@@ -2024,6 +2024,14 @@ int plotorbits2dfloat(void)
       return(-1);
    }
 
+#if 0
+    col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
+    row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
+    if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+       (*plot)(col,row,1);
+    return(0);
+#endif
+
    if((soundflag&7)==2)
       soundvar = &x;
    else if((soundflag&7)==3)

@@ -1393,8 +1393,30 @@ static int sticky_orbits(void)
 
    switch (drawmode)
    {
+   case 'r':
+   default:
+   /* draw a rectangle */
+      row = yybegin;
+      col = xxbegin;
+
+      while (row <= iystop)
+      {
+         currow = row;
+         while (col <= ixstop)
+         {
+            if (plotorbits2dfloat() == -1)
+            {
+               add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+               return(-1); /* interrupted */
+            }
+            ++col;
+         }
+         col = ixstart;
+         ++row;
+      }
+      break;
    case 'l':
-   {
+      {
       int dX, dY;                     /* vector components */
       int final,                      /* final row or column number */
           G,                  /* used to test for new row or column */
@@ -1411,15 +1433,15 @@ static int sticky_orbits(void)
       {
          if (dX > 0)         /* determine start point and last column */
          {
-            col = ixstart;
-            row = iystart;
+            col = xxbegin;
+            row = yybegin;
             final = ixstop;
          }
          else
          {
             col = ixstop;
             row = iystop;
-            final = ixstart;
+            final = xxbegin;
          }
          inc1 = 2 * abs (dY);            /* determine increments and initial G */
          G = inc1 - abs (dX);
@@ -1463,15 +1485,15 @@ static int sticky_orbits(void)
       {
         if (dY > 0)             /* determine start point and last row */
         {
-            col = ixstart;
-            row = iystart;
+            col = xxbegin;
+            row = yybegin;
             final = iystop;
         }
         else
         {
             col = ixstop;
             row = iystop;
-            final = iystart;
+            final = yybegin;
         }
         inc1 = 2 * abs (dX);            /* determine increments and initial G */
         G = inc1 - abs (dY);
@@ -1511,31 +1533,42 @@ static int sticky_orbits(void)
                  G += inc1;
            }
         }
-      }
+      } /* end case 'l' */
       break;
-   case 'r':
-   default:
-   /* draw a rectangle */
-      row = yybegin;
-      col = xxbegin;
-
-      while (row <= iystop)
+   case 'f':  /* this code does not yet work??? */
       {
-         currow = row;
-         while (col <= ixstop)
+      double Xctr,Yctr;
+      LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
+      double Xmagfactor,Rotation,Skew;
+      int angle;
+      double factor = PI / 180.0;
+      double theta;
+      double xfactor = xdots / 2.0;
+      double yfactor = ydots / 2.0;
+
+      angle = xxbegin;  /* save angle in x parameter */
+      
+      cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+      if (Rotation <= 0)
+         Rotation += 360;
+
+      while (angle < Rotation)
+      {
+	 theta = (double)angle * factor; 
+         col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
+         row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
+         if (plotorbits2dfloat() == -1)
          {
-            if (plotorbits2dfloat() == -1)
-            {
-               add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
-               return(-1); /* interrupted */
-            }
-            ++col;
+            add_worklist(angle,0,0,0,0,0,0,worksym);
+            return(-1); /* interrupted */
          }
-         col = ixstart;
-         ++row;
+         angle++;
       }
+
+
+      }  /* end case 'f' */
       break;
-   }
+   }  /* end switch */
 
    return(0);
 }

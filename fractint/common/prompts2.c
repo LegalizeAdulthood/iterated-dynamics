@@ -542,7 +542,8 @@ int passes_options(void)
    char far *ptr;
    char far *choices[20];
    int oldhelpmode;
-   char *passcalcmodes[] ={"rect","line","func"};
+   char *passcalcmodes[] ={"rect","line"};
+/*   char *passcalcmodes[] ={"rect","line","func"}; */
 
    struct fullscreenvalues uvalues[25];
    int i, j, k;
@@ -578,7 +579,8 @@ pass_option_restart:
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
 
-   LOADCHOICES("Orbit pass shape (rect,line,func)");
+   LOADCHOICES("Orbit pass shape (rect,line)");
+/*   LOADCHOICES("Orbit pass shape (rect,line,func)"); */
    uvalues[k].type = 'l';
    uvalues[k].uval.ch.vlen = 5;
    uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
