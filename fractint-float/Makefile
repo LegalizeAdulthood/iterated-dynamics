@@ -51,7 +51,7 @@ NOBSTRING = -DNOBSTRING
 # AIX may need -D_ALL_SOURCE -D_NONSTD_TYPES to compile help.c
 # For Dec Alpha, add -DFTIME -DNOBSTRING -DDIRENT
 # For SGI, you may have to add -DSYSVSGI
-DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
+DEFINES = -DXFRACT -DFLOATONLY $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 
 # Uncomment this if you get errors about "stdarg.h" missing.
 #DEFINES += -DUSE_VARARGS

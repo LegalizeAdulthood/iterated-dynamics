@@ -120,8 +120,4 @@
 #define ESCHER                 105     /* 105 escher_julia     */
 #define LATOO                  106     /* 106 latoocarfian     */
 
-#endif                         
-                               
-                               
-                               
-                               
+#endif
