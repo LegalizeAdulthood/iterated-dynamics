@@ -107,8 +107,9 @@ The "orbitdelay=" option controls how many orbits are computed before the
 orbits are displayed on the screen.  This allows the orbits to settle down.
 The "orbitinterval=" option causes Orbits to plot every nth orbit point.  A
 non-zero value of the "periodicity=" option causes Orbits to not plot orbits
-that have reached the bailout conditions.  A zero value of periodicity will
-plot all orbits except as modified by orbitdelay and orbitinterval.
+that have reached the bailout conditions or where an orbit goes off the visible
+area of the image.  A zero value of periodicity will plot all orbits except
+as modified by orbitdelay and orbitinterval.
 
 Synchronous orbits ("s") is an experimental mode using the "fractal
 witchcraft" algorithm based on the Almondbread implementation by Michael
