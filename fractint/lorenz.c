@@ -1950,7 +1950,7 @@ int plotorbits2dsetup(void)
    o_cvt.f += 0.5;
 
    if (orbit_delay >= maxit) /* make sure we get an image */
-      orbit_delay = maxit -1;
+      orbit_delay = (int)(maxit - 1);
 
    if (outside == SUM) {
        plot = plothist;

@@ -469,7 +469,7 @@ int get_toggles2()
 
    LOADCHOICES("Orbit interval (1 ... 255)");
    uvalues[k].type = 'i';
-   uvalues[k].uval.ival = old_orbit_interval = orbit_interval;
+   uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
 
    oldhelpmode = helpmode;
    helpmode = HELPYOPTS;
