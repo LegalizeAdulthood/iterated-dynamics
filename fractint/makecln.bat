@@ -2,7 +2,7 @@
 del hc.exe
 del hc.obj
 del foo
-del helpdefs.h
+del .\headers\helpdefs.h
 del fractint.hlp
 del fractint.map
 del fractint.exe
