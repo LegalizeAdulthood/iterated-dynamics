@@ -35,3 +35,10 @@ spaghetti          { ;  Jonathan Osuch josuch@fractint.org
   L0fN0jP0<3>zX0<9>OC0KA0G80<3>000<9>__0cb0gf0<3>ut0<9>ML0II0FE0<3>000GA4<\
   7>7c26g25k2<2>2v10z00w0<8>0O00K00G0<3>000<14>00v
   }
+
+line_orbit         { ;  Jonathan Osuch josuch@fractint.org
+  reset=2004 type=mandel passes=o
+  center-mag=-0.393884/0.629234/1.336065 params=0/0 float=y
+  maxiter=5000 inside=0 outside=summ periodicity=0 screencoords=yes
+  orbitcorners=-1/1/-0.5/1 orbitdrawmode=l
+  }
