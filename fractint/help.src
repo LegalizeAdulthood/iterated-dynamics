@@ -1728,6 +1728,28 @@ only these three values are needed, but the user can also specify the amount
 that the image is stretched, rotated and skewed.
 ;
 ;
+~Topic=Screen Coordinates Screen, Label=HELPSCRNCOORDS
+; This topic is online context-sensitive only.
+
+You can directly enter corner coordinates on this screen for use with the
+passes='o' option.  You can also use <F4> to reset the coordinates to the
+defaults for the current fractal type.
+
+There are two formats for the display: corners or center-mag.  You can
+toggle between the two by using <F7>.
+
+In corners mode, corner coordinate values are entered directly.  Usually
+only the top-left and bottom-right corners need be specified - the
+bottom left corner can be entered as zeros to default to an ordinary
+unrotated rectangular area.  For rotated or skewed images, the bottom
+left corner must also be specified.
+
+In center-mag mode the screen area is described by entering the coordinates
+for the center of the rectangle, and its magnification factor.  Usually
+only these three values are needed, but the user can also specify the amount
+that the image is stretched, rotated and skewed.
+;
+;
 ;
 ~Topic=Interrupting and Resuming
 
