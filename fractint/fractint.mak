@@ -16,6 +16,9 @@ DEFFILE  =
 LINKFILE = fractint.lnk
 !endif
 
+HFD=./headers
+
+
 # Next is a pseudo-target for nmake/nmk.  It just generates harmless
 # warnings with make.
 
@@ -28,18 +31,18 @@ all : fractint.exe
 
 !ifndef DEBUG
 .c.obj:
-	  $(CC) /AM /W4 /FPi /c $(OptT) $*.c >> f_errs.txt
+	  $(CC) /AM /W4 /FPi /c /I$(HDF) $(OptT) $*.c >> f_errs.txt
 
-Optsize = $(CC) /AM /W4 /FPi /c $(OptS) $*.c >> f_errs.txt
+Optsize = $(CC) /AM /W4 /FPi /c /I$(HDF) $(OptS) $*.c >> f_errs.txt
 
-Optnoalias = $(CC) /AM /W4 /FPi /c $(OptN) $*.c >> f_errs.txt
+Optnoalias = $(CC) /AM /W4 /FPi /c /I$(HDF) $(OptN) $*.c >> f_errs.txt
 !else
 .c.obj:
-	  $(CC) /Zi /AM /W4 /FPi /c $(OptT) $*.c >> f_errs.txt
+	  $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) $(OptT) $*.c >> f_errs.txt
 
-Optsize = $(CC) /Zi /AM /W4 /FPi /c $(OptS) $*.c >> f_errs.txt
+Optsize = $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) $(OptS) $*.c >> f_errs.txt
 
-Optnoalias = $(CC) /Zi /AM /W4 /FPi /c /DTESTFP $(OptN) $*.c >> f_errs.txt
+Optnoalias = $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) /DTESTFP $(OptN) $*.c >> f_errs.txt
 !endif
 
 lorenz.obj : lorenz.c fractint.h fractype.h

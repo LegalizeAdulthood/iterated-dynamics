@@ -4,8 +4,8 @@
 
 all : hc.exe fractint.hlp
 # commented out remake of hc.c since it hasn't changed for many moons.
-hc.obj : hc.c helpcom.h
-	$(CC) /AL /W1 /FPi /c $(OptT) hc.c
+hc.obj : ./common/hc.c ./headers/helpcom.h
+	$(CC) /AL /W1 /FPi /c /I./headers $(OptT) ./common/hc.c
 
 hc.exe : hc.obj
 	$(LINKER) /ST:4096 /CP:1 /EXEPACK hc;
