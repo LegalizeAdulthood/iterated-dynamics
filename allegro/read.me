@@ -1,0 +1,61 @@
+I.
+These sources originated from the Xfractint sources with most of the integer math
+removed.  Two areas where integer math is still known to exist is the logtable
+code and the 3D image transformations.
+
+All of the printer routines and documentation have been removed.
+
+Bug List:
+  3D transformations are broken
+  tga file output is broken
+
+II.
+To install the Allegro graphics package:
+  doing the following as root seems to work best, but it does cause some problems
+    install the Allegro rpm
+    from the Allegro base directory run "autoconf"
+    run "./configure"
+    run "make"
+    run "make install"
+  as user
+    add the following to the .bashrc file in your home directory
+
+###############################################################
+# Your PATH must include the Allegro `bin' directory:
+
+export PATH=$PATH:/usr/local/bin
+
+# If you are using Allegro as a shared library, you need to tell the
+# dynamic loader where to find the Allegro libraries:
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# GCC needs to know where to find the Allego header and library files:
+
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/include
+export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/include
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib
+###############################################################
+
+    copy setup and setup.dat into your working directory (where the Xfractint Allegro port is)
+    run "setup" (this could be a problem if you installed as root.  you will need to change the permissions)
+    this creates the allegro.cfg file
+To compile the Xfractint port
+  as user
+    run "make xfractint"
+    run "./xfractint" to see if it worked
+
+III.
+A new driver arrangement has been installed utilizing the Allegro graphics
+package (WIP 3.9.38).  Some of the features you are used to are still
+broken.
+
+Bug List:
+  passes=g, t, b at bpp > 8 are broken
+  zooming with the mouse before completion of an image is broken
+  the color editor in 8 bpp mode is available, but slightly scrambled
+  no coloring schemes for > 8 bpp modes have been implemented
+  although truecolor images can be created, they can't be saved or restored
+  the docs are a mess
+  so is the code
+
