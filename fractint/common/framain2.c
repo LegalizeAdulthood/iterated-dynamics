@@ -1451,6 +1451,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          set_current_params();
          odpx=odpy=newodpx=newodpy=0;
          fiddlefactor = 1;           /* reset param evolution stuff */
+         set_orbit_corners = 0;
          param_history(0); /* save history */
          if (i == 0)
          {
@@ -1465,6 +1466,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
    case 'x':                    /* invoke options screen        */
    case 'y':
+   case 'p':                    /* passes options      */
    case 'z':                    /* type specific parms */
    case 'g':
    case 5:
@@ -1478,6 +1480,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          i = get_toggles();
       else if (*kbdchar == 'y')
          i = get_toggles2();
+      else if (*kbdchar == 'p')
+         i = passes_options();
       else if (*kbdchar == 'z')
          i = get_fract_params(1);
       else if (*kbdchar == 5 || *kbdchar == SPACE)
