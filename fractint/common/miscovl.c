@@ -1125,6 +1125,9 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
    if (drawmode != 'r')
       put_parm(" %s=%c",s_orbitdrawmode, drawmode);
 
+   if (math_tol[0] != 0.05 || math_tol[1] != 0.05)
+      put_parm(" %s=%g/%g",s_mathtolerance,math_tol[0],math_tol[1]);
+
    }
 
    if (*colorinf != 'n')
