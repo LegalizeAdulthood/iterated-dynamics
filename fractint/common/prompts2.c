@@ -641,6 +641,7 @@ pass_option_restart:
       if (get_screen_corners() > 0) {
          ret = 1;
       }
+      if (j) ret = 1;
       goto pass_option_restart;
    }
 
@@ -648,6 +649,7 @@ pass_option_restart:
       if (get_corners() > 0) {
          ret = 1;
       }
+      if (j) ret = 1;
       goto pass_option_restart;
    }
 
@@ -2150,6 +2152,8 @@ gc_loop:
    for (i = 0; i < 15; ++i)
       values[i].type = 'd'; /* most values on this screen are type d */
    cmag = usemag;
+   if (drawmode == 'l')
+      cmag = 0;
    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
    nump = -1;
@@ -2173,28 +2177,43 @@ gc_loop:
       }
 
    else {
-      LOADPROMPTS("Top-Left Corner");
-      values[nump].type = '*';
-      prompts[++nump] = xprompt;
-      values[nump].uval.dval = xxmin;
-      prompts[++nump] = yprompt;
-      values[nump].uval.dval = yymax;
-      LOADPROMPTS("Bottom-Right Corner");
-      values[nump].type = '*';
-      prompts[++nump] = xprompt;
-      values[nump].uval.dval = xxmax;
-      prompts[++nump] = yprompt;
-      values[nump].uval.dval = yymin;
-      if (xxmin == xx3rd && yymin == yy3rd)
-         xx3rd = yy3rd = 0;
-      LOADPROMPTS("Bottom-left (zeros for top-left X, bottom-right Y)");
-      values[nump].type = '*';
-      prompts[++nump] = xprompt;
-      values[nump].uval.dval = xx3rd;
-      prompts[++nump] = yprompt;
-      values[nump].uval.dval = yy3rd;
-      LOADPROMPTS("Press "FK_F7" to switch to \"center-mag\" mode");
-      values[nump].type = '*';
+      if (drawmode == 'l') {
+         LOADPROMPTS("Left End Point");
+         values[nump].type = '*';
+         prompts[++nump] = xprompt;
+         values[nump].uval.dval = xxmin;
+         prompts[++nump] = yprompt;
+         values[nump].uval.dval = yymax;
+         LOADPROMPTS("Right End Point");
+         values[nump].type = '*';
+         prompts[++nump] = xprompt;
+         values[nump].uval.dval = xxmax;
+         prompts[++nump] = yprompt;
+         values[nump].uval.dval = yymin;
+      } else {
+         LOADPROMPTS("Top-Left Corner");
+         values[nump].type = '*';
+         prompts[++nump] = xprompt;
+         values[nump].uval.dval = xxmin;
+         prompts[++nump] = yprompt;
+         values[nump].uval.dval = yymax;
+         LOADPROMPTS("Bottom-Right Corner");
+         values[nump].type = '*';
+         prompts[++nump] = xprompt;
+         values[nump].uval.dval = xxmax;
+         prompts[++nump] = yprompt;
+         values[nump].uval.dval = yymin;
+         if (xxmin == xx3rd && yymin == yy3rd)
+            xx3rd = yy3rd = 0;
+         LOADPROMPTS("Bottom-left (zeros for top-left X, bottom-right Y)");
+         values[nump].type = '*';
+         prompts[++nump] = xprompt;
+         values[nump].uval.dval = xx3rd;
+         prompts[++nump] = yprompt;
+         values[nump].uval.dval = yy3rd;
+         LOADPROMPTS("Press "FK_F7" to switch to \"center-mag\" mode");
+         values[nump].type = '*';
+      }
    }
 
    LOADPROMPTS("Press "FK_F4" to reset to type default values");
@@ -2246,22 +2265,31 @@ gc_loop:
    }
 
    else {
-      nump = 1;
-      xxmin = values[nump++].uval.dval;
-      yymax = values[nump++].uval.dval;
-      nump++;
-      xxmax = values[nump++].uval.dval;
-      yymin = values[nump++].uval.dval;
-      nump++;
-      xx3rd = values[nump++].uval.dval;
-      yy3rd = values[nump++].uval.dval;
-      if (xx3rd == 0 && yy3rd == 0) {
-         xx3rd = xxmin;
-         yy3rd = yymin;
+      if (drawmode == 'l') {
+         nump = 1;
+         xxmin = values[nump++].uval.dval;
+         yymax = values[nump++].uval.dval;
+         nump++;
+         xxmax = values[nump++].uval.dval;
+         yymin = values[nump++].uval.dval;
+      } else {
+         nump = 1;
+         xxmin = values[nump++].uval.dval;
+         yymax = values[nump++].uval.dval;
+         nump++;
+         xxmax = values[nump++].uval.dval;
+         yymin = values[nump++].uval.dval;
+         nump++;
+         xx3rd = values[nump++].uval.dval;
+         yy3rd = values[nump++].uval.dval;
+         if (xx3rd == 0 && yy3rd == 0) {
+            xx3rd = xxmin;
+            yy3rd = yymin;
+         }
       }
    }
 
-   if (prompt_ret == F7) { /* toggle corners/center-mag mode */
+   if (prompt_ret == F7 && drawmode != 'l') { /* toggle corners/center-mag mode */
       if (usemag == 0)
       {
          cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2359,9 +2387,7 @@ gsc_loop:
       values[nump].type = '*';
       LOADPROMPTS("Press "FK_F7" to switch to \"corners\" mode");
       values[nump].type = '*';
-      }
-
-   else {
+   } else {
       LOADPROMPTS("Top-Left Corner");
       values[nump].type = '*';
       prompts[++nump] = xprompt;
@@ -2445,7 +2471,6 @@ gsc_loop:
          ox3rd = xx3rd; oy3rd = yy3rd;
       }
    }
-
    else {
       nump = 1;
       oxmin = values[nump++].uval.dval;
