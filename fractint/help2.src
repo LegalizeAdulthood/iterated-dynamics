@@ -2497,6 +2497,10 @@ All variables are created automatically by their usage and treated as
 complex.  If you declare 'v = 2' then the variable 'v' is treated as a
 complex with an imaginary value of zero.
 
+NOTE: For periodicity checking, inside options, outside options, and
+the passes=o option to work correctly it is necessary to leave the result
+of the orbit calculation in the variable z.
+
 ~OnlineFF
 Sequential processing of the formula can be altered with the flow control\
 instructions
