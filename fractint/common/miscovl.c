@@ -737,6 +737,23 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
          }
       }
 
+      if (usr_stdcalcmode == 'o' && set_orbit_corners)
+         {
+            int xdigits,ydigits;
+            put_parm( " %s=",s_orbitcorners);
+            xdigits = getprec(oxmin,oxmax,ox3rd);
+            ydigits = getprec(oymin,oymax,oy3rd);
+            put_float(0,oxmin,xdigits);
+            put_float(1,oxmax,xdigits);
+            put_float(1,oymin,ydigits);
+            put_float(1,oymax,ydigits);
+            if (ox3rd != oxmin || oy3rd != oymin)
+            {
+               put_float(1,ox3rd,xdigits);
+               put_float(1,oy3rd,ydigits);
+            }
+         }
+
       for(i = (MAXPARAMS-1); i >= 0; --i)
           if(typehasparm((fractype==JULIBROT || fractype==JULIBROTFP)
                           ?neworbittype:fractype,i,NULL)) break;

@@ -661,6 +661,7 @@ extern char                  s_numframes[];
 extern char                  s_off[];
 extern char                  s_olddemmcolors[];
 extern char                  s_one[];
+extern char                  s_orbitcorners[];
 extern char                  s_orbitdelay[];
 extern char                  s_orbitinterval[];
 extern char                  s_orbitname[];
