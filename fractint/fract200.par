@@ -1,0 +1,184 @@
+
+comment { par file released with Fractint 20.0 }
+
+ismand_demo_julia  { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=formula formulafile=fract200.frm
+  formulaname=ismand_demo ismand=n passes=d
+  center-mag=0/0/0.6666667
+  params=-0.1542022284011214/0.6137691202307978/4/0
+  float=y maxiter=1000 inside=0 decomp=256 periodicity=0
+  cyclerange=0/255 sound=off
+  colors=05F<63>DISDISDIS<89>uxxuxxvyyvyywzz<94>05F
+  }
+
+ismand_demo_mandel { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=formula formulafile=fract200.frm
+  formulaname=ismand_demo ismand=y passes=d
+  center-mag=0/0/0.6666667 params=0/0/4/0 float=y
+  maxiter=1000 inside=0 decomp=256 periodicity=0
+  cyclerange=0/255 sound=off
+  colors=05F<63>DISDISDIS<89>uxxuxxvyyvyywzz<94>05F
+  }
+
+Latoocarfian-09    { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=latoocarfian function=sin/sin/sin/sinh
+  passes=1
+  center-mag=+0.00290330359295909/+0.00092771550057891/0.83056\
+  69 params=-0.95/2.75/0.075/-0.5600000000000001 float=y
+  maxiter=1000 sound=off
+  colors=000z8W<4>zUMzYJzbH<3>zt8<10>zwfzxizxm<3>zzz<11>LkkIjj\
+  Eii<3>0cc<27>aqWbqVdrV<2>hsUitUjtV<6>swWtxXuxXvyXwyXyzY<9>yz\
+  lyzmyzo<2>yzszzuyyt<24>OCOMANL8M<2>G2IE0GE0G333E0G<25>94C95B\
+  85B<2>85B76A98E<3>JETLGXNI`QKd<3>YVl_Yna`pccr<9>SShRRgPPf<2>\
+  MMcKKbKKa<9>EEREEQDDP<5>99H88G77E77D66B55A<3>335223112000<3>\
+  D2AG2DK3FQ4L<5>j8`<2>v8X
+  }
+
+Latoocarfian-11    { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=latoocarfian function=sin/sin/sin/sin
+  passes=1
+  center-mag=-0.00000000000000044/+0.00000000000000033/0.81300\
+  81/1/-5 params=-1.751/1.505/1.39/0.001 float=y
+  maxiter=1000 sound=off
+  colors=000n8_<2>z8W<4>zUMzYJzbH<3>zt8<10>zwfzxizxm<3>zzz<11>\
+  LkkIjjEii<3>0cc<27>aqWbqVdrV<2>hsUitUjtV<6>swWtxXuxXvyXwyXyz\
+  Y<9>yzlyzmyzo<2>yzszzuyyt<24>OCOMANL8M<2>G2IE0GE0G333E0G<25>\
+  94C95B85B<2>85B76A98E<3>JETLGXNI`QKd<3>YVl_Yna`pccr<9>SShRRg\
+  PPf<2>MMcKKbKKa<9>EEREEQDDP<5>99H88G77E77D66B55A<3>335223112\
+  000<3>D2AG2DK3FQ4L<5>j8`
+  }
+
+Latoocarfian-12    { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=latoocarfian function=sin/sin/sin/cosxx
+  passes=1
+  center-mag=-0.33504046793695770/-0.51374300838841750/0.97462\
+  83/1/64.999 params=-0.85/2.19/0.64/-0.75 float=y
+  maxiter=2000 sound=off
+  colors=000c6V<3>p9VsAVvBVzCU<3>zUMzYJzbH<3>zt8<10>zwfzxizxm<\
+  3>zzz<11>LkkIjjEii<3>0cc<27>aqWbqVdrV<2>hsUitUjtV<6>swWtxXux\
+  XvyXwyXyzY<9>yzlyzmyzo<2>yzszzuyyt<24>OCOMANL8M<2>G2IE0GE0G3\
+  33E0G<25>94C95B85B<2>85B76A98E<3>JETLGXNI`QKd<3>YVl_Yna`pccr\
+  <9>SShRRgPPf<2>MMcKKbKKa<9>EEREEQDDP<5>99H88G77E77D66B55A<3>\
+  335223112000<5>K3FQ4L<2>_6T
+  }
+
+Latoocarfian-17    { ; Image and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=latoocarfian function=sin/atan/sin/conj
+  passes=1
+  center-mag=+0.00000000000000044/+0.00000000000000000/0.57886\
+  18 params=4.11/2.71828182845905/0.41/0.1 float=y
+  maxiter=2000 sound=off
+  colors=000fbp<3>rptvtvvtv<42>GGfFFfEEf<3>AAcAAbAAa<13>B6MC6L\
+  C6KC5JC5HC5G<79>NTuNTuNTvOUw<76>K5QK5QK5P<2>K4OJ3NL4P<3>R8_T\
+  9bVBe<4>hYn
+  }
+
+music_1            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=gingerbreadman passes=1
+  corners=3.751879/0.07802473/7.537395/-3.930215/6.557631/2.54\
+  9392 params=8.01/2 float=y maxiter=100 bailout=128
+  inside=3 viewwindows=4.2/0.75/yes/0/0 hertz=150
+  sound=x/fm/quant polyphony=9 wavetype=5 attack=1
+  sustain=10 srelease=15 scalemap=1/2/1/3/1/4/1/5/1/6/1/7
+  orbitdelay=1300 showorbit=yes colors=@default.map
+  }
+
+music_2            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=quadruptwo passes=1
+  corners=-2.523687/37.52171/-51.15019/-34.31792
+  params=-33/1/5 float=y maxiter=20 bailout=64 inside=3
+  viewwindows=4.2/0.75/yes/0/0 hertz=10 sound=z/fm/quant
+  polyphony=3 attack=1 decay=6 sustain=7 srelease=14
+  scalemap=1/2/1/3/1/4/1/5/1/6/1/7 orbitdelay=1900
+  showorbit=yes colors=@default.map
+  }
+
+music_3            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=quadruptwo passes=1
+  corners=-36.04249/11.80311/-35.97947/-15.86855
+  params=-25/1/5 float=y maxiter=20 bailout=64 inside=3
+  viewwindows=4.2/0.75/yes/0/0 hertz=10 sound=z/fm/quant
+  polyphony=9 wavetype=2 attack=1 decay=7 sustain=10
+  srelease=13 scalemap=1/2/1/3/1/4/1/5/1/6/1/7
+  orbitdelay=1900 showorbit=yes colors=@default.map
+  }
+
+music_4            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=quadruptwo passes=1
+  corners=-29.41428/9.819112/-37.59262/-21.10167
+  params=-25/1/5 float=y maxiter=12 bailout=64 inside=3
+  viewwindows=4.2/0.75/yes/0/0 hertz=8 sound=z/fm/quant
+  polyphony=6 wavetype=2 attack=9 decay=9 sustain=11
+  srelease=13 scalemap=1/1/3/3/3/6/6/8/8/10/10/12
+  orbitdelay=1625 showorbit=yes colors=@default.map
+  }
+
+music_5            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=hopalong passes=1
+  center-mag=-0.406464/-0.371105/0.2523325/0.784/-43.558/0.968
+  params=-1/1.101/0.995 float=y maxiter=3
+  viewwindows=4.2/0.75/yes/0/0 hertz=150 sound=x/fm/quant
+  polyphony=5 wavetype=1 attack=8 decay=8 sustain=11
+  scalemap=1/1/3/3/3/6/6/8/8/10/10/11 orbitdelay=1600
+  showorbit=yes colors=@default.map
+  }
+
+music_6            { ; Music and par Copyright (c) Sylvie Gallet, 1999
+                     ; sylvie_gallet@compuserve.com
+  reset=2000 type=threeply passes=1
+  center-mag=4.54747e-013/-4.54747e-013/0.0005274262
+  params=1/-1/1 float=y maxiter=3
+  viewwindows=4.2/0.75/yes/0/0 hertz=50 sound=x/fm/quant
+  polyphony=9 attack=9 sustain=8
+  scalemap=1/1/3/3/3/6/6/8/8/10/10/11 orbitdelay=1500
+  showorbit=yes colors=@default.map
+  }
+
+Waterfall          { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
+                     ; Fractint ver. 20.0
+                     ; Compatible with most SB compatible cards (OPL-3 chip)
+  reset=2000 type=chip passes=1 center-mag=0/0/0.001754386
+  params=-15/-19/1 float=y viewwindows=12/0.75/yes/0/0 hertz=-100
+  sound=x/fm/quant polyphony=3 decay=8 sustain=14 srelease=10
+  scalemap=1/3/5/6/8/10/12/1/3/5/8/10 orbitdelay=1000 showorbit=yes
+  }
+
+Mariah             { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
+                     ; Fractint ver. 20.0
+                     ; Compatible with most SB compatible cards (OPL-3 chip)
+  reset=2000 type=mandel passes=1
+  center-mag=-0.215153/0.643042/1353.996/0.1539/-7.499/-51.994
+  params=0/0 maxiter=1000 viewwindows=16/0.75/yes/0/0 hertz=220
+  sound=y/fm polyphony=6 wavetype=4 orbitdelay=1000 showorbit=yes
+  }
+
+
+The_Sorceress      { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
+                     ; Fractint ver. 20.0
+                     ; Compatible with most SB compatible cards (OPL-3 chip)
+  reset=2000 type=chip passes=1 center-mag=0/0/0.001754386
+  params=-15/-19/1 float=y viewwindows=12/0.75/yes/0/0 hertz=-200
+  sound=x/pc/fm/quant polyphony=6 attack=9 decay=8 sustain=14
+  srelease=10 scalemap=1/4/4/8/8/4/1/4/8/4/4/1 orbitdelay=1000
+  showorbit=yes
+  }
+
+Pod_Racers         { ; Music par Copyright (c) Bill Jemison [70400,2537] 1999
+                     ; Fractint ver. 20.0
+                     ; Compatible with most SB compatible cards (OPL-3 chip)
+  reset=2000 type=mandelcloud passes=1 center-mag=-0.5/0/0.6666667
+  params=50 float=y maxiter=500 viewwindows=12/0.75/yes/0/0 hertz=512
+  sound=x/pc/fm polyphony=3 wavetype=1 decay=8 sustain=14 srelease=10
+  orbitdelay=1000 showorbit=yes
+  }

@@ -1,0 +1,3576 @@
+~Topic=Common Problems
+
+Of course, Fractint would never stoop to having a "common" problem.  These
+notes describe some, ahem, "special situations" which come up occasionally
+and which even we haven't the gall to label as "features".
+
+Fractint (alas!) is still a DOS program. It runs well under windows, but there
+can be problems. Here are some tips from some expert users.
+
+Jay Hill's Windows tips:\ 
+  For starters, make sure the DOS window properties are set to 
+  'Misc | Always suspend' = off." Unless you want the task to stop when it 
+  does not have focus. Also, you can put the Idle Sensitivity to high. Make 
+  settings on any other DOS windows you have open according to what they 
+  should be (or what you prefer). 
+
+  If your DOS window is full screen, press Alt-Enter to make it a Window window. 
+  Then click on the MSDOS icon in the upper left. WARNING, don't do this in a
+  high res graphics mode or in text mode (sometimes). The safest is F3 320x200 
+  graphics mode. Windows likes that mode. If you have a high res image, hit 'X'
+  to get the text screen and then Alt-ENTER to get the DOS Windows window... 
+  POW...your task will likely die. So ... don't do that: 
+
+  Some DOS programs eat up to 50% or 80% CPU time just sitting watching for 
+  key strokes. Clearly, these should be suspended when they don't have the 
+  focus. A simple DOS prompt, I have found, eats little time. 
+
+  Some web pages eat lots of time (watching prompt boxes) while others eat 
+  little (plain text or graphics with no links). 
+
+  It has been noted here before, you can make a shortcut to Fractint.exe and 
+  tailor its properties. I use in the program tab: command line: 
+
+  FRACTINT.EXE textsafe=save sound=off\
+
+  Under the screen tab: Usage: Full screen. 
+  Under Misc: Allow screen saver=off. 
+
+  You should coordinate your DOS windows according to what you are doing. 
+  I often change the settings for a short time, just to do some other task. 
+
+Damien M. Jones Windows tips:\
+  This is what works for me. Your mileage may vary. 
+
+  Create a shortcut to FRACTINT.EXE, right-click it, choose Properties. 
+  On the Memory tab: set all five drop-downs to "Auto". 
+  On the Screen tab: choose Full-screen and Fast ROM emulation, leave 
+  Dynamic memory allocation OFF. 
+  Under the Misc tab: turn OFF Allow screen saver. Turn ON Always suspend. 
+  Set the Idle sensitivity to about 1/4, closest to Low. 
+
+  In the SSTOOLS.INI file, put textsafe=save on a line by itself in the 
+  [fractint] section. (This helps preserve your screen when you switch away 
+  from FractInt, but only works if Always suspend is turned ON.) 
+
+  Having more than 8M of RAM helps too, that way Windows and FractInt aren't 
+  fighting over the same memory. 
+
+Hang during startup:\
+  There might be a problem with Fractint's video detection logic and your
+  particular video adapter. Try running with "fractint adapter=xxx" where
+  xxx is cga, ega, egamono, mcga, or vga.  If "adapter=vga" works, and you
+  really have a SuperVGA adapter capable of higher video modes, there are
+  other "adapter=" options for a number of SuperVGA chipsets - please see
+  the full selection in {Video Parameters} for details.  If this solves the
+  problem, create an SSTOOLS.INI file with the "adapter=xxx" command in it
+  so that the fix will apply to every run.\
+  Another possible cause:  If you install the latest Fractint in say
+  directory "newfrac", then run it from another directory with the command
+  "\\newfrac\\fractint", *and* you have an older version of fractint.exe
+  somewhere in your DOS PATH, a silent hang is all you'll get.  See the
+  notes under the "Cannot find FRACTINT.EXE message" problem for the reason.\
+  Another possibility: try one of the "textsafe" parameter choices
+  described in {Video Parameters}.
+
+Scrambled image when returning from a text mode display:\
+  If an image which has been partly or completely generated gets partly
+  destroyed when you return to it from the menu, help, or the information
+  display, please try the various "textsafe" parameter options - see
+  {Video Parameters} for details.  If this cures the problem, create
+  an SSTOOLS.INI file with the "textsafe=xxx" command so that the fix will
+  apply to every run.
+
+"Holes" in an image while it is being drawn:\
+  Little squares colored in your "inside" color, in a pattern of every
+  second square of that size, in solid guessing mode, both across and down
+  (i.e., 1 out of 4), are
+  a symptom of an image which should be calculated with more conservative
+  periodicity checking than the default.  See the Periodicity parameter
+  under {Image Calculation Parameters}.
+
+Black bar at top of screen during color cycling on 8086/8088 machines:\
+  (This might happen intermittently, not every run.)\
+  "fractint cyclelimit=10" might cure the problem.  If so, increase
+  the cyclelimit value (try increasing by 5 or 10 each time) until the
+  problem reappears, then back off one step and add that cyclelimit value
+  to your SSTOOLS.INI file.
+
+Other video problems:
+
+  If you are using a VESA driver with your video adapter, the first thing
+  to try is the "vesadetect=no" parameter. If that fixes the problem, add
+  it to your SSTOOLS.INI file to make the fix permanent.
+
+  It may help to explicitly specify your type of adapter - see the
+  "adapter=" parameter in {Video Parameters}.
+
+  We've had one case where a video driver for Windows does not work
+  properly with Fractint.  If running under Windows, DesqView, or some
+  other layered environment, try running Fractint directly from DOS to see
+  if that avoids the problem.\
+  We've also had one case of a problem co-existing with "386 to the Max".
+
+  We've had one report of an EGA adapter which got scrambled images in
+  all modes until "textsafe=no" was used (see {Video Parameters}).
+
+  Also, see {Video Adapter Notes} for information
+  about enhanced video modes - Fractint makes only limited attempts to
+  verify that a video mode you request is actually supported by your
+  adapter.
+~OnlineFF
+
+Other Hangs and Strange Behavior:\
+  We've had some problems (hangs and solid beeps) on an FPU equipped
+  machine when running under Windows 3's enhanced mode.  The only ways
+  around the problem we can find are to either run the Fractint image
+  involved outside Windows, or to use the DOS command "SET NO87=nofpu"
+  before running Fractint.  (This SET command makes Fractint ignore your
+  fpu, so things might be a lot slower as a result.)
+
+Insufficient memory:\
+  Fractint requires a fair bit of memory to run.  Most machines with at
+  least 640k (ok sticklers, make that "PC-compatible machines") will have
+  no problem.  Machines with 512k and machines with many TSR utilities
+  and/or a LAN interface may have problems.  Some Fractint features
+  allocate memory when required during a run.  If you get a message about
+  insufficient memory, or suspect that some problem is due to a memory
+  shortage, you could try commenting out some TSR utilities in your
+  AUTOEXEC.BAT file, some non-critical drivers in your CONFIG.SYS file, or
+  reducing the BUFFERS parameter in your CONFIG.SYS.
+~OnlineFF
+
+"Cannot find FRACTINT.EXE" message:\
+  Fractint is an overlayed program - some parts of it are brought from
+  disk into memory only when used.  The overlay manager needs to know
+  where to find the program.  It must be named FRACTINT.EXE (which it is
+  unless somebody renamed it), and you should either be in the directory
+  containing it when you start Fractint, or that directory should be in
+  your DOS PATH.
+
+"File FRACTINT.CFG is missing or invalid" message:\
+  You should either start Fractint while you are in the directory
+  containing it, or should have that directory in your DOS PATH variable.
+  If that isn't the problem, maybe you have a FRACTINT.CFG file from an
+  older release of Fractint lying around? If so, best rename or delete it.
+  If that isn't the problem either, then the FRACTINT.CFG included in the
+  FRAINT.EXE release file has probably been changed or deleted. Best
+  reinstall Fractint to get a fresh copy.
+~OnlineFF
+
+Some other program doesn't like GIF files created by Fractint:\
+  Fractint generates nice clean GIF89A spec files, honest! But telling
+  this to the other program isn't likely to change its mind. Instead, try
+  an option which might get around the problem: run Fractint with the
+  command line option "gif87a=yes" and then save an image. Fractint will
+  store the image in the older GIF87A format, without any fractal
+  parameters in it (so you won't be able to load the image back into
+  Fractint and zoom into it - the fractal type, coordinates, etc. are not
+  stored in this older format), and without an "aspect ratio" in the GIF
+  header (we've seen one utility which doesn't like that field.)
+
+Disk video mode performance:\
+  This won't be blindingly fast at the best of times, but there are things
+  which can slow it down and can be tuned.  See {"Disk-Video" Modes}
+  for details.
+
+Sound card output isn't working:\
+  If you get the message "FM hardware not present" when trying to switch on
+  output from your sound card then check that the drivers you installed with
+  the card have set the BLASTER environment variable. To do this go to a DOS
+  prompt and type SET, this command will list a bunch of lines like this:\
+  VARIABLE=VALUE\
+  ANOTHERVARIABLE=ANOTHER VALUE\
+  \
+  one of these should look like:\
+  BLASTER=A:220 I:5 D:3\
+  or similar, it's the A: entry that's important. If you don't have the variable
+  set then try putting the line:\
+  SET BLASTER=A:220\
+  in your autoexec.bat file, though be warned that if your sound hardware isn't
+  compatable or has its base i/o address set differently to the 220H, then unexpected
+  things may happen as fractint tries to write to hardware that isn't there.
+
+  If you get no warning message but still can't hear anything then try to
+  alter the volume of your card's output using whatever utility came with the
+  card. For windows 95 doubleclick on the small loudspeaker icon on your
+  task bar and play with the sliders, you may have to go to the mixer properties
+  menu and enable the control for the FM output to appear, this may be called
+  'synthesizer', 'FM', 'midi', or 'legacy' depending on your hardware.
+  Also fractint is unlikely to be able to continue sounding notes when running
+  in the background under windows 95, so you'll need to keep switching back and
+  forth until things are set right.
+  
+
+
+;
+;
+;
+~Topic=Fractals and the PC
+;
+; empty for document, present just so we can reference the subject
+
+~Format-,Doc-
+
+    A Little History:
+       { Before Mandelbrot }
+       { Who Is This Guy, Anyway? }
+
+    A Little Code:
+       { Periodicity Logic }
+       { Limitations of Integer Math (And How We Cope) }
+       { Arbitrary Precision and Deep Zooming }
+       { The Fractint "Fractal Engine" Architecture }
+
+    A Little Math:
+       { Summary of Fractal Types }
+       { Inside=bof60|bof61|zmag|fmod|period|atan }
+       { Inside=epscross|startrail }
+       { Finite Attractors }
+       { Trig Identities }
+       { Quaternion and Hypercomplex Algebra }
+~Format+,Doc+
+;
+;
+~Topic=Before Mandelbrot
+
+Like new forms of life, new branches of mathematics and science don't
+appear from nowhere. The ideas of fractal geometry can be traced to the
+late nineteenth century, when mathematicians created shapes -- sets of
+points -- that seemed to have no counterpart in nature.  By a wonderful
+irony, the "abstract" mathematics descended from that work has now turned
+out to be MORE appropriate than any other for describing many natural
+shapes and processes.
+
+Perhaps we shouldn't be surprised.  The Greek geometers worked out the
+mathematics of the conic sections for its formal beauty; it was two
+thousand years before Copernicus and Brahe, Kepler and Newton overcame the
+preconception that all heavenly motions must be circular, and found the
+ellipse, parabola, and hyperbola in the paths of planets, comets, and
+projectiles.
+
+In the 17th century Newton and Leibniz created calculus, with its
+techniques for "differentiating" or finding the derivative of functions --
+in geometric terms, finding the tangent of a curve at any given point.
+True, some functions were discontinuous, with no tangent at a gap or an
+isolated point. Some had singularities: abrupt changes in direction at
+which the idea of a tangent becomes meaningless. But these were seen as
+exceptional, and attention was focused on the "well-behaved" functions
+that worked well in modeling nature.
+
+Beginning in the early 1870s, though, a 50-year crisis transformed
+mathematical thinking. Weierstrass described a function that was
+continuous but nondifferentiable -- no tangent could be described at any
+point. Cantor showed how a simple, repeated procedure could turn a line
+into a dust of scattered points, and Peano generated a convoluted curve
+that eventually touches every point on a plane. These shapes seemed to
+fall "between" the usual categories of one-dimensional lines, two-
+dimensional planes and three-dimensional volumes. Most still saw them as
+"pathological" cases, but here and there they began to find applications.
+
+In other areas of mathematics, too, strange shapes began to crop up.
+Poincare attempted to analyze the stability of the solar system in the
+1880s and found that the many-body dynamical problem resisted traditional
+methods. Instead, he developed a qualitative approach, a "state space" in
+which each point represented a different planetary orbit, and studied what
+we would now call the topology -- the "connectedness" -- of whole families
+of orbits. This approach revealed that while many initial motions quickly
+settled into the familiar curves, there were also strange, "chaotic"
+orbits that never became periodic and predictable.
+
+Other investigators trying to understand fluctuating, "noisy" phenomena --
+the flooding of the Nile, price series in economics, the jiggling of
+molecules in Brownian motion in fluids -- found that traditional models
+could not match the data. They had to introduce apparently arbitrary
+scaling features, with spikes in the data becoming rarer as they grew
+larger, but never disappearing entirely.
+
+For many years these developments seemed unrelated, but there were
+tantalizing hints of a common thread. Like the pure mathematicians' curves
+and the chaotic orbital motions, the graphs of irregular time series often
+had the property of self-similarity: a magnified small section looked very
+similar to a large one over a wide range of scales.
+;
+;
+~Topic=Who Is This Guy\, Anyway?
+
+While many pure and applied mathematicians advanced these trends, it is
+Benoit Mandelbrot above all who saw what they had in common and pulled the
+threads together into the new discipline.
+
+He was born in Warsaw in 1924, and moved to France in 1935. In a time when
+French mathematical training was strongly analytic, he visualized problems
+whenever possible, so that he could attack them in geometric terms.  He
+attended the Ecole Polytechnique, then Caltech, where he encountered the
+tangled motions of fluid turbulence.
+
+In 1958 he joined IBM, where he began a mathematical analysis of
+electronic "noise" -- and began to perceive a structure in it, a hierarchy
+of fluctuations of all sizes, that could not be explained by existing
+statistical methods. Through the years that followed, one seemingly
+unrelated problem after another was drawn into the growing body of ideas
+he would come to call fractal geometry.
+
+As computers gained more graphic capabilities, the skills of his mind's
+eye were reinforced by visualization on display screens and plotters.
+Again and again, fractal models produced results -- series of flood
+heights, or cotton prices -- that experts said looked like "the real
+thing."
+
+Visualization was extended to the physical world as well. In a provocative
+essay titled "How Long Is the Coast of Britain?" Mandelbrot noted that the
+answer depends on the scale at which one measures: it grows longer and
+longer as one takes into account every bay and inlet, every stone, every
+grain of sand. And he codified the "self-similarity" characteristic of
+many fractal shapes -- the reappearance of geometrically similar features
+at all scales.
+
+First in isolated papers and lectures, then in two editions of his seminal
+book, he argued that many of science's traditional mathematical models are
+ill-suited to natural forms and processes: in fact, that many of the
+"pathological" shapes mathematicians had discovered generations before are
+useful approximations of tree bark and lung tissue, clouds and galaxies.
+
+Mandelbrot was named an IBM Fellow in 1974, and continues to work at the
+IBM Watson Research Center. He has also been a visiting professor and
+guest lecturer at many universities.
+;
+;
+~Topic=Periodicity Logic
+
+The "Mandelbrot Lake" in the center of the M-set images is the traditional
+bane of plotting programs. It sucks up the most computer time because it
+always reaches the iteration limit -- and yet the most interesting areas
+are invariably right at the edge the lake.
+(See {The Mandelbrot Set} for a description of the iteration process.)
+
+Thanks to Mark Peterson for pointing out (well, he more like beat us over
+the head until we paid attention) that the iteration values in the middle
+of Mandelbrot Lake tend to decay to periodic loops (i.e., Z(n+m) == Z(n),
+a fact that is pointed out on pages 58-61 of "The Beauty of Fractals"). An
+intelligent program (like the one he wrote) would check for this
+periodicity once in a while, recognize that iterations caught in a loop
+are going to max out, and bail out early.
+
+For speed purposes, the current version of the program turns this checking
+algorithm on only if the last pixel generated was in the lake.  (The
+checking itself takes a small amount of time, and the pixels on the very
+edge of the lake tend to decay to periodic loops very slowly, so this
+compromise turned out to be the fastest generic answer).
+
+Try a full M-set plot with a 1000-iteration maximum with any other
+program, and then try it on this one for a pretty dramatic proof of the
+value of periodicity checking.
+
+You can get a visual display of the periodicity effects if you press
+<O>rbits while plotting. This toggles display of the intermediate
+iterations during the generation process.  It also gives you an idea of
+how much work your poor little PC is going through for you!  If you use
+this toggle, it's best to disable solid-guessing first using <1> or <2>
+because in its second pass, solid-guessing bypasses many of the pixel
+calculations precisely where the orbits are most interesting.
+
+Mark was also responsible for pointing out that 16-bit integer math was
+good enough for the first few levels of M/J images, where the round-off
+errors stay well within the area covered by a single pixel. Fractint now
+uses 16-bit math where applicable, which makes a big difference on non-32-
+bit PCs.
+;
+;
+~Topic=Limitations of Integer Math (And How We Cope)
+
+By default, Fractint uses 16-bit and/or 32-bit integer math to generate
+nearly all its fractal types. The advantage of integer math is speed: this
+is by far the fastest such plotter that we have ever seen on any PC. The
+disadvantage is an accuracy limit. Integer math represents numbers like
+1.00 as 32-bit integers of the form [1.00 * (2^29)] (approximately
+a range of 500,000,000) for the Mandelbrot and Julia sets. Other integer
+fractal types use a bitshift of 24 rather than 29, so 1.0 is stored
+internally as [1.00 * (2^24)]. This yields accuracy of better than 8
+significant digits, and works fine... until the initial values of the
+calculations on consecutive pixels differ only in the ninth decimal place.
+
+At that point, if Fractint has a floating-point algorithm handy for that
+particular fractal type (and virtually all of the fractal types have one
+these days), it will silently switch over to the floating-point algorithm
+and keep right on going.  Fair warning - if you don't have an FPU, the
+effect is that of a rocket sled hitting a wall of jello, and even if you
+do, the slowdown is noticeable.
+
+If it has no floating-point algorithm, Fractint does the best it can: it
+switches to its minimal drawing mode, with adjacent pixels having initial
+values differing by 1 (really 0.000000002).  Attempts to zoom further may
+result in moving the image around a bit, but won't actually zoom.  If you
+are stuck with an integer algorithm, you can reach minimal mode with your
+fifth consecutive "maximum zoom", each of which covers about 0.25% of the
+previous screen. By then your full-screen image is an area less than
+1/(10^13)th [\~0.0000000000001] the area of the initial screen.  (If your
+image is rotated or stretched very slightly, you can run into the wall of
+jello as early as the fourth consecutive maximum zoom.  Rotating or
+stretching by larger amounts has less impact on how soon you run into it.)
+
+Think of it this way: at minimal drawing mode, your VGA display would have
+to have a surface area of over one million square miles just to be able to
+display the entire M-set using the integer algorithms.  Using the
+floating-point algorithms, your display would have to be big enough to fit
+the entire solar system out to the orbit of Saturn inside it.  So there's
+a considerable saving on hardware, electricity and desk space involved
+here.  Also, you don't have to take out asteroid insurance.
+
+32 bit integers also limit the largest number which can be stored.  This
+doesn't matter much since numbers outside the supported range (which is
+between -4 and +4) produce a boring single color. If you try to zoom-out
+to reduce the entire Mandelbrot set to a speck, or to squeeze
+it to a pancake, you'll find you can't do so in integer math mode.
+;
+;
+~Topic=Arbitrary Precision and Deep Zooming
+
+The zoom limit of Fractint is approximately 10^15 (10 to the fifteenth
+power). This limit is due to the precision possible with the computer
+representation of numbers as 64 bit double precision data. To give you an
+idea of just how big a magnification 10^15 is, consider this. At the scale
+of your computer screen while displaying a tiny part of the Mandelbrot set at
+the deepest possible zoom, the entire Mandelbrot set would be many millions
+of miles wide, as big as the orbit of Jupiter.
+
+Big as this zoom magnification is, your PC can do better using something
+called arbitrary precision math. Instead of using 64 bit double precision to
+represent numbers, your computer software allocates as much memory as needed
+to create a data type supporting as many decimals of precision as you want.
+
+Incorporation of this feature in Fractint was inspired by Jay Hill and his
+DEEPZOOM program which uses the shareware MFLOAT programming library.
+Several of the Stone Soup programmers noticed Jay's posts in the Internet
+sci.fractals newsgroup and began to investigate adding arbitrary precision
+to Fractint. High school math and physics teacher Wes Loewer wrote an
+arbitrary precision library in both 80x86 assembler and C, and the Stone Soup
+team incorporated Wes's library into Fractint. Initially, support was added
+for fractal types mandel, julia, manzpower, and julzpower.
+
+Normally, when you reach Fractint's zoom limit, Fractint simply
+refuses to let you zoom any more. When using the fractal types that support
+arbitrary precision, you will not reach this limit, but can keep on
+zooming. When you pass the threshold between double precision and arbitrary
+precision, Fractint will dramatically slow down. The <tab> status screen can
+be used to verify that Fractint is indeed using arbitrary precision.
+
+Fractals with arbitrary precision are SLOW, as much as ten times slower than
+if the math were done with your math coprocessor, and even slower simply
+because the zoom depth is greater. The good news, if you want to call it
+that, is that your math coprocessor is not needed; coprocessorless machines
+can produce deep zooms with the same glacial slowness as machines with
+coprocessors!
+
+Maybe the real point of arbitrary precision math is to prolong the "olden"
+days when men were men, women were women, and real fractal programmers spent
+weeks generating fractals. One of your Stone Soup authors has a large
+monitor that blinks a bit when changing video modes--PCs have gotten so fast
+that Fractint finishes the default 320x200 Mandelbrot before the monitor can
+even complete its blinking transition to graphics mode! Computers are getting
+faster every day, and soon a new generation of fractal lovers might forget
+that fractal generation is *supposed* to be slow, just as it was in Grandpa's
+day when they only had Pentium chips. The solution to this educational
+dilemma is Fractint's arbitrary precision feature. Even the newest sexium and
+septium machines are going to have to chug for days or weeks at the extreme
+zoom depths now possible ...
+
+So how far can you zoom? How does 10^1600 sound--roughly 1600 decimal
+digits of precision. To put *this* magnification in perspective, the "tiny"
+ratio of 10^61 is the ratio of the entire visible universe to the smallest
+quantum effects. With 1600 digits to work with, you can expand an
+electron-sized image up to the size of the visible universe, not once but
+more than twenty times. So you can examine screen-sized portions of a
+Mandelbrot set so large all but a tiny part of it would be vastly farther away
+than the billion or so light year limit of our best telescopes.
+
+Lest anyone suppose that we Stone Soupers suffer from an inflated pride over
+having thus spanned the Universe, current inflationary cosmological theories
+estimate the size of the universe to be unimaginably larger than the
+"tiny" part we can see.
+
+Note: many of Fractint's options do not work with arbitrary precision. To
+experiment with arbitrary precision at the speedier ordinary magnifications,
+start Fractint with the debug=3200 command-line option. With the exception
+of mandel and manzpower perturbations, values that would normally be entered
+in the Parameters and Coordinates screens need to be entered using the
+command-line interface or .par files.  Other known things that do not yet
+work with arbitrary precision are: biomorph, decomp, distance estimator,
+inversion, Julia-Mandel switch, history, orbit-in-window, and the browse
+feature.
+;
+;
+~Topic=The Fractint "Fractal Engine" Architecture
+
+Several of the authors would never ADMIT this, but Fractint has evolved a
+powerful and flexible architecture that makes adding new fractals very
+easy. (They would never admit this because they pride themselves on being
+the sort that mindlessly but happily hacks away at code and "sees if it
+works and doesn't hang the machine".)
+
+Many fractal calculations work by taking a rectangle in the complex plane,
+and, point by point, calculating a color corresponding to that point.
+Furthermore, the color calculation is often done by iterating a function
+over and over until some bailout condition is met.
+(See {The Mandelbrot Set} for a description of the iteration process.)
+
+In implementing such a scheme, there are three fractal-specific
+calculations that take place within a framework that is pretty much the
+same for them all.  Rather than copy the same code over and over, we
+created a standard fractal engine that calls three functions that may be
+bolted in temporarily to the engine.  The "bolting in" process uses the C
+language mechanism of variable function pointers.
+
+These three functions are:
+
+   1) a setup function that is run once per image, to do any required
+   initialization of variables,
+
+   2) a once-per-pixel function that does whatever initialization has to
+   be done to calculate a color for one pixel, and
+
+   3) a once-per-orbit-iteration function, which is the fundamental
+   fractal algorithm that is repeatedly iterated in the fractal
+   calculation.
+
+The common framework that calls these functions can contain all sorts of
+speedups, tricks, and options that the fractal implementor need not worry
+about.  All that is necessary is to write the three functions in the
+correct way, and BINGO! - all options automatically apply. What makes it
+even easier is that usually one can re-use functions 1) and 2) written for
+other fractals, and therefore only need to write function 3).
+
+Then it occurred to us that there might be more than one sort of fractal
+engine, so we even allowed THAT to be bolted in. And we created a data
+structure for each fractal that includes pointers to these four functions,
+various prompts, a default region of the complex plane, and various
+miscellaneous bits of information that allow toggling between Julia and
+Mandelbrot or toggling between the various kinds of math used in
+implementation.
+
+That sounds pretty flexible, but there is one drawback - you have to be a
+C programmer and have a C compiler to make use of it! So we took it a step
+further, and designed a built-in high level compiler, so that you can
+enter the formulas for the various functions in a formula file in a
+straightforward algebra-like language, and Fractint will compile them and
+bolt them in for you!
+
+There is a terrible down side to this flexibility.  Fractint users
+everywhere are going berserk. Fractal-inventing creativity is running
+rampant. Proposals for new fractal types are clogging the mail and the
+telephones.
+
+All we can say is that non-productivity software has never been so potent,
+and we're sorry, it's our fault!
+
+Fractint was compiled using Microsoft C 7.0 and Microsoft Assembler 6.0,
+using the "Medium" model. Note that the assembler code uses the "C" model
+option added to version 5.1, and must be assembled with the /MX or /ML
+switch to link with the "C" code. Because it has become too large to
+distribute comfortably as a single compressed file, and because many
+downloaders have no intention of ever modifying it, Fractint is now
+distributed as two files: one containing FRACTINT.EXE, auxiliary files and
+this document, and another containing complete source code (including a
+.MAK file and MAKEFRAC.BAT).  See {Distribution of Fractint}.
+;
+;
+;
+~Topic=Inside=bof60|bof61|zmag|fmod|period|atan
+~Format-,Online-
+
+INSIDE=BOF60|BOF61|ZMAG|FMOD|PERIOD|ATAN
+~Format+,Online+
+
+Here is an *ATTEMPTED* explanation of what the inside=bof60 and
+inside=bof61 options do. This explanation is hereby dedicated to Adrian
+Mariano, who badgered it out of us! For the *REAL* explanation, see
+"Beauty of Fractals", page 62.
+
+Let p(z) be the function that is repeatedly iterated to generate a fractal
+using the escape-time algorithm.  For example, p(z) = z^2+c in the case of
+a Julia set. Then let pk(z) be the result of iterating the function p for
+k iterations. (The "k" should be shown as a superscript.) We could also
+use the notation pkc(z) when the function p has a parameter c, as it does
+in our example.  Now hold your breath and get your thinking cap on. Define
+a(c) = inf\{|pkc(0)|:k=1,2,3,...}. In English - a(c) is the greatest lower
+bound of the images of zero of as many iterations as you like. Put another
+way, a(c) is the closest to the origin any point in the orbit starting
+with 0 gets. Then the index (c) is the value of k (the iteration) when
+that closest point was achieved.  Since there may be more than one,
+index(c) is the least such. Got it?  Good, because the "Beauty of
+Fractals" explanation of this, is, ahhhh, *TERSE* ! Now for the punch
+line. Inside=bof60 colors the lake alternating shades according to the
+level sets of a(c).  Each band represents solid areas of the fractal where
+the closest value of the orbit to the origin is the same.  Inside=bof61
+show domains where index(c) is constant.  That is, areas where the
+iteration when the orbit swooped closest to the origin has the same value.
+Well, folks, that's the best we can do! Improved explanations will be
+accepted for the next edition!
+
+In response to this request for lucidity, Herb Savage offers this explanation
+the bof60 and bof61 options:
+\
+ The picture on page 60 of The Beauty of Fractals shows the distance to\
+ origin of the closest point to the origin in the sequence of points\
+ generated from a given X,Y coordinate.  The picture on page 61 shows\
+ the index (or number) in the sequence of the closest point.\
+\
+inside=zmag is similar. This option colors inside pixels according to
+the magnitude of the orbit point when maxiter was reached, using the formula
+color = (x^2 + y^2) * maxiter/2 + 1.
+
+inside=fmod colors inside pixels according to the magnitude of the last orbit
+point which is within a set distance from the origin.  Then:\
+  color = magnitude * colors / closeprox\
+The magnitude used for the comparison is now based on the same calculation as
+is used for the bailout test.  The value of closeprox can be varied
+interactively.  This feature was contributed by Iain Stirling.
+
+inside=period colors pixels according to the length of their eventual cycle.
+For example, points that approach a fixed point have color=1.  Points that
+approach a 2-cycle have color=2.  Points that do not approach a cycle during
+the iterations performed have color=maxit.  This option works best with a
+fairly large number of iterations.
+
+inside=atan colors by determining the angle in degrees the last iterated
+value has with respect to the real axis, and using the absolute value.  This
+feature should be used with periodicity=0
+;
+;
+;
+~Topic=Inside=epscross|startrail
+~Format-,Online-
+
+INSIDE=EPSCROSS|STARTRAIL
+~Format+,Online+
+
+Kenneth Hooper has written a paper entitled "A Note On Some Internal
+Structures Of The Mandelbrot Set" published in "Computers and Graphics", Vol
+15, No.2, pp. 295-297.  In that article he describes Clifford Pickover's
+"epsilon cross" method which creates some mysterious plant-like tendrils in
+the Mandelbrot set. The algorithm is this. In the escape-time calculation of a
+fractal, if the orbit comes within .01 of the Y-axis, the orbit is terminated
+and the pixel is colored green. Similarly, the pixel is colored yellow if it
+approaches the X-axis. Strictly speaking, this is not an "inside" option
+because a point destined to escape could be caught by this bailout criterion.
+
+The test distance, 0.01, can now be changed interactively on the <x> screen
+and via the proximity=<nnn> command line parameter. A negative value of
+the test distance triggers an alternative variation of epsilon cross that
+colors the epsilon bands with the iteration; otherwise they are colored 
+normally to maintain compatibility.
+
+Hooper has another coloring scheme called "star trails" that involves
+detecting clusters of points being traversed by the orbit. A table of tangents
+of each orbit point is built, and the pixel colored according to how many
+orbit points are near the first one before the orbit flies out of the cluster.
+This option looks fine with maxiter=16, which greatly speeds the calculation.
+
+Both of these options should be tried with the outside color fixed
+(outside=<nnn>) so that the "lake" structure revealed by the algorithms can be
+more clearly seen. Epsilon Cross is fun to watch with boundary tracing turned
+on - even though the result is incorrect it is interesting! Shucks - what
+does "incorrect" mean in chaos theory anyway?!
+;
+;
+;
+~Topic=Finite Attractors
+~Format-,Online-
+
+FINITE ATTRACTORS
+~Format+,Online+
+
+Many of Fractint's fractals involve the iteration of functions of complex
+numbers until some "bailout" value is exceeded, then coloring the
+associated pixel according to the number of iterations performed.  This
+process identifies which values tend to infinity when iterated, and gives
+us a rough measure of how "quickly" they get there.
+
+In dynamical terms, we say that "Infinity is an Attractor", as many
+initial values get "attracted" to it when iterated.  The set of all points
+that are attracted to infinity is termed The Basin of Attraction of
+Infinity.  The coloring algorithm used divides this Basin of Attraction
+into many distinct sets, each a single band of one color, representing all
+the points that are "attracted" to Infinity at the same "rate".  These
+sets (bands of color) are termed "Level Sets" - all points in such a set
+are at the same "Level" away from the attractor, in terms of numbers of
+iterations required to exceed the bailout value.
+
+Thus, Fractint produces colored images of the Level Sets of the Basin of
+Attraction of Infinity, for all fractals that iterate functions of Complex
+numbers, at least.  Now we have a sound mathematical definition of what
+Fractint's "bailout" processing generates, and we have formally introduced
+the terms Attractor, Basin of Attraction, and Level Set, so you should
+have little trouble following the rest of this section!
+
+For certain Julia-type fractals, Fractint can also display the Level Sets
+of Basins of Attraction of Finite Attractors.  This capability is a by-
+product of the implementation of the MAGNETic fractal types, which always
+have at least one Finite Attractor.
+
+This option can be invoked by setting the "Look for finite attractor"
+option on the <Y> options screen, or by giving the "finattract=yes"
+command-line option.
+
+Most Julia-types that have a "lake" (normally colored blue by default)
+have a Finite Attractor within this lake, and the lake turns out to be,
+quite appropriately, the Basin of Attraction of this Attractor.
+
+The "finattract=yes" option (command-line or <Y> options screen)
+instructs Fractint to seek out and identify a possible Finite Attractor
+and, if found, to display the Level Sets of its Basin of Attraction, in
+addition to those of the Basin of Attraction of Infinity.  In many cases
+this results in a "lake" with colored "waves" in it;  in other cases there
+may be little change in the lake's appearance.
+
+For a quick demonstration, select a fractal type of LAMBDA, with a
+parameter of 0.5 + 0.5i.  You will obtain an image with a large blue lake.
+Now set "Look for finite attractor" to 1 with the "Y" menu.
+The image will be re-drawn
+with a much more colorful lake.  A Finite Attractor lives in the center of
+one of the resulting "ripple" patterns in the lake - turn the <O>rbits
+display on to see where it is - the orbits of all initial points that are
+in the lake converge there.
+
+Fractint tests for the presence of a Finite Attractor by iterating a
+Critical Value of the fractal's function.  If the iteration doesn't bail
+out before exceeding twice the iteration limit, it is almost certain that
+we have a Finite Attractor - we assume that we have.
+
+Next we define a small circle around it and, after each iteration, as well
+as testing for the usual bailout value being exceeded, we test to see if
+we've hit the circle. If so, we bail out and color our pixels according to
+the number of iterations performed.  Result - a nicely colored-in lake
+that displays the Level Sets of the Basin of Attraction of the Finite
+Attractor.  Sometimes !
+
+First exception: This does not work for the lakes of Mandel-types.  Every
+point in a Mandel-type is, in effect, a single point plucked from one of
+its related Julia-types.  A Mandel-type's lake has an infinite number of
+points, and thus an infinite number of related Julia-type sets, and
+consequently an infinite number of finite attractors too.  It *MAY* be
+possible to color in such a lake, by determining the attractor for EVERY
+pixel, but this would probably treble (at least) the number of iterations
+needed to draw the image.  Due to this overhead, Finite Attractor logic
+has not been implemented for Mandel-types.
+
+Secondly, certain Julia-types with lakes may not respond to this
+treatment, depending on the parameter value used.  E.g., the Lambda Set
+for 0.5 + 0.5i responds well; the Lambda Set for 0.0 + 1.0i does not - its
+lake stays blue.  Attractors that consist of single points, or a cycle of
+a finite number of points are ok.  Others are not.  If you're into fractal
+technospeak, the implemented approach fails if the Julia-type is a
+Parabolic case, or has Siegel Disks, or has Herman Rings.
+
+However, all the difficult cases have one thing in common - they all have
+a parameter value that falls exactly on the edge of the related Mandel-
+type's lake.  You can avoid them by intelligent use of the Mandel-Julia
+Space-Bar toggle:  Pick a view of the related Mandel-type where the center
+of the screen is inside the lake, but not too close to its edge, then use
+the space-bar toggle.  You should obtain a usable Julia-type with a lake,
+if you follow this guideline.
+
+Thirdly, the initial implementation only works for Julia-types that use
+the "Standard" fractal engine in Fractint.  Fractals with their own
+special algorithms are not affected by Finite Attractor logic, as yet.
+
+Finally, the finite attractor code will not work if it fails to detect
+a finite attractor.  If the number of iterations is set too low, the finite
+attractor may be missed.
+
+Despite these restrictions, the Finite Attractor logic can produce
+interesting results.  Just bear in mind that it is principally a bonus
+off-shoot from the development of the MAGNETic fractal types, and is not
+specifically tuned for optimal performance for other Julia types.
+
+(Thanks to Kevin Allen for the above).
+
+There is a second type of finite attractor coloring, which is selected
+by setting "Look for Finite Attractor" to a negative value.  This colors
+points by the phase of the convergence to the finite attractor,
+instead of by the speed of convergence.
+
+For example, consider the Julia set for -0.1 + 0.7i, which is the three-lobed
+"rabbit" set.  The Finite Attractor is an orbit of length three; call these
+values a, b, and c.  Then, the Julia set iteration can converge to one of
+three sequences: a,b,c,a,b,c,..., or b,c,a,b,c,..., or c,a,b,c,a,b,...
+The Finite Attractor phase option colors the interior of the Julia set with
+three colors, depending on which of the three sequences the orbit converges
+to.  Internally, the code determines one point of the orbit, say "a", and
+the length of the orbit cycle, say 3.  It then iterates until the sequence
+converges to a, and then uses the iteration number modulo 3 to determine the
+color.
+
+;
+;
+~Topic=Trig Identities
+~Online-
+
+TRIG IDENTITIES
+
+~Online+
+The following trig identities are invaluable for coding fractals that use
+complex-valued transcendental functions of a complex variable in terms of
+real-valued functions of a real variable, which are usually found in
+compiler math libraries. In what follows, we sometimes use "*" for
+multiplication, but leave it out when clarity is not lost. We use "^" for
+exponentiation; x^y is x to the y power.
+~Format-
+
+   (u+iv) + (x+iy) = (u+x) + i(v+y)
+   (u+iv) - (x+iy) = (u-x) + i(v-y)
+   (u+iv) * (x+iy) = (ux - vy) + i(vx + uy)
+   (u+iv) / (x+iy) = ((ux + vy) + i(vx - uy)) / (x^2 + y^2)
+
+   e^(x+iy) = (e^x) (cos(y) + i sin(y))
+
+   log(x+iy) = (1/2)log(x^2 + y^2) + i(atan(y/x) + 2kPi)
+      for k = 0, -1, 1, -2, 2, ...
+      (The log function refers to log base e, or ln. The expression
+       atan(y/x) is an angle between -pi and pi in the quadrant containing
+       (x,y) implemented in C as the atan2() function.)
+
+   z^w = e^(w*log(z))
+
+   sin(x+iy)  = sin(x)cosh(y) + i cos(x)sinh(y)
+   cos(x+iy)  = cos(x)cosh(y) - i sin(x)sinh(y)
+   tan(x+iy)  = sin(x+iy) / cos(x+iy)
+   sinh(x+iy) = sinh(x)cos(y) + i cosh(x)sin(y)
+   cosh(x+iy) = cosh(x)cos(y) + i sinh(x)sin(y)
+   tanh(x+iy) = sinh(x+iy) / cosh(x+iy)
+   cosxx(x+iy) = cos(x)cosh(y) + i sin(x)sinh(y)
+     (cosxx is present in Fractint to provide compatibility with a bug
+     which was in its cos calculation before version 16)
+
+                     sin(2x)               sinh(2y)
+   tan(x+iy) = ------------------  + i------------------
+               cos(2x) + cosh(2y)     cos(2x) + cosh(2y)
+
+                 sin(2x) - i*sinh(2y)
+   cotan(x+iy) = --------------------
+                  cosh(2y) - cos(2x)
+
+                    sinh(2x)                sin(2y)
+   tanh(x+iy) = ------------------ + i------------------
+                cosh(2x) + cos(2y)    cosh(2x) + cos(2y)
+
+                  sinh(2x) - i*sin(2y)
+   cotanh(x+iy) = --------------------
+                   cosh(2x) - cos(2y)
+
+   asin(z) = -i * log(i*z+sqrt(1-z*z))
+   acos(z) = -i * log(z+sqrt(z*z-1))
+   atan(z) = i/2* log((1-i*z)/(1+i*z))
+
+   asinh(z) = log(z+sqrt(z*z+1))
+   acosh(z) = log(z+sqrt(z*z-1))
+   atanh(z) = 1/2 * log((1+z)/(1-z))
+
+   sqr(x+iy) = (x^2-y^2) + i*2xy
+   sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) * (cos(atan(y/x)/2) + i sin(atan(y/x)/2))
+
+   ident(x+iy) = x + iy
+   conj(x+iy) = x - iy
+   recip(x+iy) = (x-iy) / (x^2+y^2)
+   flip(x+iy) = y + ix
+   zero(x+iy) = 0
+   one(x+iy)  = 1
+   cabs(x+iy) = sqrt(x^2 + y^2)
+   floor(x+iy) = floor(x) + i*floor(y)
+   ceil(x+iy)  = ceil(x) + i*ceil(y)
+   trunc(x+iy) = trunc(x) + i*trunc(y)
+   round(x+iy) = round(x) + i*round(y)
+
+~Format+
+Fractint's definitions of abs(x+iy) and |x+iy| below are non-standard.
+Math texts define both absolute value and modulus of a complex number to
+be the same thing.  They are both equal to cabs(x+iy) as defined above.
+~Format-
+
+   |x+iy| = x^2 + y^2
+   abs(x+iy) = sqrt(x^2) + i sqrt(y^2)
+;
+;
+;
+~Topic=Quaternion and Hypercomplex Algebra
+
+Quaternions are four dimensional generalizations of complex numbers.
+They almost obey the familiar field properties of real numbers, but
+fail the commutative law of multiplication, since x*y is not generally
+equal to y*x.
+
+Quaternion algebra is most compactly described by specifying the rules
+for multiplying the basis vectors 1, i, j, and k. Quaternions form a
+superset of the complex numbers, and the basis vectors 1 and i are the
+familiar basis vectors for the complex algebra. Any quaternion q can be
+represented as a linear combination q = x + yi + zj + wk of the basis
+vectors just as any complex number can be written in the form z = a + bi.
+~Format-
+
+Multiplication rules for quaternion basis vectors:
+ij =  k jk =  i ki = j
+ji = -k kj = -i ik = -j
+ii = jj = kk = -1
+ijk = -1
+
+Note that ij = k but ji = -k, showing the failure of the commutative law.
+The rules for multiplying any two quaternions follow from the behavior
+of the basis vectors just described. However, for your convenience, the
+following formula works out the details.
+
+Let q1 = x1 + y1i + z1j + w1k and q2 = x2 + y2i + z2j + w2k.
+Then q1q2 = 1(x1x2 - y1y2 - z1z2 - w1w2) +
+            i(y1x2 + x1y2 + w1z2 - z1w2) +
+            j(z1x2 - w1y2 + x1z2 + y1w2) +
+            k(w1x2 + z1y2 - y1z2 + x1w2)
+
+~Format+
+Quaternions are not the only possible four dimensional supersets of the
+complex numbers. William Rowan Hamilton, who discovered quaternions in 1843,
+considered the alternative called the hypercomplex number system.
+Unlike quaternions, the hypercomplex numbers satisfy the commutative law of
+multiplication. The law which fails is the field property that states that
+all non-zero elements of a field have a multiplicative inverse. For a non-zero
+hypercomplex number h, the multiplicative inverse 1/h does not always exist.
+
+As with quaternions, we will define multiplication in terms of the basis
+vectors 1, i, j, and k, but with subtly different rules.
+~Format-
+
+Multiplication rules for hypercomplex basis vectors:
+ij = k  jk = -i ki = -j
+ji = k  kj = -i ik = -j
+ii = jj = -kk = -1
+ijk = 1
+
+Note that now ij = k and ji = k, and similarly for other products of pairs
+of basis vectors, so the commutative law holds.
+
+Hypercomplex multiplication formula:
+Let h1 = x1 + y1i + z1j + w1k and h2 = x2 + y2i + z2j + w2k.
+Then  h1h2 =  1(x1x2 - y1y2 - z1z2 + w1w2) +
+              i(y1x2 + x1y2 - w1z2 - z1w2) +
+              j(z1x2 - w1y2 + x1z2 - y1w2) +
+              k(w1x2 + z1y2 + y1z2 + x1w2)
+
+As an added bonus, we'll give you the formula for the reciprocal.
+
+Let det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]
+Then 1/h =   1[ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/det +
+             i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/det +
+             j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/det +
+             k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/det
+
+~Format+
+A look at this formula shows the difficulty with hypercomplex numbers.
+In order to calculate 1/h, you have to divide by the quantity
+det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]. So when this quantity is zero,
+the multiplicative inverse will not exist.
+
+Hypercomplex numbers have an elegant generalization of any unary
+complex valued function defined on the complex numbers. First, note that
+hypercomplex numbers can be represented as a pair of complex numbers in the
+following way.
+~Format-
+Let h = x + yi + zj + wk.
+    a = (x-w) + i(y+z)
+    b = (x+w) + i(y-z)
+~Format+
+The numbers a and b are complex numbers. We can represent h as the pair of
+complex numbers (a,b). Conversely, if we have a hypercomplex number given
+to us in the form (a,b), we can solve for x, y, z, and w. The solution to
+~Format-
+   c = (x-w) + i(y+z)
+   d = (x+w) + i(y-z)
+is
+   x = (real(c) + real(d))/2
+   y = (imag(c) + imag(d))/2
+   z = (imag(c) - imag(d))/2
+   w = (real(d) - real(c))/2
+~Format+
+We can now, for example, compute sin(h). First compute the two complex numbers
+a and b as above, then set c = sin(a) and d = sin(b) where sin() is the
+complex version of the sin function. Now use the equations above to solve for
+x, y, z, and w in terms of c and d. The hypercomplex number (x,y,z,w) thus
+obtained is sin(h).
+
+The beauty of this is that it really doesn't make any difference what
+function we use. Instead of sin, we could have used cos, sinh, ln, or z^2.
+Using this technique, Fractint can create 3-D fractals using the formula
+h' = fn(h) + c, where "fn" is any of the built-in functions. Where fn is
+sqr(), this is the famous mandelbrot formula, generalized to four dimensions.
+
+For more information, see _Fractal Creations, Second Edition_ by Tim Wegner
+and Bert Tyler, Waite Group Press, 1993.
+;
+;
+;
+~Topic=GIF Save File Format
+
+Since version 5.0, Fractint has had the <S>ave-to-disk command, which
+stores screen images in the extremely compact, flexible .GIF (Graphics
+Interchange Format) widely supported on CompuServe. Version 7.0 added the
+<R>estore-from-disk capability.
+
+Until version 14, Fractint saved images as .FRA files, which were a
+non-standard extension of the then-current GIF87a specification.  The
+reason was that GIF87a did not offer a place to store the extra
+information needed by Fractint to implement the
+<R> feature -- i.e., the parameters that let you keep zooming, etc.
+as if the restored file had just been created in this session.
+The .FRA format worked with all of the popular GIF decoders that we
+tested, but these were not true GIF files. For one thing,
+information after the GIF terminator (which is where we put the extra info)
+has the potential to confuse the
+online GIF viewers used on CompuServe. For another, it is the opinion of
+some GIF developers that the addition of this extra information violates
+the GIF87a spec. That's why we used the default filetype .FRA instead.
+
+Since version 14, Fractint has used a genuine .GIF format, using the
+GIF89a spec - an upwardly compatible extension of GIF87a, released by
+CompuServe on August 1 1990.
+This new spec allows the
+placement of application data within "extension blocks".
+In version 14 we changed our default savename extension from .FRA
+to .GIF.
+
+There is one significant advantage to the new GIF89a format compared to
+the old GIF87a-based .FRA format for Fractint purposes:  the new .GIF
+files may be uploaded to the CompuServe graphics forums fractal information
+intact.  Therefore anyone downloading a Fractint image from CompuServe will
+also be downloading all the information needed to regenerate the image.
+
+Fractint can still read .FRA files generated by
+earlier versions.  If for some reason you wish to save files in the older
+GIF87a format, for example because your favorite GIF decoder has not yet
+been upgraded to GIF89a, use the command-line parameter "GIF87a=yes".
+Then any saved files will use the original GIF87a format without any
+application-specific information.
+
+An easy way to convert an older .FRA file into true .GIF format suitable
+for uploading is something like this at the DOS prompt:\
+    FRACTINT MYFILE.FRA SAVENAME=MYFILE.GIF BATCH=YES\
+Fractint will load MYFILE.FRA, save it in true .GIF format as MYFILE.GIF,
+and return to DOS.
+
+GIF and "Graphics Interchange Format" are trademarks of CompuServe
+Incorporated, an H&R Block Company.
+;
+;
+;
+~Topic=Using Fractint With a Mouse
+; This topic is online only.
+
+~FormatExclude-
+Left Button:   Brings up and sizes the Zoom Box.   While holding down the
+               left button, push the mouse forward to shrink the Zoom Box,
+               and pull it back to expand it.
+               Double-clicking the left button performs the Zoom.
+
+Right Button:  While holding the right button held down, move the mouse
+               from side to side to 'rotate' the Zoom Box.  Move the mouse
+               forward or back to change the Zoom Box color.
+               Double-clicking the right button performs a 'Zoom-Out'.
+
+Both Buttons:  (or the middle button, if you have three of them) While
+               holding down both buttons, move the mouse up and down to
+               stretch/shrink the height of the Zoom Box, or side to side
+               to 'squish' the Zoom Box into a non-rectangular shape.
+
+Zoom and Pan using the mouse typically consists of pushing in the left
+button, sizing the zoom box, letting go of the button, panning to the
+general area, then double-clicking the left button to perform the Zoom.
+
+For details of a special mode that takes advantage of the mouse when
+palette editing see {Freestyle mode tutorial}
+;
+;
+;
+~Topic=Selecting a video mode when loading a file, Label=HELPLOADFILE
+; This topic is only online, context-sensitive.
+~Format-
+
+The most suitable video modes for the file are listed first.
+
+The 'err' column in the video mode information indicates:
+  blank  mode seems perfect for this image
+  v      image smaller than screen, will be loaded in a <v>iew window
+  c      mode has more colors than image needs
+  *      a major problem, one or more of the following is also shown:
+   C     mode has too few colors
+   R     image larger than screen, Fractint will reduce the image, possibly
+         into a <v>iew window, and maybe with aspect ratio a bit wrong
+   A     mode has the wrong shape of pixels for this image
+;
+;
+;
+~Topic=Distribution of Fractint
+~Format-,Online-
+
+DISTRIBUTION OF FRACTINT
+~Format+,Online+
+
+New versions of FRACTINT are uploaded to the Fractint developer's web site at
+www.fractint.org, and make
+their way to other systems from that point.  FRACTINT is available as
+two self-extracting archive files - FRAINT.EXE (executable & documentation)
+and FRASRC.EXE (source code).
+
+The latest developer's version can also be found at www.fractint.org.
+
+Many other sites tend to carry
+these files shortly after their initial release (although sometimes
+using different naming conventions).  Look for frainnn.zip (executable
+package) and frasrnnn.zip (source), where nnn is the release number. Major
+releases with two digit numbers have names such as fraintnn.zip and
+frasrcnn.zip.
+
+On the Internet, try the Noel Giffin's Spanky Fractal Database. Using a
+Web browser, go to: \
+http://spanky.triumf.ca/pub/fractals/programs/ibmpc/frainxxx.zip\
+where xxx is the release number.
+
+Via FTP, login to spanky.triumf.ca as ANONYMOUS, and change directories
+to [pub.fractals.programs.ibmpc], then download frainxxx.zip. (The directory
+syntax is in VAX format.)
+
+The X Windows port of Fractint was written by Ken Shirriff and is available
+via FTP from http://spanky.triumf.ca/pub/fractals/programs/unix/XFRACTxxx.zip\
+where xxx is the Xfractint release number.  Developer's versions of
+Xfractint are available at the Fractint developer's web site.
+;
+;
+~Topic=Contacting the Authors
+~Format-,Online-
+
+CONTACTING THE AUTHORS
+~Format+,Online+
+Communication between the authors for development of the next version of
+Fractint takes place in the fractint mailing list.
+
+Most of the authors have never met except on CompuServe.  The development
+team has moved off of CompuServe and now uses a mailing list maintained by
+Tim Wegner (see below).  New members are always welcome! Stop on by if you
+have any questions or just want to take a peek at what's getting tossed into
+the soup.  This is by far the best way to have your questions answered or
+participate in a discussion.
+
+The following authors have agreed to the distribution of their addresses.
+Usenet/Internet/Bitnet/Whatevernet users can reach CIS users directly if
+they know the user ID.
+
+Postal addresses are listed below
+so that you have a way to send bug reports
+and ideas to the Stone Soup team.
+
+Please understand that we receive a lot of
+mail, and because of the demands of volunteer work on Fractint as well as
+our professional responsibilities, we are generally unable to answer it all.
+Several of us have reached the point where we can't answer any conventional
+mail. We *do* read and enjoy all the mail we receive, however. If you need a
+reply, the best thing to do is use email, which we are generally able to
+answer, or better yet, leave a message on the fractint list.
+
+Tim Wegner now runs a mailing list for fractint users to swap ideas and par
+data, you can subscribe by emailing majordomo@mailman.xmission.com with
+the line:\
+subscribe fractint\
+as the sole content of the message, you'll receive further instructions by
+return of email.
+
+(This address list has been pruned of names of folks we haven't heard
+from in a while. If your name has been removed, and you'd like to be listed,
+just let us know and we'll add it back.)
+
+~FF
+Current main authors:
+
+~Format-
+
+Timothy Wegner          twegner@fractint.org
+4714 Rockwood
+Houston, TX 77004
+(713) 747-7543
+
+Jonathan Osuch          josuch@fractint.org
+2110 Northview Drive
+Marion, IA  52302
+
+George Martin           [76440,1143] on CIS
+209 E. Liberty          ggmartin@compuserve.com
+Milford, MI 48381
+
+Robin Bussell           [100604,643] on CIS
+13 Bayswater Rd         robin.b2@ukonline.co.uk
+Horfield
+Bristol
+Avon, England
+
+
+Contributing authors' addresses (in alphabetic order).
+
+Prof Jm Collard-Richard jmc@math.ethz.ch
+
+Paul de Leeuw
+16 Sunset Street
+Wyoming
+NSW 2250
+Australia
++61-2-8293-3055 (Work)
++61-2-4329-0870 (Home)
+
+
+~OnlineFF
+Sylvie Gallet           [101324,3444] on CIS
+Residence des Erables   sylvie_gallet@compuserve.com
+2 allee des Bouvreuils
+93700 DRANCY FRANCE
+
+Lee H. Skinner          [75450,3631] on CIS
+P.O. Box 14944
+Albuquerque, NM  87191
+(505) 293-5723
+
+Bert Tyler              bert_tyler@oef.com
+Tyler Software 
+124 Wooded Lane
+Villanova, PA 19085
+(610) 525-5478
+
+~Format+
+;
+;
+~Topic=The Stone Soup Story
+~Format-,Online-
+THE STONE SOUP STORY
+~Format+,Online+
+
+Once upon a time, somewhere in Eastern Europe, there was a great famine.
+People jealously hoarded whatever food they could find, hiding it even
+from their friends and neighbors. One day a peddler drove his wagon into a
+village, sold a few of his wares, and began asking questions as if he
+planned to stay for the night.
+
+[No!  No!  It was three Russian Soldiers! - Lee Crocker]\
+[Wait!  I heard it was a Wandering Confessor! - Doug Quinn]\
+[Well *my* kids have a book that uses Russian Soldiers! - Bert]\
+[Look, who's writing this documentation, anyway? - Monte]\
+[Ah, but who gets it *last* and gets to upload it? - Bert]\
+
+"There's not a bite to eat in the whole province," he was told. "Better
+keep moving on."
+
+"Oh, I have everything I need," he said. "In fact, I was thinking of
+making some stone soup to share with all of you." He pulled an iron
+cauldron from his wagon, filled it with water, and built a fire under it.
+Then, with great ceremony, he drew an ordinary-looking stone from a velvet
+bag and dropped it into the water.
+
+By now, hearing the rumor of food, most of the villagers had come to the
+square or watched from their windows. As the peddler sniffed the "broth"
+and licked his lips in anticipation, hunger began to overcome their
+skepticism.
+
+"Ahh," the peddler said to himself rather loudly, "I do like a tasty stone
+soup. Of course, stone soup with CABBAGE -- that's hard to beat."
+
+Soon a villager approached hesitantly, holding a cabbage he'd retrieved
+from its hiding place, and added it to the pot. "Capital!" cried the
+peddler. "You know, I once had stone soup with cabbage and a bit of salt
+beef as well, and it was fit for a king."
+
+The village butcher managed to find some salt beef...and so it went,
+through potatoes, onions, carrots, mushrooms, and so on, until there was
+indeed a delicious meal for all. The villagers offered the peddler a great
+deal of money for the magic stone, but he refused to sell and traveled on
+the next day. And from that time on, long after the famine had ended, they
+reminisced about the finest soup they'd ever had.
+
+                                ***
+
+That's the way Fractint has grown, with quite a bit of magic, although
+without the element of deception. (You don't have to deceive programmers
+to make them think that hours of painstaking, often frustrating work is
+fun... they do it to themselves.)
+
+It wouldn't have happened, of course, without Benoit Mandelbrot and the
+explosion of interest in fractal graphics that has grown from his work at
+IBM. Or without the example of other Mandelplotters for the PC. Or without
+those wizards who first realized you could perform Mandelbrot calculations
+using integer math (it wasn't us - we just recognize good algorithms when
+we steal--uhh--see them).  Or those graphics experts who hang around the
+CompuServe PICS forum and keep adding video modes to the program.  Or...
+~Doc-
+(continued in {A Word About the Authors})
+~Doc+
+;
+;
+~Topic=A Word About the Authors
+~Format-,Online-
+
+A WORD ABOUT THE AUTHORS
+~Format+,Online+
+
+Fractint is the result of a synergy between the main authors, many
+contributors, and published sources.  All of the main authors have
+had a hand in many aspects of the code.  However, each author has certain
+areas of greater contribution and creativity.  Since there is not room in
+the credits screen for the contributions of the main authors, we list these
+here to facilitate those who would like to communicate with us on
+particular subjects.
+
+Main Authors of Version 19 and later.
+
+BERT TYLER is the original author of Fractint.  He wrote the "blindingly
+fast" 386-specific 32 bit integer math code and the original video mode
+logic. Bert made Stone Soup possible, and provides a sense of direction when
+we need it. His forte is writing fast 80x86 assembler, his knowledge of a
+variety of video hardware, and his skill at hacking up the code we send him!
+
+Bert has a BA in mathematics from Cornell University.  He has been in
+programming since he got a job at the computer center in his sophomore
+year at college - in other words, he hasn't done an honest day's work in
+his life.  He has been known to pass himself off as a PC expert, a UNIX
+expert, a statistician, and even a financial modeling expert.  He is
+currently masquerading as an independent PC consultant, supporting the PC-
+to-Mainframe communications environment at NIH.  If you sent mail from the
+Internet to an NIH staffer on his 3+Mail system, it was probably Bert's
+code that mangled it during the Internet-to-3+Mail conversion.  He also
+claims to support the MS-Kermit environment at NIH. Fractint is Bert's
+first effort at building a graphics program.
+
+TIM WEGNER contributed the original implementation of palette animation,
+and is responsible for most of the 3D mechanisms.  He provided
+the main outlines of the "StandardFractal" engine and data structures, and is
+accused by his cohorts of being "obsessed with options". One of Tim's main
+interests is the use of four dimensional algebras to produce fractals.
+Tim served as team coordinator for version 19, and integrated Wes Loewer's
+arbitrary precision library into Fractint.
+
+Tim has BA and MA degrees in mathematics from Carleton College and the
+University of California Berkeley.  He worked for 7 years overseas as a
+volunteer, doing things like working with Egyptian villagers building
+water systems. Since returning to the US in 1982, he has written shuttle
+navigation software, a software support environment prototype, and
+supported strategic information planning, all at NASA's Johnson Space
+Center. After a two-year stint at full-time writing, he's back at NASA
+developing shuttle navigation software.
+
+JONATHAN OSUCH started throwing pebbles into the soup around version 15.0
+with a method for simulating an if-then-else structure using the formula
+parser.  He has contributed the fn||fn fractal types, the built-in bailout
+tests, the increase in both the maximum iteration count and bailout value,
+and bug fixes too numerous to count. Jonathan worked closely with Robin
+Bussell to implement Robin's browser mechanism in Fractint.
+
+Jonathan has a B.S. in Physics from the University of Dubuque and a B.S. in
+Computer Science from Mount Mercy College, both in Iowa.  He is currently
+working as a consultant in the nuclear power industry.
+
+WES LOEWER first got his foot in the Stone Soup door by writing fast
+floating point assembler routines for Mandelbrot, Julia, and Lyapunov
+fractals.  He also rewrote the boundary trace algorithms and added the
+frothybasin fractal.  His most significant contribution is the addition of
+the arbitrary precision library which allows Fractint to perform
+incredibly deep zooms.
+
+Wes has a B.S. in Physics from Wheaton College in Illinois.  He also holds
+an M.S. in Physics and an M.Ed. in Education from Texas A&M University.
+Wes teaches physics and math at McCullough High School in The Woodlands,
+Texas where his pupils inspire him to keep that sense of amazement that
+students get when they understand a physical or mathematical principle for
+the first time.  Since he uses Fractint to help teach certain mathematical
+principles, he's one of the few folks who actually gets to use Fractint on
+the job.  Besides his involvement with Fractint, Wes is the author of
+WL-Plot, an equation graphing program, and MatCalc, a matrix calculator
+program.
+
+GEORGE MARTIN first became known to Fractint users when he brought
+a modicum of order to the chaotic world of formula postings with his
+release of the Orgform program and formula compilation. George added
+IF..ELSE to the formula parser language for version 19.6. Among his other
+contributions are the ability to include formula, ifs, and lsystem entries
+in .par files, the scrolling of text in the <z> and F2 screens, and
+new autokey commands.
+
+George received an A.B. in Economics from Dartmouth College and a J.D from
+the University of Michigan. When not playing with Fractint, he practices
+law in a small village about 40 miles northwest of Detroit.
+
+
+ROBIN BUSSELL began contributing to fractint in rudimentary fashion with the
+autologmap routine and has been producing more and more complex interface
+enhancements as he gets better at what he refers to as 'this C programming lark'
+He is always grateful for the help the rest of the team have given in smoothing
+the rough edges of the ingredients he adds to the soup and regards the evolver
+feature as his greatest achievement to date.
+
+Robin had far too much fun at college in London to actually get any qualifications there
+and has since worked his way up from a workshop job fixing computers back in
+the final days of CPM, via some interesting work with Transputers ( an innovative
+British cpu that was designed to run in massively parallel configurations, and
+made a very good Mandlebrot set calculating machine when a few dozen or more were set
+to the task) , through to his current position of senior engineer for a third
+party suppport company where he spends his time travelling the south west of Britain
+sorting out peoples IT problems. Anyone wishing to offer him interesting work
+in anything to do with computers can find a CV at:
+http://web.ukonline.co.uk/robin.b2/rbcv.htm
+
+When not playing with computers Robin likes to relax by experimenting with kite
+powered traction and can often be found hurtling around the local beaches on the end of
+a few square metres of fabric and carbon fibre in various configurations.
+;
+;
+~Topic=Other Fractal Products
+(Forgive us, but we just *have* to begin this section with a plug for
+*our* fractal products even though the books are now out of print and 
+hard to find ...)
+
+Several of Fractint's programmers have written books about fractals,
+Fractint, and Winfract (the Windows version of Fractint).
+The book about Fractint is Fractal Creations Second Edition (1994 Waite
+Group Press, ISBN # 1-878739-34-4).  The book about Winfract is The Waite
+Group's Fractals for Windows (1992 Waite Group Press, ISBN # 1-878739-25-5).
+These books are now very hard to find, so if you see one, better get it!
+~Format-
+Fractal Creations Second Edition includes:
+ o A guided tour of Fractint.
+ o A detailed manual and reference section of commands.
+ o A tutorial on fractals.
+ o A reference containing tips, explanations, and examples of parameters
+   for all the Fractals generated by Fractint/Winfract.
+ o Secrets on how the programs work internally.
+ o Spectacular color plate section.
+ o A CD containing Fractint and Xfract source and executable, and over a
+   thousand spectacular fractal images.
+ o A complete copy of the source code with a chapter explaining how the
+   program works.
+~Format+
+;
+;
+~OnlineFF
+
+  Several Fractint enthusiasts are selling Fractal CDs.  Two of the best
+  are called "Fractal Dimensions" by Lee Skinner, and "Fractography" by
+  Caren Park.  Highly recommended original artwork in a variety of
+  graphics formats.
+
+  You can receive the "Fractal Dimensions CD" by sending $29.95US +
+  $5.00 S&H (or $10.00 S&H outside USA) to
+
+     Lee H. Skinner
+     P. O. Box 14944
+     Albuquerque, NM  87191-4944
+     USA
+
+  This CD is in html format.  Another CD by Lee Skinner is "Visions 6: Super
+  Fractals".  This CD is $39.95US (plus $5.00 S&H) and is available from
+
+     Walnut Creek CDROM
+     1537 Palos Verdes Mall, Suite 260
+     Walnut Creek, CA 94596
+
+and the "Fractography" CD by sending $30.00US + $5.00 S&H (in US/Canada) to\
+   Lost and Found Books\
+   485 Front Street N, Suite A\
+   Issaquah, WA 98027-2900\
+
+~OnlineFF
+Michael Peters and Randall Scott have written a fractal program called HOP
+based on the Martin orbit fractals. This program is much narrower than
+Fractint in the kind of thing that it does, but has many more animation
+effects and makes a great screen saver. Michael sent us the algorithms for
+the chip, quadruptwo, and threeply fractal types to give us a taste. The
+file is called HOPZIP.EXE in LIB 9 of CompuServe's DIGART forum.
+
+Michael has also written a handy utility called PARTOBAT which creates
+a batch file for generating all the images in a Fractint PAR file.
+
+George Martin has written a useful formula file organizing program,
+distributed as ORGFRM.ZIP, which also includes a comprehensive collection
+of formulas. More than 15,000 formulas written by Fractint users are
+included in the compilation, arranged alphabetically by name, and with
+the original source file shown in each formula by comment, making the
+compilation an encyclopedia of formulas written for Fractint. The most
+recent version of ORGFRM.ZIP is available at the CompuServe site, and
+at Noel Giffin's web page described in the next paragraph. The package
+includes a utility program, orgform.exe, which copies the formulas of
+".frm" files into the compilation, skipping those formulas which are
+already included in the compilation. Formula writers are urged to consult
+this compilation in order to avoid giving a new formula an existing formula
+name. George can be reached at [76440,1143], or ggmartin@compuserve.com.
+
+Robin Bussell has knocked together a windows front end for fractint that makes
+rendering images from par information recieved in email a simple operation.
+Download it for free from http://web.ukonline.co.uk/robin.b2/pastengo.htm
+or check compuserve for pastengo.zip
+
+
+Noel Giffin (noel@triumf.ca), maintains a terrific web page for Fractint and
+fractals in general at spanky.triumf.ca. Highly recommended. His pages on
+arbitrary precision gleaned from sci.fractals and corresponence are required
+reading.
+;
+;
+;
+~Topic=Bibliography
+
+BARNSLEY, Michael: "Fractals Everywhere," Academic Press, 1988.
+
+DAVENPORT, Clyde: "A Hypercomplex Calculus with Applications to Relativity",
+   ISBN 0-9623837-0-8. This self-published expansion of Mr. Davenport's
+   Master's thesis makes the case for using hypercomplex numbers rather than
+   quaternions. This book provided the background for Fractint's
+   implementation of hypercomplex fractals.
+
+DEWDNEY, A. K., "Computer Recreations" columns in "Scientific American" --
+   8/85, 7/87, 11/87, 12/88, 7/89.
+
+FEDER, Jens: "Fractals," Plenum, 1988.\
+   Quite technical, with good coverage of applications in fluid
+   percolation, game theory, and other areas.
+
+GLEICK, James: "Chaos: Making a New Science," Viking Press, 1987.\
+   The best non-technical account of the revolution in our understanding
+   of dynamical systems and its connections with fractal geometry.
+~OnlineFF
+
+MANDELBROT, Benoit: "The Fractal Geometry of Nature," W. H. Freeman & Co.,
+   1982.\
+   An even more revised and expanded version of the 1977 work. A rich and
+   sometimes confusing stew of formal and informal mathematics, the
+   prehistory of fractal geometry, and everything else. Best taken in
+   small doses.
+
+MANDELBROT, Benoit: "Fractals: Form, Chance, and Dimension," W. H. Freeman
+   & Co., 1977.\
+   A much revised translation of "Les objets fractals: forme, hasard, et
+   dimension," Flammarion, 1975.
+
+PEITGEN, Heinz-Otto & RICHTER, Peter: "The Beauty of Fractals," Springer-
+   Verlag, 1986.\
+   THE coffee-table book of fractal images, knowledgeable on computer
+   graphics as well as the mathematics they portray.
+
+PEITGEN, Heinz-Otto & SAUPE, Ditmar: "The Science of Fractal Images,"
+   Springer-Verlag, 1988.\
+   A fantastic work, with a few nice pictures, but mostly filled with
+   *equations*!!!
+
+PICKOVER, Clifford: "Computers, Pattern, Chaos, and Beauty," St. Martin's
+   Press, 1990.\
+
+SCHROEDER, Manfred: "Fractals, Chaos, Power Laws," W. H. Freeman
+   & Co., 1991.\
+
+WEGNER, Timothy: "Image Lab, Second Edition", Waite Group Press, 1995.\
+   Learn how to create fractal animations, fractal
+   RDS stereo images, and how to use Fractint with other image creation
+   and processing tools such as Piclab, POV-Ray and Polyray ray tracers.
+
+WEGNER, Timothy & TYLER, Bert: "Fractal Creations, Second Edition" Waite
+   Group Press, 1993\
+   This is the definitive Fractint book. Spectacular color plate section,
+   totally new and expanded fractal type descriptions, annotated PAR files,
+   source code secrets, and a CD filled to the brim with spectacular fractals.
+
+WEGNER, Timothy, TYLER, Bert, PETERSON, Mark, and Branderhorst, Pieter:
+   "Fractals for Windows," Waite Group Press, 1992.\
+   This book is to Winfract (the Windows version of Fractint) what
+   "Fractal Creations" is to Fractint.
+;
+;
+~Topic=Other Programs
+
+~Label=@FDESIGN
+FDESIGN, by Doug Nelson (CIS ID 70431,3374) - a freeware IFS fractal
+generator available from CompuServe in DIGART LIB 9, and probably on your
+local BBS.  This program requires a VGA adapter and a Microsoft-compatible
+mouse, and a floating point coprocessor is highly recommended.  It
+generates IFS fractals in a *much* more intuitive fashion than Fractint.
+It can also (beginning with version 3.0) save its IFS formulas in
+Fractint-style .IFS files.
+
+BRAZIL Fractal Generator by David CHARDONNET - A freeware IFS fractal 
+generator and animator for Windows 95 and Win/NT 4.0 shares common fractal
+description language for sharing fractals between fractint and this program. 
+It can be downloaded from his website:\ 
+   http://www.geocities.com/CapeCanaveral/Lab/1837/index_a.html
+ 
+FRACTINT SCREEN SAVER by Thore Berntsen. This freeware screen saver works with
+Fractint. Check this out at:\
+   http://home.sol.no/\~thbernt/fintsave.htm\
+
+~OnlineFF
+The following pieces of software are pretty old now, but for now these 
+references are still here. Winfract is based on on old version of Fractint
+and is no longer maintained.
+
+WINFRACT. Bert Tyler has ported Fractint to run under Windows 3.  The same
+underlying code is used, with a Windows user interface.  Winfract has
+almost all the functionality of Fractint - the biggest difference is the
+absence of a zillion weird video modes.  Fractint for DOS will continue to
+be the definitive version.  Winfract is available from CompuServe in
+DIGART LIB 9, as WINFRA.ZIP (executable) and WINSRC.ZIP (source).
+
+PICLAB, by Lee Crocker - a freeware image manipulation utility available
+from CompuServe in PICS Lib 10, as PICLAB.EXE.  PICLAB can do very
+sophisticated resizing and color manipulation of GIF and TGA files.  It
+can be used to reduce 24 bit TGA files generated with the Fractint
+"lightname" option to GIF files.
+
+~OnlineFF
+~Label=@ACROSPIN
+ACROSPIN, by David Parker - An inexpensive commercial program that reads
+an object definition file and creates images that can be rapidly rotated
+in three dimensions. The Fractint "orbitsave=yes" option creates files that
+this program can read for orbit-type fractals and IFS fractals. Contact:
+   David Parker                         801-966-2580\
+   P O Box 26871                        800-227-6248\
+   Salt Lake City, UT  84126-0871
+
+;
+;
+
+~Topic=Sound Controls, label=HELPSOUND
+
+On this screen, accessed by hitting ctrl-F, you'll find a few parameters
+that you recognise from the 'x' menu handily gathered together, plus a few
+new ones. You can find the descriptions for the basic parms over at the
+{Sound Parameters} help.
+
+The newer parameters now control whether fractint uses the PC speaker for
+sound, as in previous versions, or the output of a sound card, or both.
+
+Your present Sound card may boast all manner of gizmos and wotnots but fractint may
+well not be able to take advantage of them, this is simply due to our not including
+umpteen different drivers for all the different cards. Instead it just uses a
+simple approach that at least allows you to use multimedia speakers for
+the various noises of which fractint is capable.
+
+This DOS version of fractint uses the current lowest common denominator
+hardware among the variety of sound cards available, the yamaha OPL-3 FM synthesizer
+chipset which is found in most sound cards from the original AdLib, through
+the various soundblasters from creative labs, to the numerous cards that
+emulate them. 
+
+The OPL-3 chipset has within it several 'voices', each capable of generating
+sound independently of the others, and with a variety of controllable
+parameters. See {Advanced Sound Controls} for details.
+
+The sound card volume control given here will be overridden by any volume
+control applications that come with your OS, such as the windows 95 mixer
+control panel. Also, depending on your sound card and software, the output
+of the OPL-3 chipset may be controlled by a slider named 'synth', 'midi',
+ or possibly 'legacy'... if in doubt, experiment :-)
+
+The other parameter that needs explaining here is note pitch quantisation.
+When this is enabled, tones that are to be played are first rounded to the
+nearest note on the western even tempered scale (i.e. the notes that you find
+on a piano) as opposed to the full spectrum of frequencies. The
+{Advanced Sound Controls} screen also has a facility to restrict the notes
+played further so that you can produce tunes in a particular key, if you're
+so inclined.
+;
+;
+~Topic=Advanced Sound Controls, Label=HELPMUSIC
+The soundcard output from fractint is a tad more versatile than the simple
+tones of the PC speaker. This comes into its own when playing sounds based
+on fractal orbits, producing results from haunting chordal pulses through to
+unearthly arpeggios.
+
+The voices used to generate notes on the sound card have variable {Envelopes}
+and can be played polyphonically so we have three parameters to vary the
+sounds produced:
+
+POLYPHONY=nn\
+This controls how many different note are allowed to sound at once, voices are
+assigned cyclically as notes are played: i.e. after the first orbit is
+calculated a frequency is assigned to the first voice and that note is
+triggered on. Fractint then waits for one orbitdelay period, calculates the
+next orbit, assigns a frequency to the second voice, and triggers it on. 
+This continues until the number of voices sounding is equal to the polyphony
+value whereupon the first selected voice is triggered off and the note allowed
+to decay.
+That probably all sounds horrendously complex but just think of it as playing
+the organ, holding down each new note for as long as possible but with the
+polyphony value controlling how many fingers you have.
+
+WAVETYPE=nn\
+~Format-
+ WaveForm 0: Sine       WaveForm 1: Half-Sine
+  | /^\\                   | /^\\         /^\\
+  |/   \\       /          |/   \\       /   \\
+ Ä/ÄÄÄÄÄ\\ÄÄÄÄÄ/ÄÄ        Ä|ÄÄÄÄÄÁ-----ÁÄÄÄÄÄÁÄ
+  |      \\   /            |
+  |       \\_/             |
+
+ WaveForm 2: Abs-Sine   WaveForm 3: Pulse-Sine
+  | /^\\   /^\\             | /^|         /^|
+  |/   \\ /   \\ /          |/  |        /  |
+ Ä|ÄÄÄÄÄÁÄÄÄÄÄÁÄÄ        Ä|ÄÄÄÁ-------ÁÄÄÄÁÄÄÄ
+  |                       |
+
+ WaveForm 4: Sine - even periods only
+  | /^\\                     /^\\
+  |/   \\                   /   \\
+ Ä|ÄÄÄÄÄ\\ÄÄÄÄÄÂ-----------ÁÄÄÄÄÄ\\ÄÄÄÄÄÂÄ
+  |      \\   /                   \\   /
+  |       \\_/                     \\_/
+
+ WaveForm 5: Abs-Sine - even periods only
+  | /^\\   /^\\               /^\\   /^\\
+  |/   \\ /   \\             /   \\ /   \\
+ Ä|ÄÄÄÄÄÁÄÄÄÄÄÁ-----------ÁÄÄÄÄÄÁÄÄÄÄÄÁÄ
+  |
+
+ WaveForm 6: Square
+  |-----¿     Ú-----¿     Ú-----¿     Ú-
+  |     |     |     |     |     |     |
+ Ä|ÄÄÄÄÄ|ÄÄÄÄÄ|ÄÄÄÄÄ|ÄÄÄÄÄ|ÄÄÄÄÄ|ÄÄÄÄÄ|ÄÄ
+  |     |     |     |     |     |     |
+  |     À-----Ù     À-----Ù     À-----Ù
+
+ WaveForm 7: Derived Square
+  |          |\\                |\\
+  |         |  \\              |  \\
+ Ä|--__ÄÄÄÄ|ÄÄÄÄ\\------__ÄÄÄÄ|ÄÄÄÄ\\------
+  |    \\  |              \\  |
+  |     \\|                \\|
+~Format+
+
+ATTACK=nn\
+This controls the time taken for a note to hit full volume after being
+triggered on. Low values give a punchy percussive sound while long values
+give a softer bowed sound. If attack time is set too long and orbitdelay is
+low then notes are played too fast to ever achieve any volume and the net
+result is low or non existent output. To put it another way, if orbitdelay
+is low then this value should be low also.
+
+DECAY=nn\
+This controls the time taken for a note to die down to the sustain level. 
+Setting this time too low may produce a rhythmic click between notes.  
+The attack and decay values don't allow much fine control.
+
+SUSTAIN=nn\
+This controls the volume level at which a note is held.
+
+SRELEASE=nn\
+This controls the delay in time for releasing a note.  A release value of
+15 seems to equate to 'never let the note release' on the machine used to
+develop the sound card drivers.  But, as ever, with other manufacturer's
+emulations your mileage may vary.
+
+VOLUME=nn\
+It is possible to adjust the volume of an FM synth card.  This has no effect
+on the PC speaker.
+
+ATTENUATE=none|low|mid|high\
+On an FM synth card it is possible to attenuate the high pitched notes.  The
+default is none.  The low value attenuates at 1.5 dB/octave, the mid at
+3.0 dB/octave, and the high at 6.0 dB/octave.
+
+SCALEMAP=nn/nn/nn/...\
+The scale map list is a way of controlling which notes are played by fractint
+and only has any effect if note quantisation is switched on in the basic sound
+parameters screen. It can be very useful when the polyphony is up and the chords
+you're getting are more like dischords. :-)
+
+The way it works is this: When a sound is played with frequency quantisation on
+its frequency is rounded to the nearest 'proper' note on the musical scale,
+this note number is then looked up in the scale map table and substituted by the
+note indicated in that entry of the table.
+The end result of this is that, for instance, using this sequence of numbers
+as a scale map: \
+2,2,4,4,4,7,7,9,9,11,11,11 \
+Will ensure that fractint uses only the black notes on the keyboard, just the
+sharps and flats for a vaguely oriental feel (to my western ears anyway :-) ).
+
+The above probably appears to be sheer gobbledegook at first reading, sorry,
+but if you keep at it you'll unlock this powerful feature for keeping your
+fractals melodic.  (Unless you're totally turned on by microtonal frequencies
+in which case forget all this quantisation nonsense and tune in to the true
+sound of chaos!)
+
+The passes=1 setting ({Drawing Method}) almost always works best with sound. 
+~Topic=Envelopes
+
+Here's some more information about the concept of a note envelope for those 
+unfamiliar with sound synthesis terminology, it's all about how the dynamics 
+of a note are defined (i.e the way in which the loudness changes during the 
+life of a note)
+
+ Graph of a note's volume during it's life cycle:
+  
+    /\\______                     /\\_______           \
+__/          \\_____ ... _______/          \\_________ \
+0011111111110000000 ... 0000000111111111110000000000 \
+  A  D  S   R                  AAADSSSSSSSR          \
+
+The string of 0's and 1's represents the keyon/off state of the voice, 1's
+indicate the key being held down. The attack, decay, sustain, and release
+portions of the envelope are represented by ADSR, this is what happens:
+
+When the note is first triggered on the volume rises to peak volume at a
+rate determined by the attack value.
+
+Once at the full level the decay period starts and the volume dies down (at
+a rate set by the decay value) to a level that is set by the sustain
+value.
+
+The note continues to sound at this volume until triggered off (the 'key'
+is released) whereupon it dies down to zero volume at the release rate.
+
+And so on.  Now, with the current voice assignment method, while orbits are
+being generated continuously, timing looks like this (with four note polyphony 
+in this example)
+
+   Voice:\
+     1 *111.....*111....\
+     2 .*111.....*111...\
+     3 ..*111.....*111..\
+     4 ...*111.....*111.\
+     5 ....*111.....*111\
+     6 .....*111.....*11\
+     7 ......*111.....*1\
+     8 .......*111.....*\
+     9 ........*111.....\
+orbit: 12345678901234567\
+
+Where:\
+      . = key off (silent or releasing note)\
+      * = note assigned a value and triggered on, attack, decay, sustain phase
+          begins\
+      1 = note held on, you'll notice that above there are only ever four
+          notes held on at any one time, though more than four may be sounding
+          if there is a long release value.\
+;
+;
+~Topic=Revision History
+
+  Please select one of:
+
+      {Version 19}
+
+      {Version 18}
+
+      {Version 17}
+
+      {Version 16}
+
+      {Version 15}
+
+      {Versions 12 through 14}
+
+      {Versions  1 through 11}
+;
+~Topic=Version 19
+
+Version 19.6 new features include:
+
+Added new fractal types {=HT_ESCHER escher_julia} and {=HT_VL volterra-lotka}
+  courtesy Michael Sargent.
+
+Expanded formula parser capability to recognize "if..else" flow control
+  instructions. The format of an "if block" of instructions is:
+         IF(boolean)
+            statements
+         ELSEIF(boolean) [any number of these are permitted in a block]
+            statements
+         ELSE            [if used, only one is permitted in a block]
+            statements
+         ENDIF
+  Note that ELSEIF() does not require a separate ENDIF. Each branching
+  instruction must be a separate formula statement, separated from other
+  statements by a comma or an end of line. There is a limit of 200 branching
+  instructions per formula (ELSEIF counts as two branching instructions).
+  Unlimited nesting is permitted; each ELSEIF, ELSE, and ENDIF relates to
+  the immediately preceding "non endif'ed" IF. An IF() and its ENDIF cannot
+  traverse the end of the initialization section of the formula.
+
+Added tutorials to the distribution package: Bradley
+  Beacham's basic formula tutorial, Sylvie Gallet's PHC and PTC formula
+  tutorial, and George Martin's tutorial on the new if..else feature
+  of the formula parser. Required reading for formula writers.
+
+Added text scrolling capability in <z> and F2 screens. Scroll keys for
+  the <z> screen:
+         CTRL+DOWN_ARROW    Move screen down one line
+         CTRL+UP_ARROW      Move screen up one line
+         CTRL+RIGHT_ARROW   Move screen right one column
+         CTRL+LEFT_ARROW    Move screen left one column
+         CTRL+PAGE_DOWN     Move screen down one view screen
+         CTRL+PAGE_UP       Move screen up one view screen
+         CTRL+HOME          Go to beginning of entry
+         CTRL+END           Go to end of entry
+
+  Direction keys without the CONTROL key depressed maintain their current
+  roles in moving the cursor in the entry prompt boxes.
+
+  In the F2 screen, the same scrolling is available; the CONTROL key
+  does not need to be depressed.
+
+Added capability to place ifs, formula, and lsys entries in PAR files.
+  If not found in the file named in the parameter entry, formulas, ifs, and
+  lsystem entries called for in entries are looked for in the .par file
+  itself. The referenced entry must have the appropriate prefix in the
+  PAR file as follows:\
+
+       formulas  frm:\
+       lsystem   lsys:\
+       ifs       ifs:\
+
+  for example:\
+
+  frm:mandel \{\
+    z=c=pixel:\
+    z = z*z + c\
+    |z| < 4\
+  \}\
+
+  The prefix is an identifier, not part of the name itself. Thus, the
+  parameter in the image entry would read "formulaname=mandel". The
+  formulafile= parameter need not, and probably should not, name the
+  PAR file itself - the search of the PAR file is automatic.
+
+  Formulas, ifs, and lsys entries in a PAR file will not be shown on the
+  menu screen for the PAR file, and are accessible only in connection with
+  running the parameter entry which calls for the formula. Also, PAR
+  files are not searched when looking for a formula, ifs, or lsystem entry in
+  connection with restoring a .gif file. You will need to copy these entries
+  from the PAR file into .frm, .ifs, and .l files as applicable (taking
+  care, of course, to delete the identifier prefixes) in order to make
+  general use of them.
+
+Added command line option fastrestore=yes|no. Default is NO. When YES,
+  causes viewwindows to be set to NO before each restore, so that otherwise
+  normal gifs will not be drawn at the reduced aspect when viewwindows was
+  previously set to YES; and bypasses the warning which is displayed when a
+  restore is to be viewed in a video mode other than the one at which the gif
+  was saved. Combined with askvideo=no, all restores will automatically be
+  made at the user's default video mode. This feature will be helpful when
+  cycling through a group of gifs in autokey mode.
+
+Ctrl-Right used in file selection screens now skips over directory listings,
+  and if the cursor is on the last file, moves the cursor to the first file.
+  This makes possible uninterrupted cycling in autokey mode. The keyword for
+  this keystroke in a .key file is CTRL_RIGHT.\
+~OnlineFF
+  The following additional keystrokes were also implemented:\
+
+       Ctrl-Left (autokey symbol "CTRL_LEFT")\
+       Ctrl-Down ("CTRL_DOWN")\
+       Ctrl-Up   ("CTRL_UP")\
+       Ctrl-Home ("CTRL_HOME")\
+       Ctrl-End  ("CTRL_END")\
+
+   Run the following .key file with command line parameters fastrestore=yes
+   and askvideo=no (and, if you don't set your video mode in sstools.ini,
+   video=[your standard video mode]) and your coworkers will get a continuous
+   display of the .gif files in your default .gif directory when you go to
+   lunch (come on, we know you have Fractint on your hard drive at work):
+
+         "r"
+          MORE:
+          ENTER
+          CALCWAIT
+          WAIT 30
+          "R"
+          CTRL_RIGHT
+          GOTO MORE
+
+Added four new lsystem types to fractint.l.
+
+When palette editing mode is entered, the original palette is now stored
+  in the area associated with F2.
+
+Reduced the fractint.cfg resolution limit to 2x2 pixels.
+
+Fixed bug which caused a lockup when ranges= was used with maxit >= 32767.
+
+Fixed arbitrary precision and decoder crashes.
+
+Fixed an entry display scrolling bug.
+
+Fixed the integer mode frothy basin "censored" bug.
+
+Added backwards compatibility for inside=startrails.
+
+Fixed the 16-color color cycling inside the palette editor.  Fixed color
+  cycling when used with a maxit > 32767.  Pixels with iterations > 32767
+  now cycle in the same direction as those with iterations <= 32767.
+
+Fixed bug which caused an apparent lockup when find finite attractor was
+  used with maxit > 32767.
+
+Fixed viewwindows bug that caused extra points to be written when ydots
+  was not divisible by 4.
+
+Fixed Ant type so that it works with 16 digits.  Old pars will need to be
+  re-entered or have a decimal point added to the first two parameters.
+
+Changed MAXSTRING in the decoder from 64000 to 60000. This change eliminates
+  all the encoder bug examples we have, but we don't understand why it
+  works and we may not have fixed the problem.
+
+Fixed the logmap routine when used with a par/gif release <= 1920 and memory
+  for the LogTable is insufficient.
+
+Fixed the complexnewton type when used with a par/gif release <= 1920.
+
+Changed the keystroke behavior of the passes= field on the <x> screen.
+
+New logic autocenters all input screen menu titles.
+
+Changed the automatic resolution switching logic between float and arbitrary
+  precision.
+
+If user aborts before selecting a file in a file menu screen, the program
+  now remembers the last file name selected even if the directory has been
+  changed.
+
+Fixed writing 3d smooth factor to PAR.
+
+Fixed writing potential to PAR in makepar mode.
+
+Fixed redundant "Regenerate before <b> to get correct symmetry" messages
+  in divide and conquer mode.
+
+Fixed hi rez type 2 diffusion bug and parser error bug.
+
+Fixed crashing in disk video with too long a savename path.
+
+Added Adrian Mariano's diffusion fixes - a new color option, several bug
+  fixes, and improved documentation. Removed integer support which wasn't
+  being used anyway.
+
+Finally, we've added two undocumented commands to give expert users
+   workarounds for math type precision and GIF encoder problems.
+
+Added the mathtolerance=.05/.05 command. The first number controls the
+  integer/float transition, and the second number controls the float/arbitrary
+  precision transition. The default value of .05 means that the ratio between
+  the exact and calculated width and height is between .95 and 1.05. A larger
+  value than .05 (say .10) makes the test looser so that the lower precision
+  math is used longer. A value <= 0 means the test is always failed and the
+  higher precision math type is used. A value >= 1 means that the test is
+  always passed and the lower precision math type is used.
+
+  The automatic precision toggle is resolution dependent. The same image may
+  use float at 320x200 and arbitrary precision at 640x480. This is not a bug;
+  it has to work this way. At a given magnification more pixels require more
+  precision. There are other tests so even with mathtolerance=1/.05,
+  eventually Fractint will have to use float. The same is not true for
+  mathtolerance=.05/1. If you keep zooming Fractint will not rescue you;
+  eventually you'll get a nasty error message and the corners will be lost.
+
+Added the tweaklzw=nnn/nnn command. Fractint's GIF encoder occasionally
+  fails and produces bad GIF files. Tweaking encoder parameters might
+  allow saving in such a situation. The parameters reduce the
+  maximum size of the current string and maximum total length of the string
+  table, respectively. The default values are 0, which gives the old
+  encoder performance.
+
+
+Version 19.5 is a bug-fix release for version 19.4 based on the developer's
+  version 19.40 patch 11. As always, we added a few new features along
+  with the bug fixes.
+
+New {=@COMMENTS Comment= command}. You can automatically set any of the four
+  PAR comments, and can include variables in the comments such as the
+  much-requested $calctime$ and $date$. Fractint now writes ';;' for empty
+  comments above the last comment from the comment= command. This prevents
+  comments from moving positions when the PAR is reloaded.
+
+New {=@RECORDCOLORS recordcolors= command}. If you place
+  recordcolors=y in your SSTOOLS.INI, compressed colors will always be
+  written in your PARS. If you want to remember what the map file was
+  (assuming the colors were loaded from one), try recordcolors=c. This is
+  exactly like recordcolors=y except that the map file (if any) is written
+  to a parfile comment.
+
+Added new parser constants:\
+  1. whitesq parser constant = (row+col)&1\
+  2. scrnpix parser constant = (col,row)\
+  3. scrnmax parser constant = (xdots, ydots)\
+  4. maxit   parser constant = (maxit,0)\
+
+Added "\\" linewrap for formula files.
+
+Made the round function consistent in all modes. Now round(z) is always
+  (floor(x+.5)+i*floor(y+.5)). In version 19.4, in floating point mode
+  with type=formula, round() used the coprocessor "nearest or even"
+  rounding. Version 19.5 always rounds xxx.5 up.
+
+Fixed a bug that caused a crash when zooming out with certain functions in
+  integer mode.
+
+Fixed a bug that caused a crash when attempting 3d=overlay without a filename
+  in batch mode.
+
+Fixed a bug that caused part of the video table to not show when compiled
+  by Borland.
+
+Fixed a bug that kept the last image browsed from showing up when you
+  regenerate an image and then start the browser again.
+
+Fixed a bug that loaded images with the wrong aspect ratio when using the
+  browser with the view window turned on, and the file image size was not the
+  same as the screen image size.
+~ONLINEFF
+Version 19.4 is a bug-fix release for version 19.3 based on the developer's
+  version 19.30 patch 18. But a few new features did slip in when we weren't
+  looking.
+
+New functions are now available for type=formula and general function
+  variable use. They are the rounding functions: floor(), ceil(), trunc(),
+  and round()
+
+New larger showdot "turtle" to enable better seeing which pixel is currently
+  being calculated. The syntax is showdot=<color>/<size>, but the color
+  parameter can now be one of auto, bright, medium, and dark in addition to
+  the previously-supported color number value.
+
+The <g> command now remembers the last command.
+
+Added the ability to load images into a view window.  This can be used
+  with the browser to browse images larger than the current image.
+
+Added George Martin's new integrated entry-finding code. Fractint is now
+  more tolerant of text between entries, and the internal code is much
+  cleaner than before.
+
+Added Bert Tyler's new VESA truecolor video drivers. These don't do anything
+  yet; we've just added the video drivers for testing. Work goes on ...\
+  To test out the new modes, try fractint debug=500 type=test and select
+  a new truecolor mode. They only work with video boards having VESA
+  truecolor support. Some "non-standard VESA" modes (an unfortunate
+  oxymoron if there ever was one) can also be supported by editing
+  FRACTINT.CFG. These vendor-specific "VESA" modes tend to make Bert,
+  our video expert, real grumpy ...
+
+Now for the squashed bugs report:
+
+Ranges is working again.
+
+Fixed a browser bug that caused a crash when the browser cross-hairs
+  become too small.
+
+Fixed a bug which put the browser into an infinite loop if the history
+  feature was used to try and access a deleted or renamed image that was
+  still in the history stack.
+
+Fixed bug that caused any command with greater than 16 parameters to fail,
+  most notably textcolors and ranges.
+
+Fixed a center-mag<->corners conversion bug that occurred with rotated images.
+  arbitrary precision also (test with debug=3200).
+
+Fixed bug that allowed the matherr debugging file to grow arbitrarily large.
+  Matherr file is limited to 100 messages for each fractal.
+
+Fixed bug that affected some Icons3d types, which were broken due to a
+  very subtle bug in apparently good code caused by the compiler optimizer.
+
+Version 19.3 is a bug-fix release for version 19.2 based on the developer's
+  version 19.21 patch 30.
+
+The biggest changes from 19.2 to 19.3 are the fixing of the color logmap
+  function for maximum iterations greater than 32K, and a large increase in
+  the maximum size of an individual formula and the maximum number of entries
+  in formula, parameter, ifs, and lsystem files.
+
+Changes from 19.2 to 19.3 include:
+
+Added better math function error trapping for the formula parser. This can
+  change the rendering of some PAR files using type=formula. If reset=1920
+  is included in the PAR file, the new error trapping is disabled.
+
+Fixed an old, rare, but nasty bug that stripped trailing zeros from the
+  exponents of floating point numbers written to PAR files.
+
+Ctrl-ins and Ctrl-Del now change the browser frame colors.
+
+Fixed bug that occurred when writing PAR files containing a video= line
+  with a four character video mode.
+
+Added batch facility to copy fractal information and color in GIFs to PAR
+  format.
+
+Added current column to the <tab> screen.
+
+Removed support for reading Targa files.
+
+Added backwards compatibility for the fractal type fn(z*z).
+
+Added support for expanded and extended memory to the browser.  Use
+  expanded memory if you don't have at least 4 MB of extended memory.
+
+Added pi and e to constants that the formula parser recognizes.  Fixed parser
+  so that constants are recognized correctly.
+
+Added docs for freestyle mode in the colour editor.
+
+Fixed bug involving comments between formula entries.
+
+Allow renaming Fractint.exe without losing access to fractint's help files.
+
+Center-mag is now the default method for storing coordinates in PAR files.
+
+Increased limit on number of operations in a formula entry from 250 to
+  over 2000. In most cases memory use is actually less than before
+  because of use of existing memory arrays.
+
+Fixed a bug that caused the image to regenerate when the <y> screen was
+  accessed, but nothing was changed (or color cycle range was changed).
+
+Fixed a bug that caused saved partial images that used logmap to use the
+  incorrect logmap routine when restored (GIFs & PARs).
+
+Made the solid guessing stop pass parameter save to GIFs and PARS.
+
+Added truecolor=yes command. This causes the iterations for each point to
+  be written to a 24-bit Targa truecolor file called iterates.tga. Maxiter
+  is also written to the file. This allows a simple outboard program to
+  assign truecolors to iterations. Passes=1 is forced, but symmetry works.
+  (This function may go away in the future when real truecolor support is
+  implemented.)
+
+Fixed bug that caused PARs to have incorrect number of parameters when
+  a formula based GIF was loaded and a PAR made immediately.
+
+Added additional bailout tests manh and manr.  See {Bailout Test}.
+
+Fixed <Z> screen so bailout test can be changed when potential is being used.
+
+Fixed bug that caused large filename numbers to increment incorrectly.
+
+Added new guessing options g1, g2, etc. that cause guessing to terminate
+  before the last pass.
+
+Added new orbitsave=sound option that causes orbits with sound on to
+  write to a file sound.txt. The values written are the Hertz values for
+  each orbit point. The time is written out in milliseconds once per pixel.
+
+Added documentation for making demm images to match ones made prior to
+  version 16.
+
+Added key pressed check to autologmap so it is possible to bailout with
+  a high maxit value.
+
+Made all floating point types capable of zooming out past (32,32).
+
+Added the formula parameters p1, p2, and p3 to the <tab> screen.
+
+Added stereo pair feature to stereo options menu.
+
+Fixed a bug that caused julia_inverse to continue after completed.
+
+Bignumber library rearranged. DOS midnight bug fix, so total time of images
+  run overnight is now correct.
+
+Added logmap backwards compatibility for pre-version 19.2 images.
+
+Browser problem with flipped images fixed.
+
+Changed default corners to 4:3 aspect for types sierpinski, popcorn,
+  pickover, popcornjul, tim's_error, martin, and halley.
+
+Added a range check for type=ants numants parameter.
+
+RDS save command is no longer case sensitive.
+
+Added the color number to the status area in the palette editor.
+
+Changed logmap and distest to a long variable to accomodate the version 19.0
+  change to long maxit.
+
+Added a pixel-at-a-time routine to calculate the logmap values on the fly when
+  memory is low or maxit > 32767.  Use logmode=fly to use with maxit < 32767.
+  Note: ranges still doesn't work with maxit > 32767.
+
+Extended error checking to set the overflow variable when a zero denominator
+  is found.  Added checking of overflow in a few places where it is needed.
+
+Added backwards compatibility for the old "broken" integer parser mod
+  function.
+
+Fixed the maximum zoom out of the integer type fn(z*z) (and others) so the
+  user doesn't get thrown out to DOS.
+
+Fixed writing of olddemmcolors variable to PAR file.
+
+Version 19.2 changes start on the next page.
+~FF
+Version 19.2 is a bug-fix release for version 19.1. Changes from 19.1
+  to 19.2 include:
+
+Fixed the 3D function, which was broken in 19.1 due to a side-effect of
+  a repair of a minor bug in 19.0. Arrgghh! This is the main reason for the
+  release of this version so quickly.
+
+Fixed a bug that caused the Julia inverse window and the orbits window to lose
+  their place after loading a color map.
+
+Fixed a bug that causes corners to be lost when too many digits are entered.
+
+Added an enhanced ants automaton by Luciano Genero and Fulvio Cappelli.
+
+New showorbit command allows orbits-during-generation feature to be turned
+  on by default. Expanded limits of Hertz command to 20 to 15000.
+
+Targa 3D files are now correctly written to workdir rather than tempdir.
+
+Uncommented garbage between file entries is now ignored. (But note that "\{"
+  must be on same line as entry name.)
+
+Fixed savename update logic.
+
+Version 19.1 is a bug-fix release for version 19.0. Changes from 19.0
+  to 19.1 include:
+
+Disabled the F6 (corners) key when in the parameters screen (<z>) for
+  arbitrary precision.
+
+IFS formulas now show in <z> screen.
+
+Allow RDS image maps of arbitrary dimensions.
+
+Touched up Mandelbrot/Julia <Space> toggle logic.
+
+Fractint now remembers map name, and uses the mapfile path correctly, and
+  now allows periods in directory names.
+
+Fixed tab bug that caused problems when interrupting a restore of an
+  arbitrary precision image.
+
+Repaired savename logic. No longer show (usually truncated) full path of
+  the saved file in the screen.
+
+Fixed double to arbitrary precision transition with 90 degree images. (This
+  only failed before when the image was rotated exactly 90 degrees.)
+
+Corrected docs directory errors that reported several commands such as
+  PARDIR= that were not implemented. Documented the color cycling HOME
+  function.
+
+Fixed Mandelbrot/Julia types with bailout less than 4 (try it, results
+  are interesting!)
+
+Fixed browser delete feature which left a box on the screen after deleting
+  and exiting browser feature.
+
+More changes in filename processing logic.  ".\\" is now recognized as the
+  current directory and is expanded to its full path name.  It is now possible,
+  although not recommended, to designate the root directory of a disk as the
+  desired search directory.
+
+Fixed integer math Mandelbrot bug for 286 or lower machines.
+
+Fixed problem of reading some Lsys files incorrectly (distribution
+  PENROSE.L file was broken unless first line was commented.)
+
+Fixed problem that caused endless loop in RDS with bad input values.
+
+Made reading the current directory first optional, added the new
+  curdir=yes command for times when you want to use current directory
+  files.
+
+Fixed problem with complexpower() function ("x^y" formula operator) in
+  the case where x == 0. (Note that formulas where 0^0 appears for every
+  every pixel are considered broken and no promises made.)
+
+Prevented aspect ratio drift as you zoom. If you want to make tiny
+  adjustments, use new ASPECTDRIFT=0 command.
+
+Inside=bof60 and bof61 options now work correctly with the formula parser.
+
+We discovered the calculation time is no good after 24 days, so instead of the
+  time you will now get the message "A Really Long Time!!! (> 24.855 days)".
+  We thought you'd like to know ... A prize for the first person who actually
+  *sees* this message!
+
+A summary of features new with 19.0 begins on next page.
+~FF
+New arbitrary precision math allows types mandelbrot, julia, manzpower, and
+  julzpower to zoom to 10^1600. See {Arbitrary Precision and Deep Zooming}
+
+New Random Dot Stereogram feature using <Ctrl>-<S>. Thanks to Paul De Leeuw
+  for contributing this feature. For more, see {Random Dot Stereograms (RDS)}.
+
+New browser invoked by the <l> command allows you to see the relationships of
+  a family of images within the current corners values. See {Browse Commands}
+  and {Browser Parameters}. Thanks to Robin Bussell for contributing this
+  feature.
+
+Added four bailout tests: real, imag, or, and.  These are
+  set on the <Z> screen of the fractal types for which they work.  The
+  default is still mod.  See {Bailout Test}.
+
+New asin, asinh, acos, acosh, atan, atanh, sqrt, abs (abs(x)+i*abs(y)),
+  and cabs (sqrt(x*x + y*y)) functions added to function variables and parser.
+
+New fractal types types chip, quadruptwo, threeply, phoenixcplx,
+  mandphoenixclx, and ant automaton.
+
+Increased maximum iterations to 2,147,483,647 and maximum bailout to 2,100,000,000
+  when using floating point math.
+
+New path/directory management. Fractint now remembers the pathname of
+  command-line filenames. This means that you can specifiy directories where
+  your files reside in SSTOOLS.INI. In what follows, <path> can be a directory,
+  a filename, or a full path.
+
+  File                      SSTOOLS.INI Command       Comments\
+  ==========================================================================\
+  PAR directory             parmfile=<path>\
+  GIF files for reading     filename=<path>\
+  MAP files                 map=<path>\
+  Autokey files             autokeyname=<path>\
+  GIF files for saving      savename=<path>\
+  Print file                printfile=<path>\
+  Formula files             formulafile=<path>\
+  Lsystem file              lfile=<path>\
+  IFS file                  ifsfile=<path>\
+  Miscellaneous files       workdir=<path>\           new command\
+  Temporary files           tempdir=<path>\           new command\
+
+  If the directories do not exist, Fractint gives an error message on runup
+  with the option to continue.
+
+Fractint now searches all FRM, IFS, LSYS, and PAR files in the designated
+  directory for entries. The number of entries in files has been greatly
+  increased from 200 to 2000. Comment support in these files is improved.
+
+Parameters shown in <z> screen now match those used in a formula.
+
+Distance estimator logic has been overhauled, with the variable olddemmcolors
+  added for backward compatibility.
+
+New floating point code for Lsystems from Nick Wilt greatly speeds up image
+   generation.
+
+Enhanced fast parser from Chuck Ebbert makes floating point formula fractals
+  faster than built-in types.
+
+Enhanced the history command to include all parameters, colors, and
+  even .frm, .l, and .ifs file names and entries. Number of history sets
+  remembered can be set with the maxhistory=<nnn> command to save memory.
+
+Enhanced center-mag coordinates to support rotated/stretched/skewed zoom
+  boxes.
+
+Added new parameter to built-in Halley for comparison with formula type,
+  also added new parameter to Frothybasin type.
+
+Added color number to orbits numbers <n> display.
+
+Added two new parameters to distest= to allow specifying resolution.
+  This allows making resolution-independent distance estimator images.
+
+Fixed bug that caused the "big red switch" bug if '(' appeared in random
+  uncommented formula file text, but fair warning, we don't officially
+  support uncommented text in FRM files.
+
+Symmetry now works for the Marksjulia type and Marksmandel types.
+
+Full path no longer written in PAR files with <b> command.
+
+Fixed fractal type fn(z*z) so that zooming out will no longer dump you out
+  to DOS, affecting zoomed out integer images made with this type.
+
+Fixed a float to fudged integer conversion that affects integer fractal
+  types fn(z*z) and fn*fn.  This has only a minor impact on integer images
+  made with these types.
+
+Default drive and directory restored after dropping to DOS, in
+  case you changed it while under DOS.
+
+Added support for inversion to the formula parser (type=formula).
+
+Increased maximum number of files listed by <r> command to 2977 from 300.
+
+Added outside=atan option.
+
+Added faster auto logmap logic.
+;
+;
+
+
+;
+~Topic=Version 18
+
+Versions 18.1 and 18.2 are bug-fix releases for version 18.0.  Changes from
+18.1 to 18.2 include:
+
+ The <b> command now causes filenames only to be written in PAR files.
+
+ Fractint will now search directories in the PATH for files not found in the
+ requested the requested directory or the current directory. If you place
+ .MAP, .FRM, etc. in directories in your PATH, then Fractint will find them.
+
+ Fixed bug that caused fractals using PI symmetry to fail at high resolution.
+
+ Fractals interrupted with <3> or <r> can now resume.
+
+ The palette editor's <u> (undo) now works.
+
+ The <s> command in orbit/Julia window mode is no longer case sensitive.
+
+ Added warnings that the POV-Ray output is obsolete (but has been left in).
+ Use POV-Ray's height field facility instead or create and convert RAW files.
+
+ Fixed several IFS bugs.
+
+Changes from 18.0 to 18.1 include:
+
+ Overlay tuning - the Mandelbrot/Julia Set fractals are now back up
+ to 17.x speeds
+
+ Disk Video modes now work correctly with VESA video adapters (they
+ used to use the same array for different purposes, confusing each other)
+
+ 1024x768x256 and 2048x2048x256 disk video modes work again
+
+ Parameter-file processing no longer crashes Fractint if it attempts to
+ run a formula requiring access to a non-existent FRM file
+
+ IFS arrays no longer overrun their array space
+
+ type=cellular fixes
+
+ "autologmap=2" now correctly picks up the minimum color
+
+ The use of disk-video mode with random-access fractal types is now
+ legal (it generates a warning message but lets you proceed if you
+ really want to)
+
+ The Lsystems "spinning-wheel" now spins slower (removing needless overhead)
+
+ Changes to contributors' addresses in the Help screens
+
+(The remainder of this "new features" section is from version 18.0)
+
+New fractal types:
+
+ 19 new fractal types, including:
+
+ New fractal types - 'lambda(fn||fn)', 'julia(fn||fn)', 'manlam(fn||fn)',
+ 'mandel(fn||fn)', 'halley', 'phoenix', 'mandphoenix', 'cellular',
+ generalized bifurcation, and 'bifmay' - from Jonathan Osuch.
+
+ New Mandelcloud, Quaternion, Dynamic System, Cellular Automata fractal
+ types from Ken Shirriff.
+
+ New HyperComplex fractal types from Timothy Wegner
+
+ New ICON type from Dan Farmer, including a PAR file of examples.
+
+ New Frothy Basin fractal types (and PAR entries) by Wesley Loewer
+
+ MIIM (Modified Inverse Iteration Method) implementation of Inverse Julia
+ from Michael Snyder.
+
+ New Inverse Julia fractal type from Juan Buhler.
+
+ New floating-point versions of Markslambda, Marksmandel, Mandel4,
+ and Julia4 types (chosen automatically if the floating-point option
+ is enabled).
+
+New options/features:
+
+ New assembler-based parser logic from Chuck Ebbert - significantly
+ faster than the C-based code it replaces!
+
+ New assembler-based Lyapunov logic from Nicholas Wilt and Wes Loewer.
+ Roughly six times faster than the old version!
+
+ New Orbits-on-a-window / Julia-in-a-window options:\
+  1) The old Overlay option is now '#' (Shift-3).\
+  2) During generation, 'O' brings up orbits (as before) - after\
+     generation, 'O' brings up new orbits Windows mode.\
+  3) Control-O brings up new orbits Windows mode at any time.\
+  4) Spacebar toggles between Inverse Julia mode and the Julia set and\
+     back to the Mandelbrot set.\
+ These new "in-a-window" modes are really neat!  See {Orbits Window}
+ and {Julia Toggle Spacebar Commands} for details.
+
+ New multi-image GIF support in the <B> command.  You can now generate
+ 65535x65535x256 fractal images using Fractint (if you have the disk
+ space, of course).  This option builds special PAR entries and a
+ MAKEMIG.BAT file that you later use to invoke Fractint multiple times
+ to generate individual sections of the image and (in a final step)
+ stitch them all together.  If your other software can't handle
+ Multiple-image GIFs, a SIMPLGIF program is also supplied that converts
+ MIGS into simgle-image GIFs.  Press F1 at the <B> prompts screen for
+ details.
+
+ Fractint's decoder now handles Multi-Image Gifs.
+
+ New SuperVGA/VESA Autodetect logic from the latest version of
+ VGAKIT.  Sure hope we didn't break anything.
+
+ New register-compatible 8514/A code from Jonathan Osuch.  By default,
+ Fractint now looks first for the presence of an 8514/A register-compatible
+ adapter and then (and only if it doesn't find one) the presence of the
+ 8514/A API (IE, HDILOAD is no longer necessary for register-compatible
+ "8514/a" adapters).  Fractint can be forced to use the 8514/A API by using
+ a new command-line option, "afi=yes".  Jonathan also added ATI's
+ "8514/a-style" 800x600x256 and 1280x1024x16 modes.
+
+ New XGA-detection logic for ISA-based XGA-2 systems.
+
+ The palette editor now has a "freestyle" editing option.  See
+ {Palette Editing Commands} for details.
+
+
+ Fractint is now more "batch file" friendly.  When running Fractint from
+ a batch file, pressing any key will cause Fractint to exit with an
+ errorlevel = 2.  Any error that interrupts an image save to disk will
+ cause an exit with errorlevel = 2.  Any error that prevents an
+ image from being generated will cause an exit with errorlevel = 1.
+
+ New Control-X, Control-Y, and Control-Z options flip a fractal image
+ along the X-axis, Y-axis, and Origin, respectively.
+
+ New area calculation mode in TAB screen from Ken Shirriff
+ (for accuracy use inside=0).
+
+ The TAB screen now indicates when the Integer Math algorithms are in use.
+
+ The palette must now be explicitly changed, it will not reset to the default
+ unexpectedly when doing things like switching video modes.
+
+ The Julibrot type has been generalized.
+ Julibrot fractals can now be generated from PAR files.
+
+ Added <b> command support for viewwindows.
+
+ Added room for two additional PAR comments in the <B> command
+
+ New coloring method for IFS shows which parts of fractal came from
+ which transform.
+
+ Added attractor basin phase plotting for Julia sets from Ken Shirriff.
+
+ Improved finite attractor code to find more attractors from Ken Shirriff.
+
+ New zero function, to be used in PAR files to replace old integer tan, tanh
+
+ Debugflag=10000 now reports video chipset in use as well as CPU/FPU
+ type and available memory
+
+ Added 6 additional parameters for params= for those fractal types that
+ need them.
+
+ New 'matherr()' logic lets Fractint get more aggressive when these errors
+ happen.
+
+ New autologmap option (log=+-2) from Robin Bussell that ensures that
+ all palette values are used by searching the screen border for the lowest
+ value and then setting log= to +- that color.
+
+ Two new diffusion options - falling and square cavity.
+
+ Three new Editpal commands: '!', '@' and '#' commands (that's
+ <shift-1>, <shift-2>, and <shift-3>) to swap R<->G, G<->B, R<->B.
+
+ Parameter files now use a slightly shorter maximum line length, making
+ them a bit more readable when stuffed into messages on CompuServe.
+
+ Plasma now has 16-bit .POT output for use with Ray tracers. The "old"
+ algorithm has been modified so that the plasma effect is independent
+ of resolution.
+
+ Slight modification to the Raytrace code to make it compatible with
+ Rayshade 4.0 patch level 6.
+
+ Improved boundary-tracing logic from Wesley Loewer.
+
+ Command-line parameters can now be entered on-the-fly using the <g> key
+ thanks to Ken Shirriff.
+
+ Dithered gif images can now be loaded onto a b/w display.
+ Thanks to Ken Shirriff.
+
+ Pictures can now be output as compressed PostScript.
+ Thanks to Ken Shirriff.
+
+ Periodicity is a new inside coloring option.
+ Thanks to Ken Shirriff.
+
+ Fixes: symmetry values for the SQR functions, bailout for the floating-pt
+ versions of 'lambdafn' and 'mandelfn' fractals from Jonathan Osuch.
+
+ "Flip", "conj" operators are now selectable in the parser
+
+ New DXF Raytracing option from Dennis Bragg.
+
+ Improved boundary-tracing logic from Wesley Loewer.
+
+ New MSC7-style overlay structure is used if MAKEFRAC.BAT specifies MSC7.
+ (with new FRACTINT.DEF and FRACTINT.LNK files for MSC7 users).  Several
+ modules have been re-organized to take advantage of this new overlay
+ capability if compiled under MSC7.
+
+ Fractint now looks first any embedded help inside FRACTINT.EXE, and then
+ for an external FRACTINT.HLP file before giving up. Previous releases
+ required that the help text be embedded inside FRACTINT.EXE.
+
+Bug fixes:
+
+ Corrected formulas displayed for Marksmandel, Cmplxmarksmandel, and
+  associated julia types.
+
+ BTM and precision fixes.
+
+ Symmetry logic changed for various "outside=" options
+
+ Symmetry value for EXP function in lambdafn and lambda(fn||fn) fixed.
+
+ Fixed bug where math errors prevented save in batch mode.
+
+ The <3> and <r> commands no longer destroy image -- user can back out
+ with ESC and image is still there.
+
+ Fixed display of correct number of Julibrot parameters, and Julibrot
+ relaxes and doesn't constantly force ALTERN.MAP.
+
+ Fixed tesseral type for condition when border is all one color but center
+ contains image.
+
+ Fixed integer mandel and julia when used with parameters > +1.99 and < -1.99
+
+ Eliminated recalculation when generating a julia type from a mandelbrot
+ type when the 'z' screen is viewed for the first time.
+
+ Minor logic change to prevent double-clutching into and out of graphics
+ mode when pressing, say, the 'x' key from a menu screen.
+
+ Changed non-US phone number for the Houston Public (Software) Library
+
+ The "Y" screen is now "Extended Options" instead of "Extended Doodads"
+
+ ...and probably a lot more bux-fixes that we've since forgotten that
+ we've implemented.
+
+;
+~Topic=Version 17
+
+Version 17.2, 3/92
+
+ - Fixed a bug which caused Fractint to hang when a Continuous Potential\
+   Bailout value was set (using the 'Y') screen and then the 'Z' screen\
+   was activated.\
+ - fixed a bug which caused "batch=yes" runs to abort whenever any\
+   key was pressed.\
+ - bug-fixes in the Stereo3D/Targa logic from Marc Reinig.\
+ - Fractint now works correctly again on FPU-less 8088s when\
+   zoomed deeply into the Mandelbrot/Julia sets\
+ - The current image is no longer marked as "not resumable" on a\
+   Shell-To-Dos ("D") command.\
+ - fixed a bug which prevented the "help" functions from working\
+   properly during fractal-type selection for some fractal types.\
+
+Version 17.1, 3/92
+
+ - fixed a bug which caused PCs with no FPU to lock up when they attempted\
+   to use some fractal types.\
+ - fixed a color-cycling bug which caused the palette to single-step \
+   when you pressed ESCAPE to exit color-cycling.\
+ - fixed the action of the '<' and '>' keys during color-cycling.\
+
+Version 17.0, 2/92
+
+- New fractal types (but of course!):
+
+Lyapunov Fractals from Roy Murphy (see {Lyapunov Fractals} for details)
+
+'BifStewart' (Stewart Map bifurcation) fractal type and new bifurcation
+parameters (filter cycles, seed population) from Kevin Allen.
+
+Lorenz3d1, Lorenz3d3, and Lorenz3d4 fractal types from Scott Taylor.
+Note that a bug in the Lorenz3d1 fractal prevents zooming-out from
+working with it at the moment.
+
+Martin, Circle, and Hopalong (culled from Dewdney's Scientific American
+Article)
+
+Lots of new entries in fractint.par.
+
+New ".L" files (TILING.L, PENROSE.L)
+
+New 'rand()' function added to the 'type=formula' parser
+
+- New fractal generation options:
+
+New 'Tesseral' calculation algorithm (use the 'X' option list to
+select it) from  Chris Lusby Taylor.
+
+New 'Fillcolor=' option shows off Boundary Tracing and Tesseral structure
+
+inside=epscross and inside=startrail options taken from a paper by
+Kenneth Hooper, with credit also to Clifford Pickover
+
+New Color Postscript Printer support from Scott Taylor.
+
+Sound= command now works with <O>rbits and <R>ead commands.
+
+New 'orbitdelay' option in X-screen and command-line interface
+
+New "showdot=nn" command-line option that displays the pixel currently
+being worked on using the specified color value (useful for those lloooonngg
+images being calculated using solid guessing - "where is it now?").
+
+New 'exitnoask=yes' commandline/SSTOOLS.INI option to avoid the final
+"are you sure?" screen
+
+New plasma-cloud options.  The interface at the moment (documented here and
+  here only because it might change later) lets you:\
+  - use an alternate drawing algorithm that gives you an earlier preview\
+    of the finished image.
+  - re-generate your favorite plasma cloud (say, at a higher resolution)
+    by forcing a re-select of the random seed.\
+
+New 'N' (negative palette) option from Scott Taylor - the documentation at
+this point is:  Pressing 'N' while in the palette editor will invert
+each color. It will convert only the current color if it is in 'x' mode,
+a range if in 'y' mode, and every color if not in either the 'x' or 'y' mode.
+
+- Speedups:
+
+New, faster floating-point Mandelbrot/Julia set code from Wesley Loewer,
+Frank Fussenegger and Chris Lusby Taylor (in separate contributions).
+
+Faster non-386 integer Mandelbrot code from Chris Lusby Taylor, Mike Gelvin
+and Bill Townsend (in separate contributions)
+
+New integer Lsystems logic from Nicholas Wilt
+
+Finite-Attractor fixups and Lambda/mandellambda speedups from Kevin Allen.
+
+GIF Decoder speedups from Mike Gelvin
+
+- Bug-fixes and other enhancements:
+
+Fractint now works with 8088-based AMSTRAD computers.
+
+The video logic is improved so that (we think) fewer video boards will need
+"textsafe=save" for correct operation.
+
+Fixed a bug in the VESA interface which effectively messed up adapters
+with unusual VESA-style access, such as STB's S3 chipset.
+
+Fixed a color-cycling bug that would at times restore the wrong colors
+to your image if you exited out of color-cycling, displayed a 'help'
+screen, and then returned to the image.
+
+Fixed the XGA video logic so that its 256-color modes use the same
+default 256 colors as the VGA adapter's 320x200x256 mode.
+
+Fixed the 3D bug that caused bright spots on surfaces
+to show as black blotches of color 0 when using a light source.
+
+Fixed an image-generation bug that sometimes caused image regeneration
+to restart even if not required if the image had been zoomed in
+to the point that floating-point had been automatically activated.
+
+Added autodetection and 640x480x256 support for the Compaq Advanced VGA
+Systems board - I wonder if it works?
+
+Added VGA register-compatible 320x240x256 video mode.
+
+Fixed the "logmap=yes" option to (again) take effect for continuous potential
+images.  This was broken in version 15.x.
+
+The colors for the floating-point algorithm of the Julia fractal
+now match the colors for the integer algorithm.
+
+If the GIF Encoder (the "Save" command) runs out of disk space, it now
+tells you about it.
+
+If you select both the boundary-tracing algorithm and either "inside=0"
+or "outside=0", the algorithm will now give you an error message instead
+of silently failing.
+
+Updated 3D logic from Marc Reinig.
+
+Minor changes to permit IFS3D fractal types to be handled properly
+using the "B" command.
+
+Minor changes to the "Obtaining the latest Source" section to refer
+to BBS access (Peter Longo's) and mailed diskettes (the Public (Software)
+Library).
+
+~Topic=Version 16
+
+Version 16.12, 8/91
+
+  Fix to cure some video problems reported with Amstrad
+     8088/8086-based PCs.
+
+Version 16.11, 7/91
+
+  SuperVGA Autodetect fixed for older Tseng 3000 adapters.\
+
+  New "adapter=" options to force the selection of specific SuperVGA
+     adapter types.  See {Video Parameters} for details.\
+
+  Integer/Floating-Point math toggle is changed only temporarily
+     if floating-point math is forced due to deep zooming.\
+
+  Fractint now survives being modified by McAfee's "SCAN /AV" option.\
+
+  Bug Fixes for Acrospin interface, 3D "Light Source Before
+     Transformation" fill type, and GIF decoder.\
+
+  New options in the <Z> parameters screen allow you to directly
+     enter image coordinates.\
+
+  New "inside=zmag" and "outside=real|imag|mult|summ" options.\
+
+  The GIF Decoder now survives reading GIF files with a local color map.\
+  Improved IIT Math Coprocessor support.\
+
+  New color-cycling single-step options, '<' and '>'.\
+
+Version 16.0, 6/91
+
+  Integrated online help / fractint.doc system from Ethan Nagel.
+    To create a printable fractint.doc file see {Startup Parameters}.
+
+  Over 350 screens of online help! Try pressing <F1> just about anywhere!\
+
+  New "autokey" feature.  Type "demo" to run the included demo.bat and
+    demo.key files for a great demonstration of Fractint.
+    See {Autokey Mode} for details.
+
+  New <@> command executes a saved set of commands.  The <b> command has
+    changed to write the current image's parameters as a named set of
+    commands in a structured file.  Saved sets of commands can subsequently
+    be executed with the <@> command.
+    See {Parameter Save/Restore Commands}.
+    A default "fractint.par" file is included with the release.
+
+  New <z> command allows changing fractal type-specific parameters without
+    going back through the <t> (fractal type selection) screen.
+
+  Ray tracer interface from Marc Reinig, generates 3d transform output for a
+    number of ray tracers; see {"Interfacing with Ray Tracing Programs"}
+
+  Selection of video modes and structure of "fractint.cfg" have changed. If
+    you have a customized fractint.cfg file, you'll have to rebuild it based
+    on this release's version. You can customize the assignment of your
+    favorite video modes to function keys; see {Video Mode Function Keys}.
+    <delete> is a new command key which goes directly to video mode selection.
+
+  New "cyclerange" option (command line and <y> options screen) from Hugh
+    Steele. Limits color cycling to a specified range of colors.
+
+  Improved {Distance Estimator Method} algorithm from Phil Wilson.\
+
+  New "ranges=" option from Norman Hills.
+    See {Logarithmic Palettes and Color Ranges} for details.
+
+  type=formula definitions can use "variable functions" to select
+    sin, cos, sinh, cosh, exp, log, etc at run time;
+    new built-ins tan, tanh, cotan, cotanh, and flip
+    are available with type=formula; see Type {Formula}
+
+  New <w> command in palette editing mode to convert image to greyscale\
+
+  All "fn" fractal types (e.g. fn*fn) can now use new functions tan, tanh,
+    cotan, cotanh, recip, and ident; bug in prior cos function fixed, new
+    function cosxx (conjugate of cos) is the old erroneous cos calculation
+
+  New L-Systems from Herb Savage\
+  New IFS types from Alex Matulich\
+  Many new formulas in fractint.frm, including a large group from
+    JM Collard-Richard
+  Generalized type manzpwr with complex exponent per Lee Skinner's request\
+  Initial orbit parameter added to Gingerbreadman fractal type\
+
+  New color maps (neon, royal, volcano, blues, headache) from Daniel Egnor\
+
+  IFS type has changed to use a single file containing named entries
+    (instead of a separate xxx.ifs file per type); the <z> command brings up
+    IFS editor (used to be <i> command).  See {=HT_IFS Barnsley IFS Fractals}.
+
+  Much improved support for PaintJet printers; see {PaintJet Parameters}\
+
+  From Scott Taylor:\
+    Support for plotters using HP-GL; see {Plotter Parameters}\
+    Lots of new PostScript halftones; see {PostScript Parameters}\
+    "printer=PS[L]/0/..." for full page PostScript; see {PostScript Parameters}\
+    Option to drive printer ports directly (faster); see {Printer Parameters}\
+    Option to change printer end of line control chars; see {Printer Parameters}
+
+  Support for XGA video adapter\
+  Support for Targa+ video adapter\
+  16 color VGA mode enhancements:\
+    Now use the first 16 colors of .map files to be more predictable\
+    Palette editor now works with these modes\
+    Color cycling now works properly with these modes
+  Targa video adapter fixes; Fractint now uses (and requires) the "targa"
+    and "targaset" environment variables for Targa systems
+  "vesadetect=no" parameter to bypass use of VESA video driver; try
+    this if you encounter video problems with a VESA driver
+  Upgraded video adapter detect and handling from John Bridges; autodetect
+    added for NCR, Trident 8900, Tseng 4000, Genoa (this code
+    is from a beta release of VGAKIT, we're not sure it all works yet)
+
+  Zoom box is included in saved/printed images (but, is not recognized as
+    anything special when such an image is restored)
+
+  The colors numbers reserved by the palette editor are now selectable with
+    the new <v> palette editing mode command
+
+  Option to use IIT floating point chip's special matrix arithmetic for
+    faster 3D transforms; see "fpu=" in {Startup Parameters}
+
+  Disk video cache increased to 64k; disk video does less seeking when
+    running to real disk
+  Faster floating point code for 287 and higher fpus, for types mandel,
+    julia, barnsleyj1/m1/j2/m2, lambda, manowar, from Chuck Ebbert
+
+  "filename=.xxx" can be used to set default <r> function file mask\
+
+  Selection of type formula or lsys now goes directly to entry selection
+    (file selection step is now skipped); to change to a different file, use
+    <F6> from the entry selection screen
+
+  Three new values have been added to the textcolors= parameter; if you use
+    this parameter you should update it by inserting values for the new 6th,
+    7th, 9th, and 13th positions; see "textcolors=" in {Color Parameters}
+
+  The formula type's imag() function has changed to return the result as
+    a real number
+
+  Fractal type-specific parameters (entered after selecting a new fractal
+    type with <T>) now restart at their default values each time you select
+    a new fractal type
+
+  Floating point input fields can now be entered in scientific notation (e.g.
+    11.234e-20). Entering the letters "e" and "p" in the first column causes
+    the numbers e=2.71828... and pi=3.14159... to be entered.
+
+  New option "orbitsave=yes" to create files for Acrospin for
+    some types (see {Barnsley IFS Fractals}, {Orbit Fractals},
+    {=@ACROSPIN Acrospin})
+
+  Bug fixes:\
+    Problem with Hercules adapter auto-detection repaired.\
+    Problems with VESA video adapters repaired (we're not sure we've got them
+      all yet...)\
+    3D transforms fixed to work at high resolutions (> 1000 dots).\
+    3D parameters no longer clobbered when restoring non-3D images.\
+    L-Systems fixed to not crash when order too high for available memory.\
+    PostScript EPS file fixes.\
+    Bad leftmost pixels with floating point at 2048 dot resolution fixed.\
+    3D transforms fixed to use current <x> screen float/integer setting.\
+    Restore of images using inversion fixed.\
+    Error in "cos" function (used with "fn" type fractals) fixed; prior
+      incorrect function still available as "cosxx" for compatibility
+
+  Old 3D=nn/nn/nn/... form of 3D transform parameters no longer supported\
+
+  Fractint source code now Microsoft C6.00A compatible.
+;
+;
+~Topic=Version 15
+
+Version 15.11, 3/91, companion to Fractal Creations, not for general
+release
+
+  Autokey feature, IIT fpu support, and some bug fixes publicly released in
+  version 16.
+
+
+Version 15 and 15.1, 12/90
+
+  New user interface! Enjoy! Some key assignments have changed and some have
+    been removed.
+  New palette editing from Ethan Nagel.\
+  Reduced memory requirements - Fractint now uses overlays and will run on a
+    512K machine.
+  New <v>iew command: use to get small window for fast preview, or to setup
+    an image which will eventually be rendered on hard copy with different
+    aspect ratio
+  L-System fractal type from Adrian Mariano\
+  Postscript printer support from Scott Taylor\
+  Better Tandy video support and faster CGA video from Joseph A Albrecht\
+  16 bit continuous potential files have changed considerably;  see the
+    Continuous Potential section for details.  Continuous potential is now
+    resumable.
+  Mandelbrot calculation is faster again (thanks to Mike Gelvin) - double
+    speed in 8086 32 bit case
+  Compressed log palette and sqrt palette from Chuck Ebbert\
+  Calculation automatically resumes whenever current image is resumable and
+    is not paused for a visible reason.
+  Auto increment of savename changed to be more predictable\
+  New video modes:\
+    trident 1024x768x256 mode\
+    320x480x256 tweak mode (good for reduced 640x480 viewing)\
+    changed NEC GB-1, hopefully it works now\
+  Integer mandelbrot and julia now work with periodicitycheck\
+  Initial zoombox color auto-picked for better contrast (usually)\
+  New adapter=cga|ega|mcga|vga for systems having trouble with auto-detect\
+  New textsafe=no|yes for systems having trouble with garbled text mode\
+  <r> and <3> commands now present list of video modes to pick from; <r> can
+    reduce a non-standard or unviewable image size.
+  Diffusion fractal type is now resumable after interrupt/save\
+  Exitmode=n parameter, sets video mode to n when exiting from fractint\
+  When savetime is used with 1 and 2 pass and solid guessing, saves are
+    deferred till the beginning of a new row, so that no calculation time is
+    lost.
+  3d photographer's mode now allows the first image to be saved to disk\
+  textcolors=mono|12/34/56/... -- allows setting user interface colors\
+  Code (again!) compilable under TC++ (we think!)\
+  .TIW files (from v9.3) are no longer supported as input to 3D
+    transformations
+  bug fixes:\
+    multiple restores (msc 6.0, fixed in 14.0r)\
+    repeating 3d loads problem; slow 3d loads of images with float=yes\
+    map= is now a real substitute for default colors\
+    starfield and julibrot no longer cause permanent color map replacement\
+    starfield parameters bug fix - if you couldn't get the starfield
+    parameters to do anything interesting before, try again with this\
+    release\
+    Newton and newtbasin orbit display fixed
+
+ Version 15.1:
+
+  Fixed startup and text screen problems on systems with VESA compliant
+    video adapters.
+  New textsafe=save|bios options.\
+  Fixes for EGA with monochrome monitor, and for Hercules Graphics Card.
+    Both should now be auto-detected and operate correctly in text modes.
+    Options adapter=egamono and adapter=hgc added.
+  Fixed color L-Systems to not use color 0 (black).\
+  PostScript printing fix.
+;
+~Topic=Versions 12 through 14
+
+Version 14, 8/90
+
+  LAST MINUTE NEWS FLASH!\
+    CompuServe announces the GIF89a on August 1, 1990, and Fractint supports
+    it on August 2! GIF files can now contain fractal information!  Fractint
+    now saves its files in the new GIF89a format by default, and uses .GIF
+    rather than .FRA as a default filetype.  Note that Fractint still
+    *looks* for a .FRA file on file restores if it can't find a .GIF file,
+    and can be coerced into using the old GIF87a format with the new
+    'gif87a=yes' command-line option.
+
+  Pieter Branderhorst mounted a major campaign to get his name in lights:\
+  Mouse interface:  Diagonals, faster movement, improved feel. Mouse button
+    assignments have changed - see the online help.
+  Zoom box enhancements:  The zoom box can be rotated, stretched, skewed,
+    and panned partially offscreen.  See "More Zoom Box Commands".
+  FINALLY!! You asked for it and we (eventually, by talking Pieter into it
+    [actually he grabbed it]) did it!  Images can be saved before
+    completion, for a subsequent restore and continue.  See "Interrupting
+    and Resuming" and "Batch Mode".
+  Off-center symmetry:  Fractint now takes advantage of x or y axis symmetry
+    anywhere on the screen to reduce drawing time.
+  Panning:  If you move an image up, down, left, or right, and don't change
+    anything else, only the new edges are calculated.
+  Disk-video caching - it is now possible, reasonable even, to do most
+    things with disk video, including solid guessing, 3d, and plasma.
+  Logarithmic palette changed to use all colors.  It now matches regular
+    palette except near the "lake".  "logmap=old" gets the old way.
+  New "savetime=nnn" parameter to save checkpoints during long calculations.\
+  Calculation time is shown in <Tab> display.
+
+  Kevin C Allen    Finite Attractor, Bifurcation Engine, Magnetic fractals...\
+  Made Bifurcation/Verhulst into a generalized Fractal Engine (like
+    StandardFractal, but for Bifurcation types), and implemented periodicity
+    checking for Bifurcation types to speed them up.
+  Added Integer version of Verhulst Bifurcation (lots faster now). Integer
+    is the default.  The Floating-Point toggle works, too.
+  Added NEW Fractal types BIFLAMBDA, BIF+SINPI, and BIF=SINPI. These are
+    Bifurcation types that make use of the new Engine. Floating-
+    point/Integer toggle is available for BIFLAMBDA. The SINPI types are
+    Floating-Point only, at this time.
+  Corrected the generation of the MandelLambda Set.  Sorry, but it's always
+    been wrong (up to v 12, at least).  Ask Mandelbrot !
+  Added NEW Fractal types MAGNET1M, MAGNET1J, MAGNET2M, MAGNET2J from "The
+    Beauty of Fractals".  Floating-Point only, so far, but what do you
+    expect with THESE formulae ?!
+  Added new symmetry types XAXIS NOIMAG and XAXIS NOREAL, required by the
+    new MAGNETic Fractal types.
+  Added Finite Attractor Bailout (FAB) logic to detect when iterations are
+    approaching a known finite attractor. This is required by the new
+    MAGNETic Fractal types.
+  Added Finite Attractor Detection (FAD) logic which can be used by *SOME*
+    Julia types prior to generating an image, to test for finite attractors,
+    and find their values, for use by FAB logic. Can be used by the new
+    MAGNETic Fractal Types, Lambda Sets, and some other Julia types too.
+
+  Mike Burkey sent us new tweaked video modes:\
+    VGA     - 400x600x256   376x564x256   400x564x256\
+    ATI VGA - 832x612x256
+  New HP Paintjet support from Chris Martin\
+  New "FUNCTION=" command to allow substition of different transcendental
+    functions for variables in types (allows one type with four of these
+    variables to represent 7*7*7*7 different types!
+  ALL KINDS of new fractal types, some using "FUNCTION=": fn(z*z), fn*fn,
+    fn*z+z, fn+fn, sqr(1/fn), sqr(fn), spider, tetrate, and Manowar. Most of
+    these are generalizations of formula fractal types contributed by Scott
+    Taylor and Lee Skinner.
+  Distance Estimator logic can now be applied to many fractal types using
+    distest= option. The types "demm" and "demj" have been replaced by
+    "type=mandel distest=nnn" and "type=julia distest=nnn"
+  Added extended memory support for diskvideo thanks to Paul Varner\
+  Added support for "center and magnification" format for corners.\
+  Color 0 is no longer generated except when specifically requested with
+    inside= or outside=.
+  Formula name is now included in <Tab> display and in <S>aved images.\
+  Bug fixes - formula type and diskvideo, batch file outside=-1 problem.\
+  Now you can produce your favorite fractal terrains in full color instead
+    of boring old monochrome! Use the fullcolor option in 3d! Along with a
+    few new 3D options.
+  New "INITORBIT=" command to allow alternate Mandelbrot set orbit
+    initialization.
+
+
+Version 13.0, 5/90
+
+  F1 was made the help key.\
+    Use F1 for help\
+    Use F9 for EGA 320x200x16 video mode\
+    Use CF4 for EGA 640x200x16 mode (if anybody uses that mode)\
+  Super-Solid-guessing (three or more passes) from Pieter Branderhorst
+    (replaces the old solid-guessing mode)
+  Boundary Tracing option from David Guenther ("fractint passes=btm", or use
+    the new 'x' options screen)
+  "outside=nnn" option sets all points not "inside" the fractal to color
+    "nnn" (and generates a two-color image).
+  'x' option from the main menu brings up a full-screen menu of many popular
+    options and toggle switches
+  "Speed Key" feature for fractal type selection (either use the cursor keys
+    for point-and-shoot, or just start typing the name of your favorite
+    fractal type)
+  "Attractor" fractals (Henon, Rossler, Pickover, Gingerbread)\
+  Diffusion fractal type by Adrian Mariano\
+  "type=formula" formulas from Scott Taylor and Lee H. Skinner.\
+  "sound=" options for attractor fractals.  Sound=x  plays speaker tones
+    according to the 'x' attractor value  Sound=y  plays speaker tones
+    according to the 'y' attractor value.  Sound=z  plays speaker tones
+    according to the 'z' attractor value  (These options are best invoked
+    with the floating-point algorithm flag set.)
+  "hertz=" option for adjusting the "sound=x/y/z" output.\
+  Printer support for color printers (printer=color) from Kurt Sowa\
+  Trident 4000 and Oak Technologies SuperVGA support from John Bridges\
+  Improved 8514/A support (the zoom-box keeps up with the cursor keys now!)\
+  Tandy 1000 640x200x16 mode from Brian Corbino (which does not, as yet,
+    work with the F1(help) and TAB functions)
+  The Julibrot fractal type and the Starmap option now automatically verify
+    that they have been selected with a 256-color palette, and search for,
+    and use, the appropriate GLASSESn.MAP or ALTERN.MAP palette map when
+    invoked.  *You* were supposed to be doing that manually all along, but
+    *you* probably never read the docs, huh?
+  Bug Fixes:\
+    TAB key now works after R(estore) commands\
+    PS/2 Model 30 (MCGA) adapters should be able to select 320x200x256 mode
+      again (we think)\
+    Everex video adapters should work with the Autodetect modes again (we
+      think)
+
+
+Version 12.0, 3/90
+
+  New SuperVGA Autodetecting and VESA Video modes (you tell us the
+    resolution you want, and we'll figure out how to do it)
+  New Full-Screen Entry for most prompting\
+  New Fractal formula interpreter ('type=formula') - roll your own fractals
+    without using a "C" compiler!
+  New 'Julibrot' fractal type\
+  Added floating point option to all remaining fractal types.\
+  Real (funny glasses) 3D - Now with "real-time" lorenz3D!!\
+  Non-Destructive <TAB> - Check out what your fractal parameters are without
+    stopping the generation of a fractal image
+  New Cross-Hair mode for changing individual palette colors (VGA only)\
+  Zooming beyond the limits of Integer algorithms (with automatic switchover
+    to a floating-point algorithm when you zoom in "too far")
+  New 'inside=bof60', 'inside=bof61' ("Beauty of Fractals, Page nn") options\
+  New starmap ('a' - for astrology? astronomy?) transformation option\
+  Restrictions on the options available when using Expanded Memory
+    "Disk/RAM" video mode have been removed
+  And a lot of other nice little clean-up features that we've already
+    forgotten that we've added...
+  Added capability to create 3D projection images (just barely) for people
+    with 2 or 4 color video boards.
+;
+~Topic=Versions  1 through 11
+
+Version 11.0, 1/90
+
+  More fractal types\
+    mandelsinh/lambdasinh        mandelcosh/lambdacosh\
+    mansinzsqrd/julsinzsqrd      mansinexp/julsinexp\
+    manzzprw/julzzpwr            manzpower/julzpower\
+    lorenz (from Rob Beyer)      lorenz3d\
+    complexnewton                complexbasin\
+    dynamic                      popcorn\
+  Most fractal types given an integer and a floating point algorithm.
+    "Float=yes" option now determines whether integer or floating-point
+    algorithms are used for most fractal types.  "F" command toggles the use
+    of floating-point algorithms, flagged in the <Tab> status display
+  8/16/32/../256-Way decomposition option (from Richard Finegold)\
+  "Biomorph=", "bailout=", "symmetry="  and "askvideo=" options\
+  "T(ransform)" option in the IFS editor lets you select 3D options (used
+    with the Lorenz3D fractal type)
+  The "T(ype)" command uses a new "Point-and-Shoot" method of selecting
+    fractal types rather than prompting you for a type name
+  Bug fixes to continuous-potential algorithm on integer fractals, GIF
+    encoder, and IFS editor
+
+
+Version 10.0, 11/89
+
+  Barnsley IFS type (Rob Beyer)\
+  Barnsley IFS3D type\
+  MandelSine/Cos/Exp type\
+  MandelLambda/MarksLambda/Unity type\
+  BarnsleyM1/J1/M2/J2/M3/J3 type\
+  Mandel4/Julia4 type\
+  Sierpinski gasket type\
+  Demm/Demj and bifurcation types (Phil Wilson), "test" is "mandel" again\
+  <I>nversion command for most fractal types\
+  <Q>uaternary decomposition toggle and "DECOMP=" argument\
+  <E>ditor for Barnsley IFS parameters\
+  Command-line options for 3D parameters\
+  Spherical 3D calculations 5x faster\
+  3D now clips properly to screen edges and works at extreme perspective\
+  "RSEED=" argument for reproducible plasma clouds\
+  Faster plasma clouds (by 40% on a 386)\
+  Sensitivity to "continuous potential" algorithm for all types except
+    plasma and IFS
+  Palette-map <S>ave and Restore (<M>) commands\
+  <L>ogarithmic and <N>ormal palette-mapping commands and arguments\
+  Maxiter increased to 32,000 to support log palette maps\
+  .MAP and .IFS files can now reside anywhere along the DOS path\
+  Direct-video support for Hercules adapters (Dean Souleles)\
+  Tandy 1000 160x200x16 mode (Tom Price)\
+  320x400x256 register-compatible-VGA "tweaked" mode\
+  ATI VGA Wonder 1024x768x16 direct-video mode (Mark Peterson)\
+  1024x768x16 direct-video mode for all supported chipsets\
+  Tseng 640x400x256 mode\
+  "Roll-your-own" video mode 19\
+  New video-table "hot-keys" eliminate need for enhanced keyboard to access
+    later entries
+
+
+Version 9.3, 8/89
+
+  <P>rint command and "PRINTER=" argument (Matt Saucier)\
+  8514/A video modes (Kyle Powell)\
+  SSTOOLS.INI sensitivity and '@THISFILE' argument\
+  Continuous-potential algorithm for Mandelbrot/Julia sets\
+  Light source 3D option for all fractal types\
+  "Distance estimator" M/J method (Phil Wilson) implemented as "test" type\
+  LambdaCosine and LambdaExponent types\
+  Color cycling mode for 640x350x16 EGA adapters\
+  Plasma clouds for 16-color and 4-color video modes\
+  Improved TARGA support (Joe McLain)\
+  CGA modes now use direct-video read/writes\
+  Tandy 1000 320x200x16 and 640x200x4 modes (Tom Price)\
+  TRIDENT chip-set super-VGA video modes (Lew Ramsey)\
+  Direct-access video modes for TRIDENT, Chips & Technologies, and ATI VGA
+    WONDER adapters (John Bridges). and, unlike version 9.1, they WORK in
+    version 9.3!)
+  "zoom-out" (<Ctrl><Enter>) command\
+  <D>os command for shelling out\
+  2/4/16-color Disk/RAM video mode capability and 2-color video modes
+    supporting full-page printer graphics
+  "INSIDE=-1" option (treated dynamically as "INSIDE=maxiter")\
+  Improved <H>elp and sound routines (even a "SOUND=off" argument)\
+  Turbo-C and TASM compatibility (really!  Would we lie to you?)
+
+
+Version 8.1, 6/89
+
+  <3>D restore-from-disk and 3D <O>verlay commands, "3D=" argument\
+  Fast Newton algorithm including inversion option (Lee Crocker)\
+  16-bit Mandelbrot/Julia logic for 386-class speed with non-386 PCs on
+    "large" images (Mark Peterson)
+  Restore now loads .GIF files (as plasma clouds)\
+  TARGA video modes and color-map file options (Joe McLain)\
+  30 new color-cycling palette options (<Shft><F1> to <Alt><F10>)\
+  "Disk-video, RAM-video, EMS-video" modes\
+  Lambda sets now use integer math (with 80386 speedups)\
+  "WARN=yes" argument to prevent over-writing old .GIF files
+
+
+Version 7.0, 4/89
+
+  Restore from disk (from prior save-to-disk using v. 7.0 or later)\
+  New types: Newton, Lambda, Mandelfp, Juliafp, Plasma, Lambdasine\
+  Many new color-cycling options (for VGA adapters only)\
+  New periodicity logic (Mark Peterson)\
+  Initial displays recognize (and use) symmetry\
+  Solid-guessing option (now the default)\
+  Context-sensitive <H>elp\
+  Customizable video mode configuration file (FRACTINT.CFG)\
+  "Batch mode" option\
+  Improved super-VGA support (with direct video read/writes)\
+  Non-standard 360 x 480 x 256 color mode on a STANDARD IBM VGA!
+
+
+Version 6.0, 2/89
+
+  32-bit integer math emulated for non-386 processors; FRACT386 renamed
+    FRACTINT
+  More video modes
+
+
+Version 5.1, 1/89
+
+  Save to disk\
+  New! Improved! (and Incompatible!) optional arguments format\
+  "Correct" initial image aspect ratio\
+  More video modes
+
+
+Version 4.0, 12/88
+
+  Mouse support (Mike Kaufman)\
+  Dynamic iteration limits\
+  Color cycling\
+  Dual-pass mode\
+  More video modes, including "tweaked" modes for IBM VGA and register-
+    compatible adapters
+
+
+Version 3.1, 11/88
+
+  Julia sets
+
+
+Version 2.1, 10/23/88 (the "debut" on CIS)
+
+  Video table\
+  CPU type detector
+
+
+Version 2.0, 10/10/88
+
+  Zoom and pan
+
+
+Version 1.0, 9/88
+
+  The original, blindingly fast, 386-specific 32-bit integer algorithm
+;
+;
+;
+~Data=INTRO_AUTHORS
+;
+; FRACTINT intro screen primary authors
+;
+ Current Primary Authors
+ Timothy Wegner         twegner@fractint.org
+ Jonathan Osuch         josuch@fractint.org
+ George Martin          ggmartin@compuserve.com
+ Robin Bussell          robin.b2@ukonline.co.uk
+ Contributing Authors
+
+
+
+; room for 14 authors at a time here
+
+
+
+
+
+
+
+
+
+
+
+ SPACEBAR toggles scrolling off/on
+   Copyright (C) 1990-2004 The Stone Soup Group.  Fractint may be freely copied
+   and distributed but may not be sold.  See help for more information.
+;
+;
+;
+~Data=INTRO_CREDITS
+;
+; FRACTINT intro screen contributing authors.
+;
+                  ...
+ Michael Abrash   360x480x256, 320x400x256 VGA video modes
+ Rees Acheson     [70674,2606] (Author of MandelB) pentium speedups
+ Joseph Albrecht  Tandy video, CGA video speedup
+ Kevin Allen      kevina@microsoft.com Finite attractor, bifurcation engine
+ Humberto Baptista humberto@insite.com.br passes=d, latoocarfian type
+ Steve Bennett    restore-from-disk logic
+ Rob Beyer        [71021,2074] Barnsley IFS, Lorenz fractals
+ Francois Blais   [70700,446] Lyapunov Fractals, LYAPUNOV.MAP
+ Scott D. Boyd    sdboyd56@swbell.net Xfractint user interface cleanup
+ Dennis Bragg     [75300,2456] DXF Raytracing output option
+ Pieter Branderhorst Past main author, solid guessing, menus
+ Juan J. Buhler   jbuhler@gidef.edu.ar Diffusion options, inverse Julia type
+ Mike Burkey      376x564x256, 400x564x256, and 832x612x256 VGA video modes
+ John Bridges     jbridges@netcom.com superVGA support, 360x480x256 mode
+ Fulvio Cappelli  [100025,1507] ants options and speedup
+ Charlie Chernohorsky fractint@oblivion.cz Virtual VESA screen sizes & speedup
+ Brian Corbino    [71611,702] Tandy 1000 640x200x16 video mode
+ Lee Crocker      lcrocker@netcom.com Fast Newton, Inversion, Decomposition..
+ Monte Davis      [71450,3542] Documentation
+ Paul De Leeuw    RDS (Random Dot Stereogram) Feature
+ Jean-Pierre Demailly Jean-Pierre.Demailly@ujf-grenoble.fr Xfractint truecolor
+ Chuck Ebbert     [76306,1226] cmprsd & sqrt logmap, fpu speedups, fast parser
+ Dan Farmer       [74431,1075] orbits enhancements
+ Richard Finegold [76701,153] 8/16/../256-Way Decomposition option
+ Frank Fussenegger Mandelbrot speedups
+ Sylvie Gallet    Sylvie_Gallet@compuserve.com Formula and math wizard
+ Mike Gelvin      [73337,520] Mandelbrot speedups
+ Luciano Genero   ants options and speedup
+ Lawrence Gozum   [73437,2372] Tseng 640x400x256 Video Mode
+ David Guenther   [70531,3525] Boundary Tracing algorithm
+ Jay Hill         ehill1@san.rr.com Windows notes
+ Mike Kaufman     [kaufman@mcs.com] mouse support, other features
+ Norman Hills     [71621,1352] Ranges option
+ Richard Hughes   [70461,3272] "inside=", "outside=" coloring options
+ Bill Jemison     [70400,2537] orbitsave=sound option
+ Damien M. Jones  dmj@fractalus.com Windows notes
+ Wesley Loewer    [loewer@net2000ke.com] Past main author, AP and much more.
+ Adrian Mariano   [adrian@cam.cornell.edu] Diffusion & L-Systems
+ Charles Marslett [75300,1636] VESA video and IIT math chip support
+ Andrew McCarthy  [andrewmc@netsoc.ucd.ie] European keyboard support
+ Joe McLain       [75066,1257] TARGA Support, color-map files
+ Bob Montgomery   [73357,3140] (Author of VPIC) Fast text I/O routines
+ Bret Mulvey      bret_x@hotmail.com plasma clouds
+ Roy Murphy       [76376,721] Lyapunov Fractals
+ Ethan Nagel      [70022,2552] Palette editor, integrated help/doc system
+ Yavuz Onder      yavuz@bnr.ca Postscript printer driver
+ Mark Peterson    [73642,1775] Past main author, parser, julibrot
+ Kyle Powell      [76704,12] 8514/A Support
+ Marc Reinig      [72410,77] Lots of 3D options
+ Michael Sargent  msargent@zoo.uvm.edu Volterra-Lotka, escher_julia fractals
+ Matt Saucier     [72371,3101] Printer Support
+ Herb Savage      [75260,217] 'inside=bof60', 'inside=bof61' options
+ Ken Shirriff     shirriff@eng.sun.com Quaternions, CA, Xfractint port
+ Lee Skinner      LeeHSkinner@compuserve.com Tetrate fractal types and more
+ Michael Snyder   [75300,642] julia inverse and Julia-In-A-Window using MIIM
+ Dean Souleles    [75115,1671] Hercules Support
+ Kurt Sowa        [73467,2013] Color Printer Support
+ Hugh Steele      cyclerange feature
+ Iain Stirling    Iain@flat2-2.freeserve.co.uk Inside=fmod and outside=fmod
+ John Swenson     [75300,2136] Postscript printer features
+ Chris Taylor     Floating&Fixed-point algorithm speedups, Tesseral Option
+ Scott Taylor     [72401,410] PostScript, Kam Torus, many fn types.
+ Rich Thomson     rich.thomson@xmission.com Xfractint truecolor support
+ Bert Tyler       bert_tyler@oef.com, Original Fractint Author
+ Bill Townsend    Mandelbrot Speedups
+ Paul Varner      [73237,441] Extended Memory support for Disk Video
+ Dave Warker      Integer Mandelbrot Fractals concept
+ Aaron Williams   Register-compatible 8514/A code
+ Phil Wilson      [76247,3145] Distance Estimator, Bifurcation fractals
+ Nicholas Wilt    Lsystem speedups
+ Richard Wilton   Tweaked VGA Video modes
+;
+;
