@@ -569,7 +569,7 @@ int passes_options(void)
    uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
 
    oldhelpmode = helpmode;
-   helpmode = HELPYOPTS;
+   helpmode = HELPPOPTS;
    i = fullscreen_prompt(hdg,k+1,choices,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {

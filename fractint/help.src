@@ -1696,6 +1696,10 @@ chip.
    Inversion parameters - see{ Inversion }\
 
    Color cycling range - see{ Color Cycling Commands }\
+;
+;
+~Topic=<P> Options Screen, Label=HELPPOPTS
+; This topic is online context-sensitive only.
 
    Periodicity - see{ Periodicity Logic }\
 
