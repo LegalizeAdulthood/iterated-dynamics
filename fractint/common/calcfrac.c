@@ -538,7 +538,8 @@ int calcfract(void)
    }
    if(!use_grid)
    {
-      usr_stdcalcmode = stdcalcmode = '1';
+      if (usr_stdcalcmode != 'o')
+         usr_stdcalcmode = stdcalcmode = '1';
    }
       
    init_misc();  /* set up some variables in parser.c */
