@@ -254,6 +254,7 @@ tidy:
 
 clean:
 	rm -f $(HOBJS) fractint.doc fractint.hlp hc xfractint
+	rm -f ./headers/helpdefs.h
 	cd common ; ${MAKE} clean
 	cd unix ; ${MAKE} clean
 
