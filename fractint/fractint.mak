@@ -16,13 +16,13 @@ DEFFILE  =
 LINKFILE = fractint.lnk
 !endif
 
-HFD=./headers
+HFD=../headers
 
 
 # Next is a pseudo-target for nmake/nmk.  It just generates harmless
 # warnings with make.
 
-all : fractint.exe
+all : common fractint.exe
 
 .asm.obj:
 	$(AS) /W3 $*; >> f_errs.txt
@@ -45,39 +45,14 @@ Optsize = $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) $(OptS) $*.c >> f_errs.txt
 Optnoalias = $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) /DTESTFP $(OptN) $*.c >> f_errs.txt
 !endif
 
-lorenz.obj : lorenz.c fractint.h fractype.h
-
-lsys.obj : lsys.c fractint.h lsys.h
+common :
+	cd .\common
+	$(MAKE) all /I$(HDF) /V /F common.mak
+#	cd ..
 
 lsysa.obj: lsysa.asm
 
-plot3d.obj : plot3d.c fractint.h fractype.h
-	$(Optnoalias)
-
-3d.obj : 3d.c fractint.h
-
-fractals.obj : fractals.c fractint.h fractype.h mpmath.h helpdefs.h
-
-fractalp.obj : fractalp.c fractint.h fractype.h mpmath.h helpdefs.h
-
-fractalb.obj : fractalb.c fractint.h fractype.h big.h helpdefs.h
-
-calcfrac.obj : calcfrac.c fractint.h mpmath.h
-
-miscfrac.obj : miscfrac.c fractint.h mpmath.h
-
-fracsubr.obj : fracsubr.c fractint.h helpdefs.h
-	$(Optnoalias)
-       
-jiim.obj : jiim.c helpdefs.h
-
 fracsuba.obj : fracsuba.asm
-
-parser.obj : parser.c fractint.h mpmath.h
-	$(Optnoalias)
-
-parserfp.obj : parserfp.c fractint.h mpmath.h
-	$(Optnoalias)
 
 parsera.obj: parsera.asm
 # for MASM
@@ -102,120 +77,28 @@ calmanfp.obj : calmanfp.asm
 calmanp5.obj : calmanp5.asm
 	$(AS) /W3 calmanp5; >> f_errs.txt
 
-cmdfiles.obj : cmdfiles.c fractint.h
-	$(Optsize)
-
-loadfile.obj : loadfile.c fractint.h fractype.h
-	$(Optsize)
-
-loadfdos.obj : loadfdos.c fractint.h helpdefs.h
-	$(Optsize)
-
-decoder.obj : decoder.c fractint.h
-
-diskvid.obj : diskvid.c fractint.h
-
-encoder.obj : encoder.c fractint.h fractype.h
-
-fr8514a.obj : fr8514a.asm
-
 hgcfra.obj : hgcfra.asm
 
-fractint.obj : fractint.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
-
-framain2.obj : framain2.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
+fr8514a.obj : fr8514a.asm
 
 video.obj : video.asm
 
 general.obj : general.asm
 
-gifview.obj : gifview.c fractint.h
-
-tgaview.obj : tgaview.c fractint.h targa_lc.h port.h
-
-help.obj : help.c fractint.h helpdefs.h helpcom.h
-	$(Optsize)
-
-intro.obj : intro.c fractint.h helpdefs.h
-	$(Optsize)
-
-line3d.obj : line3d.c fractint.h
-
 newton.obj : newton.asm
 	$(AS) /e newton;
-
-printer.obj : printer.c fractint.h
-	$(Optsize)
-
-prompts1.obj : prompts1.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
-
-prompts2.obj : prompts2.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
-
-rotate.obj : rotate.c fractint.h helpdefs.h
-	$(Optsize)
-
-editpal.obj : editpal.c fractint.h
-	$(Optsize)
-
-testpt.obj: testpt.c fractint.h
-
-targa.obj : targa.c targa.h fractint.h
-
-loadmap.obj : loadmap.c targa.h fractint.h
-	$(Optsize)
-
-yourvid.obj : yourvid.c
 
 fpu387.obj : fpu387.asm
 
 fpu087.obj : fpu087.asm
 	$(AS) /e /W3 fpu087; >> f_errs.txt
 
-f16.obj : f16.c targa_lc.h
-
-mpmath_c.obj : mpmath_c.c mpmath.h
-
-hcmplx.obj : hcmplx.c fractint.h
-
 mpmath_a.obj : mpmath_a.asm
-
-jb.obj : jb.c fractint.h helpdefs.h
-
-zoom.obj : zoom.c fractint.h
-	$(Optnoalias)
-#	$(Optsize)
-
-miscres.obj : miscres.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
-
-miscovl.obj : miscovl.c fractint.h fractype.h helpdefs.h
-	$(Optsize)
-
-realdos.obj : realdos.c fractint.h helpdefs.h
-	$(Optsize)
-
-tplus.obj : tplus.c tplus.h
 
 tplus_a.obj : tplus_a.asm
 
 lyapunov.obj : lyapunov.asm
 	$(AS) /e /W3 lyapunov; >> f_errs.txt
-
-slideshw.obj : slideshw.c
-	$(Optsize)
-
-biginit.obj : biginit.c big.h
-	$(Optnoalias)
-
-bignum.obj : bignum.c big.h
-	$(Optnoalias)
-
-bigflt.obj : bigflt.c big.h
-	$(Optnoalias)
 
 bignuma.obj : bignuma.asm big.inc
 # for MASM
@@ -223,37 +106,11 @@ bignuma.obj : bignuma.asm big.inc
 # for QuickAssembler
 #   $(AS) /FPi bignuma.asm >> f_errs.txt
 
-# only used for non ASM version
-#bignumc.obj : bignumc.c big.h
-#        $(Optnoalias)
-
-stereo.obj : stereo.c helpdefs.h 
-
-ant.obj : ant.c helpdefs.h
-
-frasetup.obj : frasetup.c 
-
-lsysf.obj : lsysf.c fractint.h lsys.h
-
 lsysaf.obj: lsysaf.asm
 # for MASM
 	$(AS) /e /W3 lsysaf.asm; >> f_errs.txt
 # for QuickAssembler
 #   $(AS) /FPi lsysaf.asm
-
-memory.obj : memory.c
-
-soi.obj : soi.c
-
-soi1.obj : soi1.c
-
-evolve.obj : evolve.c fractint.h
-        $(Optnoalias)
-
-sound.obj  : sound.c
-	$(Optnoalias)
-
-uclock.obj  : uclock.c uclock.h
 
 fractint.exe : fractint.obj help.obj loadfile.obj encoder.obj gifview.obj \
      general.obj calcmand.obj calmanfp.obj fractals.obj fractalp.obj calcfrac.obj \
