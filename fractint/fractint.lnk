@@ -1,12 +1,19 @@
-/dynamic:600 /info fractint+general+fractals+fractalp+fracsubr+fracsuba+
-fpu087+fpu387+mpmath_c+mpmath_a+jb+hcmplx+
-newton+fr8514a+hgcfra+diskvid+tplus+tplus_a+
-targa+loadmap+video+yourvid+parser+parserfp+parsera+lsys+lsysa+lsysf+lsysaf+
-lorenz+plot3d+3d+zoom+miscres+realdos+
-tgaview+f16+slideshw+gifview+decoder+
-cmdfiles+help+intro+prompts1+prompts2+calmanp5+
-calcfrac+miscfrac+calcmand+calmanfp+testpt+lyapunov+
-encoder+loadfile+loadfdos+line3d+stereo+
-rotate+editpal+jiim+printer+miscovl+framain2+
-biginit+bignum+bigflt+bignuma+memory+evolve+soi+soi1+
-fractalb+ant+frasetup+sound+uclock,,,,fractint.def
+/dynamic:600 /info .\common\fractint+
+.\common\3d+.\common\ant+.\common\bigflt+.\common\biginit+.\common\bignum+
+.\common\calcfrac+.\common\cmdfiles+.\common\decoder+.\common\diskvid+
+.\common\editpal+.\common\encoder+.\common\evolve+.\common\f16+
+.\common\fracsubr+.\common\fractals+.\common\fractalp+.\common\fractalb+
+.\common\framain2+.\common\frasetup+.\common\gifview+.\common\hcmplx+
+.\common\help+.\common\intro+.\common\jb+.\common\jiim+.\common\line3d+
+.\common\loadfile+.\common\loadfdos+.\common\loadmap+.\common\lorenz+
+.\common\lsys+.\common\lsysf+.\common\memory+.\common\miscfrac+
+.\common\miscovl+.\common\miscres+.\common\mpmath_c+.\common\parser+
+.\common\parserfp+.\common\plot3d+.\common\printer+.\common\prompts1+
+.\common\prompts2+.\common\realdos+.\common\rotate+.\common\slideshw+
+.\common\soi+.\common\soi1+.\common\stereo+.\common\targa+.\common\testpt+
+.\common\tgaview+.\common\tplus+.\common\yourvid+.\common\zoom+
+.\dos\sound+.\dos\uclock+.\dos\bignuma+.\dos\calcmand+.\dos\calmanp5+
+.\dos\calmanfp+.\dos\fpu087+.\dos\fpu387+.\dos\fr8514a+.\dos\fracsuba+
+.\dos\general+.\dos\hgcfra+.\dos\lsysa+.\dos\lsysaf+.\dos\lyapunov+
+.\dos\mpmath_a+.\dos\newton+.\dos\parsera+.\dos\tplus_a+
+.\dos\video.obj,,,,fractint.def

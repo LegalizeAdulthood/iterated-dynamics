@@ -16,13 +16,14 @@ DEFFILE  =
 LINKFILE = fractint.lnk
 !endif
 
-HFD=../headers
-
+HFD=.\headers
+COMDIR = .\common
+DOSDIR = .\dos
 
 # Next is a pseudo-target for nmake/nmk.  It just generates harmless
 # warnings with make.
 
-all : common fractint.exe
+all : common dos fractint.exe
 
 .asm.obj:
 	$(AS) /W3 $*; >> f_errs.txt
@@ -46,87 +47,41 @@ Optnoalias = $(CC) /Zi /AM /W4 /FPi /c /I$(HDF) /DTESTFP $(OptN) $*.c >> f_errs.
 !endif
 
 common :
-	cd .\common
-	$(MAKE) all /I$(HDF) /V /F common.mak
-#	cd ..
+	cd $(COMDIR)
+	$(MAKE) all /F common.mak
+	cd ..
 
-lsysa.obj: lsysa.asm
+dos :
+	cd $(DOSDIR)
+	$(MAKE) all /F dos.mak
+	cd ..
 
-fracsuba.obj : fracsuba.asm
-
-parsera.obj: parsera.asm
-# for MASM
-!ifndef DEBUG
-	$(AS) /W3 parsera; >> f_errs.txt
-#	$(AS) /e parsera;
-!else
-	$(AS) /e /Zi parsera;
-!endif
-# for QuickAssembler
-#   $(AS) /FPi parsera.asm
-
-calcmand.obj : calcmand.asm
-
-calmanfp.obj : calmanfp.asm
-# for MASM
-	$(AS) /e /W3 calmanfp; >> f_errs.txt
-#	$(AS) /e calmanfp;
-# for QuickAssembler
-#   $(AS) /FPi calmanfp.asm
-
-calmanp5.obj : calmanp5.asm
-	$(AS) /W3 calmanp5; >> f_errs.txt
-
-hgcfra.obj : hgcfra.asm
-
-fr8514a.obj : fr8514a.asm
-
-video.obj : video.asm
-
-general.obj : general.asm
-
-newton.obj : newton.asm
-	$(AS) /e newton;
-
-fpu387.obj : fpu387.asm
-
-fpu087.obj : fpu087.asm
-	$(AS) /e /W3 fpu087; >> f_errs.txt
-
-mpmath_a.obj : mpmath_a.asm
-
-tplus_a.obj : tplus_a.asm
-
-lyapunov.obj : lyapunov.asm
-	$(AS) /e /W3 lyapunov; >> f_errs.txt
-
-bignuma.obj : bignuma.asm big.inc
-# for MASM
-        $(AS) /e /W3 bignuma.asm; >> f_errs.txt
-# for QuickAssembler
-#   $(AS) /FPi bignuma.asm >> f_errs.txt
-
-lsysaf.obj: lsysaf.asm
-# for MASM
-	$(AS) /e /W3 lsysaf.asm; >> f_errs.txt
-# for QuickAssembler
-#   $(AS) /FPi lsysaf.asm
-
-fractint.exe : fractint.obj help.obj loadfile.obj encoder.obj gifview.obj \
-     general.obj calcmand.obj calmanfp.obj fractals.obj fractalp.obj calcfrac.obj \
-     testpt.obj decoder.obj rotate.obj yourvid.obj prompts1.obj prompts2.obj parser.obj \
-     parserfp.obj parsera.obj diskvid.obj line3d.obj 3d.obj newton.obj cmdfiles.obj \
-     intro.obj slideshw.obj jiim.obj miscfrac.obj \
-     targa.obj loadmap.obj printer.obj fracsubr.obj fracsuba.obj \
-     video.obj tgaview.obj f16.obj fr8514a.obj loadfdos.obj stereo.obj\
-     hgcfra.obj fpu087.obj fpu387.obj mpmath_c.obj mpmath_a.obj \
-     lorenz.obj plot3d.obj jb.obj zoom.obj miscres.obj miscovl.obj \
-     realdos.obj lsys.obj lsysa.obj editpal.obj tplus.obj tplus_a.obj \
-     lyapunov.obj fractint.hlp hcmplx.obj \
-     biginit.obj bignum.obj bigflt.obj bignuma.obj \
-     fractalb.obj ant.obj frasetup.obj framain2.obj \
-     lsysf.obj lsysaf.obj memory.obj evolve.obj soi.obj \
-     soi1.obj calmanp5.obj sound.obj uclock.obj\
+fractint.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
+     $(COMDIR)\biginit.obj $(COMDIR)\bignum.obj $(COMDIR)\calcfrac.obj \
+     $(COMDIR)\cmdfiles.obj $(COMDIR)\decoder.obj $(COMDIR)\diskvid.obj \
+     $(COMDIR)\editpal.obj $(COMDIR)\encoder.obj $(COMDIR)\evolve.obj \
+     $(COMDIR)\f16.obj $(COMDIR)\fracsubr.obj $(COMDIR)\fractals.obj \
+     $(COMDIR)\fractalp.obj $(COMDIR)\fractalb.obj $(COMDIR)\fractint.obj \
+     $(COMDIR)\framain2.obj $(COMDIR)\frasetup.obj $(COMDIR)\gifview.obj \
+     $(COMDIR)\hcmplx.obj $(COMDIR)\help.obj $(COMDIR)\intro.obj \
+     $(COMDIR)\jb.obj $(COMDIR)\jiim.obj $(COMDIR)\line3d.obj \
+     $(COMDIR)\loadfile.obj $(COMDIR)\loadfdos.obj $(COMDIR)\loadmap.obj \
+     $(COMDIR)\lorenz.obj $(COMDIR)\lsys.obj $(COMDIR)\lsysf.obj \
+     $(COMDIR)\memory.obj $(COMDIR)\miscfrac.obj $(COMDIR)\miscovl.obj \
+     $(COMDIR)\miscres.obj $(COMDIR)\mpmath_c.obj $(COMDIR)\parser.obj \
+     $(COMDIR)\parserfp.obj $(COMDIR)\plot3d.obj $(COMDIR)\printer.obj \
+     $(COMDIR)\prompts1.obj $(COMDIR)\prompts2.obj $(COMDIR)\realdos.obj \
+     $(COMDIR)\rotate.obj $(COMDIR)\slideshw.obj $(COMDIR)\soi.obj \
+     $(COMDIR)\soi1.obj $(COMDIR)\stereo.obj $(COMDIR)\targa.obj \
+     $(COMDIR)\testpt.obj $(COMDIR)\tgaview.obj $(COMDIR)\tplus.obj \
+     $(COMDIR)\yourvid.obj $(COMDIR)\zoom.obj \
+     $(DOSDIR)\sound.obj $(DOSDIR)\uclock.obj \
+     $(DOSDIR)\bignuma.obj $(DOSDIR)\calcmand.obj $(DOSDIR)\calmanp5.obj \
+     $(DOSDIR)\calmanfp.obj $(DOSDIR)\fpu087.obj $(DOSDIR)\fpu387.obj \
+     $(DOSDIR)\fr8514a.obj $(DOSDIR)\fracsuba.obj $(DOSDIR)\general.obj \
+     $(DOSDIR)\hgcfra.obj $(DOSDIR)\lsysa.obj $(DOSDIR)\lsysaf.obj \
+     $(DOSDIR)\lyapunov.obj $(DOSDIR)\mpmath_a.obj $(DOSDIR)\newton.obj \
+     $(DOSDIR)\parsera.obj $(DOSDIR)\tplus_a.obj $(DOSDIR)\video.obj \
      $(DEFFILE) $(LINKFILE)
 !ifndef DEBUG
 	$(LINKER) /ST:8800 /SE:160 /PACKC /F /NOE @$(LINKFILE) > foo
