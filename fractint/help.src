@@ -276,8 +276,15 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.3.01 is an update of Fractint 20.0 based on the developer's
-  version 20.3.00.  New features include:
+Version 20.3.02 is an update of Fractint 20.0 based on the developer's
+  version 20.3.01.  New features include:
+
+Patch 2\
+Fixed the problem with a left mouse click not bringing up the zoom box
+  after an image is completed.
+
+  Incorporated Gerald Dobiasovsky's fix for the julibrot type when used
+  with quat and hypercomplex.
 
 Patch 1\
 Fixed the float bailout for the lambdafn fractal type when the EXP function
