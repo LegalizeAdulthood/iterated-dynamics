@@ -1283,7 +1283,6 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
      char thisname[FILE_MAX_PATH];
      char tmpname[FILE_MAX_PATH];
      char thisext[FILE_MAX_EXT];
-
      for(;;) {
          dirEntry = readdir(currdir);
          if (dirEntry == NULL) {
@@ -2333,7 +2332,6 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    /* no dot or slash so assume a file */
    if(strchr(newfilename,'.')==NULL && strchr(newfilename,SLASHC) == NULL)
       isafile=1;
-
    if((isadir = isadirectory(newfilename)) != 0)
       fix_dirname(newfilename);
 #if 0
