@@ -460,7 +460,7 @@ void save_palette()
 int load_palette(void)
 {
    int i,oldhelpmode;
-   char filename[80];
+   char filename[FILE_MAX_PATH];
    oldhelpmode = helpmode;
    strcpy(filename,MAP_name);
    stackscreen();

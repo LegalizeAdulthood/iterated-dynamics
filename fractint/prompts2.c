@@ -1283,6 +1283,7 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
      char thisname[FILE_MAX_PATH];
      char tmpname[FILE_MAX_PATH];
      char thisext[FILE_MAX_EXT];
+
      for(;;) {
          dirEntry = readdir(currdir);
          if (dirEntry == NULL) {
@@ -1291,22 +1292,22 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
              return -1;
          } else if (dirEntry->d_ino != 0) {
              splitpath(dirEntry->d_name,NULL,NULL,thisname,thisext);
-             if ((searchname[0]=='*' || strcmp(searchname,thisname)==0) &&
-                     (searchext[0]=='*' || strcmp(searchext,thisext)==0)) {
-                 strncpy(DTA.filename,dirEntry->d_name,13);
-                 DTA.filename[12]='\0';
-                 strcpy(tmpname,searchdir);
-                 strcat(tmpname,"/");
-                 strcat(tmpname,dirEntry->d_name);
-                 stat(tmpname,&sbuf);
-                 if ((sbuf.st_mode&S_IFMT)==S_IFREG) {
-                     DTA.attribute = 0;
-                 } else if ((sbuf.st_mode&S_IFMT)==S_IFDIR) {
-                     DTA.attribute = SUBDIR;
-                 } else {
-                     continue;
-                 }
-                 DTA.size = sbuf.st_size;
+             strncpy(DTA.filename,dirEntry->d_name,13);
+             DTA.filename[12]='\0';
+             strcpy(tmpname,searchdir);
+             strcat(tmpname,dirEntry->d_name);
+             stat(tmpname,&sbuf);
+             DTA.size = sbuf.st_size;
+             if ((sbuf.st_mode&S_IFMT)==S_IFREG &&
+                 (searchname[0]=='*' || strcmp(searchname,thisname)==0) &&
+                 (searchext[0]=='*' || strcmp(searchext,thisext)==0)) {
+                 DTA.attribute = 0;
+                 return 0;
+             }
+	     else if (((sbuf.st_mode&S_IFMT)==S_IFDIR) &&
+                 ((searchname[0]=='*' || searchext[0]=='*') ||
+                 (strcmp(searchname,thisname)==0))) {
+                 DTA.attribute = SUBDIR;
                  return 0;
              }
          }
@@ -1699,22 +1700,22 @@ static int filename_speedstr(int row, int col, int vid,
 
 int isadirectory(char *s)
 {
-#ifdef _MSC_VER
    int len;
    char sv;
+#ifdef _MSC_VER
    unsigned attrib = 0;
 #endif
    despace(s);  /* scrunch out white space */
    if(strchr(s,'*') || strchr(s,'?'))
       return(0); /* for my purposes, not a directory */
 
-#ifdef _MSC_VER
    len = strlen(s);
    if(len > 0)
       sv = s[len-1];   /* last char */
    else
       sv = 0;
 
+#ifdef _MSC_VER
    if(_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
    {
       return(1);  /* not a directory or doesn't exist */
@@ -1735,15 +1736,25 @@ int isadirectory(char *s)
    if(fr_findfirst(s) != 0) /* couldn't find it */
    {
       /* any better ideas?? */
-      if(strchr(s,SLASHC)) /* we'll guess it is a directory */
+     if(sv == SLASHC) /* we'll guess it is a directory */
          return(1);
       else
          return(0);  /* no slashes - we'll guess it's a file */
    }
-   else if(DTA.attribute & SUBDIR)
-      return(1);   /* we're SURE it's a directory */
-   else
-      return(0);
+   else if((DTA.attribute & SUBDIR) != 0) {
+      if(sv == SLASHC) {
+      /* strip trailing slash and try again */
+         s[len-1] = 0;
+         if(fr_findfirst(s) != 0) /* couldn't find it */
+             return(0);
+         else if((DTA.attribute & SUBDIR) != 0)
+             return(1);   /* we're SURE it's a directory */
+         else
+             return(0);
+      } else
+         return(1);   /* we're SURE it's a directory */
+   }
+   return(0);
 #endif
 }
 
@@ -2322,6 +2333,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    /* no dot or slash so assume a file */
    if(strchr(newfilename,'.')==NULL && strchr(newfilename,SLASHC) == NULL)
       isafile=1;
+
    if((isadir = isadirectory(newfilename)) != 0)
       fix_dirname(newfilename);
 #if 0

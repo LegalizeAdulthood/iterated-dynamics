@@ -43,6 +43,7 @@ static void parse_textcolors(char *value);
 static int  parse_colors(char *value);
 static int  parse_printer(char *value);
 static int  get_bf(bf_t, char *);
+static int isabigfloat(char *str);
 
 /* variables defined by the command line/files processor */
 int     stoppass=0;             /* stop at this guessing pass early */
@@ -1070,7 +1071,8 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       /* using arbitrary precision and above failed */
       else if (((int)strlen(argptr) > 513)  /* very long command */
                  || (totparms > 0 && floatval[totparms-1] == FLT_MAX
-                 && totparms < 6)) {
+                     && totparms < 6)
+                 || isabigfloat(argptr)) {
          ++floatparms;
          floatval[totparms] = FLT_MAX;
          floatvalstr[totparms]=argptr;
@@ -3157,3 +3159,28 @@ void dopause(int action)
       break;
    }
 }
+
+/* 
+   Crude function to detect a floating point number. Intended for
+   use with arbitrary precision.
+*/
+static int isabigfloat(char *str)
+{
+   /* [+|-]numbers][.]numbers[+|-][e|g]numbers */
+   int result=1;
+   char *s = str;
+   int numdot=0;
+   int nume=0;
+   int numsign=0;
+   while(*s != 0 && *s != '/' && *s != ' ')
+   {
+      if(*s == '-' || *s == '+') numsign++;
+      else if(*s == '.') numdot++;
+      else if(*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G') nume++;
+      else if(!isdigit(*s)) {result=0; break;}
+      s++;
+   }
+   if(numdot > 1 || numsign > 2 || nume > 1) result=0;
+   return(result);
+}
+
