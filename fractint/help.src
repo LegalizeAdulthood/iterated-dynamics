@@ -17,7 +17,7 @@
    { Introduction }                         { Distribution of Fractint }
    { Conditions on Use }                    { Contacting the Authors }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 20.3.X }               { A Word About the Authors }
+   { New Features in 20.4.X }               { A Word About the Authors }
                                           { Other Fractal Products }
    { Display Mode Commands }
    { Color Cycling Commands }               { Fractint on Unix }
@@ -38,7 +38,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 20.3.X", FF}
+{     , 0, "New Features in 20.4.X", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Fractint Commands, FF}
@@ -270,16 +270,38 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ;
-~Topic=New Features in 20.3.X
+~Topic=New Features in 20.4.X
 This is a developer's "incremental" release. These incremental releases
 typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.3.02 is an update of Fractint 20.0 based on the developer's
-  version 20.3.01.  New features include:
+Version 20.4.0 is an update of Fractint 20.0 based on the developer's
+  version 20.3.02.  New features include:
 
-Patch 2\
+Version 20.4.0\
+Incremented the version number to accommodate backwards compatibility for
+  the mandel based per-pixel routines that were not setting the Y variable.
+
+  Added a passes=o option that draws an image by plotting the orbits of the
+  escape time fractals.  This technique takes the same parameters that draw
+  an image with "passes=1" and no symmetry and plots the orbits for each
+  pixel.  See {Drawing Method}.
+
+  Cleaned up panning logic.
+
+  Cleaned up docs.
+
+Xfractint fixes:
+  Fixed the newton and newtbasin types in Xfractint so they would work
+  without using the FPU=387 option.
+
+  Fixed the Xfractint mandelbrot code in calmanfp.c so that the image
+  generated matched the one produced by the StandardFractal() routine.
+
+  Fixed the outside=sum option when used with the mandel fractal type.
+
+Patch 2 to Version 20.3.0\
 Fixed the inability to reload a PAR created from an arbitrary precision
   fractal with a large magnification. 
 

@@ -2056,7 +2056,11 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (far_strcmp(variable,s_float) == 0 ) {        /* float=? */
       if (yesnoval[0] < 0) goto badarg;
+#ifndef XFRACT
       usr_floatflag = (char)yesnoval[0];
+#else
+      usr_floatflag = 1; /* must use floating point */
+#endif
       return 3;
       }
 
