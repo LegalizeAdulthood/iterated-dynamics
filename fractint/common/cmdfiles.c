@@ -442,10 +442,10 @@ char s_atanh [] =           "atanh";
 char s_cabs [] =            "cabs";
 char s_sqrt [] =            "sqrt";
 char s_ismand [] =          "ismand";
+char s_mathtolerance[] =    "mathtolerance";
 static FCODE s_bfdigits []     = "bfdigits";
 static FCODE s_recordcolors [] = "recordcolors";
 static FCODE s_maxlinelength []= "maxlinelength";
-static FCODE s_mathtolerance[] = "mathtolerance";
 static FCODE s_minstack[]      = "minstack";
 static FCODE s_lzw []          = "tweaklzw";
 static FCODE s_sstoolsini []   = "sstools.ini";
@@ -778,6 +778,9 @@ static void initvars_fractal()          /* init vars affecting calculation */
    oymin = curfractalspecific->ymin;
    oymax = curfractalspecific->ymax;
    oy3rd = curfractalspecific->ymin;
+
+   math_tol[0] = 0.05;
+   math_tol[1] = 0.05;
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
@@ -1675,7 +1678,9 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       }
 
    if (far_strcmp(variable,s_mathtolerance) == 0) {      /* mathtolerance=? */
-      if (totparms >= 1) math_tol[0] = floatval[0];
+      if(charval[0] == '/')
+          ; /* leave math_tol[0] at the default value */
+      else if (totparms >= 1) math_tol[0] = floatval[0];
       if (totparms >= 2) math_tol[1] = floatval[1];
       return 0;
       }
