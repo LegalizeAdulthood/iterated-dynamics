@@ -709,6 +709,7 @@ extern char                  s_savename[];
 extern char                  s_savetime[];
 extern char                  s_scalemap[];
 extern char                  s_scalexyz[];
+extern char                  s_screencoords[];
 extern char                  s_showbox[];
 extern char                  s_showdot[];
 extern char                  s_showorbit[];

@@ -367,6 +367,7 @@ char s_savename[] =         "savename";
 char s_savetime[] =         "savetime";
 char s_scalemap[] =         "scalemap";
 char s_scalexyz[] =         "scalexyz";
+char s_screencoords[] =     "screencoords";
 char s_showbox[] =          "showbox";
 char s_showdot[] =          "showdot";
 char s_showorbit[] =        "showorbit";
@@ -767,6 +768,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    rotate_lo = 1; rotate_hi = 255;      /* color cycling default range */
    orbit_delay = 0;                     /* full speed orbits */
    orbit_interval = 1;                  /* plot all orbits */
+   keep_scrn_coords = 0;
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
@@ -1937,6 +1939,12 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          oy3rd =      floatval[5];
          }
       set_orbit_corners = 1;
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_screencoords) == 0 ) {     /* screencoords=?   */
+      if (yesnoval[0] < 0) goto badarg;
+      keep_scrn_coords = yesnoval[0];
       return 1;
       }
 
