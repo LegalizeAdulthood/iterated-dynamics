@@ -2220,7 +2220,16 @@ static void _fastcall save_history_info()
    current.ismand          = (short)ismand;
    current.closeprox       = closeprox;
    current.nobof           = (short)nobof;
+   current.orbit_delay     = (short)orbit_delay;
    current.orbit_interval  = orbit_interval;
+   current.oxmin           = oxmin;
+   current.oxmax           = oxmax;
+   current.oymin           = oymin;
+   current.oymax           = oymax;
+   current.ox3rd           = ox3rd;
+   current.oy3rd           = oy3rd;
+   current.keep_scrn_coords= (short)keep_scrn_coords;
+   current.drawmode        = drawmode;
    far_memcpy(current.dac,dacbox,256*3);
    switch(fractype)
    {
@@ -2389,7 +2398,16 @@ static void _fastcall restore_history_info(int i)
    ismand = last.ismand;
    closeprox = last.closeprox;
    nobof = last.nobof;
+   orbit_delay = last.orbit_delay;
    orbit_interval = last.orbit_interval;
+   oxmin = last.oxmin;
+   oxmax = last.oxmax;
+   oymin = last.oymin;
+   oymax = last.oymax;
+   ox3rd = last.ox3rd;
+   oy3rd = last.oy3rd;
+   keep_scrn_coords = last.keep_scrn_coords;
+   drawmode = last.drawmode;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
    far_memcpy(dacbox,last.dac,256*3);
    far_memcpy(olddacbox,last.dac,256*3);
