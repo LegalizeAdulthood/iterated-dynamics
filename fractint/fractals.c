@@ -2638,7 +2638,8 @@ int long_mandel_per_pixel(void)
    /* barnsleym1 */
    /* barnsleym2 */
    linit.x = lxpixel();
-   linit.y = lypixel();
+   if(save_release >= 2004)
+      linit.y = lypixel();
 
    if(invert)
    {
@@ -2752,7 +2753,8 @@ int mandel_per_pixel(void)
    }
    else {
       linit.x = lxpixel();
-      linit.y = lypixel();
+      if(save_release >= 2004)
+         linit.y = lypixel();
    }
    switch (fractype)
      {
@@ -2811,7 +2813,8 @@ int marksmandel_per_pixel()
    }
    else {
       linit.x = lxpixel();
-      linit.y = lypixel();
+      if(save_release >= 2004)
+         linit.y = lypixel();
    }
 
    if(useinitorbit == 1)
@@ -3177,7 +3180,8 @@ int long_mandphoenix_per_pixel(void)
 {
 #ifndef XFRACT
    linit.x = lxpixel();
-   linit.y = lypixel();
+   if(save_release >= 2004)
+      linit.y = lypixel();
 
    if(invert)
    {

@@ -1382,9 +1382,12 @@ static int sticky_orbits(void)
 {
 
    got_status = 6; /* for <tab> screen */
+   totpasses = 1;
 
-   if (plotorbits2dsetup() == -1)
+   if (plotorbits2dsetup() == -1) {
+      stdcalcmode = 'g';
       return(-1);
+   }
 
    row = yybegin;
    col = xxbegin;

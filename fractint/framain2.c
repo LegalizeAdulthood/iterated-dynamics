@@ -771,7 +771,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case 'f':                    /* floating pt toggle           */
       if (usr_floatflag == 0)
          usr_floatflag = 1;
-      else
+      else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
       initmode = adapter;
       return(IMAGESTART);
@@ -1495,7 +1495,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case 'f':                    /* floating pt toggle           */
       if (usr_floatflag == 0)
          usr_floatflag = 1;
-      else
+      else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
       initmode = adapter;
       return(IMAGESTART);

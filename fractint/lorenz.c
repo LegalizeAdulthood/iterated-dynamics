@@ -1940,6 +1940,18 @@ static int o_color = 1;
 
 int plotorbits2dsetup(void)
 {
+
+#ifndef XFRACT
+   if (curfractalspecific->isinteger != 0) {
+      int tofloat;
+      if ((tofloat = curfractalspecific->tofloat) == NOFRACTAL)
+         return(-1);
+      floatflag = usr_floatflag = 1; /* force floating point */
+      curfractalspecific = &fractalspecific[tofloat];
+      fractype = tofloat;
+   }
+#endif
+
    PER_IMAGE();
 
    /* setup affine screen coord conversion */
@@ -1994,6 +2006,7 @@ int plotorbits2dfloat(void)
 
        if (count < orbit_delay || count%orbit_interval)
           continue;  /* don't plot it */
+
        /* else count >= orbit_delay and we want to plot it */
        col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
        row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
