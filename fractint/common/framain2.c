@@ -653,6 +653,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          set_current_params();
          odpx=odpy=newodpx=newodpy=0;
          fiddlefactor = 1;           /* reset param evolution stuff */
+         set_orbit_corners = 0;
          param_history(0); /* save history */
          if (i == 0)
          {
