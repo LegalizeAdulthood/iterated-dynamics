@@ -1379,10 +1379,10 @@ static void count_to_int (long unsigned C, int *r, int *l) {
 }
 */
 
+char drawmode = 'r';
+
 static int sticky_orbits(void)
 {
-   char drawmode;
-
    got_status = 6; /* for <tab> screen */
    totpasses = 1;
 
@@ -1391,12 +1391,127 @@ static int sticky_orbits(void)
       return(-1);
    }
 
-   drawmode = 'r';
    switch (drawmode)
    {
    case 'l':
-   /* draw a line, need end points and number of divisions */
-   /* see drawlines in zoom.c */
+   {
+      int dX, dY;                     /* vector components */
+      int final,                      /* final row or column number */
+          G,                  /* used to test for new row or column */
+          inc1,           /* G increment when row or column doesn't change */
+          inc2;               /* G increment when row or column changes */
+      char pos_slope;
+
+      dX = ixstop - ixstart;                   /* find vector components */
+      dY = iystop - iystart;
+      pos_slope = (char)(dX > 0);                   /* is slope positive? */
+      if (dY < 0)
+      pos_slope = (char)!pos_slope;
+      if (abs (dX) > abs (dY))                /* shallow line case */
+      {
+         if (dX > 0)         /* determine start point and last column */
+         {
+            col = ixstart;
+            row = iystart;
+            final = ixstop;
+         }
+         else
+         {
+            col = ixstop;
+            row = iystop;
+            final = ixstart;
+         }
+         inc1 = 2 * abs (dY);            /* determine increments and initial G */
+         G = inc1 - abs (dX);
+         inc2 = 2 * (abs (dY) - abs (dX));
+         if (pos_slope)
+            while (col <= final)    /* step through columns checking for new row */
+            {
+               if (plotorbits2dfloat() == -1)
+               {
+                 add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                 return(-1); /* interrupted */
+               }
+               col++;
+               if (G >= 0)             /* it's time to change rows */
+               {
+                  row++;      /* positive slope so increment through the rows */
+                  G += inc2;
+               }
+               else                        /* stay at the same row */
+                  G += inc1;
+            }
+         else
+            while (col <= final)    /* step through columns checking for new row */
+            {
+               if (plotorbits2dfloat() == -1)
+               {
+                 add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                 return(-1); /* interrupted */
+               }
+               col++;
+               if (G > 0)              /* it's time to change rows */
+               {
+                  row--;      /* negative slope so decrement through the rows */
+                  G += inc2;
+               }
+               else                        /* stay at the same row */
+                  G += inc1;
+            }
+      }   /* if |dX| > |dY| */
+      else                            /* steep line case */
+      {
+        if (dY > 0)             /* determine start point and last row */
+        {
+            col = ixstart;
+            row = iystart;
+            final = iystop;
+        }
+        else
+        {
+            col = ixstop;
+            row = iystop;
+            final = iystart;
+        }
+        inc1 = 2 * abs (dX);            /* determine increments and initial G */
+        G = inc1 - abs (dY);
+        inc2 = 2 * (abs (dX) - abs (dY));
+        if (pos_slope)
+           while (row <= final)    /* step through rows checking for new column */
+           {
+              if (plotorbits2dfloat() == -1)
+              {
+                add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                return(-1); /* interrupted */
+              }
+              row++;
+              if (G >= 0)                 /* it's time to change columns */
+              {
+                  col++;  /* positive slope so increment through the columns */
+                  G += inc2;
+              }
+              else                    /* stay at the same column */
+                  G += inc1;
+           }
+        else
+           while (row <= final)    /* step through rows checking for new column */
+           {
+              if (plotorbits2dfloat() == -1)
+              {
+                add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                return(-1); /* interrupted */
+              }
+              row++;
+              if (G > 0)                  /* it's time to change columns */
+              {
+                 col--;  /* negative slope so decrement through the columns */
+                 G += inc2;
+              }
+              else                    /* stay at the same column */
+                 G += inc1;
+           }
+        }
+      }
       break;
    case 'r':
    default:

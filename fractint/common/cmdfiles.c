@@ -326,6 +326,7 @@ char s_off[] =              "off";
 char s_olddemmcolors[] =    "olddemmcolors";
 char s_orbitcorners[] =     "orbitcorners";
 char s_orbitdelay[] =       "orbitdelay";
+char s_orbitdrawmode[] =    "orbitdrawmode";
 char s_orbitinterval[] =    "orbitinterval";
 char s_orbitname[] =        "orbitname";
 char s_orbitsave[] =        "orbitsave";
@@ -769,6 +770,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    orbit_delay = 0;                     /* full speed orbits */
    orbit_interval = 1;                  /* plot all orbits */
    keep_scrn_coords = 0;
+   drawmode = 'r';                      /* passes=orbits draw mode */
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
@@ -1946,6 +1948,13 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    if (far_strcmp(variable,s_screencoords) == 0 ) {     /* screencoords=?   */
       if (yesnoval[0] < 0) goto badarg;
       keep_scrn_coords = yesnoval[0];
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_orbitdrawmode) == 0) {     /* orbitdrawmode=? */
+      if ( charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
+         goto badarg;
+      drawmode = charval[0];
       return 1;
       }
 

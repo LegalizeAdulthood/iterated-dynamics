@@ -536,11 +536,13 @@ int passes_options(void)
 {
    static FCODE o_hdg[]={"Passes Options\n\
 (not all combinations make sense)"};
-   static FCODE pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
-   char hdg[sizeof(o_hdg)+sizeof(pressf6)];
+   static FCODE pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
+   static FCODE pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
+   char hdg[sizeof(o_hdg)+sizeof(pressf2)+sizeof(pressf6)];
    char far *ptr;
    char far *choices[20];
    int oldhelpmode;
+   char *passcalcmodes[] ={"rect","line","func"};
 
    struct fullscreenvalues uvalues[25];
    int i, j, k;
@@ -548,8 +550,10 @@ int passes_options(void)
 
    int old_periodicity, old_orbit_delay, old_orbit_interval;
    int old_keep_scrn_coords;
+   char old_drawmode;
 
    far_strcpy(hdg,o_hdg);
+   far_strcat(hdg,pressf2);
    far_strcat(hdg,pressf6);
    ptr = (char far *)MK_FP(extraseg,0);
    ret = 0;
@@ -574,9 +578,19 @@ pass_option_restart:
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
 
+   LOADCHOICES("Orbit pass shape (rect,line,func)");
+   uvalues[k].type = 'l';
+   uvalues[k].uval.ch.vlen = 5;
+   uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
+   uvalues[k].uval.ch.list = passcalcmodes;
+   uvalues[k].uval.ch.val = (drawmode == 'r') ? 0
+                          : (drawmode == 'l') ? 1
+			  :   /* function */    2;
+   old_drawmode = drawmode;
+
    oldhelpmode = helpmode;
    helpmode = HELPPOPTS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0x40,NULL);
+   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0x44,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return(-1);
@@ -605,8 +619,33 @@ pass_option_restart:
    if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
    if (keep_scrn_coords == 0) set_orbit_corners = 0;
 
-   if (i == F6) {
+   { int tmp;
+   tmp = uvalues[++k].uval.ch.val;
+      switch (tmp)
+      {
+      default:
+      case 0:
+         drawmode = 'r';
+         break;
+      case 1:
+         drawmode = 'l';
+         break;
+      case 2:
+         drawmode = 'f';
+         break;
+      }
+   }
+   if (drawmode != old_drawmode) j = 1;
+
+   if (i == F2) {
       if (get_screen_corners() > 0) {
+         ret = 1;
+      }
+      goto pass_option_restart;
+   }
+
+   if (i == F6) {
+      if (get_corners() > 0) {
          ret = 1;
       }
       goto pass_option_restart;

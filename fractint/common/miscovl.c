@@ -1102,8 +1102,8 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
    if(start_showorbit > 0)
       put_parm(s_seqs,s_showorbit,s_yes);
 
-    if (keep_scrn_coords)
-         put_parm( " %s=y",s_screencoords);
+   if (keep_scrn_coords)
+      put_parm(s_seqs,s_screencoords,s_yes);
 
    if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
       {
@@ -1121,6 +1121,9 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
             put_float(1,oy3rd,ydigits);
          }
       }
+
+   if (drawmode != 'r')
+      put_parm(" %s=%c",s_orbitdrawmode, drawmode);
 
    }
 
