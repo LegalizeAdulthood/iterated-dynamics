@@ -544,7 +544,7 @@ int passes_options(void)
 
    struct fullscreenvalues uvalues[25];
    int i, j, k;
-   int ret = 0;
+   int ret;
 
    int old_periodicity, old_orbit_delay, old_orbit_interval;
    int old_keep_scrn_coords;
@@ -552,8 +552,9 @@ int passes_options(void)
    far_strcpy(hdg,o_hdg);
    far_strcat(hdg,pressf6);
    ptr = (char far *)MK_FP(extraseg,0);
+   ret = 0;
 
-passes_options_restart:
+pass_option_restart:
    /* fill up the choices (and previous values) arrays */
    k = -1;
 
@@ -575,16 +576,10 @@ passes_options_restart:
 
    oldhelpmode = helpmode;
    helpmode = HELPPOPTS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0,NULL);
+   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0x40,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return(-1);
-      }
-
-   if (i == F6)
-      if (get_screen_corners() > 0) {
-         ret = 1;
-	 goto passes_options_restart;
       }
 
    /* now check out the results (*hopefully* in the same order <grin>) */
@@ -608,6 +603,14 @@ passes_options_restart:
 
    keep_scrn_coords = uvalues[++k].uval.ch.val;
    if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
+   if (keep_scrn_coords == 0) set_orbit_corners = 0;
+
+   if (i == F6) {
+      if (get_screen_corners() > 0) {
+         ret = 1;
+      }
+      goto pass_option_restart;
+   }
 
    return(j + ret);
 }
@@ -2260,6 +2263,7 @@ static int get_screen_corners(void)
    LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
    double Xmagfactor,Rotation,Skew;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
+   double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
    static FCODE hdg[]={"Screen Coordinates"};
    int oldhelpmode;
 
@@ -2268,11 +2272,32 @@ static int get_screen_corners(void)
    far_strcpy(zprompt,o_zprompt);
    ptr = (char far *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
+
+   svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
+   svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
+   svxx3rd = xxmin;
+   svyymin = yymin;
+   svyymax = yymax;
+   svyy3rd = yymin;
+
+   if (!set_orbit_corners && !keep_scrn_coords) {
+      oxmin = xxmin;
+      oxmax = xxmax;
+      ox3rd = xxmin;
+      oymin = yymin;
+      oymax = yymax;
+      oy3rd = yymin;
+   }
+
    oxxmin = oxmin; oxxmax = oxmax;
    oyymin = oymin; oyymax = oymax;
    oxx3rd = ox3rd; oyy3rd = oy3rd;
 
-gc_loop:
+   xxmin = oxmin; xxmax = oxmax;
+   yymin = oymin; yymax = oymax;
+   xx3rd = ox3rd; yy3rd = oy3rd;
+
+gsc_loop:
    for (i = 0; i < 15; ++i)
       values[i].type = 'd'; /* most values on this screen are type d */
    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2334,6 +2359,10 @@ gc_loop:
       oxmin = oxxmin; oxmax = oxxmax;
       oymin = oyymin; oymax = oyymax;
       ox3rd = oxx3rd; oy3rd = oyy3rd;
+      /* restore corners */
+      xxmin = svxxmin; xxmax = svxxmax;
+      yymin = svyymin; yymax = svyymax;
+      xx3rd = svxx3rd; yy3rd = svyy3rd;
       return(-1);
       }
 
@@ -2342,11 +2371,16 @@ gc_loop:
       oxmax         = curfractalspecific->xmax;
       oy3rd = oymin = curfractalspecific->ymin;
       oymax         = curfractalspecific->ymax;
+      xxmin = oxmin; xxmax = oxmax;
+      yymin = oymin; yymax = oymax;
+      xx3rd = ox3rd; yy3rd = oy3rd;
       if (viewcrop && finalaspectratio != screenaspect)
          aspectratio_crop(screenaspect,finalaspectratio);
-      if(bf_math != 0)
-         fractal_floattobf();
-      goto gc_loop;
+
+      oxmin = xxmin; oxmax = xxmax;
+      oymin = yymin; oymax = yymax;
+      ox3rd = xxmin; oy3rd = yymin;
+      goto gsc_loop;
       }
 
    if (cmag) {
@@ -2366,6 +2400,10 @@ gc_loop:
          if (Xmagfactor == 0)
             Xmagfactor = 1;
          cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+         /* set screen corners */
+         oxmin = xxmin; oxmax = xxmax;
+         oymin = yymin; oymax = yymax;
+         ox3rd = xx3rd; oy3rd = yy3rd;
       }
    }
 
@@ -2393,7 +2431,7 @@ gc_loop:
       }
       else
          cmag = 0;
-      goto gc_loop;
+      goto gsc_loop;
       }
 
    if(!cmpdbl(oxxmin,oxmin) && !cmpdbl(oxxmax,oxmax) && !cmpdbl(oyymin,oymin) &&
@@ -2403,10 +2441,21 @@ gc_loop:
       oxmin = oxxmin; oxmax = oxxmax;
       oymin = oyymin; oymax = oyymax;
       ox3rd = oxx3rd; oy3rd = oyy3rd;
+      /* restore corners */
+      xxmin = svxxmin; xxmax = svxxmax;
+      yymin = svyymin; yymax = svyymax;
+      xx3rd = svxx3rd; yy3rd = svyy3rd;
       return 0;
    }
-   else
+   else {
+      set_orbit_corners = 1;
+      keep_scrn_coords = 1;
+      /* restore corners */
+      xxmin = svxxmin; xxmax = svxxmax;
+      yymin = svyymin; yymax = svyymax;
+      xx3rd = svxx3rd; yy3rd = svyy3rd;
       return(1);
+   }
 }
 
 /* get browse parameters , called from fractint.c and loadfile.c

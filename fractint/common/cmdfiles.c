@@ -1939,6 +1939,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          oy3rd =      floatval[5];
          }
       set_orbit_corners = 1;
+      keep_scrn_coords = 1;
       return 1;
       }
 
