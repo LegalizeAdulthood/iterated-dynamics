@@ -737,7 +737,7 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
          }
       }
 
-      if (usr_stdcalcmode == 'o' && set_orbit_corners)
+      if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
          {
             int xdigits,ydigits;
             put_parm( " %s=",s_orbitcorners);
