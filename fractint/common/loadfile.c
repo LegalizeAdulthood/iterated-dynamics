@@ -19,7 +19,8 @@ static int  find_fractal_info(char *,struct fractal_info *,
                               struct ext_blk_3 *,
                               struct ext_blk_4 *,
                               struct ext_blk_5 *,
-                              struct ext_blk_6 *);
+                              struct ext_blk_6 *,
+                              struct ext_blk_7 *);
 static void load_ext_blk(char far *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
 static void backwardscompat(struct fractal_info *info);
@@ -45,6 +46,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    struct ext_blk_4 blk_4_info;
    struct ext_blk_5 blk_5_info;
    struct ext_blk_6 blk_6_info;
+   struct ext_blk_7 blk_7_info;
 
    showfile = 1;                /* for any abort exit, pretend done */
    initmode = -1;               /* no viewing mode set yet */
@@ -56,7 +58,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       strcat(readname,".gif");
 
    if(find_fractal_info(readname,&read_info,&blk_2_info,&blk_3_info,
-                        &blk_4_info,&blk_5_info,&blk_6_info)) {
+                        &blk_4_info,&blk_5_info,&blk_6_info,&blk_7_info)) {
       /* didn't find a useable file */
       sprintf(msg,"Sorry, %s isn't a file I can decode.",readname);
       stopmsg(0,msg);
@@ -504,6 +506,19 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    else {
           evolving = FALSE;
    }
+
+   if(blk_7_info.got_data == 1) {
+          oxmin       = blk_7_info.oxmin;
+          oxmax       = blk_7_info.oxmax;
+          oymin       = blk_7_info.oymin;
+          oymax       = blk_7_info.oymax;
+          ox3rd       = blk_7_info.ox3rd;
+          oy3rd       = blk_7_info.oy3rd;
+          keep_scrn_coords = blk_7_info.keep_scrn_coords;
+          drawmode    = blk_7_info.drawmode;
+          if(keep_scrn_coords) set_orbit_corners = 1;
+   }
+
    showfile = 0;                   /* trigger the file load */
    return(0);
 }
@@ -513,7 +528,8 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
        struct ext_blk_3 *blk_3_info,
        struct ext_blk_4 *blk_4_info,
        struct ext_blk_5 *blk_5_info,
-       struct ext_blk_6 *blk_6_info)
+       struct ext_blk_6 *blk_6_info,
+       struct ext_blk_7 *blk_7_info)
 {
    BYTE gifstart[18];
    char temp1[81];
@@ -522,6 +538,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    int hdr_offset;
    struct formula_info fload_info;
    struct evolution_info eload_info;
+   struct orbits_info oload_info;
    int i, j, k = 0;
 
    blk_2_info->got_data = 0; /* initialize to no data */
@@ -529,6 +546,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    blk_4_info->got_data = 0; /* initialize to no data */
    blk_5_info->got_data = 0; /* initialize to no data */
    blk_6_info->got_data = 0; /* initialize to no data */
+   blk_7_info->got_data = 0; /* initialize to no data */
 
    if((fp = fopen(gif_file,"rb"))==NULL)
       return(-1);
@@ -744,6 +762,25 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   blk_6_info->ecount          = eload_info.ecount;
                   for (i = 0; i < NUMGENES; i++)
                      blk_6_info->mutate[i]    = eload_info.mutate[i];
+                  break;
+               case 7: /* orbits parameters  */
+                  skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+                  fseek(fp,(long)(0-block_len),SEEK_CUR);
+                  load_ext_blk((char far *)&oload_info,data_len);
+                  /* XFRACT processing of doubles here */
+#ifdef XFRACT
+                  decode_orbits_info(&oload_info,1);
+#endif
+                  blk_7_info->length = data_len;
+                  blk_7_info->got_data = 1; /* got data */
+                  blk_7_info->oxmin           = oload_info.oxmin;
+                  blk_7_info->oxmax           = oload_info.oxmax;
+                  blk_7_info->oymin           = oload_info.oymin;
+                  blk_7_info->oymax           = oload_info.oymax;
+                  blk_7_info->ox3rd           = oload_info.ox3rd;
+                  blk_7_info->oy3rd           = oload_info.oy3rd;
+                  blk_7_info->keep_scrn_coords= oload_info.keep_scrn_coords;
+                  blk_7_info->drawmode        = oload_info.drawmode;
                   break;
                default:
                   skip_ext_blk(&block_len,&data_len);
@@ -1117,6 +1154,7 @@ int fgetwindow(void)
     struct ext_blk_4 blk_4_info;
     struct ext_blk_5 blk_5_info;
     struct ext_blk_6 blk_6_info;
+    struct ext_blk_7 blk_7_info;
     time_t thistime,lastime;
     char mesg[40],newname[60],oldname[60];
     int c,i,index,done,wincount,toggle,color_of_box;
@@ -1201,7 +1239,8 @@ rescan:  /* entry for changed browse parms */
        splitpath(DTA.filename,NULL,NULL,fname,ext);
        makepath(tmpmask,drive,dir,fname,ext);
        if( !find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
-                                     &blk_4_info,&blk_5_info,&blk_6_info) &&
+                                     &blk_4_info,&blk_5_info,&blk_6_info,
+				     &blk_7_info) &&
            (typeOK(&read_info,&blk_3_info) || !brwschecktype) &&
            (paramsOK(&read_info) || !brwscheckparms) &&
            stricmp(browsename,DTA.filename) &&

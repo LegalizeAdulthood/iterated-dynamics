@@ -514,6 +514,32 @@ int encoder()
              goto oops;
       }
 
+      /* Extended parameters block 007 */
+      if (stdcalcmode == 'o')
+      {
+          struct orbits_info osave_info;
+          int i;
+          osave_info.oxmin     = oxmin;
+          osave_info.oxmax     = oxmax;
+          osave_info.oymin     = oymin;
+          osave_info.oymax     = oymax;
+          osave_info.ox3rd     = ox3rd;
+          osave_info.oy3rd     = oy3rd;
+          osave_info.keep_scrn_coords= keep_scrn_coords;
+          osave_info.drawmode  = drawmode;
+          for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
+             osave_info.future[i] = 0;
+
+          /* some XFRACT logic for the doubles needed here */
+#ifdef XFRACT
+          decode_orbits_info(&osave_info, 0);
+#endif
+          /* orbits info block, 007 */
+          save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
+          if (!put_extend_blk(7, sizeof(osave_info), (char far *) &osave_info))
+             goto oops;
+      }
+
       /* main and last block, 001 */
       save_info.tot_extend_len += extend_blk_len(FRACTAL_INFO_SIZE);
 #ifdef XFRACT
