@@ -990,6 +990,7 @@ decode_orbits_info(info,dir)
     getDouble(&info->ox3rd,&bufPtr,dir);
     getDouble(&info->oy3rd,&bufPtr,dir);
     getInt(&info->keep_scrn_coords,&bufPtr,dir);
+    getInt(&info->orbit_delay,&bufPtr,dir);
     getChar(&info->drawmode,&bufPtr,dir);
     getChar(&info->dummy,&bufPtr,dir);
 

@@ -348,6 +348,7 @@ struct history_info
     short ismand;
     double closeprox;
     short nobof;
+    short orbit_delay;
     long orbit_interval;
     double oxmin;
     double oxmax;
@@ -458,9 +459,10 @@ struct orbits_info      /* for saving orbits data in a GIF file */
    double ox3rd;
    double oy3rd;
    short keep_scrn_coords;
+   short orbit_delay;
    char drawmode;
    char dummy; /* need an even number of bytes */
-   short future[74];      /* total of 200 bytes */
+   short future[73];      /* total of 200 bytes */
 };
 
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
@@ -1068,6 +1070,7 @@ struct ext_blk_7 {
    double ox3rd;
    double oy3rd;
    short keep_scrn_coords;
+   short orbit_delay;
    char drawmode;
    };
 

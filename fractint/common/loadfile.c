@@ -515,6 +515,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           ox3rd       = blk_7_info.ox3rd;
           oy3rd       = blk_7_info.oy3rd;
           keep_scrn_coords = blk_7_info.keep_scrn_coords;
+	  orbit_delay = blk_7_info.orbit_delay;
           drawmode    = blk_7_info.drawmode;
           if(keep_scrn_coords) set_orbit_corners = 1;
    }
@@ -780,6 +781,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   blk_7_info->ox3rd           = oload_info.ox3rd;
                   blk_7_info->oy3rd           = oload_info.oy3rd;
                   blk_7_info->keep_scrn_coords= oload_info.keep_scrn_coords;
+                  blk_7_info->orbit_delay     = oload_info.orbit_delay;
                   blk_7_info->drawmode        = oload_info.drawmode;
                   break;
                default:
