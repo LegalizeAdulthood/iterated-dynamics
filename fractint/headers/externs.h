@@ -645,6 +645,7 @@ extern char                  s_makepar[];
 extern char                  s_manh[];
 extern char                  s_manr[];
 extern char                  s_map[];
+extern char                  s_mathtolerance[];
 extern char                  s_maxcolorres[];
 extern char                  s_maxiter[];
 extern char                  s_mcga[];

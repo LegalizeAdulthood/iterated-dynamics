@@ -348,6 +348,7 @@ struct history_info
     short ismand;
     double closeprox;
     short nobof;
+    double math_tol[2];
     short orbit_delay;
     long orbit_interval;
     double oxmin;
