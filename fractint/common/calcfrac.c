@@ -1380,6 +1380,7 @@ static void count_to_int (long unsigned C, int *r, int *l) {
 
 static int sticky_orbits(void)
 {
+   char drawmode;
 
    got_status = 6; /* for <tab> screen */
    totpasses = 1;
@@ -1389,24 +1390,37 @@ static int sticky_orbits(void)
       return(-1);
    }
 
-   row = yybegin;
-   col = xxbegin;
-
-   while (row <= iystop)
+   drawmode = 'r';
+   switch (drawmode)
    {
-      currow = row;
-      while (col <= ixstop)
+   case 'l':
+   /* draw a line, need end points and number of divisions */
+   /* see drawlines in zoom.c */
+      break;
+   case 'r':
+   default:
+   /* draw a rectangle */
+      row = yybegin;
+      col = xxbegin;
+
+      while (row <= iystop)
       {
-         if (plotorbits2dfloat() == -1)
+         currow = row;
+         while (col <= ixstop)
          {
-            add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
-            return(-1); /* interrupted */
+            if (plotorbits2dfloat() == -1)
+            {
+               add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+               return(-1); /* interrupted */
+            }
+            ++col;
          }
-         ++col;
+         col = ixstart;
+         ++row;
       }
-      col = ixstart;
-      ++row;
+      break;
    }
+
    return(0);
 }
 

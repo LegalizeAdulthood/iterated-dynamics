@@ -1934,7 +1934,9 @@ int dynam2dfloat()
 }
 
 int keep_scrn_coords = 0;
+int set_orbit_corners = 0;
 long orbit_interval;
+double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
 struct affine o_cvt;
 static int o_color = 1;
 
@@ -1942,23 +1944,19 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 {
    double det, xd, yd;
 
-/* no rotation, so 3rd values are (xmin,ymin) */
-
-   if((det = (curfractalspecific->ymax-curfractalspecific->ymin)
-              *(curfractalspecific->xmax-curfractalspecific->xmin))==0)
+   if((det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin))==0)
       return(-1);
    xd = dxsize/det;
-   scrn_cnvt->a =  xd*(curfractalspecific->ymax-curfractalspecific->ymin);
-   scrn_cnvt->b =  0;
-   scrn_cnvt->e = -scrn_cnvt->a*curfractalspecific->xmin - scrn_cnvt->b*curfractalspecific->ymax;
+   scrn_cnvt->a =  xd*(oymax-oy3rd);
+   scrn_cnvt->b =  xd*(ox3rd-oxmin);
+   scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;
 
-   if((det = (curfractalspecific->xmin-curfractalspecific->xmax)
-              *(curfractalspecific->ymin-curfractalspecific->ymax))==0)
+   if((det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin))==0)
       return(-1);
    yd = dysize/det;
-   scrn_cnvt->c =  0;
-   scrn_cnvt->d =  yd*(curfractalspecific->xmin-curfractalspecific->xmax);
-   scrn_cnvt->f = -scrn_cnvt->c*curfractalspecific->xmin - scrn_cnvt->d*curfractalspecific->ymax;
+   scrn_cnvt->c =  yd*(oymin-oy3rd);
+   scrn_cnvt->d =  yd*(ox3rd-oxmax);
+   scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;
    return(0);
 }
 
@@ -1975,6 +1973,15 @@ int plotorbits2dsetup(void)
       fractype = tofloat;
    }
 #endif
+
+   if (!set_orbit_corners) {
+      oxmin = curfractalspecific->xmin;
+      oxmax = curfractalspecific->xmax;
+      ox3rd = curfractalspecific->xmin;
+      oymin = curfractalspecific->ymin;
+      oymax = curfractalspecific->ymax;
+      oy3rd = curfractalspecific->ymin;
+   }
 
    PER_IMAGE();
 

@@ -324,6 +324,7 @@ char s_none[] =             "none";
 char s_noninterlaced[] =    "noninterlaced";
 char s_off[] =              "off";
 char s_olddemmcolors[] =    "olddemmcolors";
+char s_orbitcorners[] =     "orbitcorners";
 char s_orbitdelay[] =       "orbitdelay";
 char s_orbitinterval[] =    "orbitinterval";
 char s_orbitname[] =        "orbitname";
@@ -1918,6 +1919,24 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          xx3rd =      floatval[4];
          yy3rd =      floatval[5];
          }
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_orbitcorners) == 0) {  /* orbit corners=?,?,?,? */
+      set_orbit_corners = 0;
+      if (  floatparms != totparms
+            || (totparms != 0 && totparms != 4 && totparms != 6))
+         goto badarg;
+      ox3rd = oxmin = floatval[0];
+      oxmax =         floatval[1];
+      oy3rd = oymin = floatval[2];
+      oymax =         floatval[3];
+
+      if (totparms == 6) {
+         ox3rd =      floatval[4];
+         oy3rd =      floatval[5];
+         }
+      set_orbit_corners = 1;
       return 1;
       }
 
