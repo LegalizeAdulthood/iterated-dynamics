@@ -571,7 +571,7 @@ extern struct fractalspecificstuff far *curfractalspecific;
 #endif
 
 /* 3D stuff - formerly in 3d.h */
-#ifndef dot_product
+#ifndef f_dot_product
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
@@ -581,7 +581,7 @@ extern struct fractalspecificstuff far *curfractalspecific;
 #define PER_PIXEL   (fractalspecific[fractype].per_pixel)
 #define ORBITCALC   (fractalspecific[fractype].orbitcalc)
 
-#define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])  /* TW 7-09-89 */
+#define f_dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])  /* TW 7-09-89 */
 #endif
 
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */

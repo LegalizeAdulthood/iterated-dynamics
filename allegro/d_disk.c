@@ -1381,7 +1381,13 @@ disk_delay(Driver *drv, long time)
 static void
 disk_buzzer(Driver *drv, int kind)
 {
-  fprintf(stderr, "disk_buzzer(%d)\n", kind);
+  if ((soundflag & 7) != 0) {
+    printf("\007");
+    fflush(stdout);
+  }
+  if (kind==0) {
+    disk_redraw(drv);
+  }
 }
 
 static int

@@ -91,12 +91,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          }
          far_memcpy((char far *)&videoentry,(char far *)&videotable[adapter],
                     sizeof(videotable[adapter]));
-//         dotmode = videoentry.dotmode;     /* assembler dot read/write */
+         dotmode = videoentry.dotmode;     /* assembler dot read/write */
          xdots   = videoentry.xdots;       /* # dots across the screen */
          ydots   = videoentry.ydots;       /* # dots down the screen   */
          colors  = videoentry.colors;      /* # colors available */
-//         textsafe2 = dotmode / 100;
-//         dotmode  %= 100;
+         textsafe2 = dotmode / 100;
+         dotmode  %= 100;
          sxdots  = xdots;
          sydots  = ydots;
          sxoffs = syoffs = 0;

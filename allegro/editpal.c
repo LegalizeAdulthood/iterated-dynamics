@@ -3052,12 +3052,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
          PalTable__SaveUndoData(this, 0, 255);
 
          load_palette();
-/* ##FIXME## */
-#ifndef XFRACT
          getpalrange(0, colors, this->pal);
-#else
-         getpalrange(0, 256, this->pal);
-#endif
          PalTable__UpdateDAC(this);
          RGBEditor_SetRGB(this->rgb[0], this->curr[0], &(this->pal[this->curr[0]]));
          RGBEditor_Update(this->rgb[0]);
@@ -3069,12 +3064,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
       case 'S':     /* save a .map palette */
       case 's':
          {
-/* ##FIXME## */
-#ifndef XFRACT
          setpalrange(0, colors, this->pal);
-#else
-         setpalrange(0, 256, this->pal);
-#endif
          save_palette();
          PalTable__UpdateDAC(this);
          break;

@@ -145,13 +145,13 @@ struct tagDriver {
     name_##_diskp \
   }
 
-#if 1
+#if 0
 #define HAVE_X11_DRIVER 1
 #endif
 #if 0
 #define HAVE_DISK_DRIVER 1
 #endif
-#if 0
+#if 1
 #define HAVE_ALLEGRO_DRIVER 1
 #endif
 

@@ -438,11 +438,7 @@ void save_palette()
       if (dacfile == NULL)
          driver_buzzer(2);
       else {
-#ifndef XFRACT
          for (i = 0; i < colors; i++)
-#else
-         for (i = 0; i < 256; i++)
-#endif
             fprintf(dacfile, "%3d %3d %3d\n",
                     dacbox[i][0] << 2,
                     dacbox[i][1] << 2,

@@ -22,7 +22,6 @@
 #include "drivers.h"
 #ifdef HAVE_ALLEGRO_DRIVER
 #include <allegro.h>
-#define ALLEGRO_H 1
 #endif
 
   /* #include hierarchy for fractint is a follows:

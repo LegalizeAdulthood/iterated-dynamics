@@ -13,10 +13,6 @@
 #include "prototyp.h"
 #include "fractype.h"
 
-#ifdef XFRACT
-int fake_lut = 0;
-#endif
-
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE far * color, int numcolors);
 static int _fastcall extend_blk_len(int datalen);

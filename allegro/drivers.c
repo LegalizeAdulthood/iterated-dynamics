@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
@@ -188,6 +190,9 @@ load_fractint_cfg(int options)
          colors = 256;
          truecolorbits = 8; /* 256 colors */
       }
+
+if(colors > 256)
+   colors = 256;
 
       sscanf(&tempstring[commas[4]],"%u",&R);
       sscanf(&tempstring[commas[5]],"%u",&G);

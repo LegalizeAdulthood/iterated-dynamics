@@ -376,6 +376,7 @@ get_default_mode(Driver *drv, VIDEOINFO *mode)
        mode->videomodeA = 8;
        break;
    }
+   mode->colors = 256; /* For now, we can't handle more */
 #if 0
 fprintf(stderr, "colors=%i, R=%i, G=%i, B=%i, A=%i, depth=%i\n", mode->colors, mode->videomodeR,
               mode->videomodeG, mode->videomodeB, mode->videomodeA, mode->truecolorbits);
@@ -490,6 +491,8 @@ algro_init(Driver *drv, int *argc, char **argv)
    install_mouse(); /* returns -1 on failure, otherwise number of buttons */
 
    install_keyboard();
+
+   install_sound(DIGI_AUTODETECT,MIDI_NONE,"dummy");
 
   /* filter out allegro arguments */
   {
@@ -621,6 +624,8 @@ algro_resize(Driver *drv)
     oldx = videotable[adapter].xdots;
     oldy = videotable[adapter].ydots;
     colors = videotable[adapter].colors;
+    if (colors > 256 || colors <= 0)
+      colors = 256;
 /*    videotable[adapter].dotmode = 19; */
     oldbpp = videotable[adapter].truecolorbits;
 
@@ -641,7 +646,7 @@ algro_resize(Driver *drv)
     di->txt = (struct BITMAP *)create_bitmap(oldx,oldy);
     di->stack_txt = (struct BITMAP *)create_bitmap(oldx,oldy);
     if (di->bmp == NULL || di->txt == NULL || di->stack_txt == NULL) {
-      printf("create_bitmap failed\n");
+      fprintf(stderr,"create_bitmap failed\n");
       algro_terminate(drv); /* FIXME we don't need to bailout here. JCO */
       exit(-1);
     }
@@ -682,11 +687,11 @@ algro_read_palette(Driver *drv)
 {
   DIALGRO(drv);
   int i;
-#if 0
-  if (gotrealdac == 0 && istruecolor && truemode)
-    return -1;
-#endif
-  get_palette(di->pal);
+
+  if (gotrealdac == 0 && istruecolor)
+    generate_332_palette(di->pal);
+  else
+    get_palette(di->pal);
   for (i = 0; i < colors; i++) {
     dacbox[i][0] = di->pal[i].r /* >>10 */;
     dacbox[i][1] = di->pal[i].g /* >>10 */;
@@ -715,56 +720,9 @@ algro_write_palette(Driver *drv)
 {
   DIALGRO(drv);
   int i;
+
 #if 0
-  if (!gotrealdac) {
-    if (di->fake_lut) {
-      /* !gotrealdac, fake_lut => truecolor, directcolor displays */
-      static unsigned char last_dac[256][3];
-      static int last_dac_inited = False;
-
-      for (i = 0; i < colors; i++) {
-	if (!last_dac_inited ||
-	    last_dac[i][0] != dacbox[i][0] ||
-	    last_dac[i][1] != dacbox[i][1] ||
-	    last_dac[i][2] != dacbox[i][2]) {
-	  di->cols[i].flags = DoRed | DoGreen | DoBlue;
-	  di->cols[i].red = dacbox[i][0]*1024;
-	  di->cols[i].green = dacbox[i][1]*1024;
-	  di->cols[i].blue = dacbox[i][2]*1024;
-
-	  if (di->cmap_pixtab_alloced) {
-	    XFreeColors(di->Xdp, di->Xcmap, di->cmap_pixtab + i, 1, None);
-	  }
-	  if (XAllocColor(di->Xdp, di->Xcmap, &di->cols[i])) {
-	    di->cmap_pixtab[i] = di->cols[i].pixel;
-	  } else {
-	    assert(1);
-	    fprintf(stderr,"Allocating color %d failed.\n", i);
-	  }
-
-	  last_dac[i][0] = dacbox[i][0];
-	  last_dac[i][1] = dacbox[i][1];
-	  last_dac[i][2] = dacbox[i][2];
-	}
-      }
-      di->cmap_pixtab_alloced = True;
-      last_dac_inited = True;
-    } else {
-      /* !gotrealdac, !fake_lut => static color, static gray displays */
-      assert(1);
-    }
-  } else {
-    /* gotrealdac => grayscale or pseudocolor displays */
-    for (i = 0; i < colors; i++) {
-      di->cols[i].pixel = di->pixtab[i];
-      di->cols[i].flags = DoRed | DoGreen | DoBlue;
-      di->cols[i].red = dacbox[i][0]*1024;
-      di->cols[i].green = dacbox[i][1]*1024;
-      di->cols[i].blue = dacbox[i][2]*1024;
-    }
-    XStoreColors(di->Xdp, di->Xcmap, di->cols, colors);
-    XFlush(di->Xdp);
-  }
+  fprintf(stderr,"colors = %i\n",colors);
 #endif
   for (i = 0; i < colors; i++) {
     di->pal[i].r = dacbox[i][0] /*<<10 */;
@@ -1019,7 +977,7 @@ algro_read_pixel(Driver *drv, int x, int y)
 #if 0
   fprintf(stderr, "algro_read_pixel(%i,%i): %i\n", x, y, getpixel(di->bmp, x, y));
 #endif
-      return getpixel(di->bmp, x, y);
+      return getpixel(screen, x, y);
 }
 
 /*
@@ -2095,10 +2053,14 @@ algro_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
     if (di->depth == 8) {
       gotrealdac = 1;
       istruecolor = 0;
+      fake_lut = 0;
+      di->fake_lut = 0;
     }
     else {
       gotrealdac = 0;
       istruecolor = 1;
+      fake_lut = 1;
+      di->fake_lut = 1;
     }
     break;
 
@@ -2108,7 +2070,7 @@ algro_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
     exit(-1);
   } 
   if (dotmode !=0) {
-    algro_read_palette(drv);
+/*    algro_read_palette(drv); This breaks it! */
     andcolor = colors-1;
     boxcount =0;
   }
@@ -2367,7 +2329,13 @@ algro_delay(Driver *drv, long time)
 static void
 algro_buzzer(Driver *drv, int kind)
 {
-  fprintf(stderr, "algro_buzzer(%d)\n", kind);
+  if ((soundflag & 7) != 0) {
+    printf("\007");
+    fflush(stdout);
+  }
+  if (kind==0) {
+    algro_redraw(drv);
+  }
 }
 
 static int

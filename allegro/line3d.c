@@ -702,7 +702,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                   /* we will use this value to shade surface */
 
                   cur.color = (int) (1 + (colors - 2) *
-                               (1.0 - dot_product(cross, light_direction)));
+                               (1.0 - f_dot_product(cross, light_direction)));
                }
                /* if colors out of range, set them to min or max color index
                 * but avoid background index. This makes colors "opaque" so

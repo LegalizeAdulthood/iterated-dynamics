@@ -142,14 +142,30 @@ zlinefp(double x, double y)
    jbfp_per_pixel();
    for (zpixel = 0; zpixel < zdots; zpixel++)
    {
-      old.x = jxfp;
-      old.y = jyfp;
-      jbcfp.x = mxfp;
-      jbcfp.y = myfp;
-      qc = param[0];
-      qci = param[1];
-      qcj = param[2];
-      qck = param[3];
+      /* Special initialization for Mandelbrot types */
+      if ((neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
+          && save_release > 2002)
+      {
+         old.x = 0.0;
+         old.y = 0.0;
+         jbcfp.x = 0.0;
+         jbcfp.y = 0.0;
+         qc = jxfp;
+         qci = jyfp;
+         qcj = mxfp;
+         qck = myfp;
+      }
+      else
+      {
+         old.x = jxfp;
+         old.y = jyfp;
+         jbcfp.x = mxfp;
+         jbcfp.y = myfp;
+         qc = param[0];
+         qci = param[1];
+         qcj = param[2];
+         qck = param[3];
+      }
 /* ##FIXME## */
 #ifdef XFRACT
       if (keychk++ > 500)

@@ -84,8 +84,8 @@ CC = gcc
 # For Solaris, add -L/usr/openwin/lib; change -lncurses to -lcurses
 # if you get undefined symbols like "w32addch".
 # For Linux, use  
-LIBS = -L/usr/X11R6/lib -lX11 -lm -lcurses
-#LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses  `/usr/bin/allegro-config --libs`
+#LIBS = -L/usr/X11R6/lib -lX11 -lm -lcurses
+LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses  `/usr/bin/allegro-config --libs`
 #LIBS = -lX11 -lm -lcurses
 
 # For using nasm, set:
@@ -184,8 +184,7 @@ lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
 parserfp.o plot3d.o prompts1.o prompts2.o \
 realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o testpt.o \
 unix.o video.o zoom.o drivers.o d_x11.o d_disk.o \
-calmanfx.o
-#d_allegro.o \
+calmanfx.o d_allegro.o
 
 else
 
@@ -198,8 +197,7 @@ intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \
 lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
 parserfp.o plot3d.o prompts1.o prompts2.o \
 realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o testpt.o \
-unix.o video.o zoom.o drivers.o d_x11.o d_disk.o
-#d_allegro.o
+unix.o video.o zoom.o drivers.o d_x11.o d_disk.o d_allegro.o
 
 endif
 

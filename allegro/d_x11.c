@@ -2631,7 +2631,13 @@ x11_delay(Driver *drv, long time)
 static void
 x11_buzzer(Driver *drv, int kind)
 {
-  fprintf(stderr, "x11_buzzer(%d)\n", kind);
+  if ((soundflag & 7) != 0) {
+    printf("\007");
+    fflush(stdout);
+  }
+  if (kind==0) {
+    x11_redraw(drv);
+  }
 }
 
 static int

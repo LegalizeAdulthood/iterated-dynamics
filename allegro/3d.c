@@ -189,7 +189,7 @@ int icross_product (IVECTOR v, IVECTOR w, IVECTOR cross)
 int fnormalize_vector(VECTOR v)
 {
     double vlength;
-    vlength = dot_product(v,v);
+    vlength = f_dot_product(v,v);
 
     /* bailout if zero vlength */
     if(vlength < FLT_MIN || vlength > FLT_MAX)

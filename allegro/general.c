@@ -301,8 +301,9 @@ int buzzertype;
         printf("\007");
         fflush(stdout);
     }
-      if (buzzertype==0) {
+    if (buzzertype==0) {
         driver_redraw();
+    }
 }
 
 /*
