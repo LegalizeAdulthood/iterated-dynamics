@@ -249,11 +249,7 @@ int get_toggles()
    else
       sprintf(uvalues[k].uval.sval,"%d",fillcolor);
    old_fillcolor = fillcolor;
-#ifdef XFRACT
-   LOADCHOICES("Orbit delay (0 = none)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = orbit_delay;
-#endif
+
    LOADCHOICES("Proximity value for inside=epscross and fmod");
    uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
    uvalues[k].uval.dval = old_closeprox = closeprox;
@@ -276,8 +272,11 @@ int get_toggles()
    if(stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
       stoppass = 0;
 
-   if(usr_stdcalcmode == 'o' && calctype == lyapunov) /* Oops,lyapunov type */
-      usr_stdcalcmode = old_usr_stdcalcmode; /* doesn't use new & breaks orbits */
+   if(usr_stdcalcmode == 'o' && (fractype == LYAPUNOV /* Oops,lyapunov type, */
+       || fractype == QUATFP || fractype == QUATJULFP /* quaternion types, */
+       || fractype == HYPERCMPLXFP || fractype == HYPERCMPLXJFP))
+         /* and hypercomplex types don't use 'new' & break orbits */
+      usr_stdcalcmode = old_usr_stdcalcmode;
 
    if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
    if (old_stoppass != stoppass) j++;
@@ -374,9 +373,7 @@ int get_toggles()
    if (fillcolor < 0) fillcolor = -1;
    if (fillcolor >= colors) fillcolor = (fillcolor % colors) + (fillcolor / colors);
    if (fillcolor != old_fillcolor) j++;
-#ifdef XFRACT
-   orbit_delay = uvalues[++k].uval.ival;
-#endif
+
    ++k;
    closeprox = uvalues[k].uval.dval;
    if (closeprox != old_closeprox) j++;
@@ -396,14 +393,14 @@ int get_toggles2()
 (not all combinations make sense)"};
    char hdg[sizeof(o_hdg)];
    char far *ptr;
-   char far *choices[20];
+   char far *choices[18];
    int oldhelpmode;
 
-   struct fullscreenvalues uvalues[25];
+   struct fullscreenvalues uvalues[23];
    int i, j, k;
 
    int old_rotate_lo,old_rotate_hi;
-   int old_distestwidth, old_periodicity, old_orbit_interval;
+   int old_distestwidth;
    double old_potparam[3],old_inversion[3];
    long old_usr_distest;
 
@@ -462,14 +459,6 @@ int get_toggles2()
    LOADCHOICES("              to   color (1 ... 255)");
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = old_rotate_hi = rotate_hi;
-
-   LOADCHOICES("Periodicity (0=off, <0=show, >0=on, -255..+255)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = old_periodicity = usr_periodicitycheck;
-
-   LOADCHOICES("Orbit interval (1 ... 255)");
-   uvalues[k].type = 'i';
-   uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
 
    oldhelpmode = helpmode;
    helpmode = HELPYOPTS;
@@ -535,18 +524,90 @@ int get_toggles2()
       rotate_lo = old_rotate_lo;
       rotate_hi = old_rotate_hi;
       }
+
+   return(j);
+}
+
+
+
+
+
+
+
+int passes_options(void)
+{
+   static FCODE o_hdg[]={"Passes Options\n\
+(not all combinations make sense)"};
+   char hdg[sizeof(o_hdg)];
+   char far *ptr;
+   char far *choices[20];
+   int oldhelpmode;
+
+   struct fullscreenvalues uvalues[25];
+   int i, j, k;
+
+   int old_periodicity, old_orbit_delay, old_orbit_interval;
+
+   far_strcpy(hdg,o_hdg);
+   ptr = (char far *)MK_FP(extraseg,0);
+
+   /* fill up the choices (and previous values) arrays */
+   k = -1;
+
+   LOADCHOICES("Periodicity (0=off, <0=show, >0=on, -255..+255)");
+   uvalues[k].type = 'i';
+   uvalues[k].uval.ival = old_periodicity = usr_periodicitycheck;
+
+   LOADCHOICES("Orbit delay (0 = none)");
+   uvalues[k].type = 'i';
+   uvalues[k].uval.ival = old_orbit_delay = orbit_delay;
+
+   LOADCHOICES("Orbit interval (1 ... 255)");
+   uvalues[k].type = 'i';
+   uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
+
+
+   oldhelpmode = helpmode;
+   helpmode = HELPYOPTS;
+   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0,NULL);
+   helpmode = oldhelpmode;
+   if (i < 0) {
+      return(-1);
+      }
+
+   /* now check out the results (*hopefully* in the same order <grin>) */
+   k = -1;
+   j = 0;   /* return code */
+
    usr_periodicitycheck = uvalues[++k].uval.ival;
    if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
    if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
    if (usr_periodicitycheck != old_periodicity) j = 1;
+
+
+   orbit_delay = uvalues[++k].uval.ival;
+   if (orbit_delay != old_orbit_delay) j = 1;
+
 
    orbit_interval = uvalues[++k].uval.ival;
    if (orbit_interval > 255) orbit_interval = 255;
    if (orbit_interval < 1) orbit_interval = 1;
    if (orbit_interval != old_orbit_interval) j = 1;
 
+
+
+
    return(j);
 }
+
+
+
+
+
+
+
+
+
 
 /* for videomodes added new options "virtual x/y" that change "sx/ydots" */
 /* for diskmode changed "viewx/ydots" to "virtual x/y" that do as above  */

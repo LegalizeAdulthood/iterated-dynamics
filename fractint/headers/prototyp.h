@@ -1099,6 +1099,7 @@ extern int scan_entries(FILE *infile, void far *ch, char *itemname);
 
 extern int get_toggles(void);
 extern int get_toggles2(void);
+extern int passes_options(void);
 extern int get_view_params(void);
 extern int get_starfield_params(void );
 extern int get_commands(void);

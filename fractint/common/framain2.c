@@ -672,6 +672,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       break;
    case 'x':                    /* invoke options screen        */
    case 'y':
+   case 'p':                    /* passes options      */
    case 'z':                    /* type specific parms */
    case 'g':
    case 'v':
@@ -688,6 +689,8 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          i = get_toggles();
       else if (*kbdchar == 'y')
          i = get_toggles2();
+      else if (*kbdchar == 'p')
+         i = passes_options();
       else if (*kbdchar == 'z')
          i = get_fract_params(1);
       else if (*kbdchar == 'v')
@@ -1266,6 +1269,7 @@ image.  Sorry - it's the best we could do."};
    case 'b':                    /* make batch file              */
       make_batch_file();
       break;
+#if 0
    case 'p':                    /* print current image          */
       note_zoom();
       Print_Screen();
@@ -1278,6 +1282,7 @@ image.  Sorry - it's the best we could do."};
          getakey();
       }
       return(CONTINUE);
+#endif
    case ENTER:                  /* Enter                        */
    case ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
