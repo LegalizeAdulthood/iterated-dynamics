@@ -89,10 +89,13 @@ for filling in defined regions. The effect of this is to show off the
 boundaries of the areas delimited by these two methods.
 
 Orbits ("o") draws an image by plotting the orbits of the escape time
-fractals.  This technique takes the same parameters that draw an image
-with "passes=1" and no symmetry and plots the orbits for each pixel.  Zooming
-into a "passes=o" image is in fact zooming into the "passes=1" image, and the
-resulting image may not be what is expected.
+fractals.  This technique uses the same coordinates to draw an image as
+the other passes options, sets "passes=1" and no symmetry, and then plots
+the orbits for each pixel.  Zooming into a "passes=o" image is in fact
+zooming into the "passes=1" image, and the resulting image may not be what
+is expected.  To find interesting places to investigate, press <O> after an
+image has completed and watch the behaviour of the orbits as the cursor is
+moved around the screen.  See {Orbits Window}.
 
 The "outside=summ" option causes Orbits to increment a pixel's color
 number every time an orbit touchs it; the resulting display is a 2-d

@@ -284,9 +284,10 @@ Incremented the version number to accommodate backwards compatibility for
   the mandel based per-pixel routines that were not setting the Y variable.
 
   Added a passes=o option that draws an image by plotting the orbits of the
-  escape time fractals.  This technique takes the same parameters that draw
-  an image with "passes=1" and no symmetry and plots the orbits for each
-  pixel.  See {Drawing Method}.
+  escape time fractals and leaving them on the screen.  This technique uses
+  the same coordinates to draw an image as the other passes options, sets
+  "passes=1" and no symmetry, and then plots the orbits for each pixel.
+  See {Drawing Method}.
 
   Cleaned up panning logic.
 
@@ -300,6 +301,8 @@ Xfractint fixes:
   generated matched the one produced by the StandardFractal() routine.
 
   Fixed the outside=sum option when used with the mandel fractal type.
+
+  Fixed the command line option -geometry, which broke at 20.2.05.
 
 Patch 2 to Version 20.3.0\
 Fixed the inability to reload a PAR created from an arbitrary precision
