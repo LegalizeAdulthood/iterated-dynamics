@@ -1939,7 +1939,6 @@ long orbit_interval;
 double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
 struct affine o_cvt;
 static int o_color;
-long l_color;
 
 int setup_orbits_to_screen(struct affine *scrn_cnvt)
 {
@@ -2001,8 +2000,10 @@ int plotorbits2dsetup(void)
    if (orbit_delay >= maxit) /* make sure we get an image */
       orbit_delay = (int)(maxit - 1);
 
+   if (LogFlag)         /* if using logmap, force on-the-fly calculation */
+      Log_Calc = 1;     /* so that it works??? */
+
    o_color = 1;
-   l_color = 1;
 
    if (outside == SUM) {
        plot = plothist;
@@ -2032,13 +2033,9 @@ int plotorbits2dfloat(void)
 
    if(inside > 0)
       o_color = inside;
-
-   if (inside == 0) {
+   else { /* inside <= 0 */
       o_color++;
-      l_color++;
-      if (LogFlag)
-         o_color = logtablecalc(l_color);
-      else if (o_color >= colors) /* another color to switch to? */
+      if (o_color >= colors) /* another color to switch to? */
           o_color = 1;    /* (don't use the background color) */
    }
 
