@@ -97,12 +97,12 @@
                            Begin with these Coordinates
                            (Example: corners=-0.739/-0.736/0.288/0.291)
                            With no parameters causes <B> command to output
-                           'corners=' (default) instead of center-mag.
+                           'corners=' instead of center-mag.
   center-mag=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]
                            An alternative method of entering corners.
                            (Example: center-mag=-0.7375/0.2895/300)
                            With no parameters causes <B> command to output
-                           'center-mag=' instead of corners.
+                           'center-mag=' (default) instead of corners.
   maxiter=nnn              Maximum number of iterations (default = 150)
   bailout=nnnn             Use this as the iteration bailout value (instead
                            of the default (4.0 for most fractal types)
@@ -701,15 +701,16 @@ parallelogram:  (xmin,ymax) are the coordinates used for the top-left
 corner of the screen, (xmax,ymin) for the bottom-right corner, and
 (x3rd,y3rd) for the bottom-left.
 Entering just "CORNERS=" tells Fractint to use this form
-(the default mode) rather than CENTER-MAG (see below) when saving
+rather than CENTER-MAG (see below) when saving
 parameters with the <B> command.
 
 ~Label=@CENTERMAG
 CENTER-MAG=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]\
 This is an alternative way to enter corners as a center point and a
 magnification that is popular with some fractal programs and publications.
-Entering just "CENTER-MAG=" tells Fractint to use this form rather
-than CORNERS (see above) when saving parameters with the <B> command.
+Entering just "CENTER-MAG=" tells Fractint to use this form
+(the default mode) rather than CORNERS (see above) when saving parameters
+with the <B> command.
 The <TAB> status
 display shows the "corners" in both forms.  When you specify three values
 (the usual case), this defines a rectangle:  (Xctr, Yctr) specifies the
