@@ -1096,6 +1096,9 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
    if(orbit_delay > 0)
       put_parm(s_seqd,s_orbitdelay,orbit_delay);
 
+   if(orbit_interval != 1)
+      put_parm(s_seqd,s_orbitinterval,orbit_interval);
+
    if(start_showorbit > 0)
       put_parm(s_seqs,s_showorbit,s_yes);
 

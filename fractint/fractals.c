@@ -172,10 +172,21 @@ int (near *longbailout)(void);
 int (near *bignumbailout)(void);
 int (near *bigfltbailout)(void);
 
+#if 0
 int near fpMODbailout(void)
 {
    if ( ( magnitude = ( tempsqrx=sqr(new.x) )
                     + ( tempsqry=sqr(new.y) ) ) >= rqlim ) return(1);
+   old = new;
+   return(0);
+}
+#endif
+int near fpMODbailout(void)
+{
+   tempsqrx=sqr(new.x);
+   tempsqry=sqr(new.y);
+   magnitude = tempsqrx + tempsqry;
+   if(magnitude >= rqlim) return(1);
    old = new;
    return(0);
 }
@@ -2627,6 +2638,7 @@ int long_mandel_per_pixel(void)
    /* barnsleym1 */
    /* barnsleym2 */
    linit.x = lxpixel();
+   linit.y = lypixel();
 
    if(invert)
    {
@@ -2738,8 +2750,10 @@ int mandel_per_pixel(void)
       linit.x = (long)(init.x*fudge);
       linit.y = (long)(init.y*fudge);
    }
-   else
+   else {
       linit.x = lxpixel();
+      linit.y = lypixel();
+   }
    switch (fractype)
      {
         case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
@@ -2795,8 +2809,10 @@ int marksmandel_per_pixel()
       linit.x = (long)(init.x*fudge);
       linit.y = (long)(init.y*fudge);
    }
-   else
+   else {
       linit.x = lxpixel();
+      linit.y = lypixel();
+   }
 
    if(useinitorbit == 1)
       lold = linitorbit;
@@ -2832,8 +2848,11 @@ int marksmandelfp_per_pixel()
 
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
 
    if(useinitorbit == 1)
       old = initorbit;
@@ -2879,8 +2898,11 @@ int mandelfp_per_pixel(void)
 
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
     switch (fractype)
       {
         case MAGNET2M:
@@ -2978,8 +3000,11 @@ int othermandelfp_per_pixel(void)
 {
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
 
    if(useinitorbit == 1)
       old = initorbit;
@@ -3002,8 +3027,11 @@ int MPCHalley_per_pixel(void)
    /* MPC halley */
    if(invert)
       invertz2(&init);
-   else
-     init.x = dxpixel();
+   else {
+      init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
 
    mpcold.x = *pd2MP(init.x);
    mpcold.y = *pd2MP(init.y);
@@ -3021,8 +3049,11 @@ int Halley_per_pixel(void)
 {
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
 
    old = init;
 
@@ -3079,8 +3110,11 @@ int MarksCplxMandperp(void)
 {
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
    old.x = init.x + parm.x; /* initial pertubation of parameters set */
    old.y = init.y + parm.y;
    tempsqrx = sqr(old.x);  /* precalculated value */
@@ -3143,6 +3177,7 @@ int long_mandphoenix_per_pixel(void)
 {
 #ifndef XFRACT
    linit.x = lxpixel();
+   linit.y = lypixel();
 
    if(invert)
    {
@@ -3182,8 +3217,11 @@ int mandphoenix_per_pixel(void)
 {
    if(invert)
       invertz2(&init);
-   else
+   else {
       init.x = dxpixel();
+      if(save_release >= 2004)
+         init.y = dypixel();
+   }
 
    if(useinitorbit == 1)
       old = initorbit;

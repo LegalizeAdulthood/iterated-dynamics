@@ -607,7 +607,6 @@ extern int key_count(int);
 extern int main_menu_switch(int *,int *,int *,char *,int);
 extern int pot_line(BYTE *,int );
 extern int sound_line(BYTE *,int );
-extern int sound_line(unsigned char *pixels,int linelen);
 #ifndef XFRACT
 extern int _cdecl _matherr(struct exception *);
 #else
@@ -786,6 +785,8 @@ extern int orbit3dlong(void);
 extern int iconfloatorbit(double *, double *, double *);  /* dmf */
 extern int latoofloatorbit(double *, double *, double *);  /* hb */
 extern int  setup_convert_to_screen(struct affine *);
+extern int plotorbits2dsetup(void);
+extern int plotorbits2dfloat(void);
 
 /*  lsys -- C file prototypes */
 

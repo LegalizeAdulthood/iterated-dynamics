@@ -1673,6 +1673,8 @@ chip.
    Color cycling range - see{ Color Cycling Commands }\
 
    Periodicity - see{ Periodicity Logic }\
+
+   Orbit Interval - see{ Image Calculation Parameters }\
 ;
 ;
 ~Topic=Image Coordinates Screen, Label=HELPCOORDS

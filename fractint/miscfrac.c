@@ -1302,6 +1302,10 @@ int lya_setup () {
         stopmsg(0,(char far *)msg);
         inside=1;
         }
+    if (usr_stdcalcmode == 'o') { /* Oops,lyapunov type */
+        usr_stdcalcmode = '1';  /* doesn't use new & breaks orbits */
+        stdcalcmode = '1';
+        }
     return 1;
 }
 

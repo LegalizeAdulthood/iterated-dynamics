@@ -62,6 +62,7 @@ int
 NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
    int i;
+#ifndef XFRACT
    if (debugflag != 1010)
    {
       if(fpu != 0)
@@ -80,7 +81,14 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
       }
       curfractalspecific = &fractalspecific[fractype];
    }
+#else
+   if(fractype == MPNEWTON)
+      fractype = NEWTON;
+   else if(fractype == MPNEWTBASIN)
+      fractype = NEWTBASIN;
 
+   curfractalspecific = &fractalspecific[fractype];
+#endif
    /* set up table of roots of 1 along unit circle */
    degree = (int)parm.x;
    if(degree < 2)

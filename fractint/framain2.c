@@ -714,6 +714,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          !truecolor &&    /* recalc not yet implemented with truecolor */
          !(usr_stdcalcmode == 't' && fillcolor > -1) &&
                /* tesseral with fill doesn't work */
+         !(usr_stdcalcmode == 'o') &&
          i == 1 && /* nothing else changed */
          outside != ATAN ) {
             quick_calc = 1;
@@ -2211,6 +2212,9 @@ static void _fastcall save_history_info()
    current.old_demm_colors = (short)old_demm_colors;
    current.logcalc         = (short)Log_Fly_Calc;
    current.ismand          = (short)ismand;
+   current.closeprox       = closeprox;
+   current.nobof           = (short)nobof;
+   current.orbit_interval  = orbit_interval;
    far_memcpy(current.dac,dacbox,256*3);
    switch(fractype)
    {
@@ -2377,6 +2381,9 @@ static void _fastcall restore_history_info(int i)
       invert = 3;
    Log_Fly_Calc = last.logcalc;
    ismand = last.ismand;
+   closeprox = last.closeprox;
+   nobof = last.nobof;
+   orbit_interval = last.orbit_interval;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
    far_memcpy(dacbox,last.dac,256*3);
    far_memcpy(olddacbox,last.dac,256*3);

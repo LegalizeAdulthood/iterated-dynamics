@@ -565,17 +565,21 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
         return(0); /* not a worklist-driven type */
     if (zwidth != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
         return(0); /* not a full size unrotated unskewed zoombox */
+    if (stdcalcmode == 't')
+        return(0); /* tesselate, can't do it */
+    if (stdcalcmode == 'd')
+	return(0); /* diffusion scan: can't do it either */
+    if (stdcalcmode == 'o')
+	return(0); /* orbits, can't do it */
+
     /* can pan if we get this far */
+
     if (calc_status == 4)
         return(1); /* image completed, align on any pixel */
     if (potflag && pot16bit)
         return(1); /* 1 pass forced so align on any pixel */
     if (stdcalcmode == 'b')
         return(1); /* btm, align on any pixel */
-    if (stdcalcmode == 't')
-        return(0); /* tesselate, can't do it */
-    if (stdcalcmode == 'd')
-	return(0); /* diffusion scan: can't do it either */
     if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS)) {
         if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
            return(2);

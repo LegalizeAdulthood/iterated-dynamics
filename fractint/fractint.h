@@ -249,7 +249,8 @@ struct fractal_info         /*  for saving data in GIF file     */
     short quick_calc;
     double closeprox;
     short nobof;
-    short future[18];     /* for stuff we haven't thought of yet */
+    long orbit_interval;
+    short future[16];     /* for stuff we haven't thought of yet */
 };
 
 #define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
@@ -347,6 +348,7 @@ struct history_info
     short ismand;
     double closeprox;
     short nobof;
+    long orbit_interval;
 };
 
 typedef struct history_info HISTORY;

@@ -108,7 +108,7 @@ int get_toggles()
    int old_fillcolor;
    int old_stoppass;
    double old_closeprox;
-   char *calcmodes[] ={"1","2","3","g","g1","g2","g3","g4","g5","g6","b","s","t","d"};
+   char *calcmodes[] ={"1","2","3","g","g1","g2","g3","g4","g5","g6","b","s","t","d","o"};
    char *soundmodes[5]={s_off,s_beep,s_x,s_y,s_z};
    char *insidemodes[]={"numb",s_maxiter,s_zmag,s_bof60,s_bof61,s_epscross,
                          s_startrail,s_period,s_atan,s_fmod};
@@ -120,7 +120,7 @@ int get_toggles()
 
    k = -1;
 
-   LOADCHOICES("Passes (1,2,3, g[uessing], b[oundary], t[esseral], d[iffu.])");
+   LOADCHOICES("Passes (1,2,3, g[uess], b[ound], t[ess], d[iffu], o[rbit])");
    uvalues[k].type = 'l';
    uvalues[k].uval.ch.vlen = 3;
    uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
@@ -138,7 +138,8 @@ int get_toggles()
                           : (usr_stdcalcmode == 'b') ? 10 
 			  : (usr_stdcalcmode == 's') ? 11
 			  : (usr_stdcalcmode == 't') ? 12
-			  :        /* "d"iffusion */   13;
+			  : (usr_stdcalcmode == 'd') ? 13
+                          :        /* "o"rbits */      14;
    old_usr_stdcalcmode = usr_stdcalcmode;
    old_stoppass = stoppass;
 #ifndef XFRACT
@@ -275,6 +276,9 @@ int get_toggles()
    if(stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
       stoppass = 0;
 
+   if(usr_stdcalcmode == 'o' && calctype == lyapunov) /* Oops,lyapunov type */
+      usr_stdcalcmode = old_usr_stdcalcmode; /* doesn't use new & breaks orbits */
+
    if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
    if (old_stoppass != stoppass) j++;
 #ifndef XFRACT
@@ -399,7 +403,7 @@ int get_toggles2()
    int i, j, k;
 
    int old_rotate_lo,old_rotate_hi;
-   int old_distestwidth, old_periodicity;
+   int old_distestwidth, old_periodicity, old_orbit_interval;
    double old_potparam[3],old_inversion[3];
    long old_usr_distest;
 
@@ -462,6 +466,10 @@ int get_toggles2()
    LOADCHOICES("Periodicity (0=off, <0=show, >0=on, -255..+255)");
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = old_periodicity = usr_periodicitycheck;
+
+   LOADCHOICES("Orbit interval (1 ... 255)");
+   uvalues[k].type = 'i';
+   uvalues[k].uval.ival = old_orbit_interval = orbit_interval;
 
    oldhelpmode = helpmode;
    helpmode = HELPYOPTS;
@@ -531,6 +539,11 @@ int get_toggles2()
    if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
    if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
    if (usr_periodicitycheck != old_periodicity) j = 1;
+
+   orbit_interval = uvalues[++k].uval.ival;
+   if (orbit_interval > 255) orbit_interval = 255;
+   if (orbit_interval < 1) orbit_interval = 1;
+   if (orbit_interval != old_orbit_interval) j = 1;
 
    return(j);
 }
