@@ -239,6 +239,7 @@ extern int                   juli3Dmode;
 extern char *                juli3Doptions[];
 extern int                   julibrot;
 extern int                   kbdcount;
+extern int                   keep_scrn_coords;
 extern int                   keybuffer;
 extern long                  l16triglim;
 extern int                   LastInitOp;

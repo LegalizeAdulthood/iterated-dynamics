@@ -1933,10 +1933,34 @@ int dynam2dfloat()
    return(ret);
 }
 
-
+int keep_scrn_coords = 0;
 long orbit_interval;
 struct affine o_cvt;
 static int o_color = 1;
+
+int setup_orbits_to_screen(struct affine *scrn_cnvt)
+{
+   double det, xd, yd;
+
+/* no rotation, so 3rd values are (xmin,ymin) */
+
+   if((det = (curfractalspecific->ymax-curfractalspecific->ymin)
+              *(curfractalspecific->xmax-curfractalspecific->xmin))==0)
+      return(-1);
+   xd = dxsize/det;
+   scrn_cnvt->a =  xd*(curfractalspecific->ymax-curfractalspecific->ymin);
+   scrn_cnvt->b =  0;
+   scrn_cnvt->e = -scrn_cnvt->a*curfractalspecific->xmin - scrn_cnvt->b*curfractalspecific->ymax;
+
+   if((det = (curfractalspecific->xmin-curfractalspecific->xmax)
+              *(curfractalspecific->ymin-curfractalspecific->ymax))==0)
+      return(-1);
+   yd = dysize/det;
+   scrn_cnvt->c =  0;
+   scrn_cnvt->d =  yd*(curfractalspecific->xmin-curfractalspecific->xmax);
+   scrn_cnvt->f = -scrn_cnvt->c*curfractalspecific->xmin - scrn_cnvt->d*curfractalspecific->ymax;
+   return(0);
+}
 
 int plotorbits2dsetup(void)
 {
@@ -1955,8 +1979,13 @@ int plotorbits2dsetup(void)
    PER_IMAGE();
 
    /* setup affine screen coord conversion */
-   if(setup_convert_to_screen(&o_cvt))
-      return(-1);
+   if (keep_scrn_coords) {
+      if(setup_orbits_to_screen(&o_cvt))
+         return(-1);
+   } else {
+      if(setup_convert_to_screen(&o_cvt))
+         return(-1);
+   }
    /* set so truncation to int rounds to nearest */
    o_cvt.e += 0.5;
    o_cvt.f += 0.5;
