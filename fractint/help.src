@@ -291,6 +291,9 @@ Fixed the inability to reload a PAR created from an arbitrary precision
 
   Fixed the display of subdirectories in Xfractint.
 
+  Replaced control characters in realdos.c with the equivalent ascii values
+  to quiet complaints by CVS.
+
 Patch 1\
 Fixed the float bailout for the lambdafn fractal type when the EXP function
   is used so the float and integer images match.

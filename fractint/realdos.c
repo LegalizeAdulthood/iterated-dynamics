@@ -1397,11 +1397,13 @@ static int menu_checkkey(int curkey,int choice)
 #endif
    if(testkey == '2')
       testkey = '@';
-   if (strchr("#@2txyzgvir3dj",testkey) || testkey == INSERT
-     || testkey == ESC || testkey == DELETE || testkey ==6) /*RB 6== ctrl-F for sound menu */
+   if (strchr("#@2txyzgvir3dj",testkey) || testkey == INSERT || testkey == 2
+     || testkey == ESC || testkey == DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
       return(0-testkey);
    if (menutype) {
-      if (strchr("\\sobpkrh",testkey) || testkey == TAB)
+      if (strchr("\\sobpkrh",testkey) || testkey == TAB
+        || testkey == 1 || testkey == 5 || testkey == 8
+        || testkey == 19 || testkey == 21) /* ctrl-A, E, H, S, U */
          return(0-testkey);
       if (testkey == ' ')
          if ((curfractalspecific->tojulia != NOFRACTAL
