@@ -1327,7 +1327,7 @@ static int o_color = 1;
 int plotorbits2dsetup(void)
 {
 
-#ifndef XFRACT
+#ifndef FLOATONLY
    if (curfractalspecific->isinteger != 0) {
       int tofloat;
       if ((tofloat = curfractalspecific->tofloat) == NOFRACTAL)
