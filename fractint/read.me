@@ -1,6 +1,29 @@
-Fractint 20.0 complete C and ASM source for
+FRACTINT:
+Fractint 20.4 complete C and ASM source for
 the DOS-based fractal generator. Requires
 Microsoft C/C++ 7.0 or later or Borland C/C++
 3.1 or later. Object code of ASM modules 
 supplied so an assembler is not required.
-Copyrighted freeware. 
+Copyrighted freeware.
+
+XFRACTINT:
+Download the source tarball (for example: xfract20.3.02.tar.gz), put it in
+your home directory, and untar it with the command:
+
+tar -xzf xfract20.3.02.tar.gz
+
+This will create the directory xfractint-20.03p02 containing the source.
+You might want to change the directory name to xfractint for convenience.
+
+You will need to have gcc, ncurses, and ncurse-develop installed.  You also
+need the XFree86-libs package installed for the X11 libraries.  This package
+should already be installed, but if it isn't and your distribution doesn't
+have it, then you need the XFree86-devel package.
+
+The Makefile is set up for my convenience, so if you want to put files in
+different directories, you will need to change the SRCDIR setting.  
+Otherwise, just run make from the source directory and it should compile.  
+Run ./xfractint to start it up.
+
+Jonathan
+
