@@ -236,7 +236,7 @@ HELP = help.src help2.src help3.src help4.src help5.src
 .SUFFIXES: .o .c .s .h .asm
 
 xfractint: fractint.hlp .WAIT
-	mv -f helpdefs.h $(HFD)
+	if [ -f helpdefs.h ] ; then mv -f helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
