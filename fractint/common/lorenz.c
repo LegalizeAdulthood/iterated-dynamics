@@ -2000,9 +2000,6 @@ int plotorbits2dsetup(void)
    if (orbit_delay >= maxit) /* make sure we get an image */
       orbit_delay = (int)(maxit - 1);
 
-   if (LogFlag)         /* if using logmap, force on-the-fly calculation */
-      Log_Calc = 1;     /* so that it works??? */
-
    o_color = 1;
 
    if (outside == SUM) {
@@ -2021,6 +2018,8 @@ int plotorbits2dfloat(void)
    if(keypressed())
    {
       mute();
+      alloc_resume(100,1);
+      put_resume(sizeof(o_color),&o_color, 0);
       return(-1);
    }
 
@@ -2038,6 +2037,12 @@ int plotorbits2dfloat(void)
       soundvar = &y;
    else if((soundflag&7)==4)
       soundvar = &z;
+
+   if (resuming) {
+       start_resume();
+       get_resume(sizeof(o_color),&o_color, 0);
+       end_resume();
+   }
 
    if(inside > 0)
       o_color = inside;
