@@ -276,8 +276,23 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.3.0 is an update of Fractint 20.0 based on the developer's
-  version 20.2.05.  New features include:
+Version 20.3.01 is an update of Fractint 20.0 based on the developer's
+  version 20.3.00.  New features include:
+
+Patch 1\
+Fixed the float bailout for the lambdafn fractal type when the EXP function
+  is used so the float and integer images match.
+  
+  Jan Andres contributed Xfractint fixes that allow compiling with newer
+  versions of gcc because varargs.h is no longer supported.  Enabled the
+  use of the long double type on Solaris.  Moved the getwd() macro definition
+  in prompts1.c after the #include lines, to avoid the mess that happens when
+  the prototype for getwd() is included but it's already defined as a macro.
+  Added some Solaris-specific comments to the Makefile.
+
+  Fixed the sound in Xfractint so the beep turns off now.
+
+  Changed lsys.c to use inline1 instead of the reserved word inline.
 
 Version 20.3.0\
 Incremented the version number to accommodate backwards compatibility for
@@ -297,7 +312,7 @@ Incremented the version number to accommodate backwards compatibility for
   is used.
 
   Fixed the plasma type to show the value of the parameter that is actually
-  used in the image genaration.
+  used in the image generation.
 
   Fixed the plasma type so that a parameter file uses the colors included
   in the parameter entry instead of the default colors.
