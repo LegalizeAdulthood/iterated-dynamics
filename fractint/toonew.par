@@ -1,8 +1,0 @@
-NewSolarSystem     { ; Example of new julia(fn||fn)
-                     ; Jonathan Osuch
-  reset type=julia(fn||fn) function=recip/exp
-  corners=-3.481429/1.926571/-0.520462/3.535538
-  params=0.426332288401274/1.05527638190956/0.5 float=y maxiter=1000
-  inside=0 colors=000880<15>000000000000000<124>yy0zz0yy0<106>990
-  }
-
