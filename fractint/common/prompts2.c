@@ -2327,10 +2327,11 @@ static int get_screen_corners(void)
    char yprompt[sizeof(o_yprompt)];
    char zprompt[sizeof(o_zprompt)];
    int i,nump,prompt_ret;
-   int cmag = 0;
+   int cmag;
    double Xctr,Yctr;
    LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
    double Xmagfactor,Rotation,Skew;
+   BYTE ousemag;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
    double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
    static FCODE hdg[]={"Screen Coordinates"};
@@ -2341,6 +2342,7 @@ static int get_screen_corners(void)
    far_strcpy(zprompt,o_zprompt);
    ptr = (char far *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
+   ousemag = usemag;
 
    svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
    svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
@@ -2369,6 +2371,7 @@ static int get_screen_corners(void)
 gsc_loop:
    for (i = 0; i < 15; ++i)
       values[i].type = 'd'; /* most values on this screen are type d */
+   cmag = usemag;
    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
    nump = -1;
@@ -2423,6 +2426,7 @@ gsc_loop:
    helpmode = oldhelpmode;
 
    if (prompt_ret < 0) {
+      usemag = ousemag;
       oxmin = oxxmin; oxmax = oxxmax;
       oymin = oyymin; oymax = oyymax;
       ox3rd = oxx3rd; oy3rd = oyy3rd;
@@ -2490,13 +2494,13 @@ gsc_loop:
    }
 
    if (prompt_ret == F7) { /* toggle corners/center-mag mode */
-      if (cmag == 0)
+      if (usemag == 0)
       {
          cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-            cmag = 1;
+            usemag = 1;
       }
       else
-         cmag = 0;
+         usemag = 0;
       goto gsc_loop;
       }
 
