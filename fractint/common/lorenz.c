@@ -2039,7 +2039,12 @@ int plotorbits2dfloat(void)
        /* else count >= orbit_delay and we want to plot it */
        col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
        row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
+#ifdef XFRACT
        if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+#else
+/* don't know why the next line is necessary, the one above should work */
+       if ( col > 0 && col < xdots && row > 0 && row < ydots )
+#endif
        {             /* plot if on the screen */
           if ((soundflag&7) > 1)
              w_snd((int)(*soundvar*100+basehertz));
