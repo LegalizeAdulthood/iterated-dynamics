@@ -771,6 +771,13 @@ static void initvars_fractal()          /* init vars affecting calculation */
    orbit_interval = 1;                  /* plot all orbits */
    keep_scrn_coords = 0;
    drawmode = 'r';                      /* passes=orbits draw mode */
+   set_orbit_corners = 0;
+   oxmin = curfractalspecific->xmin;
+   oxmax = curfractalspecific->xmax;
+   ox3rd = curfractalspecific->xmin;
+   oymin = curfractalspecific->ymin;
+   oymax = curfractalspecific->ymax;
+   oy3rd = curfractalspecific->ymin;
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
