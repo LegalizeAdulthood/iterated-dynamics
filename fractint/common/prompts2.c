@@ -272,10 +272,8 @@ int get_toggles()
    if(stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
       stoppass = 0;
 
-   if(usr_stdcalcmode == 'o' && (fractype == LYAPUNOV /* Oops,lyapunov type, */
-       || fractype == QUATFP || fractype == QUATJULFP /* quaternion types, */
-       || fractype == HYPERCMPLXFP || fractype == HYPERCMPLXJFP))
-         /* and hypercomplex types don't use 'new' & break orbits */
+   if(usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops,lyapunov type */
+                                       /* doesn't use 'new' & breaks orbits */
       usr_stdcalcmode = old_usr_stdcalcmode;
 
    if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
@@ -529,10 +527,9 @@ int get_toggles2()
 }
 
 
-
-
-
-
+/*
+     passes_options invoked by <p> key
+*/
 
 int passes_options(void)
 {
@@ -547,6 +544,7 @@ int passes_options(void)
    int i, j, k;
 
    int old_periodicity, old_orbit_delay, old_orbit_interval;
+   int old_keep_scrn_coords;
 
    far_strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
@@ -566,6 +564,9 @@ int passes_options(void)
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
 
+   LOADCHOICES("Maintain screen coordinates");
+   uvalues[k].type = 'y';
+   uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
 
    oldhelpmode = helpmode;
    helpmode = HELPYOPTS;
@@ -594,19 +595,11 @@ int passes_options(void)
    if (orbit_interval < 1) orbit_interval = 1;
    if (orbit_interval != old_orbit_interval) j = 1;
 
-
-
+   keep_scrn_coords = uvalues[++k].uval.ch.val;
+   if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
 
    return(j);
 }
-
-
-
-
-
-
-
-
 
 
 /* for videomodes added new options "virtual x/y" that change "sx/ydots" */
