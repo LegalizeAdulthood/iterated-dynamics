@@ -47,6 +47,7 @@
 static  int check_f6_key(int curkey,int choice);
 static  int expand_dirname(char *dirname,char *drive);
 static  int filename_speedstr(int, int, int, char *, int);
+static  int get_screen_corners(void);
 
 /* speed key state values */
 #define MATCHING         0      /* string matches list - speed key mode */
@@ -535,20 +536,24 @@ int passes_options(void)
 {
    static FCODE o_hdg[]={"Passes Options\n\
 (not all combinations make sense)"};
-   char hdg[sizeof(o_hdg)];
+   static FCODE pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
+   char hdg[sizeof(o_hdg)+sizeof(pressf6)];
    char far *ptr;
    char far *choices[20];
    int oldhelpmode;
 
    struct fullscreenvalues uvalues[25];
    int i, j, k;
+   int ret = 0;
 
    int old_periodicity, old_orbit_delay, old_orbit_interval;
    int old_keep_scrn_coords;
 
    far_strcpy(hdg,o_hdg);
+   far_strcat(hdg,pressf6);
    ptr = (char far *)MK_FP(extraseg,0);
 
+passes_options_restart:
    /* fill up the choices (and previous values) arrays */
    k = -1;
 
@@ -576,6 +581,12 @@ int passes_options(void)
       return(-1);
       }
 
+   if (i == F6)
+      if (get_screen_corners() > 0) {
+         ret = 1;
+	 goto passes_options_restart;
+      }
+
    /* now check out the results (*hopefully* in the same order <grin>) */
    k = -1;
    j = 0;   /* return code */
@@ -598,7 +609,7 @@ int passes_options(void)
    keep_scrn_coords = uvalues[++k].uval.ch.val;
    if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
 
-   return(j);
+   return(j + ret);
 }
 
 
@@ -2226,6 +2237,172 @@ gc_loop:
       xxmin = oxxmin; xxmax = oxxmax;
       yymin = oyymin; yymax = oyymax;
       xx3rd = oxx3rd; yy3rd = oyy3rd;
+      return 0;
+   }
+   else
+      return(1);
+}
+
+static int get_screen_corners(void)
+{
+   char far *ptr;
+   struct fullscreenvalues values[15];
+   char far *prompts[15];
+   static FCODE o_xprompt[]={"          X"};
+   static FCODE o_yprompt[]={"          Y"};
+   static FCODE o_zprompt[]={"          Z"};
+   char xprompt[sizeof(o_xprompt)];
+   char yprompt[sizeof(o_yprompt)];
+   char zprompt[sizeof(o_zprompt)];
+   int i,nump,prompt_ret;
+   int cmag = 0;
+   double Xctr,Yctr;
+   LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
+   double Xmagfactor,Rotation,Skew;
+   double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
+   static FCODE hdg[]={"Screen Coordinates"};
+   int oldhelpmode;
+
+   far_strcpy(xprompt,o_xprompt);
+   far_strcpy(yprompt,o_yprompt);
+   far_strcpy(zprompt,o_zprompt);
+   ptr = (char far *)MK_FP(extraseg,0);
+   oldhelpmode = helpmode;
+   oxxmin = oxmin; oxxmax = oxmax;
+   oyymin = oymin; oyymax = oymax;
+   oxx3rd = ox3rd; oyy3rd = oy3rd;
+
+gc_loop:
+   for (i = 0; i < 15; ++i)
+      values[i].type = 'd'; /* most values on this screen are type d */
+   cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+
+   nump = -1;
+   if (cmag) {
+      LOADPROMPTS("Center X");
+      values[nump].uval.dval = Xctr;
+      LOADPROMPTS("Center Y");
+      values[nump].uval.dval = Yctr;
+      LOADPROMPTS("Magnification");
+      values[nump].uval.dval = (double)Magnification;
+      LOADPROMPTS("X Magnification Factor");
+      values[nump].uval.dval = Xmagfactor;
+      LOADPROMPTS("Rotation Angle (degrees)");
+      values[nump].uval.dval = Rotation;
+      LOADPROMPTS("Skew Angle (degrees)");
+      values[nump].uval.dval = Skew;
+      LOADPROMPTS("");
+      values[nump].type = '*';
+      LOADPROMPTS("Press "FK_F7" to switch to \"corners\" mode");
+      values[nump].type = '*';
+      }
+
+   else {
+      LOADPROMPTS("Top-Left Corner");
+      values[nump].type = '*';
+      prompts[++nump] = xprompt;
+      values[nump].uval.dval = oxmin;
+      prompts[++nump] = yprompt;
+      values[nump].uval.dval = oymax;
+      LOADPROMPTS("Bottom-Right Corner");
+      values[nump].type = '*';
+      prompts[++nump] = xprompt;
+      values[nump].uval.dval = oxmax;
+      prompts[++nump] = yprompt;
+      values[nump].uval.dval = oymin;
+      if (oxmin == ox3rd && oymin == oy3rd)
+         ox3rd = oy3rd = 0;
+      LOADPROMPTS("Bottom-left (zeros for top-left X, bottom-right Y)");
+      values[nump].type = '*';
+      prompts[++nump] = xprompt;
+      values[nump].uval.dval = ox3rd;
+      prompts[++nump] = yprompt;
+      values[nump].uval.dval = oy3rd;
+      LOADPROMPTS("Press "FK_F7" to switch to \"center-mag\" mode");
+      values[nump].type = '*';
+   }
+
+   LOADPROMPTS("Press "FK_F4" to reset to type default values");
+   values[nump].type = '*';
+
+   oldhelpmode = helpmode;
+   helpmode = HELPSCRNCOORDS;
+   prompt_ret = fullscreen_prompt(hdg,nump+1, prompts, values, 0x90, NULL);
+   helpmode = oldhelpmode;
+
+   if (prompt_ret < 0) {
+      oxmin = oxxmin; oxmax = oxxmax;
+      oymin = oyymin; oymax = oyymax;
+      ox3rd = oxx3rd; oy3rd = oyy3rd;
+      return(-1);
+      }
+
+   if (prompt_ret == F4) { /* reset to type defaults */
+      ox3rd = oxmin = curfractalspecific->xmin;
+      oxmax         = curfractalspecific->xmax;
+      oy3rd = oymin = curfractalspecific->ymin;
+      oymax         = curfractalspecific->ymax;
+      if (viewcrop && finalaspectratio != screenaspect)
+         aspectratio_crop(screenaspect,finalaspectratio);
+      if(bf_math != 0)
+         fractal_floattobf();
+      goto gc_loop;
+      }
+
+   if (cmag) {
+      if ( cmpdbl(Xctr         , values[0].uval.dval)
+        || cmpdbl(Yctr         , values[1].uval.dval)
+        || cmpdbl((double)Magnification, values[2].uval.dval)
+        || cmpdbl(Xmagfactor   , values[3].uval.dval)
+        || cmpdbl(Rotation     , values[4].uval.dval)
+        || cmpdbl(Skew         , values[5].uval.dval))
+      {
+         Xctr          = values[0].uval.dval;
+         Yctr          = values[1].uval.dval;
+         Magnification = values[2].uval.dval;
+         Xmagfactor    = values[3].uval.dval;
+         Rotation      = values[4].uval.dval;
+         Skew          = values[5].uval.dval;
+         if (Xmagfactor == 0)
+            Xmagfactor = 1;
+         cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+      }
+   }
+
+   else {
+      nump = 1;
+      oxmin = values[nump++].uval.dval;
+      oymax = values[nump++].uval.dval;
+      nump++;
+      oxmax = values[nump++].uval.dval;
+      oymin = values[nump++].uval.dval;
+      nump++;
+      ox3rd = values[nump++].uval.dval;
+      oy3rd = values[nump++].uval.dval;
+      if (ox3rd == 0 && oy3rd == 0) {
+         ox3rd = oxmin;
+         oy3rd = oymin;
+      }
+   }
+
+   if (prompt_ret == F7) { /* toggle corners/center-mag mode */
+      if (cmag == 0)
+      {
+         cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+            cmag = 1;
+      }
+      else
+         cmag = 0;
+      goto gc_loop;
+      }
+
+   if(!cmpdbl(oxxmin,oxmin) && !cmpdbl(oxxmax,oxmax) && !cmpdbl(oyymin,oymin) &&
+      !cmpdbl(oyymax,oymax) && !cmpdbl(oxx3rd,ox3rd) && !cmpdbl(oyy3rd,oy3rd))
+   {
+     /* no change, restore values to avoid drift */
+      oxmin = oxxmin; oxmax = oxxmax;
+      oymin = oyymin; oymax = oyymax;
+      ox3rd = oxx3rd; oy3rd = oyy3rd;
       return 0;
    }
    else
