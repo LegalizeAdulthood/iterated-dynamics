@@ -250,7 +250,7 @@ typedef int sigfunc(int);
 #       define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
 #       define rand15() (rand()&0x7FFF)
 
-#       include "./unix/unix.h"
+#       include "unix.h"
 
 
 #endif
