@@ -20,8 +20,8 @@
 
 The "passes option" (<X> options screen or "passes=" parameter)
 selects one of the single-pass, dual-pass, triple-pass, solid-guessing
-(default), solid-guessing after pass n, boundary tracing, tesseral, or
-synchronous orbit modes.
+(default), solid-guessing after pass n, boundary tracing, tesseral,
+synchronous orbits, or orbits modes.
 
 This option applies to most fractal types.
 
@@ -74,7 +74,7 @@ boundary of a solid color. It's actually slower than the solid-guessing
 algorithm, but it looks neat, so we left it in. This mode is also subject to
 errors when islands of color appear inside the rectangles.\
 
-Diffusion Scan ("d") is a draw type based on dithering techniques. It
+Diffusion Scan ("d") is a drawing type based on dithering techniques. It
 scans the image spreading the points evenly and to each point it paints
 a square of the appropriate size so that the image will be incrementally
 enhanced. This method calculates ALL the points in the image being a
@@ -82,6 +82,34 @@ good substitute for Single/Dual/Triple pass and presents a quick
 visualization even in the slowest fractals. With "fillcolor=0" (below)
 the squares are not painted and the points are spread over the image
 until all have being calculated (sort of a "Fade In").
+
+The "fillcolor=" option in the <X> screen or on the command line sets a
+fixed color to be used by the Boundary Tracing and Tesseral calculations
+for filling in defined regions. The effect of this is to show off the
+boundaries of the areas delimited by these two methods.
+
+Orbits ("o") draws an image by plotting the orbits of the escape time
+fractals.  This technique uses the same coordinates to draw an image as
+the other passes options, sets "passes=1" and no symmetry, and then plots
+the orbits for each pixel.  Zooming into a "passes=o" image is in fact
+zooming into the "passes=1" image, and the resulting image may not be what
+is expected.  To find interesting places to investigate, press <O> after an
+image has completed and watch the behaviour of the orbits as the cursor is
+moved around the screen.  See {Orbits Window}.
+
+The "outside=summ" option causes Orbits to increment a pixel's color
+number every time an orbit touchs it; the resulting display is a 2-d
+histogram.  If "outside=" is some other value, then the "inside=" color
+determines the color of the plotted orbits.  If "inside=0", then the color
+number is incremented at the start of each pixel of the passes=1 image.
+
+The "orbitdelay=" option controls how many orbits are computed before the
+orbits are displayed on the screen.  This allows the orbits to settle down.
+The "orbitinterval=" option causes Orbits to plot every nth orbit point.  A
+non-zero value of the "periodicity=" option causes Orbits to not plot orbits
+that have reached the bailout conditions or where an orbit goes off the visible
+area of the image.  A zero value of periodicity will plot all orbits except
+as modified by orbitdelay and orbitinterval.
 
 Synchronous orbits ("s") is an experimental mode using the "fractal
 witchcraft" algorithm based on the Almondbread implementation by Michael
@@ -99,11 +127,6 @@ on the command line, a long double (rather than double) version will be used,
 which allows zooming about 1000 times deeper. SOI really needs to be ported to
 fractint's arbitary precision. This will likely happen only after Fractint
 is moved to a better programming environment.
-
-The "fillcolor=" option in the <X> screen or on the command line sets a
-fixed color to be used by the Boundary Tracing and Tesseral calculations
-for filling in defined regions. The effect of this is to show off the
-boundaries of the areas delimited by these two methods.
 ;
 ;
 ~Topic=Autokey Mode

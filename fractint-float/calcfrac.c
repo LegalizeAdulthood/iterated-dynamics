@@ -41,6 +41,7 @@ static int  _fastcall xsym_split(int,int);
 static int  _fastcall ysym_split(int,int);
 static void _fastcall puttruecolor_disk(int,int,int);
 static int diffusion_engine (void);
+static int sticky_orbits(void);
 
 /**CJLT new function prototypes: */
 static int tesseral(void);
@@ -136,7 +137,8 @@ static int dem_mandel;
 
 /* variables which must be visible for tab_display */
 int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
-	      /* 2 for btm, 3 for 3d, 5 for diffusion_scan */
+	      /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
+              /* 6 for orbits */
 int curpass,totpasses;
 int currow,curcol;
 
@@ -1053,6 +1055,9 @@ static void perform_worklist()
       case 'd':
          diffusion_scan();
          break;
+      case 'o':
+         sticky_orbits();
+         break;
       default:
          OneOrTwoPass();
       }
@@ -1349,6 +1354,38 @@ static void count_to_int (long unsigned C, int *r, int *l) {
 }
 */
 
+static int sticky_orbits(void)
+{
+
+   got_status = 6; /* for <tab> screen */
+   totpasses = 1;
+
+   if (plotorbits2dsetup() == -1) {
+      stdcalcmode = 'g';
+      return(-1);
+   }
+
+   row = yybegin;
+   col = xxbegin;
+
+   while (row <= iystop)
+   {
+      currow = row;
+      while (col <= ixstop)
+      {
+         if (plotorbits2dfloat() == -1)
+         {
+            add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+            return(-1); /* interrupted */
+         }
+         ++col;
+      }
+      col = ixstart;
+      ++row;
+   }
+   return(0);
+}
+
 static int OneOrTwoPass(void)
 {
    int i;
@@ -1390,6 +1427,7 @@ static int _fastcall StandardCalc(int passnum)
    curpass = passnum;
    row = yybegin;
    col = xxbegin;
+
    while (row <= iystop)
    {
       currow = row;
@@ -3090,7 +3128,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
    bf_t bft1;
    int saved=0;
    symmetry = 1;
-   if(stdcalcmode == 's')
+   if(stdcalcmode == 's' || stdcalcmode == 'o')
       return;
    if(sym == NOPLOT && forcesymmetry == 999)
    {

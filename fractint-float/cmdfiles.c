@@ -324,6 +324,7 @@ char s_noninterlaced[] =    "noninterlaced";
 char s_off[] =              "off";
 char s_olddemmcolors[] =    "olddemmcolors";
 char s_orbitdelay[] =       "orbitdelay";
+char s_orbitinterval[] =    "orbitinterval";
 char s_orbitname[] =        "orbitname";
 char s_orbitsave[] =        "orbitsave";
 char s_orgfrmdir[] =        "orgfrmdir";
@@ -642,6 +643,7 @@ static void initvars_restart()          /* <ins> key init */
    video_cutboth = 1;                   /* keep virtual aspect */
    zscroll = 1;                         /* relaxed screen scrolling */
    orbit_delay = 0;                     /* full speed orbits */
+   orbit_interval = 1;                  /* plot all orbits */
    debugflag = 0;                       /* debugging flag(s) are off */
    timerflag = 0;                       /* timer flags are off       */
    far_strcpy(FormFileName,s_fractintfrm); /* default formula file      */
@@ -756,6 +758,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 
    colorstate = colorpreloaded = 0;
    rotate_lo = 1; rotate_hi = 255;      /* color cycling default range */
+   orbit_delay = 0;                     /* full speed orbits */
+   orbit_interval = 1;                  /* plot all orbits */
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
@@ -1548,7 +1552,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if ( charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
         && charval[0] != 'g' && charval[0] != 'b'
 	&& charval[0] != 't' && charval[0] != 's'
-	&& charval[0] != 'd' )
+	&& charval[0] != 'd' && charval[0] != 'o')
          goto badarg;
       usr_stdcalcmode = charval[0];
       if(charval[0] == 'g')
@@ -2045,7 +2049,8 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (far_strcmp(variable,s_float) == 0 ) {        /* float=? */
       if (yesnoval[0] < 0) goto badarg;
-      return 0;
+      usr_floatflag = 1; /* must use floating point */
+      return 3;
       }
 
    if (far_strcmp(variable,s_fastrestore) == 0 ) {   /* fastrestore=? */
@@ -2406,6 +2411,15 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (far_strcmp(variable,s_orbitdelay) == 0) {
       orbit_delay = numval;
+      return 0;
+      }
+
+   if (far_strcmp(variable,s_orbitinterval) == 0) {
+      orbit_interval = numval;
+      if (orbit_interval < 1)
+         orbit_interval = 1;
+      if (orbit_interval > 255)
+         orbit_interval = 255;
       return 0;
       }
 

@@ -490,6 +490,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    /* modified saved evolver structure JCO 12JUL01 */
    Log_Auto_Calc = 0;  /* make sure it's turned off */
 
+   orbit_interval = 1;
+   if (read_info.version > 15) { /* post-version 20.3.2 */
+      orbit_interval = read_info.orbit_interval;
+   }
+
    backwards_v18();
    backwards_v19();
    backwards_v20();
