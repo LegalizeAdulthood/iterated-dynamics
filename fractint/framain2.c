@@ -496,7 +496,7 @@ resumeloop:                             /* return here on failed overlays */
             }
          else if (initbatch == 0) {     /* not batch mode */
 #ifndef XFRACT
-            lookatmouse = (zwidth == 0 && calc_status == 1) ? -PAGE_UP : 3;
+            lookatmouse = (zwidth == 0 && !video_scroll) ? -PAGE_UP : 3;
 #else
             lookatmouse = (zwidth == 0) ? -PAGE_UP : 3;
 #endif
