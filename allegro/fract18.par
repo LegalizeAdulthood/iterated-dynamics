@@ -1,0 +1,122 @@
+; This file is the "newparm.par" file that was included with versions
+; 18.0 thru 19.2.
+
+; The following illustrate a few features new in Fractint 18.0 
+
+daisy              { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=recip/sqr
+  corners=-0.655441/0.663666/-0.493652/0.49321 params=1/0.9/1 maxiter=500
+  inside=0 biomorph=0
+  colors=00000e0e00eee00e0eeL0eeeLLLLLzLzLLzzzLLzLzzzLzzz000555<3>HHHKKKOOOSSS\
+  WWW___ccchhhmmmssszzz00z<3>z0z<3>z00<3>zz0<3>0z0<3>0zz<2>0GzVVz<3>zVz<3>zVV<\
+  3>zzV<3>VzV<3>Vzz<2>Vbzhhz<3>zhz<3>zhh<3>zzh<3>hzh<3>hzz<2>hlz00S<3>S0S<3>S0\
+  0<3>SS0<3>0S0<3>0SS<2>07SEES<3>SES<3>SEE<3>SSE<3>ESE<3>ESS<2>EHSKKS<2>QKSSKS\
+  SKQSKOSKMSKK<2>SQKSSKQSKOSKMSKKSK<2>KSQKSSKQSKOSKMS00G<3>G0G<3>G00<3>GG0<3>0\
+  G0<3>0GG<2>04G88G<2>E8GG8GG8EG8CG8AG88<2>GE8GG8EG8CG8AG88G8<2>8GE8GG8EG8CG8A\
+  GBBG<2>FBGGBGGBFGBDGBCGBB<2>GFBGGBFGBDGBCGBBGB<2>BGFBGGBFGBDGBCG000<6>000
+  }
+
+snow_storm         { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=conj/cosh
+  corners=-0.655441/0.663666/-0.493652/0.49321 params=1/0.9/1 maxiter=500
+  inside=0 colors=000DDD<51>000zzz<200>DDD
+  }
+
+cat's_eye          { ; Jonathan Osuch [73277,1432]
+  reset type=manlam(fn||fn) function=tan/exp
+  corners=-4.0/4.002258/-3.000122/3.0 params=0/0/10 maxiter=500 inside=0
+  colors=0007S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>\
+  7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0U\
+  SA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<12>7S0USA7S0<5>7S0USA7\
+  S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4\
+  >7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0USA7S0<5>7S0USA7S0<4>7S0\
+  USA7S0<5>7S0USA7S0<3>7S0000000
+  }
+
+logfnbifurc        { ; Jonathan Osuch [73277,1432]
+  reset type=bif+sinpi function=log
+  corners=-1.017556/0.202374/-0.185711/1.52232 params=5/0.66 maxiter=30
+  inside=0
+  }
+
+twirlbifurc        { ; Jonathan Osuch [73277,1432]
+  reset type=bif=sinpi function=cotan
+  corners=-0.070738/0.07079/-0.09937/0.098708 params=5/0.77 float=y
+  maxiter=30 inside=0
+  }
+
+bifurclambdafn     { ; Jonathan Osuch [73277,1432]
+  reset type=biflambda function=sqr
+  corners=-3.50002366/-3.49890184/-0.836589396/-0.836031914
+  params=300/0.66 float=y maxiter=300 inside=0
+  }
+
+bifurclambdafnexp  { ; Jonathan Osuch [73277,1432]
+  reset type=biflambda function=exp
+  corners=0.464147/5.931557/-1.876942/0.856763 params=9/0.9 float=y
+  maxiter=30 inside=0
+  }
+
+star_burst         { ; Jonathan Osuch [73277,1432]
+  reset type=bifstewart function=cotanh
+  corners=0.7/1.999998/-0.558294/1.641709 params=1000/0.66
+  inside=0
+  }
+
+fireworks          { ; Jonathan Osuch [73277,1432]
+  reset type=bifstewart function=cotanh
+  corners=1.07614/1.281547/0.025189/1.168775 params=1000/0.66
+  inside=0
+  }
+
+bifmay_test        { ; Jonathan Osuch [73277,1432]
+  reset type=bifmay corners=57.48834/82.879774/-0.564521/6.948902
+  params=300/0.9/5 float=y inside=0 colors=@default
+  }
+
+bazzaro            { ; Jonathan Osuch [73277,1432]
+  reset type=manlam(fn||fn) function=exp/tanh
+  corners=-0.54303/0.547302/2.500732/3.317551 params=0/0/10 inside=0
+  }
+
+eggface            { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=exp/tanh
+  corners=-4.0/4.002258/-3.000122/3.0
+  params=0.443054199148903/3.23751068170854/10 float=y inside=0
+  colors=00000e0e00eee00e0eeL0eeeLLLLLzLzLLzzzLLzLzzzLzzz000555<3>HHHKKKOOOSSS\
+  WWW___ccchhhmmmssszzz00z<3>z0z<3>z00<3>zz0<3>0z0<3>0zz<2>0GzVVz<3>zVz<3>zVV<\
+  3>zzV<3>VzV<3>Vzz<2>Vbzhhz<3>zhz<3>zhh<3>zzh<3>hzh<3>hzz<2>hlz00S<3>S0S<3>S0\
+  0<3>SS0<3>0S0<3>0SS<2>07SEES<3>SES<3>SEE<3>SSE<3>ESE<3>ESSEOSELS
+  }
+
+face2              { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=exp/tanh corners=-4.0/4.0/-3.0/3.0
+  params=-0.110656738224139/2.5479354841206/10 float=y inside=0
+  }
+
+twisted_pairs      { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=sin/sqr
+  corners=0.038671912/0.038951912/-0.003221834/-0.003011834
+  params=3.63636363636368/8.88178419700125e-015/32 float=y maxiter=500
+  inside=0
+  }
+
+sunburst           { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=sin/sinh
+  corners=1.208435/1.685455/0.151367/0.509674 params=1/0.1/32 float=y
+  inside=0
+  colors=000rr7<29>zz0AAANNHffJ<44>__QzcE<7>zAAPP`<10>Z3w_0zaaO<24>``PzcE<21>z\
+  QD
+  }
+
+testbifstewart     { ; Jonathan Osuch [73277,1432]
+  reset type=bifstewart function=ident corners=0.7/1.999998/-1.100003/1.1
+  params=1/0.56 inside=0
+  }
+
+triple_swirl       { ; Jonathan Osuch [73277,1432]
+  reset type=lambda(fn||fn) function=sin/sqr
+  corners=-1.119186/1.123398/-0.84111/0.839951 params=1/0.1/32 float=y
+  maxiter=1000 inside=0
+  }
+

@@ -1,0 +1,400 @@
+
+Filament           { ; A Mandelbrot                         Ian Adam
+  reset type=mandel
+  corners=-1.86057396488642/-1.86057395514533/-0.00000093796272/-0.00000093078\
+  577 float=y maxiter=1500 inside=0
+  colors=000512<3>E44G55I66K77M88<13>mCBoCBqBA<2>v97w97y77<2>z11z00z00<9>z00z0\
+  0x02<28>20w00y00z<10>00z<5>``zffzllzsszzzz00z<6>00z<5>``zffzllzsszzzz00z<6>0\
+  0z<5>``zffzllzsszzzz00K00M00O00Q11S22U44W66Y98_<2>LKePOgTRiXUk`Yldam00z<8>00\
+  e00c00b<14>00O00O00N00N00M<21>00B00B009<17>000000000000000<24>000301
+  }
+
+
+Hypnoteyes         { ; try color cycling and hitting F4     Pieter Branderhorst
+  reset type=julia corners=-0.162458/0.17487/0.734422/0.984935
+  params=0.258919/1.76951e-007 colors=@chroma.map
+  }
+
+Hypnoteyes2        { ; with decomp, try fast cycling        Pieter Branderhorst
+  reset type=julia corners=-0.162458/0.17487/0.734422/0.984935
+  params=0.258919/1.76951e-007 decomp=256 colors=@blues.map
+  }
+
+AtomicGlow         { ; try gamma2.map & grey.map too        Pieter Branderhorst
+  reset type=sqr(fn) function=cosh
+  corners=0.706238/0.321106/0.622375/0.792267/0.487701/0.915131
+  potential=255/820/20
+  colors=0000KN<26>8RL8RL8RL9RL9SL9SL<26>GYKGYKHZJIZJ<39>WjFWjFXkEYkE<25>nqIoq\
+  JoqJoqJpqJpqJ<4>roFroErnDsmC<17>sECrCCqCC<11>UCCSCDQCDOCEMCEKCFICFGCG<21>GCW\
+  FCXFCXECYECZ<20>DCrCCsCEs<12>CcsCesChtCku<4>CzzCzz
+  }
+
+Mousies            { ; sqr(1/cos), with maxiter just 15!    Pieter Branderhorst
+                     ; (they look like my son's "Mousie" stuffed animal)
+  reset type=sqr(1/fn) function=cos
+  corners=-3.839996/0.692047/-1.723389/1.6745 maxiter=15 inside=0
+  colors=0000tc0e0wmVc660oQzz0Tunhzlpi`sd0L`fkkk000000000
+  }
+
+MiniMandelbrot     { ; try random cycling                   Pieter Branderhorst
+  reset type=mandel
+  corners=-0.74543892033/-0.74541806988/-0.11300775036/-0.1130095385/-0.745431\
+  29839/-0.11299945787 maxiter=1000 inside=0
+  colors=000000QBr<5>8Gv<11>VSGWTDXSH<8>_Oj_OmZMk<14>S0P<6>LEUKGVJHVJIW<6>GPf4\
+  zD<10>DZ_EWaEVbFTcGReQ_h`il<10>JSgHQgEJrFLnGNjEGf<2>FMZilU<5>ZhSXoaWm`Vl_hDY\
+  <5>S_k<12>e0Z<14>mDQmDQnEO<13>yR5<9>G1dzzIyzG<13>cdZbc_`ca<7>NcjMckKclJcmGhh\
+  <2>9wU<2>tsa<3>jd_ha_f_W<2>bUNaTKbXIb_H<4>7pO<14>3q1Dh9M_HZHVcIXl9du1k<7>X9q
+  }
+
+Insectarm          { ; barnsleyj2 with decomp               Pieter Branderhorst
+  reset type=barnsleyj2
+  corners=0.220596/0.3306656/0.2319299/0.2133/0.2663158/0.1675801
+  params=0.757642/1.07726 decomp=256
+  colors=A0AJ0S<13>p0u8B36B34B32B32B52B7000<100>000zzK<2>_yHRxGIwF8vD0uB<3>Usu\
+  <8>tcl<6>tlc000<96>000U0m<4>A0K
+  }
+
+Rna?               { ; barnsleym1                           Pieter Branderhorst
+  reset type=barnsleym1
+  corners=1.35740495/1.36174238/-0.42260021/-0.4214974/1.3584317/-0.42392069
+  params=0.5555/0.7676 periodicity=-256
+  }
+
+Newton_6           { ; try cycling and F5; try volcano.map  Pieter Branderhorst
+  reset type=newton corners=-0.194363/0.194333/1.21358/1.5 params=6
+  periodicity=-256
+  colors=000000<25>qqq00z<7>z0z<3>z00<3>zz0<3>0z0<3>0zz<2>0GzVVz<3>zVz<3>zVV<3\
+  >zzV<3>VzV<3>Vzz<2>Vbzhhz<3>zhz<3>zhh<3>zzh<3>hzh<3>hzz<2>hlz<46>hlz
+  }
+
+Spiral             { ; A julia                              Pieter Branderhorst
+  reset type=julia
+  corners=-0.0864522/-0.1012557/0.1608274/0.1801619/-0.1012557/0.1801619
+  params=-0.204812/-0.663316 maxiter=255 inside=0
+  colors=@neon.map
+  }
+
+Spiral2            { ; Another julia                        Pieter Branderhorst
+  reset type=julia corners=-1.032595/-0.907029/-0.07522/0.0185483
+  params=-0.833062/0.194798 maxiter=2000
+  colors=@royal.map
+  }
+
+Bows               { ; ribbon and bows                      Pieter Branderhorst
+  reset type=lambdafn function=exp
+  corners=-0.143341/0.119507/1.09465/1.292023 params=1/0.4 maxiter=5000
+  decomp=256
+  colors=xZJhpzxWL<2>zNSzKUyKU<41>UAFhpz<46>hpz2S2<5>GcEIeGLhIOkK<4>czZ<2>XtTU\
+  qRSoPPlMNkL<9>3S2hpz<67>hpzc00<30>zq1<24>xaH
+  }
+
+Reach              { ; a stretched wineglass formula        Pieter Branderhorst
+  reset type=formula formulafile=fractint.frm formulaname=Wineglass
+  corners=0.23862567/0.24167464/0.58484177/0.58636416 float=y maxiter=255
+  colors=000zzm<20>zzmfdb<5>fdbzz0<4>z0G0wz<7>00zw2z<13>BFx<29>P_vQ`uQ`uQ`u<16\
+  2>www
+  }
+
+Float              { ; a stretched wineglass formula        Pieter Branderhorst
+  reset type=formula formulafile=fractint.frm formulaname=wineglass
+  corners=0.09857260478/0.09856737821/0.14981300096/0.14979180221/0.0985776646\
+  3/0.14978712961 float=y
+  colors=653CJbNbMLbbjGJYJ_`QIfdbMMKCWmZjNckroRSWWWwvNxwu653653653ECDEEEHFGMMK\
+  NONORRWWWZWXfdbckdEFYxwuxwuckr<2>ckrOboOboOboCWmCWmATlrcIreKwuIZjN<6>Zj`Zkb_\
+  kf<2>ckroRS<5>sePsgPtiPtlPunO<2>wvN<9>xwfHRJCXN<3>ckd<5>xwu<7>sej<4>ckd<6>ee\
+  cfdbeca<2>`YZZWXZWX<2>WWWVWWUVVSUURTTQSSORRORRORONONNONMNMMMKMMKMMKHJKHJKHFG\
+  HFGEEEEEEEEEECDECDECD653653653
+  }
+
+Shell              { ; this one is a good Rorschach         Pieter Branderhorst
+  reset type=manowarj
+  corners=-0.385088301/-0.38385805/-0.018227188/-0.017669901/-0.384912909/-0.0\
+  18461045 params=-0.385482666666669/-0.018571636363635 float=y
+  maxiter=850 inside=0 logmap=yes
+  colors=000000<30>zKU<30>211000000<94>000110330<29>zz0<30>220000000<29>000
+  }
+
+RubberDucky        { ; a stretched wineglass formula        Pieter Branderhorst
+  reset type=formula formulafile=fractint.frm formulaname=wineglass
+  corners=0.2408521729/0.2406268424/0.5851913634/0.5851407676/0.240706247/0.58\
+  52776043 float=y maxiter=85
+  colors=000<32>000AbE<12>HrM<2>czpczp<7>0hez_p<3>zII<3>zaJzgKxrBww0<2>wwi`za<\
+  3>EwH000<4>000
+  }
+
+Butterfly          { ; type sqr(1/cos)                      Pieter Branderhorst
+  reset type=sqr(1/fn) function=cos
+  corners=-3.591669/-2.692763/0.449396/1.125021 float=y maxiter=10
+  decomp=256
+  colors=0RHwwhcwc<33>0RHvcX<20>m22<12>tTFtVGtWG<5>uaMvbNvbNvbO<13>sYYsYYsXX<1\
+  1>mOOmNNlMMkLL<13>W22U00V11<18>qRRsTTsTT<11>t__t__t_Z<13>vbLwcKwaJ<16>m22<21\
+  >vcX0RH<32>`tb0RHgzj
+  }
+
+Cheshire           { ; reminds me of Alice in Wonderland    Pieter Branderhorst
+  reset type=spider
+  corners=-0.488343/-0.27876/0.140556/-0.138888/-0.27876/-0.138888
+  maxiter=255 inside=0 invert=0.331101/-0.0974796/0 periodicity=4
+  colors=qqqqqqqqq000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAA\
+  AmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP0\
+  00rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rA\
+  AAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP000rAAAmP\
+  000rAAAmPGKPDNRFOQLKODPQKRPBVUDYTreKjGJ000<15>000_iKEJQjGJreKsej000<120>000
+  }
+
+
+Lambdafn           { ; beautiful inversion (an fpu helps)   Michael Coddington
+  reset type=lambdafn function=cos
+  corners=0.13159977/0.15118976/0.12827285/0.11423222/0.14539167/0.10988365
+  params=4.72675/0.00145555 float=y maxiter=900 inside=0
+  invert=0.5/0.2/0.5
+  colors=00040N91X<5>NCYB4P<18>zmn<9>ua`u`_u`_<2>u_YtZXtZXtYX<27>tOUtOUuNTuMT<\
+  9>q8Up6Vq8U<6>_9RY9QV8QS8PQ8P<2>C7IF8JI9LLAN<3>QEOSGPTGP<22>kSWlSXmTXnUYoVY<\
+  5>t_bu`bvacwbcxcd<2>zefzefydf<44>WGRVFQVFQUFQ<51>40NoEj
+  }
+
+CoolComplexNewton  { ; complexnewton using chroma.map       Michael Coddington
+  reset type=complexnewton corners=-2.0/2.0/-1.5/1.5
+  params=4/-3/1/1 float=y inside=bof60 invert=0.5/0.125/-0.125
+  colors=CCCssC<20>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<19>CqsCssCsq<8>Cs_C\
+  sYECE<20>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<19>ssE
+  }
+
+FieryMandelbrot    { ; resembles lightning                  Michael Coddington
+  reset type=mandel
+  corners=-0.59695729/-0.58756756/-0.62374772/-0.61683133 inside=0
+  colors=000aiu_kxZmzgbmpS`N`8<13>wINF5E<19>wHO7xu<8>tLRz`p<22>yIQyHPwzD<22>yI\
+  OBR`<23>wHOCxF<5>rNN3DX<3>nHP6`W<9>tIOptH<9>yKORCG<14>wHOlEe<30>yHO8_1<25>wH\
+  O_uF<7>hgIieJiX`<4>kVc<4>bfr
+  }
+
+
+DinnerPlate        { ; Looks like china on tablecloth       Dan Farmer
+  reset type=formula
+  formulafile=fractint.frm formulaname=LeeMandel2
+  corners=-0.0233229/0.0233249/0.2569835/0.291958 inside=0 potential=255/500/500
+  colors=000DP_Uoq<20>A4XVqq<18>nwjoIRFns0kuUqq<22>ieiUqo<19>HjCTqq<17>4riUqq<\
+  20>9ggUqq<14>SxqRyqTpq<6>LgmUqp<11>Pm`XfjPlZ<4>MjSy3J<5>YEB<15>eOFeOFdOF<11>\
+  ZMAl`AzoAIjb<10>sOD<22>1ZC<3>9SS }
+
+Batman             { ; Cont Pot... looks like a bat         Dan Farmer
+  reset type=manfn+zsqrd function=cosxx
+  corners=1.591553/-3.133835/-3.158447/3.144699/-3.133835/3.144699
+  maxiter=32000 inside=0 potential=255/300/150 decomp=256
+  colors=000zk0<253>000
+  }
+
+Tonsils            { ; LeeMandel3 forumula, cont. pot.      Dan Farmer
+  reset type=formula formulafile=fractint.frm formulaname=leemandel3
+  corners=1.66875/-1.668761/-2.225006/2.225/-1.668761/2.225 inside=0
+  potential=255/500/500 colors=000zk0<253>000
+  }
+
+NYUF004            { ; delicate & beautiful                 Dan Farmer
+  reset type=formula formulafile=fractint.frm formulaname=Richard1
+  corners=1.0942183/1.0642116/-0.0205947/0.0193983/1.0642116/0.0193983
+  inside=0 potential=255/600/500
+  colors=000S9jLSd<147>hwXixWiwW<30>Z7wY5xY5x<69>T9j
+  }
+
+NYUF008            { ; Hard to describe.  Try it.           Dan Farmer
+  reset type=barnsleyj1
+  corners=2.023155/-0.005196/-1.352236/1.352223/-0.005196/1.352223
+  params=0.599999905/1.099998949 maxiter=256 inside=0 potential=255/1000/1
+  colors=000zk0<253>000
+  }
+
+NYUF009            { ; pretty bug if changed to float=n     Dan Farmer
+  reset type=fn(z)+fn(pix) function=sin/sqr float=y
+  corners=12.801548/-3.196652/-10.911614/10.419413/-3.196652/10.419413
+  params=0/0/1 inside=0 potential=255/200/250
+  colors=000gK4fJ3hPCohbrokpkjmghhZelJ3<2>tM4HC2<13>FZSJD2<9>ieGHB4<9>MCeGD8<6\
+  >8XyGC3<11>4V`HB3<14>4HhIC6<7>XKjJE3<10>dt_HF1HJ1HO2HH7<3>GeXGF1<10>3y3OCB<3\
+  >pGpKF8<3>ZZ_HD3<7>ITQIVSGG5IXV<2>Jbc<8>SqFUsCTrD<14>2P`<12>Se4Vg1Ve3<14>_1f\
+  <3>_7b<2>LHIKMMJPOJRRIUTGa_FdaFfcDnjCqlBto<3>DulEvi<6>IxcVnU<3>tUA<12>hL4
+  }
+
+
+Arrow              { ; formula Wineglass                    Richard Hughes
+  reset type=formula formulafile=fractint.frm formulaname=Wineglass
+  corners=-0.650529/-0.306983/-0.128843/0.128827 maxiter=256 inside=0
+  outside=mult logmap=yes symmetry=xaxis
+  colors=00000S88YBBaDDeEEiFFmHHsKKwNNzOOz<2>WWzZZzccz00522755977BAAF<11>cchee\
+  jffl<2>mmrppurrvttwuuxP0P<2>c0cg0gj0jm0mp0p<3>z0zzFz<6>zmzgfoZ`iTVdPR`<2>HJU\
+  FHUCHS9LV0OY0Tc0Yh<2>0jw5mz0ozFpz<5>hpzmpzppz000555<18>zzz00V88Y<6>NNz<13>nn\
+  zppzttzvvzP0PU0UZ0Zc0cg2gh0hm0mr0rw0wz0zzCzzKzzRzzYzzczzhz000555<3>HHHKKKOOO\
+  SSSWWW___ccchhhmmmssszzzz00zICzNGzQNzTS<3>zbbzeezhizjkzlozopzts000555<3>HHHK\
+  KKOOOSSSWWW___ccchhhmmmssszzz00P00X08_8DaCFcHEgKHlNGrLOqJVqHar5gtTjv_nwduzlw\
+  z000555<3>HHHKKKOOOSSSWWW___ccchhhmmmssszzzV0W_0_c4de9fg2gi9jlAmoDprCst0uwCu\
+  z5zzRzzYzzczzhzzkzzoz<3>zzz00z0z0z00
+  }
+
+Egg                { ; FN*FN   SINH/SQR                     Richard Hughes
+  reset type=fn*fn function=sinh/sqr
+  corners=-0.0067631/0.0187092/1.991193/2.0105618 float=y maxiter=256
+  inside=0 outside=real logmap=yes
+  colors=000ssEssC<20>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<19>CqsCssCsq<8>C\
+  s_CsYECE<20>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<18>ssG
+  }
+
+mandala            { ; Sqr(1/FN)  IDENT                     Richard Hughes
+  reset type=sqr(1/fn) function=ident  ; TW changed - cotan was broken
+  corners=-1.984573/1.98143/-1.486908/1.487839 maxiter=256 inside=0
+  outside=real
+  colors=000ztn<49>zV1zU0zU0zT0<28>z10z00z00y00<30>c00b11a11`22_22<23>GEEFFFFF\
+  FFFF<29>x11z00z10<29>zx0zz0zz1<29>zzxzzzzzz<10>zto
+  }
+
+Mounts             { ; Fn(z)+Fn(pix)  COTAN/SQR             Richard Hughes
+  reset type=fn(z)+fn(pix) function=cotan/sqr
+  corners=0.494267/0.906929/0.5978/0.907317 params=0/0/1 maxiter=256
+  inside=0 outside=summ logmap=yes
+  colors=000FFF<29>x11z00z10<29>zx0zz0zz1<29>zzxzzzzzz<61>zV1zU0zU0zT0<28>z10z\
+  00z00y00<30>c00b11a11`22_22<25>FFF
+  }
+
+SpiderPlant        { ; Manowarj                             Richard Hughes
+  reset type=manowarj
+  corners=-0.18194276/-0.19649744/0.08981478/0.06949806/-0.17743176/0.08380193
+  maxiter=250 inside=0 outside=imag logmap=yes
+  colors=00000S<25>002000000000<29>00k00m01m<29>0ky0mz1mz<30>zzz<46>2zz0zz0yz<\
+  45>02z00z00y<27>00Y
+  }
+
+Stripes            { ; Mandelfn IDENT                       Richard Hughes
+  reset type=mandelfn function=ident
+  corners=-1.367645/-0.958344/0.296143/-0.24617/-0.958344/-0.24617
+  maxiter=100 inside=0 outside=real
+  colors=000s_C<10>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<17>Cms
+  }
+
+
+Autumn             { ; You guessed it!                      Peter Moreland
+  reset type=ifs ifsfile=fractint.ifs ifs=fern
+  corners=-8.0/8.000351/-0.999954/11.0
+  colors=000DGT<4>jQ1<2>bgO`lVWmZ<5>5np<3>pky<2>Avk<5>l7KhGaeOrPKq9Hp<5>Mjy<4>\
+  11`1cR<6>GlJ<2>_J8OSFC`M<7>J7XOFWSNWXVVbXb`bVUor_lfGKp<4>`fYwL6<6>fgSdeQdhTf\
+  Se<5>dhWWcBAHB<6>agTQB8<3>acRa0pMC9J`APcGUeL_hQgYifbdef_G3xPInXXdFny<2>Zkalc\
+  E`Vg<4>dhXJEP<3>`dUK5XRJWYXVKlWQkVVkV_jVcWL<3>deS
+  }
+
+The_Eye            { ; Kamtora is watching you!             Peter Moreland
+  reset type=kamtorus corners=-0.282135/0.424988/-0.237793/0.292328
+  params=0.3/0.005/5/500
+  colors=000mme<12>hBAnph000555<3>HHHKKKOOOSSSWWW___ccchhhmmmssszzz00z<3>z0z<3\
+  >z00<3>zz0<3>0z0<3>0zz<2>0GzVVz<3>zVz<3>zVV<3>zzV<3>VzV<3>Vzz<2>Vbzhhz<3>zhz\
+  <3>zhh<3>zzh<3>hzh<3>hzz<2>hlz00S<3>S0S<3>S00<3>SS0<3>0S0<3>0SS<2>07SEES<3>S\
+  ES<3>SEE<3>SSE<3>ESE<3>ESSEOSELS
+  }
+
+Blue               { ; I like it, no more to say...         Peter Moreland
+  reset type=julfn+zsqrd function=cosxx passes=b
+  corners=-2.0/1.99765/-1.501511/1.5 params=-0.5/0.5 maxiter=2250
+  bailout=30 decomp=256 biomorph=0
+  colors=000Iaf<27>PtVQuUPrT<5>DZIBVGBVG<15>B_KCOj<27>02FDQm<38>V`bDQl<33>Vt5H\
+  Ti<8>sxADQm<62>VelMT_VWLdZ6DQm<6>FVjFRmFWj<8>Haf
+  }
+
+Orc_Insignia       { ; hmmmm.....                           Peter Moreland
+  reset type=mandelfn function=sin
+  corners=-0.0362244/0.0369263/1.7957306/1.8505707 maxiter=32767
+  colors=000GNPEPWCRbNKL<2>_NlTLMcOWnRetVAKxPCBL42UHTI<2>Bv_MJAPJ7HJG<2>AHVPCJ\
+  ONFURI_WLQ4RPbLVwUXLXHNCERCBVDVStNGD<2>`6GZYYnmsd_SzpgTTJ<2>vyeRML<2>nYlS`Ga\
+  rKMF8QB3JIQKGcLEqIZNGnYXWJjhQxuYWE8h94u40JVCJfCKrBLLF<2>RRPHMJ<2>8VfTcHcyNd`\
+  Ozr_Xa`kuzKTrAQO0X`PML<2>iYnLyYGEZD9vLQKNYTRSB_`Ahj8LNDNSFPXHSaJTO_cTwUGTeCi\
+  PXRVje`xtIHGHFKGCPGc_CywbERw9fCMB4QALPC<2>ShEs7R6gnPIFVHIaFLXXDjkESIB`H9jG7S\
+  mPv_oVXLfkULUINdOPoULJCXVOkf_5zIYNImRPTE8b94l40KGL<2>Q4mprqXBVj3mFXFAkI5zLMf\
+  YL`YOss_6EZFxbbFvvJM`CQsCTNKbSSlX`wLdTRK<2>vqhMGE<2>V4MNFI<2>_0bFGhGJ9CI6UHG\
+  eFKOFJ<2>b2cIPLGVVEadJbAJw8FU9Ad65p3_44CVU4glHMG<2>AWUc58SPC`VCi`DFPM<2>1gpb\
+  oMREI_9OQJMXKWdLeFQJ<2>1mdFDCB7D61EHIH<2>8CXTJBbJAmK8HCjMSO<2>HZQF`QB`l9Kr72\
+  yuRv<3>YWh<3>mzTlYm
+  }
+
+
+YinFinite          { ; like Yin-Yang symbol, infinity sign  Ethan Nagel
+  reset type=julia
+  corners=-0.1328505/0.1261121/-0.0104325/0.0093564/-0.0491231/-0.1220701
+  params=0.252235/0.000169836 maxiter=5000 inside=255 logmap=75
+  colors=@chroma.map
+  }
+
+
+Rich8z3            { ; Fractal Creations cover              Lee Skinner
+  reset type=fn(z)+fn(pix) function=sin/sin
+  corners=0.58152919/0.59067959/1.17166377/1.17852657
+  maxiter=1023 inside=0 bailout=50 float=y
+  colors=000ww3<3>zz0zz0zy0<81>z10z00z00y01<82>00z00z11y<77>vv4
+  }
+
+
+Owl                { ; fn*z+z, TANH                         Scott Taylor
+  reset type=fn*z+z function=tanh symmetry=yaxis
+  corners=-1.996257/1.996259/0.79092/3.785347 params=1/0/1 maxiter=512
+  inside=255 potential=255/355/0 colors=@volcano.map
+  }
+
+SWT-018            { ; fn+fn, SINH/COSH                     Scott Taylor
+  reset type=fn+fn function=sinh/cosh
+  corners=-1.093216/2.098724/2.127304/-2.128159/2.098724/-2.128159
+  params=1/0/1 maxiter=512 inside=255 potential=255/355/0
+  colors=@volcano.map
+  }
+
+SWT-023            { ; color cycle and press "2" for fun    Scott Taylor
+  reset type=mandelfn function=cos symmetry=xyaxis
+  corners=-3.679993/3.681534/-2.759262/2.759003 maxiter=512 inside=255
+  outside=summ potential=255/400/0 colors=@headache.map
+  }
+
+SWT-027            { ; magnet2m                             Scott Taylor
+  reset type=magnet2m passes=b symmetry=xaxis
+  corners=-4.552174/6.752174/-4.239131/4.239131 maxiter=512 inside=255
+  outside=summ potential=255/400/0 colors=@headache.map
+  }
+
+SWT-029            { ; lambdafn, EXP                        Scott Taylor
+  reset type=lambdafn function=exp symmetry=xaxis
+  corners=-4.340851/4.336975/-3.250305/3.254669 params=1.9/0.4 maxiter=512
+  inside=255 potential=255/455/0 colors=@royal.map
+  }
+
+SWT-030            { ; lambdafn, COSH                       Scott Taylor
+  reset type=lambdafn function=cosh
+  corners=-3.949829/3.947968/-2.958694/2.961563 params=1.9/0.4 maxiter=512
+  inside=255 potential=255/455/0 colors=@neon.map
+  }
+
+
+EvilFrog          { ; Kermit with rabies                   Wesley Loewer
+  reset type=frothybasin passes=1
+  corners=0.1987794025371462/0.1987794025306378/-1.287290394040766/-1.2872\
+  90394029171/0.1987794025292465/-1.287290394030193 params=6/1 float=y
+  maxiter=100
+  colors=000z00<82>M00z0z<40>M0M0z0<40>0M000z<40>00Mzz0<40>MM0000000000
+  }
+
+
+Horsetail          { ; MIIM Julia                           Michael Snyder
+                     ; Reminds me of a horsetail fern
+                     ; Give it your highest 16-color resolution.
+  reset=1732 type=julia_inverse miim=depth/left
+  corners=-1.303326/1.303335/-1.0648/1.064791
+  params=-0.194/0.6557/3/1024
+  }
+
+SeaHorse           { ; MIIM Julia                           Michael Snyder
+                     ; The famous Seahorse Julia -- from a different angle!
+                     ; Give it your highest 16-color resolution.
+  reset=1732 type=julia_inverse miim=depth/left
+  corners=-0.213794/0.213791/-1.003197/1.003186/-1.812457/0.013164
+  params=-0.74543/0.11301/3/1024
+  }
+
+SeaShell           { ; MIIM Julia                           Michael Snyder
+                     ; Like a Chambered Nautilus cut in half; my favorite.
+                     ; Give it your highest 16-color resolution.
+  reset=1732 type=julia_inverse miim=depth/right
+  corners=0.839251/-0.839269/-1.119046/1.119006/-0.839269/1.119006
+  params=0.27334/0.00742/5/1024
+  }
+
