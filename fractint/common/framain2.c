@@ -2407,6 +2407,7 @@ static void _fastcall restore_history_info(int i)
    ox3rd = last.ox3rd;
    oy3rd = last.oy3rd;
    keep_scrn_coords = last.keep_scrn_coords;
+   if (keep_scrn_coords) set_orbit_corners = 1;
    drawmode = last.drawmode;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
    far_memcpy(dacbox,last.dac,256*3);
