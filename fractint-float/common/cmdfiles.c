@@ -936,14 +936,21 @@ static int next_command(char *cmdbuf,int maxlen,
 static int next_line(FILE *handle,char *linebuf,int mode)
 {
    int toolssection;
-   char tmpbuf[10];
+   char tmpbuf[11];
    toolssection = 0;
    while (file_gets(linebuf,512,handle) >= 0) {
       if (mode == 1 && linebuf[0] == '[') {     /* check for [fractint] */
+#ifndef XFRACT
          strncpy(tmpbuf,&linebuf[1],9);
          tmpbuf[9] = 0;
          strlwr(tmpbuf);
          toolssection = far_strncmp(tmpbuf,"fractint]",9);
+#else
+         strncpy(tmpbuf,&linebuf[1],10);
+         tmpbuf[10] = 0;
+         strlwr(tmpbuf);
+         toolssection = far_strncmp(tmpbuf,"xfractint]",10);
+#endif
          continue;                              /* skip tools section heading */
          }
       if (toolssection == 0) return(0);
