@@ -654,7 +654,7 @@ static void _fastcall setup_save_info(struct fractal_info far * save_info)
       maxfn = 0;
    /* set save parameters in save structure */
    far_strcpy(save_info->info_id, INFO_ID);
-   save_info->version = 15;     /* file version, independent of system */
+   save_info->version = 16;     /* file version, independent of system */
    /* increment this EVERY time the fractal_info structure changes */
 
    if (maxit <= SHRT_MAX)
@@ -793,6 +793,7 @@ static void _fastcall setup_save_info(struct fractal_info far * save_info)
    save_info->quick_calc = (short) quick_calc;
    save_info->closeprox = closeprox;
    save_info->nobof = (short) nobof;
+   save_info->orbit_interval = orbit_interval;
    for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
       save_info->future[i] = 0;
       

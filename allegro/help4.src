@@ -32,7 +32,7 @@
   maxlinelength=nnn        Sets maximum width of lines written to PAR files.
   batch=yes                Batch mode run (display image, save-to-disk, exit)
   autokey=play|record      Playback or record keystrokes
-  autokeyname=filename     File for autokey mode, default AUTO.KEY
+  autokeyname=<path>\\filename  File for autokey mode, default AUTO.KEY
   fpu=387                  Assume 387 fpu is present
   makedoc=filename         Create Fractint documentation file
   maxhistory=<nnn>         Set image capacity of history feature. A higher
@@ -47,10 +47,10 @@
                            Inserts comments into PAR files.
 ~FF
 {Calculation Mode Parameters}
-  passes=1|2|3|g|b|t|g1..g6|s  Select Single-Pass, Dual-Pass, Triple-Pass
+  passes=1|2|3|g|b|t|g1..g6|s|o  Select Single-Pass, Dual-Pass, Triple-Pass
                            Solid-Guessing, Solid-Guessing stop after pass n,
-                           Boundary-Tracing, Tesseral, or Synchronous Orbits
-                           drawing algorithms
+                           Boundary-Tracing, Tesseral, Synchronous Orbits, or
+                           Orbits drawing algorithms
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   float=yes                For most functions changes from integer math to fp
@@ -122,12 +122,13 @@
                            size of the traveling pointer.
   aspectdrift=nn           How much the aspect ratio can vary from normal due
                            to zooming. (default is 0.02)
+  orbitinterval=nn         Plots every nth orbit point with passes=o.
 {Color Parameters}
   inside=nnn|maxiter|zmag|bof60|bof61|epscr|star|per|atan|fmod
                            Fractal interior color (inside=0 for black)
   outside=nnn|iter|real|imag|mult|summ|atan|fmod|tdis
                            Fractal exterior color options
-  map=filename             Use 'filename' as the default color map (vga/targa)
+  map=<path>\\filename      Use 'filename' as the default color map (vga/targa)
   colors=@filename|colorspec Sets current image color map from file or spec,
                            vga or higher only
   recordcolors=auto|comment|yes Sets method of writing colors in PAR files.
@@ -194,16 +195,16 @@
                            notes on the musical scale.
 
 {File Parameters}
-  savename=filename        Save files using this name (instead of FRACT001)
+  savename=<path>\\filename Save files using this name (instead of FRACT001)
   overwrite=no|yes         Don't over-write existing files
   savetime=nnn             Autosave image every nnn minutes of calculation
   gif87a=yes               Save GIF files in the older GIF87a format (with
                            no FRACTINT extension blocks)
   dither=yes               Dither color GIFs read into a b/w display.
-  parmfile=filename        File for <@> and <b> commands, default FRACTINT.PAR
-  formulafile=filename     File for type=formula, default FRACTINT.FRM
-  lfile=filename           File for type=lsystem, default FRACTINT.L
-  ifsfile=filename         File for type=ifs, default FRACTINT.IFS
+  parmfile=<path>\\filename File for <@> and <b> commands, default FRACTINT.PAR
+  formulafile=<path>\\filename  File for type=formula, default FRACTINT.FRM
+  lfile=<path>\\filename    File for type=lsystem, default FRACTINT.L
+  ifsfile=<path>\\filename  File for type=ifs, default FRACTINT.IFS
   orbitsave=yes            Causes IFS and orbit fractals orbit points to be
                            saved in the file ORBITS.RAW
 ~FF
@@ -234,6 +235,8 @@
                            one in which the gif was saved. Default is no.
                            Feature will be useful when cycling through a
                            group of gifs in autokey mode.
+  virtual=yes|no           If no, disables the check for and the ability to
+                           use virtual screen sizes.  Default is yes.
 
 ~FF
 {3D Parameters}
@@ -559,10 +562,10 @@ to inform Fractint to take advantage of those extra 387 instructions.
 ;
 ;
 ~Topic=Calculation Mode Parameters
-PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t\
+PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o\
 Selects single-pass, dual-pass, triple-pass, solid-Guessing mode,
-solid-Guessing stop after pass n, Boundary Tracing, or the Tesseral
-algorithm.  See {Drawing Method}.
+solid-Guessing stop after pass n, Boundary Tracing, Tesseral,
+Synchronous Orbits, or the Orbits algorithm.  See {Drawing Method}.
 
 FILLCOLOR=normal|<nnn>\
 Sets a color to be used for block fill by Boundary Tracing and Tesseral
@@ -752,15 +755,20 @@ If the aspect changes by a factor less than <nn>, then the aspect is set
 to it's normal value, making the center-mag Xmagfactor parameter equal to 1.
 (see CENTER-MAG above.)  The default is 0.01.  A larger
 value adjusts more often.  A value of 0 does no adjustment at all.
+
+ORBITINTERVAL=<nn>\
+This parameter causes "passes=o" to plot every nth orbit point ranging from
+1, which plots every orbit, to 255, which plots every 255th orbit.  This
+value must be lower than the value of maxit to make any sense.
 ;
 ;
 ~Topic=Color Parameters
-INSIDE=nnn|bof60|bof61|zmag|attractor|epscross|startrail|period|atan|fmod\
+INSIDE=nnn|maxiter|bof60|bof61|zmag|epscross|startrail|period|atan|fmod\
 Set the color of the interior: for
 example, "inside=0" makes the M-set "lake" a stylish basic black. A setting of
--1 makes inside=maxiter.
+inside=maxiter makes the inside color the same as the value of maxiter.
 
-Six more options reveal hidden structure inside the lake.  Inside=bof60 and
+Eight more options reveal hidden structure inside the lake.  Inside=bof60 and
 inside=bof61, are named after the figures on pages 60 and 61 of "Beauty of
 Fractals".  Inside=zmag is a method of coloring based on the magnitude of Z
 after the maximum iterations have been reached.  The affect along the edges
@@ -1049,9 +1057,10 @@ default directories, or both. For example, in the SAVENAME description below,
 plus filename. You can specify default directories using these variables
 in your SSTOOLS.INI file.
 
-SAVENAME=[name]\
-Set the filename to use when you <S>ave a screen. The default filename is
-FRACT001. The .GIF extension is optional (Example: SAVENAME=myfile)
+SAVENAME=[<path>\\][name]\
+Set the path and/or filename to use when you <S>ave a screen. The default
+filename is FRACT001. The .GIF extension is optional (Example:
+SAVENAME=myfile)
 
 OVERWRITE=no|yes\
 Sets the savename overwrite flag (default is 'no'). If 'yes', saved files
@@ -1078,21 +1087,21 @@ a poor-quality display of gray levels.  Note that if you have a 2-color
 display, you can create a 256-color gif with disk video and then read it
 back in dithered.
 
-PARMFILE=[parmfilename]\
-Specifies the default parameter file to be used by the <@> (or <2>) and <B>
-commands.  If not specified, the default is FRACTINT.PAR.
+PARMFILE=[<path>\\][parmfilename]\
+Specifies the default parameter path and/or file to be used by the <@> (or <2>)
+and <B> commands.  If not specified, the default is FRACTINT.PAR.
 
-FORMULAFILE=[formulafilename]\
-Specifies the formula file for type=formula fractals (default is
+FORMULAFILE=[<path>\\][formulafilename]\
+Specifies the formula path and/or file for type=formula fractals (default is
 FRACTINT.FRM).  Handy if you want to generate one of these fractal types
 in batch mode.
 
-LFILE=[lsystemfile]\
-Specifies the default L-System file for type=lsystem fractals (if not
-FRACTINT.L).
+LFILE=[<path>\\][lsystemfile]\
+Specifies the default L-System path and/or file for type=lsystem fractals
+(default is FRACTINT.L).
 
-IFSFILE=[ifsfilename]\
-Specifies the default file for type=ifs fractals (default is
+IFSFILE=[<path>\\][ifsfilename]\
+Specifies the default path and/or file for type=ifs fractals (default is
 FRACTINT.IFS).
 
 FILENAME=[.suffix]\
@@ -1249,6 +1258,14 @@ saved. Default is NO. Feature will be useful when cycling through a group
 of gifs in autokey mode.  When combined with askvideo=no, allows loading
 images with the last successfully used video mode.  This is handy when
 viewing 1600x1200 images when you only have 1024x768 available.
+
+VIRTUAL=yes|no\
+With a suitable video adapter it is possible to set virtual screen modes
+using the {"View Window"} options.  With certain video adapters it may be
+necessary to disable the check for virtual screen modes if this check
+prevents Fractint from loading correctly.  The default is "yes".  Setting
+this to "no" disables the check for and the ability to use virtual screen
+sizes.
 ;
 ;
 ~Topic=Sound Parameters
@@ -1302,6 +1319,10 @@ try passes=1 and a moderate resolution such as 320x200.  Note that
 the first time you press the 'O' key with the 'orbitdelay' function
 active, your computer will pause for a half-second or so to calibrate
 a high-resolution timer.
+
+This option also controls how many orbits are computed before the orbits
+are displayed on the screen when using the "passes=o" option, and the
+fractal types mandelcloud and dynamic.
 
 SHOWORBIT=yes|no\
 Causes the during-generation orbits feature, toggled by the <O> command, to

@@ -114,7 +114,7 @@ int projection = 2; /* projection plane - default is to plot x-y */
    application of determinants to solve a set of simulataneous
    equations. The procedure was simple and general, but inefficient.
    The inefficiecy wasn't hurting anything because the routine was called
-   only once per image, bit it seemed positively sinful to use it
+   only once per image, but it seemed positively sinful to use it
    because the code that follows is SO much more compact, at the
    expense of being less general. Here are Sylvie's notes. I have further
    optimized the code a slight bit.
@@ -1182,7 +1182,7 @@ int dynam2dfloatsetup()
        }
        if (dt==0) dt = 0.01;
    }
-   if (outside == -5) {
+   if (outside == SUM) {
        plot = plothist;
    }
    return(1);
@@ -1318,6 +1318,99 @@ int dynam2dfloat()
    if(fp)
       fclose(fp);
    return(ret);
+}
+
+
+long orbit_interval;
+struct affine o_cvt;
+static int o_color = 1;
+
+int plotorbits2dsetup(void)
+{
+
+#ifndef XFRACT
+   if (curfractalspecific->isinteger != 0) {
+      int tofloat;
+      if ((tofloat = curfractalspecific->tofloat) == NOFRACTAL)
+         return(-1);
+      floatflag = usr_floatflag = 1; /* force floating point */
+      curfractalspecific = &fractalspecific[tofloat];
+      fractype = tofloat;
+   }
+#endif
+
+   PER_IMAGE();
+
+   /* setup affine screen coord conversion */
+   if(setup_convert_to_screen(&o_cvt))
+      return(-1);
+   /* set so truncation to int rounds to nearest */
+   o_cvt.e += 0.5;
+   o_cvt.f += 0.5;
+
+   if (orbit_delay >= maxit) /* make sure we get an image */
+      orbit_delay = (int)(maxit - 1);
+
+   if (outside == SUM) {
+       plot = plothist;
+   }
+   return(1);
+}
+
+int plotorbits2dfloat(void)
+{
+   double *soundvar = NULL;
+   double x,y,z;
+   int col,row;
+   long count;
+
+   if(keypressed())
+   {
+      mute();
+      return(-1);
+   }
+
+   if((soundflag&7)==2)
+      soundvar = &x;
+   else if((soundflag&7)==3)
+      soundvar = &y;
+   else if((soundflag&7)==4)
+      soundvar = &z;
+
+   if(inside > 0)
+      o_color = inside;
+
+   if (inside == 0)
+      if (++o_color >= colors) /* another color to switch to? */
+          o_color = 1;    /* (don't use the background color) */
+
+   PER_PIXEL(); /* initialize the calculations */
+
+   for (count = 0; count < maxit; count++) {
+
+       if (ORBITCALC() == 1 && periodicitycheck)
+          continue;  /* bailed out, don't plot */
+
+       if (count < orbit_delay || count%orbit_interval)
+          continue;  /* don't plot it */
+
+       /* else count >= orbit_delay and we want to plot it */
+       col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
+       row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
+       if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+       {             /* plot if on the screen */
+          if ((soundflag&7) > 1)
+             w_snd((int)(*soundvar*100+basehertz));
+
+          (*plot)(col,row,o_color%colors);
+       }
+       else
+       {             /* off screen, don't continue unless periodicity=0 */
+          if (periodicitycheck)
+             return(0); /* skip to next pixel */
+       }
+   }
+   return(0);
 }
 
 /* this function's only purpose is to manage funnyglasses related */
@@ -1731,6 +1824,7 @@ static FILE *open_orbitsave(void)
 static void _fastcall plothist(int x, int y, int color)
 {
     color = getcolor(x,y)+1;
-    if (color<colors)
-        putcolor(x,y,color);
+    if (color >= colors)
+        color = 1;
+    putcolor(x,y,color);
 }

@@ -633,6 +633,7 @@ decode_fractal_info(info,dir)
     getInt(&info->quick_calc,&bufPtr,dir);
     getDouble(&info->closeprox,&bufPtr,dir);
     getInt(&info->nobof,&bufPtr,dir);
+    getLong(&info->orbit_interval,&bufPtr,dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);

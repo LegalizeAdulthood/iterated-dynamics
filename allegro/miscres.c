@@ -683,6 +683,7 @@ static FCODE ssolid_guessing[] =   {"Solid Guessing"};
 static FCODE sboundary_tracing[] = {"Boundary Tracing"};
 static FCODE stesseral[] =         {"Tesseral"};
 static FCODE sdiffusion[] =        {"Diffusion"};
+static FCODE sorbits[] =           {"Orbits"};
 static FCODE scalculation_time[] = {"Calculation time:"};
 static FCODE siterations[] =       {" 1000's of points:"};
 static FCODE scornersxy[] =        {"Corners:                X                     Y"};
@@ -1000,6 +1001,9 @@ top:
             break;
 	 case 5:
 	    driver_put_string(s_row,2,C_GENERAL_HI,sdiffusion);
+	    break;
+	 case 6:
+	    driver_put_string(s_row,2,C_GENERAL_HI,sorbits);
 	    break;
          }
       ++s_row;
