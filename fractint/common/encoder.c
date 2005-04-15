@@ -526,7 +526,6 @@ int encoder()
           osave_info.ox3rd     = ox3rd;
           osave_info.oy3rd     = oy3rd;
           osave_info.keep_scrn_coords= keep_scrn_coords;
-          osave_info.orbit_delay= orbit_delay;
           osave_info.drawmode  = drawmode;
           for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
              osave_info.future[i] = 0;
@@ -652,8 +651,7 @@ static void _fastcall setup_save_info(struct fractal_info far * save_info)
       maxfn = 0;
    /* set save parameters in save structure */
    far_strcpy(save_info->info_id, INFO_ID);
-   save_info->version = 16;     /* file version, independent of system */
-   /* increment this EVERY time the fractal_info structure changes */
+   save_info->version = VERSION;
 
    if (maxit <= SHRT_MAX)
       save_info->iterationsold = (short) maxit;
@@ -792,6 +790,9 @@ static void _fastcall setup_save_info(struct fractal_info far * save_info)
    save_info->closeprox = closeprox;
    save_info->nobof = (short) nobof;
    save_info->orbit_interval = orbit_interval;
+   save_info->orbit_delay = orbit_delay;
+   save_info->math_tol[0] = math_tol[0];
+   save_info->math_tol[1] = math_tol[1];
    for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
       save_info->future[i] = 0;
       

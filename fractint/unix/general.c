@@ -651,6 +651,9 @@ decode_fractal_info(info,dir)
     getDouble(&info->closeprox,&bufPtr,dir);
     getInt(&info->nobof,&bufPtr,dir);
     getLong(&info->orbit_interval,&bufPtr,dir);
+    getInt(&info->orbit_delay,&bufPtr,dir);
+    getDouble(&info->math_tol[0],&bufPtr,dir);
+    getDouble(&info->math_tol[1],&bufPtr,dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
@@ -990,7 +993,6 @@ decode_orbits_info(info,dir)
     getDouble(&info->ox3rd,&bufPtr,dir);
     getDouble(&info->oy3rd,&bufPtr,dir);
     getInt(&info->keep_scrn_coords,&bufPtr,dir);
-    getInt(&info->orbit_delay,&bufPtr,dir);
     getChar(&info->drawmode,&bufPtr,dir);
     getChar(&info->dummy,&bufPtr,dir);
 

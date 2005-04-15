@@ -130,6 +130,9 @@ typedef    struct fractal_info FRACTAL_INFO;
 #define FRACTAL_INFO_SIZE 504
 #endif
 
+#define VERSION 17  /* file version, independent of system */
+   /* increment this EVERY time the fractal_info structure changes */
+   
 struct fractal_info         /*  for saving data in GIF file     */
 {
     char  info_id[8];       /* Unique identifier for info block */
@@ -250,7 +253,9 @@ struct fractal_info         /*  for saving data in GIF file     */
     double closeprox;
     short nobof;
     long orbit_interval;
-    short future[16];     /* for stuff we haven't thought of yet */
+    short orbit_delay;
+    double math_tol[2];
+    short future[7];     /* for stuff we haven't thought of yet */
 };
 
 #define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
@@ -460,10 +465,9 @@ struct orbits_info      /* for saving orbits data in a GIF file */
    double ox3rd;
    double oy3rd;
    short keep_scrn_coords;
-   short orbit_delay;
    char drawmode;
    char dummy; /* need an even number of bytes */
-   short future[73];      /* total of 200 bytes */
+   short future[74];      /* total of 200 bytes */
 };
 
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
@@ -1071,7 +1075,6 @@ struct ext_blk_7 {
    double ox3rd;
    double oy3rd;
    short keep_scrn_coords;
-   short orbit_delay;
    char drawmode;
    };
 
