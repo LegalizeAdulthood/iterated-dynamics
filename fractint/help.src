@@ -276,8 +276,33 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.0 is an update of Fractint 20.0 based on the developer's
-  version 20.3.02.  New features include:
+Version 20.4.1 is an update of Fractint 20.0 based on the developer's
+  version 20.4.0.  New features include:
+
+Patch 1 to Version 20.4.0\
+Added the mathtolerance and orbit_delay parameters to values written
+  to PARs and GIFs.
+
+  Fixed how a mathtolerance parameter with a slash and a second number, but
+  no first number is read in.  The slash was being interpreted as a double.
+
+  Stole the <p> key for use by passes options.  If you are brave enough to
+  try it, printing is still available from the main menu.
+
+  Put periodicity and orbit delay on the new <p> screen.  There are currently
+  two drawing modes available for the passes=orbits option.  The rect(angle)
+  method that plots the orbits in a rectangle that can be zoomed, rotated, and
+  skewed using the <F2> corner parameter screen, and the straight line method
+  plots the orbits between two points specified on the <F2> corner parameter
+  screen.  The orbit interval parameter plots every nth orbit.  The maintain
+  screen coordinates parameter lets you zoom into an image changing the
+  coordinates of the line or rectangle used to generate the image, but keeps
+  the display coordinates the same.
+
+  Updated the docs for center-mag and corners because center-mag is now the
+  default.
+
+  Restructured the source to make it easier to maintain.
 
 Version 20.4.0\
 Incremented the version number to accommodate backwards compatibility for
