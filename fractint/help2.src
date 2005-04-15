@@ -1740,7 +1740,7 @@ the dynamic system defined by:
 
 In the original the functions were: sin, tan, sin, tan, and C was 3.
 
-The the initializers x(0) and y(0) equal to ALL the complex values within
+The initializers x(0) and y(0) equal to ALL the complex values within
 the "corners" values, and h=.01.  ALL these orbits are superimposed,
 resulting in "popcorn" effect.  You may want to use a maxiter value less
 than normal - Pickover recommends a value of 50.  Although you can zoom and
