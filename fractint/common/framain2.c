@@ -1270,8 +1270,7 @@ image.  Sorry - it's the best we could do."};
    case 'b':                    /* make batch file              */
       make_batch_file();
       break;
-#if 0
-   case 'p':                    /* print current image          */
+   case 16:                    /* print current image          */
       note_zoom();
       Print_Screen();
       restore_zoom();
@@ -1283,7 +1282,6 @@ image.  Sorry - it's the best we could do."};
          getakey();
       }
       return(CONTINUE);
-#endif
    case ENTER:                  /* Enter                        */
    case ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
