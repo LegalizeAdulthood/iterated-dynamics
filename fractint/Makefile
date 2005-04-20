@@ -73,7 +73,7 @@ DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 #If you have the nasm assembler on your system add -DNASM to CFLAGS
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -Wall \
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
          -mcpu=pentium -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
