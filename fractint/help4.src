@@ -12,6 +12,7 @@
     { Calculation Mode Parameters }
     { Fractal Type Parameters }
     { Image Calculation Parameters }
+    { Passes Parameters }
     { Color Parameters }
     { Doodad Parameters }
     { File Parameters }
@@ -112,10 +113,6 @@
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
                            to the complex number corresponding to the screen
                            pixel. This is the default for most types.
-  periodicity=[no|show|nnn] Controls periodicity checking. 'no' turns checking
-                           off; entering a number nnn controls the tightness
-                           of checking (default 1, higher is more stringent)
-                           'show' or a neg value colors 'caught' points white.
   rseed=nnnnn              Random number seed, for reproducable Plasma Clouds
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
@@ -123,7 +120,15 @@
                            size of the traveling pointer.
   aspectdrift=nn           How much the aspect ratio can vary from normal due
                            to zooming. (default is 0.02)
+{Passes Parameters}
+  periodicity=[no|show|nnn] Controls periodicity checking. 'no' turns checking
+                           off; entering a number nnn controls the tightness
+                           of checking (default 1, higher is more stringent)
+                           'show' or a neg value colors 'caught' points white.
+  orbitdelay=nn            Starts plotting orbits after the nth orbit.
   orbitinterval=nn         Plots every nth orbit point with passes=o.
+  screencoords=[yes|no]
+  orbitdrawmode=[rect|line]
 {Color Parameters}
   inside=nnn|maxiter|zmag|bof60|bof61|epscr|star|per|atan|fmod
                            Fractal interior color (inside=0 for black)
@@ -592,7 +597,8 @@ to inform Fractint to take advantage of those extra 387 instructions.
 PASSES=1|2|3|g|g1|g2|g3|g4|g5|g6|b|t|s|o\
 Selects single-pass, dual-pass, triple-pass, solid-Guessing mode,
 solid-Guessing stop after pass n, Boundary Tracing, Tesseral,
-Synchronous Orbits, or the Orbits algorithm.  See {Drawing Method}.
+Synchronous Orbits, or the Orbits algorithm.  See {Drawing Method} and
+{Passes Parameters}.
 
 FILLCOLOR=normal|<nnn>\
 Sets a color to be used for block fill by Boundary Tracing and Tesseral
@@ -749,16 +755,6 @@ the orbit to the complex number corresponding to the screen pixel. The
 command "initorbit=nnn/nnn" uses the entered value as the initializer. See
 the discussion of the {Mandellambda Sets} for more on this topic.
 
-PERIODICITY=no|show|nnn\
-Controls periodicity checking (see {Periodicity Logic}).
-"no" turns it off, "show" lets
-you see which pixels were painted as "inside" due to being caught
-by periodicity.  Specifying a number causes a more conservative
-periodicity test (each increase of 1 divides test tolerance by 2).
-Entering a negative number lets you turn on "show" with that number. Type
-lambdafn function=exp needs periodicity turned off to be accurate -- there
-may be other cases.
-
 RSEED=nnnn\
 The initial random-number "seed" for plasma clouds is taken from your PC's
 internal clock-timer. This argument forces a value (which you can see in
@@ -783,11 +779,57 @@ If the aspect changes by a factor less than <nn>, then the aspect is set
 to it's normal value, making the center-mag Xmagfactor parameter equal to 1.
 (see CENTER-MAG above.)  The default is 0.01.  A larger
 value adjusts more often.  A value of 0 does no adjustment at all.
+;
+;
+~Topic=Passes Parameters
+PERIODICITY=no|show|nnn\
+Controls periodicity checking (see {Periodicity Logic}).
+"no" turns it off, "show" lets
+you see which pixels were painted as "inside" due to being caught
+by periodicity.  Specifying a number causes a more conservative
+periodicity test (each increase of 1 divides test tolerance by 2).
+Entering a negative number lets you turn on "show" with that number. Type
+lambdafn function=exp needs periodicity turned off to be accurate -- there
+may be other cases.
+
+A non-zero value of the "periodicity=" option causes "passes=o" to not
+plot orbits that have reached the bailout conditions or where an orbit goes
+off the visible area of the image.  A zero value of periodicity will plot
+all orbits except as modified by orbitdelay and orbitinterval.
+
+ORBITDELAY=<nn>\
+This option controls how many orbits are computed before the orbits
+are displayed on the screen when using the "passes=o" option, or the
+fractal types mandelcloud and dynamic.  This allows the orbits to settle
+down before plotting starts.
+
+This option also slows down the display of orbits using the <O> command
+for folks with hot new computers. Units are in 1/10000 seconds per
+orbit point.  ORBITDELAY=10 therefore allows you to see each pixel's
+orbit point for about one millisecond. For best display of orbits,
+try passes=1 and a moderate resolution such as 320x200.  Note that
+the first time you press the 'O' key with the 'orbitdelay' function
+active, your computer will pause for a half-second or so to calibrate
+a high-resolution timer.
 
 ORBITINTERVAL=<nn>\
 This parameter causes "passes=o" to plot every nth orbit point ranging from
 1, which plots every orbit, to 255, which plots every 255th orbit.  This
 value must be lower than the value of maxit to make any sense.
+
+SCREENCOORDS=yes|no\
+This parameter maintains the screen coordinates and lets you zoom into an image
+changing the coordinates of the line or rectangle used to generate the
+image, but keeps the display coordinates the same.  The screen coordinates
+can be zoomed, rotated, and skewed using the <F2> {Screen Coordinates Screen}.
+If set to no, the screen and image coordinates are maintained the same
+when an image is zoomed.
+
+ORBITDRAWMODE=rect|line\
+The rect(angle) method plots the orbits in a rectangle that can be
+zoomed, rotated, and skewed using the <F6> {Image Coordinates Screen}, and
+the straight line method plots the orbits between two points specified
+on the <F6> image coordinates screen.  
 ;
 ;
 ~Topic=Color Parameters
@@ -1347,10 +1389,6 @@ try passes=1 and a moderate resolution such as 320x200.  Note that
 the first time you press the 'O' key with the 'orbitdelay' function
 active, your computer will pause for a half-second or so to calibrate
 a high-resolution timer.
-
-This option also controls how many orbits are computed before the orbits
-are displayed on the screen when using the "passes=o" option, and the
-fractal types mandelcloud and dynamic.
 
 SHOWORBIT=yes|no\
 Causes the during-generation orbits feature, toggled by the <O> command, to
