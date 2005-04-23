@@ -533,7 +533,8 @@ int calcfract(void)
    }
    if(!use_grid)
    {
-      usr_stdcalcmode = stdcalcmode = '1';
+      if (usr_stdcalcmode != 'o')
+         usr_stdcalcmode = stdcalcmode = '1';
    }
       
    init_misc();  /* set up some variables in parser.c */
@@ -1354,9 +1355,10 @@ static void count_to_int (long unsigned C, int *r, int *l) {
 }
 */
 
+char drawmode = 'r';
+
 static int sticky_orbits(void)
 {
-
    got_status = 6; /* for <tab> screen */
    totpasses = 1;
 
@@ -1365,24 +1367,185 @@ static int sticky_orbits(void)
       return(-1);
    }
 
-   row = yybegin;
-   col = xxbegin;
-
-   while (row <= iystop)
+   switch (drawmode)
    {
-      currow = row;
-      while (col <= ixstop)
+   case 'r':
+   default:
+   /* draw a rectangle */
+      row = yybegin;
+      col = xxbegin;
+
+      while (row <= iystop)
       {
+         currow = row;
+         while (col <= ixstop)
+         {
+            if (plotorbits2dfloat() == -1)
+            {
+               add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+               return(-1); /* interrupted */
+            }
+            ++col;
+         }
+         col = ixstart;
+         ++row;
+      }
+      break;
+   case 'l':
+      {
+      int dX, dY;                     /* vector components */
+      int final,                      /* final row or column number */
+          G,                  /* used to test for new row or column */
+          inc1,           /* G increment when row or column doesn't change */
+          inc2;               /* G increment when row or column changes */
+      char pos_slope;
+
+      dX = ixstop - ixstart;                   /* find vector components */
+      dY = iystop - iystart;
+      pos_slope = (char)(dX > 0);                   /* is slope positive? */
+      if (dY < 0)
+      pos_slope = (char)!pos_slope;
+      if (abs (dX) > abs (dY))                /* shallow line case */
+      {
+         if (dX > 0)         /* determine start point and last column */
+         {
+            col = xxbegin;
+            row = yybegin;
+            final = ixstop;
+         }
+         else
+         {
+            col = ixstop;
+            row = iystop;
+            final = xxbegin;
+         }
+         inc1 = 2 * abs (dY);            /* determine increments and initial G */
+         G = inc1 - abs (dX);
+         inc2 = 2 * (abs (dY) - abs (dX));
+         if (pos_slope)
+            while (col <= final)    /* step through columns checking for new row */
+            {
+               if (plotorbits2dfloat() == -1)
+               {
+                 add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                 return(-1); /* interrupted */
+               }
+               col++;
+               if (G >= 0)             /* it's time to change rows */
+               {
+                  row++;      /* positive slope so increment through the rows */
+                  G += inc2;
+               }
+               else                        /* stay at the same row */
+                  G += inc1;
+            }
+         else
+            while (col <= final)    /* step through columns checking for new row */
+            {
+               if (plotorbits2dfloat() == -1)
+               {
+                 add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                 return(-1); /* interrupted */
+               }
+               col++;
+               if (G > 0)              /* it's time to change rows */
+               {
+                  row--;      /* negative slope so decrement through the rows */
+                  G += inc2;
+               }
+               else                        /* stay at the same row */
+                  G += inc1;
+            }
+      }   /* if |dX| > |dY| */
+      else                            /* steep line case */
+      {
+        if (dY > 0)             /* determine start point and last row */
+        {
+            col = xxbegin;
+            row = yybegin;
+            final = iystop;
+        }
+        else
+        {
+            col = ixstop;
+            row = iystop;
+            final = yybegin;
+        }
+        inc1 = 2 * abs (dX);            /* determine increments and initial G */
+        G = inc1 - abs (dY);
+        inc2 = 2 * (abs (dX) - abs (dY));
+        if (pos_slope)
+           while (row <= final)    /* step through rows checking for new column */
+           {
+              if (plotorbits2dfloat() == -1)
+              {
+                add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                return(-1); /* interrupted */
+              }
+              row++;
+              if (G >= 0)                 /* it's time to change columns */
+              {
+                  col++;  /* positive slope so increment through the columns */
+                  G += inc2;
+              }
+              else                    /* stay at the same column */
+                  G += inc1;
+           }
+        else
+           while (row <= final)    /* step through rows checking for new column */
+           {
+              if (plotorbits2dfloat() == -1)
+              {
+                add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+                return(-1); /* interrupted */
+              }
+              row++;
+              if (G > 0)                  /* it's time to change columns */
+              {
+                 col--;  /* negative slope so decrement through the columns */
+                 G += inc2;
+              }
+              else                    /* stay at the same column */
+                 G += inc1;
+           }
+        }
+      } /* end case 'l' */
+      break;
+   case 'f':  /* this code does not yet work??? */
+      {
+      double Xctr,Yctr;
+      LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
+      double Xmagfactor,Rotation,Skew;
+      int angle;
+      double factor = PI / 180.0;
+      double theta;
+      double xfactor = xdots / 2.0;
+      double yfactor = ydots / 2.0;
+
+      angle = xxbegin;  /* save angle in x parameter */
+      
+      cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+      if (Rotation <= 0)
+         Rotation += 360;
+
+      while (angle < Rotation)
+      {
+	 theta = (double)angle * factor; 
+         col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
+         row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
          if (plotorbits2dfloat() == -1)
          {
-            add_worklist(xxstart,xxstop,col,yystart,yystop,row,0,worksym);
+            add_worklist(angle,0,0,0,0,0,0,worksym);
             return(-1); /* interrupted */
          }
-         ++col;
+         angle++;
       }
-      col = ixstart;
-      ++row;
-   }
+
+
+      }  /* end case 'f' */
+      break;
+   }  /* end switch */
+
    return(0);
 }
 

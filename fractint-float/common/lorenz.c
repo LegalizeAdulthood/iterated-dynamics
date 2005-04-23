@@ -1319,10 +1319,32 @@ int dynam2dfloat()
    return(ret);
 }
 
-
+int keep_scrn_coords = 0;
+int set_orbit_corners = 0;
 long orbit_interval;
+double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
 struct affine o_cvt;
-static int o_color = 1;
+static int o_color;
+
+int setup_orbits_to_screen(struct affine *scrn_cnvt)
+{
+   double det, xd, yd;
+
+   if((det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin))==0)
+      return(-1);
+   xd = dxsize/det;
+   scrn_cnvt->a =  xd*(oymax-oy3rd);
+   scrn_cnvt->b =  xd*(ox3rd-oxmin);
+   scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;
+
+   if((det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin))==0)
+      return(-1);
+   yd = dysize/det;
+   scrn_cnvt->c =  yd*(oymin-oy3rd);
+   scrn_cnvt->d =  yd*(ox3rd-oxmax);
+   scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;
+   return(0);
+}
 
 int plotorbits2dsetup(void)
 {
@@ -1338,17 +1360,33 @@ int plotorbits2dsetup(void)
    }
 #endif
 
+   if (!set_orbit_corners) {
+      oxmin = curfractalspecific->xmin;
+      oxmax = curfractalspecific->xmax;
+      ox3rd = curfractalspecific->xmin;
+      oymin = curfractalspecific->ymin;
+      oymax = curfractalspecific->ymax;
+      oy3rd = curfractalspecific->ymin;
+   }
+
    PER_IMAGE();
 
    /* setup affine screen coord conversion */
-   if(setup_convert_to_screen(&o_cvt))
-      return(-1);
+   if (keep_scrn_coords) {
+      if(setup_orbits_to_screen(&o_cvt))
+         return(-1);
+   } else {
+      if(setup_convert_to_screen(&o_cvt))
+         return(-1);
+   }
    /* set so truncation to int rounds to nearest */
    o_cvt.e += 0.5;
    o_cvt.f += 0.5;
 
    if (orbit_delay >= maxit) /* make sure we get an image */
       orbit_delay = (int)(maxit - 1);
+
+   o_color = 1;
 
    if (outside == SUM) {
        plot = plothist;
@@ -1366,8 +1404,18 @@ int plotorbits2dfloat(void)
    if(keypressed())
    {
       mute();
+      alloc_resume(100,1);
+      put_resume(sizeof(o_color),&o_color, 0);
       return(-1);
    }
+
+#if 0
+    col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
+    row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
+    if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+       (*plot)(col,row,1);
+    return(0);
+#endif
 
    if((soundflag&7)==2)
       soundvar = &x;
@@ -1376,12 +1424,19 @@ int plotorbits2dfloat(void)
    else if((soundflag&7)==4)
       soundvar = &z;
 
+   if (resuming) {
+       start_resume();
+       get_resume(sizeof(o_color),&o_color, 0);
+       end_resume();
+   }
+
    if(inside > 0)
       o_color = inside;
-
-   if (inside == 0)
-      if (++o_color >= colors) /* another color to switch to? */
+   else { /* inside <= 0 */
+      o_color++;
+      if (o_color >= colors) /* another color to switch to? */
           o_color = 1;    /* (don't use the background color) */
+   }
 
    PER_PIXEL(); /* initialize the calculations */
 
@@ -1396,7 +1451,12 @@ int plotorbits2dfloat(void)
        /* else count >= orbit_delay and we want to plot it */
        col = (int)(o_cvt.a*new.x + o_cvt.b*new.y + o_cvt.e);
        row = (int)(o_cvt.c*new.x + o_cvt.d*new.y + o_cvt.f);
+#ifdef XFRACT
        if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+#else
+/* don't know why the next line is necessary, the one above should work */
+       if ( col > 0 && col < xdots && row > 0 && row < ydots )
+#endif
        {             /* plot if on the screen */
           if ((soundflag&7) > 1)
              w_snd((int)(*soundvar*100+basehertz));

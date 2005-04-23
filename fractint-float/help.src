@@ -170,6 +170,9 @@
 {5.18 , 1, "3D Parameters"}
 {5.19 , 1, "Batch Mode"}
 {5.20 , 1, "Browser Parameters"}
+{5.21 , 1, "Passes Parameters"}
+{5.22 , 1, "Screen Coordinates Screen"}
+{5.23 , 1, "Image Coordinates Screen"}
 
 {6.   , 0, Hardware Support, FF}
 {6.1  , 1, Notes on Video Modes\, \"Standard\" and Otherwise,
@@ -276,8 +279,33 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.0 is an update of Fractint 20.0 based on the developer's
-  version 20.3.02.  New features include:
+Version 20.4.1 is an update of Fractint 20.0 based on the developer's
+  version 20.4.0.  New features include:
+
+Patch 1 to Version 20.4.0\
+Added the mathtolerance and orbit_delay parameters to values written
+  to PARs and GIFs.
+
+  Fixed how a mathtolerance parameter with a slash and a second number, but
+  no first number is read in.  The slash was being interpreted as a double.
+
+  Stole the <p> key for use by passes options.  If you are brave enough to
+  try it, printing is still available using <ctl-p>.
+
+  Put periodicity and orbit delay on the new <p> screen.  There are currently
+  two drawing modes available for the passes=orbits option.  The rect(angle)
+  method plots the orbits in a rectangle that can be zoomed, rotated, and
+  skewed using the <F6> corner parameter screen, and the straight line method
+  plots the orbits between two points specified on the <F6> corner parameter
+  screen.  The orbit interval parameter plots every nth orbit.  The maintain
+  screen coordinates parameter lets you zoom into an image changing the
+  coordinates of the line or rectangle used to generate the image, but keeps
+  the display coordinates, set on the <F2> screen, the same.
+
+  Updated the docs for center-mag and corners because center-mag is now the
+  default.
+
+  Restructured the source to make it easier to maintain.
 
 Version 20.4.0\
 Incremented the version number to accommodate backwards compatibility for
@@ -1131,6 +1159,7 @@ Commands marked with an '*' are also available at the credits screen.
  * x               Set a number of options and doodads
  * y               Set extended options and doodads
  * z               Set fractal type-specific parameters
+   p               Set passes options
    c or + or -     Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
    e               Enter Palette-Editing Mode (see {=HELPXHAIR Palette Editing Commands})
    Spacebar        Mandelbrot/Julia Set toggle.
@@ -1159,7 +1188,7 @@ Commands marked with an '*' are also available at the credits screen.
  * v               Set view window parameters (reduction, aspect ratio)
 
 {Print Command}
-   p               Print the screen (command-line options set printer type)
+   ctrl-p          Print the screen (command-line options set printer type)
 ~OnlineFF
 {Parameter Save/Restore Commands}
    b               Save commands describing the current image in a file
@@ -1298,7 +1327,14 @@ More options which we couldn't fit under the <X> command:\
   "invert=" parameters - see {Inversion}\
   "distest=" parameters - see {Distance Estimator Method}\
   "cyclerange=" - see {Color Cycling Commands}\
+
+<P>\
+Options that apply to the Passes feature:\
   "periodicity=" - see {Periodicity Logic}\
+  "orbitdelay=" - see {Passes Parameters}\
+  "orbitinterval=" - see {Passes Parameters}\
+  "screencoords=" - see {Passes Parameters}\
+  "orbitdrawmode=" - see {Passes Parameters}\
 
 <Z>\
 Modify the parameters specific to the currently selected fractal type.
@@ -1526,7 +1562,7 @@ it will be reduced by using only every Nth pixel during the restore.
 ;
 ~Topic=Print Command
 
-<P>\
+<Ctrl><P>\
 
 Print the current fractal image on your (Laserjet, Paintjet, Epson-
 compatible, PostScript, or HP-GL) printer.
@@ -1696,10 +1732,20 @@ chip.
    Inversion parameters - see{ Inversion }\
 
    Color cycling range - see{ Color Cycling Commands }\
+;
+;
+~Topic=<P> Options Screen, Label=HELPPOPTS
+; This topic is online context-sensitive only.
 
-   Periodicity - see{ Periodicity Logic }\
+   Periodicity - see{ Passes Parameters }\
 
-   Orbit Interval - see{ Image Calculation Parameters }\
+   Orbit Delay - see{ Passes Parameters }\
+
+   Orbit Interval - see{ Passes Parameters }\
+
+   Maintain Screen Coordinates - see{ Passes Parameters }\
+
+   Orbit Draw Mode - see{ Passes Parameters }\
 ;
 ;
 ~Topic=Image Coordinates Screen, Label=HELPCOORDS
@@ -1719,6 +1765,28 @@ unrotated rectangular area.  For rotated or skewed images, the bottom
 left corner must also be specified.
 
 In center-mag mode the image area is described by entering the coordinates
+for the center of the rectangle, and its magnification factor.  Usually
+only these three values are needed, but the user can also specify the amount
+that the image is stretched, rotated and skewed.
+;
+;
+~Topic=Screen Coordinates Screen, Label=HELPSCRNCOORDS
+; This topic is online context-sensitive only.
+
+You can directly enter corner coordinates on this screen for use with the
+passes='o' option.  You can also use <F4> to reset the coordinates to the
+defaults for the current fractal type.
+
+There are two formats for the display: corners or center-mag.  You can
+toggle between the two by using <F7>.
+
+In corners mode, corner coordinate values are entered directly.  Usually
+only the top-left and bottom-right corners need be specified - the
+bottom left corner can be entered as zeros to default to an ordinary
+unrotated rectangular area.  For rotated or skewed images, the bottom
+left corner must also be specified.
+
+In center-mag mode the screen area is described by entering the coordinates
 for the center of the rectangle, and its magnification factor.  Usually
 only these three values are needed, but the user can also specify the amount
 that the image is stretched, rotated and skewed.

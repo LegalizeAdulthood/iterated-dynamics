@@ -659,6 +659,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          set_current_params();
          odpx=odpy=newodpx=newodpy=0;
          fiddlefactor = 1;           /* reset param evolution stuff */
+         set_orbit_corners = 0;
          param_history(0); /* save history */
          if (i == 0)
          {
@@ -678,6 +679,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       break;
    case 'x':                    /* invoke options screen        */
    case 'y':
+   case 'p':                    /* passes options      */
    case 'z':                    /* type specific parms */
    case 'g':
    case 'v':
@@ -694,6 +696,8 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          i = get_toggles();
       else if (*kbdchar == 'y')
          i = get_toggles2();
+      else if (*kbdchar == 'p')
+         i = passes_options();
       else if (*kbdchar == 'z')
          i = get_fract_params(1);
       else if (*kbdchar == 'v')
@@ -1273,7 +1277,7 @@ image.  Sorry - it's the best we could do."};
    case 'b':                    /* make batch file              */
       make_batch_file();
       break;
-   case 'p':                    /* print current image          */
+   case 16:                    /* print current image          */
       note_zoom();
       Print_Screen();
       restore_zoom();
@@ -1452,6 +1456,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          set_current_params();
          odpx=odpy=newodpx=newodpy=0;
          fiddlefactor = 1;           /* reset param evolution stuff */
+         set_orbit_corners = 0;
          param_history(0); /* save history */
          if (i == 0)
          {
@@ -1466,6 +1471,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
    case 'x':                    /* invoke options screen        */
    case 'y':
+   case 'p':                    /* passes options      */
    case 'z':                    /* type specific parms */
    case 'g':
    case 5:
@@ -1479,6 +1485,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          i = get_toggles();
       else if (*kbdchar == 'y')
          i = get_toggles2();
+      else if (*kbdchar == 'p')
+         i = passes_options();
       else if (*kbdchar == 'z')
          i = get_fract_params(1);
       else if (*kbdchar == 5 || *kbdchar == SPACE)
@@ -2211,7 +2219,16 @@ static void _fastcall save_history_info()
    current.ismand          = (short)ismand;
    current.closeprox       = closeprox;
    current.nobof           = (short)nobof;
+   current.orbit_delay     = (short)orbit_delay;
    current.orbit_interval  = orbit_interval;
+   current.oxmin           = oxmin;
+   current.oxmax           = oxmax;
+   current.oymin           = oymin;
+   current.oymax           = oymax;
+   current.ox3rd           = ox3rd;
+   current.oy3rd           = oy3rd;
+   current.keep_scrn_coords= (short)keep_scrn_coords;
+   current.drawmode        = drawmode;
    far_memcpy(current.dac,dacbox,256*3);
    switch(fractype)
    {
@@ -2379,7 +2396,17 @@ static void _fastcall restore_history_info(int i)
    ismand = last.ismand;
    closeprox = last.closeprox;
    nobof = last.nobof;
+   orbit_delay = last.orbit_delay;
    orbit_interval = last.orbit_interval;
+   oxmin = last.oxmin;
+   oxmax = last.oxmax;
+   oymin = last.oymin;
+   oymax = last.oymax;
+   ox3rd = last.ox3rd;
+   oy3rd = last.oy3rd;
+   keep_scrn_coords = last.keep_scrn_coords;
+   if (keep_scrn_coords) set_orbit_corners = 1;
+   drawmode = last.drawmode;
    far_memcpy(dacbox,last.dac,256*3);
    far_memcpy(olddacbox,last.dac,256*3);
    if(mapdacbox)

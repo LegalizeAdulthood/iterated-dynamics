@@ -1615,8 +1615,8 @@ QuaternionFPFractal(void)
    if (magnitude>rqlim) {
        return 1;
    }
-   old.x = n0;
-   old.y = n1;
+   old.x = new.x = n0;
+   old.y = new.y = n1;
    floatparm->x = n2;
    floatparm->y = n3;
    return(0);
@@ -1639,8 +1639,8 @@ HyperComplexFPFractal(void)
    hnew.z += qcj;
    hnew.t += qck;
 
-   old.x = hnew.x;
-   old.y = hnew.y;
+   old.x = new.x = hnew.x;
+   old.y = new.y = hnew.y;
    floatparm->x = hnew.z;
    floatparm->y = hnew.t;
 

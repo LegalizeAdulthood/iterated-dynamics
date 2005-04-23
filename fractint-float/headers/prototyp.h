@@ -940,6 +940,7 @@ extern int scan_entries(FILE *infile, void far *ch, char *itemname);
 
 extern int get_toggles(void);
 extern int get_toggles2(void);
+extern int passes_options(void);
 extern int get_view_params(void);
 extern int get_starfield_params(void );
 extern int get_commands(void);
@@ -1165,6 +1166,7 @@ extern int waitkeypressed(int);
 extern void fix_ranges(int *, int, int);
 extern void decode_evolver_info(struct evolution_info *, int);
 extern void decode_fractal_info(struct fractal_info *, int);
+extern void decode_orbits_info(struct orbits_info *, int);
 
 /*
  *   unix.c -- C file prototypes

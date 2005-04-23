@@ -27,7 +27,7 @@ static int menu_checkkey(int curkey,int choice);
 #define PRODUCTION
 */
 int release=2004;  /* this has 2 implied decimals; increment it every synch */
-int patchlevel=0; /* patchlevel for DOS version */
+int patchlevel=1; /* patchlevel for DOS version */
 
 /* fullscreen_choice options */
 #define CHOICERETURNKEY 1
@@ -1231,6 +1231,9 @@ top:
    choicekey[nextleft+=2] = 'z';
    attributes[nextleft] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextleft,"type-specific parms... <z>  ");
+   choicekey[nextleft+=2] = 'p';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"passes options...      <p>  ");
    choicekey[nextleft+=2] = 'v';
    attributes[nextleft] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextleft,"view window options... <v>  ");
@@ -1279,9 +1282,9 @@ top:
       choicekey[nextright+=2] = 'b';
       attributes[nextright] = MENU_ITEM;
       LOADPROMPTSCHOICES(nextright,"save current parameters..<b>  ");
-      choicekey[nextright+=2] = 'p';
+      choicekey[nextright+=2] = 16;
       attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"print image              <p>  ");
+      LOADPROMPTSCHOICES(nextright,"print image          <ctl-p>  ");
       }
 #ifdef XFRACT
    choicekey[nextright+=2] = 'd';
@@ -1407,7 +1410,8 @@ static int menu_checkkey(int curkey,int choice)
    if (menutype) {
       if (strchr("\\sobpkrh",testkey) || testkey == TAB
         || testkey == 1 || testkey == 5 || testkey == 8
-        || testkey == 19 || testkey == 21) /* ctrl-A, E, H, S, U */
+        || testkey == 16
+        || testkey == 19 || testkey == 21) /* ctrl-A, E, H, P, S, U */
          return(0-testkey);
       if (testkey == ' ')
          if ((curfractalspecific->tojulia != NOFRACTAL

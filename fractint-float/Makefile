@@ -73,7 +73,7 @@ DEFINES = -DXFRACT -DFLOATONLY $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 #If you have the nasm assembler on your system add -DNASM to CFLAGS
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -Wall \
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
          -mcpu=pentium -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
@@ -236,7 +236,7 @@ HELP = help.src help2.src help3.src help4.src help5.src
 .SUFFIXES: .o .c .s .h .asm
 
 xfractint: fractint.hlp .WAIT
-	mv -f helpdefs.h $(HFD)
+	if [ -f helpdefs.h ] ; then mv -f helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \

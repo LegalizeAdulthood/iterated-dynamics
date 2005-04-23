@@ -30,7 +30,7 @@ SUMMARY OF FRACTAL TYPES
     will terminate. The 3rd parameter is the number of ants. The 4th is the
     ant type 1 or 2. The 5th parameter determines if the ants wrap the screen
     or stop at the edge.  The 6th parameter is a random seed. You can slow
-    down the ants to see them better using the <x> screen Orbit Delay.
+    down the ants to see them better using the <p> screen Orbit Delay.
 
 {=HT_BARNS barnsleyj1}
 ~Label=HF_BARNSJ1
@@ -1740,7 +1740,7 @@ the dynamic system defined by:
 
 In the original the functions were: sin, tan, sin, tan, and C was 3.
 
-The the initializers x(0) and y(0) equal to ALL the complex values within
+The initializers x(0) and y(0) equal to ALL the complex values within
 the "corners" values, and h=.01.  ALL these orbits are superimposed,
 resulting in "popcorn" effect.  You may want to use a maxiter value less
 than normal - Pickover recommends a value of 50.  Although you can zoom and
@@ -2408,7 +2408,7 @@ The 4th paramter allows you to select ant type 1 (the original), or type 2.
 The 5th parameter determines whether the ant's progress stops when the edge
 of the screen is reaches (as in the original implementation), or whether the
 ant's path wraps to the opposite side of the screen. You can slow down the
-ant to see her better using the <x> screen Orbit Delay - try 10.
+ant to see her better using the <p> screen Orbit Delay - try 10.
 
 The 6th parameter accepts a random seed, allowing you to duplicate images
 using random values (empty rule string or 0 maximum ants.
@@ -2426,7 +2426,7 @@ type reverts to that of the underlying fractal.
 ~Label=ANTCOMMANDS
 Special keystrokes are in effect during the ant's march. The <space> key
 toggles a step-by-step mode. When in this mode, press <enter> to see each step
-of the ant's progress. When orbit delay (on <x> screen) is set to 1, the step
+of the ant's progress. When orbit delay (on <p> screen) is set to 1, the step
 mode is the default.
 
 If you press the right or left arrow during the ant's journey, you can
@@ -2434,7 +2434,7 @@ adjust the orbit delay factor with the arrow keys (increment by 10) or
 ctrl-arrow keys (increment by 100). Press any other key to get out of the
 orbit delay adjustment mode. Higher values cause slower motion. Changed values
 are not saved after the ant is finished, but you can set the orbit delay
-value in advance from the <x> screen.
+value in advance from the <p> screen.
 ;
 ;
 ;
@@ -2496,6 +2496,10 @@ bailout criteria remains true or until 'z' turns into a periodic loop.
 All variables are created automatically by their usage and treated as
 complex.  If you declare 'v = 2' then the variable 'v' is treated as a
 complex with an imaginary value of zero.
+
+NOTE: For periodicity checking, inside options, outside options, and
+the passes=o option to work correctly it is necessary to leave the result
+of the orbit calculation in the variable z.
 
 ~OnlineFF
 Sequential processing of the formula can be altered with the flow control\

@@ -1096,6 +1096,32 @@ static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int 
    if(start_showorbit > 0)
       put_parm(s_seqs,s_showorbit,s_yes);
 
+   if (keep_scrn_coords)
+      put_parm(s_seqs,s_screencoords,s_yes);
+
+   if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
+      {
+         int xdigits,ydigits;
+         put_parm( " %s=",s_orbitcorners);
+         xdigits = getprec(oxmin,oxmax,ox3rd);
+         ydigits = getprec(oymin,oymax,oy3rd);
+         put_float(0,oxmin,xdigits);
+         put_float(1,oxmax,xdigits);
+         put_float(1,oymin,ydigits);
+         put_float(1,oymax,ydigits);
+         if (ox3rd != oxmin || oy3rd != oymin)
+         {
+            put_float(1,ox3rd,xdigits);
+            put_float(1,oy3rd,ydigits);
+         }
+      }
+
+   if (drawmode != 'r')
+      put_parm(" %s=%c",s_orbitdrawmode, drawmode);
+
+   if (math_tol[0] != 0.05 || math_tol[1] != 0.05)
+      put_parm(" %s=%g/%g",s_mathtolerance,math_tol[0],math_tol[1]);
+
    }
 
    if (*colorinf != 'n')

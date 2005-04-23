@@ -651,6 +651,9 @@ decode_fractal_info(info,dir)
     getDouble(&info->closeprox,&bufPtr,dir);
     getInt(&info->nobof,&bufPtr,dir);
     getLong(&info->orbit_interval,&bufPtr,dir);
+    getInt(&info->orbit_delay,&bufPtr,dir);
+    getDouble(&info->math_tol[0],&bufPtr,dir);
+    getDouble(&info->math_tol[1],&bufPtr,dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
         getInt(&info->future[i],&bufPtr,dir);
@@ -959,6 +962,50 @@ decode_evolver_info(info,dir)
     } 
     if (dir==0) {
 	bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
+    }
+
+    free(buf);
+}
+
+void
+decode_orbits_info(info,dir)
+    struct orbits_info *info;
+    int dir;
+{
+    unsigned char *buf;
+    unsigned char *bufPtr;
+    int i;
+
+    if (dir==1) {
+	buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
+	bufPtr = buf;
+	bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
+    }  else {
+	buf = (unsigned char *)malloc(sizeof(struct orbits_info));
+	bufPtr = buf;
+	bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
+    }
+
+    getDouble(&info->oxmin,&bufPtr,dir);
+    getDouble(&info->oxmax,&bufPtr,dir);
+    getDouble(&info->oymin,&bufPtr,dir);
+    getDouble(&info->oymax,&bufPtr,dir);
+    getDouble(&info->ox3rd,&bufPtr,dir);
+    getDouble(&info->oy3rd,&bufPtr,dir);
+    getInt(&info->keep_scrn_coords,&bufPtr,dir);
+    getChar(&info->drawmode,&bufPtr,dir);
+    getChar(&info->dummy,&bufPtr,dir);
+
+    for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
+        getInt(&info->future[i],&bufPtr,dir);
+    }   
+    if (bufPtr-buf != ORBITS_INFO_SIZE) {
+	printf("Warning: loadfile miscount on orbits_info structure.\n");
+	printf("Components add up to %d bytes, but ORBITS_INFO_SIZE = %d\n",
+		bufPtr-buf, ORBITS_INFO_SIZE);
+    } 
+    if (dir==0) {
+	bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
     }
 
     free(buf);

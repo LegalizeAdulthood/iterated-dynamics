@@ -130,6 +130,9 @@ typedef    struct fractal_info FRACTAL_INFO;
 #define FRACTAL_INFO_SIZE 504
 #endif
 
+#define VERSION 17  /* file version, independent of system */
+   /* increment this EVERY time the fractal_info structure changes */
+   
 struct fractal_info         /*  for saving data in GIF file     */
 {
     char  info_id[8];       /* Unique identifier for info block */
@@ -250,7 +253,9 @@ struct fractal_info         /*  for saving data in GIF file     */
     double closeprox;
     short nobof;
     long orbit_interval;
-    short future[16];     /* for stuff we haven't thought of yet */
+    short orbit_delay;
+    double math_tol[2];
+    short future[7];     /* for stuff we haven't thought of yet */
 };
 
 #define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
@@ -348,7 +353,17 @@ struct history_info
     short ismand;
     double closeprox;
     short nobof;
+    double math_tol[2];
+    short orbit_delay;
     long orbit_interval;
+    double oxmin;
+    double oxmax;
+    double oymin;
+    double oymax;
+    double ox3rd;
+    double oy3rd;
+    short keep_scrn_coords;
+    char drawmode;
 };
 
 typedef struct history_info HISTORY;
@@ -424,6 +439,35 @@ struct evolution_info      /* for saving evolution data in a GIF file */
    short mutate[NUMGENES];
    short ecount; /* count of how many images have been calc'ed so far */
    short future[68 - NUMGENES];      /* total of 200 bytes */
+};
+
+
+typedef    struct orbits_info ORBITS_INFO;
+/*
+ * Note: because non-MSDOS machines store structures differently, we have
+ * to do special processing of the orbits_info structure in loadfile.c and
+ * encoder.c.  See decode_orbits_info() in general.c.
+ * Make sure changes to the structure here get reflected there.
+ */
+#ifndef XFRACT
+#define ORBITS_INFO_SIZE sizeof(orbits_info)
+#else
+/* This value should be the MSDOS size, not the Unix size. */
+#define ORBITS_INFO_SIZE 200
+#endif
+
+struct orbits_info      /* for saving orbits data in a GIF file */
+{
+   double oxmin;
+   double oxmax;
+   double oymin;
+   double oymax;
+   double ox3rd;
+   double oy3rd;
+   short keep_scrn_coords;
+   char drawmode;
+   char dummy; /* need an even number of bytes */
+   short future[74];      /* total of 200 bytes */
 };
 
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
@@ -1013,7 +1057,20 @@ struct ext_blk_6 {
    short  ydots;
    short  ecount;
    short  mutate[NUMGENES];
-};
+   };
+
+struct ext_blk_7 {
+   char got_data;
+   int length;
+   double oxmin;
+   double oxmax;
+   double oymin;
+   double oymax;
+   double ox3rd;
+   double oy3rd;
+   short keep_scrn_coords;
+   char drawmode;
+   };
 
 struct SearchPath {
    char par[FILE_MAX_PATH];

@@ -323,7 +323,9 @@ char s_none[] =             "none";
 char s_noninterlaced[] =    "noninterlaced";
 char s_off[] =              "off";
 char s_olddemmcolors[] =    "olddemmcolors";
+char s_orbitcorners[] =     "orbitcorners";
 char s_orbitdelay[] =       "orbitdelay";
+char s_orbitdrawmode[] =    "orbitdrawmode";
 char s_orbitinterval[] =    "orbitinterval";
 char s_orbitname[] =        "orbitname";
 char s_orbitsave[] =        "orbitsave";
@@ -365,6 +367,7 @@ char s_savename[] =         "savename";
 char s_savetime[] =         "savetime";
 char s_scalemap[] =         "scalemap";
 char s_scalexyz[] =         "scalexyz";
+char s_screencoords[] =     "screencoords";
 char s_showbox[] =          "showbox";
 char s_showdot[] =          "showdot";
 char s_showorbit[] =        "showorbit";
@@ -438,10 +441,10 @@ char s_atanh [] =           "atanh";
 char s_cabs [] =            "cabs";
 char s_sqrt [] =            "sqrt";
 char s_ismand [] =          "ismand";
+char s_mathtolerance[] =    "mathtolerance";
 static FCODE s_bfdigits []     = "bfdigits";
 static FCODE s_recordcolors [] = "recordcolors";
 static FCODE s_maxlinelength []= "maxlinelength";
-static FCODE s_mathtolerance[] = "mathtolerance";
 static FCODE s_minstack[]      = "minstack";
 static FCODE s_lzw []          = "tweaklzw";
 static FCODE s_sstoolsini []   = "sstools.ini";
@@ -760,6 +763,18 @@ static void initvars_fractal()          /* init vars affecting calculation */
    rotate_lo = 1; rotate_hi = 255;      /* color cycling default range */
    orbit_delay = 0;                     /* full speed orbits */
    orbit_interval = 1;                  /* plot all orbits */
+   keep_scrn_coords = 0;
+   drawmode = 'r';                      /* passes=orbits draw mode */
+   set_orbit_corners = 0;
+   oxmin = curfractalspecific->xmin;
+   oxmax = curfractalspecific->xmax;
+   ox3rd = curfractalspecific->xmin;
+   oymin = curfractalspecific->ymin;
+   oymax = curfractalspecific->ymax;
+   oy3rd = curfractalspecific->ymin;
+
+   math_tol[0] = 0.05;
+   math_tol[1] = 0.05;
 
    display3d = 0;                       /* 3D display is off        */
    overlay3d = 0;                       /* 3D overlay is off        */
@@ -1656,7 +1671,9 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       }
 
    if (far_strcmp(variable,s_mathtolerance) == 0) {      /* mathtolerance=? */
-      if (totparms >= 1) math_tol[0] = floatval[0];
+      if(charval[0] == '/')
+          ; /* leave math_tol[0] at the default value */
+      else if (totparms >= 1) math_tol[0] = floatval[0];
       if (totparms >= 2) math_tol[1] = floatval[1];
       return 0;
       }
@@ -1911,6 +1928,38 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          xx3rd =      floatval[4];
          yy3rd =      floatval[5];
          }
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_orbitcorners) == 0) {  /* orbit corners=?,?,?,? */
+      set_orbit_corners = 0;
+      if (  floatparms != totparms
+            || (totparms != 0 && totparms != 4 && totparms != 6))
+         goto badarg;
+      ox3rd = oxmin = floatval[0];
+      oxmax =         floatval[1];
+      oy3rd = oymin = floatval[2];
+      oymax =         floatval[3];
+
+      if (totparms == 6) {
+         ox3rd =      floatval[4];
+         oy3rd =      floatval[5];
+         }
+      set_orbit_corners = 1;
+      keep_scrn_coords = 1;
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_screencoords) == 0 ) {     /* screencoords=?   */
+      if (yesnoval[0] < 0) goto badarg;
+      keep_scrn_coords = yesnoval[0];
+      return 1;
+      }
+
+   if (far_strcmp(variable,s_orbitdrawmode) == 0) {     /* orbitdrawmode=? */
+      if ( charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
+         goto badarg;
+      drawmode = charval[0];
       return 1;
       }
 
