@@ -2346,18 +2346,18 @@ static int get_screen_corners(void)
 
    svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
    svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
-   svxx3rd = xxmin;
+   svxx3rd = xx3rd;
    svyymin = yymin;
    svyymax = yymax;
-   svyy3rd = yymin;
+   svyy3rd = yy3rd;
 
    if (!set_orbit_corners && !keep_scrn_coords) {
       oxmin = xxmin;
       oxmax = xxmax;
-      ox3rd = xxmin;
+      ox3rd = xx3rd;
       oymin = yymin;
       oymax = yymax;
-      oy3rd = yymin;
+      oy3rd = yy3rd;
    }
 
    oxxmin = oxmin; oxxmax = oxmax;
