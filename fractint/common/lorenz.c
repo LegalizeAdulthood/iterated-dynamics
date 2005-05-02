@@ -1974,15 +1974,6 @@ int plotorbits2dsetup(void)
    }
 #endif
 
-   if (!set_orbit_corners) {
-      oxmin = curfractalspecific->xmin;
-      oxmax = curfractalspecific->xmax;
-      ox3rd = curfractalspecific->xmin;
-      oymin = curfractalspecific->ymin;
-      oymax = curfractalspecific->ymax;
-      oy3rd = curfractalspecific->ymin;
-   }
-
    PER_IMAGE();
 
    /* setup affine screen coord conversion */
