@@ -769,7 +769,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    rotate_lo = 1; rotate_hi = 255;      /* color cycling default range */
    orbit_delay = 0;                     /* full speed orbits */
    orbit_interval = 1;                  /* plot all orbits */
-   keep_scrn_coords = 1;
+   keep_scrn_coords = 0;
    drawmode = 'r';                      /* passes=orbits draw mode */
    set_orbit_corners = 0;
    oxmin = curfractalspecific->xmin;
