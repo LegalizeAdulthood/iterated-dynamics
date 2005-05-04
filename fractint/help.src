@@ -279,8 +279,15 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.1 is an update of Fractint 20.0 based on the developer's
-  version 20.4.0.  New features include:
+Version 20.4.2 is an update of Fractint 20.0 based on the developer's
+  version 20.4.1.  New features include:
+
+Patch 2 to Version 20.4.0\
+Fixed the display coordinates so they won't change, after an image had been
+  zoomed, when the maintain screen coordinates parameter is set to yes.
+
+  Fixed the corner parameter screen and image parameter screen so that
+  rotating and/or skewing now doesn't get reset when changes are made.
 
 Patch 1 to Version 20.4.0\
 Added the mathtolerance and orbit_delay parameters to values written
