@@ -9,7 +9,7 @@ rem ** Microsoft C7.00 or Visual C++ (normal case)
 echo Building Fractint using MSC 7 or Visual C++
 nmake "CC=cl /Gs" "AS=masm /ML" "LINKER=link" "OptT=/Oilg" "C7=YES" /F frachelp.mak
 if errorlevel 1 goto exit
-nmake "CC=cl /Gs /DC6 /DFLOATONLY" "AS=masm /ML" "LINKER=link" "OptT=/Oeciltaz" "OptS=/Osleazc" "OptN=/Oilc""C7=YES" /Ffractint.mak
+nmake "CC=cl /Gs /DC6 /DFLOATONLY" "AS=masm /ML" "LINKER=link" "OptT=/Oeciltaz" "OptS=/Osleazc" "OptN=/Oilc" C7=YES /Ffractint.mak
 goto exit
 
 :exit
