@@ -137,7 +137,7 @@ SUMMARY OF FRACTAL TYPES
       y(n+1) = a - x(n)
     Parameters are a, b, and c.
 
-~FF
+~OnlineFF
 {=HT_CIRCLE circle}
 ~Label=HF_CIRCLE
     Circle pattern by John Connett
@@ -180,6 +180,7 @@ SUMMARY OF FRACTAL TYPES
     accumulate.  Three parameters: border width (default 10), type,
     and color change rate.
 
+~OnlineFF
 {=HT_DYNAM dynamic}
 ~Label=HF_DYNAM
     Time-discrete dynamic system.
@@ -203,6 +204,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = fn(z(n)*z(n))
     One parameter: the function fn.
 
+~OnlineFF
 {=HT_SCOTSKIN fn*fn}
 ~Label=HF_FNTIMESFN
       z(0) = pixel; z(n+1) = fn1(n)*fn2(n)
@@ -214,7 +216,6 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: the real and imaginary components of
     p1 and p2, and the function fn.
 
-~OnlineFF
 {=HT_SCOTSKIN fn+fn}
 ~Label=HF_FNPLUSFN
       z(0) = pixel;
@@ -225,6 +226,7 @@ SUMMARY OF FRACTAL TYPES
 {=HT_FORMULA formula}
     Formula interpreter - write your own formulas as text files!
 
+~OnlineFF
 {=HT_FROTH frothybasin}
 ~Label=HF_FROTH
     Pixel color is determined by which attractor captures the orbit.  The
@@ -249,6 +251,7 @@ SUMMARY OF FRACTAL TYPES
     Four parameters: order a, real part of R, epsilon,
        and imaginary part of R.
 
+~OnlineFF
 {=HT_HENON henon}
 ~Label=HF_HENON
     Orbit in two dimensions defined by:
@@ -402,6 +405,7 @@ SUMMARY OF FRACTAL TYPES
        y(n+1) = fn3 (x(n) * a) + d * fn4(y(n) * a)
        Parameters:  a, b, c, d fn1..4 (all sin=original)
 
+~OnlineFF
 {=HT_LORENZ lorenz, lorenz3d}
 ~Label=HF_LORENZ
     Lorenz two lobe attractor - orbit in three dimensions.
@@ -423,6 +427,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n) +(y(n)*dt/2) - c*dt*z(n)
     Parameters are dt, a, b, and c.
 
+~OnlineFF
 {=HT_LORENZ lorenz3d3}
 ~Label=HF_LORENZ3D3
     Lorenz three lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
@@ -436,6 +441,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n) +(3*x(n)*dt*x(n)*y(n)-y(n)*dt*y(n)^2)/2 - c*dt*z(n)
     Parameters are dt, a, b, and c.
 
+~OnlineFF
 {=HT_LORENZ lorenz3d4}
 ~Label=HF_LORENZ3D4
     Lorenz four lobe attractor, 3D orbit (Rick Miranda and Emily Stone)
@@ -452,14 +458,13 @@ SUMMARY OF FRACTAL TYPES
 {=HT_LSYS lsystem}
     Using a turtle-graphics control language and starting with
     an initial axiom string, carries out string substitutions the
-    specified number of times (the order), and plots the resulting.
+    specified number of times (the order), and plots the result.
 
 {=HT_LYAPUNOV lyapunov}
     Derived from the Bifurcation fractal, the Lyapunov plots the Lyapunov
     Exponent for a population model where the Growth parameter varies between
     two values in a periodic manner.
 
-~FF
 {=HT_MAGNET magnet1j}
 ~Label=HF_MAGJ1
       z(0) = pixel;
@@ -484,6 +489,7 @@ SUMMARY OF FRACTAL TYPES
                 [  3*(z(n)^2) + 3*(C-2)*z(n) + (C-1)*(C-2) + 1 ]
     Parameters: the real and imaginary parts of c
 
+~OnlineFF
 {=HT_MAGNET magnet2m}
 ~Label=HF_MAGM2
       z(0) = 0; c = pixel;
@@ -648,7 +654,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = c * fn(z(n)) + pixel,
     Parameters: real and imaginary perturbations of z(0), and fn
 
-~FF
+~OnlineFF
 {=HT_NEWTBAS newtbasin}
 ~Label=HF_NEWTBAS
     Based on the Newton formula for finding the roots of z^p - 1.
@@ -707,6 +713,7 @@ SUMMARY OF FRACTAL TYPES
     Four parameters: 'graininess' (0, 0.125 to 100, default = 2),
     old/new algorithm, seed value used, 16-bit out output selection.
 
+~OnlineFF
 {=HT_POPCORN popcorn}
 ~Label=HF_POPCORN
     The orbits in 2D are plotted superimposed:
@@ -727,6 +734,7 @@ SUMMARY OF FRACTAL TYPES
                     - imag(h * fn1( y(n) + fn2(C * y(n) ))
     Parameters: step size h, C, functions fn1..4 (original: sin,tan,sin,tan).
 
+~OnlineFF
 {=HT_MARTIN quadruptwo}
 ~Label=HF_QUADRUPTWO
     Quadruptwo attractor from Michael Peters - orbit in two dimensions.
@@ -800,6 +808,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = c^z(n)
     Parameters: real & imaginary perturbation of z(0)
 
+~OnlineFF
 {=HT_MARTIN threeply}
 ~Label=HF_THREEPLY
     Threeply attractor by Michael Peters - orbit in two dimensions.
@@ -820,6 +829,7 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = tmp + pixel;
     Parameters: real & imaginary perturbations of z(0) and function fn
 
+~OnlineFF
 {=HT_UNITY unity}
 ~Label=HF_UNITY
       z(0) = pixel;
@@ -841,6 +851,7 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: h and p
     Recommended: zmag or bof60 inside coloring options
 
+~OnlineFF
 {=HT_ESCHER escher_julia}
 ~Label=HF_ESCHER
     Escher-like tiling of Julia sets from The Science of Fractal Images

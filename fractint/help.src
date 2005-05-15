@@ -1196,7 +1196,7 @@ Commands marked with an '*' are also available at the credits screen.
 
 {Print Command}
    ctrl-p          Print the screen (command-line options set printer type)
-~OnlineFF
+
 {Parameter Save/Restore Commands}
    b               Save commands describing the current image in a file
                    (writes an entry to be used with @ command)
