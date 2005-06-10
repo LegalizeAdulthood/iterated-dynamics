@@ -279,8 +279,14 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.2 is an update of Fractint 20.0 based on the developer's
-  version 20.4.1.  New features include:
+Version 20.4.3 is an update of Fractint 20.0 based on the developer's
+  version 20.4.2.  New features include:
+
+Patch 3 to Version 20.4.0\
+Started the cleanup of the docs.  Cleaned up the map directory.
+
+  Fixed the Xfractint Makefile so that install would run.  Added an
+  uninstall.
 
 Patch 2 to Version 20.4.0\
 Fixed the display coordinates so they won't change, after an image had been
