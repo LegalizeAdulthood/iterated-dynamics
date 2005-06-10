@@ -1,3 +1,5 @@
+SHELL=/bin/sh
+
 ifeq ($(AS),nasm)
 
 OBJS = \
