@@ -17,6 +17,7 @@ IDIR = ifs
 LDIR = lsystem
 MDIR = maps
 PDIR = pars
+XDIR = extra
 
 NOBSTRING =
 HAVESTRI =
@@ -61,6 +62,15 @@ DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 # bundled with Sun C.
 #DEFINES += -DUSE_SUNMATH
 
+# For using nasm, set:
+#AS = /usr/bin/nasm
+# Note that because of the differences between the assembler syntaxes,
+#  nasm is the only one that will work.
+AS = foo
+
+# Below is for Linux with output file type of elf, turn all warnings on
+AFLAGS = -f elf -w+orphan-labels
+
 #Maybe -D_CONST will fix problems with constant type in include files?
 #For HPUX, use CFLAGS = -I. $(DEFINES) -I/usr/include/X11R4 +O3 +Obb1000
 #For SGI, add -cckr to CFLAGS
@@ -72,11 +82,20 @@ DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 #For Solaris, use CFLAGS = -I. -I/usr/openwin/include $(DEFINES) -g
 #If you have the nasm assembler on your system add -DNASM to CFLAGS
 
+ifeq ($(AS),/usr/bin/nasm)
+
 #CFLAGS = -I. -D_CONST $(DEFINES)
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
          -mcpu=pentium -DNASM -fno-builtin
-#CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM
+#CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
+
+else
+
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
+         -mcpu=pentium -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
+
+endif
 
 # Gcc is often the only compiler that works for this
 # For HPUX, use CC = cc -Aa -D_HPUX_SOURCE
@@ -97,16 +116,6 @@ CC = /usr/bin/gcc
 #LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
 LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
 #LIBS = -lX11 -lm -lcurses
-
-# For using nasm, set:
-AS = nasm
-#AS = /usr/bin/nasm
-# Note that because of the differences between the assembler syntaxes,
-#  nasm is the only one that will work.
-#AS = foo
-
-# Below is for Linux with output file type of elf, turn all warnings on
-AFLAGS = -f elf -w+orphan-labels
 
 # HPUX fixes thanks to David Allport, Bill Broadley, and R. Lloyd.
 # AIX fixes thanks to David Sanderson & Elliot Jaffe.
@@ -149,7 +158,7 @@ cellular.par demo.par fract18.par fract19.par fract200.par fractint.par \
 icons.par lyapunov.par music.par newphoen.par orbits.par phoenix.par
 
 FRMFILES = fractint.frm fract200.frm fract196.frm fract001.frm fract002.frm \
-fract003.frm fract_sy.frm if_else.frm ikenaga.frm julitile.frm new_if.frm \
+fract003.frm fract_sy.frm ikenaga.frm julitile.frm new_if.frm \
 newton.frm fend.frm
 
 IFSFILES = fractint.ifs
@@ -162,6 +171,9 @@ froth3.map froth316.map froth6.map froth616.map gamma1.map gamma2.map \
 glasses1.map glasses2.map goodega.map green.map grey.map grid.map headache.map \
 landscap.map lyapunov.map neon.map paintjet.map \
 royal.map topo.map volcano.map
+
+XTRAFILES = \
+all_maps.zip frmtut.zip if_else.zip phctutor.zip
 
 OLDRUN = $(PDIR)/$(PARFILES) $(FDIR)/$(FRMFILES) $(IDIR)/$(IFSFILES) \
 $(LDIR)/$(LFILES) $(MDIR)/$(MAPFILES) demo.key
@@ -194,7 +206,7 @@ $(COMDIR)/targa.o $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
 $(COMDIR)/tplus.o $(COMDIR)/zoom.o
 
 
-ifeq ($(AS),nasm)
+ifeq ($(AS),/usr/bin/nasm)
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
@@ -245,9 +257,9 @@ clean:
 install: xfractint fractint.hlp
 	strip xfractint
 # only next 4 lines might need su
-	cp xfractint $(BINDIR)/xfractint
-	chmod a+x $(BINDIR)/xfractint
-	cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1
+	cp xfractint $(BINDIR)/xfractint;
+	chmod a+x $(BINDIR)/xfractint;
+	cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
 	chmod a+r $(MANDIR)/xfractint.1
 # create directories if they don't exist
 	if [ ! -d $(SRCDIR) ] ; then mkdir $(SRCDIR) ; fi
@@ -256,6 +268,7 @@ install: xfractint fractint.hlp
 	if [ ! -d $(SRCDIR)/$(IDIR) ] ; then mkdir $(SRCDIR)/$(IDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(LDIR) ] ; then mkdir $(SRCDIR)/$(LDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(MDIR) ] ; then mkdir $(SRCDIR)/$(MDIR) ; fi
+	if [ ! -d $(SRCDIR)/$(XDIR) ] ; then mkdir $(SRCDIR)/$(XDIR) ; fi
 # copy all the files to the appropriate directories
 	cp fractint.hlp sstools.ini $(DOCS) $(SRCDIR)
 	cd ./$(PDIR); cp $(PARFILES) $(SRCDIR)/$(PDIR)
@@ -263,15 +276,17 @@ install: xfractint fractint.hlp
 	cd ./$(IDIR); cp $(IFSFILES) $(SRCDIR)/$(IDIR)
 	cd ./$(LDIR); cp $(LFILES) $(SRCDIR)/$(LDIR)
 	cd ./$(MDIR); cp $(MAPFILES) $(SRCDIR)/$(MDIR)
+	cd ./$(XDIR); cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
 # set permissions
 	cd $(SRCDIR); cd ..; chmod -R a+rw $(SRCDIR)
-#	cd $(SRCDIR); chmod a+r fractint.hlp
-#	cd $(SRCDIR); chmod a+rw sstools.ini
-#	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
-#	cd $(SRCDIR)/$(FDIR); chmod a+rw $(FRMFILES)
-#	cd $(SRCDIR)/$(IDIR); chmod a+rw $(IFSFILES)
-#	cd $(SRCDIR)/$(LDIR); chmod a+rw $(LFILES)
-#	cd $(SRCDIR)/$(MDIR); chmod a+rw $(MAPFILES)
+	cd $(SRCDIR); chmod a+r fractint.hlp
+	cd $(SRCDIR); chmod a+rw sstools.ini
+	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
+	cd $(SRCDIR)/$(FDIR); chmod a+rw $(FRMFILES)
+	cd $(SRCDIR)/$(IDIR); chmod a+rw $(IFSFILES)
+	cd $(SRCDIR)/$(LDIR); chmod a+rw $(LFILES)
+	cd $(SRCDIR)/$(MDIR); chmod a+rw $(MAPFILES)
+	cd $(SRCDIR)/$(XDIR); chmod a+rw $(XTRAFILES)
 
 uninstall:
 	cd $(SRCDIR)/$(PDIR); rm -f $(PARFILES)
@@ -279,8 +294,9 @@ uninstall:
 	cd $(SRCDIR)/$(IDIR); rm -f $(IFSFILES)
 	cd $(SRCDIR)/$(LDIR); rm -f $(LFILES)
 	cd $(SRCDIR)/$(MDIR); rm -f $(MAPFILES)
+	cd $(SRCDIR)/$(XDIR); rm -f $(XTRAFILES)
 	cd $(SRCDIR); rm -f fractint.hlp sstools.ini $(DOCS)
-	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR)
+	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
 	cd $(SRCDIR); cd ..; rmdir $(SRCDIR)
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
