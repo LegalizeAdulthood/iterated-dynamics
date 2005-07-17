@@ -150,7 +150,7 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_CMPLXMARKSJUL
     A generalization of the marksjulia fractal.
       z(0) = pixel;
-      z(n+1) = (c^exp-1)*z(n)^2 + c.
+      z(n+1) = c^(exp-1)*z(n)^2 + c.
     Four parameters: real and imaginary parts of c,
     and real and imaginary parts of exponent.
 
@@ -158,7 +158,7 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_CMPLXMARKSMAND
     A generalization of the marksmandel fractal.
       z(0) = c = pixel;
-      z(n+1) = (c^exp-1)*z(n)^2 + c.
+      z(n+1) = c^(exp-1)*z(n)^2 + c.
     Four parameters: real and imaginary parts of perturbation
     of z(0), and real and imaginary parts of exponent.
 
@@ -635,14 +635,14 @@ SUMMARY OF FRACTAL TYPES
 ~Label=HF_MARKSJULIA
     A variant of the julia-lambda fractal.
       z(0) = pixel;
-      z(n+1) = (c^exp-1)*z(n)^2 + c.
+      z(n+1) = c^(exp-1)*z(n)^2 + c.
     Parameters: real & imaginary parts of c, and exponent
 
 {=HT_MARKS marksmandel}
 ~Label=HF_MARKSMAND
     A variant of the mandel-lambda fractal.
       z(0) = c = pixel;
-      z(n+1) = (c^exp-1)*z(n)^2 + c.
+      z(n+1) = c^(exp-1)*z(n)^2 + c.
     Parameters: real & imaginary parts of perturbations of z(0),
     and exponent
 
@@ -1830,7 +1830,7 @@ MarksJulia are two families of fractal types that are linked in the same
 manner as the classic Mandelbrot/Julia sets: each MarksMandel set can be
 considered as a mapping into the MarksJulia sets, and is linked with the
 spacebar toggle. The basic equation for these sets is:
-      Z(n+1) = ((lambda^exp-1) * Z(n)^2) + lambda\
+      Z(n+1) = (lambda^(exp-1) * Z(n)^2) + lambda\
 where Z(0) = 0.0 and lambda is (x + iy) for MarksMandel. For MarksJulia,
 Z(0) = (x + iy) and lambda is a constant (taken from the MarksMandel
 spacebar toggle, if that method is used). The exponent is a positive
