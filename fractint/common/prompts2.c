@@ -2683,9 +2683,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    char dir[FILE_MAX_DIR];
    char fname[FILE_MAX_FNAME];
    char ext[FILE_MAX_EXT];
-#ifndef XFRACT
    char temp_path[FILE_MAX_PATH];
-#endif
 
    char drive1[FILE_MAX_DRIVE];
    char dir1[FILE_MAX_DIR];
@@ -2743,6 +2741,9 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
          newfilename[len-1] = 0; /* get rid of slash added by expand_dirname */
       }
    }
+#else
+   findpath(newfilename,temp_path);
+   strcpy(newfilename,temp_path);
 #endif
    /* check existence */
    if(isadir==0 || isafile==1)
