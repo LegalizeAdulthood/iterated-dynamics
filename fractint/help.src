@@ -288,6 +288,9 @@ Started the cleanup of the docs.  Cleaned up the map directory.
   Fixed the Xfractint Makefile so that install would run.  Added an
   uninstall.
 
+  Fixed Xfractint so that it can be run from an arbitrary directory and
+  still use the directory settings in sstools.ini.
+
 Patch 2 to Version 20.4.0\
 Fixed the display coordinates so they won't change, after an image had been
   zoomed, when the maintain screen coordinates parameter is set to yes.
