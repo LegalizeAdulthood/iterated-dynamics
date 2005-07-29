@@ -280,7 +280,11 @@ char *filename, *fullpathname;
 
     if (filename[0]=='/') {
 	strcpy(fullpathname,filename);
-	return;
+	fd = open(fullpathname,O_RDONLY);
+	if (fd != -1) {
+	    close(fd);
+	    return;
+	}
     }
     fractdir = getenv("FRACTDIR");
     if (fractdir != NULL) {
@@ -303,6 +307,12 @@ char *filename, *fullpathname;
     }
     strcpy(fullpathname,"./");
     strcat(fullpathname,filename);
+    fd = open(fullpathname,O_RDONLY);
+    if (fd != -1) {
+	close(fd);
+	return;
+    }
+    fullpathname=NULL;
 }
 
 /*

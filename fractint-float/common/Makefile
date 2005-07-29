@@ -1,3 +1,5 @@
+SHELL=/bin/sh
+
 OBJS = \
 3d.o ant.o bigflt.o  biginit.o bignum.o bignumc.o calcfrac.o \
 cmdfiles.o decoder.o editpal.o encoder.o \

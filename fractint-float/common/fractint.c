@@ -244,10 +244,18 @@ restart:   /* insert key re-starts here */
    initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
    start_showorbit = 0;
    showdot = -1; /* turn off showdot if entered with <g> command */
-
-   if (fract_dir1==NULL)
-       fract_dir1 = ".";
    calc_status = -1;                    /* no active fractal image */
+
+   fract_dir1 = getenv("FRACTDIR");
+   if (fract_dir1==NULL) {
+       fract_dir1 = ".";
+   }
+#ifdef SRCDIR
+   fract_dir2 = SRCDIR;
+#else
+   fract_dir2 = ".";
+#endif
+
    cmdfiles(argc,argv);         /* process the command-line */
    dopause(0);                  /* pause for error msg if not batch */
    init_msg(0,"",NULL,0);  /* this causes getakey if init_msg called on runup */
@@ -270,15 +278,7 @@ restart:   /* insert key re-starts here */
    }
    if (debugflag ==   70)                fpu =   0; /* for testing purposes */
    if (getenv("NO87")) fpu = 0;
-   fract_dir1 = getenv("FRACTDIR");
-   if (fract_dir1==NULL) {
-       fract_dir1 = ".";
-   }
-#ifdef SRCDIR
-   fract_dir2 = SRCDIR;
-#else
-   fract_dir2 = ".";
-#endif
+
    if (fpu >= 287 && debugflag != 72)   /* Fast 287 math */
       setup287code();
    adapter_detect();                    /* check what video is really present */

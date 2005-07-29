@@ -1,4 +1,6 @@
-ifeq ($(AS),nasm)
+SHELL=/bin/sh
+
+ifeq ($(AS),/usr/bin/nasm)
 
 OBJS = \
 calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
@@ -25,7 +27,7 @@ tidy:
 clean:
 	rm -f $(OBJS)
 
-ifeq ($(AS),nasm)
+ifeq ($(AS),/usr/bin/nasm)
 calmanfx.o: calmanfx.asm
 	$(AS) $(AFLAGS) calmanfx.asm
 endif
@@ -42,7 +44,7 @@ calcmand.o: calcmand.c ${HFD}/port.h
 
 calmanfp.o: calmanfp.c ${HFD}/port.h ${HFD}/fractype.h
 
-ifeq ($(AS),nasm)
+ifeq ($(AS),/usr/bin/nasm)
 calmanfx.o: calmanfx.asm xfract_a.inc
 endif
 
