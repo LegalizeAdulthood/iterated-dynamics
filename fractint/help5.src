@@ -920,10 +920,10 @@ following formula works out the details.
 
 Let q1 = x1 + y1i + z1j + w1k and q2 = x2 + y2i + z2j + w2k.
 Then q1q2 = 1(x1x2 - y1y2 - z1z2 - w1w2) +
-            i(y1x2 + x1y2 + w1z2 - z1w2) +
-            j(z1x2 - w1y2 + x1z2 + y1w2) +
+            i(y1x2 + x1y2 - w1z2 + z1w2) +
+            j(z1x2 + w1y2 + x1z2 - y1w2) +
             k(w1x2 + z1y2 - y1z2 + x1w2)
-
+            
 ~Format+
 Quaternions are not the only possible four dimensional supersets of the
 complex numbers. William Rowan Hamilton, who discovered quaternions in 1843,
@@ -1148,12 +1148,7 @@ CONTACTING THE AUTHORS
 Communication between the authors for development of the next version of
 Fractint takes place in the fractint mailing list.
 
-Most of the authors have never met except on CompuServe.  The development
-team has moved off of CompuServe and now uses a mailing list maintained by
-Tim Wegner (see below).  New members are always welcome! Stop on by if you
-have any questions or just want to take a peek at what's getting tossed into
-the soup.  This is by far the best way to have your questions answered or
-participate in a discussion.
+
 
 The following authors have agreed to the distribution of their addresses.
 Usenet/Internet/Bitnet/Whatevernet users can reach CIS users directly if
@@ -1172,7 +1167,7 @@ reply, the best thing to do is use email, which we are generally able to
 answer, or better yet, leave a message on the fractint list.
 
 Tim Wegner now runs a mailing list for fractint users to swap ideas and par
-data, you can subscribe by emailing majordomo@mailman.xmission.com with
+data, you can subscribe by emailing mailman@mailman.xmission.com with
 the line:\
 subscribe fractint\
 as the sole content of the message, you'll receive further instructions by
@@ -1196,16 +1191,6 @@ Jonathan Osuch          josuch@fractint.org
 2110 Northview Drive
 Marion, IA  52302
 
-George Martin           [76440,1143] on CIS
-209 E. Liberty          ggmartin@compuserve.com
-Milford, MI 48381
-
-Robin Bussell           [100604,643] on CIS
-13 Bayswater Rd         robin.b2@ukonline.co.uk
-Horfield
-Bristol
-Avon, England
-
 
 Contributing authors' addresses (in alphabetic order).
 
@@ -1221,17 +1206,14 @@ Australia
 
 
 ~OnlineFF
-Sylvie Gallet           [101324,3444] on CIS
-Residence des Erables   sylvie_gallet@compuserve.com
-2 allee des Bouvreuils
-93700 DRANCY FRANCE
+Sylvie Gallet           sylvie.gallet1@libertysurf.fr
 
-Lee H. Skinner          [75450,3631] on CIS
+Lee H. Skinner          skinner@thuntek.net 
 P.O. Box 14944
 Albuquerque, NM  87191
 (505) 293-5723
 
-Bert Tyler              bert_tyler@oef.com
+Bert Tyler              bert.tyler@oef.com
 Tyler Software 
 124 Wooded Lane
 Villanova, PA 19085
@@ -1450,12 +1432,11 @@ Fractal Creations Second Edition includes:
 ;
 ~OnlineFF
 
-  Several Fractint enthusiasts are selling Fractal CDs.  Two of the best
-  are called "Fractal Dimensions" by Lee Skinner, and "Fractography" by
-  Caren Park.  Highly recommended original artwork in a variety of
-  graphics formats.
+  Several Fractint enthusiasts are selling Fractal CDs.  One of the best
+  are called "Fractal Dimensions" by Lee Skinner. Highly recommended original 
+  artwork in a variety of graphics formats.
 
-  You can receive the "Fractal Dimensions CD" by sending $29.95US +
+  You can receive the "Fractal Dimensions CD" by sending $19.95US +
   $5.00 S&H (or $10.00 S&H outside USA) to
 
      Lee H. Skinner
@@ -1463,17 +1444,6 @@ Fractal Creations Second Edition includes:
      Albuquerque, NM  87191-4944
      USA
 
-  This CD is in html format.  Another CD by Lee Skinner is "Visions 6: Super
-  Fractals".  This CD is $39.95US (plus $5.00 S&H) and is available from
-
-     Walnut Creek CDROM
-     1537 Palos Verdes Mall, Suite 260
-     Walnut Creek, CA 94596
-
-and the "Fractography" CD by sending $30.00US + $5.00 S&H (in US/Canada) to\
-   Lost and Found Books\
-   485 Front Street N, Suite A\
-   Issaquah, WA 98027-2900\
 
 ~OnlineFF
 Michael Peters and Randall Scott have written a fractal program called HOP
@@ -3469,18 +3439,17 @@ Version 1.0, 9/88
 ;
 ; FRACTINT intro screen primary authors
 ;
- Current Primary Authors
- Timothy Wegner         twegner@fractint.org
- Jonathan Osuch         josuch@fractint.org
- George Martin          ggmartin@compuserve.com
- Robin Bussell          robin.b2@ukonline.co.uk
+ Primary Authors (current and past)
+ Timothy Wegner       twegnerATfractint.org (current)
+ Jonathan Osuch       josuchATfractint.org (current)
+ Bert Tyler           Original Fractint Author 
+ Mark Peterson        Parser, julibrot
+ Pieter Branderhorst  Solid guessing, menus
+ Wesley Loewer        Arbitrary precision
+ George Martin        Formula parser
+ Robin Bussell        Fractal browser and evolver
  Contributing Authors
-
-
-
-; room for 14 authors at a time here
-
-
+ ; room for 14 authors at a time here
 
 
 
@@ -3501,76 +3470,72 @@ Version 1.0, 9/88
 ; FRACTINT intro screen contributing authors.
 ;
                   ...
- Michael Abrash   360x480x256, 320x400x256 VGA video modes
- Rees Acheson     [70674,2606] (Author of MandelB) pentium speedups
- Joseph Albrecht  Tandy video, CGA video speedup
- Kevin Allen      kevina@microsoft.com Finite attractor, bifurcation engine
- Humberto Baptista humberto@insite.com.br passes=d, latoocarfian type
- Steve Bennett    restore-from-disk logic
- Rob Beyer        [71021,2074] Barnsley IFS, Lorenz fractals
- Francois Blais   [70700,446] Lyapunov Fractals, LYAPUNOV.MAP
- Scott D. Boyd    sdboyd56@swbell.net Xfractint user interface cleanup
- Dennis Bragg     [75300,2456] DXF Raytracing output option
- Pieter Branderhorst Past main author, solid guessing, menus
- Juan J. Buhler   jbuhler@gidef.edu.ar Diffusion options, inverse Julia type
- Mike Burkey      376x564x256, 400x564x256, and 832x612x256 VGA video modes
- John Bridges     jbridges@netcom.com superVGA support, 360x480x256 mode
- Fulvio Cappelli  [100025,1507] ants options and speedup
- Charlie Chernohorsky fractint@oblivion.cz Virtual VESA screen sizes & speedup
- Brian Corbino    [71611,702] Tandy 1000 640x200x16 video mode
- Lee Crocker      lcrocker@netcom.com Fast Newton, Inversion, Decomposition..
- Monte Davis      [71450,3542] Documentation
- Paul De Leeuw    RDS (Random Dot Stereogram) Feature
- Jean-Pierre Demailly Jean-Pierre.Demailly@ujf-grenoble.fr Xfractint truecolor
- Chuck Ebbert     [76306,1226] cmprsd & sqrt logmap, fpu speedups, fast parser
- Dan Farmer       [74431,1075] orbits enhancements
- Richard Finegold [76701,153] 8/16/../256-Way Decomposition option
- Frank Fussenegger Mandelbrot speedups
- Sylvie Gallet    Sylvie_Gallet@compuserve.com Formula and math wizard
- Mike Gelvin      [73337,520] Mandelbrot speedups
- Luciano Genero   ants options and speedup
- Lawrence Gozum   [73437,2372] Tseng 640x400x256 Video Mode
- David Guenther   [70531,3525] Boundary Tracing algorithm
- Jay Hill         ehill1@san.rr.com Windows notes
- Mike Kaufman     [kaufman@mcs.com] mouse support, other features
- Norman Hills     [71621,1352] Ranges option
- Richard Hughes   [70461,3272] "inside=", "outside=" coloring options
- Bill Jemison     [70400,2537] orbitsave=sound option
- Damien M. Jones  dmj@fractalus.com Windows notes
- Wesley Loewer    [loewer@net2000ke.com] Past main author, AP and much more.
- Adrian Mariano   [adrian@cam.cornell.edu] Diffusion & L-Systems
- Charles Marslett [75300,1636] VESA video and IIT math chip support
- Andrew McCarthy  [andrewmc@netsoc.ucd.ie] European keyboard support
- Joe McLain       [75066,1257] TARGA Support, color-map files
- Bob Montgomery   [73357,3140] (Author of VPIC) Fast text I/O routines
- Bret Mulvey      bret_x@hotmail.com plasma clouds
- Roy Murphy       [76376,721] Lyapunov Fractals
- Ethan Nagel      [70022,2552] Palette editor, integrated help/doc system
- Yavuz Onder      yavuz@bnr.ca Postscript printer driver
- Mark Peterson    [73642,1775] Past main author, parser, julibrot
- Kyle Powell      [76704,12] 8514/A Support
- Marc Reinig      [72410,77] Lots of 3D options
- Michael Sargent  msargent@zoo.uvm.edu Volterra-Lotka, escher_julia fractals
- Matt Saucier     [72371,3101] Printer Support
- Herb Savage      [75260,217] 'inside=bof60', 'inside=bof61' options
- Ken Shirriff     shirriff@eng.sun.com Quaternions, CA, Xfractint port
- Lee Skinner      LeeHSkinner@compuserve.com Tetrate fractal types and more
- Michael Snyder   [75300,642] julia inverse and Julia-In-A-Window using MIIM
- Dean Souleles    [75115,1671] Hercules Support
- Kurt Sowa        [73467,2013] Color Printer Support
- Hugh Steele      cyclerange feature
- Iain Stirling    Iain@flat2-2.freeserve.co.uk Inside=fmod and outside=fmod
- John Swenson     [75300,2136] Postscript printer features
- Chris Taylor     Floating&Fixed-point algorithm speedups, Tesseral Option
- Scott Taylor     [72401,410] PostScript, Kam Torus, many fn types.
- Rich Thomson     rich.thomson@xmission.com Xfractint truecolor support
- Bert Tyler       bert_tyler@oef.com, Original Fractint Author
- Bill Townsend    Mandelbrot Speedups
- Paul Varner      [73237,441] Extended Memory support for Disk Video
- Dave Warker      Integer Mandelbrot Fractals concept
- Aaron Williams   Register-compatible 8514/A code
- Phil Wilson      [76247,3145] Distance Estimator, Bifurcation fractals
- Nicholas Wilt    Lsystem speedups
- Richard Wilton   Tweaked VGA Video modes
+ Michael Abrash       360x480x256, 320x400x256 VGA video modes
+ Rees Acheson         (Author of MandelB) pentium speedups
+ Joseph Albrecht      Tandy video, CGA video speedup
+ Kevin Allen          Finite attractor, bifurcation engine
+ Humberto Baptista    passes=d, latoocarfian type
+ Steve Bennett        restore-from-disk logic
+ Rob Beyer            Barnsley IFS, Lorenz fractals
+ Francois Blais       Lyapunov Fractals, LYAPUNOV.MAP
+ Scott D. Boyd        Xfractint user interface cleanup
+ Dennis Bragg         DXF Raytracing output option
+ Juan J. Buhler       Diffusion options, inverse Julia type
+ Mike Burkey          376x564x256, 400x564x256, and 832x612x256 VGA video modes
+ John Bridges         superVGA support, 360x480x256 mode
+ Fulvio Cappelli      ants options and speedup
+ Charlie Chernohorsky Virtual VESA screen sizes & speedup
+ Brian Corbino        Tandy 1000 640x200x16 video mode
+ Lee Crocker          Fast Newton, Inversion, Decomposition..
+ Monte Davis          Documentation
+ Paul De Leeuw        RDS (Random Dot Stereogram) Feature
+ Jean-Pierre Demailly Xfractint truecolor
+ Chuck Ebbert         cmprsd & sqrt logmap, fpu speedups, fast parser
+ Dan Farmer           orbits enhancements
+ Richard Finegold     8/16/../256-Way Decomposition option
+ Frank Fussenegger    Mandelbrot speedups
+ Sylvie Gallet        Formula and math wizard
+ Mike Gelvin          Mandelbrot speedups
+ Luciano Genero       ants options and speedup
+ Lawrence Gozum       Tseng 640x400x256 Video Mode
+ David Guenther       Boundary Tracing algorithm
+ Jay Hill             Windows notes
+ Mike Kaufman         mouse support, other features
+ Norman Hills         Ranges option
+ Richard Hughes       "inside=", "outside=" coloring options
+ Bill Jemison         orbitsave=sound option
+ Damien M. Jones      Windows notes, web hosting
+ Adrian Mariano       Diffusion & L-Systems
+ Charles Marslett     VESA video and IIT math chip support
+ Andrew McCarthy      European keyboard support
+ Joe McLain           TARGA Support, color-map files
+ Bob Montgomery       (Author of VPIC) Fast text I/O routines
+ Bret Mulvey          plasma clouds
+ Roy Murphy           Lyapunov Fractals
+ Ethan Nagel          Palette editor, integrated help/doc system
+ Yavuz Onder          Postscript printer driver
+ Kyle Powell          8514/A Support
+ Marc Reinig          Lots of 3D options
+ Michael Sargent      Volterra-Lotka, escher_julia fractals
+ Matt Saucier         Printer Support
+ Herb Savage          'inside=bof60', 'inside=bof61' options
+ Ken Shirriff         Quaternions, CA, Xfractint port
+ Lee Skinner          Tetrate fractal types and more
+ Michael Snyder       julia inverse and Julia-In-A-Window using MIIM
+ Dean Souleles        Hercules Support
+ Kurt Sowa            Color Printer Support
+ Hugh Steele          cyclerange feature
+ Iain Stirling        Inside=fmod and outside=fmod
+ John Swenson         Postscript printer features
+ Chris Taylor         Floating&Fixed-point algorithm speedups, Tesseral Option
+ Scott Taylor         PostScript, Kam Torus, many fn types.
+ Rich Thomson         Xfractint truecolor support, mailing list
+ Bill Townsend        Mandelbrot Speedups
+ Paul Varner          Extended Memory support for Disk Video
+ Dave Warker          Integer Mandelbrot Fractals concept
+ Aaron Williams       Register-compatible 8514/A code
+ Phil Wilson          Distance Estimator, Bifurcation fractals
+ Nicholas Wilt        Lsystem speedups
+ Richard Wilton       Tweaked VGA Video modes
 ;
 ;

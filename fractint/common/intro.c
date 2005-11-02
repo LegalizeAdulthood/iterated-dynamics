@@ -57,14 +57,14 @@ void intro(void)
    authors[j+1] = i;
 
    helptitle();
-#define END_MAIN_AUTHOR 7
+#define END_MAIN_AUTHOR 11
    toprow = END_MAIN_AUTHOR+1;
 #ifndef XFRACT
    botrow = 21;
 #else
    botrow = 20;
    putstringcenter(21,0,80,C_TITLE,
-   "Unix/X port of fractint by Ken Shirriff [shirriff@eng.sun.com]");
+   "Unix/X port of fractint by Ken Shirriff");
 #endif
    putstringcenter(1,0,80,C_TITLE, PRESS_ENTER);
    putstring(2,0,C_CONTRIB,screen_text);
@@ -74,7 +74,7 @@ void intro(void)
    setattr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
    setattr(23,0,C_TITLE_LOW,160);
    for (i = 3; i < END_MAIN_AUTHOR; ++i)
-      setattr(i,18,C_CONTRIB,61);
+      setattr(i,21,C_CONTRIB,58);
    setattr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
    i = botrow - toprow;
    srand((unsigned int)clock_ticks());
