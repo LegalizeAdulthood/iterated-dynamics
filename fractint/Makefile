@@ -86,13 +86,13 @@ ifeq ($(AS),/usr/bin/nasm)
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
-         -mcpu=pentium -DNASM -fno-builtin
+         -march=pentium -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os \
-         -mcpu=pentium -fno-builtin
+         -march=pentium -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
 
 endif
