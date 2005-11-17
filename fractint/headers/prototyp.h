@@ -1331,8 +1331,10 @@ extern void decode_orbits_info(struct orbits_info *, int);
  *   unix.c -- C file prototypes
  */
 extern long clock_ticks(void);
+#ifndef HAVESTRI
 extern int stricmp(char *, char *);
 extern int strnicmp(char *, char *, int);
+#endif
 extern int memicmp(char *, char *, int);
 extern unsigned short _rotl(unsigned short, short);
 extern int ltoa(long, char *, int);

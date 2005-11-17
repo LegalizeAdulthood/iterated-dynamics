@@ -11,7 +11,11 @@
 #ifndef RAND_MAX
 #define RAND_MAX 0x7fffffff
 #endif
+
+#ifndef O_BINARY
 #define O_BINARY 0
+#endif
+
 #ifdef CLK_TCK
 #undef CLK_TCK
 #endif

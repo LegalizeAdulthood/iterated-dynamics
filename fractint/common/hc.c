@@ -84,8 +84,10 @@
 #include "helpcom.h"
 
 #ifdef XFRACT
+#ifndef HAVESTRI
 extern int stricmp(char *, char *);
 extern int strnicmp(char *, char *, int);
+#endif
 extern int filelength(int);
 extern int _splitpath(char *,char *,char *,char *,char *);
 #endif

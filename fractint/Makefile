@@ -37,6 +37,7 @@ DEBUG =
 #     may have to change the "#elif !defined(__386BSD__)" at the top of
 #     prompts2.c to "#else".
 # For Red Hat Linux, uncomment the NOBSTRING line.
+# For Cygwin, uncomment the NOBSTRING and HAVESTRI lines below.
 #
 
 NOBSTRING = -DNOBSTRING
@@ -52,6 +53,7 @@ NOBSTRING = -DNOBSTRING
 # AIX may need -D_ALL_SOURCE -D_NONSTD_TYPES to compile help.c
 # For Dec Alpha, add -DFTIME -DNOBSTRING -DDIRENT
 # For SGI, you may have to add -DSYSVSGI
+# For Cygwin, add -DDIRENT
 DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 
 # Uncomment this if you get errors about "stdarg.h" missing.
