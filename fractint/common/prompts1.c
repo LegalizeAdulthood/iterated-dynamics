@@ -8,14 +8,6 @@
 #ifndef  __386BSD__
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef __SVR4
-# include <sys/dir.h>
-#else
-# include <dirent.h>
-#ifndef DIRENT
-#define DIRENT
-#endif
-#endif
 #endif
 #endif
 #ifdef __TURBOC__
