@@ -24,28 +24,36 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+
 #ifdef _AIX
 #include <sys/select.h>
 #endif
-#include <sys/time.h>
-#include <sys/ioctl.h>
+
 #ifdef FPUERR
 #include <floatingpoint.h>
 #endif
+
 #ifdef __hpux
 #include <sys/file.h>
 #endif
+
 #include <fcntl.h>
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
+
 #ifdef LINUX
+#ifndef FNDELAY
 #define FNDELAY O_NDELAY
+#endif
 #endif
 #ifdef __SVR4
 # include <sys/filio.h>
 # define FNDELAY O_NONBLOCK
 #endif
+
 #include <assert.h>
 
 /* Check if there is a character waiting for us.  */
