@@ -9,14 +9,18 @@
 #elif !defined(__386BSD__)
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef __SVR4
-# include <sys/dir.h>
+
+#ifdef DIRENT
+#include <dirent.h>
+#elif !defined(__SVR4)
+#include <sys/dir.h>
 #else
-# include <dirent.h>
+#include <dirent.h>
 #ifndef DIRENT
 #define DIRENT
 #endif
 #endif
+
 #endif
 #ifdef __TURBOC__
 #include <alloc.h>
