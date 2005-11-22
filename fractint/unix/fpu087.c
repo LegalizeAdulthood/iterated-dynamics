@@ -24,10 +24,6 @@
 double _2_ = 2.0;
 double _1_ = 1.0;
 double PointFive = 0.5;
-/* infinity is declared in sunmath.h */
-#ifndef USE_SUNMATH
-double infinity = 1.0E+300;
-#endif
 
 void FPUaptan387(double *y, double *x, double *atan)
 {
