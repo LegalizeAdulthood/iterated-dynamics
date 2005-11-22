@@ -301,6 +301,11 @@ typedef int sigfunc(int);
 #endif
 #endif
 
+/* This should not be neccessary, but below appears to not work */
+#ifdef CYGWIN
+#define DO_NOT_USE_LONG_DOUBLE
+#endif
+
 #ifndef DO_NOT_USE_LONG_DOUBLE
 #ifdef LDBL_DIG
 /* this is what we're hoping for */
