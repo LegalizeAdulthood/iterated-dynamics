@@ -53,7 +53,6 @@ NOBSTRING = -DNOBSTRING
 # AIX may need -D_ALL_SOURCE -D_NONSTD_TYPES to compile help.c
 # For Dec Alpha, add -DFTIME -DNOBSTRING -DDIRENT
 # For SGI, you may have to add -DSYSVSGI
-# For Cygwin, add -DDIRENT
 DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 
 # Uncomment this if you get errors about "stdarg.h" missing.
@@ -63,6 +62,9 @@ DEFINES = -DXFRACT $(NOBSTRING) $(HAVESTRI) $(DEBUG)
 # "-lsunmath" to the LIBS definition below. Requires the sunmath library
 # bundled with Sun C.
 #DEFINES += -DUSE_SUNMATH
+
+# Uncomment this for Cygwin
+#DEFINES += -DCYGWIN -DDIRENT
 
 # For using nasm, set:
 #AS = /usr/bin/nasm
