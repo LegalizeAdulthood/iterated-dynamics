@@ -32,7 +32,7 @@ char    temp[FILE_MAX_PATH+1];
 char    temp_fn[FILE_MAX_PATH];
         strcpy(temp,MAP_name);
         strcpy(temp_fn,fn);
-        merge_pathnames(temp,temp_fn,0);
+        merge_pathnames(temp,temp_fn,3);
         if (has_ext(temp) == NULL) /* Did name have an extension? */
                 strcat(temp,".map");  /* No? Then add .map */
         findpath( temp, line);        /* search the dos path */
