@@ -6,8 +6,6 @@
 #ifndef XFRACT
 #include <io.h>
 #include <process.h>
-#else
-#include <curses.h>
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -376,39 +374,20 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
 }
 
 /*
- * The stackscreen()/unstackscreen() functions were originally
- * ported to Xfractint. However, since Xfractint uses a separate
- * text and graphics window, I don't see what these functions
- * are good for, so I have commented them out.
- *
- * To restore the Xfractint versions of these functions,
- * uncomment next.
- * These functions are useful for switching between different text screens.
- * For example, looking at a parameter entry using F2.
+ * The stackscreen()/unstackscreen() functions for XFRACT have been
+ * moved to unix/video.c to more cleanly separate the XFRACT code.
  */
-
-#define USE_XFRACT_STACK_FUNCTIONS
 
 #ifndef XFRACT
 static int screenctr = -1;
-#else
-static int screenctr = 0;
-extern void savecurses(WINDOW **);
-extern void restorecurses(WINDOW **);
-#endif
 
 #define MAXSCREENS 3
 
-#ifndef XFRACT
 static U16 savescreen[MAXSCREENS];
-#else
-static BYTE far *savescreen[MAXSCREENS];
-#endif
 static int saverc[MAXSCREENS+1];
 
 void stackscreen()
 {
-#ifndef XFRACT
    BYTE far *vidmem;
    int savebytes;
    int i;
@@ -443,32 +422,10 @@ void stackscreen()
       if (boxcount)
          moveboxf(0.0,0.0);
    }
-#elif defined (USE_XFRACT_STACK_FUNCTIONS)
-   int i;
-   BYTE far *ptr;
-   saverc[screenctr+1] = textrow*80 + textcol;
-   if (++screenctr) { /* already have some stacked */
-         static char far msg[]={"stackscreen overflow"};
-      if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(1,msg);
-         exit(1);
-         }
-      if ((ptr = (savescreen[i] = farmemalloc(sizeof(int *)))))
-         savecurses((WINDOW **)ptr);
-      else {
-         stopmsg(1,msg);
-         exit(1);
-        }
-      setclear();
-      }
-   else
-      setfortext();
-#endif
 }
 
 void unstackscreen()
 {
-#ifndef XFRACT
    BYTE far *vidmem;
    int savebytes;
    if(*s_makepar == 0)
@@ -492,37 +449,20 @@ void unstackscreen()
          moveboxf(0.0,0.0);
       scroll_state(1); /* restore position */
    }
-#elif defined (USE_XFRACT_STACK_FUNCTIONS)
-   BYTE far *ptr;
-   textrow = saverc[screenctr] / 80;
-   textcol = saverc[screenctr] % 80;
-   if (--screenctr >= 0) { /* unstack */
-      ptr = savescreen[screenctr];
-      restorecurses((WINDOW **)ptr);
-      farmemfree(ptr);
-      }
-   else
-      setforgraphics();
-   movecursor(-1,-1);
-#endif
 }
 
 void discardscreen()
 {
    if (--screenctr >= 0) { /* unstack */
       if (savescreen[screenctr]) {
-#ifndef XFRACT
          MemoryRelease(savescreen[screenctr]);
          savescreen[screenctr] = 0;
-#elif defined(USE_XFRACT_STACK_FUNCTIONS)
-         farmemfree(savescreen[screenctr]);
-#endif
       }
    }
    else
       discardgraphics();
 }
-
+#endif
 
 /* ------------------------------------------------------------------------ */
 
