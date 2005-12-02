@@ -118,19 +118,26 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 {
    int tries = 0;
    int i, gotprec;
+   long xytemp;
    double ftemp;
    coloriter=oldcoloriter = 0L;
    for(i=0;i<10;i++)
       rhombus_stack[i] = 0;
  
   /* set up grid array compactly leaving space at end */
-   if(xdots > OLDMAXPIXELS || ydots > OLDMAXPIXELS || debugflag==3800)
+  /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
+  /* space available in extraseg is 65536 Bytes */
+   xytemp = xdots + ydots;
+   if( ((floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
+       ((floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
+         debugflag == 3800)
    {
       use_grid=0;
       floatflag = usr_floatflag = 1;
    }
    else
       use_grid=1;   
+
    set_grid_pointers();
  
    if(!(curfractalspecific->flags & BF_MATH))
