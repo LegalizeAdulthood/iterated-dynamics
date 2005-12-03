@@ -279,8 +279,19 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.3 is an update of Fractint 20.0 based on the developer's
-  version 20.4.2.  New features include:
+Version 20.4.4 is an update of Fractint 20.0 based on the developer's
+  version 20.4.3.  New features include:
+
+Patch 4 to Version 20.4.0\
+Added minor changes so that Xfractint would compile under Cygwin.
+
+  Fixed Xfractint so that built in calls to a different map file would
+  work.
+  
+  Modified the logic for calculating when to switch from using a grid
+  to using the on-the-fly calculation of an image's pixels.  This affects
+  how large an image can be made when using integer math.  The switch is
+  now made when (xdots + ydots) * sizeof(long) > 32768.
 
 Patch 3 to Version 20.4.0\
 Started the cleanup of the docs.  Cleaned up the map directory.
