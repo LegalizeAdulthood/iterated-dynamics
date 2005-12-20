@@ -73,9 +73,9 @@ fractint.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(COMDIR)\prompts1.obj $(COMDIR)\prompts2.obj $(COMDIR)\realdos.obj \
      $(COMDIR)\rotate.obj $(COMDIR)\slideshw.obj $(COMDIR)\soi.obj \
      $(COMDIR)\soi1.obj $(COMDIR)\stereo.obj $(COMDIR)\targa.obj \
-     $(COMDIR)\testpt.obj $(COMDIR)\tgaview.obj $(COMDIR)\tplus.obj \
+     $(COMDIR)\testpt.obj $(COMDIR)\tgaview.obj \
      $(COMDIR)\yourvid.obj $(COMDIR)\zoom.obj \
-     $(DOSDIR)\sound.obj $(DOSDIR)\uclock.obj \
+     $(DOSDIR)\sound.obj $(DOSDIR)\tplus.obj $(DOSDIR)\uclock.obj \
      $(DOSDIR)\bignuma.obj $(DOSDIR)\calcmand.obj $(DOSDIR)\calmanp5.obj \
      $(DOSDIR)\calmanfp.obj $(DOSDIR)\fpu087.obj $(DOSDIR)\fpu387.obj \
      $(DOSDIR)\fr8514a.obj $(DOSDIR)\fracsuba.obj $(DOSDIR)\general.obj \

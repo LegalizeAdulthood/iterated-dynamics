@@ -4,7 +4,7 @@
 # available for the compiler.  NMK would not trigger subsequent recompiles
 # due to a rebuild of helpdefs.h file if we used a single step.
 
-OBJ = sound.obj uclock.obj \
+OBJ = sound.obj tplus.obj uclock.obj \
 bignuma.obj calcmand.obj calmanp5.obj calmanfp.obj fpu087.obj fpu387.obj \
 fr8514a.obj fracsuba.obj general.obj hgcfra.obj lsysa.obj lsysaf.obj \
 lyapunov.obj mpmath_a.obj newton.obj parsera.obj tplus_a.obj video.obj
@@ -39,6 +39,8 @@ Optnoalias = $(CC) /Zi /AM /W4 /FPi /c /I$(HFD) /DTESTFP $(OptN) $*.c >> f_errs.
 
 sound.obj  : sound.c
 	$(Optnoalias)
+
+tplus.obj : tplus.c $(HFD)\tplus.h
 
 uclock.obj  : uclock.c $(HFD)\uclock.h
 

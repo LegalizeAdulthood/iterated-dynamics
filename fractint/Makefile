@@ -140,7 +140,7 @@ intro.c jb.c jiim.c line3d.c loadfdos.c loadfile.c loadmap.c lorenz.c \
 lsys.c lsysf.c memory.c miscfrac.c miscovl.c miscres.c \
 mpmath_c.c parser.c parserfp.c plot3d.c printer.c prompts1.c \
 prompts2.c realdos.c rotate.c slideshw.c soi.c soi1.c stereo.c \
-targa.c testpt.c tgaview.c tplus.c zoom.c Makefile
+targa.c testpt.c tgaview.c zoom.c Makefile
 
 NEWSRC = calcmand.c calmanfp.c diskvidu.c \
 fpu087.c fracsuba.c general.c tplus_a.c \
@@ -207,7 +207,7 @@ $(COMDIR)/plot3d.o $(COMDIR)/printer.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/targa.o $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
-$(COMDIR)/tplus.o $(COMDIR)/zoom.o
+$(COMDIR)/zoom.o
 
 
 ifeq ($(AS),/usr/bin/nasm)

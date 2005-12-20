@@ -9,7 +9,7 @@ intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \
 lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
 parserfp.o plot3d.o printer.o prompts1.o prompts2.o \
 realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o targa.o testpt.o tgaview.o \
-tplus.o zoom.o
+zoom.o
 
 #Need to prevent lex from doing fractint.l -> fractint.c
 .SUFFIXES:
@@ -152,7 +152,5 @@ testpt.o: testpt.c
 tgaview.o: tgaview.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/targa_lc.h ${HFD}/prototyp.h ${HFD}/mpmath.h ${HFD}/helpcom.h
 
 tp3d.o: tp3d.c ${HFD}/mpmath.h ${HFD}/fractint.h ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/helpcom.h
-
-tplus.o: tplus.c ${HFD}/port.h ${HFD}/tplus.h ${HFD}/prototyp.h ${HFD}/mpmath.h ${HFD}/fractint.h ${HFD}/helpcom.h
 
 zoom.o: zoom.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/mpmath.h ${HFD}/helpcom.h
