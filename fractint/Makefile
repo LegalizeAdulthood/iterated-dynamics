@@ -143,7 +143,7 @@ prompts2.c realdos.c rotate.c slideshw.c soi.c soi1.c stereo.c \
 targa.c testpt.c tgaview.c zoom.c Makefile
 
 NEWSRC = calcmand.c calmanfp.c diskvidu.c \
-fpu087.c fracsuba.c general.c tplus_a.c \
+fpu087.c fracsuba.c general.c \
 video.c unix.c unixscr.c unix.h Makefile xfract_a.inc \
 calmanfx.asm
 
@@ -214,7 +214,7 @@ ifeq ($(AS),/usr/bin/nasm)
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/tplus_a.o $(UDIR)/unix.o \
+$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o \
 $(UDIR)/calmanfx.o
 
@@ -222,7 +222,7 @@ else
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/tplus_a.o $(UDIR)/unix.o \
+$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o
 
 endif
