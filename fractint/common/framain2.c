@@ -111,13 +111,16 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             setvideomode(axmode,bxmode,cxmode,dxmode); /* switch video modes */
             if (goodmode == 0) {
                static FCODE msg[] = {"That video mode is not available with your adapter."};
+#ifndef XFRACT
                static FCODE TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
 
                if(TPlusErr) {
                   stopmsg(0, TPlusStr);
                   TPlusErr = 0;
                   }
-               else if(dotmode == 11) {
+               else
+#endif	       
+	       if(dotmode == 11) {
                   askvideo = TRUE;
                   }
                else {
