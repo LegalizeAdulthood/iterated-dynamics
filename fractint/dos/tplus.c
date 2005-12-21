@@ -12,10 +12,8 @@
 
 */
 
-#ifndef XFRACT
 #include <conio.h>
 #include <string.h>
-#endif
 
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -36,8 +34,6 @@ struct TPRead far ReadOffsets = {
 
 struct _BOARD far TPlus;
 int TPlusErr = 0;
-
-#ifndef XFRACT
 
 void WriteTPWord(unsigned Register, unsigned Number) {
    OUTPORTB(TPlus.Write.INDIRECT, Register);
@@ -493,5 +489,3 @@ void TPlusZoom(int Zoom) {
    Mode2 |= (Zoom << 2);
    OUTPORTB(TPlus.Write.MODE2, Mode2);
 }
-
-#endif
