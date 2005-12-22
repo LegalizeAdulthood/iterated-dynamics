@@ -69,7 +69,7 @@ int SetColorPaletteName( char * fn )
 {
         if( ValidateLuts( fn ) != 0)
                 return 1;
-        if( mapdacbox == NULL && (mapdacbox = farmemalloc(768L)) == NULL) {
+        if( mapdacbox == NULL && (mapdacbox = (char far *)farmemalloc(768L)) == NULL) {
                 static FCODE o_msg[]={"Insufficient memory for color map."};
                 char msg[sizeof(o_msg)];
                 far_strcpy(msg,o_msg);

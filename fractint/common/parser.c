@@ -3921,7 +3921,7 @@ static void parser_allocate(void)
       else if(is_bad_form == 0)
       {
          typespecific_workarea =
-            farmemalloc((long)(f_size+Load_size+Store_size+v_size+p_size));
+            (char far *)farmemalloc((long)(f_size+Load_size+Store_size+v_size+p_size));
          used_extra = 0;
       }
       f = (void(far * far *)(void))typespecific_workarea;

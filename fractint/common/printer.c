@@ -771,7 +771,7 @@ Print_Screen (void)
                doing getcolor calls down each column in separate passes */
             fetchrows = 16;
             for(;;) {
-                if ((pixels = farmemalloc((long)(fetchrows)*ydots)) != NULL)
+                if ((pixels = (BYTE far *)farmemalloc((long)(fetchrows)*ydots)) != NULL)
                    break;
                 if ((fetchrows >>= 1) == 0) {
                     static char far msg[]={"insufficient memory"};

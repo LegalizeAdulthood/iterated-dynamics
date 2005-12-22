@@ -850,7 +850,7 @@ void stackscreen()
          stopmsg(1,msg);
          exit(1);
          }
-      if ((ptr = (savescreen[i] = farmemalloc(sizeof(int *)))))
+      if ((ptr = (savescreen[i] = (BYTE far *)farmemalloc(sizeof(int *)))))
          savecurses((WINDOW **)ptr);
       else {
          stopmsg(1,msg);

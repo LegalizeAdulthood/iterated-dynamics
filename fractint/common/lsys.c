@@ -364,7 +364,7 @@ static int _fastcall save_rule(char *rule,char far **saveptr)
    int i;
    char far *tmpfar;
    i=strlen(rule)+1;
-   if((tmpfar=farmemalloc((long)i))==NULL) {
+   if((tmpfar=(char far *)farmemalloc((long)i))==NULL) {
        return -1;
    }
    *saveptr=tmpfar;
@@ -381,7 +381,7 @@ static int _fastcall append_rule(char *rule, int index)
    for (i = 0; *(old++); i++)
       ;
    j = strlen(rule) + 1;
-   if ((dst = farmemalloc((long)(i + j))) == NULL)
+   if ((dst = (char far *)farmemalloc((long)(i + j))) == NULL)
       return -1;
 
    old = sav;

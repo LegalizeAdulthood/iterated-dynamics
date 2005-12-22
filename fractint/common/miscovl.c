@@ -1639,7 +1639,7 @@ int edit_text_colors()
             movecursor(25,80);
             return 0;
          case '/':
-            farp1 = savescreen = farmemalloc(4000L);
+            farp1 = savescreen = (char far *)farmemalloc(4000L);
             farp2 = vidmem;
             for (i = 0; i < 4000; ++i) { /* save and blank */
                *(farp1++) = *farp2;

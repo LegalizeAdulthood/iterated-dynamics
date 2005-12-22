@@ -798,7 +798,7 @@ int help(int action)
       return (0);
       }
 
-   buffer = farmemalloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
+   buffer = (char far *)farmemalloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
                         sizeof(PAGE)*max_pages);
 
    if (buffer == NULL)
