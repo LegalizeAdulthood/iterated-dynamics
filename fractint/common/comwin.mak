@@ -5,15 +5,14 @@
 # due to a rebuild of helpdefs.h file if we used a single step.
 
 OBJ = 3d.obj ant.obj bigflt.obj biginit.obj bignum.obj calcfrac.obj \
-cmdfiles.obj decoder.obj diskvid.obj editpal.obj encoder.obj evolve.obj \
-f16.obj fracsubr.obj fractals.obj fractalp.obj fractalb.obj fractint.obj \
-framain2.obj frasetup.obj gifview.obj hcmplx.obj help.obj intro.obj \
-jb.obj jiim.obj line3d.obj loadfile.obj loadfdos.obj loadmap.obj \
+cmdfiles.obj decoder.obj editpal.obj encoder.obj evolve.obj \
+f16.obj fracsubr.obj fractals.obj fractalp.obj fractalb.obj \
+frasetup.obj gifview.obj hcmplx.obj help.obj \
+jb.obj jiim.obj line3d.obj loadfile.obj \
 lorenz.obj lsys.obj lsysf.obj memory.obj miscfrac.obj miscovl.obj \
-miscres.obj mpmath_c.obj parser.obj parserfp.obj plot3d.obj printer.obj \
-prompts1.obj prompts2.obj realdos.obj rotate.obj slideshw.obj soi.obj \
-soi1.obj stereo.obj targa.obj testpt.obj tgaview.obj \
-yourvid.obj zoom.obj
+miscres.obj mpmath_c.obj parser.obj parserfp.obj plot3d.obj \
+prompts1.obj prompts2.obj soi.obj \
+soi1.obj stereo.obj testpt.obj tgaview.obj
 
 HFD = ..\headers
 
@@ -54,8 +53,6 @@ cmdfiles.obj : cmdfiles.c $(HFD)\fractint.h
 
 decoder.obj : decoder.c $(HFD)\fractint.h
 
-diskvid.obj : diskvid.c $(HFD)\fractint.h
-
 editpal.obj : editpal.c $(HFD)\fractint.h
 	$(Optsize)
 
@@ -75,12 +72,6 @@ fractalp.obj : fractalp.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\mpmath.h $(
 
 fractalb.obj : fractalb.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\big.h $(HFD)\helpdefs.h
 
-fractint.obj : fractint.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\helpdefs.h
-	$(Optsize)
-
-framain2.obj : framain2.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\helpdefs.h
-	$(Optsize)
-
 frasetup.obj : frasetup.c
 
 gifview.obj : gifview.c $(HFD)\fractint.h
@@ -90,9 +81,6 @@ hcmplx.obj : hcmplx.c $(HFD)\fractint.h
 help.obj : help.c $(HFD)\fractint.h $(HFD)\helpdefs.h $(HFD)\helpcom.h
 	$(Optsize)
 
-intro.obj : intro.c $(HFD)\fractint.h $(HFD)\helpdefs.h
-	$(Optsize)
-
 jb.obj : jb.c $(HFD)\fractint.h $(HFD)\helpdefs.h
 
 jiim.obj : jiim.c $(HFD)\helpdefs.h
@@ -100,12 +88,6 @@ jiim.obj : jiim.c $(HFD)\helpdefs.h
 line3d.obj : line3d.c $(HFD)\fractint.h
 
 loadfile.obj : loadfile.c $(HFD)\fractint.h $(HFD)\fractype.h
-	$(Optsize)
-
-loadfdos.obj : loadfdos.c $(HFD)\fractint.h $(HFD)\helpdefs.h
-	$(Optsize)
-
-loadmap.obj : loadmap.c $(HFD)\targa.h $(HFD)\fractint.h
 	$(Optsize)
 
 lorenz.obj : lorenz.c $(HFD)\fractint.h $(HFD)\fractype.h
@@ -135,22 +117,10 @@ parserfp.obj : parserfp.c $(HFD)\fractint.h $(HFD)\mpmath.h
 plot3d.obj : plot3d.c $(HFD)\fractint.h $(HFD)\fractype.h
 	$(Optnoalias)
 
-printer.obj : printer.c $(HFD)\fractint.h
-	$(Optsize)
-
 prompts1.obj : prompts1.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\helpdefs.h
 	$(Optsize)
 
 prompts2.obj : prompts2.c $(HFD)\fractint.h $(HFD)\fractype.h $(HFD)\helpdefs.h
-	$(Optsize)
-
-realdos.obj : realdos.c $(HFD)\fractint.h $(HFD)\helpdefs.h
-	$(Optsize)
-
-rotate.obj : rotate.c $(HFD)\\fractint.h $(HFD)\\helpdefs.h
-	$(Optsize)
-
-slideshw.obj : slideshw.c
 	$(Optsize)
 
 soi.obj : soi.c
@@ -159,15 +129,7 @@ soi1.obj : soi1.c
 
 stereo.obj : stereo.c $(HFD)\helpdefs.h
 
-targa.obj : targa.c $(HFD)\targa.h $(HFD)\fractint.h
-
 testpt.obj: testpt.c $(HFD)\fractint.h
 
 tgaview.obj : tgaview.c $(HFD)\fractint.h $(HFD)\targa_lc.h $(HFD)\port.h
-
-yourvid.obj : yourvid.c
-
-zoom.obj : zoom.c $(HFD)\fractint.h
-	$(Optnoalias)
-#	$(Optsize)
 

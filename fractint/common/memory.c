@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <malloc.h>
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
 #include <io.h>
 #endif
 
@@ -42,12 +42,12 @@ U16 start_avail_extra = 0;
 char memfile[] = "handle.$$$";
 int numTOTALhandles;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
 char memstr[6][9] = {"nowhere", "extraseg", "far", "expanded",
                      "extended", "disk"};
 #endif
 
-#ifdef XFRACT
+#if (defined(XFRACT) || defined(WINFRACT))
 char memstr[3][9] = {{"nowhere"}, {"far"}, {"disk"}};
 #endif
 
@@ -68,7 +68,7 @@ struct disk {
    FILE *file;
    };
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
 struct extra {
    enum stored_at_values stored_at;
    long size;
@@ -96,7 +96,7 @@ union mem {
    struct nowhere Nowhere;
    struct farmem Farmem;
    struct disk Disk;
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    struct extra Extra;
    struct expanded Expanded;
    struct extended Extended;
@@ -168,7 +168,7 @@ static int _fastcall near CheckDiskSpace(long howmuch)
 static void WhichDiskError(int I_O)
 { /* Set I_O == 1 after a file create, I_O == 2 after a file set value */
   /* Set I_O == 3 after a file write, I_O == 4 after a file read */
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
  char buf[MSGLEN];
  char nmsg[MSGLEN];
  static FCODE fmsg1[] = {"Disk file creation error"};
@@ -208,7 +208,7 @@ static void WhichDiskError(int I_O)
 #endif
 }
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
 static void _fastcall near exp_seek(U16 handle, int page) /* expanded mem seek */
 {
  static U16 lasthandle = 0;
@@ -246,7 +246,7 @@ static int check_for_mem(int stored_at, long howmuch)
 /* This function returns an adjusted stored_at value. */
 /* This is where the memory requested can be allocated. */
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    long usedmem, totalmem;
    long longtmp;
    int counter;
@@ -266,7 +266,7 @@ static int check_for_mem(int stored_at, long howmuch)
 
    switch (stored_at)
    {
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* check_for_mem */
       usedmem = 0L;
       for(counter = 0; counter < MAXHANDLES; counter++)
@@ -289,7 +289,7 @@ static int check_for_mem(int stored_at, long howmuch)
          }
       }
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
  /* Failed, fall through and try expanded memory */
    case EXPANDED: /* check_for_mem */
       totalmem = (howmuch + 16383) >> 14; /* # of 16 KB blocks */
@@ -384,7 +384,7 @@ static int CheckBounds (long start, long length, U16 handle)
 
 void DisplayMemory (void)
 {
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    long tmpfar;
    U32 tmpdisk;
    char buf[MSGLEN];
@@ -427,7 +427,7 @@ void DisplayHandle (U16 handle)
 void InitMemory (void)
 {
    int counter;
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    long longtmp;
 #endif
 
@@ -436,7 +436,7 @@ void InitMemory (void)
       handletable[counter].Nowhere.stored_at = NOWHERE;
       handletable[counter].Nowhere.size = 0;
    }
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    numEXThandles = 0;
    longtmp = fr_farfree();
    ext_xfer_size = XMMWRITELEN; /* 8192 */
@@ -476,7 +476,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    int success, use_this_type;
    long toallocate;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    BYTE far *temp;
    long longtmp;
    int mempages = 0;
@@ -515,7 +515,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       use_this_type = NOWHERE; /* in case nonsense value is passed */
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* MemoryAlloc */
       handletable[handle].Extra.size = toallocate;
       handletable[handle].Extra.stored_at = EXTRA;
@@ -535,7 +535,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       success = TRUE;
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXPANDED: /* MemoryAlloc */
       mempages = (int)((toallocate + 16383) >> 14);
       if (emmquery() != NULL) {
@@ -653,7 +653,7 @@ void MemoryRelease(U16 handle)
    case NOWHERE: /* MemoryRelease */
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* MemoryRelease */
 /* Deallocate in the reverse order of allocation. */
       start_avail_extra -= (U16)handletable[handle].Extra.size;
@@ -672,7 +672,7 @@ void MemoryRelease(U16 handle)
       numTOTALhandles--;
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXPANDED: /* MemoryRelease */
       emmdeallocate(handletable[handle].Expanded.emmhandle);
       handletable[handle].Expanded.emmhandle = 0;
@@ -717,7 +717,7 @@ int MoveToMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
 /* to start moving the contents of buffer to */
 /* size is the size of the unit, count is the number of units to move */
 /* Returns TRUE if successful, FALSE if failure */
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    int currpage;
    long tmplength;
    struct XMM_Move MoveStruct;
@@ -741,7 +741,7 @@ int MoveToMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
       DisplayHandle(handle);
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* MoveToMemory */
       far_memcpy(handletable[handle].Extra.extramemory+start, buffer, (U16)tomove);
       success = TRUE; /* No way to gauge success or failure */
@@ -757,7 +757,7 @@ int MoveToMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
       success = TRUE; /* No way to gauge success or failure */
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXPANDED: /* MoveToMemory */
       currpage = (int)(start / EXPWRITELEN);
       exp_seek(handle, currpage);
@@ -844,7 +844,7 @@ int MoveFromMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
 /* offset is the number of units from the beginning of buffer to start moving */
 /* size is the size of the unit, count is the number of units to move */
 /* Returns TRUE if successful, FALSE if failure */
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    int currpage;
    long tmplength;
    struct XMM_Move MoveStruct;
@@ -868,7 +868,7 @@ int MoveFromMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
       DisplayHandle(handle);
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* MoveFromMemory */
       far_memcpy(buffer, handletable[handle].Extra.extramemory+start, (U16)tomove);
       success = TRUE; /* No way to gauge success or failure */
@@ -884,7 +884,7 @@ int MoveFromMemory(BYTE far *buffer,U16 size,long count,long offset,U16 handle)
       success = TRUE; /* No way to gauge success or failure */
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXPANDED: /* MoveFromMemory */
       currpage = (int)(start / EXPWRITELEN);
       exp_seek(handle, currpage);
@@ -971,7 +971,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
 /* offset is the number of units from the start of allocated memory */
 /* size is the size of the unit, count is the number of units to set */
 /* Returns TRUE if successful, FALSE if failure */
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    int currpage;
    long tmplength;
    struct XMM_Move MoveStruct;
@@ -995,7 +995,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       DisplayHandle(handle);
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXTRA: /* SetMemory */
       far_memset(handletable[handle].Extra.extramemory+start, value, (U16)tomove);
       success = TRUE; /* No way to gauge success or failure */
@@ -1010,7 +1010,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       success = TRUE; /* No way to gauge success or failure */
       break;
 
-#ifndef XFRACT
+#if (!defined(XFRACT) && !defined(WINFRACT))
    case EXPANDED: /* SetMemory */
       currpage = (int)(start / EXPWRITELEN);
       exp_seek(handle, currpage);

@@ -10,12 +10,18 @@
 #include "externs.h"
 
 /* maintain the common prototypes in this file
- * split the dos/unix prototypes into separate files.
+ * split the dos/win/unix prototypes into separate files.
  */
 
 #ifdef XFRACT
 #include "unixprot.h"
-#else
+#endif
+
+#ifdef WINFRACT
+#include "winprot.h"
+#endif
+
+#if (!defined(XFRACT) && !defined(WINFRACT))
 #include "dosprot.h"
 #endif
 
@@ -122,41 +128,6 @@ extern void cdecl   invertz2(_CMPLX *);
 
 extern void WriteTPlusBankedPixel(int, int, unsigned long);
 extern unsigned long ReadTPlusBankedPixel(int, int);
-
-/*  video -- assembler file prototypes */
-
-extern void   cdecl adapter_detect(void);
-extern void   cdecl scroll_center(int, int);
-extern void   cdecl scroll_relative(int, int);
-extern void   cdecl scroll_state(int);
-extern void   cdecl setvideotext(void);
-extern void   cdecl setnullvideo(void);
-extern void   cdecl setfortext(void);
-extern void   cdecl setforgraphics(void);
-extern void   cdecl swapnormwrite(void);
-extern void   cdecl setclear(void);
-extern int    cdecl keycursor(int,int);
-extern void   cdecl swapnormread(void);
-extern void   cdecl setvideomode(int, int, int, int);
-extern void   cdecl movewords(int,BYTE far*,BYTE far*);
-extern void   cdecl movecursor(int, int);
-extern void   cdecl get_line(int, int, int, BYTE *);
-extern void   cdecl put_line(int, int, int, BYTE *);
-extern void   cdecl setattr(int, int, int, int);
-extern void   cdecl putstring(int,int,int,char far *);
-extern void   cdecl spindac(int, int);
-extern void   cdecl find_special_colors(void);
-extern char   cdecl get_a_char(void);
-extern void   cdecl put_a_char(int);
-extern void   cdecl scrollup(int, int);
-extern void   cdecl home(void);
-extern BYTE far *cdecl  findfont(int);
-extern int _fastcall getcolor(int, int);
-extern void _fastcall putcolor_a(int, int, int);
-extern void gettruecolor(int, int, int*, int*, int*);
-extern void puttruecolor(int, int, int, int, int);
-extern int  out_line(BYTE *, int);
-extern void   (*swapsetup)(void);
 
 /*  3d -- C file prototypes */
 
@@ -569,7 +540,9 @@ extern int timer();
 
 extern void clear_zoombox(void);
 extern void flip_image(int kbdchar);
+#ifndef WINFRACT
 extern void reset_zoom_corners(void);
+#endif
 extern void setup287code(void);
 extern void checkfreemem(int);
 
@@ -678,9 +651,9 @@ extern int targa_validate(char *);
 extern int startdisk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */
-
+#ifndef WINFRACT
 extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
-
+#endif
 /*  loadfile -- C file prototypes */
 
 extern int read_overlay(void);
@@ -1078,6 +1051,7 @@ extern char *has_ext(char *source);
 
 /*  realdos -- C file prototypes */
 
+#ifndef WINFRACT
 extern int showvidlength(void);
 extern int stopmsg(int ,char far *);
 extern int texttempmsg(char far *);
@@ -1098,7 +1072,7 @@ extern int main_menu(int );
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
 extern int field_prompt(int ,char far *,char far *,char *,int ,int (*)(int));
 extern int thinking(int ,char far *);
-extern void clear_screen(void );
+extern void clear_screen(int );
 extern int savegraphics(void);
 extern int restoregraphics(void);
 extern void discardgraphics(void);
@@ -1110,6 +1084,7 @@ extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int ,char *);
 extern void freetempmsg(void);
 extern char *despace(char *str);
+#endif
 
 /*  rotate -- C file prototypes */
 

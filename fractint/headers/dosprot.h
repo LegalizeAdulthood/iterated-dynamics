@@ -21,7 +21,6 @@ extern  int    cdecl far_strlen( char far *);
 extern  int    cdecl far_strnicmp(char far *, char far *,int);
 extern  void   cdecl far_strcpy( char far *, char far *);
 extern  int    cdecl far_strcmp( char far *, char far *);
-extern  int    cdecl far_strcmp( char far *, char far *);
 extern  int    cdecl far_stricmp(char far *, char far *);
 extern  void   cdecl far_strcat( char far *, char far *);
 extern  void   cdecl far_memset( VOIDFARPTR , int      , unsigned);
@@ -97,6 +96,41 @@ extern void DisableOverlayCapture(void );
 extern void ClearTPlusScreen(void );
 extern int MatchTPlusMode(unsigned int ,unsigned int ,unsigned int ,unsigned int ,unsigned int );
 extern void TPlusZoom(int );
+
+/*  video -- assembler file prototypes */
+
+extern void   cdecl adapter_detect(void);
+extern void   cdecl scroll_center(int, int);
+extern void   cdecl scroll_relative(int, int);
+extern void   cdecl scroll_state(int);
+extern void   cdecl setvideotext(void);
+extern void   cdecl setnullvideo(void);
+extern void   cdecl setfortext(void);
+extern void   cdecl setforgraphics(void);
+extern void   cdecl swapnormwrite(void);
+extern void   cdecl setclear(void);
+extern int    cdecl keycursor(int,int);
+extern void   cdecl swapnormread(void);
+extern void   cdecl setvideomode(int, int, int, int);
+extern void   cdecl movewords(int,BYTE far*,BYTE far*);
+extern void   cdecl movecursor(int, int);
+extern void   cdecl get_line(int, int, int, BYTE *);
+extern void   cdecl put_line(int, int, int, BYTE *);
+extern void   cdecl setattr(int, int, int, int);
+extern void   cdecl putstring(int,int,int,char far *);
+extern void   cdecl spindac(int, int);
+extern void   cdecl find_special_colors(void);
+extern char   cdecl get_a_char(void);
+extern void   cdecl put_a_char(int);
+extern void   cdecl scrollup(int, int);
+extern void   cdecl home(void);
+extern BYTE far *cdecl  findfont(int);
+extern int _fastcall getcolor(int, int);
+extern void _fastcall putcolor_a(int, int, int);
+extern void gettruecolor(int, int, int*, int*, int*);
+extern void puttruecolor(int, int, int, int, int);
+extern int  out_line(BYTE *, int);
+extern void   (*swapsetup)(void);
 
 #endif
 

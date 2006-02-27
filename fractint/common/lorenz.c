@@ -2118,7 +2118,7 @@ then hit <s> to save, hit any other key to create second image."};
          else {                   /* Windows version */
 static FCODE firstready2[]={"First (Left Eye) image is complete"};
             stopmsg(0,firstready2);
-            clear_screen();
+            clear_screen(0);
             }
       }
       whichimage = 2;

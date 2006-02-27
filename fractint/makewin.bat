@@ -6,11 +6,13 @@ set LINK=
 if exist f_errs.txt del f_errs.txt
 
 rem ** Microsoft C7.00 or Visual C++ (normal case)
-echo Building Fractint using MSC 7 or Visual C++
+echo Building WinFract using MSC 7 or Visual C++
 nmake "CC=cl /Gs" "AS=masm /ML" "LINKER=link" "OptT=/Oilg" "C7=YES" /F frachelp.mak
 if errorlevel 1 goto exit
+rem delete hc.exe since it conflicts with the Windows help compiler
+if exist hc.exe del hc.exe
 if exist helpdefs.h move /Y helpdefs.h .\headers\helpdefs.h
-nmake @macros_d /F fractint.mak
+nmake "WINFRACT=YES" @macros_w /F fractint.mak
 goto exit
 
 :exit

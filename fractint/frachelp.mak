@@ -8,7 +8,6 @@ HELP = help.src help2.src help3.src help4.src help5.src
 # warnings with make.
 
 all : hc.exe fractint.hlp
-         if exist helpdefs.h move /Y helpdefs.h $(HFD)\helpdefs.h
 
 # commented out remake of hc.c since it hasn't changed for many moons.
 hc.obj : $(COMDIR)\hc.c $(HFD)\helpcom.h $(HFD)\port.h

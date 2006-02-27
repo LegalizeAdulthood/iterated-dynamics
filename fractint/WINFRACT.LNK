@@ -1,0 +1,21 @@
+/NOD /SEG:160 .\win\winfract+
+.\common\3d+.\common\ant+.\common\bigflt+.\common\biginit+.\common\bignum+
+.\common\calcfrac+.\common\cmdfiles+.\common\decoder+
+.\common\editpal+.\common\encoder+.\common\evolve+.\common\f16+
+.\common\fracsubr+.\common\fractals+.\common\fractalp+.\common\fractalb+
+.\common\frasetup+.\common\gifview+.\common\hcmplx+
+.\common\help+.\common\jb+.\common\jiim+.\common\line3d+
+.\common\loadfile+.\common\lorenz+
+.\common\lsys+.\common\lsysf+.\common\memory+.\common\miscfrac+
+.\common\miscovl+.\common\miscres+.\common\mpmath_c+.\common\parser+
+.\common\parserfp+.\common\plot3d+.\common\prompts1+
+.\common\prompts2+
+.\common\soi+.\common\soi1+.\common\stereo+.\common\testpt+
+.\common\tgaview+
+.\dos\uclock+.\dos\bignuma+.\dos\calcmand+.\dos\calmanp5+
+.\dos\calmanfp+.\dos\fpu087+.\dos\fpu387+.\dos\fracsuba+
+.\dos\lsysa+.\dos\lsysaf+.\dos\lyapunov+
+.\dos\mpmath_a+.\dos\newton+.\dos\parsera+
+.\win\dialog+.\win\mainfrac+.\win\mathtool+.\win\profile+.\win\select+
+.\win\windos+.\win\windos2+.\win\winstubs+.\win\wintext+
+.\win\wgeneral,,, libw /NOD:mlibce mlibcew, winfract.def;

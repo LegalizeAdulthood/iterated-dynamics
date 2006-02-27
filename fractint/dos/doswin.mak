@@ -4,10 +4,10 @@
 # available for the compiler.  NMK would not trigger subsequent recompiles
 # due to a rebuild of helpdefs.h file if we used a single step.
 
-OBJ = sound.obj tplus.obj uclock.obj \
+OBJ = uclock.obj \
 bignuma.obj calcmand.obj calmanp5.obj calmanfp.obj fpu087.obj fpu387.obj \
-fr8514a.obj fracsuba.obj general.obj hgcfra.obj lsysa.obj lsysaf.obj \
-lyapunov.obj mpmath_a.obj newton.obj parsera.obj tplus_a.obj video.obj
+fracsuba.obj lsysa.obj lsysaf.obj \
+lyapunov.obj mpmath_a.obj newton.obj parsera.obj
 
 HFD = ..\headers
 
@@ -28,11 +28,6 @@ Optsize = $(CC) /I$(HFD) $(OptS) $*.c >> f_errs.txt
 
 Optnoalias = $(CC) /I$(HFD) $(OptN) $*.c >> f_errs.txt
 
-
-sound.obj  : sound.c
-	$(Optnoalias)
-
-tplus.obj : tplus.c $(HFD)\tplus.h
 
 uclock.obj  : uclock.c $(HFD)\uclock.h
 
@@ -59,13 +54,7 @@ fpu087.obj : fpu087.asm
 
 fpu387.obj : fpu387.asm
 
-fr8514a.obj : fr8514a.asm
-
 fracsuba.obj : fracsuba.asm
-
-general.obj : general.asm
-
-hgcfra.obj : hgcfra.asm
 
 lsysa.obj: lsysa.asm
 
@@ -93,8 +82,4 @@ parsera.obj: parsera.asm
 !endif
 # for QuickAssembler
 #   $(AS) /FPi parsera.asm
-
-tplus_a.obj : tplus_a.asm
-
-video.obj : video.asm
 

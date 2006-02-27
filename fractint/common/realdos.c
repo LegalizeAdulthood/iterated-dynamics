@@ -1624,8 +1624,9 @@ int thinking(int options,char far *msg)
 }
 
 
-void clear_screen(void)  /* a stub for a windows only subroutine */
+void clear_screen(int dummy)  /* a stub for a windows only subroutine */
 {
+   dummy=0; /* quite the warning */
 }
 
 
