@@ -85,7 +85,7 @@ double far win_oldprompts[20];
 extern int stopmsg(int, char far *);
 
 /* far strings (near space is precious) */
-char far about_msg01[] = "(C) 1990, 1993 The Stone Soup Group";
+char far about_msg01[] = "(C) 1990-2006 The Stone Soup Group";
 char far about_msg02[] = "";
 char far about_msg03[] = "";
 char far about_msg04[] = "";
@@ -96,7 +96,7 @@ char far about_msg08[] = "Distribution of Winfract by BBS, network, and";
 char far about_msg09[] = "software shareware distributors, etc. is encouraged.";
 char far about_msg10[] = "";
 
-BOOL FAR PASCAL About(hDlg, message, wParam, lParam)
+BOOL CALLBACK About(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -136,7 +136,7 @@ char about_msg00[80];
 }
 
 
-BOOL FAR PASCAL Status(hDlg, message, wParam, lParam)
+BOOL CALLBACK Status(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -207,7 +207,7 @@ char tempstring[100];
 }
 
 
-BOOL FAR PASCAL SelectFractal(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectFractal(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -270,7 +270,7 @@ okay:
 }
 
 
-BOOL FAR PASCAL SelectFracParams(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectFracParams(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -399,7 +399,7 @@ LPARAM lParam;
 }
 
 
-BOOL FAR PASCAL SelectImage(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectImage(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -538,7 +538,7 @@ LPARAM lParam;
 }
 
 
-BOOL FAR PASCAL SelectDoodads(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectDoodads(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -683,7 +683,7 @@ LPARAM lParam;
 }
 
 
-BOOL FAR PASCAL SelectExtended(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectExtended(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -821,7 +821,7 @@ LPARAM lParam;
 }
 
 
-BOOL FAR PASCAL SelectSavePar(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectSavePar(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -897,7 +897,7 @@ LPARAM lParam;
 int win_cycledir = -1, win_cyclerand = 0, win_cyclefreq = 0, win_cycledelay = 0;
 int win_tempcycle, win_tempcycledir, win_tempcyclerand, win_tempcyclefreq;
 
-BOOL FAR PASCAL SelectCycle(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectCycle(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1040,7 +1040,7 @@ if (Return) {
 return(-1);
 }
 
-BOOL FAR PASCAL SelectFullScreen(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectFullScreen(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1126,7 +1126,7 @@ extern int eyeseparation;
 
 static int far win_answers[20];
 
-BOOL FAR PASCAL Select3D(hDlg, message, wParam, lParam)
+BOOL CALLBACK Select3D(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1269,7 +1269,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
-BOOL FAR PASCAL Select3DPlanar(hDlg, message, wParam, lParam)
+BOOL CALLBACK Select3DPlanar(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1342,7 +1342,7 @@ LPARAM lParam;
 }
 
 
-BOOL FAR PASCAL SelectIFS3D(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectIFS3D(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1412,7 +1412,7 @@ LPARAM lParam;
 
 char win_funnyglasses_map_name[41];
 
-BOOL FAR PASCAL SelectFunnyGlasses(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectFunnyGlasses(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1498,7 +1498,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
-BOOL FAR PASCAL SelectLightSource(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectLightSource(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1550,7 +1550,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
-BOOL FAR PASCAL Select3DSpherical(hDlg, message, wParam, lParam)
+BOOL CALLBACK Select3DSpherical(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1622,7 +1622,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
-BOOL FAR PASCAL SelectStarfield(hDlg, message, wParam, lParam)
+BOOL CALLBACK SelectStarfield(hDlg, message, wParam, lParam)
 HWND hDlg;
 UINT message;
 WPARAM wParam;
@@ -1670,7 +1670,7 @@ extern LPBITMAPINFO pDibInfo;
 extern char huge *pixels;
 extern LPLOGPALETTE pLogPal;
 
-BOOL FAR PASCAL StatusBoxProc(HWND hDlg, UINT Msg, WPARAM wParam,
+BOOL CALLBACK StatusBoxProc(HWND hDlg, UINT Msg, WPARAM wParam,
                 LPARAM lParam)
 {
    char PerStr[10];
@@ -2000,7 +2000,7 @@ static PRINTDLG pd;
 static BOOL print_abort_flag;
 static HWND print_abort_dialog;
 
-int FAR PASCAL PrintAbortDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+int CALLBACK PrintAbortDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_COMMAND) { /* Cancel button (Enter, Esc, Return, Space) */
         print_abort_flag = TRUE;
@@ -2015,7 +2015,7 @@ int FAR PASCAL PrintAbortDlg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return (FALSE);
 }
 
-int FAR PASCAL PrintAbort(HDC hPr, int Code)
+int CALLBACK PrintAbort(HDC hPr, int Code)
 {
     MSG msg;
     while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
