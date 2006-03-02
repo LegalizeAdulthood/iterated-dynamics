@@ -5,7 +5,7 @@
 .\common\fracsubr+.\common\fractals+.\common\fractalp+.\common\fractalb+
 .\common\frasetup+.\common\gifview+.\common\hcmplx+
 .\common\help+.\common\jb+.\common\jiim+.\common\line3d+
-.\common\loadfile+.\common\lorenz+
+.\common\loadfile+.\common\loadmap+.\common\lorenz+
 .\common\lsys+.\common\lsysf+.\common\memory+.\common\miscfrac+
 .\common\miscovl+.\common\miscres+.\common\mpmath_c+.\common\parser+
 .\common\parserfp+.\common\plot3d+.\common\prompts1+
