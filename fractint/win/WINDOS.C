@@ -967,6 +967,7 @@ int j;
     spindac(0,1);
 }
 
+#if 0
 extern int colorstate;
 extern char        colorfile[];
 
@@ -997,6 +998,7 @@ unsigned char        temp[81];
         strcpy(colorfile,temp);
         return 0;
 }
+#endif
 
 int win_thinking = 0;
 

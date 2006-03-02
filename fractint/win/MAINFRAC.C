@@ -97,11 +97,7 @@ extern int initsavetime;
 long saveticks = 0;
 long savebase = 0;
 double zwidth = 0;
-extern int (*outln)();
-extern int out_line();
-extern int outlin16();
-static int call_line3d();
-extern int line3d();
+static int call_line3d(BYTE *, int);
 
 int     sxdots,sydots;
 int     sxoffs=0,syoffs=0;
@@ -562,7 +558,7 @@ int pot_line(unsigned char *pixels, int linelen)
 }
 #endif
 
-static int call_line3d(unsigned char *pixels, int linelen)
+static int call_line3d(BYTE *pixels, int linelen)
 {
    /* this routine exists because line3d might be in an overlay */
    return(line3d(pixels,linelen));

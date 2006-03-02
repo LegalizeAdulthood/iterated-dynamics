@@ -8,7 +8,7 @@ OBJ = 3d.obj ant.obj bigflt.obj biginit.obj bignum.obj calcfrac.obj \
 cmdfiles.obj decoder.obj editpal.obj encoder.obj evolve.obj \
 f16.obj fracsubr.obj fractals.obj fractalp.obj fractalb.obj \
 frasetup.obj gifview.obj hcmplx.obj help.obj \
-jb.obj jiim.obj line3d.obj loadfile.obj \
+jb.obj jiim.obj line3d.obj loadfile.obj loadmap.obj \
 lorenz.obj lsys.obj lsysf.obj memory.obj miscfrac.obj miscovl.obj \
 miscres.obj mpmath_c.obj parser.obj parserfp.obj plot3d.obj \
 prompts1.obj prompts2.obj soi.obj \
@@ -88,6 +88,9 @@ jiim.obj : jiim.c $(HFD)\helpdefs.h
 line3d.obj : line3d.c $(HFD)\fractint.h
 
 loadfile.obj : loadfile.c $(HFD)\fractint.h $(HFD)\fractype.h
+	$(Optsize)
+
+loadmap.obj : loadmap.c $(HFD)\targa.h $(HFD)\fractint.h
 	$(Optsize)
 
 lorenz.obj : lorenz.c $(HFD)\fractint.h $(HFD)\fractype.h

@@ -11,6 +11,7 @@
 
 #define dac ((Palettetype *)dacbox)
 
+#ifndef WINFRACT
 void SetTgaColors() {
 unsigned        r, g, b, index;
     if (tga16 != NULL)
@@ -22,6 +23,7 @@ unsigned        r, g, b, index;
                 tga32[index] = ((long)r<<16) | (g<<8) | b;
         }
 }
+#endif
 
 int ValidateLuts( char * fn )
 {
