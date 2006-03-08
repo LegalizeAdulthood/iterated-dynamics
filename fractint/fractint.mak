@@ -44,7 +44,7 @@ WINDIR = .\win
 !ifndef WINFRACT
 all : common dos fractint.exe
 !else
-all: common dos win winfract.hlp res
+all : common dos win winfract.hlp res
 !endif
 
 
@@ -94,7 +94,7 @@ winfract.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(COMDIR)\fractals.obj $(COMDIR)\fractalp.obj $(COMDIR)\fractalb.obj \
      $(COMDIR)\frasetup.obj $(COMDIR)\gifview.obj $(COMDIR)\hcmplx.obj \
      $(COMDIR)\help.obj $(COMDIR)\jb.obj $(COMDIR)\jiim.obj \
-     $(COMDIR)\line3d.obj $(COMDIR)\loadfile.obj \
+     $(COMDIR)\line3d.obj $(COMDIR)\loadfile.obj $(COMDIR)\loadmap.obj \
      $(COMDIR)\lorenz.obj $(COMDIR)\lsys.obj $(COMDIR)\lsysf.obj \
      $(COMDIR)\memory.obj $(COMDIR)\miscfrac.obj $(COMDIR)\miscovl.obj \
      $(COMDIR)\miscres.obj $(COMDIR)\mpmath_c.obj $(COMDIR)\parser.obj \
