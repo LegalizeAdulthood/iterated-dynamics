@@ -1086,6 +1086,7 @@ struct SearchPath {
    char ifs[FILE_MAX_PATH];
    char lsys[FILE_MAX_PATH];
 } ;
+
 struct affine
 {
    /* weird order so a,b,e and c,d,f are vectors */
