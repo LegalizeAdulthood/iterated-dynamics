@@ -1343,7 +1343,7 @@ void SecondaryWndProc(void)
                 case IDM_SAVE:
                 case IDM_SAVEAS:
                     lstrcpy(DialogTitle,"File to SaveAs");
-                    lstrcpy(FileName, readname);
+                    lstrcpy(FileName, savename);
                     lstrcpy(DefSpec,"*.gif");
                     lstrcpy(DefExt,".gif");
                     Return = Win_SaveFile(FileName);
