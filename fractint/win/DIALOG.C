@@ -13,6 +13,7 @@
 #include <commdlg.h>
 #include <print.h>
 #include <string.h>
+#include <direct.h>
 
 #include "winfract.h"
 #include "dialog.h"
@@ -77,8 +78,8 @@ extern int win_release;
 extern char far win_comment[];
 
 extern char far DialogTitle[];
-extern unsigned char DefExt[10];
-extern unsigned char FullPathName[128];
+extern unsigned char DefExt[];
+extern unsigned char FullPathName[];
 
 double far win_oldprompts[20];
 
@@ -1783,7 +1784,7 @@ void SaveBitmapFile(HWND hWnd, char *FullPathName)
    unsigned PalSize, BitCount;
    unsigned BlockSize = 10240;
    int hFile;
-   char Temp[128];
+   char Temp[FILE_MAX_DIR];
    OFSTRUCT OfStruct;
    HANDLE hPal;
    RGBQUAD FAR *Pal;
@@ -1896,16 +1897,31 @@ static char *win_common_type2[] = {
 int Win_OpenFile(unsigned char FileName[])
 {
 OPENFILENAME ofn;
-char szFilter[128], szDirName[128], szFile[128], szFileTitle[128];
+char szFilter[FILE_MAX_DIR], szDirName[FILE_MAX_DIR], szFile[FILE_MAX_DIR];
+char szFileTitle[FILE_MAX_DIR];
 char chReplace;
 int i;
+char currdir[FILE_MAX_DIR], tempdir[FILE_MAX_DIR], tempext[FILE_MAX_DIR];
 
 szFilter[0] = '\0';
 szDirName[0] = '\0';
 szFile[0] = '\0';
 szFileTitle[0] = '\0';
 
-/* lstrcpy(szFile,FileName); */
+   _getcwd(currdir, FILE_MAX_DIR); /* save current working directory so we */
+   lstrcpy(szDirName,currdir);     /* can restore it when we're done here */
+   if (FileName[0] != 0) {
+      lstrcpy(szFile,FileName);
+      splitpath(FileName,"",tempdir,szFile,tempext);
+      if (tempext[0] != 0)
+         lstrcat(szFile,tempext);
+      else
+         lstrcat(szFile,DefExt);
+   }
+   if (tempdir[0] != 0) {
+      lstrcat(szDirName,SLASH);
+      lstrcat(szDirName,tempdir);
+   }
 /* GetSystemDirectory(szDirName, sizeof(szDirName)); */
 
 for (i = 0; i < 7; i++)
@@ -1934,6 +1950,7 @@ ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 
 i = GetOpenFileName(&ofn);
 lstrcpy(FileName,szFile);
+_chdir(currdir);
 
 return i;
 
@@ -1942,14 +1959,31 @@ return i;
 Win_SaveFile(unsigned char FileName[])
 {
 OPENFILENAME ofn;
-char szFilter[128], szDirName[128], szFile[128], szFileTitle[128];
+char szFilter[FILE_MAX_DIR], szDirName[FILE_MAX_DIR], szFile[FILE_MAX_DIR];
+char szFileTitle[FILE_MAX_DIR];
 char chReplace;
 int i;
+char currdir[FILE_MAX_DIR], tempdir[FILE_MAX_DIR], tempext[FILE_MAX_DIR];
 
 szFilter[0] = '\0';
 szDirName[0] = '\0';
 szFile[0] = '\0';
 szFileTitle[0] = '\0';
+
+   _getcwd(currdir, FILE_MAX_DIR); /* save current working directory so we */
+   lstrcpy(szDirName,currdir);     /* can restore it when we're done here */
+   if (FileName[0] != 0) {
+      lstrcpy(szFile,FileName);
+      splitpath(FileName,"",tempdir,szFile,tempext);
+      if (tempext[0] != 0)
+         lstrcat(szFile,tempext);
+      else
+         lstrcat(szFile,DefExt);
+   }
+   if (tempdir[0] != 0) {
+      lstrcat(szDirName,SLASH);
+      lstrcat(szDirName,tempdir);
+   }
 
 /* lstrcpy(szFile,FileName); */
 /* GetSystemDirectory(szDirName, sizeof(szDirName)); */
@@ -1979,7 +2013,7 @@ ofn.lpstrFileTitle = szFileTitle;
 ofn.nMaxFileTitle = sizeof(szFileTitle);
 ofn.lpstrInitialDir = szDirName;
 ofn.lpstrTitle = DialogTitle;
-ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+//ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
 
 i = GetSaveFileName(&ofn);
@@ -1991,6 +2025,8 @@ FileFormat = ID_GIF89A;
 if (strlen(FileName) > 4)
     if (stricmp(&FileName[strlen(FileName)-4],".BMP") == 0)
         FileFormat = ID_BMP;
+
+_chdir(currdir);
 
 return i;
 

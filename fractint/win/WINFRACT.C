@@ -58,7 +58,7 @@ HANDLE hIconBitmap;
 
 HANDLE  hPal;          /* Handle to the application's logical palette  */
 HANDLE  hLogPal;       /* Temporary Handle */
-LPLOGPALETTE pLogPal;  /* pointer to tha application's logical palette */
+LPLOGPALETTE pLogPal;  /* pointer to the application's logical palette */
 int     iNumColors;    /* Number of colors supported by device               */
 int     iRasterCaps;   /* Raster capabilities                                       */
 int     iPalSize;      /* Size of Physical palette                               */
@@ -125,7 +125,7 @@ extern unsigned char DefPath[];
 extern char far StatusTitle[];
 unsigned char far DialogTitle[128];
 unsigned char FileName[128];
-unsigned char FullPathName[128];
+unsigned char FullPathName[FILE_MAX_DIR];
 unsigned char DefSpec[13];
 unsigned char DefExt[10];
 
@@ -1872,7 +1872,7 @@ winfract_zmenu:
                 case IDM_MAPIN:
                 case IDM_MAPOUT:
                     lstrcpy(DialogTitle,"Palette File to Load");
-                    lstrcpy(FileName, "default");
+                    lstrcpy(FileName, MAP_name);
                     if (wParam == IDM_MAPOUT || wParam == IDF_MAPOUT)
                         lstrcpy(FileName, "mymap");
                     lstrcpy(DefSpec,"*.map");

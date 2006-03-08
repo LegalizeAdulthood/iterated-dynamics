@@ -161,10 +161,14 @@ dy1 = (double far *)&dy0[MAXLINE];
 
 extraseg = FP_SEG(dx0);
 
+win_cmdfiles();                                /* SSTOOLS.INI processing */
+
     {
     /* wierd logic to initialize the palette */
     int iLoop, jLoop;
-    if (ValidateLuts("defaultw.map") == 0) {
+    if (MAP_name[0] == 0)
+        strcpy(MAP_name, "defaultw.map");
+    if (ValidateLuts(MAP_name) == 0) {
         for (iLoop = 0; iLoop < 256; iLoop++)
             for (jLoop = 0; jLoop < 3; jLoop++)
                 win_dacbox[iLoop][jLoop] = dacbox[iLoop][jLoop];
@@ -173,8 +177,6 @@ extraseg = FP_SEG(dx0);
     }
 
 restoredac();                /* ensure that the palette has been initialized */
-
-win_cmdfiles();                                /* SSTOOLS.INI processing */
 
 initmode = 1;                           /* override SSTOOLS.INI */
 

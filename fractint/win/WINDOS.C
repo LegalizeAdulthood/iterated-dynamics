@@ -967,39 +967,6 @@ int j;
     spindac(0,1);
 }
 
-#if 0
-extern int colorstate;
-extern char        colorfile[];
-
-int ValidateLuts( char * fn )
-{
-FILE * f;
-unsigned        r, g, b, index;
-unsigned char        line[101];
-unsigned char        temp[81];
-        strcpy (temp,fn);
-        if (strchr(temp,'.') == NULL) /* Did name have an extension? */
-                strcat(temp,".map");  /* No? Then add .map */
-        findpath( temp, line);              /* search the dos path */
-        f = fopen( line, "r" );
-        if (f == NULL)
-                return 1;
-        for( index = 0; index < 256; index++ ) {
-                if (fgets(line,100,f) == NULL)
-                        break;
-                sscanf( line, "%d %d %d", &r, &g, &b );
-                /** load global dac values **/
-                dacbox[index][0] = r >> 2;        /* maps default to 8 bits */
-                dacbox[index][1] = g >> 2;        /* DAC wants 6 bits */
-                dacbox[index][2] = b >> 2;
-        }
-        fclose( f );
-        colorstate = 2;
-        strcpy(colorfile,temp);
-        return 0;
-}
-#endif
-
 int win_thinking = 0;
 
 int thinking(int waiting, char far *dummy)
