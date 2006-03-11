@@ -285,6 +285,9 @@ Version 20.4.4 is an update of Fractint 20.0 based on the developer's
 Patch 4 to Version 20.4.0\
 Added minor changes so that Xfractint would compile under Cygwin.
 
+  Added lines to the Xfractint makefile (commented out) for compiling in a
+  64-bit environment.
+
   Fixed Xfractint so that built in calls to a different map file would
   work.
   
@@ -292,6 +295,9 @@ Added minor changes so that Xfractint would compile under Cygwin.
   to using the on-the-fly calculation of an image's pixels.  This affects
   how large an image can be made when using integer math.  The switch is
   now made when (xdots + ydots) * sizeof(long) > 32768.
+
+  Pulled the WinFract version 18.21 source into the CVS repository source
+  tree.  This code now runs but still has many many bugs.
 
 Patch 3 to Version 20.4.0\
 Started the cleanup of the docs.  Cleaned up the map directory.
