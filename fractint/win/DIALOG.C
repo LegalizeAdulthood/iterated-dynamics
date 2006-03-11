@@ -11,7 +11,6 @@
 
 #include <windows.h>
 #include <commdlg.h>
-#include <print.h>
 #include <string.h>
 #include <direct.h>
 
@@ -19,7 +18,6 @@
 #include "dialog.h"
 #include "fractype.h"
 #include "mathtool.h"
-#include "externs.h"
 #include "profile.h"
 
 extern HWND hwnd;                               /* handle to main window */
@@ -41,24 +39,6 @@ extern int time_to_cycle;                               /* time to cycle? */
 extern int xdots, ydots, colors;
 extern long maxiter;
 extern int ytop, ybottom, xleft, xright;
-
-#if 0
-extern double xxmin, xxmax, yymin, yymax;
-extern int fractype;
-extern int calc_status;
-extern double param[4];
-extern long bailout;
-extern struct moreparams far moreparams[];
-
-extern int inside, outside, usr_biomorph, decomp, debugflag;
-extern int usr_stdcalcmode, usr_floatflag;
-extern        int        invert;         /* non-zero if inversion active */
-extern        double        inversion[3];        /* radius, xcenter, ycenter */
-extern int numtrigfn;
-
-extern int LogFlag, fillcolor;
-extern unsigned char readname[];
-#endif
 
 int win_temp1, win_temp2, win_temp3, win_temp4;
 long win_ltemp2;
@@ -2013,8 +1993,7 @@ ofn.lpstrFileTitle = szFileTitle;
 ofn.nMaxFileTitle = sizeof(szFileTitle);
 ofn.lpstrInitialDir = szDirName;
 ofn.lpstrTitle = DialogTitle;
-//ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
-ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 
 i = GetSaveFileName(&ofn);
 lstrcpy(FileName,szFile);

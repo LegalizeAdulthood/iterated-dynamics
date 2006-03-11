@@ -144,7 +144,6 @@ void writedisk(unsigned int foo1,unsigned int foo2,unsigned int foo3) {}
 int targa_startdisk(FILE *foo1,int foo2){return 0;}
 void targa_writedisk(unsigned int foo1,unsigned int foo2,BYTE foo3,BYTE foo4,BYTE foo5){}
 void targa_readdisk(unsigned int foo1,unsigned int foo2,BYTE *foo3,BYTE *foo4,BYTE *foo5){}
-//int SetColorPaletteName(char *foo1) {return 0;}
 BYTE far *findfont(int foo1) {return(0);}
 long cdecl readticker(void){return(0);}
 void EndTGA(void){}
