@@ -91,12 +91,14 @@ ifeq ($(AS),/usr/bin/nasm)
 #CFLAGS = -I. -D_CONST $(DEFINES)
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
          -march=pentium -DNASM -fno-builtin
+#         -march=athlon64 -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
 CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
          -march=pentium -fno-builtin
+#         -march=athlon64 -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
 
 endif
@@ -119,6 +121,7 @@ CC = /usr/bin/gcc
 # For Linux, use
 #LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
 LIBS = -L/usr/X11R6/lib -lX11 -lm -lncurses
+#LIBS = -L/usr/X11R6/lib64 -lX11 -lm -lncurses
 #LIBS = -lX11 -lm -lcurses
 
 # HPUX fixes thanks to David Allport, Bill Broadley, and R. Lloyd.

@@ -350,10 +350,6 @@ Incremented the version number to accommodate backwards compatibility for
   "passes=1" and no symmetry, and then plots the orbits for each pixel.
   See {Drawing Method}.
 
-  Cleaned up panning logic.
-
-  Cleaned up docs.
-
 Xfractint fixes:
   Fixed the newton and newtbasin types in Xfractint so they would work
   without using the FPU=387 option.
@@ -462,9 +458,7 @@ Made changes to allow Xfractint to find files that use upper case letters.
   program doesn't end abruptly.
 
 Patch 4\
-Updated Paul de Leeuw's contact information.
-
-  Modified the Xfractint makefile and source files to allow compiling
+Modified the Xfractint makefile and source files to allow compiling
   without an assembler.
 
 Patch 3\
@@ -523,8 +517,6 @@ Fixed a problem with a finished image not redrawing if the maxiter was
   Added checks for p3, p4, and p5 to the browser for determining similar
   images.
 
-  Updated Scott Boyd's email address.
-
 Xfractint fixes:
   Fixed the command line -disk segmentation fault.
 
@@ -569,8 +561,6 @@ Added truecolor support to Fractint thanks to Bert Tyler.  While in a
 
   Removed Bert's truecolor test code used with the test fractal type.
 
-  Updated Paul de Leeuw's contact information.
-
 Patch 7\
 Fixed a bug which caused the float only version to omit the name of the
   formula/lsystem/ifs in saved GIFs.  Fixed the julia_inverse fractal type
@@ -588,8 +578,6 @@ Patch 6\
 Once again fixed the assignment of hotkeys to video modes so that the
   fractint.cfg file is no longer corrupted.  This problem was caused by
   the section of code dealing with the true-color video modes.
-
-  Updated copyright notice.
 
 Patch 5\
 Updated the disk video help docs.  The limit of disk video has been
@@ -634,8 +622,6 @@ Fixed the incremental redraw so that interrupting the redraw no longer sets
 
 Patch 2\
 Backed out the changes to the savegraphics() and restoregraphics() routines.
-
-  Updated Bret Mulvey's email address.
 
 Patch 1\
 Fixed the <TAB> display screen so the video memory doesn't get overwritten.
@@ -747,7 +733,6 @@ Fixed some user interface prompts that were wrong in Xfractint. Merged the
 Patch 9\
 Fixed a bug that occurred when maxhistory=0 was used.  Fixed a bug that
   occurred when ismand was used in a formula and ctrl <o> was pressed.
-  Updated Jonathan's email address.
 
 Patch 8\
 Fixed a bug causing a lock up with lsystem and ifs fractal types when using
@@ -774,8 +759,6 @@ Made selecting the evolver feature turn off truecolor=yes.  Each subimage was
 Patch 4\
 Fixed the type=test bug.
 
-Removed Tim's compuserve email address.
-
 Patch 3\
 Fixed a bug in the pentium mandelbrot code that affected periodicity
   checking.  Fixed a problem with skewed zoom boxes leaving dots on the
@@ -783,7 +766,7 @@ Fixed a bug in the pentium mandelbrot code that affected periodicity
   the zoom box so it is visible in 2-color modes.
 
 Patch 2\
-Fixed a bug in the formula parser.  Updated Tim Wegner's email address.
+Fixed a bug in the formula parser.
 
 Patch 1\
 Fixed the 2 and 16 color disk-video modes.  Using truecolor=yes now
