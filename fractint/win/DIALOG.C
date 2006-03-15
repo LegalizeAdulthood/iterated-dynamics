@@ -90,7 +90,7 @@ char about_msg00[80];
     switch (message) {
 
         case WM_INITDIALOG:
-            sprintf(about_msg00,"Winfract version %d.%02d, Fractals for Windows release",
+            sprintf(about_msg00,"Winfract version %d.%02d",
                 win_release/100, win_release%100);
             SetDlgItemText(hDlg, ID_VERSION  ,about_msg00);
             SetDlgItemText(hDlg, ID_COMMENT  ,about_msg01);

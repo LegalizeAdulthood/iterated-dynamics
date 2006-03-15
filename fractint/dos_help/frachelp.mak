@@ -1,6 +1,5 @@
 
-HFD = .\headers
-COMDIR = .\common
+HFD = ..\headers
 
 HELP = help.src help2.src help3.src help4.src help5.src
 
@@ -10,8 +9,8 @@ HELP = help.src help2.src help3.src help4.src help5.src
 all : hc.exe fractint.hlp
 
 # commented out remake of hc.c since it hasn't changed for many moons.
-hc.obj : $(COMDIR)\hc.c $(HFD)\helpcom.h $(HFD)\port.h
-	$(CC) /AL /W1 /FPi /c /I$(HFD) $(OptT) $(COMDIR)\hc.c
+hc.obj : hc.c $(HFD)\helpcom.h $(HFD)\port.h
+	$(CC) /AL /W1 /FPi /c /I$(HFD) $(OptT) hc.c
 
 hc.exe : hc.obj
 	$(LINKER) /ST:4096 /CP:1 /EXEPACK hc;

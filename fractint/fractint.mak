@@ -36,15 +36,18 @@ LDEBUG = /CO
 HFD = .\headers
 COMDIR = .\common
 DOSDIR = .\dos
+DOSHELPDIR = .\dos_help
 WINDIR = .\win
+WINHELPDIR = .\win_help
+WINMENUDIR = .\win_menu
 
 # Next is a pseudo-target for nmake/nmk.  It just generates harmless
 # warnings with make.
 
-!ifndef WINFRACT
-all : common dos fractint.exe
+!ifdef WINFRACT
+all : common dos win winfract.hlp res winfract.exe
 !else
-all : common dos win winfract.hlp res
+all : common dos fractint.exe
 !endif
 
 
@@ -64,15 +67,16 @@ win :
 	$(MAKE) all /F win.mak
 	cd ..
 
-.rc.res:
-	  rc -r -i$(HFD) $*.rc
+res :
+	cd $(WINMENUDIR)
+	$(MAKE) all /F menu.mak
+	cd ..
 
-winfract.hlp: winfract.rtf mathtool.rtf
-	hc winfract
+winfract.hlp: $(WINHELPDIR)\winfract.rtf $(WINHELPDIR)\mathtool.rtf
+	  cd $(WINHELPDIR)
+	  hc winfract
+	  cd ..
 
-winfract.res: winfract.rc mathtool.rc $(HFD)\mathtool.h coord.dlg $(HFD)\winfract.h \
-	  $(HFD)\dialog.h zoom.dlg
-	rc -r -i$(HFD) winfract.rc
 !else
 common :
 	cd $(COMDIR)
@@ -113,8 +117,8 @@ winfract.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(DEFFILE) $(LINKFILE)
      $(LINKER) $(LDEBUG) /NOE @$(LINKFILE) > foo
 
-res: winfract.res winfract.exe
-	 rc -k -i$(HFD) winfract
+	rc -k -i$(HFD) $(WINMENUDIR)\winfract.res winfract.exe
+
 !else
 fractint.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(COMDIR)\biginit.obj $(COMDIR)\bignum.obj $(COMDIR)\calcfrac.obj \
@@ -155,7 +159,7 @@ fractint.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
 #	type foo
 
 !ifndef DEBUG
-	hc /a
+	$(DOSHELPDIR)\hc /a
 !endif
 
 !endif
