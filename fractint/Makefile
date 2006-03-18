@@ -11,6 +11,7 @@ MANDIR = /usr/X11R6/man/man1
 HFD = ./headers
 UDIR = ./unix
 COMDIR = ./common
+DOSHELPDIR = ./dos_help
 
 FDIR = formulas
 IDIR = ifs
@@ -157,7 +158,7 @@ DOCS = debugfla.doc fractsrc.doc hc.doc
 
 HELPFILES = help.src help2.src help3.src help4.src help5.src
 
-SRCFILES = $(COMDIR)/$(OLDSRC) $(UDIR)/$(NEWSRC) $(HELPFILES) \
+SRCFILES = $(COMDIR)/$(OLDSRC) $(UDIR)/$(NEWSRC) $(DOSHELPDIR)/$(HELPFILES) \
 $(HFD)/$(HEADERS) $(DOCS)
 
 PARFILES = \
@@ -230,16 +231,14 @@ $(UDIR)/unixscr.o $(UDIR)/video.o
 
 endif
 
-HOBJS = $(COMDIR)/hc.o unix.o
-
-HELP = help.src help2.src help3.src help4.src help5.src
+HOBJS = $(DOSHELPDIR)/hc.o unix.o
 
 #Need to prevent lex from doing fractint.l -> fractint.c
 .SUFFIXES:
 .SUFFIXES: .o .c .s .h .asm
 
 xfractint: fractint.hlp .WAIT
-	if [ -f helpdefs.h ] ; then mv -f helpdefs.h $(HFD) ; fi
+	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
@@ -258,8 +257,8 @@ tidy:
 clean:
 	rm -f $(HOBJS) fractint.doc fractint.hlp hc xfractint
 	rm -f $(HFD)/helpdefs.h
-	cd common ; ${MAKE} clean
-	cd unix ; ${MAKE} clean
+	cd $(COMDIR) ; ${MAKE} clean
+	cd $(UDIR) ; ${MAKE} clean
 
 install: xfractint fractint.hlp
 	strip xfractint
@@ -308,14 +307,14 @@ uninstall:
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
-fractint.hlp: hc $(HELP)
-	./hc /c
+fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
+	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
 
 .WAIT:
 
 fractint.doc: doc
 
-doc: hc $(HELP)
+doc: hc $(DOSHELPDIR)/$(HELPFILES)
 	./hc /p
 
 hc:	$(HOBJS)
@@ -329,5 +328,5 @@ copy: $(FILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
-hc.o: $(COMDIR)/hc.c $(HFD)/helpcom.h $(HFD)/port.h
+hc.o: $(DOSHELPDIR)/hc.c $(HFD)/helpcom.h $(HFD)/port.h
 
