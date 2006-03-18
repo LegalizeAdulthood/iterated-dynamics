@@ -538,7 +538,7 @@ long logtablecalc(long citer) {
       return(LogTable[(long)min(citer, MaxLTSize)]);
 
    if (LogFlag > 0) { /* new log function */
-      if ((unsigned long)citer <= lf)
+      if ((unsigned long)citer <= lf + 1)
          ret = 1;
       else if((citer - lf) / log(citer - lf) <= mlf) {
          if (save_release < 2002)
