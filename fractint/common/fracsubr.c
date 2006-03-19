@@ -128,8 +128,8 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
   /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
    xytemp = xdots + ydots;
-   if( ((floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
-       ((floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
+   if( ((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
+       ((usr_floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
          debugflag == 3800)
    {
       use_grid=0;
