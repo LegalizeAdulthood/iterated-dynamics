@@ -55,9 +55,11 @@
 #define     ID_PASS	   300
 #define     ID_PASS1	   301
 #define     ID_PASS2	   302
-#define     ID_PASSS	   303
+#define     ID_PASSG	   303
 #define     ID_PASSB	   304
 #define     ID_PASST	   305
+#define     ID_PASSD	   306
+#define     ID_PASSO	   307
 
 #define     ID_MATHF	   310
 
@@ -67,19 +69,22 @@
 
 #define     ID_DECOMP	   340
 
-#define     ID_INSIDE	   350
-#define     ID_INSIDE2	   359
+#define     ID_INSIDE	   345
+#define     ID_INSIDE2	   356
 
-#define     ID_INSIDEC     351
-#define     ID_INSIDEM     352
-#define     ID_INSIDEZ     353
-#define     ID_INSIDE60    354
-#define     ID_INSIDE61    355
-#define     ID_INSIDEE     356
-#define     ID_INSIDES     357
+#define     ID_INSIDEC     346
+#define     ID_INSIDEM     347
+#define     ID_INSIDEZ     348
+#define     ID_INSIDE60    349
+#define     ID_INSIDE61    350
+#define     ID_INSIDEE     351
+#define     ID_INSIDES     352
+#define     ID_INSIDEPER   353
+#define     ID_INSIDEAT    354
+#define     ID_INSIDEFM    355
 
 #define     ID_OUTSIDE	   360
-#define     ID_OUTSIDE2	   369
+#define     ID_OUTSIDE2	   370
 
 #define     ID_OUTSIDEN    361
 #define     ID_OUTSIDEIT   362
@@ -87,6 +92,9 @@
 #define     ID_OUTSIDEIM   364
 #define     ID_OUTSIDEM    365
 #define     ID_OUTSIDES    366
+#define     ID_OUTSIDEAT   367
+#define     ID_OUTSIDEFM   368
+#define     ID_OUTSIDETD   369
 
 #define     ID_FILL        380
 #define     ID_FILLC       381

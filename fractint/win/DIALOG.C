@@ -537,15 +537,20 @@ LPARAM lParam;
             if (usr_stdcalcmode == 'g') win_temp2 = 2;
             if (usr_stdcalcmode == 'b') win_temp2 = 3;
             if (usr_stdcalcmode == 't') win_temp2 = 4;
+            if (usr_stdcalcmode == 'd') win_temp2 = 5;
+            if (usr_stdcalcmode == 'o') win_temp2 = 6;
             win_temp3 = 0;
-            if (inside == -1)    win_temp3 = 1;
-            if (inside == -59)   win_temp3 = 2;
-            if (inside == -60)   win_temp3 = 3;
-            if (inside == -61)   win_temp3 = 4;
-            if (inside == -100)  win_temp3 = 5;
-            if (inside == -101)  win_temp3 = 6;
+            if (inside == ITER)       win_temp3 = 1;
+            if (inside == ZMAG)       win_temp3 = 2;
+            if (inside == BOF60)      win_temp3 = 3;
+            if (inside == BOF61)      win_temp3 = 4;
+            if (inside == EPSCROSS)   win_temp3 = 5;
+            if (inside == STARTRAIL)  win_temp3 = 6;
+            if (inside == PERIOD)     win_temp3 = 7;
+            if (inside == ATANI)      win_temp3 = 8;
+            if (inside == FMODI)      win_temp3 = 9;
             win_temp4 = 0;
-            if (outside < 0 && outside > -6) win_temp4 = 0 - outside;
+            if (outside < 0 && outside > -9) win_temp4 = 0 - outside;
             CheckDlgButton(hDlg, ID_PASS1+win_temp2,1);
             CheckDlgButton(hDlg, ID_INSIDEC+win_temp3, 1);
             CheckDlgButton(hDlg, ID_OUTSIDEN+win_temp4, 1);
@@ -579,6 +584,8 @@ LPARAM lParam;
                     if (win_temp2 == 2) usr_stdcalcmode = 'g';
                     if (win_temp2 == 3) usr_stdcalcmode = 'b';
                     if (win_temp2 == 4) usr_stdcalcmode = 't';
+                    if (win_temp2 == 5) usr_stdcalcmode = 'd';
+                    if (win_temp2 == 6) usr_stdcalcmode = 'o';
                     usr_floatflag = win_temp1;
                     GetDlgItemText(hDlg, ID_MAXIT, temp, 12);
                     maxiter = atol(temp);
@@ -600,12 +607,15 @@ LPARAM lParam;
                     inside = atoi(temp);
                     if (inside < 0) inside = 0;
                     if (inside >= colors) inside = colors-1;
-                    if (win_temp3 == 1) inside = -1;
-                    if (win_temp3 == 2) inside = -59;
-                    if (win_temp3 == 3) inside = -60;
-                    if (win_temp3 == 4) inside = -61;
-                    if (win_temp3 == 5) inside = -100;
-                    if (win_temp3 == 6) inside = -101;
+                    if (win_temp3 == 1) inside = ITER;
+                    if (win_temp3 == 2) inside = ZMAG;
+                    if (win_temp3 == 3) inside = BOF60;
+                    if (win_temp3 == 4) inside = BOF61;
+                    if (win_temp3 == 5) inside = EPSCROSS;
+                    if (win_temp3 == 6) inside = STARTRAIL;
+                    if (win_temp3 == 7) inside = PERIOD;
+                    if (win_temp3 == 8) inside = ATANI;
+                    if (win_temp3 == 9) inside = FMODI;
                     GetDlgItemText(hDlg, ID_OUTSIDE, temp, 10);
                     outside = atoi(temp);
                     if (outside < 0) outside = -1;
@@ -621,11 +631,13 @@ LPARAM lParam;
 
                 case ID_PASS1:
                 case ID_PASS2:
-                case ID_PASSS:
+                case ID_PASSG:
                 case ID_PASSB:
                 case ID_PASST:
+                case ID_PASSD:
+                case ID_PASSO:
                     win_temp2 = wParam - ID_PASS1;
-                    CheckRadioButton(hDlg, ID_PASS1, ID_PASST, wParam);
+                    CheckRadioButton(hDlg, ID_PASS1, ID_PASSO, wParam);
                     break;
 
                 case ID_INSIDEC:
@@ -635,8 +647,11 @@ LPARAM lParam;
                 case ID_INSIDE61:
                 case ID_INSIDEE:
                 case ID_INSIDES:
+                case ID_INSIDEPER:
+                case ID_INSIDEAT:
+                case ID_INSIDEFM:
                     win_temp3 = wParam - ID_INSIDEC;
-                    CheckRadioButton(hDlg, ID_INSIDEC, ID_INSIDES, wParam);
+                    CheckRadioButton(hDlg, ID_INSIDEC, ID_INSIDEFM, wParam);
                     break;
 
                 case ID_OUTSIDEN:
@@ -645,8 +660,11 @@ LPARAM lParam;
                 case ID_OUTSIDEIM:
                 case ID_OUTSIDEM:
                 case ID_OUTSIDES:
+                case ID_OUTSIDEAT:
+                case ID_OUTSIDEFM:
+                case ID_OUTSIDETD:
                     win_temp4 = wParam - ID_OUTSIDEN;
-                    CheckRadioButton(hDlg, ID_OUTSIDEN, ID_OUTSIDES, wParam);
+                    CheckRadioButton(hDlg, ID_OUTSIDEN, ID_OUTSIDETD, wParam);
                     break;
 
                 case ID_MATHF:
