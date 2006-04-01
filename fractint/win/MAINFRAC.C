@@ -68,6 +68,7 @@ double param[MAXPARAMS];
 int diskvideo, savedac;
 
 #define MAXLINE  2048
+#define MAXNUMFRACTALS  110
 
 long   far *lx0, far *ly0, far *lx1, far *ly1;
 double far *dx0, far *dy0, far *dx1, far *dy1;
@@ -105,7 +106,7 @@ float   finalaspectratio;
 extern int filexdots, fileydots, filecolors;
 int frommandel;
 
-int onthelist[100];                /* list of available fractal types */
+int onthelist[MAXNUMFRACTALS];  /* list of available fractal types */
 int CountFractalList;           /* how many are on the list? */
 extern int CurrentFractal;                /* which one is current? */
 
@@ -122,7 +123,7 @@ int compare_fractalnames( const void *element1, const void *element2)
 int i, j, k;
     j = *(int*)element1;
     k = *(int*)element2;
-for (i = 0; i < 100; i++) {
+for (i = 0; i < MAXNUMFRACTALS; i++) {
     if (fractalspecific[j].name[i] < fractalspecific[k].name[i])
         return(-1);
     if (fractalspecific[j].name[i] > fractalspecific[k].name[i])
@@ -145,7 +146,7 @@ CountFractalList = 0;
 for (k = 0; fractalspecific[k].name != NULL; k++)
    if (fractalspecific[k].name[0] != '*' &&
        (fractalspecific[k].flags & WINFRAC) != 0 &&
-       CountFractalList < 100)
+       CountFractalList < MAXNUMFRACTALS)
             onthelist[CountFractalList++] = k;
 qsort(onthelist,CountFractalList,2,compare_fractalnames);
 CurrentFractal = fractype;
