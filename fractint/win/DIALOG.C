@@ -124,6 +124,8 @@ WPARAM wParam;
 LPARAM lParam;
 {
 char tempstring[100];
+char parstr0[100], parstr1[100], parstr2[100], parstr3[100];
+
     switch (message) {
 
         case WM_INITDIALOG:
@@ -144,27 +146,35 @@ char tempstring[100];
             SetDlgItemText(hDlg, IDS_LINE1,tempstring);
             if(fractalspecific[fractype].param[0][0] == 0)
                 tempstring[0] = 0;
-            else
+            else {
+                _fstrcpy(parstr0,fractalspecific[fractype].param[0]);
                 sprintf(tempstring,"%-30.30s   %14.10f",
-                    fractalspecific[fractype].param[0], param[0]);
+                    parstr0, param[0]);
+            }
             SetDlgItemText(hDlg, IDS_LINE2,tempstring);
             if(fractalspecific[fractype].param[1][0] == 0)
                 tempstring[0] = 0;
-            else
+            else {
+                _fstrcpy(parstr1,fractalspecific[fractype].param[1]);
                 sprintf(tempstring,"%-30.30s   %14.10f",
-                    fractalspecific[fractype].param[1], param[1]);
+                    parstr1, param[1]);
+            }
             SetDlgItemText(hDlg, IDS_LINE3,tempstring);
             if(fractalspecific[fractype].param[2][0] == 0)
                 tempstring[0] = 0;
-            else
+            else {
+                _fstrcpy(parstr2,fractalspecific[fractype].param[2]);
                 sprintf(tempstring,"%-30.30s   %14.10f",
-                    fractalspecific[fractype].param[2], param[2]);
+                    parstr2, param[2]);
+            }
             SetDlgItemText(hDlg, IDS_LINE4,tempstring);
             if(fractalspecific[fractype].param[3][0] == 0)
                 tempstring[0] = 0;
-            else
+            else {
+                _fstrcpy(parstr3,fractalspecific[fractype].param[3]);
                 sprintf(tempstring,"%-30.30s   %14.10f",
-                    fractalspecific[fractype].param[3], param[3]);
+                    parstr3, param[3]);
+            }
             SetDlgItemText(hDlg, IDS_LINE5,tempstring);
             sprintf(tempstring,"Xmin:        %25.16f", xxmin);
             SetDlgItemText(hDlg, IDS_LINE6,tempstring);
@@ -308,7 +318,7 @@ LPARAM lParam;
                                     temp);
                                 }
                     }
-                sprintf(temp,"%d",bailout);
+                sprintf(temp,"%ld",bailout);
                 SetDlgItemText(hDlg, ID_BAILOUT,   temp);
                 sprintf(temp,"%.12f",xxmin);
                 SetDlgItemText(hDlg, ID_FRACXMIN,   temp);
