@@ -27,9 +27,9 @@ BEGIN
     POPUP	 "F&ractals"
     BEGIN
 	MENUITEM   "&Fractal Formula...",      IDM_FORMULA
+	MENUITEM   "Fractal &Params...",       IDM_DOODADZ
 	MENUITEM   "&Basic Options...",        IDM_DOODADX
 	MENUITEM   "&Extended Options...",     IDM_DOODADY
-	MENUITEM   "Fractal &Params...",       IDM_DOODADZ
 	MENUITEM   "&3D Params...",            IDM_IFS3D
 	MENUITEM   "&Reset All Options",       IDM_RESTART
         MENUITEM   SEPARATOR
