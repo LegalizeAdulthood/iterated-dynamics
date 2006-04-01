@@ -172,17 +172,14 @@ long maxiter;
 int ytop, ybottom, xleft, xright;
 int xposition, yposition, win_xoffset, win_yoffset, xpagesize, ypagesize;
 int win_xdots, win_ydots;
-extern int fractype;
-extern double param[];
-extern double xxmin, xxmax, yymin, yymax, xx3rd, yy3rd;
 double jxxmin, jxxmax, jyymin, jyymax, jxx3rd, jyy3rd;
-extern int frommandel, bitshift, biomorph;
+extern int frommandel;
 
 int cpu, fpu;                        /* cpu, fpu flags */
 
 extern int win_release;
 
-char *win_choices[100];
+char *win_choices[110];
 int win_numchoices, win_choicemade;
 
 extern int onthelist[];
