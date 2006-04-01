@@ -260,11 +260,18 @@ LPARAM lParam;
 
     int i, j;
     char temp[30];
+    int curtype;
 
     switch (message) {
 
         case WM_INITDIALOG:
-                win_temp1 = CurrentFractal;
+                curtype = CurrentFractal;
+                if (curfractalspecific->name[0] == '*'
+                   && (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
+                   && fractalspecific[i].name[0] != '*')
+                      curtype = i;
+                curfractalspecific = &fractalspecific[curtype];
+                win_temp1 = curtype;
                 SetDlgItemText(hDlg, ID_FRACNAME,   fractalspecific[win_temp1].name);
                 for (numparams = 0; numparams < 4; numparams++)
                     if (fractalspecific[win_temp1].param[numparams][0] == 0)
