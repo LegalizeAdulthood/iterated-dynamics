@@ -102,7 +102,7 @@ BOOL dont_wait_for_a_key = TRUE;
    int LPTNumber;
    int stackavail() { return(10240 + (signed int)_SP); }
 #else
-   int printf() {return(0);}
+   int printf(const char *dummy, ...) {return(0);}
    int _bios_serialcom(){return(0);}
 #endif
 
