@@ -2208,7 +2208,7 @@ struct fractalspecificstuff far fractalspecific[]=
        "+Ant type (1 or 2)"
       },
       {1100, 1.0E9, 1, 1},
-      HT_ANT, HF_ANT, NOZOOM+NOGUESS+NOTRACE+NORESUME+MORE,
+      HT_ANT, HF_ANT, WINFRAC+NOZOOM+NOGUESS+NOTRACE+NORESUME+MORE,
       (float)-1.0, (float)1.0, (float)-1.0, (float)1.0,
       0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
       NULL, NULL, StandaloneSetup, ant,
