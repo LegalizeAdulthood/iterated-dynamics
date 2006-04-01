@@ -176,7 +176,7 @@ BEGIN
     CONTROL "", ID_FRACPARTX6, "static", SS_LEFT | WS_CHILD,                             10, 115, 120,  8
     CONTROL  "0.0", ID_FRACPARAM6, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130, 115,  60, 12
     CONTROL "&Bailout Value (0 means use default)", 3,"static", SS_LEFT | WS_CHILD,      10, 140, 120,  8
-    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 140,  30, 12
+    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 140,  48, 12
     CONTROL "Image Corner values", 3, "static", SS_LEFT | WS_CHILD,                      60, 160,  73,  8
     CONTROL "&Xmin", 3, "static", SS_LEFT | WS_CHILD,                                    15, 175,  20,  8
     CONTROL "-2.5", ID_FRACXMIN, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    40, 175,  60, 12
