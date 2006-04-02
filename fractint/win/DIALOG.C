@@ -271,6 +271,7 @@ LPARAM lParam;
     int i, j;
     char temp[30];
     int curtype;
+    static long oldbailout;
 
     switch (message) {
 
@@ -318,6 +319,7 @@ LPARAM lParam;
                                     temp);
                                 }
                     }
+                oldbailout = bailout;
                 sprintf(temp,"%ld",bailout);
                 SetDlgItemText(hDlg, ID_BAILOUT,   temp);
                 sprintf(temp,"%.12f",xxmin);
@@ -369,8 +371,10 @@ LPARAM lParam;
                         GetDlgItemText(hDlg, paramv[i+numparams+numtrig], temp, 20);
                         param[i+4] = atof(temp);
                         }
-                    GetDlgItemText(hDlg, ID_BAILOUT   , temp, 10);
-                    bailout = (long)atof(temp);
+                    GetDlgItemText(hDlg, ID_BAILOUT   , temp, 11);
+                    bailout = atol(temp);
+                    if (bailout != 0 && (bailout < 1 || bailout > 2100000000L))
+                        bailout = oldbailout;
                     GetDlgItemText(hDlg, ID_FRACXMIN  , temp, 20);
                     xxmin = atof(temp);
                     GetDlgItemText(hDlg, ID_FRACXMAX  , temp, 20);
@@ -544,6 +548,7 @@ LPARAM lParam;
 {
 
     char temp[80];
+    long oldmaxiter;
 
     switch (message) {
 
@@ -575,6 +580,7 @@ LPARAM lParam;
                 CheckDlgButton(hDlg, ID_MATHF, 1);
             else
                 CheckDlgButton(hDlg, ID_MATHF, 0);
+            oldmaxiter = maxiter;
             sprintf(temp,"%ld",maxiter);
             SetDlgItemText(hDlg, ID_MAXIT, temp);
             sprintf(temp,"%d",usr_biomorph);
@@ -604,11 +610,11 @@ LPARAM lParam;
                     if (win_temp2 == 5) usr_stdcalcmode = 'd';
                     if (win_temp2 == 6) usr_stdcalcmode = 'o';
                     usr_floatflag = win_temp1;
-                    GetDlgItemText(hDlg, ID_MAXIT, temp, 12);
+                    GetDlgItemText(hDlg, ID_MAXIT, temp, 11);
                     maxiter = atol(temp);
-                    if (maxiter < 0) maxiter = 2147483647;
+                    if (maxiter < 0) maxiter = oldmaxiter;
                     if (maxiter < 2) maxiter = 2;
-                    GetDlgItemText(hDlg, ID_LOGP, temp, 12);
+                    GetDlgItemText(hDlg, ID_LOGP, temp, 11);
                     LogFlag = atol(temp);
                     GetDlgItemText(hDlg, ID_BIOMORPH, temp, 10);
                     usr_biomorph = atoi(temp);

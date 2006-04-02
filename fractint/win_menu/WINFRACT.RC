@@ -176,7 +176,7 @@ BEGIN
     CONTROL "", ID_FRACPARTX6, "static", SS_LEFT | WS_CHILD,                             10, 115, 120,  8
     CONTROL  "0.0", ID_FRACPARAM6, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130, 115,  60, 12
     CONTROL "&Bailout Value (0 means use default)", 3,"static", SS_LEFT | WS_CHILD,      10, 140, 120,  8
-    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 140,  48, 12
+    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 140,  44, 12
     CONTROL "Image Corner values", 3, "static", SS_LEFT | WS_CHILD,                      60, 160,  73,  8
     CONTROL "&Xmin", 3, "static", SS_LEFT | WS_CHILD,                                    15, 175,  20,  8
     CONTROL "-2.5", ID_FRACXMIN, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    40, 175,  60, 12
@@ -227,7 +227,7 @@ BEGIN
     CONTROL "&S-Guess", ID_PASSG, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,         110, 15, 40, 12
     CONTROL "&B-Trace", ID_PASSB, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,         150, 15, 40, 12
     CONTROL "&Tesseral",ID_PASST, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,         190, 15, 37, 12
-    CONTROL "&Diffussion",ID_PASSD, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,       227, 15, 43, 12
+    CONTROL "&Diffusion",ID_PASSD, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,        227, 15, 43, 12
     CONTROL "&Orbits",  ID_PASSO, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,         270, 15, 28, 12
     CONTROL "",          ID_INSIDE2,  "button", BS_GROUPBOX | WS_TABSTOP | WS_CHILD,          0, 30,300, 18
     CONTROL "Inside:",    3, "static", SS_LEFT | WS_CHILD,                                    5, 37, 25, 10
@@ -254,13 +254,13 @@ BEGIN
     CONTROL "&Tdis",    ID_OUTSIDETD, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,     270, 55, 25, 12
     CONTROL "&Floating-Pt Math", ID_MATHF, "button", BS_CHECKBOX | WS_TABSTOP | WS_CHILD,    10, 75, 80, 12
     CONTROL "&Maximum Iterations (2 to 2,147,483,647)", 3, "static", SS_LEFT | WS_CHILD,     10, 90, 180, 8
-    CONTROL "", ID_MAXIT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,              202, 90, 48, 12
+    CONTROL "", ID_MAXIT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,              202, 90, 44, 12
     CONTROL "&Inside color (if using 'Color', above)", 3, "static", SS_LEFT | WS_CHILD,      10,105, 180, 8
     CONTROL "", ID_INSIDE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,             202,105, 32, 12
     CONTROL "&Outside Color (if using 'Color', above)", 3, "static", SS_LEFT | WS_CHILD,     10,120, 180, 8
     CONTROL "", ID_OUTSIDE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,            202,120, 32, 12
     CONTROL "&Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)", 3, "static", SS_LEFT | WS_CHILD, 10,135, 200, 8
-    CONTROL "", ID_LOGP,   "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,             202,135, 48, 12
+    CONTROL "", ID_LOGP,   "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,             202,135, 44, 12
     CONTROL "&Biomorph Color (-1 = OFF)", 3, "static", SS_LEFT | WS_CHILD,                   10,150, 180, 8
     CONTROL "", ID_BIOMORPH, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           202,150, 32, 12
     CONTROL "&Decompostion Option (2,4,8,...,256, 0=OFF)", 3, "static", SS_LEFT | WS_CHILD,  10,165, 180, 8
