@@ -125,6 +125,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       char buf[20];
       static FCODE fmsg1[] = {"'Disk-Video' mode"};
       static FCODE fmsg2[] = {"Screen resolution: "};
+      static FCODE fsname[] = {"Save name: "};
       static FCODE stat[] = {"Status:"};
       helptitle();
       setattr(1,0,C_DVID_BKGRD,24*80);  /* init rest to background */
@@ -144,7 +145,10 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
          sprintf(buf,"%d",colors);
          putstring(-1,-1,C_DVID_LO,buf);
          }
-      putstring(BOXROW+8,BOXCOL+4,C_DVID_LO,stat);
+      putstring(BOXROW+6,BOXCOL+4,C_DVID_LO,fsname);
+      sprintf(buf,"%s",savename);
+      putstring(-1,-1,C_DVID_LO,buf);
+      putstring(BOXROW+10,BOXCOL+4,C_DVID_LO,stat);
       {
       static FCODE o_msg[] = {"clearing the 'screen'"};
       char msg[sizeof(o_msg)];
@@ -198,7 +202,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    if (dotmode == 11) {
       char buf[50];
       sprintf(buf,"Cache size: %dK\n\n",cache_size);
-      putstring(BOXROW+6,BOXCOL+4,C_DVID_LO,buf);
+      putstring(BOXROW+8,BOXCOL+4,C_DVID_LO,buf);
       }
 
    /* preset cache to all invalid entries so we don't need free list logic */
@@ -657,7 +661,7 @@ void dvid_status(int line,char far *msg)
       line -= 100;
       attrib = C_STOP_ERR;
       }
-   putstring(BOXROW+8+line,BOXCOL+12,attrib,buf);
+   putstring(BOXROW+10+line,BOXCOL+12,attrib,buf);
    movecursor(25,80);
 }
 
