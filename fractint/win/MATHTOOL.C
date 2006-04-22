@@ -15,6 +15,9 @@
 
 */
 
+#include "port.h"
+#include "prototyp.h"
+
 #include <windows.h>
 #include "winfract.h"
 #include "mathtool.h"
@@ -42,12 +45,9 @@ RECT ZoomRect;
 WORD CoordFormat = IDM_RECT;
 WORD AngleFormat = IDM_DEGREES;
 
-extern unsigned xdots, ydots;
-extern double xxmin, yymin, xxmax, yymax, delxx, delyy;
 extern int ytop, ybottom, xleft, xright, ZoomMode;
 extern BOOL zoomflag;
 extern int time_to_restart, time_to_cycle, time_to_reinit, calc_status;
-extern int win_xoffset, win_yoffset;
 
 void XorZoomBox(void);
 
@@ -86,7 +86,7 @@ BOOL RegisterMathWindows(HANDLE hInstance) {
     wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
     wc.hIcon = LoadIcon(hInstance, "MathToolIcon");
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hCursor = LoadCursor(0, IDC_ARROW);
     wc.hbrBackground = GetStockObject(BLACK_BRUSH);
     wc.lpszMenuName =  "MathToolsMenu";
     wc.lpszClassName = MTClassName;
@@ -235,17 +235,17 @@ void CancelZoom(void) {
 void ExecuteZoom(void) {
    double xd, yd, z;
 
-   xd = xxmin + (delxx * (ZoomCenter.x + win_xoffset));  /* BDT 11/6/91 */
-   yd = yymax - (delyy * (ZoomCenter.y + win_yoffset));  /* BDT 11/6/91 */
+   xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));  /* BDT 11/6/91 */
+   yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));  /* BDT 11/6/91 */
 
    z = 1.0 - fabs((double)Zooming / 100 * .99);
    if(Zooming > 0)
       z = 1.0 / z;
 
-   xxmin = xd - (delxx * z * (xdots / 2));
-   xxmax = xd + (delxx * z * (xdots / 2));
-   yymin = yd - (delyy * z * (ydots / 2));
-   yymax = yd + (delyy * z * (ydots / 2));
+   xxmin = xd - ((double)delxx * z * (xdots / 2));
+   xxmax = xd + ((double)delxx * z * (xdots / 2));
+   yymin = yd - ((double)delyy * z * (ydots / 2));
+   yymax = yd + ((double)delyy * z * (ydots / 2));
 
    time_to_reinit = 1;
    time_to_cycle = 0;
@@ -287,9 +287,9 @@ BOOL FAR PASCAL ZoomBarDlg(HWND hDlg, WORD Message, WORD wp, DWORD dp) {
          hZoomPen = GetStockObject(WHITE_PEN);
          if(!(lpFnct = MakeProcInstance(ZoomBarProc, hThisInst)))
             return(FALSE);
-         if(!(hZoomBar = CreateWindow("scrollbar", NULL, WS_CHILD |
+         if(!(hZoomBar = CreateWindow("scrollbar", 0, WS_CHILD |
                            WS_TABSTOP | SBS_VERT,
-                           38, 28, 18, 248, hDlg, NULL, hThisInst, NULL)))
+                           38, 28, 18, 248, hDlg, 0, hThisInst, 0)))
             return(FALSE);
 
          SetScrollRange(hZoomBar, SB_CTL, ZoomBarMin, ZoomBarMax, FALSE);
@@ -433,8 +433,8 @@ void UpdateCoordBox(DWORD dw) {
 
    xPixel = (unsigned)dw         + win_xoffset;  /* BDT 11/6/91 */
    yPixel = (unsigned)(dw >> 16) + win_yoffset;  /* BDT 11/6/91 */
-   xd = xxmin + (delxx * xPixel);
-   yd = yymax - (delyy * yPixel);
+   xd = xxmin + ((double)delxx * xPixel);
+   yd = yymax - ((double)delyy * yPixel);
    switch(CoordFormat) {
       case IDM_PIXEL:
          sprintf(xStr, "%d", xPixel);
@@ -500,9 +500,9 @@ BOOL OpenMTWnd(void) {
         CW_USEDEFAULT, CW_USEDEFAULT,
         xdots, ydots,
         hFractalWnd,
-        NULL,
+        0,
         hThisInst,
-        NULL
+        0
     );
     if(!hMathToolsWnd)
         return(FALSE);
