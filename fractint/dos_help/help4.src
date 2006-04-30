@@ -49,10 +49,10 @@
                            Inserts comments into PAR files.
 ~FF
 {Calculation Mode Parameters}
-  passes=1|2|3|g|b|t|g1..g6|s|o  Select Single-Pass, Dual-Pass, Triple-Pass
+  passes=1|2|3|g|b|d|t|g1..g6|s|o  Select Single-Pass, Dual-Pass, Triple-Pass
                            Solid-Guessing, Solid-Guessing stop after pass n,
-                           Boundary-Tracing, Tesseral, Synchronous Orbits, or
-                           Orbits drawing algorithms
+                           Boundary-Tracing, Diffusion, Tesseral,
+                           Synchronous Orbits, or Orbits drawing algorithms
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
   float=yes                For most functions changes from integer math to fp

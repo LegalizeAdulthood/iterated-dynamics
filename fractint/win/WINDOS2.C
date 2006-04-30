@@ -70,6 +70,8 @@ int lookatmouse;
 #define CHOICEMENU        2
 #define CHOICEHELP        4
 
+static char far par_comment[4][MAXCMT];
+
 char speed_prompt[]="Speed key string";
 
 int fullscreen_choice(
@@ -1049,6 +1051,7 @@ int win_make_batch_file(void)
    char outname[81],buf[256],buf2[128];
    FILE *infile;
    char colorspec[14];
+   int colorsonly = 0;
    int maxcolor;
    char *sptr,*sptr2;
    extern char CommandFile[];
@@ -1073,11 +1076,12 @@ int win_make_batch_file(void)
       if (win_temp1 == 0) {          /* default colors */
          }
       else if (win_temp1 == 2) { /* colors match colorfile */
-         colorspec[0] = '@';
+         strcpy(colorspec,"@");
          sptr = colorfile;
          }
-      else                          /* colors match no .map that we know of */
-         colorspec[0] = 'y';
+      else {                        /* colors match no .map that we know of */
+         strcpy(colorspec,"y");
+      }
       if (colorspec[0] == '@') {
          if ((sptr2 = strrchr(sptr,'\\'))) sptr = sptr2 + 1;
          if ((sptr2 = strrchr(sptr,':')))  sptr = sptr2 + 1;
@@ -1114,7 +1118,7 @@ int win_make_batch_file(void)
               && sscanf(buf," %40[^ \t({]",buf2)
               && stricmp(buf2,CommandName) == 0) { /* entry with same name */
                sprintf(buf2,"File already has an entry named %s\n\
-Continue to replace it, Cancel to back out",CommandName);
+OK to replace it, Cancel to back out",CommandName);
                if (stopmsg(18,buf2) < 0) {            /* cancel */
                   fclose(infile);
                   fclose(parmfile);
@@ -1131,12 +1135,35 @@ Continue to replace it, Cancel to back out",CommandName);
          }
 
       fprintf(parmfile,"%-19s{",CommandName);
-      if (CommandComment[0][0]) fprintf(parmfile," ; %Fs",CommandComment[0]);
-      fputc('\n',parmfile);
-      if (CommandComment[1][0])
-         fprintf(parmfile,"                     ; %Fs\n",CommandComment[1]);
-/* this next line will need to be fixed JCO */
-//      write_batch_parms(parmfile,colorspec,maxcolor); /* write the parameters */
+
+         {
+            /* guarantee that there are no blank comments above the last
+               non-blank par_comment */
+            int i, last;
+            for(last=-1,i=0;i<4;i++)
+               if(*par_comment[i])
+                  last=i;
+            for(i=0;i<last;i++)
+               if(*CommandComment[i]=='\0')
+                  far_strcpy(CommandComment[i],";");
+         }
+         if (CommandComment[0][0])
+            fprintf(parmfile, " ; %s", CommandComment[0]);
+         fputc('\n', parmfile);
+         {
+            int k;
+            char buf[25];
+            memset(buf, ' ', 23);
+            buf[23] = 0;
+            buf[21] = ';';
+            for(k=1;k<4;k++)
+               if (CommandComment[k][0])
+                  fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
+            if (patchlevel != 0 && colorsonly == 0)
+               fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
+                  Fractint, release, patchlevel);
+         }
+      write_batch_parms(colorspec,colorsonly,maxcolor,0,0); /* write the parameters */
       fprintf(parmfile,"  }\n\n");
 
       if (gotinfile) {        /* copy the rest of the file */

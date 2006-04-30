@@ -26,8 +26,8 @@
 
 /* routines in this module      */
 
-static void write_batch_parms(char *colorinf,int colorsonly, int maxcolor,int i, int j);
-static void expand_comments(char far *target, char far *source);
+void write_batch_parms(char *colorinf,int colorsonly, int maxcolor,int i, int j);
+void expand_comments(char far *target, char far *source);
 
 #ifndef USE_VARARGS
 static void put_parm(char *parm,...);
@@ -53,7 +53,7 @@ static void strip_zeros(char *buf);
 #define CHOICEMENU      2
 #define CHOICEHELP      4
 
-static char far par_comment[4][MAXCMT];
+char far par_comment[4][MAXCMT];
 
 char s_yes[]      = "yes";
 char s_no[]       = "no";
@@ -551,7 +551,7 @@ static struct write_batch_data { /* buffer for parms to break lines nicely */
    char *buf;
    } *wbdata;
 
-static void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
+void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
    char far *saveshared;
    int i,j,k;
@@ -2443,7 +2443,7 @@ static char *expand_var(char *var, char *buf)
 static const char esc_char = '$';
 
 /* extract comments from the comments= command */
-static void expand_comments(char far *target, char far *source)
+void expand_comments(char far *target, char far *source)
 {
    int i,j, k, escape = 0;
    char c, oldc, varname[MAXVNAME];

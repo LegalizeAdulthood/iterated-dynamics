@@ -106,16 +106,18 @@ VK_INSERT,  IDF_RESTART,       VIRTKEY
 "a",        IDF_STARFIELD
 "A",        IDF_STARFIELD
 "b",        IDF_SAVEPAR
-"B",        IDF_SAVEPAR
+"B",        IDF_BROWSER
 "c",        IDF_CYCLE
 "C",        IDF_CYCLE
+"e",        IDF_EVOLVER
+"E",        IDF_EVOLVER
 "i",        IDF_IFS3D
 "I",        IDF_IFS3D
 "l",        IDF_MAPIN
 "L",        IDF_MAPIN
 "o",        IDF_3DOVER
 "O",        IDF_3DOVER
-"p",        IDF_PRINT
+"p",        IDF_PASSES
 "P",        IDF_PRINT
 "r",        IDF_OPEN
 "R",        IDF_OPEN
@@ -271,38 +273,39 @@ BEGIN
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,            140,200, 33, 14
 END
 
-SelectExtended DIALOG LOADONCALL MOVEABLE DISCARDABLE                                   11, 19, 200, 200
+SelectExtended DIALOG LOADONCALL MOVEABLE DISCARDABLE                                   11, 19, 220, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
     CONTROL "Extended Options", 3, "static", SS_CENTER | WS_CHILD,                           5,  5, 175, 8
-    CONTROL "Finite &Attractor", ID_FINITE, "button", BS_CHECKBOX | WS_CHILD,                5, 20, 130, 8
+    CONTROL "Finite &Attractor (0=NO, +n=YES, -n=PHASE)", 3, "static", SS_LEFT | WS_CHILD,   5, 20, 140, 8
+    CONTROL "", ID_FINITE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,            160, 20, 32, 12
     CONTROL "&Potential Max Color (0=OFF)", 3, "static", SS_LEFT | WS_CHILD,                 5, 32, 130, 8
-    CONTROL "", ID_POTENTMAX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         140, 32, 32, 12
+    CONTROL "", ID_POTENTMAX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         160, 32, 32, 12
     CONTROL "  &Slope", 3, "static", SS_LEFT | WS_CHILD,                                     5, 44, 130, 8
-    CONTROL "", ID_POTENTSLOPE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,       140, 44, 32, 12
+    CONTROL "", ID_POTENTSLOPE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,       160, 44, 60, 12
     CONTROL "  &Bailout", 3, "static", SS_LEFT | WS_CHILD,                                   5, 56, 130, 8
-    CONTROL "", ID_POTENTBAIL, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,        140, 56, 32, 12
-    CONTROL "  &16-bit Values", ID_POTENT16, "button", BS_CHECKBOX | WS_CHILD,               10,68, 125, 8
-    CONTROL "&Distance Estimator (0=OFF,<0=EDGE,>0=ON)", 3, "static", SS_LEFT | WS_CHILD,    5, 80, 130, 8
-    CONTROL "", ID_DISTEST, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           140, 80, 32, 12
+    CONTROL "", ID_POTENTBAIL, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,        160, 56, 32, 12
+    CONTROL "  &16-bit Values", ID_POTENT16, "button", BS_CHECKBOX | WS_CHILD,              10, 68, 125, 8
+    CONTROL "&Distance Estimator (0=OFF, -n=EDGE, +n=ON)", 3, "static", SS_LEFT | WS_CHILD,  5, 80, 150, 8
+    CONTROL "", ID_DISTEST, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           160, 80, 60, 12
     CONTROL "  &Width Factor", 3, "static", SS_LEFT | WS_CHILD,                              5, 92, 130, 8
-    CONTROL "", ID_DISTESTWID, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,        140, 92, 32, 12
+    CONTROL "", ID_DISTESTWID, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,        160, 92, 32, 12
     CONTROL "&Inversion Radius or 'AUTO' (0=OFF)", 3, "static", SS_LEFT | WS_CHILD,          5,104, 130, 8
-    CONTROL "", ID_INVERTRAD, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         140,104, 60, 12
+    CONTROL "", ID_INVERTRAD, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         160,104, 60, 12
     CONTROL "  Center &X coordinate or 'AUTO'", 3, "static", SS_LEFT | WS_CHILD,             5,116, 130, 8
-    CONTROL "", ID_INVERTX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           140,116, 60, 12
+    CONTROL "", ID_INVERTX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           160,116, 60, 12
     CONTROL "  Center &Y coordinate or 'AUTO'", 3, "static", SS_LEFT | WS_CHILD,             5,128, 130, 8
-    CONTROL "", ID_INVERTY, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           140,128, 60, 12
-    CONTROL "Color-Cycling &from (0..254)", 3, "static", SS_LEFT | WS_CHILD,                 5,140, 130, 8
-    CONTROL "", ID_COLORMIN, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          140,140, 32, 12
-    CONTROL "Color-Cycling &to (1..255)", 3, "static", SS_LEFT | WS_CHILD,                   5,152, 130, 8
-    CONTROL "", ID_COLORMAX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          140,152, 32, 12
-    CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_CHILD,                 40,180, 32, 14
-    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,           110,180, 32, 14
+    CONTROL "", ID_INVERTY, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,           160,128, 60, 12
+    CONTROL "Color-Cycling &from color (0..254)", 3, "static", SS_LEFT | WS_CHILD,           5,140, 130, 8
+    CONTROL "", ID_COLORMIN, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          160,140, 32, 12
+    CONTROL "Color-Cycling &to    color (1..255)", 3, "static", SS_LEFT | WS_CHILD,          5,152, 130, 8
+    CONTROL "", ID_COLORMAX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          160,152, 32, 12
+    CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_CHILD,                 50,180, 32, 14
+    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,           120,180, 32, 14
 END
 
-SelectSavePar DIALOG LOADONCALL MOVEABLE DISCARDABLE				       10,  18, 200, 170
+SelectSavePar DIALOG LOADONCALL MOVEABLE DISCARDABLE				       10,  18, 200, 200
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractint for Windows"
 BEGIN
@@ -315,17 +318,21 @@ BEGIN
     CONTROL "", ID_PCOM1, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90,  60, 100, 12
     CONTROL "Second Comment:", 3, "static", SS_LEFT | WS_CHILD,                         10,  77,  80,  8
     CONTROL "", ID_PCOM2, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90,  75, 100, 12
-    CONTROL "", 3, "static", SS_BLACKFRAME | WS_CHILD,                                   0,  90, 200, 20
-    CONTROL "Record Colors?", 3, "static", SS_LEFT | WS_CHILD,                          10,  97,  70,  8
-    CONTROL "&No", ID_PCOL1, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,          80,  95,  30, 12
-    CONTROL "&Yes", ID_PCOL2, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,        110,  95,  30, 12
-    CONTROL "&From File", ID_PCOL3, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,  140,  95,  40, 12
-    CONTROL "&Number of Colors:", 3, "static", SS_LEFT | WS_CHILD,                      10, 117,  80,  8
-    CONTROL "", ID_PCNUM, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90, 115,  50, 12
-    CONTROL "Palette &FileName:", 3, "static", SS_LEFT | WS_CHILD,                      10, 132,  80,  8
-    CONTROL "", ID_PCFILE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         90, 130, 100, 12
-    CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_CHILD,             50, 150,  24, 14
-    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,       140, 150,  24, 14
+    CONTROL "Third Comment:", 3, "static", SS_LEFT | WS_CHILD,                          10,  92,  80,  8
+    CONTROL "", ID_PCOM3, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90,  90, 100, 12
+    CONTROL "Fourth Comment:", 3, "static", SS_LEFT | WS_CHILD,                         10, 107,  80,  8
+    CONTROL "", ID_PCOM4, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90, 105, 100, 12
+    CONTROL "", 3, "static", SS_BLACKFRAME | WS_CHILD,                                   0, 120, 200, 20
+    CONTROL "Record Colors?", 3, "static", SS_LEFT | WS_CHILD,                          10, 127,  70,  8
+    CONTROL "&No", ID_PCOL1, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,          80, 125,  30, 12
+    CONTROL "&Yes", ID_PCOL2, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,        110, 125,  30, 12
+    CONTROL "&From File", ID_PCOL3, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,  140, 125,  40, 12
+    CONTROL "&Number of Colors:", 3, "static", SS_LEFT | WS_CHILD,                      10, 147,  80,  8
+    CONTROL "", ID_PCNUM, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,          90, 145,  50, 12
+    CONTROL "Palette &FileName:", 3, "static", SS_LEFT | WS_CHILD,                      10, 162,  80,  8
+    CONTROL "", ID_PCFILE, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,         90, 160, 100, 12
+    CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_CHILD,             50, 180,  24, 14
+    CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,       140, 180,  24, 14
 END
 
 SelectCycle DIALOG LOADONCALL MOVEABLE DISCARDABLE			       10, 18, 114, 135

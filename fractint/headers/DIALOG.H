@@ -130,6 +130,8 @@
 #define     ID_PENTRY      211
 #define     ID_PCOM1       212
 #define     ID_PCOM2       213
+#define     ID_PCOM3       214
+#define     ID_PCOM4       215
 #define     ID_PCOL1       221
 #define     ID_PCOL2       222
 #define     ID_PCOL3       223

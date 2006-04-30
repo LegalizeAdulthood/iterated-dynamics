@@ -735,6 +735,8 @@ extern int getprecbf(int);
 extern int getprecbf_mag(void);
 extern void parse_comments(char *value);
 extern void init_comments(void);
+extern void write_batch_parms(char *, int, int, int, int);
+extern void expand_comments(char far *, char far *);
 
 /*  miscres -- C file prototypes */
 

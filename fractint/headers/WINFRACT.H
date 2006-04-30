@@ -41,16 +41,20 @@
 
 #define     IDM_FRACTAL  171
 #define     IDM_FORMULA  172
-#define     IDM_IMAGE	 173
+#define     IDM_IMAGE    173
 #define     IDM_DOODADX  174
 #define     IDM_DOODADY  175
 #define     IDM_DOODADZ  176
-#define     IDM_CYCLE	 177
-#define     IDM_IFS3D	 178
+#define     IDM_CYCLE    177
+#define     IDM_IFS3D    178
 #define     IDM_STARFIELD  179
 #define     IDM_PIXELS   180
 #define     IDM_ORBITS   181
 #define     IDM_RESTART  182
+#define     IDM_PASSES   183
+#define     IDM_BROWSER  184
+#define     IDM_EVOLVER  185
+#define     IDM_MAINMENU 186
 
 #define     ID_GIF89A	113
 #define     ID_GIF87A	114
@@ -98,7 +102,11 @@
 #define     IDF_HOTCYCLERSTEP  526
 #define     IDF_IFS3D          527
 #define     IDF_STARFIELD      528
-#define     IDF_RESTART        529 
+#define     IDF_RESTART        529
+#define     IDF_PASSES         530
+#define     IDF_BROWSER        531
+#define     IDF_EVOLVER        532
+#define     IDF_MAINMENU       533
 
 /* Math Tools */
 #define     IDM_MATH_TOOLS    1001

@@ -713,34 +713,24 @@ LPARAM lParam;
 {
    char temp[80];
    int i;
-#if 0
-   extern        int        finattract;        /* finite attractor switch */
-   extern        double        potparam[3];        /* three potential parameters*/
-   extern        int        pot16bit;
-   extern        int        usr_distest;        /* distance estimator option */
-   extern        int        distestwidth;
-   extern        int        rotate_lo,rotate_hi;
-#endif
+
     switch (message) {
 
         case WM_INITDIALOG:
-            if (finattract)
-                win_temp1 = 1;
-            else
-                win_temp1 = 0;
-            CheckDlgButton(hDlg, ID_FINITE, win_temp1);
-            sprintf(temp,"%f",potparam[0]);
+            sprintf(temp,"%i",finattract);
+            SetDlgItemText(hDlg, ID_FINITE, temp);
+            sprintf(temp,"%i",(int)potparam[0]);
             SetDlgItemText(hDlg, ID_POTENTMAX, temp);
-            sprintf(temp,"%f",potparam[1]);
+            sprintf(temp,"%.12f",potparam[1]);
             SetDlgItemText(hDlg, ID_POTENTSLOPE, temp);
-            sprintf(temp,"%f",potparam[2]);
+            sprintf(temp,"%i",(int)potparam[2]);
             SetDlgItemText(hDlg, ID_POTENTBAIL, temp);
             if (pot16bit)
                 win_temp2 = 1;
             else
                 win_temp2 = 0;
             CheckDlgButton(hDlg, ID_POTENT16, win_temp2);
-            sprintf(temp,"%i",usr_distest);
+            sprintf(temp,"%ld",usr_distest);
             SetDlgItemText(hDlg, ID_DISTEST, temp);
             sprintf(temp,"%i",distestwidth);
             SetDlgItemText(hDlg, ID_DISTESTWID, temp);
@@ -755,7 +745,7 @@ LPARAM lParam;
             SetDlgItemText(hDlg, ID_COLORMIN, temp);
             sprintf(temp,"%i",rotate_hi);
             SetDlgItemText(hDlg, ID_COLORMAX, temp);
-            win_oldprompts[0] = win_temp1;
+            win_oldprompts[0] = finattract;
             win_oldprompts[1] = potparam[0];
             win_oldprompts[2] = potparam[1];
             win_oldprompts[3] = potparam[2];
@@ -772,7 +762,8 @@ LPARAM lParam;
 
                 case IDOK:
                     /* retrieve and validate the results */
-                    finattract = win_temp1;
+                    GetDlgItemText(hDlg, ID_FINITE, temp, 10);
+                    finattract = atoi(temp);
                     GetDlgItemText(hDlg, ID_POTENTMAX, temp, 10);
                     potparam[0] = atof(temp);
                     GetDlgItemText(hDlg, ID_POTENTSLOPE, temp, 10);
@@ -780,8 +771,8 @@ LPARAM lParam;
                     GetDlgItemText(hDlg, ID_POTENTBAIL, temp, 10);
                     potparam[2] = atof(temp);
                     pot16bit = win_temp2;
-                    GetDlgItemText(hDlg, ID_DISTEST, temp, 10);
-                    usr_distest = atoi(temp);
+                    GetDlgItemText(hDlg, ID_DISTEST, temp, 11);
+                    usr_distest = atol(temp);
                     GetDlgItemText(hDlg, ID_DISTESTWID, temp, 10);
                     distestwidth = atoi(temp);
                     for (i = 0; i < 3; i++) {
@@ -802,7 +793,7 @@ LPARAM lParam;
                         }
                     time_to_restart = 0;
                     if (
-                        win_oldprompts[0] != win_temp1   ||
+                        win_oldprompts[0] != finattract   ||
                         win_oldprompts[1] != potparam[0]  ||
                         win_oldprompts[2] != potparam[1]  ||
                         win_oldprompts[3] != potparam[2]  ||
@@ -820,14 +811,6 @@ LPARAM lParam;
                     EndDialog(hDlg, 0);
                     break;
 
-                case ID_FINITE:
-                    if (win_temp1 == 0)
-                        win_temp1 = 1;
-                    else
-                        win_temp1 = 0;
-                    CheckDlgButton(hDlg, ID_FINITE, win_temp1);
-                    break;
-
                 case ID_POTENT16:
                     if (win_temp2 == 0)
                         win_temp2 = 1;
@@ -842,6 +825,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
+extern char far par_comment[4][MAXCMT];
 
 BOOL CALLBACK SelectSavePar(hDlg, message, wParam, lParam)
 HWND hDlg;
@@ -850,6 +834,7 @@ WPARAM wParam;
 LPARAM lParam;
 {
    char temp[80];
+   int i;
    extern int  colorstate;         /* comments in cmdfiles */
    extern char CommandFile[];
    extern char CommandName[];
@@ -866,22 +851,30 @@ LPARAM lParam;
                 win_temp1 = 1;
             if (colorstate == 2)
                 win_temp1 = 2;
-            win_ltemp2 = colors - 1;
-            if (maxiter < win_ltemp2) win_ltemp2 = maxiter;
-            if (inside  > 0 && inside    > win_ltemp2) win_ltemp2 = inside;
-            if (outside > 0 && outside   > win_ltemp2) win_ltemp2 = outside;
-            if (usr_distest < 0 && 0-usr_distest > win_ltemp2) win_ltemp2 = 0-usr_distest;
-            if (decomp[0] > win_ltemp2) win_ltemp2 = decomp[0] - 1;
-            if (potflag && potparam[0] >= win_ltemp2) win_ltemp2 = (long)potparam[0];
-            if (++win_ltemp2 > 256) win_ltemp2 = 256;
+
+            win_temp2 = colors - 1;
+/*            if (maxiter < win_temp2) win_temp2 = maxiter; */
+            if (inside  > 0 && inside    > win_temp2) win_temp2 = inside;
+            if (outside > 0 && outside   > win_temp2) win_temp2 = outside;
+            if (distest < 0 && 0-distest > win_temp2) win_temp2 = (int)(0-distest);
+            if (decomp[0] > win_temp2) win_temp2 = decomp[0] - 1;
+            if (potflag && potparam[0] >= win_temp2) win_temp2 = (int)potparam[0];
+            if (++win_temp2 > 256) win_temp2 = 256;
+
             SetDlgItemText(hDlg, ID_PFILE, CommandFile);
             SetDlgItemText(hDlg, ID_PENTRY, CommandName);
+            for(i=0;i<4;i++)
+            {
+                expand_comments(CommandComment[i], par_comment[i]);
+            }
             if (CommandName[0] == 0)
                 SetDlgItemText(hDlg, ID_PENTRY, "test");
             SetDlgItemText(hDlg, ID_PCOM1, CommandComment[0]);
             SetDlgItemText(hDlg, ID_PCOM2, CommandComment[1]);
+            SetDlgItemText(hDlg, ID_PCOM3, CommandComment[2]);
+            SetDlgItemText(hDlg, ID_PCOM4, CommandComment[3]);
             CheckDlgButton(hDlg, ID_PCOL1+win_temp1, 1);
-            sprintf(temp,"%i",win_ltemp2);
+            sprintf(temp,"%i",win_temp2);
             SetDlgItemText(hDlg, ID_PCNUM, temp);
             if (colorstate == 2)
                 SetDlgItemText(hDlg, ID_PCFILE, colorfile);
@@ -896,6 +889,10 @@ LPARAM lParam;
                     GetDlgItemText(hDlg, ID_PENTRY, CommandName,    50);
                     GetDlgItemText(hDlg, ID_PCOM1, CommandComment[0], 57);
                     GetDlgItemText(hDlg, ID_PCOM2, CommandComment[1], 57);
+                    GetDlgItemText(hDlg, ID_PCOM3, CommandComment[2], 57);
+                    GetDlgItemText(hDlg, ID_PCOM4, CommandComment[3], 57);
+                    GetDlgItemText(hDlg, ID_PCNUM, temp, 10);
+                    win_temp2 = atoi(temp);
                     GetDlgItemText(hDlg, ID_PCFILE, colorfile,      50);
                     EndDialog(hDlg, 1);
                     break;

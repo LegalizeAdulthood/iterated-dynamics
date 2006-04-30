@@ -268,6 +268,30 @@ BOOL InitInstance(hInstance, nCmdShow)
     unsigned int version;
     int iLoop;
 
+    autobrowse     = FALSE;
+    brwschecktype  = TRUE;
+    brwscheckparms = TRUE;
+    doublecaution  = TRUE;
+    no_sub_images = FALSE;
+    toosmall = 6;
+    minbox   = 3;
+    strcpy(browsemask,"*.gif");
+    strcpy(browsename,"            ");
+    name_stack_ptr= -1; /* init loaded files stack */
+
+    evolving = FALSE;
+    paramrangex = 4;
+    opx = newopx = -2.0;
+    paramrangey = 3;
+    opy = newopy = -1.5;
+    odpx = odpy = 0;
+    gridsz = 9;
+    fiddlefactor = 1;
+    fiddle_reduction = 1.0;
+    this_gen_rseed = (unsigned int)clock_ticks();
+    srand(this_gen_rseed);
+    initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
+
     /* so, what kind of a computer are we on, anyway? */
     WinFlags = GetWinFlags();
     cpu = 88;                             /* determine the CPU type */
@@ -1164,6 +1188,14 @@ GlobalExit:
                 case IDM_ZOOMIN:
                 case IDM_ZOOMOUT:
                 case IDM_ZOOM:
+                case IDF_PASSES:
+                case IDM_PASSES:
+                case IDF_BROWSER:
+                case IDM_BROWSER:
+                case IDF_EVOLVER:
+                case IDM_EVOLVER:
+                case IDM_MAINMENU:
+                case IDF_MAINMENU:
                     win_kill_all_zooming();
                     time_to_cycle = 0;
                     SecondaryhWnd = hWnd;
@@ -1625,6 +1657,18 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                 case IDF_DOODADZ:
                     if (!winfract_menustyle)   /* Windows menus */
                         goto winfract_zmenu;   /* for now */
+                case IDF_PASSES:
+                    if (!winfract_menustyle)   /* Windows menus */
+                        goto winfract_pmenu;   /* for now */
+                case IDF_BROWSER:
+                    if (!winfract_menustyle)   /* Windows menus */
+                        goto winfract_bmenu;   /* for now */
+                case IDF_EVOLVER:
+                    if (!winfract_menustyle)   /* Windows menus */
+                        goto winfract_emenu;   /* for now */
+                case IDF_MAINMENU:
+                    if (!winfract_menustyle)   /* Windows menus */
+                        goto winfract_mmenu;   /* for now */
 
                     if (winfract_menustyle) {        /* fractint prompts */
                         win_kill_all_zooming();
@@ -1637,6 +1681,14 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                             i = get_toggles2();
                         else if (wParam == IDF_DOODADZ || wParam == IDM_DOODADZ)
                             i = get_fract_params(1);
+                        else if (wParam == IDF_PASSES || wParam == IDM_PASSES)
+                            i = passes_options();
+                        else if (wParam == IDF_BROWSER || wParam == IDM_BROWSER)
+                            i = get_browse_params();
+                        else if (wParam == IDF_EVOLVER || wParam == IDM_EVOLVER)
+                            i = get_evolve_Parms();
+                        else if (wParam == IDF_MAINMENU || wParam == IDM_MAINMENU)
+                            i = get_evolve_Parms(); /* want to use main_menu(1) */
                         else {
                             i = get_commands();
                             if (xx3rd != xxmin || yy3rd != yymin)
@@ -1700,6 +1752,22 @@ winfract_zmenu:
                         time_to_cycle = 0;
                         calc_status = 0;
                         }
+                  break;
+
+                case IDM_PASSES:
+winfract_pmenu:
+                  break;
+
+                case IDM_BROWSER:
+winfract_bmenu:
+                  break;
+
+                case IDM_EVOLVER:
+winfract_emenu:
+                  break;
+
+                case IDM_MAINMENU:
+winfract_mmenu:
                   break;
 
                 case IDF_IFS3D:
