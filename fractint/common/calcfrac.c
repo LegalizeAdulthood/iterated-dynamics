@@ -874,6 +874,8 @@ static void perform_worklist()
       stdcalcmode = '1';
    if (stdcalcmode == 'g' && (curfractalspecific->flags & NOGUESS))
       stdcalcmode = '1';
+   if (stdcalcmode == 'o' && (curfractalspecific->calctype != StandardFractal))
+      stdcalcmode = '1';
 
    /* default setup a new worklist */
    num_worklist = 1;
