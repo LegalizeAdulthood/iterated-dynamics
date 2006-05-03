@@ -892,7 +892,6 @@ extern short    skipxdots,skipydots;        /* for decoder, when reducing image 
 
 int get_video_mode(struct fractal_info *info,struct ext_blk_3 *dummy)
 {
-// this may need to be fixed to read the ext_blk_3 information JCO
    viewwindow = viewxdots = viewydots = 0;
    fileaspectratio = (float)(0.75);
    skipxdots = skipydots = 0;
@@ -1187,12 +1186,12 @@ struct videoinfo far videotable[1];
 
 void vidmode_keyname(int num, char *string)
 {
-    strcpy(string,"    ");  // fill in a blank videomode name
+    strcpy(string,"    ");  /* fill in a blank videomode name */
 }
 
 int check_vidmode_keyname(char *dummy)
 {
-    return(1);  // yeah, sure - that;s a good videomode name.
+    return(1);  /* yeah, sure - that's a good videomode name. */
 }
 
 int check_vidmode_key(int dummy1, int dummy2)
@@ -1200,5 +1199,5 @@ int check_vidmode_key(int dummy1, int dummy2)
     /* fill in a videomode structure that looks just like the current image */
     videotable[0].xdots = xdots;
     videotable[0].ydots = ydots;
-    return 0;  // yeah, sure - that's a good key.
+    return 0;  /* yeah, sure - that's a good key. */
 }

@@ -754,6 +754,7 @@ LPARAM lParam;
                case SB_LINEUP:         xposition -= 1; break;
                case SB_PAGEDOWN:       xposition += 10; break;
                case SB_PAGEUP:         xposition -= 10; break;
+               case SB_THUMBTRACK:
                case SB_THUMBPOSITION:  xposition = LOWORD(lParam);
                default:                break;
                }
@@ -772,6 +773,7 @@ LPARAM lParam;
                case SB_LINEUP:         yposition -= 1; break;
                case SB_PAGEDOWN:       yposition += 10; break;
                case SB_PAGEUP:         yposition -= 10; break;
+               case SB_THUMBTRACK:
                case SB_THUMBPOSITION:  yposition = LOWORD(lParam);
                default:                break;
                }
@@ -954,8 +956,7 @@ LPARAM lParam;
                  return FALSE;
 
         case WM_PALETTECHANGED:
-// next line makes no sense JCO
-//            if (wParam != hWnd){
+            if (wParam != hWnd){
                 if (last_written_y >= 0) {
                     hDC = GetDC (hWnd);
                     SelectPalette (hDC, hPal, 0);
@@ -966,7 +967,7 @@ LPARAM lParam;
                         InvalidateRect (hWnd, (LPRECT) (NULL), 1);
                     ReleaseDC (hWnd, hDC);
                     }
-//                }
+                }
             break;
 
         case WM_COMMAND:
