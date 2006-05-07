@@ -956,7 +956,7 @@ LPARAM lParam;
                  return FALSE;
 
         case WM_PALETTECHANGED:
-            if (wParam != hWnd){
+            if (wParam != (WPARAM)hWnd){
                 if (last_written_y >= 0) {
                     hDC = GetDC (hWnd);
                     SelectPalette (hDC, hPal, 0);

@@ -29,6 +29,14 @@
 #define     ID_FRACXMAX    222
 #define     ID_FRACYMIN    223
 #define     ID_FRACYMAX    224
+#define     ID_BAILOUTEST  230
+#define     ID_BAILOUTESTMOD   231
+#define     ID_BAILOUTESTREAL  232
+#define     ID_BAILOUTESTIMAG  233
+#define     ID_BAILOUTESTOR    234
+#define     ID_BAILOUTESTAND   235
+#define     ID_BAILOUTESTMANH  236
+#define     ID_BAILOUTESTMANR  237
 
 /* window sizing stuff */
 

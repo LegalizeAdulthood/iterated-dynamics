@@ -159,26 +159,36 @@ BEGIN
     CONTROL "&Cancel" IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,      95, 75, 45, 14
 END
 
-SelectFracParams DIALOG LOADONCALL MOVEABLE DISCARDABLE 			     14,   21, 210, 230
+SelectFracParams DIALOG LOADONCALL MOVEABLE DISCARDABLE 			     14,   21, 230, 230
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "Fractal Parameters"
 BEGIN
     CONTROL "", ID_FRACNAME, "static", SS_CENTER | WS_CHILD,                             20,  10, 150,  8
     CONTROL "Formula Parameters:", 3, "static", SS_LEFT | WS_CHILD,                      60,  20,  80,  8
-    CONTROL "", ID_FRACPARTX1, "static", SS_LEFT | WS_CHILD,                             10,  40, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM1, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  40,  60, 12
-    CONTROL "", ID_FRACPARTX2, "static", SS_LEFT | WS_CHILD,                             10,  55, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM2, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  55,  60, 12
-    CONTROL "", ID_FRACPARTX3, "static", SS_LEFT | WS_CHILD,                             10,  70, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM3, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  70,  60, 12
-    CONTROL "", ID_FRACPARTX4, "static", SS_LEFT | WS_CHILD,                             10,  85, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM4, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  85,  60, 12
-    CONTROL "", ID_FRACPARTX5, "static", SS_LEFT | WS_CHILD,                             10, 100, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM5, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130, 100,  60, 12
-    CONTROL "", ID_FRACPARTX6, "static", SS_LEFT | WS_CHILD,                             10, 115, 120,  8
-    CONTROL  "0.0", ID_FRACPARAM6, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130, 115,  60, 12
-    CONTROL "&Bailout Value (0 means use default)", 3,"static", SS_LEFT | WS_CHILD,      10, 140, 120,  8
-    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 140,  44, 12
+    CONTROL "", ID_FRACPARTX1, "static", SS_LEFT | WS_CHILD,                             10,  35, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM1, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  35,  60, 12
+    CONTROL "", ID_FRACPARTX2, "static", SS_LEFT | WS_CHILD,                             10,  50, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM2, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  50,  60, 12
+    CONTROL "", ID_FRACPARTX3, "static", SS_LEFT | WS_CHILD,                             10,  65, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM3, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  65,  60, 12
+    CONTROL "", ID_FRACPARTX4, "static", SS_LEFT | WS_CHILD,                             10,  80, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM4, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  80,  60, 12
+    CONTROL "", ID_FRACPARTX5, "static", SS_LEFT | WS_CHILD,                             10,  95, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM5, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130,  95,  60, 12
+    CONTROL "", ID_FRACPARTX6, "static", SS_LEFT | WS_CHILD,                             10, 110, 120,  8
+    CONTROL  "0.0", ID_FRACPARAM6, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD, 130, 110,  60, 12
+    CONTROL "",     ID_BAILOUTEST,  "button", BS_GROUPBOX | WS_TABSTOP | WS_CHILD,         0, 125, 230, 18
+    CONTROL "Bailout Test:",  3, "static", SS_LEFT | WS_CHILD,                             5, 132,  45, 10
+    CONTROL "&MOD",  ID_BAILOUTESTMOD, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,  50, 130,  25, 12
+    CONTROL "&REAL", ID_BAILOUTESTREAL, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD, 75, 130,  25, 12
+    CONTROL "&IMAG", ID_BAILOUTESTIMAG, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,100, 130,  25, 12
+    CONTROL "&AND",  ID_BAILOUTESTAND, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD, 125, 130,  25, 12
+    CONTROL "&OR",   ID_BAILOUTESTOR, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,  150, 130,  20, 12
+    CONTROL "&MANH", ID_BAILOUTESTMANH, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,170, 130,  30, 12
+    CONTROL "&MANR", ID_BAILOUTESTMANR, "button", BS_RADIOBUTTON | WS_TABSTOP | WS_CHILD,200, 130,  29, 12
+    CONTROL "&Bailout Value (0 means use default)", 3,"static", SS_LEFT | WS_CHILD,      10, 145, 120,  8
+    CONTROL  "0.0", ID_BAILOUT, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    130, 145,  44, 12
+
     CONTROL "Image Corner values", 3, "static", SS_LEFT | WS_CHILD,                      60, 160,  73,  8
     CONTROL "&Xmin", 3, "static", SS_LEFT | WS_CHILD,                                    15, 175,  20,  8
     CONTROL "-2.5", ID_FRACXMIN, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,    40, 175,  60, 12
@@ -190,7 +200,7 @@ BEGIN
     CONTROL  "1.5", ID_FRACYMAX, "edit", ES_LEFT | WS_BORDER | WS_TABSTOP | WS_CHILD,   130, 190,  60, 12
     CONTROL "OK", IDOK, "button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_CHILD,              40, 210,  31, 14
     CONTROL "Cancel", IDCANCEL, "button", BS_PUSHBUTTON | WS_TABSTOP | WS_CHILD,        110, 210,  32, 14
-    CONTROL "Text", 3, "static", SS_BLACKFRAME | WS_CHILD,                                0,  30, 210,100
+    CONTROL "Text", 3, "static", SS_BLACKFRAME | WS_CHILD,                                0,  30, 230, 95
 END
 
 SelectImage DIALOG LOADONCALL MOVEABLE DISCARDABLE				      10,  18, 200, 150

@@ -319,6 +319,7 @@ LPARAM lParam;
                                     temp);
                                 }
                     }
+                CheckDlgButton(hDlg, ID_BAILOUTESTMOD+bailoutest,1);
                 oldbailout = bailout;
                 sprintf(temp,"%ld",bailout);
                 SetDlgItemText(hDlg, ID_BAILOUT,   temp);
@@ -371,6 +372,7 @@ LPARAM lParam;
                         GetDlgItemText(hDlg, paramv[i+numparams+numtrig], temp, 20);
                         param[i+4] = atof(temp);
                         }
+                    setbailoutformula(bailoutest);
                     GetDlgItemText(hDlg, ID_BAILOUT   , temp, 11);
                     bailout = atol(temp);
                     if (bailout != 0 && (bailout < 1 || bailout > 2100000000L))
@@ -389,6 +391,16 @@ LPARAM lParam;
                     EndDialog(hDlg, 1);
                     break;
 
+                case ID_BAILOUTESTMOD:
+                case ID_BAILOUTESTREAL:
+                case ID_BAILOUTESTIMAG:
+                case ID_BAILOUTESTOR:
+                case ID_BAILOUTESTAND:
+                case ID_BAILOUTESTMANH:
+                case ID_BAILOUTESTMANR:
+                    bailoutest = wParam - ID_BAILOUTESTMOD;
+                    CheckRadioButton(hDlg, ID_BAILOUTESTMOD, ID_BAILOUTESTMANR, wParam);
+                    break;
 
                 case IDCANCEL:
                     EndDialog(hDlg, 0);
