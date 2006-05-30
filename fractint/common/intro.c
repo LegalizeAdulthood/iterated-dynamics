@@ -57,7 +57,7 @@ void intro(void)
    authors[j+1] = i;
 
    helptitle();
-#define END_MAIN_AUTHOR 11
+#define END_MAIN_AUTHOR 5
    toprow = END_MAIN_AUTHOR+1;
 #ifndef XFRACT
    botrow = 21;

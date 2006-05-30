@@ -171,6 +171,7 @@ MOREPARAMS moreparams[] =
     {FORMULA  ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
     {FFORMULA ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
     {ANT              ,{ "+Wrap?",s_randomseed,ES,ES,ES,ES},{1,0,0,0,0,0}},
+    {MANDELBROTMIX4   ,{ p3real,p3imag,        ES,ES,ES,ES},{0,0,0,0,0,0}},
     {-1               ,{ NULL,NULL,NULL,NULL,NULL,NULL    },{0,0,0,0,0,0}}
 };
 
@@ -179,8 +180,14 @@ MOREPARAMS moreparams[] =
    |-----|----|--------------|--------------|--------------| */
 struct alternatemathstuff far alternatemath[] =
 {
+#define USEBN
+#ifdef USEBN
    {JULIAFP, 1,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
    {MANDELFP,1,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
+#else
+   {JULIAFP, 2,JuliabfFractal,juliabf_per_pixel,  MandelbfSetup},
+   {MANDELFP,2,JuliabfFractal,mandelbf_per_pixel, MandelbfSetup},
+#endif
 /*
 NOTE: The default precision for bf_math=BIGNUM is not high enough
       for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
@@ -2284,6 +2291,17 @@ struct fractalspecificstuff far fractalspecific[]=
       0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
       (VF)latoofloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
       NOBAILOUT
+   },
+
+   {
+   "mandelbrotmix4",
+      {p1real, p1imag, p2real, p2imag},
+      {0.05, 3, -1.5, -2},
+      HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, WINFRAC+BAILTEST+TRIG1+MORE,
+      (float)-2.5, (float)1.5, (float)-1.5, (float)1.5,
+      0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+      MandelbrotMix4fpFractal, mandelbrotmix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
+      STDBAILOUT
    },
 
    {

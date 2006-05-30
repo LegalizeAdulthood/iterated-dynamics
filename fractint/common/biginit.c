@@ -131,7 +131,7 @@ static void init_bf_2(void)
     bignum_seg = (_segment)extraseg;
 #endif
     /* at present time one call would suffice, but this logic allows
-       mulytiple kinds of alternate math eg long double */
+       multiple kinds of alternate math eg long double */
     if((i = find_alternate_math(fractype, BIGNUM)) > -1)
        bf_math = alternatemath[i].math;
     else if((i = find_alternate_math(fractype, BIGFLT)) > -1)

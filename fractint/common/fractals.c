@@ -49,40 +49,11 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "externs.h"
 
 
 #define NEWTONDEGREELIMIT  100
-#if 0 /* why are these macros here? They are also in mpmath.h */
-#define CMPLXsqr_old(out)       \
-   (out).y = (old.x+old.x) * old.y;\
-   (out).x = tempsqrx - tempsqry
 
-#define CMPLXpwr(arg1,arg2,out)   (out)= ComplexPower((arg1), (arg2))
-#define CMPLXmult1(arg1,arg2,out)    Arg2->d = (arg1); Arg1->d = (arg2);\
-         dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
-
-#define CMPLXmult(arg1,arg2,out)  \
-        {\
-           _CMPLX TmP;\
-           TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;\
-           TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
-           (out) = TmP;\
-         }
-
-#define CMPLXadd(arg1,arg2,out)    \
-    (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define CMPLXsub(arg1,arg2,out)    \
-    (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
-#define CMPLXtimesreal(arg,real,out)   \
-    (out).x = (arg).x*(real);\
-    (out).y = (arg).y*(real)
-
-#define CMPLXrecip(arg,out)    \
-   { double denom; denom = sqr((arg).x) + sqr((arg).y);\
-     if(denom==0.0) {(out).x = 1.0e10;(out).y = 1.0e10;}else\
-    { (out).x =  (arg).x/denom;\
-     (out).y = -(arg).y/denom;}}
-#endif
 _LCMPLX lcoefficient,lold,lnew,lparm, linit,ltmp,ltmp2,lparm2;
 long ltempsqrx,ltempsqry;
 int maxcolor;
@@ -3341,6 +3312,124 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
       return 1;
    }
 }
+
+/* re-use static roots variable
+   memory for mandelmix4 */
+
+#define A staticroots[ 0]
+#define B staticroots[ 1]
+#define C staticroots[ 2]
+#define D staticroots[ 3]
+#define F staticroots[ 4]
+#define G staticroots[ 5]
+#define H staticroots[ 6]
+#define J staticroots[ 7]
+#define K staticroots[ 8]
+#define L staticroots[ 9]
+#define Z staticroots[10]
+
+int Mandelbrotmix4Setup(void)
+{
+   int sign_array = 0;
+   A.x=param[0];       A.y=0.0;    /* a=real(p1),     */
+   B.x=param[1];       B.y=0.0;    /* b=imag(p1),     */
+   D.x=param[2];       D.y=0.0;    /* d=real(p2),     */
+   F.x=param[3];       F.y=0.0;    /* f=imag(p2),     */
+   K.x=param[4]+1.0;   K.y=0.0;    /* k=real(p3)+1,   */
+   L.x=param[5]+100.0; L.y=0.0;    /* l=imag(p3)+100, */
+   CMPLXrecip(F,G);                /* g=1/f,          */
+   CMPLXrecip(D,H);                /* h=1/d,          */
+   CMPLXsub(F,B,tmp);              /* tmp = f-b       */
+   CMPLXrecip(tmp,J);              /* j = 1/(f-b)     */
+   CMPLXneg(A,tmp);
+   CMPLXmult(tmp,B,tmp);           /* z=(-a*b*g*h)^j, */
+   CMPLXmult(tmp,G,tmp);
+   CMPLXmult(tmp,H,tmp);
+
+   /*
+      This code kludge attempts to duplicate the behavior
+      of the parser in determining the sign of zero of the
+      imaginary part of the argument of the power function. The
+      reason this is important is that the complex arctangent
+      returns PI in one case and -PI in the other, depending
+      on the sign bit of zero, and we wish the results to be
+      compatible with Jim Muth's mix4 formula using the parser.
+
+      First create a number encoding the signs of a, b, g , h. Our
+      kludge assumes that those signs determine the behavior.
+    */
+   if(A.x < 0.0) sign_array += 8;
+   if(B.x < 0.0) sign_array += 4;
+   if(G.x < 0.0) sign_array += 2;
+   if(H.x < 0.0) sign_array += 1;
+   if(tmp.y == 0.0) /* we know tmp.y IS zero but ... */
+   {
+      switch(sign_array)
+      {
+         /*
+            Add to this list the magic numbers of any cases
+            in which the fractal does not match the formula version
+          */
+         case 15: /* 1111 */
+         case 10: /* 1010 */
+         case  6: /* 0110 */
+         case  5: /* 0101 */
+         case  3: /* 0011 */
+         case  0: /* 0000 */
+            tmp.y = -tmp.y; /* swap sign bit */
+         default: /* do nothing - remaining cases already OK */
+             ;
+      }
+      /* in case our kludge failed, let the user fix it */
+      if(debugflag == 1012)  tmp.y = -tmp.y;
+   }
+
+   CMPLXpwr(tmp,J,tmp);   /* note: z is old */
+   /* in case our kludge failed, let the user fix it */
+   if(param[6] < 0.0) tmp.y = -tmp.y;
+
+   if(bailout == 0)
+   {
+      rqlim = L.x;
+      rqlim2 = rqlim*rqlim;
+   }
+   return(1);
+}
+
+int Mandelbrotmix4fp_per_pixel(void)
+{
+   if(invert)
+      invertz2(&init);
+   else {
+      init.x = dxpixel();
+      init.y = dypixel();
+   }
+   old = tmp;
+   CMPLXtrig0(init,C);        /* c=fn1(pixel): */
+   return(0); /* 1st iteration has been NOT been done */
+}
+
+int
+MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
+{
+   /* z=k*((a*(z^b))+(d*(z^f)))+c, */
+   _CMPLX z_b, z_f;
+   CMPLXpwr(old,B,z_b);     /* (z^b)     */
+   CMPLXpwr(old,F,z_f);     /* (z^f)     */
+   new.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
+   new.y = K.x*A.x*z_b.y + K.x*D.x*z_f.y + C.y;
+   return(floatbailout());
+}
+#undef A
+#undef B
+#undef C
+#undef D
+#undef F
+#undef G
+#undef H
+#undef J
+#undef K
+#undef L
 
 /*
  * The following functions calculate the real and imaginary complex
