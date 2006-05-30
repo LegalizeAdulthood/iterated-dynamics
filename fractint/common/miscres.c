@@ -724,7 +724,7 @@ static FCODE sxmag[] =             {"X-Mag-Factor"};
 static FCODE srot[] =              {"Rotation"};
 static FCODE sskew[] =             {"Skew"};
 static FCODE sparams[] =           {"Params "};
-static FCODE siteration_maximum[] ={"Iteration maximum: "};
+static FCODE siteration_maximum[] ={"Current (Max) Iteration: "};
 static FCODE seffective_bailout[] ={"     Effective bailout: "};
 static FCODE scurrent_rseed[] =    {"Current 'rseed': "};
 static FCODE sinversion_radius[] = {"Inversion radius: "};
@@ -1234,7 +1234,7 @@ top:
       }
    }
    putstring(s_row+=2,2,C_GENERAL_MED,siteration_maximum);
-   sprintf(msg,"%ld",maxit);
+   sprintf(msg,"%ld (%ld)",coloriter,maxit);
    putstring(-1,-1,C_GENERAL_HI,msg);
    putstring(-1,-1,C_GENERAL_MED,seffective_bailout);
    sprintf(msg,"%f",rqlim);
