@@ -200,4 +200,6 @@ if(denom==0L) overflow=1; else {(out).x = divide((arg).x,denom,bitshift);\
     { (out).x =  (arg).x/denom;\
      (out).y = -(arg).y/denom;}}
 
+#define CMPLXneg(arg,out)  (out).x = -(arg).x; (out).y = -(arg).y
+
 #endif
