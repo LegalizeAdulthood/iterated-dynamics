@@ -46,6 +46,7 @@ timer.
 910     miscovl.c       disables Sylvie Gallet's colors= color compression fix.
 920     miscovl.c       makes colors= compression lossless.
 1010	fractals.c	force fp for newton & newtbasin (no mpc math)
+1012	fractals.c	swap sign bit of zero for mandelbrotmix4
 1234	fractint.c	force larger integer arithmetic bitshift value
 2222	line3d.c	show amount of extra seg memory used
 2224	line3d.c	old just-the-dots logic, probably a temporary thing
