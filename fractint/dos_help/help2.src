@@ -515,7 +515,16 @@ SUMMARY OF FRACTAL TYPES
          z(n+1) = fn2(z(n)) + c.
     Five parameters: real, imaginary portions of p1, shift value,
                      fn1 and fn2.
-
+                     
+{=HT_MANDELBROTMIX4 mandelbrotmix4}
+~Label=HF_MANDELBROTMIX4
+    From a Jim Muth favorite FOTD formula
+      a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+      z=k*((a*(z^b))+(d*(z^f)))+c
+    Parameters: see above, sixth parameter used for bailout
+    
 {=HT_MANDELCLOUD mandelcloud}
 ~Label=HF_MANDELCLOUD
     Displays orbits of Mandelbrot set:
@@ -529,14 +538,14 @@ SUMMARY OF FRACTAL TYPES
       z(0) = c = pixel;
       z(n+1) = z(n)^4 + c.
     Parameters: real & imaginary perturbations of z(0)
-
+    
+~OnlineFF
 {=HT_MANDFN mandelfn}
 ~Label=HF_MANDFN
       z(0) = c = pixel;
       z(n+1) = c*fn(z(n)).
     Parameters: real & imaginary perturbations of z(0), and fn
-
-~OnlineFF
+    
 {=HT_FNORFN manlam(fn||fn)}
 ~Label=HF_MANLAMFNFN
       c = pixel;
@@ -553,14 +562,14 @@ SUMMARY OF FRACTAL TYPES
       x(n+1) = y(n) - sin(x(n))
       y(n+1) = a - x(n)
     Parameter is a (try a value near pi)
-
+    
+~OnlineFF
 {=HT_MLAMBDA mandellambda}
 ~Label=HF_MLAMBDA
       z(0) = .5; lambda = pixel;
       z(n+1) = lambda*z(n)*(1 - z(n)).
     Parameters: real & imaginary perturbations of z(0)
 
-~OnlineFF
 {=HT_PHOENIX mandphoenix}
 ~Label=HF_MANDPHOENIX
     z(0) = c = pixel, y(0) = 0;
@@ -573,7 +582,8 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = z(n)^|degree| + c.x*z(n)^(|degree|-2) + c.y*y(n)
       y(n+1) = z(n)
     Three parameters: real & imaginary perturbations of z(0), and degree.
-
+    
+~OnlineFF
 {=HT_PHOENIX mandphoenixclx}
 ~Label=HF_MANDPHOENIXCPLX
     z(0) = c = pixel, y(0) = 0;
@@ -607,14 +617,14 @@ SUMMARY OF FRACTAL TYPES
       z1(n+1) = z(n);
     Parameters: real & imaginary perturbations of z(0)
 
-~OnlineFF
 {=HT_SCOTSKIN manowarj}
 ~Label=HF_MANOWARJ
       z1(0) = z(0) = pixel;
       z(n+1) = z(n)^2 + z1(n) + c;
       z1(n+1) = z(n);
     Parameters: real & imaginary parts of c
-
+    
+~OnlineFF
 {=HT_PICKMJ manzpower}
 ~Label=HF_MANZPOWER
     'Mandelbrot-Equivalent' for julzpower.
@@ -902,6 +912,7 @@ Select a fractal type:
 { Barnsley IFS Fractals }
 { Sierpinski Gasket }
 { Quartic Mandelbrot/Julia }
+{ Mandelbrot Mix 4 }
 { Distance Estimator }
 { Pickover Mandelbrot/Julia Types }
 { Pickover Popcorn }
@@ -1697,6 +1708,28 @@ sets look nice right from the start.
 
 Other powers, like Z(n)^3 or Z(n)^7, work in exactly the same fashion. We
 used this one only because we're lazy, and Z(n)^4 = (Z(n)^2)^2.
+;
+;
+~Topic=Mandelbrot Mix 4, Label=HT_MANDELBROTMIX4
+(type=mandelbrotmix4)
+
+Jim Muth has been publishing a "Fractal of the Day" on the fractint mailing
+list for many years now. As often as not Jim picks the formula 
+Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the 
+fractint authors have provided this fractal as a built-in type. 
+
+The formula is:
+
+MandelbrotMix4 \{\; Jim Muth
+a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+z=k*((a*(z^b))+(d*(z^f)))+c,
+|z| < l \}
+
+Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar parameter,
+as the bailout. Our implementation follows Jim if the user requests
+the default bailout.
 ;
 ;
 ~Topic=Distance Estimator

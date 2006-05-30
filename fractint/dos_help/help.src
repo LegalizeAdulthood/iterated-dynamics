@@ -115,6 +115,7 @@
 {2.51 , 1, "Volterra-Lotka Fractals"}
 {2.52 , 1, "Escher-Like Julia Sets"}
 {2.53 , 1, "Latoocarfian"}
+{2.54 , 1, "Mandelbrot Mix 4"}
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
@@ -216,6 +217,7 @@
 {Appendix F, 0, "Other Programs", FF}
 
 {Appendix G, 0, "Revision History",
+                   "Version 20",
                    "Version 19",
                    "Version 18",
                    "Version 17",
@@ -281,6 +283,23 @@ which very likely have new bugs.
 
 Version 20.4.5 is an update of Fractint 20.0 based on the developer's
   version 20.4.4.  New features include:
+
+Tim's changes (5/29/2006)
+  Added type mandelbrotmix4.
+  
+  Moved version 20.0 change history to revision history to make room for 
+  in help.src.
+  
+  Changed help screen to show just two main authors - decided
+  better not to show inactive authors.
+  
+  Removed commented out complex macros in fractals.c.
+  
+  Added commented out bf version of Mandelbrot in fractalp.c. Giving 
+  thought to offerring bfmath as an option to bnmath, but if we fix the 
+  current bignum problems, this may be moot.
+  
+  Added interation to <tab> screen.
 
 Patch 5 to Version 20.4.0\
 Fixed the logic for calculating when to switch from using a grid to using
@@ -782,219 +801,6 @@ Fixed the 2 and 16 color disk-video modes.  Using truecolor=yes now
   file, let us know.  Fixed the 3D targa modes.
 
 ~OnlineFF
-Version 20.0 is an update of Fractint based on the developer's
-  version 19.61 patch 85. You can report problems at:\
-  http://web.ukonline.co.uk/robin.b2/buglist.htm
-Major new features include:
-
-The new Fractal Evolver by Robin Bussell. This feature randomly perturbs 
-  fractal parameters in a user-controlled way, letting you see a screen
-  full of postage-stamp variations of a fractal. See 
-  {=HELPEVOL Parameter explorer/evolver}
-
-New sound routines from Robin Bussell.  Now <ctrl-f> brings up a menu for
-  changing the sounds made by Fractint.  The sound= prompt can now look like
-  this: sound=off|beep|x|y|z/pc|fm/quant. See {Sound Parameters}
-
-New 32767 x 32767 (32K) pixel limit. Removed the 2048 pixel limit for the size
-  of fractals. You can now define disk video modes larger than 2048 x 2048. 
-
-Added the experimental synchronous orbits (a.k.a. SOI) "fractal witchcraft" 
-  algorithm invoked using passes=s. This algorithm optimizes the computation of very 
-  deeply zoomed fractals by calculating parallel orbits, and subdividing 
-  when the orbits break formation. See {Drawing Method}
-
-Other new features and changes include:
-
-When resuming in pass=1, the calculation is now restarted at the last X value,
-  instead of at the beginning of the row. 
-
-Fixed browser so browsing images won't make the current image non-resumable.
-
-During an image save to disk, the 's' key is now ignored.
-
-Added Humberto Baptista's Epsilon Cross variation. It is triggered with a 
-  negative proximity. With a positive proximity value, the result should 
-  be backwards compatable. This assumes no one has made images with a 
-  negative proximity.
-
-Changed the internal orbitdelay timer to use a new microsecond timer.
-  Changed the logic for controlling sound and orbit speed to make
-  it less machine dependent. Use debug=4020 to invoke the old timing
-  logic.
-
-Modified autologmap so that it ignores symmetry.  
-
-Made the sound= prompts and batch output match the docs.  
-
-Made the colors= information put into PARs the last item in the PAR.
-
-Added capability for makepar command to detect viewwindows and add to
-  PAR file.
-
-Turned off view windows when the window is either too large or too small.
-
-Added an auto calc feature for the final aspect ratio if it is set to zero 
-  and the x and y sizes are specified.  
-
-Fixed corners drift of integer fractals by disabling the logic that attempts
-   to keep the aspect fixed when zooming. 
-
-The <g> command no longer runs the backwards() routines unless
-  debug=98. 
-
-Added tangent domain protection to integer version of popcorn that
-  prevents the "PI box" artifact. Brutal but works.
-
-~OnlineFF
-Generalized popcorn and popcornjul. There's a lot of possibility in
-  these new variations. The function variables are remembered as long 
-  as you stay within the popcorn family, otherwise they are set to
-  defaults. The integer version has an artifact in the F3 mode, probably
-  due to tan() being undefined.
-
-Included contributions from Humberto Baptista. These include Pickover's
-  Latoocarfian fractal type, as well as a passes=d[iffusion] option. 
-
-The parser colors variable is now initialized to 256.
-
-Fixed problem with the floating point Unity fractal type.  
-
-Added Chuck Ebbert's parser speedup.  
-
-Added checks for inside, outside, biomorph, and fillcolor entries larger
-  than the number of colors.
-
-Added fix so that showorbit= can be turned off by restarting Fractint
-  with <INS>.
-
-Adapted the browser so it would work with arbitrary precision images.
-
-Added cpu/fpu detection for 486 and up.
-
-Fixed the slow down of palette reset caused by slowing down color cycling.
-
-Fixed inside=zmag and =fmod for arbitrary precision.
-
-More mandel/julia FPU speedup by assembling the > 8087 code without the
-  emulator fixups.  This was also used to speedup the FPU parser code.
-
-The mandel/julia optimizations are a combination of contributions from
-  Rees Acheson (author of MANDELB), Damien Jones, Agner Fog,
-  Terje Mathisen, Thomas Jentzsch, and Daniele Paccaloni.  Although
-  it would be hard to identify any one person's contribution, they all
-  played a great part in the pentium optimizations.
-
-Added inside=fmod and inside=atan. The inside=atan option should only be 
-  used with periodicity=0.
-
-Fixed a bug in loaddac() routine caused because bios doesn't zero top 8
-  entries when resetting the dac.
-
-Added two new features to <b> command. You can now specify "only" at
-   the "Record colors?", and added a maxlinelen field to specify how
-   wide the parameter file can be.
-
-Added support for maps to makepar command. Try something like:\
-   fractint map=lyapunov makepar=mymaps
-
-Improved color map compression in PAR files. Debug=910 uses old method, 
-   otherwise uses Sylvie Gallet's fix. Debug=920 uses lossless
-   compression for critical use.
-
-Removed a longstanding but unintended row limit of the encoder which
-  resulted in an "interrupted" message when saving long (> 5000 rows) files.
-
-Fixed bug with LodRealPwr in formula parser.
-
-Speedkey now works with unsorted lists. 
-
-Numbers in sound001.txt file names now increment.
-
-Added new based data type PFCODE which is a pointer to FCODE. This saves
-   memory with the array of parser error messages.
-
-Fixed bug that caused lockup when extended memory is used without any
-  expanded memory. 
-
-Fixed a bug in the spacing of file names in the file selection menu.
-
-Added Rich Thomson's Xfractint fixes for Silicon Graphics. 
-
-Fixed Julia pointer bug.
-
-Fixed a bug that caused the zoom box coordinates to be used if a doodad was
-  changed with a zoom box on the screen.
-
-Formula type and inversion now work with large images. Fractint now
-   does everything simplgifd does - make an appropriate diskvideo
-   mode, then load and save a MIG!! 
-
-Fixed a long standing bug in the popcorn fractal type and added backwards
-  compatibility.  Revised the popcorn type docs to clarify that when the
-  view window is used, it is possible to see orbits outside the "box".
-
-Fixed a bug that was causing garbage to be read when a non-Fractint GIF
-  image was read.
-
-Replaced the lzw logic with code based on the UNIX compress. This should 
-  eliminate very rare but very frustrating encoder problems.
-
-Added a function one() to formula parser, to complement ident() and zero().
-  The new function returns (1,0), and, like ident() and zero(), is only
-  available as a choice for fn1, fn2, fn3 or fn4.
-
-Disabled symmetry for synchronous orbits.
-
-Moved encoder default color palettes from near memory to overlayed data.
-
-Changed the grid lookups to a function. Fixed diskvideo viewwindows bug.
-  Moved zoom box function out of assembler to c. 
-
-Changed the direction of single color cycling when in color cycling mode.
-
-Added command line option orgfrmdir=[directory path]. When used, Fractint's
-  search for formulas will make a final check of the appropriate Orgform
-  compilation file in the specified directory (e.g. for a formula with the
-  name "abc", the only file searched in the specified directory will
-  be _a.frm). This feature will significantly reduce the time taken to
-  find a formula for users of the compilation.
-
-  For more about the Orgform compilation, see { Other Fractal Products }.
-
-Added a new minstack=<nnnn> command. Default value is 1100. This is
-  the minimum number of bytes returned by the stackavail() function
-  required in order to do another SOI recursion. People who get bad SOI
-  results at high resolutions should increase this value until the
-  symptoms go away. 
-
-Fixed the FPUatan bug that has been in the code in calmanfp.asm
-  since it was written.  It turns out that the major problem was that the FPU
-  stack was being overrun. 
-
-Rewrote the Mandelbrot FPU code.  Fixed the FPU versions of inside= real,
-  imag, mult, and summ.  Incremented the version number so the fix could
-  be backwards compatible.
-
-Added symmetry to Escher-Julia type. 
-
-Editpal changes from Andrew McCarthy.  Removed IIT coprocessor support.
-
-Parser changes: New code is only used to determine which functions
-  and variables will appear at top of "z" screen for a formula. Variable
-  names in fomrulas must now start with a letter or "_". Error checking
-  of formulas expanded. Formulas in Orgform compilation caught by the new
-  error checking have been rewritten.
-
-Fixed bug which appeared when an image entry and a formula in a .par file
-  had the same name.
-
-Added support for formula type to SPACE Mandelbrot/Julia toggle. Implemented
-  using new ismand parser constant.
-
-Added incremental redraw of images when maxiter is increased.  This works on
-  completed images that use inside=color.  None of the other inside=
-  options are supported.
 
 For information on previous versions, see { Revision History }.
 ;
