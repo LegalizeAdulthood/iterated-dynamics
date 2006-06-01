@@ -2210,7 +2210,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             else if (bf_math == BIGFLT)
             {
                if (cmp_bf(abs_a_bf(sub_bf(bftmp,bfsaved.x,bfnew.x)), bfclosenuff) < 0)
-                  if (cmp_bn(abs_a_bf(sub_bf(bftmp,bfsaved.y,bfnew.y)), bfclosenuff) < 0)
+                  if (cmp_bf(abs_a_bf(sub_bf(bftmp,bfsaved.y,bfnew.y)), bfclosenuff) < 0)
                      caught_a_cycle = 1;
             }
             else
