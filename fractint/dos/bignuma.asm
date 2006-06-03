@@ -186,6 +186,7 @@ not_match_16:
         jne     bottom                  ; jump if ah doesn't match
         ; if ah does match, then mismatch was in al
         dec     cx                      ; decrement cx by 1 to show match
+        cmp     al, ds:[di]             ; reset the flags for below
         jmp     bottom
 
 ENDIF
@@ -218,6 +219,7 @@ not_match_32:
         jne     bottom                  ; jump if ah doesn't match
         ; if bh,bl,ah do match, then mismatch was in al
         dec     cx                      ; decrement cx by 1 to show match
+        cmp     al, ds:[di]             ; reset the flags for below
         jmp     bottom
 
 ENDIF
