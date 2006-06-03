@@ -3328,7 +3328,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 #define L staticroots[ 9]
 #define Z staticroots[10]
 
-int Mandelbrotmix4Setup(void)
+int MandelbrotMix4Setup(void)
 {
    int sign_array = 0;
    A.x=param[0];       A.y=0.0;    /* a=real(p1),     */
@@ -3396,7 +3396,7 @@ int Mandelbrotmix4Setup(void)
    return(1);
 }
 
-int Mandelbrotmix4fp_per_pixel(void)
+int MandelbrotMix4fp_per_pixel(void)
 {
    if(invert)
       invertz2(&init);

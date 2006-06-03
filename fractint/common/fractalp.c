@@ -2300,7 +2300,7 @@ struct fractalspecificstuff far fractalspecific[]=
       HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, WINFRAC+BAILTEST+TRIG1+MORE,
       (float)-2.5, (float)1.5, (float)-1.5, (float)1.5,
       0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-      MandelbrotMix4fpFractal, mandelbrotmix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
+      MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
       STDBAILOUT
    },
 
