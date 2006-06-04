@@ -284,7 +284,9 @@ which very likely have new bugs.
 Version 20.4.5 is an update of Fractint 20.0 based on the developer's
   version 20.4.4.  New features include:
 
-Tim's changes (5/29/2006)
+Patch 5 to Version 20.4.0\
+
+Tim's changes (5/29/2006)\
   Added type mandelbrotmix4.
   
   Moved version 20.0 change history to revision history to make room for 
@@ -301,12 +303,17 @@ Tim's changes (5/29/2006)
   
   Added interation to <tab> screen.
 
-Patch 5 to Version 20.4.0\
-Fixed the logic for calculating when to switch from using a grid to using
+Jonathan's changes\
+  Fixed the logic for calculating when to switch from using a grid to using
   the on-the-fly calculation of an image's pixels.  The logic was not
-  handling disk video image sized above 2048x2048 with floating point enabled.
+  handling disk video images sized above 2048x2048 with floating point enabled.
 
   Added the savename to the disk video status screen.
+
+  Fixed bug in the compare routine of bn_math that fixes long standing problem
+  with periodicity checking in deep zoomed images.
+
+  Resurrected the documentation for ap_math that was at the beginning of bignum.c.
 
 Patch 4 to Version 20.4.0\
 Added minor changes so that Xfractint would compile under Cygwin.
