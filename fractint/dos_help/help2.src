@@ -191,6 +191,16 @@ SUMMARY OF FRACTAL TYPES
     For implicit Euler approximation: x(n+1) = x(n) - f( y(n+1) )
     Five parameters: start position step, dt, a, b, and the function fn1.
 
+{=HT_ESCHER escher_julia}
+~Label=HF_ESCHER
+    Escher-like tiling of Julia sets from The Science of Fractal Images
+      z(0) = pixel
+      z(n+1) = z(n)^2 + (0, 0i)
+    The target set is a second, scaled, Julia set:
+      T = [ z: | (z * 15.0)^2 + c | < BAILOUT ]
+    Two parameters: real and imaginary parts of c
+    Iteration count and bailout size apply to both Julia sets.
+
 {=HT_SCOTSKIN fn(z)+fn(pix)}
 ~Label=HF_FNPLUSFNPIX
       c = z(0) = pixel;
@@ -860,17 +870,6 @@ SUMMARY OF FRACTAL TYPES
       y(new) = y + h/2 * [ g(x,y) + g[x + pf(x,y), y + pg(x,y)] ]
     Two parameters: h and p
     Recommended: zmag or bof60 inside coloring options
-
-~OnlineFF
-{=HT_ESCHER escher_julia}
-~Label=HF_ESCHER
-    Escher-like tiling of Julia sets from The Science of Fractal Images
-      z(0) = pixel
-      z(n+1) = z(n)^2 + (0, 0i)
-    The target set is a second, scaled, Julia set:
-      T = [ z: | (z * 15.0)^2 + c | < BAILOUT ]
-    Two parameters: real and imaginary parts of c
-    Iteration count and bailout size apply to both Julia sets.
 
 ~CompressSpaces+
 ;
