@@ -74,7 +74,7 @@ res :
 
 winfract.hlp: $(WINHELPDIR)\winfract.rtf $(WINHELPDIR)\mathtool.rtf
 	  cd $(WINHELPDIR)
-	  hc winfract
+	  hc -n winfract
 	  cd ..
 
 !else
