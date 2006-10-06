@@ -1775,7 +1775,7 @@ static void set_Cellular_palette()
    static Palettetype Yellow = { 60,58,18 };
    static Palettetype Brown  = { 42,21, 0 };
 
-   if (mapdacbox) return;               /* map= specified */
+   if (mapdacbox && colorstate != 0) return;       /* map= specified */
 
    dac[0].red  = 0 ;
    dac[0].green= 0 ;
@@ -1895,7 +1895,7 @@ static void set_Froth_palette(void)
          }
       if (ValidateLuts(mapname) != 0)
          return;
-      colorstate = 0; /* treat map it as default */
+      colorstate = 0; /* treat map as default */
       spindac(0,1);
       }
    }
