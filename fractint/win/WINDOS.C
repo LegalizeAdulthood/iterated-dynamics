@@ -1178,6 +1178,15 @@ void reset_zoom_corners(void)
    yymax = symax;
    yymin = symin;
    yy3rd = sy3rd;
+   if(bf_math)
+   {
+      copy_bf(bfxmin,bfsxmin);
+      copy_bf(bfxmax,bfsxmax);
+      copy_bf(bfymin,bfsymin);
+      copy_bf(bfymax,bfsymax);
+      copy_bf(bfx3rd,bfsx3rd);
+      copy_bf(bfy3rd,bfsy3rd);
+   }
 }
 
 /*  fake videotable stuff  */

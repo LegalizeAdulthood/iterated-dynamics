@@ -316,6 +316,57 @@ restart:
     yymax = temp1 + (temp2 * (ydots - 1 - ytop   )/(ydots-1));
     xx3rd = xxmin;
     yy3rd = yymin;
+
+    if (bf_math) {
+        int saved=0;
+        double tempxl = xleft / (xdots - 1);
+        double tempxr = xright / (xdots - 1);
+        double tempyl = (ydots - 1 - ybottom) / (ydots - 1);
+        double tempyr = (ydots - 1 - ytop) / (ydots - 1);
+        bf_t bftmp1, bftmp2, bftmp;
+        bf_t bftempxl, bftempxr, bftempyl, bftempyr;
+
+        saved = save_stack();
+        bftmp1 = alloc_stack(rbflength+2);
+        bftmp2 = alloc_stack(rbflength+2);
+        bftmp = alloc_stack(rbflength+2);
+        bftempxl = alloc_stack(rbflength+2);
+        bftempxr = alloc_stack(rbflength+2);
+        bftempyl = alloc_stack(rbflength+2);
+        bftempyr = alloc_stack(rbflength+2);
+
+        floattobf(bftempxl,tempxl);
+        floattobf(bftempxr,tempxr);
+        floattobf(bftempyl,tempyl);
+        floattobf(bftempyr,tempyr);
+
+/*      temp1 = xxmin; */
+        copy_bf(bftmp1,bfxmin);
+/*      temp2 = xxmax - xxmin;*/
+        sub_bf(bftmp2, bfxmax, bfxmin);
+/*      xxmin = temp1 + (temp2 * xleft )/(xdots-1); */
+        mult_bf(bftmp, bftmp2, bftempxl);
+        add_bf(bfxmin, bftmp1, bftmp);
+/*      xxmax = temp1 + (temp2 * xright)/(xdots-1); */
+        mult_bf(bftmp, bftmp2, bftempxr);
+        add_bf(bfxmax, bftmp1, bftmp);
+
+/*      temp1 = yymin; */
+        copy_bf(bftmp1,bfymin);
+/*      temp2 = yymax - yymin;*/
+        sub_bf(bftmp2, bfymax, bfymin);
+/*      yymin = temp1 + (temp2 * (ydots - 1 - ybottom)/(ydots-1)); */
+        mult_bf(bftmp, bftmp2, bftempyl);
+        add_bf(bfymin, bftmp1, bftmp);
+/*      xxmax = temp1 + (temp2 * (ydots - 1 - ytop   )/(ydots-1)); */
+        mult_bf(bftmp, bftmp2, bftempyr);
+        add_bf(bfymax, bftmp1, bftmp);
+
+        copy_bf(bfx3rd,bfxmin);
+        copy_bf(bfy3rd,bfymin);
+      restore_stack(saved);
+    }
+
     xleft   = 0;
     xright  = xdots-1;
     ytop    = 0;
@@ -329,8 +380,6 @@ restart:
     if (fabs(delyy) < ddelmin)
         ddelmin = fabs(delyy);
 */
-
-    dxsize = xdots - 1;  dysize = ydots - 1;
 
     if (calc_status != 2 && !overlay3d)
         if (!clear_screen(1)) {
@@ -351,6 +400,23 @@ restart:
     calcfracinit();
 
     bitshiftless1 = bitshift - 1;
+
+    sxmin = xxmin; /* save 3 corners for zoom.c ref points */
+    sxmax = xxmax;
+    sx3rd = xx3rd;
+    symin = yymin;
+    symax = yymax;
+    sy3rd = yy3rd;
+
+    if(bf_math)
+    {
+       copy_bf(bfsxmin,bfxmin);
+       copy_bf(bfsxmax,bfxmax);
+       copy_bf(bfsymin,bfymin);
+       copy_bf(bfsymax,bfymax);
+       copy_bf(bfsx3rd,bfx3rd);
+       copy_bf(bfsy3rd,bfy3rd);
+    }
 
     if (time_to_load)
         goto wait_loop;

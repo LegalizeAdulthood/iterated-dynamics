@@ -554,22 +554,73 @@ LPARAM lParam;
                   if (abs(Rect.bottom - Rect.top ) > 5 &&
                       abs(Rect.right  - Rect.left) > 5) {
                         double xd, yd, z;
+                        double tmpx, tmpy;
+                        bf_t bfxd, bfyd;
+                        bf_t bftmpx, bftmpy;
+                        bf_t bftmpzoomx, bftmpzoomy;
+                        int saved=0;
                         extern POINT Center, ZoomDim;
+
+                        if(bf_math)
+                        {
+                           saved = save_stack();
+                           bfxd = alloc_stack(rbflength+2);
+                           bfyd  = alloc_stack(rbflength+2);
+                           bftmpzoomx = alloc_stack(rbflength+2);
+                           bftmpzoomy = alloc_stack(rbflength+2);
+                           bftmpx = alloc_stack(rbflength+2);
+                           bftmpy = alloc_stack(rbflength+2);
+                         }
 
                         z = (double)(ZoomDim.x << 1) / xdots;
                         if(ZoomMode == IDM_ZOOMOUT) {
                             z = 1.0 / z;
                             xd = (xxmin + xxmax) / 2 - (double)(delxx * z * (Center.x + win_xoffset - (xdots/2)));
-                            yd = (yymin + yymax) / 2 + (double)(delxx * z * (Center.y + win_yoffset - (ydots/2)));
+                            yd = (yymin + yymax) / 2 + (double)(delyy * z * (Center.y + win_yoffset - (ydots/2)));
+                            if(bf_math) {
+                               tmpx = z * (Center.x + win_xoffset - (xdots/2));
+                               tmpy = z * (Center.y + win_yoffset - (ydots/2));
+                               floattobf(bftmpx, tmpx);
+                               floattobf(bftmpy, tmpy);
+                               mult_bf(bftmpzoomx, bfxdel, bftmpx);
+                               mult_bf(bftmpzoomy, bfydel, bftmpy);
+                               add_bf(bftmpx, bfxmin, bfxmax);
+                               add_bf(bftmpy, bfymin, bfymax);
+                               sub_bf(bfxd, half_a_bf(bftmpx), bftmpzoomx);
+                               add_bf(bfyd, half_a_bf(bftmpy), bftmpzoomy);
+                               }
                             }
                         else {
                             xd = xxmin + (double)(delxx * (Center.x + win_xoffset));  /* BDT 11/6/91 */
                             yd = yymax - (double)(delyy * (Center.y + win_yoffset));  /* BDT 11/6/91 */
+                            if(bf_math) {
+                               tmpx = Center.x + win_xoffset;
+                               tmpy = Center.y + win_yoffset;
+                               floattobf(bftmpx, tmpx);
+                               floattobf(bftmpy, tmpy);
+                               mult_bf(bftmpzoomx, bfxdel, bftmpx);
+                               mult_bf(bftmpzoomy, bfydel, bftmpy);
+                               add_bf(bfxd, bfxmin, bftmpzoomx);
+                               sub_bf(bfyd, bfymax, bftmpzoomy);
+                               }
                             }
                         xxmin = xd - (double)(delxx * z * (xdots / 2));
                         xxmax = xd + (double)(delxx * z * (xdots / 2));
                         yymin = yd - (double)(delyy * z * (ydots / 2));
                         yymax = yd + (double)(delyy * z * (ydots / 2));
+                        if(bf_math) {
+                           tmpx = z * (xdots / 2);
+                           tmpy = z * (ydots / 2);
+                           floattobf(bftmpx, tmpx);
+                           floattobf(bftmpy, tmpy);
+                           mult_bf(bftmpzoomx, bfxdel, bftmpx);
+                           mult_bf(bftmpzoomy, bfydel, bftmpy);
+                           sub_bf(bfxmin, bfxd, bftmpzoomx);
+                           add_bf(bfxmax, bfxd, bftmpzoomx);
+                           sub_bf(bfymin, bfyd, bftmpzoomy);
+                           add_bf(bfymax, bfyd, bftmpzoomy);
+                           restore_stack(saved);
+                           }
                         }
 
                       zoomflag = TRUE;
@@ -655,7 +706,7 @@ LPARAM lParam;
             yy = HIWORD(lParam);
             xx += win_xoffset;
             yy += win_yoffset;
-            if (xx >= xdots || yy >= ydots)
+            if (xx >= xdots || yy >= ydots || bf_math)
                 break;
             if (fractalspecific[fractype].tojulia != NOFRACTAL
                 && param[0] == 0.0 && param[1] == 0.0) {

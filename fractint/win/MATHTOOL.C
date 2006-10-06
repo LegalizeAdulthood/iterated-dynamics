@@ -226,6 +226,7 @@ void PaintMathTools(void) {
 }
 
 void CancelZoom(void) {
+   clear_zoombox();
    XorZoomBox();
    CenterZoom();
    TrackingZoom = Zooming = FALSE;
@@ -234,6 +235,22 @@ void CancelZoom(void) {
 
 void ExecuteZoom(void) {
    double xd, yd, z;
+   double tmpx, tmpy;
+   bf_t bfxd, bfyd;
+   bf_t bftmpx, bftmpy;
+   bf_t bftmpzoomx, bftmpzoomy;
+   int saved=0;
+
+   if(bf_math)
+   {
+      saved = save_stack();
+      bfxd = alloc_stack(rbflength+2);
+      bfyd  = alloc_stack(rbflength+2);
+      bftmpzoomx = alloc_stack(rbflength+2);
+      bftmpzoomy = alloc_stack(rbflength+2);
+      bftmpx = alloc_stack(rbflength+2);
+      bftmpy = alloc_stack(rbflength+2);
+    }
 
    xd = xxmin + ((double)delxx * (ZoomCenter.x + win_xoffset));  /* BDT 11/6/91 */
    yd = yymax - ((double)delyy * (ZoomCenter.y + win_yoffset));  /* BDT 11/6/91 */
@@ -242,10 +259,37 @@ void ExecuteZoom(void) {
    if(Zooming > 0)
       z = 1.0 / z;
 
+   if(bf_math)
+   {
+      tmpx = ZoomCenter.x + win_xoffset;
+      tmpy = ZoomCenter.y + win_yoffset;
+      floattobf(bftmpx, tmpx);
+      floattobf(bftmpy, tmpy);
+      mult_bf(bftmpzoomx, bfxdel, bftmpx);
+      mult_bf(bftmpzoomy, bfydel, bftmpy);
+      add_bf(bfxd, bfxmin, bftmpzoomx);
+      sub_bf(bfyd, bfymax, bftmpzoomy);
+   }
+
    xxmin = xd - ((double)delxx * z * (xdots / 2));
    xxmax = xd + ((double)delxx * z * (xdots / 2));
    yymin = yd - ((double)delyy * z * (ydots / 2));
    yymax = yd + ((double)delyy * z * (ydots / 2));
+
+   if(bf_math)
+   {
+      tmpx = z * (xdots / 2);
+      tmpy = z * (ydots / 2);
+      floattobf(bftmpx, tmpx);
+      floattobf(bftmpy, tmpy);
+      mult_bf(bftmpzoomx, bfxdel, bftmpx);
+      mult_bf(bftmpzoomy, bfydel, bftmpy);
+      sub_bf(bfxmin, bfxd, bftmpzoomx);
+      add_bf(bfxmax, bfxd, bftmpzoomx);
+      sub_bf(bfymin, bfyd, bftmpzoomy);
+      add_bf(bfymax, bfyd, bftmpzoomy);
+      restore_stack(saved);
+   }
 
    time_to_reinit = 1;
    time_to_cycle = 0;
@@ -431,7 +475,7 @@ void UpdateCoordBox(DWORD dw) {
    double xd, yd, Angle, Modulus;
    char xStr[40], yStr[40];
 
-   xPixel = (unsigned)dw         + win_xoffset;  /* BDT 11/6/91 */
+   xPixel = (unsigned)(dw & 0xFFFF) + win_xoffset;  /* BDT 11/6/91 */
    yPixel = (unsigned)(dw >> 16) + win_yoffset;  /* BDT 11/6/91 */
    xd = xxmin + ((double)delxx * xPixel);
    yd = yymax - ((double)delyy * yPixel);
