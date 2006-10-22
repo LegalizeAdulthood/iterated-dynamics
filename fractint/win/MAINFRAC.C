@@ -319,52 +319,64 @@ restart:
 
     if (bf_math) {
         int saved=0;
-        double tempxl = xleft / (xdots - 1);
-        double tempxr = xright / (xdots - 1);
-        double tempyl = (ydots - 1 - ybottom) / (ydots - 1);
-        double tempyr = (ydots - 1 - ytop) / (ydots - 1);
         bf_t bftmp1, bftmp2, bftmp;
-        bf_t bftempxl, bftempxr, bftempyl, bftempyr;
+        bf_t bftempxl, bftempxr, bftempyb, bftempyt;
+        bf_t bfxleft, bfxright, bfdxsize;
+        bf_t bfybottom, bfytop, bfdysize;
 
         saved = save_stack();
         bftmp1 = alloc_stack(rbflength+2);
         bftmp2 = alloc_stack(rbflength+2);
         bftmp = alloc_stack(rbflength+2);
+        bfxleft = alloc_stack(rbflength+2);
+        bfxright = alloc_stack(rbflength+2);
+        bfdxsize = alloc_stack(rbflength+2);
+        bfybottom = alloc_stack(rbflength+2);
+        bfytop = alloc_stack(rbflength+2);
+        bfdysize = alloc_stack(rbflength+2);
         bftempxl = alloc_stack(rbflength+2);
         bftempxr = alloc_stack(rbflength+2);
-        bftempyl = alloc_stack(rbflength+2);
-        bftempyr = alloc_stack(rbflength+2);
+        bftempyb = alloc_stack(rbflength+2);
+        bftempyt = alloc_stack(rbflength+2);
 
-        floattobf(bftempxl,tempxl);
-        floattobf(bftempxr,tempxr);
-        floattobf(bftempyl,tempyl);
-        floattobf(bftempyr,tempyr);
+        floattobf(bfxleft,xleft);
+        floattobf(bfxright,xright);
+        floattobf(bfdxsize,dxsize);
+        floattobf(bfybottom,ybottom);
+        floattobf(bfytop,ytop);
+        floattobf(bfdysize,dysize);
 
 /*      temp1 = xxmin; */
         copy_bf(bftmp1,bfxmin);
 /*      temp2 = xxmax - xxmin;*/
         sub_bf(bftmp2, bfxmax, bfxmin);
 /*      xxmin = temp1 + (temp2 * xleft )/(xdots-1); */
-        mult_bf(bftmp, bftmp2, bftempxl);
-        add_bf(bfxmin, bftmp1, bftmp);
+        mult_bf(bftmp, bftmp2, bfxleft);
+        div_bf(bftempxl, bftmp, bfdxsize);
+        add_bf(bfxmin, bftmp1, bftempxl);
 /*      xxmax = temp1 + (temp2 * xright)/(xdots-1); */
-        mult_bf(bftmp, bftmp2, bftempxr);
-        add_bf(bfxmax, bftmp1, bftmp);
+        mult_bf(bftmp, bftmp2, bfxright);
+        div_bf(bftempxr, bftmp, bfdxsize);
+        add_bf(bfxmax, bftmp1, bftempxr);
 
 /*      temp1 = yymin; */
         copy_bf(bftmp1,bfymin);
 /*      temp2 = yymax - yymin;*/
         sub_bf(bftmp2, bfymax, bfymin);
 /*      yymin = temp1 + (temp2 * (ydots - 1 - ybottom)/(ydots-1)); */
-        mult_bf(bftmp, bftmp2, bftempyl);
-        add_bf(bfymin, bftmp1, bftmp);
-/*      xxmax = temp1 + (temp2 * (ydots - 1 - ytop   )/(ydots-1)); */
-        mult_bf(bftmp, bftmp2, bftempyr);
-        add_bf(bfymax, bftmp1, bftmp);
+        sub_bf(bftempyb, bfdysize, bfybottom);
+        mult_bf(bftmp, bftmp2, bftempyb);
+        div_bf(bftempyb, bftmp, bfdysize);
+        add_bf(bfymin, bftmp1, bftempyb);
+/*      yymax = temp1 + (temp2 * (ydots - 1 - ytop   )/(ydots-1)); */
+        sub_bf(bftempyt, bfdysize, bfytop);
+        mult_bf(bftmp, bftmp2, bftempyt);
+        div_bf(bftempyt, bftmp, bfdysize);
+        add_bf(bfymax, bftmp1, bftempyt);
 
         copy_bf(bfx3rd,bfxmin);
         copy_bf(bfy3rd,bfymin);
-      restore_stack(saved);
+        restore_stack(saved);
     }
 
     xleft   = 0;
