@@ -180,7 +180,7 @@ MOREPARAMS moreparams[] =
    |-----|----|--------------|--------------|--------------| */
 struct alternatemathstuff far alternatemath[] =
 {
-#define USEBN
+/* #define USEBN */
 #ifdef USEBN
    {JULIAFP, 1,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
    {MANDELFP,1,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
