@@ -107,6 +107,7 @@
 #define     IDF_BROWSER        531
 #define     IDF_EVOLVER        532
 #define     IDF_MAINMENU       533
+#define     IDF_CMDSTRING      534
 
 /* Math Tools */
 #define     IDM_MATH_TOOLS    1001
@@ -114,7 +115,8 @@
 #define     IDM_ZOOM	      1003
 #define     IDM_SIZING	      1004
 #define     IDM_TRACKING      1005
-#define     IDM_ZOOMIN        1006
+/* #define     IDM_ZOOMIN        1006 this is odd!! */
+#define     IDM_ZOOMIN        1060
 #define     IDM_ZOOMOUT       1007
 
 /* Print stuff */
