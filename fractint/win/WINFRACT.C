@@ -1248,6 +1248,7 @@ GlobalExit:
                 case IDM_EVOLVER:
                 case IDM_MAINMENU:
                 case IDF_MAINMENU:
+                case IDF_CMDSTRING:
                     win_kill_all_zooming();
                     time_to_cycle = 0;
                     SecondaryhWnd = hWnd;
@@ -1721,6 +1722,7 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                 case IDF_MAINMENU:
                     if (!winfract_menustyle)   /* Windows menus */
                         goto winfract_mmenu;   /* for now */
+                case IDF_CMDSTRING:
 
                     if (winfract_menustyle) {        /* fractint prompts */
                         win_kill_all_zooming();
@@ -1740,7 +1742,9 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                         else if (wParam == IDF_EVOLVER || wParam == IDM_EVOLVER)
                             i = get_evolve_Parms();
                         else if (wParam == IDF_MAINMENU || wParam == IDM_MAINMENU)
-                            i = get_evolve_Parms(); /* want to use main_menu(1) */
+                            i = main_menu(1);
+                        else if (wParam == IDF_CMDSTRING)
+                            i = get_cmd_string();
                         else {
                             i = get_commands();
                             if (xx3rd != xxmin || yy3rd != yymin)
@@ -2066,7 +2070,7 @@ void win_set_title_text(void)
 char far win_oldtitle[30];
 char far win_title1[] = " (calculating)";
 char far win_title2[] = " (color-cycling)";
-char far win_title3[] = " (zooming)";
+char far win_title3[] = " (zooming ";
 char far win_title4[] = " (starfield generation)";
 
 void win_title_text(int title)
@@ -2091,6 +2095,10 @@ if (title == 2) {
     }
 if (title == 3) {
     lstrcat(newtitle, win_title3);
+if (ZoomMode == IDM_ZOOMOUT)
+    lstrcat(newtitle, "out)");
+else
+    lstrcat(newtitle, "in)");
     }
 if (title == 4) {
     lstrcat(newtitle, win_title4);

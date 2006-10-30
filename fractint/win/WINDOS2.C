@@ -66,9 +66,11 @@ int textrbase = 0, textcbase = 0;
 int lookatmouse;
 
 /* fullscreen_choice options */
-#define CHOICERETURNKEY 1
+#define CHOICERETURNKEY   1
 #define CHOICEMENU        2
 #define CHOICEHELP        4
+#define CHOICESCRUNCH    16
+#define CHOICESNOTSORTED 32
 
 static char far par_comment[4][MAXCMT];
 
@@ -1183,3 +1185,295 @@ OK to replace it, Cancel to back out",CommandName);
 
 return(1);
 }
+
+
+static int menutype;
+#define MENU_HDG 3
+#define MENU_ITEM 1
+
+static int menu_checkkey(int curkey,int choice)
+{ /* choice is dummy used by other routines called by fullscreen_choice() */
+   int testkey;
+   testkey = choice; /* for warning only */
+   testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
+#ifdef XFRACT
+   /* We use F2 for shift-@, annoyingly enough */
+   if (testkey == F2) return(0-testkey);
+#endif
+   if(testkey == '2')
+      testkey = '@';
+   if (strchr("#@2txyzgvir3dj",testkey) || testkey == INSERT || testkey == 2
+     || testkey == ESC || testkey == DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
+      return(0-testkey);
+   if (menutype) {
+      if (strchr("\\sobpkrh",testkey) || testkey == TAB
+        || testkey == 1 || testkey == 5 || testkey == 8
+        || testkey == 16
+        || testkey == 19 || testkey == 21) /* ctrl-A, E, H, P, S, U */
+         return(0-testkey);
+      if (testkey == ' ')
+         if ((curfractalspecific->tojulia != NOFRACTAL
+              && param[0] == 0.0 && param[1] == 0.0)
+           || curfractalspecific->tomandel != NOFRACTAL)
+         return(0-testkey);
+      if (gotrealdac && colors >= 16) {
+         if (strchr("c+-",testkey))
+            return(0-testkey);
+         if (colors > 16
+           && (testkey == 'a' || (!reallyega && testkey == 'e')))
+            return(0-testkey);
+         }
+      /* Alt-A and Alt-S */
+      if (testkey == 1030 || testkey == 1031 )
+         return(0-testkey);
+      }
+   if (check_vidmode_key(0,testkey) >= 0)
+      return(0-testkey);
+   return(0);
+}
+
+#define LOADPROMPTSCHOICES(X,Y)     {\
+   static FCODE tmp[] = { Y };\
+   choices[X]= (char far *)tmp;\
+   }
+
+int main_menu(int fullmenu)
+{
+   char far *choices[44]; /* 2 columns * 22 rows */
+   int attributes[44];
+   int choicekey[44];
+   int i;
+   int nextleft,nextright;
+   int oldtabmode /* ,oldhelpmode */;
+   static char far MAIN_MENU[] = {"MAIN MENU"};
+   int showjuliatoggle;
+   oldtabmode = tabmode;
+   /* oldhelpmode = helpmode; */
+top:
+   menutype = fullmenu;
+   tabmode = 0;
+   showjuliatoggle = 0;
+   for (i = 0; i < 44; ++i) {
+      attributes[i] = 256;
+      choices[i] = "";
+      choicekey[i] = -1;
+      }
+   nextleft = -2;
+   nextright = -1;
+
+   if (fullmenu) {
+      LOADPROMPTSCHOICES(nextleft+=2,"      CURRENT IMAGE         ");
+      attributes[nextleft] = 256+MENU_HDG;
+      choicekey[nextleft+=2] = 13; /* enter */
+      attributes[nextleft] = MENU_ITEM;
+      if (calc_status == 2)
+      {
+         LOADPROMPTSCHOICES(nextleft,"continue calculation        ");
+      }
+      else
+      {
+         LOADPROMPTSCHOICES(nextleft,"return to image             ");
+      }
+      choicekey[nextleft+=2] = 9; /* tab */
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"info about image      <tab> ");
+      choicekey[nextleft+=2] = 'o';
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"orbits window          <o>  ");
+      if(!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+          nextleft+=2;
+      }
+   LOADPROMPTSCHOICES(nextleft+=2,"      NEW IMAGE             ");
+   attributes[nextleft] = 256+MENU_HDG;
+   choicekey[nextleft+=2] = DELETE;
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"draw fractal           <D>  ");
+   choicekey[nextleft+=2] = 't';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"select fractal type    <t>  ");
+   if (fullmenu) {
+      if ((curfractalspecific->tojulia != NOFRACTAL
+          && param[0] == 0.0 && param[1] == 0.0)
+          || curfractalspecific->tomandel != NOFRACTAL) {
+             choicekey[nextleft+=2] = ' ';
+             attributes[nextleft] = MENU_ITEM;
+             LOADPROMPTSCHOICES(nextleft,"toggle to/from julia <space>");
+             showjuliatoggle = 1;
+          }
+      if(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA) {
+             choicekey[nextleft+=2] = 'j';
+             attributes[nextleft] = MENU_ITEM;
+             LOADPROMPTSCHOICES(nextleft,"toggle to/from inverse <j>  ");
+             showjuliatoggle = 1;
+          }
+/* History not implemented in WinFract
+      choicekey[nextleft+=2] = 'h';
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"return to prior image  <h>   ");
+
+      choicekey[nextleft+=2] = 8;
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"reverse thru history <ctl-h> ");
+ */
+   }
+   else
+      nextleft += 2;
+   LOADPROMPTSCHOICES(nextleft+=2,"      OPTIONS                ");
+   attributes[nextleft] = 256+MENU_HDG;
+   choicekey[nextleft+=2] = 'x';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"basic options...       <x>  ");
+   choicekey[nextleft+=2] = 'y';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"extended options...    <y>  ");
+   choicekey[nextleft+=2] = 'z';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"type-specific parms... <z>  ");
+   choicekey[nextleft+=2] = 'p';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"passes options...      <p>  ");
+/* view window not implemented in WinFract
+   choicekey[nextleft+=2] = 'v';
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"view window options... <v>  ");
+ */
+   if(showjuliatoggle == 0)
+   {
+      choicekey[nextleft+=2] = 'i';
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"fractal 3D parms...    <i>  ");
+   }
+   choicekey[nextleft+=2] = 2;
+   attributes[nextleft] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextleft,"browse parms...      <ctl-b>");
+
+   if (fullmenu) {
+      choicekey[nextleft+=2] = 5;
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"evolver parms...     <ctl-e>");
+   }
+/* Sound not yet implemented in WinFract
+   if (fullmenu) {
+      choicekey[nextleft+=2] = 6;
+      attributes[nextleft] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextleft,"sound parms...       <ctl-f>");
+   }
+ */
+   LOADPROMPTSCHOICES(nextright+=2,"        FILE                  ");
+   attributes[nextright] = 256+MENU_HDG;
+   choicekey[nextright+=2] = '@';
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"run saved command set... <@>  ");
+   if (fullmenu) {
+      choicekey[nextright+=2] = 's';
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"save image to file       <s>  ");
+      }
+   choicekey[nextright+=2] = 'r';
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"load image from file...  <r>  ");
+   choicekey[nextright+=2] = '3';
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"3d transform from file...<3>  ");
+   if (fullmenu) {
+      choicekey[nextright+=2] = '#';
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"3d overlay from file.....<#>  ");
+      choicekey[nextright+=2] = 'b';
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"save current parameters..<b>  ");
+      choicekey[nextright+=2] = 16;
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"print image          <ctl-p>  ");
+      }
+/* No place to shell to in WinFract
+   choicekey[nextright+=2] = 'd';
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"shell to dos             <d>  ");
+*/
+   choicekey[nextright+=2] = 'g';
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"give command string      <g>  ");
+   choicekey[nextright+=2] = ESC;
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"quit "FRACTINT"           <esc> ");
+   choicekey[nextright+=2] = INSERT;
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,"restart "FRACTINT"        <ins> ");
+   if (fullmenu && gotrealdac && colors >= 16) {
+      /* nextright += 2; */
+      LOADPROMPTSCHOICES(nextright+=2,"       COLORS                 ");
+      attributes[nextright] = 256+MENU_HDG;
+      choicekey[nextright+=2] = 'c';
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"color cycling mode       <c>  ");
+      choicekey[nextright+=2] = '+';
+      attributes[nextright] = MENU_ITEM;
+      LOADPROMPTSCHOICES(nextright,"rotate palette      <+>, <->  ");
+      if (colors > 16) {
+         if (!reallyega) {
+            choicekey[nextright+=2] = 'e';
+            attributes[nextright] = MENU_ITEM;
+            LOADPROMPTSCHOICES(nextright,"palette editing mode     <e>  ");
+         }
+         choicekey[nextright+=2] = 'a';
+         attributes[nextright] = MENU_ITEM;
+         LOADPROMPTSCHOICES(nextright,"make starfield           <a>  ");
+      }
+   }
+   choicekey[nextright+=2] = 1;
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,   "ant automaton          <ctl-a>");
+
+   choicekey[nextright+=2] = 19;
+   attributes[nextright] = MENU_ITEM;
+   LOADPROMPTSCHOICES(nextright,   "stereogram             <ctl-s>");
+
+   i = (keypressed()) ? getakey() : 0;
+   if (menu_checkkey(i,0) == 0) {
+      helpmode = HELPMAIN;         /* switch help modes */
+      if ((nextleft += 2) < nextright)
+         nextleft = nextright + 1;
+      i = fullscreen_choice(CHOICEMENU+CHOICESCRUNCH,
+          MAIN_MENU,
+          NULL,NULL,nextleft,(char far * far *)choices,attributes,
+          2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
+      if (i == -1)     /* escape */
+         i = ESC;
+      else if (i < 0)
+         i = 0 - i;
+      else {                      /* user selected a choice */
+         i = choicekey[i];
+         switch (i) {             /* check for special cases */
+            case -10:             /* zoombox functions */
+               helpmode = HELPZOOM;
+               help(0);
+               i = 0;
+               break;
+            }
+         }
+      }
+   if (i == ESC) {             /* escape from menu exits Fractint */
+      static char far s[] = "Exit from WinFract (y/n)? y";
+      helptitle();
+      setattr(1,0,C_GENERAL_MED,24*80);
+      for (i = 9; i <= 11; ++i)
+         setattr(i,18,C_GENERAL_INPUT,40);
+      putstringcenter(10,18,40,C_GENERAL_INPUT,s);
+      movecursor(25,80);
+      while ((i = getakey()) != 'y' && i != 'Y' && i != 13) {
+         if (i == 'n' || i == 'N')
+            goto top;
+         }
+      goodbye(); /* this needs to be a Windows command JCO */
+      }
+   if (i == TAB) {
+      tab_display();
+      i = 0;
+      }
+   if (i == ENTER || i == ENTER_2)
+      i = 0;                 /* don't trigger new calc */
+   tabmode = oldtabmode;
+   return(i);
+}
+

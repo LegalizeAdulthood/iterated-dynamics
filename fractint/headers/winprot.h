@@ -104,6 +104,8 @@ extern char *despace(char *str);
 extern int savegraphics(void);
 extern int restoregraphics(void);
 
+extern int main_menu(int);
+
 /*  winfract -- C file prototypes */
 
 extern void win_set_title_text(void);
