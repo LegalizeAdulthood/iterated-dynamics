@@ -132,7 +132,7 @@ void make_batch_file()
 
    /* steal existing array for "choices" */
    ptr = (char far *)(inpcomment[3] + MAXCMT);
-   driver_stack_screen();
+   stackscreen();
    oldhelpmode = helpmode;
    helpmode = HELPPARMFILE;
 
@@ -539,7 +539,7 @@ Continue to replace it, Cancel to back out"};
       break;
    }
    helpmode = oldhelpmode;
-   driver_unstack_screen();
+   unstackscreen();
 }
 
 #ifdef C6
@@ -1629,14 +1629,14 @@ int edit_text_colors()
       if (row > 24) row = 24;
       if (col < 0)  col = 0;
       if (col > 79) col = 79;
-      driver_move_cursor(row,col);
+      movecursor(row,col);
       i = getakey();
       if (i >= 'a' && i <= 'z') i -= 32; /* uppercase */
       switch (i) {
          case 27: /* esc */
             debugflag = save_debugflag;
             lookatmouse = save_lookatmouse;
-            driver_hide_text_cursor();
+            movecursor(25,80);
             return 0;
          case '/':
             farp1 = savescreen = (char far *)farmemalloc(4000L);

@@ -277,7 +277,7 @@ int line3d(BYTE * pixels, unsigned linelen)
        !(!RAY && (FILLTYPE > 4) && (currow == 1)))
       /* Get init geometry in lightsource modes */
       goto reallythebottom;     /* skip over most of the line3d calcs */
-   if (driver_diskp())
+   if (dotmode == 11)
    {
       static FCODE mapping[] = {"mapping to 3d, reading line "};
       char s[40];

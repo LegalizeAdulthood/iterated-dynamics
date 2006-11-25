@@ -103,7 +103,6 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "drivers.h"
 
 /* macros for near-space-saving purposes */
 /* CAE 9211 changed these for BC++ */
@@ -466,9 +465,9 @@ Print_Screen (void)
       }
 
 #ifdef XFRACT
-      driver_put_string(3,0,0,"Printing to:");
-      driver_put_string(4,0,0,PrintName);
-      driver_put_string(5,0,0,"               ");
+      putstring(3,0,0,"Printing to:");
+      putstring(4,0,0,PrintName);
+      putstring(5,0,0,"               ");
 #endif
 
     es=MK_FP(extraseg,0);
@@ -617,7 +616,7 @@ Print_Screen (void)
                 color_test();
                 return;
             }  */
-            if (!driver_diskp()) { /* preview */
+            if (dotmode != 11) { /* preview */
                 static char far msg[] = {"Preview. Enter=go, Esc=cancel, k=keep"};
                 memcpy(triple[1],dacbox,768);
                 for (i = 0; i < colors; ++i)
@@ -1045,7 +1044,7 @@ Print_Screen (void)
         outp((LPTn==30) ? 0x3F9 : 0x2F9,0x00);
         }
 #else
-    driver_put_string(5,0,0,"Printing done\n");
+    putstring(5,0,0,"Printing done\n");
 #endif
 }
 

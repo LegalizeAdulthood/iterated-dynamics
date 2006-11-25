@@ -13,7 +13,6 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
 
 static void sleep_secs(int);
 static int  showtempmsg_txt(int,int,int,int,char *);
@@ -124,15 +123,15 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
       return(1);
    for(i=0;i<80;i++)
    {
-      driver_move_cursor(row,i);
+      movecursor(row,i);
       savescrn[i] = get_a_char();
    }
-   driver_put_string(row,col,attr,txt);
-   driver_hide_text_cursor();
+   putstring(row,col,attr,txt);
+   movecursor(25,80);
    sleep_secs(secs);
    for(i=0;i<80;i++)
    {
-      driver_move_cursor(row,i);
+      movecursor(row,i);
       put_a_char(savescrn[i]);
    }
    return(0);

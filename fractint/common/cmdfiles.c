@@ -13,7 +13,6 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "drivers.h"
 /*#ifdef __TURBOC__
 #include <dir.h>
 #endif  */
@@ -3188,14 +3187,14 @@ int init_msg(int flags,char *cmdstr,char far *badfilename,int mode)
    if (active_system == 0 /* DOS */
      && first_init) {     /* & cmdfiles hasn't finished 1st try */
       if(row == 1 && badfilename) {
-	 driver_set_for_text();
-         driver_put_string(0,0,15,diags);
+         setvideotext();
+         putstring(0,0,15,diags);
       }
       if(badfilename)
-         driver_put_string(row++,0,7,msg);
+         putstring(row++,0,7,msg);
       else if(row > 1){
-         driver_put_string(++row,0,15,s_escapetoabort);
-         driver_move_cursor(row+1,0);
+         putstring(++row,0,15,s_escapetoabort);
+         movecursor(row+1,0);
          /*
          if(getakeynohelp()==27)
             goodbye();

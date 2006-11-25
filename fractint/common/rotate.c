@@ -45,7 +45,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
    if (!(gotrealdac || fake_lut)        /* ??? no DAC to rotate! */
 #endif
      || colors < 16) {                  /* strange things happen in 2x modes */
-      driver_buzzer(2);
+      buzzer(2);
       return;
       }
 
@@ -77,7 +77,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 
    more = 1;
    while (more) {
-      if (driver_diskp()) {
+      if (dotmode == 11) {
          if (!paused)
             pauserotate();
          }
@@ -211,7 +211,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          case 'G':                      /* color changes */
             if (changecolor    == -1) changecolor = 1;
          case 'B':                      /* color changes */
-            if (driver_diskp()) break;
+            if (dotmode == 11) break;
             if (changecolor    == -1) changecolor = 2;
             if (changedirection == 0) changedirection = 1;
             if (reallyega) break;       /* no sense on real EGAs */
@@ -344,7 +344,7 @@ BYTE olddac0,olddac1,olddac2;
       dacbox[0][1] = 48;
       dacbox[0][2] = 48;
       spindac(0,1);                     /* show white border */
-      if (driver_diskp())
+      if (dotmode == 11)
       {
          static FCODE o_msg[] = {" Paused in \"color cycling\" mode "};
          char msg[sizeof(o_msg)];
@@ -356,7 +356,7 @@ BYTE olddac0,olddac1,olddac2;
 #else
       waitkeypressed(0);                /* wait for any key */
 #endif
-      if (driver_diskp())
+      if (dotmode == 11)
          dvid_status(0,"");
       dacbox[0][0] = olddac0;
       dacbox[0][1] = olddac1;
@@ -425,18 +425,18 @@ void save_palette()
    far_strcpy(msg,o_msg);
    strcpy(palname,MAP_name);
    oldhelpmode = helpmode;
-   driver_stack_screen();
+   stackscreen();
    temp1[0] = 0;
    helpmode = HELPCOLORMAP;
    i = field_prompt(0,msg,NULL,temp1,60,NULL);
-   driver_unstack_screen();
+   unstackscreen();
    if (i != -1 && temp1[0]) {
       if (strchr(temp1,'.') == NULL)
          strcat(temp1,".map");
       merge_pathnames(palname,temp1,2);
       dacfile = fopen(palname,"w");
       if (dacfile == NULL)
-         driver_buzzer(2);
+         buzzer(2);
       else {
 #ifndef XFRACT
          for (i = 0; i < colors; i++)
@@ -463,10 +463,10 @@ int load_palette(void)
    char filename[FILE_MAX_PATH];
    oldhelpmode = helpmode;
    strcpy(filename,MAP_name);
-   driver_stack_screen();
+   stackscreen();
    helpmode = HELPCOLORMAP;
    i = getafilename("Select a MAP File",mapmask,filename);
-   driver_unstack_screen();
+   unstackscreen();
    if (i >= 0)
    {
       if (ValidateLuts(filename) == 0)
