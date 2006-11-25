@@ -257,7 +257,7 @@ int _find_token_length(register char far *curr, unsigned len, int *size, int *wi
                ++curr;
                ++_size;
                ++_width;
-               assert(_size < len);
+               assert((unsigned) _size < len);
                }
 
             ++_size;   /* skip ending CMD_LINK */
@@ -605,7 +605,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                         else if (in_link == 2)
                            {
                            tok = TOK_WORD;
-                           width = strlen(page_text);
+                           width = (int) strlen(page_text);
                            col += 8 - width;
                            size = 0;
                            pd.curr = page_text;
@@ -760,7 +760,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                      {
                      width += 9;
                      sprintf(page_text, " (p. %d)", pd.i);
-                     if ( !DO_PRINT(page_text, strlen(page_text)) )
+                     if ( !DO_PRINT(page_text, (int) strlen(page_text)) )
                         return (0);
                      }
                   break;

@@ -1351,7 +1351,7 @@ void w_snd(int tone)
       if(soundon(tone)) {
          wait_until(0,orbit_delay);
          if(!taborhelp) /* kludge because wait_until() calls keypressed */
-            soundoff();
+            driver_sound_off();
       }
    }
 }
@@ -1448,6 +1448,7 @@ void scrub_orbit(void)
    }
    sxoffs = save_sxoffs;
    syoffs = save_syoffs;
+   driver_sound_off();
 }
 
 

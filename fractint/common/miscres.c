@@ -26,6 +26,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 /* routines in this module      */
 
@@ -130,7 +131,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char far *str,int maxrow)
           else
              str[col2-col1+1]   = '\\';
           str[col2-col1+2] = 0;
-          putstring(*row,col1,color,str);
+          driver_put_string(*row,col1,color,str);
           if(done == 1)
              break;
           str[col2-col1+1] = save1;
@@ -138,7 +139,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char far *str,int maxrow)
           str += col2-col1;
           (*row)++;
        } else
-          putstring(*row,col1,color,str);
+          driver_put_string(*row,col1,color,str);
        length -= col2-col1;
        col1 = decpt; /* align with decimal */
     }
@@ -769,7 +770,7 @@ static void show_str_var(char *name, char *var, int *row, char *msg)
    if(*var != 0)
    {
       sprintf(msg,"%s=%s",name,var);
-      putstring((*row)++,2,C_GENERAL_HI,msg);
+      driver_put_string((*row)++,2,C_GENERAL_HI,msg);
    }
 }
 
@@ -778,25 +779,25 @@ int tab_display_2(char *msg)
    extern long maxptr, maxstack, startstack;
    int s_row,key,ret=0;
    helptitle();
-   setattr(1,0,C_GENERAL_MED,24*80); /* init rest to background */
+   driver_set_attr(1,0,C_GENERAL_MED,24*80); /* init rest to background */
 
    s_row = 1;
    putstringcenter(s_row++,0,80,C_PROMPT_HI, sstopsecret);
    sprintf(msg,"Version %d patch %d",release, patchlevel);
-   putstring(++s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    sprintf(msg,"%lu bytes conventional stack free",stackavail());
-   putstring(++s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    sprintf(msg,"%ld of %ld bignum memory used",maxptr,maxstack);
-   putstring(++s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    sprintf(msg,"   %ld used for bignum globals", startstack);
-   putstring(++s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    sprintf(msg,"   %ld stack used == %ld variables of length %d",
          maxptr-startstack,(long)((maxptr-startstack)/(rbflength+2)),rbflength+2);
-   putstring(++s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    if(bf_math)
    {
       sprintf(msg,"intlength %-d bflength %-d ",intlength, bflength);
-      putstring(++s_row,2,C_GENERAL_HI,msg);
+      driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    }
    s_row++;
    show_str_var(s_tempdir,    tempdir,      &s_row, msg);
@@ -812,17 +813,17 @@ int tab_display_2(char *msg)
    show_str_var(s_map,        MAP_name,     &s_row, msg);
    sprintf(msg,"Sizeof fractalspecific array %d",
       num_fractal_types*(int)sizeof(struct fractalspecificstuff));
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    sprintf(msg,"calc_status %d pixel [%d,%d]",calc_status,col,row);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    if(fractype==FORMULA || fractype==FFORMULA)
    {
    sprintf(msg,"total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u Used_extra %u",
       total_formula_mem,posp,vsp,used_extra);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    sprintf(msg,"   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
       StoPtr,LodPtr,Max_Ops,Max_Args,LastInitOp);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    }
    else if(rhombus_stack[0])
    {
@@ -838,7 +839,7 @@ int tab_display_2(char *msg)
       rhombus_stack[7],
       rhombus_stack[8],
       rhombus_stack[9]);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    }
    
 /*
@@ -853,7 +854,7 @@ int tab_display_2(char *msg)
       curfractalspecific->orbitcalc ==  Formula?"slow parser":
       curfractalspecific->orbitcalc ==  BadFormula?"bad formula":
       "",uses_ismand);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
 /*
    sprintf(msg,"ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
       ixstart,ixstop,iystart,iystop,bitshift);
@@ -862,11 +863,11 @@ int tab_display_2(char *msg)
       sprintf(msg,"minstackavail %d llimit2 %ld use_grid %d",
          minstackavail,llimit2,use_grid);
    }
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
    putstringcenter(24,0,80,C_GENERAL_LO,spressanykey1);
    *msg = 0;
 again:
-   putstring(s_row,2,C_GENERAL_HI,msg);
+   driver_put_string(s_row,2,C_GENERAL_HI,msg);
    key=getakeynohelp();
    if(key != ESC && key != BACKSPACE && key != TAB)
    {
@@ -900,7 +901,7 @@ int tab_display()       /* display the status of the current image */
    }
    if (calc_status == 1)        /* next assumes CLK_TCK is 10^n, n>=2 */
       calctime += (clock_ticks() - timer_start) / (CLK_TCK/100);
-   stackscreen();
+   driver_stack_screen();
    if(bf_math)
    {
    /* Save memory from the beginning of extraseg to ENDVID=22400 */
@@ -921,46 +922,46 @@ top:
    k = 0; /* initialize here so parameter line displays correctly on return
              from control-tab */
    helptitle();
-   setattr(1,0,C_GENERAL_MED,24*80); /* init rest to background */
+   driver_set_attr(1,0,C_GENERAL_MED,24*80); /* init rest to background */
    s_row = 2;
-   putstring(s_row,2,C_GENERAL_MED,sfractal_type);
+   driver_put_string(s_row,2,C_GENERAL_MED,sfractal_type);
    if (display3d > 0)
-      putstring(s_row,16,C_GENERAL_HI,s3D_transform);
+      driver_put_string(s_row,16,C_GENERAL_HI,s3D_transform);
    else {
-      putstring(s_row,16,C_GENERAL_HI,
+      driver_put_string(s_row,16,C_GENERAL_HI,
            curfractalspecific->name[0] == '*' ?
              &curfractalspecific->name[1] :
              curfractalspecific->name);
       i = 0;
       if (fractype == FORMULA || fractype == FFORMULA)
       {
-         putstring(s_row+1,3,C_GENERAL_MED,sitem_name);
-         putstring(s_row+1,16,C_GENERAL_HI,FormName);
+         driver_put_string(s_row+1,3,C_GENERAL_MED,sitem_name);
+         driver_put_string(s_row+1,16,C_GENERAL_HI,FormName);
          i = strlen(FormName)+1;
-         putstring(s_row+2,3,C_GENERAL_MED,sitem_file);
+         driver_put_string(s_row+2,3,C_GENERAL_MED,sitem_file);
          if((int)strlen(FormFileName) >= 29)
             addrow = 1;
-         putstring(s_row+2+addrow,16,C_GENERAL_HI,FormFileName);
+         driver_put_string(s_row+2+addrow,16,C_GENERAL_HI,FormFileName);
       }
       trigdetails(msg);
-      putstring(s_row+1,16+i,C_GENERAL_HI,msg);
+      driver_put_string(s_row+1,16+i,C_GENERAL_HI,msg);
       if (fractype == LSYSTEM)
       {
-         putstring(s_row+1,3,C_GENERAL_MED,sitem_name);
-         putstring(s_row+1,16,C_GENERAL_HI,LName);
-         putstring(s_row+2,3,C_GENERAL_MED,sitem_file);
+         driver_put_string(s_row+1,3,C_GENERAL_MED,sitem_name);
+         driver_put_string(s_row+1,16,C_GENERAL_HI,LName);
+         driver_put_string(s_row+2,3,C_GENERAL_MED,sitem_file);
          if((int)strlen(LFileName) >= 28)
             addrow = 1;
-         putstring(s_row+2+addrow,16,C_GENERAL_HI,LFileName);
+         driver_put_string(s_row+2+addrow,16,C_GENERAL_HI,LFileName);
       }
       if (fractype == IFS || fractype == IFS3D)
       {
-         putstring(s_row+1,3,C_GENERAL_MED,sitem_name);
-         putstring(s_row+1,16,C_GENERAL_HI,IFSName);
-         putstring(s_row+2,3,C_GENERAL_MED,sitem_file);
+         driver_put_string(s_row+1,3,C_GENERAL_MED,sitem_name);
+         driver_put_string(s_row+1,16,C_GENERAL_HI,IFSName);
+         driver_put_string(s_row+2,3,C_GENERAL_MED,sitem_file);
          if((int)strlen(IFSFileName) >= 28)
             addrow = 1;
-         putstring(s_row+2+addrow,16,C_GENERAL_HI,IFSFileName);
+         driver_put_string(s_row+2+addrow,16,C_GENERAL_HI,IFSFileName);
       }
    }
 
@@ -977,12 +978,12 @@ top:
                break;
       default: msgptr = "";
       }
-   putstring(s_row,45,C_GENERAL_HI,msgptr);
+   driver_put_string(s_row,45,C_GENERAL_HI,msgptr);
    if(initbatch && calc_status != 0)
-      putstring(-1,-1,C_GENERAL_HI,sbatch);
+      driver_put_string(-1,-1,C_GENERAL_HI,sbatch);
 
    if (helpmode == HELPCYCLING)
-      putstring(s_row+1,45,C_GENERAL_HI,syou_are_cycling);
+      driver_put_string(s_row+1,45,C_GENERAL_HI,syou_are_cycling);
    ++s_row;
    /* if(bf_math == 0) */
      ++s_row;
@@ -998,22 +999,22 @@ top:
     if(bf_math==0)
     {
     if (j) {
-       putstring(s_row,45,C_GENERAL_HI,sfloating_point);
+       driver_put_string(s_row,45,C_GENERAL_HI,sfloating_point);
 
-       putstring(-1,-1,C_GENERAL_HI,(j == 1) ? sflag_is_activated
+       driver_put_string(-1,-1,C_GENERAL_HI,(j == 1) ? sflag_is_activated
                                              : sin_use_required );
       i = 1;
       }
       else
       {
-       putstring(s_row,45,C_GENERAL_HI,sinteger_math);
+       driver_put_string(s_row,45,C_GENERAL_HI,sinteger_math);
       i = 1;
       }
    } else
    {
        sprintf(msg,"(%-d decimals)",decimals /*getprecbf(CURRENTREZ)*/);
-       putstring(s_row,45,C_GENERAL_HI,sarbitrary_precision);
-       putstring(-1,-1,C_GENERAL_HI,msg);
+       driver_put_string(s_row,45,C_GENERAL_HI,sarbitrary_precision);
+       driver_put_string(-1,-1,C_GENERAL_HI,msg);
 
       i = 1;
    }
@@ -1024,11 +1025,11 @@ top:
       if (curfractalspecific->flags&NORESUME)
       {
          static FCODE msg[] = {"Note: can't resume this type after interrupts other than <tab> and <F1>"};
-         putstring(s_row++,2,C_GENERAL_HI,msg);
+         driver_put_string(s_row++,2,C_GENERAL_HI,msg);
       }
    s_row += addrow;
-   putstring(s_row,2,C_GENERAL_MED,ssavename);
-   putstring(s_row,-1,C_GENERAL_HI,savename);
+   driver_put_string(s_row,2,C_GENERAL_MED,ssavename);
+   driver_put_string(s_row,-1,C_GENERAL_HI,savename);
 
    /* if(bf_math == 0) */
      ++s_row;
@@ -1037,30 +1038,30 @@ top:
       switch (got_status) {
          case 0:
             sprintf(msg,"%d Pass Mode",totpasses);
-            putstring(s_row,2,C_GENERAL_HI,msg);
+            driver_put_string(s_row,2,C_GENERAL_HI,msg);
             if(usr_stdcalcmode=='3')
-               putstring(s_row,-1,C_GENERAL_HI,sthreepass);
+               driver_put_string(s_row,-1,C_GENERAL_HI,sthreepass);
             break;
          case 1:
-            putstring(s_row,2,C_GENERAL_HI,ssolid_guessing);
+            driver_put_string(s_row,2,C_GENERAL_HI,ssolid_guessing);
             if(usr_stdcalcmode=='3')
-               putstring(s_row,-1,C_GENERAL_HI,sthreepass);
+               driver_put_string(s_row,-1,C_GENERAL_HI,sthreepass);
             break;
          case 2:
-            putstring(s_row,2,C_GENERAL_HI,sboundary_tracing);
+            driver_put_string(s_row,2,C_GENERAL_HI,sboundary_tracing);
             break;
          case 3:
             sprintf(msg,"Processing row %d (of %d) of input image",currow,fileydots);
-            putstring(s_row,2,C_GENERAL_HI,msg);
+            driver_put_string(s_row,2,C_GENERAL_HI,msg);
             break;
          case 4:
-            putstring(s_row,2,C_GENERAL_HI,stesseral);
+            driver_put_string(s_row,2,C_GENERAL_HI,stesseral);
             break;
          case 5:		
-            putstring(s_row,2,C_GENERAL_HI,sdiffusion);
+	    driver_put_string(s_row,2,C_GENERAL_HI,sdiffusion);
             break;
          case 6:
-            putstring(s_row,2,C_GENERAL_HI,sorbits);
+            driver_put_string(s_row,2,C_GENERAL_HI,sorbits);
             break;
          }
       ++s_row;
@@ -1068,51 +1069,51 @@ top:
          sprintf(msg,"%2.2f%% done, counter at %lu of %lu (%u bits)",
                  (100.0 * dif_counter)/dif_limit,
                  dif_counter,dif_limit,bits);
-         putstring(s_row,2,C_GENERAL_MED,msg);
+	 driver_put_string(s_row,2,C_GENERAL_MED,msg);
          ++s_row;
       } else
       if (got_status != 3) {
          sprintf(msg,"Working on block (y,x) [%d,%d]...[%d,%d], ",
                 yystart,xxstart,yystop,xxstop);
-         putstring(s_row,2,C_GENERAL_MED,msg);
+         driver_put_string(s_row,2,C_GENERAL_MED,msg);
          if (got_status == 2 || got_status == 4) { /* btm or tesseral */
-            putstring(-1,-1,C_GENERAL_MED,"at ");
+            driver_put_string(-1,-1,C_GENERAL_MED,"at ");
             sprintf(msg,"[%d,%d]",currow,curcol);
-            putstring(-1,-1,C_GENERAL_HI,msg);
+            driver_put_string(-1,-1,C_GENERAL_HI,msg);
             }
          else {
             if (totpasses > 1) {
-               putstring(-1,-1,C_GENERAL_MED,"pass ");
+               driver_put_string(-1,-1,C_GENERAL_MED,"pass ");
                sprintf(msg,"%d",curpass);
-               putstring(-1,-1,C_GENERAL_HI,msg);
-               putstring(-1,-1,C_GENERAL_MED," of ");
+               driver_put_string(-1,-1,C_GENERAL_HI,msg);
+               driver_put_string(-1,-1,C_GENERAL_MED," of ");
                sprintf(msg,"%d",totpasses);
-               putstring(-1,-1,C_GENERAL_HI,msg);
-               putstring(-1,-1,C_GENERAL_MED,", ");
+               driver_put_string(-1,-1,C_GENERAL_HI,msg);
+               driver_put_string(-1,-1,C_GENERAL_MED,", ");
                }
-            putstring(-1,-1,C_GENERAL_MED,"at row ");
+            driver_put_string(-1,-1,C_GENERAL_MED,"at row ");
             sprintf(msg,"%d",currow);
-            putstring(-1,-1,C_GENERAL_HI,msg);
-            putstring(-1,-1,C_GENERAL_MED," col ");
+            driver_put_string(-1,-1,C_GENERAL_HI,msg);
+            driver_put_string(-1,-1,C_GENERAL_MED," col ");
             sprintf(msg,"%d",col);
-            putstring(-1,-1,C_GENERAL_HI,msg);
+            driver_put_string(-1,-1,C_GENERAL_HI,msg);
             }
          ++s_row;
          }
       }
-   putstring(s_row,2,C_GENERAL_MED,scalculation_time);
+   driver_put_string(s_row,2,C_GENERAL_MED,scalculation_time);
    get_calculation_time(msg,calctime);
-   putstring(-1,-1,C_GENERAL_HI,msg);
+   driver_put_string(-1,-1,C_GENERAL_HI,msg);
    if ((got_status == 5) && (calc_status == 1)) { /* estimate total time */
-      putstring(-1,-1,C_GENERAL_MED," estimated total time: ");
+      driver_put_string(-1,-1,C_GENERAL_MED," estimated total time: ");
       get_calculation_time( msg,(long)(calctime*((dif_limit*1.0)/dif_counter)) );
-   putstring(-1,-1,C_GENERAL_HI,msg);
+   driver_put_string(-1,-1,C_GENERAL_HI,msg);
    }
 
    if ((curfractalspecific->flags&INFCALC) && (coloriter != 0)) {
-      putstring(s_row,-1,C_GENERAL_MED,siterations);
+      driver_put_string(s_row,-1,C_GENERAL_MED,siterations);
       sprintf(msg," %ld of %ld",coloriter-2,maxct);
-      putstring(s_row,-1,C_GENERAL_HI,msg);
+      driver_put_string(s_row,-1,C_GENERAL_HI,msg);
    }
 
    ++s_row;
@@ -1122,7 +1123,7 @@ top:
       sprintf(msg,"Video: %dx%dx%d %s %s",
               videoentry.xdots, videoentry.ydots, videoentry.colors,
               videoentry.name, videoentry.comment);
-      putstring(s_row++,2,C_GENERAL_MED,msg);
+      driver_put_string(s_row++,2,C_GENERAL_MED,msg);
       }
    if(!(curfractalspecific->flags&NOZOOM))
    {
@@ -1139,68 +1140,68 @@ top:
       if(dec < decimals)
          truncate = 1;
       truncaterow = row;
-      putstring(++s_row,2,C_GENERAL_MED,scenter);
-      putstring(s_row,8,C_GENERAL_MED,s_x);
+      driver_put_string(++s_row,2,C_GENERAL_MED,scenter);
+      driver_put_string(s_row,8,C_GENERAL_MED,s_x);
       bftostr(msg,dec,bfXctr);
       if(putstringwrap(&s_row,10,78,C_GENERAL_HI,msg,5)==1)
          truncate = 1;
-      putstring(++s_row,8,C_GENERAL_MED,s_y);
+      driver_put_string(++s_row,8,C_GENERAL_MED,s_y);
       bftostr(msg,dec,bfYctr);
       if(putstringwrap(&s_row,10,78,C_GENERAL_HI,msg,5)==1 || truncate)
-         putstring(truncaterow,2,C_GENERAL_MED,struncate);
-      putstring(++s_row,2,C_GENERAL_MED,smag);
+         driver_put_string(truncaterow,2,C_GENERAL_MED,struncate);
+      driver_put_string(++s_row,2,C_GENERAL_MED,smag);
 #ifdef USE_LONG_DOUBLE
       sprintf(msg,"%10.8Le",Magnification);
 #else
       sprintf(msg,"%10.8le",Magnification);
 #endif
-      putstring(-1,11,C_GENERAL_HI,msg);
-      putstring(++s_row,2,C_GENERAL_MED,sxmag);
+      driver_put_string(-1,11,C_GENERAL_HI,msg);
+      driver_put_string(++s_row,2,C_GENERAL_MED,sxmag);
       sprintf(msg,"%11.4f   ",Xmagfactor);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,srot);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,srot);
       sprintf(msg,"%9.3f   ",Rotation);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,sskew);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,sskew);
       sprintf(msg,"%9.3f",Skew);
-      putstring(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
    }
    else /* bf != 1 */
    {
-      putstring(s_row,2,C_GENERAL_MED,scornersxy);
-      putstring(++s_row,3,C_GENERAL_MED,stop_left);
+      driver_put_string(s_row,2,C_GENERAL_MED,scornersxy);
+      driver_put_string(++s_row,3,C_GENERAL_MED,stop_left);
       sprintf(msg,"%20.16f  %20.16f",xxmin,yymax);
-      putstring(-1,17,C_GENERAL_HI,msg);
-      putstring(++s_row,3,C_GENERAL_MED,sbottom_right);
+      driver_put_string(-1,17,C_GENERAL_HI,msg);
+      driver_put_string(++s_row,3,C_GENERAL_MED,sbottom_right);
       sprintf(msg,"%20.16f  %20.16f",xxmax,yymin);
-      putstring(-1,17,C_GENERAL_HI,msg);
+      driver_put_string(-1,17,C_GENERAL_HI,msg);
 
       if (xxmin != xx3rd || yymin != yy3rd)
       {
-         putstring(++s_row,3,C_GENERAL_MED,sbottom_left);
+         driver_put_string(++s_row,3,C_GENERAL_MED,sbottom_left);
          sprintf(msg,"%20.16f  %20.16f",xx3rd,yy3rd);
-         putstring(-1,17,C_GENERAL_HI,msg);
+         driver_put_string(-1,17,C_GENERAL_HI,msg);
       }
       cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-      putstring(s_row+=2,2,C_GENERAL_MED,scenter);
+      driver_put_string(s_row+=2,2,C_GENERAL_MED,scenter);
       sprintf(msg,"%20.16f %20.16f  ",Xctr,Yctr);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,smag);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,smag);
 #ifdef USE_LONG_DOUBLE
       sprintf(msg," %10.8Le",Magnification);
 #else
       sprintf(msg," %10.8le",Magnification);
 #endif
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(++s_row,2,C_GENERAL_MED,sxmag);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(++s_row,2,C_GENERAL_MED,sxmag);
       sprintf(msg,"%11.4f   ",Xmagfactor);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,srot);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,srot);
       sprintf(msg,"%9.3f   ",Rotation);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,sskew);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,sskew);
       sprintf(msg,"%9.3f",Skew);
-      putstring(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
 
    }
    }
@@ -1220,48 +1221,48 @@ top:
          else
             col = -1;
          if(k == 0) /* only true with first displayed parameter */
-            putstring(++s_row,2,C_GENERAL_MED,sparams);
+            driver_put_string(++s_row,2,C_GENERAL_MED,sparams);
          sprintf(msg,"%3d: ",i+1);
-         putstring(s_row,col,C_GENERAL_MED,msg);
+         driver_put_string(s_row,col,C_GENERAL_MED,msg);
          if(*p == '+')
             sprintf(msg,"%-12d",(int)param[i]);
          else if(*p == '#')
             sprintf(msg,"%-12lu",(U32)param[i]);
          else
             sprintf(msg,"%-12.9f",param[i]);
-         putstring(-1,-1,C_GENERAL_HI,msg);
+         driver_put_string(-1,-1,C_GENERAL_HI,msg);
          k++;
       }
    }
-   putstring(s_row+=2,2,C_GENERAL_MED,siteration_maximum);
+   driver_put_string(s_row+=2,2,C_GENERAL_MED,siteration_maximum);
    sprintf(msg,"%ld (%ld)",coloriter,maxit);
-   putstring(-1,-1,C_GENERAL_HI,msg);
-   putstring(-1,-1,C_GENERAL_MED,seffective_bailout);
+   driver_put_string(-1,-1,C_GENERAL_HI,msg);
+   driver_put_string(-1,-1,C_GENERAL_MED,seffective_bailout);
    sprintf(msg,"%f",rqlim);
-   putstring(-1,-1,C_GENERAL_HI,msg);
+   driver_put_string(-1,-1,C_GENERAL_HI,msg);
 
    if (fractype == PLASMA || fractype == ANT || fractype == CELLULAR) {
-      putstring(++s_row,2,C_GENERAL_MED,scurrent_rseed);
+      driver_put_string(++s_row,2,C_GENERAL_MED,scurrent_rseed);
       sprintf(msg,"%d",rseed);
-      putstring(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
       }
 
    if(invert) {
-      putstring(++s_row,2,C_GENERAL_MED,sinversion_radius);
+      driver_put_string(++s_row,2,C_GENERAL_MED,sinversion_radius);
       sprintf(msg,"%12.9f",f_radius);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,sxcenter);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,sxcenter);
       sprintf(msg,"%12.9f",f_xcenter);
-      putstring(-1,-1,C_GENERAL_HI,msg);
-      putstring(-1,-1,C_GENERAL_MED,sycenter);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_MED,sycenter);
       sprintf(msg,"%12.9f",f_ycenter);
-      putstring(-1,-1,C_GENERAL_HI,msg);
+      driver_put_string(-1,-1,C_GENERAL_HI,msg);
       }
 
    if ((s_row += 2) < 23) ++s_row;
 /*waitforkey:*/
    putstringcenter(/*s_row*/24,0,80,C_GENERAL_LO,spressanykey);
-   movecursor(25,80);
+   driver_hide_text_cursor();
 #ifdef XFRACT
    while (keypressed()) {
        getakey();
@@ -1269,9 +1270,9 @@ top:
 #endif
    key = getakeynohelp();
    if (key==F6) {
-       unstackscreen();
+       driver_unstack_screen();
        area();
-       stackscreen();
+       driver_stack_screen();
 /*       goto waitforkey;*/
         goto top;
    }
@@ -1279,7 +1280,7 @@ top:
       if(tab_display_2(msg))
          goto top;
    }
-   unstackscreen();
+   driver_unstack_screen();
    timer_start = clock_ticks(); /* tab display was "time out" */
    if(bf_math)
    {

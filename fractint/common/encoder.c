@@ -11,6 +11,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "drivers.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE far * color, int numcolors);
@@ -139,7 +140,7 @@ restart:
       return -1;
    }
 
-   if (dotmode == 11)
+   if (driver_diskp())
    {                            /* disk-video */
       char buf[61];
       extract_filename(tmpmsg, openfile);
@@ -150,9 +151,9 @@ restart:
 #ifdef XFRACT
    else
    {
-      putstring(3, 0, 0, "Saving to:");
-      putstring(4, 0, 0, openfile);
-      putstring(5, 0, 0, "               ");
+      driver_put_string(3, 0, 0, "Saving to:");
+      driver_put_string(4, 0, 0, openfile);
+      driver_put_string(5, 0, 0, "               ");
    }
 #endif
 
@@ -194,7 +195,7 @@ restart:
       rename(tmpfile, openfile);/* earlier with access              */
    }
 
-   if (dotmode != 11)
+   if (!driver_diskp())
    {                            /* supress this on disk-video */
       if (active_system == 0)
       {                         /* no bars in Windows version */
@@ -218,7 +219,7 @@ restart:
          }
       }
 #ifdef XFRACT
-      putstring(5, 0, 0, "Saving done\n");
+      driver_put_string(5, 0, 0, "Saving done\n");
 #endif
    }
    else                         /* disk-video */
@@ -234,7 +235,7 @@ restart:
    }
    if (timedsave == 0)
    {
-      buzzer(0);
+      driver_buzzer(0);
       if (initbatch == 0)
       {
          extract_filename(tmpfile, openfile);
@@ -1006,7 +1007,7 @@ nomatch:
             else
               cl_block();
          } /* end for xdot */
-         if (dotmode != 11      /* supress this on disk-video */
+         if (! driver_diskp()		/* supress this on disk-video */
              && active_system == 0      /* and in Windows version     */
              && ydot == rownum)
          {
