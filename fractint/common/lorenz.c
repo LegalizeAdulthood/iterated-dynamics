@@ -9,7 +9,6 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "drivers.h"
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x,y,z) \
@@ -1395,7 +1394,7 @@ int orbit2dfloat()
    {
       if(keypressed())
       {
-         driver_sound_off();
+         mute();
          alloc_resume(100,1);
          put_resume(sizeof(count),&count,sizeof(color),&color,
              sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
@@ -1523,7 +1522,7 @@ int orbit2dlong()
    {
       if(keypressed())
       {
-         driver_sound_off();
+         mute();
          alloc_resume(100,1);
          put_resume(sizeof(count),&count,sizeof(color),&color,
              sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
@@ -1624,7 +1623,7 @@ static int orbit3dlongcalc(void)
       }
       if(keypressed())
       {
-         driver_sound_off();
+         mute();
          ret = -1;
          break;
       }
@@ -1724,7 +1723,7 @@ static int orbit3dfloatcalc(void)
 
       if(keypressed())
       {
-         driver_sound_off();
+         mute();
          ret = -1;
          break;
       }
@@ -1862,7 +1861,7 @@ int dynam2dfloat()
    {
       if(keypressed())
       {
-             driver_sound_off();
+             mute();
              alloc_resume(100,1);
              put_resume(sizeof(count),&count, sizeof(color),&color,
                      sizeof(oldrow),&oldrow, sizeof(oldcol),&oldcol,
@@ -1877,7 +1876,7 @@ int dynam2dfloat()
           xstep = 0;
           ystep ++;
           if (ystep>d) {
-              driver_sound_off();
+              mute();
               ret = -1;
               break;
           }
@@ -2009,7 +2008,7 @@ int plotorbits2dfloat(void)
 
    if(keypressed())
    {
-      driver_sound_off();
+      mute();
       alloc_resume(100,1);
       put_resume(sizeof(o_color),&o_color, 0);
       return(-1);
@@ -2111,7 +2110,7 @@ then hit <s> to save, hit any other key to create second image."};
                diskisactive = 0;
                }
             /* is there a better way to clear the screen in graphics mode? */
-            driver_set_video_mode(videoentry.videomodeax,
+            setvideomode(videoentry.videomodeax,
                 videoentry.videomodebx,
                 videoentry.videomodecx,
                 videoentry.videomodedx);

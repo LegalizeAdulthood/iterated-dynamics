@@ -31,7 +31,6 @@
 #include <sys/param.h>
 #define getwd(a) getcwd(a,MAXPATHLEN)
 #endif
-#include "drivers.h"
 
 /* Routines used in prompts2.c */
 
@@ -189,7 +188,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
 
 
    helptitle();                        /* clear screen, display title line  */
-   driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);  /* init rest of screen to background */
+   setattr(1,0,C_PROMPT_BKGRD,24*80);  /* init rest of screen to background */
 
 
    hdgscan = hdg;                      /* count title lines, find widest */
@@ -315,7 +314,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
 
    /* display box heading */
    for (i = titlerow; i < boxrow; ++i)
-      driver_set_attr(i,boxcol,C_PROMPT_HI,boxwidth);
+      setattr(i,boxcol,C_PROMPT_HI,boxwidth);
    {
       char far *hdgline = hdg;
       /* center each line of heading independently */
@@ -328,7 +327,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          *next = '\0';
          titlewidth = far_strlen(hdgline);
          textcbase = boxcol + (boxwidth - titlewidth) / 2;
-         driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
+         putstring(titlerow+i,0,C_PROMPT_HI,hdgline);
          *next = '\n';
          hdgline = next+1;
       }
@@ -340,7 +339,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
 
       titlewidth = far_strlen(hdgline);
       textcbase = boxcol + (boxwidth - titlewidth) / 2;
-      driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
+      putstring(titlerow+i,0,C_PROMPT_HI,hdgline);
    }
 
    /* display extra info */
@@ -362,36 +361,36 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
 #endif
       memset(buf,S1,80); buf[boxwidth-2] = 0;
       textcbase = boxcol + 1;
-      driver_put_string(extrarow,0,C_PROMPT_BKGRD,buf);
-      driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,buf);
+      putstring(extrarow,0,C_PROMPT_BKGRD,buf);
+      putstring(extrarow+extralines-1,0,C_PROMPT_BKGRD,buf);
       --textcbase;
-      driver_put_string(extrarow,0,C_PROMPT_BKGRD,S5);
-      driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S2);
+      putstring(extrarow,0,C_PROMPT_BKGRD,S5);
+      putstring(extrarow+extralines-1,0,C_PROMPT_BKGRD,S2);
       textcbase += boxwidth - 1;
-      driver_put_string(extrarow,0,C_PROMPT_BKGRD,S6);
-      driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S3);
+      putstring(extrarow,0,C_PROMPT_BKGRD,S6);
+      putstring(extrarow+extralines-1,0,C_PROMPT_BKGRD,S3);
 
       textcbase = boxcol;
 
       for (i = 1; i < extralines-1; ++i) {
-         driver_put_string(extrarow+i,0,C_PROMPT_BKGRD,S4);
-         driver_put_string(extrarow+i,boxwidth-1,C_PROMPT_BKGRD,S4);
+         putstring(extrarow+i,0,C_PROMPT_BKGRD,S4);
+         putstring(extrarow+i,boxwidth-1,C_PROMPT_BKGRD,S4);
       }
       textcbase += (boxwidth - extrawidth) / 2;
-      driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
+      putstring(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
    }
 
    textcbase = 0;
 
    /* display empty box */
    for (i = 0; i < boxlines; ++i)
-      driver_set_attr(boxrow+i,boxcol,C_PROMPT_LO,boxwidth);
+      setattr(boxrow+i,boxcol,C_PROMPT_LO,boxwidth);
 
    /* display initial values */
    for (i = 0; i < numprompts; i++) {
-      driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
+      putstring(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
       prompt_valuestring(buf,&values[i]);
-      driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
+      putstring(promptrow+i, valuecol, C_PROMPT_LO, buf);
    }
 
 
@@ -400,7 +399,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
         instr0);
       putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
         (helpmode > 0) ? instr0b : instr0a);
-      driver_hide_text_cursor();
+      movecursor(25,80);
       textcbase = 2;
       for(;;) {
          if(rewrite_extrainfo) {
@@ -409,8 +408,8 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
             load_entry_text(scroll_file, extrainfo, extralines - 2,
                         scroll_row_status, scroll_column_status);
             for(i=1; i <= extralines - 2; i++)
-               driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
-            driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
+               putstring(extrarow+i,0,C_PROMPT_TEXT,blanks);
+            putstring(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
          }
         while (!keypressed()) { }
         done = getakey();
@@ -506,8 +505,8 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          load_entry_text(scroll_file, extrainfo, extralines - 2,
                              scroll_row_status, scroll_column_status);
          for(i=1; i <= extralines - 2; i++)
-            driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
-         driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
+            putstring(extrarow+i,0,C_PROMPT_TEXT,blanks);
+         putstring(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
          textcbase = j;
       }
 
@@ -518,7 +517,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
                    (curtype == 'l') ? instr2b : instr2a);
       else
          rewrite_extrainfo = 0;
-      driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_HI,prompts[curchoice]);
+      putstring(promptrow+curchoice,promptcol,C_PROMPT_HI,prompts[curchoice]);
 
       if (curtype == 'l') {
          i = input_field_list(
@@ -561,10 +560,10 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
             }
          }
 
-      driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_LO,prompts[curchoice]);
+      putstring(promptrow+curchoice,promptcol,C_PROMPT_LO,prompts[curchoice]);
       j = strlen(buf);
       memset(&buf[j],' ',80-j); buf[curlen] = 0;
-      driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
+      putstring(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
 
       switch(i) {
          case 0:  /* enter  */
@@ -653,7 +652,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
    }
 
 fullscreen_exit:
-   driver_hide_text_cursor();
+   movecursor(25,80);
    lookatmouse = savelookatmouse;
    if(scroll_file) {
       fclose(scroll_file);
@@ -798,7 +797,7 @@ static int input_field_list(
       while (i < vlen)
          buf[i++] = ' ';
       buf[vlen] = 0;
-      driver_put_string(row,col,attr,buf);
+      putstring(row,col,attr,buf);
       curkey = keycursor(row,col); /* get a keystroke */
       switch (curkey) {
          case ENTER:
@@ -860,7 +859,7 @@ static void clear_line(int row, int start, int stop, int color) /* clear part of
 {
    int col;
    for(col=start;col<= stop;col++)
-      driver_put_string(row,col,color," ");
+      putstring(row,col,color," ");
 }
 
 #endif
@@ -2114,18 +2113,18 @@ static int check_gfe_key(int curkey,int choice)
       strcpy(infhdg,gfe_title);
       strcat(infhdg," file entry:\n\n");
  /* ... instead, call help with buffer?  heading added */
-      driver_stack_screen();
+      stackscreen();
       helptitle();
-      driver_set_attr(1,0,C_GENERAL_MED,24*80);
+      setattr(1,0,C_GENERAL_MED,24*80);
 
       textcbase = 0;
-      driver_put_string(2,1,C_GENERAL_HI,infhdg);
+      putstring(2,1,C_GENERAL_HI,infhdg);
       textcbase = 2; /* left margin is 2 */
-      driver_put_string(4,0,C_GENERAL_MED,infbuf);
+      putstring(4,0,C_GENERAL_MED,infbuf);
 
       {
       static FCODE msg[]  = {"\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list"};
-      driver_put_string(-1,0,C_GENERAL_LO,msg);
+      putstring(-1,0,C_GENERAL_LO,msg);
       }
 
       while(!done) {
@@ -2134,8 +2133,8 @@ static int check_gfe_key(int curkey,int choice)
             fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
             load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
             for(i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
-               driver_put_string(i,0,C_GENERAL_MED,blanks);
-            driver_put_string(4,0,C_GENERAL_MED,infbuf);
+               putstring(i,0,C_GENERAL_MED,blanks);
+            putstring(4,0,C_GENERAL_MED,infbuf);
          }
          if((i = getakeynohelp()) == DOWN_ARROW || i == DOWN_ARROW_2
                              || i == UP_ARROW || i == UP_ARROW_2
@@ -2207,8 +2206,8 @@ static int check_gfe_key(int curkey,int choice)
             done = 1;  /* a key other than scrolling key was pressed */
       }
       textcbase = 0;
-      driver_hide_text_cursor();
-      driver_unstack_screen();
+      movecursor(25,80);
+      unstackscreen();
    }
    return 0;
 }
@@ -2365,7 +2364,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    struct fullscreenvalues uvalues[20];
    char far *ifs3d_prompts[8];
 
-   driver_stack_screen();
+   stackscreen();
    ifs3d_prompts[0] = p1;
    ifs3d_prompts[1] = p2;
    ifs3d_prompts[2] = p3;
@@ -2412,7 +2411,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
          ret = -1;
 
 get_f3d_exit:
-   driver_unstack_screen();
+   unstackscreen();
    return(ret);
 }
 

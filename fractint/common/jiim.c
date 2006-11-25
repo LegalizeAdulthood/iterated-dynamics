@@ -239,7 +239,7 @@ ClearQueue()
 
 int Init_Queue(unsigned long request)
 {
-   if (driver_diskp())
+   if (dotmode == 11)
    {
       static FCODE nono[] = "Don't try this in disk video mode, kids...\n";
       stopmsg(0, nono);

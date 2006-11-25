@@ -250,7 +250,7 @@ int do_AutoStereo(void)
       static FCODE msg[] = 
          {"Stereo not allowed with resolution > 2048 pixels wide"};
       stopmsg(0,msg);
-      driver_buzzer(1);
+      buzzer(1);
       ret = 1;
       goto exit_stereo;
    }
@@ -268,7 +268,7 @@ int do_AutoStereo(void)
    DEPTH = labs(DEPTH) + 1;
    if(get_min_max())
    {
-      driver_buzzer(1);
+      buzzer(1);
       ret = 1;
       goto exit_stereo;
    }
@@ -355,7 +355,7 @@ int do_AutoStereo(void)
             if(kbdchar == 27)   /* if ESC avoid returning to menu */
                kbdchar = 255;
             ungetakey(kbdchar);
-            driver_buzzer(0);
+            buzzer(0);
             done = 1;
             break;
        }

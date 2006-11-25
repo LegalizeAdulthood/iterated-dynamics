@@ -48,7 +48,6 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "drivers.h"
 
 struct videoinfo videoentry;
 int helpmode;
@@ -229,12 +228,9 @@ main(int argc, char **argv)
    InitMemory();
    checkfreemem(0);
    load_videotable(1); /* load fractint.cfg, no message yet if bad */
-   if (! init_drivers(&argc, argv)) {
-     fprintf(stderr, "Sorry, I couldn't find any "
-	     "working video drivers for your system\n");
-     exit(-1);
-   }
-
+#ifdef XFRACT
+   UnixInit();
+#endif
    init_help();
 
 restart:   /* insert key re-starts here */
@@ -281,7 +277,9 @@ restart:   /* insert key re-starts here */
    checkfreemem(1);
    if(debugflag==450 && initbatch==1)   /* abort if savename already exists */
        check_samename();
-   driver_window();
+#ifdef XFRACT
+   initUnixWindow();
+#endif
    memcpy(olddacbox,dacbox,256*3);      /* save in case colors= present */
 
    if (debugflag == 8088)                cpu =  86; /* for testing purposes */
@@ -305,7 +303,7 @@ restart:   /* insert key re-starts here */
 
    diskisactive = 0;                    /* disk-video is inactive */
    diskvideo = 0;                       /* disk driver is not in use */
-   driver_set_for_text();                      /* switch to text mode */
+   setvideotext();                      /* switch to text mode */
    savedac = 0;                         /* don't save the VGA DAC */
 
 #ifndef XFRACT
@@ -371,8 +369,8 @@ restorestart:
       tabmode = 1;
       if(stacked)
       {
-         driver_discard_screen();
-         driver_set_for_text();
+         discardscreen();
+         setvideotext();
          stacked = 0;
       }
       if (read_overlay() == 0)       /* read hdr, get video mode */
@@ -388,7 +386,7 @@ restorestart:
    lookatmouse = 0;                     /* ignore mouse */
 
    if (((overlay3d && !initbatch) || stacked) && initmode < 0) {        /* overlay command failed */
-      driver_unstack_screen();                  /* restore the graphics screen */
+      unstackscreen();                  /* restore the graphics screen */
       stacked = 0;
       overlay3d = 0;                    /* forget overlays */
       display3d = 0;                    /* forget 3D */
@@ -402,7 +400,7 @@ restorestart:
 imagestart:                             /* calc/display a new image */
    if(stacked)
    {
-      driver_discard_screen();
+      discardscreen();
       stacked = 0;
    }
 #ifdef XFRACT
@@ -439,13 +437,13 @@ imagestart:                             /* calc/display a new image */
          kbdchar = tolower(kbdchar);
 #endif
       if (kbdchar == 'd') {                     /* shell to DOS */
-	driver_set_clear();
+         setclear();
 #ifndef XFRACT
          printf("\n\nShelling to DOS - type 'exit' to return\n\n");
 #else
          printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
 #endif
-         driver_shell();
+         shell_to_dos();
          goto imagestart;
          }
 
@@ -468,7 +466,7 @@ imagestart:                             /* calc/display a new image */
             display3d = 1;
          if(colorpreloaded)
             memcpy(olddacbox,dacbox,256*3);     /* save in case colors= present */
-         driver_set_for_text(); /* switch to text mode */
+         setvideotext(); /* switch to text mode */
          showfile = -1;
          goto restorestart;
          }
@@ -552,7 +550,7 @@ int check_key()
          return(-1);
       }
       getakey();
-      if (!driver_diskp())
+      if (dotmode != 11)
          show_orbit = 1 - show_orbit;
    }
    return(0);

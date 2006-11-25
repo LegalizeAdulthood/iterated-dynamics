@@ -12,7 +12,7 @@
 #define RAND_MAX 0x7fffffff
 #endif
 
-#if !defined(O_BINARY)
+#ifndef O_BINARY
 #define O_BINARY 0
 #endif
 
@@ -25,19 +25,11 @@ typedef short INT2;
 typedef unsigned short UINT2;
 typedef int INT4;
 typedef unsigned int UINT4;
-#if !defined(max)
 #define max(a,b) ((a)>(b)?(a):(b))
-#endif
-#if !defined(min)
 #define min(a,b) ((a)<(b)?(a):(b))
-#endif
 #define remove(x) unlink(x)
-#if !defined(_MAX_FNAME)
 #define _MAX_FNAME 20
-#endif
-#if !defined(_MAX_EXT)
 #define _MAX_EXT 4
-#endif
 #define chsize(fd,len) ftruncate(fd,len)
 
 #define inp(x) 0
@@ -76,11 +68,7 @@ extern int iocount;
 char *strlwr(char *s);
 char *strupr(char *s);
 
-#if defined(WIN32)
-#define bcopy(src,dst,n) memcpy(dst,src,n)
-#define bzero(buf,siz) memset(buf,0,siz)
-#define bcmp(buf1,buf2,len) memcmp(buf1,buf2,len)
-#else
+
 #ifndef LINUX
 #ifndef __SVR4
 /* bcopy is probably faster than memmove, memcpy */
@@ -97,7 +85,6 @@ char *strupr(char *s);
 # define bcopy(src,dst,n) memcpy(dst,src,n)
 # define bzero(buf,siz) memset(buf,0,siz)
 # define bcmp(buf1,buf2,len) memcmp(buf1,buf2,len)
-#endif
 #endif
 #endif
 

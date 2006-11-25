@@ -14,12 +14,10 @@
 /* huge pointers is not supported in assembly, only in C           */
 /* uncomment only ONE of these or declare on compiler command line */
 /* #define BIG_NEAR   */
-#if !defined(WIN32)
 #if defined(_MSC_VER)
 #   define BIG_BASED    
 #elif defined( __BORLANDC__)  
 #   define BIG_FAR    
-#endif
 #endif
 /* #define BIG_HUGE   */  /* C code only */
 /* #define BIG_ANSI_C */  /* C code only */
