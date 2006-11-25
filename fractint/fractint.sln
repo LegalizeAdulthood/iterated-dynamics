@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5} = {DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dos_help", "dos_help\dos_help.vcproj", "{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug.ActiveCfg = Debug|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug.Build.0 = Debug|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.ActiveCfg = Release|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.Build.0 = Release|Win32
+		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Debug.ActiveCfg = Debug|Win32
+		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Debug.Build.0 = Debug|Win32
+		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Release.ActiveCfg = Release|Win32
+		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
