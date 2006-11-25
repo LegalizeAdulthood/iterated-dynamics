@@ -128,6 +128,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 /*
  * misc. #defines
@@ -397,7 +398,7 @@ void displayc(int x, int y, int fg, int bg, int ch)
    BYTE far *ptr;
 
    if( font8x8 == NULL)
-      if ( (font8x8 = findfont(0)) == NULL )
+      if ( (font8x8 = driver_find_font(0)) == NULL )
          return ;
 
    ptr = ((BYTE far *)font8x8) + ch*FONT_DEPTH;
@@ -2355,7 +2356,7 @@ static void PalTable__SaveRect(PalTable *this)
          if (this->file == NULL)
             {
             this->stored_at = NOWHERE;
-            buzzer(3);
+            driver_buzzer(3);
             return ;
             }
          }
@@ -2368,7 +2369,7 @@ static void PalTable__SaveRect(PalTable *this)
          hline (this->x, this->y+yoff, width, bg_color);
          if ( fwrite(buff, width, 1, this->file) != 1 )
             {
-            buzzer(3);
+            driver_buzzer(3);
             break;
             }
          }
@@ -2397,7 +2398,7 @@ static void PalTable__RestoreRect(PalTable *this)
             {
             if ( fread(buff, width, 1, this->file) != 1 )
                {
-               buzzer(3);
+               driver_buzzer(3);
                break;
                }
             putrow(this->x, this->y+yoff, width, buff);
@@ -2898,9 +2899,9 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
               char buf[20];
               far_strcpy(msg,o_msg);
               sprintf(buf,"%.3f",1./gamma_val);
-              stackscreen();
+              driver_stack_screen();
               i = field_prompt(0,msg,NULL,buf,20,NULL);
-              unstackscreen();
+              driver_unstack_screen();
               if (i != -1) {
                   sscanf(buf,"%f",&gamma_val);
                   if (gamma_val==0) {
@@ -2997,7 +2998,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
          if ( this->curr[0] >= colors || this->curr[1] >= colors ||
               this->curr[0] == this->curr[1] )
             {
-            buzzer(2);
+            driver_buzzer(2);
             break;
             }
 
@@ -3053,7 +3054,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             RGBEditor_SetDone(this->rgb[this->active], TRUE);
             }
          else
-            buzzer(3);   /* error buzz */
+            driver_buzzer(3);   /* error buzz */
          break;
          }
 
@@ -3073,7 +3074,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             far_memcpy(this->save_pal[which],this->pal,256*3);
             }
          else
-            buzzer(3); /* oops! short on memory! */
+            driver_buzzer(3); /* oops! short on memory! */
          break;
          }
 
@@ -3479,7 +3480,7 @@ void EditPalette(void)       /* called by fractint */
 
    mem_init(strlocn, 10*1024);
 
-   if ( (font8x8 = findfont(0)) == NULL )
+   if ( (font8x8 = driver_find_font(0)) == NULL )
       return ;
 
    if (sxdots < 133 || sydots < 174)

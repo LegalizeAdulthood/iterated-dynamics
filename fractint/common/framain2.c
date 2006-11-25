@@ -17,6 +17,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 #if 0
 /* makes a handly list of jul-man pairs, not for release */
@@ -96,19 +97,19 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
          diskvideo = 0;                 /* set diskvideo flag */
-         if (dotmode == 11)             /* default assumption is disk */
+         if (driver_diskp())		/* default assumption is disk */
             diskvideo = 2;
 
          memcpy(olddacbox,dacbox,256*3); /* save the DAC */
          diskisactive = 1;              /* flag for disk-video routines */
 
          if (overlay3d && !initbatch) {
-            unstackscreen();            /* restore old graphics image */
+            driver_unstack_screen();            /* restore old graphics image */
             overlay3d = 0;
             }
 
          else {
-            setvideomode(axmode,bxmode,cxmode,dxmode); /* switch video modes */
+            driver_set_video_mode(axmode, bxmode, cxmode, dxmode); /* switch video modes */
             if (goodmode == 0) {
                static FCODE msg[] = {"That video mode is not available with your adapter."};
 #ifndef XFRACT
@@ -120,7 +121,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   }
                else
 #endif	       
-	       if(dotmode == 11) {
+	       if (driver_diskp()) {
                   askvideo = TRUE;
                   }
                else {
@@ -128,7 +129,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   askvideo = TRUE;
                   }
                initmode = -1;
-               setvideotext(); /* switch to text mode */
+               driver_set_for_text(); /* switch to text mode */
                /* goto restorestart; */
                return(RESTORESTART);
                }
@@ -169,7 +170,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                far_memcpy((char far *)dacbox,mapdacbox,768);
                spindac(0,1);
                }
-            else if ((dotmode == 11 && colors == 256) || !colors) {
+            else if ((driver_diskp() && colors == 256) || !colors) {
                /* disk video, setvideomode via bios didn't get it right, so: */
 #ifndef XFRACT
                ValidateLuts("default"); /* read the default palette file */
@@ -257,7 +258,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                pot16bit = 0;
                initmode = -1;
                calc_status = 2;         /* "resume" without 16-bit */
-               setvideotext();
+               driver_set_for_text();
                get_fracttype();
                /* goto imagestart; */
                return(IMAGESTART);
@@ -284,12 +285,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          if(outln_cleanup)              /* cleanup routine defined? */
             (*outln_cleanup)();
          if(i == 0)
-            buzzer(0);
+            driver_buzzer(0);
          else {
             calc_status = -1;
             if (keypressed()) {
                static FCODE msg[] = {"*** load incomplete ***"};
-               buzzer(1);
+               driver_buzzer(1);
                while (keypressed()) getakey();
                texttempmsg(msg);
                }
@@ -297,13 +298,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          }
 
       zoomoff = 1;                      /* zooming is enabled */
-      if (dotmode == 11 || (curfractalspecific->flags&NOZOOM) != 0)
+      if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
          zoomoff = 0;                   /* for these cases disable zooming */
       if (!evolving)
          calcfracinit();
-#ifdef XFRACT
-      schedulealarm(1);
-#endif
+      driver_schedule_alarm(1);
 
       sxmin = xxmin; /* save 3 corners for zoom.c ref points */
       sxmax = xxmax;
@@ -411,7 +410,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 done:
         if (ecount == gridsqr) {
            i = 0;
-           buzzer(0); /* finished!! */
+           driver_buzzer(0); /* finished!! */
         }
         else { /* interrupted screen generation, save info */
            if (evolve_handle == 0)
@@ -451,11 +450,11 @@ done:
      else {
          i = calcfract();       /* draw the fractal using "C" */
          if (i == 0)
-            buzzer(0); /* finished!! */
+            driver_buzzer(0); /* finished!! */
      }
 
      saveticks = 0;                 /* turn off autosave timer */
-     if (dotmode == 11 && i == 0) /* disk-video */
+     if (driver_diskp() && i == 0) /* disk-video */
      {
         static FCODE o_msg[] = {"Image has been completed"};
         char msg[sizeof(o_msg)];
@@ -520,7 +519,7 @@ resumeloop:                             /* return here on failed overlays */
                   if (kbdchar == ESC && escape_exit != 0)
                       /* don't ask, just get out */
                       goodbye();
-                  stackscreen();
+                  driver_stack_screen();
 #ifndef XFRACT
                   kbdchar = main_menu(1);
 #else
@@ -536,14 +535,14 @@ resumeloop:                             /* return here on failed overlays */
                   if (kbdchar == '\\' || kbdchar == CTL_BACKSLASH ||
                       kbdchar == 'h' || kbdchar == 8 ||
                       check_vidmode_key(0,kbdchar) >= 0)
-                     discardscreen();
+                     driver_discard_screen();
                   else if (kbdchar == 'x' || kbdchar == 'y' ||
                            kbdchar == 'z' || kbdchar == 'g' ||
                            kbdchar == 'v' || kbdchar == 2 ||
                            kbdchar == 5 || kbdchar == 6)
                      fromtext_flag = 1;
                   else
-                     unstackscreen();
+                     driver_unstack_screen();
                   }
                }
             }
@@ -610,11 +609,9 @@ resumeloop:                             /* return here on failed overlays */
          }
          if (zoomoff == 1 && *kbdmore == 1) /* draw/clear a zoom box? */
             drawbox(1);
-#ifdef XFRACT
-         if (resizeWindow()) {
+         if (driver_resize()) {
              calc_status = -1;
          }
-#endif
          }
       }
 /*  return(0); */
@@ -643,10 +640,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case 't':                    /* new fractal type             */
       julibrot = 0;
       clear_zoombox();
-      stackscreen();
+      driver_stack_screen();
       if ((i = get_fracttype()) >= 0)
       {
-         discardscreen();
+         driver_discard_screen();
          savedac = 0;
          save_release = release;
          no_mag_calc = 0;
@@ -664,10 +661,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             *frommandel = 0;
          }
          else if (initmode < 0) /* it is supposed to be... */
-            setvideotext();     /* reset to text mode      */
+            driver_set_for_text();     /* reset to text mode      */
          return(IMAGESTART);
       }
-      unstackscreen();
+      driver_unstack_screen();
       break;
    case 24:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
    case 25:
@@ -688,7 +685,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       if (fromtext_flag == 1)
          fromtext_flag = 0;
       else
-         stackscreen();
+         driver_stack_screen();
       if (*kbdchar == 'x')
          i = get_toggles();
       else if (*kbdchar == 'y')
@@ -713,7 +710,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          i = get_sound_params();
       else
          i = get_cmd_string();
-      unstackscreen();
+      driver_unstack_screen();
       if (evolving && truecolor)
          truecolor = 0; /* truecolor doesn't play well with the evolver */
       if (maxit > old_maxit && inside >= 0 && calc_status == 4 &&
@@ -743,7 +740,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 #else
    case F2:                     /* execute commands */
 #endif
-      stackscreen();
+      driver_stack_screen();
       i = get_commands();
       if (initmode != -1)
       {                         /* video= was specified */
@@ -762,18 +759,18 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       if ((i & 4))
       {                         /* 3d = was specified */
          *kbdchar = '3';
-         unstackscreen();
+         driver_unstack_screen();
          goto do_3d_transform;  /* pretend '3' was keyed */
       }
       if ((i & 1))
       {                         /* fractal parameter changed */
-         discardscreen();
+         driver_discard_screen();
          /* backwards_v18();*/  /* moved this to cmdfiles.c */
          /* backwards_v19();*/
          *kbdmore = calc_status = 0;
       }
       else
-         unstackscreen();
+         driver_unstack_screen();
       break;
    case 'f':                    /* floating pt toggle           */
       if (usr_floatflag == 0)
@@ -807,16 +804,16 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             load_params(fractype);
          }
          if (!fromtext_flag)
-            stackscreen();
+            driver_stack_screen();
          fromtext_flag = 0;
          if ((err = get_fract_params(2)) >= 0)
          {
-            unstackscreen();
+            driver_unstack_screen();
             if (ant() >= 0)
                calc_status = 0;
          }
          else
-            unstackscreen();
+            driver_unstack_screen();
          fractype = oldtype;
          for(i=0;i<MAXPARAMS;i++)
             param[i] = oldparm[i];
@@ -972,7 +969,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             *kbdmore = 0;
          }
          else
-            buzzer(2);          /* can't switch */
+            driver_buzzer(2);          /* can't switch */
       }                         /* end of else for if == cellular */
       break;
    case 'j':                    /* inverse julia toggle */
@@ -1006,7 +1003,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
 #endif
       else
-         buzzer(2);
+         driver_buzzer(2);
       break;
    case '\\':                   /* return to prev image    */
    case CTL_BACKSLASH:
@@ -1033,7 +1030,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          showfile = 0;
          if (askvideo)
          {
-            stackscreen();      /* save graphics image */
+            driver_stack_screen();      /* save graphics image */
             *stacked = 1;
          }
          return(RESTORESTART);
@@ -1061,10 +1058,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       break;
    case 'd':                    /* shell to MS-DOS              */
 #ifndef XFRACT
-      stackscreen();
+      driver_stack_screen();
       if (75000L > fr_farfree()) {
          static FCODE dosmsg[] = {"Not enough memory to Shell-to-DOS"};
-         unstackscreen();
+         driver_unstack_screen();
          stopmsg(0, dosmsg);
          break;
       }
@@ -1075,15 +1072,15 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 Note:  Your graphics image is still squirreled away in your video\n\
 adapter's memory.  Switching video modes will clobber part of that\n\
 image.  Sorry - it's the best we could do."};
-         putstring(0, 0, 7, dosmsg);
-         movecursor(6, 0);
+         driver_put_string(0, 0, 7, dosmsg);
+         driver_move_cursor(6, 0);
       }
-      shell_to_dos();
-      unstackscreen();
+      driver_shell();
+      driver_unstack_screen();
 #else
       setclear();
       printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
-      shell_to_dos();
+      driver_shell();
       putprompt();
       return(CONTINUE);
 #endif
@@ -1111,7 +1108,7 @@ image.  Sorry - it's the best we could do."};
       }
       clear_zoombox();
       if (dacbox[0][0] != 255 && !reallyega && colors >= 16
-          && dotmode != 11)
+          && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
@@ -1127,7 +1124,7 @@ image.  Sorry - it's the best we could do."};
       }
       return(CONTINUE);
    case 's':                    /* save-to-disk                 */
-      if (dotmode == 11 && disktarga == 1)
+      if (driver_diskp() && disktarga == 1)
          return(CONTINUE);  /* disk video and targa, nothing to save */
       diskisactive = 1;         /* flag for disk-video routines */
       note_zoom();
@@ -1161,7 +1158,7 @@ image.  Sorry - it's the best we could do."};
             comparegif = overlay3d = 1;
             if (initbatch == 2)
             {
-               stackscreen();   /* save graphics image */
+               driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
                showfile = 0;
                return(RESTORESTART);
@@ -1171,7 +1168,7 @@ image.  Sorry - it's the best we could do."};
             comparegif = overlay3d = 0;
          display3d = 0;
       }
-      stackscreen();            /* save graphics image */
+      driver_stack_screen();            /* save graphics image */
       if (overlay3d)
          *stacked = 0;
       else
@@ -1217,7 +1214,7 @@ image.  Sorry - it's the best we could do."};
             merge_pathnames(readname,browsename,2);
             if (askvideo)
             {
-               stackscreen();   /* save graphics image */
+               driver_stack_screen();   /* save graphics image */
                *stacked = 1;
             }
             return(RESTORESTART);       /* hop off and do it!! */
@@ -1242,7 +1239,7 @@ image.  Sorry - it's the best we could do."};
                showfile = 0;
                if (askvideo)
                {
-                  stackscreen();/* save graphics image */
+                  driver_stack_screen();/* save graphics image */
                   *stacked = 1;
                }
                return(RESTORESTART);
@@ -1267,7 +1264,7 @@ image.  Sorry - it's the best we could do."};
       else
       {
          browsing = FALSE;
-         buzzer(2);             /* can't browse if zooming or diskvideo */
+         driver_buzzer(2);             /* can't browse if zooming or diskvideo */
       }
       break;
    case 'b':                    /* make batch file              */
@@ -1278,10 +1275,10 @@ image.  Sorry - it's the best we could do."};
       Print_Screen();
       restore_zoom();
       if (!keypressed())
-         buzzer(0);
+         driver_buzzer(0);
       else
       {
-         buzzer(1);
+         driver_buzzer(1);
          getakey();
       }
       return(CONTINUE);
@@ -1305,7 +1302,7 @@ image.  Sorry - it's the best we could do."};
       zoomout();                /* calc corners for zooming out */
       break;
    case INSERT:         /* insert                       */
-      setvideotext();           /* force text mode */
+      driver_set_for_text();           /* force text mode */
       return(RESTART);
    case LEFT_ARROW:             /* cursor left                  */
    case RIGHT_ARROW:            /* cursor right                 */
@@ -1404,12 +1401,12 @@ image.  Sorry - it's the best we could do."};
 
    case DELETE:         /* select video mode from list */
    {
-      stackscreen();
+      driver_stack_screen();
       *kbdchar = select_video_mode(adapter);
       if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
-         discardscreen();
+         driver_discard_screen();
       else
-         unstackscreen();
+         driver_unstack_screen();
       /* fall through */
    }
    default:                     /* other (maybe a valid Fn key) */
@@ -1439,10 +1436,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case 't':                    /* new fractal type             */
      julibrot = 0;
      clear_zoombox();
-     stackscreen();
+     driver_stack_screen();
       if ((i = get_fracttype()) >= 0)
       {
-         discardscreen();
+         driver_discard_screen();
          savedac = 0;
          save_release = release;
          no_mag_calc = 0;
@@ -1460,10 +1457,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             *frommandel = 0;
          }
          else if (initmode < 0) /* it is supposed to be... */
-            setvideotext();     /* reset to text mode      */
+            driver_set_for_text();     /* reset to text mode      */
          return(IMAGESTART);
       }
-      unstackscreen();
+      driver_unstack_screen();
       break;
    case 'x':                    /* invoke options screen        */
    case 'y':
@@ -1476,7 +1473,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       if (fromtext_flag == 1)
          fromtext_flag = 0;
       else
-         stackscreen();
+         driver_stack_screen();
       if (*kbdchar == 'x')
          i = get_toggles();
       else if (*kbdchar == 'y')
@@ -1489,7 +1486,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          i = get_evolve_Parms();
       else
          i = get_cmd_string();
-      unstackscreen();
+      driver_unstack_screen();
       if (evolving && truecolor)
          truecolor = 0; /* truecolor doesn't play well with the evolver */
       if (i > 0) {              /* time to redraw? */
@@ -1557,7 +1554,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       }
       clear_zoombox();
       if (dacbox[0][0] != 255 && !reallyega && colors >= 16
-          && dotmode != 11)
+          && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
@@ -1576,7 +1573,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 {     int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
       GENEBASE gene[NUMGENES];
 
-      if (dotmode == 11 && disktarga == 1)
+      if (driver_diskp() && disktarga == 1)
          return(CONTINUE);  /* disk video and targa, nothing to save */
       /* get the gene array from far memory */
       MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -1621,7 +1618,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             comparegif = overlay3d = 1;
             if (initbatch == 2)
             {
-               stackscreen();   /* save graphics image */
+               driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
                showfile = 0;
                return(RESTORESTART);
@@ -1631,7 +1628,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             comparegif = overlay3d = 0;
          display3d = 0;
       }
-      stackscreen();            /* save graphics image */
+      driver_stack_screen();            /* save graphics image */
       if (overlay3d)
          *stacked = 0;
       else
@@ -1663,7 +1660,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       zoomout();                /* calc corners for zooming out */
       break;
    case INSERT:         /* insert                       */
-      setvideotext();           /* force text mode */
+      driver_set_for_text();           /* force text mode */
       return(RESTART);
    case LEFT_ARROW:             /* cursor left                  */
    case RIGHT_ARROW:            /* cursor right                 */
@@ -1900,12 +1897,12 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
 
    case DELETE:         /* select video mode from list */
-      stackscreen();
+      driver_stack_screen();
       *kbdchar = select_video_mode(adapter);
       if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
-         discardscreen();
+         driver_discard_screen();
       else
-         unstackscreen();
+         driver_unstack_screen();
       /* fall through */
    default:             /* other (maybe valid Fn key */
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
@@ -2466,7 +2463,7 @@ void checkfreemem(int secondpass)
    }
    if(extraseg == 0 || tmp == NULL)
    {
-      buzzer(2);
+      driver_buzzer(2);
 #ifndef XFRACT
       printf("%Fs",(char far *)msg);
 #else
