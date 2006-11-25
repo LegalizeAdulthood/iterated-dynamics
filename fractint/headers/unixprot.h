@@ -30,9 +30,11 @@ extern long clock_ticks(void);
 extern int stricmp(char *, char *);
 extern int strnicmp(char *, char *, int);
 #endif
+#if !defined(_WIN32)
 extern int memicmp(char *, char *, int);
 extern unsigned short _rotl(unsigned short, short);
 extern int ltoa(long, char *, int);
+#endif
 extern void ftimex(struct timebx *);
 extern long stackavail(void);
 extern int kbhit(void);

@@ -1296,7 +1296,7 @@ rescan:  /* entry for changed browse parms */
  c=0;
  if (wincount)
  {
-      buzzer(0); /*let user know we've finished */
+      driver_buzzer(0); /*let user know we've finished */
       index=0;done = 0;
       MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
       MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
@@ -1434,7 +1434,7 @@ rescan:  /* entry for changed browse parms */
 
         case 'R':
          cleartempmsg();
-         stackscreen();
+         driver_stack_screen();
          newname[0] = 0;
          strcpy(mesg,"");
          {
@@ -1447,7 +1447,7 @@ rescan:  /* entry for changed browse parms */
          strcpy(newname,tmpmask);
          strcat(mesg,tmpmask);
          i = field_prompt(0,mesg,NULL,newname,60,NULL);
-         unstackscreen();
+         driver_unstack_screen();
          if( i != -1)
           if (!rename(tmpmask,newname)) {
             if (errno == EACCES)
@@ -1469,9 +1469,9 @@ rescan:  /* entry for changed browse parms */
 
         case 2: /* ctrl B */
           cleartempmsg();
-          stackscreen();
+          driver_stack_screen();
           done = abs(get_browse_params());
-          unstackscreen();
+          driver_unstack_screen();
           showtempmsg(winlist.name);
           break;
 
@@ -1515,7 +1515,7 @@ rescan:  /* entry for changed browse parms */
  }/*if*/
  else {
    static FCODE msg[] = {"sorry.. I can't find anything"};
-   buzzer(1); /*no suitable files in directory! */
+   driver_buzzer(1); /*no suitable files in directory! */
    texttempmsg(msg);
    no_sub_images = TRUE;
  }

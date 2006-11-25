@@ -17,6 +17,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 static int menu_checkkey(int curkey,int choice);
 
@@ -80,13 +81,13 @@ int stopmsg (int flags, char far *msg)
    if (active_system == 0 /* DOS */
      && first_init) {     /* & cmdfiles hasn't finished 1st try */
 #ifdef XFRACT
-      setvideotext();
-      buzzer(2);
-      putstring(0,0,15,s_errorstart);
-      putstring(2,0,15,msg);
-      movecursor(8,0);
+      driver_set_for_text();
+      driver_buzzer(2);
+      driver_put_string(0,0,15,s_errorstart);
+      driver_put_string(2,0,15,msg);
+      driver_move_cursor(8,0);
       sleep(1);
-      UnixDone();
+      close_drivers();
       exit(1);
 #else
       printf("%Fs\n",msg);
@@ -105,22 +106,22 @@ int stopmsg (int flags, char far *msg)
    if ((flags & 1))
       blankrows(toprow=12,10,7);
    else {
-      stackscreen();
+      driver_stack_screen();
       toprow = 4;
-      movecursor(4,0);
+      driver_move_cursor(4,0);
       }
    textcbase = 2; /* left margin is 2 */
-   putstring(toprow,0,7,msg);
+   driver_put_string(toprow,0,7,msg);
    if (flags & 2)
-      putstring(textrow+2,0,7,s_escape_cancel);
+      driver_put_string(textrow+2,0,7,s_escape_cancel);
    else
-      putstring(textrow+2,0,7,s_anykey);
+      driver_put_string(textrow+2,0,7,s_anykey);
    textcbase = 0; /* back to full line */
    color = (flags & 16) ? C_STOP_INFO : C_STOP_ERR;
-   setattr(toprow,0,color,(textrow+1-toprow)*80);
-   movecursor(25,80);   /* cursor off */
+   driver_set_attr(toprow,0,color,(textrow+1-toprow)*80);
+   driver_hide_text_cursor();   /* cursor off */
    if ((flags & 4) == 0)
-      buzzer((flags & 16) ? 0 : 2);
+      driver_buzzer((flags & 16) ? 0 : 2);
    while (keypressed()) /* flush any keyahead */
       getakey();
    if(debugflag != 324)
@@ -129,7 +130,7 @@ int stopmsg (int flags, char far *msg)
    if ((flags & 1))
       blankrows(toprow,10,7);
    else
-      unstackscreen();
+      driver_unstack_screen();
    lookatmouse = savelookatmouse;
    return ret;
 }
@@ -176,7 +177,7 @@ int showtempmsg(char far *msgparm)
    int save_sxoffs,save_syoffs;
    far_strncpy(msg,msgparm,40);
    msg[40] = 0; /* ensure max message len of 40 chars */
-   if (dotmode == 11) { /* disk video, screen in text mode, easy */
+   if (driver_diskp()) { /* disk video, screen in text mode, easy */
       dvid_status(0,msg);
       return(0);
       }
@@ -186,7 +187,7 @@ int showtempmsg(char far *msgparm)
       return(0);
       }
 
-   if ((fontptr = findfont(0)) == NULL) { /* old bios, no font table? */
+   if ((fontptr = driver_find_font(0)) == NULL) { /* old bios, no font table? */
       if (oktoprint == 0               /* can't printf */
         || sxdots > 640 || sydots > 200) /* not willing to trust char cell size */
          return(-1); /* sorry, message not displayed */
@@ -256,7 +257,7 @@ void cleartempmsg()
    BYTE buffer[640];
    int i;
    int save_sxoffs,save_syoffs;
-   if (dotmode == 11) /* disk video, easy */
+   if (driver_diskp()) /* disk video, easy */
       dvid_status(0,"");
    else if (temptextsave != 0) {
       save_sxoffs = sxoffs;
@@ -288,7 +289,7 @@ void blankrows(int row,int rows,int attr)
    memset(buf,' ',80);
    buf[80] = 0;
    while (--rows >= 0)
-      putstring(row++,0,attr,buf);
+      driver_put_string(row++,0,attr,buf);
    }
 
 #if (_MSC_VER >= 700)
@@ -298,7 +299,7 @@ void blankrows(int row,int rows,int attr)
 void helptitle()
 {
    char msg[MSGLEN],buf[MSGLEN];
-   setclear(); /* clear the screen */
+   driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
    strcpy(msg,"X");
 #else
@@ -324,11 +325,11 @@ void helptitle()
    if (debugflag == 3002) return;
 #define DEVELOPMENT
 #ifdef DEVELOPMENT
-   putstring(0,2,C_TITLE_DEV,"Development Version");
+   driver_put_string(0,2,C_TITLE_DEV,"Development Version");
 #else
-   putstring(0,3,C_TITLE_DEV, s_custom);
+   driver_put_string(0,3,C_TITLE_DEV, s_custom);
 #endif
-   putstring(0,55,C_TITLE_DEV,s_incremental);
+   driver_put_string(0,55,C_TITLE_DEV,s_notpublic);
 #endif
 }
 
@@ -369,7 +370,7 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
    i = 0;
    k = j;
    while (msg[i]) buf[k++] = msg[i++]; /* strcpy for a far */
-   putstring(row,col,attr,buf);
+   driver_put_string(row,col,attr,buf);
    return j;
 }
 
@@ -414,10 +415,10 @@ void stackscreen()
                stopmsg(1,msg);
                exit(1);
             }
-      setclear();
+      driver_set_clear();
       }
    else
-      setfortext();
+      driver_set_for_text();
    if (video_scroll) {
       if (boxcount)
          moveboxf(0.0,0.0);
@@ -491,13 +492,13 @@ void show_speedstring(int speedrow,
    char buf[81];
    memset(buf,' ',80);
    buf[80] = 0;
-   putstring(speedrow,0,C_PROMPT_BKGRD,buf);
+   driver_put_string(speedrow,0,C_PROMPT_BKGRD,buf);
    if (*speedstring) {                 /* got a speedstring on the go */
-      putstring(speedrow,15,C_CHOICE_SP_INSTR," ");
+      driver_put_string(speedrow,15,C_CHOICE_SP_INSTR," ");
       if (speedprompt)
          j = speedprompt(speedrow,16,C_CHOICE_SP_INSTR,speedstring,speed_match);
       else {
-         putstring(speedrow,16,C_CHOICE_SP_INSTR,speed_prompt);
+         driver_put_string(speedrow,16,C_CHOICE_SP_INSTR,speed_prompt);
          j = sizeof(speed_prompt)-1;
          }
       strcpy(buf,speedstring);
@@ -505,12 +506,12 @@ void show_speedstring(int speedrow,
       while (i < 30)
          buf[i++] = ' ';
       buf[i] = 0;
-      putstring(speedrow,16+j,C_CHOICE_SP_INSTR," ");
-      putstring(speedrow,17+j,C_CHOICE_SP_KEYIN,buf);
-      movecursor(speedrow,17+j+strlen(speedstring));
+      driver_put_string(speedrow,16+j,C_CHOICE_SP_INSTR," ");
+      driver_put_string(speedrow,17+j,C_CHOICE_SP_KEYIN,buf);
+      driver_move_cursor(speedrow,17+j+(int) strlen(speedstring));
       }
    else
-      movecursor(25,80);
+      driver_hide_text_cursor();
 }
 
 void process_speedstring(char    *speedstring,
@@ -734,17 +735,17 @@ int fullscreen_choice(
 
    /* now set up the overall display */
    helptitle();                            /* clear, display title line */
-   setattr(1,0,C_PROMPT_BKGRD,24*80);      /* init rest to background */
+   driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);      /* init rest to background */
    for (i = topleftrow-1-titlelines; i < topleftrow+boxdepth+1; ++i)
-      setattr(i,k,C_PROMPT_LO,j);          /* draw empty box */
+      driver_set_attr(i,k,C_PROMPT_LO,j);          /* draw empty box */
    if (hdg) {
       textcbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
       textcbase -= (90 - titlewidth) / 20; /* put heading into box */
-      putstring(topleftrow-titlelines-1,0,C_PROMPT_HI,hdg);
+      driver_put_string(topleftrow-titlelines-1,0,C_PROMPT_HI,hdg);
       textcbase = 0;
       }
    if (hdg2)                               /* display 2nd heading */
-      putstring(topleftrow-1,topleftcol,C_PROMPT_MED,hdg2);
+      driver_put_string(topleftrow-1,topleftcol,C_PROMPT_MED,hdg2);
    i = topleftrow + boxdepth + 1;
    if (instr == NULL || (options & 8)) {   /* display default instructions */
       if (i < 20) ++i;
@@ -782,7 +783,7 @@ int fullscreen_choice(
             memset(buf,' ',80);
             buf[boxwidth*colwidth] = 0;
             for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
-               putstring(topleftrow+i,topleftcol,C_PROMPT_LO,buf);
+               driver_put_string(topleftrow+i,topleftcol,C_PROMPT_LO,buf);
             }
          for (i = 0; i+topleftchoice < numchoices && i < boxitems; ++i) {
             /* display the choices */
@@ -799,7 +800,7 @@ int fullscreen_choice(
             }
             else
                charptr = choices[j];
-            putstring(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
+            driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
                       k,charptr);
             }
          /***
@@ -808,9 +809,9 @@ int fullscreen_choice(
          ...  side, 1 blue margin each side)
          ***/
          if (topleftchoice > 0 && hdg2 == NULL)
-            putstring(topleftrow-1,topleftcol,C_PROMPT_LO,"(more)");
+            driver_put_string(topleftrow-1,topleftcol,C_PROMPT_LO,"(more)");
          if (topleftchoice + boxitems < numchoices)
-            putstring(topleftrow+boxdepth,topleftcol,C_PROMPT_LO,"(more)");
+            driver_put_string(topleftrow+boxdepth,topleftcol,C_PROMPT_LO,"(more)");
          redisplay = 0;
          }
 
@@ -822,14 +823,14 @@ int fullscreen_choice(
       }
       else
          itemptr = choices[current];
-      putstring(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
+      driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
                 C_CHOICE_CURRENT,itemptr);
 
       if (speedstring) {                     /* show speedstring if any */
          show_speedstring(speedrow,speedstring,speedprompt);
          }
       else
-         movecursor(25,80);
+         driver_hide_text_cursor();
 
 #ifndef XFRACT
       while (!keypressed()) { } /* enables help */
@@ -850,7 +851,7 @@ int fullscreen_choice(
          k = C_PROMPT_HI;
       else
          k = C_PROMPT_MED;
-      putstring(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
+      driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
                 k,itemptr);
 
       increment = 0;
@@ -1304,11 +1305,11 @@ top:
       static char far s[] = "Exit from Fractint (y/n)? y";
 #endif
       helptitle();
-      setattr(1,0,C_GENERAL_MED,24*80);
+      driver_set_attr(1,0,C_GENERAL_MED,24*80);
       for (i = 9; i <= 11; ++i)
-         setattr(i,18,C_GENERAL_INPUT,40);
+         driver_set_attr(i,18,C_GENERAL_INPUT,40);
       putstringcenter(10,18,40,C_GENERAL_INPUT,s);
-      movecursor(25,80);
+      driver_hide_text_cursor();
       while ((i = getakey()) != 'y' && i != 'Y' && i != 13) {
          if (i == 'n' || i == 'N')
             goto top;
@@ -1399,7 +1400,7 @@ int input_field(
          buf[i++] = ' ';
       buf[len] = 0;
       if (display) {                                /* display current value */
-         putstring(row,col,attr,buf);
+         driver_put_string(row,col,attr,buf);
          display = 0;
          }
       curkey = keycursor(row+insert,col+offset);  /* get a keystroke */
@@ -1531,7 +1532,7 @@ int field_prompt(
    char buf[81];
    static char far DEFLT_INST[] = {"Press ENTER when finished (or ESCAPE to back out)"};
    helptitle();                           /* clear screen, display title */
-   setattr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
+   driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
    charptr = hdg;                         /* count title lines, find widest */
    i = boxwidth = 0;
    titlelines = 1;
@@ -1557,9 +1558,9 @@ int field_prompt(
    j -= i;
    boxwidth += i * 2;
    for (i = -1; i < titlelines+3; ++i)    /* draw empty box */
-      setattr(titlerow+i,j,C_PROMPT_LO,boxwidth);
+      driver_set_attr(titlerow+i,j,C_PROMPT_LO,boxwidth);
    textcbase = titlecol;                  /* set left margin for putstring */
-   putstring(titlerow,0,C_PROMPT_HI,hdg); /* display heading */
+   driver_put_string(titlerow,0,C_PROMPT_HI,hdg); /* display heading */
    textcbase = 0;
    i = titlerow + titlelines + 4;
    if (instr) {                           /* display caller's instructions */
@@ -1598,18 +1599,18 @@ int thinking(int options,char far *msg)
    if (options == 0) {
       if (thinkstate >= 0) {
          thinkstate = -1;
-         unstackscreen();
+         driver_unstack_screen();
          }
       return(0);
       }
    if (thinkstate < 0) {
-      stackscreen();
+      driver_stack_screen();
       thinkstate = 0;
       helptitle();
       strcpy(buf,"  ");
       far_strcat(buf,msg);
       strcat(buf,"    ");
-      putstring(4,10,C_GENERAL_HI,buf);
+      driver_put_string(4,10,C_GENERAL_HI,buf);
       thinkcol = textcol - 3;
       count = 0;
       }
@@ -1617,8 +1618,8 @@ int thinking(int options,char far *msg)
        return 0;
    }
    count = 0;
-   putstring(4,thinkcol,C_GENERAL_HI,wheel[thinkstate]);
-   movecursor(25,80); /* turn off cursor */
+   driver_put_string(4,thinkcol,C_GENERAL_HI,wheel[thinkstate]);
+   driver_hide_text_cursor(); /* turn off cursor */
    thinkstate = (thinkstate + 1) & 3;
    return (keypressed());
 }

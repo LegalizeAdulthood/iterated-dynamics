@@ -13,7 +13,9 @@
 #ifndef XFRACT
 #include        <dos.h>
 #else
+#if !defined(_WIN32)
 #include  <unistd.h>
+#endif
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,11 +45,15 @@
 
 /* If endian.h is not present, it can be handled in the code below, */
 /* but if you have this file, it can make it more fool proof. */
-#if (defined(XFRACT) && !defined(__sun))
+#if (defined(XFRACT) && !defined(__sun)) || defined(_WIN32)
+#if defined(_WIN32)
+#define LITTLE_ENDIAN 1234
+#else
 #if defined(sgi)
 #include <sys/endian.h>
 #else
 #include <endian.h>
+#endif
 #endif
 #endif
 #ifndef BIG_ENDIAN
@@ -61,9 +67,12 @@
 
 #define overwrite   fract_overwrite      /* avoid name conflict with curses */
 
-#ifdef XFRACT           /* XFRACT forces unix configuration! --CWM-- */
+#if defined(XFRACT) || defined(_WIN32)
+/* _WIN32 uses a flat model */
+/* XFRACT forces unix configuration! --CWM-- */
 
 #ifdef BIG_ANSI_C       /* remove far's */
+
 #ifdef far
 #undef far
 #endif
@@ -76,14 +85,18 @@
 #undef __far
 #endif
 #define __far
+
 #define _fmemcpy  memcpy
 #define _fmemset  memset
 #define _fmemmove memmove
+
 #ifndef USE_BIGNUM_C_CODE
 #define USE_BIGNUM_C_CODE
 #endif
+/* XFRACT || _WIN32 */
 #endif
- /* CAE added ltoa, overwrite fix for HP-UX v9 26Jan95  */
+
+/* CAE added ltoa, overwrite fix for HP-UX v9 26Jan95  */
 #ifdef _HPUX_SOURCE
 #define ltoa fr_ltoa
 #endif

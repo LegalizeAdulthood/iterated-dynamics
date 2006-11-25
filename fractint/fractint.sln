@@ -1,10 +1,15 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
 	ProjectSection(ProjectDependencies) = postProject
-		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5} = {DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}
+		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dos_help", "dos_help\dos_help.vcproj", "{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "..\FractIntSetup\FractIntSetup.vdproj", "{054FE2A4-36B9-40C2-AFBF-8137FCC5E452}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -18,10 +23,12 @@ Global
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug.Build.0 = Debug|Win32
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.ActiveCfg = Release|Win32
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.Build.0 = Release|Win32
-		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Debug.ActiveCfg = Debug|Win32
-		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Debug.Build.0 = Debug|Win32
-		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Release.ActiveCfg = Release|Win32
-		{DC01B847-2FA2-4D81-844C-CBB9BBFF18E5}.Release.Build.0 = Release|Win32
+		{054FE2A4-36B9-40C2-AFBF-8137FCC5E452}.Debug.ActiveCfg = Debug
+		{054FE2A4-36B9-40C2-AFBF-8137FCC5E452}.Release.ActiveCfg = Release
+		{92025993-C759-4969-8093-3361B2DC4832}.Debug.ActiveCfg = Debug|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Debug.Build.0 = Debug|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Release.ActiveCfg = Release|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

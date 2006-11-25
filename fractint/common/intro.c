@@ -13,6 +13,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 /* stuff from fractint */
 
@@ -67,25 +68,25 @@ void intro(void)
    "Unix/X port of fractint by Ken Shirriff");
 #endif
    putstringcenter(1,0,80,C_TITLE, PRESS_ENTER);
-   putstring(2,0,C_CONTRIB,screen_text);
-   setattr(2,0,C_AUTHDIV1,80);
-   setattr(END_MAIN_AUTHOR,0,C_AUTHDIV1,80);
-   setattr(22,0,C_AUTHDIV2,80);
-   setattr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
-   setattr(23,0,C_TITLE_LOW,160);
+   driver_put_string(2,0,C_CONTRIB,screen_text);
+   driver_set_attr(2,0,C_AUTHDIV1,80);
+   driver_set_attr(END_MAIN_AUTHOR,0,C_AUTHDIV1,80);
+   driver_set_attr(22,0,C_AUTHDIV2,80);
+   driver_set_attr(3,0,C_PRIMARY,80*(END_MAIN_AUTHOR-3));
+   driver_set_attr(23,0,C_TITLE_LOW,160);
    for (i = 3; i < END_MAIN_AUTHOR; ++i)
-      setattr(i,21,C_CONTRIB,58);
-   setattr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
+      driver_set_attr(i,21,C_CONTRIB,58);
+   driver_set_attr(toprow,0,C_CONTRIB,(21-END_MAIN_AUTHOR)*80);
    i = botrow - toprow;
    srand((unsigned int)clock_ticks());
    j = rand()%(j-(botrow-toprow)); /* first to use */
    i = j+botrow-toprow; /* last to use */
    oldchar = credits[authors[i+1]];
    credits[authors[i+1]] = 0;
-   putstring(toprow,0,C_CONTRIB,credits+authors[j]);
+   driver_put_string(toprow,0,C_CONTRIB,credits+authors[j]);
    credits[authors[i+1]] = oldchar;
    delaymax = 10;
-   movecursor(25,80); /* turn it off */
+   driver_hide_text_cursor();
    helpmode = HELPMENU;
    while (! keypressed())
       {
@@ -106,16 +107,16 @@ void intro(void)
             getakey();
          }
       delaymax = 15;
-      scrollup(toprow, botrow);
+      driver_scroll_up(toprow, botrow);
       i++;
       if (credits[authors[i]] == 0)
          i = 0;
       oldchar = credits[authors[i+1]];
       credits[authors[i+1]] = 0;
-      putstring(botrow,0,C_CONTRIB,&credits[authors[i]]);
-      setattr(botrow,0,C_CONTRIB,80);
+      driver_put_string(botrow,0,C_CONTRIB,&credits[authors[i]]);
+      driver_set_attr(botrow,0,C_CONTRIB,80);
       credits[authors[i+1]] = oldchar;
-      movecursor(25,80); /* turn it off */
+      driver_hide_text_cursor(); /* turn it off */
       }
 
    lookatmouse = oldlookatmouse;                /* restore the mouse-checking */

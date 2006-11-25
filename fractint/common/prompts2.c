@@ -6,7 +6,7 @@
 #include <ctype.h>
 #ifndef XFRACT
 #include <io.h>
-#elif !defined(__386BSD__)
+#elif !defined(__386BSD__) && !defined(_WIN32)
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -45,6 +45,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 /* Routines in this module      */
 
@@ -495,7 +496,7 @@ int get_toggles2()
          if (potparam[0] != 0.0) j = 1;
          }
       else /* turned it off */
-         if (dotmode != 11) /* ditch the disk video */
+         if (!driver_diskp()) /* ditch the disk video */
             enddisk();
          else /* keep disk video, but ditch the fraction part at end */
             disk16bit = 0;
@@ -741,7 +742,7 @@ get_view_restart:
    /* fill up the previous values arrays */
    k = -1;
 
-   if (dotmode != 11) {
+   if (!driver_diskp()) {
       LOADCHOICES("Preview display? (no for full screen)");
       uvalues[k].type = 'y';
       uvalues[k].uval.ch.val = viewwindow;
@@ -832,7 +833,7 @@ get_view_restart:
    }
 #endif
 
-   if (dotmode != 11) {
+   if (!driver_diskp()) {
       LOADCHOICES("Press "FK_F4" to reset view parameters to defaults.");
       uvalues[k].type = '*';
    }
@@ -845,7 +846,7 @@ get_view_restart:
       return(-1);
       }
 
-   if (i == F4 && dotmode != 11) {
+   if (i == F4 && !driver_diskp()) {
       viewwindow = viewxdots = viewydots = 0;
       viewreduction = (float)4.2;
       viewcrop = 1;
@@ -862,7 +863,7 @@ get_view_restart:
    /* now check out the results (*hopefully* in the same order <grin>) */
    k = -1;
 
-   if (dotmode != 11) {
+   if (!driver_diskp()) {
       viewwindow = uvalues[++k].uval.ch.val;
 
       viewreduction = (float)uvalues[++k].uval.dval;
@@ -880,7 +881,7 @@ get_view_restart:
    if (virtual && dotmode == 28 && chkd_vvs && !video_scroll)
       ++k;  /* add 1 if not supported line is inserted */
 
-   if (dotmode == 11 || (virtual && dotmode == 28)) {
+   if (driver_diskp() || (virtual && dotmode == 28)) {
       sxdots = uvalues[++k].uval.ival;
       sydots = uvalues[++k].uval.ival;
 #ifndef XFRACT
@@ -947,7 +948,7 @@ get_view_restart:
    }
 #endif
 
-   if (dotmode == 11 || (virtual && dotmode == 28)) {
+   if (driver_diskp() || (virtual && dotmode == 28)) {
       videoentry.xdots = sxdots;
       videoentry.ydots = sydots;
       far_memcpy((char far *)&videotable[adapter],(char far *)&videoentry,
@@ -1049,7 +1050,7 @@ int starfield(void)
    for(row = 0; row < ydots; row++) {
       for(col = 0; col < xdots; col++) {
          if(keypressed()) {
-            buzzer(1);
+            driver_buzzer(1);
             busy = 0;
             return(1);
             }
@@ -1059,7 +1060,7 @@ int starfield(void)
          putcolor(col, row, GausianNumber(c, colors));
       }
    }
-   buzzer(0);
+   driver_buzzer(0);
    busy = 0;
    return(0);
 }
@@ -1094,12 +1095,12 @@ int get_starfield_params(void) {
       uvalues[i].uval.dval = starfield_values[i];
       uvalues[i].type = 'f';
    }
-   stackscreen();
+   driver_stack_screen();
    oldhelpmode = helpmode;
    helpmode = HELPSTARFLD;
    i = fullscreen_prompt(hdg,3,starfield_prompts,uvalues,0,NULL);
    helpmode = oldhelpmode;
-   unstackscreen();
+   driver_unstack_screen();
    if (i < 0) {
       return(-1);
       }
@@ -1135,7 +1136,7 @@ int get_rds_params(void) {
    int i,k;
    int ret;
    static char reuse = 0;
-   stackscreen();
+   driver_stack_screen();
    for(;;)
    {
       ret = 0;
@@ -1229,7 +1230,7 @@ int get_rds_params(void) {
       }
       break;
    }
-   unstackscreen();
+   driver_unstack_screen();
    return(ret);
 }
 
@@ -1243,7 +1244,7 @@ int get_a_number(double *x, double *y)
    struct fullscreenvalues uvalues[2];
    int i, k;
 
-   stackscreen();
+   driver_stack_screen();
    far_strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
 
@@ -1260,7 +1261,7 @@ int get_a_number(double *x, double *y)
 
    i = fullscreen_prompt(hdg,k+1,choices,uvalues,25,NULL);
    if (i < 0) {
-      unstackscreen();
+      driver_unstack_screen();
       return(-1);
       }
 
@@ -1270,7 +1271,7 @@ int get_a_number(double *x, double *y)
    *x = uvalues[++k].uval.dval;
    *y = uvalues[++k].uval.dval;
 
-   unstackscreen();
+   driver_unstack_screen();
    return(i);
 }
 
@@ -1325,7 +1326,7 @@ void goodbye()                  /* we done.  Bail out */
    return;
 #endif
    if(*s_makepar != 0)
-      setvideotext();
+      driver_set_for_text();
 #ifdef XFRACT
    UnixDone();
    printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
@@ -1340,7 +1341,7 @@ void goodbye()                  /* we done.  Bail out */
 #endif
    if(*s_makepar != 0)
    {
-      movecursor(6,0);
+      driver_move_cursor(6,0);
       discardgraphics(); /* if any emm/xmm tied up there, release it */
    }
    stopslideshow();
@@ -1350,6 +1351,7 @@ void goodbye()                  /* we done.  Bail out */
      ret = 2;
    else if (initbatch == 4)
      ret = 1;
+   close_drivers();
    exit(ret);
 }
 
@@ -1821,7 +1823,7 @@ static int filename_speedstr(int row, int col, int vid,
       speedstate = MATCHING;
       prompt = speed_prompt;
       }
-   putstring(row,col,vid,prompt);
+   driver_put_string(row,col,vid,prompt);
    return(strlen(prompt));
 }
 
