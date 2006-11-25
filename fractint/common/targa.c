@@ -15,6 +15,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "targa.h"
+#include "drivers.h"
 
 /*************  ****************/
 
@@ -272,16 +273,16 @@ void ReopenTGA()
 {
 static FCODE runningontarga[]={"Running On TrueVision TARGA Card"};
         helptitle();
-        putstring(2,20,7,runningontarga);
-        movecursor(6,0); /* in case of brutal exit */
+        driver_put_string(2,20,7,runningontarga);
+        driver_move_cursor(6,0); /* in case of brutal exit */
 }
 
 static void _fastcall fatalerror(char far *msg)
 {
 static FCODE abortmsg[]={"...aborting!"};
-        putstring(4,20,15,msg);
-        putstring(5,20,15,abortmsg);
-        movecursor(8,0);
+        driver_put_string(4,20,15,msg);
+        driver_put_string(5,20,15,abortmsg);
+        driver_move_cursor(8,0);
         exit(1);
 }
 

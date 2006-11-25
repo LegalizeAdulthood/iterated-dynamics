@@ -44,10 +44,14 @@
 /* If endian.h is not present, it can be handled in the code below, */
 /* but if you have this file, it can make it more fool proof. */
 #if (defined(XFRACT) && !defined(__sun))
+#if defined(WIN32)
+#define LITTLE_ENDIAN 1234
+#else
 #if defined(sgi)
 #include <sys/endian.h>
 #else
 #include <endian.h>
+#endif
 #endif
 #endif
 #ifndef BIG_ENDIAN

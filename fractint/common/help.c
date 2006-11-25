@@ -29,6 +29,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
 #define ALT_F1           1104
@@ -138,7 +139,7 @@ static void displaycc(int row, int col, int color, int ch)
       }
 
    s[0] = (char)ch;
-   putstring(row, col, color, s);
+   driver_put_string(row, col, color, s);
    }
 
 static void display_text(int row, int col, int color, char far *text, unsigned len)
@@ -318,7 +319,7 @@ static void color_link(LINK far *link, int color)
    if (text_type == 1)   /* if 640x200x2 mode */
       display_text(link->r, link->c, color, buffer+link->offset, link->width);
    else
-      setattr(link->r, link->c, color, link->width);
+      driver_set_attr(link->r, link->c, color, link->width);
 
    textcbase = 0;
    textrbase = 0;
@@ -326,12 +327,12 @@ static void color_link(LINK far *link, int color)
 
 /* #define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR_KEYS,name), putstring(-1,-1,C_HELP_INSTR," "descrip"  ") */
 #ifndef XFRACT
-#define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR,name); putstring(-1,-1,C_HELP_INSTR,":"descrip"  ")
+#define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name); driver_put_string(-1,-1,C_HELP_INSTR,":"descrip"  ")
 #else
-#define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR,name);\
-putstring(-1,-1,C_HELP_INSTR,":");\
-putstring(-1,-1,C_HELP_INSTR,descrip);\
-putstring(-1,-1,C_HELP_INSTR,"  ")
+#define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name);\
+driver_put_string(-1,-1,C_HELP_INSTR,":");\
+driver_put_string(-1,-1,C_HELP_INSTR,descrip);\
+driver_put_string(-1,-1,C_HELP_INSTR,"  ")
 #endif
 
 static void helpinstr(void)
@@ -339,9 +340,9 @@ static void helpinstr(void)
    int ctr;
 
    for (ctr=0; ctr<80; ctr++)
-     putstring(24, ctr, C_HELP_INSTR, " ");
+     driver_put_string(24, ctr, C_HELP_INSTR, " ");
 
-   movecursor(24, 1);
+   driver_move_cursor(24, 1);
    PUT_KEY("F1",               "Index");
 #ifndef XFRACT
    PUT_KEY("\030\031\033\032", "Select");
@@ -358,9 +359,9 @@ static void printinstr(void)
    int ctr;
 
    for (ctr=0; ctr<80; ctr++)
-     putstring(24, ctr, C_HELP_INSTR, " ");
+     driver_put_string(24, ctr, C_HELP_INSTR, " ");
 
-   movecursor(24, 1);
+   driver_move_cursor(24, 1);
    PUT_KEY("Escape", "Abort");
    }
 
@@ -372,20 +373,20 @@ static void display_page(char far *title, char far *text, unsigned text_len, int
 
    helptitle();
    helpinstr();
-   setattr(2, 0, C_HELP_BODY, 80*22);
+   driver_set_attr(2, 0, C_HELP_BODY, 80*22);
    putstringcenter(1, 0, 80, C_HELP_HDG, title);
    sprintf(temp, "%2d of %d", page+1, num_pages);
 #ifndef XFRACT
-   putstring(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+   driver_put_string(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
 #else
    /* Some systems (Ultrix) mess up if you write to column 80 */
-   putstring(1, 78-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+   driver_put_string(1, 78-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
 #endif
 
    if (text != NULL)
       display_parse_text(text, text_len, start_margin, num_link, link);
 
-   movecursor(25, 80);   /* hide cursor */
+   driver_hide_text_cursor();
    }
 
 /*
@@ -794,7 +795,7 @@ int help(int action)
 
    if (help_file == -1)
       {
-      buzzer(2);
+      driver_buzzer(2);
       return (0);
       }
 
@@ -803,7 +804,7 @@ int help(int action)
 
    if (buffer == NULL)
       {
-      buzzer(2);
+      driver_buzzer(2);
       return (0);
       }
 
@@ -813,7 +814,7 @@ int help(int action)
    oldlookatmouse = lookatmouse;
    lookatmouse = 0;
    timer_start -= clock_ticks();
-   stackscreen();
+   driver_stack_screen();
 
    if (helpmode >= 0)
       {
@@ -914,7 +915,7 @@ int help(int action)
 
    farmemfree((BYTE far *)buffer);
 
-   unstackscreen();
+   driver_unstack_screen();
    lookatmouse = oldlookatmouse;
    helpmode = oldhelpmode;
    timer_start += clock_ticks();
@@ -1290,7 +1291,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
    if ( pnum == -1 )    /* successful completion */
       {
       static FCODE msg[] = {"Done -- Press any key"};
-      buzzer(0);
+      driver_buzzer(0);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
       getakey();
       return (0);
@@ -1299,7 +1300,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
    if ( pnum == -2 )   /* aborted */
       {
       static FCODE msg[] = {"Aborted -- Press any key"};
-      buzzer(1);
+      driver_buzzer(1);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
       getakey();
       return (0);
@@ -1310,16 +1311,16 @@ static int print_doc_msg_func(int pnum, int num_pages)
       static FCODE msg[] = {"Generating FRACTINT.DOC"};
       helptitle();
       printinstr();
-      setattr(2, 0, C_HELP_BODY, 80*22);
+      driver_set_attr(2, 0, C_HELP_BODY, 80*22);
       putstringcenter(1, 0, 80, C_HELP_HDG, msg);
 
-      putstring(7, 30, C_HELP_BODY, "Completed:");
+      driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 
-      movecursor(25,80);   /* hide cursor */
+      driver_hide_text_cursor();
       }
 
    sprintf(temp, "%d%%", (int)( (100.0 / num_pages) * pnum ) );
-   putstring(7, 41, C_HELP_LINK, temp);
+   driver_put_string(7, 41, C_HELP_LINK, temp);
 
    while ( keypressed() )
       {

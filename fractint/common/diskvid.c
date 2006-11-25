@@ -14,6 +14,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 #define BOXROW   6
 #define BOXCOL   11
@@ -24,7 +25,7 @@ int disk16bit = 0;         /* storing 16 bit values for continuous potential */
 
 static int timetodisplay;
 static FILE *fp = NULL;
-int disktarga;
+static int disktarga;
 
 #define BLOCKLEN 2048   /* must be a power of 2, must match next */
 #define BLOCKSHIFT 11   /* must match above */
@@ -77,7 +78,7 @@ int startdisk()
 int pot_startdisk()
 {
    int i;
-   if (dotmode == 11) /* ditch the original disk file */
+   if (driver_diskp())			/* ditch the original disk file */
       enddisk();
    else
    {
@@ -95,7 +96,7 @@ int pot_startdisk()
 int targa_startdisk(FILE *targafp,int overhead)
 {
    int i;
-   if (dotmode == 11) { /* ditch the original disk file, make just the targa */
+   if (driver_diskp()) { /* ditch the original file, make just the targa */
       enddisk();      /* close the 'screen' */
       setnullvideo(); /* set readdot and writedot routines to do nothing */
       }
@@ -121,34 +122,34 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    BYTE far *tempfar = NULL;
    if (diskflag)
       enddisk();
-   if (dotmode == 11) { /* otherwise, real screen also in use, don't hit it */
+   if (driver_diskp()) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
       static FCODE fmsg1[] = {"'Disk-Video' mode"};
       static FCODE fmsg2[] = {"Screen resolution: "};
       static FCODE fsname[] = {"Save name: "};
       static FCODE stat[] = {"Status:"};
       helptitle();
-      setattr(1,0,C_DVID_BKGRD,24*80);  /* init rest to background */
+      driver_set_attr(1,0,C_DVID_BKGRD,24*80);  /* init rest to background */
       for (i = 0; i < BOXDEPTH; ++i)
-         setattr(BOXROW+i,BOXCOL,C_DVID_LO,BOXWIDTH);  /* init box */
-      putstring(BOXROW+2,BOXCOL+4,C_DVID_HI,fmsg1);
-      putstring(BOXROW+4,BOXCOL+4,C_DVID_LO,fmsg2);
+         driver_set_attr(BOXROW+i,BOXCOL,C_DVID_LO,BOXWIDTH);  /* init box */
+      driver_put_string(BOXROW+2,BOXCOL+4,C_DVID_HI,fmsg1);
+      driver_put_string(BOXROW+4,BOXCOL+4,C_DVID_LO,fmsg2);
       sprintf(buf,"%d x %d",sxdots,sydots);
-      putstring(-1,-1,C_DVID_LO,buf);
+      driver_put_string(-1,-1,C_DVID_LO,buf);
       if (disktarga) {
          static FCODE tarmsg[] = {"  24 bit Targa"};
-         putstring(-1,-1,C_DVID_LO,tarmsg);
+         driver_put_string(-1,-1,C_DVID_LO,tarmsg);
          }
       else {
          static FCODE clrmsg[] = {"  Colors: "};
-         putstring(-1,-1,C_DVID_LO,clrmsg);
+         driver_put_string(-1,-1,C_DVID_LO,clrmsg);
          sprintf(buf,"%d",colors);
-         putstring(-1,-1,C_DVID_LO,buf);
+         driver_put_string(-1,-1,C_DVID_LO,buf);
          }
-      putstring(BOXROW+6,BOXCOL+4,C_DVID_LO,fsname);
+      driver_put_string(BOXROW+6,BOXCOL+4,C_DVID_LO,fsname);
       sprintf(buf,"%s",savename);
-      putstring(-1,-1,C_DVID_LO,buf);
-      putstring(BOXROW+10,BOXCOL+4,C_DVID_LO,stat);
+      driver_put_string(-1,-1,C_DVID_LO,buf);
+      driver_put_string(BOXROW+10,BOXCOL+4,C_DVID_LO,stat);
       {
       static FCODE o_msg[] = {"clearing the 'screen'"};
       char msg[sizeof(o_msg)];
@@ -199,10 +200,10 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       stopmsg(0,msg);
       return(-1);
       }
-   if (dotmode == 11) {
+   if (driver_diskp()) {
       char buf[50];
       sprintf(buf,"Cache size: %dK\n\n",cache_size);
-      putstring(BOXROW+8,BOXCOL+4,C_DVID_LO,buf);
+      driver_put_string(BOXROW+6,BOXCOL+4,C_DVID_LO,buf);
       }
 
    /* preset cache to all invalid entries so we don't need free list logic */
@@ -247,7 +248,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       return(-1);
    }
 
-   if (dotmode == 11)
+   if (driver_diskp())
      switch (MemoryType(dv_handle)) {
          static FCODE fmsg1[] = {"Using no Memory, it's broke"};
          static FCODE fmsg2[] = {"Using your Expanded Memory"};
@@ -255,16 +256,16 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
          static FCODE fmsg4[] = {"Using your Disk Drive"};
        case NOWHERE:
        default:
-         putstring(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg1);
+         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg1);
          break;
        case EXPANDED:
-         putstring(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg2);
+         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg2);
          break;
        case EXTENDED:
-         putstring(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg3);
+         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg3);
          break;
        case DISK:
-         putstring(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg4);
+         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg4);
          break;
      }
 
@@ -287,7 +288,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       MoveToMemory(membuf, (U16)headerlength, 1L, 0, dv_handle);
    }
 
-   if (dotmode == 11)
+   if (driver_diskp())
       dvid_status(0,"");
    return(0);
 }
@@ -324,7 +325,7 @@ int readdisk(unsigned int col, unsigned int row)
    long offset;
    char buf[41];
    if (--timetodisplay < 0) {  /* time to display status? */
-      if (dotmode == 11) {
+      if (driver_diskp()) {
          sprintf(buf," reading line %4d",
                 (row >= (unsigned int)sydots) ? row-sydots : row); /* adjust when potfile */
          dvid_status(0,buf);
@@ -379,7 +380,7 @@ void writedisk(unsigned int col, unsigned int row, unsigned int color)
    long offset;
    char buf[41];
    if (--timetodisplay < 0) {  /* time to display status? */
-      if (dotmode == 11) {
+      if (driver_diskp()) {
          sprintf(buf," writing line %4d",
                 (row >= (unsigned int)sydots) ? row-sydots : row); /* adjust when potfile */
          dvid_status(0,buf);
@@ -661,7 +662,7 @@ void dvid_status(int line,char far *msg)
       line -= 100;
       attrib = C_STOP_ERR;
       }
-   putstring(BOXROW+10+line,BOXCOL+12,attrib,buf);
-   movecursor(25,80);
+   driver_put_string(BOXROW+8+line,BOXCOL+12,attrib,buf);
+   driver_hide_text_cursor();
 }
 

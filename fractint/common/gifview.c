@@ -177,7 +177,7 @@ int gifview()
    }
    if (dacbox[0][0] != 255)
       spindac(0,1);       /* update the DAC */
-   if (dotmode == 11){ /* disk-video */
+   if (driver_diskp()){ /* disk-video */
       char fname[FILE_MAX_FNAME];
       char ext[FILE_MAX_EXT];
       char tmpname[15];
@@ -310,7 +310,7 @@ int gifview()
       }
    }
    close_file();
-   if (dotmode == 11) { /* disk-video */
+   if (driver_diskp()) { /* disk-video */
       static FCODE o_msg[] = {"Restore completed"};
       char msg[sizeof(o_msg)];
       far_strcpy(msg,o_msg);
@@ -421,7 +421,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
       if(keypressed())
       {
-        mute();
+        driver_sound_off();
         return(-1);
       }
    }
@@ -458,7 +458,7 @@ int sound_line(BYTE *pixels, int linelen)
          rowcount++;
       }
    }   
-   mute();
+   driver_sound_off();
    if(keypressed())
       ret = -1;
    return(ret);
@@ -474,7 +474,7 @@ int pot_line(BYTE *pixels, int linelen)
    row = (rowcount >>= 1);
    if ((saverowcount & 1) != 0) /* odd line */
       row += ydots;
-   else if (dotmode != 11) /* even line - display the line too */
+   else if (!driver_diskp()) /* even line - display the line too */
       out_line(pixels,linelen);
    for (col = 0; col < xdots; ++col)
       writedisk(col+sxoffs,row+syoffs,*(pixels+col));

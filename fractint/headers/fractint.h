@@ -1122,62 +1122,62 @@ typedef struct baseunit    GENEBASE;
  * is swapped out.
  */
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef char __based(__segname("_CODE")) FCODE;
 #else
 typedef char far FCODE;
 #endif
 
 /* pointer to FCODE */
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef FCODE * __based(__segname("_CODE")) PFCODE;
 #else
 typedef FCODE * PFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef BYTE __based(__segname("_CODE")) BFCODE;
 #else
 typedef BYTE far BFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef short __based(__segname("_CODE")) SIFCODE;
 #else
 typedef short far SIFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef short __based(__segname("_CODE")) USFCODE;
 #else
 typedef short far USFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef int __based(__segname("_CODE")) IFCODE;
 #else
 typedef int far IFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef unsigned int __based(__segname("_CODE")) UIFCODE;
 #else
 typedef unsigned int far UIFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef long __based(__segname("_CODE")) LFCODE;
 #else
 typedef long far LFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef unsigned long __based(__segname("_CODE")) ULFCODE;
 #else
 typedef unsigned long far ULFCODE;
 #endif
 
-#if (_MSC_VER >= 700 && !defined(WINFRACT))
+#if (_MSC_VER >= 700) && !defined(WIN32)
 typedef double __based(__segname("_CODE")) DFCODE;
 #else
 typedef double far DFCODE;
