@@ -58,6 +58,10 @@
 #include <io.h>
 #endif
 
+#if defined(_WIN32)
+#include <io.h>
+#endif
+
 #ifndef USE_VARARGS
 #include <stdarg.h>
 #else
@@ -269,8 +273,9 @@ struct
    } include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
+void check_buffer(char *current, unsigned off, char *buffer);
 
-#define CHK_BUFFER(off) { if ((unsigned)(curr+(off)) - (unsigned)buffer >= (BUFFER_SIZE-1024)) fatal(0,"Buffer overflowed -- Help topic too large."); }
+#define CHK_BUFFER(off) check_buffer(curr, off, buffer)
 
 #ifdef __WATCOMC__
 #define putw( x1, x2 )  fprintf( x2, "%c%c", x1&0xFF, x1>>8 );
@@ -514,7 +519,7 @@ char *dupstr(char *s, unsigned len)
    char *ptr;
 
    if (len == 0)
-      len = strlen(s) + 1;
+      len = (int) strlen(s) + 1;
 
    ptr = newx(len);
 
@@ -653,7 +658,7 @@ void unread_char(int ch)
 
 void unread_string(char *s)
    {
-   int p = strlen(s);
+   int p = (int) strlen(s);
 
    while (p-- > 0)
       unread_char(s[p]);
@@ -835,7 +840,7 @@ int find_topic_title(char *title)
    while (*title == ' ')
       ++title;
 
-   len = strlen(title) - 1;
+   len = (int) strlen(title) - 1;
    while ( title[len] == ' ' && len > 0 )
       --len;
 
@@ -848,7 +853,7 @@ int find_topic_title(char *title)
       }
 
    for (t=0; t<num_topic; t++)
-      if ( strlen(topic[t].title) == len &&
+      if ( (int) strlen(topic[t].title) == len &&
            strnicmp(title, topic[t].title, len) == 0 )
          return (t);
 
@@ -981,7 +986,7 @@ void process_contents(void)
    TOPIC   t;
 
    t.flags     = 0;
-   t.title_len = strlen(DOCCONTENTS_TITLE)+1;
+   t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
    t.title     = dupstr(DOCCONTENTS_TITLE, t.title_len);
    t.doc_page  = -1;
    t.num_page  = 0;
@@ -1032,8 +1037,8 @@ void process_contents(void)
          if ( cmd[0] == '\"' )
             {
             ptr = cmd+1;
-            if (ptr[strlen(ptr)-1] == '\"')
-               ptr[strlen(ptr)-1] = '\0';
+            if (ptr[(int) strlen(ptr)-1] == '\"')
+               ptr[(int) strlen(ptr)-1] = '\0';
             else
                warn(0,"Missing ending quote.");
 
@@ -1048,7 +1053,7 @@ void process_contents(void)
          /* now, make the entry in the buffer */
 
          sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
-         ptr = curr + strlen(curr);
+         ptr = curr + (int) strlen(curr);
          while ( (ptr-curr) < PAGE_WIDTH-10 )
             *ptr++ = '.';
          c.page_num_pos = (unsigned) ( (ptr-3) - buffer );
@@ -1069,8 +1074,8 @@ void process_contents(void)
             if (cmd[0] == '\"')
                {
                ptr = cmd+1;
-               if (ptr[strlen(ptr)-1] == '\"')
-                  ptr[strlen(ptr)-1] = '\0';
+               if (ptr[(int) strlen(ptr)-1] == '\"')
+                  ptr[(int) strlen(ptr)-1] = '\0';
                else
                   warn(0,"Missing ending quote.");
 
@@ -1192,7 +1197,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
 
    if ( !bad )
       {
-      CHK_BUFFER(1+3*sizeof(int)+len+1)
+      CHK_BUFFER(1+3*sizeof(int)+len+1);
       lnum = add_link(&l);
       *curr++ = CMD_LINK;
       setint(curr,lnum);
@@ -1344,7 +1349,7 @@ int create_table(void)
          if ( first_link+lnum >= num_link )
             break;
 
-         len = strlen(title[lnum]);
+         len = (int) strlen(title[lnum]);
          *curr++ = CMD_LINK;
          setint(curr,first_link+lnum);
          curr += 3*sizeof(int);
@@ -1521,7 +1526,7 @@ enum STATES   /* states for FSM's */
 
 void check_command_length(int eoff, int len)
    {
-   if (strlen(cmd) != len)
+   if ((int) strlen(cmd) != len)
       error(eoff, "Invalid text after a command \"%s\"", cmd+len);
    }
 
@@ -2437,7 +2442,7 @@ void read_src(char *fname)
          while (again);
          }
 
-      CHK_BUFFER(0)
+      CHK_BUFFER(0);
       } /* while ( 1 ) */
 
    fclose(srcfile);
@@ -2908,7 +2913,7 @@ void set_content_doc_page(void)
       {
       assert(c->doc_page>=1);
       sprintf(buf, "%d", c->doc_page);
-      len = strlen(buf);
+      len = (int) strlen(buf);
       assert(len<=3);
       memcpy(base+c->page_num_pos+(3-len), buf, len);
       }
@@ -3187,9 +3192,9 @@ void calc_offsets(void)    /* calc file offset to each topic */
    for (c=0, cp=contents; c<num_contents; c++, cp++)
       offset += sizeof(int) +       /* flags */
                 1 +                 /* id length */
-                strlen(cp->id) +    /* id text */
+                (int) strlen(cp->id) +    /* id text */
                 1 +                 /* name length */
-                strlen(cp->name) +  /* name text */
+                (int) strlen(cp->name) +  /* name text */
                 1 +                 /* number of topics */
                 cp->num_topic*sizeof(int);    /* topic numbers */
 
@@ -3285,11 +3290,11 @@ void _write_help(FILE *file)
       {
       putw(cp->flags, file);
 
-      t = strlen(cp->id);
+      t = (int) strlen(cp->id);
       putc((BYTE)t, file);
       fwrite(cp->id, 1, t, file);
 
-      t = strlen(cp->name);
+      t = (int) strlen(cp->name);
       putc((BYTE)t, file);
       fwrite(cp->name, 1, t, file);
 
@@ -3535,7 +3540,7 @@ void report_memory(void)
    for (ctr=0; ctr<num_link; ctr++)
       {
       data += sizeof(LINK);
-      string += strlen(a_link[ctr].name);
+      string += (long) strlen(a_link[ctr].name);
       }
 
    if (num_link > 0)
@@ -3544,7 +3549,7 @@ void report_memory(void)
    for (ctr=0; ctr<num_label; ctr++)
       {
       data   += sizeof(LABEL);
-      string += strlen(label[ctr].name) + 1;
+      string += (long) strlen(label[ctr].name) + 1;
       }
 
    if (num_label > 0)
@@ -3553,7 +3558,7 @@ void report_memory(void)
    for (ctr=0; ctr<num_plabel; ctr++)
       {
       data   += sizeof(LABEL);
-      string += strlen(plabel[ctr].name) + 1;
+      string += (long) strlen(plabel[ctr].name) + 1;
       }
 
    if (num_plabel > 0)
@@ -3569,10 +3574,10 @@ void report_memory(void)
             sizeof(contents[0].topic_num[0])     );
       data += sizeof(CONTENT) - t;
       dead += t;
-      string += strlen(contents[ctr].id) + 1;
-      string += strlen(contents[ctr].name) + 1;
+      string += (long) strlen(contents[ctr].id) + 1;
+      string += (long) strlen(contents[ctr].name) + 1;
       for (ctr2=0; ctr2<contents[ctr].num_topic; ctr2++)
-         string += strlen(contents[ctr].topic_name[ctr2]) + 1;
+         string += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
       }
 
    dead += (CONTENTS_ALLOC_SIZE-(num_contents%CONTENTS_ALLOC_SIZE)) * sizeof(CONTENT);
@@ -3938,4 +3943,17 @@ int main(int argc, char *argv[])
    return ( errors );   /* return the number of errors */
    }
 
-
+#if defined(_WIN32)
+#pragma warning(push)
+#pragma warning(disable : 4311)
+#endif
+void check_buffer(char *current, unsigned off, char *buffer)
+{
+	if ((unsigned) curr + off - (unsigned) buffer >= (BUFFER_SIZE-1024))
+	{
+		fatal(0, "Buffer overflowerd -- Help topic too large.");
+	}
+}
+#if defined(_WIN32)
+#pragma warning(pop)
+#endif
