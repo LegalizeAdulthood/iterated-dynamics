@@ -400,7 +400,7 @@ static void free_lcmds(void)
     farmemfree(*sc++);
 }
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 #define lsysi_doslash_386 lsysi_doslash
 #define lsysi_dobslash_386 lsysi_dobslash
 #define lsys_doat lsysi_doat

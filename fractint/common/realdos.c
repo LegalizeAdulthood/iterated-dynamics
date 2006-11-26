@@ -27,6 +27,9 @@ static int menu_checkkey(int curkey,int choice);
 */
 int release=2004;  /* this has 2 implied decimals; increment it every synch */
 int patchlevel=4; /* patchlevel for DOS version */
+#ifdef XFRACT
+int xrelease=304;
+#endif
 
 /* fullscreen_choice options */
 #define CHOICERETURNKEY 1
@@ -57,6 +60,7 @@ static char far s_escape_cancel[] = {"Escape to cancel, any other key to continu
 static char far s_anykey[] = {"Any key to continue..."};
 #if !defined(PRODUCTION) && !defined(XFRACT)
 static char far s_custom[] = {"Customized Version"};
+static char far s_notpublic[] = {"Not for Public Release"};
 static char far s_incremental[] = {"Incremental release"};
 #endif
 int stopmsg (int flags, char far *msg)
@@ -86,7 +90,9 @@ int stopmsg (int flags, char far *msg)
       driver_put_string(0,0,15,s_errorstart);
       driver_put_string(2,0,15,msg);
       driver_move_cursor(8,0);
+#if !defined(WIN32)
       sleep(1);
+#endif
       close_drivers();
       exit(1);
 #else
@@ -197,7 +203,7 @@ int showtempmsg(char far *msgparm)
    else {
       xrepeat = (sxdots >= 640) ? 2 : 1;
       yrepeat = (sydots >= 300) ? 2 : 1;
-      textxdots = strlen(msg) * xrepeat * 8;
+      textxdots = (int) strlen(msg) * xrepeat * 8;
       textydots = yrepeat * 8;
       }
    /* worst case needs 10k */
@@ -292,7 +298,7 @@ void blankrows(int row,int rows,int attr)
       driver_put_string(row++,0,attr,buf);
    }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("realdos1_text")     /* place following in an overlay */
 #endif
 
@@ -301,7 +307,8 @@ void helptitle()
    char msg[MSGLEN],buf[MSGLEN];
    driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
-   strcpy(msg,"X");
+   sprintf(msg,"XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
+           xrelease/100,xrelease%100, release/100,release%100);
 #else
    *msg=0;
 #endif   
@@ -348,7 +355,7 @@ void footer_msg(int *i, int options, char *speedstring)
       : ((options&CHOICEHELP) ? choiceinstr2b : choiceinstr2a));
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()         /* back to normal segment */
 #endif
 
@@ -374,97 +381,6 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
    return j;
 }
 
-/*
- * The stackscreen()/unstackscreen() functions for XFRACT have been
- * moved to unix/video.c to more cleanly separate the XFRACT code.
- */
-
-#ifndef XFRACT
-static int screenctr = -1;
-
-#define MAXSCREENS 3
-
-static U16 savescreen[MAXSCREENS];
-static int saverc[MAXSCREENS+1];
-
-void stackscreen()
-{
-   BYTE far *vidmem;
-   int savebytes;
-   int i;
-   if (video_scroll) {
-      scroll_state(0); /* save position */
-      scroll_center(0,0);
-   }
-   if(*s_makepar == 0)
-      return;
-   saverc[screenctr+1] = textrow*80 + textcol;
-   if (++screenctr) { /* already have some stacked */
-         static char far msg[]={"stackscreen overflow"};
-      if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(1,msg);
-         exit(1);
-         }
-      vidmem = MK_FP(textaddr,0);
-      savebytes = (text_type == 0) ? 4000 : 16384;
-      savescreen[i] = MemoryAlloc((U16)savebytes,1L,FARMEM);
-      if (savescreen[i] != 0)
-         MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);
-      else {
-            static char far msg[]={"insufficient memory, aborting"};
-               stopmsg(1,msg);
-               exit(1);
-            }
-      driver_set_clear();
-      }
-   else
-      driver_set_for_text();
-   if (video_scroll) {
-      if (boxcount)
-         moveboxf(0.0,0.0);
-   }
-}
-
-void unstackscreen()
-{
-   BYTE far *vidmem;
-   int savebytes;
-   if(*s_makepar == 0)
-      return;
-   textrow = saverc[screenctr] / 80;
-   textcol = saverc[screenctr] % 80;
-   if (--screenctr >= 0) { /* unstack */
-      vidmem = MK_FP(textaddr,0);
-      savebytes = (text_type == 0) ? 4000 : 16384;
-      if (savescreen[screenctr] != 0) {
-         MoveFromMemory(vidmem,(U16)savebytes,1L,0L,savescreen[screenctr]);
-         MemoryRelease(savescreen[screenctr]);
-         savescreen[screenctr] = 0;
-         }
-      }
-   else
-      setforgraphics();
-   movecursor(-1,-1);
-   if (video_scroll) {
-      if (boxcount)
-         moveboxf(0.0,0.0);
-      scroll_state(1); /* restore position */
-   }
-}
-
-void discardscreen()
-{
-   if (--screenctr >= 0) { /* unstack */
-      if (savescreen[screenctr]) {
-         MemoryRelease(savescreen[screenctr]);
-         savescreen[screenctr] = 0;
-      }
-   }
-   else
-      discardgraphics();
-}
-#endif
-
 /* ------------------------------------------------------------------------ */
 
 char speed_prompt[]="Speed key string";
@@ -479,7 +395,7 @@ static int isadirname(char far *name)
       return 0;
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("realdos1_text")     /* place following in an overlay */
 #endif
 
@@ -502,7 +418,7 @@ void show_speedstring(int speedrow,
          j = sizeof(speed_prompt)-1;
          }
       strcpy(buf,speedstring);
-      i = strlen(buf);
+      i = (int) strlen(buf);
       while (i < 30)
          buf[i++] = ' ';
       buf[i] = 0;
@@ -523,7 +439,7 @@ void process_speedstring(char    *speedstring,
 {
    int i, comp_result;
 
-   i = strlen(speedstring);
+   i = (int) strlen(speedstring);
    if (curkey == 8 && i > 0) /* backspace */
       speedstring[--i] = 0;
    if (33 <= curkey && curkey <= 126 && i < 30)
@@ -563,7 +479,7 @@ void process_speedstring(char    *speedstring,
 }
 
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()         /* back to normal segment */
 #endif
 
@@ -619,7 +535,7 @@ int fullscreen_choice(
    lookatmouse = 0;
    ret = -1;
    if (speedstring
-     && (i = strlen(speedstring)) > 0) { /* preset current to passed string */
+     && (i = (int) strlen(speedstring)) > 0) { /* preset current to passed string */
       current = 0;
       if(options&CHOICESNOTSORTED)
       {
@@ -668,7 +584,7 @@ int fullscreen_choice(
       for (i = 0; i < numchoices; ++i)
       {
          int len;
-         if ((len=far_strlen(choices[i])) > colwidth)
+         if ((len=(int) far_strlen(choices[i])) > colwidth)
             colwidth = len;
       }
    /* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
@@ -1034,7 +950,7 @@ fs_choice_end:
 
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("realdos1_text")     /* place following in an overlay */
 #endif
 
@@ -1326,7 +1242,7 @@ top:
    return(i);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()         /* back to normal segment */
 #endif
 
@@ -1395,7 +1311,7 @@ int input_field(
    display = 1;
    for(;;) {
       strcpy(buf,fld);
-      i = strlen(buf);
+      i = (int) strlen(buf);
       while (i < len)
          buf[i++] = ' ';
       buf[len] = 0;
@@ -1425,13 +1341,13 @@ int input_field(
             started = 1;
             break;
          case END:
-            offset = strlen(fld);
+            offset = (int) strlen(fld);
             started = 1;
             break;
          case 8:
          case 127:                              /* backspace */
             if (offset > 0) {
-               j = strlen(fld);
+               j = (int) strlen(fld);
                for (i = offset-1; i < j; ++i)
                   fld[i] = fld[i+1];
                --offset;
@@ -1439,7 +1355,7 @@ int input_field(
             started = display = 1;
             break;
          case DELETE:                           /* delete */
-            j = strlen(fld);
+            j = (int) strlen(fld);
             for (i = offset; i < j; ++i)
                fld[i] = fld[i+1];
             started = display = 1;
@@ -1476,7 +1392,7 @@ int input_field(
             if (started == 0) /* first char is data, zap field */
                fld[0] = 0;
             if (insert) {
-               j = strlen(fld);
+               j = (int) strlen(fld);
                while (j >= offset) {
                   fld[j+1] = fld[j];
                   --j;
@@ -1728,7 +1644,7 @@ void discardgraphics() /* release expanded/extended memory if any in use */
 #endif
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("realdos1_text")     /* place following in an overlay */
 #endif
 
@@ -1790,7 +1706,7 @@ int load_fractint_cfg(int options)
       ++linenum;
       if (tempstring[0] == ';') continue;   /* comment line */
       tempstring[120] = 0;
-      tempstring[strlen(tempstring)-1] = 0; /* zap trailing \n */
+      tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
       memset(commas,0,20);
       i = j = -1;
       for(;;) {
@@ -1997,6 +1913,6 @@ void vidmode_keyname(int k,char *buf)
       }
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()      /* back to normal segment */
 #endif

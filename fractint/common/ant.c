@@ -410,7 +410,7 @@ ant(void)
    maxpts = labs(maxpts);
    wait = abs(orbit_delay);
    sprintf(rule, "%.17g", param[0]);
-   rule_len = strlen(rule);
+   rule_len = (int) strlen(rule);
    if (rule_len > 1)
    {                            /* if rule_len == 0 random rule */
       for (i = 0; i < rule_len; i++)

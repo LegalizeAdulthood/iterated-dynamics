@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #include <bios.h>
 #endif
   /* see Fractint.c for a description of the "include"  hierarchy */
@@ -908,7 +908,7 @@ static int next_command(char *cmdbuf,int maxlen,
       while (*lineptr <= ' ' || *lineptr == ';') {
          if (cmdlen) {                  /* space or ; marks end of command */
             cmdbuf[cmdlen] = 0;
-            *lineoffset = lineptr - linebuf;
+            *lineoffset = (int) (lineptr - linebuf);
             return cmdlen;
             }
          while (*lineptr && *lineptr <= ' ')
@@ -1038,15 +1038,15 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 #endif
 
    if ((value = strchr(&curarg[1],'=')) != NULL) {
-      if ((j = (value++) - curarg) > 1 && curarg[j-1] == ':')
+      if ((j = (int) ((value++) - curarg)) > 1 && curarg[j-1] == ':')
          --j;                           /* treat := same as =     */
       }
    else
-      value = curarg + (j = strlen(curarg));
+      value = curarg + (j = (int) strlen(curarg));
    if (j > 20) goto badarg;             /* keyword too long */
    strncpy(variable,curarg,j);          /* get the variable name  */
    variable[j] = 0;                     /* truncate variable name */
-   valuelen = strlen(value);            /* note value's length    */
+   valuelen = (int) strlen(value);            /* note value's length    */
    charval[0] = value[0];               /* first letter of value  */
    yesnoval[0] = -1;                    /* note yes|no value      */
    if (charval[0] == 'n') yesnoval[0] = 0;
@@ -1146,7 +1146,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
                  if(adapter_name[j] == ' ')
                      adapter_name[j] = 0;
              if (adapter_name[0] == 0) break;  /* end-of-the-list */
-             if (far_strncmp(value,adapter_name,strlen(adapter_name)) == 0) {
+             if (far_strncmp(value,adapter_name,(int) strlen(adapter_name)) == 0) {
                 svga_type = i+1;
                 adapter_ptr[6] = 1;
                 break;
@@ -2292,7 +2292,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
             case '2':  l |= 4;  break;
             }
          }
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #ifndef WINFRACT
       _bios_serialcom(0,numval-1,l);
 #endif
@@ -3134,7 +3134,7 @@ int get_curarg_len(char *curarg)
    s=strchr(curarg,'/');
    if(s)
       *s = 0;
-   len = strlen(curarg);
+   len = (int) strlen(curarg);
    if(s)
       *s = '/';
    return(len);

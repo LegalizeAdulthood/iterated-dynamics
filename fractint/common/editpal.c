@@ -2341,7 +2341,7 @@ static void PalTable__SaveRect(PalTable *this)
          getrow(this->x, this->y+yoff, width, buff);
          hline (this->x, this->y+yoff, width, bg_color);
          far_memcpy(ptr,bufptr, width);
-         ptr = (char far *)normalize(ptr+width);
+         ptr += width;
          }
       Cursor_Show();
       }
@@ -2416,7 +2416,7 @@ static void PalTable__RestoreRect(PalTable *this)
             {
             far_memcpy(bufptr, ptr, width);
             putrow(this->x, this->y+yoff, width, buff);
-            ptr = (char far *)normalize(ptr+width);
+            ptr += width;
             }
          Cursor_Show();
          break;

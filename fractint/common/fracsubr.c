@@ -18,7 +18,7 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-
+#include "drivers.h"
 
 /* routines in this module      */
 
@@ -1344,7 +1344,7 @@ void w_snd(int tone)
          fprintf(snd_fp,"%-d\n",tone);
    }
    taborhelp = 0;
-   if(!keypressed()) { /* keypressed calls mute() if TAB or F1 pressed */
+   if(!keypressed()) { /* keypressed calls driver_sound_off() if TAB or F1 pressed */
                /* must not then call soundoff(), else indexes out of synch */
 /*   if(20 < tone && tone < 15000)  better limits? */
 /*   if(10 < tone && tone < 5000)  better limits? */
@@ -1435,7 +1435,7 @@ void scrub_orbit(void)
 {
    int i,j,c;
    int save_sxoffs,save_syoffs;
-   mute();
+   driver_mute();
    save_sxoffs = sxoffs;
    save_syoffs = syoffs;
    sxoffs = syoffs = 0;
@@ -1448,7 +1448,6 @@ void scrub_orbit(void)
    }
    sxoffs = save_sxoffs;
    syoffs = save_syoffs;
-   driver_sound_off();
 }
 
 

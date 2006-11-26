@@ -22,7 +22,7 @@ fractal routines.
 
 int bf_math = 0;
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("bigsetup_text")     /* place following in an overlay */
 #endif
 
@@ -250,7 +250,7 @@ void bfcornerstofloat(void)
          param[i] = (double)bftofloat(bfparms[i]);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ( )     /* back to normal segment */
 #endif
 
@@ -487,7 +487,7 @@ int near bfMANRbailout()
    return(0);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("bigsetup_text")     /* place following in an overlay */
 #endif
 
@@ -645,7 +645,7 @@ int MandelbfSetup()
    return (1);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ( )     /* back to normal segment */
 #endif
 

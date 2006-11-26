@@ -55,6 +55,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "drivers.h"
 
 #define FAR_RESERVE     8192L     /* amount of far mem we will leave avail. */
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */

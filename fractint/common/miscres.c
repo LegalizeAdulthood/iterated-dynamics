@@ -937,7 +937,7 @@ top:
       {
          driver_put_string(s_row+1,3,C_GENERAL_MED,sitem_name);
          driver_put_string(s_row+1,16,C_GENERAL_HI,FormName);
-         i = strlen(FormName)+1;
+         i = (int) strlen(FormName)+1;
          driver_put_string(s_row+2,3,C_GENERAL_MED,sitem_file);
          if((int)strlen(FormFileName) >= 29)
             addrow = 1;
@@ -1654,6 +1654,7 @@ int file_gets(char *buf,int maxlen,FILE *infile)
 
 int matherr_ct = 0;
 
+#if !defined(_WIN32)
 #ifndef XFRACT
 #ifdef WINFRACT
 /* call this something else to dodge the QC4WIN bullet... */
@@ -1725,6 +1726,7 @@ int _cdecl _matherr( struct exception *except )
     except->retval = 1.0;
     return(1);
 }
+#endif
 #endif
 
 void roundfloatd(double *x) /* make double converted from float look ok */

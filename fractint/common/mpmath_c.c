@@ -22,7 +22,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #if (_MSC_VER >= 700)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
@@ -188,7 +188,7 @@ void setMPfunctions(void) {
       /* pfg2MP = fg2MP086; */
    }
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 #endif /* XFRACT */

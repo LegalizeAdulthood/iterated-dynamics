@@ -23,6 +23,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 #include "helpdefs.h"
 
 char stereomapname[FILE_MAX_DIR+1] = {""};

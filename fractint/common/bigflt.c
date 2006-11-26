@@ -15,7 +15,7 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
 
-#if (_MSC_VER >= 700)                 /* for Fractint */
+#if (_MSC_VER >= 700) && !defined(_WIN32)                 /* for Fractint */
 #pragma code_seg ("bigflt1_text")     /* place following in an overlay */
 #endif
 
@@ -225,7 +225,7 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
     return s;
     }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ( )       /* back to normal segment */
 #endif
 

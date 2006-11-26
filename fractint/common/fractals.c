@@ -295,7 +295,7 @@ static int near Halleybailout(void)
 struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
 struct MP mptmpparm2x;
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 
@@ -308,12 +308,12 @@ static int near MPCHalleybailout(void)
    mpcold = mpcnew;
    return(0);
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 int asmlMODbailout(void) { return 0;}
 int asmlREALbailout(void) { return 0;}
 int asmlIMAGbailout(void) { return 0;}
@@ -563,7 +563,7 @@ struct MP mpt2;
 struct MP mpone;
 #endif
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 int MPCNewtonFractal(void)
@@ -613,7 +613,7 @@ int MPCNewtonFractal(void)
     return(0);
 #endif
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -1712,7 +1712,7 @@ int AplusOne, Ap1deg;
 struct MP mpAplusOne, mpAp1deg;
 struct MPC mpctmpparm;
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 
@@ -1782,7 +1782,7 @@ struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -2535,7 +2535,7 @@ CirclelongFractal()
 /*              Initialization (once per pixel) routines                                                */
 /* -------------------------------------------------------------------- */
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 /* this code translated to asm - lives in newton.asm */
 /* transform points with reciprocal function */
 void invertz2(_CMPLX *z)
@@ -2935,7 +2935,7 @@ int juliafp_per_pixel(void)
    return(0);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 int MPCjulia_per_pixel(void)
@@ -2957,7 +2957,7 @@ int MPCjulia_per_pixel(void)
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -2991,7 +2991,7 @@ int othermandelfp_per_pixel(void)
    return(1); /* 1st iteration has been done */
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 
@@ -3015,7 +3015,7 @@ int MPCHalley_per_pixel(void)
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 

@@ -359,7 +359,7 @@ bn_t alloc_stack(size_t size)
       stopmsg(0,msg);
       return(0);
       }
-   stack_addr = (long)(stack_ptr-bnroot)+size; /* +ENDVID, part of bnroot */
+   stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 
    if(stack_addr > maxstack)
       {
@@ -378,7 +378,7 @@ bn_t alloc_stack(size_t size)
 /* Returns stack pointer offset so it can be saved.                            */
 int save_stack(void)
    {
-   return(stack_ptr - bnroot);
+   return (int) (stack_ptr - bnroot);
    }
 
 /************************************************************************/

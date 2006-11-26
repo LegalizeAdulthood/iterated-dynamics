@@ -78,7 +78,7 @@
  */
 
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #include <bios.h>
 #include <io.h>
 #endif
@@ -87,7 +87,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #include <conio.h>
 #endif
 
@@ -1391,7 +1391,7 @@ else                    /* And this is for printing to printer */
 static int _fastcall printer(int c)
 {
     if (Print_To_File>0) return ((fprintf(PRFILE,"%c",c))<1);
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     if (LPTn<9)  return (((_bios_printer(0,LPTn,c))+0x0010)&0x0010);
     if (LPTn<19) return ((_bios_serialcom(1,(LPTn-10),c))&0x9E00);
     if ((LPTn==20)||(LPTn==21))
@@ -1428,7 +1428,7 @@ static int _fastcall printer(int c)
 
 static void printer_reset(void)
 {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     if (Print_To_File < 1)
         if (LPTn<9)       _bios_printer(1,LPTn,0);
         else if (LPTn<19) _bios_serialcom(3,(LPTn-10),0);

@@ -1362,6 +1362,11 @@ disk_sound_off(Driver *drv)
   fprintf(stderr, "disk_sound_off\n");
 }
 
+static void
+disk_mute(Driver *drv)
+{
+}
+
 static int
 disk_diskp(Driver *drv)
 {
