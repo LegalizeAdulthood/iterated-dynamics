@@ -8,12 +8,12 @@
 #include "externs.h"
 #include "prototyp.h"
 
-static int win32_init(int *argc, char *argv)
+static int win32_init(Driver *drv, int *argc, char **argv)
 {
   return TRUE;
 }
 
-static void win32_terminate(void)
+static void win32_terminate(Driver *drv)
 {
 }
 
@@ -21,148 +21,152 @@ static void win32_flush(Driver *drv)
 {
 }
 
-void win32_schedule_alarm(Driver *drv, int secs)
+static void win32_schedule_alarm(Driver *drv, int secs)
 {
 }
 
-int win32_start_video(Driver *drv)
-{
-    return 0;
-}
-
-int win32_end_video(Driver *drv)
+static int win32_start_video(Driver *drv)
 {
     return 0;
 }
 
-void win32_window(Driver *drv)
-{
-}
-
-int win32_resize(Driver *drv)
+static int win32_end_video(Driver *drv)
 {
     return 0;
 }
 
-void win32_redraw(Driver *drv)
+static void win32_window(Driver *drv)
 {
 }
 
-int win32_read_palette(Driver *drv)
-{
-    return 0;
-}
-
-int win32_write_palette(Driver *drv)
+static int win32_resize(Driver *drv)
 {
     return 0;
 }
 
-int win32_read_pixel(Driver *drv, int x, int y)
+static void win32_redraw(Driver *drv)
+{
+}
+
+static int win32_read_palette(Driver *drv)
 {
     return 0;
 }
 
-void win32_write_pixel(Driver *drv, int x, int y, int color)
-{
-}
-
-void win32_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
-{
-}
-
-void win32_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
-{
-}
-
-void win32_set_line_mode(Driver *drv, int mode)
-{
-}
-
-void win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
-{
-}
-
-int win32_get_key(Driver *drv, int block)
+static int win32_write_palette(Driver *drv)
 {
     return 0;
 }
 
-void win32_shell(Driver *drv)
+static int win32_read_pixel(Driver *drv, int x, int y)
+{
+    return 0;
+}
+
+static void win32_write_pixel(Driver *drv, int x, int y, int color)
 {
 }
 
-void win32_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
+static void win32_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 }
 
-void win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+static void win32_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 }
 
-void win32_set_for_text(Driver *drv)
+static void win32_set_line_mode(Driver *drv, int mode)
 {
 }
 
-void win32_set_for_graphics(Driver *drv)
+static void win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
 {
 }
 
-void win32_set_clear(Driver *drv)
+static int win32_get_key(Driver *drv, int block)
+{
+    return 0;
+}
+
+static void win32_shell(Driver *drv)
 {
 }
 
-BYTE *win32_find_font(Driver *drv, int parm)
+static void win32_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
+{
+}
+
+static void win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+{
+}
+
+static void win32_set_for_text(Driver *drv)
+{
+}
+
+static void win32_set_for_graphics(Driver *drv)
+{
+}
+
+static void win32_set_clear(Driver *drv)
+{
+}
+
+static BYTE *win32_find_font(Driver *drv, int parm)
 {
     return NULL;
 }
 
-void win32_move_cursor(Driver *drv, int row, int col)
+static void win32_move_cursor(Driver *drv, int row, int col)
 {
 }
 
-void win32_hide_text_cursor(Driver *drv)
+static void win32_hide_text_cursor(Driver *drv)
 {
 }
 
-void win32_set_attr(Driver *drv, int row, int col, int attr, int count)
+static void win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
 }
 
-void win32_scroll_up(Driver *drv, int top, int bot)
+static void win32_scroll_up(Driver *drv, int top, int bot)
 {
 }
 
-void win32_stack_screen(Driver *drv)
+static void win32_stack_screen(Driver *drv)
 {
 }
 
-void win32_unstack_screen(Driver *drv)
+static void win32_unstack_screen(Driver *drv)
 {
 }
 
-void win32_discard_screen(Driver *drv)
+static void win32_discard_screen(Driver *drv)
 {
 }
 
-int win32_init_fm(Driver *drv)
+static int win32_init_fm(Driver *drv)
 {
     return 0;
 }
 
-void win32_buzzer(Driver *drv, int kind)
+static void win32_buzzer(Driver *drv, int kind)
 {
 }
 
-void win32_sound_on(Driver *drv, int frequency)
+static void win32_sound_on(Driver *drv, int frequency)
 {
 }
 
-void win32_sound_off(Driver *drv)
+static void win32_sound_off(Driver *drv)
 {
 }
 
-int win32_diskp(Driver *drv)
+static void win32_mute(Driver *drv)
+{
+}
+
+static int win32_diskp(Driver *drv)
 {
     return 0;
 }
@@ -194,8 +198,9 @@ int win32_diskp(Driver *drv)
    discard_screen	    discardscreen
    init_fm		        initfm
    buzzer		        buzzer
-   sound_on		        sound_on
-   sound_off		    sound_off
+   sound_on		        soundon
+   sound_off		    soundoff
+   mute					mute
    diskp                diskp
 */
 Driver win32_driver = STD_DRIVER_STRUCT(win32);

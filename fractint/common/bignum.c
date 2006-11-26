@@ -187,7 +187,7 @@ S16 big_setS16(S16 BIGDIST *addr, S16 val)
 
 #endif
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("bignum1_text")     /* place following in an overlay */
 #endif
 
@@ -268,7 +268,7 @@ bn_t strtobn(bn_t r, char *s)
 
     if (strchr(s, '.') != NULL) /* is there a decimal point? */
         {
-        l = strlen(s) - 1;      /* start with the last digit */
+        l = (int) strlen(s) - 1;      /* start with the last digit */
         while (s[l] >= '0' && s[l] <= '9') /* while a digit */
             {
             *onesbyte = (BYTE)(s[l--] - '0');
@@ -378,7 +378,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
             break;
         }
     ltoa(longval, s, 10);
-    l = strlen(s);
+    l = (int) strlen(s);
     s[l++] = '.';
     for (d=0; d < dec; d++)
         {
@@ -393,7 +393,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     return s;
     }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ( )         /* back to normal segment */
 #endif
 
@@ -1359,7 +1359,7 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
     return r;
     }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("bignum1_text")     /* place following in an overlay */
 #endif
 
@@ -1369,7 +1369,7 @@ char *bntostr(char *s, int dec, bn_t r)
     return unsafe_bntostr(s, dec, copy_bn(bntmpcpy2, r));
     }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ( )        /* back to normal segment */
 #endif
 

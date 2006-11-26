@@ -90,6 +90,7 @@ struct tagDriver {
   void (*buzzer)(Driver *drv, int kind);
   void (*sound_on)(Driver *drv, int frequency);
   void (*sound_off)(Driver *drv);
+  void (*mute)(Driver *drv);
   
   int (*diskp)(Driver *drv);
 };
@@ -133,11 +134,20 @@ struct tagDriver {
     name_##_buzzer, \
     name_##_sound_on, \
     name_##_sound_off, \
+	name_##_mute, \
     name_##_diskp \
   }
 
-#define HAVE_X11_DRIVER 1
-#define HAVE_DISK_DRIVER 1
+/* Classic FRACTINT code path */
+#define HAVE_FRACTINT_DRIVER	0
+/* XFractint code path */
+#define HAVE_X11_DRIVER			0
+/* Classic FRACTINT disk video code path */
+#define HAVE_DISK_DRIVER		0
+/* Win32 disk video code path */
+#define HAVE_WIN32_DISK_DRIVER	1
+/* Win32 GDI code path */
+#define HAVE_WIN32_DRIVER		1
 
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
@@ -184,19 +194,20 @@ extern int driver_init_fm(void);
 extern void driver_buzzer(int kind);
 extern void driver_sound_on(int frequency);
 extern void driver_sound_off(void);
+extern void driver_mute(void);
 extern int driver_diskp(void);
 
 #else
 
-#define driver_terminate()		(*display->terminate)(display)
-#define driver_flush()			(*display->flush)(display)
+#define driver_terminate()			(*display->terminate)(display)
+#define driver_flush()				(*display->flush)(display)
 #define void driver_schedule_alarm(_secs) \
 	(*display->schedule_alarm)(display, _secs)
 #define driver_start_video()		(*display->start_video)(display)
-#define driver_end_video()		(*display->end_video)(display)
-#define driver_window()			(*display->window)(display)
-#define driver_resize()			(*display->resize)(display)
-#define driver_redraw()			(*display->redraw)(display)
+#define driver_end_video()			(*display->end_video)(display)
+#define driver_window()				(*display->window)(display)
+#define driver_resize()				(*display->resize)(display)
+#define driver_redraw()				(*display->redraw)(display)
 #define driver_read_palette()		(*display->read_palette)(display)
 #define driver_write_palette()		(*display->write_palette)(display)
 #define driver_read_pixel(_x, _y) \
@@ -211,14 +222,14 @@ extern int driver_diskp(void);
 #define driver_draw_line(x1_, y1_, x2_, y2_) \
 	(*display->draw_line)(x1_, y1_, x1_, y2_)
 #define driver_get_key(_block)		(*display->get_key)(display, _block)
-#define driver_shell()			(*display->shell)(display)
+#define driver_shell()				(*display->shell)(display)
 #define driver_set_video_mode(_ax, _bx, _cx, _dx) \
 	(*display->set_video_mode)(display, _ax, _bx, _cx, _dx)
 #define driver_put_string(_row, _col, _attr, _msg) \
 	(*display->put_string)(display, _row, _col, _attr, _msg)
 #define driver_set_for_text()		(*display->set_for_text)(display)
 #define driver_set_for_graphics()	(*display->set_for_graphics)(display)
-#define driver_set_clear()		(*display->set_clear)(display)
+#define driver_set_clear()			(*display->set_clear)(display)
 #define driver_find_font(_parm)		(*display->find_font)(display, _parm)
 #define driver_move_cursor(_row, _col) \
 	(*display->move_cursor)(display, _row, _col)
@@ -230,11 +241,12 @@ extern int driver_diskp(void);
 #define driver_stack_screen()		(*display->stack_screen)(display)
 #define driver_unstack_screen()		(*display->unstack_screen)(display)
 #define driver_discard_screen()		(*display->discard_screen)(display)
-#define driver_init_fm()		(*display->init_fm)(display)
+#define driver_init_fm()			(*display->init_fm)(display)
 #define driver_buzzer(_kind)		(*display->buzzer)(display, _kind)
 #define driver_sound_on(_freq)		(*display->sound_on)(display, _freq)
-#define driver_sound_off()		(*display->sound_off)(display)
-#define driver_diskp()			(*display->diskp)(display)
+#define driver_sound_off()			(*display->sound_off)(display)
+#define driver_mute()				(*display->mute)(display)
+#define driver_diskp()				(*display->diskp)(display)
 
 #endif
 

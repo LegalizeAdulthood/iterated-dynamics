@@ -30,11 +30,7 @@
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="4"/>
 			<Tool
-				Name="VCCustomBuildTool"
-				Description="Compiling help files"
-				CommandLine="$(TargetPath) /c"
-				AdditionalDependencies="help.src;help2.src;help3.src;help4.src;help5.src;$(TargetPath)"
-				Outputs="helpdefs.h;fractint.hlp;"/>
+				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/hc.exe"
@@ -81,10 +77,8 @@
 				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"
-				Description="Compiling help files"
-				CommandLine="$(TargetPath) /c"
-				AdditionalDependencies="help.src;help2.src;help3.src;help4.src;help5.src;$(TargetPath)"
-				Outputs="helpdefs.h;fractint.hlp;"/>
+				CommandLine="$(TargetPath) /c
+"/>
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/hc.exe"

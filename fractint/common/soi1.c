@@ -178,7 +178,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
   else
     return w1+((t-x1)/(x2-x1))*(w2-w1);*/
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("soi3_text")     /* place following in an overlay */
 #endif
 
@@ -910,7 +910,7 @@ rhombus_done:
   return(status);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()    
 #endif
 

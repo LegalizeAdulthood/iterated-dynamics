@@ -529,8 +529,10 @@ extern int key_count(int);
 extern int main_menu_switch(int *,int *,int *,char *,int);
 extern int pot_line(BYTE *,int );
 extern int sound_line(BYTE *,int );
-#ifndef XFRACT
+#if !defined(XFRACT)
+#if !defined(_WIN32)
 extern int _cdecl _matherr(struct exception *);
+#endif
 #else
 extern int XZoomWaiting;
 #endif
@@ -1056,7 +1058,7 @@ extern char *has_ext(char *source);
 
 /*  realdos -- C file prototypes */
 
-#ifndef WINFRACT
+#if !defined(WINFRACT)
 extern int showvidlength(void);
 extern int stopmsg(int ,char far *);
 extern int texttempmsg(char far *);
@@ -1065,8 +1067,8 @@ extern void cleartempmsg(void);
 extern void blankrows(int ,int ,int );
 extern void helptitle(void);
 extern int putstringcenter(int ,int ,int ,int ,char far *);
-extern void stackscreen(void);
-extern void unstackscreen(void);
+//extern void stackscreen(void);
+//extern void unstackscreen(void);
 extern void discardscreen(void);
 extern int fullscreen_choice(int options, char far *hdg, char far *hdg2, char far *instr, int numchoices, char far *far *choices, int far *attributes, int boxwidth, int boxdepth, int colwidth, int current
 , void (*formatitem)(int, char *), char *speedstring, int (*speedprompt)(int, int, int, char *, int), int (*checkkey)(int, int));
@@ -1130,15 +1132,15 @@ extern int outlin16(BYTE*,int );
 
 /*  yourvid -- C file prototypes */
 
-extern int startvideo(void);
-extern int endvideo(void);
-extern void writevideo(int ,int ,int );
-extern int readvideo(int ,int );
-extern int readvideopalette(void);
-extern int writevideopalette(void);
+//extern int startvideo(void);
+//extern int endvideo(void);
+//extern void writevideo(int ,int ,int );
+//extern int readvideo(int ,int );
+//extern int readvideopalette(void);
+//extern int writevideopalette(void);
 #ifdef XFRACT
-extern void readvideoline(int ,int, int, BYTE * );
-extern void writevideoline(int ,int, int, BYTE * );
+//extern void readvideoline(int ,int, int, BYTE * );
+//extern void writevideoline(int ,int, int, BYTE * );
 #endif
 
 /*  zoom -- C file prototypes */

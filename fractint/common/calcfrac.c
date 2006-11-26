@@ -170,8 +170,10 @@ typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 #define tprefix   (*((TPREFIX)prefix))
 
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 BYTE dstack[4096];              /* common temp, two put_line calls */
+#endif
+#ifdef XFRACT
 unsigned int prefix[2][maxyblk][maxxblk]; /* common temp */
 #endif
 
@@ -509,7 +511,7 @@ int logtable_in_extra_ok(void)
 
 /******* calcfract - the top level routine for generating an image *******/
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("calcfra1_text")     /* place following in an overlay */
 #endif
 
@@ -1115,7 +1117,7 @@ static void perform_worklist()
    }
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()     /* back to normal segment */
 #endif
 
@@ -2837,7 +2839,7 @@ static int _fastcall potential(double mag, long iterations)
          pot = (float)1.0; /* avoid color 0 */
    }
    else if(inside >= 0)
-      pot = inside;
+      pot = (float) inside;
    else /* inside < 0 implies inside=maxit, so use 1st pot param instead */
       pot = (float)potparam[0];
 
@@ -3627,7 +3629,7 @@ static int _fastcall ysym_split(int yaxis_col,int yaxis_between)
 #pragma optimize ("ea", off)
 #endif
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("calcfra1_text")     /* place following in an overlay */
 #endif
 
@@ -3880,7 +3882,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 #pragma optimize ("ea", on)
 #endif
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 

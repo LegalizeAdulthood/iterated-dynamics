@@ -15,6 +15,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 static void close_file(void);
 
@@ -55,7 +56,7 @@ int get_bytes(BYTE *where,int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAXPIXELS 
 #else
@@ -421,7 +422,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
       if(keypressed())
       {
-        driver_sound_off();
+        driver_mute();
         return(-1);
       }
    }
@@ -458,7 +459,7 @@ int sound_line(BYTE *pixels, int linelen)
          rowcount++;
       }
    }   
-   driver_sound_off();
+   driver_mute();
    if(keypressed())
       ret = -1;
    return(ret);

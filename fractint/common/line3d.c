@@ -14,6 +14,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 struct point
 {

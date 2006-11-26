@@ -16,7 +16,7 @@
 
 #define INCLUDE_COMMON  /* include common code in helpcom.h */
 
-#ifndef XFRACT
+#if !defined(XFRACT)
 #include <io.h>
 #endif
 #include <fcntl.h>
@@ -111,7 +111,7 @@ static void help_seek(long pos)
 
 static void displaycc(int row, int col, int color, int ch)
    {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    static char *s = "?";
 #else
    static char s[] = "?";
@@ -326,7 +326,7 @@ static void color_link(LINK far *link, int color)
    }
 
 /* #define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR_KEYS,name), putstring(-1,-1,C_HELP_INSTR," "descrip"  ") */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name); driver_put_string(-1,-1,C_HELP_INSTR,":"descrip"  ")
 #else
 #define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name);\
@@ -344,7 +344,7 @@ static void helpinstr(void)
 
    driver_move_cursor(24, 1);
    PUT_KEY("F1",               "Index");
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    PUT_KEY("\030\031\033\032", "Select");
 #else
    PUT_KEY("K J H L", "Select");
@@ -376,7 +376,7 @@ static void display_page(char far *title, char far *text, unsigned text_len, int
    driver_set_attr(2, 0, C_HELP_BODY, 80*22);
    putstringcenter(1, 0, 80, C_HELP_HDG, title);
    sprintf(temp, "%2d of %d", page+1, num_pages);
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    driver_put_string(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
 #else
    /* Some systems (Ultrix) mess up if you write to column 80 */
@@ -923,7 +923,7 @@ int help(int action)
    return(0);
    }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 static int dos_version(void)
    {
    union REGS r;
@@ -957,7 +957,7 @@ static int can_read_file(char *path)
 
 static int exe_path(char *filename, char *path)
    {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    char *ptr;
 
    if (dos_version() >= 300)  /* DOS version 3.00+ ? */
@@ -1080,7 +1080,7 @@ typedef struct PRINT_DOC_INFO
    char      id[81];        /* buffer to store id in */
    char      title[81];     /* buffer to store title in */
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    int     (*msg_func)(int pnum, int num_page);
 #else
    int     (*msg_func)();
@@ -1441,7 +1441,7 @@ int init_help(void)
    help_file = -1;
 
 #ifndef WINFRACT
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
       {
       static FCODE err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
@@ -1535,7 +1535,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
    if (help_file == -1)         /* Can't find the help files anywhere! */
       {
       static FCODE msg[] =
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
          {"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
 #else
          {"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};

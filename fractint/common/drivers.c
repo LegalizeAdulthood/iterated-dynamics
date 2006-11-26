@@ -4,9 +4,13 @@
 #include "cmplx.h"
 #include "drivers.h"
 
+#include <string.h>
+
+extern Driver *fractint_driver;
 extern Driver *disk_driver;
-extern Driver *win32_driver;
 extern Driver *x11_driver;
+extern Driver *win32_driver;
+extern Driver *win32_disk_driver;
 
 /* list of drivers that are supported by source code in fractint */
 /* default driver is first one in the list that initializes. */
@@ -22,17 +26,21 @@ Driver *display = NULL;
 static int
 load_driver(Driver *drv, int *argc, char **argv)
 {
-  if (drv && drv->init) {
-    const int num = (*drv->init)(drv, argc, argv);
-    if (num > 0) {
-      if (! display)
-	display = drv;
-      available[num_drivers++] = drv;
-      return 1;
-    }
-  }
+	if (drv && drv->init)
+	{
+		const int num = (*drv->init)(drv, argc, argv);
+		if (num > 0)
+		{
+			if (! display)
+			{
+				display = drv;
+			}
+			available[num_drivers++] = drv;
+			return 1;
+		}
+	}
 
-  return 0;
+	return 0;
 }
 
 /*------------------------------------------------------------
@@ -41,25 +49,28 @@ load_driver(Driver *drv, int *argc, char **argv)
  * Go through the static list of drivers defined and try to initialize
  * them one at a time.  Returns the number of drivers initialized.
  */
-#define LOAD_DRIVER(name_) init_single_driver(name_##_driver)
 int
 init_drivers(int *argc, char **argv)
 {
-  int i;
-
-  vidtbl = (VIDEOINFO *) malloc(sizeof(vidtbl[0])*MAXVIDEOMODES);
+	vidtbl = (VIDEOINFO *) malloc(sizeof(vidtbl[0])*MAXVIDEOMODES);
 
 #if HAVE_X11_DRIVER
-  load_driver(x11_driver, argc, argv);
-#endif
-#if HAVE_DISK_DRIVER
-  load_driver(disk_driver, argc, argv);
-#endif
-#if HAVE_WIN32_DRIVER
-  load_driver(win32_driver, argc, argv);
+	load_driver(x11_driver, argc, argv);
 #endif
 
-  return num_drivers;		/* number of drivers supported at runtime */
+#if HAVE_DISK_DRIVER
+	load_driver(disk_driver, argc, argv);
+#endif
+
+#if HAVE_WIN32_DRIVER
+	load_driver(win32_driver, argc, argv);
+#endif
+
+#if HAVE_WIN32_DISK_DRIVER
+	load_driver(win32_disk_driver, argc, argv);
+#endif
+
+	return num_drivers;		/* number of drivers supported at runtime */
 }
 
 /* add_video_mode
@@ -226,6 +237,7 @@ driver_sound_on(int freq)
 }
 
 METHOD_VOID(sound_off)
+METHOD_VOID(mute)
 METHOD_INT(diskp)
 
 #endif

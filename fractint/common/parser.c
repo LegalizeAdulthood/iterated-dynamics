@@ -53,7 +53,7 @@ struct PEND_OP {
    int p;
 };
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 /* reuse an array in the decoder */
 JUMP_CONTROL_ST far *jump_control = (JUMP_CONTROL_ST far *) sizeofstring;
 #else
@@ -215,7 +215,7 @@ short uses_p1, uses_p2, uses_p3, uses_p4, uses_p5, uses_jump;
 short uses_ismand;
 unsigned int chars_in_formula;
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #define ChkLongDenom(denom)\
     if ((denom == 0 || overflow) && save_release > 1920) {\
         overflow = 1;\
@@ -233,7 +233,7 @@ unsigned int chars_in_formula;
 
 #define LastSqr v[4].a
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("parser1_text")     /* place following in an overlay */
 #endif
 
@@ -333,18 +333,18 @@ static char far *ParseErrs(int which)
    return((char far *)ErrStrings[which]);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #define FUNCT
 #ifdef FUNCT /* use function form save space - isn't really slower */
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 static void mStkFunct(void (*fct)(void))   /* call lStk via dStk */
@@ -353,7 +353,7 @@ static void mStkFunct(void (*fct)(void))   /* call lStk via dStk */
    (*fct)();
    Arg1->m = cmplx2MPC(Arg1->d);
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -429,7 +429,7 @@ void dRandom(void)
 
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mRandom(void)
 {
    long x, y;
@@ -474,7 +474,7 @@ void RandomSeed(void)
    Randomized = 1;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void lStkSRand(void)
 {
    SetRandFnct();
@@ -483,7 +483,7 @@ void lStkSRand(void)
 }
 #endif
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkSRand(void)
 {
    Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
@@ -572,7 +572,7 @@ void dStkAbs(void) {
    Arg1->d.y = fabs(Arg1->d.y);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkAbs(void) {
    if(Arg1->m.x.Exp < 0)
       Arg1->m.x.Exp = -Arg1->m.x.Exp;
@@ -597,7 +597,7 @@ void dStkSqr(void) {
    LastSqr.d.y = 0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkSqr(void) {
    LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
    LastSqr.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
@@ -627,9 +627,9 @@ void dStkAdd(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkAdd(void) {
@@ -637,7 +637,7 @@ void mStkAdd(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -658,8 +658,8 @@ void dStkSub(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
-#if (_MSC_VER >= 700)
+#if !defined(XFRACT) && !defined(_WIN32)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkSub(void) {
@@ -667,7 +667,7 @@ void mStkSub(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -685,7 +685,7 @@ void dStkConj(void) {
    Arg1->d.y = -Arg1->d.y;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkConj(void) {
    Arg1->m.y.Exp ^= 0x8000;
 }
@@ -702,7 +702,7 @@ void dStkFloor(void) {
    Arg1->d.y = floor(Arg1->d.y);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkFloor(void) {
    mStkFunct(dStkFloor);   /* call lStk via dStk */
 }
@@ -726,7 +726,7 @@ void dStkCeil(void) {
    Arg1->d.y = ceil(Arg1->d.y);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCeil(void) {
    mStkFunct(dStkCeil);   /* call lStk via dStk */
 }
@@ -748,7 +748,7 @@ void dStkTrunc(void) {
    Arg1->d.y = (int)(Arg1->d.y);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkTrunc(void) {
    mStkFunct(dStkTrunc);   /* call lStk via dStk */
 }
@@ -777,7 +777,7 @@ void dStkRound(void) {
    Arg1->d.y = floor(Arg1->d.y+.5);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkRound(void) {
    mStkFunct(dStkRound);   /* call lStk via dStk */
 }
@@ -796,7 +796,7 @@ void dStkZero(void) {
    Arg1->d.y = Arg1->d.x = 0.0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkZero(void) {
    Arg1->m.x.Mant = Arg1->m.x.Exp = 0;
    Arg1->m.y.Mant = Arg1->m.y.Exp = 0;
@@ -814,7 +814,7 @@ void dStkOne(void) {
    Arg1->d.y = 0.0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkOne(void) {
    Arg1->m = MPCone;
 }
@@ -832,7 +832,7 @@ void dStkReal(void) {
    Arg1->d.y = 0.0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkReal(void) {
    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
@@ -849,7 +849,7 @@ void dStkImag(void) {
    Arg1->d.y = 0.0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkImag(void) {
    Arg1->m.x = Arg1->m.y;
    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
@@ -868,7 +868,7 @@ void dStkNeg(void) {
    Arg1->d.y = -Arg1->d.y;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkNeg(void) {
    Arg1->m.x.Exp ^= 0x8000;
    Arg1->m.y.Exp ^= 0x8000;
@@ -888,8 +888,8 @@ void dStkMul(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
-#if (_MSC_VER >= 700)
+#if !defined(XFRACT) && !defined(_WIN32)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkMul(void) {
@@ -897,7 +897,7 @@ void mStkMul(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -923,8 +923,8 @@ void dStkDiv(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
-#if (_MSC_VER >= 700)
+#if !defined(XFRACT) && !defined(_WIN32)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkDiv(void) {
@@ -932,7 +932,7 @@ void mStkDiv(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -960,15 +960,15 @@ void dStkMod(void) {
    Arg1->d.y = 0.0;
 }
 
-#ifndef XFRACT
-#if (_MSC_VER >= 700)
+#if !defined(XFRACT) && !defined(_WIN32)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkMod(void) {
    Arg1->m.x = MPCmod(Arg1->m);
    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -1027,7 +1027,7 @@ void dStkFlip(void) {
    Arg1->d.y = t;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkFlip(void) {
    struct MP t;
 
@@ -1056,7 +1056,7 @@ void dStkSin(void) {
    Arg1->d.y = cosx*sinhy;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkSin(void) {
    mStkFunct(dStkSin);   /* call lStk via dStk */
 }
@@ -1089,7 +1089,7 @@ void dStkTan(void) {
    Arg1->d.y = sinhy/denom;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkTan(void) {
    mStkFunct(dStkTan);   /* call lStk via dStk */
 }
@@ -1123,7 +1123,7 @@ void dStkTanh(void) {
    Arg1->d.y = siny/denom;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkTanh(void) {
    mStkFunct(dStkTanh);   /* call lStk via dStk */
 }
@@ -1157,7 +1157,7 @@ void dStkCoTan(void) {
    Arg1->d.y = -sinhy/denom;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCoTan(void) {
    mStkFunct(dStkCoTan);   /* call lStk via dStk */
 }
@@ -1191,7 +1191,7 @@ void dStkCoTanh(void) {
    Arg1->d.y = -siny/denom;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCoTanh(void) {
    mStkFunct(dStkCoTanh);   /* call lStk via dStk */
 }
@@ -1227,7 +1227,7 @@ void dStkRecip(void) {
    Arg1->d.y = -Arg1->d.y/mod;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkRecip(void) {
    struct MP mod;
    mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
@@ -1265,7 +1265,7 @@ void dStkSinh(void) {
    Arg1->d.y = coshx*siny;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkSinh(void) {
    mStkFunct(dStkSinh);   /* call lStk via dStk */
 }
@@ -1293,7 +1293,7 @@ void dStkCos(void) {
    Arg1->d.y = -sinx*sinhy; /* TIW 04-25-91 sign */
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCos(void) {
    mStkFunct(dStkCos);   /* call lStk via dStk */
 }
@@ -1319,7 +1319,7 @@ void dStkCosXX(void) {
    Arg1->d.y = -Arg1->d.y;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCosXX(void) {
    mStkFunct(dStkCosXX);   /* call lStk via dStk */
 }
@@ -1341,7 +1341,7 @@ void dStkCosh(void) {
    Arg1->d.y = sinhx*siny;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCosh(void) {
    mStkFunct(dStkCosh);   /* call lStk via dStk */
 }
@@ -1366,7 +1366,7 @@ void dStkASin(void) {
    Arcsinz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkASin(void) {
    mStkFunct(dStkASin);
 }
@@ -1382,7 +1382,7 @@ void dStkASinh(void) {
    Arcsinhz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkASinh(void) {
    mStkFunct(dStkASinh);
 }
@@ -1398,7 +1398,7 @@ void dStkACos(void) {
    Arccosz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkACos(void) {
    mStkFunct(dStkACos);
 }
@@ -1414,7 +1414,7 @@ void dStkACosh(void) {
    Arccoshz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkACosh(void) {
    mStkFunct(dStkACosh);
 }
@@ -1430,7 +1430,7 @@ void dStkATan(void) {
    Arctanz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkATan(void) {
    mStkFunct(dStkATan);
 }
@@ -1446,7 +1446,7 @@ void dStkATanh(void) {
    Arctanhz(Arg1->d, &(Arg1->d));
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkATanh(void) {
    mStkFunct(dStkATanh);
 }
@@ -1462,7 +1462,7 @@ void dStkSqrt(void) {
    Arg1->d = ComplexSqrtFloat(Arg1->d.x, Arg1->d.y);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkSqrt(void) {
    mStkFunct(dStkSqrt);
 }
@@ -1480,7 +1480,7 @@ void dStkCAbs(void) {
    Arg1->d.y = 0.0;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkCAbs(void) {
    mStkFunct(dStkCAbs);
 }
@@ -1501,7 +1501,7 @@ void dStkLT(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkLT(void) {
    Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1526,7 +1526,7 @@ void dStkGT(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkGT(void) {
    Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1551,7 +1551,7 @@ void dStkLTE(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkLTE(void) {
    int comp;
 
@@ -1579,7 +1579,7 @@ void dStkGTE(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkGTE(void) {
    int comp;
 
@@ -1607,7 +1607,7 @@ void dStkEQ(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkEQ(void) {
    int comp;
 
@@ -1635,7 +1635,7 @@ void dStkNE(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkNE(void) {
    int comp;
 
@@ -1663,7 +1663,7 @@ void dStkOR(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkOR(void) {
    Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1688,7 +1688,7 @@ void dStkAND(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkAND(void) {
    Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
    Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
@@ -1709,7 +1709,7 @@ void dStkLog(void) {
    FPUcplxlog(&Arg1->d, &Arg1->d);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkLog(void) {
    mStkFunct(dStkLog);   /* call lStk via dStk */
 }
@@ -1738,7 +1738,7 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z) {
       FPUcplxexp(&Arg1->d, &Arg1->d);
    }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void mStkExp(void) {
    mStkFunct(dStkExp);   /* call lStk via dStk */
 }
@@ -1756,8 +1756,8 @@ void dStkPwr(void) {
    Arg2--;
 }
 
-#ifndef XFRACT
-#if (_MSC_VER >= 700)
+#if !defined(XFRACT) && !defined(_WIN32)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 void mStkPwr(void) {
@@ -1770,7 +1770,7 @@ void mStkPwr(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -1820,7 +1820,7 @@ void dStkJumpOnFalse (void)
 
 void mStkJumpOnFalse (void)
 {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if(Arg1->m.x.Mant == 0)
       StkJump();
    else
@@ -1848,7 +1848,7 @@ void dStkJumpOnTrue (void)
 
 void mStkJumpOnTrue (void)
 {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if(Arg1->m.x.Mant)
       StkJump();
    else
@@ -1872,7 +1872,7 @@ void StkJumpLabel (void)
 }
 
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("parser1_text")     /* place following in an overlay */
 #endif
 
@@ -1932,7 +1932,7 @@ struct ConstArg far *isconst(char *Str, int Len) {
                uses_p4 = 1;
             if(n == 18)        /* The formula uses 'p5'. */
                uses_p5 = 1;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
             if(n == 10 || n == 11 || n == 12)
                if(MathType == L_MATH)
                   keybuffer = 'f';
@@ -1946,7 +1946,7 @@ struct ConstArg far *isconst(char *Str, int Len) {
    v[vsp].len = Len;
    v[vsp].a.d.x = v[vsp].a.d.y = 0.0;
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    /* v[vsp].a should already be zeroed out */
    switch(MathType) {
    case M_MATH:
@@ -1988,7 +1988,7 @@ struct ConstArg far *isconst(char *Str, int Len) {
       case D_MATH:
          v[vsp].a.d = z;
          break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       case M_MATH:
          v[vsp].a.m = cmplx2MPC(z);
          break;
@@ -2130,7 +2130,7 @@ int whichfn(char *s, int len)
    return(out);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void (far *isfunct(char *Str, int Len))(void)
 #else
 void (*isfunct(Str, Len))()
@@ -2287,7 +2287,7 @@ static int ParseStr(char *Str, int pass) {
       StkJumpOnFalse = dStkJumpOnFalse;    /* GGM 02-10-97 */
       StkOne = dStkOne;        /* GGM 10-08-97 */
       break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
       StkAdd = mStkAdd;
       StkSub = mStkSub;
@@ -2406,7 +2406,7 @@ static int ParseStr(char *Str, int pass) {
    maxfn = 0;   /* TIW 03-30-91 */
    for(vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++) {
       v[vsp].s = Constants[vsp];
-      v[vsp].len = strlen(Constants[vsp]);
+      v[vsp].len = (int) strlen(Constants[vsp]);
    }
    cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
    const_pi = atan(1.0) * 4;
@@ -2442,7 +2442,7 @@ static int ParseStr(char *Str, int pass) {
       v[18].a.d.x = param[8];
       v[18].a.d.y = param[9];
       break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
       v[1].a.m.x = *d2MP(param[0]);
       v[1].a.m.y = *d2MP(param[1]);
@@ -2705,7 +2705,7 @@ static int ParseStr(char *Str, int pass) {
 }
 
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ()       /* back to normal segment */
 #endif
 
@@ -2724,7 +2724,7 @@ int Formula(void) {
       case D_MATH:
          dRandom();
          break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       case L_MATH:
          lRandom();
          break;
@@ -2751,7 +2751,7 @@ int Formula(void) {
    case D_MATH:
       old = new = v[3].a.d;
       return(Arg1->d.x == 0.0);
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
       old = new = MPC2cmplx(v[3].a.m);
       return(Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0);
@@ -2786,7 +2786,7 @@ int form_per_pixel(void) {
       break;
 
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
       if((row+col)&1)
          v[9].a.m = MPCone;
@@ -2816,7 +2816,7 @@ int form_per_pixel(void) {
             v[0].a.d.x = old.x;
             v[0].a.d.y = old.y;
             break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
          case M_MATH:
             v[0].a.m.x = *d2MP(old.x);
             v[0].a.m.y = *d2MP(old.y);
@@ -2843,7 +2843,7 @@ int form_per_pixel(void) {
             v[0].a.d.x = dxpixel();
             v[0].a.d.y = dypixel();
             break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
          case M_MATH:
             v[0].a.m.x = *d2MP(dxpixel());
             v[0].a.m.y = *d2MP(dypixel());
@@ -2870,7 +2870,7 @@ int form_per_pixel(void) {
    case D_MATH:
       old = v[3].a.d;
       break;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
       old = MPC2cmplx(v[3].a.m);
       break;
@@ -2983,7 +2983,7 @@ int fill_jump_struct(void)
 
 static char *FormStr;
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("parser1_text")     /* place following in an overlay */
 #endif
 
@@ -3617,7 +3617,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          }
       }
       if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
-         char far * msgbuf = (char far*) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
+         char far * msgbuf = (char far *) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + strlen(sym_buf) + 6);
          far_strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          far_strcat(msgbuf, ":\n   ");
@@ -3806,7 +3806,7 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 int fpFormulaSetup(void) {
 
    int RunFormRes;              /* CAE fp */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if (fpu > 0) {
       MathType = D_MATH;
       /* CAE changed below for fp */
@@ -4000,7 +4000,7 @@ void frm_error(FILE * open_file, long begin_frm)
             return;
          }
       }
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       sprintf(&msgbuf[strlen(msgbuf)], "Error(%d) at line %d:  %Fs\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
 #else
       sprintf(&msgbuf[strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));

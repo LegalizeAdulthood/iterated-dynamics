@@ -1,4 +1,10 @@
+#include <string.h>
+#include "port.h"
+#include "cmplx.h"
+#include "fractint.h"
 #include "drivers.h"
+#include "externs.h"
+#include "prototyp.h"
 
 /*
 ; ********************** Function setvideotext() ************************
@@ -31,6 +37,8 @@ setforgraphics()
   driver_start_video();
   spindac(0,1);
 }
+
+extern int check_vidmode_keyname(char *kname);
 
 static int
 load_fractint_cfg(int options)
@@ -196,7 +204,7 @@ load_videotable(int options)
 }
 
 static void
-fractint_init(int *argc, char *argv)
+fractint_init(int *argc, char **argv)
 {
   load_videotable(1); /* load fractint.cfg, no message yet if bad */
 }
@@ -217,34 +225,286 @@ fractint_hide_text_cursor(void)
   fractint_move_cursor(25, 80);
 }
 
-/* new driver		old fractint
+/*
+ * The stackscreen()/unstackscreen() functions for XFRACT have been
+ * moved to unix/video.c to more cleanly separate the XFRACT code.
+ */
+
+static int screenctr = -1;
+
+#define MAXSCREENS 3
+
+static U16 savescreen[MAXSCREENS];
+static int saverc[MAXSCREENS+1];
+
+void stackscreen()
+{
+   BYTE far *vidmem;
+   int savebytes;
+   int i;
+   if (video_scroll) {
+      scroll_state(0); /* save position */
+      scroll_center(0,0);
+   }
+   if(*s_makepar == 0)
+      return;
+   saverc[screenctr+1] = textrow*80 + textcol;
+   if (++screenctr) { /* already have some stacked */
+         static char far msg[]={"stackscreen overflow"};
+      if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
+         stopmsg(1,msg);
+         exit(1);
+         }
+      vidmem = MK_FP(textaddr,0);
+      savebytes = (text_type == 0) ? 4000 : 16384;
+      savescreen[i] = MemoryAlloc((U16)savebytes,1L,FARMEM);
+      if (savescreen[i] != 0)
+         MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);
+      else {
+            static char far msg[]={"insufficient memory, aborting"};
+               stopmsg(1,msg);
+               exit(1);
+            }
+      driver_set_clear();
+      }
+   else
+      driver_set_for_text();
+   if (video_scroll) {
+      if (boxcount)
+         moveboxf(0.0,0.0);
+   }
+}
+
+void unstackscreen()
+{
+   BYTE far *vidmem;
+   int savebytes;
+   if(*s_makepar == 0)
+      return;
+   textrow = saverc[screenctr] / 80;
+   textcol = saverc[screenctr] % 80;
+   if (--screenctr >= 0) { /* unstack */
+      vidmem = MK_FP(textaddr,0);
+      savebytes = (text_type == 0) ? 4000 : 16384;
+      if (savescreen[screenctr] != 0) {
+         MoveFromMemory(vidmem,(U16)savebytes,1L,0L,savescreen[screenctr]);
+         MemoryRelease(savescreen[screenctr]);
+         savescreen[screenctr] = 0;
+         }
+      }
+   else
+      setforgraphics();
+   movecursor(-1,-1);
+   if (video_scroll) {
+      if (boxcount)
+         moveboxf(0.0,0.0);
+      scroll_state(1); /* restore position */
+   }
+}
+
+void discardscreen()
+{
+   if (--screenctr >= 0) { /* unstack */
+      if (savescreen[screenctr]) {
+         MemoryRelease(savescreen[screenctr]);
+         savescreen[screenctr] = 0;
+      }
+   }
+   else
+      discardgraphics();
+}
+
+int fractint_start_video(Driver *drv)
+{
+	return startvideo();
+}
+
+void fractint_flush(Driver *drv)
+{
+	/* flush pending updates */
+}
+
+void fractint_schedule_alarm(Driver *drv, int secs)
+{
+		/* refresh alarm */
+}
+
+int fractint_start_video(Driver *drv)
+{
+	
+}
+int fractint_end_video(Driver *drv)
+{
+	
+}
+
+void fractint_window(Driver *drv)
+{
+				/* creates a window */
+}
+int fractint_resize(Driver *drv)
+{
+				/* handles window resize.  */
+}
+void fractint_redraw(Driver *drv)
+{
+				/* redraws the screen */
+}
+
+int fractint_read_palette(Driver *drv)
+{
+	/* reads palette into dacbox */
+	readvideopalette();
+}
+int fractint_write_palette(Driver *drv)
+{
+	/* writes dacbox into palette */
+	writevideopalette();
+}
+
+int fractint_read_pixel(Driver *drv, int x, int y)
+{
+	
+}
+void fractint_write_pixel(Driver *drv, int x, int y, int color)
+{
+	
+}
+/* reads a line of pixels */
+void fractint_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+{
+	
+}
+/* writes a line of pixels */
+void fractint_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+{
+	
+}
+
+void fractint_set_line_mode(Driver *drv, int mode)
+{
+		/* set copy/xor line */
+}
+void fractint_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
+{
+	 /* draw line */
+}
+
+int fractint_get_key(Driver *drv, int block)
+{
+			/* poll or block for a key */
+}
+void fractint_shell(Driver *drv)
+{
+				/* invoke a command shell */
+}
+void fractint_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
+{
+	
+}
+void fractint_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+{
+	
+}
+
+void fractint_set_for_text(Driver *drv)
+{
+			/* set for text mode & save gfx */
+}
+void fractint_set_for_graphics(Driver *drv)
+{
+		/* restores graphics and data */
+}
+void fractint_set_clear(Driver *drv)
+{
+			/* clears text screen */
+}
+
+BYTE *fractint_find_font(Driver *drv, int parm)
+{
+			/* for palette editor */
+}
+
+/* text screen functions */
+void fractint_move_cursor(Driver *drv, int row, int col)
+{
+	
+}
+void fractint_set_attr(Driver *drv, int row, int col, int attr, int count)
+{
+	setattr(row, col, attr, count);
+}
+void fractint_scroll_up(Driver *drv, int top, int bot)
+{
+	scrollup();
+}
+void fractint_stack_screen(Driver *drv)
+{
+	stackscreen();
+}
+void fractint_unstack_screen(Driver *drv)
+{
+	unstackscreen();
+}
+void fractint_discard_screen(Driver *drv)
+{
+	discardscreen();
+}
+
+/* sound routines */
+int fractint_init_fm(Driver *drv)
+{
+	return initfm();
+}
+void fractint_buzzer(Driver *drv, int kind)
+{
+	buzzer(kind);
+}
+void fractint_sound_on(Driver *drv, int frequency)
+{
+	soundon(frequency);
+}
+void fractint_sound_off(Driver *drv)
+{
+	soundoff();
+}
+
+int fractint_diskp(Driver *drv)
+{
+	return (dotmode == 11) ? 1 : 0;
+}
+
+
+/* new driver			old fractint
    -------------------  ------------
-   start_video		startvideo
-   end_video		endvideo
-   read_palette		readvideopalette
-   write_palette	writevideopalette
-   read_pixel		readvideo
-   write_pixel		writevideo
-   read_span		readvideoline
-   write_span		writevideoline
-   set_line_mode	setlinemode
-   draw_line		drawline
-   get_key		getkey
-   shell		shell_to_dos
-   set_video_mode	setvideomode
-   set_for_text		setfortext
-   set_for_graphics	setforgraphics
-   set_clear		setclear
-   find_font		findfont
-   move_cursor		movecursor
-   set_attr		setattr
-   scroll_up		scrollup
-   stack_screen		stackscreen
-   unstack_screen	unstackscreen
-   discard_screen	discardscreen
-   init_fm		initfm
-   buzzer		buzzer
-   sound_on		sound_on
-   sound_off		sound_off
+   start_video			startvideo
+   end_video			endvideo
+   read_palette			readvideopalette
+   write_palette		writevideopalette
+   read_pixel			readvideo
+   write_pixel			writevideo
+   read_span			readvideoline
+   write_span			writevideoline
+   set_line_mode		setlinemode
+   draw_line			drawline
+   get_key				getkey
+   shell				shell_to_dos
+   set_video_mode		setvideomode
+   set_for_text			setfortext
+   set_for_graphics		setforgraphics
+   set_clear			setclear
+   find_font			findfont
+   move_cursor			movecursor
+   set_attr				setattr
+   scroll_up			scrollup
+   stack_screen			stackscreen
+   unstack_screen		unstackscreen
+   discard_screen		discardscreen
+   init_fm				initfm
+   buzzer				buzzer
+   sound_on				soundon
+   sound_off			soundoff
+   mute					mute
+   diskp				dotmode == 11
 */
 Driver fractint_driver = STD_DRIVER_STRUCT(fractint);

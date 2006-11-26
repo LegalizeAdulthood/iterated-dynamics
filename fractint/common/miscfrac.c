@@ -972,7 +972,7 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 /* The following are Bifurcation "orbitcalc" routines...              */
 /*                                                                                                    */
 /**********************************************************************/
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 int BifurcLambda() /* Used by lyanupov */
   {
     Population = Rate * Population * (1 - Population);
@@ -1217,7 +1217,7 @@ int lyapunov () {
         a = dypixel();
         b = dxpixel();
         }
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     /*  the assembler routines don't work for a & b outside the
         ranges 0 < a < 4 and 0 < b < 4. So, fall back on the C
         routines if part of the image sticks out.
@@ -1280,7 +1280,7 @@ int lya_setup () {
     lyaLength = 1;
 
     i = (long)param[0];
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     if (save_release<1732) i &= 0x0FFFFL; /* make it a short to reporduce prior stuff*/
 #endif
     lyaRxy[0] = 1;

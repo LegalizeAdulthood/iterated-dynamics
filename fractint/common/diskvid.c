@@ -216,7 +216,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
          + (((unsigned short)(longtmp+=BLOCKLEN) >> BLOCKSHIFT) & (HASHSIZE-1));
       ptr1->offset = longtmp;
       ptr1->hashlink = *fwd_link;
-      *fwd_link = (char far *)ptr1 - (char far *)cache_start;
+      *fwd_link = (int) ((char far *)ptr1 - (char far *)cache_start);
       }
 
    memorysize = (long)(newcolsize) * newrowsize + headerlength;
@@ -249,6 +249,11 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    }
 
    if (driver_diskp())
+   {
+#if defined(XFRACT) || defined(_WIN32)
+	   driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
+		   (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
+#else
      switch (MemoryType(dv_handle)) {
          static FCODE fmsg1[] = {"Using no Memory, it's broke"};
          static FCODE fmsg2[] = {"Using your Expanded Memory"};
@@ -268,6 +273,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
          driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg4);
          break;
      }
+#endif
+   }
 
    membufptr = membuf;
 
@@ -459,7 +466,7 @@ static void _fastcall near findload_cache(long offset) /* used by read/write */
    /* remove block at cache_lru from its hash chain */
    fwd_link = hash_ptr
             + (((unsigned short)cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1));
-   tbloffset = (char far *)cache_lru - (char far *)cache_start;
+   tbloffset = (int) ((char far *)cache_lru - (char far *)cache_start);
    while (*fwd_link != tbloffset)
       fwd_link = &((struct cache far *)((char far *)cache_start+*fwd_link))->hashlink;
    *fwd_link = cache_lru->hashlink;
@@ -508,7 +515,7 @@ static void _fastcall near findload_cache(long offset) /* used by read/write */
    /* add new block to its hash chain */
    fwd_link = hash_ptr + (((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1));
    cache_lru->hashlink = *fwd_link;
-   *fwd_link = (char far *)cache_lru - (char far *)cache_start;
+   *fwd_link = (int) ((char far *)cache_lru - (char far *)cache_start);
    cur_cache = cache_lru;
 #endif
    }

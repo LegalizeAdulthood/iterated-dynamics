@@ -562,7 +562,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          }
 
       driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_LO,prompts[curchoice]);
-      j = strlen(buf);
+      j = (int) strlen(buf);
       memset(&buf[j],' ',80-j); buf[curlen] = 0;
       driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
 
@@ -794,7 +794,7 @@ static int input_field_list(
    ret = -1;
    for(;;) {
       strcpy(buf,list[curval]);
-      i = strlen(buf);
+      i = (int) strlen(buf);
       while (i < vlen)
          buf[i++] = ' ';
       buf[vlen] = 0;
@@ -1158,7 +1158,7 @@ struct trig_funct_lst trigfn[] =
 /* changing the order of these alters meaning of *.fra file */
 /* maximum 6 characters in function names or recheck all related code */
 {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    {s_sin,   lStkSin,   dStkSin,   mStkSin   },
    {s_cosxx, lStkCosXX, dStkCosXX, mStkCosXX },
    {s_sinh,  lStkSinh,  dStkSinh,  mStkSinh  },

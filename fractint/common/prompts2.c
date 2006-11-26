@@ -4,6 +4,7 @@
 
 #include <string.h>
 #include <ctype.h>
+
 #ifndef XFRACT
 #include <io.h>
 #elif !defined(__386BSD__) && !defined(_WIN32)
@@ -22,6 +23,7 @@
 #endif
 
 #endif
+
 #ifdef __TURBOC__
 #include <alloc.h>
 #elif !defined(__386BSD__)
@@ -38,6 +40,10 @@
 
 #ifdef __SVR4
 #include <sys/param.h>
+#endif
+
+#if defined(_WIN32)
+#include <direct.h>
 #endif
 
   /* see Fractint.c for a description of the "include"  hierarchy */
@@ -1186,12 +1192,12 @@ int get_rds_params(void) {
          for(i=0;i<sizeof(rds6);i++)
             rds6[i] = ' ';
          if((p = strrchr(stereomapname,SLASHC))==NULL ||
-                 strlen(stereomapname) < sizeof(rds6)-2)
+                 (int) strlen(stereomapname) < sizeof(rds6)-2)
             p = strlwr(stereomapname);
          else
             p++;
          /* center file name */
-         rds6[(sizeof(rds6)-strlen(p)+2)/2] = 0;
+         rds6[(sizeof(rds6)-(int) strlen(p)+2)/2] = 0;
          strcat(rds6,"[");
          strcat(rds6,p);
          strcat(rds6,"]");
@@ -1303,7 +1309,7 @@ void goodbye()                  /* we done.  Bail out */
    char goodbyemessage[40];
    int ret;
    static FCODE gbm[]={"   Thank You for using "FRACTINT};
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    union REGS r;
 #endif
    if (resume_info != 0)
@@ -1331,6 +1337,7 @@ void goodbye()                  /* we done.  Bail out */
    UnixDone();
    printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
 #else
+#if !defined(_WIN32)
    if(*s_makepar != 0)
    {
       r.h.al = (char)((mode7text == 0) ? exitmode : 7);
@@ -1338,6 +1345,7 @@ void goodbye()                  /* we done.  Bail out */
       int86(0x10, &r, &r);
       printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
    }
+#endif
 #endif
    if(*s_makepar != 0)
    {
@@ -1358,6 +1366,7 @@ void goodbye()                  /* we done.  Bail out */
 
 /* --------------------------------------------------------------------- */
 
+#if !defined(_WIN32)
 #ifdef XFRACT
 static char searchdir[FILE_MAX_DIR];
 static char searchname[FILE_MAX_PATH];
@@ -1443,7 +1452,7 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
      }
 #endif
 }
-
+#endif /* !_WIN32 */
 
 #if 0
 void heap_sort(void far *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
@@ -1559,7 +1568,7 @@ retry_dir:
    fix_dirname(tmpmask);
    if (retried == 0 && strcmp(dir,SLASH) && strcmp(dir,DOTSLASH))
    {
-      tmpmask[(j = strlen(tmpmask) - 1)] = 0; /* strip trailing \ */
+      tmpmask[(j = (int) strlen(tmpmask) - 1)] = 0; /* strip trailing \ */
       if (strchr(tmpmask,'*') || strchr(tmpmask,'?')
         || fr_findfirst(tmpmask) != 0
         || (DTA.attribute & SUBDIR) == 0)
@@ -1581,7 +1590,7 @@ retry_dir:
    dircount  = 0;
    notroot   = 0;
    j = 0;
-   masklen = strlen(tmpmask);
+   masklen = (int) strlen(tmpmask);
    strcat(tmpmask,"*.*");
    out = fr_findfirst(tmpmask);
    while(out == 0 && filecount < MAXNUMFILES)
@@ -1824,9 +1833,10 @@ static int filename_speedstr(int row, int col, int vid,
       prompt = speed_prompt;
       }
    driver_put_string(row,col,vid,prompt);
-   return(strlen(prompt));
+   return((int) strlen(prompt));
 }
 
+#if !defined(_WIN32)
 int isadirectory(char *s)
 {
    int len;
@@ -1838,7 +1848,7 @@ int isadirectory(char *s)
    if(strchr(s,'*') || strchr(s,'?'))
       return(0); /* for my purposes, not a directory */
 
-   len = strlen(s);
+   len = (int) strlen(s);
    if(len > 0)
       sv = s[len-1];   /* last char */
    else
@@ -1886,7 +1896,7 @@ int isadirectory(char *s)
    return(0);
 #endif
 }
-
+#endif
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
@@ -1905,7 +1915,7 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
    if(ext)
       ext[0]   = 0;
 
-   if((length = far_strlen(template)) == 0)
+   if((length = (int) far_strlen(template)) == 0)
       return(0);
 
    offset = 0;
@@ -1934,7 +1944,7 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
       if(tmp)
       {
          tmp++;  /* first character after slash */
-         len = tmp - (char far *)&template[offset];
+         len = (int) (tmp - (char far *)&template[offset]);
          if(len >= 0 && len < FILE_MAX_DIR && dir)
             far_strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
          if(len < FILE_MAX_DIR && dir)
@@ -1954,7 +1964,7 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
       if(tmp)
       {
          /* tmp++; */ /* first character past "." */
-         len = tmp - (char far *)&template[offset];
+         len = (int) (tmp - (char far *)&template[offset]);
          if((len > 0) && (offset+len < length) && fname)
          {
             far_strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
@@ -2005,7 +2015,7 @@ void fix_dirname(char *dirname)
 {
    int length;
    despace(dirname);
-   length = strlen(dirname); /* index of last character */
+   length = (int) strlen(dirname); /* index of last character */
 
    /* make sure dirname ends with a slash */
    if(length > 0)
@@ -2047,6 +2057,37 @@ FILE *dir_fopen(char *dir, char *filename, char *mode )
 }
 
 /* converts relative path to absolute path */
+#if defined(_WIN32)
+static int expand_dirname(char *dirname, char *drive)
+{
+   fix_dirname(dirname);
+   if (dirname[0] != SLASHC) {
+      char buf[FILE_MAX_DIR+1],curdir[FILE_MAX_DIR+1];
+      getcwd(curdir,FILE_MAX_DIR);
+      strcat(curdir,SLASH);
+      while (strncmp(dirname,DOTSLASH,2) == 0) {
+         strcpy(buf,&dirname[2]);
+         strcpy(dirname,buf);
+         }
+      while (strncmp(dirname,DOTDOTSLASH,3) == 0) {
+         char *s;
+         curdir[(int) strlen(curdir)-1] = 0; /* strip trailing slash */
+         if ((s = strrchr(curdir,SLASHC)) != NULL)
+            *s = 0;
+         strcat(curdir,SLASH);
+         strcpy(buf,&dirname[3]);
+         strcpy(dirname,buf);
+         }
+      strcpy(buf,dirname);
+      dirname[0] = 0;
+      if (curdir[0] != SLASHC)
+         strcpy(dirname,SLASH);
+      strcat(dirname,curdir);
+      strcat(dirname,buf);
+      }
+   return(0);
+}
+#else
 static int expand_dirname(char *dirname,char *drive)
 {
    fix_dirname(dirname);
@@ -2080,7 +2121,7 @@ static int expand_dirname(char *dirname,char *drive)
          }
       while (strncmp(dirname,DOTDOTSLASH,3) == 0) {
          char *s;
-         curdir[strlen(curdir)-1] = 0; /* strip trailing slash */
+         curdir[(int) strlen(curdir)-1] = 0; /* strip trailing slash */
          if ((s = strrchr(curdir,SLASHC)) != NULL)
             *s = 0;
          strcat(curdir,SLASH);
@@ -2096,7 +2137,7 @@ static int expand_dirname(char *dirname,char *drive)
       }
    return(0);
 }
-
+#endif
 
 /*
    See if double value was changed by input screen. Problem is that the
@@ -2708,12 +2749,12 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 #endif
 #ifndef XFRACT
    /* if drive, colon, slash, is a directory */
-   if(strlen(newfilename) == 3 &&
+   if((int) strlen(newfilename) == 3 &&
            newfilename[1] == ':' &&
            newfilename[2] == SLASHC)
       isadir = 1;
    /* if drive, colon, with no slash, is a directory */
-   if(strlen(newfilename) == 2 &&
+   if((int) strlen(newfilename) == 2 &&
            newfilename[1] == ':') {
       newfilename[2] = SLASHC;
       newfilename[3] = 0;
@@ -2743,7 +2784,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
       strcat(temp_path,newfilename);
       strcpy(newfilename,temp_path);
       if (!test_dir) {
-         len = strlen(newfilename);
+         len = (int) strlen(newfilename);
          newfilename[len-1] = 0; /* get rid of slash added by expand_dirname */
       }
    }
@@ -2768,18 +2809,18 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 
    splitpath(newfilename,drive,dir,fname,ext);
    splitpath(oldfullpath,drive1,dir1,fname1,ext1);
-   if(strlen(drive) != 0 && GETPATH)
+   if((int) strlen(drive) != 0 && GETPATH)
       strcpy(drive1,drive);
-   if(strlen(dir) != 0 && GETPATH)
+   if((int) strlen(dir) != 0 && GETPATH)
       strcpy(dir1,dir);
-   if(strlen(fname) != 0)
+   if((int) strlen(fname) != 0)
       strcpy(fname1,fname);
-   if(strlen(ext) != 0)
+   if((int) strlen(ext) != 0)
       strcpy(ext1,ext);
    if(isadir == 0 && isafile == 0 && GETPATH)
    {
       makepath(oldfullpath,drive1,dir1,NULL,NULL);
-      len = strlen(oldfullpath);
+      len = (int) strlen(oldfullpath);
       if(len > 0)
       {
          char save;
@@ -2839,7 +2880,7 @@ void shell_sort(void far *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR 
          }
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("prompts3_text")     /* place following in an overlay */
 #endif
 
@@ -2851,7 +2892,7 @@ void far_strncpy(char far *t, char far *s, int len)
 char far *far_strchr(char far *str, char c)
 {
    int len,i;
-   len = far_strlen(str);
+   len = (int) far_strlen(str);
    i= -1;
    while (++i < len && c != str[i]);
    if(i == len)
@@ -2863,7 +2904,7 @@ char far *far_strchr(char far *str, char c)
 char far *far_strrchr(char far *str, char c)
 {
    int len;
-   len = far_strlen(str);
+   len = (int) far_strlen(str);
    while (--len > -1 && c != str[len]);
    if(len == -1)
       return(NULL);
@@ -2871,6 +2912,6 @@ char far *far_strrchr(char far *str, char c)
       return(&str[len]);
 }
 
-#if (_MSC_VER >= 700)
+#if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("")
 #endif

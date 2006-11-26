@@ -190,7 +190,7 @@ short far sizeofstring[MAX_CODES + 1];  /* size of string list */
 
 short decoder(short linewidth)
 {
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
    U16 prefix[MAX_CODES+1];     /* Prefix linked list */
 #endif
    BYTE far *sp;
@@ -332,7 +332,7 @@ short decoder(short linewidth)
                {
                   if (--yskip < 0)
                   {
-                     if ((ret = (short) ((*outln) (decoderline, bufptr - decoderline))) < 0)
+                     if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
                         return (ret);
                      yskip = skipydots;
                   }
@@ -385,7 +385,7 @@ short decoder(short linewidth)
          {
             if (--yskip < 0)
             {
-               if ((ret = (short) ((*outln) (decoderline, bufptr - decoderline))) < 0)
+               if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
                   return (ret);
                yskip = skipydots;
             }

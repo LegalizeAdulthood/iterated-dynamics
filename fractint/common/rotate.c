@@ -9,6 +9,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 /* routines in this module      */
 

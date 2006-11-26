@@ -11,6 +11,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "targa_lc.h"
+#include "drivers.h"
 
 /* routines in this module      */
 

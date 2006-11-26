@@ -115,7 +115,7 @@
 /* global data  */
 struct fls far *pfls = (struct fls far *)0;
 
-#ifndef XFRACT /* --  */
+#if !defined(XFRACT) && !defined(_WIN32)
 
 /* not moved to PROTOTYPE.H because these only communicate within
    PARSER.C and other parser modules */

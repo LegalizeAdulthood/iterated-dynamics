@@ -23,6 +23,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 /* routines in this module      */
 

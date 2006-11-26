@@ -11,26 +11,26 @@ typedef BYTE BOOLEAN;
 #endif
 #endif
 
-#ifndef XFRACT
-#define ftimex ftime
+#if !defined(XFRACT) && !defined(_WIN32)
+#  define ftimex ftime
 typedef int SEGTYPE;
 typedef unsigned USEGTYPE;
-#ifdef __TURBOC__
+#  ifdef __TURBOC__
 #   define _bios_printer(a,b,c)   biosprint((a),(c),(b))
 #   define _bios_serialcom(a,b,c) bioscom((a),(c),(b))
-#else
-#ifndef __WATCOMC__
-#ifndef MK_FP
-#   define MK_FP(seg,off) (VOIDFARPTR )( (((long)(seg))<<16) | \
+#  else
+#    ifndef __WATCOMC__
+#      ifndef MK_FP
+#        define MK_FP(seg,off) (VOIDFARPTR )( (((long)(seg))<<16) | \
                                           ((unsigned)(off)) )
-#endif
-#endif
-#endif
+#      endif
+#    endif
+#  endif
 #else
 typedef char * SEGTYPE;
 typedef char * USEGTYPE;
-#   define MK_FP(seg,off) (VOIDFARPTR )(seg+off)
-#include <sys/types.h> /* need size_t */
+#  define MK_FP(seg,off) (VOIDFARPTR )(seg+off)
+#  include <sys/types.h> /* need size_t */
 #endif
 
 #ifndef XFRACT
@@ -383,7 +383,7 @@ struct formula_info         /*  for saving formula data in GIF file     */
     short future[6];       /* for stuff we haven't thought of, yet */
 };
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 enum stored_at_values
    {
    NOWHERE,
@@ -395,7 +395,7 @@ enum stored_at_values
    };
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 enum stored_at_values
    {
    NOWHERE,
