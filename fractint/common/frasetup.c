@@ -11,8 +11,12 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
+#endif
+
+#if defined(XFRACT) || defined(_WIN32)
+extern long calcmandfpasm_c(void);
 #endif
 
 /* -------------------------------------------------------------------- */
@@ -62,7 +66,7 @@ int
 NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
    int i;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if (debugflag != 1010)
    {
       if(fpu != 0)
@@ -100,7 +104,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
    d1overd      = (double)(degree - 1) / (double)degree;
    maxcolor     = 0;
    threshold    = .3*PI/degree; /* less than half distance between roots */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if (fractype == MPNEWTON || fractype == MPNEWTBASIN) {
       mproverd     = *pd2MP(roverd);
       mpd1overd    = *pd2MP(d1overd);
@@ -142,7 +146,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          roots[i].y = sin(i*twopi/(double)degree);
       }
    }
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    else if (fractype==MPNEWTBASIN)
    {
      if(parm.y)
@@ -177,7 +181,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
       symmetry = XAXIS;
 
    calctype=StandardFractal;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
       setMPfunctions();
 #endif
@@ -243,7 +247,7 @@ MandelfpSetup(void)
             && (orbitsave&2) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
            if (cpu >= 386 && fpu >= 387)
            {
               calcmandfpasmstart_p5();
@@ -382,7 +386,7 @@ JuliafpSetup(void)
             && (orbitsave&2) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
            if (cpu >= 386 && fpu >= 387)
            {
               calcmandfpasmstart_p5();
@@ -1029,7 +1033,7 @@ MandelTrigSetup(void)
 int
 MarksJuliaSetup(void)
 {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if(param[2] < 1)
       param[2] = 1;
    c_exp = (int)param[2];
@@ -1121,7 +1125,7 @@ HalleySetup(void)
    AplusOne = degree + 1; /* a+1 */
    Ap1deg = AplusOne * degree;
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    if(fractype == MPHALLEY) {
       setMPfunctions();
       mpAplusOne = *pd2MP((double)AplusOne);

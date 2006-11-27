@@ -138,7 +138,7 @@ unsigned char huge *pixels;        /* the device-independent bitmap  pixels */
 extern int bytes_per_pixelline;        /* pixels/line / pixels/byte */
 extern long win_bitmapsize;     /* size of the DIB in bytes */
 extern        int        resave_flag;        /* resaving after a timed save */
-extern        char overwrite;         /* overwrite on/off */
+extern        char fract_overwrite;         /* overwrite on/off */
 
 HANDLE hClipboard1, hClipboard2, hClipboard3; /* handles to clipboard info */
 LPSTR lpClipboard1, lpClipboard2;            /* pointers to clipboard info */
@@ -1436,7 +1436,7 @@ void SecondaryWndProc(void)
                        time_to_cycle = 0;
                        wsprintf(StatusTitle, "Saving:  %s", (LPSTR)FullPathName);
                        OpenStatusBox(hWnd, hInst);
-                       resave_flag = overwrite = 1;
+                       resave_flag = fract_overwrite = 1;
                     }
                     break;
 

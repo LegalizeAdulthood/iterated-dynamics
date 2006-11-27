@@ -430,7 +430,7 @@ imagestart:                             /* calc/display a new image */
       }
       kbdchar = main_menu(0);
       if (kbdchar == INSERT) goto restart;      /* restart pgm on Insert Key */
-      if (kbdchar == DELETE)                    /* select video mode list */
+      if (kbdchar == FIK_DELETE)                    /* select video mode list */
          kbdchar = select_video_mode(-1);
       if ((adapter = check_vidmode_key(0,kbdchar)) >= 0)
          break;                                 /* got a video mode now */

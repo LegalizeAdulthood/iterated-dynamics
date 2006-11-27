@@ -363,7 +363,7 @@ static int _fastcall save_rule(char *rule,char far **saveptr)
 {
    int i;
    char far *tmpfar;
-   i=strlen(rule)+1;
+   i=(int) strlen(rule)+1;
    if((tmpfar=(char far *)farmemalloc((long)i))==NULL) {
        return -1;
    }
@@ -380,7 +380,7 @@ static int _fastcall append_rule(char *rule, int index)
    old = sav = ruleptrs[index];
    for (i = 0; *(old++); i++)
       ;
-   j = strlen(rule) + 1;
+   j = (int) strlen(rule) + 1;
    if ((dst = (char far *)farmemalloc((long)(i + j))) == NULL)
       return -1;
 
@@ -412,7 +412,7 @@ void lsys_donefpu(struct lsys_turtlestatef *x) { }
 
 /* integer specific routines */
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_doplus(struct lsys_turtlestatei *cmd)
 {
     if (cmd->reverse) {
@@ -430,7 +430,7 @@ static void lsysi_doplus(struct lsys_turtlestatei *cmd)
 extern void lsysi_doplus(struct lsys_turtlestatei *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 /* This is the same as lsys_doplus, except maxangle is a power of 2. */
 static void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd)
 {
@@ -447,7 +447,7 @@ static void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd)
 extern void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus(struct lsys_turtlestatei *cmd)
 {
     if (cmd->reverse) {
@@ -465,7 +465,7 @@ static void lsysi_dominus(struct lsys_turtlestatei *cmd)
 extern void lsysi_dominus(struct lsys_turtlestatei *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus_pow2(struct lsys_turtlestatei *cmd)
 {
     if (cmd->reverse) {
@@ -489,7 +489,7 @@ static void lsysi_doslash(struct lsys_turtlestatei *cmd)
         cmd->realangle += cmd->num;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 extern void lsysi_doslash_386(struct lsys_turtlestatei *cmd);
 #endif
 
@@ -501,7 +501,7 @@ static void lsysi_dobslash(struct lsys_turtlestatei *cmd)
         cmd->realangle -= cmd->num;
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 extern void lsysi_dobslash_386(struct lsys_turtlestatei *cmd);
 #endif
 
@@ -516,7 +516,7 @@ static void lsysi_dopipe(struct lsys_turtlestatei *cmd)
     cmd->angle %= cmd->maxangle;
 }
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dopipe_pow2(struct lsys_turtlestatei *cmd)
 {
     cmd->angle += cmd->maxangle >> 1;
@@ -526,7 +526,7 @@ static void lsysi_dopipe_pow2(struct lsys_turtlestatei *cmd)
 extern void lsysi_dopipe_pow2(struct lsys_turtlestatei *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dobang(struct lsys_turtlestatei *cmd)
 {
     cmd->reverse = ! cmd->reverse;
@@ -871,7 +871,7 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
         num = 3;
         break;
     }
-#ifdef XFRACT
+#if defined(XFRACT)
     ret[n].f = (void (*)())f;
 #else
     ret[n].f = (void (*)(struct lsys_turtlestatei *))f;

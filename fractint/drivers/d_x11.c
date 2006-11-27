@@ -1204,7 +1204,7 @@ translate_key(int ch)
   else {
     switch (ch) {
     case 'I':		return INSERT;
-    case 'D':		return DELETE;
+    case 'D':		return FIK_DELETE;
     case 'U':		return PAGE_UP;
     case 'N':		return PAGE_DOWN;
     case CTL('O'):	return CTL_HOME;
@@ -1383,7 +1383,7 @@ handle_esc(DriverX11 *di)
     case '2':		/* esc [ 2 ~ */
       return INSERT;
     case '3':		/* esc [ 3 ~ */
-      return DELETE;
+      return FIK_DELETE;
     case '5':		/* esc [ 5 ~ */
       return PAGE_UP;
     case '6':		/* esc [ 6 ~ */
@@ -1488,7 +1488,7 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     di->xbufkey = di->ctl_mode ? CTL_INSERT : INSERT;
     return 1;
   case XK_Delete:
-    di->xbufkey = di->ctl_mode ? CTL_DEL : DELETE;
+    di->xbufkey = di->ctl_mode ? CTL_DEL : FIK_DELETE;
     return 1;
   case XK_End:
   case XK_R13:
@@ -2474,10 +2474,11 @@ x11_buzzer(Driver *drv, int kind)
   fprintf(stderr, "x11_buzzer(%d)\n", kind);
 }
 
-static void
+static int
 x11_sound_on(Driver *drv, int freq)
 {
   fprintf(stderr, "x11_sound_on(%d)\n", freq);
+  return 0;
 }
 
 static void

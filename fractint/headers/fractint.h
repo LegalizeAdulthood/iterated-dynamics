@@ -823,9 +823,12 @@ extern  void   (_fastcall *plot)(int, int, int);
 /* nonalpha tests if we have a control character */
 #define nonalpha(c) ((c)<32 || (c)>127)
 
-/* keys */
+/* keys; FIK = "FractInt Key"
+ * Use this prefix to disambiguate key name symbols used in the fractint source
+ * from symbols defined by the external environment, i.e. "DELETE" on Win32
+ */
 #define   INSERT         1082
-#define   DELETE         1083
+#define   FIK_DELETE         1083
 #define   PAGE_UP        1073
 #define   PAGE_DOWN      1081
 #define   CTL_HOME       1119

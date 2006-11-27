@@ -460,9 +460,9 @@ void fractint_buzzer(Driver *drv, int kind)
 {
 	buzzer(kind);
 }
-void fractint_sound_on(Driver *drv, int frequency)
+int fractint_sound_on(Driver *drv, int frequency)
 {
-	soundon(frequency);
+	return soundon(frequency);
 }
 void fractint_sound_off(Driver *drv)
 {

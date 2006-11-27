@@ -2133,9 +2133,7 @@ int whichfn(char *s, int len)
 #if !defined(XFRACT) && !defined(_WIN32)
 void (far *isfunct(char *Str, int Len))(void)
 #else
-void (*isfunct(Str, Len))()
-char *Str;
-int Len;
+void (*isfunct(char *Str, int Len))(void)
 #endif
 {
    unsigned n;
@@ -3618,7 +3616,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       }
       if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
          char far * msgbuf = (char far *) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
-                            + strlen(sym_buf) + 6);
+                            + (int) strlen(sym_buf) + 6);
          far_strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          far_strcat(msgbuf, ":\n   ");
          far_strcat(msgbuf, sym_buf);
@@ -3833,7 +3831,7 @@ int fpFormulaSetup(void) {
 }
 
 int intFormulaSetup(void) {
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
       printf("intFormulaSetup called!!!\n");
       exit(-1);
 #else
@@ -4001,11 +3999,11 @@ void frm_error(FILE * open_file, long begin_frm)
          }
       }
 #if !defined(XFRACT) && !defined(_WIN32)
-      sprintf(&msgbuf[strlen(msgbuf)], "Error(%d) at line %d:  %Fs\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
+      sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %Fs\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
 #else
-      sprintf(&msgbuf[strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
+      sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
 #endif
-      i = strlen(msgbuf);
+      i = (int) strlen(msgbuf);
 /*    sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
       stopmsg (0, debugmsg);
 */    fseek(open_file, errors[j].start_pos, SEEK_SET);
@@ -4017,7 +4015,7 @@ void frm_error(FILE * open_file, long begin_frm)
 /*          stopmsg(0, "About to get error token\n");
 */          chars_to_error = statement_len;
             frmgettoken(open_file, &tok);
-            chars_in_error = strlen(tok.token_str);
+            chars_in_error = (int) strlen(tok.token_str);
             statement_len += chars_in_error;
             token_count++;
 /*          sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
@@ -4027,7 +4025,7 @@ void frm_error(FILE * open_file, long begin_frm)
             frmgettoken(open_file, &tok);
 /*          sprintf(debugmsg, "Just got %s\n", tok.token_str);
             stopmsg (0, debugmsg);
-*/          statement_len += strlen(tok.token_str);
+*/          statement_len += (int) strlen(tok.token_str);
             token_count++;
          }
          if ((tok.token_type == END_OF_FORMULA)
@@ -4045,7 +4043,7 @@ void frm_error(FILE * open_file, long begin_frm)
          while (chars_to_error + chars_in_error > 74) {
 /*          stopmsg(0, "chars in error less than 74, but late in line");
 */          frmgettoken(open_file, &tok);
-            chars_to_error -= strlen(tok.token_str);
+            chars_to_error -= (int) strlen(tok.token_str);
             token_count--;
          }
       }
@@ -4055,17 +4053,17 @@ void frm_error(FILE * open_file, long begin_frm)
          token_count = 1;
       }
 /*    stopmsg(0, "Back to beginning of statement to build msgbuf");
-*/    while (strlen(&msgbuf[i]) <=74 && token_count--) {
+*/    while ((int) strlen(&msgbuf[i]) <=74 && token_count--) {
          frmgettoken (open_file, &tok);
          strcat (msgbuf, tok.token_str);
 /*         stopmsg(0, &msgbuf[i]);
 */    }
       fseek (open_file, errors[j].error_pos, SEEK_SET);
       frmgettoken (open_file, &tok);
-      if (strlen(&msgbuf[i]) > 74)
+      if ((int) strlen(&msgbuf[i]) > 74)
          msgbuf[i + 74] = (char) 0;
       strcat(msgbuf, "\n");
-      i = strlen(msgbuf);
+      i = (int) strlen(msgbuf);
       while (chars_to_error-- > -2)
          strcat (msgbuf, " ");
 /*    sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
@@ -4074,7 +4072,7 @@ void frm_error(FILE * open_file, long begin_frm)
       if(errors[j].error_number == PE_TOKEN_TOO_LONG) {
          chars_in_error = 33;
       }
-      while (chars_in_error-- && strlen(&msgbuf[i]) <=74)
+      while (chars_in_error-- && (int) strlen(&msgbuf[i]) <=74)
          strcat (msgbuf, "^");
       strcat (msgbuf, "\n");
    }
@@ -4264,7 +4262,7 @@ int frm_prescan (FILE * open_file)
           errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
       stopmsg (0, debugmsg);
 */
-      chars_in_formula += strlen(this_token.token_str);
+      chars_in_formula += (int) strlen(this_token.token_str);
       switch (this_token.token_type) {
          case NOT_A_TOKEN:
             assignment_ok = 0;

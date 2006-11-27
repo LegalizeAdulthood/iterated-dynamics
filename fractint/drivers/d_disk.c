@@ -658,7 +658,7 @@ translatekey(int ch)
   else {
     switch (ch) {
     case 'I':		return INSERT;
-    case 'D':		return DELETE;
+    case 'D':		return FIK_DELETE;
     case 'U':		return PAGE_UP;
     case 'N':		return PAGE_DOWN;
     case CTL('O'):	return CTL_HOME;
@@ -839,7 +839,7 @@ handleesc(DriverDisk *di)
     case '2':		/* esc [ 2 ~ */
       return INSERT;
     case '3':		/* esc [ 3 ~ */
-      return DELETE;
+      return FIK_DELETE;
     case '5':		/* esc [ 5 ~ */
       return PAGE_UP;
     case '6':		/* esc [ 6 ~ */
@@ -1350,10 +1350,11 @@ disk_buzzer(Driver *drv, int kind)
   fprintf(stderr, "disk_buzzer(%d)\n", kind);
 }
 
-static void
+static int
 disk_sound_on(Driver *drv, int freq)
 {
   fprintf(stderr, "disk_sound_on(%d)\n", freq);
+  return;
 }
 
 static void

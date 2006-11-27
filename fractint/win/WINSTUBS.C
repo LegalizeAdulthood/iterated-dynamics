@@ -80,7 +80,7 @@ int video_starty = 0;
 int vesa_xres = 0;
 int vesa_yres = 0;
 int video_vram = 0;
-int virtual = 0;
+int virtual_screens = 0;
 int istruecolor = 0;
 int video_scroll = 0;
 

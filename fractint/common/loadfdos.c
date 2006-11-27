@@ -141,7 +141,7 @@ Press F1 for help, "};
    load_fractint_cfg(0); /* get fractint.cfg into *vidtbl (== extraseg) */
 
    /* try to change any VESA entries to fit the loaded image size */
-   if (virtual && video_vram && initmode == -1) {
+   if (virtual_screens && video_vram && initmode == -1) {
       unsigned long vram = (unsigned long)video_vram << 16,
                     need = (unsigned long)info->xdots * info->ydots;
       if (need <= vram) {

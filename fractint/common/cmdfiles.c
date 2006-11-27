@@ -79,7 +79,7 @@ int     rflag, rseed;           /* Random number seeding flag and value */
 int     decomp[2];              /* Decomposition coloring */
 long    distest;
 int     distestwidth;
-char    overwrite = 0;  /* 0 if file overwrite not allowed */
+char    fract_overwrite = 0;	/* 0 if file overwrite not allowed */
 int     soundflag;              /* sound control bitfield... see sound.c for useage*/
 int     basehertz;              /* sound=x/y/x hertz value */
 int     debugflag;              /* internal use only - you didn't see this */
@@ -632,7 +632,7 @@ static void initvars_restart()          /* <ins> key init */
    gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
    dither_flag = 0;                     /* no dithering */
    askvideo = 1;                        /* turn on video-prompt flag */
-   overwrite = 0;                       /* don't overwrite           */
+   fract_overwrite = 0;                 /* don't overwrite           */
    soundflag = 9;                       /* sound is on to PC speaker */
    initbatch = 0;                       /* not in batch mode         */
    checkcurdir = 0;                     /* flag to check current dire for files */
@@ -641,7 +641,7 @@ static void initvars_restart()          /* <ins> key init */
    viewwindow = 0;                      /* no view window            */
    viewreduction = (float)4.2;
    viewcrop = 1;
-   virtual = 1;                         /* virtual screen modes on   */
+   virtual_screens = 1;                 /* virtual screen modes on   */
    ai_8514 = 0;                         /* no need for the 8514 API  */
    finalaspectratio = screenaspect;
    viewxdots = viewydots = 0;
@@ -1411,12 +1411,12 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    /* keep this for backward compatibility */
    if (far_strcmp(variable,s_warn) == 0 ) {         /* warn=? */
       if (yesnoval[0] < 0) goto badarg;
-      overwrite = (char)(yesnoval[0] ^ 1);
+      fract_overwrite = (char)(yesnoval[0] ^ 1);
       return 0;
       }
    if (far_strcmp(variable,s_overwrite) == 0 ) {    /* overwrite=? */
       if (yesnoval[0] < 0) goto badarg;
-      overwrite = (char)yesnoval[0];
+      fract_overwrite = (char)yesnoval[0];
       return 0;
       }
 
@@ -2328,14 +2328,14 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          soundflag = soundflag | 4;
       else
          goto badarg;
-#ifndef XFRACT
+#if !defined(XFRACT)
       if (totparms > 1) {
        int i;
          soundflag = soundflag & 7; /* reset options */
          for (i = 1; i < totparms; i++) {
           /* this is for 2 or more options at the same time */
             if (charval[i] == 'f') { /* (try to)switch on opl3 fm synth */
-               if(initfm())
+               if (driver_init_fm())
                   soundflag = soundflag | 16;
                else soundflag = (soundflag & 0xEF);
             }
@@ -2872,7 +2872,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (far_strcmp(variable,s_virtual) == 0) {         /* virtual= */
       if (yesnoval[0] < 0) goto badarg;
-      virtual = yesnoval[0];
+      virtual_screens = yesnoval[0];
       return 1;
       }
 

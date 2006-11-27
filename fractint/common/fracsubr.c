@@ -20,6 +20,11 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #include "fractype.h"
 #include "drivers.h"
 
+#if defined(_WIN32)
+#define ftimex ftime
+#define timebx timeb
+#endif
+
 /* routines in this module      */
 
 static long   _fastcall fudgetolong(double d);
@@ -1348,7 +1353,7 @@ void w_snd(int tone)
                /* must not then call soundoff(), else indexes out of synch */
 /*   if(20 < tone && tone < 15000)  better limits? */
 /*   if(10 < tone && tone < 5000)  better limits? */
-      if(soundon(tone)) {
+      if (driver_sound_on(tone)) {
          wait_until(0,orbit_delay);
          if(!taborhelp) /* kludge because wait_until() calls keypressed */
             driver_sound_off();

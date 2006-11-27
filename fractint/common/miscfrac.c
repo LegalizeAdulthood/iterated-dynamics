@@ -997,7 +997,7 @@ int BifurcVerhulstTrig()
 
 int LongBifurcVerhulstTrig()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
@@ -1019,7 +1019,7 @@ int BifurcStewartTrig()
 
 int LongBifurcStewartTrig()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
@@ -1041,7 +1041,7 @@ int BifurcSetTrigPi()
 
 int LongBifurcSetTrigPi()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = multiply(lPopulation,LPI,bitshift);
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
@@ -1061,7 +1061,7 @@ int BifurcAddTrigPi()
 
 int LongBifurcAddTrigPi()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = multiply(lPopulation,LPI,bitshift);
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
@@ -1082,7 +1082,7 @@ int BifurcLambdaTrig()
 
 int LongBifurcLambdaTrig()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = lPopulation;
     ltmp.y = 0;
     LCMPLXtrig0(ltmp, ltmp);
@@ -1108,7 +1108,7 @@ int BifurcMay()
 
 int LongBifurcMay()
   {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
     ltmp.x = lPopulation + fudge;
     ltmp.y = 0;
     lparm2.x = beta * fudge;
@@ -1387,7 +1387,7 @@ jumpout:
 
 #define CELLULAR_DONE 10
 
-#ifndef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static BYTE *cell_array[2];
 #else
 static BYTE far *cell_array[2];
@@ -1464,13 +1464,13 @@ void abort_cellular(int err, int t)
          break;
    }
    if(cell_array[0] != NULL)
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       cell_array[0] = NULL;
 #else
       farmemfree((char far *)cell_array[0]);
 #endif
    if(cell_array[1] != NULL)
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       cell_array[1] = NULL;
 #else
       farmemfree((char far *)cell_array[1]);
@@ -1548,7 +1548,7 @@ int cellular () {
    if (!rflag) ++rseed;
 
 /* generate rule table from parameter 1 */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
    n = param[1];
 #else
    /* gcc can't manage to convert a big double to an unsigned long properly. */
@@ -1585,7 +1585,7 @@ int cellular () {
 
 
    start_row = 0;
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
   /* two 4096 byte arrays, at present at most 2024 + 1 bytes should be */
   /* needed in each array (max screen width + 1) */
    cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */

@@ -230,10 +230,10 @@ driver_buzzer(int kind)
   (*display->buzzer)(display, kind);
 }
 
-void
+int
 driver_sound_on(int freq)
 {
-  (*display->sound_on)(display, freq);
+  return (*display->sound_on)(display, freq);
 }
 
 METHOD_VOID(sound_off)

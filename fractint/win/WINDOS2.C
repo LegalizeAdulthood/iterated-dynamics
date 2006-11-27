@@ -530,7 +530,7 @@ int input_field(
                }
             started = display = 1;
             break;
-         case DELETE:                                /* delete */
+         case FIK_DELETE:                                /* delete */
             j = strlen(fld);
             for (i = offset; i < j; ++i)
                fld[i] = fld[i+1];
@@ -1203,7 +1203,7 @@ static int menu_checkkey(int curkey,int choice)
    if(testkey == '2')
       testkey = '@';
    if (strchr("#@2txyzgvir3dj",testkey) || testkey == INSERT || testkey == 2
-     || testkey == ESC || testkey == DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
+     || testkey == ESC || testkey == FIK_DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
       return(0-testkey);
    if (menutype) {
       if (strchr("\\sobpkrh",testkey) || testkey == TAB
@@ -1285,7 +1285,7 @@ top:
       }
    LOADPROMPTSCHOICES(nextleft+=2,"      NEW IMAGE             ");
    attributes[nextleft] = 256+MENU_HDG;
-   choicekey[nextleft+=2] = DELETE;
+   choicekey[nextleft+=2] = FIK_DELETE;
    attributes[nextleft] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextleft,"draw fractal           <D>  ");
    choicekey[nextleft+=2] = 't';

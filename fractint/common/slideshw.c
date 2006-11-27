@@ -55,7 +55,7 @@ static struct scancodes far scancodes[] =
 {
    {  ENTER,         s_ENTER     },
    {  INSERT,        s_INSERT    },
-   {  DELETE,        s_DELETE    },
+   {  FIK_DELETE,    s_DELETE    },
    {  ESC,           s_ESC       },
    {  TAB,           s_TAB       },
    {  PAGE_UP,       s_PAGEUP    },
