@@ -167,14 +167,13 @@ static int right_guess,bottom_guess;
 /* extern unsigned int prefix[2][maxyblk][maxxblk]; */
 
 typedef int (*TPREFIX)[2][maxyblk][maxxblk];
-#define tprefix   (*((TPREFIX)prefix))
 
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
 #if defined(XFRACT) || defined(_WIN32)
 BYTE dstack[4096];              /* common temp, two put_line calls */
-#endif
-#ifdef XFRACT
-unsigned int prefix[2][maxyblk][maxxblk]; /* common temp */
+unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
+#else
+#define tprefix   (*((TPREFIX)prefix))
 #endif
 
 int nxtscreenflag; /* for cellular next screen generation */

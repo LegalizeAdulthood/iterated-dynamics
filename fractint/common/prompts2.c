@@ -227,7 +227,7 @@ int get_toggles()
 
    LOADCHOICES("File Overwrite ('overwrite=')");
    uvalues[k].type = 'y';
-   uvalues[k].uval.ch.val = overwrite;
+   uvalues[k].uval.ch.val = fract_overwrite;
 
    LOADCHOICES("Sound (off, beep, x, y, z)");
    uvalues[k].type = 'l';
@@ -357,7 +357,7 @@ int get_toggles()
    strcpy(savenameptr,uvalues[++k].uval.sval);
    if (strcmp(savename,prevsavename))
       resave_flag = started_resaves = 0; /* forget pending increment */
-   overwrite = (char)uvalues[++k].uval.ch.val;
+   fract_overwrite = (char)uvalues[++k].uval.ch.val;
 
    soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
    if (soundflag != old_soundflag && ((soundflag&7) > 1 || (old_soundflag&7) > 1))
@@ -725,7 +725,7 @@ int get_view_params()
 */
 
 #ifndef XFRACT
-   if (dotmode == 28 && virtual) {
+   if (dotmode == 28 && virtual_screens) {
       /* virtual screen limits estimation */
       if (truebytes < 2)
          ++truebytes;
@@ -778,13 +778,13 @@ get_view_restart:
    uvalues[k].type = '*';
 
 #ifndef XFRACT
-   if (virtual && dotmode == 28 && chkd_vvs && !video_scroll) {
+   if (virtual_screens && dotmode == 28 && chkd_vvs && !video_scroll) {
       LOADCHOICES("Your graphics card does NOT support virtual screens.");
       uvalues[k].type = '*';
    }
 #endif
 
-   if (dotmode == 11 || (virtual && dotmode == 28)) {
+   if (dotmode == 11 || (virtual_screens && dotmode == 28)) {
       LOADCHOICES("Virtual screen total x pixels");
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = sxdots;
@@ -800,7 +800,7 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (virtual && dotmode == 28) {
+   if (virtual_screens && dotmode == 28) {
       char dim[50];
       static FCODE xmsg[] = {"Video memory limits: (for y = "};
       static FCODE ymsg[] = {"                     (for x = "};
@@ -884,10 +884,10 @@ get_view_restart:
 
    ++k;
 
-   if (virtual && dotmode == 28 && chkd_vvs && !video_scroll)
+   if (virtual_screens && dotmode == 28 && chkd_vvs && !video_scroll)
       ++k;  /* add 1 if not supported line is inserted */
 
-   if (driver_diskp() || (virtual && dotmode == 28)) {
+   if (driver_diskp() || (virtual_screens && dotmode == 28)) {
       sxdots = uvalues[++k].uval.ival;
       sydots = uvalues[++k].uval.ival;
 #ifndef XFRACT
@@ -915,7 +915,7 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (virtual && dotmode == 28) {
+   if (virtual_screens && dotmode == 28) {
 
       /* virtual screen smaller than physical screen, use view window */
       if (sxdots < vesa_xres && sydots < vesa_yres) {
@@ -954,7 +954,7 @@ get_view_restart:
    }
 #endif
 
-   if (driver_diskp() || (virtual && dotmode == 28)) {
+   if (driver_diskp() || (virtual_screens && dotmode == 28)) {
       videoentry.xdots = sxdots;
       videoentry.ydots = sydots;
       far_memcpy((char far *)&videotable[adapter],(char far *)&videoentry,

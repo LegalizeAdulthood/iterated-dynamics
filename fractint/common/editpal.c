@@ -1598,7 +1598,7 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, VOIDPTR info) /* pri
             }
          break;
 
-      case DELETE:   /* move to next CEditor */
+      case FIK_DELETE:   /* move to next CEditor */
       case CTL_ENTER_2:    /*double click rt mouse also! */
          if ( ++this->curr > 2)
             this->curr = 0;

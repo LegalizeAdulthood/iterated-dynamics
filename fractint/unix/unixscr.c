@@ -1434,7 +1434,7 @@ int ch;
 	    case 'I':
 		return INSERT;
 	    case 'D':
-		return DELETE;
+		return FIK_DELETE;
 	    case 'U':
 		return PAGE_UP;
 	    case 'N':
@@ -1651,7 +1651,7 @@ handleesc()
 	    case '2':		/* esc [ 2 ~ */
 		return INSERT;
 	    case '3':		/* esc [ 3 ~ */
-		return DELETE;
+		return FIK_DELETE;
 	    case '5':		/* esc [ 5 ~ */
 		return PAGE_UP;
 	    case '6':		/* esc [ 6 ~ */
@@ -1810,7 +1810,7 @@ xhandleevents()
 			xbufkey = ctl_mode ? CTL_INSERT : INSERT;
 			return;
 		    case XK_Delete:
-			xbufkey = ctl_mode ? CTL_DEL : DELETE;
+			xbufkey = ctl_mode ? CTL_DEL : FIK_DELETE;
 			return;
 		    case XK_End:
 		    case XK_R13:

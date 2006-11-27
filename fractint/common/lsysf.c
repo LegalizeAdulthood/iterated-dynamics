@@ -30,13 +30,13 @@ struct lsys_cmd {
 static struct lsys_cmd far * _fastcall findsize(struct lsys_cmd far *,struct lsys_turtlestatef *, struct lsys_cmd far **,int);
 
 /* Define blanks for portability */
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 void lsysf_prepfpu(struct lsys_turtlestatef *x) { }
 void lsysf_donefpu(struct lsys_turtlestatef *x) { }
 #endif
 
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse) {
@@ -54,7 +54,7 @@ static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 extern void lsysf_doplus(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 /* This is the same as lsys_doplus, except maxangle is a power of 2. */
 static void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd)
 {
@@ -71,7 +71,7 @@ static void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd)
 extern void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse) {
@@ -89,7 +89,7 @@ static void lsysf_dominus(struct lsys_turtlestatef *cmd)
 extern void lsysf_dominus(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus_pow2(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse) {
@@ -105,7 +105,7 @@ static void lsysf_dominus_pow2(struct lsys_turtlestatef *cmd)
 extern void lsysf_dominus_pow2(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doslash(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -117,7 +117,7 @@ static void lsysf_doslash(struct lsys_turtlestatef *cmd)
 extern void lsysf_doslash(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dobslash(struct lsys_turtlestatef *cmd)
 {
     if (cmd->reverse)
@@ -129,7 +129,7 @@ static void lsysf_dobslash(struct lsys_turtlestatef *cmd)
 extern void lsysf_dobslash(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doat(struct lsys_turtlestatef *cmd)
 {
     cmd->size *= cmd->parm.nf;
@@ -145,7 +145,7 @@ lsysf_dopipe(struct lsys_turtlestatef *cmd)
     cmd->angle %= cmd->maxangle;
 }
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dopipe_pow2(struct lsys_turtlestatef *cmd)
 {
     cmd->angle += cmd->maxangle >> 1;
@@ -155,7 +155,7 @@ static void lsysf_dopipe_pow2(struct lsys_turtlestatef *cmd)
 extern void lsysf_dopipe_pow2(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dobang(struct lsys_turtlestatef *cmd)
 {
     cmd->reverse = ! cmd->reverse;
@@ -164,7 +164,7 @@ static void lsysf_dobang(struct lsys_turtlestatef *cmd)
 extern void lsysf_dobang(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dosizedm(struct lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -185,7 +185,7 @@ static void lsysf_dosizedm(struct lsys_turtlestatef *cmd)
 extern void lsysf_dosizedm(struct lsys_turtlestatef *cmd, long n);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dosizegf(struct lsys_turtlestatef *cmd)
 {
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
@@ -200,7 +200,7 @@ static void lsysf_dosizegf(struct lsys_turtlestatef *cmd)
 extern void lsysf_dosizegf(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawd(struct lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -221,7 +221,7 @@ static void lsysf_dodrawd(struct lsys_turtlestatef *cmd)
 extern void lsysf_dodrawd(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawm(struct lsys_turtlestatef *cmd)
 {
     double angle = (double) cmd->realangle;
@@ -237,7 +237,7 @@ static void lsysf_dodrawm(struct lsys_turtlestatef *cmd)
 extern void lsysf_dodrawm(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawg(struct lsys_turtlestatef *cmd)
 {
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
@@ -247,7 +247,7 @@ static void lsysf_dodrawg(struct lsys_turtlestatef *cmd)
 extern void lsysf_dodrawg(struct lsys_turtlestatef *cmd);
 #endif
 
-#ifdef XFRACT
+#if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dodrawf(struct lsys_turtlestatef *cmd)
 {
     int lastx = (int) cmd->xpos;
@@ -539,7 +539,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
         num = 3;
         break;
     }
-#ifdef XFRACT
+#if defined(XFRACT)
     ret[n].f = (void (*)())f;
 #else
     ret[n].f = (void (*)(struct lsys_turtlestatef *))f;
@@ -629,7 +629,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
         num = 3;
         break;
     }
-#ifdef XFRACT
+#if defined(XFRACT)
     ret[n].f = (void (*)())f;
 #else
     ret[n].f = (void (*)(struct lsys_turtlestatef *))f;

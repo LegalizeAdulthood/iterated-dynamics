@@ -85,7 +85,7 @@ int textrbase = 0;		/* textrow is relative to this */
 int textcbase = 0;		/* textcol is relative to this */
 
 int vesa_detect = 1;		/* set to 0 to disable VESA-detection */
-int virtual = 0;                /* no virtual screens, it's a DOS thing */
+int virtual_screens = 0;                /* no virtual screens, it's a DOS thing */
 int video_scroll = 0;
 int video_startx = 0;
 int video_starty = 0;

@@ -371,7 +371,7 @@ extern void (*               outln_cleanup) (void);
 extern int                   outside;
 extern int                   overflow;
 extern int                   overlay3d;
-extern char                  overwrite;
+extern char                  fract_overwrite;
 extern double                ox3rd;
 extern double                oxmax;
 extern double                oxmin;
@@ -506,7 +506,11 @@ extern int                   StoPtr;
 extern int                   stoppass;
 extern unsigned int          strlocn[];
 extern BYTE                  suffix[];
+#if defined(_WIN32)
+extern char					 supervga_list[];
+#else
 extern char                  supervga_list;
+#endif
 extern int                   svga_type;
 extern double                sx3rd;
 extern int                   sxdots;
@@ -840,7 +844,7 @@ extern float                 viewreduction;
 extern int                   viewwindow;
 extern int                   viewxdots;
 extern int                   viewydots;
-extern int                   virtual;
+extern int                   virtual_screens;
 extern unsigned              vsp;
 extern int                   vxdots;
 extern int                   whichimage;

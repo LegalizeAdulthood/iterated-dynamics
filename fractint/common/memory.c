@@ -16,7 +16,7 @@
 
 #include "port.h"
 #include "prototyp.h"
-
+#include "drivers.h"
 
 /* Memory allocation routines. */
 
@@ -613,7 +613,7 @@ dodisk:
          use_this_type = NOWHERE;
          WhichDiskError(1);
          DisplayMemory();
-         buzzer(3);
+         driver_buzzer(3);
          break;
       }
       numTOTALhandles++;

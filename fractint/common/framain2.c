@@ -134,7 +134,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                return(RESTORESTART);
                }
 
-            if (virtual && (xdots > sxdots || ydots > sydots)) {
+            if (virtual_screens && (xdots > sxdots || ydots > sydots)) {
                char buf[120];
                static FCODE msgxy1[] = {"Can't set virtual line that long, width cut down."};
                static FCODE msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
@@ -1399,7 +1399,7 @@ image.  Sorry - it's the best we could do."};
       *kbdmore = calc_status = 0;
       break;
 
-   case DELETE:         /* select video mode from list */
+   case FIK_DELETE:         /* select video mode from list */
    {
       driver_stack_screen();
       *kbdchar = select_video_mode(adapter);
@@ -1896,7 +1896,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       *kbdmore = calc_status = 0;
       break;
 
-   case DELETE:         /* select video mode from list */
+   case FIK_DELETE:         /* select video mode from list */
       driver_stack_screen();
       *kbdchar = select_video_mode(adapter);
       if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */

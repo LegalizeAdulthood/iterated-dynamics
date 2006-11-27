@@ -154,8 +154,9 @@ static void win32_buzzer(Driver *drv, int kind)
 {
 }
 
-static void win32_sound_on(Driver *drv, int frequency)
+static int win32_sound_on(Driver *drv, int frequency)
 {
+	return 0;
 }
 
 static void win32_sound_off(Driver *drv)

@@ -106,7 +106,7 @@ restart:
    else
    {                                  /* file already exists */
       static FCODE fractint_tmp[] = {"fractint.tmp"};
-      if (overwrite == 0)
+      if (fract_overwrite == 0)
       {
          if (resave_flag == 0)
             goto restart;

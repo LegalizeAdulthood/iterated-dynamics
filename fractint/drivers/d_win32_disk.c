@@ -709,7 +709,7 @@ translatekey(int ch)
 		switch (ch)
 		{
 		case 'I':		return INSERT;
-		case 'D':		return DELETE;
+		case 'D':		return FIK_DELETE;
 		case 'U':		return PAGE_UP;
 		case 'N':		return PAGE_DOWN;
 		case CTL('O'):	return CTL_HOME;
@@ -1294,9 +1294,10 @@ win32_disk_buzzer(Driver *drv, int kind)
 #endif
 }
 
-static void
+static int
 win32_disk_sound_on(Driver *drv, int freq)
 {
+	return 0;
 #if 0
 	fprintf(stderr, "win32_disk_sound_on(%d)\n", freq);
 #endif

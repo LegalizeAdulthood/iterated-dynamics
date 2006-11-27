@@ -576,7 +576,7 @@ nextname:
       return 0;
     }
    /* file already exists */
-   if (overwrite == 0) {
+   if (fract_overwrite == 0) {
       updatesavename(name);
       goto nextname;
       }
@@ -587,7 +587,7 @@ nextname:
 /* ('timer()'     was moved to FRACTINT.C for MSC7-overlay speed purposes) */
 
 BYTE trigndx[] = {SIN,SQR,SINH,COSH};
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 void (*ltrig0)(void) = lStkSin;
 void (*ltrig1)(void) = lStkSqr;
 void (*ltrig2)(void) = lStkSinh;
@@ -667,28 +667,28 @@ void set_trig_pointers(int which)
    switch(which)
    {
    case 0:
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       ltrig0 = trigfn[trigndx[0]].lfunct;
       mtrig0 = trigfn[trigndx[0]].mfunct;
 #endif
       dtrig0 = trigfn[trigndx[0]].dfunct;
       break;
    case 1:
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       ltrig1 = trigfn[trigndx[1]].lfunct;
       mtrig1 = trigfn[trigndx[1]].mfunct;
 #endif
       dtrig1 = trigfn[trigndx[1]].dfunct;
       break;
    case 2:
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       ltrig2 = trigfn[trigndx[2]].lfunct;
       mtrig2 = trigfn[trigndx[2]].mfunct;
 #endif
       dtrig2 = trigfn[trigndx[2]].dfunct;
       break;
    case 3:
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       ltrig3 = trigfn[trigndx[3]].lfunct;
       mtrig3 = trigfn[trigndx[3]].mfunct;
 #endif
@@ -848,7 +848,7 @@ int tab_display_2(char *msg)
 */
    sprintf(msg,"xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
       xxstart,xxstop,yystart,yystop,
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
       curfractalspecific->orbitcalc == fFormula?"fast parser":
 #endif
       curfractalspecific->orbitcalc ==  Formula?"slow parser":
@@ -1560,7 +1560,7 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
          if(!(DTA.attribute & SUBDIR) &&
              strcmp(DTA.filename,".")&&
              strcmp(DTA.filename,"..")) {
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
             strlwr(DTA.filename);
 #endif
             splitpath(DTA.filename,NULL,NULL,fname,ext);
