@@ -2,7 +2,7 @@ SHELL=/bin/sh
 
 OBJS = \
 3d.o ant.o bigflt.o  biginit.o bignum.o bignumc.o calcfrac.o \
-cmdfiles.o decoder.o editpal.o encoder.o \
+cmdfiles.o decoder.o drivers.o editpal.o encoder.o \
 evolve.o f16.o fracsubr.o fractalb.o fractalp.o fractals.o \
 fractint.o framain2.o frasetup.o gifview.o hcmplx.o help.o \
 intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \

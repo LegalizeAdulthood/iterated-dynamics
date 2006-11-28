@@ -197,7 +197,8 @@ FILES = $(SRCFILES) $(RUNFILES)
 OBJS = \
 $(COMDIR)/3d.o $(COMDIR)/ant.o $(COMDIR)/bigflt.o  $(COMDIR)/biginit.o \
 $(COMDIR)/bignum.o $(COMDIR)/bignumc.o $(COMDIR)/calcfrac.o \
-$(COMDIR)/cmdfiles.o $(COMDIR)/decoder.o $(COMDIR)/editpal.o \
+$(COMDIR)/cmdfiles.o $(COMDIR)/decoder.o \
+$(COMDIR)/drivers.o $(COMDIR)/editpal.o \
 $(COMDIR)/encoder.o $(COMDIR)/evolve.o $(COMDIR)/f16.o $(COMDIR)/fracsubr.o \
 $(COMDIR)/fractalb.o $(COMDIR)/fractalp.o $(COMDIR)/fractals.o \
 $(COMDIR)/fractint.o $(COMDIR)/framain2.o $(COMDIR)/frasetup.o \
@@ -211,7 +212,8 @@ $(COMDIR)/plot3d.o $(COMDIR)/printer.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/targa.o $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
-$(COMDIR)/zoom.o
+$(COMDIR)/zoom.o \
+drivers/d_x11.o drivers/d_disk.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
@@ -241,6 +243,7 @@ xfractint: fractint.hlp .WAIT
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
+	cd drivers ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
 	$(CC) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
