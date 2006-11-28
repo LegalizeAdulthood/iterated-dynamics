@@ -2493,6 +2493,11 @@ x11_diskp(Driver *drv)
   return 0;
 }
 
+static void
+x11_mute()
+{
+}
+
 /*
  * place this last in the file to avoid having to forward declare routines
  */
