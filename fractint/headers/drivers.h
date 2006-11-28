@@ -138,16 +138,35 @@ struct tagDriver {
     name_##_diskp \
   }
 
-/* Classic FRACTINT code path */
+/* Define the drivers to be included in the compilation:
+
+    HAVE_FRACTINT_DRIVER	Classic FRACTINT code path
+    HAVE_DISK_DRIVER		Curses based disk driver
+    HAVE_X11_DRIVER		XFractint code path
+    HAVE_WIN32_DRIVER		Win32/GDI driver
+    HAVE_WIN32_DISK_DRIVER	Win32 disk driver
+*/
+#if defined(XFRACT)
 #define HAVE_FRACTINT_DRIVER	0
-/* XFractint code path */
-#define HAVE_X11_DRIVER			0
-/* Classic FRACTINT disk video code path */
-#define HAVE_DISK_DRIVER		0
-/* Win32 disk video code path */
+#define HAVE_DISK_DRIVER	1
+#define HAVE_X11_DRIVER		1
+#define HAVE_WIN32_DRIVER	0
+#define HAVE_WIN32_DISK_DRIVER	0
+#endif
+#if defined(MSDOS)
+#define HAVE_FRACTINT_DRIVER	1
+#define HAVE_DISK_DRIVER	0
+#define HAVE_X11_DRIVER		0
+#define HAVE_WIN32_DRIVER	0
+#define HAVE_WIN32_DISK_DRIVER	0
+#endif
+#if defined(_WIN32)
+#define HAVE_FRACTINT_DRIVER	0
+#define HAVE_DISK_DRIVER	0
+#define HAVE_X11_DRIVER		0
+#define HAVE_WIN32_DRIVER	1
 #define HAVE_WIN32_DISK_DRIVER	1
-/* Win32 GDI code path */
-#define HAVE_WIN32_DRIVER		1
+#endif
 
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
