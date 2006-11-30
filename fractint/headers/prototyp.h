@@ -513,11 +513,7 @@ extern int MandelbrotMix4Setup(void);
 
 /*  fractint -- C file prototypes */
 
-#ifdef XFRACT
 extern int main(int argc,char **argv );
-#else
-extern void main(int argc,char **argv );
-#endif
 extern int elapsed_time(int);
 
 /*  framain2 -- C file prototypes */

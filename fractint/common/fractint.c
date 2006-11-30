@@ -210,12 +210,7 @@ static void my_floating_point_err(int sig)
       overflow = 1;
 }
 
-#ifdef XFRACT
-int
-#else
-void
-#endif
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
    int     resumeflag;
    int     kbdchar;                     /* keyboard key-hit value       */
@@ -536,9 +531,8 @@ resumeloop:
    default:
       break;
    }
-#ifdef XFRACT
-   return(0);
-#endif
+
+   return 0;
 }
 
 int check_key()
