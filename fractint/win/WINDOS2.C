@@ -1161,7 +1161,7 @@ OK to replace it, Cancel to back out",CommandName);
             for(k=1;k<4;k++)
                if (CommandComment[k][0])
                   fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
-            if (patchlevel != 0 && colorsonly == 0)
+            if (debugflag != 0 && colorsonly == 0)
                fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
                   Fractint, release, patchlevel);
          }
