@@ -1038,7 +1038,7 @@ void fractint_help(void)
 
    in_fractint_help = 1;
    oldhelpmode = helpmode;
-   helpmode = HELP_INDEX;
+   helpmode = FIHELP_INDEX;
    help(0);
    in_fractint_help = 0;
    helpmode = oldhelpmode;

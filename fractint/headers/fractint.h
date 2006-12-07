@@ -828,7 +828,7 @@ extern  void   (_fastcall *plot)(int, int, int);
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
 #define   INSERT         1082
-#define   FIK_DELETE         1083
+#define   FIK_DELETE     1083
 #define   PAGE_UP        1073
 #define   PAGE_DOWN      1081
 #define   CTL_HOME       1119
@@ -864,8 +864,15 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define   F8             1066
 #define   F9             1067
 #define   F10            1068
+#define   CONTROL_A		 1
+#define   CONTROL_B		 2
+#define   CONTROL_E		 5
+#define   CONTROL_F		 6
+#define   CONTROL_G		 7
 #define   BACKSPACE      8
 #define   TAB            9
+#define	  CONTROL_P		 16
+#define   CONTROL_S		 19
 #define   CTL_TAB        1148
 #define   ALT_TAB        1165
 #define   BACK_TAB       1015  /* shift tab */

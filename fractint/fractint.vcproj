@@ -250,6 +250,9 @@
 			<File
 				RelativePath=".\win32\os_win32.c">
 			</File>
+			<File
+				RelativePath=".\win32\WinText.c">
+			</File>
 		</Filter>
 		<Filter
 			Name="common"

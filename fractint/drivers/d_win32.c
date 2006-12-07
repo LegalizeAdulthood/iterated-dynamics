@@ -8,6 +8,12 @@
 #include "externs.h"
 #include "prototyp.h"
 
+typedef struct tagDriverWin32 DriverWin32;
+struct tagDriverWin32
+{
+	Driver pub;
+};
+
 static int win32_init(Driver *drv, int *argc, char **argv)
 {
   return TRUE;
@@ -204,4 +210,9 @@ static int win32_diskp(Driver *drv)
    mute					mute
    diskp                diskp
 */
-Driver win32_driver = STD_DRIVER_STRUCT(win32);
+static DriverWin32 win32_driver_info =
+{
+	STD_DRIVER_STRUCT(win32),
+};
+
+Driver *win32_driver = &win32_driver_info.pub;
