@@ -1030,7 +1030,7 @@ GlobalExit:
 
                case IDM_HELP_INDEX:
                case IDF_HELP_INDEX:
-                   WinHelp(hWnd,szHelpFileName,HELP_INDEX,0L);
+                   WinHelp(hWnd,szHelpFileName,FIHELP_INDEX,0L);
                    break;
 
                case IDM_HELP_FRACTINT:
@@ -1043,7 +1043,7 @@ GlobalExit:
                    break;
 
                case IDM_HELP_HELP:
-                   WinHelp(hWnd,"WINHELP.HLP",HELP_INDEX,0L);
+                   WinHelp(hWnd,"WINHELP.HLP",FIHELP_INDEX,0L);
                    break;
 
                 case IDM_ABOUT:

@@ -985,7 +985,7 @@ extern HWND far wintext_hWndCopy;                /* a Global copy of hWnd */
    prompting routines */
 void winfract_help(void)
 {
-        WinHelp(wintext_hWndCopy,szHelpFileName,HELP_INDEX,0L);
+        WinHelp(wintext_hWndCopy,szHelpFileName,FIHELP_INDEX,0L);
 }
 
 int far_strlen(char far *string) {

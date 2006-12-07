@@ -122,7 +122,7 @@ extern int _splitpath(char *,char *,char *,char *,char *);
 #define MAX_WARNINGS      (25)   /* stop after this many warnings */
                                  /* 0 = never stop */
 
-#define INDEX_LABEL       "HELP_INDEX"
+#define INDEX_LABEL       "FIHELP_INDEX"
 #define DOCCONTENTS_TITLE "DocContent"
 
 
@@ -3100,7 +3100,7 @@ void _write_hdr(char *fname, FILE *file)
 
    fprintf(file, "/* current help file version */\n");
    fprintf(file, "\n");
-   fprintf(file, "#define %-32s %3d\n", "HELP_VERSION", version);
+   fprintf(file, "#define %-32s %3d\n", "FIHELP_VERSION", version);
    fprintf(file, "\n\n");
 
    fprintf(file, "/* labels */\n\n");

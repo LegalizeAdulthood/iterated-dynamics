@@ -97,7 +97,7 @@ struct tagDriver {
 
 #define STD_DRIVER_STRUCT(name_) \
   { \
-    "##name_##", \
+	#name_, \
     name_##_init, \
     name_##_terminate, \
     name_##_flush, \

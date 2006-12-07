@@ -851,8 +851,8 @@ int help(int action)
             break;
 
          case ACTION_INDEX:
-            next.topic_num = label[HELP_INDEX].topic_num;
-            next.topic_off = label[HELP_INDEX].topic_off;
+            next.topic_num = label[FIHELP_INDEX].topic_num;
+            next.topic_off = label[FIHELP_INDEX].topic_off;
 
             /* fall-through */
 
@@ -863,7 +863,7 @@ int help(int action)
          } /* switch */
 
       flags = 0;
-      if (curr.topic_num == label[HELP_INDEX].topic_num)
+      if (curr.topic_num == label[FIHELP_INDEX].topic_num)
          flags |= F_INDEX;
       if (curr_hist > 0)
          flags |= F_HIST;
@@ -1479,7 +1479,7 @@ int init_help(void)
 
             else
                {
-               if ( hs.version != HELP_VERSION )
+               if ( hs.version != FIHELP_VERSION )
                   {
                   close(help_file);
                   help_file = -1;
@@ -1519,7 +1519,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
             stopmsg(1, msg);
             }
 
-         else if ( hs.version != HELP_VERSION )
+         else if ( hs.version != FIHELP_VERSION )
             {
             static FCODE msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
             close(help_file);

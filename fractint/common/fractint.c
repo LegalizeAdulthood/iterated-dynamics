@@ -187,7 +187,7 @@ int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes 
 #define RESTORESTART      3
 #define CONTINUE          4
 
-static void check_samename(void)
+void check_samename(void)
    {
       char drive[FILE_MAX_DRIVE];
       char dir[FILE_MAX_DIR];

@@ -1,5 +1,7 @@
 #include <string.h>
+#include <signal.h>
 #include <sys/timeb.h>
+#include <time.h>
 
 #include "port.h"
 #include "cmplx.h"
@@ -7,13 +9,93 @@
 #include "drivers.h"
 #include "externs.h"
 #include "prototyp.h"
+#include "helpdefs.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
+
 /* External declarations */
 extern int (*dotread)(int, int);			/* read-a-dot routine */
 extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
+extern void check_samename(void);
+
+typedef enum
+{
+	FE_UNKNOWN = -1,
+	FE_IMAGE_INFO,					/* TAB */
+	FE_RESTART,						/* INSERT */
+	FE_SELECT_VIDEO_MODE,			/* DELETE */
+	FE_EXECUTE_COMMANDS,			/* @ */
+	FE_COMMAND_SHELL,				/* d */
+	FE_ORBITS_WINDOW,				/* o */
+	FE_SELECT_FRACTAL_TYPE,			/* t */
+	FE_TOGGLE_JULIA,				/* SPACE */
+	FE_TOGGLE_INVERSE,				/* j */
+	FE_PRIOR_IMAGE,					/* h */
+	FE_REVERSE_HISTORY,				/* ^H */
+	FE_BASIC_OPTIONS,				/* x */
+	FE_EXTENDED_OPTIONS,			/* y */
+	FE_TYPE_SPECIFIC_PARAMS,		/* z */
+	FE_PASSES_OPTIONS,				/* p */
+	FE_VIEW_WINDOW_OPTIONS,			/* v */
+	FE_3D_PARAMS,					/* i */
+	FE_BROWSE_PARAMS,				/* ^B */
+	FE_EVOLVER_PARAMS,				/* ^E */
+	FE_SOUND_PARAMS,				/* ^F */
+	FE_SAVE_IMAGE,					/* s */
+	FE_LOAD_IMAGE,					/* r */
+	FE_3D_TRANSFORM,				/* 3 */
+	FE_3D_OVERLAY,					/* # */
+	FE_SAVE_CURRENT_PARAMS,			/* b */
+	FE_PRINT_IMAGE,					/* ^P */
+	FE_GIVE_COMMAND_STRING,			/* g */
+	FE_QUIT,						/* ESC */
+	FE_COLOR_CYCLING_MODE,			/* c */
+	FE_ROTATE_PALETTE_DOWN,			/* - */
+	FE_ROTATE_PALETTE_UP,			/* + */
+	FE_EDIT_PALETTE,				/* e */
+	FE_MAKE_STARFIELD,				/* a */
+	FE_ANT_AUTOMATON,				/* ^A */
+	FE_STEREOGRAM,					/* ^S */
+	FE_VIDEO_F1,
+	FE_VIDEO_F2,
+	FE_VIDEO_F3,
+	FE_VIDEO_F4,
+	FE_VIDEO_F5,
+	FE_VIDEO_F6,
+	FE_VIDEO_F7,
+	FE_VIDEO_F8,
+	FE_VIDEO_F9,
+	FE_VIDEO_F10,
+	FE_VIDEO_F11,
+	FE_VIDEO_F12,
+	FE_VIDEO_AF1,
+	FE_VIDEO_AF2,
+	FE_VIDEO_AF3,
+	FE_VIDEO_AF4,
+	FE_VIDEO_AF5,
+	FE_VIDEO_AF6,
+	FE_VIDEO_AF7,
+	FE_VIDEO_AF8,
+	FE_VIDEO_AF9,
+	FE_VIDEO_AF10,
+	FE_VIDEO_AF11,
+	FE_VIDEO_AF12,
+	FE_VIDEO_CF1,
+	FE_VIDEO_CF2,
+	FE_VIDEO_CF3,
+	FE_VIDEO_CF4,
+	FE_VIDEO_CF5,
+	FE_VIDEO_CF6,
+	FE_VIDEO_CF7,
+	FE_VIDEO_CF8,
+	FE_VIDEO_CF9,
+	FE_VIDEO_CF10,
+	FE_VIDEO_CF11,
+	FE_VIDEO_CF12
+} fractint_event;
 
 /* Global variables (yuck!) */
 int andcolor;
@@ -149,6 +231,70 @@ int vxdots = 0;
  * they have assembly language equivalents that we provide
  * here in a slower C form for portability.
  */
+
+/* keyboard_event
+**
+** Map a keypress into an event id.
+*/
+static fractint_event keyboard_event(int key)
+{
+	struct
+	{
+		int key;
+		fractint_event event;
+	}
+	mapping[] =
+	{
+		CONTROL_A,	FE_ANT_AUTOMATON,
+		CONTROL_B,	FE_BROWSE_PARAMS,
+		CONTROL_E,	FE_EVOLVER_PARAMS,
+		CONTROL_F,	FE_SOUND_PARAMS,
+		BACKSPACE,	FE_REVERSE_HISTORY,
+		TAB,		FE_IMAGE_INFO,
+		CONTROL_P,	FE_PRINT_IMAGE,
+		CONTROL_S,	FE_STEREOGRAM,
+		ESC,		FE_QUIT,
+		SPACE,		FE_TOGGLE_JULIA,
+		INSERT,		FE_RESTART,
+		DELETE,		FE_SELECT_VIDEO_MODE,
+		'@',		FE_EXECUTE_COMMANDS,
+		'#',		FE_3D_OVERLAY,
+		'3',		FE_3D_TRANSFORM,
+		'a',		FE_MAKE_STARFIELD,
+		'b',		FE_SAVE_CURRENT_PARAMS,
+		'c',		FE_COLOR_CYCLING_MODE,
+		'd',		FE_COMMAND_SHELL,
+		'e',		FE_EDIT_PALETTE,
+		'g',		FE_GIVE_COMMAND_STRING,
+		'h',		FE_PRIOR_IMAGE,
+		'j',		FE_TOGGLE_INVERSE,
+		'i',		FE_3D_PARAMS,
+		'o',		FE_ORBITS_WINDOW,
+		'p',		FE_PASSES_OPTIONS,
+		'r',		FE_LOAD_IMAGE,
+		's',		FE_SAVE_IMAGE,
+		't',		FE_SELECT_FRACTAL_TYPE,
+		'v',		FE_VIEW_WINDOW_OPTIONS,
+		'x',		FE_BASIC_OPTIONS,
+		'y',		FE_EXTENDED_OPTIONS,
+		'z',		FE_TYPE_SPECIFIC_PARAMS,
+		'-',		FE_ROTATE_PALETTE_DOWN,
+		'+',		FE_ROTATE_PALETTE_UP
+	};
+	key = tolower(key);
+	{
+		int i;
+		for (i = 0; i < NUM_OF(mapping); i++)
+		{
+			if (mapping[i].key == key)
+			{
+				return mapping[i].event;
+			}
+		}
+	}
+
+	return FE_UNKNOWN;
+}
 
 /* Return available stack space ... shouldn't be needed in Win32, should it? */
 long stackavail()
@@ -912,8 +1058,411 @@ void setnullvideo(void)
   dotread = nullread;
 }
 
+/* Do nothing if math error */
+static void my_floating_point_err(int sig)
+{
+   if(sig != 0)
+      overflow = 1;
+}
+
+static int old_main(int argc, char **argv)
+{
+	int     resumeflag;
+	int     kbdchar;                     /* keyboard key-hit value       */
+	int     kbdmore;                     /* continuation variable        */
+	char stacked=0;                      /* flag to indicate screen stacked */
+
+	/* this traps non-math library floating point errors */
+	signal( SIGFPE, my_floating_point_err );
+
+	initasmvars();                       /* initialize ASM stuff */
+	InitMemory();
+	checkfreemem(0);
+	load_videotable(1); /* load fractint.cfg, no message yet if bad */
+	if (!init_drivers(&argc, argv))
+	{
+		fprintf(stderr, "Sorry, I couldn't find any "
+		"working video drivers for your system\n");
+		return -1;
+	}
+
+	init_help();
+
+	restart:   /* insert key re-starts here */
+	autobrowse     = FALSE;
+	brwschecktype  = TRUE;
+	brwscheckparms = TRUE;
+	doublecaution  = TRUE;
+	no_sub_images = FALSE;
+	toosmall = 6;
+	minbox   = 3;
+	strcpy(browsemask,"*.gif");
+	strcpy(browsename,"            ");
+	name_stack_ptr= -1; /* init loaded files stack */
+
+	evolving = FALSE;
+	paramrangex = 4;
+	opx = newopx = -2.0;
+	paramrangey = 3;
+	opy = newopy = -1.5;
+	odpx = odpy = 0;
+	gridsz = 9;
+	fiddlefactor = 1;
+	fiddle_reduction = 1.0;
+	this_gen_rseed = (unsigned int)clock_ticks();
+	srand(this_gen_rseed);
+	initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
+	start_showorbit = 0;
+	showdot = -1; /* turn off showdot if entered with <g> command */
+	calc_status = -1;                    /* no active fractal image */
+
+	fract_dir1 = getenv("FRACTDIR");
+	if (fract_dir1==NULL)
+	{
+		fract_dir1 = ".";
+	}
+#ifdef SRCDIR
+	fract_dir2 = SRCDIR;
+#else
+	fract_dir2 = ".";
+#endif
+
+	cmdfiles(argc,argv);         /* process the command-line */
+	dopause(0);                  /* pause for error msg if not batch */
+	init_msg(0,"",NULL,0);  /* this causes getakey if init_msg called on runup */
+	checkfreemem(1);
+	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
+	{
+		check_samename();
+	}
+	driver_window();
+	memcpy(olddacbox,dacbox,256*3);      /* save in case colors= present */
+
+	if (debugflag == 8088)
+	{
+		cpu =  86; /* for testing purposes */
+	}
+	if (debugflag == 2870 && fpu >= 287 )
+	{
+		fpu = 287; /* for testing purposes */
+		cpu = 286;
+	}
+	if (debugflag ==  870 && fpu >=  87 )
+	{
+		fpu =  87; /* for testing purposes */
+		cpu =  86;
+	}
+	if (debugflag ==   70)
+	{
+		fpu =   0; /* for testing purposes */
+	}
+	if (getenv("NO87"))
+	{
+		fpu = 0;
+	}
+
+	if (fpu >= 287 && debugflag != 72)   /* Fast 287 math */
+	{
+		setup287code();
+	}
+	adapter_detect();                    /* check what video is really present */
+	if (debugflag >= 9002 && debugflag <= 9100) /* for testing purposes */
+	{
+		if (video_type > (debugflag-9000)/2)     /* adjust the video value */
+		{
+			video_type = (debugflag-9000)/2;
+		}
+	}
+
+	diskisactive = 0;                    /* disk-video is inactive */
+	diskvideo = 0;                       /* disk driver is not in use */
+	driver_set_for_text();                      /* switch to text mode */
+	savedac = 0;                         /* don't save the VGA DAC */
+
+	if (debugflag == 10000)              /* check for free memory */
+	{
+		showfreemem();
+	}
+
+	if (badconfig < 0)                   /* fractint.cfg bad, no msg yet */
+	{
+		bad_fractint_cfg_msg();
+	}
+
+	max_colors = 256;                    /* the Windows version is lower */
+	max_kbdcount=(cpu>=386) ? 80 : 30;   /* check the keyboard this often */
+
+	if (showfile && initmode < 0)
+	{
+		intro();                          /* display the credits screen */
+		if (keypressed() == ESC)
+		{
+			getakey();
+			goodbye();
+		}
+	}
+
+	browsing = FALSE;
+
+	if (!functionpreloaded)
+	{
+		set_if_old_bif();
+	}
+	stacked = 0;
+
+restorestart:
+	if (colorpreloaded)
+	{
+		memcpy(dacbox,olddacbox,256*3);   /* restore in case colors= present */
+	}
+
+	lookatmouse = 0;                     /* ignore mouse */
+
+	while (showfile <= 0)
+	{              /* image is to be loaded */
+		char *hdg;
+		tabmode = 0;
+		if (!browsing )     /*RB*/
+		{
+			if (overlay3d)
+			{
+				hdg = "Select File for 3D Overlay";
+				helpmode = HELP3DOVLY;
+			}
+			else if (display3d)
+			{
+				hdg = "Select File for 3D Transform";
+				helpmode = HELP3D;
+			}
+			else
+			{
+				hdg = "Select File to Restore";
+				helpmode = HELPSAVEREST;
+			}
+			if (showfile < 0 && getafilename(hdg,gifmask,readname) < 0)
+			{
+				showfile = 1;               /* cancelled */
+				initmode = -1;
+				break;
+			}
+
+			name_stack_ptr = 0; /* 'r' reads first filename for browsing */
+			strcpy(file_name_stack[name_stack_ptr],browsename);
+		}
+
+		evolving = viewwindow = 0;
+		showfile = 0;
+		helpmode = -1;
+		tabmode = 1;
+		if (stacked)
+		{
+			driver_discard_screen();
+			driver_set_for_text();
+			stacked = 0;
+		}
+		if (read_overlay() == 0)       /* read hdr, get video mode */
+		{
+			break;                      /* got it, exit */
+		}
+		if (browsing) /* break out of infinite loop, but lose your mind */
+		{
+			showfile = 1;
+		}
+		else
+		{
+			showfile = -1;                 /* retry */
+		}
+	} /* while showfile <= 0 */
+
+	helpmode = HELPMENU;                 /* now use this help mode */
+	tabmode = 1;
+	lookatmouse = 0;                     /* ignore mouse */
+
+	if (((overlay3d && !initbatch) || stacked) && initmode < 0)        /* overlay command failed */
+	{
+		driver_unstack_screen();                  /* restore the graphics screen */
+		stacked = 0;
+		overlay3d = 0;                    /* forget overlays */
+		display3d = 0;                    /* forget 3D */
+		if (calc_status ==3)
+		{
+			calc_status = 0;
+		}
+		resumeflag = 1;
+		goto resumeloop;                  /* ooh, this is ugly */
+	}
+
+	savedac = 0;                         /* don't save the VGA DAC */
+
+imagestart:                             /* calc/display a new image */
+	if(stacked)
+	{
+		driver_discard_screen();
+		stacked = 0;
+	}
+	got_status = -1;                     /* for tab_display */
+
+	if (showfile)
+	{
+		if (calc_status > 0)              /* goto imagestart implies re-calc */
+		{
+			calc_status = 0;
+		}
+	}
+
+	if (initbatch == 0)
+	{
+		lookatmouse = -PAGE_UP;           /* just mouse left button, == pgup */
+	}
+
+	cyclelimit = initcyclelimit;         /* default cycle limit   */
+	adapter = initmode;                  /* set the video adapter up */
+	initmode = -1;                       /* (once)                   */
+
+	while (adapter < 0)                /* cycle through instructions */
+	{
+		fractint_event ev;
+		if (initbatch)                          /* batch, nothing to do */
+		{
+			initbatch = 4;                 /* exit with error condition set */
+			goodbye();
+		}
+		kbdchar = main_menu(0);
+		ev = keyboard_event(kbdchar);
+		if (FE_RESTART == ev)
+		{
+			goto restart;      /* restart pgm on Insert Key */
+		}
+		if (FE_SELECT_VIDEO_MODE == ev)                    /* select video mode list */
+		{
+			kbdchar = select_video_mode(-1);
+		}
+		adapter = check_vidmode_key(0, kbdchar);
+		if (adapter >= 0)
+		{
+			break;                                 /* got a video mode now */
+		}
+		if ('A' <= kbdchar && kbdchar <= 'Z')
+		{
+			kbdchar = tolower(kbdchar);
+		}
+		if (kbdchar == 'd')                     /* shell to DOS */
+		{
+			driver_set_clear();
+			printf("\n\nShelling to DOS - type 'exit' to return\n\n");
+			driver_shell();
+			goto imagestart;
+		}
+
+		if (kbdchar == '@' || kbdchar == '2')    /* execute commands */
+		{
+			if ((get_commands() & 4) == 0)
+			{
+				goto imagestart;
+			}
+			kbdchar = '3';                         /* 3d=y so fall thru '3' code */
+		}
+		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
+		{
+			display3d = 0;
+			if (kbdchar == '3' || kbdchar == '#' || kbdchar == F3)
+			{
+				display3d = 1;
+			}
+			if (colorpreloaded)
+			{
+				memcpy(olddacbox,dacbox,256*3);     /* save in case colors= present */
+			}
+			driver_set_for_text(); /* switch to text mode */
+			showfile = -1;
+			goto restorestart;
+		}
+		if (kbdchar == 't')                     /* set fractal type */
+		{
+			julibrot = 0;
+			get_fracttype();
+			goto imagestart;
+		}
+		if (kbdchar == 'x')                     /* generic toggle switch */
+		{
+			get_toggles();
+			goto imagestart;
+		}
+		if (kbdchar == 'y')                     /* generic toggle switch */
+		{
+			get_toggles2();
+			goto imagestart;
+		}
+		if (kbdchar == 'z')                     /* type specific parms */
+		{
+			get_fract_params(1);
+			goto imagestart;
+		}
+		if (kbdchar == 'v')                     /* view parameters */
+		{
+			get_view_params();
+			goto imagestart;
+		}
+		if (kbdchar == 2)                       /* ctrl B = browse parms*/
+		{
+			get_browse_params();
+			goto imagestart;
+		}
+		if (kbdchar == 6)                       /* ctrl f = sound parms*/
+		{
+			get_sound_params();
+			goto imagestart;
+		}
+		if (kbdchar == 'f')                     /* floating pt toggle */
+		{
+			if (usr_floatflag == 0)
+			{
+				usr_floatflag = 1;
+			}
+			else
+			{
+				usr_floatflag = 0;
+			}
+			goto imagestart;
+		}
+		if (kbdchar == 'i')                     /* set 3d fractal parms */
+		{
+			get_fract3d_params(); /* get the parameters */
+			goto imagestart;
+		}
+		if (kbdchar == 'g')
+		{
+			get_cmd_string(); /* get command string */
+			goto imagestart;
+		}
+		/* buzzer(2); */                          /* unrecognized key */
+	} /* while adapter < 0 */
+
+	zoomoff = 1;                 /* zooming is enabled */
+	helpmode = HELPMAIN;         /* now use this help mode */
+	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
+
+resumeloop:
+	param_history(0); /* save old history */
+	/* this switch processes gotos that are now inside function */
+	switch (big_while_loop(&kbdmore,&stacked,resumeflag))
+	{
+	case RESTART:		goto restart;
+	case IMAGESTART:	goto imagestart;
+	case RESTORESTART:	goto restorestart;
+
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
+	int argc = 0;
+	char **argv = NULL;
+	old_main(argc, argv);
 	return 0;
 }
 
