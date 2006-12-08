@@ -957,7 +957,7 @@ get_view_restart:
    if (driver_diskp() || (virtual_screens && dotmode == 28)) {
       videoentry.xdots = sxdots;
       videoentry.ydots = sydots;
-      far_memcpy((char far *)&videotable[adapter],(char far *)&videoentry,
+      memcpy((char far *)&videotable[adapter],(char far *)&videoentry,
                     sizeof(videoentry));
       if (finalaspectratio == 0.0)
          finalaspectratio = (float)sydots/sxdots;

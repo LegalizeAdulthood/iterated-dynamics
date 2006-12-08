@@ -80,7 +80,7 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 static void format_vid_inf(int i,char *err,char *buf)
 {
    char kname[5];
-   far_memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+   memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
               sizeof(videoentry));
    vidmode_keyname(videoentry.keynum,kname);
    sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
@@ -199,7 +199,7 @@ Press F1 for help, "};
 
    /* setup table entry for each vid mode, flagged for how well it matches */
    for (i = 0; i < vidtbllen; ++i) {
-      far_memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+      memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
                  sizeof(videoentry));
       tmpflags = VI_EXACT;
       if (videoentry.keynum == 0)
@@ -323,13 +323,13 @@ if (fastrestore  && !askvideo)
          if (initmode >= MAXVIDEOTABLE-1) j = 0;
          }
       if (j == 0) /* mode has no key, add to reserved slot at end */
-         far_memcpy((char far *)&videotable[initmode=MAXVIDEOTABLE-1],
+         memcpy((char far *)&videotable[initmode=MAXVIDEOTABLE-1],
                     (char far *)&vidtbl[i],sizeof(*vidtbl));
       }
 
    /* ok, we're going to return with a video mode */
 
-   far_memcpy((char far *)&videoentry,(char far *)&videotable[initmode],
+   memcpy((char far *)&videoentry,(char far *)&videotable[initmode],
               sizeof(videoentry));
 
 

@@ -1030,11 +1030,6 @@ for (i = 0;i < maxlen ; i++)
 ; *************** Far string/memory functions *********
 */
 
-void far_strcat (char far *a, char far *b)
-{
-   _fstrcat(a,b);
-}
-
 long timer_start,timer_interval;        /* timer(...) start & total */
 extern int  timerflag;
 extern int  show_orbit;

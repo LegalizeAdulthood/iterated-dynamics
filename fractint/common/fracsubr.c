@@ -1098,7 +1098,7 @@ va_dcl
    while (len)
    {
       source_ptr = (BYTE *)va_arg(arg_marker,char *);
-/*      far_memcpy(resume_info+resume_len,source_ptr,len); */
+/*      memcpy(resume_info+resume_len,source_ptr,len); */
       MoveToMemory(source_ptr,(U16)1,(long)len,resume_len,resume_info);
       resume_len += len;
       len = va_arg(arg_marker,int);
@@ -1150,7 +1150,7 @@ va_dcl
    while (len)
    {
       dest_ptr = (BYTE *)va_arg(arg_marker,char *);
-/*      far_memcpy(dest_ptr,resume_info+resume_offset,len); */
+/*      memcpy(dest_ptr,resume_info+resume_offset,len); */
       MoveFromMemory(dest_ptr,(U16)1,(long)len,resume_offset,resume_info);
       resume_offset += len;
       len = va_arg(arg_marker,int);

@@ -433,7 +433,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           {
           bf_math = 1;
           init_bf_length(read_info.bflength);
-          far_memcpy((char far *)bfxmin,blk_5_info.apm_data,blk_5_info.length);
+          memcpy((char far *)bfxmin,blk_5_info.apm_data,blk_5_info.length);
           farmemfree(blk_5_info.apm_data);
           }
    else
@@ -1666,12 +1666,12 @@ static char is_visible_window
       bt_t5   = alloc_stack(two_di_len);
       bt_t6   = alloc_stack(two_di_len);
 
-      far_memcpy((char far *)bt_t1,blk_5_info->apm_data,(two_di_len));
-      far_memcpy((char far *)bt_t2,blk_5_info->apm_data+two_di_len,(two_di_len));
-      far_memcpy((char far *)bt_t3,blk_5_info->apm_data+2*two_di_len,(two_di_len));
-      far_memcpy((char far *)bt_t4,blk_5_info->apm_data+3*two_di_len,(two_di_len));
-      far_memcpy((char far *)bt_t5,blk_5_info->apm_data+4*two_di_len,(two_di_len));
-      far_memcpy((char far *)bt_t6,blk_5_info->apm_data+5*two_di_len,(two_di_len));
+      memcpy((char far *)bt_t1,blk_5_info->apm_data,(two_di_len));
+      memcpy((char far *)bt_t2,blk_5_info->apm_data+two_di_len,(two_di_len));
+      memcpy((char far *)bt_t3,blk_5_info->apm_data+2*two_di_len,(two_di_len));
+      memcpy((char far *)bt_t4,blk_5_info->apm_data+3*two_di_len,(two_di_len));
+      memcpy((char far *)bt_t5,blk_5_info->apm_data+4*two_di_len,(two_di_len));
+      memcpy((char far *)bt_t6,blk_5_info->apm_data+5*two_di_len,(two_di_len));
 
       convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
       convert_bf(bt_xmax, bt_t2, two_len, two_di_len);

@@ -78,7 +78,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
              calc_status = -1;
          }
 #endif
-         far_memcpy((char far *)&videoentry,(char far *)&videotable[adapter],
+         memcpy((char far *)&videoentry,(char far *)&videotable[adapter],
                     sizeof(videoentry));
          axmode  = videoentry.videomodeax; /* video mode (BIOS call)   */
          bxmode  = videoentry.videomodebx; /* video mode (BIOS call)   */
@@ -167,7 +167,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
          else { /* reset DAC to defaults, which setvideomode has done for us */
             if (mapdacbox) { /* but there's a map=, so load that */
-               far_memcpy((char far *)dacbox,mapdacbox,768);
+               memcpy((char far *)dacbox,mapdacbox,768);
                spindac(0,1);
                }
             else if ((driver_diskp() && colors == 256) || !colors) {
@@ -1932,9 +1932,9 @@ static void note_zoom()
          clear_zoombox(); /* not enuf mem so clear the box */
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
-         far_memcpy(savezoom,boxx,boxcount*2);
-         far_memcpy(savezoom+boxcount*2,boxy,boxcount*2);
-         far_memcpy(savezoom+boxcount*4,boxvalues,boxcount);
+         memcpy(savezoom,boxx,boxcount*2);
+         memcpy(savezoom+boxcount*2,boxy,boxcount*2);
+         memcpy(savezoom+boxcount*4,boxvalues,boxcount);
          }
       }
 }
@@ -1942,9 +1942,9 @@ static void note_zoom()
 static void restore_zoom()
 {
    if (boxcount) { /* restore zoombox arrays */
-      far_memcpy(boxx,savezoom,boxcount*2);
-      far_memcpy(boxy,savezoom+boxcount*2,boxcount*2);
-      far_memcpy(boxvalues,savezoom+boxcount*4,boxcount);
+      memcpy(boxx,savezoom,boxcount*2);
+      memcpy(boxy,savezoom+boxcount*2,boxcount*2);
+      memcpy(boxvalues,savezoom+boxcount*4,boxcount);
       farmemfree(savezoom);
       drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
       }
@@ -2232,7 +2232,7 @@ static void _fastcall save_history_info()
    current.oy3rd           = oy3rd;
    current.keep_scrn_coords= (short)keep_scrn_coords;
    current.drawmode        = drawmode;
-   far_memcpy(current.dac,dacbox,256*3);
+   memcpy(current.dac,dacbox,256*3);
    switch(fractype)
    {
    case FORMULA:
@@ -2412,10 +2412,10 @@ static void _fastcall restore_history_info(int i)
    if (keep_scrn_coords) set_orbit_corners = 1;
    drawmode = last.drawmode;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
-   far_memcpy(dacbox,last.dac,256*3);
-   far_memcpy(olddacbox,last.dac,256*3);
+   memcpy(dacbox,last.dac,256*3);
+   memcpy(olddacbox,last.dac,256*3);
    if(mapdacbox)
-      far_memcpy(mapdacbox,last.dac,256*3);
+      memcpy(mapdacbox,last.dac,256*3);
    spindac(0,1);
    if(fractype == JULIBROT || fractype == JULIBROTFP)
       savedac = 0;

@@ -3618,8 +3618,8 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          char far * msgbuf = (char far *) farmemalloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
          strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
-         far_strcat(msgbuf, ":\n   ");
-         far_strcat(msgbuf, sym_buf);
+         strcat(msgbuf, ":\n   ");
+         strcat(msgbuf, sym_buf);
          stopmsg(8, msgbuf);
          farmemfree(msgbuf);
       }
