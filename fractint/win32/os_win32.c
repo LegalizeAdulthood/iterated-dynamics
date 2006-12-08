@@ -516,11 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-void far_memicmp(VOIDFARPTR a, VOIDFARPTR b, int len)
-{
-    memicmp(a, b, len);
-}
-
 VOIDPTR farmemalloc(long len)
 {
     return (VOIDPTR) malloc((unsigned) len);
