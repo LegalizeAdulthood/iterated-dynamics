@@ -1002,18 +1002,6 @@ for (i = 0;i < maxlen ; i++) {
 return(0);
 }
 
-int far_memcmp(void far *string1, void far *string2, int maxlen) {
-int i;
-unsigned char j, k;
-for (i = 0;i < maxlen ; i++) {
-    j = ((char far *)string1)[i];
-    k = ((char far *)string2)[i];
-    if (j-k != 0)
-        return(j-k);
-    }
-return(0);
-}
-
 /*
 ; *************** Far string/memory functions *********
 */
