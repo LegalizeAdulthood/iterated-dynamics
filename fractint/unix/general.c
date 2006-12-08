@@ -427,13 +427,6 @@ char *a, *b;
 }
 
 int
-far_stricmp(a,b)
-char *a,*b;
-{
-   return stricmp(a,b);
-}
-
-int
 far_strnicmp(a,b,n)
 char *a,*b;
 int n;

@@ -28,8 +28,6 @@
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #endif
 
-#define far_strncmp far_strnicmp
-
 static int  cmdfile(FILE *,int);
 static int  next_command(char *,int,FILE *,char *,int *,int);
 static int  next_line(FILE *,char *,int);
@@ -967,12 +965,12 @@ static int next_line(FILE *handle,char *linebuf,int mode)
          strncpy(tmpbuf,&linebuf[1],9);
          tmpbuf[9] = 0;
          strlwr(tmpbuf);
-         toolssection = far_strncmp(tmpbuf,"fractint]",9);
+         toolssection = strncmp(tmpbuf,"fractint]",9);
 #else
          strncpy(tmpbuf,&linebuf[1],10);
          tmpbuf[10] = 0;
          strlwr(tmpbuf);
-         toolssection = far_strncmp(tmpbuf,"xfractint]",10);
+         toolssection = strncmp(tmpbuf,"xfractint]",10);
 #endif
          continue;                              /* skip tools section heading */
          }
@@ -1029,9 +1027,9 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    while (*argptr) {                    /* convert to lower case */
       if (*argptr >= 'A' && *argptr <= 'Z')
          *argptr += 'a' - 'A';
-      if (*argptr == '=' && far_strncmp(curarg,"colors=",7) == 0)
+      if (*argptr == '=' && strncmp(curarg,"colors=",7) == 0)
          break;                         /* don't convert colors=value */
-      if (*argptr == '=' && far_strncmp(curarg,s_comment,7) == 0)
+      if (*argptr == '=' && strncmp(curarg,s_comment,7) == 0)
          break;                         /* don't convert comment=value */
       ++argptr;
       }
@@ -1146,7 +1144,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
                  if(adapter_name[j] == ' ')
                      adapter_name[j] = 0;
              if (adapter_name[0] == 0) break;  /* end-of-the-list */
-             if (far_strncmp(value,adapter_name,(int) strlen(adapter_name)) == 0) {
+             if (strncmp(value,adapter_name,(int) strlen(adapter_name)) == 0) {
                 svga_type = i+1;
                 adapter_ptr[6] = 1;
                 break;
@@ -1178,7 +1176,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          }
 
       if (strcmp(variable,s_afi) == 0) {
-       if (far_strncmp(value,"8514"  ,4) == 0
+       if (strncmp(value,"8514"  ,4) == 0
            || charval[0] == 'y') ai_8514 = 1; /* set afi flag JCO 4/11/92 */
        return 3;
         }
@@ -1481,15 +1479,15 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          inside = BOF60;
       else if(strcmp(value,s_bof61)==0)
          inside = BOF61;
-      else if(far_strncmp(value,s_epscross,3)==0)
+      else if(strncmp(value,s_epscross,3)==0)
          inside = EPSCROSS;
-      else if(far_strncmp(value,s_startrail,4)==0)
+      else if(strncmp(value,s_startrail,4)==0)
          inside = STARTRAIL;
-      else if(far_strncmp(value,s_period,3)==0)
+      else if(strncmp(value,s_period,3)==0)
          inside = PERIOD;
-      else if(far_strncmp(value,s_fmod,3)==0)
+      else if(strncmp(value,s_fmod,3)==0)
          inside = FMODI;
-      else if(far_strncmp(value,s_atan,3)==0)
+      else if(strncmp(value,s_atan,3)==0)
          inside = ATANI;
       else if(strcmp(value,s_maxiter)==0)
          inside = -1;
@@ -2318,11 +2316,11 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
       if (charval[0] == 'n' || charval[0] == 'o')
          soundflag = soundflag & 0xF8; 
-      else if ((far_strncmp(value,"ye",2) == 0) || (charval[0] == 'b'))
+      else if ((strncmp(value,"ye",2) == 0) || (charval[0] == 'b'))
          soundflag = soundflag | 1;
       else if (charval[0] == 'x')
          soundflag = soundflag | 2;
-      else if (charval[0] == 'y' && far_strncmp(value,"ye",2) != 0)
+      else if (charval[0] == 'y' && strncmp(value,"ye",2) != 0)
          soundflag = soundflag | 3;
       else if (charval[0] == 'z')
          soundflag = soundflag | 4;

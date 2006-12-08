@@ -2,6 +2,7 @@
 FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
 FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 */
+#include <memory.h>
 
 #ifndef USE_VARARGS
 #include <stdarg.h>
@@ -523,7 +524,7 @@ expand_retry:
       /* in production version this code can be deleted */
       char far *extra;
       extra = (char far *)MK_FP(extraseg,0);
-      far_memset(extra,0,(unsigned int)(0x10000l-(bflength+2)*22U));
+      memset(extra,0,(unsigned int)(0x10000l-(bflength+2)*22U));
    }
 }
 

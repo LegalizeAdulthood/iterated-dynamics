@@ -302,7 +302,7 @@ int line3d(BYTE * pixels, unsigned linelen)
              (!(!RAY && FILLTYPE > 4 && col == 1)))
             goto loopbottom;
 
-         f_cur.color = cur.color = Real_Color = pixels[col];
+         f_cur.color = (float) (cur.color = Real_Color = pixels[col]);
 
          if (RAY || preview || FILLTYPE < 0)
          {
@@ -316,7 +316,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             next = lastdot;
 
          if (cur.color > 0 && cur.color < WATERLINE)
-            f_cur.color = cur.color = Real_Color = (BYTE)WATERLINE; /* "lake" */
+            f_cur.color = (float) (cur.color = Real_Color = (BYTE)WATERLINE); /* "lake" */
          else if (pot16bit)
             f_cur.color += ((float) fraction[col]) / (float) (1 << 8);
 
@@ -717,7 +717,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                      static FCODE msg[] = {"debug, cur.color=bad"};
                      stopmsg(0, msg);
                   }
-                  cur.color = (int)(f_cur.color = bad.color);
+                  cur.color = (int)(f_cur.color = (float) bad.color);
                }
                else
                {
@@ -760,7 +760,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                             * f_lastrow[col-1].y,f_lastrow[col-1].color);
                             * stopmsg(0,msg); */
                         }
-                        cur.color = (int)(f_cur.color = colors);
+                        cur.color = (int)(f_cur.color = (float) colors);
                      }
                   }
                   crossavg[0] = tmpcross[0];
@@ -2616,9 +2616,9 @@ static int first_time(int linelen, VECTOR v)
    }
 
    /* bad has values caught by clipping */
-   f_bad.x = bad.x = bad_value;
-   f_bad.y = bad.y = bad_value;
-   f_bad.color = bad.color = bad_value;
+   f_bad.x = (float) (bad.x = bad_value);
+   f_bad.y = (float) (bad.y = bad_value);
+   f_bad.color = (float) (bad.color = bad_value);
    for (i = 0; i < (int) linelen; i++)
    {
       lastrow[i] = bad;

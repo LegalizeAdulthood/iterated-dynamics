@@ -554,7 +554,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
          ts->stackoflow = 1;
          return NULL;
          }
-      far_memcpy(doub, ret, max*sizeof(struct lsys_cmd));
+      memcpy(doub, ret, max*sizeof(struct lsys_cmd));
       farmemfree(ret);
       ret = doub;
       max <<= 1;
@@ -572,7 +572,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
        ts->stackoflow = 1;
        return NULL;
        }
-  far_memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+  memcpy(doub, ret, n*sizeof(struct lsys_cmd));
   farmemfree(ret);
   return doub;
 }
@@ -644,7 +644,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
            ts->stackoflow = 1;
            return NULL;
            }
-      far_memcpy(doub, ret, max*sizeof(struct lsys_cmd));
+      memcpy(doub, ret, max*sizeof(struct lsys_cmd));
       farmemfree(ret);
       ret = doub;
       max <<= 1;
@@ -662,7 +662,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
        ts->stackoflow = 1;
        return NULL;
        }
-  far_memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+  memcpy(doub, ret, n*sizeof(struct lsys_cmd));
   farmemfree(ret);
   return doub;
 }

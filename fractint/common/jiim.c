@@ -897,7 +897,7 @@ void Jiim(int which)         /* called by fractint */
                Cursor_Show();
             }
             else
-               displays(5, vesa_yres-show_numbers, WHITE, BLACK, str,strlen(str));
+               displays(5, vesa_yres-show_numbers, WHITE, BLACK, str, (int) strlen(str));
          }
          iter = 1;
          old.x = old.y = lold.x = lold.y = 0;

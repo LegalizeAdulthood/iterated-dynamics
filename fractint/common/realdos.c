@@ -1524,7 +1524,7 @@ int thinking(int options,char far *msg)
       thinkstate = 0;
       helptitle();
       strcpy(buf,"  ");
-      far_strcat(buf,msg);
+      strcat(buf,msg);
       strcat(buf,"    ");
       driver_put_string(4,10,C_GENERAL_HI,buf);
       thinkcol = textcol - 3;

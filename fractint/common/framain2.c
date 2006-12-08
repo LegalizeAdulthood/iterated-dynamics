@@ -2111,7 +2111,7 @@ static void _fastcall save_history_info()
       return;
    MoveFromMemory((BYTE far *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
 
-   far_memset((void far *)&current,0,sizeof(HISTORY));
+   memset((void far *)&current,0,sizeof(HISTORY));
    current.fractal_type    = (short)fractype                  ;
    current.xmin       = xxmin                     ;
    current.xmax       = xxmax                     ;

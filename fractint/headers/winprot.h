@@ -65,7 +65,6 @@ extern void win_cycle(void);
 
 extern void far * cdecl farmemalloc(long);
 extern void farmemfree(void far *);
-extern int far_memcmp(void far *, void far *, int);
 extern int far_strcmp (char far *, char far *);
 extern int far_strnicmp (char far *, char far *, int);
 extern void far_strcat (char far *, char far *);

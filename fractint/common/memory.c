@@ -572,7 +572,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       {
          longtmp /= (ext_xfer_size >> 10);
          handletable[handle].Extended.mempages = (int)longtmp;
-         far_memset(charbuf, 0, (int)ext_xfer_size); /* zero the buffer */
+         memset(charbuf, 0, (int)ext_xfer_size); /* zero the buffer */
          MoveStruct.SourceHandle = 0;    /* Source is in conventional memory */
          MoveStruct.SourceOffset = (U32)charbuf;
          MoveStruct.DestHandle   = handletable[handle].Extended.xmmhandle;
@@ -997,14 +997,14 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
 
 #if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
    case EXTRA: /* SetMemory */
-      far_memset(handletable[handle].Extra.extramemory+start, value, (U16)tomove);
+      memset(handletable[handle].Extra.extramemory+start, value, (U16)tomove);
       success = TRUE; /* No way to gauge success or failure */
       break;
 #endif
 
    case FARMEM: /* SetMemory */
       for(i=0;i<size;i++) {
-         far_memset(handletable[handle].Farmem.farmemory+start, value, (U16)count);
+         memset(handletable[handle].Farmem.farmemory+start, value, (U16)count);
          start += count;
       }
       success = TRUE; /* No way to gauge success or failure */
@@ -1019,7 +1019,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       start -= (currpage * EXPWRITELEN);
       if (tmplength > tomove)
          tmplength = tomove;
-      far_memset(handletable[handle].Expanded.expmemory+start, value, (U16)tmplength);
+      memset(handletable[handle].Expanded.expmemory+start, value, (U16)tmplength);
       tomove -= tmplength;
 /* At a page boundary, move until less than a page left */
       while (tomove >= EXPWRITELEN)
@@ -1046,7 +1046,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       MoveStruct.SourceOffset = (U32)charbuf;
       MoveStruct.DestHandle = handletable[handle].Extended.xmmhandle;
       MoveStruct.DestOffset = (U32)start;
-      far_memset(charbuf, value, (int)ext_xfer_size);
+      memset(charbuf, value, (int)ext_xfer_size);
       while (tomove > ext_xfer_size)
       {
          xmmmoveextended(&MoveStruct);
@@ -1060,7 +1060,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
 #endif
 
    case DISK: /* SetMemory */
-      far_memset(diskbuf, value, (U16)DISKWRITELEN);
+      memset(diskbuf, value, (U16)DISKWRITELEN);
       rewind(handletable[handle].Disk.file);
       fseek(handletable[handle].Disk.file,start,SEEK_SET);
       while (tomove > DISKWRITELEN)

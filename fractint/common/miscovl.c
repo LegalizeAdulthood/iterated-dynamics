@@ -392,11 +392,11 @@ skip_UI:
 Continue to replace it, Cancel to back out"};
                static FCODE s2a[] = {"... Replacing ..."};
                strcpy(buf2,s1);
-               far_strcat(buf2,CommandName);
+               strcat(buf2,CommandName);
                if(*s_makepar == 0)
-                   far_strcat(buf2,s2a);
+                   strcat(buf2,s2a);
                else
-                   far_strcat(buf2,s2);
+                   strcat(buf2,s2);
                if (stopmsg(18, buf2) < 0)
                {                /* cancel */
                   fclose(infile);
@@ -2432,7 +2432,7 @@ static char *expand_var(char *var, char *buf)
    {
       static char far msg[] = {"Unknown comment variable xxxxxxxxxxxxxxx"};
       msg[25] = '\0';
-      far_strcat(msg,var);
+      strcat(msg,var);
       stopmsg(0,msg);
       out = "";
    }

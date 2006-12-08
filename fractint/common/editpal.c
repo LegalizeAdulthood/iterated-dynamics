@@ -2340,7 +2340,7 @@ static void PalTable__SaveRect(PalTable *this)
          {
          getrow(this->x, this->y+yoff, width, buff);
          hline (this->x, this->y+yoff, width, bg_color);
-         far_memcpy(ptr,bufptr, width);
+         memcpy(ptr,bufptr, width);
          ptr += width;
          }
       Cursor_Show();
@@ -2414,7 +2414,7 @@ static void PalTable__RestoreRect(PalTable *this)
          Cursor_Hide();
          for (yoff=0; yoff<depth; yoff++)
             {
-            far_memcpy(bufptr, ptr, width);
+            memcpy(bufptr, ptr, width);
             putrow(this->x, this->y+yoff, width, buff);
             ptr += width;
             }
@@ -3046,7 +3046,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             Cursor_Hide();
 
             PalTable__SaveUndoData(this, 0, 255);
-            far_memcpy(this->pal,this->save_pal[which],256*3);
+            memcpy(this->pal,this->save_pal[which],256*3);
             PalTable__UpdateDAC(this);
 
             PalTable__SetCurr(this, -1, 0);
@@ -3071,7 +3071,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
          if ( this->save_pal[which] != NULL )
             {
-            far_memcpy(this->save_pal[which],this->pal,256*3);
+            memcpy(this->save_pal[which],this->pal,256*3);
             }
          else
             driver_buzzer(3); /* oops! short on memory! */
@@ -3264,7 +3264,7 @@ static void PalTable__MkDefaultPalettes(PalTable *this)  /* creates default Fkey
    {
       if (this->save_pal[i] != NULL)
       {
-         far_memcpy(this->save_pal[i], this->pal, 256*3);
+         memcpy(this->save_pal[i], this->pal, 256*3);
       }
    }
 }

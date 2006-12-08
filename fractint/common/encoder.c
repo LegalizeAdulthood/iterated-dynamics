@@ -126,7 +126,7 @@ restart:
       i = (int) strlen(tmpfile);
       while (--i >= 0 && tmpfile[i] != SLASHC)
          tmpfile[i] = 0;
-      far_strcat(tmpfile, fractint_tmp);
+      strcat(tmpfile, fractint_tmp);
    }
 
    started_resaves = (resave_flag == 1) ? 1 : 0;
@@ -178,9 +178,9 @@ restart:
       char buf[200];
       sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
       if (newfile)
-         far_strcat(buf,s_delete);
+         strcat(buf,s_delete);
       else
-         far_strcat(buf,s_retain);
+         strcat(buf,s_retain);
       interrupted = 1;
       if (stopmsg(2, buf) < 0)
       {

@@ -366,7 +366,7 @@ int FromMemDisk(long offset, int size, void far *dest)
    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
       findload_cache (offset & (0L-BLOCKLEN));
 
-   far_memcpy(dest, (void far *) &cur_cache->pixel[col_subscr], size);
+   memcpy(dest, (void far *) &cur_cache->pixel[col_subscr], size);
    cur_cache->dirty = 0;
    return 1;
 }
@@ -421,7 +421,7 @@ int ToMemDisk(long offset, int size, void far *src)
    if (cur_offset != (offset & (0L-BLOCKLEN))) /* same entry as last ref? */
       findload_cache (offset & (0L-BLOCKLEN));
 
-   far_memcpy((void far *) &cur_cache->pixel[col_subscr], src, size);
+   memcpy((void far *) &cur_cache->pixel[col_subscr], src, size);
    cur_cache->dirty = 1;
    return 1;
 }
@@ -662,7 +662,7 @@ void dvid_status(int line,char far *msg)
    char buf[41];
    int attrib;
    memset(buf,' ',40);
-   far_memcpy(buf,msg,(int) strlen(msg));
+   memcpy(buf,msg,(int) strlen(msg));
    buf[40] = 0;
    attrib = C_DVID_HI;
    if (line >= 100) {

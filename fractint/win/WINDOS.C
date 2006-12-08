@@ -1030,11 +1030,6 @@ for (i = 0;i < maxlen ; i++)
 ; *************** Far string/memory functions *********
 */
 
-int far_stricmp(char far *a, char far *b)
-{
-   return _fstricmp(a,b);
-}
-
 void far_strcat (char far *a, char far *b)
 {
    _fstrcat(a,b);

@@ -152,7 +152,7 @@ static int _fastcall readLSystemFile(char *str)
          if (!strcmp(word,"axiom"))
          {
             if (save_rule(strtok(NULL," \t\n"),&ruleptrs[0])) {
-                far_strcat(msgbuf,out_of_mem);
+                strcat(msgbuf,out_of_mem);
                 ++err;
                 break;
             }
@@ -193,7 +193,7 @@ static int _fastcall readLSystemFile(char *str)
                memerr = append_rule(fixed,index);
             }
             if (memerr) {
-                far_strcat(msgbuf, out_of_mem);
+                strcat(msgbuf, out_of_mem);
                 ++err;
                 break;
             }
@@ -223,13 +223,13 @@ static int _fastcall readLSystemFile(char *str)
    if (!ruleptrs[0] && err<6)
    {
       static FCODE no_axiom[] = {"Error:  no axiom\n"};
-      far_strcat(msgbuf,no_axiom);
+      strcat(msgbuf,no_axiom);
       ++err;
    }
    if ((maxangle<3||maxangle>50) && err<6)
    {
       static FCODE missing_angle[] = {"Error:  illegal or missing angle\n"};
-      far_strcat(msgbuf,missing_angle);
+      strcat(msgbuf,missing_angle);
       ++err;
    }
    if (err)

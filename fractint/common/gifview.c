@@ -353,7 +353,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
     int i,nexterr,brt,err;
         if(ditherbuf == NULL)
         ditherbuf = (char far *)farmemalloc(linelen+1);
-        far_memset( ditherbuf, 0, linelen+1);
+        memset( ditherbuf, 0, linelen+1);
 
     nexterr = (rand()&0x1f)-16;
     for (i=0;i<linelen;i++) {

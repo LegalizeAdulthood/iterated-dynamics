@@ -11,6 +11,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
+#include "drivers.h"
 
 /* routines in this module      */
 
@@ -544,9 +545,9 @@ int diffusion()
    }
    if (mode == 2) {
       if (xdots > ydots)
-         radius = ydots - border;
+         radius = (float) (ydots - border);
       else
-         radius = xdots - border;
+         radius = (float) (xdots - border);
    }
    if (resuming) /* restore worklist, if we can't the above will stay in place */
    {

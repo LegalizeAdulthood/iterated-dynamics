@@ -133,7 +133,7 @@ long x,y;
 long LogFloat14(x)
 unsigned long x;
 {
-    return log((double)em2float(x))*(1<<16);
+    return (long) log((double)em2float(x))*(1<<16);
 }
 
 /* This divides two e/m numbers and returns an e/m number. */
@@ -169,7 +169,7 @@ long RegFloat2Fg(x,Fudge)
 long x;
 int Fudge;
 {
-    return em2float(x)*(float)(1<<Fudge);
+    return (long) (em2float(x)*(float)(1<<Fudge));
 }
 
 long RegSftFloat(x, Shift)

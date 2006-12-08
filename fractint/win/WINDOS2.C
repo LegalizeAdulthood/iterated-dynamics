@@ -733,8 +733,8 @@ void stackscreen()
          }
       savebytes = 25*80;
       if ((ptr = savescreen[i] = farmemalloc((long)(2*savebytes)))) {
-         far_memcpy(ptr,wintext_chars,savebytes);
-         far_memcpy(ptr+savebytes,wintext_attrs,savebytes);
+         memcpy(ptr,wintext_chars,savebytes);
+         memcpy(ptr+savebytes,wintext_attrs,savebytes);
          }
       else {
             static char far msg[]={"insufficient memory, aborting"};
@@ -758,8 +758,8 @@ void unstackscreen()
    if (--screenctr >= 0) { /* unstack */
       savebytes = 25*80;
       if ((ptr = savescreen[screenctr])) {
-         far_memcpy(wintext_chars,ptr,savebytes);
-         far_memcpy(wintext_attrs,ptr+savebytes,savebytes);
+         memcpy(wintext_chars,ptr,savebytes);
+         memcpy(wintext_attrs,ptr+savebytes,savebytes);
          wintext_paintscreen(0,80,0,25);
          farmemfree(ptr);
          }

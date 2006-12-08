@@ -288,7 +288,7 @@ if (fastrestore  && !askvideo)
             strcat((char *)dstack,temp1);
             }
       if (fileaspectratio != 0 && fileaspectratio != screenaspect)
-         far_strcat((char *)dstack,warning);
+         strcat((char *)dstack,warning);
       strcat((char *)dstack,"\n");
       /* set up instructions */
       strcpy(temp1,select_msg);
