@@ -2263,7 +2263,7 @@ static void _fastcall save_history_info()
    }
    else if(historyflag == 1)
       historyflag = 0;   /* coming from user history command, don't save */
-   else if(far_memcmp(&current,&last,sizeof(HISTORY)))
+   else if (memcmp(&current,&last,sizeof(HISTORY)))
    {
       if(++saveptr >= maxhistory)  /* back to beginning of circular buffer */
          saveptr = 0;

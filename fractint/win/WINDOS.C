@@ -1020,12 +1020,6 @@ for (i = 0;i < maxlen ; i++) {
 return(0);
 }
 
-void far_memset(void far *string1, int char2, int maxlen) {
-int i;
-for (i = 0;i < maxlen ; i++)
-    ((char far *)string1)[i] = char2;
-}
-
 /*
 ; *************** Far string/memory functions *********
 */

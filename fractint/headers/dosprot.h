@@ -25,7 +25,6 @@ extern  void   cdecl far_strcat( char far *, char far *);
 extern  void   cdecl far_memset( VOIDFARPTR , int      , unsigned);
 extern  void   cdecl far_memcpy( VOIDFARPTR , VOIDFARPTR , int);
 extern  int    cdecl far_memcmp( VOIDFARPTR , VOIDFARPTR , int);
-extern  void   cdecl far_memicmp(VOIDFARPTR , VOIDFARPTR , int);
 extern  BYTE far *cdecl emmquery(void);
 extern  unsigned int cdecl emmgetfree(void);
 extern  unsigned int cdecl emmallocate(unsigned int);
