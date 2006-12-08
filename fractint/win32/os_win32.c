@@ -516,11 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-int far_memcmp(VOIDFARPTR a, VOIDFARPTR b, int len)
-{
-    return memcmp(a, b, len);
-}
-
 void far_memicmp(VOIDFARPTR a, VOIDFARPTR b, int len)
 {
     memicmp(a, b, len);
