@@ -1764,8 +1764,8 @@ int load_fractint_cfg(int options)
            )
          goto bad_fractint_cfg;
       cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
-      far_memcpy(vident->name,   (char far *)&tempstring[commas[0]],25);
-      far_memcpy(vident->comment,(char far *)&tempstring[commas[9]],25);
+      memcpy(vident->name,   (char far *)&tempstring[commas[0]],25);
+      memcpy(vident->comment,(char far *)&tempstring[commas[9]],25);
       vident->name[25] = vident->comment[25] = 0;
       vident->keynum      = keynum;
       vident->videomodeax = ax;
@@ -1792,7 +1792,7 @@ use_resident_table:
    vident = vidtbl;
    for (i = 0; i < MAXVIDEOTABLE; ++i) {
       if (videotable[i].xdots) {
-         far_memcpy((char far *)vident,(char far *)&videotable[i],
+         memcpy((char far *)vident,(char far *)&videotable[i],
                     sizeof(*vident));
          ++vident;
          ++vidtbllen;
@@ -1822,7 +1822,7 @@ void load_videotable(int options)
    memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         far_memcpy((char far *)&videotable[keyents],(char far *)&vidtbl[i],
+         memcpy((char far *)&videotable[keyents],(char far *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (++keyents >= MAXVIDEOTABLE)
             break;

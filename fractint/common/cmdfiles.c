@@ -867,7 +867,7 @@ static int cmdfile(FILE *handle,int mode)
       contents to extraseg */
    cmdbuf = (char *)suffix;
    savesuffix = MK_FP(extraseg,0);
-   far_memcpy(savesuffix,suffix,10000);
+   memcpy(savesuffix,suffix,10000);
    memset(suffix,0,10000);
 
    if (mode == 2 || mode == 3) {
@@ -885,7 +885,7 @@ static int cmdfile(FILE *handle,int mode)
 #ifdef XFRACT
    initmode = 0;                /* Skip credits if @file is used. */
 #endif
-   far_memcpy(suffix,savesuffix,10000);
+   memcpy(suffix,savesuffix,10000);
    if(changeflag&1)
    {
       backwards_v18();

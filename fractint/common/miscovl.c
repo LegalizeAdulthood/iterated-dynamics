@@ -576,7 +576,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    /* Using near string boxx for buffer after saving to extraseg */
 
    saveshared = MK_FP(extraseg,0);
-   far_memcpy(saveshared,boxx,10000);
+   memcpy(saveshared,boxx,10000);
    memset(boxx,0,10000);
    wb_data.buf = (char *)boxx;
    if(colorsonly)
@@ -1232,7 +1232,7 @@ docolors:
    while (wbdata->len) /* flush the buffer */
       put_parm_line();
    /* restore previous boxx data from extraseg */
-   far_memcpy(boxx, saveshared, 10000);
+   memcpy(boxx, saveshared, 10000);
    restore_stack(saved);
 }
 
@@ -1747,7 +1747,7 @@ int select_video_mode(int curmode)
          }
       }
    else
-      far_memcpy((char far *)&videoentry,(char far *)&videotable[curmode],
+      memcpy((char far *)&videoentry,(char far *)&videotable[curmode],
                  sizeof(videoentry));
 #ifndef XFRACT
    for (i = 0; i < vidtbllen; ++i) { /* find default mode */
@@ -1783,7 +1783,7 @@ int select_video_mode(int curmode)
    else         /* picked by Enter key */
       i = entnums[i];
 #endif
-   far_memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+   memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
               sizeof(videoentry));  /* the selected entry now in videoentry */
 
 #ifndef XFRACT
@@ -1792,7 +1792,7 @@ int select_video_mode(int curmode)
    memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         far_memcpy((char far *)&videotable[j],(char far *)&vidtbl[i],
+         memcpy((char far *)&videotable[j],(char far *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (far_memcmp((char far *)&videoentry,(char far *)&vidtbl[i],
                         sizeof(videoentry)) == 0)
@@ -1805,7 +1805,7 @@ int select_video_mode(int curmode)
     k = vidtbl[0].keynum;
 #endif
    if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
-      far_memcpy((char far *)&videotable[MAXVIDEOTABLE-1],
+      memcpy((char far *)&videotable[MAXVIDEOTABLE-1],
                  (char far *)&videoentry,sizeof(*vidtbl));
       ret = 1400; /* special value for check_vidmode_key */
       }
@@ -1823,7 +1823,7 @@ void format_vid_table(int choice,char *buf)
    char kname[5];
    char biosflag;
    int truecolorbits;
-   far_memcpy((char far *)&videoentry,(char far *)&vidtbl[entsptr[choice]],
+   memcpy((char far *)&videoentry,(char far *)&vidtbl[entsptr[choice]],
               sizeof(videoentry));
    vidmode_keyname(videoentry.keynum,kname);
    biosflag = (char)((videoentry.dotmode % 100 == 1) ? 'B' : ' ');
@@ -1927,7 +1927,7 @@ static void update_fractint_cfg()
       char colorsbuf[10];
       ++linenum;
       if (linenum == nextlinenum) { /* replace this line */
-         far_memcpy((char far *)&vident,(char far *)&vidtbl[nextmode],
+         memcpy((char far *)&vident,(char far *)&vidtbl[nextmode],
                     sizeof(videoentry));
          vidmode_keyname(vident.keynum,kname);
          strcpy(buf,vident.name);

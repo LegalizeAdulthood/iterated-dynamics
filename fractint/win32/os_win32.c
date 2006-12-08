@@ -516,11 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-void far_strcat(char *a, char *b)
-{
-    strcat(a, b);
-}
-
 void far_memset(VOIDFARPTR a, int c, unsigned int len)
 {
     memset(a, c, len);
