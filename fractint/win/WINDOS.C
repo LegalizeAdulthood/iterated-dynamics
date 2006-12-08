@@ -988,13 +988,6 @@ void winfract_help(void)
         WinHelp(wintext_hWndCopy,szHelpFileName,FIHELP_INDEX,0L);
 }
 
-int far_strlen(char far *string) {
-int i;
-for (i = 0; ; i++)
-    if (string[i] == 0)
-        return(i);
-}
-
 int far_strnicmp(char far *string1, char far *string2, int maxlen) {
 int i;
 unsigned char j, k;
@@ -1036,16 +1029,6 @@ for (i = 0;i < maxlen ; i++)
 /*
 ; *************** Far string/memory functions *********
 */
-
-void far_strcpy(char far *to, char far *from)
-{
-   _fstrcpy(to, from);
-}
-
-int far_strcmp (char far *a, char far *b)
-{
-   return _fstrcmp(a,b);
-}
 
 int far_stricmp(char far *a, char far *b)
 {

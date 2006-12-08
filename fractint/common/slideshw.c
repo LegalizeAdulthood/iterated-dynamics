@@ -82,7 +82,7 @@ static int get_scancode(char *mn)
    int i;
    i = 0;
    for(i=0;i< stop;i++)
-      if(far_strcmp((char far *)mn,scancodes[i].mnemonic)==0)
+      if(strcmp((char far *)mn,scancodes[i].mnemonic)==0)
          break;
    return(scancodes[i].code);
 }
@@ -237,7 +237,7 @@ start:
    out = -12345;
    if(isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
          out=atoi(buffer);
-   else if(far_strcmp((char far *)buffer,smsg)==0)
+   else if(strcmp((char far *)buffer,smsg)==0)
       {
          int secs;
          out = 0;
@@ -258,7 +258,7 @@ start:
          }
          out = 0;
       }
-   else if(far_strcmp((char far *)buffer,sgoto)==0)
+   else if(strcmp((char far *)buffer,sgoto)==0)
       {
          if (fscanf(fpss,"%s",buffer) != 1)
          {
@@ -286,7 +286,7 @@ start:
       }
    else if((i = get_scancode(buffer)) > 0)
          out = i;
-   else if(far_strcmp(swait,(char far *)buffer)==0)
+   else if(strcmp(swait,(char far *)buffer)==0)
       {
          float fticks;
          err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
@@ -303,7 +303,7 @@ start:
          }
          slowcount = out = 0;
       }
-   else if(far_strcmp(scalcwait,(char far *)buffer)==0) /* wait for calc to finish */
+   else if(strcmp(scalcwait,(char far *)buffer)==0) /* wait for calc to finish */
       {
          calcwait = 1;
          slowcount = out = 0;

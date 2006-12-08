@@ -516,16 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-int far_strlen(char *str)
-{
-	return (int) strlen(str);
-}
-
-int far_strcmp(char *a, char *b)
-{
-    return strcmp(a, b);
-}
-
 int far_stricmp(char *a, char *b)
 {
    return stricmp(a, b);

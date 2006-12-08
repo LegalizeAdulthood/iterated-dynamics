@@ -662,7 +662,7 @@ void dvid_status(int line,char far *msg)
    char buf[41];
    int attrib;
    memset(buf,' ',40);
-   far_memcpy(buf,msg,far_strlen(msg));
+   far_memcpy(buf,msg,(int) strlen(msg));
    buf[40] = 0;
    attrib = C_DVID_HI;
    if (line >= 100) {

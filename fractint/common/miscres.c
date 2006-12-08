@@ -102,7 +102,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char far *str,int maxrow)
     int length, decpt, padding, startrow, done;
     done = 0;
     startrow = *row;
-    length = far_strlen(str);
+    length = (int) strlen(str);
     padding = 3; /* space between col1 and decimal. */
     /* find decimal point */
     for(decpt=0;decpt < length; decpt++)
@@ -1333,7 +1333,7 @@ static void area(void)
 int endswithslash(char far *fl)
 {
    int len;
-   len = far_strlen(fl);
+   len = (int) strlen(fl);
    if(len)
       if(fl[--len] == SLASHC)
          return(1);

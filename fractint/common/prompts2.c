@@ -1725,7 +1725,7 @@ retry_dir:
    {
       if(choices[i]->type)
       {
-         if(far_strcmp(choices[i]->name,"..") == 0) /* go up a directory */
+         if(strcmp(choices[i]->name,"..") == 0) /* go up a directory */
          {
             if(strcmp(dir,DOTSLASH) == 0)
                strcpy(dir,DOTDOTSLASH);
@@ -1915,7 +1915,7 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
    if(ext)
       ext[0]   = 0;
 
-   if((length = (int) far_strlen(template)) == 0)
+   if((length = (int) strlen(template)) == 0)
       return(0);
 
    offset = 0;
@@ -2892,7 +2892,7 @@ void far_strncpy(char far *t, char far *s, int len)
 char far *far_strchr(char far *str, char c)
 {
    int len,i;
-   len = (int) far_strlen(str);
+   len = (int) strlen(str);
    i= -1;
    while (++i < len && c != str[i]);
    if(i == len)
@@ -2904,7 +2904,7 @@ char far *far_strchr(char far *str, char c)
 char far *far_strrchr(char far *str, char c)
 {
    int len;
-   len = (int) far_strlen(str);
+   len = (int) strlen(str);
    while (--len > -1 && c != str[len]);
    if(len == -1)
       return(NULL);

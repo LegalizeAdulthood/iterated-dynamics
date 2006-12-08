@@ -2353,42 +2353,42 @@ static char *expand_var(char *var, char *buf)
    /* Sat Aug 17 21:34:14 1996 */
    /* 012345678901234567890123 */
    /*           1         2    */   
-   if(far_strcmp(var,s_year) == 0)       /* 4 chars */
+   if(strcmp(var,s_year) == 0)       /* 4 chars */
    {
       str[24] = '\0';
       out = &str[20];
    }
-   else if(far_strcmp(var,s_month) == 0) /* 3 chars */
+   else if(strcmp(var,s_month) == 0) /* 3 chars */
    {
       str[7] = '\0';
       out = &str[4];
    }
-   else if(far_strcmp(var,s_day) == 0)   /* 2 chars */
+   else if(strcmp(var,s_day) == 0)   /* 2 chars */
    {
       str[10] = '\0';
       out = &str[8];
    }
-   else if(far_strcmp(var,s_hour) == 0)  /* 2 chars */
+   else if(strcmp(var,s_hour) == 0)  /* 2 chars */
    {
       str[13] = '\0';
       out = &str[11];
    }
-   else if(far_strcmp(var,s_min) == 0)   /* 2 chars */
+   else if(strcmp(var,s_min) == 0)   /* 2 chars */
    {
       str[16] = '\0';
       out = &str[14];
    }
-   else if(far_strcmp(var,s_sec) == 0)   /* 2 chars */
+   else if(strcmp(var,s_sec) == 0)   /* 2 chars */
    {
       str[19] = '\0';
       out = &str[17];
    }
-   else if(far_strcmp(var,s_time) == 0)  /* 8 chars */
+   else if(strcmp(var,s_time) == 0)  /* 8 chars */
    {
       str[19] = '\0';
       out = &str[11];
    }
-   else if(far_strcmp(var,s_date) == 0)
+   else if(strcmp(var,s_date) == 0)
    {
       str[10] = '\0';
       str[24] = '\0';
@@ -2396,32 +2396,32 @@ static char *expand_var(char *var, char *buf)
       strcat(out,", ");
       strcat(out,&str[20]);
    }
-   else if(far_strcmp(var,s_calctime) == 0)
+   else if(strcmp(var,s_calctime) == 0)
    {
       get_calculation_time(buf,calctime);
       out = buf;
    }
-   else if(far_strcmp(var,s_version) == 0)  /* 4 chars */
+   else if(strcmp(var,s_version) == 0)  /* 4 chars */
    {
       sprintf(buf,"%d",release);
       out = buf;
    }
-   else if(far_strcmp(var,s_patch) == 0)   /* 1 or 2 chars */
+   else if(strcmp(var,s_patch) == 0)   /* 1 or 2 chars */
    {
       sprintf(buf,"%d",patchlevel);
       out = buf;
    }
-   else if(far_strcmp(var,s_xdots) == 0)   /* 2 to 4 chars */
+   else if(strcmp(var,s_xdots) == 0)   /* 2 to 4 chars */
    {
       sprintf(buf,"%d",xdots);
       out = buf;
    }
-   else if(far_strcmp(var,s_ydots) == 0)   /* 2 to 4 chars */
+   else if(strcmp(var,s_ydots) == 0)   /* 2 to 4 chars */
    {
       sprintf(buf,"%d",ydots);
       out = buf;
    }
-   else if(far_strcmp(var,s_vidkey) == 0)   /* 2 to 3 chars */
+   else if(strcmp(var,s_vidkey) == 0)   /* 2 to 3 chars */
    {
       char vidmde[5];
       vidmode_keyname(videoentry.keynum, vidmde);

@@ -418,23 +418,9 @@ char *ptr;
 /*
 ; *************** Far string/memory functions *********
 */
-int
-far_strlen (a)
-char *a;
-{
-    return strlen(a);
-}
-
-
-void
-far_strcpy (a,b)
-char *a,*b;
-{
-    strcpy(a,b);
-}
 
 int
-far_strcmp (a,b)
+strcmp (a,b)
 char *a, *b;
 {
     return strcmp(a,b);
