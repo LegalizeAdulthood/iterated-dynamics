@@ -153,7 +153,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       {
       static FCODE o_msg[] = {"clearing the 'screen'"};
       char msg[sizeof(o_msg)];
-      far_strcpy(msg,o_msg);
+      strcpy(msg,o_msg);
       dvid_status(0,msg);
       }
       }

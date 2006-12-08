@@ -95,7 +95,7 @@ static void get_mnemonic(int code,char *mnemonic)
    for(i=0;i< stop;i++)
       if(code == scancodes[i].code)
       {
-         far_strcpy(mnemonic,scancodes[i].mnemonic);
+         strcpy(mnemonic,scancodes[i].mnemonic);
          break;
       }   
 }
@@ -404,7 +404,7 @@ static void slideshowerr(char far *msg)
    char msgbuf[300];
    static FCODE errhdg[] = "Slideshow error:\n";
    stopslideshow();
-   far_strcpy(msgbuf,errhdg);
+   strcpy(msgbuf,errhdg);
    far_strcat(msgbuf,msg);
    stopmsg(0,msgbuf);
 }

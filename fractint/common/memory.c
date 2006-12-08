@@ -186,16 +186,16 @@ static void WhichDiskError(int I_O)
    switch (I_O) {
       default:
       case 1:
-         far_strcpy(nmsg,fmsg1);
+         strcpy(nmsg,fmsg1);
          break;
       case 2:
-         far_strcpy(nmsg,fmsg2);
+         strcpy(nmsg,fmsg2);
          break;
       case 3:
-         far_strcpy(nmsg,fmsg3);
+         strcpy(nmsg,fmsg3);
          break;
       case 4:
-         far_strcpy(nmsg,fmsg4);
+         strcpy(nmsg,fmsg4);
          break;
    }
    sprintf(buf,nmsg);
@@ -236,7 +236,7 @@ static void DisplayError(int stored_at, long howmuch)
    char buf[MSGLEN*2];
    char nmsg[MSGLEN*2];
    static FCODE fmsg[] = {"Allocating %ld Bytes of %s memory failed.\nAlternate disk space is also insufficient. Goodbye"};
-   far_strcpy(nmsg,fmsg);
+   strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,howmuch,memstr[stored_at]);
    stopmsg(0,(char far *)buf);
 }
@@ -405,7 +405,7 @@ void DisplayMemory (void)
    tmpdisk = GetDiskSpace(); /* fix this for XFRACT ????? */
 
    tmpfar = fr_farfree();
-   far_strcpy(nmsg,fmsg);
+   strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,tmpextra,tmpfar,tmpexp,tmpext,tmpdisk);
    stopmsg(20,(char far *)buf);
 #endif
@@ -417,7 +417,7 @@ void DisplayHandle (U16 handle)
    char nmsg[MSGLEN];
    static FCODE fmsg[] = {"Handle %u, type %s, size %li"};
 
-   far_strcpy(nmsg,fmsg);
+   strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,handle,memstr[handletable[handle].Nowhere.stored_at],
            handletable[handle].Nowhere.size);
    if(stopmsg(6,(char far *)buf) == -1)
@@ -458,7 +458,7 @@ void ExitCheck (void)
             char buf[MSGLEN];
             char nmsg[MSGLEN];
             static FCODE fmsg[] = {"Memory type %s still allocated.  Handle = %i."};
-            far_strcpy(nmsg,fmsg);
+            strcpy(nmsg,fmsg);
             sprintf(buf,nmsg,memstr[handletable[i].Nowhere.stored_at],i);
             stopmsg(0,(char far *)buf);
             MemoryRelease(i);
@@ -634,7 +634,7 @@ dodisk:
       char buf[MSGLEN];
       char nmsg[MSGLEN];
       static FCODE fmsg[] = {"Asked for %s, allocated %lu bytes of %s, handle = %u."};
-      far_strcpy(nmsg,fmsg);
+      strcpy(nmsg,fmsg);
       sprintf(buf,nmsg,memstr[stored_at],toallocate,memstr[use_this_type],handle);
       stopmsg(20,(char far *)buf);
       DisplayMemory();

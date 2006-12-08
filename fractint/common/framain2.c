@@ -458,7 +458,7 @@ done:
      {
         static FCODE o_msg[] = {"Image has been completed"};
         char msg[sizeof(o_msg)];
-        far_strcpy(msg,o_msg);
+        strcpy(msg,o_msg);
         dvid_status(0,msg);
      }
      diskisactive = 0;              /* flag for disk-video routines */

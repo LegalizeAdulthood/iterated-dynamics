@@ -2,6 +2,7 @@
         This module consists only of the fractalspecific structure
         and a *slew* of defines needed to get it to compile
 */
+#include <string.h>
 
 /* includes needed for fractalspecific */
 
@@ -2384,6 +2385,6 @@ int typehasparm(int type,int parm,char *buf)
          ret = NULL;
 
    if(ret && buf != NULL)
-      far_strcpy(buf,ret);
+      strcpy(buf,ret);
    return(ret?1:0);
 }

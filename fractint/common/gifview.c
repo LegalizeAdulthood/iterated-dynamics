@@ -42,7 +42,7 @@ int get_byte()
 
 int get_bytes(BYTE *where,int how_many)
 {
-   return (fread((char *)where,1,how_many,fpin)); /* EOF is -1, as desired */
+   return (int) fread((char *)where,1,how_many,fpin); /* EOF is -1, as desired */
 }
 
 /*
@@ -314,7 +314,7 @@ int gifview()
    if (driver_diskp()) { /* disk-video */
       static FCODE o_msg[] = {"Restore completed"};
       char msg[sizeof(o_msg)];
-      far_strcpy(msg,o_msg);
+      strcpy(msg,o_msg);
       dvid_status(0,msg);
       dvid_status(1,"");
       }

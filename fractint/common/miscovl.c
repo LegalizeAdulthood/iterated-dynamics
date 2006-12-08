@@ -81,7 +81,7 @@ FILE *parmfile;
 
 #define LOADBATCHPROMPTS(X)     {\
    static FCODE tmp[] = { X };\
-   far_strcpy(ptr,tmp);\
+   strcpy(ptr,tmp);\
    choices[promptnum]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -186,16 +186,16 @@ void make_batch_file()
          colorspec[13] = 0;
       }
    }
-   far_strcpy(inpcommandfile, CommandFile);
-   far_strcpy(inpcommandname, CommandName);
+   strcpy(inpcommandfile, CommandFile);
+   strcpy(inpcommandname, CommandName);
    for(i=0;i<4;i++)
    {
       expand_comments(CommandComment[i], par_comment[i]);
-      far_strcpy(inpcomment[i], CommandComment[i]);
+      strcpy(inpcomment[i], CommandComment[i]);
    }
    
    if (CommandName[0] == 0)
-      far_strcpy(inpcommandname, "test");
+      strcpy(inpcommandname, "test");
    /* TW added these  - and Bert moved them */
    pxdots = xdots;
    pydots = ydots;
@@ -273,10 +273,10 @@ prompt_user:
          colorsonly = 1;
       }
 
-      far_strcpy(CommandFile, inpcommandfile);
+      strcpy(CommandFile, inpcommandfile);
       if (has_ext(CommandFile) == NULL)
          strcat(CommandFile, ".par");   /* default extension .par */
-      far_strcpy(CommandName, inpcommandname);
+      strcpy(CommandName, inpcommandname);
       for(i=0;i<4;i++)
          far_strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
@@ -361,7 +361,7 @@ skip_UI:
             stopmsg(0, buf);
             continue;
          }
-         i = strlen(outname);
+         i = (int) strlen(outname);
          while (--i >= 0 && outname[i] != SLASHC)
             outname[i] = 0;
          strcat(outname, "fractint.tmp");
@@ -391,7 +391,7 @@ skip_UI:
                static FCODE s2[] = {"\n\
 Continue to replace it, Cancel to back out"};
                static FCODE s2a[] = {"... Replacing ..."};
-               far_strcpy(buf2,s1);
+               strcpy(buf2,s1);
                far_strcat(buf2,CommandName);
                if(*s_makepar == 0)
                    far_strcat(buf2,s2a);
@@ -483,7 +483,7 @@ Continue to replace it, Cancel to back out"};
                   last=i;
             for(i=0;i<last;i++)
                if(*CommandComment[i]=='\0')
-                  far_strcpy(CommandComment[i],";");
+                  strcpy(CommandComment[i],";");
          }
          if (CommandComment[0][0])
             fprintf(parmfile, " ; %s", CommandComment[0]);
@@ -1714,8 +1714,8 @@ int select_video_mode(int curmode)
 
    load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
 
-   far_strcpy(hdg1,o_hdg1);
-   far_strcpy(hdg2,o_hdg2);
+   strcpy(hdg1,o_hdg1);
+   strcpy(hdg2,o_hdg2);
 
    for (i = 0; i < vidtbllen; ++i) { /* init tables */
       entnums[i] = i;
@@ -1908,7 +1908,7 @@ static void update_fractint_cfg()
       return;
       }
    strcpy(outname,cfgname);
-   i = strlen(outname);
+   i = (int) strlen(outname);
    while (--i >= 0 && outname[i] != SLASHC)
    outname[i] = 0;
    strcat(outname,"fractint.tmp");
@@ -1931,7 +1931,7 @@ static void update_fractint_cfg()
                     sizeof(videoentry));
          vidmode_keyname(vident.keynum,kname);
          strcpy(buf,vident.name);
-         i = strlen(buf);
+         i = (int) strlen(buf);
          while (i && buf[i-1] == ' ') /* strip trailing spaces to compress */
             --i;
          j = i + 5;
@@ -2018,13 +2018,13 @@ if (xstep == 0 && ystep == 0) {         /* first time through? */
     static FCODE msg1[] = "Cannot create output file %s!\n";
     static FCODE msg2[] = " \n Generating multi-image GIF file %s using";
     static FCODE msg3[] = " %d X and %d Y components\n\n";
-    far_strcpy(msgbuf, msg2);
+    strcpy(msgbuf, msg2);
     printf(msgbuf, gifout);
-    far_strcpy(msgbuf, msg3);
+    strcpy(msgbuf, msg3);
     printf(msgbuf, xmult, ymult);
     /* attempt to create the output file */
     if ((out = fopen(gifout,"wb")) == NULL) {
-        far_strcpy(msgbuf, msg1);
+        strcpy(msgbuf, msg1);
         printf(msgbuf, gifout);
         exit(1);
         }
@@ -2034,7 +2034,7 @@ if (xstep == 0 && ystep == 0) {         /* first time through? */
 
         if ((in = fopen(gifin,"rb")) == NULL) {
             static FCODE msg1[] = "Can't open file %s!\n";
-            far_strcpy(msgbuf, msg1);
+            strcpy(msgbuf, msg1);
             printf(msgbuf, gifin);
             exit(1);
             }
@@ -2080,7 +2080,7 @@ if (xstep == 0 && ystep == 0) {         /* first time through? */
         if (xres != allxres || yres != allyres || itbl != allitbl) {
             /* Oops - our pieces don't match */
             static FCODE msg1[] = "File %s doesn't have the same resolution as its predecessors!\n";
-            far_strcpy(msgbuf, msg1);
+            strcpy(msgbuf, msg1);
             printf(msgbuf, gifin);
             exit(1);
             }
@@ -2180,7 +2180,7 @@ fclose(out);                    /* done with the output GIF */
 
 if (inputerrorflag != 0) {      /* uh-oh - something failed */
     static FCODE msg1[] = "\007 Process failed = early EOF on input file %s\n";
-    far_strcpy(msgbuf, msg1);
+    strcpy(msgbuf, msg1);
     printf(msgbuf, gifin);
 /* following line was for debugging
     printf("inputerrorflag = %d\n", inputerrorflag);
@@ -2189,7 +2189,7 @@ if (inputerrorflag != 0) {      /* uh-oh - something failed */
 
 if (errorflag != 0) {           /* uh-oh - something failed */
     static FCODE msg1[] = "\007 Process failed = out of disk space?\n";
-    far_strcpy(msgbuf, msg1);
+    strcpy(msgbuf, msg1);
     printf(msgbuf);
 /* following line was for debugging
     printf("errorflag = %d\n", errorflag);
@@ -2208,7 +2208,7 @@ if (errorflag == 0 && inputerrorflag == 0)
 /* tell the world we're done */
 if (errorflag == 0 && inputerrorflag == 0) {
     static FCODE msg1[] = "File %s has been created (and its component files deleted)\n";
-    far_strcpy(msgbuf, msg1);
+    strcpy(msgbuf, msg1);
     printf(msgbuf, gifout);
     }
 }
@@ -2476,7 +2476,7 @@ void expand_comments(char far *target, char far *source)
          varname[k] = 0;
          varstr = expand_var(varname,buf);
          far_strncpy(target+j,varstr,MAXCMT-j-1);
-         j += strlen(varstr);
+         j += (int) strlen(varstr);
       }
       else if (c == esc_char && escape != 0 && oldc != '\\')
          k = 0;

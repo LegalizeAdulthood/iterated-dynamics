@@ -2897,7 +2897,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
               char msg[sizeof(o_msg)];
               int i;
               char buf[20];
-              far_strcpy(msg,o_msg);
+              strcpy(msg,o_msg);
               sprintf(buf,"%.3f",1./gamma_val);
               driver_stack_screen();
               i = field_prompt(0,msg,NULL,buf,20,NULL);

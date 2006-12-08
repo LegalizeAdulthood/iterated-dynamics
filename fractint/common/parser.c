@@ -3571,7 +3571,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       int j;
       int k = far_strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
       char msgbuf[100];
-      far_strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+      strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
       strcat(msgbuf, ":\n   ");
       fseek(open_file, filepos, SEEK_SET);
       for(j = 0; j < i && j < 25; j++)
@@ -3617,7 +3617,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
          char far * msgbuf = (char far *) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
-         far_strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
+         strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          far_strcat(msgbuf, ":\n   ");
          far_strcat(msgbuf, sym_buf);
          stopmsg(8, msgbuf);
@@ -4146,7 +4146,7 @@ struct var_list_st far * add_var_to_list (struct var_list_st far * p, struct tok
    if (p == NULL) {
       if ((p = var_list_alloc()) == NULL)
          return NULL;
-      far_strcpy(p->name, tok.token_str);
+      strcpy(p->name, tok.token_str);
       p->next_item = NULL;
    }
    else if (far_strcmp(p->name, tok.token_str) == 0) {
