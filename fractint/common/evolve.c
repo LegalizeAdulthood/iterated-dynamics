@@ -1,3 +1,4 @@
+#include <string.h>
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -136,27 +137,27 @@ void initgene(void) /* set up pointers and mutation params for all usable image
     { &bailoutest, varybotest,  0, "",6 }
   };
   i = -1;
-  far_strcpy(gene[++i].name, s_Param0); /* name of var for menus */
-  far_strcpy(gene[++i].name, s_Param1);
-  far_strcpy(gene[++i].name, s_Param2);
-  far_strcpy(gene[++i].name, s_Param3);
-  far_strcpy(gene[++i].name, s_Param4);
-  far_strcpy(gene[++i].name, s_Param5);
-  far_strcpy(gene[++i].name, s_Param6);
-  far_strcpy(gene[++i].name, s_Param7);
-  far_strcpy(gene[++i].name, s_Param8);
-  far_strcpy(gene[++i].name, s_Param9);
-  far_strcpy(gene[++i].name, s_inside);
-  far_strcpy(gene[++i].name, s_outside);
-  far_strcpy(gene[++i].name, s_decomp);
-  far_strcpy(gene[++i].name, s_invertr);
-  far_strcpy(gene[++i].name, s_invertx);
-  far_strcpy(gene[++i].name, s_inverty);
-  far_strcpy(gene[++i].name, s_trigfn1);
-  far_strcpy(gene[++i].name, s_trigfn2);
-  far_strcpy(gene[++i].name, s_trigfn3);
-  far_strcpy(gene[++i].name, s_trigfn4);
-  far_strcpy(gene[++i].name, s_botest);
+  strcpy(gene[++i].name, s_Param0); /* name of var for menus */
+  strcpy(gene[++i].name, s_Param1);
+  strcpy(gene[++i].name, s_Param2);
+  strcpy(gene[++i].name, s_Param3);
+  strcpy(gene[++i].name, s_Param4);
+  strcpy(gene[++i].name, s_Param5);
+  strcpy(gene[++i].name, s_Param6);
+  strcpy(gene[++i].name, s_Param7);
+  strcpy(gene[++i].name, s_Param8);
+  strcpy(gene[++i].name, s_Param9);
+  strcpy(gene[++i].name, s_inside);
+  strcpy(gene[++i].name, s_outside);
+  strcpy(gene[++i].name, s_decomp);
+  strcpy(gene[++i].name, s_invertr);
+  strcpy(gene[++i].name, s_invertx);
+  strcpy(gene[++i].name, s_inverty);
+  strcpy(gene[++i].name, s_trigfn1);
+  strcpy(gene[++i].name, s_trigfn2);
+  strcpy(gene[++i].name, s_trigfn3);
+  strcpy(gene[++i].name, s_trigfn4);
+  strcpy(gene[++i].name, s_botest);
 
   if (gene_handle == 0)
      gene_handle = MemoryAlloc((U16)sizeof(gene),1L,FARMEM);
@@ -358,7 +359,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 
 #define LOADCHOICES(X)     {\
    static FCODE tmp[] = { X };\
-   far_strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char far *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -382,7 +383,7 @@ int get_the_rest(void)
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
 
-  far_strcpy(hdg,o_hdg);
+  strcpy(hdg,o_hdg);
   ptr = (char far *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -483,7 +484,7 @@ int get_variations(void)
   int lastparm  = MAXPARAMS;
   int chngd = -1;
 
-  far_strcpy(hdg,o_hdg);
+  strcpy(hdg,o_hdg);
   ptr = (char far *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -636,7 +637,7 @@ int get_evolve_Parms(void)
 
 get_evol_restart:
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
    /* adjust field param to make some sense when changing from random modes*/

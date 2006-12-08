@@ -55,7 +55,7 @@ void findpath(char far *filename, char *fullpathname) /* return full pathnames *
       return;
    }
 
-   far_strcpy(temp_path,filename);   /* avoid side effect changes to filename */
+   strcpy(temp_path,filename);   /* avoid side effect changes to filename */
 
    if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':')) {
       if(access(temp_path,0)==0) {   /* file exists */
@@ -760,7 +760,7 @@ void get_calculation_time(char *msg, long ctime)
 	     (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
    }
    else
-      far_strcpy(msg,sreallylongtime);
+      strcpy(msg,sreallylongtime);
 }
 
 static void show_str_var(char *name, char *var, int *row, char *msg)

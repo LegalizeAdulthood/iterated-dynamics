@@ -133,9 +133,9 @@ Press F1 for help, "};
    warning = ptr;
    ptr += sizeof(o_warning);
    select_msg = ptr;
-   far_strcpy(hdg2,o_hdg2);
-   far_strcpy(warning,o_warning);
-   far_strcpy(select_msg,o_select_msg);
+   strcpy(hdg2,o_hdg2);
+   strcpy(warning,o_warning);
+   strcpy(select_msg,o_select_msg);
 
    initmode = -1;
    load_fractint_cfg(0); /* get fractint.cfg into *vidtbl (== extraseg) */
@@ -157,7 +157,7 @@ Press F1 for help, "};
                   * ((bppx = vident->dotmode/1000) < 2 ? ++bppx : bppx)) {
 
                sprintf(over,"<-VIRTUAL! at %4u x %4u",vident->xdots,vident->ydots);
-               far_strcpy((char far *)vident->comment,(char far *)over);
+               strcpy((char far *)vident->comment,(char far *)over);
 
                if (info->xdots > vident->xdots)
                   vident->xdots = info->xdots;
@@ -271,7 +271,7 @@ if (fastrestore  && !askvideo)
             strcat((char *)dstack,"WinFract ");
          sprintf(temp1,"v%d.%01d",save_release/100,(save_release%100)/10);
          if (save_release%100) {
-            i = strlen(temp1);
+            i = (int) strlen(temp1);
             temp1[i] = (char)((save_release%10) + '0');
             temp1[i+1] = 0;
             }
@@ -291,7 +291,7 @@ if (fastrestore  && !askvideo)
          far_strcat((char *)dstack,warning);
       strcat((char *)dstack,"\n");
       /* set up instructions */
-      far_strcpy(temp1,select_msg);
+      strcpy(temp1,select_msg);
       if (info->info_id[0] != 'G')
          strcat(temp1,"TAB for fractal information, ");
       strcat(temp1,"ESCAPE to back out.");
@@ -339,7 +339,7 @@ if (fastrestore  && !askvideo)
       if (calc_status != 4) /* if not complete */
           calc_status = 0;  /* can't resume anyway */
       if (viewxdots) {
-         viewreduction = videoentry.xdots / viewxdots;
+         viewreduction = (float) (videoentry.xdots / viewxdots);
          viewxdots = viewydots = 0; /* easier to use auto reduction */
       }
       viewreduction = (float)((int)(viewreduction + 0.5)); /* need integer value */

@@ -216,7 +216,7 @@ int video_vram = 0;
 VIDEOINFO videotable[] =
 {
 	{
-		"unused  mode             ","                         ",
+		"unused  mode             ", "                         ",
 		0, 0, 0,
 		0, 0, 0, 0, 0, 0
 	}
@@ -309,7 +309,7 @@ long stackavail()
 ;       32-bit integer divide routine with an 'n'-bit shift.
 ;       Overflow condition returns 0x7fffh with overflow = 1;
 ;
-;       z = divide(x,y,n);       z = x / y;
+;       z = divide(x, y, n);       z = x / y;
 */
 long divide(long x, long y, int n)
 {
@@ -324,7 +324,7 @@ long divide(long x, long y, int n)
 ;       long x, y, z, multiply();
 ;       int n;
 ;
-;       z = multiply(x,y,n)
+;       z = multiply(x, y, n)
 ;
 */
 
@@ -494,7 +494,7 @@ int waitkeypressed(int timeout)
 /*
 ; **************** Function getcolor(xdot, ydot) *******************
 
-;       Return the color on the screen at the (xdot,ydot) point
+;       Return the color on the screen at the (xdot, ydot) point
 */
 int getcolor(int xdot, int ydot)
 {
@@ -509,17 +509,13 @@ int getcolor(int xdot, int ydot)
 /*
 ; ************** Function putcolor_a(xdot, ydot, color) *******************
 
-;       write the color on the screen at the (xdot,ydot) point
+;       write the color on the screen at the (xdot, ydot) point
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-void far_strcpy(char *to, char *from)
-{
-	strcpy(to, from);
-}
 int far_strlen(char *str)
 {
 	return (int) strlen(str);
@@ -527,42 +523,42 @@ int far_strlen(char *str)
 
 int far_strcmp(char *a, char *b)
 {
-    return strcmp(a,b);
+    return strcmp(a, b);
 }
 
 int far_stricmp(char *a, char *b)
 {
-   return stricmp(a,b);
+   return stricmp(a, b);
 }
 
 int far_strnicmp(char *a, char *b, int n)
 {
-    return strnicmp(a,b,n);
+    return strnicmp(a, b, n);
 }
 
 void far_strcat(char *a, char *b)
 {
-    strcat(a,b);
+    strcat(a, b);
 }
 
 void far_memset(VOIDFARPTR a, int c, unsigned int len)
 {
-    memset(a,c,len);
+    memset(a, c, len);
 }
 
 void far_memcpy(VOIDFARPTR a, VOIDFARPTR b, int len)
 {
-    memcpy(a,b,len);
+    memcpy(a, b, len);
 }
 
 int far_memcmp(VOIDFARPTR a, VOIDFARPTR b, int len)
 {
-    return memcmp(a,b,len);
+    return memcmp(a, b, len);
 }
 
 void far_memicmp(VOIDFARPTR a, VOIDFARPTR b, int len)
 {
-    memicmp(a,b,len);
+    memicmp(a, b, len);
 }
 
 VOIDPTR farmemalloc(long len)
@@ -661,7 +657,7 @@ int fr_findnext()
 }
 
 /*
-; ***Function get_line(int row,int startcol,int stopcol, unsigned char *pixels)
+; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
 
 ;       This routine is a 'line' analog of 'getcolor()', and gets a segment
 ;       of a line from the screen and stores it in pixels[] at one byte per
@@ -677,7 +673,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 }
 
 /*
-; ***Function put_line(int row,int startcol,int stopcol, unsigned char *pixels)
+; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
 
 ;       This routine is a 'line' analog of 'putcolor()', and puts a segment
 ;       of a line from the screen and stores it in pixels[] at one byte per
@@ -700,7 +696,7 @@ int get_sound_params(void)
 }
 
 /*
-; ***************Function out_line(pixels,linelen) *********************
+; ***************Function out_line(pixels, linelen) *********************
 
 ;       This routine is a 'line' analog of 'putcolor()', and sends an
 ;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
@@ -870,7 +866,7 @@ void put_a_char(int ch)
 
 /*
 ; ********* Function gettruecolor(xdot, ydot, &red, &green, &blue) **************
-;       Return the color on the screen at the (xdot,ydot) point
+;       Return the color on the screen at the (xdot, ydot) point
 */
 void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 {
@@ -919,7 +915,7 @@ int isadirectory(char *s)
 
 /*
 ; ******* Function puttruecolor(xdot, ydot, red, green, blue) *************
-;       write the color on the screen at the (xdot,ydot) point
+;       write the color on the screen at the (xdot, ydot) point
 */
 void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 {
@@ -1096,8 +1092,8 @@ static int old_main(int argc, char **argv)
 	no_sub_images = FALSE;
 	toosmall = 6;
 	minbox   = 3;
-	strcpy(browsemask,"*.gif");
-	strcpy(browsename,"            ");
+	strcpy(browsemask, "*.gif");
+	strcpy(browsename, "            ");
 	name_stack_ptr= -1; /* init loaded files stack */
 
 	evolving = FALSE;
@@ -1127,16 +1123,16 @@ static int old_main(int argc, char **argv)
 	fract_dir2 = ".";
 #endif
 
-	cmdfiles(argc,argv);         /* process the command-line */
+	cmdfiles(argc, argv);         /* process the command-line */
 	dopause(0);                  /* pause for error msg if not batch */
-	init_msg(0,"",NULL,0);  /* this causes getakey if init_msg called on runup */
+	init_msg(0, "", NULL, 0);  /* this causes getakey if init_msg called on runup */
 	checkfreemem(1);
 	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox,dacbox,256*3);      /* save in case colors= present */
+	memcpy(olddacbox, dacbox, 256*3);      /* save in case colors= present */
 
 	if (debugflag == 8088)
 	{
@@ -1213,7 +1209,7 @@ static int old_main(int argc, char **argv)
 restorestart:
 	if (colorpreloaded)
 	{
-		memcpy(dacbox,olddacbox,256*3);   /* restore in case colors= present */
+		memcpy(dacbox, olddacbox, 256*3);   /* restore in case colors= present */
 	}
 
 	lookatmouse = 0;                     /* ignore mouse */
@@ -1239,7 +1235,7 @@ restorestart:
 				hdg = "Select File to Restore";
 				helpmode = HELPSAVEREST;
 			}
-			if (showfile < 0 && getafilename(hdg,gifmask,readname) < 0)
+			if (showfile < 0 && getafilename(hdg, gifmask, readname) < 0)
 			{
 				showfile = 1;               /* cancelled */
 				initmode = -1;
@@ -1247,7 +1243,7 @@ restorestart:
 			}
 
 			name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			strcpy(file_name_stack[name_stack_ptr],browsename);
+			strcpy(file_name_stack[name_stack_ptr], browsename);
 		}
 
 		evolving = viewwindow = 0;
@@ -1371,7 +1367,7 @@ imagestart:                             /* calc/display a new image */
 			}
 			if (colorpreloaded)
 			{
-				memcpy(olddacbox,dacbox,256*3);     /* save in case colors= present */
+				memcpy(olddacbox, dacbox, 256*3);     /* save in case colors= present */
 			}
 			driver_set_for_text(); /* switch to text mode */
 			showfile = -1;
@@ -1445,7 +1441,7 @@ imagestart:                             /* calc/display a new image */
 resumeloop:
 	param_history(0); /* save old history */
 	/* this switch processes gotos that are now inside function */
-	switch (big_while_loop(&kbdmore,&stacked,resumeflag))
+	switch (big_while_loop(&kbdmore, &stacked, resumeflag))
 	{
 	case RESTART:		goto restart;
 	case IMAGESTART:	goto imagestart;

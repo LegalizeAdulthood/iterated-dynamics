@@ -349,7 +349,7 @@ BYTE olddac0,olddac1,olddac2;
       {
          static FCODE o_msg[] = {" Paused in \"color cycling\" mode "};
          char msg[sizeof(o_msg)];
-         far_strcpy(msg,o_msg);
+         strcpy(msg,o_msg);
          dvid_status(100,msg);
       }
 #ifndef XFRACT
@@ -423,7 +423,7 @@ void save_palette()
    char msg[sizeof(o_msg)];
    FILE *dacfile;
    int i,oldhelpmode;
-   far_strcpy(msg,o_msg);
+   strcpy(msg,o_msg);
    strcpy(palname,MAP_name);
    oldhelpmode = helpmode;
    driver_stack_screen();

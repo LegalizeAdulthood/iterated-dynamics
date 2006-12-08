@@ -98,7 +98,7 @@ char commandmask[13] = {"*.par"};
 */
 #define LOADCHOICES(X)     {\
    static FCODE tmp[] = { X };\
-   far_strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char far *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -127,7 +127,7 @@ int get_toggles()
    char *outsidemodes[]={"numb",s_iter,s_real,s_imag,s_mult,s_sum,s_atan,
                          s_fmod,s_tdis};
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
 
    k = -1;
@@ -414,7 +414,7 @@ int get_toggles2()
    double old_potparam[3],old_inversion[3];
    long old_usr_distest;
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
 
    /* fill up the choices (and previous values) arrays */
@@ -564,7 +564,7 @@ int passes_options(void)
    int old_keep_scrn_coords;
    char old_drawmode;
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    far_strcat(hdg,pressf2);
    far_strcat(hdg,pressf6);
    ptr = (char far *)MK_FP(extraseg,0);
@@ -706,7 +706,7 @@ int get_view_params()
       dotmode = videoentry.dotmode%100;
 #endif
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
 
 /*
@@ -823,13 +823,13 @@ get_view_restart:
       uvalues[k].type = '*';
 
       sprintf(dim,"%Fs%4u%Fs%lu",(char far *)xmsg,vesa_yres,(char far *)midxmsg,estm_xmax);
-      far_strcpy(ptr,(char far *)dim);
+      strcpy(ptr,(char far *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
 
       sprintf(dim,"%Fs%4u%Fs%lu",(char far *)ymsg,vesa_xres,(char far *)midymsg,estm_ymax);
-      far_strcpy(ptr,(char far *)dim);
+      strcpy(ptr,(char far *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
@@ -1000,7 +1000,7 @@ int get_cmd_string()
    int i;
    static char cmdbuf[61];
 
-   far_strcpy(msg,o_msg);
+   strcpy(msg,o_msg);
    oldhelpmode = helpmode;
    helpmode = HELPCOMMANDS;
    i = field_prompt(0,msg,NULL,cmdbuf,60,NULL);
@@ -1084,10 +1084,10 @@ int get_starfield_params(void) {
    int oldhelpmode;
    int i;
    char far *starfield_prompts[3];
-   far_strcpy(hdg,o_hdg);
-   far_strcpy(sf1,o_sf1);
-   far_strcpy(sf2,o_sf2);
-   far_strcpy(sf3,o_sf3);
+   strcpy(hdg,o_hdg);
+   strcpy(sf1,o_sf1);
+   strcpy(sf2,o_sf2);
+   strcpy(sf3,o_sf3);
    starfield_prompts[0] = sf1;
    starfield_prompts[1] = sf2;
    starfield_prompts[2] = sf3;
@@ -1147,13 +1147,13 @@ int get_rds_params(void) {
    {
       ret = 0;
       /* copy to make safe from overlay change */
-      far_strcpy(hdg,o_hdg);
-      far_strcpy(rds0,o_rds0);
-      far_strcpy(rds1,o_rds1);
-      far_strcpy(rds2,o_rds2);
-      far_strcpy(rds3,o_rds3);
-      far_strcpy(rds4,o_rds4);
-      far_strcpy(rds5,o_rds5);
+      strcpy(hdg,o_hdg);
+      strcpy(rds0,o_rds0);
+      strcpy(rds1,o_rds1);
+      strcpy(rds2,o_rds2);
+      strcpy(rds3,o_rds3);
+      strcpy(rds4,o_rds4);
+      strcpy(rds5,o_rds5);
       rds_prompts[0] = rds0;
       rds_prompts[1] = rds1;
       rds_prompts[2] = rds2;
@@ -1229,7 +1229,7 @@ int get_rds_params(void) {
             static FCODE tmp[] = {"Select an Imagemap File"};
             char tmp1[sizeof(tmp)];
             /* tmp1 only a convenient buffer */
-            far_strcpy(tmp1,tmp);
+            strcpy(tmp1,tmp);
             if(getafilename(tmp1,masks[1],stereomapname))
                continue;
          }
@@ -1251,7 +1251,7 @@ int get_a_number(double *x, double *y)
    int i, k;
 
    driver_stack_screen();
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
 
    /* fill up the previous values arrays */
@@ -1327,7 +1327,7 @@ void goodbye()                  /* we done.  Bail out */
    enddisk();
    discardgraphics();
    ExitCheck();
-   far_strcpy(goodbyemessage, gbm);
+   strcpy(goodbyemessage, gbm);
 #ifdef WINFRACT
    return;
 #endif
@@ -1652,12 +1652,12 @@ retry_dir:
    while (++j < numtemplates);
    if (++filecount == 0)
    {
-      far_strcpy(choices[filecount]->name,"*nofiles*");
+      strcpy(choices[filecount]->name,"*nofiles*");
       choices[filecount]->type = 0;
       ++filecount;
    }
 
-   far_strcpy(instr,o_instr);
+   strcpy(instr,o_instr);
    if(dosort)
    {
       far_strcat(instr,"off");
@@ -2161,7 +2161,7 @@ int cmpdbl(double old, double new)
 
 #define LOADPROMPTS(X)     {\
    static FCODE tmp[] = { X };\
-   far_strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char far *)tmp);\
    prompts[++nump]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -2187,9 +2187,9 @@ int get_corners()
    static FCODE hdg[]={"Image Coordinates"};
    int oldhelpmode;
 
-   far_strcpy(xprompt,o_xprompt);
-   far_strcpy(yprompt,o_yprompt);
-   far_strcpy(zprompt,o_zprompt);
+   strcpy(xprompt,o_xprompt);
+   strcpy(yprompt,o_yprompt);
+   strcpy(zprompt,o_zprompt);
    ptr = (char far *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
@@ -2384,9 +2384,9 @@ static int get_screen_corners(void)
    static FCODE hdg[]={"Screen Coordinates"};
    int oldhelpmode;
 
-   far_strcpy(xprompt,o_xprompt);
-   far_strcpy(yprompt,o_yprompt);
-   far_strcpy(zprompt,o_zprompt);
+   strcpy(xprompt,o_xprompt);
+   strcpy(yprompt,o_yprompt);
+   strcpy(zprompt,o_zprompt);
    ptr = (char far *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
@@ -2593,7 +2593,7 @@ int get_browse_params()
    double old_toosmall;
    char old_browsemask[13];
 
-   far_strcpy(hdg,o_hdg);
+   strcpy(hdg,o_hdg);
    ptr = (char far *)MK_FP(extraseg,0);
    old_autobrowse     = autobrowse;
    old_brwschecktype  = brwschecktype;

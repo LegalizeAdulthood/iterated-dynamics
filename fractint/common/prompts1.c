@@ -557,7 +557,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
                strncpy(values[curchoice].uval.sval,buf,16);
                break;
             default: /* assume 0x100+n */
-               far_strcpy(values[curchoice].uval.sbuf,buf);
+               strcpy(values[curchoice].uval.sbuf,buf);
             }
          }
 
@@ -709,7 +709,7 @@ int prompt_valuestring(char *buf,struct fullscreenvalues *val)
          ret = val->uval.ch.vlen;
          break;
       default: /* assume 0x100+n */
-         far_strcpy(buf,val->uval.sbuf);
+         strcpy(buf,val->uval.sbuf);
          ret = val->type & 0xff;
       }
    return ret;
@@ -922,11 +922,11 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
    /* setup context sensitive help */
    oldhelpmode = helpmode;
    helpmode = HELPFRACTALS;
-   far_strcpy(instr,o_instr);
+   strcpy(instr,o_instr);
    if(julibrot)
-      far_strcpy(head,head2);
+      strcpy(head,head2);
    else
-      far_strcpy(head,head1);
+      strcpy(head,head1);
    if (t == IFS3D) t = IFS;
    i = j = -1;
    while(fractalspecific[++i].name) {
@@ -935,7 +935,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
            continue;
       if (fractalspecific[i].name[0] == '*')
          continue;
-      far_strcpy(choices[++j]->name,fractalspecific[i].name);
+      strcpy(choices[++j]->name,fractalspecific[i].name);
       choices[j]->name[14] = 0; /* safety */
       choices[j]->num = i;      /* remember where the real item is */
       }
@@ -1953,7 +1953,7 @@ top:
          {
             if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
             {
-               far_strcpy(choices[numentries]->name, buf);
+               strcpy(choices[numentries]->name, buf);
                choices[numentries]->point = name_offset;
                if (++numentries >= MAXENTRIES)
                {
@@ -2015,7 +2015,7 @@ retry:
       fclose(gfe_file);
       return -2; /* back to file list */
       }
-   far_strcpy(instr,o_instr);
+   strcpy(instr,o_instr);
    if(dosort)
    {
       far_strcat(instr,"off");
@@ -2053,7 +2053,7 @@ retry:
          return -2; /* go back to file list */
       return -1;    /* cancel */
       }
-   far_strcpy(entryname, choices[i]->name);
+   strcpy(entryname, choices[i]->name);
    return(choices[i]->point);
 }
 

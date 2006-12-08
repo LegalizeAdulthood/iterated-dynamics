@@ -228,7 +228,7 @@ static void init_bf_2(void)
        char msg[80];
        char nmsg[80];
        static FCODE fmsg[] = {"Requested precision of %d too high, aborting"};
-       far_strcpy(nmsg,fmsg);
+       strcpy(nmsg,fmsg);
        sprintf(msg,nmsg,decimals);
        stopmsg(0,msg);
        goodbye();

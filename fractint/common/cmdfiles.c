@@ -499,7 +499,7 @@ int cmdfiles(int argc,char **argv)
    initvars_restart();                  /* <ins> key initialization */
    initvars_fractal();                  /* image initialization */
 
-   far_strcpy(curarg,s_sstoolsini);
+   strcpy(curarg,s_sstoolsini);
    findpath(curarg, tempstring); /* look for SSTOOLS.INI */
    if (tempstring[0] != 0)              /* found it! */
       if ((initfile = fopen(tempstring,"r")) != NULL)
@@ -651,15 +651,15 @@ static void initvars_restart()          /* <ins> key init */
    orbit_interval = 1;                  /* plot all orbits */
    debugflag = 0;                       /* debugging flag(s) are off */
    timerflag = 0;                       /* timer flags are off       */
-   far_strcpy(FormFileName,s_fractintfrm); /* default formula file      */
+   strcpy(FormFileName,s_fractintfrm); /* default formula file      */
    FormName[0] = 0;
-   far_strcpy(LFileName,s_fractintl);
+   strcpy(LFileName,s_fractintl);
    LName[0] = 0;
-   far_strcpy(CommandFile,s_fractintpar);
+   strcpy(CommandFile,s_fractintpar);
    CommandName[0] = 0;
    for(i=0;i<4; i++)
       CommandComment[i][0] = 0;
-   far_strcpy(IFSFileName,s_fractintifs);
+   strcpy(IFSFileName,s_fractintifs);
    IFSName[0] = 0;
    reset_ifs_defn();
    rflag = 0;                           /* not a fixed srand() seed */
@@ -927,7 +927,7 @@ static int next_command(char *cmdbuf,int maxlen,
                   for(i=0;i<4; i++)
                      if (CommandComment[i][0] == 0)
                      {
-                        far_strcpy(CommandComment[i],lineptr);
+                        strcpy(CommandComment[i],lineptr);
                         break;   
                      }
                   }

@@ -123,7 +123,7 @@ restart:
          return -1;
       }
       newfile = 0;
-      i = strlen(tmpfile);
+      i = (int) strlen(tmpfile);
       while (--i >= 0 && tmpfile[i] != SLASHC)
          tmpfile[i] = 0;
       far_strcat(tmpfile, fractint_tmp);
@@ -651,7 +651,7 @@ static void _fastcall setup_save_info(struct fractal_info far * save_info)
    if (fractype != FORMULA && fractype != FFORMULA)
       maxfn = 0;
    /* set save parameters in save structure */
-   far_strcpy(save_info->info_id, INFO_ID);
+   strcpy(save_info->info_id, INFO_ID);
    save_info->version = VERSION;
 
    if (maxit <= SHRT_MAX)

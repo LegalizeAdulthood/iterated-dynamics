@@ -2890,7 +2890,7 @@ int  bound_trace_main(void)
         {
         static FCODE inside_outside[] = {"inside=0 or outside=0"};
         char msg[MSGLEN];
-        far_strcpy(msg,btm_cantbeused);
+        strcpy(msg,btm_cantbeused);
         far_strcat(msg,inside_outside);
         stopmsg(0,msg);
         return(-1);
@@ -2899,7 +2899,7 @@ int  bound_trace_main(void)
         {
         char msg[MSGLEN];
         static FCODE lessthansixteen[] = {"< 16 colors"};
-        far_strcpy(msg,btm_cantbeused);
+        strcpy(msg,btm_cantbeused);
         far_strcat(msg,lessthansixteen);
         stopmsg(0,msg);
         return(-1);
