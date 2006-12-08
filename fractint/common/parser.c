@@ -2038,7 +2038,7 @@ int isjump(char *Str, int Len)
    int i;
 
    for(i = 0; *JumpList[i]; i++)
-      if(far_strlen(JumpList[i]) == Len)
+      if((int) strlen(JumpList[i]) == Len)
          if(!far_strnicmp(JumpList[i], Str, Len))
             return i + 1;
    return 0;
@@ -2142,7 +2142,7 @@ void (*isfunct(char *Str, int Len))(void)
    n = SkipWhiteSpace(&Str[Len]);
    if(Str[Len+n] == '(') {
       for(n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++) {
-         if(far_strlen(FnctList[n].s) == Len) {        /* TIW 03-31-91 added far */
+         if((int) strlen(FnctList[n].s) == Len) {        /* TIW 03-31-91 added far */
             if(!far_strnicmp(FnctList[n].s, Str, Len)) {  /* TIW 03-31-91 added far */
                /* count function variables */
                if((functnum = whichfn(Str, Len)) != 0)    /* TIW 04-22-91 */
@@ -3022,7 +3022,7 @@ void getfuncinfo(struct token_st * tok)
 {
    int i;
    for(i=0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) {
-      if(!far_strcmp(FnctList[i].s, tok->token_str)) {
+      if(!strcmp(FnctList[i].s, tok->token_str)) {
          tok->token_id = i;
          if(i >= 11 && i <= 14)
             tok->token_type = PARAM_FUNCTION;
@@ -3033,7 +3033,7 @@ void getfuncinfo(struct token_st * tok)
    }
 
    for (i=0; i < 4; i++) { /*pick up flow control*/
-      if(!far_strcmp(JumpList[i], tok->token_str)) {
+      if(!strcmp(JumpList[i], tok->token_str)) {
          tok->token_type = FLOW_CONTROL;
          tok->token_id   = i + 1;
          return;
@@ -3049,7 +3049,7 @@ void getvarinfo(struct token_st * tok)
    int i;
 
    for(i=0; i < sizeof(Constants) / sizeof(char*); i++) {
-      if(!far_strcmp(Constants[i], tok->token_str)) {
+      if(!strcmp(Constants[i], tok->token_str)) {
          tok->token_id = i;
          switch(i) {
             case 1: case 2: case 8: case 13: case 17: case 18:
@@ -3442,7 +3442,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          this_token->token_str[i] = (char) 0;
          if(this_token->token_type == OPERATOR) {
             for(i=0; i < sizeof(OPList)/sizeof(struct OP_LIST); i++) {
-               if(!far_strcmp(OPList[i].s, this_token->token_str)) {
+               if(!strcmp(OPList[i].s, this_token->token_str)) {
                   this_token->token_id = i;
                }
             }
@@ -3569,7 +3569,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
 
    if(i > ITEMNAMELEN) {
       int j;
-      int k = far_strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
+      int k = (int) strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
       char msgbuf[100];
       strcpy(msgbuf, ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
       strcat(msgbuf, ":\n   ");
@@ -3615,7 +3615,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          }
       }
       if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
-         char far * msgbuf = (char far *) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
+         char far * msgbuf = (char far *) farmemalloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
          strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          far_strcat(msgbuf, ":\n   ");
@@ -4149,7 +4149,7 @@ struct var_list_st far * add_var_to_list (struct var_list_st far * p, struct tok
       strcpy(p->name, tok.token_str);
       p->next_item = NULL;
    }
-   else if (far_strcmp(p->name, tok.token_str) == 0) {
+   else if (strcmp(p->name, tok.token_str) == 0) {
    }
    else {
       if ((p->next_item = add_var_to_list(p->next_item, tok)) == NULL)

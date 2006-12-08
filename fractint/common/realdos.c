@@ -584,7 +584,7 @@ int fullscreen_choice(
       for (i = 0; i < numchoices; ++i)
       {
          int len;
-         if ((len=(int) far_strlen(choices[i])) > colwidth)
+         if ((len=(int) strlen(choices[i])) > colwidth)
             colwidth = len;
       }
    /* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */

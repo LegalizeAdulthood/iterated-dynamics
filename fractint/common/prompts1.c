@@ -279,7 +279,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          values[i].uval.ch.list = noyes;
          values[i].uval.ch.llen = 2;
          }
-      j = far_strlen(prompts[i]);
+      j = (int) strlen(prompts[i]);
       if (values[i].type == '*') {
          if (j > maxcomment)     maxcomment = j;
          }
@@ -326,7 +326,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          if((next = far_strchr(hdgline,'\n')) == NULL)
             break; /* shouldn't happen */
          *next = '\0';
-         titlewidth = far_strlen(hdgline);
+         titlewidth = (int) strlen(hdgline);
          textcbase = boxcol + (boxwidth - titlewidth) / 2;
          driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
          *next = '\n';
@@ -338,7 +338,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
          far_strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
       }
 
-      titlewidth = far_strlen(hdgline);
+      titlewidth = (int) strlen(hdgline);
       textcbase = boxcol + (boxwidth - titlewidth) / 2;
       driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
    }
