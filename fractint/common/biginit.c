@@ -288,7 +288,7 @@ static int save_bf_vars(void)
       {
       mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
       bf_save_len = bflength;
-      far_memcpy(bnroot,bfxmin,mem);
+      memcpy(bnroot,bfxmin,mem);
       /* scrub old high area */
       memset(bfxmin,0,mem);
       ret = 0;

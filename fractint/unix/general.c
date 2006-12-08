@@ -415,65 +415,6 @@ char *ptr;
     return (long) ptr;
 }
 
-/*
-; *************** Far string/memory functions *********
-*/
-
-int
-strcmp (a,b)
-char *a, *b;
-{
-    return strcmp(a,b);
-}
-
-int
-far_strnicmp(a,b,n)
-char *a,*b;
-int n;
-{
-    return strnicmp(a,b,n);
-}
-
-void
-far_strcat (a,b)
-char *a,*b;
-{
-    strcat(a,b);
-}
-
-void
-far_memset ( a,c,len)
-VOIDFARPTR a;
-int c;
-unsigned int len;
-{
-    memset(a,c,len);
-}
-
-void
-far_memcpy ( a,b,len)
-VOIDFARPTR a,b;
-int len;
-{
-    memcpy(a,b,len);
-}
-
-int
-far_memcmp (a,b,len)
-VOIDFARPTR a,b;
-int len;
-{
-    return memcmp(a,b,len);
-}
-
-void
-far_memicmp(a,b,len)
-VOIDFARPTR a,b;
-int len;
-{
-    memicmp(a,b,len);
-}
-
 /* --------------------------------------------------------------------
  * The following routines are used for encoding/decoding gif images.
  * If we aren't on a PC, things are rough for decoding the fractal info

@@ -868,7 +868,7 @@ static int cmdfile(FILE *handle,int mode)
    cmdbuf = (char *)suffix;
    savesuffix = MK_FP(extraseg,0);
    far_memcpy(savesuffix,suffix,10000);
-   far_memset(suffix,0,10000);
+   memset(suffix,0,10000);
 
    if (mode == 2 || mode == 3) {
       while ((i = getc(handle)) != '{' && i != EOF) { }

@@ -577,7 +577,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    saveshared = MK_FP(extraseg,0);
    far_memcpy(saveshared,boxx,10000);
-   far_memset(boxx,0,10000);
+   memset(boxx,0,10000);
    wb_data.buf = (char *)boxx;
    if(colorsonly)
       goto docolors;
@@ -1789,7 +1789,7 @@ int select_video_mode(int curmode)
 #ifndef XFRACT
    /* copy fractint.cfg table to resident table, note selected entry */
    j = k = 0;
-   far_memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
          far_memcpy((char far *)&videotable[j],(char far *)&vidtbl[i],
