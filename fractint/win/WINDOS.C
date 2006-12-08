@@ -1002,12 +1002,6 @@ for (i = 0;i < maxlen ; i++) {
 return(0);
 }
 
-void far_memcpy(void far *string1, void far *string2, int maxlen) {
-int i;
-for (i = 0;i < maxlen ; i++)
-    ((char far *)string1)[i] = ((char far *)string2)[i];
-}
-
 int far_memcmp(void far *string1, void far *string2, int maxlen) {
 int i;
 unsigned char j, k;

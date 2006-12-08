@@ -516,11 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-void far_memset(VOIDFARPTR a, int c, unsigned int len)
-{
-    memset(a, c, len);
-}
-
 void far_memcpy(VOIDFARPTR a, VOIDFARPTR b, int len)
 {
     memcpy(a, b, len);

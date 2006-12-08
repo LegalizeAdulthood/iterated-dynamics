@@ -1754,7 +1754,7 @@ int select_video_mode(int curmode)
       if ( videoentry.videomodeax == vidtbl[entnums[i]].videomodeax
         && videoentry.colors      == vidtbl[entnums[i]].colors
         && (curmode < 0
-            || far_memcmp((char far *)&videoentry,(char far *)&vidtbl[entnums[i]],
+            || memcmp((char far *)&videoentry,(char far *)&vidtbl[entnums[i]],
                           sizeof(videoentry)) == 0))
          break;
       }
@@ -1794,7 +1794,7 @@ int select_video_mode(int curmode)
       if (vidtbl[i].keynum > 0) {
          memcpy((char far *)&videotable[j],(char far *)&vidtbl[i],
                     sizeof(*vidtbl));
-         if (far_memcmp((char far *)&videoentry,(char far *)&vidtbl[i],
+         if (memcmp((char far *)&videoentry,(char far *)&vidtbl[i],
                         sizeof(videoentry)) == 0)
             k = vidtbl[i].keynum;
          if (++j >= MAXVIDEOTABLE-1)
