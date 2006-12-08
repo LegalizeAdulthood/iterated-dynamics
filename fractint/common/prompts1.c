@@ -335,7 +335,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
         /* add scrolling key message, if applicable */
       if(in_scrolling_mode) {
          *(hdgline + 31) = (char) 0;   /* replace the ')' */
-         far_strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
+         strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
       }
 
       titlewidth = (int) strlen(hdgline);
@@ -1579,7 +1579,7 @@ gfp_top:
    if(bf_math == 0)
    {
       static FCODE pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
-      far_strcat(msg,pressf6);
+      strcat(msg,pressf6);
    }
    else
       fkeymask = 0;
@@ -2018,11 +2018,11 @@ retry:
    strcpy(instr,o_instr);
    if(dosort)
    {
-      far_strcat(instr,"off");
+      strcat(instr,"off");
       shell_sort((char far *)choices,numentries,sizeof(char far *),lccompare);
    }
    else
-      far_strcat(instr,"on");
+      strcat(instr,"on");
 
    strcpy(buf,entryname); /* preset to last choice made */
    sprintf(temp1,"%s Selection\nFile: %s",title,filename);

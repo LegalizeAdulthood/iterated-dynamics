@@ -192,7 +192,7 @@ load_videotable(int options)
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   far_memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
          far_memcpy((char far *)&videotable[keyents],(char far *)&vidtbl[i],

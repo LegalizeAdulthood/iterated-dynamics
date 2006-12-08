@@ -53,7 +53,7 @@ extern unsigned long far cdecl ExpFudged(long , int );
 extern long far cdecl RegDivFloat(long , long );
 extern long far cdecl LogFudged(unsigned long , int );
 extern long far cdecl LogFloat14(unsigned long );
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 extern long far cdecl RegFg2Float(long, char);
 extern long far cdecl RegSftFloat(long, char);
 #else

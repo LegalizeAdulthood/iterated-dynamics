@@ -82,7 +82,7 @@ int SetColorPaletteName( char * fn )
                 stopmsg(0,msg);
                 return 1;
                 }
-        far_memcpy((char far *)mapdacbox,(char far *)dacbox,768);
+        memcpy((char far *)mapdacbox,(char far *)dacbox,768);
         /* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
         return 0;
 }

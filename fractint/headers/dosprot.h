@@ -21,7 +21,6 @@ extern  int    cdecl far_strlen( char far *);
 extern  int    cdecl far_strnicmp(char far *, char far *,int);
 extern  void   cdecl far_strcpy( char far *, char far *);
 extern  int    cdecl far_strcmp( char far *, char far *);
-extern  int    cdecl far_stricmp(char far *, char far *);
 extern  void   cdecl far_strcat( char far *, char far *);
 extern  void   cdecl far_memset( VOIDFARPTR , int      , unsigned);
 extern  void   cdecl far_memcpy( VOIDFARPTR , VOIDFARPTR , int);

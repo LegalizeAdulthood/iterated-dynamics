@@ -1396,7 +1396,7 @@ rescan:  /* entry for changed browse parms */
           cleartempmsg();
           strcpy(mesg,"");
           strcat(mesg,"Delete ");
-          far_strcat(mesg,winlist.name);
+          strcat(mesg,winlist.name);
           strcat(mesg,"? (Y/N)");
           showtempmsg(mesg);
           while (!keypressed()) ;
@@ -1440,7 +1440,7 @@ rescan:  /* entry for changed browse parms */
          strcpy(mesg,"");
          {
          static FCODE msg[] = {"Enter the new filename for "};
-         far_strcat((char far *)mesg,msg);
+         strcat((char far *)mesg,msg);
          }
          splitpath(readname,drive,dir,NULL,NULL);
          splitpath(winlist.name,NULL,NULL,fname,ext);

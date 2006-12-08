@@ -565,8 +565,8 @@ int passes_options(void)
    char old_drawmode;
 
    strcpy(hdg,o_hdg);
-   far_strcat(hdg,pressf2);
-   far_strcat(hdg,pressf6);
+   strcat(hdg,pressf2);
+   strcat(hdg,pressf6);
    ptr = (char far *)MK_FP(extraseg,0);
    ret = 0;
 
@@ -1660,11 +1660,11 @@ retry_dir:
    strcpy(instr,o_instr);
    if(dosort)
    {
-      far_strcat(instr,"off");
+      strcat(instr,"off");
       shell_sort((void far *far*)choices,filecount,sizeof(char far *),lccompare); /* sort file list */
    }
    else
-      far_strcat(instr,"on");
+      strcat(instr,"on");
    if(notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
    {
       splitpath(tmpmask,drive,dir,fname,ext);
@@ -1741,7 +1741,7 @@ retry_dir:
             }
          }
          else  /* go down a directory */
-            far_strcat(dir,choices[i]->name);
+            strcat(dir,choices[i]->name);
          fix_dirname(dir);
          makepath(flname,drive,dir,"","");
          goto restart;

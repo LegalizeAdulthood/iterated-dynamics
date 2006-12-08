@@ -405,6 +405,6 @@ static void slideshowerr(char far *msg)
    static FCODE errhdg[] = "Slideshow error:\n";
    stopslideshow();
    strcpy(msgbuf,errhdg);
-   far_strcat(msgbuf,msg);
+   strcat(msgbuf,msg);
    stopmsg(0,msgbuf);
 }

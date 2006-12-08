@@ -258,13 +258,13 @@ static void init_bf_2(void)
 
     /* good citizens initialize variables */
     if(bf_save_len)  /* leave save area */
-       far_memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
+       memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
     else /* first time through - nothing saved */
        {
        /* high variables */
-       far_memset(bnroot+maxstack,0,(bflength+2)*22);
+       memset(bnroot+maxstack,0,(bflength+2)*22);
        /* low variables */
-       far_memset(bnroot,0,(unsigned)startstack);
+       memset(bnroot,0,(unsigned)startstack);
        }
 
     restore_bf_vars();
@@ -290,7 +290,7 @@ static int save_bf_vars(void)
       bf_save_len = bflength;
       far_memcpy(bnroot,bfxmin,mem);
       /* scrub old high area */
-      far_memset(bfxmin,0,mem);
+      memset(bfxmin,0,mem);
       ret = 0;
       }
    else
@@ -329,7 +329,7 @@ static int restore_bf_vars(void)
    convert_bf(bfsy3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
 
    /* scrub save area */
-   far_memset(bnroot,0,(bf_save_len+2)*22);
+   memset(bnroot,0,(bf_save_len+2)*22);
    return(0);
    }
 
