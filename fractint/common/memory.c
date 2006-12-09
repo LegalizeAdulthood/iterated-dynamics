@@ -281,7 +281,7 @@ static int check_for_mem(int stored_at, long howmuch)
 
    case FARMEM: /* check_for_mem */
       if (maxmem > howmuch) {
-         temp = (BYTE far *)farmemalloc(howmuch + FAR_RESERVE);
+         temp = (BYTE far *)malloc(howmuch + FAR_RESERVE);
          if (temp != NULL) { /* minimum free space + requested amount */
             farmemfree(temp);
             use_this_type = FARMEM;
@@ -528,7 +528,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
    case FARMEM: /* MemoryAlloc */
 /* Availability of far memory checked in check_for_mem() */
-      handletable[handle].Farmem.farmemory = (BYTE far *)farmemalloc(toallocate);
+      handletable[handle].Farmem.farmemory = (BYTE far *)malloc(toallocate);
       handletable[handle].Farmem.size = toallocate;
       handletable[handle].Farmem.stored_at = FARMEM;
       numTOTALhandles++;
@@ -554,11 +554,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    case EXTENDED: /* MemoryAlloc */
    /* This is ugly!  Need far memory to use extended memory. */
       if (charbuf == NULL) { /* first time through, allocate buffer */
-         temp = (BYTE far *)farmemalloc((long)ext_xfer_size + FAR_RESERVE);
+         temp = (BYTE far *)malloc((long)ext_xfer_size + FAR_RESERVE);
          if (temp != NULL) /* minimum free space + requested amount */
          {
             farmemfree(temp);
-            charbuf = (BYTE far *)farmemalloc((long)ext_xfer_size);
+            charbuf = (BYTE far *)malloc((long)ext_xfer_size);
          }
          else
             goto dodisk;

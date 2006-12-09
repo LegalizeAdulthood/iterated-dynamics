@@ -850,7 +850,7 @@ void stackscreen()
          stopmsg(1,msg);
          exit(1);
          }
-      if ((ptr = (savescreen[i] = (BYTE far *)farmemalloc(sizeof(int *)))))
+      if ((ptr = (savescreen[i] = (BYTE far *)malloc(sizeof(int *)))))
          savecurses((WINDOW **)ptr);
       else {
          stopmsg(1,msg);
@@ -872,7 +872,7 @@ void unstackscreen()
    if (--screenctr >= 0) { /* unstack */
       ptr = savescreen[screenctr];
       restorecurses((WINDOW **)ptr);
-      farmemfree(ptr);
+      free(ptr);
       }
    else
       setforgraphics();
@@ -885,7 +885,7 @@ void discardscreen()
    if (--screenctr >= 0) { /* unstack */
       if (savescreen[screenctr]) {
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-         farmemfree(savescreen[screenctr]);
+         free(savescreen[screenctr]);
 #endif
       }
    }

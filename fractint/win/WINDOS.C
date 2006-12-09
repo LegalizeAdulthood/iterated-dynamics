@@ -506,7 +506,7 @@ int   farmemallocinit = 0;                /* any memory been allocated yet?   */
 HANDLE farmemallochandles[MAXFARMEMALLOCS];                        /* handles  */
 void far *farmemallocpointers[MAXFARMEMALLOCS]; /* pointers */
 
-void far * cdecl farmemalloc(long bytecount)
+void far * cdecl malloc(long bytecount)
 {
 int i;
 HANDLE temphandle;
@@ -537,23 +537,6 @@ if ((temppointer = (void far *)GlobalLock(temphandle)) == NULL) {
 farmemallochandles[i] =  temphandle;
 farmemallocpointers[i] = temppointer;
 return(temppointer);
-}
-
-void farmemfree(void far *bytepointer)
-{
-int i;
-
-if (bytepointer == (void far *)NULL) return;
-
-for (i = 0; i < MAXFARMEMALLOCS; i++)        /* search for a matching pointer */
-    if (farmemallocpointers[i] == bytepointer)
-         break;
-if (i < MAXFARMEMALLOCS) {                /* got one */
-    GlobalUnlock(farmemallochandles[i]);
-    GlobalFree(farmemallochandles[i]);
-    farmemallochandles[i] = (HANDLE)0;
-    }
-
 }
 
 void debugmessage(char *msg1, char *msg2)

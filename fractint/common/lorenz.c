@@ -2288,7 +2288,7 @@ static int ifs2d(void)
 
    srand(1);
    color_method = (int)param[0];
-   if((localifs=(long far *)farmemalloc((long)numaffine*IFSPARM*sizeof(long)))==NULL)
+   if((localifs=(long far *)malloc((long)numaffine*IFSPARM*sizeof(long)))==NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);
@@ -2373,7 +2373,7 @@ static int ifs3dlong(void)
    struct long3dvtinf inf;
    srand(1);
    color_method = (int)param[0];
-   if((localifs=(long far *)farmemalloc((long)numaffine*IFS3DPARM*sizeof(long)))==NULL)
+   if((localifs=(long far *)malloc((long)numaffine*IFS3DPARM*sizeof(long)))==NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);

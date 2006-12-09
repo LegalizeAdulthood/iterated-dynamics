@@ -364,7 +364,7 @@ static int _fastcall save_rule(char *rule,char far **saveptr)
    int i;
    char far *tmpfar;
    i=(int) strlen(rule)+1;
-   if((tmpfar=(char far *)farmemalloc((long)i))==NULL) {
+   if((tmpfar=(char far *)malloc((long)i))==NULL) {
        return -1;
    }
    *saveptr=tmpfar;
@@ -381,7 +381,7 @@ static int _fastcall append_rule(char *rule, int index)
    for (i = 0; *(old++); i++)
       ;
    j = (int) strlen(rule) + 1;
-   if ((dst = (char far *)farmemalloc((long)(i + j))) == NULL)
+   if ((dst = (char far *)malloc((long)(i + j))) == NULL)
       return -1;
 
    old = sav;
@@ -844,7 +844,7 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
   void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
   void (*dogf)() =   (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
 
-  ret = (struct lsys_cmd far *) farmemalloc((long) maxval * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd far *) malloc((long) maxval * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -878,7 +878,7 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
 #endif
     ret[n].n = num;
     if (++n == maxval) {
-      doub = (struct lsys_cmd far *) farmemalloc((long) maxval*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd far *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
          farmemfree(ret);
          ts->stackoflow = 1;
@@ -896,7 +896,7 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
   ret[n].n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) farmemalloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
        farmemfree(ret);
        ts->stackoflow = 1;
@@ -926,7 +926,7 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
   void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
   void (*drawg)() =  (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
 
-  ret = (struct lsys_cmd far *) farmemalloc((long) maxval * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd far *) malloc((long) maxval * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -963,7 +963,7 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
 #endif
     ret[n].n = num;
     if (++n == maxval) {
-      doub = (struct lsys_cmd far *) farmemalloc((long) maxval*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd far *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
            farmemfree(ret);
            ts->stackoflow = 1;
@@ -981,7 +981,7 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
   ret[n].n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) farmemalloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
        farmemfree(ret);
        ts->stackoflow = 1;

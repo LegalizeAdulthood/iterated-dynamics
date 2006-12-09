@@ -799,7 +799,7 @@ int help(int action)
       return (0);
       }
 
-   buffer = (char far *)farmemalloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
+   buffer = (char far *)malloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
                         sizeof(PAGE)*max_pages);
 
    if (buffer == NULL)
@@ -1558,7 +1558,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
 
    /* allocate one big chunk for all three arrays */
 
-   topic_offset = (long far *)farmemalloc(sizeof(long)*num_topic + 2L*sizeof(int)*num_label + sizeof(HIST)*MAX_HIST);
+   topic_offset = (long far *)malloc(sizeof(long)*num_topic + 2L*sizeof(int)*num_label + sizeof(HIST)*MAX_HIST);
 
    if (topic_offset == NULL)
       {

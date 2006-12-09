@@ -784,7 +784,7 @@ int Bifurcation(void)
       end_resume();
    }
    array_size =  (iystop + 1) * sizeof(int); /* should be iystop + 1 */
-   if ((verhulst_array = (int far *) farmemalloc(array_size)) == NULL)
+   if ((verhulst_array = (int far *) malloc(array_size)) == NULL)
    {
       static FCODE msg[]={"Insufficient free memory for calculation."};
       stopmsg(0,msg);
@@ -1592,8 +1592,8 @@ int cellular () {
    cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
    cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
 #else
-   cell_array[0] = (BYTE far *)farmemalloc(ixstop+1);
-   cell_array[1] = (BYTE far *)farmemalloc(ixstop+1);
+   cell_array[0] = (BYTE far *)malloc(ixstop+1);
+   cell_array[1] = (BYTE far *)malloc(ixstop+1);
 #endif
    if (cell_array[0]==NULL || cell_array[1]==NULL) {
       abort_cellular(BAD_MEM, 0);

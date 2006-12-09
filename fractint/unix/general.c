@@ -364,23 +364,9 @@ readticker(void)
 ; ************************* Far Segment RAM Support **************************
 ;
 ;
-;       farptr = (char far *)farmemalloc(long bytestoalloc);
-;       (void)farmemfree(farptr);
+;       farptr = (char far *)malloc(long bytestoalloc);
+;       (void)free(farptr);
 */
-
-VOIDPTR 
-farmemalloc(len)
-long len;
-{
-    return (VOIDPTR )malloc((unsigned)len);
-}
-
-void
-farmemfree(addr)
-VOIDPTR addr;
-{
-    free((char *)addr);
-}
 
 void erasesegment(segaddress,segvalue)
 int segaddress;

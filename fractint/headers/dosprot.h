@@ -59,7 +59,6 @@ extern  unsigned int cdecl cmpextra( unsigned int, char *, int );
 extern  unsigned int cdecl fromextra( unsigned int, char *, int );
 extern  unsigned int cdecl toextra( unsigned int, char *, int );
 extern  void   cdecl load_mat(double (*)[4]);
-extern  VOIDFARPTR cdecl farmemalloc(long);
 
 /* sound.c file prototypes */
 extern int get_sound_params(void);

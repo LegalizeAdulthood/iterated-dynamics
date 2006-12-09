@@ -595,7 +595,7 @@ int calcfract(void)
       if(logtable_in_extra_ok())
          LogTable = (BYTE far *)(dx0 + 2*(xdots+ydots));
       else
-         LogTable = (BYTE far *)farmemalloc((long)MaxLTSize + 1);
+         LogTable = (BYTE far *)malloc((long)MaxLTSize + 1);
 
       if(LogTable == NULL)
       {

@@ -2224,7 +2224,7 @@ static int ParseStr(char *Str, int pass) {
       o = (struct PEND_OP far *)
     ((char far *)typespecific_workarea + total_formula_mem-sizeof(struct PEND_OP) * Max_Ops);
    else
-      o = (struct PEND_OP far *)farmemalloc(sizeof(struct PEND_OP) * (long)Max_Ops);
+      o = (struct PEND_OP far *)malloc(sizeof(struct PEND_OP) * (long)Max_Ops);
    if( !o || !typespecific_workarea) {
       stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
       return(1);
@@ -2698,7 +2698,7 @@ static int ParseStr(char *Str, int pass) {
       }
    }
    if(pass > 0 && used_extra == 0)
-      farmemfree(o);
+      free(o);
    return(0);
 }
 
@@ -3615,13 +3615,13 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          }
       }
       if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
-         char far * msgbuf = (char far *) farmemalloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
+         char far * msgbuf = (char far *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
          strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          strcat(msgbuf, ":\n   ");
          strcat(msgbuf, sym_buf);
          stopmsg(8, msgbuf);
-         farmemfree(msgbuf);
+         free(msgbuf);
       }
    }
    if (c != '{') {
@@ -3863,7 +3863,7 @@ void init_misc()
 
 
 /* PB 910417 here to end changed.
-        Allocate sub-arrays from one main farmemalloc, using global variable
+        Allocate sub-arrays from one main malloc, using global variable
         typespecific_workarea; calcfrac.c releases this area when calculation
         ends or is terminated.
         Moved the "f" array to be allocated as part of this.
@@ -3883,7 +3883,7 @@ static void parser_allocate(void)
    long end_dx_array;
    /* TW Jan 1 1996 Made two passes to determine actual values of
       Max_Ops and Max_Args. Now use the end of extraseg if possible, so
-      if less than 2048x2048 resolution is used, usually no farmemalloc
+      if less than 2048x2048 resolution is used, usually no malloc
       calls are needed */
    for(pass = 0; pass < 2; pass++)
    {
@@ -3919,7 +3919,7 @@ static void parser_allocate(void)
       else if(is_bad_form == 0)
       {
          typespecific_workarea =
-            (char far *)farmemalloc((long)(f_size+Load_size+Store_size+v_size+p_size));
+            (char far *)malloc((long)(f_size+Load_size+Store_size+v_size+p_size));
          used_extra = 0;
       }
       f = (void(far * far *)(void))typespecific_workarea;
@@ -3945,7 +3945,7 @@ static void parser_allocate(void)
 void free_workarea()
 {
    if(typespecific_workarea && used_extra == 0) {
-      farmemfree(typespecific_workarea);
+      free(typespecific_workarea);
    }
    typespecific_workarea = NULL;
    Store = (union Arg far * far *)0;
@@ -4108,12 +4108,12 @@ void display_const_lists()
 
 
 struct var_list_st far *var_list_alloc() {
-   return (struct var_list_st far*) farmemalloc(sizeof(struct var_list_st));
+   return (struct var_list_st far*) malloc(sizeof(struct var_list_st));
 }
 
 
 struct const_list_st  far *const_list_alloc() {
-   return (struct const_list_st far *) farmemalloc(sizeof(struct const_list_st));
+   return (struct const_list_st far *) malloc(sizeof(struct const_list_st));
 }
 
 void init_var_list()
@@ -4121,7 +4121,7 @@ void init_var_list()
    struct var_list_st far * temp, far * p;
    for (p = var_list; p; p=temp) {
       temp = p->next_item;
-      farmemfree(p);
+      free(p);
    }
    var_list = NULL;
 }
@@ -4132,12 +4132,12 @@ void init_const_lists()
    struct const_list_st far * temp, far * p;
    for (p = complx_list; p; p=temp) {
       temp = p->next_item;
-      farmemfree(p);
+      free(p);
    }
    complx_list = NULL;
    for (p = real_list; p; p=temp) {
       temp = p->next_item;
-      farmemfree(p);
+      free(p);
    }
    real_list = NULL;
 }
