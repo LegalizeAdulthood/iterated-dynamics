@@ -1274,7 +1274,7 @@ win32_disk_discard_screen(Driver *drv)
 	{ /* unstack */
 		if (di->savescreen[di->screenctr])
 		{
-			farmemfree(di->savescreen[di->screenctr]);
+			free(di->savescreen[di->screenctr]);
 		}
 	}
 #endif

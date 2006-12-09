@@ -1334,7 +1334,7 @@ disk_discard_screen(Driver *drv)
   DriverDisk *di = (DriverDisk *) drv;
   if (--di->screenctr >= 0) { /* unstack */
     if (di->savescreen[di->screenctr]) {
-      farmemfree(di->savescreen[di->screenctr]);
+      free(di->savescreen[di->screenctr]);
     }
   }
 }

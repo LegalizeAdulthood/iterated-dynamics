@@ -1253,7 +1253,7 @@ finish:
 #if 0
    if (memory)                  /* done with memory, free it */
    {
-      farmemfree(memory);
+      free(memory);
       memory = NULL;
    }
 #endif
