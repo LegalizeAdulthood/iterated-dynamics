@@ -786,10 +786,10 @@ static void initvars_fractal()          /* init vars affecting calculation */
 
    old_demm_colors = 0;
    bailoutest    = Mod;
-   floatbailout  = (int (near *)(void))fpMODbailout;
-   longbailout   = (int (near *)(void))asmlMODbailout;
-   bignumbailout = (int (near *)(void))bnMODbailout;
-   bigfltbailout = (int (near *)(void))bfMODbailout;
+   floatbailout  = (int ( *)(void))fpMODbailout;
+   longbailout   = (int ( *)(void))asmlMODbailout;
+   bignumbailout = (int ( *)(void))bnMODbailout;
+   bigfltbailout = (int ( *)(void))bfMODbailout;
 
    functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
    mxminfp = -.83;

@@ -265,7 +265,7 @@ void bfcornerstofloat(void)
 /* No need to set magnitude                          */
 /* as color schemes that need it calculate it later. */
 
-int near bnMODbailout()
+int  bnMODbailout()
 {
    long longmagnitude;
 
@@ -281,7 +281,7 @@ int near bnMODbailout()
    return 0;
 }
 
-int near bnREALbailout()
+int  bnREALbailout()
 {
    long longtempsqrx;
 
@@ -296,7 +296,7 @@ int near bnREALbailout()
 }
 
 
-int near bnIMAGbailout()
+int  bnIMAGbailout()
 {
    long longtempsqry;
 
@@ -310,7 +310,7 @@ int near bnIMAGbailout()
    return(0);
 }
 
-int near bnORbailout()
+int  bnORbailout()
 {
    long longtempsqrx, longtempsqry;
 
@@ -325,7 +325,7 @@ int near bnORbailout()
    return(0);
 }
 
-int near bnANDbailout()
+int  bnANDbailout()
 {
    long longtempsqrx, longtempsqry;
 
@@ -340,7 +340,7 @@ int near bnANDbailout()
    return(0);
 }
 
-int near bnMANHbailout()
+int  bnMANHbailout()
 {
    long longtempmag;
 
@@ -359,7 +359,7 @@ int near bnMANHbailout()
    return(0);
 }
 
-int near bnMANRbailout()
+int  bnMANRbailout()
 {
    long longtempmag;
 
@@ -376,7 +376,7 @@ int near bnMANRbailout()
    return(0);
 }
 
-int near bfMODbailout()
+int  bfMODbailout()
 {
    long longmagnitude;
 
@@ -392,7 +392,7 @@ int near bfMODbailout()
    return 0;
 }
 
-int near bfREALbailout()
+int  bfREALbailout()
 {
    long longtempsqrx;
 
@@ -407,7 +407,7 @@ int near bfREALbailout()
 }
 
 
-int near bfIMAGbailout()
+int  bfIMAGbailout()
 {
    long longtempsqry;
 
@@ -421,7 +421,7 @@ int near bfIMAGbailout()
    return(0);
 }
 
-int near bfORbailout()
+int  bfORbailout()
 {
    long longtempsqrx, longtempsqry;
 
@@ -436,7 +436,7 @@ int near bfORbailout()
    return(0);
 }
 
-int near bfANDbailout()
+int  bfANDbailout()
 {
    long longtempsqrx, longtempsqry;
 
@@ -451,7 +451,7 @@ int near bfANDbailout()
    return(0);
 }
 
-int near bfMANHbailout()
+int  bfMANHbailout()
 {
    long longtempmag;
 
@@ -470,7 +470,7 @@ int near bfMANHbailout()
    return(0);
 }
 
-int near bfMANRbailout()
+int  bfMANRbailout()
 {
    long longtempmag;
 

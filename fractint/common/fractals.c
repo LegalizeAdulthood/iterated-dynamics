@@ -138,13 +138,13 @@ void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed *
 /*              Bailout Routines Macros                                                                                                 */
 /* -------------------------------------------------------------------- */
 
-int (near *floatbailout)(void);
-int (near *longbailout)(void);
-int (near *bignumbailout)(void);
-int (near *bigfltbailout)(void);
+int ( *floatbailout)(void);
+int ( *longbailout)(void);
+int ( *bignumbailout)(void);
+int ( *bigfltbailout)(void);
 
 #if 0
-int near fpMODbailout(void)
+int  fpMODbailout(void)
 {
    if ( ( magnitude = ( tempsqrx=sqr(new.x) )
                     + ( tempsqry=sqr(new.y) ) ) >= rqlim ) return(1);
@@ -152,7 +152,7 @@ int near fpMODbailout(void)
    return(0);
 }
 #endif
-int near fpMODbailout(void)
+int  fpMODbailout(void)
 {
    tempsqrx=sqr(new.x);
    tempsqry=sqr(new.y);
@@ -162,7 +162,7 @@ int near fpMODbailout(void)
    return(0);
 }
 
-int near fpREALbailout(void)
+int  fpREALbailout(void)
 {
    tempsqrx=sqr(new.x);
    tempsqry=sqr(new.y);
@@ -172,7 +172,7 @@ int near fpREALbailout(void)
    return(0);
 }
 
-int near fpIMAGbailout(void)
+int  fpIMAGbailout(void)
 {
    tempsqrx=sqr(new.x);
    tempsqry=sqr(new.y);
@@ -182,7 +182,7 @@ int near fpIMAGbailout(void)
    return(0);
 }
 
-int near fpORbailout(void)
+int  fpORbailout(void)
 {
    tempsqrx=sqr(new.x);
    tempsqry=sqr(new.y);
@@ -192,7 +192,7 @@ int near fpORbailout(void)
    return(0);
 }
 
-int near fpANDbailout(void)
+int  fpANDbailout(void)
 {
    tempsqrx=sqr(new.x);
    tempsqry=sqr(new.y);
@@ -202,7 +202,7 @@ int near fpANDbailout(void)
    return(0);
 }
 
-int near fpMANHbailout(void)
+int  fpMANHbailout(void)
 {
    double manhmag;
    tempsqrx=sqr(new.x);
@@ -214,7 +214,7 @@ int near fpMANHbailout(void)
    return(0);
 }
 
-int near fpMANRbailout(void)
+int  fpMANRbailout(void)
 {
    double manrmag;
    tempsqrx=sqr(new.x);
@@ -282,7 +282,7 @@ int near fpMANRbailout(void)
       (X) = (long)tmp;\
    }\
 
-static int near Halleybailout(void)
+static int  Halleybailout(void)
 {
    if ( fabs(modulus(new)-modulus(old)) < parm2.x)
       return(1);
@@ -299,7 +299,7 @@ struct MP mptmpparm2x;
 #pragma code_seg ("mpmath1_text")     /* place following in an overlay */
 #endif
 
-static int near MPCHalleybailout(void)
+static int  MPCHalleybailout(void)
 {
    static struct MP mptmpbailout;
    mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));

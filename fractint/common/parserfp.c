@@ -157,7 +157,7 @@ OLD_FN  dStkRound;
 OLD_FN  StkJump, dStkJumpOnTrue, dStkJumpOnFalse;
 OLD_FN  dStkOne;
 
-typedef void (near NEW_FN)(void);  /* new 387-only ASM functions  */
+typedef void ( NEW_FN)(void);  /* new 387-only ASM functions  */
 
 NEW_FN  fStkPull2;  /* pull up fpu stack from 2 to 4  */
 NEW_FN  fStkPush2;  /* push down fpu stack from 8 to 6  */
@@ -243,8 +243,8 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define CLEAR_STK 127
 #define FNPTR(x) pfls[(x)].function  /* function pointer */
 #define OPPTR(x) pfls[(x)].operand   /* operand pointer */
-#define NO_OPERAND (union Arg near *)0
-#define NO_FUNCTION (void (near *)(void))0
+#define NO_OPERAND (union Arg  *)0
+#define NO_FUNCTION (void ( *)(void))0
 #define LASTSQR v[4].a
 #define PARM1 v[1].a
 #define PARM2 v[2].a
@@ -388,7 +388,7 @@ static unsigned char
 static unsigned int
    cvtptrx;      /* subscript of next free entry in pfls  */
 
-static void (near *prevfptr )(void);  /* previous function pointer  */
+static void ( *prevfptr )(void);  /* previous function pointer  */
 
 /* the entries in this table must be in the same order as  */
 /*    the #defines above  */
@@ -401,7 +401,7 @@ struct fn_entry {
    void (*infn)(void);  /* 'old' function pointer  */
          /* (infn points to an operator fn in parser.c)  */
 
-   void (near *outfn)(void);  /* pointer to equiv. fast fn.  */
+   void ( *outfn)(void);  /* pointer to equiv. fast fn.  */
 
    char min_regs;  /* min regs needed on stack by this fn.  */
          /* (legal values are 0, 2, 4)  */
@@ -476,10 +476,10 @@ struct fn_entry {
 static char cDbgMsg[255];
 #endif  /* TESTFP  */
 
-static int CvtFptr(void (near * ffptr)(void), int MinStk, int FreeStk,
+static int CvtFptr(void ( * ffptr)(void), int MinStk, int FreeStk,
       int Delta )
 {
-   union Arg near *otemp;    /* temp operand ptr  */
+   union Arg  *otemp;    /* temp operand ptr  */
    union Arg *testload;
 #ifdef TESTFP
    int prevstkcnt;
@@ -541,11 +541,11 @@ awful_error:
 
    /* set the operand pointer here for store function  */
    if (ffptr == fStkSto ){
-      OPPTR(cvtptrx) = (void near *)FP_OFF((Store[StoPtr++]));
+      OPPTR(cvtptrx) = (void  *)FP_OFF((Store[StoPtr++]));
    }
    else if (ffptr == fStkLod && debugflag == 322 ){
       /* when disabling optimizer, set load pointer here  */
-      OPPTR(cvtptrx) = (void near *)FP_OFF((Load[LodPtr++]));
+      OPPTR(cvtptrx) = (void  *)FP_OFF((Load[LodPtr++]));
    }
    else { /* the optimizer will set the pointer for load fn.  */
       OPPTR(cvtptrx) = NO_OPERAND;
@@ -621,7 +621,7 @@ awful_error:
          }
       }
       /* set the operand ptr here  */
-      OPPTR(cvtptrx) = (void near *)FP_OFF((Load[LodPtr++]));
+      OPPTR(cvtptrx) = (void  *)FP_OFF((Load[LodPtr++]));
    }
    /* ******************************************************************** */
    else if (ffptr == fStkAdd ){
@@ -930,13 +930,13 @@ awful_error:
          else {
             DBUGMSG(0, "*lodrealc (div) -> (*lodrealmul)" );
          }
-         v[vsp].s = (void near *)0;  /* this constant has no name  */
+         v[vsp].s = (void  *)0;  /* this constant has no name  */
          v[vsp].len = 0;
          v[vsp].a.d.x = _1_ / Load[LodPtr-1]->d.x;
          v[vsp].a.d.y = 0.0;
          {
             void *p = &v[vsp++].a;
-            OPPTR(cvtptrx) = (void near *)FP_OFF(p);  /* isn't C fun!  */
+            OPPTR(cvtptrx) = (void  *)FP_OFF(p);  /* isn't C fun!  */
          }
          ffptr = fStkLodRealMul;
       }
@@ -1207,7 +1207,7 @@ int fpfill_jump_struct(void)
   /* On entry, jump_index is the number of jump functions in the formula*/
    int i = 0;
    int checkforelse = 0;
-   NEW_FN near * JumpFunc = NULL;
+   NEW_FN  * JumpFunc = NULL;
    int find_new_func = 1;
    JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
@@ -1262,7 +1262,7 @@ extern void (Img_Setup )(void);
 int CvtStk() {  /* convert the array of ptrs  */
    extern char FormName[];
    void (*ftst)(void);
-   void (near *ntst)(void);
+   void ( *ntst)(void);
    union Arg *testoperand;
    struct fn_entry *pfe;
    int fnfound;
@@ -1331,7 +1331,7 @@ int CvtStk() {  /* convert the array of ptrs  */
       f[LastOp++] = StkClr;
    }
 
-   prevfptr = (void (near *)(void))0;
+   prevfptr = (void ( *)(void))0;
    cvtptrx = realstkcnt = stkcnt = 0;
 
    for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++) {

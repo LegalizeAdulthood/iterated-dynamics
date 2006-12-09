@@ -445,21 +445,6 @@
 				RelativePath=".\common\stereo.c">
 			</File>
 			<File
-				RelativePath=".\common\targa.c">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\common\testpt.c">
 			</File>
 			<File
