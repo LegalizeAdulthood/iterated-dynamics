@@ -41,7 +41,7 @@ void setfortext(void);
 void setforgraphics(void);
 void setclear(void);
 
-extern  VOIDFARPTR cdecl farmemalloc(long);
+extern  VOIDFARPTR cdecl malloc(long);
 
 /* faked/unimplemented routines */
 
@@ -732,7 +732,7 @@ void stackscreen()
          exit(1);
          }
       savebytes = 25*80;
-      if ((ptr = savescreen[i] = farmemalloc((long)(2*savebytes)))) {
+      if ((ptr = savescreen[i] = malloc((long)(2*savebytes)))) {
          memcpy(ptr,wintext_chars,savebytes);
          memcpy(ptr+savebytes,wintext_attrs,savebytes);
          }

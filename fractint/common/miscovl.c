@@ -1552,7 +1552,7 @@ long fr_farfree(void)
    j = 0;
    j2 = 0x80000L;
    while ((j2 >>= 1) != 0)
-      if ((fartempptr = (BYTE huge *)farmemalloc(j+j2)) != NULL) {
+      if ((fartempptr = (BYTE huge *)malloc(j+j2)) != NULL) {
          farmemfree((void far*)fartempptr);
          j += j2;
          }
@@ -1640,7 +1640,7 @@ int edit_text_colors()
             driver_hide_text_cursor();
             return 0;
          case '/':
-            farp1 = savescreen = (char far *)farmemalloc(4000L);
+            farp1 = savescreen = (char far *)malloc(4000L);
             farp2 = vidmem;
             for (i = 0; i < 4000; ++i) { /* save and blank */
                *(farp1++) = *farp2;

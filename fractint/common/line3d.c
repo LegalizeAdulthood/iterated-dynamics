@@ -2689,14 +2689,14 @@ static int line3dmem(void)
       check_extra += sizeof(struct minmax) * ydots;
       if (check_extra > (1L << 16))     /* run out of extra segment? */
       {
-         static FCODE msg[] = {"farmemalloc minmax"};
+         static FCODE msg[] = {"malloc minmax"};
          static struct minmax far *got_mem = NULL;
          if(debugflag == 2222)
             stopmsg(0,msg);
          /* not using extra segment so decrement check_extra */
          check_extra -= sizeof(struct minmax) * ydots;
          if (got_mem == NULL)
-            got_mem = (struct minmax far *) (farmemalloc(OLDMAXPIXELS *
+            got_mem = (struct minmax far *) (malloc(OLDMAXPIXELS *
                                                     sizeof(struct minmax)));
          if (got_mem)
             minmax_x = got_mem;

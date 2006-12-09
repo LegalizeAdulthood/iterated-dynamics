@@ -511,7 +511,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
   void (*at)() =     lsysf_doat;
   void (*dogf)() =   lsysf_dosizegf;
 
-  ret = (struct lsys_cmd far *) farmemalloc((long) max * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd far *) malloc((long) max * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -548,7 +548,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
         ret[n].parm.n = num;
     ret[n].ptype = ptype;
     if (++n == max) {
-      doub = (struct lsys_cmd far *) farmemalloc((long) max*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd far *) malloc((long) max*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
          farmemfree(ret);
          ts->stackoflow = 1;
@@ -566,7 +566,7 @@ LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts)
   ret[n].parm.n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) farmemalloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
        farmemfree(ret);
        ts->stackoflow = 1;
@@ -598,7 +598,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
   void (*at)() =     lsysf_doat;
   void (*drawg)() =  lsysf_dodrawg;
 
-  ret = (struct lsys_cmd far *) farmemalloc((long) max * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd far *) malloc((long) max * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -638,7 +638,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
         ret[n].parm.n = (long)num;
     ret[n].ptype = ptype;
     if (++n == max) {
-      doub = (struct lsys_cmd far *) farmemalloc((long) max*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd far *) malloc((long) max*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
            farmemfree(ret);
            ts->stackoflow = 1;
@@ -656,7 +656,7 @@ LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts)
   ret[n].parm.n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) farmemalloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
        farmemfree(ret);
        ts->stackoflow = 1;

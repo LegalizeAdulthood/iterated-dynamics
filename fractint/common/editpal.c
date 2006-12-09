@@ -2278,7 +2278,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *this, long size)
       this->stored_at = NOWHERE;
       return (FALSE);   /* can't do it */
       }
-   temp = (char far *)farmemalloc(FAR_RESERVE);   /* minimum free space */
+   temp = (char far *)malloc(FAR_RESERVE);   /* minimum free space */
 
    if (temp == NULL)
       {
@@ -2286,7 +2286,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *this, long size)
       return (FALSE);   /* can't do it */
       }
 
-   this->memory = (char far *)farmemalloc( size );
+   this->memory = (char far *)malloc( size );
 
    farmemfree(temp);
 
@@ -3279,11 +3279,11 @@ static PalTable *PalTable_Construct(void)
    PALENTRY far *mem_block;
    void far     *temp;
 
-   temp = (void far *)farmemalloc(FAR_RESERVE);
+   temp = (void far *)malloc(FAR_RESERVE);
 
    if ( temp != NULL )
       {
-      mem_block = (PALENTRY far *)farmemalloc(256L*3 * 8);
+      mem_block = (PALENTRY far *)malloc(256L*3 * 8);
 
       if ( mem_block == NULL )
          {

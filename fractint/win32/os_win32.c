@@ -516,16 +516,6 @@ void putcolor_a(int xdot, int ydot, int color)
 	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
 }
 
-VOIDPTR farmemalloc(long len)
-{
-    return (VOIDPTR) malloc((unsigned) len);
-}
-
-void farmemfree(VOIDPTR addr)
-{
-    free((char *) addr);
-}
-
 /*
 ; *************** Function find_special_colors ********************
 

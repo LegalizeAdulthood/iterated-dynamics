@@ -1928,7 +1928,7 @@ static int call_line3d(BYTE *pixels, int linelen)
 static void note_zoom()
 {
    if (boxcount) { /* save zoombox stuff in far mem before encode (mem reused) */
-      if ((savezoom = (char far *)farmemalloc((long)(5*boxcount))) == NULL)
+      if ((savezoom = (char far *)malloc((long)(5*boxcount))) == NULL)
          clear_zoombox(); /* not enuf mem so clear the box */
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
@@ -2449,7 +2449,7 @@ void checkfreemem(int secondpass)
    static FCODE msg[] =
       {" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
    static FCODE msg2[] = {"To save memory, reduced maxhistory to "};
-   tmp = (char far *)farmemalloc(4096L);
+   tmp = (char far *)malloc(4096L);
    oldmaxhistory = maxhistory;
    if(secondpass && !history)
    {

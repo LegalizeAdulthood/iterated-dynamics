@@ -182,19 +182,19 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size) {
       longtmp = ((int)cache_size < freemem) ? (long)cache_size << 11
                                        : (long)(cache_size+freemem) << 10;
-      if ((tempfar = farmemalloc(longtmp)) != NULL) {
+      if ((tempfar = malloc(longtmp)) != NULL) {
          farmemfree(tempfar);
          break;
          }
       }
    if(debugflag==4200) cache_size = CACHEMIN;
    longtmp = (long)cache_size << 10;
-   cache_start = (struct cache far *)farmemalloc(longtmp);
+   cache_start = (struct cache far *)malloc(longtmp);
    if (cache_size == 64)
       --longtmp; /* safety for next line */
    cache_end = (cache_lru = cache_start) + longtmp / sizeof(*cache_start);
-   hash_ptr  = (unsigned int far *)farmemalloc((long)(HASHSIZE<<1));
-   membuf = (BYTE far *)farmemalloc((long)BLOCKLEN);
+   hash_ptr  = (unsigned int far *)malloc((long)(HASHSIZE<<1));
+   membuf = (BYTE far *)malloc((long)BLOCKLEN);
    if (cache_start == NULL || hash_ptr == NULL || membuf == NULL) {
       static FCODE msg[]={"*** insufficient free memory for cache buffers ***"};
       stopmsg(0,msg);

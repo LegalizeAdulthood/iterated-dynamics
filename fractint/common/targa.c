@@ -243,8 +243,8 @@ static FCODE insuffmem[]={"Insufficient memory for Targa"};
         VCenterDisplay( sydots + 1 );
 
         if (tga16 == NULL)
-            if ( (tga16 = (unsigned far *)farmemalloc(512L)) == NULL
-              || (tga32 = (long     far *)farmemalloc(1024L)) == NULL)
+            if ( (tga16 = (unsigned far *)malloc(512L)) == NULL
+              || (tga32 = (long     far *)malloc(1024L)) == NULL)
                 fatalerror(insuffmem);
 
         SetTgaColors();

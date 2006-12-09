@@ -1370,7 +1370,7 @@ int ifsload()                   /* read in IFS parameters */
    int ret,rowsize;
 
    if (ifs_defn) { /* release prior parms */
-      farmemfree((char far *)ifs_defn);
+      free((char far *)ifs_defn);
       ifs_defn = NULL;
       }
 
@@ -1436,7 +1436,7 @@ int ifsload()                   /* read in IFS parameters */
 
    if (ret == 0) {
       numaffine = i/rowsize;
-      if ((ifs_defn = (float far *)farmemalloc(
+      if ((ifs_defn = (float far *)malloc(
                         (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == NULL) {
      stopmsg(0,insufficient_ifs_mem);
          ret = -1;
