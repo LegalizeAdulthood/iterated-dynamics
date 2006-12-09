@@ -3004,87 +3004,87 @@ void setbailoutformula(enum bailouts test) {
      case Mod:
      default:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpMODbailout;
+           floatbailout = (int ( *)(void))asmfpMODbailout;
          else
-           floatbailout = (int (near *)(void))fpMODbailout;
+           floatbailout = (int ( *)(void))fpMODbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lMODbailout;
+           longbailout = (int ( *)(void))asm386lMODbailout;
          else
-           longbailout = (int (near *)(void))asmlMODbailout;
-         bignumbailout = (int (near *)(void))bnMODbailout;
-         bigfltbailout = (int (near *)(void))bfMODbailout;
+           longbailout = (int ( *)(void))asmlMODbailout;
+         bignumbailout = (int ( *)(void))bnMODbailout;
+         bigfltbailout = (int ( *)(void))bfMODbailout;
          break;}
      case Real: {
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpREALbailout;
+           floatbailout = (int ( *)(void))asmfpREALbailout;
          else
-           floatbailout = (int (near *)(void))fpREALbailout;
+           floatbailout = (int ( *)(void))fpREALbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lREALbailout;
+           longbailout = (int ( *)(void))asm386lREALbailout;
          else
-           longbailout = (int (near *)(void))asmlREALbailout;
-         bignumbailout = (int (near *)(void))bnREALbailout;
-         bigfltbailout = (int (near *)(void))bfREALbailout;
+           longbailout = (int ( *)(void))asmlREALbailout;
+         bignumbailout = (int ( *)(void))bnREALbailout;
+         bigfltbailout = (int ( *)(void))bfREALbailout;
          break;}
      case Imag:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpIMAGbailout;
+           floatbailout = (int ( *)(void))asmfpIMAGbailout;
          else
-           floatbailout = (int (near *)(void))fpIMAGbailout;
+           floatbailout = (int ( *)(void))fpIMAGbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lIMAGbailout;
+           longbailout = (int ( *)(void))asm386lIMAGbailout;
          else
-           longbailout = (int (near *)(void))asmlIMAGbailout;
-         bignumbailout = (int (near *)(void))bnIMAGbailout;
-         bigfltbailout = (int (near *)(void))bfIMAGbailout;
+           longbailout = (int ( *)(void))asmlIMAGbailout;
+         bignumbailout = (int ( *)(void))bnIMAGbailout;
+         bigfltbailout = (int ( *)(void))bfIMAGbailout;
          break;}
      case Or:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpORbailout;
+           floatbailout = (int ( *)(void))asmfpORbailout;
          else
-           floatbailout = (int (near *)(void))fpORbailout;
+           floatbailout = (int ( *)(void))fpORbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lORbailout;
+           longbailout = (int ( *)(void))asm386lORbailout;
          else
-           longbailout = (int (near *)(void))asmlORbailout;
-         bignumbailout = (int (near *)(void))bnORbailout;
-         bigfltbailout = (int (near *)(void))bfORbailout;
+           longbailout = (int ( *)(void))asmlORbailout;
+         bignumbailout = (int ( *)(void))bnORbailout;
+         bigfltbailout = (int ( *)(void))bfORbailout;
          break;}
      case And:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpANDbailout;
+           floatbailout = (int ( *)(void))asmfpANDbailout;
          else
-           floatbailout = (int (near *)(void))fpANDbailout;
+           floatbailout = (int ( *)(void))fpANDbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lANDbailout;
+           longbailout = (int ( *)(void))asm386lANDbailout;
          else
-           longbailout = (int (near *)(void))asmlANDbailout;
-         bignumbailout = (int (near *)(void))bnANDbailout;
-         bigfltbailout = (int (near *)(void))bfANDbailout;
+           longbailout = (int ( *)(void))asmlANDbailout;
+         bignumbailout = (int ( *)(void))bnANDbailout;
+         bigfltbailout = (int ( *)(void))bfANDbailout;
          break;}
      case Manh:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpMANHbailout;
+           floatbailout = (int ( *)(void))asmfpMANHbailout;
          else
-           floatbailout = (int (near *)(void))fpMANHbailout;
+           floatbailout = (int ( *)(void))fpMANHbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lMANHbailout;
+           longbailout = (int ( *)(void))asm386lMANHbailout;
          else
-           longbailout = (int (near *)(void))asmlMANHbailout;
-         bignumbailout = (int (near *)(void))bnMANHbailout;
-         bigfltbailout = (int (near *)(void))bfMANHbailout;
+           longbailout = (int ( *)(void))asmlMANHbailout;
+         bignumbailout = (int ( *)(void))bnMANHbailout;
+         bigfltbailout = (int ( *)(void))bfMANHbailout;
          break;}
      case Manr:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int (near *)(void))asmfpMANRbailout;
+           floatbailout = (int ( *)(void))asmfpMANRbailout;
          else
-           floatbailout = (int (near *)(void))fpMANRbailout;
+           floatbailout = (int ( *)(void))fpMANRbailout;
          if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int (near *)(void))asm386lMANRbailout;
+           longbailout = (int ( *)(void))asm386lMANRbailout;
          else
-           longbailout = (int (near *)(void))asmlMANRbailout;
-         bignumbailout = (int (near *)(void))bnMANRbailout;
-         bigfltbailout = (int (near *)(void))bfMANRbailout;
+           longbailout = (int ( *)(void))asmlMANRbailout;
+         bignumbailout = (int ( *)(void))bnMANRbailout;
+         bigfltbailout = (int ( *)(void))bfMANRbailout;
          break;}
    }
 }

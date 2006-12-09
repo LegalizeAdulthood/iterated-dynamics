@@ -79,7 +79,7 @@ int targa_startdisk(FILE *targafp,int overhead)
    return (i);
 }
 
-int _fastcall near common_startdisk(long newrowsize, long newcolsize, int colors)
+int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
 {
    int i;
    long memorysize;

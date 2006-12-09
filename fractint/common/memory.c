@@ -108,9 +108,9 @@ union mem handletable[MAXHANDLES];
 /* Routines in this module */
 #if !defined(XFRACT) && !defined(_WIN32)
 U32 GetDiskSpace(void);
-static void _fastcall near exp_seek(U16 handle, int page); /* expanded mem seek */
+static void _fastcall  exp_seek(U16 handle, int page); /* expanded mem seek */
 #endif
-static int _fastcall near CheckDiskSpace(long howmuch);
+static int _fastcall  CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle(void);
 static int CheckBounds (long start, long length, U16 handle);
@@ -148,7 +148,7 @@ U32 GetDiskSpace(void)
 }
 #endif
 
-static int _fastcall near CheckDiskSpace(long howmuch)
+static int _fastcall  CheckDiskSpace(long howmuch)
 {
    int EnoughSpace = FALSE;
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -209,7 +209,7 @@ static void WhichDiskError(int I_O)
 }
 
 #if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-static void _fastcall near exp_seek(U16 handle, int page) /* expanded mem seek */
+static void _fastcall  exp_seek(U16 handle, int page) /* expanded mem seek */
 {
  static U16 lasthandle = 0;
    if (page != handletable[handle].Expanded.oldexppage || page == 0 ||

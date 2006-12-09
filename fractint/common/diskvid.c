@@ -60,12 +60,12 @@ long memoffset = 0;
 long oldmemoffset = 0;
 BYTE *membufptr;
 
-static void _fastcall near findload_cache(long);
-static struct cache * _fastcall near find_cache(long);
-static void near write_cache_lru(void);
-static void _fastcall near mem_putc(BYTE);
-static BYTE near mem_getc(void);
-static void _fastcall near mem_seek(long);
+static void _fastcall  findload_cache(long);
+static struct cache * _fastcall  find_cache(long);
+static void  write_cache_lru(void);
+static void _fastcall  mem_putc(BYTE);
+static BYTE  mem_getc(void);
+static void _fastcall  mem_seek(long);
 
 int startdisk()
 {
@@ -434,7 +434,7 @@ void targa_writedisk(unsigned int col, unsigned int row,
    writedisk(col+1, row,red);
 }
 
-static void _fastcall near findload_cache(long offset) /* used by read/write */
+static void _fastcall  findload_cache(long offset) /* used by read/write */
 {
 #ifndef XFRACT
    unsigned int tbloffset;
@@ -520,7 +520,7 @@ static void _fastcall near findload_cache(long offset) /* used by read/write */
 #endif
    }
 
-static struct cache * _fastcall near find_cache(long offset)
+static struct cache * _fastcall  find_cache(long offset)
 /* lookup for write_cache_lru */
 {
 #ifndef XFRACT
@@ -537,7 +537,7 @@ static struct cache * _fastcall near find_cache(long offset)
 #endif
 }
 
-static void near write_cache_lru()
+static void  write_cache_lru()
 {
    int i,j;
    BYTE *pixelptr;
@@ -620,7 +620,7 @@ write_stuff:
    a mem_putc nor v.v. without a seek between them.
    */
 
-static void _fastcall near mem_seek(long offset)        /* mem seek */
+static void _fastcall  mem_seek(long offset)        /* mem seek */
 {
    offset += headerlength;
    memoffset = offset >> BLOCKSHIFT;
@@ -632,7 +632,7 @@ static void _fastcall near mem_seek(long offset)        /* mem seek */
    membufptr = membuf + (offset & (BLOCKLEN - 1));
    }
 
-static BYTE near mem_getc()                     /* memory get_char */
+static BYTE  mem_getc()                     /* memory get_char */
 {
    if (membufptr - membuf >= BLOCKLEN) {
       MoveToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
@@ -644,7 +644,7 @@ static BYTE near mem_getc()                     /* memory get_char */
    return (*(membufptr++));
    }
 
-static void _fastcall near mem_putc(BYTE c)     /* memory get_char */
+static void _fastcall  mem_putc(BYTE c)     /* memory get_char */
 {
    if (membufptr - membuf >= BLOCKLEN) {
       MoveToMemory(membuf, (U16)BLOCKLEN, 1L, memoffset, dv_handle);
