@@ -54,7 +54,7 @@ static int _fastcall tessrow(int,int,int);
 static int diffusion_scan(void);
 
 /* lookup tables to avoid too much bit fiddling : */
-char far dif_la[] = {
+char dif_la[] = {
 0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
 2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
 6,14, 6,14,2,10,2,10,6,14, 6,14,1, 9,1, 9, 5,13, 5,13,1, 9,1, 9,5,13,
@@ -67,7 +67,7 @@ char far dif_la[] = {
 1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-char far dif_lb[] = {
+char dif_lb[] = {
  0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
  6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
  2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
@@ -115,7 +115,7 @@ unsigned long lm;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
 int     show_orbit;                     /* flag to turn on and off */
 int     orbit_ptr;                      /* pointer into save_orbit array */
-int far *save_orbit;                    /* array to save orbit values */
+int *save_orbit;                    /* array to save orbit values */
 int     orbit_color=15;                 /* XOR color */
 
 int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
@@ -593,9 +593,9 @@ int calcfract(void)
    if ((LogFlag || rangeslen) && !Log_Calc)
    {
       if(logtable_in_extra_ok())
-         LogTable = (BYTE far *)(dx0 + 2*(xdots+ydots));
+         LogTable = (BYTE *)(dx0 + 2*(xdots+ydots));
       else
-         LogTable = (BYTE far *)malloc((long)MaxLTSize + 1);
+         LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
 
       if(LogTable == NULL)
       {
@@ -646,7 +646,7 @@ int calcfract(void)
       atan_colors = 180;
 
    /* ORBIT stuff */
-   save_orbit = (int far *)((double huge *)dx0 + 4*OLDMAXPIXELS);
+   save_orbit = (int *)((double huge *)dx0 + 4*OLDMAXPIXELS);
    show_orbit = start_showorbit;
    orbit_ptr = 0;
    orbit_color = 15;
@@ -790,7 +790,7 @@ int calcfract(void)
    if(LogTable && !Log_Calc)
    {
       if(!logtable_in_extra_ok())
-         farmemfree(LogTable);   /* free if not using extraseg */
+         free(LogTable);   /* free if not using extraseg */
       LogTable = NULL;
    }
    if(typespecific_workarea)
@@ -1661,7 +1661,7 @@ static int _fastcall StandardCalc(int passnum)
 
 int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col set */
 {
-   /* setup values from far array to avoid using es reg in calcmand.asm */
+   /* setup values from array to avoid using es reg in calcmand.asm */
    linitx = lxpixel();
    linity = lypixel();
    if (calcmandasm() >= 0)

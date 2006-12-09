@@ -44,7 +44,7 @@ void dispbox(void)
    int boxc = (colors-1)&boxcolor;
    unsigned char *values = (unsigned char *)boxvalues;
    int rgb[3];
-   xorTARGA = 1;
+   //xorTARGA = 1;
    for(i=0;i<boxcount;i++)
    {
       if(istruecolor && truemode)
@@ -65,13 +65,13 @@ void dispbox(void)
          else
             putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,boxc);
       }
-   xorTARGA = 0;
+   //xorTARGA = 0;
 }
 
 void clearbox(void)
 {
    int i;
-   xorTARGA = 1;
+   //xorTARGA = 1;
    if(istruecolor && truemode)
    {
       dispbox();
@@ -84,7 +84,7 @@ void clearbox(void)
          putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,values[i]);
       }
    }
-   xorTARGA = 0;
+   //xorTARGA = 0;
 }
 #endif
 

@@ -20,16 +20,16 @@
 /* routines in this module        */
 void movecursor(int row, int col);
 void setattr(int row, int col, int attr, int count);
-int  putstringcenter(int row, int col, int width, int attr, char far *msg);
-void putstring(int row, int col, int attr, unsigned char far *buf);
+int  putstringcenter(int row, int col, int width, int attr, char *msg);
+void putstring(int row, int col, int attr, unsigned char *buf);
 int  fullscreen_choice(
-             int options, char far *hdg, char far *hdg2, char far *instr, int numchoices,
-             char far * far *choices, int far *attributes, int boxwidth, int boxdepth,
+             int options, char *hdg, char *hdg2, char *instr, int numchoices,
+             char * *choices, int *attributes, int boxwidth, int boxdepth,
              int colwidth, int current, void (*formatitem)(),
              char *speedstring, int (*speedprompt)(), int (*checkkey)());
-int  strncasecmp(char far *s,char far *t,int ct);
+int  strncasecmp(char *s,char *t,int ct);
 int  input_field(int options, int attr, char *fld, int len, int row, int col, int (*checkkey)(int) );
-int  field_prompt(int options, char far *hdg, char far *instr, char *fld, int len, int (*checkkey)(int) );
+int  field_prompt(int options, char *hdg, char *instr, char *fld, int len, int (*checkkey)(int) );
 void helptitle(void);
 void stackscreen(void);
 void unstackscreen(void);
@@ -45,7 +45,7 @@ extern  VOIDFARPTR cdecl malloc(long);
 
 /* faked/unimplemented routines */
 
-struct videoinfo far *vidtbl;
+struct videoinfo *vidtbl;
 int vidtbllen = 0;
 int badconfig = 0;
 
@@ -53,7 +53,7 @@ int in_fractint_help = 0;
 
 int win_release = 2004;
 int patchlevel = 4;
-char far win_comment[] =
+char win_comment[] =
      {" "};                /*  publicly-released version */
 /*   {"Test Version - Not for Release"};   /* interim test versions */
 /*   {"'Public Beta' Release"};   /* interim test versions */
@@ -72,7 +72,7 @@ int lookatmouse;
 #define CHOICESCRUNCH    16
 #define CHOICESNOTSORTED 32
 
-static char far par_comment[4][MAXCMT];
+static char par_comment[4][MAXCMT];
 
 char speed_prompt[]="Speed key string";
 
@@ -80,12 +80,12 @@ int fullscreen_choice(
         int options,             /* &2 use menu coloring scheme               */
                              /* &4 include F1 for help in instructions */
                              /* &8 add caller's instr after normal set */
-        char far *hdg,             /* heading info, \n delimited               */
-        char far *hdg2,             /* column heading or NULL                       */
-        char far *instr,     /* instructions, \n delimited, or NULL    */
+        char *hdg,             /* heading info, \n delimited               */
+        char *hdg2,             /* column heading or NULL                       */
+        char *instr,     /* instructions, \n delimited, or NULL    */
         int numchoices,      /* How many choices in list               */
-        char far * far *choices,      /* array of choice strings                */
-        int far *attributes,     /* &3: 0 normal color, 1,3 highlight      */
+        char * *choices,      /* array of choice strings                */
+        int *attributes,     /* &3: 0 normal color, 1,3 highlight      */
                              /* &256 marks a dummy entry               */
         int boxwidth,             /* box width, 0 for calc (in items)       */
         int boxdepth,             /* box depth, 0 for calc, 99 for max      */
@@ -102,11 +102,11 @@ int fullscreen_choice(
       speedstring[0] != 0 on return if string is present
       */
 {
-static char far choiceinstr1a[]="Use the cursor keys to highlight your selection";
-static char far choiceinstr1b[]="Use the cursor keys or type a value to make a selection";
-static char far choiceinstr2a[]="Press ENTER for highlighted choice, or ESCAPE to back out";
-static char far choiceinstr2b[]="Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help";
-static char far choiceinstr2c[]="Press ENTER for highlighted choice, or F1 for help";
+static char choiceinstr1a[]="Use the cursor keys to highlight your selection";
+static char choiceinstr1b[]="Use the cursor keys or type a value to make a selection";
+static char choiceinstr2a[]="Press ENTER for highlighted choice, or ESCAPE to back out";
+static char choiceinstr2b[]="Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help";
+static char choiceinstr2c[]="Press ENTER for highlighted choice, or F1 for help";
 
    int titlelines,titlewidth;
    int reqdrows;
@@ -117,11 +117,11 @@ static char far choiceinstr2c[]="Press ENTER for highlighted choice, or F1 for h
    int curkey,increment,rev_increment;
    int redisplay;
    int i,j,k;
-   char far *charptr;
+   char *charptr;
    char buf[81];
    int speed_match = 0;
    char curitem[81];
-   char far *itemptr;
+   char *itemptr;
    int ret,savelookatmouse;
 
    savelookatmouse = lookatmouse;
@@ -610,14 +610,14 @@ inpfld_end:
 
 int field_prompt(
         int options,            /* &1 numeric value, &2 integer */
-        char far *hdg,            /* heading, \n delimited lines */
-        char far *instr,            /* additional instructions or NULL */
+        char *hdg,            /* heading, \n delimited lines */
+        char *instr,            /* additional instructions or NULL */
         char *fld,            /* the field itself */
         int len,            /* field length (declare as 1 larger for \0) */
         int (*checkkey)(int)   /* routine to check non data keys, or NULL */
         )
 {
-   char far *charptr;
+   char *charptr;
    int boxwidth,titlelines,titlecol,titlerow;
    int promptcol;
    int i,j;
@@ -711,22 +711,22 @@ int restoregraphics(void) {return 0;}
 
 static int screenctr=-1;
 #define MAXSCREENS 3
-static unsigned char far *savescreen[MAXSCREENS];
+static unsigned char *savescreen[MAXSCREENS];
 static int saverc[MAXSCREENS+1];
 static FILE *savescf=NULL;
 static char scsvfile[]="fractscr.tmp";
 
 void stackscreen()
 {
-   extern unsigned char far wintext_chars[25][80];
-   extern unsigned char far wintext_attrs[25][80];
+   extern unsigned char wintext_chars[25][80];
+   extern unsigned char wintext_attrs[25][80];
    int savebytes;
    int i;
-   unsigned char far *ptr;
+   unsigned char *ptr;
 
    saverc[screenctr+1] = textrow*80 + textcol;
    if (++screenctr) { /* already have some stacked */
-         static char far msg[]={"stackscreen overflow"};
+         static char msg[]={"stackscreen overflow"};
       if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
          stopmsg(1,msg);
          exit(1);
@@ -737,7 +737,7 @@ void stackscreen()
          memcpy(ptr+savebytes,wintext_attrs,savebytes);
          }
       else {
-            static char far msg[]={"insufficient memory, aborting"};
+            static char msg[]={"insufficient memory, aborting"};
 fileproblem:   stopmsg(1,msg);
                exit(1);
          }
@@ -749,10 +749,10 @@ fileproblem:   stopmsg(1,msg);
 
 void unstackscreen()
 {
-   extern unsigned char far wintext_chars[25][80];
-   extern unsigned char far wintext_attrs[25][80];
+   extern unsigned char wintext_chars[25][80];
+   extern unsigned char wintext_attrs[25][80];
    int savebytes;
-   unsigned char far *ptr;
+   unsigned char *ptr;
    textrow = saverc[screenctr] / 80;
    textcol = saverc[screenctr] % 80;
    if (--screenctr >= 0) { /* unstack */
@@ -795,18 +795,18 @@ wintext_textoff();
 
 void setclear(void)
 {
-extern int far wintext_buffer_init;
+extern int wintext_buffer_init;
 
     wintext_buffer_init = 0;
     wintext_paintscreen(0,80,0,25);
 }
 
-int putstringcenter(int row, int col, int width, int attr, char far *msg)
+int putstringcenter(int row, int col, int width, int attr, char *msg)
 {
    char buf[81];
    int i,j,k;
    i = 0;
-   while (msg[i]) ++i; /* strlen for a far */
+   while (msg[i]) ++i; /* strlen for a */
    if (i == 0) return(-1);
    j = (width - i) / 2;
    j -= (width + 10 - i) / 20; /* when wide a bit left of center looks better */
@@ -819,10 +819,10 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
    return j;
 }
 
-void putstring(int row, int col, int attr, unsigned char far *buf)
+void putstring(int row, int col, int attr, unsigned char *buf)
 {
-    extern unsigned char far wintext_chars[25][80];
-    extern unsigned char far wintext_attrs[25][80];
+    extern unsigned char wintext_chars[25][80];
+    extern unsigned char wintext_attrs[25][80];
     int i, j, k, maxrow, maxcol;
     char xc, xa;
 
@@ -862,7 +862,7 @@ void putstring(int row, int col, int attr, unsigned char far *buf)
 
 void setattr(int row, int col, int attr, int count)
 {
-extern unsigned char far wintext_attrs[25][80];
+extern unsigned char wintext_attrs[25][80];
     int i, j, k, maxrow, maxcol;
     char xa;
 
@@ -967,7 +967,7 @@ int getakeynohelp(void) {
 return(fractint_getkeypress(1));
 }
 
-int strncasecmp(char far *s,char far *t,int ct)
+int strncasecmp(char *s,char *t,int ct)
 {
    return((int)_fstrnicmp(s,t,ct));
 }
@@ -1147,7 +1147,7 @@ OK to replace it, Cancel to back out",CommandName);
                   last=i;
             for(i=0;i<last;i++)
                if(*CommandComment[i]=='\0')
-                  far_strcpy(CommandComment[i],";");
+                  strcpy(CommandComment[i],";");
          }
          if (CommandComment[0][0])
             fprintf(parmfile, " ; %s", CommandComment[0]);
@@ -1234,18 +1234,18 @@ static int menu_checkkey(int curkey,int choice)
 
 #define LOADPROMPTSCHOICES(X,Y)     {\
    static FCODE tmp[] = { Y };\
-   choices[X]= (char far *)tmp;\
+   choices[X]= (char *)tmp;\
    }
 
 int main_menu(int fullmenu)
 {
-   char far *choices[44]; /* 2 columns * 22 rows */
+   char *choices[44]; /* 2 columns * 22 rows */
    int attributes[44];
    int choicekey[44];
    int i;
    int nextleft,nextright;
    int oldtabmode /* ,oldhelpmode */;
-   static char far MAIN_MENU[] = {"MAIN MENU"};
+   static char MAIN_MENU[] = {"MAIN MENU"};
    int showjuliatoggle;
    oldtabmode = tabmode;
    /* oldhelpmode = helpmode; */
@@ -1436,7 +1436,7 @@ top:
          nextleft = nextright + 1;
       i = fullscreen_choice(CHOICEMENU+CHOICESCRUNCH,
           MAIN_MENU,
-          NULL,NULL,nextleft,(char far * far *)choices,attributes,
+          NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
       if (i == -1)     /* escape */
          i = ESC;
@@ -1454,7 +1454,7 @@ top:
          }
       }
    if (i == ESC) {             /* escape from menu exits Fractint */
-      static char far s[] = "Exit from WinFract (y/n)? y";
+      static char s[] = "Exit from WinFract (y/n)? y";
       helptitle();
       setattr(1,0,C_GENERAL_MED,24*80);
       for (i = 9; i <= 11; ++i)

@@ -64,7 +64,7 @@ BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
 #endif
 
 BYTE *decoderline1;
-static char far *ditherbuf = NULL;
+static char *ditherbuf = NULL;
 
 /* Main entry decoder */
 
@@ -320,7 +320,7 @@ int gifview()
       }
 
         if (ditherbuf != NULL) { /* we're done, free dither memory */
-            farmemfree(ditherbuf);
+            free(ditherbuf);
         ditherbuf = NULL;
         }
 
@@ -352,7 +352,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 {
     int i,nexterr,brt,err;
         if(ditherbuf == NULL)
-        ditherbuf = (char far *)malloc(linelen+1);
+        ditherbuf = (char *)malloc(linelen+1);
         memset( ditherbuf, 0, linelen+1);
 
     nexterr = (rand()&0x1f)-16;

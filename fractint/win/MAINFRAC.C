@@ -70,16 +70,16 @@ int diskvideo, savedac;
 #define MAXLINE  2048
 #define MAXNUMFRACTALS  110
 
-long   far *lx0, far *ly0, far *lx1, far *ly1;
-double far *dx0, far *dy0, far *dx1, far *dy1;
-extern double far *temp_array;
+long   *lx0, *ly0, *lx1, *ly1;
+double *dx0, *dy0, *dx1, *dy1;
+extern double *temp_array;
 
-extern unsigned char far win_dacbox[256][3];
+extern unsigned char win_dacbox[256][3];
 BYTE dacbox[256][3];
 int dotmode;
 int andcolor, resave_flag;
 
-/*      HISTORY  far *history = NULL; */
+/*      HISTORY  *history = NULL; */
 U16 history = 0;
 int maxhistory = 10;
 
@@ -151,14 +151,14 @@ for (k = 0; fractalspecific[k].name != NULL; k++)
 qsort(onthelist,CountFractalList,2,compare_fractalnames);
 CurrentFractal = fractype;
 
-lx0 = (long far *)&temp_array[0];
-ly0 = (long far *)&lx0[MAXLINE];
-lx1 = (long far *)&ly0[MAXLINE];
-ly1 = (long far *)&ly0[MAXLINE];
-dx0 = (double far *)&temp_array[0];
-dy0 = (double far *)&dx0[MAXLINE];
-dx1 = (double far *)&dy0[MAXLINE];
-dy1 = (double far *)&dy0[MAXLINE];
+lx0 = (long *)&temp_array[0];
+ly0 = (long *)&lx0[MAXLINE];
+lx1 = (long *)&ly0[MAXLINE];
+ly1 = (long *)&ly0[MAXLINE];
+dx0 = (double *)&temp_array[0];
+dy0 = (double *)&dx0[MAXLINE];
+dx1 = (double *)&dy0[MAXLINE];
+dy1 = (double *)&dy0[MAXLINE];
 
 extraseg = FP_SEG(dx0);
 

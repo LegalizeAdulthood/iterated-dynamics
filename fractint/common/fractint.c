@@ -116,12 +116,12 @@ int compiled_by_turboc = 0;
         int hasinverse = 0;
         /* note that integer grid is set when integerfractal && !invert;    */
         /* otherwise the floating point grid is set; never both at once     */
-        long    far *lx0, far *ly0;     /* x, y grid                */
-        long    far *lx1, far *ly1;     /* adjustment for rotate    */
+        long    *lx0, *ly0;     /* x, y grid                */
+        long    *lx1, *ly1;     /* adjustment for rotate    */
         /* note that lx1 & ly1 values can overflow into sign bit; since     */
         /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-        double far *dx0, far *dy0;      /* floating pt equivs */
-        double far *dx1, far *dy1;
+        double *dx0, *dy0;      /* floating pt equivs */
+        double *dx1, *dy1;
         int     integerfractal;         /* TRUE if fractal uses integer math */
 
         /* usr_xxx is what the user wants, vs what we may be forced to do */
@@ -138,7 +138,7 @@ int compiled_by_turboc = 0;
         int     video_cutboth;          /* nonzero to keep virtual aspect */
         int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
-/*      HISTORY  far *history = NULL; */
+/*      HISTORY  *history = NULL; */
         U16 history = 0;
         int maxhistory = 10;
 

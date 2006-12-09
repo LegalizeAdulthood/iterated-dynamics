@@ -14,11 +14,11 @@
 #include "drivers.h"
 
 static int compress(int rowlimit);
-static int _fastcall shftwrite(BYTE far * color, int numcolors);
+static int _fastcall shftwrite(BYTE * color, int numcolors);
 static int _fastcall extend_blk_len(int datalen);
-static int _fastcall put_extend_blk(int block_id, int block_len, char far * block_data);
+static int _fastcall put_extend_blk(int block_id, int block_len, char * block_data);
 static int _fastcall store_item_name(char *);
-static void _fastcall setup_save_info(struct fractal_info far * save_info);
+static void _fastcall setup_save_info(struct fractal_info * save_info);
 
 /*
                         Save-To-Disk Routines (GIF)
@@ -335,33 +335,33 @@ int encoder()
    {                            /* write out the 256-color palette */
       if (gotrealdac)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE far *) dacbox, colors))
+         if (!shftwrite((BYTE *) dacbox, colors))
             goto oops;
 #else
    if (colors > 2)
    {
       if (gotrealdac || fake_lut)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE far *) dacbox, 256))
+         if (!shftwrite((BYTE *) dacbox, 256))
             goto oops;
 #endif
       }
       else
       {                         /* uh oh - better fake it */
          for (i = 0; i < 256; i += 16)
-            if (!shftwrite((BYTE far *)paletteEGA, 16))
+            if (!shftwrite((BYTE *)paletteEGA, 16))
                goto oops;
       }
    }
    if (colors == 2)
    {                            /* write out the B&W palette */
-      if (!shftwrite((BYTE far *)paletteBW, colors))
+      if (!shftwrite((BYTE *)paletteBW, colors))
          goto oops;
    }
 #ifndef XFRACT
    if (colors == 4)
    {                            /* write out the CGA palette */
-      if (!shftwrite((BYTE far *)paletteCGA, colors))
+      if (!shftwrite((BYTE *)paletteCGA, colors))
          goto oops;
    }
    if (colors == 16)
@@ -373,7 +373,7 @@ int encoder()
       }
       else
       {                         /* no DAC - must be an EGA */
-         if (!shftwrite((BYTE far *)paletteEGA, colors))
+         if (!shftwrite((BYTE *)paletteEGA, colors))
             goto oops;
       }
    }
@@ -417,7 +417,7 @@ int encoder()
          /* resume info block, 002 */
          save_info.tot_extend_len += extend_blk_len(resume_len);
          MoveFromMemory((BYTE *)block,(U16)1,(long)resume_len,0,resume_info);
-         if (!put_extend_blk(2, resume_len, (char far *)block))
+         if (!put_extend_blk(2, resume_len, (char *)block))
             goto oops;
       }
 /* save_info.fractal_type gets modified in setup_save_info() in float only
@@ -438,7 +438,7 @@ int encoder()
 #ifdef XFRACT
          fix_ranges(ranges, rangeslen, 0);
 #endif
-         if (!put_extend_blk(4, rangeslen * 2, (char far *) ranges))
+         if (!put_extend_blk(4, rangeslen * 2, (char *) ranges))
             goto oops;
 
       }
@@ -448,7 +448,7 @@ int encoder()
          save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
          /* note: this assumes variables allocated in order starting with
           * bfxmin in init_bf2() in BIGNUM.C */
-         if (!put_extend_blk(5, 22 * (bflength + 2), (char far *) bfxmin))
+         if (!put_extend_blk(5, 22 * (bflength + 2), (char *) bfxmin))
             goto oops;
       }
 
@@ -511,7 +511,7 @@ int encoder()
 #endif
           /* evolution info block, 006 */
           save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
-          if (!put_extend_blk(6, sizeof(esave_info), (char far *) &esave_info))
+          if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
              goto oops;
       }
 
@@ -537,7 +537,7 @@ int encoder()
 #endif
           /* orbits info block, 007 */
           save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
-          if (!put_extend_blk(7, sizeof(osave_info), (char far *) &osave_info))
+          if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
              goto oops;
       }
 
@@ -546,7 +546,7 @@ int encoder()
 #ifdef XFRACT
       decode_fractal_info(&save_info, 0);
 #endif
-      if (!put_extend_blk(1, FRACTAL_INFO_SIZE, (char far *) &save_info))
+      if (!put_extend_blk(1, FRACTAL_INFO_SIZE, (char *) &save_info))
       {
          goto oops;
       }
@@ -567,7 +567,7 @@ oops:
 }
 
 /* shift IBM colors to GIF */
-static int _fastcall shftwrite(BYTE far * color, int numcolors)
+static int _fastcall shftwrite(BYTE * color, int numcolors)
 {
    BYTE thiscolor;
    int i, j;
@@ -589,7 +589,7 @@ static int _fastcall extend_blk_len(int datalen)
    /* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
-static int _fastcall put_extend_blk(int block_id, int block_len, char far * block_data)
+static int _fastcall put_extend_blk(int block_id, int block_len, char * block_data)
 {
    int i, j;
    char header[15];
@@ -641,11 +641,11 @@ static int _fastcall store_item_name(char *nameptr)
    for (i = 0; i < sizeof(fsave_info.future) / sizeof(short); i++)
       fsave_info.future[i] = 0;
    /* formula/lsys/ifs info block, 003 */
-   put_extend_blk(3, sizeof(fsave_info), (char far *) &fsave_info);
+   put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
    return (extend_blk_len(sizeof(fsave_info)));
 }
 
-static void _fastcall setup_save_info(struct fractal_info far * save_info)
+static void _fastcall setup_save_info(struct fractal_info * save_info)
 {
    int i;
    if (fractype != FORMULA && fractype != FFORMULA)
@@ -845,7 +845,7 @@ unsigned int strlocn[10240];
 BYTE block[4096];
 #endif
 
-static long far *htab;
+static long *htab;
 static unsigned short *codetab = (unsigned short *)strlocn;
 
 /*
@@ -858,8 +858,8 @@ static unsigned short *codetab = (unsigned short *)strlocn;
  */
 
 #define tab_prefixof(i)   codetab[i]
-#define tab_suffixof(i)   ((char_type far *)(htab))[i]
-#define de_stack          ((char_type far *)&tab_suffixof((int)1<<BITSF))
+#define tab_suffixof(i)   ((char_type *)(htab))[i]
+#define de_stack          ((char_type *)&tab_suffixof((int)1<<BITSF))
 
 static int free_ent;                  /* first unused entry */
 
@@ -912,7 +912,7 @@ static int compress(int rowlimit)
    int tempkey;
    char accum_stack[256];
    accum = accum_stack;
-   htab = (long far *)MK_FP(extraseg,0);
+   htab = (long *)MK_FP(extraseg,0);
    
    outcolor1 = 0;               /* use these colors to show progress */
    outcolor2 = 1;               /* (this has nothing to do with GIF) */

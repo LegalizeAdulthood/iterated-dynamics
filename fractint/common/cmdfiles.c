@@ -102,9 +102,9 @@ long    bailout;                /* user input bailout value */
 enum bailouts bailoutest;       /* test used for determining bailout */
 double  inversion[3];           /* radius, xcenter, ycenter */
 int     rotate_lo,rotate_hi;    /* cycling color range      */
-int far *ranges;                /* iter->color ranges mapping */
+int *ranges;                /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
-BYTE far *mapdacbox = NULL;     /* map= (default colors)    */
+BYTE *mapdacbox = NULL;     /* map= (default colors)    */
 int     colorstate;             /* 0, dacbox matches default (bios or map=) */
                                 /* 1, dacbox matches no known defined map   */
                                 /* 2, dacbox matches the colorfile map      */
@@ -149,7 +149,7 @@ int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen 
 int first_init=1;               /* first time into cmdfiles? */
 static int init_rseed;
 static char initcorners,initparams;
-struct fractalspecificstuff far *curfractalspecific;
+struct fractalspecificstuff *curfractalspecific;
 
 char FormFileName[FILE_MAX_PATH];/* file to find (type=)formulas in */
 char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
@@ -161,7 +161,7 @@ char CommandComment[4][MAXCMT];    /* comments for command set */
 char IFSFileName[FILE_MAX_PATH];/* file to find (type=)IFS in */
 char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
-float far *ifs_defn = NULL;     /* ifs parameters */
+float *ifs_defn = NULL;     /* ifs parameters */
 int  ifs_type;                  /* 0=2d, 1=3d */
 int  slides = 0;                /* 1 autokey=play, 2 autokey=record */
 
@@ -457,7 +457,7 @@ static FCODE s_at_cmd []       = "PAR file";
 
 int lzw[2];
 static FCODE s_escapetoabort[] = "Press Escape to abort, any other key to continue";
-char far s_pressanykeytocontinue[] = "press any key to continue";
+char s_pressanykeytocontinue[] = "press any key to continue";
 
 /*
         cmdfiles(argc,argv) process the command-line arguments
@@ -668,7 +668,7 @@ static void initvars_restart()          /* <ins> key init */
    initcyclelimit=55;                   /* spin-DAC default speed limit */
    mapset = 0;                          /* no map= name active */
    if (mapdacbox) {
-      farmemfree(mapdacbox);
+      free(mapdacbox);
       mapdacbox = NULL;
       }
    TPlusFlag = 1;
@@ -759,7 +759,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    set_trig_array(2,s_sinh);
    set_trig_array(3,s_cosh);
    if (rangeslen) {
-      farmemfree((char far *)ranges);
+      free((char *)ranges);
       rangeslen = 0;
       }
    usemag = 1;                          /* use center-mag, not corners */
@@ -844,7 +844,7 @@ static void initvars_3d()               /* init vars affecting 3d */
 static void reset_ifs_defn()
 {
    if (ifs_defn) {
-      farmemfree((char far *)ifs_defn);
+      free((char *)ifs_defn);
       ifs_defn = NULL;
       }
 }
@@ -862,7 +862,7 @@ static int cmdfile(FILE *handle,int mode)
    int lineoffset = 0;
    int changeflag = 0; /* &1 fractal stuff chgd, &2 3d stuff chgd */
    char linebuf[513],*cmdbuf;
-   char far *savesuffix;
+   char *savesuffix;
    /* use near array suffix for large argument buffer, but save existing
       contents to extraseg */
    cmdbuf = (char *)suffix;
@@ -1643,7 +1643,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          tmpranges[entries++] = prev = j;
          }
       if (prev == 0) goto badarg;
-      if ((ranges = (int far *)malloc(sizeof(int)*entries)) == NULL) {
+      if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL) {
          static FCODE msg[] = {"Insufficient memory for ranges="};
          stopmsg(1,msg);
          return(-1);
@@ -3056,9 +3056,9 @@ Oops. I couldn't understand the argument:\n  "};
    if (active_system == 0 /* DOS */
      && first_init)       /* & this is 1st call to cmdfiles */
 #ifndef XFRACT
-      sprintf(msg,"%Fs%s%Fs",(char far *)argerrmsg1,badarg,(char far *)argerrmsg2);
+      sprintf(msg,"%Fs%s%Fs",(char *)argerrmsg1,badarg,(char *)argerrmsg2);
    else
-      sprintf(msg,"%Fs%s",(char far *)argerrmsg1,badarg);
+      sprintf(msg,"%Fs%s",(char *)argerrmsg1,badarg);
 #else
       sprintf(msg,"%s%s%s",argerrmsg1,badarg,argerrmsg2);
    else
@@ -3155,9 +3155,9 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stopmsg() but can be used in cmdfiles()      */
 /* call with NULL for badfilename to get pause for getakey() */
-int init_msg(int flags,char *cmdstr,char far *badfilename,int mode)
+int init_msg(int flags,char *cmdstr,char *badfilename,int mode)
 {
-   char far *modestr[4] =
+   char *modestr[4] =
        {s_commandline,s_sstoolsini,s_at_cmd,s_at_cmd};
    static FCODE diags[] =
        {"Fractint found the following problems when parsing commands: "};

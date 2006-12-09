@@ -57,7 +57,7 @@
 #include "fractype.h"
 #include "drivers.h"
 
-#define FAR_RESERVE     8192L     /* amount of far mem we will leave avail. */
+#define FAR_RESERVE     8192L     /* amount of mem we will leave avail. */
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
 #define newx(size)     mem_alloc(size)
@@ -554,7 +554,7 @@ void Jiim(int which)         /* called by fractint */
 
 /*
  * MIIM code:
- * Grab far memory for Queue/Stack before SaveRect gets it.
+ * Grab memory for Queue/Stack before SaveRect gets it.
  */
    OKtoMIIM  = 0;
    if (which == JIIM && debugflag != 300)

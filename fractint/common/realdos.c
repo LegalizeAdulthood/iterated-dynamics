@@ -54,16 +54,16 @@ int xrelease=304;
       &16 for info only message (green box instead of red in DOS vsn)
    */
 #ifdef XFRACT
-static char far s_errorstart[] = {"*** Error during startup:"};
+static char s_errorstart[] = {"*** Error during startup:"};
 #endif
-static char far s_escape_cancel[] = {"Escape to cancel, any other key to continue..."};
-static char far s_anykey[] = {"Any key to continue..."};
+static char s_escape_cancel[] = {"Escape to cancel, any other key to continue..."};
+static char s_anykey[] = {"Any key to continue..."};
 #if !defined(PRODUCTION) && !defined(XFRACT)
-static char far s_custom[] = {"Customized Version"};
-static char far s_notpublic[] = {"Not for Public Release"};
-static char far s_incremental[] = {"Incremental release"};
+static char s_custom[] = {"Customized Version"};
+static char s_notpublic[] = {"Not for Public Release"};
+static char s_incremental[] = {"Incremental release"};
 #endif
-int stopmsg (int flags, char far *msg)
+int stopmsg (int flags, char *msg)
 {
    int ret,toprow,color,savelookatmouse;
    static unsigned char batchmode = 0;
@@ -150,7 +150,7 @@ static int  textxdots,textydots;
       eating the key).
       It works in almost any video mode - does nothing in some very odd cases
       (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int texttempmsg(char far *msgparm)
+int texttempmsg(char *msgparm)
 {
    if (showtempmsg(msgparm))
       return(-1);
@@ -170,18 +170,18 @@ void freetempmsg()
    temptextsave = 0;
 }
 
-int showtempmsg(char far *msgparm)
+int showtempmsg(char *msgparm)
 {
    static long size = 0;
    char msg[41];
    BYTE buffer[640];
-   BYTE far *fontptr;
+   BYTE *fontptr;
    BYTE *bufptr;
    int i,j,k,fontchar,charnum;
    int xrepeat = 0;
    int yrepeat = 0;
    int save_sxoffs,save_syoffs;
-   far_strncpy(msg,msgparm,40);
+   strncpy(msg,msgparm,40);
    msg[40] = 0; /* ensure max message len of 40 chars */
    if (driver_diskp()) { /* disk video, screen in text mode, easy */
       dvid_status(0,msg);
@@ -359,7 +359,7 @@ void footer_msg(int *i, int options, char *speedstring)
 #pragma code_seg ()         /* back to normal segment */
 #endif
 
-int putstringcenter(int row, int col, int width, int attr, char far *msg)
+int putstringcenter(int row, int col, int width, int attr, char *msg)
 {
    char buf[81];
    int i,j,k;
@@ -367,7 +367,7 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
 #ifdef XFRACT
    if (width>=80) width=79; /* Some systems choke in column 80 */
 #endif
-   while (msg[i]) ++i; /* strlen for a far */
+   while (msg[i]) ++i; /* strlen for a */
    if (i == 0) return(-1);
    if (i >= width) i = width - 1; /* sanity check */
    j = (width - i) / 2;
@@ -376,7 +376,7 @@ int putstringcenter(int row, int col, int width, int attr, char far *msg)
    buf[width] = 0;
    i = 0;
    k = j;
-   while (msg[i]) buf[k++] = msg[i++]; /* strcpy for a far */
+   while (msg[i]) buf[k++] = msg[i++]; /* strcpy for a */
    driver_put_string(row,col,attr,buf);
    return j;
 }
@@ -387,7 +387,7 @@ char speed_prompt[]="Speed key string";
 
 /* For file list purposes only, it's a directory name if first 
    char is a dot or last char is a slash */
-static int isadirname(char far *name)
+static int isadirname(char *name)
 {
    if(*name == '.' || endswithslash(name))
       return 1;
@@ -431,7 +431,7 @@ void show_speedstring(int speedrow,
 }
 
 void process_speedstring(char    *speedstring,
-                        char far*far*choices,         /* array of choice strings                */
+                        char **choices,         /* array of choice strings                */
                         int       curkey,
                         int      *pcurrent,
                         int       numchoices,
@@ -488,12 +488,12 @@ int fullscreen_choice(
                                   /* &4 include F1 for help in instructions */
                                   /* &8 add caller's instr after normal set */
                                   /* &16 menu items up one line             */
-    char far *hdg,                /* heading info, \n delimited             */
-    char far *hdg2,               /* column heading or NULL                 */
-    char far *instr,              /* instructions, \n delimited, or NULL    */
+    char *hdg,                /* heading info, \n delimited             */
+    char *hdg2,               /* column heading or NULL                 */
+    char *instr,              /* instructions, \n delimited, or NULL    */
     int numchoices,               /* How many choices in list               */
-    char far*far*choices,         /* array of choice strings                */
-    int far *attributes,          /* &3: 0 normal color, 1,3 highlight      */
+    char **choices,         /* array of choice strings                */
+    int *attributes,          /* &3: 0 normal color, 1,3 highlight      */
                                   /* &256 marks a dummy entry               */
     int boxwidth,                 /* box width, 0 for calc (in items)       */
     int boxdepth,                 /* box depth, 0 for calc, 99 for max      */
@@ -520,10 +520,10 @@ int fullscreen_choice(
    int curkey,increment,rev_increment = 0;
    int redisplay;
    int i,j,k = 0;
-   char far *charptr;
+   char *charptr;
    char buf[81];
    char curitem[81];
-   char far *itemptr;
+   char *itemptr;
    int ret,savelookatmouse;
    int scrunch;  /* scrunch up a line */
 
@@ -970,7 +970,7 @@ char *despace(char *str)
 
 #ifndef XFRACT
 /* case independent version of strncmp */
-int strncasecmp(char far *s,char far *t,int ct)
+int strncasecmp(char *s,char *t,int ct)
 {
    for(; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
       if(*s == '\0')
@@ -981,7 +981,7 @@ int strncasecmp(char far *s,char far *t,int ct)
 
 #define LOADPROMPTSCHOICES(X,Y)     {\
    static FCODE tmp[] = { Y };\
-   choices[X]= (char far *)tmp;\
+   choices[X]= (char *)tmp;\
    }
 
 static int menutype;
@@ -990,13 +990,13 @@ static int menutype;
 
 int main_menu(int fullmenu)
 {
-   char far *choices[44]; /* 2 columns * 22 rows */
+   char *choices[44]; /* 2 columns * 22 rows */
    int attributes[44];
    int choicekey[44];
    int i;
    int nextleft,nextright;
    int oldtabmode /* ,oldhelpmode */;
-   static char far MAIN_MENU[] = {"MAIN MENU"};
+   static char MAIN_MENU[] = {"MAIN MENU"};
    int showjuliatoggle;
    oldtabmode = tabmode;
    /* oldhelpmode = helpmode; */
@@ -1197,7 +1197,7 @@ top:
          nextleft = nextright + 1;
       i = fullscreen_choice(CHOICEMENU+CHOICESCRUNCH,
           MAIN_MENU,
-          NULL,NULL,nextleft,(char far * far *)choices,attributes,
+          NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
       if (i == -1)     /* escape */
          i = ESC;
@@ -1216,9 +1216,9 @@ top:
       }
    if (i == ESC) {             /* escape from menu exits Fractint */
 #ifdef XFRACT
-      static char far s[] = "Exit from Xfractint (y/n)? y";
+      static char s[] = "Exit from Xfractint (y/n)? y";
 #else
-      static char far s[] = "Exit from Fractint (y/n)? y";
+      static char s[] = "Exit from Fractint (y/n)? y";
 #endif
       helptitle();
       driver_set_attr(1,0,C_GENERAL_MED,24*80);
@@ -1434,19 +1434,19 @@ inpfld_end:
 
 int field_prompt(
         int options,        /* &1 numeric value, &2 integer */
-        char far *hdg,      /* heading, \n delimited lines */
-        char far *instr,    /* additional instructions or NULL */
+        char *hdg,      /* heading, \n delimited lines */
+        char *instr,    /* additional instructions or NULL */
         char *fld,          /* the field itself */
         int len,            /* field length (declare as 1 larger for \0) */
         int (*checkkey)(int)   /* routine to check non data keys, or NULL */
         )
 {
-   char far *charptr;
+   char *charptr;
    int boxwidth,titlelines,titlecol,titlerow;
    int promptcol;
    int i,j;
    char buf[81];
-   static char far DEFLT_INST[] = {"Press ENTER when finished (or ESCAPE to back out)"};
+   static char DEFLT_INST[] = {"Press ENTER when finished (or ESCAPE to back out)"};
    helptitle();                           /* clear screen, display title */
    driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
    charptr = hdg;                         /* count title lines, find widest */
@@ -1505,7 +1505,7 @@ int field_prompt(
       call this when thinking phase is done
    */
 
-int thinking(int options,char far *msg)
+int thinking(int options,char *msg)
 {
    static int thinkstate = -1;
    char *wheel[] = {"-","\\","|","/"};
@@ -1551,7 +1551,7 @@ void clear_screen(int dummy)  /* a stub for a windows only subroutine */
 
 unsigned long swaptotlen;
 unsigned long swapoffset;
-BYTE far *swapvidbuf;
+BYTE *swapvidbuf;
 int swaplength;
 
 #define SWAPBLKLEN 4096 /* must be a power of 2 */
@@ -1671,7 +1671,7 @@ int load_fractint_cfg(int options)
 
    FILE *cfgfile;
    VIDEOINFO *vident;
-   int far *cfglinenums;
+   int *cfglinenums;
    int linenum;
    long xdots, ydots;
    int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
@@ -1681,7 +1681,7 @@ int load_fractint_cfg(int options)
    int truecolorbits; 
 
    vidtbl = MK_FP(extraseg,0);
-   cfglinenums = (int far *)(&vidtbl[MAXVIDEOMODES]);
+   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
 #ifdef XFRACT
     badconfig = -1;
@@ -1764,8 +1764,8 @@ int load_fractint_cfg(int options)
            )
          goto bad_fractint_cfg;
       cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
-      memcpy(vident->name,   (char far *)&tempstring[commas[0]],25);
-      memcpy(vident->comment,(char far *)&tempstring[commas[9]],25);
+      memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
+      memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
       vident->name[25] = vident->comment[25] = 0;
       vident->keynum      = keynum;
       vident->videomodeax = ax;
@@ -1792,7 +1792,7 @@ use_resident_table:
    vident = vidtbl;
    for (i = 0; i < MAXVIDEOTABLE; ++i) {
       if (videotable[i].xdots) {
-         memcpy((char far *)vident,(char far *)&videotable[i],
+         memcpy((char *)vident,(char *)&videotable[i],
                     sizeof(*vident));
          ++vident;
          ++vidtbllen;
@@ -1804,7 +1804,7 @@ use_resident_table:
 
 void bad_fractint_cfg_msg()
 {
-static char far badcfgmsg[]={"\
+static char badcfgmsg[]={"\
 File FRACTINT.CFG is missing or invalid.\n\
 See Hardware Support and Video Modes in the full documentation for help.\n\
 I will continue with only the built-in video modes available."};
@@ -1819,10 +1819,10 @@ void load_videotable(int options)
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         memcpy((char far *)&videotable[keyents],(char far *)&vidtbl[i],
+         memcpy((char *)&videotable[keyents],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (++keyents >= MAXVIDEOTABLE)
             break;

@@ -133,7 +133,7 @@ static int get_min_max(void)
    return(0);
 }
 
-void toggle_bars(int *bars, int barwidth, int far *colour)
+void toggle_bars(int *bars, int barwidth, int *colour)
 {
    int i, j, ct;
    find_special_colors();
@@ -158,11 +158,11 @@ void toggle_bars(int *bars, int barwidth, int far *colour)
 int outline_stereo(BYTE * pixels, int linelen)
 {
    int i, j, x, s;
-   int far *same;
-   int far *colour;
+   int *same;
+   int *colour;
    if((Y) >= ydots)
       return(1);
-   same   = (int far *)MK_FP(extraseg,0);
+   same   = (int *)MK_FP(extraseg,0);
    colour = &same[ydots];
 
    for (x = 0; x < xdots; ++x)
@@ -229,9 +229,9 @@ int do_AutoStereo(void)
    time_t ltime;
    unsigned char *buf = (unsigned char *)decoderline;
    /* following two lines re-use existing arrays in Fractint */
-   int far *same;
-   int far *colour;
-   same   = (int far *)MK_FP(extraseg,0);
+   int *same;
+   int *colour;
+   same   = (int *)MK_FP(extraseg,0);
    colour = &same[ydots];
 
    pv = &v;   /* set static vars to stack structure */

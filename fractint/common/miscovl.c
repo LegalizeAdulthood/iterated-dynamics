@@ -28,7 +28,7 @@
 /* routines in this module      */
 
 void write_batch_parms(char *colorinf,int colorsonly, int maxcolor,int i, int j);
-void expand_comments(char far *target, char far *source);
+void expand_comments(char *target, char *source);
 
 #ifndef USE_VARARGS
 static void put_parm(char *parm,...);
@@ -54,7 +54,7 @@ static void strip_zeros(char *buf);
 #define CHOICEMENU      2
 #define CHOICEHELP      4
 
-char far par_comment[4][MAXCMT];
+char par_comment[4][MAXCMT];
 
 char s_yes[]      = "yes";
 char s_no[]       = "no";
@@ -90,7 +90,7 @@ void make_batch_file()
 {
 #define MAXPROMPTS 18
    int colorsonly = 0;
-   static char far hdg[]={"Save Current Parameters"};
+   static char hdg[]={"Save Current Parameters"};
    /** added for pieces feature **/
    double pdelx = 0.0;
    double pdely = 0.0;
@@ -105,11 +105,11 @@ void make_batch_file()
    /****/
 
    int i,j;
-   char far *inpcommandfile, far *inpcommandname;
-   char far *inpcomment[4];
+   char *inpcommandfile, *inpcommandname;
+   char *inpcomment[4];
    struct fullscreenvalues paramvalues[18];
-   char far * choices[MAXPROMPTS];
-   char far *ptr;
+   char * choices[MAXPROMPTS];
+   char *ptr;
    int gotinfile;
    char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
    FILE *infile = NULL;
@@ -132,7 +132,7 @@ void make_batch_file()
    inpcomment[3]    = inpcomment[2] + MAXCMT;
 
    /* steal existing array for "choices" */
-   ptr = (char far *)(inpcomment[3] + MAXCMT);
+   ptr = (char *)(inpcomment[3] + MAXCMT);
    driver_stack_screen();
    oldhelpmode = helpmode;
    helpmode = HELPPARMFILE;
@@ -278,7 +278,7 @@ prompt_user:
          strcat(CommandFile, ".par");   /* default extension .par */
       strcpy(CommandName, inpcommandname);
       for(i=0;i<4;i++)
-         far_strncpy(CommandComment[i], inpcomment[i], MAXCMT);
+         strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
       if ((gotrealdac && !reallyega) || (istruecolor && !truemode))
 #else
@@ -554,7 +554,7 @@ static struct write_batch_data { /* buffer for parms to break lines nicely */
 
 void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
-   char far *saveshared;
+   char *saveshared;
    int i,j,k;
    double Xctr, Yctr;
    LDBL Magnification;
@@ -1553,7 +1553,7 @@ long fr_farfree(void)
    j2 = 0x80000L;
    while ((j2 >>= 1) != 0)
       if ((fartempptr = (BYTE huge *)malloc(j+j2)) != NULL) {
-         farmemfree((void far*)fartempptr);
+         free((void *)fartempptr);
          j += j2;
          }
    return(j);
@@ -1615,9 +1615,9 @@ int edit_text_colors()
    int save_debugflag,save_lookatmouse;
    int row,col,bkgrd;
    int rowf,colf,rowt,colt;
-   char far *vidmem;
-   char far *savescreen;
-   char far *farp1; char far *farp2;
+   char *vidmem;
+   char *savescreen;
+   char *farp1; char *farp2;
    int i,j,k;
    save_debugflag = debugflag;
    save_lookatmouse = lookatmouse;
@@ -1640,7 +1640,7 @@ int edit_text_colors()
             driver_hide_text_cursor();
             return 0;
          case '/':
-            farp1 = savescreen = (char far *)malloc(4000L);
+            farp1 = savescreen = (char *)malloc(4000L);
             farp2 = vidmem;
             for (i = 0; i < 4000; ++i) { /* save and blank */
                *(farp1++) = *farp2;
@@ -1660,7 +1660,7 @@ int edit_text_colors()
             farp2 = savescreen;
             for (i = 0; i < 4000; ++i) /* restore */
                *(farp1++) = *(farp2++);
-            farmemfree(savescreen);
+            free(savescreen);
             break;
          case ',':
             rowf = row; colf = col; break;
@@ -1747,14 +1747,14 @@ int select_video_mode(int curmode)
          }
       }
    else
-      memcpy((char far *)&videoentry,(char far *)&videotable[curmode],
+      memcpy((char *)&videoentry,(char *)&videotable[curmode],
                  sizeof(videoentry));
 #ifndef XFRACT
    for (i = 0; i < vidtbllen; ++i) { /* find default mode */
       if ( videoentry.videomodeax == vidtbl[entnums[i]].videomodeax
         && videoentry.colors      == vidtbl[entnums[i]].colors
         && (curmode < 0
-            || memcmp((char far *)&videoentry,(char far *)&vidtbl[entnums[i]],
+            || memcmp((char *)&videoentry,(char *)&vidtbl[entnums[i]],
                           sizeof(videoentry)) == 0))
          break;
       }
@@ -1783,18 +1783,18 @@ int select_video_mode(int curmode)
    else         /* picked by Enter key */
       i = entnums[i];
 #endif
-   memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+   memcpy((char *)&videoentry,(char *)&vidtbl[i],
               sizeof(videoentry));  /* the selected entry now in videoentry */
 
 #ifndef XFRACT
    /* copy fractint.cfg table to resident table, note selected entry */
    j = k = 0;
-   memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         memcpy((char far *)&videotable[j],(char far *)&vidtbl[i],
+         memcpy((char *)&videotable[j],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
-         if (memcmp((char far *)&videoentry,(char far *)&vidtbl[i],
+         if (memcmp((char *)&videoentry,(char *)&vidtbl[i],
                         sizeof(videoentry)) == 0)
             k = vidtbl[i].keynum;
          if (++j >= MAXVIDEOTABLE-1)
@@ -1805,8 +1805,8 @@ int select_video_mode(int curmode)
     k = vidtbl[0].keynum;
 #endif
    if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
-      memcpy((char far *)&videotable[MAXVIDEOTABLE-1],
-                 (char far *)&videoentry,sizeof(*vidtbl));
+      memcpy((char *)&videotable[MAXVIDEOTABLE-1],
+                 (char *)&videoentry,sizeof(*vidtbl));
       ret = 1400; /* special value for check_vidmode_key */
       }
 
@@ -1823,7 +1823,7 @@ void format_vid_table(int choice,char *buf)
    char kname[5];
    char biosflag;
    int truecolorbits;
-   memcpy((char far *)&videoentry,(char far *)&vidtbl[entsptr[choice]],
+   memcpy((char *)&videoentry,(char *)&vidtbl[entsptr[choice]],
               sizeof(videoentry));
    vidmode_keyname(videoentry.keynum,kname);
    biosflag = (char)((videoentry.dotmode % 100 == 1) ? 'B' : ' ');
@@ -1896,7 +1896,7 @@ static void update_fractint_cfg()
 #ifndef XFRACT
    char cfgname[100],outname[100],buf[121],kname[5];
    FILE *cfgfile,*outfile;
-   int far *cfglinenums;
+   int *cfglinenums;
    int i,j,linenum,nextlinenum,nextmode;
    struct videoinfo vident;
 
@@ -1919,7 +1919,7 @@ static void update_fractint_cfg()
       }
    cfgfile = fopen(cfgname,"r");
 
-   cfglinenums = (int far *)(&vidtbl[MAXVIDEOMODES]);
+   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
    linenum = nextmode = 0;
    nextlinenum = cfglinenums[0];
    while (fgets(buf,120,cfgfile)) {
@@ -1927,7 +1927,7 @@ static void update_fractint_cfg()
       char colorsbuf[10];
       ++linenum;
       if (linenum == nextlinenum) { /* replace this line */
-         memcpy((char far *)&vident,(char far *)&vidtbl[nextmode],
+         memcpy((char *)&vident,(char *)&vidtbl[nextmode],
                     sizeof(videoentry));
          vidmode_keyname(vident.keynum,kname);
          strcpy(buf,vident.name);
@@ -1999,7 +1999,7 @@ unsigned char *temp;
 FILE *out, *in;
 char msgbuf[81];
 
-errorflag = 0;                          /* no errors so far */
+errorflag = 0;                          /* no errors so */
 inputerrorflag = 0;
 allxres = allyres = allitbl = 0;
 out = in = NULL;
@@ -2430,7 +2430,7 @@ static char *expand_var(char *var, char *buf)
    }
    else
    {
-      static char far msg[] = {"Unknown comment variable xxxxxxxxxxxxxxx"};
+      static char msg[] = {"Unknown comment variable xxxxxxxxxxxxxxx"};
       msg[25] = '\0';
       strcat(msg,var);
       stopmsg(0,msg);
@@ -2444,7 +2444,7 @@ static char *expand_var(char *var, char *buf)
 static const char esc_char = '$';
 
 /* extract comments from the comments= command */
-void expand_comments(char far *target, char far *source)
+void expand_comments(char *target, char *source)
 {
    int i,j, k, escape = 0;
    char c, oldc, varname[MAXVNAME];
@@ -2475,7 +2475,7 @@ void expand_comments(char far *target, char far *source)
          char *varstr;
          varname[k] = 0;
          varstr = expand_var(varname,buf);
-         far_strncpy(target+j,varstr,MAXCMT-j-1);
+         strncpy(target+j,varstr,MAXCMT-j-1);
          j += (int) strlen(varstr);
       }
       else if (c == esc_char && escape != 0 && oldc != '\\')
@@ -2506,7 +2506,7 @@ void parse_comments(char *value)
             save = *next;
             *next = '\0';
          }
-         far_strncpy(par_comment[i],value, MAXCMT);
+         strncpy(par_comment[i],value, MAXCMT);
       }
       if(next == NULL)
          break;

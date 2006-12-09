@@ -98,7 +98,7 @@ char commandmask[13] = {"*.par"};
 */
 #define LOADCHOICES(X)     {\
    static FCODE tmp[] = { X };\
-   strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -106,8 +106,8 @@ int get_toggles()
 {
    static FCODE o_hdg[]={"Basic Options\n(not all combinations make sense)"};
    char hdg[sizeof(o_hdg)];
-   char far *choices[20];
-   char far *ptr;
+   char *choices[20];
+   char *ptr;
    int oldhelpmode;
    char prevsavename[FILE_MAX_DIR+1];
    char *savenameptr;
@@ -128,7 +128,7 @@ int get_toggles()
                          s_fmod,s_tdis};
 
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
 
    k = -1;
 
@@ -402,8 +402,8 @@ int get_toggles2()
    static FCODE o_hdg[]={"Extended Options\n\
 (not all combinations make sense)"};
    char hdg[sizeof(o_hdg)];
-   char far *ptr;
-   char far *choices[18];
+   char *ptr;
+   char *choices[18];
    int oldhelpmode;
 
    struct fullscreenvalues uvalues[23];
@@ -415,7 +415,7 @@ int get_toggles2()
    long old_usr_distest;
 
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
 
    /* fill up the choices (and previous values) arrays */
    k = -1;
@@ -550,8 +550,8 @@ int passes_options(void)
    static FCODE pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
    static FCODE pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
    char hdg[sizeof(o_hdg)+sizeof(pressf2)+sizeof(pressf6)];
-   char far *ptr;
-   char far *choices[20];
+   char *ptr;
+   char *choices[20];
    int oldhelpmode;
    char *passcalcmodes[] ={"rect","line"};
 /*   char *passcalcmodes[] ={"rect","line","func"}; */
@@ -567,7 +567,7 @@ int passes_options(void)
    strcpy(hdg,o_hdg);
    strcat(hdg,pressf2);
    strcat(hdg,pressf6);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
    ret = 0;
 
 pass_option_restart:
@@ -689,8 +689,8 @@ int get_view_params()
 {
    static FCODE o_hdg[]={"View Window Options"};
    char hdg[sizeof(o_hdg)];
-   char far *choices[16];
-   char far *ptr;
+   char *choices[16];
+   char *ptr;
 
    int oldhelpmode;
    struct fullscreenvalues uvalues[25];
@@ -707,7 +707,7 @@ int get_view_params()
 #endif
 
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
 
 /*
    Because the scrolling (and virtual screen width) must be
@@ -822,14 +822,14 @@ get_view_restart:
       LOADCHOICES("");
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char far *)xmsg,vesa_yres,(char far *)midxmsg,estm_xmax);
-      strcpy(ptr,(char far *)dim);
+      sprintf(dim,"%Fs%4u%Fs%lu",(char *)xmsg,vesa_yres,(char *)midxmsg,estm_xmax);
+      strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char far *)ymsg,vesa_xres,(char far *)midymsg,estm_ymax);
-      strcpy(ptr,(char far *)dim);
+      sprintf(dim,"%Fs%4u%Fs%lu",(char *)ymsg,vesa_xres,(char *)midymsg,estm_ymax);
+      strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
@@ -957,7 +957,7 @@ get_view_restart:
    if (driver_diskp() || (virtual_screens && dotmode == 28)) {
       videoentry.xdots = sxdots;
       videoentry.ydots = sydots;
-      memcpy((char far *)&videotable[adapter],(char far *)&videoentry,
+      memcpy((char *)&videotable[adapter],(char *)&videoentry,
                     sizeof(videoentry));
       if (finalaspectratio == 0.0)
          finalaspectratio = (float)sydots/sxdots;
@@ -1083,7 +1083,7 @@ int get_starfield_params(void) {
    struct fullscreenvalues uvalues[3];
    int oldhelpmode;
    int i;
-   char far *starfield_prompts[3];
+   char *starfield_prompts[3];
    strcpy(hdg,o_hdg);
    strcpy(sf1,o_sf1);
    strcpy(sf2,o_sf2);
@@ -1137,7 +1137,7 @@ int get_rds_params(void) {
    char rds6[60];
    char *stereobars[] = {"none", "middle", "top"};
    struct fullscreenvalues uvalues[7];
-   char far *rds_prompts[7];
+   char *rds_prompts[7];
    int oldhelpmode;
    int i,k;
    int ret;
@@ -1244,15 +1244,15 @@ int get_a_number(double *x, double *y)
 {
    static FCODE o_hdg[]={"Set Cursor Coordinates"};
    char hdg[sizeof(o_hdg)];
-   char far *ptr;
-   char far *choices[2];
+   char *ptr;
+   char *choices[2];
 
    struct fullscreenvalues uvalues[2];
    int i, k;
 
    driver_stack_screen();
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
 
    /* fill up the previous values arrays */
    k = -1;
@@ -1335,7 +1335,7 @@ void goodbye()                  /* we done.  Bail out */
       driver_set_for_text();
 #ifdef XFRACT
    UnixDone();
-   printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
+   printf("\n\n\n%s\n",goodbyemessage); /* printf takes pointer */
 #else
 #if !defined(_WIN32)
    if(*s_makepar != 0)
@@ -1455,12 +1455,12 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
 #endif /* !_WIN32 */
 
 #if 0
-void heap_sort(void far *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
+void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
 {
    int ll,j,ir,i;
-   void far *rra;
-   char far *ra;
-   ra = (char far *)ra1;
+   void *rra;
+   char *ra;
+   ra = (char *)ra1;
    ra -= sz;
    ll=(n>>1)+1;
    ir=n;
@@ -1468,14 +1468,14 @@ void heap_sort(void far *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR 
    for(;;)
    {
       if(ll>1)
-         rra = *((char far *far *)(ra+(--ll)*sz));
+         rra = *((char **)(ra+(--ll)*sz));
       else
       {
-         rra = *((char far * far *)(ra+ir*sz));
-         *((char far * far *)(ra+ir*sz))=*((char far * far *)(ra+sz));
+         rra = *((char * *)(ra+ir*sz));
+         *((char * *)(ra+ir*sz))=*((char * *)(ra+sz));
          if(--ir == 1)
          {
-            *((char far * far *)(ra+sz))=rra;
+            *((char * *)(ra+sz))=rra;
             return;
          }
       }
@@ -1487,20 +1487,20 @@ void heap_sort(void far *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR 
             ++j;
          if(fct(&rra,ra+j*sz) < 0)
          {
-            *((char far * far *)(ra+i*sz)) = *((char far * far *)(ra+j*sz));
+            *((char * *)(ra+i*sz)) = *((char * *)(ra+j*sz));
             j += (i=j);
          }
          else
             j=ir+1;
       }
-      *((char far * far *)(ra+i*sz))=rra;
+      *((char * *)(ra+i*sz))=rra;
    }
 }
 #endif
 
 int lccompare(VOIDFARPTR arg1, VOIDFARPTR arg2) /* for sort */
 {
-   return(strncasecmp(*((char far * far *)arg1),*((char far *far *)arg2),40));
+   return(strncasecmp(*((char * *)arg1),*((char **)arg2),40));
 }
 
 
@@ -1509,7 +1509,7 @@ int getafilename(char *hdg,char *template,char *flname)
 {
    int rds;  /* if getting an RDS image map */
    static FCODE o_instr[]={"Press "FK_F6" for default directory, "FK_F4" to toggle sort "};
-   char far *instr;
+   char *instr;
    int masklen;
    char filename[FILE_MAX_PATH]; /* 13 is big enough for Fractint, but not Xfractint */
    char speedstr[81];
@@ -1524,8 +1524,8 @@ int getafilename(char *hdg,char *template,char *flname)
       char name[13];
       char type;
    }
-   far *far*choices;
-   int far *attributes;
+   **choices;
+   int *attributes;
    int filecount;   /* how many files */
    int dircount;    /* how many directories */
    int notroot;     /* not the root directory */
@@ -1540,10 +1540,10 @@ int getafilename(char *hdg,char *template,char *flname)
    rds = (stereomapname == flname)?1:0;
 
    /* steal existing array for "choices" */
-   choices = (struct CHOICE far *far*)MK_FP(extraseg,0);
-   choices[0] = (struct CHOICE far *)(choices + MAXNUMFILES+1);
-   attributes = (int far *)(choices[0] + MAXNUMFILES+1);
-   instr = (char far *)(attributes + MAXNUMFILES +1);
+   choices = (struct CHOICE **)MK_FP(extraseg,0);
+   choices[0] = (struct CHOICE *)(choices + MAXNUMFILES+1);
+   attributes = (int *)(choices[0] + MAXNUMFILES+1);
+   instr = (char *)(attributes + MAXNUMFILES +1);
    attributes[0] = 1;
    for(i=1;i<MAXNUMFILES+1;i++)
    {
@@ -1602,7 +1602,7 @@ retry_dir:
 #endif
          if(strcmp(DTA.filename,".."))
             strcat(DTA.filename,SLASH);
-         far_strncpy(choices[++filecount]->name,DTA.filename,13);
+         strncpy(choices[++filecount]->name,DTA.filename,13);
          choices[filecount]->name[12] = '\0';
          choices[filecount]->type = 1;
          dircount++;
@@ -1634,7 +1634,7 @@ retry_dir:
 #ifndef XFRACT
                strlwr(DTA.filename);
 #endif
-               far_strncpy(choices[++filecount]->name,DTA.filename,13);
+               strncpy(choices[++filecount]->name,DTA.filename,13);
                choices[filecount]->type = 0;
             }
             else
@@ -1642,7 +1642,7 @@ retry_dir:
 #ifndef XFRACT
                strlwr(DTA.filename);
 #endif
-               far_strncpy(choices[++filecount]->name,DTA.filename,13);
+               strncpy(choices[++filecount]->name,DTA.filename,13);
                choices[filecount]->type = 0;
             }
          }
@@ -1661,7 +1661,7 @@ retry_dir:
    if(dosort)
    {
       strcat(instr,"off");
-      shell_sort((void far *far*)choices,filecount,sizeof(char far *),lccompare); /* sort file list */
+      shell_sort((void **)choices,filecount,sizeof(char *),lccompare); /* sort file list */
    }
    else
       strcat(instr,"on");
@@ -1692,7 +1692,7 @@ retry_dir:
       options = 8;
    else
       options = 8+32;
-   i = fullscreen_choice(options,temp1,NULL,instr,filecount,(char far *far*)choices,
+   i = fullscreen_choice(options,temp1,NULL,instr,filecount,(char **)choices,
           attributes,5,99,12,i,NULL,speedstr,filename_speedstr,check_f6_key);
    if (i==-F4)
    {
@@ -1900,12 +1900,12 @@ int isadirectory(char *s)
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
-int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
+int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 {
    int length;
    int len;
    int offset;
-   char far *tmp;
+   char *tmp;
    if(drive)
       drive[0] = 0;
    if(dir)
@@ -1940,13 +1940,13 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
    /* get dir */
    if(offset < length)
    {
-      tmp = far_strrchr(template,SLASHC);
+      tmp = strrchr(template,SLASHC);
       if(tmp)
       {
          tmp++;  /* first character after slash */
-         len = (int) (tmp - (char far *)&template[offset]);
+         len = (int) (tmp - (char *)&template[offset]);
          if(len >= 0 && len < FILE_MAX_DIR && dir)
-            far_strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
+            strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
          if(len < FILE_MAX_DIR && dir)
             dir[len] = 0;
          offset += len;
@@ -1958,16 +1958,16 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
    /* get fname */
    if(offset < length)
    {
-      tmp = far_strrchr(template,'.');
-      if(tmp < far_strrchr(template,SLASHC) || tmp < far_strrchr(template,':'))
+      tmp = strrchr(template,'.');
+      if(tmp < strrchr(template,SLASHC) || tmp < strrchr(template,':'))
          tmp = 0; /* in this case the '.' must be a directory */
       if(tmp)
       {
          /* tmp++; */ /* first character past "." */
-         len = (int) (tmp - (char far *)&template[offset]);
+         len = (int) (tmp - (char *)&template[offset]);
          if((len > 0) && (offset+len < length) && fname)
          {
-            far_strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
+            strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
             if(len < FILE_MAX_FNAME)
                fname[len] = 0;
             else
@@ -1976,13 +1976,13 @@ int splitpath(char far *template,char *drive,char *dir,char *fname,char *ext)
          offset += len;
          if((offset < length) && ext)
          {
-            far_strncpy(ext,&template[offset],FILE_MAX_EXT);
+            strncpy(ext,&template[offset],FILE_MAX_EXT);
             ext[FILE_MAX_EXT-1] = 0;
          }
       }
       else if((offset < length) && fname)
       {
-         far_strncpy(fname,&template[offset],FILE_MAX_FNAME);
+         strncpy(fname,&template[offset],FILE_MAX_FNAME);
          fname[FILE_MAX_FNAME-1] = 0;
       }
    }
@@ -2161,16 +2161,16 @@ int cmpdbl(double old, double new)
 
 #define LOADPROMPTS(X)     {\
    static FCODE tmp[] = { X };\
-   strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char *)tmp);\
    prompts[++nump]= ptr;\
    ptr += sizeof(tmp);\
    }
 
 int get_corners()
 {
-   char far *ptr;
+   char *ptr;
    struct fullscreenvalues values[15];
-   char far *prompts[15];
+   char *prompts[15];
    static FCODE o_xprompt[]={"          X"};
    static FCODE o_yprompt[]={"          Y"};
    static FCODE o_zprompt[]={"          Z"};
@@ -2190,7 +2190,7 @@ int get_corners()
    strcpy(xprompt,o_xprompt);
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
    oxxmin = xxmin; oxxmax = xxmax;
@@ -2364,9 +2364,9 @@ gc_loop:
 
 static int get_screen_corners(void)
 {
-   char far *ptr;
+   char *ptr;
    struct fullscreenvalues values[15];
-   char far *prompts[15];
+   char *prompts[15];
    static FCODE o_xprompt[]={"          X"};
    static FCODE o_yprompt[]={"          Y"};
    static FCODE o_zprompt[]={"          Z"};
@@ -2387,7 +2387,7 @@ static int get_screen_corners(void)
    strcpy(xprompt,o_xprompt);
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
 
@@ -2582,8 +2582,8 @@ int get_browse_params()
 {
    static FCODE o_hdg[]={"Browse ('L'ook) Mode Options"};
    char hdg[sizeof(o_hdg)];
-   char far *ptr;
-   char far *choices[10];
+   char *ptr;
+   char *choices[10];
 
    int oldhelpmode;
    struct fullscreenvalues uvalues[25];
@@ -2594,7 +2594,7 @@ int get_browse_params()
    char old_browsemask[13];
 
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
    old_autobrowse     = autobrowse;
    old_brwschecktype  = brwschecktype;
    old_brwscheckparms = brwscheckparms;
@@ -2862,56 +2862,20 @@ char *has_ext(char *source)
 
 
 /* I tried heap sort also - this is faster! */
-void shell_sort(void far *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
+void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
 {
    int gap,i,j;
-   void far *temp;
-   char far *v;
-   v = (char far *)v1;
+   void *temp;
+   char *v;
+   v = (char *)v1;
    for(gap = n/2; gap > 0; gap /= 2)
       for(i = gap; i<n; i++)
          for(j=i-gap;j>=0; j -= gap)
          {
-            if(fct((char far *far*)(v+j*sz),(char far *far*)(v+(j+gap)*sz)) <= 0)
+            if(fct((char **)(v+j*sz),(char **)(v+(j+gap)*sz)) <= 0)
                break;
-            temp = *(char far *far*)(v+j*sz);
-            *(char far *far*)(v+j*sz) = *(char far *far*)(v+(j+gap)*sz);
-            *(char far *far*)(v+(j+gap)*sz) = temp;
+            temp = *(char **)(v+j*sz);
+            *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
+            *(char **)(v+(j+gap)*sz) = temp;
          }
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("prompts3_text")     /* place following in an overlay */
-#endif
-
-void far_strncpy(char far *t, char far *s, int len)
-{
-   while((len-- && (*t++ = *s++) != 0));
-}
-
-char far *far_strchr(char far *str, char c)
-{
-   int len,i;
-   len = (int) strlen(str);
-   i= -1;
-   while (++i < len && c != str[i]);
-   if(i == len)
-      return(NULL);
-   else
-      return(&str[i]);
-}
-
-char far *far_strrchr(char far *str, char c)
-{
-   int len;
-   len = (int) strlen(str);
-   while (--len > -1 && c != str[len]);
-   if(len == -1)
-      return(NULL);
-   else
-      return(&str[len]);
-}
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("")
-#endif

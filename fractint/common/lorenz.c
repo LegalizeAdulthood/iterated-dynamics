@@ -2162,7 +2162,7 @@ static int ifs3dfloat(void)
 
    struct float3dvtinf inf;
 
-   float far *ffptr;
+   float *ffptr;
 
    /* setup affine screen coord conversion */
    setup_convert_to_screen(&inf.cvt);
@@ -2277,8 +2277,8 @@ static int ifs2d(void)
    int row;
    int color;
    int ret;
-   long far *localifs;
-   long far *lfptr;
+   long *localifs;
+   long *lfptr;
    long x,y,newx,newy,r,sum, tempr;
 
    int i,j,k;
@@ -2288,7 +2288,7 @@ static int ifs2d(void)
 
    srand(1);
    color_method = (int)param[0];
-   if((localifs=(long far *)malloc((long)numaffine*IFSPARM*sizeof(long)))==NULL)
+   if((localifs=(long *)malloc((long)numaffine*IFSPARM*sizeof(long)))==NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);
@@ -2353,7 +2353,7 @@ static int ifs2d(void)
    }
    if(fp)
       fclose(fp);
-   farmemfree(localifs);
+   free(localifs);
    return(ret);
 }
 
@@ -2364,8 +2364,8 @@ static int ifs3dlong(void)
    int color;
    int ret;
 
-   long far *localifs;
-   long far *lfptr;
+   long *localifs;
+   long *lfptr;
    long newx,newy,newz,r,sum, tempr;
 
    int i,j,k;
@@ -2373,7 +2373,7 @@ static int ifs3dlong(void)
    struct long3dvtinf inf;
    srand(1);
    color_method = (int)param[0];
-   if((localifs=(long far *)malloc((long)numaffine*IFS3DPARM*sizeof(long)))==NULL)
+   if((localifs=(long *)malloc((long)numaffine*IFS3DPARM*sizeof(long)))==NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);
@@ -2473,7 +2473,7 @@ static int ifs3dlong(void)
    }
    if(fp)
       fclose(fp);
-   farmemfree(localifs);
+   free(localifs);
    return(ret);
 }
 

@@ -63,11 +63,6 @@ extern int win_load(void);
 extern void win_save(void);
 extern void win_cycle(void);
 
-extern void farmemfree(void far *);
-extern int far_strcmp (char far *, char far *);
-extern int far_strnicmp (char far *, char far *, int);
-extern void far_strcat (char far *, char far *);
-
 extern void winfract_help(void);
 
 /*  windos2 -- C file prototypes */
@@ -130,7 +125,7 @@ extern int intro_overlay(void);
 extern int rotate_overlay(void);
 extern int printer_overlay(void);
 extern int pot_startdisk(void);
-extern void SetTgaColors(void);
+//extern void SetTgaColors(void);
 extern int startdisk(void);
 extern void enddisk(void);
 extern int readdisk(unsigned int,unsigned int);

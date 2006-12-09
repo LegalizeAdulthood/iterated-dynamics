@@ -36,7 +36,7 @@ void show_var_bn(char *s, bn_t n)
         strcat(msg," ");
         bntostr(msg+strlen(s),40,n);
         msg[79] = 0;
-        stopmsg(0,(char far *)msg);
+        stopmsg(0,(char *)msg);
     }
 
 void showcornersdbl(char *s)

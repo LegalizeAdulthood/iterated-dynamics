@@ -94,15 +94,15 @@ static int            curr_hist = 0;  /* current pos in history */
 
 /* these items alloc'ed in init_help... */
 
-static long      far *topic_offset;        /* 4*num_topic */
-static LABEL     far *label;               /* 4*num_label */
-static HIST      far *hist;                /* 6*MAX_HIST (96 bytes) */
+static long      *topic_offset;        /* 4*num_topic */
+static LABEL     *label;               /* 4*num_label */
+static HIST      *hist;                /* 6*MAX_HIST (96 bytes) */
 
 /* these items alloc'ed only while help is active... */
 
-static char       far *buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
-static LINK       far *link_table;       /* 10*max_links */
-static PAGE       far *page_table;       /* 4*max_pages  */
+static char       *buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
+static LINK       *link_table;       /* 10*max_links */
+static PAGE       *page_table;       /* 4*max_pages  */
 
 static void help_seek(long pos)
    {
@@ -142,7 +142,7 @@ static void displaycc(int row, int col, int color, int ch)
    driver_put_string(row, col, color, s);
    }
 
-static void display_text(int row, int col, int color, char far *text, unsigned len)
+static void display_text(int row, int col, int color, char *text, unsigned len)
    {
    while (len-- != 0)
       {
@@ -155,9 +155,9 @@ static void display_text(int row, int col, int color, char far *text, unsigned l
       }
    }
 
-static void display_parse_text(char far *text, unsigned len, int start_margin, int *num_link, LINK far *link)
+static void display_parse_text(char *text, unsigned len, int start_margin, int *num_link, LINK *link)
    {
-   char far  *curr;
+   char  *curr;
    int        row, col;
    int        tok;
    int        size,
@@ -311,7 +311,7 @@ static void display_parse_text(char far *text, unsigned len, int start_margin, i
    textrbase = 0;
    }
 
-static void color_link(LINK far *link, int color)
+static void color_link(LINK *link, int color)
    {
    textcbase = SCREEN_INDENT;
    textrbase = TEXT_START_ROW;
@@ -367,7 +367,7 @@ static void printinstr(void)
 
 #undef PUT_KEY
 
-static void display_page(char far *title, char far *text, unsigned text_len, int page, int num_pages, int start_margin, int *num_link, LINK far *link)
+static void display_page(char *title, char *text, unsigned text_len, int page, int num_pages, int start_margin, int *num_link, LINK *link)
    {
    char temp[9];
 
@@ -444,15 +444,15 @@ static int dist1(int a, int b)
 #   pragma warn -def /* turn off "Possible use before definition" warning */
 #endif
 
-static int find_link_updown(LINK far *link, int num_link, int curr_link, int up)
+static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
    {
    int       ctr,
              curr_c2,
              best_overlap = 0,
              temp_overlap;
-   LINK far *curr,
-        far *temp,
-        far *best;
+   LINK *curr,
+        *temp,
+        *best;
    int       temp_dist;
 
    curr    = &link[curr_link];
@@ -494,7 +494,7 @@ static int find_link_updown(LINK far *link, int num_link, int curr_link, int up)
    return ( (best==NULL) ? -1 : (int)(best-link) );
    }
 
-static int find_link_leftright(LINK far *link, int num_link, int curr_link, int left)
+static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
    {
    int       ctr,
              curr_c2,
@@ -502,9 +502,9 @@ static int find_link_leftright(LINK far *link, int num_link, int curr_link, int 
              temp_c2,
              best_dist = 0,
              temp_dist;
-   LINK far *curr,
-        far *temp,
-        far *best;
+   LINK *curr,
+        *temp,
+        *best;
 
    curr    = &link[curr_link];
    best    = NULL;
@@ -555,7 +555,7 @@ static int find_link_leftright(LINK far *link, int num_link, int curr_link, int 
 #   pragma argsused
 #endif
 
-static int find_link_key(LINK far *link, int num_link, int curr_link, int key)
+static int find_link_key(LINK *link, int num_link, int curr_link, int key)
    {
    link = NULL;   /* just for warning */
    switch (key)
@@ -570,7 +570,7 @@ static int find_link_key(LINK far *link, int num_link, int curr_link, int key)
 #   pragma warn .par /* back to default */
 #endif
 
-static int do_move_link(LINK far *link, int num_link, int *curr, int (*f)(LINK far *,int,int,int), int val)
+static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *,int,int,int), int val)
    {
    int t;
 
@@ -615,7 +615,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    read(help_file, (char *)&num_pages, sizeof(int));
    assert(num_pages>0 && num_pages<=max_pages);
 
-   farread(help_file, (char far *)page_table, 3*sizeof(int)*num_pages);
+   farread(help_file, (char *)page_table, 3*sizeof(int)*num_pages);
 
    read(help_file, &ch, 1);
    len = ch;
@@ -799,7 +799,7 @@ int help(int action)
       return (0);
       }
 
-   buffer = (char far *)malloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
+   buffer = (char *)malloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
                         sizeof(PAGE)*max_pages);
 
    if (buffer == NULL)
@@ -808,8 +808,8 @@ int help(int action)
       return (0);
       }
 
-   link_table = (LINK far *)(&buffer[MAX_PAGE_SIZE]);
-   page_table = (PAGE far *)(&link_table[max_links]);
+   link_table = (LINK *)(&buffer[MAX_PAGE_SIZE]);
+   page_table = (PAGE *)(&link_table[max_links]);
 
    oldlookatmouse = lookatmouse;
    lookatmouse = 0;
@@ -913,7 +913,7 @@ int help(int action)
       }
    while (action != ACTION_QUIT);
 
-   farmemfree((BYTE far *)buffer);
+   free((BYTE *)buffer);
 
    driver_unstack_screen();
    lookatmouse = oldlookatmouse;
@@ -1037,7 +1037,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
    if (read_len > 0)
       {
       help_seek(curr_base + off);
-      farread(help_file, (char far *)buf, read_len);
+      farread(help_file, (char *)buf, read_len);
       }
 
    return ( curr_len - (off+len) );
@@ -1075,7 +1075,7 @@ typedef struct PRINT_DOC_INFO
 
    int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
 
-   char far *buffer;        /* text buffer */
+   char *buffer;        /* text buffer */
 
    char      id[81];        /* buffer to store id in */
    char      title[81];     /* buffer to store title in */
@@ -1128,7 +1128,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
       }
    }
 
-static void printers(PRINT_DOC_INFO *info, char far *s, int n)
+static void printers(PRINT_DOC_INFO *info, char *s, int n)
    {
    if (n > 0)
       {
@@ -1355,7 +1355,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    PRINT_DOC_INFO info;
    int            success   = 0;
    int            temp_file = -1;
-   char      far *msg = NULL;
+   char      *msg = NULL;
 
    info.buffer = MK_FP(extraseg, 0);
 
@@ -1558,7 +1558,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
 
    /* allocate one big chunk for all three arrays */
 
-   topic_offset = (long far *)malloc(sizeof(long)*num_topic + 2L*sizeof(int)*num_label + sizeof(HIST)*MAX_HIST);
+   topic_offset = (long *)malloc(sizeof(long)*num_topic + 2L*sizeof(int)*num_label + sizeof(HIST)*MAX_HIST);
 
    if (topic_offset == NULL)
       {
@@ -1572,8 +1572,8 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
 
    /* split off the other arrays */
 
-   label = (LABEL far *)(&topic_offset[num_topic]);
-   hist  = (HIST far *)(&label[num_label]);
+   label = (LABEL *)(&topic_offset[num_topic]);
+   hist  = (HIST *)(&label[num_label]);
 
    /* read in the tables... */
 
@@ -1590,7 +1590,7 @@ void end_help(void)
    if (help_file != -1)
       {
       close(help_file);
-      farmemfree((BYTE far *)topic_offset);
+      free((BYTE *)topic_offset);
       help_file = -1;
       }
    }

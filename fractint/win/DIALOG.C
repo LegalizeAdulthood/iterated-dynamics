@@ -55,27 +55,27 @@ static int paramv[] = {ID_FRACPARAM1, ID_FRACPARAM2,
                        ID_FRACPARAM5, ID_FRACPARAM6, };
 
 extern int win_release;
-extern char far win_comment[];
+extern char win_comment[];
 
-extern char far DialogTitle[];
+extern char DialogTitle[];
 extern unsigned char DefExt[];
 extern unsigned char FullPathName[];
 
-double far win_oldprompts[20];
+double win_oldprompts[20];
 
-extern int stopmsg(int, char far *);
+extern int stopmsg(int, char *);
 
 /* far strings (near space is precious) */
-char far about_msg01[] = "(C) 1990-2006 The Stone Soup Group";
-char far about_msg02[] = "";
-char far about_msg03[] = "";
-char far about_msg04[] = "";
-char far about_msg05[] = "Winfract is copyrighted freeware and may not be";
-char far about_msg06[] = "distributed for commercial or promotional purposes";
-char far about_msg07[] = "without written permission from the Stone Soup Group.";
-char far about_msg08[] = "Distribution of Winfract by BBS, network, and";
-char far about_msg09[] = "software shareware distributors, etc. is encouraged.";
-char far about_msg10[] = "";
+char about_msg01[] = "(C) 1990-2006 The Stone Soup Group";
+char about_msg02[] = "";
+char about_msg03[] = "";
+char about_msg04[] = "";
+char about_msg05[] = "Winfract is copyrighted freeware and may not be";
+char about_msg06[] = "distributed for commercial or promotional purposes";
+char about_msg07[] = "without written permission from the Stone Soup Group.";
+char about_msg08[] = "Distribution of Winfract by BBS, network, and";
+char about_msg09[] = "software shareware distributors, etc. is encouraged.";
+char about_msg10[] = "";
 
 BOOL CALLBACK About(hDlg, message, wParam, lParam)
 HWND hDlg;
@@ -84,7 +84,7 @@ WPARAM wParam;
 LPARAM lParam;
 {
 
-extern char far winfract_title_text[];
+extern char winfract_title_text[];
 char about_msg00[80];
 
     switch (message) {
@@ -837,7 +837,7 @@ LPARAM lParam;
     return (FALSE);
 }
 
-extern char far par_comment[4][MAXCMT];
+extern char par_comment[4][MAXCMT];
 
 BOOL CALLBACK SelectSavePar(hDlg, message, wParam, lParam)
 HWND hDlg;
@@ -1033,14 +1033,14 @@ FARPROC lpSelectFullScreen;
 extern HANDLE hInst;
 
 int win_fullscreen_count;
-char * far win_fullscreen_prompts[20];
+char * win_fullscreen_prompts[20];
 char *win_fullscreen_heading;
 static struct fullscreenvalues win_fullscreen_values[20];
 
 int xxx_fullscreen_prompt(        /* full-screen prompting routine */
         char *hdg,                /* heading, lines separated by \n */
         int numprompts,         /* there are this many prompts (max) */
-        char * far *prompts,        /* array of prompting pointers */
+        char * *prompts,        /* array of prompting pointers */
         struct fullscreenvalues values[], /* array of values */
         int options,                /* future use bits in case we need them */
         int fkeymask                /* bit n on if Fn to cause return */
@@ -1155,7 +1155,7 @@ extern        int        overlay3d;            /* 3D overlay flag: 0 = OFF */
 extern int xadjust;
 extern int eyeseparation;
 
-static int far win_answers[20];
+static int win_answers[20];
 
 BOOL CALLBACK Select3D(hDlg, message, wParam, lParam)
 HWND hDlg;
@@ -1695,7 +1695,7 @@ int FileFormat = 0;
 FARPROC lpStatusBox = NULL;
 HWND hStatusBox;
 BOOL OperCancelled;
-char far StatusTitle[80];
+char StatusTitle[80];
 
 extern LPBITMAPINFO pDibInfo;
 extern char huge *pixels;
@@ -1902,7 +1902,7 @@ GeneralError:
 
 /* common dialog boxes */
 
-static char far *win_common_type[] = {
+static char *win_common_type[] = {
     "BMP Files (*.BMP)|*.bmp|",
     "GIF Files (*.GIF)|*.gif|",
     "Palette Files (*.MAP)|*.map|",

@@ -20,99 +20,99 @@
 /*       parameters preceded by # are U32 parameters */
 
 /* for Mandelbrots */
-static char far realz0[] = "Real Perturbation of Z(0)";
-static char far imagz0[] = "Imaginary Perturbation of Z(0)";
+static char realz0[] = "Real Perturbation of Z(0)";
+static char imagz0[] = "Imaginary Perturbation of Z(0)";
 
 /* for Julias */
-static char far realparm[] = "Real Part of Parameter";
-static char far imagparm[] = "Imaginary Part of Parameter";
+static char realparm[] = "Real Part of Parameter";
+static char imagparm[] = "Imaginary Part of Parameter";
 
 /* for Newtons */
-static char far newtdegree[] = "+Polynomial Degree (>= 2)";
+static char newtdegree[] = "+Polynomial Degree (>= 2)";
 
 /* for MarksMandel/Julia */
-static char far exponent[]   = "Real part of Exponent";
-static char far imexponent[] = "Imag part of Exponent";
+static char exponent[]   = "Real part of Exponent";
+static char imexponent[] = "Imag part of Exponent";
 
 /* for Complex Newton */
-static char far realroot[]   = "Real part of Root";
-static char far imagroot[]   = "Imag part of Root";
-static char far realdegree[] = "Real part of Degree";
-static char far imagdegree[] = "Imag part of Degree";
+static char realroot[]   = "Real part of Root";
+static char imagroot[]   = "Imag part of Root";
+static char realdegree[] = "Real part of Degree";
+static char imagdegree[] = "Imag part of Degree";
 
 /* for Lorenz */
-static char far timestep[]     = "Time Step";
+static char timestep[]     = "Time Step";
 
 /* for formula */
-static char far p1real[] = "Real portion of p1";
-static char far p2real[] = "Real portion of p2";
-static char far p3real[] = "Real portion of p3";
-static char far p4real[] = "Real portion of p4";
-static char far p5real[] = "Real portion of p5";
-static char far p1imag[] = "Imaginary portion of p1";
-static char far p2imag[] = "Imaginary portion of p2";
-static char far p3imag[] = "Imaginary portion of p3";
-static char far p4imag[] = "Imaginary portion of p4";
-static char far p5imag[] = "Imaginary portion of p5";
+static char p1real[] = "Real portion of p1";
+static char p2real[] = "Real portion of p2";
+static char p3real[] = "Real portion of p3";
+static char p4real[] = "Real portion of p4";
+static char p5real[] = "Real portion of p5";
+static char p1imag[] = "Imaginary portion of p1";
+static char p2imag[] = "Imaginary portion of p2";
+static char p3imag[] = "Imaginary portion of p3";
+static char p4imag[] = "Imaginary portion of p4";
+static char p5imag[] = "Imaginary portion of p5";
 
 /* trig functions */
-static char far recoeftrg1[] = "Real Coefficient First Function";
-static char far imcoeftrg1[] = "Imag Coefficient First Function";
-static char far recoeftrg2[] = "Real Coefficient Second Function";
-static char far imcoeftrg2[] = "Imag Coefficient Second Function";
+static char recoeftrg1[] = "Real Coefficient First Function";
+static char imcoeftrg1[] = "Imag Coefficient First Function";
+static char recoeftrg2[] = "Real Coefficient Second Function";
+static char imcoeftrg2[] = "Imag Coefficient Second Function";
 
 /* MCP 7-7-91
-static char far recoefsqr[] = "Real Coefficient Square Term";
-static char far imcoefsqr[] = "Imag Coefficient Square Term";
+static char recoefsqr[] = "Real Coefficient Square Term";
+static char imcoefsqr[] = "Imag Coefficient Square Term";
 */
 
-static char far recoef2nd[] = "Real Coefficient Second Term";
-static char far imcoef2nd[] = "Imag Coefficient Second Term";
+static char recoef2nd[] = "Real Coefficient Second Term";
+static char imcoef2nd[] = "Imag Coefficient Second Term";
 
 /* KAM Torus */
-static char far kamangle[] = "Angle (radians)";
-static char far kamstep[] =  "Step size";
-static char far kamstop[] =  "Stop value";
-static char far pointsperorbit[] = "+Points per orbit";
+static char kamangle[] = "Angle (radians)";
+static char kamstep[] =  "Step size";
+static char kamstop[] =  "Stop value";
+static char pointsperorbit[] = "+Points per orbit";
 
 /* Newtbasin */
-static char far stripes[] = "Enter non-zero value for stripes";
+static char stripes[] = "Enter non-zero value for stripes";
 
 /* Gingerbreadman */
-static char far initx[] = "Initial x";
-static char far inity[] = "Initial y";
+static char initx[] = "Initial x";
+static char inity[] = "Initial y";
 
 /* popcorn and julia popcorn generalized */
-static char far step_x[] = "Step size (real)";
-static char far step_y[] = "Step size (imaginary)";
-static char far constant_x[] = "Constant C (real)";
-static char far constant_y[] = "Constant C (imaginary)";
+static char step_x[] = "Step size (real)";
+static char step_y[] = "Step size (imaginary)";
+static char constant_x[] = "Constant C (real)";
+static char constant_y[] = "Constant C (imaginary)";
 
 /* bifurcations */
-static char far filt[] = "+Filter Cycles";
-static char far seed[] = "Seed Population";
+static char filt[] = "+Filter Cycles";
+static char seed[] = "Seed Population";
 
 /* frothy basins */
-static char far frothmapping[] = "+Apply mapping once (1) or twice (2)";
-static char far frothshade[] =  "+Enter non-zero value for alternate color shading";
-static char far frothavalue[] =  "A (imaginary part of C)";
+static char frothmapping[] = "+Apply mapping once (1) or twice (2)";
+static char frothshade[] =  "+Enter non-zero value for alternate color shading";
+static char frothavalue[] =  "A (imaginary part of C)";
 
 /* symmetrical icon fractals */
-static char far s_lambda[] = "Lambda";
-static char far s_alpha[]  = "Alpha";
-static char far s_beta[]   = "Beta";
-static char far s_gamma[]  = "Gamma";
-static char far s_omega[]  = "Omega";
-static char far symdegree[] = "+Degree of symmetry";
+static char s_lambda[] = "Lambda";
+static char s_alpha[]  = "Alpha";
+static char s_beta[]   = "Beta";
+static char s_gamma[]  = "Gamma";
+static char s_omega[]  = "Omega";
+static char symdegree[] = "+Degree of symmetry";
 
-static char far shiftval[] = "Function Shift Value";
+static char shiftval[] = "Function Shift Value";
 
 /* plasma and ant */
 
-static char far s_randomseed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
+static char s_randomseed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
 
 /* ifs */
-static char far color_method[] = "+Coloring method (0,1)";
+static char color_method[] = "+Coloring method (0,1)";
 
 /* orbit fractals */
 static char A[] = "a";
@@ -129,28 +129,28 @@ static char CJ[] = "cj";
 static char CK[] = "ck";
 static char ZJ[] = "zj";
 static char ZK[] = "zk";
-static char far notused[] = "notused";
+static char notused[] = "notused";
 /* phoenix fractals */
-static char far degreeZ[] = "Degree = 0 | >= 2 | <= -3";
+static char degreeZ[] = "Degree = 0 | >= 2 | <= -3";
 
 /* empty string */
-static char far ES[] = "";
+static char ES[] = "";
 
 /* julia inverse */
-static char far s_maxhits[] = "Max Hits per Pixel";
+static char s_maxhits[] = "Max Hits per Pixel";
 #ifdef RANDOM_RUN
-static char far randomruninterval[] = "Random Run Interval";
+static char randomruninterval[] = "Random Run Interval";
 #endif
 /* halley */
-static char far order[] = {"+Order (integer > 1)"};
-static char far real_relax[] = {"Real Relaxation coefficient"};
-static char far epsilon[] = {"Epsilon"};
-static char far imag_relax[] = {"Imag Relaxation coefficient"};
+static char order[] = {"+Order (integer > 1)"};
+static char real_relax[] = {"Real Relaxation coefficient"};
+static char epsilon[] = {"Epsilon"};
+static char imag_relax[] = {"Imag Relaxation coefficient"};
 /* cellular */
-static char far cell_init[] = {"#Initial String | 0 = Random | -1 = Reuse Last Random"};
-static char far cell_rule[] = {"#Rule = # of digits (see below) | 0 = Random"};
-static char far cell_type[] = {"+Type (see below)"};
-static char far cell_strt[] = {"#Starting Row Number"};
+static char cell_init[] = {"#Initial String | 0 = Random | -1 = Reuse Last Random"};
+static char cell_rule[] = {"#Rule = # of digits (see below) | 0 = Random"};
+static char cell_type[] = {"+Type (see below)"};
+static char cell_strt[] = {"#Starting Row Number"};
 
 /* bailout defines */
 #define FTRIGBAILOUT 2500
@@ -179,7 +179,7 @@ MOREPARAMS moreparams[] =
 /*
      type math orbitcalc fnct per_pixel fnct per_image fnct
    |-----|----|--------------|--------------|--------------| */
-struct alternatemathstuff far alternatemath[] =
+struct alternatemathstuff alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN
@@ -271,7 +271,7 @@ char t_halley[]= "*halley";
 /* use next to cast orbitcalcs() that have arguments */
 #define VF int(*)(void)
 
-struct fractalspecificstuff far fractalspecific[]=
+struct fractalspecificstuff fractalspecific[]=
 {
    /*
    {
@@ -2370,7 +2370,7 @@ int paramnotused(int parm)
 int typehasparm(int type,int parm,char *buf)
 {
    int extra;
-   char far *ret = NULL;
+   char *ret = NULL;
    if(0 <= parm && parm < 4)
       ret=fractalspecific[type].param[parm];
    else if(parm >= 4 && parm < MAXPARAMS)

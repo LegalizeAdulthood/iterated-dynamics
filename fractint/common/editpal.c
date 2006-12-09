@@ -146,7 +146,7 @@
 #define CURSOR_BLINK_RATE   300   /* timer ticks between cursor blinks */
 #endif
 
-#define FAR_RESERVE     8192L     /* amount of far mem we will leave avail. */
+#define FAR_RESERVE     8192L     /* amount of mem we will leave avail. */
 
 #define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
 
@@ -208,7 +208,7 @@ typedef struct
  */
 
 
-static BYTE far *font8x8 = NULL;
+static BYTE *font8x8 = NULL;
 BYTE     *line_buff;   /* must be alloced!!! */
 static BYTE       fg_color,
                           bg_color;
@@ -395,13 +395,13 @@ void displayc(int x, int y, int fg, int bg, int ch)
    {
    int                xc, yc;
    BYTE      t;
-   BYTE far *ptr;
+   BYTE *ptr;
 
    if( font8x8 == NULL)
       if ( (font8x8 = driver_find_font(0)) == NULL )
          return ;
 
-   ptr = ((BYTE far *)font8x8) + ch*FONT_DEPTH;
+   ptr = ((BYTE *)font8x8) + ch*FONT_DEPTH;
 
    for (yc=0; yc<FONT_DEPTH; yc++, y++, ++ptr)
       {
@@ -1808,9 +1808,9 @@ struct  _PalTable
    int           hidden;
    int           stored_at;
    FILE         *file;
-   char far     *memory;
+   char     *memory;
 
-   PALENTRY far *save_pal[8];
+   PALENTRY *save_pal[8];
 
 
    PALENTRY      fs_color;
@@ -2271,14 +2271,14 @@ static BOOLEAN PalTable__SetCurr(PalTable *this, int which, int curr)
 
 static BOOLEAN PalTable__MemoryAlloc(PalTable *this, long size)
    {
-   char far *temp;
+   char *temp;
 
    if (debugflag == 420)
       {
       this->stored_at = NOWHERE;
       return (FALSE);   /* can't do it */
       }
-   temp = (char far *)malloc(FAR_RESERVE);   /* minimum free space */
+   temp = (char *)malloc(FAR_RESERVE);   /* minimum free space */
 
    if (temp == NULL)
       {
@@ -2286,9 +2286,9 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *this, long size)
       return (FALSE);   /* can't do it */
       }
 
-   this->memory = (char far *)malloc( size );
+   this->memory = (char *)malloc( size );
 
-   farmemfree(temp);
+   free(temp);
 
    if ( this->memory == NULL )
       {
@@ -2323,7 +2323,7 @@ static void PalTable__SaveRect(PalTable *this)
 
       case FARMEM:
          if (this->memory != NULL)
-            farmemfree(this->memory);
+            free(this->memory);
          this->memory = NULL;
          break;
       } ;
@@ -2332,8 +2332,8 @@ static void PalTable__SaveRect(PalTable *this)
 
    if ( PalTable__MemoryAlloc(this, (long)width*depth) )
       {
-      char far  *ptr = this->memory;
-      char far  *bufptr = buff; /* MSC needs this indirection to get it right */
+      char  *ptr = this->memory;
+      char  *bufptr = buff; /* MSC needs this indirection to get it right */
 
       Cursor_Hide();
       for (yoff=0; yoff<depth; yoff++)
@@ -2408,8 +2408,8 @@ static void PalTable__RestoreRect(PalTable *this)
 
       case FARMEM:
          {
-         char far  *ptr = this->memory;
-         char far  *bufptr = buff; /* MSC needs this indirection to get it right */
+         char  *ptr = this->memory;
+         char  *bufptr = buff; /* MSC needs this indirection to get it right */
 
          Cursor_Hide();
          for (yoff=0; yoff<depth; yoff++)
@@ -3276,14 +3276,14 @@ static PalTable *PalTable_Construct(void)
    PalTable     *this = new(PalTable);
    int           csize;
    int           ctr;
-   PALENTRY far *mem_block;
-   void far     *temp;
+   PALENTRY *mem_block;
+   void     *temp;
 
-   temp = (void far *)malloc(FAR_RESERVE);
+   temp = (void *)malloc(FAR_RESERVE);
 
    if ( temp != NULL )
       {
-      mem_block = (PALENTRY far *)malloc(256L*3 * 8);
+      mem_block = (PALENTRY *)malloc(256L*3 * 8);
 
       if ( mem_block == NULL )
          {
@@ -3295,7 +3295,7 @@ static PalTable *PalTable_Construct(void)
          for (ctr=0; ctr<8; ctr++)
             this->save_pal[ctr] = mem_block + (256*ctr);
          }
-      farmemfree(temp);
+      free(temp);
       }
 
    this->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key,
@@ -3396,10 +3396,10 @@ static void PalTable_Destroy(PalTable *this)
       }
 
    if (this->memory != NULL)
-      farmemfree(this->memory);
+      free(this->memory);
 
    if (this->save_pal[0] != NULL)
-      farmemfree((BYTE far *)this->save_pal[0]);
+      free((BYTE *)this->save_pal[0]);
 
    RGBEditor_Destroy(this->rgb[0]);
    RGBEditor_Destroy(this->rgb[1]);

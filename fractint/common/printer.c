@@ -141,7 +141,7 @@
 /********      PROTOTYPES     ********/
 
 #ifndef USE_VARARGS
-static void Printer_printf(char far *fmt,...);
+static void Printer_printf(char *fmt,...);
 #else
 static void Printer_printf();
 #endif
@@ -427,7 +427,7 @@ Print_Screen (void)
                                 /* by MAXPIXELS pic took over 2 hours to*/
                                 /* print.  It takes about 15 min now*/
     int BuffSiz;                /* how much of buff[] we'll use   */
-    char far *es;               /* pointer to extraseg for buffer */
+    char *es;               /* pointer to extraseg for buffer */
     int i,x,k,                  /* more indices                   */
         imax,                   /* maximum i value (ydots/8)      */
         res,                    /* resolution we're gonna' use    */
@@ -542,7 +542,7 @@ Print_Screen (void)
             BYTE convert[256];
             BYTE scale[64];
 
-            BYTE far *table_ptr = NULL;
+            BYTE *table_ptr = NULL;
             res = (res < 150) ? 90 : 180;   /* 90 or 180 dpi */
             if (Printer_SetScreen == 0) {
                 Printer_SFrequency = 21;  /* default red gamma */
@@ -618,7 +618,7 @@ Print_Screen (void)
                 return;
             }  */
             if (!driver_diskp()) { /* preview */
-                static char far msg[] = {"Preview. Enter=go, Esc=cancel, k=keep"};
+                static char msg[] = {"Preview. Enter=go, Esc=cancel, k=keep"};
                 memcpy(triple[1],dacbox,768);
                 for (i = 0; i < colors; ++i)
                     for (j = 0; j < 3; ++j)
@@ -766,16 +766,16 @@ Print_Screen (void)
         case 4:                       /* HP PaintJet       */
             {
             unsigned int fetchrows,fetched;
-            BYTE far *pixels = NULL, far *nextpixel = NULL;
+            BYTE *pixels = NULL, *nextpixel = NULL;
             /* for reasonable speed when using disk video, try to fetch
                and store the info for 8 columns at a time instead of
                doing getcolor calls down each column in separate passes */
             fetchrows = 16;
             for(;;) {
-                if ((pixels = (BYTE far *)malloc((long)(fetchrows)*ydots)) != NULL)
+                if ((pixels = (BYTE *)malloc((long)(fetchrows)*ydots)) != NULL)
                    break;
                 if ((fetchrows >>= 1) == 0) {
-                    static char far msg[]={"insufficient memory"};
+                    static char msg[]={"insufficient memory"};
                     stopmsg(0,msg);
                     break;
                 }
@@ -1175,29 +1175,29 @@ static void _fastcall graphics_init(int ptrid,int res,char *EndOfLine)
                 if (Printer_SetScreen==1)
                     {
 #ifndef XFRACT
-                    static char far fmt_str[] = "%d %d {%Fs}%s";
+                    static char fmt_str[] = "%d %d {%Fs}%s";
 #else
                     static char fmt_str[] = "%d %d {%s}%s";
 #endif
                     Printer_printf(fmt_str,
                                        Printer_RFrequency,
                                        Printer_RAngle,
-                                       (char far *)HalfTone[Printer_RStyle],
+                                       (char *)HalfTone[Printer_RStyle],
                                        EndOfLine);
                     Printer_printf(fmt_str,
                                        Printer_GFrequency,
                                        Printer_GAngle,
-                                       (char far *)HalfTone[Printer_GStyle],
+                                       (char *)HalfTone[Printer_GStyle],
                                        EndOfLine);
                     Printer_printf(fmt_str,
                                        Printer_BFrequency,
                                        Printer_BAngle,
-                                       (char far *)HalfTone[Printer_BStyle],
+                                       (char *)HalfTone[Printer_BStyle],
                                        EndOfLine);
                     Printer_printf(fmt_str,
                                        Printer_SFrequency,
                                        Printer_SAngle,
-                                       (char far *)HalfTone[Printer_SStyle],
+                                       (char *)HalfTone[Printer_SStyle],
                                        EndOfLine);
                     PRINTER_PRINTF2("setcolorscreen%s", EndOfLine);
                     }
@@ -1221,13 +1221,13 @@ static void _fastcall graphics_init(int ptrid,int res,char *EndOfLine)
                       PRINTER_PRINTF5("%d %d {%Fs} setscreen%s",
                                      Printer_SFrequency,
                                      Printer_SAngle,
-                                     (char far *)HalfTone[Printer_SStyle],
+                                     (char *)HalfTone[Printer_SStyle],
                                      EndOfLine);
 #else
                       Printer_printf("%d %d {%s} setscreen%s",
                                      Printer_SFrequency,
                                      Printer_SAngle,
-                                     (char far *)HalfTone[Printer_SStyle],
+                                     (char *)HalfTone[Printer_SStyle],
                                      EndOfLine);
 #endif
                    }
@@ -1344,7 +1344,7 @@ static void _fastcall print_title(int ptrid,int res,char *EndOfLine)
 /* This function prints a string to the the printer with BIOS calls. */
 
 #ifndef USE_VARARGS
-static void Printer_printf(char far *fmt,...)
+static void Printer_printf(char *fmt,...)
 #else
 static void Printer_printf(va_alist)
 va_dcl
@@ -1358,13 +1358,13 @@ va_list arg;
 #ifndef USE_VARARGS
 va_start(arg,fmt);
 #else
-char far *fmt;
+char *fmt;
 va_start(arg);
-fmt = va_arg(arg,char far *);
+fmt = va_arg(arg,char *);
 #endif
 
 {
-   /* copy far to near string */
+   /* copy to near string */
    char fmt1[100];
    i=0;
    while(fmt[i]) {

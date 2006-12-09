@@ -438,7 +438,7 @@ _CMPLX ComplexSqrtFloat(double x, double y)
 
 #ifndef TESTING_MATH
 
-BYTE far *LogTable = (BYTE far *)0;
+BYTE *LogTable = (BYTE *)0;
 long MaxLTSize;
 int  Log_Calc = 0;
 static double mlf;
@@ -564,7 +564,7 @@ long logtablecalc(long citer) {
    return (ret);
 }
 
-long far ExpFloat14(long xx) {
+long ExpFloat14(long xx) {
    static float fLogTwo = (float)0.6931472;
    int f;
    long Ans;

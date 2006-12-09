@@ -44,7 +44,7 @@ int ZoomMode;
 HWND hMainWnd, hwnd;                     /* handle to main window */
 HWND hWndCopy;                                 /* Copy of hWnd */
 
-char far winfract_title_text[41];        /* Winfract title-bar text */
+char winfract_title_text[41];        /* Winfract title-bar text */
 
 #define PALETTESIZE 256               /* dull-normal VGA                    */
 HANDLE hpal;                          /* palette handle                     */
@@ -87,7 +87,7 @@ char       szHelpFileName[EXE_NAME_MAX_SIZE+1];    /* Help file name*/
 
 void MakeHelpPathName(char*);  /* Function deriving help file path */
 
-unsigned char far win_dacbox[256][3];
+unsigned char win_dacbox[256][3];
 
 int win_fastupdate;                   /* 0 for "normal" fast screen updates */
 
@@ -122,8 +122,8 @@ FARPROC lpSelectStarfield;
 
 extern int FileFormat;
 extern unsigned char DefPath[];
-extern char far StatusTitle[];
-unsigned char far DialogTitle[128];
+extern char StatusTitle[];
+unsigned char DialogTitle[128];
 unsigned char FileName[128];
 unsigned char FullPathName[FILE_MAX_DIR];
 unsigned char DefSpec[13];
@@ -190,7 +190,7 @@ char FormNameChoices[80][25];
 extern char FormName[];
 extern char        IFSFileName[];    /* IFS code file */
 extern char        IFSName[];        /* IFS code item */
-double far *temp_array;
+double *temp_array;
 HANDLE htemp_array;
 
 HANDLE hSaveCursor;             /* the original cursor value */
@@ -200,15 +200,15 @@ BOOL winfract_menustyle = FALSE;/* Menu style:
                                    FALSE = Winfract-style,
                                    TRUE  = Fractint-style */
 
-/* far strings (near space is precious) */
-char far winfract_msg01[] = "Fractint For Windows";
-char far winfract_msg02[] = "WinFracMenu";
-char far winfract_msg03[] = "FractintForWindowsV0010";
-char far winfract_msg04[] = "WinfractAcc";
-char far winfract_msg96[] = "I'm sorry, but color-cycling \nrequires a palette-based\nvideo driver";
-char far winfract_msg97[] = "There isn't enough available\nmemory to run Winfract";
-char far winfract_msg98[] =  "This program requires Standard\nor 386-Enhanced Mode";
-char far winfract_msg99[] = "Not Enough Free Memory to Copy to the Clipboard";
+/* strings (near space is precious) */
+char winfract_msg01[] = "Fractint For Windows";
+char winfract_msg02[] = "WinFracMenu";
+char winfract_msg03[] = "FractintForWindowsV0010";
+char winfract_msg04[] = "WinfractAcc";
+char winfract_msg96[] = "I'm sorry, but color-cycling \nrequires a palette-based\nvideo driver";
+char winfract_msg97[] = "There isn't enough available\nmemory to run Winfract";
+char winfract_msg98[] =  "This program requires Standard\nor 386-Enhanced Mode";
+char winfract_msg99[] = "Not Enough Free Memory to Copy to the Clipboard";
 
 
 int PASCAL WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow)
@@ -370,7 +370,7 @@ BOOL InitInstance(hInstance, nCmdShow)
         GlobalLock(temphandle);
         GlobalUnlock(temphandle);
         GlobalFree(temphandle);
-        temp_array = (double far *)GlobalLock(htemp_array);
+        temp_array = (double *)GlobalLock(htemp_array);
     }
 
    MakeHelpPathName(szHelpFileName);
@@ -2067,11 +2067,11 @@ void win_set_title_text(void)
     lstrcpy(winfract_title_text, ctemp);
 }
 
-char far win_oldtitle[30];
-char far win_title1[] = " (calculating)";
-char far win_title2[] = " (color-cycling)";
-char far win_title3[] = " (zooming ";
-char far win_title4[] = " (starfield generation)";
+char win_oldtitle[30];
+char win_title1[] = " (calculating)";
+char win_title2[] = " (color-cycling)";
+char win_title3[] = " (zooming ";
+char win_title4[] = " (starfield generation)";
 
 void win_title_text(int title)
 {
@@ -2170,9 +2170,9 @@ int i;                /* fill in the palette index values */
 int default_dib_palette(void)
 {
 int i, k;                /* fill in the palette index values */
-int far *palette_values;        /* pointer to palette values */
+int *palette_values;        /* pointer to palette values */
 
-    palette_values = (int far *)&pDibInfo->bmiColors[0];
+    palette_values = (int *)&pDibInfo->bmiColors[0];
     k = 0;
     for (i = 0; i < 256; i++) {
         palette_values[i] = k;

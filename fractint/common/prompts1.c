@@ -50,7 +50,7 @@ static  int sel_fractype_help(int curkey, int choice);
         void set_default_parms(void);
 static  long gfe_choose_entry(int,char *,char *,char *);
 static  int check_gfe_key(int curkey,int choice);
-static  void load_entry_text(FILE *entfile,char far *buf,int maxlines, int startrow, int startcol);
+static  void load_entry_text(FILE *entfile,char *buf,int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int,char *);
 static  int get_light_params(void );
 static  int check_mapfile(void );
@@ -84,15 +84,15 @@ int scroll_column_status; /* will be set to first column of extra info to
                              be displayed ( 0 = leftmost column )*/
 
 int fullscreen_prompt(  /* full-screen prompting routine */
-        char far *hdg,          /* heading, lines separated by \n */
+        char *hdg,          /* heading, lines separated by \n */
         int numprompts,         /* there are this many prompts (max) */
-        char far **prompts,     /* array of prompting pointers */
+        char **prompts,     /* array of prompting pointers */
         struct fullscreenvalues *values, /* array of values */
         int fkeymask,           /* bit n on if Fn to cause return */
-        char far *extrainfo     /* extra info box to display, \n separated */
+        char *extrainfo     /* extra info box to display, \n separated */
         )
 {
-   char far *hdgscan;
+   char *hdgscan;
    int titlelines,titlewidth,titlerow;
    int maxpromptwidth,maxfldwidth,maxcomment;
    int boxrow,boxlines;
@@ -228,7 +228,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
    if(in_scrolling_mode && scroll_row_status == 0
              && lines_in_entry == extralines - 2
              && scroll_column_status == 0
-             && far_strchr(extrainfo, '\021') == NULL) {
+             && strchr(extrainfo, '\021') == NULL) {
       in_scrolling_mode = 0;
       fclose(scroll_file);
       scroll_file = NULL;
@@ -317,13 +317,13 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
    for (i = titlerow; i < boxrow; ++i)
       driver_set_attr(i,boxcol,C_PROMPT_HI,boxwidth);
    {
-      char far *hdgline = hdg;
+      char *hdgline = hdg;
       /* center each line of heading independently */
       int i;
       for(i=0;i<titlelines-1;i++)
       {
-         char far *next;
-         if((next = far_strchr(hdgline,'\n')) == NULL)
+         char *next;
+         if((next = strchr(hdgline,'\n')) == NULL)
             break; /* shouldn't happen */
          *next = '\0';
          titlewidth = (int) strlen(hdgline);
@@ -439,7 +439,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
                }
                break;
             case RIGHT_ARROW_2:   /* scrolling key - right one column */
-               if(in_scrolling_mode && far_strchr(extrainfo, '\021') != NULL) {
+               if(in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
                   scroll_column_status++;
                   rewrite_extrainfo = 1;
                }
@@ -615,7 +615,7 @@ static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for hel
             }
             break;
          case RIGHT_ARROW_2:    /* scrolling key - right one column */
-            if(in_scrolling_mode && far_strchr(extrainfo, '\021') != NULL) {
+            if(in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
                scroll_column_status++;
                rewrite_extrainfo = 1;
             }
@@ -892,7 +892,7 @@ struct FT_CHOICE {
       char name[15];
       int  num;
       };
-static struct FT_CHOICE far **ft_choices; /* for sel_fractype_help subrtn */
+static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 
 static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
                                    /* so that storage gets freed up      */
@@ -907,11 +907,11 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
    int i, j;
 #define MAXFTYPES 200
    char tname[40];
-   struct FT_CHOICE far *choices[MAXFTYPES];
+   struct FT_CHOICE *choices[MAXFTYPES];
    int attributes[MAXFTYPES];
 
    /* steal existing array for "choices" */
-   choices[0] = (struct FT_CHOICE far *)boxy;
+   choices[0] = (struct FT_CHOICE *)boxy;
    attributes[0] = 1;
    for (i = 1; i < MAXFTYPES; ++i) {
       choices[i] = choices[i-1] + 1;
@@ -940,7 +940,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
       choices[j]->num = i;      /* remember where the real item is */
       }
    numtypes = j + 1;
-   shell_sort(choices,numtypes,sizeof(char far *),lccompare); /* sort list */
+   shell_sort(choices,numtypes,sizeof(char *),lccompare); /* sort list */
    j = 0;
    for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
       if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
@@ -948,7 +948,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 
    tname[0] = 0;
    done = fullscreen_choice(CHOICEHELP+8,head,NULL,instr,numtypes,
-         (char far *far*)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
+         (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
    if (done >= 0) {
       done = choices[done]->num;
       if((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
@@ -1232,15 +1232,15 @@ const int numtrigfn = NUMTRIGFN;
 /* --------------------------------------------------------------------- */
 int get_fract_params(int caller)        /* prompt for type-specific parms */
 {
-   char far *v0 = v0a;
-   char far *v1 = v1a;
-   char far *v2 = v2a;
-   char far *v3 = v3a;
+   char *v0 = v0a;
+   char *v1 = v1a;
+   char *v2 = v2a;
+   char *v3 = v3a;
    char *juliorbitname = NULL;
    int i,j,k;
    int curtype,numparams,numtrig;
    struct fullscreenvalues paramvalues[30];
-   char far *choices[30];
+   char *choices[30];
    long oldbailout = 0L;
    int promptnum;
    char msg[120];
@@ -1261,8 +1261,8 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    static /* Can't initialize aggregates on the stack */
 #endif
    char *bailnameptr[] = {s_mod,s_real,s_imag,s_or,s_and,s_manh,s_manr};
-   struct fractalspecificstuff far *jborbit = NULL;
-   struct fractalspecificstuff far *savespecific;
+   struct fractalspecificstuff *jborbit = NULL;
+   struct fractalspecificstuff *savespecific;
    int firstparm = 0;
    int lastparm  = MAXPARAMS;
    double oldparam[MAXPARAMS];
@@ -1434,7 +1434,7 @@ gfp_top:
       paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
       paramvalues[promptnum].uval.ch.vlen = 6;
       paramvalues[promptnum].uval.ch.list = trignameptr;
-      choices[promptnum++] = (char far *)trg[i];
+      choices[promptnum++] = (char *)trg[i];
       }
    if (*(typename = curfractalspecific->name) == '*')
         ++typename;
@@ -1559,7 +1559,7 @@ gfp_top:
    }
 
    if((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) {
-      choices[promptnum] = (char far *)s_ismand;
+      choices[promptnum] = (char *)s_ismand;
       paramvalues[promptnum].type = 'y';
       paramvalues[promptnum++].uval.ch.val = ismand?1:0;
    }
@@ -1812,7 +1812,7 @@ struct entryinfo {
    char name[ITEMNAMELEN+2];
    long point; /* points to the ( or the { following the name */
    };
-static struct entryinfo far *far*gfe_choices; /* for format_getparm_line */
+static struct entryinfo **gfe_choices; /* for format_getparm_line */
 static char *gfe_title;
 
 /* skip to next non-white space character and return it */
@@ -1843,14 +1843,14 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE * infile, void far * ch, char *itemname)
+int scan_entries(FILE * infile, void * ch, char *itemname)
 {
       /*
       function returns the number of entries found; if a
       specific entry is being looked for, returns -1 if
       the entry is found, 0 otherwise.
       */
-   struct entryinfo far *far * choices;
+   struct entryinfo ** choices;
    char buf[101];
    int exclude_entry;
    long name_offset, temp_offset;   /*rev 5/23/96 to add temp_offset,
@@ -1860,7 +1860,7 @@ int scan_entries(FILE * infile, void far * ch, char *itemname)
    long file_offset = -1;
    int numentries = 0;
 
-   choices = (struct entryinfo far * far *) ch;
+   choices = (struct entryinfo * *) ch;
 
    for (;;)
    {                            /* scan the file for entry names */
@@ -1981,20 +1981,20 @@ static long gfe_choose_entry(int type,char *title,char *filename,char *entryname
 #endif
    int numentries, i;
    char buf[101];
-   struct entryinfo far * far *choices;
-   int far *attributes;
+   struct entryinfo * *choices;
+   int *attributes;
    void (*formatitem)(int, char *);
    int boxwidth,boxdepth,colwidth;
    static int dosort = 1;
    int options = 8;
-   char far *instr;
+   char *instr;
    /* steal existing array for "choices" */
-   choices = (struct entryinfo far *far*)MK_FP(extraseg,0);
+   choices = (struct entryinfo **)MK_FP(extraseg,0);
    /* leave room for details F2 */
-   choices = choices + (2048/sizeof(struct entryinfo far *far*));
-   choices[0] = (struct entryinfo far *)(choices + MAXENTRIES+1);
-   attributes = (int far *)(choices[0] + MAXENTRIES+1);
-   instr = (char far *)(attributes + MAXENTRIES +1);
+   choices = choices + (2048/sizeof(struct entryinfo **));
+   choices[0] = (struct entryinfo *)(choices + MAXENTRIES+1);
+   attributes = (int *)(choices[0] + MAXENTRIES+1);
+   instr = (char *)(attributes + MAXENTRIES +1);
    gfe_choices = &choices[0];
    gfe_title = title;
 retry:
@@ -2019,7 +2019,7 @@ retry:
    if(dosort)
    {
       strcat(instr,"off");
-      shell_sort((char far *)choices,numentries,sizeof(char far *),lccompare);
+      shell_sort((char *)choices,numentries,sizeof(char *),lccompare);
    }
    else
       strcat(instr,"on");
@@ -2038,7 +2038,7 @@ retry:
       options = 8;
    else
       options = 8+32;
-   i = fullscreen_choice(options,temp1,NULL,instr,numentries,(char far*far*)choices,
+   i = fullscreen_choice(options,temp1,NULL,instr,numentries,(char **)choices,
                            attributes,boxwidth,boxdepth,colwidth,0,
                            formatitem,buf,NULL,check_gfe_key);
    if (i == 0-F4)
@@ -2061,7 +2061,7 @@ retry:
 static int check_gfe_key(int curkey,int choice)
 {
    char infhdg[60];
-   char far *infbuf;
+   char *infbuf;
    int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
    int top_line = 0;
    int left_column = 0;
@@ -2165,7 +2165,7 @@ static int check_gfe_key(int curkey,int choice)
                   }
                   break;
                case RIGHT_ARROW: case RIGHT_ARROW_2: /* right one column */
-                  if(in_scrolling_mode && far_strchr(infbuf, '\021') != NULL) {
+                  if(in_scrolling_mode && strchr(infbuf, '\021') != NULL) {
                      left_column++;
                      rewrite_infbuf = 1;
                   }
@@ -2215,7 +2215,7 @@ static int check_gfe_key(int curkey,int choice)
 
 static void load_entry_text(
       FILE *entfile,
-      char far *buf,
+      char *buf,
       int maxlines,
       int startrow,
       int startcol)
@@ -2363,7 +2363,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    static FCODE p6[] = {"Y shift with perspective (positive = up   )"};
    static FCODE p7[] = {"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"};
    struct fullscreenvalues uvalues[20];
-   char far *ifs3d_prompts[8];
+   char *ifs3d_prompts[8];
 
    driver_stack_screen();
    ifs3d_prompts[0] = p1;
@@ -2433,24 +2433,24 @@ int get_3d_params()     /* prompt for 3D parameters */
 {
    static FCODE hdg[]={"3D Mode Selection"};
    static FCODE hdg1[]={"Select 3D Fill Type"};
-   char far *choices[11];
+   char *choices[11];
    int attributes[21];
    int sphere;
-   char far *s;
+   char *s;
    static FCODE s1[] = {"Sphere 3D Parameters\n\
 Sphere is on its side; North pole to right\n\
 Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right"};
    static FCODE s2[]={"Planar 3D Parameters\n\
 Pre-rotation X axis is screen top; Y axis is left side\n\
 Pre-rotation Z axis is coming at you out of the screen!"};
-   char far *prompts3d[21];
+   char *prompts3d[21];
    struct fullscreenvalues uvalues[21];
    int i, k;
    int oldhelpmode;
 
 #ifdef WINFRACT
      {
-     extern int far wintext_textmode;
+     extern int wintext_textmode;
      if (wintext_textmode != 2)  /* are we in textmode? */
          return(0);              /* no - prompts are already handled */
      }
@@ -2596,7 +2596,7 @@ the online documentation."};
       for (i = 0; i < k; ++i)
          attributes[i] = 1;
       helpmode = HELP3DFILL;
-      i = fullscreen_choice(CHOICEHELP,hdg1,NULL,NULL,k,(char far * far *)choices,attributes,
+      i = fullscreen_choice(CHOICEHELP,hdg1,NULL,NULL,k,(char * *)choices,attributes,
                               0,0,0,FILLTYPE+1,NULL,NULL,NULL,NULL);
       helpmode = oldhelpmode;
       if (i < 0)
@@ -2739,7 +2739,7 @@ return(0);
 static int get_light_params()
 {
    static FCODE hdg[]={"Light Source Parameters"};
-   char far *prompts3d[13];
+   char *prompts3d[13];
    struct fullscreenvalues uvalues[13];
 
    int k;
@@ -2899,7 +2899,7 @@ or '*' to use palette from the image to be loaded."};
 static int get_funny_glasses_params()
 {
    static FCODE hdg[]={"Funny Glasses Parameters"};
-   char far *prompts3d[10];
+   char *prompts3d[10];
 
    struct fullscreenvalues uvalues[10];
 

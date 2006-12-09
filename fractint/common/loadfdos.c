@@ -80,7 +80,7 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 static void format_vid_inf(int i,char *err,char *buf)
 {
    char kname[5];
-   memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+   memcpy((char *)&videoentry,(char *)&vidtbl[i],
               sizeof(videoentry));
    vidmode_keyname(videoentry.keynum,kname);
    sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
@@ -110,7 +110,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 Select a video mode.  Use the cursor keypad to move the pointer.\n\
 Press ENTER for selected mode, or use a video mode function key.\n\
 Press F1 for help, "};
-   char far *hdg2, far *warning, far *select_msg, far *ptr;
+   char *hdg2, *warning, *select_msg, *ptr;
    struct vidinf vid[MAXVIDEOMODES];
    int i,j;
    int gotrealmode;
@@ -127,7 +127,7 @@ Press F1 for help, "};
    VIDEOINFO *vident;
 
    /* save overlayed strings to extraseg memory */
-   ptr = (char far *)MK_FP(extraseg,ENDVID);  /* ENDVID is to avoid videotable */
+   ptr = (char *)MK_FP(extraseg,ENDVID);  /* ENDVID is to avoid videotable */
    hdg2 = ptr;
    ptr += sizeof(o_hdg2);
    warning = ptr;
@@ -157,7 +157,7 @@ Press F1 for help, "};
                   * ((bppx = vident->dotmode/1000) < 2 ? ++bppx : bppx)) {
 
                sprintf(over,"<-VIRTUAL! at %4u x %4u",vident->xdots,vident->ydots);
-               strcpy((char far *)vident->comment,(char far *)over);
+               strcpy((char *)vident->comment,(char *)over);
 
                if (info->xdots > vident->xdots)
                   vident->xdots = info->xdots;
@@ -199,7 +199,7 @@ Press F1 for help, "};
 
    /* setup table entry for each vid mode, flagged for how well it matches */
    for (i = 0; i < vidtbllen; ++i) {
-      memcpy((char far *)&videoentry,(char far *)&vidtbl[i],
+      memcpy((char *)&videoentry,(char *)&vidtbl[i],
                  sizeof(videoentry));
       tmpflags = VI_EXACT;
       if (videoentry.keynum == 0)
@@ -323,13 +323,13 @@ if (fastrestore  && !askvideo)
          if (initmode >= MAXVIDEOTABLE-1) j = 0;
          }
       if (j == 0) /* mode has no key, add to reserved slot at end */
-         memcpy((char far *)&videotable[initmode=MAXVIDEOTABLE-1],
-                    (char far *)&vidtbl[i],sizeof(*vidtbl));
+         memcpy((char *)&videotable[initmode=MAXVIDEOTABLE-1],
+                    (char *)&vidtbl[i],sizeof(*vidtbl));
       }
 
    /* ok, we're going to return with a video mode */
 
-   memcpy((char far *)&videoentry,(char far *)&videotable[initmode],
+   memcpy((char *)&videoentry,(char *)&videotable[initmode],
               sizeof(videoentry));
 
 

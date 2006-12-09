@@ -104,7 +104,7 @@ JulibrotSetup(void)
       if (fractalspecific[neworbittype].isinteger == 0)
       {
          static FCODE msg[] = {"Julibrot orbit type isinteger mismatch"};
-         stopmsg(0, (char far *)msg);
+         stopmsg(0, (char *)msg);
       }
       if (fractalspecific[neworbittype].isinteger > 1)
          bitshift = fractalspecific[neworbittype].isinteger;

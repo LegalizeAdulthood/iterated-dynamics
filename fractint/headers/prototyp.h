@@ -668,7 +668,7 @@ extern int check_back(void);
 
 /*  loadmap -- C file prototypes */
 
-extern void SetTgaColors(void);
+//extern void SetTgaColors(void);
 extern int ValidateLuts(char *);
 extern int SetColorPaletteName(char *);
 
@@ -1035,9 +1035,6 @@ extern int makepath(char *template,char *drive,char *dir,char *fname,char *ext);
 extern int fr_findfirst(char *path);
 extern int fr_findnext(void );
 extern void shell_sort(void far *,int n,unsigned,int (__cdecl *fct)(VOIDFARPTR,VOIDFARPTR));
-extern void far_strncpy(char far *, char far *, int len);
-extern char far *far_strchr(char far *str, char c);
-extern char far *far_strrchr(char far *str, char c);
 extern void fix_dirname(char *dirname);
 extern int merge_pathnames(char *, char *, int);
 extern int get_browse_params(void);

@@ -484,7 +484,7 @@ static void set_Plasma_palette()
       dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
 #endif
    }
-   SetTgaColors();      /* TARGA 3 June 89  j mclain */
+   //SetTgaColors();      /* TARGA 3 June 89  j mclain */
    spindac(0,1);
 }
 
@@ -764,7 +764,7 @@ int diffusion()
 
 #define SEED 0.66               /* starting value for population */
 
-static int far *verhulst_array;
+static int *verhulst_array;
 unsigned long filter_cycles;
 static unsigned int half_time_check;
 static long   lPopulation, lRate;
@@ -784,7 +784,7 @@ int Bifurcation(void)
       end_resume();
    }
    array_size =  (iystop + 1) * sizeof(int); /* should be iystop + 1 */
-   if ((verhulst_array = (int far *) malloc(array_size)) == NULL)
+   if ((verhulst_array = (int *) malloc(array_size)) == NULL)
    {
       static FCODE msg[]={"Insufficient free memory for calculation."};
       stopmsg(0,msg);
@@ -827,7 +827,7 @@ int Bifurcation(void)
    {
       if(keypressed())
       {
-         farmemfree((char far *)verhulst_array);
+         free((char *)verhulst_array);
          alloc_resume(10,1);
          put_resume(sizeof(column),&column,0);
          return(-1);
@@ -854,7 +854,7 @@ int Bifurcation(void)
       }
       column++;
    }
-   farmemfree((char far *)verhulst_array);
+   free((char *)verhulst_array);
    return(0);
 }
 
@@ -1300,7 +1300,7 @@ int lya_setup () {
     if (inside<0) {
         static FCODE msg[]=
             {"Sorry, inside options other than inside=nnn are not supported by the lyapunov"};
-        stopmsg(0,(char far *)msg);
+        stopmsg(0,(char *)msg);
         inside=1;
         }
     if (usr_stdcalcmode == 'o') { /* Oops,lyapunov type */
@@ -1391,7 +1391,7 @@ jumpout:
 #if defined(XFRACT) || defined(_WIN32)
 static BYTE *cell_array[2];
 #else
-static BYTE far *cell_array[2];
+static BYTE *cell_array[2];
 #endif
 
 S16 r, k_1, rule_digits;
@@ -1406,7 +1406,7 @@ void abort_cellular(int err, int t)
          {
          char msg[30];
          sprintf(msg,"Bad t=%d, aborting\n", t);
-         stopmsg(0,(char far *)msg);
+         stopmsg(0,(char *)msg);
          }
          break;
       case BAD_MEM:
@@ -1468,13 +1468,13 @@ void abort_cellular(int err, int t)
 #if !defined(XFRACT) && !defined(_WIN32)
       cell_array[0] = NULL;
 #else
-      farmemfree((char far *)cell_array[0]);
+      free((char *)cell_array[0]);
 #endif
    if(cell_array[1] != NULL)
 #if !defined(XFRACT) && !defined(_WIN32)
       cell_array[1] = NULL;
 #else
-      farmemfree((char far *)cell_array[1]);
+      free((char *)cell_array[1]);
 #endif
 }
 
@@ -1592,8 +1592,8 @@ int cellular () {
    cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
    cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
 #else
-   cell_array[0] = (BYTE far *)malloc(ixstop+1);
-   cell_array[1] = (BYTE far *)malloc(ixstop+1);
+   cell_array[0] = (BYTE *)malloc(ixstop+1);
+   cell_array[1] = (BYTE *)malloc(ixstop+1);
 #endif
    if (cell_array[0]==NULL || cell_array[1]==NULL) {
       abort_cellular(BAD_MEM, 0);
@@ -1802,7 +1802,7 @@ static void set_Cellular_palette()
    dac[5].green = Brown.green;
    dac[5].blue  = Brown.blue;
 
-   SetTgaColors();
+   //SetTgaColors();
    spindac(0,1);
 }
 
@@ -1915,7 +1915,7 @@ int froth_setup(void)
       {
       static FCODE msg[]=
           {"Sorry, not enough memory to run the frothybasin fractal type"};
-      stopmsg(0,(char far *)msg);
+      stopmsg(0,(char *)msg);
       return 0;
       }
 

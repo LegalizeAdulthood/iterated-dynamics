@@ -49,7 +49,7 @@ void set_grid_pointers()
 {
    dx0 = MK_FP(extraseg,0);
    dy1 = (dx1 = (dy0 = dx0 + xdots) + ydots) + ydots;
-   lx0 = (long far *) dx0;
+   lx0 = (long *) dx0;
    ly1 = (lx1 = (ly0 = lx0 + xdots) + ydots) + ydots;
    set_pixel_calc_functions();
 }
@@ -522,8 +522,8 @@ expand_retry:
    {
       /* zap all of extraseg except high area to flush out bugs */
       /* in production version this code can be deleted */
-      char far *extra;
-      extra = (char far *)MK_FP(extraseg,0);
+      char *extra;
+      extra = (char *)MK_FP(extraseg,0);
       memset(extra,0,(unsigned int)(0x10000l-(bflength+2)*22U));
    }
 }
@@ -1061,7 +1061,7 @@ static int _fastcall ratio_bad(double actual, double desired)
          get_resume(sizeof(parmarray),parmarray,0);
       end_resume();
 
-   Engines which allocate a large far memory chunk of their own might
+   Engines which allocate a large memory chunk of their own might
    directly set resume_info, resume_len, calc_status to avoid doubling
    transient memory needs by using these routines.
 
