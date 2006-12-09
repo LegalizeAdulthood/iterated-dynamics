@@ -113,7 +113,7 @@
 #include "prototyp.h"
 
 /* global data  */
-struct fls far *pfls = (struct fls far *)0;
+struct fls *pfls = (struct fls *)0;
 
 #if !defined(XFRACT) && !defined(_WIN32)
 
@@ -122,13 +122,13 @@ struct fls far *pfls = (struct fls far *)0;
 
 extern union Arg *Arg1, *Arg2;
 extern double _1_, _2_;
-extern union Arg s[20], far * far *Store, far * far *Load;
+extern union Arg s[20], * *Store, * *Load;
 extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
-extern struct ConstArg far *v;
+extern struct ConstArg *v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
-extern void (far * far *f)(void);
-extern JUMP_CONTROL_ST far *jump_control;
+extern void (* *f)(void);
+extern JUMP_CONTROL_ST *jump_control;
 extern int uses_jump, jump_index;
 
 typedef void OLD_FN(void);  /* old C functions  */
@@ -223,7 +223,7 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 /* if first char not alpha, or const p1, p2, or p3 are being accessed  */
 /*    then this is a const.  */
 #define IS_CONST(x) \
-      (!isalpha(**(((char * far *)x ) - 2 ) ) \
+      (!isalpha(**(((char * *)x ) - 2 ) ) \
       || (x==&PARM1 && p1const ) \
       || (x==&PARM2 && p2const ) \
       || (x==&PARM3 && p3const ) \
@@ -254,7 +254,7 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
-int pstopmsg(int x,char far *msg)
+int pstopmsg(int x,char *msg)
 {
    static FILE *fp = NULL;
    if(fp == NULL)
@@ -396,9 +396,9 @@ static void (near *prevfptr )(void);  /* previous function pointer  */
 struct fn_entry {
 
 #ifdef TESTFP
-   char far *fname;  /* function name  */
+   char *fname;  /* function name  */
 #endif
-   void (far *infn)(void);  /* 'old' function pointer  */
+   void (*infn)(void);  /* 'old' function pointer  */
          /* (infn points to an operator fn in parser.c)  */
 
    void (near *outfn)(void);  /* pointer to equiv. fast fn.  */
@@ -412,7 +412,7 @@ struct fn_entry {
    char delta;  /* net change to # of values on the fp stack  */
          /* (legal values are -2, 0, +2)  */
 
-} static far afe[NUM_OLD_FNS] = {  /* array of function entries  */
+} static afe[NUM_OLD_FNS] = {  /* array of function entries  */
 
    {FNAME("Lod",     StkLod,      fStkLod,    0, 2, +2) },          /*  0  */
    {FNAME("Clr",     StkClr,      fStkClr1,   0, 0,  CLEAR_STK) },  /*  1  */
@@ -480,7 +480,7 @@ static int CvtFptr(void (near * ffptr)(void), int MinStk, int FreeStk,
       int Delta )
 {
    union Arg near *otemp;    /* temp operand ptr  */
-   union Arg far *testload;
+   union Arg *testload;
 #ifdef TESTFP
    int prevstkcnt;
 #endif
@@ -935,7 +935,7 @@ awful_error:
          v[vsp].a.d.x = _1_ / Load[LodPtr-1]->d.x;
          v[vsp].a.d.y = 0.0;
          {
-            void far *p = &v[vsp++].a;
+            void *p = &v[vsp++].a;
             OPPTR(cvtptrx) = (void near *)FP_OFF(p);  /* isn't C fun!  */
          }
          ffptr = fStkLodRealMul;
@@ -1257,14 +1257,14 @@ int fpfill_jump_struct(void)
 
 extern int fform_per_pixel(void);       /* these fns are in parsera.asm  */
 extern int BadFormula(void);
-extern void (far Img_Setup )(void);
+extern void (Img_Setup )(void);
 
 int CvtStk() {  /* convert the array of ptrs  */
    extern char FormName[];
-   void (far *ftst)(void);
+   void (*ftst)(void);
    void (near *ntst)(void);
-   union Arg far *testoperand;
-   struct fn_entry far *pfe;
+   union Arg *testoperand;
+   struct fn_entry *pfe;
    int fnfound;
 
    lastsqrreal = 1;  /* assume lastsqr is real (not stored explicitly)  */

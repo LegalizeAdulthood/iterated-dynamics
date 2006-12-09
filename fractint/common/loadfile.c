@@ -22,7 +22,7 @@ static int  find_fractal_info(char *,struct fractal_info *,
                               struct ext_blk_5 *,
                               struct ext_blk_6 *,
                               struct ext_blk_7 *);
-static void load_ext_blk(char far *loadptr,int loadlen);
+static void load_ext_blk(char *loadptr,int loadlen);
 static void skip_ext_blk(int *,int *);
 static void backwardscompat(struct fractal_info *info);
 static int fix_bof(void);
@@ -416,13 +416,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           }
 
    if (rangeslen) { /* free prior ranges */
-     farmemfree((char far *)ranges);
+     free((char *)ranges);
      rangeslen = 0;
    }
 
    if(blk_4_info.got_data == 1)
           {
-          ranges = (int far *)blk_4_info.range_data;
+          ranges = (int *)blk_4_info.range_data;
           rangeslen = blk_4_info.length;
 #ifdef XFRACT
           fix_ranges(ranges,rangeslen,1);
@@ -433,8 +433,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           {
           bf_math = 1;
           init_bf_length(read_info.bflength);
-          memcpy((char far *)bfxmin,blk_5_info.apm_data,blk_5_info.length);
-          farmemfree(blk_5_info.apm_data);
+          memcpy((char *)bfxmin,blk_5_info.apm_data,blk_5_info.length);
+          free(blk_5_info.apm_data);
           }
    else
       bf_math = 0;
@@ -677,7 +677,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                      scan_extend = 0;
                      break;
                      }
-                  load_ext_blk((char far *)info,FRACTAL_INFO_SIZE);
+                  load_ext_blk((char *)info,FRACTAL_INFO_SIZE);
 #ifdef XFRACT
                   decode_fractal_info(info,1);
 #endif
@@ -691,7 +691,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                      info->calc_status = 3; /* not resumable after all */
                   else {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
-                     load_ext_blk((char far *)block,data_len);
+                     load_ext_blk((char *)block,data_len);
                      MoveToMemory((BYTE *)block,(U16)1,(long)data_len,0,(U16)blk_2_info->resume_data);
                      blk_2_info->length = data_len;
                      blk_2_info->got_data = 1; /* got data */
@@ -701,7 +701,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                 /* check data_len for backward compatibility */
                   fseek(fp,(long)(0-block_len),SEEK_CUR);
-                  load_ext_blk((char far *)&fload_info,data_len);
+                  load_ext_blk((char *)&fload_info,data_len);
                   strcpy(blk_3_info->form_name,fload_info.form_name);
                   blk_3_info->length = data_len;
                   blk_3_info->got_data = 1; /* got data */
@@ -726,16 +726,16 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   break;
                case 4: /* ranges info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                  if ((blk_4_info->range_data = (int far *)malloc((long)data_len)) != NULL) {
+                  if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != NULL) {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
-                     load_ext_blk((char far *)blk_4_info->range_data,data_len);
+                     load_ext_blk((char *)blk_4_info->range_data,data_len);
                      blk_4_info->length = data_len/2;
                      blk_4_info->got_data = 1; /* got data */
                      }
                   break;
                case 5: /* extended precision parameters  */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                  if ((blk_5_info->apm_data = (char far *)malloc((long)data_len)) != NULL) {
+                  if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != NULL) {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
                      load_ext_blk(blk_5_info->apm_data,data_len);
                      blk_5_info->length = data_len;
@@ -745,7 +745,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 6: /* evolver params */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                   fseek(fp,(long)(0-block_len),SEEK_CUR);
-                  load_ext_blk((char far *)&eload_info,data_len);
+                  load_ext_blk((char *)&eload_info,data_len);
                   /* XFRACT processing of doubles here */
 #ifdef XFRACT
                   decode_evolver_info(&eload_info,1);
@@ -776,7 +776,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 7: /* orbits parameters  */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                   fseek(fp,(long)(0-block_len),SEEK_CUR);
-                  load_ext_blk((char far *)&oload_info,data_len);
+                  load_ext_blk((char *)&oload_info,data_len);
                   /* XFRACT processing of doubles here */
 #ifdef XFRACT
                   decode_orbits_info(&oload_info,1);
@@ -830,7 +830,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    return(0);
 }
 
-static void load_ext_blk(char far *loadptr,int loadlen)
+static void load_ext_blk(char *loadptr,int loadlen)
 {
    int len;
    while ((len = fgetc(fp)) > 0) {
@@ -1269,12 +1269,12 @@ rescan:  /* entry for changed browse parms */
            wincount++;
          }
 
-        if(blk_2_info.got_data == 1) /* Clean up any far memory allocated */
+        if(blk_2_info.got_data == 1) /* Clean up any memory allocated */
            MemoryRelease((U16)blk_2_info.resume_data);
-        if(blk_4_info.got_data == 1) /* Clean up any far memory allocated */
-           farmemfree(blk_4_info.range_data);
-        if(blk_5_info.got_data == 1) /* Clean up any far memory allocated */
-           farmemfree(blk_5_info.apm_data);
+        if(blk_4_info.got_data == 1) /* Clean up any memory allocated */
+           free(blk_4_info.range_data);
+        if(blk_5_info.got_data == 1) /* Clean up any memory allocated */
+           free(blk_5_info.apm_data);
 
         done=(fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
       }
@@ -1282,7 +1282,7 @@ rescan:  /* entry for changed browse parms */
       if (no_memory)
       {
          static FCODE msg[] = {"Sorry...not enough memory to browse."};
-       texttempmsg(msg);/* doesn't work if NO far memory available, go figure */
+       texttempmsg(msg);/* doesn't work if NO memory available, go figure */
       }
       if (wincount >= MAX_WINDOWS_OPEN)
       { /* hard code message at MAX_WINDOWS_OPEN = 450 */
@@ -1440,7 +1440,7 @@ rescan:  /* entry for changed browse parms */
          strcpy(mesg,"");
          {
          static FCODE msg[] = {"Enter the new filename for "};
-         strcat((char far *)mesg,msg);
+         strcat((char *)mesg,msg);
          }
          splitpath(readname,drive,dir,NULL,NULL);
          splitpath(winlist.name,NULL,NULL,fname,ext);
@@ -1666,12 +1666,12 @@ static char is_visible_window
       bt_t5   = alloc_stack(two_di_len);
       bt_t6   = alloc_stack(two_di_len);
 
-      memcpy((char far *)bt_t1,blk_5_info->apm_data,(two_di_len));
-      memcpy((char far *)bt_t2,blk_5_info->apm_data+two_di_len,(two_di_len));
-      memcpy((char far *)bt_t3,blk_5_info->apm_data+2*two_di_len,(two_di_len));
-      memcpy((char far *)bt_t4,blk_5_info->apm_data+3*two_di_len,(two_di_len));
-      memcpy((char far *)bt_t5,blk_5_info->apm_data+4*two_di_len,(two_di_len));
-      memcpy((char far *)bt_t6,blk_5_info->apm_data+5*two_di_len,(two_di_len));
+      memcpy((char *)bt_t1,blk_5_info->apm_data,(two_di_len));
+      memcpy((char *)bt_t2,blk_5_info->apm_data+two_di_len,(two_di_len));
+      memcpy((char *)bt_t3,blk_5_info->apm_data+2*two_di_len,(two_di_len));
+      memcpy((char *)bt_t4,blk_5_info->apm_data+3*two_di_len,(two_di_len));
+      memcpy((char *)bt_t5,blk_5_info->apm_data+4*two_di_len,(two_di_len));
+      memcpy((char *)bt_t6,blk_5_info->apm_data+5*two_di_len,(two_di_len));
 
       convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
       convert_bf(bt_xmax, bt_t2, two_len, two_di_len);

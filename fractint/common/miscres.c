@@ -41,7 +41,7 @@ char s_cantfind[]       = {"Can't find %s"};
 
 #ifndef XFRACT
 
-void findpath(char far *filename, char *fullpathname) /* return full pathnames */
+void findpath(char *filename, char *fullpathname) /* return full pathnames */
 {
    char fname[FILE_MAX_FNAME];
    char ext[FILE_MAX_EXT];
@@ -96,7 +96,7 @@ abort if it appears that your disk drive is working too hard."};
 /* color   -- attribute (same as for putstring)                           */
 /* maxrow -- max number of rows to write                                 */
 /* returns 0 if success, 1 if hit maxrow before done                      */
-int putstringwrap(int *row,int col1,int col2,int color,char far *str,int maxrow)
+int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
 {
     char save1, save2;
     int length, decpt, padding, startrow, done;
@@ -887,13 +887,13 @@ int tab_display()       /* display the status of the current image */
    double Xmagfactor, Rotation, Skew;
    bf_t bfXctr=NULL, bfYctr=NULL;
    char msg[350];
-   char far *msgptr;
+   char *msgptr;
    int key;
    int saved=0;
    int dec;
    int k;
    U16 save_extra_handle = 0;
-   BYTE far *ptr_to_extraseg = NULL;
+   BYTE *ptr_to_extraseg = NULL;
    int hasformparam = 0;
 
    if (calc_status < 0) {       /* no active fractal image */
@@ -1297,7 +1297,7 @@ static void area(void)
     /* apologies to UNIX folks, we PC guys have to save near space */
     static FCODE warning[] = {"Warning: inside may not be unique\n"};
     static FCODE total_area[] = {".  Total area "};
-    char far *msg;
+    char *msg;
     int x,y;
     char buf[160];
     long cnt=0;
@@ -1316,11 +1316,11 @@ static void area(void)
     if (inside>0 && outside<0 && maxit>inside) {
       msg = warning;
     } else {
-      msg = (char far *)"";
+      msg = (char *)"";
     }
 #ifndef XFRACT
       sprintf(buf,"%Fs%ld inside pixels of %ld%Fs%f",
-              msg,cnt,(long)xdots*(long)ydots,(char far *)total_area,
+              msg,cnt,(long)xdots*(long)ydots,(char *)total_area,
               cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
 #else
       sprintf(buf,"%s%ld inside pixels of %ld%s%f",
@@ -1330,7 +1330,7 @@ static void area(void)
     stopmsg(4,buf);
 }
 
-int endswithslash(char far *fl)
+int endswithslash(char *fl)
 {
    int len;
    len = (int) strlen(fl);
@@ -1370,7 +1370,7 @@ int ifsload()                   /* read in IFS parameters */
    int ret,rowsize;
 
    if (ifs_defn) { /* release prior parms */
-      free((char far *)ifs_defn);
+      free((char *)ifs_defn);
       ifs_defn = NULL;
       }
 
@@ -1436,7 +1436,7 @@ int ifsload()                   /* read in IFS parameters */
 
    if (ret == 0) {
       numaffine = i/rowsize;
-      if ((ifs_defn = (float far *)malloc(
+      if ((ifs_defn = (float *)malloc(
                         (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == NULL) {
      stopmsg(0,insufficient_ifs_mem);
          ret = -1;

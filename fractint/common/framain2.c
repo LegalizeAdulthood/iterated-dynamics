@@ -54,7 +54,7 @@ static void _fastcall save_history_info(void);
 
 U16 evolve_handle = 0;
 char old_stdcalcmode;
-static char far *savezoom;
+static char *savezoom;
 static  int        historyptr = -1;     /* user pointer into history tbl  */
 static  int        saveptr = 0;         /* save ptr into history tbl      */
 static  int        historyflag;         /* are we backing off in history? */
@@ -78,7 +78,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
              calc_status = -1;
          }
 #endif
-         memcpy((char far *)&videoentry,(char far *)&videotable[adapter],
+         memcpy((char *)&videoentry,(char *)&videotable[adapter],
                     sizeof(videoentry));
          axmode  = videoentry.videomodeax; /* video mode (BIOS call)   */
          bxmode  = videoentry.videomodebx; /* video mode (BIOS call)   */
@@ -140,9 +140,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                static FCODE msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
                if (xdots > sxdots && ydots > sydots) {
 #ifndef XFRACT
-                  sprintf(buf,"%Fs\n%Fs",(char far *)msgxy1,(char far *)msgxy2);
+                  sprintf(buf,"%Fs\n%Fs",(char *)msgxy1,(char *)msgxy2);
 #else
-                  sprintf(buf,"%s\n%s",(char far *)msgxy1,(char far *)msgxy2);
+                  sprintf(buf,"%s\n%s",(char *)msgxy1,(char *)msgxy2);
 #endif
                   stopmsg(0,buf);
                 }
@@ -167,7 +167,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
          else { /* reset DAC to defaults, which setvideomode has done for us */
             if (mapdacbox) { /* but there's a map=, so load that */
-               memcpy((char far *)dacbox,mapdacbox,768);
+               memcpy((char *)dacbox,mapdacbox,768);
                spindac(0,1);
                }
             else if ((driver_diskp() && colors == 256) || !colors) {
@@ -275,7 +275,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             {
                char msg[MSGLEN];
                sprintf(msg,"floatflag=%d",usr_floatflag);
-               stopmsg(4,(char far *)msg);
+               stopmsg(4,(char *)msg);
             }
 
             i = funny_glasses_call(gifview);
@@ -353,7 +353,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
         int grout,ecount,tmpxdots,tmpydots,gridsqr;
         struct evolution_info resume_e_info;
         GENEBASE gene[NUMGENES];
-        /* get the gene array from far memory */
+        /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         if ((evolve_handle != 0) && (calc_status == 2)) {
            MoveFromMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
@@ -443,7 +443,7 @@ done:
         unspiralmap(); /* first time called, w/above line sets up array */
         param_history(1); /* restore old history */
         fiddleparms(gene, 0);
-        /* now put the gene array back in far memory */
+        /* now put the gene array back in memory */
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
       }
  /* end of evolution loop */
@@ -1575,7 +1575,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 
       if (driver_diskp() && disktarga == 1)
          return(CONTINUE);  /* disk video and targa, nothing to save */
-      /* get the gene array from far memory */
+      /* get the gene array from memory */
       MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
       oldsxoffs = sxoffs;
       oldsyoffs = syoffs;
@@ -1677,7 +1677,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
      if (boxcount) {
         int grout;
         GENEBASE gene[NUMGENES];
-        /* get the gene array from far memory */
+        /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         if (evolving&1) {
              if (*kbdchar == LEFT_ARROW_2) {
@@ -1707,7 +1707,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
              chgboxi(0,0);
              drawparmbox(0);
         }
-        /* now put the gene array back in far memory */
+        /* now put the gene array back in memory */
         MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
      }
      else                       /* if no zoombox, scroll by arrows */
@@ -1845,7 +1845,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          {
           int i;
           GENEBASE gene[NUMGENES];
-          /* get the gene array from far memory */
+          /* get the gene array from memory */
           MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
           for (i =0;i < NUMGENES; i++) {
             if (gene[i].mutate == 5) {
@@ -1854,7 +1854,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             }
             if (gene[i].mutate == 6) gene[i].mutate = 5;
           }
-          /* now put the gene array back in far memory */
+          /* now put the gene array back in memory */
           MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         }
       *kbdmore = calc_status = 0;
@@ -1927,8 +1927,8 @@ static int call_line3d(BYTE *pixels, int linelen)
 
 static void note_zoom()
 {
-   if (boxcount) { /* save zoombox stuff in far mem before encode (mem reused) */
-      if ((savezoom = (char far *)malloc((long)(5*boxcount))) == NULL)
+   if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
+      if ((savezoom = (char *)malloc((long)(5*boxcount))) == NULL)
          clear_zoombox(); /* not enuf mem so clear the box */
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
@@ -1945,7 +1945,7 @@ static void restore_zoom()
       memcpy(boxx,savezoom,boxcount*2);
       memcpy(boxy,savezoom+boxcount*2,boxcount*2);
       memcpy(boxvalues,savezoom+boxcount*4,boxcount);
-      farmemfree(savezoom);
+      free(savezoom);
       drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
       }
 }
@@ -2109,9 +2109,9 @@ static void _fastcall save_history_info()
    HISTORY current,last;
    if(maxhistory <= 0 || bf_math || history == 0)
       return;
-   MoveFromMemory((BYTE far *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
+   MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
 
-   memset((void far *)&current,0,sizeof(HISTORY));
+   memset((void *)&current,0,sizeof(HISTORY));
    current.fractal_type    = (short)fractype                  ;
    current.xmin       = xxmin                     ;
    current.xmax       = xxmax                     ;
@@ -2237,17 +2237,17 @@ static void _fastcall save_history_info()
    {
    case FORMULA:
    case FFORMULA:
-      far_strncpy(current.filename,FormFileName,FILE_MAX_PATH);
-      far_strncpy(current.itemname,FormName,ITEMNAMELEN+1);
+      strncpy(current.filename,FormFileName,FILE_MAX_PATH);
+      strncpy(current.itemname,FormName,ITEMNAMELEN+1);
       break;
    case IFS:
    case IFS3D:
-      far_strncpy(current.filename,IFSFileName,FILE_MAX_PATH);
-      far_strncpy(current.itemname,IFSName,ITEMNAMELEN+1);
+      strncpy(current.filename,IFSFileName,FILE_MAX_PATH);
+      strncpy(current.itemname,IFSName,ITEMNAMELEN+1);
       break;
    case LSYSTEM:
-      far_strncpy(current.filename,LFileName,FILE_MAX_PATH);
-      far_strncpy(current.itemname,LName,ITEMNAMELEN+1);
+      strncpy(current.filename,LFileName,FILE_MAX_PATH);
+      strncpy(current.itemname,LName,ITEMNAMELEN+1);
       break;
    default:
       *(current.filename) = 0;
@@ -2258,7 +2258,7 @@ static void _fastcall save_history_info()
    {
       int i;
       for (i = 0; i < maxhistory; i++)
-         MoveToMemory((BYTE far *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
+         MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
       historyflag = saveptr = historyptr = 0;   /* initialize history ptr */
    }
    else if(historyflag == 1)
@@ -2269,7 +2269,7 @@ static void _fastcall save_history_info()
          saveptr = 0;
       if(++historyptr >= maxhistory)  /* move user pointer in parallel */
          historyptr = 0;
-      MoveToMemory((BYTE far *)&current,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
+      MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
    }
 }
 
@@ -2278,7 +2278,7 @@ static void _fastcall restore_history_info(int i)
    HISTORY last;
    if(maxhistory <= 0 || bf_math || history == 0)
       return;
-   MoveFromMemory((BYTE far *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
+   MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
    invert = 0;
    calc_status = 0;
    resuming = 0;
@@ -2425,17 +2425,17 @@ static void _fastcall restore_history_info(int i)
    {
    case FORMULA:
    case FFORMULA:
-      far_strncpy(FormFileName,last.filename,FILE_MAX_PATH);
-      far_strncpy(FormName,    last.itemname,ITEMNAMELEN+1);
+      strncpy(FormFileName,last.filename,FILE_MAX_PATH);
+      strncpy(FormName,    last.itemname,ITEMNAMELEN+1);
       break;
    case IFS:
    case IFS3D:
-      far_strncpy(IFSFileName,last.filename,FILE_MAX_PATH);
-      far_strncpy(IFSName    ,last.itemname,ITEMNAMELEN+1);
+      strncpy(IFSFileName,last.filename,FILE_MAX_PATH);
+      strncpy(IFSName    ,last.itemname,ITEMNAMELEN+1);
       break;
    case LSYSTEM:
-      far_strncpy(LFileName,last.filename,FILE_MAX_PATH);
-      far_strncpy(LName    ,last.itemname,ITEMNAMELEN+1);
+      strncpy(LFileName,last.filename,FILE_MAX_PATH);
+      strncpy(LName    ,last.itemname,ITEMNAMELEN+1);
       break;
    default:
       break;
@@ -2445,11 +2445,11 @@ static void _fastcall restore_history_info(int i)
 void checkfreemem(int secondpass)
 {
    int oldmaxhistory;
-   char far *tmp;
+   char *tmp;
    static FCODE msg[] =
       {" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
    static FCODE msg2[] = {"To save memory, reduced maxhistory to "};
-   tmp = (char far *)malloc(4096L);
+   tmp = (char *)malloc(4096L);
    oldmaxhistory = maxhistory;
    if(secondpass && !history)
    {
@@ -2465,19 +2465,19 @@ void checkfreemem(int secondpass)
    {
       driver_buzzer(2);
 #ifndef XFRACT
-      printf("%Fs",(char far *)msg);
+      printf("%Fs",(char *)msg);
 #else
       printf("%s",msg);
 #endif
       exit(1);
    }
-   farmemfree(tmp); /* was just to check for min space */
+   free(tmp); /* was just to check for min space */
    if(secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
    {
 #ifndef XFRACT
-      printf("%Fs%d\n%Fs\n",(char far *)msg2,maxhistory,s_pressanykeytocontinue);
+      printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
 #else
-      printf("%s%d\n%s\n",(char far *)msg2,maxhistory,s_pressanykeytocontinue);
+      printf("%s%d\n%s\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
 #endif
       getakey();
    }

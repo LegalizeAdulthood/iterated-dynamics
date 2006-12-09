@@ -30,10 +30,10 @@ typedef struct tagTIMERINFO {
     DWORD dwmsThisVM;
     } TIMERINFO;
 
-BOOL    far pascal TimerCount(TIMERINFO FAR *);
+BOOL    pascal TimerCount(TIMERINFO FAR *);
 #endif
 
-int stopmsg(int , char far *);
+int stopmsg(int , char *);
 int  farread(int, VOIDFARPTR, unsigned);
 int  farwrite(int, VOIDFARPTR, unsigned);
 
@@ -75,7 +75,7 @@ extern int time_to_orbit;            /* time to activate orbits? */
 
 extern BOOL win_systempaletteused;        /* flag system palette set */
 
-extern unsigned char far temp_array[];         /* temporary spot for Encoder rtns */
+extern unsigned char temp_array[];         /* temporary spot for Encoder rtns */
 
 extern HANDLE hpixels;                        /* handle to the DIB pixels */
 extern unsigned char huge *pixels;   /* the device-independent bitmap pixels */
@@ -107,7 +107,7 @@ BOOL dont_wait_for_a_key = TRUE;
 #endif
 
 
-extern int far wintext_textmode, far wintext_AltF4hit;
+extern int wintext_textmode, wintext_AltF4hit;
 
 int getakey(void)
 {
@@ -504,13 +504,13 @@ MessageBeep(0);
 #define MAXFARMEMALLOCS  50                /* max active farmemallocs */
 int   farmemallocinit = 0;                /* any memory been allocated yet?   */
 HANDLE farmemallochandles[MAXFARMEMALLOCS];                        /* handles  */
-void far *farmemallocpointers[MAXFARMEMALLOCS]; /* pointers */
+void *farmemallocpointers[MAXFARMEMALLOCS]; /* pointers */
 
-void far * cdecl malloc(long bytecount)
+void * cdecl malloc(long bytecount)
 {
 int i;
 HANDLE temphandle;
-void far *temppointer;
+void *temppointer;
 
 if (!farmemallocinit) {         /* never been here yet - initialize */
     farmemallocinit = 1;
@@ -529,7 +529,7 @@ if (i == MAXFARMEMALLOCS)        /* uh-oh - no more handles */
 if (!(temphandle = GlobalAlloc(GMEM_FIXED | GMEM_ZEROINIT, bytecount)))
      return(NULL);                /* can't allocate the memory */
 
-if ((temppointer = (void far *)GlobalLock(temphandle)) == NULL) {
+if ((temppointer = (void *)GlobalLock(temphandle)) == NULL) {
      GlobalFree(temphandle);
      return(NULL);                /* ?? can't lock the memory ?? */
      }
@@ -549,7 +549,7 @@ MessageBox (
 
 }
 
-void texttempmsg(char far *msg1)
+void texttempmsg(char *msg1)
 {
 MessageBox (
     GetFocus(),
@@ -558,7 +558,7 @@ MessageBox (
     MB_ICONASTERISK | MB_OK);
 }
 
-int stopmsg(int flags, char far *msg1)
+int stopmsg(int flags, char *msg1)
 {
 int result;
 
@@ -740,7 +740,7 @@ extern int win_cycledir, win_cyclerand, win_cyclefreq, win_cycledelay;
 
 extern HANDLE  hPal;           /* Palette Handle */
 extern LPLOGPALETTE pLogPal;  /* pointer to the application's logical palette */
-extern unsigned char far win_dacbox[256][3];
+extern unsigned char win_dacbox[256][3];
 #define PALETTESIZE 256               /* dull-normal VGA                    */
 
 static int win_fsteps[] = {54, 24, 8};
@@ -951,7 +951,7 @@ int j;
 
 int win_thinking = 0;
 
-int thinking(int waiting, char far *dummy)
+int thinking(int waiting, char *dummy)
 {
 if (waiting && ! win_thinking) {
     win_thinking = 1;
@@ -962,27 +962,13 @@ if (!waiting)
 return(keypressed());
 }
 
-extern HWND far wintext_hWndCopy;                /* a Global copy of hWnd */
+extern HWND wintext_hWndCopy;                /* a Global copy of hWnd */
 
 /* Call for help caused by pressing F1 inside the "fractint-style"
    prompting routines */
 void winfract_help(void)
 {
         WinHelp(wintext_hWndCopy,szHelpFileName,FIHELP_INDEX,0L);
-}
-
-int far_strnicmp(char far *string1, char far *string2, int maxlen) {
-int i;
-unsigned char j, k;
-for (i = 0;i < maxlen ; i++) {
-    j = string1[i];
-    k = string2[i];
-    if (j >= 'a' && j <= 'z') j -= ('a' - 'A');
-    if (k >= 'a' && k <= 'z') k -= ('a' - 'A');
-    if (j-k != 0)
-        return(j-k);
-    }
-return(0);
 }
 
 /*
@@ -1123,7 +1109,7 @@ void reset_zoom_corners(void)
 
 /*  fake videotable stuff  */
 
-struct videoinfo far videotable[1];
+struct videoinfo videotable[1];
 
 void vidmode_keyname(int num, char *string)
 {

@@ -118,16 +118,16 @@ int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes 
 void rotate(int x) {}
 void find_special_colors(void) {}
 int spawnl(int dummy1, char *dummy2, char *dummy3) {return 0;}
-int showtempmsg(char far *foo) {return 1;}
+int showtempmsg(char *foo) {return 1;}
 void cleartempmsg(void) {}
 void freetempmsg(void) {}
-int FromMemDisk(long offset, int size, void far *src) {return 0;}
-int ToMemDisk(long offset, int size, void far *src) {return 0;}
+int FromMemDisk(long offset, int size, void *src) {return 0;}
+int ToMemDisk(long offset, int size, void *src) {return 0;}
 int  common_startdisk(long newrowsize, long newcolsize, int colors) {return 0;}
-long cdecl normalize(char far *foo) {return 0;}
+long cdecl normalize(char *foo) {return 0;}
 void drawbox(int foo) {}
 
-void farmessage(unsigned char far *foo) {}
+void farmessage(unsigned char *foo) {}
 void setvideomode(int foo1, int foo2, int foo3, int foo4) {}
 int fromvideotable(void) {return 0;}
 void home(void) {}
@@ -136,7 +136,7 @@ int intro_overlay(void) {return 0;}
 int rotate_overlay(void) {return 0;}
 int printer_overlay(void) {return 0;}
 int pot_startdisk(void) {return 0;}
-void SetTgaColors(void) {}
+//void SetTgaColors(void) {}
 int startdisk(void) {return 0;}
 void enddisk(void) {}
 int readdisk(unsigned int foo1,unsigned int foo2) {return 0;}
@@ -144,7 +144,7 @@ void writedisk(unsigned int foo1,unsigned int foo2,unsigned int foo3) {}
 int targa_startdisk(FILE *foo1,int foo2){return 0;}
 void targa_writedisk(unsigned int foo1,unsigned int foo2,BYTE foo3,BYTE foo4,BYTE foo5){}
 void targa_readdisk(unsigned int foo1,unsigned int foo2,BYTE *foo3,BYTE *foo4,BYTE *foo5){}
-BYTE far *findfont(int foo1) {return(0);}
+BYTE *findfont(int foo1) {return(0);}
 long cdecl readticker(void){return(0);}
 void EndTGA(void){}
 
@@ -167,7 +167,7 @@ int initfm(void) {return(0);}
 
 void mute(void) {}
 
-void dvid_status(int foo1, char far *foo2){}
+void dvid_status(int foo1, char *foo2){}
 int tovideotable(void){return 0;}
 
 void TranspPerPixel(void){}

@@ -45,12 +45,12 @@ uclock_t usec_clock(void)
       unsigned char msb, lsb;
       unsigned int tim_ticks;
       static uclock_t last, init_count;
-      static uclock_t far *c_ptr;
+      static uclock_t *c_ptr;
       uclock_t count, us_tmp;
 
       if (!init)
       {
-            c_ptr = (uclock_t far *)MK_FP(BIOS_DS, B_TIKP);
+            c_ptr = (uclock_t *)MK_FP(BIOS_DS, B_TIKP);
             init  = 1;        /* First call, we have to set up timer.   */
             int_off(); 
             outp(TMODE, CONTVAL);   /* Write new control byte.          */

@@ -34,8 +34,8 @@
  * for x 0, 1, 0, -1
  * for y 1, 0, -1, 0
  */
-static int far *incx[DIRS];         /* tab for 4 directions */
-static int far *incy[DIRS];
+static int *incx[DIRS];         /* tab for 4 directions */
+static int *incy[DIRS];
 
 void
 setwait(long *wait)
@@ -49,7 +49,7 @@ setwait(long *wait)
       while ((int)strlen(msg) < 15)
          strcat(msg, " ");
       msg[15] = '\0';
-      showtempmsg((char far *) msg);
+      showtempmsg((char *) msg);
       kbdchar = getakey();
       switch (kbdchar)
       {
@@ -364,14 +364,14 @@ ant(void)
    int oldhelpmode, rule_len;
    long maxpts, wait;
    char rule[MAX_ANTS];
-   char far *extra;
+   char *extra;
 
    extra = MK_FP(extraseg,0);
 
    for (i = 0; i < DIRS; i++)
    {
-      incx[i] = (int far *) (extra + (xdots + 2) * sizeof(int) * i);       /* steal some memory */
-      incy[i] = (int far *) (extra + (xdots + 2) * sizeof(int) * DIRS + (ydots + 2) *sizeof(int) * i);     /* steal some memory */
+      incx[i] = (int *) (extra + (xdots + 2) * sizeof(int) * i);       /* steal some memory */
+      incy[i] = (int *) (extra + (xdots + 2) * sizeof(int) * DIRS + (ydots + 2) *sizeof(int) * i);     /* steal some memory */
    }
 
 /* In this vectors put all the possible point that the ants can visit.

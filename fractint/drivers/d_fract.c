@@ -53,7 +53,7 @@ load_fractint_cfg(int options)
 
    FILE *cfgfile;
    VIDEOINFO *vident;
-   int far *cfglinenums;
+   int *cfglinenums;
    int linenum;
    long xdots, ydots;
    int i, j, keynum, ax, bx, cx, dx, file_dotmode, colors;
@@ -63,7 +63,7 @@ load_fractint_cfg(int options)
    int truecolorbits; 
 
    vidtbl = MK_FP(extraseg,0);
-   cfglinenums = (int far *)(&vidtbl[MAXVIDEOMODES]);
+   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
    if (badconfig)  /* fractint.cfg already known to be missing or bad */
       goto use_resident_table;
@@ -134,8 +134,8 @@ load_fractint_cfg(int options)
            )
          goto bad_fractint_cfg;
       cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
-      memcpy(vident->name,   (char far *)&tempstring[commas[0]],25);
-      memcpy(vident->comment,(char far *)&tempstring[commas[9]],25);
+      memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
+      memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
       vident->name[25] = vident->comment[25] = 0;
       vident->keynum      = keynum;
       vident->videomodeax = ax;
@@ -163,7 +163,7 @@ use_resident_table:
    vident = vidtbl;
    for (i = 0; i < MAXVIDEOTABLE; ++i) {
       if (videotable[i].xdots) {
-         memcpy((char far *)vident,(char far *)videotable[i],
+         memcpy((char *)vident,(char *)videotable[i],
                     sizeof(*vident));
          ++vident;
          ++vidtbllen;
@@ -176,7 +176,7 @@ use_resident_table:
 static void
 bad_fractint_cfg_msg(void)
 {
-static char far badcfgmsg[]={"\
+static char badcfgmsg[]={"\
 File FRACTINT.CFG is missing or invalid.\n\
 See Hardware Support and Video Modes in the full documentation for help.\n\
 I will continue with only the built-in video modes available."};
@@ -192,10 +192,10 @@ load_videotable(int options)
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   memset((char far *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         memcpy((char far *)&videotable[keyents],(char far *)&vidtbl[i],
+         memcpy((char *)&videotable[keyents],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (++keyents >= MAXVIDEOTABLE)
             break;
@@ -239,7 +239,7 @@ static int saverc[MAXSCREENS+1];
 
 void stackscreen()
 {
-   BYTE far *vidmem;
+   BYTE *vidmem;
    int savebytes;
    int i;
    if (video_scroll) {
@@ -250,7 +250,7 @@ void stackscreen()
       return;
    saverc[screenctr+1] = textrow*80 + textcol;
    if (++screenctr) { /* already have some stacked */
-         static char far msg[]={"stackscreen overflow"};
+         static char msg[]={"stackscreen overflow"};
       if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
          stopmsg(1,msg);
          exit(1);
@@ -261,7 +261,7 @@ void stackscreen()
       if (savescreen[i] != 0)
          MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);
       else {
-            static char far msg[]={"insufficient memory, aborting"};
+            static char msg[]={"insufficient memory, aborting"};
                stopmsg(1,msg);
                exit(1);
             }
@@ -277,7 +277,7 @@ void stackscreen()
 
 void unstackscreen()
 {
-   BYTE far *vidmem;
+   BYTE *vidmem;
    int savebytes;
    if(*s_makepar == 0)
       return;

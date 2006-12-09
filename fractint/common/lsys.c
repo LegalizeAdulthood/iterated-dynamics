@@ -20,14 +20,14 @@ struct lsys_cmd {
 static int _fastcall readLSystemFile(char *);
 static void _fastcall free_rules_mem(void);
 static int _fastcall rule_present(char symbol);
-static int _fastcall save_rule(char *,char far **);
+static int _fastcall save_rule(char *,char **);
 static int _fastcall append_rule(char *rule, int index);
 static void free_lcmds(void);
-static struct lsys_cmd far * _fastcall findsize(struct lsys_cmd far *,struct lsys_turtlestatei *, struct lsys_cmd far **,int);
-static struct lsys_cmd far * drawLSysI(struct lsys_cmd far *command,struct lsys_turtlestatei *ts, struct lsys_cmd far **rules,int depth);
-static int lsysi_findscale(struct lsys_cmd far *command, struct lsys_turtlestatei *ts, struct lsys_cmd far **rules, int depth);
-static struct lsys_cmd far *LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts);
-static struct lsys_cmd far *LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts);
+static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
+static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
+static int lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
+static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
+static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
 static void _fastcall lsysi_dosincos(void);
 
 static void lsysi_doslash(struct lsys_turtlestatei *cmd);
@@ -53,13 +53,13 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
        changed to not be static
      use of strdup was a nono, caused problems running out of space cause
        the memory allocated each time was never freed; I've changed to
-       use far memory and to free when done
+       use memory and to free when done
    */
 
 #define sins ((long *)(boxy))
 #define coss (((long *)(boxy)+50)) /* 50 after the start of sins */
-static char far *ruleptrs[MAXRULES];
-static struct lsys_cmd far *rules2[MAXRULES];
+static char *ruleptrs[MAXRULES];
+static struct lsys_cmd *rules2[MAXRULES];
 char maxangle;
 static char loaded=0;
 
@@ -69,7 +69,7 @@ int _fastcall ispow2(int n)
   return (n == (n & -n));
 }
 
-LDBL _fastcall getnumber(char far **str)
+LDBL _fastcall getnumber(char **str)
 {
    char numstr[30];
    LDBL ret;
@@ -122,7 +122,7 @@ LDBL _fastcall getnumber(char far **str)
 static int _fastcall readLSystemFile(char *str)
 {
    int c;
-   char far **rulind;
+   char **rulind;
    int err=0;
    int linenum,check=0;
    char inline1[MAX_LSYS_LINE_LEN+1],fixed[MAX_LSYS_LINE_LEN+1],*word;
@@ -245,8 +245,8 @@ static int _fastcall readLSystemFile(char *str)
 int Lsystem(void)
 {
    int order;
-   char far **rulesc;
-   struct lsys_cmd far **sc;
+   char **rulesc;
+   struct lsys_cmd **sc;
    int stackoflow = 0;
 
    if ( (!loaded) && LLoad())
@@ -347,7 +347,7 @@ static void _fastcall free_rules_mem(void)
 {
    int i;
    for(i=0;i<MAXRULES;++i)
-      if(ruleptrs[i]) farmemfree(ruleptrs[i]);
+      if(ruleptrs[i]) free(ruleptrs[i]);
 }
 
 static int _fastcall rule_present(char symbol)
@@ -359,12 +359,12 @@ static int _fastcall rule_present(char symbol)
    return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static int _fastcall save_rule(char *rule,char far **saveptr)
+static int _fastcall save_rule(char *rule,char **saveptr)
 {
    int i;
-   char far *tmpfar;
+   char *tmpfar;
    i=(int) strlen(rule)+1;
-   if((tmpfar=(char far *)malloc((long)i))==NULL) {
+   if((tmpfar=(char *)malloc((long)i))==NULL) {
        return -1;
    }
    *saveptr=tmpfar;
@@ -374,30 +374,30 @@ static int _fastcall save_rule(char *rule,char far **saveptr)
 
 static int _fastcall append_rule(char *rule, int index)
 {
-   char far *dst, far *old, far *sav;
+   char *dst, *old, *sav;
    int i, j;
 
    old = sav = ruleptrs[index];
    for (i = 0; *(old++); i++)
       ;
    j = (int) strlen(rule) + 1;
-   if ((dst = (char far *)malloc((long)(i + j))) == NULL)
+   if ((dst = (char *)malloc((long)(i + j))) == NULL)
       return -1;
 
    old = sav;
    ruleptrs[index] = dst;
    while (i-- > 0) *(dst++) = *(old++);
    while (j-- > 0) *(dst++) = *(rule++);
-   farmemfree(sav);
+   free(sav);
    return 0;
 }
 
 static void free_lcmds(void)
 {
-  struct lsys_cmd far **sc = rules2;
+  struct lsys_cmd **sc = rules2;
 
   while (*sc)
-    farmemfree(*sc++);
+    free(*sc++);
 }
 
 #if defined(XFRACT) || defined(_WIN32)
@@ -642,10 +642,10 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd)
     cmd->curcolor = 1;
 }
 
-static struct lsys_cmd far * _fastcall
-findsize(struct lsys_cmd far *command, struct lsys_turtlestatei *ts, struct lsys_cmd far **rules, int depth)
+static struct lsys_cmd * _fastcall
+findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
-   struct lsys_cmd far **rulind;
+   struct lsys_cmd **rulind;
    int tran;
 
 if (overflow)     /* integer math routines overflowed */
@@ -707,13 +707,13 @@ if (overflow)     /* integer math routines overflowed */
 }
 
 static int
-lsysi_findscale(struct lsys_cmd far *command, struct lsys_turtlestatei *ts, struct lsys_cmd far **rules, int depth)
+lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
    float horiz,vert;
    double xmin, xmax, ymin, ymax;
    double locsize;
    double locaspect;
-   struct lsys_cmd far *fsret;
+   struct lsys_cmd *fsret;
 
    locaspect=screenaspect*xdots/ydots;
    ts->aspect = FIXEDPT(locaspect);
@@ -761,10 +761,10 @@ lsysi_findscale(struct lsys_cmd far *command, struct lsys_turtlestatei *ts, stru
    return 1;
 }
 
-static struct lsys_cmd far *
-drawLSysI(struct lsys_cmd far *command,struct lsys_turtlestatei *ts, struct lsys_cmd far **rules,int depth)
+static struct lsys_cmd *
+drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth)
 {
-   struct lsys_cmd far **rulind;
+   struct lsys_cmd **rulind;
    int tran;
 
    if (overflow)     /* integer math routines overflowed */
@@ -825,11 +825,11 @@ drawLSysI(struct lsys_cmd far *command,struct lsys_turtlestatei *ts, struct lsys
    return command;
 }
 
-static struct lsys_cmd far *
-LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
+static struct lsys_cmd *
+LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 {
-  struct lsys_cmd far *ret;
-  struct lsys_cmd far *doub;
+  struct lsys_cmd *ret;
+  struct lsys_cmd *doub;
   int maxval = 10;
   int n = 0;
   void (*f)();
@@ -844,7 +844,7 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
   void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
   void (*dogf)() =   (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
 
-  ret = (struct lsys_cmd far *) malloc((long) maxval * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd *) malloc((long) maxval * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -878,14 +878,14 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
 #endif
     ret[n].n = num;
     if (++n == maxval) {
-      doub = (struct lsys_cmd far *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
-         farmemfree(ret);
+         free(ret);
          ts->stackoflow = 1;
          return NULL;
          }
       memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-      farmemfree(ret);
+      free(ret);
       ret = doub;
       maxval <<= 1;
     }
@@ -896,22 +896,22 @@ LSysISizeTransform(char far *s, struct lsys_turtlestatei *ts)
   ret[n].n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
-       farmemfree(ret);
+       free(ret);
        ts->stackoflow = 1;
        return NULL;
        }
   memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-  farmemfree(ret);
+  free(ret);
   return doub;
 }
 
-static struct lsys_cmd far *
-LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
+static struct lsys_cmd *
+LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 {
-  struct lsys_cmd far *ret;
-  struct lsys_cmd far *doub;
+  struct lsys_cmd *ret;
+  struct lsys_cmd *doub;
   int maxval = 10;
   int n = 0;
   void (*f)();
@@ -926,7 +926,7 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
   void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
   void (*drawg)() =  (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
 
-  ret = (struct lsys_cmd far *) malloc((long) maxval * sizeof(struct lsys_cmd));
+  ret = (struct lsys_cmd *) malloc((long) maxval * sizeof(struct lsys_cmd));
   if (ret == NULL) {
        ts->stackoflow = 1;
        return NULL;
@@ -963,14 +963,14 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
 #endif
     ret[n].n = num;
     if (++n == maxval) {
-      doub = (struct lsys_cmd far *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+      doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
       if (doub == NULL) {
-           farmemfree(ret);
+           free(ret);
            ts->stackoflow = 1;
            return NULL;
            }
       memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-      farmemfree(ret);
+      free(ret);
       ret = doub;
       maxval <<= 1;
     }
@@ -981,14 +981,14 @@ LSysIDrawTransform(char far *s, struct lsys_turtlestatei *ts)
   ret[n].n = 0;
   n++;
 
-  doub = (struct lsys_cmd far *) malloc((long) n*sizeof(struct lsys_cmd));
+  doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
   if (doub == NULL) {
-       farmemfree(ret);
+       free(ret);
        ts->stackoflow = 1;
        return NULL;
        }
   memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-  farmemfree(ret);
+  free(ret);
   return doub;
 }
 

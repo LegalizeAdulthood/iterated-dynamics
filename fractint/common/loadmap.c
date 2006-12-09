@@ -11,7 +11,7 @@
 
 #define dac ((Palettetype *)dacbox)
 
-#ifndef WINFRACT
+#if !defined(WINFRACT) && !defined(_WIN32)
 void SetTgaColors() {
 unsigned        r, g, b, index;
     if (tga16 != NULL)
@@ -62,7 +62,7 @@ char    temp_fn[FILE_MAX_PATH];
                 dac[index].red = dac[index].blue = dac[index].green = 40;
                 ++index;
         }
-        SetTgaColors();
+        //SetTgaColors();
         colorstate = 2;
         strcpy(colorfile,fn);
         return 0;
@@ -75,14 +75,14 @@ int SetColorPaletteName( char * fn )
 {
         if( ValidateLuts( fn ) != 0)
                 return 1;
-        if( mapdacbox == NULL && (mapdacbox = (char far *)malloc(768L)) == NULL) {
+        if( mapdacbox == NULL && (mapdacbox = (char *)malloc(768L)) == NULL) {
                 static FCODE o_msg[]={"Insufficient memory for color map."};
                 char msg[sizeof(o_msg)];
                 strcpy(msg,o_msg);
                 stopmsg(0,msg);
                 return 1;
                 }
-        memcpy((char far *)mapdacbox,(char far *)dacbox,768);
+        memcpy((char *)mapdacbox,(char *)dacbox,768);
         /* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
         return 0;
 }

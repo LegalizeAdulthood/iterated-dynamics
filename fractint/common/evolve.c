@@ -10,7 +10,7 @@ U16 gene_handle = 0;
 /* evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz) */
 int px,py,evolving,gridsz;
 #define MAXGRIDSZ 51  /* This is arbitrary, = 1024/20 */
-static int far ecountbox[MAXGRIDSZ][MAXGRIDSZ];
+static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
 unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
@@ -359,7 +359,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 
 #define LOADCHOICES(X)     {\
    static FCODE tmp[] = { X };\
-   strcpy(ptr,(char far *)tmp);\
+   strcpy(ptr,(char *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
    }
@@ -378,13 +378,13 @@ int get_the_rest(void)
   static FCODE o_hdg[]={"Variable tweak central 2 of 2"};
   int i,k,num, numtrig;
   char hdg[sizeof(o_hdg)];
-  char far *choices[20];
-  char far *ptr;
+  char *choices[20];
+  char *ptr;
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
 
   strcpy(hdg,o_hdg);
-  ptr = (char far *)MK_FP(extraseg,0);
+  ptr = (char *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -476,8 +476,8 @@ int get_variations(void)
   static FCODE o_hdg[]={"Variable tweak central 1 of 2"};
   int i,k,num, numparams;
   char hdg[sizeof(o_hdg)];
-  char far *choices[20];
-  char far *ptr;
+  char *choices[20];
+  char *ptr;
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
   int firstparm = 0;
@@ -485,7 +485,7 @@ int get_variations(void)
   int chngd = -1;
 
   strcpy(hdg,o_hdg);
-  ptr = (char far *)MK_FP(extraseg,0);
+  ptr = (char *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -599,7 +599,7 @@ void set_mutation_level(int strength)
 /* are suitable for this level of mutation */
  int i;
  GENEBASE gene[NUMGENES];
- /* get the gene array from far memory */
+ /* get the gene array from memory */
  MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
  for (i=0;i<NUMGENES;i++) {
@@ -608,7 +608,7 @@ void set_mutation_level(int strength)
    else
       gene[i].mutate = 0;
  }
- /* now put the gene array back in far memory */
+ /* now put the gene array back in memory */
  MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
  return;
 }
@@ -617,8 +617,8 @@ int get_evolve_Parms(void)
 {
    static FCODE o_hdg[]={"Evolution Mode Options"};
    char hdg[sizeof(o_hdg)];
-   char far *choices[20];
-   char far *ptr;
+   char *choices[20];
+   char *ptr;
    int oldhelpmode;
    struct fullscreenvalues uvalues[20];
    int i,j, k, tmp;
@@ -638,7 +638,7 @@ int get_evolve_Parms(void)
 get_evol_restart:
 
    strcpy(hdg,o_hdg);
-   ptr = (char far *)MK_FP(extraseg,0);
+   ptr = (char *)MK_FP(extraseg,0);
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
    /* adjust field param to make some sense when changing from random modes*/
    /* maybe should adjust for aspect ratio here? */

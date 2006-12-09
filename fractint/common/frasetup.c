@@ -699,7 +699,7 @@ TrigPlusTrigfpSetup(void)
 int
 FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
 {
-   static char far fnplusfn[7][7] =
+   static char fnplusfn[7][7] =
    {/* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
    /* fn1 */
    /* sin */ {PI_SYM,XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
@@ -777,10 +777,10 @@ MandelTrigOrTrigSetup(void)
 int
 ZXTrigPlusZSetup(void)
 {
-/*   static char far ZXTrigPlusZSym1[] = */
+/*   static char ZXTrigPlusZSym1[] = */
    /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
 /*           {XAXIS,XYAXIS,XAXIS,XYAXIS,XAXIS,NOSYM,XYAXIS}; */
-/*   static char far ZXTrigPlusZSym2[] = */
+/*   static char ZXTrigPlusZSym2[] = */
    /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
 /*           {NOSYM,ORIGIN,NOSYM,ORIGIN,NOSYM,NOSYM,ORIGIN}; */
 
@@ -901,7 +901,7 @@ LambdaTrigSetup(void)
 int
 JuliafnPlusZsqrdSetup(void)
 {
-/*   static char far fnpluszsqrd[] = */
+/*   static char fnpluszsqrd[] = */
    /* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
    /* sin    {NOSYM,ORIGIN,NOSYM,ORIGIN,ORIGIN,NOSYM,NOSYM}; */
 
@@ -926,7 +926,7 @@ JuliafnPlusZsqrdSetup(void)
 int
 SqrTrigSetup(void)
 {
-/*   static char far SqrTrigSym[] = */
+/*   static char SqrTrigSym[] = */
    /* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
 /*           {PI_SYM,PI_SYM,XYAXIS,XYAXIS,XYAXIS,XAXIS,XAXIS}; */
 /*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
@@ -947,7 +947,7 @@ SqrTrigSetup(void)
 int
 FnXFnSetup(void)
 {
-   static char far fnxfn[7][7] =
+   static char fnxfn[7][7] =
    {/* fn2 ->sin     cos    sinh    cosh  exp    log    sqr */
    /* fn1 */
    /* sin */ {PI_SYM,YAXIS, XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},

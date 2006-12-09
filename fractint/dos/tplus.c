@@ -20,19 +20,19 @@
 #include "prototyp.h"
 #include "tplus.h"
 
-struct TPWrite far WriteOffsets = {
+struct TPWrite WriteOffsets = {
       0,       1,       2,       3,       0x400,   0x401,      0x402,
       0x403,   0x800,   0x801,   0x802,   0x803,   0xc00,      0xc01,
       0xc02,   0xc03
 };
 
-struct TPRead far ReadOffsets = {
+struct TPRead ReadOffsets = {
       0,                2,       3,       0x400,   0x401,      0x402,
       0x403,   0x800,   0x801,   0x802,   0x803,   0xc00,      0xc01,
       0xc02,   0xc03
 };
 
-struct _BOARD far TPlus;
+struct _BOARD TPlus;
 int TPlusErr = 0;
 
 void WriteTPWord(unsigned Register, unsigned Number) {
@@ -77,7 +77,7 @@ struct TPLUS_IO {
    unsigned long Color;
    unsigned RegsOffset, RegsSegment, RegListOffset, RegListSegment,
             BoardNumber, StructSize;
-} far TPlusIO;
+} TPlusIO;
 
 /* TARGAP.SYS Commands */
 #define READALL    0
@@ -99,8 +99,8 @@ int hTPlus = -1;
 unsigned NumTPlus = 0;
 
 int TargapSys(int Command, unsigned DOS) {
-   struct TPLUS_IO far *IOPtr;
-   unsigned far *RegPtr;
+   struct TPLUS_IO *IOPtr;
+   unsigned *RegPtr;
    union REGS r;
    struct SREGS s;
 
@@ -127,10 +127,10 @@ int _SetBoard(int BoardNumber) {
    return(TargapSys(SETBOARD, DOS_WRITE));
 }
 
-int TPlusLUT(BYTE far *LUTData, unsigned Index, unsigned Number,
+int TPlusLUT(BYTE *LUTData, unsigned Index, unsigned Number,
              unsigned DosFlag)
 {
-   struct TPLUS_IO far *IOPtr;
+   struct TPLUS_IO *IOPtr;
    union REGS r;
    struct SREGS s;
 
@@ -270,7 +270,7 @@ int SetBoard(int BoardNumber) {
 
    MemBase        = TPlus.Reg[MEM_BASE];
    MemBase += (TPlus.Reg[MEM_MAP] != 3) ? 8 : 0;
-   TPlus.Screen = (BYTE far *)(MemBase << 28);
+   TPlus.Screen = (BYTE *)(MemBase << 28);
 
    if(!TargapSys(IOBASE, DOS_READ))
       return(0);
@@ -278,9 +278,9 @@ int SetBoard(int BoardNumber) {
    TPlus.Read = ReadOffsets;
    TPlus.Write = WriteOffsets;
    for(n = 0; n < sizeof(TPlus.Read) / sizeof(unsigned); n++)
-      ((unsigned far *)&(TPlus.Read))[n] += ioBase;
+      ((unsigned *)&(TPlus.Read))[n] += ioBase;
    for(n = 0; n < sizeof(TPlus.Write) / sizeof(unsigned); n++)
-      ((unsigned far *)&(TPlus.Write))[n] += ioBase;
+      ((unsigned *)&(TPlus.Write))[n] += ioBase;
 
    EnableMemory();
    return(1);
@@ -426,7 +426,7 @@ void ClearTPlusScreen(void) {
 
 static struct {
    unsigned xdots, ydots, Template, Zoom, Depth;
-} far ModeTable[] = {
+} ModeTable[] = {
    {512, 400, 0,  0, 4},
    {512, 476, 1,  0, 4},
    {512, 486, 2,  0, 4},

@@ -1150,14 +1150,14 @@ disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 ;    putstring(row, col, attr, string) where
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
-;         string = far pointer to the null terminated string to print.
+;         string = pointer to the null terminated string to print.
 ;    Written for the A86 assembler (which has much less 'red tape' than MASM)
 ;    by Bob Montgomery, Orlando, Fla.             7-11-88
 ;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
 ;    Furthur mucked up to handle graphics
 ;       video modes by Bert Tyler                 1-07-90
 ;    Reworked for:  row,col update/inherit;
-;       620x200x2 inverse video;  far ptr to string;
+;       620x200x2 inverse video;  ptr to string;
 ;       fix to avoid scrolling when last posn chgd;
 ;       divider removed;  newline ctl chars;  PB  9-25-90
 */
@@ -1282,7 +1282,7 @@ disk_stack_screen(Driver *drv)
 
   di->saverc[di->screenctr+1] = textrow*80 + textcol;
   if (++di->screenctr) { /* already have some stacked */
-    static char far msg[] = { "stackscreen overflow" };
+    static char msg[] = { "stackscreen overflow" };
     if ((i = di->screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
       stopmsg(1,msg);
       exit(1);

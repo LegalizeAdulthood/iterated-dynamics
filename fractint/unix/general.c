@@ -364,7 +364,7 @@ readticker(void)
 ; ************************* Far Segment RAM Support **************************
 ;
 ;
-;       farptr = (char far *)malloc(long bytestoalloc);
+;       farptr = (char *)malloc(long bytestoalloc);
 ;       (void)free(farptr);
 */
 
