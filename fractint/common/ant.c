@@ -366,6 +366,7 @@ ant(void)
    char rule[MAX_ANTS];
    char *extra;
 
+   /* TODO: allocate real memory, not reuse shared segment */
    extra = MK_FP(extraseg,0);
 
    for (i = 0; i < DIRS; i++)

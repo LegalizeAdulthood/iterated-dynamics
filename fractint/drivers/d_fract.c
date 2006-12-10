@@ -62,6 +62,7 @@ load_fractint_cfg(int options)
    char tempstring[150];
    int truecolorbits; 
 
+   /* TODO: allocate real memory, not reuse shared segment */
    vidtbl = MK_FP(extraseg,0);
    cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
@@ -255,6 +256,7 @@ void stackscreen()
          stopmsg(1,msg);
          exit(1);
          }
+   /* TODO: allocate real memory, not reuse shared segment */
       vidmem = MK_FP(textaddr,0);
       savebytes = (text_type == 0) ? 4000 : 16384;
       savescreen[i] = MemoryAlloc((U16)savebytes,1L,FARMEM);
@@ -284,6 +286,7 @@ void unstackscreen()
    textrow = saverc[screenctr] / 80;
    textcol = saverc[screenctr] % 80;
    if (--screenctr >= 0) { /* unstack */
+   /* TODO: allocate real memory, not reuse shared segment */
       vidmem = MK_FP(textaddr,0);
       savebytes = (text_type == 0) ? 4000 : 16384;
       if (savescreen[screenctr] != 0) {

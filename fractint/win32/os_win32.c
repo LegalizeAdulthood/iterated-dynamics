@@ -213,7 +213,7 @@ int video_vram = 0;
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO videotable[] =
+VIDEOINFO videotable[MAXVIDEOTABLE] =
 {
 	{
 		"unused  mode             ", "                         ",
@@ -783,16 +783,6 @@ void erasesegment(int segaddress, int segvalue)
 	OutputDebugString("!erasesegment called.\n");
 }
 
-int farread(int handle, VOIDFARPTR buf, unsigned len)
-{
-	return (int) _lread(handle, buf, len);
-}
-
-int farwrite(int handle, VOIDFARPTR buf, unsigned len)
-{
-    return (int) _lwrite(handle, buf, len);
-}
-
 /*
 ; *************** Functions get_a_char, put_a_char ********************
 ;       Get and put character and attribute at cursor
@@ -1006,7 +996,7 @@ static void my_floating_point_err(int sig)
       overflow = 1;
 }
 
-static int old_main(int argc, char **argv)
+static int fractint_main(int argc, char **argv)
 {
 	int     resumeflag;
 	int     kbdchar;                     /* keyboard key-hit value       */
@@ -1401,9 +1391,7 @@ resumeloop:
 
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
-	int argc = 0;
-	char **argv = NULL;
-	old_main(argc, argv);
+	fractint_main(__argc, __argv);
 	return 0;
 }
 

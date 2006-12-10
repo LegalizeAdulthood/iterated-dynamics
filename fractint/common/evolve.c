@@ -384,6 +384,7 @@ int get_the_rest(void)
   GENEBASE gene[NUMGENES];
 
   strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
   ptr = (char *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -485,6 +486,7 @@ int get_variations(void)
   int chngd = -1;
 
   strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
   ptr = (char *)MK_FP(extraseg,0);
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -638,6 +640,7 @@ int get_evolve_Parms(void)
 get_evol_restart:
 
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
    /* adjust field param to make some sense when changing from random modes*/

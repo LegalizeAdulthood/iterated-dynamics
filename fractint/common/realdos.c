@@ -1605,6 +1605,7 @@ int restoregraphics()
    unsigned long swaptmpoff;
 
    swapoffset = 0;
+   /* TODO: allocate real memory, not reuse shared segment */
    swapvidbuf = MK_FP(extraseg+0x1000,0); /* for swapnormwrite case */
 
    while (swapoffset < swaptotlen) {
@@ -1680,6 +1681,7 @@ int load_fractint_cfg(int options)
    char tempstring[150];
    int truecolorbits; 
 
+   /* TODO: allocate real memory, not reuse shared segment */
    vidtbl = MK_FP(extraseg,0);
    cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 

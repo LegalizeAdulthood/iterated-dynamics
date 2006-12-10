@@ -471,6 +471,7 @@ Print_Screen (void)
       driver_put_string(5,0,0,"               ");
 #endif
 
+   /* TODO: allocate real memory, not reuse shared segment */
     es=MK_FP(extraseg,0);
 
     LPTn=LPTNumber-1;

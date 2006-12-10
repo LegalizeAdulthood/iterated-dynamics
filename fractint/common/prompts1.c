@@ -1989,6 +1989,7 @@ static long gfe_choose_entry(int type,char *title,char *filename,char *entryname
    int options = 8;
    char *instr;
    /* steal existing array for "choices" */
+   /* TODO: allocate real memory, not reuse shared segment */
    choices = (struct entryinfo **)MK_FP(extraseg,0);
    /* leave room for details F2 */
    choices = choices + (2048/sizeof(struct entryinfo **));
@@ -2082,6 +2083,7 @@ static int check_gfe_key(int curkey,int choice)
       int comment = 0;
       int c = 0;
       int widthct = 0;
+   /* TODO: allocate real memory, not reuse shared segment */
       infbuf = MK_FP(extraseg,0);
       fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
       while((c = fgetc(gfe_file)) != EOF && c != '\032') {

@@ -375,25 +375,6 @@ int segvalue;
 }
 
 
-int
-farread(handle, buf, len)
-int handle;
-VOIDPTR buf;
-unsigned len;
-{
-    return read(handle, buf, len);
-}
-
-int
-farwrite(handle, buf, len)
-int handle;
-VOIDPTR buf;
-unsigned len;
-{
-    return write(handle,buf,len);
-}
-
-
 long
 normalize(ptr)
 char *ptr;

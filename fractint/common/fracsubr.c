@@ -47,6 +47,7 @@ static int    resume_offset;            /* offset in resume info gets */
 
 void set_grid_pointers()
 {
+   /* TODO: allocate real memory, not reuse shared segment */
    dx0 = MK_FP(extraseg,0);
    dy1 = (dx1 = (dy0 = dx0 + xdots) + ydots) + ydots;
    lx0 = (long *) dx0;
@@ -523,6 +524,7 @@ expand_retry:
       /* zap all of extraseg except high area to flush out bugs */
       /* in production version this code can be deleted */
       char *extra;
+   /* TODO: allocate real memory, not reuse shared segment */
       extra = (char *)MK_FP(extraseg,0);
       memset(extra,0,(unsigned int)(0x10000l-(bflength+2)*22U));
    }

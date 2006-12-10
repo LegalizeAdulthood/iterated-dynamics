@@ -2661,6 +2661,7 @@ static int line3dmem(void)
    /* lastrow stores the previous row of the original GIF image for
       the purpose of filling in gaps with triangle procedure */
    /* first 8k of extraseg now used in decoder TW 3/95 */
+   /* TODO: allocate real memory, not reuse shared segment */
    lastrow = MK_FP(extraseg, 0);
 
    check_extra = sizeof(*lastrow) * xdots;
