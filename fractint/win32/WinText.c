@@ -1,9 +1,10 @@
-
 #define STRICT
-
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <windowsx.h>
 #include <string.h>
 #include <stdlib.h>
+#include "WinText.h"
 
 /*
         WINTEXT.C handles the character-based "prompt screens",
@@ -89,22 +90,12 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
         but the application program hasn't officially closed the window yet.
 */
 
-int wintext_textmode = 0;
-int wintext_AltF4hit = 0;
+static int wintext_textmode = 0;
+static int wintext_AltF4hit = 0;
 
 /* function prototypes */
 
-BOOL wintext_initialize(HANDLE, HWND, LPSTR);
-void wintext_destroy(void);
-LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
-int wintext_texton(void);
-int wintext_textoff(void);
-void wintext_putstring(int, int, int, char *);
-void wintext_paintscreen(int, int, int, int);
-void wintext_cursor(int, int, int);
-int wintext_look_for_activity(int);
-void wintext_addkeypress(unsigned int);
-unsigned int wintext_getkeypress(int);
+static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
 /* Local copy of the "screen" characters and attributes */
 
@@ -137,7 +128,7 @@ LPSTR wintext_title_text;         /* title-bar text */
 
 HWND wintext_hWndCopy;                /* a Global copy of hWnd */
 HWND wintext_hWndParent;              /* a Global copy of hWnd's Parent */
-HANDLE wintext_hInstance;             /* a global copy of hInstance */
+HINSTANCE wintext_hInstance;             /* a global copy of hInstance */
 
 /* the keypress buffer */
 
@@ -199,7 +190,7 @@ COLORREF wintext_color[] =
      all of the neccessary registration and initialization
 */
 
-BOOL wintext_initialize(HANDLE hInstance, HWND hWndParent, LPSTR titletext)
+BOOL wintext_initialize(HINSTANCE hInstance, HWND hWndParent, LPSTR titletext)
 {
     WNDCLASS  wc;
     BOOL return_value;
@@ -361,19 +352,117 @@ int wintext_textoff(void)
     return 0;
 }
 
+static void wintext_OnClose(HWND window)
+{
+	wintext_textmode = 1;
+	wintext_AltF4hit = 1;
+}
+
+static void Cls_OnSize(HWND window, UINT state, int cx, int cy)
+{
+	if (cx > (WORD)wintext_max_width ||
+		cy > (WORD)wintext_max_height)
+	{
+		SetWindowPos(window,
+			GetNextWindow(window, GW_HWNDPREV),
+			0, 0, wintext_max_width, wintext_max_height, SWP_NOMOVE);
+	}
+}
+
+static void wintext_OnSetFocus(HWND window, HWND old_focus)
+{
+	/* get focus - display caret */
+	/* create caret & display */
+	wintext_cursor_owned = 1;
+	CreateCaret(wintext_hWndCopy, wintext_bitmap[wintext_cursor_type], wintext_char_width, wintext_char_height);
+	SetCaretPos(wintext_cursor_x*wintext_char_width, wintext_cursor_y*wintext_char_height);
+	SetCaretBlinkTime(500);
+	ShowCaret(wintext_hWndCopy);
+}
+
+static void wintext_OnKillFocus(HWND window, HWND old_focus)
+{
+	/* kill focus - hide caret */
+	wintext_cursor_owned = 0;
+	DestroyCaret();
+}
+
+static void wintext_OnPaint(HWND window)
+{
+    PAINTSTRUCT ps;
+    HDC hDC = BeginPaint(window, &ps);
+    RECT tempRect;
+
+	/* "Paint" routine - call the worker routine */
+	GetUpdateRect(window, &tempRect, FALSE);
+	ValidateRect(window, &tempRect);
+
+	/* the routine below handles *all* window updates */
+	wintext_paintscreen(0, wintext_char_xchars-1, 0, wintext_char_ychars-1);
+	EndPaint(window, &ps);
+}
+
+void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+{
+	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
+	/* a key has been pressed - maybe ASCII, maybe not */
+	/* if it's an ASCII key, 'WM_CHAR' will handle it  */
+	unsigned int i, j, k;
+	i = MapVirtualKey(vk, 0);
+	j = MapVirtualKey(vk, 2);
+	k = (i << 8) + j;
+	if (vk == 0x10 || vk == 0x11) /* shift or ctl key */
+	{
+		j = 0;       /* send flag: special key down */
+		k = 0xff00 + (unsigned int) vk;
+	}
+	if (j == 0)        /* use this call only for non-ASCII keys */
+	{
+		wintext_addkeypress(k);
+	}
+}
+
+void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+{
+	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
+	/* a key has been released - maybe ASCII, maybe not */
+	/* Watch for Shift, Ctl keys  */
+	unsigned int i, j, k;
+	i = MapVirtualKey(vk, 0);
+	j = MapVirtualKey(vk, 2);
+	k = (i << 8) + j;
+	j = 1;
+	if (vk == 0x10 || vk == 0x11) /* shift or ctl key */
+	{
+		j = 0;       /* send flag: special key up */
+		k = 0xfe00 + vk;
+	}
+	if (j == 0)        /* use this call only for non-ASCII keys */
+	{
+		wintext_addkeypress(k);
+	}
+}
+
+void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+{
+	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
+	/* an ASCII key has been pressed */
+	unsigned int i, j, k;
+	i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
+	j = ch;
+	k = (i << 8) + j;
+	wintext_addkeypress(k);
+}
+
+void wintext_OnSize(HWND hwnd, UINT state, int cx, int cy)
+{
+}
+
 /*
         Window-handling procedure
 */
-LRESULT CALLBACK wintext_proc(hWnd, message, wParam, lParam)
-HWND hWnd;
-UINT message;
-WPARAM wParam;
-LPARAM lParam;
+LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    RECT tempRect;
-    PAINTSTRUCT ps;
-    HDC hDC;
-
     if (hWnd != wintext_hWndCopy)  /* ??? not the text-mode window! */
 	{
          return DefWindowProc(hWnd, message, wParam, lParam);
@@ -381,108 +470,15 @@ LPARAM lParam;
 
     switch (message)
 	{
-    case WM_INITMENU:
-        /* first time through*/
-        /* someday we might want to do something special here */
-        return (TRUE);
-
-	case WM_COMMAND:
-		/* if we added menu items, they would go here */
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-
-	case WM_CLOSE:
-		wintext_textmode = 1;
-		wintext_AltF4hit = 1;
-		return (DefWindowProc(hWnd, message, wParam, lParam));
-
-	case WM_SIZE:
-		/* code to prevent the window from exceeding a "full text page" */
-		if (LOWORD(lParam) > (WORD)wintext_max_width ||
-			HIWORD(lParam) > (WORD)wintext_max_height)
-		{
-			SetWindowPos(wintext_hWndCopy,
-				GetNextWindow(wintext_hWndCopy, GW_HWNDPREV),
-				0, 0, wintext_max_width, wintext_max_height, SWP_NOMOVE);
-		}
-		break;
-
-	case WM_SETFOCUS : /* get focus - display caret */
-		/* create caret & display */
-		wintext_cursor_owned = 1;
-		CreateCaret(wintext_hWndCopy, wintext_bitmap[wintext_cursor_type], wintext_char_width, wintext_char_height);
-		SetCaretPos(wintext_cursor_x*wintext_char_width, wintext_cursor_y*wintext_char_height);
-		SetCaretBlinkTime(500);
-		ShowCaret(wintext_hWndCopy);
-		break;
-
-	case WM_KILLFOCUS : /* kill focus - hide caret */
-		wintext_cursor_owned = 0;
-		DestroyCaret();
-		break;
-
-	case WM_PAINT:  /* "Paint" routine - call the worker routine */
-		hDC = BeginPaint(hWnd, &ps);
-		GetUpdateRect(hWnd, &tempRect, FALSE);
-		ValidateRect(hWnd, &tempRect);
-		/* the routine below handles *all* window updates */
-		wintext_paintscreen(0, wintext_char_xchars-1, 0, wintext_char_ychars-1);
-		EndPaint(hWnd, &ps);
-		break;
-
-	case WM_KEYDOWN:   /* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
-		/* a key has been pressed - maybe ASCII, maybe not */
-		/* if it's an ASCII key, 'WM_CHAR' will handle it  */
-		{
-			unsigned int i, j, k;
-			i = (MapVirtualKey((unsigned int) wParam, 0));
-			j = (MapVirtualKey((unsigned int) wParam, 2));
-			k = (i << 8) + j;
-			if (wParam == 0x10 || wParam == 0x11) /* shift or ctl key */
-			{
-				j = 0;       /* send flag: special key down */
-				k = 0xff00 + (unsigned int) wParam;
-			}
-			if (j == 0)        /* use this call only for non-ASCII keys */
-			{
-				wintext_addkeypress(k);
-			}
-		}
-		break;
-
-	case WM_KEYUP:   /* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-		/* a key has been released - maybe ASCII, maybe not */
-		/* Watch for Shift, Ctl keys  */
-		{
-			unsigned int i, j, k;
-			i = (MapVirtualKey((unsigned int) wParam, 0));
-			j = (MapVirtualKey((unsigned int) wParam, 2));
-			k = (i << 8) + j;
-			j = 1;
-			if (wParam == 0x10 || wParam == 0x11) /* shift or ctl key */
-			{
-				j = 0;       /* send flag: special key up */
-				k = 0xfe00 + (unsigned int) wParam;
-			}
-			if (j == 0)        /* use this call only for non-ASCII keys */
-			{
-				wintext_addkeypress(k);
-			}
-		}
-		break;
-
-	case WM_CHAR:   /* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-		/* an ASCII key has been pressed */
-		{
-			unsigned int i, j, k;
-			i = (unsigned int)((lParam & 0x00ff0000) >> 16);
-			j = (unsigned int) wParam;
-			k = (i << 8) + j;
-			wintext_addkeypress(k);
-		}
-		break;
-
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
+	case WM_CLOSE:		HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);			break;
+	case WM_SIZE:		HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);			break;
+	case WM_SETFOCUS:	HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);	break;
+	case WM_KILLFOCUS:	HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
+	case WM_PAINT:		HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
+	case WM_KEYDOWN:	HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
+	case WM_KEYUP:		HANDLE_WM_KEYUP(hWnd, wParam, lParam, wintext_OnKeyUp);			break;
+	case WM_CHAR:		HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
+	default:			return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
     return 0;
 }
