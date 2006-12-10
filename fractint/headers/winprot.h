@@ -153,7 +153,7 @@ extern int load_fractint_cfg(int);
 extern void wintext_destroy(void);
 extern int wintext_texton(void);
 extern int wintext_textoff(void);
-extern void wintext_putstring(int, int, int, char far *);
+extern void wintext_putstring(int, int, int, const char *);
 extern void wintext_paintscreen(int, int, int, int);
 extern void wintext_cursor(int, int, int);
 extern int wintext_look_for_activity(int);
