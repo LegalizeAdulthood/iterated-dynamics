@@ -176,4 +176,6 @@ extern void delay(int);
 extern void initasmvars(void);
 extern void adapter_detect(void);
 
+extern void windows_shell_to_dos(void);
+
 #endif

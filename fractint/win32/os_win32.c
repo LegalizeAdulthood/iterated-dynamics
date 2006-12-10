@@ -12,7 +12,9 @@
 #include "helpdefs.h"
 
 #define WIN32_LEAN_AND_MEAN
+#define STRICT
 #include <windows.h>
+#include <shlwapi.h>
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
 
@@ -20,6 +22,8 @@
 extern int (*dotread)(int, int);			/* read-a-dot routine */
 extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
 extern void check_samename(void);
+
+HINSTANCE g_instance = NULL;
 
 static void null_swap(void);
 
@@ -845,9 +849,7 @@ void initasmvars(void)
 
 int isadirectory(char *s)
 {
-	OutputDebugString("!isadirectory called.\n");
-	/* TODO */
-	return 0;
+	return PathFileExists(s);
 }
 
 /*
@@ -1393,6 +1395,7 @@ resumeloop:
 
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
+	g_instance = instance;
 	fractint_main(__argc, __argv);
 	return 0;
 }
@@ -1410,3 +1413,22 @@ long fr_farfree(void)
 	return 0x8FFFFL;
 }
 
+void windows_shell_to_dos(void)
+{
+	STARTUPINFO si =
+	{
+		sizeof(si)
+	};
+	PROCESS_INFORMATION pi = { 0 };
+	char *comspec = getenv("COMSPEC");
+
+	if (NULL == comspec)
+	{
+		comspec = "cmd.exe";
+	}
+	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
+	{
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		CloseHandle(pi.hProcess);
+	}
+}

@@ -148,23 +148,23 @@ struct tagDriver {
 */
 #if defined(XFRACT)
 #define HAVE_FRACTINT_DRIVER	0
-#define HAVE_DISK_DRIVER	1
-#define HAVE_X11_DRIVER		1
-#define HAVE_WIN32_DRIVER	0
+#define HAVE_DISK_DRIVER		1
+#define HAVE_X11_DRIVER			1
+#define HAVE_WIN32_DRIVER		0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(MSDOS)
 #define HAVE_FRACTINT_DRIVER	1
-#define HAVE_DISK_DRIVER	0
-#define HAVE_X11_DRIVER		0
-#define HAVE_WIN32_DRIVER	0
+#define HAVE_DISK_DRIVER		0
+#define HAVE_X11_DRIVER			0
+#define HAVE_WIN32_DRIVER		0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(_WIN32)
 #define HAVE_FRACTINT_DRIVER	0
-#define HAVE_DISK_DRIVER	0
-#define HAVE_X11_DRIVER		0
-#define HAVE_WIN32_DRIVER	1
+#define HAVE_DISK_DRIVER		0
+#define HAVE_X11_DRIVER			0
+#define HAVE_WIN32_DRIVER		0
 #define HAVE_WIN32_DISK_DRIVER	1
 #endif
 
