@@ -615,7 +615,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    read(help_file, (char *)&num_pages, sizeof(int));
    assert(num_pages>0 && num_pages<=max_pages);
 
-   farread(help_file, (char *)page_table, 3*sizeof(int)*num_pages);
+   read(help_file, (char *)page_table, 3*sizeof(int)*num_pages);
 
    read(help_file, &ch, 1);
    len = ch;
@@ -640,7 +640,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
       if (draw_page)
          {
          help_seek(where+page_table[page].offset);
-         farread(help_file, buffer, page_table[page].len);
+         read(help_file, buffer, page_table[page].len);
 
          num_link = 0;
          display_page(title, buffer, page_table[page].len, page, num_pages,
@@ -1037,7 +1037,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
    if (read_len > 0)
       {
       help_seek(curr_base + off);
-      farread(help_file, (char *)buf, read_len);
+      read(help_file, (char *)buf, read_len);
       }
 
    return ( curr_len - (off+len) );
@@ -1357,6 +1357,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    int            temp_file = -1;
    char      *msg = NULL;
 
+   /* TODO: allocate real memory, not reuse shared segment */
    info.buffer = MK_FP(extraseg, 0);
 
 /*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
@@ -1379,7 +1380,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
          goto ErrorAbort;
          }
 
-      if ( farwrite(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
+      if ( write(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
          {
          msg = err_badwrite;
          goto ErrorAbort;
@@ -1408,7 +1409,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
          goto ErrorAbort;
          }
 
-      if ( farread(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
+      if ( read(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
          {
          msg = err_badread;
          goto ErrorAbort;
@@ -1556,11 +1557,12 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
    assert(num_topic > 0);
    assert(num_label > 0);
 
-   /* allocate one big chunk for all three arrays */
+   /* allocate all three arrays */
+   topic_offset = (long *) malloc(sizeof(long)*num_topic);
+   label = (LABEL *) malloc(sizeof(LABEL)*num_label);
+   hist = (HIST *) malloc(sizeof(HIST)*MAX_HIST);
 
-   topic_offset = (long *)malloc(sizeof(long)*num_topic + 2L*sizeof(int)*num_label + sizeof(HIST)*MAX_HIST);
-
-   if (topic_offset == NULL)
+   if ((topic_offset == NULL) || (NULL == label) || (NULL == hist))
       {
       static FCODE err_no_mem[] = "Not enough memory for help system!\n";
       close(help_file);
@@ -1570,20 +1572,14 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
       return (-2);
       }
 
-   /* split off the other arrays */
-
-   label = (LABEL *)(&topic_offset[num_topic]);
-   hist  = (HIST *)(&label[num_label]);
-
    /* read in the tables... */
-
-   farread(help_file, topic_offset, num_topic*sizeof(long));
-   farread(help_file, label, num_label*2*sizeof(int));
+   read(help_file, topic_offset, num_topic*sizeof(long));
+   read(help_file, label, num_label*sizeof(LABEL));
 
    /* finished! */
 
-   return (0);  /* success */
-   }
+   return 0;  /* success */
+}
 
 void end_help(void)
    {

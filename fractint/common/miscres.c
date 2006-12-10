@@ -907,6 +907,7 @@ int tab_display()       /* display the status of the current image */
    /* Save memory from the beginning of extraseg to ENDVID=22400 */
    /* This is so the bf_math manipulations here don't corrupt */
    /* the video modes or screen prompts. */
+   /* TODO: allocate real memory, not reuse shared segment */
       ptr_to_extraseg = MK_FP(extraseg,0);
       save_extra_handle = MemoryAlloc((U16)22400, 1L, FARMEM);
       MoveToMemory(ptr_to_extraseg,(U16)22400,1L,0L,save_extra_handle);

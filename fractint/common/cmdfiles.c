@@ -866,6 +866,7 @@ static int cmdfile(FILE *handle,int mode)
    /* use near array suffix for large argument buffer, but save existing
       contents to extraseg */
    cmdbuf = (char *)suffix;
+   /* TODO: allocate real memory, not reuse shared segment */
    savesuffix = MK_FP(extraseg,0);
    memcpy(savesuffix,suffix,10000);
    memset(suffix,0,10000);

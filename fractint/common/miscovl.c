@@ -124,6 +124,7 @@ void make_batch_file()
       colorsonly = 1;
 
    /* put comment storage in extraseg */
+   /* TODO: allocate real memory, not reuse shared segment */
    inpcommandfile = MK_FP(extraseg,0);
    inpcommandname = inpcommandfile+80;
    inpcomment[0]    = inpcommandname+(ITEMNAMELEN + 1);
@@ -575,6 +576,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    /* Using near string boxx for buffer after saving to extraseg */
 
+   /* TODO: allocate real memory, not reuse shared segment */
    saveshared = MK_FP(extraseg,0);
    memcpy(saveshared,boxx,10000);
    memset(boxx,0,10000);
@@ -1624,6 +1626,7 @@ int edit_text_colors()
    debugflag = 0;   /* don't get called recursively */
    lookatmouse = 2; /* text mouse sensitivity */
    row = col = bkgrd = rowt = rowf = colt = colf = 0;
+   /* TODO: allocate real memory, not reuse shared segment */
    vidmem = MK_FP(0xB800,0);
    for(;;) {
       if (row < 0)  row = 0;

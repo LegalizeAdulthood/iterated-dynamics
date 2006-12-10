@@ -127,6 +127,7 @@ Press F1 for help, "};
    VIDEOINFO *vident;
 
    /* save overlayed strings to extraseg memory */
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,ENDVID);  /* ENDVID is to avoid videotable */
    hdg2 = ptr;
    ptr += sizeof(o_hdg2);

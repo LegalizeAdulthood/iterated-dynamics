@@ -3908,11 +3908,13 @@ static void parser_allocate(void)
 
       if(pass == 0 || is_bad_form)
       {
+   /* TODO: allocate real memory, not reuse shared segment */
          typespecific_workarea = (char *)MK_FP(extraseg,0);
          used_extra = 1;
       }
       else if(1L<<16 > end_dx_array + total_formula_mem)
       {
+   /* TODO: allocate real memory, not reuse shared segment */
          typespecific_workarea = (char *)MK_FP(extraseg,0) + end_dx_array;
          used_extra = 1;
       }

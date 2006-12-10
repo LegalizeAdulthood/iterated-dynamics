@@ -128,6 +128,7 @@ int get_toggles()
                          s_fmod,s_tdis};
 
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
 
    k = -1;
@@ -415,6 +416,7 @@ int get_toggles2()
    long old_usr_distest;
 
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
 
    /* fill up the choices (and previous values) arrays */
@@ -567,6 +569,7 @@ int passes_options(void)
    strcpy(hdg,o_hdg);
    strcat(hdg,pressf2);
    strcat(hdg,pressf6);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
    ret = 0;
 
@@ -707,6 +710,7 @@ int get_view_params()
 #endif
 
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
 
 /*
@@ -1252,6 +1256,7 @@ int get_a_number(double *x, double *y)
 
    driver_stack_screen();
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
 
    /* fill up the previous values arrays */
@@ -1540,6 +1545,7 @@ int getafilename(char *hdg,char *template,char *flname)
    rds = (stereomapname == flname)?1:0;
 
    /* steal existing array for "choices" */
+   /* TODO: allocate real memory, not reuse shared segment */
    choices = (struct CHOICE **)MK_FP(extraseg,0);
    choices[0] = (struct CHOICE *)(choices + MAXNUMFILES+1);
    attributes = (int *)(choices[0] + MAXNUMFILES+1);
@@ -2190,6 +2196,7 @@ int get_corners()
    strcpy(xprompt,o_xprompt);
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
@@ -2387,6 +2394,7 @@ static int get_screen_corners(void)
    strcpy(xprompt,o_xprompt);
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
    oldhelpmode = helpmode;
    ousemag = usemag;
@@ -2594,6 +2602,7 @@ int get_browse_params()
    char old_browsemask[13];
 
    strcpy(hdg,o_hdg);
+   /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)MK_FP(extraseg,0);
    old_autobrowse     = autobrowse;
    old_brwschecktype  = brwschecktype;

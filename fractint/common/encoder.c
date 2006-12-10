@@ -912,6 +912,7 @@ static int compress(int rowlimit)
    int tempkey;
    char accum_stack[256];
    accum = accum_stack;
+   /* TODO: allocate real memory, not reuse shared segment */
    htab = (long *)MK_FP(extraseg,0);
    
    outcolor1 = 0;               /* use these colors to show progress */

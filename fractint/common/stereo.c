@@ -162,6 +162,7 @@ int outline_stereo(BYTE * pixels, int linelen)
    int *colour;
    if((Y) >= ydots)
       return(1);
+   /* TODO: allocate real memory, not reuse shared segment */
    same   = (int *)MK_FP(extraseg,0);
    colour = &same[ydots];
 
@@ -231,6 +232,7 @@ int do_AutoStereo(void)
    /* following two lines re-use existing arrays in Fractint */
    int *same;
    int *colour;
+   /* TODO: allocate real memory, not reuse shared segment */
    same   = (int *)MK_FP(extraseg,0);
    colour = &same[ydots];
 
