@@ -127,7 +127,6 @@ extern long stackavail();
         typedef unsigned long  U32;
         typedef signed long    S32;
         typedef unsigned char  BYTE;
-        typedef unsigned char  CHAR;
         typedef void          *VOIDPTR;
         typedef const void    *VOIDCONSTPTR;
 
