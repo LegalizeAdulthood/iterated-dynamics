@@ -1460,7 +1460,7 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
 #endif /* !_WIN32 */
 
 #if 0
-void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
+void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))
 {
    int ll,j,ir,i;
    void *rra;
@@ -1503,7 +1503,7 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1
 }
 #endif
 
-int lccompare(VOIDFARPTR arg1, VOIDFARPTR arg2) /* for sort */
+int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {
    return(strncasecmp(*((char * *)arg1),*((char **)arg2),40));
 }
@@ -2871,7 +2871,7 @@ char *has_ext(char *source)
 
 
 /* I tried heap sort also - this is faster! */
-void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDFARPTR arg1,VOIDFARPTR arg2))
+void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1,VOIDPTR arg2))
 {
    int gap,i,j;
    void *temp;

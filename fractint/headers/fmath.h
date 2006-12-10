@@ -90,35 +90,35 @@ Just be sure to declare x, y, and z as type floats instead of type double.
 
 long
 #ifndef XFRACT
-   far RegFg2Float(long x, char FudgeFact),
-   far RegSftFloat(long x, char Shift),
+   RegFg2Float(long x, char FudgeFact),
+   RegSftFloat(long x, char Shift),
 #else
-   far RegFg2Float(long x, int FudgeFact),
-   far RegSftFloat(long x, int Shift),
+   RegFg2Float(long x, int FudgeFact),
+   RegSftFloat(long x, int Shift),
 #endif
-   far RegFloat2Fg(long x, int Fudge),
-   far RegAddFloat(long x, long y),
-   far RegDivFloat(long x, long y),
-   far RegMulFloat(long x, long y),
-   far RegSqrFloat(long x),
-   far RegSubFloat(long x, long y);
+   RegFloat2Fg(long x, int Fudge),
+   RegAddFloat(long x, long y),
+   RegDivFloat(long x, long y),
+   RegMulFloat(long x, long y),
+   RegSqrFloat(long x),
+   RegSubFloat(long x, long y);
 long
-   far r16Mul(long x, long y),
-   far r16Sqr(long x);
+   r16Mul(long x, long y),
+   r16Sqr(long x);
 int
-        far sin13(long x),
-        far cos13(long x),
-        far FastCosine(int x),
-        far FastSine(int x);
+        sin13(long x),
+        cos13(long x),
+        FastCosine(int x),
+        FastSine(int x);
 long
-        far FastHypCosine(int x),
-        far FastHypSine(int x),
-   far sinh13(long x),
-   far cosh13(long x);
-long far LogFudged(unsigned long x, int Fudge);
-long far LogFloat14(unsigned long x);
-unsigned long far ExpFudged(long x, int Fudge);
-long far ExpFloat14(long x);
+        FastHypCosine(int x),
+        FastHypSine(int x),
+   sinh13(long x),
+   cosh13(long x);
+long LogFudged(unsigned long x, int Fudge);
+long LogFloat14(unsigned long x);
+unsigned long ExpFudged(long x, int Fudge);
+long ExpFloat14(long x);
 
 #define fAdd(x, y, z) (void)((*(long*)&z) = RegAddFloat(*(long*)&x, *(long*)&y))
 #define fMul(x, y, z) (void)((*(long*)&z) = RegMulFloat(*(long*)&x, *(long*)&y))

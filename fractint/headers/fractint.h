@@ -21,7 +21,7 @@ typedef unsigned USEGTYPE;
 #  else
 #    ifndef __WATCOMC__
 #      ifndef MK_FP
-#        define MK_FP(seg,off) (VOIDFARPTR )( (((long)(seg))<<16) | \
+#        define MK_FP(seg,off) (VOIDPTR)( (((long)(seg))<<16) | \
                                           ((unsigned)(off)) )
 #      endif
 #    endif
@@ -29,7 +29,7 @@ typedef unsigned USEGTYPE;
 #else
 typedef char * SEGTYPE;
 typedef char * USEGTYPE;
-#  define MK_FP(seg,off) (VOIDFARPTR )(seg+off)
+#  define MK_FP(seg,off) (VOIDPTR)(seg+off)
 #  include <sys/types.h> /* need size_t */
 #endif
 
@@ -116,7 +116,7 @@ struct videoinfo {              /* All we need to know about a Video Adapter */
         int     colors;         /* number of colors available           */
         };
 
-typedef struct videoinfo far        VIDEOINFO;
+typedef struct videoinfo VIDEOINFO;
 #define INFO_ID         "Fractal"
 typedef    struct fractal_info FRACTAL_INFO;
 
@@ -494,17 +494,17 @@ extern  double   f_at_rad;      /* finite attractor radius  */
 struct moreparams
 {
    int      type;                       /* index in fractalname of the fractal */
-   char     far *param[MAXPARAMS-4];    /* name of the parameters */
+   char     *param[MAXPARAMS-4];    /* name of the parameters */
    double   paramvalue[MAXPARAMS-4];    /* default parameter values */
 };
 
-typedef struct moreparams far       MOREPARAMS;
+typedef struct moreparams MOREPARAMS;
 
 struct fractalspecificstuff
 {
    char  *name;                         /* name of the fractal */
                                         /* (leading "*" supresses name display) */
-   char  far *param[4];                 /* name of the parameters */
+   char  *param[4];                 /* name of the parameters */
    double paramvalue[4];                /* default parameter values */
    int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
    int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
@@ -554,7 +554,7 @@ struct alternatemathstuff
    int (*per_image)(void);      /* once-per-image setup */
 };
 
-typedef struct alternatemathstuff ALTERNATE;
+typedef struct alternatemathstuff AlternateMath;
 
 /* defines for symmetry */
 #define  NOSYM          0
@@ -623,8 +623,8 @@ enum Minor  {left_first, right_first};
 #define NOGROUT         8    /* no gaps between images                                   */
 
 
-extern struct fractalspecificstuff far fractalspecific[];
-extern struct fractalspecificstuff far *curfractalspecific;
+extern struct fractalspecificstuff fractalspecific[];
+extern struct fractalspecificstuff *curfractalspecific;
 
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
@@ -971,7 +971,7 @@ struct fullscreenvalues
       int    ival;      /* when type is 'i'      */
       long   Lval;      /* when type is 'L'      */
       char   sval[16];  /* when type is 's'      */
-      char  far *sbuf;  /* when type is 0x100+n  */
+      char  *sbuf;  /* when type is 0x100+n  */
       struct {          /* when type is 'l'      */
          int  val;      /*   selected choice     */
          int  vlen;     /*   char len per choice */
@@ -1044,13 +1044,13 @@ struct ext_blk_3 {
 struct ext_blk_4 {
    char got_data;
    int length;
-   int far *range_data;
+   int *range_data;
    };
 
 struct ext_blk_5 {
    char got_data;
    int length;
-   char far *apm_data;
+   char *apm_data;
    };
 
 /* parameter evolution stuff */
@@ -1135,7 +1135,7 @@ typedef struct baseunit    GENEBASE;
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef char __based(__segname("_CODE")) FCODE;
 #else
-typedef char far FCODE;
+typedef char FCODE;
 #endif
 
 /* pointer to FCODE */
@@ -1148,49 +1148,49 @@ typedef FCODE * PFCODE;
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef BYTE __based(__segname("_CODE")) BFCODE;
 #else
-typedef BYTE far BFCODE;
+typedef BYTE BFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef short __based(__segname("_CODE")) SIFCODE;
 #else
-typedef short far SIFCODE;
+typedef short SIFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef short __based(__segname("_CODE")) USFCODE;
 #else
-typedef short far USFCODE;
+typedef short USFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef int __based(__segname("_CODE")) IFCODE;
 #else
-typedef int far IFCODE;
+typedef int IFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef unsigned int __based(__segname("_CODE")) UIFCODE;
 #else
-typedef unsigned int far UIFCODE;
+typedef unsigned int UIFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef long __based(__segname("_CODE")) LFCODE;
 #else
-typedef long far LFCODE;
+typedef long LFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef unsigned long __based(__segname("_CODE")) ULFCODE;
 #else
-typedef unsigned long far ULFCODE;
+typedef unsigned long ULFCODE;
 #endif
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 typedef double __based(__segname("_CODE")) DFCODE;
 #else
-typedef double far DFCODE;
+typedef double DFCODE;
 #endif
 #endif
 

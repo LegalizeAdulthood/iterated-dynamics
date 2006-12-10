@@ -998,7 +998,7 @@ static int find_file(char *filename, char *path)
    return ( (path[0]) ? 1 : 0);
    }
 
-static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
+static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
    {
    static int  curr_topic = -1;
    static long curr_base;
@@ -1043,7 +1043,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDFARPTR buf)
    return ( curr_len - (off+len) );
    }
 
-int read_help_topic(int label_num, int off, int len, VOIDFARPTR buf)
+int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
    /*
     * reads text from a help topic.  Returns number of bytes from (off+len)
     * to end of topic.  On "EOF" returns a negative number representing

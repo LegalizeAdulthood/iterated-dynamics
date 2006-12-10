@@ -296,7 +296,7 @@ void blankrows(int row,int rows,int attr)
    buf[80] = 0;
    while (--rows >= 0)
       driver_put_string(row++,0,attr,buf);
-   }
+}
 
 #if (_MSC_VER >= 700) && !defined(_WIN32)
 #pragma code_seg ("realdos1_text")     /* place following in an overlay */
@@ -1541,9 +1541,10 @@ int thinking(int options,char *msg)
 }
 
 
-void clear_screen(int dummy)  /* a stub for a windows only subroutine */
+int clear_screen(int dummy)  /* a stub for a windows only subroutine */
 {
    dummy=0; /* quite the warning */
+   return 0;
 }
 
 
