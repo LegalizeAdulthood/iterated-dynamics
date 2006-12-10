@@ -29,7 +29,7 @@ int wintext_texton();
 int wintext_textoff();
     Removes the text window.  No parameters.
 
-void wintext_putstring(int xpos, int ypos, int attrib, char  *string);
+void wintext_putstring(int xpos, int ypos, int attrib, const char *string);
     Sends a character string to the screen starting at (xpos, ypos)
     using the (CGA-style and, yes, it should be a 'char') specified attribute.
 void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
@@ -402,7 +402,7 @@ static void wintext_OnPaint(HWND window)
 	EndPaint(window, &ps);
 }
 
-void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
 	/* a key has been pressed - maybe ASCII, maybe not */
@@ -422,7 +422,7 @@ void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	}
 }
 
-void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+static void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
 	/* a key has been released - maybe ASCII, maybe not */
@@ -443,7 +443,7 @@ void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	}
 }
 
-void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+static void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
 	/* an ASCII key has been pressed */
@@ -454,8 +454,14 @@ void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 	wintext_addkeypress(k);
 }
 
-void wintext_OnSize(HWND hwnd, UINT state, int cx, int cy)
+static void wintext_OnSize(HWND hwnd, UINT state, int cx, int cy)
 {
+}
+
+static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
+{
+	lpMinMaxInfo->ptMaxSize.x = wintext_max_width;
+	lpMinMaxInfo->ptMaxSize.y = wintext_max_height;
 }
 
 /*
@@ -463,22 +469,26 @@ void wintext_OnSize(HWND hwnd, UINT state, int cx, int cy)
 */
 LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    if (hWnd != wintext_hWndCopy)  /* ??? not the text-mode window! */
+	if (wintext_hWndCopy == NULL)
+	{
+		wintext_hWndCopy = hWnd;
+	} else if (hWnd != wintext_hWndCopy)  /* ??? not the text-mode window! */
 	{
          return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
     switch (message)
 	{
-	case WM_CLOSE:		HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);			break;
-	case WM_SIZE:		HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);			break;
-	case WM_SETFOCUS:	HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);	break;
-	case WM_KILLFOCUS:	HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
-	case WM_PAINT:		HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
-	case WM_KEYDOWN:	HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
-	case WM_KEYUP:		HANDLE_WM_KEYUP(hWnd, wParam, lParam, wintext_OnKeyUp);			break;
-	case WM_CHAR:		HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
-	default:			return DefWindowProc(hWnd, message, wParam, lParam);			break;
+	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, wintext_OnGetMinMaxInfo); break;
+	case WM_CLOSE:			HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);			break;
+	case WM_SIZE:			HANDLE_WM_SIZE(hWnd, wParam, lParam, wintext_OnSize);			break;
+	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);	break;
+	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
+	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
+	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
+	case WM_KEYUP:			HANDLE_WM_KEYUP(hWnd, wParam, lParam, wintext_OnKeyUp);			break;
+	case WM_CHAR:			HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
+	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
     return 0;
 }
@@ -631,7 +641,7 @@ int wintext_look_for_activity(int wintext_waitflag)
         general routine to send a string to the screen
 */
 
-void wintext_putstring(int xpos, int ypos, int attrib, char *string)
+void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
 {
     int i, j, k, maxrow, maxcol;
     char xc, xa;

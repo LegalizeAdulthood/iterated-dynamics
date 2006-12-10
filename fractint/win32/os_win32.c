@@ -674,6 +674,35 @@ long readticker(void)
 	return 0;
 }
 
+void windows_pump_messages(BOOL nowait)
+{
+	while (1)
+	{
+		MSG msg;
+		int status;
+		
+		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
+		{
+			if (nowait)
+			{
+				return;
+			}
+		}
+
+		status = GetMessage(&msg, NULL, 0, 0);
+		if (status == -1)
+		{
+			/* error */
+			return;
+		}
+		else if (status > 0)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
 /*
 ; ***************** Function delay(int delaytime) ************************
 ;
@@ -681,6 +710,7 @@ long readticker(void)
 */
 void delay(int delaytime)
 {
+	windows_pump_messages(TRUE);
 	Sleep(delaytime);
 }
 
