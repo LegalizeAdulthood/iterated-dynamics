@@ -21,6 +21,8 @@ extern int (*dotread)(int, int);			/* read-a-dot routine */
 extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
 extern void check_samename(void);
 
+static void null_swap(void);
+
 typedef enum
 {
 	FE_UNKNOWN = -1,
@@ -190,7 +192,7 @@ char supervga_list[] =
 	0, 0								//        dw      0
 };
 int svga_type = 0;
-void (*swapsetup)(void) = NULL;			/* setfortext/graphics setup routine */
+void (*swapsetup)(void) = null_swap;			/* setfortext/graphics setup routine */
 int text_type = 0;
 int textcbase = 0;
 int textcol = 0;
@@ -1393,5 +1395,18 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 {
 	fractint_main(__argc, __argv);
 	return 0;
+}
+
+void null_swap(void)
+{
+}
+
+void showfreemem(void)
+{
+}
+
+long fr_farfree(void)
+{
+	return 0x8FFFFL;
 }
 

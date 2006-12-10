@@ -129,7 +129,6 @@ extern long stackavail();
         typedef unsigned char  BYTE;
         typedef unsigned char  CHAR;
         typedef void          *VOIDPTR;
-        typedef void          *VOIDFARPTR;
         typedef const void    *VOIDCONSTPTR;
 
         #define CONST          const
@@ -195,7 +194,6 @@ extern long stackavail();
         typedef unsigned char  BYTE;
         typedef unsigned char  CHAR;
         typedef void          *VOIDPTR;
-        typedef void far      *VOIDFARPTR;
         typedef const void    *VOIDCONSTPTR;
 
         #define CONST          const
@@ -226,7 +224,6 @@ extern long stackavail();
         typedef UBYTE          CHAR;
 
         typedef void          *VOIDPTR;
-        typedef void          *VOIDFARPTR;
         typedef const void    *VOIDCONSTPTR;
 
         #define PRINTER        "PRT:"
@@ -264,16 +261,13 @@ extern long stackavail();
 
 		#ifdef __SVR4
 		typedef void          *VOIDPTR;
-		typedef void          *VOIDFARPTR;
 		typedef const void    *VOIDCONSTPTR;
 		#else
 		# ifdef BADVOID
 		typedef char          *VOIDPTR;
-		typedef char          *VOIDFARPTR;
 		typedef char          *VOIDCONSTPTR;
 		# else
 		typedef void          *VOIDPTR;
-		typedef void          *VOIDFARPTR;
 		typedef const void    *VOIDCONSTPTR;
 		# endif
 		#endif

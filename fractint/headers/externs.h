@@ -10,7 +10,7 @@
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int                   active_system;
 extern int                   adapter;
-extern ALTERNATE far         alternatemath[];
+extern AlternateMath         alternatemath[];
 extern int                   Ambient;
 extern int                   andcolor;
 extern struct MP             Ans;
@@ -806,7 +806,7 @@ extern int                   truecolor;
 extern int                   truemode;
 extern char                  tstack[];
 extern double                twopi;
-extern VOIDFARPTR            typespecific_workarea;
+extern VOIDPTR               typespecific_workarea;
 extern char                  useinitorbit;
 extern BYTE                  used_extra;
 extern int                   use_grid;	

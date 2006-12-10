@@ -131,7 +131,7 @@ int xxstart,xxstop,xxbegin;             /* these are same as worklist, */
 int yystart,yystop,yybegin;             /* declared as separate items  */
 int workpass,worksym;                   /* for the sake of calcmand    */
 
-VOIDFARPTR typespecific_workarea = NULL;
+VOIDPTR typespecific_workarea = NULL;
 
 static double dem_delta, dem_width;     /* distance estimator variables */
 static double dem_toobig;

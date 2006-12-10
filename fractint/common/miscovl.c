@@ -1521,7 +1521,7 @@ static void put_bf(int slash,bf_t r, int prec)
    put_parm(buf);
 }
 
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
 #include <direct.h>
 void shell_to_dos()
 {

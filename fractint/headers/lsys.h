@@ -80,10 +80,10 @@ extern void lsys_donefpu(struct lsys_turtlestatef *);
 
 /* routines in lsysf.c */
 
-extern struct lsys_cmd far * _fastcall drawLSysF(struct lsys_cmd far *command,struct lsys_turtlestatef *ts, struct lsys_cmd far **rules,int depth);
-extern int _fastcall lsysf_findscale(struct lsys_cmd far *command, struct lsys_turtlestatef *ts, struct lsys_cmd far **rules, int depth);
-extern struct lsys_cmd far *LSysFSizeTransform(char far *s, struct lsys_turtlestatef *ts);
-extern struct lsys_cmd far *LSysFDrawTransform(char far *s, struct lsys_turtlestatef *ts);
+extern struct lsys_cmd * _fastcall drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd **rules,int depth);
+extern int _fastcall lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd **rules, int depth);
+extern struct lsys_cmd *LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts);
+extern struct lsys_cmd *LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts);
 extern void _fastcall lsysf_dosincos(void);
 
 #endif

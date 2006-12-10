@@ -2,8 +2,10 @@
  *
  * Routines for a Win32 disk video mode driver for fractint.
  */
+#define WIN32_LEAN_AND_MEAN
+#define STRICT
+#include <windows.h>
 
-#include <stdio.h>
 //#include <stdlib.h>
 //#include <curses.h>
 //#include <signal.h>
@@ -113,6 +115,7 @@ typedef struct tagDriverWin32Disk DriverWin32Disk;
 struct tagDriverWin32Disk
 {
 	Driver pub;
+	HWND text_window;
 #if 0
 	SCREEN *term;
 	WINDOW *curwin;
@@ -276,12 +279,12 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 	*/
 	if (sizeof(short) != 2)
 	{
-		fprintf(stderr, "Error: need short to be 2 bytes\n");
+		OutputDebugString("Error: need short to be 2 bytes\n");
 		exit(-1);
 	}
 	if (sizeof(long) < sizeof(FLOAT4))
 	{
-		fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
+		OutputDebugString("Error: need sizeof(long) >= sizeof(FLOAT4)\n");
 		exit(-1);
 	}
 
@@ -549,7 +552,7 @@ static void
 win32_disk_write_pixel(Driver *drv, int x, int y, int color)
 {
 #if 0
-	fprintf(stderr, "win32_disk_write_pixel(%d,%d): %d\n", x, y, color);
+	OutputDebugString("win32_disk_write_pixel(%d,%d): %d\n", x, y, color);
 #endif
 }
 
@@ -572,7 +575,7 @@ static int
 win32_disk_read_pixel(Driver *drv, int x, int y)
 {
 #if 0
-	fprintf(stderr, "win32_disk_read_pixel(%d,%d)\n", x, y);
+	OutputDebugString("win32_disk_read_pixel(%d,%d)\n", x, y);
 #endif
 return 0;
 }
@@ -632,7 +635,7 @@ static void
 win32_disk_set_line_mode(Driver *drv, int mode)
 {
 #if 0
-	fprintf(stderr, "win32_disk_set_line_mode(%d)\n", mode);
+	OutputDebugString("win32_disk_set_line_mode(%d)\n", mode);
 #endif
 }
 
@@ -640,7 +643,7 @@ static void
 win32_disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
 {
 #if 0
-	fprintf(stderr, "win32_disk_draw_line(%d,%d, %d,%d)\n", x1, y1, x2, y2);
+	OutputDebugString("win32_disk_draw_line(%d,%d, %d,%d)\n", x1, y1, x2, y2);
 #endif
 }
 
@@ -792,7 +795,7 @@ static void
 win32_disk_redraw(Driver *drv)
 {
 #if 0
-	fprintf(stderr, "win32_disk_redraw\n");
+	OutputDebugString("win32_disk_redraw\n");
 #endif
 }
 
@@ -1290,7 +1293,7 @@ static void
 win32_disk_buzzer(Driver *drv, int kind)
 {
 #if 0
-	fprintf(stderr, "win32_disk_buzzer(%d)\n", kind);
+	OutputDebugString("win32_disk_buzzer(%d)\n", kind);
 #endif
 }
 
@@ -1299,7 +1302,7 @@ win32_disk_sound_on(Driver *drv, int freq)
 {
 	return 0;
 #if 0
-	fprintf(stderr, "win32_disk_sound_on(%d)\n", freq);
+	OutputDebugString("win32_disk_sound_on(%d)\n", freq);
 #endif
 }
 
@@ -1307,7 +1310,7 @@ static void
 win32_disk_sound_off(Driver *drv)
 {
 #if 0
-	fprintf(stderr, "win32_disk_sound_off\n");
+	OutputDebugString("win32_disk_sound_off\n");
 #endif
 }
 
@@ -1325,6 +1328,7 @@ win32_disk_diskp(Driver *drv)
 static DriverWin32Disk win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk),
+	NULL				/* text_window */
 #if 0
 	NULL,				/* term */
 	NULL,				/* curwin */
