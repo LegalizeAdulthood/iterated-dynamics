@@ -40,8 +40,8 @@ void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
     also be called  manually by your program when it wants a portion
     of the screen updated (the actual data is kept in two arrays, which
     your program has presumably updated:)
-       unsigned char wintext_chars[25][80]  holds the text
-       unsigned char wintext_attrs[25][80]  holds the (CGA-style) attributes
+       unsigned char wintext_chars[WINTEXT_MAX_ROW][80]  holds the text
+       unsigned char wintext_attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
 
 void wintext_cursor(int xpos, int ypos, int cursor_type);
     Sets the cursor to character position (xpos, ypos) and switches to
@@ -98,9 +98,10 @@ static int wintext_AltF4hit = 0;
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
 /* Local copy of the "screen" characters and attributes */
-
-unsigned char wintext_chars[25][80];
-unsigned char wintext_attrs[25][80];
+#define WINTEXT_MAX_COL 80
+#define WINTEXT_MAX_ROW 25
+unsigned char wintext_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+unsigned char wintext_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
 int wintext_buffer_init;     /* zero if 'screen' is uninitialized */
 
 /* font information */
@@ -227,8 +228,8 @@ BOOL wintext_initialize(HINSTANCE hInstance, HWND hWndParent, LPSTR titletext)
     ReleaseDC(hWndParent, hDC);
     wintext_char_width  = TextMetric.tmMaxCharWidth;
     wintext_char_height = TextMetric.tmHeight;
-    wintext_char_xchars = 80;
-    wintext_char_ychars = 25;
+    wintext_char_xchars = WINTEXT_MAX_COL;
+    wintext_char_ychars = WINTEXT_MAX_ROW;
 
 	/* maximum screen width */
     wintext_max_width = wintext_char_xchars*wintext_char_width + GetSystemMetrics(SM_CXFRAME)*2;
@@ -673,14 +674,14 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
 	{
         if (xc == 13 || xc == 10)
 		{
-            if (j < 24) j++;
+            if (j < WINTEXT_MAX_ROW-1) j++;
             k = -1;
 		}
         else
 		{
-            if ((++k) >= 80)
+            if ((++k) >= WINTEXT_MAX_COL)
 			{
-                if (j < 24) j++;
+                if (j < WINTEXT_MAX_ROW-1) j++;
                 k = 0;
             }
             if (maxrow < j) maxrow = j;
@@ -693,6 +694,28 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
 	{
 		wintext_paintscreen(xpos, maxcol, ypos, maxrow);
     }
+}
+
+void wintext_scroll_up(int top, int bot)
+{
+	int row;
+	for (row = top; row < bot; row++)
+	{
+		unsigned char *chars = &wintext_chars[row][0];
+		unsigned char *attrs = &wintext_attrs[row][0];
+		unsigned char *next_chars = &wintext_chars[row+1][0];
+		unsigned char *next_attrs = &wintext_attrs[row+1][0];
+		int col;
+
+		for (col = 0; col < WINTEXT_MAX_COL; col++)
+		{
+			*chars++ = *next_chars++;
+			*attrs++ = *next_attrs++;
+		}
+	}
+	memset(&wintext_chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+	memset(&wintext_attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+	wintext_paintscreen(0, WINTEXT_MAX_COL, 0, WINTEXT_MAX_ROW);
 }
 
 /*

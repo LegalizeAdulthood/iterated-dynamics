@@ -17,11 +17,13 @@
 #include <shlwapi.h>
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
+#define CALLED(fn_) function_called(fn_, __FILE__, __LINE__)
 
 /* External declarations */
 extern int (*dotread)(int, int);			/* read-a-dot routine */
 extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
 extern void check_samename(void);
+extern void function_called(const char *fn, const char *file, unsigned int line);
 
 HINSTANCE g_instance = NULL;
 
@@ -306,7 +308,7 @@ static fractint_event keyboard_event(int key)
 long stackavail()
 {
 	/* TODO */
-	OutputDebugString("!stackavail called.\n");
+	CALLED("stackavail");
 	return 8192;
 }
 
@@ -596,14 +598,14 @@ find_special_colors (void)
 int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
 	/* TODO */
-	OutputDebugString("!fr_findfirst called.\n");
+	CALLED("fr_findfirst");
 	return -1;
 }
 
 int fr_findnext()
 {
 	/* TODO */
-	OutputDebugString("!fr_findnext called.\n");
+	CALLED("fr_findnext");
 	return -1;
 }
 
@@ -642,7 +644,7 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 int get_sound_params(void)
 {
 	/* TODO */
-	OutputDebugString("!get_sound_params called.\n");
+	CALLED("get_sound_params");
 	return(0);
 }
 
@@ -670,7 +672,7 @@ int out_line(BYTE *pixels, int linelen)
 long readticker(void)
 {
 	/* TODO */
-	OutputDebugString("!readticker called.\n");
+	CALLED("readticker");
 	return 0;
 }
 
@@ -715,7 +717,8 @@ void windows_pump_messages(BOOL nowait)
 */
 void delay(int delaytime)
 {
-	windows_pump_messages(TRUE);
+	wintext_look_for_activity(FALSE);
+	//windows_pump_messages(TRUE);
 	Sleep(delaytime);
 }
 
@@ -821,7 +824,7 @@ adapter_detect (void)
 
 void erasesegment(int segaddress, int segvalue)
 {
-	OutputDebugString("!erasesegment called.\n");
+	CALLED("erasesegment");
 }
 
 /*
@@ -836,7 +839,7 @@ char get_a_char(void)
 
 void put_a_char(int ch)
 {
-	OutputDebugString("!put_a_char called.\n");
+	CALLED("put_a_char");
 	/* TODO */
 }
 
@@ -847,7 +850,7 @@ void put_a_char(int ch)
 void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 {
 	/* TODO */
-	OutputDebugString("!gettruecolor called.\n");
+	CALLED("gettruecolor");
 	*red = 0;
 	*green = 0;
 	*blue = 0;
@@ -893,7 +896,7 @@ int isadirectory(char *s)
 */
 void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 {
-	OutputDebugString("!puttruecolor called.\n");
+	CALLED("puttruecolor");
 	/* TODO */
 }
 
@@ -903,7 +906,7 @@ void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 void restart_uclock(void)
 {
 	/* TODO */
-	OutputDebugString("!restart_uclock called.\n");
+	CALLED("restart_uclock");
 #if 0
 	gettimeofday(&tv_start, NULL);
 #endif
@@ -924,7 +927,7 @@ uclock_t usec_clock(void)
 {
    uclock_t result = 0;
    /* TODO */
-   OutputDebugString("!usec_clock called.\n");
+   CALLED("usec_clock");
 
 #if 0
    struct timeval tv, elapsed;
@@ -947,13 +950,13 @@ uclock_t usec_clock(void)
 
 void swapnormread(void)
 {
-	OutputDebugString("!swapnormread called.\n");
+	CALLED("swapnormread");
 	/* TODO */
 }
 
 void swapnormwrite(void)
 {
-	OutputDebugString("!swapnormwrite called.\n");
+	CALLED("swapnormwrite");
 	/* TODO */
 }
 
@@ -965,7 +968,7 @@ int keycursor(int row, int col)
 {
 #if 1
 	/* TODO */
-	OutputDebugString("!keycursor called.\n");
+	CALLED("keycursor");
 	return 0;
 #else
 	int i, cursor_style;
@@ -1009,23 +1012,26 @@ int keycursor(int row, int col)
 void scroll_center(int tocol, int torow)
 {
 	/* TODO */
-	OutputDebugString("!scroll_center called.\n");
+	CALLED("scroll_center");
 }
 
 static void nullwrite(int a, int b, int c)
 {
+	CALLED("nullwrite");
 }
 
 static int nullread(int a, int b)
 {
-  return 0;
+	CALLED("nullread");
+	return 0;
 }
 
 /* from video.asm */
 void setnullvideo(void)
 {
-  dotwrite = nullwrite;
-  dotread = nullread;
+	CALLED("setnullvideo");
+	dotwrite = nullwrite;
+	dotread = nullread;
 }
 
 /* Do nothing if math error */
@@ -1058,7 +1064,7 @@ static int fractint_main(int argc, char **argv)
 
 	init_help();
 
-	restart:   /* insert key re-starts here */
+restart:   /* insert key re-starts here */
 	autobrowse     = FALSE;
 	brwschecktype  = TRUE;
 	brwscheckparms = TRUE;
@@ -1437,14 +1443,17 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 
 void null_swap(void)
 {
+	CALLED("null_swap");
 }
 
 void showfreemem(void)
 {
+	CALLED("showfreemem");
 }
 
 long fr_farfree(void)
 {
+	CALLED("fr_farfree");
 	return 0x8FFFFL;
 }
 
@@ -1457,6 +1466,7 @@ void windows_shell_to_dos(void)
 	PROCESS_INFORMATION pi = { 0 };
 	char *comspec = getenv("COMSPEC");
 
+	CALLED("windows_shell_to_dos");
 	if (NULL == comspec)
 	{
 		comspec = "cmd.exe";
