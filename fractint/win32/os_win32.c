@@ -693,12 +693,17 @@ void windows_pump_messages(BOOL nowait)
 		if (status == -1)
 		{
 			/* error */
+			OutputDebugString("!windows_pump_messages status == -1, error\n");
 			return;
 		}
 		else if (status > 0)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+		}
+		else if (status == 0)
+		{
+			OutputDebugString("!windows_pump_messages status == 0\n");
 		}
 	}
 }

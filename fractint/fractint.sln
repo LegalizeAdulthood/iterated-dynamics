@@ -8,6 +8,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.vcproj", 
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "win32\FractIntSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -22,6 +27,10 @@ Global
 		{92025993-C759-4969-8093-3361B2DC4832}.Debug.Build.0 = Debug|Win32
 		{92025993-C759-4969-8093-3361B2DC4832}.Release.ActiveCfg = Release|Win32
 		{92025993-C759-4969-8093-3361B2DC4832}.Release.Build.0 = Release|Win32
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Debug.ActiveCfg = Debug
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Debug.Build.0 = Debug
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release.ActiveCfg = Release
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
