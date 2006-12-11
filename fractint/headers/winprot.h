@@ -159,6 +159,7 @@ extern void wintext_cursor(int, int, int);
 extern int wintext_look_for_activity(int);
 extern void wintext_addkeypress(unsigned int);
 extern unsigned int wintext_getkeypress(int);
+extern void wintext_scroll_up(int top, int bot);
 
 /* added for Win32 port */
 extern void gettruecolor(int, int, int*, int*, int*);
