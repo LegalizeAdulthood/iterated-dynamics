@@ -250,7 +250,13 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\win32\fractint.rc">
+			</File>
+			<File
 				RelativePath=".\win32\os_win32.c">
+			</File>
+			<File
+				RelativePath=".\win32\resource.h">
 			</File>
 			<File
 				RelativePath=".\win32\WinText.c">
@@ -1109,12 +1115,6 @@ copy fractint.hlp $(ProjectDir)
 		</Filter>
 		<File
 			RelativePath=".\win32\FractInt.ico">
-		</File>
-		<File
-			RelativePath=".\fractint.rc">
-		</File>
-		<File
-			RelativePath=".\resource.h">
 		</File>
 	</Files>
 	<Globals>
