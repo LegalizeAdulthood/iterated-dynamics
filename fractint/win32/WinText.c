@@ -199,6 +199,7 @@ BOOL wintext_initialize(HINSTANCE hInstance, HWND hWndParent, LPSTR titletext)
     TEXTMETRIC TextMetric;
     int i, j;
 
+	OutputDebugString("wintext_initialize\n");
     wintext_hInstance = hInstance;
     wintext_title_text = titletext;
     wintext_hWndParent = hWndParent;
@@ -268,7 +269,9 @@ void wintext_destroy(void)
 {
 	int i;
 
-    if (wintext_textmode == 2)  /* text is still active! */
+	OutputDebugString("wintext_destroy\n");
+
+	if (wintext_textmode == 2)  /* text is still active! */
 	{
         wintext_textoff();
 	}
@@ -292,6 +295,8 @@ void wintext_destroy(void)
 int wintext_texton(void)
 {
     HWND hWnd;
+
+	OutputDebugString("wintext_texton\n");
 
     if (wintext_textmode != 1)  /* not in the right mode */
 	{
@@ -342,6 +347,7 @@ int wintext_texton(void)
 
 int wintext_textoff(void)
 {
+	OutputDebugString("wintext_textoff\n");
     wintext_AltF4hit = 0;
     if (wintext_textmode != 2)  /* not in the right mode */
 	{
@@ -354,23 +360,14 @@ int wintext_textoff(void)
 
 static void wintext_OnClose(HWND window)
 {
+	OutputDebugString("wintext_OnClose\n");
 	wintext_textmode = 1;
 	wintext_AltF4hit = 1;
 }
 
-static void Cls_OnSize(HWND window, UINT state, int cx, int cy)
-{
-	if (cx > (WORD)wintext_max_width ||
-		cy > (WORD)wintext_max_height)
-	{
-		SetWindowPos(window,
-			GetNextWindow(window, GW_HWNDPREV),
-			0, 0, wintext_max_width, wintext_max_height, SWP_NOMOVE);
-	}
-}
-
 static void wintext_OnSetFocus(HWND window, HWND old_focus)
 {
+	OutputDebugString("wintext_OnSetFocus\n");
 	/* get focus - display caret */
 	/* create caret & display */
 	wintext_cursor_owned = 1;
@@ -383,6 +380,7 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
 static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
 	/* kill focus - hide caret */
+	OutputDebugString("wintext_OnKillFocus\n");
 	wintext_cursor_owned = 0;
 	DestroyCaret();
 }
@@ -392,6 +390,8 @@ static void wintext_OnPaint(HWND window)
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
     RECT tempRect;
+
+	OutputDebugString("wintext_OnPaint\n");
 
 	/* "Paint" routine - call the worker routine */
 	GetUpdateRect(window, &tempRect, FALSE);
@@ -408,6 +408,7 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 	/* a key has been pressed - maybe ASCII, maybe not */
 	/* if it's an ASCII key, 'WM_CHAR' will handle it  */
 	unsigned int i, j, k;
+	OutputDebugString("wintext_OnKeyDown\n");
 	i = MapVirtualKey(vk, 0);
 	j = MapVirtualKey(vk, 2);
 	k = (i << 8) + j;
@@ -428,6 +429,7 @@ static void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	/* a key has been released - maybe ASCII, maybe not */
 	/* Watch for Shift, Ctl keys  */
 	unsigned int i, j, k;
+	OutputDebugString("wintext_OnKeyUp\n");
 	i = MapVirtualKey(vk, 0);
 	j = MapVirtualKey(vk, 2);
 	k = (i << 8) + j;
@@ -448,18 +450,28 @@ static void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
 	/* an ASCII key has been pressed */
 	unsigned int i, j, k;
+	OutputDebugString("wintext_OnChar\n");
 	i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
 	j = ch;
 	k = (i << 8) + j;
 	wintext_addkeypress(k);
 }
 
-static void wintext_OnSize(HWND hwnd, UINT state, int cx, int cy)
+static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
+	OutputDebugString("wintext_OnSize\n");
+	if (cx > (WORD)wintext_max_width ||
+		cy > (WORD)wintext_max_height)
+	{
+		SetWindowPos(window,
+			GetNextWindow(window, GW_HWNDPREV),
+			0, 0, wintext_max_width, wintext_max_height, SWP_NOMOVE);
+	}
 }
 
 static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
+	OutputDebugString("wintext_OnGetMinMaxInfo\n");
 	lpMinMaxInfo->ptMaxSize.x = wintext_max_width;
 	lpMinMaxInfo->ptMaxSize.y = wintext_max_height;
 }
@@ -503,6 +515,8 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
 void wintext_addkeypress(unsigned int keypress)
 {
+	OutputDebugString("wintext_addkeypress\n");
+
 	if (wintext_textmode != 2)  /* not in the right mode */
 		return;
 
@@ -570,6 +584,7 @@ unsigned int wintext_getkeypress(int option)
 {
 	int i;
 
+	OutputDebugString("wintext_getkeypress\n");
 	wintext_look_for_activity(option);
 
 	if (wintext_textmode != 2)  /* not in the right mode */
@@ -612,6 +627,8 @@ int wintext_look_for_activity(int wintext_waitflag)
 {
 	MSG msg;
 
+	OutputDebugString("wintext_look_for_activity\n");
+
 	if (wintext_textmode != 2)  /* not in the right mode */
 	{
 		return 0;
@@ -643,10 +660,12 @@ int wintext_look_for_activity(int wintext_waitflag)
 
 void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
 {
-    int i, j, k, maxrow, maxcol;
+	int i, j, k, maxrow, maxcol;
     char xc, xa;
 
-    xa = (attrib & 0x0ff);
+	OutputDebugString("wintext_putstring\n");
+
+	xa = (attrib & 0x0ff);
     j = maxrow = ypos;
     k = maxcol = xpos-1;
 
@@ -691,6 +710,8 @@ void wintext_paintscreen(
 	unsigned char wintext_oldbk;
 	unsigned char wintext_oldfg;
 	HDC hDC;
+
+	OutputDebugString("wintext_paintscreen\n");
 
 	if (wintext_textmode != 2)  /* not in the right mode */
 		return;
@@ -780,6 +801,8 @@ void wintext_paintscreen(
 
 void wintext_cursor(int xpos, int ypos, int cursor_type)
 {
+	OutputDebugString("wintext_cursor\n");
+
 	if (wintext_textmode != 2)  /* not in the right mode */
 	{
 		return;
