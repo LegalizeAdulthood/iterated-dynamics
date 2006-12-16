@@ -298,10 +298,6 @@ void blankrows(int row,int rows,int attr)
       driver_put_string(row++,0,attr,buf);
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("realdos1_text")     /* place following in an overlay */
-#endif
-
 void helptitle()
 {
    char msg[MSGLEN],buf[MSGLEN];
@@ -355,10 +351,6 @@ void footer_msg(int *i, int options, char *speedstring)
       : ((options&CHOICEHELP) ? choiceinstr2b : choiceinstr2a));
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()         /* back to normal segment */
-#endif
-
 int putstringcenter(int row, int col, int width, int attr, char *msg)
 {
    char buf[81];
@@ -394,10 +386,6 @@ static int isadirname(char *name)
    else
       return 0;
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("realdos1_text")     /* place following in an overlay */
-#endif
 
 void show_speedstring(int speedrow,
                    char *speedstring,
@@ -478,10 +466,6 @@ void process_speedstring(char    *speedstring,
    }
 }
 
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()         /* back to normal segment */
-#endif
 
 int fullscreen_choice(
     int options,                  /* &2 use menu coloring scheme            */
@@ -950,10 +934,6 @@ fs_choice_end:
 
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("realdos1_text")     /* place following in an overlay */
-#endif
-
 /* squeeze space out of string */
 char *despace(char *str)
 {
@@ -1241,10 +1221,6 @@ top:
    tabmode = oldtabmode;
    return(i);
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()         /* back to normal segment */
-#endif
 
 static int menu_checkkey(int curkey,int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
@@ -1646,10 +1622,6 @@ void discardgraphics() /* release expanded/extended memory if any in use */
 #endif
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("realdos1_text")     /* place following in an overlay */
-#endif
-
 VIDEOINFO *vidtbl;  /* temporarily loaded fractint.cfg info */
 int vidtbllen;                 /* number of entries in above           */
 
@@ -1915,7 +1887,3 @@ void vidmode_keyname(int k,char *buf)
       sprintf(buf,"F%d",k);
       }
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()      /* back to normal segment */
-#endif

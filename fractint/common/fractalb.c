@@ -22,10 +22,6 @@ fractal routines.
 
 int bf_math = 0;
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("bigsetup_text")     /* place following in an overlay */
-#endif
-
 #ifdef DEBUG
 
 /**********************************************************************/
@@ -249,10 +245,6 @@ void bfcornerstofloat(void)
       if(typehasparm(fractype,i,NULL))
          param[i] = (double)bftofloat(bfparms[i]);
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ( )     /* back to normal segment */
-#endif
 
 /* -------------------------------------------------------------------- */
 /*    Bignumber Bailout Routines                                        */
@@ -487,10 +479,6 @@ int  bfMANRbailout()
    return(0);
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("bigsetup_text")     /* place following in an overlay */
-#endif
-
 int MandelbnSetup()
 {
    /* this should be set up dynamically based on corners */
@@ -644,10 +632,6 @@ int MandelbfSetup()
    restore_stack(saved);
    return (1);
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ( )     /* back to normal segment */
-#endif
 
 int mandelbn_per_pixel()
 {

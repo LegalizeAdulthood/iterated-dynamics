@@ -295,10 +295,6 @@ static int  Halleybailout(void)
 struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
 struct MP mptmpparm2x;
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
-
 static int  MPCHalleybailout(void)
 {
    static struct MP mptmpbailout;
@@ -308,9 +304,6 @@ static int  MPCHalleybailout(void)
    mpcold = mpcnew;
    return(0);
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 #endif
 
 #if defined(XFRACT) || defined(_WIN32)
@@ -563,9 +556,6 @@ struct MP mpt2;
 struct MP mpone;
 #endif
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 int MPCNewtonFractal(void)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -613,9 +603,6 @@ int MPCNewtonFractal(void)
     return(0);
 #endif
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 int
 Barnsley1Fractal(void)
@@ -1712,10 +1699,6 @@ int AplusOne, Ap1deg;
 struct MP mpAplusOne, mpAp1deg;
 struct MPC mpctmpparm;
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
-
 int MPCHalleyFractal(void)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -1782,9 +1765,6 @@ struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 int
 HalleyFractal(void)
@@ -2935,9 +2915,6 @@ int juliafp_per_pixel(void)
    return(0);
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 int MPCjulia_per_pixel(void)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -2957,9 +2934,6 @@ int MPCjulia_per_pixel(void)
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 int
 otherrichard8fp_per_pixel(void)
@@ -2991,10 +2965,6 @@ int othermandelfp_per_pixel(void)
    return(1); /* 1st iteration has been done */
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
-
 int MPCHalley_per_pixel(void)
 {
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -3015,9 +2985,6 @@ int MPCHalley_per_pixel(void)
    return(0);
 #endif
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 int Halley_per_pixel(void)
 {
