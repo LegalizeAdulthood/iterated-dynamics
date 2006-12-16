@@ -233,10 +233,6 @@ unsigned int chars_in_formula;
 
 #define LastSqr v[4].a
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("parser1_text")     /* place following in an overlay */
-#endif
-
 /* ParseErrs() defines; all calls to ParseErrs(), or any variable which will
    be used as the argument in a call to ParseErrs(), should use one of these
    defines.
@@ -333,10 +329,6 @@ static char *ParseErrs(int which)
    return((char *)ErrStrings[which]);
 }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
-
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
@@ -344,18 +336,12 @@ static char *ParseErrs(int which)
 #define FUNCT
 #ifdef FUNCT /* use function form save space - isn't really slower */
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 static void mStkFunct(void (*fct)(void))   /* call lStk via dStk */
 {
    Arg1->d = MPC2cmplx(Arg1->m);
    (*fct)();
    Arg1->m = cmplx2MPC(Arg1->d);
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 {
@@ -629,17 +615,11 @@ void dStkAdd(void) {
 
 #if !defined(XFRACT) && !defined(_WIN32)
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkAdd(void) {
    Arg2->m = MPCadd(Arg2->m, Arg1->m);
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkAdd(void) {
    Arg2->l.x += Arg1->l.x;
@@ -659,17 +639,11 @@ void dStkSub(void) {
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkSub(void) {
    Arg2->m = MPCsub(Arg2->m, Arg1->m);
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkSub(void) {
    Arg2->l.x -= Arg1->l.x;
@@ -889,17 +863,11 @@ void dStkMul(void) {
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkMul(void) {
    Arg2->m = MPCmul(Arg2->m, Arg1->m);
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkMul(void) {
    long x, y;
@@ -924,17 +892,11 @@ void dStkDiv(void) {
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkDiv(void) {
    Arg2->m = MPCdiv(Arg2->m, Arg1->m);
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkDiv(void) {
    long x, y, mod, x2, y2;
@@ -961,16 +923,10 @@ void dStkMod(void) {
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkMod(void) {
    Arg1->m.x = MPCmod(Arg1->m);
    Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkMod(void) {
 /*   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) + */
@@ -1757,9 +1713,6 @@ void dStkPwr(void) {
 }
 
 #if !defined(XFRACT) && !defined(_WIN32)
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("mpmath1_text")     /* place following in an overlay */
-#endif
 void mStkPwr(void) {
    _CMPLX x, y;
 
@@ -1770,9 +1723,6 @@ void mStkPwr(void) {
    Arg1--;
    Arg2--;
 }
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
 
 void lStkPwr(void) {
    _CMPLX x, y;
@@ -1871,10 +1821,6 @@ void StkJumpLabel (void)
    jump_index++;
 }
 
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("parser1_text")     /* place following in an overlay */
-#endif
 
 unsigned SkipWhiteSpace(char *Str) {
    unsigned n, Done;
@@ -2703,10 +2649,6 @@ static int ParseStr(char *Str, int pass) {
 }
 
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
-#endif
-
 int Formula(void) {
    if(FormName[0] == 0 || overflow) return(1);
 
@@ -2980,10 +2922,6 @@ int fill_jump_struct(void)
 }
 
 static char *FormStr;
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("parser1_text")     /* place following in an overlay */
-#endif
 
 int frmgetchar (FILE * openfile)
 {

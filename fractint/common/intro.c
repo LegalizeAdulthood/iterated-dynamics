@@ -99,7 +99,7 @@ void intro(void)
       if (keypressed() == 32)
          {      /* spacebar pauses */
          getakey();
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
          while (!keypressed()) ;
 #else
          waitkeypressed(0);

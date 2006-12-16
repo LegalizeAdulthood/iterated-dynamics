@@ -510,10 +510,6 @@ int logtable_in_extra_ok(void)
 
 /******* calcfract - the top level routine for generating an image *******/
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("calcfra1_text")     /* place following in an overlay */
-#endif
-
 int calcfract(void)
 {
    matherr_ct = 0;
@@ -1115,10 +1111,6 @@ static void perform_worklist()
       curfractalspecific->per_image = sv_per_image;
    }
 }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()     /* back to normal segment */
-#endif
 
 static int diffusion_scan(void)
 {
@@ -3628,10 +3620,6 @@ static int _fastcall ysym_split(int yaxis_col,int yaxis_between)
 #pragma optimize ("ea", off)
 #endif
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("calcfra1_text")     /* place following in an overlay */
-#endif
-
 static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetrical plot functions */
 {
    int i;
@@ -3879,10 +3867,6 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 
 #ifdef _MSC_VER
 #pragma optimize ("ea", on)
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ()       /* back to normal segment */
 #endif
 
 /**************** tesseral method by CJLT begins here*********************/

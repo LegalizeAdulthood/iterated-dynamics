@@ -187,10 +187,6 @@ S16 big_setS16(S16 BIGDIST *addr, S16 val)
 
 #endif
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("bignum1_text")     /* place following in an overlay */
-#endif
-
 /************************************************************************/
 /* convert_bn  -- convert bignum numbers from old to new lengths        */
 int convert_bn(bn_t new, bn_t old, int newbnlength, int newintlength,
@@ -392,10 +388,6 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 
     return s;
     }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ( )         /* back to normal segment */
-#endif
 
 /*********************************************************************/
 /*  b = l                                                            */
@@ -1359,19 +1351,11 @@ bn_t div_bn_int(bn_t r, bn_t n, U16 u)
     return r;
     }
 
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ("bignum1_text")     /* place following in an overlay */
-#endif
-
 /**********************************************************************/
 char *bntostr(char *s, int dec, bn_t r)
     {
     return unsafe_bntostr(s, dec, copy_bn(bntmpcpy2, r));
     }
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-#pragma code_seg ( )        /* back to normal segment */
-#endif
 
 /**********************************************************************/
 bn_t inv_bn(bn_t r, bn_t n)
