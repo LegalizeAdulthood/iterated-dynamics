@@ -203,7 +203,7 @@ static void WhichDiskError(int I_O)
    sprintf(buf,nmsg,errno,strerror(errno));
 */
    if (debugflag == 10000)
-      if(stopmsg(6,(char *)buf) == -1)
+      if(stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
         goodbye(); /* bailout if ESC */
 #endif
 }
@@ -346,14 +346,14 @@ static int CheckBounds (long start, long length, U16 handle)
    if(handletable[handle].Nowhere.size - start - length < 0)
       {
          static FCODE msg[] = {"Memory reference out of bounds."};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(length > (long)USHRT_MAX)
       {
          static FCODE msg[] = {"Tried to move > 65,535 bytes."};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
@@ -361,21 +361,21 @@ static int CheckBounds (long start, long length, U16 handle)
          (stackavail() <= DISKWRITELEN) )
       {
          static FCODE msg[] = {"Stack space insufficient for disk memory."};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(length <= 0)
       {
          static FCODE msg[] = {"Zero or negative length."};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(start < 0)
       {
          static FCODE msg[] = {"Negative offset."};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
@@ -407,7 +407,7 @@ void DisplayMemory (void)
    tmpfar = fr_farfree();
    strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,tmpextra,tmpfar,tmpexp,tmpext,tmpdisk);
-   stopmsg(20,(char *)buf);
+   stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);
 #endif
 }
 
@@ -420,7 +420,7 @@ void DisplayHandle (U16 handle)
    strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,handle,memstr[handletable[handle].Nowhere.stored_at],
            handletable[handle].Nowhere.size);
-   if(stopmsg(6,(char *)buf) == -1)
+   if(stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
      goodbye(); /* bailout if ESC, it's messy, but should work */
 }
 
@@ -519,7 +519,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    case EXTRA: /* MemoryAlloc */
       handletable[handle].Extra.size = toallocate;
       handletable[handle].Extra.stored_at = EXTRA;
-      handletable[handle].Extra.extramemory = (BYTE *)MK_FP(extraseg,start_avail_extra);
+      handletable[handle].Extra.extramemory = (BYTE *) extraseg,start_avail_extra);
       start_avail_extra += (U16)toallocate;
       numTOTALhandles++;
       success = TRUE;
@@ -636,7 +636,7 @@ dodisk:
       static FCODE fmsg[] = {"Asked for %s, allocated %lu bytes of %s, handle = %u."};
       strcpy(nmsg,fmsg);
       sprintf(buf,nmsg,memstr[stored_at],toallocate,memstr[use_this_type],handle);
-      stopmsg(20,(char *)buf);
+      stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);
       DisplayMemory();
    }
 
