@@ -488,6 +488,12 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
       return((U16)success); /* or it wraps around to negative */
 
+#if (defined(XFRACT) || defined(WINFRACT))
+/* this is ugly, but keeps us from having to change every call to */
+/* MemoryAlloc().  JCO */
+   stored_at = FARMEM;
+#endif
+
 /* check structure for requested memory type (add em up) to see if
    sufficient amount is available to grant request */
 
@@ -510,7 +516,6 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 /* attempt to allocate requested memory type */
    switch (use_this_type)
    {
-   default:
    case NOWHERE: /* MemoryAlloc */
       use_this_type = NOWHERE; /* in case nonsense value is passed */
       break;
@@ -597,6 +602,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       /* need to fall through and use disk memory, or will crash fractint */
 dodisk:
 #endif
+   default:
    case DISK: /* MemoryAlloc */
       memfile[9] = (char)(handle % 10 + (int)'0');
       memfile[8] = (char)((handle % 100) / 10 + (int)'0');
