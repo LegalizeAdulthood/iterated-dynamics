@@ -63,7 +63,7 @@ load_fractint_cfg(int options)
    int truecolorbits; 
 
    /* TODO: allocate real memory, not reuse shared segment */
-   vidtbl = MK_FP(extraseg,0);
+   vidtbl = extraseg;
    cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
    if (badconfig)  /* fractint.cfg already known to be missing or bad */
@@ -253,7 +253,7 @@ void stackscreen()
    if (++screenctr) { /* already have some stacked */
          static char msg[]={"stackscreen overflow"};
       if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(1,msg);
+         stopmsg(STOPMSG_NO_STACK,msg);
          exit(1);
          }
    /* TODO: allocate real memory, not reuse shared segment */
@@ -264,7 +264,7 @@ void stackscreen()
          MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);
       else {
             static char msg[]={"insufficient memory, aborting"};
-               stopmsg(1,msg);
+               stopmsg(STOPMSG_NO_STACK,msg);
                exit(1);
             }
       driver_set_clear();

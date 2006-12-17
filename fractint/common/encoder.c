@@ -182,7 +182,7 @@ restart:
       else
          strcat(buf,s_retain);
       interrupted = 1;
-      if (stopmsg(2, buf) < 0)
+      if (stopmsg(STOPMSG_CANCEL, buf) < 0)
       {
          interrupted = -1;
          unlink(tmpfile);
@@ -913,7 +913,7 @@ static int compress(int rowlimit)
    char accum_stack[256];
    accum = accum_stack;
    /* TODO: allocate real memory, not reuse shared segment */
-   htab = (long *)MK_FP(extraseg,0);
+   htab = (long *) extraseg;
    
    outcolor1 = 0;               /* use these colors to show progress */
    outcolor2 = 1;               /* (this has nothing to do with GIF) */

@@ -385,7 +385,7 @@ int get_the_rest(void)
 
   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-  ptr = (char *)MK_FP(extraseg,0);
+  ptr = (char *) extraseg;
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -487,7 +487,7 @@ int get_variations(void)
 
   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-  ptr = (char *)MK_FP(extraseg,0);
+  ptr = (char *) extraseg;
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -641,7 +641,7 @@ get_evol_restart:
 
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *) extraseg;
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
    /* adjust field param to make some sense when changing from random modes*/
    /* maybe should adjust for aspect ratio here? */

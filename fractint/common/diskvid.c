@@ -283,7 +283,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
            static FCODE cancel[] = {"Disk Video initialization interrupted:\n"};
          SetMemory(0, (U16)BLOCKLEN, 1L, offset, dv_handle);
          if (keypressed())           /* user interrupt */
-            if (stopmsg(2, cancel))  /* esc to cancel, else continue */
+            if (stopmsg(STOPMSG_CANCEL, cancel))  /* esc to cancel, else continue */
             {
                enddisk();
                goodmode = 0;

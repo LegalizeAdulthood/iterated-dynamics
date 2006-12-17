@@ -908,7 +908,7 @@ int tab_display()       /* display the status of the current image */
    /* This is so the bf_math manipulations here don't corrupt */
    /* the video modes or screen prompts. */
    /* TODO: allocate real memory, not reuse shared segment */
-      ptr_to_extraseg = MK_FP(extraseg,0);
+      ptr_to_extraseg = extraseg;
       save_extra_handle = MemoryAlloc((U16)22400, 1L, FARMEM);
       MoveToMemory(ptr_to_extraseg,(U16)22400,1L,0L,save_extra_handle);
       saved = save_stack();
@@ -1328,7 +1328,7 @@ static void area(void)
               msg,cnt,(long)xdots*(long)ydots,total_area,
               cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
 #endif
-    stopmsg(4,buf);
+    stopmsg(STOPMSG_NO_BUZZER,buf);
 }
 
 int endswithslash(char *fl)

@@ -1358,7 +1358,7 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    char      *msg = NULL;
 
    /* TODO: allocate real memory, not reuse shared segment */
-   info.buffer = MK_FP(extraseg, 0);
+   info.buffer = extraseg;
 
 /*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
    help_seek(8L);                               /* indeed it should - Bert */
@@ -1427,7 +1427,7 @@ ErrorAbort:
    if ( msg != NULL )
       {
       helptitle();
-      stopmsg(1, msg);
+      stopmsg(STOPMSG_NO_STACK, msg);
       }
 
    else if ( msg_func != NULL )
@@ -1474,7 +1474,7 @@ int init_help(void)
                close(help_file);
                help_file = -1;
                /* (leave out the error message)
-               stopmsg(1, err_not_in_exe);
+               stopmsg(STOPMSG_NO_STACK, err_not_in_exe);
                */
                }
 
@@ -1484,7 +1484,7 @@ int init_help(void)
                   {
                   close(help_file);
                   help_file = -1;
-                  stopmsg(1, err_wrong_ver);
+                  stopmsg(STOPMSG_NO_STACK, err_wrong_ver);
                   }
                else
                   base_off = hs.base;
@@ -1492,10 +1492,10 @@ int init_help(void)
                }
             }
          else
-            stopmsg(1, err_no_open);
+            stopmsg(STOPMSG_NO_STACK, err_no_open);
          }
       else
-         stopmsg(1, err_no_exe);
+         stopmsg(STOPMSG_NO_STACK, err_no_exe);
 
       }
 #endif
@@ -1517,14 +1517,14 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
             {
             static FCODE msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
             close(help_file);
-            stopmsg(1, msg);
+            stopmsg(STOPMSG_NO_STACK, msg);
             }
 
          else if ( hs.version != FIHELP_VERSION )
             {
             static FCODE msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
             close(help_file);
-            stopmsg(1, msg);
+            stopmsg(STOPMSG_NO_STACK, msg);
             }
 
          else
@@ -1541,7 +1541,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
 #else
          {"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif
-      stopmsg(1, msg);
+      stopmsg(STOPMSG_NO_STACK, msg);
       }
 
    help_seek(0L);
@@ -1567,7 +1567,7 @@ if (help_file == -1)            /* look for FRACTINT.HLP */
       static FCODE err_no_mem[] = "Not enough memory for help system!\n";
       close(help_file);
       help_file = -1;
-      stopmsg(1, err_no_mem);
+      stopmsg(STOPMSG_NO_STACK, err_no_mem);
 
       return (-2);
       }

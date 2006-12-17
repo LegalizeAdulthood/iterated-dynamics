@@ -8,11 +8,11 @@
 
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int                   active_system;
-extern int                   adapter;
-extern AlternateMath         alternatemath[];
-extern int                   Ambient;
-extern int                   andcolor;
+extern int                   active_system;						/* = 0 for DOS, = WINFRACT for WinFract */
+extern int                   adapter;							/* index into videotable[] */
+extern AlternateMath         alternatemath[];					/* alternate math function pointers */
+extern int                   Ambient;							/* Ambient= parameter value */
+extern int                   andcolor;							/* AND mask for iteration to get color index */
 extern struct MP             Ans;
 extern int                   Ap1deg;
 extern int                   AplusOne;
@@ -132,18 +132,18 @@ extern double                dpy;
 extern char                  drawmode;
 extern BYTE                  dstack[];
 extern U16                   dv_handle;
-extern double *          dx0;
-extern double *          dx1;
+extern double *				 dx0;
+extern double *				 dx1;
 extern double (_fastcall *   dxpixel)(void); /* set in FRACTALS.C */
 extern double                dxsize;
-extern double *          dy0;
-extern double *          dy1;
+extern double *				 dy0;
+extern double *				 dy1;
 extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
 extern int                   EPSFileType;
 extern int                   escape_exit;
 extern BYTE                  exitmode;
-extern SEGTYPE               extraseg;
+extern void *				 extraseg;
 extern int                   evolving;
 extern U16                   evolve_handle;
 extern int                   eyeseparation;

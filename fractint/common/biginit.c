@@ -124,9 +124,9 @@ static void init_bf_2(void)
    /* TODO: allocate real memory, not reuse shared segment */
     /* allocate all the memory at once within the same segment (DOS) */
 #if defined(BIG_FAR) || defined(BIG_ANSI_C)
-    bnroot = (bf_t)MK_FP(extraseg,ENDVID); /* ENDVID is to avoid videotable */
+    bnroot = (bf_t) extraseg;
 #else /* BASED or NEAR  */
-    bnroot = (bf_t)ENDVID;  /* ENDVID is to avoid videotable */
+    bnroot = (bf_t) 0;  /* ENDVID is to avoid videotable */
 #endif
 #ifdef BIG_BASED
     bignum_seg = (_segment)extraseg;

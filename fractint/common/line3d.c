@@ -2662,7 +2662,7 @@ static int line3dmem(void)
       the purpose of filling in gaps with triangle procedure */
    /* first 8k of extraseg now used in decoder TW 3/95 */
    /* TODO: allocate real memory, not reuse shared segment */
-   lastrow = MK_FP(extraseg, 0);
+   lastrow = extraseg;
 
    check_extra = sizeof(*lastrow) * xdots;
    if (SPHERE)
@@ -2721,7 +2721,7 @@ static int line3dmem(void)
 #else
       sprintf(tmpmsg, "used %ld%s", check_extra, extramsg);
 #endif
-      stopmsg(4, tmpmsg);
+      stopmsg(STOPMSG_NO_BUZZER, tmpmsg);
    }
    return(0);
 }

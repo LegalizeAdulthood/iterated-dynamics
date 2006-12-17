@@ -109,7 +109,7 @@ int stopmsg (int flags, char *msg)
    ret = 0;
    savelookatmouse = lookatmouse;
    lookatmouse = -13;
-   if ((flags & 1))
+   if ((flags & STOPMSG_NO_STACK))
       blankrows(toprow=12,10,7);
    else {
       driver_stack_screen();
@@ -118,22 +118,22 @@ int stopmsg (int flags, char *msg)
       }
    textcbase = 2; /* left margin is 2 */
    driver_put_string(toprow,0,7,msg);
-   if (flags & 2)
+   if (flags & STOPMSG_CANCEL)
       driver_put_string(textrow+2,0,7,s_escape_cancel);
    else
       driver_put_string(textrow+2,0,7,s_anykey);
    textcbase = 0; /* back to full line */
-   color = (flags & 16) ? C_STOP_INFO : C_STOP_ERR;
+   color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
    driver_set_attr(toprow,0,color,(textrow+1-toprow)*80);
    driver_hide_text_cursor();   /* cursor off */
-   if ((flags & 4) == 0)
+   if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & 16) ? 0 : 2);
    while (keypressed()) /* flush any keyahead */
       getakey();
    if(debugflag != 324)
       if (getakeynohelp() == ESC)
          ret = -1;
-   if ((flags & 1))
+   if ((flags & STOPMSG_NO_STACK))
       blankrows(toprow,10,7);
    else
       driver_unstack_screen();
@@ -1583,7 +1583,7 @@ int restoregraphics()
 
    swapoffset = 0;
    /* TODO: allocate real memory, not reuse shared segment */
-   swapvidbuf = MK_FP(extraseg+0x1000,0); /* for swapnormwrite case */
+   swapvidbuf = extraseg; /* for swapnormwrite case */
 
    while (swapoffset < swaptotlen) {
       swaplength = SWAPBLKLEN;
@@ -1655,7 +1655,7 @@ int load_fractint_cfg(int options)
    int truecolorbits; 
 
    /* TODO: allocate real memory, not reuse shared segment */
-   vidtbl = MK_FP(extraseg,0);
+   vidtbl = extraseg;
    cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
 #ifdef XFRACT

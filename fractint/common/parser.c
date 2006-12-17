@@ -962,8 +962,6 @@ void StkLod(void) {
    *Arg1 = *Load[LodPtr++];
 }
 
-void (*PtrStkLod)(void) = StkLod;
-
 void StkClr(void) {
    s[0] = *Arg1;
    Arg1 = &s[0];
@@ -2036,24 +2034,24 @@ struct OP_LIST {
    void (**ptr)(void);
 };
 
-struct OP_LIST OPList[] = {
-    {","  , &PtrStkClr  }, /*  0 */
-    {"!=" , &StkNE      }, /*  1 */
-    {"="  , &PtrStkSto  }, /*  2 */
-    {"==" , &StkEQ      }, /*  3 */
-    {"<"  , &StkLT      }, /*  4 */
-    {"<=" , &StkLTE     }, /*  5 */
-    {">"  , &StkGT      }, /*  6 */
-    {">=" , &StkGTE     }, /*  7 */
-    {"|"  , &StkMod     }, /*  8 */
-    {"||" , &StkOR      }, /*  9 */
-    {"&&" , &StkAND     }, /* 10 */
-    {":"  , &PtrEndInit }, /* 11 */
-    {"+"  , &StkAdd     }, /* 12 */
-    {"-"  , &StkSub     }, /* 13 */
-    {"*"  , &StkMul     }, /* 14 */
-    {"/"  , &StkDiv     }, /* 15 */
-    {"^"  , &StkPwr     }, /* 16 */
+char *OPList[] = {
+    ",",	/*  0 */
+    "!=",	/*  1 */
+    "=",	/*  2 */
+    "==",	/*  3 */
+    "<",	/*  4 */
+    "<=",	/*  5 */
+    ">",	/*  6 */
+    ">=",	/*  7 */
+    "|",	/*  8 */
+    "||",	/*  9 */
+    "&&",	/* 10 */
+    ":",	/* 11 */
+    "+",	/* 12 */
+    "-",	/* 13 */
+    "*",	/* 14 */
+    "/",	/* 15 */
+    "^"		/* 16 */
 };
 
 
@@ -3379,8 +3377,8 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          }
          this_token->token_str[i] = (char) 0;
          if(this_token->token_type == OPERATOR) {
-            for(i=0; i < sizeof(OPList)/sizeof(struct OP_LIST); i++) {
-               if(!strcmp(OPList[i].s, this_token->token_str)) {
+            for(i=0; i < sizeof(OPList)/sizeof(OPList[0]); i++) {
+               if(!strcmp(OPList[i], this_token->token_str)) {
                   this_token->token_id = i;
                }
             }
@@ -3515,7 +3513,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       for(j = 0; j < i && j < 25; j++)
          msgbuf[j+k+2] = (char) getc(open_file);
       msgbuf[j+k+2] = (char) 0;
-      stopmsg(8, msgbuf);
+      stopmsg(STOPMSG_FIXED_FONT, msgbuf);
       return 0;
    }
       /* get symmetry */
@@ -3529,10 +3527,10 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
                stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
                return 0;
             case '\r': case '\n':
-               stopmsg(8,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+               stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                return 0;
             case '{':
-               stopmsg(8,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+               stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
                return 0;
             case ' ': case '\t':
                break;
@@ -3558,7 +3556,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
          strcat(msgbuf, ":\n   ");
          strcat(msgbuf, sym_buf);
-         stopmsg(8, msgbuf);
+         stopmsg(STOPMSG_FIXED_FONT, msgbuf);
          free(msgbuf);
       }
    }
@@ -3567,10 +3565,10 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       while(!done) {
          switch (c = getc(open_file)) {
             case EOF: case '\032':
-               stopmsg(8,ParseErrs(PE_UNEXPECTED_EOF));
+               stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_UNEXPECTED_EOF));
                return 0;
             case '\r': case '\n':
-               stopmsg(8,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+               stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                return 0;
             case '{':
                done = 1;
@@ -3638,12 +3636,12 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
    while(!Done) {
       frmgettoken(File, &temp_tok);
       if (temp_tok.token_type == NOT_A_TOKEN) {
-         stopmsg(8, "Unexpected token error in PrepareFormula\n");
+         stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
          fseek(File, filepos, SEEK_SET);
          return NULL;
       }
       else if (temp_tok.token_type == END_OF_FORMULA) {
-         stopmsg(8, "Formula has no executable instructions\n");
+         stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
          fseek(File, filepos, SEEK_SET);
          return NULL;
       }
@@ -3660,7 +3658,7 @@ static char *PrepareFormula(FILE * File, int from_prompts1c) {
       frmgettoken(File, &temp_tok);
       switch (temp_tok.token_type) {
          case NOT_A_TOKEN:
-            stopmsg(8, "Unexpected token error in PrepareFormula\n");
+            stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
             fseek(File, filepos, SEEK_SET);
             return NULL;
          case END_OF_FORMULA:
@@ -3847,13 +3845,13 @@ static void parser_allocate(void)
       if(pass == 0 || is_bad_form)
       {
    /* TODO: allocate real memory, not reuse shared segment */
-         typespecific_workarea = (char *)MK_FP(extraseg,0);
+         typespecific_workarea = (char *)extraseg;
          used_extra = 1;
       }
       else if(1L<<16 > end_dx_array + total_formula_mem)
       {
    /* TODO: allocate real memory, not reuse shared segment */
-         typespecific_workarea = (char *)MK_FP(extraseg,0) + end_dx_array;
+         typespecific_workarea = (char *)extraseg + end_dx_array;
          used_extra = 1;
       }
       else if(is_bad_form == 0)

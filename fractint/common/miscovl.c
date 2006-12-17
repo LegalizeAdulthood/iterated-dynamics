@@ -125,7 +125,7 @@ void make_batch_file()
 
    /* put comment storage in extraseg */
    /* TODO: allocate real memory, not reuse shared segment */
-   inpcommandfile = MK_FP(extraseg,0);
+   inpcommandfile = extraseg;
    inpcommandname = inpcommandfile+80;
    inpcomment[0]    = inpcommandname+(ITEMNAMELEN + 1);
    inpcomment[1]    = inpcomment[0] + MAXCMT;
@@ -398,7 +398,7 @@ Continue to replace it, Cancel to back out"};
                    strcat(buf2,s2a);
                else
                    strcat(buf2,s2);
-               if (stopmsg(18, buf2) < 0)
+               if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                {                /* cancel */
                   fclose(infile);
                   fclose(parmfile);
@@ -577,7 +577,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    /* Using near string boxx for buffer after saving to extraseg */
 
    /* TODO: allocate real memory, not reuse shared segment */
-   saveshared = MK_FP(extraseg,0);
+   saveshared = extraseg;
    memcpy(saveshared,boxx,10000);
    memset(boxx,0,10000);
    wb_data.buf = (char *)boxx;
@@ -1612,6 +1612,8 @@ void showfreemem(void)
 }
 #endif
 
+/* TODO: make this work for a driver situation */
+#if !defined(_WIN32)
 int edit_text_colors()
 {
    int save_debugflag,save_lookatmouse;
@@ -1696,6 +1698,7 @@ int edit_text_colors()
          }
       }
 }
+#endif
 
 static int *entsptr;
 static int modes_changed;
@@ -1777,7 +1780,7 @@ int select_video_mode(int curmode)
    static FCODE msg[]={"Save new function key assignments or cancel changes?"};
       if (modes_changed /* update fractint.cfg for new key assignments */
         && badconfig == 0
-        && stopmsg(22,msg) == 0)
+        && stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,msg) == 0)
          update_fractint_cfg();
       return(-1);
       }

@@ -769,12 +769,6 @@
 				RelativePath=".\headers\cmplx.h">
 			</File>
 			<File
-				RelativePath=".\headers\Dialog.h">
-			</File>
-			<File
-				RelativePath=".\headers\dosprot.h">
-			</File>
-			<File
 				RelativePath=".\headers\drivers.h">
 			</File>
 			<File
@@ -796,43 +790,13 @@
 				RelativePath=".\headers\lsys.h">
 			</File>
 			<File
-				RelativePath=".\headers\Mathtool.h">
-			</File>
-			<File
 				RelativePath=".\headers\mpmath.h">
 			</File>
 			<File
 				RelativePath=".\headers\port.h">
 			</File>
 			<File
-				RelativePath=".\headers\Profile.h">
-			</File>
-			<File
 				RelativePath=".\headers\prototyp.h">
-			</File>
-			<File
-				RelativePath=".\headers\Select.h">
-			</File>
-			<File
-				RelativePath=".\headers\targa.h">
-			</File>
-			<File
-				RelativePath=".\headers\targa_lc.h">
-			</File>
-			<File
-				RelativePath=".\headers\tplus.h">
-			</File>
-			<File
-				RelativePath=".\headers\uclock.h">
-			</File>
-			<File
-				RelativePath=".\headers\unix.h">
-			</File>
-			<File
-				RelativePath=".\headers\unixprot.h">
-			</File>
-			<File
-				RelativePath=".\headers\Winfract.h">
 			</File>
 			<File
 				RelativePath=".\headers\winprot.h">
