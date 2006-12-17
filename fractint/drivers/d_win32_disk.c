@@ -8,32 +8,11 @@
 #define STRICT
 #include <windows.h>
 
-//#include <stdlib.h>
-//#include <curses.h>
-//#include <signal.h>
-//#include <sys/types.h>
-//#ifdef _AIX
-//#include <sys/select.h>
-//#endif
-//#if !defined(WIN32)
-//#include <sys/time.h>
-//#include <sys/ioctl.h>
-//#endif
-//#ifdef FPUERR
-//#include <floatingpoint.h>
-//#endif
-//#ifdef __hpux
-//#include <sys/file.h>
-//#endif
-//#include <fcntl.h>
-//#include <string.h>
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 #include "WinText.h"
-
-extern HINSTANCE g_instance;
 
 #if !defined(ASSERT)
 #if defined(_DEBUG)
@@ -42,6 +21,10 @@ extern HINSTANCE g_instance;
 #define ASSERT(x_)
 #endif
 #endif
+
+#define MAXSCREENS 3
+
+extern HINSTANCE g_instance;
 
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
 #if 0
@@ -53,12 +36,9 @@ extern HINSTANCE g_instance;
 # define FNDELAY O_NONBLOCK
 #endif
 #include <assert.h>
-
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int) iocount)
-
 /* external variables (set in the FRACTINT.CFG file, but findable here */
-
 extern int dotmode;  /* video access method (= 19)    */
 extern int sxdots, sydots;  /* total # of dots on the screen   */
 extern int sxoffs, syoffs;  /* offset of drawing area          */
@@ -70,51 +50,34 @@ extern int inside_help;
 extern  float finalaspectratio;
 extern  float screenaspect;
 extern int lookatmouse;
-
 extern VIDEOINFO videotable[];
-
 /* the video-palette array (named after the VGA adapter's video-DAC) */
-
 extern unsigned char dacbox[256][3];
-
 extern void drawbox();
-
 extern int text_type;
 extern int helpmode;
 extern int rotate_hi;
-
 extern void fpe_handler();
-
 #ifdef FPUERR
 static void continue_hdl(int sig, int code, struct sigcontext *scp, char *addr);
 #endif
-
 #define DEFX 640
 #define DEFY 480
 #define DEFXY "640x480+0+0"
-
 extern int editpal_cursor;
 extern void Cursor_SetPos();
-
 #define SENS 1
 #define ABS(x)		((x) > 0   ? (x) : -(x))
 #define MIN(x, y)	((x) < (y) ? (x) : (y))
 #define SIGN(x)		((x) > 0   ? 1   : -1)
-
 #define SHELL "/bin/csh"
-
 #define DRAW_INTERVAL 6
-
 extern void (*dotwrite)(int, int, int);	/* write-a-dot routine */
 extern int (*dotread)(int, int); 		/* read-a-dot routine */
 extern void (*linewrite)(void);			/* write-a-line routine */
 extern void (*lineread)(void);			/* read-a-line routine */
-
 extern void normalineread(void);
 extern void normaline(void);
-
-#define MAXSCREENS 3
-
 #endif
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
 
@@ -128,11 +91,16 @@ typedef struct tagDriverWin32Disk DriverWin32Disk;
 struct tagDriverWin32Disk
 {
 	Driver pub;
+
 	BYTE *pixels;
 	size_t pixels_len;
 	int width;
 	int height;
 	unsigned char cols[256][3];
+
+	int screen_count;
+	BYTE *saved_screens[MAXSCREENS];
+	int saved_cursor[MAXSCREENS+1];
 #if 0
 	SCREEN *term;
 	WINDOW *curwin;
@@ -154,10 +122,6 @@ struct tagDriverWin32Disk
 
 	unsigned char *fontPtr;
 
-	int screenctr;
-
-	BYTE *savescreen[MAXSCREENS];
-	int saverc[MAXSCREENS+1];
 #endif
 };
 
@@ -832,6 +796,7 @@ static void
 win32_disk_redraw(Driver *drv)
 {
 	CALLED("win32_disk_redraw");
+	wintext_paintscreen(0, 80, 0, 24);
 }
 
 /*----------------------------------------------------------------------
@@ -854,7 +819,7 @@ static int
 win32_disk_get_key(Driver *drv, int block)
 {
 	CALLED("win32_disk_get_key");
-	wintext_look_for_activity(block);
+	return wintext_getkeypress(block);
 #if 0
 	static int skipcount = 0;
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
@@ -1132,11 +1097,7 @@ static void
 win32_disk_set_clear(Driver *drv)
 {
 	CALLED("win32_disk_set_clear");
-#if 0
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-	wclear(di->curwin);
-	wrefresh(di->curwin);
-#endif
+	wintext_clear();
 }
 
 /************** Function scrollup(toprow, botrow) ******************
@@ -1196,6 +1157,7 @@ static void
 win32_disk_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
 	CALLED("win32_disk_set_attr");
+	wintext_set_attr(row, col, attr, count);
 }
 
 static void
@@ -1211,84 +1173,64 @@ win32_disk_hide_text_cursor(Driver *drv)
 static void
 win32_disk_stack_screen(Driver *drv)
 {
-	CALLED("win32_disk_stack_screen");
-#if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	int i;
 
-	di->saverc[di->screenctr+1] = textrow*80 + textcol;
-	if (++di->screenctr)
+	CALLED("win32_disk_stack_screen");
+	di->saved_cursor[di->screen_count+1] = textrow*80 + textcol;
+	if (++di->screen_count)
 	{ /* already have some stacked */
 		static char msg[] =
 		{ "stackscreen overflow" };
-		if ((i = di->screenctr - 1) >= MAXSCREENS)
+		if ((i = di->screen_count - 1) >= MAXSCREENS)
 		{ /* bug, missing unstack? */
-			stopmsg(1,msg);
+			stopmsg(STOPMSG_NO_STACK, msg);
 			exit(1);
 		}
-		{
-			WINDOW **ptr = (WINDOW **) malloc(sizeof(WINDOW *));
-			if (ptr)
-			{
-				*ptr = di->curwin;
-				di->savescreen[i] = (BYTE *) ptr;
-				di->curwin = newwin(0, 0, 0, 0);
-				touchwin(di->curwin);
-				wrefresh(di->curwin);
-			}
-			else
-			{
-				stopmsg(1,msg);
-				exit(1);
-			}
-		}
+		di->saved_screens[i] = wintext_screen_get();
 		win32_disk_set_clear(drv);
 	}
 	else
+	{
 		win32_disk_set_for_text(drv);
-#endif
+	}
 }
 
 static void
 win32_disk_unstack_screen(Driver *drv)
 {
-	CALLED("win32_disk_unstack_screen");
-#if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
-	textrow = di->saverc[di->screenctr] / 80;
-	textcol = di->saverc[di->screenctr] % 80;
-	if (--di->screenctr >= 0)
+	CALLED("win32_disk_unstack_screen");
+	textrow = di->saved_cursor[di->screen_count] / 80;
+	textcol = di->saved_cursor[di->screen_count] % 80;
+	if (--di->screen_count >= 0)
 	{ /* unstack */
-		WINDOW **ptr = (WINDOW **) di->savescreen[di->screenctr];
-
-		delwin(di->curwin);
-		di->curwin = *ptr;
-		touchwin(di->curwin);
-		wrefresh(di->curwin);
-
-		free(ptr);
+		wintext_screen_set(di->saved_screens[di->screen_count]);
+		free(di->saved_screens[di->screen_count]);
+		di->saved_screens[di->screen_count] = NULL;
 	}
 	else
+	{
 		win32_disk_set_for_graphics(drv);
+	}
 	win32_disk_move_cursor(drv, -1, -1);
-#endif
 }
 
 static void
 win32_disk_discard_screen(Driver *drv)
 {
-	CALLED("win32_disk_discard_screen");
-#if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-	if (--di->screenctr >= 0)
+
+	CALLED("win32_disk_discard_screen");
+	if (--di->screen_count >= 0)
 	{ /* unstack */
-		if (di->savescreen[di->screenctr])
+		if (di->saved_screens[di->screen_count])
 		{
-			free(di->savescreen[di->screenctr]);
+			free(di->saved_screens[di->screen_count]);
+			di->saved_screens[di->screen_count] = NULL;
 		}
 	}
-#endif
 }
 
 static int
@@ -1333,6 +1275,7 @@ win32_disk_diskp(Driver *drv)
 static DriverWin32Disk win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk),
+
 #if 0
 	NULL,				/* term */
 	NULL,				/* curwin */
@@ -1349,9 +1292,9 @@ static DriverWin32Disk win32_disk_driver_info =
 	{ 0 },				/* ipixtab */
 	0,					/* xbufkey */
 	NULL,				/* fontPtr */
-	0,					/* screenctr */
-	{ 0 },				/* savescreen */
-	{ 0 }				/* saverc */
+	0,					/* screen_count */
+	{ 0 },				/* saved_screens */
+	{ 0 }				/* saved_cursor */
 #endif
 };
 
