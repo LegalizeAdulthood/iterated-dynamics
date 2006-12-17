@@ -91,7 +91,7 @@ _CMPLX init,tmp,old,new,saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
 int row, col, passes;
-int iterations, invert;
+int invert;
 double f_radius,f_xcenter, f_ycenter; /* for inversion */
 void (_fastcall *putcolor)(int,int,int) = putcolor_a;
 void (_fastcall *plot)(int,int,int) = putcolor_a;
