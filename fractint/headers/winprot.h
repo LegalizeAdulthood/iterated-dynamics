@@ -148,19 +148,6 @@ extern void aspectratio_crop(float, float);
 extern void setvideotext(void);
 extern int load_fractint_cfg(int);
 
-/*  wintext -- C file prototypes */
-
-extern void wintext_destroy(void);
-extern int wintext_texton(void);
-extern int wintext_textoff(void);
-extern void wintext_putstring(int, int, int, const char *);
-extern void wintext_paintscreen(int, int, int, int);
-extern void wintext_cursor(int, int, int);
-extern int wintext_look_for_activity(int);
-extern void wintext_addkeypress(unsigned int);
-extern unsigned int wintext_getkeypress(int);
-extern void wintext_scroll_up(int top, int bot);
-
 /* added for Win32 port */
 extern void gettruecolor(int, int, int*, int*, int*);
 extern void puttruecolor(int, int, int, int, int);
@@ -178,5 +165,6 @@ extern void initasmvars(void);
 extern void adapter_detect(void);
 
 extern void windows_shell_to_dos(void);
+extern int waitkeypressed(int timeout);
 
 #endif
