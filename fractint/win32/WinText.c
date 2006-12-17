@@ -40,8 +40,8 @@ void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
     also be called  manually by your program when it wants a portion
     of the screen updated (the actual data is kept in two arrays, which
     your program has presumably updated:)
-       unsigned char wintext_chars[WINTEXT_MAX_ROW][80]  holds the text
-       unsigned char wintext_attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
+       unsigned char chars[WINTEXT_MAX_ROW][80]  holds the text
+       unsigned char attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
 
 void wintext_cursor(int xpos, int ypos, int cursor_type);
     Sets the cursor to character position (xpos, ypos) and switches to
@@ -75,23 +75,32 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
     the applications program, but must be referenced as a call-back
     routine by your ".DEF" file.
 
-        The 'wintext_textmode' flag tracks the current textmode status.
+        The 'g_wintext.textmode' flag tracks the current textmode status.
         Note that pressing Alt-F4 closes and destroys the window *and*
         resets this flag (to 1), so the main program should look at
         this flag whenever it is possible that Alt-F4 has been hit!
         ('wintext_getkeypress()' returns a 27 (ESCAPE) if this happens)
         (Note that you can use an 'WM_CLOSE' case to handle this situation.)
-        The 'wintext_textmode' values are:
+        The 'g_wintext.textmode' values are:
                 0 = the initialization routine has never been called!
                 1 = text mode is *not* active
                 2 = text mode *is* active
-        There is also a 'wintext_AltF4hit' flag that is non-zero if
+        There is also a 'g_wintext.AltF4hit' flag that is non-zero if
         the window has been closed (by an Alt-F4, or a WM_CLOSE sequence)
         but the application program hasn't officially closed the window yet.
 */
 
-static int wintext_textmode = 0;
-static int wintext_AltF4hit = 0;
+struct tagWinText_Globals
+{
+	int textmode;
+	int AltF4hit;
+};
+typedef struct tagWinText_Globals WinText_Globals;
+static WinText_Globals g_wintext =
+{
+	0,
+	0
+};
 
 /* function prototypes */
 
@@ -100,30 +109,37 @@ static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 /* Local copy of the "screen" characters and attributes */
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
-unsigned char wintext_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-unsigned char wintext_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-int wintext_buffer_init;     /* zero if 'screen' is uninitialized */
 
-/* font information */
+struct tagWinText_Instance
+{
+	unsigned char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	int buffer_init;     /* zero if 'screen' is uninitialized */
 
-HFONT wintext_hFont;
-int wintext_char_font;
-int wintext_char_width;
-int wintext_char_height;
-int wintext_char_xchars;
-int wintext_char_ychars;
-int wintext_max_width;
-int wintext_max_height;
+	/* font information */
 
-/* "cursor" variables (AKA the "caret" in Window-Speak) */
-int wintext_cursor_x;
-int wintext_cursor_y;
-int wintext_cursor_type;
-int wintext_cursor_owned;
-HBITMAP wintext_bitmap[3];
-short wintext_cursor_pattern[3][40];
+	HFONT hFont;
+	int char_font;
+	int char_width;
+	int char_height;
+	int char_xchars;
+	int char_ychars;
+	int max_width;
+	int max_height;
 
-LPSTR wintext_title_text;         /* title-bar text */
+	/* "cursor" variables (AKA the "caret" in Window-Speak) */
+	int cursor_x;
+	int cursor_y;
+	int cursor_type;
+	int cursor_owned;
+	HBITMAP bitmap[3];
+	short cursor_pattern[3][40];
+
+	LPSTR title_text;         /* title-bar text */
+};
+typedef struct tagWinText_Instance WinText_Instance;
+static WinText_Instance g_instance = { 0 };
+
 
 /* a few Windows variables we need to remember globally */
 
@@ -202,7 +218,7 @@ BOOL wintext_initialize(HINSTANCE hInstance, HWND hWndParent, LPSTR titletext)
 
 	OutputDebugString("wintext_initialize\n");
     wintext_hInstance = hInstance;
-    wintext_title_text = titletext;
+    g_instance.title_text = titletext;
     wintext_hWndParent = hWndParent;
 
     wc.style = 0;
@@ -219,46 +235,46 @@ BOOL wintext_initialize(HINSTANCE hInstance, HWND hWndParent, LPSTR titletext)
     return_value = RegisterClass(&wc);
 
     /* set up the font characteristics */
-    wintext_char_font = OEM_FIXED_FONT;
-    wintext_hFont = GetStockObject(wintext_char_font);
+    g_instance.char_font = OEM_FIXED_FONT;
+    g_instance.hFont = GetStockObject(g_instance.char_font);
     hDC=GetDC(hWndParent);
-    hOldFont = SelectObject(hDC, wintext_hFont);
+    hOldFont = SelectObject(hDC, g_instance.hFont);
     GetTextMetrics(hDC, &TextMetric);
     SelectObject(hDC, hOldFont);
     ReleaseDC(hWndParent, hDC);
-    wintext_char_width  = TextMetric.tmMaxCharWidth;
-    wintext_char_height = TextMetric.tmHeight;
-    wintext_char_xchars = WINTEXT_MAX_COL;
-    wintext_char_ychars = WINTEXT_MAX_ROW;
+    g_instance.char_width  = TextMetric.tmMaxCharWidth;
+    g_instance.char_height = TextMetric.tmHeight;
+    g_instance.char_xchars = WINTEXT_MAX_COL;
+    g_instance.char_ychars = WINTEXT_MAX_ROW;
 
 	/* maximum screen width */
-    wintext_max_width = wintext_char_xchars*wintext_char_width + GetSystemMetrics(SM_CXFRAME)*2;
+    g_instance.max_width = g_instance.char_xchars*g_instance.char_width + GetSystemMetrics(SM_CXFRAME)*2;
     /* maximum screen height */
-	wintext_max_height = wintext_char_ychars*wintext_char_height + GetSystemMetrics(SM_CYFRAME)*2
+	g_instance.max_height = g_instance.char_ychars*g_instance.char_height + GetSystemMetrics(SM_CYFRAME)*2
             - 1 + GetSystemMetrics(SM_CYCAPTION);
 
     /* set up the font and caret information */
     for (i = 0; i < 3; i++)
 	{
-        for (j = 0; j < wintext_char_height; j++)
+        for (j = 0; j < g_instance.char_height; j++)
 		{
-            wintext_cursor_pattern[i][j] = 0;
+            g_instance.cursor_pattern[i][j] = 0;
 		}
 	}
-    for (j = wintext_char_height-2; j < wintext_char_height; j++)
+    for (j = g_instance.char_height-2; j < g_instance.char_height; j++)
 	{
-        wintext_cursor_pattern[1][j] = 0x00ff;
+        g_instance.cursor_pattern[1][j] = 0x00ff;
 	}
-    for (j = 0; j < wintext_char_height; j++)
+    for (j = 0; j < g_instance.char_height; j++)
 	{
-        wintext_cursor_pattern[2][j] = 0x00ff;
+        g_instance.cursor_pattern[2][j] = 0x00ff;
 	}
-    wintext_bitmap[0] = CreateBitmap(8, wintext_char_height, 1, 1, (LPSTR)wintext_cursor_pattern[0]);
-    wintext_bitmap[1] = CreateBitmap(8, wintext_char_height, 1, 1, (LPSTR)wintext_cursor_pattern[1]);
-    wintext_bitmap[2] = CreateBitmap(8, wintext_char_height, 1, 1, (LPSTR)wintext_cursor_pattern[2]);
+    g_instance.bitmap[0] = CreateBitmap(8, g_instance.char_height, 1, 1, (LPSTR)g_instance.cursor_pattern[0]);
+    g_instance.bitmap[1] = CreateBitmap(8, g_instance.char_height, 1, 1, (LPSTR)g_instance.cursor_pattern[1]);
+    g_instance.bitmap[2] = CreateBitmap(8, g_instance.char_height, 1, 1, (LPSTR)g_instance.cursor_pattern[2]);
 
-    wintext_textmode = 1;
-    wintext_AltF4hit = 0;
+    g_wintext.textmode = 1;
+    g_wintext.AltF4hit = 0;
 
     return return_value;
 }
@@ -272,21 +288,21 @@ void wintext_destroy(void)
 
 	OutputDebugString("wintext_destroy\n");
 
-	if (wintext_textmode == 2)  /* text is still active! */
+	if (g_wintext.textmode == 2)  /* text is still active! */
 	{
         wintext_textoff();
 	}
-    if (wintext_textmode != 1)  /* not in the right mode */
+    if (g_wintext.textmode != 1)  /* not in the right mode */
 	{
         return;
 	}
 
     for (i = 0; i < 3; i++)
 	{
-        DeleteObject((HANDLE) wintext_bitmap[i]);
+        DeleteObject((HANDLE) g_instance.bitmap[i]);
 	}
-    wintext_textmode = 0;
-    wintext_AltF4hit = 0;
+    g_wintext.textmode = 0;
+    g_wintext.AltF4hit = 0;
 }
 
 
@@ -299,31 +315,31 @@ int wintext_texton(void)
 
 	OutputDebugString("wintext_texton\n");
 
-    if (wintext_textmode != 1)  /* not in the right mode */
+    if (g_wintext.textmode != 1)  /* not in the right mode */
 	{
         return 0;
 	}
 
     /* initialize the cursor */
-    wintext_cursor_x    = 0;
-    wintext_cursor_y    = 0;
-    wintext_cursor_type = 0;
-    wintext_cursor_owned = 0;
+    g_instance.cursor_x    = 0;
+    g_instance.cursor_y    = 0;
+    g_instance.cursor_type = 0;
+    g_instance.cursor_owned = 0;
 
     /* clear the keyboard buffer */
     wintext_keypress_count = 0;
     wintext_keypress_head  = 0;
     wintext_keypress_tail  = 0;
     wintext_keypress_initstate = 0;
-    wintext_buffer_init = 0;
+    g_instance.buffer_init = 0;
 
     hWnd = CreateWindow("FractintForWindowsV0011",
-        wintext_title_text,
+        g_instance.title_text,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,               /* default horizontal position */
         CW_USEDEFAULT,               /* default vertical position */
-        wintext_max_width,
-        wintext_max_height,
+        g_instance.max_width,
+        g_instance.max_height,
         wintext_hWndParent,
         NULL,
         wintext_hInstance,
@@ -332,8 +348,8 @@ int wintext_texton(void)
     /* squirrel away a global copy of 'hWnd' for later */
     wintext_hWndCopy = hWnd;
 
-    wintext_textmode = 2;
-    wintext_AltF4hit = 0;
+    g_wintext.textmode = 2;
+    g_wintext.AltF4hit = 0;
 
     ShowWindow(wintext_hWndCopy, SW_SHOWNORMAL);
     UpdateWindow(wintext_hWndCopy);
@@ -349,21 +365,21 @@ int wintext_texton(void)
 int wintext_textoff(void)
 {
 	OutputDebugString("wintext_textoff\n");
-    wintext_AltF4hit = 0;
-    if (wintext_textmode != 2)  /* not in the right mode */
+    g_wintext.AltF4hit = 0;
+    if (g_wintext.textmode != 2)  /* not in the right mode */
 	{
         return 0;
 	}
     DestroyWindow(wintext_hWndCopy);
-    wintext_textmode = 1;
+    g_wintext.textmode = 1;
     return 0;
 }
 
 static void wintext_OnClose(HWND window)
 {
 	OutputDebugString("wintext_OnClose\n");
-	wintext_textmode = 1;
-	wintext_AltF4hit = 1;
+	g_wintext.textmode = 1;
+	g_wintext.AltF4hit = 1;
 }
 
 static void wintext_OnSetFocus(HWND window, HWND old_focus)
@@ -371,9 +387,9 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
 	OutputDebugString("wintext_OnSetFocus\n");
 	/* get focus - display caret */
 	/* create caret & display */
-	wintext_cursor_owned = 1;
-	CreateCaret(wintext_hWndCopy, wintext_bitmap[wintext_cursor_type], wintext_char_width, wintext_char_height);
-	SetCaretPos(wintext_cursor_x*wintext_char_width, wintext_cursor_y*wintext_char_height);
+	g_instance.cursor_owned = 1;
+	CreateCaret(wintext_hWndCopy, g_instance.bitmap[g_instance.cursor_type], g_instance.char_width, g_instance.char_height);
+	SetCaretPos(g_instance.cursor_x*g_instance.char_width, g_instance.cursor_y*g_instance.char_height);
 	SetCaretBlinkTime(500);
 	ShowCaret(wintext_hWndCopy);
 }
@@ -382,7 +398,7 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
 	/* kill focus - hide caret */
 	OutputDebugString("wintext_OnKillFocus\n");
-	wintext_cursor_owned = 0;
+	g_instance.cursor_owned = 0;
 	DestroyCaret();
 }
 
@@ -399,7 +415,7 @@ static void wintext_OnPaint(HWND window)
 	ValidateRect(window, &tempRect);
 
 	/* the routine below handles *all* window updates */
-	wintext_paintscreen(0, wintext_char_xchars-1, 0, wintext_char_ychars-1);
+	wintext_paintscreen(0, g_instance.char_xchars-1, 0, g_instance.char_ychars-1);
 	EndPaint(window, &ps);
 }
 
@@ -461,20 +477,20 @@ static void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
 	OutputDebugString("wintext_OnSize\n");
-	if (cx > (WORD)wintext_max_width ||
-		cy > (WORD)wintext_max_height)
+	if (cx > (WORD)g_instance.max_width ||
+		cy > (WORD)g_instance.max_height)
 	{
 		SetWindowPos(window,
 			GetNextWindow(window, GW_HWNDPREV),
-			0, 0, wintext_max_width, wintext_max_height, SWP_NOMOVE);
+			0, 0, g_instance.max_width, g_instance.max_height, SWP_NOMOVE);
 	}
 }
 
 static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 {
 	OutputDebugString("wintext_OnGetMinMaxInfo\n");
-	lpMinMaxInfo->ptMaxSize.x = wintext_max_width;
-	lpMinMaxInfo->ptMaxSize.y = wintext_max_height;
+	lpMinMaxInfo->ptMaxSize.x = g_instance.max_width;
+	lpMinMaxInfo->ptMaxSize.y = g_instance.max_height;
 }
 
 /*
@@ -518,7 +534,7 @@ void wintext_addkeypress(unsigned int keypress)
 {
 	OutputDebugString("wintext_addkeypress\n");
 
-	if (wintext_textmode != 2)  /* not in the right mode */
+	if (g_wintext.textmode != 2)  /* not in the right mode */
 		return;
 
 	if (wintext_keypress_count >= BUFMAX)
@@ -588,7 +604,7 @@ unsigned int wintext_getkeypress(int option)
 	OutputDebugString("wintext_getkeypress\n");
 	wintext_look_for_activity(option);
 
-	if (wintext_textmode != 2)  /* not in the right mode */
+	if (g_wintext.textmode != 2)  /* not in the right mode */
 	{
 		return 27;
 	}
@@ -630,7 +646,7 @@ int wintext_look_for_activity(int wintext_waitflag)
 
 	OutputDebugString("wintext_look_for_activity\n");
 
-	if (wintext_textmode != 2)  /* not in the right mode */
+	if (g_wintext.textmode != 2)  /* not in the right mode */
 	{
 		return 0;
 	}
@@ -639,7 +655,7 @@ int wintext_look_for_activity(int wintext_waitflag)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
-			if (wintext_waitflag == 0 || wintext_keypress_count != 0 || wintext_textmode != 2)
+			if (wintext_waitflag == 0 || wintext_keypress_count != 0 || g_wintext.textmode != 2)
 			{
 				return (wintext_keypress_count == 0) ? 0 : 1;
 			}
@@ -686,8 +702,8 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
             }
             if (maxrow < j) maxrow = j;
             if (maxcol < k) maxcol = k;
-            wintext_chars[j][k] = xc;
-            wintext_attrs[j][k] = xa;
+            g_instance.chars[j][k] = xc;
+            g_instance.attrs[j][k] = xa;
         }
     }
     if (i > 0)
@@ -701,10 +717,10 @@ void wintext_scroll_up(int top, int bot)
 	int row;
 	for (row = top; row < bot; row++)
 	{
-		unsigned char *chars = &wintext_chars[row][0];
-		unsigned char *attrs = &wintext_attrs[row][0];
-		unsigned char *next_chars = &wintext_chars[row+1][0];
-		unsigned char *next_attrs = &wintext_attrs[row+1][0];
+		unsigned char *chars = &g_instance.chars[row][0];
+		unsigned char *attrs = &g_instance.attrs[row][0];
+		unsigned char *next_chars = &g_instance.chars[row+1][0];
+		unsigned char *next_attrs = &g_instance.attrs[row+1][0];
 		int col;
 
 		for (col = 0; col < WINTEXT_MAX_COL; col++)
@@ -713,8 +729,8 @@ void wintext_scroll_up(int top, int bot)
 			*attrs++ = *next_attrs++;
 		}
 	}
-	memset(&wintext_chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
-	memset(&wintext_attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+	memset(&g_instance.chars[bot][0], 0, (size_t) WINTEXT_MAX_COL);
+	memset(&g_instance.attrs[bot][0], 0, (size_t) WINTEXT_MAX_COL);
 	wintext_paintscreen(0, WINTEXT_MAX_COL, 0, WINTEXT_MAX_ROW);
 }
 
@@ -736,38 +752,38 @@ void wintext_paintscreen(
 
 	OutputDebugString("wintext_paintscreen\n");
 
-	if (wintext_textmode != 2)  /* not in the right mode */
+	if (g_wintext.textmode != 2)  /* not in the right mode */
 		return;
 
 	/* first time through?  Initialize the 'screen' */
-	if (wintext_buffer_init == 0)
+	if (g_instance.buffer_init == 0)
 	{
-		wintext_buffer_init = 1;
+		g_instance.buffer_init = 1;
 		wintext_oldbk = 0x00;
 		wintext_oldfg = 0x0f;
 		k = (wintext_oldbk << 4) + wintext_oldfg;
-		wintext_buffer_init = 1;
-		for (i = 0; i < wintext_char_xchars; i++)
+		g_instance.buffer_init = 1;
+		for (i = 0; i < g_instance.char_xchars; i++)
 		{
-			for (j = 0; j < wintext_char_ychars; j++)
+			for (j = 0; j < g_instance.char_ychars; j++)
 			{
-				wintext_chars[j][i] = ' ';
-				wintext_attrs[j][i] = k;
+				g_instance.chars[j][i] = ' ';
+				g_instance.attrs[j][i] = k;
             }
         }
     }
 
 	if (xmin < 0) xmin = 0;
-	if (xmax >= wintext_char_xchars) xmax = wintext_char_xchars-1;
+	if (xmax >= g_instance.char_xchars) xmax = g_instance.char_xchars-1;
 	if (ymin < 0) ymin = 0;
-	if (ymax >= wintext_char_ychars) ymax = wintext_char_ychars-1;
+	if (ymax >= g_instance.char_ychars) ymax = g_instance.char_ychars-1;
 
 	hDC=GetDC(wintext_hWndCopy);
-	SelectObject(hDC, wintext_hFont);
+	SelectObject(hDC, g_instance.hFont);
 	SetBkMode(hDC, OPAQUE);
 	SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
-	if (wintext_cursor_owned != 0)
+	if (g_instance.cursor_owned != 0)
 	{
 		HideCaret( wintext_hWndCopy );
 	}
@@ -788,7 +804,7 @@ void wintext_paintscreen(
 			k = -1;
 			if (i <= xmax)
 			{
-				k = wintext_attrs[j][i];
+				k = g_instance.attrs[j][i];
 			}
 			foreground = (k & 15);
 			background = (k >> 4);
@@ -799,9 +815,9 @@ void wintext_paintscreen(
 					SetBkColor(hDC, wintext_color[wintext_oldbk]);
 					SetTextColor(hDC, wintext_color[wintext_oldfg]);
 					TextOut(hDC,
-						istart*wintext_char_width,
-						jstart*wintext_char_height,
-						&wintext_chars[jstart][istart],
+						istart*g_instance.char_width,
+						jstart*g_instance.char_height,
+						&g_instance.chars[jstart][istart],
 						length);
                 }
 				wintext_oldbk = background;
@@ -814,7 +830,7 @@ void wintext_paintscreen(
 		}
     }
 
-	if (wintext_cursor_owned != 0)
+	if (g_instance.cursor_owned != 0)
 	{
 		ShowCaret( wintext_hWndCopy );
 	}
@@ -826,23 +842,59 @@ void wintext_cursor(int xpos, int ypos, int cursor_type)
 {
 	OutputDebugString("wintext_cursor\n");
 
-	if (wintext_textmode != 2)  /* not in the right mode */
+	if (g_wintext.textmode != 2)  /* not in the right mode */
 	{
 		return;
 	}
 
-    wintext_cursor_x = xpos;
-    wintext_cursor_y = ypos;
-    if (cursor_type >= 0) wintext_cursor_type = cursor_type;
-    if (wintext_cursor_type < 0) wintext_cursor_type = 0;
-    if (wintext_cursor_type > 2) wintext_cursor_type = 2;
-    if (wintext_cursor_owned != 0)
+    g_instance.cursor_x = xpos;
+    g_instance.cursor_y = ypos;
+    if (cursor_type >= 0) g_instance.cursor_type = cursor_type;
+    if (g_instance.cursor_type < 0) g_instance.cursor_type = 0;
+    if (g_instance.cursor_type > 2) g_instance.cursor_type = 2;
+    if (g_instance.cursor_owned != 0)
     {
-        CreateCaret( wintext_hWndCopy, wintext_bitmap[wintext_cursor_type],
-              wintext_char_width, wintext_char_height);
-              SetCaretPos( wintext_cursor_x*wintext_char_width,
-                  wintext_cursor_y*wintext_char_height);
+        CreateCaret( wintext_hWndCopy, g_instance.bitmap[g_instance.cursor_type],
+              g_instance.char_width, g_instance.char_height);
+              SetCaretPos( g_instance.cursor_x*g_instance.char_width,
+                  g_instance.cursor_y*g_instance.char_height);
               SetCaretBlinkTime(500);
               ShowCaret( wintext_hWndCopy );
 	}
+}
+
+void wintext_set_attr(int row, int col, int attr, int count)
+{
+	int i;
+	for (i = 0; i < count; i++)
+	{
+		g_instance.attrs[row][col+i] = (unsigned char) (attr & 0xFF);
+	}
+}
+
+void wintext_clear(void)
+{
+	int y;
+	for (y = 0; y < WINTEXT_MAX_ROW; y++)
+	{
+		memset(&g_instance.chars[y][0], 0, (size_t) WINTEXT_MAX_COL);
+		memset(&g_instance.attrs[y][0], 0, (size_t) WINTEXT_MAX_COL);
+	}
+}
+
+BYTE *wintext_screen_get(void)
+{
+	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
+	BYTE *copy = (BYTE *) malloc(count*2);
+	memcpy(copy, g_instance.chars, count);
+	memcpy(copy + count, g_instance.attrs, count);
+	return copy;
+}
+
+void wintext_screen_set(const BYTE *copy)
+{
+	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
+	memcpy(g_instance.chars, copy, count);
+	memcpy(g_instance.attrs, copy + count, count);
+	wintext_paintscreen(0, WINTEXT_MAX_COL, 0, WINTEXT_MAX_ROW);
 }
