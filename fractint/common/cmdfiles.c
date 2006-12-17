@@ -536,7 +536,7 @@ int cmdfiles(int argc,char **argv)
       else if ((sptr = strchr(curarg,'/')) != NULL) { /* @filename/setname? */
          *sptr = 0;
          if(merge_pathnames(CommandFile, &curarg[1], 0) < 0)
-            init_msg(0,"",CommandFile,0);
+            init_msg("",CommandFile,0);
          strcpy(CommandName,sptr+1);
          if(find_file_item(CommandFile,CommandName,&initfile, 0)<0 || initfile==NULL)
             argerror(curarg);
@@ -554,7 +554,7 @@ int cmdfiles(int argc,char **argv)
       showfile = 1;  /* nor startup image file              */
       }
 
-   init_msg(0,"",NULL,0);  /* this causes getakey if init_msg called on runup */
+   init_msg("",NULL,0);  /* this causes getakey if init_msg called on runup */
 
    if(debugflag != 110)
        first_init = 0;
@@ -867,7 +867,7 @@ static int cmdfile(FILE *handle,int mode)
       contents to extraseg */
    cmdbuf = (char *)suffix;
    /* TODO: allocate real memory, not reuse shared segment */
-   savesuffix = MK_FP(extraseg,0);
+   savesuffix = extraseg;
    memcpy(savesuffix,suffix,10000);
    memset(suffix,0,10000);
 
@@ -1322,7 +1322,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if((existdir=merge_pathnames(readname, value, mode))==0)
          showfile = 0;
       else if(existdir < 0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       else
          extract_filename(browsename,readname);
       return 3;
@@ -1349,7 +1349,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if((existdir=merge_pathnames(MAP_name,value,mode))>0)
          return 0;    /* got a directory */
       else if (existdir < 0) {
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
          return (0);
       }
       SetColorPaletteName(MAP_name);
@@ -1448,7 +1448,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (strcmp(variable,s_autokeyname) == 0) {   /* autokeyname=? */
       if(merge_pathnames(autoname, value,mode) < 0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 0;
       }
 
@@ -1646,7 +1646,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (prev == 0) goto badarg;
       if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL) {
          static FCODE msg[] = {"Insufficient memory for ranges="};
-         stopmsg(1,msg);
+         stopmsg(STOPMSG_NO_STACK,msg);
          return(-1);
          }
       rangeslen = entries;
@@ -1659,7 +1659,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
       if (first_init || mode == 2) {
          if(merge_pathnames(savename, value, mode) < 0)
-            init_msg(0,variable,value,mode);
+            init_msg(variable,value,mode);
       }
       return 0;
       }
@@ -2189,7 +2189,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if((existdir=merge_pathnames(PrintName, value, mode))==0)
          Print_To_File = 1;
       else if (existdir < 0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 0;
       }
    if(strcmp(variable,s_rleps) == 0) {
@@ -2548,7 +2548,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    if (strcmp(variable,s_formulafile) == 0) {   /* formulafile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
       if(merge_pathnames(FormFileName, value, mode)<0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 1;
       }
 
@@ -2561,7 +2561,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    if (strcmp(variable,s_lfile) == 0) {    /* lfile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
       if(merge_pathnames(LFileName, value, mode)<0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 1;
       }
 
@@ -2577,7 +2577,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if((existdir=merge_pathnames(IFSFileName, value, mode))==0)
          reset_ifs_defn();
       else if(existdir < 0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 1;
       }
 
@@ -2593,7 +2593,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    if (strcmp(variable,s_parmfile) == 0) {   /* parmfile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
       if(merge_pathnames(CommandFile, value, mode)<0)
-         init_msg(0,variable,value,mode);
+         init_msg(variable,value,mode);
       return 1;
       }
 
@@ -2930,7 +2930,7 @@ static int parse_colors(char *value)
    int i,j,k;
    if (*value == '@') {
       if(merge_pathnames(MAP_name,&value[1],3)<0)
-         init_msg(0,"",&value[1],3);
+         init_msg("",&value[1],3);
       if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
          goto badcolor;
       if (display3d) {
@@ -2938,7 +2938,7 @@ static int parse_colors(char *value)
         }
       else {
         if(merge_pathnames(colorfile,&value[1],3)<0)
-          init_msg(0,"",&value[1],3);
+          init_msg("",&value[1],3);
         colorstate = 2;
         }
       }
@@ -3156,7 +3156,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stopmsg() but can be used in cmdfiles()      */
 /* call with NULL for badfilename to get pause for getakey() */
-int init_msg(int flags,char *cmdstr,char *badfilename,int mode)
+int init_msg(char *cmdstr,char *badfilename,int mode)
 {
    char *modestr[4] =
        {s_commandline,s_sstoolsini,s_at_cmd,s_at_cmd};
@@ -3203,7 +3203,7 @@ int init_msg(int flags,char *cmdstr,char *badfilename,int mode)
       }
    }
    else if(badfilename)
-      stopmsg(flags,msg);
+      stopmsg(0,msg);
    return(0);
 }
 

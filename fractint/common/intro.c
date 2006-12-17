@@ -43,7 +43,7 @@ void intro(void)
    lookatmouse = 0;                     /* de-activate full mouse checking */
 
    /* TODO: allocate real memory, not reuse shared segment */
-   screen_text = MK_FP(extraseg, 0);
+   screen_text = extraseg;
 
    i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
    screen_text[i++] = '\0';

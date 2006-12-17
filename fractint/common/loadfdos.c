@@ -128,7 +128,7 @@ Press F1 for help, "};
 
    /* save overlayed strings to extraseg memory */
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,ENDVID);  /* ENDVID is to avoid videotable */
+   ptr = (char *) extraseg;  /* ENDVID is to avoid videotable */
    hdg2 = ptr;
    ptr += sizeof(o_hdg2);
    warning = ptr;
@@ -428,7 +428,7 @@ if (fastrestore  && !askvideo)
       static FCODE msg[] = {"\
 Warning: <V>iew parameters are being set to non-standard values.\n\
 Remember to reset them when finished with this image!"};
-      stopmsg(4,msg);
+      stopmsg(STOPMSG_NO_BUZZER,msg);
       }
    return(0);
 }

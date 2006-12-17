@@ -1569,7 +1569,7 @@ gfp_top:
       && (display3d > 0))
       {
        static FCODE msg[]={"Current type has no type-specific parameters"};
-       stopmsg(20,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        goto gfp_exit;
        }
    if(julibrot)
@@ -1990,7 +1990,7 @@ static long gfe_choose_entry(int type,char *title,char *filename,char *entryname
    char *instr;
    /* steal existing array for "choices" */
    /* TODO: allocate real memory, not reuse shared segment */
-   choices = (struct entryinfo **)MK_FP(extraseg,0);
+   choices = (struct entryinfo **)extraseg;
    /* leave room for details F2 */
    choices = choices + (2048/sizeof(struct entryinfo **));
    choices[0] = (struct entryinfo *)(choices + MAXENTRIES+1);
@@ -2084,7 +2084,7 @@ static int check_gfe_key(int curkey,int choice)
       int c = 0;
       int widthct = 0;
    /* TODO: allocate real memory, not reuse shared segment */
-      infbuf = MK_FP(extraseg,0);
+      infbuf = extraseg;
       fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
       while((c = fgetc(gfe_file)) != EOF && c != '\032') {
          if(c == ';')

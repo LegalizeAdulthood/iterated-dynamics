@@ -11,28 +11,6 @@ typedef BYTE BOOLEAN;
 #endif
 #endif
 
-#if !defined(XFRACT) && !defined(_WIN32)
-#  define ftimex ftime
-typedef int SEGTYPE;
-typedef unsigned USEGTYPE;
-#  ifdef __TURBOC__
-#   define _bios_printer(a,b,c)   biosprint((a),(c),(b))
-#   define _bios_serialcom(a,b,c) bioscom((a),(c),(b))
-#  else
-#    ifndef __WATCOMC__
-#      ifndef MK_FP
-#        define MK_FP(seg,off) (VOIDPTR)( (((long)(seg))<<16) | \
-                                          ((unsigned)(off)) )
-#      endif
-#    endif
-#  endif
-#else
-typedef char * SEGTYPE;
-typedef char * USEGTYPE;
-#  define MK_FP(seg,off) (VOIDPTR)(seg+off)
-#  include <sys/types.h> /* need size_t */
-#endif
-
 #ifndef XFRACT
 #define clock_ticks() clock()
 #endif
@@ -40,6 +18,13 @@ typedef char * USEGTYPE;
 #ifdef XFRACT
 #define difftime(now,then) ((now)-(then))
 #endif
+
+/* stopmsg() flags */
+#define STOPMSG_NO_STACK	1
+#define STOPMSG_CANCEL		2
+#define STOPMSG_NO_BUZZER	4
+#define STOPMSG_FIXED_FONT	8
+#define STOPMSG_INFO_ONLY	16
 
 /* for gotos in former FRACTINT.C pieces */
 #define RESTART           1

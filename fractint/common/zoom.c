@@ -667,7 +667,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     static FCODE msg[] = {"\
 Tables full, can't pan current image.\n\
 Cancel resumes old image, continue pans and calculates a new one."};
-        if (stopmsg(2,msg)) {
+        if (stopmsg(STOPMSG_CANCEL,msg)) {
             zwidth = 0; /* cancel the zoombox */
             drawbox(1); }
         else

@@ -203,7 +203,7 @@ extern int load_commands(FILE *);
 extern void set_3d_defaults(void);
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
-extern int init_msg(int,char *,char *,int);
+extern int init_msg(char *,char *,int);
 extern int cmdarg(char *curarg,int mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
@@ -1043,7 +1043,6 @@ extern int get_rds_params(void);
 extern int starfield(void);
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
-extern int dir_open(char *, char *, int, int);
 extern int dir_remove(char *,char *);
 extern FILE *dir_fopen(char *, char *, char *);
 extern void extract_filename(char *, char *);
@@ -1183,7 +1182,6 @@ extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
 
 /*  memory -- C file prototypes */
 
-extern void DisplayMemory (void);
 extern void DisplayHandle (U16 handle);
 extern int MemoryType (U16 handle);
 extern void InitMemory (void);

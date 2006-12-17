@@ -472,7 +472,7 @@ Print_Screen (void)
 #endif
 
    /* TODO: allocate real memory, not reuse shared segment */
-    es=MK_FP(extraseg,0);
+    es=extraseg;
 
     LPTn=LPTNumber-1;
     if (((LPTn>2)&&(LPTn<10))||

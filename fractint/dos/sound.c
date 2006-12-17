@@ -520,7 +520,7 @@ get_sound_restart:
    menu2 = 0;
    k = -1;
    strcpy(hdg,o_hdg);
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
 
    LOADCHOICES("Sound (off, beep, x, y, z)");
    uvalues[k].type = 'l';
@@ -632,7 +632,7 @@ int i, j;
 get_map_restart:
    k = -1;
    strcpy(hdg,o_hdg);
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
 
    LOADCHOICES("Scale map C (1)");
    uvalues[k].type = 'i';
@@ -737,7 +737,7 @@ int i;
 get_music_restart:
    k = -1;
    strcpy(hdg,o_hdg);
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
 
    LOADCHOICES("Polyphony 1..9");
    uvalues[k].type = 'i';

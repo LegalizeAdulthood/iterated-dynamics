@@ -326,7 +326,7 @@ int orbit3dlongsetup()
          case breadth_first:
             if (Init_Queue((long)32*1024) == 0)
             { /* can't get queue memory: fall back to random walk */
-               stopmsg(20, NoQueue);
+               stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                major_method = random_walk;
                goto lrwalk;
             }
@@ -336,7 +336,7 @@ int orbit3dlongsetup()
          case depth_first:
             if (Init_Queue((long)32*1024) == 0)
             { /* can't get queue memory: fall back to random walk */
-               stopmsg(20, NoQueue);
+               stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                major_method = random_walk;
                goto lrwalk;
             }
@@ -494,7 +494,7 @@ int orbit3dfloatsetup()
          case breadth_first:
             if (Init_Queue((long)32*1024) == 0)
             { /* can't get queue memory: fall back to random walk */
-               stopmsg(20, NoQueue);
+               stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                major_method = random_walk;
                goto rwalk;
             }
@@ -504,7 +504,7 @@ int orbit3dfloatsetup()
          case depth_first:                      /* depth first (choose direction) */
             if (Init_Queue((long)32*1024) == 0)
             { /* can't get queue memory: fall back to random walk */
-               stopmsg(20, NoQueue);
+               stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
                major_method = random_walk;
                goto rwalk;
             }
@@ -2104,7 +2104,7 @@ int funny_glasses_call(int (*calc)(void))
 static FCODE firstready[]={"\
 First image (left eye) is ready.  Hit any key to see it,\n\
 then hit <s> to save, hit any other key to create second image."};
-            stopmsg(16,firstready);
+            stopmsg(STOPMSG_INFO_ONLY,firstready);
             while ((i = getakey()) == 's' || i == 'S') {
                diskisactive = 1;
                savetodisk(savename);
@@ -2133,7 +2133,7 @@ static FCODE firstready2[]={"First (Left Eye) image is complete"};
       if(glassestype==3) /* photographer's mode */
          if(active_system == 0) { /* dos version */
 static FCODE secondready[]={"Second image (right eye) is ready"};
-            stopmsg(16,secondready);
+            stopmsg(STOPMSG_INFO_ONLY,secondready);
          }
    }
 done:

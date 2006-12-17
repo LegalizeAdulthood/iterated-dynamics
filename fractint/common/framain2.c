@@ -275,7 +275,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             {
                char msg[MSGLEN];
                sprintf(msg,"floatflag=%d",usr_floatflag);
-               stopmsg(4,(char *)msg);
+               stopmsg(STOPMSG_NO_BUZZER,(char *)msg);
             }
 
             i = funny_glasses_call(gifview);

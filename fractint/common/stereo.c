@@ -163,7 +163,7 @@ int outline_stereo(BYTE * pixels, int linelen)
    if((Y) >= ydots)
       return(1);
    /* TODO: allocate real memory, not reuse shared segment */
-   same   = (int *)MK_FP(extraseg,0);
+   same   = (int *)extraseg;
    colour = &same[ydots];
 
    for (x = 0; x < xdots; ++x)
@@ -233,7 +233,7 @@ int do_AutoStereo(void)
    int *same;
    int *colour;
    /* TODO: allocate real memory, not reuse shared segment */
-   same   = (int *)MK_FP(extraseg,0);
+   same   = (int *)extraseg;
    colour = &same[ydots];
 
    pv = &v;   /* set static vars to stack structure */

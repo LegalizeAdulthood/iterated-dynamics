@@ -129,7 +129,7 @@ int get_toggles()
 
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *) extraseg;
 
    k = -1;
 
@@ -417,7 +417,7 @@ int get_toggles2()
 
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *) extraseg;
 
    /* fill up the choices (and previous values) arrays */
    k = -1;
@@ -570,7 +570,7 @@ int passes_options(void)
    strcat(hdg,pressf2);
    strcat(hdg,pressf6);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *) extraseg;
    ret = 0;
 
 pass_option_restart:
@@ -711,7 +711,7 @@ int get_view_params()
 
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
 
 /*
    Because the scrolling (and virtual screen width) must be
@@ -1257,7 +1257,7 @@ int get_a_number(double *x, double *y)
    driver_stack_screen();
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
 
    /* fill up the previous values arrays */
    k = -1;
@@ -1546,7 +1546,7 @@ int getafilename(char *hdg,char *template,char *flname)
 
    /* steal existing array for "choices" */
    /* TODO: allocate real memory, not reuse shared segment */
-   choices = (struct CHOICE **)MK_FP(extraseg,0);
+   choices = (struct CHOICE **)extraseg;
    choices[0] = (struct CHOICE *)(choices + MAXNUMFILES+1);
    attributes = (int *)(choices[0] + MAXNUMFILES+1);
    instr = (char *)(attributes + MAXNUMFILES +1);
@@ -2038,14 +2038,6 @@ static void dir_name(char *target, char *dir, char *name)
    strcat(target,name);
 }
 
-/* opens file in dir directory */
-int dir_open(char *dir, char *filename, int oflag, int pmode)
-{
-   char tmp[FILE_MAX_PATH];
-   dir_name(tmp,dir,filename);
-   return(open(tmp,oflag,pmode));
-}
-
 /* removes file in dir directory */
 int dir_remove(char *dir,char *filename)
 {
@@ -2197,7 +2189,7 @@ int get_corners()
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
    oldhelpmode = helpmode;
    ousemag = usemag;
    oxxmin = xxmin; oxxmax = xxmax;
@@ -2395,7 +2387,7 @@ static int get_screen_corners(void)
    strcpy(yprompt,o_yprompt);
    strcpy(zprompt,o_zprompt);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
    oldhelpmode = helpmode;
    ousemag = usemag;
 
@@ -2603,7 +2595,7 @@ int get_browse_params()
 
    strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *)MK_FP(extraseg,0);
+   ptr = (char *)extraseg;
    old_autobrowse     = autobrowse;
    old_brwschecktype  = brwschecktype;
    old_brwscheckparms = brwscheckparms;

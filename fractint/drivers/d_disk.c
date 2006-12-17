@@ -1284,7 +1284,7 @@ disk_stack_screen(Driver *drv)
   if (++di->screenctr) { /* already have some stacked */
     static char msg[] = { "stackscreen overflow" };
     if ((i = di->screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-      stopmsg(1,msg);
+      stopmsg(STOPMSG_NO_STACK,msg);
       exit(1);
     }
     {
@@ -1296,7 +1296,7 @@ disk_stack_screen(Driver *drv)
 	touchwin(di->curwin);
 	wrefresh(di->curwin);
       } else {
-	stopmsg(1,msg);
+	stopmsg(STOPMSG_NO_STACK,msg);
 	exit(1);
       }
     }
