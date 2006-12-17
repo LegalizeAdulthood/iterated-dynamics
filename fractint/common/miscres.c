@@ -909,6 +909,7 @@ int tab_display()       /* display the status of the current image */
    /* the video modes or screen prompts. */
    /* TODO: allocate real memory, not reuse shared segment */
       ptr_to_extraseg = extraseg;
+			 /* TODO: MemoryAlloc */
       save_extra_handle = MemoryAlloc((U16)22400, 1L, FARMEM);
       MoveToMemory(ptr_to_extraseg,(U16)22400,1L,0L,save_extra_handle);
       saved = save_stack();

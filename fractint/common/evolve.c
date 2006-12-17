@@ -159,6 +159,7 @@ void initgene(void) /* set up pointers and mutation params for all usable image
   strcpy(gene[++i].name, s_trigfn4);
   strcpy(gene[++i].name, s_botest);
 
+  /* TODO: MemoryAlloc, MoveToMemory */
   if (gene_handle == 0)
      gene_handle = MemoryAlloc((U16)sizeof(gene),1L,FARMEM);
   MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -170,6 +171,7 @@ void param_history(int mode)
 
    PARAMHIST oldhistory;
 
+   /* TODO: MemoryAlloc */
    if (oldhistory_handle == 0)
       oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory),1L,FARMEM);
 
@@ -832,6 +834,7 @@ void SetupParamBox(void)
 /* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */  
    vidsize = (xdots+ydots) * 4 * sizeof(int) ;
    vidsize = vidsize + xdots + ydots + 2 ;
+   /* TODO: MemoryAlloc */
    if (prmboxhandle == 0)
       prmboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
    if (prmboxhandle == 0 ) {
@@ -843,6 +846,7 @@ void SetupParamBox(void)
 
 /* vidsize = (vidsize / gridsz)+3 ; */ /* allocate less mem for smaller box */
 /* taken out above as *all* pixels get plotted in small boxes */
+   /* TODO: MemoryAlloc */
    if (imgboxhandle == 0)
       imgboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
    if (!imgboxhandle) {

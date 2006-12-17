@@ -413,6 +413,7 @@ done:
            driver_buzzer(0); /* finished!! */
         }
         else { /* interrupted screen generation, save info */
+			/* TODO: MemoryAlloc */
            if (evolve_handle == 0)
               evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,FARMEM);
            resume_e_info.paramrangex     = paramrangex;
@@ -2455,6 +2456,7 @@ void checkfreemem(int secondpass)
    {
       while(maxhistory > 0) /* decrease history if necessary */
       {
+		  /* TODO: MemoryAlloc */
          history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,EXPANDED);
          if(history)
             break;

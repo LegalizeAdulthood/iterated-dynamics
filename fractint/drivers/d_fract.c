@@ -259,6 +259,7 @@ void stackscreen()
    /* TODO: allocate real memory, not reuse shared segment */
       vidmem = MK_FP(textaddr,0);
       savebytes = (text_type == 0) ? 4000 : 16384;
+			 /* TODO: MemoryAlloc */
       savescreen[i] = MemoryAlloc((U16)savebytes,1L,FARMEM);
       if (savescreen[i] != 0)
          MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);

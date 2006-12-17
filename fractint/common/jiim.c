@@ -444,6 +444,7 @@ static void SaveRect(int x, int y, int width, int depth)
    /* allocate space and store the rect */
 
    memset(dstack, color_dark, width);
+   /* TODO: MemoryAlloc */
    if ((memory_handle = MemoryAlloc( (U16)width, (long)depth, FARMEM)) != 0)
    {
       Cursor_Hide();

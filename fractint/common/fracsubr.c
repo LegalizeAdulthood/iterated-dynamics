@@ -1113,6 +1113,7 @@ int alloc_resume(int alloclen, int version)
 { /* WARNING! if alloclen > 4096B, problems may occur with GIF save/restore */
    if (resume_info != 0) /* free the prior area if there is one */
       MemoryRelease(resume_info);
+   /* TODO: MemoryAlloc */
    if ((resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, FARMEM)) == 0)
    {
       static FCODE msg[] = {"\
