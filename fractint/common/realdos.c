@@ -221,6 +221,7 @@ int showtempmsg(char *msgparm)
       sxoffs = syoffs = 0;
    if(temptextsave == 0) /* only save screen first time called */
    {
+		/* TODO: MemoryAlloc, MoveToMemory */
       if ((temptextsave = MemoryAlloc((U16)textxdots,(long)textydots,FARMEM)) == 0)
          return(-1); /* sorry, message not displayed */
       for (i = 0; i < textydots; ++i) {
@@ -1556,6 +1557,7 @@ int savegraphics()
    swapoffset = 0;
    if (memhandle != 0)
       discardgraphics(); /* if any emm/xmm in use from prior call, release it */
+			 /* TODO: MemoryAlloc */
    memhandle = MemoryAlloc((U16)SWAPBLKLEN, count, EXPANDED);
 
    while (swapoffset < swaptotlen) {

@@ -445,6 +445,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           GENEBASE gene[NUMGENES];
           int i;
 
+		  /* TODO: MemoryAlloc */
           if (gene_handle == 0)
              gene_handle = MemoryAlloc((U16)sizeof(gene),1L,FARMEM);
           MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -455,6 +456,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           if (blk_6_info.ecount != blk_6_info.gridsz * blk_6_info.gridsz
              && calc_status != 4) {
              calc_status = 2;
+			 /* TODO: MemoryAlloc */
              if (evolve_handle == 0)
                 evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,FARMEM);
              resume_e_info.paramrangex  = blk_6_info.paramrangex;
@@ -687,6 +689,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   break;
                case 2: /* resume info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
+			 /* TODO: MemoryAlloc */
                   if ((blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,FARMEM)) == 0)
                      info->calc_status = 3; /* not resumable after all */
                   else {
@@ -1205,6 +1208,7 @@ int fgetwindow(void)
 #ifdef XFRACT
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
+	/* TODO: MemoryAlloc */
    browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,FARMEM);
    boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,EXPANDED);
    boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,EXPANDED);

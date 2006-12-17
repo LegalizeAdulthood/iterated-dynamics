@@ -1181,7 +1181,9 @@ extern _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
 extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
 
 /*  memory -- C file prototypes */
-
+/* TODO: Get rid of this and use regular memory routines;
+** see about creating standard disk memory routines for disk video
+*/
 extern void DisplayHandle (U16 handle);
 extern int MemoryType (U16 handle);
 extern void InitMemory (void);
