@@ -7,7 +7,8 @@
 OBJ = 3d.obj ant.obj bigflt.obj biginit.obj bignum.obj calcfrac.obj \
 cmdfiles.obj decoder.obj diskvid.obj editpal.obj encoder.obj evolve.obj \
 f16.obj fracsubr.obj fractals.obj fractalp.obj fractalb.obj fractint.obj \
-framain2.obj frasetup.obj gifview.obj hcmplx.obj help.obj intro.obj \
+framain2.obj frasetup.obj gifview.obj hcmplx.obj help.obj \
+history.obj intro.obj \
 jb.obj jiim.obj line3d.obj loadfile.obj loadfdos.obj loadmap.obj \
 lorenz.obj lsys.obj lsysf.obj memory.obj miscfrac.obj miscovl.obj \
 miscres.obj mpmath_c.obj parser.obj parserfp.obj plot3d.obj printer.obj \
@@ -88,6 +89,9 @@ gifview.obj : gifview.c $(HFD)\fractint.h
 hcmplx.obj : hcmplx.c $(HFD)\fractint.h
 
 help.obj : help.c $(HFD)\fractint.h $(HFD)\helpdefs.h $(HFD)\helpcom.h
+	$(Optsize)
+
+history.obj : history.c $(HFD)\fractint.h $(HFD)\fractype.h
 	$(Optsize)
 
 intro.obj : intro.c $(HFD)\fractint.h $(HFD)\helpdefs.h

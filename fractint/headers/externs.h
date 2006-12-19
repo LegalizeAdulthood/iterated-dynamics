@@ -209,6 +209,8 @@ extern float                 heightfp;
 extern int                   helpmode;
 extern int                   hi_atten;
 extern U16                   history;
+extern int                   historyflag;
+extern int                   historyptr;
 extern char                  IFSFileName[];
 extern char                  IFSName[];
 extern float far *           ifs_defn;

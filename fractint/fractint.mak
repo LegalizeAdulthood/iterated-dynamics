@@ -97,7 +97,8 @@ winfract.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(COMDIR)\evolve.obj $(COMDIR)\f16.obj $(COMDIR)\fracsubr.obj \
      $(COMDIR)\fractals.obj $(COMDIR)\fractalp.obj $(COMDIR)\fractalb.obj \
      $(COMDIR)\frasetup.obj $(COMDIR)\gifview.obj $(COMDIR)\hcmplx.obj \
-     $(COMDIR)\help.obj $(COMDIR)\jb.obj $(COMDIR)\jiim.obj \
+     $(COMDIR)\help.obj $(COMDIR)\history.obj \
+     $(COMDIR)\jb.obj $(COMDIR)\jiim.obj \
      $(COMDIR)\line3d.obj $(COMDIR)\loadfile.obj $(COMDIR)\loadmap.obj \
      $(COMDIR)\lorenz.obj $(COMDIR)\lsys.obj $(COMDIR)\lsysf.obj \
      $(COMDIR)\memory.obj $(COMDIR)\miscfrac.obj $(COMDIR)\miscovl.obj \
@@ -127,7 +128,8 @@ fractint.exe : $(COMDIR)\3d.obj $(COMDIR)\ant.obj $(COMDIR)\bigflt.obj \
      $(COMDIR)\f16.obj $(COMDIR)\fracsubr.obj $(COMDIR)\fractals.obj \
      $(COMDIR)\fractalp.obj $(COMDIR)\fractalb.obj $(COMDIR)\fractint.obj \
      $(COMDIR)\framain2.obj $(COMDIR)\frasetup.obj $(COMDIR)\gifview.obj \
-     $(COMDIR)\hcmplx.obj $(COMDIR)\help.obj $(COMDIR)\intro.obj \
+     $(COMDIR)\hcmplx.obj $(COMDIR)\help.obj \
+     $(COMDIR)\history.obj $(COMDIR)\intro.obj \
      $(COMDIR)\jb.obj $(COMDIR)\jiim.obj $(COMDIR)\line3d.obj \
      $(COMDIR)\loadfile.obj $(COMDIR)\loadfdos.obj $(COMDIR)\loadmap.obj \
      $(COMDIR)\lorenz.obj $(COMDIR)\lsys.obj $(COMDIR)\lsysf.obj \

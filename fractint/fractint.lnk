@@ -4,7 +4,8 @@
 .\common\editpal+.\common\encoder+.\common\evolve+.\common\f16+
 .\common\fracsubr+.\common\fractals+.\common\fractalp+.\common\fractalb+
 .\common\framain2+.\common\frasetup+.\common\gifview+.\common\hcmplx+
-.\common\help+.\common\intro+.\common\jb+.\common\jiim+.\common\line3d+
+.\common\help+.\common\history+.\common\intro+.\common\jb+.\common\jiim+
+.\common\line3d+
 .\common\loadfile+.\common\loadfdos+.\common\loadmap+.\common\lorenz+
 .\common\lsys+.\common\lsysf+.\common\memory+.\common\miscfrac+
 .\common\miscovl+.\common\miscres+.\common\mpmath_c+.\common\parser+
