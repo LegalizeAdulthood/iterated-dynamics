@@ -1249,6 +1249,8 @@ GlobalExit:
                 case IDM_MAINMENU:
                 case IDF_MAINMENU:
                 case IDF_CMDSTRING:
+                case IDF_HISTORY_F:
+                case IDF_HISTORY_B:
                     win_kill_all_zooming();
                     time_to_cycle = 0;
                     SecondaryhWnd = hWnd;
@@ -1762,6 +1764,34 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                             }
                         break;
                    }
+
+                case IDF_HISTORY_F:
+                case IDF_HISTORY_B:
+                   if(maxhistory > 0 && bf_math == 0)
+                   {
+                      if (wParam == IDF_HISTORY_B)
+                         if (--historyptr < 0)
+                            historyptr = maxhistory - 1;
+                      if (wParam == IDF_HISTORY_F)
+                         if (++historyptr >= maxhistory)
+                            historyptr = 0;
+                      restore_history_info(historyptr);
+//                      zoomoff = 1;
+//                      initmode = adapter;
+                      if (curfractalspecific->isinteger != 0 &&
+                          curfractalspecific->tofloat != NOFRACTAL)
+                         usr_floatflag = 0;
+                      if (curfractalspecific->isinteger == 0 &&
+                          curfractalspecific->tofloat != NOFRACTAL)
+                         usr_floatflag = 1;
+                      historyflag = 1;       /* avoid re-store parms due to rounding errs */
+                      win_kill_all_zooming();
+                      win_savedac();
+                      time_to_restart = 1;
+                      time_to_cycle = 0;
+                      calc_status = 0;
+                   }
+                   break;
 
                 case IDM_DOODADX:
 winfract_xmenu:

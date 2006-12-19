@@ -113,6 +113,8 @@ VK_INSERT,  IDF_RESTART,       VIRTKEY
 "E",        IDF_EVOLVER
 "g",        IDF_CMDSTRING
 "G",        IDF_CMDSTRING
+"h",        IDF_HISTORY_B
+"H",        IDF_HISTORY_F
 "i",        IDF_IFS3D
 "I",        IDF_IFS3D
 "l",        IDF_MAPIN

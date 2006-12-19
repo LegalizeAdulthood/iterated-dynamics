@@ -108,6 +108,8 @@
 #define     IDF_EVOLVER        532
 #define     IDF_MAINMENU       533
 #define     IDF_CMDSTRING      534
+#define     IDF_HISTORY_B      535
+#define     IDF_HISTORY_F      536
 
 /* Math Tools */
 #define     IDM_MATH_TOOLS    1001
