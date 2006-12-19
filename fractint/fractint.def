@@ -114,6 +114,7 @@ SEGMENTS	miscfrac_text ovl:30
 SEGMENTS	yourvid_text ovl:31
 SEGMENTS	frasetup_text ovl:32
 SEGMENTS	framain2_text ovl:33
+SEGMENTS        history_text ovl:33
 SEGMENTS	calcfra1_text ovl:45
 SEGMENTS	ant_text ovl:46
 SEGMENTS	mpmath1_text ovl:47

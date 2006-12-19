@@ -611,6 +611,11 @@ extern void print_document(char *,int (*)(int ,int ),int );
 extern int init_help(void );
 extern void end_help(void );
 
+/*  history -- C file prototypes */
+
+void _fastcall restore_history_info(int);
+void _fastcall save_history_info(void);
+
 /*  intro -- C file prototypes */
 
 extern void intro(void );
