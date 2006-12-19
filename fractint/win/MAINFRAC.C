@@ -232,6 +232,17 @@ if (debugflag == 10000) {   /* check for free memory */
 
 if (debugflag == 70) fpu = 0;
 
+   if(!history)
+   {
+      while(maxhistory > 0) /* decrease history if necessary */
+      {
+         history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,FARMEM);
+         if(history)
+            break;
+         maxhistory--;
+      }
+   }
+
 init_help();
 
 /* ----- */
@@ -429,6 +440,8 @@ restart:
        copy_bf(bfsx3rd,bfx3rd);
        copy_bf(bfsy3rd,bfy3rd);
     }
+
+    save_history_info();
 
     if (time_to_load)
         goto wait_loop;
