@@ -4,7 +4,7 @@ OBJS = \
 3d.o ant.o bigflt.o  biginit.o bignum.o bignumc.o calcfrac.o \
 cmdfiles.o decoder.o editpal.o encoder.o \
 evolve.o f16.o fracsubr.o fractalb.o fractalp.o fractals.o \
-fractint.o framain2.o frasetup.o gifview.o hcmplx.o help.o \
+fractint.o framain2.o frasetup.o gifview.o hcmplx.o help.o history.o\
 intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \
 lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
 parserfp.o plot3d.o printer.o prompts1.o prompts2.o \
@@ -87,6 +87,8 @@ gifview.o: gifview.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/mp
 hcmplx.o: hcmplx.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/mpmath.h ${HFD}/helpcom.h ${HFD}/mpmath.h
 
 help.o: help.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/helpcom.h ${HFD}/helpdefs.h ${HFD}/prototyp.h ${HFD}/mpmath.h
+
+history.o: history.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/prototyp.h
 
 intro.o: intro.c ${HFD}/fractint.h ${HFD}/port.h ${HFD}/helpdefs.h ${HFD}/prototyp.h ${HFD}/mpmath.h ${HFD}/helpcom.h
 
