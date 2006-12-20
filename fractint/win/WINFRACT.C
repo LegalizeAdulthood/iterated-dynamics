@@ -1776,8 +1776,6 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                          if (++historyptr >= maxhistory)
                             historyptr = 0;
                       restore_history_info(historyptr);
-//                      zoomoff = 1;
-//                      initmode = adapter;
                       if (curfractalspecific->isinteger != 0 &&
                           curfractalspecific->tofloat != NOFRACTAL)
                          usr_floatflag = 0;
