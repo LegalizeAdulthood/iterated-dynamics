@@ -498,9 +498,9 @@ Continue to replace it, Cancel to back out"};
             for(k=1;k<4;k++)
                if (CommandComment[k][0])
                   fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
-            if (patchlevel != 0 && colorsonly == 0)
+            if (g_patchlevel != 0 && colorsonly == 0)
                fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-                  Fractint, release, patchlevel); 
+                  Fractint, g_release, g_patchlevel); 
          }
          write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
          if(xm > 1 || ym > 1)
@@ -588,9 +588,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       /****** fractal only parameters in this section *******/
       put_parm(" reset");
       if (check_back())
-        put_parm("=%d",min(save_release,release));
+        put_parm("=%d",min(save_release,g_release));
       else
-        put_parm("=%d",release);
+        put_parm("=%d",g_release);
 
       if (*(sptr = curfractalspecific->name) == '*') ++sptr;
       put_parm( s_seqs,s_type,sptr);
@@ -2409,12 +2409,12 @@ static char *expand_var(char *var, char *buf)
    }
    else if(strcmp(var,s_version) == 0)  /* 4 chars */
    {
-      sprintf(buf,"%d",release);
+      sprintf(buf,"%d",g_release);
       out = buf;
    }
    else if(strcmp(var,s_patch) == 0)   /* 1 or 2 chars */
    {
-      sprintf(buf,"%d",patchlevel);
+      sprintf(buf,"%d",g_patchlevel);
       out = buf;
    }
    else if(strcmp(var,s_xdots) == 0)   /* 2 to 4 chars */

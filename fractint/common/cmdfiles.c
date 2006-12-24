@@ -623,7 +623,7 @@ static void initvars_restart()          /* <ins> key init */
 {
    int i;
    recordcolors = 'a';                  /* don't use mapfiles in PARs */
-   save_release = release;              /* this release number */
+   save_release = g_release;            /* this release number */
    gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
    dither_flag = 0;                     /* no dithering */
    askvideo = 1;                        /* turn on video-prompt flag */
