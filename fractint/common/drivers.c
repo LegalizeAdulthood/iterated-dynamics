@@ -257,4 +257,16 @@ METHOD_VOID(sound_off)
 METHOD_VOID(mute)
 METHOD_INT(diskp)
 
+int
+driver_get_char_attr(void)
+{
+	return (*display->get_char_attr)(display);
+}
+
+void
+driver_put_char_attr(int char_attr)
+{
+	(*display->put_char_attr)(display, char_attr);
+}
+
 #endif

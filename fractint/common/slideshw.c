@@ -125,7 +125,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
    for(i=0;i<80;i++)
    {
       driver_move_cursor(row,i);
-      savescrn[i] = get_a_char();
+      savescrn[i] = driver_get_char_attr();
    }
    driver_put_string(row,col,attr,txt);
    driver_hide_text_cursor();
@@ -133,7 +133,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
    for(i=0;i<80;i++)
    {
       driver_move_cursor(row,i);
-      put_a_char(savescrn[i]);
+      driver_put_char_attr(savescrn[i]);
    }
    return(0);
 }

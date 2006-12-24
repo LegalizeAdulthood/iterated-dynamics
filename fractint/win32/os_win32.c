@@ -820,16 +820,6 @@ void erasesegment(int segaddress, int segvalue)
 	CALLED("erasesegment");
 }
 
-/*
-; *************** Functions get_a_char, put_a_char ********************
-;       Get and put character and attribute at cursor
-;       Hi nybble=character, low nybble attribute. Text mode only
-*/
-char get_a_char(void)
-{
-	return (char) getakey();
-}
-
 void put_a_char(int ch)
 {
 	CALLED("put_a_char");

@@ -153,8 +153,6 @@ extern void puttruecolor(int, int, int, int, int);
 extern void scroll_center(int, int);
 extern void scroll_relative(int, int);
 extern void scroll_state(int);
-extern char get_a_char(void);
-extern void put_a_char(int);
 extern void (*swapsetup)(void);
 extern void swapnormread(void);
 extern void swapnormwrite(void);
