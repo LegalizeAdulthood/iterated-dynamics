@@ -454,6 +454,11 @@ int getakeynohelp(void)
 
 int keypressed(void)
 {
+	return wintext_getkeypress(0);
+#if 0
+	extern unsigned int  wintext_keypress_head;
+	extern unsigned int  wintext_keypress_tail;
+
     int ch;
     ch = getkeyint(0);
     if (!ch)
@@ -474,6 +479,7 @@ int keypressed(void)
 		return 0;
     }
     return ch;
+#endif
 }
 
 /* Wait for a key.

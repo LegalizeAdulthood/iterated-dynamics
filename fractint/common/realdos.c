@@ -25,8 +25,8 @@ static int menu_checkkey(int curkey,int choice);
 /*
 #define PRODUCTION
 */
-int release=2004;  /* this has 2 implied decimals; increment it every synch */
-int patchlevel=4; /* patchlevel for DOS version */
+int g_release = 2100;	/* this has 2 implied decimals; increment it every synch */
+int g_patchlevel = 0;	/* patchlevel for DOS version */
 #ifdef XFRACT
 int xrelease=304;
 #endif
@@ -305,18 +305,18 @@ void helptitle()
    driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
    sprintf(msg,"XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
-           xrelease/100,xrelease%100, release/100,release%100);
+           xrelease/100,xrelease%100, g_release/100,g_release%100);
 #else
    *msg=0;
 #endif   
-   sprintf(buf,"FRACTINT Version %d.%01d",release/100,(release%100)/10);
+   sprintf(buf,"FRACTINT Version %d.%01d",g_release/100,(g_release%100)/10);
    strcat(msg,buf);
-   if (release%10) {
-      sprintf(buf,"%01d",release%10);
+   if (g_release%10) {
+      sprintf(buf,"%01d",g_release%10);
       strcat(msg,buf);
       }
-   if (patchlevel) {
-      sprintf(buf,".%d",patchlevel);
+   if (g_patchlevel) {
+      sprintf(buf,".%d",g_patchlevel);
       strcat(msg,buf);
       }
    putstringcenter(0,0,80,C_TITLE,msg);

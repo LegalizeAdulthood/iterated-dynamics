@@ -821,7 +821,7 @@ win32_disk_get_key(Driver *drv)
 {
 	int block = 0;
 	CALLED("win32_disk_get_key");
-	return wintext_getkeypress(block);
+	return wintext_getkeypress(1);
 #if 0
 	static int skipcount = 0;
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;

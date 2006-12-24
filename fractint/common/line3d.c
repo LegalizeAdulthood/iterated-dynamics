@@ -1808,7 +1808,7 @@ static int _fastcall RAY_Header(void)
       fprintf(File_Ptr1, dxf_begin);
 
    if (RAY != 7)
-      fprintf(File_Ptr1, banner, (char *)s3, release / 100., (char *)s3a);
+      fprintf(File_Ptr1, banner, (char *)s3, g_release / 100., (char *)s3a);
 
    if (RAY == 5)
       fprintf(File_Ptr1, "*/\n");

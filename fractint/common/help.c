@@ -1229,8 +1229,8 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          info->margin = 0;
 
          memset(line, ' ', 81);
-         sprintf(buff, "Fractint Version %d.%01d%c",release/100, (release%100)/10,
-                                ( (release%10) ? '0'+(release%10) : ' ') );
+         sprintf(buff, "Fractint Version %d.%01d%c",g_release/100, (g_release%100)/10,
+                                ( (g_release%10) ? '0'+(g_release%10) : ' ') );
          memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
          sprintf(buff, "Page %d", pd->pnum);

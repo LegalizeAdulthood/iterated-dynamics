@@ -791,7 +791,7 @@ int tab_display_2(char *msg)
 
    s_row = 1;
    putstringcenter(s_row++,0,80,C_PROMPT_HI, sstopsecret);
-   sprintf(msg,"Version %d patch %d",release, patchlevel);
+   sprintf(msg,"Version %d patch %d",g_release, g_patchlevel);
    driver_put_string(++s_row,2,C_GENERAL_HI,msg);
    sprintf(msg,"%lu bytes conventional stack free",stackavail());
    driver_put_string(++s_row,2,C_GENERAL_HI,msg);

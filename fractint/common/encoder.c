@@ -746,9 +746,9 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
    save_info->system = (short) save_system;
 
    if (check_back())
-      save_info->release = (short) min(save_release, release);
+      save_info->release = (short) min(save_release, g_release);
    else
-      save_info->release = (short) release;
+      save_info->release = (short) g_release;
 
    save_info->flag3d = (short) display3d;
    save_info->ambient = (short) Ambient;
