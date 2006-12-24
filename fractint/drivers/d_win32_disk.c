@@ -1179,7 +1179,7 @@ win32_disk_stack_screen(Driver *drv)
 	int i;
 
 	CALLED("win32_disk_stack_screen");
-	di->saved_cursor[di->screen_count+1] = textrow*80 + textcol;
+	di->saved_cursor[di->screen_count+1] = g_textrow*80 + g_textcol;
 	if (++di->screen_count)
 	{ /* already have some stacked */
 		static char msg[] =
@@ -1204,8 +1204,8 @@ win32_disk_unstack_screen(Driver *drv)
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
 	CALLED("win32_disk_unstack_screen");
-	textrow = di->saved_cursor[di->screen_count] / 80;
-	textcol = di->saved_cursor[di->screen_count] % 80;
+	g_textrow = di->saved_cursor[di->screen_count] / 80;
+	g_textcol = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
 	{ /* unstack */
 		wintext_screen_set(di->saved_screens[di->screen_count]);

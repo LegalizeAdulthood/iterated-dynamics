@@ -116,15 +116,15 @@ int stopmsg (int flags, char *msg)
       toprow = 4;
       driver_move_cursor(4,0);
       }
-   textcbase = 2; /* left margin is 2 */
+   g_textcbase = 2; /* left margin is 2 */
    driver_put_string(toprow,0,7,msg);
    if (flags & STOPMSG_CANCEL)
-      driver_put_string(textrow+2,0,7,s_escape_cancel);
+      driver_put_string(g_textrow+2,0,7,s_escape_cancel);
    else
-      driver_put_string(textrow+2,0,7,s_anykey);
-   textcbase = 0; /* back to full line */
+      driver_put_string(g_textrow+2,0,7,s_anykey);
+   g_textcbase = 0; /* back to full line */
    color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-   driver_set_attr(toprow,0,color,(textrow+1-toprow)*80);
+   driver_set_attr(toprow,0,color,(g_textrow+1-toprow)*80);
    driver_hide_text_cursor();   /* cursor off */
    if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & 16) ? 0 : 2);
@@ -640,10 +640,10 @@ int fullscreen_choice(
    for (i = topleftrow-1-titlelines; i < topleftrow+boxdepth+1; ++i)
       driver_set_attr(i,k,C_PROMPT_LO,j);          /* draw empty box */
    if (hdg) {
-      textcbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
-      textcbase -= (90 - titlewidth) / 20; /* put heading into box */
+      g_textcbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
+      g_textcbase -= (90 - titlewidth) / 20; /* put heading into box */
       driver_put_string(topleftrow-titlelines-1,0,C_PROMPT_HI,hdg);
-      textcbase = 0;
+      g_textcbase = 0;
       }
    if (hdg2)                               /* display 2nd heading */
       driver_put_string(topleftrow-1,topleftcol,C_PROMPT_MED,hdg2);
@@ -1452,9 +1452,9 @@ int field_prompt(
    boxwidth += i * 2;
    for (i = -1; i < titlelines+3; ++i)    /* draw empty box */
       driver_set_attr(titlerow+i,j,C_PROMPT_LO,boxwidth);
-   textcbase = titlecol;                  /* set left margin for putstring */
+   g_textcbase = titlecol;                  /* set left margin for putstring */
    driver_put_string(titlerow,0,C_PROMPT_HI,hdg); /* display heading */
-   textcbase = 0;
+   g_textcbase = 0;
    i = titlerow + titlelines + 4;
    if (instr) {                           /* display caller's instructions */
       charptr = instr;
@@ -1504,7 +1504,7 @@ int thinking(int options,char *msg)
       strcat(buf,msg);
       strcat(buf,"    ");
       driver_put_string(4,10,C_GENERAL_HI,buf);
-      thinkcol = textcol - 3;
+      thinkcol = g_textcol - 3;
       count = 0;
       }
    if ((count++)<100) {
