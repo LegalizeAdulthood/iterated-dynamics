@@ -279,7 +279,7 @@ restart:   /* insert key re-starts here */
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox,dacbox,256*3);      /* save in case colors= present */
+	memcpy(olddacbox,g_dacbox,256*3);      /* save in case colors= present */
 
 	if (debugflag == 8088)
 	{
@@ -358,7 +358,7 @@ restart:   /* insert key re-starts here */
 restorestart:
 	if (colorpreloaded)
 	{
-		memcpy(dacbox,olddacbox,256*3);   /* restore in case colors= present */
+		memcpy(g_dacbox,olddacbox,256*3);   /* restore in case colors= present */
 	}
 
 	lookatmouse = 0;                     /* ignore mouse */
@@ -505,7 +505,7 @@ imagestart:                             /* calc/display a new image */
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == F3)
 						display3d = 1;
 					if(colorpreloaded)
-						memcpy(olddacbox,dacbox,256*3);     /* save in case colors= present */
+						memcpy(olddacbox,g_dacbox,256*3);     /* save in case colors= present */
 					driver_set_for_text(); /* switch to text mode */
 					showfile = -1;
 					goto restorestart;

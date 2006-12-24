@@ -225,23 +225,23 @@ static float    gamma_val = 1;
 
 static void setpal(int pal, int r, int g, int b)
    {
-   dacbox[pal][0] = (BYTE)r;
-   dacbox[pal][1] = (BYTE)g;
-   dacbox[pal][2] = (BYTE)b;
+   g_dacbox[pal][0] = (BYTE)r;
+   g_dacbox[pal][1] = (BYTE)g;
+   g_dacbox[pal][2] = (BYTE)b;
    spindac(0,1);
    }
 
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(dacbox+first, pal, how_many*3);
+   memmove(g_dacbox+first, pal, how_many*3);
    spindac(0,1);
    }
 
 
 static void getpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(pal, dacbox+first, how_many*3);
+   memmove(pal, g_dacbox+first, how_many*3);
    }
 
 
@@ -887,15 +887,9 @@ void Cursor_CheckBlink(void)
 int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
    {
 
-#ifndef XFRACT
-   while ( !driver_key_pressed() ) {
+   while ( !driver_wait_key_pressed(1) ) {
        Cursor_CheckBlink();
    }
-#else
-   while ( !waitkeypressed(1) ) {
-       Cursor_CheckBlink();
-   }
-#endif
 
    return( driver_key_pressed() );
    }
@@ -2571,11 +2565,11 @@ static void PalTable__UpdateDAC(PalTable *this)
    {
    if ( this->exclude )
       {
-      memset(dacbox, 0, 256*3);
+      memset(g_dacbox, 0, 256*3);
       if (this->exclude == 1)
          {
          int a = this->curr[this->active];
-         memmove(dacbox[a], &this->pal[a], 3);
+         memmove(g_dacbox[a], &this->pal[a], 3);
          }
       else
          {
@@ -2589,28 +2583,28 @@ static void PalTable__UpdateDAC(PalTable *this)
             b=t;
             }
 
-         memmove(dacbox[a], &this->pal[a], 3*(1+(b-a)));
+         memmove(g_dacbox[a], &this->pal[a], 3*(1+(b-a)));
          }
       }
    else
       {
-      memmove(dacbox[0], this->pal, 3*colors);
+      memmove(g_dacbox[0], this->pal, 3*colors);
 
       if ( this->freestyle )
-         PalTable__PutBand(this, (PALENTRY *)dacbox);   /* apply band to dacbox */
+         PalTable__PutBand(this, (PALENTRY *)g_dacbox);   /* apply band to g_dacbox */
       }
 
    if ( !this->hidden )
       {
       if (inverse)
          {
-         memset(dacbox[fg_color], 0, 3);         /* dacbox[fg] = (0,0,0) */
-         memset(dacbox[bg_color], 48, 3);        /* dacbox[bg] = (48,48,48) */
+         memset(g_dacbox[fg_color], 0, 3);         /* g_dacbox[fg] = (0,0,0) */
+         memset(g_dacbox[bg_color], 48, 3);        /* g_dacbox[bg] = (48,48,48) */
          }
       else
          {
-         memset(dacbox[bg_color], 0, 3);         /* dacbox[bg] = (0,0,0) */
-         memset(dacbox[fg_color], 48, 3);        /* dacbox[fg] = (48,48,48) */
+         memset(g_dacbox[bg_color], 0, 3);         /* g_dacbox[bg] = (0,0,0) */
+         memset(g_dacbox[fg_color], 48, 3);        /* g_dacbox[fg] = (48,48,48) */
          }
       }
 

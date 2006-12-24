@@ -92,7 +92,7 @@ extern int                   currow;
 extern int                   cyclelimit;
 extern int                   c_exp;
 extern double                d1overd;
-extern BYTE                  dacbox[256][3];
+extern BYTE                  g_dacbox[256][3];
 extern int                   daccount;
 extern int                   daclearn;
 extern double                ddelmin;

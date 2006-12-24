@@ -2884,9 +2884,9 @@ or '*' to use palette from the image to be loaded."};
             break;
          }
       }
-      memcpy(olddacbox,dacbox,256*3); /* save the DAC */
+      memcpy(olddacbox,g_dacbox,256*3); /* save the DAC */
       i = ValidateLuts(temp1);
-      memcpy(dacbox,olddacbox,256*3); /* restore the DAC */
+      memcpy(g_dacbox,olddacbox,256*3); /* restore the DAC */
       if (i != 0) { /* Oops, somethings wrong */
          askflag = 1;
          continue;

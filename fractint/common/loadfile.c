@@ -591,7 +591,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
          for (j = 0; j < 3; j++) {
             if ((k = getc(fp)) < 0)
                break;
-            dacbox[i][j] = (BYTE)(k >> 2);
+            g_dacbox[i][j] = (BYTE)(k >> 2);
          }
          if(k < 0)
             break;

@@ -118,7 +118,7 @@ int color_bright = 0;		/* brightest color in palette */
 int color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int cpu, fpu;                        /* cpu, fpu flags */
-unsigned char dacbox[256][3];
+unsigned char g_dacbox[256][3];
 int daclearn = 0;
 int dacnorm = 0;
 int daccount = 0;
@@ -555,7 +555,7 @@ find_special_colors (void)
 
 	for (i = 0; i < colors; i++)
 	{
-		brt = (int) dacbox[i][0] + (int) dacbox[i][1] + (int) dacbox[i][2];
+		brt = (int) g_dacbox[i][0] + (int) g_dacbox[i][1] + (int) g_dacbox[i][2];
 		if (brt > maxb)
 		{
 			maxb = brt;
@@ -568,22 +568,22 @@ find_special_colors (void)
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = mingun = (int) dacbox[i][0];
-			if ((int) dacbox[i][1] > (int) dacbox[i][0])
+			maxgun = mingun = (int) g_dacbox[i][0];
+			if ((int) g_dacbox[i][1] > (int) g_dacbox[i][0])
 			{
-				maxgun = (int) dacbox[i][1];
+				maxgun = (int) g_dacbox[i][1];
 			}
 			else
 			{
-				mingun = (int) dacbox[i][1];
+				mingun = (int) g_dacbox[i][1];
 			}
-			if ((int) dacbox[i][2] > maxgun)
+			if ((int) g_dacbox[i][2] > maxgun)
 			{
-				maxgun = (int) dacbox[i][2];
+				maxgun = (int) g_dacbox[i][2];
 			}
-			if ((int) dacbox[i][2] < mingun)
+			if ((int) g_dacbox[i][2] < mingun)
 			{
-				mingun = (int) dacbox[i][2];
+				mingun = (int) g_dacbox[i][2];
 			}
 			if (brt - (maxgun - mingun) / 2 > med)
 			{
@@ -740,7 +740,7 @@ void spindac(int dir, int inc)
 	if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
 	{
 		top = rotate_hi > colors ? colors - 1 : rotate_hi;
-		dacbot = (unsigned char *) dacbox + 3 * rotate_lo;
+		dacbot = (unsigned char *) g_dacbox + 3 * rotate_lo;
 		len = (top - rotate_lo) * 3 * sizeof (unsigned char);
 		if (dir > 0)
 		{

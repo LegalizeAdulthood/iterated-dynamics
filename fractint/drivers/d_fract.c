@@ -357,12 +357,12 @@ void fractint_redraw(Driver *drv)
 
 int fractint_read_palette(Driver *drv)
 {
-	/* reads palette into dacbox */
+	/* reads palette into g_dacbox */
 	readvideopalette();
 }
 int fractint_write_palette(Driver *drv)
 {
-	/* writes dacbox into palette */
+	/* writes g_dacbox into palette */
 	writevideopalette();
 }
 

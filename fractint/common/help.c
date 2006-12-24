@@ -1589,7 +1589,9 @@ void end_help(void)
    if (help_file != -1)
       {
       close(help_file);
-      free((BYTE *)topic_offset);
+      free(topic_offset);
+	  free(label);
+	  free(hist);
       help_file = -1;
       }
    }

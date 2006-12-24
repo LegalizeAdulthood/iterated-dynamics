@@ -102,10 +102,10 @@ int     rotate_lo,rotate_hi;    /* cycling color range      */
 int *ranges;                /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
 BYTE *mapdacbox = NULL;     /* map= (default colors)    */
-int     colorstate;             /* 0, dacbox matches default (bios or map=) */
-                                /* 1, dacbox matches no known defined map   */
-                                /* 2, dacbox matches the colorfile map      */
-int     colorpreloaded;         /* if dacbox preloaded for next mode select */
+int     colorstate;             /* 0, g_dacbox matches default (bios or map=) */
+                                /* 1, g_dacbox matches no known defined map   */
+                                /* 2, g_dacbox matches the colorfile map      */
+int     colorpreloaded;         /* if g_dacbox preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor=0;        /* flag for reading color from GIF */
 double  math_tol[2]={.05,.05};  /* For math transition */
@@ -2960,20 +2960,20 @@ static int parse_colors(char *value)
                else if (k <= 'Z')       k -= ('A'-10);
                else if (k < '_' || k > 'z') goto badcolor;
                else                     k -= ('_'-36);
-               dacbox[i][j] = (BYTE)k;
+               g_dacbox[i][j] = (BYTE)k;
                if (smooth) {
                   int start,spread,cnum;
                   start = i - (spread = smooth + 1);
                   cnum = 0;
-                  if ((k - (int)dacbox[start][j]) == 0) {
+                  if ((k - (int)g_dacbox[start][j]) == 0) {
                      while (++cnum < spread)
-                        dacbox[start+cnum][j] = (BYTE)k;
+                        g_dacbox[start+cnum][j] = (BYTE)k;
                      }
                   else {
                      while (++cnum < spread)
-                        dacbox[start+cnum][j] =
-            (BYTE)(( cnum *dacbox[i][j]
-            + (i-(start+cnum))*dacbox[start][j]
+                        g_dacbox[start+cnum][j] =
+            (BYTE)(( cnum *g_dacbox[i][j]
+            + (i-(start+cnum))*g_dacbox[start][j]
             + spread/2 )
             / (BYTE) spread);
                      }
@@ -2985,13 +2985,13 @@ static int parse_colors(char *value)
          }
       if (smooth) goto badcolor;
       while (i < 256)  { /* zap unset entries */
-         dacbox[i][0] = dacbox[i][1] = dacbox[i][2] = 40;
+         g_dacbox[i][0] = g_dacbox[i][1] = g_dacbox[i][2] = 40;
          ++i;
          }
       colorstate = 1;
       }
    colorpreloaded = 1;
-   memcpy(olddacbox,dacbox,256*3);
+   memcpy(olddacbox,g_dacbox,256*3);
    return(0);
 badcolor:
    return(-1);

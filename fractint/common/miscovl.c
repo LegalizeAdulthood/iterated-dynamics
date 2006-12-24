@@ -1156,7 +1156,7 @@ docolors:
          for(;;) {
             /* emit color in rgb 3 char encoded form */
             for (j = 0; j < 3; ++j) {
-               if ((k = dacbox[curc][j]) < 10) k += '0';
+               if ((k = g_dacbox[curc][j]) < 10) k += '0';
                else if (k < 36)                k += ('A' - 10);
                else                            k += ('_' - 36);
                buf[j] = (char)k;
@@ -1188,11 +1188,11 @@ docolors:
                   for (j = 0; j < 3; ++j) { /* check pattern of chg per color */
                      /* Sylvie Gallet's fix */
                      if (debugflag != 910 && scanc > (curc+4) && scanc < maxcolor-5)
-                        if (abs(2*dacbox[scanc][j] - dacbox[scanc-5][j]
-                                - dacbox[scanc+5][j]) >= 2)
+                        if (abs(2*g_dacbox[scanc][j] - g_dacbox[scanc-5][j]
+                                - g_dacbox[scanc+5][j]) >= 2)
                            break;
                      /* end Sylvie's fix */       
-                     delta = (int)dacbox[scanc][j] - (int)dacbox[scanc-k-1][j];
+                     delta = (int)g_dacbox[scanc][j] - (int)g_dacbox[scanc-k-1][j];
                      if (k == scanc - curc)
                         diff1[k][j] = diff2[k][j] = delta;
                      else

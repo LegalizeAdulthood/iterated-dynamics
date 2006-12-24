@@ -195,7 +195,7 @@ extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
 extern int driver_get_key(void);
 extern int driver_key_pressed(void);
-extern int driver_wait_key_prssed(int timeout);
+extern int driver_wait_key_pressed(int timeout);
 extern void driver_shell(void);
 extern void driver_set_video_mode(int ax, int bx, int cx, int dx);
 extern void driver_put_string(int row, int col, int attr, const char *msg);

@@ -233,9 +233,9 @@ int line3d(BYTE * pixels, unsigned linelen)
          int pal, colornum;
          colornum = pixels[col];
          /* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-         pal = ((int) dacbox[colornum][0] * 77 +
-                (int) dacbox[colornum][1] * 151 +
-                (int) dacbox[colornum][2] * 28);
+         pal = ((int) g_dacbox[colornum][0] * 77 +
+                (int) g_dacbox[colornum][1] * 151 +
+                (int) g_dacbox[colornum][2] * 28);
          pal >>= 6;
          pixels[col] = (BYTE) pal;
       }
@@ -1269,9 +1269,9 @@ int _fastcall targa_color(int x, int y, int color)
       case 0:
       default:
       {
-         RGB[0] = (BYTE)(dacbox[Real_Color][0] << 2); /* Move color space to */
-         RGB[1] = (BYTE)(dacbox[Real_Color][1] << 2); /* 256 color primaries */
-         RGB[2] = (BYTE)(dacbox[Real_Color][2] << 2); /* from 64 colors */
+         RGB[0] = (BYTE)(g_dacbox[Real_Color][0] << 2); /* Move color space to */
+         RGB[1] = (BYTE)(g_dacbox[Real_Color][1] << 2); /* 256 color primaries */
+         RGB[2] = (BYTE)(g_dacbox[Real_Color][2] << 2); /* from 64 colors */
          break;
       }
       case 1:
@@ -1889,10 +1889,10 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
    if (!BRIEF)
       for (i = 0; i <= 2; i++)
 #ifdef __SVR4
-         c[i] = (float) ((int)(dacbox[c1][i] + dacbox[c2][i] + dacbox[c3][i])
+         c[i] = (float) ((int)(g_dacbox[c1][i] + g_dacbox[c2][i] + g_dacbox[c3][i])
             / (3 * 63));
 #else
-         c[i] = (float) (dacbox[c1][i] + dacbox[c2][i] + dacbox[c3][i])
+         c[i] = (float) (g_dacbox[c1][i] + g_dacbox[c2][i] + g_dacbox[c3][i])
             / (3 * 63);
 #endif
 
