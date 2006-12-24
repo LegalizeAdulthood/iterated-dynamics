@@ -1608,7 +1608,7 @@ void showfreemem(void)
       sizeof(HISTORY)*(unsigned long)maxhistory);
    printf("\n %d video table used",showvidlength());
    printf("\n\n %Fs...\n",s_pressanykeytocontinue);
-   getakey();
+   driver_get_key();
 }
 #endif
 
@@ -1636,7 +1636,7 @@ int edit_text_colors()
       if (col < 0)  col = 0;
       if (col > 79) col = 79;
       driver_move_cursor(row,col);
-      i = getakey();
+      i = driver_get_key();
       if (i >= 'a' && i <= 'z') i -= 32; /* uppercase */
       switch (i) {
          case 27: /* esc */
@@ -1660,7 +1660,7 @@ int edit_text_colors()
                   *(farp1++) = (char)((j < 10) ? j+'0' : j+'A'-10); *(farp1++) = (char)k;
                   *(farp1++) = ' '; *(farp1++) = (char)k;
                   }
-            getakey();
+            driver_get_key();
             farp1 = vidmem;
             farp2 = savescreen;
             for (i = 0; i < 4000; ++i) /* restore */
@@ -1682,7 +1682,7 @@ int edit_text_colors()
          case 1080: /* cursor down  */
             ++row; break;
          case 13:   /* enter */
-            *(vidmem + row*160 + col*2) = (char)getakey();
+            *(vidmem + row*160 + col*2) = (char)driver_get_key();
             break;
          default:
             if (i >= '0' && i <= '9')      i -= '0';

@@ -98,14 +98,14 @@ void intro(void)
          delay(100);
       if (driver_key_pressed() == 32)
          {      /* spacebar pauses */
-         getakey();
+         driver_get_key();
 #if !defined(XFRACT) && !defined(_WIN32)
          while (!driver_key_pressed()) ;
 #else
          waitkeypressed(0);
 #endif
          if (driver_key_pressed() == 32)
-            getakey();
+            driver_get_key();
          }
       delaymax = 15;
       driver_scroll_up(toprow, botrow);

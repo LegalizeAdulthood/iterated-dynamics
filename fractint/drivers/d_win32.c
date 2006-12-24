@@ -89,7 +89,7 @@ static void win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
 {
 }
 
-static int win32_get_key(Driver *drv, int block)
+static int win32_get_key(Driver *drv)
 {
     return 0;
 }

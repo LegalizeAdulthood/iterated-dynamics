@@ -1247,7 +1247,7 @@ rescan:  /* entry for changed browse parms */
      {
        if(driver_key_pressed())
        {
-          getakey();
+          driver_get_key();
           break;
        }
        splitpath(DTA.filename,NULL,NULL,fname,ext);
@@ -1336,7 +1336,7 @@ rescan:  /* entry for changed browse parms */
              drawindow(color_bright,&winlist);
 #endif
 
-      c=getakey();
+      c=driver_get_key();
       switch (c) {
          case RIGHT_ARROW:
          case LEFT_ARROW:
@@ -1405,11 +1405,11 @@ rescan:  /* entry for changed browse parms */
           showtempmsg(mesg);
           while (!driver_key_pressed()) ;
           cleartempmsg();
-          c = getakey();
+          c = driver_get_key();
           if ( c == 'Y' && doublecaution ) {
            static char msg[] = {"ARE YOU SURE???? (Y/N)"};
            texttempmsg(msg);
-            if ( getakey() != 'Y') c = 'N';
+            if ( driver_get_key() != 'Y') c = 'N';
           }
           if ( c == 'Y' ) {
           splitpath(readname,drive,dir,NULL,NULL);

@@ -60,7 +60,7 @@ struct tagDriver {
 	/* writes a span of pixels */		void (*write_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);	
 	/* set copy/xor line */				void (*set_line_mode)(Driver *drv, int mode);									 
 	/* draw line */						void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2);			
-	/* poll or block for a key */		int (*get_key)(Driver *drv, int block);		
+	/* poll or block for a key */		int (*get_key)(Driver *drv);		
 										int (*key_pressed)(Driver *drv);
 										int (*wait_key_pressed)(Driver *drv, int timeout);
 	/* invoke a command shell */		void (*shell)(Driver *drv);			
@@ -192,7 +192,7 @@ extern void driver_read_span(int y, int x, int lastx, BYTE *pixels);
 extern void driver_write_span(int y, int x, int lastx, BYTE *pixels);
 extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2);
-extern int driver_get_key(int block);
+extern int driver_get_key(void);
 extern int driver_key_pressed(void);
 extern int driver_wait_key_prssed(int timeout);
 extern void driver_shell(void);
@@ -236,7 +236,7 @@ extern void driver_put_char_attr(int char_attr);
 #define driver_write_span(_y, _x, _lastx, _pixels)	(*display->write_span)(display, _y, _x, _lastx, _pixels)
 #define driver_set_line_mode(_m)					(*display->set_line_mode)(display, _m)
 #define driver_draw_line(x1_, y1_, x2_, y2_)		(*display->draw_line)(x1_, y1_, x1_, y2_)
-#define driver_get_key(_block)						(*display->get_key)(display, _block)
+#define driver_get_key()							(*display->get_key)(display)
 #define driver_key_pressed()						(*display->key_pressed)(display)
 #define driver_wait_key_pressed(timeout_)			(*display->wait_key_pressed)(timeout_)
 #define driver_shell()								(*display->shell)(display)

@@ -661,7 +661,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
          draw_page = 0;
          }
 
-      key = getakey();
+      key = driver_get_key();
 
       switch(key)
          {
@@ -887,7 +887,7 @@ int help(int action)
             action = -1;
             while (action == -1)
                {
-               switch (getakey())
+               switch (driver_get_key())
                   {
                   case ESC:      action = ACTION_QUIT;  break;
                   case ALT_F1:   action = ACTION_PREV;  break;
@@ -1293,7 +1293,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
       static char msg[] = {"Done -- Press any key"};
       driver_buzzer(0);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
-      getakey();
+      driver_get_key();
       return (0);
       }
 
@@ -1302,7 +1302,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
       static char msg[] = {"Aborted -- Press any key"};
       driver_buzzer(1);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
-      getakey();
+      driver_get_key();
       return (0);
       }
 
@@ -1324,7 +1324,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    while ( driver_key_pressed() )
       {
-      key = getakey();
+      key = driver_get_key();
       if ( key == ESC )
          return (0);    /* user abort */
       }

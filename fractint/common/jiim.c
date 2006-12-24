@@ -691,7 +691,7 @@ void Jiim(int which)         /* called by fractint */
          while(driver_key_pressed())
          {
             Cursor_WaitKey();
-            kbdchar = getakey();
+            kbdchar = driver_get_key();
 
             dcol = drow = 0;
             xcjul = BIG;

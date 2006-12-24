@@ -551,7 +551,7 @@ int cmdfiles(int argc,char **argv)
       showfile = 1;  /* nor startup image file              */
       }
 
-   init_msg("",NULL,0);  /* this causes getakey if init_msg called on runup */
+   init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
 
    if(debugflag != 110)
        first_init = 0;
@@ -3152,7 +3152,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        2 <@> command after startup      */
 /*        3 command line @filename/setname */
 /* this is like stopmsg() but can be used in cmdfiles()      */
-/* call with NULL for badfilename to get pause for getakey() */
+/* call with NULL for badfilename to get pause for driver_get_key() */
 int init_msg(char *cmdstr,char *badfilename,int mode)
 {
    char *modestr[4] =
@@ -3214,7 +3214,7 @@ void dopause(int action)
       if(initbatch == 0)
       {
          if(needpause == 1)
-            getakey();
+            driver_get_key();
          else if (needpause == 2)
             if(getakeynohelp() == ESC)
                goodbye();

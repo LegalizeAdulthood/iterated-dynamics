@@ -256,7 +256,7 @@ int encoder()
 
    if (initbatch)               /* flush any impending keystrokes */
       while (driver_key_pressed())
-         getakey();
+         driver_get_key();
 
    setup_save_info(&save_info);
 
@@ -1036,7 +1036,7 @@ nomatch:
             break;
          }
          if (tempkey == (int)'s')
-            getakey();   /* eat the keystroke */
+            driver_get_key();   /* eat the keystroke */
       } /* end for ydot */
    } /* end for rownum */
    

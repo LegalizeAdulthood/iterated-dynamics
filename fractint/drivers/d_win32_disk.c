@@ -816,8 +816,9 @@ win32_disk_redraw(Driver *drv)
 *----------------------------------------------------------------------
 */
 static int
-win32_disk_get_key(Driver *drv, int block)
+win32_disk_get_key(Driver *drv)
 {
+	int block = 0;
 	CALLED("win32_disk_get_key");
 	return wintext_getkeypress(block);
 #if 0

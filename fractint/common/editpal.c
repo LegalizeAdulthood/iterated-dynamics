@@ -178,7 +178,7 @@ int editpal_cursor = 0;
  int         sydots;             /* depth of physical screen         */
  int         sxoffs;             /* start of logical screen          */
  int         syoffs;             /* start of logical screen          */
- int         lookatmouse;        /* mouse mode for getakey(), etc    */
+ int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
  int         strlocn[];          /* 10K buffer to store classes in   */
  int         colors;             /* # colors avail.                  */
  int         color_bright;       /* brightest color in palette       */
@@ -1064,7 +1064,7 @@ static void MoveBox__Move(MoveBox *this, int key)
       if (!done)
          {
          if (!first)
-            getakey();       /* delete key from buffer */
+            driver_get_key();       /* delete key from buffer */
          else
             first = FALSE;
          key = driver_key_pressed();   /* peek at the next one... */
@@ -1108,7 +1108,7 @@ static BOOLEAN MoveBox_Process(MoveBox *this)
    for(;;)
       {
       Cursor_WaitKey();
-      key = getakey();
+      key = driver_get_key();
 
       if (key==ENTER || key==ENTER_2 || key==ESC || key=='H' || key=='h')
          {
@@ -1352,7 +1352,7 @@ static int CEditor_Edit(CEditor *this)
    while ( !this->done )
       {
       Cursor_WaitKey();
-      key = getakey();
+      key = driver_get_key();
 
       switch( key )
          {
@@ -1372,7 +1372,7 @@ static int CEditor_Edit(CEditor *this)
             diff = 1;
             while ( driver_key_pressed() == key )
                {
-               getakey();
+               driver_get_key();
                ++diff;
                }
             if (this->val < 63)
@@ -1400,7 +1400,7 @@ static int CEditor_Edit(CEditor *this)
             diff = 1;
             while ( driver_key_pressed() == key )
                {
-               getakey();
+               driver_get_key();
                ++diff;
                }
             if (this->val > 0)
@@ -2510,7 +2510,7 @@ static void PalTable__DoCurs(PalTable *this, int key)
       if (!done)
          {
          if (!first)
-            getakey();       /* delete key from buffer */
+            driver_get_key();       /* delete key from buffer */
          else
             first = FALSE;
          key = driver_key_pressed();   /* peek at the next one... */
@@ -2968,7 +2968,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
                while (readticker() == tick) ;   /* wait until a tick passes */
                }
 
-            key = getakey();
+            key = driver_get_key();
             }
          while (key=='<' || key=='>');
 

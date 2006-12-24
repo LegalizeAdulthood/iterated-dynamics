@@ -392,7 +392,7 @@ int getkeyint(int block)
 		keybuffer = 0;
 		return ch;
     }
-    curkey = driver_get_key(0);
+    curkey = driver_get_key(); //0);
     if (slides==1 && curkey == ESC)
 	{
 		stopslideshow();
@@ -406,7 +406,7 @@ int getkeyint(int block)
 
     if (curkey==0 && block)
 	{
-		curkey = driver_get_key(1);
+		curkey = driver_get_key(); //1);
 		if (slides==1 && curkey == ESC)
 		{
 			stopslideshow();

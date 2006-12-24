@@ -129,7 +129,7 @@ int stopmsg (int flags, char *msg)
    if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & 16) ? 0 : 2);
    while (driver_key_pressed()) /* flush any keyahead */
-      getakey();
+      driver_get_key();
    if(debugflag != 324)
       if (getakeynohelp() == ESC)
          ret = -1;
@@ -738,7 +738,7 @@ int fullscreen_choice(
 #else
       waitkeypressed(0); /* enables help */
 #endif
-      curkey = getakey();
+      curkey = driver_get_key();
 #ifdef XFRACT
       if (curkey==F10) curkey=')';
       if (curkey==F9) curkey='(';
@@ -1171,7 +1171,7 @@ top:
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,   "stereogram             <ctl-s>");
 
-   i = (driver_key_pressed()) ? getakey() : 0;
+   i = (driver_key_pressed()) ? driver_get_key() : 0;
    if (menu_checkkey(i,0) == 0) {
       helpmode = HELPMAIN;         /* switch help modes */
       if ((nextleft += 2) < nextright)
@@ -1207,7 +1207,7 @@ top:
          driver_set_attr(i,18,C_GENERAL_INPUT,40);
       putstringcenter(10,18,40,C_GENERAL_INPUT,s);
       driver_hide_text_cursor();
-      while ((i = getakey()) != 'y' && i != 'Y' && i != 13) {
+      while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13) {
          if (i == 'n' || i == 'N')
             goto top;
          }

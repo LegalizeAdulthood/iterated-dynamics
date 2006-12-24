@@ -336,7 +336,7 @@ int do_AutoStereo(void)
    while(done==0)
    {
       while(driver_key_pressed()==0); /* to trap F1 key */
-      kbdchar = getakey();
+      kbdchar = driver_get_key();
       switch(kbdchar)
       {
          case ENTER:   /* toggle bars */
