@@ -426,24 +426,29 @@ void DisplayHandle (U16 handle)
 
 void InitMemory (void)
 {
-   int counter;
+	int counter;
 #if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   long longtmp;
+	long longtmp;
 #endif
 
-   numTOTALhandles = 0;
-   for (counter = 0; counter < MAXHANDLES; counter++) {
-      handletable[counter].Nowhere.stored_at = NOWHERE;
-      handletable[counter].Nowhere.size = 0;
-   }
+	numTOTALhandles = 0;
+	for (counter = 0; counter < MAXHANDLES; counter++)
+	{
+		handletable[counter].Nowhere.stored_at = NOWHERE;
+		handletable[counter].Nowhere.size = 0;
+	}
 #if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   numEXThandles = 0;
-   longtmp = fr_farfree();
-   ext_xfer_size = XMMWRITELEN; /* 8192 */
-   if (longtmp < (long)XMMWRITELEN * 8)
-      ext_xfer_size = XMMWRITELEN / 2; /* 4096 */
-   if (longtmp < (long)XMMWRITELEN)
-      ext_xfer_size = XMMWRITELEN / 8; /* 1024, won't work, try anyway */
+	numEXThandles = 0;
+	longtmp = fr_farfree();
+	ext_xfer_size = XMMWRITELEN; /* 8192 */
+	if (longtmp < (long)XMMWRITELEN * 8)
+	{
+		ext_xfer_size = XMMWRITELEN / 2; /* 4096 */
+	}
+	if (longtmp < (long)XMMWRITELEN)
+	{
+		ext_xfer_size = XMMWRITELEN / 8; /* 1024, won't work, try anyway */
+	}
 #endif
 }
 

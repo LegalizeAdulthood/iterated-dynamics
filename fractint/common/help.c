@@ -1322,7 +1322,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
    sprintf(temp, "%d%%", (int)( (100.0 / num_pages) * pnum ) );
    driver_put_string(7, 41, C_HELP_LINK, temp);
 
-   while ( keypressed() )
+   while ( driver_key_pressed() )
       {
       key = getakey();
       if ( key == ESC )
@@ -1435,150 +1435,153 @@ ErrorAbort:
    }
 
 int init_help(void)
-   {
-   struct help_sig_info hs;
-   char                 path[FILE_MAX_PATH+1];
+{
+	struct help_sig_info hs;
+	char path[FILE_MAX_PATH+1];
 
-   help_file = -1;
+	help_file = -1;
 
 #ifndef WINFRACT
 #if !defined(XFRACT) && !defined(_WIN32)
-   if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
-      {
-      static FCODE err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
-      static FCODE err_no_exe[]     = "Help system couldn't find FRACTINT.EXE!\n";
-      static FCODE err_wrong_ver[]  = "Wrong help version in FRACTINT.EXE!\n";
+	if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
+    {
+		static FCODE err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
+		static FCODE err_no_exe[]     = "Help system couldn't find FRACTINT.EXE!\n";
+		static FCODE err_wrong_ver[]  = "Wrong help version in FRACTINT.EXE!\n";
 /*
       static FCODE err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
 */
 
-      if ( find_file(s_fractintexe, path) )
-         {
+		if (find_file(s_fractintexe, path))
+        {
 #ifdef __TURBOC__
-     if ( (help_file = open(path, O_RDONLY|O_BINARY|O_DENYWRITE)) != -1 )
+			if ((help_file = open(path, O_RDONLY|O_BINARY|O_DENYWRITE)) != -1)
 #else
-     if ( (help_file = open(path, O_RDONLY|O_BINARY)) != -1 )
+			if ((help_file = open(path, O_RDONLY|O_BINARY)) != -1)
 #endif
-            {
-            long help_offset;
+			{
+				long help_offset;
 
-            for (help_offset = -((long)sizeof(hs)); help_offset >= -128L; help_offset--)
-               {
-               lseek(help_file, help_offset, SEEK_END);
-               read(help_file, (char *)&hs, sizeof(hs));
-               if (hs.sig == HELP_SIG)  break;
-               }
+				for (help_offset = -((long)sizeof(hs)); help_offset >= -128L; help_offset--)
+				{
+					lseek(help_file, help_offset, SEEK_END);
+					read(help_file, (char *)&hs, sizeof(hs));
+					if (hs.sig == HELP_SIG)
+					{
+						break;
+					}
+				}
 
-            if ( hs.sig != HELP_SIG )
-               {
-               close(help_file);
-               help_file = -1;
-               /* (leave out the error message)
-               stopmsg(STOPMSG_NO_STACK, err_not_in_exe);
-               */
-               }
-
-            else
-               {
-               if ( hs.version != FIHELP_VERSION )
-                  {
-                  close(help_file);
-                  help_file = -1;
-                  stopmsg(STOPMSG_NO_STACK, err_wrong_ver);
-                  }
-               else
-                  base_off = hs.base;
-
-               }
-            }
-         else
-            stopmsg(STOPMSG_NO_STACK, err_no_open);
-         }
-      else
-         stopmsg(STOPMSG_NO_STACK, err_no_exe);
-
-      }
+				if (hs.sig != HELP_SIG)
+				{
+					close(help_file);
+					help_file = -1;
+				}
+				else
+				{
+					if (hs.version != FIHELP_VERSION)
+					{
+						close(help_file);
+						help_file = -1;
+						stopmsg(STOPMSG_NO_STACK, err_wrong_ver);
+					}
+					else
+					{
+						base_off = hs.base;
+					}
+				}
+			}
+			else
+			{
+				stopmsg(STOPMSG_NO_STACK, err_no_open);
+			}
+		}
+		else
+		{
+			stopmsg(STOPMSG_NO_STACK, err_no_exe);
+		}
+	}
 #endif
 #endif
 
-if (help_file == -1)            /* look for FRACTINT.HLP */
-   {
-   if ( find_file("fractint.hlp", path) )
-      {
+	if (help_file == -1)            /* look for FRACTINT.HLP */
+	{
+		if (find_file("fractint.hlp", path))
+		{
 #ifdef __TURBOC__
-      if ( (help_file = open(path, O_RDONLY|O_BINARY|O_DENYWRITE)) != -1 )
+			if ((help_file = open(path, O_RDONLY|O_BINARY|O_DENYWRITE)) != -1)
 #else
-      if ( (help_file = open(path, O_RDONLY|O_BINARY)) != -1 )
+			if ((help_file = open(path, O_RDONLY|O_BINARY)) != -1)
 #endif
-     {
-         read(help_file, (char *)&hs, sizeof(long)+sizeof(int));
+			{
+				read(help_file, (char *)&hs, sizeof(long)+sizeof(int));
 
-         if ( hs.sig != HELP_SIG )
-            {
-            static FCODE msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
-            close(help_file);
-            stopmsg(STOPMSG_NO_STACK, msg);
-            }
+				if (hs.sig != HELP_SIG)
+				{
+					static FCODE msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
+					close(help_file);
+					stopmsg(STOPMSG_NO_STACK, msg);
+				}
+				else if (hs.version != FIHELP_VERSION)
+				{
+					static FCODE msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
+					close(help_file);
+					stopmsg(STOPMSG_NO_STACK, msg);
+				}
+				else
+				{
+					base_off = sizeof(long)+sizeof(int);
+				}
+			}
+		}
+	}
 
-         else if ( hs.version != FIHELP_VERSION )
-            {
-            static FCODE msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
-            close(help_file);
-            stopmsg(STOPMSG_NO_STACK, msg);
-            }
-
-         else
-            base_off = sizeof(long)+sizeof(int);
-         }
-      }
-   }
-
-   if (help_file == -1)         /* Can't find the help files anywhere! */
-      {
-      static FCODE msg[] =
+	if (help_file == -1)         /* Can't find the help files anywhere! */
+	{
+		static FCODE msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
-         {"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
+			{"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
 #else
-         {"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};
+			{"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif
-      stopmsg(STOPMSG_NO_STACK, msg);
-      }
+		stopmsg(STOPMSG_NO_STACK, msg);
+	}
 
-   help_seek(0L);
+	help_seek(0L);
 
-   read(help_file, (char *)&max_pages, sizeof(int));
-   read(help_file, (char *)&max_links, sizeof(int));
-   read(help_file, (char *)&num_topic, sizeof(int));
-   read(help_file, (char *)&num_label, sizeof(int));
-   help_seek((long)6*sizeof(int));  /* skip num_contents and num_doc_pages */
+	read(help_file, (char *)&max_pages, sizeof(int));
+	read(help_file, (char *)&max_links, sizeof(int));
+	read(help_file, (char *)&num_topic, sizeof(int));
+	read(help_file, (char *)&num_label, sizeof(int));
+	help_seek((long)6*sizeof(int));  /* skip num_contents and num_doc_pages */
 
-   assert(max_pages > 0);
-   assert(max_links >= 0);
-   assert(num_topic > 0);
-   assert(num_label > 0);
+	assert(max_pages > 0);
+	assert(max_links >= 0);
+	assert(num_topic > 0);
+	assert(num_label > 0);
 
-   /* allocate all three arrays */
-   topic_offset = (long *) malloc(sizeof(long)*num_topic);
-   label = (LABEL *) malloc(sizeof(LABEL)*num_label);
-   hist = (HIST *) malloc(sizeof(HIST)*MAX_HIST);
+	/* allocate all three arrays */
+	topic_offset = (long *) malloc(sizeof(long)*num_topic);
+	label = (LABEL *) malloc(sizeof(LABEL)*num_label);
+	hist = (HIST *) malloc(sizeof(HIST)*MAX_HIST);
 
-   if ((topic_offset == NULL) || (NULL == label) || (NULL == hist))
-      {
-      static FCODE err_no_mem[] = "Not enough memory for help system!\n";
-      close(help_file);
-      help_file = -1;
-      stopmsg(STOPMSG_NO_STACK, err_no_mem);
+	if ((topic_offset == NULL) || (NULL == label) || (NULL == hist))
+	{
+		static FCODE err_no_mem[] = "Not enough memory for help system!\n";
+		close(help_file);
+		help_file = -1;
+		stopmsg(STOPMSG_NO_STACK, err_no_mem);
 
-      return (-2);
-      }
+		return (-2);
+	}
 
-   /* read in the tables... */
-   read(help_file, topic_offset, num_topic*sizeof(long));
-   read(help_file, label, num_label*sizeof(LABEL));
+	/* read in the tables... */
+	read(help_file, topic_offset, num_topic*sizeof(long));
+	read(help_file, label, num_label*sizeof(LABEL));
 
-   /* finished! */
+	/* finished! */
 
-   return 0;  /* success */
+	return 0;  /* success */
 }
 
 void end_help(void)

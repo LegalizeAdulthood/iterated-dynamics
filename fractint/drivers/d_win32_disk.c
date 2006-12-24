@@ -1272,6 +1272,13 @@ win32_disk_diskp(Driver *drv)
 	return 1;
 }
 
+static int
+win32_disk_key_pressed(Driver *drv)
+{
+	extern int keypressed(void);
+	return keypressed();
+}
+
 static DriverWin32Disk win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk),

@@ -1485,7 +1485,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
          File_Error(File_Name2, 2);
          return (-2);
       }
-      if (keypressed())
+      if (driver_key_pressed())
          return (-3);
    }
 

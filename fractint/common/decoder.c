@@ -28,7 +28,7 @@
  == 3) The 'out_line()' external function has been changed to reference
  ==    '*outln()' for flexibility (in particular, 3D transformations)
  ==
- == 4) A call to 'keypressed()' has been added after the 'outln()' calls
+ == 4) A call to 'driver_key_pressed()' has been added after the 'outln()' calls
  ==    to check for the presenc of a key-press as a bail-out signal
  ==
  == (Bert Tyler and Timothy Wegner)
@@ -336,7 +336,7 @@ short decoder(short linewidth)
                         return (ret);
                      yskip = skipydots;
                   }
-                  if (keypressed())
+                  if (driver_key_pressed())
                      return (-1);
                   bufptr = decoderline;
                   bufcnt = linewidth;
@@ -389,7 +389,7 @@ short decoder(short linewidth)
                   return (ret);
                yskip = skipydots;
             }
-            if (keypressed())
+            if (driver_key_pressed())
                return (-1);
             bufptr = decoderline;
             bufcnt = linewidth;

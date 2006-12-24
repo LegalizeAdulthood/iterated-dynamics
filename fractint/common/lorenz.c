@@ -1393,7 +1393,7 @@ int orbit2dfloat()
 
    while(coloriter++ <= maxct) /* loop until keypress or maxit */
    {
-      if(keypressed())
+      if(driver_key_pressed())
       {
          driver_mute();
          alloc_resume(100,1);
@@ -1521,7 +1521,7 @@ int orbit2dlong()
 
    while(coloriter++ <= maxct) /* loop until keypress or maxit */
    {
-      if(keypressed())
+      if(driver_key_pressed())
       {
          driver_mute();
          alloc_resume(100,1);
@@ -1622,7 +1622,7 @@ static int orbit3dlongcalc(void)
          if (++color >= colors)   /* another color to switch to? */
             color = 1;        /* (don't use the background color) */
       }
-      if(keypressed())
+      if(driver_key_pressed())
       {
          driver_mute();
          ret = -1;
@@ -1722,7 +1722,7 @@ static int orbit3dfloatcalc(void)
             color = 1;        /* (don't use the background color) */
       }
 
-      if(keypressed())
+      if(driver_key_pressed())
       {
          driver_mute();
          ret = -1;
@@ -1860,7 +1860,7 @@ int dynam2dfloat()
    ret = 0;
    for(;;)
    {
-      if(keypressed())
+      if(driver_key_pressed())
       {
              driver_mute();
              alloc_resume(100,1);
@@ -1899,7 +1899,7 @@ int dynam2dfloat()
       for (count=0;count<maxit;count++) {
 
           if (count % 2048L == 0)
-             if (keypressed())
+             if (driver_key_pressed())
                  break;
 
           col = (int)(cvt.a*x + cvt.b*y + cvt.e);
@@ -2007,7 +2007,7 @@ int plotorbits2dfloat(void)
    int col,row;
    long count;
 
-   if(keypressed())
+   if(driver_key_pressed())
    {
       driver_mute();
       alloc_resume(100,1);
@@ -2185,7 +2185,7 @@ static int ifs3dfloat(void)
    coloriter = 0L;
    while(coloriter++ <= maxct) /* loop until keypress or maxit */
    {
-      if( keypressed() )  /* keypress bails out */
+      if( driver_key_pressed() )  /* keypress bails out */
       {
          ret = -1;
          break;
@@ -2311,7 +2311,7 @@ static int ifs2d(void)
    coloriter = 0L;
    while(coloriter++ <= maxct) /* loop until keypress or maxit */
    {
-      if( keypressed() )  /* keypress bails out */
+      if( driver_key_pressed() )  /* keypress bails out */
       {
          ret = -1;
          break;
@@ -2402,7 +2402,7 @@ static int ifs3dlong(void)
    coloriter = 0L;
    while(coloriter++ <= maxct) /* loop until keypress or maxit */
    {
-      if( keypressed() )  /* keypress bails out */
+      if( driver_key_pressed() )  /* keypress bails out */
       {
          ret = -1;
          break;

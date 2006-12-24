@@ -128,7 +128,7 @@ int stopmsg (int flags, char *msg)
    driver_hide_text_cursor();   /* cursor off */
    if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & 16) ? 0 : 2);
-   while (keypressed()) /* flush any keyahead */
+   while (driver_key_pressed()) /* flush any keyahead */
       getakey();
    if(debugflag != 324)
       if (getakeynohelp() == ESC)
@@ -155,7 +155,7 @@ int texttempmsg(char *msgparm)
    if (showtempmsg(msgparm))
       return(-1);
 #ifndef XFRACT
-   while (!keypressed()) ; /* wait for a keystroke but don't eat it */
+   while (!driver_key_pressed()) ; /* wait for a keystroke but don't eat it */
 #else
    waitkeypressed(0); /* wait for a keystroke but don't eat it */
 #endif
@@ -734,7 +734,7 @@ int fullscreen_choice(
          driver_hide_text_cursor();
 
 #ifndef XFRACT
-      while (!keypressed()) { } /* enables help */
+      while (!driver_key_pressed()) { } /* enables help */
 #else
       waitkeypressed(0); /* enables help */
 #endif
@@ -1171,7 +1171,7 @@ top:
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,   "stereogram             <ctl-s>");
 
-   i = (keypressed()) ? getakey() : 0;
+   i = (driver_key_pressed()) ? getakey() : 0;
    if (menu_checkkey(i,0) == 0) {
       helpmode = HELPMAIN;         /* switch help modes */
       if ((nextleft += 2) < nextright)
@@ -1514,7 +1514,7 @@ int thinking(int options,char *msg)
    driver_put_string(4,thinkcol,C_GENERAL_HI,wheel[thinkstate]);
    driver_hide_text_cursor(); /* turn off cursor */
    thinkstate = (thinkstate + 1) & 3;
-   return (keypressed());
+   return (driver_key_pressed());
 }
 
 
@@ -1637,146 +1637,169 @@ int showvidlength()
 
 int load_fractint_cfg(int options)
 {
-   /* Reads fractint.cfg, loading videoinfo entries into extraseg. */
-   /* Sets vidtbl pointing to the loaded table, and returns the    */
-   /* number of entries (also sets vidtbllen to this).             */
-   /* Past vidtbl, cfglinenums are stored for update_fractint_cfg. */
-   /* If fractint.cfg is not found or invalid, issues a message    */
-   /* (first time the problem occurs only, and only if options is  */
-   /* zero) and uses the hard-coded table.                         */
+	/* Reads fractint.cfg, loading videoinfo entries into extraseg. */
+	/* Sets vidtbl pointing to the loaded table, and returns the    */
+	/* number of entries (also sets vidtbllen to this).             */
+	/* Past vidtbl, cfglinenums are stored for update_fractint_cfg. */
+	/* If fractint.cfg is not found or invalid, issues a message    */
+	/* (first time the problem occurs only, and only if options is  */
+	/* zero) and uses the hard-coded table.                         */
 
-   FILE *cfgfile;
-   VIDEOINFO *vident;
-   int *cfglinenums;
-   int linenum;
-   long xdots, ydots;
-   int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
-   int commas[10];
-   int textsafe2;
-   char tempstring[150];
-   int truecolorbits; 
+	FILE *cfgfile;
+	VIDEOINFO *vident;
+	int *cfglinenums;
+	int linenum;
+	long xdots, ydots;
+	int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
+	int commas[10];
+	int textsafe2;
+	char tempstring[150];
+	int truecolorbits; 
 
-   /* TODO: allocate real memory, not reuse shared segment */
-   vidtbl = extraseg;
-   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
+	/* TODO: allocate real memory, not reuse shared segment */
+	vidtbl = extraseg;
+	cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
 #ifdef XFRACT
-    badconfig = -1;
+	badconfig = -1;
 #endif
 
-   if (badconfig)  /* fractint.cfg already known to be missing or bad */
-      goto use_resident_table;
+	if (badconfig)  /* fractint.cfg already known to be missing or bad */
+	{
+		goto use_resident_table;
+	}
 
-   findpath("fractint.cfg",tempstring);
-   if (tempstring[0] == 0                            /* can't find the file */
-     || (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
-      goto bad_fractint_cfg;
+	findpath("fractint.cfg",tempstring);
+	if (tempstring[0] == 0                            /* can't find the file */
+		|| (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
+	{
+		goto bad_fractint_cfg;
+	}
 
-   vidtbllen = 0;
-   linenum = 0;
-   vident = vidtbl;
-   while (vidtbllen < MAXVIDEOMODES
-     && fgets(tempstring, 120, cfgfile)) {
-      if(strchr(tempstring,'\n') == NULL)
-         /* finish reading the line */
-         while(fgetc(cfgfile) != '\n' && !feof(cfgfile));
-      ++linenum;
-      if (tempstring[0] == ';') continue;   /* comment line */
-      tempstring[120] = 0;
-      tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
-      memset(commas,0,20);
-      i = j = -1;
-      for(;;) {
-         if (tempstring[++i] < ' ') {
-            if (tempstring[i] == 0) break;
-            tempstring[i] = ' '; /* convert tab (or whatever) to blank */
-            }
-         else if (tempstring[i] == ',' && ++j < 10) {
-            commas[j] = i + 1;   /* remember start of next field */
-            tempstring[i] = 0;   /* make field a separate string */
-            }
-         }
-      keynum = check_vidmode_keyname(tempstring);
-      sscanf(&tempstring[commas[1]],"%x",&ax);
-      sscanf(&tempstring[commas[2]],"%x",&bx);
-      sscanf(&tempstring[commas[3]],"%x",&cx);
-      sscanf(&tempstring[commas[4]],"%x",&dx);
-      dotmode     = atoi(&tempstring[commas[5]]);
-      xdots       = atol(&tempstring[commas[6]]);
-      ydots       = atol(&tempstring[commas[7]]);
-      colors      = atoi(&tempstring[commas[8]]);
-      if(colors == 4 && strchr(strlwr(&tempstring[commas[8]]),'g'))
-      {
-         colors = 256;
-         truecolorbits = 4; /* 32 bits */
-      }
-      else if(colors == 16 && strchr(&tempstring[commas[8]],'m'))
-      {
-         colors = 256;
-         truecolorbits = 3; /* 24 bits */
-      }
-      else if(colors == 64 && strchr(&tempstring[commas[8]],'k'))
-      {
-         colors = 256;
-         truecolorbits = 2; /* 16 bits */
-      }
-      else if(colors == 32 && strchr(&tempstring[commas[8]],'k'))
-      {
-         colors = 256;
-         truecolorbits = 1; /* 15 bits */
-      }
-      else
-         truecolorbits = 0;
+	vidtbllen = 0;
+	linenum = 0;
+	vident = vidtbl;
+	while (vidtbllen < MAXVIDEOMODES
+		&& fgets(tempstring, 120, cfgfile))
+	{
+		if(strchr(tempstring,'\n') == NULL)
+		{
+			/* finish reading the line */
+			while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
+		}
+		++linenum;
+		if (tempstring[0] == ';')
+		{
+			continue;   /* comment line */
+		}
+		tempstring[120] = 0;
+		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
+		memset(commas,0,20);
+		i = j = -1;
+		for (;;)
+		{
+			if (tempstring[++i] < ' ')
+			{
+				if (tempstring[i] == 0)
+				{
+					break;
+				}
+				tempstring[i] = ' '; /* convert tab (or whatever) to blank */
+			}
+			else if (tempstring[i] == ',' && ++j < 10)
+			{
+				commas[j] = i + 1;   /* remember start of next field */
+				tempstring[i] = 0;   /* make field a separate string */
+			}
+		}
+		keynum = check_vidmode_keyname(tempstring);
+		sscanf(&tempstring[commas[1]],"%x",&ax);
+		sscanf(&tempstring[commas[2]],"%x",&bx);
+		sscanf(&tempstring[commas[3]],"%x",&cx);
+		sscanf(&tempstring[commas[4]],"%x",&dx);
+		dotmode     = atoi(&tempstring[commas[5]]);
+		xdots       = atol(&tempstring[commas[6]]);
+		ydots       = atol(&tempstring[commas[7]]);
+		colors      = atoi(&tempstring[commas[8]]);
+		if (colors == 4 && strchr(strlwr(&tempstring[commas[8]]),'g'))
+		{
+			colors = 256;
+			truecolorbits = 4; /* 32 bits */
+		}
+		else if (colors == 16 && strchr(&tempstring[commas[8]],'m'))
+		{
+			colors = 256;
+			truecolorbits = 3; /* 24 bits */
+		}
+		else if (colors == 64 && strchr(&tempstring[commas[8]],'k'))
+		{
+			colors = 256;
+			truecolorbits = 2; /* 16 bits */
+		}
+		else if (colors == 32 && strchr(&tempstring[commas[8]],'k'))
+		{
+			colors = 256;
+			truecolorbits = 1; /* 15 bits */
+		}
+		else
+		{
+			truecolorbits = 0;
+		}
 
-      textsafe2   = dotmode / 100;
-      dotmode    %= 100;
-      if (j < 9 ||
-            keynum < 0 ||
-            dotmode < 0 || dotmode > 30 ||
-            textsafe2 < 0 || textsafe2 > 4 ||
-            xdots < MINPIXELS || xdots > MAXPIXELS ||
-            ydots < MINPIXELS || ydots > MAXPIXELS ||
-            (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
-             colors != 256)
-           )
-         goto bad_fractint_cfg;
-      cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
-      memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
-      memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
-      vident->name[25] = vident->comment[25] = 0;
-      vident->keynum      = keynum;
-      vident->videomodeax = ax;
-      vident->videomodebx = bx;
-      vident->videomodecx = cx;
-      vident->videomodedx = dx;
-      vident->dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
-      vident->xdots       = (short)xdots;
-      vident->ydots       = (short)ydots;
-      vident->colors      = colors;
-      ++vident;
-      ++vidtbllen;
-      }
-   fclose(cfgfile);
-   return (vidtbllen);
+		textsafe2   = dotmode / 100;
+		dotmode    %= 100;
+		if (j < 9 ||
+				keynum < 0 ||
+				dotmode < 0 || dotmode > 30 ||
+				textsafe2 < 0 || textsafe2 > 4 ||
+				xdots < MINPIXELS || xdots > MAXPIXELS ||
+				ydots < MINPIXELS || ydots > MAXPIXELS ||
+				(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
+				colors != 256)
+			)
+		{
+			goto bad_fractint_cfg;
+		}
+		cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
+		memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
+		memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
+		vident->name[25] = vident->comment[25] = 0;
+		vident->keynum      = keynum;
+		vident->videomodeax = ax;
+		vident->videomodebx = bx;
+		vident->videomodecx = cx;
+		vident->videomodedx = dx;
+		vident->dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
+		vident->xdots       = (short)xdots;
+		vident->ydots       = (short)ydots;
+		vident->colors      = colors;
+		++vident;
+		++vidtbllen;
+	}
+	fclose(cfgfile);
+	return (vidtbllen);
 
 bad_fractint_cfg:
-   badconfig = -1; /* bad, no message issued yet */
-   if (options == 0)
-      bad_fractint_cfg_msg();
+	badconfig = -1; /* bad, no message issued yet */
+	if (options == 0)
+	{
+		bad_fractint_cfg_msg();
+	}
 
 use_resident_table:
-   vidtbllen = 0;
-   vident = vidtbl;
-   for (i = 0; i < MAXVIDEOTABLE; ++i) {
-      if (videotable[i].xdots) {
-         memcpy((char *)vident,(char *)&videotable[i],
-                    sizeof(*vident));
-         ++vident;
-         ++vidtbllen;
-         }
-      }
-   return (vidtbllen);
-
+	vidtbllen = 0;
+	vident = vidtbl;
+	for (i = 0; i < MAXVIDEOTABLE; ++i)
+	{
+		if (videotable[i].xdots)
+		{
+			memcpy((char *)vident,(char *)&videotable[i],
+						sizeof(*vident));
+			++vident;
+			++vidtbllen;
+		}
+	}
+	return (vidtbllen);
 }
 
 void bad_fractint_cfg_msg()
@@ -1791,20 +1814,24 @@ I will continue with only the built-in video modes available."};
 
 void load_videotable(int options)
 {
-   /* Loads fractint.cfg and copies the video modes which are */
-   /* assigned to function keys into videotable.              */
-   int keyents,i;
-   load_fractint_cfg(options); /* load fractint.cfg to extraseg */
-   keyents = 0;
-   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
-   for (i = 0; i < vidtbllen; ++i) {
-      if (vidtbl[i].keynum > 0) {
-         memcpy((char *)&videotable[keyents],(char *)&vidtbl[i],
-                    sizeof(*vidtbl));
-         if (++keyents >= MAXVIDEOTABLE)
-            break;
-         }
-      }
+	/* Loads fractint.cfg and copies the video modes which are */
+	/* assigned to function keys into videotable.              */
+	int keyents, i;
+	load_fractint_cfg(options); /* load fractint.cfg to extraseg */
+	keyents = 0;
+	memset((char *) videotable, 0, sizeof(*vidtbl)*MAXVIDEOTABLE);
+	for (i = 0; i < vidtbllen; ++i)
+	{
+		if (vidtbl[i].keynum > 0)
+		{
+			memcpy((char *) &videotable[keyents], (char *) &vidtbl[i],
+						sizeof(*vidtbl));
+			if (++keyents >= MAXVIDEOTABLE)
+			{
+				break;
+			}
+		}
+	}
 }
 
 int check_vidmode_key(int option,int k)

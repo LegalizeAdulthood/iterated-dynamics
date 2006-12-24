@@ -288,10 +288,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             driver_buzzer(0);
          else {
             calc_status = -1;
-            if (keypressed()) {
+            if (driver_key_pressed()) {
                static FCODE msg[] = {"*** load incomplete ***"};
                driver_buzzer(1);
-               while (keypressed()) getakey();
+               while (driver_key_pressed()) getakey();
                texttempmsg(msg);
                }
             }
@@ -503,14 +503,14 @@ resumeloop:                             /* return here on failed overlays */
 #else
             lookatmouse = (zwidth == 0) ? -PAGE_UP : 3;
 #endif
-            if (calc_status == 2 && zwidth == 0 && !keypressed()) {
+            if (calc_status == 2 && zwidth == 0 && !driver_key_pressed()) {
                   kbdchar = ENTER ;  /* no visible reason to stop, continue */
             } else {     /* wait for a real keystroke */
               if (autobrowse && !no_sub_images) kbdchar = 'l';
                else
                {
 #ifndef XFRACT
-               while (!keypressed());/* { }*/  /* enables help */
+               while (!driver_key_pressed());/* { }*/  /* enables help */
 #else
                waitkeypressed(0);
 #endif
@@ -563,7 +563,7 @@ resumeloop:                             /* return here on failed overlays */
                }
             else if (initbatch == 1 || initbatch == 4 ) {       /* save-to-disk */
 /*
-               while(keypressed())
+               while(driver_key_pressed())
                  getakey();
 */
                if (debugflag == 50)
@@ -1275,7 +1275,7 @@ image.  Sorry - it's the best we could do."};
       note_zoom();
       Print_Screen();
       restore_zoom();
-      if (!keypressed())
+      if (!driver_key_pressed())
          driver_buzzer(0);
       else
       {
@@ -1989,7 +1989,7 @@ static void move_zoombox(int keynum)
          if (getmore == 2)              /* eat last key used */
             getakey();
          getmore = 2;
-         keynum = keypressed();         /* next pending key */
+         keynum = driver_key_pressed();         /* next pending key */
          }
       }
    if (boxcount) {
@@ -2098,7 +2098,7 @@ void setup287code()
 int key_count(int keynum)
 {  int ctr;
    ctr = 1;
-   while (keypressed() == keynum) {
+   while (driver_key_pressed() == keynum) {
       getakey();
       ++ctr;
       }
@@ -2445,43 +2445,45 @@ static void _fastcall restore_history_info(int i)
 
 void checkfreemem(int secondpass)
 {
-   int oldmaxhistory;
-   char *tmp;
-   static FCODE msg[] =
-      {" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
-   static FCODE msg2[] = {"To save memory, reduced maxhistory to "};
-   tmp = (char *)malloc(4096L);
-   oldmaxhistory = maxhistory;
-   if(secondpass && !history)
-   {
-      while(maxhistory > 0) /* decrease history if necessary */
-      {
-		  /* TODO: MemoryAlloc */
-         history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,EXPANDED);
-         if(history)
-            break;
-         maxhistory--;
-      }
-   }
-   if(extraseg == 0 || tmp == NULL)
-   {
-      driver_buzzer(2);
+	int oldmaxhistory;
+	char *tmp;
+	static FCODE msg[] =
+		{" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
+	static FCODE msg2[] = {"To save memory, reduced maxhistory to "};
+	tmp = (char *)malloc(4096L);
+	oldmaxhistory = maxhistory;
+	if (secondpass && !history)
+	{
+		while (maxhistory > 0) /* decrease history if necessary */
+		{
+			/* TODO: MemoryAlloc */
+			history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,EXPANDED);
+			if (history)
+			{
+				break;
+			}
+			maxhistory--;
+		}
+	}
+	if (extraseg == 0 || tmp == NULL)
+	{
+		driver_buzzer(2);
 #ifndef XFRACT
-      printf("%Fs",(char *)msg);
+		printf("%Fs",(char *)msg);
 #else
-      printf("%s",msg);
+		printf("%s",msg);
 #endif
-      exit(1);
-   }
-   free(tmp); /* was just to check for min space */
-   if(secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
-   {
+		exit(1);
+	}
+	free(tmp); /* was just to check for min space */
+	if (secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
+	{
 #ifndef XFRACT
-      printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
+		printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
 #else
-      printf("%s%d\n%s\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
+		printf("%s%d\n%s\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
 #endif
-      getakey();
-   }
+		getakey();
+	}
 }
 

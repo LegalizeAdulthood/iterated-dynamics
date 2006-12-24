@@ -144,7 +144,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
    for (count = 0; count < maxpts; count++)
    {
       /* check for a key only every inner_loop times */
-      kbdchar = keypressed();
+      kbdchar = driver_key_pressed();
       if (kbdchar || step)
       {
          int done = 0;
@@ -174,7 +174,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          }
          if (done)
             goto exit_ant;
-         if (keypressed())
+         if (driver_key_pressed())
             getakey();
       }
       for (i = INNER_LOOP; i; i--)
@@ -282,7 +282,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
    for (count = 0; count < maxpts; count++)
    {
       /* check for a key only every inner_loop times */
-      kbdchar = keypressed();
+      kbdchar = driver_key_pressed();
       if (kbdchar || step)
       {
          int done = 0;
@@ -312,7 +312,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          }
          if (done)
             goto exit_ant;
-         if (keypressed())
+         if (driver_key_pressed())
             getakey();
       }
       for (i = INNER_LOOP; i; i--)

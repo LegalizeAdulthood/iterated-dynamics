@@ -1154,23 +1154,23 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
              }
          if (svga_type != 0) return 3;
 
-         video_type = 5;                        /* assume video=vga */
+         video_type = VIDEO_TYPE_VGA;                        /* assume video=vga */
          if (strcmp(value,s_egamono) == 0) {
-            video_type = 3;
+            video_type = VIDEO_TYPE_EGA;
             mode7text = 1;
             }
          else if (strcmp(value,s_hgc) == 0) {   /* video = hgc */
-            video_type = 1;
+            video_type = VIDEO_TYPE_HGC;
             mode7text = 1;
             }
          else if (strcmp(value,s_ega) == 0)     /* video = ega */
-            video_type = 3;
+            video_type = VIDEO_TYPE_EGA;
          else if (strcmp(value,s_cga) == 0)     /* video = cga */
-            video_type = 2;
+            video_type = VIDEO_TYPE_CGA;
          else if (strcmp(value,s_mcga) == 0)    /* video = mcga */
-            video_type = 4;
+            video_type = VIDEO_TYPE_MCGA;
          else if (strcmp(value,s_vga) == 0)     /* video = vga */
-            video_type = 5;
+            video_type = VIDEO_TYPE_VGA;
          else
             goto badarg;
          return 3;

@@ -52,7 +52,7 @@ int test(void)
             register int color;
             init.x = dxpixel();
             init.y = dypixel();
-            if(keypressed())
+            if(driver_key_pressed())
             {
                testend();
                alloc_resume(20,1);
@@ -194,7 +194,7 @@ static int _fastcall new_subD (int x1,int y1,int x2,int y2, int recur)
    while (suby.t >= 1)
    {
       if ((++plasma_check & 0x0f) == 1)
-         if(keypressed())
+         if(driver_key_pressed())
          {
             plasma_check--;
             return(1);
@@ -266,7 +266,7 @@ static void _fastcall subDivide(int x1,int y1,int x2,int y2)
    int x,y;
    S32 v,i;
    if ((++plasma_check & 0x7f) == 1)
-      if(keypressed())
+      if(driver_key_pressed())
       {
          plasma_check--;
          return;
@@ -421,7 +421,7 @@ mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
          k = k * 2;
          if (k  >(int)max(xdots-1,ydots-1))
             break;
-         if (keypressed())
+         if (driver_key_pressed())
          {
             n = 1;
             goto done;
@@ -429,7 +429,7 @@ mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
          i++;
       }
    }
-   if (! keypressed())
+   if (! driver_key_pressed())
       n = 0;
    else
       n = 1;
@@ -825,7 +825,7 @@ int Bifurcation(void)
 
    while (column <= ixstop)
    {
-      if(keypressed())
+      if(driver_key_pressed())
       {
          free((char *)verhulst_array);
          alloc_resume(10,1);
@@ -1198,7 +1198,7 @@ int lyapunov_cycles_in_c(long, double, double);
 int lyapunov () {
     double a, b;
 
-    if (keypressed()) {
+    if (driver_key_pressed()) {
         return -1;
         }
     overflow=FALSE;
@@ -1689,7 +1689,7 @@ int cellular () {
 
        filled = notfilled;
        notfilled = (S16)(1-filled);
-       if (keypressed()) {
+       if (driver_key_pressed()) {
           thinking(0, NULL);
           abort_cellular(INTERUPT, 0);
           return -1;
@@ -1743,7 +1743,7 @@ contloop:
        filled = notfilled;
        notfilled = (S16)(1-filled);
        put_line(row,0,ixstop,cell_array[filled]);
-       if (keypressed()) {
+       if (driver_key_pressed()) {
           abort_cellular(CELLULAR_DONE, 0);
           alloc_resume(10,1);
           put_resume(sizeof(row),&row,0);
@@ -2084,7 +2084,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
          coloriter++;
 
          if (show_orbit) {
-            if (keypressed())
+            if (driver_key_pressed())
                break;
             plot_orbit(old.x, old.y, -1);
          }
@@ -2180,7 +2180,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
          coloriter++;
 
          if (show_orbit) {
-            if (keypressed())
+            if (driver_key_pressed())
                break;
             iplot_orbit(lold.x, lold.y, -1);
          }

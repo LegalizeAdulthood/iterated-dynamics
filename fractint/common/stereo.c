@@ -116,7 +116,7 @@ static int get_min_max(void)
    MAXC = 0;
    for(yd = 0; yd < ydots; yd++)
    {
-      if (keypressed())
+      if (driver_key_pressed())
          return (1);
       if(yd == 20)
          showtempmsg("Getting min and max");
@@ -306,7 +306,7 @@ int do_AutoStereo(void)
    {
       while(Y < ydots)
       {
-          if(keypressed())
+          if(driver_key_pressed())
           {
              ret = 1;
              goto exit_stereo;
@@ -335,7 +335,7 @@ int do_AutoStereo(void)
    done = 0;
    while(done==0)
    {
-      while(keypressed()==0); /* to trap F1 key */
+      while(driver_key_pressed()==0); /* to trap F1 key */
       kbdchar = getakey();
       switch(kbdchar)
       {

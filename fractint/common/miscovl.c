@@ -1734,13 +1734,13 @@ int select_video_mode(int curmode)
    /* pick default mode */
    if (curmode < 0) {
       switch (video_type) { /* set up a reasonable default (we hope) */
-         case 1:  videoentry.videomodeax = 8;   /* hgc */
+         case VIDEO_TYPE_HGC:  videoentry.videomodeax = 8;   /* hgc */
                   videoentry.colors = 2;
                   break;
-         case 2:  videoentry.videomodeax = 4;   /* cga */
+         case VIDEO_TYPE_CGA:  videoentry.videomodeax = 4;   /* cga */
                   videoentry.colors = 4;
                   break;
-         case 3:  videoentry.videomodeax = 16;  /* ega */
+         case VIDEO_TYPE_EGA:  videoentry.videomodeax = 16;  /* ega */
                   videoentry.colors = 16;
                   if (mode7text) {              /* egamono */
                      videoentry.videomodeax = 15;
@@ -2241,7 +2241,7 @@ void flip_image(int key)
    case 24:            /* control-X - reverse X-axis */
       for (i = 0; i < ixhalf; i++)
       {
-         if(keypressed())
+         if(driver_key_pressed())
             break;
          for (j = 0; j < ydots; j++)
          {
@@ -2271,7 +2271,7 @@ void flip_image(int key)
    case 25:            /* control-Y - reverse Y-aXis */
       for (j = 0; j < iyhalf; j++)
       {
-         if(keypressed())
+         if(driver_key_pressed())
             break;
          for (i = 0; i < xdots; i++)
          {
@@ -2301,7 +2301,7 @@ void flip_image(int key)
    case 26:            /* control-Z - reverse X and Y aXis */
       for (i = 0; i < ixhalf; i++)
       {
-         if(keypressed())
+         if(driver_key_pressed())
             break;
          for (j = 0; j < ydots; j++)
          {

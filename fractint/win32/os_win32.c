@@ -497,7 +497,7 @@ int waitkeypressed(int timeout)
 		if (timeout)
 			break;
     }
-    return keypressed();
+    return driver_key_pressed();
 }
 
 /*
@@ -875,7 +875,9 @@ void home(void)
 void initasmvars(void)
 {
 	if (cpu != 0)
+	{
 		return;
+	}
 	overflow = 0;
 	extraseg = malloc(0x18000);
 

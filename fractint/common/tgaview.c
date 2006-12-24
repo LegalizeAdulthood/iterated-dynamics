@@ -37,7 +37,7 @@ tgaview()
           fptarga = NULL;
           return(-1);
        }
-       if (keypressed())
+       if (driver_key_pressed())
        {
           fclose(fptarga);
           fptarga = NULL;

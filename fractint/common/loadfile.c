@@ -1245,7 +1245,7 @@ rescan:  /* entry for changed browse parms */
                                    /* draw all visible windows */
      while (!done)
      {
-       if(keypressed())
+       if(driver_key_pressed())
        {
           getakey();
           break;
@@ -1316,7 +1316,7 @@ rescan:  /* entry for changed browse parms */
 #ifdef XFRACT
         blinks = 1;
 #endif
-        while (!keypressed())
+        while (!driver_key_pressed())
         {
           time(&thistime);
           if (difftime(thistime,lastime) > .2 ) {
@@ -1403,7 +1403,7 @@ rescan:  /* entry for changed browse parms */
           strcat(mesg,winlist.name);
           strcat(mesg,"? (Y/N)");
           showtempmsg(mesg);
-          while (!keypressed()) ;
+          while (!driver_key_pressed()) ;
           cleartempmsg();
           c = getakey();
           if ( c == 'Y' && doublecaution ) {

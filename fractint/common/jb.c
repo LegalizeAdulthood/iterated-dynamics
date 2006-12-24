@@ -235,7 +235,7 @@ zline(long x, long y)
       lold.y = jy;
       jbc.x = mx;
       jbc.y = my;
-      if (keypressed())
+      if (driver_key_pressed())
          return (-1);
       ltempsqrx = multiply(lold.x, lold.x, bitshift);
       ltempsqry = multiply(lold.y, lold.y, bitshift);
@@ -335,11 +335,11 @@ zlinefp(double x, double y)
       if (keychk++ > 500)
       {
          keychk = 0;
-         if (keypressed())
+         if (driver_key_pressed())
             return (-1);
       }
 #else
-      if (keypressed())
+      if (driver_key_pressed())
          return (-1);
 #endif
       tempsqrx = sqr(old.x);

@@ -89,22 +89,22 @@ void intro(void)
    delaymax = 10;
    driver_hide_text_cursor();
    helpmode = HELPMENU;
-   while (! keypressed())
+   while (! driver_key_pressed())
       {
 #ifdef XFRACT
       if (slowdisplay) delaymax *= 15;
 #endif
-      for (j = 0; j < delaymax && !(keypressed()); j++)
+      for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
          delay(100);
-      if (keypressed() == 32)
+      if (driver_key_pressed() == 32)
          {      /* spacebar pauses */
          getakey();
 #if !defined(XFRACT) && !defined(_WIN32)
-         while (!keypressed()) ;
+         while (!driver_key_pressed()) ;
 #else
          waitkeypressed(0);
 #endif
-         if (keypressed() == 32)
+         if (driver_key_pressed() == 32)
             getakey();
          }
       delaymax = 15;

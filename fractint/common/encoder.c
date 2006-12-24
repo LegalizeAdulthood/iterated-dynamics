@@ -255,7 +255,7 @@ int encoder()
    struct fractal_info save_info;
 
    if (initbatch)               /* flush any impending keystrokes */
-      while (keypressed())
+      while (driver_key_pressed())
          getakey();
 
    setup_save_info(&save_info);
@@ -1028,7 +1028,7 @@ nomatch:
             }
             last_colorbar = ydot;
          } /* end if dotmode != 11 */
-         tempkey = keypressed();
+         tempkey = driver_key_pressed();
          if (tempkey && (tempkey != (int)'s'))  /* keyboard hit - bail out */
          {
             interrupted = 1;

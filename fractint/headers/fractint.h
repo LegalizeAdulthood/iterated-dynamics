@@ -26,6 +26,13 @@ typedef BYTE BOOLEAN;
 #define STOPMSG_FIXED_FONT	8
 #define STOPMSG_INFO_ONLY	16
 
+/* video_type video types */
+#define VIDEO_TYPE_HGC		1
+#define VIDEO_TYPE_EGA		3
+#define VIDEO_TYPE_CGA		2
+#define VIDEO_TYPE_MCGA		4
+#define VIDEO_TYPE_VGA		5
+
 /* for gotos in former FRACTINT.C pieces */
 #define RESTART           1
 #define IMAGESTART        2
@@ -1109,74 +1116,19 @@ typedef struct baseunit    GENEBASE;
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
 /* 
- * The following typedefs allow declaring based data
- * types that are stored in the code segment under MSC,
- * and thus may be overlaid. Use only for constant data.
- * Be sure to use the data right away, since arrays thus
- * declared do not exist when the overlay they belong to
- * is swapped out.
+ * The following are legacy typedefs for the segmented memory model.
+ * DO NOT USE THESE TYPEDEFS IN NEW CODE
  */
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef char __based(__segname("_CODE")) FCODE;
-#else
 typedef char FCODE;
-#endif
-
-/* pointer to FCODE */
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef FCODE * __based(__segname("_CODE")) PFCODE;
-#else
-typedef FCODE * PFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef BYTE __based(__segname("_CODE")) BFCODE;
-#else
+typedef FCODE *PFCODE;
 typedef BYTE BFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef short __based(__segname("_CODE")) SIFCODE;
-#else
 typedef short SIFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef short __based(__segname("_CODE")) USFCODE;
-#else
 typedef short USFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef int __based(__segname("_CODE")) IFCODE;
-#else
 typedef int IFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef unsigned int __based(__segname("_CODE")) UIFCODE;
-#else
 typedef unsigned int UIFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef long __based(__segname("_CODE")) LFCODE;
-#else
 typedef long LFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef unsigned long __based(__segname("_CODE")) ULFCODE;
-#else
 typedef unsigned long ULFCODE;
-#endif
-
-#if (_MSC_VER >= 700) && !defined(_WIN32)
-typedef double __based(__segname("_CODE")) DFCODE;
-#else
 typedef double DFCODE;
-#endif
 #endif
 
 
