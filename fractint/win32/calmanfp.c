@@ -75,7 +75,7 @@ long calcmandfpasm_c(void) {
 	key = driver_key_pressed();
 	if (key) {
 	    if (key=='o' || key=='O') {
-		getakey();
+		driver_get_key();
 		show_orbit = 1-show_orbit;
 	    } else {
 		coloriter = -1;

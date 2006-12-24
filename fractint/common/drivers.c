@@ -174,9 +174,9 @@ driver_draw_line(int x1, int y1, int x2, int y2)
 }
 
 int
-driver_get_key(int block)
+driver_get_key(void)
 {
-	return (*display->get_key)(display, block);
+	return (*display->get_key)(display);
 }
 
 int

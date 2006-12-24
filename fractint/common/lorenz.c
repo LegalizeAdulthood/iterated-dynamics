@@ -2105,7 +2105,7 @@ static char firstready[]={"\
 First image (left eye) is ready.  Hit any key to see it,\n\
 then hit <s> to save, hit any other key to create second image."};
             stopmsg(STOPMSG_INFO_ONLY,firstready);
-            while ((i = getakey()) == 's' || i == 'S') {
+            while ((i = driver_get_key()) == 's' || i == 'S') {
                diskisactive = 1;
                savetodisk(savename);
                diskisactive = 0;

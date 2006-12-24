@@ -1275,7 +1275,7 @@ top:
    driver_hide_text_cursor();
 #ifdef XFRACT
    while (driver_key_pressed()) {
-       getakey();
+       driver_get_key();
    }
 #endif
    key = getakeynohelp();

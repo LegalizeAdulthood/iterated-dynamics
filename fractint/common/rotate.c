@@ -107,7 +107,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          spindac(direction, step);
          }
       if (step >= rotate_size) step = oldstep;
-      kbdchar = getakey();
+      kbdchar = driver_get_key();
       if (paused && (kbdchar != ' '
                  && kbdchar != 'c'
                  && kbdchar != HOME

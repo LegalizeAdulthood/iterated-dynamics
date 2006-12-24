@@ -1467,7 +1467,7 @@ color_test()
             }
          }
    spindac(0,1);
-   getakey();
+   driver_get_key();
 }
 **/
 

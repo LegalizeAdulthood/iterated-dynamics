@@ -291,7 +291,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             if (driver_key_pressed()) {
                static char msg[] = {"*** load incomplete ***"};
                driver_buzzer(1);
-               while (driver_key_pressed()) getakey();
+               while (driver_key_pressed()) driver_get_key();
                texttempmsg(msg);
                }
             }
@@ -486,7 +486,7 @@ resumeloop:                             /* return here on failed overlays */
       while (*kbdmore == 1) {           /* loop through command keys */
          if (timedsave != 0) {
             if (timedsave == 1) {       /* woke up for timed save */
-               getakey();     /* eat the dummy char */
+               driver_get_key();     /* eat the dummy char */
                kbdchar = 's'; /* do the save */
                resave_flag = 1;
                timedsave = 2;
@@ -514,7 +514,7 @@ resumeloop:                             /* return here on failed overlays */
 #else
                waitkeypressed(0);
 #endif
-               kbdchar = getakey();
+               kbdchar = driver_get_key();
                }
                if (kbdchar == ESC || kbdchar == 'm' || kbdchar == 'M') {
                   if (kbdchar == ESC && escape_exit != 0)
@@ -564,7 +564,7 @@ resumeloop:                             /* return here on failed overlays */
             else if (initbatch == 1 || initbatch == 4 ) {       /* save-to-disk */
 /*
                while(driver_key_pressed())
-                 getakey();
+                 driver_get_key();
 */
                if (debugflag == 50)
                   kbdchar = 'r';
@@ -895,7 +895,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                   hasinverse = 0;
             clear_zoombox();
             Jiim(JIIM);
-            key = getakey();    /* flush keyboard buffer */
+            key = driver_get_key();    /* flush keyboard buffer */
             if (key != SPACE)
             {
                   ungetakey(key);
@@ -1280,7 +1280,7 @@ image.  Sorry - it's the best we could do."};
       else
       {
          driver_buzzer(1);
-         getakey();
+         driver_get_key();
       }
       return(CONTINUE);
    case ENTER:                  /* Enter                        */
@@ -1987,7 +1987,7 @@ static void move_zoombox(int keynum)
          }
       if (getmore) {
          if (getmore == 2)              /* eat last key used */
-            getakey();
+            driver_get_key();
          getmore = 2;
          keynum = driver_key_pressed();         /* next pending key */
          }
@@ -2099,7 +2099,7 @@ int key_count(int keynum)
 {  int ctr;
    ctr = 1;
    while (driver_key_pressed() == keynum) {
-      getakey();
+      driver_get_key();
       ++ctr;
       }
    return ctr;
@@ -2483,7 +2483,7 @@ void checkfreemem(int secondpass)
 #else
 		printf("%s%d\n%s\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
 #endif
-		getakey();
+		driver_get_key();
 	}
 }
 

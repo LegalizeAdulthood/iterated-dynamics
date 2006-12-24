@@ -272,7 +272,7 @@ restart:   /* insert key re-starts here */
 
 	cmdfiles(argc,argv);         /* process the command-line */
 	dopause(0);                  /* pause for error msg if not batch */
-	init_msg("",NULL,0);  /* this causes getakey if init_msg called on runup */
+	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
 	checkfreemem(1);
 	if(debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{
@@ -342,7 +342,7 @@ restart:   /* insert key re-starts here */
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == ESC)
 		{
-			getakey();
+			driver_get_key();
 			goodbye();
 		}
 	}
@@ -589,7 +589,7 @@ int check_key()
          fflush(stdout);
          return(-1);
       }
-      getakey();
+      driver_get_key();
       if (!driver_diskp())
          show_orbit = 1 - show_orbit;
    }

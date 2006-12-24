@@ -27,7 +27,6 @@ extern void set_default_parms(void);
 
 extern void debugmessage(char *, char *);
 extern int stopmsg(int , char far *);
-extern int getakey(void);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
 extern void far_memcpy(void far *, void far *, int);

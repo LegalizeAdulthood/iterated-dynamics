@@ -1,5 +1,5 @@
 /***********************************************************************/
-/* These routines are called by getakey to allow keystrokes to control */
+/* These routines are called by driver_get_key to allow keystrokes to control */
 /* Fractint to be read from a file.                                    */
 /***********************************************************************/
 

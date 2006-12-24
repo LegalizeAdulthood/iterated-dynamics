@@ -51,7 +51,7 @@ setwait(long *wait)
          strcat(msg, " ");
       msg[15] = '\0';
       showtempmsg((char *) msg);
-      kbdchar = getakey();
+      kbdchar = driver_get_key();
       switch (kbdchar)
       {
       case RIGHT_ARROW_2:
@@ -150,7 +150,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
       {
          int done = 0;
          if (kbdchar == 0)
-            kbdchar = getakey();
+            kbdchar = driver_get_key();
          switch (kbdchar)
          {
          case SPACE:
@@ -176,7 +176,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          if (done)
             goto exit_ant;
          if (driver_key_pressed())
-            getakey();
+            driver_get_key();
       }
       for (i = INNER_LOOP; i; i--)
       {
@@ -288,7 +288,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
       {
          int done = 0;
          if (kbdchar == 0)
-            kbdchar = getakey();
+            kbdchar = driver_get_key();
          switch (kbdchar)
          {
          case SPACE:
@@ -314,7 +314,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          if (done)
             goto exit_ant;
          if (driver_key_pressed())
-            getakey();
+            driver_get_key();
       }
       for (i = INNER_LOOP; i; i--)
       {
