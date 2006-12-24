@@ -68,7 +68,7 @@ extern VIDEOINFO videotable[];
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
-extern unsigned char dacbox[256][3];
+extern unsigned char g_dacbox[256][3];
 
 extern void drawbox();
 
@@ -232,13 +232,13 @@ initdacbox()
 {
   int i;
   for (i=0;i < 256;i++) {
-    dacbox[i][0] = (i >> 5)*8+7;
-    dacbox[i][1] = (((i+16) & 28) >> 2)*8+7;
-    dacbox[i][2] = (((i+2) & 3))*16+15;
+    g_dacbox[i][0] = (i >> 5)*8+7;
+    g_dacbox[i][1] = (((i+16) & 28) >> 2)*8+7;
+    g_dacbox[i][2] = (((i+2) & 3))*16+15;
   }
-  dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
-  dacbox[1][0] = dacbox[1][1] = dacbox[1][2] = 63;
-  dacbox[2][0] = 47; dacbox[2][1] = dacbox[2][2] = 63;
+  g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+  g_dacbox[1][0] = g_dacbox[1][1] = g_dacbox[1][2] = 63;
+  g_dacbox[2][0] = 47; g_dacbox[2][1] = g_dacbox[2][2] = 63;
 }
 
 /*----------------------------------------------------------------------
@@ -382,14 +382,14 @@ disk_resize(Driver *drv)
 /*----------------------------------------------------------------------
  * disk_read_palette
  *
- *	Reads the current video palette into dacbox.
+ *	Reads the current video palette into g_dacbox.
  *	
  *
  * Results:
  *	None.
  *
  * Side effects:
- *	Fills in dacbox.
+ *	Fills in g_dacbox.
  *
  *----------------------------------------------------------------------
  */
@@ -401,9 +401,9 @@ disk_read_palette(Driver *drv)
   if (gotrealdac == 0)
     return -1;
   for (i = 0; i < 256; i++) {
-    dacbox[i][0] = di->cols[i][0];
-    dacbox[i][1] = di->cols[i][1];
-    dacbox[i][2] = di->cols[i][2];
+    g_dacbox[i][0] = di->cols[i][0];
+    g_dacbox[i][1] = di->cols[i][1];
+    g_dacbox[i][2] = di->cols[i][2];
   }
   return 0;
 }
@@ -412,7 +412,7 @@ disk_read_palette(Driver *drv)
  *----------------------------------------------------------------------
  *
  * disk_write_palette --
- *	Writes dacbox into the video palette.
+ *	Writes g_dacbox into the video palette.
  *	
  *
  * Results:
@@ -430,9 +430,9 @@ disk_write_palette(Driver *drv)
   int i;
 
   for (i = 0; i < 256; i++) {
-    di->cols[i][0] = dacbox[i][0];
-    di->cols[i][1] = dacbox[i][1];
-    di->cols[i][2] = dacbox[i][2];
+    di->cols[i][0] = g_dacbox[i][0];
+    di->cols[i][1] = g_dacbox[i][1];
+    di->cols[i][2] = g_dacbox[i][2];
   }
 
   return 0;

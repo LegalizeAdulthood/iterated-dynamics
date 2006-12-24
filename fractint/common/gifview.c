@@ -165,7 +165,7 @@ int gifview()
          }
          if((!display3d || (glassestype != 1 && glassestype != 2))
                        && !dontreadcolor)
-            dacbox[i][j] = (BYTE)(k >> 2);
+            g_dacbox[i][j] = (BYTE)(k >> 2);
       }
    }
    colorstate = 1; /* colors aren't default and not a known .map file */
@@ -176,7 +176,7 @@ int gifview()
        ValidateLuts(MAP_name);  /* read the palette file */
        spindac(0,1); /* load it, but don't spin */
    }
-   if (dacbox[0][0] != 255)
+   if (g_dacbox[0][0] != 255)
       spindac(0,1);       /* update the DAC */
    if (driver_diskp()){ /* disk-video */
       char fname[FILE_MAX_FNAME];
@@ -358,11 +358,11 @@ static int out_line_dither(BYTE *pixels, int linelen)
     nexterr = (rand()&0x1f)-16;
     for (i=0;i<linelen;i++) {
 #ifdef __SVR4
-        brt = (int)((dacbox[pixels[i]][0]*5+dacbox[pixels[i]][1]*9 +
-            dacbox[pixels[i]][2]*2))>>4; /* brightness from 0 to 63 */
+        brt = (int)((g_dacbox[pixels[i]][0]*5+g_dacbox[pixels[i]][1]*9 +
+            g_dacbox[pixels[i]][2]*2))>>4; /* brightness from 0 to 63 */
 #else
-        brt = (dacbox[pixels[i]][0]*5+dacbox[pixels[i]][1]*9 +
-            dacbox[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
+        brt = (g_dacbox[pixels[i]][0]*5+g_dacbox[pixels[i]][1]*9 +
+            g_dacbox[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
 #endif
         brt += nexterr;
         if (brt>32) {

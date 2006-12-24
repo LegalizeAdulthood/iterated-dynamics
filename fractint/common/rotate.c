@@ -91,16 +91,16 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
                if (++incr > fstep) {    /* time to randomize */
                   incr = 1;
                   fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
-                  fromred   = dacbox[last][0];
-                  fromgreen = dacbox[last][1];
-                  fromblue  = dacbox[last][2];
+                  fromred   = g_dacbox[last][0];
+                  fromgreen = g_dacbox[last][1];
+                  fromblue  = g_dacbox[last][2];
                   tored     = rand15() >> 9;
                   togreen   = rand15() >> 9;
                   toblue    = rand15() >> 9;
                   }
-               dacbox[jstep][0] = (BYTE)(fromred   + (((tored    - fromred  )*incr)/fstep));
-               dacbox[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
-               dacbox[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue )*incr)/fstep));
+               g_dacbox[jstep][0] = (BYTE)(fromred   + (((tored    - fromred  )*incr)/fstep));
+               g_dacbox[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
+               g_dacbox[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue )*incr)/fstep));
                }
             }
          if (step >= rotate_size) step = oldstep;
@@ -217,11 +217,11 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (changedirection == 0) changedirection = 1;
             if (reallyega) break;       /* no sense on real EGAs */
             for (i = 1; i < 256; i++) {
-               dacbox[i][changecolor] = (BYTE)(dacbox[i][changecolor] + changedirection);
-               if (dacbox[i][changecolor] == 64)
-               dacbox[i][changecolor] = 63;
-               if (dacbox[i][changecolor] == 255)
-                  dacbox[i][changecolor] = 0;
+               g_dacbox[i][changecolor] = (BYTE)(g_dacbox[i][changecolor] + changedirection);
+               if (g_dacbox[i][changecolor] == 64)
+               g_dacbox[i][changecolor] = 63;
+               if (g_dacbox[i][changecolor] == 255)
+                  g_dacbox[i][changecolor] = 0;
                }
             changecolor    = -1;        /* clear flags for next time */
             changedirection = 0;
@@ -284,7 +284,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             more = 0;                   /* time to bail out */
             break;
          case HOME:                     /* restore palette */
-            memcpy(dacbox,olddacbox,256*3);
+            memcpy(g_dacbox,olddacbox,256*3);
             pauserotate();              /* pause */
             break;
          default:                       /* maybe a new palette */
@@ -337,13 +337,13 @@ BYTE olddac0,olddac1,olddac2;
       paused = 0;
    else {                               /* else set border, wait for a key */
       olddaccount = daccount;
-      olddac0 = dacbox[0][0];
-      olddac1 = dacbox[0][1];
-      olddac2 = dacbox[0][2];
+      olddac0 = g_dacbox[0][0];
+      olddac1 = g_dacbox[0][1];
+      olddac2 = g_dacbox[0][2];
       daccount = 256;
-      dacbox[0][0] = 48;
-      dacbox[0][1] = 48;
-      dacbox[0][2] = 48;
+      g_dacbox[0][0] = 48;
+      g_dacbox[0][1] = 48;
+      g_dacbox[0][2] = 48;
       spindac(0,1);                     /* show white border */
       if (driver_diskp())
       {
@@ -352,16 +352,13 @@ BYTE olddac0,olddac1,olddac2;
          strcpy(msg,o_msg);
          dvid_status(100,msg);
       }
-#ifndef XFRACT
-      while (!driver_key_pressed());          /* wait for any key */
-#else
-      waitkeypressed(0);                /* wait for any key */
-#endif
-      if (driver_diskp())
+      driver_wait_key_pressed(0);                /* wait for any key */
+
+	  if (driver_diskp())
          dvid_status(0,"");
-      dacbox[0][0] = olddac0;
-      dacbox[0][1] = olddac1;
-      dacbox[0][2] = olddac2;
+      g_dacbox[0][0] = olddac0;
+      g_dacbox[0][1] = olddac1;
+      g_dacbox[0][2] = olddac2;
       spindac(0,1);                     /* show black border */
       daccount = olddaccount;
       paused = 1;
@@ -371,28 +368,28 @@ BYTE olddac0,olddac1,olddac2;
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
    int i, j;
-   dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
+   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
    for(i=1;i<=255;i++)                  /* fill the palette     */
       for (j = 0; j < 3; j++)
 #ifdef __SVR4
-         dacbox[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
+         g_dacbox[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
 #else
-         dacbox[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
+         g_dacbox[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
 #endif
 }
 
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
    int i, j;
-   dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
+   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
    for(i=1;i<=128;i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         dacbox[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
-         dacbox[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
+         g_dacbox[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
+         g_dacbox[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
 #else
-         dacbox[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j] )/128);
-         dacbox[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
+         g_dacbox[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j] )/128);
+         g_dacbox[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
 #endif
       }
 }
@@ -400,17 +397,17 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
    int i, j;
-   dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
+   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
    for(i=1;i<=85;i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         dacbox[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);
-         dacbox[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
-         dacbox[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
+         g_dacbox[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);
+         g_dacbox[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
+         g_dacbox[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
 #else
-         dacbox[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j] )/85);
-         dacbox[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
-         dacbox[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
+         g_dacbox[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j] )/85);
+         g_dacbox[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
+         g_dacbox[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
 #endif
       }
 }
@@ -445,10 +442,10 @@ void save_palette()
          for (i = 0; i < 256; i++)
 #endif
             fprintf(dacfile, "%3d %3d %3d\n",
-                    dacbox[i][0] << 2,
-                    dacbox[i][1] << 2,
-                    dacbox[i][2] << 2);
-         memcpy(olddacbox,dacbox,256*3);
+                    g_dacbox[i][0] << 2,
+                    g_dacbox[i][1] << 2,
+                    g_dacbox[i][2] << 2);
+         memcpy(olddacbox,g_dacbox,256*3);
          colorstate = 2;
          strcpy(colorfile,temp1);
          }
@@ -471,7 +468,7 @@ int load_palette(void)
    if (i >= 0)
    {
       if (ValidateLuts(filename) == 0)
-         memcpy(olddacbox,dacbox,256*3);
+         memcpy(olddacbox,g_dacbox,256*3);
       merge_pathnames(MAP_name,filename,0);
    }
    helpmode = oldhelpmode;

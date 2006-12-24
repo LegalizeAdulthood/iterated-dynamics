@@ -100,7 +100,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          if (driver_diskp())		/* default assumption is disk */
             diskvideo = 2;
 
-         memcpy(olddacbox,dacbox,256*3); /* save the DAC */
+         memcpy(olddacbox,g_dacbox,256*3); /* save the DAC */
          diskisactive = 1;              /* flag for disk-video routines */
 
          if (overlay3d && !initbatch) {
@@ -161,13 +161,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
          diskisactive = 0;              /* flag for disk-video routines */
          if (savedac || colorpreloaded) {
-            memcpy(dacbox,olddacbox,256*3); /* restore the DAC */
+            memcpy(g_dacbox,olddacbox,256*3); /* restore the DAC */
             spindac(0,1);
             colorpreloaded = 0;
             }
          else { /* reset DAC to defaults, which setvideomode has done for us */
             if (mapdacbox) { /* but there's a map=, so load that */
-               memcpy((char *)dacbox,mapdacbox,768);
+               memcpy((char *)g_dacbox,mapdacbox,768);
                spindac(0,1);
                }
             else if ((driver_diskp() && colors == 256) || !colors) {
@@ -509,11 +509,7 @@ resumeloop:                             /* return here on failed overlays */
               if (autobrowse && !no_sub_images) kbdchar = 'l';
                else
                {
-#ifndef XFRACT
-               while (!driver_key_pressed());/* { }*/  /* enables help */
-#else
-               waitkeypressed(0);
-#endif
+               driver_wait_key_pressed(0);
                kbdchar = driver_get_key();
                }
                if (kbdchar == ESC || kbdchar == 'm' || kbdchar == 'M') {
@@ -1091,9 +1087,9 @@ image.  Sorry - it's the best we could do."};
    case '+':                    /* rotate palette               */
    case '-':                    /* rotate palette               */
       clear_zoombox();
-      memcpy(olddacbox, dacbox, 256 * 3);
+      memcpy(olddacbox, g_dacbox, 256 * 3);
       rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, dacbox, 256 * 3))
+      if (memcmp(olddacbox, g_dacbox, 256 * 3))
       {
          colorstate = 1;
          save_history_info();
@@ -1108,16 +1104,16 @@ image.  Sorry - it's the best we could do."};
             return(CONTINUE);
       }
       clear_zoombox();
-      if (dacbox[0][0] != 255 && !reallyega && colors >= 16
+      if (g_dacbox[0][0] != 255 && !reallyega && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
-         memcpy(olddacbox, dacbox, 256 * 3);
+         memcpy(olddacbox, g_dacbox, 256 * 3);
          helpmode = HELPXHAIR;
          EditPalette();
          helpmode = oldhelpmode;
-         if (memcmp(olddacbox, dacbox, 256 * 3))
+         if (memcmp(olddacbox, g_dacbox, 256 * 3))
          {
             colorstate = 1;
             save_history_info();
@@ -1537,9 +1533,9 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case '+':                    /* rotate palette               */
    case '-':                    /* rotate palette               */
       clear_zoombox();
-      memcpy(olddacbox, dacbox, 256 * 3);
+      memcpy(olddacbox, g_dacbox, 256 * 3);
       rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, dacbox, 256 * 3))
+      if (memcmp(olddacbox, g_dacbox, 256 * 3))
       {
          colorstate = 1;
          save_history_info();
@@ -1554,16 +1550,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             return(CONTINUE);
       }
       clear_zoombox();
-      if (dacbox[0][0] != 255 && !reallyega && colors >= 16
+      if (g_dacbox[0][0] != 255 && !reallyega && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
-         memcpy(olddacbox, dacbox, 256 * 3);
+         memcpy(olddacbox, g_dacbox, 256 * 3);
          helpmode = HELPXHAIR;
          EditPalette();
          helpmode = oldhelpmode;
-         if (memcmp(olddacbox, dacbox, 256 * 3))
+         if (memcmp(olddacbox, g_dacbox, 256 * 3))
          {
             colorstate = 1;
             save_history_info();
@@ -2233,7 +2229,7 @@ static void _fastcall save_history_info()
    current.oy3rd				= oy3rd;
    current.keep_scrn_coords		= (short)keep_scrn_coords;
    current.drawmode				= drawmode;
-   memcpy(current.dac,dacbox,256*3);
+   memcpy(current.dac,g_dacbox,256*3);
    switch(fractype)
    {
    case FORMULA:
@@ -2413,7 +2409,7 @@ static void _fastcall restore_history_info(int i)
    if (keep_scrn_coords) set_orbit_corners = 1;
    drawmode = last.drawmode;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
-   memcpy(dacbox,last.dac,256*3);
+   memcpy(g_dacbox,last.dac,256*3);
    memcpy(olddacbox,last.dac,256*3);
    if(mapdacbox)
       memcpy(mapdacbox,last.dac,256*3);

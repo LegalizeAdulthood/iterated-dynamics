@@ -99,11 +99,7 @@ void intro(void)
       if (driver_key_pressed() == 32)
          {      /* spacebar pauses */
          driver_get_key();
-#if !defined(XFRACT) && !defined(_WIN32)
-         while (!driver_key_pressed()) ;
-#else
-         waitkeypressed(0);
-#endif
+         driver_wait_key_pressed(0);
          if (driver_key_pressed() == 32)
             driver_get_key();
          }

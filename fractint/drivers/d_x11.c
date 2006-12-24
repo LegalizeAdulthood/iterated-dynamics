@@ -62,7 +62,7 @@ extern	int	lookatmouse;
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
-extern unsigned char dacbox[256][3];
+extern unsigned char g_dacbox[256][3];
 
 extern void drawbox();
 
@@ -344,13 +344,13 @@ initdacbox()
 {
     int i;
     for (i=0;i < 256;i++) {
-	dacbox[i][0] = (i >> 5)*8+7;
-	dacbox[i][1] = (((i+16) & 28) >> 2)*8+7;
-	dacbox[i][2] = (((i+2) & 3))*16+15;
+	g_dacbox[i][0] = (i >> 5)*8+7;
+	g_dacbox[i][1] = (((i+16) & 28) >> 2)*8+7;
+	g_dacbox[i][2] = (((i+2) & 3))*16+15;
     }
-    dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
-    dacbox[1][0] = dacbox[1][1] = dacbox[1][2] = 63;
-    dacbox[2][0] = 47; dacbox[2][1] = dacbox[2][2] = 63;
+    g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+    g_dacbox[1][0] = g_dacbox[1][1] = g_dacbox[1][2] = 63;
+    g_dacbox[2][0] = 47; g_dacbox[2][1] = g_dacbox[2][2] = 63;
 }
 
 static void
@@ -687,14 +687,14 @@ x11_resize(Driver *drv)
  *----------------------------------------------------------------------
  *
  * x11_read_palette --
- *	Reads the current video palette into dacbox.
+ *	Reads the current video palette into g_dacbox.
  *	
  *
  * Results:
  *	None.
  *
  * Side effects:
- *	Fills in dacbox.
+ *	Fills in g_dacbox.
  *
  *----------------------------------------------------------------------
  */
@@ -706,9 +706,9 @@ x11_read_palette(Driver *drv)
   if (gotrealdac == 0)
     return -1;
   for (i = 0; i < 256; i++) {
-    dacbox[i][0] = di->cols[i].red/1024;
-    dacbox[i][1] = di->cols[i].green/1024;
-    dacbox[i][2] = di->cols[i].blue/1024;
+    g_dacbox[i][0] = di->cols[i].red/1024;
+    g_dacbox[i][1] = di->cols[i].green/1024;
+    g_dacbox[i][2] = di->cols[i].blue/1024;
   }
   return 0;
 }
@@ -717,7 +717,7 @@ x11_read_palette(Driver *drv)
  *----------------------------------------------------------------------
  *
  * x11_write_palette --
- *	Writes dacbox into the video palette.
+ *	Writes g_dacbox into the video palette.
  *	
  *
  * Results:
@@ -742,13 +742,13 @@ x11_write_palette(Driver *drv)
 
       for (i = 0; i < 256; i++) {
 	if (!last_dac_inited ||
-	    last_dac[i][0] != dacbox[i][0] ||
-	    last_dac[i][1] != dacbox[i][1] ||
-	    last_dac[i][2] != dacbox[i][2]) {
+	    last_dac[i][0] != g_dacbox[i][0] ||
+	    last_dac[i][1] != g_dacbox[i][1] ||
+	    last_dac[i][2] != g_dacbox[i][2]) {
 	  di->cols[i].flags = DoRed | DoGreen | DoBlue;
-	  di->cols[i].red = dacbox[i][0]*1024;
-	  di->cols[i].green = dacbox[i][1]*1024;
-	  di->cols[i].blue = dacbox[i][2]*1024;
+	  di->cols[i].red = g_dacbox[i][0]*1024;
+	  di->cols[i].green = g_dacbox[i][1]*1024;
+	  di->cols[i].blue = g_dacbox[i][2]*1024;
 
 	  if (di->cmap_pixtab_alloced) {
 	    XFreeColors(di->Xdp, di->Xcmap, di->cmap_pixtab + i, 1, None);
@@ -760,9 +760,9 @@ x11_write_palette(Driver *drv)
 	    printf("Allocating color %d failed.\n", i);
 	  }
 
-	  last_dac[i][0] = dacbox[i][0];
-	  last_dac[i][1] = dacbox[i][1];
-	  last_dac[i][2] = dacbox[i][2];
+	  last_dac[i][0] = g_dacbox[i][0];
+	  last_dac[i][1] = g_dacbox[i][1];
+	  last_dac[i][2] = g_dacbox[i][2];
 	}
       }
       di->cmap_pixtab_alloced = True;
@@ -776,9 +776,9 @@ x11_write_palette(Driver *drv)
     for (i = 0; i < 256; i++) {
       di->cols[i].pixel = di->pixtab[i];
       di->cols[i].flags = DoRed | DoGreen | DoBlue;
-      di->cols[i].red = dacbox[i][0]*1024;
-      di->cols[i].green = dacbox[i][1]*1024;
-      di->cols[i].blue = dacbox[i][2]*1024;
+      di->cols[i].red = g_dacbox[i][0]*1024;
+      di->cols[i].green = g_dacbox[i][1]*1024;
+      di->cols[i].blue = g_dacbox[i][2]*1024;
     }
     XStoreColors(di->Xdp, di->Xcmap, di->cols, colors);
     XFlush(di->Xdp);

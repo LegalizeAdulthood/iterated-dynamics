@@ -444,7 +444,7 @@ mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
    return(n);
 }
 
-#define dac ((Palettetype *)dacbox)
+#define dac ((Palettetype *)g_dacbox)
 static void set_Plasma_palette()
 {
    static Palettetype Red    = { 63, 0, 0 };
@@ -1876,7 +1876,7 @@ static void set_Froth_palette(void)
    {
    char *mapname;
 
-   if (colorstate != 0) /* 0 means dacbox matches default */
+   if (colorstate != 0) /* 0 means g_dacbox matches default */
       return;
    if (colors >= 16)
       {

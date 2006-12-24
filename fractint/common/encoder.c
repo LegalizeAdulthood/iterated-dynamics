@@ -335,14 +335,14 @@ int encoder()
    {                            /* write out the 256-color palette */
       if (gotrealdac)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE *) dacbox, colors))
+         if (!shftwrite((BYTE *) g_dacbox, colors))
             goto oops;
 #else
    if (colors > 2)
    {
       if (gotrealdac || fake_lut)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE *) dacbox, 256))
+         if (!shftwrite((BYTE *) g_dacbox, 256))
             goto oops;
 #endif
       }
@@ -368,7 +368,7 @@ int encoder()
    {                            /* Either EGA or VGA */
       if (gotrealdac)
       {
-         if (!shftwrite((BYTE *) dacbox, colors))
+         if (!shftwrite((BYTE *) g_dacbox, colors))
             goto oops;
       }
       else

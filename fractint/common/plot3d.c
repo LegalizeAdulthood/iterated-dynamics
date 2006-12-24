@@ -464,22 +464,22 @@ void plot_setup()
         {
             if(glassestype == 2 && colors < 256)
             {
-                dacbox[PAL_RED  ][0] = 63;
-                dacbox[PAL_RED  ][1] =  0;
-                dacbox[PAL_RED  ][2] =  0;
+                g_dacbox[PAL_RED  ][0] = 63;
+                g_dacbox[PAL_RED  ][1] =  0;
+                g_dacbox[PAL_RED  ][2] =  0;
 
-                dacbox[PAL_BLUE ][0] =  0;
-                dacbox[PAL_BLUE ][1] =  0;
-                dacbox[PAL_BLUE ][2] = 63;
+                g_dacbox[PAL_BLUE ][0] =  0;
+                g_dacbox[PAL_BLUE ][1] =  0;
+                g_dacbox[PAL_BLUE ][2] = 63;
 
-                dacbox[PAL_MAGENTA][0] = 63;
-                dacbox[PAL_MAGENTA][1] =    0;
-                dacbox[PAL_MAGENTA][2] = 63;
+                g_dacbox[PAL_MAGENTA][0] = 63;
+                g_dacbox[PAL_MAGENTA][1] =    0;
+                g_dacbox[PAL_MAGENTA][2] = 63;
             }
             for (i=0;i<256;i++)
             {
-                dacbox[i][0] = (BYTE)(dacbox[i][0] * d_red_bright);
-                dacbox[i][2] = (BYTE)(dacbox[i][2] * d_blue_bright);
+                g_dacbox[i][0] = (BYTE)(g_dacbox[i][0] * d_red_bright);
+                g_dacbox[i][2] = (BYTE)(g_dacbox[i][2] * d_blue_bright);
             }
         }
         spindac(0,1); /* load it, but don't spin */

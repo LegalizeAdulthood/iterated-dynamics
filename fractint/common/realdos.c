@@ -154,11 +154,7 @@ int texttempmsg(char *msgparm)
 {
    if (showtempmsg(msgparm))
       return(-1);
-#ifndef XFRACT
-   while (!driver_key_pressed()) ; /* wait for a keystroke but don't eat it */
-#else
-   waitkeypressed(0); /* wait for a keystroke but don't eat it */
-#endif
+   driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
    cleartempmsg();
    return(0);
 }
@@ -733,11 +729,7 @@ int fullscreen_choice(
       else
          driver_hide_text_cursor();
 
-#ifndef XFRACT
-      while (!driver_key_pressed()) { } /* enables help */
-#else
-      waitkeypressed(0); /* enables help */
-#endif
+      driver_wait_key_pressed(0); /* enables help */
       curkey = driver_get_key();
 #ifdef XFRACT
       if (curkey==F10) curkey=')';

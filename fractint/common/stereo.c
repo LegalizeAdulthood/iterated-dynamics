@@ -246,7 +246,7 @@ int do_AutoStereo(void)
    oldhelpmode = helpmode;
    helpmode = RDSKEYS;
    savegraphics();                      /* save graphics image */
-   memcpy(savedacbox, dacbox, 256 * 3);  /* save colors */
+   memcpy(savedacbox, g_dacbox, 256 * 3);  /* save colors */
 
    if(xdots > OLDMAXPIXELS)
    {
@@ -367,7 +367,7 @@ int do_AutoStereo(void)
    exit_stereo:
    helpmode = oldhelpmode;
    restoregraphics();
-   memcpy(dacbox, savedacbox, 256 * 3);
+   memcpy(g_dacbox, savedacbox, 256 * 3);
    spindac(0,1);
    return (ret);
 }
