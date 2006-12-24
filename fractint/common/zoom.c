@@ -664,7 +664,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     if (col > 0)
         listfull |= add_worklist(xdots-col,xdots-1,xdots-col,i,j,i,0,0);
     if (listfull != 0) {
-    static FCODE msg[] = {"\
+    static char msg[] = {"\
 Tables full, can't pan current image.\n\
 Cancel resumes old image, continue pans and calculates a new one."};
         if (stopmsg(STOPMSG_CANCEL,msg)) {

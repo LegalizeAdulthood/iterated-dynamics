@@ -297,7 +297,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 
    while (command->ch && command->ch !=']') {
       if (! (ts->counter++)) {
-         static FCODE msg[]={"L-System thinking (higher orders take longer)"};
+         static char msg[]={"L-System thinking (higher orders take longer)"};
          /* let user know we're not dead */
          if (thinking(1,msg)) {
             ts->counter--;

@@ -97,11 +97,11 @@ static int T_Safe; /* Original Targa Image successfully copied to targa_temp */
 static VECTOR light_direction;
 static BYTE Real_Color;  /* Actual color of cur pixel */
 static int RO, CO, CO_MAX;  /* For use in Acrospin support */
-static FCODE acro_s1[] =
+static char acro_s1[] =
    {"Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n"};
-static FCODE acro_s2[] = {"LineList From To\n"};
-static FCODE s3[] = {"{ Created by FRACTINT Ver. "};
-static FCODE s3a[] = {" }\n\n"};
+static char acro_s2[] = {"LineList From To\n"};
+static char s3[] = {"{ Created by FRACTINT Ver. "};
+static char s3a[] = {" }\n\n"};
 #ifndef XFRACT
 static char banner[] = "%Fs%#4.2f%Fs";
 #else
@@ -280,7 +280,7 @@ int line3d(BYTE * pixels, unsigned linelen)
       goto reallythebottom;     /* skip over most of the line3d calcs */
    if (driver_diskp())
    {
-      static FCODE mapping[] = {"mapping to 3d, reading line "};
+      static char mapping[] = {"mapping to 3d, reading line "};
       char s[40];
 #ifndef XFRACT
       sprintf(s, "%Fs%d", (char *)mapping, currow);
@@ -714,7 +714,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                {
                   if (debugflag)
                   {
-                     static FCODE msg[] = {"debug, cur.color=bad"};
+                     static char msg[] = {"debug, cur.color=bad"};
                      stopmsg(0, msg);
                   }
                   cur.color = (int)(f_cur.color = (float) bad.color);
@@ -746,7 +746,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                         /* this shouldn't happen */
                         if (debugflag)
                         {
-                           static FCODE msg[] = {"debug, normal vector err2"};
+                           static char msg[] = {"debug, normal vector err2"};
                            stopmsg(0, msg);
                            /* use next instead if you ever need details:
                             * static char tmp[] = {"debug, vector err"};
@@ -1359,11 +1359,11 @@ static char s_fff[] = "%Fs%Fs%Fs";
 static char s_f[] = "%s%s";
 static char s_fff[] = "%s%s%s";
 #endif
-static FCODE OOPS[] = {"OOPS, "};
-static FCODE E1[] = {"can't handle this type of file.\n"};
-static FCODE str1[] = {"couldn't open  < "};
-static FCODE str3[] = {"image wrong size\n"};
-static FCODE outofdisk[] = {"ran out of disk space. < "};
+static char OOPS[] = {"OOPS, "};
+static char E1[] = {"can't handle this type of file.\n"};
+static char str1[] = {"couldn't open  < "};
+static char str3[] = {"image wrong size\n"};
+static char outofdisk[] = {"ran out of disk space. < "};
 
 static void File_Error(char *File_Name1, int ERROR)
 {
@@ -1732,23 +1732,23 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /*                                                                  */
 /********************************************************************/
 
-static FCODE declare[] = {"DECLARE       "};
-static FCODE frac_default[] = {"F_Dflt"};
-static FCODE s_color[] = {"COLOR  "};
-static FCODE dflt[] = {"RED 0.8 GREEN 0.4 BLUE 0.1\n"};
-static FCODE d_color[] = {"0.8 0.4 0.1"};
-static FCODE r_surf[] = {"0.95 0.05 5 0 0\n"};
-static FCODE surf[] = {"surf={diff="};
+static char declare[] = {"DECLARE       "};
+static char frac_default[] = {"F_Dflt"};
+static char s_color[] = {"COLOR  "};
+static char dflt[] = {"RED 0.8 GREEN 0.4 BLUE 0.1\n"};
+static char d_color[] = {"0.8 0.4 0.1"};
+static char r_surf[] = {"0.95 0.05 5 0 0\n"};
+static char surf[] = {"surf={diff="};
 /* EB & DG: changed "surface T" to "applysurf" and "diff" to "diffuse" */
-static FCODE rs_surf[] = {"applysurf diffuse "};
-static FCODE end[] = {"END_"};
-static FCODE plane[] = {"PLANE"};
-static FCODE m1[] = {"-1.0 "};
-static FCODE one[] = {" 1.0 "};
-static FCODE z[] = {" 0.0 "};
-static FCODE bnd_by[] = {" BOUNDED_BY\n"};
-static FCODE end_bnd[] = {" END_BOUND\n"};
-static FCODE inter[] = {"INTERSECTION\n"};
+static char rs_surf[] = {"applysurf diffuse "};
+static char end[] = {"END_"};
+static char plane[] = {"PLANE"};
+static char m1[] = {"-1.0 "};
+static char one[] = {" 1.0 "};
+static char z[] = {" 0.0 "};
+static char bnd_by[] = {" BOUNDED_BY\n"};
+static char end_bnd[] = {" END_BOUND\n"};
+static char inter[] = {"INTERSECTION\n"};
 #ifndef XFRACT
 static char fmt[] = "   %Fs <%Fs%Fs%Fs> % #4.3f %Fs%Fs\n";
 #else
@@ -1762,32 +1762,32 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n"};
 static char dxf_3dface[] = {"  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n"};
 static char dxf_vertex[] = {"%3d\n%g\n"};
 static char dxf_end[] = {"  0\nENDSEC\n  0\nEOF\n"};
-static FCODE composite[] = {"COMPOSITE"};
-static FCODE object[] = {"OBJECT"};
-static FCODE triangle[] = {"TRIANGLE "};
-static FCODE l_tri[] = {"triangle"};
-static FCODE texture[] = {"TEXTURE\n"};
-/* static FCODE end_texture[] = {" END_TEXTURE\n"}; */
-static FCODE red[] = {"RED"};
-static FCODE green[] = {"GREEN"};
-static FCODE blue[] = {"BLUE"};
-static FCODE frac_texture[] = {"      AMBIENT 0.25 DIFFUSE 0.75"};
-static FCODE polygon[] = {"polygon={points=3;"};
-static FCODE vertex[] = {" vertex =  "};
-static FCODE d_vert[] = {"      <"};
+static char composite[] = {"COMPOSITE"};
+static char object[] = {"OBJECT"};
+static char triangle[] = {"TRIANGLE "};
+static char l_tri[] = {"triangle"};
+static char texture[] = {"TEXTURE\n"};
+/* static char end_texture[] = {" END_TEXTURE\n"}; */
+static char red[] = {"RED"};
+static char green[] = {"GREEN"};
+static char blue[] = {"BLUE"};
+static char frac_texture[] = {"      AMBIENT 0.25 DIFFUSE 0.75"};
+static char polygon[] = {"polygon={points=3;"};
+static char vertex[] = {" vertex =  "};
+static char d_vert[] = {"      <"};
 static char f1[] = "% #4.4f ";
 /* EB & DG: changed this to much better values */
-static FCODE grid[] =
+static char grid[] =
 {"screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n"};
-static FCODE grid2[] = {"background .3 0 0\nreport verbose\n"};
+static char grid2[] = {"background .3 0 0\nreport verbose\n"};
 
 static char s_n[] = "\n";
 static char f2[] = "R%dC%d R%dC%d\n";
-static FCODE ray_comment1[] =
+static char ray_comment1[] =
    {"/* make a gridded aggregate. this size grid is fast for landscapes. */\n"};
-static FCODE ray_comment2[] =
+static char ray_comment2[] =
    {"/* make z grid = 1 always for landscapes. */\n\n"};
-static FCODE grid3[] = {"grid 33 25 1\n"};
+static char grid3[] = {"grid 33 25 1\n"};
 
 static int _fastcall RAY_Header(void)
 {
@@ -2176,7 +2176,7 @@ static void line3d_cleanup(void)
    int i, j;
    if (RAY && File_Ptr1)
    {                            /* Finish up the ray tracing files */
-      static FCODE n_ta[] = {"{ No. Of Triangles = "};
+      static char n_ta[] = {"{ No. Of Triangles = "};
       if (RAY != 5 && RAY != 7)
          fprintf(File_Ptr1, s_n); /* EB & DG: too many newlines */
       if (RAY == 2)
@@ -2690,7 +2690,7 @@ static int line3dmem(void)
       check_extra += sizeof(struct minmax) * ydots;
       if (check_extra > (1L << 16))     /* run out of extra segment? */
       {
-         static FCODE msg[] = {"malloc minmax"};
+         static char msg[] = {"malloc minmax"};
          static struct minmax *got_mem = NULL;
          if(debugflag == 2222)
             stopmsg(0,msg);
@@ -2715,7 +2715,7 @@ static int line3dmem(void)
    if (debugflag == 2222 || check_extra > (1L << 16))
    {
       char tmpmsg[70];
-      static FCODE extramsg[] = {" of extra segment"};
+      static char extramsg[] = {" of extra segment"};
 #ifndef XFRACT
       sprintf(tmpmsg, "used %ld%Fs", check_extra, (char *)extramsg);
 #else

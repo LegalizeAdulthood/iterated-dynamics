@@ -1115,20 +1115,6 @@ typedef struct baseunit    GENEBASE;
 
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
-/* 
- * The following are legacy typedefs for the segmented memory model.
- * DO NOT USE THESE TYPEDEFS IN NEW CODE
- */
-typedef char FCODE;
-typedef FCODE *PFCODE;
-typedef BYTE BFCODE;
-typedef short SIFCODE;
-typedef short USFCODE;
-typedef int IFCODE;
-typedef unsigned int UIFCODE;
-typedef long LFCODE;
-typedef unsigned long ULFCODE;
-typedef double DFCODE;
 #endif
 
 

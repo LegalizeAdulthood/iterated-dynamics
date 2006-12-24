@@ -104,9 +104,9 @@ static struct vidinf *vidptr;
 
 int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 {
-   static FCODE o_hdg2[]={"key...name......................err...xdot..ydot.clr.comment.................."};
-   static FCODE o_warning[]={"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings"};
-   static FCODE o_select_msg[]={"\
+   static char o_hdg2[]={"key...name......................err...xdot..ydot.clr.comment.................."};
+   static char o_warning[]={"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings"};
+   static char o_select_msg[]={"\
 Select a video mode.  Use the cursor keypad to move the pointer.\n\
 Press ENTER for selected mode, or use a video mode function key.\n\
 Press F1 for help, "};
@@ -425,7 +425,7 @@ if (fastrestore  && !askvideo)
       }
    if (*s_makepar && !fastrestore && !initbatch &&
         (fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0)) {
-      static FCODE msg[] = {"\
+      static char msg[] = {"\
 Warning: <V>iew parameters are being set to non-standard values.\n\
 Remember to reset them when finished with this image!"};
       stopmsg(STOPMSG_NO_BUZZER,msg);

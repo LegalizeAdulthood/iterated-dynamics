@@ -630,7 +630,7 @@ VOIDPTR mem_alloc(unsigned size)
 
    if (mem_avail < size)   /* don't let this happen! */
       {
-      static FCODE msg[] = "editpal.c: Out of memory!\n";
+      static char msg[] = "editpal.c: Out of memory!\n";
 
       stopmsg(0, msg);
       exit(1);
@@ -1522,7 +1522,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(),
 #endif
    {
    RGBEditor      *this     = new(RGBEditor);
-   static FCODE letter[] = "RGB";
+   static char letter[] = "RGB";
    int             ctr;
 
    for (ctr=0; ctr<3; ctr++)
@@ -2893,7 +2893,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
       case 'M':   /* set gamma */
       case 'm':
           {
-              static FCODE o_msg[] = {"Enter gamma value"};
+              static char o_msg[] = {"Enter gamma value"};
               char msg[sizeof(o_msg)];
               int i;
               char buf[20];

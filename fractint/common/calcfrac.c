@@ -95,8 +95,6 @@ int invert;
 double f_radius,f_xcenter, f_ycenter; /* for inversion */
 void (_fastcall *putcolor)(int,int,int) = putcolor_a;
 void (_fastcall *plot)(int,int,int) = putcolor_a;
-typedef void (_fastcall *PLOTC)(int,int,int);
-typedef void (_fastcall *GETC)(int,int,int);
 
 double magnitude, rqlim, rqlim2, rqlim_save;
 int no_mag_calc = 0;
@@ -552,7 +550,7 @@ int calcfract(void)
    parm2.y  = param[3];
 
    if (LogFlag && colors < 16) {
-      static FCODE msg[]={"Need at least 16 colors to use logmap"};
+      static char msg[]={"Need at least 16 colors to use logmap"};
       stopmsg(0,msg);
       LogFlag = 0;
       }
@@ -596,11 +594,11 @@ int calcfract(void)
       if(LogTable == NULL)
       {
          if (rangeslen || Log_Fly_Calc == 2) {
-           static FCODE msg[]={"Insufficient memory for logmap/ranges with this maxiter"};
+           static char msg[]={"Insufficient memory for logmap/ranges with this maxiter"};
            stopmsg(0,msg);
          }
          else {
-            static FCODE msg[]={"Insufficient memory for logTable, using on-the-fly routine"};
+            static char msg[]={"Insufficient memory for logTable, using on-the-fly routine"};
             stopmsg(0,msg);
             Log_Fly_Calc = 1;
             Log_Calc = 1; /* calculate on the fly */
@@ -2877,10 +2875,10 @@ int  bound_trace_main(void)
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
-    static FCODE btm_cantbeused[]={"Boundary tracing cannot be used with "};
+    static char btm_cantbeused[]={"Boundary tracing cannot be used with "};
     if (inside == 0 || outside == 0)
         {
-        static FCODE inside_outside[] = {"inside=0 or outside=0"};
+        static char inside_outside[] = {"inside=0 or outside=0"};
         char msg[MSGLEN];
         strcpy(msg,btm_cantbeused);
         strcat(msg,inside_outside);
@@ -2890,7 +2888,7 @@ int  bound_trace_main(void)
     if (colors < 16)
         {
         char msg[MSGLEN];
-        static FCODE lessthansixteen[] = {"< 16 colors"};
+        static char lessthansixteen[] = {"< 16 colors"};
         strcpy(msg,btm_cantbeused);
         strcat(msg,lessthansixteen);
         stopmsg(0,msg);

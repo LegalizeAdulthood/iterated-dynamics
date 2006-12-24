@@ -279,43 +279,43 @@ unsigned int chars_in_formula;
 static char *ParseErrs(int which)
 {
    int lasterr;
-   static FCODE e0[] = {"Should be an Argument"};
-   static FCODE e1[] = {"Should be an Operator"};
-   static FCODE e2[] = {"')' needs a matching '('"};
-   static FCODE e3[] = {"Need more ')'"};
-   static FCODE e4[] = {"Undefined Operator"};
-   static FCODE e5[] = {"Undefined Function"};
-   static FCODE e6[] = {"Table overflow"};
-   static FCODE e7[] = {"Didn't find matching ')' in symmetry declaration"};
-   static FCODE e8[] = {"No '{' found on first line"};
-   static FCODE e9[] = {"Unexpected EOF!"};
-   static FCODE e10[] = {"Symmetry below is invalid, will use NOSYM"};
-   static FCODE e11[] = {"Formula is too large"};
-   static FCODE e12[] = {"Insufficient memory to run fractal type 'formula'"};
-   static FCODE e13[] = {"Could not open file where formula located"};
-   static FCODE e14[] = {"No characters may precede jump instruction"};
-   static FCODE e15[] = {"No characters may follow this jump instruction"};
-   static FCODE e16[] = {"Jump instruction missing required (boolean argument)"};
-   static FCODE e17[] = {"Next jump after \"else\" must be \"endif\""};
-   static FCODE e18[] = {"\"endif\" has no matching \"if\""};
-   static FCODE e19[] = {"Misplaced \"else\" or \"elseif()\""};
-   static FCODE e20[] = {"\"if()\" in initialization has no matching \"endif\""};
-   static FCODE e21[] = {"\"if()\" has no matching \"endif\""};
-   static FCODE e22[] = {"Error in parsing jump statements"};
-   static FCODE e23[] = {"Formula has too many jump commands"};
-   static FCODE e24[] = {"Formula name has too many characters"};
-   static FCODE e25[] = {"Only variables are allowed to left of assignment"};
-   static FCODE e26[] = {"Illegal variable name"};
-   static FCODE e27[] = {"Invalid constant expression"};
-   static FCODE e28[] = {"This character not supported by parser"};
-   static FCODE e29[] = {"Nesting of parentheses exceeds maximum depth"};
-   static FCODE e30[] = {"Unmatched modulus operator \"|\" in this expression"}; /*last one */
-   static FCODE e31[] = {"Can't use function name as variable"};
-   static FCODE e32[] = {"Negative exponent must be enclosed in parens"};
-   static FCODE e33[] = {"Variable or constant exceeds 32 character limit"};
-   static FCODE e34[] = {"Only one \":\" permitted in a formula"};
-   static FCODE e35[] = {"Invalid ParseErrs code"};
-   static PFCODE ErrStrings[] = { e0,e1,e2,e3,e4,e5,
+   static char e0[] = {"Should be an Argument"};
+   static char e1[] = {"Should be an Operator"};
+   static char e2[] = {"')' needs a matching '('"};
+   static char e3[] = {"Need more ')'"};
+   static char e4[] = {"Undefined Operator"};
+   static char e5[] = {"Undefined Function"};
+   static char e6[] = {"Table overflow"};
+   static char e7[] = {"Didn't find matching ')' in symmetry declaration"};
+   static char e8[] = {"No '{' found on first line"};
+   static char e9[] = {"Unexpected EOF!"};
+   static char e10[] = {"Symmetry below is invalid, will use NOSYM"};
+   static char e11[] = {"Formula is too large"};
+   static char e12[] = {"Insufficient memory to run fractal type 'formula'"};
+   static char e13[] = {"Could not open file where formula located"};
+   static char e14[] = {"No characters may precede jump instruction"};
+   static char e15[] = {"No characters may follow this jump instruction"};
+   static char e16[] = {"Jump instruction missing required (boolean argument)"};
+   static char e17[] = {"Next jump after \"else\" must be \"endif\""};
+   static char e18[] = {"\"endif\" has no matching \"if\""};
+   static char e19[] = {"Misplaced \"else\" or \"elseif()\""};
+   static char e20[] = {"\"if()\" in initialization has no matching \"endif\""};
+   static char e21[] = {"\"if()\" has no matching \"endif\""};
+   static char e22[] = {"Error in parsing jump statements"};
+   static char e23[] = {"Formula has too many jump commands"};
+   static char e24[] = {"Formula name has too many characters"};
+   static char e25[] = {"Only variables are allowed to left of assignment"};
+   static char e26[] = {"Illegal variable name"};
+   static char e27[] = {"Invalid constant expression"};
+   static char e28[] = {"This character not supported by parser"};
+   static char e29[] = {"Nesting of parentheses exceeds maximum depth"};
+   static char e30[] = {"Unmatched modulus operator \"|\" in this expression"}; /*last one */
+   static char e31[] = {"Can't use function name as variable"};
+   static char e32[] = {"Negative exponent must be enclosed in parens"};
+   static char e33[] = {"Variable or constant exceeds 32 character limit"};
+   static char e34[] = {"Only one \":\" permitted in a formula"};
+   static char e35[] = {"Invalid ParseErrs code"};
+   static char *ErrStrings[] = { e0,e1,e2,e3,e4,e5,
                                   e6,e7,e8,e9,e10,
                                   e11,e12,e13,e14,e15,
                                   e16,e17,e18,e19,e20,
@@ -2027,11 +2027,6 @@ struct FNCT_LIST FnctList[] = {   /* TIW 03-31-91 added far */
    {s_ceil,  &StkCeil},    /* TIW 06-30-96 */
    {s_trunc, &StkTrunc},   /* TIW 06-30-96 */
    {s_round, &StkRound},   /* TIW 06-30-96 */
-};
-
-struct OP_LIST {
-   char *s;
-   void (**ptr)(void);
 };
 
 char *OPList[] = {

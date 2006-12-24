@@ -91,27 +91,27 @@ void initgene(void) /* set up pointers and mutation params for all usable image
  /* 0 = dont vary, 1= with x axis, 2 = with y */
  /* 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random */
  /* Use only 15 letters below: 123456789012345 */
-  static FCODE s_Param0[] =  {"Param 1 real"};
-  static FCODE s_Param1[] =  {"Param 1 imag"};
-  static FCODE s_Param2[] =  {"Param 2 real"};
-  static FCODE s_Param3[] =  {"Param 2 imag"};
-  static FCODE s_Param4[] =  {"Param 3 real"};
-  static FCODE s_Param5[] =  {"Param 3 imag"};
-  static FCODE s_Param6[] =  {"Param 4 real"};
-  static FCODE s_Param7[] =  {"Param 4 imag"};
-  static FCODE s_Param8[] =  {"Param 5 real"};
-  static FCODE s_Param9[] =  {"Param 5 imag"};
-  static FCODE s_inside[] =  {"inside colour"};
-  static FCODE s_outside[] = {"outside colour"};
-  static FCODE s_decomp[] =  {"decomposition"};
-  static FCODE s_trigfn1[] = {"trig function 1"};
-  static FCODE s_trigfn2[] = {"trig fn 2"};
-  static FCODE s_trigfn3[] = {"trig fn 3"};
-  static FCODE s_trigfn4[] = {"trig fn 4"};
-  static FCODE s_botest[]  = {"bailout test"};
-  static FCODE s_invertr[] = {"invert radius"};
-  static FCODE s_invertx[] = {"invert center x"};
-  static FCODE s_inverty[] = {"invert center y"};
+  static char s_Param0[] =  {"Param 1 real"};
+  static char s_Param1[] =  {"Param 1 imag"};
+  static char s_Param2[] =  {"Param 2 real"};
+  static char s_Param3[] =  {"Param 2 imag"};
+  static char s_Param4[] =  {"Param 3 real"};
+  static char s_Param5[] =  {"Param 3 imag"};
+  static char s_Param6[] =  {"Param 4 real"};
+  static char s_Param7[] =  {"Param 4 imag"};
+  static char s_Param8[] =  {"Param 5 real"};
+  static char s_Param9[] =  {"Param 5 imag"};
+  static char s_inside[] =  {"inside colour"};
+  static char s_outside[] = {"outside colour"};
+  static char s_decomp[] =  {"decomposition"};
+  static char s_trigfn1[] = {"trig function 1"};
+  static char s_trigfn2[] = {"trig fn 2"};
+  static char s_trigfn3[] = {"trig fn 3"};
+  static char s_trigfn4[] = {"trig fn 4"};
+  static char s_botest[]  = {"bailout test"};
+  static char s_invertr[] = {"invert radius"};
+  static char s_invertx[] = {"invert center x"};
+  static char s_inverty[] = {"invert center y"};
 
   GENEBASE gene[NUMGENES] = {
     { &param[0],   varydbl,     5, "",1 },
@@ -360,7 +360,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
   }
 
 #define LOADCHOICES(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    strcpy(ptr,(char *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
@@ -377,7 +377,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 int get_the_rest(void)
 {
   char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
-  static FCODE o_hdg[]={"Variable tweak central 2 of 2"};
+  static char o_hdg[]={"Variable tweak central 2 of 2"};
   int i,k,num, numtrig;
   char hdg[sizeof(o_hdg)];
   char *choices[20];
@@ -476,7 +476,7 @@ choose_vars_restart:
 int get_variations(void)
 {
   char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
-  static FCODE o_hdg[]={"Variable tweak central 1 of 2"};
+  static char o_hdg[]={"Variable tweak central 1 of 2"};
   int i,k,num, numparams;
   char hdg[sizeof(o_hdg)];
   char *choices[20];
@@ -619,7 +619,7 @@ void set_mutation_level(int strength)
 
 int get_evolve_Parms(void)
 {
-   static FCODE o_hdg[]={"Evolution Mode Options"};
+   static char o_hdg[]={"Evolution Mode Options"};
    char hdg[sizeof(o_hdg)];
    char *choices[20];
    char *ptr;
@@ -838,7 +838,7 @@ void SetupParamBox(void)
    if (prmboxhandle == 0)
       prmboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
    if (prmboxhandle == 0 ) {
-     static FCODE msg[] = {"Sorry...can't allocate mem for parmbox"};
+     static char msg[] = {"Sorry...can't allocate mem for parmbox"};
      texttempmsg(msg);
      evolving=0;
    }
@@ -850,7 +850,7 @@ void SetupParamBox(void)
    if (imgboxhandle == 0)
       imgboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
    if (!imgboxhandle) {
-     static FCODE msg[] = {"Sorry...can't allocate mem for imagebox"};
+     static char msg[] = {"Sorry...can't allocate mem for imagebox"};
      texttempmsg(msg);
    }
 }

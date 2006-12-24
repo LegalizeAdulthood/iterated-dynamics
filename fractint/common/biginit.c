@@ -228,7 +228,7 @@ static void init_bf_2(void)
        {
        char msg[80];
        char nmsg[80];
-       static FCODE fmsg[] = {"Requested precision of %d too high, aborting"};
+       static char fmsg[] = {"Requested precision of %d too high, aborting"};
        strcpy(nmsg,fmsg);
        sprintf(msg,nmsg,decimals);
        stopmsg(0,msg);
@@ -356,7 +356,7 @@ bn_t alloc_stack(size_t size)
    long stack_addr;
    if(bf_math == 0)
       {
-      static FCODE msg[] = {"alloc_stack called with bf_math==0"};
+      static char msg[] = {"alloc_stack called with bf_math==0"};
       stopmsg(0,msg);
       return(0);
       }
@@ -364,7 +364,7 @@ bn_t alloc_stack(size_t size)
 
    if(stack_addr > maxstack)
       {
-      static FCODE msg[] = {"Aborting, Out of Bignum Stack Space"};
+      static char msg[] = {"Aborting, Out of Bignum Stack Space"};
       stopmsg(0,msg);
       goodbye();
       }
@@ -451,7 +451,7 @@ void init_big_pi(void)
     /* What, don't you recognize the first 700 digits of pi, */
     /* in base 256, in reverse order?                        */
     int length, pi_offset;
-    static BFCODE pi_table[] = {
+    static BYTE pi_table[] = {
          0x44, 0xD5, 0xDB, 0x69, 0x17, 0xDF, 0x2E, 0x56, 0x87, 0x1A,
          0xA0, 0x8C, 0x6F, 0xCA, 0xBB, 0x57, 0x5C, 0x9E, 0x82, 0xDF,
          0x00, 0x3E, 0x48, 0x7B, 0x31, 0x53, 0x60, 0x87, 0x23, 0xFD,

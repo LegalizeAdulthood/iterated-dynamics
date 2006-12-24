@@ -97,14 +97,14 @@ char commandmask[13] = {"*.par"};
         for them in the same order!!!
 */
 #define LOADCHOICES(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    strcpy(ptr,(char *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
    }
 int get_toggles()
 {
-   static FCODE o_hdg[]={"Basic Options\n(not all combinations make sense)"};
+   static char o_hdg[]={"Basic Options\n(not all combinations make sense)"};
    char hdg[sizeof(o_hdg)];
    char *choices[20];
    char *ptr;
@@ -400,7 +400,7 @@ int get_toggles()
 
 int get_toggles2()
 {
-   static FCODE o_hdg[]={"Extended Options\n\
+   static char o_hdg[]={"Extended Options\n\
 (not all combinations make sense)"};
    char hdg[sizeof(o_hdg)];
    char *ptr;
@@ -547,10 +547,10 @@ int get_toggles2()
 
 int passes_options(void)
 {
-   static FCODE o_hdg[]={"Passes Options\n\
+   static char o_hdg[]={"Passes Options\n\
 (not all combinations make sense)"};
-   static FCODE pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
-   static FCODE pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
+   static char pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
+   static char pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
    char hdg[sizeof(o_hdg)+sizeof(pressf2)+sizeof(pressf6)];
    char *ptr;
    char *choices[20];
@@ -690,7 +690,7 @@ pass_option_restart:
 
 int get_view_params()
 {
-   static FCODE o_hdg[]={"View Window Options"};
+   static char o_hdg[]={"View Window Options"};
    char hdg[sizeof(o_hdg)];
    char *choices[16];
    char *ptr;
@@ -806,10 +806,10 @@ get_view_restart:
 #ifndef XFRACT
    if (virtual_screens && dotmode == 28) {
       char dim[50];
-      static FCODE xmsg[] = {"Video memory limits: (for y = "};
-      static FCODE ymsg[] = {"                     (for x = "};
-      static FCODE midxmsg[] = {") x <= "};
-      static FCODE midymsg[] = {") y <= "};
+      static char xmsg[] = {"Video memory limits: (for y = "};
+      static char ymsg[] = {"                     (for x = "};
+      static char midxmsg[] = {") x <= "};
+      static char midymsg[] = {") y <= "};
       char *scrolltypes[] ={"fixed","relaxed"};
 
       LOADCHOICES("Keep aspect? (cuts both x & y when either too big)");
@@ -998,7 +998,7 @@ get_view_restart:
 
 int get_cmd_string()
 {
-   static FCODE o_msg[] = {"Enter command string to use."};
+   static char o_msg[] = {"Enter command string to use."};
    char msg[sizeof(o_msg)];
    int oldhelpmode;
    int i;
@@ -1051,7 +1051,7 @@ int starfield(void)
    Slope = (int)(starfield_values[2]);
 
    if (ValidateLuts(GreyFile) != 0) {
-      static FCODE msg[]={"Unable to load ALTERN.MAP"};
+      static char msg[]={"Unable to load ALTERN.MAP"};
       stopmsg(0,msg);
       busy = 0;
       return(-1);
@@ -1076,10 +1076,10 @@ int starfield(void)
 }
 
 int get_starfield_params(void) {
-   static FCODE o_hdg[]={"Starfield Parameters"};
-   static FCODE o_sf1[] = {"Star Density in Pixels per Star"};
-   static FCODE o_sf2[] = {"Percent Clumpiness"};
-   static FCODE o_sf3[] = {"Ratio of Dim stars to Bright"};
+   static char o_hdg[]={"Starfield Parameters"};
+   static char o_sf1[] = {"Star Density in Pixels per Star"};
+   static char o_sf2[] = {"Percent Clumpiness"};
+   static char o_sf3[] = {"Ratio of Dim stars to Bright"};
    char hdg[sizeof(o_hdg)];
    char sf1[sizeof(o_sf1)];
    char sf2[sizeof(o_sf2)];
@@ -1097,7 +1097,7 @@ int get_starfield_params(void) {
    starfield_prompts[2] = sf3;
 
    if(colors < 255) {
-      static FCODE msg[]={"starfield requires 256 color mode"};
+      static char msg[]={"starfield requires 256 color mode"};
       stopmsg(0,msg);
       return(-1);
    }
@@ -1123,13 +1123,13 @@ int get_starfield_params(void) {
 static char *masks[] = {"*.pot","*.gif"};
 
 int get_rds_params(void) {
-   static FCODE o_hdg[] =  {"Random Dot Stereogram Parameters"};
-   static FCODE o_rds0[] = {"Depth Effect (negative reverses front and back)"};
-   static FCODE o_rds1[] = {"Image width in inches"};
-   static FCODE o_rds2[] = {"Use grayscale value for depth? (if \"no\" uses color number)"};
-   static FCODE o_rds3[] = {"Calibration bars"};
-   static FCODE o_rds4[] = {"Use image map? (if \"no\" uses random dots)"};
-   static FCODE o_rds5[] = {"  If yes, use current image map name? (see below)"};
+   static char o_hdg[] =  {"Random Dot Stereogram Parameters"};
+   static char o_rds0[] = {"Depth Effect (negative reverses front and back)"};
+   static char o_rds1[] = {"Image width in inches"};
+   static char o_rds2[] = {"Use grayscale value for depth? (if \"no\" uses color number)"};
+   static char o_rds3[] = {"Calibration bars"};
+   static char o_rds4[] = {"Use image map? (if \"no\" uses random dots)"};
+   static char o_rds5[] = {"  If yes, use current image map name? (see below)"};
 
    char hdg[sizeof(o_hdg)];
    char rds0[sizeof(o_rds0)];
@@ -1230,7 +1230,7 @@ int get_rds_params(void) {
             reuse = 0;
          if(image_map && !reuse)
          {
-            static FCODE tmp[] = {"Select an Imagemap File"};
+            static char tmp[] = {"Select an Imagemap File"};
             char tmp1[sizeof(tmp)];
             /* tmp1 only a convenient buffer */
             strcpy(tmp1,tmp);
@@ -1246,7 +1246,7 @@ int get_rds_params(void) {
 
 int get_a_number(double *x, double *y)
 {
-   static FCODE o_hdg[]={"Set Cursor Coordinates"};
+   static char o_hdg[]={"Set Cursor Coordinates"};
    char hdg[sizeof(o_hdg)];
    char *ptr;
    char *choices[2];
@@ -1313,7 +1313,7 @@ void goodbye()                  /* we done.  Bail out */
 {
    char goodbyemessage[40];
    int ret;
-   static FCODE gbm[]={"   Thank You for using "FRACTINT};
+   static char gbm[]={"   Thank You for using "FRACTINT};
 #if !defined(XFRACT) && !defined(_WIN32)
    union REGS r;
 #endif
@@ -1513,7 +1513,7 @@ static int speedstate;
 int getafilename(char *hdg,char *template,char *flname)
 {
    int rds;  /* if getting an RDS image map */
-   static FCODE o_instr[]={"Press "FK_F6" for default directory, "FK_F4" to toggle sort "};
+   static char o_instr[]={"Press "FK_F6" for default directory, "FK_F4" to toggle sort "};
    char *instr;
    int masklen;
    char filename[FILE_MAX_PATH]; /* 13 is big enough for Fractint, but not Xfractint */
@@ -2182,7 +2182,7 @@ int cmpdbl(double old, double new)
 }
 
 #define LOADPROMPTS(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    strcpy(ptr,(char *)tmp);\
    prompts[++nump]= ptr;\
    ptr += sizeof(tmp);\
@@ -2193,9 +2193,9 @@ int get_corners()
    char *ptr;
    struct fullscreenvalues values[15];
    char *prompts[15];
-   static FCODE o_xprompt[]={"          X"};
-   static FCODE o_yprompt[]={"          Y"};
-   static FCODE o_zprompt[]={"          Z"};
+   static char o_xprompt[]={"          X"};
+   static char o_yprompt[]={"          Y"};
+   static char o_zprompt[]={"          Z"};
    char xprompt[sizeof(o_xprompt)];
    char yprompt[sizeof(o_yprompt)];
    char zprompt[sizeof(o_zprompt)];
@@ -2206,7 +2206,7 @@ int get_corners()
    double Xmagfactor,Rotation,Skew;
    BYTE ousemag;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
-   static FCODE hdg[]={"Image Coordinates"};
+   static char hdg[]={"Image Coordinates"};
    int oldhelpmode;
 
    strcpy(xprompt,o_xprompt);
@@ -2390,9 +2390,9 @@ static int get_screen_corners(void)
    char *ptr;
    struct fullscreenvalues values[15];
    char *prompts[15];
-   static FCODE o_xprompt[]={"          X"};
-   static FCODE o_yprompt[]={"          Y"};
-   static FCODE o_zprompt[]={"          Z"};
+   static char o_xprompt[]={"          X"};
+   static char o_yprompt[]={"          Y"};
+   static char o_zprompt[]={"          Z"};
    char xprompt[sizeof(o_xprompt)];
    char yprompt[sizeof(o_yprompt)];
    char zprompt[sizeof(o_zprompt)];
@@ -2404,7 +2404,7 @@ static int get_screen_corners(void)
    BYTE ousemag;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
    double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
-   static FCODE hdg[]={"Screen Coordinates"};
+   static char hdg[]={"Screen Coordinates"};
    int oldhelpmode;
 
    strcpy(xprompt,o_xprompt);
@@ -2604,7 +2604,7 @@ gsc_loop:
 
 int get_browse_params()
 {
-   static FCODE o_hdg[]={"Browse ('L'ook) Mode Options"};
+   static char o_hdg[]={"Browse ('L'ook) Mode Options"};
    char hdg[sizeof(o_hdg)];
    char *ptr;
    char *choices[10];

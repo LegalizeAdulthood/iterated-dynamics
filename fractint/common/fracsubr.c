@@ -438,7 +438,7 @@ expand_retry:
                by using the magnification.  */
             if(++tries < 2) /* for safety */
             {
-            static FCODE err[] = {"precision-detection error"};
+            static char err[] = {"precision-detection error"};
             if(tries > 1) stopmsg(0, err);
             /* Previously there were four tests of distortions in the
                zoom box used to detect precision limitations. In some
@@ -1116,7 +1116,7 @@ int alloc_resume(int alloclen, int version)
    /* TODO: MemoryAlloc */
    if ((resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, FARMEM)) == 0)
    {
-      static FCODE msg[] = {"\
+      static char msg[] = {"\
 Warning - insufficient free memory to save status.\n\
 You will not be able to resume calculating this image."};
       stopmsg(0,msg);
@@ -1332,7 +1332,7 @@ int snd_open(void)
    {
       if((snd_fp = fopen(soundname,"w"))==NULL)
       {
-         static FCODE msg[] = {"Can't open SOUND*.TXT"};
+         static char msg[] = {"Can't open SOUND*.TXT"};
          stopmsg(0,msg);
       }
       else

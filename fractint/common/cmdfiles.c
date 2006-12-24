@@ -439,21 +439,21 @@ char s_cabs [] =            "cabs";
 char s_sqrt [] =            "sqrt";
 char s_ismand [] =          "ismand";
 char s_mathtolerance[] =    "mathtolerance";
-static FCODE s_bfdigits []     = "bfdigits";
-static FCODE s_recordcolors [] = "recordcolors";
-static FCODE s_maxlinelength []= "maxlinelength";
-static FCODE s_minstack[]      = "minstack";
-static FCODE s_lzw []          = "tweaklzw";
-static FCODE s_sstoolsini []   = "sstools.ini";
-static FCODE s_fractintfrm []  = "fractint.frm";
-static FCODE s_fractintl []    = "fractint.l";
-static FCODE s_fractintpar []  = "fractint.par";
-static FCODE s_fractintifs []  = "fractint.ifs";
-static FCODE s_commandline []  = "command line";
-static FCODE s_at_cmd []       = "PAR file";
+static char s_bfdigits []     = "bfdigits";
+static char s_recordcolors [] = "recordcolors";
+static char s_maxlinelength []= "maxlinelength";
+static char s_minstack[]      = "minstack";
+static char s_lzw []          = "tweaklzw";
+static char s_sstoolsini []   = "sstools.ini";
+static char s_fractintfrm []  = "fractint.frm";
+static char s_fractintl []    = "fractint.l";
+static char s_fractintpar []  = "fractint.par";
+static char s_fractintifs []  = "fractint.ifs";
+static char s_commandline []  = "command line";
+static char s_at_cmd []       = "PAR file";
 
 int lzw[2];
-static FCODE s_escapetoabort[] = "Press Escape to abort, any other key to continue";
+static char s_escapetoabort[] = "Press Escape to abort, any other key to continue";
 char s_pressanykeytocontinue[] = "press any key to continue";
 
 /*
@@ -1642,7 +1642,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          }
       if (prev == 0) goto badarg;
       if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL) {
-         static FCODE msg[] = {"Insufficient memory for ranges="};
+         static char msg[] = {"Insufficient memory for ranges="};
          stopmsg(STOPMSG_NO_STACK,msg);
          return(-1);
          }
@@ -3044,9 +3044,9 @@ static int parse_printer(char *value)
 
 static void argerror(char *badarg)      /* oops. couldn't decode this */
 {
-   static FCODE argerrmsg1[]={"\
+   static char argerrmsg1[]={"\
 Oops. I couldn't understand the argument:\n  "};
-   static FCODE argerrmsg2[]={"\n\n\
+   static char argerrmsg2[]={"\n\n\
 (see the Startup Help screens or documentation for a complete\n\
  argument list with descriptions)"};
    char msg[300];
@@ -3157,7 +3157,7 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
 {
    char *modestr[4] =
        {s_commandline,s_sstoolsini,s_at_cmd,s_at_cmd};
-   static FCODE diags[] =
+   static char diags[] =
        {"Fractint found the following problems when parsing commands: "};
    char msg[256];
    char cmd[80];

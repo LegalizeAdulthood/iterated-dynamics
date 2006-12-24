@@ -340,11 +340,11 @@ void helptitle()
 
 void footer_msg(int *i, int options, char *speedstring)
 {
-   static FCODE choiceinstr1a[]="Use the cursor keys to highlight your selection";
-   static FCODE choiceinstr1b[]="Use the cursor keys or type a value to make a selection";
-   static FCODE choiceinstr2a[]="Press ENTER for highlighted choice, or ESCAPE to back out";
-   static FCODE choiceinstr2b[]="Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help";
-   static FCODE choiceinstr2c[]="Press ENTER for highlighted choice, or "FK_F1" for help";
+   static char choiceinstr1a[]="Use the cursor keys to highlight your selection";
+   static char choiceinstr1b[]="Use the cursor keys or type a value to make a selection";
+   static char choiceinstr2a[]="Press ENTER for highlighted choice, or ESCAPE to back out";
+   static char choiceinstr2b[]="Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help";
+   static char choiceinstr2c[]="Press ENTER for highlighted choice, or "FK_F1" for help";
    putstringcenter((*i)++,0,80,C_PROMPT_BKGRD,
       (speedstring) ? choiceinstr1b : choiceinstr1a);
    putstringcenter(*(i++),0,80,C_PROMPT_BKGRD,
@@ -961,7 +961,7 @@ int strncasecmp(char *s,char *t,int ct)
 #endif
 
 #define LOADPROMPTSCHOICES(X,Y)     {\
-   static FCODE tmp[] = { Y };\
+   static char tmp[] = { Y };\
    choices[X]= (char *)tmp;\
    }
 

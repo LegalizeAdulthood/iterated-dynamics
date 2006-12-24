@@ -82,7 +82,7 @@ int pot_startdisk()
       enddisk();
    else
    {
-      static FCODE msg[] = {"clearing 16bit pot work area"};
+      static char msg[] = {"clearing 16bit pot work area"};
       showtempmsg(msg);
    }
    headerlength = disktarga = 0;
@@ -124,10 +124,10 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       enddisk();
    if (driver_diskp()) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
-      static FCODE fmsg1[] = {"'Disk-Video' mode"};
-      static FCODE fmsg2[] = {"Screen resolution: "};
-      static FCODE fsname[] = {"Save name: "};
-      static FCODE stat[] = {"Status:"};
+      static char fmsg1[] = {"'Disk-Video' mode"};
+      static char fmsg2[] = {"Screen resolution: "};
+      static char fsname[] = {"Save name: "};
+      static char stat[] = {"Status:"};
       helptitle();
       driver_set_attr(1,0,C_DVID_BKGRD,24*80);  /* init rest to background */
       for (i = 0; i < BOXDEPTH; ++i)
@@ -137,11 +137,11 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       sprintf(buf,"%d x %d",sxdots,sydots);
       driver_put_string(-1,-1,C_DVID_LO,buf);
       if (disktarga) {
-         static FCODE tarmsg[] = {"  24 bit Targa"};
+         static char tarmsg[] = {"  24 bit Targa"};
          driver_put_string(-1,-1,C_DVID_LO,tarmsg);
          }
       else {
-         static FCODE clrmsg[] = {"  Colors: "};
+         static char clrmsg[] = {"  Colors: "};
          driver_put_string(-1,-1,C_DVID_LO,clrmsg);
          sprintf(buf,"%d",colors);
          driver_put_string(-1,-1,C_DVID_LO,buf);
@@ -151,7 +151,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       driver_put_string(-1,-1,C_DVID_LO,buf);
       driver_put_string(BOXROW+10,BOXCOL+4,C_DVID_LO,stat);
       {
-      static FCODE o_msg[] = {"clearing the 'screen'"};
+      static char o_msg[] = {"clearing the 'screen'"};
       char msg[sizeof(o_msg)];
       strcpy(msg,o_msg);
       dvid_status(0,msg);
@@ -196,7 +196,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    hash_ptr  = (unsigned int *)malloc((long)(HASHSIZE<<1));
    membuf = (BYTE *)malloc((long)BLOCKLEN);
    if (cache_start == NULL || hash_ptr == NULL || membuf == NULL) {
-      static FCODE msg[]={"*** insufficient free memory for cache buffers ***"};
+      static char msg[]={"*** insufficient free memory for cache buffers ***"};
       stopmsg(0,msg);
       return(-1);
       }
@@ -241,7 +241,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    else
       dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, EXPANDED);
    if (dv_handle == 0) {
-      static FCODE msg[]={"*** insufficient free memory/disk space ***"};
+      static char msg[]={"*** insufficient free memory/disk space ***"};
       stopmsg(0,msg);
       goodmode = 0;
       rowsize = 0;
@@ -255,10 +255,10 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		   (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
 #else
      switch (MemoryType(dv_handle)) {
-         static FCODE fmsg1[] = {"Using no Memory, it's broke"};
-         static FCODE fmsg2[] = {"Using your Expanded Memory"};
-         static FCODE fmsg3[] = {"Using your Extended Memory"};
-         static FCODE fmsg4[] = {"Using your Disk Drive"};
+         static char fmsg1[] = {"Using no Memory, it's broke"};
+         static char fmsg2[] = {"Using your Expanded Memory"};
+         static char fmsg3[] = {"Using your Extended Memory"};
+         static char fmsg4[] = {"Using your Disk Drive"};
        case NOWHERE:
        default:
          driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg1);
@@ -280,7 +280,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 
    if (!disktarga)
       for (offset = 0; offset < memorysize; offset++) {
-           static FCODE cancel[] = {"Disk Video initialization interrupted:\n"};
+           static char cancel[] = {"Disk Video initialization interrupted:\n"};
          SetMemory(0, (U16)BLOCKLEN, 1L, offset, dv_handle);
          if (driver_key_pressed())           /* user interrupt */
             if (stopmsg(STOPMSG_CANCEL, cancel))  /* esc to cancel, else continue */

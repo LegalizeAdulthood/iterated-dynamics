@@ -224,7 +224,7 @@ extern int                   initmode;
 extern _CMPLX                initorbit;
 extern int                   initsavetime;
 extern int                   inside;
-extern FCODE                 insufficient_ifs_mem[];
+extern char                 insufficient_ifs_mem[];
 extern int                   integerfractal;
 extern double                inversion[];
 extern int                   invert;

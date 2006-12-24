@@ -22,33 +22,33 @@ static void slideshowerr(char *msg);
 static int  get_scancode(char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
-static FCODE s_ENTER     [] = "ENTER"     ;
-static FCODE s_INSERT    [] = "INSERT"    ;
-static FCODE s_DELETE    [] = "DELETE"    ;
-static FCODE s_ESC       [] = "ESC"       ;
-static FCODE s_TAB       [] = "TAB"       ;
-static FCODE s_PAGEUP    [] = "PAGEUP"    ;
-static FCODE s_PAGEDOWN  [] = "PAGEDOWN"  ;
-static FCODE s_HOME      [] = "HOME"      ;
-static FCODE s_END       [] = "END"       ;
-static FCODE s_LEFT      [] = "LEFT"      ;
-static FCODE s_RIGHT     [] = "RIGHT"     ;
-static FCODE s_UP        [] = "UP"        ;
-static FCODE s_DOWN      [] = "DOWN"      ;
-static FCODE s_F1        [] = "F1"        ;
-static FCODE s_CTRL_RIGHT[] = "CTRL_RIGHT";
-static FCODE s_CTRL_LEFT [] = "CTRL_LEFT" ;
-static FCODE s_CTRL_DOWN [] = "CTRL_DOWN" ;
-static FCODE s_CTRL_UP   [] = "CTRL_UP"   ;
-static FCODE s_CTRL_END  [] = "CTRL_END"  ;
-static FCODE s_CTRL_HOME [] = "CTRL_HOME" ;
+static char s_ENTER     [] = "ENTER"     ;
+static char s_INSERT    [] = "INSERT"    ;
+static char s_DELETE    [] = "DELETE"    ;
+static char s_ESC       [] = "ESC"       ;
+static char s_TAB       [] = "TAB"       ;
+static char s_PAGEUP    [] = "PAGEUP"    ;
+static char s_PAGEDOWN  [] = "PAGEDOWN"  ;
+static char s_HOME      [] = "HOME"      ;
+static char s_END       [] = "END"       ;
+static char s_LEFT      [] = "LEFT"      ;
+static char s_RIGHT     [] = "RIGHT"     ;
+static char s_UP        [] = "UP"        ;
+static char s_DOWN      [] = "DOWN"      ;
+static char s_F1        [] = "F1"        ;
+static char s_CTRL_RIGHT[] = "CTRL_RIGHT";
+static char s_CTRL_LEFT [] = "CTRL_LEFT" ;
+static char s_CTRL_DOWN [] = "CTRL_DOWN" ;
+static char s_CTRL_UP   [] = "CTRL_UP"   ;
+static char s_CTRL_END  [] = "CTRL_END"  ;
+static char s_CTRL_HOME [] = "CTRL_HOME" ;
 
 #define MAX_MNEMONIC    20   /* max size of any mnemonic string */
 
 struct scancodes
 {
    int code;
-   FCODE *mnemonic;
+   char *mnemonic;
 };
 
 static struct scancodes scancodes[] =
@@ -110,10 +110,10 @@ static unsigned int quotes;
 static char calcwait = 0;
 static int repeats = 0;
 static int last1 = 0;
-static FCODE smsg[] = "MESSAGE";
-static FCODE sgoto[] = "GOTO";
-static FCODE scalcwait[] = "CALCWAIT";
-static FCODE swait[] = "WAIT";
+static char smsg[] = "MESSAGE";
+static char sgoto[] = "GOTO";
+static char scalcwait[] = "CALCWAIT";
+static char swait[] = "WAIT";
 
 /* places a temporary message on the screen in text mode */
 static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
@@ -215,7 +215,7 @@ start:
          if (fscanf(fpss,"%d",&repeats) != 1
            || repeats <= 1 || repeats >= 256 || feof(fpss))
          {
-            static FCODE msg[] = "error in * argument";
+            static char msg[] = "error in * argument";
             slideshowerr(msg);
             last1 = repeats = 0;
          }
@@ -243,7 +243,7 @@ start:
          out = 0;
          if (fscanf(fpss,"%d",&secs) != 1)
          {
-            static FCODE msg[] = "MESSAGE needs argument";
+            static char msg[] = "MESSAGE needs argument";
             slideshowerr(msg);
          }
          else
@@ -262,7 +262,7 @@ start:
       {
          if (fscanf(fpss,"%s",buffer) != 1)
          {
-            static FCODE msg[] = "GOTO needs target";
+            static char msg[] = "GOTO needs target";
             slideshowerr(msg);
             out = 0;
          }
@@ -277,7 +277,7 @@ start:
             } while( err == 1 && strcmp(buffer1,buffer) != 0);
             if(feof(fpss))
             {
-               static FCODE msg[] = "GOTO target not found";
+               static char msg[] = "GOTO target not found";
                slideshowerr(msg);
                return(0);
             }
@@ -298,7 +298,7 @@ start:
          }
          else
          {
-            static FCODE msg[] = "WAIT needs argument";
+            static char msg[] = "WAIT needs argument";
             slideshowerr(msg);
          }
          slowcount = out = 0;
@@ -402,7 +402,7 @@ static void sleep_secs(int secs)
 static void slideshowerr(char *msg)
 {
    char msgbuf[300];
-   static FCODE errhdg[] = "Slideshow error:\n";
+   static char errhdg[] = "Slideshow error:\n";
    stopslideshow();
    strcpy(msgbuf,errhdg);
    strcat(msgbuf,msg);
