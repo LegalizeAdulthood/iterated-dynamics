@@ -1,9 +1,9 @@
-
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "drivers.h"
 
 /* these need to be accessed elsewhere for saving data */
 double mxminfp = -.83;

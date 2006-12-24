@@ -423,14 +423,6 @@ int getkeyint(int block)
 }
 
 /*
- * This routine returns the current key, or 0.
- */
-int getkeynowait(void)
-{
-    return getkeyint(0);
-}
-
-/*
  * This routine returns a keypress
  */
 int getakey(void)
@@ -463,7 +455,7 @@ int getakeynohelp(void)
 int keypressed(void)
 {
     int ch;
-    ch = getkeynowait();
+    ch = getkeyint(0);
     if (!ch)
 		return 0;
     keybuffer = ch;

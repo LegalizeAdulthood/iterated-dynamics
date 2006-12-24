@@ -183,6 +183,11 @@ static int win32_key_pressed(Driver *drv)
 	return 0;
 }
 
+static int win32_wait_key_pressed(Driver *drv, int timeout)
+{
+	return 0;
+}
+
 
 /* new driver		    old fractint
    -------------------  ------------
@@ -197,6 +202,8 @@ static int win32_key_pressed(Driver *drv)
    set_line_mode	    setlinemode
    draw_line		    drawline
    get_key		        getkey
+   key_pressed			keypressed
+   wait_key_pressed		waitkeypressed
    shell		        shell_to_dos
    set_video_mode	    setvideomode
    set_for_text		    setfortext
@@ -215,6 +222,7 @@ static int win32_key_pressed(Driver *drv)
    sound_off		    soundoff
    mute					mute
    diskp                diskp
+   delay				delay
 */
 static DriverWin32 win32_driver_info =
 {

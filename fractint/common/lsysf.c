@@ -9,6 +9,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
+#include "drivers.h"
 
 #ifdef max
 #undef max

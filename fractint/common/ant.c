@@ -21,6 +21,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "drivers.h"
 
 #define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */

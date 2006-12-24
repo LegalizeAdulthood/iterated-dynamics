@@ -14,9 +14,6 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
-/*#ifdef __TURBOC__
-#include <dir.h>
-#endif  */
 
 #ifdef XFRACT
 #define DEFAULT_PRINTER 5       /* Assume a Postscript printer */

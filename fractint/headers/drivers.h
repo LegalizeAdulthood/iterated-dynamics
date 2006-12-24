@@ -27,6 +27,7 @@
  * draw_line
  * get_key
  * key_pressed
+ * wait_key_pressed
  * shell
  * set_video_mode
  * put_string
@@ -60,6 +61,7 @@ struct tagDriver {
 	/* draw line */						void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2);			
 	/* poll or block for a key */		int (*get_key)(Driver *drv, int block);		
 										int (*key_pressed)(Driver *drv);
+										int (*wait_key_pressed)(Driver *drv, int timeout);
 	/* invoke a command shell */		void (*shell)(Driver *drv);			
 										void (*set_video_mode)(Driver *drv, int ax, int bx, int cx, int dx);
 										void (*put_string)(Driver *drv, int row, int col, int attr, const char *msg);
@@ -106,6 +108,7 @@ struct tagDriver {
     name_##_draw_line, \
     name_##_get_key, \
 	name_##_key_pressed, \
+	name_##_wait_key_pressed, \
     name_##_shell, \
     name_##_set_video_mode, \
     name_##_put_string, \
@@ -186,6 +189,7 @@ extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2);
 extern int driver_get_key(int block);
 extern int driver_key_pressed(void);
+extern int driver_wait_key_prssed(int timeout);
 extern void driver_shell(void);
 extern void driver_set_video_mode(int ax, int bx, int cx, int dx);
 extern void driver_put_string(int row, int col, int attr, const char *msg);
@@ -227,6 +231,7 @@ extern int driver_diskp(void);
 #define driver_draw_line(x1_, y1_, x2_, y2_)		(*display->draw_line)(x1_, y1_, x1_, y2_)
 #define driver_get_key(_block)						(*display->get_key)(display, _block)
 #define driver_key_pressed()						(*display->key_pressed)(display)
+#define driver_wait_key_pressed(timeout_)			(*display->wait_key_pressed)(timeout_)
 #define driver_shell()								(*display->shell)(display)
 #define driver_set_video_mode(_ax, _bx, _cx, _dx)	(*display->set_video_mode)(display, _ax, _bx, _cx, _dx)
 #define driver_put_string(_row, _col, _attr, _msg)	(*display->put_string)(display, _row, _col, _attr, _msg)

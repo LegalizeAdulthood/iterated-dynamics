@@ -12,6 +12,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"
+#include "drivers.h"
 
 static FILE *fptarga = NULL;            /* FILE pointer           */
 

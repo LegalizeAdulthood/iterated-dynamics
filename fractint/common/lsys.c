@@ -10,6 +10,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
+#include "drivers.h"
 
 struct lsys_cmd {
     void (*f)(struct lsys_turtlestatei *);

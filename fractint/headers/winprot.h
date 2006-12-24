@@ -27,7 +27,6 @@ extern void set_default_parms(void);
 
 extern void debugmessage(char *, char *);
 extern int stopmsg(int , char far *);
-extern int keypressed(void);
 extern int getakey(void);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
@@ -165,6 +164,11 @@ extern void initasmvars(void);
 extern void adapter_detect(void);
 
 extern void windows_shell_to_dos(void);
+/* Wait for a key.
+ * This should be used instead of:
+ * while (!keypressed()) {}
+ * If timeout=1, waitkeypressed will time out after .5 sec.
+ */
 extern int waitkeypressed(int timeout);
 
 #endif
