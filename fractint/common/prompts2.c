@@ -1510,7 +1510,7 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 
 
 static int speedstate;
-int getafilename(char *hdg,char *template,char *flname)
+int getafilename(char *hdg,char *file_template,char *flname)
 {
    int rds;  /* if getting an RDS image map */
    static char o_instr[]={"Press "FK_F6" for default directory, "FK_F4" to toggle sort "};
@@ -1585,10 +1585,10 @@ retry_dir:
       }
       tmpmask[j] = SLASHC;
    }
-   if(template[0])
+   if(file_template[0])
    {
       numtemplates = 1;
-      splitpath(template,NULL,NULL,fname,ext);
+      splitpath(file_template,NULL,NULL,fname,ext);
    }
    else
       numtemplates = sizeof(masks)/sizeof(masks[0]);
@@ -1618,7 +1618,7 @@ retry_dir:
       out = fr_findnext();
    }
    tmpmask[masklen] = 0;
-   if(template[0])
+   if(file_template[0])
       makepath(tmpmask,drive,dir,fname,ext);
    do
    {
@@ -1780,7 +1780,7 @@ retry_dir:
          makepath(flname,drive,dir,fname1,ext1);
          if(strchr(fname1,'*') || strchr(fname1,'?') ||
              strchr(ext1  ,'*') || strchr(ext1  ,'?'))
-            makepath(template,"","",fname1,ext1);
+            makepath(file_template,"","",fname1,ext1);
          else if(isadirectory(flname))
             fix_dirname(flname);
          goto restart;
@@ -1906,7 +1906,7 @@ int isadirectory(char *s)
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
-int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
+int splitpath(char *file_template,char *drive,char *dir,char *fname,char *ext)
 {
 	int length;
 	int len;
@@ -1929,7 +1929,7 @@ int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 		ext[0]   = 0;
 	}
 
-	if ((length = (int) strlen(template)) == 0)
+	if ((length = (int) strlen(file_template)) == 0)
 	{
 		return(0);
 	}
@@ -1939,12 +1939,12 @@ int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 	/* get drive */
 	if (length >= 2)
 	{
-		if (template[1] == ':')
+		if (file_template[1] == ':')
 		{
 			if (drive)
 			{
-				drive[0] = template[offset++];
-				drive[1] = template[offset++];
+				drive[0] = file_template[offset++];
+				drive[1] = file_template[offset++];
 				drive[2] = 0;
 			}
 			else
@@ -1958,14 +1958,14 @@ int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 	/* get dir */
 	if (offset < length)
 	{
-		tmp = strrchr(template,SLASHC);
+		tmp = strrchr(file_template,SLASHC);
 		if (tmp)
 		{
 			tmp++;  /* first character after slash */
-			len = (int) (tmp - (char *)&template[offset]);
+			len = (int) (tmp - (char *)&file_template[offset]);
 			if (len >= 0 && len < FILE_MAX_DIR && dir)
 			{
-				strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
+				strncpy(dir,&file_template[offset],min(len,FILE_MAX_DIR));
 			}
 			if (len < FILE_MAX_DIR && dir)
 			{
@@ -1982,18 +1982,18 @@ int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 	/* get fname */
 	if (offset < length)
 	{
-		tmp = strrchr(template,'.');
-		if (tmp < strrchr(template,SLASHC) || tmp < strrchr(template,':'))
+		tmp = strrchr(file_template,'.');
+		if (tmp < strrchr(file_template,SLASHC) || tmp < strrchr(file_template,':'))
 		{
 			tmp = 0; /* in this case the '.' must be a directory */
 		}
 		if (tmp)
 		{
 			/* tmp++; */ /* first character past "." */
-			len = (int) (tmp - (char *)&template[offset]);
+			len = (int) (tmp - (char *)&file_template[offset]);
 			if ((len > 0) && (offset+len < length) && fname)
 			{
-				strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
+				strncpy(fname,&file_template[offset],min(len,FILE_MAX_FNAME));
 				if (len < FILE_MAX_FNAME)
 				{
 					fname[len] = 0;
@@ -2006,13 +2006,13 @@ int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 			offset += len;
 			if ((offset < length) && ext)
 			{
-				strncpy(ext,&template[offset],FILE_MAX_EXT);
+				strncpy(ext,&file_template[offset],FILE_MAX_EXT);
 				ext[FILE_MAX_EXT-1] = 0;
 			}
 		}
 		else if ((offset < length) && fname)
 		{
-			strncpy(fname,&template[offset],FILE_MAX_FNAME);
+			strncpy(fname,&file_template[offset],FILE_MAX_FNAME);
 			fname[FILE_MAX_FNAME-1] = 0;
 		}
 	}
