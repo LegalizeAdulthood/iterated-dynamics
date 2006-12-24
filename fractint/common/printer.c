@@ -109,32 +109,32 @@
 /* CAE 9211 changed these for BC++ */
 
 #define PRINTER_PRINTF1(X) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp);\
 }
 
 #define PRINTER_PRINTF2(X,Y) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y));\
 }
 #define PRINTER_PRINTF3(X,Y,Z) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y),(Z));\
 }
 #define PRINTER_PRINTF4(X,Y,Z,W) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y),(Z),(W));\
 }
 #define PRINTER_PRINTF5(X,Y,Z,W,V) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y),(Z),(W),(V));\
 }
 #define PRINTER_PRINTF6(X,Y,Z,W,V,U) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y),(Z),(W),(V),(U));\
 }
 #define PRINTER_PRINTF7(X,Y,Z,W,V,U,T) {\
-   static FCODE tmp[] = X;\
+   static char tmp[] = X;\
    Printer_printf(tmp,(Y),(Z),(W),(V),(U),(T));\
 }
 
@@ -211,7 +211,7 @@ static int repeat, item, count, repeatitem, itembuf[128], rlebitsperitem,
  *         (hans@garfield.metal2.polymtl.ca)
  */
 
-static UIFCODE pj_patterns [] = {
+static unsigned int pj_patterns [] = {
       0x7777,0x0000,0x1111,0x2222,0x3333,0x4444,0x5555,0x6666,
              0x0001,0x0002,0x0003,0x0004,0x0005,0x0006,0x0007,
       0x0110,0x0120,0x0130,0x0140,0x0150,0x0160,0x0170,0x0220,
@@ -265,7 +265,7 @@ static UIFCODE pj_patterns [] = {
  *           11 <- changed blue's value from this
  */
 #ifndef XFRACT
-static BFCODE  pj_reds[] = {
+static BYTE  pj_reds[] = {
         229,  2,145,  7,227,  9,136, 5,
              17, 10, 17, 10, 16, 10, 16, 29, 16, 32, 15, 30, 15, 31,  9,
          15, 10, 15,  9, 13, 37, 15, 32, 16, 36, 10, 15,  9, 13, 30, 15,
@@ -294,7 +294,7 @@ static BFCODE  pj_reds[] = {
  *                           65 <- changed green from this
  */
 
-static BFCODE pj_greens[] = {
+static BYTE pj_greens[] = {
         224,  2, 20, 72,211, 10, 11, 55,
              12, 15, 19, 11, 11, 14, 17, 14, 18, 22, 12, 13, 16, 19, 24,
          29, 16, 17, 23, 27, 41, 17, 22, 29, 39, 11, 10, 14, 14, 11, 14,
@@ -322,7 +322,7 @@ static BFCODE pj_greens[] = {
  *                           56 <- changed green from this
  *                                          163 <- changed cyan from this
  */
-static BFCODE pj_blues[] = {
+static BYTE pj_blues[] = {
         216,  2, 34, 48, 33, 73, 64,168,
              18, 19, 18, 20, 19, 22, 21, 22, 24, 22, 26, 24, 27, 24, 27,
          24, 29, 27, 31, 29, 22, 27, 25, 30, 28, 31, 29, 33, 33, 28, 32,
@@ -359,26 +359,26 @@ static FILE *PRFILE;
 #define TONES 17                   /* Number of PostScript halftone styles */
 
 #if 1
-static FCODE ht00[] = {"D mul exch D mul add 1 exch sub"};
-static FCODE ht01[] = {"abs exch abs 2 copy add 1 gt {1 sub D mul exch 1 sub D mul add 1 sub} {D mul exch D mul add 1 exch sub} ifelse"};
-static FCODE ht02[] = {"D mul exch D mul add 1 sub"};
-static FCODE ht03[] = {"D mul exch D mul add 0.6 exch sub abs -0.5 mul"};
-static FCODE ht04[] = {"D mul exch D mul add 0.6 exch sub abs 0.5 mul"};
-static FCODE ht05[] = {"add 2 div"};
-static FCODE ht06[] = {"2 exch sub exch abs 2 mul sub 3 div"};
-static FCODE ht07[] = {"2 copy abs exch abs gt {exch} if pop 2 mul 1 exch sub 3.5 div"};
-static FCODE ht08[] = {"abs exch abs add 1 exch sub"};
-static FCODE ht09[] = {"pop"};
-static FCODE ht10[] = {"/wy exch def 180 mul cos 2 div wy D D D mul mul sub mul wy add 180 mul cos"};
-static FCODE ht11[] = {"D 5 mul 8 div mul exch D mul exch add sqrt 1 exch sub"};
-static FCODE ht12[] = {"D mul D mul exch D mul D mul add 1 exch sub"};
-static FCODE ht13[] = {"D mul exch D mul add sqrt 1 exch sub"};
-static FCODE ht14[] = {"abs exch abs 2 copy gt {exch} if 1 sub D 0 eq {0.01 add} if atan 360 div"};
-static FCODE ht15[] = {"pop pop rand 1 add 10240 mod 5120 div 1 exch sub"};
-static FCODE ht16[] = {"pop abs 2 mul 1 exch sub"};
+static char ht00[] = {"D mul exch D mul add 1 exch sub"};
+static char ht01[] = {"abs exch abs 2 copy add 1 gt {1 sub D mul exch 1 sub D mul add 1 sub} {D mul exch D mul add 1 exch sub} ifelse"};
+static char ht02[] = {"D mul exch D mul add 1 sub"};
+static char ht03[] = {"D mul exch D mul add 0.6 exch sub abs -0.5 mul"};
+static char ht04[] = {"D mul exch D mul add 0.6 exch sub abs 0.5 mul"};
+static char ht05[] = {"add 2 div"};
+static char ht06[] = {"2 exch sub exch abs 2 mul sub 3 div"};
+static char ht07[] = {"2 copy abs exch abs gt {exch} if pop 2 mul 1 exch sub 3.5 div"};
+static char ht08[] = {"abs exch abs add 1 exch sub"};
+static char ht09[] = {"pop"};
+static char ht10[] = {"/wy exch def 180 mul cos 2 div wy D D D mul mul sub mul wy add 180 mul cos"};
+static char ht11[] = {"D 5 mul 8 div mul exch D mul exch add sqrt 1 exch sub"};
+static char ht12[] = {"D mul D mul exch D mul D mul add 1 exch sub"};
+static char ht13[] = {"D mul exch D mul add sqrt 1 exch sub"};
+static char ht14[] = {"abs exch abs 2 copy gt {exch} if 1 sub D 0 eq {0.01 add} if atan 360 div"};
+static char ht15[] = {"pop pop rand 1 add 10240 mod 5120 div 1 exch sub"};
+static char ht16[] = {"pop abs 2 mul 1 exch sub"};
 #endif
 
-static FCODE *HalfTone[TONES]=  {ht00,ht01,ht02,ht03,ht04,ht05,ht06,ht07,
+static char *HalfTone[TONES]=  {ht00,ht01,ht02,ht03,ht04,ht05,ht06,ht07,
     ht08,ht09,ht10,ht11,ht12,ht13,ht14,ht15,ht16};
 
 #if 0
@@ -569,7 +569,7 @@ Print_Screen (void)
                 gamma_val = 10.0 / i;
                 gammadiv = pow(255,gamma_val) / 255;
                 for (i = 0; i < 256; ++i) { /* build gamma conversion table */
-                    static FCODE msg[]={"Calculating color translation"};
+                    static char msg[]={"Calculating color translation"};
                     if ((i & 15) == 15)
                         thinking(1,msg);
                     convert[i] = (BYTE)((pow((double)i,gamma_val) / gammadiv) + 0.5);

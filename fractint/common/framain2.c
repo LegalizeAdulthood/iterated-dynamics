@@ -111,9 +111,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          else {
             driver_set_video_mode(axmode, bxmode, cxmode, dxmode); /* switch video modes */
             if (goodmode == 0) {
-               static FCODE msg[] = {"That video mode is not available with your adapter."};
+               static char msg[] = {"That video mode is not available with your adapter."};
 #ifndef XFRACT
-               static FCODE TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
+               static char TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
 
                if(TPlusErr) {
                   stopmsg(0, TPlusStr);
@@ -136,8 +136,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
             if (virtual_screens && (xdots > sxdots || ydots > sydots)) {
                char buf[120];
-               static FCODE msgxy1[] = {"Can't set virtual line that long, width cut down."};
-               static FCODE msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
+               static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
+               static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
                if (xdots > sxdots && ydots > sydots) {
 #ifndef XFRACT
                   sprintf(buf,"%Fs\n%Fs",(char *)msgxy1,(char *)msgxy2);
@@ -197,7 +197,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   xdots = (int)((double)ydots / ftemp + 0.5);
                }
             if (xdots > sxdots || ydots > sydots) {
-               static FCODE msg[] = {"View window too large; using full screen."};
+               static char msg[] = {"View window too large; using full screen."};
                stopmsg(0,msg);
                viewwindow = 0;
                xdots = viewxdots = sxdots;
@@ -207,14 +207,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   || (ydots <= 1)) /* work with the sound feature */
                   && !(evolving&1)) { /* so ssg works */
                   /* but no check if in evolve mode to allow lots of small views*/
-               static FCODE msg[] = {"View window too small; using full screen."};
+               static char msg[] = {"View window too small; using full screen."};
                stopmsg(0,msg);
                viewwindow = 0;
                xdots = sxdots;
                ydots = sydots;
             }
             if ((evolving&1) && (curfractalspecific->flags&INFCALC)) {
-               static FCODE msg[] = {"Fractal doesn't terminate! switching off evolution."};
+               static char msg[] = {"Fractal doesn't terminate! switching off evolution."};
                stopmsg(0,msg);
                evolving = evolving -1;
                viewwindow = FALSE;
@@ -289,7 +289,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          else {
             calc_status = -1;
             if (driver_key_pressed()) {
-               static FCODE msg[] = {"*** load incomplete ***"};
+               static char msg[] = {"*** load incomplete ***"};
                driver_buzzer(1);
                while (driver_key_pressed()) getakey();
                texttempmsg(msg);
@@ -457,7 +457,7 @@ done:
      saveticks = 0;                 /* turn off autosave timer */
      if (driver_diskp() && i == 0) /* disk-video */
      {
-        static FCODE o_msg[] = {"Image has been completed"};
+        static char o_msg[] = {"Image has been completed"};
         char msg[sizeof(o_msg)];
         strcpy(msg,o_msg);
         dvid_status(0,msg);
@@ -1061,14 +1061,14 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 #ifndef XFRACT
       driver_stack_screen();
       if (75000L > fr_farfree()) {
-         static FCODE dosmsg[] = {"Not enough memory to Shell-to-DOS"};
+         static char dosmsg[] = {"Not enough memory to Shell-to-DOS"};
          driver_unstack_screen();
          stopmsg(0, dosmsg);
          break;
       }
       if (axmode == 0 || axmode > 7)
       {
-         static FCODE dosmsg[] =
+         static char dosmsg[] =
          {"\
 Note:  Your graphics image is still squirreled away in your video\n\
 adapter's memory.  Switching video modes will clobber part of that\n\
@@ -2447,9 +2447,9 @@ void checkfreemem(int secondpass)
 {
 	int oldmaxhistory;
 	char *tmp;
-	static FCODE msg[] =
+	static char msg[] =
 		{" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
-	static FCODE msg2[] = {"To save memory, reduced maxhistory to "};
+	static char msg2[] = {"To save memory, reduced maxhistory to "};
 	tmp = (char *)malloc(4096L);
 	oldmaxhistory = maxhistory;
 	if (secondpass && !history)

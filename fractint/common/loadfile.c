@@ -338,7 +338,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    if (overlay3d) {
       initmode = adapter;          /* use previous adapter mode for overlays */
       if (filexdots > xdots || fileydots > ydots) {
-         static FCODE msg[]={"Can't overlay with a larger image"};
+         static char msg[]={"Can't overlay with a larger image"};
          stopmsg(0,msg);
          initmode = -1;
          return(-1);
@@ -1285,17 +1285,17 @@ rescan:  /* entry for changed browse parms */
 
       if (no_memory)
       {
-         static FCODE msg[] = {"Sorry...not enough memory to browse."};
+         static char msg[] = {"Sorry...not enough memory to browse."};
        texttempmsg(msg);/* doesn't work if NO memory available, go figure */
       }
       if (wincount >= MAX_WINDOWS_OPEN)
       { /* hard code message at MAX_WINDOWS_OPEN = 450 */
-         static FCODE msg[] = {"Sorry...no more space, 450 displayed."};
+         static char msg[] = {"Sorry...no more space, 450 displayed."};
        texttempmsg(msg);
       }
       if (vid_too_big==2)
       {
-         static FCODE msg[] = {"Xdots + Ydots > 4096."};
+         static char msg[] = {"Xdots + Ydots > 4096."};
        texttempmsg(msg);
       }
  c=0;
@@ -1407,7 +1407,7 @@ rescan:  /* entry for changed browse parms */
           cleartempmsg();
           c = getakey();
           if ( c == 'Y' && doublecaution ) {
-           static FCODE msg[] = {"ARE YOU SURE???? (Y/N)"};
+           static char msg[] = {"ARE YOU SURE???? (Y/N)"};
            texttempmsg(msg);
             if ( getakey() != 'Y') c = 'N';
           }
@@ -1424,14 +1424,14 @@ rescan:  /* entry for changed browse parms */
             break;
             }
           else if( errno == EACCES ) {
-              static FCODE msg[] = {"Sorry...it's a read only file, can't del"};
+              static char msg[] = {"Sorry...it's a read only file, can't del"};
               texttempmsg(msg);
               showtempmsg(winlist.name);
               break;
               }
           }
           {
-          static FCODE msg[] = {"file not deleted (phew!)"};
+          static char msg[] = {"file not deleted (phew!)"};
           texttempmsg(msg);
           }
           showtempmsg(winlist.name);
@@ -1443,7 +1443,7 @@ rescan:  /* entry for changed browse parms */
          newname[0] = 0;
          strcpy(mesg,"");
          {
-         static FCODE msg[] = {"Enter the new filename for "};
+         static char msg[] = {"Enter the new filename for "};
          strcat((char *)mesg,msg);
          }
          splitpath(readname,drive,dir,NULL,NULL);
@@ -1457,7 +1457,7 @@ rescan:  /* entry for changed browse parms */
           if (!rename(tmpmask,newname)) {
             if (errno == EACCES)
             {
-               static FCODE msg[] = {"sorry....can't rename"};
+               static char msg[] = {"sorry....can't rename"};
                 texttempmsg(msg);
             }
           else {
@@ -1519,7 +1519,7 @@ rescan:  /* entry for changed browse parms */
     }
  }/*if*/
  else {
-   static FCODE msg[] = {"sorry.. I can't find anything"};
+   static char msg[] = {"sorry.. I can't find anything"};
    driver_buzzer(1); /*no suitable files in directory! */
    texttempmsg(msg);
    no_sub_images = TRUE;

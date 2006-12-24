@@ -347,7 +347,7 @@ BYTE olddac0,olddac1,olddac2;
       spindac(0,1);                     /* show white border */
       if (driver_diskp())
       {
-         static FCODE o_msg[] = {" Paused in \"color cycling\" mode "};
+         static char o_msg[] = {" Paused in \"color cycling\" mode "};
          char msg[sizeof(o_msg)];
          strcpy(msg,o_msg);
          dvid_status(100,msg);
@@ -419,7 +419,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
    char palname[FILE_MAX_PATH];
-   static FCODE o_msg[] = {"Name of map file to write"};
+   static char o_msg[] = {"Name of map file to write"};
    char msg[sizeof(o_msg)];
    FILE *dacfile;
    int i,oldhelpmode;

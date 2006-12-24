@@ -303,7 +303,7 @@ int initfm(void)
 int k;
    k = ReadBlasterEnv(&IOport);
    if (k == 1) { /* BLASTER environment variable not set */
-      static FCODE msg[] = {"No sound hardware or Blaster variable not set"};
+      static char msg[] = {"No sound hardware or Blaster variable not set"};
       soundflag = (soundflag & 0xef); /* 1110 1111 */
       stopmsg(0,msg);
       return(0); /* no card found */
@@ -482,7 +482,7 @@ void buzzer(int tone)
 }
 
 #define LOADCHOICES(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    strcpy(ptr,(char *)tmp);\
    choices[++k]= ptr;\
    ptr += sizeof(tmp);\
@@ -491,7 +491,7 @@ void buzzer(int tone)
 int get_sound_params(void)
 {
 /* routine to get sound settings  */
-static FCODE o_hdg[] = {"Sound Control Screen"};
+static char o_hdg[] = {"Sound Control Screen"};
 char *soundmodes[] = {s_off,s_beep,s_x,s_y,s_z};
 int old_soundflag,old_orbit_delay;
 char hdg[sizeof(o_hdg)];
@@ -619,7 +619,7 @@ get_sound_restart:
 
 static int get_scale_map(void)
 {
-static FCODE o_hdg[] = {"Scale Mapping Screen"};
+static char o_hdg[] = {"Scale Mapping Screen"};
 int oldhelpmode;
 char hdg[sizeof(o_hdg)];
 char *choices[15];
@@ -723,7 +723,7 @@ get_map_restart:
 
 static int get_music_parms(void)
 {
-static FCODE o_hdg[] = {"FM Synth Card Control Screen"};
+static char o_hdg[] = {"FM Synth Card Control Screen"};
 char *attenmodes[] = {s_none,s_low,s_mid,s_high};
 int oldhelpmode;
 char hdg[sizeof(o_hdg)];

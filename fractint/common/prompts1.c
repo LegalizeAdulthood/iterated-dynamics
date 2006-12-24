@@ -117,15 +117,15 @@ int fullscreen_prompt(  /* full-screen prompting routine */
    int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
    char blanks[78];               /* used to clear text box                */
 
-static FCODE instr1[]  = {"Use " UPARR1 " and " DNARR1 " to select values to change"};
-static FCODE instr2a[]  = {"Type in replacement value for selected field"};
-static FCODE instr2b[]  = {"Use " LTARR1 " or " RTARR1 " to change value of selected field"};
-static FCODE instr3a[] = {"Press ENTER when finished (or ESCAPE to back out)"};
-static FCODE instr3b[] = {"Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help"};
+static char instr1[]  = {"Use " UPARR1 " and " DNARR1 " to select values to change"};
+static char instr2a[]  = {"Type in replacement value for selected field"};
+static char instr2b[]  = {"Use " LTARR1 " or " RTARR1 " to change value of selected field"};
+static char instr3a[] = {"Press ENTER when finished (or ESCAPE to back out)"};
+static char instr3b[] = {"Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help"};
 
-static FCODE instr0[] = {"No changeable parameters;"};
-static FCODE instr0a[] = {"Press ENTER to exit"};
-static FCODE instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help"};
+static char instr0[] = {"No changeable parameters;"};
+static char instr0a[] = {"Press ENTER to exit"};
+static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help"};
 
    savelookatmouse = lookatmouse;
    lookatmouse = 0;
@@ -897,9 +897,9 @@ static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
                                    /* so that storage gets freed up      */
 {
-   static FCODE head1[] = {"Select a Fractal Type"};
-   static FCODE head2[] = {"Select Orbit Algorithm for Julibrot"};
-   static FCODE o_instr[] = {"Press "FK_F2" for a description of the highlighted type"};
+   static char head1[] = {"Select a Fractal Type"};
+   static char head2[] = {"Select Orbit Algorithm for Julibrot"};
+   static char o_instr[] = {"Press "FK_F2" for a description of the highlighted type"};
    char instr[sizeof(o_instr)];
    char head[40];
    int oldhelpmode;
@@ -1115,42 +1115,42 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
     return (numfractals);
 }
 
-static FCODE v0a[] = {"From cx (real part)"};
-static FCODE v1a[] = {"From cy (imaginary part)"};
-static FCODE v2a[] = {"To   cx (real part)"};
-static FCODE v3a[] = {"To   cy (imaginary part)"};
+static char v0a[] = {"From cx (real part)"};
+static char v1a[] = {"From cy (imaginary part)"};
+static char v2a[] = {"To   cx (real part)"};
+static char v3a[] = {"To   cy (imaginary part)"};
 
 /* 4D Mandelbrot */
-static FCODE v0b[] = {"From cj (3rd dim)"};
-static FCODE v1b[] = {"From ck (4th dim)"};
-static FCODE v2b[] = {"To   cj (3rd dim)"};
-static FCODE v3b[] = {"To   ck (4th dim)"};
+static char v0b[] = {"From cj (3rd dim)"};
+static char v1b[] = {"From ck (4th dim)"};
+static char v2b[] = {"To   cj (3rd dim)"};
+static char v3b[] = {"To   ck (4th dim)"};
 
 /* 4D Julia */
-static FCODE v0c[] = {"From zj (3rd dim)"};
-static FCODE v1c[] = {"From zk (4th dim)"};
-static FCODE v2c[] = {"To   zj (3rd dim)"};
-static FCODE v3c[] = {"To   zk (4th dim)"};
+static char v0c[] = {"From zj (3rd dim)"};
+static char v1c[] = {"From zk (4th dim)"};
+static char v2c[] = {"To   zj (3rd dim)"};
+static char v3c[] = {"To   zk (4th dim)"};
 
-static FCODE v4[] = {"Number of z pixels"};
-static FCODE v5[] = {"Location of z origin"};
-static FCODE v6[] = {"Depth of z"};
-static FCODE v7[] = {"Screen height"};
-static FCODE v8[] = {"Screen width"};
-static FCODE v9[] = {"Distance to Screen"};
-static FCODE v10[] = {"Distance between eyes"};
-static FCODE v11[] = {"3D Mode"};
+static char v4[] = {"Number of z pixels"};
+static char v5[] = {"Location of z origin"};
+static char v6[] = {"Depth of z"};
+static char v7[] = {"Screen height"};
+static char v8[] = {"Screen width"};
+static char v9[] = {"Distance to Screen"};
+static char v10[] = {"Distance between eyes"};
+static char v11[] = {"3D Mode"};
 char *juli3Doptions[] = {"monocular","lefteye","righteye","red-blue"};
 
 /* JIIM */
 #ifdef RANDOM_RUN
-static FCODE JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
+static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
 char *JIIMmethod[] = {"breadth", "depth", "walk", "run"};
 #else
-static FCODE JIIMstr1[] = "Breadth first, Depth first, Random Walk";
+static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
 char *JIIMmethod[] = {"breadth", "depth", "walk"};
 #endif
-static FCODE JIIMstr2[] = "Left first or Right first?";
+static char JIIMstr2[] = "Left first or Right first?";
 char *JIIMleftright[] = {"left", "right"};
 
 /* moved from miscres.c so sizeof structure can be accessed here */
@@ -1249,11 +1249,11 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    int ret = 0;
    int oldhelpmode;
    char parmprompt[MAXPARAMS][55];
-   static FCODE t1[] = {"First Function"};
-   static FCODE t2[] = {"Second Function"};
-   static FCODE t3[] = {"Third Function"};
-   static FCODE t4[] = {"Fourth Function"};
-   static FCODE *trg[] = {t1, t2, t3, t4};
+   static char t1[] = {"First Function"};
+   static char t2[] = {"Second Function"};
+   static char t3[] = {"Third Function"};
+   static char t4[] = {"Fourth Function"};
+   static char *trg[] = {t1, t2, t3, t4};
    char *filename,*entryname;
    FILE *entryfile;
    char *trignameptr[NUMTRIGFN];
@@ -1443,7 +1443,7 @@ gfp_top:
 
    if( i != 0 && curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) ) {
-        static FCODE bailteststr[] = {"Bailout Test (mod, real, imag, or, and, manh, manr)"};
+        static char bailteststr[] = {"Bailout Test (mod, real, imag, or, and, manh, manr)"};
       paramvalues[promptnum].type = 'l';
       paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
       paramvalues[promptnum].uval.ch.llen = 7;
@@ -1455,13 +1455,13 @@ gfp_top:
    if (i) {
       if (potparam[0] != 0.0 && potparam[2] != 0.0)
       {
-        static FCODE bailpotstr[] = {"Bailout: continuous potential (Y screen) value in use"};
+        static char bailpotstr[] = {"Bailout: continuous potential (Y screen) value in use"};
          paramvalues[promptnum].type = '*';
          choices[promptnum++] = bailpotstr;
       }
       else
       {
-         static FCODE bailoutstr[] = {"Bailout value (0 means use default)"};
+         static char bailoutstr[] = {"Bailout value (0 means use default)"};
          choices[promptnum] = bailoutstr;
          paramvalues[promptnum].type = 'L';
          paramvalues[promptnum++].uval.Lval = (oldbailout = bailout);
@@ -1568,7 +1568,7 @@ gfp_top:
 /*      && (display3d > 0 || promptnum == 0)) */
       && (display3d > 0))
       {
-       static FCODE msg[]={"Current type has no type-specific parameters"};
+       static char msg[]={"Current type has no type-specific parameters"};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        goto gfp_exit;
        }
@@ -1578,7 +1578,7 @@ gfp_top:
       sprintf(msg,"Parameters for fractal type %s",typename);
    if(bf_math == 0)
    {
-      static FCODE pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
+      static char pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
       strcat(msg,pressf6);
    }
    else
@@ -1974,10 +1974,10 @@ static long gfe_choose_entry(int type,char *title,char *filename,char *entryname
 /* subrtn of get_file_entry, separated so that storage gets freed up */
 {
 #ifdef XFRACT
-   static FCODE o_instr[]={"Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort "};
+   static char o_instr[]={"Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort "};
 /* keep the above line length < 80 characters */
 #else
-   static FCODE o_instr[]={"Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort "};
+   static char o_instr[]={"Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort "};
 #endif
    int numentries, i;
    char buf[101];
@@ -2011,7 +2011,7 @@ retry:
 
    numentries=scan_entries(gfe_file,choices,NULL);
    if (numentries == 0) {
-      static FCODE msg[]={"File doesn't contain any valid entries"};
+      static char msg[]={"File doesn't contain any valid entries"};
       stopmsg(0,msg);
       fclose(gfe_file);
       return -2; /* back to file list */
@@ -2126,7 +2126,7 @@ static int check_gfe_key(int curkey,int choice)
       driver_put_string(4,0,C_GENERAL_MED,infbuf);
 
       {
-      static FCODE msg[]  = {"\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list"};
+      static char msg[]  = {"\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list"};
       driver_put_string(-1,0,C_GENERAL_LO,msg);
       }
 
@@ -2356,14 +2356,14 @@ static void format_parmfile_line(int choice,char *buf)
 int get_fract3d_params() /* prompt for 3D fractal parameters */
 {
    int i,k,ret,oldhelpmode;
-   static FCODE hdg[] = {"3D Parameters"};
-   static FCODE p1[] = {"X-axis rotation in degrees"};
-   static FCODE p2[] = {"Y-axis rotation in degrees"};
-   static FCODE p3[] = {"Z-axis rotation in degrees"};
-   static FCODE p4[] = {"Perspective distance [1 - 999, 0 for no persp]"};
-   static FCODE p5[] = {"X shift with perspective (positive = right)"};
-   static FCODE p6[] = {"Y shift with perspective (positive = up   )"};
-   static FCODE p7[] = {"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"};
+   static char hdg[] = {"3D Parameters"};
+   static char p1[] = {"X-axis rotation in degrees"};
+   static char p2[] = {"Y-axis rotation in degrees"};
+   static char p3[] = {"Z-axis rotation in degrees"};
+   static char p4[] = {"Perspective distance [1 - 999, 0 for no persp]"};
+   static char p5[] = {"X shift with perspective (positive = right)"};
+   static char p6[] = {"Y shift with perspective (positive = up   )"};
+   static char p7[] = {"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"};
    struct fullscreenvalues uvalues[20];
    char *ifs3d_prompts[8];
 
@@ -2422,27 +2422,27 @@ get_f3d_exit:
 /* These macros streamline the "save near space" campaign */
 
 #define LOADPROMPTS3D(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    prompts3d[++k]= tmp;\
    }
 
 #define LOADPROMPTSCHOICES(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    choices[k++]= tmp;\
    }
 
 int get_3d_params()     /* prompt for 3D parameters */
 {
-   static FCODE hdg[]={"3D Mode Selection"};
-   static FCODE hdg1[]={"Select 3D Fill Type"};
+   static char hdg[]={"3D Mode Selection"};
+   static char hdg1[]={"Select 3D Fill Type"};
    char *choices[11];
    int attributes[21];
    int sphere;
    char *s;
-   static FCODE s1[] = {"Sphere 3D Parameters\n\
+   static char s1[] = {"Sphere 3D Parameters\n\
 Sphere is on its side; North pole to right\n\
 Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right"};
-   static FCODE s2[]={"Planar 3D Parameters\n\
+   static char s2[]={"Planar 3D Parameters\n\
 Pre-rotation X axis is screen top; Y axis is left side\n\
 Pre-rotation Z axis is coming at you out of the screen!"};
    char *prompts3d[21];
@@ -2535,7 +2535,7 @@ restart_1:
    RAY = uvalues[k++].uval.ival;
    k++;
    {
-      static FCODE msg[] = {
+      static char msg[] = {
 "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n\
 the online documentation."};
       if(RAY == 1)
@@ -2740,7 +2740,7 @@ return(0);
 /* --------------------------------------------------------------------- */
 static int get_light_params()
 {
-   static FCODE hdg[]={"Light Source Parameters"};
+   static char hdg[]={"Light Source Parameters"};
    char *prompts3d[13];
    struct fullscreenvalues uvalues[13];
 
@@ -2870,7 +2870,7 @@ static int check_mapfile()
 
    for(;;) {
       if (askflag) {
-         static FCODE msg[] = {"\
+         static char msg[] = {"\
 Enter name of .MAP file to use,\n\
 or '*' to use palette from the image to be loaded."};
          oldhelpmode = helpmode;
@@ -2900,7 +2900,7 @@ or '*' to use palette from the image to be loaded."};
 
 static int get_funny_glasses_params()
 {
-   static FCODE hdg[]={"Funny Glasses Parameters"};
+   static char hdg[]={"Funny Glasses Parameters"};
    char *prompts3d[10];
 
    struct fullscreenvalues uvalues[10];

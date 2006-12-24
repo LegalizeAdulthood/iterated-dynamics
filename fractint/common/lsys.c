@@ -141,7 +141,7 @@ static int _fastcall readLSystemFile(char *str)
 
    while(file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
    {
-      static FCODE out_of_mem[] = {"Error:  out of memory\n"};
+      static char out_of_mem[] = {"Error:  out of memory\n"};
       linenum++;
       if ((word = strchr(inline1,';')) != NULL) /* strip comment */
          *word = 0;
@@ -223,13 +223,13 @@ static int _fastcall readLSystemFile(char *str)
    fclose(infile);
    if (!ruleptrs[0] && err<6)
    {
-      static FCODE no_axiom[] = {"Error:  no axiom\n"};
+      static char no_axiom[] = {"Error:  no axiom\n"};
       strcat(msgbuf,no_axiom);
       ++err;
    }
    if ((maxangle<3||maxangle>50) && err<6)
    {
-      static FCODE missing_angle[] = {"Error:  illegal or missing angle\n"};
+      static char missing_angle[] = {"Error:  illegal or missing angle\n"};
       strcat(msgbuf,missing_angle);
       ++err;
    }
@@ -291,7 +291,7 @@ int Lsystem(void)
    }
 
    if (stackoflow) {
-      static FCODE msg[]={"insufficient memory, try a lower order"};
+      static char msg[]={"insufficient memory, try a lower order"};
       stopmsg(0,msg);
    }
    else if (overflow) {
@@ -658,7 +658,7 @@ if (overflow)     /* integer math routines overflowed */
    }
 
    while (command->ch && command->ch !=']') {
-      static FCODE thinking_msg[] =
+      static char thinking_msg[] =
          {"L-System thinking (higher orders take longer)"};
       if (! (ts->counter++)) {
          /* let user know we're not dead */

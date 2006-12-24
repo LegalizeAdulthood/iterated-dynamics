@@ -90,7 +90,7 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 
 void notdiskmsg()
 {
-static FCODE sorrymsg[]={
+static char sorrymsg[]={
 "This type may be slow using a real-disk based 'video' mode, but may not \n\
 be too bad if you have enough expanded or extended memory. Press <Esc> to \n\
 abort if it appears that your disk drive is working too hard."};
@@ -709,56 +709,56 @@ void set_trig_pointers(int which)
    }
 }
 
-static FCODE sfractal_type[] =     {"Fractal type:"};
-static FCODE sitem_name[] =        {"Item name:"};
-static FCODE sitem_file[] =        {"Item file:"};
-static FCODE s3D_transform[] =     {"3D Transform"};
-static FCODE syou_are_cycling[] =  {"You are in color-cycling mode"};
-static FCODE sfloating_point[] =   {"Floating-point"};
-static FCODE ssolid_guessing[] =   {"Solid Guessing"};
-static FCODE sboundary_tracing[] = {"Boundary Tracing"};
-static FCODE stesseral[] =         {"Tesseral"};
-static FCODE sdiffusion[] =        {"Diffusion"};
-static FCODE sorbits[] =           {"Orbits"};
-static FCODE scalculation_time[] = {"Calculation time:"};
-static FCODE siterations[] =       {" 1000's of points:"};
-static FCODE scornersxy[] =        {"Corners:                X                     Y"};
-static FCODE stop_left[] =         {"Top-l"};
-static FCODE sbottom_right[] =     {"Bot-r"};
-static FCODE sbottom_left[] =      {"Bot-l"};
-static FCODE scenter[] =           {"Ctr"};
-static FCODE struncate[] =         {"(Center values shown truncated to 320 decimals)"};
-static FCODE smag[] =              {"Mag"};
-static FCODE sxmag[] =             {"X-Mag-Factor"};
-static FCODE srot[] =              {"Rotation"};
-static FCODE sskew[] =             {"Skew"};
-static FCODE sparams[] =           {"Params "};
-static FCODE siteration_maximum[] ={"Current (Max) Iteration: "};
-static FCODE seffective_bailout[] ={"     Effective bailout: "};
-static FCODE scurrent_rseed[] =    {"Current 'rseed': "};
-static FCODE sinversion_radius[] = {"Inversion radius: "};
-static FCODE sxcenter[] =          {"  xcenter: "};
-static FCODE sycenter[] =          {"  ycenter: "};
-static FCODE sparms_chgd[] = {"Parms chgd since generated"};
-static FCODE sstill_being[] = {"Still being generated"};
-static FCODE sinterrupted_resumable[] = {"Interrupted, resumable"};
-static FCODE sinterrupted_non_resumable[] = {"Interrupted, non-resumable"};
-static FCODE simage_completed[] = {"Image completed"};
-static FCODE sflag_is_activated[] = {" flag is activated"};
-static FCODE sinteger_math[]      = {"Integer math is in use"};
-static FCODE sin_use_required[] = {" in use (required)"};
-static FCODE sarbitrary_precision[] = {"Arbitrary precision "};
+static char sfractal_type[] =     {"Fractal type:"};
+static char sitem_name[] =        {"Item name:"};
+static char sitem_file[] =        {"Item file:"};
+static char s3D_transform[] =     {"3D Transform"};
+static char syou_are_cycling[] =  {"You are in color-cycling mode"};
+static char sfloating_point[] =   {"Floating-point"};
+static char ssolid_guessing[] =   {"Solid Guessing"};
+static char sboundary_tracing[] = {"Boundary Tracing"};
+static char stesseral[] =         {"Tesseral"};
+static char sdiffusion[] =        {"Diffusion"};
+static char sorbits[] =           {"Orbits"};
+static char scalculation_time[] = {"Calculation time:"};
+static char siterations[] =       {" 1000's of points:"};
+static char scornersxy[] =        {"Corners:                X                     Y"};
+static char stop_left[] =         {"Top-l"};
+static char sbottom_right[] =     {"Bot-r"};
+static char sbottom_left[] =      {"Bot-l"};
+static char scenter[] =           {"Ctr"};
+static char struncate[] =         {"(Center values shown truncated to 320 decimals)"};
+static char smag[] =              {"Mag"};
+static char sxmag[] =             {"X-Mag-Factor"};
+static char srot[] =              {"Rotation"};
+static char sskew[] =             {"Skew"};
+static char sparams[] =           {"Params "};
+static char siteration_maximum[] ={"Current (Max) Iteration: "};
+static char seffective_bailout[] ={"     Effective bailout: "};
+static char scurrent_rseed[] =    {"Current 'rseed': "};
+static char sinversion_radius[] = {"Inversion radius: "};
+static char sxcenter[] =          {"  xcenter: "};
+static char sycenter[] =          {"  ycenter: "};
+static char sparms_chgd[] = {"Parms chgd since generated"};
+static char sstill_being[] = {"Still being generated"};
+static char sinterrupted_resumable[] = {"Interrupted, resumable"};
+static char sinterrupted_non_resumable[] = {"Interrupted, non-resumable"};
+static char simage_completed[] = {"Image completed"};
+static char sflag_is_activated[] = {" flag is activated"};
+static char sinteger_math[]      = {"Integer math is in use"};
+static char sin_use_required[] = {" in use (required)"};
+static char sarbitrary_precision[] = {"Arbitrary precision "};
 #ifdef XFRACT
-static FCODE spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
+static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
 #else
-static FCODE spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
+static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
 #endif
-static FCODE spressanykey1[] = {"Press Esc to continue, Backspace for first screen"};
-static FCODE sbatch[] = {" (Batch mode)"};
-static FCODE ssavename[] = {"Savename: "};
-static FCODE sstopsecret[] = {"Top Secret Developer's Screen"};
-static FCODE sthreepass[] = {" (threepass)"};
-static FCODE sreallylongtime[] = {"A long time! (> 24.855 days)"};
+static char spressanykey1[] = {"Press Esc to continue, Backspace for first screen"};
+static char sbatch[] = {" (Batch mode)"};
+static char ssavename[] = {"Savename: "};
+static char sstopsecret[] = {"Top Secret Developer's Screen"};
+static char sthreepass[] = {" (threepass)"};
+static char sreallylongtime[] = {"A long time! (> 24.855 days)"};
 
 void get_calculation_time(char *msg, long ctime)
 {
@@ -1034,7 +1034,7 @@ top:
    if (calc_status == 1 || calc_status == 2)
       if (curfractalspecific->flags&NORESUME)
       {
-         static FCODE msg[] = {"Note: can't resume this type after interrupts other than <tab> and <F1>"};
+         static char msg[] = {"Note: can't resume this type after interrupts other than <tab> and <F1>"};
          driver_put_string(s_row++,2,C_GENERAL_HI,msg);
       }
    s_row += addrow;
@@ -1305,14 +1305,14 @@ top:
 static void area(void)
 {
     /* apologies to UNIX folks, we PC guys have to save near space */
-    static FCODE warning[] = {"Warning: inside may not be unique\n"};
-    static FCODE total_area[] = {".  Total area "};
+    static char warning[] = {"Warning: inside may not be unique\n"};
+    static char total_area[] = {".  Total area "};
     char *msg;
     int x,y;
     char buf[160];
     long cnt=0;
     if (inside<0) {
-      static FCODE msg[] = {"Need solid inside to compute area"};
+      static char msg[] = {"Need solid inside to compute area"};
       stopmsg(0,msg);
       return;
     }
@@ -1369,7 +1369,7 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
    }
 }
 
-FCODE insufficient_ifs_mem[]={"Insufficient memory for IFS"};
+char insufficient_ifs_mem[]={"Insufficient memory for IFS"};
 int numaffine;
 int ifsload()                   /* read in IFS parameters */
 {
@@ -1413,7 +1413,7 @@ int ifsload()                   /* read in IFS parameters */
          break ;
       if (++i >= NUMIFS*rowsize)
       {
-         static FCODE msg[]={"IFS definition has too many lines"};
+         static char msg[]={"IFS definition has too many lines"};
             stopmsg(0,msg);
             ret = -1;
             break;
@@ -1433,12 +1433,12 @@ int ifsload()                   /* read in IFS parameters */
    }
 
    if ((i % rowsize) != 0 || *bufptr != '}') {
-      static FCODE msg[]={"invalid IFS definition"};
+      static char msg[]={"invalid IFS definition"};
       stopmsg(0,msg);
       ret = -1;
       }
    if (i == 0 && ret == 0) {
-      static FCODE msg[]={"Empty IFS definition"};
+      static char msg[]={"Empty IFS definition"};
       stopmsg(0,msg);
       ret = -1;
       }
@@ -1676,7 +1676,7 @@ int _cdecl _matherr( struct exception *except )
     if(debugflag != 0)
     {
        static FILE *fp=NULL;
-       static FCODE msg[]={"Math error, but we'll try to keep going"};
+       static char msg[]={"Math error, but we'll try to keep going"};
        if(matherr_ct++ == 0)
           if(debugflag == 4000 || debugflag == 3200)
              stopmsg(0,msg);

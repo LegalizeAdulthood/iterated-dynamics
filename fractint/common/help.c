@@ -781,7 +781,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 int help(int action)
    {
-   static FCODE unknowntopic_msg[] = "Unknown Help Topic";
+   static char unknowntopic_msg[] = "Unknown Help Topic";
    HIST      curr;
    int       oldlookatmouse;
    int       oldhelpmode;
@@ -1290,7 +1290,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if ( pnum == -1 )    /* successful completion */
       {
-      static FCODE msg[] = {"Done -- Press any key"};
+      static char msg[] = {"Done -- Press any key"};
       driver_buzzer(0);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
       getakey();
@@ -1299,7 +1299,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if ( pnum == -2 )   /* aborted */
       {
-      static FCODE msg[] = {"Aborted -- Press any key"};
+      static char msg[] = {"Aborted -- Press any key"};
       driver_buzzer(1);
       putstringcenter(7, 0, 80, C_HELP_LINK, msg);
       getakey();
@@ -1308,7 +1308,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if (pnum == 0)   /* initialization */
       {
-      static FCODE msg[] = {"Generating FRACTINT.DOC"};
+      static char msg[] = {"Generating FRACTINT.DOC"};
       helptitle();
       printinstr();
       driver_set_attr(2, 0, C_HELP_BODY, 80*22);
@@ -1347,10 +1347,10 @@ int makedoc_msg_func(int pnum, int num_pages)
 
 void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg )
    {
-   static FCODE err_no_temp[]  = "Unable to create temporary file.\n";
-   static FCODE err_no_out[]   = "Unable to create output file.\n";
-   static FCODE err_badwrite[] = "Error writing temporary file.\n";
-   static FCODE err_badread[]  = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
+   static char err_no_temp[]  = "Unable to create temporary file.\n";
+   static char err_no_out[]   = "Unable to create output file.\n";
+   static char err_badwrite[] = "Error writing temporary file.\n";
+   static char err_badread[]  = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
 
    PRINT_DOC_INFO info;
    int            success   = 0;
@@ -1445,11 +1445,11 @@ int init_help(void)
 #if !defined(XFRACT) && !defined(_WIN32)
 	if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
     {
-		static FCODE err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
-		static FCODE err_no_exe[]     = "Help system couldn't find FRACTINT.EXE!\n";
-		static FCODE err_wrong_ver[]  = "Wrong help version in FRACTINT.EXE!\n";
+		static char err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
+		static char err_no_exe[]     = "Help system couldn't find FRACTINT.EXE!\n";
+		static char err_wrong_ver[]  = "Wrong help version in FRACTINT.EXE!\n";
 /*
-      static FCODE err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
+      static char err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
 */
 
 		if (find_file(s_fractintexe, path))
@@ -1518,13 +1518,13 @@ int init_help(void)
 
 				if (hs.sig != HELP_SIG)
 				{
-					static FCODE msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
+					static char msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
 					close(help_file);
 					stopmsg(STOPMSG_NO_STACK, msg);
 				}
 				else if (hs.version != FIHELP_VERSION)
 				{
-					static FCODE msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
+					static char msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
 					close(help_file);
 					stopmsg(STOPMSG_NO_STACK, msg);
 				}
@@ -1538,7 +1538,7 @@ int init_help(void)
 
 	if (help_file == -1)         /* Can't find the help files anywhere! */
 	{
-		static FCODE msg[] =
+		static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
 			{"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
 #else
@@ -1567,7 +1567,7 @@ int init_help(void)
 
 	if ((topic_offset == NULL) || (NULL == label) || (NULL == hist))
 	{
-		static FCODE err_no_mem[] = "Not enough memory for help system!\n";
+		static char err_no_mem[] = "Not enough memory for help system!\n";
 		close(help_file);
 		help_file = -1;
 		stopmsg(STOPMSG_NO_STACK, err_no_mem);

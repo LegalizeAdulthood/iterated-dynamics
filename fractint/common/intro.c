@@ -25,9 +25,9 @@ void intro(void)
    {
    /* following overlayed data safe if "putstrings" are resident */
 #ifdef XFRACT
-   static FCODE PRESS_ENTER[] = {"Press ENTER for main menu, Shift-1 for help."};
+   static char PRESS_ENTER[] = {"Press ENTER for main menu, Shift-1 for help."};
 #else
-   static FCODE PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
+   static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
 #endif
    int       toprow, botrow, i, j, delaymax;
    char      oldchar;

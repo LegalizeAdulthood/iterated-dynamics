@@ -171,17 +171,17 @@ static void WhichDiskError(int I_O)
 #if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
  char buf[MSGLEN];
  char nmsg[MSGLEN];
- static FCODE fmsg1[] = {"Disk file creation error"};
- static FCODE fmsg2[] = {"Disk file set error"};
- static FCODE fmsg3[] = {"Disk file write error"};
- static FCODE fmsg4[] = {"Disk file read error"};
+ static char fmsg1[] = {"Disk file creation error"};
+ static char fmsg2[] = {"Disk file set error"};
+ static char fmsg3[] = {"Disk file write error"};
+ static char fmsg4[] = {"Disk file read error"};
 
 /*  The following and the associated sprintf eat up 432 bytes of near memory.
     Only marginally useful for debugging purposes.
- static FCODE fmsg1[] = {"Create file error %d:  %s"};
- static FCODE fmsg2[] = {"Set file error %d:  %s"};
- static FCODE fmsg3[] = {"Write file error %d:  %s"};
- static FCODE fmsg4[] = {"Read file error %d:  %s"};
+ static char fmsg1[] = {"Create file error %d:  %s"};
+ static char fmsg2[] = {"Set file error %d:  %s"};
+ static char fmsg3[] = {"Write file error %d:  %s"};
+ static char fmsg4[] = {"Read file error %d:  %s"};
 */
    switch (I_O) {
       default:
@@ -235,7 +235,7 @@ static void DisplayError(int stored_at, long howmuch)
 
    char buf[MSGLEN*2];
    char nmsg[MSGLEN*2];
-   static FCODE fmsg[] = {"Allocating %ld Bytes of %s memory failed.\nAlternate disk space is also insufficient. Goodbye"};
+   static char fmsg[] = {"Allocating %ld Bytes of %s memory failed.\nAlternate disk space is also insufficient. Goodbye"};
    strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,howmuch,memstr[stored_at]);
    stopmsg(0,(char *)buf);
@@ -345,14 +345,14 @@ static int CheckBounds (long start, long length, U16 handle)
 {
    if(handletable[handle].Nowhere.size - start - length < 0)
       {
-         static FCODE msg[] = {"Memory reference out of bounds."};
+         static char msg[] = {"Memory reference out of bounds."};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(length > (long)USHRT_MAX)
       {
-         static FCODE msg[] = {"Tried to move > 65,535 bytes."};
+         static char msg[] = {"Tried to move > 65,535 bytes."};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
@@ -360,21 +360,21 @@ static int CheckBounds (long start, long length, U16 handle)
    if(handletable[handle].Nowhere.stored_at == DISK &&
          (stackavail() <= DISKWRITELEN) )
       {
-         static FCODE msg[] = {"Stack space insufficient for disk memory."};
+         static char msg[] = {"Stack space insufficient for disk memory."};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(length <= 0)
       {
-         static FCODE msg[] = {"Zero or negative length."};
+         static char msg[] = {"Zero or negative length."};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
       }
    if(start < 0)
       {
-         static FCODE msg[] = {"Negative offset."};
+         static char msg[] = {"Negative offset."};
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
        DisplayHandle(handle);
        return (1);
@@ -389,8 +389,8 @@ void DisplayMemory (void)
    U32 tmpdisk;
    char buf[MSGLEN];
    char nmsg[MSGLEN];
-/* #ifdef XFRACT   static FCODE fmsg[] = {"far=%ld, disk=%lu"}; */
-   static FCODE fmsg[] = {"extra=%ld, far=%ld, expanded=%ld,\nextended=%ld, disk=%lu"};
+/* #ifdef XFRACT   static char fmsg[] = {"far=%ld, disk=%lu"}; */
+   static char fmsg[] = {"extra=%ld, far=%ld, expanded=%ld,\nextended=%ld, disk=%lu"};
    long tmpextra, tmpexp, tmpext;
 
    tmpextra = USHRT_MAX - start_avail_extra;
@@ -415,7 +415,7 @@ void DisplayHandle (U16 handle)
 {
    char buf[MSGLEN];
    char nmsg[MSGLEN];
-   static FCODE fmsg[] = {"Handle %u, type %s, size %li"};
+   static char fmsg[] = {"Handle %u, type %s, size %li"};
 
    strcpy(nmsg,fmsg);
    sprintf(buf,nmsg,handle,memstr[handletable[handle].Nowhere.stored_at],
@@ -456,13 +456,13 @@ void ExitCheck (void)
 {
    U16 i;
    if(/*charbuf != NULL ||*/ numEXThandles != 0 || numTOTALhandles != 0) {
-        static FCODE msg[] = {"Error - not all memory released, I'll get it."};
+        static char msg[] = {"Error - not all memory released, I'll get it."};
       stopmsg(0,msg);
       for (i = 1; i < MAXHANDLES; i++)
          if (handletable[i].Nowhere.stored_at != NOWHERE) {
             char buf[MSGLEN];
             char nmsg[MSGLEN];
-            static FCODE fmsg[] = {"Memory type %s still allocated.  Handle = %i."};
+            static char fmsg[] = {"Memory type %s still allocated.  Handle = %i."};
             strcpy(nmsg,fmsg);
             sprintf(buf,nmsg,memstr[handletable[i].Nowhere.stored_at],i);
             stopmsg(0,(char *)buf);
@@ -638,7 +638,7 @@ dodisk:
    if (stored_at != use_this_type && debugflag == 10000) {
       char buf[MSGLEN];
       char nmsg[MSGLEN];
-      static FCODE fmsg[] = {"Asked for %s, allocated %lu bytes of %s, handle = %u."};
+      static char fmsg[] = {"Asked for %s, allocated %lu bytes of %s, handle = %u."};
       strcpy(nmsg,fmsg);
       sprintf(buf,nmsg,memstr[stored_at],toallocate,memstr[use_this_type],handle);
       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);

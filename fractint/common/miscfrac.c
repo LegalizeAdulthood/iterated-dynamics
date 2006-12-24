@@ -311,7 +311,7 @@ int plasma()
    OldPotFlag=OldPot16bit=plasma_check = 0;
 
    if(colors < 4) {
-      static FCODE plasmamsg[]={
+      static char plasmamsg[]={
          "\
 Plasma Clouds can currently only be run in a 4-or-more-color video\n\
 mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
@@ -786,7 +786,7 @@ int Bifurcation(void)
    array_size =  (iystop + 1) * sizeof(int); /* should be iystop + 1 */
    if ((verhulst_array = (int *) malloc(array_size)) == NULL)
    {
-      static FCODE msg[]={"Insufficient free memory for calculation."};
+      static char msg[]={"Insufficient free memory for calculation."};
       stopmsg(0,msg);
       return(-1);
    }
@@ -1298,7 +1298,7 @@ int lya_setup () {
         if (inside==1) inside = 0;
         }
     if (inside<0) {
-        static FCODE msg[]=
+        static char msg[]=
             {"Sorry, inside options other than inside=nnn are not supported by the lyapunov"};
         stopmsg(0,(char *)msg);
         inside=1;
@@ -1411,40 +1411,40 @@ void abort_cellular(int err, int t)
          break;
       case BAD_MEM:
          {
-         static FCODE msg[]={"Insufficient free memory for calculation" };
+         static char msg[]={"Insufficient free memory for calculation" };
          stopmsg(0,msg);
          }
          break;
       case STRING1:
          {
-         static FCODE msg[]={"String can be a maximum of 16 digits" };
+         static char msg[]={"String can be a maximum of 16 digits" };
          stopmsg(0,msg);
          }
          break;
       case STRING2:
          {
-         static FCODE msg[]={"Make string of 0's through  's" };
+         static char msg[]={"Make string of 0's through  's" };
          msg[27] = (char)(k_1 + 48); /* turn into a character value */
          stopmsg(0,msg);
          }
          break;
       case TABLEK:
          {
-         static FCODE msg[]={"Make Rule with 0's through  's" };
+         static char msg[]={"Make Rule with 0's through  's" };
          msg[27] = (char)(k_1 + 48); /* turn into a character value */
          stopmsg(0,msg);
          }
          break;
       case TYPEKR:
          {
-         static FCODE msg[]={"Type must be 21, 31, 41, 51, 61, 22, 32, \
+         static char msg[]={"Type must be 21, 31, 41, 51, 61, 22, 32, \
 42, 23, 33, 24, 25, 26, 27" };
          stopmsg(0,msg);
          }
          break;
       case RULELENGTH:
          {
-         static FCODE msg[]={"Rule must be    digits long" };
+         static char msg[]={"Rule must be    digits long" };
          i = rule_digits / 10;
          if(i==0)
             msg[14] = (char)(rule_digits + 48);
@@ -1457,7 +1457,7 @@ void abort_cellular(int err, int t)
          break;
       case INTERUPT:
          {
-         static FCODE msg[]={"Interrupted, can't resume" };
+         static char msg[]={"Interrupted, can't resume" };
          stopmsg(0,msg);
          }
          break;
@@ -1648,7 +1648,7 @@ int cellular () {
    if (lstscreenflag) { /* line number != 0 & not resuming & not continuing */
      U32 big_row;
      for (big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
-      static FCODE msg[]={"Cellular thinking (higher start row takes longer)"};
+      static char msg[]={"Cellular thinking (higher start row takes longer)"};
 
       thinking(1,msg);
       if(rflag || randparam==0 || randparam==-1){
@@ -1913,7 +1913,7 @@ int froth_setup(void)
       fsp = (struct froth_struct *)malloc(sizeof (struct froth_struct));
    if (fsp == NULL)
       {
-      static FCODE msg[]=
+      static char msg[]=
           {"Sorry, not enough memory to run the frothybasin fractal type"};
       stopmsg(0,(char *)msg);
       return 0;

@@ -50,19 +50,19 @@ static int save16bit;
 static int outcolor1s, outcolor2s;
 static int startbits;
 
-static BFCODE paletteBW[] =
+static BYTE paletteBW[] =
 {                               /* B&W palette */
    0, 0, 0, 63, 63, 63,
 };
 
 #ifndef XFRACT
-static BFCODE paletteCGA[] =
+static BYTE paletteCGA[] =
 {                               /* 4-color (CGA) palette  */
    0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
 };
 #endif
 
-static BFCODE paletteEGA[] =
+static BYTE paletteEGA[] =
 {                               /* 16-color (EGA/CGA) pal */
    0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
    42, 0, 0, 42, 0, 42, 42, 21, 0, 42, 42, 42,
@@ -105,7 +105,7 @@ restart:
       newfile = 1;
    else
    {                                  /* file already exists */
-      static FCODE fractint_tmp[] = {"fractint.tmp"};
+      static char fractint_tmp[] = {"fractint.tmp"};
       if (fract_overwrite == 0)
       {
          if (resave_flag == 0)
@@ -170,9 +170,9 @@ restart:
 
    if (interrupted)
    {
-      static FCODE s_delete[] = 
+      static char s_delete[] = 
          {"delete the file,\ncontinue to keep the partial image."};
-      static FCODE s_retain[] = 
+      static char s_retain[] = 
          {"retain the original file,\ncontinue to replace original with new partial image."};
       
       char buf[200];
@@ -227,7 +227,7 @@ restart:
 
    if (interrupted)
    {
-      static FCODE msg[] = {" *interrupted* save "};
+      static char msg[] = {" *interrupted* save "};
       texttempmsg(msg);
       if (initbatch >= 1)
          initbatch = 3;         /* if batch mode, set error level */
@@ -559,7 +559,7 @@ int encoder()
 
 oops:
    {
-      static FCODE msg[] = {"Error Writing to disk (Disk full?)"};
+      static char msg[] = {"Error Writing to disk (Disk full?)"};
       fflush(g_outfile);
       stopmsg(0,msg);
       return 1;
@@ -1068,7 +1068,7 @@ nomatch:
 
 static void _fastcall output(int code)
 {
-   static ULFCODE masks[] = 
+   static unsigned long masks[] = 
       { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
                 0x001F, 0x003F, 0x007F, 0x00FF,
                 0x01FF, 0x03FF, 0x07FF, 0x0FFF,

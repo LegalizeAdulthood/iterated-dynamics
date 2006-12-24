@@ -277,7 +277,7 @@ long iteration(register DBLS cr, register DBLS ci,
     }
   else
     {
-       static FCODE adjust[256]=
+       static char adjust[256]=
          {0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,
           5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
           6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,

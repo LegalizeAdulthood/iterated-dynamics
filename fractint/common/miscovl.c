@@ -80,7 +80,7 @@ FILE *parmfile;
 #endif
 
 #define LOADBATCHPROMPTS(X)     {\
-   static FCODE tmp[] = { X };\
+   static char tmp[] = { X };\
    strcpy(ptr,tmp);\
    choices[promptnum]= ptr;\
    ptr += sizeof(tmp);\
@@ -317,7 +317,7 @@ prompt_user:
               }
       if (pxdots == 0 && (xm > 1 || ym > 1)) {
           /* no corresponding video mode! */
-          static FCODE msg[] = {"Invalid video mode entry!"};
+          static char msg[] = {"Invalid video mode entry!"};
           stopmsg(0,msg);
           goto prompt_user;
           }
@@ -325,7 +325,7 @@ prompt_user:
 
       /* bounds range on xm, ym */
       if (xm < 1 || xm > 36 || ym < 1 || ym > 36) {
-          static FCODE msg[] = {"X and Y components must be 1 to 36"};
+          static char msg[] = {"X and Y components must be 1 to 36"};
           stopmsg(0,msg);
           goto prompt_user;
           }
@@ -334,7 +334,7 @@ prompt_user:
       xtotal = xm;  ytotal = ym;
       xtotal *= pxdots;  ytotal *= pydots;
       if (xtotal > 65535L || ytotal > 65535L) {
-      static FCODE msg[] = {"Total resolution (X or Y) cannot exceed 65535"};
+      static char msg[] = {"Total resolution (X or Y) cannot exceed 65535"};
           stopmsg(0,msg);
           goto prompt_user;
           }
@@ -388,10 +388,10 @@ skip_UI:
                 && sscanf(buf, " %40[^ \t({]", buf2)
                 && stricmp(buf2, CommandName) == 0)
             {                   /* entry with same name */
-               static FCODE s1[] = {"File already has an entry named "};
-               static FCODE s2[] = {"\n\
+               static char s1[] = {"File already has an entry named "};
+               static char s2[] = {"\n\
 Continue to replace it, Cancel to back out"};
-               static FCODE s2a[] = {"... Replacing ..."};
+               static char s2a[] = {"... Replacing ..."};
                strcpy(buf2,s1);
                strcat(buf2,CommandName);
                if(*s_makepar == 0)
@@ -894,7 +894,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          put_parm(s_seqy,s_finattract);
 
       if (forcesymmetry != 999) {
-         static FCODE msg[] =
+         static char msg[] =
             {"Regenerate before <b> to get correct symmetry"};
          if(forcesymmetry == 1000 && ii == 1 && jj == 1)
             stopmsg(0,msg);
@@ -1705,8 +1705,8 @@ static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-   static FCODE o_hdg2[]={"key...name.......................xdot..ydot.colr.comment.................."};
-   static FCODE o_hdg1[]={"Select Video Mode"};
+   static char o_hdg2[]={"key...name.......................xdot..ydot.colr.comment.................."};
+   static char o_hdg1[]={"Select Video Mode"};
    char hdg2[sizeof(o_hdg2)];
    char hdg1[sizeof(o_hdg1)];
 
@@ -1777,7 +1777,7 @@ int select_video_mode(int curmode)
    tabmode = oldtabmode;
    helpmode = oldhelpmode;
    if (i == -1) {
-   static FCODE msg[]={"Save new function key assignments or cancel changes?"};
+   static char msg[]={"Save new function key assignments or cancel changes?"};
       if (modes_changed /* update fractint.cfg for new key assignments */
         && badconfig == 0
         && stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,msg) == 0)
@@ -1858,7 +1858,7 @@ static int check_modekey(int curkey,int choice)
    ret = 0;
    if ( (curkey == '-' || curkey == '+')
      && (vidtbl[i].keynum == 0 || vidtbl[i].keynum >= 1084)) {
-      static FCODE msg[]={"Missing or bad FRACTINT.CFG file. Can't reassign keys."};
+      static char msg[]={"Missing or bad FRACTINT.CFG file. Can't reassign keys."};
       if (badconfig)
          stopmsg(0,msg);
       else {
@@ -2021,9 +2021,9 @@ for (ystep = 0; ystep < ymult; ystep++) {
     for (xstep = 0; xstep < xmult; xstep++) {
 
 if (xstep == 0 && ystep == 0) {         /* first time through? */
-    static FCODE msg1[] = "Cannot create output file %s!\n";
-    static FCODE msg2[] = " \n Generating multi-image GIF file %s using";
-    static FCODE msg3[] = " %d X and %d Y components\n\n";
+    static char msg1[] = "Cannot create output file %s!\n";
+    static char msg2[] = " \n Generating multi-image GIF file %s using";
+    static char msg3[] = " %d X and %d Y components\n\n";
     strcpy(msgbuf, msg2);
     printf(msgbuf, gifout);
     strcpy(msgbuf, msg3);
@@ -2039,7 +2039,7 @@ if (xstep == 0 && ystep == 0) {         /* first time through? */
         sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
         if ((in = fopen(gifin,"rb")) == NULL) {
-            static FCODE msg1[] = "Can't open file %s!\n";
+            static char msg1[] = "Can't open file %s!\n";
             strcpy(msgbuf, msg1);
             printf(msgbuf, gifin);
             exit(1);
@@ -2085,7 +2085,7 @@ if (xstep == 0 && ystep == 0) {         /* first time through? */
 
         if (xres != allxres || yres != allyres || itbl != allitbl) {
             /* Oops - our pieces don't match */
-            static FCODE msg1[] = "File %s doesn't have the same resolution as its predecessors!\n";
+            static char msg1[] = "File %s doesn't have the same resolution as its predecessors!\n";
             strcpy(msgbuf, msg1);
             printf(msgbuf, gifin);
             exit(1);
@@ -2185,7 +2185,7 @@ if (fwrite(temp,1,1,out) != 1)
 fclose(out);                    /* done with the output GIF */
 
 if (inputerrorflag != 0) {      /* uh-oh - something failed */
-    static FCODE msg1[] = "\007 Process failed = early EOF on input file %s\n";
+    static char msg1[] = "\007 Process failed = early EOF on input file %s\n";
     strcpy(msgbuf, msg1);
     printf(msgbuf, gifin);
 /* following line was for debugging
@@ -2194,7 +2194,7 @@ if (inputerrorflag != 0) {      /* uh-oh - something failed */
     }
 
 if (errorflag != 0) {           /* uh-oh - something failed */
-    static FCODE msg1[] = "\007 Process failed = out of disk space?\n";
+    static char msg1[] = "\007 Process failed = out of disk space?\n";
     strcpy(msgbuf, msg1);
     printf(msgbuf);
 /* following line was for debugging
@@ -2213,7 +2213,7 @@ if (errorflag == 0 && inputerrorflag == 0)
 
 /* tell the world we're done */
 if (errorflag == 0 && inputerrorflag == 0) {
-    static FCODE msg1[] = "File %s has been created (and its component files deleted)\n";
+    static char msg1[] = "File %s has been created (and its component files deleted)\n";
     strcpy(msgbuf, msg1);
     printf(msgbuf, gifout);
     }
@@ -2334,20 +2334,20 @@ void flip_image(int key)
 }
 static char *expand_var(char *var, char *buf)
 {
-   static FCODE s_year    [] = {"year"    };
-   static FCODE s_month   [] = {"month"   };
-   static FCODE s_day     [] = {"day"     };
-   static FCODE s_hour    [] = {"hour"    };
-   static FCODE s_min     [] = {"min"     };
-   static FCODE s_sec     [] = {"sec"     };
-   static FCODE s_time    [] = {"time"    };
-   static FCODE s_date    [] = {"date"    };
-   static FCODE s_calctime[] = {"calctime"};
-   static FCODE s_version [] = {"version" };
-   static FCODE s_patch   [] = {"patch"   };
-   static FCODE s_xdots   [] = {"xdots"   };
-   static FCODE s_ydots   [] = {"ydots"   };
-   static FCODE s_vidkey  [] = {"vidkey"  };
+   static char s_year    [] = {"year"    };
+   static char s_month   [] = {"month"   };
+   static char s_day     [] = {"day"     };
+   static char s_hour    [] = {"hour"    };
+   static char s_min     [] = {"min"     };
+   static char s_sec     [] = {"sec"     };
+   static char s_time    [] = {"time"    };
+   static char s_date    [] = {"date"    };
+   static char s_calctime[] = {"calctime"};
+   static char s_version [] = {"version" };
+   static char s_patch   [] = {"patch"   };
+   static char s_xdots   [] = {"xdots"   };
+   static char s_ydots   [] = {"ydots"   };
+   static char s_vidkey  [] = {"vidkey"  };
    
    time_t ltime;
    char *str, *out;

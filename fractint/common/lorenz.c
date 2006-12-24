@@ -98,7 +98,7 @@ static double initorbitfp[3];
  * The following declarations used for Inverse Julia.  MVS
  */
 
-static FCODE NoQueue[] =
+static char NoQueue[] =
   "Not enough memory: switching to random walk.\n";
 
 static int    mxhits;
@@ -2101,7 +2101,7 @@ int funny_glasses_call(int (*calc)(void))
       if(glassestype==3)  { /* photographer's mode */
          if(active_system == 0) { /* dos version */
             int i;
-static FCODE firstready[]={"\
+static char firstready[]={"\
 First image (left eye) is ready.  Hit any key to see it,\n\
 then hit <s> to save, hit any other key to create second image."};
             stopmsg(STOPMSG_INFO_ONLY,firstready);
@@ -2117,7 +2117,7 @@ then hit <s> to save, hit any other key to create second image."};
                 videoentry.videomodedx);
          }
          else {                   /* Windows version */
-static FCODE firstready2[]={"First (Left Eye) image is complete"};
+static char firstready2[]={"First (Left Eye) image is complete"};
             stopmsg(0,firstready2);
             clear_screen(0);
             }
@@ -2132,7 +2132,7 @@ static FCODE firstready2[]={"First (Left Eye) image is complete"};
          goto done;
       if(glassestype==3) /* photographer's mode */
          if(active_system == 0) { /* dos version */
-static FCODE secondready[]={"Second image (right eye) is ready"};
+static char secondready[]={"Second image (right eye) is ready"};
             stopmsg(STOPMSG_INFO_ONLY,secondready);
          }
    }

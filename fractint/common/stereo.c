@@ -250,7 +250,7 @@ int do_AutoStereo(void)
 
    if(xdots > OLDMAXPIXELS)
    {
-      static FCODE msg[] = 
+      static char msg[] = 
          {"Stereo not allowed with resolution > 2048 pixels wide"};
       stopmsg(0,msg);
       driver_buzzer(1);

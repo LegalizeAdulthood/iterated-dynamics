@@ -312,7 +312,7 @@ int gifview()
    }
    close_file();
    if (driver_diskp()) { /* disk-video */
-      static FCODE o_msg[] = {"Restore completed"};
+      static char o_msg[] = {"Restore completed"};
       char msg[sizeof(o_msg)];
       strcpy(msg,o_msg);
       dvid_status(0,msg);

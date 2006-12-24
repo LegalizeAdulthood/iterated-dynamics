@@ -1233,7 +1233,7 @@ static int menu_checkkey(int curkey,int choice)
 }
 
 #define LOADPROMPTSCHOICES(X,Y)     {\
-   static FCODE tmp[] = { Y };\
+   static char tmp[] = { Y };\
    choices[X]= (char *)tmp;\
    }
 
