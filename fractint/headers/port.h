@@ -79,9 +79,6 @@ extern long stackavail();
 #        undef __far
 #      endif
 #      define __far
-#      define _fmemcpy  memcpy
-#      define _fmemset  memset
-#      define _fmemmove memmove
 #      ifndef USE_BIGNUM_C_CODE
 #        define USE_BIGNUM_C_CODE
 #      endif

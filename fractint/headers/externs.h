@@ -330,7 +330,7 @@ extern double                mxminfp;
 extern double                mymaxfp;
 extern double                myminfp;
 extern int                   name_stack_ptr;
-extern _CMPLX                new;
+extern _CMPLX                g_new;
 extern char                  newodpx;
 extern char                  newodpy;
 extern double                newopx;

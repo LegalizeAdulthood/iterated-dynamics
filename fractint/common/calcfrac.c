@@ -54,7 +54,7 @@ static int _fastcall tessrow(int,int,int);
 static int diffusion_scan(void);
 
 /* lookup tables to avoid too much bit fiddling : */
-char dif_la[] = {
+static char dif_la[] = {
 0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
 2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
 6,14, 6,14,2,10,2,10,6,14, 6,14,1, 9,1, 9, 5,13, 5,13,1, 9,1, 9,5,13,
@@ -67,7 +67,7 @@ char dif_la[] = {
 1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-char dif_lb[] = {
+static char dif_lb[] = {
  0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
  6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
  2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
@@ -85,9 +85,10 @@ char dif_lb[] = {
 /* added for testing autologmap() */
 static long autologmap(void);
 
+/* variables exported from this file */
 _LCMPLX linitorbit;
 long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
-_CMPLX init,tmp,old,new,saved;
+_CMPLX init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
 int row, col, passes;
@@ -231,7 +232,7 @@ double fmodtest(void)
    if (inside==FMODI && save_release <= 2000) /* for backwards compatibility */
    {
       if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
-         result=sqr(new.x)+sqr(new.y);
+         result=sqr(g_new.x)+sqr(g_new.y);
       else
          result=magnitude; /* don't recalculate */
       return (result);
@@ -242,37 +243,37 @@ double fmodtest(void)
    case (Mod):
       {
       if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
-         result=sqr(new.x)+sqr(new.y);
+         result=sqr(g_new.x)+sqr(g_new.y);
       else
          result=magnitude; /* don't recalculate */
       }break;
    case (Real):
       {
-      result=sqr(new.x);
+      result=sqr(g_new.x);
       }break;
    case (Imag):
       {
-      result=sqr(new.y);
+      result=sqr(g_new.y);
       }break;
    case (Or):
       {
       double tmpx, tmpy;
-      if ((tmpx = sqr(new.x)) > (tmpy = sqr(new.y)))
+      if ((tmpx = sqr(g_new.x)) > (tmpy = sqr(g_new.y)))
          result=tmpx;
       else
          result=tmpy;
       }break;
    case (Manh):
       {
-      result=sqr(fabs(new.x)+fabs(new.y));
+      result=sqr(fabs(g_new.x)+fabs(g_new.y));
       }break;
    case (Manr):
       {
-      result=sqr(new.x+new.y);
+      result=sqr(g_new.x+g_new.y);
       }break;
    default:
       {
-      result=sqr(new.x)+sqr(new.y);
+      result=sqr(g_new.x)+sqr(g_new.y);
       }break;
    }
    return (result);
@@ -1939,7 +1940,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
           if (use_old_distest) {
            if (dem_color < 0) {
               dem_color = coloriter;
-              dem_new = new;
+              dem_new = g_new;
            }
            if (rqlim >= DEM_BAILOUT
            || magnitude >= (rqlim = DEM_BAILOUT)
@@ -1949,7 +1950,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
           else
            break;
          }
-         old = new;
+         old = g_new;
       }
 
       /* the usual case */
@@ -1960,10 +1961,10 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          if (!integerfractal)
          {
             if (bf_math == BIGNUM)
-               new = cmplxbntofloat(&bnnew);
+               g_new = cmplxbntofloat(&bnnew);
             else if (bf_math==BIGFLT)
-               new = cmplxbftofloat(&bfnew);
-            plot_orbit(new.x, new.y, -1);
+               g_new = cmplxbftofloat(&bfnew);
+            plot_orbit(g_new.x, g_new.y, -1);
          }
          else
             iplot_orbit(lnew.x, lnew.y, -1);
@@ -1971,39 +1972,39 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       if( inside < -1)
       {
          if (bf_math == BIGNUM)
-            new = cmplxbntofloat(&bnnew);
+            g_new = cmplxbntofloat(&bnnew);
          else if (bf_math == BIGFLT)
-            new = cmplxbftofloat(&bfnew);
+            g_new = cmplxbftofloat(&bfnew);
          if(inside == STARTRAIL)
          {
             if(0 < coloriter && coloriter < 16)
             {
                if (integerfractal)
                {
-                  new.x = lnew.x;
-                  new.x /= fudge;
-                  new.y = lnew.y;
-                  new.y /= fudge;
+                  g_new.x = lnew.x;
+                  g_new.x /= fudge;
+                  g_new.y = lnew.y;
+                  g_new.y /= fudge;
                }
 
                if (save_release > 1824) {
-                 if(new.x > STARTRAILMAX)
-                    new.x = STARTRAILMAX;
-                 if(new.x < -STARTRAILMAX)
-                    new.x = -STARTRAILMAX;
-                 if(new.y > STARTRAILMAX)
-                    new.y = STARTRAILMAX;
-                 if(new.y < -STARTRAILMAX)
-                    new.y = -STARTRAILMAX;
-                 tempsqrx = new.x * new.x;
-                 tempsqry = new.y * new.y;
+                 if(g_new.x > STARTRAILMAX)
+                    g_new.x = STARTRAILMAX;
+                 if(g_new.x < -STARTRAILMAX)
+                    g_new.x = -STARTRAILMAX;
+                 if(g_new.y > STARTRAILMAX)
+                    g_new.y = STARTRAILMAX;
+                 if(g_new.y < -STARTRAILMAX)
+                    g_new.y = -STARTRAILMAX;
+                 tempsqrx = g_new.x * g_new.x;
+                 tempsqry = g_new.y * g_new.y;
                  magnitude = tempsqrx + tempsqry;
-                 old = new;
+                 old = g_new;
                }
                {
                int tmpcolor;
                tmpcolor = (int)(((coloriter - 1) % andcolor) + 1);
-               tantable[tmpcolor-1] = new.y/(new.x+.000001);
+               tantable[tmpcolor-1] = g_new.y/(g_new.x+.000001);
                }
             }
          }
@@ -2025,12 +2026,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             }
             else
             {
-               if(fabs(new.x) < fabs(closeprox))
+               if(fabs(g_new.x) < fabs(closeprox))
                {
                   hooper = (closeprox>0? 1 : -1); /* close to y axis */
                   goto plot_inside;
                }
-               else if(fabs(new.y) < fabs(closeprox))
+               else if(fabs(g_new.y) < fabs(closeprox))
                {
                   hooper = (closeprox>0? 2 : -2); /* close to x axis */
                   goto plot_inside;
@@ -2042,8 +2043,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             double mag;
             if(integerfractal)
             {
-               new.x = ((double)lnew.x) / fudge;
-               new.y = ((double)lnew.y) / fudge;
+               g_new.x = ((double)lnew.x) / fudge;
+               g_new.y = ((double)lnew.y) / fudge;
             }
             mag = fmodtest();
             if(mag < closeprox)
@@ -2060,7 +2061,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             }
             else
                if (magnitude == 0.0 || no_mag_calc == 0)
-                  magnitude = sqr(new.x) + sqr(new.y);
+                  magnitude = sqr(g_new.x) + sqr(g_new.y);
             if (magnitude < min_orbit)
             {
                min_orbit = magnitude;
@@ -2072,27 +2073,27 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       if (outside == TDIS || outside == FMOD)
       {
          if (bf_math == BIGNUM)
-            new = cmplxbntofloat(&bnnew);
+            g_new = cmplxbntofloat(&bnnew);
          else if (bf_math == BIGFLT)
-            new = cmplxbftofloat(&bfnew);
+            g_new = cmplxbftofloat(&bfnew);
          if (outside == TDIS)
          {
             if(integerfractal)
             {
-               new.x = ((double)lnew.x) / fudge;
-               new.y = ((double)lnew.y) / fudge;
+               g_new.x = ((double)lnew.x) / fudge;
+               g_new.y = ((double)lnew.y) / fudge;
             }
-            totaldist += sqrt(sqr(lastz.x-new.x)+sqr(lastz.y-new.y));
-            lastz.x = new.x;
-            lastz.y = new.y;
+            totaldist += sqrt(sqr(lastz.x-g_new.x)+sqr(lastz.y-g_new.y));
+            lastz.x = g_new.x;
+            lastz.y = g_new.y;
          }
          else if (outside == FMOD)
          {
             double mag;
             if(integerfractal)
             {
-               new.x = ((double)lnew.x) / fudge;
-               new.y = ((double)lnew.y) / fudge;
+               g_new.x = ((double)lnew.x) / fudge;
+               g_new.y = ((double)lnew.y) / fudge;
             }
             mag = fmodtest();
             if(mag < closeprox)
@@ -2128,11 +2129,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          {
             for (i = 0; i < attractors; i++)
             {
-                at.x = new.x - attr[i].x;
+                at.x = g_new.x - attr[i].x;
                 at.x = sqr(at.x);
                 if (at.x < f_at_rad)
                 {
-                   at.y = new.y - attr[i].y;
+                   at.y = g_new.y - attr[i].y;
                    at.y = sqr(at.y);
                    if ( at.y < f_at_rad)
                    {
@@ -2169,7 +2170,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             }
             else
             {
-               saved = new;  /* floating pt fractals */
+               saved = g_new;  /* floating pt fractals */
 #ifdef NUMSAVED
                if(zctr < NUMSAVED)
                {
@@ -2206,8 +2207,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             }
             else
             {
-               if (fabs(saved.x - new.x) < closenuff)
-                  if (fabs(saved.y - new.y) < closenuff)
+               if (fabs(saved.x - g_new.x) < closenuff)
+                  if (fabs(saved.y - g_new.y) < closenuff)
                      caught_a_cycle = 1;
 #ifdef NUMSAVED
                int i;
@@ -2215,8 +2216,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 {
                    if(caught[i] == 0)
                    {
-                      if (fabs(savedz[i].x - new.x) < closenuff)
-                         if (fabs(savedz[i].y - new.y) < closenuff)
+                      if (fabs(savedz[i].x - g_new.x) < closenuff)
+                         if (fabs(savedz[i].y - g_new.y) < closenuff)
                              caught[i] = coloriter;
                    }
                 }
@@ -2267,20 +2268,20 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    {
       if (integerfractal)       /* adjust integer fractals */
       {
-         new.x = ((double)lnew.x) / fudge;
-         new.y = ((double)lnew.y) / fudge;
+         g_new.x = ((double)lnew.x) / fudge;
+         g_new.y = ((double)lnew.y) / fudge;
       }
       else if (bf_math==BIGNUM)
       {
-         new.x = (double)bntofloat(bnnew.x);
-         new.y = (double)bntofloat(bnnew.y);
+         g_new.x = (double)bntofloat(bnnew.x);
+         g_new.y = (double)bntofloat(bnnew.y);
       }
       else if (bf_math==BIGFLT)
       {
-         new.x = (double)bftofloat(bfnew.x);
-         new.y = (double)bftofloat(bfnew.y);
+         g_new.x = (double)bftofloat(bfnew.x);
+         g_new.y = (double)bftofloat(bfnew.y);
       }
-      magnitude = sqr(new.x) + sqr(new.y);
+      magnitude = sqr(g_new.x) + sqr(g_new.y);
       coloriter = potential(magnitude, coloriter);
       if (LogTable || Log_Calc)
          coloriter = logtablecalc(coloriter);
@@ -2295,25 +2296,25 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    {
       if (integerfractal)
       {
-         new.x = ((double)lnew.x) / fudge;
-         new.y = ((double)lnew.y) / fudge;
+         g_new.x = ((double)lnew.x) / fudge;
+         g_new.y = ((double)lnew.y) / fudge;
       }
       else if(bf_math==1)
       {
-         new.x = (double)bntofloat(bnnew.x);
-         new.y = (double)bntofloat(bnnew.y);
+         g_new.x = (double)bntofloat(bnnew.x);
+         g_new.y = (double)bntofloat(bnnew.y);
       }
       /* Add 7 to overcome negative values on the MANDEL    */
       if (outside == REAL)               /* "real" */
-         coloriter += (long)new.x + 7;
+         coloriter += (long)g_new.x + 7;
       else if (outside == IMAG)          /* "imag" */
-         coloriter += (long)new.y + 7;
-      else if (outside == MULT  && new.y)  /* "mult" */
-          coloriter = (long)((double)coloriter * (new.x/new.y));
+         coloriter += (long)g_new.y + 7;
+      else if (outside == MULT  && g_new.y)  /* "mult" */
+          coloriter = (long)((double)coloriter * (g_new.x/g_new.y));
       else if (outside == SUM)           /* "sum" */
-          coloriter += (long)(new.x + new.y);
+          coloriter += (long)(g_new.x + g_new.y);
       else if (outside == ATAN)          /* "atan" */
-          coloriter = (long)fabs(atan2(new.y,new.x)*atan_colors/PI);
+          coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
       else if (outside == FMOD)
           coloriter = (long)(memvalue * colors / closeprox);
       else if (outside == TDIS) {
@@ -2333,7 +2334,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    if (distest)
    {
       double dist,temp;
-      dist = sqr(new.x) + sqr(new.y);
+      dist = sqr(g_new.x) + sqr(g_new.y);
       if (dist == 0 || overflow)
          dist = 0;
       else {
@@ -2365,7 +2366,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       }
       if (use_old_distest) {
          coloriter = dem_color;
-         new = dem_new;
+         g_new = dem_new;
       }
       /* use pixel's "regular" color */
    }
@@ -2380,7 +2381,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             coloriter = biomorph;
       }
       else
-         if (fabs(new.x) < rqlim2 || fabs(new.y) < rqlim2)
+         if (fabs(g_new.x) < rqlim2 || fabs(g_new.y) < rqlim2)
             coloriter = biomorph;
    }
 
@@ -2436,12 +2437,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       }
       else if (inside == ATANI)          /* "atan" */
          if (integerfractal) {
-            new.x = ((double)lnew.x) / fudge;
-            new.y = ((double)lnew.y) / fudge;
-            coloriter = (long)fabs(atan2(new.y,new.x)*atan_colors/PI);
+            g_new.x = ((double)lnew.x) / fudge;
+            g_new.y = ((double)lnew.y) / fudge;
+            coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
          }
          else
-            coloriter = (long)fabs(atan2(new.y,new.x)*atan_colors/PI);
+            coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
       else if (inside == BOF60)
          coloriter = (long)(sqrt(min_orbit) * 75);
       else if (inside == BOF61)
@@ -2451,14 +2452,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          if (integerfractal)
          {
             /*
-            new.x = ((double)lnew.x) / fudge;
-            new.y = ((double)lnew.y) / fudge;
+            g_new.x = ((double)lnew.x) / fudge;
+            g_new.y = ((double)lnew.y) / fudge;
             coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
             */
             coloriter = (long)(((double)lmagnitud/fudge) * (maxit>>1) + 1);
          }
          else
-            coloriter = (long)((sqr(new.x) + sqr(new.y)) * (maxit>>1) + 1);
+            coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit>>1) + 1);
       }
       else /* inside == -1 */
          coloriter = maxit;
@@ -2654,15 +2655,15 @@ static void decomposition(void)
    }
    else /* double case */
    {
-      if (new.y < 0)
+      if (g_new.y < 0)
       {
          temp = 2;
-         new.y = -new.y;
+         g_new.y = -g_new.y;
       }
-      if (new.x < 0)
+      if (g_new.x < 0)
       {
          ++temp;
-         new.x = -new.x;
+         g_new.x = -g_new.x;
       }
       if (decomp[0] == 2 && save_release >= 1827)
       {
@@ -2673,61 +2674,61 @@ static void decomposition(void)
       if (decomp[0] >= 8)
       {
          temp <<= 1;
-         if (new.x < new.y)
+         if (g_new.x < g_new.y)
          {
             ++temp;
-            alt.x = new.x; /* just */
-            new.x = new.y; /* swap */
-            new.y = alt.x; /* them */
+            alt.x = g_new.x; /* just */
+            g_new.x = g_new.y; /* swap */
+            g_new.y = alt.x; /* them */
          }
          if (decomp[0] >= 16)
          {
             temp <<= 1;
-            if (new.x*tan22_5 < new.y)
+            if (g_new.x*tan22_5 < g_new.y)
             {
                ++temp;
-               alt = new;
-               new.x = alt.x*cos45 + alt.y*sin45;
-               new.y = alt.x*sin45 - alt.y*cos45;
+               alt = g_new;
+               g_new.x = alt.x*cos45 + alt.y*sin45;
+               g_new.y = alt.x*sin45 - alt.y*cos45;
             }
 
             if (decomp[0] >= 32)
             {
                temp <<= 1;
-               if (new.x*tan11_25 < new.y)
+               if (g_new.x*tan11_25 < g_new.y)
                {
                   ++temp;
-                  alt = new;
-                  new.x = alt.x*cos22_5 + alt.y*sin22_5;
-                  new.y = alt.x*sin22_5 - alt.y*cos22_5;
+                  alt = g_new;
+                  g_new.x = alt.x*cos22_5 + alt.y*sin22_5;
+                  g_new.y = alt.x*sin22_5 - alt.y*cos22_5;
                }
 
                if (decomp[0] >= 64)
                {
                   temp <<= 1;
-                  if (new.x*tan5_625 < new.y)
+                  if (g_new.x*tan5_625 < g_new.y)
                   {
                      ++temp;
-                     alt = new;
-                     new.x = alt.x*cos11_25 + alt.y*sin11_25;
-                     new.y = alt.x*sin11_25 - alt.y*cos11_25;
+                     alt = g_new;
+                     g_new.x = alt.x*cos11_25 + alt.y*sin11_25;
+                     g_new.y = alt.x*sin11_25 - alt.y*cos11_25;
                   }
 
                   if (decomp[0] >= 128)
                   {
                      temp <<= 1;
-                     if (new.x*tan2_8125 < new.y)
+                     if (g_new.x*tan2_8125 < g_new.y)
                      {
                         ++temp;
-                        alt = new;
-                        new.x = alt.x*cos5_625 + alt.y*sin5_625;
-                        new.y = alt.x*sin5_625 - alt.y*cos5_625;
+                        alt = g_new;
+                        g_new.x = alt.x*cos5_625 + alt.y*sin5_625;
+                        g_new.y = alt.x*sin5_625 - alt.y*cos5_625;
                      }
 
                      if (decomp[0] == 256)
                      {
                         temp <<= 1;
-                        if ((new.x*tan1_4063 < new.y))
+                        if ((g_new.x*tan1_4063 < g_new.y))
                            ++temp;
                      }
                   }

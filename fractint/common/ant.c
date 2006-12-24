@@ -35,8 +35,8 @@
  * for x 0, 1, 0, -1
  * for y 1, 0, -1, 0
  */
-static int *incx[DIRS];         /* tab for 4 directions */
-static int *incy[DIRS];
+static int *s_incx[DIRS];         /* tab for 4 directions */
+static int *s_incy[DIRS];
 
 void
 setwait(long *wait)
@@ -200,8 +200,8 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                       (idir == 2 && iy == 0) ||
                       (idir == 3 && ix == 0))
                      goto exit_ant;
-               x[color] = incx[idir][ix];
-               y[color] = incy[idir][iy];
+               x[color] = s_incx[idir][ix];
+               y[color] = s_incy[idir][iy];
                dir[color] = idir;
             }
          }
@@ -222,8 +222,8 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                       (idir == 2 && iy == 0) ||
                       (idir == 3 && ix == 0))
                      goto exit_ant;
-               x[color] = incx[idir][ix];
-               y[color] = incy[idir][iy];
+               x[color] = s_incx[idir][ix];
+               y[color] = s_incy[idir][iy];
                dir[color] = idir;
             }
          }
@@ -346,8 +346,8 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                    (idir == 2 && iy == 0) ||
                    (idir == 3 && ix == 0))
                   goto exit_ant;
-            x[color] = incx[idir][ix];
-            y[color] = incy[idir][iy];
+            x[color] = s_incx[idir][ix];
+            y[color] = s_incy[idir][iy];
             dir[color] = idir;
          }
          rule_mask = _rotl(rule_mask, 1);
@@ -372,8 +372,8 @@ ant(void)
 
    for (i = 0; i < DIRS; i++)
    {
-      incx[i] = (int *) (extra + (xdots + 2) * sizeof(int) * i);       /* steal some memory */
-      incy[i] = (int *) (extra + (xdots + 2) * sizeof(int) * DIRS + (ydots + 2) *sizeof(int) * i);     /* steal some memory */
+      s_incx[i] = (int *) (extra + (xdots + 2) * sizeof(int) * i);       /* steal some memory */
+      s_incy[i] = (int *) (extra + (xdots + 2) * sizeof(int) * DIRS + (ydots + 2) *sizeof(int) * i);     /* steal some memory */
    }
 
 /* In this vectors put all the possible point that the ants can visit.
@@ -381,30 +381,30 @@ ant(void)
  */
    for (i = 0; i < xdots; i++)
    {
-      incx[0][i] = i;
-      incx[2][i] = i;
+      s_incx[0][i] = i;
+      s_incx[2][i] = i;
    }
 
    for(i = 0; i < xdots; i++)
-      incx[3][i] = i + 1;
-   incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
+      s_incx[3][i] = i + 1;
+   s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
 
    for(i = 1; i < xdots; i++)
-      incx[1][i] = i - 1;
-   incx[1][0] = xdots-1; /* wrap from left of the screen to right */
+      s_incx[1][i] = i - 1;
+   s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
 
    for (i = 0; i < ydots; i++)
    {
-      incy[1][i] = i;
-      incy[3][i] = i;
+      s_incy[1][i] = i;
+      s_incy[3][i] = i;
    }
    for (i = 0; i < ydots; i++)
-      incy[0][i] = i + 1;
-   incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
+      s_incy[0][i] = i + 1;
+   s_incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
                                  * bottom */
    for (i = 1; i < ydots; i++)
-      incy[2][i] = i - 1;
-   incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
+      s_incy[2][i] = i - 1;
+   s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
                                  * top */
    oldhelpmode = helpmode;
    helpmode = ANTCOMMANDS;

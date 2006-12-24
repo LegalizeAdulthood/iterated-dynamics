@@ -888,7 +888,7 @@ LDBL bntofloat(bn_t n)
 /* r = 0 */
 bf_t clear_bf(bf_t r)
     {
-    _fmemset( r, 0, bflength+2); /* set array to zero */
+    memset( r, 0, bflength+2); /* set array to zero */
     return r;
     }
 
@@ -896,7 +896,7 @@ bf_t clear_bf(bf_t r)
 /* r = n */
 bf_t copy_bf(bf_t r, bf_t n)
     {
-    _fmemcpy( r, n, bflength+2);
+    memcpy( r, n, bflength+2);
     return r;
     }
 
