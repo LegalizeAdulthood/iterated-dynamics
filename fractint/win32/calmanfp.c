@@ -71,7 +71,7 @@ long calcmandfpasm_c(void) {
     if (kbdcount<0) {
 	int key;
 	kbdcount = 1000;
-	key = keypressed();
+	key = driver_key_pressed();
 	if (key) {
 	    if (key=='o' || key=='O') {
 		getakey();

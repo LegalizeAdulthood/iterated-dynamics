@@ -1059,7 +1059,7 @@ int starfield(void)
    spindac(0,1);                 /* load it, but don't spin */
    for(row = 0; row < ydots; row++) {
       for(col = 0; col < xdots; col++) {
-         if(keypressed()) {
+         if(driver_key_pressed()) {
             driver_buzzer(1);
             busy = 0;
             return(1);
@@ -1908,111 +1908,135 @@ int isadirectory(char *s)
 
 int splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 {
-   int length;
-   int len;
-   int offset;
-   char *tmp;
-   if(drive)
-      drive[0] = 0;
-   if(dir)
-      dir[0]   = 0;
-   if(fname)
-      fname[0] = 0;
-   if(ext)
-      ext[0]   = 0;
+	int length;
+	int len;
+	int offset;
+	char *tmp;
+	if (drive)
+	{
+		drive[0] = 0;
+	}
+	if (dir)
+	{
+		dir[0]   = 0;
+	}
+	if (fname)
+	{
+		fname[0] = 0;
+	}
+	if (ext)
+	{
+		ext[0]   = 0;
+	}
 
-   if((length = (int) strlen(template)) == 0)
-      return(0);
+	if ((length = (int) strlen(template)) == 0)
+	{
+		return(0);
+	}
 
-   offset = 0;
+	offset = 0;
 
-   /* get drive */
-   if(length >= 2)
-      if(template[1] == ':')
-      {
-         if(drive)
-         {
-            drive[0] = template[offset++];
-            drive[1] = template[offset++];
-            drive[2] = 0;
-         }
-         else
-         {
-            offset++;
-            offset++;
-         }
-      }
+	/* get drive */
+	if (length >= 2)
+	{
+		if (template[1] == ':')
+		{
+			if (drive)
+			{
+				drive[0] = template[offset++];
+				drive[1] = template[offset++];
+				drive[2] = 0;
+			}
+			else
+			{
+				offset++;
+				offset++;
+			}
+		}
+	}
 
-   /* get dir */
-   if(offset < length)
-   {
-      tmp = strrchr(template,SLASHC);
-      if(tmp)
-      {
-         tmp++;  /* first character after slash */
-         len = (int) (tmp - (char *)&template[offset]);
-         if(len >= 0 && len < FILE_MAX_DIR && dir)
-            strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
-         if(len < FILE_MAX_DIR && dir)
-            dir[len] = 0;
-         offset += len;
-      }
-   }
-   else
-      return(0);
+	/* get dir */
+	if (offset < length)
+	{
+		tmp = strrchr(template,SLASHC);
+		if (tmp)
+		{
+			tmp++;  /* first character after slash */
+			len = (int) (tmp - (char *)&template[offset]);
+			if (len >= 0 && len < FILE_MAX_DIR && dir)
+			{
+				strncpy(dir,&template[offset],min(len,FILE_MAX_DIR));
+			}
+			if (len < FILE_MAX_DIR && dir)
+			{
+				dir[len] = 0;
+			}
+			offset += len;
+		}
+	}
+	else
+	{
+		return(0);
+	}
 
-   /* get fname */
-   if(offset < length)
-   {
-      tmp = strrchr(template,'.');
-      if(tmp < strrchr(template,SLASHC) || tmp < strrchr(template,':'))
-         tmp = 0; /* in this case the '.' must be a directory */
-      if(tmp)
-      {
-         /* tmp++; */ /* first character past "." */
-         len = (int) (tmp - (char *)&template[offset]);
-         if((len > 0) && (offset+len < length) && fname)
-         {
-            strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
-            if(len < FILE_MAX_FNAME)
-               fname[len] = 0;
-            else
-               fname[FILE_MAX_FNAME-1] = 0;
-         }
-         offset += len;
-         if((offset < length) && ext)
-         {
-            strncpy(ext,&template[offset],FILE_MAX_EXT);
-            ext[FILE_MAX_EXT-1] = 0;
-         }
-      }
-      else if((offset < length) && fname)
-      {
-         strncpy(fname,&template[offset],FILE_MAX_FNAME);
-         fname[FILE_MAX_FNAME-1] = 0;
-      }
-   }
-   return(0);
+	/* get fname */
+	if (offset < length)
+	{
+		tmp = strrchr(template,'.');
+		if (tmp < strrchr(template,SLASHC) || tmp < strrchr(template,':'))
+		{
+			tmp = 0; /* in this case the '.' must be a directory */
+		}
+		if (tmp)
+		{
+			/* tmp++; */ /* first character past "." */
+			len = (int) (tmp - (char *)&template[offset]);
+			if ((len > 0) && (offset+len < length) && fname)
+			{
+				strncpy(fname,&template[offset],min(len,FILE_MAX_FNAME));
+				if (len < FILE_MAX_FNAME)
+				{
+					fname[len] = 0;
+				}
+				else
+				{
+					fname[FILE_MAX_FNAME-1] = 0;
+				}
+			}
+			offset += len;
+			if ((offset < length) && ext)
+			{
+				strncpy(ext,&template[offset],FILE_MAX_EXT);
+				ext[FILE_MAX_EXT-1] = 0;
+			}
+		}
+		else if ((offset < length) && fname)
+		{
+			strncpy(fname,&template[offset],FILE_MAX_FNAME);
+			fname[FILE_MAX_FNAME-1] = 0;
+		}
+	}
+	return 0;
 }
 #endif
 
-int makepath(char *template,char *drive,char *dir,char *fname,char *ext)
+int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 {
-   if(template)
-      *template = 0;
-   else
-      return(-1);
+	if (template_str)
+		*template_str = 0;
+	else
+		return(-1);
 #ifndef XFRACT
-   if(drive)
-      strcpy(template,drive);
+	if (drive)
+		strcpy(template_str,drive);
 #endif
-   if(dir)
-      strcat(template,dir);
-   if(fname)
-      strcat(template,fname);
-   if(ext)
-      strcat(template,ext);
-   return(0);
+	if (dir)
+		strcat(template_str,dir);
+	if (fname)
+		strcat(template_str,fname);
+	if (ext)
+		strcat(template_str,ext);
+	return 0;
 }
 
 

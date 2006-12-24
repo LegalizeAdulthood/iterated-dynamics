@@ -194,7 +194,7 @@ static void fillrect(int x, int y, int width, int depth, int color)
    memset(dstack, color % colors, width);
    while (depth-- > 0)
    {
-      if(keypressed()) /* we could do this less often when in fast modes */
+      if(driver_key_pressed()) /* we could do this less often when in fast modes */
          return;
       putrow(x, y++, width, (char *)dstack);
    }
@@ -685,10 +685,10 @@ void Jiim(int which)         /* called by fractint */
       } else {
           Cursor_WaitKey();
       }
-      if(keypressed() || first_time) /* prevent burning up UNIX CPU */
+      if(driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
       {
          first_time = 0;
-         while(keypressed())
+         while(driver_key_pressed())
          {
             Cursor_WaitKey();
             kbdchar = getakey();
@@ -863,7 +863,7 @@ void Jiim(int which)         /* called by fractint */
            }
 
             Cursor_SetPos(col,row);
-         }  /* end while (keypressed) */
+         }  /* end while (driver_key_pressed) */
 
          if(exact == 0)
          {
@@ -953,7 +953,7 @@ void Jiim(int which)         /* called by fractint */
          else
             fillrect(xc, yc, xd, yd, color_dark);
 
-      } /* end if (keypressed) */
+      } /* end if (driver_key_pressed) */
 
       if(which == JIIM)
       {

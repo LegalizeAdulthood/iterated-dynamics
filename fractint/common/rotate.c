@@ -82,7 +82,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          if (!paused)
             pauserotate();
          }
-      else while(!keypressed()) { /* rotate until key hit, at least once so step=oldstep ok */
+      else while(!driver_key_pressed()) { /* rotate until key hit, at least once so step=oldstep ok */
          if (fkey > 0) {                /* randomizing is on */
             for (istep = 0; istep < step; istep++) {
                jstep = next + (istep * direction);
@@ -353,7 +353,7 @@ BYTE olddac0,olddac1,olddac2;
          dvid_status(100,msg);
       }
 #ifndef XFRACT
-      while (!keypressed());          /* wait for any key */
+      while (!driver_key_pressed());          /* wait for any key */
 #else
       waitkeypressed(0);                /* wait for any key */
 #endif

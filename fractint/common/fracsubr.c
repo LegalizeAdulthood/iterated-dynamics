@@ -1222,7 +1222,7 @@ void sleepms_old(long ms)
            10000 per sec independent of CPU speed */
         int i,elapsed;
         scalems = 1L;
-        if(keypressed()) /* check at start, hope to get start of timeslice */
+        if(driver_key_pressed()) /* check at start, hope to get start of timeslice */
            goto sleepexit;
         /* calibrate, assume slow computer first */
         showtempmsg("Calibrating timer");
@@ -1236,7 +1236,7 @@ void sleepms_old(long ms)
             while (t2.time == t1.time && t2.millitm == t1.millitm);
            sleepms_old(10L * SLEEPINIT); /* about 1/4 sec */
            ftimex(&t2);
-           if(keypressed()) {
+           if(driver_key_pressed()) {
               scalems = 0L;
               cleartempmsg();
               goto sleepexit;
@@ -1260,13 +1260,13 @@ void sleepms_old(long ms)
         ms /= 10;
         ftimex(&t1);
         for(;;) {
-           if(keypressed()) break;
+           if(driver_key_pressed()) break;
            ftimex(&t2);
            if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms) break;
         }
     }
     else
-        if(!keypressed()) {
+        if(!driver_key_pressed()) {
            ms *= scalems;
            while(ms-- >= 0);
         }
@@ -1281,7 +1281,7 @@ static void sleepms_new(long ms)
    uclock_t now = usec_clock();
    next_time = now + ms*100;
    while ((now = usec_clock()) < next_time)
-     if(keypressed()) break;
+     if(driver_key_pressed()) break;
 }
 
 void sleepms(long ms)
@@ -1306,7 +1306,7 @@ void wait_until(int index, uclock_t wait_time)
    {   
       uclock_t now;
       while ( (now = usec_clock()) < next_time[index])
-         if(keypressed()) break;
+         if(driver_key_pressed()) break;
       next_time[index] = now + wait_time*100; /* wait until this time next call */
    }
 }
@@ -1353,13 +1353,13 @@ void w_snd(int tone)
          fprintf(snd_fp,"%-d\n",tone);
    }
    taborhelp = 0;
-   if(!keypressed()) { /* keypressed calls driver_sound_off() if TAB or F1 pressed */
+   if(!driver_key_pressed()) { /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
                /* must not then call soundoff(), else indexes out of synch */
 /*   if(20 < tone && tone < 15000)  better limits? */
 /*   if(10 < tone && tone < 5000)  better limits? */
       if (driver_sound_on(tone)) {
          wait_until(0,orbit_delay);
-         if(!taborhelp) /* kludge because wait_until() calls keypressed */
+         if(!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
             driver_sound_off();
       }
    }

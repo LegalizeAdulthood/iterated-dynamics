@@ -80,34 +80,39 @@ init_drivers(int *argc, char **argv)
 void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-  /* stash away driver pointer so we can init driver for selected mode */
-  mode_drivers[vidtbllen] = drv;
-  memcpy(&videotable[vidtbllen], mode, sizeof(videotable[0]));
-  vidtbllen++;
+	/* stash away driver pointer so we can init driver for selected mode */
+	mode_drivers[vidtbllen] = drv;
+	memcpy(&videotable[vidtbllen], mode, sizeof(videotable[0]));
+	vidtbllen++;
 }
 
 void
 close_drivers(void)
 {
-  int i;
+	int i;
 
-  for (i = 0; i < num_drivers; i++)
-    if (available[i]) {
-      (*available[i]->terminate)(available[i]);
-      available[i] = NULL;
-    }
+	for (i = 0; i < num_drivers; i++)
+	{
+		if (available[i])
+		{
+			(*available[i]->terminate)(available[i]);
+			available[i] = NULL;
+		}
+	}
 
-  if (vidtbl)
-    free(vidtbl);
-  vidtbl = NULL;
-  display = NULL;
+	if (vidtbl)
+	{
+		free(vidtbl);
+	}
+	vidtbl = NULL;
+	display = NULL;
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
 void
 driver_terminate(void)
 {
-  (*display->terminate)(display);
+	(*display->terminate)(display);
 }
 
 #define METHOD_VOID(name_) \
@@ -121,7 +126,7 @@ METHOD_VOID(flush)
 void
 driver_schedule_alarm(int soon)
 {
-  (*display->schedule_alarm)(display, soon);
+	(*display->schedule_alarm)(display, soon);
 }
 
 METHOD_INT(start_video)
@@ -135,43 +140,49 @@ METHOD_INT(write_palette)
 int
 driver_read_pixel(int x, int y)
 {
-  return (*display->read_pixel)(display, x, y);
+	return (*display->read_pixel)(display, x, y);
 }
 
 void
 driver_write_pixel(int x, int y, int color)
 {
-  (*display->write_pixel)(display, x, y, color);
+	(*display->write_pixel)(display, x, y, color);
 }
 
 void
 driver_read_span(int y, int x, int lastx, BYTE *pixels)
 {
-  (*display->read_span)(display, y, x, lastx, pixels);
+	(*display->read_span)(display, y, x, lastx, pixels);
 }
 
 void
 driver_write_span(int y, int x, int lastx, BYTE *pixels)
 {
-  (*display->write_span)(display, y, x, lastx, pixels);
+	(*display->write_span)(display, y, x, lastx, pixels);
 }
 
 void
 driver_set_line_mode(int mode)
 {
-  (*display->set_line_mode)(display, mode);
+	(*display->set_line_mode)(display, mode);
 }
 
 void
 driver_draw_line(int x1, int y1, int x2, int y2)
 {
-  (*display->draw_line)(display, x1, y1, x2, y2);
+	(*display->draw_line)(display, x1, y1, x2, y2);
 }
 
 int
 driver_get_key(int block)
 {
-  return (*display->get_key)(display, block);
+	return (*display->get_key)(display, block);
+}
+
+int
+driver_key_pressed(void)
+{
+	return (*display->key_pressed)(display);
 }
 
 METHOD_VOID(shell)
@@ -179,13 +190,13 @@ METHOD_VOID(shell)
 void
 driver_set_video_mode(int ax, int bx, int cx, int dx)
 {
-  (*display->set_video_mode)(display, ax, bx, cx, dx);
+	(*display->set_video_mode)(display, ax, bx, cx, dx);
 }
 
 void
 driver_put_string(int row, int col, int attr, const char *msg)
 {
-  (*display->put_string)(display, row, col, attr, msg);
+	(*display->put_string)(display, row, col, attr, msg);
 }
 
 METHOD_VOID(set_for_text)
@@ -195,13 +206,13 @@ METHOD_VOID(set_clear)
 BYTE *
 driver_find_font(int parm)
 {
-  return (*display->find_font)(display, parm);
+	return (*display->find_font)(display, parm);
 }
 
 void
 driver_move_cursor(int row, int col)
 {
-  (*display->move_cursor)(display, row, col);
+	(*display->move_cursor)(display, row, col);
 }
 
 METHOD_VOID(hide_text_cursor)
@@ -209,13 +220,13 @@ METHOD_VOID(hide_text_cursor)
 void
 driver_set_attr(int row, int col, int attr, int count)
 {
-  (*display->set_attr)(display, row, col, attr, count);
+	(*display->set_attr)(display, row, col, attr, count);
 }
 
 void
 driver_scroll_up(int top, int bot)
 {
-  (*display->scroll_up)(display, top, bot);
+	(*display->scroll_up)(display, top, bot);
 }
 
 METHOD_VOID(stack_screen)
@@ -227,13 +238,13 @@ METHOD_INT(init_fm)
 void
 driver_buzzer(int kind)
 {
-  (*display->buzzer)(display, kind);
+	(*display->buzzer)(display, kind);
 }
 
 int
 driver_sound_on(int freq)
 {
-  return (*display->sound_on)(display, freq);
+	return (*display->sound_on)(display, freq);
 }
 
 METHOD_VOID(sound_off)

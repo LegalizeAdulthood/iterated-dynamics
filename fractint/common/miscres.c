@@ -43,39 +43,47 @@ char s_cantfind[]       = {"Can't find %s"};
 
 void findpath(char *filename, char *fullpathname) /* return full pathnames */
 {
-   char fname[FILE_MAX_FNAME];
-   char ext[FILE_MAX_EXT];
-   char temp_path[FILE_MAX_PATH];
+	char fname[FILE_MAX_FNAME];
+	char ext[FILE_MAX_EXT];
+	char temp_path[FILE_MAX_PATH];
 
-   splitpath(filename ,NULL,NULL,fname,ext);
-   makepath(temp_path,""   ,"" ,fname,ext);
+	splitpath(filename ,NULL,NULL,fname,ext);
+	makepath(temp_path,""   ,"" ,fname,ext);
 
-   if(checkcurdir != 0 && access(temp_path,0)==0) {   /* file exists */
-      strcpy(fullpathname,temp_path);
-      return;
-   }
+	if (checkcurdir != 0 && access(temp_path,0) == 0)   /* file exists */
+	{
+		strcpy(fullpathname,temp_path);
+		return;
+	}
 
-   strcpy(temp_path,filename);   /* avoid side effect changes to filename */
+	strcpy(temp_path,filename);   /* avoid side effect changes to filename */
 
-   if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':')) {
-      if(access(temp_path,0)==0) {   /* file exists */
-         strcpy(fullpathname,temp_path);
-         return;
-         }
-      else {
-         splitpath(temp_path ,NULL,NULL,fname,ext);
-         makepath(temp_path,""   ,"" ,fname,ext);
-         }
-      }
-   fullpathname[0] = 0;                         /* indicate none found */
+	if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
+	{
+		if (access(temp_path,0) == 0)   /* file exists */
+		{
+			strcpy(fullpathname,temp_path);
+			return;
+		}
+		else
+		{
+		splitpath(temp_path ,NULL,NULL,fname,ext);
+		makepath(temp_path,""   ,"" ,fname,ext);
+		}
+	}
+	fullpathname[0] = 0;                         /* indicate none found */
 /* #ifdef __TURBOC__ */                         /* look for the file */
 /*   strcpy(fullpathname,searchpath(temp_path)); */
 /* #else */
-   _searchenv(temp_path,"PATH",fullpathname);
+	_searchenv(temp_path,"PATH",fullpathname);
 /* #endif */
-   if (fullpathname[0] != 0)                    /* found it! */
-      if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) /* stupid klooge! */
-         strcpy(&fullpathname[3],temp_path);
+	if (fullpathname[0] != 0)                    /* found it! */
+	{
+		if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) /* stupid klooge! */
+		{
+			strcpy(&fullpathname[3],temp_path);
+		}
+	}
 }
 #endif
 
@@ -1266,7 +1274,7 @@ top:
    putstringcenter(/*s_row*/24,0,80,C_GENERAL_LO,spressanykey);
    driver_hide_text_cursor();
 #ifdef XFRACT
-   while (keypressed()) {
+   while (driver_key_pressed()) {
        getakey();
    }
 #endif

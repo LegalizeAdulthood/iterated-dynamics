@@ -291,7 +291,7 @@ int gifview()
          if (calc_status == 1) /* e.g., set by line3d */
          {
             calctime = timer_interval; /* note how long it took */
-            if (keypressed() != 0) {
+            if (driver_key_pressed() != 0) {
                calc_status = 3; /* interrupted, not resumable */
                finished = 1;
                }
@@ -420,7 +420,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       if(orbit_delay > 0)
          sleepms(orbit_delay);
       w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
-      if(keypressed())
+      if(driver_key_pressed())
       {
         driver_mute();
         return(-1);
@@ -460,7 +460,7 @@ int sound_line(BYTE *pixels, int linelen)
       }
    }   
    driver_mute();
-   if(keypressed())
+   if(driver_key_pressed())
       ret = -1;
    return(ret);
 }   

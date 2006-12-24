@@ -665,7 +665,7 @@ Print_Screen (void)
 
     graphics_init(ptrid,res,EndOfLine);
 
-    if (keypressed()) {         /* one last chance before we start...*/
+    if (driver_key_pressed()) {         /* one last chance before we start...*/
         return;
         }
 
@@ -676,9 +676,9 @@ Print_Screen (void)
 
         case 1:                        /* HP LaserJet (et al)            */
             imax=(ydots/8)-1;
-            for (x=0;((x<xdots)&&(!keypressed()));x+=BuffSiz) {
-                for (i=imax;((i>=0)&&(!keypressed()));i--) {
-                    for (y=7;((y>=0)&&(!keypressed()));y--) {
+            for (x=0;((x<xdots)&&(!driver_key_pressed()));x+=BuffSiz) {
+                for (i=imax;((i>=0)&&(!driver_key_pressed()));i--) {
+                    for (y=7;((y>=0)&&(!driver_key_pressed()));y--) {
                         for (j=0;j<BuffSiz;j++) {
                             if ((x+j)<xdots) {
                                 buff[j]<<=1;
@@ -691,20 +691,20 @@ Print_Screen (void)
                         buff[j]=0;
                         }
                     }
-                for (j=0;((j<BuffSiz)&&(!keypressed()));j++) {
+                for (j=0;((j<BuffSiz)&&(!driver_key_pressed()));j++) {
                     if ((x+j)<xdots) {
                         PRINTER_PRINTF2("\033*b%iW",imax+1);
-                        for (i=imax;((i>=0)&&(!keypressed()));i--) {
+                        for (i=imax;((i>=0)&&(!driver_key_pressed()));i--) {
                             printer(*(es+j+BuffSiz*i));
                             }
                         }
                     }
                 }
-            if (!keypressed()) PRINTER_PRINTF1("\033*rB\014");
+            if (!driver_key_pressed()) PRINTER_PRINTF1("\033*rB\014");
             break;
 
         case 2:                        /* IBM Graphics/Epson             */
-            for (x=0;((x<xdots)&&(!keypressed()));x+=8) {
+            for (x=0;((x<xdots)&&(!driver_key_pressed()));x+=8) {
                 switch (res) {
                     case 60:  Printer_printf("\033K"); break;
                     case 120: Printer_printf("\033L"); break;
@@ -722,16 +722,16 @@ Print_Screen (void)
                         }
                     printer(buff[0]);
                     }
-                if (keypressed()) break;
+                if (driver_key_pressed()) break;
                 Printer_printf(EndOfLine);
                 }
-            if (!keypressed()) printer(12);
+            if (!driver_key_pressed()) printer(12);
             break;
 
         case 3:                        /* IBM Graphics/Epson Color      */
             high=ydots/256;
             low=ydots%256;
-            for (x=0;((x<xdots)&&(!keypressed()));x+=8)
+            for (x=0;((x<xdots)&&(!driver_key_pressed()));x+=8)
                 {
                 for (k=0; k<8; k++)  /* colors */
                     {
@@ -783,7 +783,7 @@ Print_Screen (void)
             }
             if (!pixels) break;
             fetched = 0;
-            for (x = 0; (x < xdots && !keypressed()); ++x) {
+            for (x = 0; (x < xdots && !driver_key_pressed()); ++x) {
                 if (fetched == 0) {
                     if ((fetched = xdots-x) > fetchrows)
                         fetched = fetchrows;
@@ -857,7 +857,7 @@ Print_Screen (void)
                 }
             }
             PRINTER_PRINTF1("\033*r0B"); /* end raster graphics */
-            if (!keypressed()) {
+            if (!driver_key_pressed()) {
                if (debugflag != 600)
                   printer(12); /* form feed */
                else
@@ -887,7 +887,7 @@ Print_Screen (void)
             }
             i=0;
             j=0;
-            for (y=0;((y<ydots)&&(!keypressed()));y++)
+            for (y=0;((y<ydots)&&(!driver_key_pressed()));y++)
             {   unsigned char bit8 = 0;
                 if (Printer_Compress) {
                     if (ColorPS) {
@@ -997,7 +997,7 @@ Print_Screen (void)
             for (i=0;i<3;i++)
             {
               PRINTER_PRINTF4("%sSP %d;%s\0",EndOfLine,(i+1),EndOfLine);
-              for (y=0;(y<ydots)&&(!keypressed());y++)
+              for (y=0;(y<ydots)&&(!driver_key_pressed());y++)
               {
                 for (x=0;x<xdots;x++)
                 {
@@ -1381,7 +1381,7 @@ if (Print_To_File>0)    /* This is for printing to file */
 else                    /* And this is for printing to printer */
     while (s[x])
         if (printer(s[x++]) != 0)
-            while (!keypressed()) { if (printer(s[x-1])==0) break; }
+            while (!driver_key_pressed()) { if (printer(s[x-1])==0) break; }
 }
 
 /* This function standardizes both _bios_printer and _bios_serialcom
@@ -1400,7 +1400,7 @@ static int _fastcall printer(int c)
         int PS=0;
         while ((PS & 0xF8) != 0xD8)
             { PS = inp((LPTn==20) ? 0x379 : 0x279);
-              if (keypressed()) return(1); }
+              if (driver_key_pressed()) return(1); }
         outp((LPTn==20) ? 0x37C : 0x27C,c);
         PS = inp((LPTn==20) ? 0x37A : 0x27A);
         outp((LPTn==20) ? 0x37A : 0x27A,(PS | 0x01));
@@ -1411,7 +1411,7 @@ static int _fastcall printer(int c)
         {
         while (((inp((LPTn==30) ? 0x3FE : 0x2FE)&0x30)!=0x30) ||
                ((inp((LPTn==30) ? 0x3FD : 0x2FD)&0x60)!=0x60))
-            { if (keypressed()) return (1); }
+            { if (driver_key_pressed()) return (1); }
         outp((LPTn==30) ? 0x3F8 : 0x2F8,c);
         return(0);
         }

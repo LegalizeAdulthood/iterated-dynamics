@@ -431,7 +431,7 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
 
    while (command->ch && command->ch !=']') {
       if (!(ts->counter++)) {
-         if (keypressed()) {
+         if (driver_key_pressed()) {
             ts->counter--;
             return NULL;
          }

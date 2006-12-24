@@ -178,6 +178,12 @@ static int win32_diskp(Driver *drv)
     return 0;
 }
 
+static int win32_key_pressed(Driver *drv)
+{
+	return 0;
+}
+
+
 /* new driver		    old fractint
    -------------------  ------------
    start_video		    startvideo

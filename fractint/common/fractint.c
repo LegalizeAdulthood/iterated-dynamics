@@ -340,7 +340,7 @@ restart:   /* insert key re-starts here */
 	if (showfile && initmode < 0)
 	{
 		intro();                          /* display the credits screen */
-		if (keypressed() == ESC)
+		if (driver_key_pressed() == ESC)
 		{
 			getakey();
 			goodbye();
@@ -582,7 +582,7 @@ resumeloop:
 int check_key()
 {
    int key;
-   if((key = keypressed()) != 0) {
+   if((key = driver_key_pressed()) != 0) {
       if (show_orbit)
          scrub_orbit();
       if(key != 'o' && key != 'O') {
