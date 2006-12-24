@@ -248,9 +248,9 @@ bn_t bftobn(bn_t n, bf_t f)
 
     /* already checked for over/underflow, this should be ok */
     movebytes = bnlength - intlength + fexp + 1;
-    _fmemcpy(n, f+bflength-movebytes-1, movebytes);
+    memcpy(n, f+bflength-movebytes-1, movebytes);
     hibyte = *(f+bflength-1);
-    _fmemset(n+movebytes, hibyte, bnlength-movebytes); /* sign extends */
+    memset(n+movebytes, hibyte, bnlength-movebytes); /* sign extends */
     return n;
     }
 
@@ -260,8 +260,8 @@ bn_t bftobn(bn_t n, bf_t f)
 /*  bflength must be at least bnlength+2                             */
 bf_t bntobf(bf_t f, bn_t n)
     {
-    _fmemcpy(f+bflength-bnlength-1, n, bnlength);
-    _fmemset(f, 0, bflength - bnlength - 1);
+    memcpy(f+bflength-bnlength-1, n, bnlength);
+    memset(f, 0, bflength - bnlength - 1);
     *(f+bflength-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); /* sign extend */
     big_set16(f+bflength, (S16)(intlength - 1)); /* exp */
     norm_bf(f);
@@ -1239,20 +1239,20 @@ int is_bf_zero(bf_t n)
 
 /************************************************************************/
 /* convert_bf  -- convert bigfloat numbers from old to new lengths      */
-int convert_bf(bf_t new, bf_t old, int newbflength, int oldbflength)
+int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
    {
    int savebflength;
 
    /* save lengths so not dependent on external environment */
    savebflength  = bflength;
    bflength      = newbflength;
-   clear_bf(new);
+   clear_bf(newnum);
    bflength      = savebflength;
 
    if(newbflength > oldbflength)
-      _fmemcpy(new+newbflength-oldbflength,old,oldbflength+2);
+      memcpy(newnum+newbflength-oldbflength,old,oldbflength+2);
    else
-      _fmemcpy(new,old+oldbflength-newbflength,newbflength+2);
+      memcpy(newnum,old+oldbflength-newbflength,newbflength+2);
    return(0);
    }
 
@@ -1271,7 +1271,7 @@ bf_t norm_bf(bf_t r)
     hi_byte = r[bflength-1];
     if (hi_byte != 0x00 && hi_byte != 0xFF)
         {
-        _fmemmove(r, r+1, bflength-1);
+        memmove(r, r+1, bflength-1);
         r[bflength-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
         big_setS16(rexp,big_accessS16(rexp)+(S16)1);   /* exp */
         }
@@ -1288,8 +1288,8 @@ bf_t norm_bf(bf_t r)
             scale -= 2;
             if (scale > 0) /* it did underflow */
                 {
-                _fmemmove(r+scale, r, bflength-scale-1);
-                _fmemset(r, 0, scale);
+                memmove(r+scale, r, bflength-scale-1);
+                memset(r, 0, scale);
                 big_setS16(rexp,big_accessS16(rexp)-(S16)scale);    /* exp */
                 }
             }
@@ -1327,8 +1327,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         if (scale < bflength)
             {
             fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-            _fmemmove(n2, n2+scale, bflength-scale);
-            _fmemset(n2+bflength-scale, fill_byte, scale);
+            memmove(n2, n2+scale, bflength-scale);
+            memset(n2+bflength-scale, fill_byte, scale);
             }
         else
             clear_bf(n2);
@@ -1341,8 +1341,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         if (scale < bflength)
             {
             fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-            _fmemmove(n1, n1+scale, bflength-scale);
-            _fmemset(n1+bflength-scale, fill_byte, scale);
+            memmove(n1, n1+scale, bflength-scale);
+            memset(n1+bflength-scale, fill_byte, scale);
             }
         else
             clear_bf(n1);
@@ -1739,7 +1739,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
     big_set16(r+bflength, (S16)(rexp+2)); /* adjust after mult */
     norm_sign_bf(r, positive);
     bflength = bfl;
-    _fmemmove(r, r+padding, bflength+2); /* shift back */
+    memmove(r, r+padding, bflength+2); /* shift back */
 
     return r;
     }
@@ -1824,7 +1824,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 
     norm_sign_bf(r, 1);
     bflength = bfl;
-    _fmemmove(r, r+padding, bflength+2); /* shift back */
+    memmove(r, r+padding, bflength+2); /* shift back */
 
     return r;
     }
@@ -1851,7 +1851,7 @@ multiplication is performed.
 */
     if (u > 0x00FF)
         { /* un-normalize n */
-        _fmemmove(n, n+1, bflength-1);  /* this sign extends as well */
+        memmove(n, n+1, bflength-1);  /* this sign extends as well */
         big_setS16(rexp,big_accessS16(rexp)+(S16)1);
         }
 
@@ -1882,7 +1882,7 @@ multiplication is performed.
 */
     if (u > 0x00FF)
         { /* un-normalize n */
-        _fmemmove(r, r+1, bflength-1);  /* this sign extends as well */
+        memmove(r, r+1, bflength-1);  /* this sign extends as well */
         big_setS16(rexp,big_accessS16(rexp)+(S16)1);
         }
 
@@ -2165,7 +2165,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
       if (d == 0) /* rounding went back to the first digit and it overflowed */
          {
          r[1] = 0;
-         _fmemmove(r+2, r+1, dec-1);
+         memmove(r+2, r+1, dec-1);
          r[1] = 1;
          p = (S16)big_access16(power10);
          big_set16(power10, (U16)(p+1));
@@ -2209,7 +2209,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
    while (overflow)
       {
       p++;
-      _fmemmove(r+2, r+1, dec-1);
+      memmove(r+2, r+1, dec-1);
       r[1] = (BYTE)(overflow % 10);
       overflow = overflow / 10;
       }

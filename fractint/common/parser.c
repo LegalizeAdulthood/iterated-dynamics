@@ -2682,11 +2682,11 @@ int Formula(void) {
 
    switch(MathType) {
    case D_MATH:
-      old = new = v[3].a.d;
+      old = g_new = v[3].a.d;
       return(Arg1->d.x == 0.0);
 #if !defined(XFRACT) && !defined(_WIN32)
    case M_MATH:
-      old = new = MPC2cmplx(v[3].a.m);
+      old = g_new = MPC2cmplx(v[3].a.m);
       return(Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0);
    case L_MATH:
       lold = lnew = v[3].a.l;

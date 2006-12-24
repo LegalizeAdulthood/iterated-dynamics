@@ -79,15 +79,15 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 {
      /* result stored in MATRIX new to avoid problems
         in case parameter mat3 == mat2 or mat 1 */
-     MATRIX new;
+     MATRIX newmat;
      int i,j;
      for(i=0;i<4;i++)
      for(j=0;j<4;j++)
-        new[j][i] =  mat1[j][0]*mat2[0][i]+
+        newmat[j][i] =  mat1[j][0]*mat2[0][i]+
                      mat1[j][1]*mat2[1][i]+
                      mat1[j][2]*mat2[2][i]+
                      mat1[j][3]*mat2[3][i];
-     memcpy(mat3,new,sizeof(new));
+     memcpy(mat3,newmat,sizeof(newmat));
 }
 
 /* multiply a matrix by a scalar */

@@ -1595,7 +1595,7 @@ void get_julia_attractor (double real, double imag)
       if (integerfractal)   /* remember where it went to */
          lresult = lnew;
       else
-         result =  new;
+         result =  g_new;
      for (i=0;i<10;i++) {
       overflow = 0;
       if(!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
@@ -1613,10 +1613,10 @@ void get_julia_attractor (double real, double imag)
          }
          else
          {
-            if(fabs(result.x-new.x) < closenuff
-                && fabs(result.y-new.y) < closenuff)
+            if(fabs(result.x-g_new.x) < closenuff
+                && fabs(result.y-g_new.y) < closenuff)
             {
-               attr[attractors] = new;
+               attr[attractors] = g_new;
                attrperiod[attractors] = i+1;
                attractors++;   /* another attractor - coloured lakes ! */
                break;
