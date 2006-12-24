@@ -643,9 +643,10 @@ win32_disk_set_line_mode(Driver *drv, int mode)
 }
 
 static void
-win32_disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
+win32_disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 {
 	CALLED("win32_disk_draw_line");
+	draw_line(x1, y1, x2, y2, color);
 }
 
 /*

@@ -1683,8 +1683,8 @@ static void RGBEditor_Update(RGBEditor *this)
           y2 = y1+RGBEditor_BDEPTH-3;
 
       fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
-      draw_line(x1, y1, x2, y2, fg_color);
-      draw_line(x1, y2, x2, y1, fg_color);
+      driver_draw_line(x1, y1, x2, y2, fg_color);
+      driver_draw_line(x1, y2, x2, y1, fg_color);
       }
    else
       fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, this->pal);
@@ -2174,8 +2174,8 @@ static void PalTable__Draw(PalTable *this)
              x2 = x1 + this->csize - 2,
              y2 = y1 + this->csize - 2;
          fillrect(this->x + xoff + 1, this->y + yoff + 1, this->csize-1, this->csize-1, bg_color);
-         draw_line(x1, y1, x2, y2, fg_color);
-         draw_line(x1, y2, x2, y1, fg_color);
+         driver_draw_line(x1, y1, x2, y2, fg_color);
+         driver_draw_line(x1, y2, x2, y1, fg_color);
          }
       else
          fillrect(this->x + xoff + 1, this->y + yoff + 1, this->csize-1, this->csize-1, pal);

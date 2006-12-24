@@ -216,7 +216,7 @@ static void lsysf_dodrawd(struct lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
 
-    draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
+    driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
 #else
 extern void lsysf_dodrawd(struct lsys_turtlestatef *cmd);
@@ -255,7 +255,7 @@ static void lsysf_dodrawf(struct lsys_turtlestatef *cmd)
     int lasty = (int) cmd->ypos;
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
-    draw_line(lastx,lasty,(int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
+    driver_draw_line(lastx,lasty,(int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
 }
 #else
 extern void lsysf_dodrawf(struct lsys_turtlestatef *cmd);

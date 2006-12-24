@@ -168,9 +168,9 @@ driver_set_line_mode(int mode)
 }
 
 void
-driver_draw_line(int x1, int y1, int x2, int y2)
+driver_draw_line(int x1, int y1, int x2, int y2, int color)
 {
-	(*display->draw_line)(display, x1, y1, x2, y2);
+	(*display->draw_line)(display, x1, y1, x2, y2, color);
 }
 
 int
