@@ -45,6 +45,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 /***** Application Function Prototypes **********************************/
 static short get_next_code(void);

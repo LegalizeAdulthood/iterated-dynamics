@@ -23,7 +23,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
-
+#include "drivers.h"
 
 /* routines in this module      */
 static void perform_worklist(void);

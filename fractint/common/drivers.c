@@ -185,6 +185,12 @@ driver_key_pressed(void)
 	return (*display->key_pressed)(display);
 }
 
+int
+driver_wait_key_pressed(int timeout)
+{
+	return (*display->wait_key_pressed)(display, timeout);
+}
+
 METHOD_VOID(shell)
 
 void

@@ -8,6 +8,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "drivers.h"
 
 extern int atan_colors;
 extern long firstsavedand;
