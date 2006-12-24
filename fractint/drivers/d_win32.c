@@ -188,6 +188,15 @@ static int win32_wait_key_pressed(Driver *drv, int timeout)
 	return 0;
 }
 
+static int win32_get_char_attr(Driver *drv)
+{
+	return 0;
+}
+
+static void win32_put_char_attr(Driver *drv, int char_attr)
+{
+}
+
 
 /* new driver		    old fractint
    -------------------  ------------

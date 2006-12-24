@@ -38,6 +38,7 @@
  * set_attr
  * scroll_up
  * stack_screen, unstack_screen, discard_screen
+ * get_char_attr, put_char_attr
  */
 typedef struct tagDriver Driver;
 struct tagDriver {
@@ -84,6 +85,8 @@ struct tagDriver {
 										void (*sound_off)(Driver *drv);
 										void (*mute)(Driver *drv);
 										int (*diskp)(Driver *drv);
+										int (*get_char_attr)(Driver *drv);
+										void (*put_char_attr)(Driver *drv, int char_attr);
 };
 
 #define STD_DRIVER_STRUCT(name_) \
@@ -128,7 +131,9 @@ struct tagDriver {
     name_##_sound_on, \
     name_##_sound_off, \
 	name_##_mute, \
-    name_##_diskp \
+    name_##_diskp, \
+	name_##_get_char_attr, \
+	name_##_put_char_attr \
   }
 
 /* Define the drivers to be included in the compilation:
@@ -210,6 +215,8 @@ extern int driver_sound_on(int frequency);
 extern void driver_sound_off(void);
 extern void driver_mute(void);
 extern int driver_diskp(void);
+extern int driver_get_char_attr(void);
+extern void driver_put_char_attr(int char_attr);
 
 #else
 
@@ -252,6 +259,8 @@ extern int driver_diskp(void);
 #define driver_sound_off()							(*display->sound_off)(display)
 #define driver_mute()								(*display->mute)(display)
 #define driver_diskp()								(*display->diskp)(display)
+#define driver_get_char_attr()						(*display->get_char_attr)(display)
+#define driver_put_char_attr(char_attr_)			(*display->put_char_attr)(display, char_attr_)
 
 #endif
 

@@ -1286,6 +1286,17 @@ win32_disk_wait_key_pressed(Driver *drv, int timeout)
 	return waitkeypressed(timeout);
 }
 
+static int
+win32_disk_get_char_attr(Driver *drv)
+{
+	return 0;
+}
+
+static void
+win32_disk_put_char_attr(Driver *drv, int char_attr)
+{
+}
+
 static DriverWin32Disk win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk),
