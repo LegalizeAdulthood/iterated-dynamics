@@ -1421,7 +1421,7 @@ int orbit2dfloat()
 	 if((fractype!=ICON) && (fractype!=LATOO))
          {
          if(oldcol != -1 && connect)
-            draw_line(col,row,oldcol,oldrow,color%colors);
+            driver_draw_line(col,row,oldcol,oldrow,color%colors);
             else
             (*plot)(col,row,color%colors);
          } else {
@@ -1557,7 +1557,7 @@ int orbit2dlong()
             w_snd((int)(yy*100+basehertz));
          }
          if(oldcol != -1 && connect)
-            draw_line(col,row,oldcol,oldrow,color%colors);
+            driver_draw_line(col,row,oldcol,oldrow,color%colors);
          else if(!start)
             (*plot)(col,row,color%colors);
          oldcol = col;
@@ -1647,7 +1647,7 @@ static int orbit3dlongcalc(void)
                w_snd((int)(yy*100+basehertz));
             }
             if(oldcol != -1 && connect)
-               draw_line(inf.col,inf.row,oldcol,oldrow,color%colors);
+               driver_draw_line(inf.col,inf.row,oldcol,oldrow,color%colors);
             else
                (*plot)(inf.col,inf.row,color%colors);
          }
@@ -1662,7 +1662,7 @@ static int orbit3dlongcalc(void)
             if (inf.col1 >= 0)
             {
                if(oldcol1 != -1 && connect)
-                  draw_line(inf.col1,inf.row1,oldcol1,oldrow1,color%colors);
+                  driver_draw_line(inf.col1,inf.row1,oldcol1,oldrow1,color%colors);
                else
                   (*plot)(inf.col1,inf.row1,color%colors);
             }
@@ -1743,7 +1743,7 @@ static int orbit3dfloatcalc(void)
                w_snd((int)(inf.viewvect[((soundflag&7) - 2)]*100+basehertz));
             }
             if(oldcol != -1 && connect)
-               draw_line(inf.col,inf.row,oldcol,oldrow,color%colors);
+               driver_draw_line(inf.col,inf.row,oldcol,oldrow,color%colors);
             else
                (*plot)(inf.col,inf.row,color%colors);
          }
@@ -1758,7 +1758,7 @@ static int orbit3dfloatcalc(void)
             if (inf.col1 >= 0)
             {
                if(oldcol1 != -1 && connect)
-                  draw_line(inf.col1,inf.row1,oldcol1,oldrow1,color%colors);
+                  driver_draw_line(inf.col1,inf.row1,oldcol1,oldrow1,color%colors);
                else
                   (*plot)(inf.col1,inf.row1,color%colors);
             }
@@ -1911,7 +1911,7 @@ int dynam2dfloat()
 
              if (count>=orbit_delay) {
                  if(oldcol != -1 && connect)
-                    draw_line(col,row,oldcol,oldrow,color%colors);
+                    driver_draw_line(col,row,oldcol,oldrow,color%colors);
                  else if(count > 0 || fractype != MANDELCLOUD)
                     (*plot)(col,row,color%colors);
              }

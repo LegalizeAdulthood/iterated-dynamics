@@ -535,10 +535,10 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                tout = 1;
 
-               draw_line(old.x, old.y, cur.x, cur.y, old.color);
-               draw_line(old.x, old.y, lastrow[col].x,
+               driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
+               driver_draw_line(old.x, old.y, lastrow[col].x,
                          lastrow[col].y, old.color);
-               draw_line(lastrow[col].x, lastrow[col].y,
+               driver_draw_line(lastrow[col].x, lastrow[col].y,
                          cur.x, cur.y, cur.color);
                num_tris++;
             }
@@ -567,11 +567,11 @@ int line3d(BYTE * pixels, unsigned linelen)
 
                tout = 1;
 
-               draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
+               driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
                          cur.color);
-               draw_line(lastrow[next].x, lastrow[next].y, cur.x, cur.y,
+               driver_draw_line(lastrow[next].x, lastrow[next].y, cur.x, cur.y,
                          cur.color);
-               draw_line(lastrow[next].x, lastrow[next].y, lastrow[col].x,
+               driver_draw_line(lastrow[next].x, lastrow[next].y, lastrow[col].x,
                          lastrow[col].y, lastrow[col].color);
                num_tris++;
             }
@@ -593,13 +593,13 @@ int line3d(BYTE * pixels, unsigned linelen)
             if (col &&
                 old.x > bad_check &&
                 old.x < (xdots - bad_check))
-               draw_line(old.x, old.y, cur.x, cur.y, cur.color);
+               driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             if (currow &&
                 lastrow[col].x > bad_check &&
                 lastrow[col].y > bad_check &&
                 lastrow[col].x < (xdots - bad_check) &&
                 lastrow[col].y < (ydots - bad_check))
-               draw_line(lastrow[col].x, lastrow[col].y, cur.x,
+               driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
                          cur.y, cur.color);
             break;
 
@@ -612,7 +612,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 old.x > bad_check &&
                 old.y > bad_check)      /* Don't draw from old to cur on col
                                          * 0 */
-               draw_line(old.x, old.y, cur.x, cur.y, cur.color);
+               driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
          case 2:                /* with interpolation */
@@ -687,7 +687,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                old.y = 0;
             if (old.y >= ydots)
                old.y = ydots - 1;
-            draw_line(old.x, old.y, cur.x, cur.y, cur.color);
+            driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
          case 5:
@@ -859,7 +859,7 @@ static void _fastcall vdraw_line(double *v1, double *v2, int color)
    y1 = (int) v1[1];
    x2 = (int) v2[0];
    y2 = (int) v2[1];
-   draw_line(x1, y1, x2, y2, color);
+   driver_draw_line(x1, y1, x2, y2, color);
 }
 
 static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
@@ -1091,14 +1091,14 @@ static void _fastcall putatriangle(struct point pt1, struct point pt2, struct po
       if (p1.y == p3.y && p1.x == p3.x)
          (*plot) (p1.x, p1.y, color);
       else
-         draw_line(p1.x, p1.y, p3.x, p3.y, color);
+         driver_draw_line(p1.x, p1.y, p3.x, p3.y, color);
       plot = normalplot;
       return;
    }
    else if ((p3.y == p1.y && p3.x == p1.x) || (p3.y == p2.y && p3.x == p2.x))
    {
       plot = fillplot;
-      draw_line(p1.x, p1.y, p2.x, p2.y, color);
+      driver_draw_line(p1.x, p1.y, p2.x, p2.y, color);
       plot = normalplot;
       return;
    }
@@ -1130,9 +1130,9 @@ static void _fastcall putatriangle(struct point pt1, struct point pt2, struct po
    plot = putminmax;
 
    /* build table of extreme x's of triangle */
-   draw_line(p1.x, p1.y, p2.x, p2.y, 0);
-   draw_line(p2.x, p2.y, p3.x, p3.y, 0);
-   draw_line(p3.x, p3.y, p1.x, p1.y, 0);
+   driver_draw_line(p1.x, p1.y, p2.x, p2.y, 0);
+   driver_draw_line(p2.x, p2.y, p3.x, p3.y, 0);
+   driver_draw_line(p3.x, p3.y, p1.x, p1.y, 0);
 
    for (y = miny; y <= maxy; y++)
    {

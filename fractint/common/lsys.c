@@ -586,7 +586,7 @@ static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
   cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 /* xpos+=size*aspect*cos(realangle*PI/180); */
 /* ypos+=size*sin(realangle*PI/180); */
-  draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+  driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
 }
 
 static void lsysi_dodrawm(struct lsys_turtlestatei *cmd)
@@ -621,7 +621,7 @@ static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
   cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
 /* xpos+=size*coss[angle]; */
 /* ypos+=size*sins[angle]; */
-  draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+  driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
 }
 
 static void lsysi_dodrawc(struct lsys_turtlestatei *cmd)

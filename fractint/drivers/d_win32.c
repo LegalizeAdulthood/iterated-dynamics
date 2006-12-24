@@ -85,8 +85,9 @@ static void win32_set_line_mode(Driver *drv, int mode)
 {
 }
 
-static void win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2)
+static void win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 {
+	draw_line(x1, y1, x2, y2, color);
 }
 
 static int win32_get_key(Driver *drv)

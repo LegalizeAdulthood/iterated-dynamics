@@ -1106,7 +1106,7 @@ void Jiim(int which)         /* called by fractint */
                    }
                    if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
                    {
-                      draw_line(x, y, old_x, old_y, color);
+                      driver_draw_line(x, y, old_x, old_y, color);
                    }
                    old_x = x;
                    old_y = y;
@@ -1192,7 +1192,7 @@ void Jiim(int which)         /* called by fractint */
          }
          if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
          {
-            draw_line(x, y, old_x, old_y, color);
+            driver_draw_line(x, y, old_x, old_y, color);
          }
          old_x = x;
          old_y = y;
