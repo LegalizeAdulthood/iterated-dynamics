@@ -201,10 +201,10 @@ char supervga_list[] =
 int svga_type = 0;
 void (*swapsetup)(void) = null_swap;			/* setfortext/graphics setup routine */
 int text_type = 0;
-int textcbase = 0;
-int textcol = 0;
-int textrbase = 0;
-int textrow = 0;
+int g_textcbase = 0;
+int g_textcol = 0;
+int g_textrbase = 0;
+int g_textrow = 0;
 int textsafe = 0;
 int TPlusErr = 0;
 char tstack[4096] = { 0 };
@@ -853,8 +853,8 @@ void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 void home(void)
 {
 	driver_move_cursor(0, 0);
-	textrow = 0;
-	textcol = 0;
+	g_textrow = 0;
+	g_textcol = 0;
 }
 
 /*

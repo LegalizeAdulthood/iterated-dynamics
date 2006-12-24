@@ -163,8 +163,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
    int        size,
               width;
 
-   textcbase = SCREEN_INDENT;
-   textrbase = TEXT_START_ROW;
+   g_textcbase = SCREEN_INDENT;
+   g_textrbase = TEXT_START_ROW;
 
    curr = text;
    row = 0;
@@ -307,22 +307,22 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
       tok = find_token_length(ONLINE, curr, len, &size, &width);
       } /* for(;;) */
 
-   textcbase = 0;
-   textrbase = 0;
+   g_textcbase = 0;
+   g_textrbase = 0;
    }
 
 static void color_link(LINK *link, int color)
    {
-   textcbase = SCREEN_INDENT;
-   textrbase = TEXT_START_ROW;
+   g_textcbase = SCREEN_INDENT;
+   g_textrbase = TEXT_START_ROW;
 
    if (text_type == 1)   /* if 640x200x2 mode */
       display_text(link->r, link->c, color, buffer+link->offset, link->width);
    else
       driver_set_attr(link->r, link->c, color, link->width);
 
-   textcbase = 0;
-   textrbase = 0;
+   g_textcbase = 0;
+   g_textrbase = 0;
    }
 
 /* #define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR_KEYS,name), putstring(-1,-1,C_HELP_INSTR," "descrip"  ") */

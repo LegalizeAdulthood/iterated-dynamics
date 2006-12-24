@@ -327,7 +327,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
             break; /* shouldn't happen */
          *next = '\0';
          titlewidth = (int) strlen(hdgline);
-         textcbase = boxcol + (boxwidth - titlewidth) / 2;
+         g_textcbase = boxcol + (boxwidth - titlewidth) / 2;
          driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
          *next = '\n';
          hdgline = next+1;
@@ -339,7 +339,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
       }
 
       titlewidth = (int) strlen(hdgline);
-      textcbase = boxcol + (boxwidth - titlewidth) / 2;
+      g_textcbase = boxcol + (boxwidth - titlewidth) / 2;
       driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
    }
 
@@ -361,27 +361,27 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 #define S6 "+" /* ur corner */
 #endif
       memset(buf,S1,80); buf[boxwidth-2] = 0;
-      textcbase = boxcol + 1;
+      g_textcbase = boxcol + 1;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,buf);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,buf);
-      --textcbase;
+      --g_textcbase;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,S5);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S2);
-      textcbase += boxwidth - 1;
+      g_textcbase += boxwidth - 1;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,S6);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S3);
 
-      textcbase = boxcol;
+      g_textcbase = boxcol;
 
       for (i = 1; i < extralines-1; ++i) {
          driver_put_string(extrarow+i,0,C_PROMPT_BKGRD,S4);
          driver_put_string(extrarow+i,boxwidth-1,C_PROMPT_BKGRD,S4);
       }
-      textcbase += (boxwidth - extrawidth) / 2;
+      g_textcbase += (boxwidth - extrawidth) / 2;
       driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
    }
 
-   textcbase = 0;
+   g_textcbase = 0;
 
    /* display empty box */
    for (i = 0; i < boxlines; ++i)
@@ -401,7 +401,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
       putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
         (helpmode > 0) ? instr0b : instr0a);
       driver_hide_text_cursor();
-      textcbase = 2;
+      g_textcbase = 2;
       for(;;) {
          if(rewrite_extrainfo) {
             rewrite_extrainfo = 0;
@@ -500,15 +500,15 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 
    while (!done) {
       if(rewrite_extrainfo) {
-         j = textcbase;
-         textcbase = 2;
+         j = g_textcbase;
+         g_textcbase = 2;
          fseek(scroll_file, scroll_file_start, SEEK_SET);
          load_entry_text(scroll_file, extrainfo, extralines - 2,
                              scroll_row_status, scroll_column_status);
          for(i=1; i <= extralines - 2; i++)
             driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
          driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
-         textcbase = j;
+         g_textcbase = j;
       }
 
       curtype = values[curchoice].type;
@@ -2120,9 +2120,9 @@ static int check_gfe_key(int curkey,int choice)
       helptitle();
       driver_set_attr(1,0,C_GENERAL_MED,24*80);
 
-      textcbase = 0;
+      g_textcbase = 0;
       driver_put_string(2,1,C_GENERAL_HI,infhdg);
-      textcbase = 2; /* left margin is 2 */
+      g_textcbase = 2; /* left margin is 2 */
       driver_put_string(4,0,C_GENERAL_MED,infbuf);
 
       {
@@ -2208,7 +2208,7 @@ static int check_gfe_key(int curkey,int choice)
          else
             done = 1;  /* a key other than scrolling key was pressed */
       }
-      textcbase = 0;
+      g_textcbase = 0;
       driver_hide_text_cursor();
       driver_unstack_screen();
    }
