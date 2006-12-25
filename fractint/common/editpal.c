@@ -891,7 +891,7 @@ int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
        Cursor_CheckBlink();
    }
 
-   return( driver_key_pressed() );
+   return driver_key_pressed();
    }
 
 
@@ -1364,7 +1364,7 @@ static int CEditor_Edit(CEditor *this)
          case '+':
          case CTL_PLUS:        /*RB*/
             diff = 1;
-            while ( driver_key_pressed() == key )
+            while (driver_key_pressed() == key)
                {
                driver_get_key();
                ++diff;
@@ -1392,7 +1392,7 @@ static int CEditor_Edit(CEditor *this)
          case '-':
          case CTL_MINUS:     /*RB*/
             diff = 1;
-            while ( driver_key_pressed() == key )
+            while (driver_key_pressed() == key)
                {
                driver_get_key();
                ++diff;
@@ -2954,7 +2954,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
             {
             dir = (key=='>') ? 1 : -1;
 
-            while ( !driver_key_pressed() )
+            while (!driver_key_pressed())
                {
                tick = readticker();
                PalTable__Rotate(this, dir, rotate_lo, rotate_hi);

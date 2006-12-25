@@ -412,6 +412,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
                driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
             driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
          }
+		 /* TODO: rework key interaction to blocking wait */
         while (!driver_key_pressed()) { }
         done = driver_get_key();
         switch(done) {

@@ -1245,7 +1245,7 @@ rescan:  /* entry for changed browse parms */
                                    /* draw all visible windows */
      while (!done)
      {
-       if(driver_key_pressed())
+       if (driver_key_pressed())
        {
           driver_get_key();
           break;
@@ -1403,6 +1403,7 @@ rescan:  /* entry for changed browse parms */
           strcat(mesg,winlist.name);
           strcat(mesg,"? (Y/N)");
           showtempmsg(mesg);
+		  /* TODO: change interaction mode from polling to waiting for a key */
           while (!driver_key_pressed()) ;
           cleartempmsg();
           c = driver_get_key();
