@@ -455,7 +455,28 @@ int getakeynohelp(void)
 
 int keypressed(void)
 {
-	return wintext_getkeypress(0);
+	int ch = wintext_getkeypress(0);
+	if (ch)
+	{
+		keybuffer = ch;
+		if (F1 == ch && helpmode)
+		{
+			keybuffer = 0;
+			inside_help = 1;
+			help(0);
+			inside_help = 0;
+			ch = 0;
+		}
+		else if (TAB == ch && tabmode)
+		{
+			keybuffer = 0;
+			tab_display();
+			ch = 0;
+		}
+	}
+
+	return ch;
+
 #if 0
 	extern unsigned int  wintext_keypress_head;
 	extern unsigned int  wintext_keypress_tail;

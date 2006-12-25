@@ -16,5 +16,6 @@ extern int			wintext_textoff(void);
 extern int			wintext_texton(void);
 extern BYTE *		wintext_screen_get(void);
 extern void			wintext_screen_set(const BYTE *copy);
+extern void			wintext_hide_cursor(void);
 
 #endif
