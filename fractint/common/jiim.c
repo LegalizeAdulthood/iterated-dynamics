@@ -769,7 +769,7 @@ void Jiim(int which)         /* called by fractint */
             case '.':
                zoom *= (float)1.15;
                break;
-            case SPACE:
+            case FIK_SPACE:
                xcjul = cr;
                ycjul = ci;
                goto finish;

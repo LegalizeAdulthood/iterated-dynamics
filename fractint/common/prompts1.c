@@ -799,7 +799,7 @@ static int input_field_list(
          buf[i++] = ' ';
       buf[vlen] = 0;
       driver_put_string(row,col,attr,buf);
-      curkey = keycursor(row,col); /* get a keystroke */
+      curkey = driver_key_cursor(row,col); /* get a keystroke */
       switch (curkey) {
          case ENTER:
          case ENTER_2:

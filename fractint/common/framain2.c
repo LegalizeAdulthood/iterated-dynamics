@@ -851,7 +851,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          Jiim(ORBIT);
       }
       break;
-   case SPACE:                  /* spacebar, toggle mand/julia   */
+   case FIK_SPACE:                  /* spacebar, toggle mand/julia   */
       if(bf_math || evolving)
          break;
       if (fractype == CELLULAR)
@@ -892,7 +892,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             clear_zoombox();
             Jiim(JIIM);
             key = driver_get_key();    /* flush keyboard buffer */
-            if (key != SPACE)
+            if (key != FIK_SPACE)
             {
                   ungetakey(key);
                   break;
@@ -1465,7 +1465,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case 'z':                    /* type specific parms */
    case 'g':
    case 5:
-   case SPACE:
+   case FIK_SPACE:
       clear_zoombox();
       if (fromtext_flag == 1)
          fromtext_flag = 0;
@@ -1479,7 +1479,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          i = passes_options();
       else if (*kbdchar == 'z')
          i = get_fract_params(1);
-      else if (*kbdchar == 5 || *kbdchar == SPACE)
+      else if (*kbdchar == 5 || *kbdchar == FIK_SPACE)
          i = get_evolve_Parms();
       else
          i = get_cmd_string();
