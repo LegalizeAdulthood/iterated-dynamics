@@ -2241,7 +2241,7 @@ void flip_image(int key)
    case 24:            /* control-X - reverse X-axis */
       for (i = 0; i < ixhalf; i++)
       {
-         if(driver_key_pressed())
+         if (driver_key_pressed())
             break;
          for (j = 0; j < ydots; j++)
          {
@@ -2271,7 +2271,7 @@ void flip_image(int key)
    case 25:            /* control-Y - reverse Y-aXis */
       for (j = 0; j < iyhalf; j++)
       {
-         if(driver_key_pressed())
+         if (driver_key_pressed())
             break;
          for (i = 0; i < xdots; i++)
          {
@@ -2301,7 +2301,7 @@ void flip_image(int key)
    case 26:            /* control-Z - reverse X and Y aXis */
       for (i = 0; i < ixhalf; i++)
       {
-         if(driver_key_pressed())
+         if (driver_key_pressed())
             break;
          for (j = 0; j < ydots; j++)
          {

@@ -3475,7 +3475,7 @@ static int _fastcall guessrow(int firstpass,int y,int blocksize)
          put_line(j,xxstart,ixstop,&dstack[xxstart]);
       if((j=y+i+halfblock)<=iystop)
          put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
-      if(driver_key_pressed()) return -1;
+      if (driver_key_pressed()) return -1;
    }
    if(plot!=putcolor)  /* symmetry, just vertical & origin the fast way */
    {
@@ -3496,7 +3496,7 @@ static int _fastcall guessrow(int firstpass,int y,int blocksize)
             put_line(j,xxstart,ixstop,&dstack[xxstart]);
          if((j=yystop-(y+i+halfblock-yystart))>iystop && j<ydots)
             put_line(j,xxstart,ixstop,&dstack[xxstart+OLDMAXPIXELS]);
-         if(driver_key_pressed()) return -1;
+         if (driver_key_pressed()) return -1;
       }
    }
    return 0;

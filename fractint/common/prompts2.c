@@ -1059,7 +1059,7 @@ int starfield(void)
    spindac(0,1);                 /* load it, but don't spin */
    for(row = 0; row < ydots; row++) {
       for(col = 0; col < xdots; col++) {
-         if(driver_key_pressed()) {
+         if (driver_key_pressed()) {
             driver_buzzer(1);
             busy = 0;
             return(1);

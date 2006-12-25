@@ -306,7 +306,7 @@ int do_AutoStereo(void)
    {
       while(Y < ydots)
       {
-          if(driver_key_pressed())
+          if (driver_key_pressed())
           {
              ret = 1;
              goto exit_stereo;
@@ -335,7 +335,8 @@ int do_AutoStereo(void)
    done = 0;
    while(done==0)
    {
-      while(driver_key_pressed()==0); /* to trap F1 key */
+	   /* TODO: change interaction from constant polling to waiting */
+      while (driver_key_pressed() == 0); /* to trap F1 key */
       kbdchar = driver_get_key();
       switch(kbdchar)
       {

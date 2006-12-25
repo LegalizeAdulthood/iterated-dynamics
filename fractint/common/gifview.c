@@ -420,7 +420,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       if(orbit_delay > 0)
          sleepms(orbit_delay);
       w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
-      if(driver_key_pressed())
+      if (driver_key_pressed())
       {
         driver_mute();
         return(-1);
@@ -460,7 +460,7 @@ int sound_line(BYTE *pixels, int linelen)
       }
    }   
    driver_mute();
-   if(driver_key_pressed())
+   if (driver_key_pressed())
       ret = -1;
    return(ret);
 }   

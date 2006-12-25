@@ -780,27 +780,30 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    }
 
 int help(int action)
-   {
-   static char unknowntopic_msg[] = "Unknown Help Topic";
-   HIST      curr;
-   int       oldlookatmouse;
-   int       oldhelpmode;
-   int       flags;
-   HIST      next;
+{
+	static char unknowntopic_msg[] = "Unknown Help Topic";
+	HIST      curr;
+	int       oldlookatmouse;
+	int       oldhelpmode;
+	int       flags;
+	HIST      next;
+	char *buffer_orig;
 
-   if (helpmode == -1)   /* is help disabled? */
-      {
-      return (0);
-      }
+	if (helpmode == -1)   /* is help disabled? */
+	{
+		return (0);
+	}
 
-   if (help_file == -1)
-      {
-      driver_buzzer(2);
-      return (0);
-      }
+	if (help_file == -1)
+    {
+		driver_buzzer(2);
+		return (0);
+    }
 
-   buffer = (char *)malloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
-                        sizeof(PAGE)*max_pages);
+
+	buffer = (char *)malloc((long)MAX_PAGE_SIZE + sizeof(LINK)*max_links +
+							sizeof(PAGE)*max_pages);
+	buffer_orig = buffer;
 
    if (buffer == NULL)
       {
@@ -834,6 +837,7 @@ int help(int action)
 
    do
       {
+	  assert(buffer == buffer_orig);
       switch(action)
          {
          case ACTION_PREV2:
@@ -913,6 +917,7 @@ int help(int action)
       }
    while (action != ACTION_QUIT);
 
+   assert(buffer_orig == buffer);
    free((BYTE *)buffer);
 
    driver_unstack_screen();

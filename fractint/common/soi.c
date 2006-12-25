@@ -632,7 +632,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
      max_rhombus_depth = rhombus_depth;
   rhombus_stack[rhombus_depth] = avail;
 
-  if(driver_key_pressed())
+  if (driver_key_pressed())
     {
     status = 1;
     goto rhombus_done;
@@ -662,7 +662,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       
       for(y=y1, im=cim1; y<y2; y++, im+=imstep)
 	{
-	  if(driver_key_pressed())
+	  if (driver_key_pressed())
 	    {
 	    status = 1;
             goto rhombus_done;
