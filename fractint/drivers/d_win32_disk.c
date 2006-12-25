@@ -829,10 +829,10 @@ win32_disk_get_key(Driver *drv)
 
 	if (ch)
 	{
+		extern int inside_help;
 		keybuffer = ch;
-		if (F1 == ch && helpmode)
+		if (F1 == ch && helpmode && !inside_help)
 		{
-			extern int inside_help;
 			keybuffer = 0;
 			inside_help = 1;
 			help(0);
