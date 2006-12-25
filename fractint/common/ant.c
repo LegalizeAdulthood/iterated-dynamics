@@ -153,7 +153,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             kbdchar = driver_get_key();
          switch (kbdchar)
          {
-         case SPACE:
+         case FIK_SPACE:
             step = 1 - step;
             break;
          case ESC:
@@ -291,7 +291,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
             kbdchar = driver_get_key();
          switch (kbdchar)
          {
-         case SPACE:
+         case FIK_SPACE:
             step = 1 - step;
             break;
          case ESC:

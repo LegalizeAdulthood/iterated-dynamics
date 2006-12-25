@@ -429,14 +429,14 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 	i = MapVirtualKey(vk, 0);
 	j = MapVirtualKey(vk, 2);
 	k = (i << 8) + j;
-	if (vk == 0x10 || vk == 0x11) /* shift or ctl key */
+	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
 	{
 		j = 0;       /* send flag: special key down */
 		k = 0xff00 + (unsigned int) vk;
 	}
 	if (j == 0)        /* use this call only for non-ASCII keys */
 	{
-		wintext_addkeypress(k);
+		wintext_addkeypress(1000 + i);
 	}
 }
 
@@ -451,7 +451,7 @@ static void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	j = MapVirtualKey(vk, 2);
 	k = (i << 8) + j;
 	j = 1;
-	if (vk == 0x10 || vk == 0x11) /* shift or ctl key */
+	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
 	{
 		j = 0;       /* send flag: special key up */
 		k = 0xfe00 + vk;
@@ -501,7 +501,8 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	if (wintext_hWndCopy == NULL)
 	{
 		wintext_hWndCopy = hWnd;
-	} else if (hWnd != wintext_hWndCopy)  /* ??? not the text-mode window! */
+	}
+	else if (hWnd != wintext_hWndCopy)  /* ??? not the text-mode window! */
 	{
          return DefWindowProc(hWnd, message, wParam, lParam);
 	}
@@ -880,6 +881,7 @@ void wintext_clear(void)
 		memset(&g_instance.chars[y][0], 0, (size_t) WINTEXT_MAX_COL);
 		memset(&g_instance.attrs[y][0], 0, (size_t) WINTEXT_MAX_COL);
 	}
+    InvalidateRect(wintext_hWndCopy, NULL, FALSE);
 }
 
 BYTE *wintext_screen_get(void)

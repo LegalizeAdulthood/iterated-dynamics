@@ -1288,7 +1288,7 @@ int input_field(
          driver_put_string(row,col,attr,buf);
          display = 0;
          }
-      curkey = keycursor(row+insert,col+offset);  /* get a keystroke */
+      curkey = driver_key_cursor(row+insert,col+offset);  /* get a keystroke */
       if(curkey == 1047) curkey = 47; /* numeric slash */
       switch (curkey) {
          case ENTER:

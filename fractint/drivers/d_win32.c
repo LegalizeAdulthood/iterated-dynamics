@@ -184,6 +184,11 @@ static int win32_key_pressed(Driver *drv)
 	return 0;
 }
 
+static int win32_key_cursor(Driver *drv, int row, int col)
+{
+	return 0;
+}
+
 static int win32_wait_key_pressed(Driver *drv, int timeout)
 {
 	return 0;

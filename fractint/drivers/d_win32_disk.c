@@ -3,6 +3,7 @@
  * Routines for a Win32 disk video mode driver for fractint.
  */
 #include <assert.h>
+#include <stdio.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -73,8 +74,6 @@ extern void normaline(void);
 #endif
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
 
-#define CALLED(fn_) function_called(fn_, __FILE__, __LINE__, TRUE)
-#define CALLINFO(fn_) function_called(fn_, __FILE__, __LINE__, FALSE)
 
 static VIDEOINFO win32_disk_info =
 {
@@ -96,6 +95,7 @@ struct tagDriverWin32Disk
 	int screen_count;
 	BYTE *saved_screens[MAXSCREENS];
 	int saved_cursor[MAXSCREENS+1];
+	BOOL cursor_shown;
 	int cursor_row;
 	int cursor_col;
 
@@ -154,7 +154,31 @@ function_called(const char *fn, const char *file, unsigned line, int error)
 	char buffer[512];
 	sprintf(buffer, "%s(%d): %c%s called\n", file, line, error ? '!' : '?', fn);
 	OutputDebugString(buffer);
+	if (error)
+	{
+		ASSERT(FALSE);
+	}
 }
+
+void
+ods(const char *file, unsigned int line, const char *format, ...)
+{
+	char header[MAX_PATH+1] = { 0 };
+	char buffer[MAX_PATH+1] = { 0 };
+	va_list args;
+
+	va_start(args, format);
+	_vsnprintf(buffer, MAX_PATH, format, args);
+	_snprintf(header, MAX_PATH, "%s(%d): %s\n", file, line, buffer);
+	va_end(args);
+
+	OutputDebugString(header);
+}
+#define ODS(text_)						ods(__FILE__, __LINE__, text_)
+#define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
+#define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
+#define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
+#define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
 
 /*----------------------------------------------------------------------
 *
@@ -173,7 +197,7 @@ function_called(const char *fn, const char *file, unsigned line, int error)
 static void
 win32_disk_terminate(Driver *drv)
 {
-	CALLED("win32_disk_terminate");
+	ODS("win32_disk_terminate");
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (!di->simple_input)
@@ -244,7 +268,7 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 {
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
-	CALLINFO("win32_disk_init");
+	ODS1("win32_disk_init %d", *argc);
 	if (wintext_initialize(g_instance, NULL, "FractInt for Windows"))
 	{
 		return TRUE;
@@ -364,7 +388,7 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 static void
 win32_disk_flush(Driver *drv)
 {
-	CALLED("win32_disk_flush");
+	ODS("win32_disk_flush");
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	wrefresh(di->curwin);
@@ -377,7 +401,7 @@ win32_disk_flush(Driver *drv)
 static int
 win32_disk_resize(Driver *drv)
 {
-	CALLED("win32_disk_resize");
+	ODS("win32_disk_resize");
 	return 0;
 }
 
@@ -402,7 +426,7 @@ win32_disk_read_palette(Driver *drv)
 	DI(di);
 	int i;
 
-	CALLED("win32_disk_read_palette");
+	ODS("win32_disk_read_palette");
 	if (gotrealdac == 0)
 		return -1;
 	for (i = 0; i < 256; i++)
@@ -435,7 +459,7 @@ win32_disk_write_palette(Driver *drv)
 	DI(di);
 	int i;
 
-	CALLED("win32_disk_write_palette");
+	ODS("win32_disk_write_palette");
 	for (i = 0; i < 256; i++)
 	{
 		di->cols[i][0] = g_dacbox[i][0];
@@ -449,14 +473,14 @@ win32_disk_write_palette(Driver *drv)
 static int
 win32_disk_start_video(Driver *drv)
 {
-	CALLED("win32_disk_start_video");
+	ODS("win32_disk_start_video");
 	return 0;
 }
 
 static int
 win32_disk_end_video(Driver *drv)
 {
-	CALLED("win32_disk_end_video");
+	ODS("win32_disk_end_video");
 	return 0;				/* set flag: video ended */
 }
 
@@ -503,7 +527,7 @@ static void
 win32_disk_schedule_alarm(Driver *drv, int soon)
 {
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-	CALLED("win32_disk_schedule_alarm");
+	ODS1("win32_disk_schedule_alarm %d", soon);
 #if 0
 	signal(SIGALRM, (SignalHandler) setredrawscreen);
 	if (soon)
@@ -534,7 +558,7 @@ win32_disk_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DI(di);
 
-	CALLINFO("win32_disk_write_pixel");
+	ODS3("win32_disk_write_pixel (%d,%d)=%d", x, y, color);
 	ASSERT(di->pixels);
 	di->pixels[y*di->width + x] = (BYTE) (color & 0xFF);
 }
@@ -559,7 +583,7 @@ win32_disk_read_pixel(Driver *drv, int x, int y)
 {
 	DI(di);
 
-	CALLINFO("win32_disk_read_pixel");
+	ODS2("win32_disk_read_pixel (%d,%d)", x, y);
 	return (int) di->pixels[y*di->width + x];
 }
 
@@ -583,7 +607,7 @@ win32_disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int i;
 	int width = lastx-x+1;
-	CALLINFO("win32_disk_write_span");
+	ODS3("win32_disk_write_span (%d,%d,%d)", y, x, lastx);
 
 	for (i = 0; i < width; i++)
 	{
@@ -610,7 +634,7 @@ static void
 win32_disk_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
-	CALLINFO("win32_disk_read_span");
+	ODS3("win32_disk_read_span (%d,%d,%d)", y, x, lastx);
 	width = lastx-x+1;
 	for (i = 0; i < width; i++)
 	{
@@ -621,13 +645,13 @@ win32_disk_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 static void
 win32_disk_set_line_mode(Driver *drv, int mode)
 {
-	CALLED("win32_disk_set_line_mode");
+	ODS1("win32_disk_set_line_mode %d", mode);
 }
 
 static void
 win32_disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 {
-	CALLED("win32_disk_draw_line");
+	ODS5("win32_disk_draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
 	draw_line(x1, y1, x2, y2, color);
 }
 
@@ -778,7 +802,7 @@ handleesc(DriverWin32Disk *di)
 static void
 win32_disk_redraw(Driver *drv)
 {
-	CALLED("win32_disk_redraw");
+	ODS("win32_disk_redraw");
 	wintext_paintscreen(0, 80, 0, 24);
 }
 
@@ -801,64 +825,12 @@ win32_disk_redraw(Driver *drv)
 static int
 win32_disk_get_key(Driver *drv)
 {
-	int block = 0;
-	CALLINFO("win32_disk_get_key");
 	return wintext_getkeypress(1);
-#if 0
-	static int skipcount = 0;
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-
-	while (1)
-	{
-		if (input_pending())
-		{
-			int ch = getachar(di);
-			return (ch == ESC) ? handleesc(di) : translatekey(ch);
-		}
-
-		/* Don't check X events every time, since that is expensive */
-		skipcount++;
-		if (block == 0 && skipcount < 25)
-			break;
-		skipcount = 0;
-
-		if (di->xbufkey)
-		{
-			int ch = di->xbufkey;
-			di->xbufkey = 0;
-			skipcount = 9999; /* If we got a key, check right away next time */
-			return translatekey(ch);
-		}
-
-		if (!block)
-			break;
-
-		{
-			fd_set reads;
-			struct timeval tout;
-			int status;
-
-			FD_ZERO(&reads);
-			FD_SET(0, &reads);
-			tout.tv_sec = 0;
-			tout.tv_usec = 500000;
-
-			status = select(1, &reads, NULL, NULL, &tout);
-			if (status <= 0)
-				return 0;
-		}
-	}
-#endif
-
-	return 0;
 }
 
 static void
 parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-#if 0
-	char *plus, *minus;
-
 	/* do something like XParseGeometry() */
 	if (2 == sscanf(spec, "%dx%d", width, height))
 	{
@@ -866,15 +838,14 @@ parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 		*x = 0;
 		*y = 0;
 	}
-#endif
 }
 
 static void
 win32_disk_window(Driver *drv)
 {
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
+	DI(di);
+	ODS("win32_disk_window");
 
-	CALLINFO("win32_disk_window");
 	wintext_texton();
 	if (di->pixels != NULL)
 	{
@@ -957,7 +928,7 @@ win32_disk_shell(Driver *drv)
 static void
 win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
-	CALLED("win32_disk_set_video_mode");
+	ODS("win32_disk_set_video_mode");
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (diskflag)
@@ -1012,53 +983,8 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 static void
 win32_disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-
-	CALLINFO("win32_disk_put_string");
 	wintext_putstring(g_textcbase + col, g_textrbase + row, attr, msg);
 #if 0
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-	int so = 0;
-
-	if (row != -1)
-		textrow = row;
-	if (col != -1)
-		textcol = col;
-
-	if (attr & INVERSE || attr & BRIGHT)
-	{
-		wstandout(di->curwin);
-		so = 1;
-	}
-	wmove(di->curwin,textrow+textrbase, textcol+textcbase);
-	while (1)
-	{
-		if (*msg == '\0') break;
-		if (*msg == '\n')
-		{
-			textcol = 0;
-			textrow++;
-			wmove(di->curwin,textrow+textrbase, textcol+textcbase);
-		}
-		else
-		{
-			char *ptr;
-			ptr = strchr(msg,'\n');
-			if (ptr == NULL)
-			{
-				waddstr(di->curwin,msg);
-				break;
-			}
-			else
-				waddch(di->curwin,*msg);
-		}
-		msg++;
-	}
-	if (so)
-		wstandend(di->curwin);
-
-	wrefresh(di->curwin);
-	fflush(stdout);
 	getyx(di->curwin,textrow,textcol);
 	textrow -= textrbase;
 	textcol -= textcbase;
@@ -1068,15 +994,13 @@ win32_disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 static void
 win32_disk_set_for_text(Driver *drv)
 {
-	CALLED("win32_disk_set_for_text");
-	/* TODO: hide graphics window, show text window */
+	ODS("win32_disk_set_for_text: TODO: hide graphics window, show text window");
 }
 
 static void
 win32_disk_set_for_graphics(Driver *drv)
 {
-	CALLED("win32_disk_set_for_graphics");
-	/* TODO: hide text window, show graphics window */
+	ODS("win32_disk_set_for_graphics: TODO: hide text window, show graphics window");
 }
 
 static void
@@ -1092,36 +1016,33 @@ win32_disk_set_clear(Driver *drv)
 static void
 win32_disk_scroll_up(Driver *drv, int top, int bot)
 {
-	CALLINFO("win32_disk_scroll_up");
+	ODS2("win32_disk_scroll_up %d, %d", top, bot);
 	wintext_scroll_up(top, bot);
-#if 0
-	DriverWin32Disk *di = (DriverWin32Disk *) drv;
-
-	wmove(di->curwin, top, 0);
-	wdeleteln(di->curwin);
-	wmove(di->curwin, bot, 0);
-	winsertln(di->curwin);
-	wrefresh(di->curwin);
-#endif
 }
 
 static BYTE *
 win32_disk_find_font(Driver *drv, int parm)
 {
-	CALLED("win32_disk_find_font");
+	ODS1("win32_disk_find_font %d", parm);
 	return NULL;
 }
 
 static void
 win32_disk_move_cursor(Driver *drv, int row, int col)
 {
-	CALLED("win32_disk_move_cursor");
-
+	DI(di);
+	ODS2("win32_disk_move_cursor %d,%d", row, col);
 
 	if (row != -1)
 	{
-
+		di->cursor_row = row;
 	}
+	if (col != -1)
+	{
+		di->cursor_col = col;
+	}
+	wintext_cursor(col, row, -1);
+
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (row == -1)
@@ -1147,14 +1068,15 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 static void
 win32_disk_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
-	CALLINFO("win32_disk_set_attr");
 	wintext_set_attr(row, col, attr, count);
 }
 
 static void
 win32_disk_hide_text_cursor(Driver *drv)
 {
-	CALLED("win32_disk_hide_text_cursor");
+	DI(di);
+	di->cursor_shown = FALSE;
+	ODS("win32_disk_hide_text_cursor");
 }
 
 /*
@@ -1167,7 +1089,7 @@ win32_disk_stack_screen(Driver *drv)
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	int i;
 
-	CALLINFO("win32_disk_stack_screen");
+	ODS("win32_disk_stack_screen");
 	di->saved_cursor[di->screen_count+1] = g_textrow*80 + g_textcol;
 	if (++di->screen_count)
 	{ /* already have some stacked */
@@ -1192,7 +1114,7 @@ win32_disk_unstack_screen(Driver *drv)
 {
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
-	CALLINFO("win32_disk_unstack_screen");
+	ODS("win32_disk_unstack_screen");
 	g_textrow = di->saved_cursor[di->screen_count] / 80;
 	g_textcol = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
@@ -1213,7 +1135,7 @@ win32_disk_discard_screen(Driver *drv)
 {
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
-	CALLINFO("win32_disk_discard_screen");
+	ODS("win32_disk_discard_screen");
 	if (--di->screen_count >= 0)
 	{ /* unstack */
 		if (di->saved_screens[di->screen_count])
@@ -1227,34 +1149,34 @@ win32_disk_discard_screen(Driver *drv)
 static int
 win32_disk_init_fm(Driver *drv)
 {
-	CALLED("win32_disk_init_fm");
+	ODS("win32_disk_init_fm");
 	return 0;
 }
 
 static void
 win32_disk_buzzer(Driver *drv, int kind)
 {
-	CALLINFO("win32_disk_buzzer");
+	ODS1("win32_disk_buzzer %d", kind);
 	MessageBeep(MB_OK);
 }
 
 static int
 win32_disk_sound_on(Driver *drv, int freq)
 {
-	CALLED("win32_disk_sound_on");
+	ODS1("win32_disk_sound_on %d", freq);
 	return 0;
 }
 
 static void
 win32_disk_sound_off(Driver *drv)
 {
-	CALLED("win32_disk_sound_off");
+	ODS("win32_disk_sound_off");
 }
 
 static void
 win32_disk_mute(Driver *drv)
 {
-	CALLED("win32_disk_mute");
+	ODS("win32_disk_mute");
 }
 
 static int
@@ -1268,6 +1190,23 @@ win32_disk_key_pressed(Driver *drv)
 {
 	extern int keypressed(void);
 	return keypressed();
+}
+
+static int
+win32_disk_key_cursor(Driver *drv, int row, int col)
+{
+	DI(di);
+	int result = win32_disk_key_pressed(drv);
+	ODS2("win32_disk_key_cursor %d,%d", row, col);
+
+	di->cursor_col = col;
+	di->cursor_row = row;
+	if (0 == result)
+	{
+		wintext_cursor(row, col, -1);
+		result = win32_disk_get_key(drv);
+	}
+	return result;
 }
 
 static int

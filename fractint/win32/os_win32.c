@@ -18,13 +18,14 @@
 #include "wintext.h"
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
-#define CALLED(fn_) function_called(fn_, __FILE__, __LINE__)
+#define CALLED(fn_) function_called(fn_, __FILE__, __LINE__, TRUE)
+#define CALLINFO(fn_) function_called(fn_, __FILE__, __LINE__, FALSE)
 
 /* External declarations */
 extern int (*dotread)(int, int);			/* read-a-dot routine */
 extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
 extern void check_samename(void);
-extern void function_called(const char *fn, const char *file, unsigned int line);
+extern void function_called(const char *fn, const char *file, unsigned int line, int error);
 
 HINSTANCE g_instance = NULL;
 
@@ -40,7 +41,7 @@ typedef enum
 	FE_COMMAND_SHELL,				/* d */
 	FE_ORBITS_WINDOW,				/* o */
 	FE_SELECT_FRACTAL_TYPE,			/* t */
-	FE_TOGGLE_JULIA,				/* SPACE */
+	FE_TOGGLE_JULIA,				/* FIK_SPACE */
 	FE_TOGGLE_INVERSE,				/* j */
 	FE_PRIOR_IMAGE,					/* h */
 	FE_REVERSE_HISTORY,				/* ^H */
@@ -263,7 +264,7 @@ static fractint_event keyboard_event(int key)
 		CONTROL_P,	FE_PRINT_IMAGE,
 		CONTROL_S,	FE_STEREOGRAM,
 		ESC,		FE_QUIT,
-		SPACE,		FE_TOGGLE_JULIA,
+		FIK_SPACE,	FE_TOGGLE_JULIA,
 		INSERT,		FE_RESTART,
 		DELETE,		FE_SELECT_VIDEO_MODE,
 		'@',		FE_EXECUTE_COMMANDS,
@@ -952,44 +953,6 @@ void swapnormwrite(void)
 }
 
 /*
-; **************** Function keycursor(row, col)  **********************
-;       Subroutine to wait cx ticks, or till keystroke pending
-*/
-int keycursor(int row, int col)
-{
-#if 1
-	/* TODO */
-	CALLED("keycursor");
-	return 0;
-#else
-	int i, cursor_style;
-
-	if (row == -2 && col == -2)
-		return fractint_getkeypress(1);
-
-	if (row == -1)
-		row = textrow;
-	if (col == -1)
-		col = textcol;
-
-	cursor_style = 1;
-	if (row < 0)
-	{
-		cursor_style = 2;
-		row = row & 0x7fff;
-	}
-
-	i = fractint_getkeypress(0);
-	if (i == 0)
-		wintext_cursor(col, row, cursor_style);
-	i = fractint_getkeypress(1);
-	wintext_cursor(col, row, 0);
-
-	return i;
-#endif
-}
-
-/*
 ; ************* function scroll_center(tocol, torow) *************************
 
 ; scroll_center --------------------------------------------------------------
@@ -1062,15 +1025,20 @@ void windows_shell_to_dos(void)
 	};
 	PROCESS_INFORMATION pi = { 0 };
 	char *comspec = getenv("COMSPEC");
+	CALLINFO("windows_shell_to_dos");
 
-	CALLED("windows_shell_to_dos");
 	if (NULL == comspec)
 	{
 		comspec = "cmd.exe";
 	}
 	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
 	{
-		WaitForSingleObject(pi.hProcess, INFINITE);
+		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
+		while (WAIT_TIMEOUT == status)
+		{
+			wintext_look_for_activity(0);
+			status = WaitForSingleObject(pi.hProcess, 1000); 
+		}
 		CloseHandle(pi.hProcess);
 	}
 }

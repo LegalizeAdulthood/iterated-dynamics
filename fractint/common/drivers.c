@@ -180,6 +180,12 @@ driver_get_key(void)
 }
 
 int
+driver_key_cursor(int row, int col)
+{
+	return (*display->key_cursor)(display, row, col);
+}
+
+int
 driver_key_pressed(void)
 {
 	return (*display->key_pressed)(display);

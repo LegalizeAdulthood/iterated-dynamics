@@ -96,11 +96,11 @@ void intro(void)
 #endif
       for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
          delay(100);
-      if (driver_key_pressed() == 32)
+      if (driver_key_pressed() == FIK_SPACE)
          {      /* spacebar pauses */
          driver_get_key();
          driver_wait_key_pressed(0);
-         if (driver_key_pressed() == 32)
+         if (driver_key_pressed() == FIK_SPACE)
             driver_get_key();
          }
       delaymax = 15;

@@ -869,7 +869,7 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define   ALT_TAB        1165
 #define   BACK_TAB       1015  /* shift tab */
 #define   ESC            27
-#define   SPACE          32
+#define   FIK_SPACE      32
 #define   SF1            1084
 #define   SF2            1085
 #define   SF3            1086

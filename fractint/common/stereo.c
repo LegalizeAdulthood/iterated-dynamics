@@ -340,7 +340,7 @@ int do_AutoStereo(void)
       switch(kbdchar)
       {
          case ENTER:   /* toggle bars */
-         case SPACE:
+         case FIK_SPACE:
             toggle_bars(&bars, barwidth, colour);
             break;
          case 'c':
