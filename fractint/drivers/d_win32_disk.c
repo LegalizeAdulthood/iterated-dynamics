@@ -825,7 +825,29 @@ win32_disk_redraw(Driver *drv)
 static int
 win32_disk_get_key(Driver *drv)
 {
-	return wintext_getkeypress(1);
+	int ch = wintext_getkeypress(1);
+
+	if (ch)
+	{
+		keybuffer = ch;
+		if (F1 == ch && helpmode)
+		{
+			extern int inside_help;
+			keybuffer = 0;
+			inside_help = 1;
+			help(0);
+			inside_help = 0;
+			ch = 0;
+		}
+		else if (TAB == ch && tabmode)
+		{
+			keybuffer = 0;
+			tab_display();
+			ch = 0;
+		}
+	}
+
+	return ch;
 }
 
 static void
@@ -1041,7 +1063,8 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 	{
 		di->cursor_col = col;
 	}
-	wintext_cursor(col, row, -1);
+	wintext_cursor(col, row, 1);
+	di->cursor_shown = TRUE;
 
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
@@ -1075,7 +1098,11 @@ static void
 win32_disk_hide_text_cursor(Driver *drv)
 {
 	DI(di);
-	di->cursor_shown = FALSE;
+	if (TRUE == di->cursor_shown)
+	{
+		di->cursor_shown = FALSE;
+		wintext_hide_cursor();
+	}
 	ODS("win32_disk_hide_text_cursor");
 }
 
@@ -1203,7 +1230,7 @@ win32_disk_key_cursor(Driver *drv, int row, int col)
 	di->cursor_row = row;
 	if (0 == result)
 	{
-		wintext_cursor(row, col, -1);
+		wintext_cursor(col, row, 1);
 		result = win32_disk_get_key(drv);
 	}
 	return result;
