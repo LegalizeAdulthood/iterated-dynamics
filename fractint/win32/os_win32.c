@@ -739,7 +739,6 @@ void windows_pump_messages(BOOL nowait)
 void delay(int delaytime)
 {
 	wintext_look_for_activity(FALSE);
-	//windows_pump_messages(TRUE);
 	Sleep(delaytime);
 }
 
