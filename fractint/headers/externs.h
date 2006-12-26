@@ -9,7 +9,7 @@
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int                   active_system;						/* = 0 for DOS, = WINFRACT for WinFract */
-extern int                   adapter;							/* index into videotable[] */
+extern int                   g_adapter;							/* index into videotable[] */
 extern AlternateMath         alternatemath[];					/* alternate math function pointers */
 extern int                   Ambient;							/* Ambient= parameter value */
 extern int                   andcolor;							/* AND mask for iteration to get color index */
@@ -220,7 +220,7 @@ extern int                   init3d[20];
 extern _CMPLX                init;
 extern int                   initbatch;
 extern int                   initcyclelimit;
-extern int                   initmode;
+extern int                   g_init_mode;
 extern _CMPLX                initorbit;
 extern int                   initsavetime;
 extern int                   inside;

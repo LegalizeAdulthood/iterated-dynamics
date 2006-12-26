@@ -27,6 +27,8 @@
 
 extern HINSTANCE g_instance;
 
+#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
+
 #define DI(name_) DriverWin32Disk *name_ = (DriverWin32Disk *) drv
 
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
@@ -36,8 +38,8 @@ extern int dotmode;  /* video access method (= 19)    */
 extern int sxdots, sydots;  /* total # of dots on the screen   */
 extern int sxoffs, syoffs;  /* offset of drawing area          */
 extern int colors;   /* maximum colors available    */
-extern int initmode;
-extern int adapter;
+extern int g_init_mode;
+extern int g_adapter;
 extern int gotrealdac;
 extern int inside_help;
 extern  float finalaspectratio;
@@ -74,11 +76,91 @@ extern void normaline(void);
 #endif
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
 
+/* VIDEOINFO:															*/
+/*         char    name[26];       Adapter name (IBM EGA, etc)          */
+/*         char    comment[26];    Comments (UNTESTED, etc)             */
+/*         int     keynum;         key number used to invoked this mode */
+/*                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
+/*         int     videomodeax;    begin with INT 10H, AX=(this)        */
+/*         int     videomodebx;                 ...and BX=(this)        */
+/*         int     videomodecx;                 ...and CX=(this)        */
+/*         int     videomodedx;                 ...and DX=(this)        */
+/*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
+/*         int     dotmode;        video access method used by asm code */
+/*                                      1 == BIOS 10H, AH=12,13 (SLOW)  */
+/*                                      2 == access like EGA/VGA        */
+/*                                      3 == access like MCGA           */
+/*                                      4 == Tseng-like  SuperVGA*256   */
+/*                                      5 == P'dise-like SuperVGA*256   */
+/*                                      6 == Vega-like   SuperVGA*256   */
+/*                                      7 == "Tweaked" IBM-VGA ...*256  */
+/*                                      8 == "Tweaked" SuperVGA ...*256 */
+/*                                      9 == Targa Format               */
+/*                                      10 = Hercules                   */
+/*                                      11 = "disk video" (no screen)   */
+/*                                      12 = 8514/A                     */
+/*                                      13 = CGA 320x200x4, 640x200x2   */
+/*                                      14 = Tandy 1000                 */
+/*                                      15 = TRIDENT  SuperVGA*256      */
+/*                                      16 = Chips&Tech SuperVGA*256    */
+/*         int     xdots;          number of dots across the screen     */
+/*         int     ydots;          number of dots down the screen       */
+/*         int     colors;         number of colors available           */
 
-static VIDEOINFO win32_disk_info =
+static VIDEOINFO modes[] =
 {
-	"xfractint mode           ","                         ",
-	999, 0,	 0,   0,   0,	19, 640, 480,  256
+	{
+		"IBM 256-Color VGA/MCGA	  ", "Quick and LOTS of colors ",
+		F2, 0, 0, 0, 0,				19, 320, 200, 256
+	},
+	{
+		"IBM VGA (non-std)        ", "Quick and LOTS of colors ",
+		F3, 0, 0, 0, 0,				19, 320, 400, 256
+	},
+	{
+		"IBM VGA (non-std)        ", "Quick and LOTS of colors ",
+		F4, 0, 0, 0, 0,				19, 360, 480, 256
+	},
+	{
+		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA ",
+		F5, 0, 0, 0, 0,				19, 640, 400, 256
+	},
+	{
+		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA ",
+		F6, 0, 0, 0, 0,				19, 640, 480, 256
+	},
+	{
+		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA",
+		F7 , 0, 0, 0, 0,				  27,   800,   600, 256
+	},
+	{
+		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA",
+		F8, 0, 0, 0, 0,				  27,  1024,   768, 256
+	},
+	{
+		"VESA Standard interface  ", "OK: Andy Fu - Chips&Tech",
+		F9, 0, 0, 0, 0,				  28,  1280,  1024, 256
+	},
+	{
+		"Disk video               ", "                        ",
+		SF1, 0, 0, 0, 0,				  28,  1024,  1024, 256
+	},
+	{
+		"Disk video               ", "                        ",
+		SF2, 0, 0, 0, 0,				  28,  1600,  1200, 256
+	},
+	{
+		"Disk video               ", "                        ",
+		SF3, 0, 0, 0, 0,				  28,  2048,  2048, 256
+	},
+	{
+		"Disk video               ", "                        ",
+		SF4, 0, 0, 0, 0,				  28,  4096,  4096, 256
+	},
+	{
+		"Disk video               ", "                        ",
+		SF5, 0, 0, 0, 0,				  28,  8192,  8192, 256
+	}
 };
 
 typedef struct tagDriverWin32Disk DriverWin32Disk;
@@ -178,6 +260,7 @@ ods(const char *file, unsigned int line, const char *format, ...)
 #define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
 #define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
 #define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
+#define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
 #define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
 
 /*----------------------------------------------------------------------
@@ -276,48 +359,14 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 
 	ODS1("win32_disk_init %d", *argc);
-	if (wintext_initialize(g_instance, NULL, "FractInt for Windows"))
+	if (!wintext_initialize(g_instance, NULL, "FractInt for Windows"))
 	{
-		return TRUE;
-	}
-
-	return FALSE;
-#if 0
-
-	/*
-	* Check a bunch of important conditions
-	*/
-	if (sizeof(short) != 2)
-	{
-		OutputDebugString("Error: need short to be 2 bytes\n");
-		exit(-1);
-	}
-	if (sizeof(long) < sizeof(FLOAT4))
-	{
-		OutputDebugString("Error: need sizeof(long) >= sizeof(FLOAT4)\n");
-		exit(-1);
-	}
-
-	di->term = newterm(NULL, stdout, stdin);
-	if (!di->term)
-		return 0;
-
-	di->curwin = stdscr;
-	cbreak();
-	noecho();
-
-	if (standout())
-	{
-		text_type = 1;
-		standend();
-	}
-	else
-	{
-		text_type = 1;
+		return FALSE;
 	}
 
 	initdacbox();
 
+#if 0
 	if (!di->simple_input)
 	{
 		signal(SIGINT, (SignalHandler) goodbye);
@@ -353,9 +402,17 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 			argv[copied++] = argv_copy[i];
 		*argc = copied;
 	}
-
-	/* add_video_mode(&win32_disk_info); */
 #endif
+
+	{
+		int m;
+		for (m = 0; m < NUM_OF(modes); m++)
+		{
+			add_video_mode(drv, &modes[m]);
+		}
+	}
+
+	return TRUE;
 }
 
 #ifdef FPUERR
@@ -894,7 +951,7 @@ win32_disk_window(Driver *drv)
 		fcntl(0, F_SETFL, FNDELAY);
 	}
 
-	adapter = 0;
+	g_adapter = 0;
 
 	/* We have to do some X stuff even for disk video, to parse the geometry
 	* string */
@@ -957,7 +1014,7 @@ win32_disk_shell(Driver *drv)
 static void
 win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
-	ODS("win32_disk_set_video_mode");
+	ODS4("win32_disk_set_video_mode %d,%d,%d,%d", ax, bx, cx, dx);
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (diskflag)

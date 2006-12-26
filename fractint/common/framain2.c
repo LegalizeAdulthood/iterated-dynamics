@@ -78,7 +78,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
              calc_status = -1;
          }
 #endif
-         memcpy((char *)&videoentry,(char *)&videotable[adapter],
+         memcpy((char *)&videoentry,(char *)&videotable[g_adapter],
                     sizeof(videoentry));
          axmode  = videoentry.videomodeax; /* video mode (BIOS call)   */
          bxmode  = videoentry.videomodebx; /* video mode (BIOS call)   */
@@ -128,7 +128,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                   stopmsg(0,msg);
                   askvideo = TRUE;
                   }
-               initmode = -1;
+               g_init_mode = -1;
                driver_set_for_text(); /* switch to text mode */
                /* goto restorestart; */
                return(RESTORESTART);
@@ -256,7 +256,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                showfile = 1;
                potflag  = 0;
                pot16bit = 0;
-               initmode = -1;
+               g_init_mode = -1;
                calc_status = 2;         /* "resume" without 16-bit */
                driver_set_for_text();
                get_fracttype();
@@ -654,10 +654,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          param_history(0); /* save history */
          if (i == 0)
          {
-            initmode = adapter;
+            g_init_mode = g_adapter;
             *frommandel = 0;
          }
-         else if (initmode < 0) /* it is supposed to be... */
+         else if (g_init_mode < 0) /* it is supposed to be... */
             driver_set_for_text();     /* reset to text mode      */
          return(IMAGESTART);
       }
@@ -739,10 +739,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 #endif
       driver_stack_screen();
       i = get_commands();
-      if (initmode != -1)
+      if (g_init_mode != -1)
       {                         /* video= was specified */
-         adapter = initmode;
-         initmode = -1;
+         g_adapter = g_init_mode;
+         g_init_mode = -1;
          i |= 1;
          savedac = 0;
       }
@@ -774,7 +774,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          usr_floatflag = 1;
       else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
-      initmode = adapter;
+      g_init_mode = g_adapter;
       return(IMAGESTART);
    case 'i':                    /* 3d fractal parms */
       if (get_fract3d_params() >= 0)    /* get the parameters */
@@ -1042,7 +1042,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                historyptr = 0;
          restore_history_info(historyptr);
          zoomoff = 1;
-         initmode = adapter;
+         g_init_mode = g_adapter;
          if (curfractalspecific->isinteger != 0 &&
              curfractalspecific->tofloat != NOFRACTAL)
             usr_floatflag = 0;
@@ -1399,7 +1399,7 @@ image.  Sorry - it's the best we could do."};
    case FIK_DELETE:         /* select video mode from list */
    {
       driver_stack_screen();
-      *kbdchar = select_video_mode(adapter);
+      *kbdchar = select_video_mode(g_adapter);
       if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
          driver_discard_screen();
       else
@@ -1409,11 +1409,11 @@ image.  Sorry - it's the best we could do."};
    default:                     /* other (maybe a valid Fn key) */
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
       {
-         adapter = k;
-/*                if (videotable[adapter].dotmode != 11       Took out so that */
-/*                  || videotable[adapter].colors != colors)  DAC is not reset */
+         g_adapter = k;
+/*                if (videotable[g_adapter].dotmode != 11       Took out so that */
+/*                  || videotable[g_adapter].colors != colors)  DAC is not reset */
 /*                   savedac = 0;                    when changing video modes */
-         if (videotable[adapter].colors != colors)
+         if (videotable[g_adapter].colors != colors)
             savedac = 0;
          calc_status = 0;
          *kbdmore = 0;
@@ -1450,10 +1450,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          param_history(0); /* save history */
          if (i == 0)
          {
-            initmode = adapter;
+            g_init_mode = g_adapter;
             *frommandel = 0;
          }
-         else if (initmode < 0) /* it is supposed to be... */
+         else if (g_init_mode < 0) /* it is supposed to be... */
             driver_set_for_text();     /* reset to text mode      */
          return(IMAGESTART);
       }
@@ -1502,7 +1502,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          usr_floatflag = 1;
       else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
-      initmode = adapter;
+      g_init_mode = g_adapter;
       return(IMAGESTART);
    case '\\':                   /* return to prev image    */
    case CTL_BACKSLASH:
@@ -1518,7 +1518,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
                historyptr = 0;
          restore_history_info(historyptr);
          zoomoff = 1;
-         initmode = adapter;
+         g_init_mode = g_adapter;
          if (curfractalspecific->isinteger != 0 &&
              curfractalspecific->tofloat != NOFRACTAL)
             usr_floatflag = 0;
@@ -1895,7 +1895,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 
    case FIK_DELETE:         /* select video mode from list */
       driver_stack_screen();
-      *kbdchar = select_video_mode(adapter);
+      *kbdchar = select_video_mode(g_adapter);
       if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
          driver_discard_screen();
       else
@@ -1904,8 +1904,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    default:             /* other (maybe valid Fn key */
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
       {
-         adapter = k;
-         if (videotable[adapter].colors != colors)
+         g_adapter = k;
+         if (videotable[g_adapter].colors != colors)
             savedac = 0;
          calc_status = 0;
          *kbdmore = 0;

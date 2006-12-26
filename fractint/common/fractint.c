@@ -54,7 +54,7 @@ struct videoinfo videoentry;
 int helpmode;
 
 long timer_start,timer_interval;        /* timer(...) start & total */
-int     adapter;                /* Video Adapter chosen from list in ...h */
+int     g_adapter;                /* Video Adapter chosen from list in ...h */
 char *fract_dir1="", *fract_dir2="";
 
 #if !defined(_WIN32)
@@ -337,7 +337,7 @@ restart:   /* insert key re-starts here */
 	max_colors = 256;                    /* the Windows version is lower */
 	max_kbdcount = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
 
-	if (showfile && initmode < 0)
+	if (showfile && g_init_mode < 0)
 	{
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == ESC)
@@ -387,7 +387,7 @@ restorestart:
 			if (showfile < 0 && getafilename(hdg,gifmask,readname) < 0)
 			{
 				showfile = 1;               /* cancelled */
-				initmode = -1;
+				g_init_mode = -1;
 				break;
 			}
 
@@ -423,7 +423,7 @@ restorestart:
 	tabmode = 1;
 	lookatmouse = 0;                     /* ignore mouse */
 
-	if (((overlay3d && !initbatch) || stacked) && initmode < 0)        /* overlay command failed */
+	if (((overlay3d && !initbatch) || stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
 		driver_unstack_screen();                  /* restore the graphics screen */
 		stacked = 0;
@@ -456,10 +456,10 @@ imagestart:                             /* calc/display a new image */
 		lookatmouse = -PAGE_UP;           /* just mouse left button, == pgup */
 
 	cyclelimit = initcyclelimit;         /* default cycle limit   */
-	adapter = initmode;                  /* set the video adapter up */
-	initmode = -1;                       /* (once)                   */
+	g_adapter = g_init_mode;                  /* set the video adapter up */
+	g_init_mode = -1;                       /* (once)                   */
 
-	while (adapter < 0)                /* cycle through instructions */
+	while (g_adapter < 0)                /* cycle through instructions */
 	{
 		if (initbatch)                          /* batch, nothing to do */
 		{
@@ -470,7 +470,7 @@ imagestart:                             /* calc/display a new image */
 		if (kbdchar == INSERT) goto restart;      /* restart pgm on Insert Key */
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 			kbdchar = select_video_mode(-1);
-		if ((adapter = check_vidmode_key(0,kbdchar)) >= 0)
+		if ((g_adapter = check_vidmode_key(0,kbdchar)) >= 0)
 			break;                                 /* got a video mode now */
 #ifndef XFRACT
 		if ('A' <= kbdchar && kbdchar <= 'Z')

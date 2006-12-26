@@ -92,7 +92,7 @@ int     initbatch;              /* 1 if batch run (no kbd)  */
 int     initsavetime;           /* autosave minutes         */
 _CMPLX  initorbit;              /* initial orbitvalue */
 char    useinitorbit;           /* flag for initorbit */
-int     initmode;               /* initial video mode       */
+int     g_init_mode;               /* initial video mode       */
 int     initcyclelimit;         /* initial cycle limit      */
 BYTE    usemag;                 /* use center-mag corners   */
 long    bailout;                /* user input bailout value */
@@ -547,7 +547,7 @@ int cmdfiles(int argc,char **argv)
       }
 
    if (first_init == 0) {
-      initmode = -1; /* don't set video when <ins> key used */
+      g_init_mode = -1; /* don't set video when <ins> key used */
       showfile = 1;  /* nor startup image file              */
       }
 
@@ -632,7 +632,7 @@ static void initvars_restart()          /* <ins> key init */
    initbatch = 0;                       /* not in batch mode         */
    checkcurdir = 0;                     /* flag to check current dire for files */
    initsavetime = 0;                    /* no auto-save              */
-   initmode = -1;                       /* no initial video mode     */
+   g_init_mode = -1;                       /* no initial video mode     */
    viewwindow = 0;                      /* no view window            */
    viewreduction = (float)4.2;
    viewcrop = 1;
@@ -881,7 +881,7 @@ static int cmdfile(FILE *handle,int mode)
       }
    fclose(handle);
 #ifdef XFRACT
-   initmode = 0;                /* Skip credits if @file is used. */
+   g_init_mode = 0;                /* Skip credits if @file is used. */
 #endif
    memcpy(suffix,savesuffix,10000);
    if(changeflag&1)
@@ -1114,7 +1114,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (strcmp(variable,s_batch) == 0 ) {     /* batch=?      */
          if (yesnoval[0] < 0) goto badarg;
 #ifdef XFRACT
-         initmode = yesnoval[0]?0:-1; /* skip credits for batch mode */
+         g_init_mode = yesnoval[0]?0:-1; /* skip credits for batch mode */
 #endif
          initbatch = yesnoval[0];
          return 3;
@@ -1328,14 +1328,14 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
    if (strcmp(variable,s_video) == 0) {         /* video=? */
       if (active_system == 0) {
          if ((k = check_vidmode_keyname(value)) == 0) goto badarg;
-         initmode = -1;
+         g_init_mode = -1;
          for (i = 0; i < MAXVIDEOTABLE; ++i) {
             if (videotable[i].keynum == k) {
-               initmode = i;
+               g_init_mode = i;
                break;
                }
             }
-         if (initmode == -1) goto badarg;
+         if (g_init_mode == -1) goto badarg;
          }
       return 3;
       }
