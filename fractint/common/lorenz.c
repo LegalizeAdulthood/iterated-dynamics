@@ -2111,10 +2111,10 @@ then hit <s> to save, hit any other key to create second image."};
                diskisactive = 0;
                }
             /* is there a better way to clear the screen in graphics mode? */
-            driver_set_video_mode(videoentry.videomodeax,
-                videoentry.videomodebx,
-                videoentry.videomodecx,
-                videoentry.videomodedx);
+            driver_set_video_mode(g_video_entry.videomodeax,
+                g_video_entry.videomodebx,
+                g_video_entry.videomodecx,
+                g_video_entry.videomodedx);
          }
          else {                   /* Windows version */
 static char firstready2[]={"First (Left Eye) image is complete"};

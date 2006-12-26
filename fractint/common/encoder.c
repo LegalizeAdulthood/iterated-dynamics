@@ -666,14 +666,14 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
    save_info->ymax = yymax;
    save_info->creal = param[0];
    save_info->cimag = param[1];
-   save_info->videomodeax = (short) videoentry.videomodeax;
-   save_info->videomodebx = (short) videoentry.videomodebx;
-   save_info->videomodecx = (short) videoentry.videomodecx;
-   save_info->videomodedx = (short) videoentry.videomodedx;
-   save_info->dotmode = (short) (videoentry.dotmode % 100);
-   save_info->xdots = (short) videoentry.xdots;
-   save_info->ydots = (short) videoentry.ydots;
-   save_info->colors = (short) videoentry.colors;
+   save_info->videomodeax = (short) g_video_entry.videomodeax;
+   save_info->videomodebx = (short) g_video_entry.videomodebx;
+   save_info->videomodecx = (short) g_video_entry.videomodecx;
+   save_info->videomodedx = (short) g_video_entry.videomodedx;
+   save_info->dotmode = (short) (g_video_entry.dotmode % 100);
+   save_info->xdots = (short) g_video_entry.xdots;
+   save_info->ydots = (short) g_video_entry.ydots;
+   save_info->colors = (short) g_video_entry.colors;
    save_info->parm3 = 0;        /* pre version==7 fields */
    save_info->parm4 = 0;
    save_info->dparm3 = param[2];
