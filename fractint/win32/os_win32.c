@@ -128,7 +128,8 @@ int disktarga = 0;
 int DivideOverflow = 0;
 int (*dotread)(int, int);	/* read-a-dot routine */
 void (*dotwrite)(int, int, int); /* write-a-dot routine */
-void *extraseg;
+static char extrasegment[0x18000] = { 0 };
+void *extraseg = &extrasegment[0];
 int fake_lut = 0;
 int finishrow = 0;
 int fm_attack = 0;
@@ -461,11 +462,14 @@ int keypressed(void)
 		keybuffer = ch;
 		if (F1 == ch && helpmode)
 		{
-			keybuffer = 0;
-			inside_help = 1;
-			help(0);
-			inside_help = 0;
-			ch = 0;
+			if (!inside_help)
+			{
+				keybuffer = 0;
+				inside_help = 1;
+				help(0);
+				inside_help = 0;
+				ch = 0;
+			}
 		}
 		else if (TAB == ch && tabmode)
 		{
@@ -476,32 +480,6 @@ int keypressed(void)
 	}
 
 	return ch;
-
-#if 0
-	extern unsigned int  wintext_keypress_head;
-	extern unsigned int  wintext_keypress_tail;
-
-    int ch;
-    ch = getkeyint(0);
-    if (!ch)
-		return 0;
-    keybuffer = ch;
-    if (ch==F1 && helpmode)
-	{
-		keybuffer = 0;
-		inside_help = 1;
-		help(0);
-		inside_help = 0;
-		return 0;
-    }
-	else if (ch==TAB && tabmode)
-	{
-		keybuffer = 0;
-		tab_display();
-		return 0;
-    }
-    return ch;
-#endif
 }
 
 /* Wait for a key.
@@ -888,7 +866,6 @@ void initasmvars(void)
 		return;
 	}
 	overflow = 0;
-	extraseg = malloc(0x18000);
 
 	/* set cpu type */
 	cpu = 1;

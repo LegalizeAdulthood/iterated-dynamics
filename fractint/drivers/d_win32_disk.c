@@ -197,7 +197,14 @@ ods(const char *file, unsigned int line, const char *format, ...)
 static void
 win32_disk_terminate(Driver *drv)
 {
+	DI(di);
 	ODS("win32_disk_terminate");
+
+	if (di->pixels)
+	{
+		free(di->pixels);
+		di->pixels = NULL;
+	}
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (!di->simple_input)
@@ -1063,7 +1070,9 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 	{
 		di->cursor_col = col;
 	}
-	wintext_cursor(col, row, 1);
+	row = di->cursor_row;
+	col = di->cursor_col;
+	wintext_cursor(g_textcbase + col, g_textrbase + row, 1);
 	di->cursor_shown = TRUE;
 
 #if 0
@@ -1091,7 +1100,7 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 static void
 win32_disk_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
-	wintext_set_attr(row, col, attr, count);
+	wintext_set_attr(g_textrbase + row, g_textcbase + col, attr, count);
 }
 
 static void

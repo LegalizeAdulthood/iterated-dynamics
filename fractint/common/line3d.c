@@ -2662,7 +2662,7 @@ static int line3dmem(void)
       the purpose of filling in gaps with triangle procedure */
    /* first 8k of extraseg now used in decoder TW 3/95 */
    /* TODO: allocate real memory, not reuse shared segment */
-   lastrow = extraseg;
+   lastrow = (struct point *) extraseg;
 
    check_extra = sizeof(*lastrow) * xdots;
    if (SPHERE)
