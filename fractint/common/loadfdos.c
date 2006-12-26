@@ -46,7 +46,7 @@ static void   format_vid_inf(int i,char *err,char *buf);
 static double vid_aspect(int tryxdots,int tryydots);
 
 struct vidinf {
-   int entnum;     /* videoentry subscript */
+   int entnum;     /* g_video_entry subscript */
    unsigned flags; /* flags for sort's compare, defined below */
    };
 /* defines for flags; done this way instead of bit union to ensure ordering;
@@ -80,21 +80,21 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 static void format_vid_inf(int i,char *err,char *buf)
 {
    char kname[5];
-   memcpy((char *)&videoentry,(char *)&vidtbl[i],
-              sizeof(videoentry));
-   vidmode_keyname(videoentry.keynum,kname);
+   memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+              sizeof(g_video_entry));
+   vidmode_keyname(g_video_entry.keynum,kname);
    sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
-           kname, videoentry.name, err,
-           videoentry.xdots, videoentry.ydots,
-           videoentry.colors, videoentry.comment);
-   videoentry.xdots = 0; /* so tab_display knows to display nothing */
+           kname, g_video_entry.name, err,
+           g_video_entry.xdots, g_video_entry.ydots,
+           g_video_entry.colors, g_video_entry.comment);
+   g_video_entry.xdots = 0; /* so tab_display knows to display nothing */
 }
 #endif
 
 static double vid_aspect(int tryxdots,int tryydots)
 {  /* calc resulting aspect ratio for specified dots in current mode */
    return (double)tryydots / (double)tryxdots
-        * (double)videoentry.xdots / (double)videoentry.ydots
+        * (double)g_video_entry.xdots / (double)g_video_entry.ydots
         * screenaspect;
    }
 
@@ -200,31 +200,31 @@ Press F1 for help, "};
 
    /* setup table entry for each vid mode, flagged for how well it matches */
    for (i = 0; i < vidtbllen; ++i) {
-      memcpy((char *)&videoentry,(char *)&vidtbl[i],
-                 sizeof(videoentry));
+      memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+                 sizeof(g_video_entry));
       tmpflags = VI_EXACT;
-      if (videoentry.keynum == 0)
+      if (g_video_entry.keynum == 0)
          tmpflags |= VI_NOKEY;
-      if (info->xdots > videoentry.xdots || info->ydots > videoentry.ydots)
+      if (info->xdots > g_video_entry.xdots || info->ydots > g_video_entry.ydots)
          tmpflags |= VI_SSMALL;
-      else if (info->xdots < videoentry.xdots || info->ydots < videoentry.ydots)
+      else if (info->xdots < g_video_entry.xdots || info->ydots < g_video_entry.ydots)
          tmpflags |= VI_SBIG;
-      if (filexdots > videoentry.xdots || fileydots > videoentry.ydots)
+      if (filexdots > g_video_entry.xdots || fileydots > g_video_entry.ydots)
          tmpflags |= VI_VSMALL;
-      else if (filexdots < videoentry.xdots || fileydots < videoentry.ydots)
+      else if (filexdots < g_video_entry.xdots || fileydots < g_video_entry.ydots)
          tmpflags |= VI_VBIG;
-      if (filecolors > videoentry.colors)
+      if (filecolors > g_video_entry.colors)
          tmpflags |= VI_CSMALL;
-      if (filecolors < videoentry.colors)
+      if (filecolors < g_video_entry.colors)
          tmpflags |= VI_CBIG;
       if (i == g_init_mode)
          tmpflags -= VI_EXACT;
-      if (videoentry.dotmode%100 == 11) {
+      if (g_video_entry.dotmode%100 == 11) {
          tmpflags |= VI_DISK2;
          if ((tmpflags & (VI_SBIG+VI_SSMALL+VI_VBIG+VI_VSMALL)) != 0)
             tmpflags |= VI_DISK1;
          }
-      if (fileaspectratio != 0 && videoentry.dotmode%100 != 11
+      if (fileaspectratio != 0 && g_video_entry.dotmode%100 != 11
         && (tmpflags & VI_VSMALL) == 0) {
          ftemp = vid_aspect(filexdots,fileydots);
          if ( ftemp < fileaspectratio * 0.98
@@ -330,17 +330,17 @@ if (fastrestore  && !askvideo)
 
    /* ok, we're going to return with a video mode */
 
-   memcpy((char *)&videoentry,(char *)&videotable[g_init_mode],
-              sizeof(videoentry));
+   memcpy((char *)&g_video_entry,(char *)&videotable[g_init_mode],
+              sizeof(g_video_entry));
 
 
    if (viewwindow &&
-      filexdots == videoentry.xdots && fileydots == videoentry.ydots) {
+      filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots) {
       /* pull image into a view window */
       if (calc_status != 4) /* if not complete */
           calc_status = 0;  /* can't resume anyway */
       if (viewxdots) {
-         viewreduction = (float) (videoentry.xdots / viewxdots);
+         viewreduction = (float) (g_video_entry.xdots / viewxdots);
          viewxdots = viewydots = 0; /* easier to use auto reduction */
       }
       viewreduction = (float)((int)(viewreduction + 0.5)); /* need integer value */
@@ -349,18 +349,18 @@ if (fastrestore  && !askvideo)
    }
 
    skipxdots = skipydots = 0; /* set for no reduction */
-   if (videoentry.xdots < filexdots || videoentry.ydots < fileydots) {
+   if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots) {
       /* set up to load only every nth pixel to make image fit */
       if (calc_status != 4) /* if not complete */
           calc_status = 0;  /* can't resume anyway */
       skipxdots = skipydots = 1;
-      while (skipxdots * videoentry.xdots < filexdots) ++skipxdots;
-      while (skipydots * videoentry.ydots < fileydots) ++skipydots;
+      while (skipxdots * g_video_entry.xdots < filexdots) ++skipxdots;
+      while (skipydots * g_video_entry.ydots < fileydots) ++skipydots;
       i = j = 0;
       for(;;) {
          tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
          tmpydots = (fileydots + skipydots - 1) / skipydots;
-         if (fileaspectratio == 0 || videoentry.dotmode%100 == 11)
+         if (fileaspectratio == 0 || g_video_entry.dotmode%100 == 11)
             break;
          /* reduce further if that improves aspect */
          if ((ftemp = vid_aspect(tmpxdots,tmpydots)) > fileaspectratio) {
@@ -398,22 +398,22 @@ if (fastrestore  && !askvideo)
 
    /* setup view window stuff */
    viewwindow = viewxdots = viewydots = 0;
-   if (filexdots != videoentry.xdots || fileydots != videoentry.ydots) {
+   if (filexdots != g_video_entry.xdots || fileydots != g_video_entry.ydots) {
       /* image not exactly same size as screen */
       viewwindow = 1;
       ftemp = finalaspectratio
-            * (double)videoentry.ydots / (double)videoentry.xdots
+            * (double)g_video_entry.ydots / (double)g_video_entry.xdots
             / screenaspect;
       if (finalaspectratio <= screenaspect) {
-         i = (int)((double)videoentry.xdots / (double)filexdots * 20.0 + 0.5);
+         i = (int)((double)g_video_entry.xdots / (double)filexdots * 20.0 + 0.5);
          tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
-         i = (int)((double)videoentry.xdots / tmpreduce + 0.5);
+         i = (int)((double)g_video_entry.xdots / tmpreduce + 0.5);
          j = (int)((double)i * ftemp + 0.5);
          }
       else {
-         i = (int)((double)videoentry.ydots / (double)fileydots * 20.0 + 0.5);
+         i = (int)((double)g_video_entry.ydots / (double)fileydots * 20.0 + 0.5);
          tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
-         j = (int)((double)videoentry.ydots / tmpreduce + 0.5);
+         j = (int)((double)g_video_entry.ydots / tmpreduce + 0.5);
          i = (int)((double)j / ftemp + 0.5);
          }
       if (i != filexdots || j != fileydots) { /* too bad, must be explicit */

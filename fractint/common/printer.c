@@ -1442,10 +1442,10 @@ color_test()
 {
    int x,y,color,i,j,xx,yy;
    int bw,cw,bh,ch;
-   setvideomode(videoentry.videomodeax,
-                videoentry.videomodebx,
-                videoentry.videomodecx,
-                videoentry.videomodedx);
+   setvideomode(g_video_entry.videomodeax,
+                g_video_entry.videomodebx,
+                g_video_entry.videomodecx,
+                g_video_entry.videomodedx);
    bw = xdots/25; cw = bw * 2 / 3;
    bh = ydots/10; ch = bh * 2 / 3;
    g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 60;

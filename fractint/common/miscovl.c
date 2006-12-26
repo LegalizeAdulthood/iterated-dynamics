@@ -204,7 +204,7 @@ void make_batch_file()
    if(*s_makepar == 0)
       goto skip_UI;
 
-   vidmode_keyname(videoentry.keynum, vidmde);
+   vidmode_keyname(g_video_entry.keynum, vidmde);
    for(;;)
    {
 prompt_user:
@@ -1734,34 +1734,34 @@ int select_video_mode(int curmode)
    /* pick default mode */
    if (curmode < 0) {
       switch (video_type) { /* set up a reasonable default (we hope) */
-         case VIDEO_TYPE_HGC:  videoentry.videomodeax = 8;   /* hgc */
-                  videoentry.colors = 2;
+         case VIDEO_TYPE_HGC:  g_video_entry.videomodeax = 8;   /* hgc */
+                  g_video_entry.colors = 2;
                   break;
-         case VIDEO_TYPE_CGA:  videoentry.videomodeax = 4;   /* cga */
-                  videoentry.colors = 4;
+         case VIDEO_TYPE_CGA:  g_video_entry.videomodeax = 4;   /* cga */
+                  g_video_entry.colors = 4;
                   break;
-         case VIDEO_TYPE_EGA:  videoentry.videomodeax = 16;  /* ega */
-                  videoentry.colors = 16;
+         case VIDEO_TYPE_EGA:  g_video_entry.videomodeax = 16;  /* ega */
+                  g_video_entry.colors = 16;
                   if (mode7text) {              /* egamono */
-                     videoentry.videomodeax = 15;
-                     videoentry.colors = 2;
+                     g_video_entry.videomodeax = 15;
+                     g_video_entry.colors = 2;
                      }
                   break;
-         default: videoentry.videomodeax = 19;  /* mcga/vga? */
-                  videoentry.colors = 256;
+         default: g_video_entry.videomodeax = 19;  /* mcga/vga? */
+                  g_video_entry.colors = 256;
                   break;
          }
       }
    else
-      memcpy((char *)&videoentry,(char *)&videotable[curmode],
-                 sizeof(videoentry));
+      memcpy((char *)&g_video_entry,(char *)&videotable[curmode],
+                 sizeof(g_video_entry));
 #ifndef XFRACT
    for (i = 0; i < vidtbllen; ++i) { /* find default mode */
-      if ( videoentry.videomodeax == vidtbl[entnums[i]].videomodeax
-        && videoentry.colors      == vidtbl[entnums[i]].colors
+      if ( g_video_entry.videomodeax == vidtbl[entnums[i]].videomodeax
+        && g_video_entry.colors      == vidtbl[entnums[i]].colors
         && (curmode < 0
-            || memcmp((char *)&videoentry,(char *)&vidtbl[entnums[i]],
-                          sizeof(videoentry)) == 0))
+            || memcmp((char *)&g_video_entry,(char *)&vidtbl[entnums[i]],
+                          sizeof(g_video_entry)) == 0))
          break;
       }
    if (i >= vidtbllen) /* no match, default to first entry */
@@ -1789,8 +1789,8 @@ int select_video_mode(int curmode)
    else         /* picked by Enter key */
       i = entnums[i];
 #endif
-   memcpy((char *)&videoentry,(char *)&vidtbl[i],
-              sizeof(videoentry));  /* the selected entry now in videoentry */
+   memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+              sizeof(g_video_entry));  /* the selected entry now in g_video_entry */
 
 #ifndef XFRACT
    /* copy fractint.cfg table to resident table, note selected entry */
@@ -1800,8 +1800,8 @@ int select_video_mode(int curmode)
       if (vidtbl[i].keynum > 0) {
          memcpy((char *)&videotable[j],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
-         if (memcmp((char *)&videoentry,(char *)&vidtbl[i],
-                        sizeof(videoentry)) == 0)
+         if (memcmp((char *)&g_video_entry,(char *)&vidtbl[i],
+                        sizeof(g_video_entry)) == 0)
             k = vidtbl[i].keynum;
          if (++j >= MAXVIDEOTABLE-1)
             break;
@@ -1812,7 +1812,7 @@ int select_video_mode(int curmode)
 #endif
    if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
       memcpy((char *)&videotable[MAXVIDEOTABLE-1],
-                 (char *)&videoentry,sizeof(*vidtbl));
+                 (char *)&g_video_entry,sizeof(*vidtbl));
       ret = 1400; /* special value for check_vidmode_key */
       }
 
@@ -1829,15 +1829,15 @@ void format_vid_table(int choice,char *buf)
    char kname[5];
    char biosflag;
    int truecolorbits;
-   memcpy((char *)&videoentry,(char *)&vidtbl[entsptr[choice]],
-              sizeof(videoentry));
-   vidmode_keyname(videoentry.keynum,kname);
-   biosflag = (char)((videoentry.dotmode % 100 == 1) ? 'B' : ' ');
+   memcpy((char *)&g_video_entry,(char *)&vidtbl[entsptr[choice]],
+              sizeof(g_video_entry));
+   vidmode_keyname(g_video_entry.keynum,kname);
+   biosflag = (char)((g_video_entry.dotmode % 100 == 1) ? 'B' : ' ');
    sprintf(buf,"%-5s %-25s %5d %5d ",  /* 44 chars */
-           kname, videoentry.name, videoentry.xdots, videoentry.ydots);
-   if((truecolorbits = videoentry.dotmode/1000) == 0)
+           kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
+   if((truecolorbits = g_video_entry.dotmode/1000) == 0)
       sprintf(local_buf,"%s%3d",  /* 47 chars */
-           buf, videoentry.colors);
+           buf, g_video_entry.colors);
    else 
       sprintf(local_buf,"%s%3s",  /* 47 chars */
            buf, (truecolorbits == 4)?" 4g":
@@ -1845,7 +1845,7 @@ void format_vid_table(int choice,char *buf)
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
    sprintf(buf,"%s%c %-25s",  /* 74 chars */
-           local_buf, biosflag, videoentry.comment);
+           local_buf, biosflag, g_video_entry.comment);
 }
 
 #ifndef XFRACT
@@ -1934,7 +1934,7 @@ static void update_fractint_cfg()
       ++linenum;
       if (linenum == nextlinenum) { /* replace this line */
          memcpy((char *)&vident,(char *)&vidtbl[nextmode],
-                    sizeof(videoentry));
+                    sizeof(g_video_entry));
          vidmode_keyname(vident.keynum,kname);
          strcpy(buf,vident.name);
          i = (int) strlen(buf);
@@ -2430,7 +2430,7 @@ static char *expand_var(char *var, char *buf)
    else if(strcmp(var,s_vidkey) == 0)   /* 2 to 3 chars */
    {
       char vidmde[5];
-      vidmode_keyname(videoentry.keynum, vidmde);
+      vidmode_keyname(g_video_entry.keynum, vidmde);
       sprintf(buf,"%s",vidmde);
       out = buf;
    }

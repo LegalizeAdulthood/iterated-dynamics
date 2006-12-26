@@ -50,7 +50,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 
-struct videoinfo videoentry;
+struct videoinfo g_video_entry;
 int helpmode;
 
 long timer_start,timer_interval;        /* timer(...) start & total */

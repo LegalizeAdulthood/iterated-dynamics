@@ -78,16 +78,16 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
              calc_status = -1;
          }
 #endif
-         memcpy((char *)&videoentry,(char *)&videotable[g_adapter],
-                    sizeof(videoentry));
-         axmode  = videoentry.videomodeax; /* video mode (BIOS call)   */
-         bxmode  = videoentry.videomodebx; /* video mode (BIOS call)   */
-         cxmode  = videoentry.videomodecx; /* video mode (BIOS call)   */
-         dxmode  = videoentry.videomodedx; /* video mode (BIOS call)   */
-         dotmode = videoentry.dotmode;     /* assembler dot read/write */
-         xdots   = videoentry.xdots;       /* # dots across the screen */
-         ydots   = videoentry.ydots;       /* # dots down the screen   */
-         colors  = videoentry.colors;      /* # colors available */
+         memcpy((char *)&g_video_entry,(char *)&videotable[g_adapter],
+                    sizeof(g_video_entry));
+         axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
+         bxmode  = g_video_entry.videomodebx; /* video mode (BIOS call)   */
+         cxmode  = g_video_entry.videomodecx; /* video mode (BIOS call)   */
+         dxmode  = g_video_entry.videomodedx; /* video mode (BIOS call)   */
+         dotmode = g_video_entry.dotmode;     /* assembler dot read/write */
+         xdots   = g_video_entry.xdots;       /* # dots across the screen */
+         ydots   = g_video_entry.ydots;       /* # dots down the screen   */
+         colors  = g_video_entry.colors;      /* # colors available */
          dotmode %= 1000;
          textsafe2 = dotmode / 100;
          dotmode  %= 100;
@@ -155,8 +155,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
             xdots = sxdots;
             ydots = sydots;
-            videoentry.xdots = xdots;
-            videoentry.ydots = ydots;
+            g_video_entry.xdots = xdots;
+            g_video_entry.ydots = ydots;
          }
 
          diskisactive = 0;              /* flag for disk-video routines */

@@ -828,7 +828,7 @@ extern char                  usr_stdcalcmode;
 extern int                   vesa_detect;
 extern int                   vesa_xres;
 extern int                   vesa_yres;
-extern struct videoinfo      videoentry;
+extern struct videoinfo      g_video_entry;
 extern VIDEOINFO             videotable[];
 extern int                   video_cutboth;
 extern int                   video_scroll;

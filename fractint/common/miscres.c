@@ -1129,10 +1129,10 @@ top:
    ++s_row;
    if(bf_math == 0)
      ++s_row;
-   if (videoentry.xdots && bf_math==0) {
+   if (g_video_entry.xdots && bf_math==0) {
       sprintf(msg,"Video: %dx%dx%d %s %s",
-              videoentry.xdots, videoentry.ydots, videoentry.colors,
-              videoentry.name, videoentry.comment);
+              g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
+              g_video_entry.name, g_video_entry.comment);
       driver_put_string(s_row++,2,C_GENERAL_MED,msg);
       }
    if(!(curfractalspecific->flags&NOZOOM))

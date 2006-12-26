@@ -677,7 +677,7 @@ pass_option_restart:
 /* for diskmode changed "viewx/ydots" to "virtual x/y" that do as above  */
 /* (since for diskmode they were updated by x/ydots that should be the   */
 /* same as sx/ydots for that mode)                                       */
-/* videotable and videoentry are now updated even for non-disk modes     */
+/* videotable and g_video_entry are now updated even for non-disk modes     */
 
 /* --------------------------------------------------------------------- */
 /*
@@ -703,10 +703,10 @@ int get_view_params()
    unsigned long estm_xmax=32767,estm_ymax=32767;
 #ifndef XFRACT
    unsigned long vidmem = (unsigned long)video_vram << 16;
-   int truebytes = videoentry.dotmode/1000;
+   int truebytes = g_video_entry.dotmode/1000;
 
    if (dotmode == 28)          /* setvideo might have changed mode 27 to 28 */
-      dotmode = videoentry.dotmode%100;
+      dotmode = g_video_entry.dotmode%100;
 #endif
 
    strcpy(hdg,o_hdg);
@@ -959,10 +959,10 @@ get_view_restart:
 #endif
 
    if (driver_diskp() || (virtual_screens && dotmode == 28)) {
-      videoentry.xdots = sxdots;
-      videoentry.ydots = sydots;
-      memcpy((char *)&videotable[g_adapter],(char *)&videoentry,
-                    sizeof(videoentry));
+      g_video_entry.xdots = sxdots;
+      g_video_entry.ydots = sydots;
+      memcpy((char *)&videotable[g_adapter],(char *)&g_video_entry,
+                    sizeof(g_video_entry));
       if (finalaspectratio == 0.0)
          finalaspectratio = (float)sydots/sxdots;
    }
