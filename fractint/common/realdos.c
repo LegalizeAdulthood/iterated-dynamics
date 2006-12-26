@@ -1649,7 +1649,7 @@ int load_fractint_cfg(int options)
 	int truecolorbits; 
 
 	/* TODO: allocate real memory, not reuse shared segment */
-	vidtbl = extraseg;
+	vidtbl = (VIDEOINFO *) extraseg;
 	cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
 #ifdef XFRACT

@@ -1365,6 +1365,7 @@ void goodbye()                  /* we done.  Bail out */
    else if (initbatch == 4)
      ret = 1;
    close_drivers();
+   _CrtDumpMemoryLeaks();
    exit(ret);
 }
 
