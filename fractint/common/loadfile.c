@@ -50,7 +50,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    struct ext_blk_7 blk_7_info;
 
    showfile = 1;                /* for any abort exit, pretend done */
-   initmode = -1;               /* no viewing mode set yet */
+   g_init_mode = -1;               /* no viewing mode set yet */
    oldfloatflag = usr_floatflag;
    loaded3d = 0;
    if(fastrestore)
@@ -336,11 +336,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       usr_floatflag = oldfloatflag; /*  floatflag in line3d is clarified */
 
    if (overlay3d) {
-      initmode = adapter;          /* use previous adapter mode for overlays */
+      g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
       if (filexdots > xdots || fileydots > ydots) {
          static char msg[]={"Can't overlay with a larger image"};
          stopmsg(0,msg);
-         initmode = -1;
+         g_init_mode = -1;
          return(-1);
          }
       }
@@ -359,7 +359,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             MemoryRelease((U16)blk_2_info.resume_data);
             blk_2_info.length = 0;
          }
-         initmode = -1;
+         g_init_mode = -1;
          return(-1);
          }
       }
@@ -371,7 +371,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       param[0] = 0;
       if (!initbatch)
          if (get_3d_params() < 0) {
-            initmode = -1;
+            g_init_mode = -1;
             return(-1);
             }
       }

@@ -52,8 +52,8 @@ extern	int	dotmode;		/* video access method (= 19)	   */
 extern	int	sxdots, sydots; 	/* total # of dots on the screen   */
 extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
 extern	int	colors; 		/* maximum colors available	   */
-extern	int	initmode;
-extern	int	adapter;
+extern	int	g_init_mode;
+extern	int	g_adapter;
 extern	int	gotrealdac;
 extern	int	inside_help;
 extern  float	finalaspectratio;
@@ -2054,7 +2054,7 @@ x11_window(Driver *drv)
   int i;
   DIX11(drv);
 
-  adapter = 0;
+  g_adapter = 0;
 
   /* We have to do some X stuff even for disk video, to parse the geometry
    * string */

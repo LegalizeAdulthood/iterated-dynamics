@@ -7,7 +7,7 @@
     of loading an image.  get_video_mode should return with:
       return code 0 for ok, -1 for error or cancelled by user
       video parameters setup for the mainline, in the dos case this means
-        setting initmode to video mode, based on this fractint.c will set up
+        setting g_init_mode to video mode, based on this fractint.c will set up
         for and call setvideomode
       set viewwindow on if file going to be loaded into a view smaller than
         physical screen, in this case also set viewreduction, viewxdots,
@@ -138,11 +138,11 @@ Press F1 for help, "};
    strcpy(warning,o_warning);
    strcpy(select_msg,o_select_msg);
 
-   initmode = -1;
+   g_init_mode = -1;
    load_fractint_cfg(0); /* get fractint.cfg into *vidtbl (== extraseg) */
 
    /* try to change any VESA entries to fit the loaded image size */
-   if (virtual_screens && video_vram && initmode == -1) {
+   if (virtual_screens && video_vram && g_init_mode == -1) {
       unsigned long vram = (unsigned long)video_vram << 16,
                     need = (unsigned long)info->xdots * info->ydots;
       if (need <= vram) {
@@ -179,21 +179,21 @@ Press F1 for help, "};
         && info->videomodecx == vident->videomodecx
         && info->videomodedx == vident->videomodedx
         && info->dotmode%100 == vident->dotmode%100) {
-         initmode = i;
+         g_init_mode = i;
          break;
          }
       }
 
    /* exit in makepar mode if no exact match of video mode in file */
-   if(*s_makepar == '\0' && initmode == -1)
+   if(*s_makepar == '\0' && g_init_mode == -1)
       return(0);
 
-   if (initmode == -1) /* try to find very good match for vid mode */
+   if (g_init_mode == -1) /* try to find very good match for vid mode */
       for (i = 0; i < vidtbllen; ++i) {
          vident = &vidtbl[i];
          if (info->xdots == vident->xdots && info->ydots == vident->ydots
            && filecolors == vident->colors) {
-            initmode = i;
+            g_init_mode = i;
             break;
             }
          }
@@ -217,7 +217,7 @@ Press F1 for help, "};
          tmpflags |= VI_CSMALL;
       if (filecolors < videoentry.colors)
          tmpflags |= VI_CBIG;
-      if (i == initmode)
+      if (i == g_init_mode)
          tmpflags -= VI_EXACT;
       if (videoentry.dotmode%100 == 11) {
          tmpflags |= VI_DISK2;
@@ -236,11 +236,11 @@ Press F1 for help, "};
       }
 
 if (fastrestore  && !askvideo)
-   initmode = adapter;
+   g_init_mode = g_adapter;
 
 #ifndef XFRACT
    gotrealmode = 0;
-   if ((initmode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0') {
+   if ((g_init_mode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0') {
       /* no exact match or (askvideo=yes and batch=no), and not
         in makepar mode, talk to user */
 
@@ -282,10 +282,10 @@ if (fastrestore  && !askvideo)
          }
       strcat((char *)dstack,"\n");
       if (info->info_id[0] != 'G' && save_system == 0)
-         if (initmode < 0)
+         if (g_init_mode < 0)
             strcat((char *)dstack,"Saved in unknown video mode.");
          else {
-            format_vid_inf(initmode,"",temp1);
+            format_vid_inf(g_init_mode,"",temp1);
             strcat((char *)dstack,temp1);
             }
       if (fileaspectratio != 0 && fileaspectratio != screenaspect)
@@ -305,32 +305,32 @@ if (fastrestore  && !askvideo)
       if (i == -1)
          return(-1);
       if (i < 0) { /* returned -100 - videotable entry number */
-         initmode = -100 - i;
+         g_init_mode = -100 - i;
          gotrealmode = 1;
          }
       else
-         initmode = vid[i].entnum;
+         g_init_mode = vid[i].entnum;
       }
 #else
-      initmode = 0;
+      g_init_mode = 0;
       j = vidtbl[0].keynum;
       gotrealmode = 0;
 #endif
 
    if (gotrealmode == 0) { /* translate from temp table to permanent */
-      if ((j = vidtbl[i=initmode].keynum) != 0) {
-         for (initmode = 0; initmode < MAXVIDEOTABLE-1; ++initmode)
-            if (videotable[initmode].keynum == j) break;
-         if (initmode >= MAXVIDEOTABLE-1) j = 0;
+      if ((j = vidtbl[i=g_init_mode].keynum) != 0) {
+         for (g_init_mode = 0; g_init_mode < MAXVIDEOTABLE-1; ++g_init_mode)
+            if (videotable[g_init_mode].keynum == j) break;
+         if (g_init_mode >= MAXVIDEOTABLE-1) j = 0;
          }
       if (j == 0) /* mode has no key, add to reserved slot at end */
-         memcpy((char *)&videotable[initmode=MAXVIDEOTABLE-1],
+         memcpy((char *)&videotable[g_init_mode=MAXVIDEOTABLE-1],
                     (char *)&vidtbl[i],sizeof(*vidtbl));
       }
 
    /* ok, we're going to return with a video mode */
 
-   memcpy((char *)&videoentry,(char *)&videotable[initmode],
+   memcpy((char *)&videoentry,(char *)&videotable[g_init_mode],
               sizeof(videoentry));
 
 
