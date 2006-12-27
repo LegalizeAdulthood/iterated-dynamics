@@ -102,7 +102,7 @@ return(0);                              /* set flag: video ended */
 
 void writevideo(int x, int y, int color)
 {
-
+#if !defined(_WIN32)
 union REGS regs;
 
 regs.h.ah = 0x0c;                       /* invoke INT 10H with AH = 0CH */
@@ -111,12 +111,14 @@ regs.x.bx = 0;
 regs.x.cx = x;
 regs.x.dx = y;
 int86(0x10,&regs,&regs);
-
+#endif
 }
 
 int readvideo(int x, int y)
 {
-
+#if defined(_WIN32)
+	return -1;
+#else
 union REGS regs;
 
 regs.x.ax = 0x0d00;                     /* invoke INT 10H with AH = 0DH */
@@ -126,17 +128,17 @@ regs.x.dx = y;
 int86(0x10,&regs,&regs);
 
 return((unsigned int)regs.h.al);        /* return pixel color */
-
+#endif
 }
 
-int readvideopalette()
+int readvideopalette(void)
 {
 
 return (-1);                            /* let the internal routines do it */
 
 }
 
-int writevideopalette()
+int writevideopalette(void)
 {
 
 return (-1);                            /* let the internal routines do it */
