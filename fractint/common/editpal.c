@@ -181,9 +181,9 @@ int editpal_cursor = 0;
  int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
  int         strlocn[];          /* 10K buffer to store classes in   */
  int         colors;             /* # colors avail.                  */
- int         color_bright;       /* brightest color in palette       */
- int         color_dark;         /* darkest color in palette         */
- int         color_medium;       /* nearest to medbright gray color  */
+ int         g_color_bright;       /* brightest color in palette       */
+ int         g_color_dark;         /* darkest color in palette         */
+ int         g_color_medium;       /* nearest to medbright gray color  */
  int         rotate_lo, rotate_hi;
  int         debugflag;
 #endif
@@ -225,23 +225,23 @@ static float    gamma_val = 1;
 
 static void setpal(int pal, int r, int g, int b)
    {
-   g_dacbox[pal][0] = (BYTE)r;
-   g_dacbox[pal][1] = (BYTE)g;
-   g_dacbox[pal][2] = (BYTE)b;
+   g_dac_box[pal][0] = (BYTE)r;
+   g_dac_box[pal][1] = (BYTE)g;
+   g_dac_box[pal][2] = (BYTE)b;
    spindac(0,1);
    }
 
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(g_dacbox+first, pal, how_many*3);
+   memmove(g_dac_box+first, pal, how_many*3);
    spindac(0,1);
    }
 
 
 static void getpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(pal, g_dacbox+first, how_many*3);
+   memmove(pal, g_dac_box+first, how_many*3);
    }
 
 
@@ -756,7 +756,7 @@ static void Cursor__Draw(void)
    int color;
 
    find_special_colors();
-   color = (the_cursor->blink) ? color_medium : color_dark;
+   color = (the_cursor->blink) ? g_color_medium : g_color_dark;
 
    vline(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, color);
    vline(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, color);
@@ -2565,11 +2565,11 @@ static void PalTable__UpdateDAC(PalTable *this)
    {
    if ( this->exclude )
       {
-      memset(g_dacbox, 0, 256*3);
+      memset(g_dac_box, 0, 256*3);
       if (this->exclude == 1)
          {
          int a = this->curr[this->active];
-         memmove(g_dacbox[a], &this->pal[a], 3);
+         memmove(g_dac_box[a], &this->pal[a], 3);
          }
       else
          {
@@ -2583,28 +2583,28 @@ static void PalTable__UpdateDAC(PalTable *this)
             b=t;
             }
 
-         memmove(g_dacbox[a], &this->pal[a], 3*(1+(b-a)));
+         memmove(g_dac_box[a], &this->pal[a], 3*(1+(b-a)));
          }
       }
    else
       {
-      memmove(g_dacbox[0], this->pal, 3*colors);
+      memmove(g_dac_box[0], this->pal, 3*colors);
 
       if ( this->freestyle )
-         PalTable__PutBand(this, (PALENTRY *)g_dacbox);   /* apply band to g_dacbox */
+         PalTable__PutBand(this, (PALENTRY *)g_dac_box);   /* apply band to g_dac_box */
       }
 
    if ( !this->hidden )
       {
       if (inverse)
          {
-         memset(g_dacbox[fg_color], 0, 3);         /* g_dacbox[fg] = (0,0,0) */
-         memset(g_dacbox[bg_color], 48, 3);        /* g_dacbox[bg] = (48,48,48) */
+         memset(g_dac_box[fg_color], 0, 3);         /* g_dac_box[fg] = (0,0,0) */
+         memset(g_dac_box[bg_color], 48, 3);        /* g_dac_box[bg] = (48,48,48) */
          }
       else
          {
-         memset(g_dacbox[bg_color], 0, 3);         /* g_dacbox[bg] = (0,0,0) */
-         memset(g_dacbox[fg_color], 48, 3);        /* g_dacbox[fg] = (48,48,48) */
+         memset(g_dac_box[bg_color], 0, 3);         /* g_dac_box[bg] = (0,0,0) */
+         memset(g_dac_box[fg_color], 48, 3);        /* g_dac_box[fg] = (48,48,48) */
          }
       }
 
@@ -3324,9 +3324,9 @@ static PalTable *PalTable_Construct(void)
    RGBEditor_SetRGB(this->rgb[0], this->curr[0], &this->pal[this->curr[0]]);
    RGBEditor_SetRGB(this->rgb[1], this->curr[1], &this->pal[this->curr[0]]);
 
-   if (video_scroll) {
-      PalTable__SetPos(this, video_startx, video_starty);
-      csize = ( (vesa_yres-(PalTable_PALY+1+1)) / 2 ) / 16;
+   if (g_video_scroll) {
+      PalTable__SetPos(this, g_video_start_x, g_video_start_y);
+      csize = ( (g_vesa_y_res-(PalTable_PALY+1+1)) / 2 ) / 16;
    } else {
       PalTable__SetPos(this, 0, 0);
       csize = ( (sydots-(PalTable_PALY+1+1)) / 2 ) / 16;

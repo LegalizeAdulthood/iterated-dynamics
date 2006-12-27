@@ -82,7 +82,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	/* stash away driver pointer so we can init driver for selected mode */
 	mode_drivers[vidtbllen] = drv;
-	memcpy(&videotable[vidtbllen], mode, sizeof(videotable[0]));
+	memcpy(&g_video_table[vidtbllen], mode, sizeof(g_video_table[0]));
 	vidtbllen++;
 }
 

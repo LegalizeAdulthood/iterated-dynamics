@@ -163,8 +163,8 @@ use_resident_table:
    vidtbllen = 0;
    vident = vidtbl;
    for (i = 0; i < MAXVIDEOTABLE; ++i) {
-      if (videotable[i].xdots) {
-         memcpy((char *)vident,(char *)videotable[i],
+      if (g_video_table[i].xdots) {
+         memcpy((char *)vident,(char *)g_video_table[i],
                     sizeof(*vident));
          ++vident;
          ++vidtbllen;
@@ -189,14 +189,14 @@ static void
 load_videotable(int options)
 {
    /* Loads fractint.cfg and copies the video modes which are */
-   /* assigned to function keys into videotable.              */
+   /* assigned to function keys into g_video_table.              */
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char *)g_video_table,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         memcpy((char *)&videotable[keyents],(char *)&vidtbl[i],
+         memcpy((char *)&g_video_table[keyents],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (++keyents >= MAXVIDEOTABLE)
             break;
@@ -214,7 +214,7 @@ static void
 fractint_terminate(void)
 {
   if (*s_makepar != 0) {
-    r.h.al = (char)((mode7text == 0) ? exitmode : 7);
+    r.h.al = (char)((g_mode_7_text == 0) ? exitmode : 7);
     r.h.ah = 0;
     int86(0x10, &r, &r);
   }
@@ -243,7 +243,7 @@ void stackscreen()
    BYTE *vidmem;
    int savebytes;
    int i;
-   if (video_scroll) {
+   if (g_video_scroll) {
       scroll_state(0); /* save position */
       scroll_center(0,0);
    }
@@ -258,7 +258,7 @@ void stackscreen()
          }
    /* TODO: allocate real memory, not reuse shared segment */
       vidmem = MK_FP(textaddr,0);
-      savebytes = (text_type == 0) ? 4000 : 16384;
+      savebytes = (g_text_type == 0) ? 4000 : 16384;
 			 /* TODO: MemoryAlloc */
       savescreen[i] = MemoryAlloc((U16)savebytes,1L,FARMEM);
       if (savescreen[i] != 0)
@@ -272,7 +272,7 @@ void stackscreen()
       }
    else
       driver_set_for_text();
-   if (video_scroll) {
+   if (g_video_scroll) {
       if (boxcount)
          moveboxf(0.0,0.0);
    }
@@ -289,7 +289,7 @@ void unstackscreen()
    if (--screenctr >= 0) { /* unstack */
    /* TODO: allocate real memory, not reuse shared segment */
       vidmem = MK_FP(textaddr,0);
-      savebytes = (text_type == 0) ? 4000 : 16384;
+      savebytes = (g_text_type == 0) ? 4000 : 16384;
       if (savescreen[screenctr] != 0) {
          MoveFromMemory(vidmem,(U16)savebytes,1L,0L,savescreen[screenctr]);
          MemoryRelease(savescreen[screenctr]);
@@ -299,7 +299,7 @@ void unstackscreen()
    else
       setforgraphics();
    movecursor(-1,-1);
-   if (video_scroll) {
+   if (g_video_scroll) {
       if (boxcount)
          moveboxf(0.0,0.0);
       scroll_state(1); /* restore position */
@@ -357,12 +357,12 @@ void fractint_redraw(Driver *drv)
 
 int fractint_read_palette(Driver *drv)
 {
-	/* reads palette into g_dacbox */
+	/* reads palette into g_dac_box */
 	readvideopalette();
 }
 int fractint_write_palette(Driver *drv)
 {
-	/* writes g_dacbox into palette */
+	/* writes g_dac_box into palette */
 	writevideopalette();
 }
 

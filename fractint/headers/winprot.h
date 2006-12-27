@@ -151,7 +151,7 @@ extern void puttruecolor(int, int, int, int, int);
 extern void scroll_center(int, int);
 extern void scroll_relative(int, int);
 extern void scroll_state(int);
-extern void (*swapsetup)(void);
+extern void (*g_swap_setup)(void);
 extern void swapnormread(void);
 extern void swapnormwrite(void);
 extern void setnullvideo(void);

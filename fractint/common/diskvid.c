@@ -120,7 +120,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    long longtmp;
    unsigned int cache_size;
    BYTE *tempfar = NULL;
-   if (diskflag)
+   if (g_disk_flag)
       enddisk();
    if (driver_diskp()) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
@@ -224,7 +224,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       memorysize += BLOCKLEN - i;
    memorysize >>= pixelshift;
    memorysize >>= BLOCKSHIFT;
-   diskflag = 1;
+   g_disk_flag = 1;
    rowsize = (unsigned int) newrowsize;
    colsize = (unsigned int) newcolsize;
 
@@ -243,7 +243,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    if (dv_handle == 0) {
       static char msg[]={"*** insufficient free memory/disk space ***"};
       stopmsg(0,msg);
-      goodmode = 0;
+      g_good_mode = 0;
       rowsize = 0;
       return(-1);
    }
@@ -286,7 +286,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
             if (stopmsg(STOPMSG_CANCEL, cancel))  /* esc to cancel, else continue */
             {
                enddisk();
-               goodmode = 0;
+               g_good_mode = 0;
                return -2;            /* -1 == failed, -2 == cancel   */
             }
       }
@@ -320,7 +320,7 @@ void enddisk()
       free((void *)cache_start);
    if (membuf != NULL)
       free((void *)membuf);
-   diskflag = rowsize = disk16bit = 0;
+   g_disk_flag = rowsize = disk16bit = 0;
    hash_ptr    = NULL;
    cache_start = NULL;
    fp          = NULL;

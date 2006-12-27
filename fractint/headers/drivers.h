@@ -54,8 +54,8 @@ struct tagDriver
 	/* creates a window */				void (*window)(Driver *drv);
 	/* handles window resize.  */		int (*resize)(Driver *drv);
 	/* redraws the screen */			void (*redraw)(Driver *drv);
-	/* reads palette into dacbox */		int (*read_palette)(Driver *drv);
-	/* writes dacbox into palette */	int (*write_palette)(Driver *drv);
+	/* read palette into g_dac_box */	int (*read_palette)(Driver *drv);
+	/* write g_dac_box into palette */	int (*write_palette)(Driver *drv);
 	/* reads a single pixel */			int (*read_pixel)(Driver *drv, int x, int y);
 	/* writes a single pixel */			void (*write_pixel)(Driver *drv, int x, int y, int color);
 	/* reads a span of pixel */			void (*read_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);

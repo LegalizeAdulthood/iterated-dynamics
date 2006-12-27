@@ -120,7 +120,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 {
    int savescrn[80];
    int i;
-   if(text_type > 1)
+   if(g_text_type > 1)
       return(1);
    for(i=0;i<80;i++)
    {
@@ -146,7 +146,7 @@ static void message(int secs, char *buf)
    while(buf[++i] && i< 40)
       nearbuf[i] = buf[i];
    nearbuf[i] = 0;
-   if(text_type < 2)
+   if(g_text_type < 2)
       showtempmsg_txt(0,0,7,secs,nearbuf);
    else if (showtempmsg(nearbuf) == 0)
       {

@@ -141,9 +141,9 @@ void make_batch_file()
    maxcolor = colors;
    strcpy(colorspec,"y");
 #ifndef XFRACT
-   if ((gotrealdac && !reallyega) || (istruecolor && !truemode))
+   if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
 #else
-   if ((gotrealdac && !reallyega) || (istruecolor && !truemode) || fake_lut)
+   if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
 #endif
    {
       --maxcolor;
@@ -228,9 +228,9 @@ prompt_user:
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
-      if ((gotrealdac && !reallyega) || (istruecolor && !truemode))
+      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
 #else
-      if ((gotrealdac && !reallyega) || (istruecolor && !truemode) || fake_lut)
+      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
 #endif
       {
          LOADBATCHPROMPTS("Record colors?");
@@ -281,9 +281,9 @@ prompt_user:
       for(i=0;i<4;i++)
          strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
-      if ((gotrealdac && !reallyega) || (istruecolor && !truemode))
+      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
 #else
-      if ((gotrealdac && !reallyega) || (istruecolor && !truemode) || fake_lut)
+      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
 #endif
          if (paramvalues[maxcolorindex].uval.ival > 0 &&
              paramvalues[maxcolorindex].uval.ival <= 256)
@@ -312,8 +312,8 @@ prompt_user:
       if ((i = check_vidmode_keyname(vidmde)) > 0)
           if ((i = check_vidmode_key(0, i)) >= 0) {
               /* get the resolution of this video mode */
-              pxdots = videotable[i].xdots;
-              pydots = videotable[i].ydots;
+              pxdots = g_video_table[i].xdots;
+              pydots = g_video_table[i].ydots;
               }
       if (pxdots == 0 && (xm > 1 || ym > 1)) {
           /* no corresponding video mode! */
@@ -1156,7 +1156,7 @@ docolors:
          for(;;) {
             /* emit color in rgb 3 char encoded form */
             for (j = 0; j < 3; ++j) {
-               if ((k = g_dacbox[curc][j]) < 10) k += '0';
+               if ((k = g_dac_box[curc][j]) < 10) k += '0';
                else if (k < 36)                k += ('A' - 10);
                else                            k += ('_' - 36);
                buf[j] = (char)k;
@@ -1188,11 +1188,11 @@ docolors:
                   for (j = 0; j < 3; ++j) { /* check pattern of chg per color */
                      /* Sylvie Gallet's fix */
                      if (debugflag != 910 && scanc > (curc+4) && scanc < maxcolor-5)
-                        if (abs(2*g_dacbox[scanc][j] - g_dacbox[scanc-5][j]
-                                - g_dacbox[scanc+5][j]) >= 2)
+                        if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
+                                - g_dac_box[scanc+5][j]) >= 2)
                            break;
                      /* end Sylvie's fix */       
-                     delta = (int)g_dacbox[scanc][j] - (int)g_dacbox[scanc-k-1][j];
+                     delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
                      if (k == scanc - curc)
                         diff1[k][j] = diff2[k][j] = delta;
                      else
@@ -1570,7 +1570,7 @@ void showfreemem(void)
    char *adapter_ptr;
 
    printf("\n CPU type: %d  FPU type: %d  Video: %d",
-          cpu, fpu, video_type);
+          cpu, fpu, g_video_type);
 
    adapter_ptr = &supervga_list;
 
@@ -1733,7 +1733,7 @@ int select_video_mode(int curmode)
 
    /* pick default mode */
    if (curmode < 0) {
-      switch (video_type) { /* set up a reasonable default (we hope) */
+      switch (g_video_type) { /* set up a reasonable default (we hope) */
          case VIDEO_TYPE_HGC:  g_video_entry.videomodeax = 8;   /* hgc */
                   g_video_entry.colors = 2;
                   break;
@@ -1742,7 +1742,7 @@ int select_video_mode(int curmode)
                   break;
          case VIDEO_TYPE_EGA:  g_video_entry.videomodeax = 16;  /* ega */
                   g_video_entry.colors = 16;
-                  if (mode7text) {              /* egamono */
+                  if (g_mode_7_text) {              /* egamono */
                      g_video_entry.videomodeax = 15;
                      g_video_entry.colors = 2;
                      }
@@ -1753,7 +1753,7 @@ int select_video_mode(int curmode)
          }
       }
    else
-      memcpy((char *)&g_video_entry,(char *)&videotable[curmode],
+      memcpy((char *)&g_video_entry,(char *)&g_video_table[curmode],
                  sizeof(g_video_entry));
 #ifndef XFRACT
    for (i = 0; i < vidtbllen; ++i) { /* find default mode */
@@ -1795,10 +1795,10 @@ int select_video_mode(int curmode)
 #ifndef XFRACT
    /* copy fractint.cfg table to resident table, note selected entry */
    j = k = 0;
-   memset((char *)videotable,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
+   memset((char *)g_video_table,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
    for (i = 0; i < vidtbllen; ++i) {
       if (vidtbl[i].keynum > 0) {
-         memcpy((char *)&videotable[j],(char *)&vidtbl[i],
+         memcpy((char *)&g_video_table[j],(char *)&vidtbl[i],
                     sizeof(*vidtbl));
          if (memcmp((char *)&g_video_entry,(char *)&vidtbl[i],
                         sizeof(g_video_entry)) == 0)
@@ -1811,7 +1811,7 @@ int select_video_mode(int curmode)
     k = vidtbl[0].keynum;
 #endif
    if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
-      memcpy((char *)&videotable[MAXVIDEOTABLE-1],
+      memcpy((char *)&g_video_table[MAXVIDEOTABLE-1],
                  (char *)&g_video_entry,sizeof(*vidtbl));
       ret = 1400; /* special value for check_vidmode_key */
       }
@@ -1961,7 +1961,7 @@ static void update_fractint_cfg()
                 vident.videomodebx,
                 vident.videomodecx,
                 vident.videomodedx,
-                vident.dotmode%1000, /* remove true-color flag, keep textsafe */
+                vident.dotmode%1000, /* remove true-color flag, keep g_text_safe */
                 vident.xdots,
                 vident.ydots,
                 colorsbuf,

@@ -128,7 +128,7 @@ Press F1 for help, "};
 
    /* save overlayed strings to extraseg memory */
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *) extraseg;  /* ENDVID is to avoid videotable */
+   ptr = (char *) extraseg;  /* ENDVID is to avoid g_video_table */
    hdg2 = ptr;
    ptr += sizeof(o_hdg2);
    warning = ptr;
@@ -142,8 +142,8 @@ Press F1 for help, "};
    load_fractint_cfg(0); /* get fractint.cfg into *vidtbl (== extraseg) */
 
    /* try to change any VESA entries to fit the loaded image size */
-   if (virtual_screens && video_vram && g_init_mode == -1) {
-      unsigned long vram = (unsigned long)video_vram << 16,
+   if (g_virtual_screens && g_video_vram && g_init_mode == -1) {
+      unsigned long vram = (unsigned long)g_video_vram << 16,
                     need = (unsigned long)info->xdots * info->ydots;
       if (need <= vram) {
          char over[25]; /* overwrite comments with original resolutions */
@@ -304,7 +304,7 @@ if (fastrestore  && !askvideo)
       helpmode = oldhelpmode;
       if (i == -1)
          return(-1);
-      if (i < 0) { /* returned -100 - videotable entry number */
+      if (i < 0) { /* returned -100 - g_video_table entry number */
          g_init_mode = -100 - i;
          gotrealmode = 1;
          }
@@ -320,17 +320,17 @@ if (fastrestore  && !askvideo)
    if (gotrealmode == 0) { /* translate from temp table to permanent */
       if ((j = vidtbl[i=g_init_mode].keynum) != 0) {
          for (g_init_mode = 0; g_init_mode < MAXVIDEOTABLE-1; ++g_init_mode)
-            if (videotable[g_init_mode].keynum == j) break;
+            if (g_video_table[g_init_mode].keynum == j) break;
          if (g_init_mode >= MAXVIDEOTABLE-1) j = 0;
          }
       if (j == 0) /* mode has no key, add to reserved slot at end */
-         memcpy((char *)&videotable[g_init_mode=MAXVIDEOTABLE-1],
+         memcpy((char *)&g_video_table[g_init_mode=MAXVIDEOTABLE-1],
                     (char *)&vidtbl[i],sizeof(*vidtbl));
       }
 
    /* ok, we're going to return with a video mode */
 
-   memcpy((char *)&g_video_entry,(char *)&videotable[g_init_mode],
+   memcpy((char *)&g_video_entry,(char *)&g_video_table[g_init_mode],
               sizeof(g_video_entry));
 
 

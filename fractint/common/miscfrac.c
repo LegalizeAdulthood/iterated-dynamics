@@ -62,9 +62,9 @@ int test(void)
             color = testpt(init.x,init.y,parm.x,parm.y,maxit,inside);
             if (color >= colors) { /* avoid trouble if color is 0 */
                if (colors < 16)
-                  color &= andcolor;
+                  color &= g_and_color;
                else
-                  color = ((color-1) % andcolor) + 1; /* skip color zero */
+                  color = ((color-1) % g_and_color) + 1; /* skip color zero */
             }
             (*plot)(col,row,color);
             if(numpasses && (passes == 0))
@@ -444,7 +444,7 @@ mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
    return(n);
 }
 
-#define dac ((Palettetype *)g_dacbox)
+#define dac ((Palettetype *)g_dac_box)
 static void set_Plasma_palette()
 {
    static Palettetype Red    = { 63, 0, 0 };
@@ -1876,7 +1876,7 @@ static void set_Froth_palette(void)
    {
    char *mapname;
 
-   if (colorstate != 0) /* 0 means g_dacbox matches default */
+   if (colorstate != 0) /* 0 means g_dac_box matches default */
       return;
    if (colors >= 16)
       {

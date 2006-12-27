@@ -517,7 +517,7 @@ int calcfract(void)
    basin = 0;
    /* added yet another level of indirection to putcolor!!! TW */
    putcolor = putcolor_a;
-   if (istruecolor && truemode)
+   if (g_is_true_color && truemode)
       /* Have to force passes=1 */
       usr_stdcalcmode = stdcalcmode = '1';
    if(truecolor)
@@ -975,14 +975,14 @@ static void perform_worklist()
         switch(autoshowdot)
         {
            case 'd':
-              showdotcolor = color_dark%colors;
+              showdotcolor = g_color_dark%colors;
               break;
            case 'm':
-              showdotcolor = color_medium%colors;
+              showdotcolor = g_color_medium%colors;
               break;
            case 'b':
            case 'a':
-              showdotcolor = color_bright%colors;
+              showdotcolor = g_color_bright%colors;
               break;
            default:
               showdotcolor = showdot%colors;
@@ -1664,15 +1664,15 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
       if (coloriter >= colors) { /* don't use color 0 unless from inside/outside */
          if (save_release <= 1950) {
             if (colors < 16)
-               color &= andcolor;
+               color &= g_and_color;
             else
-               color = ((color - 1) % andcolor) + 1;  /* skip color zero */
+               color = ((color - 1) % g_and_color) + 1;  /* skip color zero */
          }
          else {
             if (colors < 16)
-               color = (int)(coloriter & andcolor);
+               color = (int)(coloriter & g_and_color);
             else
-               color = (int)(((coloriter - 1) % andcolor) + 1);
+               color = (int)(((coloriter - 1) % g_and_color) + 1);
          }
       }
       if(debugflag != 470)
@@ -1712,15 +1712,15 @@ int calcmandfp(void)
       if (coloriter >= colors) { /* don't use color 0 unless from inside/outside */
          if (save_release <= 1950) {
             if (colors < 16)
-               color &= andcolor;
+               color &= g_and_color;
             else
-               color = ((color - 1) % andcolor) + 1;  /* skip color zero */
+               color = ((color - 1) % g_and_color) + 1;  /* skip color zero */
          }
          else {
             if (colors < 16)
-               color = (int)(coloriter & andcolor);
+               color = (int)(coloriter & g_and_color);
             else
-               color = (int)(((coloriter - 1) % andcolor) + 1);
+               color = (int)(((coloriter - 1) % g_and_color) + 1);
          }
       }
       if(debugflag != 470)
@@ -2003,7 +2003,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                }
                {
                int tmpcolor;
-               tmpcolor = (int)(((coloriter - 1) % andcolor) + 1);
+               tmpcolor = (int)(((coloriter - 1) % g_and_color) + 1);
                tantable[tmpcolor-1] = g_new.y/(g_new.x+.000001);
                }
             }
@@ -2473,15 +2473,15 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    if (coloriter >= colors) { /* don't use color 0 unless from inside/outside */
       if (save_release <= 1950) {
          if (colors < 16)
-            color &= andcolor;
+            color &= g_and_color;
          else
-            color = ((color - 1) % andcolor) + 1;  /* skip color zero */
+            color = ((color - 1) % g_and_color) + 1;  /* skip color zero */
       }
       else {
          if (colors < 16)
-            color = (int)(coloriter & andcolor);
+            color = (int)(coloriter & g_and_color);
          else
-            color = (int)(((coloriter - 1) % andcolor) + 1);
+            color = (int)(((coloriter - 1) % g_and_color) + 1);
       }
    }
    if(debugflag != 470)

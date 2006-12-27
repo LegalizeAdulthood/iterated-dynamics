@@ -443,7 +443,7 @@ static void SaveRect(int x, int y, int width, int depth)
 
    /* allocate space and store the rect */
 
-   memset(dstack, color_dark, width);
+   memset(dstack, g_color_dark, width);
    /* TODO: MemoryAlloc */
    if ((memory_handle = MemoryAlloc( (U16)width, (long)depth, FARMEM)) != 0)
    {
@@ -548,7 +548,7 @@ void Jiim(int which)         /* called by fractint */
    if(which == ORBIT)
       (*PER_IMAGE)();
    else
-      color = color_bright;
+      color = g_color_bright;
    /* end moved code */
 
    Cursor_Construct();
@@ -569,9 +569,9 @@ void Jiim(int which)         /* called by fractint */
  * end MIIM code.
  */
 
-   if (!video_scroll) {
-      vesa_xres = sxdots;
-      vesa_yres = sydots;
+   if (!g_video_scroll) {
+      g_vesa_x_res = sxdots;
+      g_vesa_y_res = sydots;
    }
 
    if(sxoffs != 0 || syoffs != 0) /* we're in view windows */
@@ -579,35 +579,35 @@ void Jiim(int which)         /* called by fractint */
       savehasinverse = hasinverse;
       hasinverse = 1;
       SaveRect(0,0,xdots,ydots);
-      sxoffs = video_startx;
-      syoffs = video_starty;
+      sxoffs = g_video_start_x;
+      syoffs = g_video_start_y;
       RestoreRect(0,0,xdots,ydots);
       hasinverse = savehasinverse;
    }
 
-   if(xdots == vesa_xres || ydots == vesa_yres ||
-       vesa_xres-xdots < vesa_xres/3 ||
-       vesa_yres-ydots < vesa_yres/3 ||
+   if(xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
+       g_vesa_x_res-xdots < g_vesa_x_res/3 ||
+       g_vesa_y_res-ydots < g_vesa_y_res/3 ||
        xdots >= MAXRECT )
    {
       /* this mode puts orbit/julia in an overlapping window 1/3 the size of
          the physical screen */
       windows = 0; /* full screen or large view window */
-      xd = vesa_xres / 3;
-      yd = vesa_yres / 3;
-      xc = video_startx + xd * 2;
-      yc = video_starty + yd * 2;
-      xoff = video_startx + xd * 5 / 2;
-      yoff = video_starty + yd * 5 / 2;
+      xd = g_vesa_x_res / 3;
+      yd = g_vesa_y_res / 3;
+      xc = g_video_start_x + xd * 2;
+      yc = g_video_start_y + yd * 2;
+      xoff = g_video_start_x + xd * 5 / 2;
+      yoff = g_video_start_y + yd * 5 / 2;
    }
-   else if(xdots > vesa_xres/3 && ydots > vesa_yres/3)
+   else if(xdots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
    {
       /* Julia/orbit and fractal don't overlap */
       windows = 1;
-      xd = vesa_xres - xdots;
-      yd = vesa_yres - ydots;
-      xc = video_startx + xdots;
-      yc = video_starty + ydots;
+      xd = g_vesa_x_res - xdots;
+      yd = g_vesa_y_res - ydots;
+      xc = g_video_start_x + xdots;
+      yc = g_video_start_y + ydots;
       xoff = xc + xd/2;
       yoff = yc + yd/2;
 
@@ -616,12 +616,12 @@ void Jiim(int which)         /* called by fractint */
    {
       /* Julia/orbit takes whole screen */
       windows = 2;
-      xd = vesa_xres;
-      yd = vesa_yres;
-      xc = video_startx;
-      yc = video_starty;
-      xoff = video_startx + xd/2;
-      yoff = video_starty + yd/2;
+      xd = g_vesa_x_res;
+      yd = g_vesa_y_res;
+      xc = g_video_start_x;
+      yc = g_video_start_y;
+      xoff = g_video_start_x + xd/2;
+      yoff = g_video_start_y + yd/2;
    }
 
    xfactor = (int)(xd/5.33);
@@ -631,11 +631,11 @@ void Jiim(int which)         /* called by fractint */
       SaveRect(xc,yc,xd,yd);
    else if(windows == 2)  /* leave the fractal */
    {
-      fillrect(xdots, yc, xd-xdots, yd, color_dark);
-      fillrect(xc   , ydots, xdots, yd-ydots, color_dark);
+      fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
+      fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
    }
    else  /* blank whole window */
-      fillrect(xc, yc, xd, yd, color_dark);
+      fillrect(xc, yc, xd, yd, g_color_dark);
 
    setup_convert_to_screen(&cvt);
 
@@ -667,7 +667,7 @@ void Jiim(int which)         /* called by fractint */
 
    Cursor_SetPos(col, row);
    Cursor_Show();
-   color = color_bright;
+   color = g_color_bright;
 
    iter = 1;
    still = 1;
@@ -804,9 +804,9 @@ void Jiim(int which)         /* called by fractint */
             case 'H':   /* hide fractal toggle */
                if(windows == 2)
                   windows = 3;
-               else if(windows == 3 && xd == vesa_xres)
+               else if(windows == 3 && xd == g_vesa_x_res)
                {
-                  RestoreRect(video_startx, video_starty, xdots, ydots);
+                  RestoreRect(g_video_start_x, g_video_start_y, xdots, ydots);
                   windows = 2;
                }
                break;
@@ -898,7 +898,7 @@ void Jiim(int which)         /* called by fractint */
                Cursor_Show();
             }
             else
-               displays(5, vesa_yres-show_numbers, WHITE, BLACK, str, (int) strlen(str));
+               displays(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str, (int) strlen(str));
          }
          iter = 1;
          old.x = old.y = lold.x = lold.y = 0;
@@ -938,20 +938,20 @@ void Jiim(int which)         /* called by fractint */
          if(windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
          {
             RestoreRect(xc,yc,xd,yd);
-            if (xc == video_startx + xd*2)
-               xc = video_startx + 2;
+            if (xc == g_video_start_x + xd*2)
+               xc = g_video_start_x + 2;
             else
-               xc = video_startx + xd*2;
+               xc = g_video_start_x + xd*2;
             xoff = xc + xd /  2;
             SaveRect(xc,yc,xd,yd);
          }
          if(windows == 2)
          {
-            fillrect(xdots, yc, xd-xdots, yd-show_numbers, color_dark);
-            fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, color_dark);
+            fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
+            fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
          }
          else
-            fillrect(xc, yc, xd, yd, color_dark);
+            fillrect(xc, yc, xd, yd, g_color_dark);
 
       } /* end if (driver_key_pressed) */
 
@@ -1221,12 +1221,12 @@ finish:
       {
          if(windows == 2)
          {
-            fillrect(xdots, yc, xd-xdots, yd, color_dark);
-            fillrect(xc   , ydots, xdots, yd-ydots, color_dark);
+            fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
+            fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
          }
          else
-            fillrect(xc, yc, xd, yd, color_dark);
-         if(windows == 3 && xd == vesa_xres) /* unhide */
+            fillrect(xc, yc, xd, yd, g_color_dark);
+         if(windows == 3 && xd == g_vesa_x_res) /* unhide */
          {
             RestoreRect(0, 0, xdots, ydots);
             windows = 2;

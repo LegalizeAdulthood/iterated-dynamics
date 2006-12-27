@@ -9,7 +9,7 @@
 
 /***************************************************************************/
 
-#define dac ((Palettetype *)g_dacbox)
+#define dac ((Palettetype *)g_dac_box)
 
 #if !defined(WINFRACT) && !defined(_WIN32)
 void SetTgaColors() {
@@ -82,7 +82,7 @@ int SetColorPaletteName( char * fn )
                 stopmsg(0,msg);
                 return 1;
                 }
-        memcpy((char *)mapdacbox,(char *)g_dacbox,768);
+        memcpy((char *)mapdacbox,(char *)g_dac_box,768);
         /* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
         return 0;
 }

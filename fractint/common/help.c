@@ -117,7 +117,7 @@ static void displaycc(int row, int col, int color, int ch)
    static char s[] = "?";
 #endif
 
-   if (text_type == 1)   /* if 640x200x2 mode */
+   if (g_text_type == 1)   /* if 640x200x2 mode */
       {
       /*
        * This is REALLY ugly, but it works.  Non-current links (ones that
@@ -163,8 +163,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
    int        size,
               width;
 
-   g_textcbase = SCREEN_INDENT;
-   g_textrbase = TEXT_START_ROW;
+   g_text_cbase = SCREEN_INDENT;
+   g_text_rbase = TEXT_START_ROW;
 
    curr = text;
    row = 0;
@@ -307,22 +307,22 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
       tok = find_token_length(ONLINE, curr, len, &size, &width);
       } /* for(;;) */
 
-   g_textcbase = 0;
-   g_textrbase = 0;
+   g_text_cbase = 0;
+   g_text_rbase = 0;
    }
 
 static void color_link(LINK *link, int color)
    {
-   g_textcbase = SCREEN_INDENT;
-   g_textrbase = TEXT_START_ROW;
+   g_text_cbase = SCREEN_INDENT;
+   g_text_rbase = TEXT_START_ROW;
 
-   if (text_type == 1)   /* if 640x200x2 mode */
+   if (g_text_type == 1)   /* if 640x200x2 mode */
       display_text(link->r, link->c, color, buffer+link->offset, link->width);
    else
       driver_set_attr(link->r, link->c, color, link->width);
 
-   g_textcbase = 0;
-   g_textrbase = 0;
+   g_text_cbase = 0;
+   g_text_rbase = 0;
    }
 
 /* #define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR_KEYS,name), putstring(-1,-1,C_HELP_INSTR," "descrip"  ") */

@@ -677,7 +677,7 @@ pass_option_restart:
 /* for diskmode changed "viewx/ydots" to "virtual x/y" that do as above  */
 /* (since for diskmode they were updated by x/ydots that should be the   */
 /* same as sx/ydots for that mode)                                       */
-/* videotable and g_video_entry are now updated even for non-disk modes     */
+/* g_video_table and g_video_entry are now updated even for non-disk modes     */
 
 /* --------------------------------------------------------------------- */
 /*
@@ -702,7 +702,7 @@ int get_view_params()
    int old_viewwindow,old_viewxdots,old_viewydots,old_sxdots,old_sydots;
    unsigned long estm_xmax=32767,estm_ymax=32767;
 #ifndef XFRACT
-   unsigned long vidmem = (unsigned long)video_vram << 16;
+   unsigned long vidmem = (unsigned long)g_video_vram << 16;
    int truebytes = g_video_entry.dotmode/1000;
 
    if (dotmode == 28)          /* setvideo might have changed mode 27 to 28 */
@@ -729,13 +729,13 @@ int get_view_params()
 */
 
 #ifndef XFRACT
-   if (dotmode == 28 && virtual_screens) {
+   if (dotmode == 28 && g_virtual_screens) {
       /* virtual screen limits estimation */
       if (truebytes < 2)
          ++truebytes;
       vidmem /= truebytes;
-      estm_xmax = vesa_yres ? vidmem/vesa_yres : 0;
-      estm_ymax = vesa_xres ? vidmem/vesa_xres : 0;
+      estm_xmax = g_vesa_y_res ? vidmem/g_vesa_y_res : 0;
+      estm_ymax = g_vesa_x_res ? vidmem/g_vesa_x_res : 0;
       estm_xmax &= truebytes&1 ? -8 : truebytes - 6;
    }
 #endif
@@ -782,13 +782,13 @@ get_view_restart:
    uvalues[k].type = '*';
 
 #ifndef XFRACT
-   if (virtual_screens && dotmode == 28 && chkd_vvs && !video_scroll) {
+   if (g_virtual_screens && dotmode == 28 && g_checked_vvs && !g_video_scroll) {
       LOADCHOICES("Your graphics card does NOT support virtual screens.");
       uvalues[k].type = '*';
    }
 #endif
 
-   if (dotmode == 11 || (virtual_screens && dotmode == 28)) {
+   if (dotmode == 11 || (g_virtual_screens && dotmode == 28)) {
       LOADCHOICES("Virtual screen total x pixels");
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = sxdots;
@@ -804,7 +804,7 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (virtual_screens && dotmode == 28) {
+   if (g_virtual_screens && dotmode == 28) {
       char dim[50];
       static char xmsg[] = {"Video memory limits: (for y = "};
       static char ymsg[] = {"                     (for x = "};
@@ -826,13 +826,13 @@ get_view_restart:
       LOADCHOICES("");
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char *)xmsg,vesa_yres,(char *)midxmsg,estm_xmax);
+      sprintf(dim,"%Fs%4u%Fs%lu",(char *)xmsg,g_vesa_y_res,(char *)midxmsg,estm_xmax);
       strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char *)ymsg,vesa_xres,(char *)midymsg,estm_ymax);
+      sprintf(dim,"%Fs%4u%Fs%lu",(char *)ymsg,g_vesa_x_res,(char *)midymsg,estm_ymax);
       strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
@@ -862,8 +862,8 @@ get_view_restart:
       viewcrop = 1;
       finalaspectratio = screenaspect;
       if (dotmode == 28) {
-         sxdots = vesa_xres ? vesa_xres : old_sxdots;
-         sydots = vesa_yres ? vesa_yres : old_sydots;
+         sxdots = g_vesa_x_res ? g_vesa_x_res : old_sxdots;
+         sydots = g_vesa_y_res ? g_vesa_y_res : old_sydots;
          video_cutboth = 1;
          zscroll = 1;
       }
@@ -888,10 +888,10 @@ get_view_restart:
 
    ++k;
 
-   if (virtual_screens && dotmode == 28 && chkd_vvs && !video_scroll)
+   if (g_virtual_screens && dotmode == 28 && g_checked_vvs && !g_video_scroll)
       ++k;  /* add 1 if not supported line is inserted */
 
-   if (driver_diskp() || (virtual_screens && dotmode == 28)) {
+   if (driver_diskp() || (g_virtual_screens && dotmode == 28)) {
       sxdots = uvalues[++k].uval.ival;
       sydots = uvalues[++k].uval.ival;
 #ifndef XFRACT
@@ -919,15 +919,15 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (virtual_screens && dotmode == 28) {
+   if (g_virtual_screens && dotmode == 28) {
 
       /* virtual screen smaller than physical screen, use view window */
-      if (sxdots < vesa_xres && sydots < vesa_yres) {
+      if (sxdots < g_vesa_x_res && sydots < g_vesa_y_res) {
          viewwindow = 1;
          viewxdots = sxdots;
          viewydots = sydots;
-         sxdots    = vesa_xres;
-         sydots    = vesa_yres;
+         sxdots    = g_vesa_x_res;
+         sydots    = g_vesa_y_res;
       } else {
          viewwindow = 0; /* make sure it is off */
          viewxdots = 0;
@@ -935,8 +935,8 @@ get_view_restart:
       }
 
       /* if virtual screen is too large */
-      if( (unsigned long)((sxdots < vesa_xres) ? vesa_xres : sxdots)
-            * ((sydots < vesa_yres) ? vesa_yres : sydots) > vidmem) {
+      if( (unsigned long)((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots)
+            * ((sydots < g_vesa_y_res) ? g_vesa_y_res : sydots) > vidmem) {
         /* and we have to keep ratio */
         if (video_cutboth) {
            double tmp,virtaspect = (double)sydots / sxdots;
@@ -952,16 +952,16 @@ get_view_restart:
            /* if sydots < 2 here, then sxdots > estm_xmax */
         }
         else { /* cut only the y value */
-           sydots = (int)((double)vidmem / ((sxdots < vesa_xres) ? vesa_xres : sxdots));
+           sydots = (int)((double)vidmem / ((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots));
         }
       }
    }
 #endif
 
-   if (driver_diskp() || (virtual_screens && dotmode == 28)) {
+   if (driver_diskp() || (g_virtual_screens && dotmode == 28)) {
       g_video_entry.xdots = sxdots;
       g_video_entry.ydots = sydots;
-      memcpy((char *)&videotable[g_adapter],(char *)&g_video_entry,
+      memcpy((char *)&g_video_table[g_adapter],(char *)&g_video_entry,
                     sizeof(g_video_entry));
       if (finalaspectratio == 0.0)
          finalaspectratio = (float)sydots/sxdots;
@@ -1345,7 +1345,7 @@ void goodbye()                  /* we done.  Bail out */
 #if !defined(_WIN32)
    if(*s_makepar != 0)
    {
-      r.h.al = (char)((mode7text == 0) ? exitmode : 7);
+      r.h.al = (char)((g_mode_7_text == 0) ? exitmode : 7);
       r.h.ah = 0;
       int86(0x10, &r, &r);
       printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
