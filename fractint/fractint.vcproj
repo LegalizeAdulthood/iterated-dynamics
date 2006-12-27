@@ -404,6 +404,9 @@
 				<File
 					RelativePath=".\common\tgaview.c">
 				</File>
+				<File
+					RelativePath=".\common\yourvid.c">
+				</File>
 			</Filter>
 			<Filter
 				Name="math"

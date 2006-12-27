@@ -74,8 +74,8 @@ extern void Cursor_SetPos();
 
 typedef void t_dotwriter(int, int, int);
 typedef int  t_dotreader(int, int);
-typedef void t_linewriter(void);
-typedef void t_linereader(void);
+typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
+typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 typedef void t_swapper(void);
 
 /* read/write-a-dot/line routines */
@@ -85,6 +85,13 @@ extern t_linewriter *linewrite;
 extern t_linereader *lineread;
 extern t_linewriter *normaline;
 extern t_linereader *normalineread;
+
+extern int startvideo();
+extern int endvideo();
+extern void writevideo(int x, int y, int color);
+extern int readvideo(int x, int y);
+extern int readvideopalette(void);
+extern int writevideopalette(void);
 
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
@@ -1007,6 +1014,28 @@ win32_disk_shell(Driver *drv)
 	windows_shell_to_dos();
 }
 
+int videoflag = 0;
+int xga_isinmode = 0;
+int xga_clearvideo = 0;
+int f85flag = 0;
+int ai_8514 = 0;
+int HGCflag = 0;
+int xga_loaddac = 0;
+int TPlusInstalled = 0;
+extern int NonInterlaced;
+extern int MaxColorRes;
+extern int PixelZoom;
+
+void xga_mode(int x) {}
+void close8514hw(void) {}
+void close8514(void) {}
+void f85end(void) {}
+void hgcend(void) {}
+int MatchTPlusMode(int xdots, int ydots, int MaxColorRes, int PixelZoom, int NonInterlaced)
+{
+	return 0;
+}
+
 /*
 tandymode:      ; from Joseph Albrecht
 		mov     tandyseg,0b800h         ; set video segment address
@@ -1303,7 +1332,7 @@ void trident256mode(void) {}
 void chipstech256mode(void) {}
 void ati256mode(void) {}
 void everex256mode(void) {}
-void yourownmode(void) {}
+void yourownmode(void) { videoflag = 1; }
 void ati1024mode(void) {}
 void tseng16mode(void) {}
 void trident16mode(void) {}
@@ -1359,6 +1388,30 @@ void videomode(t_dotwriter dot_write, t_dotreader dot_read,
 	g_dac_count = cyclelimit;
 }
 
+t_dotwriter win32_dot_writer;
+t_dotreader win32_dot_reader;
+t_linewriter win32_line_writer;
+t_linereader win32_line_reader;
+t_swapper win32_swap_setup;
+
+void win32_dot_writer(int x, int y, int color)
+{
+	driver_write_pixel(x, y, color);
+}
+int win32_dot_reader(int x, int y)
+{
+	return driver_read_pixel(x, y);
+}
+void win32_line_writer(int row, int col, int lastcol, BYTE *pixels)
+{
+	driver_write_span(row, col, lastcol, pixels);
+}
+void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
+{
+	driver_read_span(row, col, lastcol, pixels);
+}
+void win32_swap_setup(void) {}
+
 /*
 ; **************** Function setvideomode(ax, bx, cx, dx) ****************
 ;       This function sets the (alphanumeric or graphic) video mode
@@ -1377,11 +1430,9 @@ static void
 win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
 	int setting_text = 0;
-	ODS4("win32_disk_set_video_mode %d,%d,%d,%d", ax, bx, cx, dx);
-
-#if 0
 	int videoax, videobx, videocx, videodx;
 
+	ODS4("win32_disk_set_video_mode %d,%d,%d,%d", ax, bx, cx, dx);
 	/*
 	setvideomode    proc    uses di si es,argax:word,argbx:word,argcx:word,argdx:word
 			mov     ax,sxdots               ; initially, set the virtual line
@@ -1447,11 +1498,6 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 					call    far ptr EndTGA          ; endTGA( void )
 					mov     tgaflag,0               ; set flag: targa cleaned up
 			*/
-			if (1 == tgaflag)
-			{
-				EndTGA();
-				tgaflag = 0;
-			}
 		}
 
 		/*
@@ -1543,97 +1589,98 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 		g_ok_to_print = 1;
 		g_good_mode = 1;
 		xga_loaddac = 1;
-		*bankadr = video_bankadr;
-		*bankseg = video_bankseg;
 		videoax = ax;
 		videobx = bx;
 		videocx = cx;
 		videodx = dx;
-		/*
-		videomodeisgood:
-				mov     bx,dotmode              ; set up for a video table jump
-				cmp     bx,30                   ; are we within the range of dotmodes?
-				jbe     videomodesetup          ; yup.  all is OK
-				mov     bx,0                    ; nope.  use dullnormalmode
-		videomodesetup:
-				shl     bx,1                    ; switch to a word offset
-				mov     bx,cs:videomodetable[bx]        ; get the next step
-				jmp     bx                      ; and go there
-		videomodetable  dw      offset dullnormalmode   ; mode 0
-				dw      offset dullnormalmode   ; mode 1
-				dw      offset vgamode          ; mode 2
-				dw      offset mcgamode         ; mode 3
-				dw      offset tseng256mode     ; mode 4
-				dw      offset paradise256mode  ; mode 5
-				dw      offset video7256mode    ; mode 6
-				dw      offset tweak256mode     ; mode 7
-				dw      offset everex16mode     ; mode 8
-				dw      offset targaMode        ; mode 9
-				dw      offset hgcmode          ; mode 10
-				dw      offset diskmode         ; mode 11
-				dw      offset f8514mode        ; mode 12
-				dw      offset cgamode          ; mode 13
-				dw      offset tandymode        ; mode 14
-				dw      offset trident256mode   ; mode 15
-				dw      offset chipstech256mode ; mode 16
-				dw      offset ati256mode       ; mode 17
-				dw      offset everex256mode    ; mode 18
-				dw      offset yourownmode      ; mode 19
-				dw      offset ati1024mode      ; mode 20
-				dw      offset tseng16mode      ; mode 21
-				dw      offset trident16mode    ; mode 22
-				dw      offset video716mode     ; mode 23
-				dw      offset paradise16mode   ; mode 24
-				dw      offset chipstech16mode  ; mode 25
-				dw      offset everex16mode     ; mode 26
-				dw      offset VGAautomode      ; mode 27
-				dw      offset VESAmode         ; mode 28
-				dw      offset TrueColorAuto    ; mode 29
-				dw      offset dullnormalmode   ; mode 30
-				dw      offset dullnormalmode   ; mode 31
-		*/
-		int i = dotmode;
-		if (30 >= i)
-		{
-			i = 0;
-		}
 
-		void (*videomodetable)[32] =
 		{
-				dullnormalmode,		/* mode 0*/
-				dullnormalmode,		/* mode 1*/
-				vgamode,			/* mode 2*/
-				mcgamode,			/* mode 3*/
-				tseng256mode,		/* mode 4*/
-				paradise256mode,	/* mode 5*/
-				video7256mode,		/* mode 6*/
-				tweak256mode,		/* mode 7*/
-				everex16mode,		/* mode 8*/
-				targaMode,			/* mode 9*/
-				hgcmode,			/* mode 10*/
-				diskmode,			/* mode 11*/
-				f8514mode,			/* mode 12*/
-				cgamode,			/* mode 13*/
-				tandymode,			/* mode 14*/
-				trident256mode,		/* mode 15*/
-				chipstech256mode,	/* mode 16*/
-				ati256mode,			/* mode 17*/
-				everex256mode,		/* mode 18*/
-				yourownmode,		/* mode 19*/
-				ati1024mode,		/* mode 20*/
-				tseng16mode,		/* mode 21*/
-				trident16mode,		/* mode 22*/
-				video716mode,		/* mode 23*/
-				paradise16mode,		/* mode 24*/
-				chipstech16mode,	/* mode 25*/
-				everex16mode,		/* mode 26*/
-				VGAautomode,		/* mode 27*/
-				VESAmode,			/* mode 28*/
-				TrueColorAuto,		/* mode 29*/
-				dullnormalmode,		/* mode 30*/
-				dullnormalmode		/* mode 31*/
-		};
-		(*videomemtable[i])();
+			/*
+			videomodeisgood:
+					mov     bx,dotmode              ; set up for a video table jump
+					cmp     bx,30                   ; are we within the range of dotmodes?
+					jbe     videomodesetup          ; yup.  all is OK
+					mov     bx,0                    ; nope.  use dullnormalmode
+			videomodesetup:
+					shl     bx,1                    ; switch to a word offset
+					mov     bx,cs:videomodetable[bx]        ; get the next step
+					jmp     bx                      ; and go there
+			videomodetable  dw      offset dullnormalmode   ; mode 0
+					dw      offset dullnormalmode   ; mode 1
+					dw      offset vgamode          ; mode 2
+					dw      offset mcgamode         ; mode 3
+					dw      offset tseng256mode     ; mode 4
+					dw      offset paradise256mode  ; mode 5
+					dw      offset video7256mode    ; mode 6
+					dw      offset tweak256mode     ; mode 7
+					dw      offset everex16mode     ; mode 8
+					dw      offset targaMode        ; mode 9
+					dw      offset hgcmode          ; mode 10
+					dw      offset diskmode         ; mode 11
+					dw      offset f8514mode        ; mode 12
+					dw      offset cgamode          ; mode 13
+					dw      offset tandymode        ; mode 14
+					dw      offset trident256mode   ; mode 15
+					dw      offset chipstech256mode ; mode 16
+					dw      offset ati256mode       ; mode 17
+					dw      offset everex256mode    ; mode 18
+					dw      offset yourownmode      ; mode 19
+					dw      offset ati1024mode      ; mode 20
+					dw      offset tseng16mode      ; mode 21
+					dw      offset trident16mode    ; mode 22
+					dw      offset video716mode     ; mode 23
+					dw      offset paradise16mode   ; mode 24
+					dw      offset chipstech16mode  ; mode 25
+					dw      offset everex16mode     ; mode 26
+					dw      offset VGAautomode      ; mode 27
+					dw      offset VESAmode         ; mode 28
+					dw      offset TrueColorAuto    ; mode 29
+					dw      offset dullnormalmode   ; mode 30
+					dw      offset dullnormalmode   ; mode 31
+			*/
+			int i = dotmode;
+			typedef void t_void_function(void);
+			t_void_function *videomodetable[32] =
+			{
+					dullnormalmode,		/* mode 0*/
+					dullnormalmode,		/* mode 1*/
+					vgamode,			/* mode 2*/
+					mcgamode,			/* mode 3*/
+					tseng256mode,		/* mode 4*/
+					paradise256mode,	/* mode 5*/
+					video7256mode,		/* mode 6*/
+					tweak256mode,		/* mode 7*/
+					everex16mode,		/* mode 8*/
+					targaMode,			/* mode 9*/
+					hgcmode,			/* mode 10*/
+					diskmode,			/* mode 11*/
+					f8514mode,			/* mode 12*/
+					cgamode,			/* mode 13*/
+					tandymode,			/* mode 14*/
+					trident256mode,		/* mode 15*/
+					chipstech256mode,	/* mode 16*/
+					ati256mode,			/* mode 17*/
+					everex256mode,		/* mode 18*/
+					yourownmode,		/* mode 19*/
+					ati1024mode,		/* mode 20*/
+					tseng16mode,		/* mode 21*/
+					trident16mode,		/* mode 22*/
+					video716mode,		/* mode 23*/
+					paradise16mode,		/* mode 24*/
+					chipstech16mode,	/* mode 25*/
+					everex16mode,		/* mode 26*/
+					VGAautomode,		/* mode 27*/
+					VESAmode,			/* mode 28*/
+					TrueColorAuto,		/* mode 29*/
+					dullnormalmode,		/* mode 30*/
+					dullnormalmode		/* mode 31*/
+			};
+			if (30 < i)
+			{
+				i = 0;
+			}
+			(*videomodetable[i])();
+		}
 	}
 	else
 	{
@@ -1688,7 +1735,7 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 				*/
 				g_good_mode = 1;
 				g_ok_to_print = 1;
-				videomode(TPlusWrite
+				/*videomode(TPlusWrite, TPlusRead, normaline, normalineread, swapnormread);*/
 			}
 		}
 		else
@@ -1702,7 +1749,12 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 			g_good_mode = 0;
 		}
 	}
-#endif
+	dotwrite = win32_dot_writer;
+	dotread = win32_dot_reader;
+	linewrite = win32_line_writer;
+	lineread = win32_line_reader;
+	g_swap_setup = win32_swap_setup;
+
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
 	if (g_disk_flag)
