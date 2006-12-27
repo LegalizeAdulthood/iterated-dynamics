@@ -1,6 +1,7 @@
 #if !defined(WINTEXT_H)
 #define WINTEXT_H
 
+extern HWND			wintext_hWndCopy;
 extern void			wintext_addkeypress(unsigned int);
 extern void			wintext_clear();
 extern void			wintext_cursor(int, int, int);
@@ -17,6 +18,7 @@ extern int			wintext_texton(void);
 extern BYTE *		wintext_screen_get(void);
 extern void			wintext_screen_set(const BYTE *copy);
 extern void			wintext_hide_cursor(void);
+extern VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime);
 
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25

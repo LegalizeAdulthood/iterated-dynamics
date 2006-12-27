@@ -24,6 +24,8 @@
 #endif
 
 #define MAXSCREENS 3
+#define DRAW_INTERVAL 6
+#define TIMER_ID 1
 
 extern HINSTANCE g_instance;
 
@@ -66,7 +68,6 @@ extern void Cursor_SetPos();
 #define MIN(x, y)	((x) < (y) ? (x) : (y))
 #define SIGN(x)		((x) > 0   ? 1   : -1)
 #define SHELL "/bin/csh"
-#define DRAW_INTERVAL 6
 #endif
 /*  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\
 /* /  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \
@@ -617,16 +618,13 @@ setredrawscreen(void)
 static void
 win32_disk_schedule_alarm(Driver *drv, int soon)
 {
-	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-	ODS1("win32_disk_schedule_alarm %d", soon);
-#if 0
-	signal(SIGALRM, (SignalHandler) setredrawscreen);
-	if (soon)
-		alarm(1);
-	else
-		alarm(DRAW_INTERVAL);
-	di->alarmon = 1;
-#endif
+	int delay = (soon ? 1 : DRAW_INTERVAL)*1000;
+	UINT_PTR result = SetTimer(wintext_hWndCopy, TIMER_ID, delay, wintext_timer_redraw);
+	if (!result)
+	{
+		DWORD error = GetLastError();
+		ASSERT(result);
+	}
 }
 
 /*
@@ -1293,17 +1291,18 @@ static void
 win32_disk_stack_screen(Driver *drv)
 {
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-	int i;
-
 	ODS("win32_disk_stack_screen");
+
 	di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
 	if (++di->screen_count)
-	{ /* already have some stacked */
-		static char msg[] =
-		{ "stackscreen overflow" };
-		if ((i = di->screen_count - 1) >= MAXSCREENS)
-		{ /* bug, missing unstack? */
-			stopmsg(STOPMSG_NO_STACK, msg);
+	{
+		/* already have some stacked */
+		int i = di->screen_count - 1;
+		ASSERT(i < MAXSCREENS);
+		if (i >= MAXSCREENS)
+		{
+			/* bug, missing unstack? */
+			stopmsg(STOPMSG_NO_STACK, "stackscreen overflow");
 			exit(1);
 		}
 		di->saved_screens[i] = wintext_screen_get();
