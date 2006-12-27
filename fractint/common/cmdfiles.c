@@ -146,7 +146,7 @@ int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen 
 int first_init=1;               /* first time into cmdfiles? */
 static int init_rseed;
 static char initcorners,initparams;
-struct fractalspecificstuff *curfractalspecific;
+struct fractalspecificstuff *curfractalspecific = NULL;
 
 char FormFileName[FILE_MAX_PATH];/* file to find (type=)formulas in */
 char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
