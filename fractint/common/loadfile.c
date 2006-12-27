@@ -591,7 +591,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
          for (j = 0; j < 3; j++) {
             if ((k = getc(fp)) < 0)
                break;
-            g_dacbox[i][j] = (BYTE)(k >> 2);
+            g_dac_box[i][j] = (BYTE)(k >> 2);
          }
          if(k < 0)
             break;
@@ -1232,7 +1232,7 @@ int fgetwindow(void)
         floattobf(bt_f, cvt->f);
         }
      find_special_colors();
-     color_of_box = color_medium;
+     color_of_box = g_color_medium;
 rescan:  /* entry for changed browse parms */
      time(&lastime);
      toggle = 0;
@@ -1324,16 +1324,16 @@ rescan:  /* entry for changed browse parms */
              toggle = 1- toggle;
           }
           if (toggle)
-             drawindow(color_bright,&winlist);   /* flash current window */
+             drawindow(g_color_bright,&winlist);   /* flash current window */
           else
-             drawindow(color_dark,&winlist);
+             drawindow(g_color_dark,&winlist);
 #ifdef XFRACT
           blinks++;
 #endif
         }
 #ifdef XFRACT
           if ((blinks & 1) == 1)   /* Need an odd # of blinks, so next one leaves box turned off */
-             drawindow(color_bright,&winlist);
+             drawindow(g_color_bright,&winlist);
 #endif
 
       c=driver_get_key();
@@ -1390,7 +1390,7 @@ rescan:  /* entry for changed browse parms */
         case 'L':
 #ifdef XFRACT
         /* Need all boxes turned on, turn last one back on. */
-          drawindow(color_bright,&winlist);
+          drawindow(g_color_bright,&winlist);
 #endif
           autobrowse = FALSE;
           done = 2;
@@ -1509,7 +1509,7 @@ rescan:  /* entry for changed browse parms */
           if (boxcount > 0 )
 #ifdef XFRACT
         /* Turn all boxes off */
-             drawindow(color_bright,&winlist);
+             drawindow(g_color_bright,&winlist);
 #else
              clearbox();
 #endif

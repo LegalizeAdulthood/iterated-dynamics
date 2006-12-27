@@ -327,7 +327,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
             break; /* shouldn't happen */
          *next = '\0';
          titlewidth = (int) strlen(hdgline);
-         g_textcbase = boxcol + (boxwidth - titlewidth) / 2;
+         g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
          driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
          *next = '\n';
          hdgline = next+1;
@@ -339,7 +339,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
       }
 
       titlewidth = (int) strlen(hdgline);
-      g_textcbase = boxcol + (boxwidth - titlewidth) / 2;
+      g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
       driver_put_string(titlerow+i,0,C_PROMPT_HI,hdgline);
    }
 
@@ -361,27 +361,27 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 #define S6 "+" /* ur corner */
 #endif
       memset(buf,S1,80); buf[boxwidth-2] = 0;
-      g_textcbase = boxcol + 1;
+      g_text_cbase = boxcol + 1;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,buf);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,buf);
-      --g_textcbase;
+      --g_text_cbase;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,S5);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S2);
-      g_textcbase += boxwidth - 1;
+      g_text_cbase += boxwidth - 1;
       driver_put_string(extrarow,0,C_PROMPT_BKGRD,S6);
       driver_put_string(extrarow+extralines-1,0,C_PROMPT_BKGRD,S3);
 
-      g_textcbase = boxcol;
+      g_text_cbase = boxcol;
 
       for (i = 1; i < extralines-1; ++i) {
          driver_put_string(extrarow+i,0,C_PROMPT_BKGRD,S4);
          driver_put_string(extrarow+i,boxwidth-1,C_PROMPT_BKGRD,S4);
       }
-      g_textcbase += (boxwidth - extrawidth) / 2;
+      g_text_cbase += (boxwidth - extrawidth) / 2;
       driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
    }
 
-   g_textcbase = 0;
+   g_text_cbase = 0;
 
    /* display empty box */
    for (i = 0; i < boxlines; ++i)
@@ -401,7 +401,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
       putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
         (helpmode > 0) ? instr0b : instr0a);
       driver_hide_text_cursor();
-      g_textcbase = 2;
+      g_text_cbase = 2;
       for(;;) {
          if(rewrite_extrainfo) {
             rewrite_extrainfo = 0;
@@ -501,15 +501,15 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 
    while (!done) {
       if(rewrite_extrainfo) {
-         j = g_textcbase;
-         g_textcbase = 2;
+         j = g_text_cbase;
+         g_text_cbase = 2;
          fseek(scroll_file, scroll_file_start, SEEK_SET);
          load_entry_text(scroll_file, extrainfo, extralines - 2,
                              scroll_row_status, scroll_column_status);
          for(i=1; i <= extralines - 2; i++)
             driver_put_string(extrarow+i,0,C_PROMPT_TEXT,blanks);
          driver_put_string(extrarow+1,0,C_PROMPT_TEXT,extrainfo);
-         g_textcbase = j;
+         g_text_cbase = j;
       }
 
       curtype = values[curchoice].type;
@@ -2121,9 +2121,9 @@ static int check_gfe_key(int curkey,int choice)
       helptitle();
       driver_set_attr(1,0,C_GENERAL_MED,24*80);
 
-      g_textcbase = 0;
+      g_text_cbase = 0;
       driver_put_string(2,1,C_GENERAL_HI,infhdg);
-      g_textcbase = 2; /* left margin is 2 */
+      g_text_cbase = 2; /* left margin is 2 */
       driver_put_string(4,0,C_GENERAL_MED,infbuf);
 
       {
@@ -2209,7 +2209,7 @@ static int check_gfe_key(int curkey,int choice)
          else
             done = 1;  /* a key other than scrolling key was pressed */
       }
-      g_textcbase = 0;
+      g_text_cbase = 0;
       driver_hide_text_cursor();
       driver_unstack_screen();
    }
@@ -2885,9 +2885,9 @@ or '*' to use palette from the image to be loaded."};
             break;
          }
       }
-      memcpy(olddacbox,g_dacbox,256*3); /* save the DAC */
+      memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
       i = ValidateLuts(temp1);
-      memcpy(g_dacbox,olddacbox,256*3); /* restore the DAC */
+      memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
       if (i != 0) { /* Oops, somethings wrong */
          askflag = 1;
          continue;

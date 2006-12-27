@@ -102,10 +102,10 @@ int     rotate_lo,rotate_hi;    /* cycling color range      */
 int *ranges;                /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
 BYTE *mapdacbox = NULL;     /* map= (default colors)    */
-int     colorstate;             /* 0, g_dacbox matches default (bios or map=) */
-                                /* 1, g_dacbox matches no known defined map   */
-                                /* 2, g_dacbox matches the colorfile map      */
-int     colorpreloaded;         /* if g_dacbox preloaded for next mode select */
+int     colorstate;             /* 0, g_dac_box matches default (bios or map=) */
+                                /* 1, g_dac_box matches no known defined map   */
+                                /* 2, g_dac_box matches the colorfile map      */
+int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor=0;        /* flag for reading color from GIF */
 double  math_tol[2]={.05,.05};  /* For math transition */
@@ -636,7 +636,7 @@ static void initvars_restart()          /* <ins> key init */
    viewwindow = 0;                      /* no view window            */
    viewreduction = (float)4.2;
    viewcrop = 1;
-   virtual_screens = 1;                 /* virtual screen modes on   */
+   g_virtual_screens = 1;                 /* virtual screen modes on   */
    ai_8514 = 0;                         /* no need for the 8514 API  */
    finalaspectratio = screenaspect;
    viewxdots = viewydots = 0;
@@ -1133,7 +1133,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          char adapter_name[8];          /* entry lenth from VIDEO.ASM */
          char *adapter_ptr;
 
-         adapter_ptr = &supervga_list;
+         adapter_ptr = &supervga_list[0];
 
          for(i = 0 ; ; i++) {           /* find the SuperVGA entry */
              memcpy(adapter_name , adapter_ptr, 8);
@@ -1143,31 +1143,31 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
                      adapter_name[j] = 0;
              if (adapter_name[0] == 0) break;  /* end-of-the-list */
              if (strncmp(value,adapter_name,(int) strlen(adapter_name)) == 0) {
-                svga_type = i+1;
+                g_svga_type = i+1;
                 adapter_ptr[6] = 1;
                 break;
                 }
              adapter_ptr += 8;
              }
-         if (svga_type != 0) return 3;
+         if (g_svga_type != 0) return 3;
 
-         video_type = VIDEO_TYPE_VGA;                        /* assume video=vga */
+         g_video_type = VIDEO_TYPE_VGA;                        /* assume video=vga */
          if (strcmp(value,s_egamono) == 0) {
-            video_type = VIDEO_TYPE_EGA;
-            mode7text = 1;
+            g_video_type = VIDEO_TYPE_EGA;
+            g_mode_7_text = 1;
             }
          else if (strcmp(value,s_hgc) == 0) {   /* video = hgc */
-            video_type = VIDEO_TYPE_HGC;
-            mode7text = 1;
+            g_video_type = VIDEO_TYPE_HGC;
+            g_mode_7_text = 1;
             }
          else if (strcmp(value,s_ega) == 0)     /* video = ega */
-            video_type = VIDEO_TYPE_EGA;
+            g_video_type = VIDEO_TYPE_EGA;
          else if (strcmp(value,s_cga) == 0)     /* video = cga */
-            video_type = VIDEO_TYPE_CGA;
+            g_video_type = VIDEO_TYPE_CGA;
          else if (strcmp(value,s_mcga) == 0)    /* video = mcga */
-            video_type = VIDEO_TYPE_MCGA;
+            g_video_type = VIDEO_TYPE_MCGA;
          else if (strcmp(value,s_vga) == 0)     /* video = vga */
-            video_type = VIDEO_TYPE_VGA;
+            g_video_type = VIDEO_TYPE_VGA;
          else
             goto badarg;
          return 3;
@@ -1182,13 +1182,13 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (strcmp(variable,s_textsafe) == 0 ) {  /* textsafe==? */
          if (first_init) {
             if (charval[0] == 'n') /* no */
-               textsafe = 2;
+               g_text_safe = 2;
             else if (charval[0] == 'y') /* yes */
-               textsafe = 1;
+               g_text_safe = 1;
             else if (charval[0] == 'b') /* bios */
-               textsafe = 3;
+               g_text_safe = 3;
             else if (charval[0] == 's') /* save */
-               textsafe = 4;
+               g_text_safe = 4;
             else
                goto badarg;
             }
@@ -1197,7 +1197,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
       if (strcmp(variable,s_vesadetect) == 0) {
          if (yesnoval[0] < 0) goto badarg;
-         vesa_detect = yesnoval[0];
+         g_vesa_detect = yesnoval[0];
          return 3;
          }
 
@@ -1330,7 +1330,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          if ((k = check_vidmode_keyname(value)) == 0) goto badarg;
          g_init_mode = -1;
          for (i = 0; i < MAXVIDEOTABLE; ++i) {
-            if (videotable[i].keynum == k) {
+            if (g_video_table[i].keynum == k) {
                g_init_mode = i;
                break;
                }
@@ -2868,7 +2868,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (strcmp(variable,s_virtual) == 0) {         /* virtual= */
       if (yesnoval[0] < 0) goto badarg;
-      virtual_screens = yesnoval[0];
+      g_virtual_screens = yesnoval[0];
       return 1;
       }
 
@@ -2960,20 +2960,20 @@ static int parse_colors(char *value)
                else if (k <= 'Z')       k -= ('A'-10);
                else if (k < '_' || k > 'z') goto badcolor;
                else                     k -= ('_'-36);
-               g_dacbox[i][j] = (BYTE)k;
+               g_dac_box[i][j] = (BYTE)k;
                if (smooth) {
                   int start,spread,cnum;
                   start = i - (spread = smooth + 1);
                   cnum = 0;
-                  if ((k - (int)g_dacbox[start][j]) == 0) {
+                  if ((k - (int)g_dac_box[start][j]) == 0) {
                      while (++cnum < spread)
-                        g_dacbox[start+cnum][j] = (BYTE)k;
+                        g_dac_box[start+cnum][j] = (BYTE)k;
                      }
                   else {
                      while (++cnum < spread)
-                        g_dacbox[start+cnum][j] =
-            (BYTE)(( cnum *g_dacbox[i][j]
-            + (i-(start+cnum))*g_dacbox[start][j]
+                        g_dac_box[start+cnum][j] =
+            (BYTE)(( cnum *g_dac_box[i][j]
+            + (i-(start+cnum))*g_dac_box[start][j]
             + spread/2 )
             / (BYTE) spread);
                      }
@@ -2985,13 +2985,13 @@ static int parse_colors(char *value)
          }
       if (smooth) goto badcolor;
       while (i < 256)  { /* zap unset entries */
-         g_dacbox[i][0] = g_dacbox[i][1] = g_dacbox[i][2] = 40;
+         g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 40;
          ++i;
          }
       colorstate = 1;
       }
    colorpreloaded = 1;
-   memcpy(olddacbox,g_dacbox,256*3);
+   memcpy(olddacbox,g_dac_box,256*3);
    return(0);
 badcolor:
    return(-1);

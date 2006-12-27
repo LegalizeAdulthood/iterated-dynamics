@@ -143,8 +143,8 @@ void toggle_bars(int *bars, int barwidth, int *colour)
       {
          if(*bars)
          {
-            putcolor(i + (int)(AVG), j , color_bright);
-            putcolor(i - (int)(AVG), j , color_bright);
+            putcolor(i + (int)(AVG), j , g_color_bright);
+            putcolor(i - (int)(AVG), j , g_color_bright);
          }
          else
          {
@@ -246,7 +246,7 @@ int do_AutoStereo(void)
    oldhelpmode = helpmode;
    helpmode = RDSKEYS;
    savegraphics();                      /* save graphics image */
-   memcpy(savedacbox, g_dacbox, 256 * 3);  /* save colors */
+   memcpy(savedacbox, g_dac_box, 256 * 3);  /* save colors */
 
    if(xdots > OLDMAXPIXELS)
    {
@@ -368,7 +368,7 @@ int do_AutoStereo(void)
    exit_stereo:
    helpmode = oldhelpmode;
    restoregraphics();
-   memcpy(g_dacbox, savedacbox, 256 * 3);
+   memcpy(g_dac_box, savedacbox, 256 * 3);
    spindac(0,1);
    return (ret);
 }

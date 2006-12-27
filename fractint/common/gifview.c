@@ -93,7 +93,7 @@ int gifview()
    status = 0;
 
    /* initialize the col and row count for write-lines */
-   colcount = rowcount = 0;
+   colcount = g_row_count = 0;
    
    /* Open the file */
    if(outln == outline_stereo)
@@ -165,7 +165,7 @@ int gifview()
          }
          if((!display3d || (glassestype != 1 && glassestype != 2))
                        && !dontreadcolor)
-            g_dacbox[i][j] = (BYTE)(k >> 2);
+            g_dac_box[i][j] = (BYTE)(k >> 2);
       }
    }
    colorstate = 1; /* colors aren't default and not a known .map file */
@@ -176,7 +176,7 @@ int gifview()
        ValidateLuts(MAP_name);  /* read the palette file */
        spindac(0,1); /* load it, but don't spin */
    }
-   if (g_dacbox[0][0] != 255)
+   if (g_dac_box[0][0] != 255)
       spindac(0,1);       /* update the DAC */
    if (driver_diskp()){ /* disk-video */
       char fname[FILE_MAX_FNAME];
@@ -275,7 +275,7 @@ int gifview()
              }
 
          /* initialize the row count for write-lines */
-         rowcount = 0;
+         g_row_count = 0;
 
          if (calc_status == 1) /* should never be so, but make sure */
             calc_status = 0;
@@ -339,11 +339,11 @@ static int out_line_migs(BYTE *pixels, int linelen)
 {
    int row, startcol, stopcol;
 
-   row = gifview_image_top + rowcount;
+   row = gifview_image_top + g_row_count;
    startcol = gifview_image_left;
    stopcol = startcol+linelen-1;
    put_line(row, startcol, stopcol, pixels);
-   rowcount++;
+   g_row_count++;
 
    return(0);
 }
@@ -358,11 +358,11 @@ static int out_line_dither(BYTE *pixels, int linelen)
     nexterr = (rand()&0x1f)-16;
     for (i=0;i<linelen;i++) {
 #ifdef __SVR4
-        brt = (int)((g_dacbox[pixels[i]][0]*5+g_dacbox[pixels[i]][1]*9 +
-            g_dacbox[pixels[i]][2]*2))>>4; /* brightness from 0 to 63 */
+        brt = (int)((g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
+            g_dac_box[pixels[i]][2]*2))>>4; /* brightness from 0 to 63 */
 #else
-        brt = (g_dacbox[pixels[i]][0]*5+g_dacbox[pixels[i]][1]*9 +
-            g_dacbox[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
+        brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
+            g_dac_box[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
 #endif
         brt += nexterr;
         if (brt>32) {
@@ -391,21 +391,21 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
       extra = colcount+linelen-twidth;
       if(extra > 0) /* line wraps */
       {   
-          put_line(rowcount, colcount, twidth-1, pixels);
+          put_line(g_row_count, colcount, twidth-1, pixels);
           pixels += twidth-colcount;
           linelen -= twidth-colcount;
           colcount = twidth;
       }
       else
       {
-          put_line(rowcount, colcount, colcount+linelen-1, pixels);
+          put_line(g_row_count, colcount, colcount+linelen-1, pixels);
           colcount += linelen;
           linelen = 0;
       }
       if(colcount >= twidth)
       {
          colcount = 0;
-         rowcount++;
+         g_row_count++;
       }
    }   
    return(0);
@@ -440,7 +440,7 @@ int sound_line(BYTE *pixels, int linelen)
       extra = colcount+linelen-twidth;
       if(extra > 0) /* line wraps */
       {   
-          if(put_sound_line(rowcount, colcount, twidth-1, pixels))
+          if(put_sound_line(g_row_count, colcount, twidth-1, pixels))
              break;
           pixels += twidth-colcount;
           linelen -= twidth-colcount;
@@ -448,7 +448,7 @@ int sound_line(BYTE *pixels, int linelen)
       }
       else
       {
-          if(put_sound_line(rowcount, colcount, colcount+linelen-1, pixels))
+          if(put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
              break;
           colcount += linelen;
           linelen = 0;
@@ -456,7 +456,7 @@ int sound_line(BYTE *pixels, int linelen)
       if(colcount >= twidth)
       {
          colcount = 0;
-         rowcount++;
+         g_row_count++;
       }
    }   
    driver_mute();
@@ -468,17 +468,17 @@ int sound_line(BYTE *pixels, int linelen)
 int pot_line(BYTE *pixels, int linelen)
 {
    int row,col,saverowcount;
-   if (rowcount == 0)
+   if (g_row_count == 0)
       if (pot_startdisk() < 0)
          return -1;
-   saverowcount = rowcount;
-   row = (rowcount >>= 1);
+   saverowcount = g_row_count;
+   row = (g_row_count >>= 1);
    if ((saverowcount & 1) != 0) /* odd line */
       row += ydots;
    else if (!driver_diskp()) /* even line - display the line too */
       out_line(pixels,linelen);
    for (col = 0; col < xdots; ++col)
       writedisk(col+sxoffs,row+syoffs,*(pixels+col));
-   rowcount = saverowcount + 1;
+   g_row_count = saverowcount + 1;
    return(0);
 }

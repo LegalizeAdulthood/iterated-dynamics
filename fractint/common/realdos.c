@@ -116,15 +116,15 @@ int stopmsg (int flags, char *msg)
       toprow = 4;
       driver_move_cursor(4,0);
       }
-   g_textcbase = 2; /* left margin is 2 */
+   g_text_cbase = 2; /* left margin is 2 */
    driver_put_string(toprow,0,7,msg);
    if (flags & STOPMSG_CANCEL)
-      driver_put_string(g_textrow+2,0,7,s_escape_cancel);
+      driver_put_string(g_text_row+2,0,7,s_escape_cancel);
    else
-      driver_put_string(g_textrow+2,0,7,s_anykey);
-   g_textcbase = 0; /* back to full line */
+      driver_put_string(g_text_row+2,0,7,s_anykey);
+   g_text_cbase = 0; /* back to full line */
    color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-   driver_set_attr(toprow,0,color,(g_textrow+1-toprow)*80);
+   driver_set_attr(toprow,0,color,(g_text_row+1-toprow)*80);
    driver_hide_text_cursor();   /* cursor off */
    if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & 16) ? 0 : 2);
@@ -209,9 +209,9 @@ int showtempmsg(char *msgparm)
    size = (long)textxdots * (long)textydots;
    save_sxoffs = sxoffs;
    save_syoffs = syoffs;
-   if (video_scroll) {
-      sxoffs = video_startx;
-      syoffs = video_starty;
+   if (g_video_scroll) {
+      sxoffs = g_video_start_x;
+      syoffs = g_video_start_y;
    }
    else
       sxoffs = syoffs = 0;
@@ -230,9 +230,9 @@ int showtempmsg(char *msgparm)
       printf(msg);
       }
    else { /* generate the characters */
-      find_special_colors(); /* get color_dark & color_medium set */
+      find_special_colors(); /* get g_color_dark & g_color_medium set */
       for (i = 0; i < 8; ++i) {
-         memset(buffer,color_dark,640);
+         memset(buffer,g_color_dark,640);
          bufptr = buffer;
          charnum = -1;
          while (msg[++charnum] != 0) {
@@ -240,7 +240,7 @@ int showtempmsg(char *msgparm)
             for (j = 0; j < 8; ++j) {
                for (k = 0; k < xrepeat; ++k) {
                   if ((fontchar & 0x80) != 0)
-                     *bufptr = (BYTE)color_medium;
+                     *bufptr = (BYTE)g_color_medium;
                   ++bufptr;
                   }
                fontchar <<= 1;
@@ -265,9 +265,9 @@ void cleartempmsg()
    else if (temptextsave != 0) {
       save_sxoffs = sxoffs;
       save_syoffs = syoffs;
-      if (video_scroll) {
-         sxoffs = video_startx;
-         syoffs = video_starty;
+      if (g_video_scroll) {
+         sxoffs = g_video_start_x;
+         syoffs = g_video_start_y;
       }
       else
          sxoffs = syoffs = 0;
@@ -636,10 +636,10 @@ int fullscreen_choice(
    for (i = topleftrow-1-titlelines; i < topleftrow+boxdepth+1; ++i)
       driver_set_attr(i,k,C_PROMPT_LO,j);          /* draw empty box */
    if (hdg) {
-      g_textcbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
-      g_textcbase -= (90 - titlewidth) / 20; /* put heading into box */
+      g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
+      g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
       driver_put_string(topleftrow-titlelines-1,0,C_PROMPT_HI,hdg);
-      g_textcbase = 0;
+      g_text_cbase = 0;
       }
    if (hdg2)                               /* display 2nd heading */
       driver_put_string(topleftrow-1,topleftcol,C_PROMPT_MED,hdg2);
@@ -1131,9 +1131,9 @@ top:
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"restart "FRACTINT"        <ins> ");
 #ifdef XFRACT
-   if (fullmenu && (gotrealdac || fake_lut) && colors >= 16) {
+   if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16) {
 #else
-   if (fullmenu && gotrealdac && colors >= 16) {
+   if (fullmenu && g_got_real_dac && colors >= 16) {
 #endif
       /* nextright += 2; */
       LOADPROMPTSCHOICES(nextright+=2,"       COLORS                 ");
@@ -1145,7 +1145,7 @@ top:
       attributes[nextright] = MENU_ITEM;
       LOADPROMPTSCHOICES(nextright,"rotate palette      <+>, <->  ");
       if (colors > 16) {
-         if (!reallyega) {
+         if (!g_really_ega) {
             choicekey[nextright+=2] = 'e';
             attributes[nextright] = MENU_ITEM;
             LOADPROMPTSCHOICES(nextright,"palette editing mode     <e>  ");
@@ -1240,11 +1240,11 @@ static int menu_checkkey(int curkey,int choice)
               && param[0] == 0.0 && param[1] == 0.0)
            || curfractalspecific->tomandel != NOFRACTAL)
          return(0-testkey);
-      if (gotrealdac && colors >= 16) {
+      if (g_got_real_dac && colors >= 16) {
          if (strchr("c+-",testkey))
             return(0-testkey);
          if (colors > 16
-           && (testkey == 'a' || (!reallyega && testkey == 'e')))
+           && (testkey == 'a' || (!g_really_ega && testkey == 'e')))
             return(0-testkey);
          }
       /* Alt-A and Alt-S */
@@ -1444,9 +1444,9 @@ int field_prompt(
    boxwidth += i * 2;
    for (i = -1; i < titlelines+3; ++i)    /* draw empty box */
       driver_set_attr(titlerow+i,j,C_PROMPT_LO,boxwidth);
-   g_textcbase = titlecol;                  /* set left margin for putstring */
+   g_text_cbase = titlecol;                  /* set left margin for putstring */
    driver_put_string(titlerow,0,C_PROMPT_HI,hdg); /* display heading */
-   g_textcbase = 0;
+   g_text_cbase = 0;
    i = titlerow + titlelines + 4;
    if (instr) {                           /* display caller's instructions */
       charptr = instr;
@@ -1496,7 +1496,7 @@ int thinking(int options,char *msg)
       strcat(buf,msg);
       strcat(buf,"    ");
       driver_put_string(4,10,C_GENERAL_HI,buf);
-      thinkcol = g_textcol - 3;
+      thinkcol = g_text_col - 3;
       count = 0;
       }
    if ((count++)<100) {
@@ -1532,14 +1532,13 @@ BYTE suffix[10000];
 #endif
 
 #ifndef XFRACT
-
 int savegraphics()
 {
    int i;
    long count;
    unsigned long swaptmpoff;
 
-   swaptotlen = (long)(vxdots > sxdots ? vxdots : sxdots) * (long)sydots;
+   swaptotlen = (long)(g_vxdots > sxdots ? g_vxdots : sxdots) * (long)sydots;
    i = colors;
    while (i <= 16) {
       swaptotlen >>= 1;
@@ -1562,7 +1561,7 @@ int savegraphics()
          swaptmpoff = 0;
       else
          swaptmpoff = swapoffset/swaplength;
-      (*swapsetup)(); /* swapoffset,swaplength -> sets swapvidbuf,swaplength */
+      (*g_swap_setup)(); /* swapoffset,swaplength -> sets swapvidbuf,swaplength */
 
       MoveToMemory(swapvidbuf,(U16)swaplength,1L,swaptmpoff,memhandle);
 
@@ -1589,12 +1588,12 @@ int restoregraphics()
          swaptmpoff = 0;
       else
          swaptmpoff = swapoffset/swaplength;
-      if (swapsetup != swapnormread)
-         (*swapsetup)(); /* swapoffset,swaplength -> sets swapvidbuf,swaplength */
+      if (g_swap_setup != swapnormread)
+         (*g_swap_setup)(); /* swapoffset,swaplength -> sets swapvidbuf,swaplength */
 
       MoveFromMemory(swapvidbuf,(U16)swaplength,1L,swaptmpoff,memhandle);
 
-      if (swapsetup == swapnormread)
+      if (g_swap_setup == swapnormread)
          swapnormwrite();
       swapoffset += swaplength;
       }
@@ -1783,9 +1782,9 @@ use_resident_table:
 	vident = vidtbl;
 	for (i = 0; i < MAXVIDEOTABLE; ++i)
 	{
-		if (videotable[i].xdots)
+		if (g_video_table[i].xdots)
 		{
-			memcpy((char *)vident,(char *)&videotable[i],
+			memcpy((char *)vident,(char *)&g_video_table[i],
 						sizeof(*vident));
 			++vident;
 			++vidtbllen;
@@ -1807,16 +1806,16 @@ I will continue with only the built-in video modes available."};
 void load_videotable(int options)
 {
 	/* Loads fractint.cfg and copies the video modes which are */
-	/* assigned to function keys into videotable.              */
+	/* assigned to function keys into g_video_table.              */
 	int keyents, i;
 	load_fractint_cfg(options); /* load fractint.cfg to extraseg */
 	keyents = 0;
-	memset((char *) videotable, 0, sizeof(*vidtbl)*MAXVIDEOTABLE);
+	memset((char *) g_video_table, 0, sizeof(*vidtbl)*MAXVIDEOTABLE);
 	for (i = 0; i < vidtbllen; ++i)
 	{
 		if (vidtbl[i].keynum > 0)
 		{
-			memcpy((char *) &videotable[keyents], (char *) &vidtbl[i],
+			memcpy((char *) &g_video_table[keyents], (char *) &vidtbl[i],
 						sizeof(*vidtbl));
 			if (++keyents >= MAXVIDEOTABLE)
 			{
@@ -1829,14 +1828,14 @@ void load_videotable(int options)
 int check_vidmode_key(int option,int k)
 {
    int i;
-   /* returns videotable entry number if the passed keystroke is a  */
+   /* returns g_video_table entry number if the passed keystroke is a  */
    /* function key currently assigned to a video mode, -1 otherwise */
    if (k == 1400)              /* special value from select_vid_mode  */
       return(MAXVIDEOTABLE-1); /* for last entry with no key assigned */
    if (k != 0) {
       if (option == 0) { /* check resident video mode table */
          for (i = 0; i < MAXVIDEOTABLE; ++i) {
-            if (videotable[i].keynum == k)
+            if (g_video_table[i].keynum == k)
                return(i);
             }
          }

@@ -41,9 +41,9 @@ int rotate_max,rotate_size;
 static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 
 #ifndef XFRACT
-   if (gotrealdac == 0                  /* ??? no DAC to rotate! */
+   if (g_got_real_dac == 0                  /* ??? no DAC to rotate! */
 #else
-   if (!(gotrealdac || fake_lut)        /* ??? no DAC to rotate! */
+   if (!(g_got_real_dac || fake_lut)        /* ??? no DAC to rotate! */
 #endif
      || colors < 16) {                  /* strange things happen in 2x modes */
       driver_buzzer(2);
@@ -91,16 +91,16 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
                if (++incr > fstep) {    /* time to randomize */
                   incr = 1;
                   fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
-                  fromred   = g_dacbox[last][0];
-                  fromgreen = g_dacbox[last][1];
-                  fromblue  = g_dacbox[last][2];
+                  fromred   = g_dac_box[last][0];
+                  fromgreen = g_dac_box[last][1];
+                  fromblue  = g_dac_box[last][2];
                   tored     = rand15() >> 9;
                   togreen   = rand15() >> 9;
                   toblue    = rand15() >> 9;
                   }
-               g_dacbox[jstep][0] = (BYTE)(fromred   + (((tored    - fromred  )*incr)/fstep));
-               g_dacbox[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
-               g_dacbox[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue )*incr)/fstep));
+               g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred  )*incr)/fstep));
+               g_dac_box[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
+               g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue )*incr)/fstep));
                }
             }
          if (step >= rotate_size) step = oldstep;
@@ -131,12 +131,12 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             incr = 999;
             break;
          case UP_ARROW:                 /* UpArrow means speed up       */
-            daclearn = 1;
-            if (++daccount >= colors) --daccount;
+            g_dac_learn = 1;
+            if (++g_dac_count >= colors) --g_dac_count;
             break;
          case DOWN_ARROW:               /* DownArrow means slow down    */
-            daclearn = 1;
-            if (daccount > 1) daccount--;
+            g_dac_learn = 1;
+            if (g_dac_count > 1) g_dac_count--;
             break;
          case '1':
          case '2':
@@ -186,14 +186,14 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
                   fkey = 10;break;
             }
 #endif
-            if (reallyega) fkey = (fkey+1)>>1; /* limit on EGA */
+            if (g_really_ega) fkey = (fkey+1)>>1; /* limit on EGA */
             fstep = 1;
             incr = 999;
             break;
          case ENTER:                    /* enter key: randomize all colors */
          case ENTER_2:                  /* also the Numeric-Keypad Enter */
             fkey = rand15()/3277 + 1;
-            if (reallyega)              /* limit on EGAs */
+            if (g_really_ega)              /* limit on EGAs */
                fkey = (fkey+1)>>1;
             fstep = 1;
             incr = 999;
@@ -215,13 +215,13 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (driver_diskp()) break;
             if (changecolor    == -1) changecolor = 2;
             if (changedirection == 0) changedirection = 1;
-            if (reallyega) break;       /* no sense on real EGAs */
+            if (g_really_ega) break;       /* no sense on real EGAs */
             for (i = 1; i < 256; i++) {
-               g_dacbox[i][changecolor] = (BYTE)(g_dacbox[i][changecolor] + changedirection);
-               if (g_dacbox[i][changecolor] == 64)
-               g_dacbox[i][changecolor] = 63;
-               if (g_dacbox[i][changecolor] == 255)
-                  g_dacbox[i][changecolor] = 0;
+               g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
+               if (g_dac_box[i][changecolor] == 64)
+               g_dac_box[i][changecolor] = 63;
+               if (g_dac_box[i][changecolor] == 255)
+                  g_dac_box[i][changecolor] = 0;
                }
             changecolor    = -1;        /* clear flags for next time */
             changedirection = 0;
@@ -284,11 +284,11 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             more = 0;                   /* time to bail out */
             break;
          case HOME:                     /* restore palette */
-            memcpy(g_dacbox,olddacbox,256*3);
+            memcpy(g_dac_box,olddacbox,256*3);
             pauserotate();              /* pause */
             break;
          default:                       /* maybe a new palette */
-            if (reallyega) break;       /* no sense on real EGAs */
+            if (g_really_ega) break;       /* no sense on real EGAs */
             fkey = 0;                   /* disable random generation */
             if (kbdchar == 1084) set_palette(Black, White);
             if (kbdchar == SF2) set_palette(Red, Yellow);
@@ -336,14 +336,14 @@ BYTE olddac0,olddac1,olddac2;
    if (paused)                          /* if already paused , just clear */
       paused = 0;
    else {                               /* else set border, wait for a key */
-      olddaccount = daccount;
-      olddac0 = g_dacbox[0][0];
-      olddac1 = g_dacbox[0][1];
-      olddac2 = g_dacbox[0][2];
-      daccount = 256;
-      g_dacbox[0][0] = 48;
-      g_dacbox[0][1] = 48;
-      g_dacbox[0][2] = 48;
+      olddaccount = g_dac_count;
+      olddac0 = g_dac_box[0][0];
+      olddac1 = g_dac_box[0][1];
+      olddac2 = g_dac_box[0][2];
+      g_dac_count = 256;
+      g_dac_box[0][0] = 48;
+      g_dac_box[0][1] = 48;
+      g_dac_box[0][2] = 48;
       spindac(0,1);                     /* show white border */
       if (driver_diskp())
       {
@@ -356,11 +356,11 @@ BYTE olddac0,olddac1,olddac2;
 
 	  if (driver_diskp())
          dvid_status(0,"");
-      g_dacbox[0][0] = olddac0;
-      g_dacbox[0][1] = olddac1;
-      g_dacbox[0][2] = olddac2;
+      g_dac_box[0][0] = olddac0;
+      g_dac_box[0][1] = olddac1;
+      g_dac_box[0][2] = olddac2;
       spindac(0,1);                     /* show black border */
-      daccount = olddaccount;
+      g_dac_count = olddaccount;
       paused = 1;
       }
 }
@@ -368,28 +368,28 @@ BYTE olddac0,olddac1,olddac2;
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
    int i, j;
-   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+   g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
    for(i=1;i<=255;i++)                  /* fill the palette     */
       for (j = 0; j < 3; j++)
 #ifdef __SVR4
-         g_dacbox[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
+         g_dac_box[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
 #else
-         g_dacbox[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
+         g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
 #endif
 }
 
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
    int i, j;
-   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+   g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
    for(i=1;i<=128;i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         g_dacbox[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
-         g_dacbox[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
+         g_dac_box[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
+         g_dac_box[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
 #else
-         g_dacbox[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j] )/128);
-         g_dacbox[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
+         g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j] )/128);
+         g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
 #endif
       }
 }
@@ -397,17 +397,17 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
    int i, j;
-   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+   g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
    for(i=1;i<=85;i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         g_dacbox[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);
-         g_dacbox[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
-         g_dacbox[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
+         g_dac_box[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);
+         g_dac_box[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
+         g_dac_box[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
 #else
-         g_dacbox[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j] )/85);
-         g_dacbox[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
-         g_dacbox[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
+         g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j] )/85);
+         g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
+         g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
 #endif
       }
 }
@@ -442,10 +442,10 @@ void save_palette()
          for (i = 0; i < 256; i++)
 #endif
             fprintf(dacfile, "%3d %3d %3d\n",
-                    g_dacbox[i][0] << 2,
-                    g_dacbox[i][1] << 2,
-                    g_dacbox[i][2] << 2);
-         memcpy(olddacbox,g_dacbox,256*3);
+                    g_dac_box[i][0] << 2,
+                    g_dac_box[i][1] << 2,
+                    g_dac_box[i][2] << 2);
+         memcpy(olddacbox,g_dac_box,256*3);
          colorstate = 2;
          strcpy(colorfile,temp1);
          }
@@ -468,7 +468,7 @@ int load_palette(void)
    if (i >= 0)
    {
       if (ValidateLuts(filename) == 0)
-         memcpy(olddacbox,g_dacbox,256*3);
+         memcpy(olddacbox,g_dac_box,256*3);
       merge_pathnames(MAP_name,filename,0);
    }
    helpmode = oldhelpmode;

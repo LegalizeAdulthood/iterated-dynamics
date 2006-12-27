@@ -108,22 +108,22 @@ typedef enum
 } fractint_event;
 
 /* Global variables (yuck!) */
-int andcolor;
+int g_and_color;
 BYTE block[256] = { 0 };
 int boxx[2304] = { 0 };
 int boxy[1024] = { 0 };
 int boxvalues[512] = { 0 };
-int chkd_vvs = 0;
-int color_dark = 0;		/* darkest color in palette */
-int color_bright = 0;		/* brightest color in palette */
-int color_medium = 0;		/* nearest to medbright grey in palette
+int g_checked_vvs = 0;
+int g_color_dark = 0;		/* darkest color in palette */
+int g_color_bright = 0;		/* brightest color in palette */
+int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int cpu, fpu;                        /* cpu, fpu flags */
-unsigned char g_dacbox[256][3];
-int daclearn = 0;
+unsigned char g_dac_box[256][3];
+int g_dac_learn = 0;
 int dacnorm = 0;
-int daccount = 0;
-int diskflag = 0;
+int g_dac_count = 0;
+int g_disk_flag = 0;
 int disktarga = 0;
 int DivideOverflow = 0;
 int (*dotread)(int, int);	/* read-a-dot routine */
@@ -138,23 +138,23 @@ int fm_release = 0;
 int fm_sustain = 0;
 int fm_vol = 0;
 int fm_wavetype = 0;
-int goodmode = 0;
-int gotrealdac = 0;
+int g_good_mode = 0;
+int g_got_real_dac = 0;
 int hi_atten = 0;
 int inside_help = 0;
-int istruecolor = 0;
+int g_is_true_color = 0;
 void (*lineread)();		/* read-a-line routine */
 void (*linewrite)();		/* write-a-line routine */
 long linitx = 0;
 long linity = 0;
 int lookatmouse = 0;
-int mode7text = 0;
+int g_mode_7_text = 0;
 BYTE olddacbox[256][3];
 int overflow = 0;
 int polyphony = 0;
-int reallyega = 0;
+int g_really_ega = 0;
 char rlebuf[512] = { 0 };
-int rowcount = 0;
+int g_row_count = 0;
 long savebase = 0;				/* base clock ticks */ 
 long saveticks = 0;				/* save after this many ticks */ 
 unsigned int strlocn[10*1024] = { 0 };
@@ -200,31 +200,31 @@ char supervga_list[] =
 	' ', ' ', ' ', ' ', ' ', ' ',		//        db      "      "        ; end-of-the-list
 	0, 0								//        dw      0
 };
-int svga_type = 0;
-void (*swapsetup)(void) = null_swap;			/* setfortext/graphics setup routine */
-int text_type = 0;
-int g_textcbase = 0;
-int g_textcol = 0;
-int g_textrbase = 0;
-int g_textrow = 0;
-int textsafe = 0;
+int g_svga_type = 0;
+void (*g_swap_setup)(void) = null_swap;			/* setfortext/graphics setup routine */
+int g_text_type = 0;
+int g_text_cbase = 0;
+int g_text_col = 0;
+int g_text_rbase = 0;
+int g_text_row = 0;
+int g_text_safe = 0;
 int TPlusErr = 0;
 char tstack[4096] = { 0 };
-int vesa_detect = 0;
-int vesa_xres = 0;
-int vesa_yres = 0;
-int video_scroll = 0;
-int video_startx = 0;
-int video_starty = 0;
-int video_type = 0;
-int video_vram = 0;
-/* videotable
+int g_vesa_detect = 0;
+int g_vesa_x_res = 0;
+int g_vesa_y_res = 0;
+int g_video_scroll = 0;
+int g_video_start_x = 0;
+int g_video_start_y = 0;
+int g_video_type = 0;
+int g_video_vram = 0;
+/* g_video_table
  *
  *  |--Adapter/Mode-Name------|-------Comments-----------|
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO videotable[MAXVIDEOTABLE] =
+VIDEOINFO g_video_table[MAXVIDEOTABLE] =
 {
 	{
 		"unused  mode             ", "                         ",
@@ -233,8 +233,8 @@ VIDEOINFO videotable[MAXVIDEOTABLE] =
 	}
 };
 VIDEOINFO *vidtbl = NULL;
-int virtual_screens = 0;
-int vxdots = 0;
+int g_virtual_screens = 0;
+int g_vxdots = 0;
 
 /* Global functions
  *
@@ -520,7 +520,7 @@ int getcolor(int xdot, int ydot)
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
-	dotwrite(xdot + sxoffs, ydot + syoffs, color & andcolor);
+	dotwrite(xdot + sxoffs, ydot + syoffs, color & g_and_color);
 }
 
 /*
@@ -539,55 +539,55 @@ find_special_colors (void)
 	int brt;
 	int i;
 
-	color_dark = 0;
-	color_medium = 7;
-	color_bright = 15;
+	g_color_dark = 0;
+	g_color_medium = 7;
+	g_color_bright = 15;
 
 	if (colors == 2)
 	{
-		color_medium = 1;
-		color_bright = 1;
+		g_color_medium = 1;
+		g_color_bright = 1;
 		return;
 	}
 
-	if (!(gotrealdac || fake_lut))
+	if (!(g_got_real_dac || fake_lut))
 		return;
 
 	for (i = 0; i < colors; i++)
 	{
-		brt = (int) g_dacbox[i][0] + (int) g_dacbox[i][1] + (int) g_dacbox[i][2];
+		brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
 		if (brt > maxb)
 		{
 			maxb = brt;
-			color_bright = i;
+			g_color_bright = i;
 		}
 		if (brt < minb)
 		{
 			minb = brt;
-			color_dark = i;
+			g_color_dark = i;
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = mingun = (int) g_dacbox[i][0];
-			if ((int) g_dacbox[i][1] > (int) g_dacbox[i][0])
+			maxgun = mingun = (int) g_dac_box[i][0];
+			if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
 			{
-				maxgun = (int) g_dacbox[i][1];
+				maxgun = (int) g_dac_box[i][1];
 			}
 			else
 			{
-				mingun = (int) g_dacbox[i][1];
+				mingun = (int) g_dac_box[i][1];
 			}
-			if ((int) g_dacbox[i][2] > maxgun)
+			if ((int) g_dac_box[i][2] > maxgun)
 			{
-				maxgun = (int) g_dacbox[i][2];
+				maxgun = (int) g_dac_box[i][2];
 			}
-			if ((int) g_dacbox[i][2] < mingun)
+			if ((int) g_dac_box[i][2] < mingun)
 			{
-				mingun = (int) g_dacbox[i][2];
+				mingun = (int) g_dac_box[i][2];
 			}
 			if (brt - (maxgun - mingun) / 2 > med)
 			{
-				color_medium = i;
+				g_color_medium = i;
 				med = brt - (maxgun - mingun) / 2;
 			}
 		}
@@ -656,12 +656,12 @@ int get_sound_params(void)
 */
 int out_line(BYTE *pixels, int linelen)
 {
-	if (rowcount + syoffs >= sydots)
+	if (g_row_count + syoffs >= sydots)
 	{
 		return 0;
 	}
-	linewrite(rowcount + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
-	rowcount++;
+	linewrite(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+	g_row_count++;
 	return 0;
 }
 
@@ -734,12 +734,12 @@ void spindac(int dir, int inc)
 	int len;
 	if (colors < 16)
 		return;
-	if (istruecolor && truemode)
+	if (g_is_true_color && truemode)
 		return;
 	if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
 	{
 		top = rotate_hi > colors ? colors - 1 : rotate_hi;
-		dacbot = (unsigned char *) g_dacbox + 3 * rotate_lo;
+		dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
 		len = (top - rotate_lo) * 3 * sizeof (unsigned char);
 		if (dir > 0)
 		{
@@ -761,7 +761,7 @@ void spindac(int dir, int inc)
 		}
 	}
 	//writevideopalette();
-	delay(colors - daccount - 1);
+	delay(colors - g_dac_count - 1);
 }
 
 //; ************* function scroll_relative(bycol, byrow) ***********************
@@ -771,12 +771,12 @@ void spindac(int dir, int inc)
 //; ------------------------------------------------------------16-08-2002-ChCh-
 //
 //scroll_relative proc    bycol: word, byrow: word
-//        cmp     video_scroll,0        ; is the scrolling on?
+//        cmp     g_video_scroll,0        ; is the scrolling on?
 //        jne     okletsmove              ;  ok, lets move
 //        jmp     staystill               ;  no, stay still
 //okletsmove:
-//        mov     cx,video_startx         ; where we already are..
-//        mov     dx,video_starty
+//        mov     cx,g_video_start_x         ; where we already are..
+//        mov     dx,g_video_start_y
 //        add     cx,video_cofs_x         ; find the screen center
 //        add     dx,video_cofs_y
 //        add     cx,bycol                ; add the relative shift
@@ -788,7 +788,7 @@ void spindac(int dir, int inc)
 
 void scroll_relative(int bycol, int byrow)
 {
-	if (video_scroll)
+	if (g_video_scroll)
 	{
 		// blt pixels around :-)
 	}
@@ -798,25 +798,25 @@ void scroll_relative(int bycol, int byrow)
 ; adapter_detect:
 ;       This routine performs a few quick checks on the type of
 ;       video adapter installed.
-;       It sets variables video_type and textsafe,
+;       It sets variables g_video_type and g_text_safe,
 ;       and fills in a few bank-switching routines.
 */
 void
-adapter_detect (void)
+adapter_detect(void)
 {
 	static int done_detect = 0;
 
 	if (done_detect)
 		return;
 	done_detect = 1;
-	textsafe = 2;
+	g_text_safe = 2;
 	if (colors == 2)
 	{
-		video_type = 100;
+		g_video_type = 100;
 	}
 	else
 	{
-		video_type = 101;
+		g_video_type = 101;
 	}
 }
 
@@ -852,8 +852,8 @@ void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 void home(void)
 {
 	driver_move_cursor(0, 0);
-	g_textrow = 0;
-	g_textcol = 0;
+	g_text_row = 0;
+	g_text_col = 0;
 }
 
 /*

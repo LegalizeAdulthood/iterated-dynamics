@@ -192,7 +192,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                                  * clipping */
       plot = normalplot = clipcolor;
 
-   currow = rowcount;           /* use separate variable to allow for
+   currow = g_row_count;           /* use separate variable to allow for
                                  * pot16bit files */
    if (pot16bit)
       currow >>= 1;
@@ -203,7 +203,7 @@ int line3d(BYTE * pixels, unsigned linelen)
    /* communication with the rest of the program is generally via static   */
    /* or global variables.                                                 */
    /************************************************************************/
-   if (rowcount++ == 0)
+   if (g_row_count++ == 0)
    {
       int err;
       if ((err = first_time(linelen, v)) != 0)
@@ -233,9 +233,9 @@ int line3d(BYTE * pixels, unsigned linelen)
          int pal, colornum;
          colornum = pixels[col];
          /* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-         pal = ((int) g_dacbox[colornum][0] * 77 +
-                (int) g_dacbox[colornum][1] * 151 +
-                (int) g_dacbox[colornum][2] * 28);
+         pal = ((int) g_dac_box[colornum][0] * 77 +
+                (int) g_dac_box[colornum][1] * 151 +
+                (int) g_dac_box[colornum][2] * 28);
          pal >>= 6;
          pixels[col] = (BYTE) pal;
       }
@@ -1269,9 +1269,9 @@ int _fastcall targa_color(int x, int y, int color)
       case 0:
       default:
       {
-         RGB[0] = (BYTE)(g_dacbox[Real_Color][0] << 2); /* Move color space to */
-         RGB[1] = (BYTE)(g_dacbox[Real_Color][1] << 2); /* 256 color primaries */
-         RGB[2] = (BYTE)(g_dacbox[Real_Color][2] << 2); /* from 64 colors */
+         RGB[0] = (BYTE)(g_dac_box[Real_Color][0] << 2); /* Move color space to */
+         RGB[1] = (BYTE)(g_dac_box[Real_Color][1] << 2); /* 256 color primaries */
+         RGB[2] = (BYTE)(g_dac_box[Real_Color][2] << 2); /* from 64 colors */
          break;
       }
       case 1:
@@ -1889,10 +1889,10 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
    if (!BRIEF)
       for (i = 0; i <= 2; i++)
 #ifdef __SVR4
-         c[i] = (float) ((int)(g_dacbox[c1][i] + g_dacbox[c2][i] + g_dacbox[c3][i])
+         c[i] = (float) ((int)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
             / (3 * 63));
 #else
-         c[i] = (float) (g_dacbox[c1][i] + g_dacbox[c2][i] + g_dacbox[c3][i])
+         c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
             / (3 * 63);
 #endif
 

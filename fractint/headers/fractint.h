@@ -26,7 +26,7 @@ typedef BYTE BOOLEAN;
 #define STOPMSG_FIXED_FONT	8
 #define STOPMSG_INFO_ONLY	16
 
-/* video_type video types */
+/* g_video_type video types */
 #define VIDEO_TYPE_HGC		1
 #define VIDEO_TYPE_EGA		3
 #define VIDEO_TYPE_CGA		2

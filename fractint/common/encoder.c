@@ -333,16 +333,16 @@ int encoder()
 #ifndef XFRACT
    if (colors == 256)
    {                            /* write out the 256-color palette */
-      if (gotrealdac)
+      if (g_got_real_dac)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE *) g_dacbox, colors))
+         if (!shftwrite((BYTE *) g_dac_box, colors))
             goto oops;
 #else
    if (colors > 2)
    {
-      if (gotrealdac || fake_lut)
+      if (g_got_real_dac || fake_lut)
       {                         /* got a DAC - must be a VGA */
-         if (!shftwrite((BYTE *) g_dacbox, 256))
+         if (!shftwrite((BYTE *) g_dac_box, 256))
             goto oops;
 #endif
       }
@@ -366,9 +366,9 @@ int encoder()
    }
    if (colors == 16)
    {                            /* Either EGA or VGA */
-      if (gotrealdac)
+      if (g_got_real_dac)
       {
-         if (!shftwrite((BYTE *) g_dacbox, colors))
+         if (!shftwrite((BYTE *) g_dac_box, colors))
             goto oops;
       }
       else

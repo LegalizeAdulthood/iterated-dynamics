@@ -79,7 +79,7 @@ int compiled_by_turboc = 0;
 */
         int     active_system = 0;      /* 0 for DOS, WINFRAC for Windows */
         int     dotmode;                /* video access method      */
-        int     textsafe2;              /* textsafe override from videotable */
+        int     textsafe2;              /* textsafe override from g_video_table */
         int     oktoprint;              /* 0 if printf() won't work */
         int     sxdots,sydots;          /* # of dots on the physical screen    */
         int     sxoffs,syoffs;          /* physical top left of logical screen */
@@ -279,7 +279,7 @@ restart:   /* insert key re-starts here */
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox,g_dacbox,256*3);      /* save in case colors= present */
+	memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
 
 	if (debugflag == 8088)
 	{
@@ -311,9 +311,9 @@ restart:   /* insert key re-starts here */
 	adapter_detect();                    /* check what video is really present */
 	if (debugflag >= 9002 && debugflag <= 9100) /* for testing purposes */
 	{
-		if (video_type > (debugflag-9000)/2)     /* adjust the video value */
+		if (g_video_type > (debugflag-9000)/2)     /* adjust the video value */
 		{
-			video_type = (debugflag-9000)/2;
+			g_video_type = (debugflag-9000)/2;
 		}
 	}
 
@@ -358,7 +358,7 @@ restart:   /* insert key re-starts here */
 restorestart:
 	if (colorpreloaded)
 	{
-		memcpy(g_dacbox,olddacbox,256*3);   /* restore in case colors= present */
+		memcpy(g_dac_box,olddacbox,256*3);   /* restore in case colors= present */
 	}
 
 	lookatmouse = 0;                     /* ignore mouse */
@@ -505,7 +505,7 @@ imagestart:                             /* calc/display a new image */
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == F3)
 						display3d = 1;
 					if(colorpreloaded)
-						memcpy(olddacbox,g_dacbox,256*3);     /* save in case colors= present */
+						memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
 					driver_set_for_text(); /* switch to text mode */
 					showfile = -1;
 					goto restorestart;

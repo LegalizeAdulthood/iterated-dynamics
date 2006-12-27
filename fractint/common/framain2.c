@@ -78,7 +78,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
              calc_status = -1;
          }
 #endif
-         memcpy((char *)&g_video_entry,(char *)&videotable[g_adapter],
+         memcpy((char *)&g_video_entry,(char *)&g_video_table[g_adapter],
                     sizeof(g_video_entry));
          axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
          bxmode  = g_video_entry.videomodebx; /* video mode (BIOS call)   */
@@ -100,7 +100,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          if (driver_diskp())		/* default assumption is disk */
             diskvideo = 2;
 
-         memcpy(olddacbox,g_dacbox,256*3); /* save the DAC */
+         memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
          diskisactive = 1;              /* flag for disk-video routines */
 
          if (overlay3d && !initbatch) {
@@ -110,7 +110,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
          else {
             driver_set_video_mode(axmode, bxmode, cxmode, dxmode); /* switch video modes */
-            if (goodmode == 0) {
+            if (g_good_mode == 0) {
                static char msg[] = {"That video mode is not available with your adapter."};
 #ifndef XFRACT
                static char TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
@@ -134,7 +134,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                return(RESTORESTART);
                }
 
-            if (virtual_screens && (xdots > sxdots || ydots > sydots)) {
+            if (g_virtual_screens && (xdots > sxdots || ydots > sydots)) {
                char buf[120];
                static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
                static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
@@ -161,13 +161,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
          diskisactive = 0;              /* flag for disk-video routines */
          if (savedac || colorpreloaded) {
-            memcpy(g_dacbox,olddacbox,256*3); /* restore the DAC */
+            memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
             spindac(0,1);
             colorpreloaded = 0;
             }
          else { /* reset DAC to defaults, which setvideomode has done for us */
             if (mapdacbox) { /* but there's a map=, so load that */
-               memcpy((char *)g_dacbox,mapdacbox,768);
+               memcpy((char *)g_dac_box,mapdacbox,768);
                spindac(0,1);
                }
             else if ((driver_diskp() && colors == 256) || !colors) {
@@ -180,8 +180,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
          if (viewwindow) {
             ftemp = finalaspectratio    /* bypass for VESA virtual screen */
-                    * ((dotmode == 28 && ((vesa_xres && vesa_xres != sxdots)
-                       || (vesa_yres && vesa_yres != sydots)))
+                    * ((dotmode == 28 && ((g_vesa_x_res && g_vesa_x_res != sxdots)
+                       || (g_vesa_y_res && g_vesa_y_res != sydots)))
                     ? 1 : (double)sydots / (double)sxdots / screenaspect);
             if ((xdots = viewxdots) != 0) { /* xdots specified */
                if ((ydots = viewydots) == 0) /* calc ydots? */
@@ -476,8 +476,8 @@ done:
 
       if (fractype == PLASMA && cpu > 88) {
          cyclelimit = 256;              /* plasma clouds need quick spins */
-         daccount = 256;
-         daclearn = 1;
+         g_dac_count = 256;
+         g_dac_learn = 1;
          }
 
 resumeloop:                             /* return here on failed overlays */
@@ -499,7 +499,7 @@ resumeloop:                             /* return here on failed overlays */
             }
          else if (initbatch == 0) {     /* not batch mode */
 #ifndef XFRACT
-            lookatmouse = (zwidth == 0 && !video_scroll) ? -PAGE_UP : 3;
+            lookatmouse = (zwidth == 0 && !g_video_scroll) ? -PAGE_UP : 3;
 #else
             lookatmouse = (zwidth == 0) ? -PAGE_UP : 3;
 #endif
@@ -845,7 +845,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
           (fractalspecific[fractype].isinteger == 0 ||
            fractalspecific[fractype].tofloat != NOFRACTAL) &&
            !bf_math && /* for now no arbitrary precision support */
-           !(istruecolor && truemode) )
+           !(g_is_true_color && truemode) )
       {
          clear_zoombox();
          Jiim(ORBIT);
@@ -1087,16 +1087,16 @@ image.  Sorry - it's the best we could do."};
    case '+':                    /* rotate palette               */
    case '-':                    /* rotate palette               */
       clear_zoombox();
-      memcpy(olddacbox, g_dacbox, 256 * 3);
+      memcpy(olddacbox, g_dac_box, 256 * 3);
       rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, g_dacbox, 256 * 3))
+      if (memcmp(olddacbox, g_dac_box, 256 * 3))
       {
          colorstate = 1;
          save_history_info();
       }
       return(CONTINUE);
    case 'e':                    /* switch to color editing      */
-      if (istruecolor && !initbatch) { /* don't enter palette editor */
+      if (g_is_true_color && !initbatch) { /* don't enter palette editor */
          if (load_palette() >= 0) {
             *kbdmore = calc_status = 0;
             break;
@@ -1104,16 +1104,16 @@ image.  Sorry - it's the best we could do."};
             return(CONTINUE);
       }
       clear_zoombox();
-      if (g_dacbox[0][0] != 255 && !reallyega && colors >= 16
+      if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
-         memcpy(olddacbox, g_dacbox, 256 * 3);
+         memcpy(olddacbox, g_dac_box, 256 * 3);
          helpmode = HELPXHAIR;
          EditPalette();
          helpmode = oldhelpmode;
-         if (memcmp(olddacbox, g_dacbox, 256 * 3))
+         if (memcmp(olddacbox, g_dac_box, 256 * 3))
          {
             colorstate = 1;
             save_history_info();
@@ -1347,7 +1347,7 @@ image.  Sorry - it's the best we could do."};
             zskew = zrotate = 0;
             zbx = zby = 0;
             find_special_colors();
-            boxcolor = color_bright;
+            boxcolor = g_color_bright;
             px = py = gridsz/2;
             moveboxf(0.0,0.0); /* force scrolling */
          }
@@ -1410,10 +1410,10 @@ image.  Sorry - it's the best we could do."};
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
       {
          g_adapter = k;
-/*                if (videotable[g_adapter].dotmode != 11       Took out so that */
-/*                  || videotable[g_adapter].colors != colors)  DAC is not reset */
+/*                if (g_video_table[g_adapter].dotmode != 11       Took out so that */
+/*                  || g_video_table[g_adapter].colors != colors)  DAC is not reset */
 /*                   savedac = 0;                    when changing video modes */
-         if (videotable[g_adapter].colors != colors)
+         if (g_video_table[g_adapter].colors != colors)
             savedac = 0;
          calc_status = 0;
          *kbdmore = 0;
@@ -1533,16 +1533,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case '+':                    /* rotate palette               */
    case '-':                    /* rotate palette               */
       clear_zoombox();
-      memcpy(olddacbox, g_dacbox, 256 * 3);
+      memcpy(olddacbox, g_dac_box, 256 * 3);
       rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, g_dacbox, 256 * 3))
+      if (memcmp(olddacbox, g_dac_box, 256 * 3))
       {
          colorstate = 1;
          save_history_info();
       }
       return(CONTINUE);
    case 'e':                    /* switch to color editing      */
-      if (istruecolor && !initbatch) { /* don't enter palette editor */
+      if (g_is_true_color && !initbatch) { /* don't enter palette editor */
          if (load_palette() >= 0) {
             *kbdmore = calc_status = 0;
             break;
@@ -1550,16 +1550,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             return(CONTINUE);
       }
       clear_zoombox();
-      if (g_dacbox[0][0] != 255 && !reallyega && colors >= 16
+      if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;
          oldhelpmode = helpmode;
-         memcpy(olddacbox, g_dacbox, 256 * 3);
+         memcpy(olddacbox, g_dac_box, 256 * 3);
          helpmode = HELPXHAIR;
          EditPalette();
          helpmode = oldhelpmode;
-         if (memcmp(olddacbox, g_dacbox, 256 * 3))
+         if (memcmp(olddacbox, g_dac_box, 256 * 3))
          {
             colorstate = 1;
             save_history_info();
@@ -1752,7 +1752,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             zskew = zrotate = 0;
             zbx = zby = 0;
             find_special_colors();
-            boxcolor = color_bright;
+            boxcolor = g_color_bright;
      /*rb*/ if (evolving&1) {
               /* set screen view params back (previously changed to allow
                           full screen saves in viewwindow mode) */
@@ -1905,7 +1905,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
       {
          g_adapter = k;
-         if (videotable[g_adapter].colors != colors)
+         if (g_video_table[g_adapter].colors != colors)
             savedac = 0;
          calc_status = 0;
          *kbdmore = 0;
@@ -2010,7 +2010,7 @@ int cmp_line(BYTE *pixels, int linelen)
 {
    int row,col;
    int oldcolor;
-   if((row = rowcount++) == 0) {
+   if((row = g_row_count++) == 0) {
       errcount = 0;
       cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
       outln_cleanup = cmp_line_cleanup;
@@ -2229,7 +2229,7 @@ static void _fastcall save_history_info()
    current.oy3rd				= oy3rd;
    current.keep_scrn_coords		= (short)keep_scrn_coords;
    current.drawmode				= drawmode;
-   memcpy(current.dac,g_dacbox,256*3);
+   memcpy(current.dac,g_dac_box,256*3);
    switch(fractype)
    {
    case FORMULA:
@@ -2409,7 +2409,7 @@ static void _fastcall restore_history_info(int i)
    if (keep_scrn_coords) set_orbit_corners = 1;
    drawmode = last.drawmode;
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
-   memcpy(g_dacbox,last.dac,256*3);
+   memcpy(g_dac_box,last.dac,256*3);
    memcpy(olddacbox,last.dac,256*3);
    if(mapdacbox)
       memcpy(mapdacbox,last.dac,256*3);

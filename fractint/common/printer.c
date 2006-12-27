@@ -525,7 +525,7 @@ Print_Screen (void)
                a tolerable mapping of screen colors to printer colors on
                my machine.  There are two sources of error in getting colors
                to come out right.
-               1) Must match some g_dacbox values to the 330 PaintJet dithered
+               1) Must match some g_dac_box values to the 330 PaintJet dithered
                   colors so that they look the same.  For this we use HP's
                   color values in printera.asm and modify by gamma separately
                   for each of red/green/blue.  This mapping is ok if the
@@ -594,9 +594,9 @@ Print_Screen (void)
             /* Following code and the later code which writes to Paintjet    */
             /* using pj_patterns was adapted from Lee Crocker's PGIF program */
             for (i = 0; i < colors; ++i) { /* find nearest match colors */
-                r = scale[g_dacbox[i][0]];
-                g = scale[g_dacbox[i][1]];
-                b = scale[g_dacbox[i][2]];
+                r = scale[g_dac_box[i][0]];
+                g = scale[g_dac_box[i][1]];
+                b = scale[g_dac_box[i][2]];
                 ldist = 9999999L;
                 /* check variance vs each PaintJet color */
                 /* if high-res 8 color mode, consider only 1st 8 colors */
@@ -620,17 +620,17 @@ Print_Screen (void)
             }  */
             if (!driver_diskp()) { /* preview */
                 static char msg[] = {"Preview. Enter=go, Esc=cancel, k=keep"};
-                memcpy(triple[1],g_dacbox,768);
+                memcpy(triple[1],g_dac_box,768);
                 for (i = 0; i < colors; ++i)
                     for (j = 0; j < 3; ++j)
-                        g_dacbox[i][j] = (BYTE)triple[0][j][pj_color_ptr[i]];
+                        g_dac_box[i][j] = (BYTE)triple[0][j][pj_color_ptr[i]];
                 spindac(0,1);
                 texttempmsg(msg);
                 i = getakeynohelp();
                 if (i == 'K' || i == 'k') {
                     return;
                 }
-                memcpy(g_dacbox,triple[1],768);
+                memcpy(g_dac_box,triple[1],768);
                 spindac(0,1);
                 if (i == 0x1B) {
                     return;
@@ -874,15 +874,15 @@ Print_Screen (void)
             if (!ColorPS) {
               for (i=0; i<256; ++i)
                 if (Printer_Compress) {
-                    convert[i] = (char)((.3*255./63. * (double)g_dacbox[i][0])+
-                                        (.59*255./63. * (double)g_dacbox[i][1])+
-                                        (.11*255./63. * (double)g_dacbox[i][2]));
+                    convert[i] = (char)((.3*255./63. * (double)g_dac_box[i][0])+
+                                        (.59*255./63. * (double)g_dac_box[i][1])+
+                                        (.11*255./63. * (double)g_dac_box[i][2]));
                 } else
                 {
                     sprintf(&convert[2*i], "%02X",
-                              (int)((.3*255./63. * (double)g_dacbox[i][0])+
-                                    (.59*255./63. * (double)g_dacbox[i][1])+
-                                    (.11*255./63. * (double)g_dacbox[i][2])));
+                              (int)((.3*255./63. * (double)g_dac_box[i][0])+
+                                    (.59*255./63. * (double)g_dac_box[i][1])+
+                                    (.11*255./63. * (double)g_dac_box[i][2])));
                 }
             }
             i=0;
@@ -893,17 +893,17 @@ Print_Screen (void)
                     if (ColorPS) {
                         for (x=0;x<xdots;x++) {
                             k=getcolor(x,y);
-                            rleputxelval((int)g_dacbox[k][0]<<2);
+                            rleputxelval((int)g_dac_box[k][0]<<2);
                         }
                         rleflush();
                         for (x=0;x<xdots;x++) {
                             k=getcolor(x,y);
-                            rleputxelval((int)g_dacbox[k][1]<<2);
+                            rleputxelval((int)g_dac_box[k][1]<<2);
                         }
                         rleflush();
                         for (x=0;x<xdots;x++) {
                             k=getcolor(x,y);
-                            rleputxelval((int)g_dacbox[k][2]<<2);
+                            rleputxelval((int)g_dac_box[k][2]<<2);
                         }
                         rleflush();
                      } else {
@@ -936,9 +936,9 @@ Print_Screen (void)
                         k=getcolor(x,y);
                         if (ColorPS)
                           {
-                          sprintf(&buff[i], "%02X%02X%02X", g_dacbox[k][0]<<2,
-                                                            g_dacbox[k][1]<<2,
-                                                            g_dacbox[k][2]<<2);
+                          sprintf(&buff[i], "%02X%02X%02X", g_dac_box[k][0]<<2,
+                                                            g_dac_box[k][1]<<2,
+                                                            g_dac_box[k][2]<<2);
                           i+=6;
                           }
                         else
@@ -1001,7 +1001,7 @@ Print_Screen (void)
               {
                 for (x=0;x<xdots;x++)
                 {
-                  j=g_dacbox[getcolor(x,y)][i];
+                  j=g_dac_box[getcolor(x,y)][i];
                   if (j>0)
                   {
                     switch(Printer_SStyle)
@@ -1448,17 +1448,17 @@ color_test()
                 g_video_entry.videomodedx);
    bw = xdots/25; cw = bw * 2 / 3;
    bh = ydots/10; ch = bh * 2 / 3;
-   g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 60;
+   g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 60;
    if (debugflag == 902)
-      g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
+      g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
    for (x = 0; x < 25; ++x)
       for (y = 0; y < 10; ++y) {
          if (x < 11) i = (32 - x) * 10 + y;
              else    i = (24 - x) * 10 + y;
          color = x * 10 + y + 1;
-         g_dacbox[color][0] = triple[0][0][i];
-         g_dacbox[color][1] = triple[0][1][i];
-         g_dacbox[color][2] = triple[0][2][i];
+         g_dac_box[color][0] = triple[0][0][i];
+         g_dac_box[color][1] = triple[0][1][i];
+         g_dac_box[color][2] = triple[0][2][i];
          for (i = 0; i < cw; ++i) {
             xx = x * bw + bw / 6 + i;
             yy = y * bh + bh / 6;

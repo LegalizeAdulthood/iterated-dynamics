@@ -126,7 +126,7 @@ static void init_bf_2(void)
 #if defined(BIG_FAR) || defined(BIG_ANSI_C)
     bnroot = (bf_t) extraseg;
 #else /* BASED or NEAR  */
-    bnroot = (bf_t) 0;  /* ENDVID is to avoid videotable */
+    bnroot = (bf_t) 0;  /* ENDVID is to avoid g_video_table */
 #endif
 #ifdef BIG_BASED
     bignum_seg = (_segment)extraseg;

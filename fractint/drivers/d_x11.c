@@ -54,7 +54,7 @@ extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
 extern	int	colors; 		/* maximum colors available	   */
 extern	int	g_init_mode;
 extern	int	g_adapter;
-extern	int	gotrealdac;
+extern	int	g_got_real_dac;
 extern	int	inside_help;
 extern  float	finalaspectratio;
 extern  float	screenaspect;
@@ -62,11 +62,11 @@ extern	int	lookatmouse;
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
-extern unsigned char g_dacbox[256][3];
+extern unsigned char g_dac_box[256][3];
 
 extern void drawbox();
 
-extern int text_type;
+extern int g_text_type;
 extern int helpmode;
 extern int rotate_hi;
 
@@ -344,13 +344,13 @@ initdacbox()
 {
     int i;
     for (i=0;i < 256;i++) {
-	g_dacbox[i][0] = (i >> 5)*8+7;
-	g_dacbox[i][1] = (((i+16) & 28) >> 2)*8+7;
-	g_dacbox[i][2] = (((i+2) & 3))*16+15;
+	g_dac_box[i][0] = (i >> 5)*8+7;
+	g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
+	g_dac_box[i][2] = (((i+2) & 3))*16+15;
     }
-    g_dacbox[0][0] = g_dacbox[0][1] = g_dacbox[0][2] = 0;
-    g_dacbox[1][0] = g_dacbox[1][1] = g_dacbox[1][2] = 63;
-    g_dacbox[2][0] = 47; g_dacbox[2][1] = g_dacbox[2][2] = 63;
+    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+    g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+    g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
 }
 
 static void
@@ -509,21 +509,21 @@ select_visual(DriverX11 *di)
   case StaticGray:
   case StaticColor:
     colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
-    gotrealdac = 0;
+    g_got_real_dac = 0;
     di->fake_lut = 0;
     break;
 
   case GrayScale:
   case PseudoColor:
     colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
-    gotrealdac = 1;
+    g_got_real_dac = 1;
     di->fake_lut = 0;
     break;
 
   case TrueColor:
   case DirectColor:
     colors = 256;
-    gotrealdac = 0;
+    g_got_real_dac = 0;
     di->fake_lut = 1;
     break;
 
@@ -687,14 +687,14 @@ x11_resize(Driver *drv)
  *----------------------------------------------------------------------
  *
  * x11_read_palette --
- *	Reads the current video palette into g_dacbox.
+ *	Reads the current video palette into g_dac_box.
  *	
  *
  * Results:
  *	None.
  *
  * Side effects:
- *	Fills in g_dacbox.
+ *	Fills in g_dac_box.
  *
  *----------------------------------------------------------------------
  */
@@ -703,12 +703,12 @@ x11_read_palette(Driver *drv)
 {
   DIX11(drv);
   int i;
-  if (gotrealdac == 0)
+  if (g_got_real_dac == 0)
     return -1;
   for (i = 0; i < 256; i++) {
-    g_dacbox[i][0] = di->cols[i].red/1024;
-    g_dacbox[i][1] = di->cols[i].green/1024;
-    g_dacbox[i][2] = di->cols[i].blue/1024;
+    g_dac_box[i][0] = di->cols[i].red/1024;
+    g_dac_box[i][1] = di->cols[i].green/1024;
+    g_dac_box[i][2] = di->cols[i].blue/1024;
   }
   return 0;
 }
@@ -717,7 +717,7 @@ x11_read_palette(Driver *drv)
  *----------------------------------------------------------------------
  *
  * x11_write_palette --
- *	Writes g_dacbox into the video palette.
+ *	Writes g_dac_box into the video palette.
  *	
  *
  * Results:
@@ -734,21 +734,21 @@ x11_write_palette(Driver *drv)
   DIX11(drv);
   int i;
 
-  if (!gotrealdac) {
+  if (!g_got_real_dac) {
     if (di->fake_lut) {
-      /* !gotrealdac, fake_lut => truecolor, directcolor displays */
+      /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
       static unsigned char last_dac[256][3];
       static int last_dac_inited = False;
 
       for (i = 0; i < 256; i++) {
 	if (!last_dac_inited ||
-	    last_dac[i][0] != g_dacbox[i][0] ||
-	    last_dac[i][1] != g_dacbox[i][1] ||
-	    last_dac[i][2] != g_dacbox[i][2]) {
+	    last_dac[i][0] != g_dac_box[i][0] ||
+	    last_dac[i][1] != g_dac_box[i][1] ||
+	    last_dac[i][2] != g_dac_box[i][2]) {
 	  di->cols[i].flags = DoRed | DoGreen | DoBlue;
-	  di->cols[i].red = g_dacbox[i][0]*1024;
-	  di->cols[i].green = g_dacbox[i][1]*1024;
-	  di->cols[i].blue = g_dacbox[i][2]*1024;
+	  di->cols[i].red = g_dac_box[i][0]*1024;
+	  di->cols[i].green = g_dac_box[i][1]*1024;
+	  di->cols[i].blue = g_dac_box[i][2]*1024;
 
 	  if (di->cmap_pixtab_alloced) {
 	    XFreeColors(di->Xdp, di->Xcmap, di->cmap_pixtab + i, 1, None);
@@ -760,25 +760,25 @@ x11_write_palette(Driver *drv)
 	    printf("Allocating color %d failed.\n", i);
 	  }
 
-	  last_dac[i][0] = g_dacbox[i][0];
-	  last_dac[i][1] = g_dacbox[i][1];
-	  last_dac[i][2] = g_dacbox[i][2];
+	  last_dac[i][0] = g_dac_box[i][0];
+	  last_dac[i][1] = g_dac_box[i][1];
+	  last_dac[i][2] = g_dac_box[i][2];
 	}
       }
       di->cmap_pixtab_alloced = True;
       last_dac_inited = True;
     } else {
-      /* !gotrealdac, !fake_lut => static color, static gray displays */
+      /* !g_got_real_dac, !fake_lut => static color, static gray displays */
       assert(1);
     }
   } else {
-    /* gotrealdac => grayscale or pseudocolor displays */
+    /* g_got_real_dac => grayscale or pseudocolor displays */
     for (i = 0; i < 256; i++) {
       di->cols[i].pixel = di->pixtab[i];
       di->cols[i].flags = DoRed | DoGreen | DoBlue;
-      di->cols[i].red = g_dacbox[i][0]*1024;
-      di->cols[i].green = g_dacbox[i][1]*1024;
-      di->cols[i].blue = g_dacbox[i][2]*1024;
+      di->cols[i].red = g_dac_box[i][0]*1024;
+      di->cols[i].green = g_dac_box[i][1]*1024;
+      di->cols[i].blue = g_dac_box[i][2]*1024;
     }
     XStoreColors(di->Xdp, di->Xcmap, di->cols, colors);
     XFlush(di->Xdp);
@@ -813,12 +813,12 @@ xcmapstuff(DriverX11 *di)
     di->pixtab[i] = i;
     di->ipixtab[i] = 999;
   }
-  if (!gotrealdac) {
+  if (!g_got_real_dac) {
     di->Xcmap = DefaultColormapOfScreen(di->Xsc);
     if (di->fake_lut)
       x11_write_palette(&di->pub);
   } else if (di->sharecolor) {
-    gotrealdac = 0;
+    g_got_real_dac = 0;
   } else if (di->privatecolor) {
     di->Xcmap = XCreateColormap(di->Xdp, di->Xw, di->Xvi, AllocAll);
     XSetWindowColormap(di->Xdp, di->Xw, di->Xcmap);
@@ -839,7 +839,7 @@ xcmapstuff(DriverX11 *di)
     }
     if (!di->usepixtab) {
       printf("Couldn't allocate any colors\n");
-      gotrealdac = 0;
+      g_got_real_dac = 0;
     }
   }
   for (i = 0; i < colors; i++) {
@@ -862,7 +862,7 @@ xcmapstuff(DriverX11 *di)
     di->ipixtab[0] = 0;
   }
 
-  if (!gotrealdac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0) {
+  if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0) {
     di->pixtab[0] = di->ipixtab[0] = 1;
     di->pixtab[1] = di->ipixtab[1] = 0;
     di->usepixtab = 1;
@@ -2360,10 +2360,10 @@ x11_set_clear(Driver *drv)
 static void
 x11_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
-  if (diskflag)
+  if (g_disk_flag)
     enddisk();
   driver_end_video();
-  goodmode = 1;
+  g_good_mode = 1;
   switch (dotmode) {
   case 0:				/* text */
 #if 0
@@ -2386,7 +2386,7 @@ x11_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
   } 
   if (dotmode !=0) {
     x11_read_palette(drv);
-    andcolor = colors-1;
+    g_and_color = colors-1;
     boxcount =0;
   }
 }
