@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <string.h>
 #include <signal.h>
 #include <sys/timeb.h>
@@ -16,6 +17,10 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "wintext.h"
+
+#if !defined(ASSERT)
+#define ASSERT(expr_) assert(expr_)
+#endif
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
 #define CALLED(fn_) function_called(fn_, __FILE__, __LINE__, TRUE)
@@ -508,6 +513,8 @@ int getcolor(int xdot, int ydot)
 	int x1, y1;
 	x1 = xdot + sxoffs;
 	y1 = ydot + syoffs;
+	ASSERT(x1 >= 0 && x1 <= sxdots);
+	ASSERT(y1 >= 0 && y1 <= sydots);
 	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
 		return 0;
 	return dotread(x1, y1);
@@ -520,7 +527,11 @@ int getcolor(int xdot, int ydot)
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
-	dotwrite(xdot + sxoffs, ydot + syoffs, color & g_and_color);
+	int x1 = xdot + sxoffs;
+	int y1 = ydot + syoffs;
+	ASSERT(x1 >= 0 && x1 <= sxdots);
+	ASSERT(y1 >= 0 && y1 <= sydots);
+	dotwrite(x1, y1, color & g_and_color);
 }
 
 /*
