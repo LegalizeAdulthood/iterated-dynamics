@@ -52,8 +52,6 @@ load_driver(Driver *drv, int *argc, char **argv)
 int
 init_drivers(int *argc, char **argv)
 {
-	vidtbl = (VIDEOINFO *) malloc(sizeof(vidtbl[0])*MAXVIDEOMODES);
-
 #if HAVE_X11_DRIVER
 	load_driver(x11_driver, argc, argv);
 #endif
@@ -81,9 +79,9 @@ void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	/* stash away driver pointer so we can init driver for selected mode */
-	mode_drivers[vidtbllen] = drv;
-	memcpy(&g_video_table[vidtbllen], mode, sizeof(g_video_table[0]));
-	vidtbllen++;
+	mode_drivers[g_video_table_len] = drv;
+	memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
+	g_video_table_len++;
 }
 
 void
@@ -100,11 +98,6 @@ close_drivers(void)
 		}
 	}
 
-	if (vidtbl)
-	{
-		free(vidtbl);
-	}
-	vidtbl = NULL;
 	display = NULL;
 }
 

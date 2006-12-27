@@ -273,12 +273,21 @@ ods(const char *file, unsigned int line, const char *format, ...)
 
 	OutputDebugString(header);
 }
+#if RT_VERBOSE
 #define ODS(text_)						ods(__FILE__, __LINE__, text_)
 #define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
 #define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
 #define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
 #define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
 #define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
+#else
+#define ODS(text_)
+#define ODS1(fmt_, arg_)
+#define ODS2(fmt_, a1_, a2_)
+#define ODS3(fmt_, a1_, a2_, a3_)
+#define ODS4(fmt_, _1, _2, _3, _4)
+#define ODS5(fmt_, _1, _2, _3, _4, _5)
+#endif
 
 /*----------------------------------------------------------------------
 *
@@ -639,8 +648,6 @@ static void
 win32_disk_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DI(di);
-
-	ODS3("win32_disk_write_pixel (%d,%d)=%d", x, y, color);
 	ASSERT(di->pixels);
 	ASSERT(x >= 0 && x < di->width);
 	ASSERT(y >= 0 && y < di->height);
@@ -666,8 +673,9 @@ static int
 win32_disk_read_pixel(Driver *drv, int x, int y)
 {
 	DI(di);
-
-	ODS2("win32_disk_read_pixel (%d,%d)", x, y);
+	ASSERT(di->pixels);
+	ASSERT(x >= 0 && x < di->width);
+	ASSERT(y >= 0 && y < di->height);
 	return (int) di->pixels[y*di->width + x];
 }
 
@@ -1822,12 +1830,21 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 static void
 win32_disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
-	wintext_putstring(g_text_cbase + col, g_text_rbase + row, attr, msg);
-#if 0
-	getyx(di->curwin,textrow,textcol);
-	textrow -= textrbase;
-	textcol -= textcbase;
-#endif
+	if (-1 != row)
+	{
+		g_text_row = row;
+	}
+	if (-1 != col)
+	{
+		g_text_col = col;
+	}
+	{
+		int abs_row = g_text_rbase + g_text_row;
+		int abs_col = g_text_cbase + g_text_col;
+		ASSERT(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
+		ASSERT(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
+		wintext_putstring(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
+	}
 }
 
 static void
@@ -1875,10 +1892,12 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 	if (row != -1)
 	{
 		di->cursor_row = row;
+		g_text_row = row;
 	}
 	if (col != -1)
 	{
 		di->cursor_col = col;
+		g_text_col = col;
 	}
 	row = di->cursor_row;
 	col = di->cursor_col;
@@ -1910,7 +1929,15 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 static void
 win32_disk_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
-	wintext_set_attr(g_text_rbase + row, g_text_cbase + col, attr, count);
+	if (-1 != row)
+	{
+		g_text_row = row;
+	}
+	if (-1 != col)
+	{
+		g_text_col = col;
+	}
+	wintext_set_attr(g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
 }
 
 static void
@@ -2045,12 +2072,26 @@ win32_disk_key_cursor(Driver *drv, int row, int col)
 	int result = win32_disk_key_pressed(drv);
 	ODS2("win32_disk_key_cursor %d,%d", row, col);
 
-	di->cursor_col = col;
-	di->cursor_row = row;
+	if (-1 != row)
+	{
+		di->cursor_row = row;
+		g_text_row = row;
+	}
+	if (-1 != col)
+	{
+		di->cursor_col = col;
+		g_text_col = col;
+	}
+
+	col = di->cursor_col;
+	row = di->cursor_row;
 	if (0 == result)
 	{
+		di->cursor_shown = TRUE;
 		wintext_cursor(col, row, 1);
 		result = win32_disk_get_key(drv);
+		win32_disk_hide_text_cursor(drv);
+		di->cursor_shown = FALSE;
 	}
 	return result;
 }

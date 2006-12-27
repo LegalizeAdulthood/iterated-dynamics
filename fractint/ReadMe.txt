@@ -58,3 +58,9 @@ main
 
 win32
 	Files needed for the Win32 platform.
+
+2006.12.26.23.09
+	Basic plotting through dotwrite working.
+2006.12.27.00.53
+	vidtbl vs. g_video_table confusion resolved.
+	Eliminate one use of extraseg for vidtbl.

@@ -1723,13 +1723,13 @@ int select_video_mode(int curmode)
    strcpy(hdg1,o_hdg1);
    strcpy(hdg2,o_hdg2);
 
-   for (i = 0; i < vidtbllen; ++i) { /* init tables */
+   for (i = 0; i < g_video_table_len; ++i) { /* init tables */
       entnums[i] = i;
       attributes[i] = 1;
       }
    entsptr = entnums;           /* for indirectly called subroutines */
 
-   qsort(entnums,vidtbllen,sizeof(entnums[0]),entcompare); /* sort modes */
+   qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
 
    /* pick default mode */
    if (curmode < 0) {
@@ -1756,15 +1756,15 @@ int select_video_mode(int curmode)
       memcpy((char *)&g_video_entry,(char *)&g_video_table[curmode],
                  sizeof(g_video_entry));
 #ifndef XFRACT
-   for (i = 0; i < vidtbllen; ++i) { /* find default mode */
-      if ( g_video_entry.videomodeax == vidtbl[entnums[i]].videomodeax
-        && g_video_entry.colors      == vidtbl[entnums[i]].colors
+   for (i = 0; i < g_video_table_len; ++i) { /* find default mode */
+      if ( g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax
+        && g_video_entry.colors      == g_video_table[entnums[i]].colors
         && (curmode < 0
-            || memcmp((char *)&g_video_entry,(char *)&vidtbl[entnums[i]],
+            || memcmp((char *)&g_video_entry,(char *)&g_video_table[entnums[i]],
                           sizeof(g_video_entry)) == 0))
          break;
       }
-   if (i >= vidtbllen) /* no match, default to first entry */
+   if (i >= g_video_table_len) /* no match, default to first entry */
       i = 0;
 
    oldtabmode = tabmode;
@@ -1772,7 +1772,7 @@ int select_video_mode(int curmode)
    modes_changed = 0;
    tabmode = 0;
    helpmode = HELPVIDSEL;
-   i = fullscreen_choice(CHOICEHELP,hdg1,hdg2,NULL,vidtbllen,NULL,attributes,
+   i = fullscreen_choice(CHOICEHELP,hdg1,hdg2,NULL,g_video_table_len,NULL,attributes,
                          1,16,74,i,format_vid_table,NULL,NULL,check_modekey);
    tabmode = oldtabmode;
    helpmode = oldhelpmode;
@@ -1789,30 +1789,30 @@ int select_video_mode(int curmode)
    else         /* picked by Enter key */
       i = entnums[i];
 #endif
-   memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+   memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
               sizeof(g_video_entry));  /* the selected entry now in g_video_entry */
 
 #ifndef XFRACT
    /* copy fractint.cfg table to resident table, note selected entry */
    j = k = 0;
-   memset((char *)g_video_table,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
-   for (i = 0; i < vidtbllen; ++i) {
-      if (vidtbl[i].keynum > 0) {
-         memcpy((char *)&g_video_table[j],(char *)&vidtbl[i],
-                    sizeof(*vidtbl));
-         if (memcmp((char *)&g_video_entry,(char *)&vidtbl[i],
+   memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
+   for (i = 0; i < g_video_table_len; ++i) {
+      if (g_video_table[i].keynum > 0) {
+         memcpy((char *)&g_video_table[j],(char *)&g_video_table[i],
+                    sizeof(*g_video_table));
+         if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
                         sizeof(g_video_entry)) == 0)
-            k = vidtbl[i].keynum;
+            k = g_video_table[i].keynum;
          if (++j >= MAXVIDEOTABLE-1)
             break;
          }
       }
 #else
-    k = vidtbl[0].keynum;
+    k = g_video_table[0].keynum;
 #endif
    if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
       memcpy((char *)&g_video_table[MAXVIDEOTABLE-1],
-                 (char *)&g_video_entry,sizeof(*vidtbl));
+                 (char *)&g_video_entry,sizeof(*g_video_table));
       ret = 1400; /* special value for check_vidmode_key */
       }
 
@@ -1829,7 +1829,7 @@ void format_vid_table(int choice,char *buf)
    char kname[5];
    char biosflag;
    int truecolorbits;
-   memcpy((char *)&g_video_entry,(char *)&vidtbl[entsptr[choice]],
+   memcpy((char *)&g_video_entry,(char *)&g_video_table[entsptr[choice]],
               sizeof(g_video_entry));
    vidmode_keyname(g_video_entry.keynum,kname);
    biosflag = (char)((g_video_entry.dotmode % 100 == 1) ? 'B' : ' ');
@@ -1857,27 +1857,27 @@ static int check_modekey(int curkey,int choice)
    i = entsptr[choice];
    ret = 0;
    if ( (curkey == '-' || curkey == '+')
-     && (vidtbl[i].keynum == 0 || vidtbl[i].keynum >= 1084)) {
+     && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
       static char msg[]={"Missing or bad FRACTINT.CFG file. Can't reassign keys."};
       if (badconfig)
          stopmsg(0,msg);
       else {
          if (curkey == '-') {                   /* deassign key? */
-            if (vidtbl[i].keynum >= 1084) {
-               vidtbl[i].keynum = 0;
+            if (g_video_table[i].keynum >= 1084) {
+               g_video_table[i].keynum = 0;
                modes_changed = 1;
                }
             }
          else {                                 /* assign key? */
             j = getakeynohelp();
             if (j >= 1084 && j <= 1113) {
-               for (k = 0; k < vidtbllen; ++k) {
-                  if (vidtbl[k].keynum == j) {
-                     vidtbl[k].keynum = 0;
+               for (k = 0; k < g_video_table_len; ++k) {
+                  if (g_video_table[k].keynum == j) {
+                     g_video_table[k].keynum = 0;
                      ret = -1; /* force redisplay */
                      }
                   }
-               vidtbl[i].keynum = j;
+               g_video_table[i].keynum = j;
                modes_changed = 1;
                }
             }
@@ -1890,8 +1890,8 @@ static int check_modekey(int curkey,int choice)
 static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 {
    int i,j;
-   if ((i = vidtbl[*((int *)p1)].keynum) == 0) i = 9999;
-   if ((j = vidtbl[*((int *)p2)].keynum) == 0) j = 9999;
+   if ((i = g_video_table[*((int *)p1)].keynum) == 0) i = 9999;
+   if ((j = g_video_table[*((int *)p2)].keynum) == 0) j = 9999;
    if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
       return(-1);
    return(1);
@@ -1899,10 +1899,10 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 
 static void update_fractint_cfg()
 {
+	extern int g_cfg_line_nums[];
 #ifndef XFRACT
    char cfgname[100],outname[100],buf[121],kname[5];
    FILE *cfgfile,*outfile;
-   int *cfglinenums;
    int i,j,linenum,nextlinenum,nextmode;
    struct videoinfo vident;
 
@@ -1925,15 +1925,14 @@ static void update_fractint_cfg()
       }
    cfgfile = fopen(cfgname,"r");
 
-   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
    linenum = nextmode = 0;
-   nextlinenum = cfglinenums[0];
+   nextlinenum = g_cfg_line_nums[0];
    while (fgets(buf,120,cfgfile)) {
       int truecolorbits;
       char colorsbuf[10];
       ++linenum;
       if (linenum == nextlinenum) { /* replace this line */
-         memcpy((char *)&vident,(char *)&vidtbl[nextmode],
+         memcpy((char *)&vident,(char *)&g_video_table[nextmode],
                     sizeof(g_video_entry));
          vidmode_keyname(vident.keynum,kname);
          strcpy(buf,vident.name);
@@ -1966,10 +1965,10 @@ static void update_fractint_cfg()
                 vident.ydots,
                 colorsbuf,
                 vident.comment);
-         if (++nextmode >= vidtbllen)
+         if (++nextmode >= g_video_table_len)
             nextlinenum = 32767;
          else
-            nextlinenum = cfglinenums[nextmode];
+            nextlinenum = g_cfg_line_nums[nextmode];
          }
       else
          fputs(buf,outfile);

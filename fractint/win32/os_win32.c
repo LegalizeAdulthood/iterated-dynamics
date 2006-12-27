@@ -237,7 +237,7 @@ VIDEOINFO g_video_table[MAXVIDEOMODES] =
 		0, 0, 0, 0, 0, 0
 	}
 };
-VIDEOINFO *vidtbl = NULL;
+VIDEOINFO vidtbl[MAXVIDEOMODES] = { 0 };
 int g_virtual_screens = 0;
 int g_vxdots = 0;
 

@@ -829,14 +829,13 @@ extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
 extern struct videoinfo      g_video_entry;
 extern VIDEOINFO             g_video_table[];
+extern int					 g_video_table_len;
 extern int                   video_cutboth;
 extern int                   g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 extern int                   g_video_type;						/* video adapter type */
 extern int                   g_video_vram;
-extern VIDEOINFO *           vidtbl;
-extern int                   vidtbllen;
 extern VECTOR                view;
 extern int                   viewcrop;
 extern float                 viewreduction;
