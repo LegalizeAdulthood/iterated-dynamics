@@ -190,7 +190,7 @@ int showtempmsg(char *msgparm)
       }
 
    if ((fontptr = driver_find_font(0)) == NULL) { /* old bios, no font table? */
-      if (oktoprint == 0               /* can't printf */
+      if (g_ok_to_print == 0               /* can't printf */
         || sxdots > 640 || sydots > 200) /* not willing to trust char cell size */
          return(-1); /* sorry, message not displayed */
       textydots = 8;
