@@ -159,18 +159,18 @@ static WinText_Instance g_me = { 0 };
 /* a few Windows variables we need to remember globally */
 
 HWND wintext_hWndCopy;                /* a Global copy of hWnd */
-HWND wintext_hWndParent;              /* a Global copy of hWnd's Parent */
-HINSTANCE wintext_hInstance;             /* a global copy of hInstance */
+static HWND wintext_hWndParent;              /* a Global copy of hWnd's Parent */
+static HINSTANCE wintext_hInstance;             /* a global copy of hInstance */
 
 /* the keypress buffer */
 
 #define BUFMAX 80
-unsigned int  wintext_keypress_count;
-unsigned int  wintext_keypress_head;
-unsigned int  wintext_keypress_tail;
-unsigned char wintext_keypress_initstate;
-unsigned int  wintext_keypress_buffer[BUFMAX];
-unsigned char wintext_keypress_state[BUFMAX];
+static unsigned int  wintext_keypress_count;
+static unsigned int  wintext_keypress_head;
+static unsigned int  wintext_keypress_tail;
+static unsigned char wintext_keypress_initstate;
+static unsigned int  wintext_keypress_buffer[BUFMAX];
+static unsigned char wintext_keypress_state[BUFMAX];
 
 /* EGA/VGA 16-color palette (which doesn't match Windows palette exactly) */
 /*
@@ -196,7 +196,7 @@ COLORREF wintext_color[] =
 */
 /* 16-color Windows Palette */
 
-COLORREF wintext_color[] =
+static COLORREF wintext_color[] =
 {
 	RGB(0, 0, 0),
 	RGB(0, 0, 128),
@@ -988,4 +988,9 @@ void wintext_hide_cursor(void)
 		s_showing_cursor = FALSE;
 		HideCaret(wintext_hWndCopy);
 	}
+}
+
+VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+{
+	InvalidateRect(window, NULL, FALSE);
 }

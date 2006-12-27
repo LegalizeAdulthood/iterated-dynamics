@@ -365,6 +365,31 @@ long multiply(long x, long y, int n)
 }
 
 /*
+; **************** internal Read/Write-a-line routines *********************
+;
+;       These routines are called by out_line(), put_line() and get_line().
+*/
+void normaline(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		dotwrite(x + i, y, pixels[i]);
+	}
+}
+
+void normalineread(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		pixels[i] = dotread(x + i, y);
+	}
+}
+
+/*
 ; ****************** Function getakey() *****************************
 ; **************** Function keypressed() ****************************
 
@@ -686,7 +711,12 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
 		return;
+#if 0
 	linewrite(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+#else
+	normaline(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+	Sleep(50);
+#endif
 }
 
 int get_sound_params(void)
@@ -1085,30 +1115,5 @@ void windows_shell_to_dos(void)
 			status = WaitForSingleObject(pi.hProcess, 1000); 
 		}
 		CloseHandle(pi.hProcess);
-	}
-}
-
-/*
-; **************** internal Read/Write-a-line routines *********************
-;
-;       These routines are called by out_line(), put_line() and get_line().
-*/
-void normaline(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		dotwrite(x + i, y, pixels[i]);
-	}
-}
-
-void normalineread(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		pixels[i] = dotread(x + i, y);
 	}
 }
