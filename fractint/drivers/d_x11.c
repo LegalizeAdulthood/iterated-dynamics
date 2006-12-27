@@ -438,7 +438,7 @@ x11_init(Driver *drv, int *argc, char **argv)
   erase_text_screen(di);
 
   /* should enumerate visuals here and build video modes for each */
-  memcpy(&vidtbl[vidtbllen++], &x11_info, sizeof(vidtbl[0]));
+  memcpy(&g_video_table[g_video_table_len++], &x11_info, sizeof(g_video_table[0]));
   return 1;
 }
 
@@ -646,8 +646,8 @@ x11_resize(Driver *drv)
   if (oldx != width || oldy != height) {
     sxdots = width;
     sydots = height;
-    vidtbl[0].xdots = sxdots;
-    vidtbl[0].ydots = sydots;
+    g_video_table[0].xdots = sxdots;
+    g_video_table[0].ydots = sydots;
     oldx = sxdots;
     oldy = sydots;
     di->Xwinwidth = sxdots;
@@ -2125,10 +2125,10 @@ x11_window(Driver *drv)
   x11_flush(drv);
   x11_write_palette(drv);
 
-  vidtbl[0].xdots = sxdots;
-  vidtbl[0].ydots = sydots;
-  vidtbl[0].colors = colors;
-  vidtbl[0].dotmode = 19;
+  g_video_table[0].xdots = sxdots;
+  g_video_table[0].ydots = sydots;
+  g_video_table[0].colors = colors;
+  g_video_table[0].dotmode = 19;
 }
 
 static void

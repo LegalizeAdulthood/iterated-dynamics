@@ -44,16 +44,15 @@ static int
 load_fractint_cfg(int options)
 {
    /* Reads fractint.cfg, loading videoinfo entries into extraseg. */
-   /* Sets vidtbl pointing to the loaded table, and returns the    */
-   /* number of entries (also sets vidtbllen to this).             */
-   /* Past vidtbl, cfglinenums are stored for update_fractint_cfg. */
+   /* Sets g_video_table pointing to the loaded table, and returns the    */
+   /* number of entries (also sets g_video_table_len to this).             */
+   /* Past g_video_table, g_cfg_line_nums are stored for update_fractint_cfg. */
    /* If fractint.cfg is not found or invalid, issues a message    */
    /* (first time the problem occurs only, and only if options is  */
    /* zero) and uses the hard-coded table.                         */
 
    FILE *cfgfile;
    VIDEOINFO *vident;
-   int *cfglinenums;
    int linenum;
    long xdots, ydots;
    int i, j, keynum, ax, bx, cx, dx, file_dotmode, colors;
@@ -63,8 +62,8 @@ load_fractint_cfg(int options)
    int truecolorbits; 
 
    /* TODO: allocate real memory, not reuse shared segment */
-   vidtbl = extraseg;
-   cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
+   g_video_table = extraseg;
+   cfglinenums = (int *)(&g_video_table[MAXVIDEOMODES]);
 
    if (badconfig)  /* fractint.cfg already known to be missing or bad */
       goto use_resident_table;
@@ -74,10 +73,10 @@ load_fractint_cfg(int options)
      || (cfgfile = fopen(tempstring,"r")) == NULL)   /* can't open it */
       goto bad_fractint_cfg;
 
-   vidtbllen = 0;
+   g_video_table_len = 0;
    linenum = 0;
-   vident = vidtbl;
-   while (vidtbllen < MAXVIDEOMODES
+   vident = g_video_table;
+   while (g_video_table_len < MAXVIDEOMODES
      && fgets(tempstring, 120, cfgfile)) {
       ++linenum;
       if (tempstring[0] == ';') continue;   /* comment line */
@@ -134,7 +133,7 @@ load_fractint_cfg(int options)
              colors != 256)
            )
          goto bad_fractint_cfg;
-      cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
+      cfglinenums[g_video_table_len] = linenum; /* for update_fractint_cfg */
       memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
       memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
       vident->name[25] = vident->comment[25] = 0;
@@ -149,10 +148,10 @@ load_fractint_cfg(int options)
       vident->ydots       = (short)ydots;
       vident->colors      = colors;
       ++vident;
-      ++vidtbllen;
+      ++g_video_table_len;
       }
    fclose(cfgfile);
-   return (vidtbllen);
+   return (g_video_table_len);
 
 bad_fractint_cfg:
    badconfig = -1; /* bad, no message issued yet */
@@ -160,17 +159,17 @@ bad_fractint_cfg:
       bad_fractint_cfg_msg();
 
 use_resident_table:
-   vidtbllen = 0;
-   vident = vidtbl;
+   g_video_table_len = 0;
+   vident = g_video_table;
    for (i = 0; i < MAXVIDEOTABLE; ++i) {
       if (g_video_table[i].xdots) {
          memcpy((char *)vident,(char *)g_video_table[i],
                     sizeof(*vident));
          ++vident;
-         ++vidtbllen;
+         ++g_video_table_len;
          }
       }
-   return (vidtbllen);
+   return (g_video_table_len);
 
 }
 
@@ -193,11 +192,11 @@ load_videotable(int options)
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   memset((char *)g_video_table,0,sizeof(*vidtbl)*MAXVIDEOTABLE);
-   for (i = 0; i < vidtbllen; ++i) {
-      if (vidtbl[i].keynum > 0) {
-         memcpy((char *)&g_video_table[keyents],(char *)&vidtbl[i],
-                    sizeof(*vidtbl));
+   memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
+   for (i = 0; i < g_video_table_len; ++i) {
+      if (g_video_table[i].keynum > 0) {
+         memcpy((char *)&g_video_table[keyents],(char *)&g_video_table[i],
+                    sizeof(*g_video_table));
          if (++keyents >= MAXVIDEOTABLE)
             break;
          }

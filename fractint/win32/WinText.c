@@ -6,13 +6,22 @@
 #include <stdlib.h>
 #include "WinText.h"
 
-int showing_cursor = FALSE;
+static int s_showing_cursor = FALSE;
+
+#if defined(RT_VERBOSE)
 int carrot_count = 0;
 extern void ods(const char *file, unsigned int line, const char *format, ...);
 #define ODS(fmt_)				ods(__FILE__, __LINE__, fmt_)
 #define ODS1(fmt_, _1)			ods(__FILE__, __LINE__, fmt_, _1)
 #define ODS2(fmt_, _1, _2)		ods(__FILE__, __LINE__, fmt_, _1, _2)
 #define ODS3(fmt_, _1, _2, _3)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3)
+#else
+#define ODS(fmt_)
+#define ODS1(fmt_, _1)
+#define ODS2(fmt_, _1, _2)
+#define ODS3(fmt_, _1, _2, _3)
+#endif
+
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 /*
@@ -115,12 +124,9 @@ static WinText_Globals g_wintext =
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
-/* Local copy of the "screen" characters and attributes */
-#define WINTEXT_MAX_COL 80
-#define WINTEXT_MAX_ROW 25
-
 struct tagWinText_Instance
 {
+	/* Local copy of the "screen" characters and attributes */
 	unsigned char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
 	unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
 	int buffer_init;     /* zero if 'screen' is uninitialized */
@@ -342,7 +348,7 @@ int wintext_texton(void)
     g_me.cursor_y    = 0;
     g_me.cursor_type = 0;
     g_me.cursor_owned = 0;
-	showing_cursor = FALSE;
+	s_showing_cursor = FALSE;
 
     /* clear the keyboard buffer */
     wintext_keypress_count = 0;
@@ -405,7 +411,7 @@ static void wintext_OnSetFocus(HWND window, HWND old_focus)
 	ODS("wintext_OnSetFocus");
 	/* get focus - display caret */
 	/* create caret & display */
-	if (TRUE == showing_cursor)
+	if (TRUE == s_showing_cursor)
 	{
 		g_me.cursor_owned = 1;
 		CreateCaret(wintext_hWndCopy, g_me.bitmap[g_me.cursor_type], g_me.char_width, g_me.char_height);
@@ -420,7 +426,7 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 {
 	/* kill focus - hide caret */
 	ODS("wintext_OnKillFocus");
-	if (TRUE == showing_cursor)
+	if (TRUE == s_showing_cursor)
 	{
 		g_me.cursor_owned = 0;
 		ODS1("======================== Hide Caret %d", --carrot_count);
@@ -703,7 +709,7 @@ int wintext_look_for_activity(int wintext_waitflag)
         general routine to send a string to the screen
 */
 
-void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
+void wintext_putstring(int xpos, int ypos, int attrib, const char *string, int *end_row, int *end_col)
 {
 	int i, j, k, maxrow, maxcol;
     char xc, xa;
@@ -740,6 +746,8 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string)
 		wintext_paintscreen(xpos, maxcol, ypos, maxrow);
 #else
 		invalidate(xpos, ypos, maxcol, maxrow);
+		*end_row = j;
+		*end_col = k;
 #endif
     }
 }
@@ -819,7 +827,7 @@ void wintext_paintscreen(
 	SetBkMode(hDC, OPAQUE);
 	SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
-	if (TRUE == showing_cursor)
+	if (TRUE == s_showing_cursor)
 	//if (g_me.cursor_owned != 0)
 	{
 		ODS1("======================== Hide Caret %d", --carrot_count);
@@ -868,7 +876,7 @@ void wintext_paintscreen(
 		}
     }
 
-	if (TRUE == showing_cursor)
+	if (TRUE == s_showing_cursor)
 	//if (g_me.cursor_owned != 0)
 	{
 		ODS1("======================== Show Caret %d", ++carrot_count);
@@ -893,7 +901,7 @@ void wintext_cursor(int xpos, int ypos, int cursor_type)
     if (cursor_type >= 0) g_me.cursor_type = cursor_type;
     if (g_me.cursor_type < 0) g_me.cursor_type = 0;
     if (g_me.cursor_type > 2) g_me.cursor_type = 2;
-	if (FALSE == showing_cursor)
+	if (FALSE == s_showing_cursor)
 	{
 		x = g_me.cursor_x*g_me.char_width;
 		y = g_me.cursor_y*g_me.char_height;
@@ -902,7 +910,7 @@ void wintext_cursor(int xpos, int ypos, int cursor_type)
         SetCaretPos(x, y);
 		ODS3("======================== Show Caret %d #2 (%d,%d)", ++carrot_count, x, y);
         ShowCaret(wintext_hWndCopy);
-		showing_cursor = TRUE;
+		s_showing_cursor = TRUE;
 	}
 	else
     //if (g_me.cursor_owned != 0)
@@ -975,9 +983,9 @@ void wintext_screen_set(const BYTE *copy)
 
 void wintext_hide_cursor(void)
 {
-	if (TRUE == showing_cursor)
+	if (TRUE == s_showing_cursor)
 	{
-		showing_cursor = FALSE;
+		s_showing_cursor = FALSE;
 		HideCaret(wintext_hWndCopy);
 	}
 }

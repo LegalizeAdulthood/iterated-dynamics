@@ -1615,8 +1615,8 @@ void discardgraphics() /* release expanded/extended memory if any in use */
 #endif
 }
 
-VIDEOINFO *vidtbl;  /* temporarily loaded fractint.cfg info */
-int vidtbllen;                 /* number of entries in above           */
+/*VIDEOINFO *g_video_table;  /* temporarily loaded fractint.cfg info */
+int g_video_table_len;                 /* number of entries in above           */
 
 int showvidlength()
 {
@@ -1625,20 +1625,20 @@ int showvidlength()
    return(sz);
 }
 
+int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 
 int load_fractint_cfg(int options)
 {
-	/* Reads fractint.cfg, loading videoinfo entries into extraseg. */
-	/* Sets vidtbl pointing to the loaded table, and returns the    */
-	/* number of entries (also sets vidtbllen to this).             */
-	/* Past vidtbl, cfglinenums are stored for update_fractint_cfg. */
+	/* Reads fractint.cfg, loading videoinfo entries into g_video_table. */
+	/* Sets g_video_table pointing to the loaded table, and returns the    */
+	/* number of entries (also sets g_video_table_len to this).             */
+	/* Past g_video_table, g_cfg_line_nums are stored for update_fractint_cfg. */
 	/* If fractint.cfg is not found or invalid, issues a message    */
 	/* (first time the problem occurs only, and only if options is  */
 	/* zero) and uses the hard-coded table.                         */
 
 	FILE *cfgfile;
 	VIDEOINFO *vident;
-	int *cfglinenums;
 	int linenum;
 	long xdots, ydots;
 	int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
@@ -1646,10 +1646,6 @@ int load_fractint_cfg(int options)
 	int textsafe2;
 	char tempstring[150];
 	int truecolorbits; 
-
-	/* TODO: allocate real memory, not reuse shared segment */
-	vidtbl = (VIDEOINFO *) extraseg;
-	cfglinenums = (int *)(&vidtbl[MAXVIDEOMODES]);
 
 #ifdef XFRACT
 	badconfig = -1;
@@ -1667,10 +1663,10 @@ int load_fractint_cfg(int options)
 		goto bad_fractint_cfg;
 	}
 
-	vidtbllen = 0;
+	g_video_table_len = 0;
 	linenum = 0;
-	vident = vidtbl;
-	while (vidtbllen < MAXVIDEOMODES
+	vident = g_video_table;
+	while (g_video_table_len < MAXVIDEOMODES
 		&& fgets(tempstring, 120, cfgfile))
 	{
 		if(strchr(tempstring,'\n') == NULL)
@@ -1751,7 +1747,7 @@ int load_fractint_cfg(int options)
 		{
 			goto bad_fractint_cfg;
 		}
-		cfglinenums[vidtbllen] = linenum; /* for update_fractint_cfg */
+		g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
 		memcpy(vident->name,   (char *)&tempstring[commas[0]],25);
 		memcpy(vident->comment,(char *)&tempstring[commas[9]],25);
 		vident->name[25] = vident->comment[25] = 0;
@@ -1765,10 +1761,10 @@ int load_fractint_cfg(int options)
 		vident->ydots       = (short)ydots;
 		vident->colors      = colors;
 		++vident;
-		++vidtbllen;
+		++g_video_table_len;
 	}
 	fclose(cfgfile);
-	return (vidtbllen);
+	return (g_video_table_len);
 
 bad_fractint_cfg:
 	badconfig = -1; /* bad, no message issued yet */
@@ -1778,8 +1774,8 @@ bad_fractint_cfg:
 	}
 
 use_resident_table:
-	vidtbllen = 0;
-	vident = vidtbl;
+	g_video_table_len = 0;
+	vident = g_video_table;
 	for (i = 0; i < MAXVIDEOTABLE; ++i)
 	{
 		if (g_video_table[i].xdots)
@@ -1787,10 +1783,10 @@ use_resident_table:
 			memcpy((char *)vident,(char *)&g_video_table[i],
 						sizeof(*vident));
 			++vident;
-			++vidtbllen;
+			++g_video_table_len;
 		}
 	}
-	return (vidtbllen);
+	return (g_video_table_len);
 }
 
 void bad_fractint_cfg_msg()
@@ -1810,13 +1806,13 @@ void load_videotable(int options)
 	int keyents, i;
 	load_fractint_cfg(options); /* load fractint.cfg to extraseg */
 	keyents = 0;
-	memset((char *) g_video_table, 0, sizeof(*vidtbl)*MAXVIDEOTABLE);
-	for (i = 0; i < vidtbllen; ++i)
+	memset((char *) g_video_table, 0, sizeof(*g_video_table)*MAXVIDEOTABLE);
+	for (i = 0; i < g_video_table_len; ++i)
 	{
-		if (vidtbl[i].keynum > 0)
+		if (g_video_table[i].keynum > 0)
 		{
-			memcpy((char *) &g_video_table[keyents], (char *) &vidtbl[i],
-						sizeof(*vidtbl));
+			memcpy((char *) &g_video_table[keyents], (char *) &g_video_table[i],
+						sizeof(*g_video_table));
 			if (++keyents >= MAXVIDEOTABLE)
 			{
 				break;
@@ -1839,9 +1835,9 @@ int check_vidmode_key(int option,int k)
                return(i);
             }
          }
-      else { /* check full vidtbl */
-         for (i = 0; i < vidtbllen; ++i) {
-            if (vidtbl[i].keynum == k)
+      else { /* check full g_video_table */
+         for (i = 0; i < g_video_table_len; ++i) {
+            if (g_video_table[i].keynum == k)
                return(i);
             }
          }

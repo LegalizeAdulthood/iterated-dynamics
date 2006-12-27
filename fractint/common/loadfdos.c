@@ -71,8 +71,8 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
    ptr2 = (struct vidinf CONST *)p2;
    if (ptr1->flags < ptr2->flags) return(-1);
    if (ptr1->flags > ptr2->flags) return(1);
-   if (vidtbl[ptr1->entnum].keynum < vidtbl[ptr2->entnum].keynum) return(-1);
-   if (vidtbl[ptr1->entnum].keynum > vidtbl[ptr2->entnum].keynum) return(1);
+   if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum) return(-1);
+   if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum) return(1);
    if (ptr1->entnum < ptr2->entnum) return(-1);
    return(1);
 }
@@ -80,7 +80,7 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 static void format_vid_inf(int i,char *err,char *buf)
 {
    char kname[5];
-   memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+   memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
               sizeof(g_video_entry));
    vidmode_keyname(g_video_entry.keynum,kname);
    sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
@@ -139,7 +139,7 @@ Press F1 for help, "};
    strcpy(select_msg,o_select_msg);
 
    g_init_mode = -1;
-   load_fractint_cfg(0); /* get fractint.cfg into *vidtbl (== extraseg) */
+   load_fractint_cfg(0); /* get fractint.cfg into *g_video_table (== extraseg) */
 
    /* try to change any VESA entries to fit the loaded image size */
    if (g_virtual_screens && g_video_vram && g_init_mode == -1) {
@@ -148,8 +148,8 @@ Press F1 for help, "};
       if (need <= vram) {
          char over[25]; /* overwrite comments with original resolutions */
          int bppx;      /* bytesperpixel multiplier */
-         for (i = 0; i < vidtbllen; ++i) {
-            vident = &vidtbl[i];
+         for (i = 0; i < g_video_table_len; ++i) {
+            vident = &g_video_table[i];
             if (vident->dotmode%100 == 28 && vident->colors >= 256
                && (info->xdots > vident->xdots || info->ydots > vident->ydots)
                && vram >= (unsigned long)
@@ -170,8 +170,8 @@ Press F1 for help, "};
    }
 
    /* try to find exact match for vid mode */
-   for (i = 0; i < vidtbllen; ++i) {
-      vident = &vidtbl[i];
+   for (i = 0; i < g_video_table_len; ++i) {
+      vident = &g_video_table[i];
       if (info->xdots == vident->xdots && info->ydots == vident->ydots
         && filecolors == vident->colors
         && info->videomodeax == vident->videomodeax
@@ -189,8 +189,8 @@ Press F1 for help, "};
       return(0);
 
    if (g_init_mode == -1) /* try to find very good match for vid mode */
-      for (i = 0; i < vidtbllen; ++i) {
-         vident = &vidtbl[i];
+      for (i = 0; i < g_video_table_len; ++i) {
+         vident = &g_video_table[i];
          if (info->xdots == vident->xdots && info->ydots == vident->ydots
            && filecolors == vident->colors) {
             g_init_mode = i;
@@ -199,8 +199,8 @@ Press F1 for help, "};
          }
 
    /* setup table entry for each vid mode, flagged for how well it matches */
-   for (i = 0; i < vidtbllen; ++i) {
-      memcpy((char *)&g_video_entry,(char *)&vidtbl[i],
+   for (i = 0; i < g_video_table_len; ++i) {
+      memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
                  sizeof(g_video_entry));
       tmpflags = VI_EXACT;
       if (g_video_entry.keynum == 0)
@@ -244,10 +244,10 @@ if (fastrestore  && !askvideo)
       /* no exact match or (askvideo=yes and batch=no), and not
         in makepar mode, talk to user */
 
-      qsort(vid,vidtbllen,sizeof(vid[0]),vidcompare); /* sort modes */
+      qsort(vid,g_video_table_len,sizeof(vid[0]),vidcompare); /* sort modes */
 
       attributes = (int *)&dstack[1000];
-      for (i = 0; i < vidtbllen; ++i)
+      for (i = 0; i < g_video_table_len; ++i)
          attributes[i] = 1;
       vidptr = &vid[0]; /* for format_item */
 
@@ -299,7 +299,7 @@ if (fastrestore  && !askvideo)
 
       oldhelpmode = helpmode;
       helpmode = HELPLOADFILE;
-      i = fullscreen_choice(0,(char *)dstack,hdg2,temp1,vidtbllen,NULL,attributes,
+      i = fullscreen_choice(0,(char *)dstack,hdg2,temp1,g_video_table_len,NULL,attributes,
                              1,13,78,0,format_item,NULL,NULL,check_modekey);
       helpmode = oldhelpmode;
       if (i == -1)
@@ -313,19 +313,19 @@ if (fastrestore  && !askvideo)
       }
 #else
       g_init_mode = 0;
-      j = vidtbl[0].keynum;
+      j = g_video_table[0].keynum;
       gotrealmode = 0;
 #endif
 
    if (gotrealmode == 0) { /* translate from temp table to permanent */
-      if ((j = vidtbl[i=g_init_mode].keynum) != 0) {
+      if ((j = g_video_table[i=g_init_mode].keynum) != 0) {
          for (g_init_mode = 0; g_init_mode < MAXVIDEOTABLE-1; ++g_init_mode)
             if (g_video_table[g_init_mode].keynum == j) break;
          if (g_init_mode >= MAXVIDEOTABLE-1) j = 0;
          }
       if (j == 0) /* mode has no key, add to reserved slot at end */
          memcpy((char *)&g_video_table[g_init_mode=MAXVIDEOTABLE-1],
-                    (char *)&vidtbl[i],sizeof(*vidtbl));
+                    (char *)&g_video_table[i],sizeof(*g_video_table));
       }
 
    /* ok, we're going to return with a video mode */
