@@ -2842,7 +2842,7 @@ static int _fastcall potential(double mag, long iterations)
 
    if(pot16bit)
    {
-      if (dotmode != 11) /* if putcolor won't be doing it for us */
+      if (!driver_diskp()) /* if putcolor won't be doing it for us */
          writedisk(col+sxoffs,row+syoffs,i_pot);
       writedisk(col+sxoffs,row+sydots+syoffs,(int)l_pot);
    }

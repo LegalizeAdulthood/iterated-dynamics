@@ -218,13 +218,8 @@ extern void set_byte_buff(BYTE *ptr);
 extern int pot_startdisk(void);
 extern int targa_startdisk(FILE *,int );
 extern void enddisk(void);
-#ifndef XFRACT
-extern int readdisk(unsigned int, unsigned int );
-extern void writedisk(unsigned int, unsigned int, unsigned int );
-#else
-extern int readdisk(int, int );
-extern void writedisk(int, int, int );
-#endif
+extern int readdisk(int, int);
+extern void writedisk(int, int, int);
 extern void targa_readdisk(unsigned int ,unsigned int ,BYTE *,BYTE *,BYTE *);
 extern void targa_writedisk(unsigned int ,unsigned int ,BYTE ,BYTE ,BYTE );
 extern void dvid_status(int ,char *);

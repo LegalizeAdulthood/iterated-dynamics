@@ -705,7 +705,7 @@ int get_view_params()
    unsigned long vidmem = (unsigned long)g_video_vram << 16;
    int truebytes = g_video_entry.dotmode/1000;
 
-   if (dotmode == 28)          /* setvideo might have changed mode 27 to 28 */
+   if (dotmode == DOTMODE_VESA)          /* setvideo might have changed mode 27 to 28 */
       dotmode = g_video_entry.dotmode%100;
 #endif
 
@@ -729,7 +729,7 @@ int get_view_params()
 */
 
 #ifndef XFRACT
-   if (dotmode == 28 && g_virtual_screens) {
+   if (dotmode == DOTMODE_VESA && g_virtual_screens) {
       /* virtual screen limits estimation */
       if (truebytes < 2)
          ++truebytes;
@@ -782,13 +782,13 @@ get_view_restart:
    uvalues[k].type = '*';
 
 #ifndef XFRACT
-   if (g_virtual_screens && dotmode == 28 && g_checked_vvs && !g_video_scroll) {
+   if (g_virtual_screens && dotmode == DOTMODE_VESA && g_checked_vvs && !g_video_scroll) {
       LOADCHOICES("Your graphics card does NOT support virtual screens.");
       uvalues[k].type = '*';
    }
 #endif
 
-   if (dotmode == 11 || (g_virtual_screens && dotmode == 28)) {
+   if (dotmode == 11 || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
       LOADCHOICES("Virtual screen total x pixels");
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = sxdots;
@@ -804,7 +804,7 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (g_virtual_screens && dotmode == 28) {
+   if (g_virtual_screens && dotmode == DOTMODE_VESA) {
       char dim[50];
       static char xmsg[] = {"Video memory limits: (for y = "};
       static char ymsg[] = {"                     (for x = "};
@@ -861,7 +861,7 @@ get_view_restart:
       viewreduction = (float)4.2;
       viewcrop = 1;
       finalaspectratio = screenaspect;
-      if (dotmode == 28) {
+      if (dotmode == DOTMODE_VESA) {
          sxdots = g_vesa_x_res ? g_vesa_x_res : old_sxdots;
          sydots = g_vesa_y_res ? g_vesa_y_res : old_sydots;
          video_cutboth = 1;
@@ -888,10 +888,10 @@ get_view_restart:
 
    ++k;
 
-   if (g_virtual_screens && dotmode == 28 && g_checked_vvs && !g_video_scroll)
+   if (g_virtual_screens && dotmode == DOTMODE_VESA && g_checked_vvs && !g_video_scroll)
       ++k;  /* add 1 if not supported line is inserted */
 
-   if (driver_diskp() || (g_virtual_screens && dotmode == 28)) {
+   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
       sxdots = uvalues[++k].uval.ival;
       sydots = uvalues[++k].uval.ival;
 #ifndef XFRACT
@@ -903,7 +903,7 @@ get_view_restart:
          sxdots = (int)estm_xmax;
       if (sxdots < 2)
          sxdots = 2;
-      if (sydots == 0 && dotmode == 28) { /* auto by aspect ratio request */
+      if (sydots == 0 && dotmode == DOTMODE_VESA) { /* auto by aspect ratio request */
          if (finalaspectratio == 0.0) {
             if (viewwindow && viewxdots != 0 && viewydots != 0)
                finalaspectratio = (float)viewydots/viewxdots;
@@ -919,7 +919,7 @@ get_view_restart:
    }
 
 #ifndef XFRACT
-   if (g_virtual_screens && dotmode == 28) {
+   if (g_virtual_screens && dotmode == DOTMODE_VESA) {
 
       /* virtual screen smaller than physical screen, use view window */
       if (sxdots < g_vesa_x_res && sydots < g_vesa_y_res) {
@@ -958,7 +958,7 @@ get_view_restart:
    }
 #endif
 
-   if (driver_diskp() || (g_virtual_screens && dotmode == 28)) {
+   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
       g_video_entry.xdots = sxdots;
       g_video_entry.ydots = sydots;
       memcpy((char *)&g_video_table[g_adapter],(char *)&g_video_entry,

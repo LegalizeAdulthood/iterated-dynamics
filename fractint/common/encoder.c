@@ -1027,7 +1027,7 @@ nomatch:
                   getcolor(xdots - 1 - i, ydot) ^ outcolor2);
             }
             last_colorbar = ydot;
-         } /* end if dotmode != 11 */
+         } /* end if !driver_diskp() */
          tempkey = driver_key_pressed();
          if (tempkey && (tempkey != (int)'s'))  /* keyboard hit - bail out */
          {
