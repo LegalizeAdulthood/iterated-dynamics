@@ -347,7 +347,7 @@ extern int                   num_fractal_types;
 extern int                   num_worklist;
 extern int                   nxtscreenflag;
 extern int                   Offset;
-extern int                   oktoprint;
+extern int                   g_ok_to_print;
 extern _CMPLX                old;
 extern long                  oldcoloriter;
 extern BYTE                  olddacbox[256][3];

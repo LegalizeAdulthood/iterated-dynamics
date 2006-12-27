@@ -80,7 +80,7 @@ int compiled_by_turboc = 0;
         int     active_system = 0;      /* 0 for DOS, WINFRAC for Windows */
         int     dotmode;                /* video access method      */
         int     textsafe2;              /* textsafe override from g_video_table */
-        int     oktoprint;              /* 0 if printf() won't work */
+        int     g_ok_to_print;              /* 0 if printf() won't work */
         int     sxdots,sydots;          /* # of dots on the physical screen    */
         int     sxoffs,syoffs;          /* physical top left of logical screen */
         int     xdots, ydots;           /* # of dots on the logical screen     */
