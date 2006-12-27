@@ -229,7 +229,7 @@ int g_video_vram = 0;
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO g_video_table[MAXVIDEOTABLE] =
+VIDEOINFO g_video_table[MAXVIDEOMODES] =
 {
 	{
 		"unused  mode             ", "                         ",
@@ -605,18 +605,52 @@ find_special_colors (void)
 	}
 }
 
+static HANDLE s_find_context = INVALID_HANDLE_VALUE;
+static char s_find_base[MAX_PATH] = { 0 };
+static WIN32_FIND_DATA s_find_data = { 0 };
+
 int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
-	/* TODO */
-	CALLED("fr_findfirst");
-	return -1;
+	if (s_find_context != INVALID_HANDLE_VALUE)
+	{
+		BOOL result = FindClose(s_find_context);
+		ASSERT(result);
+	}
+	SetLastError(0);
+	s_find_context = FindFirstFile(path, &s_find_data);
+	if (INVALID_HANDLE_VALUE == s_find_context)
+	{
+		return GetLastError() || -1;
+	}
+
+	strncpy(s_find_base, path, NUM_OF(s_find_base));
+	{
+		char *whack = strrchr(s_find_base, '\\');
+		if (whack != NULL)
+		{
+			whack[1] = 0;
+		}
+	}
+	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+
+	return 0;
 }
 
 int fr_findnext()
 {
-	/* TODO */
-	CALLED("fr_findnext");
-	return -1;
+	BOOL result = FALSE;
+	ASSERT(INVALID_HANDLE_VALUE != s_find_context);
+	result = FindNextFile(s_find_context, &s_find_data);
+	if (result != 0)
+	{
+		DWORD code = GetLastError();
+		ASSERT(ERROR_NO_MORE_FILES == code);
+		return code || -1;
+	}
+
+	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+
+	return 0;
 }
 
 /*
@@ -906,8 +940,8 @@ void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 void restart_uclock(void)
 {
 	/* TODO */
-	CALLED("restart_uclock");
 #if 0
+	CALLED("restart_uclock");
 	gettimeofday(&tv_start, NULL);
 #endif
 }

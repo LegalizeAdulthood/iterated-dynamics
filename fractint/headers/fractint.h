@@ -978,14 +978,14 @@ struct fullscreenvalues
 #define   SYSTEM         4
 #define   SUBDIR         16
 
-struct DIR_SEARCH               /* Allocate DTA and define structure */
+struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
 {
-     char path[21];             /* DOS path and filespec */
-     char attribute;            /* File attributes wanted */
-     int  ftime;                /* File creation time */
-     int  fdate;                /* File creation date */
-     long size;                 /* File size in bytes */
-     char filename[13];         /* Filename and extension */
+	char path[_MAX_PATH];		/* DOS path	and	filespec */
+	char attribute;				/* File	attributes wanted */
+	int	 ftime;					/* File	creation time */
+	int	 fdate;					/* File	creation date */
+	long size;					/* File	size in bytes */
+	char filename[_MAX_PATH];	/* Filename	and	extension */
 };
 
 extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */

@@ -172,7 +172,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                }
             else if ((driver_diskp() && colors == 256) || !colors) {
                /* disk video, setvideomode via bios didn't get it right, so: */
-#ifndef XFRACT
+#if !defined(XFRACT) && !defined(_WIN32)
                ValidateLuts("default"); /* read the default palette file */
 #endif
                }
