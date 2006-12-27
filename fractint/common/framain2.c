@@ -180,7 +180,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
          if (viewwindow) {
             ftemp = finalaspectratio    /* bypass for VESA virtual screen */
-                    * ((dotmode == 28 && ((g_vesa_x_res && g_vesa_x_res != sxdots)
+                    * ((dotmode == DOTMODE_VESA && ((g_vesa_x_res && g_vesa_x_res != sxdots)
                        || (g_vesa_y_res && g_vesa_y_res != sydots)))
                     ? 1 : (double)sydots / (double)sxdots / screenaspect);
             if ((xdots = viewxdots) != 0) { /* xdots specified */

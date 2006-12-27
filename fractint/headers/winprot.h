@@ -113,8 +113,6 @@ extern int pot_startdisk(void);
 //extern void SetTgaColors(void);
 extern int startdisk(void);
 extern void enddisk(void);
-extern int readdisk(unsigned int,unsigned int);
-extern void writedisk(unsigned int,unsigned int,unsigned int);
 extern int targa_startdisk(FILE *,int);
 extern void targa_writedisk(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void targa_readdisk(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);

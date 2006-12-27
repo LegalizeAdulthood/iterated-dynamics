@@ -103,7 +103,7 @@ void _fastcall putpot(int x, int y, U16 color)
    if(color < 1)
       color = 1;
    putcolor(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
-   /* we don't write this if dotmode==11 because the above putcolor
+   /* we don't write this if driver_diskp() because the above putcolor
          was already a "writedisk" in that case */
    if (!driver_diskp())
       writedisk(x+sxoffs,y+syoffs,color >> 8);    /* upper 8 bits */

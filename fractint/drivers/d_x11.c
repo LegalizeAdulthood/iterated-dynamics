@@ -2128,7 +2128,7 @@ x11_window(Driver *drv)
   g_video_table[0].xdots = sxdots;
   g_video_table[0].ydots = sydots;
   g_video_table[0].colors = colors;
-  g_video_table[0].dotmode = 19;
+  g_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
 }
 
 static void

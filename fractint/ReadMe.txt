@@ -64,3 +64,5 @@ win32
 2006.12.27.00.53
 	vidtbl vs. g_video_table confusion resolved.
 	Eliminate one use of extraseg for vidtbl.
+2006.12.27.02.26
+	Basic disk video messages displaying.

@@ -150,7 +150,7 @@ Press F1 for help, "};
          int bppx;      /* bytesperpixel multiplier */
          for (i = 0; i < g_video_table_len; ++i) {
             vident = &g_video_table[i];
-            if (vident->dotmode%100 == 28 && vident->colors >= 256
+            if (vident->dotmode%100 == DOTMODE_VESA && vident->colors >= 256
                && (info->xdots > vident->xdots || info->ydots > vident->ydots)
                && vram >= (unsigned long)
                   (info->xdots < vident->xdots ? vident->xdots : info->xdots)
@@ -219,12 +219,12 @@ Press F1 for help, "};
          tmpflags |= VI_CBIG;
       if (i == g_init_mode)
          tmpflags -= VI_EXACT;
-      if (g_video_entry.dotmode%100 == 11) {
+      if (g_video_entry.dotmode%100 == DOTMODE_RAMDISK) {
          tmpflags |= VI_DISK2;
          if ((tmpflags & (VI_SBIG+VI_SSMALL+VI_VBIG+VI_VSMALL)) != 0)
             tmpflags |= VI_DISK1;
          }
-      if (fileaspectratio != 0 && g_video_entry.dotmode%100 != 11
+      if (fileaspectratio != 0 && g_video_entry.dotmode%100 != DOTMODE_RAMDISK
         && (tmpflags & VI_VSMALL) == 0) {
          ftemp = vid_aspect(filexdots,fileydots);
          if ( ftemp < fileaspectratio * 0.98
@@ -360,7 +360,7 @@ if (fastrestore  && !askvideo)
       for(;;) {
          tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
          tmpydots = (fileydots + skipydots - 1) / skipydots;
-         if (fileaspectratio == 0 || g_video_entry.dotmode%100 == 11)
+         if (fileaspectratio == 0 || g_video_entry.dotmode%100 == DOTMODE_RAMDISK)
             break;
          /* reduce further if that improves aspect */
          if ((ftemp = vid_aspect(tmpxdots,tmpydots)) > fileaspectratio) {

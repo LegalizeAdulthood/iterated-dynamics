@@ -69,11 +69,13 @@ static void _fastcall  mem_seek(long);
 
 int startdisk()
 {
-   if (!diskisactive)
-      return(0);
-   headerlength = disktarga = 0;
-   return (common_startdisk(sxdots,sydots,colors));
-   }
+	if (!diskisactive)
+	{
+		return 0;
+	}
+	headerlength = disktarga = 0;
+	return common_startdisk(sxdots,sydots,colors);
+}
 
 int pot_startdisk()
 {
@@ -381,7 +383,7 @@ void targa_readdisk(unsigned int col, unsigned int row,
    *red   = (BYTE)readdisk(col+1,row);
 }
 
-void writedisk(unsigned int col, unsigned int row, unsigned int color)
+void writedisk(int col, int row, int color)
 {
    int col_subscr;
    long offset;

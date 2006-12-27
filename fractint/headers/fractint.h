@@ -39,6 +39,37 @@ typedef BYTE BOOLEAN;
 #define RESTORESTART      3
 #define CONTINUE          4
 
+/* values for dotmode */
+#define DOTMODE_SLOW_BIOS		1
+#define DOTMODE_PRETEND_EGA		2
+#define DOTMODE_PRETEND_MCGA	3
+#define DOTMODE_VGA_TSENG		4
+#define DOTMODE_VGA_PARADISE	5
+#define DOTMODE_VGA_VIDEO7		6
+#define DOTMODE_VGA_NONSTANDARD	7
+#define DOTMODE_VGA_EVEREX		8
+#define DOTMODE_TARGA			9
+#define DOTMODE_HERCULES		10
+#define DOTMODE_RAMDISK			11
+#define DOTMODE_8514A			12
+#define DOTMODE_CGA				13
+#define DOTMODE_TANDY_1000		14
+#define DOTMODE_SVGA_TRIDENT	15
+#define DOTMODE_SVGA_CHIPSTECH	16
+#define DOTMODE_SVGA_VGAWONDER	17
+#define DOTMODE_SVGA_EVEREX		18
+#define DOTMODE_ROLL_YOUR_OWN	19
+#define DOTMODE_XGA_VGAWONDER	20
+#define DOTMODE_XGA_TSENG		21
+#define DOTMODE_XGA_TRIDENT		22
+#define DOTMODE_XGA_VIDEO7		23
+#define DOTMODE_XGA_PARADISE	24
+#define DOTMODE_XGA_CHIPSTECH	25
+#define DOTMODE_XGA_EVEREX		26
+#define DOTMODE_SVGA_AUTO		27
+#define DOTMODE_VESA			28
+#define DOTMODE_TRUECOLOR_AUTO	29
+
 /* these are used to declare arrays for file names */
 #ifdef XFRACT
 #define FILE_MAX_PATH  256       /* max length of path+filename  */

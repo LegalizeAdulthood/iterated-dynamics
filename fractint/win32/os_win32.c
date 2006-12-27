@@ -34,7 +34,7 @@ extern void function_called(const char *fn, const char *file, unsigned int line,
 
 HINSTANCE g_instance = NULL;
 
-static void null_swap(void);
+void null_swap(void);
 
 typedef enum
 {
@@ -148,8 +148,12 @@ int g_got_real_dac = 0;
 int hi_atten = 0;
 int inside_help = 0;
 int g_is_true_color = 0;
-void (*lineread)();		/* read-a-line routine */
-void (*linewrite)();		/* write-a-line routine */
+typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
+typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
+t_linewriter *linewrite = NULL;
+t_linereader *lineread = NULL;
+//void (*lineread)(int y, int x, int lastx, BYTE *pixels) = NULL;		/* read-a-line routine */
+//void (*linewrite)(int y, int x, int lastx, BYTE *pixels) = NULL;		/* write-a-line routine */
 long linitx = 0;
 long linity = 0;
 int lookatmouse = 0;
@@ -1045,7 +1049,6 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 
 void null_swap(void)
 {
-	CALLED("null_swap");
 }
 
 void showfreemem(void)
@@ -1082,5 +1085,30 @@ void windows_shell_to_dos(void)
 			status = WaitForSingleObject(pi.hProcess, 1000); 
 		}
 		CloseHandle(pi.hProcess);
+	}
+}
+
+/*
+; **************** internal Read/Write-a-line routines *********************
+;
+;       These routines are called by out_line(), put_line() and get_line().
+*/
+void normaline(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		dotwrite(x + i, y, pixels[i]);
+	}
+}
+
+void normalineread(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		pixels[i] = dotread(x + i, y);
 	}
 }

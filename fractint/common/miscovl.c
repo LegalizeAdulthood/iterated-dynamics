@@ -1832,7 +1832,7 @@ void format_vid_table(int choice,char *buf)
    memcpy((char *)&g_video_entry,(char *)&g_video_table[entsptr[choice]],
               sizeof(g_video_entry));
    vidmode_keyname(g_video_entry.keynum,kname);
-   biosflag = (char)((g_video_entry.dotmode % 100 == 1) ? 'B' : ' ');
+   biosflag = (char)((g_video_entry.dotmode % 100 == DOTMODE_SLOW_BIOS) ? 'B' : ' ');
    sprintf(buf,"%-5s %-25s %5d %5d ",  /* 44 chars */
            kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
    if((truecolorbits = g_video_entry.dotmode/1000) == 0)
