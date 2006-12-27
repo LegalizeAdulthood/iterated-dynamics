@@ -67,14 +67,24 @@ extern void Cursor_SetPos();
 #define SIGN(x)		((x) > 0   ? 1   : -1)
 #define SHELL "/bin/csh"
 #define DRAW_INTERVAL 6
-extern void (*dotwrite)(int, int, int);	/* write-a-dot routine */
-extern int (*dotread)(int, int); 		/* read-a-dot routine */
-extern void (*linewrite)(void);			/* write-a-line routine */
-extern void (*lineread)(void);			/* read-a-line routine */
-extern void normalineread(void);
-extern void normaline(void);
 #endif
+/*  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\
+/* /  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \
 /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
+
+typedef void t_dotwriter(int, int, int);
+typedef int  t_dotreader(int, int);
+typedef void t_linewriter(void);
+typedef void t_linereader(void);
+typedef void t_swapper(void);
+
+/* read/write-a-dot/line routines */
+extern t_dotwriter *dotwrite;
+extern t_dotreader *dotread;
+extern t_linewriter *linewrite;
+extern t_linereader *lineread;
+extern t_linewriter *normaline;
+extern t_linereader *normalineread;
 
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
@@ -998,6 +1008,358 @@ win32_disk_shell(Driver *drv)
 }
 
 /*
+tandymode:      ; from Joseph Albrecht
+		mov     tandyseg,0b800h         ; set video segment address
+		mov     tandyofs,0              ; set video offset address
+		mov     ax,offset plottandy16   ; set up write-a-dot
+		mov     bx,offset gettandy16    ; set up read-a-dot
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		cmp     videoax,8               ; check for 160x200x16 color mode
+		je      tandy16low              ; ..
+		cmp     videoax,9               ; check for 320x200x16 color mode
+		je      tandy16med              ; ..
+		cmp     videoax,0ah             ; check for 640x200x4 color mode
+		je      tandy4high              ; ..
+		cmp     videoax,0bh             ; check for 640x200x16 color mode
+		je      tandy16high             ; ..
+tandy16low:
+		mov     tandyscan,offset scan16k; set scan line address table
+		jmp     videomode               ; return to common code
+tandy16med:
+		mov     tandyscan,offset scan32k; set scan line address table
+		jmp     videomode               ; return to common code
+tandy4high:
+		mov     ax,offset plottandy4    ; set up write-a-dot
+		mov     bx,offset gettandy4     ; set up read-a-dot
+		jmp     videomode               ; return to common code
+tandy16high:
+		mov     tandyseg,0a000h         ; set video segment address
+		mov     tandyofs,8000h          ; set video offset address
+		mov     tandyscan,offset scan64k; set scan line address table
+		jmp     videomode               ; return to common code
+dullnormalmode:
+		mov     ax,offset normalwrite   ; set up the BIOS write-a-dot routine
+		mov     bx,offset normalread    ; set up the BIOS read-a-dot  routine
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		jmp     videomode               ; return to common code
+mcgamode:
+		mov     ax,offset mcgawrite     ; set up MCGA write-a-dot routine
+		mov     bx,offset mcgaread      ; set up MCGA read-a-dot  routine
+		mov     cx,offset mcgaline      ; set up the MCGA linewrite routine
+		mov     dx,offset mcgareadline  ; set up the MCGA lineread  routine
+		mov     si,offset swap256       ; set up the MCGA swap routine
+		jmp     videomode               ; return to common code
+tseng16mode:
+		mov     tseng,1                 ; set chipset flag
+		mov     [bankadr],offset $tseng
+		mov     [bankseg],seg $tseng
+		jmp     vgamode         ; set ega/vga functions
+trident16mode:
+		mov     trident,1               ; set chipset flag
+		mov     [bankadr],offset $trident
+		mov     [bankseg],seg $trident
+		jmp     vgamode
+video716mode:
+		mov     video7,1                ; set chipset flag
+		mov     [bankadr],offset $video7
+		mov     [bankseg],seg $video7
+		jmp     vgamode
+paradise16mode:
+		mov     paradise,1              ; set chipset flag
+		mov     [bankadr],offset $paradise
+		mov     [bankseg],seg $paradise
+		jmp     vgamode
+chipstech16mode:
+		mov     chipstech,1             ; set chipset flag
+		mov     [bankadr],offset $chipstech
+		mov     [bankseg],seg $chipstech
+		jmp     vgamode
+everex16mode:
+		mov     everex,1                ; set chipset flag
+		mov     [bankadr],offset $everex
+		mov     [bankseg],seg $everex
+		jmp     vgamode
+VESAmode:                               ; set VESA 16-color mode
+		mov     ax,word ptr vesa_mapper
+		mov     [bankadr],ax
+		mov     ax,word ptr vesa_mapper+2
+		mov     [bankseg],ax
+		cmp     vesa_bitsppixel,15
+		jae     VESAtruecolormode
+VGAautomode:                            ; set VGA auto-detect mode
+		cmp     colors,256              ; 256 colors?
+		je      VGAauto256mode          ; just like SuperVGA
+		cmp     xga_isinmode,0          ; in an XGA mode?
+		jne     xgamode
+		cmp     colors,16               ; 16 colors?
+		je      vgamode                 ; just like a VGA
+	jmp     dullnormalmode          ; otherwise, use the BIOS
+
+VESAtruecolormode:
+		mov     g_is_true_color,1
+	mov	ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine	
+	mov	bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine	
+	mov	cx, offset normaline       ; set up dullnormal linewrite routine	
+	mov	dx, offset normalineread   ; set up dullnormal lineread routine	
+		mov     si,offset swap256          ; set up the swap routine
+		jmp     videomode                  ; return to common code
+
+xgamode:
+		mov     ax,offset xga_16write      ; set up XGA write-a-dot routine
+		mov     bx,offset xga_16read       ; set up XGA read-a-dot  routine
+		mov     cx,offset xga_16linewrite  ; set up the XGA linewrite routine
+		mov     dx,offset normalineread    ; set up the XGA lineread  routine
+		mov     si,offset swap256          ; set up the swap routine
+		jmp     videomode                  ; return to common code
+	
+VGAauto256mode:
+		jmp     super256mode            ; just like a SuperVGA
+egamode:
+vgamode:
+;;;     shr     g_vxdots,1                ; scan line increment is in bytes...
+;;;     shr     g_vxdots,1
+;;;     shr     g_vxdots,1
+		mov     ax,offset vgawrite      ; set up EGA/VGA write-a-dot routine.
+		mov     bx,offset vgaread       ; set up EGA/VGA read-a-dot  routine
+		mov     cx,offset vgaline       ; set up the EGA/VGA linewrite routine
+		mov     dx,offset vgareadline   ; set up the EGA/VGA lineread  routine
+		mov     si,offset swapvga       ; set up the EGA/VGA swap routine
+		jmp     videomode               ; return to common code
+tseng256mode:
+		mov     tseng,1                 ; set chipset flag
+		mov     [bankadr],offset $tseng
+		mov     [bankseg],seg $tseng
+		jmp     super256mode            ; set super VGA linear memory functions
+paradise256mode:
+		mov     paradise,1              ; set chipset flag
+		mov     [bankadr],offset $paradise
+		mov     [bankseg],seg $paradise
+		jmp     super256mode            ; set super VGA linear memory functions
+video7256mode:
+		mov     video7, 1               ; set chipset flag
+		mov     [bankadr],offset $video7
+		mov     [bankseg],seg $video7
+		jmp     super256mode            ; set super VGA linear memory functions
+trident256mode:
+		mov     trident,1               ; set chipset flag
+		mov     [bankadr],offset $trident
+		mov     [bankseg],seg $trident
+		jmp     super256mode            ; set super VGA linear memory functions
+chipstech256mode:
+		mov     chipstech,1             ; set chipset flag
+		mov     [bankadr],offset $chipstech
+		mov     [bankseg],seg $chipstech
+		jmp     super256mode            ; set super VGA linear memory functions
+ati256mode:
+		mov     ativga,1                ; set chipset flag
+		mov     [bankadr],offset $ativga
+		mov     [bankseg],seg $ativga
+		jmp     super256mode            ; set super VGA linear memory functions
+everex256mode:
+		mov     everex,1                ; set chipset flag
+		mov     [bankadr],offset $everex
+		mov     [bankseg],seg $everex
+		jmp     super256mode            ; set super VGA linear memory functions
+VGA256automode:                         ; Auto-detect SuperVGA
+		jmp     super256mode            ; set super VGA linear memory functions
+VESA256mode:                            ; set VESA 256-color mode
+		mov     ax,word ptr vesa_mapper
+		mov     [bankadr],ax
+		mov     ax,word ptr vesa_mapper+2
+		mov     [bankseg],ax
+		jmp     super256mode            ; set super VGA linear memory functions
+super256mode:
+		mov     ax,offset super256write ; set up superVGA write-a-dot routine
+		mov     bx,offset super256read  ; set up superVGA read-a-dot  routine
+		mov     cx,offset super256line  ; set up the  linewrite routine
+		mov     dx,offset super256readline ; set up the normal lineread  routine
+		mov     si,offset swap256       ; set up the swap routine
+		jmp     videomode               ; return to common code
+tweak256mode:
+		shr     g_vxdots,1                ; scan line increment is in bytes...
+		shr     g_vxdots,1
+		mov     g_ok_to_print,0             ; NOT OK to printf() in this mode
+		mov     ax,offset tweak256write ; set up tweaked-256 write-a-dot
+		mov     bx,offset tweak256read  ; set up tweaked-256 read-a-dot
+		mov     cx,offset tweak256line  ; set up tweaked-256 read-a-line
+		mov     dx,offset tweak256readline ; set up the normal lineread  routine
+		mov     si,offset swapvga       ; set up the swap routine
+		jmp     videomode               ; return to common code
+cgamode:
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		cmp     videoax,4               ; check for 320x200x4 color mode
+		je      cga4med                 ; ..
+		cmp     videoax,5               ; ..
+		je      cga4med                 ; ..
+		cmp     videoax,6               ; check for 640x200x2 color mode
+		je      cga2high                ; ..
+cga4med:
+		mov     ax,offset plotcga4      ; set up CGA write-a-dot
+		mov     bx,offset getcga4       ; set up CGA read-a-dot
+		jmp     videomode               ; return to common code
+cga2high:
+		mov     ax,offset plotcga2      ; set up CGA write-a-dot
+		mov     bx,offset getcga2       ; set up CGA read-a-dot
+		jmp     videomode               ; return to common code
+ati1024mode:
+		mov     ativga,1                ; set ATI flag.
+		mov     ax,offset ati1024write  ; set up ATI1024 write-a-dot
+		mov     bx,offset ati1024read   ; set up ATI1024 read-a-dot
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swap256       ; set up the swap routine
+		jmp     videomode               ; return to common code
+diskmode:
+		call    far ptr startdisk       ; external disk-video start routine
+		mov     ax,offset diskwrite     ; set up disk-vid write-a-dot routine
+		mov     bx,offset diskread      ; set up disk-vid read-a-dot routine
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		jmp     videomode               ; return to common code
+yourownmode:
+		call    far ptr startvideo      ; external your-own start routine
+		mov     ax,offset videowrite    ; set up ur-own-vid write-a-dot routine
+		mov     bx,offset videoread     ; set up ur-own-vid read-a-dot routine
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		mov     videoflag,1             ; flag "your-own-end" needed.
+		jmp     videomode               ; return to common code
+targaMode:                              ; TARGA MODIFIED 2 June 89 - j mclain
+		call    far ptr StartTGA
+		mov     ax,offset tgawrite      ;
+		mov     bx,offset tgaread       ;
+		mov     cx,offset normaline     ; set up the normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		mov     tgaflag,1               ;
+		jmp     videomode               ; return to common code
+f8514mode:                              ; 8514 modes
+		cmp     ai_8514, 0              ; check if afi flag is set, JCO 4/11/92
+		jne     f85afi          ; yes, try afi
+		call    far ptr open8514hw      ; start the 8514a, try registers first JCO
+		jnc     f85ok
+		mov     ai_8514, 1              ; set afi flag
+f85afi:
+		call    far ptr open8514        ; start the 8514a, try afi
+		jnc     f85ok
+		mov     ai_8514, 0              ; clear afi flag, JCO 4/11/92
+		mov     g_good_mode,0              ; oops - problems.
+		mov     dotmode, 0              ; if problem starting use normal mode
+		jmp     dullnormalmode
+hgcmode:
+		mov     g_ok_to_print,0             ; NOT OK to printf() in this mode
+		call    hgcstart                ; Initialize the HGC card
+		mov     ax,offset hgcwrite      ; set up HGC write-a-dot routine
+		mov     bx,offset hgcread       ; set up HGC read-a-dot  routine
+		mov     cx,offset normaline     ; set up normal linewrite routine
+		mov     dx,offset normalineread ; set up the normal lineread  routine
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		mov     HGCflag,1               ; flag "HGC-end" needed.
+		jmp     videomode               ; return to common code
+f85ok:
+		cmp     ai_8514, 0
+		jne     f85okafi                        ; afi flag is set JCO 4/11/92
+		mov     ax,offset f85hwwrite    ;use register routines
+		mov     bx,offset f85hwread    ;changed to near calls
+		mov     cx,offset f85hwline    ;
+		mov     dx,offset f85hwreadline    ;
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		mov     f85flag,1               ;
+		mov     oktoprint,0             ; NOT OK to printf() in this mode
+		jmp     videomode               ; return to common code
+f85okafi:
+		mov     ax,offset f85write      ;use afi routines, JCO 4/11/92
+		mov     bx,offset f85read      ;changed to near calls
+		mov     cx,offset f85line      ;
+		mov     dx,offset f85readline      ;
+		mov     si,offset swapnormread  ; set up the normal swap routine
+		mov     f85flag,1               ;
+		mov     g_ok_to_print,0             ; NOT OK to printf() in this mode
+		jmp     videomode               ; return to common code
+*/
+void dullnormalmode(void) {}
+void vgamode(void) {}
+void mcgamode(void) {}
+void tseng256mode(void) {}
+void paradise256mode(void) {}
+void video7256mode(void) {}
+void tweak256mode(void) {}
+void everex16mode(void) {}
+void targaMode(void) {}
+void hgcmode(void) {}
+void diskmode(void) {}
+void f8514mode(void) {}
+void cgamode(void) {}
+void tandymode(void) {}
+void trident256mode(void) {}
+void chipstech256mode(void) {}
+void ati256mode(void) {}
+void everex256mode(void) {}
+void yourownmode(void) {}
+void ati1024mode(void) {}
+void tseng16mode(void) {}
+void trident16mode(void) {}
+void video716mode(void) {}
+void paradise16mode(void) {}
+void chipstech16mode(void) {}
+void VGAautomode(void) {}
+void VESAmode(void) {}
+void TrueColorAuto(void) {}
+
+void videomode(t_dotwriter dot_write, t_dotreader dot_read,
+			   t_linewriter line_write, t_linereader line_read,
+			   t_swapper swapper)
+{
+	/*
+	videomode:
+			mov     dotwrite,ax             ; save the results
+			mov     dotread,bx              ;  ...
+			mov     linewrite,cx            ;  ...
+			mov     lineread,dx             ;  ...
+			mov     word ptr g_swap_setup,si   ;  ...
+			mov     ax,cs                   ;  ...
+			mov     word ptr g_swap_setup+2,ax ;  ...
+	*/
+	dotwrite = dot_write;
+	dotread = dot_read;
+	linewrite = line_write;
+	lineread = line_read;
+	g_swap_setup = swapper;
+
+	/*		mov     ax,colors               ; calculate the "and" value
+			dec     ax                      ; to use for eventual color
+			mov     g_and_color,ax          ; selection
+	*/
+	g_and_color = colors-1;
+
+	/*
+			mov     boxcount,0              ; clear the zoom-box counter
+			mov     g_dac_learn,0           ; set the DAC rotates to learn mode
+			mov     g_dac_count,6           ; initialize the DAC counter
+			cmp     cpu,88                  ; say, are we on a 186/286/386?
+			jbe     setvideoslow            ;  boo!  hiss!
+			mov     g_dac_learn,1           ; yup.  bypass learn mode
+			mov     ax,cyclelimit           ;  and go as fast as he wants
+			mov     g_dac_count,ax          ;  ...
+	setvideoslow:
+			call    far ptr loaddac         ; load the video dac, if we can
+			ret
+	setvideomode    endp
+	*/
+	boxcount = 0;
+	g_dac_learn = 1;
+	g_dac_count = cyclelimit;
+}
+
+/*
 ; **************** Function setvideomode(ax, bx, cx, dx) ****************
 ;       This function sets the (alphanumeric or graphic) video mode
 ;       of the monitor.   Called with the proper values of AX thru DX.
@@ -1149,7 +1511,7 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 		}
 		/*
 		noHGC:
-				mov     oktoprint,1             ; say it's OK to use printf()
+				mov     g_ok_to_print,1             ; say it's OK to use printf()
 				mov     g_good_mode,1              ; assume a good video mode
 				mov     xga_loaddac,1           ; tell the XGA to fake a 'loaddac'
 				mov     ax,video_bankadr        ; restore the results of 'whichvga()'
@@ -1178,7 +1540,7 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 				mov     si,offset swapnormread  ; set up the normal swap routine
 				jmp     videomode               ; return to common code
 		*/
-		oktoprint = 1;
+		g_ok_to_print = 1;
 		g_good_mode = 1;
 		xga_loaddac = 1;
 		*bankadr = video_bankadr;
@@ -1193,18 +1555,10 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 				cmp     bx,30                   ; are we within the range of dotmodes?
 				jbe     videomodesetup          ; yup.  all is OK
 				mov     bx,0                    ; nope.  use dullnormalmode
-		*/
-		int i = dotmode;
-		if (30 >= i)
-		{
-			i = 0;
-		}
-		/*
 		videomodesetup:
 				shl     bx,1                    ; switch to a word offset
 				mov     bx,cs:videomodetable[bx]        ; get the next step
 				jmp     bx                      ; and go there
-
 		videomodetable  dw      offset dullnormalmode   ; mode 0
 				dw      offset dullnormalmode   ; mode 1
 				dw      offset vgamode          ; mode 2
@@ -1237,284 +1591,49 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 				dw      offset TrueColorAuto    ; mode 29
 				dw      offset dullnormalmode   ; mode 30
 				dw      offset dullnormalmode   ; mode 31
-
-		tandymode:      ; from Joseph Albrecht
-				mov     tandyseg,0b800h         ; set video segment address
-				mov     tandyofs,0              ; set video offset address
-				mov     ax,offset plottandy16   ; set up write-a-dot
-				mov     bx,offset gettandy16    ; set up read-a-dot
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				cmp     videoax,8               ; check for 160x200x16 color mode
-				je      tandy16low              ; ..
-				cmp     videoax,9               ; check for 320x200x16 color mode
-				je      tandy16med              ; ..
-				cmp     videoax,0ah             ; check for 640x200x4 color mode
-				je      tandy4high              ; ..
-				cmp     videoax,0bh             ; check for 640x200x16 color mode
-				je      tandy16high             ; ..
-		tandy16low:
-				mov     tandyscan,offset scan16k; set scan line address table
-				jmp     videomode               ; return to common code
-		tandy16med:
-				mov     tandyscan,offset scan32k; set scan line address table
-				jmp     videomode               ; return to common code
-		tandy4high:
-				mov     ax,offset plottandy4    ; set up write-a-dot
-				mov     bx,offset gettandy4     ; set up read-a-dot
-				jmp     videomode               ; return to common code
-		tandy16high:
-				mov     tandyseg,0a000h         ; set video segment address
-				mov     tandyofs,8000h          ; set video offset address
-				mov     tandyscan,offset scan64k; set scan line address table
-				jmp     videomode               ; return to common code
-		dullnormalmode:
-				mov     ax,offset normalwrite   ; set up the BIOS write-a-dot routine
-				mov     bx,offset normalread    ; set up the BIOS read-a-dot  routine
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				jmp     videomode               ; return to common code
-		mcgamode:
-				mov     ax,offset mcgawrite     ; set up MCGA write-a-dot routine
-				mov     bx,offset mcgaread      ; set up MCGA read-a-dot  routine
-				mov     cx,offset mcgaline      ; set up the MCGA linewrite routine
-				mov     dx,offset mcgareadline  ; set up the MCGA lineread  routine
-				mov     si,offset swap256       ; set up the MCGA swap routine
-				jmp     videomode               ; return to common code
-		tseng16mode:
-				mov     tseng,1                 ; set chipset flag
-				mov     [bankadr],offset $tseng
-				mov     [bankseg],seg $tseng
-				jmp     vgamode         ; set ega/vga functions
-		trident16mode:
-				mov     trident,1               ; set chipset flag
-				mov     [bankadr],offset $trident
-				mov     [bankseg],seg $trident
-				jmp     vgamode
-		video716mode:
-				mov     video7,1                ; set chipset flag
-				mov     [bankadr],offset $video7
-				mov     [bankseg],seg $video7
-				jmp     vgamode
-		paradise16mode:
-				mov     paradise,1              ; set chipset flag
-				mov     [bankadr],offset $paradise
-				mov     [bankseg],seg $paradise
-				jmp     vgamode
-		chipstech16mode:
-				mov     chipstech,1             ; set chipset flag
-				mov     [bankadr],offset $chipstech
-				mov     [bankseg],seg $chipstech
-				jmp     vgamode
-		everex16mode:
-				mov     everex,1                ; set chipset flag
-				mov     [bankadr],offset $everex
-				mov     [bankseg],seg $everex
-				jmp     vgamode
-		VESAmode:                               ; set VESA 16-color mode
-				mov     ax,word ptr vesa_mapper
-				mov     [bankadr],ax
-				mov     ax,word ptr vesa_mapper+2
-				mov     [bankseg],ax
-				cmp     vesa_bitsppixel,15
-				jae     VESAtruecolormode
-		VGAautomode:                            ; set VGA auto-detect mode
-				cmp     colors,256              ; 256 colors?
-				je      VGAauto256mode          ; just like SuperVGA
-				cmp     xga_isinmode,0          ; in an XGA mode?
-				jne     xgamode
-				cmp     colors,16               ; 16 colors?
-				je      vgamode                 ; just like a VGA
-			jmp     dullnormalmode          ; otherwise, use the BIOS
-
-		VESAtruecolormode:
-				mov     g_is_true_color,1
-			mov	ax, offset VESAtruewrite   ; set up VESA true-color write-a-dot routine	
-			mov	bx, offset VESAtrueread    ; set up VESA true-color read-a-dot routine	
-			mov	cx, offset normaline       ; set up dullnormal linewrite routine	
-			mov	dx, offset normalineread   ; set up dullnormal lineread routine	
-				mov     si,offset swap256          ; set up the swap routine
-				jmp     videomode                  ; return to common code
-
-		xgamode:
-				mov     ax,offset xga_16write      ; set up XGA write-a-dot routine
-				mov     bx,offset xga_16read       ; set up XGA read-a-dot  routine
-				mov     cx,offset xga_16linewrite  ; set up the XGA linewrite routine
-				mov     dx,offset normalineread    ; set up the XGA lineread  routine
-				mov     si,offset swap256          ; set up the swap routine
-				jmp     videomode                  ; return to common code
-			
-		VGAauto256mode:
-				jmp     super256mode            ; just like a SuperVGA
-		egamode:
-		vgamode:
-		;;;     shr     g_vxdots,1                ; scan line increment is in bytes...
-		;;;     shr     g_vxdots,1
-		;;;     shr     g_vxdots,1
-				mov     ax,offset vgawrite      ; set up EGA/VGA write-a-dot routine.
-				mov     bx,offset vgaread       ; set up EGA/VGA read-a-dot  routine
-				mov     cx,offset vgaline       ; set up the EGA/VGA linewrite routine
-				mov     dx,offset vgareadline   ; set up the EGA/VGA lineread  routine
-				mov     si,offset swapvga       ; set up the EGA/VGA swap routine
-				jmp     videomode               ; return to common code
-		tseng256mode:
-				mov     tseng,1                 ; set chipset flag
-				mov     [bankadr],offset $tseng
-				mov     [bankseg],seg $tseng
-				jmp     super256mode            ; set super VGA linear memory functions
-		paradise256mode:
-				mov     paradise,1              ; set chipset flag
-				mov     [bankadr],offset $paradise
-				mov     [bankseg],seg $paradise
-				jmp     super256mode            ; set super VGA linear memory functions
-		video7256mode:
-				mov     video7, 1               ; set chipset flag
-				mov     [bankadr],offset $video7
-				mov     [bankseg],seg $video7
-				jmp     super256mode            ; set super VGA linear memory functions
-		trident256mode:
-				mov     trident,1               ; set chipset flag
-				mov     [bankadr],offset $trident
-				mov     [bankseg],seg $trident
-				jmp     super256mode            ; set super VGA linear memory functions
-		chipstech256mode:
-				mov     chipstech,1             ; set chipset flag
-				mov     [bankadr],offset $chipstech
-				mov     [bankseg],seg $chipstech
-				jmp     super256mode            ; set super VGA linear memory functions
-		ati256mode:
-				mov     ativga,1                ; set chipset flag
-				mov     [bankadr],offset $ativga
-				mov     [bankseg],seg $ativga
-				jmp     super256mode            ; set super VGA linear memory functions
-		everex256mode:
-				mov     everex,1                ; set chipset flag
-				mov     [bankadr],offset $everex
-				mov     [bankseg],seg $everex
-				jmp     super256mode            ; set super VGA linear memory functions
-		VGA256automode:                         ; Auto-detect SuperVGA
-				jmp     super256mode            ; set super VGA linear memory functions
-		VESA256mode:                            ; set VESA 256-color mode
-				mov     ax,word ptr vesa_mapper
-				mov     [bankadr],ax
-				mov     ax,word ptr vesa_mapper+2
-				mov     [bankseg],ax
-				jmp     super256mode            ; set super VGA linear memory functions
-		super256mode:
-				mov     ax,offset super256write ; set up superVGA write-a-dot routine
-				mov     bx,offset super256read  ; set up superVGA read-a-dot  routine
-				mov     cx,offset super256line  ; set up the  linewrite routine
-				mov     dx,offset super256readline ; set up the normal lineread  routine
-				mov     si,offset swap256       ; set up the swap routine
-				jmp     videomode               ; return to common code
-		tweak256mode:
-				shr     g_vxdots,1                ; scan line increment is in bytes...
-				shr     g_vxdots,1
-				mov     oktoprint,0             ; NOT OK to printf() in this mode
-				mov     ax,offset tweak256write ; set up tweaked-256 write-a-dot
-				mov     bx,offset tweak256read  ; set up tweaked-256 read-a-dot
-				mov     cx,offset tweak256line  ; set up tweaked-256 read-a-line
-				mov     dx,offset tweak256readline ; set up the normal lineread  routine
-				mov     si,offset swapvga       ; set up the swap routine
-				jmp     videomode               ; return to common code
-		cgamode:
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				cmp     videoax,4               ; check for 320x200x4 color mode
-				je      cga4med                 ; ..
-				cmp     videoax,5               ; ..
-				je      cga4med                 ; ..
-				cmp     videoax,6               ; check for 640x200x2 color mode
-				je      cga2high                ; ..
-		cga4med:
-				mov     ax,offset plotcga4      ; set up CGA write-a-dot
-				mov     bx,offset getcga4       ; set up CGA read-a-dot
-				jmp     videomode               ; return to common code
-		cga2high:
-				mov     ax,offset plotcga2      ; set up CGA write-a-dot
-				mov     bx,offset getcga2       ; set up CGA read-a-dot
-				jmp     videomode               ; return to common code
-		ati1024mode:
-				mov     ativga,1                ; set ATI flag.
-				mov     ax,offset ati1024write  ; set up ATI1024 write-a-dot
-				mov     bx,offset ati1024read   ; set up ATI1024 read-a-dot
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swap256       ; set up the swap routine
-				jmp     videomode               ; return to common code
-		diskmode:
-				call    far ptr startdisk       ; external disk-video start routine
-				mov     ax,offset diskwrite     ; set up disk-vid write-a-dot routine
-				mov     bx,offset diskread      ; set up disk-vid read-a-dot routine
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				jmp     videomode               ; return to common code
-		yourownmode:
-				call    far ptr startvideo      ; external your-own start routine
-				mov     ax,offset videowrite    ; set up ur-own-vid write-a-dot routine
-				mov     bx,offset videoread     ; set up ur-own-vid read-a-dot routine
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				mov     videoflag,1             ; flag "your-own-end" needed.
-				jmp     videomode               ; return to common code
-		targaMode:                              ; TARGA MODIFIED 2 June 89 - j mclain
-				call    far ptr StartTGA
-				mov     ax,offset tgawrite      ;
-				mov     bx,offset tgaread       ;
-				mov     cx,offset normaline     ; set up the normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				mov     tgaflag,1               ;
-				jmp     videomode               ; return to common code
-		f8514mode:                              ; 8514 modes
-				cmp     ai_8514, 0              ; check if afi flag is set, JCO 4/11/92
-				jne     f85afi          ; yes, try afi
-				call    far ptr open8514hw      ; start the 8514a, try registers first JCO
-				jnc     f85ok
-				mov     ai_8514, 1              ; set afi flag
-		f85afi:
-				call    far ptr open8514        ; start the 8514a, try afi
-				jnc     f85ok
-				mov     ai_8514, 0              ; clear afi flag, JCO 4/11/92
-				mov     g_good_mode,0              ; oops - problems.
-				mov     dotmode, 0              ; if problem starting use normal mode
-				jmp     dullnormalmode
-		hgcmode:
-				mov     oktoprint,0             ; NOT OK to printf() in this mode
-				call    hgcstart                ; Initialize the HGC card
-				mov     ax,offset hgcwrite      ; set up HGC write-a-dot routine
-				mov     bx,offset hgcread       ; set up HGC read-a-dot  routine
-				mov     cx,offset normaline     ; set up normal linewrite routine
-				mov     dx,offset normalineread ; set up the normal lineread  routine
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				mov     HGCflag,1               ; flag "HGC-end" needed.
-				jmp     videomode               ; return to common code
-		f85ok:
-				cmp     ai_8514, 0
-				jne     f85okafi                        ; afi flag is set JCO 4/11/92
-				mov     ax,offset f85hwwrite    ;use register routines
-				mov     bx,offset f85hwread    ;changed to near calls
-				mov     cx,offset f85hwline    ;
-				mov     dx,offset f85hwreadline    ;
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				mov     f85flag,1               ;
-				mov     oktoprint,0             ; NOT OK to printf() in this mode
-				jmp     videomode               ; return to common code
-		f85okafi:
-				mov     ax,offset f85write      ;use afi routines, JCO 4/11/92
-				mov     bx,offset f85read      ;changed to near calls
-				mov     cx,offset f85line      ;
-				mov     dx,offset f85readline      ;
-				mov     si,offset swapnormread  ; set up the normal swap routine
-				mov     f85flag,1               ;
-				mov     oktoprint,0             ; NOT OK to printf() in this mode
-				jmp     videomode               ; return to common code
 		*/
+		int i = dotmode;
+		if (30 >= i)
+		{
+			i = 0;
+		}
+
+		void (*videomodetable)[32] =
+		{
+				dullnormalmode,		/* mode 0*/
+				dullnormalmode,		/* mode 1*/
+				vgamode,			/* mode 2*/
+				mcgamode,			/* mode 3*/
+				tseng256mode,		/* mode 4*/
+				paradise256mode,	/* mode 5*/
+				video7256mode,		/* mode 6*/
+				tweak256mode,		/* mode 7*/
+				everex16mode,		/* mode 8*/
+				targaMode,			/* mode 9*/
+				hgcmode,			/* mode 10*/
+				diskmode,			/* mode 11*/
+				f8514mode,			/* mode 12*/
+				cgamode,			/* mode 13*/
+				tandymode,			/* mode 14*/
+				trident256mode,		/* mode 15*/
+				chipstech256mode,	/* mode 16*/
+				ati256mode,			/* mode 17*/
+				everex256mode,		/* mode 18*/
+				yourownmode,		/* mode 19*/
+				ati1024mode,		/* mode 20*/
+				tseng16mode,		/* mode 21*/
+				trident16mode,		/* mode 22*/
+				video716mode,		/* mode 23*/
+				paradise16mode,		/* mode 24*/
+				chipstech16mode,	/* mode 25*/
+				everex16mode,		/* mode 26*/
+				VGAautomode,		/* mode 27*/
+				VESAmode,			/* mode 28*/
+				TrueColorAuto,		/* mode 29*/
+				dullnormalmode,		/* mode 30*/
+				dullnormalmode		/* mode 31*/
+		};
+		(*videomemtable[i])();
 	}
 	else
 	{
@@ -1522,68 +1641,67 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 		TrueColorAuto:
 				cmp     TPlusInstalled, 1
 				jne     NoTPlus
-				push    NonInterlaced
-				push    PixelZoom
-				push    MaxColorRes
-				push    ydots
-				push    xdots
-				call    far ptr MatchTPlusMode
-				add     sp, 10
-				or      ax, ax
-				jz      NoTrueColorCard
-
-				cmp     ax, 1                     ; Are we limited to 256 colors or less?
-				jne     SetTPlusRoutines          ; All right! True color mode!
-
-				mov     cx, MaxColorRes           ; Aw well, give'm what they want.
-				shl     ax, cl
-				mov     colors, ax
-
-		SetTPlusRoutines:
-				mov     g_good_mode, 1
-				mov     oktoprint, 1
-				mov     ax, offset TPlusWrite
-				mov     bx, offset TPlusRead
-				mov     cx, offset normaline
-				mov     dx, offset normalineread
-				mov     si, offset swapnormread
-				jmp     videomode
-
-		NoTPlus:
-		NoTrueColorCard:
-				mov     g_good_mode, 0
-				jmp     videomode
 		*/
+		if (1 == TPlusInstalled)
+		{
+			/*
+					push    NonInterlaced
+					push    PixelZoom
+					push    MaxColorRes
+					push    ydots
+					push    xdots
+					call    far ptr MatchTPlusMode
+					add     sp, 10
+					or      ax, ax
+					jz      NoTrueColorCard
+			*/
+			int mode = MatchTPlusMode(xdots, ydots, MaxColorRes, PixelZoom, NonInterlaced);
+			if (0 == mode)
+			{
+				g_good_mode = 0;
+			}
+			else
+			{
+				/*
+						cmp     ax, 1                     ; Are we limited to 256 colors or less?
+						jne     SetTPlusRoutines          ; All right! True color mode!
+				*/
+				if (1 == mode)
+				{
+					/*
+							mov     cx, MaxColorRes           ; Aw well, give'm what they want.
+							shl     ax, cl
+							mov     colors, ax
+					*/
+					colors = 1 << MaxColorRes;
+				}
+				/*
+				SetTPlusRoutines:
+						mov     g_good_mode, 1
+						mov     g_ok_to_print, 1
+						mov     ax, offset TPlusWrite
+						mov     bx, offset TPlusRead
+						mov     cx, offset normaline
+						mov     dx, offset normalineread
+						mov     si, offset swapnormread
+						jmp     videomode
+				*/
+				g_good_mode = 1;
+				g_ok_to_print = 1;
+				videomode(TPlusWrite
+			}
+		}
+		else
+		{
+			/*
+			NoTPlus:
+			NoTrueColorCard:
+					mov     g_good_mode, 0
+					jmp     videomode
+			*/
+			g_good_mode = 0;
+		}
 	}
-
-	/*
-	videomode:
-			mov     dotwrite,ax             ; save the results
-			mov     dotread,bx              ;  ...
-			mov     linewrite,cx            ;  ...
-			mov     lineread,dx             ;  ...
-			mov     word ptr g_swap_setup,si   ;  ...
-			mov     ax,cs                   ;  ...
-			mov     word ptr g_swap_setup+2,ax ;  ...
-
-			mov     ax,colors               ; calculate the "and" value
-			dec     ax                      ; to use for eventual color
-			mov     g_and_color,ax             ; selection
-
-			mov     boxcount,0              ; clear the zoom-box counter
-
-			mov     g_dac_learn,0              ; set the DAC rotates to learn mode
-			mov     g_dac_count,6              ; initialize the DAC counter
-			cmp     cpu,88                  ; say, are we on a 186/286/386?
-			jbe     setvideoslow            ;  boo!  hiss!
-			mov     g_dac_learn,1              ; yup.  bypass learn mode
-			mov     ax,cyclelimit           ;  and go as fast as he wants
-			mov     g_dac_count,ax             ;  ...
-	setvideoslow:
-			call    far ptr loaddac         ; load the video dac, if we can
-			ret
-	setvideomode    endp
-	*/
 #endif
 #if 0
 	DriverWin32Disk *di = (DriverWin32Disk *) drv;
