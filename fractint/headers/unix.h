@@ -103,10 +103,6 @@ char *strupr(char *s);
 #endif
 #endif
 
-/* For Unix, all memory is FARMEM */
-#define EXPANDED FARMEM
-#define EXTENDED FARMEM
-
 /*
  * These defines are so movedata, etc. will work properly, without worrying
  * about the silly segment stuff.

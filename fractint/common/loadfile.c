@@ -447,7 +447,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 		  /* TODO: MemoryAlloc */
           if (gene_handle == 0)
-             gene_handle = MemoryAlloc((U16)sizeof(gene),1L,FARMEM);
+             gene_handle = MemoryAlloc((U16)sizeof(gene),1L,MEMORY);
           MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
           if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
              /* Increasing NUMGENES moves ecount in the data structure */
@@ -458,7 +458,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
              calc_status = 2;
 			 /* TODO: MemoryAlloc */
              if (evolve_handle == 0)
-                evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,FARMEM);
+                evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
              resume_e_info.paramrangex  = blk_6_info.paramrangex;
              resume_e_info.paramrangey  = blk_6_info.paramrangey;
              resume_e_info.opx          = blk_6_info.opx;
@@ -690,7 +690,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 2: /* resume info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
 			 /* TODO: MemoryAlloc */
-                  if ((blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,FARMEM)) == 0)
+                  if ((blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY)) == 0)
                      info->calc_status = 3; /* not resumable after all */
                   else {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
@@ -1209,10 +1209,10 @@ int fgetwindow(void)
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
 	/* TODO: MemoryAlloc */
-   browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,FARMEM);
-   boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,EXPANDED);
-   boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,EXPANDED);
-   boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,EXPANDED);
+   browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,MEMORY);
+   boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
+   boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
+   boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
    if(!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
       no_memory = 1;
 

@@ -57,7 +57,6 @@
 #include "fractype.h"
 #include "drivers.h"
 
-#define FAR_RESERVE     8192L     /* amount of mem we will leave avail. */
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
 #define newx(size)     mem_alloc(size)
@@ -445,7 +444,7 @@ static void SaveRect(int x, int y, int width, int depth)
 
    memset(dstack, g_color_dark, width);
    /* TODO: MemoryAlloc */
-   if ((memory_handle = MemoryAlloc( (U16)width, (long)depth, FARMEM)) != 0)
+   if ((memory_handle = MemoryAlloc( (U16)width, (long)depth, MEMORY)) != 0)
    {
       Cursor_Hide();
       for (yoff=0; yoff<depth; yoff++)
