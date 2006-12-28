@@ -2291,7 +2291,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *this, long size)
       }
    else
       {
-      this->stored_at = FARMEM;
+      this->stored_at = MEMORY;
       return (TRUE);
       }
    }
@@ -2315,7 +2315,7 @@ static void PalTable__SaveRect(PalTable *this)
       case DISK:
          break;
 
-      case FARMEM:
+      case MEMORY:
          if (this->memory != NULL)
             free(this->memory);
          this->memory = NULL;
@@ -2400,7 +2400,7 @@ static void PalTable__RestoreRect(PalTable *this)
          Cursor_Show();
          break;
 
-      case FARMEM:
+      case MEMORY:
          {
          char  *ptr = this->memory;
          char  *bufptr = buff; /* MSC needs this indirection to get it right */

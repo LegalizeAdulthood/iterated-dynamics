@@ -51,8 +51,8 @@ long cur_row_base;
 unsigned int *hash_ptr = NULL;
 int pixelshift;
 int headerlength;
-unsigned int rowsize = 0;   /* doubles as a disk video not ok flag */
-unsigned int colsize;       /* sydots, *2 when pot16bit */
+int rowsize = 0;   /* doubles as a disk video not ok flag */
+int colsize;       /* sydots, *2 when pot16bit */
 
 BYTE *membuf;
 U16 dv_handle = 0;
@@ -241,7 +241,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, DISK);
    }
    else
-      dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, EXPANDED);
+      dv_handle = MemoryAlloc((U16)BLOCKLEN, memorysize, MEMORY);
    if (dv_handle == 0) {
       static char msg[]={"*** insufficient free memory/disk space ***"};
       stopmsg(0,msg);
@@ -328,7 +328,7 @@ void enddisk()
    fp          = NULL;
 }
 
-int readdisk(unsigned int col, unsigned int row)
+int readdisk(int col, int row)
 {
    int col_subscr;
    long offset;
@@ -336,7 +336,7 @@ int readdisk(unsigned int col, unsigned int row)
    if (--timetodisplay < 0) {  /* time to display status? */
       if (driver_diskp()) {
          sprintf(buf," reading line %4d",
-                (row >= (unsigned int)sydots) ? row-sydots : row); /* adjust when potfile */
+                (row >= sydots) ? row-sydots : row); /* adjust when potfile */
          dvid_status(0,buf);
          }
       if(bf_math)
@@ -344,7 +344,7 @@ int readdisk(unsigned int col, unsigned int row)
       else
          timetodisplay = 1000;  /* time-to-display-status counter */
       }
-   if (row != (unsigned int)cur_row) { /* try to avoid ghastly code generated for multiply */
+   if (row != cur_row) { /* try to avoid ghastly code generated for multiply */
       if (row >= colsize) /* while we're at it avoid this test if not needed  */
          return(0);
       cur_row_base = (long)(cur_row = row) * rowsize;
@@ -391,7 +391,7 @@ void writedisk(int col, int row, int color)
    if (--timetodisplay < 0) {  /* time to display status? */
       if (driver_diskp()) {
          sprintf(buf," writing line %4d",
-                (row >= (unsigned int)sydots) ? row-sydots : row); /* adjust when potfile */
+                (row >= sydots) ? row-sydots : row); /* adjust when potfile */
          dvid_status(0,buf);
          }
       timetodisplay = 1000;

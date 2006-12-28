@@ -1114,7 +1114,7 @@ int alloc_resume(int alloclen, int version)
    if (resume_info != 0) /* free the prior area if there is one */
       MemoryRelease(resume_info);
    /* TODO: MemoryAlloc */
-   if ((resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, FARMEM)) == 0)
+   if ((resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY)) == 0)
    {
       static char msg[] = {"\
 Warning - insufficient free memory to save status.\n\

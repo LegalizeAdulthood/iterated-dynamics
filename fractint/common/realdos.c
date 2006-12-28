@@ -218,7 +218,7 @@ int showtempmsg(char *msgparm)
    if(temptextsave == 0) /* only save screen first time called */
    {
 		/* TODO: MemoryAlloc, MoveToMemory */
-      if ((temptextsave = MemoryAlloc((U16)textxdots,(long)textydots,FARMEM)) == 0)
+      if ((temptextsave = MemoryAlloc((U16)textxdots,(long)textydots,MEMORY)) == 0)
          return(-1); /* sorry, message not displayed */
       for (i = 0; i < textydots; ++i) {
          get_line(i,0,textxdots-1,buffer);
@@ -1549,7 +1549,7 @@ int savegraphics()
    if (memhandle != 0)
       discardgraphics(); /* if any emm/xmm in use from prior call, release it */
 			 /* TODO: MemoryAlloc */
-   memhandle = MemoryAlloc((U16)SWAPBLKLEN, count, EXPANDED);
+   memhandle = MemoryAlloc((U16)SWAPBLKLEN, count, MEMORY);
 
    while (swapoffset < swaptotlen) {
       swaplength = SWAPBLKLEN;

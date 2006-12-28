@@ -20,9 +20,6 @@
 
 /* Memory allocation routines. */
 
-#if 1 
-/* For extra seg memory: */
-#define EXTRA_RESERVE   4096L  /* amount of extra mem we will leave avail. */
 /* For far memory: */
 #define FAR_RESERVE   8192L    /* amount of far mem we will leave avail. */
 /* For expanded memory: */
@@ -36,7 +33,6 @@ BYTE *charbuf = NULL;
 int numEXThandles;
 long ext_xfer_size;
 U16 start_avail_extra = 0;
-#endif
 
 #define MAXHANDLES 256   /* arbitrary #, suitably big */
 char memfile[] = "handle.$$$";
@@ -67,30 +63,6 @@ struct disk {
    long size;
    FILE *file;
    };
-
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-struct extra {
-   enum stored_at_values stored_at;
-   long size;
-   BYTE *extramemory;
-   };
-
-struct expanded {
-   enum stored_at_values stored_at;
-   long size;
-   int oldexppage;
-   int mempages;
-   int emmhandle;
-   BYTE *expmemory;
-   };
-
-struct extended {
-   enum stored_at_values stored_at;
-   long size;
-   int mempages;
-   int xmmhandle;
-   };
-#endif
 
 union mem {
    struct nowhere Nowhere;
@@ -262,7 +234,7 @@ static int check_for_mem(int stored_at, long howmuch)
    if (debugflag == 420)
       stored_at = DISK;
    if (debugflag == 422)
-      stored_at = EXTENDED;
+      stored_at = MEMORY;
 
    switch (stored_at)
    {
@@ -279,12 +251,12 @@ static int check_for_mem(int stored_at, long howmuch)
  /* failed, fall through and try memory */
 #endif
 
-   case FARMEM: /* check_for_mem */
+   case MEMORY: /* check_for_mem */
       if (maxmem > howmuch) {
          temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
          if (temp != NULL) { /* minimum free space + requested amount */
             free(temp);
-            use_this_type = FARMEM;
+            use_this_type = MEMORY;
             break;
          }
       }
@@ -531,11 +503,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       break;
 #endif
 
-   case FARMEM: /* MemoryAlloc */
+   case MEMORY: /* MemoryAlloc */
 /* Availability of memory checked in check_for_mem() */
       handletable[handle].Farmem.farmemory = (BYTE *)malloc(toallocate);
       handletable[handle].Farmem.size = toallocate;
-      handletable[handle].Farmem.stored_at = FARMEM;
+      handletable[handle].Farmem.stored_at = MEMORY;
       numTOTALhandles++;
       success = TRUE;
       break;
@@ -669,7 +641,7 @@ void MemoryRelease(U16 handle)
       break;
 #endif
 
-   case FARMEM: /* MemoryRelease */
+   case MEMORY: /* MemoryRelease */
       free(handletable[handle].Farmem.farmemory);
       handletable[handle].Farmem.farmemory = NULL;
       handletable[handle].Farmem.size = 0;
@@ -753,7 +725,7 @@ int MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       break;
 #endif
 
-   case FARMEM: /* MoveToMemory */
+   case MEMORY: /* MoveToMemory */
       for(i=0;i<size;i++) {
          memcpy(handletable[handle].Farmem.farmemory+start, buffer, (U16)count);
          start += count;
@@ -880,7 +852,7 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       break;
 #endif
 
-   case FARMEM: /* MoveFromMemory */
+   case MEMORY: /* MoveFromMemory */
       for(i=0;i<size;i++) {
          memcpy(buffer, handletable[handle].Farmem.farmemory+start, (U16)count);
          start += count;
@@ -1007,7 +979,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       break;
 #endif
 
-   case FARMEM: /* SetMemory */
+   case MEMORY: /* SetMemory */
       for(i=0;i<size;i++) {
          memset(handletable[handle].Farmem.farmemory+start, value, (U16)count);
          start += count;

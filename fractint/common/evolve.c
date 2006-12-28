@@ -161,7 +161,7 @@ void initgene(void) /* set up pointers and mutation params for all usable image
 
   /* TODO: MemoryAlloc, MoveToMemory */
   if (gene_handle == 0)
-     gene_handle = MemoryAlloc((U16)sizeof(gene),1L,FARMEM);
+     gene_handle = MemoryAlloc((U16)sizeof(gene),1L,MEMORY);
   MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 }
 
@@ -173,7 +173,7 @@ void param_history(int mode)
 
    /* TODO: MemoryAlloc */
    if (oldhistory_handle == 0)
-      oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory),1L,FARMEM);
+      oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory),1L,MEMORY);
 
    if (mode == 0) { /* save the old parameter history */
       oldhistory.param0 = param[0];
@@ -836,7 +836,7 @@ void SetupParamBox(void)
    vidsize = vidsize + xdots + ydots + 2 ;
    /* TODO: MemoryAlloc */
    if (prmboxhandle == 0)
-      prmboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
+      prmboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
    if (prmboxhandle == 0 ) {
      static char msg[] = {"Sorry...can't allocate mem for parmbox"};
      texttempmsg(msg);
@@ -848,7 +848,7 @@ void SetupParamBox(void)
 /* taken out above as *all* pixels get plotted in small boxes */
    /* TODO: MemoryAlloc */
    if (imgboxhandle == 0)
-      imgboxhandle = MemoryAlloc((U16)(vidsize),1L,FARMEM);
+      imgboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
    if (!imgboxhandle) {
      static char msg[] = {"Sorry...can't allocate mem for imagebox"};
      texttempmsg(msg);

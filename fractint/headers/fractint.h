@@ -406,26 +406,12 @@ struct formula_info         /*  for saving formula data in GIF file     */
     short future[6];       /* for stuff we haven't thought of, yet */
 };
 
-#if !defined(XFRACT) && !defined(_WIN32)
 enum stored_at_values
-   {
+{
    NOWHERE,
-   EXTRA,
-   FARMEM,
-   EXPANDED,
-   EXTENDED,
+   MEMORY,
    DISK
-   };
-#endif
-
-#if defined(XFRACT) || defined(_WIN32)
-enum stored_at_values
-   {
-   NOWHERE,
-   FARMEM,
-   DISK
-   };
-#endif
+};
 
 #define NUMGENES 21
 
