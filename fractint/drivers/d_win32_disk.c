@@ -15,14 +15,6 @@
 #include "drivers.h"
 #include "WinText.h"
 
-#if !defined(ASSERT)
-#if defined(_DEBUG)
-#define ASSERT(x_) assert(x_)
-#else
-#define ASSERT(x_)
-#endif
-#endif
-
 #define MAXSCREENS 3
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
@@ -33,59 +25,22 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) Win32DiskDriver *name_ = (Win32DiskDriver *) drv
 
-/*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
-#if 0
-/* external variables (set in the FRACTINT.CFG file, but findable here */
-extern int dotmode;  /* video access method (= 19)    */
-extern int sxdots, sydots;  /* total # of dots on the screen   */
-extern int sxoffs, syoffs;  /* offset of drawing area          */
-extern int colors;   /* maximum colors available    */
-extern int g_init_mode;
-extern int g_adapter;
-extern int g_got_real_dac;
-extern int inside_help;
-extern  float finalaspectratio;
-extern  float screenaspect;
-extern int lookatmouse;
-extern VIDEOINFO g_video_table[];
-/* the video-palette array (named after the VGA adapter's video-DAC) */
-extern unsigned char g_dac_box[256][3];
-extern void drawbox();
-extern int g_text_type;
-extern int helpmode;
-extern int rotate_hi;
-extern void fpe_handler();
-#ifdef FPUERR
-static void continue_hdl(int sig, int code, struct sigcontext *scp, char *addr);
-#endif
-#define DEFX 640
-#define DEFY 480
-#define DEFXY "640x480+0+0"
-extern int editpal_cursor;
-extern void Cursor_SetPos();
-#define SENS 1
-#define ABS(x)		((x) > 0   ? (x) : -(x))
-#define MIN(x, y)	((x) < (y) ? (x) : (y))
-#define SIGN(x)		((x) > 0   ? 1   : -1)
-#define SHELL "/bin/csh"
-#endif
-/*  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\  /\
-/* /  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \/  \
-/*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
-
+/* read/write-a-dot/line routines */
 typedef void t_dotwriter(int, int, int);
 typedef int  t_dotreader(int, int);
 typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
 typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 typedef void t_swapper(void);
 
-/* read/write-a-dot/line routines */
-extern t_dotwriter *dotwrite;
-extern t_dotreader *dotread;
-extern t_linewriter *linewrite;
-extern t_linereader *lineread;
-extern t_linewriter *normaline;
-extern t_linereader *normalineread;
+t_linewriter normaline;
+t_linereader normalineread;
+t_swapper null_swap;
+
+t_swapper *g_swap_setup = null_swap;			/* setfortext/graphics setup routine */
+static t_dotwriter *dotwrite = NULL;
+static t_dotreader *dotread = NULL;
+static t_linewriter *linewrite = NULL;
+static t_linereader *lineread = NULL;
 
 extern int startvideo();
 extern int endvideo();
@@ -198,16 +153,6 @@ struct tagWin32DiskDriver
 	BOOL cursor_shown;
 	int cursor_row;
 	int cursor_col;
-
-#if 0
-	int simple_input; /* Use simple input (debugging) */
-	int old_fcntl;
-	int alarmon; /* 1 if the refresh alarm is on */
-	int doredraw; /* 1 if we have a redraw waiting */
-	int width, height;
-	int xlastcolor;
-	unsigned char *fontPtr;
-#endif
 };
 
 /*
@@ -246,18 +191,6 @@ check_arg(Win32DiskDriver *di, int argc, char **argv, int *i)
 	}
 #endif
 	return 0;
-}
-
-void
-function_called(const char *fn, const char *file, unsigned line, int error)
-{
-	char buffer[512];
-	sprintf(buffer, "%s(%d): %c%s called\n", file, line, error ? '!' : '?', fn);
-	OutputDebugString(buffer);
-	if (error)
-	{
-		ASSERT(FALSE);
-	}
 }
 
 void
@@ -315,18 +248,17 @@ win32_disk_terminate(Driver *drv)
 		free(di->pixels);
 		di->pixels = NULL;
 	}
-#if 0
-	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-	if (!di->simple_input)
 	{
-		fcntl(0, F_SETFL, di->old_fcntl);
+		int i;
+		for (i = 0; i < NUM_OF(di->saved_screens); i++)
+		{
+			if (NULL != di->saved_screens[i])
+			{
+				free(di->saved_screens[i]);
+				di->saved_screens[i] = NULL;
+			}
+		}
 	}
-	mvcur(0, COLS-1, LINES-1, 0);
-	nocbreak();
-	echo();
-	endwin();
-	delscreen(di->term);
-#endif
 }
 
 /*----------------------------------------------------------------------
@@ -580,29 +512,6 @@ win32_disk_end_video(Driver *drv)
 /*
 *----------------------------------------------------------------------
 *
-* setredrawscreen --
-*
-*	Set the screen refresh flag
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Sets the flag.
-*
-*----------------------------------------------------------------------
-*/
-static void
-setredrawscreen(void)
-{
-#if 0
-	((Win32DiskDriver *) display)->doredraw = 1;
-#endif
-}
-
-/*
-*----------------------------------------------------------------------
-*
 * win32_disk_schedule_alarm --
 *
 *	Start the refresh alarm
@@ -623,7 +532,7 @@ win32_disk_schedule_alarm(Driver *drv, int soon)
 	if (!result)
 	{
 		DWORD error = GetLastError();
-		ASSERT(result);
+		_ASSERTE(result);
 	}
 }
 
@@ -646,9 +555,9 @@ static void
 win32_disk_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DI(di);
-	ASSERT(di->pixels);
-	ASSERT(x >= 0 && x < di->width);
-	ASSERT(y >= 0 && y < di->height);
+	_ASSERTE(di->pixels);
+	_ASSERTE(x >= 0 && x < di->width);
+	_ASSERTE(y >= 0 && y < di->height);
 	di->pixels[y*di->width + x] = (BYTE) (color & 0xFF);
 }
 
@@ -671,9 +580,9 @@ static int
 win32_disk_read_pixel(Driver *drv, int x, int y)
 {
 	DI(di);
-	ASSERT(di->pixels);
-	ASSERT(x >= 0 && x < di->width);
-	ASSERT(y >= 0 && y < di->height);
+	_ASSERTE(di->pixels);
+	_ASSERTE(x >= 0 && x < di->width);
+	_ASSERTE(y >= 0 && y < di->height);
 	return (int) di->pixels[y*di->width + x];
 }
 
@@ -962,7 +871,7 @@ init_pixels(Win32DiskDriver *di)
 	di->width = sxdots;
 	di->height = sydots;
 	di->pixels_len = di->width * di->height * sizeof(BYTE);
-	ASSERT(di->pixels_len > 0);
+	_ASSERTE(di->pixels_len > 0);
 	di->pixels = (BYTE *) malloc(di->pixels_len);
 	memset(di->pixels, 0, di->pixels_len);
 }
@@ -1033,26 +942,10 @@ win32_disk_shell(Driver *drv)
 
 static int s_video_flag = 0;
 
-void videomode(t_dotwriter dot_write, t_dotreader dot_read,
-			   t_linewriter line_write, t_linereader line_read,
-			   t_swapper swapper)
-{
-	dotwrite = dot_write;
-	dotread = dot_read;
-	linewrite = line_write;
-	lineread = line_read;
-	g_swap_setup = swapper;
-	g_and_color = colors-1;
-	boxcount = 0;
-	g_dac_learn = 1;
-	g_dac_count = cyclelimit;
-}
-
 t_dotwriter win32_dot_writer;
 t_dotreader win32_dot_reader;
 t_linewriter win32_line_writer;
 t_linereader win32_line_reader;
-t_swapper win32_swap_setup;
 
 void win32_dot_writer(int x, int y, int color)
 {
@@ -1070,7 +963,141 @@ void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
 {
 	driver_read_span(row, col, lastcol, pixels);
 }
-void win32_swap_setup(void) {}
+
+void null_swap(void)
+{
+}
+
+t_dotwriter nullwrite;
+t_dotreader nullread;
+
+static void nullwrite(int a, int b, int c)
+{
+	_ASSERTE(FALSE);
+}
+
+static int nullread(int a, int b)
+{
+	_ASSERTE(FALSE);
+	return 0;
+}
+
+/* from video.asm */
+void setnullvideo(void)
+{
+	ODS("setnullvideo");
+	dotwrite = nullwrite;
+	dotread = nullread;
+}
+
+/*
+; **************** Function getcolor(xdot, ydot) *******************
+
+;       Return the color on the screen at the (xdot, ydot) point
+*/
+int getcolor(int xdot, int ydot)
+{
+	int x1, y1;
+	x1 = xdot + sxoffs;
+	y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+		return 0;
+	return (*dotread)(x1, y1);
+}
+
+/*
+; ************** Function putcolor_a(xdot, ydot, color) *******************
+
+;       write the color on the screen at the (xdot, ydot) point
+*/
+void putcolor_a(int xdot, int ydot, int color)
+{
+	int x1 = xdot + sxoffs;
+	int y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	(*dotwrite)(x1, y1, color & g_and_color);
+}
+
+/*
+; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'getcolor()', and gets a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+		return;
+	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'putcolor()', and puts a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+		return;
+	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; ***************Function out_line(pixels, linelen) *********************
+
+;       This routine is a 'line' analog of 'putcolor()', and sends an
+;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
+;       Called by the GIF decoder
+*/
+int out_line(BYTE *pixels, int linelen)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (g_row_count + syoffs >= sydots)
+	{
+		return 0;
+	}
+	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+	g_row_count++;
+	return 0;
+}
+
+/*
+; **************** internal Read/Write-a-line routines *********************
+;
+;       These routines are called by out_line(), put_line() and get_line().
+*/
+void normaline(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		dotwrite(x + i, y, pixels[i]);
+	}
+}
+
+void normalineread(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		pixels[i] = dotread(x + i, y);
+	}
+}
 
 /*
 ; **************** Function setvideomode(ax, bx, cx, dx) ****************
@@ -1110,35 +1137,23 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 		s_video_flag = 0;
 	}
 
-	g_ok_to_print = 1;
+	g_ok_to_print = FALSE;
 	g_good_mode = 1;
 
-	if (driver_diskp())
-	{
-		extern t_swapper null_swap;
-		startdisk();
-		dotwrite = writedisk;
-		dotread = readdisk;
-		lineread = normalineread;
-		linewrite = normaline;
-	}
-	else if (0 == dotmode)
-	{
-		videomode(win32_dot_writer, win32_dot_reader,
-			win32_line_writer, win32_line_reader,
-			win32_swap_setup);
-	}
-	else
-	{
-		/* bad video mode 'dotmode' */
-		ASSERT(FALSE);
-	}
+	startdisk();
+	dotwrite = writedisk;
+	dotread = readdisk;
+	lineread = normalineread;
+	linewrite = normaline;
 
 	if (dotmode !=0)
 	{
 		driver_read_palette();
 		g_and_color = colors-1;
 		boxcount = 0;
+		g_dac_learn = 1;
+		g_dac_count = cyclelimit;
+		g_got_real_dac = TRUE;
 	}
 }
 
@@ -1172,8 +1187,8 @@ win32_disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 	{
 		int abs_row = g_text_rbase + g_text_row;
 		int abs_col = g_text_cbase + g_text_col;
-		ASSERT(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-		ASSERT(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
+		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
+		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
 		wintext_putstring(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
 }
@@ -1298,7 +1313,7 @@ win32_disk_stack_screen(Driver *drv)
 	{
 		/* already have some stacked */
 		int i = di->screen_count - 1;
-		ASSERT(i < MAXSCREENS);
+		_ASSERTE(i < MAXSCREENS);
 		if (i >= MAXSCREENS)
 		{
 			/* bug, missing unstack? */
@@ -1448,28 +1463,7 @@ win32_disk_put_char_attr(Driver *drv, int char_attr)
 
 static Win32DiskDriver win32_disk_driver_info =
 {
-	STD_DRIVER_STRUCT(win32_disk),
-
-#if 0
-	NULL,				/* term */
-	NULL,				/* curwin */
-	0,					/* simple_input */
-	NULL,				/* Xgeometry */
-	0,					/* old_fcntl */
-	0,					/* alarmon */
-	0,					/* doredraw */
-	DEFX, DEFY,			/* width, height */
-	-1,					/* xlastcolor */
-	NULL,				/* pixbuf */
-	{ 0 },				/* cols */
-	{ 0 },				/* pixtab */
-	{ 0 },				/* ipixtab */
-	0,					/* xbufkey */
-	NULL,				/* fontPtr */
-	0,					/* screen_count */
-	{ 0 },				/* saved_screens */
-	{ 0 }				/* saved_cursor */
-#endif
+	STD_DRIVER_STRUCT(win32_disk)
 };
 
 Driver *win32_disk_driver = &win32_disk_driver_info.pub;
