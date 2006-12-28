@@ -1,9 +1,13 @@
+#define _CRTDBG_MAP_ALLOC
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
-#include <string.h>
-#include <stdlib.h>
 #include "WinText.h"
 
 static int s_showing_cursor = FALSE;
@@ -697,6 +701,7 @@ int wintext_look_for_activity(int wintext_waitflag)
 
 		if (GetMessage(&msg, NULL, 0, 0))
 		{
+			// translate accelerator here?
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -747,7 +752,7 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string, int *
 #else
 		invalidate(xpos, ypos, maxcol, maxrow);
 		*end_row = j;
-		*end_col = k;
+		*end_col = k+1;
 #endif
     }
 }
@@ -968,6 +973,7 @@ BYTE *wintext_screen_get(void)
 {
 	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
 	BYTE *copy = (BYTE *) malloc(count*2);
+	_ASSERTE(copy);
 	memcpy(copy, g_me.chars, count);
 	memcpy(copy + count, g_me.attrs, count);
 	return copy;

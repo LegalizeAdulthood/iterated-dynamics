@@ -18,23 +18,12 @@
 #include "helpdefs.h"
 #include "wintext.h"
 
-#if !defined(ASSERT)
-#define ASSERT(expr_) assert(expr_)
-#endif
-
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
-#define CALLED(fn_) function_called(fn_, __FILE__, __LINE__, TRUE)
-#define CALLINFO(fn_) function_called(fn_, __FILE__, __LINE__, FALSE)
 
 /* External declarations */
-extern int (*dotread)(int, int);			/* read-a-dot routine */
-extern void (*dotwrite)(int, int, int);		/* write-a-dot routine */
 extern void check_samename(void);
-extern void function_called(const char *fn, const char *file, unsigned int line, int error);
 
 HINSTANCE g_instance = NULL;
-
-void null_swap(void);
 
 typedef enum
 {
@@ -131,8 +120,6 @@ int g_dac_count = 0;
 int g_disk_flag = 0;
 int disktarga = 0;
 int DivideOverflow = 0;
-int (*dotread)(int, int);	/* read-a-dot routine */
-void (*dotwrite)(int, int, int); /* write-a-dot routine */
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
 int fake_lut = 0;
@@ -148,12 +135,6 @@ int g_got_real_dac = 0;
 int hi_atten = 0;
 int inside_help = 0;
 int g_is_true_color = 0;
-typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
-typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
-t_linewriter *linewrite = NULL;
-t_linereader *lineread = NULL;
-//void (*lineread)(int y, int x, int lastx, BYTE *pixels) = NULL;		/* read-a-line routine */
-//void (*linewrite)(int y, int x, int lastx, BYTE *pixels) = NULL;		/* write-a-line routine */
 long linitx = 0;
 long linity = 0;
 int lookatmouse = 0;
@@ -210,7 +191,6 @@ char supervga_list[] =
 	0, 0								//        dw      0
 };
 int g_svga_type = 0;
-void (*g_swap_setup)(void) = null_swap;			/* setfortext/graphics setup routine */
 int g_text_type = 0;
 int g_text_cbase = 0;
 int g_text_col = 0;
@@ -320,7 +300,7 @@ static fractint_event keyboard_event(int key)
 long stackavail()
 {
 	/* TODO */
-	CALLED("stackavail");
+	_ASSERTE(FALSE);
 	return 8192;
 }
 
@@ -362,31 +342,6 @@ long multiply(long x, long y, int n)
 		overflow = 1;
     }
     return l;
-}
-
-/*
-; **************** internal Read/Write-a-line routines *********************
-;
-;       These routines are called by out_line(), put_line() and get_line().
-*/
-void normaline(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		dotwrite(x + i, y, pixels[i]);
-	}
-}
-
-void normalineread(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		pixels[i] = dotread(x + i, y);
-	}
 }
 
 /*
@@ -533,37 +488,6 @@ int waitkeypressed(int timeout)
 }
 
 /*
-; **************** Function getcolor(xdot, ydot) *******************
-
-;       Return the color on the screen at the (xdot, ydot) point
-*/
-int getcolor(int xdot, int ydot)
-{
-	int x1, y1;
-	x1 = xdot + sxoffs;
-	y1 = ydot + syoffs;
-	ASSERT(x1 >= 0 && x1 <= sxdots);
-	ASSERT(y1 >= 0 && y1 <= sydots);
-	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
-		return 0;
-	return dotread(x1, y1);
-}
-
-/*
-; ************** Function putcolor_a(xdot, ydot, color) *******************
-
-;       write the color on the screen at the (xdot, ydot) point
-*/
-void putcolor_a(int xdot, int ydot, int color)
-{
-	int x1 = xdot + sxoffs;
-	int y1 = ydot + syoffs;
-	ASSERT(x1 >= 0 && x1 <= sxdots);
-	ASSERT(y1 >= 0 && y1 <= sydots);
-	dotwrite(x1, y1, color & g_and_color);
-}
-
-/*
 ; *************** Function find_special_colors ********************
 
 ;       Find the darkest and brightest colors in palette, and a medium
@@ -643,7 +567,7 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
 	if (s_find_context != INVALID_HANDLE_VALUE)
 	{
 		BOOL result = FindClose(s_find_context);
-		ASSERT(result);
+		_ASSERTE(result);
 	}
 	SetLastError(0);
 	s_find_context = FindFirstFile(path, &s_find_data);
@@ -668,12 +592,12 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
 int fr_findnext()
 {
 	BOOL result = FALSE;
-	ASSERT(INVALID_HANDLE_VALUE != s_find_context);
+	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
 	result = FindNextFile(s_find_context, &s_find_data);
 	if (result != 0)
 	{
 		DWORD code = GetLastError();
-		ASSERT(ERROR_NO_MORE_FILES == code);
+		_ASSERTE(ERROR_NO_MORE_FILES == code);
 		return code || -1;
 	}
 
@@ -682,66 +606,11 @@ int fr_findnext()
 	return 0;
 }
 
-/*
-; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'getcolor()', and gets a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void get_line(int row, int startcol, int stopcol, BYTE *pixels)
-{
-	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
-		return;
-	lineread(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
-}
-
-/*
-; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'putcolor()', and puts a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void put_line(int row, int startcol, int stopcol, BYTE *pixels)
-{
-	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
-		return;
-#if 0
-	linewrite(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
-#else
-	normaline(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
-	Sleep(50);
-#endif
-}
-
 int get_sound_params(void)
 {
 	/* TODO */
-	CALLED("get_sound_params");
+	_ASSERTE(FALSE);
 	return(0);
-}
-
-/*
-; ***************Function out_line(pixels, linelen) *********************
-
-;       This routine is a 'line' analog of 'putcolor()', and sends an
-;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
-;       Called by the GIF decoder
-*/
-int out_line(BYTE *pixels, int linelen)
-{
-	if (g_row_count + syoffs >= sydots)
-	{
-		return 0;
-	}
-	linewrite(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
-	g_row_count++;
-	return 0;
 }
 
 /*
@@ -750,7 +619,7 @@ int out_line(BYTE *pixels, int linelen)
 long readticker(void)
 {
 	/* TODO */
-	CALLED("readticker");
+	_ASSERTE(FALSE);
 	return 0;
 }
 
@@ -901,13 +770,13 @@ adapter_detect(void)
 
 void erasesegment(int segaddress, int segvalue)
 {
-	CALLED("erasesegment");
+	_ASSERTE(FALSE);
 }
 
 void put_a_char(int ch)
 {
-	CALLED("put_a_char");
 	/* TODO */
+	_ASSERTE(FALSE);
 }
 
 /*
@@ -917,7 +786,7 @@ void put_a_char(int ch)
 void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 {
 	/* TODO */
-	CALLED("gettruecolor");
+	_ASSERTE(FALSE);
 	*red = 0;
 	*green = 0;
 	*blue = 0;
@@ -964,8 +833,8 @@ int isadirectory(char *s)
 */
 void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 {
-	CALLED("puttruecolor");
 	/* TODO */
+	_ASSERTE(FALSE);
 }
 
 /* tenths of millisecond timewr routine */
@@ -974,10 +843,6 @@ void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 void restart_uclock(void)
 {
 	/* TODO */
-#if 0
-	CALLED("restart_uclock");
-	gettimeofday(&tv_start, NULL);
-#endif
 }
 
 
@@ -995,37 +860,21 @@ uclock_t usec_clock(void)
 {
    uclock_t result = 0;
    /* TODO */
-   CALLED("usec_clock");
-
-#if 0
-   struct timeval tv, elapsed;
-   gettimeofday(&tv, NULL);
-
-   elapsed.tv_usec  = tv.tv_usec -  tv_start.tv_sec;
-   elapsed.tv_sec   = tv.tv_sec -   tv_start.tv_sec;
-
-   if(elapsed.tv_usec < 0)
-   {
-      /* "borrow */
-      elapsed.tv_usec += 1000000;
-      elapsed.tv_sec--;
-   }
-   result  = (unsigned long)(elapsed.tv_sec*10000 +  elapsed.tv_usec/100);
-#endif
+   _ASSERTE(FALSE);
 
    return result; 
 }
 
 void swapnormread(void)
 {
-	CALLED("swapnormread");
 	/* TODO */
+	_ASSERTE(FALSE);
 }
 
 void swapnormwrite(void)
 {
-	CALLED("swapnormwrite");
 	/* TODO */
+	_ASSERTE(FALSE);
 }
 
 /*
@@ -1042,54 +891,25 @@ void swapnormwrite(void)
 void scroll_center(int tocol, int torow)
 {
 	/* TODO */
-	CALLED("scroll_center");
-}
-
-static void nullwrite(int a, int b, int c)
-{
-	CALLED("nullwrite");
-}
-
-static int nullread(int a, int b)
-{
-	CALLED("nullread");
-	return 0;
-}
-
-/* from video.asm */
-void setnullvideo(void)
-{
-	CALLED("setnullvideo");
-	dotwrite = nullwrite;
-	dotread = nullread;
-}
-
-/* Do nothing if math error */
-static void my_floating_point_err(int sig)
-{
-   if(sig != 0)
-      overflow = 1;
-}
-
-int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
-{
-	g_instance = instance;
-	return main(__argc, __argv);
-}
-
-void null_swap(void)
-{
+	_ASSERTE(FALSE);
 }
 
 void showfreemem(void)
 {
-	CALLED("showfreemem");
+	/* TODO */
+	_ASSERTE(FALSE);
 }
 
 long fr_farfree(void)
 {
-	CALLED("fr_farfree");
+	/* TODO */
 	return 0x8FFFFL;
+}
+
+unsigned long GetDiskSpace(void)
+{
+	/* TODO */
+	return 0x7FFFFFFF;
 }
 
 void windows_shell_to_dos(void)
@@ -1100,7 +920,6 @@ void windows_shell_to_dos(void)
 	};
 	PROCESS_INFORMATION pi = { 0 };
 	char *comspec = getenv("COMSPEC");
-	CALLINFO("windows_shell_to_dos");
 
 	if (NULL == comspec)
 	{
@@ -1116,4 +935,11 @@ void windows_shell_to_dos(void)
 		}
 		CloseHandle(pi.hProcess);
 	}
+}
+
+int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
+{
+	g_instance = instance;
+	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
+	return main(__argc, __argv);
 }

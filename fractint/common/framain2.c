@@ -72,6 +72,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
    if(resumeflag)
       goto resumeloop;
     for(;;) {                   /* eternal loop */
+		_ASSERTE(_CrtCheckMemory());
+
       if (calc_status != 2 || showfile == 0) {
 #ifdef XFRACT
          if (resizeWindow()) {
@@ -408,14 +410,16 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
           ecount ++;
         }
 done:
-        if (ecount == gridsqr) {
+		_ASSERTE(_CrtCheckMemory());
+
+		if (ecount == gridsqr) {
            i = 0;
            driver_buzzer(0); /* finished!! */
         }
         else { /* interrupted screen generation, save info */
 			/* TODO: MemoryAlloc */
            if (evolve_handle == 0)
-              evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,FARMEM);
+              evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
            resume_e_info.paramrangex     = paramrangex;
            resume_e_info.paramrangey     = paramrangey;
            resume_e_info.opx             = opx;
@@ -481,6 +485,7 @@ done:
          }
 
 resumeloop:                             /* return here on failed overlays */
+	_ASSERTE(_CrtCheckMemory());
 
       *kbdmore = 1;
       while (*kbdmore == 1) {           /* loop through command keys */
@@ -2453,7 +2458,7 @@ void checkfreemem(int secondpass)
 		while (maxhistory > 0) /* decrease history if necessary */
 		{
 			/* TODO: MemoryAlloc */
-			history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,EXPANDED);
+			history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,MEMORY);
 			if (history)
 			{
 				break;

@@ -325,15 +325,33 @@ static void color_link(LINK *link, int color)
    g_text_rbase = 0;
    }
 
-/* #define PUT_KEY(name, descrip) putstring(-1,-1,C_HELP_INSTR_KEYS,name), putstring(-1,-1,C_HELP_INSTR," "descrip"  ") */
-#if !defined(XFRACT) && !defined(_WIN32)
-#define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name); driver_put_string(-1,-1,C_HELP_INSTR,":"descrip"  ")
+/* #define PUT_KEY(name, descrip)
+		putstring(-1,-1,C_HELP_INSTR_KEYS,name),
+		putstring(-1,-1,C_HELP_INSTR," "descrip"  ")
+*/
+#if defined(_WIN32)
+#define PUT_KEY(name_,desc_) put_key(name_,desc_)
 #else
-#define PUT_KEY(name, descrip) driver_put_string(-1,-1,C_HELP_INSTR,name);\
-driver_put_string(-1,-1,C_HELP_INSTR,":");\
-driver_put_string(-1,-1,C_HELP_INSTR,descrip);\
-driver_put_string(-1,-1,C_HELP_INSTR,"  ")
+#if !defined(XFRACT)
+#define PUT_KEY(name, descrip)								\
+	driver_put_string(-1,-1,C_HELP_INSTR,name),				\
+	driver_put_string(-1,-1,C_HELP_INSTR,":"descrip"  ")
+#else
+#define PUT_KEY(name, descrip)						\
+	driver_put_string(-1,-1,C_HELP_INSTR,name);		\
+	driver_put_string(-1,-1,C_HELP_INSTR,":");		\
+	driver_put_string(-1,-1,C_HELP_INSTR,descrip);	\
+	driver_put_string(-1,-1,C_HELP_INSTR,"  ")
 #endif
+#endif
+
+static void put_key(char *name, char *descrip)
+{
+	driver_put_string(-1,-1,C_HELP_INSTR,name);
+	driver_put_string(-1,-1,C_HELP_INSTR,":");
+	driver_put_string(-1,-1,C_HELP_INSTR,descrip);
+	driver_put_string(-1,-1,C_HELP_INSTR,"  ");
+}
 
 static void helpinstr(void)
    {

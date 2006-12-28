@@ -231,7 +231,9 @@ int main(int argc, char **argv)
 
 	init_help();
 
+	
 restart:   /* insert key re-starts here */
+	_ASSERTE(_CrtCheckMemory());
 	autobrowse     = FALSE;
 	brwschecktype  = TRUE;
 	brwscheckparms = TRUE;
@@ -356,6 +358,8 @@ restart:   /* insert key re-starts here */
 	stacked = 0;
 
 restorestart:
+	_ASSERTE(_CrtCheckMemory());
+
 	if (colorpreloaded)
 	{
 		memcpy(g_dac_box,olddacbox,256*3);   /* restore in case colors= present */
@@ -438,6 +442,8 @@ restorestart:
 	savedac = 0;                         /* don't save the VGA DAC */
 
 imagestart:                             /* calc/display a new image */
+	_ASSERTE(_CrtCheckMemory());
+
 	if (stacked)
 	{
 		driver_discard_screen();
@@ -562,6 +568,8 @@ imagestart:                             /* calc/display a new image */
 	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
 resumeloop:
+	_ASSERTE(_CrtCheckMemory());
+
 	param_history(0); /* save old history */
 	/* this switch processes gotos that are now inside function */
 	switch(big_while_loop(&kbdmore,&stacked,resumeflag))

@@ -163,7 +163,7 @@ extern long stackavail();
 		#define BIG_ANSI_C
 		#endif
 
-		/* bleah -- we should refactor this into something better instead of using unix.h */
+		/* TODO: we should refactor this into something better instead of using unix.h */
 		#include "unix.h"
 
 		/*================================== Win32 definitions */

@@ -122,6 +122,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
    long longtmp;
    unsigned int cache_size;
    BYTE *tempfar = NULL;
+	_ASSERTE(_CrtCheckMemory());
    if (g_disk_flag)
       enddisk();
    if (driver_diskp()) { /* otherwise, real screen also in use, don't hit it */
@@ -159,6 +160,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       dvid_status(0,msg);
       }
       }
+	_ASSERTE(_CrtCheckMemory());
    cur_offset = seek_offset = high_offset = -1;
    cur_row    = -1;
    if (disktarga)
@@ -181,7 +183,9 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       there is free; demand a certain minimum or nogo at all */
    freemem = FREEMEM;
 
-   for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size) {
+	_ASSERTE(_CrtCheckMemory());
+
+	for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size) {
       longtmp = ((int)cache_size < freemem) ? (long)cache_size << 11
                                        : (long)(cache_size+freemem) << 10;
       if ((tempfar = malloc(longtmp)) != NULL) {
@@ -189,13 +193,14 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
          break;
          }
       }
+	_ASSERTE(_CrtCheckMemory());
    if(debugflag==4200) cache_size = CACHEMIN;
    longtmp = (long)cache_size << 10;
    cache_start = (struct cache *)malloc(longtmp);
    if (cache_size == 64)
       --longtmp; /* safety for next line */
    cache_end = (cache_lru = cache_start) + longtmp / sizeof(*cache_start);
-   hash_ptr  = (unsigned int *)malloc((long)(HASHSIZE<<1));
+   hash_ptr  = (unsigned int *)malloc(sizeof(unsigned int)*HASHSIZE);
    membuf = (BYTE *)malloc((long)BLOCKLEN);
    if (cache_start == NULL || hash_ptr == NULL || membuf == NULL) {
       static char msg[]={"*** insufficient free memory for cache buffers ***"};
@@ -208,19 +213,26 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
       driver_put_string(BOXROW+6,BOXCOL+4,C_DVID_LO,buf);
       }
 
-   /* preset cache to all invalid entries so we don't need free list logic */
-   for (i = 0; i < HASHSIZE; ++i)
-      hash_ptr[i] = 0xffff; /* 0xffff marks the end of a hash chain */
-   longtmp = 100000000L;
-   for (ptr1 = cache_start; ptr1 < cache_end; ++ptr1) {
-      ptr1->dirty = ptr1->lru = 0;
-      fwd_link = hash_ptr
-         + (((unsigned short)(longtmp+=BLOCKLEN) >> BLOCKSHIFT) & (HASHSIZE-1));
-      ptr1->offset = longtmp;
-      ptr1->hashlink = *fwd_link;
-      *fwd_link = (int) ((char *)ptr1 - (char *)cache_start);
-      }
+	/* preset cache to all invalid entries so we don't need free list logic */
+	for (i = 0; i < HASHSIZE; ++i)
+	{
+		hash_ptr[i] = 0xffff; /* 0xffff marks the end of a hash chain */
+		_ASSERTE(_CrtCheckMemory());
+	}
+	_ASSERTE(_CrtCheckMemory());
+	longtmp = 100000000L;
+	for (ptr1 = cache_start; ptr1 < cache_end; ++ptr1)
+	{
+		ptr1->dirty = ptr1->lru = 0;
+		longtmp += BLOCKLEN;
+		fwd_link = hash_ptr + (((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1));
+		ptr1->offset = longtmp;
+		ptr1->hashlink = *fwd_link;
+		*fwd_link = (int) ((char *)ptr1 - (char *)cache_start);
+		_ASSERTE(_CrtCheckMemory());
+	}
 
+	_ASSERTE(_CrtCheckMemory());
    memorysize = (long)(newcolsize) * newrowsize + headerlength;
    if ((i = (short)memorysize & (BLOCKLEN-1)) != 0)
       memorysize += BLOCKLEN - i;
@@ -252,35 +264,15 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 
    if (driver_diskp())
    {
-#if defined(XFRACT) || defined(_WIN32)
 	   driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
 		   (MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
-#else
-     switch (MemoryType(dv_handle)) {
-         static char fmsg1[] = {"Using no Memory, it's broke"};
-         static char fmsg2[] = {"Using your Expanded Memory"};
-         static char fmsg3[] = {"Using your Extended Memory"};
-         static char fmsg4[] = {"Using your Disk Drive"};
-       case NOWHERE:
-       default:
-         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg1);
-         break;
-       case EXPANDED:
-         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg2);
-         break;
-       case EXTENDED:
-         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg3);
-         break;
-       case DISK:
-         driver_put_string(BOXROW+2,BOXCOL+23,C_DVID_LO,fmsg4);
-         break;
-     }
-#endif
    }
 
    membufptr = membuf;
 
-   if (!disktarga)
+	_ASSERTE(_CrtCheckMemory());
+
+	if (!disktarga)
       for (offset = 0; offset < memorysize; offset++) {
            static char cancel[] = {"Disk Video initialization interrupted:\n"};
          SetMemory(0, (U16)BLOCKLEN, 1L, offset, dv_handle);
