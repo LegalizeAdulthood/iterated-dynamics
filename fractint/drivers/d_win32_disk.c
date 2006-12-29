@@ -1284,6 +1284,7 @@ win32_disk_stack_screen(Driver *drv)
 	{
 		/* already have some stacked */
 		int i = di->screen_count - 1;
+
 		_ASSERTE(i < MAXSCREENS);
 		if (i >= MAXSCREENS)
 		{
@@ -1306,6 +1307,7 @@ win32_disk_unstack_screen(Driver *drv)
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
 
 	ODS("win32_disk_unstack_screen");
+	_ASSERTE(di->screen_count > 0);
 	g_text_row = di->saved_cursor[di->screen_count] / 80;
 	g_text_col = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
@@ -1326,7 +1328,7 @@ win32_disk_discard_screen(Driver *drv)
 {
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
 
-	ODS("win32_disk_discard_screen");
+	_ASSERE(di->screen_count > 0);
 	if (--di->screen_count >= 0)
 	{ /* unstack */
 		if (di->saved_screens[di->screen_count])
