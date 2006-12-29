@@ -702,6 +702,7 @@ int get_view_params()
    int old_viewwindow,old_viewxdots,old_viewydots,old_sxdots,old_sydots;
    unsigned long estm_xmax=32767,estm_ymax=32767;
 #ifndef XFRACT
+   /* TODO: virtual screens? video ram? VESA/DOS be gone! */
    unsigned long vidmem = (unsigned long)g_video_vram << 16;
    int truebytes = g_video_entry.dotmode/1000;
 
