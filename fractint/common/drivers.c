@@ -19,7 +19,7 @@ static int num_drivers = 0;
 static Driver *available[MAX_DRIVERS];
 static Driver *mode_drivers[MAXVIDEOMODES];
 
-Driver *display = NULL;
+Driver *g_driver = NULL;
 
 #define NUM_OF(array_) (sizeof(array_)/sizeof(array_[0]))
 
@@ -31,9 +31,9 @@ load_driver(Driver *drv, int *argc, char **argv)
 		const int num = (*drv->init)(drv, argc, argv);
 		if (num > 0)
 		{
-			if (! display)
+			if (! g_driver)
 			{
-				display = drv;
+				g_driver = drv;
 			}
 			available[num_drivers++] = drv;
 			return 1;
@@ -78,6 +78,7 @@ init_drivers(int *argc, char **argv)
 void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
+	_ASSERTE(g_video_table_len < MAXVIDEOMODES);
 	/* stash away driver pointer so we can init driver for selected mode */
 	mode_drivers[g_video_table_len] = drv;
 	memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
@@ -98,20 +99,20 @@ close_drivers(void)
 		}
 	}
 
-	display = NULL;
+	g_driver = NULL;
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
 void
 driver_terminate(void)
 {
-	(*display->terminate)(display);
+	(*g_driver->terminate)(g_driver);
 }
 
 #define METHOD_VOID(name_) \
-void driver_##name_(void) { (*display->name_)(display); }
+void driver_##name_(void) { (*g_driver->name_)(g_driver); }
 #define METHOD(type_,name_) \
-type_ driver_##name_(void) { return (*display->name_)(display); }
+type_ driver_##name_(void) { return (*g_driver->name_)(g_driver); }
 #define METHOD_INT(name_) METHOD(int,name_)
 
 METHOD_VOID(flush)
@@ -119,7 +120,7 @@ METHOD_VOID(flush)
 void
 driver_schedule_alarm(int soon)
 {
-	(*display->schedule_alarm)(display, soon);
+	(*g_driver->schedule_alarm)(g_driver, soon);
 }
 
 METHOD_INT(start_video)
@@ -133,61 +134,61 @@ METHOD_INT(write_palette)
 int
 driver_read_pixel(int x, int y)
 {
-	return (*display->read_pixel)(display, x, y);
+	return (*g_driver->read_pixel)(g_driver, x, y);
 }
 
 void
 driver_write_pixel(int x, int y, int color)
 {
-	(*display->write_pixel)(display, x, y, color);
+	(*g_driver->write_pixel)(g_driver, x, y, color);
 }
 
 void
 driver_read_span(int y, int x, int lastx, BYTE *pixels)
 {
-	(*display->read_span)(display, y, x, lastx, pixels);
+	(*g_driver->read_span)(g_driver, y, x, lastx, pixels);
 }
 
 void
 driver_write_span(int y, int x, int lastx, BYTE *pixels)
 {
-	(*display->write_span)(display, y, x, lastx, pixels);
+	(*g_driver->write_span)(g_driver, y, x, lastx, pixels);
 }
 
 void
 driver_set_line_mode(int mode)
 {
-	(*display->set_line_mode)(display, mode);
+	(*g_driver->set_line_mode)(g_driver, mode);
 }
 
 void
 driver_draw_line(int x1, int y1, int x2, int y2, int color)
 {
-	(*display->draw_line)(display, x1, y1, x2, y2, color);
+	(*g_driver->draw_line)(g_driver, x1, y1, x2, y2, color);
 }
 
 int
 driver_get_key(void)
 {
-	return (*display->get_key)(display);
+	return (*g_driver->get_key)(g_driver);
 }
 
 int
 driver_key_cursor(int row, int col)
 {
-	return (*display->key_cursor)(display, row, col);
+	return (*g_driver->key_cursor)(g_driver, row, col);
 }
 
 int
 driver_key_pressed(void)
 {
-	return (*display->key_pressed)(display);
+	return (*g_driver->key_pressed)(g_driver);
 }
 
 int
 driver_wait_key_pressed(int timeout)
 {
-	return (*display->wait_key_pressed)(display, timeout);
+	return (*g_driver->wait_key_pressed)(g_driver, timeout);
 }
 
 METHOD_VOID(shell)
@@ -195,13 +196,13 @@ METHOD_VOID(shell)
 void
 driver_set_video_mode(int ax, int bx, int cx, int dx)
 {
-	(*display->set_video_mode)(display, ax, bx, cx, dx);
+	(*g_driver->set_video_mode)(g_driver, ax, bx, cx, dx);
 }
 
 void
 driver_put_string(int row, int col, int attr, const char *msg)
 {
-	(*display->put_string)(display, row, col, attr, msg);
+	(*g_driver->put_string)(g_driver, row, col, attr, msg);
 }
 
 METHOD_VOID(set_for_text)
@@ -211,13 +212,13 @@ METHOD_VOID(set_clear)
 BYTE *
 driver_find_font(int parm)
 {
-	return (*display->find_font)(display, parm);
+	return (*g_driver->find_font)(g_driver, parm);
 }
 
 void
 driver_move_cursor(int row, int col)
 {
-	(*display->move_cursor)(display, row, col);
+	(*g_driver->move_cursor)(g_driver, row, col);
 }
 
 METHOD_VOID(hide_text_cursor)
@@ -225,13 +226,13 @@ METHOD_VOID(hide_text_cursor)
 void
 driver_set_attr(int row, int col, int attr, int count)
 {
-	(*display->set_attr)(display, row, col, attr, count);
+	(*g_driver->set_attr)(g_driver, row, col, attr, count);
 }
 
 void
 driver_scroll_up(int top, int bot)
 {
-	(*display->scroll_up)(display, top, bot);
+	(*g_driver->scroll_up)(g_driver, top, bot);
 }
 
 METHOD_VOID(stack_screen)
@@ -243,13 +244,13 @@ METHOD_INT(init_fm)
 void
 driver_buzzer(int kind)
 {
-	(*display->buzzer)(display, kind);
+	(*g_driver->buzzer)(g_driver, kind);
 }
 
 int
 driver_sound_on(int freq)
 {
-	return (*display->sound_on)(display, freq);
+	return (*g_driver->sound_on)(g_driver, freq);
 }
 
 METHOD_VOID(sound_off)
@@ -259,13 +260,13 @@ METHOD_INT(diskp)
 int
 driver_get_char_attr(void)
 {
-	return (*display->get_char_attr)(display);
+	return (*g_driver->get_char_attr)(g_driver);
 }
 
 void
 driver_put_char_attr(int char_attr)
 {
-	(*display->put_char_attr)(display, char_attr);
+	(*g_driver->put_char_attr)(g_driver, char_attr);
 }
 
 #endif
