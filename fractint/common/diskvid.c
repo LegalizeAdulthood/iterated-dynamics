@@ -173,7 +173,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 			--pixelshift;
 		}
 	}
-	timetodisplay = bf_math ? 10 : 1000;  /* time-to-display-status counter */
+	timetodisplay = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
 
 	/* allocate cache: try for the max; leave FREEMEMk free if we can get
 		that much or more; if we can't get that much leave 1/2 of whatever
@@ -213,7 +213,6 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		char buf[50];
 		sprintf(buf, "Cache size: %dK", cache_size);
 		driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
-		delay(1000);
 	}
 
 	/* preset cache to all invalid entries so we don't need free list logic */
@@ -352,7 +351,7 @@ int readdisk(int col, int row)
 	int col_subscr;
 	long offset;
 	char buf[41];
-	if (--timetodisplay < 0)  /* time to display status? */
+	if (--timetodisplay < 0)  /* time to g_driver status? */
 	{
 		if (driver_diskp())
 		{
@@ -362,11 +361,11 @@ int readdisk(int col, int row)
 		}
 		if (bf_math)
 		{
-			timetodisplay = 10;  /* time-to-display-status counter */
+			timetodisplay = 10;  /* time-to-g_driver-status counter */
 		}
 		else
 		{
-			timetodisplay = 1000;  /* time-to-display-status counter */
+			timetodisplay = 1000;  /* time-to-g_driver-status counter */
 		}
 	}
 	if (row != cur_row) /* try to avoid ghastly code generated for multiply */
@@ -761,5 +760,4 @@ void dvid_status(int line, char *msg)
 	}
 	driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buf);
 	driver_hide_text_cursor();
-	delay(500);
 }
