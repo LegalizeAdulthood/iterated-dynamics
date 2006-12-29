@@ -526,15 +526,15 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: real, imaginary portions of p1, shift value,
                      fn1 and fn2.
                      
-{=HT_MANDELBROTMIX4 mandelbrotmix4}
-~Label=HF_MANDELBROTMIX4
-    From a Jim Muth favorite FOTD formula
-      a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
-      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
-      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
-      z=k*((a*(z^b))+(d*(z^f)))+c
-    Parameters: see above, sixth parameter used for bailout
-    
+;{=HT_MANDELBROTMIX4 mandelbrotmix4}
+;~Label=HF_MANDELBROTMIX4
+;    From a Jim Muth favorite FOTD formula
+;      a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+;      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+;      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+;      z=k*((a*(z^b))+(d*(z^f)))+c
+;    Parameters: see above, sixth parameter used for bailout
+;    
 {=HT_MANDELCLOUD mandelcloud}
 ~Label=HF_MANDELCLOUD
     Displays orbits of Mandelbrot set:
@@ -911,7 +911,7 @@ Select a fractal type:
 { Barnsley IFS Fractals }
 { Sierpinski Gasket }
 { Quartic Mandelbrot/Julia }
-{ Mandelbrot Mix 4 }
+;{ Mandelbrot Mix 4 }
 { Distance Estimator }
 { Pickover Mandelbrot/Julia Types }
 { Pickover Popcorn }
@@ -1709,26 +1709,26 @@ Other powers, like Z(n)^3 or Z(n)^7, work in exactly the same fashion. We
 used this one only because we're lazy, and Z(n)^4 = (Z(n)^2)^2.
 ;
 ;
-~Topic=Mandelbrot Mix 4, Label=HT_MANDELBROTMIX4
-(type=mandelbrotmix4)
-
-Jim Muth has been publishing a "Fractal of the Day" on the fractint mailing
-list for many years now. As often as not Jim picks the formula 
-Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the 
-fractint authors have provided this fractal as a built-in type. 
-
-The formula is:
-
-MandelbrotMix4 \{\; Jim Muth
-a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
-g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
-k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
-z=k*((a*(z^b))+(d*(z^f)))+c,
-|z| < l \}
-
-Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar parameter,
-as the bailout. Our implementation follows Jim if the user requests
-the default bailout.
+;~Topic=Mandelbrot Mix 4, Label=HT_MANDELBROTMIX4
+;(type=mandelbrotmix4)
+;
+;Jim Muth has been publishing a "Fractal of the Day" on the fractint mailing
+;list for many years now. As often as not Jim picks the formula 
+;Mandelbrotmix4 as the fractal continent to explore. To honor Jim, the 
+;fractint authors have provided this fractal as a built-in type. 
+;
+;The formula is:
+;
+;MandelbrotMix4 \{\; Jim Muth
+;a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+;g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+;k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+;z=k*((a*(z^b))+(d*(z^f)))+c,
+;|z| < l \}
+;
+;Note that Jim uses l=imag(p3)+100, which is to say, the sixth scalar parameter,
+;as the bailout. Our implementation follows Jim if the user requests
+;the default bailout.
 ;
 ;
 ~Topic=Distance Estimator
