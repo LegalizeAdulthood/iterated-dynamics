@@ -195,7 +195,6 @@ int g_text_col = 0;
 int g_text_rbase = 0;
 int g_text_row = 0;
 int g_text_safe = 0;
-int TPlusErr = 0;
 char tstack[4096] = { 0 };
 int g_vesa_detect = 0;
 int g_vesa_x_res = 0;

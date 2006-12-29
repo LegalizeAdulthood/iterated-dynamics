@@ -114,15 +114,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             driver_set_video_mode(axmode, bxmode, cxmode, dxmode); /* switch video modes */
             if (g_good_mode == 0) {
                static char msg[] = {"That video mode is not available with your adapter."};
-#ifndef XFRACT
-               static char TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
-
-               if (TPlusErr) {
-                  stopmsg(0, TPlusStr);
-                  TPlusErr = 0;
-                  }
-               else
-#endif	       
 	       if (driver_diskp()) {
                   askvideo = TRUE;
                   }

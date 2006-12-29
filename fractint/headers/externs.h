@@ -798,7 +798,6 @@ extern char                  tempdir[];
 extern double                toosmall;
 extern int                   totpasses;
 extern long                  total_formula_mem;
-extern int                   TPlusErr;
 extern int                   transparent[];
 extern BYTE                  trigndx[];
 extern int                   truecolor;
