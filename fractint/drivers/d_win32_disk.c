@@ -1328,7 +1328,7 @@ win32_disk_discard_screen(Driver *drv)
 {
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
 
-	_ASSERE(di->screen_count > 0);
+	_ASSERTE(di->screen_count > 0);
 	if (--di->screen_count >= 0)
 	{ /* unstack */
 		if (di->saved_screens[di->screen_count])
