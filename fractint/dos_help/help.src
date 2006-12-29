@@ -115,7 +115,7 @@
 {2.51 , 1, "Volterra-Lotka Fractals"}
 {2.52 , 1, "Escher-Like Julia Sets"}
 {2.53 , 1, "Latoocarfian"}
-{2.54 , 1, "Mandelbrot Mix 4"}
+;{2.54 , 1, "Mandelbrot Mix 4"}
 
 {3.   , 0, Doodads\, Bells\, and Whistles, FF}
 {3.1  , 1, "Drawing Method"}
@@ -287,8 +287,6 @@ Version 20.4.5 is an update of Fractint 20.0 based on the developer's
 Patch 5 to Version 20.4.0\
 
 Tim's changes (5/29/2006)\
-  Added type mandelbrotmix4.
-  
   Moved version 20.0 change history to revision history to make room for 
   in help.src.
   
