@@ -11,6 +11,12 @@ typedef BYTE BOOLEAN;
 #endif
 #endif
 
+/* Returns the number of items in an array declared of fixed size, i.e:
+	int stuff[100];
+	NUM_OF(stuff) returns 100.
+*/
+#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
+
 #ifndef XFRACT
 #define clock_ticks() clock()
 #endif
@@ -69,6 +75,13 @@ typedef BYTE BOOLEAN;
 #define DOTMODE_SVGA_AUTO		27
 #define DOTMODE_VESA			28
 #define DOTMODE_TRUECOLOR_AUTO	29
+
+/* fullscreen_choice options */
+#define CHOICE_RETURN_KEY	1
+#define CHOICE_MENU			2
+#define CHOICE_HELP			4
+#define CHOICE_CRUNCH		16
+#define CHOICE_NOT_SORTED	32
 
 /* these are used to declare arrays for file names */
 #ifdef XFRACT
