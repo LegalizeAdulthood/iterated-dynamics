@@ -84,7 +84,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				calc_status = -1;
 			}
 #endif
-			memcpy((char *)&g_video_entry,(char *)&g_video_table[g_adapter],
+			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
 			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
 			bxmode  = g_video_entry.videomodebx; /* video mode (BIOS call)   */
@@ -108,7 +108,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				diskvideo = 2;
 			}
 
-			memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
+			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
 			diskisactive = 1;              /* flag for disk-video routines */
 
 			if (overlay3d && !initbatch)
@@ -164,16 +164,16 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			diskisactive = 0;              /* flag for disk-video routines */
 			if (savedac || colorpreloaded)
 			{
-				memcpy(g_dac_box,olddacbox,256*3); /* restore the DAC */
-				spindac(0,1);
+				memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
+				spindac(0, 1);
 				colorpreloaded = 0;
 			}
 			else
 			{	/* reset DAC to defaults, which setvideomode has done for us */
 				if (mapdacbox)
 				{	/* but there's a map=, so load that */
-					memcpy((char *)g_dac_box,mapdacbox,768);
-					spindac(0,1);
+					memcpy((char *)g_dac_box, mapdacbox, 768);
+					spindac(0, 1);
 				}
 				else if ((driver_diskp() && colors == 256) || !colors)
 				{
@@ -298,11 +298,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			if (filetype == 0)
 			{
-				if (debugflag==2224)
+				if (debugflag == 2224)
 				{
 					char msg[MSGLEN];
-					sprintf(msg,"floatflag=%d",usr_floatflag);
-					stopmsg(STOPMSG_NO_BUZZER,(char *)msg);
+					sprintf(msg, "floatflag=%d", usr_floatflag);
+					stopmsg(STOPMSG_NO_BUZZER, (char *)msg);
 				}
 				i = funny_glasses_call(gifview);
 			}
@@ -350,12 +350,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		if (bf_math)
 		{
-			copy_bf(bfsxmin,bfxmin);
-			copy_bf(bfsxmax,bfxmax);
-			copy_bf(bfsymin,bfymin);
-			copy_bf(bfsymax,bfymax);
-			copy_bf(bfsx3rd,bfx3rd);
-			copy_bf(bfsy3rd,bfy3rd);
+			copy_bf(bfsxmin, bfxmin);
+			copy_bf(bfsxmax, bfxmax);
+			copy_bf(bfsymin, bfymin);
+			copy_bf(bfsymax, bfymax);
+			copy_bf(bfsx3rd, bfx3rd);
+			copy_bf(bfsy3rd, bfy3rd);
 		}
 		save_history_info();
 		if (display3d || showfile)
@@ -397,14 +397,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			if (viewwindow && (evolving&1) && (calc_status != 4))
 			{
 				/* generate a set of images with varied parameters on each one */
-				int grout,ecount,tmpxdots,tmpydots,gridsqr;
+				int grout, ecount, tmpxdots, tmpydots, gridsqr;
 				struct evolution_info resume_e_info;
 				GENEBASE gene[NUMGENES];
 				/* get the gene array from memory */
 				MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 				if ((evolve_handle != 0) && (calc_status == 2))
 				{
-					MoveFromMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
+					MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
 					paramrangex  = resume_e_info.paramrangex;
 					paramrangey  = resume_e_info.paramrangey;
 					opx = newopx = resume_e_info.opx;
@@ -473,7 +473,7 @@ done:
 					/* TODO: MemoryAlloc */
 					if (evolve_handle == 0)
 					{
-						evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
+						evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info), 1L, MEMORY);
 					}
 					resume_e_info.paramrangex     = paramrangex;
 					resume_e_info.paramrangey     = paramrangey;
@@ -492,7 +492,7 @@ done:
 					resume_e_info.fiddlefactor    = fiddlefactor;
 					resume_e_info.evolving        = (short)evolving;
 					resume_e_info.ecount          = (short) ecount;
-					MoveToMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
+					MoveToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
 				}
 				sxoffs = syoffs = 0;
 				xdots = sxdots;
@@ -611,7 +611,7 @@ resumeloop:                             /* return here on failed overlays */
 #endif
 						if (kbdchar == '\\' || kbdchar == CTL_BACKSLASH ||
 							kbdchar == 'h' || kbdchar == 8 ||
-							check_vidmode_key(0,kbdchar) >= 0)
+							check_vidmode_key(0, kbdchar) >= 0)
 						{
 							driver_discard_screen();
 						}
@@ -678,11 +678,11 @@ resumeloop:                             /* return here on failed overlays */
 #endif
 			if (evolving)
 			{
-				mms_value = evolver_menu_switch(&kbdchar,&frommandel,kbdmore,stacked);
+				mms_value = evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
 			}
 			else
 			{
-				mms_value = main_menu_switch(&kbdchar,&frommandel,kbdmore,stacked,axmode);
+				mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
 			}
 			if (quick_calc && (mms_value == IMAGESTART ||
                             mms_value == RESTORESTART ||
