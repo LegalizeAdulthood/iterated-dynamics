@@ -136,7 +136,6 @@ long    LogFlag;                /* Logarithmic palette flag: 0 = no */
 
 BYTE exitmode = 3;      /* video mode on exit */
 
-char    ai_8514;        /* Flag for using 8514a afi JCO 4/11/92 */
 int     Log_Fly_Calc = 0;   /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;  /* auto calculate logmap */
 int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images */
@@ -221,7 +220,6 @@ char s_387[] =              "387";
 char s_3d[] =               "3d";
 char s_3dmode[] =           "3dmode";
 char s_adapter[] =          "adapter";
-char s_afi[] =              "afi";
 char s_ambient[] =          "ambient";
 char s_askvideo[] =         "askvideo";
 char s_aspectdrift[] =      "aspectdrift";
@@ -637,7 +635,6 @@ static void initvars_restart()          /* <ins> key init */
    viewreduction = (float)4.2;
    viewcrop = 1;
    g_virtual_screens = 1;                 /* virtual screen modes on   */
-   ai_8514 = 0;                         /* no need for the 8514 API  */
    finalaspectratio = screenaspect;
    viewxdots = viewydots = 0;
    video_cutboth = 1;                   /* keep virtual aspect */
@@ -1128,6 +1125,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       }
 
 #ifndef XFRACT
+	/* adapter= no longer used */
 	if (strcmp(variable,s_adapter) == 0 )    /* adapter==?     */
 	{
 		/* adapter parameter no longer used; check for bad argument anyway */
@@ -1140,11 +1138,11 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
         return 3;
     }
 
-      if (strcmp(variable,s_afi) == 0) {
-       if (strncmp(value,"8514"  ,4) == 0
-           || charval[0] == 'y') ai_8514 = 1; /* set afi flag JCO 4/11/92 */
-       return 3;
-        }
+	/* 8514 API no longer used; silently gobble any argument */
+    if (strcmp(variable, "afi") == 0)
+	{
+		return 3;
+	}
 
       if (strcmp(variable,s_textsafe) == 0 ) {  /* textsafe==? */
          if (first_init) {
