@@ -49,11 +49,6 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2);
 static void update_fractint_cfg(void);
 static void strip_zeros(char *buf);
 
-/* fullscreen_choice options */
-#define CHOICERETURNKEY 1
-#define CHOICEMENU      2
-#define CHOICEHELP      4
-
 char par_comment[4][MAXCMT];
 
 char s_yes[]      = "yes";
@@ -1705,11 +1700,6 @@ static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-   static char o_hdg2[]={"key...name.......................xdot..ydot.colr.comment.................."};
-   static char o_hdg1[]={"Select Video Mode"};
-   char hdg2[sizeof(o_hdg2)];
-   char hdg1[sizeof(o_hdg1)];
-
    int entnums[MAXVIDEOMODES];
    int attributes[MAXVIDEOMODES];
    int i,k,ret;
@@ -1718,10 +1708,7 @@ int select_video_mode(int curmode)
    int oldtabmode,oldhelpmode;
 #endif
 
-   load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
-
-   strcpy(hdg1,o_hdg1);
-   strcpy(hdg2,o_hdg2);
+   //load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
 
    for (i = 0; i < g_video_table_len; ++i) { /* init tables */
       entnums[i] = i;
@@ -1772,8 +1759,11 @@ int select_video_mode(int curmode)
    modes_changed = 0;
    tabmode = 0;
    helpmode = HELPVIDSEL;
-   i = fullscreen_choice(CHOICEHELP,hdg1,hdg2,NULL,g_video_table_len,NULL,attributes,
-                         1,16,74,i,format_vid_table,NULL,NULL,check_modekey);
+   i = fullscreen_choice(CHOICE_HELP,
+	   "Select Video Mode",
+	   "key...name.......................xdot..ydot.colr.comment..................",
+	   NULL, g_video_table_len, NULL, attributes,
+	   1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
    tabmode = oldtabmode;
    helpmode = oldhelpmode;
    if (i == -1) {
