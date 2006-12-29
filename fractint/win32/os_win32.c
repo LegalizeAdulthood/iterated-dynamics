@@ -201,7 +201,6 @@ int g_vesa_y_res = 0;
 int g_video_scroll = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
-int g_video_vram = 0;
 /* g_video_table
  *
  *  |--Adapter/Mode-Name------|-------Comments-----------|
@@ -217,8 +216,12 @@ VIDEOINFO g_video_table[MAXVIDEOMODES] =
 	}
 };
 VIDEOINFO vidtbl[MAXVIDEOMODES] = { 0 };
-int g_virtual_screens = 0;
 int g_vxdots = 0;
+
+/* Global variables that should be phased out (old video mode stuff) */
+int g_video_vram = 0;
+int g_virtual_screens = 0;
+
 
 /* Global functions
  *
