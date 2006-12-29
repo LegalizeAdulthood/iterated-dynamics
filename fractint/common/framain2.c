@@ -104,7 +104,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 			diskvideo = 0;                 /* set diskvideo flag */
 			if (driver_diskp())		/* default assumption is disk */
+			{
 				diskvideo = 2;
+			}
 
 			memcpy(olddacbox,g_dac_box,256*3); /* save the DAC */
 			diskisactive = 1;              /* flag for disk-video routines */
@@ -167,9 +169,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				colorpreloaded = 0;
 			}
 			else
-			{ /* reset DAC to defaults, which setvideomode has done for us */
+			{	/* reset DAC to defaults, which setvideomode has done for us */
 				if (mapdacbox)
-				{ /* but there's a map=, so load that */
+				{	/* but there's a map=, so load that */
 					memcpy((char *)g_dac_box,mapdacbox,768);
 					spindac(0,1);
 				}
@@ -184,14 +186,18 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
             }
 			if (viewwindow)
 			{
-				ftemp = finalaspectratio    /* bypass for VESA virtual screen */
-						* ((dotmode == DOTMODE_VESA && ((g_vesa_x_res && g_vesa_x_res != sxdots)
-						|| (g_vesa_y_res && g_vesa_y_res != sydots)))
-						? 1 : (double)sydots / (double)sxdots / screenaspect);
+				/* bypass for VESA virtual screen */
+				ftemp = finalaspectratio *
+					((dotmode == DOTMODE_VESA &&
+						((g_vesa_x_res && g_vesa_x_res != sxdots) ||
+						 (g_vesa_y_res && g_vesa_y_res != sydots)))
+					? 1 : (double)sydots / (double)sxdots / screenaspect);
 				if ((xdots = viewxdots) != 0)
-				{ /* xdots specified */
+				{	/* xdots specified */
 					if ((ydots = viewydots) == 0) /* calc ydots? */
+					{
 						ydots = (int)((double)xdots * ftemp + 0.5);
+					}
 				}
 				else if (finalaspectratio <= screenaspect)
 				{
@@ -213,14 +219,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				else if (((xdots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (ydots <= 1)) /* work with the sound feature */
 					&& !(evolving&1))
-				{ /* so ssg works */
+				{	/* so ssg works */
 					/* but no check if in evolve mode to allow lots of small views*/
 					stopmsg(0, "View window too small; using full screen.");
 					viewwindow = 0;
 					xdots = sxdots;
 					ydots = sydots;
 				}
-				if ((evolving&1) && (curfractalspecific->flags&INFCALC))
+				if ((evolving & 1) && (curfractalspecific->flags & INFCALC))
 				{
 					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
 					evolving = evolving -1;
@@ -228,7 +234,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					xdots = sxdots;
 					ydots = sydots;
 				}
-				if (evolving&1)
+				if (evolving & 1)
 				{
 					xdots = (sxdots / gridsz)-!((evolving & NOGROUT)/NOGROUT);
 					xdots = xdots - (xdots % 4); /* trim to multiple of 4 for SSG */
@@ -244,22 +250,28 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			dxsize = xdots - 1;            /* convert just once now */
 			dysize = ydots - 1;
 		}
-		if (savedac == 0)
-			savedac = 2;                    /* assume we save next time (except jb) */
-		else
-			savedac = 1;                      /* assume we save next time */
+		/* assume we save next time (except jb) */
+		savedac = (savedac == 0) ? 2 : 1;
 		if (initbatch == 0)
+		{
 			lookatmouse = -PAGE_UP;        /* mouse left button == pgup */
+		}
 
 		if (showfile == 0)
 		{               /* loading an image */
 			outln_cleanup = NULL;          /* outln routine can set this */
 			if (display3d)                 /* set up 3D decoding */
+			{
 				outln = call_line3d;
+			}
 			else if (filetype >= 1)         /* old .tga format input file */
+			{
 				outln = outlin16;
+			}
 			else if (comparegif)            /* debug 50 */
+			{
 				outln = cmp_line;
+			}
 			else if (pot16bit)
 			{            /* .pot format input file */
 				if (pot_startdisk() < 0)
@@ -277,9 +289,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				outln = pot_line;
 			}
 			else if ((soundflag&7) > 1 && !evolving) /* regular gif/fra input file */
+			{
 				outln = sound_line;      /* sound decoding */
+			}
 			else
+			{
 				outln = out_line;        /* regular decoding */
+			}
 			if (filetype == 0)
 			{
 				if (debugflag==2224)
@@ -288,15 +304,20 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					sprintf(msg,"floatflag=%d",usr_floatflag);
 					stopmsg(STOPMSG_NO_BUZZER,(char *)msg);
 				}
-
 				i = funny_glasses_call(gifview);
 			}
 			else
+			{
 				i = funny_glasses_call(tgaview);
+			}
 			if (outln_cleanup)              /* cleanup routine defined? */
+			{
 				(*outln_cleanup)();
+			}
 			if (i == 0)
+			{
 				driver_buzzer(0);
+			}
 			else
 			{
 				calc_status = -1;
@@ -311,9 +332,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		zoomoff = 1;                      /* zooming is enabled */
 		if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
+		{
 			zoomoff = 0;                   /* for these cases disable zooming */
+		}
 		if (!evolving)
+		{
 			calcfracinit();
+		}
 		driver_schedule_alarm(1);
 
 		sxmin = xxmin; /* save 3 corners for zoom.c ref points */
@@ -342,9 +367,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		{               /* image has been loaded */
 			showfile = 1;
 			if (initbatch == 1 && calc_status == 2)
+			{
 				initbatch = -1; /* flag to finish calc before save */
+			}
 			if (loaded3d)      /* 'r' of image created with '3' */
+			{
 				display3d = 1;  /* so set flag for 'b' command */
+			}
 		}
 		else
 		{                            /* draw an image */
@@ -356,16 +385,18 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				saveticks = abs(initsavetime);
 				saveticks *= 1092; /* bios ticks/minute */
 				if ((saveticks & 65535L) == 0)
+				{
 					++saveticks; /* make low word nonzero */
+				}
 				finishrow = -1;
             }
 			browsing = FALSE;      /* regenerate image, turn off browsing */
- /*rb*/
+			/*rb*/
 			name_stack_ptr = -1;   /* reset pointer */
 			browsename[0] = '\0';  /* null */
 			if (viewwindow && (evolving&1) && (calc_status != 4))
-			/*generate a set of images with varied parameters on each one*/
 			{
+				/* generate a set of images with varied parameters on each one */
 				int grout,ecount,tmpxdots,tmpydots,gridsqr;
 				struct evolution_info resume_e_info;
 				GENEBASE gene[NUMGENES];
@@ -415,7 +446,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				tmpxdots = xdots+grout;
 				tmpydots = ydots+grout;
 				gridsqr = gridsz * gridsz;
-				while ( ecount < gridsqr )
+				while (ecount < gridsqr)
 				{
 					spiralmap(ecount); /* sets px & py */
 					sxoffs = tmpxdots * px;
@@ -424,7 +455,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					fiddleparms(gene, ecount);
 					calcfracinit();
 					if (calcfract() == -1)
+					{
 						goto done;
+					}
 					ecount ++;
 				}
 done:
@@ -436,10 +469,12 @@ done:
 					driver_buzzer(0); /* finished!! */
 				}
 				else
-				{ /* interrupted screen generation, save info */
+				{	/* interrupted screen generation, save info */
 					/* TODO: MemoryAlloc */
 					if (evolve_handle == 0)
+					{
 						evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
+					}
 					resume_e_info.paramrangex     = paramrangex;
 					resume_e_info.paramrangey     = paramrangey;
 					resume_e_info.opx             = opx;
@@ -476,7 +511,9 @@ done:
 			{
 				i = calcfract();       /* draw the fractal using "C" */
 				if (i == 0)
+				{
 					driver_buzzer(0); /* finished!! */
+				}
 			}
 
 			saveticks = 0;                 /* turn off autosave timer */
@@ -540,7 +577,9 @@ resumeloop:                             /* return here on failed overlays */
 				else      /* wait for a real keystroke */
 				{
 					if (autobrowse && !no_sub_images)
+					{
 						kbdchar = 'l';
+					}
 					else
 					{
 						driver_wait_key_pressed(0);
@@ -549,8 +588,10 @@ resumeloop:                             /* return here on failed overlays */
 					if (kbdchar == ESC || kbdchar == 'm' || kbdchar == 'M')
 					{
 						if (kbdchar == ESC && escape_exit != 0)
+						{
 							/* don't ask, just get out */
 							goodbye();
+						}
 						driver_stack_screen();
 #ifndef XFRACT
 						kbdchar = main_menu(1);
@@ -609,12 +650,15 @@ resumeloop:                             /* return here on failed overlays */
 					while (driver_key_pressed())
 						driver_get_key();
 */
-					if (debugflag == 50)
-						kbdchar = 'r';
-					else
-						kbdchar = 's';
-					if (initbatch == 1) initbatch = 2;
-					if (initbatch == 4) initbatch = 5;
+					kbdchar = (debugflag == 50) ? 'r' : 's';
+					if (initbatch == 1)
+					{
+						initbatch = 2;
+					}
+					if (initbatch == 4)
+					{
+						initbatch = 5;
+					}
 				}
 				else
 				{
@@ -660,7 +704,9 @@ resumeloop:                             /* return here on failed overlays */
 			default:			break;
 			}
 			if (zoomoff == 1 && *kbdmore == 1) /* draw/clear a zoom box? */
+			{
 				drawbox(1);
+			}
 			if (driver_resize())
 			{
 				calc_status = -1;
