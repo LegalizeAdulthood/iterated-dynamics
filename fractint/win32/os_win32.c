@@ -18,8 +18,6 @@
 #include "helpdefs.h"
 #include "wintext.h"
 
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof((ary_)[0]))
-
 /* External declarations */
 extern void check_samename(void);
 
@@ -434,12 +432,11 @@ int getakey(void)
 int getakeynohelp(void)
 {
 	int ch;
-	while (1)
+	do
 	{
-		ch = getakey();
-		if (ch != F1)
-			break;
+		ch = driver_get_key();
 	}
+	while (ch == F1);
 	return ch;
 }
 
