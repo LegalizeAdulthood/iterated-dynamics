@@ -657,44 +657,44 @@ translatekey(int ch)
     return ch;
   else {
     switch (ch) {
-    case 'I':		return INSERT;
+    case 'I':		return FIK_INSERT;
     case 'D':		return FIK_DELETE;
-    case 'U':		return PAGE_UP;
-    case 'N':		return PAGE_DOWN;
-    case CTL('O'):	return CTL_HOME;
-    case CTL('E'):	return CTL_END;
-    case 'H':		return LEFT_ARROW;
-    case 'L':		return RIGHT_ARROW;
-    case 'K':		return UP_ARROW;
-    case 'J':		return DOWN_ARROW;
-    case 1115:		return LEFT_ARROW_2;
-    case 1116:		return RIGHT_ARROW_2;
-    case 1141:		return UP_ARROW_2;
-    case 1145:		return DOWN_ARROW_2;
-    case 'O':		return HOME;
-    case 'E':		return END;
-    case '\n':		return ENTER;
-    case CTL('T'):	return CTL_ENTER;
-    case -2:		return CTL_ENTER_2;
-    case CTL('U'):	return CTL_PAGE_UP;
-    case CTL('N'):	return CTL_PAGE_DOWN;
-    case '{':		return CTL_MINUS;
-    case '}':		return CTL_PLUS;
+    case 'U':		return FIK_PAGE_UP;
+    case 'N':		return FIK_PAGE_DOWN;
+    case CTL('O'):	return FIK_CTL_HOME;
+    case CTL('E'):	return FIK_CTL_END;
+    case 'H':		return FIK_LEFT_ARROW;
+    case 'L':		return FIK_RIGHT_ARROW;
+    case 'K':		return FIK_UP_ARROW;
+    case 'J':		return FIK_DOWN_ARROW;
+    case 1115:		return FIK_LEFT_ARROW_2;
+    case 1116:		return FIK_RIGHT_ARROW_2;
+    case 1141:		return FIK_UP_ARROW_2;
+    case 1145:		return FIK_DOWN_ARROW_2;
+    case 'O':		return FIK_HOME;
+    case 'E':		return FIK_END;
+    case '\n':		return FIK_ENTER;
+    case CTL('T'):	return FIK_CTL_ENTER;
+    case -2:		return FIK_CTL_ENTER_2;
+    case CTL('U'):	return FIK_CTL_PAGE_UP;
+    case CTL('N'):	return FIK_CTL_PAGE_DOWN;
+    case '{':		return FIK_CTL_MINUS;
+    case '}':		return FIK_CTL_PLUS;
 #if 0
       /* we need ^I for tab */
-    case CTL('I'):	return CTL_INSERT;
+    case CTL('I'):	return FIK_CTL_INSERT;
 #endif
-    case CTL('D'):	return CTL_DEL;
-    case '!':		return F1;
-    case '@':		return F2;
-    case '#':		return F3;
-    case '$':		return F4;
-    case '%':		return F5;
-    case '^':		return F6;
-    case '&':		return F7;
-    case '*':		return F8;
-    case '(':		return F9;
-    case ')':		return F10;
+    case CTL('D'):	return FIK_CTL_DEL;
+    case '!':		return FIK_F1;
+    case '@':		return FIK_F2;
+    case '#':		return FIK_F3;
+    case '$':		return FIK_F4;
+    case '%':		return FIK_F5;
+    case '^':		return FIK_F6;
+    case '&':		return FIK_F7;
+    case '*':		return FIK_F8;
+    case '(':		return FIK_F9;
+    case ')':		return FIK_F10;
     default:
       return ch;
     }
@@ -721,7 +721,7 @@ handleesc(DriverDisk *di)
 {
   int ch1, ch2, ch3;
   if (di->simple_input)
-    return ESC;
+    return FIK_ESC;
 
 #ifdef __hpux
   /* HP escape key sequences. */
@@ -731,36 +731,36 @@ handleesc(DriverDisk *di)
     ch1 = getachar(di);
   }
   if (ch1 == -1)
-    return ESC;
+    return FIK_ESC;
 
   switch (ch1) {
   case 'A':
-    return UP_ARROW;
+    return FIK_UP_ARROW;
   case 'B':
-    return DOWN_ARROW;
+    return FIK_DOWN_ARROW;
   case 'D':
-    return LEFT_ARROW;
+    return FIK_LEFT_ARROW;
   case 'C':
-    return RIGHT_ARROW;
+    return FIK_RIGHT_ARROW;
   case 'd':
-    return HOME;
+    return FIK_HOME;
   }
   if (ch1 != '[')
-    return ESC;
+    return FIK_ESC;
   ch1 = getachar(di);
   if (ch1 == -1) {
     delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar(di);
   }
   if (ch1 == -1 || !isdigit(ch1))
-    return ESC;
+    return FIK_ESC;
   ch2 = getachar(di);
   if (ch2 == -1) {
     delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch2 = getachar(di);
   }
   if (ch2 == -1)
-    return ESC;
+    return FIK_ESC;
   if (isdigit(ch2)) {
     ch3 = getachar(di);
     if (ch3 == -1) {
@@ -768,38 +768,38 @@ handleesc(DriverDisk *di)
       ch3 = getachar(di);
     }
     if (ch3 != '~')
-      return ESC;
+      return FIK_ESC;
     ch2 = (ch2-'0')*10+ch3-'0';
   } else if (ch3 != '~') {
-    return ESC;
+    return FIK_ESC;
   } else {
     ch2 = ch2-'0';
   }
   switch (ch2) {
   case 5:
-    return PAGE_UP;
+    return FIK_PAGE_UP;
   case 6:
-    return PAGE_DOWN;
+    return FIK_PAGE_DOWN;
   case 29:
-    return F1; /* help */
+    return FIK_F1; /* help */
   case 11:
-    return F1;
+    return FIK_F1;
   case 12:
-    return F2;
+    return FIK_F2;
   case 13:
-    return F3;
+    return FIK_F3;
   case 14:
-    return F4;
+    return FIK_F4;
   case 15:
-    return F5;
+    return FIK_F5;
   case 17:
-    return F6;
+    return FIK_F6;
   case 18:
-    return F7;
+    return FIK_F7;
   case 19:
-    return F8;
+    return FIK_F8;
   default:
-    return ESC;
+    return FIK_ESC;
   }
 #else
   /* SUN escape key sequences */
@@ -809,23 +809,23 @@ handleesc(DriverDisk *di)
     ch1 = getachar(di);
   }
   if (ch1 != '[')		/* See if we have esc [ */
-    return ESC;
+    return FIK_ESC;
   ch1 = getachar(di);
   if (ch1 == -1) {
     delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar(di);
   }
   if (ch1 == -1)
-    return ESC;
+    return FIK_ESC;
   switch (ch1) {
   case 'A':		/* esc [ A */
-    return UP_ARROW;
+    return FIK_UP_ARROW;
   case 'B':		/* esc [ B */
-    return DOWN_ARROW;
+    return FIK_DOWN_ARROW;
   case 'C':		/* esc [ C */
-    return RIGHT_ARROW;
+    return FIK_RIGHT_ARROW;
   case 'D':		/* esc [ D */
-    return LEFT_ARROW;
+    return FIK_LEFT_ARROW;
   default:
     break;
   }
@@ -837,18 +837,18 @@ handleesc(DriverDisk *di)
   if (ch2 == '~') {		/* esc [ ch1 ~ */
     switch (ch1) {
     case '2':		/* esc [ 2 ~ */
-      return INSERT;
+      return FIK_INSERT;
     case '3':		/* esc [ 3 ~ */
       return FIK_DELETE;
     case '5':		/* esc [ 5 ~ */
-      return PAGE_UP;
+      return FIK_PAGE_UP;
     case '6':		/* esc [ 6 ~ */
-      return PAGE_DOWN;
+      return FIK_PAGE_DOWN;
     default:
-      return ESC;
+      return FIK_ESC;
     }
   } else if (ch2 == -1) {
-    return ESC;
+    return FIK_ESC;
   } else {
     ch3 = getachar(di);
     if (ch3 == -1) {
@@ -856,42 +856,42 @@ handleesc(DriverDisk *di)
       ch3 = getachar(di);
     }
     if (ch3 != '~') {	/* esc [ ch1 ch2 ~ */
-      return ESC;
+      return FIK_ESC;
     }
     if (ch1 == '1') {
       switch (ch2) {
       case '1':	/* esc [ 1 1 ~ */
-	return F1;
+	return FIK_F1;
       case '2':	/* esc [ 1 2 ~ */
-	return F2;
+	return FIK_F2;
       case '3':	/* esc [ 1 3 ~ */
-	return F3;
+	return FIK_F3;
       case '4':	/* esc [ 1 4 ~ */
-	return F4;
+	return FIK_F4;
       case '5':	/* esc [ 1 5 ~ */
-	return F5;
+	return FIK_F5;
       case '6':	/* esc [ 1 6 ~ */
-	return F6;
+	return FIK_F6;
       case '7':	/* esc [ 1 7 ~ */
-	return F7;
+	return FIK_F7;
       case '8':	/* esc [ 1 8 ~ */
-	return F8;
+	return FIK_F8;
       case '9':	/* esc [ 1 9 ~ */
-	return F9;
+	return FIK_F9;
       default:
-	return ESC;
+	return FIK_ESC;
       }
     } else if (ch1 == '2') {
       switch (ch2) {
       case '0':	/* esc [ 2 0 ~ */
-	return F10;
+	return FIK_F10;
       case '8':	/* esc [ 2 8 ~ */
-	return F1;  /* HELP */
+	return FIK_F1;  /* HELP */
       default:
-	return ESC;
+	return FIK_ESC;
       }
     } else {
-      return ESC;
+      return FIK_ESC;
     }
   }
 #endif
@@ -943,7 +943,7 @@ disk_get_key(Driver *drv, int block)
   while (1) {
     if (input_pending()) {
       int ch = getachar(di);
-      return (ch == ESC) ? handleesc(di) : translatekey(ch);
+      return (ch == FIK_ESC) ? handleesc(di) : translatekey(ch);
     }
 
     /* Don't check X events every time, since that is expensive */

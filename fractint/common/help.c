@@ -32,7 +32,6 @@
 #include "drivers.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
-#define ALT_F1           1104
 #define ACTION_CALL         0        /* values returned by help_topic() */
 #define ACTION_PREV         1
 #define ACTION_PREV2        2        /* special - go back two topics */
@@ -578,8 +577,8 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
    link = NULL;   /* just for warning */
    switch (key)
       {
-      case TAB:      return ( (curr_link>=num_link-1) ? -1 : curr_link+1 );
-      case BACK_TAB: return ( (curr_link<=0)          ? -1 : curr_link-1 );
+      case FIK_TAB:      return ( (curr_link>=num_link-1) ? -1 : curr_link+1 );
+      case FIK_SHF_TAB: return ( (curr_link<=0)          ? -1 : curr_link-1 );
       default:       assert(0);  return (-1);
       }
    }
@@ -683,7 +682,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
       switch(key)
          {
-         case PAGE_DOWN:
+         case FIK_PAGE_DOWN:
             if (page<num_pages-1)
                {
                page++;
@@ -691,7 +690,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case PAGE_UP:
+         case FIK_PAGE_UP:
             if (page>0)
                {
                page--;
@@ -699,7 +698,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case HOME:
+         case FIK_HOME:
             if ( page != 0 )
                {
                page = 0;
@@ -709,7 +708,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                do_move_link(link_table, num_link, &curr_link, NULL, 0);
             break;
 
-         case END:
+         case FIK_END:
             if ( page != num_pages-1 )
                {
                page = num_pages-1;
@@ -719,7 +718,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                do_move_link(link_table, num_link, &curr_link, NULL, num_link-1);
             break;
 
-         case TAB:
+         case FIK_TAB:
             if ( !do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
                  page<num_pages-1 )
                {
@@ -728,7 +727,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case BACK_TAB:
+         case FIK_SHF_TAB:
             if ( !do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
                  page>0 )
                {
@@ -737,7 +736,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case DOWN_ARROW:
+         case FIK_DOWN_ARROW:
             if ( !do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
                  page<num_pages-1 )
                {
@@ -746,7 +745,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case UP_ARROW:
+         case FIK_UP_ARROW:
             if ( !do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
                  page>0 )
                {
@@ -755,31 +754,31 @@ static int help_topic(HIST *curr, HIST *next, int flags)
                }
             break;
 
-         case LEFT_ARROW:
+         case FIK_LEFT_ARROW:
             do_move_link(link_table, num_link, &curr_link, find_link_leftright, 1);
             break;
 
-         case RIGHT_ARROW:
+         case FIK_RIGHT_ARROW:
             do_move_link(link_table, num_link, &curr_link, find_link_leftright, 0);
             break;
 
-         case ESC:         /* exit help */
+         case FIK_ESC:         /* exit help */
             action = ACTION_QUIT;
             break;
 
-         case BACKSPACE:   /* prev topic */
-         case ALT_F1:
+         case FIK_BACKSPACE:   /* prev topic */
+         case FIK_ALT_F1:
             if (flags & F_HIST)
                action = ACTION_PREV;
             break;
 
-         case F1:    /* help index */
+         case FIK_F1:    /* help index */
             if (!(flags & F_INDEX))
                action = ACTION_INDEX;
             break;
 
-         case ENTER:
-         case ENTER_2:
+         case FIK_ENTER:
+         case FIK_ENTER_2:
             if (num_link > 0)
                {
                next->topic_num = link_table[curr_link].topic_num;
@@ -911,9 +910,9 @@ int help(int action)
                {
                switch (driver_get_key())
                   {
-                  case ESC:      action = ACTION_QUIT;  break;
-                  case ALT_F1:   action = ACTION_PREV;  break;
-                  case F1:       action = ACTION_INDEX; break;
+                  case FIK_ESC:      action = ACTION_QUIT;  break;
+                  case FIK_ALT_F1:   action = ACTION_PREV;  break;
+                  case FIK_F1:       action = ACTION_INDEX; break;
                   } /* switch */
                } /* while */
             }
@@ -1348,7 +1347,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
    while ( driver_key_pressed() )
       {
       key = driver_get_key();
-      if ( key == ESC )
+      if ( key == FIK_ESC )
          return (0);    /* user abort */
       }
 

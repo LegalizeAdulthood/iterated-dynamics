@@ -243,17 +243,17 @@ static fractint_event keyboard_event(int key)
 	}
 	mapping[] =
 	{
-		CONTROL_A,	FE_ANT_AUTOMATON,
-		CONTROL_B,	FE_BROWSE_PARAMS,
-		CONTROL_E,	FE_EVOLVER_PARAMS,
-		CONTROL_F,	FE_SOUND_PARAMS,
-		BACKSPACE,	FE_REVERSE_HISTORY,
-		TAB,		FE_IMAGE_INFO,
-		CONTROL_P,	FE_PRINT_IMAGE,
-		CONTROL_S,	FE_STEREOGRAM,
-		ESC,		FE_QUIT,
+		FIK_CTL_A,	FE_ANT_AUTOMATON,
+		FIK_CTL_B,	FE_BROWSE_PARAMS,
+		FIK_CTL_E,	FE_EVOLVER_PARAMS,
+		FIK_CTL_F,	FE_SOUND_PARAMS,
+		FIK_BACKSPACE,	FE_REVERSE_HISTORY,
+		FIK_TAB,		FE_IMAGE_INFO,
+		FIK_CTL_P,	FE_PRINT_IMAGE,
+		FIK_CTL_S,	FE_STEREOGRAM,
+		FIK_ESC,		FE_QUIT,
 		FIK_SPACE,	FE_TOGGLE_JULIA,
-		INSERT,		FE_RESTART,
+		FIK_INSERT,		FE_RESTART,
 		DELETE,		FE_SELECT_VIDEO_MODE,
 		'@',		FE_EXECUTE_COMMANDS,
 		'#',		FE_3D_OVERLAY,
@@ -382,7 +382,7 @@ int getkeyint(int block)
 		return ch;
     }
     curkey = driver_get_key(); //0);
-    if (slides==1 && curkey == ESC)
+    if (slides==1 && curkey == FIK_ESC)
 	{
 		stopslideshow();
 		return 0;
@@ -396,7 +396,7 @@ int getkeyint(int block)
     if (curkey==0 && block)
 	{
 		curkey = driver_get_key(); //1);
-		if (slides==1 && curkey == ESC)
+		if (slides==1 && curkey == FIK_ESC)
 		{
 			stopslideshow();
 			return 0;
@@ -436,7 +436,7 @@ int getakeynohelp(void)
 	{
 		ch = driver_get_key();
 	}
-	while (ch == F1);
+	while (ch == FIK_F1);
 	return ch;
 }
 
@@ -446,7 +446,7 @@ int keypressed(void)
 	if (ch)
 	{
 		keybuffer = ch;
-		if (F1 == ch && helpmode)
+		if (FIK_F1 == ch && helpmode)
 		{
 			if (!inside_help)
 			{
@@ -457,7 +457,7 @@ int keypressed(void)
 				ch = 0;
 			}
 		}
-		else if (TAB == ch && tabmode)
+		else if (FIK_TAB == ch && tabmode)
 		{
 			keybuffer = 0;
 			tab_display();

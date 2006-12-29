@@ -468,7 +468,7 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 	k = (i << 8) + j;
 	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
 	{
-		j = 0;       /* send flag: special key down */
+		//j = 0;       /* send flag: special key down */
 		k = 0xff00 + (unsigned int) vk;
 	}
 	if (j == 0)        /* use this call only for non-ASCII keys */
@@ -490,7 +490,7 @@ static void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	j = 1;
 	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
 	{
-		j = 0;       /* send flag: special key up */
+		//j = 0;       /* send flag: special key up */
 		k = 0xfe00 + vk;
 	}
 	if (j == 0)        /* use this call only for non-ASCII keys */

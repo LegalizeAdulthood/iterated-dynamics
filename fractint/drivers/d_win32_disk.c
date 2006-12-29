@@ -88,19 +88,19 @@ extern int writevideopalette(void);
 #define MODE28(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 28)
 static VIDEOINFO modes[] =
 {
-	MODE19("Win32 Disk Video         ", "                        ", F2,  320,  200),
-	MODE19("Win32 Disk Video         ", "                        ", F3,  320,  400),
-	MODE19("Win32 Disk Video         ", "                        ", F4,  360,  480),
-	MODE19("Win32 Disk Video         ", "                        ", F5,  640,  400),
-	MODE19("Win32 Disk Video         ", "                        ", F6,  640,  480),
-	MODE27("Win32 Disk Video         ", "                        ", F7,  800,  600),
-	MODE27("Win32 Disk Video         ", "                        ", F8,  1024, 768),
-	MODE28("Win32 Disk Video         ", "                        ", F9,  1280, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", SF1, 1024, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", SF2, 1600, 1200),
-	MODE28("Win32 Disk Video         ", "                        ", SF3, 2048, 2048),
-	MODE28("Win32 Disk Video         ", "                        ", SF4, 4096, 4096),
-	MODE28("Win32 Disk Video         ", "                        ", SF5, 8192, 8192)
+	MODE19("Win32 Disk Video         ", "                        ", FIK_F2,  320,  200),
+	MODE19("Win32 Disk Video         ", "                        ", FIK_F3,  320,  400),
+	MODE19("Win32 Disk Video         ", "                        ", FIK_F4,  360,  480),
+	MODE19("Win32 Disk Video         ", "                        ", FIK_F5,  640,  400),
+	MODE19("Win32 Disk Video         ", "                        ", FIK_F6,  640,  480),
+	MODE27("Win32 Disk Video         ", "                        ", FIK_F7,  800,  600),
+	MODE27("Win32 Disk Video         ", "                        ", FIK_F8,  1024, 768),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_F9,  1280, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_SF1, 1024, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_SF2, 1600, 1200),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_SF3, 2048, 2048),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_SF4, 4096, 4096),
+	MODE28("Win32 Disk Video         ", "                        ", FIK_SF5, 8192, 8192)
 };
 #undef MODE28
 #undef MODE27
@@ -689,44 +689,44 @@ translatekey(int ch)
 	{
 		switch (ch)
 		{
-		case 'I':		return INSERT;
+		case 'I':		return FIK_INSERT;
 		case 'D':		return FIK_DELETE;
-		case 'U':		return PAGE_UP;
-		case 'N':		return PAGE_DOWN;
-		case CTL('O'):	return CTL_HOME;
-		case CTL('E'):	return CTL_END;
-		case 'H':		return LEFT_ARROW;
-		case 'L':		return RIGHT_ARROW;
-		case 'K':		return UP_ARROW;
-		case 'J':		return DOWN_ARROW;
-		case 1115:		return LEFT_ARROW_2;
-		case 1116:		return RIGHT_ARROW_2;
-		case 1141:		return UP_ARROW_2;
-		case 1145:		return DOWN_ARROW_2;
-		case 'O':		return HOME;
-		case 'E':		return END;
-		case '\n':		return ENTER;
-		case CTL('T'):	return CTL_ENTER;
-		case -2:		return CTL_ENTER_2;
-		case CTL('U'):	return CTL_PAGE_UP;
-		case CTL('N'):	return CTL_PAGE_DOWN;
-		case '{':		return CTL_MINUS;
-		case '}':		return CTL_PLUS;
+		case 'U':		return FIK_PAGE_UP;
+		case 'N':		return FIK_PAGE_DOWN;
+		case CTL('O'):	return FIK_CTL_HOME;
+		case CTL('E'):	return FIK_CTL_END;
+		case 'H':		return FIK_LEFT_ARROW;
+		case 'L':		return FIK_RIGHT_ARROW;
+		case 'K':		return FIK_UP_ARROW;
+		case 'J':		return FIK_DOWN_ARROW;
+		case 1115:		return FIK_LEFT_ARROW_2;
+		case 1116:		return FIK_RIGHT_ARROW_2;
+		case 1141:		return FIK_UP_ARROW_2;
+		case 1145:		return FIK_DOWN_ARROW_2;
+		case 'O':		return FIK_HOME;
+		case 'E':		return FIK_END;
+		case '\n':		return FIK_ENTER;
+		case CTL('T'):	return FIK_CTL_ENTER;
+		case -2:		return FIK_CTL_ENTER_2;
+		case CTL('U'):	return FIK_CTL_PAGE_UP;
+		case CTL('N'):	return FIK_CTL_PAGE_DOWN;
+		case '{':		return FIK_CTL_MINUS;
+		case '}':		return FIK_CTL_PLUS;
 #if 0
 		/* we need ^I for tab */
-		case CTL('I'):	return CTL_INSERT;
+		case CTL('I'):	return FIK_CTL_INSERT;
 #endif
-		case CTL('D'):	return CTL_DEL;
-		case '!':		return F1;
-		case '@':		return F2;
-		case '#':		return F3;
-		case '$':		return F4;
-		case '%':		return F5;
-		case '^':		return F6;
-		case '&':		return F7;
-		case '*':		return F8;
-		case '(':		return F9;
-		case ')':		return F10;
+		case CTL('D'):	return FIK_CTL_DEL;
+		case '!':		return FIK_F1;
+		case '@':		return FIK_F2;
+		case '#':		return FIK_F3;
+		case '$':		return FIK_F4;
+		case '%':		return FIK_F5;
+		case '^':		return FIK_F6;
+		case '&':		return FIK_F7;
+		case '*':		return FIK_F8;
+		case '(':		return FIK_F9;
+		case ')':		return FIK_F10;
 		default:
 			return ch;
 		}
@@ -780,7 +780,7 @@ win32_disk_get_key(Driver *drv)
 	{
 		extern int inside_help;
 		keybuffer = ch;
-		if (F1 == ch && helpmode && !inside_help)
+		if (FIK_F1 == ch && helpmode && !inside_help)
 		{
 			keybuffer = 0;
 			inside_help = 1;
@@ -788,7 +788,7 @@ win32_disk_get_key(Driver *drv)
 			inside_help = 0;
 			ch = 0;
 		}
-		else if (TAB == ch && tabmode)
+		else if (FIK_TAB == ch && tabmode)
 		{
 			keybuffer = 0;
 			tab_display();

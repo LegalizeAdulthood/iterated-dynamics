@@ -439,15 +439,15 @@ choose_vars_restart:
    i = fullscreen_prompt(hdg,k+1,choices,uvalues,28,NULL);
 
    switch(i) {
-     case F2: /* set all off */
+     case FIK_F2: /* set all off */
        for (num = MAXPARAMS; num < NUMGENES; num++)
           gene[num].mutate = 0;
        goto choose_vars_restart;
-     case F3: /* set all on..alternate x and y for field map */
+     case FIK_F3: /* set all on..alternate x and y for field map */
        for (num = MAXPARAMS; num < NUMGENES; num ++ )
           gene[num].mutate = (char)((num % 2) + 1);
        goto choose_vars_restart;
-     case F4: /* Randomize all */
+     case FIK_F4: /* Randomize all */
        for (num =MAXPARAMS; num < NUMGENES; num ++ )
           gene[num].mutate = (char)(rand() % 6);
        goto choose_vars_restart;
@@ -561,19 +561,19 @@ choose_vars_restart:
    i = fullscreen_prompt(hdg,k+1,choices,uvalues,92,NULL);
 
    switch(i) {
-     case F2: /* set all off */
+     case FIK_F2: /* set all off */
        for (num = 0; num < MAXPARAMS; num++)
           gene[num].mutate = 0;
        goto choose_vars_restart;
-     case F3: /* set all on..alternate x and y for field map */
+     case FIK_F3: /* set all on..alternate x and y for field map */
        for (num = 0; num < MAXPARAMS; num ++ )
           gene[num].mutate = (char)((num % 2) + 1);
        goto choose_vars_restart;
-     case F4: /* Randomize all */
+     case FIK_F4: /* Randomize all */
        for (num =0; num < MAXPARAMS; num ++ )
           gene[num].mutate = (char)(rand() % 6);
        goto choose_vars_restart;
-     case F6: /* go to second screen, put array away first */
+     case FIK_F6: /* go to second screen, put array away first */
        MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
        chngd = get_the_rest();
        MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
@@ -729,13 +729,13 @@ get_evol_restart:
       return(-1);
    }
 
-   if (i == F4) {
+   if (i == FIK_F4) {
       set_current_params();
       fiddlefactor = 1;
       fiddle_reduction = 1.0;
       goto get_evol_restart;
    }
-   if (i==F2 ) {
+   if (i==FIK_F2 ) {
       paramrangex = paramrangex / 2;
       opx = newopx = opx + paramrangex / 2;
       paramrangey = paramrangey / 2;
@@ -743,7 +743,7 @@ get_evol_restart:
       fiddlefactor = fiddlefactor / 2;
       goto get_evol_restart;
    }
-   if (i==F3 ) {
+   if (i==FIK_F3 ) {
     double centerx, centery;
       centerx = opx + paramrangex / 2;
       paramrangex = paramrangex * 2;
@@ -763,7 +763,7 @@ get_evol_restart:
 
    viewwindow = evolving = uvalues[++k].uval.ch.val;
 
-   if (!evolving && i != F6)  /* don't need any of the other parameters JCO 12JUL2002 */
+   if (!evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
       return(1);              /* the following code can set evolving even if it's off */
 
    gridsz = uvalues[++k].uval.ival;
@@ -811,7 +811,7 @@ get_evol_restart:
 
    if (!evolving && (evolving == old_evolving)) i = 0;
 
-if (j==F6) {
+if (j==FIK_F6) {
       old_variations = get_variations();
       set_current_params();
       if (old_variations > 0)

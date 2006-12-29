@@ -1338,13 +1338,13 @@ rescan:  /* entry for changed browse parms */
 
       c=driver_get_key();
       switch (c) {
-         case RIGHT_ARROW:
-         case LEFT_ARROW:
-         case DOWN_ARROW:
-         case UP_ARROW:
+         case FIK_RIGHT_ARROW:
+         case FIK_LEFT_ARROW:
+         case FIK_DOWN_ARROW:
+         case FIK_UP_ARROW:
            cleartempmsg();
            drawindow(color_of_box,&winlist);/* dim last window */
-           if (c==RIGHT_ARROW || c== UP_ARROW) {
+           if (c==FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
               index++;                     /* shift attention to next window */
               if (index >= wincount) index=0;
            }
@@ -1359,8 +1359,8 @@ rescan:  /* entry for changed browse parms */
            showtempmsg(winlist.name);
            break;
 #ifndef XFRACT
-        case CTL_INSERT:
-          color_of_box += key_count(CTL_INSERT);
+        case FIK_CTL_INSERT:
+          color_of_box += key_count(FIK_CTL_INSERT);
           for (i=0 ; i < wincount ; i++) {
               MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
               drawindow(color_of_box,&winlist);
@@ -1369,8 +1369,8 @@ rescan:  /* entry for changed browse parms */
           drawindow(color_of_box,&winlist);
           break;
 
-        case CTL_DEL:
-          color_of_box -= key_count(CTL_DEL);
+        case FIK_CTL_DEL:
+          color_of_box -= key_count(FIK_CTL_DEL);
           for (i=0 ; i < wincount ; i++) {
               MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
               drawindow(color_of_box,&winlist);
@@ -1379,13 +1379,13 @@ rescan:  /* entry for changed browse parms */
           drawindow(color_of_box,&winlist);
           break;
 #endif
-        case ENTER:
-        case ENTER_2:   /* this file please */
+        case FIK_ENTER:
+        case FIK_ENTER_2:   /* this file please */
           strcpy(browsename,winlist.name);
           done = 1;
           break;
 
-        case ESC:
+        case FIK_ESC:
         case 'l':
         case 'L':
 #ifdef XFRACT

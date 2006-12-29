@@ -877,12 +877,12 @@ int tab_display_2(char *msg)
 again:
    driver_put_string(s_row,2,C_GENERAL_HI,msg);
    key=getakeynohelp();
-   if(key != ESC && key != BACKSPACE && key != TAB)
+   if(key != FIK_ESC && key != FIK_BACKSPACE && key != FIK_TAB)
    {
       sprintf(msg,"%d      ",key);
       goto again;
    }
-   if(key == BACKSPACE || key == TAB)
+   if(key == FIK_BACKSPACE || key == FIK_TAB)
       ret = 1;
    return(ret);
 }
@@ -1338,14 +1338,14 @@ top:
 	}
 #endif
 	key = getakeynohelp();
-	if (key == F6)
+	if (key == FIK_F6)
 	{
 		driver_stack_screen();
 		area();
 		driver_unstack_screen();
 		goto top;
 	}
-	else if (key == CTL_TAB || key == BACK_TAB || key == F7)
+	else if (key == FIK_CTL_TAB || key == FIK_SHF_TAB || key == FIK_F7)
 	{
 		if (tab_display_2(msg))
 		{

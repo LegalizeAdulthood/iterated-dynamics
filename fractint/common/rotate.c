@@ -110,12 +110,12 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
       kbdchar = driver_get_key();
       if (paused && (kbdchar != ' '
                  && kbdchar != 'c'
-                 && kbdchar != HOME
+                 && kbdchar != FIK_HOME
                  && kbdchar != 'C' ))
          paused = 0;                    /* clear paused condition       */
       switch (kbdchar) {
          case '+':                      /* '+' means rotate forward     */
-         case RIGHT_ARROW:              /* RightArrow = rotate fwd      */
+         case FIK_RIGHT_ARROW:              /* RightArrow = rotate fwd      */
             fkey = 0;
             direction = 1;
             last = rotate_max;
@@ -123,18 +123,18 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             incr = 999;
             break;
          case '-':                      /* '-' means rotate backward    */
-         case LEFT_ARROW:               /* LeftArrow = rotate bkwd      */
+         case FIK_LEFT_ARROW:               /* LeftArrow = rotate bkwd      */
             fkey = 0;
             direction = -1;
             last = rotate_lo;
             next = rotate_max;
             incr = 999;
             break;
-         case UP_ARROW:                 /* UpArrow means speed up       */
+         case FIK_UP_ARROW:                 /* UpArrow means speed up       */
             g_dac_learn = 1;
             if (++g_dac_count >= colors) --g_dac_count;
             break;
-         case DOWN_ARROW:               /* DownArrow means slow down    */
+         case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
             g_dac_learn = 1;
             if (g_dac_count > 1) g_dac_count--;
             break;
@@ -150,39 +150,39 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             step = kbdchar - '0';   /* change step-size */
             if (step > rotate_size) step = rotate_size;
             break;
-         case F1:                       /* F1 - F10:                    */
-         case F2:                       /* select a shading factor      */
-         case F3:
-         case F4:
-         case F5:
-         case F6:
-         case F7:
-         case F8:
-         case F9:
-         case F10:
+         case FIK_F1:                       /* FIK_F1 - FIK_F10:                    */
+         case FIK_F2:                       /* select a shading factor      */
+         case FIK_F3:
+         case FIK_F4:
+         case FIK_F5:
+         case FIK_F6:
+         case FIK_F7:
+         case FIK_F8:
+         case FIK_F9:
+         case FIK_F10:
 #ifndef XFRACT
             fkey = kbdchar-1058;
 #else
             switch (kbdchar) {
-               case F1:
+               case FIK_F1:
                   fkey = 1;break;
-               case F2:
+               case FIK_F2:
                   fkey = 2;break;
-               case F3:
+               case FIK_F3:
                   fkey = 3;break;
-               case F4:
+               case FIK_F4:
                   fkey = 4;break;
-               case F5:
+               case FIK_F5:
                   fkey = 5;break;
-               case F6:
+               case FIK_F6:
                   fkey = 6;break;
-               case F7:
+               case FIK_F7:
                   fkey = 7;break;
-               case F8:
+               case FIK_F8:
                   fkey = 8;break;
-               case F9:
+               case FIK_F9:
                   fkey = 9;break;
-               case F10:
+               case FIK_F10:
                   fkey = 10;break;
             }
 #endif
@@ -190,8 +190,8 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             fstep = 1;
             incr = 999;
             break;
-         case ENTER:                    /* enter key: randomize all colors */
-         case ENTER_2:                  /* also the Numeric-Keypad Enter */
+         case FIK_ENTER:                    /* enter key: randomize all colors */
+         case FIK_ENTER_2:                  /* also the Numeric-Keypad Enter */
             fkey = rand15()/3277 + 1;
             if (g_really_ega)              /* limit on EGAs */
                fkey = (fkey+1)>>1;
@@ -267,7 +267,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             pauserotate();              /* update palette and pause */
             break;
          case 'l':                      /* load colors from a specified map */
-#ifndef XFRACT /* L is used for RIGHT_ARROW in Unix keyboard mapping */
+#ifndef XFRACT /* L is used for FIK_RIGHT_ARROW in Unix keyboard mapping */
          case 'L':
 #endif
             load_palette();
@@ -280,10 +280,10 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             fkey = 0;                   /* disable random generation */
             pauserotate();              /* update palette and pause */
             break;
-         case ESC:                      /* escape */
+         case FIK_ESC:                      /* escape */
             more = 0;                   /* time to bail out */
             break;
-         case HOME:                     /* restore palette */
+         case FIK_HOME:                     /* restore palette */
             memcpy(g_dac_box,olddacbox,256*3);
             pauserotate();              /* pause */
             break;
@@ -291,14 +291,14 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (g_really_ega) break;       /* no sense on real EGAs */
             fkey = 0;                   /* disable random generation */
             if (kbdchar == 1084) set_palette(Black, White);
-            if (kbdchar == SF2) set_palette(Red, Yellow);
-            if (kbdchar == SF3) set_palette(Blue, Green);
-            if (kbdchar == SF4) set_palette(Black, Yellow);
-            if (kbdchar == SF5) set_palette(Black, Red);
-            if (kbdchar == SF6) set_palette(Black, Blue);
-            if (kbdchar == SF7) set_palette(Black, Green);
-            if (kbdchar == SF8) set_palette(Blue, Yellow);
-            if (kbdchar == SF9) set_palette(Red, Green);
+            if (kbdchar == FIK_SF2) set_palette(Red, Yellow);
+            if (kbdchar == FIK_SF3) set_palette(Blue, Green);
+            if (kbdchar == FIK_SF4) set_palette(Black, Yellow);
+            if (kbdchar == FIK_SF5) set_palette(Black, Red);
+            if (kbdchar == FIK_SF6) set_palette(Black, Blue);
+            if (kbdchar == FIK_SF7) set_palette(Black, Green);
+            if (kbdchar == FIK_SF8) set_palette(Blue, Yellow);
+            if (kbdchar == FIK_SF9) set_palette(Red, Green);
             if (kbdchar == 1093) set_palette(Green, White);
             if (kbdchar == 1094) set_palette2(Black, White);
             if (kbdchar == 1095) set_palette2(Red, Yellow);
