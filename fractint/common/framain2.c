@@ -63,9 +63,9 @@ void (*outln_cleanup) (void);
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {
    int     frommandel;                  /* if julia entered from mandel */
-   int     axmode=0, bxmode, cxmode, dxmode; /* video mode (BIOS ##)    */
+   int     axmode = 0, bxmode, cxmode, dxmode; /* video mode (BIOS ##)    */
    double  ftemp;                       /* fp temp                      */
-   int     i=0;                           /* temporary loop counters      */
+   int     i = 0;                           /* temporary loop counters      */
    int kbdchar;
    int mms_value;
    frommandel = 0;
@@ -119,14 +119,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				driver_set_video_mode(axmode, bxmode, cxmode, dxmode); /* switch video modes */
 				if (g_good_mode == 0)
 				{
-					static char msg[] = {"That video mode is not available with your adapter."};
 					if (driver_diskp())
 					{
 						askvideo = TRUE;
 					}
 					else
 					{
-						stopmsg(0,msg);
+						stopmsg(0, "That video mode is not available with your adapter.");
 						askvideo = TRUE;
 					}
 					g_init_mode = -1;
@@ -142,20 +141,16 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
 					if (xdots > sxdots && ydots > sydots)
 					{
-#ifndef XFRACT
-						sprintf(buf,"%Fs\n%Fs",(char *)msgxy1,(char *)msgxy2);
-#else
-						sprintf(buf,"%s\n%s",(char *)msgxy1,(char *)msgxy2);
-#endif
-						stopmsg(0,buf);
+						sprintf(buf, "%s\n%s", (char *) msgxy1, (char *) msgxy2);
+						stopmsg(0, buf);
 					}
 					else if (ydots > sydots)
 					{
-						stopmsg(0,msgxy2);
+						stopmsg(0, msgxy2);
 					}
 					else
 					{
-						stopmsg(0,msgxy1);
+						stopmsg(0, msgxy1);
 					}
 				}
 				xdots = sxdots;
@@ -210,8 +205,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				if (xdots > sxdots || ydots > sydots)
 				{
-					static char msg[] = {"View window too large; using full screen."};
-					stopmsg(0,msg);
+					stopmsg(0, "View window too large; using full screen.");
 					viewwindow = 0;
 					xdots = viewxdots = sxdots;
 					ydots = viewydots = sydots;
@@ -220,21 +214,19 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					|| (ydots <= 1)) /* work with the sound feature */
 					&& !(evolving&1))
 				{ /* so ssg works */
-						/* but no check if in evolve mode to allow lots of small views*/
-					static char msg[] = {"View window too small; using full screen."};
-					stopmsg(0,msg);
+					/* but no check if in evolve mode to allow lots of small views*/
+					stopmsg(0, "View window too small; using full screen.");
 					viewwindow = 0;
 					xdots = sxdots;
 					ydots = sydots;
 				}
 				if ((evolving&1) && (curfractalspecific->flags&INFCALC))
 				{
-					static char msg[] = {"Fractal doesn't terminate! switching off evolution."};
-					stopmsg(0,msg);
+					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
 					evolving = evolving -1;
 					viewwindow = FALSE;
-					xdots=sxdots;
-					ydots=sydots;
+					xdots = sxdots;
+					ydots = sydots;
 				}
 				if (evolving&1)
 				{
@@ -310,10 +302,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				calc_status = -1;
 				if (driver_key_pressed())
 				{
-					static char msg[] = {"*** load incomplete ***"};
 					driver_buzzer(1);
 					while (driver_key_pressed()) driver_get_key();
-					texttempmsg(msg);
+					texttempmsg("*** load incomplete ***");
 				}
 			}
         }
@@ -418,8 +409,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 														inside, outside, trigfn etc */
 				}
 				prmboxcount = 0;
-				dpx=paramrangex/(gridsz-1);
-				dpy=paramrangey/(gridsz-1);
+				dpx = paramrangex/(gridsz-1);
+				dpy = paramrangey/(gridsz-1);
 				grout  = !((evolving & NOGROUT)/NOGROUT);
 				tmpxdots = xdots+grout;
 				tmpydots = ydots+grout;
@@ -491,10 +482,7 @@ done:
 			saveticks = 0;                 /* turn off autosave timer */
 			if (driver_diskp() && i == 0) /* disk-video */
 			{
-				static char o_msg[] = {"Image has been completed"};
-				char msg[sizeof(o_msg)];
-				strcpy(msg,o_msg);
-				dvid_status(0,msg);
+				dvid_status(0, "Image has been completed");
 			}
 			diskisactive = 0;              /* flag for disk-video routines */
 		}
