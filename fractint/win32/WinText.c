@@ -649,6 +649,7 @@ unsigned int wintext_getkeypress(int option)
 
 	if (wintext_keypress_count == 0)
 	{
+		_ASSERTE(option == 0);
 		return 0;
 	}
 
