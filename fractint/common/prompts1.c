@@ -56,9 +56,6 @@ static  int get_light_params(void );
 static  int check_mapfile(void );
 static  int get_funny_glasses_params(void );
 
-/* fullscreen_choice options */
-#define CHOICEHELP      4
-
 #define GETFORMULA 0
 #define GETLSYS    1
 #define GETIFS     2
@@ -948,7 +945,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
          j = i;
 
    tname[0] = 0;
-   done = fullscreen_choice(CHOICEHELP+8,head,NULL,instr,numtypes,
+   done = fullscreen_choice(CHOICE_HELP+8,head,NULL,instr,numtypes,
          (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
    if (done >= 0) {
       done = choices[done]->num;
@@ -2599,7 +2596,7 @@ the online documentation."};
       for (i = 0; i < k; ++i)
          attributes[i] = 1;
       helpmode = HELP3DFILL;
-      i = fullscreen_choice(CHOICEHELP,hdg1,NULL,NULL,k,(char * *)choices,attributes,
+      i = fullscreen_choice(CHOICE_HELP,hdg1,NULL,NULL,k,(char * *)choices,attributes,
                               0,0,0,FILLTYPE+1,NULL,NULL,NULL,NULL);
       helpmode = oldhelpmode;
       if (i < 0)

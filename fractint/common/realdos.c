@@ -31,13 +31,6 @@ int g_patchlevel = 0;	/* patchlevel for DOS version */
 int xrelease=304;
 #endif
 
-/* fullscreen_choice options */
-#define CHOICERETURNKEY 1
-#define CHOICEMENU      2
-#define CHOICEHELP      4
-#define CHOICESCRUNCH   16
-#define CHOICESNOTSORTED 32
-
 /* int stopmsg(flags,message) displays message and waits for a key:
      message should be a max of 9 lines with \n's separating them;
        no leading or trailing \n's in message;
@@ -344,8 +337,8 @@ void footer_msg(int *i, int options, char *speedstring)
    putstringcenter((*i)++,0,80,C_PROMPT_BKGRD,
       (speedstring) ? choiceinstr1b : choiceinstr1a);
    putstringcenter(*(i++),0,80,C_PROMPT_BKGRD,
-         (options&CHOICEMENU) ? choiceinstr2c
-      : ((options&CHOICEHELP) ? choiceinstr2b : choiceinstr2a));
+         (options&CHOICE_MENU) ? choiceinstr2c
+      : ((options&CHOICE_HELP) ? choiceinstr2b : choiceinstr2a));
 }
 
 int putstringcenter(int row, int col, int width, int attr, char *msg)
@@ -508,7 +501,7 @@ int fullscreen_choice(
    int ret,savelookatmouse;
    int scrunch;  /* scrunch up a line */
 
-   if(options&CHOICESCRUNCH)
+   if(options&CHOICE_CRUNCH)
       scrunch = 1;
    else
       scrunch = 0;
@@ -518,7 +511,7 @@ int fullscreen_choice(
    if (speedstring
      && (i = (int) strlen(speedstring)) > 0) { /* preset current to passed string */
       current = 0;
-      if(options&CHOICESNOTSORTED)
+      if(options&CHOICE_NOT_SORTED)
       {
          while (current < numchoices
              && (k = strncasecmp(speedstring,choices[current],i)) != 0)
@@ -676,7 +669,7 @@ int fullscreen_choice(
    topleftrow -= scrunch;
    for(;;) { /* main loop */
       if (redisplay) {                       /* display the current choices */
-         if ((options & CHOICEMENU) == 0) {
+         if ((options & CHOICE_MENU) == 0) {
             memset(buf,' ',80);
             buf[boxwidth*colwidth] = 0;
             for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
@@ -891,7 +884,7 @@ int fullscreen_choice(
             ret = -1;
             if (speedstring) {
                process_speedstring(speedstring,choices,curkey,&current,
-                        numchoices,options&CHOICESNOTSORTED);
+                        numchoices,options&CHOICE_NOT_SORTED);
                }
             break;
       }
@@ -1168,7 +1161,7 @@ top:
       helpmode = HELPMAIN;         /* switch help modes */
       if ((nextleft += 2) < nextright)
          nextleft = nextright + 1;
-      i = fullscreen_choice(CHOICEMENU+CHOICESCRUNCH,
+      i = fullscreen_choice(CHOICE_MENU+CHOICE_CRUNCH,
           MAIN_MENU,
           NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
