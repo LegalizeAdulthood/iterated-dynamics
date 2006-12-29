@@ -241,7 +241,7 @@ static void win32_put_char_attr(Driver *drv, int char_attr)
 */
 static DriverWin32 win32_driver_info =
 {
-	STD_DRIVER_STRUCT(win32),
+	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows."),
 };
 
 Driver *win32_driver = &win32_driver_info.pub;

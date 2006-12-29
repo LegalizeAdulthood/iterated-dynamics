@@ -45,6 +45,7 @@ typedef struct tagDriver Driver;
 struct tagDriver
 {
 	/* name of driver */				const char *name;
+	/* driver description */			const char *description;
 	/* init the driver */				int (*init)(Driver *drv, int *argc, char **argv);
 	/* shutdown the driver */			void (*terminate)(Driver *drv);
 	/* flush pending updates */			void (*flush)(Driver *drv);
@@ -92,9 +93,9 @@ struct tagDriver
 										void (*put_char_attr)(Driver *drv, int char_attr);
 };
 
-#define STD_DRIVER_STRUCT(name_) \
+#define STD_DRIVER_STRUCT(name_, desc_) \
   { \
-	#name_, \
+	#name_, desc_, \
     name_##_init, \
     name_##_terminate, \
     name_##_flush, \
@@ -174,7 +175,7 @@ extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
 extern void close_drivers(void);
 
-extern Driver *display;			/* current driver in use */
+extern Driver *g_driver;			/* current driver in use */
 
 #define USE_DRIVER_FUNCTIONS 1
 
@@ -225,48 +226,48 @@ extern void driver_put_char_attr(int char_attr);
 
 #else
 
-#define driver_terminate()							(*display->terminate)(display)
-#define driver_flush()								(*display->flush)(display)
-#define void driver_schedule_alarm(_secs)			(*display->schedule_alarm)(display, _secs)
-#define driver_start_video()						(*display->start_video)(display)
-#define driver_end_video()							(*display->end_video)(display)
-#define driver_window()								(*display->window)(display)
-#define driver_resize()								(*display->resize)(display)
-#define driver_redraw()								(*display->redraw)(display)
-#define driver_read_palette()						(*display->read_palette)(display)
-#define driver_write_palette()						(*display->write_palette)(display)
-#define driver_read_pixel(_x, _y)					(*display->read_pixel)(display, _x, _y)
-#define driver_write_pixel(_x, _y, _color)			(*display->write_pixel)(display, _x, _y, _color)
-#define driver_read_span(_y, _x, _lastx, _pixels)	(*display->read_span(_y, _x, _lastx, _pixels)
-#define driver_write_span(_y, _x, _lastx, _pixels)	(*display->write_span)(display, _y, _x, _lastx, _pixels)
-#define driver_set_line_mode(_m)					(*display->set_line_mode)(display, _m)
-#define driver_draw_line(x1_, y1_, x2_, y2_, clr_)	(*display->draw_line)(x1_, y1_, x1_, y2_, clr_)
-#define driver_get_key()							(*display->get_key)(display)
-#define driver_key_cursor(row_, col_)				(*display->key_cursor)(display, row_, col_)
-#define driver_key_pressed()						(*display->key_pressed)(display)
-#define driver_wait_key_pressed(timeout_)			(*display->wait_key_pressed)(timeout_)
-#define driver_shell()								(*display->shell)(display)
-#define driver_set_video_mode(_ax, _bx, _cx, _dx)	(*display->set_video_mode)(display, _ax, _bx, _cx, _dx)
-#define driver_put_string(_row, _col, _attr, _msg)	(*display->put_string)(display, _row, _col, _attr, _msg)
-#define driver_set_for_text()						(*display->set_for_text)(display)
-#define driver_set_for_graphics()					(*display->set_for_graphics)(display)
-#define driver_set_clear()							(*display->set_clear)(display)
-#define driver_find_font(_parm)						(*display->find_font)(display, _parm)
-#define driver_move_cursor(_row, _col)				(*display->move_cursor)(display, _row, _col)
-#define driver_hide_text_cursor()					(*display->hide_text_cursor)(display)
-#define driver_set_attr(_row, _col, _attr, _count)	(*display->set_attr)(display, _row, _col, _attr, _count)
-#define driver_scroll_up(_top, _bot)				(*display->scroll_up)(display, _top, _bot)
-#define driver_stack_screen()						(*display->stack_screen)(display)
-#define driver_unstack_screen()						(*display->unstack_screen)(display)
-#define driver_discard_screen()						(*display->discard_screen)(display)
-#define driver_init_fm()							(*display->init_fm)(display)
-#define driver_buzzer(_kind)						(*display->buzzer)(display, _kind)
-#define driver_sound_on(_freq)						(*display->sound_on)(display, _freq)
-#define driver_sound_off()							(*display->sound_off)(display)
-#define driver_mute()								(*display->mute)(display)
-#define driver_diskp()								(*display->diskp)(display)
-#define driver_get_char_attr()						(*display->get_char_attr)(display)
-#define driver_put_char_attr(char_attr_)			(*display->put_char_attr)(display, char_attr_)
+#define driver_terminate()							(*g_driver->terminate)(g_driver)
+#define driver_flush()								(*g_driver->flush)(g_driver)
+#define void driver_schedule_alarm(_secs)			(*g_driver->schedule_alarm)(g_driver, _secs)
+#define driver_start_video()						(*g_driver->start_video)(g_driver)
+#define driver_end_video()							(*g_driver->end_video)(g_driver)
+#define driver_window()								(*g_driver->window)(g_driver)
+#define driver_resize()								(*g_driver->resize)(g_driver)
+#define driver_redraw()								(*g_driver->redraw)(g_driver)
+#define driver_read_palette()						(*g_driver->read_palette)(g_driver)
+#define driver_write_palette()						(*g_driver->write_palette)(g_driver)
+#define driver_read_pixel(_x, _y)					(*g_driver->read_pixel)(g_driver, _x, _y)
+#define driver_write_pixel(_x, _y, _color)			(*g_driver->write_pixel)(g_driver, _x, _y, _color)
+#define driver_read_span(_y, _x, _lastx, _pixels)	(*g_driver->read_span(_y, _x, _lastx, _pixels)
+#define driver_write_span(_y, _x, _lastx, _pixels)	(*g_driver->write_span)(g_driver, _y, _x, _lastx, _pixels)
+#define driver_set_line_mode(_m)					(*g_driver->set_line_mode)(g_driver, _m)
+#define driver_draw_line(x1_, y1_, x2_, y2_, clr_)	(*g_driver->draw_line)(x1_, y1_, x1_, y2_, clr_)
+#define driver_get_key()							(*g_driver->get_key)(g_driver)
+#define driver_key_cursor(row_, col_)				(*g_driver->key_cursor)(g_driver, row_, col_)
+#define driver_key_pressed()						(*g_driver->key_pressed)(g_driver)
+#define driver_wait_key_pressed(timeout_)			(*g_driver->wait_key_pressed)(timeout_)
+#define driver_shell()								(*g_driver->shell)(g_driver)
+#define driver_set_video_mode(_ax, _bx, _cx, _dx)	(*g_driver->set_video_mode)(g_driver, _ax, _bx, _cx, _dx)
+#define driver_put_string(_row, _col, _attr, _msg)	(*g_driver->put_string)(g_driver, _row, _col, _attr, _msg)
+#define driver_set_for_text()						(*g_driver->set_for_text)(g_driver)
+#define driver_set_for_graphics()					(*g_driver->set_for_graphics)(g_driver)
+#define driver_set_clear()							(*g_driver->set_clear)(g_driver)
+#define driver_find_font(_parm)						(*g_driver->find_font)(g_driver, _parm)
+#define driver_move_cursor(_row, _col)				(*g_driver->move_cursor)(g_driver, _row, _col)
+#define driver_hide_text_cursor()					(*g_driver->hide_text_cursor)(g_driver)
+#define driver_set_attr(_row, _col, _attr, _count)	(*g_driver->set_attr)(g_driver, _row, _col, _attr, _count)
+#define driver_scroll_up(_top, _bot)				(*g_driver->scroll_up)(g_driver, _top, _bot)
+#define driver_stack_screen()						(*g_driver->stack_screen)(g_driver)
+#define driver_unstack_screen()						(*g_driver->unstack_screen)(g_driver)
+#define driver_discard_screen()						(*g_driver->discard_screen)(g_driver)
+#define driver_init_fm()							(*g_driver->init_fm)(g_driver)
+#define driver_buzzer(_kind)						(*g_driver->buzzer)(g_driver, _kind)
+#define driver_sound_on(_freq)						(*g_driver->sound_on)(g_driver, _freq)
+#define driver_sound_off()							(*g_driver->sound_off)(g_driver)
+#define driver_mute()								(*g_driver->mute)(g_driver)
+#define driver_diskp()								(*g_driver->diskp)(g_driver)
+#define driver_get_char_attr()						(*g_driver->get_char_attr)(g_driver)
+#define driver_put_char_attr(char_attr_)			(*g_driver->put_char_attr)(g_driver, char_attr_)
 
 #endif
 
