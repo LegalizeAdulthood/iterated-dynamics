@@ -730,14 +730,14 @@ void wintext_putstring(int xpos, int ypos, int attrib, const char *string, int *
         if (xc == 13 || xc == 10)
 		{
             if (j < WINTEXT_MAX_ROW-1) j++;
-            k = -1;
+            k = xpos-1;
 		}
         else
 		{
             if ((++k) >= WINTEXT_MAX_COL)
 			{
                 if (j < WINTEXT_MAX_ROW-1) j++;
-                k = 0;
+                k = xpos;
             }
             if (maxrow < j) maxrow = j;
             if (maxcol < k) maxcol = k;
