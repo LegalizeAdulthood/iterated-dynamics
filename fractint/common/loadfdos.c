@@ -139,7 +139,7 @@ Press F1 for help, "};
    strcpy(select_msg,o_select_msg);
 
    g_init_mode = -1;
-   load_fractint_cfg(0); /* get fractint.cfg into *g_video_table (== extraseg) */
+   //load_fractint_cfg(0); /* get fractint.cfg into *g_video_table (== extraseg) */
 
    /* try to change any VESA entries to fit the loaded image size */
    if (g_virtual_screens && g_video_vram && g_init_mode == -1) {

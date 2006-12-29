@@ -221,7 +221,8 @@ int main(int argc, char **argv)
 	initasmvars();                       /* initialize ASM stuff */
 	InitMemory();
 	checkfreemem(0);
-	load_videotable(1); /* load fractint.cfg, no message yet if bad */
+	//load_videotable(1);					/* load fractint.cfg, no message yet if bad */
+	/* let drivers add their video modes */
 	if (! init_drivers(&argc, argv))
 	{
 		fprintf(stderr, "Sorry, I couldn't find any "
