@@ -69,9 +69,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
    int kbdchar;
    int mms_value;
    frommandel = 0;
-   if(resumeflag)
+   if (resumeflag)
       goto resumeloop;
-    for(;;) {                   /* eternal loop */
+    for (;;) {                   /* eternal loop */
 		_ASSERTE(_CrtCheckMemory());
 
       if (calc_status != 2 || showfile == 0) {
@@ -117,7 +117,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 #ifndef XFRACT
                static char TPlusStr[] = "This video mode requires 'noninterlaced=yes'";
 
-               if(TPlusErr) {
+               if (TPlusErr) {
                   stopmsg(0, TPlusStr);
                   TPlusErr = 0;
                   }
@@ -133,7 +133,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                g_init_mode = -1;
                driver_set_for_text(); /* switch to text mode */
                /* goto restorestart; */
-               return(RESTORESTART);
+               return RESTORESTART;
                }
 
             if (g_virtual_screens && (xdots > sxdots || ydots > sydots)) {
@@ -237,22 +237,22 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          dxsize = xdots - 1;            /* convert just once now */
          dysize = ydots - 1;
       }
-      if(savedac == 0)
+      if (savedac == 0)
         savedac = 2;                    /* assume we save next time (except jb) */
       else
       savedac = 1;                      /* assume we save next time */
       if (initbatch == 0)
          lookatmouse = -PAGE_UP;        /* mouse left button == pgup */
 
-      if(showfile == 0) {               /* loading an image */
+      if (showfile == 0) {               /* loading an image */
          outln_cleanup = NULL;          /* outln routine can set this */
          if (display3d)                 /* set up 3D decoding */
             outln = call_line3d;
-         else if(filetype >= 1)         /* old .tga format input file */
+         else if (filetype >= 1)         /* old .tga format input file */
             outln = outlin16;
-         else if(comparegif)            /* debug 50 */
+         else if (comparegif)            /* debug 50 */
             outln = cmp_line;
-         else if(pot16bit) {            /* .pot format input file */
+         else if (pot16bit) {            /* .pot format input file */
             if (pot_startdisk() < 0)
             {                           /* pot file failed?  */
                showfile = 1;
@@ -263,17 +263,17 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
                driver_set_for_text();
                get_fracttype();
                /* goto imagestart; */
-               return(IMAGESTART);
+               return IMAGESTART;
             }
             outln = pot_line;
          }
-         else if((soundflag&7) > 1 && !evolving) /* regular gif/fra input file */
+         else if ((soundflag&7) > 1 && !evolving) /* regular gif/fra input file */
             outln = sound_line;      /* sound decoding */
          else
             outln = out_line;        /* regular decoding */
-         if(filetype == 0)
+         if (filetype == 0)
          {
-            if(debugflag==2224)
+            if (debugflag==2224)
             {
                char msg[MSGLEN];
                sprintf(msg,"floatflag=%d",usr_floatflag);
@@ -284,9 +284,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          }
          else
             i = funny_glasses_call(tgaview);
-         if(outln_cleanup)              /* cleanup routine defined? */
+         if (outln_cleanup)              /* cleanup routine defined? */
             (*outln_cleanup)();
-         if(i == 0)
+         if (i == 0)
             driver_buzzer(0);
          else {
             calc_status = -1;
@@ -313,7 +313,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
       symax = yymax;
       sy3rd = yy3rd;
 
-      if(bf_math)
+      if (bf_math)
       {
          copy_bf(bfsxmin,bfxmin);
          copy_bf(bfsxmax,bfxmax);
@@ -327,7 +327,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
          save_system  = active_system;  /*   unless really doing some work,   */
          }                              /*   so simple <r> + <s> keeps number */
 
-      if(showfile == 0) {               /* image has been loaded */
+      if (showfile == 0) {               /* image has been loaded */
          showfile = 1;
          if (initbatch == 1 && calc_status == 2)
             initbatch = -1; /* flag to finish calc before save */
@@ -564,18 +564,18 @@ resumeloop:                             /* return here on failed overlays */
                }
             else if (initbatch == 1 || initbatch == 4 ) {       /* save-to-disk */
 /*
-               while(driver_key_pressed())
+               while (driver_key_pressed())
                  driver_get_key();
 */
                if (debugflag == 50)
                   kbdchar = 'r';
                else
                   kbdchar = 's';
-               if(initbatch == 1) initbatch = 2;
-               if(initbatch == 4) initbatch = 5;
+               if (initbatch == 1) initbatch = 2;
+               if (initbatch == 4) initbatch = 5;
                }
             else {
-               if(calc_status != 4) initbatch = 3; /* bailout with error */
+               if (calc_status != 4) initbatch = 3; /* bailout with error */
                goodbye();               /* done, exit */
                }
             }
@@ -596,14 +596,14 @@ resumeloop:                             /* return here on failed overlays */
          }
          if (quick_calc && calc_status != 4)
             usr_stdcalcmode = '1';
-         switch(mms_value)
+         switch (mms_value)
          {
          case IMAGESTART:
-            return(IMAGESTART);
+            return IMAGESTART;
          case RESTORESTART:
-            return(RESTORESTART);
+            return RESTORESTART;
          case RESTART:
-            return(RESTART);
+            return RESTART;
          case CONTINUE:
             continue;
          default:
@@ -616,7 +616,7 @@ resumeloop:                             /* return here on failed overlays */
          }
          }
       }
-/*  return(0); */
+/*  return 0; */
 }
 
 int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
