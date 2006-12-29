@@ -16,7 +16,7 @@
 #include "drivers.h"
 #include "WinText.h"
 
-#define MAXSCREENS 3
+#define MAXSCREENS 10
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
 
