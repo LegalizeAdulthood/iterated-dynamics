@@ -254,7 +254,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		savedac = (savedac == 0) ? 2 : 1;
 		if (initbatch == 0)
 		{
-			lookatmouse = -PAGE_UP;        /* mouse left button == pgup */
+			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
 		}
 
 		if (showfile == 0)
@@ -560,19 +560,19 @@ resumeloop:                             /* return here on failed overlays */
 				{                      /* save done, resume */
 					timedsave = 0;
 					resave_flag = 2;
-					kbdchar = ENTER;
+					kbdchar = FIK_ENTER;
 				}
 			}
 			else if (initbatch == 0)      /* not batch mode */
 			{
 #ifndef XFRACT
-				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -PAGE_UP : 3;
+				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
 #else
-				lookatmouse = (zwidth == 0) ? -PAGE_UP : 3;
+				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : 3;
 #endif
 				if (calc_status == 2 && zwidth == 0 && !driver_key_pressed())
 				{
-					kbdchar = ENTER ;  /* no visible reason to stop, continue */
+					kbdchar = FIK_ENTER ;  /* no visible reason to stop, continue */
 				}
 				else      /* wait for a real keystroke */
 				{
@@ -585,9 +585,9 @@ resumeloop:                             /* return here on failed overlays */
 						driver_wait_key_pressed(0);
 						kbdchar = driver_get_key();
 					}
-					if (kbdchar == ESC || kbdchar == 'm' || kbdchar == 'M')
+					if (kbdchar == FIK_ESC || kbdchar == 'm' || kbdchar == 'M')
 					{
-						if (kbdchar == ESC && escape_exit != 0)
+						if (kbdchar == FIK_ESC && escape_exit != 0)
 						{
 							/* don't ask, just get out */
 							goodbye();
@@ -598,18 +598,18 @@ resumeloop:                             /* return here on failed overlays */
 #else
 						if (XZoomWaiting)
 						{
-							kbdchar = ENTER;
+							kbdchar = FIK_ENTER;
 						}
 						else
 						{
 							kbdchar = main_menu(1);
 							if (XZoomWaiting)
 							{
-								kbdchar = ENTER;
+								kbdchar = FIK_ENTER;
 							}
 						}
 #endif
-						if (kbdchar == '\\' || kbdchar == CTL_BACKSLASH ||
+						if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
 							kbdchar == 'h' || kbdchar == 8 ||
 							check_vidmode_key(0, kbdchar) >= 0)
 						{
@@ -641,7 +641,7 @@ resumeloop:                             /* return here on failed overlays */
 
 				if (initbatch == -1)       /* finish calc */
 				{
-					kbdchar = ENTER;
+					kbdchar = FIK_ENTER;
 					initbatch = 1;
 				}
 				else if (initbatch == 1 || initbatch == 4 )        /* save-to-disk */
@@ -836,7 +836,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case '@':                    /* execute commands */
    case '2':                    /* execute commands */
 #else
-   case F2:                     /* execute commands */
+   case FIK_F2:                     /* execute commands */
 #endif
       driver_stack_screen();
       i = get_commands();
@@ -1104,7 +1104,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          driver_buzzer(2);
       break;
    case '\\':                   /* return to prev image    */
-   case CTL_BACKSLASH:
+   case FIK_CTL_BACKSLASH:
    case 'h':
    case 8:
       if (name_stack_ptr >= 1)
@@ -1138,7 +1138,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          if(*kbdchar == '\\' || *kbdchar == 'h')
             if (--historyptr < 0)
                historyptr = maxhistory - 1;
-         if(*kbdchar == CTL_BACKSLASH || *kbdchar == 8)
+         if(*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
             if (++historyptr >= maxhistory)
                historyptr = 0;
          restore_history_info(historyptr);
@@ -1232,7 +1232,7 @@ image.  Sorry - it's the best we could do."};
       return(CONTINUE);
    case '#':                    /* 3D overlay                   */
 #ifdef XFRACT
-   case F3:                     /* 3D overlay                   */
+   case FIK_F3:                     /* 3D overlay                   */
 #endif
       clear_zoombox();
       overlay3d = 1;
@@ -1288,8 +1288,8 @@ image.  Sorry - it's the best we could do."};
          helpmode = HELPBROWSE;
          switch (fgetwindow())
          {
-         case ENTER:
-         case ENTER_2:
+         case FIK_ENTER:
+         case FIK_ENTER_2:
             showfile = 0;       /* trigger load */
             browsing = TRUE;    /* but don't ask for the file name as it's
                                  * just been selected */
@@ -1343,7 +1343,7 @@ image.  Sorry - it's the best we could do."};
                return(RESTORESTART);
             }                   /* otherwise fall through and turn off
                                  * browsing */
-         case ESC:
+         case FIK_ESC:
          case 'l':              /* turn it off */
          case 'L':
             browsing = FALSE;
@@ -1380,8 +1380,8 @@ image.  Sorry - it's the best we could do."};
          driver_get_key();
       }
       return(CONTINUE);
-   case ENTER:                  /* Enter                        */
-   case ENTER_2:                /* Numeric-Keypad Enter         */
+   case FIK_ENTER:                  /* Enter                        */
+   case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
       XZoomWaiting = 0;
 #endif
@@ -1393,53 +1393,53 @@ image.  Sorry - it's the best we could do."};
       if (calc_status != 4)     /* don't restart if image complete */
          *kbdmore = 0;
       break;
-   case CTL_ENTER:              /* control-Enter                */
-   case CTL_ENTER_2:            /* Control-Keypad Enter         */
+   case FIK_CTL_ENTER:              /* control-Enter                */
+   case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
       init_pan_or_recalc(1);
       *kbdmore = 0;
       zoomout();                /* calc corners for zooming out */
       break;
-   case INSERT:         /* insert                       */
+   case FIK_INSERT:         /* insert                       */
       driver_set_for_text();           /* force text mode */
       return(RESTART);
-   case LEFT_ARROW:             /* cursor left                  */
-   case RIGHT_ARROW:            /* cursor right                 */
-   case UP_ARROW:               /* cursor up                    */
-   case DOWN_ARROW:             /* cursor down                  */
+   case FIK_LEFT_ARROW:             /* cursor left                  */
+   case FIK_RIGHT_ARROW:            /* cursor right                 */
+   case FIK_UP_ARROW:               /* cursor up                    */
+   case FIK_DOWN_ARROW:             /* cursor down                  */
         move_zoombox(*kbdchar);
         break;
-   case LEFT_ARROW_2:           /* Ctrl-cursor left             */
-   case RIGHT_ARROW_2:          /* Ctrl-cursor right            */
-   case UP_ARROW_2:             /* Ctrl-cursor up               */
-   case DOWN_ARROW_2:           /* Ctrl-cursor down             */
+   case FIK_LEFT_ARROW_2:           /* Ctrl-cursor left             */
+   case FIK_RIGHT_ARROW_2:          /* Ctrl-cursor right            */
+   case FIK_UP_ARROW_2:             /* Ctrl-cursor up               */
+   case FIK_DOWN_ARROW_2:           /* Ctrl-cursor down             */
        move_zoombox(*kbdchar);
        break;
-   case CTL_HOME:               /* Ctrl-home                    */
+   case FIK_CTL_HOME:               /* Ctrl-home                    */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
       {
-         i = key_count(CTL_HOME);
+         i = key_count(FIK_CTL_HOME);
          if ((zskew -= 0.02 * i) < -0.48)
             zskew = -0.48;
       }
       break;
-   case CTL_END:                /* Ctrl-end                     */
+   case FIK_CTL_END:                /* Ctrl-end                     */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
       {
-         i = key_count(CTL_END);
+         i = key_count(FIK_CTL_END);
          if ((zskew += 0.02 * i) > 0.48)
             zskew = 0.48;
       }
       break;
-   case CTL_PAGE_UP:            /* Ctrl-pgup                    */
+   case FIK_CTL_PAGE_UP:            /* Ctrl-pgup                    */
       if (boxcount)
-         chgboxi(0, -2 * key_count(CTL_PAGE_UP));
+         chgboxi(0, -2 * key_count(FIK_CTL_PAGE_UP));
       break;
-   case CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
+   case FIK_CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
       if (boxcount)
-         chgboxi(0, 2 * key_count(CTL_PAGE_DOWN));
+         chgboxi(0, 2 * key_count(FIK_CTL_PAGE_DOWN));
       break;
 
-   case PAGE_UP:                /* page up                      */
+   case FIK_PAGE_UP:                /* page up                      */
       if (zoomoff == 1)
       {
          if (zwidth == 0)
@@ -1453,31 +1453,31 @@ image.  Sorry - it's the best we could do."};
             moveboxf(0.0,0.0); /* force scrolling */
          }
          else
-            resizebox(0 - key_count(PAGE_UP));
+            resizebox(0 - key_count(FIK_PAGE_UP));
       }
       break;
-   case PAGE_DOWN:              /* page down                    */
+   case FIK_PAGE_DOWN:              /* page down                    */
       if (boxcount)
       {
          if (zwidth >= .999 && zdepth >= 0.999) /* end zoombox */
             zwidth = 0;
          else
-            resizebox(key_count(PAGE_DOWN));
+            resizebox(key_count(FIK_PAGE_DOWN));
       }
       break;
-   case CTL_MINUS:              /* Ctrl-kpad-                  */
+   case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate += key_count(CTL_MINUS);
+         zrotate += key_count(FIK_CTL_MINUS);
       break;
-   case CTL_PLUS:               /* Ctrl-kpad+               */
+   case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate -= key_count(CTL_PLUS);
+         zrotate -= key_count(FIK_CTL_PLUS);
       break;
-   case CTL_INSERT:             /* Ctrl-ins                 */
-      boxcolor += key_count(CTL_INSERT);
+   case FIK_CTL_INSERT:             /* Ctrl-ins                 */
+      boxcolor += key_count(FIK_CTL_INSERT);
       break;
-   case CTL_DEL:                /* Ctrl-del                 */
-      boxcolor -= key_count(CTL_DEL);
+   case FIK_CTL_DEL:                /* Ctrl-del                 */
+      boxcolor -= key_count(FIK_CTL_DEL);
       break;
 
    case 1120: /* alt + number keys set mutation level and start evolution engine */
@@ -1606,7 +1606,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       g_init_mode = g_adapter;
       return(IMAGESTART);
    case '\\':                   /* return to prev image    */
-   case CTL_BACKSLASH:
+   case FIK_CTL_BACKSLASH:
    case 'h':
    case 8:
       if(maxhistory > 0 && bf_math == 0)
@@ -1614,7 +1614,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          if(*kbdchar == '\\' || *kbdchar == 'h')
             if (--historyptr < 0)
                historyptr = maxhistory - 1;
-         if(*kbdchar == CTL_BACKSLASH || *kbdchar == 8)
+         if(*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
             if (++historyptr >= maxhistory)
                historyptr = 0;
          restore_history_info(historyptr);
@@ -1738,8 +1738,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       }
       showfile = -1;
       return(RESTORESTART);
-   case ENTER:                  /* Enter                        */
-   case ENTER_2:                /* Numeric-Keypad Enter         */
+   case FIK_ENTER:                  /* Enter                        */
+   case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
       XZoomWaiting = 0;
 #endif
@@ -1751,25 +1751,25 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       if (calc_status != 4)     /* don't restart if image complete */
          *kbdmore = 0;
       break;
-   case CTL_ENTER:              /* control-Enter                */
-   case CTL_ENTER_2:            /* Control-Keypad Enter         */
+   case FIK_CTL_ENTER:              /* control-Enter                */
+   case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
       init_pan_or_recalc(1);
       *kbdmore = 0;
       zoomout();                /* calc corners for zooming out */
       break;
-   case INSERT:         /* insert                       */
+   case FIK_INSERT:         /* insert                       */
       driver_set_for_text();           /* force text mode */
       return(RESTART);
-   case LEFT_ARROW:             /* cursor left                  */
-   case RIGHT_ARROW:            /* cursor right                 */
-   case UP_ARROW:               /* cursor up                    */
-   case DOWN_ARROW:             /* cursor down                  */
+   case FIK_LEFT_ARROW:             /* cursor left                  */
+   case FIK_RIGHT_ARROW:            /* cursor right                 */
+   case FIK_UP_ARROW:               /* cursor up                    */
+   case FIK_DOWN_ARROW:             /* cursor down                  */
         move_zoombox(*kbdchar);
         break;
-   case LEFT_ARROW_2:           /* Ctrl-cursor left             */
-   case RIGHT_ARROW_2:          /* Ctrl-cursor right            */
-   case UP_ARROW_2:             /* Ctrl-cursor up               */
-   case DOWN_ARROW_2:           /* Ctrl-cursor down             */
+   case FIK_LEFT_ARROW_2:           /* Ctrl-cursor left             */
+   case FIK_RIGHT_ARROW_2:          /* Ctrl-cursor right            */
+   case FIK_UP_ARROW_2:             /* Ctrl-cursor up               */
+   case FIK_DOWN_ARROW_2:           /* Ctrl-cursor down             */
         /* borrow ctrl cursor keys for moving selection box */
         /* in evolver mode */
      if (boxcount) {
@@ -1778,16 +1778,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         if (evolving&1) {
-             if (*kbdchar == LEFT_ARROW_2) {
+             if (*kbdchar == FIK_LEFT_ARROW_2) {
                 px--;
              }
-             if (*kbdchar == RIGHT_ARROW_2) {
+             if (*kbdchar == FIK_RIGHT_ARROW_2) {
                 px++;
              }
-             if (*kbdchar == UP_ARROW_2) {
+             if (*kbdchar == FIK_UP_ARROW_2) {
                 py--;
              }
-             if (*kbdchar == DOWN_ARROW_2) {
+             if (*kbdchar == FIK_DOWN_ARROW_2) {
                 py++;
              }
              if (px <0 ) px = gridsz-1;
@@ -1811,23 +1811,23 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
      else                       /* if no zoombox, scroll by arrows */
         move_zoombox(*kbdchar);
      break;
-   case CTL_HOME:               /* Ctrl-home                    */
+   case FIK_CTL_HOME:               /* Ctrl-home                    */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
       {
-         i = key_count(CTL_HOME);
+         i = key_count(FIK_CTL_HOME);
          if ((zskew -= 0.02 * i) < -0.48)
             zskew = -0.48;
       }
       break;
-   case CTL_END:                /* Ctrl-end                     */
+   case FIK_CTL_END:                /* Ctrl-end                     */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
       {
-         i = key_count(CTL_END);
+         i = key_count(FIK_CTL_END);
          if ((zskew += 0.02 * i) > 0.48)
             zskew = 0.48;
       }
       break;
-   case CTL_PAGE_UP:
+   case FIK_CTL_PAGE_UP:
       if(prmboxcount) {
         parmzoom -= 1.0;
         if(parmzoom<1.0) parmzoom=1.0;
@@ -1835,7 +1835,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         set_evolve_ranges();
       }
       break;
-   case CTL_PAGE_DOWN:
+   case FIK_CTL_PAGE_DOWN:
       if(prmboxcount) {
         parmzoom += 1.0;
         if(parmzoom>(double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
@@ -1844,7 +1844,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       }
       break;
 
-   case PAGE_UP:                /* page up                      */
+   case FIK_PAGE_UP:                /* page up                      */
       if (zoomoff == 1)
       {
          if (zwidth == 0)
@@ -1866,10 +1866,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             moveboxf(0.0,0.0); /* force scrolling */
          }
          else
-            resizebox(0 - key_count(PAGE_UP));
+            resizebox(0 - key_count(FIK_PAGE_UP));
       }
       break;
-   case PAGE_DOWN:              /* page down                    */
+   case FIK_PAGE_DOWN:              /* page down                    */
       if (boxcount)
       {
          if (zwidth >= .999 && zdepth >= 0.999) { /* end zoombox */
@@ -1880,28 +1880,28 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             }
          }
          else
-            resizebox(key_count(PAGE_DOWN));
+            resizebox(key_count(FIK_PAGE_DOWN));
       }
       break;
-   case CTL_MINUS:              /* Ctrl-kpad-                  */
+   case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate += key_count(CTL_MINUS);
+         zrotate += key_count(FIK_CTL_MINUS);
       break;
-   case CTL_PLUS:               /* Ctrl-kpad+               */
+   case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
       if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate -= key_count(CTL_PLUS);
+         zrotate -= key_count(FIK_CTL_PLUS);
       break;
-   case CTL_INSERT:             /* Ctrl-ins                 */
-      boxcolor += key_count(CTL_INSERT);
+   case FIK_CTL_INSERT:             /* Ctrl-ins                 */
+      boxcolor += key_count(FIK_CTL_INSERT);
       break;
-   case CTL_DEL:                /* Ctrl-del                 */
-      boxcolor -= key_count(CTL_DEL);
+   case FIK_CTL_DEL:                /* Ctrl-del                 */
+      boxcolor -= key_count(FIK_CTL_DEL);
       break;
 
    /* grabbed a couple of video mode keys, user can change to these using
        delete and the menu if necessary */
 
-   case F2: /* halve mutation params and regen */
+   case FIK_F2: /* halve mutation params and regen */
       fiddlefactor = fiddlefactor / 2;
       paramrangex = paramrangex / 2;
       newopx = opx + paramrangex / 2;
@@ -1910,7 +1910,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       *kbdmore = calc_status = 0;
       break;
 
-   case F3: /*double mutation parameters and regenerate */
+   case FIK_F3: /*double mutation parameters and regenerate */
    {
     double centerx, centery;
       fiddlefactor = fiddlefactor * 2;
@@ -1924,21 +1924,21 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
    }
 
-   case F4: /*decrement  gridsize and regen */
+   case FIK_F4: /*decrement  gridsize and regen */
       if (gridsz > 3) {
         gridsz = gridsz - 2;  /* gridsz must have odd value only */
         *kbdmore = calc_status = 0;
         }
       break;
 
-   case F5: /* increment gridsize and regen */
+   case FIK_F5: /* increment gridsize and regen */
       if (gridsz < (sxdots / (MINPIXELS<<1))) {
          gridsz = gridsz + 2;
          *kbdmore = calc_status = 0;
          }
       break;
 
-   case F6: /* toggle all variables selected for random variation to
+   case FIK_F6: /* toggle all variables selected for random variation to
                center weighted variation and vice versa */
          {
           int i;
@@ -2055,28 +2055,28 @@ static void move_zoombox(int keynum)
    getmore = 1;
    while (getmore) {
       switch (keynum) {
-         case LEFT_ARROW:               /* cursor left */
+         case FIK_LEFT_ARROW:               /* cursor left */
             --horizontal;
             break;
-         case RIGHT_ARROW:              /* cursor right */
+         case FIK_RIGHT_ARROW:              /* cursor right */
             ++horizontal;
             break;
-         case UP_ARROW:                 /* cursor up */
+         case FIK_UP_ARROW:                 /* cursor up */
             --vertical;
             break;
-         case DOWN_ARROW:               /* cursor down */
+         case FIK_DOWN_ARROW:               /* cursor down */
             ++vertical;
             break;
-         case LEFT_ARROW_2:             /* Ctrl-cursor left */
+         case FIK_LEFT_ARROW_2:             /* Ctrl-cursor left */
             horizontal -= 8;
             break;
-         case RIGHT_ARROW_2:             /* Ctrl-cursor right */
+         case FIK_RIGHT_ARROW_2:             /* Ctrl-cursor right */
             horizontal += 8;
             break;
-         case UP_ARROW_2:               /* Ctrl-cursor up */
+         case FIK_UP_ARROW_2:               /* Ctrl-cursor up */
             vertical -= 8;
             break;
-         case DOWN_ARROW_2:             /* Ctrl-cursor down */
+         case FIK_DOWN_ARROW_2:             /* Ctrl-cursor down */
             vertical += 8;
             break;                      /* += 8 needed by VESA scrolling */
          default:

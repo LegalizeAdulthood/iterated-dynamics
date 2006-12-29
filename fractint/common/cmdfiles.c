@@ -3181,7 +3181,7 @@ void dopause(int action)
          if(needpause == 1)
             driver_get_key();
          else if (needpause == 2)
-            if(getakeynohelp() == ESC)
+            if(getakeynohelp() == FIK_ESC)
                goodbye();
       }
       needpause = 0;

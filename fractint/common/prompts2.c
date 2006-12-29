@@ -653,7 +653,7 @@ pass_option_restart:
    }
    if (drawmode != old_drawmode) j = 1;
 
-   if (i == F2) {
+   if (i == FIK_F2) {
       if (get_screen_corners() > 0) {
          ret = 1;
       }
@@ -661,7 +661,7 @@ pass_option_restart:
       goto pass_option_restart;
    }
 
-   if (i == F6) {
+   if (i == FIK_F6) {
       if (get_corners() > 0) {
          ret = 1;
       }
@@ -857,7 +857,7 @@ get_view_restart:
       return(-1);
       }
 
-   if (i == F4 && !driver_diskp()) {
+   if (i == FIK_F4 && !driver_diskp()) {
       viewwindow = viewxdots = viewydots = 0;
       viewreduction = (float)4.2;
       viewcrop = 1;
@@ -1702,12 +1702,12 @@ retry_dir:
       options = 8+32;
    i = fullscreen_choice(options,temp1,NULL,instr,filecount,(char **)choices,
           attributes,5,99,12,i,NULL,speedstr,filename_speedstr,check_f6_key);
-   if (i==-F4)
+   if (i==-FIK_F4)
    {
       dosort = 1 - dosort;
       goto restart;
    }
-   if (i==-F6)
+   if (i==-FIK_F6)
    {
       static int lastdir=0;
       if (lastdir==0)
@@ -1815,10 +1815,10 @@ retry_dir:
 static int check_f6_key(int curkey,int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
    choice = 0; /* to suppress warning only */
-   if (curkey == F6)
-      return 0-F6;
-   else if (curkey == F4)
-      return 0-F4;
+   if (curkey == FIK_F6)
+      return 0-FIK_F6;
+   else if (curkey == FIK_F4)
+      return 0-FIK_F4;
    return 0;
 }
 
@@ -2306,7 +2306,7 @@ gc_loop:
       return(-1);
       }
 
-   if (prompt_ret == F4) { /* reset to type defaults */
+   if (prompt_ret == FIK_F4) { /* reset to type defaults */
       xx3rd = xxmin = curfractalspecific->xmin;
       xxmax         = curfractalspecific->xmax;
       yy3rd = yymin = curfractalspecific->ymin;
@@ -2363,7 +2363,7 @@ gc_loop:
       }
    }
 
-   if (prompt_ret == F7 && drawmode != 'l') { /* toggle corners/center-mag mode */
+   if (prompt_ret == FIK_F7 && drawmode != 'l') { /* toggle corners/center-mag mode */
       if (usemag == 0)
       {
          cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2510,7 +2510,7 @@ gsc_loop:
       return(-1);
       }
 
-   if (prompt_ret == F4) { /* reset to type defaults */
+   if (prompt_ret == FIK_F4) { /* reset to type defaults */
       ox3rd = oxmin = curfractalspecific->xmin;
       oxmax         = curfractalspecific->xmax;
       oy3rd = oymin = curfractalspecific->ymin;
@@ -2566,7 +2566,7 @@ gsc_loop:
       }
    }
 
-   if (prompt_ret == F7) { /* toggle corners/center-mag mode */
+   if (prompt_ret == FIK_F7) { /* toggle corners/center-mag mode */
       if (usemag == 0)
       {
          cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -2679,7 +2679,7 @@ get_brws_restart:
       return(0);
       }
 
-   if (i == F4) {
+   if (i == FIK_F4) {
       toosmall = 6;
       autobrowse = FALSE;
       askvideo = TRUE;

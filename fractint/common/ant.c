@@ -54,20 +54,20 @@ setwait(long *wait)
       kbdchar = driver_get_key();
       switch (kbdchar)
       {
-      case RIGHT_ARROW_2:
-      case UP_ARROW_2:
+      case FIK_RIGHT_ARROW_2:
+      case FIK_UP_ARROW_2:
          (*wait) += 100;
          break;
-      case RIGHT_ARROW:
-      case UP_ARROW:
+      case FIK_RIGHT_ARROW:
+      case FIK_UP_ARROW:
          (*wait) += 10;
          break;
-      case DOWN_ARROW_2:
-      case LEFT_ARROW_2:
+      case FIK_DOWN_ARROW_2:
+      case FIK_LEFT_ARROW_2:
          (*wait) -= 100;
          break;
-      case LEFT_ARROW:
-      case DOWN_ARROW:
+      case FIK_LEFT_ARROW:
+      case FIK_DOWN_ARROW:
          (*wait) -= 10;
          break;
       default:
@@ -156,17 +156,17 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          case FIK_SPACE:
             step = 1 - step;
             break;
-         case ESC:
+         case FIK_ESC:
             done = 1;
             break;
-         case RIGHT_ARROW:
-         case UP_ARROW:
-         case DOWN_ARROW:
-         case LEFT_ARROW:
-         case RIGHT_ARROW_2:
-         case UP_ARROW_2:
-         case DOWN_ARROW_2:
-         case LEFT_ARROW_2:
+         case FIK_RIGHT_ARROW:
+         case FIK_UP_ARROW:
+         case FIK_DOWN_ARROW:
+         case FIK_LEFT_ARROW:
+         case FIK_RIGHT_ARROW_2:
+         case FIK_UP_ARROW_2:
+         case FIK_DOWN_ARROW_2:
+         case FIK_LEFT_ARROW_2:
             setwait(&wait);
             break;
          default:
@@ -294,17 +294,17 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          case FIK_SPACE:
             step = 1 - step;
             break;
-         case ESC:
+         case FIK_ESC:
             done = 1;
             break;
-         case RIGHT_ARROW:
-         case UP_ARROW:
-         case DOWN_ARROW:
-         case LEFT_ARROW:
-         case RIGHT_ARROW_2:
-         case UP_ARROW_2:
-         case DOWN_ARROW_2:
-         case LEFT_ARROW_2:
+         case FIK_RIGHT_ARROW:
+         case FIK_UP_ARROW:
+         case FIK_DOWN_ARROW:
+         case FIK_LEFT_ARROW:
+         case FIK_RIGHT_ARROW_2:
+         case FIK_UP_ARROW_2:
+         case FIK_DOWN_ARROW_2:
+         case FIK_LEFT_ARROW_2:
             setwait(&wait);
             break;
          default:

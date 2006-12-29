@@ -124,7 +124,7 @@ int stopmsg (int flags, char *msg)
    while (driver_key_pressed()) /* flush any keyahead */
       driver_get_key();
    if(debugflag != 324)
-      if (getakeynohelp() == ESC)
+      if (getakeynohelp() == FIK_ESC)
          ret = -1;
    if ((flags & STOPMSG_NO_STACK))
       blankrows(toprow,10,7);
@@ -725,9 +725,9 @@ int fullscreen_choice(
       driver_wait_key_pressed(0); /* enables help */
       curkey = driver_get_key();
 #ifdef XFRACT
-      if (curkey==F10) curkey=')';
-      if (curkey==F9) curkey='(';
-      if (curkey==F8) curkey='*';
+      if (curkey==FIK_F10) curkey=')';
+      if (curkey==FIK_F9) curkey='(';
+      if (curkey==FIK_F8) curkey='*';
 #endif
 
       i = current - topleftchoice;           /* unhighlight current choice */
@@ -742,16 +742,16 @@ int fullscreen_choice(
 
       increment = 0;
       switch (curkey) {                      /* deal with input key */
-         case ENTER:
-         case ENTER_2:
+         case FIK_ENTER:
+         case FIK_ENTER_2:
             ret = current;
             goto fs_choice_end;
-         case ESC:
+         case FIK_ESC:
             goto fs_choice_end;
-         case DOWN_ARROW:
+         case FIK_DOWN_ARROW:
             rev_increment = 0 - (increment = boxwidth);
             break;
-         case DOWN_ARROW_2:
+         case FIK_DOWN_ARROW_2:
             rev_increment = 0 - (increment = boxwidth);
             {
                int newcurrent = current;
@@ -766,10 +766,10 @@ int fullscreen_choice(
                }
             }
             break;
-         case UP_ARROW:
+         case FIK_UP_ARROW:
             increment = 0 - (rev_increment = boxwidth);
             break;
-         case UP_ARROW_2:
+         case FIK_UP_ARROW_2:
             increment = 0 - (rev_increment = boxwidth);
             {
                int newcurrent = current;
@@ -786,10 +786,10 @@ int fullscreen_choice(
                }
             }
             break;
-         case RIGHT_ARROW:
+         case FIK_RIGHT_ARROW:
             increment = 1; rev_increment = -1;
             break;
-         case RIGHT_ARROW_2:  /* move to next file; if at last file, go to
+         case FIK_RIGHT_ARROW_2:  /* move to next file; if at last file, go to
                                  first file */
             increment = 1; rev_increment = -1;
             {
@@ -805,10 +805,10 @@ int fullscreen_choice(
                }
             }
             break;
-         case LEFT_ARROW:
+         case FIK_LEFT_ARROW:
             increment = -1; rev_increment = 1;
             break;
-         case LEFT_ARROW_2: /* move to previous file; if at first file, go to
+         case FIK_LEFT_ARROW_2: /* move to previous file; if at first file, go to
                                last file */
             increment = -1; rev_increment = 1;
             {
@@ -824,7 +824,7 @@ int fullscreen_choice(
                }
             }
             break;
-         case PAGE_UP:
+         case FIK_PAGE_UP:
             if (numchoices > boxitems) {
                topleftchoice -= boxitems;
                increment = -boxitems;
@@ -832,7 +832,7 @@ int fullscreen_choice(
                redisplay = 1;
                }
             break;
-         case PAGE_DOWN:
+         case FIK_PAGE_DOWN:
             if (numchoices > boxitems) {
                topleftchoice += boxitems;
                increment = boxitems;
@@ -840,11 +840,11 @@ int fullscreen_choice(
                redisplay = 1;
                }
             break;
-         case HOME:
+         case FIK_HOME:
             current = -1;
             increment = rev_increment = 1;
             break;
-         case CTL_HOME:
+         case FIK_CTL_HOME:
             current = -1;
             increment = rev_increment = 1;
             {
@@ -857,11 +857,11 @@ int fullscreen_choice(
                }
             }
             break;
-         case END:
+         case FIK_END:
             current = numchoices;
             increment = rev_increment = -1;
             break;
-         case CTL_END:
+         case FIK_CTL_END:
             current = numchoices;
             increment = rev_increment = -1;
             {
@@ -1117,10 +1117,10 @@ top:
    choicekey[nextright+=2] = 'g';
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"give command string      <g>  ");
-   choicekey[nextright+=2] = ESC;
+   choicekey[nextright+=2] = FIK_ESC;
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"quit "FRACTINT"           <esc> ");
-   choicekey[nextright+=2] = INSERT;
+   choicekey[nextright+=2] = FIK_INSERT;
    attributes[nextright] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextright,"restart "FRACTINT"        <ins> ");
 #ifdef XFRACT
@@ -1166,7 +1166,7 @@ top:
           NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
       if (i == -1)     /* escape */
-         i = ESC;
+         i = FIK_ESC;
       else if (i < 0)
          i = 0 - i;
       else {                      /* user selected a choice */
@@ -1180,7 +1180,7 @@ top:
             }
          }
       }
-   if (i == ESC) {             /* escape from menu exits Fractint */
+   if (i == FIK_ESC) {             /* escape from menu exits Fractint */
 #ifdef XFRACT
       static char s[] = "Exit from Xfractint (y/n)? y";
 #else
@@ -1198,11 +1198,11 @@ top:
          }
       goodbye();
       }
-   if (i == TAB) {
+   if (i == FIK_TAB) {
       tab_display();
       i = 0;
       }
-   if (i == ENTER || i == ENTER_2)
+   if (i == FIK_ENTER || i == FIK_ENTER_2)
       i = 0;                 /* don't trigger new calc */
    tabmode = oldtabmode;
    return(i);
@@ -1215,15 +1215,15 @@ static int menu_checkkey(int curkey,int choice)
    testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
    /* We use F2 for shift-@, annoyingly enough */
-   if (testkey == F2) return(0-testkey);
+   if (testkey == FIK_F2) return(0-testkey);
 #endif
    if(testkey == '2')
       testkey = '@';
-   if (strchr("#@2txyzgvir3dj",testkey) || testkey == INSERT || testkey == 2
-     || testkey == ESC || testkey == FIK_DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
+   if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == 2
+     || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
       return(0-testkey);
    if (menutype) {
-      if (strchr("\\sobpkrh",testkey) || testkey == TAB
+      if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB
         || testkey == 1 || testkey == 5 || testkey == 8
         || testkey == 16
         || testkey == 19 || testkey == 21) /* ctrl-A, E, H, P, S, U */
@@ -1284,25 +1284,25 @@ int input_field(
       curkey = driver_key_cursor(row+insert,col+offset);  /* get a keystroke */
       if(curkey == 1047) curkey = 47; /* numeric slash */
       switch (curkey) {
-         case ENTER:
-         case ENTER_2:
+         case FIK_ENTER:
+         case FIK_ENTER_2:
             ret = 0;
             goto inpfld_end;
-         case ESC:
+         case FIK_ESC:
             goto inpfld_end;
-         case RIGHT_ARROW:
+         case FIK_RIGHT_ARROW:
             if (offset < len-1) ++offset;
             started = 1;
             break;
-         case LEFT_ARROW:
+         case FIK_LEFT_ARROW:
             if (offset > 0) --offset;
             started = 1;
             break;
-         case HOME:
+         case FIK_HOME:
             offset = 0;
             started = 1;
             break;
-         case END:
+         case FIK_END:
             offset = (int) strlen(fld);
             started = 1;
             break;
@@ -1322,11 +1322,11 @@ int input_field(
                fld[i] = fld[i+1];
             started = display = 1;
             break;
-         case INSERT:                           /* insert */
+         case FIK_INSERT:                           /* insert */
             insert ^= 0x8000;
             started = 1;
             break;
-         case F5:
+         case FIK_F5:
             strcpy(fld,savefld);
             insert = started = offset = 0;
             display = 1;

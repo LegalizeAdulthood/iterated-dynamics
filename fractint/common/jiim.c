@@ -700,60 +700,60 @@ void Jiim(int which)         /* called by fractint */
             case 1143:    /* ctrl - keypad 5 */
             case 1076:    /* keypad 5        */
                break;     /* do nothing */
-            case CTL_PAGE_UP:
+            case FIK_CTL_PAGE_UP:
                dcol = 4;
                drow = -4;
                break;
-            case CTL_PAGE_DOWN:
+            case FIK_CTL_PAGE_DOWN:
                dcol = 4;
                drow = 4;
                break;
-            case CTL_HOME:
+            case FIK_CTL_HOME:
                dcol = -4;
                drow = -4;
                break;
-            case CTL_END:
+            case FIK_CTL_END:
                dcol = -4;
                drow = 4;
                break;
-            case PAGE_UP:
+            case FIK_PAGE_UP:
                dcol = 1;
                drow = -1;
                break;
-            case PAGE_DOWN:
+            case FIK_PAGE_DOWN:
                dcol = 1;
                drow = 1;
                break;
-            case HOME:
+            case FIK_HOME:
                dcol = -1;
                drow = -1;
                break;
-            case END:
+            case FIK_END:
                dcol = -1;
                drow = 1;
                break;
-            case UP_ARROW:
+            case FIK_UP_ARROW:
                drow = -1;
                break;
-            case DOWN_ARROW:
+            case FIK_DOWN_ARROW:
                drow = 1;
                break;
-            case LEFT_ARROW:
+            case FIK_LEFT_ARROW:
                dcol = -1;
                break;
-            case RIGHT_ARROW:
+            case FIK_RIGHT_ARROW:
                dcol = 1;
                break;
-            case UP_ARROW_2:
+            case FIK_UP_ARROW_2:
                drow = -4;
                break;
-            case DOWN_ARROW_2:
+            case FIK_DOWN_ARROW_2:
                drow = 4;
                break;
-            case LEFT_ARROW_2:
+            case FIK_LEFT_ARROW_2:
                dcol = -4;
                break;
-            case RIGHT_ARROW_2:
+            case FIK_RIGHT_ARROW_2:
                dcol = 4;
                break;
             case 'z':
@@ -810,7 +810,7 @@ void Jiim(int which)         /* called by fractint */
                }
                break;
 #ifdef XFRACT
-            case ENTER:
+            case FIK_ENTER:
                 break;
 #endif
             case '0':
@@ -839,7 +839,7 @@ void Jiim(int which)         /* called by fractint */
             col += dcol;
             row += drow;
 #ifdef XFRACT
-            if (kbdchar == ENTER) {
+            if (kbdchar == FIK_ENTER) {
                 /* We want to use the position of the cursor */
                 exact=0;
                 col = Cursor_GetX();

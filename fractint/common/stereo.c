@@ -340,7 +340,7 @@ int do_AutoStereo(void)
       kbdchar = driver_get_key();
       switch(kbdchar)
       {
-         case ENTER:   /* toggle bars */
+         case FIK_ENTER:   /* toggle bars */
          case FIK_SPACE:
             toggle_bars(&bars, barwidth, colour);
             break;

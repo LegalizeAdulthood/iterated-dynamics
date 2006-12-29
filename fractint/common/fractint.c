@@ -336,7 +336,7 @@ restart:   /* insert key re-starts here */
 	if (showfile && g_init_mode < 0)
 	{
 		intro();                          /* display the credits screen */
-		if (driver_key_pressed() == ESC)
+		if (driver_key_pressed() == FIK_ESC)
 		{
 			driver_get_key();
 			goodbye();
@@ -453,7 +453,7 @@ imagestart:                             /* calc/display a new image */
 			calc_status = 0;
 
 	if (initbatch == 0)
-		lookatmouse = -PAGE_UP;           /* just mouse left button, == pgup */
+		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
 
 	cyclelimit = initcyclelimit;         /* default cycle limit   */
 	g_adapter = g_init_mode;                  /* set the video adapter up */
@@ -467,7 +467,7 @@ imagestart:                             /* calc/display a new image */
 			goodbye();
 		}
 		kbdchar = main_menu(0);
-		if (kbdchar == INSERT) goto restart;      /* restart pgm on Insert Key */
+		if (kbdchar == FIK_INSERT) goto restart;      /* restart pgm on Insert Key */
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 			kbdchar = select_video_mode(-1);
 		if ((g_adapter = check_vidmode_key(0,kbdchar)) >= 0)
@@ -490,7 +490,7 @@ imagestart:                             /* calc/display a new image */
 #ifndef XFRACT
 		if (kbdchar == '@' || kbdchar == '2') {    /* execute commands */
 #else
-			if (kbdchar == F2 || kbdchar == '@') {     /* We mapped @ to F2 */
+			if (kbdchar == FIK_F2 || kbdchar == '@') {     /* We mapped @ to F2 */
 #endif
 				if ((get_commands() & 4) == 0)
 					goto imagestart;
@@ -499,10 +499,10 @@ imagestart:                             /* calc/display a new image */
 #ifndef XFRACT
 			if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#') {
 #else
-				if (kbdchar == 'r' || kbdchar == '3' || kbdchar == F3) {
+				if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3) {
 #endif
 					display3d = 0;
-					if (kbdchar == '3' || kbdchar == '#' || kbdchar == F3)
+					if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 						display3d = 1;
 					if(colorpreloaded)
 						memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
