@@ -1700,117 +1700,141 @@ static int modes_changed;
 
 int select_video_mode(int curmode)
 {
-   int entnums[MAXVIDEOMODES];
-   int attributes[MAXVIDEOMODES];
-   int i,k,ret;
+	int entnums[MAXVIDEOMODES];
+	int attributes[MAXVIDEOMODES];
+	int i,k,ret;
 #ifndef XFRACT
-   int j;
-   int oldtabmode,oldhelpmode;
+	int j;
+	int oldtabmode,oldhelpmode;
 #endif
 
-   //load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
+	//load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
 
-   for (i = 0; i < g_video_table_len; ++i) { /* init tables */
-      entnums[i] = i;
-      attributes[i] = 1;
-      }
-   entsptr = entnums;           /* for indirectly called subroutines */
+	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
+	{
+		entnums[i] = i;
+		attributes[i] = 1;
+	}
+	entsptr = entnums;           /* for indirectly called subroutines */
 
-   qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
+	qsort(entnums,g_video_table_len,sizeof(entnums[0]),entcompare); /* sort modes */
 
-   /* pick default mode */
-   if (curmode < 0) {
-      switch (g_video_type) { /* set up a reasonable default (we hope) */
-         case VIDEO_TYPE_HGC:  g_video_entry.videomodeax = 8;   /* hgc */
-                  g_video_entry.colors = 2;
-                  break;
-         case VIDEO_TYPE_CGA:  g_video_entry.videomodeax = 4;   /* cga */
-                  g_video_entry.colors = 4;
-                  break;
-         case VIDEO_TYPE_EGA:  g_video_entry.videomodeax = 16;  /* ega */
-                  g_video_entry.colors = 16;
-                  if (g_mode_7_text) {              /* egamono */
-                     g_video_entry.videomodeax = 15;
-                     g_video_entry.colors = 2;
-                     }
-                  break;
-         default: g_video_entry.videomodeax = 19;  /* mcga/vga? */
-                  g_video_entry.colors = 256;
-                  break;
-         }
-      }
-   else
-      memcpy((char *)&g_video_entry,(char *)&g_video_table[curmode],
-                 sizeof(g_video_entry));
-#ifndef XFRACT
-   for (i = 0; i < g_video_table_len; ++i) { /* find default mode */
-      if ( g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax
-        && g_video_entry.colors      == g_video_table[entnums[i]].colors
-        && (curmode < 0
-            || memcmp((char *)&g_video_entry,(char *)&g_video_table[entnums[i]],
-                          sizeof(g_video_entry)) == 0))
-         break;
-      }
-   if (i >= g_video_table_len) /* no match, default to first entry */
-      i = 0;
-
-   oldtabmode = tabmode;
-   oldhelpmode = helpmode;
-   modes_changed = 0;
-   tabmode = 0;
-   helpmode = HELPVIDSEL;
-   i = fullscreen_choice(CHOICE_HELP,
-	   "Select Video Mode",
-	   "key...name.......................xdot..ydot.colr.comment..................",
-	   NULL, g_video_table_len, NULL, attributes,
-	   1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
-   tabmode = oldtabmode;
-   helpmode = oldhelpmode;
-   if (i == -1) {
-   static char msg[]={"Save new function key assignments or cancel changes?"};
-      if (modes_changed /* update fractint.cfg for new key assignments */
-        && badconfig == 0
-        && stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,msg) == 0)
-         update_fractint_cfg();
-      return(-1);
-      }
-   if (i < 0)   /* picked by function key */
-      i = -1 - i;
-   else         /* picked by Enter key */
-      i = entnums[i];
-#endif
-   memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
-              sizeof(g_video_entry));  /* the selected entry now in g_video_entry */
-
-#ifndef XFRACT
-   /* copy fractint.cfg table to resident table, note selected entry */
-   j = k = 0;
-   memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
-   for (i = 0; i < g_video_table_len; ++i) {
-      if (g_video_table[i].keynum > 0) {
-         memcpy((char *)&g_video_table[j],(char *)&g_video_table[i],
-                    sizeof(*g_video_table));
-         if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
-                        sizeof(g_video_entry)) == 0)
-            k = g_video_table[i].keynum;
-         if (++j >= MAXVIDEOTABLE-1)
+	/* pick default mode */
+	if (curmode < 0)
+	{
+		switch (g_video_type)  /* set up a reasonable default (we hope) */
+		{
+		case VIDEO_TYPE_HGC:
+			g_video_entry.videomodeax = 8;   /* hgc */
+            g_video_entry.colors = 2;
             break;
-         }
-      }
-#else
-    k = g_video_table[0].keynum;
+        case VIDEO_TYPE_CGA:
+			g_video_entry.videomodeax = 4;   /* cga */
+            g_video_entry.colors = 4;
+            break;
+        case VIDEO_TYPE_EGA:
+			g_video_entry.videomodeax = 16;  /* ega */
+            g_video_entry.colors = 16;
+            if (g_mode_7_text)
+			{              /* egamono */
+				g_video_entry.videomodeax = 15;
+				g_video_entry.colors = 2;
+            }
+            break;
+
+		default:
+			g_video_entry.videomodeax = 19;  /* mcga/vga? */
+            g_video_entry.colors = 256;
+            break;
+        }
+    }
+	else
+	{
+		memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
+	}
+#ifndef XFRACT
+	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
+	{
+		if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
+			g_video_entry.colors      == g_video_table[entnums[i]].colors &&
+			(curmode < 0 ||
+			 memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+		{
+			break;
+		}
+    }
+	if (i >= g_video_table_len) /* no match, default to first entry */
+	{
+		i = 0;
+	}
+
+	oldtabmode = tabmode;
+	oldhelpmode = helpmode;
+	modes_changed = 0;
+	tabmode = 0;
+	helpmode = HELPVIDSEL;
+	i = fullscreen_choice(CHOICE_HELP,
+		"Select Video Mode",
+		"key...name.......................xdot..ydot.colr.comment..................",
+		NULL, g_video_table_len, NULL, attributes,
+		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
+	tabmode = oldtabmode;
+	helpmode = oldhelpmode;
+	if (i == -1)
+	{
+		/* update fractint.cfg for new key assignments */
+		if (modes_changed && badconfig == 0 &&
+			stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
+				"Save new function key assignments or cancel changes?") == 0)
+		{
+			update_fractint_cfg();
+		}
+		return -1;
+	}
+	/* picked by function key or ENTER key */
+	i = (i < 0) ? (-1 - i) : entnums[i];
 #endif
-   if ((ret = k) == 0) { /* selected entry not a copied (assigned to key) one */
-      memcpy((char *)&g_video_table[MAXVIDEOTABLE-1],
-                 (char *)&g_video_entry,sizeof(*g_video_table));
-      ret = 1400; /* special value for check_vidmode_key */
-      }
+	/* the selected entry now in g_video_entry */
+	memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));  
 
-   if (modes_changed /* update fractint.cfg for new key assignments */
-     && badconfig == 0)
-      update_fractint_cfg();
+#ifndef XFRACT
+	/* copy fractint.cfg table to resident table, note selected entry */
+	j = k = 0;
+	memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
+	for (i = 0; i < g_video_table_len; ++i)
+	{
+		if (g_video_table[i].keynum > 0)
+		{
+			memcpy((char *)&g_video_table[j],(char *)&g_video_table[i],
+						sizeof(*g_video_table));
+			if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
+							sizeof(g_video_entry)) == 0)
+			{
+				k = g_video_table[i].keynum;
+			}
+			if (++j >= MAXVIDEOTABLE-1)
+			{
+				break;
+			}
+        }
+    }
+#else
+	k = g_video_table[0].keynum;
+#endif
+	if ((ret = k) == 0)  /* selected entry not a copied (assigned to key) one */
+	{
+		memcpy((char *)&g_video_table[MAXVIDEOTABLE-1],
+					(char *)&g_video_entry,sizeof(*g_video_table));
+		ret = 1400; /* special value for check_vidmode_key */
+    }
 
-   return(ret);
+	/* update fractint.cfg for new key assignments */
+	if (modes_changed && badconfig == 0)
+	{
+		update_fractint_cfg();
+	}
+
+	return ret;
 }
 
 void format_vid_table(int choice,char *buf)
