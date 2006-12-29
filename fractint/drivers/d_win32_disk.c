@@ -9,9 +9,10 @@
 #define STRICT
 #include <windows.h>
 
-#include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
+#include "fractype.h"
+#include "helpdefs.h"
 #include "drivers.h"
 #include "WinText.h"
 
@@ -80,61 +81,31 @@ extern int writevideopalette(void);
 /*         int     ydots;          number of dots down the screen       */
 /*         int     colors;         number of colors available           */
 
+#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
+	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
+#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
+#define MODE27(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 27)
+#define MODE28(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 28)
 static VIDEOINFO modes[] =
 {
-	{
-		"IBM 256-Color VGA/MCGA	  ", "Quick and LOTS of colors ",
-		F2, 0, 0, 0, 0,				19, 320, 200, 256
-	},
-	{
-		"IBM VGA (non-std)        ", "Quick and LOTS of colors ",
-		F3, 0, 0, 0, 0,				19, 320, 400, 256
-	},
-	{
-		"IBM VGA (non-std)        ", "Quick and LOTS of colors ",
-		F4, 0, 0, 0, 0,				19, 360, 480, 256
-	},
-	{
-		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA ",
-		F5, 0, 0, 0, 0,				19, 640, 400, 256
-	},
-	{
-		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA ",
-		F6, 0, 0, 0, 0,				19, 640, 480, 256
-	},
-	{
-		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA",
-		F7 , 0, 0, 0, 0,				  27,   800,   600, 256
-	},
-	{
-		"SuperVGA/VESA Autodetect ", "Works with most SuperVGA",
-		F8, 0, 0, 0, 0,				  27,  1024,   768, 256
-	},
-	{
-		"VESA Standard interface  ", "OK: Andy Fu - Chips&Tech",
-		F9, 0, 0, 0, 0,				  28,  1280,  1024, 256
-	},
-	{
-		"Disk video               ", "                        ",
-		SF1, 0, 0, 0, 0,				  28,  1024,  1024, 256
-	},
-	{
-		"Disk video               ", "                        ",
-		SF2, 0, 0, 0, 0,				  28,  1600,  1200, 256
-	},
-	{
-		"Disk video               ", "                        ",
-		SF3, 0, 0, 0, 0,				  28,  2048,  2048, 256
-	},
-	{
-		"Disk video               ", "                        ",
-		SF4, 0, 0, 0, 0,				  28,  4096,  4096, 256
-	},
-	{
-		"Disk video               ", "                        ",
-		SF5, 0, 0, 0, 0,				  28,  8192,  8192, 256
-	}
+	MODE19("Win32 Disk Video         ", "                        ", F2,  320,  200),
+	MODE19("Win32 Disk Video         ", "                        ", F3,  320,  400),
+	MODE19("Win32 Disk Video         ", "                        ", F4,  360,  480),
+	MODE19("Win32 Disk Video         ", "                        ", F5,  640,  400),
+	MODE19("Win32 Disk Video         ", "                        ", F6,  640,  480),
+	MODE27("Win32 Disk Video         ", "                        ", F7,  800,  600),
+	MODE27("Win32 Disk Video         ", "                        ", F8,  1024, 768),
+	MODE28("Win32 Disk Video         ", "                        ", F9,  1280, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", SF1, 1024, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", SF2, 1600, 1200),
+	MODE28("Win32 Disk Video         ", "                        ", SF3, 2048, 2048),
+	MODE28("Win32 Disk Video         ", "                        ", SF4, 4096, 4096),
+	MODE28("Win32 Disk Video         ", "                        ", SF5, 8192, 8192)
 };
+#undef MODE28
+#undef MODE27
+#undef MODE19
+#undef DRIVER_MODE
 
 typedef struct tagWin32DiskDriver Win32DiskDriver;
 struct tagWin32DiskDriver
@@ -1463,7 +1434,7 @@ win32_disk_put_char_attr(Driver *drv, int char_attr)
 
 static Win32DiskDriver win32_disk_driver_info =
 {
-	STD_DRIVER_STRUCT(win32_disk)
+	STD_DRIVER_STRUCT(win32_disk, "A disk video driver for 32-bit Windows.")
 };
 
 Driver *win32_disk_driver = &win32_disk_driver_info.pub;
