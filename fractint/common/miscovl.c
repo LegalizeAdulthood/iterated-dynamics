@@ -1564,8 +1564,7 @@ void showfreemem(void)
    char adapter_name[8];        /* entry lenth from VIDEO.ASM */
    char *adapter_ptr;
 
-   printf("\n CPU type: %d  FPU type: %d  Video: %d",
-          cpu, fpu, g_video_type);
+   printf("\n CPU type: %d  FPU type: %d", cpu, fpu);
 
    adapter_ptr = &supervga_list;
 
@@ -1722,31 +1721,8 @@ int select_video_mode(int curmode)
 	/* pick default mode */
 	if (curmode < 0)
 	{
-		switch (g_video_type)  /* set up a reasonable default (we hope) */
-		{
-		case VIDEO_TYPE_HGC:
-			g_video_entry.videomodeax = 8;   /* hgc */
-            g_video_entry.colors = 2;
-            break;
-        case VIDEO_TYPE_CGA:
-			g_video_entry.videomodeax = 4;   /* cga */
-            g_video_entry.colors = 4;
-            break;
-        case VIDEO_TYPE_EGA:
-			g_video_entry.videomodeax = 16;  /* ega */
-            g_video_entry.colors = 16;
-            if (g_mode_7_text)
-			{              /* egamono */
-				g_video_entry.videomodeax = 15;
-				g_video_entry.colors = 2;
-            }
-            break;
-
-		default:
-			g_video_entry.videomodeax = 19;  /* mcga/vga? */
-            g_video_entry.colors = 256;
-            break;
-        }
+		g_video_entry.videomodeax = 19;  /* vga */
+        g_video_entry.colors = 256;
     }
 	else
 	{

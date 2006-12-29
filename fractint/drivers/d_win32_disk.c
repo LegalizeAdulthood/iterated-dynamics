@@ -733,27 +733,6 @@ translatekey(int ch)
 	}
 }
 
-/*----------------------------------------------------------------------
-*
-* handleesc --
-*
-*	Handle an escape key.  This may be an escape key sequence
-*	indicating a function key was pressed.
-*
-* Results:
-*	Key.
-*
-* Side effects:
-*	Reads keys.
-*
-*----------------------------------------------------------------------
-*/
-static int
-handleesc(Win32DiskDriver *di)
-{
-	return ESC;
-}
-
 /*
 *----------------------------------------------------------------------
 *
@@ -773,7 +752,7 @@ static void
 win32_disk_redraw(Driver *drv)
 {
 	ODS("win32_disk_redraw");
-	wintext_paintscreen(0, 80, 0, 24);
+	wintext_paintscreen(0, 80, 0, 25);
 }
 
 /*----------------------------------------------------------------------

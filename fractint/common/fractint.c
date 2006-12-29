@@ -312,13 +312,6 @@ restart:   /* insert key re-starts here */
 		setup287code();
 	}
 	adapter_detect();                    /* check what video is really present */
-	if (debugflag >= 9002 && debugflag <= 9100) /* for testing purposes */
-	{
-		if (g_video_type > (debugflag-9000)/2)     /* adjust the video value */
-		{
-			g_video_type = (debugflag-9000)/2;
-		}
-	}
 
 	diskisactive = 0;                    /* disk-video is inactive */
 	diskvideo = 0;                       /* disk driver is not in use */

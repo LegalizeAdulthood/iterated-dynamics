@@ -136,7 +136,6 @@ int g_is_true_color = 0;
 long linitx = 0;
 long linity = 0;
 int lookatmouse = 0;
-int g_mode_7_text = 0;
 BYTE olddacbox[256][3];
 int overflow = 0;
 int polyphony = 0;
@@ -202,7 +201,6 @@ int g_vesa_y_res = 0;
 int g_video_scroll = 0;
 int g_video_start_x = 0;
 int g_video_start_y = 0;
-int g_video_type = 0;
 int g_video_vram = 0;
 /* g_video_table
  *
@@ -742,7 +740,7 @@ void scroll_relative(int bycol, int byrow)
 ; adapter_detect:
 ;       This routine performs a few quick checks on the type of
 ;       video adapter installed.
-;       It sets variables g_video_type and g_text_safe,
+;       It sets variable g_text_safe,
 ;       and fills in a few bank-switching routines.
 */
 void
@@ -754,14 +752,6 @@ adapter_detect(void)
 		return;
 	done_detect = 1;
 	g_text_safe = 2;
-	if (colors == 2)
-	{
-		g_video_type = 100;
-	}
-	else
-	{
-		g_video_type = 101;
-	}
 }
 
 void erasesegment(int segaddress, int segvalue)

@@ -1128,50 +1128,17 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       }
 
 #ifndef XFRACT
-      if (strcmp(variable,s_adapter) == 0 ) {   /* adapter==?     */
-         int i, j;
-         char adapter_name[8];          /* entry lenth from VIDEO.ASM */
-         char *adapter_ptr;
-
-         adapter_ptr = &supervga_list[0];
-
-         for(i = 0 ; ; i++) {           /* find the SuperVGA entry */
-             memcpy(adapter_name , adapter_ptr, 8);
-             adapter_name[6] = ' ';
-             for (j = 0; j < 8; j++)
-                 if(adapter_name[j] == ' ')
-                     adapter_name[j] = 0;
-             if (adapter_name[0] == 0) break;  /* end-of-the-list */
-             if (strncmp(value,adapter_name,(int) strlen(adapter_name)) == 0) {
-                g_svga_type = i+1;
-                adapter_ptr[6] = 1;
-                break;
-                }
-             adapter_ptr += 8;
-             }
-         if (g_svga_type != 0) return 3;
-
-         g_video_type = VIDEO_TYPE_VGA;                        /* assume video=vga */
-         if (strcmp(value,s_egamono) == 0) {
-            g_video_type = VIDEO_TYPE_EGA;
-            g_mode_7_text = 1;
-            }
-         else if (strcmp(value,s_hgc) == 0) {   /* video = hgc */
-            g_video_type = VIDEO_TYPE_HGC;
-            g_mode_7_text = 1;
-            }
-         else if (strcmp(value,s_ega) == 0)     /* video = ega */
-            g_video_type = VIDEO_TYPE_EGA;
-         else if (strcmp(value,s_cga) == 0)     /* video = cga */
-            g_video_type = VIDEO_TYPE_CGA;
-         else if (strcmp(value,s_mcga) == 0)    /* video = mcga */
-            g_video_type = VIDEO_TYPE_MCGA;
-         else if (strcmp(value,s_vga) == 0)     /* video = vga */
-            g_video_type = VIDEO_TYPE_VGA;
-         else
-            goto badarg;
-         return 3;
-         }
+	if (strcmp(variable,s_adapter) == 0 )    /* adapter==?     */
+	{
+		/* adapter parameter no longer used; check for bad argument anyway */
+        if ((strcmp(value, s_egamono) != 0)	&& (strcmp(value, s_hgc) != 0) &&
+			(strcmp(value, s_ega) != 0)		&& (strcmp(value, s_cga) != 0) &&
+			(strcmp(value, s_mcga) != 0)	&& (strcmp(value, s_vga) != 0))
+		{
+			goto badarg;
+		}
+        return 3;
+    }
 
       if (strcmp(variable,s_afi) == 0) {
        if (strncmp(value,"8514"  ,4) == 0
