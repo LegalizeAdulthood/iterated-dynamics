@@ -66,3 +66,9 @@ win32
 	Eliminate one use of extraseg for vidtbl.
 2006.12.27.02.26
 	Basic disk video messages displaying.
+2006.12.28.17.34
+	Disk video status screen corrected.
+	Memory error in disk cache corrected.
+	TAB display showing properly.
+	Add driver name and description to TAB screen.
+	Deprecate fracting.cfg for video modes.
