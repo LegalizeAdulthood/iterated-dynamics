@@ -492,84 +492,11 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 	case VK_DELETE:		i = CTL_KEY(FIK_CTL_DEL);		break;
 	case VK_END:		i = CTL_KEY(FIK_CTL_END);		break;
 	case VK_RETURN:		i = CTL_KEY(FIK_CTL_ENTER);		break;
-		/* FIK_CTL_ENTER_2? */
 	case VK_HOME:		i = CTL_KEY(FIK_CTL_HOME);		break;
 	case VK_INSERT:		i = CTL_KEY(FIK_CTL_INSERT);	break;
 	case VK_SUBTRACT:	i = CTL_KEY(FIK_CTL_MINUS);		break;
-
-	case VK_PRIOR:
-		i = CTL_KEY(FIK_CTL_PAGE_UP);
-		if (i != FIK_CTL_PAGE_UP)
-		{
-			_ASSERTE(i == FIK_PAGE_UP);
-		}
-		break;
-
+	case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);	break;
 	case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);	break;
-	case VK_LEFT:		_ASSERTE(vk != VK_LEFT);		break;
-	case VK_UP:			_ASSERTE(vk != VK_UP);			break;
-	case VK_RIGHT:		_ASSERTE(vk != VK_RIGHT);		break;
-	case VK_DOWN:		_ASSERTE(vk != VK_DOWN);		break;
-	case VK_HELP:		_ASSERTE(vk != VK_HELP);		break;
-	case VK_NUMPAD0:	_ASSERTE(vk != VK_NUMPAD0);		break;
-	case VK_NUMPAD1:	_ASSERTE(vk != VK_NUMPAD1);		break;
-	case VK_NUMPAD2:	_ASSERTE(vk != VK_NUMPAD2);		break;
-	case VK_NUMPAD3:	_ASSERTE(vk != VK_NUMPAD3);		break;
-	case VK_NUMPAD4:	_ASSERTE(vk != VK_NUMPAD4);		break;
-	case VK_NUMPAD5:	_ASSERTE(vk != VK_NUMPAD5);		break;
-	case VK_NUMPAD6:	_ASSERTE(vk != VK_NUMPAD6);		break;
-	case VK_NUMPAD7:	_ASSERTE(vk != VK_NUMPAD7);		break;
-	case VK_NUMPAD8:	_ASSERTE(vk != VK_NUMPAD8);		break;
-	case VK_NUMPAD9:	_ASSERTE(vk != VK_NUMPAD9);		break;
-	case VK_MULTIPLY:	_ASSERTE(vk != VK_MULTIPLY);	break;
-	case VK_ADD:		_ASSERTE(vk != VK_ADD);			break;
-	case VK_SEPARATOR:	_ASSERTE(vk != VK_SEPARATOR);	break;
-	case VK_DECIMAL:	_ASSERTE(vk != VK_DECIMAL);		break;
-	case VK_DIVIDE:		_ASSERTE(vk != VK_DIVIDE);		break;
-	case VK_F2:			_ASSERTE(vk != VK_F2);			break;
-	case VK_F3:			_ASSERTE(vk != VK_F3);			break;
-	case VK_F4:			_ASSERTE(vk != VK_F4);			break;
-	case VK_F5:			_ASSERTE(vk != VK_F5);			break;
-	case VK_F6:			_ASSERTE(vk != VK_F6);			break;
-	case VK_F7:			_ASSERTE(vk != VK_F7);			break;
-	case VK_F8:			_ASSERTE(vk != VK_F8);			break;
-	case VK_F9:			_ASSERTE(vk != VK_F9);			break;
-	case VK_F10:		_ASSERTE(vk != VK_F10);			break;
-	case VK_F11:		_ASSERTE(vk != VK_F11);			break;
-	case VK_F12:		_ASSERTE(vk != VK_F12);			break;
-	case VK_F13:		_ASSERTE(vk != VK_F13);			break;
-	case VK_F14:		_ASSERTE(vk != VK_F14);			break;
-	case VK_F15:		_ASSERTE(vk != VK_F15);			break;
-	case VK_F16:		_ASSERTE(vk != VK_F16);			break;
-	case VK_F17:		_ASSERTE(vk != VK_F17);			break;
-	case VK_F18:		_ASSERTE(vk != VK_F18);			break;
-	case VK_F19:		_ASSERTE(vk != VK_F19);			break;
-	case VK_F20:		_ASSERTE(vk != VK_F20);			break;
-	case VK_F21:		_ASSERTE(vk != VK_F21);			break;
-	case VK_F22:		_ASSERTE(vk != VK_F22);			break;
-	case VK_F23:		_ASSERTE(vk != VK_F23);			break;
-	case VK_F24:		_ASSERTE(vk != VK_F24);			break;
-
-#if (_WIN32_WINNT >= 0x0500)
-	case VK_BROWSER_BACK:			_ASSERTE(vk != VK_BROWSER_BACK);		break;
-	case VK_BROWSER_FORWARD:		_ASSERTE(vk != VK_BROWSER_FORWARD);		break;
-	case VK_BROWSER_REFRESH:		_ASSERTE(vk != VK_BROWSER_REFRESH);		break;
-	case VK_BROWSER_STOP:			_ASSERTE(vk != VK_BROWSER_STOP);		break;
-	case VK_BROWSER_SEARCH:			_ASSERTE(vk != VK_BROWSER_SEARCH);		break;
-	case VK_BROWSER_FAVORITES:		_ASSERTE(vk != VK_BROWSER_FAVORITES);	break;
-	case VK_BROWSER_HOME:			_ASSERTE(vk != VK_BROWSER_HOME);		break;
-	case VK_VOLUME_MUTE:			_ASSERTE(vk != VK_VOLUME_MUTE);			break;
-	case VK_VOLUME_DOWN:			_ASSERTE(vk != VK_VOLUME_DOWN);			break;
-	case VK_VOLUME_UP:				_ASSERTE(vk != VK_VOLUME_UP);			break;
-	case VK_MEDIA_NEXT_TRACK:		_ASSERTE(vk != VK_MEDIA_NEXT_TRACK);	break;
-	case VK_MEDIA_PREV_TRACK:		_ASSERTE(vk != VK_MEDIA_PREV_TRACK);	break;
-	case VK_MEDIA_STOP:				_ASSERTE(vk != VK_MEDIA_STOP);			break;
-	case VK_MEDIA_PLAY_PAUSE:		_ASSERTE(vk != VK_MEDIA_PLAY_PAUSE);	break;
-	case VK_LAUNCH_MAIL:			_ASSERTE(vk != VK_LAUNCH_MAIL);			break;
-	case VK_LAUNCH_MEDIA_SELECT:	_ASSERTE(vk != VK_LAUNCH_MEDIA_SELECT);	break;
-	case VK_LAUNCH_APP1:			_ASSERTE(vk != VK_LAUNCH_APP1);			break;
-	case VK_LAUNCH_APP2:			_ASSERTE(vk != VK_LAUNCH_APP2);			break;
-#endif /* _WIN32_WINNT >= 0x0500 */
 
 	default:
 		if (0 == j)
@@ -579,36 +506,10 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 		break;
 	}
 
-	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
-	{
-		//j = 0;       /* send flag: special key down */
-		k = 0xff00 + (unsigned int) vk;
-	}
-	else if (j == 0)        /* use this call only for non-ASCII keys */
+	/* use this call only for non-ASCII keys */
+	if (!(vk == VK_SHIFT || vk == VK_CONTROL) && (j == 0))
 	{
 		wintext_addkeypress(i);
-	}
-}
-
-static void wintext_OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
-{
-	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-	/* a key has been released - maybe ASCII, maybe not */
-	/* Watch for Shift, Ctl keys  */
-	unsigned int i, j, k;
-	ODS("wintext_OnKeyUp");
-	i = MapVirtualKey(vk, 0);
-	j = MapVirtualKey(vk, 2);
-	k = (i << 8) + j;
-	j = 1;
-	if (vk == VK_SHIFT || vk == VK_CONTROL) /* shift or ctl key */
-	{
-		//j = 0;       /* send flag: special key up */
-		k = 0xfe00 + vk;
-	}
-	if (j == 0)        /* use this call only for non-ASCII keys */
-	{
-		wintext_addkeypress(k);
 	}
 }
 
@@ -666,7 +567,6 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
 	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
 	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
-	case WM_KEYUP:			HANDLE_WM_KEYUP(hWnd, wParam, lParam, wintext_OnKeyUp);			break;
 	case WM_CHAR:			HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
