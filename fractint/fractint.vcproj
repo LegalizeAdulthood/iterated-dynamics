@@ -457,7 +457,7 @@
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
-							PreprocessorDefinitions="SRCDIR=&quot;&quot;.&quot;&quot;"/>
+							PreprocessorDefinitions="SRCDIR=&quot;&quot;.&quot;&quot;;TEST"/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32">
