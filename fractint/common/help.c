@@ -1128,7 +1128,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
          {
          info->start_of_line = 1;
          info->spaces = 0;   /* strip spaces before a new-line */
-         putc(c, info->file);
+         fputc(c, info->file);
          }
 
       else
@@ -1358,12 +1358,12 @@ int makedoc_msg_func(int pnum, int num_pages)
    {
    if (pnum >= 0)
       {
-      printf("\rcompleted %d%%", (int)( (100.0 / num_pages) * pnum ) );
+      //printf("\rcompleted %d%%", (int)( (100.0 / num_pages) * pnum ) );
       return (1);
       }
-   if ( pnum == -2 )
-      printf("\n*** aborted");
-   printf("\n");
+   //if ( pnum == -2 )
+      //printf("\n*** aborted");
+   //printf("\n");
    return (0);
    }
 
