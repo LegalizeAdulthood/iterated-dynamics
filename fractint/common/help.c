@@ -1105,7 +1105,7 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
          {
          info->start_of_line = 1;
          info->spaces = 0;   /* strip spaces before a new-line */
-         putc(c, info->file);
+         fputc(c, info->file);
          }
 
       else
