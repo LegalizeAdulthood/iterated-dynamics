@@ -1419,6 +1419,12 @@ win32_disk_put_char_attr(Driver *drv, int char_attr)
 {
 }
 
+static int
+win32_disk_validate_mode(Driver *drv, VIDEOINFO *mode)
+{
+	return (mode->colors == 256) ? 1 : 0;
+}
+
 static Win32DiskDriver win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk, "A disk video driver for 32-bit Windows.")

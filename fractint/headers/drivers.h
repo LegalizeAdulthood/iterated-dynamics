@@ -47,6 +47,7 @@ struct tagDriver
 	/* name of driver */				const char *name;
 	/* driver description */			const char *description;
 	/* init the driver */				int (*init)(Driver *drv, int *argc, char **argv);
+	/* validate a fractint.cfg mode */	int (*validate_mode)(Driver *drv, VIDEOINFO *mode);
 	/* shutdown the driver */			void (*terminate)(Driver *drv);
 	/* flush pending updates */			void (*flush)(Driver *drv);
 	/* refresh alarm */					void (*schedule_alarm)(Driver *drv, int secs);
@@ -97,6 +98,7 @@ struct tagDriver
   { \
 	#name_, desc_, \
     name_##_init, \
+	name_##_validate_mode, \
     name_##_terminate, \
     name_##_flush, \
     name_##_schedule_alarm, \
@@ -174,6 +176,7 @@ struct tagDriver
 extern int init_drivers(int *argc, char **argv);
 extern void add_video_mode(Driver *drv, VIDEOINFO *mode);
 extern void close_drivers(void);
+extern Driver *driver_find_by_name(const char *name);
 
 extern Driver *g_driver;			/* current driver in use */
 
@@ -181,6 +184,7 @@ extern Driver *g_driver;			/* current driver in use */
 
 #if defined(USE_DRIVER_FUNCTIONS)
 
+extern int driver_validate_mode(VIDEOINFO *mode);
 extern void driver_terminate(void);
 extern void driver_flush(void);
 extern void driver_schedule_alarm(int secs);
@@ -226,6 +230,7 @@ extern void driver_put_char_attr(int char_attr);
 
 #else
 
+#define driver_validate_mode(mode_)					(*g_driver->validate_mode)(g_driver, mode_)
 #define driver_terminate()							(*g_driver->terminate)(g_driver)
 #define driver_flush()								(*g_driver->flush)(g_driver)
 #define void driver_schedule_alarm(_secs)			(*g_driver->schedule_alarm)(g_driver, _secs)
