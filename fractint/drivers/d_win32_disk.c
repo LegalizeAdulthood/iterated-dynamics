@@ -774,8 +774,14 @@ win32_disk_redraw(Driver *drv)
 static int
 win32_disk_get_key(Driver *drv)
 {
-	int ch = wintext_getkeypress(1);
+	int ch = keybuffer;
+	if (ch)
+	{
+		keybuffer = 0;
+		return ch;
+	}
 
+	ch = wintext_getkeypress(1);
 	if (ch)
 	{
 		extern int inside_help;
