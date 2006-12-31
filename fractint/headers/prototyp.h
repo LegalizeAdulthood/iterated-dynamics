@@ -1074,7 +1074,7 @@ extern int thinking(int ,char *);
 extern int savegraphics(void);
 extern int restoregraphics(void);
 extern void discardgraphics(void);
-extern int load_fractint_cfg(int );
+extern void load_fractint_config(void);
 extern int check_vidmode_key(int ,int );
 extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int ,char *);

@@ -215,7 +215,6 @@ VIDEOINFO g_video_table[MAXVIDEOMODES] =
 		0, 0, 0, 0, 0, 0
 	}
 };
-VIDEOINFO vidtbl[MAXVIDEOMODES] = { 0 };
 int g_vxdots = 0;
 
 /* Global variables that should be phased out (old video mode stuff) */
