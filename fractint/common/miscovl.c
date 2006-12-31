@@ -1703,11 +1703,8 @@ int select_video_mode(int curmode)
 	int attributes[MAXVIDEOMODES];
 	int i,k,ret;
 #ifndef XFRACT
-	int j;
 	int oldtabmode,oldhelpmode;
 #endif
-
-	//load_fractint_cfg(0);        /* load fractint.cfg to extraseg */
 
 	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
 	{
@@ -1775,22 +1772,15 @@ int select_video_mode(int curmode)
 
 #ifndef XFRACT
 	/* copy fractint.cfg table to resident table, note selected entry */
-	j = k = 0;
-	memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
+	k = 0;
 	for (i = 0; i < g_video_table_len; ++i)
 	{
 		if (g_video_table[i].keynum > 0)
 		{
-			memcpy((char *)&g_video_table[j],(char *)&g_video_table[i],
-						sizeof(*g_video_table));
 			if (memcmp((char *)&g_video_entry,(char *)&g_video_table[i],
 							sizeof(g_video_entry)) == 0)
 			{
 				k = g_video_table[i].keynum;
-			}
-			if (++j >= MAXVIDEOTABLE-1)
-			{
-				break;
 			}
         }
     }
