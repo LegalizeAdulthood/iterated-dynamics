@@ -1623,8 +1623,7 @@ int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 int load_fractint_cfg(int options)
 {
 	/* Reads fractint.cfg, loading videoinfo entries into g_video_table. */
-	/* Sets g_video_table pointing to the loaded table, and returns the    */
-	/* number of entries (also sets g_video_table_len to this).             */
+	/* Sets the number of entries, sets g_video_table_len. */
 	/* Past g_video_table, g_cfg_line_nums are stored for update_fractint_cfg. */
 	/* If fractint.cfg is not found or invalid, issues a message    */
 	/* (first time the problem occurs only, and only if options is  */
@@ -1641,10 +1640,10 @@ int load_fractint_cfg(int options)
 	int truecolorbits; 
 
 #ifdef XFRACT
-	badconfig = -1;
+	g_bad_config = -1;
 #endif
 
-	if (badconfig)  /* fractint.cfg already known to be missing or bad */
+	if (g_bad_config)  /* fractint.cfg already known to be missing or bad */
 	{
 		goto use_resident_table;
 	}
@@ -1760,7 +1759,7 @@ int load_fractint_cfg(int options)
 	return (g_video_table_len);
 
 bad_fractint_cfg:
-	badconfig = -1; /* bad, no message issued yet */
+	g_bad_config = -1; /* bad, no message issued yet */
 	if (options == 0)
 	{
 		bad_fractint_cfg_msg();
@@ -1784,12 +1783,11 @@ use_resident_table:
 
 void bad_fractint_cfg_msg()
 {
-static char badcfgmsg[]={"\
+	stopmsg(0,"\
 File FRACTINT.CFG is missing or invalid.\n\
 See Hardware Support and Video Modes in the full documentation for help.\n\
-I will continue with only the built-in video modes available."};
-   stopmsg(0,badcfgmsg);
-   badconfig = 1; /* bad, message issued */
+I will continue with only the built-in video modes available.");
+	g_bad_config = 1; /* bad, message issued */
 }
 
 void load_videotable(int options)

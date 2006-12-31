@@ -65,7 +65,7 @@ load_fractint_cfg(int options)
    g_video_table = extraseg;
    cfglinenums = (int *)(&g_video_table[MAXVIDEOMODES]);
 
-   if (badconfig)  /* fractint.cfg already known to be missing or bad */
+   if (g_bad_config)  /* fractint.cfg already known to be missing or bad */
       goto use_resident_table;
 
    findpath("fractint.cfg",tempstring);
@@ -154,7 +154,7 @@ load_fractint_cfg(int options)
    return (g_video_table_len);
 
 bad_fractint_cfg:
-   badconfig = -1; /* bad, no message issued yet */
+   g_bad_config = -1; /* bad, no message issued yet */
    if (options == 0)
       bad_fractint_cfg_msg();
 
@@ -181,7 +181,7 @@ File FRACTINT.CFG is missing or invalid.\n\
 See Hardware Support and Video Modes in the full documentation for help.\n\
 I will continue with only the built-in video modes available."};
    stopmsg(0,badcfgmsg);
-   badconfig = 1; /* bad, message issued */
+   g_bad_config = 1; /* bad, message issued */
 }
 
 static void
