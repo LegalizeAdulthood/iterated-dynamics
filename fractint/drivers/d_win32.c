@@ -203,6 +203,11 @@ static void win32_put_char_attr(Driver *drv, int char_attr)
 {
 }
 
+static int win32_validate_mode(Driver *drv, VIDEOINFO *mode)
+{
+	return 0;
+}
+
 
 /* new driver		    old fractint
    -------------------  ------------

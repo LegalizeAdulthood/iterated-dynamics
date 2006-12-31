@@ -16,8 +16,7 @@ extern Driver *win32_disk_driver;
 /* default driver is first one in the list that initializes. */
 #define MAX_DRIVERS 10
 static int num_drivers = 0;
-static Driver *available[MAX_DRIVERS];
-static Driver *mode_drivers[MAXVIDEOMODES];
+static Driver *s_available[MAX_DRIVERS];
 
 Driver *g_driver = NULL;
 
@@ -35,7 +34,7 @@ load_driver(Driver *drv, int *argc, char **argv)
 			{
 				g_driver = drv;
 			}
-			available[num_drivers++] = drv;
+			s_available[num_drivers++] = drv;
 			return 1;
 		}
 	}
@@ -80,7 +79,7 @@ add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	_ASSERTE(g_video_table_len < MAXVIDEOMODES);
 	/* stash away driver pointer so we can init driver for selected mode */
-	mode_drivers[g_video_table_len] = drv;
+	mode->driver = drv;
 	memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));
 	g_video_table_len++;
 }
@@ -92,14 +91,29 @@ close_drivers(void)
 
 	for (i = 0; i < num_drivers; i++)
 	{
-		if (available[i])
+		if (s_available[i])
 		{
-			(*available[i]->terminate)(available[i]);
-			available[i] = NULL;
+			(*s_available[i]->terminate)(s_available[i]);
+			s_available[i] = NULL;
 		}
 	}
 
 	g_driver = NULL;
+}
+
+Driver *
+driver_find_by_name(const char *name)
+{
+	int i;
+
+	for (i = 0; i < num_drivers; i++)
+	{
+		if (strcmp(name, s_available[i]->name) == 0)
+		{
+			return s_available[i];
+		}
+	}
+	return NULL;
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
@@ -267,6 +281,12 @@ void
 driver_put_char_attr(int char_attr)
 {
 	(*g_driver->put_char_attr)(g_driver, char_attr);
+}
+
+int
+driver_validate_mode(VIDEOINFO *mode)
+{
+	return (*g_driver->validate_mode)(g_driver, mode);
 }
 
 #endif
