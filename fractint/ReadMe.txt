@@ -72,3 +72,8 @@ win32
 	TAB display showing properly.
 	Add driver name and description to TAB screen.
 	Deprecate fracting.cfg for video modes.
+2006.12.31.12.53
+	Fisk bug with video table when you select a video mode the 2nd time around.
+	Fix space toggle bug on intro screen, but still too many keyboard routines;
+	need to narrow it down to just the two driver routines and not all these
+	inner layers.
