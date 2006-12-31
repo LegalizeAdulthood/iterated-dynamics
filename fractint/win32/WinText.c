@@ -447,16 +447,16 @@ static void wintext_OnPaint(HWND window)
 {
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
-    RECT tempRect;
+
+	/* the routine below handles *all* window updates */
+	int xmin = ps.rcPaint.left/g_me.char_width;
+	int xmax = (ps.rcPaint.right + g_me.char_width - 1)/g_me.char_width;
+	int ymin = ps.rcPaint.top/g_me.char_height;
+	int ymax = (ps.rcPaint.bottom + g_me.char_height - 1)/g_me.char_height;
 
 	ODS("wintext_OnPaint");
 
-	/* "Paint" routine - call the worker routine */
-	GetUpdateRect(window, &tempRect, FALSE);
-	ValidateRect(window, &tempRect);
-
-	/* the routine below handles *all* window updates */
-	wintext_paintscreen(0, g_me.char_xchars-1, 0, g_me.char_ychars-1);
+	wintext_paintscreen(xmin, xmax, ymin, ymax);
 	EndPaint(window, &ps);
 }
 
