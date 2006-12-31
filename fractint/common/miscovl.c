@@ -1756,7 +1756,7 @@ int select_video_mode(int curmode)
 	if (i == -1)
 	{
 		/* update fractint.cfg for new key assignments */
-		if (modes_changed && badconfig == 0 &&
+		if (modes_changed && g_bad_config == 0 &&
 			stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
 				"Save new function key assignments or cancel changes?") == 0)
 		{
@@ -1795,7 +1795,7 @@ int select_video_mode(int curmode)
     }
 
 	/* update fractint.cfg for new key assignments */
-	if (modes_changed && badconfig == 0)
+	if (modes_changed && g_bad_config == 0)
 	{
 		update_fractint_cfg();
 	}
@@ -1839,7 +1839,7 @@ static int check_modekey(int curkey,int choice)
    if ( (curkey == '-' || curkey == '+')
      && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
       static char msg[]={"Missing or bad FRACTINT.CFG file. Can't reassign keys."};
-      if (badconfig)
+      if (g_bad_config)
          stopmsg(0,msg);
       else {
          if (curkey == '-') {                   /* deassign key? */

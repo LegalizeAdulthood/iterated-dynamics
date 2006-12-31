@@ -108,7 +108,7 @@ int compiled_by_turboc = 0;
         double  f_at_rad;               /* finite attractor radius  */
         int     bitshift;               /* fudgefactor              */
 
-        int     badconfig = 0;          /* 'fractint.cfg' ok?       */
+        int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
         int     diskisactive;           /* disk-video drivers flag  */
         int     diskvideo;              /* disk-video access flag   */
         int hasinverse = 0;
@@ -324,7 +324,7 @@ restart:   /* insert key re-starts here */
 		showfreemem();
 	}
 
-	if (badconfig < 0)                   /* fractint.cfg bad, no msg yet */
+	if (g_bad_config < 0)                   /* fractint.cfg bad, no msg yet */
 	{
 		bad_fractint_cfg_msg();
 	}
