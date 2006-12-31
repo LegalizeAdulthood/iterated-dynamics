@@ -1748,7 +1748,7 @@ int select_video_mode(int curmode)
 	helpmode = HELPVIDSEL;
 	i = fullscreen_choice(CHOICE_HELP,
 		"Select Video Mode",
-		"key...name.......................xdot..ydot.colr.comment..................",
+		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
 		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
 	tabmode = oldtabmode;
@@ -1789,7 +1789,7 @@ int select_video_mode(int curmode)
 #endif
 	if ((ret = k) == 0)  /* selected entry not a copied (assigned to key) one */
 	{
-		memcpy((char *)&g_video_table[MAXVIDEOTABLE-1],
+		memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
 					(char *)&g_video_entry,sizeof(*g_video_table));
 		ret = 1400; /* special value for check_vidmode_key */
     }
@@ -1824,8 +1824,8 @@ void format_vid_table(int choice,char *buf)
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
-   sprintf(buf,"%s%c %-25s",  /* 74 chars */
-           local_buf, biosflag, g_video_entry.comment);
+   sprintf(buf,"%s%c %.12s %.12s",  /* 74 chars */
+           local_buf, biosflag, g_video_entry.driver->name, g_video_entry.comment);
 }
 
 #ifndef XFRACT
@@ -1838,9 +1838,8 @@ static int check_modekey(int curkey,int choice)
    ret = 0;
    if ( (curkey == '-' || curkey == '+')
      && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
-      static char msg[]={"Missing or bad FRACTINT.CFG file. Can't reassign keys."};
       if (g_bad_config)
-         stopmsg(0,msg);
+         stopmsg(0,"Missing or bad FRACTINT.CFG file. Can't reassign keys.");
       else {
          if (curkey == '-') {                   /* deassign key? */
             if (g_video_table[i].keynum >= 1084) {

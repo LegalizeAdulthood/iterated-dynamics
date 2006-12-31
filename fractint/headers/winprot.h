@@ -141,7 +141,6 @@ extern void TranspPerPixel(void);
 extern void stopslideshow(void);
 extern void aspectratio_crop(float, float);
 extern void setvideotext(void);
-extern int load_fractint_cfg(int);
 
 /* added for Win32 port */
 extern void gettruecolor(int, int, int*, int*, int*);

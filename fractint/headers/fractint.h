@@ -120,6 +120,8 @@ names. So for now humor us and let's keep the names short.
 #define DEFAULTASPECT ((float)0.75)/* Assumed overall screen dimensions, y/x  */
 #define DEFAULTASPECTDRIFT ((float)0.02) /* drift of < 2% is forced to 0% */
 
+typedef struct tagDriver Driver;
+
 struct videoinfo {              /* All we need to know about a Video Adapter */
         char    name[26];       /* Adapter name (IBM EGA, etc)          */
         char    comment[26];    /* Comments (UNTESTED, etc)             */
@@ -150,6 +152,7 @@ struct videoinfo {              /* All we need to know about a Video Adapter */
         int     xdots;          /* number of dots across the screen     */
         int     ydots;          /* number of dots down the screen       */
         int     colors;         /* number of colors available           */
+		Driver *driver;
         };
 
 typedef struct videoinfo VIDEOINFO;
