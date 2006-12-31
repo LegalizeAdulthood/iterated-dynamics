@@ -442,10 +442,15 @@ int getakeynohelp(void)
 
 int keypressed(void)
 {
-	int ch = wintext_getkeypress(0);
+	int ch = keybuffer;
 	if (ch)
 	{
-		keybuffer = ch;
+		return ch;
+	}
+	ch = wintext_getkeypress(0);
+	if (ch)
+	{
+		keybuffer = wintext_getkeypress(1);
 		if (FIK_F1 == ch && helpmode)
 		{
 			if (!inside_help)
