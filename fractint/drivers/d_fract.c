@@ -161,7 +161,7 @@ bad_fractint_cfg:
 use_resident_table:
    g_video_table_len = 0;
    vident = g_video_table;
-   for (i = 0; i < MAXVIDEOTABLE; ++i) {
+   for (i = 0; i < MAXVIDEOMODES; ++i) {
       if (g_video_table[i].xdots) {
          memcpy((char *)vident,(char *)g_video_table[i],
                     sizeof(*vident));
@@ -192,12 +192,12 @@ load_videotable(int options)
    int keyents,i;
    load_fractint_cfg(options); /* load fractint.cfg to extraseg */
    keyents = 0;
-   memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOTABLE);
+   memset((char *)g_video_table,0,sizeof(*g_video_table)*MAXVIDEOMODES);
    for (i = 0; i < g_video_table_len; ++i) {
       if (g_video_table[i].keynum > 0) {
          memcpy((char *)&g_video_table[keyents],(char *)&g_video_table[i],
                     sizeof(*g_video_table));
-         if (++keyents >= MAXVIDEOTABLE)
+         if (++keyents >= MAXVIDEOMODES)
             break;
          }
       }

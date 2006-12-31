@@ -1294,7 +1294,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (active_system == 0) {
          if ((k = check_vidmode_keyname(value)) == 0) goto badarg;
          g_init_mode = -1;
-         for (i = 0; i < MAXVIDEOTABLE; ++i) {
+         for (i = 0; i < MAXVIDEOMODES; ++i) {
             if (g_video_table[i].keynum == k) {
                g_init_mode = i;
                break;
