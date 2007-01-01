@@ -491,7 +491,7 @@ extern int                   sizedot;
 extern short far             sizeofstring[];
 extern short                 skipxdots;
 extern short                 skipydots;
-extern int                   slides;
+extern int                   g_slides;
 extern int                   Slope;
 extern int                   soundflag;
 extern int                   sound_rollover;
