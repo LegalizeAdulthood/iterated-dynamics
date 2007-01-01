@@ -135,6 +135,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_38DCA788CBF34AC38B7E46AB3967F8E2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_39D09E38090B48EC9CB2804DD28DC31E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -250,6 +256,12 @@
         "Entry"
         {
         "MsmKey" = "8:_69C37606211243FD8478FF33AB269A12"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -507,12 +519,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_E7497F7FF5074138B80E2F6AC5BDDFCD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -589,7 +595,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\FractIntSetup-21.00.alpha0.msi"
+        "OutputFilename" = "8:Release\\FractIntSetup-21.00.alpha1.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -766,7 +772,7 @@
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_1E503C6007A04C2BABB9C3F1BE21044A"
             {
             "SourcePath" = "8:..\\fractsrc.doc"
-            "TargetName" = "8:fractsrc.doc"
+            "TargetName" = "8:fractsrc.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -1007,6 +1013,26 @@
             {
             "SourcePath" = "8:..\\demo.bat"
             "TargetName" = "8:demo.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_38DCA788CBF34AC38B7E46AB3967F8E2"
+            {
+            "SourcePath" = "8:..\\fractint.cfg"
+            "TargetName" = "8:fractint.cfg"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -1423,6 +1449,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6DBB41225582452E9568E7A4A7E52FD3"
+            {
+            "SourcePath" = "8:Banner.bmp"
+            "TargetName" = "8:Banner.bmp"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_6E9808DF683E4D43B43239D116C106A5"
             {
             "SourcePath" = "8:..\\key\\new19-5.key"
@@ -1666,7 +1712,7 @@
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_8D7608BB741245998FCCE7C51C50C41C"
             {
             "SourcePath" = "8:..\\read.me"
-            "TargetName" = "8:read.me"
+            "TargetName" = "8:ReadMe.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -1946,7 +1992,7 @@
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_C1BD9B147ED64A47AFD061D5AE32C59F"
             {
             "SourcePath" = "8:..\\debugfla.doc"
-            "TargetName" = "8:debugfla.doc"
+            "TargetName" = "8:debugfla.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -2066,7 +2112,7 @@
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_D0E8761A2FAA48B8957E605B2543B55B"
             {
             "SourcePath" = "8:..\\hc.doc"
-            "TargetName" = "8:hc.doc"
+            "TargetName" = "8:hc.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -2260,26 +2306,6 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E5174CB1235D42DDB8B39BE18A052BC5"
-            {
-            "SourcePath" = "8:Banner.jpg"
-            "TargetName" = "8:Banner.jpg"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
@@ -2478,46 +2504,24 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_38E28DCD21F041789180B48D1CDC5DE2"
+                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_BCF6E7E6CB504D90B709B46443259F44"
                     {
-                    "Name" = "8:Stone Soup Group"
+                    "Name" = "8:FractInt"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
-                    "Property" = "8:_88D4AAD1E57040778FEBB17A47EB1FD6"
+                    "Property" = "8:_95A4355D83FE4D32AAEE53CE27FA6007"
                         "Folders"
                         {
-                            "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_E1DA564998F1426D801042A857EDE604"
-                            {
-                            "Name" = "8:FractInt"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_95A4355D83FE4D32AAEE53CE27FA6007"
-                                "Folders"
-                                {
-                                }
-                            }
                         }
                     }
-                }
-            }
-            "{78BAF5CE-F2E5-45BE-83BC-DB6AF387E941}:_26D5F1ED6F854335B7453C00ADBC2B74"
-            {
-            "Name" = "8:#1916"
-            "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:DesktopFolder"
-                "Folders"
-                {
                 }
             }
             "{58C0ADA3-3CEA-43BD-A3B3-2EA121BC8217}:_B98CDCDD524A40CD961F23015E415823"
             {
             "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
-            "AlwaysCreate" = "11:FALSE"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Property" = "8:TARGETDIR"
@@ -2617,13 +2621,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FractInt for Windows"
-        "ProductCode" = "8:{8D2ED1B7-D723-4BB4-96F9-D22F38FA14F1}"
-        "PackageCode" = "8:{B1673188-D2F4-4B9D-8253-D4D59EF880ED}"
+        "ProductCode" = "8:{D875F916-D3DD-4EFD-BE72-A72BC8132862}"
+        "PackageCode" = "8:{978BA6D0-A5E5-4FC8-BBB9-D9B616471C08}"
         "UpgradeCode" = "8:{50E4B0E3-C038-43E2-9D05-B96C4F40B5BF}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:20.99.0"
+        "ProductVersion" = "8:20.99.1"
         "Manufacturer" = "8:Stone Soup Group"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2732,6 +2736,76 @@
         }
         "Shortcut"
         {
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_53816AFC30FC4418A66B685AA6941E61"
+            {
+            "Name" = "8:Batch File Demo"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_3884E42363A849DD9BF2C1EFF14A4F1F"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_77A213C2C03D483B9D9553FCC0B1B0B2"
+            {
+            "Name" = "8:Batch File FractInt v19"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_F4D78C4C6F0D4D1F933E2A0132000777"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_7E25A07DC50D4A97A4477C134B534A84"
+            {
+            "Name" = "8:FractInt Files"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:101"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:_B9FD658C2BF54479BBFD484436D8D6FF"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_8C0A615E27D64584A480696F2128E787"
+            {
+            "Name" = "8:About debug= flags"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_B22FFD9FEC4D438084D938B62A9EF1BF"
+            {
+            "Name" = "8:About the FractInt source code"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_1E503C6007A04C2BABB9C3F1BE21044A"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
             "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_D13CA99B4EC8492699C67DF345D21878"
             {
             "Name" = "8:FractInt for Windows"
@@ -2741,7 +2815,7 @@
             "IconIndex" = "3:101"
             "Transitive" = "11:FALSE"
             "Target" = "8:_B9FD658C2BF54479BBFD484436D8D6FF"
-            "Folder" = "8:_E1DA564998F1426D801042A857EDE604"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:_B9FD658C2BF54479BBFD484436D8D6FF"
             "Feature" = "8:"
@@ -2774,7 +2848,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -2797,7 +2871,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -2846,7 +2920,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -2862,7 +2936,7 @@
                 {
                     "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_6A75C46AADDE420A819BCA2C92861550"
                     {
-                    "Sequence" = "3:300"
+                    "Sequence" = "3:400"
                     "DisplayName" = "8:Confirm Installation"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -2878,14 +2952,14 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
                     }
                     "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_ABE25232DCED44CA87C177DC16CB13AE"
                     {
-                    "Sequence" = "3:200"
+                    "Sequence" = "3:300"
                     "DisplayName" = "8:Installation Folder"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -2901,7 +2975,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -2924,7 +2998,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "CopyrightWarning"
@@ -2994,7 +3068,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
@@ -3039,7 +3113,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -3071,7 +3145,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "UpdateText"
@@ -3116,7 +3190,7 @@
                             "ContextData" = "8:Bitmap"
                             "Attributes" = "3:4"
                             "Setting" = "3:2"
-                            "Value" = "8:_E5174CB1235D42DDB8B39BE18A052BC5"
+                            "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
                             "ShowProgress"
