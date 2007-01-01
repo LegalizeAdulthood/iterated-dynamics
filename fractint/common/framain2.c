@@ -995,7 +995,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             key = driver_get_key();    /* flush keyboard buffer */
             if (key != FIK_SPACE)
             {
-                  ungetakey(key);
+                  driver_unget_key(key);
                   break;
             }
             fractype = curfractalspecific->tojulia;

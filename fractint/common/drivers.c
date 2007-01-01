@@ -289,4 +289,10 @@ driver_validate_mode(VIDEOINFO *mode)
 	return (*g_driver->validate_mode)(g_driver, mode);
 }
 
+void
+driver_unget_key(int key)
+{
+	(*g_driver->unget_key)(g_driver, key);
+}
+
 #endif

@@ -208,6 +208,9 @@ static int win32_validate_mode(Driver *drv, VIDEOINFO *mode)
 	return 0;
 }
 
+static void win32_unget_key(Driver *drv, int key)
+{
+}
 
 /* new driver		    old fractint
    -------------------  ------------

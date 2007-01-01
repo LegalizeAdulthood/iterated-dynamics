@@ -29,6 +29,7 @@
  * key_cursor
  * key_pressed
  * wait_key_pressed
+ * unget_key
  * shell
  * set_video_mode
  * put_string
@@ -68,6 +69,7 @@ struct tagDriver
 										int (*key_cursor)(Driver *drv, int row, int col);
 										int (*key_pressed)(Driver *drv);
 										int (*wait_key_pressed)(Driver *drv, int timeout);
+										void (*unget_key)(Driver *drv, int key);
 	/* invoke a command shell */		void (*shell)(Driver *drv);
 										void (*set_video_mode)(Driver *drv, int ax, int bx, int cx, int dx);
 										void (*put_string)(Driver *drv, int row, int col, int attr, const char *msg);
@@ -119,6 +121,7 @@ struct tagDriver
 	name_##_key_cursor, \
 	name_##_key_pressed, \
 	name_##_wait_key_pressed, \
+	name_##_unget_key, \
     name_##_shell, \
     name_##_set_video_mode, \
     name_##_put_string, \
@@ -205,6 +208,7 @@ extern int driver_get_key(void);
 extern int driver_key_cursor(int row, int col);
 extern int driver_key_pressed(void);
 extern int driver_wait_key_pressed(int timeout);
+extern void driver_unget_key(int key);
 extern void driver_shell(void);
 extern void driver_set_video_mode(int ax, int bx, int cx, int dx);
 extern void driver_put_string(int row, int col, int attr, const char *msg);
@@ -251,6 +255,7 @@ extern void driver_put_char_attr(int char_attr);
 #define driver_key_cursor(row_, col_)				(*g_driver->key_cursor)(g_driver, row_, col_)
 #define driver_key_pressed()						(*g_driver->key_pressed)(g_driver)
 #define driver_wait_key_pressed(timeout_)			(*g_driver->wait_key_pressed)(timeout_)
+#define driver_unget_key(key_)						(*g_driver->unget_key)(g_driver, key_)
 #define driver_shell()								(*g_driver->shell)(g_driver)
 #define driver_set_video_mode(_ax, _bx, _cx, _dx)	(*g_driver->set_video_mode)(g_driver, _ax, _bx, _cx, _dx)
 #define driver_put_string(_row, _col, _attr, _msg)	(*g_driver->put_string)(g_driver, _row, _col, _attr, _msg)
