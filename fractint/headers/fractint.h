@@ -76,6 +76,10 @@ typedef BYTE BOOLEAN;
 #define DOTMODE_VESA			28
 #define DOTMODE_TRUECOLOR_AUTO	29
 
+#define SLIDES_OFF		0
+#define SLIDES_PLAY		1
+#define SLIDES_RECORD	2
+
 /* fullscreen_choice options */
 #define CHOICE_RETURN_KEY	1
 #define CHOICE_MENU			2

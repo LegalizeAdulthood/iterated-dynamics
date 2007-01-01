@@ -324,12 +324,12 @@ int
 startslideshow()
 {
    if((fpss=fopen(autoname,"r"))==NULL)
-      slides = 0;
+      g_slides = SLIDES_OFF;
    ticks = 0;
    quotes = 0;
    calcwait = 0;
    slowcount = 0;
-   return(slides);
+   return(g_slides);
 }
 
 void stopslideshow()
@@ -337,7 +337,7 @@ void stopslideshow()
    if(fpss)
       fclose(fpss);
    fpss = NULL;
-   slides = 0;
+   g_slides = SLIDES_OFF;
 }
 
 void recordshw(int key)

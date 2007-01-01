@@ -159,7 +159,7 @@ char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
 float *ifs_defn = NULL;     /* ifs parameters */
 int  ifs_type;                  /* 0=2d, 1=3d */
-int  slides = 0;                /* 1 autokey=play, 2 autokey=record */
+int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
 
 BYTE txtcolor[]={
       BLUE*16+L_WHITE,    /* C_TITLE           title background */
@@ -1400,9 +1400,9 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (strcmp(variable,s_autokey) == 0) {       /* autokey=? */
       if (strcmp(value,s_record)==0)
-         slides=2;
+         g_slides = SLIDES_RECORD;
       else if (strcmp(value,s_play)==0)
-         slides=1;
+         g_slides = SLIDES_PLAY;
       else
          goto badarg;
       return 0;
