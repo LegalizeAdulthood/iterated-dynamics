@@ -628,114 +628,6 @@ win32_disk_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 /*
 *----------------------------------------------------------------------
 *
-* getachar --
-*
-*	Gets a character.
-*
-* Results:
-*	Key.
-*
-* Side effects:
-*	Reads key.
-*
-*----------------------------------------------------------------------
-*/
-static int
-getachar(Win32DiskDriver *di)
-{
-#if 0
-	if (di->simple_input)
-	{
-		return getchar();
-	}
-	else
-	{
-		char ch;
-		int status;
-		status = read(0, &ch, 1);
-		if (status < 0)
-		{
-			return -1;
-		}
-		else
-		{
-		return ch;
-		}
-	}
-#endif
-}
-
-/*----------------------------------------------------------------------
-*
-* translatekey --
-*
-*	Translate an input key into MSDOS format.  The purpose of this
-*	routine is to do the mappings like U -> PAGE_UP.
-*
-* Results:
-*	New character;
-*
-* Side effects:
-*	None.
-*
-*----------------------------------------------------------------------
-*/
-static int
-translatekey(int ch)
-{
-	if (ch >= 'a' && ch <= 'z')
-		return ch;
-	else
-	{
-		switch (ch)
-		{
-		case 'I':		return FIK_INSERT;
-		case 'D':		return FIK_DELETE;
-		case 'U':		return FIK_PAGE_UP;
-		case 'N':		return FIK_PAGE_DOWN;
-		case CTL('O'):	return FIK_CTL_HOME;
-		case CTL('E'):	return FIK_CTL_END;
-		case 'H':		return FIK_LEFT_ARROW;
-		case 'L':		return FIK_RIGHT_ARROW;
-		case 'K':		return FIK_UP_ARROW;
-		case 'J':		return FIK_DOWN_ARROW;
-		case 1115:		return FIK_LEFT_ARROW_2;
-		case 1116:		return FIK_RIGHT_ARROW_2;
-		case 1141:		return FIK_UP_ARROW_2;
-		case 1145:		return FIK_DOWN_ARROW_2;
-		case 'O':		return FIK_HOME;
-		case 'E':		return FIK_END;
-		case '\n':		return FIK_ENTER;
-		case CTL('T'):	return FIK_CTL_ENTER;
-		case -2:		return FIK_CTL_ENTER_2;
-		case CTL('U'):	return FIK_CTL_PAGE_UP;
-		case CTL('N'):	return FIK_CTL_PAGE_DOWN;
-		case '{':		return FIK_CTL_MINUS;
-		case '}':		return FIK_CTL_PLUS;
-#if 0
-		/* we need ^I for tab */
-		case CTL('I'):	return FIK_CTL_INSERT;
-#endif
-		case CTL('D'):	return FIK_CTL_DEL;
-		case '!':		return FIK_F1;
-		case '@':		return FIK_F2;
-		case '#':		return FIK_F3;
-		case '$':		return FIK_F4;
-		case '%':		return FIK_F5;
-		case '^':		return FIK_F6;
-		case '&':		return FIK_F7;
-		case '*':		return FIK_F8;
-		case '(':		return FIK_F9;
-		case ')':		return FIK_F10;
-		default:
-			return ch;
-		}
-	}
-}
-
-/*
-*----------------------------------------------------------------------
-*
 * win32_disk_redraw --
 *
 *	Refresh the screen.
@@ -755,40 +647,172 @@ win32_disk_redraw(Driver *drv)
 	wintext_paintscreen(0, 80, 0, 25);
 }
 
-/*----------------------------------------------------------------------
-*
-* win32_disk_get_key --
-*
-*	Get a key from the keyboard or the X server.
-*	Blocks if block = 1.
-*
-* Results:
-*	Key, or 0 if no key and not blocking.
-*	Times out after .5 second.
-*
-* Side effects:
-*	Processes X events.
-*
-*----------------------------------------------------------------------
+/*
+; ****************** Function getakey() *****************************
+; **************** Function keypressed() ****************************
+
+;       'getakey()' gets a key from either a "normal" or an enhanced
+;       keyboard.   Returns either the vanilla ASCII code for regular
+;       keys, or 1000+(the scan code) for special keys (like F1, etc)
+;       Use of this routine permits the Control-Up/Down arrow keys on
+;       enhanced keyboards.
+;
+;       The concept for this routine was "borrowed" from the MSKermit
+;       SCANCHEK utility
+;
+;       'keypressed()' returns a zero if no keypress is outstanding,
+;       and the value that 'getakey()' will return if one is.  Note
+;       that you must still call 'getakey()' to flush the character.
+;       As a sidebar function, calls 'help()' if appropriate, or
+;       'tab_display()' if appropriate.
+;       Think of 'keypressed()' as a super-'kbhit()'.
 */
-static int
-win32_disk_get_key(Driver *drv)
+static int keybuffer = 0;
+static int inside_help = 0;
+
+/*
+ * This is the low level key handling routine.
+ * If block is set, we want to block before returning, since we are waiting
+ * for a key press.
+ * We also have to handle the slide file, etc.
+ */
+
+static int getkeyint(int block)
+{
+    int ch;
+    int curkey;
+    if (keybuffer)
+	{
+		ch = keybuffer;
+		keybuffer = 0;
+		return ch;
+    }
+    curkey = driver_get_key(); //0);
+    if (slides==1 && curkey == FIK_ESC)
+	{
+		stopslideshow();
+		return 0;
+    }
+
+    if (curkey==0 && slides==1)
+	{
+		curkey = slideshw();
+    }
+
+    if (curkey==0 && block)
+	{
+		curkey = driver_get_key(); //1);
+		if (slides==1 && curkey == FIK_ESC)
+		{
+			stopslideshow();
+			return 0;
+		}
+    }
+
+    if (curkey && slides==2)
+	{
+		recordshw(curkey);
+    }
+
+    return curkey;
+}
+
+/*
+ * This routine returns a keypress
+ */
+static int getakey(void)
+{
+    int ch;
+
+    do
+	{
+		ch = getkeyint(1);
+    }
+	while (ch==0);
+    return ch;
+}
+
+static int keypressed(void)
 {
 	int ch = keybuffer;
 	if (ch)
 	{
+		return ch;
+	}
+	ch = wintext_getkeypress(0);
+	if (ch)
+	{
+		keybuffer = wintext_getkeypress(1);
+		if (FIK_F1 == ch && helpmode)
+		{
+			if (!inside_help)
+			{
+				keybuffer = 0;
+				inside_help = 1;
+				help(0);
+				inside_help = 0;
+				ch = 0;
+			}
+		}
+		else if (FIK_TAB == ch && tabmode)
+		{
+			keybuffer = 0;
+			tab_display();
+			ch = 0;
+		}
+	}
+
+	return ch;
+}
+
+/* Wait for a key.
+ * This should be used instead of:
+ * while (!keypressed()) {}
+ * If timeout=1, waitkeypressed will time out after .5 sec.
+ */
+static int waitkeypressed(int timeout)
+{
+    while (!keybuffer)
+	{
+		keybuffer = getkeyint(1);
+		if (timeout)
+			break;
+    }
+    return driver_key_pressed();
+}
+
+/* win32_disk_unget_key
+ *
+ * fake a keystroke, returns old pending key
+ */
+void win32_disk_unget_key(Driver *drv, int key)
+{
+   keybuffer = key;
+}
+
+/* win32_disk_get_key
+ *
+ * Get a keystroke, blocking if necessary.
+ */
+static int
+win32_disk_get_key(Driver *drv)
+{
+	/* got one in the buffer already? */
+	int ch = keybuffer;
+	if (ch)
+	{
+		/* give it to 'em */
 		keybuffer = 0;
 		return ch;
 	}
 
+	/* wait for one */
 	ch = wintext_getkeypress(1);
 	if (ch)
 	{
 		extern int inside_help;
-		keybuffer = ch;
 		if (FIK_F1 == ch && helpmode && !inside_help)
 		{
-			keybuffer = 0;
 			inside_help = 1;
 			help(0);
 			inside_help = 0;
@@ -796,7 +820,6 @@ win32_disk_get_key(Driver *drv)
 		}
 		else if (FIK_TAB == ch && tabmode)
 		{
-			keybuffer = 0;
 			tab_display();
 			ch = 0;
 		}
