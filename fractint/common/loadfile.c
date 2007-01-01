@@ -1403,8 +1403,7 @@ rescan:  /* entry for changed browse parms */
           strcat(mesg,winlist.name);
           strcat(mesg,"? (Y/N)");
           showtempmsg(mesg);
-		  /* TODO: change interaction mode from polling to waiting for a key */
-          while (!driver_key_pressed()) ;
+		  driver_wait_key_pressed(0);
           cleartempmsg();
           c = driver_get_key();
           if ( c == 'Y' && doublecaution ) {
