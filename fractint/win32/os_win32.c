@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <direct.h>
 #include <string.h>
 #include <signal.h>
 #include <sys/timeb.h>
@@ -429,7 +430,8 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
 		return GetLastError() || -1;
 	}
 
-	strncpy(s_find_base, path, NUM_OF(s_find_base));
+	_ASSERTE(strlen(path) < NUM_OF(s_find_base));
+	strcpy(s_find_base, path);
 	{
 		char *whack = strrchr(s_find_base, '\\');
 		if (whack != NULL)
@@ -669,7 +671,7 @@ void initasmvars(void)
 
 int isadirectory(char *s)
 {
-	return PathFileExists(s);
+	return PathIsDirectory(s);
 }
 
 /*
@@ -799,6 +801,35 @@ int getakeynohelp(void)
 	{
 		ch = driver_get_key();
 	}
-	while (ch == FIK_F1);
+	while (FIK_F1 == ch);
 	return ch;
+}
+
+/* converts relative path to absolute path */
+int expand_dirname(char *dirname, char *drive)
+{
+	char relative[MAX_PATH];
+	char absolute[MAX_PATH];
+	BOOL status;
+
+	if (PathIsRelative(dirname))
+	{
+		_ASSERTE(strlen(drive) < NUM_OF(relative));
+		strcpy(relative, drive);
+		_ASSERTE(strlen(relative) + strlen(dirname) < NUM_OF(relative));
+		strcat(relative, dirname);
+		status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
+		_ASSERTE(status);
+		if (':' == absolute[1])
+		{
+			strcpy(dirname, &absolute[2]);
+		}
+		else
+		{
+			strcpy(dirname, absolute);
+		}
+	}
+	fix_dirname(dirname);
+
+	return 0;
 }

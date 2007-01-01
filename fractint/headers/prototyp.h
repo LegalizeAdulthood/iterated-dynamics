@@ -1202,6 +1202,8 @@ extern uclock_t usec_clock(void);
 extern void restart_uclock(void);
 extern void wait_until(int index, uclock_t wait_time);
 
+extern int expand_dirname(char *dirname,char *drive);
+
 
 #ifndef DEBUG
 /*#define DEBUG */

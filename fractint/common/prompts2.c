@@ -56,7 +56,6 @@
 /* Routines in this module      */
 
 static  int check_f6_key(int curkey,int choice);
-static  int expand_dirname(char *dirname,char *drive);
 static  int filename_speedstr(int, int, int, char *, int);
 static  int get_screen_corners(void);
 
@@ -2079,89 +2078,6 @@ FILE *dir_fopen(char *dir, char *filename, char *mode )
    dir_name(tmp,dir,filename);
    return(fopen(tmp,mode));
 }
-
-/* converts relative path to absolute path */
-#if defined(_WIN32)
-static int expand_dirname(char *dirname, char *drive)
-{
-   fix_dirname(dirname);
-   if (dirname[0] != SLASHC) {
-      char buf[FILE_MAX_DIR+1],curdir[FILE_MAX_DIR+1];
-      getcwd(curdir,FILE_MAX_DIR);
-      strcat(curdir,SLASH);
-      while (strncmp(dirname,DOTSLASH,2) == 0) {
-         strcpy(buf,&dirname[2]);
-         strcpy(dirname,buf);
-         }
-      while (strncmp(dirname,DOTDOTSLASH,3) == 0) {
-         char *s;
-         curdir[(int) strlen(curdir)-1] = 0; /* strip trailing slash */
-         if ((s = strrchr(curdir,SLASHC)) != NULL)
-            *s = 0;
-         strcat(curdir,SLASH);
-         strcpy(buf,&dirname[3]);
-         strcpy(dirname,buf);
-         }
-      strcpy(buf,dirname);
-      dirname[0] = 0;
-      if (curdir[0] != SLASHC)
-         strcpy(dirname,SLASH);
-      strcat(dirname,curdir);
-      strcat(dirname,buf);
-      }
-   return(0);
-}
-#else
-static int expand_dirname(char *dirname,char *drive)
-{
-   fix_dirname(dirname);
-   if (dirname[0] != SLASHC) {
-      char buf[FILE_MAX_DIR+1],curdir[FILE_MAX_DIR+1];
-#ifndef XFRACT
-      int i=0;
-      union REGS regs;
-      struct SREGS sregs;
-      curdir[0] = 0;
-      regs.h.ah = 0x47; /* get current directory */
-      regs.h.dl = 0;
-      if (drive[0] && drive[0] != ' ')
-         regs.h.dl = (char)(tolower(drive[0])-'a'+1);
-      regs.x.si = (unsigned int) &curdir[0];
-      segread(&sregs);
-      intdosx(&regs, &regs, &sregs);
-#else
-      getcwd(curdir,FILE_MAX_DIR);
-#endif
-      strcat(curdir,SLASH);
-#ifndef XFRACT
-      while (curdir[i] != 0) {
-         curdir[i] = (char)tolower(curdir[i]);
-         i++;
-      }
-#endif
-      while (strncmp(dirname,DOTSLASH,2) == 0) {
-         strcpy(buf,&dirname[2]);
-         strcpy(dirname,buf);
-         }
-      while (strncmp(dirname,DOTDOTSLASH,3) == 0) {
-         char *s;
-         curdir[(int) strlen(curdir)-1] = 0; /* strip trailing slash */
-         if ((s = strrchr(curdir,SLASHC)) != NULL)
-            *s = 0;
-         strcat(curdir,SLASH);
-         strcpy(buf,&dirname[3]);
-         strcpy(dirname,buf);
-         }
-      strcpy(buf,dirname);
-      dirname[0] = 0;
-      if (curdir[0] != SLASHC)
-         strcpy(dirname,SLASH);
-      strcat(dirname,curdir);
-      strcat(dirname,buf);
-      }
-   return(0);
-}
-#endif
 
 /*
    See if double value was changed by input screen. Problem is that the
