@@ -14,6 +14,8 @@
 #include "prototyp.h"
 #include "fractint.h"
 
+#define TIMER_ID 1
+
 static int s_showing_cursor = FALSE;
 
 #if defined(RT_VERBOSE)
@@ -116,13 +118,13 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
         but the application program hasn't officially closed the window yet.
 */
 
-struct tagWinText_Globals
+struct tagWinTextGlobals
 {
 	int textmode;
 	int AltF4hit;
 };
-typedef struct tagWinText_Globals WinText_Globals;
-static WinText_Globals g_wintext =
+typedef struct tagWinTextGlobals WinTextGlobals;
+static WinTextGlobals g_wintext =
 {
 	0,
 	0
@@ -132,7 +134,7 @@ static WinText_Globals g_wintext =
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
-struct tagWinText_Instance
+struct tagWinTextInstance
 {
 	/* Local copy of the "screen" characters and attributes */
 	unsigned char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
@@ -160,8 +162,8 @@ struct tagWinText_Instance
 
 	LPSTR title_text;         /* title-bar text */
 };
-typedef struct tagWinText_Instance WinText_Instance;
-static WinText_Instance g_me = { 0 };
+typedef struct tagWinTextInstance WinTextInstance;
+static WinTextInstance g_me = { 0 };
 
 
 /* a few Windows variables we need to remember globally */
@@ -707,6 +709,7 @@ int wintext_look_for_activity(int wintext_waitflag)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
+			/* no messages waiting */
 			if (wintext_waitflag == 0 || wintext_keypress_count != 0 || g_wintext.textmode != 2)
 			{
 				return (wintext_keypress_count == 0) ? 0 : 1;
@@ -1010,7 +1013,28 @@ void wintext_hide_cursor(void)
 	}
 }
 
-VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
 	InvalidateRect(window, NULL, FALSE);
+}
+
+void wintext_schedule_alarm(int delay)
+{
+	UINT_PTR result = SetTimer(wintext_hWndCopy, TIMER_ID, delay, wintext_timer_redraw);
+	if (!result)
+	{
+		DWORD error = GetLastError();
+		_ASSERTE(result);
+	}
+}
+
+int wintext_get_char_attr(int row, int col)
+{
+	return ((g_me.chars[row][col] & 0xFF) << 8) | (g_me.attrs[row][col] & 0xFF);
+}
+
+void wintext_put_char_attr(int row, int col, int char_attr)
+{
+	g_me.chars[row][col] = (char_attr >> 8) & 0xFF;
+	g_me.attrs[row][col] = (char_attr & 0xFF);
 }
