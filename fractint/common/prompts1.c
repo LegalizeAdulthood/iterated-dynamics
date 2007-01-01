@@ -134,27 +134,27 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
          find_file_item() opens the file and sets the file pointer to the
          beginning of the entry.
       */
-
-   if((fractype == FORMULA || fractype == FFORMULA) && extrainfo && *extrainfo) {
-      find_file_item(FormFileName, FormName, &scroll_file, 1);
-      in_scrolling_mode = 1;
-      scroll_file_start = ftell(scroll_file);
-   }
-
-   else if(fractype == LSYSTEM && extrainfo && *extrainfo) {
-      find_file_item(LFileName, LName, &scroll_file, 2);
-      in_scrolling_mode = 1;
-      scroll_file_start = ftell(scroll_file);
-   }
-
-   else if((fractype == IFS || fractype == IFS3D) && extrainfo && *extrainfo) {
-      find_file_item(IFSFileName, IFSName, &scroll_file, 3);
-      in_scrolling_mode = 1;
-      scroll_file_start = ftell(scroll_file);
-   }
+	if (extrainfo && *extrainfo)
+	{
+		if (fractype == FORMULA || fractype == FFORMULA) {
+			find_file_item(FormFileName, FormName, &scroll_file, 1);
+			in_scrolling_mode = 1;
+			scroll_file_start = ftell(scroll_file);
+		}
+		else if (fractype == LSYSTEM) {
+			find_file_item(LFileName, LName, &scroll_file, 2);
+			in_scrolling_mode = 1;
+			scroll_file_start = ftell(scroll_file);
+		}
+		else if(fractype == IFS || fractype == IFS3D) {
+			find_file_item(IFSFileName, IFSName, &scroll_file, 3);
+			in_scrolling_mode = 1;
+			scroll_file_start = ftell(scroll_file);
+		}
+	}
 
       /* initialize widest_entry_line and lines_in_entry */
-   if(in_scrolling_mode && scroll_file != NULL) {
+   if (in_scrolling_mode && scroll_file != NULL) {
       int comment = 0;
       int c = 0;
       int widthct = 0;
