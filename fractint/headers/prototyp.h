@@ -1056,14 +1056,11 @@ extern int fullscreen_choice(int options, char *hdg, char *hdg2,
 							 int (*speedprompt)(int, int, int, char *, int),
 							 int (*checkkey)(int, int));
 extern int clear_screen(int);
-#if !defined(WINFRACT) && !defined(_WIN32)
+#if !defined(WINFRACT)
 extern int showtempmsg(char *);
 extern void cleartempmsg(void);
 extern void helptitle(void);
 extern int putstringcenter(int ,int ,int ,int ,char *);
-//extern void stackscreen(void);
-//extern void unstackscreen(void);
-extern void discardscreen(void);
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char *,char *,int );
 #endif
