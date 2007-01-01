@@ -18,7 +18,9 @@ extern int			wintext_texton(void);
 extern BYTE *		wintext_screen_get(void);
 extern void			wintext_screen_set(const BYTE *copy);
 extern void			wintext_hide_cursor(void);
-extern VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime);
+extern void			wintext_schedule_alarm(int delay);
+extern int			wintext_get_char_attr(int row, int col);
+extern void			wintext_put_char_attr(int row, int col, int char_attr);
 
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
