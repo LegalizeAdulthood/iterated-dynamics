@@ -358,7 +358,7 @@ int do_AutoStereo(void)
          default:
             if(kbdchar == 27)   /* if ESC avoid returning to menu */
                kbdchar = 255;
-            ungetakey(kbdchar);
+            driver_unget_key(kbdchar);
             driver_buzzer(0);
             done = 1;
             break;

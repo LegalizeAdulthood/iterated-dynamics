@@ -1815,15 +1815,6 @@ void fix_inversion(double *x) /* make double converted from string look ok */
    *x = atof(buf);
 }
 
-/* fake a keystroke, returns old pending key */
-int ungetakey(int key)
-{
-   int old;
-   old = keybuffer;
-   keybuffer = key;
-   return(old);
-}
-
 #if _MSC_VER == 800
 #ifdef FIXTAN_DEFINED
 #undef tan

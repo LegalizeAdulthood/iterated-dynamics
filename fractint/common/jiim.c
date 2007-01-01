@@ -1286,7 +1286,7 @@ finish:
       dir_remove(tempdir,scrnfile);
       }
    show_numbers = 0;
-   ungetakey(kbdchar);
+   driver_unget_key(kbdchar);
 
    if (curfractalspecific->calctype == calcfroth)
       froth_cleanup();
