@@ -131,7 +131,6 @@ int fm_wavetype = 0;
 int g_good_mode = 0;
 int g_got_real_dac = 0;
 int hi_atten = 0;
-int inside_help = 0;
 int g_is_true_color = 0;
 long linitx = 0;
 long linity = 0;
@@ -339,153 +338,6 @@ long multiply(long x, long y, int n)
 		overflow = 1;
     }
     return l;
-}
-
-/*
-; ****************** Function getakey() *****************************
-; **************** Function keypressed() ****************************
-
-;       'getakey()' gets a key from either a "normal" or an enhanced
-;       keyboard.   Returns either the vanilla ASCII code for regular
-;       keys, or 1000+(the scan code) for special keys (like F1, etc)
-;       Use of this routine permits the Control-Up/Down arrow keys on
-;       enhanced keyboards.
-;
-;       The concept for this routine was "borrowed" from the MSKermit
-;       SCANCHEK utility
-;
-;       'keypressed()' returns a zero if no keypress is outstanding,
-;       and the value that 'getakey()' will return if one is.  Note
-;       that you must still call 'getakey()' to flush the character.
-;       As a sidebar function, calls 'help()' if appropriate, or
-;       'tab_display()' if appropriate.
-;       Think of 'keypressed()' as a super-'kbhit()'.
-*/
-int keybuffer = 0;
-
-/*
- * This is the low level key handling routine.
- * If block is set, we want to block before returning, since we are waiting
- * for a key press.
- * We also have to handle the slide file, etc.
- */
-
-int getkeyint(int block)
-{
-    int ch;
-    int curkey;
-    if (keybuffer)
-	{
-		ch = keybuffer;
-		keybuffer = 0;
-		return ch;
-    }
-    curkey = driver_get_key(); //0);
-    if (slides==1 && curkey == FIK_ESC)
-	{
-		stopslideshow();
-		return 0;
-    }
-
-    if (curkey==0 && slides==1)
-	{
-		curkey = slideshw();
-    }
-
-    if (curkey==0 && block)
-	{
-		curkey = driver_get_key(); //1);
-		if (slides==1 && curkey == FIK_ESC)
-		{
-			stopslideshow();
-			return 0;
-		}
-    }
-
-    if (curkey && slides==2)
-	{
-		recordshw(curkey);
-    }
-
-    return curkey;
-}
-
-/*
- * This routine returns a keypress
- */
-int getakey(void)
-{
-    int ch;
-
-    do
-	{
-		ch = getkeyint(1);
-    }
-	while (ch==0);
-    return ch;
-}
-
-/*
- * This routine returns a key, ignoring F1
- */
-int getakeynohelp(void)
-{
-	int ch;
-	do
-	{
-		ch = driver_get_key();
-	}
-	while (ch == FIK_F1);
-	return ch;
-}
-
-int keypressed(void)
-{
-	int ch = keybuffer;
-	if (ch)
-	{
-		return ch;
-	}
-	ch = wintext_getkeypress(0);
-	if (ch)
-	{
-		keybuffer = wintext_getkeypress(1);
-		if (FIK_F1 == ch && helpmode)
-		{
-			if (!inside_help)
-			{
-				keybuffer = 0;
-				inside_help = 1;
-				help(0);
-				inside_help = 0;
-				ch = 0;
-			}
-		}
-		else if (FIK_TAB == ch && tabmode)
-		{
-			keybuffer = 0;
-			tab_display();
-			ch = 0;
-		}
-	}
-
-	return ch;
-}
-
-/* Wait for a key.
- * This should be used instead of:
- * while (!keypressed()) {}
- * If timeout=1, waitkeypressed will time out after .5 sec.
- */
-int waitkeypressed(int timeout)
-{
-    while (!keybuffer)
-	{
-		keybuffer = getkeyint(1);
-		if (timeout)
-			break;
-    }
-    return driver_key_pressed();
 }
 
 /*
@@ -935,4 +787,18 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 	g_instance = instance;
 	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 	return main(__argc, __argv);
+}
+
+/*
+ * This routine returns a key, ignoring F1
+ */
+int getakeynohelp(void)
+{
+	int ch;
+	do
+	{
+		ch = driver_get_key();
+	}
+	while (ch == FIK_F1);
+	return ch;
 }
