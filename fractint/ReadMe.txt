@@ -59,6 +59,12 @@ main
 win32
 	Files needed for the Win32 platform.
 
+TODO:
+	- Windows printing
+	- GDI based driver
+	- DirectX based driver
+	- Get key reading semantics right
+
 2006.12.26.23.09
 	Basic plotting through dotwrite working.
 2006.12.27.00.53
@@ -73,7 +79,9 @@ win32
 	Add driver name and description to TAB screen.
 	Deprecate fracting.cfg for video modes.
 2006.12.31.12.53
-	Fisk bug with video table when you select a video mode the 2nd time around.
+	Fix bug with video table when you select a video mode the 2nd time around.
 	Fix space toggle bug on intro screen, but still too many keyboard routines;
 	need to narrow it down to just the two driver routines and not all these
 	inner layers.
+2007.01.01.12.24
+	Fix expand_dirname problem.
