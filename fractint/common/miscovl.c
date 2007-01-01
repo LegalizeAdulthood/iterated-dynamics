@@ -1606,10 +1606,10 @@ void showfreemem(void)
 }
 #endif
 
+void edit_text_colors()
+{
 /* TODO: make this work for a driver situation */
 #if !defined(_WIN32)
-int edit_text_colors()
-{
    int save_debugflag,save_lookatmouse;
    int row,col,bkgrd;
    int rowf,colf,rowt,colt;
@@ -1637,7 +1637,7 @@ int edit_text_colors()
             debugflag = save_debugflag;
             lookatmouse = save_lookatmouse;
             driver_hide_text_cursor();
-            return 0;
+            return;
          case '/':
             farp1 = savescreen = (char *)malloc(4000L);
             farp2 = vidmem;
@@ -1691,8 +1691,8 @@ int edit_text_colors()
             bkgrd = 0;
          }
       }
-}
 #endif
+}
 
 static int *entsptr;
 static int modes_changed;
