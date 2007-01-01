@@ -498,13 +498,7 @@ win32_disk_end_video(Driver *drv)
 static void
 win32_disk_schedule_alarm(Driver *drv, int soon)
 {
-	int delay = (soon ? 1 : DRAW_INTERVAL)*1000;
-	UINT_PTR result = SetTimer(wintext_hWndCopy, TIMER_ID, delay, wintext_timer_redraw);
-	if (!result)
-	{
-		DWORD error = GetLastError();
-		_ASSERTE(result);
-	}
+	wintext_schedule_alarm((soon ? 1 : DRAW_INTERVAL)*1000);
 }
 
 /*
@@ -647,26 +641,6 @@ win32_disk_redraw(Driver *drv)
 	wintext_paintscreen(0, 80, 0, 25);
 }
 
-/*
-; ****************** Function getakey() *****************************
-; **************** Function keypressed() ****************************
-
-;       'getakey()' gets a key from either a "normal" or an enhanced
-;       keyboard.   Returns either the vanilla ASCII code for regular
-;       keys, or 1000+(the scan code) for special keys (like F1, etc)
-;       Use of this routine permits the Control-Up/Down arrow keys on
-;       enhanced keyboards.
-;
-;       The concept for this routine was "borrowed" from the MSKermit
-;       SCANCHEK utility
-;
-;       'keypressed()' returns a zero if no keypress is outstanding,
-;       and the value that 'getakey()' will return if one is.  Note
-;       that you must still call 'getakey()' to flush the character.
-;       As a sidebar function, calls 'help()' if appropriate, or
-;       'tab_display()' if appropriate.
-;       Think of 'keypressed()' as a super-'kbhit()'.
-*/
 static int keybuffer = 0;
 static int inside_help = 0;
 
@@ -680,59 +654,76 @@ static int inside_help = 0;
 static int getkeyint(int block)
 {
     int ch;
-    int curkey;
     if (keybuffer)
 	{
 		ch = keybuffer;
 		keybuffer = 0;
 		return ch;
     }
-    curkey = driver_get_key(); //0);
-    if (slides==1 && curkey == FIK_ESC)
+    ch = driver_get_key(); //0);
+    if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
 	{
 		stopslideshow();
 		return 0;
     }
 
-    if (curkey==0 && slides==1)
+    if (ch==0 && g_slides==SLIDES_PLAY)
 	{
-		curkey = slideshw();
+		ch = slideshw();
     }
 
-    if (curkey==0 && block)
+    if (ch==0 && block)
 	{
-		curkey = driver_get_key(); //1);
-		if (slides==1 && curkey == FIK_ESC)
+		ch = driver_get_key(); //1);
+		if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
 		{
 			stopslideshow();
 			return 0;
 		}
     }
 
-    if (curkey && slides==2)
+    if (ch && g_slides==SLIDES_RECORD)
 	{
-		recordshw(curkey);
+		recordshw(ch);
     }
 
-    return curkey;
-}
-
-/*
- * This routine returns a keypress
- */
-static int getakey(void)
-{
-    int ch;
-
-    do
-	{
-		ch = getkeyint(1);
-    }
-	while (ch==0);
     return ch;
 }
 
-static int keypressed(void)
+static int
+preprocess_keystroke(int ch)
+{
+	if (FIK_F1 == ch && helpmode)
+	{
+		if (!inside_help)
+		{
+			keybuffer = 0;
+			inside_help = 1;
+			help(0);
+			inside_help = 0;
+			ch = 0;
+		}
+	}
+	else if (FIK_TAB == ch && tabmode)
+	{
+		keybuffer = 0;
+		tab_display();
+		ch = 0;
+	}
+	return ch;
+}
+
+/* win32_disk_key_pressed
+ *
+ *       'keypressed()' returns a zero if no keypress is outstanding,
+ *       and the value that 'getakey()' will return if one is.  Note
+ *       that you must still call 'getakey()' to flush the character.
+ *       As a sidebar function, calls 'help()' if appropriate, or
+ *       'tab_display()' if appropriate.
+ *       Think of 'keypressed()' as a super-'kbhit()'.
+ */
+static int
+win32_disk_key_pressed(Driver *drv)
 {
 	int ch = keybuffer;
 	if (ch)
@@ -765,34 +756,29 @@ static int keypressed(void)
 	return ch;
 }
 
-/* Wait for a key.
- * This should be used instead of:
- * while (!keypressed()) {}
- * If timeout=1, waitkeypressed will time out after .5 sec.
- */
-static int waitkeypressed(int timeout)
-{
-    while (!keybuffer)
-	{
-		keybuffer = getkeyint(1);
-		if (timeout)
-			break;
-    }
-    return driver_key_pressed();
-}
-
 /* win32_disk_unget_key
  *
  * fake a keystroke, returns old pending key
  */
 void win32_disk_unget_key(Driver *drv, int key)
 {
-   keybuffer = key;
+	_ASSERTE(0 == keybuffer);
+	keybuffer = key;
 }
 
 /* win32_disk_get_key
  *
  * Get a keystroke, blocking if necessary.
+ *
+ *       'getakey()' gets a key from either a "normal" or an enhanced
+ *       keyboard.   Returns either the vanilla ASCII code for regular
+ *       keys, or 1000+(the scan code) for special keys (like F1, etc)
+ *       Use of this routine permits the Control-Up/Down arrow keys on
+ *       enhanced keyboards.
+ *
+ *       The concept for this routine was "borrowed" from the MSKermit
+ *       SCANCHEK utility
+ *
  */
 static int
 win32_disk_get_key(Driver *drv)
@@ -803,26 +789,24 @@ win32_disk_get_key(Driver *drv)
 	{
 		/* give it to 'em */
 		keybuffer = 0;
-		return ch;
+	}
+	else
+	{
+		/* wait for one */
+		ch = wintext_getkeypress(1);
 	}
 
-	/* wait for one */
-	ch = wintext_getkeypress(1);
-	if (ch)
+	if (FIK_F1 == ch && helpmode && !inside_help)
 	{
-		extern int inside_help;
-		if (FIK_F1 == ch && helpmode && !inside_help)
-		{
-			inside_help = 1;
-			help(0);
-			inside_help = 0;
-			ch = 0;
-		}
-		else if (FIK_TAB == ch && tabmode)
-		{
-			tab_display();
-			ch = 0;
-		}
+		inside_help = 1;
+		help(0);
+		inside_help = 0;
+		ch = 0;
+	}
+	else if (FIK_TAB == ch && tabmode)
+	{
+		tab_display();
+		ch = 0;
 	}
 
 	return ch;
@@ -1387,13 +1371,6 @@ win32_disk_diskp(Driver *drv)
 }
 
 static int
-win32_disk_key_pressed(Driver *drv)
-{
-	extern int keypressed(void);
-	return keypressed();
-}
-
-static int
 win32_disk_key_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
@@ -1427,19 +1404,60 @@ win32_disk_key_cursor(Driver *drv, int row, int col)
 static int
 win32_disk_wait_key_pressed(Driver *drv, int timeout)
 {
-	extern int waitkeypressed(int timeout);
-	return waitkeypressed(timeout);
+	int ch;
+
+	if (keybuffer)
+	{
+		ch = keybuffer;
+		keybuffer = 0;
+	}
+	else if (driver_key_pressed())
+	{
+		ch = driver_get_key();
+	}
+	else
+	{
+		ch = wintext_look_for_activity(timeout);
+	}
+	if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
+	{
+		stopslideshow();
+		return 0;
+	}
+
+	if (ch==0 && g_slides==SLIDES_PLAY)
+	{
+		ch = slideshw();
+	}
+
+	if (ch==0 && block)
+	{
+		ch = driver_get_key(); //1);
+		if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
+		{
+			stopslideshow();
+			return 0;
+		}
+	}
+
+	if (ch && g_slides==SLIDES_RECORD)
+	{
+		recordshw(ch);
+	}
+
+	return ch;
 }
 
 static int
 win32_disk_get_char_attr(Driver *drv)
 {
-	return 0;
+	return wintext_get_char_attr(g_text_row, g_text_col);
 }
 
 static void
 win32_disk_put_char_attr(Driver *drv, int char_attr)
 {
+	wintext_put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
 static int
