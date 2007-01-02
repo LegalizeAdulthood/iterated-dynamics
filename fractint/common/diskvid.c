@@ -43,23 +43,23 @@ static struct cache		/* structure of each cache entry */
 	unsigned int lru : 1;           /* recently used? */
 } *cache_end, *cache_lru, *cur_cache;
 
-struct cache *cache_start = NULL;
-long high_offset;           /* highwater mark of writes */
-long seek_offset;           /* what we'll get next if we don't seek */
-long cur_offset;            /* offset of last block referenced */
-int cur_row;
-long cur_row_base;
-unsigned int *hash_ptr = NULL;
-int pixelshift;
-int headerlength;
-int rowsize = 0;   /* doubles as a disk video not ok flag */
-int colsize;       /* sydots, *2 when pot16bit */
+static struct cache *cache_start = NULL;
+static long high_offset;           /* highwater mark of writes */
+static long seek_offset;           /* what we'll get next if we don't seek */
+static long cur_offset;            /* offset of last block referenced */
+static int cur_row;
+static long cur_row_base;
+static unsigned int hash_ptr[HASHSIZE] = { 0 };
+static int pixelshift;
+static int headerlength;
+static int rowsize = 0;   /* doubles as a disk video not ok flag */
+static int colsize;       /* sydots, *2 when pot16bit */
 
-BYTE *membuf;
-U16 dv_handle = 0;
-long memoffset = 0;
-long oldmemoffset = 0;
-BYTE *membufptr;
+static BYTE *membuf;
+static U16 dv_handle = 0;
+static long memoffset = 0;
+static long oldmemoffset = 0;
+static BYTE *membufptr;
 
 static void _fastcall  findload_cache(long);
 static struct cache * _fastcall  find_cache(long);
@@ -201,9 +201,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		--longtmp; /* safety for next line */
 	}
 	cache_end = (cache_lru = cache_start) + longtmp / sizeof(*cache_start);
-	hash_ptr  = (unsigned int *)malloc(sizeof(unsigned int)*HASHSIZE);
 	membuf = (BYTE *)malloc((long)BLOCKLEN);
-	if (cache_start == NULL || hash_ptr == NULL || membuf == NULL)
+	if (cache_start == NULL || membuf == NULL)
 	{
 		stopmsg(0, "*** insufficient free memory for cache buffers ***");
 		return -1;
@@ -225,7 +224,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	{
 		ptr1->dirty = ptr1->lru = 0;
 		longtmp += BLOCKLEN;
-		fwd_link = hash_ptr + (((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1));
+		fwd_link = &hash_ptr[(((unsigned short)longtmp >> BLOCKSHIFT) & (HASHSIZE-1))];
 		ptr1->offset = longtmp;
 		ptr1->hashlink = *fwd_link;
 		*fwd_link = (int) ((char *)ptr1 - (char *)cache_start);
@@ -327,11 +326,6 @@ void enddisk()
 	{
 		MemoryRelease(dv_handle);
 		dv_handle = 0;
-	}
-	if (hash_ptr != NULL)
-	{
-		free((void *)hash_ptr);
-		hash_ptr = NULL;
 	}
 	if (cache_start != NULL)
 	{
@@ -522,8 +516,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 		write_cache_lru();
 	}
 	/* remove block at cache_lru from its hash chain */
-	fwd_link = hash_ptr
-				+ (((unsigned short)cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1));
+	fwd_link = &hash_ptr[(((unsigned short)cache_lru->offset >> BLOCKSHIFT) & (HASHSIZE-1))];
 	tbloffset = (int) ((char *)cache_lru - (char *)cache_start);
 	while (*fwd_link != tbloffset)
 	{
@@ -538,10 +531,8 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 	if (offset > high_offset)  /* never been this high before, just clear it */
 	{
 		high_offset = offset;
-		for (i = 0; i < BLOCKLEN; ++i)
-		{
-			*(pixelptr++) = 0;
-		}
+		memset(pixelptr, 0, BLOCKLEN);
+		pixelptr += BLOCKLEN;
 	}
 	else
 	{
@@ -583,7 +574,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
         }
 	}
 	/* add new block to its hash chain */
-	fwd_link = hash_ptr + (((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1));
+	fwd_link = &hash_ptr[(((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1))];
 	cache_lru->hashlink = *fwd_link;
 	*fwd_link = (int) ((char *)cache_lru - (char *)cache_start);
 	cur_cache = cache_lru;
@@ -596,7 +587,7 @@ static struct cache * _fastcall  find_cache(long offset)
 #ifndef XFRACT
 	unsigned int tbloffset;
 	struct cache *ptr1;
-	tbloffset = hash_ptr[ ((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1) ];
+	tbloffset = hash_ptr[((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1)];
 	while (tbloffset != 0xffff)
 	{
 		ptr1 = (struct cache *)((char *)cache_start + tbloffset);
