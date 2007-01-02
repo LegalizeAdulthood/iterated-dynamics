@@ -85,3 +85,6 @@ TODO:
 	inner layers.
 2007.01.01.12.24
 	Fix expand_dirname problem.
+2007.01.01.21.17
+	Key input working reliably and consistently now!  Whew!
+	Ctrl+TAB bug fixed.  F10 and other "system key down" events reported.
