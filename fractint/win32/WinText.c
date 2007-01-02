@@ -178,9 +178,7 @@ static HINSTANCE wintext_hInstance;             /* a global copy of hInstance */
 static unsigned int  wintext_keypress_count;
 static unsigned int  wintext_keypress_head;
 static unsigned int  wintext_keypress_tail;
-static unsigned char wintext_keypress_initstate;
 static unsigned int  wintext_keypress_buffer[BUFMAX];
-static unsigned char wintext_keypress_state[BUFMAX];
 
 /* EGA/VGA 16-color palette (which doesn't match Windows palette exactly) */
 /*
@@ -364,7 +362,6 @@ int wintext_texton(void)
     wintext_keypress_count = 0;
     wintext_keypress_head  = 0;
     wintext_keypress_tail  = 0;
-    wintext_keypress_initstate = 0;
     g_me.buffer_init = 0;
 
     hWnd = CreateWindow("FractintForWindowsV0011",
@@ -408,6 +405,66 @@ int wintext_textoff(void)
     g_wintext.textmode = 1;
     return 0;
 }
+
+/*
+     simple keyboard logic capable of handling 80
+     typed-ahead keyboard characters (more, if BUFMAX is changed)
+          wintext_addkeypress() inserts a new keypress
+          wintext_getkeypress(0) returns keypress-available info
+          wintext_getkeypress(1) takes away the oldest keypress
+*/
+
+static void wintext_addkeypress(unsigned int keypress)
+{
+	ODS("wintext_addkeypress");
+
+	if (g_wintext.textmode != 2)  /* not in the right mode */
+		return;
+
+	if (wintext_keypress_count >= BUFMAX)
+	{
+		_ASSERTE(wintext_keypress_count < BUFMAX);
+		/* no room */
+		return;
+	}
+
+	wintext_keypress_buffer[wintext_keypress_head] = keypress;
+	if (++wintext_keypress_head >= BUFMAX)
+	{
+		wintext_keypress_head = 0;
+	}
+	wintext_keypress_count++;
+}
+
+unsigned int wintext_getkeypress(int option)
+{
+	int i;
+
+	ODS("wintext_getkeypress");
+	wintext_look_for_activity(option);
+
+	if (g_wintext.textmode != 2)  /* not in the right mode */
+	{
+		return 27;
+	}
+
+	if (wintext_keypress_count == 0)
+	{
+		_ASSERTE(option == 0);
+		return 0;
+	}
+
+	i = wintext_keypress_buffer[wintext_keypress_tail];
+
+	if (++wintext_keypress_tail >= BUFMAX)
+	{
+		wintext_keypress_tail = 0;
+	}
+	wintext_keypress_count--;
+
+	return i;
+}
+
 
 static void wintext_OnClose(HWND window)
 {
@@ -500,6 +557,14 @@ static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT 
 	case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);	break;
 	case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);	break;
 
+	case VK_TAB:
+		if (0x8000 & GetKeyState(VK_CONTROL))
+		{
+			i = FIK_CTL_TAB;
+			j = 0;
+		}
+		break;
+
 	default:
 		if (0 == j)
 		{
@@ -569,119 +634,12 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
 	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
 	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
+	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);	break;
 	case WM_CHAR:			HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
     return 0;
 }
-
-/*
-     simple keyboard logic capable of handling 80
-     typed-ahead keyboard characters (more, if BUFMAX is changed)
-          wintext_addkeypress() inserts a new keypress
-          wintext_getkeypress(0) returns keypress-available info
-          wintext_getkeypress(1) takes away the oldest keypress
-*/
-
-void wintext_addkeypress(unsigned int keypress)
-{
-	ODS("wintext_addkeypress");
-
-	if (g_wintext.textmode != 2)  /* not in the right mode */
-		return;
-
-	if (wintext_keypress_count >= BUFMAX)
-		/* no room */
-		return;
-
-	if ((keypress & 0xfe00) == 0xfe00)
-	{
-		if (keypress == 0xff10) wintext_keypress_initstate |= 0x01;
-		if (keypress == 0xfe10) wintext_keypress_initstate &= 0xfe;
-		if (keypress == 0xff11) wintext_keypress_initstate |= 0x02;
-		if (keypress == 0xfe11) wintext_keypress_initstate &= 0xfd;
-		return;
-    }
-
-	if (wintext_keypress_initstate != 0)              /* shift/ctl key down */
-	{
-		if ((wintext_keypress_initstate & 1) != 0)    /* shift key down */
-		{
-			if ((keypress & 0x00ff) == 9)             /* TAB key down */
-			{
-                keypress = (15 << 8);             /* convert to shift-tab */
-			}
-			if ((keypress & 0x00ff) == 0)           /* special character */
-			{
-				int i;
-				i = (keypress >> 8) & 0xff;
-				if (i >= 59 && i <= 68)               /* F1 thru F10 */
-				{
-					keypress = ((i + 25) << 8);       /* convert to Shifted-Fn */
-				}
-            }
-        }
-		else                                        /* control key down */
-		{
-			if ((keypress & 0x00ff) == 0)           /* special character */
-			{
-				int i;
-				i = ((keypress & 0xff00) >> 8);
-				if (i >= 59 && i <= 68)               /* F1 thru F10 */
-				{
-					keypress = ((i + 35) << 8);       /* convert to Ctl-Fn */
-				}
-				if (i == 71) keypress = (119 << 8);
-				if (i == 73) keypress = (unsigned int)(132 << 8);
-				if (i == 75) keypress = (115 << 8);
-	            if (i == 77) keypress = (116 << 8);
-				if (i == 79) keypress = (117 << 8);
-				if (i == 81) keypress = (118 << 8);
-            }
-        }
-    }
-
-	wintext_keypress_buffer[wintext_keypress_head] = keypress;
-	wintext_keypress_state[wintext_keypress_head] = wintext_keypress_initstate;
-	if (++wintext_keypress_head >= BUFMAX)
-	{
-		wintext_keypress_head = 0;
-	}
-	wintext_keypress_count++;
-}
-
-unsigned int wintext_getkeypress(int option)
-{
-	int i;
-
-	ODS("wintext_getkeypress");
-	wintext_look_for_activity(option);
-
-	if (g_wintext.textmode != 2)  /* not in the right mode */
-	{
-		return 27;
-	}
-
-	if (wintext_keypress_count == 0)
-	{
-		_ASSERTE(option == 0);
-		return 0;
-	}
-
-	i = wintext_keypress_buffer[wintext_keypress_tail];
-
-	if (option != 0)
-	{
-		if (++wintext_keypress_tail >= BUFMAX)
-		{
-			wintext_keypress_tail = 0;
-		}
-		wintext_keypress_count--;
-	}
-
-	return i;
-}
-
 
 /*
      simple event-handler and look-for-keyboard-activity process
