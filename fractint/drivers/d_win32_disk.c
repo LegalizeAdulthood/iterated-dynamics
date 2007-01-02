@@ -641,160 +641,28 @@ win32_disk_redraw(Driver *drv)
 	wintext_paintscreen(0, 80, 0, 25);
 }
 
-static int keybuffer = 0;
-static int inside_help = 0;
-
-/*
- * This is the low level key handling routine.
- * If block is set, we want to block before returning, since we are waiting
- * for a key press.
- * We also have to handle the slide file, etc.
- */
-
-static int getkeyint(int block)
-{
-    int ch;
-    if (keybuffer)
-	{
-		ch = keybuffer;
-		keybuffer = 0;
-		return ch;
-    }
-    ch = driver_get_key(); //0);
-    if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
-	{
-		stopslideshow();
-		return 0;
-    }
-
-    if (ch==0 && g_slides==SLIDES_PLAY)
-	{
-		ch = slideshw();
-    }
-
-    if (ch==0 && block)
-	{
-		ch = driver_get_key(); //1);
-		if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
-		{
-			stopslideshow();
-			return 0;
-		}
-    }
-
-    if (ch && g_slides==SLIDES_RECORD)
-	{
-		recordshw(ch);
-    }
-
-    return ch;
-}
-
-static int
-preprocess_keystroke(int ch)
-{
-	if (FIK_F1 == ch && helpmode)
-	{
-		if (!inside_help)
-		{
-			keybuffer = 0;
-			inside_help = 1;
-			help(0);
-			inside_help = 0;
-			ch = 0;
-		}
-	}
-	else if (FIK_TAB == ch && tabmode)
-	{
-		keybuffer = 0;
-		tab_display();
-		ch = 0;
-	}
-	return ch;
-}
-
-/* win32_disk_key_pressed
+/* s_key_buffer
  *
- *       'keypressed()' returns a zero if no keypress is outstanding,
- *       and the value that 'getakey()' will return if one is.  Note
- *       that you must still call 'getakey()' to flush the character.
- *       As a sidebar function, calls 'help()' if appropriate, or
- *       'tab_display()' if appropriate.
- *       Think of 'keypressed()' as a super-'kbhit()'.
+ * When we peeked ahead and saw a keypress, stash it here for later
+ * feeding to our caller.
+ */
+static int s_key_buffer = 0;
+
+/* handle_help_tab
+ *
+ * Because we want context sensitive help to work everywhere, with the
+ * help to display indicated by a non-zero value in helpmode, we need
+ * to trap the F1 key at a very low level.  The same is true of the
+ * TAB display.
+ *
+ * What we do here is check for these keys and invoke their displays.
+ * To avoid a recursive invoke of help(), a static is used to avoid
+ * recursing on ourselves as help will invoke get key!
  */
 static int
-win32_disk_key_pressed(Driver *drv)
+handle_help_tab(int ch)
 {
-	int ch = keybuffer;
-	if (ch)
-	{
-		return ch;
-	}
-	ch = wintext_getkeypress(0);
-	if (ch)
-	{
-		keybuffer = wintext_getkeypress(1);
-		if (FIK_F1 == ch && helpmode)
-		{
-			if (!inside_help)
-			{
-				keybuffer = 0;
-				inside_help = 1;
-				help(0);
-				inside_help = 0;
-				ch = 0;
-			}
-		}
-		else if (FIK_TAB == ch && tabmode)
-		{
-			keybuffer = 0;
-			tab_display();
-			ch = 0;
-		}
-	}
-
-	return ch;
-}
-
-/* win32_disk_unget_key
- *
- * fake a keystroke, returns old pending key
- */
-void win32_disk_unget_key(Driver *drv, int key)
-{
-	_ASSERTE(0 == keybuffer);
-	keybuffer = key;
-}
-
-/* win32_disk_get_key
- *
- * Get a keystroke, blocking if necessary.
- *
- *       'getakey()' gets a key from either a "normal" or an enhanced
- *       keyboard.   Returns either the vanilla ASCII code for regular
- *       keys, or 1000+(the scan code) for special keys (like F1, etc)
- *       Use of this routine permits the Control-Up/Down arrow keys on
- *       enhanced keyboards.
- *
- *       The concept for this routine was "borrowed" from the MSKermit
- *       SCANCHEK utility
- *
- */
-static int
-win32_disk_get_key(Driver *drv)
-{
-	/* got one in the buffer already? */
-	int ch = keybuffer;
-	if (ch)
-	{
-		/* give it to 'em */
-		keybuffer = 0;
-	}
-	else
-	{
-		/* wait for one */
-		ch = wintext_getkeypress(1);
-	}
+	static int inside_help = 0;
 
 	if (FIK_F1 == ch && helpmode && !inside_help)
 	{
@@ -805,9 +673,79 @@ win32_disk_get_key(Driver *drv)
 	}
 	else if (FIK_TAB == ch && tabmode)
 	{
+		int old_tab = tabmode;
+		tabmode = 0;
 		tab_display();
+		tabmode = old_tab;
 		ch = 0;
 	}
+
+	return ch;
+}
+
+/* win32_disk_key_pressed
+ *
+ * Return 0 if no key has been pressed, or the FIK value if it has.
+ * driver_get_key() must still be called to eat the key; this routine
+ * only peeks ahead.
+ *
+ * When a keystroke has been found by the underlying wintext_xxx
+ * message pump, stash it in the one key buffer for later use by
+ * get_key.
+ */
+static int
+win32_disk_key_pressed(Driver *drv)
+{
+	int ch = s_key_buffer;
+	if (ch)
+	{
+		return ch;
+	}
+	ch = wintext_getkeypress(0);
+	if (ch)
+	{
+		s_key_buffer = handle_help_tab(ch);
+	}
+
+	return ch;
+}
+
+/* win32_disk_unget_key
+ *
+ * Unread a key!  The key buffer is only one character deep, so we
+ * assert if its already full.  This should never happen in real life :-).
+ */
+void win32_disk_unget_key(Driver *drv, int key)
+{
+	_ASSERTE(0 == s_key_buffer);
+	s_key_buffer = key;
+}
+
+/* win32_disk_get_key
+ *
+ * Get a keystroke, blocking if necessary.  First, check the key buffer
+ * and if that's empty ask the wintext window to pump a keystroke for us.
+ * If we get it, pass it off to handle tab and help displays.  If those
+ * displays ate the key, then get another one.
+ */
+static int
+win32_disk_get_key(Driver *drv)
+{
+	int ch;
+	
+	do
+	{
+		if (s_key_buffer)
+		{
+			ch = s_key_buffer;
+			s_key_buffer = 0;
+		}
+		else
+		{
+			ch = handle_help_tab(wintext_getkeypress(1));
+		}
+	}
+	while (ch == 0);
 
 	return ch;
 }
@@ -1374,9 +1312,9 @@ static int
 win32_disk_key_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
-	int result = win32_disk_key_pressed(drv);
-	ODS2("win32_disk_key_cursor %d,%d", row, col);
+	int result;
 
+	ODS2("win32_disk_key_cursor %d,%d", row, col);
 	if (-1 != row)
 	{
 		di->cursor_row = row;
@@ -1390,7 +1328,12 @@ win32_disk_key_cursor(Driver *drv, int row, int col)
 
 	col = di->cursor_col;
 	row = di->cursor_row;
-	if (0 == result)
+
+	if (win32_disk_key_pressed(drv))
+	{
+		result = win32_disk_get_key(drv);
+	}
+	else
 	{
 		di->cursor_shown = TRUE;
 		wintext_cursor(col, row, 1);
@@ -1398,54 +1341,24 @@ win32_disk_key_cursor(Driver *drv, int row, int col)
 		win32_disk_hide_text_cursor(drv);
 		di->cursor_shown = FALSE;
 	}
+
 	return result;
 }
 
 static int
 win32_disk_wait_key_pressed(Driver *drv, int timeout)
 {
-	int ch;
-
-	if (keybuffer)
+	int count = 10;
+	while (!driver_key_pressed())
 	{
-		ch = keybuffer;
-		keybuffer = 0;
-	}
-	else if (driver_key_pressed())
-	{
-		ch = driver_get_key();
-	}
-	else
-	{
-		ch = wintext_look_for_activity(timeout);
-	}
-	if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
-	{
-		stopslideshow();
-		return 0;
-	}
-
-	if (ch==0 && g_slides==SLIDES_PLAY)
-	{
-		ch = slideshw();
-	}
-
-	if (ch==0 && block)
-	{
-		ch = driver_get_key(); //1);
-		if (g_slides==SLIDES_PLAY && ch == FIK_ESC)
+		Sleep(25);
+		if (timeout && (--count == 0))
 		{
-			stopslideshow();
-			return 0;
+			break;
 		}
 	}
 
-	if (ch && g_slides==SLIDES_RECORD)
-	{
-		recordshw(ch);
-	}
-
-	return ch;
+	return driver_key_pressed();
 }
 
 static int
