@@ -250,9 +250,8 @@ void stackscreen()
       return;
    saverc[screenctr+1] = textrow*80 + textcol;
    if (++screenctr) { /* already have some stacked */
-         static char msg[]={"stackscreen overflow"};
       if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(STOPMSG_NO_STACK,msg);
+         stopmsg(STOPMSG_NO_STACK,"stackscreen overflow");
          exit(1);
          }
    /* TODO: allocate real memory, not reuse shared segment */
@@ -263,8 +262,7 @@ void stackscreen()
       if (savescreen[i] != 0)
          MoveToMemory(vidmem,(U16)savebytes,1L,0L,savescreen[i]);
       else {
-            static char msg[]={"insufficient memory, aborting"};
-               stopmsg(STOPMSG_NO_STACK,msg);
+               stopmsg(STOPMSG_NO_STACK,"insufficient memory, aborting");
                exit(1);
             }
       driver_set_clear();
