@@ -2,7 +2,6 @@
 #define WINTEXT_H
 
 extern HWND			wintext_hWndCopy;
-extern void			wintext_addkeypress(unsigned int);
 extern void			wintext_clear();
 extern void			wintext_cursor(int, int, int);
 extern void			wintext_destroy(void);
