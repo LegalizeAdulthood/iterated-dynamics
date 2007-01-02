@@ -315,6 +315,7 @@ int encoder()
       goto oops;                /* background color */
    i = 0;
 
+   /* TODO: pixel aspect ratio should be 1:1? */
    if (viewwindow                               /* less than full screen?  */
        && (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
       i = (int) (((double) sydots / (double) sxdots) * 64.0 / screenaspect - 14.5);
@@ -566,6 +567,7 @@ oops:
    }
 }
 
+/* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
 /* shift IBM colors to GIF */
 static int _fastcall shftwrite(BYTE * color, int numcolors)
 {
