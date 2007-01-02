@@ -782,109 +782,101 @@ static void show_str_var(char *name, char *var, int *row, char *msg)
    }
 }
 
+static void
+write_row(int row, const char *format, ...)
+{
+	char text[78] = { 0 };
+	va_list args;
+
+	va_start(args, format);
+	_vsnprintf(text, NUM_OF(text), format, args);
+	va_end(args);
+
+	driver_put_string(row, 2, C_GENERAL_HI, text);
+}
+
 int tab_display_2(char *msg)
 {
-   extern long maxptr, maxstack, startstack;
-   int s_row,key,ret=0;
-   helptitle();
-   driver_set_attr(1,0,C_GENERAL_MED,24*80); /* init rest to background */
+	extern long maxptr, maxstack, startstack;
+	int row, key = 0;
 
-   s_row = 1;
-   putstringcenter(s_row++,0,80,C_PROMPT_HI, sstopsecret);
-   sprintf(msg,"Version %d patch %d",g_release, g_patchlevel);
-   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   sprintf(msg,"%lu bytes conventional stack free",stackavail());
-   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   sprintf(msg,"%ld of %ld bignum memory used",maxptr,maxstack);
-   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   sprintf(msg,"   %ld used for bignum globals", startstack);
-   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   sprintf(msg,"   %ld stack used == %ld variables of length %d",
-         maxptr-startstack,(long)((maxptr-startstack)/(rbflength+2)),rbflength+2);
-   driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   if(bf_math)
-   {
-      sprintf(msg,"intlength %-d bflength %-d ",intlength, bflength);
-      driver_put_string(++s_row,2,C_GENERAL_HI,msg);
-   }
-   s_row++;
-   show_str_var(s_tempdir,    tempdir,      &s_row, msg);
-   show_str_var(s_workdir,    workdir,      &s_row, msg);
-   show_str_var(s_printfile,  PrintName,    &s_row, msg);
-   show_str_var(s_filename,   readname,     &s_row, msg);
-   show_str_var(s_formulafile,FormFileName, &s_row, msg);
-   show_str_var(s_savename,   savename,     &s_row, msg);
-   show_str_var(s_parmfile,   CommandFile,  &s_row, msg);
-   show_str_var(s_ifsfile,    IFSFileName,  &s_row, msg);
-   show_str_var(s_autokeyname,autoname,     &s_row, msg);
-   show_str_var(s_lightname,  light_name,   &s_row, msg);
-   show_str_var(s_map,        MAP_name,     &s_row, msg);
-   sprintf(msg,"Sizeof fractalspecific array %d",
-      num_fractal_types*(int)sizeof(struct fractalspecificstuff));
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   sprintf(msg,"calc_status %d pixel [%d,%d]",calc_status,col,row);
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   if(fractype==FORMULA || fractype==FFORMULA)
-   {
-   sprintf(msg,"total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u Used_extra %u",
-      total_formula_mem,posp,vsp,used_extra);
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   sprintf(msg,"   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
-      StoPtr,LodPtr,Max_Ops,Max_Args,LastInitOp);
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   }
-   else if(rhombus_stack[0])
-   {
-   sprintf(msg,"SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-      max_rhombus_depth+1,
-      rhombus_stack[0],
-      rhombus_stack[1],
-      rhombus_stack[2],
-      rhombus_stack[3],
-      rhombus_stack[4],
-      rhombus_stack[5],
-      rhombus_stack[6],
-      rhombus_stack[7],
-      rhombus_stack[8],
-      rhombus_stack[9]);
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   }
+	helptitle();
+	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
+
+	row = 1;
+	putstringcenter(row++, 0, 80, C_PROMPT_HI, sstopsecret);
+
+	write_row(++row, "Version %d patch %d", g_release, g_patchlevel);
+	write_row(++row, "%ld of %ld bignum memory used", maxptr, maxstack);
+	write_row(++row, "   %ld used for bignum globals", startstack);
+	write_row(++row, "   %ld stack used == %ld variables of length %d",
+			maxptr-startstack, (long)((maxptr-startstack)/(rbflength+2)), rbflength+2);
+	if (bf_math)
+	{
+		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
+	}
+	row++;
+	show_str_var(s_tempdir,     tempdir,      &row, msg);
+	show_str_var(s_workdir,     workdir,      &row, msg);
+	show_str_var(s_printfile,   PrintName,    &row, msg);
+	show_str_var(s_filename,    readname,     &row, msg);
+	show_str_var(s_formulafile, FormFileName, &row, msg);
+	show_str_var(s_savename,    savename,     &row, msg);
+	show_str_var(s_parmfile,    CommandFile,  &row, msg);
+	show_str_var(s_ifsfile,     IFSFileName,  &row, msg);
+	show_str_var(s_autokeyname, autoname,     &row, msg);
+	show_str_var(s_lightname,   light_name,   &row, msg);
+	show_str_var(s_map,         MAP_name,     &row, msg);
+	write_row(row++, "Sizeof fractalspecific array %d",
+		num_fractal_types*(int)sizeof(struct fractalspecificstuff));
+	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, col, row);
+	if (fractype == FORMULA || fractype == FFORMULA)
+	{
+		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u Used_extra %u",
+			total_formula_mem, posp, vsp, used_extra);
+		write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
+			StoPtr, LodPtr, Max_Ops, Max_Args, LastInitOp);
+	}
+	else if (rhombus_stack[0])
+	{
+		write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
+			max_rhombus_depth+1,
+			rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
+			rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
+			rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
+			rhombus_stack[9]);
+	}
    
 /*
-   sprintf(msg,"xdots %d ydots %d sxdots %d sydots %d",xdots,ydots,sxdots,sydots);
-   putstring(s_row++,2,C_GENERAL_HI,msg);
+	write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
 */
-   sprintf(msg,"xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
-      xxstart,xxstop,yystart,yystop,
+	write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, dotmode,
+		g_driver->name, g_driver->description);
+	write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
+		xxstart, xxstop, yystart, yystop,
 #if !defined(XFRACT) && !defined(_WIN32)
-      curfractalspecific->orbitcalc == fFormula?"fast parser":
+		curfractalspecific->orbitcalc == fFormula ? "fast parser" :
 #endif
-      curfractalspecific->orbitcalc ==  Formula?"slow parser":
-      curfractalspecific->orbitcalc ==  BadFormula?"bad formula":
-      "",uses_ismand);
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
+		curfractalspecific->orbitcalc ==  Formula ? "slow parser" :
+		curfractalspecific->orbitcalc ==  BadFormula ? "bad formula" :
+		"", uses_ismand);
 /*
-   sprintf(msg,"ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
-      ixstart,ixstop,iystart,iystop,bitshift);
+	write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
+		ixstart, ixstop, iystart, iystop, bitshift);
 */
-   {
-      sprintf(msg,"minstackavail %d llimit2 %ld use_grid %d",
-         minstackavail,llimit2,use_grid);
-   }
-   driver_put_string(s_row++,2,C_GENERAL_HI,msg);
-   putstringcenter(24,0,80,C_GENERAL_LO,spressanykey1);
-   *msg = 0;
-again:
-   driver_put_string(s_row,2,C_GENERAL_HI,msg);
-   key=getakeynohelp();
-   if(key != FIK_ESC && key != FIK_BACKSPACE && key != FIK_TAB)
-   {
-      sprintf(msg,"%d      ",key);
-      goto again;
-   }
-   if(key == FIK_BACKSPACE || key == FIK_TAB)
-      ret = 1;
-   return(ret);
+    write_row(row++, "minstackavail %d llimit2 %ld use_grid %d",
+        minstackavail, llimit2, use_grid);
+	putstringcenter(24, 0, 80, C_GENERAL_LO, spressanykey1);
+	*msg = 0;
+
+	/* display keycodes while waiting for ESC, BACKSPACE or TAB */
+	while ((key != FIK_ESC) && (key != FIK_BACKSPACE) && (key != FIK_TAB))
+	{
+		driver_put_string(row, 2, C_GENERAL_HI, msg);
+		key = getakeynohelp();
+		sprintf(msg, "%d (0x%04x)      ", key, key);
+	}
+	return (key != FIK_ESC);
 }
 
 int tab_display()       /* display the status of the current image */
