@@ -1118,6 +1118,9 @@ copy fractint.hlp $(ProjectDir)
 			</Filter>
 		</Filter>
 		<File
+			RelativePath=".\BUGS.txt">
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt">
 		</File>
 	</Files>
