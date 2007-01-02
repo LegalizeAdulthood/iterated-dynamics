@@ -12,7 +12,7 @@ long linitx, linity;
 
 int
 calcmandasm(void) {
-    printf("Warning: called calcmandasm\n");
+    _ASSERTE(0 && "Warning: called calcmandasm");
     return(0);
 }
 #if 0    /* not used */
