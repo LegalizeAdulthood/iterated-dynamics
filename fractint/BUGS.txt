@@ -1,22 +1,15 @@
 Alpha 1:
 ==========================================================================
-1.  Closing the window upon exit:
+-  Closing the window upon exit:
     <esc> <y> always seems to work (DOS compatible)
    The upper right corner button works sometimes - but usually not after 
    completing a fractal.
    Sometimes the screen clears to white but the window frame remains.
 
-2. Orbits window crashes - probably because you don't do this in disk 
+- Orbits window crashes - probably because you don't do this in disk 
 video mode. :-)
 
-3. Tab Screen:   You can return from it with <esc> but not by pressing 
-another <tab>
-    also: <ctrl><tab> to get to the 2nd tab page doesn't work.
-
-4. Viewwindows screen doesn't bring up any parameters.
-
-5. X-Screen: Can't highlight any line other than passes.  Can't modify 
-passes=g to anything else.
+- Viewwindows screen doesn't bring up any parameters.
 
 I notice that you have true-color modes in the Select Video Mode page, 
 but FractInt doesn't have the ability to handle these yet, does it?
@@ -35,4 +28,3 @@ could be the problem.  Therefore, there's no way to know if the image
 is computed properly yet.
 
 INSERT doesn't reset g_text_rbase and g_text_cbase or something.
-
