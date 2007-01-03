@@ -78,12 +78,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		if (calc_status != 2 || showfile == 0)
 		{
-#ifdef XFRACT
-			if (resizeWindow())
+			if (driver_resize())
 			{
 				calc_status = -1;
 			}
-#endif
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
 			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
@@ -1155,22 +1153,19 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       break;
    case 'd':                    /* shell to MS-DOS              */
-#ifndef XFRACT
+#if !defined(XFRACT)
       driver_stack_screen();
       if (75000L > fr_farfree()) {
-         static char dosmsg[] = {"Not enough memory to Shell-to-DOS"};
          driver_unstack_screen();
-         stopmsg(0, dosmsg);
+         stopmsg(0, "Not enough memory to Shell-to-DOS");
          break;
       }
       if (axmode == 0 || axmode > 7)
       {
-         static char dosmsg[] =
-         {"\
-Note:  Your graphics image is still squirreled away in your video\n\
-adapter's memory.  Switching video modes will clobber part of that\n\
-image.  Sorry - it's the best we could do."};
-         driver_put_string(0, 0, 7, dosmsg);
+         driver_put_string(0, 0, 7,
+			"Note:  Your graphics image is still squirreled away in your video\n"
+			"adapter's memory.  Switching video modes will clobber part of that\n"
+			"image.  Sorry - it's the best we could do.");
          driver_move_cursor(6, 0);
       }
       driver_shell();
