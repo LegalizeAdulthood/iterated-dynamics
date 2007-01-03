@@ -136,7 +136,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       outside      = read_info.outside;
       }
 
-   calc_status = 0;       /* defaults if version < 4 */
+   calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
    xx3rd = xxmin;
    yy3rd = yymin;
    usr_distest = 0;
@@ -364,7 +364,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       }
 
    if (display3d) {
-      calc_status = 0;
+      calc_status = CALCSTAT_PARAMS_CHANGED;
       fractype = PLASMA;
       curfractalspecific = &fractalspecific[PLASMA];
       param[0] = 0;
@@ -453,8 +453,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
              /* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
              blk_6_info.ecount = blk_6_info.mutate[NUMGENES-4];
           if (blk_6_info.ecount != blk_6_info.gridsz * blk_6_info.gridsz
-             && calc_status != 4) {
-             calc_status = 2;
+             && calc_status != CALCSTAT_COMPLETED) {
+             calc_status = CALCSTAT_RESUMABLE;
 			 /* TODO: MemoryAlloc */
              if (evolve_handle == 0)
                 evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
@@ -480,7 +480,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
              if (evolve_handle != 0)  /* Image completed, release it. */
                 MemoryRelease(evolve_handle);
              evolve_handle = 0;
-             calc_status = 4;
+             calc_status = CALCSTAT_COMPLETED;
           }
           paramrangex  = blk_6_info.paramrangex;
           paramrangey  = blk_6_info.paramrangey;
@@ -690,7 +690,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
 			 /* TODO: MemoryAlloc */
                   if ((blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY)) == 0)
-                     info->calc_status = 3; /* not resumable after all */
+                     info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
                   else {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
                      load_ext_blk((char *)block,data_len);

@@ -983,7 +983,7 @@ top:
       attributes[nextleft] = 256+MENU_HDG;
       choicekey[nextleft+=2] = 13; /* enter */
       attributes[nextleft] = MENU_ITEM;
-      if (calc_status == 2)
+      if (calc_status == CALCSTAT_RESUMABLE)
       {
          LOADPROMPTSCHOICES(nextleft,"continue calculation        ");
       }

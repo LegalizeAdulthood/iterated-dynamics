@@ -1163,7 +1163,7 @@ int popcorn()   /* subset of std engine */
          reset_periodicity = 0;
       }
    }
-   calc_status = 4;
+   calc_status = CALCSTAT_COMPLETED;
    return(0);
 }
 

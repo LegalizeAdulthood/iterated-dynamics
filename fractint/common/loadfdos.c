@@ -409,9 +409,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
 	{
 		/* pull image into a view window */
-		if (calc_status != 4) /* if not complete */
+		if (calc_status != CALCSTAT_COMPLETED) /* if not complete */
 		{
-			calc_status = 0;  /* can't resume anyway */
+			calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		if (viewxdots)
 		{
@@ -427,9 +427,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
 	{
 		/* set up to load only every nth pixel to make image fit */
-		if (calc_status != 4) /* if not complete */
+		if (calc_status != CALCSTAT_COMPLETED) /* if not complete */
 		{
-			calc_status = 0;  /* can't resume anyway */
+			calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		skipxdots = skipydots = 1;
 		while (skipxdots * g_video_entry.xdots < filexdots)

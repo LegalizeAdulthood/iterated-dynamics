@@ -697,7 +697,7 @@ int calcfract(void)
       linitorbit.x = (long)(initorbit.x * fudge);
       linitorbit.y = (long)(initorbit.y * fudge);
    }
-   resuming = (calc_status == 2);
+   resuming = (calc_status == CALCSTAT_RESUMABLE);
    if (!resuming) /* free resume_info memory if any is hanging around */
    {
       end_resume();
@@ -720,7 +720,7 @@ int calcfract(void)
       iystart = ixstart = yystart = xxstart = yybegin = xxbegin = 0;
       iystop = yystop = ydots -1;
       ixstop = xxstop = xdots -1;
-      calc_status = 1; /* mark as in-progress */
+      calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
       distest = 0; /* only standard escape time engine supports distest */
       /* per_image routine is run here */
       if (curfractalspecific->per_image())
@@ -733,11 +733,11 @@ int calcfract(void)
       }
       if (check_key())
       {
-         if (calc_status == 1) /* calctype didn't set this itself, */
-            calc_status = 3;   /* so mark it interrupted, non-resumable */
+         if (calc_status == CALCSTAT_IN_PROGRESS) /* calctype didn't set this itself, */
+            calc_status = CALCSTAT_NON_RESUMABLE;   /* so mark it interrupted, non-resumable */
       }
       else
-         calc_status = 4; /* no key, so assume it completed */
+         calc_status = CALCSTAT_COMPLETED; /* no key, so assume it completed */
    }
    else /* standard escape-time engine */
    {
@@ -750,7 +750,7 @@ int calcfract(void)
             stdcalcmode = 'g';
             three_pass = 1;
             timer(0,(int(*)())perform_worklist);
-            if(calc_status == 4)
+            if(calc_status == CALCSTAT_COMPLETED)
             {
                if(xdots >= 640)  /* '2' is silly after 'g' for low rez */
                   stdcalcmode = '2';
@@ -796,7 +796,7 @@ int calcfract(void)
       close_snd();
    if(truecolor)
       enddisk();
-   return((calc_status == 4) ? 0 : -1);
+   return((calc_status == CALCSTAT_COMPLETED) ? 0 : -1);
 }
 
 /* locate alternate math record */
@@ -963,7 +963,7 @@ static void perform_worklist()
       for (i=0; i<num_worklist; ++i)
          worklist[i] = worklist[i+1];
 
-      calc_status = 1; /* mark as in-progress */
+      calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 
       curfractalspecific->per_image();
       if(showdot >= 0)
@@ -1099,7 +1099,7 @@ static void perform_worklist()
       put_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
    }
    else
-      calc_status = 4; /* completed */
+      calc_status = CALCSTAT_COMPLETED; /* completed */
    if(sv_orbitcalc != NULL)
    {
       curfractalspecific->orbitcalc = sv_orbitcalc;

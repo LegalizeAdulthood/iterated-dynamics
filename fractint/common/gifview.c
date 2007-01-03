@@ -277,8 +277,8 @@ int gifview()
          /* initialize the row count for write-lines */
          g_row_count = 0;
 
-         if (calc_status == 1) /* should never be so, but make sure */
-            calc_status = 0;
+         if (calc_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
+            calc_status = CALCSTAT_PARAMS_CHANGED;
          busy = 1;      /* for slideshow CALCWAIT */
          /* 
           * Call decoder(width) via timer. 
@@ -288,15 +288,15 @@ int gifview()
             width = min(width,DECODERLINE_WIDTH);
          status = timer(1,NULL,width);
          busy = 0;      /* for slideshow CALCWAIT */
-         if (calc_status == 1) /* e.g., set by line3d */
+         if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
          {
             calctime = timer_interval; /* note how long it took */
             if (driver_key_pressed() != 0) {
-               calc_status = 3; /* interrupted, not resumable */
+               calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
                finished = 1;
                }
             else
-               calc_status = 4; /* complete */
+               calc_status = CALCSTAT_COMPLETED; /* complete */
          }
          /* Hey! the decoder doesn't read the last (0-length) block!! */
          if (get_byte() != 0) {
