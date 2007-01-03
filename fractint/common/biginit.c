@@ -227,10 +227,7 @@ static void init_bf_2(void)
     if(ptr + NUMVARS*(bflength+2) > maxstack)
        {
        char msg[80];
-       char nmsg[80];
-       static char fmsg[] = {"Requested precision of %d too high, aborting"};
-       strcpy(nmsg,fmsg);
-       sprintf(msg,nmsg,decimals);
+       sprintf(msg,"Requested precision of %d too high, aborting",decimals);
        stopmsg(0,msg);
        goodbye();
        }
@@ -356,16 +353,14 @@ bn_t alloc_stack(size_t size)
    long stack_addr;
    if(bf_math == 0)
       {
-      static char msg[] = {"alloc_stack called with bf_math==0"};
-      stopmsg(0,msg);
+      stopmsg(0,"alloc_stack called with bf_math==0");
       return(0);
       }
    stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 
    if(stack_addr > maxstack)
       {
-      static char msg[] = {"Aborting, Out of Bignum Stack Space"};
-      stopmsg(0,msg);
+      stopmsg(0,"Aborting, Out of Bignum Stack Space");
       goodbye();
       }
    /* keep track of max ptr */

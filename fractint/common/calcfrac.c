@@ -551,8 +551,7 @@ int calcfract(void)
    parm2.y  = param[3];
 
    if (LogFlag && colors < 16) {
-      static char msg[]={"Need at least 16 colors to use logmap"};
-      stopmsg(0,msg);
+      stopmsg(0, "Need at least 16 colors to use logmap");
       LogFlag = 0;
       }
 
@@ -595,12 +594,10 @@ int calcfract(void)
       if(LogTable == NULL)
       {
          if (rangeslen || Log_Fly_Calc == 2) {
-           static char msg[]={"Insufficient memory for logmap/ranges with this maxiter"};
-           stopmsg(0,msg);
+           stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
          }
          else {
-            static char msg[]={"Insufficient memory for logTable, using on-the-fly routine"};
-            stopmsg(0,msg);
+            stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
             Log_Fly_Calc = 1;
             Log_Calc = 1; /* calculate on the fly */
             SetupLogTable();
@@ -2876,23 +2873,14 @@ int  bound_trace_main(void)
     int trail_color, fillcolor_used, last_fillcolor_used = -1;
     int max_putline_length;
     int right, left, length;
-    static char btm_cantbeused[]={"Boundary tracing cannot be used with "};
     if (inside == 0 || outside == 0)
         {
-        static char inside_outside[] = {"inside=0 or outside=0"};
-        char msg[MSGLEN];
-        strcpy(msg,btm_cantbeused);
-        strcat(msg,inside_outside);
-        stopmsg(0,msg);
+        stopmsg(0, "Boundary tracing cannot be used with inside=0 or outside=0");
         return(-1);
         }
     if (colors < 16)
         {
-        char msg[MSGLEN];
-        static char lessthansixteen[] = {"< 16 colors"};
-        strcpy(msg,btm_cantbeused);
-        strcat(msg,lessthansixteen);
-        stopmsg(0,msg);
+        stopmsg(0, "Boundary tracing cannot be used with < 16 colors");
         return(-1);
         }
 
