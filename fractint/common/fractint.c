@@ -478,10 +478,13 @@ imagestart:                             /* calc/display a new image */
 #endif
 		if (kbdchar == 'd') {                     /* shell to DOS */
 			driver_set_clear();
+#if !defined(_WIN32)
+			/* don't use stdio without a console on Windows */
 #ifndef XFRACT
 			printf("\n\nShelling to DOS - type 'exit' to return\n\n");
 #else
 			printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
+#endif
 #endif
 			driver_shell();
 			goto imagestart;
