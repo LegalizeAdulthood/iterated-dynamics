@@ -9,8 +9,6 @@ Alpha 1:
 - Orbits window crashes - probably because you don't do this in disk 
 video mode. :-)
 
-- Viewwindows screen doesn't bring up any parameters.
-
 I notice that you have true-color modes in the Select Video Mode page, 
 but FractInt doesn't have the ability to handle these yet, does it?
 
