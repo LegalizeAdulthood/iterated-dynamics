@@ -338,8 +338,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    if (overlay3d) {
       g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
       if (filexdots > xdots || fileydots > ydots) {
-         static char msg[]={"Can't overlay with a larger image"};
-         stopmsg(0,msg);
+         stopmsg(0,"Can't overlay with a larger image");
          g_init_mode = -1;
          return(-1);
          }
@@ -1285,18 +1284,15 @@ rescan:  /* entry for changed browse parms */
 
       if (no_memory)
       {
-         static char msg[] = {"Sorry...not enough memory to browse."};
-       texttempmsg(msg);/* doesn't work if NO memory available, go figure */
+       texttempmsg("Sorry...not enough memory to browse.");/* doesn't work if NO memory available, go figure */
       }
       if (wincount >= MAX_WINDOWS_OPEN)
       { /* hard code message at MAX_WINDOWS_OPEN = 450 */
-         static char msg[] = {"Sorry...no more space, 450 displayed."};
-       texttempmsg(msg);
+       texttempmsg("Sorry...no more space, 450 displayed.");
       }
       if (vid_too_big==2)
       {
-         static char msg[] = {"Xdots + Ydots > 4096."};
-       texttempmsg(msg);
+       texttempmsg("Xdots + Ydots > 4096.");
       }
  c=0;
  if (wincount)
@@ -1398,17 +1394,13 @@ rescan:  /* entry for changed browse parms */
 
         case 'D': /* delete file */
           cleartempmsg();
-          strcpy(mesg,"");
-          strcat(mesg,"Delete ");
-          strcat(mesg,winlist.name);
-          strcat(mesg,"? (Y/N)");
+		  _snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
           showtempmsg(mesg);
 		  driver_wait_key_pressed(0);
           cleartempmsg();
           c = driver_get_key();
           if ( c == 'Y' && doublecaution ) {
-           static char msg[] = {"ARE YOU SURE???? (Y/N)"};
-           texttempmsg(msg);
+           texttempmsg("ARE YOU SURE???? (Y/N)");
             if ( driver_get_key() != 'Y') c = 'N';
           }
           if ( c == 'Y' ) {
@@ -1424,15 +1416,13 @@ rescan:  /* entry for changed browse parms */
             break;
             }
           else if( errno == EACCES ) {
-              static char msg[] = {"Sorry...it's a read only file, can't del"};
-              texttempmsg(msg);
+              texttempmsg("Sorry...it's a read only file, can't del");
               showtempmsg(winlist.name);
               break;
               }
           }
           {
-          static char msg[] = {"file not deleted (phew!)"};
-          texttempmsg(msg);
+          texttempmsg("file not deleted (phew!)");
           }
           showtempmsg(winlist.name);
           break;
@@ -1441,11 +1431,7 @@ rescan:  /* entry for changed browse parms */
          cleartempmsg();
          driver_stack_screen();
          newname[0] = 0;
-         strcpy(mesg,"");
-         {
-         static char msg[] = {"Enter the new filename for "};
-         strcat((char *)mesg,msg);
-         }
+         strcpy(mesg, "Enter the new filename for ");
          splitpath(readname,drive,dir,NULL,NULL);
          splitpath(winlist.name,NULL,NULL,fname,ext);
          makepath(tmpmask,drive,dir,fname,ext);
@@ -1457,8 +1443,7 @@ rescan:  /* entry for changed browse parms */
           if (!rename(tmpmask,newname)) {
             if (errno == EACCES)
             {
-               static char msg[] = {"sorry....can't rename"};
-                texttempmsg(msg);
+                texttempmsg("Sorry....can't rename");
             }
           else {
            splitpath(newname,NULL,NULL,fname,ext);
@@ -1519,9 +1504,8 @@ rescan:  /* entry for changed browse parms */
     }
  }/*if*/
  else {
-   static char msg[] = {"sorry.. I can't find anything"};
    driver_buzzer(1); /*no suitable files in directory! */
-   texttempmsg(msg);
+   texttempmsg("Sorry.. I can't find anything");
    no_sub_images = TRUE;
  }
 

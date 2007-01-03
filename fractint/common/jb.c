@@ -70,9 +70,7 @@ JulibrotSetup(void)
 #ifndef XFRACT
    if (colors < 255)
    {
-      static char msg[] =
-      {"Sorry, but Julibrots require a 256-color video mode"};
-      stopmsg(0, msg);
+      stopmsg(0, "Sorry, but Julibrots require a 256-color video mode");
       return (0);
    }
 #endif
@@ -103,8 +101,7 @@ JulibrotSetup(void)
       long jxmin, jxmax, jymin, jymax, mxmax, mymax;
       if (fractalspecific[neworbittype].isinteger == 0)
       {
-         static char msg[] = {"Julibrot orbit type isinteger mismatch"};
-         stopmsg(0, (char *)msg);
+         stopmsg(0, "Julibrot orbit type isinteger mismatch");
       }
       if (fractalspecific[neworbittype].isinteger > 1)
          bitshift = fractalspecific[neworbittype].isinteger;

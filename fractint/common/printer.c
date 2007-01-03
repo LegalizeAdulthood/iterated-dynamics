@@ -569,9 +569,8 @@ Print_Screen (void)
                 gamma_val = 10.0 / i;
                 gammadiv = pow(255,gamma_val) / 255;
                 for (i = 0; i < 256; ++i) { /* build gamma conversion table */
-                    static char msg[]={"Calculating color translation"};
                     if ((i & 15) == 15)
-                        thinking(1,msg);
+                        thinking(1, "Calculating color translation");
                     convert[i] = (BYTE)((pow((double)i,gamma_val) / gammadiv) + 0.5);
                     }
                 for (i = 0; i < 330; ++i) {
@@ -619,13 +618,12 @@ Print_Screen (void)
                 return;
             }  */
             if (!driver_diskp()) { /* preview */
-                static char msg[] = {"Preview. Enter=go, Esc=cancel, k=keep"};
                 memcpy(triple[1],g_dac_box,768);
                 for (i = 0; i < colors; ++i)
                     for (j = 0; j < 3; ++j)
                         g_dac_box[i][j] = (BYTE)triple[0][j][pj_color_ptr[i]];
                 spindac(0,1);
-                texttempmsg(msg);
+                texttempmsg("Preview. Enter=go, Esc=cancel, k=keep");
                 i = getakeynohelp();
                 if (i == 'K' || i == 'k') {
                     return;
@@ -776,8 +774,7 @@ Print_Screen (void)
                 if ((pixels = (BYTE *)malloc((long)(fetchrows)*ydots)) != NULL)
                    break;
                 if ((fetchrows >>= 1) == 0) {
-                    static char msg[]={"insufficient memory"};
-                    stopmsg(0,msg);
+                    stopmsg(0, "Insufficient memory");
                     break;
                 }
             }

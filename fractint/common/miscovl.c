@@ -85,7 +85,6 @@ void make_batch_file()
 {
 #define MAXPROMPTS 18
    int colorsonly = 0;
-   static char hdg[]={"Save Current Parameters"};
    /** added for pieces feature **/
    double pdelx = 0.0;
    double pdely = 0.0;
@@ -260,7 +259,7 @@ prompt_user:
       paramvalues[promptnum++].uval.sbuf = vidmde;
 #endif
 
-      if (fullscreen_prompt(hdg,promptnum, choices, paramvalues, 0, NULL) < 0)
+      if (fullscreen_prompt("Save Current Parameters",promptnum, choices, paramvalues, 0, NULL) < 0)
          break;
 
       if(*colorspec == 'o' || s_makepar[1] == 0)
@@ -312,16 +311,14 @@ prompt_user:
               }
       if (pxdots == 0 && (xm > 1 || ym > 1)) {
           /* no corresponding video mode! */
-          static char msg[] = {"Invalid video mode entry!"};
-          stopmsg(0,msg);
+          stopmsg(0, "Invalid video mode entry!");
           goto prompt_user;
           }
 #endif
 
       /* bounds range on xm, ym */
       if (xm < 1 || xm > 36 || ym < 1 || ym > 36) {
-          static char msg[] = {"X and Y components must be 1 to 36"};
-          stopmsg(0,msg);
+          stopmsg(0, "X and Y components must be 1 to 36");
           goto prompt_user;
           }
 
@@ -329,8 +326,7 @@ prompt_user:
       xtotal = xm;  ytotal = ym;
       xtotal *= pxdots;  ytotal *= pydots;
       if (xtotal > 65535L || ytotal > 65535L) {
-      static char msg[] = {"Total resolution (X or Y) cannot exceed 65535"};
-          stopmsg(0,msg);
+          stopmsg(0, "Total resolution (X or Y) cannot exceed 65535");
           goto prompt_user;
           }
       }
@@ -383,16 +379,9 @@ skip_UI:
                 && sscanf(buf, " %40[^ \t({]", buf2)
                 && stricmp(buf2, CommandName) == 0)
             {                   /* entry with same name */
-               static char s1[] = {"File already has an entry named "};
-               static char s2[] = {"\n\
-Continue to replace it, Cancel to back out"};
-               static char s2a[] = {"... Replacing ..."};
-               strcpy(buf2,s1);
-               strcat(buf2,CommandName);
-               if(*s_makepar == 0)
-                   strcat(buf2,s2a);
-               else
-                   strcat(buf2,s2);
+			   _snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
+				   CommandName, (*s_makepar == 0) ?
+				   "... Replacing ..." : "Continue to replace it, Cancel to back out");
                if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
                {                /* cancel */
                   fclose(infile);
@@ -889,10 +878,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          put_parm(s_seqy,s_finattract);
 
       if (forcesymmetry != 999) {
-         static char msg[] =
-            {"Regenerate before <b> to get correct symmetry"};
          if(forcesymmetry == 1000 && ii == 1 && jj == 1)
-            stopmsg(0,msg);
+            stopmsg(0, "Regenerate before <b> to get correct symmetry");
          put_parm( " %s=",s_symmetry);
          if (forcesymmetry==XAXIS)
             put_parm(s_xaxis);
@@ -2414,10 +2401,9 @@ static char *expand_var(char *var, char *buf)
    }
    else
    {
-      static char msg[] = {"Unknown comment variable xxxxxxxxxxxxxxx"};
-      msg[25] = '\0';
-      strcat(msg,var);
-      stopmsg(0,msg);
+	   char buff[80];
+	   _snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
+      stopmsg(0,buff);
       out = "";
    }
    return(out);

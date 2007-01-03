@@ -223,14 +223,12 @@ static int _fastcall readLSystemFile(char *str)
    fclose(infile);
    if (!ruleptrs[0] && err<6)
    {
-      static char no_axiom[] = {"Error:  no axiom\n"};
-      strcat(msgbuf,no_axiom);
+      strcat(msgbuf,"Error:  no axiom\n");
       ++err;
    }
    if ((maxangle<3||maxangle>50) && err<6)
    {
-      static char missing_angle[] = {"Error:  illegal or missing angle\n"};
-      strcat(msgbuf,missing_angle);
+      strcat(msgbuf,"Error:  illegal or missing angle\n");
       ++err;
    }
    if (err)
@@ -291,8 +289,7 @@ int Lsystem(void)
    }
 
    if (stackoflow) {
-      static char msg[]={"insufficient memory, try a lower order"};
-      stopmsg(0,msg);
+      stopmsg(0, "insufficient memory, try a lower order");
    }
    else if (overflow) {
         struct lsys_turtlestatef ts;
@@ -658,11 +655,9 @@ if (overflow)     /* integer math routines overflowed */
    }
 
    while (command->ch && command->ch !=']') {
-      static char thinking_msg[] =
-         {"L-System thinking (higher orders take longer)"};
       if (! (ts->counter++)) {
          /* let user know we're not dead */
-         if (thinking(1,thinking_msg)) {
+         if (thinking(1, "L-System thinking (higher orders take longer)")) {
             ts->counter--;
             return NULL;
          }

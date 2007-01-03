@@ -103,8 +103,6 @@ char commandmask[13] = {"*.par"};
    }
 int get_toggles()
 {
-   static char o_hdg[]={"Basic Options\n(not all combinations make sense)"};
-   char hdg[sizeof(o_hdg)];
    char *choices[20];
    char *ptr;
    int oldhelpmode;
@@ -126,7 +124,6 @@ int get_toggles()
    char *outsidemodes[]={"numb",s_iter,s_real,s_imag,s_mult,s_sum,s_atan,
                          s_fmod,s_tdis};
 
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *) extraseg;
 
@@ -268,7 +265,7 @@ int get_toggles()
 
    oldhelpmode = helpmode;
    helpmode = HELPXOPTS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0,NULL);
+   i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return(-1);
@@ -399,9 +396,6 @@ int get_toggles()
 
 int get_toggles2()
 {
-   static char o_hdg[]={"Extended Options\n\
-(not all combinations make sense)"};
-   char hdg[sizeof(o_hdg)];
    char *ptr;
    char *choices[18];
    int oldhelpmode;
@@ -414,7 +408,6 @@ int get_toggles2()
    double old_potparam[3],old_inversion[3];
    long old_usr_distest;
 
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *) extraseg;
 
@@ -473,7 +466,9 @@ int get_toggles2()
 
    oldhelpmode = helpmode;
    helpmode = HELPYOPTS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0,NULL);
+   i = fullscreen_prompt("Extended Options\n"
+		"(not all combinations make sense)",
+		k+1,choices,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return(-1);
@@ -546,8 +541,8 @@ int get_toggles2()
 
 int passes_options(void)
 {
-   static char o_hdg[]={"Passes Options\n\
-(not all combinations make sense)"};
+   static char o_hdg[]={"Passes Options\n"
+		"(not all combinations make sense)"};
    static char pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
    static char pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
    char hdg[sizeof(o_hdg)+sizeof(pressf2)+sizeof(pressf6)];
@@ -689,8 +684,6 @@ pass_option_restart:
 
 int get_view_params()
 {
-   static char o_hdg[]={"View Window Options"};
-   char hdg[sizeof(o_hdg)];
    char *choices[16];
    char *ptr;
 
@@ -709,7 +702,6 @@ int get_view_params()
       dotmode = g_video_entry.dotmode%100;
 #endif
 
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)extraseg;
 
@@ -788,12 +780,12 @@ get_view_restart:
    }
 #endif
 
-   if (dotmode == 11 || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
+   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
       LOADCHOICES("Virtual screen total x pixels");
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = sxdots;
 
-      if (dotmode == 11) {
+      if (driver_diskp()) {
          LOADCHOICES("                     y pixels");
       }
       else {
@@ -844,13 +836,13 @@ get_view_restart:
 #endif
 
    if (!driver_diskp()) {
-      LOADCHOICES("Press "FK_F4" to reset view parameters to defaults.");
+      LOADCHOICES("Press F4 to reset view parameters to defaults.");
       uvalues[k].type = '*';
    }
 
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPVIEW;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,16,NULL);
+   i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
       return(-1);
@@ -998,16 +990,13 @@ get_view_restart:
 
 int get_cmd_string()
 {
-   static char o_msg[] = {"Enter command string to use."};
-   char msg[sizeof(o_msg)];
    int oldhelpmode;
    int i;
    static char cmdbuf[61];
 
-   strcpy(msg,o_msg);
    oldhelpmode = helpmode;
    helpmode = HELPCOMMANDS;
-   i = field_prompt(0,msg,NULL,cmdbuf,60,NULL);
+   i = field_prompt(0,"Enter command string to use.",NULL,cmdbuf,60,NULL);
    helpmode = oldhelpmode;
    if (i >= 0 && cmdbuf[0] != 0) {
        i = cmdarg(cmdbuf, 2);
@@ -1051,8 +1040,7 @@ int starfield(void)
    Slope = (int)(starfield_values[2]);
 
    if (ValidateLuts(GreyFile) != 0) {
-      static char msg[]={"Unable to load ALTERN.MAP"};
-      stopmsg(0,msg);
+      stopmsg(0,"Unable to load ALTERN.MAP");
       busy = 0;
       return(-1);
       }
@@ -1076,29 +1064,18 @@ int starfield(void)
 }
 
 int get_starfield_params(void) {
-   static char o_hdg[]={"Starfield Parameters"};
-   static char o_sf1[] = {"Star Density in Pixels per Star"};
-   static char o_sf2[] = {"Percent Clumpiness"};
-   static char o_sf3[] = {"Ratio of Dim stars to Bright"};
-   char hdg[sizeof(o_hdg)];
-   char sf1[sizeof(o_sf1)];
-   char sf2[sizeof(o_sf2)];
-   char sf3[sizeof(o_sf3)];
    struct fullscreenvalues uvalues[3];
    int oldhelpmode;
    int i;
-   char *starfield_prompts[3];
-   strcpy(hdg,o_hdg);
-   strcpy(sf1,o_sf1);
-   strcpy(sf2,o_sf2);
-   strcpy(sf3,o_sf3);
-   starfield_prompts[0] = sf1;
-   starfield_prompts[1] = sf2;
-   starfield_prompts[2] = sf3;
+   char *starfield_prompts[3] =
+	{
+		"Star Density in Pixels per Star",
+		"Percent Clumpiness",
+		"Ratio of Dim stars to Bright"
+	};
 
    if(colors < 255) {
-      static char msg[]={"starfield requires 256 color mode"};
-      stopmsg(0,msg);
+      stopmsg(0,"starfield requires 256 color mode");
       return(-1);
    }
    for (i = 0; i < 3; i++) {
@@ -1108,7 +1085,7 @@ int get_starfield_params(void) {
    driver_stack_screen();
    oldhelpmode = helpmode;
    helpmode = HELPSTARFLD;
-   i = fullscreen_prompt(hdg,3,starfield_prompts,uvalues,0,NULL);
+   i = fullscreen_prompt("Starfield Parameters",3,starfield_prompts,uvalues,0,NULL);
    helpmode = oldhelpmode;
    driver_unstack_screen();
    if (i < 0) {
@@ -1123,25 +1100,19 @@ int get_starfield_params(void) {
 static char *masks[] = {"*.pot","*.gif"};
 
 int get_rds_params(void) {
-   static char o_hdg[] =  {"Random Dot Stereogram Parameters"};
-   static char o_rds0[] = {"Depth Effect (negative reverses front and back)"};
-   static char o_rds1[] = {"Image width in inches"};
-   static char o_rds2[] = {"Use grayscale value for depth? (if \"no\" uses color number)"};
-   static char o_rds3[] = {"Calibration bars"};
-   static char o_rds4[] = {"Use image map? (if \"no\" uses random dots)"};
-   static char o_rds5[] = {"  If yes, use current image map name? (see below)"};
-
-   char hdg[sizeof(o_hdg)];
-   char rds0[sizeof(o_rds0)];
-   char rds1[sizeof(o_rds1)];
-   char rds2[sizeof(o_rds2)];
-   char rds3[sizeof(o_rds3)];
-   char rds4[sizeof(o_rds4)];
-   char rds5[sizeof(o_rds5)];
    char rds6[60];
    char *stereobars[] = {"none", "middle", "top"};
    struct fullscreenvalues uvalues[7];
-   char *rds_prompts[7];
+   char *rds_prompts[7] =
+	{
+		"Depth Effect (negative reverses front and back)",
+		"Image width in inches",
+		"Use grayscale value for depth? (if \"no\" uses color number)",
+		"Calibration bars",
+		"Use image map? (if \"no\" uses random dots)",
+		"  If yes, use current image map name? (see below)",
+		rds6
+	};
    int oldhelpmode;
    int i,k;
    int ret;
@@ -1150,21 +1121,6 @@ int get_rds_params(void) {
    for(;;)
    {
       ret = 0;
-      /* copy to make safe from overlay change */
-      strcpy(hdg,o_hdg);
-      strcpy(rds0,o_rds0);
-      strcpy(rds1,o_rds1);
-      strcpy(rds2,o_rds2);
-      strcpy(rds3,o_rds3);
-      strcpy(rds4,o_rds4);
-      strcpy(rds5,o_rds5);
-      rds_prompts[0] = rds0;
-      rds_prompts[1] = rds1;
-      rds_prompts[2] = rds2;
-      rds_prompts[3] = rds3;
-      rds_prompts[4] = rds4;
-      rds_prompts[5] = rds5;
-      rds_prompts[6] = rds6;
 
       k=0;
       uvalues[k].uval.ival = AutoStereo_depth;
@@ -1210,7 +1166,7 @@ int get_rds_params(void) {
          *stereomapname = 0;
       oldhelpmode = helpmode;
       helpmode = HELPRDS;
-      i = fullscreen_prompt(hdg,k,rds_prompts,uvalues,0,NULL);
+      i = fullscreen_prompt("Random Dot Stereogram Parameters",k,rds_prompts,uvalues,0,NULL);
       helpmode = oldhelpmode;
       if (i < 0) {
          ret = -1;
@@ -1230,11 +1186,7 @@ int get_rds_params(void) {
             reuse = 0;
          if(image_map && !reuse)
          {
-            static char tmp[] = {"Select an Imagemap File"};
-            char tmp1[sizeof(tmp)];
-            /* tmp1 only a convenient buffer */
-            strcpy(tmp1,tmp);
-            if(getafilename(tmp1,masks[1],stereomapname))
+            if(getafilename("Select an Imagemap File",masks[1],stereomapname))
                continue;
          }
       }
@@ -1246,8 +1198,6 @@ int get_rds_params(void) {
 
 int get_a_number(double *x, double *y)
 {
-   static char o_hdg[]={"Set Cursor Coordinates"};
-   char hdg[sizeof(o_hdg)];
    char *ptr;
    char *choices[2];
 
@@ -1255,7 +1205,6 @@ int get_a_number(double *x, double *y)
    int i, k;
 
    driver_stack_screen();
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)extraseg;
 
@@ -1270,7 +1219,7 @@ int get_a_number(double *x, double *y)
    uvalues[k].type = 'd';
    uvalues[k].uval.dval = *y;
 
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,25,NULL);
+   i = fullscreen_prompt("Set Cursor Coordinates",k+1,choices,uvalues,25,NULL);
    if (i < 0) {
       driver_unstack_screen();
       return(-1);
@@ -2111,12 +2060,9 @@ int get_corners()
    char *ptr;
    struct fullscreenvalues values[15];
    char *prompts[15];
-   static char o_xprompt[]={"          X"};
-   static char o_yprompt[]={"          Y"};
-   static char o_zprompt[]={"          Z"};
-   char xprompt[sizeof(o_xprompt)];
-   char yprompt[sizeof(o_yprompt)];
-   char zprompt[sizeof(o_zprompt)];
+   char xprompt[] = "          X";
+   char yprompt[] = "          Y";
+   char zprompt[] = "          Z";
    int i,nump,prompt_ret;
    int cmag;
    double Xctr,Yctr;
@@ -2124,12 +2070,8 @@ int get_corners()
    double Xmagfactor,Rotation,Skew;
    BYTE ousemag;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
-   static char hdg[]={"Image Coordinates"};
    int oldhelpmode;
 
-   strcpy(xprompt,o_xprompt);
-   strcpy(yprompt,o_yprompt);
-   strcpy(zprompt,o_zprompt);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)extraseg;
    oldhelpmode = helpmode;
@@ -2211,7 +2153,7 @@ gc_loop:
 
    oldhelpmode = helpmode;
    helpmode = HELPCOORDS;
-   prompt_ret = fullscreen_prompt(hdg,nump+1, prompts, values, 0x90, NULL);
+   prompt_ret = fullscreen_prompt("Image Coordinates",nump+1, prompts, values, 0x90, NULL);
    helpmode = oldhelpmode;
 
    if (prompt_ret < 0) {
@@ -2308,12 +2250,9 @@ static int get_screen_corners(void)
    char *ptr;
    struct fullscreenvalues values[15];
    char *prompts[15];
-   static char o_xprompt[]={"          X"};
-   static char o_yprompt[]={"          Y"};
-   static char o_zprompt[]={"          Z"};
-   char xprompt[sizeof(o_xprompt)];
-   char yprompt[sizeof(o_yprompt)];
-   char zprompt[sizeof(o_zprompt)];
+   char xprompt[] = "          X";
+   char yprompt[] = "          Y";
+   char zprompt[] = "          Z";
    int i,nump,prompt_ret;
    int cmag;
    double Xctr,Yctr;
@@ -2322,12 +2261,8 @@ static int get_screen_corners(void)
    BYTE ousemag;
    double oxxmin,oxxmax,oyymin,oyymax,oxx3rd,oyy3rd;
    double svxxmin,svxxmax,svyymin,svyymax,svxx3rd,svyy3rd;
-   static char hdg[]={"Screen Coordinates"};
    int oldhelpmode;
 
-   strcpy(xprompt,o_xprompt);
-   strcpy(yprompt,o_yprompt);
-   strcpy(zprompt,o_zprompt);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)extraseg;
    oldhelpmode = helpmode;
@@ -2411,7 +2346,7 @@ gsc_loop:
 
    oldhelpmode = helpmode;
    helpmode = HELPSCRNCOORDS;
-   prompt_ret = fullscreen_prompt(hdg,nump+1, prompts, values, 0x90, NULL);
+   prompt_ret = fullscreen_prompt("Screen Coordinates",nump+1, prompts, values, 0x90, NULL);
    helpmode = oldhelpmode;
 
    if (prompt_ret < 0) {
@@ -2522,8 +2457,6 @@ gsc_loop:
 
 int get_browse_params()
 {
-   static char o_hdg[]={"Browse ('L'ook) Mode Options"};
-   char hdg[sizeof(o_hdg)];
    char *ptr;
    char *choices[10];
 
@@ -2535,7 +2468,6 @@ int get_browse_params()
    double old_toosmall;
    char old_browsemask[13];
 
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *)extraseg;
    old_autobrowse     = autobrowse;
@@ -2589,7 +2521,7 @@ get_brws_restart:
 
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPBRWSPARMS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,16,NULL);
+   i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
       return(0);
