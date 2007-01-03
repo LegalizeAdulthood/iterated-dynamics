@@ -630,9 +630,7 @@ VOIDPTR mem_alloc(unsigned size)
 
    if (mem_avail < size)   /* don't let this happen! */
       {
-      static char msg[] = "editpal.c: Out of memory!\n";
-
-      stopmsg(0, msg);
+      stopmsg(0, "editpal.c: Out of memory!\n");
       exit(1);
       }
 
@@ -2887,14 +2885,11 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
       case 'M':   /* set gamma */
       case 'm':
           {
-              static char o_msg[] = {"Enter gamma value"};
-              char msg[sizeof(o_msg)];
               int i;
               char buf[20];
-              strcpy(msg,o_msg);
               sprintf(buf,"%.3f",1./gamma_val);
               driver_stack_screen();
-              i = field_prompt(0,msg,NULL,buf,20,NULL);
+              i = field_prompt(0,"Enter gamma value",NULL,buf,20,NULL);
               driver_unstack_screen();
               if (i != -1) {
                   sscanf(buf,"%f",&gamma_val);

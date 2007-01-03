@@ -1243,13 +1243,17 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          calcfracinit();
          make_batch_file();
 #ifndef WINFRACT
-#ifndef XFRACT
+#if !defined(XFRACT)
+#if defined(_WIN32)
+		 _ASSERTE(0 && "Don't call standard I/O without a console on Windows");
+#else
          if(*readname != 0)
             printf("copying fractal info in GIF %s to PAR %s/%s\n",
                    readname,CommandFile,CommandName);
          else if (*MAP_name != 0)
             printf("copying color info in map %s to PAR %s/%s\n",
                 MAP_name,CommandFile,CommandName);
+#endif
 #endif
          goodbye();
 #endif
@@ -1607,8 +1611,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
          }
       if (prev == 0) goto badarg;
       if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL) {
-         static char msg[] = {"Insufficient memory for ranges="};
-         stopmsg(STOPMSG_NO_STACK,msg);
+         stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
          return(-1);
          }
       rangeslen = entries;
@@ -1804,6 +1807,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       if (fractype == CELLULAR)
           return 1; /* skip setting the corners */
 #if 0
+	  /* use a debugger and OutputDebugString instead of standard I/O on Windows */
       printf("totparms %d floatparms %d\n",totparms, floatparms);
       getch();
 #endif
