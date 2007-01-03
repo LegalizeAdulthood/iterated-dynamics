@@ -410,9 +410,9 @@ int encoder()
    {                            /* store non-standard fractal info */
       /* loadfile.c has notes about extension block structure */
       if (interrupted)
-         save_info.calc_status = 0;     /* partial save is not resumable */
+         save_info.calc_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
       save_info.tot_extend_len = 0;
-      if (resume_info != 0 && save_info.calc_status == 2)
+      if (resume_info != 0 && save_info.calc_status == CALCSTAT_RESUMABLE)
       {
          /* resume info block, 002 */
          save_info.tot_extend_len += extend_blk_len(resume_len);
@@ -460,7 +460,7 @@ int encoder()
           struct evolution_info resume_e_info;
           GENEBASE gene[NUMGENES];
           MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-          if (evolve_handle == 0 || calc_status == 4) {
+          if (evolve_handle == 0 || calc_status == CALCSTAT_COMPLETED) {
              esave_info.paramrangex     = paramrangex;
              esave_info.paramrangey     = paramrangey;
              esave_info.opx             = opx;

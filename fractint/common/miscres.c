@@ -895,11 +895,11 @@ int tab_display()       /* display the status of the current image */
 	BYTE *ptr_to_extraseg = NULL;
 	int hasformparam = 0;
 
-	if (calc_status < 0)        /* no active fractal image */
+	if (calc_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
 	{
 		return 0;                /* (no TAB on the credits screen) */
 	}
-	if (calc_status == 1)        /* next assumes CLK_TCK is 10^n, n>=2 */
+	if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n>=2 */
 	{
 		calctime += (clock_ticks() - timer_start) / (CLK_TCK/100);
 	}
@@ -999,7 +999,7 @@ top:
 	default: msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-	if (initbatch && calc_status != 0)
+	if (initbatch && calc_status != CALCSTAT_PARAMS_CHANGED)
 	{
 		driver_put_string(-1, -1, C_GENERAL_HI, sbatch);
 	}
@@ -1048,7 +1048,7 @@ top:
 
 	s_row += i;
 
-	if (calc_status == 1 || calc_status == 2)
+	if (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE)
 	{
 		if (curfractalspecific->flags&NORESUME)
 		{
@@ -1062,7 +1062,7 @@ top:
 
 	++s_row;
 
-	if (got_status >= 0 && (calc_status == 1 || calc_status == 2))
+	if (got_status >= 0 && (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE))
 	{
 		switch (got_status)
 		{
@@ -1144,7 +1144,7 @@ top:
 	driver_put_string(s_row, 2, C_GENERAL_MED, scalculation_time);
 	get_calculation_time(msg, calctime);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((got_status == 5) && (calc_status == 1))  /* estimate total time */
+	if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
 		get_calculation_time( msg, (long)(calctime*((dif_limit*1.0)/dif_counter)) );
