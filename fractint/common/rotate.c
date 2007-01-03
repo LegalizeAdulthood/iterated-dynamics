@@ -416,17 +416,14 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
    char palname[FILE_MAX_PATH];
-   static char o_msg[] = {"Name of map file to write"};
-   char msg[sizeof(o_msg)];
    FILE *dacfile;
    int i,oldhelpmode;
-   strcpy(msg,o_msg);
    strcpy(palname,MAP_name);
    oldhelpmode = helpmode;
    driver_stack_screen();
    temp1[0] = 0;
    helpmode = HELPCOLORMAP;
-   i = field_prompt(0,msg,NULL,temp1,60,NULL);
+   i = field_prompt(0,"Name of map file to write",NULL,temp1,60,NULL);
    driver_unstack_screen();
    if (i != -1 && temp1[0]) {
       if (strchr(temp1,'.') == NULL)

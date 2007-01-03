@@ -311,12 +311,10 @@ int plasma()
    OldPotFlag=OldPot16bit=plasma_check = 0;
 
    if(colors < 4) {
-      static char plasmamsg[]={
-         "\
-Plasma Clouds can currently only be run in a 4-or-more-color video\n\
-mode (and color-cycled only on VGA adapters [or EGA adapters in their\n\
-640x350x16 mode])."      };
-      stopmsg(0,plasmamsg);
+      stopmsg(0,
+		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
+		"mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
+		"640x350x16 mode]).");
       return(-1);
    }
    iparmx = (int)(param[0] * 8);
@@ -786,8 +784,7 @@ int Bifurcation(void)
    array_size =  (iystop + 1) * sizeof(int); /* should be iystop + 1 */
    if ((verhulst_array = (int *) malloc(array_size)) == NULL)
    {
-      static char msg[]={"Insufficient free memory for calculation."};
-      stopmsg(0,msg);
+      stopmsg(0, "Insufficient free memory for calculation.");
       return(-1);
    }
 
@@ -1298,9 +1295,7 @@ int lya_setup () {
         if (inside==1) inside = 0;
         }
     if (inside<0) {
-        static char msg[]=
-            {"Sorry, inside options other than inside=nnn are not supported by the lyapunov"};
-        stopmsg(0,(char *)msg);
+        stopmsg(0,"Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         inside=1;
         }
     if (usr_stdcalcmode == 'o') { /* Oops,lyapunov type */
@@ -1406,19 +1401,17 @@ void abort_cellular(int err, int t)
          {
          char msg[30];
          sprintf(msg,"Bad t=%d, aborting\n", t);
-         stopmsg(0,(char *)msg);
+         stopmsg(0, msg);
          }
          break;
       case BAD_MEM:
          {
-         static char msg[]={"Insufficient free memory for calculation" };
-         stopmsg(0,msg);
+         stopmsg(0, "Insufficient free memory for calculation");
          }
          break;
       case STRING1:
          {
-         static char msg[]={"String can be a maximum of 16 digits" };
-         stopmsg(0,msg);
+         stopmsg(0, "String can be a maximum of 16 digits");
          }
          break;
       case STRING2:
@@ -1437,9 +1430,7 @@ void abort_cellular(int err, int t)
          break;
       case TYPEKR:
          {
-         static char msg[]={"Type must be 21, 31, 41, 51, 61, 22, 32, \
-42, 23, 33, 24, 25, 26, 27" };
-         stopmsg(0,msg);
+         stopmsg(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
          }
          break;
       case RULELENGTH:
@@ -1457,8 +1448,7 @@ void abort_cellular(int err, int t)
          break;
       case INTERUPT:
          {
-         static char msg[]={"Interrupted, can't resume" };
-         stopmsg(0,msg);
+         stopmsg(0, "Interrupted, can't resume");
          }
          break;
       case CELLULAR_DONE:
@@ -1648,9 +1638,7 @@ int cellular () {
    if (lstscreenflag) { /* line number != 0 & not resuming & not continuing */
      U32 big_row;
      for (big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
-      static char msg[]={"Cellular thinking (higher start row takes longer)"};
-
-      thinking(1,msg);
+      thinking(1, "Cellular thinking (higher start row takes longer)");
       if(rflag || randparam==0 || randparam==-1){
        /* Use a random border */
        for (i=0;i<=(U16)r;i++) {
@@ -1913,9 +1901,7 @@ int froth_setup(void)
       fsp = (struct froth_struct *)malloc(sizeof (struct froth_struct));
    if (fsp == NULL)
       {
-      static char msg[]=
-          {"Sorry, not enough memory to run the frothybasin fractal type"};
-      stopmsg(0,(char *)msg);
+      stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
       return 0;
       }
 

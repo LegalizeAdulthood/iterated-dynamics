@@ -535,9 +535,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	if (*s_makepar && !fastrestore && !initbatch &&
 			(fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
 	{
-		static char msg[] = {"Warning: <V>iew parameters are being set to non-standard values.\n"
-			"Remember to reset them when finished with this image!"};
-		stopmsg(STOPMSG_NO_BUZZER, msg);
+		stopmsg(STOPMSG_NO_BUZZER,
+			"Warning: <V>iew parameters are being set to non-standard values.\n"
+			"Remember to reset them when finished with this image!");
     }
 	return 0;
 }

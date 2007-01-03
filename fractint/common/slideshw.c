@@ -140,19 +140,15 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 
 static void message(int secs, char *buf)
 {
-   int i;
-   char nearbuf[41];
-   i = -1;
-   while(buf[++i] && i< 40)
-      nearbuf[i] = buf[i];
-   nearbuf[i] = 0;
-   if(g_text_type < 2)
-      showtempmsg_txt(0,0,7,secs,nearbuf);
-   else if (showtempmsg(nearbuf) == 0)
-      {
-         sleep_secs(secs);
-         cleartempmsg();
-      }
+	char nearbuf[41] = { 0 };
+	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
+	if (g_text_type < 2)
+		showtempmsg_txt(0,0,7,secs,nearbuf);
+	else if (showtempmsg(nearbuf) == 0)
+    {
+		sleep_secs(secs);
+		cleartempmsg();
+    }
 }
 
 /* this routine reads the file autoname and returns keystrokes */
@@ -401,10 +397,8 @@ static void sleep_secs(int secs)
 
 static void slideshowerr(char *msg)
 {
-   char msgbuf[300];
-   static char errhdg[] = "Slideshow error:\n";
+	char msgbuf[300] = { "Slideshow error:\n" };
    stopslideshow();
-   strcpy(msgbuf,errhdg);
    strcat(msgbuf,msg);
    stopmsg(0,msgbuf);
 }

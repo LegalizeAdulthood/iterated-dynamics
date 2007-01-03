@@ -76,10 +76,7 @@ int SetColorPaletteName( char * fn )
         if( ValidateLuts( fn ) != 0)
                 return 1;
         if( mapdacbox == NULL && (mapdacbox = (char *)malloc(768L)) == NULL) {
-                static char o_msg[]={"Insufficient memory for color map."};
-                char msg[sizeof(o_msg)];
-                strcpy(msg,o_msg);
-                stopmsg(0,msg);
+                stopmsg(0,"Insufficient memory for color map.");
                 return 1;
                 }
         memcpy((char *)mapdacbox,(char *)g_dac_box,768);

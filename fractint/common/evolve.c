@@ -377,15 +377,12 @@ void varyinv(GENEBASE gene[], int randval, int i)
 int get_the_rest(void)
 {
   char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
-  static char o_hdg[]={"Variable tweak central 2 of 2"};
   int i,k,num, numtrig;
-  char hdg[sizeof(o_hdg)];
   char *choices[20];
   char *ptr;
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
 
-  strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
   ptr = (char *) extraseg;
 
@@ -436,7 +433,7 @@ choose_vars_restart:
    LOADCHOICES("Press F4 to randomize all");
    uvalues[k].type = '*';
 
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,28,NULL);
+   i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,NULL);
 
    switch(i) {
      case FIK_F2: /* set all off */
@@ -476,9 +473,7 @@ choose_vars_restart:
 int get_variations(void)
 {
   char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
-  static char o_hdg[]={"Variable tweak central 1 of 2"};
   int i,k,num, numparams;
-  char hdg[sizeof(o_hdg)];
   char *choices[20];
   char *ptr;
   struct fullscreenvalues uvalues[20];
@@ -487,7 +482,6 @@ int get_variations(void)
   int lastparm  = MAXPARAMS;
   int chngd = -1;
 
-  strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
   ptr = (char *) extraseg;
 
@@ -558,7 +552,7 @@ choose_vars_restart:
    LOADCHOICES("Press F6 for second page"); /* F5 gets eaten */
    uvalues[k].type = '*';
 
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,92,NULL);
+   i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,NULL);
 
    switch(i) {
      case FIK_F2: /* set all off */
@@ -619,8 +613,6 @@ void set_mutation_level(int strength)
 
 int get_evolve_Parms(void)
 {
-   static char o_hdg[]={"Evolution Mode Options"};
-   char hdg[sizeof(o_hdg)];
    char *choices[20];
    char *ptr;
    int oldhelpmode;
@@ -641,7 +633,6 @@ int get_evolve_Parms(void)
 
 get_evol_restart:
 
-   strcpy(hdg,o_hdg);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *) extraseg;
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
@@ -714,7 +705,7 @@ get_evol_restart:
    uvalues[k].type = '*';
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPEVOL; 
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,255,NULL);
+   i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
    /* in case this point has been reached after calling sub menu with F6 */
@@ -838,8 +829,7 @@ void SetupParamBox(void)
    if (prmboxhandle == 0)
       prmboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
    if (prmboxhandle == 0 ) {
-     static char msg[] = {"Sorry...can't allocate mem for parmbox"};
-     texttempmsg(msg);
+     texttempmsg("Sorry...can't allocate mem for parmbox");
      evolving=0;
    }
    prmboxcount=0;
@@ -850,8 +840,7 @@ void SetupParamBox(void)
    if (imgboxhandle == 0)
       imgboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
    if (!imgboxhandle) {
-     static char msg[] = {"Sorry...can't allocate mem for imagebox"};
-     texttempmsg(msg);
+     texttempmsg("Sorry...can't allocate mem for imagebox");
    }
 }
 

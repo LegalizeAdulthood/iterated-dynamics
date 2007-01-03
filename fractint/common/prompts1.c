@@ -313,10 +313,12 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
    /* display box heading */
    for (i = titlerow; i < boxrow; ++i)
       driver_set_attr(i,boxcol,C_PROMPT_HI,boxwidth);
+
    {
-      char *hdgline = hdg;
+      char buffer[256], *hdgline = buffer;
       /* center each line of heading independently */
       int i;
+	  strcpy(hdgline, hdg);
       for(i=0;i<titlelines-1;i++)
       {
          char *next;
@@ -895,11 +897,6 @@ static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
                                    /* so that storage gets freed up      */
 {
-   static char head1[] = {"Select a Fractal Type"};
-   static char head2[] = {"Select Orbit Algorithm for Julibrot"};
-   static char o_instr[] = {"Press "FK_F2" for a description of the highlighted type"};
-   char instr[sizeof(o_instr)];
-   char head[40];
    int oldhelpmode;
    int numtypes, done;
    int i, j;
@@ -920,11 +917,6 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
    /* setup context sensitive help */
    oldhelpmode = helpmode;
    helpmode = HELPFRACTALS;
-   strcpy(instr,o_instr);
-   if(julibrot)
-      strcpy(head,head2);
-   else
-      strcpy(head,head1);
    if (t == IFS3D) t = IFS;
    i = j = -1;
    while(fractalspecific[++i].name) {
@@ -945,8 +937,10 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
          j = i;
 
    tname[0] = 0;
-   done = fullscreen_choice(CHOICE_HELP+8,head,NULL,instr,numtypes,
-         (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
+   done = fullscreen_choice(CHOICE_HELP+8,
+	   julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
+	   NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
+	   (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
    if (done >= 0) {
       done = choices[done]->num;
       if((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
@@ -1247,11 +1241,10 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    int ret = 0;
    int oldhelpmode;
    char parmprompt[MAXPARAMS][55];
-   static char t1[] = {"First Function"};
-   static char t2[] = {"Second Function"};
-   static char t3[] = {"Third Function"};
-   static char t4[] = {"Fourth Function"};
-   static char *trg[] = {t1, t2, t3, t4};
+   static char *trg[] =
+   {
+	   "First Function", "Second Function", "Third Function", "Fourth Function"
+   };
    char *filename,*entryname;
    FILE *entryfile;
    char *trignameptr[NUMTRIGFN];
@@ -1441,26 +1434,23 @@ gfp_top:
 
    if( i != 0 && curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) ) {
-        static char bailteststr[] = {"Bailout Test (mod, real, imag, or, and, manh, manr)"};
       paramvalues[promptnum].type = 'l';
       paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
       paramvalues[promptnum].uval.ch.llen = 7;
       paramvalues[promptnum].uval.ch.vlen = 6;
       paramvalues[promptnum].uval.ch.list = bailnameptr;
-      choices[promptnum++] = bailteststr;
+      choices[promptnum++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
    }
 
    if (i) {
       if (potparam[0] != 0.0 && potparam[2] != 0.0)
       {
-        static char bailpotstr[] = {"Bailout: continuous potential (Y screen) value in use"};
          paramvalues[promptnum].type = '*';
-         choices[promptnum++] = bailpotstr;
+         choices[promptnum++] = "Bailout: continuous potential (Y screen) value in use";
       }
       else
       {
-         static char bailoutstr[] = {"Bailout value (0 means use default)"};
-         choices[promptnum] = bailoutstr;
+         choices[promptnum] = "Bailout value (0 means use default)";
          paramvalues[promptnum].type = 'L';
          paramvalues[promptnum++].uval.Lval = (oldbailout = bailout);
          paramvalues[promptnum].type = '*';
@@ -1566,8 +1556,7 @@ gfp_top:
 /*      && (display3d > 0 || promptnum == 0)) */
       && (display3d > 0))
       {
-       static char msg[]={"Current type has no type-specific parameters"};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
        goto gfp_exit;
        }
    if(julibrot)
@@ -2009,8 +1998,7 @@ retry:
 
    numentries=scan_entries(gfe_file,choices,NULL);
    if (numentries == 0) {
-      static char msg[]={"File doesn't contain any valid entries"};
-      stopmsg(0,msg);
+      stopmsg(0, "File doesn't contain any valid entries");
       fclose(gfe_file);
       return -2; /* back to file list */
       }
@@ -2354,25 +2342,19 @@ static void format_parmfile_line(int choice,char *buf)
 int get_fract3d_params() /* prompt for 3D fractal parameters */
 {
    int i,k,ret,oldhelpmode;
-   static char hdg[] = {"3D Parameters"};
-   static char p1[] = {"X-axis rotation in degrees"};
-   static char p2[] = {"Y-axis rotation in degrees"};
-   static char p3[] = {"Z-axis rotation in degrees"};
-   static char p4[] = {"Perspective distance [1 - 999, 0 for no persp]"};
-   static char p5[] = {"X shift with perspective (positive = right)"};
-   static char p6[] = {"Y shift with perspective (positive = up   )"};
-   static char p7[] = {"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"};
    struct fullscreenvalues uvalues[20];
-   char *ifs3d_prompts[8];
+   char *ifs3d_prompts[7] =
+	{
+		"X-axis rotation in degrees",
+		"Y-axis rotation in degrees",
+		"Z-axis rotation in degrees",
+		"Perspective distance [1 - 999, 0 for no persp]",
+		"X shift with perspective (positive = right)",
+		"Y shift with perspective (positive = up   )",
+		"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
+	};
 
    driver_stack_screen();
-   ifs3d_prompts[0] = p1;
-   ifs3d_prompts[1] = p2;
-   ifs3d_prompts[2] = p3;
-   ifs3d_prompts[3] = p4;
-   ifs3d_prompts[4] = p5;
-   ifs3d_prompts[5] = p6;
-   ifs3d_prompts[6] = p7;
    k = 0;
    uvalues[k].type = 'i';
    uvalues[k++].uval.ival = XROT;
@@ -2391,7 +2373,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 
    oldhelpmode = helpmode;
    helpmode = HELP3DFRACT;
-   i = fullscreen_prompt(hdg,k,ifs3d_prompts,uvalues,0,NULL);
+   i = fullscreen_prompt("3D Parameters",k,ifs3d_prompts,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       ret = -1;
@@ -2431,8 +2413,6 @@ get_f3d_exit:
 
 int get_3d_params()     /* prompt for 3D parameters */
 {
-   static char hdg[]={"3D Mode Selection"};
-   static char hdg1[]={"Select 3D Fill Type"};
    char *choices[11];
    int attributes[21];
    int sphere;
@@ -2511,7 +2491,7 @@ restart_1:
    oldhelpmode = helpmode;
    helpmode = HELP3DMODE;
 
-   k = fullscreen_prompt(hdg,k+1,prompts3d,uvalues,0,NULL);
+   k = fullscreen_prompt("3D Mode Selection",k+1,prompts3d,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (k < 0) {
       return(-1);
@@ -2533,11 +2513,9 @@ restart_1:
    RAY = uvalues[k++].uval.ival;
    k++;
    {
-      static char msg[] = {
-"DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n\
-the online documentation."};
       if(RAY == 1)
-         stopmsg(0,msg);
+         stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
+			"the online documentation.");
    }
    BRIEF = uvalues[k++].uval.ch.val;
 
@@ -2596,7 +2574,7 @@ the online documentation."};
       for (i = 0; i < k; ++i)
          attributes[i] = 1;
       helpmode = HELP3DFILL;
-      i = fullscreen_choice(CHOICE_HELP,hdg1,NULL,NULL,k,(char * *)choices,attributes,
+      i = fullscreen_choice(CHOICE_HELP,"Select 3D Fill Type",NULL,NULL,k,(char * *)choices,attributes,
                               0,0,0,FILLTYPE+1,NULL,NULL,NULL,NULL);
       helpmode = oldhelpmode;
       if (i < 0)
@@ -2738,7 +2716,6 @@ return(0);
 /* --------------------------------------------------------------------- */
 static int get_light_params()
 {
-   static char hdg[]={"Light Source Parameters"};
    char *prompts3d[13];
    struct fullscreenvalues uvalues[13];
 
@@ -2812,7 +2789,7 @@ static int get_light_params()
 
    oldhelpmode = helpmode;
    helpmode = HELP3DLIGHT;
-   k = fullscreen_prompt(hdg,k,prompts3d,uvalues,0,NULL);
+   k = fullscreen_prompt("Light Source Parameters",k,prompts3d,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (k < 0)
       return(-1);
@@ -2898,7 +2875,6 @@ or '*' to use palette from the image to be loaded."};
 
 static int get_funny_glasses_params()
 {
-   static char hdg[]={"Funny Glasses Parameters"};
    char *prompts3d[10];
 
    struct fullscreenvalues uvalues[10];
@@ -2978,7 +2954,7 @@ static int get_funny_glasses_params()
 
    oldhelpmode = helpmode;
    helpmode = HELP3DGLASSES;
-   k = fullscreen_prompt(hdg,k+1,prompts3d,uvalues,0,NULL);
+   k = fullscreen_prompt("Funny Glasses Parameters",k+1,prompts3d,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (k < 0)
       return(-1);

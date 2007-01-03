@@ -1310,29 +1310,26 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if ( pnum == -1 )    /* successful completion */
       {
-      static char msg[] = {"Done -- Press any key"};
       driver_buzzer(0);
-      putstringcenter(7, 0, 80, C_HELP_LINK, msg);
+      putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
       driver_get_key();
       return (0);
       }
 
    if ( pnum == -2 )   /* aborted */
       {
-      static char msg[] = {"Aborted -- Press any key"};
       driver_buzzer(1);
-      putstringcenter(7, 0, 80, C_HELP_LINK, msg);
+      putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
       driver_get_key();
       return (0);
       }
 
    if (pnum == 0)   /* initialization */
       {
-      static char msg[] = {"Generating FRACTINT.DOC"};
       helptitle();
       printinstr();
       driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-      putstringcenter(1, 0, 80, C_HELP_HDG, msg);
+      putstringcenter(1, 0, 80, C_HELP_HDG, "Generating FRACTINT.DOC");
 
       driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 
@@ -1538,15 +1535,13 @@ int init_help(void)
 
 				if (hs.sig != HELP_SIG)
 				{
-					static char msg[] = {"Invalid help signature in FRACTINT.HLP!\n"};
 					close(help_file);
-					stopmsg(STOPMSG_NO_STACK, msg);
+					stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
 				}
 				else if (hs.version != FIHELP_VERSION)
 				{
-					static char msg[] = {"Wrong help version in FRACTINT.HLP!\n"};
 					close(help_file);
-					stopmsg(STOPMSG_NO_STACK, msg);
+					stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
 				}
 				else
 				{
@@ -1587,10 +1582,9 @@ int init_help(void)
 
 	if ((topic_offset == NULL) || (NULL == label) || (NULL == hist))
 	{
-		static char err_no_mem[] = "Not enough memory for help system!\n";
 		close(help_file);
 		help_file = -1;
-		stopmsg(STOPMSG_NO_STACK, err_no_mem);
+		stopmsg(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
 		return (-2);
 	}

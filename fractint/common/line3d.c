@@ -714,8 +714,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                {
                   if (debugflag)
                   {
-                     static char msg[] = {"debug, cur.color=bad"};
-                     stopmsg(0, msg);
+                     stopmsg(0, "debug, cur.color=bad");
                   }
                   cur.color = (int)(f_cur.color = (float) bad.color);
                }
@@ -746,8 +745,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                         /* this shouldn't happen */
                         if (debugflag)
                         {
-                           static char msg[] = {"debug, normal vector err2"};
-                           stopmsg(0, msg);
+                           stopmsg(0, "debug, normal vector err2");
                            /* use next instead if you ever need details:
                             * static char tmp[] = {"debug, vector err"};
                             * char msg[200]; #ifndef XFRACT
@@ -2690,10 +2688,9 @@ static int line3dmem(void)
       check_extra += sizeof(struct minmax) * ydots;
       if (check_extra > (1L << 16))     /* run out of extra segment? */
       {
-         static char msg[] = {"malloc minmax"};
          static struct minmax *got_mem = NULL;
          if(debugflag == 2222)
-            stopmsg(0,msg);
+            stopmsg(0,"malloc minmax");
          /* not using extra segment so decrement check_extra */
          check_extra -= sizeof(struct minmax) * ydots;
          if (got_mem == NULL)
@@ -2715,7 +2712,7 @@ static int line3dmem(void)
    if (debugflag == 2222 || check_extra > (1L << 16))
    {
       char tmpmsg[70];
-      static char extramsg[] = {" of extra segment"};
+      char extramsg[] = {" of extra segment"};
 #ifndef XFRACT
       sprintf(tmpmsg, "used %ld%Fs", check_extra, (char *)extramsg);
 #else

@@ -120,11 +120,10 @@ static void DisplayError(int stored_at, long howmuch)
 /* is also insufficient disk space to use as memory. */
 
    char buf[MSGLEN*2];
-   char nmsg[MSGLEN*2];
-   static char fmsg[] = {"Allocating %ld Bytes of %s memory failed.\nAlternate disk space is also insufficient. Goodbye"};
-   strcpy(nmsg,fmsg);
-   sprintf(buf,nmsg,howmuch,memstr[stored_at]);
-   stopmsg(0,(char *)buf);
+   sprintf(buf,"Allocating %ld Bytes of %s memory failed.\n"
+	   "Alternate disk space is also insufficient. Goodbye",
+	   howmuch,memstr[stored_at]);
+   stopmsg(0,buf);
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -188,37 +187,32 @@ static int CheckBounds (long start, long length, U16 handle)
 {
    if(handletable[handle].Nowhere.size - start - length < 0)
       {
-         static char msg[] = {"Memory reference out of bounds."};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
        DisplayHandle(handle);
        return (1);
       }
    if(length > (long)USHRT_MAX)
       {
-         static char msg[] = {"Tried to move > 65,535 bytes."};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
        DisplayHandle(handle);
        return (1);
       }
    if(handletable[handle].Nowhere.stored_at == DISK &&
          (stackavail() <= DISKWRITELEN) )
       {
-         static char msg[] = {"Stack space insufficient for disk memory."};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
        DisplayHandle(handle);
        return (1);
       }
    if(length <= 0)
       {
-         static char msg[] = {"Zero or negative length."};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
        DisplayHandle(handle);
        return (1);
       }
    if(start < 0)
       {
-         static char msg[] = {"Negative offset."};
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,msg);
+       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
        DisplayHandle(handle);
        return (1);
       }
@@ -235,17 +229,14 @@ void DisplayMemory (void)
    tmpdisk = GetDiskSpace(); /* fix this for XFRACT ????? */
    tmpfar = fr_farfree();
    sprintf(buf, "memory=%ld, disk=%lu", tmpfar, tmpdisk);
-   stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);
+   stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
 void DisplayHandle (U16 handle)
 {
    char buf[MSGLEN];
-   char nmsg[MSGLEN];
-   static char fmsg[] = {"Handle %u, type %s, size %li"};
 
-   strcpy(nmsg,fmsg);
-   sprintf(buf,nmsg,handle,memstr[handletable[handle].Nowhere.stored_at],
+   sprintf(buf,"Handle %u, type %s, size %li",handle,memstr[handletable[handle].Nowhere.stored_at],
            handletable[handle].Nowhere.size);
    if(stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,(char *)buf) == -1)
      goodbye(); /* bailout if ESC, it's messy, but should work */
@@ -283,15 +274,12 @@ void ExitCheck (void)
 {
    U16 i;
    if(numTOTALhandles != 0) {
-        static char msg[] = {"Error - not all memory released, I'll get it."};
-      stopmsg(0,msg);
+      stopmsg(0, "Error - not all memory released, I'll get it.");
       for (i = 1; i < MAXHANDLES; i++)
          if (handletable[i].Nowhere.stored_at != NOWHERE) {
             char buf[MSGLEN];
-            char nmsg[MSGLEN];
-            static char fmsg[] = {"Memory type %s still allocated.  Handle = %i."};
-            strcpy(nmsg,fmsg);
-            sprintf(buf,nmsg,memstr[handletable[i].Nowhere.stored_at],i);
+            sprintf(buf,"Memory type %s still allocated.  Handle = %i.",
+				memstr[handletable[i].Nowhere.stored_at],i);
             stopmsg(0,(char *)buf);
             MemoryRelease(i);
          }
@@ -464,10 +452,8 @@ dodisk:
 
    if (stored_at != use_this_type && debugflag == 10000) {
       char buf[MSGLEN];
-      char nmsg[MSGLEN];
-      static char fmsg[] = {"Asked for %s, allocated %lu bytes of %s, handle = %u."};
-      strcpy(nmsg,fmsg);
-      sprintf(buf,nmsg,memstr[stored_at],toallocate,memstr[use_this_type],handle);
+      sprintf(buf,"Asked for %s, allocated %lu bytes of %s, handle = %u.",
+		  memstr[stored_at],toallocate,memstr[use_this_type],handle);
       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,(char *)buf);
       DisplayMemory();
    }

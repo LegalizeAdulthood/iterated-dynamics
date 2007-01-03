@@ -241,8 +241,7 @@ int Init_Queue(unsigned long request)
 {
    if (driver_diskp())
    {
-      static char nono[] = "Don't try this in disk video mode, kids...\n";
-      stopmsg(0, nono);
+      stopmsg(0, "Don't try this in disk video mode, kids...\n");
       ListSize = 0;
       return 0;
    }

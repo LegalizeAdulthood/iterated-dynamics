@@ -227,8 +227,7 @@ restart:
 
    if (interrupted)
    {
-      static char msg[] = {" *interrupted* save "};
-      texttempmsg(msg);
+      texttempmsg(" *interrupted* save ");
       if (initbatch >= 1)
          initbatch = 3;         /* if batch mode, set error level */
       return -1;
@@ -560,9 +559,8 @@ int encoder()
 
 oops:
    {
-      static char msg[] = {"Error Writing to disk (Disk full?)"};
       fflush(g_outfile);
-      stopmsg(0,msg);
+      stopmsg(0,"Error Writing to disk (Disk full?)");
       return 1;
    }
 }

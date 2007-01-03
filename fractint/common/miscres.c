@@ -90,11 +90,10 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 
 void notdiskmsg()
 {
-static char sorrymsg[]={
-"This type may be slow using a real-disk based 'video' mode, but may not \n\
-be too bad if you have enough expanded or extended memory. Press <Esc> to \n\
-abort if it appears that your disk drive is working too hard."};
-   stopmsg(0,sorrymsg);
+   stopmsg(0,
+		"This type may be slow using a real-disk based 'video' mode, but may not \n"
+		"be too bad if you have enough expanded or extended memory. Press <Esc> to \n"
+		"abort if it appears that your disk drive is working too hard.");
 }
 
 /* Wrapping version of putstring for long numbers                         */
@@ -1359,15 +1358,12 @@ top:
 static void area(void)
 {
     /* apologies to UNIX folks, we PC guys have to save near space */
-    static char warning[] = {"Warning: inside may not be unique\n"};
-    static char total_area[] = {".  Total area "};
     char *msg;
     int x,y;
     char buf[160];
     long cnt=0;
     if (inside<0) {
-      static char msg[] = {"Need solid inside to compute area"};
-      stopmsg(0,msg);
+      stopmsg(0, "Need solid inside to compute area");
       return;
     }
     for (y=0;y<ydots;y++) {
@@ -1378,17 +1374,17 @@ static void area(void)
       }
     }
     if (inside>0 && outside<0 && maxit>inside) {
-      msg = warning;
+      msg = "Warning: inside may not be unique\n";
     } else {
-      msg = (char *)"";
+      msg = "";
     }
 #ifndef XFRACT
       sprintf(buf,"%Fs%ld inside pixels of %ld%Fs%f",
-              msg,cnt,(long)xdots*(long)ydots,(char *)total_area,
+              msg,cnt,(long)xdots*(long)ydots,".  Total area ",
               cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
 #else
       sprintf(buf,"%s%ld inside pixels of %ld%s%f",
-              msg,cnt,(long)xdots*(long)ydots,total_area,
+              msg,cnt,(long)xdots*(long)ydots,".  Total area ",
               cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
 #endif
     stopmsg(STOPMSG_NO_BUZZER,buf);
@@ -1467,8 +1463,7 @@ int ifsload()                   /* read in IFS parameters */
          break ;
       if (++i >= NUMIFS*rowsize)
       {
-         static char msg[]={"IFS definition has too many lines"};
-            stopmsg(0,msg);
+            stopmsg(0, "IFS definition has too many lines");
             ret = -1;
             break;
       }
@@ -1487,13 +1482,11 @@ int ifsload()                   /* read in IFS parameters */
    }
 
    if ((i % rowsize) != 0 || *bufptr != '}') {
-      static char msg[]={"invalid IFS definition"};
-      stopmsg(0,msg);
+      stopmsg(0, "invalid IFS definition");
       ret = -1;
       }
    if (i == 0 && ret == 0) {
-      static char msg[]={"Empty IFS definition"};
-      stopmsg(0,msg);
+      stopmsg(0, "Empty IFS definition");
       ret = -1;
       }
    fclose(ifsfile);
@@ -1730,10 +1723,9 @@ int _cdecl _matherr( struct exception *except )
     if(debugflag != 0)
     {
        static FILE *fp=NULL;
-       static char msg[]={"Math error, but we'll try to keep going"};
        if(matherr_ct++ == 0)
           if(debugflag == 4000 || debugflag == 3200)
-             stopmsg(0,msg);
+             stopmsg(0, "Math error, but we'll try to keep going");
        if(fp==NULL)
           fp = fopen("matherr","w");
        if(matherr_ct < 100)
