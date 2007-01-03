@@ -87,6 +87,14 @@ typedef BYTE BOOLEAN;
 #define CHOICE_CRUNCH		16
 #define CHOICE_NOT_SORTED	32
 
+/* calc_status values */
+#define CALCSTAT_NO_FRACTAL		-1
+#define CALCSTAT_PARAMS_CHANGED	0
+#define CALCSTAT_IN_PROGRESS	1
+#define CALCSTAT_RESUMABLE		2
+#define CALCSTAT_NON_RESUMABLE	3
+#define CALCSTAT_COMPLETED		4
+
 /* these are used to declare arrays for file names */
 #ifdef XFRACT
 #define FILE_MAX_PATH  256       /* max length of path+filename  */
