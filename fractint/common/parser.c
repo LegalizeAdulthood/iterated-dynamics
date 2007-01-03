@@ -3763,7 +3763,7 @@ int fpFormulaSetup(void) {
 
 int intFormulaSetup(void) {
 #if defined(XFRACT) || defined(_WIN32)
-      printf("intFormulaSetup called!!!\n");
+      _ASSERTE(0 && "intFormulaSetup called");
       exit(-1);
 #else
       MathType = L_MATH;
