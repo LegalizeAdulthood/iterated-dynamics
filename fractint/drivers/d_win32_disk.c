@@ -16,16 +16,6 @@
 #include "drivers.h"
 #include "WinText.h"
 
-#define MAXSCREENS 10
-#define DRAW_INTERVAL 6
-#define TIMER_ID 1
-
-extern HINSTANCE g_instance;
-
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
-
-#define DI(name_) Win32DiskDriver *name_ = (Win32DiskDriver *) drv
-
 /* read/write-a-dot/line routines */
 typedef void t_dotwriter(int, int, int);
 typedef int  t_dotreader(int, int);
@@ -33,22 +23,62 @@ typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
 typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 typedef void t_swapper(void);
 
-t_linewriter normaline;
-t_linereader normalineread;
-t_swapper null_swap;
-
-t_swapper *g_swap_setup = null_swap;			/* setfortext/graphics setup routine */
-static t_dotwriter *dotwrite = NULL;
-static t_dotreader *dotread = NULL;
-static t_linewriter *linewrite = NULL;
-static t_linereader *lineread = NULL;
-
 extern int startvideo();
 extern int endvideo();
 extern void writevideo(int x, int y, int color);
 extern int readvideo(int x, int y);
 extern int readvideopalette(void);
 extern int writevideopalette(void);
+
+extern HINSTANCE g_instance;
+
+#define MAXSCREENS 10
+#define DRAW_INTERVAL 6
+#define TIMER_ID 1
+
+#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
+
+#define DI(name_) Win32DiskDriver *name_ = (Win32DiskDriver *) drv
+
+#if RT_VERBOSE
+#define ODS(text_)						ods(__FILE__, __LINE__, text_)
+#define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
+#define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
+#define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
+#define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
+#define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
+#else
+#define ODS(text_)
+#define ODS1(fmt_, arg_)
+#define ODS2(fmt_, a1_, a2_)
+#define ODS3(fmt_, a1_, a2_, a3_)
+#define ODS4(fmt_, _1, _2, _3, _4)
+#define ODS5(fmt_, _1, _2, _3, _4, _5)
+#endif
+
+static t_dotwriter win32_dot_writer;
+static t_dotreader win32_dot_reader;
+static t_linewriter win32_line_writer;
+static t_linereader win32_line_reader;
+static t_linewriter normaline;
+static t_linereader normalineread;
+static t_swapper null_swap;
+
+t_swapper *g_swap_setup = null_swap;			/* setfortext/graphics setup routine */
+
+static t_dotwriter *dotwrite = NULL;
+static t_dotreader *dotread = NULL;
+static t_linewriter *linewrite = NULL;
+static t_linereader *lineread = NULL;
+static int s_video_flag = 0;
+
+/* s_key_buffer
+ *
+ * When we peeked ahead and saw a keypress, stash it here for later
+ * feeding to our caller.
+ */
+static int s_key_buffer = 0;
+
 
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
@@ -126,73 +156,319 @@ struct tagWin32DiskDriver
 	int cursor_col;
 };
 
-/*
-*----------------------------------------------------------------------
-*
-* check_arg --
-*
-*	See if we want to do something with the argument.
-*
-* Results:
-*	Returns 1 if we parsed the argument.
-*
-* Side effects:
-*	Increments i if we use more than 1 argument.
-*
-*----------------------------------------------------------------------
-*/
+/* ods
+ *
+ * varargs version of OutputDebugString with file and line markers.
+ */
+void
+ods(const char *file, unsigned int line, const char *format, ...)
+{
+	char full_msg[MAX_PATH+1];
+	char app_msg[MAX_PATH+1];
+	va_list args;
+
+	va_start(args, format);
+	_vsnprintf(app_msg, MAX_PATH, format, args);
+	_snprintf(full_msg, MAX_PATH, "%s(%d): %s\n", file, line, app_msg);
+	va_end(args);
+
+	OutputDebugString(full_msg);
+}
+
+/* check_arg
+ *
+ *	See if we want to do something with the argument.
+ *
+ * Results:
+ *	Returns 1 if we parsed the argument.
+ *
+ * Side effects:
+ *	Increments i if we use more than 1 argument.
+ */
 static int
-check_arg(Win32DiskDriver *di, int argc, char **argv, int *i)
+check_arg(Win32DiskDriver *di, char *arg)
 {
 #if 0
-	if (strcmp(argv[*i], "-disk") == 0)
+	if (strcmp(arg, "-disk") == 0)
 	{
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-simple") == 0)
+	else if (strcmp(arg, "-simple") == 0)
 	{
 		di->simple_input = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
+	else if (strcmp(arg, "-geometry") == 0 && *i+1 < argc)
 	{
 		di->Xgeometry = argv[(*i)+1];
 		(*i)++;
 		return 1;
 	}
 #endif
+
 	return 0;
 }
 
-void
-ods(const char *file, unsigned int line, const char *format, ...)
+/* init_pixels
+ *
+ * Resize the pixel array to sxdots by sydots and initialize it to zero.
+ * Any existing pixel array is freed.
+ */
+static void
+init_pixels(Win32DiskDriver *di)
 {
-	char header[MAX_PATH+1] = { 0 };
-	char buffer[MAX_PATH+1] = { 0 };
-	va_list args;
-
-	va_start(args, format);
-	_vsnprintf(buffer, MAX_PATH, format, args);
-	_snprintf(header, MAX_PATH, "%s(%d): %s\n", file, line, buffer);
-	va_end(args);
-
-	OutputDebugString(header);
+	if (di->pixels != NULL)
+	{
+		free(di->pixels);
+	}
+	di->width = sxdots;
+	di->height = sydots;
+	di->pixels_len = di->width * di->height * sizeof(BYTE);
+	_ASSERTE(di->pixels_len > 0);
+	di->pixels = (BYTE *) malloc(di->pixels_len);
+	memset(di->pixels, 0, di->pixels_len);
 }
-#if RT_VERBOSE
-#define ODS(text_)						ods(__FILE__, __LINE__, text_)
-#define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
-#else
-#define ODS(text_)
-#define ODS1(fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)
-#endif
+
+/*----------------------------------------------------------------------
+*
+* initdacbox --
+*
+* Put something nice in the dac.
+*
+* The conditions are:
+*	Colors 1 and 2 should be bright so ifs fractals show up.
+*	Color 15 should be bright for lsystem.
+*	Color 1 should be bright for bifurcation.
+*	Colors 1, 2, 3 should be distinct for periodicity.
+*	The color map should look good for mandelbrot.
+*	The color map should be good if only 128 colors are used.
+*
+* Results:
+*	None.
+*
+* Side effects:
+*	Loads the dac.
+*
+*----------------------------------------------------------------------
+*/
+static void
+initdacbox()
+{
+	int i;
+	for (i=0;i < 256;i++)
+	{
+		g_dac_box[i][0] = (i >> 5)*8+7;
+		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
+		g_dac_box[i][2] = (((i+2) & 3))*16+15;
+	}
+	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
+}
+
+/* handle_help_tab
+ *
+ * Because we want context sensitive help to work everywhere, with the
+ * help to display indicated by a non-zero value in helpmode, we need
+ * to trap the F1 key at a very low level.  The same is true of the
+ * TAB display.
+ *
+ * What we do here is check for these keys and invoke their displays.
+ * To avoid a recursive invoke of help(), a static is used to avoid
+ * recursing on ourselves as help will invoke get key!
+ */
+static int
+handle_help_tab(int ch)
+{
+	static int inside_help = 0;
+
+	if (FIK_F1 == ch && helpmode && !inside_help)
+	{
+		inside_help = 1;
+		help(0);
+		inside_help = 0;
+		ch = 0;
+	}
+	else if (FIK_TAB == ch && tabmode)
+	{
+		int old_tab = tabmode;
+		tabmode = 0;
+		tab_display();
+		tabmode = old_tab;
+		ch = 0;
+	}
+
+	return ch;
+}
+
+/*
+; **************** internal Read/Write-a-line routines *********************
+;
+;       These routines are called by out_line(), put_line() and get_line().
+*/
+void normaline(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		dotwrite(x + i, y, pixels[i]);
+	}
+}
+
+void normalineread(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		pixels[i] = dotread(x + i, y);
+	}
+}
+
+static void win32_dot_writer(int x, int y, int color)
+{
+	driver_write_pixel(x, y, color);
+}
+static int win32_dot_reader(int x, int y)
+{
+	return driver_read_pixel(x, y);
+}
+static void win32_line_writer(int row, int col, int lastcol, BYTE *pixels)
+{
+	driver_write_span(row, col, lastcol, pixels);
+}
+static void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
+{
+	driver_read_span(row, col, lastcol, pixels);
+}
+
+static void null_swap(void)
+{
+}
+
+static t_dotwriter nullwrite;
+static t_dotreader nullread;
+
+static void nullwrite(int a, int b, int c)
+{
+	_ASSERTE(FALSE);
+}
+
+static int nullread(int a, int b)
+{
+	_ASSERTE(FALSE);
+	return 0;
+}
+
+/* from video.asm */
+void setnullvideo(void)
+{
+	ODS("setnullvideo");
+	dotwrite = nullwrite;
+	dotread = nullread;
+}
+
+/*
+; **************** Function getcolor(xdot, ydot) *******************
+
+;       Return the color on the screen at the (xdot, ydot) point
+*/
+int getcolor(int xdot, int ydot)
+{
+	int x1, y1;
+	x1 = xdot + sxoffs;
+	y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+		return 0;
+	return (*dotread)(x1, y1);
+}
+
+/*
+; ************** Function putcolor_a(xdot, ydot, color) *******************
+
+;       write the color on the screen at the (xdot, ydot) point
+*/
+void putcolor_a(int xdot, int ydot, int color)
+{
+	int x1 = xdot + sxoffs;
+	int y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	(*dotwrite)(x1, y1, color & g_and_color);
+}
+
+/*
+; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'getcolor()', and gets a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+		return;
+	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'putcolor()', and puts a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+		return;
+	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; ***************Function out_line(pixels, linelen) *********************
+
+;       This routine is a 'line' analog of 'putcolor()', and sends an
+;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
+;       Called by the GIF decoder
+*/
+int out_line(BYTE *pixels, int linelen)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (g_row_count + syoffs >= sydots)
+	{
+		return 0;
+	}
+	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+	g_row_count++;
+	return 0;
+}
+
+static void
+parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
+{
+	/* do something like XParseGeometry() */
+	if (2 == sscanf(spec, "%dx%d", width, height))
+	{
+		/* all we care about is width and height for disk output */
+		*x = 0;
+		*y = 0;
+	}
+}
+
+/***********************************************************************
+////////////////////////////////////////////////////////////////////////
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+***********************************************************************/
 
 /*----------------------------------------------------------------------
 *
@@ -234,43 +510,6 @@ win32_disk_terminate(Driver *drv)
 
 /*----------------------------------------------------------------------
 *
-* initdacbox --
-*
-* Put something nice in the dac.
-*
-* The conditions are:
-*	Colors 1 and 2 should be bright so ifs fractals show up.
-*	Color 15 should be bright for lsystem.
-*	Color 1 should be bright for bifurcation.
-*	Colors 1, 2, 3 should be distinct for periodicity.
-*	The color map should look good for mandelbrot.
-*	The color map should be good if only 128 colors are used.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Loads the dac.
-*
-*----------------------------------------------------------------------
-*/
-static void
-initdacbox()
-{
-	int i;
-	for (i=0;i < 256;i++)
-	{
-		g_dac_box[i][0] = (i >> 5)*8+7;
-		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
-		g_dac_box[i][2] = (((i+2) & 3))*16+15;
-	}
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
-}
-
-/*----------------------------------------------------------------------
-*
 * win32_disk_init --
 *
 *	Initialize the windows and stuff.
@@ -296,48 +535,29 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 
 	initdacbox();
 
-#if 0
-	if (!di->simple_input)
-	{
-		signal(SIGINT, (SignalHandler) goodbye);
-	}
-	signal(SIGFPE, fpe_handler);
-	/*
-	signal(SIGTSTP, goodbye);
-	*/
-#ifdef FPUERR
-	signal(SIGABRT, SIG_IGN);
-	/*
-	setup the IEEE-handler to forget all common ( invalid,
-	divide by zero, overflow ) signals. Here we test, if 
-	such ieee trapping is supported.
-	*/
-	if (ieee_handler("set", "common", continue_hdl) != 0 )
-		printf("ieee trapping not supported here \n");
-#endif
-
 	/* filter out driver arguments */
 	{
-		int count = *argc;
-		char **argv_copy = (char **) malloc(sizeof(char *)*count);
 		int i;
-		int copied;
 
-		for (i = 0; i < count; i++)
-		argv_copy[i] = argv[i];
-
-		copied = 0;
-		for (i = 0; i < count; i++)
-		if (! check_arg(di, i, argv, &i))
-			argv[copied++] = argv_copy[i];
-		*argc = copied;
+		for (i = 0; i < *argc; i++)
+		{
+			if (check_arg(di, argv[i]))
+			{
+				int j;
+				for (j = i; j < *argc-1; j++)
+				{
+					argv[j] = argv[j+1];
+				}
+				argv[j] = NULL;
+				--*argc;
+			}
+		}
 	}
-#endif
 
+	/* add default list of video modes */
 	{
 		int m;
-		int c = NUM_OF(modes);
-		for (m = 0; m < c; m++)
+		for (m = 0; m < NUM_OF(modes); m++)
 		{
 			add_video_mode(drv, &modes[m]);
 		}
@@ -346,37 +566,6 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 	return TRUE;
 }
 
-#ifdef FPUERR
-/*
-*----------------------------------------------------------------------
-*
-* continue_hdl --
-*
-*	Handle an IEEE fpu error.
-*	This routine courtesy of Ulrich Hermes
-*	<hermes@olymp.informatik.uni-dortmund.de>
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Clears flag.
-*
-*----------------------------------------------------------------------
-*/
-static void
-continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
-{
-	int i;
-	char out[20];
-	/*		if you want to get all messages enable this statement.    */
-	/*  printf("ieee exception code %x occurred at pc %X\n", code, scp->sc_pc); */
-	/*	clear all excaption flags					  */
-	i = ieee_flags("clear", "exception", "all", out);
-}
-#endif
-
-
 /*----------------------------------------------------------------------
 * win32_disk_flush
 */
@@ -384,20 +573,27 @@ static void
 win32_disk_flush(Driver *drv)
 {
 	ODS("win32_disk_flush");
-#if 0
-	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-	wrefresh(di->curwin);
-#endif
+	_ASSERTE(0 && "win32_disk_flush called");
 }
 
-/*----------------------------------------------------------------------
-* win32_disk_resize
-*/
+/* win32_disk_resize
+ *
+ * Check if we need resizing.  If no, return 0.
+ * If yes, resize internal buffers and return 1.
+ */
 static int
 win32_disk_resize(Driver *drv)
 {
-	ODS("win32_disk_resize");
-	return 0;
+	DI(di);
+
+	if ((sxdots == di->width) && (sydots == di->height)) 
+	{
+		return 0;
+	}
+
+	init_pixels(di);
+
+	return !0;
 }
 
 
@@ -641,48 +837,6 @@ win32_disk_redraw(Driver *drv)
 	wintext_paintscreen(0, 80, 0, 25);
 }
 
-/* s_key_buffer
- *
- * When we peeked ahead and saw a keypress, stash it here for later
- * feeding to our caller.
- */
-static int s_key_buffer = 0;
-
-/* handle_help_tab
- *
- * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in helpmode, we need
- * to trap the F1 key at a very low level.  The same is true of the
- * TAB display.
- *
- * What we do here is check for these keys and invoke their displays.
- * To avoid a recursive invoke of help(), a static is used to avoid
- * recursing on ourselves as help will invoke get key!
- */
-static int
-handle_help_tab(int ch)
-{
-	static int inside_help = 0;
-
-	if (FIK_F1 == ch && helpmode && !inside_help)
-	{
-		inside_help = 1;
-		help(0);
-		inside_help = 0;
-		ch = 0;
-	}
-	else if (FIK_TAB == ch && tabmode)
-	{
-		int old_tab = tabmode;
-		tabmode = 0;
-		tab_display();
-		tabmode = old_tab;
-		ch = 0;
-	}
-
-	return ch;
-}
-
 /* win32_disk_key_pressed
  *
  * Return 0 if no key has been pressed, or the FIK value if it has.
@@ -751,73 +905,9 @@ win32_disk_get_key(Driver *drv)
 }
 
 static void
-parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
-{
-	/* do something like XParseGeometry() */
-	if (2 == sscanf(spec, "%dx%d", width, height))
-	{
-		/* all we care about is width and height for disk output */
-		*x = 0;
-		*y = 0;
-	}
-}
-
-static void
-init_pixels(Win32DiskDriver *di)
-{
-	if (di->pixels != NULL)
-	{
-		free(di->pixels);
-	}
-	di->width = sxdots;
-	di->height = sydots;
-	di->pixels_len = di->width * di->height * sizeof(BYTE);
-	_ASSERTE(di->pixels_len > 0);
-	di->pixels = (BYTE *) malloc(di->pixels_len);
-	memset(di->pixels, 0, di->pixels_len);
-}
-
-static void
 win32_disk_window(Driver *drv)
 {
-	DI(di);
-	ODS("win32_disk_window");
-
 	wintext_texton();
-#if 0
-	int offx, offy;
-	int i;
-	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-
-	if (!di->simple_input)
-	{
-		di->old_fcntl = fcntl(0, F_GETFL);
-		fcntl(0, F_SETFL, FNDELAY);
-	}
-
-	g_adapter = 0;
-
-	/* We have to do some X stuff even for disk video, to parse the geometry
-	* string */
-	g_got_real_dac = 1;
-	colors = 256;
-	for (i = 0; i < colors; i++)
-	{
-		di->pixtab[i] = i;
-		di->ipixtab[i] = i;
-	}
-	if (di->Xgeometry)
-		parse_geometry(di->Xgeometry, &offx, &offy, &di->width, &di->height);
-	sxdots = di->width;
-	sydots = di->height;
-	win32_disk_flush(drv);
-	win32_disk_write_palette(drv);
-
-	g_video_table[0].xdots = sxdots;
-	g_video_table[0].ydots = sydots;
-	g_video_table[0].colors = colors;
-	g_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
-#endif
 }
 
 /*
@@ -841,165 +931,6 @@ win32_disk_shell(Driver *drv)
 	windows_shell_to_dos();
 }
 
-static int s_video_flag = 0;
-
-t_dotwriter win32_dot_writer;
-t_dotreader win32_dot_reader;
-t_linewriter win32_line_writer;
-t_linereader win32_line_reader;
-
-void win32_dot_writer(int x, int y, int color)
-{
-	driver_write_pixel(x, y, color);
-}
-int win32_dot_reader(int x, int y)
-{
-	return driver_read_pixel(x, y);
-}
-void win32_line_writer(int row, int col, int lastcol, BYTE *pixels)
-{
-	driver_write_span(row, col, lastcol, pixels);
-}
-void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
-{
-	driver_read_span(row, col, lastcol, pixels);
-}
-
-void null_swap(void)
-{
-}
-
-t_dotwriter nullwrite;
-t_dotreader nullread;
-
-static void nullwrite(int a, int b, int c)
-{
-	_ASSERTE(FALSE);
-}
-
-static int nullread(int a, int b)
-{
-	_ASSERTE(FALSE);
-	return 0;
-}
-
-/* from video.asm */
-void setnullvideo(void)
-{
-	ODS("setnullvideo");
-	dotwrite = nullwrite;
-	dotread = nullread;
-}
-
-/*
-; **************** Function getcolor(xdot, ydot) *******************
-
-;       Return the color on the screen at the (xdot, ydot) point
-*/
-int getcolor(int xdot, int ydot)
-{
-	int x1, y1;
-	x1 = xdot + sxoffs;
-	y1 = ydot + syoffs;
-	_ASSERTE(x1 >= 0 && x1 <= sxdots);
-	_ASSERTE(y1 >= 0 && y1 <= sydots);
-	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
-		return 0;
-	return (*dotread)(x1, y1);
-}
-
-/*
-; ************** Function putcolor_a(xdot, ydot, color) *******************
-
-;       write the color on the screen at the (xdot, ydot) point
-*/
-void putcolor_a(int xdot, int ydot, int color)
-{
-	int x1 = xdot + sxoffs;
-	int y1 = ydot + syoffs;
-	_ASSERTE(x1 >= 0 && x1 <= sxdots);
-	_ASSERTE(y1 >= 0 && y1 <= sydots);
-	(*dotwrite)(x1, y1, color & g_and_color);
-}
-
-/*
-; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'getcolor()', and gets a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void get_line(int row, int startcol, int stopcol, BYTE *pixels)
-{
-	_ASSERTE(_CrtCheckMemory());
-	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
-		return;
-	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
-}
-
-/*
-; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
-
-;       This routine is a 'line' analog of 'putcolor()', and puts a segment
-;       of a line from the screen and stores it in pixels[] at one byte per
-;       pixel
-;       Called by the GIF decoder
-*/
-
-void put_line(int row, int startcol, int stopcol, BYTE *pixels)
-{
-	_ASSERTE(_CrtCheckMemory());
-	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
-		return;
-	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
-}
-
-/*
-; ***************Function out_line(pixels, linelen) *********************
-
-;       This routine is a 'line' analog of 'putcolor()', and sends an
-;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
-;       Called by the GIF decoder
-*/
-int out_line(BYTE *pixels, int linelen)
-{
-	_ASSERTE(_CrtCheckMemory());
-	if (g_row_count + syoffs >= sydots)
-	{
-		return 0;
-	}
-	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
-	g_row_count++;
-	return 0;
-}
-
-/*
-; **************** internal Read/Write-a-line routines *********************
-;
-;       These routines are called by out_line(), put_line() and get_line().
-*/
-void normaline(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		dotwrite(x + i, y, pixels[i]);
-	}
-}
-
-void normalineread(int y, int x, int lastx, BYTE *pixels)
-{
-	int i, width;
-	width = lastx - x + 1;
-	for (i = 0; i < width; i++)
-	{
-		pixels[i] = dotread(x + i, y);
-	}
-}
-
 /*
 ; **************** Function setvideomode(ax, bx, cx, dx) ****************
 ;       This function sets the (alphanumeric or graphic) video mode
@@ -1019,13 +950,24 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 {
 	DI(di);
 
-	init_pixels(di);
-
 	/* initially, set the virtual line to be the scan line length */
 	g_vxdots = sxdots;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_vesa_x_res = 0;					/* reset indicators used for */
 	g_vesa_y_res = 0;					/* virtual screen limits estimation */
+	g_ok_to_print = FALSE;
+	g_good_mode = 1;
+	if (dotmode !=0)
+	{
+		driver_read_palette();
+		g_and_color = colors-1;
+		boxcount = 0;
+		g_dac_learn = 1;
+		g_dac_count = cyclelimit;
+		g_got_real_dac = TRUE;
+	}
+
+	win32_disk_resize(drv);
 
 	if (g_disk_flag)
 	{
@@ -1038,24 +980,11 @@ win32_disk_set_video_mode(Driver *drv, int ax, int bx, int cx, int dx)
 		s_video_flag = 0;
 	}
 
-	g_ok_to_print = FALSE;
-	g_good_mode = 1;
-
 	startdisk();
 	dotwrite = writedisk;
 	dotread = readdisk;
 	lineread = normalineread;
 	linewrite = normaline;
-
-	if (dotmode !=0)
-	{
-		driver_read_palette();
-		g_and_color = colors-1;
-		boxcount = 0;
-		g_dac_learn = 1;
-		g_dac_count = cyclelimit;
-		g_got_real_dac = TRUE;
-	}
 }
 
 /*
@@ -1150,27 +1079,6 @@ win32_disk_move_cursor(Driver *drv, int row, int col)
 	col = di->cursor_col;
 	wintext_cursor(g_text_cbase + col, g_text_rbase + row, 1);
 	di->cursor_shown = TRUE;
-
-#if 0
-	Win32DiskDriver *di = (Win32DiskDriver *) drv;
-	if (row == -1)
-	{
-		row = textrow;
-	}
-	else
-	{
-		textrow = row;
-	}
-	if (col == -1)
-	{
-		col = textcol;
-	}
-	else
-	{
-		textcol = col;
-	}
-	wmove(di->curwin,row,col);
-#endif
 }
 
 static void
