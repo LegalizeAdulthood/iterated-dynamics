@@ -21,8 +21,13 @@ code.  The old slideshow code did a busy wait polling for keyboard input,
 where the slideshow would have a chance to inject a key if enough time
 went by.
 
-Computed image doesn't save right.  The encoder code uses extraseg, that
-could be the problem.  Therefore, there's no way to know if the image
-is computed properly yet.
-
 INSERT doesn't reset g_text_rbase and g_text_cbase or something.
+
+-----
+
+Alpha 2
+==========================================================================
+The par hypnoteyes2 causes a crash - with either float=yes or no and the 
+program window disappears.
+
+Most pars seem to work.

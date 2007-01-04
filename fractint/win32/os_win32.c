@@ -9,6 +9,7 @@
 #define STRICT
 #include <windows.h>
 #include <shlwapi.h>
+#include <dbghelp.h>
 
 #include "port.h"
 #include "cmplx.h"
@@ -416,6 +417,29 @@ static HANDLE s_find_context = INVALID_HANDLE_VALUE;
 static char s_find_base[MAX_PATH] = { 0 };
 static WIN32_FIND_DATA s_find_data = { 0 };
 
+/* fill_dta
+ *
+ * Use data in s_find_data to fill in DTA.filename, DTA.attribute and DTA.path
+ */
+#define DTA_FLAG(find_flag_, dta_flag_) \
+	((s_find_data.dwFileAttributes & find_flag_) ? dta_flag_ : 0)
+
+static void fill_dta()
+{
+	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+	DTA.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
+		DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
+		DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
+	strcpy(DTA.filename, s_find_data.cFileName);
+}
+#undef DTA_FLAG
+
+/* fr_findfirst
+ *
+ * Fill in DTA.filename, DTA.path and DTA.attribute for the first file
+ * matching the wildcard specification in path.  Return zero if a file
+ * is found, or non-zero if a file was not found or an error occurred.
+ */
 int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
 	if (s_find_context != INVALID_HANDLE_VALUE)
@@ -439,24 +463,30 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
 			whack[1] = 0;
 		}
 	}
-	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+
+	fill_dta();
 
 	return 0;
 }
 
+/* fr_findnext
+ *
+ * Find the next file matching the wildcard search begun by fr_findfirst.
+ * Fill in DTA.filename, DTA.path, and DTA.attribute
+ */
 int fr_findnext()
 {
 	BOOL result = FALSE;
 	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
 	result = FindNextFile(s_find_context, &s_find_data);
-	if (result != 0)
+	if (result == 0)
 	{
 		DWORD code = GetLastError();
 		_ASSERTE(ERROR_NO_MORE_FILES == code);
-		return code || -1;
+		return -1;
 	}
 
-	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
+	fill_dta();
 
 	return 0;
 }
@@ -786,9 +816,36 @@ void windows_shell_to_dos(void)
 
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
-	g_instance = instance;
-	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
-	return main(__argc, __argv);
+	char minidump[MAX_PATH] = "fractint.dmp";
+	MINIDUMP_EXCEPTION_INFORMATION mdei =
+	{
+		GetCurrentThreadId(),
+		NULL,
+		TRUE
+	};
+	int result = 0;
+
+	__try
+	{
+		g_instance = instance;
+		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
+		result = main(__argc, __argv);
+	}
+	__except (mdei.ExceptionPointers = GetExceptionInformation(), EXCEPTION_EXECUTE_HANDLER)
+	{
+		HANDLE dump_file = CreateFile(minidump, GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
+		DWORD status = 0;
+
+		_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
+		status = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dump_file,
+			MiniDumpWithFullMemory, &mdei, NULL, NULL);
+		_ASSERTE(status);
+		status = CloseHandle(dump_file);
+		_ASSERTE(status);
+		result = -1;
+	}
+
+	return result;
 }
 
 /*
@@ -822,6 +879,9 @@ int expand_dirname(char *dirname, char *drive)
 		_ASSERTE(status);
 		if (':' == absolute[1])
 		{
+			drive[0] = absolute[0];
+			drive[1] = absolute[1];
+			drive[2] = 0;
 			strcpy(dirname, &absolute[2]);
 		}
 		else
