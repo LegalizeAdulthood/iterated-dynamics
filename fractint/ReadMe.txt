@@ -90,3 +90,5 @@ TODO:
 	Ctrl+TAB bug fixed.  F10 and other "system key down" events reported.
 2007.01.01.23.38
 	It renders!
+2007.01.04.03.12
+	Fix file/directory browsing bugs.
