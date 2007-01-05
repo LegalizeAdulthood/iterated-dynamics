@@ -1350,17 +1350,22 @@ static int print_doc_msg_func(int pnum, int num_pages)
    }
 
 int makedoc_msg_func(int pnum, int num_pages)
-   {
-   if (pnum >= 0)
-      {
-      //printf("\rcompleted %d%%", (int)( (100.0 / num_pages) * pnum ) );
-      return (1);
-      }
-   //if ( pnum == -2 )
-      //printf("\n*** aborted");
-   //printf("\n");
-   return (0);
-   }
+{
+	char buffer[80] = "";
+	int result = 0;
+
+	if (pnum >= 0)
+	{
+		sprintf(buffer, "\rcompleted %d%%", (int) ((100.0 / num_pages) * pnum));
+		result = 1;
+	}
+	else if (pnum == -2)
+	{
+		sprintf(buffer, "\n*** aborted\n");
+	}
+	stopmsg(0, buffer);
+	return result;
+}
 
 void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg )
    {
