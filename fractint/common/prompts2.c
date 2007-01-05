@@ -1983,8 +1983,7 @@ int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 /* fix up directory names */
 void fix_dirname(char *dirname)
 {
-   int length;
-   length = (int) strlen(dirname); /* index of last character */
+   int length = (int) strlen(dirname); /* index of last character */
 
    /* make sure dirname ends with a slash */
    if(length > 0)
