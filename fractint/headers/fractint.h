@@ -96,6 +96,10 @@ typedef BYTE BOOLEAN;
 #define CALCSTAT_COMPLETED		4
 
 /* these are used to declare arrays for file names */
+#if defined(_WIN32)
+#define FILE_MAX_PATH _MAX_PATH
+#define FILE_MAX_DIR _MAX_DIR
+#else
 #ifdef XFRACT
 #define FILE_MAX_PATH  256       /* max length of path+filename  */
 #define FILE_MAX_DIR   256       /* max length of directory name */
@@ -103,12 +107,9 @@ typedef BYTE BOOLEAN;
 #define FILE_MAX_PATH  80       /* max length of path+filename  */
 #define FILE_MAX_DIR   80       /* max length of directory name */
 #endif
+#endif
 #define FILE_MAX_DRIVE  3       /* max length of drive letter   */
 
-#if 1
-#define FILE_MAX_FNAME  9       /* max length of filename       */
-#define FILE_MAX_EXT    5       /* max length of extension      */
-#else
 /*
 The filename limits were increased in Xfract 3.02. But alas,
 in this poor program that was originally developed on the
@@ -118,7 +119,6 @@ names. So for now humor us and let's keep the names short.
 */
 #define FILE_MAX_FNAME  64       /* max length of filename       */
 #define FILE_MAX_EXT    64       /* max length of extension      */
-#endif
 
 #define MAXMAXLINELENGTH  128   /* upper limit for maxlinelength for PARs */
 #define MINMAXLINELENGTH  40    /* lower limit for maxlinelength for PARs */
