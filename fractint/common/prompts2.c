@@ -1553,9 +1553,6 @@ retry_dir:
    {
       if((DTA.attribute & SUBDIR) && strcmp(DTA.filename,"."))
       {
-#ifndef XFRACT
-         strlwr(DTA.filename);
-#endif
          if(strcmp(DTA.filename,".."))
             strcat(DTA.filename,SLASH);
          strncpy(choices[++filecount]->name,DTA.filename,13);
@@ -1587,17 +1584,11 @@ retry_dir:
                splitpath(DTA.filename,NULL,NULL,fname,ext);
                /* just using speedstr as a handy buffer */
                makepath(speedstr,drive,dir,fname,ext);
-#ifndef XFRACT
-               strlwr(DTA.filename);
-#endif
                strncpy(choices[++filecount]->name,DTA.filename,13);
                choices[filecount]->type = 0;
             }
             else
             {
-#ifndef XFRACT
-               strlwr(DTA.filename);
-#endif
                strncpy(choices[++filecount]->name,DTA.filename,13);
                choices[filecount]->type = 0;
             }
@@ -1800,7 +1791,6 @@ int isadirectory(char *s)
 #ifdef _MSC_VER
    unsigned attrib = 0;
 #endif
-   despace(s);  /* scrunch out white space */
    if(strchr(s,'*') || strchr(s,'?'))
       return(0); /* for my purposes, not a directory */
 
@@ -1994,7 +1984,6 @@ int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 void fix_dirname(char *dirname)
 {
    int length;
-   despace(dirname);
    length = (int) strlen(dirname); /* index of last character */
 
    /* make sure dirname ends with a slash */
