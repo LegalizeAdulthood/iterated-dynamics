@@ -1617,9 +1617,6 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
          if(!(DTA.attribute & SUBDIR) &&
              strcmp(DTA.filename,".")&&
              strcmp(DTA.filename,"..")) {
-#if !defined(XFRACT) && !defined(_WIN32)
-            strlwr(DTA.filename);
-#endif
             splitpath(DTA.filename,NULL,NULL,fname,ext);
             makepath(fullpath,drive,dir,fname,ext);
             if((infile=fopen(fullpath, "rb")) != NULL) {
