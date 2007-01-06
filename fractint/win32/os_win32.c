@@ -893,3 +893,10 @@ int expand_dirname(char *dirname, char *drive)
 
 	return 0;
 }
+
+int abortmsg(char *file, unsigned int line, int flags, char *msg)
+{
+	char buffer[3*80];
+	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
+	return stopmsg(flags, buffer);
+}
