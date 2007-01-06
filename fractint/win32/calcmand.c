@@ -6,17 +6,20 @@
  */
 
 #include "port.h"
+#include "prototyp.h"
 
 unsigned long savedmask;
 long linitx, linity;
 
-int
-calcmandasm(void) {
-    _ASSERTE(0 && "Warning: called calcmandasm");
-    return(0);
+long cdecl
+calcmandasm(void)
+{
+	static int been_here = 0;
+	if (!been_here)
+	{
+		stopmsg(0, "This integer fractal type is unimplemented;\n"
+			"Use float=yes to get a real image.");
+		been_here = 1;
+	}
+	return 0;
 }
-#if 0    /* not used */
-code16bit() {}
-checkperiod() {}
-code32bit() {}
-#endif
