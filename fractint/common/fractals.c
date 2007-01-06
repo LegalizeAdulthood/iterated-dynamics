@@ -726,8 +726,16 @@ JuliaFractal(void)
    lnew.y = multiply(lold.x, lold.y, bitshiftless1) + longparm->y;
    return(longbailout());
 #elif !defined(__386BSD__)
-   fprintf(stderr,"JuliaFractal called\n");
-   exit(-1);
+	{
+		static int been_here = 0;
+		if (!been_here)
+		{
+			stopmsg(0, "This integer fractal type is unimplemented;\n"
+				"Use float=yes to get a real image.");
+			been_here = 1;
+		}
+		return 0;
+	}
 #endif
 }
 
