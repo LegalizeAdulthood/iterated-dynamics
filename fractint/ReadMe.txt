@@ -1,3 +1,9 @@
+Tip: In VS.NET 2003, select the FractIntSetup project in the Solution
+explorer.  Then select Project / Unload Project to unload the setup
+project.  It isn't built in the Debug configuration, but processing the
+project itself is slow, so keep it unloaded until you need to build a
+setup.
+
 Project Structure
 
 common		Files common to all implementations
