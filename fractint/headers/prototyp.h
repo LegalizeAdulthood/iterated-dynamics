@@ -1075,7 +1075,6 @@ extern int check_vidmode_key(int ,int );
 extern int check_vidmode_keyname(char *);
 extern void vidmode_keyname(int ,char *);
 extern void freetempmsg(void);
-extern char *despace(char *str);
 #endif
 extern void load_videotable(int );
 extern void bad_fractint_cfg_msg(void);
@@ -1202,7 +1201,8 @@ extern void restart_uclock(void);
 extern void wait_until(int index, uclock_t wait_time);
 
 extern int expand_dirname(char *dirname,char *drive);
-
+extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
+#define ABORT(flags_,msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
 
 #ifndef DEBUG
 /*#define DEBUG */
