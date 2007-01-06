@@ -120,7 +120,7 @@ int stopmsg (int flags, char *msg)
    driver_set_attr(toprow,0,color,(g_text_row+1-toprow)*80);
    driver_hide_text_cursor();   /* cursor off */
    if ((flags & STOPMSG_NO_BUZZER) == 0)
-      driver_buzzer((flags & 16) ? 0 : 2);
+      driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
    while (driver_key_pressed()) /* flush any keyahead */
       driver_get_key();
    if(debugflag != 324)
@@ -918,20 +918,6 @@ fs_choice_end:
    lookatmouse = savelookatmouse;
    return(ret);
 
-}
-
-/* squeeze space out of string */
-char *despace(char *str)
-{
-      char *obuf, *nbuf;
-
-      for (obuf = str, nbuf = str; *obuf && obuf; ++obuf)
-      {
-            if (!isspace(*obuf))
-                  *nbuf++ = *obuf;
-      }
-      *nbuf = 0;
-      return str;
 }
 
 #ifndef XFRACT
