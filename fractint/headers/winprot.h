@@ -77,7 +77,6 @@ extern void fractint_help(void);
 extern int getakeynohelp(void);
 extern int win_make_batch_file(void);
 extern int fractint_getkeypress(int);
-extern char *despace(char *str);
 extern int savegraphics(void);
 extern int restoregraphics(void);
 
