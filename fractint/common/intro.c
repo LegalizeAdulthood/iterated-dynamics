@@ -95,7 +95,7 @@ void intro(void)
 		if (slowdisplay) delaymax *= 15;
 #endif
 		for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
-			delay(100);
+			driver_delay(100);
 		if (driver_key_pressed() == FIK_SPACE)
         {      /* spacebar pauses */
 			driver_get_key();

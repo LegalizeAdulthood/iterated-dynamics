@@ -656,7 +656,7 @@ Print_Screen (void)
     if (Print_To_File < 1) {
         printer_reset();
         /* wait a bit, some printers need time after reset */
-        delay((ptrid == 4) ? 2000 : 500);
+        driver_delay((ptrid == 4) ? 2000 : 500);
     }
 
     /******  INITIALIZE GRAPHICS MODES  ******/
