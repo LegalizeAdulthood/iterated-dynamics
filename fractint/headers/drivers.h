@@ -8,11 +8,8 @@
  * Initialize the driver and return non-zero on success.
  *
  * terminate
- * flush
  * schedule_alarm
- * start_video
- * end_video
-
+ *
  * window
  * Do whatever is necessary to open up a window after the screen size
  * has been set.  In a windowed environment, the window may provide
@@ -50,10 +47,9 @@ struct tagDriver
 	/* init the driver */				int (*init)(Driver *drv, int *argc, char **argv);
 	/* validate a fractint.cfg mode */	int (*validate_mode)(Driver *drv, VIDEOINFO *mode);
 	/* shutdown the driver */			void (*terminate)(Driver *drv);
-	/* flush pending updates */			void (*flush)(Driver *drv);
+	/* pause this driver */				void (*pause)(Driver *drv);
+	/* resume this driver */			void (*resume)(Driver *drv);
 	/* refresh alarm */					void (*schedule_alarm)(Driver *drv, int secs);
-										int (*start_video)(Driver *drv);
-										int (*end_video)(Driver *drv);
 	/* creates a window */				void (*window)(Driver *drv);
 	/* handles window resize.  */		int (*resize)(Driver *drv);
 	/* redraws the screen */			void (*redraw)(Driver *drv);
@@ -71,7 +67,7 @@ struct tagDriver
 										int (*wait_key_pressed)(Driver *drv, int timeout);
 										void (*unget_key)(Driver *drv, int key);
 	/* invoke a command shell */		void (*shell)(Driver *drv);
-										void (*set_video_mode)(Driver *drv, int ax, int bx, int cx, int dx);
+										void (*set_video_mode)(Driver *drv, VIDEOINFO *mode);
 										void (*put_string)(Driver *drv, int row, int col, int attr, const char *msg);
 	/* set for text mode & save gfx */	void (*set_for_text)(Driver *drv);
 	/* restores graphics and data */	void (*set_for_graphics)(Driver *drv);
@@ -94,6 +90,8 @@ struct tagDriver
 										int (*diskp)(Driver *drv);
 										int (*get_char_attr)(Driver *drv);
 										void (*put_char_attr)(Driver *drv, int char_attr);
+
+										void (*delay)(Driver *drv, int ms);
 };
 
 #define STD_DRIVER_STRUCT(name_, desc_) \
@@ -102,10 +100,9 @@ struct tagDriver
     name_##_init, \
 	name_##_validate_mode, \
     name_##_terminate, \
-    name_##_flush, \
+	name_##_pause, \
+	name_##_resume, \
     name_##_schedule_alarm, \
-    name_##_start_video, \
-    name_##_end_video, \
     name_##_window, \
     name_##_resize, \
     name_##_redraw, \
@@ -143,7 +140,8 @@ struct tagDriver
 	name_##_mute, \
     name_##_diskp, \
 	name_##_get_char_attr, \
-	name_##_put_char_attr \
+	name_##_put_char_attr, \
+	name_##_delay \
   }
 
 /* Define the drivers to be included in the compilation:
@@ -155,24 +153,18 @@ struct tagDriver
     HAVE_WIN32_DISK_DRIVER	Win32 disk driver
 */
 #if defined(XFRACT)
-#define HAVE_FRACTINT_DRIVER	0
-#define HAVE_DISK_DRIVER		1
 #define HAVE_X11_DRIVER			1
 #define HAVE_WIN32_DRIVER		0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(MSDOS)
-#define HAVE_FRACTINT_DRIVER	1
-#define HAVE_DISK_DRIVER		0
 #define HAVE_X11_DRIVER			0
 #define HAVE_WIN32_DRIVER		0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(_WIN32)
-#define HAVE_FRACTINT_DRIVER	0
-#define HAVE_DISK_DRIVER		0
 #define HAVE_X11_DRIVER			0
-#define HAVE_WIN32_DRIVER		0
+#define HAVE_WIN32_DRIVER		1
 #define HAVE_WIN32_DISK_DRIVER	1
 #endif
 
@@ -183,16 +175,17 @@ extern Driver *driver_find_by_name(const char *name);
 
 extern Driver *g_driver;			/* current driver in use */
 
+/* always use a function for this one */
+extern void driver_set_video_mode(VIDEOINFO *mode);
+
 #define USE_DRIVER_FUNCTIONS 1
 
 #if defined(USE_DRIVER_FUNCTIONS)
 
 extern int driver_validate_mode(VIDEOINFO *mode);
 extern void driver_terminate(void);
-extern void driver_flush(void);
+// pause and resume are only used internally in drivers.c
 extern void driver_schedule_alarm(int secs);
-extern int driver_start_video(void);
-extern int driver_end_video(void);
 extern void driver_window(void);
 extern int driver_resize(void);
 extern void driver_redraw(void);
@@ -210,7 +203,6 @@ extern int driver_key_pressed(void);
 extern int driver_wait_key_pressed(int timeout);
 extern void driver_unget_key(int key);
 extern void driver_shell(void);
-extern void driver_set_video_mode(int ax, int bx, int cx, int dx);
 extern void driver_put_string(int row, int col, int attr, const char *msg);
 extern void driver_set_for_text(void);
 extern void driver_set_for_graphics(void);
@@ -231,15 +223,14 @@ extern void driver_mute(void);
 extern int driver_diskp(void);
 extern int driver_get_char_attr(void);
 extern void driver_put_char_attr(int char_attr);
+extern void driver_delay(int ms);
 
 #else
 
 #define driver_validate_mode(mode_)					(*g_driver->validate_mode)(g_driver, mode_)
 #define driver_terminate()							(*g_driver->terminate)(g_driver)
-#define driver_flush()								(*g_driver->flush)(g_driver)
+// pause and resume are only used internally in drivers.c
 #define void driver_schedule_alarm(_secs)			(*g_driver->schedule_alarm)(g_driver, _secs)
-#define driver_start_video()						(*g_driver->start_video)(g_driver)
-#define driver_end_video()							(*g_driver->end_video)(g_driver)
 #define driver_window()								(*g_driver->window)(g_driver)
 #define driver_resize()								(*g_driver->resize)(g_driver)
 #define driver_redraw()								(*g_driver->redraw)(g_driver)
@@ -257,7 +248,6 @@ extern void driver_put_char_attr(int char_attr);
 #define driver_wait_key_pressed(timeout_)			(*g_driver->wait_key_pressed)(timeout_)
 #define driver_unget_key(key_)						(*g_driver->unget_key)(g_driver, key_)
 #define driver_shell()								(*g_driver->shell)(g_driver)
-#define driver_set_video_mode(_ax, _bx, _cx, _dx)	(*g_driver->set_video_mode)(g_driver, _ax, _bx, _cx, _dx)
 #define driver_put_string(_row, _col, _attr, _msg)	(*g_driver->put_string)(g_driver, _row, _col, _attr, _msg)
 #define driver_set_for_text()						(*g_driver->set_for_text)(g_driver)
 #define driver_set_for_graphics()					(*g_driver->set_for_graphics)(g_driver)
@@ -278,6 +268,7 @@ extern void driver_put_char_attr(int char_attr);
 #define driver_diskp()								(*g_driver->diskp)(g_driver)
 #define driver_get_char_attr()						(*g_driver->get_char_attr)(g_driver)
 #define driver_put_char_attr(char_attr_)			(*g_driver->put_char_attr)(g_driver, char_attr_)
+#define driver_delay(ms_)							(*g_driver->delay)(g_driver, ms_)
 
 #endif
 
