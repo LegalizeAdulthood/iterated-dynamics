@@ -2110,10 +2110,7 @@ int funny_glasses_call(int (*calc)(void))
                diskisactive = 0;
                }
             /* is there a better way to clear the screen in graphics mode? */
-            driver_set_video_mode(g_video_entry.videomodeax,
-                g_video_entry.videomodebx,
-                g_video_entry.videomodecx,
-                g_video_entry.videomodedx);
+            driver_set_video_mode(&g_video_entry);
          }
          else {                   /* Windows version */
             stopmsg(0,"First (Left Eye) image is complete");
