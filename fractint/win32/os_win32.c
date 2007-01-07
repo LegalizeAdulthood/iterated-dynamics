@@ -25,6 +25,11 @@ extern void check_samename(void);
 
 HINSTANCE g_instance = NULL;
 
+static void (*dotwrite)(int, int, int) = NULL;
+static int (*dotread)(int, int) = NULL;
+static void (*linewrite)(int, int, int, BYTE *) = NULL;
+static void (*lineread)(int, int, int, BYTE *) = NULL;
+
 typedef enum
 {
 	FE_UNKNOWN = -1,
@@ -208,14 +213,7 @@ int g_video_start_y = 0;
  *  |------INT 10H------|Dot-|--Resolution---|
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
-VIDEOINFO g_video_table[MAXVIDEOMODES] =
-{
-	{
-		"unused  mode             ", "                         ",
-		0, 0, 0,
-		0, 0, 0, 0, 0, 0
-	}
-};
+VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
 int g_vxdots = 0;
 
 /* Global variables that should be phased out (old video mode stuff) */
@@ -508,48 +506,14 @@ long readticker(void)
 	return 0;
 }
 
-void windows_pump_messages(BOOL nowait)
-{
-	while (1)
-	{
-		MSG msg;
-		int status;
-		
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
-		{
-			if (nowait)
-			{
-				return;
-			}
-		}
-
-		status = GetMessage(&msg, NULL, 0, 0);
-		if (status == -1)
-		{
-			/* error */
-			OutputDebugString("!windows_pump_messages status == -1, error\n");
-			return;
-		}
-		else if (status > 0)
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else if (status == 0)
-		{
-			OutputDebugString("!windows_pump_messages status == 0\n");
-		}
-	}
-}
-
 /*
 ; ***************** Function delay(int delaytime) ************************
 ;
 ;       performs a delay loop for 'delaytime' milliseconds
 */
-void delay(int delaytime)
+void windows_delay(WinText *wintext, int delaytime)
 {
-	wintext_look_for_activity(FALSE);
+	wintext_look_for_activity(wintext, FALSE);
 	Sleep(delaytime);
 }
 
@@ -594,7 +558,7 @@ void spindac(int dir, int inc)
 		}
 	}
 	//writevideopalette();
-	delay(colors - g_dac_count - 1);
+	driver_delay(colors - g_dac_count - 1);
 }
 
 //; ************* function scroll_relative(bycol, byrow) ***********************
@@ -789,7 +753,7 @@ unsigned long GetDiskSpace(void)
 	return 0x7FFFFFFF;
 }
 
-void windows_shell_to_dos(void)
+void windows_shell_to_dos(WinText *wintext)
 {
 	STARTUPINFO si =
 	{
@@ -807,7 +771,7 @@ void windows_shell_to_dos(void)
 		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
 		while (WAIT_TIMEOUT == status)
 		{
-			wintext_look_for_activity(0);
+			wintext_look_for_activity(wintext, 0);
 			status = WaitForSingleObject(pi.hProcess, 1000); 
 		}
 		CloseHandle(pi.hProcess);
@@ -816,6 +780,7 @@ void windows_shell_to_dos(void)
 
 int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
 {
+#if 0
 	char minidump[MAX_PATH] = "fractint.dmp";
 	MINIDUMP_EXCEPTION_INFORMATION mdei =
 	{
@@ -823,14 +788,18 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 		NULL,
 		TRUE
 	};
+#endif
 	int result = 0;
 
+#if 0
 	__try
+#endif
 	{
 		g_instance = instance;
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 		result = main(__argc, __argv);
 	}
+#if 0
 	__except (mdei.ExceptionPointers = GetExceptionInformation(), EXCEPTION_EXECUTE_HANDLER)
 	{
 		HANDLE dump_file = CreateFile(minidump, GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
@@ -844,6 +813,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 		_ASSERTE(status);
 		result = -1;
 	}
+#endif
 
 	return result;
 }
@@ -899,4 +869,167 @@ int abortmsg(char *file, unsigned int line, int flags, char *msg)
 	char buffer[3*80];
 	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
 	return stopmsg(flags, buffer);
+}
+
+static void null_swap(void)
+{
+}
+
+void (*g_swap_setup)(void) = null_swap;			/* setfortext/graphics setup routine */
+
+/* ods
+ *
+ * varargs version of OutputDebugString with file and line markers.
+ */
+void
+ods(const char *file, unsigned int line, const char *format, ...)
+{
+	char full_msg[MAX_PATH+1];
+	char app_msg[MAX_PATH+1];
+	va_list args;
+
+	va_start(args, format);
+	_vsnprintf(app_msg, MAX_PATH, format, args);
+	_snprintf(full_msg, MAX_PATH, "%s(%d): %s\n", file, line, app_msg);
+	va_end(args);
+
+	OutputDebugString(full_msg);
+}
+
+/*
+; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'getcolor()', and gets a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+		return;
+	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
+
+;       This routine is a 'line' analog of 'putcolor()', and puts a segment
+;       of a line from the screen and stores it in pixels[] at one byte per
+;       pixel
+;       Called by the GIF decoder
+*/
+
+void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+{
+	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+		return;
+	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+}
+
+/*
+; **************** internal Read/Write-a-line routines *********************
+;
+;       These routines are called by out_line(), put_line() and get_line().
+*/
+void normaline(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		dotwrite(x + i, y, pixels[i]);
+	}
+}
+
+void normalineread(int y, int x, int lastx, BYTE *pixels)
+{
+	int i, width;
+	width = lastx - x + 1;
+	for (i = 0; i < width; i++)
+	{
+		pixels[i] = dotread(x + i, y);
+	}
+}
+
+void set_disk_dot(void)
+{
+	dotwrite = writedisk;
+	dotread = readdisk;
+}
+
+void set_normal_line(void)
+{
+	lineread = normalineread;
+	linewrite = normaline;
+}
+
+static void nullwrite(int a, int b, int c)
+{
+	_ASSERTE(FALSE);
+}
+
+static int nullread(int a, int b)
+{
+	_ASSERTE(FALSE);
+	return 0;
+}
+
+/* from video.asm */
+void setnullvideo(void)
+{
+	//ODS("setnullvideo");
+	dotwrite = nullwrite;
+	dotread = nullread;
+}
+
+/*
+; **************** Function getcolor(xdot, ydot) *******************
+
+;       Return the color on the screen at the (xdot, ydot) point
+*/
+int getcolor(int xdot, int ydot)
+{
+	int x1, y1;
+	x1 = xdot + sxoffs;
+	y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+		return 0;
+	return (*dotread)(x1, y1);
+}
+
+/*
+; ************** Function putcolor_a(xdot, ydot, color) *******************
+
+;       write the color on the screen at the (xdot, ydot) point
+*/
+void putcolor_a(int xdot, int ydot, int color)
+{
+	int x1 = xdot + sxoffs;
+	int y1 = ydot + syoffs;
+	_ASSERTE(x1 >= 0 && x1 <= sxdots);
+	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	(*dotwrite)(x1, y1, color & g_and_color);
+}
+
+/*
+; ***************Function out_line(pixels, linelen) *********************
+
+;       This routine is a 'line' analog of 'putcolor()', and sends an
+;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
+;       Called by the GIF decoder
+*/
+int out_line(BYTE *pixels, int linelen)
+{
+	_ASSERTE(_CrtCheckMemory());
+	if (g_row_count + syoffs >= sydots)
+	{
+		return 0;
+	}
+	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+	g_row_count++;
+	return 0;
 }
