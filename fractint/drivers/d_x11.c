@@ -1271,7 +1271,7 @@ handle_esc(DriverX11 *di)
   /* HP escape key sequences. */
   ch1 = getachar();
   if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar();
   }
   if (ch1 == -1)
@@ -1293,14 +1293,14 @@ handle_esc(DriverX11 *di)
     return FIK_ESC;
   ch1 = getachar();
   if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar();
   }
   if (ch1 == -1 || !isdigit(ch1))
     return FIK_ESC;
   ch2 = getachar();
   if (ch2 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch2 = getachar();
   }
   if (ch2 == -1)
@@ -1308,7 +1308,7 @@ handle_esc(DriverX11 *di)
   if (isdigit(ch2)) {
     ch3 = getachar();
     if (ch3 == -1) {
-      delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+      driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
       ch3 = getachar();
     }
     if (ch3 != '~')
@@ -1349,14 +1349,14 @@ handle_esc(DriverX11 *di)
   /* SUN escape key sequences */
   ch1 = getachar(di);
   if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar(di);
   }
   if (ch1 != '[')		/* See if we have esc [ */
     return FIK_ESC;
   ch1 = getachar(di);
   if (ch1 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch1 = getachar(di);
   }
   if (ch1 == -1)
@@ -1375,7 +1375,7 @@ handle_esc(DriverX11 *di)
   }
   ch2 = getachar(di);
   if (ch2 == -1) {
-    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+    driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
     ch2 = getachar(di);
   }
   if (ch2 == '~') {		/* esc [ ch1 ~ */
@@ -1396,7 +1396,7 @@ handle_esc(DriverX11 *di)
   } else {
     ch3 = getachar(di);
     if (ch3 == -1) {
-      delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+      driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
       ch3 = getachar(di);
     }
     if (ch3 != '~') {	/* esc [ ch1 ch2 ~ */
