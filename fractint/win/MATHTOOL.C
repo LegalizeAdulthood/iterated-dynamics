@@ -491,7 +491,8 @@ void UpdateCoordBox(DWORD dw) {
       case IDM_POLAR:
          Modulus = (xd*xd) + (yd*yd);
          if(Modulus > 1E-20) {
-            Modulus = sqrt(Modulus);
+/*            Modulus = sqrt(Modulus);  This breaks!! JCO 07 JAN 2007*/
+            Modulus = pow(Modulus , 0.5);
             Angle = atan2(yd, xd);
             switch(AngleFormat) {
                case IDM_DEGREES:
