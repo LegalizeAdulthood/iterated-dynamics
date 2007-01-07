@@ -258,6 +258,9 @@
 				RelativePath=".\win32\fractint.rc">
 			</File>
 			<File
+				RelativePath=".\win32\frame.c">
+			</File>
+			<File
 				RelativePath=".\win32\os_win32.c">
 			</File>
 			<File
@@ -502,36 +505,6 @@
 			Name="drivers"
 			Filter="">
 			<File
-				RelativePath=".\drivers\d_disk.c">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\drivers\d_fract.c">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\drivers\d_win32.c">
 			</File>
 			<File
@@ -579,6 +552,9 @@
 			</File>
 			<File
 				RelativePath=".\headers\fractype.h">
+			</File>
+			<File
+				RelativePath=".\headers\frame.h">
 			</File>
 			<File
 				RelativePath=".\headers\helpcom.h">
