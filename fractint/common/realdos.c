@@ -1749,7 +1749,10 @@ void load_fractint_config(void)
 						(mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
 						(mode->dotmode == vident.dotmode))
 					{
-						mode->keynum = vident.keynum;
+						if (0 == mode->keynum)
+						{
+							mode->keynum = vident.keynum;
+						}
 						synonym_found = TRUE;
 						break;
 					}
@@ -1757,8 +1760,7 @@ void load_fractint_config(void)
 				/* no synonym found, append it to current list of video modes */
 				if (FALSE == synonym_found)
 				{
-					memcpy(&g_video_table[g_video_table_len], &vident, sizeof(VIDEOINFO));
-					g_video_table_len++;
+					add_video_mode(vident.driver, &vident);
 				}
 			}
 		}
