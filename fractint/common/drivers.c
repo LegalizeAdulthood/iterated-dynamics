@@ -55,16 +55,12 @@ init_drivers(int *argc, char **argv)
 	load_driver(x11_driver, argc, argv);
 #endif
 
-#if HAVE_DISK_DRIVER
-	load_driver(disk_driver, argc, argv);
+#if HAVE_WIN32_DISK_DRIVER
+	load_driver(win32_disk_driver, argc, argv);
 #endif
 
 #if HAVE_WIN32_DRIVER
 	load_driver(win32_driver, argc, argv);
-#endif
-
-#if HAVE_WIN32_DISK_DRIVER
-	load_driver(win32_disk_driver, argc, argv);
 #endif
 
 	return num_drivers;		/* number of drivers supported at runtime */
@@ -116,6 +112,18 @@ driver_find_by_name(const char *name)
 	return NULL;
 }
 
+void
+driver_set_video_mode(VIDEOINFO *mode)
+{
+	if (g_driver != mode->driver)
+	{
+		g_driver->pause(g_driver);
+		g_driver = mode->driver;
+		g_driver->resume(g_driver);
+	}
+	(*g_driver->set_video_mode)(g_driver, mode);
+}
+
 #if defined(USE_DRIVER_FUNCTIONS)
 void
 driver_terminate(void)
@@ -129,16 +137,12 @@ void driver_##name_(void) { (*g_driver->name_)(g_driver); }
 type_ driver_##name_(void) { return (*g_driver->name_)(g_driver); }
 #define METHOD_INT(name_) METHOD(int,name_)
 
-METHOD_VOID(flush)
-
 void
 driver_schedule_alarm(int soon)
 {
 	(*g_driver->schedule_alarm)(g_driver, soon);
 }
 
-METHOD_INT(start_video)
-METHOD_INT(end_video)
 METHOD_VOID(window)
 METHOD_INT(resize)
 METHOD_VOID(redraw)
@@ -206,12 +210,6 @@ driver_wait_key_pressed(int timeout)
 }
 
 METHOD_VOID(shell)
-
-void
-driver_set_video_mode(int ax, int bx, int cx, int dx)
-{
-	(*g_driver->set_video_mode)(g_driver, ax, bx, cx, dx);
-}
 
 void
 driver_put_string(int row, int col, int attr, const char *msg)
@@ -293,6 +291,12 @@ void
 driver_unget_key(int key)
 {
 	(*g_driver->unget_key)(g_driver, key);
+}
+
+void
+driver_delay(int ms)
+{
+	(*g_driver->delay)(g_driver, ms);
 }
 
 #endif
