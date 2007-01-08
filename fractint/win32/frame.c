@@ -15,6 +15,7 @@ static void frame_forward(UINT msg, WPARAM wp, LPARAM lp)
 {
 	if (g_frame.child)
 	{
+		OutputDebugString("frame_forward\n");
 		PostMessage(g_frame.child, msg, wp, lp);
 	}
 }
@@ -38,7 +39,7 @@ static void frame_OnPaint(HWND window)
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
 	EndPaint(window, &ps);
-	OutputDebugString("frame_OnPaint");
+	OutputDebugString("frame_OnPaint\n");
 }
 
 static void frame_OnKeyDown(WPARAM wp, LPARAM lp)

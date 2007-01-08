@@ -15,7 +15,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "WinText.h"
-#include "frame.h"
+#include "..\win32\frame.h"
 
 /* read/write-a-dot/line routines */
 typedef void t_dotwriter(int, int, int);
@@ -339,7 +339,7 @@ win32_disk_init(Driver *drv, int *argc, char **argv)
 	DI(di);
 
 	frame_init(g_instance, title);
-	if (!wintext_initialize(&di->wintext, g_instance, g_frame.window, title))
+	if (!wintext_initialize(&di->wintext, g_instance, NULL, title))
 	{
 		return FALSE;
 	}
@@ -639,7 +639,8 @@ win32_disk_key_pressed(Driver *drv)
 	ch = wintext_getkeypress(&di->wintext, 0);
 	if (ch)
 	{
-		di->key_buffer = handle_help_tab(ch);
+		ch = handle_help_tab(ch);
+		di->key_buffer = ch;
 	}
 
 	return ch;
@@ -749,12 +750,13 @@ win32_disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_good_mode = 1;
 	if (dotmode !=0)
 	{
-		driver_read_palette();
 		g_and_color = colors-1;
 		boxcount = 0;
 		g_dac_learn = 1;
 		g_dac_count = cyclelimit;
 		g_got_real_dac = TRUE;
+
+		driver_read_palette();
 	}
 
 	win32_disk_resize(drv);
@@ -762,12 +764,6 @@ win32_disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	if (g_disk_flag)
 	{
 		enddisk();
-	}
-
-	if (di->video_flag)
-	{
-		endvideo();
-		di->video_flag = 0;
 	}
 
 	startdisk();
@@ -810,18 +806,6 @@ win32_disk_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
 		wintext_putstring(&di->wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
-}
-
-static void
-win32_disk_set_for_text(Driver *drv)
-{
-	ODS("win32_disk_set_for_text: TODO: hide graphics window, show text window");
-}
-
-static void
-win32_disk_set_for_graphics(Driver *drv)
-{
-	ODS("win32_disk_set_for_graphics: TODO: hide text window, show graphics window");
 }
 
 static void
@@ -897,6 +881,17 @@ win32_disk_hide_text_cursor(Driver *drv)
 		wintext_hide_cursor(&di->wintext);
 	}
 	ODS("win32_disk_hide_text_cursor");
+}
+
+static void
+win32_disk_set_for_text(Driver *drv)
+{
+}
+
+static void
+win32_disk_set_for_graphics(Driver *drv)
+{
+	win32_disk_hide_text_cursor(drv);
 }
 
 /*
