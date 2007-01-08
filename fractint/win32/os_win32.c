@@ -909,6 +909,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
 		return;
+	_ASSERTE(lineread);
 	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
@@ -925,6 +926,7 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
 		return;
+	_ASSERTE(linewrite);
 	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
 
@@ -937,9 +939,10 @@ void normaline(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
+	_ASSERTE(dotwrite);
 	for (i = 0; i < width; i++)
 	{
-		dotwrite(x + i, y, pixels[i]);
+		(*dotwrite)(x + i, y, pixels[i]);
 	}
 }
 
@@ -947,11 +950,36 @@ void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
+	_ASSERTE(dotread);
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = dotread(x + i, y);
+		pixels[i] = (*dotread)(x + i, y);
 	}
 }
+
+#if defined(USE_DRIVER_FUNCTIONS)
+void set_normal_dot(void)
+{
+	dotwrite = driver_write_pixel;
+	dotread = driver_read_pixel;
+}
+#else
+static void driver_dot_write(int x, int y, int color)
+{
+	driver_write_pixel(x, y, color);
+}
+
+static int driver_dot_read(int x, int y)
+{
+	return driver_read_pixel(x, y);
+}
+
+void set_normal_dot(void)
+{
+	dotwrite = driver_dot_write;
+	dotread = driver_dot_read;
+}
+#endif
 
 void set_disk_dot(void)
 {
@@ -979,7 +1007,7 @@ static int nullread(int a, int b)
 /* from video.asm */
 void setnullvideo(void)
 {
-	//ODS("setnullvideo");
+	_ASSERTE(0 && "setnullvideo called");
 	dotwrite = nullwrite;
 	dotread = nullread;
 }
@@ -998,6 +1026,7 @@ int getcolor(int xdot, int ydot)
 	_ASSERTE(y1 >= 0 && y1 <= sydots);
 	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
 		return 0;
+	_ASSERTE(dotread);
 	return (*dotread)(x1, y1);
 }
 
@@ -1012,6 +1041,7 @@ void putcolor_a(int xdot, int ydot, int color)
 	int y1 = ydot + syoffs;
 	_ASSERTE(x1 >= 0 && x1 <= sxdots);
 	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	_ASSERTE(dotwrite);
 	(*dotwrite)(x1, y1, color & g_and_color);
 }
 
@@ -1029,6 +1059,7 @@ int out_line(BYTE *pixels, int linelen)
 	{
 		return 0;
 	}
+	_ASSERTE(linewrite);
 	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
 	g_row_count++;
 	return 0;

@@ -122,6 +122,7 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
 
+static LPCSTR s_window_class = "FractIntText";
 static WinText *g_me = NULL;
 
 
@@ -192,7 +193,6 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     HFONT hOldFont;
     TEXTMETRIC TextMetric;
     int i, j;
-	LPCSTR windowClass = "FractintForWindowsV0011";
     WNDCLASS  wc;
 
 	ODS("wintext_initialize");
@@ -200,7 +200,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 	strcpy(me->title_text, titletext);
     me->hWndParent = hWndParent;
 
-	return_value = GetClassInfo(hInstance, windowClass, &wc);
+	return_value = GetClassInfo(hInstance, s_window_class, &wc);
 	if (!return_value)
 	{
 		wc.style = 0;
@@ -212,7 +212,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
 		wc.lpszMenuName =  me->title_text;
-		wc.lpszClassName = windowClass;
+		wc.lpszClassName = s_window_class;
 
 		return_value = RegisterClass(&wc);
 	}
@@ -318,7 +318,7 @@ int wintext_texton(WinText *me)
 	 * is going to call the window procedure.
 	 */
 	g_me = me;
-    hWnd = CreateWindow("FractintForWindowsV0011",
+    hWnd = CreateWindow(s_window_class,
         me->title_text,
 		(NULL == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
         CW_USEDEFAULT,               /* default horizontal position */
@@ -329,6 +329,7 @@ int wintext_texton(WinText *me)
         NULL,
         me->hInstance,
         NULL);
+	_ASSERTE(hWnd);
 
     /* squirrel away a global copy of 'hWnd' for later */
     me->hWndCopy = hWnd;

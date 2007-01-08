@@ -261,7 +261,16 @@
 				RelativePath=".\win32\frame.c">
 			</File>
 			<File
+				RelativePath=".\win32\frame.h">
+			</File>
+			<File
 				RelativePath=".\win32\os_win32.c">
+			</File>
+			<File
+				RelativePath=".\win32\plot.c">
+			</File>
+			<File
+				RelativePath=".\win32\plot.h">
 			</File>
 			<File
 				RelativePath=".\win32\resource.h">
@@ -552,9 +561,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\fractype.h">
-			</File>
-			<File
-				RelativePath=".\headers\frame.h">
 			</File>
 			<File
 				RelativePath=".\headers\helpcom.h">

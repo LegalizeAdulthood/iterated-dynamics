@@ -15,13 +15,8 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "WinText.h"
-#include "frame.h"
-
-/* read/write-a-dot/line routines */
-typedef void t_dotwriter(int, int, int);
-typedef int  t_dotreader(int, int);
-typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
-typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
+#include "../win32/frame.h"
+#include "../win32/plot.h"
 
 extern int windows_delay(WinText *wintext, int ms);
 extern void writevideo(int x, int y, int color);
@@ -54,13 +49,6 @@ extern HINSTANCE g_instance;
 #define ODS4(fmt_, _1, _2, _3, _4)
 #define ODS5(fmt_, _1, _2, _3, _4, _5)
 #endif
-
-static t_dotwriter win32_dot_writer;
-static t_dotreader win32_dot_reader;
-static t_linewriter win32_line_writer;
-static t_linereader win32_line_reader;
-static t_linewriter normaline;
-static t_linereader normalineread;
 
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
@@ -125,6 +113,9 @@ struct tagWin32Driver
 	Driver pub;
 
 	WinText wintext;
+	Plot plot;
+
+	BOOL text_not_graphics;
 
 	/* key_buffer
 	*
@@ -132,12 +123,6 @@ struct tagWin32Driver
 	* feeding to our caller.
 	*/
 	int key_buffer;
-
-	BYTE *pixels;
-	size_t pixels_len;
-	int width;
-	int height;
-	unsigned char cols[256][3];
 
 	int screen_count;
 	BYTE *saved_screens[MAXSCREENS];
@@ -181,24 +166,51 @@ check_arg(Win32Driver *di, char *arg)
 	return 0;
 }
 
-/* init_pixels
+/* handle_help_tab
  *
- * Resize the pixel array to sxdots by sydots and initialize it to zero.
- * Any existing pixel array is freed.
+ * Because we want context sensitive help to work everywhere, with the
+ * help to display indicated by a non-zero value in helpmode, we need
+ * to trap the F1 key at a very low level.  The same is true of the
+ * TAB display.
+ *
+ * What we do here is check for these keys and invoke their displays.
+ * To avoid a recursive invoke of help(), a static is used to avoid
+ * recursing on ourselves as help will invoke get key!
  */
-static void
-init_pixels(Win32Driver *di)
+static int
+handle_help_tab(int ch)
 {
-	if (di->pixels != NULL)
+	static int inside_help = 0;
+
+	if (FIK_F1 == ch && helpmode && !inside_help)
 	{
-		free(di->pixels);
+		inside_help = 1;
+		help(0);
+		inside_help = 0;
+		ch = 0;
 	}
-	di->width = sxdots;
-	di->height = sydots;
-	di->pixels_len = di->width * di->height * sizeof(BYTE);
-	_ASSERTE(di->pixels_len > 0);
-	di->pixels = (BYTE *) malloc(di->pixels_len);
-	memset(di->pixels, 0, di->pixels_len);
+	else if (FIK_TAB == ch && tabmode)
+	{
+		int old_tab = tabmode;
+		tabmode = 0;
+		tab_display();
+		tabmode = old_tab;
+		ch = 0;
+	}
+
+	return ch;
+}
+
+static void
+parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
+{
+	/* do something like XParseGeometry() */
+	if (2 == sscanf(spec, "%dx%d", width, height))
+	{
+		/* all we care about is width and height for disk output */
+		*x = 0;
+		*y = 0;
+	}
 }
 
 /*----------------------------------------------------------------------
@@ -238,71 +250,12 @@ initdacbox()
 	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
 }
 
-/* handle_help_tab
- *
- * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in helpmode, we need
- * to trap the F1 key at a very low level.  The same is true of the
- * TAB display.
- *
- * What we do here is check for these keys and invoke their displays.
- * To avoid a recursive invoke of help(), a static is used to avoid
- * recursing on ourselves as help will invoke get key!
- */
-static int
-handle_help_tab(int ch)
-{
-	static int inside_help = 0;
-
-	if (FIK_F1 == ch && helpmode && !inside_help)
-	{
-		inside_help = 1;
-		help(0);
-		inside_help = 0;
-		ch = 0;
-	}
-	else if (FIK_TAB == ch && tabmode)
-	{
-		int old_tab = tabmode;
-		tabmode = 0;
-		tab_display();
-		tabmode = old_tab;
-		ch = 0;
-	}
-
-	return ch;
-}
-
-static void win32_dot_writer(int x, int y, int color)
-{
-	driver_write_pixel(x, y, color);
-}
-static int win32_dot_reader(int x, int y)
-{
-	return driver_read_pixel(x, y);
-}
-static void win32_line_writer(int row, int col, int lastcol, BYTE *pixels)
-{
-	driver_write_span(row, col, lastcol, pixels);
-}
-static void win32_line_reader(int row, int col, int lastcol, BYTE *pixels)
-{
-	driver_read_span(row, col, lastcol, pixels);
-}
-
-static t_dotwriter nullwrite;
-static t_dotreader nullread;
-
 static void
-parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
+show_hide_windows(HWND show, HWND hide)
 {
-	/* do something like XParseGeometry() */
-	if (2 == sscanf(spec, "%dx%d", width, height))
-	{
-		/* all we care about is width and height for disk output */
-		*x = 0;
-		*y = 0;
-	}
+	frame_set_child(show);
+	ShowWindow(show, SW_NORMAL);
+	ShowWindow(hide, SW_HIDE);
 }
 
 /***********************************************************************
@@ -330,11 +283,8 @@ win32_terminate(Driver *drv)
 	DI(di);
 	ODS("win32_terminate");
 
-	if (di->pixels)
-	{
-		free(di->pixels);
-		di->pixels = NULL;
-	}
+	plot_terminate(&di->plot);
+
 	{
 		int i;
 		for (i = 0; i < NUM_OF(di->saved_screens); i++)
@@ -369,11 +319,11 @@ win32_init(Driver *drv, int *argc, char **argv)
 	DI(di);
 
 	frame_init(g_instance, title);
-	if (!wintext_initialize(&di->wintext, g_instance, NULL, title))
+	if (!wintext_initialize(&di->wintext, g_instance, NULL, "Text"))
 	{
 		return FALSE;
 	}
-
+	plot_init(&di->plot, g_instance, "Plot");
 	initdacbox();
 
 	/* filter out driver arguments */
@@ -417,14 +367,7 @@ win32_resize(Driver *drv)
 {
 	DI(di);
 
-	if ((sxdots == di->width) && (sydots == di->height)) 
-	{
-		return 0;
-	}
-
-	init_pixels(di);
-
-	return !0;
+	return plot_resize(&di->plot);
 }
 
 
@@ -446,18 +389,7 @@ static int
 win32_read_palette(Driver *drv)
 {
 	DI(di);
-	int i;
-
-	ODS("win32_read_palette");
-	if (g_got_real_dac == 0)
-		return -1;
-	for (i = 0; i < 256; i++)
-	{
-		g_dac_box[i][0] = di->cols[i][0];
-		g_dac_box[i][1] = di->cols[i][1];
-		g_dac_box[i][2] = di->cols[i][2];
-	}
-	return 0;
+	return plot_read_palette(&di->plot);
 }
 
 /*
@@ -479,17 +411,7 @@ static int
 win32_write_palette(Driver *drv)
 {
 	DI(di);
-	int i;
-
-	ODS("win32_write_palette");
-	for (i = 0; i < 256; i++)
-	{
-		di->cols[i][0] = g_dac_box[i][0];
-		di->cols[i][1] = g_dac_box[i][1];
-		di->cols[i][2] = g_dac_box[i][2];
-	}
-
-	return 0;
+	return plot_write_palette(&di->plot);
 }
 
 /*
@@ -533,10 +455,7 @@ static void
 win32_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DI(di);
-	_ASSERTE(di->pixels);
-	_ASSERTE(x >= 0 && x < di->width);
-	_ASSERTE(y >= 0 && y < di->height);
-	di->pixels[y*di->width + x] = (BYTE) (color & 0xFF);
+	plot_write_pixel(&di->plot, x, y, color);
 }
 
 /*
@@ -558,10 +477,7 @@ static int
 win32_read_pixel(Driver *drv, int x, int y)
 {
 	DI(di);
-	_ASSERTE(di->pixels);
-	_ASSERTE(x >= 0 && x < di->width);
-	_ASSERTE(y >= 0 && y < di->height);
-	return (int) di->pixels[y*di->width + x];
+	return plot_read_pixel(&di->plot, x, y);
 }
 
 /*
@@ -582,14 +498,8 @@ win32_read_pixel(Driver *drv, int x, int y)
 static void
 win32_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-	int i;
-	int width = lastx-x+1;
-	ODS3("win32_write_span (%d,%d,%d)", y, x, lastx);
-
-	for (i = 0; i < width; i++)
-	{
-		win32_write_pixel(drv, x+i, y, pixels[i]);
-	}
+	DI(di);
+	plot_write_span(&di->plot, x, y, lastx, pixels);
 }
 
 /*
@@ -610,26 +520,22 @@ win32_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 static void
 win32_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
-	int i, width;
-	ODS3("win32_read_span (%d,%d,%d)", y, x, lastx);
-	width = lastx-x+1;
-	for (i = 0; i < width; i++)
-	{
-		pixels[i] = win32_read_pixel(drv, x+i, y);
-	}
+	DI(di);
+	plot_read_span(&di->plot, y, x, lastx, pixels);
 }
 
 static void
 win32_set_line_mode(Driver *drv, int mode)
 {
-	ODS1("win32_set_line_mode %d", mode);
+	DI(di);
+	plot_set_line_mode(&di->plot, mode);
 }
 
 static void
 win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 {
-	ODS5("win32_draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
-	draw_line(x1, y1, x2, y2, color);
+	DI(di);
+	plot_draw_line(&di->plot, x1, y1, x2, y2, color);
 }
 
 /*
@@ -670,10 +576,12 @@ win32_key_pressed(Driver *drv)
 {
 	DI(di);
 	int ch = di->key_buffer;
+
 	if (ch)
 	{
 		return ch;
 	}
+	plot_flush(&di->plot);
 	ch = wintext_getkeypress(&di->wintext, 0);
 	if (ch)
 	{
@@ -708,6 +616,7 @@ win32_get_key(Driver *drv)
 	DI(di);
 	int ch;
 	
+	plot_flush(&di->plot);
 	do
 	{
 		if (di->key_buffer)
@@ -732,6 +641,7 @@ win32_window(Driver *drv)
 	frame_window(di->wintext.max_width, di->wintext.max_height);
 	di->wintext.hWndParent = g_frame.window;
 	wintext_texton(&di->wintext);
+	plot_window(&di->plot, g_frame.window);
 	frame_set_child(di->wintext.hWndCopy);
 }
 
@@ -757,6 +667,35 @@ win32_shell(Driver *drv)
 	windows_shell_to_dos(&di->wintext);
 }
 
+static void
+win32_hide_text_cursor(Driver *drv)
+{
+	DI(di);
+	if (TRUE == di->cursor_shown)
+	{
+		di->cursor_shown = FALSE;
+		wintext_hide_cursor(&di->wintext);
+	}
+	ODS("win32_hide_text_cursor");
+}
+
+static void
+win32_set_for_text(Driver *drv)
+{
+	DI(di);
+	di->text_not_graphics = TRUE;
+	show_hide_windows(di->wintext.hWndCopy, di->plot.window);
+}
+
+static void
+win32_set_for_graphics(Driver *drv)
+{
+	DI(di);
+	di->text_not_graphics = FALSE;
+	show_hide_windows(di->plot.window, di->wintext.hWndCopy);
+	win32_hide_text_cursor(drv);
+}
+
 /*
 ; **************** Function setvideomode(ax, bx, cx, dx) ****************
 ;       This function sets the (alphanumeric or graphic) video mode
@@ -774,7 +713,7 @@ win32_shell(Driver *drv)
 static void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
-	extern void set_disk_dot(void);
+	extern void set_normal_dot(void);
 	extern void set_normal_line(void);
 	DI(di);
 
@@ -787,12 +726,13 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_good_mode = 1;
 	if (dotmode !=0)
 	{
-		driver_read_palette();
 		g_and_color = colors-1;
 		boxcount = 0;
 		g_dac_learn = 1;
 		g_dac_count = cyclelimit;
 		g_got_real_dac = TRUE;
+
+		driver_read_palette();
 	}
 
 	win32_resize(drv);
@@ -802,7 +742,10 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		enddisk();
 	}
 
+	set_normal_dot();
 	set_normal_line();
+
+	win32_set_for_graphics(drv);
 }
 
 /*
@@ -840,18 +783,6 @@ win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
 		wintext_putstring(&di->wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
-}
-
-static void
-win32_set_for_text(Driver *drv)
-{
-	ODS("win32_set_for_text: TODO: hide graphics window, show text window");
-}
-
-static void
-win32_set_for_graphics(Driver *drv)
-{
-	ODS("win32_set_for_graphics: TODO: hide text window, show graphics window");
 }
 
 static void
@@ -915,18 +846,6 @@ win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 		g_text_col = col;
 	}
 	wintext_set_attr(&di->wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
-}
-
-static void
-win32_hide_text_cursor(Driver *drv)
-{
-	DI(di);
-	if (TRUE == di->cursor_shown)
-	{
-		di->cursor_shown = FALSE;
-		wintext_hide_cursor(&di->wintext);
-	}
-	ODS("win32_hide_text_cursor");
 }
 
 /*
