@@ -587,19 +587,24 @@ resumeloop:
 
 int check_key()
 {
-   int key;
-   if((key = driver_key_pressed()) != 0) {
-      if (show_orbit)
-         scrub_orbit();
-      if(key != 'o' && key != 'O') {
-         fflush(stdout);
-         return(-1);
-      }
-      driver_get_key();
-      if (!driver_diskp())
-         show_orbit = 1 - show_orbit;
-   }
-   return(0);
+	int key = driver_key_pressed();
+	if (key != 0)
+	{
+		if (show_orbit)
+		{
+			scrub_orbit();
+		}
+		if (key != 'o' && key != 'O')
+		{
+			return -1;
+		}
+		driver_get_key();
+		if (!driver_diskp())
+		{
+			show_orbit = 1 - show_orbit;
+		}
+	}
+	return 0;
 }
 
 /* timer function:
