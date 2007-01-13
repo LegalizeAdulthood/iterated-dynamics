@@ -18,7 +18,7 @@
 #include "../win32/frame.h"
 #include "../win32/plot.h"
 
-extern int windows_delay(WinText *wintext, int ms);
+extern int windows_delay(int ms);
 extern void writevideo(int x, int y, int color);
 extern int readvideo(int x, int y);
 extern int readvideopalette(void);
@@ -34,13 +34,15 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) Win32Driver *name_ = (Win32Driver *) drv
 
-#if RT_VERBOSE
+#define RT_VERBOSE
+#if defined(RT_VERBOSE)
 #define ODS(text_)						ods(__FILE__, __LINE__, text_)
 #define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
 #define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
 #define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
 #define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
 #define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
+extern void ods(const char *file, unsigned int line, const char *format, ...);
 #else
 #define ODS(text_)
 #define ODS1(fmt_, arg_)
@@ -112,6 +114,7 @@ struct tagWin32Driver
 {
 	Driver pub;
 
+	Frame frame;
 	WinText wintext;
 	Plot plot;
 
@@ -253,7 +256,6 @@ initdacbox()
 static void
 show_hide_windows(HWND show, HWND hide)
 {
-	frame_set_child(show);
 	ShowWindow(show, SW_NORMAL);
 	ShowWindow(hide, SW_HIDE);
 }
@@ -318,6 +320,7 @@ win32_init(Driver *drv, int *argc, char **argv)
 	LPCSTR title = "FractInt for Windows";
 	DI(di);
 
+	ODS("win32_init");
 	frame_init(g_instance, title);
 	if (!wintext_initialize(&di->wintext, g_instance, NULL, "Text"))
 	{
@@ -367,6 +370,7 @@ win32_resize(Driver *drv)
 {
 	DI(di);
 
+	ODS("win32_resize");
 	return plot_resize(&di->plot);
 }
 
@@ -389,6 +393,7 @@ static int
 win32_read_palette(Driver *drv)
 {
 	DI(di);
+	ODS("win32_read_palette");
 	return plot_read_palette(&di->plot);
 }
 
@@ -411,6 +416,7 @@ static int
 win32_write_palette(Driver *drv)
 {
 	DI(di);
+	ODS("win32_write_palette");
 	return plot_write_palette(&di->plot);
 }
 
@@ -433,7 +439,15 @@ static void
 win32_schedule_alarm(Driver *drv, int soon)
 {
 	DI(di);
-	wintext_schedule_alarm(&di->wintext, (soon ? 1 : DRAW_INTERVAL)*1000);
+	soon = (soon ? 1 : DRAW_INTERVAL)*1000;
+	if (di->text_not_graphics)
+	{
+		wintext_schedule_alarm(&di->wintext, soon);
+	}
+	else
+	{
+		plot_schedule_alarm(&di->plot, soon);
+	}
 }
 
 /*
@@ -582,7 +596,7 @@ win32_key_pressed(Driver *drv)
 		return ch;
 	}
 	plot_flush(&di->plot);
-	ch = wintext_getkeypress(&di->wintext, 0);
+	ch = frame_get_key_press(0);
 	if (ch)
 	{
 		di->key_buffer = handle_help_tab(ch);
@@ -626,7 +640,7 @@ win32_get_key(Driver *drv)
 		}
 		else
 		{
-			ch = handle_help_tab(wintext_getkeypress(&di->wintext, 1));
+			ch = handle_help_tab(frame_get_key_press(1));
 		}
 	}
 	while (ch == 0);
@@ -642,7 +656,6 @@ win32_window(Driver *drv)
 	di->wintext.hWndParent = g_frame.window;
 	wintext_texton(&di->wintext);
 	plot_window(&di->plot, g_frame.window);
-	frame_set_child(di->wintext.hWndCopy);
 }
 
 /*
@@ -664,7 +677,7 @@ static void
 win32_shell(Driver *drv)
 {
 	DI(di);
-	windows_shell_to_dos(&di->wintext);
+	windows_shell_to_dos();
 }
 
 static void
@@ -886,7 +899,7 @@ win32_unstack_screen(Driver *drv)
 	Win32Driver *di = (Win32Driver *) drv;
 
 	ODS("win32_unstack_screen");
-	_ASSERTE(di->screen_count > 0);
+	_ASSERTE(di->screen_count >= 0);
 	g_text_row = di->saved_cursor[di->screen_count] / 80;
 	g_text_col = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
@@ -907,7 +920,6 @@ win32_discard_screen(Driver *drv)
 {
 	Win32Driver *di = (Win32Driver *) drv;
 
-	_ASSERTE(di->screen_count > 0);
 	if (--di->screen_count >= 0)
 	{ /* unstack */
 		if (di->saved_screens[di->screen_count])
@@ -915,6 +927,10 @@ win32_discard_screen(Driver *drv)
 			free(di->saved_screens[di->screen_count]);
 			di->saved_screens[di->screen_count] = NULL;
 		}
+	}
+	else
+	{
+		win32_set_for_graphics(drv);
 	}
 }
 
@@ -1034,7 +1050,7 @@ static void
 win32_delay(Driver *drv, int ms)
 {
 	DI(di);
-	windows_delay(&di->wintext, ms);
+	windows_delay(ms);
 }
 
 static void
@@ -1061,7 +1077,18 @@ win32_resume(Driver *drv)
 
 static Win32Driver win32_driver_info =
 {
-	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows.")
+	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows."),
+	{ 0 },				/* Frame */
+	{ 0 },				/* WinText */
+	{ 0 },				/* Plot */
+	TRUE,				/* text_not_graphics */
+	0,					/* key_buffer */
+	-1,					/* screen_count */
+	{ NULL },			/* saved_screens */
+	{ 0 },				/* saved_cursor */
+	FALSE,				/* cursor_shown */
+	0,					/* cursor_row */
+	0					/* cursor_col */
 };
 
 Driver *win32_driver = &win32_driver_info.pub;

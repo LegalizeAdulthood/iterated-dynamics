@@ -43,20 +43,24 @@ struct tagWinText
 	HWND hWndParent;              /* a Global copy of hWnd's Parent */
 	HINSTANCE hInstance;             /* a global copy of hInstance */
 
+#if 0
 	/* the keypress buffer */
 	unsigned int  keypress_count;
 	unsigned int  keypress_head;
 	unsigned int  keypress_tail;
 	unsigned int  keypress_buffer[KEYBUFMAX];
+#endif
 };
 typedef struct tagWinText WinText;
 
 extern void			wintext_clear(WinText *);
 extern void			wintext_cursor(WinText *, int, int, int);
 extern void			wintext_destroy(WinText *);
+#if 0
 extern unsigned int	wintext_getkeypress(WinText *, int);
-extern BOOL			wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
 extern int			wintext_look_for_activity(WinText *, int);
+#endif
+extern BOOL			wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
 extern void			wintext_paintscreen(WinText *, int, int, int, int);
 extern void			wintext_putstring(WinText *, int, int, int, const char *, int *, int *);
 extern void			wintext_scroll_up(WinText *, int top, int bot);
@@ -69,5 +73,7 @@ extern void			wintext_hide_cursor(WinText *);
 extern void			wintext_schedule_alarm(WinText *, int delay);
 extern int			wintext_get_char_attr(WinText *, int row, int col);
 extern void			wintext_put_char_attr(WinText *, int row, int col, int char_attr);
+extern void			wintext_set_focus(void);
+extern void			wintext_kill_focus(void);
 
 #endif

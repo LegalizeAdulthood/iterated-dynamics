@@ -23,7 +23,7 @@ typedef int  t_dotreader(int, int);
 typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
 typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 
-extern void windows_delay(WinText *wintext, int ms);
+extern void windows_delay(int ms);
 extern int startvideo();
 extern int endvideo();
 extern void writevideo(int x, int y, int color);
@@ -636,7 +636,7 @@ win32_disk_key_pressed(Driver *drv)
 	{
 		return ch;
 	}
-	ch = wintext_getkeypress(&di->wintext, 0);
+	ch = frame_get_key_press(0);
 	if (ch)
 	{
 		ch = handle_help_tab(ch);
@@ -680,7 +680,7 @@ win32_disk_get_key(Driver *drv)
 		}
 		else
 		{
-			ch = handle_help_tab(wintext_getkeypress(&di->wintext, 1));
+			ch = handle_help_tab(frame_get_key_press(1));
 		}
 	}
 	while (ch == 0);
@@ -695,7 +695,6 @@ win32_disk_window(Driver *drv)
 	frame_window(di->wintext.max_width, di->wintext.max_height);
 	di->wintext.hWndParent = g_frame.window;
 	wintext_texton(&di->wintext);
-	frame_set_child(di->wintext.hWndCopy);
 }
 
 /*
@@ -717,7 +716,7 @@ static void
 win32_disk_shell(Driver *drv)
 {
 	DI(di);
-	windows_shell_to_dos(&di->wintext);
+	windows_shell_to_dos();
 }
 
 /*
@@ -932,7 +931,7 @@ win32_disk_unstack_screen(Driver *drv)
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
 
 	ODS("win32_disk_unstack_screen");
-	_ASSERTE(di->screen_count > 0);
+	_ASSERTE(di->screen_count >= 0);
 	g_text_row = di->saved_cursor[di->screen_count] / 80;
 	g_text_col = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
@@ -1080,7 +1079,7 @@ static void
 win32_disk_delay(Driver *drv, int ms)
 {
 	DI(di);
-	windows_delay(&di->wintext, ms);
+	windows_delay(ms);
 }
 
 static void

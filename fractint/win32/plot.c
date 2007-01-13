@@ -14,6 +14,8 @@
 #include "prototyp.h"
 #include "fractint.h"
 
+#define TIMER_ID 1
+
 static Plot *s_me = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
 
@@ -208,8 +210,10 @@ void plot_write_span(Plot *p, int y, int x, int lastx, const BYTE *pixels)
 
 void plot_flush(Plot *p)
 {
+	OutputDebugString("plot_flush\n");
 	if (p->dirty)
 	{
+		OutputDebugString("plot_flush: dirty\n");
 		InvalidateRect(p->window, &p->dirty_region, FALSE);
 	}
 }
@@ -277,4 +281,20 @@ int plot_write_palette(Plot *p)
 	}
 
 	return 0;
+}
+
+static VOID CALLBACK frame_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+{
+	InvalidateRect(window, NULL, FALSE);
+	KillTimer(window, TIMER_ID);
+}
+
+void plot_schedule_alarm(Plot *me, int delay)
+{
+	UINT_PTR result = SetTimer(me->window, TIMER_ID, delay, frame_timer_redraw);
+	if (!result)
+	{
+		DWORD error = GetLastError();
+		_ASSERTE(result);
+	}
 }
