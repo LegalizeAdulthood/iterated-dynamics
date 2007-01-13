@@ -33,5 +33,6 @@ extern int plot_resize(Plot *p);
 extern int plot_read_palette(Plot *p);
 extern int plot_write_palette(Plot *p);
 extern void plot_flush(Plot *p);
+extern void plot_schedule_alarm(Plot *me, int delay);
 
 #endif

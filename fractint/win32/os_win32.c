@@ -18,7 +18,7 @@
 #include "externs.h"
 #include "prototyp.h"
 #include "helpdefs.h"
-#include "wintext.h"
+#include "frame.h"
 
 /* External declarations */
 extern void check_samename(void);
@@ -511,9 +511,9 @@ long readticker(void)
 ;
 ;       performs a delay loop for 'delaytime' milliseconds
 */
-void windows_delay(WinText *wintext, int delaytime)
+void windows_delay(int delaytime)
 {
-	wintext_look_for_activity(wintext, FALSE);
+	frame_pump_messages(FALSE);
 	Sleep(delaytime);
 }
 
@@ -753,7 +753,7 @@ unsigned long GetDiskSpace(void)
 	return 0x7FFFFFFF;
 }
 
-void windows_shell_to_dos(WinText *wintext)
+void windows_shell_to_dos()
 {
 	STARTUPINFO si =
 	{
@@ -771,7 +771,7 @@ void windows_shell_to_dos(WinText *wintext)
 		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
 		while (WAIT_TIMEOUT == status)
 		{
-			wintext_look_for_activity(wintext, 0);
+			frame_pump_messages(0);
 			status = WaitForSingleObject(pi.hProcess, 1000); 
 		}
 		CloseHandle(pi.hProcess);

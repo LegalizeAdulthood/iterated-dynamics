@@ -18,6 +18,7 @@
 
 static int s_showing_cursor = FALSE;
 
+#define RT_VERBOSE
 #if defined(RT_VERBOSE)
 int carrot_count = 0;
 extern void ods(const char *file, unsigned int line, const char *format, ...);
@@ -308,11 +309,13 @@ int wintext_texton(WinText *me)
     me->cursor_owned = 0;
 	me->showing_cursor = FALSE;
 
+#if 0
     /* clear the keyboard buffer */
     me->keypress_count = 0;
     me->keypress_head  = 0;
     me->keypress_tail  = 0;
     me->buffer_init = 0;
+#endif
 
 	/* make sure g_me points to me because CreateWindow
 	 * is going to call the window procedure.
@@ -361,6 +364,7 @@ int wintext_textoff(WinText *me)
     return 0;
 }
 
+#if 0
 /*
      simple keyboard logic capable of handling 80
      typed-ahead keyboard characters (more, if KEYBUFMAX is changed)
@@ -419,7 +423,7 @@ unsigned int wintext_getkeypress(WinText *me, int option)
 
 	return i;
 }
-
+#endif
 
 static void wintext_OnClose(HWND window)
 {
@@ -457,6 +461,16 @@ static void wintext_OnKillFocus(HWND window, HWND old_focus)
 	}
 }
 
+void wintext_set_focus(void)
+{
+	wintext_OnSetFocus(NULL, NULL);
+}
+
+void wintext_kill_focus(void)
+{
+	wintext_OnKillFocus(NULL, NULL);
+}
+
 static void wintext_OnPaint(HWND window)
 {
     PAINTSTRUCT ps;
@@ -474,6 +488,7 @@ static void wintext_OnPaint(HWND window)
 	EndPaint(window, &ps);
 }
 
+#if 0
 static int mod_key(int modifier, int code, int fik)
 {
 	SHORT state = GetKeyState(modifier);
@@ -546,6 +561,7 @@ static void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 	k = (i << 8) + j;
 	wintext_addkeypress(g_me, k);
 }
+#endif
 
 static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
@@ -588,14 +604,17 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);	break;
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
 	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
+#if 0
 	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
 	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);	break;
 	case WM_CHAR:			HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
+#endif
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
     return 0;
 }
 
+#if 0
 /*
      simple event-handler and look-for-keyboard-activity process
 
@@ -640,6 +659,7 @@ int wintext_look_for_activity(WinText *me, int waitflag)
 
 	return me->keypress_count == 0 ? 0 : 1;
 }
+#endif
 
 /*
         general routine to send a string to the screen
@@ -918,6 +938,7 @@ void wintext_hide_cursor(WinText *me)
 static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
 	InvalidateRect(window, NULL, FALSE);
+	KillTimer(window, TIMER_ID);
 }
 
 void wintext_schedule_alarm(WinText *me, int delay)
