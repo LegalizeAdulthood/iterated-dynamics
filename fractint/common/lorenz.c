@@ -1324,260 +1324,297 @@ int inverse_julia_per_image()
 
 int orbit2dfloat()
 {
-   FILE *fp;
-   double *soundvar;
-   double x,y,z;
-   int color,col,row;
-   int count;
-   int oldrow, oldcol;
-   double *p0,*p1,*p2;
-   struct affine cvt;
-   int ret;
-   soundvar = p0 = p1 = p2 = NULL;
+	FILE *fp;
+	double *soundvar;
+	double x, y, z;
+	int color, col, row;
+	int count;
+	int oldrow, oldcol;
+	double *p0, *p1, *p2;
+	struct affine cvt;
+	int ret;
 
-   fp = open_orbitsave();
-   /* setup affine screen coord conversion */
-   setup_convert_to_screen(&cvt);
+	soundvar = p0 = p1 = p2 = NULL;
 
-   /* set up projection scheme */
-   if(projection==0)
-   {
-      p0 = &z;
-      p1 = &x;
-      p2 = &y;
-   }
-   else if(projection==1)
-   {
-      p0 = &x;
-      p1 = &z;
-      p2 = &y;
-   }
-   else if(projection==2)
-   {
-      p0 = &x;
-      p1 = &y;
-      p2 = &z;
-   }
-   if((soundflag&7) == 2)
-      soundvar = &x;
-   else if((soundflag&7) == 3)
-      soundvar = &y;
-   else if((soundflag&7) == 4)
-      soundvar = &z;
+	fp = open_orbitsave();
+	/* setup affine screen coord conversion */
+	setup_convert_to_screen(&cvt);
 
-   if(inside > 0)
-      color = inside;
-   if(color >= colors)
-      color = 1;
-   oldcol = oldrow = -1;
-   x = initorbitfp[0];
-   y = initorbitfp[1];
-   z = initorbitfp[2];
-   coloriter = 0L;
-   count = ret = 0;
-   if(maxit > 0x1fffffL || maxct)
-      maxct = 0x7fffffffL;
-   else
-      maxct = maxit*1024L;
+	/* set up projection scheme */
+	switch (projection)
+	{
+	case 0: p0 = &z; p1 = &x; p2 = &y; break;
+	case 1: p0 = &x; p1 = &z; p2 = &y; break;
+	case 2: p0 = &x; p1 = &y; p2 = &z; break;
+	}
+	switch (soundflag & 7)
+	{
+	case 2: soundvar = &x; break;
+	case 3: soundvar = &y; break;
+	case 4: soundvar = &z; break;
+	}
 
-   if (resuming)
-   {
-      start_resume();
-      get_resume(sizeof(count),&count,sizeof(color),&color,
-          sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
-          sizeof(x),&x,sizeof(y),&y,sizeof(z),&z,sizeof(t),&t,
-          sizeof(orbit),&orbit,sizeof(coloriter),&coloriter,
-          0);
-      end_resume();
-   }
+	if (inside > 0)
+	{
+		color = inside;
+	}
+	else
+	{
+		color = 2;
+	}
 
-   while(coloriter++ <= maxct) /* loop until keypress or maxit */
-   {
-      if (driver_key_pressed())
-      {
-         driver_mute();
-         alloc_resume(100,1);
-         put_resume(sizeof(count),&count,sizeof(color),&color,
-             sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
-             sizeof(x),&x,sizeof(y),&y,sizeof(z),&z,sizeof(t),&t,
-             sizeof(orbit),&orbit,sizeof(coloriter),&coloriter,
-             0);
-         ret = -1;
-         break;
-      }
-      if (++count > 1000)
-      {        /* time to switch colors? */
-         count = 0;
-         if (++color >= colors)   /* another color to switch to? */
-            color = 1;  /* (don't use the background color) */
-      }
+	oldcol = oldrow = -1;
+	x = initorbitfp[0];
+	y = initorbitfp[1];
+	z = initorbitfp[2];
+	coloriter = 0L;
+	count = ret = 0;
+	if (maxit > 0x1fffffL || maxct)
+	{
+		maxct = 0x7fffffffL;
+	}
+	else
+	{
+		maxct = maxit*1024L;
+	}
 
-      col = (int)(cvt.a*x + cvt.b*y + cvt.e);
-      row = (int)(cvt.c*x + cvt.d*y + cvt.f);
-      if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
-      {
-         if ((soundflag&7) > 1)
-            w_snd((int)(*soundvar*100+basehertz));
-	 if((fractype!=ICON) && (fractype!=LATOO))
-         {
-         if(oldcol != -1 && connect)
-            driver_draw_line(col,row,oldcol,oldrow,color%colors);
-            else
-            (*plot)(col,row,color%colors);
-         } else {
-            /* should this be using plothist()? */
-            color = getcolor(col,row)+1;
-            if( color < colors ) /* color sticks on last value */
-               (*plot)(col,row,color);
+	if (resuming)
+	{
+		start_resume();
+		get_resume(sizeof(count), &count, sizeof(color), &color,
+			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
+			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+			sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+			0);
+		end_resume();
+	}
 
-         }
+	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	{
+		if (driver_key_pressed())
+		{
+			driver_mute();
+			alloc_resume(100, 1);
+			put_resume(sizeof(count), &count, sizeof(color), &color,
+				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
+				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+				sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+				0);
+			ret = -1;
+			break;
+		}
+		if (++count > 1000)
+		{        /* time to switch colors? */
+			count = 0;
+			if (++color >= colors)   /* another color to switch to? */
+			{
+				color = 1;  /* (don't use the background color) */
+			}
+		}
 
-         oldcol = col;
-         oldrow = row;
-      }
-      else if((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
-         return(ret);
-      else
-         oldrow = oldcol = -1;
+		col = (int) (cvt.a*x + cvt.b*y + cvt.e);
+		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
+		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		{
+			if ((soundflag & 7) > 1)
+			{
+				w_snd((int) (*soundvar*100 + basehertz));
+			}
+			if ((fractype != ICON) && (fractype != LATOO))
+			{
+				if (oldcol != -1 && connect)
+				{
+					driver_draw_line(col, row, oldcol, oldrow, color % colors);
+				}
+				else
+				{
+					(*plot)(col, row, color % colors);
+				}
+			}
+			else
+			{
+				/* should this be using plothist()? */
+				color = getcolor(col, row)+1;
+				if (color < colors) /* color sticks on last value */
+				{
+					(*plot)(col, row, color);
+				}
+			}
 
-      if(FORBIT(p0, p1, p2))
-         break;
-      if(fp)
-         fprintf(fp,orbitsave_format,*p0,*p1,0.0);
-   }
-   if(fp)
-      fclose(fp);
-   return(ret);
+			oldcol = col;
+			oldrow = row;
+		}
+		else if ((long) abs(row) + (long) abs(col) > BAD_PIXEL) /* sanity check */
+		{
+			return ret;
+		}
+		else
+		{
+			oldrow = oldcol = -1;
+		}
+
+		if (FORBIT(p0, p1, p2))
+		{
+			break;
+		}
+		if (fp)
+		{
+			fprintf(fp, orbitsave_format, *p0, *p1, 0.0);
+		}
+	}
+	if (fp)
+	{
+		fclose(fp);
+	}
+	return ret;
 }
 
 int orbit2dlong()
 {
-   FILE *fp;
-   long *soundvar;
-   long x,y,z;
-   int color,col,row;
-   int count;
-   int oldrow, oldcol;
-   long *p0,*p1,*p2;
-   struct l_affine cvt;
-   int ret,start;
-   start = 1;
-   soundvar = p0 = p1 = p2 = NULL;
-   fp = open_orbitsave();
+	FILE *fp;
+	long *soundvar;
+	long x, y, z;
+	int color, col, row;
+	int count;
+	int oldrow, oldcol;
+	long *p0, *p1, *p2;
+	struct l_affine cvt;
+	int ret, start;
 
-   /* setup affine screen coord conversion */
-   l_setup_convert_to_screen(&cvt);
+	start = 1;
+	soundvar = p0 = p1 = p2 = NULL;
+	fp = open_orbitsave();
 
-   /* set up projection scheme */
-   if(projection==0)
-   {
-      p0 = &z;
-      p1 = &x;
-      p2 = &y;
-   }
-   else if(projection==1)
-   {
-      p0 = &x;
-      p1 = &z;
-      p2 = &y;
-   }
-   else if(projection==2)
-   {
-      p0 = &x;
-      p1 = &y;
-      p2 = &z;
-   }
-   if((soundflag&7)==2)
-      soundvar = &x;
-   else if((soundflag&7)==3)
-      soundvar = &y;
-   else if((soundflag&7)==4)
-      soundvar = &z;
-   if(inside > 0)
-      color = inside;
-   if(color >= colors)
-      color = 1;
-   oldcol = oldrow = -1;
-   x = initorbitlong[0];
-   y = initorbitlong[1];
-   z = initorbitlong[2];
-   count = ret = 0;
-   if(maxit > 0x1fffffL || maxct)
-      maxct = 0x7fffffffL;
-   else
-      maxct = maxit*1024L;
-   coloriter = 0L;
+	/* setup affine screen coord conversion */
+	l_setup_convert_to_screen(&cvt);
 
-   if (resuming)
-   {
-      start_resume();
-      get_resume(sizeof(count),&count,sizeof(color),&color,
-          sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
-          sizeof(x),&x,sizeof(y),&y,sizeof(z),&z,sizeof(t),&t,
-          sizeof(l_orbit),&l_orbit,sizeof(coloriter),&coloriter,
-          0);
-      end_resume();
-   }
+	/* set up projection scheme */
+	switch (projection)
+	{
+	case 0: p0 = &z; p1 = &x; p2 = &y; break;
+	case 1: p0 = &x; p1 = &z; p2 = &y; break;
+	case 2: p0 = &x; p1 = &y; p2 = &z; break;
+	}
+	switch (soundflag & 7)
+	{
+	case 2: soundvar = &x; break;
+	case 3: soundvar = &y; break;
+	case 4: soundvar = &z; break;
+	}
+		
+	if (inside > 0)
+	{
+		color = inside;
+	}
+	else
+	{
+		color = 2;
+	}
+	if (color >= colors)
+	{
+		color = 1;
+	}
+	oldcol = oldrow = -1;
+	x = initorbitlong[0];
+	y = initorbitlong[1];
+	z = initorbitlong[2];
+	count = ret = 0;
+	if (maxit > 0x1fffffL || maxct)
+	{
+		maxct = 0x7fffffffL;
+	}
+	else
+	{
+		maxct = maxit*1024L;
+	}
+	coloriter = 0L;
 
-   while(coloriter++ <= maxct) /* loop until keypress or maxit */
-   {
-      if (driver_key_pressed())
-      {
-         driver_mute();
-         alloc_resume(100,1);
-         put_resume(sizeof(count),&count,sizeof(color),&color,
-             sizeof(oldrow),&oldrow,sizeof(oldcol),&oldcol,
-             sizeof(x),&x,sizeof(y),&y,sizeof(z),&z,sizeof(t),&t,
-             sizeof(l_orbit),&l_orbit,sizeof(coloriter),&coloriter,
-             0);
-         ret = -1;
-         break;
-      }
-      if (++count > 1000)
-      {        /* time to switch colors? */
-         count = 0;
-         if (++color >= colors)   /* another color to switch to? */
-            color = 1;  /* (don't use the background color) */
-      }
+	if (resuming)
+	{
+		start_resume();
+		get_resume(sizeof(count), &count, sizeof(color), &color,
+			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
+			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+			sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+			0);
+		end_resume();
+	}
 
-      col = (int)((multiply(cvt.a,x,bitshift) + multiply(cvt.b,y,bitshift) + cvt.e) >> bitshift);
-      row = (int)((multiply(cvt.c,x,bitshift) + multiply(cvt.d,y,bitshift) + cvt.f) >> bitshift);
-      if(overflow)
-      {
-         overflow = 0;
-         return(ret);
-      }
-      if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
-      {
-         if ((soundflag&7) > 1)
-         {
-            double yy;
-            yy = *soundvar;
-            yy = yy/fudge;
-            w_snd((int)(yy*100+basehertz));
-         }
-         if(oldcol != -1 && connect)
-            driver_draw_line(col,row,oldcol,oldrow,color%colors);
-         else if(!start)
-            (*plot)(col,row,color%colors);
-         oldcol = col;
-         oldrow = row;
-         start = 0;
-      }
-      else if((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
-         return(ret);
-      else
-         oldrow = oldcol = -1;
+	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	{
+		if (driver_key_pressed())
+		{
+			driver_mute();
+			alloc_resume(100, 1);
+			put_resume(sizeof(count), &count, sizeof(color), &color,
+				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
+				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
+				sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+				0);
+			ret = -1;
+			break;
+		}
+		if (++count > 1000)
+		{        /* time to switch colors? */
+			count = 0;
+			if (++color >= colors)   /* another color to switch to? */
+			{
+				color = 1;  /* (don't use the background color) */
+			}
+		}
 
-      /* Calculate the next point */
-      if(LORBIT(p0, p1, p2))
-         break;
-      if(fp)
-         fprintf(fp,orbitsave_format,(double)*p0/fudge,(double)*p1/fudge,0.0);
-   }
-   if(fp)
-      fclose(fp);
-   return(ret);
+		col = (int)((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
+		row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
+		if (overflow)
+		{
+			overflow = 0;
+			return ret;
+		}
+		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		{
+			if ((soundflag & 7) > 1)
+			{
+				double yy;
+				yy = *soundvar;
+				yy = yy/fudge;
+				w_snd((int)(yy*100+basehertz));
+			}
+			if (oldcol != -1 && connect)
+			{
+				driver_draw_line(col, row, oldcol, oldrow, color%colors);
+			}
+			else if (!start)
+			{
+				(*plot)(col, row, color%colors);
+			}
+			oldcol = col;
+			oldrow = row;
+			start = 0;
+		}
+		else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
+		{
+			return ret;
+		}
+		else
+		{
+			oldrow = oldcol = -1;
+		}
+
+		/* Calculate the next point */
+		if (LORBIT(p0, p1, p2))
+		{
+			break;
+		}
+		if (fp)
+		{
+			fprintf(fp, orbitsave_format, (double)*p0/fudge, (double)*p1/fudge, 0.0);
+		}
+	}
+	if (fp)
+	{
+		fclose(fp);
+	}
+	return ret;
 }
 
 static int orbit3dlongcalc(void)
