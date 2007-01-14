@@ -16,7 +16,7 @@
 
 #define TIMER_ID 1
 
-static Plot *s_me = NULL;
+static Plot *s_plot = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
 
 static void
@@ -95,25 +95,25 @@ static void plot_OnPaint(HWND window)
 	for (y = ps.rcPaint.top; y < ps.rcPaint.bottom; y++)
 	{
 		int x;
-		BYTE *pixel = &s_me->pixels[y*s_me->width + ps.rcPaint.left];
+		BYTE *pixel = &s_plot->pixels[y*s_plot->width + ps.rcPaint.left];
 		for (x = ps.rcPaint.left; x < ps.rcPaint.right; x++)
 		{
-			SetPixel(dc, x, y, RGB(s_me->clut[*pixel][0], s_me->clut[*pixel][1], s_me->clut[*pixel][2]));
+			SetPixel(dc, x, y, RGB(s_plot->clut[*pixel][0]*4, s_plot->clut[*pixel][1]*4, s_plot->clut[*pixel][2]*4));
 			++pixel;
 		}
 	}
 	EndPaint(window, &ps);
 
-	s_me->dirty = FALSE;
+	s_plot->dirty = FALSE;
 	{
 		RECT r = { -1, -1, -1, -1 };
-		s_me->dirty_region = r;
+		s_plot->dirty_region = r;
 	}
 }
 
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
-	_ASSERTE(s_me != NULL);
+	_ASSERTE(s_plot != NULL);
 	switch (message)
 	{
 	case WM_PAINT: HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint); break;
@@ -122,6 +122,43 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 	}
 
 	return 0;
+}
+
+/*----------------------------------------------------------------------
+*
+* init_clut --
+*
+* Put something nice in the dac.
+*
+* The conditions are:
+*	Colors 1 and 2 should be bright so ifs fractals show up.
+*	Color 15 should be bright for lsystem.
+*	Color 1 should be bright for bifurcation.
+*	Colors 1, 2, 3 should be distinct for periodicity.
+*	The color map should look good for mandelbrot.
+*	The color map should be good if only 128 colors are used.
+*
+* Results:
+*	None.
+*
+* Side effects:
+*	Loads the dac.
+*
+*----------------------------------------------------------------------
+*/
+static void
+init_clut(BYTE clut[256][3])
+{
+	int i;
+	for (i=0;i < 256;i++)
+	{
+		clut[i][0] = (i >> 5)*8+7;
+		clut[i][1] = (((i+16) & 28) >> 2)*8+7;
+		clut[i][2] = (((i+2) & 3))*16+15;
+	}
+	clut[0][0] = clut[0][1] = clut[0][2] = 0;
+	clut[1][0] = clut[1][1] = clut[1][2] = 63;
+	clut[2][0] = 47; clut[2][1] = clut[2][2] = 63;
 }
 
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
@@ -166,7 +203,7 @@ void plot_window(Plot *p, HWND parent)
 	if (NULL == p->window)
 	{
 		init_pixels(p);
-		s_me = p;
+		s_plot = p;
 		p->window = CreateWindow(s_window_class,
 			p->title,
 			parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,

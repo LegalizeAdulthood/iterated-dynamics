@@ -19,10 +19,6 @@
 #include "../win32/plot.h"
 
 extern int windows_delay(int ms);
-extern void writevideo(int x, int y, int color);
-extern int readvideo(int x, int y);
-extern int readvideopalette(void);
-extern int writevideopalette(void);
 
 extern HINSTANCE g_instance;
 
@@ -216,43 +212,6 @@ parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 	}
 }
 
-/*----------------------------------------------------------------------
-*
-* initdacbox --
-*
-* Put something nice in the dac.
-*
-* The conditions are:
-*	Colors 1 and 2 should be bright so ifs fractals show up.
-*	Color 15 should be bright for lsystem.
-*	Color 1 should be bright for bifurcation.
-*	Colors 1, 2, 3 should be distinct for periodicity.
-*	The color map should look good for mandelbrot.
-*	The color map should be good if only 128 colors are used.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Loads the dac.
-*
-*----------------------------------------------------------------------
-*/
-static void
-initdacbox()
-{
-	int i;
-	for (i=0;i < 256;i++)
-	{
-		g_dac_box[i][0] = (i >> 5)*8+7;
-		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
-		g_dac_box[i][2] = (((i+2) & 3))*16+15;
-	}
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
-}
-
 static void
 show_hide_windows(HWND show, HWND hide)
 {
@@ -327,7 +286,6 @@ win32_init(Driver *drv, int *argc, char **argv)
 		return FALSE;
 	}
 	plot_init(&di->plot, g_instance, "Plot");
-	initdacbox();
 
 	/* filter out driver arguments */
 	{

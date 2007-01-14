@@ -24,12 +24,6 @@ typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
 typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 
 extern void windows_delay(int ms);
-extern int startvideo();
-extern int endvideo();
-extern void writevideo(int x, int y, int color);
-extern int readvideo(int x, int y);
-extern int readvideopalette(void);
-extern int writevideopalette(void);
 
 extern HINSTANCE g_instance;
 
@@ -193,7 +187,6 @@ check_arg(Win32DiskDriver *di, char *arg)
 *	Color 1 should be bright for bifurcation.
 *	Colors 1, 2, 3 should be distinct for periodicity.
 *	The color map should look good for mandelbrot.
-*	The color map should be good if only 128 colors are used.
 *
 * Results:
 *	None.
@@ -214,8 +207,8 @@ initdacbox()
 		g_dac_box[i][2] = (((i+2) & 3))*16+15;
 	}
 	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
+	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 255;
+	g_dac_box[2][0] = 190; g_dac_box[2][1] = g_dac_box[2][2] = 255;
 }
 
 /* handle_help_tab

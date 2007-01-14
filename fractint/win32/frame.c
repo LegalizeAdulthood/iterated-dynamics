@@ -131,7 +131,6 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 {
 	switch (message)
 	{
-	case WM_ERASEBKGND:		return 1;
 	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo); break;
 	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);			break;
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);			break;
@@ -163,7 +162,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 		wc.hInstance = g_frame.instance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = NULL;
+		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
 		wc.lpszMenuName = g_frame.title;
 		wc.lpszClassName = windowClass;
 

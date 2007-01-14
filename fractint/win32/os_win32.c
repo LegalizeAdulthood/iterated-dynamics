@@ -557,7 +557,7 @@ void spindac(int dir, int inc)
 			}
 		}
 	}
-	//writevideopalette();
+	driver_write_palette();
 	driver_delay(colors - g_dac_count - 1);
 }
 
