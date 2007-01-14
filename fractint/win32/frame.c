@@ -121,10 +121,12 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 	frame_add_key_press(k);
 }
 
-static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
+static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 {
-	lpMinMaxInfo->ptMaxSize.x = g_frame.width;
-	lpMinMaxInfo->ptMaxSize.y = g_frame.height;
+	info->ptMaxSize.x = g_frame.width;
+	info->ptMaxSize.y = g_frame.height;
+	info->ptMaxTrackSize = info->ptMaxSize;
+	info->ptMinTrackSize = info->ptMaxSize;
 }
 
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -162,7 +164,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 		wc.hInstance = g_frame.instance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+		wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND+1);
 		wc.lpszMenuName = g_frame.title;
 		wc.lpszClassName = windowClass;
 
