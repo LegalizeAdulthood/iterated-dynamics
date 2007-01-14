@@ -29,5 +29,6 @@ extern int frame_key_pressed(void);
 extern int frame_get_key_press(int option);
 extern int frame_pump_messages(int waitflag);
 extern void frame_schedule_alarm(int soon);
+extern void frame_resize(int width, int height);
 
 #endif
