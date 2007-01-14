@@ -8,6 +8,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "drivers.h"
 
 #define PIXELROUND 0.00001
 
@@ -44,14 +45,13 @@ void dispbox(void)
    int boxc = (colors-1)&boxcolor;
    unsigned char *values = (unsigned char *)boxvalues;
    int rgb[3];
-   //xorTARGA = 1;
    for(i=0;i<boxcount;i++)
    {
       if(g_is_true_color && truemode)
       {
-         gettruecolor(boxx[i]-sxoffs,boxy[i]-syoffs,&rgb[0],&rgb[1],&rgb[2]);
-         puttruecolor(boxx[i]-sxoffs,boxy[i]-syoffs,
-                      rgb[0]^255,rgb[1]^255,rgb[2]^255);
+         driver_get_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,&rgb[0],&rgb[1],&rgb[2],NULL);
+         driver_put_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,
+                      rgb[0]^255,rgb[1]^255,rgb[2]^255,255);
       }
       else
          values[i] = (unsigned char)getcolor(boxx[i]-sxoffs,boxy[i]-syoffs);
@@ -65,13 +65,11 @@ void dispbox(void)
          else
             putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,boxc);
       }
-   //xorTARGA = 0;
 }
 
 void clearbox(void)
 {
    int i;
-   //xorTARGA = 1;
    if(g_is_true_color && truemode)
    {
       dispbox();
@@ -84,7 +82,6 @@ void clearbox(void)
          putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,values[i]);
       }
    }
-   //xorTARGA = 0;
 }
 #endif
 

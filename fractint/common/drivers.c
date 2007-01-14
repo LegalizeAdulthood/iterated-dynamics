@@ -299,4 +299,16 @@ driver_delay(int ms)
 	(*g_driver->delay)(g_driver, ms);
 }
 
+void
+driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a)
+{
+	(*g_driver->get_truecolor)(g_driver, x, y, r, g, b, a);
+}
+
+void
+driver_put_truecolor(int x, int y, int r, int g, int b, int a)
+{
+	(*g_driver->put_truecolor)(g_driver, x, y, r, g, b, a);
+}
+
 #endif

@@ -58,6 +58,8 @@ struct tagDriver
 	/* writes a single pixel */			void (*write_pixel)(Driver *drv, int x, int y, int color);
 	/* reads a span of pixel */			void (*read_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);
 	/* writes a span of pixels */		void (*write_span)(Driver *drv, int y, int x, int lastx, BYTE *pixels);
+										void (*get_truecolor)(Driver *drv, int x, int y, int *r, int *g, int *b, int *a);
+										void (*put_truecolor)(Driver *drv, int x, int y, int r, int g, int b, int a);
 	/* set copy/xor line */				void (*set_line_mode)(Driver *drv, int mode);
 	/* draw line */						void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2, int color);
 	/* poll or block for a key */		int (*get_key)(Driver *drv);
@@ -111,6 +113,8 @@ struct tagDriver
     name_##_write_pixel, \
     name_##_read_span, \
     name_##_write_span, \
+	name_##_get_truecolor, \
+	name_##_put_truecolor, \
     name_##_set_line_mode, \
     name_##_draw_line, \
     name_##_get_key, \
@@ -194,6 +198,8 @@ extern int driver_read_pixel(int x, int y);
 extern void driver_write_pixel(int x, int y, int color);
 extern void driver_read_span(int y, int x, int lastx, BYTE *pixels);
 extern void driver_write_span(int y, int x, int lastx, BYTE *pixels);
+extern void driver_get_truecolor(int x, int y, int *r, int *g, int *b, int *a);
+extern void driver_put_truecolor(int x, int y, int r, int g, int b, int a);
 extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
 extern int driver_get_key(void);
@@ -239,6 +245,8 @@ extern void driver_delay(int ms);
 #define driver_write_pixel(_x, _y, _color)			(*g_driver->write_pixel)(g_driver, _x, _y, _color)
 #define driver_read_span(_y, _x, _lastx, _pixels)	(*g_driver->read_span(_y, _x, _lastx, _pixels)
 #define driver_write_span(_y, _x, _lastx, _pixels)	(*g_driver->write_span)(g_driver, _y, _x, _lastx, _pixels)
+#define driver_get_truecolor(_x,_y, _r,_g,_b,_a)	(*g_driver->get_truecolor)(g_driver, _x, _y, _r, _g, _b, _a)
+#define driver_put_truecolor(_x,_y, _r,_g,_b,_a)	(*g_driver->put_trueoclor)(g_driver, _x, _y, _r, _g, _b, _a)
 #define driver_set_line_mode(_m)					(*g_driver->set_line_mode)(g_driver, _m)
 #define driver_draw_line(x1_, y1_, x2_, y2_, clr_)	(*g_driver->draw_line)(x1_, y1_, x1_, y2_, clr_)
 #define driver_get_key()							(*g_driver->get_key)(g_driver)
