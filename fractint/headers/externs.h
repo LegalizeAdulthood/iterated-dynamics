@@ -385,7 +385,7 @@ extern double                parmzoom;
 extern _CMPLX                parm2;
 extern _CMPLX                parm;
 extern int                   passes;
-extern int                   g_patchlevel;
+extern int                   g_patch_level;
 extern int                   periodicitycheck;
 extern struct fls *      pfls;
 extern int                   pixelpi;
