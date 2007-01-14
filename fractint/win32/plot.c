@@ -278,12 +278,16 @@ void plot_draw_line(Plot *p, int x1, int y1, int x2, int y2, int color)
 
 int plot_resize(Plot *p)
 {
+	BOOL status;
+
 	if ((sxdots == p->width) && (sydots == p->height)) 
 	{
 		return 0;
 	}
 
 	init_pixels(p);
+	status = SetWindowPos(p->window, NULL, 0, 0, p->width, p->height, SWP_NOZORDER | SWP_NOMOVE);
+	_ASSERTE(status);
 
 	return !0;
 }
