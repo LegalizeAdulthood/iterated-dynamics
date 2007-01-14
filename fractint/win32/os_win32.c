@@ -542,18 +542,18 @@ void spindac(int dir, int inc)
 		{
 			for (i = 0; i < inc; i++)
 			{
-				bcopy(dacbot, tmp, 3 * sizeof(unsigned char));
-				bcopy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
-				bcopy(tmp, dacbot + len, 3 * sizeof(unsigned char));
+				memcpy(dacbot, tmp, 3 * sizeof(unsigned char));
+				memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
+				memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
 			}
 		}
 		else
 		{
 			for (i = 0; i < inc; i++)
 			{
-				bcopy(dacbot + len, tmp, 3 * sizeof(unsigned char));
-				bcopy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
-				bcopy(tmp, dacbot, 3 * sizeof(unsigned char));
+				memcpy(dacbot + len, tmp, 3 * sizeof(unsigned char));
+				memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
+				memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
 			}
 		}
 	}
@@ -607,17 +607,6 @@ adapter_detect(void)
 		return;
 	done_detect = 1;
 	g_text_safe = 2;
-}
-
-void erasesegment(int segaddress, int segvalue)
-{
-	_ASSERTE(FALSE);
-}
-
-void put_a_char(int ch)
-{
-	/* TODO */
-	_ASSERTE(FALSE);
 }
 
 /*
