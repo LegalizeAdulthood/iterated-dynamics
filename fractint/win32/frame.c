@@ -225,12 +225,18 @@ int frame_get_key_press(int option)
 	return i;
 }
 
+static void frame_adjust_size(int width, int height)
+{
+	g_frame.width = width + GetSystemMetrics(SM_CXFRAME)*2;
+	g_frame.height = height +
+		GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
+}
+
 void frame_window(int width, int height)
 {
 	if (NULL == g_frame.window)
 	{
-		g_frame.width = width;
-		g_frame.height = height;
+		frame_adjust_size(width, height);
 		g_frame.window = CreateWindow("FractintFrame",
 			g_frame.title,
 			WS_OVERLAPPEDWINDOW,
@@ -242,4 +248,15 @@ void frame_window(int width, int height)
 			NULL);
 		ShowWindow(g_frame.window, SW_SHOWNORMAL);
 	}
+}
+
+void frame_resize(int width, int height)
+{
+	BOOL status;
+	
+	frame_adjust_size(width, height);
+	status = SetWindowPos(g_frame.window, NULL,
+		0, 0, g_frame.width, g_frame.height,
+		SWP_NOZORDER | SWP_NOMOVE);
+	_ASSERTE(status);
 }
