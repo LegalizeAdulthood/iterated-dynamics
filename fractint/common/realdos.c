@@ -25,8 +25,8 @@ static int menu_checkkey(int curkey,int choice);
 /*
 #define PRODUCTION
 */
-int g_release = 2100;	/* this has 2 implied decimals; increment it every synch */
-int g_patchlevel = 0;	/* patchlevel for DOS version */
+int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
+int g_patch_level = 4;	/* patchlevel for DOS version */
 #ifdef XFRACT
 int xrelease=304;
 #endif
@@ -304,8 +304,8 @@ void helptitle()
       sprintf(buf,"%01d",g_release%10);
       strcat(msg,buf);
       }
-   if (g_patchlevel) {
-      sprintf(buf,".%d",g_patchlevel);
+   if (g_patch_level) {
+      sprintf(buf,".%d",g_patch_level);
       strcat(msg,buf);
       }
    putstringcenter(0,0,80,C_TITLE,msg);
