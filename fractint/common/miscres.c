@@ -708,56 +708,11 @@ void set_trig_pointers(int which)
    }
 }
 
-static char sfractal_type[] =     {"Fractal type:"};
-static char sitem_name[] =        {"Item name:"};
-static char sitem_file[] =        {"Item file:"};
-static char s3D_transform[] =     {"3D Transform"};
-static char syou_are_cycling[] =  {"You are in color-cycling mode"};
-static char sfloating_point[] =   {"Floating-point"};
-static char ssolid_guessing[] =   {"Solid Guessing"};
-static char sboundary_tracing[] = {"Boundary Tracing"};
-static char stesseral[] =         {"Tesseral"};
-static char sdiffusion[] =        {"Diffusion"};
-static char sorbits[] =           {"Orbits"};
-static char scalculation_time[] = {"Calculation time:"};
-static char siterations[] =       {" 1000's of points:"};
-static char scornersxy[] =        {"Corners:                X                     Y"};
-static char stop_left[] =         {"Top-l"};
-static char sbottom_right[] =     {"Bot-r"};
-static char sbottom_left[] =      {"Bot-l"};
-static char scenter[] =           {"Ctr"};
-static char struncate[] =         {"(Center values shown truncated to 320 decimals)"};
-static char smag[] =              {"Mag"};
-static char sxmag[] =             {"X-Mag-Factor"};
-static char srot[] =              {"Rotation"};
-static char sskew[] =             {"Skew"};
-static char sparams[] =           {"Params "};
-static char siteration_maximum[] ={"Current (Max) Iteration: "};
-static char seffective_bailout[] ={"     Effective bailout: "};
-static char scurrent_rseed[] =    {"Current 'rseed': "};
-static char sinversion_radius[] = {"Inversion radius: "};
-static char sxcenter[] =          {"  xcenter: "};
-static char sycenter[] =          {"  ycenter: "};
-static char sparms_chgd[] = {"Parms chgd since generated"};
-static char sstill_being[] = {"Still being generated"};
-static char sinterrupted_resumable[] = {"Interrupted, resumable"};
-static char sinterrupted_non_resumable[] = {"Interrupted, non-resumable"};
-static char simage_completed[] = {"Image completed"};
-static char sflag_is_activated[] = {" flag is activated"};
-static char sinteger_math[]      = {"Integer math is in use"};
-static char sin_use_required[] = {" in use (required)"};
-static char sarbitrary_precision[] = {"Arbitrary precision "};
 #ifdef XFRACT
 static char spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
 #else
 static char spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};
 #endif
-static char spressanykey1[] = {"Press Esc to continue, Backspace for first screen"};
-static char sbatch[] = {" (Batch mode)"};
-static char ssavename[] = {"Savename: "};
-static char sstopsecret[] = {"Top Secret Developer's Screen"};
-static char sthreepass[] = {" (threepass)"};
-static char sreallylongtime[] = {"A long time! (> 24.855 days)"};
 
 void get_calculation_time(char *msg, long ctime)
 {
@@ -767,7 +722,7 @@ void get_calculation_time(char *msg, long ctime)
 	     (ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
    }
    else
-      strcpy(msg,sreallylongtime);
+      strcpy(msg, "A long time! (> 24.855 days)");
 }
 
 static void show_str_var(char *name, char *var, int *row, char *msg)
@@ -803,7 +758,7 @@ int tab_display_2(char *msg)
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
 
 	row = 1;
-	putstringcenter(row++, 0, 80, C_PROMPT_HI, sstopsecret);
+	putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
 	write_row(++row, "Version %d patch %d", g_release, g_patchlevel);
 	write_row(++row, "%ld of %ld bignum memory used", maxptr, maxstack);
@@ -865,7 +820,7 @@ int tab_display_2(char *msg)
 */
     write_row(row++, "minstackavail %d llimit2 %ld use_grid %d",
         minstackavail, llimit2, use_grid);
-	putstringcenter(24, 0, 80, C_GENERAL_LO, spressanykey1);
+	putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
 	/* display keycodes while waiting for ESC, BACKSPACE or TAB */
@@ -935,10 +890,10 @@ top:
 	helptitle();
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
 	s_row = 2;
-	driver_put_string(s_row, 2, C_GENERAL_MED, sfractal_type);
+	driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
 	if (display3d > 0)
 	{
-		driver_put_string(s_row, 16, C_GENERAL_HI, s3D_transform);
+		driver_put_string(s_row, 16, C_GENERAL_HI, "3D Transform");
 	}
 	else
 	{
@@ -948,10 +903,10 @@ top:
 		i = 0;
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, sitem_name);
+			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row+1, 16, C_GENERAL_HI, FormName);
 			i = (int) strlen(FormName)+1;
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, sitem_file);
+			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(FormFileName) >= 29)
 			{
 				addrow = 1;
@@ -962,9 +917,9 @@ top:
 		driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
 		if (fractype == LSYSTEM)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, sitem_name);
+			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row+1, 16, C_GENERAL_HI, LName);
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, sitem_file);
+			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(LFileName) >= 28)
 			{
 				addrow = 1;
@@ -973,9 +928,9 @@ top:
 		}
 		if (fractype == IFS || fractype == IFS3D)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, sitem_name);
+			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName);
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, sitem_file);
+			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(IFSFileName) >= 28)
 			{
 				addrow = 1;
@@ -986,27 +941,27 @@ top:
 
 	switch (calc_status)
 	{
-	case 0:  msgptr = sparms_chgd;
+	case 0:  msgptr = "Parms chgd since generated";
 		break;
-	case 1:  msgptr = sstill_being;
+	case 1:  msgptr = "Still being generated";
 		break;
-	case 2:  msgptr = sinterrupted_resumable;
+	case 2:  msgptr = "Interrupted, resumable";
 		break;
-	case 3:  msgptr = sinterrupted_non_resumable;
+	case 3:  msgptr = "Interrupted, non-resumable";
 		break;
-	case 4:  msgptr = simage_completed;
+	case 4:  msgptr = "Image completed";
 		break;
 	default: msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
 	if (initbatch && calc_status != CALCSTAT_PARAMS_CHANGED)
 	{
-		driver_put_string(-1, -1, C_GENERAL_HI, sbatch);
+		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
 
 	if (helpmode == HELPCYCLING)
 	{
-		driver_put_string(s_row+1, 45, C_GENERAL_HI, syou_are_cycling);
+		driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
 	++s_row;
 	/* if (bf_math == 0) */
@@ -1029,19 +984,19 @@ top:
 	{
 		if (j)
 		{
-			driver_put_string(s_row, 45, C_GENERAL_HI, sfloating_point);
+			driver_put_string(s_row, 45, C_GENERAL_HI, "Floating-point");
 			driver_put_string(-1, -1, C_GENERAL_HI,
-				(j == 1) ? sflag_is_activated : sin_use_required);
+				(j == 1) ? " flag is activated" : " in use (required)");
 		}
 		else
 		{
-			driver_put_string(s_row, 45, C_GENERAL_HI, sinteger_math);
+			driver_put_string(s_row, 45, C_GENERAL_HI, "Integer math is in use");
 		}
 	}
 	else
 	{
 		sprintf(msg, "(%-d decimals)", decimals /*getprecbf(CURRENTREZ)*/);
-		driver_put_string(s_row, 45, C_GENERAL_HI, sarbitrary_precision);
+		driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 	i = 1;
@@ -1057,7 +1012,7 @@ top:
 		}
 	}
 	s_row += addrow;
-	driver_put_string(s_row, 2, C_GENERAL_MED, ssavename);
+	driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
 	driver_put_string(s_row, -1, C_GENERAL_HI, savename);
 
 	++s_row;
@@ -1071,31 +1026,31 @@ top:
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			if (usr_stdcalcmode == '3')
 			{
-				driver_put_string(s_row, -1, C_GENERAL_HI, sthreepass);
+				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
 		case 1:
-			driver_put_string(s_row, 2, C_GENERAL_HI, ssolid_guessing);
+			driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
 			if (usr_stdcalcmode == '3')
 			{
-				driver_put_string(s_row, -1, C_GENERAL_HI, sthreepass);
+				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
 		case 2:
-			driver_put_string(s_row, 2, C_GENERAL_HI, sboundary_tracing);
+			driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
 			break;
 		case 3:
 			sprintf(msg, "Processing row %d (of %d) of input image", currow, fileydots);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			break;
 		case 4:
-			driver_put_string(s_row, 2, C_GENERAL_HI, stesseral);
+			driver_put_string(s_row, 2, C_GENERAL_HI, "Tesseral");
 			break;
 		case 5:		
-			driver_put_string(s_row, 2, C_GENERAL_HI, sdiffusion);
+			driver_put_string(s_row, 2, C_GENERAL_HI, "Diffusion");
 			break;
 		case 6:
-			driver_put_string(s_row, 2, C_GENERAL_HI, sorbits);
+			driver_put_string(s_row, 2, C_GENERAL_HI, "Orbits");
 			break;
 		}
 		++s_row;
@@ -1141,7 +1096,7 @@ top:
 			++s_row;
 		}
 	}
-	driver_put_string(s_row, 2, C_GENERAL_MED, scalculation_time);
+	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
 	get_calculation_time(msg, calctime);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
@@ -1153,7 +1108,7 @@ top:
 
 	if ((curfractalspecific->flags&INFCALC) && (coloriter != 0))
 	{
-		driver_put_string(s_row, -1, C_GENERAL_MED, siterations);
+		driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
 		sprintf(msg, " %ld of %ld", coloriter-2, maxct);
 		driver_put_string(s_row, -1, C_GENERAL_HI, msg);
 	}
@@ -1189,7 +1144,7 @@ top:
 				truncate = 1;
 			}
 			truncaterow = row;
-			driver_put_string(++s_row, 2, C_GENERAL_MED, scenter);
+			driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
 			driver_put_string(s_row, 8, C_GENERAL_MED, s_x);
 			bftostr(msg, dec, bfXctr);
 			if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1)
@@ -1200,59 +1155,59 @@ top:
 			bftostr(msg, dec, bfYctr);
 			if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1 || truncate)
 			{
-				driver_put_string(truncaterow, 2, C_GENERAL_MED, struncate);
+				driver_put_string(truncaterow, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
 			}
-			driver_put_string(++s_row, 2, C_GENERAL_MED, smag);
+			driver_put_string(++s_row, 2, C_GENERAL_MED, "Mag");
 #ifdef USE_LONG_DOUBLE
 			sprintf(msg, "%10.8Le", Magnification);
 #else
 			sprintf(msg, "%10.8le", Magnification);
 #endif
 			driver_put_string(-1, 11, C_GENERAL_HI, msg);
-			driver_put_string(++s_row, 2, C_GENERAL_MED, sxmag);
+			driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
 			sprintf(msg, "%11.4f   ", Xmagfactor);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(-1, -1, C_GENERAL_MED, srot);
+			driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
 			sprintf(msg, "%9.3f   ", Rotation);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(-1, -1, C_GENERAL_MED, sskew);
+			driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
 			sprintf(msg, "%9.3f", Skew);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
 		}
 		else /* bf != 1 */
 		{
-			driver_put_string(s_row, 2, C_GENERAL_MED, scornersxy);
-			driver_put_string(++s_row, 3, C_GENERAL_MED, stop_left);
+			driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
+			driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
 			sprintf(msg, "%20.16f  %20.16f", xxmin, yymax);
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
-			driver_put_string(++s_row, 3, C_GENERAL_MED, sbottom_right);
+			driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
 			sprintf(msg, "%20.16f  %20.16f", xxmax, yymin);
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
 			if (xxmin != xx3rd || yymin != yy3rd)
 			{
-				driver_put_string(++s_row, 3, C_GENERAL_MED, sbottom_left);
+				driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
 				sprintf(msg, "%20.16f  %20.16f", xx3rd, yy3rd);
 				driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			}
 			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-			driver_put_string(s_row += 2, 2, C_GENERAL_MED, scenter);
+			driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
 			sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(-1, -1, C_GENERAL_MED, smag);
+			driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
 #ifdef USE_LONG_DOUBLE
 			sprintf(msg, " %10.8Le", Magnification);
 #else
 			sprintf(msg, " %10.8le", Magnification);
 #endif
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(++s_row, 2, C_GENERAL_MED, sxmag);
+			driver_put_string(++s_row, 2, C_GENERAL_MED, "X-Mag-Factor");
 			sprintf(msg, "%11.4f   ", Xmagfactor);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(-1, -1, C_GENERAL_MED, srot);
+			driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
 			sprintf(msg, "%9.3f   ", Rotation);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
-			driver_put_string(-1, -1, C_GENERAL_MED, sskew);
+			driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
 			sprintf(msg, "%9.3f", Skew);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
 		}
@@ -1274,7 +1229,7 @@ top:
 				else
 					col = -1;
 				if (k == 0) /* only true with first displayed parameter */
-					driver_put_string(++s_row, 2, C_GENERAL_MED, sparams);
+					driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
 				sprintf(msg, "%3d: ", i+1);
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
 				if (*p == '+')
@@ -1288,29 +1243,29 @@ top:
 			}
 		}
 	}
-	driver_put_string(s_row += 2, 2, C_GENERAL_MED, siteration_maximum);
+	driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
 	sprintf(msg, "%ld (%ld)", coloriter, maxit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	driver_put_string(-1, -1, C_GENERAL_MED, seffective_bailout);
+	driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
 	sprintf(msg, "%f", rqlim);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
 	if (fractype == PLASMA || fractype == ANT || fractype == CELLULAR)
 	{
-		driver_put_string(++s_row, 2, C_GENERAL_MED, scurrent_rseed);
+		driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
 		sprintf(msg, "%d", rseed);
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
 	if (invert)
 	{
-		driver_put_string(++s_row, 2, C_GENERAL_MED, sinversion_radius);
+		driver_put_string(++s_row, 2, C_GENERAL_MED, "Inversion radius: ");
 		sprintf(msg, "%12.9f", f_radius);
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
-		driver_put_string(-1, -1, C_GENERAL_MED, sxcenter);
+		driver_put_string(-1, -1, C_GENERAL_MED, "  xcenter: ");
 		sprintf(msg, "%12.9f", f_xcenter);
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
-		driver_put_string(-1, -1, C_GENERAL_MED, sycenter);
+		driver_put_string(-1, -1, C_GENERAL_MED, "  ycenter: ");
 		sprintf(msg, "%12.9f", f_ycenter);
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
