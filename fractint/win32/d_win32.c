@@ -220,7 +220,7 @@ show_hide_windows(HWND show, HWND hide)
 }
 
 static void
-frame_size(Win32Driver *di, int *width, int *height, BOOL *center_graphics)
+max_size(Win32Driver *di, int *width, int *height, BOOL *center_graphics)
 {
 	*center_graphics = TRUE;
 	*width = di->wintext.max_width;
@@ -376,8 +376,8 @@ static int
 win32_resize(Driver *drv)
 {
 	DI(di);
+	int width, height;
 	BOOL center_graphics;
-	DWORD status;
 
 	if ((xdots == di->plot.width) ||
 		(ydots == di->plot.height))
@@ -385,11 +385,8 @@ win32_resize(Driver *drv)
 		return 0;
 	}
 
-	frame_size(di, &g_frame.width, &g_frame.height, &center_graphics);
-	status = SetWindowPos(g_frame.window, NULL,
-		0, 0, g_frame.width, g_frame.height,
-		SWP_NOZORDER | SWP_NOMOVE);
-	_ASSERTE(status);
+	max_size(di, &width, &height, &center_graphics);
+	frame_resize(width, height);
 	plot_resize(&di->plot);
 	center_windows(di, center_graphics);
 	return 1;
@@ -677,7 +674,7 @@ win32_window(Driver *drv)
 	int height;
 	BOOL center_graphics;
 
-	frame_size(di, &width, &height, &center_graphics);
+	max_size(di, &width, &height, &center_graphics);
 	frame_window(width, height);
 	di->wintext.hWndParent = g_frame.window;
 	wintext_texton(&di->wintext);
