@@ -222,6 +222,12 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\win32\d_win32.c">
+			</File>
+			<File
+				RelativePath=".\win32\d_win32_disk.c">
+			</File>
+			<File
 				RelativePath=".\win32\fpu087.c">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -509,31 +515,6 @@
 					RelativePath=".\common\zoom.c">
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="drivers"
-			Filter="">
-			<File
-				RelativePath=".\drivers\d_win32.c">
-			</File>
-			<File
-				RelativePath=".\drivers\d_win32_disk.c">
-			</File>
-			<File
-				RelativePath=".\drivers\d_x11.c">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="headers"
@@ -1098,6 +1079,25 @@ copy fractint.hlp $(ProjectDir)
 					</FileConfiguration>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="X11"
+			Filter="">
+			<File
+				RelativePath=".\x11\d_x11.c">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\BUGS.txt">
