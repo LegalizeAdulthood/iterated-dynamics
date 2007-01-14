@@ -856,7 +856,6 @@ extern double                xcjul;
 extern int                   xdots;
 extern long                  xmax;
 extern long                  xmin;
-//extern int                   xorTARGA;
 extern int                   xshift1;
 extern int                   xshift;
 extern int                   xtrans;
