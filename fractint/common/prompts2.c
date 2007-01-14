@@ -1260,62 +1260,71 @@ int get_commands()              /* execute commands from file */
 
 void goodbye()                  /* we done.  Bail out */
 {
-   char goodbyemessage[40];
-   int ret;
-   static char gbm[]={"   Thank You for using "FRACTINT};
-#if !defined(XFRACT) && !defined(_WIN32)
-   union REGS r;
-#endif
-   if (resume_info != 0)
-      end_resume();
-   if (evolve_handle != 0)
-      MemoryRelease(evolve_handle);
-   if (gene_handle != 0)
-      MemoryRelease(gene_handle);
-   if (imgboxhandle != 0 || prmboxhandle != 0)
-      ReleaseParamBox();
-   if (history != 0)
-      MemoryRelease(history);
-   if (oldhistory_handle != 0)
-      MemoryRelease(oldhistory_handle);
-   enddisk();
-   discardgraphics();
-   ExitCheck();
-   strcpy(goodbyemessage, gbm);
+	char goodbyemessage[40] = "   Thank You for using "FRACTINT;
+	int ret;
+
+	if (mapdacbox)
+	{
+		free(mapdacbox);
+		mapdacbox = NULL;
+	}
+	if (resume_info != 0)
+	{
+		end_resume();
+	}
+	if (evolve_handle != 0)
+	{
+		MemoryRelease(evolve_handle);
+	}
+	if (gene_handle != 0)
+	{
+		MemoryRelease(gene_handle);
+	}
+	if (imgboxhandle != 0 || prmboxhandle != 0)
+	{
+		ReleaseParamBox();
+	}
+	if (history != 0)
+	{
+		MemoryRelease(history);
+	}
+	if (oldhistory_handle != 0)
+	{
+		MemoryRelease(oldhistory_handle);
+	}
+	enddisk();
+	discardgraphics();
+	ExitCheck();
 #ifdef WINFRACT
-   return;
+	return;
 #endif
-   if(*s_makepar != 0)
-      driver_set_for_text();
+	if (*s_makepar != 0)
+	{
+		driver_set_for_text();
+	}
 #ifdef XFRACT
-   UnixDone();
-   printf("\n\n\n%s\n",goodbyemessage); /* printf takes pointer */
-#else
-#if !defined(_WIN32)
-   if(*s_makepar != 0)
-   {
-      r.h.al = (char)((g_mode_7_text == 0) ? exitmode : 7);
-      r.h.ah = 0;
-      int86(0x10, &r, &r);
-      printf("\n\n\n%s\n",goodbyemessage); /* printf takes far pointer */
-   }
+	UnixDone();
+	printf("\n\n\n%s\n",goodbyemessage); /* printf takes pointer */
 #endif
-#endif
-   if(*s_makepar != 0)
-   {
-      driver_move_cursor(6,0);
-      discardgraphics(); /* if any emm/xmm tied up there, release it */
-   }
-   stopslideshow();
-   end_help();
-   ret = 0;
-   if (initbatch == 3) /* exit with error code for batch file */
-     ret = 2;
-   else if (initbatch == 4)
-     ret = 1;
-   close_drivers();
-   _CrtDumpMemoryLeaks();
-   exit(ret);
+	if (*s_makepar != 0)
+	{
+		driver_move_cursor(6,0);
+		discardgraphics(); /* if any emm/xmm tied up there, release it */
+	}
+	stopslideshow();
+	end_help();
+	ret = 0;
+	if (initbatch == 3) /* exit with error code for batch file */
+	{
+		ret = 2;
+	}
+	else if (initbatch == 4)
+	{
+		ret = 1;
+	}
+	close_drivers();
+	_CrtDumpMemoryLeaks();
+	exit(ret);
 }
 
 
