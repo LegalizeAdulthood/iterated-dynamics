@@ -248,6 +248,10 @@ void frame_window(int width, int height)
 			NULL);
 		ShowWindow(g_frame.window, SW_SHOWNORMAL);
 	}
+	else
+	{
+		frame_resize(width, height);
+	}
 }
 
 void frame_resize(int width, int height)
