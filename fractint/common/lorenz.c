@@ -1366,6 +1366,8 @@ int orbit2dfloat()
 
    if(inside > 0)
       color = inside;
+   else
+      color = 2;
    if(color >= colors)
       color = 1;
    oldcol = oldrow = -1;
@@ -1494,6 +1496,8 @@ int orbit2dlong()
       soundvar = &z;
    if(inside > 0)
       color = inside;
+   else
+      color = 2;
    if(color >= colors)
       color = 1;
    oldcol = oldrow = -1;
