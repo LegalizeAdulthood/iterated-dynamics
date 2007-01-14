@@ -232,10 +232,9 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
     me->char_ychars = WINTEXT_MAX_ROW;
 
 	/* maximum screen width */
-    me->max_width = me->char_xchars*me->char_width + GetSystemMetrics(SM_CXFRAME)*2;
+    me->max_width = me->char_xchars*me->char_width;
     /* maximum screen height */
-	me->max_height = me->char_ychars*me->char_height + GetSystemMetrics(SM_CYFRAME)*2
-            - 1 + GetSystemMetrics(SM_CYCAPTION);
+	me->max_height = me->char_ychars*me->char_height;
 
     /* set up the font and caret information */
     for (i = 0; i < 3; i++)
