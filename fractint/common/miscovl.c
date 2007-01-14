@@ -482,9 +482,9 @@ skip_UI:
             for(k=1;k<4;k++)
                if (CommandComment[k][0])
                   fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
-            if (g_patchlevel != 0 && colorsonly == 0)
+            if (g_patch_level != 0 && colorsonly == 0)
                fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-                  Fractint, g_release, g_patchlevel); 
+                  Fractint, g_release, g_patch_level); 
          }
          write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
          if(xm > 1 || ym > 1)
@@ -2450,7 +2450,7 @@ static char *expand_var(char *var, char *buf)
    }
    else if(strcmp(var,s_patch) == 0)   /* 1 or 2 chars */
    {
-      sprintf(buf,"%d",g_patchlevel);
+      sprintf(buf,"%d",g_patch_level);
       out = buf;
    }
    else if(strcmp(var,s_xdots) == 0)   /* 2 to 4 chars */
