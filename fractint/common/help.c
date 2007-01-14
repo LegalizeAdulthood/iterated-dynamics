@@ -1005,13 +1005,17 @@ static int exe_path(char *filename, char *path)
    }
 
 static int find_file(char *filename, char *path)
-   {
-   if ( exe_path(filename, path) )
-      if( can_read_file(path))
-         return (1);
-   findpath(filename,path);
-   return ( (path[0]) ? 1 : 0);
-   }
+{
+	if (exe_path(filename, path))
+	{
+		if (can_read_file(path))
+		{
+			return 1;
+		}
+	}
+	findpath(filename, path);
+	return path[0] ? 1 : 0;
+}
 
 static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
    {
