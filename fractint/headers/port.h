@@ -10,9 +10,11 @@
 #ifndef PORT_H          /* If this is defined, this file has been       */
 #define PORT_H          /* included already in this module.             */
 
+#if defined(_WIN32)
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#endif
 
 #if !defined(XFRACT) && !defined(_WIN32)
 #  include <dos.h>
