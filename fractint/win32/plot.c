@@ -91,7 +91,7 @@ init_pixels(Plot *p)
 
 		h->biSize = sizeof(p->bmi.bmiHeader);
 		h->biWidth = p->width;
-		h->biHeight = p->height; /* negative to specify top-down DIB */
+		h->biHeight = p->height;
 		h->biPlanes = 1;
 		h->biBitCount = 8;
 		h->biCompression = BI_RGB;
