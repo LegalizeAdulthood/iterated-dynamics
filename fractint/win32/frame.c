@@ -123,8 +123,8 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 
 static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 {
-	info->ptMaxSize.x = g_frame.width;
-	info->ptMaxSize.y = g_frame.height;
+	info->ptMaxSize.x = g_frame.nc_width;
+	info->ptMaxSize.y = g_frame.nc_height;
 	info->ptMaxTrackSize = info->ptMaxSize;
 	info->ptMinTrackSize = info->ptMaxSize;
 }
@@ -227,8 +227,10 @@ int frame_get_key_press(int option)
 
 static void frame_adjust_size(int width, int height)
 {
-	g_frame.width = width + GetSystemMetrics(SM_CXFRAME)*2;
-	g_frame.height = height +
+	g_frame.width = width;
+	g_frame.nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
+	g_frame.height = height;
+	g_frame.nc_height = height +
 		GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
@@ -242,8 +244,8 @@ void frame_window(int width, int height)
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,               /* default horizontal position */
 			CW_USEDEFAULT,               /* default vertical position */
-			g_frame.width,
-			g_frame.height,
+			g_frame.nc_width,
+			g_frame.nc_height,
 			NULL, NULL, g_frame.instance,
 			NULL);
 		ShowWindow(g_frame.window, SW_SHOWNORMAL);
@@ -260,7 +262,7 @@ void frame_resize(int width, int height)
 	
 	frame_adjust_size(width, height);
 	status = SetWindowPos(g_frame.window, NULL,
-		0, 0, g_frame.width, g_frame.height,
+		0, 0, g_frame.nc_width, g_frame.nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
 }
