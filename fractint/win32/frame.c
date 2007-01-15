@@ -30,7 +30,6 @@ static void frame_OnPaint(HWND window)
     PAINTSTRUCT ps;
     HDC hDC = BeginPaint(window, &ps);
 	EndPaint(window, &ps);
-	OutputDebugString("frame_OnPaint\n");
 }
 
 static void frame_add_key_press(unsigned int key)
@@ -104,7 +103,7 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	}
 
 	/* use this call only for non-ASCII keys */
-	if (!(vk == VK_SHIFT || vk == VK_CONTROL) && (j == 0))
+	if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
 	{
 		frame_add_key_press(i);
 	}
