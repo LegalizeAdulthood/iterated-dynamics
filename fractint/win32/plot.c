@@ -8,11 +8,13 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
-#include "plot.h"
 
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+
+#include "plot.h"
+#include "ods.h"
 
 #define TIMER_ID 1
 
@@ -24,8 +26,8 @@ plot_set_dirty_region(Plot *p, int xmin, int ymin, int xmax, int ymax)
 {
 	RECT *r = &p->dirty_region;
 
-	_ASSERTE(xmin <= xmax);
-	_ASSERTE(ymin <= ymax);
+	_ASSERTE(xmin < xmax);
+	_ASSERTE(ymin < ymax);
 	_ASSERTE((r->left <= r->right) && (r->top <= r->bottom));
 	if (r->left < 0)
 	{
@@ -74,7 +76,8 @@ init_pixels(Plot *p)
 	}
 	p->width = sxdots;
 	p->height = sydots;
-	p->pixels_len = p->width * p->height * sizeof(BYTE);
+	p->row_len = ((p->width * sizeof(p->pixels[0]) + 3)/4)*4;
+	p->pixels_len = p->row_len * p->height;
 	_ASSERTE(p->pixels_len > 0);
 	p->pixels = (BYTE *) malloc(p->pixels_len);
 	memset(p->pixels, 0, p->pixels_len);
@@ -83,15 +86,39 @@ init_pixels(Plot *p)
 		RECT dirty_rect = { -1, -1, -1, -1 };
 		p->dirty_region = dirty_rect;
 	}
+	{
+		BITMAPINFOHEADER *h = &p->bmi.bmiHeader;
+
+		h->biSize = sizeof(p->bmi.bmiHeader);
+		h->biWidth = p->width;
+		h->biHeight = -p->height; /* negative to specify top-down DIB */
+		h->biPlanes = 1;
+		h->biBitCount = 8;
+		h->biCompression = BI_RGB;
+		h->biSizeImage = 0;
+		h->biClrUsed = 256;
+	}
 }
 
 static void plot_OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
     HDC dc = BeginPaint(window, &ps);
-	int y;
+	int width, height;
 
 	OutputDebugString("plot_OnPaint\n");
+#if 1
+	width = ps.rcPaint.right - ps.rcPaint.left;
+	height = ps.rcPaint.bottom - ps.rcPaint.top;
+	if (width > 0 && height > 0)
+	{
+		DWORD status = StretchDIBits(dc,
+			ps.rcPaint.left, ps.rcPaint.top, width, height,
+			ps.rcPaint.left, ps.rcPaint.top, width, height,
+			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+		_ASSERTE(status != GDI_ERROR);
+	}
+#else
 	for (y = ps.rcPaint.top; y < ps.rcPaint.bottom; y++)
 	{
 		int x;
@@ -102,6 +129,7 @@ static void plot_OnPaint(HWND window)
 			++pixel;
 		}
 	}
+#endif
 	EndPaint(window, &ps);
 
 	s_plot->dirty = FALSE;
@@ -213,6 +241,12 @@ void plot_window(Plot *p, HWND parent)
 			p->height,
 			parent, NULL, p->instance,
 			NULL);
+
+		{
+			HDC dc = GetDC(p->window);
+			g_got_real_dac = (GetDeviceCaps(dc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE;
+			ReleaseDC(p->window, dc);
+		}
 	}
 }
 
@@ -221,7 +255,7 @@ void plot_write_pixel(Plot *p, int x, int y, int color)
 	_ASSERTE(p->pixels);
 	_ASSERTE(x >= 0 && x < p->width);
 	_ASSERTE(y >= 0 && y < p->height);
-	p->pixels[y*p->width + x] = (BYTE) (color & 0xFF);
+	p->pixels[y*p->row_len + x] = (BYTE) (color & 0xFF);
 	plot_set_dirty_region(p, x, y, x+1, y+1);
 }
 
@@ -230,7 +264,7 @@ int plot_read_pixel(Plot *p, int x, int y)
 	_ASSERTE(p->pixels);
 	_ASSERTE(x >= 0 && x < p->width);
 	_ASSERTE(y >= 0 && y < p->height);
-	return (int) p->pixels[y*p->width + x];
+	return (int) p->pixels[y*p->row_len + x];
 }
 
 void plot_write_span(Plot *p, int y, int x, int lastx, const BYTE *pixels)
@@ -247,10 +281,11 @@ void plot_write_span(Plot *p, int y, int x, int lastx, const BYTE *pixels)
 
 void plot_flush(Plot *p)
 {
-	OutputDebugString("plot_flush\n");
 	if (p->dirty)
 	{
-		OutputDebugString("plot_flush: dirty\n");
+		ODS4("plot_flush: tl(%d,%d) br(%d,%d)",
+			p->dirty_region.left, p->dirty_region.top,
+			p->dirty_region.right, p->dirty_region.bottom);
 		InvalidateRect(p->window, &p->dirty_region, FALSE);
 	}
 }
@@ -319,6 +354,10 @@ int plot_write_palette(Plot *p)
 		p->clut[i][0] = g_dac_box[i][0];
 		p->clut[i][1] = g_dac_box[i][1];
 		p->clut[i][2] = g_dac_box[i][2];
+
+		p->bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
+		p->bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
+		p->bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
 	}
 
 	return 0;

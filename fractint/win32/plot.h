@@ -12,12 +12,15 @@ struct tagPlot
 
 	BOOL dirty;
 	RECT dirty_region;
+	BITMAPINFO bmi;						/* contains first clut entry too */
+	RGBQUAD bmiColors[255];				/* color look up table */
 
 	BYTE *pixels;
 	size_t pixels_len;
+	size_t row_len;
 	int width;
 	int height;
-	unsigned char clut[256][3];				/* color look up table */
+	unsigned char clut[256][3];
 };
 
 extern int plot_init(Plot *p, HINSTANCE instance, LPCSTR title);
