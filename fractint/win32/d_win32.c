@@ -14,9 +14,11 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+
 #include "WinText.h"
 #include "frame.h"
 #include "plot.h"
+#include "ods.h"
 
 extern int windows_delay(int ms);
 
@@ -29,24 +31,6 @@ extern HINSTANCE g_instance;
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 #define DI(name_) Win32Driver *name_ = (Win32Driver *) drv
-
-#define RT_VERBOSE
-#if defined(RT_VERBOSE)
-#define ODS(text_)						ods(__FILE__, __LINE__, text_)
-#define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
-extern void ods(const char *file, unsigned int line, const char *format, ...);
-#else
-#define ODS(text_)
-#define ODS1(fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)
-#endif
 
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
@@ -379,8 +363,7 @@ win32_resize(Driver *drv)
 	int width, height;
 	BOOL center_graphics;
 
-	if ((xdots == di->plot.width) ||
-		(ydots == di->plot.height))
+	if ((xdots == di->plot.width) && (ydots == di->plot.height))
 	{
 		return 0;
 	}
@@ -767,7 +750,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		boxcount = 0;
 		g_dac_learn = 1;
 		g_dac_count = cyclelimit;
-		g_got_real_dac = TRUE;
+		g_got_real_dac = TRUE;			/* we are "VGA" */
 
 		driver_read_palette();
 	}
@@ -785,22 +768,6 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	win32_set_for_graphics(drv);
 }
 
-/*
-; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    putstring(row, col, attr, string) where
-;         row, col = row and column to start printing.
-;         attr = color attribute.
-;         string = pointer to the null terminated string to print.
-;    Written for the A86 assembler (which has much less 'red tape' than MASM)
-;    by Bob Montgomery, Orlando, Fla.             7-11-88
-;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
-;    Furthur mucked up to handle graphics
-;       video modes by Bert Tyler                 1-07-90
-;    Reworked for:  row,col update/inherit;
-;       620x200x2 inverse video;  ptr to string;
-;       fix to avoid scrolling when last posn chgd;
-;       divider removed;  newline ctl chars;  PB  9-25-90
-*/
 static void
 win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
