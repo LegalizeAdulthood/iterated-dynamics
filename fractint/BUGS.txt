@@ -25,9 +25,9 @@ INSERT doesn't reset g_text_rbase and g_text_cbase or something.
 
 -----
 
-Alpha 2
+Beta 1
 ==========================================================================
-The par hypnoteyes2 causes a crash - with either float=yes or no and the 
-program window disappears.
+After zooming around for a little while with PAGEUP, things get confused
+and it no longer renders new images and the zoom box is not erased.
 
-Most pars seem to work.
+There is some funniness when switching between video modes sometimes.
