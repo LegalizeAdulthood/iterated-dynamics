@@ -39,22 +39,22 @@ plot_set_dirty_region(Plot *p, int xmin, int ymin, int xmax, int ymax)
 	}
 	else
 	{
-		if (r->left > xmin)
+		if (xmin < r->left)
 		{
 			r->left = xmin;
 			p->dirty = TRUE;
 		}
-		if (r->right < xmax)
+		if (xmax > r->right)
 		{
 			r->right = xmax;
 			p->dirty = TRUE;
 		}
-		if (r->top > ymin)
+		if (ymin < r->top)
 		{
 			r->top = ymin;
 			p->dirty = TRUE;
 		}
-		if (r->bottom < ymax)
+		if (ymax > r->bottom)
 		{
 			r->bottom = ymax;
 			p->dirty = TRUE;
@@ -76,7 +76,8 @@ init_pixels(Plot *p)
 	}
 	p->width = sxdots;
 	p->height = sydots;
-	p->row_len = ((p->width * sizeof(p->pixels[0]) + 3)/4)*4;
+	p->row_len = p->width * sizeof(p->pixels[0]);
+	p->row_len = (p->row_len + 3)/4)*4;
 	p->pixels_len = p->row_len * p->height;
 	_ASSERTE(p->pixels_len > 0);
 	p->pixels = (BYTE *) malloc(p->pixels_len);
@@ -118,12 +119,6 @@ static void plot_OnPaint(HWND window)
 		_ASSERTE(status != GDI_ERROR);
 	}
 	EndPaint(window, &ps);
-
-	s_plot->dirty = FALSE;
-	{
-		RECT r = { -1, -1, -1, -1 };
-		s_plot->dirty_region = r;
-	}
 }
 
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -270,10 +265,10 @@ void plot_flush(Plot *p)
 {
 	if (p->dirty)
 	{
-		ODS4("plot_flush: tl(%d,%d) br(%d,%d)",
-			p->dirty_region.left, p->dirty_region.top,
-			p->dirty_region.right, p->dirty_region.bottom);
+		RECT r = { -1, -1, -1, -1 };
 		InvalidateRect(p->window, &p->dirty_region, FALSE);
+		p->dirty = FALSE;
+		p->dirty_region = r;
 	}
 }
 
