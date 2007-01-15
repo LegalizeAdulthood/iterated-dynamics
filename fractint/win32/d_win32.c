@@ -592,11 +592,12 @@ win32_key_pressed(Driver *drv)
 	DI(di);
 	int ch = di->key_buffer;
 
+	plot_flush(&di->plot);
+	frame_pump_messages(FALSE);
 	if (ch)
 	{
 		return ch;
 	}
-	plot_flush(&di->plot);
 	ch = frame_get_key_press(0);
 	if (ch)
 	{

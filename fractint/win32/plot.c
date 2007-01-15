@@ -77,7 +77,7 @@ init_pixels(Plot *p)
 	p->width = sxdots;
 	p->height = sydots;
 	p->row_len = p->width * sizeof(p->pixels[0]);
-	p->row_len = (p->row_len + 3)/4)*4;
+	p->row_len = ((p->row_len + 3)/4)*4;
 	p->pixels_len = p->row_len * p->height;
 	_ASSERTE(p->pixels_len > 0);
 	p->pixels = (BYTE *) malloc(p->pixels_len);
@@ -112,10 +112,17 @@ static void plot_OnPaint(HWND window)
 	_ASSERTE(width >= 0 && height >= 0);
 	if (width > 0 && height > 0)
 	{
+#if 0
 		DWORD status = StretchDIBits(dc,
 			r->left, r->top, width, height,
 			r->left, r->top, width, height,
 			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+#else
+		DWORD status = StretchDIBits(dc,
+			0, 0, s_plot->width, s_plot->height,
+			0, 0, s_plot->width, s_plot->height,
+			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+#endif
 		_ASSERTE(status != GDI_ERROR);
 	}
 	EndPaint(window, &ps);
@@ -266,7 +273,11 @@ void plot_flush(Plot *p)
 	if (p->dirty)
 	{
 		RECT r = { -1, -1, -1, -1 };
+#if 0
 		InvalidateRect(p->window, &p->dirty_region, FALSE);
+#else
+		InvalidateRect(p->window, NULL, FALSE);
+#endif
 		p->dirty = FALSE;
 		p->dirty_region = r;
 	}
