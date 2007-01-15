@@ -265,4 +265,5 @@ void frame_resize(int width, int height)
 		0, 0, g_frame.nc_width, g_frame.nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
+
 }
