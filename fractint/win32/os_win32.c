@@ -545,18 +545,18 @@ void spindac(int dir, int inc)
 		{
 			for (i = 0; i < inc; i++)
 			{
-				memcpy(dacbot, tmp, 3 * sizeof(unsigned char));
-				memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
-				memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
+				memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
+				memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
+				memcpy(dacbot + len, tmp, 3 * sizeof(unsigned char));
 			}
 		}
 		else
 		{
 			for (i = 0; i < inc; i++)
 			{
-				memcpy(dacbot + len, tmp, 3 * sizeof(unsigned char));
-				memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
-				memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
+				memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
+				memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
+				memcpy(dacbot, tmp, 3 * sizeof(unsigned char));
 			}
 		}
 	}
