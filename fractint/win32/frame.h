@@ -11,6 +11,8 @@ struct tagFrame
 	char title[80];
 	int width;
 	int height;
+	int nc_width;
+	int nc_height;
 	HWND child;
 	BOOL has_focus;
 
