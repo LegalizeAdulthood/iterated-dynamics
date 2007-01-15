@@ -514,7 +514,10 @@ long readticker(void)
 void windows_delay(int delaytime)
 {
 	frame_pump_messages(FALSE);
-	Sleep(delaytime);
+	if (delaytime >= 0)
+	{
+		Sleep(delaytime);
+	}
 }
 
 /*
