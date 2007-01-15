@@ -8,29 +8,20 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
-#include "WinText.h"
 
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
 
+#include "WinText.h"
+#include "ods.h"
+
 #define TIMER_ID 1
 
 static int s_showing_cursor = FALSE;
 
-#define RT_VERBOSE
 #if defined(RT_VERBOSE)
-int carrot_count = 0;
-extern void ods(const char *file, unsigned int line, const char *format, ...);
-#define ODS(fmt_)				ods(__FILE__, __LINE__, fmt_)
-#define ODS1(fmt_, _1)			ods(__FILE__, __LINE__, fmt_, _1)
-#define ODS2(fmt_, _1, _2)		ods(__FILE__, __LINE__, fmt_, _1, _2)
-#define ODS3(fmt_, _1, _2, _3)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3)
-#else
-#define ODS(fmt_)
-#define ODS1(fmt_, _1)
-#define ODS2(fmt_, _1, _2)
-#define ODS3(fmt_, _1, _2, _3)
+static int carrot_count = 0;
 #endif
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))

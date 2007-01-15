@@ -14,8 +14,10 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+
 #include "WinText.h"
-#include "..\win32\frame.h"
+#include "frame.h"
+#include "ods.h"
 
 /* read/write-a-dot/line routines */
 typedef void t_dotwriter(int, int, int);
@@ -34,22 +36,6 @@ extern HINSTANCE g_instance;
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 #define DI(name_) Win32DiskDriver *name_ = (Win32DiskDriver *) drv
-
-#if RT_VERBOSE
-#define ODS(text_)						ods(__FILE__, __LINE__, text_)
-#define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)			ods(__FILE__, __LINE__, fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)		ods(__FILE__, __LINE__, fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)		ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)	ods(__FILE__, __LINE__, fmt_, _1, _2, _3, _4, _5)
-#else
-#define ODS(text_)
-#define ODS1(fmt_, arg_)
-#define ODS2(fmt_, a1_, a2_)
-#define ODS3(fmt_, a1_, a2_, a3_)
-#define ODS4(fmt_, _1, _2, _3, _4)
-#define ODS5(fmt_, _1, _2, _3, _4, _5)
-#endif
 
 static t_dotwriter win32_dot_writer;
 static t_dotreader win32_dot_reader;
