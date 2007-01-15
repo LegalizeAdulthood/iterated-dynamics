@@ -91,7 +91,7 @@ init_pixels(Plot *p)
 
 		h->biSize = sizeof(p->bmi.bmiHeader);
 		h->biWidth = p->width;
-		h->biHeight = -p->height; /* negative to specify top-down DIB */
+		h->biHeight = p->height; /* negative to specify top-down DIB */
 		h->biPlanes = 1;
 		h->biBitCount = 8;
 		h->biCompression = BI_RGB;
@@ -104,32 +104,19 @@ static void plot_OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
     HDC dc = BeginPaint(window, &ps);
-	int width, height;
+	RECT *r = &ps.rcPaint;
+	int width = r->right - r->left;
+	int height = r->bottom - r->top;
 
-	OutputDebugString("plot_OnPaint\n");
-#if 1
-	width = ps.rcPaint.right - ps.rcPaint.left;
-	height = ps.rcPaint.bottom - ps.rcPaint.top;
+	_ASSERTE(width >= 0 && height >= 0);
 	if (width > 0 && height > 0)
 	{
 		DWORD status = StretchDIBits(dc,
-			ps.rcPaint.left, ps.rcPaint.top, width, height,
-			ps.rcPaint.left, ps.rcPaint.top, width, height,
+			r->left, r->top, width, height,
+			r->left, r->top, width, height,
 			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
 		_ASSERTE(status != GDI_ERROR);
 	}
-#else
-	for (y = ps.rcPaint.top; y < ps.rcPaint.bottom; y++)
-	{
-		int x;
-		BYTE *pixel = &s_plot->pixels[y*s_plot->width + ps.rcPaint.left];
-		for (x = ps.rcPaint.left; x < ps.rcPaint.right; x++)
-		{
-			SetPixel(dc, x, y, RGB(s_plot->clut[*pixel][0]*4, s_plot->clut[*pixel][1]*4, s_plot->clut[*pixel][2]*4));
-			++pixel;
-		}
-	}
-#endif
 	EndPaint(window, &ps);
 
 	s_plot->dirty = FALSE;
