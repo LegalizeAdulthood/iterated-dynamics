@@ -1,7 +1,6 @@
 #if !defined(ODS_H)
 #define ODS_H
 
-#define RT_VERBOSE
 #if defined(RT_VERBOSE)
 #define ODS(text_)						ods(__FILE__, __LINE__, text_)
 #define ODS1(fmt_, arg_)				ods(__FILE__, __LINE__, fmt_, arg_)
