@@ -270,6 +270,9 @@
 				RelativePath=".\win32\frame.h">
 			</File>
 			<File
+				RelativePath=".\win32\ods.h">
+			</File>
+			<File
 				RelativePath=".\win32\os_win32.c">
 			</File>
 			<File
