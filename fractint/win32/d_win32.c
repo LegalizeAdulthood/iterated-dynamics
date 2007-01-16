@@ -32,6 +32,32 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) Win32Driver *name_ = (Win32Driver *) drv
 
+typedef struct tagWin32Driver Win32Driver;
+struct tagWin32Driver
+{
+	Driver pub;
+
+	Frame frame;
+	Plot plot;
+	WinText wintext;
+
+	BOOL text_not_graphics;
+
+	/* key_buffer
+	*
+	* When we peeked ahead and saw a keypress, stash it here for later
+	* feeding to our caller.
+	*/
+	int key_buffer;
+
+	int screen_count;
+	BYTE *saved_screens[MAXSCREENS];
+	int saved_cursor[MAXSCREENS+1];
+	BOOL cursor_shown;
+	int cursor_row;
+	int cursor_col;
+};
+
 /* VIDEOINFO:															*/
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
 /*         char    comment[26];    Comments (UNTESTED, etc)             */
@@ -88,32 +114,6 @@ static VIDEOINFO modes[] =
 #undef MODE27
 #undef MODE19
 #undef DRIVER_MODE
-
-typedef struct tagWin32Driver Win32Driver;
-struct tagWin32Driver
-{
-	Driver pub;
-
-	Frame frame;
-	Plot plot;
-	WinText wintext;
-
-	BOOL text_not_graphics;
-
-	/* key_buffer
-	*
-	* When we peeked ahead and saw a keypress, stash it here for later
-	* feeding to our caller.
-	*/
-	int key_buffer;
-
-	int screen_count;
-	BYTE *saved_screens[MAXSCREENS];
-	int saved_cursor[MAXSCREENS+1];
-	BOOL cursor_shown;
-	int cursor_row;
-	int cursor_col;
-};
 
 /* check_arg
  *
@@ -278,7 +278,7 @@ win32_terminate(Driver *drv)
 	ODS("win32_terminate");
 
 	plot_terminate(&di->plot);
-
+	wintext_destroy(&di->wintext);
 	{
 		int i;
 		for (i = 0; i < NUM_OF(di->saved_screens); i++)
@@ -394,7 +394,6 @@ static int
 win32_read_palette(Driver *drv)
 {
 	DI(di);
-	ODS("win32_read_palette");
 	return plot_read_palette(&di->plot);
 }
 
@@ -417,7 +416,6 @@ static int
 win32_write_palette(Driver *drv)
 {
 	DI(di);
-	ODS("win32_write_palette");
 	return plot_write_palette(&di->plot);
 }
 
@@ -573,7 +571,15 @@ win32_redraw(Driver *drv)
 {
 	DI(di);
 	ODS("win32_redraw");
-	wintext_paintscreen(&di->wintext, 0, 80, 0, 25);
+	if (di->text_not_graphics)
+	{
+		wintext_paintscreen(&di->wintext, 0, 80, 0, 25);
+	}
+	else
+	{
+		plot_redraw(&di->plot);
+	}
+	frame_pump_messages(FALSE);
 }
 
 /* win32_key_pressed
@@ -717,19 +723,23 @@ win32_set_for_graphics(Driver *drv)
 	win32_hide_text_cursor(drv);
 }
 
-/*
-; **************** Function setvideomode(ax, bx, cx, dx) ****************
-;       This function sets the (alphanumeric or graphic) video mode
-;       of the monitor.   Called with the proper values of AX thru DX.
-;       No returned values, as there is no particular standard to
-;       adhere to in this case.
+/* win32_set_clear
+*/
+static void
+win32_set_clear(Driver *drv)
+{
+	DI(di);
+	if (di->text_not_graphics)
+	{
+		wintext_clear(&di->wintext);
+	}
+	else
+	{
+		plot_clear(&di->plot);
+	}
+}
 
-;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
-;       genuine VGA or register compatable adapter and program the registers
-;       directly using the coded value in DX)
-
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
+/* win32_set_video_mode
 */
 static void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
@@ -767,11 +777,14 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	set_normal_line();
 
 	win32_set_for_graphics(drv);
+	win32_set_clear(drv);
 }
 
 static void
 win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
+	DI(di);
+	_ASSERTE(di->text_not_graphics);
 	if (-1 != row)
 	{
 		g_text_row = row;
@@ -781,20 +794,12 @@ win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 		g_text_col = col;
 	}
 	{
-		DI(di);
 		int abs_row = g_text_rbase + g_text_row;
 		int abs_col = g_text_cbase + g_text_col;
 		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
 		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
 		wintext_putstring(&di->wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
-}
-
-static void
-win32_set_clear(Driver *drv)
-{
-	DI(di);
-	wintext_clear(&di->wintext);
 }
 
 /************** Function scrollup(toprow, botrow) ******************
@@ -805,7 +810,7 @@ static void
 win32_scroll_up(Driver *drv, int top, int bot)
 {
 	DI(di);
-	ODS2("win32_scroll_up %d, %d", top, bot);
+	_ASSERTE(di->text_not_graphics);
 	wintext_scroll_up(&di->wintext, top, bot);
 }
 
@@ -813,6 +818,7 @@ static BYTE *
 win32_find_font(Driver *drv, int parm)
 {
 	ODS1("win32_find_font %d", parm);
+	_ASSERTE(FALSE);
 	return NULL;
 }
 
@@ -820,6 +826,8 @@ static void
 win32_move_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
+
+	_ASSERTE(di->text_not_graphics);
 	ODS2("win32_move_cursor %d,%d", row, col);
 
 	if (row != -1)
@@ -842,6 +850,8 @@ static void
 win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
 	DI(di);
+
+	_ASSERTE(di->text_not_graphics);
 	if (-1 != row)
 	{
 		g_text_row = row;
@@ -860,15 +870,16 @@ win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 static void
 win32_stack_screen(Driver *drv)
 {
-	Win32Driver *di = (Win32Driver *) drv;
-	ODS("win32_stack_screen");
+	DI(di);
 
+	ODS("win32_stack_screen");
 	di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
 	if (++di->screen_count)
 	{
 		/* already have some stacked */
 		int i = di->screen_count - 1;
 
+		_ASSERTE(di->text_not_graphics);
 		_ASSERTE(i < MAXSCREENS);
 		if (i >= MAXSCREENS)
 		{
@@ -881,6 +892,7 @@ win32_stack_screen(Driver *drv)
 	}
 	else
 	{
+		_ASSERTE(!di->text_not_graphics);
 		win32_set_for_text(drv);
 	}
 }
@@ -888,7 +900,7 @@ win32_stack_screen(Driver *drv)
 static void
 win32_unstack_screen(Driver *drv)
 {
-	Win32Driver *di = (Win32Driver *) drv;
+	DI(di);
 
 	ODS("win32_unstack_screen");
 	_ASSERTE(di->screen_count >= 0);
@@ -896,12 +908,14 @@ win32_unstack_screen(Driver *drv)
 	g_text_col = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
 	{ /* unstack */
+		_ASSERTE(di->text_not_graphics);
 		wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
 		free(di->saved_screens[di->screen_count]);
 		di->saved_screens[di->screen_count] = NULL;
 	}
 	else
 	{
+		_ASSERTE(!di->text_not_graphics);
 		win32_set_for_graphics(drv);
 	}
 	win32_move_cursor(drv, -1, -1);
@@ -910,10 +924,11 @@ win32_unstack_screen(Driver *drv)
 static void
 win32_discard_screen(Driver *drv)
 {
-	Win32Driver *di = (Win32Driver *) drv;
+	DI(di);
 
 	if (--di->screen_count >= 0)
 	{ /* unstack */
+		_ASSERTE(di->text_not_graphics);
 		if (di->saved_screens[di->screen_count])
 		{
 			free(di->saved_screens[di->screen_count]);
@@ -930,6 +945,7 @@ static int
 win32_init_fm(Driver *drv)
 {
 	ODS("win32_init_fm");
+	_ASSERTE(0 && "win32_init_fm called");
 	return 0;
 }
 
