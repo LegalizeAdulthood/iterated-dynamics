@@ -213,6 +213,14 @@ void plot_terminate(Plot *p)
 		free(p->pixels);
 		p->pixels = NULL;
 	}
+
+	{
+		HBITMAP rendering = (HBITMAP) SelectObject(p->memory_dc, (HGDIOBJ) p->backup);
+		_ASSERTE(rendering == p->rendering);
+	}
+	DeleteObject(p->rendering);
+	DeleteDC(p->memory_dc);
+	DestroyWindow(p->window);
 }
 
 void plot_window(Plot *p, HWND parent)
@@ -221,6 +229,7 @@ void plot_window(Plot *p, HWND parent)
 	{
 		init_pixels(p);
 		s_plot = p;
+		p->parent = parent;
 		p->window = CreateWindow(s_window_class,
 			p->title,
 			parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
@@ -233,7 +242,11 @@ void plot_window(Plot *p, HWND parent)
 
 		{
 			HDC dc = GetDC(p->window);
-			g_got_real_dac = (GetDeviceCaps(dc, RASTERCAPS) & RC_PALETTE) ? TRUE : FALSE;
+			p->memory_dc = CreateCompatibleDC(dc);
+			_ASSERTE(p->memory_dc);
+			p->rendering = CreateCompatibleBitmap(p->memory_dc, p->width, p->height);
+			_ASSERTE(p->rendering);
+			p->backup = (HBITMAP) SelectObject(p->memory_dc, (HGDIOBJ) p->rendering);
 			ReleaseDC(p->window, dc);
 		}
 	}
@@ -370,4 +383,17 @@ void plot_schedule_alarm(Plot *me, int delay)
 		DWORD error = GetLastError();
 		_ASSERTE(result);
 	}
+}
+
+void plot_clear(Plot *me)
+{
+	RECT r = { 0, 0, me->width, me->height };
+	memset(me->pixels, 0, me->pixels_len);
+	me->dirty_region = r;
+	me->dirty = TRUE;
+}
+
+void plot_redraw(Plot *me)
+{
+	InvalidateRect(me->window, NULL, FALSE);
 }
