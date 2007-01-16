@@ -299,14 +299,6 @@ int wintext_texton(WinText *me)
     me->cursor_owned = 0;
 	me->showing_cursor = FALSE;
 
-#if 0
-    /* clear the keyboard buffer */
-    me->keypress_count = 0;
-    me->keypress_head  = 0;
-    me->keypress_tail  = 0;
-    me->buffer_init = 0;
-#endif
-
 	/* make sure g_me points to me because CreateWindow
 	 * is going to call the window procedure.
 	 */
@@ -353,67 +345,6 @@ int wintext_textoff(WinText *me)
     me->textmode = 1;
     return 0;
 }
-
-#if 0
-/*
-     simple keyboard logic capable of handling 80
-     typed-ahead keyboard characters (more, if KEYBUFMAX is changed)
-          wintext_addkeypress() inserts a new keypress
-          wintext_getkeypress(0) returns keypress-available info
-          wintext_getkeypress(1) takes away the oldest keypress
-*/
-
-static void wintext_addkeypress(WinText *me, unsigned int keypress)
-{
-	ODS("wintext_addkeypress");
-
-	if (me->textmode != 2)  /* not in the right mode */
-		return;
-
-	if (me->keypress_count >= KEYBUFMAX)
-	{
-		_ASSERTE(me->keypress_count < KEYBUFMAX);
-		/* no room */
-		return;
-	}
-
-	me->keypress_buffer[me->keypress_head] = keypress;
-	if (++me->keypress_head >= KEYBUFMAX)
-	{
-		me->keypress_head = 0;
-	}
-	me->keypress_count++;
-}
-
-unsigned int wintext_getkeypress(WinText *me, int option)
-{
-	int i;
-
-	ODS("wintext_getkeypress");
-	wintext_look_for_activity(me, option);
-
-	if (me->textmode != 2)  /* not in the right mode */
-	{
-		return 27;
-	}
-
-	if (me->keypress_count == 0)
-	{
-		_ASSERTE(option == 0);
-		return 0;
-	}
-
-	i = me->keypress_buffer[me->keypress_tail];
-
-	if (++me->keypress_tail >= KEYBUFMAX)
-	{
-		me->keypress_tail = 0;
-	}
-	me->keypress_count--;
-
-	return i;
-}
-#endif
 
 static void wintext_OnClose(HWND window)
 {
@@ -478,81 +409,6 @@ static void wintext_OnPaint(HWND window)
 	EndPaint(window, &ps);
 }
 
-#if 0
-static int mod_key(int modifier, int code, int fik)
-{
-	SHORT state = GetKeyState(modifier);
-	if ((state & 0x8000) != 0)
-	{
-		return fik;
-	}
-	return 1000 + code;
-}
-
-#define ALT_KEY(fik_)				mod_key(VK_MENU, i, fik_)
-#define CTL_KEY(fik_)				mod_key(VK_CONTROL, i, fik_)
-#define SHF_KEY(fik_)				mod_key(VK_SHIFT, i, fik_)
-
-static void wintext_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
-{
-	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
-	/* a key has been pressed - maybe ASCII, maybe not */
-	/* if it's an ASCII key, 'WM_CHAR' will handle it  */
-	unsigned int i, j, k;
-	ODS("wintext_OnKeyDown");
-	i = MapVirtualKey(vk, 0);
-	j = MapVirtualKey(vk, 2);
-	k = (i << 8) + j;
-
-	/* handle modifier keys on the non-WM_CHAR keys */
-	switch (vk)
-	{
-	case VK_F1:			i = ALT_KEY(FIK_ALT_F1);		break;
-	case VK_DELETE:		i = CTL_KEY(FIK_CTL_DEL);		break;
-	case VK_END:		i = CTL_KEY(FIK_CTL_END);		break;
-	case VK_RETURN:		i = CTL_KEY(FIK_CTL_ENTER);		break;
-	case VK_HOME:		i = CTL_KEY(FIK_CTL_HOME);		break;
-	case VK_INSERT:		i = CTL_KEY(FIK_CTL_INSERT);	break;
-	case VK_SUBTRACT:	i = CTL_KEY(FIK_CTL_MINUS);		break;
-	case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);	break;
-	case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);	break;
-
-	case VK_TAB:
-		if (0x8000 & GetKeyState(VK_CONTROL))
-		{
-			i = FIK_CTL_TAB;
-			j = 0;
-		}
-		break;
-
-	default:
-		if (0 == j)
-		{
-			i += 1000;
-		}
-		break;
-	}
-
-	/* use this call only for non-ASCII keys */
-	if (!(vk == VK_SHIFT || vk == VK_CONTROL) && (j == 0))
-	{
-		wintext_addkeypress(g_me, i);
-	}
-}
-
-static void wintext_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
-{
-	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-	/* an ASCII key has been pressed */
-	unsigned int i, j, k;
-	ODS("wintext_OnChar");
-	i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
-	j = ch;
-	k = (i << 8) + j;
-	wintext_addkeypress(g_me, k);
-}
-#endif
-
 static void wintext_OnSize(HWND window, UINT state, int cx, int cy)
 {
 	ODS("wintext_OnSize");
@@ -594,62 +450,10 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, wintext_OnSetFocus);	break;
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
 	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
-#if 0
-	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);		break;
-	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(hWnd, wParam, lParam, wintext_OnKeyDown);	break;
-	case WM_CHAR:			HANDLE_WM_CHAR(hWnd, wParam, lParam, wintext_OnChar);			break;
-#endif
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
     }
     return 0;
 }
-
-#if 0
-/*
-     simple event-handler and look-for-keyboard-activity process
-
-     called with parameter:
-          0 = tell me if a key was pressed
-          1 = wait for a keypress
-     returns:
-          0 = no activity
-          1 = key pressed
-*/
-
-int wintext_look_for_activity(WinText *me, int waitflag)
-{
-	MSG msg;
-
-	ODS("wintext_look_for_activity");
-
-	if (me->textmode != 2)  /* not in the right mode */
-	{
-		return 0;
-	}
-
-	g_me = me;
-	for (;;)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
-		{
-			/* no messages waiting */
-			if (waitflag == 0 || me->keypress_count != 0 || me->textmode != 2)
-			{
-				return (me->keypress_count == 0) ? 0 : 1;
-			}
-		}
-
-		if (GetMessage(&msg, NULL, 0, 0))
-		{
-			// translate accelerator here?
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-
-	return me->keypress_count == 0 ? 0 : 1;
-}
-#endif
 
 /*
         general routine to send a string to the screen
