@@ -314,14 +314,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			if (i == 0)
 			{
-				driver_buzzer(0);
+				driver_buzzer(BUZZER_COMPLETE);
 			}
 			else
 			{
 				calc_status = CALCSTAT_NO_FRACTAL;
 				if (driver_key_pressed())
 				{
-					driver_buzzer(1);
+					driver_buzzer(BUZZER_INTERRUPT);
 					while (driver_key_pressed()) driver_get_key();
 					texttempmsg("*** load incomplete ***");
 				}
@@ -464,7 +464,7 @@ done:
 				if (ecount == gridsqr)
 				{
 					i = 0;
-					driver_buzzer(0); /* finished!! */
+					driver_buzzer(BUZZER_COMPLETE); /* finished!! */
 				}
 				else
 				{	/* interrupted screen generation, save info */
@@ -510,7 +510,7 @@ done:
 				i = calcfract();       /* draw the fractal using "C" */
 				if (i == 0)
 				{
-					driver_buzzer(0); /* finished!! */
+					driver_buzzer(BUZZER_COMPLETE); /* finished!! */
 				}
 			}
 
@@ -1070,7 +1070,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             *kbdmore = 0;
          }
          else
-            driver_buzzer(2);          /* can't switch */
+            driver_buzzer(BUZZER_ERROR);          /* can't switch */
       }                         /* end of else for if == cellular */
       break;
    case 'j':                    /* inverse julia toggle */
@@ -1104,7 +1104,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
 #endif
       else
-         driver_buzzer(2);
+         driver_buzzer(BUZZER_ERROR);
       break;
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
@@ -1363,7 +1363,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       else
       {
          browsing = FALSE;
-         driver_buzzer(2);             /* can't browse if zooming or diskvideo */
+         driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or diskvideo */
       }
       break;
    case 'b':                    /* make batch file              */
@@ -1374,10 +1374,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       Print_Screen();
       restore_zoom();
       if (!driver_key_pressed())
-         driver_buzzer(0);
+         driver_buzzer(BUZZER_COMPLETE);
       else
       {
-         driver_buzzer(1);
+         driver_buzzer(BUZZER_INTERRUPT);
          driver_get_key();
       }
       return(CONTINUE);
@@ -2577,7 +2577,7 @@ void checkfreemem(int secondpass)
 	}
 	if (extraseg == 0 || tmp == NULL)
 	{
-		driver_buzzer(2);
+		driver_buzzer(BUZZER_ERROR);
 #ifndef XFRACT
 		printf("%Fs",(char *)msg);
 #else

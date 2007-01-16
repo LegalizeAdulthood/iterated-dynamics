@@ -79,7 +79,7 @@ int stopmsg (int flags, char *msg)
      && first_init) {     /* & cmdfiles hasn't finished 1st try */
 #ifdef XFRACT
       driver_set_for_text();
-      driver_buzzer(2);
+      driver_buzzer(BUZZER_ERROR);
       driver_put_string(0,0,15,s_errorstart);
       driver_put_string(2,0,15,msg);
       driver_move_cursor(8,0);
