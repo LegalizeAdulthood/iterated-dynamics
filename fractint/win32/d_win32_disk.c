@@ -285,7 +285,8 @@ win32_disk_terminate(Driver *drv)
 {
 	DI(di);
 	int i;
-	ODS("win32_disk_terminate");
+
+	wintext_destroy(&di->wintext);
 
 	for (i = 0; i < NUM_OF(di->saved_screens); i++)
 	{
