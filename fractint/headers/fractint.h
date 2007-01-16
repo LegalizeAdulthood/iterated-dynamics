@@ -25,6 +25,11 @@ typedef BYTE BOOLEAN;
 #define difftime(now,then) ((now)-(then))
 #endif
 
+/* driver_buzzer() codes */
+#define BUZZER_COMPLETE 0
+#define BUZZER_INTERRUPT 1
+#define BUZZER_ERROR 2
+
 /* stopmsg() flags */
 #define STOPMSG_NO_STACK	1
 #define STOPMSG_CANCEL		2

@@ -433,7 +433,7 @@ dodisk:
          use_this_type = NOWHERE;
          WhichDiskError(1);
          DisplayMemory();
-         driver_buzzer(3);
+         driver_buzzer(BUZZER_ERROR);
          break;
       }
       numTOTALhandles++;

@@ -812,7 +812,7 @@ int help(int action)
 
 	if (help_file == -1)
     {
-		driver_buzzer(2);
+		driver_buzzer(BUZZER_ERROR);
 		return 0;
     }
 
@@ -822,7 +822,7 @@ int help(int action)
 
 	if ((buffer == NULL) || (NULL == link_table) || (NULL == page_table))
     {
-		driver_buzzer(2);
+		driver_buzzer(BUZZER_ERROR);
 		return 0;
     }
 
@@ -1314,7 +1314,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if ( pnum == -1 )    /* successful completion */
       {
-      driver_buzzer(0);
+      driver_buzzer(BUZZER_COMPLETE);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
       driver_get_key();
       return (0);
@@ -1322,7 +1322,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
    if ( pnum == -2 )   /* aborted */
       {
-      driver_buzzer(1);
+      driver_buzzer(BUZZER_INTERRUPT);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
       driver_get_key();
       return (0);

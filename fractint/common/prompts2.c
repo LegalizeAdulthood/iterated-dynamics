@@ -1048,7 +1048,7 @@ int starfield(void)
    for(row = 0; row < ydots; row++) {
       for(col = 0; col < xdots; col++) {
          if (driver_key_pressed()) {
-            driver_buzzer(1);
+            driver_buzzer(BUZZER_INTERRUPT);
             busy = 0;
             return(1);
             }
@@ -1058,7 +1058,7 @@ int starfield(void)
          putcolor(col, row, GausianNumber(c, colors));
       }
    }
-   driver_buzzer(0);
+   driver_buzzer(BUZZER_COMPLETE);
    busy = 0;
    return(0);
 }

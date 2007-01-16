@@ -46,7 +46,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
    if (!(g_got_real_dac || fake_lut)        /* ??? no DAC to rotate! */
 #endif
      || colors < 16) {                  /* strange things happen in 2x modes */
-      driver_buzzer(2);
+      driver_buzzer(BUZZER_ERROR);
       return;
       }
 
@@ -431,7 +431,7 @@ void save_palette()
       merge_pathnames(palname,temp1,2);
       dacfile = fopen(palname,"w");
       if (dacfile == NULL)
-         driver_buzzer(2);
+         driver_buzzer(BUZZER_ERROR);
       else {
 #ifndef XFRACT
          for (i = 0; i < colors; i++)
