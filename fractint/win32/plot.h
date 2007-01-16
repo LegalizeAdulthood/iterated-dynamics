@@ -9,6 +9,9 @@ struct tagPlot
 	HWND parent;
 
 	HWND window;
+	HDC memory_dc;
+	HBITMAP rendering;
+	HBITMAP backup;
 
 	BOOL dirty;
 	RECT dirty_region;
@@ -37,5 +40,7 @@ extern int plot_read_palette(Plot *p);
 extern int plot_write_palette(Plot *p);
 extern void plot_flush(Plot *p);
 extern void plot_schedule_alarm(Plot *me, int delay);
+extern void plot_clear(Plot *me);
+extern void plot_redraw(Plot *me);
 
 #endif
