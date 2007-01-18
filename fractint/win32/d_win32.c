@@ -912,13 +912,12 @@ win32_unstack_screen(Driver *drv)
 		wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
 		free(di->saved_screens[di->screen_count]);
 		di->saved_screens[di->screen_count] = NULL;
+		win32_move_cursor(drv, -1, -1);
 	}
 	else
 	{
-		_ASSERTE(!di->text_not_graphics);
 		win32_set_for_graphics(drv);
 	}
-	win32_move_cursor(drv, -1, -1);
 }
 
 static void
