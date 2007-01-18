@@ -31,3 +31,68 @@ After zooming around for a little while with PAGEUP, things get confused
 and it no longer renders new images and the zoom box is not erased.
 
 There is some funniness when switching between video modes sometimes.
+
+1.  Zoom Box:  Left and right arrows work OK, but functionality of the 
+up and down arrows (and with <ctrl> as well) are reversed.
+2.  Save doesn't show sidebar status.
+3.  Restore of image in a different (or maybe just larger?) resolution 
+than the current video made causes Frac4Win to crash.
+
+
+2.  Save sidebars do work, but from the bottom up.  I didn't notice this 
+before.
+
+3. More on trying to restore - an error message states:
+
+The following files will be included in this error report:
+C:\DOCUME~1\Lee\LOCALS~1\Temp\6a3a_appcompat.txt
+
+But this file does not exist!
+
+5.  <E> palette editor doesn't work
+
+1. the first formula type I tried had a syntax error. But darn, I 
+didn't notice which one. I tried several others and they worked (at 
+least, generated an image). I'll systematically check and rediscover 
+which one it was.
+
+2. I generated a mandelbrot before trying the formula type. The 
+mandelbrot was still on the screen as the formula type generated. 
+This didn't seem to cause as problem, but we should probably clear 
+the screen. 
+
+actually, everything renders bottom-up,
+..have just verified it at the TAB screen..
+
+also, Ctrl^Pad+ and Ctrl^Pad- zoombox
+rotation doesn't work..
+
+mouse is not supposed to work yet, right?
+
+and those double-height video modes,
+as far as i can recall, there's some pixel
+aspect ratio variable burried somewhere..
+
+..wouldn't it be nice if one could specify
+the canvas size directly, say, at the view
+window prompt screen? (..well, later..)
+
+I) started fractint, selected a non-disk video, rendered mandel, so far OK..
+-- then restarted using <Ins>, selected a disk-video mode -> blank screen
+(although it seems to respond to keyboard input, it doesn't display anything)
+..while selecting a non-disk video after an <Ins> restart is OK..
+
+II) started fractint, selected a disk-video mode, "rendered" mandel, OK so far..
+-- on completion, went to the "View Window Options" screen (<v>), lessened
+dimensions, submitted -> fractint crashed (most of the time)
+
+III) started fractint, selected a mode like 8-8-8, or 1280x1024 (formerly VESA),
+-- went to the "View Window Options" screen (<v>), changed nothing, submit
+-> "insufficient free memory/disk space" ... reason:
+
+VESA virtual screen setup is here in effect, trying to figure out the size of the
+video memory -- of course it fails, in win32 environment.. so untill someone
+implements a win32 fullscreen mode AND a win32 virtual screen setup,
+there is no use for virtual screens in a windowed context and i suggest
+turning it off (e.g. make "virtual=n" a default setting)
+
