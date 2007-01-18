@@ -1639,7 +1639,7 @@ static int orbit3dlongcalc(void)
    inf.orbit[1] = initorbitlong[1];
    inf.orbit[2] = initorbitlong[2];
 
-   if(diskvideo)                /* this would KILL a disk drive! */
+   if (driver_diskp())                /* this would KILL a disk drive! */
       notdiskmsg();
 
    fp = open_orbitsave();
@@ -1738,7 +1738,7 @@ static int orbit3dfloatcalc(void)
    inf.orbit[1] = initorbitfp[1];
    inf.orbit[2] = initorbitfp[2];
 
-   if(diskvideo)                /* this would KILL a disk drive! */
+   if (driver_diskp())                /* this would KILL a disk drive! */
       notdiskmsg();
 
    fp = open_orbitsave();
@@ -2199,7 +2199,7 @@ static int ifs3dfloat(void)
    setup_convert_to_screen(&inf.cvt);
    srand(1);
    color_method = (int)param[0];
-   if(diskvideo)                /* this would KILL a disk drive! */
+   if (driver_diskp())                /* this would KILL a disk drive! */
       notdiskmsg();
 
    inf.orbit[0] = 0;
@@ -2293,7 +2293,7 @@ int ifs()                       /* front-end for ifs2d and ifs3d */
 {
    if (ifs_defn == NULL && ifsload() < 0)
       return(-1);
-   if(diskvideo)                /* this would KILL a disk drive! */
+   if (driver_diskp())                /* this would KILL a disk drive! */
       notdiskmsg();
    return((ifs_type == 0) ? ifs2d() : ifs3d());
 }

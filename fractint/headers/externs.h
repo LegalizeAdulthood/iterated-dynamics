@@ -117,7 +117,6 @@ extern int                   disk16bit;
 extern int                   g_disk_flag;						/* disk video active flag */
 extern int                   diskisactive;
 extern int                   disktarga;
-extern int                   diskvideo;
 extern int                   display3d;
 extern long                  distest;
 extern int                   distestwidth;

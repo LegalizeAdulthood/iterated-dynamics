@@ -507,7 +507,7 @@ int diffusion()
    int x,y;
    float r, radius;
 
-   if (diskvideo)
+   if (driver_diskp())
       notdiskmsg();
   
    x = y = -1;
