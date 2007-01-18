@@ -100,12 +100,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			sxoffs = syoffs = 0;
 			rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
-			diskvideo = 0;                 /* set diskvideo flag */
-			if (driver_diskp())		/* default assumption is disk */
-			{
-				diskvideo = 2;
-			}
-
 			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
 			diskisactive = 1;              /* flag for disk-video routines */
 
@@ -117,6 +111,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			else
 			{
 				driver_set_video_mode(&g_video_entry); /* switch video modes */
+				/* switching video modes may have changed drivers or disk flag... */
 				if (g_good_mode == 0)
 				{
 					if (driver_diskp())
@@ -713,6 +708,90 @@ resumeloop:                             /* return here on failed overlays */
 	}
 }
 
+static int look(char *stacked)
+{
+    int oldhelpmode;
+    oldhelpmode = helpmode;
+    helpmode = HELPBROWSE;
+    switch (fgetwindow())
+    {
+    case FIK_ENTER:
+    case FIK_ENTER_2:
+        showfile = 0;       /* trigger load */
+        browsing = TRUE;    /* but don't ask for the file name as it's
+                                * just been selected */
+        if (name_stack_ptr == 15)
+        {                   /* about to run off the end of the file
+                                * history stack so shift it all back one to
+                                * make room, lose the 1st one */
+            int tmp;
+            for (tmp = 1; tmp < 16; tmp++)
+			{
+                strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
+			}
+            name_stack_ptr = 14;
+        }
+        name_stack_ptr++;
+        strcpy(file_name_stack[name_stack_ptr], browsename);
+        /*
+        splitpath(browsename, NULL, NULL, fname, ext);
+        splitpath(readname, drive, dir, NULL, NULL);
+        makepath(readname, drive, dir, fname, ext);
+        */
+        merge_pathnames(readname, browsename, 2);
+        if (askvideo)
+        {
+            driver_stack_screen();   /* save graphics image */
+            *stacked = 1;
+        }
+        return 1;       /* hop off and do it!! */
+
+	case '\\':
+        if (name_stack_ptr >= 1)
+        {
+            /* go back one file if somewhere to go (ie. browsing) */
+            name_stack_ptr--;
+            while (file_name_stack[name_stack_ptr][0] == '\0' 
+                    && name_stack_ptr >= 0)
+			{
+                name_stack_ptr--;
+			}
+            if (name_stack_ptr < 0) /* oops, must have deleted first one */
+			{
+                break;
+			}
+            strcpy(browsename, file_name_stack[name_stack_ptr]);
+            merge_pathnames(readname,browsename,2);
+            browsing = TRUE;
+            showfile = 0;
+            if (askvideo)
+            {
+                driver_stack_screen();/* save graphics image */
+                *stacked = 1;
+            }
+            return 1;
+        }                   /* otherwise fall through and turn off
+                             * browsing */
+	case FIK_ESC:
+	case 'l':              /* turn it off */
+	case 'L':
+		browsing = FALSE;
+		helpmode = oldhelpmode;
+		break;
+
+	case 's':
+		browsing = FALSE;
+		helpmode = oldhelpmode;
+		savetodisk(savename);
+		break;
+
+	default:               /* or no files found, leave the state of browsing alone */
+		break;
+	}
+
+	return 0;
+}
+
 int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
 {
    int i,k;
@@ -1281,91 +1360,16 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       return(RESTORESTART);
    case 'l':
    case 'L':                    /* Look for other files within this view */
-      if ((zwidth == 0) && (!diskvideo))
-         /* not zooming & no disk video */
-      {
-         int oldhelpmode;
-         oldhelpmode = helpmode;
-         helpmode = HELPBROWSE;
-         switch (fgetwindow())
-         {
-         case FIK_ENTER:
-         case FIK_ENTER_2:
-            showfile = 0;       /* trigger load */
-            browsing = TRUE;    /* but don't ask for the file name as it's
-                                 * just been selected */
-            if (name_stack_ptr == 15)
-            {                   /* about to run off the end of the file
-                                 * history stack so shift it all back one to
-                                 * make room, lose the 1st one */
-               int tmp;
-               for (tmp = 1; tmp < 16; tmp++)
-                  strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
-               name_stack_ptr = 14;
-            }
-            name_stack_ptr++;
-            strcpy(file_name_stack[name_stack_ptr], browsename);
-            /*
-            splitpath(browsename, NULL, NULL, fname, ext);
-            splitpath(readname, drive, dir, NULL, NULL);
-            makepath(readname, drive, dir, fname, ext);
-            */
-            merge_pathnames(readname,browsename,2);
-            if (askvideo)
-            {
-               driver_stack_screen();   /* save graphics image */
-               *stacked = 1;
-            }
-            return(RESTORESTART);       /* hop off and do it!! */
-         case '\\':
-            if (name_stack_ptr >= 1)
-            {
-               /* go back one file if somewhere to go (ie. browsing) */
-               name_stack_ptr--;
-               while (file_name_stack[name_stack_ptr][0] == '\0' 
-                      && name_stack_ptr >= 0)
-                  name_stack_ptr--;
-               if (name_stack_ptr < 0) /* oops, must have deleted first one */
-                  break;
-               strcpy(browsename, file_name_stack[name_stack_ptr]);
-               /*
-               splitpath(browsename, NULL, NULL, fname, ext);
-               splitpath(readname, drive, dir, NULL, NULL);
-               makepath(readname, drive, dir, fname, ext);
-               */
-               merge_pathnames(readname,browsename,2);
-               browsing = TRUE;
-               showfile = 0;
-               if (askvideo)
-               {
-                  driver_stack_screen();/* save graphics image */
-                  *stacked = 1;
-               }
-               return(RESTORESTART);
-            }                   /* otherwise fall through and turn off
-                                 * browsing */
-         case FIK_ESC:
-         case 'l':              /* turn it off */
-         case 'L':
-            browsing = FALSE;
-            helpmode = oldhelpmode;
-            break;
-         case 's':
-            browsing = FALSE;
-            helpmode = oldhelpmode;
-            savetodisk(savename);
-            break;
-         default:               /* or no files found, leave the state of
-                                 * browsing */
-            break;              /* alone */
-         }
-      }
-      else
-      {
-         browsing = FALSE;
-         driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or diskvideo */
-      }
-      break;
+		if ((zwidth != 0) || driver_diskp())
+		{
+			browsing = FALSE;
+			driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
+		}
+		else if (look(stacked))
+		{
+			return RESTORESTART;
+		}
+		break;
    case 'b':                    /* make batch file              */
       make_batch_file();
       break;
