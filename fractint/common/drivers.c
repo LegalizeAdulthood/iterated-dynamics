@@ -222,9 +222,9 @@ METHOD_VOID(set_for_graphics)
 METHOD_VOID(set_clear)
 
 BYTE *
-driver_find_font(int parm)
+driver_find_font(void)
 {
-	return (*g_driver->find_font)(g_driver, parm);
+	return (*g_driver->find_font)(g_driver);
 }
 
 void

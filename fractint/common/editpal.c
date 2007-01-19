@@ -398,7 +398,7 @@ void displayc(int x, int y, int fg, int bg, int ch)
    BYTE *ptr;
 
    if( font8x8 == NULL)
-      if ( (font8x8 = driver_find_font(0)) == NULL )
+      if ( (font8x8 = driver_find_font()) == NULL )
          return ;
 
    ptr = ((BYTE *)font8x8) + ch*FONT_DEPTH;
@@ -3469,7 +3469,7 @@ void EditPalette(void)       /* called by fractint */
 
    mem_init(strlocn, 10*1024);
 
-   if ( (font8x8 = driver_find_font(0)) == NULL )
+   if ( (font8x8 = driver_find_font()) == NULL )
       return ;
 
    if (sxdots < 133 || sydots < 174)
