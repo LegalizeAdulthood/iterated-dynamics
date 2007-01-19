@@ -73,7 +73,7 @@ struct tagDriver
 	/* set for text mode & save gfx */	void (*set_for_text)(Driver *drv);
 	/* restores graphics and data */	void (*set_for_graphics)(Driver *drv);
 	/* clears text screen */			void (*set_clear)(Driver *drv);
-	/* for palette editor */			BYTE *(*find_font)(Driver *drv, int parm);
+	/* for palette editor */			BYTE *(*find_font)(Driver *drv);
 	/* text screen functions */
 										void (*move_cursor)(Driver *drv, int row, int col);
 										void (*hide_text_cursor)(Driver *drv);
@@ -212,7 +212,7 @@ extern void driver_put_string(int row, int col, int attr, const char *msg);
 extern void driver_set_for_text(void);
 extern void driver_set_for_graphics(void);
 extern void driver_set_clear(void);
-extern BYTE *driver_find_font(int parm);
+extern BYTE *driver_find_font(void);
 extern void driver_move_cursor(int row, int col);
 extern void driver_hide_text_cursor(void);
 extern void driver_set_attr(int row, int col, int attr, int count);
@@ -259,7 +259,7 @@ extern void driver_delay(int ms);
 #define driver_set_for_text()						(*g_driver->set_for_text)(g_driver)
 #define driver_set_for_graphics()					(*g_driver->set_for_graphics)(g_driver)
 #define driver_set_clear()							(*g_driver->set_clear)(g_driver)
-#define driver_find_font(_parm)						(*g_driver->find_font)(g_driver, _parm)
+#define driver_find_font()							(*g_driver->find_font)(g_driver)
 #define driver_move_cursor(_row, _col)				(*g_driver->move_cursor)(g_driver, _row, _col)
 #define driver_hide_text_cursor()					(*g_driver->hide_text_cursor)(g_driver)
 #define driver_set_attr(_row, _col, _attr, _count)	(*g_driver->set_attr)(g_driver, _row, _col, _attr, _count)
