@@ -46,16 +46,6 @@ int xrelease=304;
        &8 for Fractint for Windows & parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-#ifdef XFRACT
-static char s_errorstart[] = {"*** Error during startup:"};
-#endif
-static char s_escape_cancel[] = {"Escape to cancel, any other key to continue..."};
-static char s_anykey[] = {"Any key to continue..."};
-#if !defined(PRODUCTION) && !defined(XFRACT)
-static char s_custom[] = {"Customized Version"};
-static char s_notpublic[] = {"Not for Public Release"};
-static char s_incremental[] = {"Incremental release"};
-#endif
 int stopmsg (int flags, char *msg)
 {
    int ret,toprow,color,savelookatmouse;
@@ -80,7 +70,7 @@ int stopmsg (int flags, char *msg)
 #ifdef XFRACT
       driver_set_for_text();
       driver_buzzer(BUZZER_ERROR);
-      driver_put_string(0,0,15,s_errorstart);
+      driver_put_string(0,0,15, "*** Error during startup:");
       driver_put_string(2,0,15,msg);
       driver_move_cursor(8,0);
 #if !defined(WIN32)
@@ -112,9 +102,9 @@ int stopmsg (int flags, char *msg)
    g_text_cbase = 2; /* left margin is 2 */
    driver_put_string(toprow,0,7,msg);
    if (flags & STOPMSG_CANCEL)
-      driver_put_string(g_text_row+2,0,7,s_escape_cancel);
+      driver_put_string(g_text_row+2,0,7, "Escape to cancel, any other key to continue...");
    else
-      driver_put_string(g_text_row+2,0,7,s_anykey);
+      driver_put_string(g_text_row+2,0,7, "Any key to continue...");
    g_text_cbase = 0; /* back to full line */
    color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
    driver_set_attr(toprow,0,color,(g_text_row+1-toprow)*80);
@@ -145,139 +135,178 @@ static int  textxdots,textydots;
       (HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
 int texttempmsg(char *msgparm)
 {
-   if (showtempmsg(msgparm))
-      return(-1);
-   driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
-   cleartempmsg();
-   return(0);
+	if (showtempmsg(msgparm))
+	{
+		return -1;
+	}
+
+	driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
+	cleartempmsg();
+	return 0;
 }
 
 void freetempmsg()
 {
-   if(temptextsave != 0)
-      MemoryRelease(temptextsave);
-   temptextsave = 0;
+	if (temptextsave != 0)
+	{
+		MemoryRelease(temptextsave);
+	}
+	temptextsave = 0;
 }
 
 int showtempmsg(char *msgparm)
 {
-   static long size = 0;
-   char msg[41];
-   BYTE buffer[640];
-   BYTE *fontptr;
-   BYTE *bufptr;
-   int i,j,k,fontchar,charnum;
-   int xrepeat = 0;
-   int yrepeat = 0;
-   int save_sxoffs,save_syoffs;
-   strncpy(msg,msgparm,40);
-   msg[40] = 0; /* ensure max message len of 40 chars */
-   if (driver_diskp()) { /* disk video, screen in text mode, easy */
-      dvid_status(0,msg);
-      return(0);
-      }
-   if (active_system == 0 /* DOS */
-     && first_init) {     /* & cmdfiles hasn't finished 1st try */
-      printf("%s\n",msg);
-      return(0);
-      }
+	static long size = 0;
+	char msg[41];
+	BYTE buffer[640];
+	BYTE *fontptr;
+	BYTE *bufptr;
+	int i, j, k, fontchar, charnum;
+	int xrepeat = 0;
+	int yrepeat = 0;
+	int save_sxoffs, save_syoffs;
 
-   if ((fontptr = driver_find_font(0)) == NULL) { /* old bios, no font table? */
-      if (g_ok_to_print == 0               /* can't printf */
-        || sxdots > 640 || sydots > 200) /* not willing to trust char cell size */
-         return(-1); /* sorry, message not displayed */
-      textydots = 8;
-      textxdots = sxdots;
-      }
-   else {
-      xrepeat = (sxdots >= 640) ? 2 : 1;
-      yrepeat = (sydots >= 300) ? 2 : 1;
-      textxdots = (int) strlen(msg) * xrepeat * 8;
-      textydots = yrepeat * 8;
-      }
-   /* worst case needs 10k */
-   if(temptextsave != 0)
-      if(size != (long)textxdots * (long)textydots)
-         freetempmsg();
-   size = (long)textxdots * (long)textydots;
-   save_sxoffs = sxoffs;
-   save_syoffs = syoffs;
-   if (g_video_scroll) {
-      sxoffs = g_video_start_x;
-      syoffs = g_video_start_y;
-   }
-   else
-      sxoffs = syoffs = 0;
-   if(temptextsave == 0) /* only save screen first time called */
-   {
+	strncpy(msg, msgparm, 40);
+	msg[40] = 0; /* ensure max message len of 40 chars */
+	if (driver_diskp())  /* disk video, screen in text mode, easy */
+	{
+		dvid_status(0, msg);
+		return 0;
+	}
+	if (active_system == 0 /* DOS */
+		&& first_init)      /* & cmdfiles hasn't finished 1st try */
+	{
+		printf("%s\n", msg);
+		return 0;
+	}
+
+	if ((fontptr = driver_find_font()) == NULL)  /* old bios, no font table? */
+	{
+		if (g_ok_to_print == 0               /* can't printf */
+			|| sxdots > 640 || sydots > 200) /* not willing to trust char cell size */
+		{
+			return -1; /* sorry, message not displayed */
+		}
+		textydots = 8;
+		textxdots = sxdots;
+	}
+	else
+	{
+		xrepeat = (sxdots >= 640) ? 2 : 1;
+		yrepeat = (sydots >= 300) ? 2 : 1;
+		textxdots = (int) strlen(msg) * xrepeat * 8;
+		textydots = yrepeat * 8;
+	}
+	/* worst case needs 10k */
+	if (temptextsave != 0)
+	{
+		if (size != (long) textxdots * (long) textydots)
+		{
+			freetempmsg();
+		}
+	}
+	size = (long) textxdots * (long) textydots;
+	save_sxoffs = sxoffs;
+	save_syoffs = syoffs;
+	if (g_video_scroll)
+	{
+		sxoffs = g_video_start_x;
+		syoffs = g_video_start_y;
+	}
+	else
+	{
+		sxoffs = syoffs = 0;
+	}
+	if (temptextsave == 0) /* only save screen first time called */
+	{
 		/* TODO: MemoryAlloc, MoveToMemory */
-      if ((temptextsave = MemoryAlloc((U16)textxdots,(long)textydots,MEMORY)) == 0)
-         return(-1); /* sorry, message not displayed */
-      for (i = 0; i < textydots; ++i) {
-         get_line(i,0,textxdots-1,buffer);
-         MoveToMemory(buffer,(U16)textxdots,1L,(long)i,temptextsave);
-         }
-      }
-   if (fontptr == NULL) { /* bios must do it for us */
-      home();
-      printf(msg);
-      }
-   else { /* generate the characters */
-      find_special_colors(); /* get g_color_dark & g_color_medium set */
-      for (i = 0; i < 8; ++i) {
-         memset(buffer,g_color_dark,640);
-         bufptr = buffer;
-         charnum = -1;
-         while (msg[++charnum] != 0) {
-            fontchar = *(fontptr + msg[charnum]*8 + i);
-            for (j = 0; j < 8; ++j) {
-               for (k = 0; k < xrepeat; ++k) {
-                  if ((fontchar & 0x80) != 0)
-                     *bufptr = (BYTE)g_color_medium;
-                  ++bufptr;
-                  }
-               fontchar <<= 1;
-               }
-            }
-         for (j = 0; j < yrepeat; ++j)
-            put_line(i*yrepeat+j,0,textxdots-1,buffer);
-         }
-      }
-   sxoffs = save_sxoffs;
-   syoffs = save_syoffs;
-   return(0);
+		temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
+		if (temptextsave == 0)
+		{
+			return -1; /* sorry, message not displayed */
+		}
+		for (i = 0; i < textydots; ++i)
+		{
+			get_line(i, 0, textxdots-1, buffer);
+			MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+		}
+	}
+	if (fontptr == NULL)  /* bios must do it for us */
+	{
+		home();
+		printf(msg);
+	}
+	else  /* generate the characters */
+	{
+		find_special_colors(); /* get g_color_dark & g_color_medium set */
+		for (i = 0; i < 8; ++i)
+		{
+			memset(buffer, g_color_dark, 640);
+			bufptr = buffer;
+			charnum = -1;
+			while (msg[++charnum] != 0)
+			{
+				fontchar = *(fontptr + msg[charnum]*8 + i);
+				for (j = 0; j < 8; ++j)
+				{
+					for (k = 0; k < xrepeat; ++k)
+					{
+						if ((fontchar & 0x80) != 0)
+						{
+							*bufptr = (BYTE) g_color_medium;
+						}
+						++bufptr;
+					}
+					fontchar <<= 1;
+				}
+			}
+			for (j = 0; j < yrepeat; ++j)
+			{
+				put_line(i*yrepeat+j, 0, textxdots-1, buffer);
+			}
+		}
+	}
+	sxoffs = save_sxoffs;
+	syoffs = save_syoffs;
+	return 0;
 }
 
 void cleartempmsg()
 {
-   BYTE buffer[640];
-   int i;
-   int save_sxoffs,save_syoffs;
-   if (driver_diskp()) /* disk video, easy */
-      dvid_status(0,"");
-   else if (temptextsave != 0) {
-      save_sxoffs = sxoffs;
-      save_syoffs = syoffs;
-      if (g_video_scroll) {
-         sxoffs = g_video_start_x;
-         syoffs = g_video_start_y;
-      }
-      else
-         sxoffs = syoffs = 0;
-      for (i = 0; i < textydots; ++i) {
-         MoveFromMemory(buffer,(U16)textxdots,1L,(long)i,temptextsave);
-         put_line(i,0,textxdots-1,buffer);
-         }
-     if(using_jiim == 0)  /* jiim frees memory with freetempmsg() */
-     {
-         MemoryRelease(temptextsave);
-         temptextsave = 0;
-      }
-      sxoffs = save_sxoffs;
-      syoffs = save_syoffs;
-      }
+	BYTE buffer[640];
+	int i;
+	int save_sxoffs, save_syoffs;
+	if (driver_diskp()) /* disk video, easy */
+	{
+		dvid_status(0, "");
+	}
+	else if (temptextsave != 0)
+	{
+		save_sxoffs = sxoffs;
+		save_syoffs = syoffs;
+		if (g_video_scroll)
+		{
+			sxoffs = g_video_start_x;
+			syoffs = g_video_start_y;
+		}
+		else
+		{
+			sxoffs = syoffs = 0;
+		}
+		for (i = 0; i < textydots; ++i)
+		{
+			MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+			put_line(i, 0, textxdots-1, buffer);
+		}
+		if (using_jiim == 0)  /* jiim frees memory with freetempmsg() */
+		{
+			MemoryRelease(temptextsave);
+			temptextsave = 0;
+		}
+		sxoffs = save_sxoffs;
+		syoffs = save_syoffs;
+	}
 }
-
 
 void blankrows(int row,int rows,int attr)
 {
@@ -318,27 +347,24 @@ void helptitle()
    if (debugflag == 3002) return;
 #define DEVELOPMENT
 #ifdef DEVELOPMENT
-   driver_put_string(0,2,C_TITLE_DEV,"Development Version");
+   driver_put_string(0, 2, C_TITLE_DEV, "Development Version");
 #else
-   driver_put_string(0,3,C_TITLE_DEV, s_custom);
+   driver_put_string(0, 3, C_TITLE_DEV, "Customized Version");
 #endif
-   driver_put_string(0,55,C_TITLE_DEV,s_notpublic);
+   driver_put_string(0, 55, C_TITLE_DEV, "Not for Public Release");
 #endif
 }
 
 
 void footer_msg(int *i, int options, char *speedstring)
 {
-   static char choiceinstr1a[]="Use the cursor keys to highlight your selection";
-   static char choiceinstr1b[]="Use the cursor keys or type a value to make a selection";
-   static char choiceinstr2a[]="Press ENTER for highlighted choice, or ESCAPE to back out";
-   static char choiceinstr2b[]="Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help";
-   static char choiceinstr2c[]="Press ENTER for highlighted choice, or "FK_F1" for help";
-   putstringcenter((*i)++,0,80,C_PROMPT_BKGRD,
-      (speedstring) ? choiceinstr1b : choiceinstr1a);
-   putstringcenter(*(i++),0,80,C_PROMPT_BKGRD,
-         (options&CHOICE_MENU) ? choiceinstr2c
-      : ((options&CHOICE_HELP) ? choiceinstr2b : choiceinstr2a));
+   putstringcenter((*i)++, 0, 80, C_PROMPT_BKGRD,
+      (speedstring) ? "Use the cursor keys or type a value to make a selection"
+		: "Use the cursor keys to highlight your selection");
+   putstringcenter(*(i++), 0, 80, C_PROMPT_BKGRD,
+         (options&CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
+      : ((options&CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
+	  : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
 int putstringcenter(int row, int col, int width, int attr, char *msg)
@@ -948,7 +974,6 @@ int main_menu(int fullmenu)
    int i;
    int nextleft,nextright;
    int oldtabmode /* ,oldhelpmode */;
-   static char MAIN_MENU[] = {"MAIN MENU"};
    int showjuliatoggle;
    oldtabmode = tabmode;
    /* oldhelpmode = helpmode; */
@@ -1148,7 +1173,7 @@ top:
       if ((nextleft += 2) < nextright)
          nextleft = nextright + 1;
       i = fullscreen_choice(CHOICE_MENU+CHOICE_CRUNCH,
-          MAIN_MENU,
+          "MAIN MENU",
           NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
       if (i == -1)     /* escape */
@@ -1394,7 +1419,6 @@ int field_prompt(
    int promptcol;
    int i,j;
    char buf[81];
-   static char DEFLT_INST[] = {"Press ENTER when finished (or ESCAPE to back out)"};
    helptitle();                           /* clear screen, display title */
    driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);     /* init rest to background */
    charptr = hdg;                         /* count title lines, find widest */
@@ -1439,7 +1463,7 @@ int field_prompt(
       putstringcenter(i,0,80,C_PROMPT_BKGRD,buf);
       }
    else                                   /* default instructions */
-      putstringcenter(i,0,80,C_PROMPT_BKGRD,DEFLT_INST);
+      putstringcenter(i,0,80,C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
    return(input_field(options,C_PROMPT_INPUT,fld,len,
                       titlerow+titlelines+1,promptcol,checkkey));
 }
