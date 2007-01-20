@@ -806,11 +806,9 @@ win32_disk_scroll_up(Driver *drv, int top, int bot)
 	wintext_scroll_up(&di->wintext, top, bot);
 }
 
-static BYTE *
-win32_disk_find_font(Driver *drv, int parm)
+static void
+win32_disk_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
 {
-	ODS1("win32_disk_find_font %d", parm);
-	return NULL;
 }
 
 static void

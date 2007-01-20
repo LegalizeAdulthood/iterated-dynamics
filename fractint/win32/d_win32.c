@@ -814,14 +814,6 @@ win32_scroll_up(Driver *drv, int top, int bot)
 	wintext_scroll_up(&di->wintext, top, bot);
 }
 
-static BYTE *
-win32_find_font(Driver *drv, int parm)
-{
-	ODS1("win32_find_font %d", parm);
-	_ASSERTE(FALSE);
-	return NULL;
-}
-
 static void
 win32_move_cursor(Driver *drv, int row, int col)
 {
@@ -1090,6 +1082,14 @@ win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a)
 static void
 win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
 {
+}
+
+static void
+win32_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
+{
+	DI(di);
+	_ASSERTE(!di->text_not_graphics);
+	plot_display_string(&di->plot, x, y, fg, bg, text);
 }
 
 static Win32Driver win32_driver_info =
