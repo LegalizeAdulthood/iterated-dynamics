@@ -159,9 +159,8 @@ int showtempmsg(char *msgparm)
 	static long size = 0;
 	char msg[41];
 	BYTE buffer[640];
-	BYTE *fontptr;
-	BYTE *bufptr;
-	int i, j, k, fontchar, charnum;
+	BYTE *fontptr = NULL;
+	int i;
 	int xrepeat = 0;
 	int yrepeat = 0;
 	int save_sxoffs, save_syoffs;
@@ -180,23 +179,11 @@ int showtempmsg(char *msgparm)
 		return 0;
 	}
 
-	if ((fontptr = driver_find_font()) == NULL)  /* old bios, no font table? */
-	{
-		if (g_ok_to_print == 0               /* can't printf */
-			|| sxdots > 640 || sydots > 200) /* not willing to trust char cell size */
-		{
-			return -1; /* sorry, message not displayed */
-		}
-		textydots = 8;
-		textxdots = sxdots;
-	}
-	else
-	{
-		xrepeat = (sxdots >= 640) ? 2 : 1;
-		yrepeat = (sydots >= 300) ? 2 : 1;
-		textxdots = (int) strlen(msg) * xrepeat * 8;
-		textydots = yrepeat * 8;
-	}
+	xrepeat = (sxdots >= 640) ? 2 : 1;
+	yrepeat = (sydots >= 300) ? 2 : 1;
+	textxdots = (int) strlen(msg) * xrepeat * 8;
+	textydots = yrepeat * 8;
+
 	/* worst case needs 10k */
 	if (temptextsave != 0)
 	{
@@ -231,43 +218,12 @@ int showtempmsg(char *msgparm)
 			MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
 		}
 	}
-	if (fontptr == NULL)  /* bios must do it for us */
-	{
-		home();
-		printf(msg);
-	}
-	else  /* generate the characters */
-	{
-		find_special_colors(); /* get g_color_dark & g_color_medium set */
-		for (i = 0; i < 8; ++i)
-		{
-			memset(buffer, g_color_dark, 640);
-			bufptr = buffer;
-			charnum = -1;
-			while (msg[++charnum] != 0)
-			{
-				fontchar = *(fontptr + msg[charnum]*8 + i);
-				for (j = 0; j < 8; ++j)
-				{
-					for (k = 0; k < xrepeat; ++k)
-					{
-						if ((fontchar & 0x80) != 0)
-						{
-							*bufptr = (BYTE) g_color_medium;
-						}
-						++bufptr;
-					}
-					fontchar <<= 1;
-				}
-			}
-			for (j = 0; j < yrepeat; ++j)
-			{
-				put_line(i*yrepeat+j, 0, textxdots-1, buffer);
-			}
-		}
-	}
+
+	find_special_colors(); /* get g_color_dark & g_color_medium set */
+	driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
+
 	return 0;
 }
 

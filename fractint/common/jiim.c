@@ -72,13 +72,6 @@ int xd, yd;                       /* dots in the window    */
 double xcjul = BIG;
 double ycjul = BIG;
 
-void displays(int x, int y, int fg, int bg, char *str, int len)
-{
-   int i;
-   for(i=0;i<len; i++)
-      displayc(x+i*8, y, fg, bg, str[i]);
-}
-
 /* circle routines from Dr. Dobbs June 1990 */
 int xbase, ybase;
 unsigned int xAspect, yAspect;
@@ -896,7 +889,7 @@ void Jiim(int which)         /* called by fractint */
                Cursor_Show();
             }
             else
-               displays(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str, (int) strlen(str));
+               driver_display_string(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str);
          }
          iter = 1;
          old.x = old.y = lold.x = lold.y = 0;

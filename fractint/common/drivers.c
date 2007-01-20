@@ -221,12 +221,6 @@ METHOD_VOID(set_for_text)
 METHOD_VOID(set_for_graphics)
 METHOD_VOID(set_clear)
 
-BYTE *
-driver_find_font(void)
-{
-	return (*g_driver->find_font)(g_driver);
-}
-
 void
 driver_move_cursor(int row, int col)
 {
@@ -309,6 +303,12 @@ void
 driver_put_truecolor(int x, int y, int r, int g, int b, int a)
 {
 	(*g_driver->put_truecolor)(g_driver, x, y, r, g, b, a);
+}
+
+void
+driver_display_string(int x, int y, int fg, int bg, const char *text)
+{
+	(*g_driver->display_string)(g_driver, x, y, fg, bg, text);
 }
 
 #endif
