@@ -112,16 +112,22 @@ static void plot_OnPaint(HWND window)
 	_ASSERTE(width >= 0 && height >= 0);
 	if (width > 0 && height > 0)
 	{
+		DWORD status;
 #if 0
-		DWORD status = StretchDIBits(dc,
+		status = StretchDIBits(dc,
 			r->left, r->top, width, height,
 			r->left, r->top, width, height,
 			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
-		DWORD status = StretchDIBits(dc,
+#if 0
+		status = StretchBlt(dc, 0, 0, s_plot->width, s_plot->height,
+			s_plot->memory_dc, 0, 0, s_plot->width, s_plot->height, SRCCOPY);
+#else
+		status = StretchDIBits(dc,
 			0, 0, s_plot->width, s_plot->height,
 			0, 0, s_plot->width, s_plot->height,
 			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+#endif
 #endif
 		_ASSERTE(status != GDI_ERROR);
 	}
@@ -223,6 +229,26 @@ void plot_terminate(Plot *p)
 	DestroyWindow(p->window);
 }
 
+static void plot_create_backing_store(Plot *p)
+{
+	{
+		HDC dc = GetDC(p->window);
+		p->memory_dc = CreateCompatibleDC(dc);
+		_ASSERTE(p->memory_dc);
+		ReleaseDC(p->window, dc);
+	}
+
+	p->rendering = CreateCompatibleBitmap(p->memory_dc, p->width, p->height);
+	_ASSERTE(p->rendering);
+	p->backup = (HBITMAP) SelectObject(p->memory_dc, (HGDIOBJ) p->rendering);
+
+	p->font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
+		OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+		DEFAULT_PITCH | FF_MODERN, "Courier");
+	_ASSERTE(p->font);
+	SelectObject(p->memory_dc, (HGDIOBJ) p->font);
+	SetBkMode(p->memory_dc, OPAQUE);
+}
 void plot_window(Plot *p, HWND parent)
 {
 	if (NULL == p->window)
@@ -240,15 +266,7 @@ void plot_window(Plot *p, HWND parent)
 			parent, NULL, p->instance,
 			NULL);
 
-		{
-			HDC dc = GetDC(p->window);
-			p->memory_dc = CreateCompatibleDC(dc);
-			_ASSERTE(p->memory_dc);
-			p->rendering = CreateCompatibleBitmap(p->memory_dc, p->width, p->height);
-			_ASSERTE(p->rendering);
-			p->backup = (HBITMAP) SelectObject(p->memory_dc, (HGDIOBJ) p->rendering);
-			ReleaseDC(p->window, dc);
-		}
+		plot_create_backing_store(p);
 	}
 }
 
@@ -257,7 +275,7 @@ void plot_write_pixel(Plot *p, int x, int y, int color)
 	_ASSERTE(p->pixels);
 	_ASSERTE(x >= 0 && x < p->width);
 	_ASSERTE(y >= 0 && y < p->height);
-	p->pixels[y*p->row_len + x] = (BYTE) (color & 0xFF);
+	p->pixels[(p->height - y - 1)*p->row_len + x] = (BYTE) (color & 0xFF);
 	plot_set_dirty_region(p, x, y, x+1, y+1);
 }
 
@@ -266,7 +284,7 @@ int plot_read_pixel(Plot *p, int x, int y)
 	_ASSERTE(p->pixels);
 	_ASSERTE(x >= 0 && x < p->width);
 	_ASSERTE(y >= 0 && y < p->height);
-	return (int) p->pixels[y*p->row_len + x];
+	return (int) p->pixels[(p->height - 1 - y)*p->row_len + x];
 }
 
 void plot_write_span(Plot *p, int y, int x, int lastx, const BYTE *pixels)
@@ -289,7 +307,15 @@ void plot_flush(Plot *p)
 #if 0
 		InvalidateRect(p->window, &p->dirty_region, FALSE);
 #else
+#if 0
+		DWORD status;
+		status = StretchDIBits(p->memory_dc,
+			0, 0, p->width, p->width,
+			0, 0, p->width, p->height,
+			p->pixels, &p->bmi, DIB_RGB_COLORS, SRCCOPY);
+#else
 		InvalidateRect(p->window, NULL, FALSE);
+#endif
 #endif
 		p->dirty = FALSE;
 		p->dirty_region = r;
@@ -396,4 +422,22 @@ void plot_clear(Plot *me)
 void plot_redraw(Plot *me)
 {
 	InvalidateRect(me->window, NULL, FALSE);
+}
+
+void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text)
+{
+#if 0
+	plot_flush(me);
+	SetTextColor(me->memory_dc, RGB(me->clut[fg][0], me->clut[fg][1], me->clut[fg][2]));
+	SetBkColor(me->memory_dc, RGB(me->clut[bg][0], me->clut[bg][1], me->clut[bg][2]));
+	TextOut(me->memory_dc, x, y, text, (int) strlen(text));
+#else
+	HDC dc = GetDC(me->window);
+	//HFONT old_font = (HFONT) SelectObject(dc, (HGDIOBJ) me->font);
+	SetTextColor(dc, RGB(me->clut[fg][0], me->clut[fg][1], me->clut[fg][2]));
+	SetBkColor(dc, RGB(me->clut[bg][0], me->clut[bg][1], me->clut[bg][2]));
+	SetBkMode(dc, OPAQUE);
+	TextOut(dc, x, y, text, (int) strlen(text));
+	//SelectObject(dc, (HGDIOBJ) old_font);
+#endif
 }
