@@ -437,21 +437,8 @@ char s_cabs [] =            "cabs";
 char s_sqrt [] =            "sqrt";
 char s_ismand [] =          "ismand";
 char s_mathtolerance[] =    "mathtolerance";
-static char s_bfdigits []     = "bfdigits";
-static char s_recordcolors [] = "recordcolors";
-static char s_maxlinelength []= "maxlinelength";
-static char s_minstack[]      = "minstack";
-static char s_lzw []          = "tweaklzw";
-static char s_sstoolsini []   = "sstools.ini";
-static char s_fractintfrm []  = "fractint.frm";
-static char s_fractintl []    = "fractint.l";
-static char s_fractintpar []  = "fractint.par";
-static char s_fractintifs []  = "fractint.ifs";
-static char s_commandline []  = "command line";
-static char s_at_cmd []       = "PAR file";
 
 int lzw[2];
-static char s_escapetoabort[] = "Press Escape to abort, any other key to continue";
 char s_pressanykeytocontinue[] = "press any key to continue";
 
 /*
@@ -492,7 +479,7 @@ int cmdfiles(int argc,char **argv)
    initvars_restart();                  /* <ins> key initialization */
    initvars_fractal();                  /* image initialization */
 
-   strcpy(curarg,s_sstoolsini);
+   strcpy(curarg, "sstools.ini");
    findpath(curarg, tempstring); /* look for SSTOOLS.INI */
    if (tempstring[0] != 0)              /* found it! */
       if ((initfile = fopen(tempstring,"r")) != NULL)
@@ -643,15 +630,15 @@ static void initvars_restart()          /* <ins> key init */
    orbit_interval = 1;                  /* plot all orbits */
    debugflag = 0;                       /* debugging flag(s) are off */
    timerflag = 0;                       /* timer flags are off       */
-   strcpy(FormFileName,s_fractintfrm); /* default formula file      */
+   strcpy(FormFileName, "fractint.frm"); /* default formula file      */
    FormName[0] = 0;
-   strcpy(LFileName,s_fractintl);
+   strcpy(LFileName, "fractint.l");
    LName[0] = 0;
-   strcpy(CommandFile,s_fractintpar);
+   strcpy(CommandFile, "fractint.par");
    CommandName[0] = 0;
    for(i=0;i<4; i++)
       CommandComment[i][0] = 0;
-   strcpy(IFSFileName,s_fractintifs);
+   strcpy(IFSFileName, "fractint.ifs");
    IFSName[0] = 0;
    reset_ifs_defn();
    rflag = 0;                           /* not a fixed srand() seed */
@@ -1328,14 +1315,14 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       return 0;
       }
 
-   if (strcmp(variable,s_recordcolors) == 0) {       /* recordcolors= */
+   if (strcmp(variable, "recordcolors") == 0) {       /* recordcolors= */
       if(*value != 'y' && *value != 'c' && *value != 'a')
          goto badarg;
       recordcolors = *value;
       return 0;
       }
 
-   if (strcmp(variable,s_maxlinelength) == 0) {  /* maxlinelength= */
+   if (strcmp(variable, "maxlinelength") == 0) {  /* maxlinelength= */
       if(numval < MINMAXLINELENGTH || numval > MAXMAXLINELENGTH)
          goto badarg;
       maxlinelength = numval;
@@ -1527,7 +1514,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable,s_bfdigits) == 0 ) {      /* bfdigits=? */
+   if (strcmp(variable, "bfdigits") == 0 ) {      /* bfdigits=? */
       if(numval == NONNUMERIC)
          goto badarg;
       else if(numval < 0 || numval > 2000) goto badarg;
@@ -1630,13 +1617,13 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       return 0;
       }
 
-   if (strcmp(variable,s_lzw) == 0) {      /* tweaklzw=? */
+   if (strcmp(variable, "tweaklzw") == 0) {      /* tweaklzw=? */
       if (totparms >= 1) lzw[0] = intval[0];
       if (totparms >= 2) lzw[1] = intval[1];
       return 0;
       }
 
-   if (strcmp(variable,s_minstack) == 0) {      /* minstack=? */
+   if (strcmp(variable, "minstack") == 0) {      /* minstack=? */
       if (totparms != 1)
          goto badarg;
       minstack = intval[0];
@@ -3126,9 +3113,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 int init_msg(char *cmdstr,char *badfilename,int mode)
 {
    char *modestr[4] =
-       {s_commandline,s_sstoolsini,s_at_cmd,s_at_cmd};
-   static char diags[] =
-       {"Fractint found the following problems when parsing commands: "};
+       {"command line", "sstools.ini", "PAR file", "PAR file"};
    char msg[256];
    char cmd[80];
    static int row = 1;
@@ -3155,12 +3140,12 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
      && first_init) {     /* & cmdfiles hasn't finished 1st try */
       if(row == 1 && badfilename) {
 	     driver_set_for_text();
-         driver_put_string(0,0,15,diags);
+         driver_put_string(0,0,15, "Fractint found the following problems when parsing commands: ");
       }
       if(badfilename)
          driver_put_string(row++,0,7,msg);
       else if(row > 1){
-         driver_put_string(++row,0,15,s_escapetoabort);
+         driver_put_string(++row,0,15, "Press Escape to abort, any other key to continue");
          driver_move_cursor(row+1,0);
          /*
          if(getakeynohelp()==27)
