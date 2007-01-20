@@ -501,9 +501,7 @@ int get_sound_params(void)
 */
 long readticker(void)
 {
-	/* TODO */
-	_ASSERTE(FALSE);
-	return 0;
+	return (long) GetTickCount();
 }
 
 /*
