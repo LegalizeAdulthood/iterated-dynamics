@@ -100,8 +100,6 @@ static int RO, CO, CO_MAX;  /* For use in Acrospin support */
 static char acro_s1[] =
    {"Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n"};
 static char acro_s2[] = {"LineList From To\n"};
-static char s3[] = {"{ Created by FRACTINT Ver. "};
-static char s3a[] = {" }\n\n"};
 #ifndef XFRACT
 static char banner[] = "%Fs%#4.2f%Fs";
 #else
@@ -1806,7 +1804,7 @@ static int _fastcall RAY_Header(void)
       fprintf(File_Ptr1, dxf_begin);
 
    if (RAY != 7)
-      fprintf(File_Ptr1, banner, (char *)s3, g_release / 100., (char *)s3a);
+      fprintf(File_Ptr1, banner, "{ Created by FRACTINT Ver. ", g_release / 100., " }\n\n");
 
    if (RAY == 5)
       fprintf(File_Ptr1, "*/\n");
