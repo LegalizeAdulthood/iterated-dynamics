@@ -12,6 +12,7 @@ struct tagPlot
 	HDC memory_dc;
 	HBITMAP rendering;
 	HBITMAP backup;
+	HFONT font;
 
 	BOOL dirty;
 	RECT dirty_region;
@@ -42,5 +43,6 @@ extern void plot_flush(Plot *p);
 extern void plot_schedule_alarm(Plot *me, int delay);
 extern void plot_clear(Plot *me);
 extern void plot_redraw(Plot *me);
+extern void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text);
 
 #endif
