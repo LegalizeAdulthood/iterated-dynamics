@@ -63,7 +63,7 @@ IDI_FRACTINT            ICON                    "FractInt.ico"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 1,0,0,1
- PRODUCTVERSION 20,99,4,0
+ PRODUCTVERSION 20,99,5,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -85,7 +85,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2007"
             VALUE "OriginalFilename", "fractint.rc"
             VALUE "ProductName", " fractint"
-            VALUE "ProductVersion", "20, 99, 4, 0"
+            VALUE "ProductVersion", "20, 99, 5, 0"
         END
     END
     BLOCK "VarFileInfo"
