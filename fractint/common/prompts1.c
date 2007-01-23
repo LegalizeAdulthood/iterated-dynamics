@@ -420,25 +420,25 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
             case FIK_ENTER:
             case FIK_ENTER_2:
                goto fullscreen_exit;
-            case FIK_DOWN_ARROW_2:    /* scrolling key - down one row */
+            case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
                if(in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                   scroll_row_status++;
                   rewrite_extrainfo = 1;
                }
                break;
-            case FIK_UP_ARROW_2:      /* scrolling key - up one row */
+            case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
                if(in_scrolling_mode && scroll_row_status > 0) {
                   scroll_row_status--;
                   rewrite_extrainfo = 1;
               }
               break;
-            case FIK_LEFT_ARROW_2:    /* scrolling key - left one column */
+            case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
                if(in_scrolling_mode && scroll_column_status > 0) {
                   scroll_column_status--;
                   rewrite_extrainfo = 1;
                }
                break;
-            case FIK_RIGHT_ARROW_2:   /* scrolling key - right one column */
+            case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
                if(in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
                   scroll_column_status++;
                   rewrite_extrainfo = 1;
@@ -596,25 +596,25 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
                if (--curchoice < 0) curchoice = numprompts - 1;
                } while (values[curchoice].type == '*');
             break;
-         case FIK_DOWN_ARROW_2:     /* scrolling key - down one row */
+         case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
             if(in_scrolling_mode && scroll_row_status < vertical_scroll_limit) {
                scroll_row_status++;
                rewrite_extrainfo = 1;
             }
             break;
-         case FIK_UP_ARROW_2:       /* scrolling key - up one row */
+         case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
             if(in_scrolling_mode && scroll_row_status > 0) {
                scroll_row_status--;
                rewrite_extrainfo = 1;
             }
             break;
-         case FIK_LEFT_ARROW_2:     /*scrolling key - left one column */
+         case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
             if(in_scrolling_mode && scroll_column_status > 0) {
                scroll_column_status--;
                rewrite_extrainfo = 1;
             }
             break;
-         case FIK_RIGHT_ARROW_2:    /* scrolling key - right one column */
+         case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
             if(in_scrolling_mode && strchr(extrainfo, '\021') != NULL) {
                scroll_column_status++;
                rewrite_extrainfo = 1;
@@ -743,12 +743,12 @@ int prompt_checkkey_scroll(int curkey)
    switch(curkey) {
       case FIK_PAGE_UP:
       case FIK_DOWN_ARROW:
-      case FIK_DOWN_ARROW_2:
+      case FIK_CTL_DOWN_ARROW:
       case FIK_PAGE_DOWN:
       case FIK_UP_ARROW:
-      case FIK_UP_ARROW_2:
-      case FIK_LEFT_ARROW_2:
-      case FIK_RIGHT_ARROW_2:
+      case FIK_CTL_UP_ARROW:
+      case FIK_CTL_LEFT_ARROW:
+      case FIK_CTL_RIGHT_ARROW:
       case FIK_CTL_PAGE_DOWN:
       case FIK_CTL_PAGE_UP:
       case FIK_CTL_END:
@@ -937,7 +937,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
          j = i;
 
    tname[0] = 0;
-   done = fullscreen_choice(CHOICE_HELP+8,
+   done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
 	   julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
 	   NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
 	   (char **)choices,attributes,0,0,0,j,NULL,tname,NULL,sel_fractype_help);
@@ -1973,7 +1973,6 @@ static long gfe_choose_entry(int type,char *title,char *filename,char *entryname
    void (*formatitem)(int, char *);
    int boxwidth,boxdepth,colwidth;
    static int dosort = 1;
-   int options = 8;
    char *instr;
    /* steal existing array for "choices" */
    /* TODO: allocate real memory, not reuse shared segment */
@@ -2021,11 +2020,9 @@ retry:
       boxdepth = 16;
       colwidth = 76;
       }
-   if(dosort)
-      options = 8;
-   else
-      options = 8+32;
-   i = fullscreen_choice(options,temp1,NULL,instr,numentries,(char **)choices,
+   
+   i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+	   temp1,NULL,instr,numentries,(char **)choices,
                            attributes,boxwidth,boxdepth,colwidth,0,
                            formatitem,buf,NULL,check_gfe_key);
    if (i == 0-FIK_F4)
@@ -2125,34 +2122,34 @@ static int check_gfe_key(int curkey,int choice)
                driver_put_string(i,0,C_GENERAL_MED,blanks);
             driver_put_string(4,0,C_GENERAL_MED,infbuf);
          }
-         if((i = getakeynohelp()) == FIK_DOWN_ARROW || i == FIK_DOWN_ARROW_2
-                             || i == FIK_UP_ARROW || i == FIK_UP_ARROW_2
-                             || i == FIK_LEFT_ARROW || i == FIK_LEFT_ARROW_2
-                             || i == FIK_RIGHT_ARROW || i == FIK_RIGHT_ARROW_2
+         if((i = getakeynohelp()) == FIK_DOWN_ARROW || i == FIK_CTL_DOWN_ARROW
+                             || i == FIK_UP_ARROW || i == FIK_CTL_UP_ARROW
+                             || i == FIK_LEFT_ARROW || i == FIK_CTL_LEFT_ARROW
+                             || i == FIK_RIGHT_ARROW || i == FIK_CTL_RIGHT_ARROW
                              || i == FIK_HOME || i == FIK_CTL_HOME
                              || i == FIK_END || i == FIK_CTL_END
                              || i == FIK_PAGE_UP || i == FIK_CTL_PAGE_UP
                              || i == FIK_PAGE_DOWN || i == FIK_CTL_PAGE_DOWN) {
             switch(i) {
-               case FIK_DOWN_ARROW: case FIK_DOWN_ARROW_2: /* down one line */
+               case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
                   if(in_scrolling_mode && top_line < lines_in_entry - 17) {
                      top_line++;
                      rewrite_infbuf = 1;
                   }
                   break;
-               case FIK_UP_ARROW: case FIK_UP_ARROW_2:  /* up one line */
+               case FIK_UP_ARROW: case FIK_CTL_UP_ARROW:  /* up one line */
                   if(in_scrolling_mode && top_line > 0) {
                      top_line--;
                      rewrite_infbuf = 1;
                   }
                   break;
-               case FIK_LEFT_ARROW: case FIK_LEFT_ARROW_2:  /* left one column */
+               case FIK_LEFT_ARROW: case FIK_CTL_LEFT_ARROW:  /* left one column */
                   if(in_scrolling_mode && left_column > 0) {
                      left_column--;
                      rewrite_infbuf = 1;
                   }
                   break;
-               case FIK_RIGHT_ARROW: case FIK_RIGHT_ARROW_2: /* right one column */
+               case FIK_RIGHT_ARROW: case FIK_CTL_RIGHT_ARROW: /* right one column */
                   if(in_scrolling_mode && strchr(infbuf, '\021') != NULL) {
                      left_column++;
                      rewrite_infbuf = 1;

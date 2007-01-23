@@ -1499,7 +1499,6 @@ int getafilename(char *hdg,char *file_template,char *flname)
    char fname[FILE_MAX_FNAME];
    char ext[FILE_MAX_EXT];
    static int dosort = 1;
-   int options = 8;
 
    rds = (stereomapname == flname)?1:0;
 
@@ -1644,11 +1643,9 @@ retry_dir:
       if (i >= filecount)
          i = 0;
    }
-   if(dosort)
-      options = 8;
-   else
-      options = 8+32;
-   i = fullscreen_choice(options,temp1,NULL,instr,filecount,(char **)choices,
+   
+   i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+	   temp1,NULL,instr,filecount,(char **)choices,
           attributes,5,99,12,i,NULL,speedstr,filename_speedstr,check_f6_key);
    if (i==-FIK_F4)
    {

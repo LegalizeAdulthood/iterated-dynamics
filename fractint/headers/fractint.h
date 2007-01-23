@@ -89,6 +89,7 @@ typedef BYTE BOOLEAN;
 #define CHOICE_RETURN_KEY	1
 #define CHOICE_MENU			2
 #define CHOICE_HELP			4
+#define CHOICE_INSTRUCTIONS	8
 #define CHOICE_CRUNCH		16
 #define CHOICE_NOT_SORTED	32
 
@@ -875,23 +876,26 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_CTL_S			19
 #define FIK_CTL_BACKSLASH	28
 #define FIK_CTL_DEL			1147
+#define FIK_CTL_DOWN_ARROW	1145
 #define FIK_CTL_END			1117
 #define FIK_CTL_ENTER		10
 #define FIK_CTL_ENTER_2		1010
 #define FIK_CTL_HOME		1119
 #define FIK_CTL_INSERT		1146
+#define FIK_CTL_LEFT_ARROW	1115
 #define FIK_CTL_MINUS		1142
 #define FIK_CTL_PAGE_DOWN	1118
 #define FIK_CTL_PAGE_UP		1132
 #define FIK_CTL_PLUS		1144
+#define FIK_CTL_RIGHT_ARROW	1116
 #define FIK_CTL_TAB			1148
+#define FIK_CTL_UP_ARROW	1141
 
 #define FIK_SHF_TAB			1015  /* shift tab aka BACKTAB */
 
 #define FIK_BACKSPACE		8
 #define FIK_DELETE			1083
 #define FIK_DOWN_ARROW		1080
-#define FIK_DOWN_ARROW_2	1145
 #define FIK_END				1079
 #define FIK_ENTER			13
 #define FIK_ENTER_2			1013
@@ -909,11 +913,9 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_HOME			1071
 #define FIK_INSERT			1082
 #define FIK_LEFT_ARROW		1075
-#define FIK_LEFT_ARROW_2	1115
 #define FIK_PAGE_DOWN		1081
 #define FIK_PAGE_UP			1073
 #define FIK_RIGHT_ARROW		1077
-#define FIK_RIGHT_ARROW_2	1116
 #define FIK_SPACE			32
 #define FIK_SF1				1084
 #define FIK_SF2				1085
@@ -927,7 +929,6 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_SF10			1093
 #define FIK_TAB				9
 #define FIK_UP_ARROW		1072
-#define FIK_UP_ARROW_2		1141
 
 /* text colors */
 #define BLACK      0
