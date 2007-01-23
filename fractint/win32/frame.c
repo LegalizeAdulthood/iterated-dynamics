@@ -85,6 +85,10 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	case VK_SUBTRACT:	i = CTL_KEY(FIK_CTL_MINUS);		break;
 	case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);	break;
 	case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);	break;
+	case VK_UP:			i = CTL_KEY(FIK_CTL_UP_ARROW);	break;
+	case VK_DOWN:		i = CTL_KEY(FIK_CTL_DOWN_ARROW); break;
+	case VK_LEFT:		i = CTL_KEY(FIK_CTL_LEFT_ARROW); break;
+	case VK_RIGHT:		i = CTL_KEY(FIK_CTL_RIGHT_ARROW); break;
 
 	case VK_TAB:
 		if (0x8000 & GetKeyState(VK_CONTROL))
