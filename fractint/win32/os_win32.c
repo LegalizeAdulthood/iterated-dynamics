@@ -292,12 +292,13 @@ static fractint_event keyboard_event(int key)
 	return FE_UNKNOWN;
 }
 
+static char *g_tos = NULL;
+#define WIN32_STACK_SIZE 1024*1024
 /* Return available stack space ... shouldn't be needed in Win32, should it? */
 long stackavail()
 {
-	/* TODO */
-	_ASSERTE(FALSE);
-	return 8192;
+	char junk;
+	return WIN32_STACK_SIZE - (long) (((char *) g_tos) - &junk);
 }
 
 /*
@@ -780,6 +781,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 	};
 #endif
 	int result = 0;
+	g_tos = (char *) &result;
 
 #if 0
 	__try
