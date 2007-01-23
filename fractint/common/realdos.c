@@ -728,14 +728,11 @@ int fullscreen_choice(
 	{
 		if (redisplay)                       /* display the current choices */
 		{
-			if ((options & CHOICE_MENU) == 0)
+			memset(buf, ' ', 80);
+			buf[boxwidth*colwidth] = 0;
+			for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
 			{
-				memset(buf, ' ', 80);
-				buf[boxwidth*colwidth] = 0;
-				for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
-				{
-					driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
-				}
+				driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
 			}
 			for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
 			{
@@ -805,17 +802,17 @@ int fullscreen_choice(
 		driver_wait_key_pressed(0); /* enables help */
 		curkey = driver_get_key();
 #ifdef XFRACT
-		if (curkey==FIK_F10)
+		if (curkey == FIK_F10)
 		{
-			curkey=')';
+			curkey = ')';
 		}
-		if (curkey==FIK_F9)
+		if (curkey == FIK_F9)
 		{
-			curkey='(';
+			curkey = '(';
 		}
-		if (curkey==FIK_F8)
+		if (curkey == FIK_F8)
 		{
-			curkey='*';
+			curkey = '*';
 		}
 #endif
 
@@ -1027,7 +1024,7 @@ int fullscreen_choice(
 				speedstring[0] = 0;
 			}
 		}
-		for(;;)
+		for (;;)
 		{                 /* adjust to a non-comment choice */
 			if (current < 0 || current >= numchoices)
 			{
