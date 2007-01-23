@@ -75,3 +75,9 @@ stereogram   <ctrl-s> (right side at bottom)
 duplicate themselves.  (in Win32 Disk Video 800x600)
 
 The R00/G00/B00 text in the palette editor doesn't display properly.
+
+If I choose a video mode of 1600x1200, I would prefer it to change my 
+windows settings to full screen 1600x1200 (some applications actually do 
+this) and then revert back when Fractint terminates.  If I choose 
+1600x1200 now, most of the picture is off screen with no way no scroll 
+as the scrollbars are also off-screen!
