@@ -26,7 +26,7 @@ static int menu_checkkey(int curkey,int choice);
 #define PRODUCTION
 */
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
-int g_patch_level = 4;	/* patchlevel for DOS version */
+int g_patch_level = 6;	/* patchlevel for DOS version */
 #ifdef XFRACT
 int xrelease=304;
 #endif
@@ -466,440 +466,602 @@ int fullscreen_choice(
                   speedstring[0] != 0 on return if string is present
     */
 {
+	int titlelines, titlewidth;
+	int reqdrows;
+	int topleftrow, topleftcol;
+	int topleftchoice;
+	int speedrow = 0;  /* speed key prompt */
+	int boxitems;      /* boxwidth*boxdepth */
+	int curkey, increment, rev_increment = 0;
+	int redisplay;
+	int i, j, k = 0;
+	char *charptr;
+	char buf[81];
+	char curitem[81];
+	char *itemptr;
+	int ret, savelookatmouse;
+	int scrunch;  /* scrunch up a line */
 
-   int titlelines,titlewidth;
-   int reqdrows;
-   int topleftrow,topleftcol;
-   int topleftchoice;
-   int speedrow = 0;  /* speed key prompt */
-   int boxitems;      /* boxwidth*boxdepth */
-   int curkey,increment,rev_increment = 0;
-   int redisplay;
-   int i,j,k = 0;
-   char *charptr;
-   char buf[81];
-   char curitem[81];
-   char *itemptr;
-   int ret,savelookatmouse;
-   int scrunch;  /* scrunch up a line */
+	scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
+	savelookatmouse = lookatmouse;
+	lookatmouse = 0;
+	ret = -1;
+	/* preset current to passed string */
+	if (speedstring && (i = (int) strlen(speedstring)) > 0)
+	{ 
+		current = 0;
+		if (options & CHOICE_NOT_SORTED)
+		{
+			while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) != 0)
+			{
+				++current;
+			}
+			if (k != 0)
+			{
+				current = 0;
+			}
+		}
+		else
+		{
+			while (current < numchoices && (k = strncasecmp(speedstring,choices[current],i)) > 0)
+			{
+				++current;
+			}
+			if (k < 0 && current > 0)  /* oops - overshot */
+			{
+				--current;
+			}
+		}
+		if (current >= numchoices) /* bumped end of list */
+		{
+			current = numchoices - 1;
+		}
+	}
 
-   if(options&CHOICE_CRUNCH)
-      scrunch = 1;
-   else
-      scrunch = 0;
-   savelookatmouse = lookatmouse;
-   lookatmouse = 0;
-   ret = -1;
-   if (speedstring
-     && (i = (int) strlen(speedstring)) > 0) { /* preset current to passed string */
-      current = 0;
-      if(options&CHOICE_NOT_SORTED)
-      {
-         while (current < numchoices
-             && (k = strncasecmp(speedstring,choices[current],i)) != 0)
-            ++current;
-         if(k != 0)
-            current = 0;
-      }
-      else
-      {
-         while (current < numchoices
-             && (k = strncasecmp(speedstring,choices[current],i)) > 0)
-            ++current;
-         if (k < 0 && current > 0)  /* oops - overshot */
-            --current;
-      }
-      if (current >= numchoices) /* bumped end of list */
-         current = numchoices - 1;
-   }
+	for (;;)
+	{
+		if (current >= numchoices)  /* no real choice in the list? */
+		{
+			goto fs_choice_end;
+		}
+		if ((attributes[current] & 256) == 0)
+		{
+			break;
+		}
+		++current;                  /* scan for a real choice */
+	}
 
-   for(;;) {
-      if (current >= numchoices)  /* no real choice in the list? */
-         goto fs_choice_end;
-      if ((attributes[current] & 256) == 0)
-         break;
-      ++current;                  /* scan for a real choice */
-      }
+	titlelines = titlewidth = 0;
+	if (hdg)
+	{
+		charptr = hdg;              /* count title lines, find widest */
+		i = 0;
+		titlelines = 1;
+		while (*charptr)
+		{
+			if (*(charptr++) == '\n')
+			{
+				++titlelines;
+				i = -1;
+			}
+			if (++i > titlewidth)
+			{
+				titlewidth = i;
+			}
+		}
+	}
 
-   titlelines = titlewidth = 0;
-   if (hdg) {
-      charptr = hdg;              /* count title lines, find widest */
-      i = 0;
-      titlelines = 1;
-      while (*charptr) {
-         if (*(charptr++) == '\n') {
-            ++titlelines;
-            i = -1;
-            }
-         if (++i > titlewidth)
-            titlewidth = i;
-         }
-      }
-
-   if (colwidth == 0)             /* find widest column */
-      for (i = 0; i < numchoices; ++i)
-      {
-         int len;
-         if ((len=(int) strlen(choices[i])) > colwidth)
-            colwidth = len;
-      }
-   /* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
-   reqdrows = 3 - scrunch;                /* calc rows available */
-   if (hdg)
-      reqdrows += titlelines + 1;
-   if (instr) {                   /* count instructions lines */
-      charptr = instr;
-      ++reqdrows;
-      while (*charptr)
-         if (*(charptr++) == '\n')
-            ++reqdrows;
-      if ((options & 8))          /* show std instr too */
-         reqdrows += 2;
-      }
-   else
-      reqdrows += 2;              /* standard instructions */
-   if (speedstring) ++reqdrows;   /* a row for speedkey prompt */
-   if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
-      boxdepth = i;
-   if (boxwidth == 0) {           /* pick box width and depth */
-      if (numchoices <= i - 2) {  /* single column is 1st choice if we can */
-         boxdepth = numchoices;
-         boxwidth = 1;
-         }
-      else {                      /* sort-of-wide is 2nd choice */
-         boxwidth = 60 / (colwidth + 1);
-         if (boxwidth == 0
-           || (boxdepth = (numchoices+boxwidth-1)/boxwidth) > i - 2) {
-            boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
-            if ((boxdepth = (numchoices+boxwidth-1)/boxwidth) > i)
-               boxdepth = i;
-            }
-         }
-      }
+	if (colwidth == 0)             /* find widest column */
+	{
+		for (i = 0; i < numchoices; ++i)
+		{
+			int len;
+			if ((len = (int) strlen(choices[i])) > colwidth)
+			{
+				colwidth = len;
+			}
+		}
+	}
+	/* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
+	reqdrows = 3 - scrunch;                /* calc rows available */
+	if (hdg)
+	{
+		reqdrows += titlelines + 1;
+	}
+	if (instr)                   /* count instructions lines */
+	{
+		charptr = instr;
+		++reqdrows;
+		while (*charptr)
+		{
+			if (*(charptr++) == '\n')
+			{
+				++reqdrows;
+			}
+		}
+		if ((options & 8))          /* show std instr too */
+		{
+			reqdrows += 2;
+		}
+	}
+	else
+	{
+		reqdrows += 2;              /* standard instructions */
+	}
+	if (speedstring)
+	{
+		++reqdrows;   /* a row for speedkey prompt */
+	}
+	if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
+	{
+		boxdepth = i;
+	}
+	if (boxwidth == 0)           /* pick box width and depth */
+	{
+		if (numchoices <= i - 2)  /* single column is 1st choice if we can */
+		{
+			boxdepth = numchoices;
+			boxwidth = 1;
+		}
+		else
+		{                      /* sort-of-wide is 2nd choice */
+			boxwidth = 60 / (colwidth + 1);
+			if (boxwidth == 0
+			|| (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i - 2)
+			{
+				boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
+				if ((boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i)
+				{
+					boxdepth = i;
+				}
+			}
+		}
+	}
 #if 0
-   if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
-      i = 3;
-   if (i == 0)
-      i = 1;
+	if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
+	{
+		i = 3;
+	}
+	if (i == 0)
+	{
+		i = 1;
+	}
 #else
-   if ((i = (80 / boxwidth - colwidth) / 2 - 1) == 0) /* to allow wider prompts */
-      i = 1;
-   if (i < 0)
-      i = 0;
-   if (i > 3)
-      i = 3;
+	if ((i = (80 / boxwidth - colwidth) / 2 - 1) == 0) /* to allow wider prompts */
+	{
+		i = 1;
+	}
+	if (i < 0)
+	{
+		i = 0;
+	}
+	if (i > 3)
+	{
+		i = 3;
+	}
 #endif
-   j = boxwidth * (colwidth += i) + i;     /* overall width of box */
-   if (j < titlewidth+2)
-      j = titlewidth + 2;
-   if (j > 80)
-      j = 80;
-   if (j <= 70 && boxwidth == 2) {         /* special case makes menus nicer */
-      ++j;
-      ++colwidth;
-      }
-   k = (80 - j) / 2;                       /* center the box */
-   k -= (90 - j) / 20;
-   topleftcol = k + i;                     /* column of topleft choice */
-   i = (25 - reqdrows - boxdepth) / 2;
-   i -= i / 4;                             /* higher is better if lots extra */
-   topleftrow = 3 + titlelines + i;        /* row of topleft choice */
+	j = boxwidth * (colwidth += i) + i;     /* overall width of box */
+	if (j < titlewidth+2)
+	{
+		j = titlewidth + 2;
+	}
+	if (j > 80)
+	{
+		j = 80;
+	}
+	if (j <= 70 && boxwidth == 2)         /* special case makes menus nicer */
+	{
+		++j;
+		++colwidth;
+    }
+	k = (80 - j) / 2;                       /* center the box */
+	k -= (90 - j) / 20;
+	topleftcol = k + i;                     /* column of topleft choice */
+	i = (25 - reqdrows - boxdepth) / 2;
+	i -= i / 4;                             /* higher is better if lots extra */
+	topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
-   /* now set up the overall display */
-   helptitle();                            /* clear, display title line */
-   driver_set_attr(1,0,C_PROMPT_BKGRD,24*80);      /* init rest to background */
-   for (i = topleftrow-1-titlelines; i < topleftrow+boxdepth+1; ++i)
-      driver_set_attr(i,k,C_PROMPT_LO,j);          /* draw empty box */
-   if (hdg) {
-      g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
-      g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
-      driver_put_string(topleftrow-titlelines-1,0,C_PROMPT_HI,hdg);
-      g_text_cbase = 0;
-      }
-   if (hdg2)                               /* display 2nd heading */
-      driver_put_string(topleftrow-1,topleftcol,C_PROMPT_MED,hdg2);
-   i = topleftrow + boxdepth + 1;
-   if (instr == NULL || (options & 8)) {   /* display default instructions */
-      if (i < 20) ++i;
-      if (speedstring) {
-         speedrow = i;
-         *speedstring = 0;
-         if (++i < 22) ++i;
-         }
-      i -= scrunch;
-      footer_msg(&i,options,speedstring);
-      }
-   if (instr) {                            /* display caller's instructions */
-      charptr = instr;
-      j = -1;
-      while ((buf[++j] = *(charptr++)) != 0)
-         if (buf[j] == '\n') {
-            buf[j] = 0;
-            putstringcenter(i++,0,80,C_PROMPT_BKGRD,buf);
-            j = -1;
-            }
-      putstringcenter(i,0,80,C_PROMPT_BKGRD,buf);
-      }
+	/* now set up the overall display */
+	helptitle();                            /* clear, display title line */
+	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
+	for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
+	{
+		driver_set_attr(i, k, C_PROMPT_LO, j);          /* draw empty box */
+	}
+	if (hdg)
+	{
+		g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
+		g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
+		driver_put_string(topleftrow - titlelines - 1, 0, C_PROMPT_HI, hdg);
+		g_text_cbase = 0;
+	}
+	if (hdg2)                               /* display 2nd heading */
+	{
+		driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
+	}
+	i = topleftrow + boxdepth + 1;
+	if (instr == NULL || (options & 8))   /* display default instructions */
+	{
+		if (i < 20)
+		{
+			++i;
+		}
+		if (speedstring)
+		{
+			speedrow = i;
+			*speedstring = 0;
+			if (++i < 22)
+			{
+				++i;
+			}
+		}
+		i -= scrunch;
+		footer_msg(&i, options, speedstring);
+	}
+	if (instr)                            /* display caller's instructions */
+	{
+		charptr = instr;
+		j = -1;
+		while ((buf[++j] = *(charptr++)) != 0)
+		{
+			if (buf[j] == '\n')
+			{
+				buf[j] = 0;
+				putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+				j = -1;
+			}
+		}
+		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+	}
 
-   boxitems = boxwidth * boxdepth;
-   topleftchoice = 0;                      /* pick topleft for init display */
-   while (current - topleftchoice >= boxitems
-     || (current - topleftchoice > boxitems/2
-         && topleftchoice + boxitems < numchoices))
-      topleftchoice += boxwidth;
-   redisplay = 1;
-   topleftrow -= scrunch;
-   for(;;) { /* main loop */
-      if (redisplay) {                       /* display the current choices */
-         if ((options & CHOICE_MENU) == 0) {
-            memset(buf,' ',80);
-            buf[boxwidth*colwidth] = 0;
-            for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
-               driver_put_string(topleftrow+i,topleftcol,C_PROMPT_LO,buf);
-            }
-         for (i = 0; i+topleftchoice < numchoices && i < boxitems; ++i) {
-            /* display the choices */
-            if ((k = attributes[j = i+topleftchoice] & 3) == 1)
-               k = C_PROMPT_LO;
-            else if (k == 3)
-               k = C_PROMPT_HI;
-            else
-               k = C_PROMPT_MED;
-            if (formatitem)
-            {
-               (*formatitem)(j,buf);
-               charptr=buf;
-            }
-            else
-               charptr = choices[j];
-            driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
-                      k,charptr);
-            }
-         /***
-         ... format differs for summary/detail, whups, force box width to
-         ...  be 72 when detail toggle available?  (2 grey margin each
-         ...  side, 1 blue margin each side)
-         ***/
-         if (topleftchoice > 0 && hdg2 == NULL)
-            driver_put_string(topleftrow-1,topleftcol,C_PROMPT_LO,"(more)");
-         if (topleftchoice + boxitems < numchoices)
-            driver_put_string(topleftrow+boxdepth,topleftcol,C_PROMPT_LO,"(more)");
-         redisplay = 0;
-         }
+	boxitems = boxwidth * boxdepth;
+	topleftchoice = 0;                      /* pick topleft for init display */
+	while (current - topleftchoice >= boxitems
+		|| (current - topleftchoice > boxitems/2
+			&& topleftchoice + boxitems < numchoices))
+	{
+		topleftchoice += boxwidth;
+	}
+	redisplay = 1;
+	topleftrow -= scrunch;
+	for (;;) /* main loop */
+	{
+		if (redisplay)                       /* display the current choices */
+		{
+			if ((options & CHOICE_MENU) == 0)
+			{
+				memset(buf, ' ', 80);
+				buf[boxwidth*colwidth] = 0;
+				for (i = (hdg2) ? 0 : -1; i <= boxdepth; ++i)  /* blank the box */
+				{
+					driver_put_string(topleftrow + i, topleftcol, C_PROMPT_LO, buf);
+				}
+			}
+			for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
+			{
+				/* display the choices */
+				if ((k = attributes[j = i + topleftchoice] & 3) == 1)
+				{
+					k = C_PROMPT_LO;
+				}
+				else if (k == 3)
+				{
+					k = C_PROMPT_HI;
+				}
+				else
+				{
+					k = C_PROMPT_MED;
+				}
+				if (formatitem)
+				{
+					(*formatitem)(j, buf);
+					charptr=buf;
+				}
+				else
+				{
+					charptr = choices[j];
+				}
+				driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+						k, charptr);
+			}
+			/***
+			... format differs for summary/detail, whups, force box width to
+			...  be 72 when detail toggle available?  (2 grey margin each
+			...  side, 1 blue margin each side)
+			***/
+			if (topleftchoice > 0 && hdg2 == NULL)
+			{
+				driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
+			}
+			if (topleftchoice + boxitems < numchoices)
+			{
+				driver_put_string(topleftrow + boxdepth, topleftcol, C_PROMPT_LO, "(more)");
+			}
+			redisplay = 0;
+		}
 
-      i = current - topleftchoice;           /* highlight the current choice */
-      if (formatitem)
-      {
-         (*formatitem)(current,curitem);
-         itemptr=curitem;
-      }
-      else
-         itemptr = choices[current];
-      driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
-                C_CHOICE_CURRENT,itemptr);
+		i = current - topleftchoice;           /* highlight the current choice */
+		if (formatitem)
+		{
+			(*formatitem)(current, curitem);
+			itemptr = curitem;
+		}
+		else
+		{
+			itemptr = choices[current];
+		}
+		driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+					C_CHOICE_CURRENT, itemptr);
 
-      if (speedstring) {                     /* show speedstring if any */
-         show_speedstring(speedrow,speedstring,speedprompt);
-         }
-      else
-         driver_hide_text_cursor();
+		if (speedstring)                     /* show speedstring if any */
+		{
+			show_speedstring(speedrow, speedstring, speedprompt);
+		}
+		else
+		{
+			driver_hide_text_cursor();
+		}
 
-      driver_wait_key_pressed(0); /* enables help */
-      curkey = driver_get_key();
+		driver_wait_key_pressed(0); /* enables help */
+		curkey = driver_get_key();
 #ifdef XFRACT
-      if (curkey==FIK_F10) curkey=')';
-      if (curkey==FIK_F9) curkey='(';
-      if (curkey==FIK_F8) curkey='*';
+		if (curkey==FIK_F10)
+		{
+			curkey=')';
+		}
+		if (curkey==FIK_F9)
+		{
+			curkey='(';
+		}
+		if (curkey==FIK_F8)
+		{
+			curkey='*';
+		}
 #endif
 
-      i = current - topleftchoice;           /* unhighlight current choice */
-      if ((k = attributes[current] & 3) == 1)
-         k = C_PROMPT_LO;
-      else if (k == 3)
-         k = C_PROMPT_HI;
-      else
-         k = C_PROMPT_MED;
-      driver_put_string(topleftrow+i/boxwidth,topleftcol+(i%boxwidth)*colwidth,
-                k,itemptr);
+		i = current - topleftchoice;           /* unhighlight current choice */
+		if ((k = attributes[current] & 3) == 1)
+		{
+			k = C_PROMPT_LO;
+		}
+		else if (k == 3)
+		{
+			k = C_PROMPT_HI;
+		}
+		else
+		{
+			k = C_PROMPT_MED;
+		}
+		driver_put_string(topleftrow + i/boxwidth, topleftcol + (i % boxwidth)*colwidth,
+					k, itemptr);
 
-      increment = 0;
-      switch (curkey) {                      /* deal with input key */
-         case FIK_ENTER:
-         case FIK_ENTER_2:
-            ret = current;
-            goto fs_choice_end;
-         case FIK_ESC:
-            goto fs_choice_end;
-         case FIK_DOWN_ARROW:
-            rev_increment = 0 - (increment = boxwidth);
-            break;
-         case FIK_DOWN_ARROW_2:
-            rev_increment = 0 - (increment = boxwidth);
-            {
-               int newcurrent = current;
-               while((newcurrent+=boxwidth) != current) {
-                  if(newcurrent >= numchoices)
-                     newcurrent = (newcurrent % boxwidth) - boxwidth;
-                  else if(!isadirname(choices[newcurrent])) {
-                     if(current != newcurrent)
-                        current = newcurrent - boxwidth;
-                     break;  /* breaks the while loop */
-                  }
-               }
-            }
-            break;
-         case FIK_UP_ARROW:
-            increment = 0 - (rev_increment = boxwidth);
-            break;
-         case FIK_UP_ARROW_2:
-            increment = 0 - (rev_increment = boxwidth);
-            {
-               int newcurrent = current;
-               while((newcurrent-=boxwidth) != current) {
-                  if(newcurrent < 0) {
-                     newcurrent = (numchoices - current) % boxwidth;
-                     newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
-                  }
-                  else if(!isadirname(choices[newcurrent])) {
-                     if(current != newcurrent)
-                        current = newcurrent + boxwidth;
-                     break;  /* breaks the while loop */
-                  }
-               }
-            }
-            break;
-         case FIK_RIGHT_ARROW:
-            increment = 1; rev_increment = -1;
-            break;
-         case FIK_RIGHT_ARROW_2:  /* move to next file; if at last file, go to
+		increment = 0;
+		switch (curkey)
+		{                      /* deal with input key */
+        case FIK_ENTER:
+        case FIK_ENTER_2:
+			ret = current;
+			goto fs_choice_end;
+        case FIK_ESC:
+			goto fs_choice_end;
+        case FIK_DOWN_ARROW:
+			rev_increment = 0 - (increment = boxwidth);
+			break;
+        case FIK_CTL_DOWN_ARROW:
+			rev_increment = 0 - (increment = boxwidth);
+			{
+				int newcurrent = current;
+				while ((newcurrent += boxwidth) != current)
+				{
+					if (newcurrent >= numchoices)
+					{
+						newcurrent = (newcurrent % boxwidth) - boxwidth;
+					}
+					else if (!isadirname(choices[newcurrent]))
+					{
+						if (current != newcurrent)
+						{
+							current = newcurrent - boxwidth;
+						}
+						break;  /* breaks the while loop */
+					}
+				}
+			}
+			break;
+        case FIK_UP_ARROW:
+			increment = 0 - (rev_increment = boxwidth);
+			break;
+        case FIK_CTL_UP_ARROW:
+			increment = 0 - (rev_increment = boxwidth);
+			{
+				int newcurrent = current;
+				while ((newcurrent-=boxwidth) != current)
+				{
+					if (newcurrent < 0)
+					{
+						newcurrent = (numchoices - current) % boxwidth;
+						newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
+					}
+					else if (!isadirname(choices[newcurrent]))
+					{
+						if (current != newcurrent)
+						{
+							current = newcurrent + boxwidth;
+						}
+						break;  /* breaks the while loop */
+					}
+				}
+			}
+			break;
+        case FIK_RIGHT_ARROW:
+			increment = 1; rev_increment = -1;
+			break;
+         case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to
                                  first file */
-            increment = 1; rev_increment = -1;
-            {
-               int newcurrent = current;
-               while(++newcurrent != current) {
-                  if(newcurrent >= numchoices)
-                     newcurrent = -1;
-                  else if(!isadirname(choices[newcurrent])) {
-                     if(current != newcurrent)
-                        current = newcurrent - 1;
-                     break;  /* breaks the while loop */
-                  }
-               }
-            }
-            break;
-         case FIK_LEFT_ARROW:
-            increment = -1; rev_increment = 1;
-            break;
-         case FIK_LEFT_ARROW_2: /* move to previous file; if at first file, go to
+			increment = 1; rev_increment = -1;
+			{
+				int newcurrent = current;
+				while (++newcurrent != current)
+				{
+					if (newcurrent >= numchoices)
+					{
+						newcurrent = -1;
+					}
+					else if (!isadirname(choices[newcurrent]))
+					{
+						if (current != newcurrent)
+						{
+							current = newcurrent - 1;
+						}
+						break;  /* breaks the while loop */
+					}
+				}
+			}
+			break;
+		case FIK_LEFT_ARROW:
+			increment = -1; rev_increment = 1;
+			break;
+        case FIK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to
                                last file */
-            increment = -1; rev_increment = 1;
-            {
-               int newcurrent = current;
-               while(--newcurrent != current) {
-                  if(newcurrent < 0)
-                     newcurrent = numchoices;
-                  else if(!isadirname(choices[newcurrent])) {
-                     if(current != newcurrent)
-                        current = newcurrent + 1;
-                     break;  /* breaks the while loop */
-                  }
-               }
-            }
+			increment = -1; rev_increment = 1;
+			{
+				int newcurrent = current;
+				while (--newcurrent != current)
+				{
+					if (newcurrent < 0)
+					{
+						newcurrent = numchoices;
+					}
+					else if (!isadirname(choices[newcurrent]))
+					{
+						if (current != newcurrent)
+						{
+							current = newcurrent + 1;
+						}
+						break;  /* breaks the while loop */
+					}
+				}
+			}
             break;
-         case FIK_PAGE_UP:
-            if (numchoices > boxitems) {
-               topleftchoice -= boxitems;
-               increment = -boxitems;
-               rev_increment = boxwidth;
-               redisplay = 1;
-               }
-            break;
-         case FIK_PAGE_DOWN:
-            if (numchoices > boxitems) {
-               topleftchoice += boxitems;
-               increment = boxitems;
-               rev_increment = -boxwidth;
-               redisplay = 1;
-               }
-            break;
-         case FIK_HOME:
-            current = -1;
-            increment = rev_increment = 1;
-            break;
-         case FIK_CTL_HOME:
-            current = -1;
-            increment = rev_increment = 1;
-            {
-               int newcurrent;
-               for(newcurrent = 0; newcurrent < numchoices; ++newcurrent) {
-                  if(!isadirname(choices[newcurrent])) {
-                     current = newcurrent - 1;
-                     break;  /* breaks the for loop */
-                  }
-               }
-            }
-            break;
-         case FIK_END:
-            current = numchoices;
-            increment = rev_increment = -1;
-            break;
-         case FIK_CTL_END:
-            current = numchoices;
-            increment = rev_increment = -1;
-            {
-               int newcurrent;
-               for(newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent) {
-                  if(!isadirname(choices[newcurrent])) {
-                     current = newcurrent + 1;
-                     break;  /* breaks the for loop */
-                  }
-               }
-            }
-            break;
-         default:
-            if (checkkey) {
-               if ((ret = (*checkkey)(curkey,current)) < -1 || ret > 0)
-                  goto fs_choice_end;
-               if (ret == -1)
-                  redisplay = -1;
-               }
-            ret = -1;
-            if (speedstring) {
-               process_speedstring(speedstring,choices,curkey,&current,
-                        numchoices,options&CHOICE_NOT_SORTED);
-               }
-            break;
-      }
-      if (increment) {                  /* apply cursor movement */
-         current += increment;
-         if (speedstring)               /* zap speedstring */
-            speedstring[0] = 0;
-         }
-      for(;;) {                 /* adjust to a non-comment choice */
-         if (current < 0 || current >= numchoices)
-             increment = rev_increment;
-         else if ((attributes[current] & 256) == 0)
-             break;
-         current += increment;
-         }
-      if (topleftchoice > numchoices - boxitems)
-         topleftchoice = ((numchoices+boxwidth-1)/boxwidth)*boxwidth - boxitems;
-      if (topleftchoice < 0)
-         topleftchoice = 0;
-      while (current < topleftchoice) {
-         topleftchoice -= boxwidth;
-         redisplay = 1;
-         }
-      while (current >= topleftchoice + boxitems) {
-         topleftchoice += boxwidth;
-         redisplay = 1;
-         }
-      }
+        case FIK_PAGE_UP:
+			if (numchoices > boxitems)
+			{
+				topleftchoice -= boxitems;
+				increment = -boxitems;
+				rev_increment = boxwidth;
+				redisplay = 1;
+			}
+			break;
+        case FIK_PAGE_DOWN:
+			if (numchoices > boxitems)
+			{
+				topleftchoice += boxitems;
+				increment = boxitems;
+				rev_increment = -boxwidth;
+				redisplay = 1;
+			}
+			break;
+        case FIK_HOME:
+			current = -1;
+			increment = rev_increment = 1;
+			break;
+        case FIK_CTL_HOME:
+			current = -1;
+			increment = rev_increment = 1;
+			{
+				int newcurrent;
+				for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
+				{
+					if (!isadirname(choices[newcurrent]))
+					{
+						current = newcurrent - 1;
+						break;  /* breaks the for loop */
+					}
+				}
+			}
+			break;
+		case FIK_END:
+			current = numchoices;
+			increment = rev_increment = -1;
+			break;
+		case FIK_CTL_END:
+			current = numchoices;
+			increment = rev_increment = -1;
+			{
+				int newcurrent;
+				for (newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
+				{
+					if (!isadirname(choices[newcurrent]))
+					{
+						current = newcurrent + 1;
+						break;  /* breaks the for loop */
+					}
+				}
+			}
+			break;
+        default:
+			if (checkkey)
+			{
+				if ((ret = (*checkkey)(curkey, current)) < -1 || ret > 0)
+				{
+					goto fs_choice_end;
+				}
+				if (ret == -1)
+				{
+					redisplay = -1;
+				}
+			}
+			ret = -1;
+			if (speedstring)
+			{
+				process_speedstring(speedstring, choices, curkey, &current,
+						numchoices, options & CHOICE_NOT_SORTED);
+			}
+			break;
+		}
+		if (increment)                  /* apply cursor movement */
+		{
+			current += increment;
+			if (speedstring)               /* zap speedstring */
+			{
+				speedstring[0] = 0;
+			}
+		}
+		for(;;)
+		{                 /* adjust to a non-comment choice */
+			if (current < 0 || current >= numchoices)
+			{
+				increment = rev_increment;
+			}
+			else if ((attributes[current] & 256) == 0)
+			{
+				break;
+			}
+			current += increment;
+		}
+		if (topleftchoice > numchoices - boxitems)
+		{
+			topleftchoice = ((numchoices + boxwidth - 1)/boxwidth)*boxwidth - boxitems;
+		}
+		if (topleftchoice < 0)
+		{
+			topleftchoice = 0;
+		}
+		while (current < topleftchoice)
+		{
+			topleftchoice -= boxwidth;
+			redisplay = 1;
+		}
+		while (current >= topleftchoice + boxitems)
+		{
+			topleftchoice += boxwidth;
+			redisplay = 1;
+		}
+	}
 
 fs_choice_end:
-   lookatmouse = savelookatmouse;
-   return(ret);
-
+	lookatmouse = savelookatmouse;
+	return ret;
 }
 
 #ifndef XFRACT
@@ -1128,7 +1290,7 @@ top:
       helpmode = HELPMAIN;         /* switch help modes */
       if ((nextleft += 2) < nextright)
          nextleft = nextright + 1;
-      i = fullscreen_choice(CHOICE_MENU+CHOICE_CRUNCH,
+      i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
           "MAIN MENU",
           NULL,NULL,nextleft,(char * *)choices,attributes,
           2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
