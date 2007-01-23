@@ -553,9 +553,9 @@ void plot_schedule_alarm(Plot *me, int delay)
 void plot_clear(Plot *me)
 {
 	RECT r = { 0, 0, me->width, me->height };
-	memset(me->pixels, 0, me->pixels_len);
 	me->dirty_region = r;
 	me->dirty = TRUE;
+	memset(me->pixels, 0, me->pixels_len);
 }
 
 void plot_redraw(Plot *me)
