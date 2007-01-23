@@ -1016,13 +1016,13 @@ static void MoveBox__Move(MoveBox *me, int key)
       {
       switch(key)
          {
-         case FIK_RIGHT_ARROW_2:     xoff += BOX_INC*4;   break;
+         case FIK_CTL_RIGHT_ARROW:     xoff += BOX_INC*4;   break;
          case FIK_RIGHT_ARROW:       xoff += BOX_INC;     break;
-         case FIK_LEFT_ARROW_2:      xoff -= BOX_INC*4;   break;
+         case FIK_CTL_LEFT_ARROW:      xoff -= BOX_INC*4;   break;
          case FIK_LEFT_ARROW:        xoff -= BOX_INC;     break;
-         case FIK_DOWN_ARROW_2:      yoff += BOX_INC*4;   break;
+         case FIK_CTL_DOWN_ARROW:      yoff += BOX_INC*4;   break;
          case FIK_DOWN_ARROW:        yoff += BOX_INC;     break;
-         case FIK_UP_ARROW_2:        yoff -= BOX_INC*4;   break;
+         case FIK_CTL_UP_ARROW:        yoff -= BOX_INC*4;   break;
          case FIK_UP_ARROW:          yoff -= BOX_INC;     break;
 
          default:
@@ -1093,10 +1093,10 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
          case FIK_DOWN_ARROW:
          case FIK_LEFT_ARROW:
          case FIK_RIGHT_ARROW:
-         case FIK_UP_ARROW_2:
-         case FIK_DOWN_ARROW_2:
-         case FIK_LEFT_ARROW_2:
-         case FIK_RIGHT_ARROW_2:
+         case FIK_CTL_UP_ARROW:
+         case FIK_CTL_DOWN_ARROW:
+         case FIK_CTL_LEFT_ARROW:
+         case FIK_CTL_RIGHT_ARROW:
             MoveBox__Move(me, key);
             break;
 
@@ -2461,13 +2461,13 @@ static void PalTable__DoCurs(PalTable *me, int key)
       {
       switch(key)
          {
-         case FIK_RIGHT_ARROW_2:     xoff += CURS_INC*4;   break;
+         case FIK_CTL_RIGHT_ARROW:     xoff += CURS_INC*4;   break;
          case FIK_RIGHT_ARROW:       xoff += CURS_INC;     break;
-         case FIK_LEFT_ARROW_2:      xoff -= CURS_INC*4;   break;
+         case FIK_CTL_LEFT_ARROW:      xoff -= CURS_INC*4;   break;
          case FIK_LEFT_ARROW:        xoff -= CURS_INC;     break;
-         case FIK_DOWN_ARROW_2:      yoff += CURS_INC*4;   break;
+         case FIK_CTL_DOWN_ARROW:      yoff += CURS_INC*4;   break;
          case FIK_DOWN_ARROW:        yoff += CURS_INC;     break;
-         case FIK_UP_ARROW_2:        yoff -= CURS_INC*4;   break;
+         case FIK_CTL_UP_ARROW:        yoff -= CURS_INC*4;   break;
          case FIK_UP_ARROW:          yoff -= CURS_INC;     break;
 
          default:
@@ -2664,10 +2664,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
       case FIK_LEFT_ARROW:
       case FIK_UP_ARROW:
       case FIK_DOWN_ARROW:
-      case FIK_RIGHT_ARROW_2:
-      case FIK_LEFT_ARROW_2:
-      case FIK_UP_ARROW_2:
-      case FIK_DOWN_ARROW_2:
+      case FIK_CTL_RIGHT_ARROW:
+      case FIK_CTL_LEFT_ARROW:
+      case FIK_CTL_UP_ARROW:
+      case FIK_CTL_DOWN_ARROW:
          PalTable__DoCurs(me, key);
          break;
 

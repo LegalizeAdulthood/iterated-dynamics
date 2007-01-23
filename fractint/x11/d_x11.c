@@ -1213,10 +1213,10 @@ translate_key(int ch)
     case 'L':		return FIK_RIGHT_ARROW;
     case 'K':		return FIK_UP_ARROW;
     case 'J':		return FIK_DOWN_ARROW;
-    case 1115:		return FIK_LEFT_ARROW_2;
-    case 1116:		return FIK_RIGHT_ARROW_2;
-    case 1141:		return FIK_UP_ARROW_2;
-    case 1145:		return FIK_DOWN_ARROW_2;
+    case 1115:		return FIK_CTL_LEFT_ARROW;
+    case 1116:		return FIK_CTL_RIGHT_ARROW;
+    case 1141:		return FIK_CTL_UP_ARROW;
+    case 1145:		return FIK_CTL_DOWN_ARROW;
     case 'O':		return FIK_HOME;
     case 'E':		return FIK_END;
     case '\n':		return FIK_ENTER;
@@ -1470,19 +1470,19 @@ ev_key_press(DriverX11 *di, XKeyEvent *xevent)
     return 1;
   case XK_Left:
   case XK_R10:
-    di->xbufkey = di->ctl_mode ? FIK_LEFT_ARROW_2 : FIK_LEFT_ARROW;
+    di->xbufkey = di->ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
     return 1;
   case XK_Right:
   case XK_R12:
-    di->xbufkey = di->ctl_mode ? FIK_RIGHT_ARROW_2 : FIK_RIGHT_ARROW;
+    di->xbufkey = di->ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
     return 1;
   case XK_Down:
   case XK_R14:
-    di->xbufkey = di->ctl_mode ? FIK_DOWN_ARROW_2 : FIK_DOWN_ARROW;
+    di->xbufkey = di->ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
     return 1;
   case XK_Up:
   case XK_R8:
-    di->xbufkey = di->ctl_mode ? FIK_UP_ARROW_2 : FIK_UP_ARROW;
+    di->xbufkey = di->ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
     return 1;
   case XK_Insert:
     di->xbufkey = di->ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;

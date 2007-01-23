@@ -736,16 +736,16 @@ void Jiim(int which)         /* called by fractint */
             case FIK_RIGHT_ARROW:
                dcol = 1;
                break;
-            case FIK_UP_ARROW_2:
+            case FIK_CTL_UP_ARROW:
                drow = -4;
                break;
-            case FIK_DOWN_ARROW_2:
+            case FIK_CTL_DOWN_ARROW:
                drow = 4;
                break;
-            case FIK_LEFT_ARROW_2:
+            case FIK_CTL_LEFT_ARROW:
                dcol = -4;
                break;
-            case FIK_RIGHT_ARROW_2:
+            case FIK_CTL_RIGHT_ARROW:
                dcol = 4;
                break;
             case 'z':
