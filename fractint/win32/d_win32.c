@@ -767,6 +767,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	}
 
 	win32_resize(drv);
+	plot_clear(&di->plot);
 
 	if (g_disk_flag)
 	{
