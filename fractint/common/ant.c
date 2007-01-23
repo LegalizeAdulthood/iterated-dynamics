@@ -54,16 +54,16 @@ setwait(long *wait)
       kbdchar = driver_get_key();
       switch (kbdchar)
       {
-      case FIK_RIGHT_ARROW_2:
-      case FIK_UP_ARROW_2:
+      case FIK_CTL_RIGHT_ARROW:
+      case FIK_CTL_UP_ARROW:
          (*wait) += 100;
          break;
       case FIK_RIGHT_ARROW:
       case FIK_UP_ARROW:
          (*wait) += 10;
          break;
-      case FIK_DOWN_ARROW_2:
-      case FIK_LEFT_ARROW_2:
+      case FIK_CTL_DOWN_ARROW:
+      case FIK_CTL_LEFT_ARROW:
          (*wait) -= 100;
          break;
       case FIK_LEFT_ARROW:
@@ -163,10 +163,10 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          case FIK_UP_ARROW:
          case FIK_DOWN_ARROW:
          case FIK_LEFT_ARROW:
-         case FIK_RIGHT_ARROW_2:
-         case FIK_UP_ARROW_2:
-         case FIK_DOWN_ARROW_2:
-         case FIK_LEFT_ARROW_2:
+         case FIK_CTL_RIGHT_ARROW:
+         case FIK_CTL_UP_ARROW:
+         case FIK_CTL_DOWN_ARROW:
+         case FIK_CTL_LEFT_ARROW:
             setwait(&wait);
             break;
          default:
@@ -301,10 +301,10 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
          case FIK_UP_ARROW:
          case FIK_DOWN_ARROW:
          case FIK_LEFT_ARROW:
-         case FIK_RIGHT_ARROW_2:
-         case FIK_UP_ARROW_2:
-         case FIK_DOWN_ARROW_2:
-         case FIK_LEFT_ARROW_2:
+         case FIK_CTL_RIGHT_ARROW:
+         case FIK_CTL_UP_ARROW:
+         case FIK_CTL_DOWN_ARROW:
+         case FIK_CTL_LEFT_ARROW:
             setwait(&wait);
             break;
          default:

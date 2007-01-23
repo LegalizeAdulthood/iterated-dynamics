@@ -1413,10 +1413,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case FIK_DOWN_ARROW:             /* cursor down                  */
         move_zoombox(*kbdchar);
         break;
-   case FIK_LEFT_ARROW_2:           /* Ctrl-cursor left             */
-   case FIK_RIGHT_ARROW_2:          /* Ctrl-cursor right            */
-   case FIK_UP_ARROW_2:             /* Ctrl-cursor up               */
-   case FIK_DOWN_ARROW_2:           /* Ctrl-cursor down             */
+   case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
+   case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
+   case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
+   case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
        move_zoombox(*kbdchar);
        break;
    case FIK_CTL_HOME:               /* Ctrl-home                    */
@@ -1775,10 +1775,10 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case FIK_DOWN_ARROW:             /* cursor down                  */
         move_zoombox(*kbdchar);
         break;
-   case FIK_LEFT_ARROW_2:           /* Ctrl-cursor left             */
-   case FIK_RIGHT_ARROW_2:          /* Ctrl-cursor right            */
-   case FIK_UP_ARROW_2:             /* Ctrl-cursor up               */
-   case FIK_DOWN_ARROW_2:           /* Ctrl-cursor down             */
+   case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
+   case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
+   case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
+   case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
         /* borrow ctrl cursor keys for moving selection box */
         /* in evolver mode */
      if (boxcount) {
@@ -1787,16 +1787,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
         /* get the gene array from memory */
         MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
         if (evolving&1) {
-             if (*kbdchar == FIK_LEFT_ARROW_2) {
+             if (*kbdchar == FIK_CTL_LEFT_ARROW) {
                 px--;
              }
-             if (*kbdchar == FIK_RIGHT_ARROW_2) {
+             if (*kbdchar == FIK_CTL_RIGHT_ARROW) {
                 px++;
              }
-             if (*kbdchar == FIK_UP_ARROW_2) {
+             if (*kbdchar == FIK_CTL_UP_ARROW) {
                 py--;
              }
-             if (*kbdchar == FIK_DOWN_ARROW_2) {
+             if (*kbdchar == FIK_CTL_DOWN_ARROW) {
                 py++;
              }
              if (px <0 ) px = gridsz-1;
@@ -2084,16 +2084,16 @@ static void move_zoombox(int keynum)
          case FIK_DOWN_ARROW:               /* cursor down */
             ++vertical;
             break;
-         case FIK_LEFT_ARROW_2:             /* Ctrl-cursor left */
+         case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
             horizontal -= 8;
             break;
-         case FIK_RIGHT_ARROW_2:             /* Ctrl-cursor right */
+         case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
             horizontal += 8;
             break;
-         case FIK_UP_ARROW_2:               /* Ctrl-cursor up */
+         case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
             vertical -= 8;
             break;
-         case FIK_DOWN_ARROW_2:             /* Ctrl-cursor down */
+         case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
             vertical += 8;
             break;                      /* += 8 needed by VESA scrolling */
          default:
