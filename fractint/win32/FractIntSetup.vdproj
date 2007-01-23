@@ -513,6 +513,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E00606B3D0AC4566B1B0F68572A953BA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E2DC0ED0FF9042F08A5F1D02D0DC8488"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2289,6 +2295,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E00606B3D0AC4566B1B0F68572A953BA"
+            {
+            "SourcePath" = "8:..\\BUGS.txt"
+            "TargetName" = "8:BUGS.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_E2DC0ED0FF9042F08A5F1D02D0DC8488"
             {
             "SourcePath" = "8:..\\extra\\phctutor.zip"
@@ -2787,6 +2813,20 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
+            "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
+            "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_98728C66D6BE46278199A6BBF37D8740"
+            {
+            "Name" = "8:Known Problems"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_E00606B3D0AC4566B1B0F68572A953BA"
             "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:"
