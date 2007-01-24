@@ -1092,6 +1092,13 @@ win32_disk_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
 {
 }
 
+static void win32_disk_save_graphics(Driver *drv)
+{
+}
+
+static void win32_disk_restore_graphics(Driver *drv)
+{
+}
 
 static Win32DiskDriver win32_disk_driver_info =
 {

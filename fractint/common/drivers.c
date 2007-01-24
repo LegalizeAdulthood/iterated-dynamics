@@ -311,4 +311,16 @@ driver_display_string(int x, int y, int fg, int bg, const char *text)
 	(*g_driver->display_string)(g_driver, x, y, fg, bg, text);
 }
 
+void
+driver_save_graphics(void)
+{
+	(*g_driver->save_graphics)(g_driver);
+}
+
+void
+driver_restore_graphics(void)
+{
+	(*g_driver->restore_graphics)(g_driver);
+}
+
 #endif
