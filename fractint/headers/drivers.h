@@ -62,6 +62,8 @@ struct tagDriver
 	/* set copy/xor line */				void (*set_line_mode)(Driver *drv, int mode);
 	/* draw line */						void (*draw_line)(Driver *drv, int x1, int y1, int x2, int y2, int color);
 	/* draw string in graphics mode */	void (*display_string)(Driver *drv, int x, int y, int fg, int bg, const char *text);
+	/* save graphics */					void (*save_graphics)(Driver *drv);
+	/* restore graphics */				void (*restore_graphics)(Driver *drv);
 	/* poll or block for a key */		int (*get_key)(Driver *drv);
 										int (*key_cursor)(Driver *drv, int row, int col);
 										int (*key_pressed)(Driver *drv);
@@ -117,6 +119,8 @@ struct tagDriver
     name_##_set_line_mode, \
     name_##_draw_line, \
 	name_##_display_string, \
+	name_##_save_graphics, \
+	name_##_restore_graphics, \
     name_##_get_key, \
 	name_##_key_cursor, \
 	name_##_key_pressed, \
@@ -203,6 +207,8 @@ extern void driver_set_line_mode(int mode);
 extern void driver_draw_line(int x1, int y1, int x2, int y2, int color);
 extern int driver_get_key(void);
 extern void driver_display_string(int x, int y, int fg, int bg, const char *text);
+extern void driver_save_graphics(void);
+extern void driver_restore_graphics(void);
 extern int driver_key_cursor(int row, int col);
 extern int driver_key_pressed(void);
 extern int driver_wait_key_pressed(int timeout);
@@ -242,17 +248,19 @@ extern void driver_delay(int ms);
 #define driver_write_palette()						(*g_driver->write_palette)(g_driver)
 #define driver_read_pixel(_x, _y)					(*g_driver->read_pixel)(g_driver, _x, _y)
 #define driver_write_pixel(_x, _y, _color)			(*g_driver->write_pixel)(g_driver, _x, _y, _color)
-#define driver_read_span(_y, _x, _lastx, _pixels)	(*g_driver->read_span(_y, _x, _lastx, _pixels)
+#define driver_read_span(_y, _x, _lastx, _pixels)	(*g_driver->read_span(g_driver, _y, _x, _lastx, _pixels)
 #define driver_write_span(_y, _x, _lastx, _pixels)	(*g_driver->write_span)(g_driver, _y, _x, _lastx, _pixels)
 #define driver_get_truecolor(_x,_y, _r,_g,_b,_a)	(*g_driver->get_truecolor)(g_driver, _x, _y, _r, _g, _b, _a)
 #define driver_put_truecolor(_x,_y, _r,_g,_b,_a)	(*g_driver->put_trueoclor)(g_driver, _x, _y, _r, _g, _b, _a)
 #define driver_set_line_mode(_m)					(*g_driver->set_line_mode)(g_driver, _m)
-#define driver_draw_line(x1_, y1_, x2_, y2_, clr_)	(*g_driver->draw_line)(x1_, y1_, x1_, y2_, clr_)
-#define driver_display_string(x_,y_,fg_,bg_,str_)	(*g_driver->display_string(x_, y_, fg_, bg_, str_)
+#define driver_draw_line(x1_, y1_, x2_, y2_, clr_)	(*g_driver->draw_line)(g_driver, x1_, y1_, x1_, y2_, clr_)
+#define driver_display_string(x_,y_,fg_,bg_,str_)	(*g_driver->display_string)(g_driver, x_, y_, fg_, bg_, str_)
+#define driver_save_graphics()						(*g_driver->save_graphics)(g_driver)
+#define driver_restore_graphics()					(*g_driver->restore_graphics)(g_driver)
 #define driver_get_key()							(*g_driver->get_key)(g_driver)
 #define driver_key_cursor(row_, col_)				(*g_driver->key_cursor)(g_driver, row_, col_)
 #define driver_key_pressed()						(*g_driver->key_pressed)(g_driver)
-#define driver_wait_key_pressed(timeout_)			(*g_driver->wait_key_pressed)(timeout_)
+#define driver_wait_key_pressed(timeout_)			(*g_driver->wait_key_pressed)(g_driver, timeout_)
 #define driver_unget_key(key_)						(*g_driver->unget_key)(g_driver, key_)
 #define driver_shell()								(*g_driver->shell)(g_driver)
 #define driver_put_string(_row, _col, _attr, _msg)	(*g_driver->put_string)(g_driver, _row, _col, _attr, _msg)

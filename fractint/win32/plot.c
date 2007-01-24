@@ -221,6 +221,12 @@ init_pixels(Plot *me)
 	if (me->pixels != NULL)
 	{
 		free(me->pixels);
+		me->pixels = NULL;
+	}
+	if (me->saved_pixels != NULL)
+	{
+		free(me->saved_pixels);
+		me->saved_pixels = NULL;
 	}
 	me->width = sxdots;
 	me->height = sydots;
@@ -366,6 +372,11 @@ void plot_terminate(Plot *me)
 	{
 		free(me->pixels);
 		me->pixels = NULL;
+	}
+	if (me->saved_pixels)
+	{
+		free(me->saved_pixels);
+		me->saved_pixels = NULL;
 	}
 
 	{
@@ -592,4 +603,21 @@ void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *tex
 		x += 8;
 		text++;
 	}
+}
+
+void plot_save_graphics(Plot *me)
+{
+	if (NULL == me->saved_pixels)
+	{
+		me->saved_pixels = malloc(me->pixels_len);
+		memset(me->saved_pixels, 0, me->pixels_len);
+	}
+	memcpy(me->saved_pixels, me->pixels, me->pixels_len);
+}
+
+void plot_restore_graphics(Plot *me)
+{
+	_ASSERTE(me->saved_pixels);
+	memcpy(me->pixels, me->saved_pixels, me->pixels_len);
+	plot_redraw(me);
 }

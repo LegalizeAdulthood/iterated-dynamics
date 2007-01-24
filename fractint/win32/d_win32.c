@@ -1093,6 +1093,20 @@ win32_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text
 	plot_display_string(&di->plot, x, y, fg, bg, text);
 }
 
+static void
+win32_save_graphics(Driver *drv)
+{
+	DI(di);
+	plot_save_graphics(&di->plot);
+}
+
+static void
+win32_restore_graphics(Driver *drv)
+{
+	DI(di);
+	plot_restore_graphics(&di->plot);
+}
+
 static Win32Driver win32_driver_info =
 {
 	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows."),
