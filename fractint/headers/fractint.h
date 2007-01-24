@@ -865,6 +865,8 @@ extern  void   (_fastcall *plot)(int, int, int);
  * Use this prefix to disambiguate key name symbols used in the fractint source
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
+#define FIK_ALT_A			1030
+#define FIK_ALT_S			1031
 #define FIK_ALT_F1			1104
 
 #define FIK_CTL_A			1
@@ -872,8 +874,14 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_CTL_E			5
 #define FIK_CTL_F			6
 #define FIK_CTL_G			7
+#define FIK_CTL_H			8
+#define FIK_CTL_O			15
 #define FIK_CTL_P			16
 #define FIK_CTL_S			19
+#define FIK_CTL_U			21
+#define FIK_CTL_X			24
+#define FIK_CTL_Y			25
+#define FIK_CTL_Z			26
 #define FIK_CTL_BACKSLASH	28
 #define FIK_CTL_DEL			1147
 #define FIK_CTL_DOWN_ARROW	1145

@@ -290,7 +290,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          default:                       /* maybe a new palette */
             if (g_really_ega) break;       /* no sense on real EGAs */
             fkey = 0;                   /* disable random generation */
-            if (kbdchar == 1084) set_palette(Black, White);
+            if (kbdchar == FIK_SF1) set_palette(Black, White);
             if (kbdchar == FIK_SF2) set_palette(Red, Yellow);
             if (kbdchar == FIK_SF3) set_palette(Blue, Green);
             if (kbdchar == FIK_SF4) set_palette(Black, Yellow);
@@ -299,7 +299,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (kbdchar == FIK_SF7) set_palette(Black, Green);
             if (kbdchar == FIK_SF8) set_palette(Blue, Yellow);
             if (kbdchar == FIK_SF9) set_palette(Red, Green);
-            if (kbdchar == 1093) set_palette(Green, White);
+            if (kbdchar == FIK_SF10) set_palette(Green, White);
             if (kbdchar == 1094) set_palette2(Black, White);
             if (kbdchar == 1095) set_palette2(Red, Yellow);
             if (kbdchar == 1096) set_palette2(Blue, Green);
@@ -310,7 +310,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (kbdchar == 1101) set_palette2(Blue, Yellow);
             if (kbdchar == 1102) set_palette2(Red, Green);
             if (kbdchar == 1103) set_palette2(Green, White);
-            if (kbdchar == 1104) set_palette3(Blue, Green, Red);
+            if (kbdchar == FIK_ALT_F1) set_palette3(Blue, Green, Red);
             if (kbdchar == 1105) set_palette3(Blue, Yellow, Red);
             if (kbdchar == 1106) set_palette3(Red, White, Blue);
             if (kbdchar == 1107) set_palette3(Red, Yellow, White);

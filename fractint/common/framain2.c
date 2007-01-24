@@ -841,9 +841,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       driver_unstack_screen();
       break;
-   case 24:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
-   case 25:
-   case 26:
+   case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
+   case FIK_CTL_Y:
+   case FIK_CTL_Z:
       flip_image(*kbdchar);
       break;
    case 'x':                    /* invoke options screen        */
@@ -852,9 +852,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case 'z':                    /* type specific parms */
    case 'g':
    case 'v':
-   case 2:
-   case 5:
-   case 6:
+   case FIK_CTL_B:
+   case FIK_CTL_E:
+   case FIK_CTL_F:
       old_maxit = maxit;
       clear_zoombox();
       if (fromtext_flag == 1)
@@ -871,9 +871,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          i = get_fract_params(1);
       else if (*kbdchar == 'v')
          i = get_view_params(); /* get the parameters */
-      else if (*kbdchar == 2)
+      else if (*kbdchar == FIK_CTL_B)
          i = get_browse_params();
-      else if (*kbdchar == 5) {
+      else if (*kbdchar == FIK_CTL_E) {
          i = get_evolve_Parms();
          if (i > 0) {
             start_showorbit = 0;
@@ -881,7 +881,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             Log_Auto_Calc = 0; /* turn it off */
          }
       }
-      else if (*kbdchar == 6)
+      else if (*kbdchar == FIK_CTL_F)
          i = get_sound_params();
       else
          i = get_cmd_string();
@@ -969,7 +969,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       /*julman();*/
       break;
 #endif
-   case 1:                     /* ^a Ant */
+   case FIK_CTL_A:                     /* ^a Ant */
       clear_zoombox();
       {
          int oldtype, err, i;
@@ -1002,7 +1002,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       break;
    case 'k':                    /* ^s is irritating, give user a single key */
-   case 19:                     /* ^s RDS */
+   case FIK_CTL_S:                     /* ^s RDS */
       clear_zoombox();
       if (get_rds_params() >= 0)
       {
@@ -1020,7 +1020,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          return(CONTINUE);
       }
       break;
-   case 15:                     /* ctrl-o */
+   case FIK_CTL_O:                     /* ctrl-o */
    case 'o':
       /* must use standard fractal and have a float variant */
       if ((fractalspecific[fractype].calctype == StandardFractal
@@ -1188,7 +1188,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
    case 'h':
-   case 8:
+   case FIK_CTL_H:
       if (name_stack_ptr >= 1)
       {
          /* go back one file if somewhere to go (ie. browsing) */
@@ -1373,7 +1373,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case 'b':                    /* make batch file              */
       make_batch_file();
       break;
-   case 16:                    /* print current image          */
+   case FIK_CTL_P:                    /* print current image          */
       note_zoom();
       Print_Screen();
       restore_zoom();
@@ -1571,7 +1571,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case 'p':                    /* passes options      */
    case 'z':                    /* type specific parms */
    case 'g':
-   case 5:
+   case FIK_CTL_E:
    case FIK_SPACE:
       clear_zoombox();
       if (fromtext_flag == 1)
@@ -1616,7 +1616,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
    case 'h':
-   case 8:
+   case FIK_CTL_H:
       if(maxhistory > 0 && bf_math == 0)
       {
          if(*kbdchar == '\\' || *kbdchar == 'h')
