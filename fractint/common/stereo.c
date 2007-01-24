@@ -333,8 +333,7 @@ int do_AutoStereo(void)
    done = 0;
    while(done==0)
    {
-	   /* TODO: change interaction from constant polling to waiting */
-      while (driver_key_pressed() == 0); /* to trap F1 key */
+	   driver_wait_key_pressed(0);
       kbdchar = driver_get_key();
       switch(kbdchar)
       {
@@ -354,7 +353,7 @@ int do_AutoStereo(void)
             diskisactive = 0;
             break;
          default:
-            if(kbdchar == 27)   /* if ESC avoid returning to menu */
+            if(kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
                kbdchar = 255;
             driver_unget_key(kbdchar);
             driver_buzzer(BUZZER_COMPLETE);
