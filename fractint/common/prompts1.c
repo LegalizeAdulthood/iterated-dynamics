@@ -2122,14 +2122,14 @@ static int check_gfe_key(int curkey,int choice)
                driver_put_string(i,0,C_GENERAL_MED,blanks);
             driver_put_string(4,0,C_GENERAL_MED,infbuf);
          }
-         if((i = getakeynohelp()) == FIK_DOWN_ARROW || i == FIK_CTL_DOWN_ARROW
-                             || i == FIK_UP_ARROW || i == FIK_CTL_UP_ARROW
-                             || i == FIK_LEFT_ARROW || i == FIK_CTL_LEFT_ARROW
-                             || i == FIK_RIGHT_ARROW || i == FIK_CTL_RIGHT_ARROW
-                             || i == FIK_HOME || i == FIK_CTL_HOME
-                             || i == FIK_END || i == FIK_CTL_END
-                             || i == FIK_PAGE_UP || i == FIK_CTL_PAGE_UP
-                             || i == FIK_PAGE_DOWN || i == FIK_CTL_PAGE_DOWN) {
+         if((i = getakeynohelp()) == FIK_DOWN_ARROW		|| i == FIK_CTL_DOWN_ARROW
+                             || i == FIK_UP_ARROW		|| i == FIK_CTL_UP_ARROW
+                             || i == FIK_LEFT_ARROW		|| i == FIK_CTL_LEFT_ARROW
+                             || i == FIK_RIGHT_ARROW	|| i == FIK_CTL_RIGHT_ARROW
+                             || i == FIK_HOME			|| i == FIK_CTL_HOME
+                             || i == FIK_END			|| i == FIK_CTL_END
+                             || i == FIK_PAGE_UP		|| i == FIK_CTL_PAGE_UP
+                             || i == FIK_PAGE_DOWN		|| i == FIK_CTL_PAGE_DOWN) {
             switch(i) {
                case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
                   if(in_scrolling_mode && top_line < lines_in_entry - 17) {

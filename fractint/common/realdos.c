@@ -1345,14 +1345,14 @@ static int menu_checkkey(int curkey,int choice)
 #endif
    if(testkey == '2')
       testkey = '@';
-   if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == 2
-     || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == 6) /*RB 6== ctrl-F for sound menu */
+   if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
+     || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F) /*RB 6== ctrl-F for sound menu */
       return(0-testkey);
    if (menutype) {
       if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB
-        || testkey == 1 || testkey == 5 || testkey == 8
-        || testkey == 16
-        || testkey == 19 || testkey == 21) /* ctrl-A, E, H, P, S, U */
+        || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_CTL_H
+        || testkey == FIK_CTL_P
+        || testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
          return(0-testkey);
       if (testkey == ' ')
          if ((curfractalspecific->tojulia != NOFRACTAL
@@ -1367,7 +1367,7 @@ static int menu_checkkey(int curkey,int choice)
             return(0-testkey);
          }
       /* Alt-A and Alt-S */
-      if (testkey == 1030 || testkey == 1031 )
+      if (testkey == FIK_ALT_A || testkey == FIK_ALT_S )
          return(0-testkey);
       }
    if (check_vidmode_key(0,testkey) >= 0)
@@ -1432,7 +1432,7 @@ int input_field(
             offset = (int) strlen(fld);
             started = 1;
             break;
-         case 8:
+         case FIK_CTL_H:
          case 127:                              /* backspace */
             if (offset > 0) {
                j = (int) strlen(fld);
