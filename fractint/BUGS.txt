@@ -39,7 +39,7 @@ But this file does not exist!
 also, Ctrl^Pad+ and Ctrl^Pad- zoombox
 rotation doesn't work..
 
-mouse is not supposed to work yet, right?
+mouse does not work
 
 and those double-height video modes,
 as far as i can recall, there's some pixel
@@ -67,14 +67,6 @@ video memory -- of course it fails, in win32 environment.. so untill someone
 implements a win32 fullscreen mode AND a win32 virtual screen setup,
 there is no use for virtual screens in a windowed context and i suggest
 turning it off (e.g. make "virtual=n" a default setting)
-
-In the <m> screen, 
-if you press the down arrow until it stops, the menu items
-orbits window   <o> (left side near top) and the 
-stereogram   <ctrl-s> (right side at bottom)
-duplicate themselves.  (in Win32 Disk Video 800x600)
-
-The R00/G00/B00 text in the palette editor doesn't display properly.
 
 If I choose a video mode of 1600x1200, I would prefer it to change my 
 windows settings to full screen 1600x1200 (some applications actually do 
