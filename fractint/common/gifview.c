@@ -165,7 +165,7 @@ int gifview()
          }
          if((!display3d || (glassestype != 1 && glassestype != 2))
                        && !dontreadcolor)
-            g_dac_box[i][j] = (BYTE)(k >> 2);
+            g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
       }
    }
    colorstate = 1; /* colors aren't default and not a known .map file */
