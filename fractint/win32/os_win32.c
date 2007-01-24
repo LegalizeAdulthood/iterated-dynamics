@@ -697,18 +697,6 @@ uclock_t usec_clock(void)
    return result; 
 }
 
-void swapnormread(void)
-{
-	/* TODO */
-	_ASSERTE(FALSE);
-}
-
-void swapnormwrite(void)
-{
-	/* TODO */
-	_ASSERTE(FALSE);
-}
-
 /*
 ; ************* function scroll_center(tocol, torow) *************************
 
@@ -862,12 +850,6 @@ int abortmsg(char *file, unsigned int line, int flags, char *msg)
 	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
 	return stopmsg(flags, buffer);
 }
-
-static void null_swap(void)
-{
-}
-
-void (*g_swap_setup)(void) = null_swap;			/* setfortext/graphics setup routine */
 
 /* ods
  *
