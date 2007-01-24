@@ -96,19 +96,19 @@ struct tagWin32Driver
 #define MODE28(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 28)
 static VIDEOINFO modes[] =
 {
-	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  200),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  400),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  360,  480),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  640,  400),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  640,  480),
-	MODE27("Win32 Disk Video         ", "                        ", 0,  800,  600),
-	MODE27("Win32 Disk Video         ", "                        ", 0,  1024, 768),
-	MODE28("Win32 Disk Video         ", "                        ", 0,  1280, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", 0, 1024, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", 0, 1600, 1200),
-	MODE28("Win32 Disk Video         ", "                        ", 0, 2048, 2048),
-	MODE28("Win32 Disk Video         ", "                        ", 0, 4096, 4096),
-	MODE28("Win32 Disk Video         ", "                        ", 0, 8192, 8192)
+	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  200),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  400),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  360,  480),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  400),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  480),
+	MODE27("Win32 GDI Video          ", "                        ", 0,  800,  600),
+	MODE27("Win32 GDI Video          ", "                        ", 0,  1024, 768),
+	MODE28("Win32 GDI Video          ", "                        ", 0,  1280, 1024),
+	MODE28("Win32 GDI Video          ", "                        ", 0, 1024, 1024),
+	MODE28("Win32 GDI Video          ", "                        ", 0, 1600, 1200),
+	MODE28("Win32 GDI Video          ", "                        ", 0, 2048, 2048),
+	MODE28("Win32 GDI Video          ", "                        ", 0, 4096, 4096),
+	MODE28("Win32 GDI Video          ", "                        ", 0, 8192, 8192)
 };
 #undef MODE28
 #undef MODE27
