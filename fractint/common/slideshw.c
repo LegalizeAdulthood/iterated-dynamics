@@ -22,27 +22,6 @@ static void slideshowerr(char *msg);
 static int  get_scancode(char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
-static char s_ENTER     [] = "ENTER"     ;
-static char s_INSERT    [] = "INSERT"    ;
-static char s_DELETE    [] = "DELETE"    ;
-static char s_ESC       [] = "ESC"       ;
-static char s_TAB       [] = "TAB"       ;
-static char s_PAGEUP    [] = "PAGEUP"    ;
-static char s_PAGEDOWN  [] = "PAGEDOWN"  ;
-static char s_HOME      [] = "HOME"      ;
-static char s_END       [] = "END"       ;
-static char s_LEFT      [] = "LEFT"      ;
-static char s_RIGHT     [] = "RIGHT"     ;
-static char s_UP        [] = "UP"        ;
-static char s_DOWN      [] = "DOWN"      ;
-static char s_F1        [] = "F1"        ;
-static char s_CTRL_RIGHT[] = "CTRL_RIGHT";
-static char s_CTRL_LEFT [] = "CTRL_LEFT" ;
-static char s_CTRL_DOWN [] = "CTRL_DOWN" ;
-static char s_CTRL_UP   [] = "CTRL_UP"   ;
-static char s_CTRL_END  [] = "CTRL_END"  ;
-static char s_CTRL_HOME [] = "CTRL_HOME" ;
-
 #define MAX_MNEMONIC    20   /* max size of any mnemonic string */
 
 struct scancodes
@@ -53,27 +32,27 @@ struct scancodes
 
 static struct scancodes scancodes[] =
 {
-   {  FIK_ENTER,         s_ENTER     },
-   {  FIK_INSERT,        s_INSERT    },
-   {  FIK_DELETE,    s_DELETE    },
-   {  FIK_ESC,           s_ESC       },
-   {  FIK_TAB,       s_TAB       },
-   {  FIK_PAGE_UP,       s_PAGEUP    },
-   {  FIK_PAGE_DOWN,     s_PAGEDOWN  },
-   {  FIK_HOME,          s_HOME      },
-   {  FIK_END,           s_END       },
-   {  FIK_LEFT_ARROW,    s_LEFT      },
-   {  FIK_RIGHT_ARROW,   s_RIGHT     },
-   {  FIK_UP_ARROW,      s_UP        },
-   {  FIK_DOWN_ARROW,    s_DOWN      },
-   {  FIK_F1,            s_F1        },
-   {  FIK_CTL_RIGHT_ARROW, s_CTRL_RIGHT},
-   {  FIK_CTL_LEFT_ARROW,  s_CTRL_LEFT },
-   {  FIK_CTL_DOWN_ARROW,  s_CTRL_DOWN },
-   {  FIK_CTL_UP_ARROW,    s_CTRL_UP   },
-   {  FIK_CTL_END,       s_CTRL_END  },
-   {  FIK_CTL_HOME,      s_CTRL_HOME },
-   {  -1,             NULL       }
+	{ FIK_ENTER,			"ENTER"     },
+	{ FIK_INSERT,			"INSERT"    },
+	{ FIK_DELETE,			"DELETE"    },
+	{ FIK_ESC,				"ESC"       },
+	{ FIK_TAB,				"TAB"       },
+	{ FIK_PAGE_UP,			"PAGEUP"    },
+	{ FIK_PAGE_DOWN,		"PAGEDOWN"  },
+	{ FIK_HOME,				"HOME"      },
+	{ FIK_END,				"END"       },
+	{ FIK_LEFT_ARROW,		"LEFT"      },
+	{ FIK_RIGHT_ARROW,		"RIGHT"     },
+	{ FIK_UP_ARROW,			"UP"        },
+	{ FIK_DOWN_ARROW,		"DOWN"      },
+	{ FIK_F1,				"F1"        },
+	{ FIK_CTL_RIGHT_ARROW,	"CTRL_RIGHT"},
+	{ FIK_CTL_LEFT_ARROW,	"CTRL_LEFT" },
+	{ FIK_CTL_DOWN_ARROW,	"CTRL_DOWN" },
+	{ FIK_CTL_UP_ARROW,		"CTRL_UP"   },
+	{ FIK_CTL_END,			"CTRL_END"  },
+	{ FIK_CTL_HOME,			"CTRL_HOME" },
+	{ -1,             NULL       }
 };
 #define stop sizeof(scancodes)/sizeof(struct scancodes)-1
 
