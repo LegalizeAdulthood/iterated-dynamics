@@ -74,39 +74,63 @@ static void frame_OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT fl
 	k = (i << 8) + j;
 
 	/* handle modifier keys on the non-WM_CHAR keys */
-	switch (vk)
+	if (VK_F1 <= vk && vk <= VK_F10)
 	{
-	case VK_F1:			i = ALT_KEY(FIK_ALT_F1);			break;
+		BOOL ctl = GetKeyState(VK_CONTROL) & 0x8000;
+		BOOL alt = GetKeyState(VK_MENU) & 0x8000;
+		BOOL  shift = GetKeyState(VK_SHIFT) & 0x8000;
 
-	/* sorted in FIK_xxx order */
-	case VK_DELETE:		i = CTL_KEY(FIK_CTL_DEL);			break;
-	case VK_DOWN:		i = CTL_KEY(FIK_CTL_DOWN_ARROW);	break;
-	case VK_END:		i = CTL_KEY(FIK_CTL_END);			break;
-	case VK_RETURN:		i = CTL_KEY(FIK_CTL_ENTER);			break;
-	case VK_HOME:		i = CTL_KEY(FIK_CTL_HOME);			break;
-	case VK_INSERT:		i = CTL_KEY(FIK_CTL_INSERT);		break;
-	case VK_LEFT:		i = CTL_KEY(FIK_CTL_LEFT_ARROW);	break;
-	case VK_SUBTRACT:	i = CTL_KEY(FIK_CTL_MINUS);			break;
-	case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);		break;
-	case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);		break;
-	case VK_ADD:		i = CTL_KEY(FIK_CTL_PLUS);			break;
-	case VK_RIGHT:		i = CTL_KEY(FIK_CTL_RIGHT_ARROW);	break;
-	case VK_UP:			i = CTL_KEY(FIK_CTL_UP_ARROW);		break;
-
-	case VK_TAB:
-		if (0x8000 & GetKeyState(VK_CONTROL))
+		if (shift)
 		{
-			i = FIK_CTL_TAB;
-			j = 0;
+			i = SHF_KEY(FIK_SF1 + (vk - VK_F1));
 		}
-		break;
-
-	default:
-		if (0 == j)
+		else if (ctl)
 		{
-			i += 1000;
+			i = CTL_KEY(FIK_CTL_F1 + (vk - VK_F1));
 		}
-		break;
+		else if (alt)
+		{
+			i = ALT_KEY(FIK_ALT_F1 + (vk - VK_F1));
+		}
+		else
+		{
+			i = FIK_F1 + vk - VK_F1;
+		}
+	}
+	else
+	{
+		switch (vk)
+		{
+		/* sorted in FIK_xxx order */
+		case VK_DELETE:		i = CTL_KEY(FIK_CTL_DEL);			break;
+		case VK_DOWN:		i = CTL_KEY(FIK_CTL_DOWN_ARROW);	break;
+		case VK_END:		i = CTL_KEY(FIK_CTL_END);			break;
+		case VK_RETURN:		i = CTL_KEY(FIK_CTL_ENTER);			break;
+		case VK_HOME:		i = CTL_KEY(FIK_CTL_HOME);			break;
+		case VK_INSERT:		i = CTL_KEY(FIK_CTL_INSERT);		break;
+		case VK_LEFT:		i = CTL_KEY(FIK_CTL_LEFT_ARROW);	break;
+		case VK_SUBTRACT:	i = CTL_KEY(FIK_CTL_MINUS);			break;
+		case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);		break;
+		case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);		break;
+		case VK_ADD:		i = CTL_KEY(FIK_CTL_PLUS);			break;
+		case VK_RIGHT:		i = CTL_KEY(FIK_CTL_RIGHT_ARROW);	break;
+		case VK_UP:			i = CTL_KEY(FIK_CTL_UP_ARROW);		break;
+
+		case VK_TAB:
+			if (0x8000 & GetKeyState(VK_CONTROL))
+			{
+				i = FIK_CTL_TAB;
+				j = 0;
+			}
+			break;
+
+		default:
+			if (0 == j)
+			{
+				i += 1000;
+			}
+			break;
+		}
 	}
 
 	/* use this call only for non-ASCII keys */

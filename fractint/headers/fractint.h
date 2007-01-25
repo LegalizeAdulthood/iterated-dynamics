@@ -887,6 +887,7 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_CTL_END			1117
 #define FIK_CTL_ENTER		10
 #define FIK_CTL_ENTER_2		1010
+#define FIK_CTL_F1			1094
 #define FIK_CTL_HOME		1119
 #define FIK_CTL_INSERT		1146
 #define FIK_CTL_LEFT_ARROW	1115
