@@ -1079,7 +1079,11 @@ win32_disk_resume(Driver *drv)
 		win32_disk_window(drv);
 	}
 
-	ShowWindow(di->wintext.hWndCopy, SW_NORMAL);
+	if (di->wintext.hWndCopy)
+	{
+		ShowWindow(di->wintext.hWndCopy, SW_NORMAL);
+	}
+	wintext_resume(&di->wintext);
 }
 
 static void

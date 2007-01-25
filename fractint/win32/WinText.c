@@ -755,3 +755,8 @@ void wintext_put_char_attr(WinText *me, int row, int col, int char_attr)
 	me->chars[row][col] = (char_attr >> 8) & 0xFF;
 	me->attrs[row][col] = (char_attr & 0xFF);
 }
+
+void wintext_resume(WinText *me)
+{
+	g_me = me;
+}
