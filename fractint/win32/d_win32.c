@@ -885,8 +885,8 @@ win32_stack_screen(Driver *drv)
 	}
 	else
 	{
-		_ASSERTE(!di->text_not_graphics);
 		win32_set_for_text(drv);
+		win32_set_clear(drv);
 	}
 }
 
