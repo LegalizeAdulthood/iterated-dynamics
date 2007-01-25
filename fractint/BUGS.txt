@@ -26,18 +26,7 @@ and it no longer renders new images and the zoom box is not erased.
 
 There is some funniness when switching between video modes sometimes.
 
-3.  Restore of image in a different (or maybe just larger?) resolution 
-than the current video made causes Frac4Win to crash.
-
-3. More on trying to restore - an error message states:
-
-The following files will be included in this error report:
-C:\DOCUME~1\Lee\LOCALS~1\Temp\6a3a_appcompat.txt
-
-But this file does not exist!
-
-also, Ctrl^Pad+ and Ctrl^Pad- zoombox
-rotation doesn't work..
+Ctrl^Pad+ and Ctrl^Pad- zoombox rotation doesn't work..
 
 mouse does not work
 
