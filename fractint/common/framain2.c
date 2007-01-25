@@ -1188,7 +1188,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
    case 'h':
-   case FIK_CTL_H:
+   case FIK_BACKSPACE:
       if (name_stack_ptr >= 1)
       {
          /* go back one file if somewhere to go (ie. browsing) */
@@ -1616,7 +1616,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
    case 'h':
-   case FIK_CTL_H:
+   case FIK_BACKSPACE:
       if(maxhistory > 0 && bf_math == 0)
       {
          if(*kbdchar == '\\' || *kbdchar == 'h')

@@ -874,7 +874,6 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_CTL_E			5
 #define FIK_CTL_F			6
 #define FIK_CTL_G			7
-#define FIK_CTL_H			8
 #define FIK_CTL_O			15
 #define FIK_CTL_P			16
 #define FIK_CTL_S			19

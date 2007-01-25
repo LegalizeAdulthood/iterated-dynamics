@@ -1350,7 +1350,7 @@ static int menu_checkkey(int curkey,int choice)
       return(0-testkey);
    if (menutype) {
       if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB
-        || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_CTL_H
+        || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
         || testkey == FIK_CTL_P
         || testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
          return(0-testkey);
@@ -1432,7 +1432,7 @@ int input_field(
             offset = (int) strlen(fld);
             started = 1;
             break;
-         case FIK_CTL_H:
+         case FIK_BACKSPACE:
          case 127:                              /* backspace */
             if (offset > 0) {
                j = (int) strlen(fld);
