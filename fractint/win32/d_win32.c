@@ -1061,6 +1061,10 @@ win32_pause(Driver *drv)
 	{
 		ShowWindow(di->wintext.hWndCopy, SW_HIDE);
 	}
+	if (di->plot.window)
+	{
+		ShowWindow(di->plot.window, SW_HIDE);
+	}
 }
 
 static void
@@ -1073,6 +1077,7 @@ win32_resume(Driver *drv)
 	}
 
 	ShowWindow(di->wintext.hWndCopy, SW_NORMAL);
+	wintext_resume(&di->wintext);
 }
 
 static void

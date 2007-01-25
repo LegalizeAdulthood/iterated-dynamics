@@ -63,5 +63,6 @@ extern int			wintext_get_char_attr(WinText *, int row, int col);
 extern void			wintext_put_char_attr(WinText *, int row, int col, int char_attr);
 extern void			wintext_set_focus(void);
 extern void			wintext_kill_focus(void);
+extern void			wintext_resume(WinText *me);
 
 #endif
