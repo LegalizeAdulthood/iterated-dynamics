@@ -842,15 +842,8 @@ static int cmdfile(FILE *handle,int mode)
    int i;
    int lineoffset = 0;
    int changeflag = 0; /* &1 fractal stuff chgd, &2 3d stuff chgd */
-   char linebuf[513],*cmdbuf;
-   char *savesuffix;
-   /* use near array suffix for large argument buffer, but save existing
-      contents to extraseg */
-   cmdbuf = (char *)suffix;
-   /* TODO: allocate real memory, not reuse shared segment */
-   savesuffix = extraseg;
-   memcpy(savesuffix,suffix,10000);
-   memset(suffix,0,10000);
+   char linebuf[513];
+   char cmdbuf[10000] = { 0 };
 
    if (mode == 2 || mode == 3) {
       while ((i = getc(handle)) != '{' && i != EOF) { }
@@ -867,7 +860,6 @@ static int cmdfile(FILE *handle,int mode)
 #ifdef XFRACT
    g_init_mode = 0;                /* Skip credits if @file is used. */
 #endif
-   memcpy(suffix,savesuffix,10000);
    if(changeflag&1)
    {
       backwards_v18();
