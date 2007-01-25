@@ -80,19 +80,19 @@ static t_linereader win32_line_reader;
 #define MODE28(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 28)
 static VIDEOINFO modes[] =
 {
-	MODE19("Win32 Disk Video         ", "                        ", FIK_F2,  320,  200),
-	MODE19("Win32 Disk Video         ", "                        ", FIK_F3,  320,  400),
-	MODE19("Win32 Disk Video         ", "                        ", FIK_F4,  360,  480),
-	MODE19("Win32 Disk Video         ", "                        ", FIK_F5,  640,  400),
-	MODE19("Win32 Disk Video         ", "                        ", FIK_F6,  640,  480),
-	MODE27("Win32 Disk Video         ", "                        ", FIK_F7,  800,  600),
-	MODE27("Win32 Disk Video         ", "                        ", FIK_F8,  1024, 768),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_F9,  1280, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_SF1, 1024, 1024),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_SF2, 1600, 1200),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_SF3, 2048, 2048),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_SF4, 4096, 4096),
-	MODE28("Win32 Disk Video         ", "                        ", FIK_SF5, 8192, 8192)
+	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  200),
+	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  400),
+	MODE19("Win32 Disk Video         ", "                        ", 0,  360,  480),
+	MODE19("Win32 Disk Video         ", "                        ", 0,  640,  400),
+	MODE19("Win32 Disk Video         ", "                        ", 0,  640,  480),
+	MODE27("Win32 Disk Video         ", "                        ", 0,  800,  600),
+	MODE27("Win32 Disk Video         ", "                        ", 0,  1024, 768),
+	MODE28("Win32 Disk Video         ", "                        ", 0,  1280, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", 0, 1024, 1024),
+	MODE28("Win32 Disk Video         ", "                        ", 0, 1600, 1200),
+	MODE28("Win32 Disk Video         ", "                        ", 0, 2048, 2048),
+	MODE28("Win32 Disk Video         ", "                        ", 0, 4096, 4096),
+	MODE28("Win32 Disk Video         ", "                        ", 0, 8192, 8192)
 };
 #undef MODE28
 #undef MODE27
