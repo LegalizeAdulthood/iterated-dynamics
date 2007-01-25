@@ -151,7 +151,6 @@ int g_row_count = 0;
 long savebase = 0;				/* base clock ticks */ 
 long saveticks = 0;				/* save after this many ticks */ 
 unsigned int strlocn[10*1024] = { 0 };
-BYTE suffix[2048] = { 0 };
 char supervga_list[] =
 {
 	'a', 'h', 'e', 'a', 'd', 'a',		//supervga_list   db      "aheada"
