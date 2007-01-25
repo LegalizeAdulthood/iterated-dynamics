@@ -1292,6 +1292,11 @@ void goodbye()                  /* we done.  Bail out */
 	{
 		MemoryRelease(oldhistory_handle);
 	}
+	if (ifs_defn != NULL)
+	{
+		free(ifs_defn);
+		ifs_defn = NULL;
+	}
 	enddisk();
 	discardgraphics();
 	ExitCheck();
