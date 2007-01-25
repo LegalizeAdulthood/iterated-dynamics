@@ -38,15 +38,6 @@ aspect ratio variable burried somewhere..
 the canvas size directly, say, at the view
 window prompt screen? (..well, later..)
 
-I) started fractint, selected a non-disk video, rendered mandel, so far OK..
--- then restarted using <Ins>, selected a disk-video mode -> blank screen
-(although it seems to respond to keyboard input, it doesn't display anything)
-..while selecting a non-disk video after an <Ins> restart is OK..
-
-II) started fractint, selected a disk-video mode, "rendered" mandel, OK so far..
--- on completion, went to the "View Window Options" screen (<v>), lessened
-dimensions, submitted -> fractint crashed (most of the time)
-
 III) started fractint, selected a mode like 8-8-8, or 1280x1024 (formerly VESA),
 -- went to the "View Window Options" screen (<v>), changed nothing, submit
 -> "insufficient free memory/disk space" ... reason:
