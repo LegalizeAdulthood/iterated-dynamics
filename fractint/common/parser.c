@@ -1993,40 +1993,40 @@ char maxfn = 0;
 /* TIW 03-30-91 STOP */
 
 struct FNCT_LIST FnctList[] = {   /* TIW 03-31-91 added far */
-   {s_sin,   &StkSin},
-   {s_sinh,  &StkSinh},
-   {s_cos,   &StkCos},
-   {s_cosh,  &StkCosh},
-   {s_sqr,   &StkSqr},
-   {s_log,   &StkLog},
-   {s_exp,   &StkExp},
-   {s_abs,   &StkAbs},
-   {s_conj,  &StkConj},
-   {s_real,  &StkReal},
-   {s_imag,  &StkImag},
-   {s_fn1,   &StkTrig0},   /* TIW 03-30-91 */
-   {s_fn2,   &StkTrig1},   /* TIW 03-30-91 */
-   {s_fn3,   &StkTrig2},   /* TIW 03-30-91 */
-   {s_fn4,   &StkTrig3},   /* TIW 03-30-91 */
-   {s_flip,  &StkFlip},    /* MCP 4-9-91 */
-   {s_tan,   &StkTan},     /* TIW 04-22-91 */
-   {s_tanh,  &StkTanh},    /* TIW 04-22-91 */
-   {s_cotan, &StkCoTan},   /* TIW 04-24-91 */
-   {s_cotanh,&StkCoTanh},  /* TIW 04-24-91 */
-   {s_cosxx, &StkCosXX},   /* PB  04-28-91 */
-   {s_srand, &StkSRand},   /* MCP 11-21-91 */
-   {s_asin,  &StkASin},    /* TIW 11-26-94 */
-   {s_asinh, &StkASinh},   /* TIW 11-26-94 */
-   {s_acos,  &StkACos},    /* TIW 11-26-94 */
-   {s_acosh, &StkACosh},   /* TIW 11-26-94 */
-   {s_atan,  &StkATan},    /* TIW 11-26-94 */
-   {s_atanh, &StkATanh},   /* TIW 11-26-94 */
-   {s_sqrt,  &StkSqrt},    /* TIW 11-26-94 */
-   {s_cabs,  &StkCAbs},    /* TIW 11-26-94 */
-   {s_floor, &StkFloor},   /* TIW 06-30-96 */
-   {s_ceil,  &StkCeil},    /* TIW 06-30-96 */
-   {s_trunc, &StkTrunc},   /* TIW 06-30-96 */
-   {s_round, &StkRound},   /* TIW 06-30-96 */
+   {"sin",   &StkSin},
+   {"sinh",  &StkSinh},
+   {"cos",   &StkCos},
+   {"cosh",  &StkCosh},
+   {"sqr",   &StkSqr},
+   {"log",   &StkLog},
+   {"exp",   &StkExp},
+   {"abs",   &StkAbs},
+   {"conj",  &StkConj},
+   {"real",  &StkReal},
+   {"imag",  &StkImag},
+   {"fn1",   &StkTrig0},   /* TIW 03-30-91 */
+   {"fn2",   &StkTrig1},   /* TIW 03-30-91 */
+   {"fn3",   &StkTrig2},   /* TIW 03-30-91 */
+   {"fn4",   &StkTrig3},   /* TIW 03-30-91 */
+   {"flip",  &StkFlip},    /* MCP 4-9-91 */
+   {"tan",   &StkTan},     /* TIW 04-22-91 */
+   {"tanh",  &StkTanh},    /* TIW 04-22-91 */
+   {"cotan", &StkCoTan},   /* TIW 04-24-91 */
+   {"cotanh",&StkCoTanh},  /* TIW 04-24-91 */
+   {"cosxx", &StkCosXX},   /* PB  04-28-91 */
+   {"srand", &StkSRand},   /* MCP 11-21-91 */
+   {"asin",  &StkASin},    /* TIW 11-26-94 */
+   {"asinh", &StkASinh},   /* TIW 11-26-94 */
+   {"acos",  &StkACos},    /* TIW 11-26-94 */
+   {"acosh", &StkACosh},   /* TIW 11-26-94 */
+   {"atan",  &StkATan},    /* TIW 11-26-94 */
+   {"atanh", &StkATanh},   /* TIW 11-26-94 */
+   {"sqrt",  &StkSqrt},    /* TIW 11-26-94 */
+   {"cabs",  &StkCAbs},    /* TIW 11-26-94 */
+   {"floor", &StkFloor},   /* TIW 06-30-96 */
+   {"ceil",  &StkCeil},    /* TIW 06-30-96 */
+   {"trunc", &StkTrunc},   /* TIW 06-30-96 */
+   {"round", &StkRound},   /* TIW 06-30-96 */
 };
 
 char *OPList[] = {
@@ -2117,7 +2117,7 @@ static char *Constants[] = {
    "scrnpix",      /* v[10] */
    "scrnmax",      /* v[11] */
    "maxit",        /* v[12] */
-   s_ismand,       /* v[13] */
+   "ismand",       /* v[13] */
    "center",       /* v[14] */
    "magxmag",      /* v[15] */
    "rotskew",      /* v[16] */

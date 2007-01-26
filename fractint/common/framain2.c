@@ -63,7 +63,7 @@ void (*outln_cleanup) (void);
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {
    int     frommandel;                  /* if julia entered from mandel */
-   int     axmode = 0, bxmode, cxmode, dxmode; /* video mode (BIOS ##)    */
+   int     axmode = 0; /* video mode (BIOS ##)    */
    double  ftemp;                       /* fp temp                      */
    int     i = 0;                           /* temporary loop counters      */
    int kbdchar;
@@ -85,15 +85,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
 			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
-			bxmode  = g_video_entry.videomodebx; /* video mode (BIOS call)   */
-			cxmode  = g_video_entry.videomodecx; /* video mode (BIOS call)   */
-			dxmode  = g_video_entry.videomodedx; /* video mode (BIOS call)   */
 			dotmode = g_video_entry.dotmode;     /* assembler dot read/write */
 			xdots   = g_video_entry.xdots;       /* # dots across the screen */
 			ydots   = g_video_entry.ydots;       /* # dots down the screen   */
 			colors  = g_video_entry.colors;      /* # colors available */
-			dotmode %= 1000;
-			textsafe2 = dotmode / 100;
 			dotmode  %= 100;
 			sxdots  = xdots;
 			sydots  = ydots;
@@ -2593,9 +2588,9 @@ void checkfreemem(int secondpass)
 	if (secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
 	{
 #ifndef XFRACT
-		printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
+		printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory, "press any key to continue");
 #else
-		printf("%s%d\n%s\n",(char *)msg2,maxhistory,s_pressanykeytocontinue);
+		printf("%s%d\n%s\n",(char *)msg2,maxhistory, "press any key to continue");
 #endif
 		driver_get_key();
 	}
