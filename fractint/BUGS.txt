@@ -15,17 +15,8 @@ code.  The old slideshow code did a busy wait polling for keyboard input,
 where the slideshow would have a chance to inject a key if enough time
 went by.
 
-INSERT doesn't reset g_text_rbase and g_text_cbase or something.
-
------
-
 Beta 1
 ==========================================================================
-After zooming around for a little while with PAGEUP, things get confused
-and it no longer renders new images and the zoom box is not erased.
-
-There is some funniness when switching between video modes sometimes.
-
 Ctrl^Pad+ and Ctrl^Pad- zoombox rotation doesn't work..
 
 mouse does not work
