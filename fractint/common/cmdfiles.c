@@ -809,8 +809,8 @@ static void initvars_3d()               /* init vars affecting 3d */
    showbox = 0;
    xadjust = 0;
    yadjust = 0;
-   eyeseparation = 0;
-   glassestype = 0;
+   g_eye_separation = 0;
+   g_glasses_type = 0;
    previewfactor = 20;
    red_crop_left   = 4;
    red_crop_right  = 0;
@@ -2545,7 +2545,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
 
    if (strcmp(variable,s_stereo) == 0) {        /* stereo=? */
       if ((numval<0) || (numval>4)) goto badarg;
-      glassestype = numval;
+      g_glasses_type = numval;
       return 3;
       }
 
@@ -2571,7 +2571,7 @@ int cmdarg(char *curarg,int mode) /* process a single argument */
       }
 
    if (strcmp(variable,s_interocular) == 0) {   /* interocular=? */
-      eyeseparation = numval;
+      g_eye_separation = numval;
       return 3;
       }
 

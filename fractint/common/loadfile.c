@@ -126,8 +126,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
          red_bright      = read_info.red_bright;
          blue_bright     = read_info.blue_bright;
          xadjust         = read_info.xadjust;
-         eyeseparation   = read_info.eyeseparation;
-         glassestype     = read_info.glassestype;
+         g_eye_separation   = read_info.eyeseparation;
+         g_glasses_type     = read_info.glassestype;
          }
       }
 

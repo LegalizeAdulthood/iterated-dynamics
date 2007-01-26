@@ -145,7 +145,7 @@ extern BYTE                  exitmode;
 extern void *				 extraseg;
 extern int                   evolving;
 extern U16                   evolve_handle;
-extern int                   eyeseparation;
+extern int                   g_eye_separation;
 extern float                 eyesfp;
 extern int                   fastrestore;
 extern long                  FgHalf;
@@ -195,7 +195,7 @@ extern int                   get_corners(void);
 extern int                   gif87a_flag;
 extern char                  gifmask[];
 extern char                  Glasses1Map[];
-extern int                   glassestype;
+extern int                   g_glasses_type;
 extern int                   g_good_mode;						/* video mode ok? */
 extern int                   g_got_real_dac;					/* loaddac worked, really got a dac */
 extern int                   got_status;
@@ -843,7 +843,7 @@ extern int                   viewydots;
 extern int                   g_virtual_screens;
 extern unsigned              vsp;
 extern int                   g_vxdots;
-extern int                   whichimage;
+extern int                   g_which_image;
 extern float                 widthfp;
 extern char                  workdir[];
 extern WORKLIST              worklist[MAXCALCWORK];

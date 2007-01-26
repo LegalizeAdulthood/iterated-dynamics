@@ -1675,7 +1675,7 @@ static int orbit3dlongcalc(void)
          if (inf.col >= 0)
          {
             if(realtime)
-               whichimage=1;
+               g_which_image=1;
             if ((soundflag&7) > 1)
             {
                double yy;
@@ -1694,7 +1694,7 @@ static int orbit3dlongcalc(void)
          oldrow = inf.row;
          if(realtime)
          {
-            whichimage=2;
+            g_which_image=2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -1775,7 +1775,7 @@ static int orbit3dfloatcalc(void)
          if (inf.col >= 0)
          {
             if(realtime)
-               whichimage=1;
+               g_which_image=1;
             if ((soundflag&7) > 1) {
                w_snd((int)(inf.viewvect[((soundflag&7) - 2)]*100+basehertz));
             }
@@ -1790,7 +1790,7 @@ static int orbit3dfloatcalc(void)
          oldrow = inf.row;
          if(realtime)
          {
-            whichimage=2;
+            g_which_image=2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -2121,21 +2121,21 @@ int funny_glasses_call(int (*calc)(void))
 {
    int status;
    status = 0;
-   if(glassestype)
-      whichimage = 1;
+   if(g_glasses_type)
+      g_which_image = 1;
    else
-      whichimage = 0;
+      g_which_image = 0;
    plot_setup();
    plot = standardplot;
    status = calc();
-   if(realtime && glassestype < 3)
+   if(realtime && g_glasses_type < 3)
    {
       realtime = 0;
       goto done;
    }
-   if(glassestype && status == 0 && display3d)
+   if(g_glasses_type && status == 0 && display3d)
    {
-      if(glassestype==3)  { /* photographer's mode */
+      if(g_glasses_type==3)  { /* photographer's mode */
          if(active_system == 0) { /* dos version */
             int i;
             stopmsg(STOPMSG_INFO_ONLY,
@@ -2154,7 +2154,7 @@ int funny_glasses_call(int (*calc)(void))
             clear_screen(0);
             }
       }
-      whichimage = 2;
+      g_which_image = 2;
       if(curfractalspecific->flags & INFCALC)
          curfractalspecific->per_image(); /* reset for 2nd image */
       plot_setup();
@@ -2162,13 +2162,13 @@ int funny_glasses_call(int (*calc)(void))
       /* is there a better way to clear the graphics screen ? */
       if((status = calc()) != 0)
          goto done;
-      if(glassestype==3) /* photographer's mode */
+      if(g_glasses_type==3) /* photographer's mode */
          if(active_system == 0) { /* dos version */
             stopmsg(STOPMSG_INFO_ONLY,"Second image (right eye) is ready");
          }
    }
 done:
-   if(glassestype == 4 && sxdots >= 2*xdots)
+   if(g_glasses_type == 4 && sxdots >= 2*xdots)
    {
       /* turn off view windows so will save properly */
       sxoffs = syoffs = 0;
@@ -2256,7 +2256,7 @@ static int ifs3dfloat(void)
          if (inf.col >= 0)
          {
             if(realtime)
-               whichimage=1;
+               g_which_image=1;
             if(color_method)
                color = (k%colors)+1;
             else
@@ -2268,7 +2268,7 @@ static int ifs3dfloat(void)
             return(ret);
          if(realtime)
          {
-            whichimage=2;
+            g_which_image=2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -2478,7 +2478,7 @@ static int ifs3dlong(void)
          if (inf.col >= 0)
          {
             if(realtime)
-               whichimage=1;
+               g_which_image=1;
             if(color_method)
                color = (k%colors)+1;
             else
@@ -2488,7 +2488,7 @@ static int ifs3dlong(void)
          }
          if(realtime)
          {
-            whichimage=2;
+            g_which_image=2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -2526,7 +2526,7 @@ static void setupmatrix(MATRIX doublemat)
 int orbit3dfloat()
 {
    display3d = -1;
-   if(0 < glassestype && glassestype < 3)
+   if(0 < g_glasses_type && g_glasses_type < 3)
       realtime = 1;
    else
       realtime = 0;
@@ -2536,7 +2536,7 @@ int orbit3dfloat()
 int orbit3dlong()
 {
    display3d = -1;
-   if(0 < glassestype && glassestype < 3)
+   if(0 < g_glasses_type && g_glasses_type < 3)
       realtime = 1;
    else
       realtime = 0;
@@ -2547,7 +2547,7 @@ static int ifs3d(void)
 {
    display3d = -1;
 
-   if(0 < glassestype && glassestype < 3)
+   if(0 < g_glasses_type && g_glasses_type < 3)
       realtime = 1;
    else
       realtime = 0;
