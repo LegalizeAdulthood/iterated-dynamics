@@ -148,12 +148,12 @@ int RAY = 0;        /* Flag to generate Ray trace compatible files in 3d */
 int BRIEF = 0;      /* 1 = short ray trace files */
 
 /* array of min and max x values used in triangle fill */
-struct minmax *minmax_x;
+static struct minmax *minmax_x;
 VECTOR view;                /* position of observer for perspective */
 VECTOR cross;
-VECTOR tmpcross;
+static VECTOR tmpcross;
 
-struct point oldlast = { 0, 0, 0 }; /* old pixels */
+static struct point oldlast = { 0, 0, 0 }; /* old pixels */
 
 
 int line3d(BYTE * pixels, unsigned linelen)
@@ -1161,7 +1161,7 @@ static void _fastcall clipcolor(int x, int y, int color)
 
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(glassestype == 1 || glassestype == 2))
+         if (!(g_glasses_type == 1 || g_glasses_type == 2))
             targa_color(x, y, color);
    }
 }
@@ -1183,7 +1183,7 @@ static void _fastcall T_clipcolor(int x, int y, int color)
       standardplot(x, y, color);/* I guess we can plot then  */
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(glassestype == 1 || glassestype == 2))
+         if (!(g_glasses_type == 1 || g_glasses_type == 2))
             targa_color(x, y, color);
    }
 }
@@ -1226,7 +1226,7 @@ static void _fastcall interpcolor(int x, int y, int color)
    {
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(glassestype == 1 || glassestype == 2))
+         if (!(g_glasses_type == 1 || g_glasses_type == 2))
             D = targa_color(x, y, color);
 
       if (FILLTYPE >= 5) {
@@ -1257,7 +1257,7 @@ int _fastcall targa_color(int x, int y, int color)
    unsigned long H, S, V;
    BYTE RGB[3];
 
-   if (FILLTYPE == 2 || glassestype == 1 || glassestype == 2 || truecolor)
+   if (FILLTYPE == 2 || g_glasses_type == 1 || g_glasses_type == 2 || truecolor)
       Real_Color = (BYTE)color;       /* So Targa gets interpolated color */
 
    switch (truemode)
@@ -1283,7 +1283,7 @@ int _fastcall targa_color(int x, int y, int color)
    R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
 
    /* Modify original S and V components */
-   if (FILLTYPE > 4 && !(glassestype == 1 || glassestype == 2))
+   if (FILLTYPE > 4 && !(g_glasses_type == 1 || g_glasses_type == 2))
       /* Adjust for Ambient */
       V = (V * (65535L - (unsigned) (color * IAmbient))) / 65535L;
 
@@ -2284,11 +2284,11 @@ static int first_time(int linelen, VECTOR v)
    set_upr_lwr();
    error = 0;
 
-   if (whichimage < 2)
+   if (g_which_image < 2)
       T_Safe = 0; /* Not safe yet to mess with the source image */
 
-   if (Targa_Out && !((glassestype == 1 || glassestype == 2)
-                 && whichimage == 2))
+   if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
+                 && g_which_image == 2))
    {
       if (Targa_Overlay)
       {

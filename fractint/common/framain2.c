@@ -2283,8 +2283,8 @@ static void _fastcall save_history_info()
    current.blue_bright			= (short)blue_bright               ;
    current.xadjust				= (short)xadjust                   ;
    current.yadjust				= (short)yadjust                   ;
-   current.eyeseparation		= (short)eyeseparation             ;
-   current.glassestype			= (short)glassestype               ;
+   current.eyeseparation		= (short)g_eye_separation             ;
+   current.glassestype			= (short)g_glasses_type               ;
    current.outside				= (short)outside                   ;
    current.x3rd					= xx3rd                     ;
    current.y3rd					= yy3rd                     ;
@@ -2454,8 +2454,8 @@ static void _fastcall restore_history_info(int i)
    blue_bright           = last.blue_bright    ;
    xadjust               = last.xadjust        ;
    yadjust               = last.yadjust        ;
-   eyeseparation         = last.eyeseparation  ;
-   glassestype           = last.glassestype    ;
+   g_eye_separation      = last.eyeseparation  ;
+   g_glasses_type        = last.glassestype    ;
    outside               = last.outside        ;
    xx3rd                 = last.x3rd           ;
    yy3rd                 = last.y3rd           ;

@@ -2366,7 +2366,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    uvalues[k].type = 'i';
    uvalues[k++].uval.ival = YSHIFT;
    uvalues[k].type = 'i';
-   uvalues[k++].uval.ival = glassestype;
+   uvalues[k++].uval.ival = g_glasses_type;
 
    oldhelpmode = helpmode;
    helpmode = HELP3DFRACT;
@@ -2384,9 +2384,9 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    ZVIEWER =  uvalues[k++].uval.ival;
    XSHIFT  =  uvalues[k++].uval.ival;
    YSHIFT  =  uvalues[k++].uval.ival;
-   glassestype = uvalues[k++].uval.ival;
-   if (glassestype < 0 || glassestype > 4) glassestype = 0;
-   if (glassestype)
+   g_glasses_type = uvalues[k++].uval.ival;
+   if (g_glasses_type < 0 || g_glasses_type > 4) g_glasses_type = 0;
+   if (g_glasses_type)
       if (get_funny_glasses_params() || check_mapfile())
          ret = -1;
 
@@ -2456,7 +2456,7 @@ restart_1:
 
    LOADPROMPTS3D("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,");
    uvalues[k].type = 'i';
-   uvalues[k].uval.ival = glassestype;
+   uvalues[k].uval.ival = g_glasses_type;
 
    LOADPROMPTS3D("                  3=photo,4=stereo pair)");
    uvalues[k].type = '*';
@@ -2504,7 +2504,7 @@ restart_1:
 
    sphere = uvalues[k++].uval.ch.val;
 
-   glassestype = uvalues[k++].uval.ival;
+   g_glasses_type = uvalues[k++].uval.ival;
    k++;
 
    RAY = uvalues[k++].uval.ival;
@@ -2538,12 +2538,12 @@ restart_1:
       set_3d_defaults();
    }
 
-   if(glassestype < 0)
-      glassestype = 0;
-   if(glassestype > 4)
-      glassestype = 4;
-   if(glassestype)
-      whichimage = 1;
+   if(g_glasses_type < 0)
+      g_glasses_type = 0;
+   if(g_glasses_type > 4)
+      g_glasses_type = 4;
+   if(g_glasses_type)
+      g_which_image = 1;
 
    if (RAY < 0)
       RAY = 0;
@@ -2578,7 +2578,7 @@ restart_1:
          goto restart_1;
       FILLTYPE = i-1;
 
-      if(glassestype)
+      if(g_glasses_type)
       {
          if(get_funny_glasses_params())
             goto restart_1;
@@ -2835,7 +2835,7 @@ static int check_mapfile()
    strcpy(temp1,"*");
    if (mapset)
       strcpy(temp1,MAP_name);
-   if (!(glassestype == 1 || glassestype == 2))
+   if (!(g_glasses_type == 1 || g_glasses_type == 2))
       askflag = 1;
    else
       merge_pathnames(temp1,funnyglasses_map_name,0);
@@ -2882,23 +2882,23 @@ static int get_funny_glasses_params()
    /* defaults */
    if(ZVIEWER == 0)
       ZVIEWER = 150;
-   if(eyeseparation == 0)
+   if(g_eye_separation == 0)
    {
       if(fractype==IFS3D || fractype==LLORENZ3D || fractype==FPLORENZ3D)
       {
-         eyeseparation =  2;
+         g_eye_separation =  2;
          xadjust       = -2;
       }
       else
       {
-         eyeseparation =  3;
+         g_eye_separation =  3;
          xadjust       =  0;
       }
    }
 
-   if(glassestype == 1)
+   if(g_glasses_type == 1)
       strcpy(funnyglasses_map_name,Glasses1Map);
-   else if(glassestype == 2)
+   else if(g_glasses_type == 2)
    {
       if(FILLTYPE == -1)
          strcpy(funnyglasses_map_name,"grid.map");
@@ -2912,7 +2912,7 @@ static int get_funny_glasses_params()
    k = -1;
    LOADPROMPTS3D("Interocular distance (as % of screen)");
    uvalues[k].type = 'i';
-   uvalues[k].uval.ival= eyeseparation;
+   uvalues[k].uval.ival= g_eye_separation;
 
    LOADPROMPTS3D("Convergence adjust (positive = spread greater)");
    uvalues[k].type = 'i';
@@ -2942,7 +2942,7 @@ static int get_funny_glasses_params()
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = blue_bright;
 
-   if(glassestype == 1 || glassestype == 2)
+   if(g_glasses_type == 1 || g_glasses_type == 2)
    {
       LOADPROMPTS3D("Map File name");
       uvalues[k].type = 's';
@@ -2957,7 +2957,7 @@ static int get_funny_glasses_params()
       return(-1);
 
    k = 0;
-   eyeseparation   =  uvalues[k++].uval.ival;
+   g_eye_separation   =  uvalues[k++].uval.ival;
    xadjust         =  uvalues[k++].uval.ival;
    red_crop_left   =  uvalues[k++].uval.ival;
    red_crop_right  =  uvalues[k++].uval.ival;
@@ -2966,7 +2966,7 @@ static int get_funny_glasses_params()
    red_bright      =  uvalues[k++].uval.ival;
    blue_bright     =  uvalues[k++].uval.ival;
 
-   if(glassestype == 1 || glassestype == 2)
+   if(g_glasses_type == 1 || g_glasses_type == 2)
       strcpy(funnyglasses_map_name,uvalues[k].uval.sval);
    return(0);
 }

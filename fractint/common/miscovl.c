@@ -976,9 +976,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       put_parm( s_seqdd,s_xyshift, XSHIFT, YSHIFT);
       if(xtrans || ytrans)
          put_parm( s_seqdd,s_xyadjust,xtrans,ytrans);
-      if(glassestype) {
-         put_parm( s_seqd,s_stereo,glassestype);
-         put_parm( s_seqd,s_interocular,eyeseparation);
+      if(g_glasses_type) {
+         put_parm( s_seqd,s_stereo,g_glasses_type);
+         put_parm( s_seqd,s_interocular,g_eye_separation);
          put_parm( s_seqd,s_converge,xadjust);
          put_parm( " %s=%d/%d/%d/%d",s_crop,
              red_crop_left,red_crop_right,blue_crop_left,blue_crop_right);

@@ -714,8 +714,8 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
    save_info->blue_bright = (short) blue_bright;
    save_info->xadjust = (short) xadjust;
    save_info->yadjust = (short) yadjust;
-   save_info->eyeseparation = (short) eyeseparation;
-   save_info->glassestype = (short) glassestype;
+   save_info->eyeseparation = (short) g_eye_separation;
+   save_info->glassestype = (short) g_glasses_type;
    save_info->outside = (short) outside;
    save_info->x3rd = xx3rd;
    save_info->y3rd = yy3rd;
