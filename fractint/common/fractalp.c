@@ -97,16 +97,6 @@ static char frothmapping[] = "+Apply mapping once (1) or twice (2)";
 static char frothshade[] =  "+Enter non-zero value for alternate color shading";
 static char frothavalue[] =  "A (imaginary part of C)";
 
-/* symmetrical icon fractals */
-static char s_lambda[] = "Lambda";
-static char s_alpha[]  = "Alpha";
-static char s_beta[]   = "Beta";
-static char s_gamma[]  = "Gamma";
-static char s_omega[]  = "Omega";
-static char symdegree[] = "+Degree of symmetry";
-
-static char shiftval[] = "Function Shift Value";
-
 /* plasma and ant */
 
 static char s_randomseed[] = "+Random Seed Value (0 = Random, 1 = Reuse Last)";
@@ -161,8 +151,8 @@ static char cell_strt[] = {"#Starting Row Number"};
 
 MOREPARAMS moreparams[] =
 {
-    {ICON             ,{ s_omega, symdegree,   ES,ES,ES,ES},{0,3,0,0,0,0}},
-    {ICON3D           ,{ s_omega, symdegree,   ES,ES,ES,ES},{0,3,0,0,0,0}},
+    {ICON             ,{ "Omega", "+Degree of symmetry",   ES,ES,ES,ES},{0,3,0,0,0,0}},
+    {ICON3D           ,{ "Omega", "+Degree of symmetry",   ES,ES,ES,ES},{0,3,0,0,0,0}},
     {HYPERCMPLXJFP    ,{ ZJ,      ZK,          ES,ES,ES,ES},{0,0,0,0,0,0}},
     {QUATJULFP        ,{ ZJ,      ZK,          ES,ES,ES,ES},{0,0,0,0,0,0}},
     {PHOENIXCPLX      ,{ degreeZ, ES,          ES,ES,ES,ES},{0,0,0,0,0,0}},
@@ -1744,7 +1734,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_lambda_fnorfn_+1,
-      {realparm, imagparm, shiftval, ES},
+      {realparm, imagparm, "Function Shift Value", ES},
       {1, 0.1, 1, 0},
       HT_FNORFN, HF_LAMBDAFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1756,7 +1746,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_lambda_fnorfn_,
-      {realparm, imagparm, shiftval, ES},
+      {realparm, imagparm, "Function Shift Value", ES},
       {1, 0.1, 1, 0},
       HT_FNORFN, HF_LAMBDAFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1768,7 +1758,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_julia_fnorfn_+1,
-      {realparm, imagparm, shiftval, ES},
+      {realparm, imagparm, "Function Shift Value", ES},
       {0, 0, 8, 0},
       HT_FNORFN, HF_JULIAFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1780,7 +1770,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_julia_fnorfn_,
-      {realparm, imagparm, shiftval, ES},
+      {realparm, imagparm, "Function Shift Value", ES},
       {0, 0, 8, 0},
       HT_FNORFN, HF_JULIAFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1792,7 +1782,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_manlam_fnorfn_+1,
-      {realz0, imagz0, shiftval, ES},
+      {realz0, imagz0, "Function Shift Value", ES},
       {0, 0, 10, 0},
       HT_FNORFN, HF_MANLAMFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1804,7 +1794,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_manlam_fnorfn_,
-      {realz0, imagz0, shiftval, ES},
+      {realz0, imagz0, "Function Shift Value", ES},
       {0, 0, 10, 0},
       HT_FNORFN, HF_MANLAMFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1816,7 +1806,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_mandel_fnorfn_+1,
-      {realz0, imagz0, shiftval, ES},
+      {realz0, imagz0, "Function Shift Value", ES},
       {0, 0, 0.5, 0},
       HT_FNORFN, HF_MANDELFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -1828,7 +1818,7 @@ struct fractalspecificstuff fractalspecific[]=
 
    {
    t_mandel_fnorfn_,
-      {realz0, imagz0, shiftval, ES},
+      {realz0, imagz0, "Function Shift Value", ES},
       {0, 0, 0.5, 0},
       HT_FNORFN, HF_MANDELFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
@@ -2139,7 +2129,7 @@ struct fractalspecificstuff fractalspecific[]=
       /* dmf */
    {
    "icons",
-      {s_lambda, s_alpha, s_beta, s_gamma},
+      {"Lambda", "Alpha", "Beta", "Gamma"},
       {-2.34, 2.0, 0.2, 0.1},
       HT_ICON, HF_ICON, NOGUESS+NOTRACE+WINFRAC+INFCALC+MORE,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
@@ -2151,7 +2141,7 @@ struct fractalspecificstuff fractalspecific[]=
       /* dmf */
    {
    "icons3d",
-      {s_lambda, s_alpha, s_beta, s_gamma},
+      {"Lambda", "Alpha", "Beta", "Gamma"},
       {-2.34, 2.0, 0.2, 0.1},
       HT_ICON, HF_ICON, NOGUESS+NOTRACE+WINFRAC+INFCALC+PARMS3D+MORE,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,

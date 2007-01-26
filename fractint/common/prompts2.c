@@ -118,11 +118,11 @@ int get_toggles()
    int old_stoppass;
    double old_closeprox;
    char *calcmodes[] ={"1","2","3","g","g1","g2","g3","g4","g5","g6","b","s","t","d","o"};
-   char *soundmodes[5]={s_off,s_beep,s_x,s_y,s_z};
-   char *insidemodes[]={"numb",s_maxiter,s_zmag,s_bof60,s_bof61,s_epscross,
-                         s_startrail,s_period,s_atan,s_fmod};
-   char *outsidemodes[]={"numb",s_iter,s_real,s_imag,s_mult,s_sum,s_atan,
-                         s_fmod,s_tdis};
+   char *soundmodes[5]={"off", "beep",s_x,s_y,s_z};
+   char *insidemodes[]={"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
+                         "startrail", "period", "atan", "fmod"};
+   char *outsidemodes[]={"numb", "iter", "real", "imag", "mult", "summ", "atan",
+                         "fmod", "tdis"};
 
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *) extraseg;
@@ -254,7 +254,7 @@ int get_toggles()
    LOADCHOICES("Fill Color (normal,#) (works with passes=t, b and d)");
    uvalues[k].type = 's';
    if(fillcolor < 0)
-      strcpy(uvalues[k].uval.sval,s_normal);
+      strcpy(uvalues[k].uval.sval, "normal");
    else
       sprintf(uvalues[k].uval.sval,"%d",fillcolor);
    old_fillcolor = fillcolor;
@@ -373,7 +373,7 @@ int get_toggles()
    decomp[0] = uvalues[++k].uval.ival;
    if (decomp[0] != old_decomp) j++;
 
-   if(strncmp(strlwr(uvalues[++k].uval.sval),s_normal,4)==0)
+   if(strncmp(strlwr(uvalues[++k].uval.sval), "normal",4)==0)
       fillcolor = -1;
    else
       fillcolor = atoi(uvalues[k].uval.sval);

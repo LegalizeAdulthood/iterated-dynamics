@@ -770,17 +770,17 @@ int tab_display_2(char *msg)
 		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
 	}
 	row++;
-	show_str_var(s_tempdir,     tempdir,      &row, msg);
-	show_str_var(s_workdir,     workdir,      &row, msg);
-	show_str_var(s_printfile,   PrintName,    &row, msg);
-	show_str_var(s_filename,    readname,     &row, msg);
-	show_str_var(s_formulafile, FormFileName, &row, msg);
-	show_str_var(s_savename,    savename,     &row, msg);
-	show_str_var(s_parmfile,    CommandFile,  &row, msg);
-	show_str_var(s_ifsfile,     IFSFileName,  &row, msg);
-	show_str_var(s_autokeyname, autoname,     &row, msg);
-	show_str_var(s_lightname,   light_name,   &row, msg);
-	show_str_var(s_map,         MAP_name,     &row, msg);
+	show_str_var("tempdir",     tempdir,      &row, msg);
+	show_str_var("workdir",     workdir,      &row, msg);
+	show_str_var("printfile",   PrintName,    &row, msg);
+	show_str_var("filename",    readname,     &row, msg);
+	show_str_var("formulafile", FormFileName, &row, msg);
+	show_str_var("savename",    savename,     &row, msg);
+	show_str_var("parmfile",    CommandFile,  &row, msg);
+	show_str_var("ifsfile",     IFSFileName,  &row, msg);
+	show_str_var("autokeyname", autoname,     &row, msg);
+	show_str_var("lightname",   light_name,   &row, msg);
+	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof fractalspecific array %d",
 		num_fractal_types*(int)sizeof(struct fractalspecificstuff));
 	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, col, row);
@@ -1699,17 +1699,17 @@ int _cdecl _matherr( struct exception *except )
         if(strstr(buf,"IN")||strstr(buf,"NAN"))  /* trashed arg? */
                            /* "IND" with MSC, "INF" with BC++ */
         {
-           if( strcmp( except->name, s_sin ) == 0 )
+           if( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.0;
               return(1);
            }
-           else if( strcmp( except->name, s_cos ) == 0 )
+           else if( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 1.0;
               return(1);
            }
-           else if( strcmp( except->name, s_log ) == 0 )
+           else if( strcmp( except->name, "log") == 0 )
            {
               except->retval = 1.0;
               return(1);
@@ -1719,12 +1719,12 @@ int _cdecl _matherr( struct exception *except )
     if( except->type == TLOSS )
     {
        /* try valiantly to keep going */
-           if( strcmp( except->name, s_sin ) == 0 )
+           if( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.5;
               return(1);
            }
-           else if( strcmp( except->name, s_cos ) == 0 )
+           else if( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 0.5;
               return(1);

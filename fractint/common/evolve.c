@@ -90,74 +90,30 @@ void initgene(void) /* set up pointers and mutation params for all usable image
  int i = 0;
  /* 0 = dont vary, 1= with x axis, 2 = with y */
  /* 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random */
- /* Use only 15 letters below: 123456789012345 */
-  static char s_Param0[] =  {"Param 1 real"};
-  static char s_Param1[] =  {"Param 1 imag"};
-  static char s_Param2[] =  {"Param 2 real"};
-  static char s_Param3[] =  {"Param 2 imag"};
-  static char s_Param4[] =  {"Param 3 real"};
-  static char s_Param5[] =  {"Param 3 imag"};
-  static char s_Param6[] =  {"Param 4 real"};
-  static char s_Param7[] =  {"Param 4 imag"};
-  static char s_Param8[] =  {"Param 5 real"};
-  static char s_Param9[] =  {"Param 5 imag"};
-  static char s_inside[] =  {"inside colour"};
-  static char s_outside[] = {"outside colour"};
-  static char s_decomp[] =  {"decomposition"};
-  static char s_trigfn1[] = {"trig function 1"};
-  static char s_trigfn2[] = {"trig fn 2"};
-  static char s_trigfn3[] = {"trig fn 3"};
-  static char s_trigfn4[] = {"trig fn 4"};
-  static char s_botest[]  = {"bailout test"};
-  static char s_invertr[] = {"invert radius"};
-  static char s_invertx[] = {"invert center x"};
-  static char s_inverty[] = {"invert center y"};
-
+  /*     Use only 15 letters below: 123456789012345 */
   GENEBASE gene[NUMGENES] = {
-    { &param[0],   varydbl,     5, "",1 },
-    { &param[1],   varydbl,     5, "",1 },
-    { &param[2],   varydbl,     0, "",1 },
-    { &param[3],   varydbl,     0, "",1 },
-    { &param[4],   varydbl,     0, "",1 },
-    { &param[5],   varydbl,     0, "",1 },
-    { &param[6],   varydbl,     0, "",1 },
-    { &param[7],   varydbl,     0, "",1 },
-    { &param[8],   varydbl,     0, "",1 },
-    { &param[9],   varydbl,     0, "",1 },
-    { &inside,     varyinside,  0, "",2 },
-    { &outside,    varyoutside, 0, "",3 },
-    { &decomp[0],  varypwr2,    0, "",4 },
-    { &inversion[0],varyinv,    0, "",7 },
-    { &inversion[1],varyinv,    0, "",7 },
-    { &inversion[2],varyinv,    0, "",7 },
-    { &trigndx[0], varytrig,    0, "",5 },
-    { &trigndx[1], varytrig,    0, "",5 },
-    { &trigndx[2], varytrig,    0, "",5 },
-    { &trigndx[3], varytrig,    0, "",5 },
-    { &bailoutest, varybotest,  0, "",6 }
+    { &param[0],   varydbl,     5, "Param 1 real",1 },
+    { &param[1],   varydbl,     5, "Param 1 imag",1 },
+    { &param[2],   varydbl,     0, "Param 2 real",1 },
+    { &param[3],   varydbl,     0, "Param 2 imag",1 },
+    { &param[4],   varydbl,     0, "Param 3 real",1 },
+    { &param[5],   varydbl,     0, "Param 3 imag",1 },
+    { &param[6],   varydbl,     0, "Param 4 real",1 },
+    { &param[7],   varydbl,     0, "Param 4 imag",1 },
+    { &param[8],   varydbl,     0, "Param 5 real",1 },
+    { &param[9],   varydbl,     0, "Param 5 imag",1 },
+    { &inside,     varyinside,  0, "inside color",2 },
+    { &outside,    varyoutside, 0, "outside color",3 },
+    { &decomp[0],  varypwr2,    0, "decomposition",4 },
+    { &inversion[0],varyinv,    0, "invert radius",7 },
+    { &inversion[1],varyinv,    0, "invert center x",7 },
+    { &inversion[2],varyinv,    0, "invert center y",7 },
+    { &trigndx[0], varytrig,    0, "trig function 1",5 },
+    { &trigndx[1], varytrig,    0, "trig fn 2",5 },
+    { &trigndx[2], varytrig,    0, "trig fn 3",5 },
+    { &trigndx[3], varytrig,    0, "trig fn 4",5 },
+    { &bailoutest, varybotest,  0, "bailout test",6 }
   };
-  i = -1;
-  strcpy(gene[++i].name, s_Param0); /* name of var for menus */
-  strcpy(gene[++i].name, s_Param1);
-  strcpy(gene[++i].name, s_Param2);
-  strcpy(gene[++i].name, s_Param3);
-  strcpy(gene[++i].name, s_Param4);
-  strcpy(gene[++i].name, s_Param5);
-  strcpy(gene[++i].name, s_Param6);
-  strcpy(gene[++i].name, s_Param7);
-  strcpy(gene[++i].name, s_Param8);
-  strcpy(gene[++i].name, s_Param9);
-  strcpy(gene[++i].name, s_inside);
-  strcpy(gene[++i].name, s_outside);
-  strcpy(gene[++i].name, s_decomp);
-  strcpy(gene[++i].name, s_invertr);
-  strcpy(gene[++i].name, s_invertx);
-  strcpy(gene[++i].name, s_inverty);
-  strcpy(gene[++i].name, s_trigfn1);
-  strcpy(gene[++i].name, s_trigfn2);
-  strcpy(gene[++i].name, s_trigfn3);
-  strcpy(gene[++i].name, s_trigfn4);
-  strcpy(gene[++i].name, s_botest);
 
   /* TODO: MemoryAlloc, MoveToMemory */
   if (gene_handle == 0)

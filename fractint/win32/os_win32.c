@@ -198,7 +198,6 @@ int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
 int g_text_row = 0;
-int g_text_safe = 0;
 char tstack[4096] = { 0 };
 int g_vesa_detect = 0;
 int g_vesa_x_res = 0;
@@ -596,7 +595,6 @@ void scroll_relative(int bycol, int byrow)
 ; adapter_detect:
 ;       This routine performs a few quick checks on the type of
 ;       video adapter installed.
-;       It sets variable g_text_safe,
 ;       and fills in a few bank-switching routines.
 */
 void
@@ -607,7 +605,6 @@ adapter_detect(void)
 	if (done_detect)
 		return;
 	done_detect = 1;
-	g_text_safe = 2;
 }
 
 /*

@@ -970,14 +970,14 @@ void set_if_old_bif(void)
       case LBIFSTEWART:
       case BIFLAMBDA:
       case LBIFLAMBDA:
-        set_trig_array(0,s_ident);
+        set_trig_array(0, "ident");
         break;
 
       case BIFEQSINPI:
       case LBIFEQSINPI:
       case BIFADSINPI:
       case LBIFADSINPI:
-        set_trig_array(0,s_sin);
+        set_trig_array(0, "sin");
         break;
    }
 }
@@ -991,16 +991,16 @@ void set_function_parm_defaults(void)
       case LPOPCORN:
       case FPPOPCORNJUL:
       case LPOPCORNJUL:
-         set_trig_array(0,s_sin);
-         set_trig_array(1,s_tan);
-         set_trig_array(2,s_sin);
-         set_trig_array(3,s_tan);
+         set_trig_array(0, "sin");
+         set_trig_array(1, "tan");
+         set_trig_array(2, "sin");
+         set_trig_array(3, "tan");
          break;
       case LATOO:
-         set_trig_array(0,s_sin);
-         set_trig_array(1,s_sin);
-         set_trig_array(2,s_sin);
-         set_trig_array(3,s_sin);
+         set_trig_array(0, "sin");
+         set_trig_array(1, "sin");
+         set_trig_array(2, "sin");
+         set_trig_array(3, "sin");
          break;
    }
 }

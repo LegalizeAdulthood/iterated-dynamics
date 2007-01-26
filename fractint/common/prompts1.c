@@ -1006,19 +1006,19 @@ sel_type_restart:
 /* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
    if(((fractype == BIFURCATION) || (fractype == LBIFURCATION)) &&
      !((oldfractype == BIFURCATION) || (oldfractype == LBIFURCATION)))
-        set_trig_array(0,s_ident);
+        set_trig_array(0, "ident");
    if(((fractype == BIFSTEWART) || (fractype == LBIFSTEWART)) &&
      !((oldfractype == BIFSTEWART) || (oldfractype == LBIFSTEWART)))
-        set_trig_array(0,s_ident);
+        set_trig_array(0, "ident");
    if(((fractype == BIFLAMBDA) || (fractype == LBIFLAMBDA)) &&
      !((oldfractype == BIFLAMBDA) || (oldfractype == LBIFLAMBDA)))
-        set_trig_array(0,s_ident);
+        set_trig_array(0, "ident");
    if(((fractype == BIFEQSINPI) || (fractype == LBIFEQSINPI)) &&
      !((oldfractype == BIFEQSINPI) || (oldfractype == LBIFEQSINPI)))
-        set_trig_array(0,s_sin);
+        set_trig_array(0, "sin");
    if(((fractype == BIFADSINPI) || (fractype == LBIFADSINPI)) &&
      !((oldfractype == BIFADSINPI) || (oldfractype == LBIFADSINPI)))
-        set_trig_array(0,s_sin);
+        set_trig_array(0, "sin");
 
    /* 
     * Next assumes that user going between popcorn and popcornjul
@@ -1151,69 +1151,69 @@ struct trig_funct_lst trigfn[] =
 /* maximum 6 characters in function names or recheck all related code */
 {
 #if !defined(XFRACT) && !defined(_WIN32)
-   {s_sin,   lStkSin,   dStkSin,   mStkSin   },
-   {s_cosxx, lStkCosXX, dStkCosXX, mStkCosXX },
-   {s_sinh,  lStkSinh,  dStkSinh,  mStkSinh  },
-   {s_cosh,  lStkCosh,  dStkCosh,  mStkCosh  },
-   {s_exp,   lStkExp,   dStkExp,   mStkExp   },
-   {s_log,   lStkLog,   dStkLog,   mStkLog   },
-   {s_sqr,   lStkSqr,   dStkSqr,   mStkSqr   },
-   {s_recip, lStkRecip, dStkRecip, mStkRecip }, /* from recip on new in v16 */
-   {s_ident, StkIdent,  StkIdent,  StkIdent  },
-   {s_cos,   lStkCos,   dStkCos,   mStkCos   },
-   {s_tan,   lStkTan,   dStkTan,   mStkTan   },
-   {s_tanh,  lStkTanh,  dStkTanh,  mStkTanh  },
-   {s_cotan, lStkCoTan, dStkCoTan, mStkCoTan },
-   {s_cotanh,lStkCoTanh,dStkCoTanh,mStkCoTanh},
-   {s_flip,  lStkFlip,  dStkFlip,  mStkFlip  },
-   {s_conj,  lStkConj,  dStkConj,  mStkConj  },
-   {s_zero,  lStkZero,  dStkZero,  mStkZero  },
-   {s_asin,  lStkASin,  dStkASin,  mStkASin  },
-   {s_asinh, lStkASinh, dStkASinh, mStkASinh },
-   {s_acos,  lStkACos,  dStkACos,  mStkACos  },
-   {s_acosh, lStkACosh, dStkACosh, mStkACosh },
-   {s_atan,  lStkATan,  dStkATan,  mStkATan  },
-   {s_atanh, lStkATanh, dStkATanh, mStkATanh },
-   {s_cabs,  lStkCAbs,  dStkCAbs,  mStkCAbs  },
-   {s_abs,   lStkAbs,   dStkAbs,   mStkAbs   },
-   {s_sqrt,  lStkSqrt,  dStkSqrt,  mStkSqrt  },
-   {s_floor, lStkFloor, dStkFloor, mStkFloor },
-   {s_ceil,  lStkCeil,  dStkCeil,  mStkCeil  },
-   {s_trunc, lStkTrunc, dStkTrunc, mStkTrunc },
-   {s_round, lStkRound, dStkRound, mStkRound },
-   {s_one,   lStkOne,   dStkOne,   mStkOne   },
+   {"sin",   lStkSin,   dStkSin,   mStkSin   },
+   {"cosxx", lStkCosXX, dStkCosXX, mStkCosXX },
+   {"sinh",  lStkSinh,  dStkSinh,  mStkSinh  },
+   {"cosh",  lStkCosh,  dStkCosh,  mStkCosh  },
+   {"exp",   lStkExp,   dStkExp,   mStkExp   },
+   {"log",   lStkLog,   dStkLog,   mStkLog   },
+   {"sqr",   lStkSqr,   dStkSqr,   mStkSqr   },
+   {"recip", lStkRecip, dStkRecip, mStkRecip }, /* from recip on new in v16 */
+   {"ident", StkIdent,  StkIdent,  StkIdent  },
+   {"cos",   lStkCos,   dStkCos,   mStkCos   },
+   {"tan",   lStkTan,   dStkTan,   mStkTan   },
+   {"tanh",  lStkTanh,  dStkTanh,  mStkTanh  },
+   {"cotan", lStkCoTan, dStkCoTan, mStkCoTan },
+   {"cotanh",lStkCoTanh,dStkCoTanh,mStkCoTanh},
+   {"flip",  lStkFlip,  dStkFlip,  mStkFlip  },
+   {"conj",  lStkConj,  dStkConj,  mStkConj  },
+   {"zero",  lStkZero,  dStkZero,  mStkZero  },
+   {"asin",  lStkASin,  dStkASin,  mStkASin  },
+   {"asinh", lStkASinh, dStkASinh, mStkASinh },
+   {"acos",  lStkACos,  dStkACos,  mStkACos  },
+   {"acosh", lStkACosh, dStkACosh, mStkACosh },
+   {"atan",  lStkATan,  dStkATan,  mStkATan  },
+   {"atanh", lStkATanh, dStkATanh, mStkATanh },
+   {"cabs",  lStkCAbs,  dStkCAbs,  mStkCAbs  },
+   {"abs",   lStkAbs,   dStkAbs,   mStkAbs   },
+   {"sqrt",  lStkSqrt,  dStkSqrt,  mStkSqrt  },
+   {"floor", lStkFloor, dStkFloor, mStkFloor },
+   {"ceil",  lStkCeil,  dStkCeil,  mStkCeil  },
+   {"trunc", lStkTrunc, dStkTrunc, mStkTrunc },
+   {"round", lStkRound, dStkRound, mStkRound },
+   {"one",   lStkOne,   dStkOne,   mStkOne   },
 #else
-   {s_sin,   dStkSin,   dStkSin,   dStkSin   },
-   {s_cosxx, dStkCosXX, dStkCosXX, dStkCosXX },
-   {s_sinh,  dStkSinh,  dStkSinh,  dStkSinh  },
-   {s_cosh,  dStkCosh,  dStkCosh,  dStkCosh  },
-   {s_exp,   dStkExp,   dStkExp,   dStkExp   },
-   {s_log,   dStkLog,   dStkLog,   dStkLog   },
-   {s_sqr,   dStkSqr,   dStkSqr,   dStkSqr   },
-   {s_recip, dStkRecip, dStkRecip, dStkRecip }, /* from recip on new in v16 */
-   {s_ident, StkIdent,  StkIdent,  StkIdent  },
-   {s_cos,   dStkCos,   dStkCos,   dStkCos   },
-   {s_tan,   dStkTan,   dStkTan,   dStkTan   },
-   {s_tanh,  dStkTanh,  dStkTanh,  dStkTanh  },
-   {s_cotan, dStkCoTan, dStkCoTan, dStkCoTan },
-   {s_cotanh,dStkCoTanh,dStkCoTanh,dStkCoTanh},
-   {s_flip,  dStkFlip,  dStkFlip,  dStkFlip  },
-   {s_conj,  dStkConj,  dStkConj,  dStkConj  },
-   {s_zero,  dStkZero,  dStkZero,  dStkZero  },
-   {s_asin,  dStkASin,  dStkASin,  dStkASin  },
-   {s_asinh, dStkASinh, dStkASinh, dStkASinh },
-   {s_acos,  dStkACos,  dStkACos,  dStkACos  },
-   {s_acosh, dStkACosh, dStkACosh, dStkACosh },
-   {s_atan,  dStkATan,  dStkATan,  dStkATan  },
-   {s_atanh, dStkATanh, dStkATanh, dStkATanh },
-   {s_cabs,  dStkCAbs,  dStkCAbs,  dStkCAbs  },
-   {s_abs,   dStkAbs,   dStkAbs,   dStkAbs   },
-   {s_sqrt,  dStkSqrt,  dStkSqrt,  dStkSqrt  },
-   {s_floor, dStkFloor, dStkFloor, dStkFloor },
-   {s_ceil,  dStkCeil,  dStkCeil,  dStkCeil  },
-   {s_trunc, dStkTrunc, dStkTrunc, dStkTrunc },
-   {s_round, dStkRound, dStkRound, dStkRound },
-   {s_one,   dStkOne,   dStkOne,   dStkOne   },
+   {"sin",   dStkSin,   dStkSin,   dStkSin   },
+   {"cosxx", dStkCosXX, dStkCosXX, dStkCosXX },
+   {"sinh",  dStkSinh,  dStkSinh,  dStkSinh  },
+   {"cosh",  dStkCosh,  dStkCosh,  dStkCosh  },
+   {"exp",   dStkExp,   dStkExp,   dStkExp   },
+   {"log",   dStkLog,   dStkLog,   dStkLog   },
+   {"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
+   {"recip", dStkRecip, dStkRecip, dStkRecip }, /* from recip on new in v16 */
+   {"ident", StkIdent,  StkIdent,  StkIdent  },
+   {"cos",   dStkCos,   dStkCos,   dStkCos   },
+   {"tan",   dStkTan,   dStkTan,   dStkTan   },
+   {"tanh",  dStkTanh,  dStkTanh,  dStkTanh  },
+   {"cotan", dStkCoTan, dStkCoTan, dStkCoTan },
+   {"cotanh",dStkCoTanh,dStkCoTanh,dStkCoTanh},
+   {"flip",  dStkFlip,  dStkFlip,  dStkFlip  },
+   {"conj",  dStkConj,  dStkConj,  dStkConj  },
+   {"zero",  dStkZero,  dStkZero,  dStkZero  },
+   {"asin",  dStkASin,  dStkASin,  dStkASin  },
+   {"asinh", dStkASinh, dStkASinh, dStkASinh },
+   {"acos",  dStkACos,  dStkACos,  dStkACos  },
+   {"acosh", dStkACosh, dStkACosh, dStkACosh },
+   {"atan",  dStkATan,  dStkATan,  dStkATan  },
+   {"atanh", dStkATanh, dStkATanh, dStkATanh },
+   {"cabs",  dStkCAbs,  dStkCAbs,  dStkCAbs  },
+   {"abs",   dStkAbs,   dStkAbs,   dStkAbs   },
+   {"sqrt",  dStkSqrt,  dStkSqrt,  dStkSqrt  },
+   {"floor", dStkFloor, dStkFloor, dStkFloor },
+   {"ceil",  dStkCeil,  dStkCeil,  dStkCeil  },
+   {"trunc", dStkTrunc, dStkTrunc, dStkTrunc },
+   {"round", dStkRound, dStkRound, dStkRound },
+   {"one",   dStkOne,   dStkOne,   dStkOne   },
 #endif
 };
 
@@ -1251,7 +1251,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 #ifdef XFRACT
    static /* Can't initialize aggregates on the stack */
 #endif
-   char *bailnameptr[] = {s_mod,s_real,s_imag,s_or,s_and,s_manh,s_manr};
+   char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
    struct fractalspecificstuff *jborbit = NULL;
    struct fractalspecificstuff *savespecific;
    int firstparm = 0;
@@ -1547,7 +1547,7 @@ gfp_top:
    }
 
    if((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) {
-      choices[promptnum] = (char *)s_ismand;
+      choices[promptnum] = "ismand";
       paramvalues[promptnum].type = 'y';
       paramvalues[promptnum++].uval.ch.val = ismand?1:0;
    }
