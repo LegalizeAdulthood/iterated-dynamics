@@ -118,7 +118,7 @@ int get_toggles()
    int old_stoppass;
    double old_closeprox;
    char *calcmodes[] ={"1","2","3","g","g1","g2","g3","g4","g5","g6","b","s","t","d","o"};
-   char *soundmodes[5]={"off", "beep",s_x,s_y,s_z};
+   char *soundmodes[5]={"off", "beep","x","y","z"};
    char *insidemodes[]={"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
                          "startrail", "period", "atan", "fmod"};
    char *outsidemodes[]={"numb", "iter", "real", "imag", "mult", "summ", "atan",
@@ -541,11 +541,6 @@ int get_toggles2()
 
 int passes_options(void)
 {
-   static char o_hdg[]={"Passes Options\n"
-		"(not all combinations make sense)"};
-   static char pressf2[] = {"\n(Press "FK_F2" for corner parameters)"};
-   static char pressf6[] = {"\n(Press "FK_F6" for calculation parameters)"};
-   char hdg[sizeof(o_hdg)+sizeof(pressf2)+sizeof(pressf6)];
    char *ptr;
    char *choices[20];
    int oldhelpmode;
@@ -560,9 +555,6 @@ int passes_options(void)
    int old_keep_scrn_coords;
    char old_drawmode;
 
-   strcpy(hdg,o_hdg);
-   strcat(hdg,pressf2);
-   strcat(hdg,pressf6);
    /* TODO: allocate real memory, not reuse shared segment */
    ptr = (char *) extraseg;
    ret = 0;
@@ -600,7 +592,10 @@ pass_option_restart:
 
    oldhelpmode = helpmode;
    helpmode = HELPPOPTS;
-   i = fullscreen_prompt(hdg,k+1,choices,uvalues,0x44,NULL);
+   i = fullscreen_prompt("Passes Options\n"
+		"(not all combinations make sense)\n"
+		"(Press "FK_F2" for corner parameters)\n"
+		"(Press "FK_F6" for calculation parameters)",k+1,choices,uvalues,0x44,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return(-1);
@@ -798,10 +793,6 @@ get_view_restart:
 #ifndef XFRACT
    if (g_virtual_screens && dotmode == DOTMODE_VESA) {
       char dim[50];
-      static char xmsg[] = {"Video memory limits: (for y = "};
-      static char ymsg[] = {"                     (for x = "};
-      static char midxmsg[] = {") x <= "};
-      static char midymsg[] = {") y <= "};
       char *scrolltypes[] ={"fixed","relaxed"};
 
       LOADCHOICES("Keep aspect? (cuts both x & y when either too big)");
@@ -818,13 +809,13 @@ get_view_restart:
       LOADCHOICES("");
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char *)xmsg,g_vesa_y_res,(char *)midxmsg,estm_xmax);
+      sprintf(dim,"%s%4u%s%lu","Video memory limits: (for y = ",g_vesa_y_res, ") x <= ",estm_xmax);
       strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
       uvalues[k].type = '*';
 
-      sprintf(dim,"%Fs%4u%Fs%lu",(char *)ymsg,g_vesa_x_res,(char *)midymsg,estm_ymax);
+      sprintf(dim,"%s%4u%s%lu",(char *)"                     (for x = ",g_vesa_x_res, ") y <= ",estm_ymax);
       strcpy(ptr,(char *)dim);
       choices[++k]= ptr;
       ptr += sizeof(dim);
@@ -1477,7 +1468,6 @@ static int speedstate;
 int getafilename(char *hdg,char *file_template,char *flname)
 {
    int rds;  /* if getting an RDS image map */
-   static char o_instr[]={"Press "FK_F6" for default directory, "FK_F4" to toggle sort "};
    char *instr;
    int masklen;
    char filename[FILE_MAX_PATH]; /* 13 is big enough for Fractint, but not Xfractint */
@@ -1617,7 +1607,7 @@ retry_dir:
       ++filecount;
    }
 
-   strcpy(instr,o_instr);
+   strcpy(instr,"Press "FK_F6" for default directory, "FK_F4" to toggle sort ");
    if(dosort)
    {
       strcat(instr,"off");

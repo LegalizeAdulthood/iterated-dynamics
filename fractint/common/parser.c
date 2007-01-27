@@ -3931,11 +3931,7 @@ void frm_error(FILE * open_file, long begin_frm)
             return;
          }
       }
-#if !defined(XFRACT) && !defined(_WIN32)
-      sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %Fs\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
-#else
       sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
-#endif
       i = (int) strlen(msgbuf);
 /*    sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
       stopmsg (0, debugmsg);

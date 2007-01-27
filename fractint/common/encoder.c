@@ -105,7 +105,6 @@ restart:
       newfile = 1;
    else
    {                                  /* file already exists */
-      static char fractint_tmp[] = {"fractint.tmp"};
       if (fract_overwrite == 0)
       {
          if (resave_flag == 0)
@@ -118,7 +117,7 @@ restart:
       }
       if (access(openfile, 2) != 0)
       {
-         sprintf(tmpmsg, s_cantwrite, openfile);
+         sprintf(tmpmsg, "Can't write %s", openfile);
          stopmsg(0, tmpmsg);
          return -1;
       }
@@ -126,7 +125,7 @@ restart:
       i = (int) strlen(tmpfile);
       while (--i >= 0 && tmpfile[i] != SLASHC)
          tmpfile[i] = 0;
-      strcat(tmpfile, fractint_tmp);
+      strcat(tmpfile, "fractint.tmp");
    }
 
    started_resaves = (resave_flag == 1) ? 1 : 0;
@@ -135,7 +134,7 @@ restart:
 
    if ((g_outfile = fopen(tmpfile, "wb")) == NULL)
    {
-      sprintf(tmpmsg, s_cantcreate, tmpfile);
+      sprintf(tmpmsg, "Can't create %s", tmpfile);
       stopmsg(0, tmpmsg);
       return -1;
    }
@@ -170,17 +169,12 @@ restart:
 
    if (interrupted)
    {
-      static char s_delete[] = 
-         {"delete the file,\ncontinue to keep the partial image."};
-      static char s_retain[] = 
-         {"retain the original file,\ncontinue to replace original with new partial image."};
-      
       char buf[200];
       sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
       if (newfile)
-         strcat(buf,s_delete);
+         strcat(buf,"delete the file,\ncontinue to keep the partial image.");
       else
-         strcat(buf,s_retain);
+         strcat(buf,"retain the original file,\ncontinue to replace original with new partial image.");
       interrupted = 1;
       if (stopmsg(STOPMSG_CANCEL, buf) < 0)
       {

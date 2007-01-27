@@ -261,11 +261,7 @@ int pstopmsg(int x,char *msg)
       fp = fopen("fpdebug.txt","w");
    if(fp)
    {
-#ifndef XFRACT
-      fprintf(fp,"%Fs\n",msg);
-#else
       fprintf(fp,"%s\n",msg);
-#endif
       fflush(fp);
    }
    return(x); /* just to quiet warnings */
@@ -1349,19 +1345,11 @@ int CvtStk() {  /* convert the array of ptrs  */
                DBUGMSG("IDENT was skipped" );
             }
             else {
-#ifndef XFRACT
-               DBUGMSG4(0, "fn=%Fs, minstk=%1i, freestk=%1i, delta=%3i",
-                     pfe->fname,
-                     (int)(pfe->min_regs),
-                     (int)(pfe->free_regs),
-                     (int)(pfe->delta) );
-#else
                DBUGMSG4(0, "fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
                      pfe->fname,
                      (int)(pfe->min_regs),
                      (int)(pfe->free_regs),
                      (int)(pfe->delta) );
-#endif
                if (!CvtFptr(ntst,
                       pfe->min_regs,
                       pfe->free_regs,
