@@ -753,43 +753,64 @@ void windows_shell_to_dos()
 	}
 }
 
-int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
+static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
-#if 0
 	char minidump[MAX_PATH] = "fractint.dmp";
 	MINIDUMP_EXCEPTION_INFORMATION mdei =
 	{
 		GetCurrentThreadId(),
-		NULL,
-		TRUE
+		ep,
+		FALSE
 	};
-#endif
-	int result = 0;
-	g_tos = (char *) &result;
+	HANDLE dump_file;
+	BOOL status = 0;
+	int i = 1;
 
-#if 0
-	__try
-#endif
+	while (PathFileExists(minidump))
 	{
+		sprintf(minidump, "fractint-%d.dmp", i++);
+	}
+	dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
+		0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
+
+	status = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(),
+		dump_file, MiniDumpNormal, &mdei, NULL, NULL);
+	_ASSERTE(status);
+	if (!status)
+	{
+		char msg[100];
+		sprintf(msg, "MiniDumpWriteDump failed with %08x", GetLastError());
+		MessageBox(NULL, msg, "Ugh", MB_OK);
+	}
+	else
+	{
+		status = CloseHandle(dump_file);
+		_ASSERTE(status);
+	}
+	{
+		char msg[MAX_PATH*2];
+		sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
+			"Please include this file with your bug report.", minidump);
+		MessageBox(NULL, msg, "FractInt: Unexpected Error", MB_OK);
+	}
+}
+
+int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine, int show)
+{
+	int result = 0;
+
+	__try
+	{
+		g_tos = (char *) &result;
 		g_instance = instance;
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 		result = main(__argc, __argv);
 	}
-#if 0
-	__except (mdei.ExceptionPointers = GetExceptionInformation(), EXCEPTION_EXECUTE_HANDLER)
+	__except (CreateMiniDump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
 	{
-		HANDLE dump_file = CreateFile(minidump, GENERIC_WRITE, 0, NULL, CREATE_NEW, 0, NULL);
-		DWORD status = 0;
-
-		_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
-		status = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dump_file,
-			MiniDumpWithFullMemory, &mdei, NULL, NULL);
-		_ASSERTE(status);
-		status = CloseHandle(dump_file);
-		_ASSERTE(status);
 		result = -1;
 	}
-#endif
 
 	return result;
 }
