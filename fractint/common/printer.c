@@ -1172,27 +1172,22 @@ static void _fastcall graphics_init(int ptrid,int res,char *EndOfLine)
 
                 if (Printer_SetScreen==1)
                     {
-#ifndef XFRACT
-                    static char fmt_str[] = "%d %d {%Fs}%s";
-#else
-                    static char fmt_str[] = "%d %d {%s}%s";
-#endif
-                    Printer_printf(fmt_str,
+                    Printer_printf("%d %d {%s}%s",
                                        Printer_RFrequency,
                                        Printer_RAngle,
                                        (char *)HalfTone[Printer_RStyle],
                                        EndOfLine);
-                    Printer_printf(fmt_str,
+                    Printer_printf("%d %d {%s}%s",
                                        Printer_GFrequency,
                                        Printer_GAngle,
                                        (char *)HalfTone[Printer_GStyle],
                                        EndOfLine);
-                    Printer_printf(fmt_str,
+                    Printer_printf("%d %d {%s}%s",
                                        Printer_BFrequency,
                                        Printer_BAngle,
                                        (char *)HalfTone[Printer_BStyle],
                                        EndOfLine);
-                    Printer_printf(fmt_str,
+                    Printer_printf("%d %d {%s}%s",
                                        Printer_SFrequency,
                                        Printer_SAngle,
                                        (char *)HalfTone[Printer_SStyle],
@@ -1215,19 +1210,11 @@ static void _fastcall graphics_init(int ptrid,int res,char *EndOfLine)
 
                    if (Printer_SetScreen==1)
                    {
-#ifndef XFRACT
-                      PRINTER_PRINTF5("%d %d {%Fs} setscreen%s",
-                                     Printer_SFrequency,
-                                     Printer_SAngle,
-                                     (char *)HalfTone[Printer_SStyle],
-                                     EndOfLine);
-#else
                       Printer_printf("%d %d {%s} setscreen%s",
                                      Printer_SFrequency,
                                      Printer_SAngle,
                                      (char *)HalfTone[Printer_SStyle],
                                      EndOfLine);
-#endif
                    }
                 }
               }

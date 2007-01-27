@@ -114,16 +114,6 @@ int fullscreen_prompt(  /* full-screen prompting routine */
    int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
    char blanks[78];               /* used to clear text box                */
 
-static char instr1[]  = {"Use " UPARR1 " and " DNARR1 " to select values to change"};
-static char instr2a[]  = {"Type in replacement value for selected field"};
-static char instr2b[]  = {"Use " LTARR1 " or " RTARR1 " to change value of selected field"};
-static char instr3a[] = {"Press ENTER when finished (or ESCAPE to back out)"};
-static char instr3b[] = {"Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help"};
-
-static char instr0[] = {"No changeable parameters;"};
-static char instr0a[] = {"Press ENTER to exit"};
-static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help"};
-
    savelookatmouse = lookatmouse;
    lookatmouse = 0;
    promptfkeys = fkeymask;
@@ -270,7 +260,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
    maxfldwidth = maxpromptwidth = maxcomment = anyinput = 0;
    for (i = 0; i < numprompts; i++) {
       if (values[i].type == 'y') {
-         static char *noyes[2] = {s_no,s_yes};
+         static char *noyes[2] = {"no", "yes"};
          values[i].type = 'l';
          values[i].uval.ch.vlen = 3;
          values[i].uval.ch.list = noyes;
@@ -396,9 +386,9 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 
    if (!anyinput) {
       putstringcenter(instrrow++,0,80,C_PROMPT_BKGRD,
-        instr0);
+        "No changeable parameters;");
       putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
-        (helpmode > 0) ? instr0b : instr0a);
+        (helpmode > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
       driver_hide_text_cursor();
       g_text_cbase = 2;
       for(;;) {
@@ -491,9 +481,10 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
 
    /* display footing */
    if (numprompts > 1)
-      putstringcenter(instrrow++,0,80,C_PROMPT_BKGRD,instr1);
+      putstringcenter(instrrow++,0,80,C_PROMPT_BKGRD,
+	  "Use " UPARR1 " and " DNARR1 " to select values to change");
    putstringcenter(instrrow+1,0,80,C_PROMPT_BKGRD,
-         (helpmode > 0) ? instr3b : instr3a);
+         (helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
    done = 0;
    while (values[curchoice].type == '*') ++curchoice;
@@ -515,7 +506,7 @@ static char instr0b[] = {"Press ENTER to exit, ESC to back out, "FK_F1" for help
       curlen = prompt_valuestring(buf,&values[curchoice]);
       if(!rewrite_extrainfo)
          putstringcenter(instrrow,0,80,C_PROMPT_BKGRD,
-                   (curtype == 'l') ? instr2b : instr2a);
+                   (curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
       else
          rewrite_extrainfo = 0;
       driver_put_string(promptrow+curchoice,promptcol,C_PROMPT_HI,prompts[curchoice]);
@@ -1107,31 +1098,6 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
     return (numfractals);
 }
 
-static char v0a[] = {"From cx (real part)"};
-static char v1a[] = {"From cy (imaginary part)"};
-static char v2a[] = {"To   cx (real part)"};
-static char v3a[] = {"To   cy (imaginary part)"};
-
-/* 4D Mandelbrot */
-static char v0b[] = {"From cj (3rd dim)"};
-static char v1b[] = {"From ck (4th dim)"};
-static char v2b[] = {"To   cj (3rd dim)"};
-static char v3b[] = {"To   ck (4th dim)"};
-
-/* 4D Julia */
-static char v0c[] = {"From zj (3rd dim)"};
-static char v1c[] = {"From zk (4th dim)"};
-static char v2c[] = {"To   zj (3rd dim)"};
-static char v3c[] = {"To   zk (4th dim)"};
-
-static char v4[] = {"Number of z pixels"};
-static char v5[] = {"Location of z origin"};
-static char v6[] = {"Depth of z"};
-static char v7[] = {"Screen height"};
-static char v8[] = {"Screen width"};
-static char v9[] = {"Distance to Screen"};
-static char v10[] = {"Distance between eyes"};
-static char v11[] = {"3D Mode"};
 char *juli3Doptions[] = {"monocular","lefteye","righteye","red-blue"};
 
 /* JIIM */
@@ -1224,10 +1190,10 @@ const int numtrigfn = NUMTRIGFN;
 /* --------------------------------------------------------------------- */
 int get_fract_params(int caller)        /* prompt for type-specific parms */
 {
-   char *v0 = v0a;
-   char *v1 = v1a;
-   char *v2 = v2a;
-   char *v3 = v3a;
+   char *v0 = "From cx (real part)";
+   char *v1 = "From cy (imaginary part)";
+   char *v2 = "To   cx (real part)";
+   char *v3 = "To   cy (imaginary part)";
    char *juliorbitname = NULL;
    int i,j,k;
    int curtype,numparams,numtrig;
@@ -1470,14 +1436,14 @@ gfp_top:
       {
       case QUATFP:
       case HYPERCMPLXFP:
-          v0 = v0b; v1 = v1b; v2 = v2b; v3 = v3b;
+          v0 = "From cj (3rd dim)"; v1 = "From ck (4th dim)"; v2 = "To   cj (3rd dim)"; v3 = "To   ck (4th dim)";
           break;
       case QUATJULFP:
       case HYPERCMPLXJFP:
-          v0 = v0c; v1 = v1c; v2 = v2c; v3 = v3c;
+          v0 = "From zj (3rd dim)"; v1 = "From zk (4th dim)"; v2 = "To   zj (3rd dim)"; v3 = "To   zk (4th dim)";
           break;
       default:
-          v0 = v0a; v1 = v1a; v2 = v2a; v3 = v3a;
+          v0 = "From cx (real part)"; v1 = "From cy (imaginary part)"; v2 = "To   cx (real part)"; v3 = "To   cy (imaginary part)";
          break;
       }
 
@@ -1496,33 +1462,33 @@ gfp_top:
       choices[promptnum++] = v3;
       paramvalues[promptnum].uval.ival = zdots;
       paramvalues[promptnum].type = 'i';
-      choices[promptnum++] = v4;
+      choices[promptnum++] = "Number of z pixels";
 
       paramvalues[promptnum].type = 'l';
       paramvalues[promptnum].uval.ch.val  = juli3Dmode;
       paramvalues[promptnum].uval.ch.llen = 4;
       paramvalues[promptnum].uval.ch.vlen = 9;
       paramvalues[promptnum].uval.ch.list = juli3Doptions;
-      choices[promptnum++] = v11;
+      choices[promptnum++] = "3D Mode";
 
       paramvalues[promptnum].uval.dval = eyesfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v10;
+      choices[promptnum++] = "Distance between eyes";
       paramvalues[promptnum].uval.dval = originfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v5;
+      choices[promptnum++] = "Location of z origin";
       paramvalues[promptnum].uval.dval = depthfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v6;
+      choices[promptnum++] = "Depth of z";
       paramvalues[promptnum].uval.dval = heightfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v7;
+      choices[promptnum++] = "Screen height";
       paramvalues[promptnum].uval.dval = widthfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v8;
+      choices[promptnum++] = "Screen width";
       paramvalues[promptnum].uval.dval = distfp;
       paramvalues[promptnum].type = 'f';
-      choices[promptnum++] = v9;
+      choices[promptnum++] = "Distance to Screen";
    }
 
    if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
@@ -1565,8 +1531,7 @@ gfp_top:
       sprintf(msg,"Parameters for fractal type %s",typename);
    if(bf_math == 0)
    {
-      static char pressf6[] = {"\n(Press "FK_F6" for corner parameters)"};
-      strcat(msg,pressf6);
+      strcat(msg,"\n(Press "FK_F6" for corner parameters)");
    }
    else
       fkeymask = 0;
@@ -1757,7 +1722,7 @@ long get_file_entry(int type,char *title,char *fmask,
          char buf[60];
          newfile = 0;
          if (firsttry) {
-            sprintf(temp1,s_cantfind, filename);
+            sprintf(temp1,"Can't find %s", filename);
             stopmsg(0,temp1);
             }
          sprintf(buf,"Select %s File",title);
@@ -2109,8 +2074,8 @@ static int check_gfe_key(int curkey,int choice)
       driver_put_string(4,0,C_GENERAL_MED,infbuf);
 
       {
-      static char msg[]  = {"\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list"};
-      driver_put_string(-1,0,C_GENERAL_LO,msg);
+      driver_put_string(-1,0,C_GENERAL_LO,
+		  "\n\n Use "UPARR1", "DNARR1", "RTARR1", "LTARR1", PgUp, PgDown, Home, and End to scroll text\nAny other key to return to selection list");
       }
 
       while(!done) {
@@ -2414,12 +2379,6 @@ int get_3d_params()     /* prompt for 3D parameters */
    int attributes[21];
    int sphere;
    char *s;
-   static char s1[] = {"Sphere 3D Parameters\n\
-Sphere is on its side; North pole to right\n\
-Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right"};
-   static char s2[]={"Planar 3D Parameters\n\
-Pre-rotation X axis is screen top; Y axis is left side\n\
-Pre-rotation Z axis is coming at you out of the screen!"};
    char *prompts3d[21];
    struct fullscreenvalues uvalues[21];
    int i, k;
@@ -2669,9 +2628,13 @@ restart_1:
    uvalues[k++].uval.ival = RANDOMIZE;
 
    if (SPHERE)
-      s = s1;
+      s = "Sphere 3D Parameters\n"
+			"Sphere is on its side; North pole to right\n"
+			"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
    else
-      s = s2;
+      s = "Planar 3D Parameters\n"
+			"Pre-rotation X axis is screen top; Y axis is left side\n"
+			"Pre-rotation Z axis is coming at you out of the screen!";
 
    helpmode = HELP3DPARMS;
    k = fullscreen_prompt(s,k,prompts3d,uvalues,0,NULL);
@@ -2842,12 +2805,11 @@ static int check_mapfile()
 
    for(;;) {
       if (askflag) {
-         static char msg[] = {"\
-Enter name of .MAP file to use,\n\
-or '*' to use palette from the image to be loaded."};
          oldhelpmode = helpmode;
          helpmode = -1;
-         i = field_prompt(0,msg,NULL,temp1,60,NULL);
+         i = field_prompt(0,"Enter name of .MAP file to use,\n"
+				"or '*' to use palette from the image to be loaded.",
+				NULL,temp1,60,NULL);
          helpmode = oldhelpmode;
          if (i < 0)
             return(-1);

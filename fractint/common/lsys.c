@@ -141,7 +141,6 @@ static int _fastcall readLSystemFile(char *str)
 
    while(file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
    {
-      static char out_of_mem[] = {"Error:  out of memory\n"};
       linenum++;
       if ((word = strchr(inline1,';')) != NULL) /* strip comment */
          *word = 0;
@@ -153,7 +152,7 @@ static int _fastcall readLSystemFile(char *str)
          if (!strcmp(word,"axiom"))
          {
             if (save_rule(strtok(NULL," \t\n"),&ruleptrs[0])) {
-                strcat(msgbuf,out_of_mem);
+                strcat(msgbuf,"Error:  out of memory\n");
                 ++err;
                 break;
             }
@@ -194,7 +193,7 @@ static int _fastcall readLSystemFile(char *str)
                memerr = append_rule(fixed,index);
             }
             if (memerr) {
-                strcat(msgbuf, out_of_mem);
+                strcat(msgbuf, "Error:  out of memory\n");
                 ++err;
                 break;
             }

@@ -58,11 +58,7 @@ int stopmsg (int flags, char *msg)
       else
          fp=dir_fopen(workdir,"stopmsg.txt","a");
       if(fp != NULL)
-#ifndef XFRACT
-      fprintf(fp,"%Fs\n",msg);
-#else
       fprintf(fp,"%s\n",msg);
-#endif
       fclose(fp);
    }
    if (active_system == 0 /* DOS */
@@ -79,7 +75,7 @@ int stopmsg (int flags, char *msg)
       close_drivers();
       exit(1);
 #else
-      printf("%Fs\n",msg);
+      printf("%s\n",msg);
       dopause(1); /* pause deferred until after cmdfiles */
       return(0);
 #endif

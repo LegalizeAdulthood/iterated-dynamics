@@ -33,12 +33,6 @@
 static  void trigdetails(char *);
 static void area(void);
 
-/* TW's static string consolidation campaign to help brain-dead compilers */
-char s_cantwrite[]      = {"Can't write %s"};
-char s_cantcreate[]     = {"Can't create %s"};
-char s_cantunderstand[] = {"Can't understand %s"};
-char s_cantfind[]       = {"Can't find %s"};
-
 #ifndef XFRACT
 
 void findpath(char *filename, char *fullpathname) /* return full pathnames */
@@ -1145,13 +1139,13 @@ top:
 			}
 			truncaterow = row;
 			driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
-			driver_put_string(s_row, 8, C_GENERAL_MED, s_x);
+			driver_put_string(s_row, 8, C_GENERAL_MED, "x");
 			bftostr(msg, dec, bfXctr);
 			if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1)
 			{
 				truncate = 1;
 			}
-			driver_put_string(++s_row, 8, C_GENERAL_MED, s_y);
+			driver_put_string(++s_row, 8, C_GENERAL_MED, "y");
 			bftostr(msg, dec, bfYctr);
 			if (putstringwrap(&s_row, 10, 78, C_GENERAL_HI, msg, 5) == 1 || truncate)
 			{
@@ -1333,15 +1327,9 @@ static void area(void)
     } else {
       msg = "";
     }
-#ifndef XFRACT
-      sprintf(buf,"%Fs%ld inside pixels of %ld%Fs%f",
-              msg,cnt,(long)xdots*(long)ydots,".  Total area ",
-              cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
-#else
       sprintf(buf,"%s%ld inside pixels of %ld%s%f",
               msg,cnt,(long)xdots*(long)ydots,".  Total area ",
               cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
-#endif
     stopmsg(STOPMSG_NO_BUZZER,buf);
 }
 

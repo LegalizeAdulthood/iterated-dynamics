@@ -51,19 +51,6 @@ static void strip_zeros(char *buf);
 
 char par_comment[4][MAXCMT];
 
-char s_yes[]      = "yes";
-char s_no[]       = "no";
-char s_seqs[]     = " %s=%s";
-char s_seqd[]     = " %s=%d";
-char s_seqdd[]    = " %s=%d/%d";
-char s_seqddd[]   = " %s=%d/%d/%d";
-char s_seqldddd[]  = " %s=%ld/%d/%d/%d";
-char s_seqd12[]   = " %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d";
-char s_seqy[]     = " %s=y";
-char s_x[]        = "x";
-char s_y[]        = "y";
-char s_z[]        = "z";
-
 /* JIIM */
 
 FILE *parmfile;
@@ -349,7 +336,7 @@ skip_UI:
          gotinfile = 1;
          if (access(CommandFile, 6))
          {
-            sprintf(buf, s_cantwrite, CommandFile);
+            sprintf(buf, "Can't write %s", CommandFile);
             stopmsg(0, buf);
             continue;
          }
@@ -364,7 +351,7 @@ skip_UI:
       }
       if ((parmfile = fopen(outname, "wt")) == NULL)
       {
-         sprintf(buf, s_cantcreate, outname);
+         sprintf(buf, "Can't create %s", outname);
          stopmsg(0, buf);
          if (gotinfile)
             fclose(infile);
@@ -577,7 +564,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
         put_parm("=%d",g_release);
 
       if (*(sptr = curfractalspecific->name) == '*') ++sptr;
-      put_parm( s_seqs, "type",sptr);
+      put_parm( " %s=%s", "type",sptr);
 
       if (fractype == JULIBROT || fractype == JULIBROTFP)
       {
@@ -596,27 +583,27 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             name = fractalspecific[neworbittype].name;
             if(*name=='*')
                name++;
-            put_parm(s_seqs, "orbitname",name);
+            put_parm(" %s=%s", "orbitname",name);
          }
          if(juli3Dmode != 0)
-            put_parm(s_seqs, "3dmode",juli3Doptions[juli3Dmode]);
+            put_parm(" %s=%s", "3dmode",juli3Doptions[juli3Dmode]);
       }
       if (fractype == FORMULA || fractype == FFORMULA)
       {
          put_filename("formulafile",FormFileName);
-         put_parm( s_seqs, "formulaname",FormName);
+         put_parm( " %s=%s", "formulaname",FormName);
          if (uses_ismand)
             put_parm(" %s=%c", "ismand",ismand?'y':'n');
       }
       if (fractype == LSYSTEM)
       {
          put_filename("lfile",LFileName);
-         put_parm( s_seqs, "lname",LName);
+         put_parm( " %s=%s", "lname",LName);
       }
       if (fractype == IFS || fractype == IFS3D)
       {
          put_filename("ifsfile",IFSFileName);
-         put_parm( s_seqs, "ifs",IFSName);
+         put_parm( " %s=%s", "ifs",IFSName);
       }
       if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
          put_parm( " %s=%s/%s", "miim",JIIMmethod[major_method], JIIMleftright[minor_method]);
@@ -760,7 +747,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          put_parm( " %s=%.15g/%.15g", "initorbit",initorbit.x,initorbit.y);
 
       if (floatflag)
-         put_parm( s_seqy, "float");
+         put_parm( " %s=y", "float");
 
       if (maxit != 150)
          put_parm(" %s=%ld", "maxiter",maxit);
@@ -842,7 +829,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          if(LogFlag == -1)
             put_parm( "old");
          else if(LogFlag == 1)
-            put_parm( s_yes);
+            put_parm("yes");
          else
             put_parm( "%ld", LogFlag);
          }
@@ -865,17 +852,17 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          put_parm( " %s=%-1.15lg/%-1.15lg/%-1.15lg", "invert",
              inversion[0], inversion[1], inversion[2]);
       if (decomp[0])
-         put_parm( s_seqd, "decomp", decomp[0]);
+         put_parm( " %s=%d", "decomp", decomp[0]);
       if (distest) {
-         put_parm( s_seqldddd, "distest", distest, distestwidth,
+         put_parm( " %s=%ld/%d/%d/%d", "distest", distest, distestwidth,
                      pseudox?pseudox:xdots,pseudoy?pseudoy:ydots);
       }
       if (old_demm_colors)
-         put_parm( s_seqy, "olddemmcolors");
+         put_parm( " %s=y", "olddemmcolors");
       if (usr_biomorph != -1)
-         put_parm( s_seqd, "biomorph", usr_biomorph);
+         put_parm( " %s=%d", "biomorph", usr_biomorph);
       if (finattract)
-         put_parm(s_seqy, "finattract");
+         put_parm(" %s=y", "finattract");
 
       if (forcesymmetry != 999) {
          if(forcesymmetry == 1000 && ii == 1 && jj == 1)
@@ -896,10 +883,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          }
 
       if (periodicitycheck != 1)
-         put_parm( s_seqd, "periodicity",periodicitycheck);
+         put_parm( " %s=%d", "periodicity",periodicitycheck);
 
       if (rflag)
-         put_parm( s_seqd, "rseed",rseed);
+         put_parm( " %s=%d", "rseed",rseed);
 
       if (rangeslen) {
          put_parm(" %s=", "ranges");
@@ -919,70 +906,70 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    if (display3d >= 1) {
       /***** 3d transform only parameters in this section *****/
       if(display3d == 2)
-         put_parm( s_seqs, "3d", "overlay");
+         put_parm( " %s=%s", "3d", "overlay");
       else
-      put_parm( s_seqs, "3d",s_yes);
+      put_parm( " %s=%s", "3d", "yes");
       if (loaded3d == 0)
          put_filename("filename", readname);
       if (SPHERE) {
-         put_parm( s_seqy, "sphere");
-         put_parm( s_seqdd, "latitude", THETA1, THETA2);
-         put_parm( s_seqdd, "longitude", PHI1, PHI2);
-         put_parm( s_seqd, "radius", RADIUS);
+         put_parm( " %s=y", "sphere");
+         put_parm( " %s=%d/%d", "latitude", THETA1, THETA2);
+         put_parm( " %s=%d/%d", "longitude", PHI1, PHI2);
+         put_parm( " %s=%d", "radius", RADIUS);
          }
-      put_parm( s_seqdd, "scalexyz", XSCALE, YSCALE);
-      put_parm( s_seqd, "roughness", ROUGH);
-      put_parm( s_seqd, "waterline", WATERLINE);
+      put_parm( " %s=%d/%d", "scalexyz", XSCALE, YSCALE);
+      put_parm( " %s=%d", "roughness", ROUGH);
+      put_parm( " %s=%d", "waterline", WATERLINE);
       if (FILLTYPE)
-         put_parm( s_seqd, "filltype", FILLTYPE);
+         put_parm( " %s=%d", "filltype", FILLTYPE);
       if (transparent[0] || transparent[1])
-         put_parm( s_seqdd, "transparent", transparent[0],transparent[1]);
+         put_parm( " %s=%d/%d", "transparent", transparent[0],transparent[1]);
       if (preview) {
-         put_parm( s_seqs, "preview",s_yes);
+         put_parm( " %s=%s", "preview", "yes");
          if (showbox)
-            put_parm( s_seqs, "showbox",s_yes);
-         put_parm( s_seqd, "coarse",previewfactor);
+            put_parm( " %s=%s", "showbox", "yes");
+         put_parm( " %s=%d", "coarse",previewfactor);
          }
       if (RAY) {
-         put_parm( s_seqd, "ray",RAY);
+         put_parm( " %s=%d", "ray",RAY);
          if (BRIEF)
-            put_parm(s_seqy, "brief");
+            put_parm(" %s=y", "brief");
          }
       if (FILLTYPE > 4) {
-         put_parm( s_seqddd, "lightsource", XLIGHT, YLIGHT, ZLIGHT);
+         put_parm( " %s=%d/%d/%d", "lightsource", XLIGHT, YLIGHT, ZLIGHT);
          if (LIGHTAVG)
-            put_parm(s_seqd, "smoothing", LIGHTAVG);
+            put_parm(" %s=%d", "smoothing", LIGHTAVG);
          }
       if (RANDOMIZE)
-         put_parm( s_seqd, "randomize",RANDOMIZE);
+         put_parm( " %s=%d", "randomize",RANDOMIZE);
       if (Targa_Out)
-         put_parm( s_seqy, "fullcolor");
+         put_parm( " %s=y", "fullcolor");
       if (grayflag)
-         put_parm( s_seqy, "usegrayscale");
+         put_parm( " %s=y", "usegrayscale");
       if (Ambient)
-         put_parm( s_seqd, "ambient",Ambient);
+         put_parm( " %s=%d", "ambient",Ambient);
       if (haze)
-         put_parm( s_seqd, "haze",haze);
+         put_parm( " %s=%d", "haze",haze);
       if (back_color[0] != 51 || back_color[1] != 153 || back_color[2] != 200)
-         put_parm( s_seqddd, "background",back_color[0],back_color[1],
+         put_parm( " %s=%d/%d/%d", "background",back_color[0],back_color[1],
                    back_color[2]);
       }
 
    if (display3d) {             /* universal 3d */
       /***** common (fractal & transform) 3d parameters in this section *****/
       if (!SPHERE || display3d < 0)
-         put_parm( s_seqddd, "rotation", XROT, YROT, ZROT);
-      put_parm( s_seqd, "perspective", ZVIEWER);
-      put_parm( s_seqdd, "xyshift", XSHIFT, YSHIFT);
+         put_parm( " %s=%d/%d/%d", "rotation", XROT, YROT, ZROT);
+      put_parm( " %s=%d", "perspective", ZVIEWER);
+      put_parm( " %s=%d/%d", "xyshift", XSHIFT, YSHIFT);
       if(xtrans || ytrans)
-         put_parm( s_seqdd, "xyadjust",xtrans,ytrans);
+         put_parm( " %s=%d/%d", "xyadjust",xtrans,ytrans);
       if(g_glasses_type) {
-         put_parm( s_seqd, "stereo",g_glasses_type);
-         put_parm( s_seqd, "interocular",g_eye_separation);
-         put_parm( s_seqd, "converge",xadjust);
+         put_parm( " %s=%d", "stereo",g_glasses_type);
+         put_parm( " %s=%d", "interocular",g_eye_separation);
+         put_parm( " %s=%d", "converge",xadjust);
          put_parm( " %s=%d/%d/%d/%d", "crop",
              red_crop_left,red_crop_right,blue_crop_left,blue_crop_right);
-         put_parm( s_seqdd, "bright",
+         put_parm( " %s=%d/%d", "bright",
              red_bright,blue_bright);
          }
       }
@@ -993,31 +980,31 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    {
       put_parm(" %s=%g/%g", "viewwindows",viewreduction,finalaspectratio);
       if(viewcrop)
-         put_parm("/%s",s_yes);
+         put_parm("/%s", "yes");
       else
-         put_parm("/%s",s_no);
+         put_parm("/%s", "no");
       put_parm("/%d/%d",viewxdots,viewydots);
    }
 
    if(colorsonly == 0)
    {
    if (rotate_lo != 1 || rotate_hi != 255)
-      put_parm( s_seqdd, "cyclerange",rotate_lo,rotate_hi);
+      put_parm( " %s=%d/%d", "cyclerange",rotate_lo,rotate_hi);
 
    if(basehertz != 440)
-      put_parm(s_seqd, "hertz",basehertz);
+      put_parm(" %s=%d", "hertz",basehertz);
 
   if(soundflag != 9) {
    if((soundflag&7) == 0)
-      put_parm(s_seqs, "sound", "off");
+      put_parm(" %s=%s", "sound", "off");
    else if((soundflag&7) == 1)
-      put_parm(s_seqs, "sound", "beep");
+      put_parm(" %s=%s", "sound", "beep");
    else if((soundflag&7) == 2)
-      put_parm(s_seqs, "sound",s_x);
+      put_parm(" %s=%s", "sound","x");
    else if((soundflag&7) == 3)
-      put_parm(s_seqs, "sound",s_y);
+      put_parm(" %s=%s", "sound","y");
    else if((soundflag&7) == 4)
-      put_parm(s_seqs, "sound",s_z);
+      put_parm(" %s=%s", "sound","z");
 #ifndef XFRACT
    if((soundflag&7) && (soundflag&7) <=4) {
       if(soundflag&8)
@@ -1034,41 +1021,41 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 #ifndef XFRACT
    if(fm_vol != 63)
-     put_parm(s_seqd, "volume",fm_vol);
+     put_parm(" %s=%d", "volume",fm_vol);
 
    if(hi_atten != 0) {
      if(hi_atten == 1)
-        put_parm(s_seqs, "attenuate", "low");
+        put_parm(" %s=%s", "attenuate", "low");
      else if(hi_atten == 2)
-        put_parm(s_seqs, "attenuate", "mid");
+        put_parm(" %s=%s", "attenuate", "mid");
      else if(hi_atten == 3)
-        put_parm(s_seqs, "attenuate", "high");
+        put_parm(" %s=%s", "attenuate", "high");
      else   /* just in case */
-        put_parm(s_seqs, "attenuate", "none");
+        put_parm(" %s=%s", "attenuate", "none");
    }
 
    if(polyphony != 0)
-     put_parm(s_seqd, "polyphony",polyphony+1);
+     put_parm(" %s=%d", "polyphony",polyphony+1);
    
    if(fm_wavetype !=0)
-     put_parm(s_seqd, "wavetype",fm_wavetype);
+     put_parm(" %s=%d", "wavetype",fm_wavetype);
    
    if(fm_attack != 5)
-      put_parm(s_seqd, "attack",fm_attack);
+      put_parm(" %s=%d", "attack",fm_attack);
 
    if(fm_decay != 10)
-      put_parm(s_seqd, "decay",fm_decay);
+      put_parm(" %s=%d", "decay",fm_decay);
 
    if(fm_sustain != 13)
-      put_parm(s_seqd, "sustain",fm_sustain);
+      put_parm(" %s=%d", "sustain",fm_sustain);
 
    if(fm_release != 5)
-      put_parm(s_seqd, "srelease",fm_release);
+      put_parm(" %s=%d", "srelease",fm_release);
 
    if(soundflag&64) { /* quantize turned on */
       for(i=0;i<=11;i++) if(scale_map[i] != i+1) i=15;
       if(i>12) 
-         put_parm(s_seqd12, "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
+         put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]
             ,scale_map[4],scale_map[5],scale_map[6],scale_map[7],scale_map[8]
             ,scale_map[9],scale_map[10],scale_map[11]);
    }
@@ -1076,19 +1063,19 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 #endif
 
    if(nobof > 0)
-      put_parm(s_seqs, "nobof",s_yes);
+      put_parm(" %s=%s", "nobof", "yes");
 
    if(orbit_delay > 0)
-      put_parm(s_seqd, "orbitdelay",orbit_delay);
+      put_parm(" %s=%d", "orbitdelay",orbit_delay);
 
    if(orbit_interval != 1)
-      put_parm(s_seqd, "orbitinterval",orbit_interval);
+      put_parm(" %s=%d", "orbitinterval",orbit_interval);
 
    if(start_showorbit > 0)
-      put_parm(s_seqs, "showorbit",s_yes);
+      put_parm(" %s=%s", "showorbit", "yes");
 
    if (keep_scrn_coords)
-      put_parm(s_seqs, "screencoords",s_yes);
+      put_parm(" %s=%s", "screencoords", "yes");
 
    if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
       {
@@ -1226,7 +1213,7 @@ static void put_filename(char *keyword,char *fname)
    if (*fname && !endswithslash(fname)) {
       if ((p = strrchr(fname, SLASHC)) != NULL)
          if (*(fname = p+1) == 0) return;
-      put_parm(s_seqs,keyword,fname);
+      put_parm(" %s=%s",keyword,fname);
       }
 }
 
@@ -1588,7 +1575,7 @@ void showfreemem(void)
    printf("\n %ld used by HISTORY structure",
       sizeof(HISTORY)*(unsigned long)maxhistory);
    printf("\n %d video table used",showvidlength());
-   printf("\n\n %Fs...\n", "press any key to continue");
+   printf("\n\n %s...\n", "press any key to continue");
    driver_get_key();
 }
 #endif
@@ -1875,7 +1862,7 @@ static void update_fractint_cfg()
    findpath("fractint.cfg",cfgname);
 
    if (access(cfgname,6)) {
-      sprintf(buf,s_cantwrite,cfgname);
+      sprintf(buf,"Can't write %s",cfgname);
       stopmsg(0,buf);
       return;
       }
@@ -1885,7 +1872,7 @@ static void update_fractint_cfg()
    outname[i] = 0;
    strcat(outname,"fractint.tmp");
    if ((outfile = fopen(outname,"w")) == NULL) {
-      sprintf(buf,s_cantcreate,outname);
+      sprintf(buf,"Can't create %s",outname);
       stopmsg(0,buf);
       return;
       }
@@ -2370,21 +2357,6 @@ void flip_image(int key)
 }
 static char *expand_var(char *var, char *buf)
 {
-   static char s_year    [] = {"year"    };
-   static char s_month   [] = {"month"   };
-   static char s_day     [] = {"day"     };
-   static char s_hour    [] = {"hour"    };
-   static char s_min     [] = {"min"     };
-   static char s_sec     [] = {"sec"     };
-   static char s_time    [] = {"time"    };
-   static char s_date    [] = {"date"    };
-   static char s_calctime[] = {"calctime"};
-   static char s_version [] = {"version" };
-   static char s_patch   [] = {"patch"   };
-   static char s_xdots   [] = {"xdots"   };
-   static char s_ydots   [] = {"ydots"   };
-   static char s_vidkey  [] = {"vidkey"  };
-   
    time_t ltime;
    char *str, *out;
    
@@ -2395,42 +2367,42 @@ static char *expand_var(char *var, char *buf)
    /* Sat Aug 17 21:34:14 1996 */
    /* 012345678901234567890123 */
    /*           1         2    */   
-   if(strcmp(var,s_year) == 0)       /* 4 chars */
+   if(strcmp(var,"year") == 0)       /* 4 chars */
    {
       str[24] = '\0';
       out = &str[20];
    }
-   else if(strcmp(var,s_month) == 0) /* 3 chars */
+   else if(strcmp(var,"month") == 0) /* 3 chars */
    {
       str[7] = '\0';
       out = &str[4];
    }
-   else if(strcmp(var,s_day) == 0)   /* 2 chars */
+   else if(strcmp(var,"day") == 0)   /* 2 chars */
    {
       str[10] = '\0';
       out = &str[8];
    }
-   else if(strcmp(var,s_hour) == 0)  /* 2 chars */
+   else if(strcmp(var,"hour") == 0)  /* 2 chars */
    {
       str[13] = '\0';
       out = &str[11];
    }
-   else if(strcmp(var,s_min) == 0)   /* 2 chars */
+   else if(strcmp(var,"min") == 0)   /* 2 chars */
    {
       str[16] = '\0';
       out = &str[14];
    }
-   else if(strcmp(var,s_sec) == 0)   /* 2 chars */
+   else if(strcmp(var,"sec") == 0)   /* 2 chars */
    {
       str[19] = '\0';
       out = &str[17];
    }
-   else if(strcmp(var,s_time) == 0)  /* 8 chars */
+   else if(strcmp(var,"time") == 0)  /* 8 chars */
    {
       str[19] = '\0';
       out = &str[11];
    }
-   else if(strcmp(var,s_date) == 0)
+   else if(strcmp(var,"date") == 0)
    {
       str[10] = '\0';
       str[24] = '\0';
@@ -2438,32 +2410,32 @@ static char *expand_var(char *var, char *buf)
       strcat(out,", ");
       strcat(out,&str[20]);
    }
-   else if(strcmp(var,s_calctime) == 0)
+   else if(strcmp(var,"calctime") == 0)
    {
       get_calculation_time(buf,calctime);
       out = buf;
    }
-   else if(strcmp(var,s_version) == 0)  /* 4 chars */
+   else if(strcmp(var,"version") == 0)  /* 4 chars */
    {
       sprintf(buf,"%d",g_release);
       out = buf;
    }
-   else if(strcmp(var,s_patch) == 0)   /* 1 or 2 chars */
+   else if(strcmp(var,"patch") == 0)   /* 1 or 2 chars */
    {
       sprintf(buf,"%d",g_patch_level);
       out = buf;
    }
-   else if(strcmp(var,s_xdots) == 0)   /* 2 to 4 chars */
+   else if(strcmp(var,"xdots") == 0)   /* 2 to 4 chars */
    {
       sprintf(buf,"%d",xdots);
       out = buf;
    }
-   else if(strcmp(var,s_ydots) == 0)   /* 2 to 4 chars */
+   else if(strcmp(var,"ydots") == 0)   /* 2 to 4 chars */
    {
       sprintf(buf,"%d",ydots);
       out = buf;
    }
-   else if(strcmp(var,s_vidkey) == 0)   /* 2 to 3 chars */
+   else if(strcmp(var,"vidkey") == 0)   /* 2 to 3 chars */
    {
       char vidmde[5];
       vidmode_keyname(g_video_entry.keynum, vidmde);

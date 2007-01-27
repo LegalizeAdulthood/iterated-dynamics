@@ -2556,9 +2556,6 @@ void checkfreemem(int secondpass)
 {
 	int oldmaxhistory;
 	char *tmp;
-	static char msg[] =
-		{" I'm sorry, but you don't have enough free memory \n to run this program.\n\n"};
-	static char msg2[] = {"To save memory, reduced maxhistory to "};
 	tmp = (char *)malloc(4096L);
 	oldmaxhistory = maxhistory;
 	if (secondpass && !history)
@@ -2577,21 +2574,13 @@ void checkfreemem(int secondpass)
 	if (extraseg == 0 || tmp == NULL)
 	{
 		driver_buzzer(BUZZER_ERROR);
-#ifndef XFRACT
-		printf("%Fs",(char *)msg);
-#else
-		printf("%s",msg);
-#endif
+		printf("%s"," I'm sorry, but you don't have enough free memory \n to run this program.\n\n");
 		exit(1);
 	}
 	free(tmp); /* was just to check for min space */
 	if (secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
 	{
-#ifndef XFRACT
-		printf("%Fs%d\n%Fs\n",(char *)msg2,maxhistory, "press any key to continue");
-#else
-		printf("%s%d\n%s\n",(char *)msg2,maxhistory, "press any key to continue");
-#endif
+		printf("%s%d\n%s\n","To save memory, reduced maxhistory to ",maxhistory, "press any key to continue");
 		driver_get_key();
 	}
 }

@@ -2965,24 +2965,17 @@ static int parse_printer(char *value)
 
 static void argerror(char *badarg)      /* oops. couldn't decode this */
 {
-   static char argerrmsg1[]={"\
-Oops. I couldn't understand the argument:\n  "};
-   static char argerrmsg2[]={"\n\n\
-(see the Startup Help screens or documentation for a complete\n\
- argument list with descriptions)"};
    char msg[300];
    if ((int)strlen(badarg) > 70) badarg[70] = 0;
    if (active_system == 0 /* DOS */
      && first_init)       /* & this is 1st call to cmdfiles */
-#ifndef XFRACT
-      sprintf(msg,"%Fs%s%Fs",(char *)argerrmsg1,badarg,(char *)argerrmsg2);
+      sprintf(msg,"%s%s%s","\
+Oops. I couldn't understand the argument:\n  ",badarg,"\n\n\
+(see the Startup Help screens or documentation for a complete\n\
+ argument list with descriptions)");
    else
-      sprintf(msg,"%Fs%s",(char *)argerrmsg1,badarg);
-#else
-      sprintf(msg,"%s%s%s",argerrmsg1,badarg,argerrmsg2);
-   else
-      sprintf(msg,"%s%s",argerrmsg1,badarg);
-#endif
+      sprintf(msg,"%s%s","\
+Oops. I couldn't understand the argument:\n  ",badarg);
    stopmsg(0,msg);
    if (initbatch) {
       initbatch = 4;
@@ -3095,11 +3088,7 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
    if(*cmd)
       strcat(cmd,"=");
    if(badfilename)
-#ifndef XFRACT
-      sprintf(msg,"Can't find %s%Fs, please check %Fs",cmd,badfilename,modestr[mode]);
-#else
       sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
-#endif
    if (active_system == 0 /* DOS */
      && first_init) {     /* & cmdfiles hasn't finished 1st try */
       if(row == 1 && badfilename) {

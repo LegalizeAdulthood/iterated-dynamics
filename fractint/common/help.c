@@ -110,11 +110,7 @@ static void help_seek(long pos)
 
 static void displaycc(int row, int col, int color, int ch)
    {
-#if !defined(XFRACT) && !defined(_WIN32)
-   static char *s = "?";
-#else
-   static char s[] = "?";
-#endif
+	   static char s[] = "?";
 
    if (g_text_type == 1)   /* if 640x200x2 mode */
       {
@@ -798,7 +794,6 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 int help(int action)
 {
-	static char unknowntopic_msg[] = "Unknown Help Topic";
 	HIST      curr;
 	int       oldlookatmouse;
 	int       oldhelpmode;
@@ -896,7 +891,7 @@ int help(int action)
 				action = ACTION_PREV2;
 			else
             {
-				display_page(unknowntopic_msg, NULL, 0, 0, 1, 0, NULL, NULL);
+				display_page("Unknown Help Topic", NULL, 0, 0, 1, 0, NULL, NULL);
 				action = -1;
 				while (action == -1)
 				{
@@ -949,7 +944,6 @@ static int dos_version(void)
    return (r.h.al*100 + r.h.ah);
    }
 
-static char s_fractintexe[] = "FRACTINT.EXE";
 #endif
 
 static int can_read_file(char *path)
@@ -983,7 +977,7 @@ static int exe_path(char *filename, char *path)
       extern char **__argv;
       strcpy(path, __argv[0]);   /* note: __argv may be undocumented in MSC */
 #endif
-      if(strcmp(filename,s_fractintexe)==0)
+      if(strcmp(filename,"FRACTINT.EXE")==0)
          if (can_read_file(path))
             return (1);
       ptr = strrchr(path, SLASHC);
@@ -1373,11 +1367,6 @@ int makedoc_msg_func(int pnum, int num_pages)
 
 void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg )
    {
-   static char err_no_temp[]  = "Unable to create temporary file.\n";
-   static char err_no_out[]   = "Unable to create output file.\n";
-   static char err_badwrite[] = "Error writing temporary file.\n";
-   static char err_badread[]  = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
-
    PRINT_DOC_INFO info;
    int            success   = 0;
    int            temp_file = -1;
@@ -1402,20 +1391,20 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
       {
       if ( (temp_file=open(TEMP_FILE_NAME, O_RDWR|O_CREAT|O_TRUNC|O_BINARY, S_IREAD|S_IWRITE)) == -1 )
          {
-         msg = err_no_temp;
+         msg = "Unable to create temporary file.\n";
          goto ErrorAbort;
          }
 
       if ( write(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
          {
-         msg = err_badwrite;
+         msg = "Error writing temporary file.\n";
          goto ErrorAbort;
          }
       }
 
    if ( (info.file = fopen(outfname, "wt")) == NULL )
       {
-      msg = err_no_out;
+      msg = "Unable to create output file.\n";
       goto ErrorAbort;
       }
 
@@ -1431,13 +1420,13 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
       {
       if ( lseek(temp_file, 0L, SEEK_SET) != 0L )
          {
-         msg = err_badread;
+         msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
          goto ErrorAbort;
          }
 
       if ( read(temp_file, info.buffer, PRINT_BUFFER_SIZE) != PRINT_BUFFER_SIZE )
          {
-         msg = err_badread;
+         msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
          goto ErrorAbort;
          }
       }
@@ -1471,14 +1460,11 @@ int init_help(void)
 #if !defined(XFRACT) && !defined(_WIN32)
 	if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
     {
-		static char err_no_open[]    = "Help system was unable to open FRACTINT.EXE!\n";
-		static char err_no_exe[]     = "Help system couldn't find FRACTINT.EXE!\n";
-		static char err_wrong_ver[]  = "Wrong help version in FRACTINT.EXE!\n";
 /*
       static char err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
 */
 
-		if (find_file(s_fractintexe, path))
+		if (find_file("FRACTINT.EXE", path))
         {
 #ifdef __TURBOC__
 			if ((help_file = open(path, O_RDONLY|O_BINARY|O_DENYWRITE)) != -1)
@@ -1509,7 +1495,7 @@ int init_help(void)
 					{
 						close(help_file);
 						help_file = -1;
-						stopmsg(STOPMSG_NO_STACK, err_wrong_ver);
+						stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
 					}
 					else
 					{
@@ -1519,12 +1505,12 @@ int init_help(void)
 			}
 			else
 			{
-				stopmsg(STOPMSG_NO_STACK, err_no_open);
+				stopmsg(STOPMSG_NO_STACK, "Help system was unable to open FRACTINT.EXE!\n");
 			}
 		}
 		else
 		{
-			stopmsg(STOPMSG_NO_STACK, err_no_exe);
+			stopmsg(STOPMSG_NO_STACK, "Help system couldn't find FRACTINT.EXE!\n");
 		}
 	}
 #endif

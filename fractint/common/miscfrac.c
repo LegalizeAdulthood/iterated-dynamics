@@ -1807,11 +1807,6 @@ static void set_Cellular_palette()
 #define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*fsp->fl.f.a*fsp->fl.f.a/4)
 
 
-static char froth3_256c[] = "froth3.map";
-static char froth6_256c[] = "froth6.map";
-static char froth3_16c[] =  "froth316.map";
-static char froth6_16c[] =  "froth616.map";
-
 struct froth_double_struct {
     double a;
     double halfa;
@@ -1871,16 +1866,16 @@ static void set_Froth_palette(void)
       if (colors >= 256)
          {
          if (fsp->attractors == 6)
-            mapname = froth6_256c;
+            mapname = "froth6.map";
          else
-            mapname = froth3_256c;
+            mapname = "froth3.map";
          }
       else /* colors >= 16 */
          {
          if (fsp->attractors == 6)
-            mapname = froth6_16c;
+            mapname = "froth616.map";
          else
-            mapname = froth3_16c;
+            mapname = "froth316.map";
          }
       if (ValidateLuts(mapname) != 0)
          return;

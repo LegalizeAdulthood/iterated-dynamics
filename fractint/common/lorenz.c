@@ -81,8 +81,6 @@ static int  float3dviewtransf(struct float3dvtinf *inf);
 static FILE *open_orbitsave(void);
 static void _fastcall plothist(int x, int y, int color);
 static int realtime;
-static char orbitsavename[]    = {"orbits.raw"};
-static char orbitsave_format[] = {"%g %g %g 15\n"};
 
 S32 maxct;
 static int t;
@@ -1459,7 +1457,7 @@ int orbit2dfloat()
 		}
 		if (fp)
 		{
-			fprintf(fp, orbitsave_format, *p0, *p1, 0.0);
+			fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
 		}
 	}
 	if (fp)
@@ -1607,7 +1605,7 @@ int orbit2dlong()
 		}
 		if (fp)
 		{
-			fprintf(fp, orbitsave_format, (double)*p0/fudge, (double)*p1/fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", (double)*p0/fudge, (double)*p1/fudge, 0.0);
 		}
 	}
 	if (fp)
@@ -1668,7 +1666,7 @@ static int orbit3dlongcalc(void)
 
       LORBIT(&inf.orbit[0],&inf.orbit[1],&inf.orbit[2]);
       if(fp)
-         fprintf(fp,orbitsave_format,(double)inf.orbit[0]/fudge,(double)inf.orbit[1]/fudge,(double)inf.orbit[2]/fudge);
+         fprintf(fp,"%g %g %g 15\n",(double)inf.orbit[0]/fudge,(double)inf.orbit[1]/fudge,(double)inf.orbit[2]/fudge);
       if (long3dviewtransf(&inf))
       {
          /* plot if inside window */
@@ -1768,7 +1766,7 @@ static int orbit3dfloatcalc(void)
 
       FORBIT(&inf.orbit[0],&inf.orbit[1],&inf.orbit[2]);
       if(fp)
-         fprintf(fp,orbitsave_format,inf.orbit[0],inf.orbit[1],inf.orbit[2]);
+         fprintf(fp,"%g %g %g 15\n",inf.orbit[0],inf.orbit[1],inf.orbit[2]);
       if (float3dviewtransf(&inf))
       {
          /* plot if inside window */
@@ -1963,7 +1961,7 @@ int dynam2dfloat()
           if(FORBIT(p0, p1, NULL))
              break;
           if(fp)
-              fprintf(fp,orbitsave_format,*p0,*p1,0.0);
+              fprintf(fp,"%g %g %g 15\n",*p0,*p1,0.0);
         }
    }
    if(fp)
@@ -2249,7 +2247,7 @@ static int ifs3dfloat(void)
       inf.orbit[1] = newy;
       inf.orbit[2] = newz;
       if(fp)
-          fprintf(fp,orbitsave_format,newx,newy,newz);
+          fprintf(fp,"%g %g %g 15\n",newx,newy,newz);
       if (float3dviewtransf(&inf))
       {
          /* plot if inside window */
@@ -2364,7 +2362,7 @@ static int ifs2d(void)
       x = newx;
       y = newy;
       if(fp)
-         fprintf(fp,orbitsave_format,(double)newx/fudge,(double)newy/fudge,0.0);
+         fprintf(fp,"%g %g %g 15\n",(double)newx/fudge,(double)newy/fudge,0.0);
 
       /* plot if inside window */
       col = (int)((multiply(cvt.a,x,bitshift) + multiply(cvt.b,y,bitshift) + cvt.e) >> bitshift);
@@ -2468,7 +2466,7 @@ static int ifs3dlong(void)
       inf.orbit[1] = newy;
       inf.orbit[2] = newz;
       if(fp)
-         fprintf(fp,orbitsave_format,(double)newx/fudge,(double)newy/fudge,(double)newz/fudge);
+         fprintf(fp,"%g %g %g 15\n",(double)newx/fudge,(double)newy/fudge,(double)newz/fudge);
 
       if (long3dviewtransf(&inf))
       {
@@ -2810,7 +2808,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 static FILE *open_orbitsave(void)
 {
    FILE *fp;
-   if ((orbitsave&1) && (fp = fopen(orbitsavename,"w")) != NULL)
+   if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != NULL)
    {
       fprintf(fp,"pointlist x y z color\n");
       return fp;

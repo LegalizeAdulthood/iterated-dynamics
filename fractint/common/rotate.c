@@ -347,10 +347,7 @@ BYTE olddac0,olddac1,olddac2;
       spindac(0,1);                     /* show white border */
       if (driver_diskp())
       {
-         static char o_msg[] = {" Paused in \"color cycling\" mode "};
-         char msg[sizeof(o_msg)];
-         strcpy(msg,o_msg);
-         dvid_status(100,msg);
+         dvid_status(100," Paused in \"color cycling\" mode ");
       }
       driver_wait_key_pressed(0);                /* wait for any key */
 

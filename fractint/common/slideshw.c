@@ -89,10 +89,6 @@ static unsigned int quotes;
 static char calcwait = 0;
 static int repeats = 0;
 static int last1 = 0;
-static char smsg[] = "MESSAGE";
-static char sgoto[] = "GOTO";
-static char scalcwait[] = "CALCWAIT";
-static char swait[] = "WAIT";
 
 /* places a temporary message on the screen in text mode */
 static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
@@ -190,8 +186,7 @@ start:
          if (fscanf(fpss,"%d",&repeats) != 1
            || repeats <= 1 || repeats >= 256 || feof(fpss))
          {
-            static char msg[] = "error in * argument";
-            slideshowerr(msg);
+            slideshowerr("error in * argument");
             last1 = repeats = 0;
          }
          repeats -= 2;
@@ -212,14 +207,13 @@ start:
    out = -12345;
    if(isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
          out=atoi(buffer);
-   else if(strcmp((char *)buffer,smsg)==0)
+   else if(strcmp((char *)buffer,"MESSAGE")==0)
       {
          int secs;
          out = 0;
          if (fscanf(fpss,"%d",&secs) != 1)
          {
-            static char msg[] = "MESSAGE needs argument";
-            slideshowerr(msg);
+            slideshowerr("MESSAGE needs argument");
          }
          else
          {
@@ -233,12 +227,11 @@ start:
          }
          out = 0;
       }
-   else if(strcmp((char *)buffer,sgoto)==0)
+   else if(strcmp((char *)buffer,"GOTO")==0)
       {
          if (fscanf(fpss,"%s",buffer) != 1)
          {
-            static char msg[] = "GOTO needs target";
-            slideshowerr(msg);
+            slideshowerr("GOTO needs target");
             out = 0;
          }
          else
@@ -252,8 +245,7 @@ start:
             } while( err == 1 && strcmp(buffer1,buffer) != 0);
             if(feof(fpss))
             {
-               static char msg[] = "GOTO target not found";
-               slideshowerr(msg);
+               slideshowerr("GOTO target not found");
                return(0);
             }
             goto start;
@@ -261,7 +253,7 @@ start:
       }
    else if((i = get_scancode(buffer)) > 0)
          out = i;
-   else if(strcmp(swait,(char *)buffer)==0)
+   else if(strcmp("WAIT",(char *)buffer)==0)
       {
          float fticks;
          err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
@@ -273,12 +265,11 @@ start:
          }
          else
          {
-            static char msg[] = "WAIT needs argument";
-            slideshowerr(msg);
+            slideshowerr("WAIT needs argument");
          }
          slowcount = out = 0;
       }
-   else if(strcmp(scalcwait,(char *)buffer)==0) /* wait for calc to finish */
+   else if(strcmp("CALCWAIT",(char *)buffer)==0) /* wait for calc to finish */
       {
          calcwait = 1;
          slowcount = out = 0;
@@ -288,7 +279,7 @@ start:
    if(out == -12345)
    {
       char msg[MSGLEN];
-      sprintf(msg,s_cantunderstand,buffer);
+      sprintf(msg,"Can't understand %s",buffer);
       slideshowerr(msg);
       out = 0;
    }

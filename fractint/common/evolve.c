@@ -33,10 +33,6 @@ U16 prmboxhandle = 0;
 U16 imgboxhandle = 0;
 int prmboxcount,imgboxcount;
 U16 oldhistory_handle = 0;
-char s_random[] = "random";
-char s_spread[] = "spread";
-char s_xplusy[] = "x+y";
-char s_xminusy[] = "x-y";
 
 struct phistory_info      /* for saving evolution data of center image */
 {
@@ -332,7 +328,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest(void)
 {
-  char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
+  char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
   int i,k,num, numtrig;
   char *choices[20];
   char *ptr;
@@ -428,7 +424,7 @@ choose_vars_restart:
 
 int get_variations(void)
 {
-  char *evolvmodes[]={s_no,s_x,s_y,s_xplusy,s_xminusy,s_random,s_spread};
+  char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
   int i,k,num, numparams;
   char *choices[20];
   char *ptr;
