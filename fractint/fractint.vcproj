@@ -222,6 +222,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\win32\calmanp5.c">
+			</File>
+			<File
 				RelativePath=".\win32\d_win32.c">
 			</File>
 			<File
@@ -274,6 +277,9 @@
 			</File>
 			<File
 				RelativePath=".\win32\os_win32.c">
+			</File>
+			<File
+				RelativePath=".\win32\parsera.c">
 			</File>
 			<File
 				RelativePath=".\win32\plot.c">
