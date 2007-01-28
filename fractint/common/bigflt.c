@@ -1054,7 +1054,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
    unsafe_atan_bf(r, bftmp6);
    if (signx < 0)
       sub_bf(r,bf_pi,r);
-   if(signy < 0)
+   if (signy < 0)
       neg_a_bf(r);
    return(r);
    }
@@ -1249,7 +1249,7 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
    clear_bf(newnum);
    bflength      = savebflength;
 
-   if(newbflength > oldbflength)
+   if (newbflength > oldbflength)
       memcpy(newnum+newbflength-oldbflength,old,oldbflength+2);
    else
       memcpy(newnum,old+oldbflength-newbflength,newbflength+2);

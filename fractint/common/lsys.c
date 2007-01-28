@@ -135,11 +135,11 @@ static int _fastcall readLSystemFile(char *str)
    while ((c = fgetc(infile)) != '{')
       if (c == EOF) return -1;
    maxangle=0;
-   for(linenum=0;linenum<MAXRULES;++linenum) ruleptrs[linenum]=NULL;
+   for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=NULL;
    rulind= &ruleptrs[1];
    msgbuf[0]=(char)(linenum=0);
 
-   while(file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
+   while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
    {
       linenum++;
       if ((word = strchr(inline1,';')) != NULL) /* strip comment */
@@ -209,7 +209,7 @@ static int _fastcall readLSystemFile(char *str)
          if (check)
          {
             check=0;
-            if((word=strtok(NULL," \t\n"))!=NULL)
+            if ((word=strtok(NULL," \t\n"))!=NULL)
                if (err<6)
                {
                   sprintf(&msgbuf[strlen(msgbuf)],
@@ -343,8 +343,8 @@ int LLoad(void)
 static void _fastcall free_rules_mem(void)
 {
    int i;
-   for(i=0;i<MAXRULES;++i)
-      if(ruleptrs[i]) free(ruleptrs[i]);
+   for (i=0; i<MAXRULES; ++i)
+      if (ruleptrs[i]) free(ruleptrs[i]);
 }
 
 static int _fastcall rule_present(char symbol)
@@ -361,11 +361,11 @@ static int _fastcall save_rule(char *rule,char **saveptr)
    int i;
    char *tmpfar;
    i=(int) strlen(rule)+1;
-   if((tmpfar=(char *)malloc((long)i))==NULL) {
+   if ((tmpfar=(char *)malloc((long)i))==NULL) {
        return -1;
    }
    *saveptr=tmpfar;
-   while(--i>=0) *(tmpfar++)= *(rule++);
+   while (--i>=0) *(tmpfar++)= *(rule++);
    return 0;
 }
 
@@ -663,7 +663,7 @@ if (overflow)     /* integer math routines overflowed */
       }
       tran=0;
       if (depth) {
-         for(rulind=rules;*rulind;rulind++)
+         for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch==command->ch) {
                tran=1;
                if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
@@ -780,7 +780,7 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
       }
       tran=0;
       if (depth) {
-         for(rulind=rules;*rulind;rulind++)
+         for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran=1;
                if (drawLSysI((*rulind)+1,ts,rules,depth-1) == NULL)
@@ -998,7 +998,7 @@ static void _fastcall lsysi_dosincos(void)
 
    locaspect=screenaspect*xdots/ydots;
    twopimax = TWOPI / maxangle;
-   for(i=0;i<maxangle;i++) {
+   for (i=0; i<maxangle; i++) {
       twopimaxi = i * twopimax;
       FPUsincos(&twopimaxi, &s, &c);
       sins[i] = (long) (s * FIXEDLT1);

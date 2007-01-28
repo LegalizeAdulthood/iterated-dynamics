@@ -182,7 +182,7 @@ void param_history(int mode)
 void varydbl(GENEBASE gene[],int randval,int i) /* routine to vary doubles */
 {
 int lclpy = gridsz - py - 1;
-   switch(gene[i].mutate) {
+   switch (gene[i].mutate) {
     default:
     case 0:
        break;
@@ -216,7 +216,7 @@ int varyint( int randvalue, int limit, int mode)
 {
 int ret = 0;
 int lclpy = gridsz - py - 1;
- switch(mode) {
+ switch (mode) {
    default:
    case 0:
      break;
@@ -341,7 +341,7 @@ int get_the_rest(void)
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
    numtrig = (curfractalspecific->flags >> 6) & 7;
-   if(fractype==FORMULA || fractype==FFORMULA ) {
+   if (fractype==FORMULA || fractype==FFORMULA ) {
       numtrig = maxfn;
       }
 
@@ -387,7 +387,7 @@ choose_vars_restart:
 
    i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,NULL);
 
-   switch(i) {
+   switch (i) {
      case FIK_F2: /* set all off */
        for (num = MAXPARAMS; num < NUMGENES; num++)
           gene[num].mutate = 0;
@@ -439,25 +439,25 @@ int get_variations(void)
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
-   if(fractype == FORMULA || fractype == FFORMULA) {
-      if(uses_p1)  /* set first parameter */
+   if (fractype == FORMULA || fractype == FFORMULA) {
+      if (uses_p1)  /* set first parameter */
          firstparm = 0;
-      else if(uses_p2)
+      else if (uses_p2)
          firstparm = 2;
-      else if(uses_p3)
+      else if (uses_p3)
          firstparm = 4;
-      else if(uses_p4)
+      else if (uses_p4)
          firstparm = 6;
       else
          firstparm = 8; /* uses_p5 or no parameter */
 
-      if(uses_p5) /* set last parameter */
+      if (uses_p5) /* set last parameter */
          lastparm = 10;
-      else if(uses_p4)
+      else if (uses_p4)
          lastparm = 8;
-      else if(uses_p3)
+      else if (uses_p3)
          lastparm = 6;
-      else if(uses_p2)
+      else if (uses_p2)
          lastparm = 4;
       else
          lastparm = 2; /* uses_p1 or no parameter */
@@ -467,8 +467,8 @@ int get_variations(void)
    for (i = firstparm; i < lastparm; i++)
    {
       if (typehasparm(julibrot?neworbittype:fractype,i,NULL)==0) {
-         if(fractype == FORMULA || fractype == FFORMULA)
-           if(paramnotused(i))
+         if (fractype == FORMULA || fractype == FFORMULA)
+           if (paramnotused(i))
               continue;
          break;
       }
@@ -482,8 +482,8 @@ choose_vars_restart:
 
    k = -1;
    for (num = firstparm; num < lastparm; num++) {
-      if(fractype == FORMULA || fractype == FFORMULA)
-        if(paramnotused(num))
+      if (fractype == FORMULA || fractype == FFORMULA)
+        if (paramnotused(num))
            continue;
       choices[++k]=gene[num].name;
       uvalues[k].type = 'l';
@@ -506,7 +506,7 @@ choose_vars_restart:
 
    i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,NULL);
 
-   switch(i) {
+   switch (i) {
      case FIK_F2: /* set all off */
        for (num = 0; num < MAXPARAMS; num++)
           gene[num].mutate = 0;
@@ -533,8 +533,8 @@ choose_vars_restart:
    /* read out values */
    k = -1;
    for (num = firstparm; num < lastparm; num++) {
-      if(fractype == FORMULA || fractype == FFORMULA)
-        if(paramnotused(num))
+      if (fractype == FORMULA || fractype == FFORMULA)
+        if (paramnotused(num))
            continue;
       gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
    }
@@ -553,7 +553,7 @@ void set_mutation_level(int strength)
  MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
  for (i=0;i<NUMGENES;i++) {
-   if(gene[i].level <= strength)
+   if (gene[i].level <= strength)
       gene[i].mutate = 5; /* 5 = random mutation mode */
    else
       gene[i].mutate = 0;
@@ -926,7 +926,7 @@ int grout;
  boxy[3] = bl.y + syoffs;
  boxcount = 8;
 #endif
- if(boxcount) {
+ if (boxcount) {
    dispbox();
    /* stash pixel values for later */
    MoveToMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
@@ -935,7 +935,7 @@ int grout;
    }
  prmboxcount = boxcount;
  boxcount = imgboxcount;
- if(imgboxcount) {
+ if (imgboxcount) {
    /* and move back old values so that everything can proceed as normal */
    MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,imgboxhandle);
    MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,imgboxhandle);
@@ -972,10 +972,10 @@ void spiralmap(int count)
     px = py = mid;
     return;
   }
-  for(offset = 1; offset <= mid; offset ++) {
+  for (offset = 1; offset <= mid; offset ++) {
     /* first do the top row */
     py = (mid - offset);
-    for(px = (mid - offset)+1; px <mid+offset; px++) {
+    for (px = (mid - offset)+1; px <mid+offset; px++) {
       i++;
       if (i==count) return;
     }

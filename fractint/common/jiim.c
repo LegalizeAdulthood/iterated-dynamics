@@ -94,9 +94,9 @@ void _fastcall c_putcolor(int x, int y, int color)
    /* avoid writing outside window */
    if ( x < xc || y < yc || x >= xc + xd || y >= yc + yd )
       return ;
-   if(y >= sydots - show_numbers) /* avoid overwriting coords */
+   if (y >= sydots - show_numbers) /* avoid overwriting coords */
       return;
-   if(windows == 2) /* avoid overwriting fractal */
+   if (windows == 2) /* avoid overwriting fractal */
       if (0 <= x && x < xdots && 0 <= y && y < ydots)
          return;
    putcolor(x, y, color);
@@ -108,9 +108,9 @@ int  c_getcolor(int x, int y)
    /* avoid reading outside window */
    if ( x < xc || y < yc || x >= xc + xd || y >= yc + yd )
       return 1000;
-   if(y >= sydots - show_numbers) /* avoid overreading coords */
+   if (y >= sydots - show_numbers) /* avoid overreading coords */
       return 1000;
-   if(windows == 2) /* avoid overreading fractal */
+   if (windows == 2) /* avoid overreading fractal */
       if (0 <= x && x < xdots && 0 <= y && y < ydots)
          return 1000;
    return getcolor(x, y);
@@ -181,7 +181,7 @@ void circle(int radius, int color)
 static void fillrect(int x, int y, int width, int depth, int color)
 {
    /* fast version of fillrect */
-   if(hasinverse == 0)
+   if (hasinverse == 0)
       return;
    memset(dstack, color % colors, width);
    while (depth-- > 0)
@@ -425,7 +425,7 @@ static void SaveRect(int x, int y, int width, int depth)
 {
    char buff[MAXRECT];
    int  yoff;
-   if(hasinverse == 0)
+   if (hasinverse == 0)
       return;
    /* first, do any de-allocationg */
 
@@ -454,7 +454,7 @@ static void RestoreRect(int x, int y, int width, int depth)
 {
    char buff[MAXRECT];
    int  yoff;
-   if(hasinverse == 0)
+   if (hasinverse == 0)
       return;
 
     Cursor_Hide();
@@ -503,11 +503,11 @@ void Jiim(int which)         /* called by fractint */
 
    old_debugflag = debugflag;
    /* must use standard fractal or be calcfroth */
-   if(fractalspecific[fractype].calctype != StandardFractal
+   if (fractalspecific[fractype].calctype != StandardFractal
        && fractalspecific[fractype].calctype != calcfroth)
        return;
    oldhelpmode = helpmode;
-   if(which == JIIM)
+   if (which == JIIM)
       helpmode = HELP_JIIM;
    else
    {
@@ -517,7 +517,7 @@ void Jiim(int which)         /* called by fractint */
 #if 0 /* I don't think this is needed any more */
       /* Earth to Chuck Ebbert - remove this code when your code supports
          my changes to PARSER.C */
-      if(fractype == FFORMULA)
+      if (fractype == FFORMULA)
       {
          debugflag = 90;
       }
@@ -536,7 +536,7 @@ void Jiim(int which)         /* called by fractint */
    lookatmouse = 3;
 
    /* this code moved from just below to avoid boxx/strlocn conflict */
-   if(which == ORBIT)
+   if (which == ORBIT)
       (*PER_IMAGE)();
    else
       color = g_color_bright;
@@ -565,7 +565,7 @@ void Jiim(int which)         /* called by fractint */
       g_vesa_y_res = sydots;
    }
 
-   if(sxoffs != 0 || syoffs != 0) /* we're in view windows */
+   if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
    {
       savehasinverse = hasinverse;
       hasinverse = 1;
@@ -576,7 +576,7 @@ void Jiim(int which)         /* called by fractint */
       hasinverse = savehasinverse;
    }
 
-   if(xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
+   if (xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
        g_vesa_x_res-xdots < g_vesa_x_res/3 ||
        g_vesa_y_res-ydots < g_vesa_y_res/3 ||
        xdots >= MAXRECT )
@@ -591,7 +591,7 @@ void Jiim(int which)         /* called by fractint */
       xoff = g_video_start_x + xd * 5 / 2;
       yoff = g_video_start_y + yd * 5 / 2;
    }
-   else if(xdots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
+   else if (xdots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
    {
       /* Julia/orbit and fractal don't overlap */
       windows = 1;
@@ -618,9 +618,9 @@ void Jiim(int which)         /* called by fractint */
    xfactor = (int)(xd/5.33);
    yfactor = (int)(-yd/4);
 
-   if(windows == 0)
+   if (windows == 0)
       SaveRect(xc,yc,xd,yd);
-   else if(windows == 2)  /* leave the fractal */
+   else if (windows == 2)  /* leave the fractal */
    {
       fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
       fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
@@ -633,7 +633,7 @@ void Jiim(int which)         /* called by fractint */
    /* reuse last location if inside window */
    col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
    row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
-   if(col < 0 || col >= xdots ||
+   if (col < 0 || col >= xdots ||
       row < 0 || row >= ydots)
    {
       cr = (xxmax + xxmin) / 2.0;
@@ -651,7 +651,7 @@ void Jiim(int which)         /* called by fractint */
    row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
    /* possible extraseg arrays have been trashed, so set up again */
-   if(integerfractal)
+   if (integerfractal)
       fill_lx_array();
    else
       fill_dx_array();
@@ -776,7 +776,7 @@ void Jiim(int which)         /* called by fractint */
             case 'n':
             case 'N':
                show_numbers = 8 - show_numbers;
-               if(windows == 0 && show_numbers == 0)
+               if (windows == 0 && show_numbers == 0)
                {
                   Cursor_Hide();
                   cleartempmsg();
@@ -793,9 +793,9 @@ void Jiim(int which)         /* called by fractint */
                break;
             case 'h':   /* hide fractal toggle */
             case 'H':   /* hide fractal toggle */
-               if(windows == 2)
+               if (windows == 2)
                   windows = 3;
-               else if(windows == 3 && xd == g_vesa_x_res)
+               else if (windows == 3 && xd == g_vesa_x_res)
                {
                   RestoreRect(g_video_start_x, g_video_start_y, xdots, ydots);
                   windows = 2;
@@ -824,9 +824,9 @@ void Jiim(int which)         /* called by fractint */
                still = 0;
 /*             ismand = (short)(1 - ismand); */
             }  /* switch */
-            if(kbdchar == 's' || kbdchar == 'S')
+            if (kbdchar == 's' || kbdchar == 'S')
                goto finish;
-            if(dcol > 0 || drow > 0)
+            if (dcol > 0 || drow > 0)
                exact = 0;
             col += dcol;
             row += drow;
@@ -840,25 +840,25 @@ void Jiim(int which)         /* called by fractint */
 #endif
 
             /* keep cursor in logical screen */
-           if(col >= xdots) {
+           if (col >= xdots) {
               col = xdots -1; exact = 0;
            }
-           if(row >= ydots) {
+           if (row >= ydots) {
               row = ydots -1; exact = 0;
            }
-           if(col < 0) {
+           if (col < 0) {
               col = 0; exact = 0;
            }
-           if(row < 0) {
+           if (row < 0) {
               row = 0; exact = 0;
            }
 
             Cursor_SetPos(col,row);
          }  /* end while (driver_key_pressed) */
 
-         if(exact == 0)
+         if (exact == 0)
          {
-            if(integerfractal)
+            if (integerfractal)
             {
                cr = lxpixel();
                ci = lypixel();
@@ -872,15 +872,15 @@ void Jiim(int which)         /* called by fractint */
             }
          }
          actively_computing = 1;
-         if(show_numbers) /* write coordinates on screen */
+         if (show_numbers) /* write coordinates on screen */
          {
             char str[41];
             sprintf(str,"%16.14f %16.14f %3d",cr,ci,getcolor(col,row));
-            if(windows == 0)
+            if (windows == 0)
             {
                /* show temp msg will clear self if new msg is a
                   different length - pad to length 40*/
-               while((int)strlen(str) < 40)
+               while ((int)strlen(str) < 40)
                   strcat(str," ");
                str[40] = 0;
                Cursor_Hide();
@@ -921,12 +921,12 @@ void Jiim(int which)         /* called by fractint */
 /*
  * End MIIM code.
  */
-         if(which == ORBIT)
+         if (which == ORBIT)
          {
            PER_PIXEL();
          }  
          /* move window if bumped */
-         if(windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
+         if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
          {
             RestoreRect(xc,yc,xd,yd);
             if (xc == g_video_start_x + xd*2)
@@ -936,7 +936,7 @@ void Jiim(int which)         /* called by fractint */
             xoff = xc + xd /  2;
             SaveRect(xc,yc,xd,yd);
          }
-         if(windows == 2)
+         if (windows == 2)
          {
             fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
             fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
@@ -946,9 +946,9 @@ void Jiim(int which)         /* called by fractint */
 
       } /* end if (driver_key_pressed) */
 
-      if(which == JIIM)
+      if (which == JIIM)
       {
-         if(hasinverse == 0)
+         if (hasinverse == 0)
             continue;
 /*
  * MIIM code:
@@ -1006,7 +1006,7 @@ void Jiim(int which)         /* called by fractint */
          old.x -= cr;
          old.y -= ci;
          r = old.x*old.x + old.y*old.y;
-         if(r > 10.0)
+         if (r > 10.0)
          {
              old.x = old.y = 0.0; /* avoids math error */
              iter = 1;
@@ -1014,7 +1014,7 @@ void Jiim(int which)         /* called by fractint */
          }
          iter++;
          color = ((count++)>>5)%colors; /* chg color every 32 pts */
-         if(color==0)
+         if (color==0)
           color = 1;
 
 /*       r = sqrt(old.x*old.x + old.y*old.y); calculated above */
@@ -1085,9 +1085,9 @@ void Jiim(int which)         /* called by fractint */
                 }
                 x = (int)(-g_new.x * xfactor * zoom + xoff);
                 y = (int)(-g_new.y * yfactor * zoom + yoff);
-                if(iter > 10)
+                if (iter > 10)
                 {
-                   if(mode == 0)                        /* pixels  */
+                   if (mode == 0)                        /* pixels  */
                       c_putcolor(x, y, color);
                    else if (mode & 1)            /* circles */
                    {
@@ -1150,17 +1150,17 @@ void Jiim(int which)         /* called by fractint */
       }
       else /* orbits */
       {
-         if(iter < maxit)
+         if (iter < maxit)
          {
             color = (int)iter%colors;
-            if(integerfractal)
+            if (integerfractal)
             {
                old.x = lold.x; old.x /= fudge;
                old.y = lold.y; old.y /= fudge;
             }
             x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
             y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
-            if((*ORBITCALC)())
+            if ((*ORBITCALC)())
                iter = maxit;
             else
                iter++;
@@ -1171,9 +1171,9 @@ void Jiim(int which)         /* called by fractint */
             actively_computing = 0;
          }
       }
-      if(which == ORBIT || iter > 10)
+      if (which == ORBIT || iter > 10)
       {
-         if(mode == 0)                  /* pixels  */
+         if (mode == 0)                  /* pixels  */
             c_putcolor(x, y, color);
          else if (mode & 1)            /* circles */
          {
@@ -1190,7 +1190,7 @@ void Jiim(int which)         /* called by fractint */
       }
       old = g_new;
       lold = lnew;
-   } /* end while(still) */
+   } /* end while (still) */
 finish:
 
 /*
@@ -1203,21 +1203,21 @@ finish:
  * end Msnyder code.
  */
 
-   if(kbdchar != 's'&& kbdchar != 'S')
+   if (kbdchar != 's'&& kbdchar != 'S')
    {
       Cursor_Hide();
-      if(windows == 0)
+      if (windows == 0)
          RestoreRect(xc,yc,xd,yd);
-      else if(windows >= 2 )
+      else if (windows >= 2 )
       {
-         if(windows == 2)
+         if (windows == 2)
          {
             fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
             fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
          }
          else
             fillrect(xc, yc, xd, yd, g_color_dark);
-         if(windows == 3 && xd == g_vesa_x_res) /* unhide */
+         if (windows == 3 && xd == g_vesa_x_res) /* unhide */
          {
             RestoreRect(0, 0, xdots, ydots);
             windows = 2;
@@ -1255,7 +1255,7 @@ finish:
    calctype = oldcalctype;
    debugflag = old_debugflag; /* yo Chuck! */
    helpmode = oldhelpmode;
-   if(kbdchar == 's' || kbdchar == 'S')
+   if (kbdchar == 's' || kbdchar == 'S')
    {
       viewwindow = viewxdots = viewydots = 0;
       viewreduction = (float)4.2;

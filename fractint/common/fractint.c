@@ -193,10 +193,10 @@ void check_samename(void)
       char ext[FILE_MAX_EXT];
       char path[FILE_MAX_PATH];
       splitpath(savename,drive,dir,fname,ext);
-      if(strcmp(fname,"fract001"))
+      if (strcmp(fname,"fract001"))
       {
          makepath(path,drive,dir,fname,"gif");
-         if(access(path,0)==0)
+         if (access(path,0)==0)
          exit(0);
       }
    }
@@ -204,7 +204,7 @@ void check_samename(void)
 /* Do nothing if math error */
 static void my_floating_point_err(int sig)
 {
-   if(sig != 0)
+   if (sig != 0)
       overflow = 1;
 }
 
@@ -276,7 +276,7 @@ restart:   /* insert key re-starts here */
 	dopause(0);                  /* pause for error msg if not batch */
 	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
 	checkfreemem(1);
-	if(debugflag==450 && initbatch==1)   /* abort if savename already exists */
+	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
@@ -505,7 +505,7 @@ imagestart:                             /* calc/display a new image */
 					display3d = 0;
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 						display3d = 1;
-					if(colorpreloaded)
+					if (colorpreloaded)
 						memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
 					driver_set_for_text(); /* switch to text mode */
 					showfile = -1;
@@ -567,7 +567,7 @@ resumeloop:
 
 	param_history(0); /* save old history */
 	/* this switch processes gotos that are now inside function */
-	switch(big_while_loop(&kbdmore,&stacked,resumeflag))
+	switch (big_while_loop(&kbdmore,&stacked,resumeflag))
 	{
 	case RESTART:
 		goto restart;
@@ -637,10 +637,10 @@ va_dcl
    do_bench = timerflag; /* record time? */
    if (timertype == 2)   /* encoder, record time only if debug=200 */
       do_bench = (debugflag == 200);
-   if(do_bench)
+   if (do_bench)
       fp=dir_fopen(workdir,"bench","a");
    timer_start = clock_ticks();
-   switch(timertype) {
+   switch (timertype) {
       case 0:
          out = (*(int(*)(void))subrtn)();
          break;
@@ -655,11 +655,11 @@ va_dcl
    /* next assumes CLK_TCK is 10^n, n>=2 */
    timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
 
-   if(do_bench) {
+   if (do_bench) {
       time(&ltime);
       timestring = ctime(&ltime);
       timestring[24] = 0; /*clobber newline in time string */
-      switch(timertype) {
+      switch (timertype) {
          case 1:
             fprintf(fp,"decode ");
             break;
@@ -674,8 +674,8 @@ va_dcl
           ydots,
           maxit);
       fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
-      if(fp != NULL)
+      if (fp != NULL)
          fclose(fp);
       }
-   return(out);
+   return out;
 }

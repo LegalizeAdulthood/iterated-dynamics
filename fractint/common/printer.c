@@ -403,7 +403,7 @@ static char *HalfTone[TONES]=  {ht00,ht01,ht02,ht03,ht04,ht05,ht06,ht07,
 #endif
 
 #ifdef __BORLANDC__
-#if(__BORLANDC__ > 2)
+#if (__BORLANDC__ > 2)
    #pragma warn -eff
 #endif
 #endif
@@ -770,7 +770,7 @@ Print_Screen (void)
                and store the info for 8 columns at a time instead of
                doing getcolor calls down each column in separate passes */
             fetchrows = 16;
-            for(;;) {
+            while (1) {
                 if ((pixels = (BYTE *)malloc((long)(fetchrows)*ydots)) != NULL)
                    break;
                 if ((fetchrows >>= 1) == 0) {
@@ -1001,7 +1001,7 @@ Print_Screen (void)
                   j=g_dac_box[getcolor(x,y)][i];
                   if (j>0)
                   {
-                    switch(Printer_SStyle)
+                    switch (Printer_SStyle)
                     {
                       case 0:
                         ci=0.004582144*(double)j;
@@ -1352,7 +1352,7 @@ fmt = va_arg(arg,char *);
    /* copy to near string */
    char fmt1[100];
    i=0;
-   while(fmt[i]) {
+   while (fmt[i]) {
      fmt1[i] = fmt[i];
      i++;
    }
@@ -1406,7 +1406,7 @@ static int _fastcall printer(int c)
 }
 
 #ifdef __BORLANDC__
-#if(__BORLANDC__ > 2)
+#if (__BORLANDC__ > 2)
    #pragma warn +eff
 #endif
 #endif

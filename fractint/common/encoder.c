@@ -394,7 +394,7 @@ int encoder()
 
    interrupted = compress(rowlimit);
 
-   if(ferror(g_outfile))
+   if (ferror(g_outfile))
       goto oops;
 
    if (fputc(0, g_outfile) != 0)
@@ -961,7 +961,7 @@ static int compress(int rowlimit)
                color = getcolor(xdot, ydot);
             else
                color = readdisk(xdot + sxoffs, ydot + syoffs);
-            if(in_count == 0)
+            if (in_count == 0)
             {
                in_count = 1;
                ent = color;
@@ -1070,14 +1070,14 @@ static void _fastcall output(int code)
                 
    cur_accum &= masks[ cur_bits ];
 
-   if(cur_bits > 0)
+   if (cur_bits > 0)
       cur_accum |= ((long)code << cur_bits);
    else
       cur_accum = code;
    
    cur_bits += n_bits;
 
-   while(cur_bits >= 8) 
+   while (cur_bits >= 8) 
    {
       char_out((unsigned int)(cur_accum & 0xff));
       cur_accum >>= 8;
@@ -1090,7 +1090,7 @@ static void _fastcall output(int code)
     */
    if (free_ent > maxcode || clear_flg) 
    {
-      if(clear_flg) 
+      if (clear_flg) 
       {
          maxcode = MAXCODE (n_bits = startbits);
          clear_flg = 0;
@@ -1106,12 +1106,12 @@ static void _fastcall output(int code)
       }
    }
    
-   if(code == EOFCode) 
+   if (code == EOFCode) 
    {
       /*
        * At EOF, write the rest of the buffer.
        */
-       while(cur_bits > 0) 
+       while (cur_bits > 0) 
        {
           char_out((unsigned int)(cur_accum & 0xff));
           cur_accum >>= 8;
@@ -1142,7 +1142,7 @@ static void _fastcall cl_block(void)             /* table clear for block compre
 static void _fastcall char_out(int c)
 {
    accum[ a_count++ ] = (char)c;
-   if(a_count >= 254) 
+   if (a_count >= 254) 
       flush_char();
 }
 
@@ -1151,7 +1151,7 @@ static void _fastcall char_out(int c)
  */
 static void _fastcall flush_char(void)
 {
-   if(a_count > 0) {
+   if (a_count > 0) {
       fputc(a_count, g_outfile);
       fwrite(accum, 1, a_count, g_outfile);
       a_count = 0;

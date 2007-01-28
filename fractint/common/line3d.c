@@ -197,9 +197,9 @@ int line3d(BYTE * pixels, unsigned linelen)
    {
       int err;
       if ((err = first_time(linelen, v)) != 0)
-         return (err);
-      if(xdots > OLDMAXPIXELS)
-         return(-1);
+         return err;
+      if (xdots > OLDMAXPIXELS)
+         return -1;
       tout = 0;
       crossavg[0] = 0;
       crossavg[1] = 0;
@@ -215,7 +215,7 @@ int line3d(BYTE * pixels, unsigned linelen)
    if (pot16bit)
    {
       if (set_pixel_buff(pixels, fraction, linelen))
-         return (0);
+         return 0;
    }
    else if (grayflag)           /* convert color numbers to grayscale values */
       for (col = 0; col < (int) linelen; col++)
@@ -318,7 +318,7 @@ int line3d(BYTE * pixels, unsigned linelen)
             }
             /************************************************************/
             /* KEEP THIS FOR DOCS - original formula --                 */
-            /* if(rscale < 0.0)                                         */
+            /* if (rscale < 0.0)                                         */
             /* r = 1.0+((double)cur.color/(double)zcoord)*rscale;       */
             /* else                                                     */
             /* r = 1.0-rscale+((double)cur.color/(double)zcoord)*rscale;*/
@@ -803,7 +803,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                   fclose(File_Ptr1);
                   remove(light_name);
                   File_Error(ray_name, 2);
-                  return (-1);
+                  return -1;
                }
             }
          }
@@ -831,7 +831,7 @@ int line3d(BYTE * pixels, unsigned linelen)
          oldcosphi2 = cosphi;
       }
    }
-   return (0);                  /* decoder needs to know all is well !!! */
+   return 0;                  /* decoder needs to know all is well !!! */
 }
 
 /* vector version of line draw */
@@ -1132,10 +1132,10 @@ static int _fastcall offscreen(struct point pt)
       if (pt.x < xdots)
          if (pt.y >= 0)
             if (pt.y < ydots)
-               return (0);      /* point is ok */
+               return 0;      /* point is ok */
    if (abs(pt.x) > 0 - bad_check || abs(pt.y) > 0 - bad_check)
-      return (99);              /* point is bad */
-   return (1);                  /* point is off the screen */
+      return 99;              /* point is bad */
+   return 1;                  /* point is off the screen */
 }
 
 static void _fastcall clipcolor(int x, int y, int color)
@@ -1301,7 +1301,7 @@ int _fastcall targa_color(int x, int y, int color)
    /* on the disk. */
    targa_writedisk(x + sxoffs, y + syoffs, RGB[0], RGB[1], RGB[2]);
 
-   return ((int) (255 - V));
+   return (int) (255 - V);
 }
 
 static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
@@ -1312,7 +1312,7 @@ static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
       for (i = 0; i < (int) linelen; i++)       /* add the fractional part in
                                                  * odd row */
          fraction[i] = pixels[i];
-      return (1);
+      return 1;
    }
    else
       /* swap */
@@ -1325,7 +1325,7 @@ static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
          fraction[i] = tmp;
       }
    }
-   return (0);
+   return 0;
 }
 
 /**************************************************************************
@@ -1385,7 +1385,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
    if ((fps = dir_fopen(workdir,File_Name2, "w+b")) == NULL)
    {
       File_Error(File_Name2, 1);
-      return (-1);              /* Oops, somethings wrong! */
+      return -1;              /* Oops, somethings wrong! */
    }
 
    inc = 1;                     /* Assume we are overlaying a file */
@@ -1418,7 +1418,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
       inc = 3;
    }
 
-   if(truecolor) /* write maxit */
+   if (truecolor) /* write maxit */
    {
       fputc((BYTE)(maxit       & 0xff), fps);
       fputc((BYTE)((maxit>>8 ) & 0xff), fps);
@@ -1441,23 +1441,23 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
       {
          /* Almost certainly not enough disk space  */
          fclose(fps);
-         if(overlay)
+         if (overlay)
             fclose(Source);
          dir_remove(workdir,File_Name2);
          File_Error(File_Name2, 2);
-         return (-2);
+         return -2;
       }
       if (driver_key_pressed())
-         return (-3);
+         return -3;
    }
 
    if (targa_startdisk(fps, T_header_24) != 0)
    {
       enddisk();
       dir_remove(workdir,File_Name2);
-      return (-4);
+      return -4;
    }
-   return (0);
+   return 0;
 }
 
 int targa_validate(char *File_Name)
@@ -1469,7 +1469,7 @@ int targa_validate(char *File_Name)
    if ((fp = dir_fopen(workdir,File_Name, "rb")) == NULL)
    {
       File_Error(File_Name, 1);
-      return (-1);              /* Oops, file does not exist */
+      return -1;              /* Oops, file does not exist */
    }
 
    T_header_24 += fgetc(fp);    /* Check ID field and adjust header size */
@@ -1477,13 +1477,13 @@ int targa_validate(char *File_Name)
    if (fgetc(fp))               /* Make sure this is an unmapped file */
    {
       File_Error(File_Name, 4);
-      return (-1);
+      return -1;
    }
 
    if (fgetc(fp) != 2)          /* Make sure it is a type 2 file */
    {
       File_Error(File_Name, 4);
-      return (-1);
+      return -1;
    }
 
    /* Skip color map specification */
@@ -1500,7 +1500,7 @@ int targa_validate(char *File_Name)
       if (fgetc(fp) != (int) upr_lwr[i])
       {
          File_Error(File_Name, 3);
-         return (-1);
+         return -1;
       }
 
    if (fgetc(fp) != (int) T24)
@@ -1510,19 +1510,19 @@ int targa_validate(char *File_Name)
    if (error == 4)
    {
       File_Error(File_Name, 4);
-      return (-1);
+      return -1;
    }
    rewind(fp);
 
    /* Now that we know its a good file, create a working copy */
    if (startdisk1(targa_temp, fp, 1))
-      return (-1);
+      return -1;
 
    fclose(fp);                  /* Close the source */
 
    T_Safe = 1;                  /* Original file successfully copied to
                                  * targa_temp */
-   return (0);
+   return 0;
 }
 
 static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsigned long *V)
@@ -1559,13 +1559,13 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
    {
       *H = 0;
       *V = *V << 8;
-      return (1);               /* v or s or both are 0 */
+      return 1;               /* v or s or both are 0 */
    }
    if (*V == MIN)
    {
       *H = 0;
       *V = *V << 8;
-      return (0);
+      return 0;
    }
    R1 = (((*V - R) * 60) << 6) / DENOM; /* distance of color from red   */
    G1 = (((*V - G) * 60) << 6) / DENOM; /* distance of color from green */
@@ -1589,7 +1589,7 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
          *H = (300 << 6) - R1;
     }
    *V = *V << 8;
-   return (0);
+   return 0;
 }
 
 static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsigned long V)
@@ -1639,7 +1639,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
       *B = (BYTE) P2;
       break;
    }
-   return (0);
+   return 0;
 }
 
 
@@ -1689,7 +1689,7 @@ static int _fastcall RAY_Header(void)
    /* Open the ray tracing output file */
    check_writefile(ray_name, ".ray");
    if ((File_Ptr1 = fopen(ray_name, "w")) == NULL)
-      return (-1);              /* Oops, somethings wrong! */
+      return -1;              /* Oops, somethings wrong! */
 
    if (RAY == 2)
       fprintf(File_Ptr1, "//");
@@ -1744,7 +1744,7 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
    if (RAY == 6)
       fprintf(File_Ptr1, "%s", "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
 
-   return (0);
+   return 0;
 }
 
 
@@ -1802,7 +1802,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
        (pt_t[2][0] == pt_t[1][0] &&
         pt_t[2][1] == pt_t[1][1] &&
         pt_t[2][2] == pt_t[1][2]))
-      return (0);
+      return 0;
 
    /* Describe the triangle */
    if (RAY == 1)
@@ -1904,7 +1904,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
    if (RAY != 7)
       fprintf(File_Ptr1, "\n");
 
-   return (0);
+   return 0;
 }
 
 /********************************************************************/
@@ -1939,14 +1939,14 @@ static void _fastcall triangle_bounds(float pt_t[3][3])
 static int _fastcall start_object(void)
 {
    if (RAY != 1)
-      return (0);
+      return 0;
 
    /* Reset the min/max values, for bounding box  */
    min_xyz[0] = min_xyz[1] = min_xyz[2] = (float)999999.0;
    max_xyz[0] = max_xyz[1] = max_xyz[2] = (float)-999999.0;
 
    fprintf(File_Ptr1, "%s\n", "COMPOSITE");
-   return (0);
+   return 0;
 }
 
 /********************************************************************/
@@ -1961,7 +1961,7 @@ static int _fastcall start_object(void)
 static int _fastcall end_object(int triout)
 {
    if (RAY == 7)
-      return (0);
+      return 0;
    if (RAY == 1)
    {
       if (triout)
@@ -2000,7 +2000,7 @@ static int _fastcall end_object(int triout)
    if (RAY != 6 && RAY != 5)
       fprintf(File_Ptr1, "\n");    /* EB & DG: too many newlines */
 
-   return (0);
+   return 0;
 }
 
 static void line3d_cleanup(void)
@@ -2115,13 +2115,13 @@ static int first_time(int linelen, VECTOR v)
       {
          /* Make sure target file is a supportable Targa File */
          if (targa_validate(light_name))
-            return (-1);
+            return -1;
       }
       else
       {
          check_writefile(light_name, ".tga");
          if (startdisk1(light_name, NULL, 0))   /* Open new file */
-            return (-1);
+            return -1;
       }
    }
 
@@ -2129,8 +2129,8 @@ static int first_time(int linelen, VECTOR v)
 
    zcoord = filecolors;
 
-   if((err=line3dmem()) != 0)
-      return(err);
+   if ((err=line3dmem()) != 0)
+      return err;
 
 
    /* get scale factors */
@@ -2442,7 +2442,7 @@ static int first_time(int linelen, VECTOR v)
       f_lastrow[i] = f_bad;
    }
    got_status = 3;
-   return (0);
+   return 0;
 } /* end of once-per-image intializations */
 
 static int line3dmem(void)
@@ -2495,7 +2495,7 @@ static int line3dmem(void)
       if (check_extra > (1L << 16))     /* run out of extra segment? */
       {
          static struct minmax *got_mem = NULL;
-         if(debugflag == 2222)
+         if (debugflag == 2222)
             stopmsg(0,"malloc minmax");
          /* not using extra segment so decrement check_extra */
          check_extra -= sizeof(struct minmax) * ydots;
@@ -2505,7 +2505,7 @@ static int line3dmem(void)
          if (got_mem)
             minmax_x = got_mem;
          else
-            return (-1);
+            return -1;
       }
       else /* ok to use extra segment */
       {
@@ -2521,5 +2521,5 @@ static int line3dmem(void)
       sprintf(tmpmsg, "used %ld%s", check_extra, " of extra segment");
       stopmsg(STOPMSG_NO_BUZZER, tmpmsg);
    }
-   return(0);
+   return 0;
 }

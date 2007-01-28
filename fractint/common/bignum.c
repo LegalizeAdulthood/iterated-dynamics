@@ -202,7 +202,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
    bnlength      = newbnlength;
    clear_bn(newnum);
 
-   if(newbnlength - newintlength > oldbnlength - oldintlength)
+   if (newbnlength - newintlength > oldbnlength - oldintlength)
       {
 
       /* This will keep the integer part from overflowing past the array. */
@@ -320,7 +320,7 @@ int strlen_needed()
    int length = 3;
 
    /* first space for integer part */
-   switch(intlength)
+   switch (intlength)
       {
       case 1:
          length = 3;  /* max 127 */
@@ -1273,7 +1273,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
    unsafe_atan_bn(r, bntmp6);
    if (signx < 0)
       sub_bn(r,bn_pi,r);
-   if(signy < 0)
+   if (signy < 0)
       neg_a_bn(r);
    return(r);
    }

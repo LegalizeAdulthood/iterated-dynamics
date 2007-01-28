@@ -27,9 +27,9 @@ static void julman()
    int i;
    fp = dir_fopen(workdir,"toggle.txt","w");
    i = -1;
-   while(fractalspecific[++i].name)
+   while (fractalspecific[++i].name)
    {
-      if(fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
+      if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
          fprintf(fp,"%s  %s\n",fractalspecific[i].name,
              fractalspecific[fractalspecific[i].tojulia].name);
    }
@@ -832,7 +832,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          }
          else if (g_init_mode < 0) /* it is supposed to be... */
             driver_set_for_text();     /* reset to text mode      */
-         return(IMAGESTART);
+         return IMAGESTART;
       }
       driver_unstack_screen();
       break;
@@ -950,7 +950,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
       g_init_mode = g_adapter;
-      return(IMAGESTART);
+      return IMAGESTART;
    case 'i':                    /* 3d fractal parms */
       if (get_fract3d_params() >= 0)    /* get the parameters */
 	  {
@@ -970,7 +970,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          int oldtype, err, i;
          double oldparm[MAXPARAMS];
          oldtype = fractype;
-         for(i=0;i<MAXPARAMS;i++)
+         for (i=0; i<MAXPARAMS; i++)
             oldparm[i] = param[i];
          if (fractype != ANT)
          {
@@ -990,10 +990,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          else
             driver_unstack_screen();
          fractype = oldtype;
-         for(i=0;i<MAXPARAMS;i++)
+         for (i=0; i<MAXPARAMS; i++)
             param[i] = oldparm[i];
          if (err >= 0)
-            return(CONTINUE);
+            return CONTINUE;
       }
       break;
    case 'k':                    /* ^s is irritating, give user a single key */
@@ -1003,7 +1003,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       {
          if (do_AutoStereo() >= 0)
             calc_status = CALCSTAT_PARAMS_CHANGED;
-         return(CONTINUE);
+         return CONTINUE;
       }
       break;
    case 'a':                    /* starfield parms               */
@@ -1012,7 +1012,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       {
          if (starfield() >= 0)
             calc_status = CALCSTAT_PARAMS_CHANGED;
-         return(CONTINUE);
+         return CONTINUE;
       }
       break;
    case FIK_CTL_O:                     /* ctrl-o */
@@ -1030,7 +1030,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       break;
    case FIK_SPACE:                  /* spacebar, toggle mand/julia   */
-      if(bf_math || evolving)
+      if (bf_math || evolving)
          break;
       if (fractype == CELLULAR)
       {
@@ -1043,9 +1043,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       else
       {
-         if(fractype == FORMULA || fractype == FFORMULA)
+         if (fractype == FORMULA || fractype == FFORMULA)
          {
-            if(ismand)
+            if (ismand)
             {
                fractalspecific[fractype].tojulia = fractype;
                fractalspecific[fractype].tomandel = NOFRACTAL;
@@ -1208,14 +1208,14 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             driver_stack_screen();      /* save graphics image */
             *stacked = 1;
          }
-         return(RESTORESTART);
+         return RESTORESTART;
       }
-      else if(maxhistory > 0 && bf_math == 0)
+      else if (maxhistory > 0 && bf_math == 0)
       {
-         if(*kbdchar == '\\' || *kbdchar == 'h')
+         if (*kbdchar == '\\' || *kbdchar == 'h')
             if (--historyptr < 0)
                historyptr = maxhistory - 1;
-         if(*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
+         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
             if (++historyptr >= maxhistory)
                historyptr = 0;
          restore_history_info(historyptr);
@@ -1228,7 +1228,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
              curfractalspecific->tofloat != NOFRACTAL)
             usr_floatflag = 1;
          historyflag = 1;       /* avoid re-store parms due to rounding errs */
-         return(IMAGESTART);
+         return IMAGESTART;
       }
       break;
    case 'd':                    /* shell to MS-DOS              */
@@ -1254,7 +1254,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
       driver_shell();
       putprompt();
-      return(CONTINUE);
+      return CONTINUE;
 #endif
 /*             calc_status = CALCSTAT_PARAMS_CHANGED; */
       break;
@@ -1269,7 +1269,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          colorstate = 1;
          save_history_info();
       }
-      return(CONTINUE);
+      return CONTINUE;
    case 'e':                    /* switch to color editing      */
       if (g_is_true_color && !initbatch) { /* don't enter palette editor */
          if (load_palette() >= 0) {
@@ -1277,7 +1277,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 			calc_status = CALCSTAT_PARAMS_CHANGED;
             break;
          } else
-            return(CONTINUE);
+            return CONTINUE;
       }
       clear_zoombox();
       if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
@@ -1295,16 +1295,16 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             save_history_info();
          }
       }
-      return(CONTINUE);
+      return CONTINUE;
    case 's':                    /* save-to-disk                 */
       if (driver_diskp() && disktarga == 1)
-         return(CONTINUE);  /* disk video and targa, nothing to save */
+         return CONTINUE;  /* disk video and targa, nothing to save */
       diskisactive = 1;         /* flag for disk-video routines */
       note_zoom();
       savetodisk(savename);
       restore_zoom();
       diskisactive = 0;         /* flag for disk-video routines */
-      return(CONTINUE);
+      return CONTINUE;
    case '#':                    /* 3D overlay                   */
 #ifdef XFRACT
    case FIK_F3:                     /* 3D overlay                   */
@@ -1334,7 +1334,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
                driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
                showfile = 0;
-               return(RESTORESTART);
+               return RESTORESTART;
             }
          }
          else
@@ -1352,7 +1352,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          resave_flag = started_resaves = 0;
       }
       showfile = -1;
-      return(RESTORESTART);
+      return RESTORESTART;
    case 'l':
    case 'L':                    /* Look for other files within this view */
 		if ((zwidth != 0) || driver_diskp())
@@ -1379,7 +1379,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          driver_buzzer(BUZZER_INTERRUPT);
          driver_get_key();
       }
-      return(CONTINUE);
+      return CONTINUE;
    case FIK_ENTER:                  /* Enter                        */
    case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
@@ -1401,7 +1401,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       break;
    case FIK_INSERT:         /* insert                       */
       driver_set_for_text();           /* force text mode */
-      return(RESTART);
+      return RESTART;
    case FIK_LEFT_ARROW:             /* cursor left                  */
    case FIK_RIGHT_ARROW:            /* cursor right                 */
    case FIK_UP_ARROW:               /* cursor up                    */
@@ -1519,11 +1519,11 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             savedac = 0;
          calc_status = CALCSTAT_PARAMS_CHANGED;
          *kbdmore = 0;
-         return(CONTINUE);
+         return CONTINUE;
       }
       break;
    }                            /* end of the big switch */
-   return(0);
+   return 0;
 }
 
 int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
@@ -1557,7 +1557,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          }
          else if (g_init_mode < 0) /* it is supposed to be... */
             driver_set_for_text();     /* reset to text mode      */
-         return(IMAGESTART);
+         return IMAGESTART;
       }
       driver_unstack_screen();
       break;
@@ -1607,17 +1607,17 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       else if (stdcalcmode != 'o') /* don't go there */
          usr_floatflag = 0;
       g_init_mode = g_adapter;
-      return(IMAGESTART);
+      return IMAGESTART;
    case '\\':                   /* return to prev image    */
    case FIK_CTL_BACKSLASH:
    case 'h':
    case FIK_BACKSPACE:
-      if(maxhistory > 0 && bf_math == 0)
+      if (maxhistory > 0 && bf_math == 0)
       {
-         if(*kbdchar == '\\' || *kbdchar == 'h')
+         if (*kbdchar == '\\' || *kbdchar == 'h')
             if (--historyptr < 0)
                historyptr = maxhistory - 1;
-         if(*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
+         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
             if (++historyptr >= maxhistory)
                historyptr = 0;
          restore_history_info(historyptr);
@@ -1630,7 +1630,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
              curfractalspecific->tofloat != NOFRACTAL)
             usr_floatflag = 1;
          historyflag = 1;       /* avoid re-store parms due to rounding errs */
-         return(IMAGESTART);
+         return IMAGESTART;
       }
       break;
    case 'c':                    /* switch to color cycling      */
@@ -1644,7 +1644,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          colorstate = 1;
          save_history_info();
       }
-      return(CONTINUE);
+      return CONTINUE;
    case 'e':                    /* switch to color editing      */
       if (g_is_true_color && !initbatch) { /* don't enter palette editor */
          if (load_palette() >= 0) {
@@ -1652,7 +1652,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 			calc_status = CALCSTAT_PARAMS_CHANGED;
             break;
          } else
-            return(CONTINUE);
+            return CONTINUE;
       }
       clear_zoombox();
       if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
@@ -1670,13 +1670,13 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             save_history_info();
          }
       }
-      return(CONTINUE);
+      return CONTINUE;
    case 's':                    /* save-to-disk                 */
 {     int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
       GENEBASE gene[NUMGENES];
 
       if (driver_diskp() && disktarga == 1)
-         return(CONTINUE);  /* disk video and targa, nothing to save */
+         return CONTINUE;  /* disk video and targa, nothing to save */
       /* get the gene array from memory */
       MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
       oldsxoffs = sxoffs;
@@ -1705,7 +1705,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       ydots = oldydots;
       MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 }
-      return(CONTINUE);
+      return CONTINUE;
    case 'r':                    /* restore-from                 */
       comparegif = 0;
       *frommandel = 0;
@@ -1723,7 +1723,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
                driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
                showfile = 0;
-               return(RESTORESTART);
+               return RESTORESTART;
             }
          }
          else
@@ -1741,7 +1741,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          resave_flag = started_resaves = 0;
       }
       showfile = -1;
-      return(RESTORESTART);
+      return RESTORESTART;
    case FIK_ENTER:                  /* Enter                        */
    case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
@@ -1763,7 +1763,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
    case FIK_INSERT:         /* insert                       */
       driver_set_for_text();           /* force text mode */
-      return(RESTART);
+      return RESTART;
    case FIK_LEFT_ARROW:             /* cursor left                  */
    case FIK_RIGHT_ARROW:            /* cursor right                 */
    case FIK_UP_ARROW:               /* cursor up                    */
@@ -1832,17 +1832,17 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       }
       break;
    case FIK_CTL_PAGE_UP:
-      if(prmboxcount) {
+      if (prmboxcount) {
         parmzoom -= 1.0;
-        if(parmzoom<1.0) parmzoom=1.0;
+        if (parmzoom<1.0) parmzoom=1.0;
         drawparmbox(0);
         set_evolve_ranges();
       }
       break;
    case FIK_CTL_PAGE_DOWN:
-      if(prmboxcount) {
+      if (prmboxcount) {
         parmzoom += 1.0;
-        if(parmzoom>(double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
+        if (parmzoom>(double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
         drawparmbox(0);
         set_evolve_ranges();
       }
@@ -2022,17 +2022,17 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             savedac = 0;
          calc_status = CALCSTAT_PARAMS_CHANGED;
          *kbdmore = 0;
-         return(CONTINUE);
+         return CONTINUE;
       }
       break;
    }                            /* end of the big evolver switch */
-   return(0);
+   return 0;
 }
 
 static int call_line3d(BYTE *pixels, int linelen)
 {
    /* this routine exists because line3d might be in an overlay */
-   return(line3d(pixels,linelen));
+   return line3d(pixels,linelen);
 }
 
 static void note_zoom()
@@ -2123,36 +2123,36 @@ int cmp_line(BYTE *pixels, int linelen)
 {
    int row,col;
    int oldcolor;
-   if((row = g_row_count++) == 0) {
+   if ((row = g_row_count++) == 0) {
       errcount = 0;
       cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
       outln_cleanup = cmp_line_cleanup;
       }
-   if(pot16bit) { /* 16 bit info, ignore odd numbered rows */
-      if((row & 1) != 0) return(0);
+   if (pot16bit) { /* 16 bit info, ignore odd numbered rows */
+      if ((row & 1) != 0) return 0;
       row >>= 1;
       }
-   for(col=0;col<linelen;col++) {
+   for (col=0; col<linelen; col++) {
       oldcolor=getcolor(col,row);
-      if(oldcolor==(int)pixels[col])
+      if (oldcolor==(int)pixels[col])
          putcolor(col,row,0);
       else {
-         if(oldcolor==0)
+         if (oldcolor==0)
             putcolor(col,row,1);
          ++errcount;
-         if(initbatch == 0)
+         if (initbatch == 0)
             fprintf(cmp_fp,"#%5d col %3d row %3d old %3d new %3d\n",
                errcount,col,row,oldcolor,pixels[col]);
          }
       }
-   return(0);
+   return 0;
 }
 
 static void cmp_line_cleanup(void)
 {
    char *timestring;
    time_t ltime;
-   if(initbatch) {
+   if (initbatch) {
       time(&ltime);
       timestring = ctime(&ltime);
       timestring[24] = 0; /*clobber newline in time string */
@@ -2177,7 +2177,7 @@ void reset_zoom_corners()
    yymax = symax;
    yymin = symin;
    yy3rd = sy3rd;
-   if(bf_math)
+   if (bf_math)
    {
       copy_bf(bfxmin,bfsxmin);
       copy_bf(bfxmax,bfsxmax);
@@ -2217,7 +2217,7 @@ int key_count(int keynum)
 static void _fastcall save_history_info()
 {
    HISTORY current,last;
-   if(maxhistory <= 0 || bf_math || history == 0)
+   if (maxhistory <= 0 || bf_math || history == 0)
       return;
    MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
 
@@ -2343,7 +2343,7 @@ static void _fastcall save_history_info()
    current.keep_scrn_coords		= (short)keep_scrn_coords;
    current.drawmode				= drawmode;
    memcpy(current.dac,g_dac_box,256*3);
-   switch(fractype)
+   switch (fractype)
    {
    case FORMULA:
    case FFORMULA:
@@ -2371,13 +2371,13 @@ static void _fastcall save_history_info()
          MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)i,history);
       historyflag = saveptr = historyptr = 0;   /* initialize history ptr */
    }
-   else if(historyflag == 1)
+   else if (historyflag == 1)
       historyflag = 0;   /* coming from user history command, don't save */
    else if (memcmp(&current,&last,sizeof(HISTORY)))
    {
-      if(++saveptr >= maxhistory)  /* back to beginning of circular buffer */
+      if (++saveptr >= maxhistory)  /* back to beginning of circular buffer */
          saveptr = 0;
-      if(++historyptr >= maxhistory)  /* move user pointer in parallel */
+      if (++historyptr >= maxhistory)  /* move user pointer in parallel */
          historyptr = 0;
       MoveToMemory((BYTE *)&current,(U16)sizeof(HISTORY),1L,(long)saveptr,history);
    }
@@ -2386,7 +2386,7 @@ static void _fastcall save_history_info()
 static void _fastcall restore_history_info(int i)
 {
    HISTORY last;
-   if(maxhistory <= 0 || bf_math || history == 0)
+   if (maxhistory <= 0 || bf_math || history == 0)
       return;
    MoveFromMemory((BYTE *)&last,(U16)sizeof(HISTORY),1L,(long)i,history);
    invert = 0;
@@ -2524,14 +2524,14 @@ static void _fastcall restore_history_info(int i)
    usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
    memcpy(g_dac_box,last.dac,256*3);
    memcpy(olddacbox,last.dac,256*3);
-   if(mapdacbox)
+   if (mapdacbox)
       memcpy(mapdacbox,last.dac,256*3);
    spindac(0,1);
-   if(fractype == JULIBROT || fractype == JULIBROTFP)
+   if (fractype == JULIBROT || fractype == JULIBROTFP)
       savedac = 0;
    else
       savedac = 1;
-   switch(fractype)
+   switch (fractype)
    {
    case FORMULA:
    case FFORMULA:

@@ -106,34 +106,34 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
     length = (int) strlen(str);
     padding = 3; /* space between col1 and decimal. */
     /* find decimal point */
-    for(decpt=0;decpt < length; decpt++)
-       if(str[decpt] == '.')
+    for (decpt=0; decpt < length; decpt++)
+       if (str[decpt] == '.')
           break;
-    if(decpt >= length)
+    if (decpt >= length)
        decpt = 0;
-    if(decpt < padding)
+    if (decpt < padding)
        padding -= decpt;
     else
        padding = 0;
     col1 += padding;
     decpt += col1+1; /* column just past where decimal is */
-    while(length > 0)
+    while (length > 0)
     {
-       if(col2-col1 < length)
+       if (col2-col1 < length)
        {
-          if((*row - startrow + 1) >= maxrow)
+          if ((*row - startrow + 1) >= maxrow)
              done = 1;
           else
              done = 0;
           save1 = str[col2-col1+1];
           save2 = str[col2-col1+2];
-          if(done)
+          if (done)
              str[col2-col1+1]   = '+';
           else
              str[col2-col1+1]   = '\\';
           str[col2-col1+2] = 0;
           driver_put_string(*row,col1,color,str);
-          if(done == 1)
+          if (done == 1)
              break;
           str[col2-col1+1] = save1;
           str[col2-col1+2] = save2;
@@ -240,7 +240,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
               sqr(tymin - yymin) +
               sqr(tymax - yymax) +
               sqr(ty3rd - yy3rd);
-      if(error > .001)
+      if (error > .001)
          showcornersdbl("cvtcentermag problem");
       xxmin = txmin;
       xxmax = txmax;
@@ -328,7 +328,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
    /* simple normal case first */
    /* if (xx3rd == xxmin && yy3rd == yymin) */
-   if(!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
+   if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
    { /* no rotation or skewing, but stretching is allowed */
       bfWidth  = alloc_stack(bflength+2);
       bfHeight = alloc_stack(bflength+2);
@@ -379,7 +379,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       /* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
       /* atan2() only depends on the ratio, this puts it in double's range */
       signx = sign(tmpx1);
-      if(signx)
+      if (signx)
          tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
       *Rotation = (double)(-rad_to_deg(atan2( (double)tmpy, signx ))); /* negative for image rotation */
    
@@ -528,7 +528,7 @@ void updatesavename(char *filename) /* go to the next file name */
    splitpath(filename ,drive,dir,fname,ext);
 
    hold = fname + strlen(fname) - 1; /* start at the end */
-   while(hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
+   while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
       hold--;
    hold++;                      /* recover first digit */
    while (*hold == '0')         /* skip leading zeros */
@@ -565,7 +565,7 @@ nextname:
          openfile[i] = 0;
          }
 #endif
-   if((period = has_ext(openfile)) != NULL)
+   if ((period = has_ext(openfile)) != NULL)
    {
       strcpy(opentype,period);
       *period = 0;
@@ -588,7 +588,7 @@ nextname:
 /* ('timer()'     was moved to FRACTINT.C for MSC7-overlay speed purposes) */
 
 BYTE trigndx[] = {SIN,SQR,SINH,COSH};
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 void (*ltrig0)(void) = lStkSin;
 void (*ltrig1)(void) = lStkSqr;
 void (*ltrig2)(void) = lStkSinh;
@@ -618,18 +618,18 @@ static void trigdetails(char *buf)
 {
    int i, numfn;
    char tmpbuf[20];
-   if(fractype==JULIBROT || fractype==JULIBROTFP)
+   if (fractype==JULIBROT || fractype==JULIBROTFP)
       numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
    else
       numfn = (curfractalspecific->flags >> 6) & 7;
-   if(curfractalspecific == &fractalspecific[FORMULA] ||
+   if (curfractalspecific == &fractalspecific[FORMULA] ||
       curfractalspecific == &fractalspecific[FFORMULA]  )
       numfn = maxfn;
    *buf = 0; /* null string if none */
    if (numfn>0) {
       strcpy(buf,trigfn[trigndx[0]].name);
       i = 0;
-      while(++i < numfn) {
+      while (++i < numfn) {
          sprintf(tmpbuf,"/%s",trigfn[trigndx[i]].name);
          strcat(buf,tmpbuf);
          }
@@ -650,9 +650,9 @@ int set_trig_array(int k, char *name)
 
    strlwr(trigname);
 
-   for(i=0;i<numtrigfn;i++)
+   for (i=0; i<numtrigfn; i++)
    {
-      if(strcmp(trigname,trigfn[i].name)==0)
+      if (strcmp(trigname,trigfn[i].name)==0)
       {
          trigndx[k] = (BYTE)i;
          set_trig_pointers(k);
@@ -665,7 +665,7 @@ void set_trig_pointers(int which)
 {
   /* set trig variable functions to avoid array lookup time */
    int i;
-   switch(which)
+   switch (which)
    {
    case 0:
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -696,7 +696,7 @@ void set_trig_pointers(int which)
       dtrig3 = trigfn[trigndx[3]].dfunct;
       break;
    default: /* do 'em all */
-      for(i=0;i<4;i++)
+      for (i=0; i<4; i++)
          set_trig_pointers(i);
       break;
    }
@@ -721,9 +721,9 @@ void get_calculation_time(char *msg, long ctime)
 
 static void show_str_var(char *name, char *var, int *row, char *msg)
 {
-   if(var == NULL)
+   if (var == NULL)
       return;
-   if(*var != 0)
+   if (*var != 0)
    {
       sprintf(msg,"%s=%s",name,var);
       driver_put_string((*row)++,2,C_GENERAL_HI,msg);
@@ -1337,8 +1337,8 @@ int endswithslash(char *fl)
 {
    int len;
    len = (int) strlen(fl);
-   if(len)
-      if(fl[--len] == SLASHC)
+   if (len)
+      if (fl[--len] == SLASHC)
          return(1);
    return(0);
 }
@@ -1348,15 +1348,15 @@ static char seps[] = {"' ','\t',\n',\r'"};
 char *get_ifs_token(char *buf,FILE *ifsfile)
 {
    char *bufptr;
-   for(;;)
+   while (1)
    {
-      if(file_gets(buf,200,ifsfile) < 0)
+      if (file_gets(buf,200,ifsfile) < 0)
          return(NULL);
       else
       {
-         if((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
+         if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
             *bufptr = 0;
-         if((bufptr = strtok(buf, seps)) != NULL)
+         if ((bufptr = strtok(buf, seps)) != NULL)
             return(bufptr);
       }
    }
@@ -1383,7 +1383,7 @@ int ifsload()                   /* read in IFS parameters */
       return(-1);
 
    file_gets(buf,200,ifsfile);
-   if((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
+   if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
       *bufptr = 0;
 
    strlwr(buf);
@@ -1400,9 +1400,9 @@ int ifsload()                   /* read in IFS parameters */
       ((float *)tstack)[i] = 0;
    i = ret = 0;
    bufptr = get_ifs_token(buf,ifsfile);
-   while(bufptr != NULL)
+   while (bufptr != NULL)
    {
-      if(sscanf(bufptr," %f ",&((float *)tstack)[i]) != 1)
+      if (sscanf(bufptr," %f ",&((float *)tstack)[i]) != 1)
          break ;
       if (++i >= NUMIFS*rowsize)
       {
@@ -1410,17 +1410,17 @@ int ifsload()                   /* read in IFS parameters */
             ret = -1;
             break;
       }
-      if((bufptr = strtok( NULL, seps ))==NULL)
+      if ((bufptr = strtok( NULL, seps ))==NULL)
       {
-         if((bufptr = get_ifs_token(buf,ifsfile)) == NULL)
+         if ((bufptr = get_ifs_token(buf,ifsfile)) == NULL)
          {
             ret = -1;
             break;
          }
       }
-      if(ret == -1)
+      if (ret == -1)
          break;
-      if(*bufptr == '}')
+      if (*bufptr == '}')
          break;
    }
 
@@ -1465,9 +1465,9 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
 
    splitpath(filename,drive,dir,fname,ext);
    makepath(fullpath,"","",fname,ext);
-   if(stricmp(filename, CommandFile)) {
-      if((infile=fopen(filename, "rb")) != NULL) {
-         if(scan_entries(infile, NULL, itemname) == -1) {
+   if (stricmp(filename, CommandFile)) {
+      if ((infile=fopen(filename, "rb")) != NULL) {
+         if (scan_entries(infile, NULL, itemname) == -1) {
             found = 1;
          }
          else {
@@ -1476,10 +1476,10 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
          }
       }
 
-      if(!found && checkcurdir) {
+      if (!found && checkcurdir) {
          makepath(fullpath,"",DOTSLASH,fname,ext);
-         if((infile=fopen(fullpath, "rb")) != NULL) {
-            if(scan_entries(infile, NULL, itemname) == -1) {
+         if ((infile=fopen(fullpath, "rb")) != NULL) {
+            if (scan_entries(infile, NULL, itemname) == -1) {
                strcpy(filename, fullpath);
                found = 1;
             }
@@ -1521,9 +1521,9 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
          break;
    }
 
-   if(!found) {
-      if((infile=fopen(CommandFile, "rb")) != NULL) {
-         if(scan_entries(infile, NULL, parsearchname) == -1) {
+   if (!found) {
+      if ((infile=fopen(CommandFile, "rb")) != NULL) {
+         if (scan_entries(infile, NULL, parsearchname) == -1) {
             strcpy(filename, CommandFile);
             found = 1;
          }
@@ -1534,10 +1534,10 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
       }
    }
 
-   if(!found) {
+   if (!found) {
       makepath(fullpath,drive,dir,fname,ext);
-      if((infile=fopen(fullpath, "rb")) != NULL) {
-         if(scan_entries(infile, NULL, itemname) == -1) {
+      if ((infile=fopen(fullpath, "rb")) != NULL) {
+         if (scan_entries(infile, NULL, itemname) == -1) {
             strcpy(filename, fullpath);
             found = 1;
          }
@@ -1548,22 +1548,22 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
       }
    }
 
-   if(!found) {  /* search for file */
+   if (!found) {  /* search for file */
       int out;
       makepath(fullpath,drive,dir,"*",defaultextension);
       out = fr_findfirst(fullpath);
-      while(out == 0) {
+      while (out == 0) {
          char msg[200];
          DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2]=0;
          sprintf(msg,"Searching %13s for %s      ",DTA.filename,itemname);
          showtempmsg(msg);
-         if(!(DTA.attribute & SUBDIR) &&
+         if (!(DTA.attribute & SUBDIR) &&
              strcmp(DTA.filename,".")&&
              strcmp(DTA.filename,"..")) {
             splitpath(DTA.filename,NULL,NULL,fname,ext);
             makepath(fullpath,drive,dir,fname,ext);
-            if((infile=fopen(fullpath, "rb")) != NULL) {
-               if(scan_entries(infile, NULL, itemname) == -1) {
+            if ((infile=fopen(fullpath, "rb")) != NULL) {
+               if (scan_entries(infile, NULL, itemname) == -1) {
                   strcpy(filename, fullpath);
                   found = 1;
                   break;
@@ -1604,8 +1604,8 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
          strcat(fname, "chr");
       }
       makepath(fullpath,drive,dir,fname,defaultextension);
-      if((infile=fopen(fullpath, "rb")) != NULL) {
-         if(scan_entries(infile, NULL, itemname) == -1) {
+      if ((infile=fopen(fullpath, "rb")) != NULL) {
+         if (scan_entries(infile, NULL, itemname) == -1) {
             strcpy(filename, fullpath);
             found = 1;
          }
@@ -1616,15 +1616,15 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
       }
    }
 
-   if(!found) {
+   if (!found) {
       sprintf(fullpath,"'%s' file entry item not found",itemname);
       stopmsg(0,fullpath);
       return(-1);
    }
    /* found file */
-   if(fileptr != NULL)
+   if (fileptr != NULL)
       *fileptr = infile;
-   else if(infile != NULL)
+   else if (infile != NULL)
       fclose(infile);
    return(0);
 }
@@ -1660,15 +1660,15 @@ int win_matherr( struct exception *except )
 int _cdecl _matherr( struct exception *except )
 #endif
 {
-    if(debugflag != 0)
+    if (debugflag != 0)
     {
        static FILE *fp=NULL;
-       if(matherr_ct++ == 0)
-          if(debugflag == 4000 || debugflag == 3200)
+       if (matherr_ct++ == 0)
+          if (debugflag == 4000 || debugflag == 3200)
              stopmsg(0, "Math error, but we'll try to keep going");
-       if(fp==NULL)
+       if (fp==NULL)
           fp = fopen("matherr","w");
-       if(matherr_ct < 100)
+       if (matherr_ct < 100)
        {
           fprintf(fp,"err #%d:  %d\nname: %s\narg:  %e\n",
                   matherr_ct, except->type, except->name, except->arg1);
@@ -1678,41 +1678,41 @@ int _cdecl _matherr( struct exception *except )
           matherr_ct = 100;
 
     }
-    if( except->type == DOMAIN )
+    if ( except->type == DOMAIN )
     {
         char buf[40];
         sprintf(buf,"%e",except->arg1);
         /* This test may be unnecessary - from my experiments if the
            argument is too large or small the error is TLOSS not DOMAIN */
-        if(strstr(buf,"IN")||strstr(buf,"NAN"))  /* trashed arg? */
+        if (strstr(buf,"IN")||strstr(buf,"NAN"))  /* trashed arg? */
                            /* "IND" with MSC, "INF" with BC++ */
         {
-           if( strcmp( except->name, "sin") == 0 )
+           if ( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.0;
               return(1);
            }
-           else if( strcmp( except->name, "cos") == 0 )
+           else if ( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 1.0;
               return(1);
            }
-           else if( strcmp( except->name, "log") == 0 )
+           else if ( strcmp( except->name, "log") == 0 )
            {
               except->retval = 1.0;
               return(1);
            }
        }
     }
-    if( except->type == TLOSS )
+    if ( except->type == TLOSS )
     {
        /* try valiantly to keep going */
-           if( strcmp( except->name, "sin") == 0 )
+           if ( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.5;
               return(1);
            }
-           else if( strcmp( except->name, "cos") == 0 )
+           else if ( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 0.5;
               return(1);

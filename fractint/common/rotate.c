@@ -82,7 +82,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
          if (!paused)
             pauserotate();
          }
-      else while(!driver_key_pressed()) { /* rotate until key hit, at least once so step=oldstep ok */
+      else while (!driver_key_pressed()) { /* rotate until key hit, at least once so step=oldstep ok */
          if (fkey > 0) {                /* randomizing is on */
             for (istep = 0; istep < step; istep++) {
                jstep = next + (istep * direction);
@@ -366,7 +366,7 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for(i=1;i<=255;i++)                  /* fill the palette     */
+   for (i=1; i<=255; i++)                  /* fill the palette     */
       for (j = 0; j < 3; j++)
 #ifdef __SVR4
          g_dac_box[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
@@ -379,7 +379,7 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for(i=1;i<=128;i++)
+   for (i=1; i<=128; i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
          g_dac_box[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
@@ -395,7 +395,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for(i=1;i<=85;i++)
+   for (i=1; i<=85; i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
          g_dac_box[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);

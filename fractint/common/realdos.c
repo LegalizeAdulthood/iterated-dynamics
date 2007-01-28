@@ -50,14 +50,14 @@ int stopmsg (int flags, char *msg)
 {
    int ret,toprow,color,savelookatmouse;
    static unsigned char batchmode = 0;
-   if(debugflag != 0 || initbatch >= 1)
+   if (debugflag != 0 || initbatch >= 1)
    {
       static FILE *fp = NULL;
-      if(fp==NULL && initbatch == 0)
+      if (fp==NULL && initbatch == 0)
          fp=dir_fopen(workdir,"stopmsg.txt","w");
       else
          fp=dir_fopen(workdir,"stopmsg.txt","a");
-      if(fp != NULL)
+      if (fp != NULL)
       fprintf(fp,"%s\n",msg);
       fclose(fp);
    }
@@ -109,7 +109,7 @@ int stopmsg (int flags, char *msg)
       driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
    while (driver_key_pressed()) /* flush any keyahead */
       driver_get_key();
-   if(debugflag != 324)
+   if (debugflag != 324)
       if (getakeynohelp() == FIK_ESC)
          ret = -1;
    if ((flags & STOPMSG_NO_STACK))
@@ -349,7 +349,7 @@ char speed_prompt[]="Speed key string";
    char is a dot or last char is a slash */
 static int isadirname(char *name)
 {
-   if(*name == '.' || endswithslash(name))
+   if (*name == '.' || endswithslash(name))
       return 1;
    else
       return 0;
@@ -424,7 +424,7 @@ void process_speedstring(char    *speedstring,
             */
       else if (is_unsorted && choices[*pcurrent][i]) {
          int temp = *pcurrent;
-         while(++temp < numchoices) {
+         while (++temp < numchoices) {
             if (!choices[temp][i] && !strncasecmp(speedstring, choices[temp], i)) {
                *pcurrent = temp;
                break;
@@ -1061,8 +1061,8 @@ fs_choice_end:
 /* case independent version of strncmp */
 int strncasecmp(char *s,char *t,int ct)
 {
-   for(; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
-      if(*s == '\0')
+   for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
+      if (*s == '\0')
          return(0);
    return(tolower(*s) - tolower(*t));
 }
@@ -1119,7 +1119,7 @@ top:
       choicekey[nextleft+=2] = 'o';
       attributes[nextleft] = MENU_ITEM;
       LOADPROMPTSCHOICES(nextleft,"orbits window          <o>  ");
-      if(!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+      if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
           nextleft+=2;
       }
    LOADPROMPTSCHOICES(nextleft+=2,"      NEW IMAGE             ");
@@ -1145,7 +1145,7 @@ top:
              LOADPROMPTSCHOICES(nextleft,"toggle to/from julia <space>");
              showjuliatoggle = 1;
           }
-      if(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA) {
+      if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA) {
              choicekey[nextleft+=2] = 'j';
              attributes[nextleft] = MENU_ITEM;
              LOADPROMPTSCHOICES(nextleft,"toggle to/from inverse <j>  ");
@@ -1178,7 +1178,7 @@ top:
    choicekey[nextleft+=2] = 'v';
    attributes[nextleft] = MENU_ITEM;
    LOADPROMPTSCHOICES(nextleft,"view window options... <v>  ");
-   if(showjuliatoggle == 0)
+   if (showjuliatoggle == 0)
    {
       choicekey[nextleft+=2] = 'i';
       attributes[nextleft] = MENU_ITEM;
@@ -1339,7 +1339,7 @@ static int menu_checkkey(int curkey,int choice)
    /* We use F2 for shift-@, annoyingly enough */
    if (testkey == FIK_F2) return(0-testkey);
 #endif
-   if(testkey == '2')
+   if (testkey == '2')
       testkey = '@';
    if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
      || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F) /*RB 6== ctrl-F for sound menu */
@@ -1393,7 +1393,7 @@ int input_field(
    strcpy(savefld,fld);
    insert = started = offset = 0;
    display = 1;
-   for(;;) {
+   while (1) {
       strcpy(buf,fld);
       i = (int) strlen(buf);
       while (i < len)
@@ -1404,7 +1404,7 @@ int input_field(
          display = 0;
          }
       curkey = driver_key_cursor(row+insert,col+offset);  /* get a keystroke */
-      if(curkey == 1047) curkey = 47; /* numeric slash */
+      if (curkey == 1047) curkey = 47; /* numeric slash */
       switch (curkey) {
          case FIK_ENTER:
          case FIK_ENTER_2:
@@ -1695,7 +1695,7 @@ void load_fractint_config(void)
 	while (g_video_table_len < MAXVIDEOMODES
 		&& fgets(tempstring, 120, cfgfile))
 	{
-		if(strchr(tempstring,'\n') == NULL)
+		if (strchr(tempstring,'\n') == NULL)
 		{
 			/* finish reading the line */
 			while (fgetc(cfgfile) != '\n' && !feof(cfgfile));

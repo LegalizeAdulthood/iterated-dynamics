@@ -60,8 +60,8 @@ static int get_scancode(char *mn)
 {
    int i;
    i = 0;
-   for(i=0;i< stop;i++)
-      if(strcmp((char *)mn,scancodes[i].mnemonic)==0)
+   for (i=0; i< stop; i++)
+      if (strcmp((char *)mn,scancodes[i].mnemonic)==0)
          break;
    return(scancodes[i].code);
 }
@@ -71,8 +71,8 @@ static void get_mnemonic(int code,char *mnemonic)
    int i;
    i = 0;
    *mnemonic = 0;
-   for(i=0;i< stop;i++)
-      if(code == scancodes[i].code)
+   for (i=0; i< stop; i++)
+      if (code == scancodes[i].code)
       {
          strcpy(mnemonic,scancodes[i].mnemonic);
          break;
@@ -95,9 +95,9 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 {
    int savescrn[80];
    int i;
-   if(g_text_type > 1)
+   if (g_text_type > 1)
       return(1);
-   for(i=0;i<80;i++)
+   for (i=0; i<80; i++)
    {
       driver_move_cursor(row,i);
       savescrn[i] = driver_get_char_attr();
@@ -105,7 +105,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
    driver_put_string(row,col,attr,txt);
    driver_hide_text_cursor();
    sleep_secs(secs);
-   for(i=0;i<80;i++)
+   for (i=0; i<80; i++)
    {
       driver_move_cursor(row,i);
       driver_put_char_attr(savescrn[i]);
@@ -131,22 +131,22 @@ int slideshw()
 {
    int out,err,i;
    char buffer[81];
-   if(calcwait)
+   if (calcwait)
    {
-      if(calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
+      if (calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
          return(0); /* wait for calc to finish before reading more keystrokes */
       calcwait = 0;
    }
-   if(fpss==NULL)   /* open files first time through */
-      if(startslideshow()==0)
+   if (fpss==NULL)   /* open files first time through */
+      if (startslideshow()==0)
          {
          stopslideshow();
          return (0);
          }
 
-   if(ticks) /* if waiting, see if waited long enough */
+   if (ticks) /* if waiting, see if waited long enough */
    {
-      if(clock_ticks() - starttick < ticks) /* haven't waited long enough */
+      if (clock_ticks() - starttick < ticks) /* haven't waited long enough */
          return(0);
       ticks = 0;
    }
@@ -157,21 +157,21 @@ int slideshw()
       if (slowcount > 10)
          ticks /= 2;
    }
-   if(repeats>0)
+   if (repeats>0)
    {
       repeats--;
       return(last1);
    }
 start:
-   if(quotes) /* reading a quoted string */
+   if (quotes) /* reading a quoted string */
    {
-      if((out=fgetc(fpss)) != '\"' && out != EOF)
+      if ((out=fgetc(fpss)) != '\"' && out != EOF)
          return(last1 = out);
       quotes = 0;
    }
    /* skip white space: */
    while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') { }
-   switch(out)
+   switch (out)
    {
       case EOF:
          stopslideshow();
@@ -180,7 +180,7 @@ start:
          quotes = 1;
          goto start;
       case ';':         /* comment from here to end of line, skip it */
-         while((out=fgetc(fpss)) != '\n' && out != EOF) { }
+         while ((out=fgetc(fpss)) != '\n' && out != EOF) { }
          goto start;
       case '*':
          if (fscanf(fpss,"%d",&repeats) != 1
@@ -194,20 +194,20 @@ start:
    }
 
    i = 0;
-   for(;;) /* get a token */
+   while (1) /* get a token */
    {
-      if(i < 80)
+      if (i < 80)
          buffer[i++] = (char)out;
-      if((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n' || out == EOF)
+      if ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n' || out == EOF)
          break;
    }
    buffer[i] = 0;
-   if(buffer[i-1] == ':')
+   if (buffer[i-1] == ':')
       goto start;
    out = -12345;
-   if(isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
+   if (isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
          out=atoi(buffer);
-   else if(strcmp((char *)buffer,"MESSAGE")==0)
+   else if (strcmp((char *)buffer,"MESSAGE")==0)
       {
          int secs;
          out = 0;
@@ -227,7 +227,7 @@ start:
          }
          out = 0;
       }
-   else if(strcmp((char *)buffer,"GOTO")==0)
+   else if (strcmp((char *)buffer,"GOTO")==0)
       {
          if (fscanf(fpss,"%s",buffer) != 1)
          {
@@ -242,8 +242,8 @@ start:
             do
             {
                err = fscanf(fpss,"%s",buffer1);
-            } while( err == 1 && strcmp(buffer1,buffer) != 0);
-            if(feof(fpss))
+            } while ( err == 1 && strcmp(buffer1,buffer) != 0);
+            if (feof(fpss))
             {
                slideshowerr("GOTO target not found");
                return(0);
@@ -251,14 +251,14 @@ start:
             goto start;
          }
       }
-   else if((i = get_scancode(buffer)) > 0)
+   else if ((i = get_scancode(buffer)) > 0)
          out = i;
-   else if(strcmp("WAIT",(char *)buffer)==0)
+   else if (strcmp("WAIT",(char *)buffer)==0)
       {
          float fticks;
          err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
          fticks *= CLK_TCK;             /* convert from seconds to ticks */
-         if(err==1)
+         if (err==1)
          {
             ticks = (long)fticks;
             starttick = clock_ticks();  /* start timing */
@@ -269,14 +269,14 @@ start:
          }
          slowcount = out = 0;
       }
-   else if(strcmp("CALCWAIT",(char *)buffer)==0) /* wait for calc to finish */
+   else if (strcmp("CALCWAIT",(char *)buffer)==0) /* wait for calc to finish */
       {
          calcwait = 1;
          slowcount = out = 0;
       }
-   else if((i=check_vidmode_keyname(buffer)) != 0)
+   else if ((i=check_vidmode_keyname(buffer)) != 0)
       out = i;
-   if(out == -12345)
+   if (out == -12345)
    {
       char msg[MSGLEN];
       sprintf(msg,"Can't understand %s",buffer);
@@ -289,7 +289,7 @@ start:
 int
 startslideshow()
 {
-   if((fpss=fopen(autoname,"r"))==NULL)
+   if ((fpss=fopen(autoname,"r"))==NULL)
       g_slides = SLIDES_OFF;
    ticks = 0;
    quotes = 0;
@@ -300,7 +300,7 @@ startslideshow()
 
 void stopslideshow()
 {
-   if(fpss)
+   if (fpss)
       fclose(fpss);
    fpss = NULL;
    g_slides = SLIDES_OFF;
@@ -312,23 +312,23 @@ void recordshw(int key)
    float dt;
    dt = (float)ticks;      /* save time of last call */
    ticks=clock_ticks();  /* current time */
-   if(fpss==NULL)
-      if((fpss=fopen(autoname,"w"))==NULL)
+   if (fpss==NULL)
+      if ((fpss=fopen(autoname,"w"))==NULL)
          return;
    dt = ticks-dt;
    dt /= CLK_TCK;  /* dt now in seconds */
-   if(dt > .5) /* don't bother with less than half a second */
+   if (dt > .5) /* don't bother with less than half a second */
    {
-      if(quotes) /* close quotes first */
+      if (quotes) /* close quotes first */
       {
          quotes=0;
          fprintf(fpss,"\"\n");
       }
       fprintf(fpss,"WAIT %4.1f\n",dt);
    }
-   if(key >= 32 && key < 128)
+   if (key >= 32 && key < 128)
    {
-      if(!quotes)
+      if (!quotes)
       {
          quotes=1;
          fputc('\"',fpss);
@@ -337,13 +337,13 @@ void recordshw(int key)
    }
    else
    {
-      if(quotes) /* not an ASCII character - turn off quotes */
+      if (quotes) /* not an ASCII character - turn off quotes */
       {
          fprintf(fpss,"\"\n");
          quotes=0;
       }
       get_mnemonic(key,mn);
-      if(*mn)
+      if (*mn)
           fprintf(fpss,"%s",mn);
       else if (check_vidmode_key(0,key) >= 0)
          {
@@ -362,7 +362,7 @@ static void sleep_secs(int secs)
 {
    long stop;
    stop = clock_ticks() + (long)secs*CLK_TCK;
-   while(clock_ticks() < stop && kbhit() == 0) { } /* bailout if key hit */
+   while (clock_ticks() < stop && kbhit() == 0) { } /* bailout if key hit */
 }
 
 static void slideshowerr(char *msg)
