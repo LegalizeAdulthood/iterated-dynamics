@@ -19,6 +19,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "frame.h"
+#include "mpmath.h"
 
 /* External declarations */
 extern void check_samename(void);
@@ -107,6 +108,8 @@ typedef enum
 } fractint_event;
 
 /* Global variables (yuck!) */
+int MPOverflow = 0;
+struct MP Ans = { 0 };
 int g_and_color;
 BYTE block[256] = { 0 };
 int boxx[2304] = { 0 };
@@ -492,7 +495,7 @@ int get_sound_params(void)
 {
 	/* TODO */
 	_ASSERTE(FALSE);
-	return(0);
+	return 0;
 }
 
 /*
