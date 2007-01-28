@@ -2573,7 +2573,6 @@ int long_julia_per_pixel(void)
    }
    return 0;
 #else
-   _ASSERTE(0 && "Called long_julia_per_pixel");
    return 0;
 #endif
 }
@@ -2626,7 +2625,6 @@ int long_mandel_per_pixel(void)
    lold.y += lparm.y;
    return 1; /* 1st iteration has been done */
 #else
-   _ASSERTE(0 && "Called long_mandel_per_pixel\n");
    return 0;
 #endif
 }
@@ -3102,7 +3100,6 @@ int long_phoenix_per_pixel(void)
    ltmp2.y = 0;
    return 0;
 #else
-   _ASSERTE(0 && "Called long_phoenix_per_pixel\n");
    return 0;
 #endif
 }
@@ -3159,7 +3156,6 @@ int long_mandphoenix_per_pixel(void)
    ltmp2.y = 0;
    return 1; /* 1st iteration has been done */
 #else
-   _ASSERTE(0 && "Called long_mandphoenix_per_pixel\n");
    return 0;
 #endif
 }
