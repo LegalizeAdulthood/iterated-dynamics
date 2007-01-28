@@ -115,7 +115,7 @@
 /* global data  */
 struct fls *pfls = (struct fls *)0;
 
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 
 /* not moved to PROTOTYPE.H because these only communicate within
    PARSER.C and other parser modules */
@@ -257,9 +257,9 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 int pstopmsg(int x,char *msg)
 {
    static FILE *fp = NULL;
-   if(fp == NULL)
+   if (fp == NULL)
       fp = fopen("fpdebug.txt","w");
-   if(fp)
+   if (fp)
    {
       fprintf(fp,"%s\n",msg);
       fflush(fp);
@@ -598,7 +598,7 @@ awful_error:
                && Store[StoPtr-1] == Load[LodPtr] ){
          /* store, clear, load same value found  */
          /* only one operand was on stack so this is safe  */
-         DBUGMSG (0, "*StoClr2 (Lod) -> (*Sto2)" );
+         DBUGMSG("*StoClr2 (Lod) -> (*Sto2)" );
          --cvtptrx;
          ffptr = fStkSto2;  /* use different Sto fn  */
       }
@@ -748,7 +748,7 @@ awful_error:
          --cvtptrx;  /*  lod *? (mul)  */
          if (FNPTR(cvtptrx) == fStkPush2 ){ /*  lod *push (mul)  */
             --cvtptrx;  /* ? *lod push (mul)  */
-            if(FNPTR(cvtptrx-1) == fStkPush2 ){
+            if (FNPTR(cvtptrx-1) == fStkPush2 ){
                DBUGMSG("push *lod push (mul) -> push4 (*lodmul)" );
                FNPTR(cvtptrx-1) = fStkPush4;
             }
@@ -1190,7 +1190,7 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
       realstkcnt = (unsigned char)(realstkcnt + Delta);
    }
 
-   DBUGMSG3(0, "Stack:  %2d --> %2d,  Real stack:  %2d",
+   DBUGMSG3("Stack:  %2d --> %2d,  Real stack:  %2d",
          prevstkcnt, stkcnt, realstkcnt );
 
    return 1;  /* return 1 for success  */
@@ -1206,14 +1206,14 @@ int fpfill_jump_struct(void)
    JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
    for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++) {
-      if(find_new_func) {
+      if (find_new_func) {
          switch (jump_control[i].type) {
             case 1:
                JumpFunc = fStkJumpOnFalse;
                break;
             case 2:
                checkforelse = !checkforelse;
-               if(checkforelse)
+               if (checkforelse)
                   JumpFunc = fStkJump;
                else
                   JumpFunc = fStkJumpOnFalse;
@@ -1229,7 +1229,7 @@ int fpfill_jump_struct(void)
          }
          find_new_func = 0;
       }
-      if(pfls[OpPtr].function == JumpFunc) {
+      if (pfls[OpPtr].function == JumpFunc) {
          jump_data[i].JumpOpPtr = OpPtr*4;
          i++;
          find_new_func = 1;
@@ -1237,12 +1237,12 @@ int fpfill_jump_struct(void)
    }
 
       /* Following for safety only; all should always be false */
-   if(i != jump_index || jump_control[i - 1].type != 4
+   if (i != jump_index || jump_control[i - 1].type != 4
            || jump_control[0].type != 1) {
       return 1;
    }
 
-   while(i > 0) {
+   while (i > 0) {
       i--;
       i = fill_if_group(i, jump_data);
    }
@@ -1345,7 +1345,7 @@ int CvtStk() {  /* convert the array of ptrs  */
                DBUGMSG("IDENT was skipped" );
             }
             else {
-               DBUGMSG4(0, "fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
+               DBUGMSG4("fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
                      pfe->fname,
                      (int)(pfe->min_regs),
                      (int)(pfe->free_regs),
