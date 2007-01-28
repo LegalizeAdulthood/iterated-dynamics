@@ -11,20 +11,6 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
-#if !defined(WINFRACT) && !defined(_WIN32)
-void SetTgaColors() {
-unsigned        r, g, b, index;
-    if (tga16 != NULL)
-        for( index = 0; index < 256; index++ ) {
-                r = dac[index].red      << 2;
-                g = dac[index].green << 2;
-                b = dac[index].blue     << 2;
-                tga16[index] = ((r&248)<<7) | ((g&248)<<2) | (b>>3);
-                tga32[index] = ((long)r<<16) | (g<<8) | b;
-        }
-}
-#endif
-
 int ValidateLuts( char * fn )
 {
 FILE * f;
@@ -48,7 +34,7 @@ char    temp_fn[FILE_MAX_PATH];
                 stopmsg(0,line);
                 return 1;
                 }
-        for( index = 0; index < 256; index++ ) {
+        for ( index = 0; index < 256; index++ ) {
                 if (fgets(line,100,f) == NULL)
                         break;
                 sscanf( line, "%u %u %u", &r, &g, &b );
@@ -62,7 +48,6 @@ char    temp_fn[FILE_MAX_PATH];
                 dac[index].red = dac[index].blue = dac[index].green = 40;
                 ++index;
         }
-        //SetTgaColors();
         colorstate = 2;
         strcpy(colorfile,fn);
         return 0;
