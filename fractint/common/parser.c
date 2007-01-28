@@ -3763,8 +3763,14 @@ int fpFormulaSetup(void) {
 
 int intFormulaSetup(void) {
 #if defined(XFRACT) || defined(_WIN32)
-      _ASSERTE(0 && "intFormulaSetup called");
-      exit(-1);
+	static int been_here = 0;
+	if (!been_here)
+	{
+		stopmsg(0, "This integer fractal type is unimplemented;\n"
+			"Use float=yes to get a real image.");
+		been_here = 1;
+	}
+	return 0;
 #else
       MathType = L_MATH;
       fg = (double)(1L << bitshift);
