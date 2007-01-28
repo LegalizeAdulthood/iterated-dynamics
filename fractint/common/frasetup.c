@@ -11,7 +11,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
@@ -66,36 +66,36 @@ int
 NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
    int i;
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
    if (debugflag != 1010)
    {
-      if(fpu != 0)
+      if (fpu != 0)
       {
-         if(fractype == MPNEWTON)
+         if (fractype == MPNEWTON)
             fractype = NEWTON;
-         else if(fractype == MPNEWTBASIN)
+         else if (fractype == MPNEWTBASIN)
             fractype = NEWTBASIN;
       }
       else
       {
-         if(fractype == NEWTON)
+         if (fractype == NEWTON)
                fractype = MPNEWTON;
-         else if(fractype == NEWTBASIN)
+         else if (fractype == NEWTBASIN)
                fractype = MPNEWTBASIN;
       }
       curfractalspecific = &fractalspecific[fractype];
    }
 #else
-   if(fractype == MPNEWTON)
+   if (fractype == MPNEWTON)
       fractype = NEWTON;
-   else if(fractype == MPNEWTBASIN)
+   else if (fractype == MPNEWTBASIN)
       fractype = NEWTBASIN;
 
    curfractalspecific = &fractalspecific[fractype];
 #endif
    /* set up table of roots of 1 along unit circle */
    degree = (int)parm.x;
-   if(degree < 2)
+   if (degree < 2)
       degree = 3;   /* defaults to 3, but 2 is possible */
    root = 1;
 
@@ -104,7 +104,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
    d1overd      = (double)(degree - 1) / (double)degree;
    maxcolor     = 0;
    threshold    = .3*PI/degree; /* less than half distance between roots */
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
    if (fractype == MPNEWTON || fractype == MPNEWTBASIN) {
       mproverd     = *pd2MP(roverd);
       mpd1overd    = *pd2MP(d1overd);
@@ -117,20 +117,20 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
    floatmax = FLT_MAX;
 
    basin = 0;
-   if(roots != staticroots) {
+   if (roots != staticroots) {
       free(roots);
       roots = staticroots;
    }
 
    if (fractype==NEWTBASIN)
    {
-      if(parm.y)
+      if (parm.y)
          basin = 2; /*stripes */
       else
          basin = 1;
-      if(degree > 16)
+      if (degree > 16)
       {
-         if((roots=(_CMPLX *)malloc(degree*sizeof(_CMPLX)))==NULL)
+         if ((roots=(_CMPLX *)malloc(degree*sizeof(_CMPLX)))==NULL)
          {
             roots = staticroots;
             degree = 16;
@@ -140,23 +140,23 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          roots = staticroots;
 
       /* list of roots to discover where we converged for newtbasin */
-      for(i=0;i<degree;i++)
+      for (i=0; i<degree; i++)
       {
          roots[i].x = cos(i*twopi/(double)degree);
          roots[i].y = sin(i*twopi/(double)degree);
       }
    }
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
    else if (fractype==MPNEWTBASIN)
    {
-     if(parm.y)
+     if (parm.y)
          basin = 2; /*stripes */
       else
          basin = 1;
 
-      if(degree > 16)
+      if (degree > 16)
       {
-         if((MPCroots=(struct MPC *)malloc(degree*sizeof(struct MPC)))==NULL)
+         if ((MPCroots=(struct MPC *)malloc(degree*sizeof(struct MPC)))==NULL)
          {
             MPCroots = (struct MPC *)staticroots;
             degree = 16;
@@ -166,7 +166,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          MPCroots = (struct MPC *)staticroots;
 
       /* list of roots to discover where we converged for newtbasin */
-      for(i=0;i<degree;i++)
+      for (i=0; i<degree; i++)
       {
          MPCroots[i].x = *pd2MP(cos(i*twopi/(double)degree));
          MPCroots[i].y = *pd2MP(sin(i*twopi/(double)degree));
@@ -181,7 +181,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
       symmetry = XAXIS;
 
    calctype=StandardFractal;
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
    if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
       setMPfunctions();
 #endif
@@ -216,13 +216,13 @@ MandelfpSetup(void)
    switch (fractype)
    {
    case MARKSMANDELFP:
-      if(c_exp < 1){
+      if (c_exp < 1){
          c_exp = 1;
          param[2] = 1;
       }
-      if(!(c_exp & 1))
+      if (!(c_exp & 1))
          symmetry = XYAXIS_NOPARM;    /* odd exponents */
-      if(c_exp & 1)
+      if (c_exp & 1)
          symmetry = XAXIS_NOPARM;
       break;
    case MANDELFP:
@@ -247,7 +247,7 @@ MandelfpSetup(void)
             && (orbitsave&2) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
            if (cpu >= 386 && fpu >= 387)
            {
               calcmandfpasmstart_p5();
@@ -288,11 +288,11 @@ MandelfpSetup(void)
         }
         break;
    case FPMANDELZPOWER:
-      if((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+      if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
          symmetry = XYAXIS_NOPARM;
-      if(param[3] != 0)
+      if (param[3] != 0)
          symmetry = NOSYM;
-      if(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = floatZpowerFractal;
       else
           fractalspecific[fractype].orbitcalc = floatCmplxZpowerFractal;
@@ -305,7 +305,7 @@ MandelfpSetup(void)
       attractors = 1;
       break;
    case SPIDERFP:
-      if(periodicitycheck==1) /* if not user set */
+      if (periodicitycheck==1) /* if not user set */
          periodicitycheck=4;
       break;
    case MANDELEXP:
@@ -315,7 +315,7 @@ MandelfpSetup(void)
 /*     JCO 2/29/92 */
    case FPMANTRIGPLUSEXP:
    case FPMANTRIGPLUSZSQRD:
-     if(parm.y == 0.0)
+     if (parm.y == 0.0)
         symmetry = XAXIS;
      else
         symmetry = NOSYM;
@@ -331,17 +331,17 @@ MandelfpSetup(void)
       floatparm = &tmp;
       attractors = 0;
       periodicitycheck = 0;
-      if(param[2] != 0)
+      if (param[2] != 0)
          symmetry = NOSYM;
-      if(trigndx[0] == 14) /* FLIP */
+      if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
       break;
    case TIMSERRORFP:
-      if(trigndx[0] == 14) /* FLIP */
+      if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
       break;
    case MARKSMANDELPWRFP:
-      if(trigndx[0] == 14) /* FLIP */
+      if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
       break;
    default:
@@ -355,7 +355,7 @@ JuliafpSetup(void)
 {
    c_exp = (int)param[2];
    floatparm = &parm;
-   if(fractype==COMPLEXMARKSJUL)
+   if (fractype==COMPLEXMARKSJUL)
    {
       pwr.x = param[2] - 1.0;
       pwr.y = param[3];
@@ -386,7 +386,7 @@ JuliafpSetup(void)
             && (orbitsave&2) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
            if (cpu >= 386 && fpu >= 387)
            {
               calcmandfpasmstart_p5();
@@ -427,9 +427,9 @@ JuliafpSetup(void)
         }
         break;
    case FPJULIAZPOWER:
-      if((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2] )
+      if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2] )
          symmetry = NOSYM;
-      if(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = floatZpowerFractal;
       else
           fractalspecific[fractype].orbitcalc = floatCmplxZpowerFractal;
@@ -449,7 +449,7 @@ JuliafpSetup(void)
       get_julia_attractor (0.5, 0.0);   /* another attractor? */
       break;
    case LAMBDAEXP:
-      if(parm.y == 0.0)
+      if (parm.y == 0.0)
          symmetry=XAXIS;
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
       break;
@@ -457,7 +457,7 @@ JuliafpSetup(void)
 /*     JCO 2/29/92 */
    case FPJULTRIGPLUSEXP:
    case FPJULTRIGPLUSZSQRD:
-     if(parm.y == 0.0)
+     if (parm.y == 0.0)
         symmetry = XAXIS;
      else
         symmetry = NOSYM;
@@ -466,21 +466,21 @@ JuliafpSetup(void)
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
       break;
    case HYPERCMPLXJFP:
-      if(param[2] != 0)
+      if (param[2] != 0)
          symmetry = NOSYM;
-      if(trigndx[0] != SQR)
+      if (trigndx[0] != SQR)
          symmetry=NOSYM;
    case QUATJULFP:
       attractors = 0;   /* attractors broken since code checks r,i not j,k */
       periodicitycheck = 0;
-      if(param[4] != 0.0 || param[5] != 0)
+      if (param[4] != 0.0 || param[5] != 0)
          symmetry = NOSYM;
       break;
    case FPPOPCORN:
    case FPPOPCORNJUL:
       {
          int default_functions = 0;
-         if(trigndx[0] == SIN &&
+         if (trigndx[0] == SIN &&
             trigndx[1] == TAN &&
             trigndx[2] == SIN &&
             trigndx[3] == TAN &&
@@ -489,12 +489,12 @@ JuliafpSetup(void)
             parm.y == 0)
          {
             default_functions = 1;
-            if(fractype == FPPOPCORNJUL)
+            if (fractype == FPPOPCORNJUL)
                symmetry = ORIGIN;
          }
-         if(save_release <=1960)
+         if (save_release <=1960)
             curfractalspecific->orbitcalc = PopcornFractal_Old;
-         else if(default_functions && debugflag == 96)
+         else if (default_functions && debugflag == 96)
             curfractalspecific->orbitcalc = PopcornFractal;
          else
             curfractalspecific->orbitcalc = PopcornFractalFn;
@@ -518,46 +518,46 @@ MandellongSetup(void)
 {
    FgHalf = fudge >> 1;
    c_exp = (int)param[2];
-   if(fractype==MARKSMANDEL && c_exp < 1){
+   if (fractype==MARKSMANDEL && c_exp < 1){
       c_exp = 1;
       param[2] = 1;
    }
-   if((fractype==MARKSMANDEL   && !(c_exp & 1)) ||
+   if ((fractype==MARKSMANDEL   && !(c_exp & 1)) ||
        (fractype==LMANDELZPOWER && (c_exp & 1)))
       symmetry = XYAXIS_NOPARM;    /* odd exponents */
-   if((fractype==MARKSMANDEL && (c_exp & 1)) || fractype==LMANDELEXP)
+   if ((fractype==MARKSMANDEL && (c_exp & 1)) || fractype==LMANDELEXP)
       symmetry = XAXIS_NOPARM;
-   if(fractype==SPIDER && periodicitycheck==1)
+   if (fractype==SPIDER && periodicitycheck==1)
       periodicitycheck=4;
    longparm = &linit;
-   if(fractype==LMANDELZPOWER)
+   if (fractype==LMANDELZPOWER)
    {
-      if(param[3] == 0.0 && debugflag != 6000  && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000  && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = longZpowerFractal;
       else
           fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
-      if(param[3] != 0 || (double)c_exp != param[2] )
+      if (param[3] != 0 || (double)c_exp != param[2] )
          symmetry = NOSYM;
     }
 /* Added to account for symmetry in manfn+exp and manfn+zsqrd */
 /*     JCO 2/29/92 */
-   if((fractype==LMANTRIGPLUSEXP)||(fractype==LMANTRIGPLUSZSQRD))
+   if ((fractype==LMANTRIGPLUSEXP)||(fractype==LMANTRIGPLUSZSQRD))
    {
-     if(parm.y == 0.0)
+     if (parm.y == 0.0)
         symmetry = XAXIS;
      else
         symmetry = NOSYM;
      if ((trigndx[0] == LOG) || (trigndx[0] == 14)) /* LOG or FLIP */
         symmetry = NOSYM;
    }
-   if(fractype == TIMSERROR)
+   if (fractype == TIMSERROR)
    {
-     if(trigndx[0] == 14) /* FLIP */
+     if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
     }
-   if(fractype == MARKSMANDELPWR)
+   if (fractype == MARKSMANDELPWR)
    {
-     if(trigndx[0] == 14) /* FLIP */
+     if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
     }
    return(1);
@@ -571,9 +571,9 @@ JulialongSetup(void)
    switch (fractype)
    {
    case LJULIAZPOWER:
-      if((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+      if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
          symmetry = NOSYM;
-      if(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = longZpowerFractal;
       else
           fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
@@ -583,14 +583,14 @@ JulialongSetup(void)
       get_julia_attractor (0.5, 0.0);   /* another attractor? */
       break;
    case LLAMBDAEXP:
-      if(lparm.y == 0)
+      if (lparm.y == 0)
          symmetry = XAXIS;
       break;
 /* Added to account for symmetry in julfn+exp and julfn+zsqrd */
 /*     JCO 2/29/92 */
    case LJULTRIGPLUSEXP:
    case LJULTRIGPLUSZSQRD:
-     if(parm.y == 0.0)
+     if (parm.y == 0.0)
         symmetry = XAXIS;
      else
         symmetry = NOSYM;
@@ -602,7 +602,7 @@ JulialongSetup(void)
    case LPOPCORNJUL:
       {
          int default_functions = 0;
-         if(trigndx[0] == SIN &&
+         if (trigndx[0] == SIN &&
             trigndx[1] == TAN &&
             trigndx[2] == SIN &&
             trigndx[3] == TAN &&
@@ -611,12 +611,12 @@ JulialongSetup(void)
             parm.y == 0)
          {
             default_functions = 1;
-            if(fractype == LPOPCORNJUL)
+            if (fractype == LPOPCORNJUL)
                symmetry = ORIGIN;
          }
-         if(save_release <=1960)
+         if (save_release <=1960)
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
-         else if(default_functions && debugflag == 96)
+         else if (default_functions && debugflag == 96)
             curfractalspecific->orbitcalc = LPopcornFractal;
          else
             curfractalspecific->orbitcalc = LPopcornFractalFn;
@@ -635,11 +635,11 @@ TrigPlusSqrlongSetup(void)
 {
    curfractalspecific->per_pixel =  julia_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-   if(lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+   if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
    {
-      if(lparm2.x == fudge)        /* Scott variant */
+      if (lparm2.x == fudge)        /* Scott variant */
          curfractalspecific->orbitcalc =  ScottTrigPlusSqrFractal;
-      else if(lparm2.x == -fudge)  /* Skinner variant */
+      else if (lparm2.x == -fudge)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubSqrFractal;
    }
    return(JulialongSetup());
@@ -650,11 +650,11 @@ TrigPlusSqrfpSetup(void)
 {
    curfractalspecific->per_pixel =  juliafp_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
-   if(parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+   if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
    {
-      if(parm2.x == 1.0)        /* Scott variant */
+      if (parm2.x == 1.0)        /* Scott variant */
          curfractalspecific->orbitcalc =  ScottTrigPlusSqrfpFractal;
-      else if(parm2.x == -1.0)  /* Skinner variant */
+      else if (parm2.x == -1.0)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
    }
    return(JuliafpSetup());
@@ -664,15 +664,15 @@ int
 TrigPlusTriglongSetup(void)
 {
    FnPlusFnSym();
-   if(trigndx[1] == SQR)
+   if (trigndx[1] == SQR)
       return(TrigPlusSqrlongSetup());
    curfractalspecific->per_pixel =  long_julia_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-   if(lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+   if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
    {
-      if(lparm2.x == fudge)        /* Scott variant */
+      if (lparm2.x == fudge)        /* Scott variant */
          curfractalspecific->orbitcalc =  ScottTrigPlusTrigFractal;
-      else if(lparm2.x == -fudge)  /* Skinner variant */
+      else if (lparm2.x == -fudge)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubTrigFractal;
    }
    return(JulialongSetup());
@@ -682,15 +682,15 @@ int
 TrigPlusTrigfpSetup(void)
 {
    FnPlusFnSym();
-   if(trigndx[1] == SQR)
+   if (trigndx[1] == SQR)
       return(TrigPlusSqrfpSetup());
    curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
-   if(parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+   if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
    {
-      if(parm2.x == 1.0)        /* Scott variant */
+      if (parm2.x == 1.0)        /* Scott variant */
          curfractalspecific->orbitcalc =  ScottTrigPlusTrigfpFractal;
-      else if(parm2.x == -1.0)  /* Skinner variant */
+      else if (parm2.x == -1.0)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubTrigfpFractal;
    }
    return(JuliafpSetup());
@@ -710,10 +710,10 @@ FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
    /* log */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XAXIS},
    /* sqr */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XYAXIS}
    };
-   if(parm.y == 0.0 && parm2.y == 0.0)
-    { if(trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/6/92*/
+   if (parm.y == 0.0 && parm2.y == 0.0)
+    { if (trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/6/92*/
         symmetry = fnplusfn[trigndx[0]][trigndx[1]];  /* JCO 5/6/92 */
-      if(trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
+      if (trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
         symmetry = NOSYM;
     }                 /* defaults to XAXIS symmetry JCO 5/6/92 */
    else
@@ -741,9 +741,9 @@ JuliaTrigOrTrigSetup(void)
 /* default symmetry is XAXIS */
    longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
    floatparm = &parm;
-   if(parm.y != 0.0)
+   if (parm.y != 0.0)
      symmetry = NOSYM;
-   if(trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
+   if (trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
      symmetry = NOSYM;
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
    return(1);
@@ -784,9 +784,9 @@ ZXTrigPlusZSetup(void)
    /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
 /*           {NOSYM,ORIGIN,NOSYM,ORIGIN,NOSYM,NOSYM,ORIGIN}; */
 
-   if(param[1] == 0.0 && param[3] == 0.0)
+   if (param[1] == 0.0 && param[3] == 0.0)
 /*      symmetry = ZXTrigPlusZSym1[trigndx[0]]; */
-   switch(trigndx[0])
+   switch (trigndx[0])
    {
       case COS:   /* changed to two case statments and made any added */
       case COSH:  /* functions default to XAXIS symmetry. JCO 5/25/92 */
@@ -806,7 +806,7 @@ ZXTrigPlusZSetup(void)
       }
    else
 /*      symmetry = ZXTrigPlusZSym2[trigndx[0]]; */
-   switch(trigndx[0])
+   switch (trigndx[0])
    {
       case COS:
       case COSH:
@@ -821,14 +821,14 @@ ZXTrigPlusZSetup(void)
          symmetry = NOSYM;
          break;
       }
-   if(curfractalspecific->isinteger)
+   if (curfractalspecific->isinteger)
    {
       curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-      if(lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+      if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
       {
-         if(lparm2.x == fudge)     /* Scott variant */
+         if (lparm2.x == fudge)     /* Scott variant */
                  curfractalspecific->orbitcalc =  ScottZXTrigPlusZFractal;
-         else if(lparm2.x == -fudge)  /* Skinner variant */
+         else if (lparm2.x == -fudge)  /* Skinner variant */
                  curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
       }
       return(JulialongSetup());
@@ -836,11 +836,11 @@ ZXTrigPlusZSetup(void)
    else
    {
       curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
-      if(parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+      if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
       {
-         if(parm2.x == 1.0)     /* Scott variant */
+         if (parm2.x == 1.0)     /* Scott variant */
                  curfractalspecific->orbitcalc =  ScottZXTrigPlusZfpFractal;
-         else if(parm2.x == -1.0)       /* Skinner variant */
+         else if (parm2.x == -1.0)       /* Skinner variant */
                  curfractalspecific->orbitcalc =  SkinnerZXTrigSubZfpFractal;
       }
    }
@@ -851,17 +851,17 @@ int
 LambdaTrigSetup(void)
 {
    int isinteger;
-   if((isinteger = curfractalspecific->isinteger) != 0)
+   if ((isinteger = curfractalspecific->isinteger) != 0)
       curfractalspecific->orbitcalc =  LambdaTrigFractal;
    else
       curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
-   switch(trigndx[0])
+   switch (trigndx[0])
    {
    case SIN:
    case COS:
    case 9:   /* 'real' cos, added this and default for additional functions */
       symmetry = PI_SYM;
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LambdaTrigFractal1;
       else
          curfractalspecific->orbitcalc =  LambdaTrigfpFractal1;
@@ -869,7 +869,7 @@ LambdaTrigSetup(void)
    case SINH:
    case COSH:
       symmetry = ORIGIN;
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LambdaTrigFractal2;
       else
          curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
@@ -878,7 +878,7 @@ LambdaTrigSetup(void)
       symmetry = ORIGIN;
       break;
    case EXP:
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
       else
          curfractalspecific->orbitcalc =  LambdaexponentFractal;
@@ -892,7 +892,7 @@ LambdaTrigSetup(void)
       break;
    }
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
-   if(isinteger)
+   if (isinteger)
       return(JulialongSetup());
    else
       return(JuliafpSetup());
@@ -906,7 +906,7 @@ JuliafnPlusZsqrdSetup(void)
    /* sin    {NOSYM,ORIGIN,NOSYM,ORIGIN,ORIGIN,NOSYM,NOSYM}; */
 
 /*   symmetry = fnpluszsqrd[trigndx[0]];   JCO  5/8/92 */
-   switch(trigndx[0]) /* fix sqr symmetry & add additional functions */
+   switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
    {
    case COS: /* cosxx */
    case COSH:
@@ -917,7 +917,7 @@ JuliafnPlusZsqrdSetup(void)
    symmetry = ORIGIN;
     /* default is for NOSYM symmetry */
    }
-   if(curfractalspecific->isinteger)
+   if (curfractalspecific->isinteger)
       return(JulialongSetup());
    else
       return(JuliafpSetup());
@@ -930,7 +930,7 @@ SqrTrigSetup(void)
    /* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
 /*           {PI_SYM,PI_SYM,XYAXIS,XYAXIS,XYAXIS,XAXIS,XAXIS}; */
 /*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
-   switch(trigndx[0]) /* fix sqr symmetry & add additional functions */
+   switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
    {
    case SIN:
    case COS: /* cosxx */
@@ -938,7 +938,7 @@ SqrTrigSetup(void)
    symmetry = PI_SYM;
     /* default is for XAXIS symmetry */
    }
-   if(curfractalspecific->isinteger)
+   if (curfractalspecific->isinteger)
       return(JulialongSetup());
    else
       return(JuliafpSetup());
@@ -959,16 +959,16 @@ FnXFnSetup(void)
    /* sqr */ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XYAXIS,NOSYM, XYAXIS},
    };
    /*
-   if(trigndx[0]==EXP || trigndx[0]==LOG || trigndx[1]==EXP || trigndx[1]==LOG)
+   if (trigndx[0]==EXP || trigndx[0]==LOG || trigndx[1]==EXP || trigndx[1]==LOG)
       symmetry = XAXIS;
-   else if((trigndx[0]==SIN && trigndx[1]==SIN)||(trigndx[0]==COS && trigndx[1]==COS))
+   else if ((trigndx[0]==SIN && trigndx[1]==SIN)||(trigndx[0]==COS && trigndx[1]==COS))
       symmetry = PI_SYM;
-   else if((trigndx[0]==SIN && trigndx[1]==COS)||(trigndx[0]==COS && trigndx[1]==SIN))
+   else if ((trigndx[0]==SIN && trigndx[1]==COS)||(trigndx[0]==COS && trigndx[1]==SIN))
       symmetry = YAXIS;
    else
       symmetry = XYAXIS;
    */
-   if(trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/22/92*/
+   if (trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/22/92*/
         symmetry = fnxfn[trigndx[0]][trigndx[1]];  /* JCO 5/22/92 */
                     /* defaults to XAXIS symmetry JCO 5/22/92 */
    else {  /* added to complete the symmetry JCO 5/22/92 */
@@ -979,7 +979,7 @@ FnXFnSetup(void)
       }
       if (trigndx[0]==9 && trigndx[1] ==9) symmetry = PI_SYM;
    }
-   if(curfractalspecific->isinteger)
+   if (curfractalspecific->isinteger)
       return(JulialongSetup());
    else
       return(JuliafpSetup());
@@ -989,30 +989,30 @@ int
 MandelTrigSetup(void)
 {
    int isinteger;
-   if((isinteger = curfractalspecific->isinteger) != 0)
+   if ((isinteger = curfractalspecific->isinteger) != 0)
       curfractalspecific->orbitcalc =  LambdaTrigFractal;
    else
       curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
    symmetry = XYAXIS_NOPARM;
-   switch(trigndx[0])
+   switch (trigndx[0])
    {
    case SIN:
    case COS:
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LambdaTrigFractal1;
       else
          curfractalspecific->orbitcalc =  LambdaTrigfpFractal1;
       break;
    case SINH:
    case COSH:
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LambdaTrigFractal2;
       else
          curfractalspecific->orbitcalc =  LambdaTrigfpFractal2;
       break;
    case EXP:
       symmetry = XAXIS_NOPARM;
-      if(isinteger)
+      if (isinteger)
          curfractalspecific->orbitcalc =  LongLambdaexponentFractal;
       else
          curfractalspecific->orbitcalc =  LambdaexponentFractal;
@@ -1024,7 +1024,7 @@ MandelTrigSetup(void)
       symmetry = XYAXIS_NOPARM;
       break;
    }
-   if(isinteger)
+   if (isinteger)
       return(MandellongSetup());
    else
       return(MandelfpSetup());
@@ -1033,22 +1033,22 @@ MandelTrigSetup(void)
 int
 MarksJuliaSetup(void)
 {
-#if !defined(XFRACT) && !defined(_WIN32)
-   if(param[2] < 1)
+#if !defined(XFRACT)
+   if (param[2] < 1)
       param[2] = 1;
    c_exp = (int)param[2];
    longparm = &lparm;
    lold = *longparm;
-   if(c_exp > 3)
+   if (c_exp > 3)
       lcpower(&lold,c_exp-1,&lcoefficient,bitshift);
-   else if(c_exp == 3)
+   else if (c_exp == 3)
    {
       lcoefficient.x = multiply(lold.x,lold.x,bitshift) - multiply(lold.y,lold.y,bitshift);
       lcoefficient.y = multiply(lold.x,lold.y,bitshiftless1);
    }
-   else if(c_exp == 2)
+   else if (c_exp == 2)
       lcoefficient = lold;
-   else if(c_exp < 2) {
+   else if (c_exp < 2) {
       lcoefficient.x = 1L << bitshift;
       lcoefficient.y = 0L;
    }
@@ -1060,21 +1060,21 @@ MarksJuliaSetup(void)
 int
 MarksJuliafpSetup(void)
 {
-   if(param[2] < 1)
+   if (param[2] < 1)
       param[2] = 1;
    c_exp = (int)param[2];
    floatparm = &parm;
    old = *floatparm;
-   if(c_exp > 3)
+   if (c_exp > 3)
       cpower(&old,c_exp-1,&coefficient);
-   else if(c_exp == 3)
+   else if (c_exp == 3)
    {
       coefficient.x = sqr(old.x) - sqr(old.y);
       coefficient.y = old.x * old.y * 2;
    }
-   else if(c_exp == 2)
+   else if (c_exp == 2)
       coefficient = old;
-   else if(c_exp < 2) {
+   else if (c_exp < 2) {
       coefficient.x = 1.0;
       coefficient.y = 0.0;
    }
@@ -1109,7 +1109,7 @@ HalleySetup(void)
    /* Halley */
    periodicitycheck=0;
 
-   if(usr_floatflag)
+   if (usr_floatflag)
      fractype = HALLEY; /* float on */
    else
      fractype = MPHALLEY;
@@ -1117,7 +1117,7 @@ HalleySetup(void)
    curfractalspecific = &fractalspecific[fractype];
 
    degree = (int)parm.x;
-   if(degree < 2)
+   if (degree < 2)
       degree = 2;
    param[0] = (double)degree;
 
@@ -1125,8 +1125,8 @@ HalleySetup(void)
    AplusOne = degree + 1; /* a+1 */
    Ap1deg = AplusOne * degree;
 
-#if !defined(XFRACT) && !defined(_WIN32)
-   if(fractype == MPHALLEY) {
+#if !defined(XFRACT)
+   if (fractype == MPHALLEY) {
       setMPfunctions();
       mpAplusOne = *pd2MP((double)AplusOne);
       mpAp1deg = *pd2MP((double)Ap1deg);
@@ -1137,7 +1137,7 @@ HalleySetup(void)
    }
 #endif
 
-   if(degree % 2)
+   if (degree % 2)
      symmetry = XAXIS;   /* odd */
    else
      symmetry = XYAXIS; /* even */
@@ -1150,24 +1150,24 @@ PhoenixSetup(void)
    longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
    floatparm = &parm;
    degree = (int)parm2.x;
-   if(degree < 2 && degree > -3) degree = 0;
+   if (degree < 2 && degree > -3) degree = 0;
    param[2] = (double)degree;
-   if(degree == 0){
-     if(usr_floatflag)
+   if (degree == 0){
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixFractal;
    }
-   if(degree >= 2){
+   if (degree >= 2){
      degree = degree - 1;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixPlusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixPlusFractal;
    }
-   if(degree <= -3){
+   if (degree <= -3){
      degree = abs(degree) - 2;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixMinusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
@@ -1182,38 +1182,38 @@ PhoenixCplxSetup(void)
    longparm = &lparm;
    floatparm = &parm;
    degree = (int)param[4];
-   if(degree < 2 && degree > -3) degree = 0;
+   if (degree < 2 && degree > -3) degree = 0;
    param[4] = (double)degree;
-   if(degree == 0){
-     if(parm2.x != 0 || parm2.y != 0)
+   if (degree == 0){
+     if (parm2.x != 0 || parm2.y != 0)
        symmetry = NOSYM;
      else
        symmetry = ORIGIN;
-     if(parm.y == 0 && parm2.y == 0)
+     if (parm.y == 0 && parm2.y == 0)
        symmetry = XAXIS;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixFractalcplx;
      else
        curfractalspecific->orbitcalc =  LongPhoenixFractalcplx;
    }
-   if(degree >= 2){
+   if (degree >= 2){
      degree = degree - 1;
-     if(parm.y == 0 && parm2.y == 0)
+     if (parm.y == 0 && parm2.y == 0)
        symmetry = XAXIS;
      else
        symmetry = NOSYM;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixCplxPlusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixCplxPlusFractal;
    }
-   if(degree <= -3){
+   if (degree <= -3){
      degree = abs(degree) - 2;
-     if(parm.y == 0 && parm2.y == 0)
+     if (parm.y == 0 && parm2.y == 0)
        symmetry = XAXIS;
      else
        symmetry = NOSYM;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixCplxMinusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
@@ -1228,24 +1228,24 @@ MandPhoenixSetup(void)
    longparm = &linit; /* added to consolidate code 10/1/92 JCO */
    floatparm = &init;
    degree = (int)parm2.x;
-   if(degree < 2 && degree > -3) degree = 0;
+   if (degree < 2 && degree > -3) degree = 0;
    param[2] = (double)degree;
-   if(degree == 0){
-     if(usr_floatflag)
+   if (degree == 0){
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixFractal;
    }
-   if(degree >= 2){
+   if (degree >= 2){
      degree = degree - 1;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixPlusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixPlusFractal;
    }
-   if(degree <= -3){
+   if (degree <= -3){
      degree = abs(degree) - 2;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixMinusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
@@ -1260,26 +1260,26 @@ MandPhoenixCplxSetup(void)
    longparm = &linit; /* added to consolidate code 10/1/92 JCO */
    floatparm = &init;
    degree = (int)param[4];
-   if(degree < 2 && degree > -3) degree = 0;
+   if (degree < 2 && degree > -3) degree = 0;
    param[4] = (double)degree;
-   if(parm.y != 0 || parm2.y != 0)
+   if (parm.y != 0 || parm2.y != 0)
      symmetry = NOSYM;
-   if(degree == 0){
-     if(usr_floatflag)
+   if (degree == 0){
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixFractalcplx;
      else
        curfractalspecific->orbitcalc =  LongPhoenixFractalcplx;
    }
-   if(degree >= 2){
+   if (degree >= 2){
      degree = degree - 1;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixCplxPlusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixCplxPlusFractal;
    }
-   if(degree <= -3){
+   if (degree <= -3){
      degree = abs(degree) - 2;
-     if(usr_floatflag)
+     if (usr_floatflag)
        curfractalspecific->orbitcalc =  PhoenixCplxMinusFractal;
      else
        curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
@@ -1291,7 +1291,7 @@ MandPhoenixCplxSetup(void)
 int
 StandardSetup(void)
 {
-   if(fractype==UNITYFP)
+   if (fractype==UNITYFP)
       periodicitycheck=0;
    return(1);
 }

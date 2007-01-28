@@ -22,7 +22,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 
 struct MP *MPsub(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
@@ -102,17 +102,17 @@ struct MPC MPCpow(struct MPC x, int exp) {
    struct MPC z;
    struct MPC zz;
 
-   if(exp & 1)
+   if (exp & 1)
       z = x;
    else
       z = MPCone;
    exp >>= 1;
-   while(exp) {
+   while (exp) {
                 zz.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
                 zz.y = *pMPmul(x.x, x.y);
                 zz.y.Exp++;
       x = zz;
-      if(exp & 1) {
+      if (exp & 1) {
                         zz.x = *pMPsub(*pMPmul(z.x, x.x), *pMPmul(z.y, x.y));
                         zz.y = *pMPadd(*pMPmul(z.x, x.y), *pMPmul(z.y, x.x));
          z = zz;
@@ -125,7 +125,7 @@ struct MPC MPCpow(struct MPC x, int exp) {
 int MPCcmp(struct MPC x, struct MPC y) {
    struct MPC z;
 
-        if(pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) {
+        if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) {
                 z.x = MPCmod(x);
                 z.y = MPCmod(y);
                 return(pMPcmp(z.x, z.y));
@@ -162,7 +162,7 @@ double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 /* struct MP  *(*pfg2MP)(long x, int fg)          = fg2MP086; */
 
 void setMPfunctions(void) {
-   if(cpu >= 386)
+   if (cpu >= 386)
    {
       pMPmul = MPmul386;
       pMPdiv = MPdiv386;
@@ -197,8 +197,8 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 
    /* fixes power bug - if any complaints, backwards compatibility hook
       goes here TIW 3/95 */
-   if(ldcheck == 0)
-      if(xx.x == 0 && xx.y == 0) {
+   if (ldcheck == 0)
+      if (xx.x == 0 && xx.y == 0) {
          z.x = z.y = 0.0;
          return(z);
       }
@@ -206,10 +206,10 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
    FPUcplxlog(&xx, &cLog);
    FPUcplxmul(&cLog, &yy, &t);
 
-   if(fpu >= 387)
+   if (fpu >= 387)
       FPUcplxexp387(&t, &z);
    else {
-      if(t.x < -690)
+      if (t.x < -690)
          e2x = 0;
       else
          e2x = exp(t.x);
@@ -286,16 +286,16 @@ void Arctanhz(_CMPLX z,_CMPLX *rz)
 {
   _CMPLX temp0,temp1,temp2;
 
-  if( z.x == 0.0){
+  if ( z.x == 0.0){
     rz->x = 0;
     rz->y = atan( z.y);
     return;
   }
   else{
-    if( fabs(z.x) == 1.0 && z.y == 0.0){
+    if ( fabs(z.x) == 1.0 && z.y == 0.0){
       return;
     }
-    else if( fabs( z.x) < 1.0 && z.y == 0.0){
+    else if ( fabs( z.x) < 1.0 && z.y == 0.0){
       rz->x = log((1+z.x)/(1-z.x))/2;
       rz->y = 0;
       return;
@@ -315,18 +315,18 @@ void Arctanhz(_CMPLX z,_CMPLX *rz)
 void Arctanz(_CMPLX z,_CMPLX *rz)
 {
   _CMPLX temp0,temp1,temp2,temp3;
-  if( z.x == 0.0 && z.y == 0.0)
+  if ( z.x == 0.0 && z.y == 0.0)
     rz->x = rz->y = 0;
-  else if( z.x != 0.0 && z.y == 0.0){
+  else if ( z.x != 0.0 && z.y == 0.0){
     rz->x = atan( z.x);
     rz->y = 0;
   }
-  else if( z.x == 0.0 && z.y != 0.0){
+  else if ( z.x == 0.0 && z.y != 0.0){
     temp0.x = z.y;  temp0.y = 0.0;
     Arctanhz( temp0, &temp0);
     rz->x = -temp0.y; rz->y = temp0.x;              /* i*temp0 */
   }
-  else if( z.x != 0.0 && z.y != 0.0){
+  else if ( z.x != 0.0 && z.y != 0.0){
 
     temp0.x = -z.y; temp0.y = z.x;                  /* i*z */
     temp1.x = 1 - temp0.x; temp1.y = -temp0.y;      /* temp1 = 1 - temp0 */
@@ -414,7 +414,7 @@ _CMPLX ComplexSqrtFloat(double x, double y)
    double theta;
    _CMPLX  result;
 
-   if(x == 0.0 && y == 0.0)
+   if (x == 0.0 && y == 0.0)
       result.x = result.y = 0.0;
    else
    {
@@ -534,7 +534,7 @@ long logtablecalc(long citer) {
    if (LogFlag > 0) { /* new log function */
       if ((unsigned long)citer <= lf + 1)
          ret = 1;
-      else if((citer - lf) / log(citer - lf) <= mlf) {
+      else if ((citer - lf) / log(citer - lf) <= mlf) {
          if (save_release < 2002)
             ret = (long)(citer - lf + (lf?1:0));
          else
@@ -550,7 +550,7 @@ long logtablecalc(long citer) {
    } else if (LogFlag <= -2) { /* sqrt function */
       if ((unsigned long)citer <= lf)
          ret = 1;
-      else if((unsigned long)(citer - lf) <= (unsigned long)(mlf * mlf))
+      else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf * mlf))
          ret = (long)(citer - lf + 1);
       else
          ret = (long)(mlf * sqrt(citer - lf)) + 1;
@@ -575,7 +575,7 @@ _CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 int ComplexNewtonSetup(void) {
    threshold = .001;
    periodicitycheck = 0;
-   if(param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
+   if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
       param[3] != 0.0) {
       croot.x = param[2];
       croot.y = param[3];
@@ -602,7 +602,7 @@ int ComplexNewton(void) {
 
    tmp.x = g_new.x - croot.x;
    tmp.y = g_new.y - croot.y;
-   if((sqr(tmp.x) + sqr(tmp.y)) < threshold)
+   if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
       return(1);
 
    FPUcplxmul(&g_new, &cd1, &tmp);
@@ -611,7 +611,7 @@ int ComplexNewton(void) {
 
    FPUcplxmul(&temp, &cdegree, &cd1);
    FPUcplxdiv(&tmp, &cd1, &old);
-   if(overflow)
+   if (overflow)
    {
       return(1);
    }
@@ -635,21 +635,21 @@ int ComplexBasin(void) {
 
    tmp.x = g_new.x - croot.x;
    tmp.y = g_new.y - croot.y;
-   if((sqr(tmp.x) + sqr(tmp.y)) < threshold) {
-      if(fabs(old.y) < .01)
+   if ((sqr(tmp.x) + sqr(tmp.y)) < threshold) {
+      if (fabs(old.y) < .01)
          old.y = 0.0;
       FPUcplxlog(&old, &temp);
       FPUcplxmul(&temp, &cdegree, &tmp);
       mod = tmp.y/TwoPi;
       coloriter = (long)mod;
-      if(fabs(mod - coloriter) > 0.5) {
-         if(mod < 0.0)
+      if (fabs(mod - coloriter) > 0.5) {
+         if (mod < 0.0)
             coloriter--;
          else
             coloriter++;
       }
       coloriter += 2;
-      if(coloriter < 0)
+      if (coloriter < 0)
          coloriter += 128;
       return(1);
    }
@@ -660,7 +660,7 @@ int ComplexBasin(void) {
 
    FPUcplxmul(&temp, &cdegree, &cd1);
    FPUcplxdiv(&tmp, &cd1, &old);
-   if(overflow)
+   if (overflow)
    {
       return(1);
    }
@@ -686,17 +686,143 @@ int GausianNumber(int Probability, int Range) {
    p = divide((long)Probability << 16, (long)Range << 16, 16);
    p = multiply(p, con, 16);
    p = multiply((long)Distribution << 16, p, 16);
-   if(!(rand15() % (Distribution - (int)(p >> 16) + 1))) {
-      for(n = 0; n < Slope; n++)
+   if (!(rand15() % (Distribution - (int)(p >> 16) + 1))) {
+      for (n = 0; n < Slope; n++)
          Accum += rand15();
       Accum /= Slope;
       r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
       r = r - Range;
-      if(r < 0)
+      if (r < 0)
          r = -r;
       return(Range - r + Offset);
    }
    return(Offset);
+}
+
+#endif
+
+#if defined(_WIN32)
+double *MP2d086(struct MP x)
+{
+	static double ans = 0.0;
+	_ASSERTE(0 && "MP2d086 called.");
+	return &ans;
+}
+
+struct MP *d2MP086(double x)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "d2MP086 called.");
+	return &ans;
+}
+
+struct MP *MPadd086(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPadd086 called.");
+	return &ans;
+}
+
+int MPcmp086(struct MP x, struct MP y)
+{
+	_ASSERTE(0 && "MPcmp086 called.");
+	return 0;
+}
+
+struct MP *MPdiv086(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPdiv086 called.");
+	return &ans;
+}
+
+struct MP *MPmul086(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPmul086 called.");
+	return &ans;
+}
+
+struct MP *d2MP386(double x)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "d2MP386 called.");
+	return &ans;
+}
+
+double *MP2d386(struct MP x)
+{
+	static double ans = 0.0;
+	_ASSERTE(0 && "MP2d386 called.");
+	return &ans;
+}
+
+struct MP *MPadd(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPadd called.");
+	return &ans;
+}
+
+struct MP *MPadd386(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPadd386 called.");
+	return &ans;
+}
+
+int MPcmp386(struct MP x, struct MP y)
+{
+	_ASSERTE(0 && "MPcmp386 called.");
+	return 0;
+}
+
+struct MP *MPdiv386(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPdiv386 called.");
+	return &ans;
+}
+
+struct MP *MPmul386(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPmul386 called.");
+	return &ans;
+}
+
+struct MP *d2MP(double x)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "d2MP called.");
+	return &ans;
+}
+
+struct MP *MPmul(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPmul called.");
+	return &ans;
+}
+
+struct MP *MPdiv(struct MP x, struct MP y)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "MPdiv called.");
+	return &ans;
+}
+
+int MPcmp(struct MP x, struct MP y)
+{
+	_ASSERTE(0 && "MPcmp called.");
+	return 0;
+}
+
+struct MP *fg2MP(long x, int fg)
+{
+	static struct MP ans = { 0 };
+	_ASSERTE(0 && "fg2MP called.");
+	return &ans;
 }
 
 #endif
