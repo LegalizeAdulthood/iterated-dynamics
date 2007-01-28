@@ -15,10 +15,10 @@
 #endif
 
 
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 struct MP {
-   int Exp;
-        unsigned long Mant;
+	int Exp;
+	unsigned long Mant;
 };
 #else
 struct MP {
@@ -49,7 +49,7 @@ extern double     *(*pMP2d)(struct MP )             ;
 
 
 /*** Formula Declarations ***/
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 enum MATH_TYPE { D_MATH, M_MATH, L_MATH };
 #else
 enum MATH_TYPE { D_MATH};
@@ -103,7 +103,7 @@ extern void (*dtrig3)(void);
 /*   The following #defines allow the complex transcendental functions  */
 /*   in parser.c to be used here thus avoiding duplicated code.         */
 /* -------------------------------------------------------------------- */
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 
 #define CMPLXmod(z)       (sqr((z).x)+sqr((z).y))
 #define CMPLXconj(z)    ((z).y =  -((z).y))
@@ -123,7 +123,7 @@ extern void (*dtrig3)(void);
 #define  CMPLXtrig2(arg,out) Arg1->d = (arg); dtrig2(); (out)=Arg1->d
 #define  CMPLXtrig3(arg,out) Arg1->d = (arg); dtrig3(); (out)=Arg1->d
 
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 
 #define LCMPLXsin(arg,out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
 #define LCMPLXcos(arg,out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
