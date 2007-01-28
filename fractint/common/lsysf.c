@@ -305,7 +305,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
       }
       tran=0;
       if (depth) {
-         for(rulind=rules;*rulind;rulind++)
+         for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch==command->ch) {
                tran=1;
                if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
@@ -438,7 +438,7 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
       }
       tran=0;
       if (depth) {
-         for(rulind=rules;*rulind;rulind++)
+         for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran=1;
                if (drawLSysF((*rulind)+1,ts,rules,depth-1) == NULL)
@@ -677,7 +677,7 @@ void _fastcall lsysf_dosincos(void)
 
    locaspect=screenaspect*xdots/ydots;
    twopimax = TWOPI / maxangle;
-   for(i=0;i<maxangle;i++) {
+   for (i=0; i<maxangle; i++) {
       twopimaxi = i * twopimax;
       sins_f[i]= sinl(twopimaxi);
       coss_f[i]= locaspect * cosl(twopimaxi);

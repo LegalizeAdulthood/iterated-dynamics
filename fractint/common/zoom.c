@@ -45,9 +45,9 @@ void dispbox(void)
    int boxc = (colors-1)&boxcolor;
    unsigned char *values = (unsigned char *)boxvalues;
    int rgb[3];
-   for(i=0;i<boxcount;i++)
+   for (i=0; i<boxcount; i++)
    {
-      if(g_is_true_color && truemode)
+      if (g_is_true_color && truemode)
       {
          driver_get_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,&rgb[0],&rgb[1],&rgb[2],NULL);
          driver_put_truecolor(boxx[i]-sxoffs,boxy[i]-syoffs,
@@ -58,7 +58,7 @@ void dispbox(void)
    }
 /* There is an interaction between getcolor and putcolor, so separate them */
    if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
-      for(i=0;i<boxcount;i++)
+      for (i=0; i<boxcount; i++)
       {
          if (colors == 2)
             putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,(1 - values[i]));
@@ -70,14 +70,14 @@ void dispbox(void)
 void clearbox(void)
 {
    int i;
-   if(g_is_true_color && truemode)
+   if (g_is_true_color && truemode)
    {
       dispbox();
    }
    else
    {
       unsigned char *values = (unsigned char *)boxvalues;
-      for(i=0;i<boxcount;i++)
+      for (i=0; i<boxcount; i++)
       {
          putcolor(boxx[i]-sxoffs,boxy[i]-syoffs,values[i]);
       }
@@ -98,7 +98,7 @@ void drawbox(int drawit)
             boxcount = 0; }
         reset_zoom_corners();
         return; }
-    if(bf_math)
+    if (bf_math)
     {
        saved = save_stack();
        bffxwidth = alloc_stack(rbflength+2);
@@ -118,7 +118,7 @@ void drawbox(int drawit)
     fyskew  = symin-sy3rd;
     fxadj   = zwidth*zskew;
 
-    if(bf_math)
+    if (bf_math)
     {
        /* do some calcs just once here to reduce fp work a bit */
        sub_bf(bffxwidth,bfsxmax,bfsx3rd);
@@ -142,7 +142,7 @@ void drawbox(int drawit)
     tl.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
     yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if(bf_math)
+    if (bf_math)
     {
        calc_corner(bfxmin,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
        calc_corner(bfymax,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -155,7 +155,7 @@ void drawbox(int drawit)
     br.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if(bf_math)
+    if (bf_math)
     {
        calc_corner(bfxmax,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
        calc_corner(bfymin,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -171,7 +171,7 @@ void drawbox(int drawit)
     bl.y   = (int)(ftemp2*(dysize+PIXELROUND));
     xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
-    if(bf_math)
+    if (bf_math)
     {
        calc_corner(bfx3rd,bfsxmin,ftemp1,bffxwidth,ftemp2,bffxskew);
        calc_corner(bfy3rd,bfsymax,ftemp2,bffydepth,ftemp1,bffyskew);
@@ -515,7 +515,7 @@ void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
 
 void zoomout(void) /* for ctl-enter, calc corners for zooming out */
 {
-   if(bf_math)
+   if (bf_math)
    {
       zoomoutbf();
    }

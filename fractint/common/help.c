@@ -172,7 +172,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
    else
       tok = -1;
 
-   for(;;)
+   while (1)
       {
       switch ( tok )
          {
@@ -196,7 +196,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
             col = indent;
 
-            for(;;)
+            while (1)
                {
                tok = find_token_length(ONLINE, curr, len, &size, &width);
 
@@ -300,7 +300,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
          break;
 
       tok = find_token_length(ONLINE, curr, len, &size, &width);
-      } /* for(;;) */
+      } /* while (1) */
 
    g_text_cbase = 0;
    g_text_rbase = 0;
@@ -638,7 +638,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
    where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
 
-   for(page=0; page<num_pages; page++)
+   for (page=0; page<num_pages; page++)
       if (curr->topic_off >= page_table[page].offset &&
           curr->topic_off <  page_table[page].offset+page_table[page].len )
          break;
@@ -676,7 +676,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
       key = driver_get_key();
 
-      switch(key)
+      switch (key)
          {
          case FIK_PAGE_DOWN:
             if (page<num_pages-1)
@@ -844,7 +844,7 @@ int help(int action)
 
 	do
 	{
-		switch(action)
+		switch (action)
         {
         case ACTION_PREV2:
 			if (curr_hist > 0)
@@ -977,7 +977,7 @@ static int exe_path(char *filename, char *path)
       extern char **__argv;
       strcpy(path, __argv[0]);   /* note: __argv may be undocumented in MSC */
 #endif
-      if(strcmp(filename,"FRACTINT.EXE")==0)
+      if (strcmp(filename,"FRACTINT.EXE")==0)
          if (can_read_file(path))
             return (1);
       ptr = strrchr(path, SLASHC);

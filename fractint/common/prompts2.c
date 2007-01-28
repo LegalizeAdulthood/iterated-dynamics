@@ -172,25 +172,25 @@ int get_toggles()
    uvalues[k].uval.ch.vlen = 12;
    uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
    uvalues[k].uval.ch.list = insidemodes;
-   if(inside >= 0)  /* numb */
+   if (inside >= 0)  /* numb */
       uvalues[k].uval.ch.val = 0;
-   else if(inside == -1)  /* maxiter */
+   else if (inside == -1)  /* maxiter */
       uvalues[k].uval.ch.val = 1;
-   else if(inside == ZMAG)
+   else if (inside == ZMAG)
       uvalues[k].uval.ch.val = 2;
-   else if(inside == BOF60)
+   else if (inside == BOF60)
       uvalues[k].uval.ch.val = 3;
-   else if(inside == BOF61)
+   else if (inside == BOF61)
       uvalues[k].uval.ch.val = 4;
-   else if(inside == EPSCROSS)
+   else if (inside == EPSCROSS)
       uvalues[k].uval.ch.val = 5;
-   else if(inside == STARTRAIL)
+   else if (inside == STARTRAIL)
       uvalues[k].uval.ch.val = 6;
-   else if(inside == PERIOD)
+   else if (inside == PERIOD)
       uvalues[k].uval.ch.val = 7;
-   else if(inside == ATANI)
+   else if (inside == ATANI)
       uvalues[k].uval.ch.val = 8;
-   else if(inside == FMODI)
+   else if (inside == FMODI)
       uvalues[k].uval.ch.val = 9;
    old_inside = inside;
 
@@ -206,7 +206,7 @@ int get_toggles()
    uvalues[k].uval.ch.vlen = 4;
    uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
    uvalues[k].uval.ch.list = outsidemodes;
-   if(outside >= 0)  /* numb */
+   if (outside >= 0)  /* numb */
       uvalues[k].uval.ch.val = 0;
    else
       uvalues[k].uval.ch.val = -outside;
@@ -216,7 +216,7 @@ int get_toggles()
    uvalues[k].type = 's';
    strcpy(prevsavename,savename);
    savenameptr = strrchr(savename, SLASHC);
-   if(savenameptr == NULL)
+   if (savenameptr == NULL)
       savenameptr = savename;
    else
       savenameptr++; /* point past slash */
@@ -253,7 +253,7 @@ int get_toggles()
 
    LOADCHOICES("Fill Color (normal,#) (works with passes=t, b and d)");
    uvalues[k].type = 's';
-   if(fillcolor < 0)
+   if (fillcolor < 0)
       strcpy(uvalues[k].uval.sval, "normal");
    else
       sprintf(uvalues[k].uval.sval,"%d",fillcolor);
@@ -278,10 +278,10 @@ int get_toggles()
    usr_stdcalcmode = calcmodes[uvalues[++k].uval.ch.val][0];
    stoppass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
-   if(stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
+   if (stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
       stoppass = 0;
 
-   if(usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops,lyapunov type */
+   if (usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops,lyapunov type */
                                        /* doesn't use 'new' & breaks orbits */
       usr_stdcalcmode = old_usr_stdcalcmode;
 
@@ -373,7 +373,7 @@ int get_toggles()
    decomp[0] = uvalues[++k].uval.ival;
    if (decomp[0] != old_decomp) j++;
 
-   if(strncmp(strlwr(uvalues[++k].uval.sval), "normal",4)==0)
+   if (strncmp(strlwr(uvalues[++k].uval.sval), "normal",4)==0)
       fillcolor = -1;
    else
       fillcolor = atoi(uvalues[k].uval.sval);
@@ -918,7 +918,7 @@ get_view_restart:
       }
 
       /* if virtual screen is too large */
-      if( (unsigned long)((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots)
+      if ( (unsigned long)((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots)
             * ((sydots < g_vesa_y_res) ? g_vesa_y_res : sydots) > vidmem) {
         /* and we have to keep ratio */
         if (video_cutboth) {
@@ -991,7 +991,7 @@ int get_cmd_string()
    helpmode = oldhelpmode;
    if (i >= 0 && cmdbuf[0] != 0) {
        i = cmdarg(cmdbuf, 2);
-       if(debugflag == 98)
+       if (debugflag == 98)
        {
           backwards_v18();
           backwards_v19();
@@ -1036,15 +1036,15 @@ int starfield(void)
       return(-1);
       }
    spindac(0,1);                 /* load it, but don't spin */
-   for(row = 0; row < ydots; row++) {
-      for(col = 0; col < xdots; col++) {
+   for (row = 0; row < ydots; row++) {
+      for (col = 0; col < xdots; col++) {
          if (driver_key_pressed()) {
             driver_buzzer(BUZZER_INTERRUPT);
             busy = 0;
             return(1);
             }
          c = getcolor(col, row);
-         if(c == inside)
+         if (c == inside)
             c = colors-1;
          putcolor(col, row, GausianNumber(c, colors));
       }
@@ -1065,7 +1065,7 @@ int get_starfield_params(void) {
 		"Ratio of Dim stars to Bright"
 	};
 
-   if(colors < 255) {
+   if (colors < 255) {
       stopmsg(0,"starfield requires 256 color mode");
       return(-1);
    }
@@ -1109,7 +1109,7 @@ int get_rds_params(void) {
    int ret;
    static char reuse = 0;
    driver_stack_screen();
-   for(;;)
+   while (1)
    {
       ret = 0;
 
@@ -1133,16 +1133,16 @@ int get_rds_params(void) {
       uvalues[k++].type = 'y';
 
 
-      if(*stereomapname != 0 && image_map)
+      if (*stereomapname != 0 && image_map)
       {
          char *p;
          uvalues[k].uval.ch.val = reuse;
          uvalues[k++].type = 'y';
 
          uvalues[k++].type = '*';
-         for(i=0;i<sizeof(rds6);i++)
+         for (i=0; i<sizeof(rds6); i++)
             rds6[i] = ' ';
-         if((p = strrchr(stereomapname,SLASHC))==NULL ||
+         if ((p = strrchr(stereomapname,SLASHC))==NULL ||
                  (int) strlen(stereomapname) < sizeof(rds6)-2)
             p = strlwr(stereomapname);
          else
@@ -1171,13 +1171,13 @@ int get_rds_params(void) {
          grayflag         = (char)uvalues[k++].uval.ch.val;
          calibrate        = (char)uvalues[k++].uval.ch.val;
          image_map        = (char)uvalues[k++].uval.ch.val;
-         if(*stereomapname && image_map)
+         if (*stereomapname && image_map)
             reuse         = (char)uvalues[k++].uval.ch.val;
          else
             reuse = 0;
-         if(image_map && !reuse)
+         if (image_map && !reuse)
          {
-            if(getafilename("Select an Imagemap File",masks[1],stereomapname))
+            if (getafilename("Select an Imagemap File",masks[1],stereomapname))
                continue;
          }
       }
@@ -1382,7 +1382,7 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
      char thisname[FILE_MAX_PATH];
      char tmpname[FILE_MAX_PATH];
      char thisext[FILE_MAX_EXT];
-     for(;;) {
+     while (1) {
          dirEntry = readdir(currdir);
          if (dirEntry == NULL) {
              closedir(currdir);
@@ -1425,15 +1425,15 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
    ll=(n>>1)+1;
    ir=n;
 
-   for(;;)
+   while (1)
    {
-      if(ll>1)
+      if (ll>1)
          rra = *((char **)(ra+(--ll)*sz));
       else
       {
          rra = *((char * *)(ra+ir*sz));
          *((char * *)(ra+ir*sz))=*((char * *)(ra+sz));
-         if(--ir == 1)
+         if (--ir == 1)
          {
             *((char * *)(ra+sz))=rra;
             return;
@@ -1443,9 +1443,9 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
       j = ll <<1;
       while (j <= ir)
       {
-         if(j<ir && (fct(ra+j*sz,ra+(j+1)*sz) < 0))
+         if (j<ir && (fct(ra+j*sz,ra+(j+1)*sz) < 0))
             ++j;
-         if(fct(&rra,ra+j*sz) < 0)
+         if (fct(&rra,ra+j*sz) < 0)
          {
             *((char * *)(ra+i*sz)) = *((char * *)(ra+j*sz));
             j += (i=j);
@@ -1504,7 +1504,7 @@ int getafilename(char *hdg,char *file_template,char *flname)
    attributes = (int *)(choices[0] + MAXNUMFILES+1);
    instr = (char *)(attributes + MAXNUMFILES +1);
    attributes[0] = 1;
-   for(i=1;i<MAXNUMFILES+1;i++)
+   for (i=1; i<MAXNUMFILES+1; i++)
    {
       choices[i] = choices[i-1] + 1;
       attributes[i] = 1;
@@ -1514,7 +1514,7 @@ int getafilename(char *hdg,char *file_template,char *flname)
 restart:  /* return here if template or directory changes */
 
    tmpmask[0] = 0;
-   if(flname[0] == 0)
+   if (flname[0] == 0)
       strcpy(flname,DOTSLASH);
    splitpath(flname ,drive,dir,fname,ext);
    makepath(filename,""   ,"" ,fname,ext);
@@ -1538,7 +1538,7 @@ retry_dir:
       }
       tmpmask[j] = SLASHC;
    }
-   if(file_template[0])
+   if (file_template[0])
    {
       numtemplates = 1;
       splitpath(file_template,NULL,NULL,fname,ext);
@@ -1552,34 +1552,34 @@ retry_dir:
    masklen = (int) strlen(tmpmask);
    strcat(tmpmask,"*.*");
    out = fr_findfirst(tmpmask);
-   while(out == 0 && filecount < MAXNUMFILES)
+   while (out == 0 && filecount < MAXNUMFILES)
    {
-      if((DTA.attribute & SUBDIR) && strcmp(DTA.filename,"."))
+      if ((DTA.attribute & SUBDIR) && strcmp(DTA.filename,"."))
       {
-         if(strcmp(DTA.filename,".."))
+         if (strcmp(DTA.filename,".."))
             strcat(DTA.filename,SLASH);
          strncpy(choices[++filecount]->name,DTA.filename,13);
          choices[filecount]->name[12] = '\0';
          choices[filecount]->type = 1;
          dircount++;
-         if(strcmp(DTA.filename,"..")==0)
+         if (strcmp(DTA.filename,"..")==0)
             notroot = 1;
       }
       out = fr_findnext();
    }
    tmpmask[masklen] = 0;
-   if(file_template[0])
+   if (file_template[0])
       makepath(tmpmask,drive,dir,fname,ext);
    do
    {
-      if(numtemplates > 1)
+      if (numtemplates > 1)
          strcpy(&(tmpmask[masklen]),masks[j]);
       out = fr_findfirst(tmpmask);
-      while(out == 0 && filecount < MAXNUMFILES)
+      while (out == 0 && filecount < MAXNUMFILES)
       {
-         if(!(DTA.attribute & SUBDIR))
+         if (!(DTA.attribute & SUBDIR))
          {
-            if(rds)
+            if (rds)
             {
                sprintf(speedstr,"%s",DTA.filename);
                putstringcenter(2,0,80,C_GENERAL_INPUT,speedstr);
@@ -1608,20 +1608,20 @@ retry_dir:
    }
 
    strcpy(instr,"Press "FK_F6" for default directory, "FK_F4" to toggle sort ");
-   if(dosort)
+   if (dosort)
    {
       strcat(instr,"off");
       shell_sort((void **)choices,filecount,sizeof(char *),lccompare); /* sort file list */
    }
    else
       strcat(instr,"on");
-   if(notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
+   if (notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
    {
       splitpath(tmpmask,drive,dir,fname,ext);
       strcpy(dir,SLASH);
       makepath(tmpmask,drive,dir,fname,ext);
    }
-   if(numtemplates > 1)
+   if (numtemplates > 1)
    {
       strcat(tmpmask," ");
       strcat(tmpmask,masks[0]);
@@ -1669,21 +1669,21 @@ retry_dir:
       strcpy(flname,old_flname);
       return(-1);
    }
-   if(speedstr[0] == 0 || speedstate == MATCHING)
+   if (speedstr[0] == 0 || speedstate == MATCHING)
    {
-      if(choices[i]->type)
+      if (choices[i]->type)
       {
-         if(strcmp(choices[i]->name,"..") == 0) /* go up a directory */
+         if (strcmp(choices[i]->name,"..") == 0) /* go up a directory */
          {
-            if(strcmp(dir,DOTSLASH) == 0)
+            if (strcmp(dir,DOTSLASH) == 0)
                strcpy(dir,DOTDOTSLASH);
             else
             {
                char *s;
-               if((s = strrchr(dir,SLASHC)) != NULL) /* trailing slash */
+               if ((s = strrchr(dir,SLASHC)) != NULL) /* trailing slash */
                {
                   *s = 0;
-                  if((s = strrchr(dir,SLASHC)) != NULL)
+                  if ((s = strrchr(dir,SLASHC)) != NULL)
                      *(s+1) = 0;
                }
             }
@@ -1705,7 +1705,7 @@ retry_dir:
         && (DTA.attribute & SUBDIR))|| strcmp(speedstr,SLASH)==0)) /* it is a directory */
          speedstate = TEMPLATE;
 
-      if(speedstate == TEMPLATE)
+      if (speedstate == TEMPLATE)
       {
          /* extract from tempstr the pathname and template information,
             being careful not to overwrite drive and directory if not
@@ -1715,15 +1715,15 @@ retry_dir:
          char fname1[FILE_MAX_FNAME];
          char ext1[FILE_MAX_EXT];
          splitpath(speedstr,drive1,dir1,fname1,ext1);
-         if(drive1[0])
+         if (drive1[0])
             strcpy(drive,drive1);
-         if(dir1[0])
+         if (dir1[0])
             strcpy(dir,dir1);
          makepath(flname,drive,dir,fname1,ext1);
-         if(strchr(fname1,'*') || strchr(fname1,'?') ||
+         if (strchr(fname1,'*') || strchr(fname1,'?') ||
              strchr(ext1  ,'*') || strchr(ext1  ,'?'))
             makepath(file_template,"","",fname1,ext1);
-         else if(isadirectory(flname))
+         else if (isadirectory(flname))
             fix_dirname(flname);
          goto restart;
       }
@@ -1731,7 +1731,7 @@ retry_dir:
       {
          char fullpath[FILE_MAX_DIR];
          findpath(speedstr,fullpath);
-         if(fullpath[0])
+         if (fullpath[0])
             strcpy(flname,fullpath);
          else
          {  /* failed, make diagnostic useful: */
@@ -1792,25 +1792,25 @@ int isadirectory(char *s)
 #ifdef _MSC_VER
    unsigned attrib = 0;
 #endif
-   if(strchr(s,'*') || strchr(s,'?'))
+   if (strchr(s,'*') || strchr(s,'?'))
       return(0); /* for my purposes, not a directory */
 
    len = (int) strlen(s);
-   if(len > 0)
+   if (len > 0)
       sv = s[len-1];   /* last char */
    else
       sv = 0;
 
 #ifdef _MSC_VER
-   if(_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
+   if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
    {
       return(1);  /* not a directory or doesn't exist */
    }
-   else if(sv == SLASHC)
+   else if (sv == SLASHC)
    {
       /* strip trailing slash and try again */
       s[len-1] = 0;
-      if(_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
+      if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
       {
          s[len-1] = sv;
          return(1);
@@ -1819,21 +1819,21 @@ int isadirectory(char *s)
    }
    return(0);
 #else
-   if(fr_findfirst(s) != 0) /* couldn't find it */
+   if (fr_findfirst(s) != 0) /* couldn't find it */
    {
       /* any better ideas?? */
-     if(sv == SLASHC) /* we'll guess it is a directory */
+     if (sv == SLASHC) /* we'll guess it is a directory */
          return(1);
       else
          return(0);  /* no slashes - we'll guess it's a file */
    }
-   else if((DTA.attribute & SUBDIR) != 0) {
-      if(sv == SLASHC) {
+   else if ((DTA.attribute & SUBDIR) != 0) {
+      if (sv == SLASHC) {
       /* strip trailing slash and try again */
          s[len-1] = 0;
-         if(fr_findfirst(s) != 0) /* couldn't find it */
+         if (fr_findfirst(s) != 0) /* couldn't find it */
              return(0);
-         else if((DTA.attribute & SUBDIR) != 0)
+         else if ((DTA.attribute & SUBDIR) != 0)
              return(1);   /* we're SURE it's a directory */
          else
              return(0);
@@ -1987,8 +1987,8 @@ void fix_dirname(char *dirname)
    int length = (int) strlen(dirname); /* index of last character */
 
    /* make sure dirname ends with a slash */
-   if(length > 0)
-      if(dirname[length-1] == SLASHC)
+   if (length > 0)
+      if (dirname[length-1] == SLASHC)
          return;
    strcat(dirname,SLASH);
 }
@@ -1996,7 +1996,7 @@ void fix_dirname(char *dirname)
 static void dir_name(char *target, char *dir, char *name)
 {
    *target = 0;
-   if(*dir != 0)
+   if (*dir != 0)
       strcpy(target,dir);
    strcat(target,name);
 }
@@ -2160,7 +2160,7 @@ gc_loop:
       yymax         = curfractalspecific->ymax;
       if (viewcrop && finalaspectratio != screenaspect)
          aspectratio_crop(screenaspect,finalaspectratio);
-      if(bf_math != 0)
+      if (bf_math != 0)
          fractal_floattobf();
       goto gc_loop;
       }
@@ -2221,7 +2221,7 @@ gc_loop:
       goto gc_loop;
       }
 
-   if(!cmpdbl(oxxmin,xxmin) && !cmpdbl(oxxmax,xxmax) && !cmpdbl(oyymin,yymin) &&
+   if (!cmpdbl(oxxmin,xxmin) && !cmpdbl(oxxmax,xxmax) && !cmpdbl(oyymin,yymin) &&
       !cmpdbl(oyymax,yymax) && !cmpdbl(oxx3rd,xx3rd) && !cmpdbl(oyy3rd,yy3rd))
    {
      /* no change, restore values to avoid drift */
@@ -2417,7 +2417,7 @@ gsc_loop:
       goto gsc_loop;
       }
 
-   if(!cmpdbl(oxxmin,oxmin) && !cmpdbl(oxxmax,oxmax) && !cmpdbl(oyymin,oymin) &&
+   if (!cmpdbl(oxxmin,oxmin) && !cmpdbl(oxxmax,oxmax) && !cmpdbl(oyymin,oymin) &&
       !cmpdbl(oyymax,oymax) && !cmpdbl(oxx3rd,ox3rd) && !cmpdbl(oyy3rd,oy3rd))
    {
      /* no change, restore values to avoid drift */
@@ -2602,30 +2602,30 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    char ext1[FILE_MAX_EXT];
 
    /* no dot or slash so assume a file */
-   if(strchr(newfilename,'.')==NULL && strchr(newfilename,SLASHC) == NULL)
+   if (strchr(newfilename,'.')==NULL && strchr(newfilename,SLASHC) == NULL)
       isafile=1;
-   if((isadir = isadirectory(newfilename)) != 0)
+   if ((isadir = isadirectory(newfilename)) != 0)
       fix_dirname(newfilename);
 #if 0
    /* if slash by itself, it's a directory */
-   if(strcmp(newfilename,SLASH)==0)
+   if (strcmp(newfilename,SLASH)==0)
       isadir = 1;
 #endif
 #ifndef XFRACT
    /* if drive, colon, slash, is a directory */
-   if((int) strlen(newfilename) == 3 &&
+   if ((int) strlen(newfilename) == 3 &&
            newfilename[1] == ':' &&
            newfilename[2] == SLASHC)
       isadir = 1;
    /* if drive, colon, with no slash, is a directory */
-   if((int) strlen(newfilename) == 2 &&
+   if ((int) strlen(newfilename) == 2 &&
            newfilename[1] == ':') {
       newfilename[2] = SLASHC;
       newfilename[3] = 0;
       isadir = 1;
       }
    /* if dot, slash, '0', its the current directory, set up full path */
-   if(newfilename[0] == '.' &&
+   if (newfilename[0] == '.' &&
            newfilename[1] == SLASHC && newfilename[2] == 0) {
       temp_path[0] = (char)('a' + _getdrive() - 1);
       temp_path[1] = ':';
@@ -2636,7 +2636,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
       isadir = 1;
       }
    /* if dot, slash, its relative to the current directory, set up full path */
-   if(newfilename[0] == '.' &&
+   if (newfilename[0] == '.' &&
            newfilename[1] == SLASHC) {
       int len, test_dir=0;
       temp_path[0] = (char)('a' + _getdrive() - 1);
@@ -2657,10 +2657,10 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    strcpy(newfilename,temp_path);
 #endif
    /* check existence */
-   if(isadir==0 || isafile==1)
+   if (isadir==0 || isafile==1)
    {
-       if(fr_findfirst(newfilename) == 0) {
-          if(DTA.attribute & SUBDIR) /* exists and is dir */
+       if (fr_findfirst(newfilename) == 0) {
+          if (DTA.attribute & SUBDIR) /* exists and is dir */
           {
              fix_dirname(newfilename);  /* add trailing slash */
              isadir = 1;
@@ -2673,26 +2673,26 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 
    splitpath(newfilename,drive,dir,fname,ext);
    splitpath(oldfullpath,drive1,dir1,fname1,ext1);
-   if((int) strlen(drive) != 0 && GETPATH)
+   if ((int) strlen(drive) != 0 && GETPATH)
       strcpy(drive1,drive);
-   if((int) strlen(dir) != 0 && GETPATH)
+   if ((int) strlen(dir) != 0 && GETPATH)
       strcpy(dir1,dir);
-   if((int) strlen(fname) != 0)
+   if ((int) strlen(fname) != 0)
       strcpy(fname1,fname);
-   if((int) strlen(ext) != 0)
+   if ((int) strlen(ext) != 0)
       strcpy(ext1,ext);
-   if(isadir == 0 && isafile == 0 && GETPATH)
+   if (isadir == 0 && isafile == 0 && GETPATH)
    {
       makepath(oldfullpath,drive1,dir1,NULL,NULL);
       len = (int) strlen(oldfullpath);
-      if(len > 0)
+      if (len > 0)
       {
          char save;
          /* strip trailing slash */
          save = oldfullpath[len-1];
-         if(save == SLASHC)
+         if (save == SLASHC)
             oldfullpath[len-1] = 0;
-         if(access(oldfullpath,0))
+         if (access(oldfullpath,0))
             isadir = -1;
          oldfullpath[len-1] = save;
       }
@@ -2718,8 +2718,8 @@ char *has_ext(char *source)
    char ext[FILE_MAX_EXT];
    char *ret = NULL;
    splitpath(source,NULL,NULL,fname,ext);
-   if(ext != NULL)
-      if(*ext != 0)
+   if (ext != NULL)
+      if (*ext != 0)
          ret = strrchr(source,'.');
    return(ret);
 }
@@ -2732,11 +2732,11 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1,VO
    void *temp;
    char *v;
    v = (char *)v1;
-   for(gap = n/2; gap > 0; gap /= 2)
-      for(i = gap; i<n; i++)
-         for(j=i-gap;j>=0; j -= gap)
+   for (gap = n/2; gap > 0; gap /= 2)
+      for (i = gap; i<n; i++)
+         for (j=i-gap; j>=0; j -= gap)
          {
-            if(fct((char **)(v+j*sz),(char **)(v+(j+gap)*sz)) <= 0)
+            if (fct((char **)(v+j*sz),(char **)(v+(j+gap)*sz)) <= 0)
                break;
             temp = *(char **)(v+j*sz);
             *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);

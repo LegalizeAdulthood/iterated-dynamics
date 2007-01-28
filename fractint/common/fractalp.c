@@ -2319,20 +2319,20 @@ int typehasparm(int type,int parm,char *buf)
 {
    int extra;
    char *ret = NULL;
-   if(0 <= parm && parm < 4)
+   if (0 <= parm && parm < 4)
       ret=fractalspecific[type].param[parm];
-   else if(parm >= 4 && parm < MAXPARAMS)
-      if((extra=find_extra_param(type)) > -1)
+   else if (parm >= 4 && parm < MAXPARAMS)
+      if ((extra=find_extra_param(type)) > -1)
          ret=moreparams[extra].param[parm-4];
-   if(ret)
-      if(*ret == 0)
+   if (ret)
+      if (*ret == 0)
          ret = NULL;
 
-   if(type == FORMULA || type == FFORMULA)
-      if(paramnotused(parm))
+   if (type == FORMULA || type == FFORMULA)
+      if (paramnotused(parm))
          ret = NULL;
 
-   if(ret && buf != NULL)
+   if (ret && buf != NULL)
       strcpy(buf,ret);
    return(ret?1:0);
 }

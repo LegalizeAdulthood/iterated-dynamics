@@ -85,7 +85,7 @@ JulibrotSetup(void)
    inch_per_xdotfp = widthfp / xdots;
    inch_per_ydotfp = heightfp / ydots;
    initzfp = originfp - (depthfp / 2);
-   if(juli3Dmode == 0)
+   if (juli3Dmode == 0)
       RightEyefp.x = 0.0;
    else
       RightEyefp.x = eyesfp / 2;
@@ -132,7 +132,7 @@ JulibrotSetup(void)
       inch_per_xdot = (long) ((widthfp / xdots) * fg16);
       inch_per_ydot = (long) ((heightfp / ydots) * fg16);
       initz = origin - (depth / 2);
-      if(juli3Dmode == 0)
+      if (juli3Dmode == 0)
          RightEye.x = 0l;
       else
          RightEye.x = eyes / 2;
@@ -151,12 +151,12 @@ JulibrotSetup(void)
    }
    else
       mapname = GreyFile;
-   if(savedac != 1)
+   if (savedac != 1)
    {
    if (ValidateLuts(mapname) != 0)
       return (0);
    spindac(0, 1);               /* load it, but don't spin */
-      if(savedac == 2)
+      if (savedac == 2)
         savedac = 1;
    }
    return (r >= 0);
@@ -209,7 +209,7 @@ zline(long x, long y)
    ypixel = y;
    mx = mxmin;
    my = mymin;
-   switch(juli3Dmode)
+   switch (juli3Dmode)
    {
    case 0:
    case 1:
@@ -285,7 +285,7 @@ zlinefp(double x, double y)
    ypixelfp = y;
    mxfp = mxminfp;
    myfp = myminfp;
-   switch(juli3Dmode)
+   switch (juli3Dmode)
    {
    case 0:
    case 1:
@@ -384,11 +384,11 @@ Std4dFractal(void)
    long x, y;
    int xdot, ydot;
    c_exp = (int)param[2];
-   if(neworbittype == LJULIAZPOWER)
+   if (neworbittype == LJULIAZPOWER)
    {
-      if(c_exp < 1)
+      if (c_exp < 1)
          c_exp = 1;
-      if(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[neworbittype].orbitcalc = longZpowerFractal;
       else
           fractalspecific[neworbittype].orbitcalc = longCmplxZpowerFractal;
@@ -426,9 +426,9 @@ Std4dfpFractal(void)
    int xdot, ydot;
    c_exp = (int)param[2];
 
-   if(neworbittype == FPJULIAZPOWER)
+   if (neworbittype == FPJULIAZPOWER)
    {
-      if(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+      if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[neworbittype].orbitcalc = floatZpowerFractal;
       else
           fractalspecific[neworbittype].orbitcalc = floatCmplxZpowerFractal;

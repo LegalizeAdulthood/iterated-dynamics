@@ -133,9 +133,9 @@ static void init_bf_2(void)
 #endif
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-    if((i = find_alternate_math(fractype, BIGNUM)) > -1)
+    if ((i = find_alternate_math(fractype, BIGNUM)) > -1)
        bf_math = alternatemath[i].math;
-    else if((i = find_alternate_math(fractype, BIGFLT)) > -1)
+    else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
        bf_math = alternatemath[i].math;
     else
        bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
@@ -224,7 +224,7 @@ static void init_bf_2(void)
     /* sanity check */
     /* leave room for NUMVARS variables allocated from stack */
     /* also leave room for the safe area at top of segment */
-    if(ptr + NUMVARS*(bflength+2) > maxstack)
+    if (ptr + NUMVARS*(bflength+2) > maxstack)
        {
        char msg[80];
        sprintf(msg,"Requested precision of %d too high, aborting",decimals);
@@ -242,7 +242,7 @@ static void init_bf_2(void)
     bfymax     = bnroot+ptr; ptr += bflength+2;
     bfx3rd     = bnroot+ptr; ptr += bflength+2;
     bfy3rd     = bnroot+ptr; ptr += bflength+2;
-    for(i=0;i<10;i++)
+    for (i=0; i<10; i++)
        {
        bfparms[i]  = bnroot+ptr; ptr += bflength+2;
        }
@@ -255,7 +255,7 @@ static void init_bf_2(void)
     /* end safe vars */
 
     /* good citizens initialize variables */
-    if(bf_save_len)  /* leave save area */
+    if (bf_save_len)  /* leave save area */
        memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
     else /* first time through - nothing saved */
        {
@@ -282,7 +282,7 @@ static int save_bf_vars(void)
    {
    int ret;
    unsigned int mem;
-   if(bnroot != BIG_NULL)
+   if (bnroot != BIG_NULL)
       {
       mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
       bf_save_len = bflength;
@@ -305,7 +305,7 @@ static int restore_bf_vars(void)
    {
    bf_t ptr;
    int i;
-   if(bf_save_len == 0)
+   if (bf_save_len == 0)
       return(-1);
    ptr  = bnroot;
    convert_bf(bfxmin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
@@ -314,7 +314,7 @@ static int restore_bf_vars(void)
    convert_bf(bfymax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
    convert_bf(bfx3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
    convert_bf(bfy3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   for(i=0;i<10;i++)
+   for (i=0; i<10; i++)
       {
       convert_bf(bfparms[i],ptr,bflength,bf_save_len);
       ptr += bf_save_len+2;
@@ -351,20 +351,20 @@ void free_bf_vars()
 bn_t alloc_stack(size_t size)
    {
    long stack_addr;
-   if(bf_math == 0)
+   if (bf_math == 0)
       {
       stopmsg(0,"alloc_stack called with bf_math==0");
       return(0);
       }
    stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 
-   if(stack_addr > maxstack)
+   if (stack_addr > maxstack)
       {
       stopmsg(0,"Aborting, Out of Bignum Stack Space");
       goodbye();
       }
    /* keep track of max ptr */
-   if(stack_addr > maxptr)
+   if (stack_addr > maxptr)
       maxptr = stack_addr;
    stack_ptr += size;   /* increment stack pointer */
    return(stack_ptr - size);
@@ -396,17 +396,17 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
     {
-    if(bfdigits)
+    if (bfdigits)
        decimals=bfdigits;   /* blindly force */
     else
        decimals = dec;
-    if(bailout > 10)    /* arbitrary value */
+    if (bailout > 10)    /* arbitrary value */
        /* using 2 doesn't gain much and requires another test */
        intlength = 4;
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
        intlength = 2;
     /* the bailout tests need greater dynamic range */
-    else if(bailoutest == Real || bailoutest == Imag || bailoutest == And ||
+    else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
             bailoutest == Manr)
        intlength = 2;
     else
@@ -424,13 +424,13 @@ void init_bf_length(int bnl)
     {
     bnlength = bnl;
 
-    if(bailout > 10)    /* arbitrary value */
+    if (bailout > 10)    /* arbitrary value */
        /* using 2 doesn't gain much and requires another test */
        intlength = 4;
     else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
        intlength = 2;
     /* the bailout tests need greater dynamic range */
-    else if(bailoutest == Real || bailoutest == Imag || bailoutest == And ||
+    else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
             bailoutest == Manr)
        intlength = 2;
     else

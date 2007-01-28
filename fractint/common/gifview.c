@@ -96,7 +96,7 @@ int gifview()
    colcount = g_row_count = 0;
    
    /* Open the file */
-   if(outln == outline_stereo)
+   if (outln == outline_stereo)
       strcpy(temp1,stereomapname);
    else
       strcpy(temp1,readname);
@@ -106,7 +106,7 @@ int gifview()
          fclose(fpin);
          }
       else {
-         if(outln == outline_stereo)
+         if (outln == outline_stereo)
             strcpy(temp1,stereomapname);
          else
             strcpy(temp1,readname);
@@ -130,7 +130,7 @@ int gifview()
       }
    }
 
-   if(strncmp((char *)buffer,"GIF87a",3) ||             /* use updated GIF specs */
+   if (strncmp((char *)buffer,"GIF87a",3) ||             /* use updated GIF specs */
       buffer[3] < '0' || buffer[3] > '9' ||
       buffer[4] < '0' || buffer[4] > '9' ||
       buffer[5] < 'A' || buffer[5] > 'z' )
@@ -144,7 +144,7 @@ int gifview()
    planes = (buffer[10] & 0x0F) + 1;
    gifview_image_twidth = width;
 
-   if((buffer[10] & 0x80)==0)    /* color map (better be!) */
+   if ((buffer[10] & 0x80)==0)    /* color map (better be!) */
    {
       close_file();
       return(-1);
@@ -163,7 +163,7 @@ int gifview()
             close_file();
             return(-1);
          }
-         if((!display3d || (g_glasses_type != 1 && g_glasses_type != 2))
+         if ((!display3d || (g_glasses_type != 1 && g_glasses_type != 2))
                        && !dontreadcolor)
             g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
       }
@@ -225,7 +225,7 @@ int gifview()
                break;
             }
          }
-         if(status < 0)
+         if (status < 0)
          {
             finished = 1;
             break;
@@ -246,11 +246,11 @@ int gifview()
          if (outln==out_line)
          {
             /* what about continuous potential???? */
-            if(width != gifview_image_twidth || top != 0)
+            if (width != gifview_image_twidth || top != 0)
             {   /* we're using normal decoding and we have a MIG */
                 outln = out_line_migs;
             }
-            else if(width > DECODERLINE_WIDTH && skipxdots == 0)
+            else if (width > DECODERLINE_WIDTH && skipxdots == 0)
             {
                 outln = out_line_too_wide;
             }
@@ -259,7 +259,7 @@ int gifview()
          if (pot16bit) width >>= 1;
 
          /* Skip local color palette */
-         if((buffer[8] & 0x80)==0x80) {      /* local map? */
+         if ((buffer[8] & 0x80)==0x80) {      /* local map? */
              int numcolors;    /* make this local */
              planes = (buffer[8] & 0x0F) + 1;
              numcolors = 1 << planes;
@@ -284,7 +284,7 @@ int gifview()
           * Call decoder(width) via timer. 
           * Width is limited to DECODERLINE_WIDTH. 
           */
-         if(skipxdots == 0)
+         if (skipxdots == 0)
             width = min(width,DECODERLINE_WIDTH);
          status = timer(1,NULL,width);
          busy = 0;      /* for slideshow CALCWAIT */
@@ -348,7 +348,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
 static int out_line_dither(BYTE *pixels, int linelen)
 {
     int i,nexterr,brt,err;
-        if(ditherbuf == NULL)
+        if (ditherbuf == NULL)
         ditherbuf = (char *)malloc(linelen+1);
         memset( ditherbuf, 0, linelen+1);
 
@@ -383,10 +383,10 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
    /* int twidth = gifview_image_twidth;*/
    int twidth = xdots;
    int extra;
-   while(linelen > 0)
+   while (linelen > 0)
    {
       extra = colcount+linelen-twidth;
-      if(extra > 0) /* line wraps */
+      if (extra > 0) /* line wraps */
       {   
           put_line(g_row_count, colcount, twidth-1, pixels);
           pixels += twidth-colcount;
@@ -399,7 +399,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
           colcount += linelen;
           linelen = 0;
       }
-      if(colcount >= twidth)
+      if (colcount >= twidth)
       {
          colcount = 0;
          g_row_count++;
@@ -411,10 +411,10 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
    int col;
-   for(col=colstart;col<=colstop;col++)
+   for (col=colstart; col<=colstop; col++)
    {
       putcolor(col,row,*pixels);
-      if(orbit_delay > 0)
+      if (orbit_delay > 0)
          sleepms(orbit_delay);
       w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
       if (driver_key_pressed())
@@ -432,12 +432,12 @@ int sound_line(BYTE *pixels, int linelen)
    int twidth = xdots;
    int extra;
    int ret=0;
-   while(linelen > 0)
+   while (linelen > 0)
    {
       extra = colcount+linelen-twidth;
-      if(extra > 0) /* line wraps */
+      if (extra > 0) /* line wraps */
       {   
-          if(put_sound_line(g_row_count, colcount, twidth-1, pixels))
+          if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
              break;
           pixels += twidth-colcount;
           linelen -= twidth-colcount;
@@ -445,12 +445,12 @@ int sound_line(BYTE *pixels, int linelen)
       }
       else
       {
-          if(put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
+          if (put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
              break;
           colcount += linelen;
           linelen = 0;
       }
-      if(colcount >= twidth)
+      if (colcount >= twidth)
       {
          colcount = 0;
          g_row_count++;

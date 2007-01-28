@@ -58,7 +58,7 @@ void set_grid_pointers()
 void fill_dx_array(void)
 {
    int i;
-   if(use_grid)
+   if (use_grid)
    {
       dx0[0] = xxmin;              /* fill up the x, y grids */
       dy0[0] = yymax;
@@ -78,7 +78,7 @@ void fill_lx_array(void)
    int i;
    /* note that lx1 & ly1 values can overflow into sign bit; since     */
    /* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-   if(use_grid)
+   if (use_grid)
    {
       lx0[0] = xmin;               /* fill up the x, y grids */
       ly0[0] = ymax;
@@ -106,7 +106,7 @@ void fractal_floattobf(void)
    floattobf(bfy3rd,yy3rd);
 
    for (i = 0; i < MAXPARAMS; i++)
-      if(typehasparm(fractype,i,NULL))
+      if (typehasparm(fractype,i,NULL))
          floattobf(bfparms[i],param[i]);
    calc_status = CALCSTAT_PARAMS_CHANGED;
 }
@@ -128,14 +128,14 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    long xytemp;
    double ftemp;
    coloriter=oldcoloriter = 0L;
-   for(i=0;i<10;i++)
+   for (i=0; i<10; i++)
       rhombus_stack[i] = 0;
  
   /* set up grid array compactly leaving space at end */
   /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
    xytemp = xdots + ydots;
-   if( ((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
+   if ( ((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
        ((usr_floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
          debugflag == 3800)
    {
@@ -147,14 +147,14 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 
    set_grid_pointers();
  
-   if(!(curfractalspecific->flags & BF_MATH))
+   if (!(curfractalspecific->flags & BF_MATH))
    {
       int tofloat;
-      if((tofloat=curfractalspecific->tofloat) == NOFRACTAL)
+      if ((tofloat=curfractalspecific->tofloat) == NOFRACTAL)
          bf_math = 0;
-      else if(!(fractalspecific[tofloat].flags & BF_MATH))
+      else if (!(fractalspecific[tofloat].flags & BF_MATH))
          bf_math = 0;
-      else if(bf_math)
+      else if (bf_math)
       {
          curfractalspecific = &fractalspecific[tofloat];
          fractype = tofloat;
@@ -162,10 +162,10 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    }
 
    /* switch back to double when zooming out if using arbitrary precision */
-   if(bf_math)
+   if (bf_math)
    {
       gotprec=getprecbf(CURRENTREZ);
-      if((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
+      if ((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
       {
          bfcornerstofloat();
          bf_math = 0;
@@ -173,28 +173,28 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
       else
          init_bf_dec(gotprec);
    }
-   else if((fractype==MANDEL || fractype==MANDELFP) && debugflag==3200)
+   else if ((fractype==MANDEL || fractype==MANDELFP) && debugflag==3200)
    {
       fractype=MANDELFP;
       curfractalspecific = &fractalspecific[MANDELFP];
       fractal_floattobf();
       usr_floatflag = 1;
    }
-   else if((fractype==JULIA || fractype==JULIAFP) && debugflag==3200)
+   else if ((fractype==JULIA || fractype==JULIAFP) && debugflag==3200)
    {
       fractype=JULIAFP;
       curfractalspecific = &fractalspecific[JULIAFP];
       fractal_floattobf();
       usr_floatflag = 1;
    }
-   else if((fractype==LMANDELZPOWER || fractype==FPMANDELZPOWER) && debugflag==3200)
+   else if ((fractype==LMANDELZPOWER || fractype==FPMANDELZPOWER) && debugflag==3200)
    {
       fractype=FPMANDELZPOWER;
       curfractalspecific = &fractalspecific[FPMANDELZPOWER];
       fractal_floattobf();
       usr_floatflag = 1;
    }
-   else if((fractype==LJULIAZPOWER || fractype==FPJULIAZPOWER) && debugflag==3200)
+   else if ((fractype==LJULIAZPOWER || fractype==FPJULIAZPOWER) && debugflag==3200)
    {
       fractype=FPJULIAZPOWER;
       curfractalspecific = &fractalspecific[FPJULIAZPOWER];
@@ -203,7 +203,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    }
    else
       free_bf_vars();
-   if(bf_math)
+   if (bf_math)
       floatflag=1;
    else
       floatflag = usr_floatflag;
@@ -257,18 +257,18 @@ init_restart:
          fractype = curfractalspecific->tofloat;
       }
    /* match Julibrot with integer mode of orbit */
-   if(fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
+   if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
    {
       int i;
-      if((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+      if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
          neworbittype = i;
       else
          fractype = JULIBROT;
    }
-   else if(fractype == JULIBROT && fractalspecific[neworbittype].isinteger==0)
+   else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger==0)
    {
       int i;
-      if((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+      if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
          neworbittype = i;
       else
          fractype = JULIBROTFP;
@@ -334,7 +334,7 @@ init_restart:
    f_at_rad = 1.0/32768L;
 
    /* now setup arrays of real coordinates corresponding to each pixel */
-   if(bf_math)
+   if (bf_math)
       adjust_to_limitsbf(1.0); /* make sure all corners in valid range */
    else
    {
@@ -346,7 +346,7 @@ init_restart:
       fill_dx_array();
    }
 
-   if(fractype != CELLULAR && fractype != ANT)  /* fudgetolong fails w >10 digits in double */
+   if (fractype != CELLULAR && fractype != ANT)  /* fudgetolong fails w >10 digits in double */
    {
       creal = fudgetolong(param[0]); /* integer equivs for it all */
       cimag = fudgetolong(param[1]);
@@ -426,7 +426,7 @@ expand_retry:
             dy0 = (double)(dy0 - (double)delyy);
             dx1 = (double)(dx1 + (double)delxx2);
             }
-         if(bf_math == 0) /* redundant test, leave for now */
+         if (bf_math == 0) /* redundant test, leave for now */
          {
             double testx_try, testx_exact;
             double testy_try, testy_exact;
@@ -436,9 +436,9 @@ expand_retry:
                (allows depper zooms at lower resolution. However it fails
                for rotations of exactly 90 degrees, so we added a safety net
                by using the magnification.  */
-            if(++tries < 2) /* for safety */
+            if (++tries < 2) /* for safety */
             {
-            if(tries > 1) stopmsg(0, "precision-detection error");
+            if (tries > 1) stopmsg(0, "precision-detection error");
             /* Previously there were four tests of distortions in the
                zoom box used to detect precision limitations. In some
                cases of rotated/skewed zoom boxs, this causes the algorithm
@@ -446,7 +446,7 @@ expand_retry:
                now only tests the larger of the two deltas in an attempt
                to repair this bug. This should never make the transition
                to arbitrary precision sooner, but always later.*/
-            if(fabs(xxmax-xx3rd) > fabs(xx3rd-xxmin))
+            if (fabs(xxmax-xx3rd) > fabs(xx3rd-xxmin))
             {
                testx_exact  = xxmax-xx3rd;
                testx_try    = dx0-xxmin;
@@ -456,7 +456,7 @@ expand_retry:
                testx_exact  = xx3rd-xxmin;
                testx_try    = dx1;
             }
-            if(fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
+            if (fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
             {
                testy_exact = yy3rd-yymax; 
                testy_try   = dy0-yymax;
@@ -466,10 +466,10 @@ expand_retry:
                testy_exact = yymin-yy3rd; 
                testy_try   = dy1;
             }
-            if(ratio_bad(testx_try,testx_exact) || 
+            if (ratio_bad(testx_try,testx_exact) || 
                ratio_bad(testy_try,testy_exact))
             {
-               if(curfractalspecific->flags & BF_MATH)
+               if (curfractalspecific->flags & BF_MATH)
                {
                   fractal_floattobf();
                   goto init_restart;
@@ -509,14 +509,14 @@ expand_retry:
    /* calcfrac.c plot_orbit routines have comments about this    */
    ftemp = (double)((0.0-delyy2) * delxx2 * dxsize * dysize
            - (xxmax-xx3rd) * (yy3rd-yymax));
-   if(ftemp != 0)
+   if (ftemp != 0)
    {
       plotmx1 = (double)(delxx2 * dxsize * dysize / ftemp);
       plotmx2 = (yy3rd-yymax) * dxsize / ftemp;
       plotmy1 = (double)((0.0-delyy2) * dxsize * dysize / ftemp);
       plotmy2 = (xxmax-xx3rd) * dysize / ftemp;
    }
-   if(bf_math == 0)
+   if (bf_math == 0)
       free_bf_vars();
    else
    {
@@ -586,8 +586,8 @@ void adjust_cornerbf(void)
    /* ftemp2=fabs(xxmax-xx3rd);*/
    abs_a_bf(sub_bf(bftemp2,bfxmax,bfx3rd));
 
-   /* if( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) ) */
-   if(cmp_bf(bftemp,bftemp2) < 0)
+   /* if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) ) */
+   if (cmp_bf(bftemp,bftemp2) < 0)
    {
       /* if (ftemp*10000 < ftemp2 && yy3rd != yymax) */
       if (cmp_bf(mult_bf_int(btmp1,bftemp,10000),bftemp2) < 0
@@ -608,8 +608,8 @@ void adjust_cornerbf(void)
    /* ftemp2=fabs(yymax-yy3rd); */
    abs_a_bf(sub_bf(bftemp2,bfymax,bfy3rd));
 
-   /* if( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) ) */
-   if(cmp_bf(bftemp,bftemp2) < 0)
+   /* if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) ) */
+   if (cmp_bf(bftemp,bftemp2) < 0)
    {
       /* if (ftemp*10000 < ftemp2 && xx3rd != xxmax) */
       if (cmp_bf(mult_bf_int(btmp1,bftemp,10000),bftemp2) < 0
@@ -636,7 +636,7 @@ void adjust_corner(void)
    double Xctr, Yctr, Xmagfactor, Rotation, Skew;
    LDBL Magnification;
 
-   if(!integerfractal)
+   if (!integerfractal)
       {
       /* While we're at it, let's adjust the Xmagfactor as well */
       cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -648,7 +648,7 @@ void adjust_corner(void)
          }
       }
 
-   if( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) ) {
+   if ( (ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)) ) {
       if (ftemp*10000 < ftemp2 && yy3rd != yymax)
          xx3rd = xxmin;
       }
@@ -656,7 +656,7 @@ void adjust_corner(void)
    if (ftemp2*10000 < ftemp && yy3rd != yymin)
       xx3rd = xxmax;
 
-   if( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) ) {
+   if ( (ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)) ) {
       if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
          yy3rd = yymin;
       }
@@ -996,13 +996,13 @@ static void _fastcall smallest_add_bf(bf_t num)
 static int _fastcall ratio_bad(double actual, double desired)
 {  
    double ftemp, tol;
-   if(integerfractal)
+   if (integerfractal)
       tol = math_tol[0];
    else
       tol = math_tol[1];
-   if(tol <= 0.0)
+   if (tol <= 0.0)
       return(1);
-   else if(tol >= 1.0)
+   else if (tol >= 1.0)
       return(0);         
    ftemp = 0;
    if (desired != 0 && debugflag != 3400)
@@ -1214,7 +1214,7 @@ void sleepms_old(long ms)
     savehelpmode = helpmode;
     tabmode  = 0;
     helpmode = -1;
-    if(scalems==0L) /* calibrate */
+    if (scalems==0L) /* calibrate */
     {
         /* selects a value of scalems that makes the units
            10000 per sec independent of CPU speed */
@@ -1254,10 +1254,10 @@ void sleepms_old(long ms)
         scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
         cleartempmsg();
     }
-    if(ms > 10L * SLEEPINIT) { /* using ftime is probably more accurate */
+    if (ms > 10L * SLEEPINIT) { /* using ftime is probably more accurate */
         ms /= 10;
         ftimex(&t1);
-        for(;;) {
+        while (1) {
            if (driver_key_pressed()) break;
            ftimex(&t2);
            if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms) break;
@@ -1266,7 +1266,7 @@ void sleepms_old(long ms)
     else
         if (!driver_key_pressed()) {
            ms *= scalems;
-           while(ms-- >= 0);
+           while (ms-- >= 0);
         }
 sleepexit:
     tabmode  = savetabmode;
@@ -1284,7 +1284,7 @@ static void sleepms_new(long ms)
 
 void sleepms(long ms)
 {
-  if(debugflag == 4020)
+  if (debugflag == 4020)
      sleepms_old(ms);   
   else
      sleepms_new(ms);
@@ -1298,7 +1298,7 @@ void sleepms(long ms)
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-   if(debugflag == 4020)
+   if (debugflag == 4020)
       sleepms_old(wait_time);
    else
    {   
@@ -1313,7 +1313,7 @@ void reset_clock(void)
 {
    int i;
    restart_uclock();
-   for(i=0;i<MAX_INDEX;i++)
+   for (i=0; i<MAX_INDEX; i++)
       next_time[i] = 0;
 }
 
@@ -1326,9 +1326,9 @@ static FILE *snd_fp = NULL;
 int snd_open(void)
 {
    static char soundname[] = {"sound001.txt"};
-   if((orbitsave&2) != 0 && snd_fp == NULL)
+   if ((orbitsave&2) != 0 && snd_fp == NULL)
    {
-      if((snd_fp = fopen(soundname,"w"))==NULL)
+      if ((snd_fp = fopen(soundname,"w"))==NULL)
       {
          stopmsg(0, "Can't open SOUND*.TXT");
       }
@@ -1344,19 +1344,19 @@ int snd_open(void)
    if the orbitsave variable is turned on */
 void w_snd(int tone)
 {
-   if((orbitsave&2) != 0)
+   if ((orbitsave&2) != 0)
    {
-      if(snd_open())
+      if (snd_open())
          fprintf(snd_fp,"%-d\n",tone);
    }
    taborhelp = 0;
    if (!driver_key_pressed()) { /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
                /* must not then call soundoff(), else indexes out of synch */
-/*   if(20 < tone && tone < 15000)  better limits? */
-/*   if(10 < tone && tone < 5000)  better limits? */
+/*   if (20 < tone && tone < 15000)  better limits? */
+/*   if (10 < tone && tone < 5000)  better limits? */
       if (driver_sound_on(tone)) {
          wait_until(0,orbit_delay);
-         if(!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
+         if (!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
             driver_sound_off();
       }
    }
@@ -1364,7 +1364,7 @@ void w_snd(int tone)
 
 void snd_time_write(void)
 {
-   if(snd_open())
+   if (snd_open())
    {
       fprintf(snd_fp,"time=%-ld\n",(long)clock()*1000/CLK_TCK);
    }
@@ -1372,7 +1372,7 @@ void snd_time_write(void)
 
 void close_snd(void)
 {
-   if(snd_fp)
+   if (snd_fp)
       fclose(snd_fp);
    snd_fp = NULL;
 }
@@ -1390,7 +1390,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
    save_syoffs = syoffs;
    sxoffs = syoffs = 0;
    /* save orbit value */
-   if(color == -1)
+   if (color == -1)
    {
       *(save_orbit + orbit_ptr++) = i;
       *(save_orbit + orbit_ptr++) = j;
@@ -1401,24 +1401,24 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
       putcolor(i,j,color);
    sxoffs = save_sxoffs;
    syoffs = save_syoffs;
-   if(debugflag == 4030) {
-      if((soundflag&7) == 2) /* sound = x */
+   if (debugflag == 4030) {
+      if ((soundflag&7) == 2) /* sound = x */
            w_snd((int)(i*1000/xdots+basehertz));
-      else if((soundflag&7) > 2) /* sound = y or z */
+      else if ((soundflag&7) > 2) /* sound = y or z */
            w_snd((int)(j*1000/ydots+basehertz));
-      else if(orbit_delay > 0) 
+      else if (orbit_delay > 0) 
       {
          wait_until(0,orbit_delay);
       }
    }
    else {
-      if((soundflag&7) == 2) /* sound = x */
+      if ((soundflag&7) == 2) /* sound = x */
            w_snd((int)(i+basehertz));
-      else if((soundflag&7) == 3) /* sound = y */
+      else if ((soundflag&7) == 3) /* sound = y */
            w_snd((int)(j+basehertz));
-      else if((soundflag&7) == 4) /* sound = z */
+      else if ((soundflag&7) == 4) /* sound = z */
            w_snd((int)(i+j+basehertz));
-      else if(orbit_delay > 0) 
+      else if (orbit_delay > 0) 
       {
          wait_until(0,orbit_delay);
       }
@@ -1445,7 +1445,7 @@ void scrub_orbit(void)
    save_sxoffs = sxoffs;
    save_syoffs = syoffs;
    sxoffs = syoffs = 0;
-   while(orbit_ptr > 0)
+   while (orbit_ptr > 0)
    {
       c = *(save_orbit + --orbit_ptr);
       j = *(save_orbit + --orbit_ptr);
@@ -1585,7 +1585,7 @@ void get_julia_attractor (double real, double imag)
    coloriter = 0;
    overflow = 0;
    while (++coloriter < maxit)
-      if(curfractalspecific->orbitcalc() || overflow)
+      if (curfractalspecific->orbitcalc() || overflow)
          break;
    if (coloriter >= maxit)      /* if orbit stays in the lake */
    {
@@ -1595,11 +1595,11 @@ void get_julia_attractor (double real, double imag)
          result =  g_new;
      for (i=0;i<10;i++) {
       overflow = 0;
-      if(!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
+      if (!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
       {                        /* and doesn't move far, probably */
          if (integerfractal)   /*   found a finite attractor    */
          {
-            if(labs(lresult.x-lnew.x) < lclosenuff
+            if (labs(lresult.x-lnew.x) < lclosenuff
                 && labs(lresult.y-lnew.y) < lclosenuff)
             {
                lattr[attractors] = lnew;
@@ -1610,7 +1610,7 @@ void get_julia_attractor (double real, double imag)
          }
          else
          {
-            if(fabs(result.x-g_new.x) < closenuff
+            if (fabs(result.x-g_new.x) < closenuff
                 && fabs(result.y-g_new.y) < closenuff)
             {
                attr[attractors] = g_new;
@@ -1624,7 +1624,7 @@ void get_julia_attractor (double real, double imag)
       }
      }
    }
-   if(attractors==0)
+   if (attractors==0)
       periodicitycheck = savper;
    maxit = savmaxit;
 }
@@ -1638,13 +1638,13 @@ int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
    /* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200 */
    blocksize=4;
    i=300;
-   while(i<=ydots)
+   while (i<=ydots)
    {
       blocksize+=blocksize;
       i+=i;
    }
    /* increase blocksize if prefix array not big enough */
-   while(blocksize*(maxxblk-2)<xdots || blocksize*(maxyblk-2)*16<ydots)
+   while (blocksize*(maxxblk-2)<xdots || blocksize*(maxyblk-2)*16<ydots)
       blocksize+=blocksize;
    return(blocksize);
 }

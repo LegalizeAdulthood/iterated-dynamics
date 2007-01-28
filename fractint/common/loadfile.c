@@ -53,12 +53,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    g_init_mode = -1;               /* no viewing mode set yet */
    oldfloatflag = usr_floatflag;
    loaded3d = 0;
-   if(fastrestore)
+   if (fastrestore)
       viewwindow=0;
-   if(has_ext(readname) == NULL)
+   if (has_ext(readname) == NULL)
       strcat(readname,".gif");
 
-   if(find_fractal_info(readname,&read_info,&blk_2_info,&blk_3_info,
+   if (find_fractal_info(readname,&read_info,&blk_2_info,&blk_3_info,
                         &blk_4_info,&blk_5_info,&blk_6_info,&blk_7_info)) {
       /* didn't find a useable file */
       sprintf(msg,"Sorry, %s isn't a file I can decode.",readname);
@@ -82,7 +82,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    save_release = 1100; /* unless we find out better later on */
 
    invert = 0;
-   if(read_info.version > 0) {
+   if (read_info.version > 0) {
       param[2]      = read_info.parm3;
       roundfloatd(&param[2]);
       param[3]      = read_info.parm4;
@@ -90,7 +90,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       potparam[0]   = read_info.potential[0];
       potparam[1]   = read_info.potential[1];
       potparam[2]   = read_info.potential[2];
-      if(*s_makepar == '\0')
+      if (*s_makepar == '\0')
          colors = read_info.colors;
       potflag       = (potparam[0] != 0.0);
       rflag         = read_info.rflag;
@@ -108,7 +108,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       forcesymmetry = read_info.symmetry;
       }
 
-   if(read_info.version > 1) {
+   if (read_info.version > 1) {
       save_release  = 1200;
       if (!display3d
         && (read_info.version <= 4 || read_info.flag3d > 0
@@ -131,7 +131,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
          }
       }
 
-   if(read_info.version > 2) {
+   if (read_info.version > 2) {
       save_release = 1300;
       outside      = read_info.outside;
       }
@@ -141,14 +141,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    yy3rd = yymin;
    usr_distest = 0;
    calctime = 0;
-   if(read_info.version > 3) {
+   if (read_info.version > 3) {
       save_release = 1400;
       xx3rd       = read_info.x3rd;
       yy3rd       = read_info.y3rd;
       calc_status = read_info.calc_status;
       usr_stdcalcmode = read_info.stdcalcmode;
       three_pass = 0;
-      if(usr_stdcalcmode == 127)
+      if (usr_stdcalcmode == 127)
       {
          three_pass = 1;
          usr_stdcalcmode = '3';
@@ -170,7 +170,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
    pot16bit = 0;
    save_system = 0;
-   if(read_info.version > 4) {
+   if (read_info.version > 4) {
       pot16bit     = read_info.pot16bit;
       if (pot16bit)
          filexdots >>= 1;
@@ -196,22 +196,22 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
    rotate_lo = 1; rotate_hi = 255;
    distestwidth = 71;
-   if(read_info.version > 5) {
+   if (read_info.version > 5) {
       rotate_lo         = read_info.rotate_lo;
       rotate_hi         = read_info.rotate_hi;
       distestwidth      = read_info.distestwidth;
       }
 
-   if(read_info.version > 6) {
+   if (read_info.version > 6) {
       param[2]          = read_info.dparm3;
       param[3]          = read_info.dparm4;
       }
 
-   if(read_info.version > 7) {
+   if (read_info.version > 7) {
       fillcolor         = read_info.fillcolor;
       }
 
-   if(read_info.version > 8) {
+   if (read_info.version > 8) {
    mxmaxfp   =  read_info.mxmaxfp        ;
    mxminfp   =  read_info.mxminfp        ;
    mymaxfp   =  read_info.mymaxfp        ;
@@ -236,9 +236,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    param[9] = read_info.dparm10;
       }
 
-   if(read_info.version < 4 && read_info.version != 0) { /* pre-version 14.0? */
+   if (read_info.version < 4 && read_info.version != 0) { /* pre-version 14.0? */
       backwardscompat(&read_info); /* translate obsolete types */
-      if(LogFlag)
+      if (LogFlag)
          LogFlag = 2;
       usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
       }
@@ -249,25 +249,25 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       if (decomp[0] > 0 && decomp[1] > 0)
          bailout = decomp[1];
       }
-   if(potflag) /* in version 15.x and 16.x logmap didn't work with pot */
-      if(read_info.version == 6 || read_info.version == 7)
+   if (potflag) /* in version 15.x and 16.x logmap didn't work with pot */
+      if (read_info.version == 6 || read_info.version == 7)
          LogFlag = 0;
    set_trig_pointers(-1);
 
-   if(read_info.version < 9 && read_info.version != 0) { /* pre-version 18.0? */
+   if (read_info.version < 9 && read_info.version != 0) { /* pre-version 18.0? */
       /* forcesymmetry==1000 means we want to force symmetry but don't
          know which symmetry yet, will find out in setsymmetry() */
-      if(outside==REAL || outside==IMAG || outside==MULT || outside==SUM
+      if (outside==REAL || outside==IMAG || outside==MULT || outside==SUM
         || outside==ATAN)
-         if(forcesymmetry == 999)
+         if (forcesymmetry == 999)
             forcesymmetry = 1000;
       }
-   if(save_release < 1725 && read_info.version != 0) { /* pre-version 17.25 */
+   if (save_release < 1725 && read_info.version != 0) { /* pre-version 17.25 */
       set_if_old_bif(); /* translate bifurcation types */
       functionpreloaded = 1;
    }
 
-   if(read_info.version > 9)
+   if (read_info.version > 9)
    { /* post-version 18.22 */
       bailout     = read_info.bailout; /* use long bailout */
       bailoutest = (enum bailouts)read_info.bailoutest;
@@ -276,7 +276,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       bailoutest = Mod;
    setbailoutformula(bailoutest);
 
-   if(read_info.version > 9) {
+   if (read_info.version > 9) {
      /* post-version 18.23 */
       maxit = read_info.iterations; /* use long maxit */
      /* post-version 18.27 */
@@ -354,7 +354,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       display3d = olddisplay3d;
       floatflag = oldfloatflag;
       if (i) {
-         if(blk_2_info.got_data == 1) {
+         if (blk_2_info.got_data == 1) {
             MemoryRelease((U16)blk_2_info.resume_data);
             blk_2_info.length = 0;
          }
@@ -380,13 +380,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
       resume_info = 0;
       }
 
-   if(blk_2_info.got_data == 1)
+   if (blk_2_info.got_data == 1)
           {
           resume_info = (U16)blk_2_info.resume_data;
           resume_len = blk_2_info.length;
           }
 
-   if(blk_3_info.got_data == 1)
+   if (blk_3_info.got_data == 1)
           {
           char *nameptr;
           switch (read_info.fractal_type) {
@@ -419,7 +419,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
      rangeslen = 0;
    }
 
-   if(blk_4_info.got_data == 1)
+   if (blk_4_info.got_data == 1)
           {
           ranges = (int *)blk_4_info.range_data;
           rangeslen = blk_4_info.length;
@@ -428,7 +428,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 #endif
           }
 
-   if(blk_5_info.got_data == 1)
+   if (blk_5_info.got_data == 1)
           {
           bf_math = 1;
           init_bf_length(read_info.bflength);
@@ -438,7 +438,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
    else
       bf_math = 0;
 
-   if(blk_6_info.got_data == 1)
+   if (blk_6_info.got_data == 1)
    {
           struct evolution_info resume_e_info;
           GENEBASE gene[NUMGENES];
@@ -518,7 +518,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           evolving = FALSE;
    }
 
-   if(blk_7_info.got_data == 1) {
+   if (blk_7_info.got_data == 1) {
           oxmin       = blk_7_info.oxmin;
           oxmax       = blk_7_info.oxmax;
           oymin       = blk_7_info.oymin;
@@ -527,7 +527,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
           oy3rd       = blk_7_info.oy3rd;
           keep_scrn_coords = blk_7_info.keep_scrn_coords;
           drawmode    = blk_7_info.drawmode;
-          if(keep_scrn_coords) set_orbit_corners = 1;
+          if (keep_scrn_coords) set_orbit_corners = 1;
    }
 
    showfile = 0;                   /* trigger the file load */
@@ -559,7 +559,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    blk_6_info->got_data = 0; /* initialize to no data */
    blk_7_info->got_data = 0; /* initialize to no data */
 
-   if((fp = fopen(gif_file,"rb"))==NULL)
+   if ((fp = fopen(gif_file,"rb"))==NULL)
       return(-1);
    fread(gifstart,13,1,fp);
    if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
@@ -583,7 +583,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       if (fileydots * 4 == filexdots * 3) /* assume the common square pixels */
          fileaspectratio = screenaspect;
 
-   if(*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
+   if (*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
    {
       for (i = 0; i < filecolors; i++)
       {
@@ -592,7 +592,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                break;
             g_dac_box[i][j] = (BYTE)(k >> 2);
          }
-         if(k < 0)
+         if (k < 0)
             break;
       }
    }
@@ -861,7 +861,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 /* switch obsolete fractal types to new generalizations */
 static void backwardscompat(struct fractal_info *info)
 {
-   switch(fractype) {
+   switch (fractype) {
       case LAMBDASINE:
          fractype = LAMBDATRIGFP;
          trigndx[0] = SIN;
@@ -963,7 +963,7 @@ void set_if_old_bif(void)
 /* set functions if not set already, may need to check 'functionpreloaded'
    before calling this routine.  JCO 7/5/92 */
 
-   switch(fractype) {
+   switch (fractype) {
       case BIFURCATION:
       case LBIFURCATION:
       case BIFSTEWART:
@@ -985,7 +985,7 @@ void set_if_old_bif(void)
 /* miscellaneous function variable defaults */
 void set_function_parm_defaults(void)
 {
-   switch(fractype) 
+   switch (fractype) 
    {
       case FPPOPCORN:
       case LPOPCORN:
@@ -1007,41 +1007,41 @@ void set_function_parm_defaults(void)
 
 void backwards_v18(void)
 {
-  if(!functionpreloaded)
+  if (!functionpreloaded)
     set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
-  if(fractype==MANDELTRIG && usr_floatflag==1
+  if (fractype==MANDELTRIG && usr_floatflag==1
          && save_release < 1800 && bailout == 0)
     bailout = 2500;
-  if(fractype==LAMBDATRIG && usr_floatflag==1
+  if (fractype==LAMBDATRIG && usr_floatflag==1
          && save_release < 1800 && bailout == 0)
     bailout = 2500;
 }
 
 void backwards_v19(void)
 {
-  if(fractype==MARKSJULIA && save_release < 1825) {
-    if(param[2] == 0)
+  if (fractype==MARKSJULIA && save_release < 1825) {
+    if (param[2] == 0)
        param[2] = 2;
     else
        param[2] += 1;
   }
-  if(fractype==MARKSJULIAFP && save_release < 1825) {
-    if(param[2] == 0)
+  if (fractype==MARKSJULIAFP && save_release < 1825) {
+    if (param[2] == 0)
        param[2] = 2;
     else
        param[2] += 1;
   }
-  if((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
+  if ((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
     inversion[0] = inversion[1] = inversion[2] = invert = 0;
-  if(fix_bof())
+  if (fix_bof())
     no_mag_calc = 1; /* fractal has old bof60/61 problem with magnitude */
   else
     no_mag_calc = 0;
-  if(fix_period_bof())
+  if (fix_period_bof())
     use_old_period = 1; /* fractal uses old periodicity method */
   else
     use_old_period = 0;
-  if(save_release < 1827 && distest)
+  if (save_release < 1827 && distest)
     use_old_distest = 1; /* use old distest code */
   else
     use_old_distest = 0; /* use new distest code */
@@ -1049,20 +1049,20 @@ void backwards_v19(void)
 
 void backwards_v20(void)
 { /* Fractype == FP type is not seen from PAR file ????? */
-  if((fractype == MANDELFP || fractype == JULIAFP ||
+  if ((fractype == MANDELFP || fractype == JULIAFP ||
       fractype == MANDEL || fractype == JULIA) &&
      (outside <= REAL && outside >= SUM) && save_release <= 1960)
     bad_outside = 1;
   else
     bad_outside = 0;
-  if((fractype == FORMULA || fractype == FFORMULA) &&
+  if ((fractype == FORMULA || fractype == FFORMULA) &&
       (save_release < 1900 || debugflag == 94))
     ldcheck = 1;
   else
     ldcheck = 0;
-  if(inside == EPSCROSS && save_release < 1961)
+  if (inside == EPSCROSS && save_release < 1961)
     closeprox = 0.01;
-  if(!functionpreloaded)
+  if (!functionpreloaded)
      set_function_parm_defaults();
 }
 
@@ -1212,7 +1212,7 @@ int fgetwindow(void)
    boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
    boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
    boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
-   if(!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
+   if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
       no_memory = 1;
 
      /* set up complex-plane-to-screen transformation */
@@ -1251,7 +1251,7 @@ rescan:  /* entry for changed browse parms */
        }
        splitpath(DTA.filename,NULL,NULL,fname,ext);
        makepath(tmpmask,drive,dir,fname,ext);
-       if( !find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
+       if ( !find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
                                      &blk_4_info,&blk_5_info,&blk_6_info,
 				     &blk_7_info) &&
            (typeOK(&read_info,&blk_3_info) || !brwschecktype) &&
@@ -1272,11 +1272,11 @@ rescan:  /* entry for changed browse parms */
            wincount++;
          }
 
-        if(blk_2_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_2_info.got_data == 1) /* Clean up any memory allocated */
            MemoryRelease((U16)blk_2_info.resume_data);
-        if(blk_4_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_4_info.got_data == 1) /* Clean up any memory allocated */
            free(blk_4_info.range_data);
-        if(blk_5_info.got_data == 1) /* Clean up any memory allocated */
+        if (blk_5_info.got_data == 1) /* Clean up any memory allocated */
            free(blk_5_info.apm_data);
 
         done=(fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
@@ -1415,7 +1415,7 @@ rescan:  /* entry for changed browse parms */
             check_history(oldname,tmpmask);
             break;
             }
-          else if( errno == EACCES ) {
+          else if ( errno == EACCES ) {
               texttempmsg("Sorry...it's a read only file, can't del");
               showtempmsg(winlist.name);
               break;
@@ -1439,7 +1439,7 @@ rescan:  /* entry for changed browse parms */
          strcat(mesg,tmpmask);
          i = field_prompt(0,mesg,NULL,newname,60,NULL);
          driver_unstack_screen();
-         if( i != -1)
+         if ( i != -1)
           if (!rename(tmpmask,newname)) {
             if (errno == EACCES)
             {
@@ -1783,7 +1783,7 @@ double tmpparm7, tmpparm8;
 double tmpparm9, tmpparm10;
 #define MINDIF 0.001
 
-   if( info->version > 6) {
+   if ( info->version > 6) {
      tmpparm3 = info->dparm3;
      tmpparm4 = info->dparm4;
    }
@@ -1793,7 +1793,7 @@ double tmpparm9, tmpparm10;
      tmpparm4 = info->parm4;
      roundfloatd(&tmpparm4);
    }
-   if( info->version > 8) {
+   if ( info->version > 8) {
      tmpparm5 = info->dparm5;
      tmpparm6 = info->dparm6;
      tmpparm7 = info->dparm7;
@@ -1809,7 +1809,7 @@ double tmpparm9, tmpparm10;
      tmpparm9 = 0.0;
      tmpparm10 = 0.0;
    }
-   if( fabs(info->creal - param[0]) < MINDIF &&
+   if ( fabs(info->creal - param[0]) < MINDIF &&
        fabs(info->cimag - param[1]) < MINDIF &&
        fabs(tmpparm3 - param[2]) < MINDIF &&
        fabs(tmpparm4 - param[3]) < MINDIF &&
@@ -1829,11 +1829,11 @@ static char functionOK( struct fractal_info *info, int numfn)
 {
  int i, mzmatch;
    mzmatch = 0;
-   for(i=0; i<numfn; i++){
-     if( info->trigndx[i] != trigndx[i] )
+   for (i=0; i<numfn; i++){
+     if ( info->trigndx[i] != trigndx[i] )
         mzmatch++;
    }
-   if(mzmatch > 0)
+   if (mzmatch > 0)
      return(0);
    else
      return(1); /* they all match */
@@ -1842,10 +1842,10 @@ static char functionOK( struct fractal_info *info, int numfn)
 static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
 {
  int numfn;
-   if( (fractype == FORMULA || fractype == FFORMULA) &&
+   if ( (fractype == FORMULA || fractype == FFORMULA) &&
      (info->fractal_type == FORMULA || info->fractal_type == FFORMULA) )
    {
-       if( !stricmp(blk_3_info->form_name,FormName) )
+       if ( !stricmp(blk_3_info->form_name,FormName) )
        {
          numfn = maxfn;
          if (numfn>0)
@@ -1856,7 +1856,7 @@ static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
        else
          return(0); /* two formulas but names don't match */
    }
-   else if(info->fractal_type == fractype ||
+   else if (info->fractal_type == fractype ||
            info->fractal_type == curfractalspecific->tofloat)
    {
      numfn = (curfractalspecific->flags >> 6) & 7;

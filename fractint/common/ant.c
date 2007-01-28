@@ -385,11 +385,11 @@ ant(void)
       s_incx[2][i] = i;
    }
 
-   for(i = 0; i < xdots; i++)
+   for (i = 0; i < xdots; i++)
       s_incx[3][i] = i + 1;
    s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
 
-   for(i = 1; i < xdots; i++)
+   for (i = 1; i < xdots; i++)
       s_incx[1][i] = i - 1;
    s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
 
