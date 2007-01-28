@@ -224,8 +224,7 @@ int main(int argc, char **argv)
 	/* let drivers add their video modes */
 	if (! init_drivers(&argc, argv))
 	{
-		fprintf(stderr, "Sorry, I couldn't find any "
-			"working video drivers for your system\n");
+		init_failure("Sorry, I couldn't find any working video drivers for your system\n");
 		exit(-1);
 	}
 	/* load fractint.cfg, match against driver supplied modes */

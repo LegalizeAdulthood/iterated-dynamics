@@ -1055,3 +1055,8 @@ int out_line(BYTE *pixels, int linelen)
 	g_row_count++;
 	return 0;
 }
+
+void init_failure(const char *message)
+{
+	MessageBox(NULL, message, "FractInt: Fatal Error", MB_OK);
+}

@@ -1200,6 +1200,7 @@ extern uclock_t usec_clock(void);
 extern void restart_uclock(void);
 extern void wait_until(int index, uclock_t wait_time);
 
+extern void init_failure(const char *message);
 extern int expand_dirname(char *dirname,char *drive);
 extern int abortmsg(char *file, unsigned int line, int flags, char *msg);
 #define ABORT(flags_,msg_) abortmsg(__FILE__, __LINE__, flags_, msg_)
