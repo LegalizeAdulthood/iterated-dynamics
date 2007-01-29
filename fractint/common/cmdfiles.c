@@ -1387,503 +1387,767 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
 		return 1;
 	}
+
 	if (strcmp(variable, "inside") == 0)       /* inside=? */
 	{
-		if (strcmp(value, "zmag")==0)
-			inside = ZMAG;
-		else if (strcmp(value, "bof60")==0)
-			inside = BOF60;
-		else if (strcmp(value, "bof61")==0)
-			inside = BOF61;
-		else if (strncmp(value, "epsiloncross", 3)==0)
-			inside = EPSCROSS;
-		else if (strncmp(value, "startrail", 4)==0)
-			inside = STARTRAIL;
-		else if (strncmp(value, "period", 3)==0)
-			inside = PERIOD;
-		else if (strncmp(value, "fmod", 3)==0)
-			inside = FMODI;
-		else if (strncmp(value, "atan", 3)==0)
-			inside = ATANI;
-		else if (strcmp(value, "maxiter")==0)
-			inside = -1;
-		else if (numval == NONNUMERIC)
-			goto badarg;
-		else
-			inside = numval;
-		return 1;
+		struct
+		{
+			const char *arg;
+			int inside;
+		} args[] =
+		{
+			{ "zmag", ZMAG },
+			{ "bof60", BOF60 },
+			{ "bof61", BOF61 },
+			{ "epsiloncross", EPSCROSS },
+			{ "startrail", STARTRAIL },
+			{ "period", PERIOD },
+			{ "fmod", FMODI },
+			{ "atan", ATANI },
+			{ "maxiter", -1 }
+		};
+		int ii;
+		for (ii = 0; ii < NUM_OF(args); ii++)
+		{
+			if (strcmp(value, args[ii].arg) == 0)
+			{
+				inside = args[ii].inside;
+				return 1;
+			}
 		}
-   if (strcmp(variable, "proximity") == 0 ) {       /* proximity=? */
-      closeprox = floatval[0];
-      return 1;
-      }
-   if (strcmp(variable, "fillcolor") == 0 ) {       /* fillcolor */
-      if (strcmp(value, "normal")==0)
-         fillcolor = -1;
-      else if (numval == NONNUMERIC)
-         goto badarg;
-      else
-         fillcolor = numval;
-      return 1;
-      }
+		if (numval == NONNUMERIC)
+		{
+			goto badarg;
+		}
+		else
+		{
+			inside = numval;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "finattract") == 0 ) {   /* finattract=? */
-      if (yesnoval[0] < 0) goto badarg;
-      finattract = yesnoval[0];
-      return 1;
-      }
+	if (strcmp(variable, "proximity") == 0)       /* proximity=? */
+	{
+		closeprox = floatval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "nobof") == 0 ) {   /* nobof=? */
-      if (yesnoval[0] < 0) goto badarg;
-      nobof = yesnoval[0];
-      return 1;
-      }
+	if (strcmp(variable, "fillcolor") == 0)       /* fillcolor */
+	{
+		if (strcmp(value, "normal")==0)
+		{
+			fillcolor = -1;
+		}
+		else if (numval == NONNUMERIC)
+		{
+			goto badarg;
+		}
+		else
+		{
+			fillcolor = numval;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "function") == 0) {      /* function=?,? */
-      k = 0;
-      while (*value && k < 4) {
-         if (set_trig_array(k++, value)) goto badarg;
-         if ((value = strchr(value, '/')) == NULL) break;
-         ++value;
-         }
-       functionpreloaded = 1; /* for old bifs  JCO 7/5/92 */
-      return 1;
-      }
+	if (strcmp(variable, "finattract") == 0)   /* finattract=? */
+	{
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
+		finattract = yesnoval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "outside") == 0 ) {      /* outside=? */
-      if (strcmp(value, "iter")==0)
-         outside = ITER;
-      else if (strcmp(value, "real")==0)
-         outside = REAL;
-      else if (strcmp(value, "imag")==0)
-         outside = IMAG;
-      else if (strcmp(value, "mult")==0)
-         outside = MULT;
-      else if (strcmp(value, "summ")==0)
-         outside = SUM;
-      else if (strcmp(value, "atan")==0)
-         outside = ATAN;
-      else if (strcmp(value, "fmod")==0)
-         outside = FMOD;
-      else if (strcmp(value, "tdis")==0)
-         outside = TDIS;
+	if (strcmp(variable, "nobof") == 0)   /* nobof=? */
+	{
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
+		nobof = yesnoval[0];
+		return 1;
+	}
 
-      else if (numval == NONNUMERIC)
-         goto badarg;
-      else if (numval < TDIS || numval > 255) goto badarg;
-      else outside = numval;
-      return 1;
-      }
+	if (strcmp(variable, "function") == 0)      /* function=?,? */
+	{
+		k = 0;
+		while (*value && k < 4)
+		{
+			if (set_trig_array(k++, value))
+			{
+				goto badarg;
+			}
+			if ((value = strchr(value, '/')) == NULL)
+			{
+				break;
+			}
+			++value;
+		}
+		functionpreloaded = 1; /* for old bifs  JCO 7/5/92 */
+		return 1;
+	}
 
-   if (strcmp(variable, "bfdigits") == 0 ) {      /* bfdigits=? */
-      if (numval == NONNUMERIC)
-         goto badarg;
-      else if (numval < 0 || numval > 2000) goto badarg;
-      else bfdigits = numval;
-      return 1;
-      }
+	if (strcmp(variable, "outside") == 0)      /* outside=? */
+	{
+		int ii;
+		struct
+		{
+			const char *arg;
+			int outside;
+		}
+		args[] =
+		{
+			{ "iter", ITER },
+			{ "real", REAL },
+			{ "imag", IMAG },
+			{ "mult", MULT },
+			{ "summ", SUM },
+			{ "atan", ATAN },
+			{ "fmod", FMOD },
+			{ "tdis", TDIS }
+		};
+		for (ii = 0; ii < NUM_OF(args); ii++)
+		{
+			if (strcmp(value, args[ii].arg) == 0)
+			{
+				outside = args[ii].outside;
+				return 1;
+			}
+		}
+		if ((numval == NONNUMERIC) || (numval < TDIS || numval > 255))
+		{
+			goto badarg;
+		}
+		outside = numval;
+		return 1;
+	}
 
-   if (strcmp(variable, "maxiter") == 0) {       /* maxiter=? */
-      if (floatval[0] < 2) goto badarg;
-      maxit = (long)floatval[0];
-      return 1;
-      }
+	if (strcmp(variable, "bfdigits") == 0)      /* bfdigits=? */
+	{
+		if ((numval == NONNUMERIC) || (numval < 0 || numval > 2000))
+		{
+			goto badarg;
+		}
+		bfdigits = numval;
+		return 1;
+	}
 
-   if (strcmp(variable, "iterincr") == 0)        /* iterincr=? */
-      return 0;
+	if (strcmp(variable, "maxiter") == 0)       /* maxiter=? */
+	{
+		if (floatval[0] < 2)
+		{
+			goto badarg;
+		}
+		maxit = (long) floatval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "passes") == 0) {        /* passes=? */
-      if ( charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
-        && charval[0] != 'g' && charval[0] != 'b'
-	&& charval[0] != 't' && charval[0] != 's'
-	&& charval[0] != 'd' && charval[0] != 'o')
-         goto badarg;
-      usr_stdcalcmode = charval[0];
-      if (charval[0] == 'g')
-      {
-         stoppass = ((int)value[1] - (int)'0');
-         if (stoppass < 0 || stoppass > 6)
-            stoppass = 0;
-      }
-      return 1;
-      }
+	if (strcmp(variable, "iterincr") == 0)        /* iterincr=? */
+	{
+		return 0;
+	}
 
-   if (strcmp(variable, "ismand") == 0 ) {        /* ismand=? */
-      if (yesnoval[0] < 0) goto badarg;
-      ismand = (short int)yesnoval[0];
-      return 1;
-      }
+	if (strcmp(variable, "passes") == 0)        /* passes=? */
+	{
+		if (charval[0] != '1' && charval[0] != '2' && charval[0] != '3'
+			&& charval[0] != 'g' && charval[0] != 'b'
+			&& charval[0] != 't' && charval[0] != 's'
+			&& charval[0] != 'd' && charval[0] != 'o')
+		{
+			goto badarg;
+		}
+		usr_stdcalcmode = charval[0];
+		if (charval[0] == 'g')
+		{
+			stoppass = ((int)value[1] - (int)'0');
+			if (stoppass < 0 || stoppass > 6)
+			{
+				stoppass = 0;
+			}
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "cyclelimit") == 0 ) {   /* cyclelimit=? */
-      if (numval <= 1 || numval > 256) goto badarg;
-      initcyclelimit = numval;
-      return 0;
-      }
+	if (strcmp(variable, "ismand") == 0)        /* ismand=? */
+	{
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
+		ismand = (short int)yesnoval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "makemig") == 0) {
-       int xmult, ymult;
-       if (totparms < 2) goto badarg;
-       xmult = intval[0];
-       ymult = intval[1];
-       make_mig(xmult, ymult);
+	if (strcmp(variable, "cyclelimit") == 0)   /* cyclelimit=? */
+	{
+		if (numval <= 1 || numval > 256)
+		{
+			goto badarg;
+		}
+		initcyclelimit = numval;
+		return 0;
+	}
+
+	if (strcmp(variable, "makemig") == 0)
+	{
+		int xmult, ymult;
+		if (totparms < 2)
+		{
+			goto badarg;
+		}
+		xmult = intval[0];
+		ymult = intval[1];
+		make_mig(xmult, ymult);
 #ifndef WINFRACT
-       exit(0);
+		exit(0);
 #endif
-       }
+	}
 
-   if (strcmp(variable, "cyclerange") == 0) {
-      if (totparms < 2) intval[1] = 255;
-      if (totparms < 1) intval[0] = 1;
-      if (totparms != intparms
-        || intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
-         goto badarg;
-      rotate_lo = intval[0];
-      rotate_hi = intval[1];
-      return 0;
-      }
+	if (strcmp(variable, "cyclerange") == 0)
+	{
+		if (totparms < 2)
+		{
+			intval[1] = 255;
+		}
+		if (totparms < 1)
+		{
+			intval[0] = 1;
+		}
+		if (totparms != intparms
+			|| intval[0] < 0 || intval[1] > 255 || intval[0] > intval[1])
+		{
+			goto badarg;
+		}
+		rotate_lo = intval[0];
+		rotate_hi = intval[1];
+		return 0;
+	}
 
-   if (strcmp(variable, "ranges") == 0) {
-      int i, j, entries, prev;
-      int tmpranges[128];
-      if (totparms != intparms) goto badarg;
-      entries = prev = i = 0;
-      LogFlag = 0; /* ranges overrides logmap */
-      while (i < totparms) {
-         if ((j = intval[i++]) < 0) { /* striping */
-            if ((j = 0-j) < 1 || j >= 16384 || i >= totparms) goto badarg;
-            tmpranges[entries++] = -1; /* {-1,width,limit} for striping */
-            tmpranges[entries++] = j;
-            j = intval[i++];
-            }
-         if (j < prev) goto badarg;
-         tmpranges[entries++] = prev = j;
-         }
-      if (prev == 0) goto badarg;
-      if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL) {
-         stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
-         return -1;
-         }
-      rangeslen = entries;
-      for (i = 0; i < rangeslen; ++i)
-         ranges[i] = tmpranges[i];
-      return 1;
-      }
+	if (strcmp(variable, "ranges") == 0)
+	{
+		int i, j, entries, prev;
+		int tmpranges[128];
 
-   if (strcmp(variable, "savename") == 0) {      /* savename=? */
-      if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if (first_init || mode == 2) {
-         if (merge_pathnames(savename, value, mode) < 0)
-            init_msg(variable, value, mode);
-      }
-      return 0;
-      }
+		if (totparms != intparms)
+		{
+			goto badarg;
+		}
+		entries = prev = i = 0;
+		LogFlag = 0; /* ranges overrides logmap */
+		while (i < totparms)
+		{
+			if ((j = intval[i++]) < 0) /* striping */
+			{
+				if ((j = 0-j) < 1 || j >= 16384 || i >= totparms)
+				{
+					goto badarg;
+				}
+				tmpranges[entries++] = -1; /* {-1,width,limit} for striping */
+				tmpranges[entries++] = j;
+				j = intval[i++];
+			}
+			if (j < prev)
+			{
+				goto badarg;
+			}
+			tmpranges[entries++] = prev = j;
+		}
+		if (prev == 0)
+		{
+			goto badarg;
+		}
+		if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL)
+		{
+			stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
+			return -1;
+		}
+		rangeslen = entries;
+		for (i = 0; i < rangeslen; ++i)
+		{
+			ranges[i] = tmpranges[i];
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "tweaklzw") == 0) {      /* tweaklzw=? */
-      if (totparms >= 1) lzw[0] = intval[0];
-      if (totparms >= 2) lzw[1] = intval[1];
-      return 0;
-      }
+	if (strcmp(variable, "savename") == 0)      /* savename=? */
+	{
+		if (valuelen > (FILE_MAX_PATH-1))
+		{
+			goto badarg;
+		}
+		if (first_init || mode == 2)
+		{
+			if (merge_pathnames(savename, value, mode) < 0)
+			{
+				init_msg(variable, value, mode);
+			}
+		}
+		return 0;
+	}
 
-   if (strcmp(variable, "minstack") == 0) {      /* minstack=? */
-      if (totparms != 1)
-         goto badarg;
-      minstack = intval[0];
-      return 0;
-      }
+	if (strcmp(variable, "tweaklzw") == 0)      /* tweaklzw=? */
+	{
+		if (totparms >= 1)
+		{
+			lzw[0] = intval[0];
+		}
+		if (totparms >= 2)
+		{
+			lzw[1] = intval[1];
+		}
+		return 0;
+	}
 
-   if (strcmp(variable, "mathtolerance") == 0) {      /* mathtolerance=? */
-      if (charval[0] == '/')
-          ; /* leave math_tol[0] at the default value */
-      else if (totparms >= 1) math_tol[0] = floatval[0];
-      if (totparms >= 2) math_tol[1] = floatval[1];
-      return 0;
-      }
+	if (strcmp(variable, "minstack") == 0)      /* minstack=? */
+	{
+		if (totparms != 1)
+		{
+			goto badarg;
+		}
+		minstack = intval[0];
+		return 0;
+	}
 
-   if (strcmp(variable, "tempdir") == 0) {      /* tempdir=? */
-      if (valuelen > (FILE_MAX_DIR-1)) goto badarg;
-      if (isadirectory(value) == 0) goto badarg;
-      strcpy(tempdir, value);
-      fix_dirname(tempdir);
-      return 0;
-      }
+	if (strcmp(variable, "mathtolerance") == 0)      /* mathtolerance=? */
+	{
+		if (charval[0] == '/')
+		{
+			; /* leave math_tol[0] at the default value */
+		}
+		else if (totparms >= 1)
+		{
+			math_tol[0] = floatval[0];
+		}
+		if (totparms >= 2)
+		{
+			math_tol[1] = floatval[1];
+		}
+		return 0;
+	}
 
-   if (strcmp(variable, "workdir") == 0) {      /* workdir=? */
-      if (valuelen > (FILE_MAX_DIR-1)) goto badarg;
-      if (isadirectory(value) == 0) goto badarg;
-      strcpy(workdir, value);
-      fix_dirname(workdir);
-      return 0;
-      }
+	if (strcmp(variable, "tempdir") == 0)      /* tempdir=? */
+	{
+		if (valuelen > (FILE_MAX_DIR-1))
+		{
+			goto badarg;
+		}
+		if (isadirectory(value) == 0)
+		{
+			goto badarg;
+		}
+		strcpy(tempdir, value);
+		fix_dirname(tempdir);
+		return 0;
+	}
 
-   if (strcmp(variable, "exitmode") == 0) {      /* exitmode=? */
-      sscanf(value, "%x", &numval);
-      exitmode = (BYTE)numval;
-      return 0;
-      }
+	if (strcmp(variable, "workdir") == 0)      /* workdir=? */
+	{
+		if (valuelen > (FILE_MAX_DIR-1))
+		{
+			goto badarg;
+		}
+		if (isadirectory(value) == 0)
+		{
+			goto badarg;
+		}
+		strcpy(workdir, value);
+		fix_dirname(workdir);
+		return 0;
+	}
 
-   if (strcmp(variable, "textcolors") == 0) {
-      parse_textcolors(value);
-      return 0;
-      }
+	if (strcmp(variable, "exitmode") == 0)      /* exitmode=? */
+	{
+		sscanf(value, "%x", &numval);
+		exitmode = (BYTE)numval;
+		return 0;
+	}
 
-   if (strcmp(variable, "potential") == 0) {     /* potential=? */
-      k = 0;
-      while (k < 3 && *value) {
-         if (k==1)
-            potparam[k] = atof(value);
-         else
-            potparam[k] = atoi(value);
-         k++;
-       if ((value = strchr(value, '/')) == NULL) k = 99;
-         ++value;
-         }
-      pot16bit = 0;
-      if (k < 99) {
-         if (strcmp(value, "16bit")) goto badarg;
-         pot16bit = 1;
-         }
-      return 1;
-      }
+	if (strcmp(variable, "textcolors") == 0)
+	{
+		parse_textcolors(value);
+		return 0;
+	}
 
-   if (strcmp(variable, "params") == 0) {        /* params=?,? */
-      if (totparms != floatparms || totparms > MAXPARAMS)
-         goto badarg;
-      initparams = 1;
-      for (k = 0; k < MAXPARAMS; ++k)
-         param[k] = (k < totparms) ? floatval[k] : 0.0;
-      if (bf_math)
-         for (k = 0; k < MAXPARAMS; k++)
-            floattobf(bfparms[k], param[k]);
-      return 1;
-      }
+	if (strcmp(variable, "potential") == 0)     /* potential=? */
+	{
+		k = 0;
+		while (k < 3 && *value)
+		{
+			if (k==1)
+			{
+				potparam[k] = atof(value);
+			}
+			else
+			{
+				potparam[k] = atoi(value);
+			}
+			k++;
+			if ((value = strchr(value, '/')) == NULL)
+			{
+				k = 99;
+			}
+			++value;
+		}
+		pot16bit = 0;
+		if (k < 99)
+		{
+			if (strcmp(value, "16bit"))
+			{
+				goto badarg;
+			}
+			pot16bit = 1;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "miim") == 0) {          /* miim=?[/?[/?[/?]]] */
-      if (totparms > 6) goto badarg;
-      if (charval[0] == 'b')
-         major_method = breadth_first;
-      else if (charval[0] == 'd')
-         major_method = depth_first;
-      else if (charval[0] == 'w')
-         major_method = random_walk;
+	if (strcmp(variable, "params") == 0)        /* params=?,? */
+	{
+		if (totparms != floatparms || totparms > MAXPARAMS)
+		{
+			goto badarg;
+		}
+		initparams = 1;
+		for (k = 0; k < MAXPARAMS; ++k)
+		{
+			param[k] = (k < totparms) ? floatval[k] : 0.0;
+		}
+		if (bf_math)
+		{
+			for (k = 0; k < MAXPARAMS; k++)
+			{
+				floattobf(bfparms[k], param[k]);
+			}
+		}
+		return 1;
+	}
+
+	if (strcmp(variable, "miim") == 0)          /* miim=?[/?[/?[/?]]] */
+	{
+		if (totparms > 6)
+		{
+			goto badarg;
+		}
+		if (charval[0] == 'b')
+		{
+			major_method = breadth_first;
+		}
+		else if (charval[0] == 'd')
+		{
+			major_method = depth_first;
+		}
+		else if (charval[0] == 'w')
+		{
+			major_method = random_walk;
+		}
 #ifdef RANDOM_RUN
-      else if (charval[0] == 'r')
-         major_method = random_run;
+		else if (charval[0] == 'r')
+		{
+			major_method = random_run;
+		}
 #endif
-      else goto badarg;
+		else
+		{
+			goto badarg;
+		}
 
-      if (charval[1] == 'l')
-         minor_method = left_first;
-      else if (charval[1] == 'r')
-         minor_method = right_first;
-      else goto badarg;
+		if (charval[1] == 'l')
+		{
+			minor_method = left_first;
+		}
+		else if (charval[1] == 'r')
+		{
+			minor_method = right_first;
+		}
+		else
+		{
+			goto badarg;
+		}
 
-/* keep this next part in for backwards compatibility with old PARs ??? */
+		/* keep this next part in for backwards compatibility with old PARs ??? */
 
-      if (totparms > 2)
-        for (k = 2; k < 6; ++k)
-           param[k-2] = (k < totparms) ? floatval[k] : 0.0;
+		if (totparms > 2)
+		{
+			for (k = 2; k < 6; ++k)
+			{
+				param[k-2] = (k < totparms) ? floatval[k] : 0.0;
+			}
+		}
 
-      return 1;
-   }
+		return 1;
+	}
 
-   if (strcmp(variable, "initorbit") == 0) {     /* initorbit=?,? */
-      if (strcmp(value, "pixel")==0)
-         useinitorbit = 2;
-      else {
-         if (totparms != 2 || floatparms != 2) goto badarg;
-         initorbit.x = floatval[0];
-         initorbit.y = floatval[1];
-         useinitorbit = 1;
-         }
-      return 1;
-      }
+	if (strcmp(variable, "initorbit") == 0)     /* initorbit=?,? */
+	{
+		if (strcmp(value, "pixel")==0)
+		{
+			useinitorbit = 2;
+		}
+		else
+		{
+			if (totparms != 2 || floatparms != 2)
+			{
+				goto badarg;
+			}
+			initorbit.x = floatval[0];
+			initorbit.y = floatval[1];
+			useinitorbit = 1;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "orbitname") == 0 ) {         /* orbitname=? */
-      if (check_orbit_name(value))
-         goto badarg;
-      return 1;
-      }
-   if (strcmp(variable, "3dmode") == 0 ) {         /* orbitname=? */
-      int i, j;
-      j = -1;
-      for (i=0; i<4; i++)
-         if (strcmp(value, juli3Doptions[i])==0)
-            j = i;
-      if (j < 0)
-         goto badarg;
-      else
-         juli3Dmode = j;
-      return 1;
-      }
+	if (strcmp(variable, "orbitname") == 0)         /* orbitname=? */
+	{
+		if (check_orbit_name(value))
+		{
+			goto badarg;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "julibrot3d") == 0) {       /* julibrot3d=?,?,?,? */
-      if (floatparms != totparms)
-         goto badarg;
-      if (totparms > 0)
-         zdots = (int)floatval[0];
-      if (totparms > 1)
-         originfp = (float)floatval[1];
-      if (totparms > 2)
-         depthfp = (float)floatval[2];
-      if (totparms > 3)
-         heightfp = (float)floatval[3];
-      if (totparms > 4)
-         widthfp = (float)floatval[4];
-      if (totparms > 5)
-         distfp = (float)floatval[5];
-      return 1;
-      }
+	if (strcmp(variable, "3dmode") == 0)         /* orbitname=? */
+	{
+		int i, j;
+		j = -1;
+		for (i = 0; i < 4; i++)
+		{
+			if (strcmp(value, juli3Doptions[i]) == 0)
+			{
+				j = i;
+			}
+		}
+		if (j < 0)
+		{
+			goto badarg;
+		}
+		else
+		{
+			juli3Dmode = j;
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "julibroteyes") == 0) {       /* julibroteyes=?,?,?,? */
-      if (floatparms != totparms || totparms != 1)
-         goto badarg;
-      eyesfp =  (float)floatval[0];
-      return 1;
-      }
+	if (strcmp(variable, "julibrot3d") == 0)       /* julibrot3d=?,?,?,? */
+	{
+		if (floatparms != totparms)
+		{
+			goto badarg;
+		}
+		if (totparms > 0)
+		{
+			zdots = (int)floatval[0];
+		}
+		if (totparms > 1)
+		{
+			originfp = (float)floatval[1];
+		}
+		if (totparms > 2)
+		{
+			depthfp = (float)floatval[2];
+		}
+		if (totparms > 3)
+		{
+			heightfp = (float)floatval[3];
+		}
+		if (totparms > 4)
+		{
+			widthfp = (float)floatval[4];
+		}
+		if (totparms > 5)
+		{
+			distfp = (float)floatval[5];
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "julibrotfromto") == 0) {       /* julibrotfromto=?,?,?,? */
-      if (floatparms != totparms || totparms != 4)
-         goto badarg;
-      mxmaxfp = floatval[0];
-      mxminfp = floatval[1];
-      mymaxfp = floatval[2];
-      myminfp = floatval[3];
-      return 1;
-      }
+	if (strcmp(variable, "julibroteyes") == 0)       /* julibroteyes=?,?,?,? */
+	{
+		if (floatparms != totparms || totparms != 1)
+		{
+			goto badarg;
+		}
+		eyesfp =  (float)floatval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "corners") == 0) {       /* corners=?,?,?,? */
-      int dec;
-      if (fractype == CELLULAR)
-          return 1; /* skip setting the corners */
+	if (strcmp(variable, "julibrotfromto") == 0)       /* julibrotfromto=?,?,?,? */
+	{
+		if (floatparms != totparms || totparms != 4)
+		{
+			goto badarg;
+		}
+		mxmaxfp = floatval[0];
+		mxminfp = floatval[1];
+		mymaxfp = floatval[2];
+		myminfp = floatval[3];
+		return 1;
+	}
+
+	if (strcmp(variable, "corners") == 0)       /* corners=?,?,?,? */
+	{
+		int dec;
+		if (fractype == CELLULAR)
+		{
+			return 1; /* skip setting the corners */
+		}
 #if 0
-	  /* use a debugger and OutputDebugString instead of standard I/O on Windows */
-      printf("totparms %d floatparms %d\n", totparms, floatparms);
-      getch();
+		/* use a debugger and OutputDebugString instead of standard I/O on Windows */
+		printf("totparms %d floatparms %d\n", totparms, floatparms);
+		getch();
 #endif
-      if (  floatparms != totparms
-            || (totparms != 0 && totparms != 4 && totparms != 6))
-         goto badarg;
-      usemag = 0;
-      if (totparms == 0) return 0; /* turns corners mode on */
-      initcorners = 1;
-      /* good first approx, but dec could be too big */
-      dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-      if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400) {
-         int old_bf_math;
+		if (floatparms != totparms
+			|| (totparms != 0 && totparms != 4 && totparms != 6))
+		{
+			goto badarg;
+		}
+		usemag = 0;
+		if (totparms == 0)
+		{
+			return 0; /* turns corners mode on */
+		}
+		initcorners = 1;
+		/* good first approx, but dec could be too big */
+		dec = get_max_curarg_len(floatvalstr, totparms) + 1;
+		if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400)
+		{
+			int old_bf_math;
 
-         old_bf_math = bf_math;
-         if (!bf_math || dec > decimals)
-            init_bf_dec(dec);
-         if (old_bf_math == 0) {
-            int k;
-            for (k = 0; k < MAXPARAMS; k++)
-               floattobf(bfparms[k], param[k]);
-         }
+			old_bf_math = bf_math;
+			if (!bf_math || dec > decimals)
+			{
+				init_bf_dec(dec);
+			}
+			if (old_bf_math == 0)
+			{
+				int k;
+				for (k = 0; k < MAXPARAMS; k++)
+				{
+					floattobf(bfparms[k], param[k]);
+				}
+			}
 
-         /* xx3rd = xxmin = floatval[0]; */
-         get_bf(bfxmin, floatvalstr[0]);
-         get_bf(bfx3rd, floatvalstr[0]);
+			/* xx3rd = xxmin = floatval[0]; */
+			get_bf(bfxmin, floatvalstr[0]);
+			get_bf(bfx3rd, floatvalstr[0]);
 
-         /* xxmax = floatval[1]; */
-         get_bf(bfxmax, floatvalstr[1]);
+			/* xxmax = floatval[1]; */
+			get_bf(bfxmax, floatvalstr[1]);
 
-         /* yy3rd = yymin = floatval[2]; */
-         get_bf(bfymin, floatvalstr[2]);
-         get_bf(bfy3rd, floatvalstr[2]);
+			/* yy3rd = yymin = floatval[2]; */
+			get_bf(bfymin, floatvalstr[2]);
+			get_bf(bfy3rd, floatvalstr[2]);
 
-         /* yymax = floatval[3]; */
-         get_bf(bfymax, floatvalstr[3]);
+			/* yymax = floatval[3]; */
+			get_bf(bfymax, floatvalstr[3]);
 
-         if (totparms == 6) {
-            /* xx3rd = floatval[4]; */
-            get_bf(bfx3rd, floatvalstr[4]);
+			if (totparms == 6)
+			{
+				/* xx3rd = floatval[4]; */
+				get_bf(bfx3rd, floatvalstr[4]);
 
-            /* yy3rd = floatval[5]; */
-            get_bf(bfy3rd, floatvalstr[5]);
-         }
+				/* yy3rd = floatval[5]; */
+				get_bf(bfy3rd, floatvalstr[5]);
+			}
 
-         /* now that all the corners have been read in, get a more */
-         /* accurate value for dec and do it all again             */
+			/* now that all the corners have been read in, get a more */
+			/* accurate value for dec and do it all again             */
 
-         dec = getprecbf_mag();
-         if (dec < 0)
-            goto badarg;     /* ie: Magnification is +-1.#INF */
+			dec = getprecbf_mag();
+			if (dec < 0)
+			{
+				goto badarg;     /* ie: Magnification is +-1.#INF */
+			}
 
-         if (dec > decimals)  /* get corners again if need more precision */
-         {
-            init_bf_dec(dec);
+			if (dec > decimals)  /* get corners again if need more precision */
+			{
+				init_bf_dec(dec);
 
-            /* now get parameters and corners all over again at new
-               decimal setting */
-            for (k = 0; k < MAXPARAMS; k++)
-               floattobf(bfparms[k], param[k]);
+				/* now get parameters and corners all over again at new
+				decimal setting */
+				for (k = 0; k < MAXPARAMS; k++)
+				{
+					floattobf(bfparms[k], param[k]);
+				}
 
-            /* xx3rd = xxmin = floatval[0]; */
-            get_bf(bfxmin, floatvalstr[0]);
-            get_bf(bfx3rd, floatvalstr[0]);
+				/* xx3rd = xxmin = floatval[0]; */
+				get_bf(bfxmin, floatvalstr[0]);
+				get_bf(bfx3rd, floatvalstr[0]);
 
-            /* xxmax = floatval[1]; */
-            get_bf(bfxmax, floatvalstr[1]);
+				/* xxmax = floatval[1]; */
+				get_bf(bfxmax, floatvalstr[1]);
 
-            /* yy3rd = yymin = floatval[2]; */
-            get_bf(bfymin, floatvalstr[2]);
-            get_bf(bfy3rd, floatvalstr[2]);
+				/* yy3rd = yymin = floatval[2]; */
+				get_bf(bfymin, floatvalstr[2]);
+				get_bf(bfy3rd, floatvalstr[2]);
 
-            /* yymax = floatval[3]; */
-            get_bf(bfymax, floatvalstr[3]);
+				/* yymax = floatval[3]; */
+				get_bf(bfymax, floatvalstr[3]);
 
-            if (totparms == 6) {
-            /* xx3rd = floatval[4]; */
-               get_bf(bfx3rd, floatvalstr[4]);
+				if (totparms == 6)
+				{
+					/* xx3rd = floatval[4]; */
+					get_bf(bfx3rd, floatvalstr[4]);
 
-            /* yy3rd = floatval[5]; */
-               get_bf(bfy3rd, floatvalstr[5]);
-            }
-         }
-      }
-      xx3rd = xxmin = floatval[0];
-      xxmax =         floatval[1];
-      yy3rd = yymin = floatval[2];
-      yymax =         floatval[3];
+					/* yy3rd = floatval[5]; */
+					get_bf(bfy3rd, floatvalstr[5]);
+				}
+			}
+		}
+		xx3rd = xxmin = floatval[0];
+		xxmax =         floatval[1];
+		yy3rd = yymin = floatval[2];
+		yymax =         floatval[3];
 
-      if (totparms == 6) {
-         xx3rd =      floatval[4];
-         yy3rd =      floatval[5];
-         }
-      return 1;
-      }
+		if (totparms == 6)
+		{
+			xx3rd =      floatval[4];
+			yy3rd =      floatval[5];
+		}
+		return 1;
+	}
 
-   if (strcmp(variable, "orbitcorners") == 0) {  /* orbit corners=?,?,?,? */
-      set_orbit_corners = 0;
-      if (  floatparms != totparms
-            || (totparms != 0 && totparms != 4 && totparms != 6))
-         goto badarg;
-      ox3rd = oxmin = floatval[0];
-      oxmax =         floatval[1];
-      oy3rd = oymin = floatval[2];
-      oymax =         floatval[3];
+	if (strcmp(variable, "orbitcorners") == 0)  /* orbit corners=?,?,?,? */
+	{
+		set_orbit_corners = 0;
+		if (floatparms != totparms
+			|| (totparms != 0 && totparms != 4 && totparms != 6))
+		{
+			goto badarg;
+		}
+		ox3rd = oxmin = floatval[0];
+		oxmax =         floatval[1];
+		oy3rd = oymin = floatval[2];
+		oymax =         floatval[3];
 
-      if (totparms == 6) {
-         ox3rd =      floatval[4];
-         oy3rd =      floatval[5];
-         }
-      set_orbit_corners = 1;
-      keep_scrn_coords = 1;
-      return 1;
-      }
+		if (totparms == 6)
+		{
+			ox3rd =      floatval[4];
+			oy3rd =      floatval[5];
+		}
+		set_orbit_corners = 1;
+		keep_scrn_coords = 1;
+		return 1;
+	}
 
-   if (strcmp(variable, "screencoords") == 0 ) {     /* screencoords=?   */
-      if (yesnoval[0] < 0) goto badarg;
-      keep_scrn_coords = yesnoval[0];
-      return 1;
-      }
+	if (strcmp(variable, "screencoords") == 0)     /* screencoords=?   */
+	{
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
+		keep_scrn_coords = yesnoval[0];
+		return 1;
+	}
 
-   if (strcmp(variable, "orbitdrawmode") == 0) {     /* orbitdrawmode=? */
-      if ( charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
-         goto badarg;
-      drawmode = charval[0];
-      return 1;
-      }
+	if (strcmp(variable, "orbitdrawmode") == 0)     /* orbitdrawmode=? */
+	{
+		if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
+		{
+			goto badarg;
+		}
+		drawmode = charval[0];
+		return 1;
+	}
 
    if (strcmp(variable, "viewwindows") == 0) {  /* viewwindows=?,?,?,?,? */
       if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
