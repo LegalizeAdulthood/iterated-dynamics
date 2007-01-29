@@ -242,6 +242,7 @@ asmfpMODbailout endp
 */
 int asmfpMODbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	magnitude = tempsqrx + tempsqry;
@@ -284,6 +285,7 @@ asmfpREALbailout endp
 */
 int asmfpREALbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	if (tempsqrx >= rqlim || overflow)
@@ -324,6 +326,7 @@ asmfpIMAGbailout endp
 */
 int asmfpIMAGbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	if (tempsqry >= rqlim || overflow)
@@ -371,6 +374,7 @@ asmfpORbailout endp
 */
 int asmfpORbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
@@ -420,6 +424,7 @@ asmfpANDbailout endp
 */
 int asmfpANDbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
@@ -472,6 +477,7 @@ asmfpMANHbailout endp
 */
 int asmfpMANHbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	magnitude = fabs(g_new.x) + fabs(g_new.y);
@@ -521,6 +527,7 @@ asmfpMANRbailout endp
 */
 int asmfpMANRbailout(void)
 {
+	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
 	magnitude = fabs(g_new.x + g_new.y);
