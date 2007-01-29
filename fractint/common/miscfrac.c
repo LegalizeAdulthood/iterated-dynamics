@@ -1382,11 +1382,7 @@ jumpout:
 
 #define CELLULAR_DONE 10
 
-#if defined(XFRACT) || defined(_WIN32)
 static BYTE *cell_array[2];
-#else
-static BYTE *cell_array[2];
-#endif
 
 S16 r, k_1, rule_digits;
 int lstscreenflag;
