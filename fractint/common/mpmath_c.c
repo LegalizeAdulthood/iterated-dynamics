@@ -704,54 +704,318 @@ int GausianNumber(int Probability, int Range) {
 #if defined(_WIN32)
 double *MP2d086(struct MP x)
 {
+	/* TODO: implement */
 	static double ans = 0.0;
 	_ASSERTE(0 && "MP2d086 called.");
 	return &ans;
 }
 
+/*
+d2MP086     PROC     uses si di, x:QWORD
+   mov   dx, word ptr [x+6]
+   mov   ax, word ptr [x+4]
+   mov   bx, word ptr [x+2]
+   mov   cx, word ptr [x]
+   mov   si, dx
+   shl   si, 1
+   pushf
+   mov   cl, 4
+   shr   si, cl
+   popf
+   rcr   si, 1
+   add   si, (1 SHL 14) - (1 SHL 10)
+
+   mov   di, ax                           ; shl dx:ax:bx 12 bits
+   mov   cl, 12
+   shl   dx, cl
+   shl   ax, cl
+   mov   cl, 4
+   shr   di, cl
+   shr   bx, cl
+   or    dx, di
+   or    ax, bx
+   stc
+   rcr   dx, 1
+   rcr   ax, 1
+
+StoreAns:
+   mov   Ans.Exp, si
+   mov   word ptr Ans.Mant+2, dx
+   mov   word ptr Ans.Mant, ax
+
+   lea   ax, Ans
+   mov   dx, ds
+   ret
+d2MP086     ENDP
+*/
 struct MP *d2MP086(double x)
 {
-	static struct MP ans = { 0 };
-	_ASSERTE(0 && "d2MP086 called.");
-	return &ans;
+	/* TODO: implement */
+	if (0.0 == x)
+	{
+		Ans.Exp = 0;
+		Ans.Mant = 0;
+	}
+	else
+	{
+		__asm
+		{
+			mov dx, word ptr [x+6]
+			mov ax, word ptr [x+4]
+			mov bx, word ptr [x+2]
+			mov cx, word ptr [x]
+			xor	esi, esi
+			mov   si, dx
+			shl   si, 1
+			pushf
+			mov   cl, 4
+			shr   si, cl
+			popf
+			rcr   si, 1
+			add   si, (1 SHL 14) - (1 SHL 10)
+
+			mov   di, ax                           ; shl dx:ax:bx 12 bits
+			mov   cl, 12
+			shl   dx, cl
+			shl   ax, cl
+			mov   cl, 4
+			shr   di, cl
+			shr   bx, cl
+			or    dx, di
+			or    ax, bx
+			stc
+			rcr   dx, 1
+			rcr   ax, 1
+
+			mov   Ans.Exp, esi
+			mov   word ptr Ans.Mant+2, dx
+			mov   word ptr Ans.Mant, ax
+		}
+	}
+	return &Ans;
 }
 
 struct MP *MPadd086(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPadd086 called.");
-	return &ans;
+	return &Ans;
 }
 
 int MPcmp086(struct MP x, struct MP y)
 {
+	/* TODO: implement */
 	_ASSERTE(0 && "MPcmp086 called.");
 	return 0;
 }
 
 struct MP *MPdiv086(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPdiv086 called.");
-	return &ans;
+	return &Ans;
 }
 
+/*
+MPmul086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
+   mov   ax, xExp
+   mov   bx, yExp
+   xor   ch, ch
+   shl   bh, 1
+   rcr   ch, 1
+   shr   bh, 1
+   xor   ah, ch
+
+   sub   bx, (1 SHL 14) - 2
+   add   ax, bx
+   jno   NoOverflow
+
+Overflow:
+   or    word ptr [xMant+2], 0
+   jz    ZeroAns
+   or    word ptr [yMant+2], 0
+   jz    ZeroAns
+
+   mov   MPOverflow, 1
+
+ZeroAns:
+   xor   ax, ax
+   xor   dx, dx
+   mov   Ans.Exp, ax
+   jmp   StoreMant
+
+NoOverflow:
+   mov   Ans.Exp, ax
+
+   mov   si, word ptr [xMant+2]
+   mov   bx, word ptr [xMant]
+   mov   di, word ptr [yMant+2]
+   mov   cx, word ptr [yMant]
+
+   mov   ax, si
+   or    ax, bx
+   jz    ZeroAns
+
+   mov   ax, di
+   or    ax, cx
+   jz    ZeroAns
+
+   mov   ax, cx
+   mul   bx
+   push  dx
+
+   mov   ax, cx
+   mul   si
+   push  ax
+   push  dx
+
+   mov   ax, bx
+   mul   di
+   push  ax
+   push  dx
+
+   mov   ax, si
+   mul   di
+   pop   bx
+   pop   cx
+   pop   si
+   pop   di
+
+   add   ax, bx
+   adc   dx, 0
+   pop   bx
+   add   di, bx
+   adc   ax, 0
+   adc   dx, 0
+   add   di, cx
+   adc   ax, si
+   adc   dx, 0
+
+   or    dx, dx
+   js    StoreMant
+
+   shl   di, 1
+   rcl   ax, 1
+   rcl   dx, 1
+   sub   Ans.Exp, 1
+   jo    Overflow
+
+StoreMant:
+   mov   word ptr Ans.Mant+2, dx
+   mov   word ptr Ans.Mant, ax
+
+   lea   ax, Ans
+   mov   dx, ds
+   ret
+MPmul086    ENDP
+*/
 struct MP *MPmul086(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
-	_ASSERTE(0 && "MPmul086 called.");
-	return &ans;
+	/* TODO: implement */
+	__asm
+	{
+		xor   eax, eax
+		xor   ebx, ebx
+		mov   eax, x.Exp
+		mov   ebx, y.Exp
+		xor   ch, ch
+		shl   bh, 1
+		rcr   ch, 1
+		shr   bh, 1
+		xor   ah, ch
+
+		sub   bx, (1 SHL 14) - 2
+		add   ax, bx
+		jno   NoOverflow
+
+	Overflow:
+		or    word ptr [x.Mant+2], 0
+		jz    ZeroAns
+		or    word ptr [y.Mant+2], 0
+		jz    ZeroAns
+
+		mov   MPOverflow, 1
+
+	ZeroAns:
+		xor   ax, ax
+		xor   dx, dx
+		mov   Ans.Exp, eax
+		jmp   StoreMant
+
+	NoOverflow:
+		mov   Ans.Exp, eax
+
+		mov   si, word ptr [x.Mant+2]
+		mov   bx, word ptr [x.Mant]
+		mov   di, word ptr [y.Mant+2]
+		mov   cx, word ptr [y.Mant]
+
+		mov   ax, si
+		or    ax, bx
+		jz    ZeroAns
+
+		mov   ax, di
+		or    ax, cx
+		jz    ZeroAns
+
+		mov   ax, cx
+		mul   bx
+		push  dx
+
+		mov   ax, cx
+		mul   si
+		push  ax
+		push  dx
+
+		mov   ax, bx
+		mul   di
+		push  ax
+		push  dx
+
+		mov   ax, si
+		mul   di
+		pop   bx
+		pop   cx
+		pop   si
+		pop   di
+
+		add   ax, bx
+		adc   dx, 0
+		pop   bx
+		add   di, bx
+		adc   ax, 0
+		adc   dx, 0
+		add   di, cx
+		adc   ax, si
+		adc   dx, 0
+
+		or    dx, dx
+		js    StoreMant
+
+		shl   di, 1
+		rcl   ax, 1
+		rcl   dx, 1
+		sub   Ans.Exp, 1
+		jo    Overflow
+
+	StoreMant:
+		mov   word ptr Ans.Mant+2, dx
+		mov   word ptr Ans.Mant, ax
+	}
+
+	return &Ans;
 }
 
 struct MP *d2MP386(double x)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "d2MP386 called.");
-	return &ans;
+	return &Ans;
 }
 
 double *MP2d386(struct MP x)
 {
+	/* TODO: implement */
 	static double ans = 0.0;
 	_ASSERTE(0 && "MP2d386 called.");
 	return &ans;
@@ -759,70 +1023,116 @@ double *MP2d386(struct MP x)
 
 struct MP *MPadd(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPadd called.");
-	return &ans;
+	return &Ans;
 }
 
 struct MP *MPadd386(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPadd386 called.");
-	return &ans;
+	return &Ans;
 }
 
 int MPcmp386(struct MP x, struct MP y)
 {
+	/* TODO: implement */
 	_ASSERTE(0 && "MPcmp386 called.");
 	return 0;
 }
 
 struct MP *MPdiv386(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPdiv386 called.");
-	return &ans;
+	return &Ans;
 }
 
 struct MP *MPmul386(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPmul386 called.");
-	return &ans;
+	return &Ans;
 }
 
 struct MP *d2MP(double x)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "d2MP called.");
-	return &ans;
+	return &Ans;
 }
 
 struct MP *MPmul(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPmul called.");
-	return &ans;
+	return &Ans;
 }
 
 struct MP *MPdiv(struct MP x, struct MP y)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "MPdiv called.");
-	return &ans;
+	return &Ans;
 }
 
 int MPcmp(struct MP x, struct MP y)
 {
+	/* TODO: implement */
 	_ASSERTE(0 && "MPcmp called.");
 	return 0;
 }
 
+/*
+fg2MP:
+   cmp   cpu, 386
+   jae   Use386fg2MP
+   jmp   fg2MP086
+
+Use386fg2MP:
+   jmp   fg2MP386
+
+fg2MP386    PROC     x:DWORD, fg:WORD
+   mov   bx, 1 SHL 14 + 30
+   sub   bx, fg
+.386
+   mov   edx, x
+
+   or    edx, edx
+   jnz   ChkNegMP
+
+   mov   bx, dx
+   jmp   StoreAns
+
+ChkNegMP:
+   jns   BitScanRight
+
+   or    bh, 80h
+   neg   edx
+
+BitScanRight:
+   bsr   ecx, edx
+   neg   cx
+   add   cx, 31
+   sub   bx, cx
+   shl   edx, cl
+
+StoreAns:
+   mov   Ans.Exp, bx
+   mov   Ans.Mant, edx
+.8086
+   lea   ax, Ans
+   mov   dx, ds
+   ret
+fg2MP386    ENDP
+
+*/
 struct MP *fg2MP(long x, int fg)
 {
-	static struct MP ans = { 0 };
+	/* TODO: implement */
 	_ASSERTE(0 && "fg2MP called.");
-	return &ans;
+	return &Ans;
 }
 
 #endif
