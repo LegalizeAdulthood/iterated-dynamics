@@ -213,9 +213,6 @@ int asm386lMANRbailout(void)
 	return 0;
 }
 
-int asmfpMODbailout(void)
-{
-	return 1;
 /*
 asmfpMODbailout proc near uses si di
         fld     qword ptr new+8
@@ -243,11 +240,21 @@ bailout:
         ret
 asmfpMODbailout endp
 */
+int asmfpMODbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	magnitude = tempsqrx + tempsqry;
+	if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
+		fabs(g_new.y) > rqlim2 || overflow)
+	{
+		overflow = 0;
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpREALbailout(void)
-{
-	return 1;
 /*
 asmfpREALbailout proc near uses si di
         fld     qword ptr new
@@ -275,11 +282,19 @@ bailout:
         ret
 asmfpREALbailout endp
 */
+int asmfpREALbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	if (tempsqrx >= rqlim || overflow)
+	{
+		overflow = 0;
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpIMAGbailout(void)
-{
-	return 1;
 /*
 asmfpIMAGbailout proc near uses si di
         fld     qword ptr new+8
@@ -307,11 +322,19 @@ bailout:
         ret
 asmfpIMAGbailout endp
 */
+int asmfpIMAGbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	if (tempsqry >= rqlim || overflow)
+	{
+		overflow = 0;
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpORbailout(void)
-{
-	return 1;
 /*
 asmfpORbailout proc near uses si di
         fld     qword ptr new+8
@@ -346,11 +369,19 @@ bailout:
         ret
 asmfpORbailout endp
 */
+int asmfpORbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
+	{
+		overflow = 0;
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpANDbailout(void)
-{
-	return 1;
 /*
 asmfpANDbailout proc near uses si di
         fld     qword ptr new+8
@@ -387,11 +418,19 @@ bailout:
         ret
 asmfpANDbailout endp
 */
+int asmfpANDbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
+	{
+		overflow = 0;
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpMANHbailout(void)
-{
-	return 1;
 /*
 asmfpMANHbailout proc near uses si di
         fld     qword ptr new+8
@@ -431,11 +470,19 @@ bailout:
         ret
 asmfpMANHbailout endp
 */
+int asmfpMANHbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	magnitude = fabs(g_new.x) + fabs(g_new.y);
+	if (magnitude*magnitude >= rqlim)
+	{
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
 
-int asmfpMANRbailout(void)
-{
-	return 1;
 /*
 asmfpMANRbailout proc near uses si di
         fld     qword ptr new+8
@@ -472,4 +519,15 @@ bailout:
         ret
 asmfpMANRbailout endp
 */
+int asmfpMANRbailout(void)
+{
+	tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	magnitude = fabs(g_new.x + g_new.y);
+	if (magnitude*magnitude >= rqlim)
+	{
+		return 1;
+	}
+	old = g_new;
+	return 0;
 }
