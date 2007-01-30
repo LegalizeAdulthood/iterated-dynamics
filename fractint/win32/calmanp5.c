@@ -3,12 +3,13 @@
 
 long cdecl calcmandfpasm_p5(void)
 {
-	_ASSERTE(0 && "calcmandfpasm_p5 called.");
-	return 0;
+	/* TODO: optimize for pentium? */
+	extern long cdecl calcmandfpasm_c();
+	return calcmandfpasm_c();
 }
 
 void cdecl calcmandfpasmstart_p5(void)
 {
-	_ASSERTE(0 && "calcmandfpasmstart_p5 called.");
+	/* TODO: optimize for pentium? */
 }
 
