@@ -212,8 +212,7 @@ $(COMDIR)/plot3d.o $(COMDIR)/printer.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/targa.o $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
-$(COMDIR)/zoom.o \
-drivers/d_x11.o drivers/d_disk.o
+$(COMDIR)/zoom.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
@@ -222,14 +221,14 @@ U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
 $(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o \
-$(UDIR)/calmanfx.o
+$(UDIR)/calmanfx.o $(UDIR)/d_x11.o
 
 else
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
 $(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
-$(UDIR)/unixscr.o $(UDIR)/video.o
+$(UDIR)/unixscr.o $(UDIR)/video.o $(UDIR)/d_x11.o
 
 endif
 
@@ -243,7 +242,6 @@ xfractint: fractint.hlp .WAIT
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
-	cd drivers ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
 	$(CC) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)

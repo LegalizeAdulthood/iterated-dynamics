@@ -5,13 +5,13 @@ ifeq ($(AS),/usr/bin/nasm)
 OBJS = \
 calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
 unix.o unixscr.o video.o \
-calmanfx.o
+calmanfx.o d_x11.o
 
 else
 
 OBJS = \
 calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
-unix.o unixscr.o video.o
+unix.o unixscr.o video.o d_x11.o
 
 endif
 

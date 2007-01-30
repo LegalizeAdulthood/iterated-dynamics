@@ -8,7 +8,7 @@ fractint.o framain2.o frasetup.o gifview.o hcmplx.o help.o \
 intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \
 lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
 parserfp.o plot3d.o printer.o prompts1.o prompts2.o \
-realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o targa.o testpt.o tgaview.o \
+realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o testpt.o tgaview.o \
 zoom.o
 
 #Need to prevent lex from doing fractint.l -> fractint.c
