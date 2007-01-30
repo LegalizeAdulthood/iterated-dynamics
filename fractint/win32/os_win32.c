@@ -112,9 +112,6 @@ int MPOverflow = 0;
 struct MP Ans = { 0 };
 int g_and_color;
 BYTE block[256] = { 0 };
-int boxx[2304] = { 0 };
-int boxy[1024] = { 0 };
-int boxvalues[512] = { 0 };
 int g_checked_vvs = 0;
 int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
@@ -647,10 +644,10 @@ void initasmvars(void)
 	overflow = 0;
 
 	/* set cpu type */
-	cpu = 1;
+	cpu = 486;
 
 	/* set fpu type */
-	/* not needed, set fpu in sstools.ini */
+	fpu = 487;
 }
 
 int isadirectory(char *s)
