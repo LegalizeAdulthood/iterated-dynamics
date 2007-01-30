@@ -25,6 +25,7 @@ typedef BYTE BOOLEAN;
 #define difftime(now,then) ((now)-(then))
 #endif
 
+#define NUM_BOXES 4096
 /* driver_buzzer() codes */
 #define BUZZER_COMPLETE 0
 #define BUZZER_INTERRUPT 1
