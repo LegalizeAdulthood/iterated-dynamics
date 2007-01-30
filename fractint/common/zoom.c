@@ -267,6 +267,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 
 void _fastcall addbox(struct coords point)
 {
+	_ASSERTE(boxcount < NUM_BOXES);
     point.x += sxoffs;
     point.y += syoffs;
     if (point.x >= 0 && point.x < sxdots && 
