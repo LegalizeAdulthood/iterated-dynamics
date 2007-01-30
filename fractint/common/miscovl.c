@@ -1580,10 +1580,10 @@ void showfreemem(void)
 }
 #endif
 
+#if 0
 void edit_text_colors()
 {
-/* TODO: make this work for a driver situation */
-#if !defined(_WIN32)
+	/* TODO: make this work for a driver situation */
    int save_debugflag,save_lookatmouse;
    int row,col,bkgrd;
    int rowf,colf,rowt,colt;
@@ -1665,8 +1665,8 @@ void edit_text_colors()
             bkgrd = 0;
          }
       }
-#endif
 }
+#endif
 
 static int *entsptr;
 static int modes_changed;
