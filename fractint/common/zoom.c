@@ -12,6 +12,10 @@
 
 #define PIXELROUND 0.00001
 
+int boxx[NUM_BOXES] = { 0 };
+int boxy[NUM_BOXES] = { 0 };
+int boxvalues[NUM_BOXES] = { 0 };
+
 static void _fastcall zmo_calc(double, double, double *, double *, double);
 static void _fastcall zmo_calcbf(bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t,bf_t);
 static int  check_pan(void);
