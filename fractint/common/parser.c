@@ -30,7 +30,7 @@
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
-
+#include "drivers.h"
 
 #ifdef WATCH_MP
 double x1, y1, x2, y2;
