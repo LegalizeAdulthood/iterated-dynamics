@@ -255,12 +255,10 @@ over_bailout_87:
 
 long cdecl calcmandfpasm_287(void)
 {
-	_ASSERTE(0 && "calcmandfpasm_287 called.");
-	return 0;
+	return calcmandfpasm_c();
 }
 
 long cdecl calcmandfpasm_87(void)
 {
-	_ASSERTE(0 && "calcmandfpasm_87 called.");
-	return 0;
+	return calcmandfpasm_c();
 }
