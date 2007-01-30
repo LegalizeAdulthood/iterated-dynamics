@@ -20,8 +20,6 @@ static Driver *s_available[MAX_DRIVERS];
 
 Driver *g_driver = NULL;
 
-#define NUM_OF(array_) (sizeof(array_)/sizeof(array_[0]))
-
 static int
 load_driver(Driver *drv, int *argc, char **argv)
 {

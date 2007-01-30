@@ -33,7 +33,7 @@ int DivideOverflow = 0;
 int cpu=0;		/* cpu type: 86, 186, 286, or 386 */
 int fpu=0;		/* fpu type: 0, 87, 287, 387 */
 
-SEGTYPE extraseg=0;		/* extra 64K segment (allocated by init) */
+void *extraseg = NULL;		/* extra 64K segment (allocated by init) */
 /* ********************** Mouse Support Variables ************************** */
 
 int lookatmouse=0;	/* see notes at mouseread routine */
@@ -170,13 +170,13 @@ keypressed(void) {
     ch = getkeynowait();
     if (!ch) return 0;
     keybuffer = ch;
-    if (ch==F1 && helpmode) {
+    if (ch==FIK_F1 && helpmode) {
 	keybuffer = 0;
 	inside_help = 1;
 	help(0);
 	inside_help = 0;
 	return 0;
-    } else if (ch==TAB && tabmode) {
+    } else if (ch==FIK_TAB && tabmode) {
 	keybuffer = 0;
 	tab_display();
 	return 0;
@@ -208,7 +208,7 @@ getakeynohelp(void) {
     int ch;
     while (1) {
 	ch = getakey();
-	if (ch != F1) break;
+	if (ch != FIK_F1) break;
     }
     return ch;
 }
@@ -253,7 +253,7 @@ int block;
 	return ch;
     }
     curkey = xgetkey(0);
-    if (slides==1 && curkey == ESC) {
+    if (slides==1 && curkey == FIK_ESC) {
 	stopslideshow();
 	return 0;
     }
@@ -264,7 +264,7 @@ int block;
 
     if (curkey==0 && block) {
 	curkey = xgetkey(1);
-	if (slides==1 && curkey == ESC) {
+	if (slides==1 && curkey == FIK_ESC) {
 	    stopslideshow();
 	    return 0;
 	}

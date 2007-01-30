@@ -153,10 +153,10 @@ static void continue_hdl(int sig, int code, struct sigcontext *scp,
 #endif
 
 static int mousefkey[4][4] /* [button][dir] */ = {
-    {RIGHT_ARROW,LEFT_ARROW,DOWN_ARROW,UP_ARROW},
-    {0,0,PAGE_DOWN,PAGE_UP},
-    {CTL_PLUS,CTL_MINUS,CTL_DEL,CTL_INSERT},
-    {CTL_END,CTL_HOME,CTL_PAGE_DOWN,CTL_PAGE_UP}
+    {FIK_RIGHT_ARROW, FIK_LEFT_ARROW, FIK_DOWN_ARROW, FIK_UP_ARROW},
+    {0, 0, FIK_PAGE_DOWN, FIK_PAGE_UP},
+    {FIK_CTL_PLUS, FIK_CTL_MINUS, FIK_CTL_DEL, FIK_CTL_INSERT},
+    {FIK_CTL_END, FIK_CTL_HOME, FIK_CTL_PAGE_DOWN, FIK_CTL_PAGE_UP}
 };
 
 /*
@@ -422,7 +422,7 @@ select_visual(void)
     colors = 1 << Xdepth;
     gotrealdac = 0;
     fake_lut = 0;
-    istruecolor = 0;
+    g_is_true_color = 0;
     break;
 
   case GrayScale:
@@ -430,7 +430,7 @@ select_visual(void)
     colors = 1 << Xdepth;
     gotrealdac = 1;
     fake_lut = 0;
-    istruecolor = 0;
+    g_is_true_color = 0;
     break;
 
   case TrueColor:
@@ -438,7 +438,7 @@ select_visual(void)
     colors = 256;
     gotrealdac = 0;
     fake_lut = 1;
-    istruecolor = 0;
+    g_is_true_color = 0;
     break;
 
   default:
@@ -493,7 +493,7 @@ initUnixWindow()
     int offx, offy;
     fastmode = 0;
     fake_lut = 0;
-    istruecolor = 0;
+    g_is_true_color = 0;
     gotrealdac = 1;
     colors = 256;
     for (i = 0; i < colors; i++) {
@@ -1131,7 +1131,7 @@ int readvideopalette()
 {
 
     int i;
-    if (gotrealdac==0 && istruecolor && truemode) return -1;
+    if (gotrealdac==0 && g_is_true_color && truemode) return -1;
     for (i=0;i<colors;i++) {
 	dacbox[i][0] = cols[i].red/1024;
 	dacbox[i][1] = cols[i].green/1024;
@@ -1366,7 +1366,7 @@ int block;
 #if 1
 	if (input_pending()) {
 	    ch = getachar();
-	    if (ch == ESC) {
+	    if (ch == FIK_ESC) {
 		return handleesc();
 	    } else {
 		return translatekey(ch);
@@ -1386,7 +1386,7 @@ int block;
 	    ch = xbufkey;
 	    xbufkey = 0;
 	    skipcount = 9999; /* If we got a key, check right away next time */
-	    if (ch == ESC) {
+	    if (ch == FIK_ESC) {
 		return handleesc();
 	    } else {
 		return translatekey(ch);
@@ -1413,7 +1413,7 @@ int block;
  * translatekey --
  *
  *	Translate an input key into MSDOS format.  The purpose of this
- *	routine is to do the mappings like U -> PAGE_UP.
+ *	routine is to do the mappings like U -> FIK_PAGE_UP.
  *
  * Results:
  *	New character;
@@ -1432,82 +1432,82 @@ int ch;
     } else {
 	switch (ch) {
 	    case 'I':
-		return INSERT;
+		return FIK_INSERT;
 	    case 'D':
 		return FIK_DELETE;
 	    case 'U':
-		return PAGE_UP;
+		return FIK_PAGE_UP;
 	    case 'N':
-		return PAGE_DOWN;
+		return FIK_PAGE_DOWN;
 	    case CTL('O'):
-		return CTL_HOME;
+		return FIK_CTL_HOME;
 #if 0
 	    case CTL('E'):
-		return CTL_END;
+		return FIK_CTL_END;
 #endif
 	    case 'H':
-		return LEFT_ARROW;
+		return FIK_LEFT_ARROW;
 	    case 'L':
-		return RIGHT_ARROW;
+		return FIK_RIGHT_ARROW;
 	    case 'K':
-		return UP_ARROW;
+		return FIK_UP_ARROW;
 	    case 'J':
-		return DOWN_ARROW;
+		return FIK_DOWN_ARROW;
 	    case 1115:
-		return LEFT_ARROW_2;
+		return FIK_CTL_LEFT_ARROW;
 	    case 1116:
-		return RIGHT_ARROW_2;
+		return FIK_CTL_RIGHT_ARROW;
 	    case 1141:
-		return UP_ARROW_2;
+		return FIK_CTL_UP_ARROW;
 	    case 1145:
-		return DOWN_ARROW_2;
+		return FIK_CTL_DOWN_ARROW;
 	    case 'O':
-		return HOME;
+		return FIK_HOME;
 	    case 'E':
-		return END;
+		return FIK_END;
 	    case '\n':
-		return ENTER;
+		return FIK_ENTER;
 	    case CTL('T'):
-		return CTL_ENTER;
+		return FIK_CTL_ENTER;
 	    case -2:
-		return CTL_ENTER_2;
+		return FIK_CTL_ENTER_2;
 	    case CTL('U'):
-		return CTL_PAGE_UP;
+		return FIK_CTL_PAGE_UP;
 	    case CTL('N'):
-		return CTL_PAGE_DOWN;
+		return FIK_CTL_PAGE_DOWN;
 	    case '{':
-		return CTL_MINUS;
+		return FIK_CTL_MINUS;
 	    case '}':
-		return CTL_PLUS;
+		return FIK_CTL_PLUS;
 	    /* we need ^I for tab */
 #if 0
 	    case CTL('I'):
-		return CTL_INSERT;
+		return FIK_CTL_INSERT;
 #endif
 	    case CTL('D'):
-		return CTL_DEL;
+		return FIK_CTL_DEL;
 	    case '!':
-		return F1;
+		return FIK_F1;
 	    case '@':
-		return F2;
+		return FIK_F2;
 #if 0
             case '#':
-		return F3;
+		return FIK_F3;
 #endif
             case '$':
-		return F4;
+		return FIK_F4;
 	    case '%':
-		return F5;
+		return FIK_F5;
 	    case '^':
-		return F6;
+		return FIK_F6;
 	    case '&':
-		return F7;
+		return FIK_F7;
 	    case '*':
-		return F8;
+		return FIK_F8;
 	    case '(':
-		return F9;
+		return FIK_F9;
 	    case ')':
-		return F10;
+		return FIK_F10;
 	    default:
 		return ch;
 	}
@@ -1535,7 +1535,7 @@ handleesc()
 {
     int ch1,ch2,ch3;
     if (simple_input) {
-	return ESC;
+	return FIK_ESC;
     }
 #ifdef __hpux
     /* HP escape key sequences. */
@@ -1545,71 +1545,71 @@ handleesc()
 	ch1 = getachar();
     }
     if (ch1==-1) {
-	return ESC;
+	return FIK_ESC;
     }
     switch (ch1) {
 	case 'A':
-	    return UP_ARROW;
+	    return FIK_UP_ARROW;
 	case 'B':
-	    return DOWN_ARROW;
+	    return FIK_DOWN_ARROW;
 	case 'D':
-	    return LEFT_ARROW;
+	    return FIK_LEFT_ARROW;
 	case 'C':
-	    return RIGHT_ARROW;
+	    return FIK_RIGHT_ARROW;
 	case 'd':
-	    return HOME;
+	    return FIK_HOME;
     }
-    if (ch1 != '[') return ESC;
+    if (ch1 != '[') return FIK_ESC;
     ch1 = getachar();
     if (ch1==-1) {
 	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch1 = getachar();
     }
-    if (ch1==-1 || !isdigit(ch1)) return ESC;
+    if (ch1==-1 || !isdigit(ch1)) return FIK_ESC;
     ch2 = getachar();
     if (ch2==-1) {
 	delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	ch2 = getachar();
     }
-    if (ch2==-1) return ESC;
+    if (ch2==-1) return FIK_ESC;
     if (isdigit(ch2)) {
 	ch3 = getachar();
 	if (ch3==-1) {
 	    delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 	    ch3 = getachar();
 	}
-	if (ch3 != '~') return ESC;
+	if (ch3 != '~') return FIK_ESC;
 	ch2 = (ch2-'0')*10+ch3-'0';
     } else if (ch3 != '~') {
-	return ESC;
+	return FIK_ESC;
     } else {
 	ch2 = ch2-'0';
     }
     switch (ch2) {
 	case 5:
-	    return PAGE_UP;
+	    return FIK_PAGE_UP;
 	case 6:
-	    return PAGE_DOWN;
+	    return FIK_PAGE_DOWN;
 	case 29:
-	    return F1; /* help */
+	    return FIK_F1; /* help */
 	case 11:
-	    return F1;
+	    return FIK_F1;
 	case 12:
-	    return F2;
+	    return FIK_F2;
 	case 13:
-	    return F3;
+	    return FIK_F3;
 	case 14:
-	    return F4;
+	    return FIK_F4;
 	case 15:
-	    return F5;
+	    return FIK_F5;
 	case 17:
-	    return F6;
+	    return FIK_F6;
 	case 18:
-	    return F7;
+	    return FIK_F7;
 	case 19:
-	    return F8;
+	    return FIK_F8;
 	default:
-	    return ESC;
+	    return FIK_ESC;
     }
 #else
     /* SUN escape key sequences */
@@ -1619,7 +1619,7 @@ handleesc()
 	ch1 = getachar();
     }
     if (ch1 != '[') {		/* See if we have esc [ */
-	return ESC;
+	return FIK_ESC;
     }
     ch1 = getachar();
     if (ch1==-1) {
@@ -1627,17 +1627,17 @@ handleesc()
 	ch1 = getachar();
     }
     if (ch1==-1) {
-	return ESC;
+	return FIK_ESC;
     }
     switch (ch1) {
 	case 'A':		/* esc [ A */
-	    return UP_ARROW;
+	    return FIK_UP_ARROW;
 	case 'B':		/* esc [ B */
-	    return DOWN_ARROW;
+	    return FIK_DOWN_ARROW;
 	case 'C':		/* esc [ C */
-	    return RIGHT_ARROW;
+	    return FIK_RIGHT_ARROW;
 	case 'D':		/* esc [ D */
-	    return LEFT_ARROW;
+	    return FIK_LEFT_ARROW;
 	default:
 	    break;
     }
@@ -1649,18 +1649,18 @@ handleesc()
     if (ch2 == '~') {		/* esc [ ch1 ~ */
 	switch (ch1) {
 	    case '2':		/* esc [ 2 ~ */
-		return INSERT;
+		return FIK_INSERT;
 	    case '3':		/* esc [ 3 ~ */
 		return FIK_DELETE;
 	    case '5':		/* esc [ 5 ~ */
-		return PAGE_UP;
+		return FIK_PAGE_UP;
 	    case '6':		/* esc [ 6 ~ */
-		return PAGE_DOWN;
+		return FIK_PAGE_DOWN;
 	    default:
-		return ESC;
+		return FIK_ESC;
 	}
     } else if (ch2==-1) {
-	return ESC;
+	return FIK_ESC;
     } else {
 	ch3 = getachar();
 	if (ch3==-1) {
@@ -1668,42 +1668,42 @@ handleesc()
 	    ch3 = getachar();
 	}
 	if (ch3 != '~') {	/* esc [ ch1 ch2 ~ */
-	    return ESC;
+	    return FIK_ESC;
 	}
 	if (ch1=='1') {
 	    switch (ch2) {
 		case '1':	/* esc [ 1 1 ~ */
-		    return F1;
+		    return FIK_F1;
 		case '2':	/* esc [ 1 2 ~ */
-		    return F2;
+		    return FIK_F2;
 		case '3':	/* esc [ 1 3 ~ */
-		    return F3;
+		    return FIK_F3;
 		case '4':	/* esc [ 1 4 ~ */
-		    return F4;
+		    return FIK_F4;
 		case '5':	/* esc [ 1 5 ~ */
-		    return F5;
+		    return FIK_F5;
 		case '6':	/* esc [ 1 6 ~ */
-		    return F6;
+		    return FIK_F6;
 		case '7':	/* esc [ 1 7 ~ */
-		    return F7;
+		    return FIK_F7;
 		case '8':	/* esc [ 1 8 ~ */
-		    return F8;
+		    return FIK_F8;
 		case '9':	/* esc [ 1 9 ~ */
-		    return F9;
+		    return FIK_F9;
 		default:
-		    return ESC;
+		    return FIK_ESC;
 	    }
 	} else if (ch1=='2') {
 	    switch (ch2) {
 		case '0':	/* esc [ 2 0 ~ */
-		    return F10;
+		    return FIK_F10;
 		case '8':	/* esc [ 2 8 ~ */
-		    return F1;  /* HELP */
+		    return FIK_F1;  /* HELP */
 		default:
-		    return ESC;
+		    return FIK_ESC;
 	    }
 	} else {
-	    return ESC;
+	    return FIK_ESC;
 	}
     }
 #endif
@@ -1788,90 +1788,90 @@ xhandleevents()
 			break;
 		    case XK_Home:
 		    case XK_R7:
-			xbufkey = ctl_mode ? CTL_HOME : HOME;
+			xbufkey = ctl_mode ? FIK_CTL_HOME : FIK_HOME;
 			return;
 		    case XK_Left:
 		    case XK_R10:
-			xbufkey = ctl_mode ? LEFT_ARROW_2 : LEFT_ARROW;
+			xbufkey = ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
 			return;
 		    case XK_Right:
 		    case XK_R12:
-			xbufkey = ctl_mode ? RIGHT_ARROW_2 : RIGHT_ARROW;
+			xbufkey = ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
 			return;
 		    case XK_Down:
 		    case XK_R14:
-			xbufkey = ctl_mode ? DOWN_ARROW_2 : DOWN_ARROW;
+			xbufkey = ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
 			return;
 		    case XK_Up:
 		    case XK_R8:
-			xbufkey = ctl_mode ? UP_ARROW_2 : UP_ARROW;
+			xbufkey = ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
 			return;
 		    case XK_Insert:
-			xbufkey = ctl_mode ? CTL_INSERT : INSERT;
+			xbufkey = ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
 			return;
 		    case XK_Delete:
-			xbufkey = ctl_mode ? CTL_DEL : FIK_DELETE;
+			xbufkey = ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
 			return;
 		    case XK_End:
 		    case XK_R13:
-			xbufkey = ctl_mode ? CTL_END : END;
+			xbufkey = ctl_mode ? FIK_CTL_END : FIK_END;
 			return;
 		    case XK_Help:
-			xbufkey = F1;
+			xbufkey = FIK_F1;
 			return;
 		    case XK_Prior:
 		    case XK_R9:
-			xbufkey = ctl_mode ? CTL_PAGE_UP : PAGE_UP;
+			xbufkey = ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
 			 return;
 		    case XK_Next:
 		    case XK_R15:
-			xbufkey = ctl_mode ? CTL_PAGE_DOWN : PAGE_DOWN;
+			xbufkey = ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
 			 return;
 		    case XK_F1:
 		    case XK_L1:
-			xbufkey = shift_mode ? SF1: F1;
+			xbufkey = shift_mode ? FIK_SF1 : FIK_F1;
 			return;
 		    case XK_F2:
 		    case XK_L2:
-			xbufkey = shift_mode ? SF2: F2;
+			xbufkey = shift_mode ? FIK_SF2: FIK_F2;
 			return;
 		    case XK_F3:
 		    case XK_L3:
-			xbufkey = shift_mode ? SF3: F3;
+			xbufkey = shift_mode ? FIK_SF3: FIK_F3;
 			return;
 		    case XK_F4:
 		    case XK_L4:
-			xbufkey = shift_mode ? SF4: F4;
+			xbufkey = shift_mode ? FIK_SF4: FIK_F4;
 			return;
 		    case XK_F5:
 		    case XK_L5:
-			xbufkey = shift_mode ? SF5: F5;
+			xbufkey = shift_mode ? FIK_SF5: FIK_F5;
 			return;
 		    case XK_F6:
 		    case XK_L6:
-			xbufkey = shift_mode ? SF6: F6;
+			xbufkey = shift_mode ? FIK_SF6: FIK_F6;
 			return;
 		    case XK_F7:
 		    case XK_L7:
-			xbufkey = shift_mode ? SF7: F7;
+			xbufkey = shift_mode ? FIK_SF7: FIK_F7;
 			return;
 		    case XK_F8:
 		    case XK_L8:
-			xbufkey = shift_mode ? SF8: F8;
+			xbufkey = shift_mode ? FIK_SF8: FIK_F8;
 			return;
 		    case XK_F9:
 		    case XK_L9:
-			xbufkey = shift_mode ? SF9: F9;
+			xbufkey = shift_mode ? FIK_SF9: FIK_F9;
 			return;
 		    case XK_F10:
 		    case XK_L10:
-			xbufkey = shift_mode ? SF10: F10;
+			xbufkey = shift_mode ? FIK_SF10: FIK_F10;
 			return;
 		    case '+':
-			 xbufkey = ctl_mode ? CTL_PLUS : '+';
+			 xbufkey = ctl_mode ? FIK_CTL_PLUS : '+';
 			 return;
 		    case '-':
-			 xbufkey = ctl_mode ? CTL_MINUS : '-';
+			 xbufkey = ctl_mode ? FIK_CTL_MINUS : '-';
 			 return;
 			 break;
 #if 0
@@ -1954,7 +1954,7 @@ xhandleevents()
 			lasty = xevent.xmotion.y;
 		    } else {
 			Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
-			xbufkey = ENTER;
+			xbufkey = FIK_ENTER;
 		    }
 
 		}
@@ -2034,7 +2034,7 @@ xhandleevents()
 		zwidth = ABS(bandx1-bandx0)/dxsize;
 		zdepth = zwidth;
 		if (!inside_help) {
-		    xbufkey = ENTER;
+		    xbufkey = FIK_ENTER;
 		}
 		if (xlastcolor != -1) {
 		    XSetForeground(Xdp, Xgc, xlastcolor);

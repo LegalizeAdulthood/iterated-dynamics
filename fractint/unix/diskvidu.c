@@ -84,7 +84,7 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
    int i;
    long memorysize;
 
-   if (diskflag)
+   if (g_disk_flag)
       enddisk();
    if (dotmode == 11) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
@@ -109,7 +109,7 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
    timetodisplay = TIMETODISPLAY;  /* time-to-display-status counter */
 
    memorysize = (long)(newcolsize) * newrowsize;
-   diskflag = 1;
+   g_disk_flag = 1;
    rowsize = newrowsize;
    colsize = newcolsize;
 
@@ -128,7 +128,7 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
 
 void enddisk()
 {
-   diskflag = rowsize = disk16bit = 0;
+   g_disk_flag = rowsize = disk16bit = 0;
    fp	       = NULL;
 }
 

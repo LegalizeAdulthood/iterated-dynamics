@@ -176,8 +176,8 @@ pop_stack:
 over_bailout_87:
 
 	if (outside<=-2) {
-	    new.x = x;
-	    new.y = y;
+	    g_new.x = x;
+	    g_new.y = y;
 	}
     if (cx-10>0) {
 	oldcoloriter = cx-10;
@@ -194,15 +194,15 @@ over_bailout_87:
     } else {
 	/* special_outside */
 	if (outside==REAL) {
-	    coloriter += (long)new.x + 7;
+	    coloriter += (long)g_new.x + 7;
 	} else if (outside==IMAG) {
-	    coloriter += (long)new.y + 7;
-	} else if (outside==MULT && new.y!=0.0) {
-          coloriter = (long)((double)coloriter * (new.x/new.y));
+	    coloriter += (long)g_new.y + 7;
+	} else if (outside==MULT && g_new.y!=0.0) {
+          coloriter = (long)((double)coloriter * (g_new.x/g_new.y));
 	} else if (outside==SUM) {
-	    coloriter +=  (long)(new.x + new.y);
+	    coloriter +=  (long)(g_new.x + g_new.y);
 	} else if (outside==ATAN) {
-            coloriter = (long)fabs(atan2(new.y,new.x)*atan_colors/PI);
+            coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
         }
 	/* check_color */
       if ((coloriter <= 0 || coloriter > maxit) && outside!=FMOD)
