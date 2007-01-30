@@ -13,6 +13,7 @@
 #endif
 
 #include <ctype.h>
+#include <errno.h>
 
 #include "port.h"
 #include "prototyp.h"
