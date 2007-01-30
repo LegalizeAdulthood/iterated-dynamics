@@ -742,23 +742,23 @@ initdacbox()
       for (i=0; i<256; i++) {
          for (j=0; j<3; j++) {
            k = (i*(cyclic[sp][j])) & 127;
-           if (k < 64) dacbox[i][j] = k; else dacbox[i][j] = (127 - k);
+           if (k < 64) g_dac_box[i][j] = k; else g_dac_box[i][j] = (127 - k);
          }
       }
     } else {
       for (i=0;i<256;i++) {
-  	dacbox[i][0] = (i>>5)*8+7;
-  	dacbox[i][1] = (((i+16)&28)>>2)*8+7;
-  	dacbox[i][2] = (((i+2)&3))*16+15;
+  	g_dac_box[i][0] = (i>>5)*8+7;
+  	g_dac_box[i][1] = (((i+16)&28)>>2)*8+7;
+  	g_dac_box[i][2] = (((i+2)&3))*16+15;
       }
-      dacbox[0][0] = dacbox[0][1] = dacbox[0][2] = 0;
-      dacbox[1][0] = dacbox[1][1] = dacbox[1][2] = 63;
-      dacbox[2][0] = 47; dacbox[2][1] = dacbox[2][2] = 63;
+      g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+      g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
+      g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
     }
     if (s0)
       for (i=0; i<256; i++)
          for (j=0; j<3; j++)
-             dacbox[i][j] = 63 - dacbox[i][j];
+             g_dac_box[i][j] = 63 - g_dac_box[i][j];
 
 }
 
@@ -1116,14 +1116,14 @@ XColor cols[256];
  *----------------------------------------------------------------------
  *
  * readvideopalette --
- *	Reads the current video palette into dacbox.
+ *	Reads the current video palette into g_dac_box.
  *	
  *
  * Results:
  *	None.
  *
  * Side effects:
- *	Fills in dacbox.
+ *	Fills in g_dac_box.
  *
  *----------------------------------------------------------------------
  */
@@ -1133,9 +1133,9 @@ int readvideopalette()
     int i;
     if (gotrealdac==0 && g_is_true_color && truemode) return -1;
     for (i=0;i<colors;i++) {
-	dacbox[i][0] = cols[i].red/1024;
-	dacbox[i][1] = cols[i].green/1024;
-	dacbox[i][2] = cols[i].blue/1024;
+	g_dac_box[i][0] = cols[i].red/1024;
+	g_dac_box[i][1] = cols[i].green/1024;
+	g_dac_box[i][2] = cols[i].blue/1024;
     }
     return 0;
 
@@ -1145,7 +1145,7 @@ int readvideopalette()
  *----------------------------------------------------------------------
  *
  * writevideopalette --
- *	Writes dacbox into the video palette.
+ *	Writes g_dac_box into the video palette.
  *
  *
  * Results:
@@ -1168,13 +1168,13 @@ int writevideopalette()
 
       for (i = 0; i < colors; i++) {
 	if (!last_dac_inited ||
-	    last_dac[i][0] != dacbox[i][0] ||
-	    last_dac[i][1] != dacbox[i][1] ||
-	    last_dac[i][2] != dacbox[i][2]) {
+	    last_dac[i][0] != g_dac_box[i][0] ||
+	    last_dac[i][1] != g_dac_box[i][1] ||
+	    last_dac[i][2] != g_dac_box[i][2]) {
 	  cols[i].flags = DoRed | DoGreen | DoBlue;
-	  cols[i].red = dacbox[i][0]*1024;
-	  cols[i].green = dacbox[i][1]*1024;
-	  cols[i].blue = dacbox[i][2]*1024;
+	  cols[i].red = g_dac_box[i][0]*1024;
+	  cols[i].green = g_dac_box[i][1]*1024;
+	  cols[i].blue = g_dac_box[i][2]*1024;
 
           /* This seems not to work in truecolor modes, so commented out!
 	  if (cmap_pixtab_alloced) {
@@ -1187,9 +1187,9 @@ int writevideopalette()
 	    fprintf(stderr,"Allocating color %d failed.\n", i);
 	  }
 
-	  last_dac[i][0] = dacbox[i][0];
-	  last_dac[i][1] = dacbox[i][1];
-	  last_dac[i][2] = dacbox[i][2];
+	  last_dac[i][0] = g_dac_box[i][0];
+	  last_dac[i][1] = g_dac_box[i][1];
+	  last_dac[i][2] = g_dac_box[i][2];
 	}
       }
       cmap_pixtab_alloced = True;
@@ -1203,9 +1203,9 @@ int writevideopalette()
     for (i = 0; i < colors; i++) {
       cols[i].pixel = pixtab[i];
       cols[i].flags = DoRed | DoGreen | DoBlue;
-      cols[i].red = dacbox[i][0]*1024;
-      cols[i].green = dacbox[i][1]*1024;
-      cols[i].blue = dacbox[i][2]*1024;
+      cols[i].red = g_dac_box[i][0]*1024;
+      cols[i].green = g_dac_box[i][1]*1024;
+      cols[i].blue = g_dac_box[i][2]*1024;
     }
     if (!unixDisk) {
       XStoreColors(Xdp, Xcmap, cols, colors);

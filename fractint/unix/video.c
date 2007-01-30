@@ -14,7 +14,7 @@ extern int waitkeypressed (int);
 WINDOW *curwin;
 
 int fake_lut = 0;
-int istruecolor = 0;
+int g_is_true_color = 0;
 int daclearn = 0;
 int dacnorm = 0;
 int daccount = 0;
@@ -25,15 +25,15 @@ void (*dotwrite) (int, int, int);
 int (*dotread) (int, int);	/* read-a-dot routine */
 void (*linewrite) ();		/* write-a-line routine */
 void (*lineread) ();		/* read-a-line routine */
-int andcolor = 0;		/* "and" value used for color selection */
+int g_and_color = 0;		/* "and" value used for color selection */
 int diskflag = 0;		/* disk video active flag */
 
 int videoflag = 0;		/* special "your-own-video" flag */
 
 void (*swapsetup) (void) = NULL;	/* setfortext/graphics setup routine */
-int color_dark = 0;		/* darkest color in palette */
-int color_bright = 0;		/* brightest color in palette */
-int color_medium = 0;		/* nearest to medbright grey in palette
+int g_color_dark = 0;		/* darkest color in palette */
+int g_color_bright = 0;		/* brightest color in palette */
+int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int boxcolor = 0;		/* Zoom-Box color */
 int reallyega = 0;		/* 1 if its an EGA posing as a VGA */
@@ -85,10 +85,10 @@ int textrbase = 0;		/* textrow is relative to this */
 int textcbase = 0;		/* textcol is relative to this */
 
 int vesa_detect = 1;		/* set to 0 to disable VESA-detection */
-int virtual_screens = 0;                /* no virtual screens, it's a DOS thing */
-int video_scroll = 0;
-int video_startx = 0;
-int video_starty = 0;
+int g_virtual_screens = 0;                /* no virtual screens, it's a DOS thing */
+int g_video_scroll = 0;
+int g_video_start_x = 0;
+int g_video_start_y = 0;
 int vesa_xres;
 int vesa_yres;
 int chkd_vvs = 0;
@@ -222,7 +222,7 @@ setvideomode (ax, bx, cx, dx)
   if (dotmode != 0)
     {
       loaddac ();
-      andcolor = colors - 1;
+      g_and_color = colors - 1;
       boxcount = 0;
     }
   vesa_xres = sxdots;
@@ -256,7 +256,7 @@ void
 putcolor_a (xdot, ydot, color)
      int xdot, ydot, color;
 {
-  dotwrite (xdot + sxoffs, ydot + syoffs, color & andcolor);
+  dotwrite (xdot + sxoffs, ydot + syoffs, color & g_and_color);
 }
 
 /*
@@ -434,7 +434,7 @@ spindac (dir, inc)
   int len;
   if (colors < 16)
     return;
-  if (istruecolor && truemode)
+  if (g_is_true_color && truemode)
     return;
   if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
     {
@@ -639,14 +639,14 @@ find_special_colors (void)
   int brt;
   int i;
 
-  color_dark = 0;
-  color_medium = 7;
-  color_bright = 15;
+  g_color_dark = 0;
+  g_color_medium = 7;
+  g_color_bright = 15;
 
   if (colors == 2)
     {
-      color_medium = 1;
-      color_bright = 1;
+      g_color_medium = 1;
+      g_color_bright = 1;
       return;
     }
 
@@ -659,12 +659,12 @@ find_special_colors (void)
       if (brt > maxb)
 	{
 	  maxb = brt;
-	  color_bright = i;
+	  g_color_bright = i;
 	}
       if (brt < minb)
 	{
 	  minb = brt;
-	  color_dark = i;
+	  g_color_dark = i;
 	}
       if (brt < 150 && brt > 80)
 	{
@@ -687,7 +687,7 @@ find_special_colors (void)
 	    }
 	  if (brt - (maxgun - mingun) / 2 > med)
 	    {
-	      color_medium = i;
+	      g_color_medium = i;
 	      med = brt - (maxgun - mingun) / 2;
 	    }
 	}

@@ -74,7 +74,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
    for (;;)                    /* eternal loop */
    {
+#if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
+#endif
 
 		if (calc_status != CALCSTAT_RESUMABLE || showfile == 0)
 		{
@@ -449,7 +451,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					ecount ++;
 				}
 done:
+#if defined(_WIN32)
 				_ASSERTE(_CrtCheckMemory());
+#endif
 
 				if (ecount == gridsqr)
 				{
@@ -530,7 +534,9 @@ done:
          }
 
 resumeloop:                             /* return here on failed overlays */
+#if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
+#endif
 
 		*kbdmore = 1;
 		while (*kbdmore == 1)
