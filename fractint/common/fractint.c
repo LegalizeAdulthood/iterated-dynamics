@@ -233,7 +233,9 @@ int main(int argc, char **argv)
 
 	
 restart:   /* insert key re-starts here */
+#if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
+#endif
 	autobrowse     = FALSE;
 	brwschecktype  = TRUE;
 	brwscheckparms = TRUE;
@@ -350,7 +352,9 @@ restart:   /* insert key re-starts here */
 	stacked = 0;
 
 restorestart:
+#if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
+#endif
 
 	if (colorpreloaded)
 	{
@@ -434,7 +438,9 @@ restorestart:
 	savedac = 0;                         /* don't save the VGA DAC */
 
 imagestart:                             /* calc/display a new image */
+#if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
+#endif
 
 	if (stacked)
 	{
@@ -563,7 +569,9 @@ imagestart:                             /* calc/display a new image */
 	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
 resumeloop:
+#if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
+#endif
 
 	param_history(0); /* save old history */
 	/* this switch processes gotos that are now inside function */

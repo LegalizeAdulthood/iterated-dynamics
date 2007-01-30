@@ -141,7 +141,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 					* (info->ydots < vident->ydots ? vident->ydots : info->ydots)
 					* ((bppx = vident->dotmode/1000) < 2 ? ++bppx : bppx))
 				{
+#if defined(_WIN32)
 					_ASSERTE(FALSE && "Trying to set video mode table from command-file?");
+#endif
 					sprintf(over, "<-VIRTUAL! at %4u x %4u",vident->xdots,vident->ydots);
 					strcpy((char *)vident->comment, (char *)over);
 

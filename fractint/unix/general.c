@@ -24,7 +24,7 @@ int overflow = 0;
 int boxx[2304], boxy[1024];
 int boxvalues[512];
 char tstack[4096];
-BYTE dacbox[256][3];
+BYTE g_dac_box[256][3];
 BYTE olddacbox[256][3];
 
 extern int tabmode;

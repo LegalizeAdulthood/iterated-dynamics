@@ -71,7 +71,9 @@ init_drivers(int *argc, char **argv)
 void
 add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
+#if defined(_WIN32)
 	_ASSERTE(g_video_table_len < MAXVIDEOMODES);
+#endif
 	/* stash away driver pointer so we can init driver for selected mode */
 	mode->driver = drv;
 	memcpy(&g_video_table[g_video_table_len], mode, sizeof(g_video_table[0]));

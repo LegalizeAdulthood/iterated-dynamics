@@ -1721,7 +1721,9 @@ void load_fractint_config(void)
 			}
 			else if (tempstring[i] == ',' && ++j < 11)
 			{
+#if defined(_WIN32)
 				_ASSERTE(j >= 0 && j < 11);
+#endif
 				fields[j] = &tempstring[i+1]; /* remember start of next field */
 				tempstring[i] = 0;   /* make field a separate string */
 			}
