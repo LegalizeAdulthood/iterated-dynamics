@@ -499,7 +499,7 @@ imagestart:                             /* calc/display a new image */
 #else
 			if (kbdchar == FIK_F2 || kbdchar == '@') {     /* We mapped @ to F2 */
 #endif
-				if ((get_commands() & 4) == 0)
+				if ((get_commands() & CMDARG_3D_YES) == 0)
 					goto imagestart;
 				kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 			}
