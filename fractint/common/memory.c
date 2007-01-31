@@ -2,10 +2,6 @@
 #include <limits.h>
 #include <malloc.h>
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-#include <io.h>
-#endif
-
 #ifndef USE_VARARGS
 #include <stdarg.h>
 #else
@@ -246,9 +242,6 @@ void DisplayHandle (U16 handle)
 void InitMemory (void)
 {
 	int counter;
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-	long longtmp;
-#endif
 
 	numTOTALhandles = 0;
 	for (counter = 0; counter < MAXHANDLES; counter++)
@@ -256,19 +249,6 @@ void InitMemory (void)
 		handletable[counter].Nowhere.stored_at = NOWHERE;
 		handletable[counter].Nowhere.size = 0;
 	}
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-	numEXThandles = 0;
-	longtmp = fr_farfree();
-	ext_xfer_size = XMMWRITELEN; /* 8192 */
-	if (longtmp < (long)XMMWRITELEN * 8)
-	{
-		ext_xfer_size = XMMWRITELEN / 2; /* 4096 */
-	}
-	if (longtmp < (long)XMMWRITELEN)
-	{
-		ext_xfer_size = XMMWRITELEN / 8; /* 1024, won't work, try anyway */
-	}
-#endif
 }
 
 void ExitCheck (void)
@@ -296,13 +276,6 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    U16 handle = 0;
    int success, use_this_type;
    long toallocate;
-
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   BYTE *temp;
-   long longtmp;
-   int mempages = 0;
-   struct XMM_Move MoveStruct;
-#endif
 
    success = FALSE;
    toallocate = count * size;
@@ -336,17 +309,6 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       use_this_type = NOWHERE; /* in case nonsense value is passed */
       break;
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXTRA: /* MemoryAlloc */
-      handletable[handle].Extra.size = toallocate;
-      handletable[handle].Extra.stored_at = EXTRA;
-      handletable[handle].Extra.extramemory = (BYTE *) extraseg,start_avail_extra);
-      start_avail_extra += (U16)toallocate;
-      numTOTALhandles++;
-      success = TRUE;
-      break;
-#endif
-
    case MEMORY: /* MemoryAlloc */
 /* Availability of memory checked in check_for_mem() */
       handletable[handle].Linearmem.memory = (BYTE *)malloc(toallocate);
@@ -356,68 +318,6 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       success = TRUE;
       break;
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXPANDED: /* MemoryAlloc */
-      mempages = (int)((toallocate + 16383) >> 14);
-      if (emmquery() != NULL) {
-         handletable[handle].Expanded.mempages = mempages;
-         handletable[handle].Expanded.expmemory = emmquery();
-         if ((handletable[handle].Expanded.emmhandle = emmallocate(mempages)) != 0) {
-            handletable[handle].Expanded.oldexppage = 0;
-            handletable[handle].Expanded.size = toallocate;
-            handletable[handle].Expanded.stored_at = EXPANDED;
-            numTOTALhandles++;
-            success = TRUE;
-            break;
-         }
-      }
-
-   case EXTENDED: /* MemoryAlloc */
-   /* This is ugly!  Need memory to use extended memory. */
-      if (charbuf == NULL) { /* first time through, allocate buffer */
-         temp = (BYTE *)malloc((long)ext_xfer_size + FAR_RESERVE);
-         if (temp != NULL) /* minimum free space + requested amount */
-         {
-            free(temp);
-            charbuf = (BYTE *)malloc((long)ext_xfer_size);
-         }
-         else
-            goto dodisk;
-      }
-      if (toallocate < ext_xfer_size)
-         longtmp = (ext_xfer_size + 1023) >> 10;
-      else
-         longtmp = (toallocate + 1023) >> 10;
-      if (xmmquery() != 0
-        && (handletable[handle].Extended.xmmhandle = xmmallocate((U16)(longtmp))) != 0)
-      {
-         longtmp /= (ext_xfer_size >> 10);
-         handletable[handle].Extended.mempages = (int)longtmp;
-         memset(charbuf, 0, (int)ext_xfer_size); /* zero the buffer */
-         MoveStruct.SourceHandle = 0;    /* Source is in conventional memory */
-         MoveStruct.SourceOffset = (U32)charbuf;
-         MoveStruct.DestHandle   = handletable[handle].Extended.xmmhandle;
-         MoveStruct.DestOffset   = 0;
-         MoveStruct.Length       = (long)ext_xfer_size;
-         while (--longtmp >= 0) {
-            if ((success = xmmmoveextended(&MoveStruct)) == 0) break;
-            MoveStruct.DestOffset += ext_xfer_size;
-         }
-         if (success) {
-            /* put in structure */
-            success = TRUE;
-            handletable[handle].Extended.size = toallocate;
-            handletable[handle].Extended.stored_at = EXTENDED;
-            numTOTALhandles++;
-            numEXThandles++;
-            break;
-         }
-         xmmdeallocate(handletable[handle].Extended.xmmhandle); /* Clear the memory */
-         handletable[handle].Extended.xmmhandle = 0;            /* Signal same */
-      }
-      /* need to fall through and use disk memory, or will crash fractint */
-dodisk:
-#endif
    case DISK: /* MemoryAlloc */
       memfile[9] = (char)(handle % 10 + (int)'0');
       memfile[8] = (char)((handle % 100) / 10 + (int)'0');
@@ -472,17 +372,6 @@ void MemoryRelease(U16 handle)
    case NOWHERE: /* MemoryRelease */
       break;
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXTRA: /* MemoryRelease */
-/* Deallocate in the reverse order of allocation. */
-      start_avail_extra -= (U16)handletable[handle].Extra.size;
-      handletable[handle].Extra.size = 0;
-      handletable[handle].Extra.stored_at = NOWHERE;
-      handletable[handle].Extra.extramemory = NULL;
-      numTOTALhandles--;
-      break;
-#endif
-
    case MEMORY: /* MemoryRelease */
       free(handletable[handle].Linearmem.memory);
       handletable[handle].Linearmem.memory = NULL;
@@ -490,30 +379,6 @@ void MemoryRelease(U16 handle)
       handletable[handle].Linearmem.stored_at = NOWHERE;
       numTOTALhandles--;
       break;
-
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXPANDED: /* MemoryRelease */
-      emmdeallocate(handletable[handle].Expanded.emmhandle);
-      handletable[handle].Expanded.emmhandle = 0;
-      handletable[handle].Expanded.size = 0;
-      handletable[handle].Expanded.stored_at = NOWHERE;
-      numTOTALhandles--;
-      break;
-
-   case EXTENDED: /* MemoryRelease */
- /* memory allocated for this must be released */
-      numEXThandles--;
-      xmmdeallocate(handletable[handle].Extended.xmmhandle);
-      if (numEXThandles == 0) {
-         free(charbuf);
-         charbuf = NULL;
-      }
-      handletable[handle].Extended.xmmhandle = 0;
-      handletable[handle].Extended.size = 0;
-      handletable[handle].Extended.stored_at = NOWHERE;
-      numTOTALhandles--;
-      break;
-#endif
 
    case DISK: /* MemoryRelease */
       memfile[9] = (char)(handle % 10 + (int)'0');
@@ -594,11 +459,6 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
 /* offset is the number of units from the beginning of buffer to start moving */
 /* size is the size of the unit, count is the number of units to move */
 /* Returns TRUE if successful, FALSE if failure */
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   int currpage;
-   long tmplength;
-   struct XMM_Move MoveStruct;
-#endif
    BYTE diskbuf[DISKWRITELEN];
    long start; /* first location to move */
    long tomove; /* number of bytes to move */
@@ -618,13 +478,6 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       DisplayHandle(handle);
       break;
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXTRA: /* MoveFromMemory */
-      memcpy(buffer, handletable[handle].Extra.extramemory+start, (U16)tomove);
-      success = TRUE; /* No way to gauge success or failure */
-      break;
-#endif
-
    case MEMORY: /* MoveFromMemory */
       for (i=0; i<size; i++) {
          memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
@@ -633,59 +486,6 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       }
       success = TRUE; /* No way to gauge success or failure */
       break;
-
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXPANDED: /* MoveFromMemory */
-      currpage = (int)(start / EXPWRITELEN);
-      exp_seek(handle, currpage);
-/* Not on a page boundary, move data up to next page boundary */
-      tmplength = (currpage + 1) * EXPWRITELEN - start;
-      start -= (currpage * EXPWRITELEN);
-      if (tmplength > tomove)
-         tmplength = tomove;
-      memcpy(buffer, handletable[handle].Expanded.expmemory+start, (U16)tmplength);
-      buffer += tmplength;
-      tomove -= tmplength;
-/* At a page boundary, move until less than a page left */
-      while (tomove >= EXPWRITELEN)
-      {
-         currpage++;
-         exp_seek(handle, currpage);
-         memcpy(buffer, handletable[handle].Expanded.expmemory, (U16)EXPWRITELEN);
-         buffer += EXPWRITELEN;
-         tomove -= EXPWRITELEN;
-      }
-/* Less than a page left, move it */
-      if (tomove > 0) /* still some left */
-      {
-         currpage++;
-         exp_seek(handle, currpage);
-         memcpy(buffer, handletable[handle].Expanded.expmemory, (U16)tomove);
-      }
-      exp_seek(handle, 0); /* flush the last page out of the page frame */
-      success = TRUE; /* No way to gauge success or failure */
-      break;
-
-   case EXTENDED: /* MoveFromMemory */
-      MoveStruct.Length = ext_xfer_size;
-      MoveStruct.SourceHandle = handletable[handle].Extended.xmmhandle;
-      MoveStruct.SourceOffset = (U32)start;
-      MoveStruct.DestHandle = 0; /* Destination is conventional memory */
-      MoveStruct.DestOffset = (U32)charbuf;
-      while (tomove > ext_xfer_size)
-      {
-         xmmmoveextended(&MoveStruct);
-         memcpy(buffer,charbuf,(int)ext_xfer_size);
-         buffer += ext_xfer_size;
-         tomove -= ext_xfer_size;
-         start += ext_xfer_size;
-         MoveStruct.SourceOffset = (U32)start;
-      }
-      MoveStruct.Length = (tomove % 2) ? tomove + 1 : tomove; /* must be even */
-      success = xmmmoveextended(&MoveStruct);
-      memcpy(buffer,charbuf,(U16)tomove);
-      break;
-#endif
 
    case DISK: /* MoveFromMemory */
       rewind(handletable[handle].Disk.file);
@@ -721,11 +521,6 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
 /* offset is the number of units from the start of allocated memory */
 /* size is the size of the unit, count is the number of units to set */
 /* Returns TRUE if successful, FALSE if failure */
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   int currpage;
-   long tmplength;
-   struct XMM_Move MoveStruct;
-#endif
    BYTE diskbuf[DISKWRITELEN];
    long start; /* first location to set */
    long tomove; /* number of bytes to set */
@@ -745,13 +540,6 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       DisplayHandle(handle);
       break;
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXTRA: /* SetMemory */
-      memset(handletable[handle].Extra.extramemory+start, value, (U16)tomove);
-      success = TRUE; /* No way to gauge success or failure */
-      break;
-#endif
-
    case MEMORY: /* SetMemory */
       for (i=0; i<size; i++) {
          memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
@@ -759,55 +547,6 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
       }
       success = TRUE; /* No way to gauge success or failure */
       break;
-
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-   case EXPANDED: /* SetMemory */
-      currpage = (int)(start / EXPWRITELEN);
-      exp_seek(handle, currpage);
-/* Not on a page boundary, move data up to next page boundary */
-      tmplength = (currpage + 1) * EXPWRITELEN - start;
-      start -= (currpage * EXPWRITELEN);
-      if (tmplength > tomove)
-         tmplength = tomove;
-      memset(handletable[handle].Expanded.expmemory+start, value, (U16)tmplength);
-      tomove -= tmplength;
-/* At a page boundary, move until less than a page left */
-      while (tomove >= EXPWRITELEN)
-      {
-         currpage++;
-         exp_seek(handle, currpage);
-         memcpy(handletable[handle].Expanded.expmemory, &value, (U16)EXPWRITELEN);
-         tomove -= EXPWRITELEN;
-      }
-/* Less than a page left, move it */
-      if (tomove > 0) /* still some left */
-      {
-         currpage++;
-         exp_seek(handle, currpage);
-         memcpy(handletable[handle].Expanded.expmemory, &value, (U16)tomove);
-      }
-      exp_seek(handle, 0); /* flush the last page out of the page frame */
-      success = TRUE; /* No way to gauge success or failure */
-      break;
-
-   case EXTENDED: /* SetMemory */
-      MoveStruct.Length = ext_xfer_size;
-      MoveStruct.SourceHandle = 0; /* Source is conventional memory */
-      MoveStruct.SourceOffset = (U32)charbuf;
-      MoveStruct.DestHandle = handletable[handle].Extended.xmmhandle;
-      MoveStruct.DestOffset = (U32)start;
-      memset(charbuf, value, (int)ext_xfer_size);
-      while (tomove > ext_xfer_size)
-      {
-         xmmmoveextended(&MoveStruct);
-         start += ext_xfer_size;
-         tomove -= ext_xfer_size;
-         MoveStruct.DestOffset = (U32)(start);
-      }
-      MoveStruct.Length = (tomove % 2) ? tomove + 1 : tomove; /* must be even */
-      success = xmmmoveextended(&MoveStruct);
-      break;
-#endif
 
    case DISK: /* SetMemory */
       memset(diskbuf, value, (U16)DISKWRITELEN);
