@@ -133,8 +133,7 @@ static int check_for_mem(int stored_at, long howmuch)
    int use_this_type;
 
    use_this_type = NOWHERE;
-   maxmem = (long)USHRT_MAX; /* limit EXTRA and FARMEM to 64K */
-                             /* limit EXPANDED and EXTENDED to 64K blocks */
+   maxmem = (long)USHRT_MAX;
 
    if (debugflag == 420)
       stored_at = DISK;
