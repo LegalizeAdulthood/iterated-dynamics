@@ -111,7 +111,7 @@ typedef enum
 int MPOverflow = 0;
 struct MP Ans = { 0 };
 int g_and_color;
-BYTE block[256] = { 0 };
+BYTE block[4096] = { 0 };
 int g_checked_vvs = 0;
 int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
@@ -146,7 +146,7 @@ BYTE olddacbox[256][3];
 int overflow = 0;
 int polyphony = 0;
 int g_really_ega = 0;
-char rlebuf[512] = { 0 };
+char rlebuf[258] = { 0 };
 int g_row_count = 0;
 long savebase = 0;				/* base clock ticks */ 
 long saveticks = 0;				/* save after this many ticks */ 

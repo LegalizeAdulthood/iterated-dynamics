@@ -211,7 +211,7 @@ $(COMDIR)/mpmath_c.o $(COMDIR)/parser.o $(COMDIR)/parserfp.o \
 $(COMDIR)/plot3d.o $(COMDIR)/printer.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
-$(COMDIR)/targa.o $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
+$(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
 $(COMDIR)/zoom.o
 
 
@@ -221,14 +221,14 @@ U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
 $(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o \
-$(UDIR)/calmanfx.o $(UDIR)/d_x11.o
+$(UDIR)/calmanfx.o $(UDIR)/d_x11.o $(UDIR)/os_unix.o
 
 else
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
 $(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
-$(UDIR)/unixscr.o $(UDIR)/video.o $(UDIR)/d_x11.o
+$(UDIR)/unixscr.o $(UDIR)/video.o $(UDIR)/d_x11.o $(UDIR)/os_unix.o
 
 endif
 

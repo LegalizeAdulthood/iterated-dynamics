@@ -1319,7 +1319,9 @@ void goodbye()                  /* we done.  Bail out */
 		ret = 1;
 	}
 	close_drivers();
+#if defined(_WIN32)
 	_CrtDumpMemoryLeaks();
+#endif
 	exit(ret);
 }
 

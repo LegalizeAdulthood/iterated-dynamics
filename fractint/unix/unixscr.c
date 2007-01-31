@@ -70,14 +70,14 @@ extern	int	sxdots, sydots; 	/* total # of dots on the screen   */
 extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
 extern	int	colors; 		/* maximum colors available	   */
 extern	int	initmode;
-extern	int	adapter;
-extern	int	gotrealdac;
+extern	int	g_adapter;
+extern	int	g_got_real_dac;
 extern	int	inside_help;
 extern  float	finalaspectratio;
 extern  float	screenaspect;
 extern	int	lookatmouse;
 
-extern struct videoinfo videotable[];
+extern VIDEOINFO x11_video_table[];
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
@@ -85,7 +85,7 @@ extern unsigned char dacbox[256][3];
 
 extern void drawbox();
 
-extern int text_type;
+extern int g_text_type;
 extern int helpmode;
 extern int rotate_hi;
 
@@ -259,10 +259,10 @@ UnixInit()
     noecho();
 
     if (standout()) {
-	text_type = 1;
+	g_text_type = 1;
 	standend();
     } else {
-	text_type = 1;
+	g_text_type = 1;
     }
 
     initdacbox();
@@ -420,7 +420,7 @@ select_visual(void)
   case StaticGray:
   case StaticColor:
     colors = 1 << Xdepth;
-    gotrealdac = 0;
+    g_got_real_dac = 0;
     fake_lut = 0;
     g_is_true_color = 0;
     break;
@@ -428,7 +428,7 @@ select_visual(void)
   case GrayScale:
   case PseudoColor:
     colors = 1 << Xdepth;
-    gotrealdac = 1;
+    g_got_real_dac = 1;
     fake_lut = 0;
     g_is_true_color = 0;
     break;
@@ -436,7 +436,7 @@ select_visual(void)
   case TrueColor:
   case DirectColor:
     colors = 256;
-    gotrealdac = 0;
+    g_got_real_dac = 0;
     fake_lut = 1;
     g_is_true_color = 0;
     break;
@@ -484,7 +484,7 @@ initUnixWindow()
     fcntl(0, F_SETFL, FNDELAY);
   }
   
-  adapter = 0;
+  g_adapter = 0;
 
   /* We have to do some X stuff even for disk video, to parse the geometry
    * string */
@@ -494,7 +494,7 @@ initUnixWindow()
     fastmode = 0;
     fake_lut = 0;
     g_is_true_color = 0;
-    gotrealdac = 1;
+    g_got_real_dac = 1;
     colors = 256;
     for (i = 0; i < colors; i++) {
       pixtab[i] = i;
@@ -605,10 +605,10 @@ initUnixWindow()
 
     writevideopalette();
 
-    videotable[0].xdots = sxdots;
-    videotable[0].ydots = sydots;
-    videotable[0].colors = colors;
-    videotable[0].dotmode = (unixDisk) ? 11 : 19;
+    x11_video_table[0].xdots = sxdots;
+    x11_video_table[0].ydots = sydots;
+    x11_video_table[0].colors = colors;
+    x11_video_table[0].dotmode = (unixDisk) ? 11 : 19;
 }
 /*
  *----------------------------------------------------------------------
@@ -818,8 +818,8 @@ resizeWindow()
     if (oldx != width || oldy != height) {
 	sxdots = width & -4;
 	sydots = height & -4;
-	videotable[0].xdots = sxdots;
-	videotable[0].ydots = sydots;
+	x11_video_table[0].xdots = sxdots;
+	x11_video_table[0].ydots = sydots;
 	oldx = sxdots;
 	oldy = sydots;
 	Xwinwidth = sxdots;
@@ -891,12 +891,12 @@ xcmapstuff()
     pixtab[i] = i;
     ipixtab[i] = 999;
   }
-  if (!gotrealdac) {
+  if (!g_got_real_dac) {
     Xcmap = DefaultColormapOfScreen(Xsc);
     if (fake_lut)
       writevideopalette();
   } else if (sharecolor) {
-    gotrealdac = 0;
+    g_got_real_dac = 0;
   } else if (privatecolor) {
     Xcmap = XCreateColormap(Xdp, Xw, Xvi, AllocAll);
     XSetWindowColormap(Xdp, Xw, Xcmap);
@@ -916,7 +916,7 @@ xcmapstuff()
     }
     if (!usepixtab) {
       fprintf(stderr,"Couldn't allocate any colors\n");
-      gotrealdac = 0;
+      g_got_real_dac = 0;
     }
   }
   for (i = 0; i < colors; i++) {
@@ -939,7 +939,7 @@ xcmapstuff()
     ipixtab[0] = 0;
   }
 
-  if (!gotrealdac && colors == 2 && BlackPixelOfScreen(Xsc) != 0) {
+  if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(Xsc) != 0) {
     pixtab[0] = ipixtab[0] = 1;
     pixtab[1] = ipixtab[1] = 0;
     usepixtab = 1;
@@ -1131,7 +1131,7 @@ int readvideopalette()
 {
 
     int i;
-    if (gotrealdac==0 && g_is_true_color && truemode) return -1;
+    if (g_got_real_dac==0 && g_is_true_color && truemode) return -1;
     for (i=0;i<colors;i++) {
 	g_dac_box[i][0] = cols[i].red/1024;
 	g_dac_box[i][1] = cols[i].green/1024;
@@ -1160,9 +1160,9 @@ int writevideopalette()
 {
   int i;
 
-  if (!gotrealdac) {
+  if (!g_got_real_dac) {
     if (fake_lut) {
-      /* !gotrealdac, fake_lut => truecolor, directcolor displays */
+      /* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
       static unsigned char last_dac[256][3];
       static int last_dac_inited = False;
 
@@ -1195,11 +1195,11 @@ int writevideopalette()
       cmap_pixtab_alloced = True;
       last_dac_inited = True;
     } else {
-      /* !gotrealdac, !fake_lut => static color, static gray displays */
+      /* !g_got_real_dac, !fake_lut => static color, static gray displays */
       assert(1);
     }
   } else {
-    /* gotrealdac => grayscale or pseudocolor displays */
+    /* g_got_real_dac => grayscale or pseudocolor displays */
     for (i = 0; i < colors; i++) {
       cols[i].pixel = pixtab[i];
       cols[i].flags = DoRed | DoGreen | DoBlue;
