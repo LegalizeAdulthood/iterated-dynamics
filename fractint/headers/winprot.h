@@ -65,7 +65,6 @@ extern int  putstringcenter(int, int, int, int, char far *);
 extern void putstring(int, int, int, unsigned char far *);
 extern int  strncasecmp(char far *,char far *,int);
 extern int  input_field(int, int, char *, int, int, int, int (*)(int) );
-extern int  field_prompt(int, char far *, char far *, char *, int, int (*)(int) );
 extern void helptitle(void);
 extern void stackscreen(void);
 extern void unstackscreen(void);

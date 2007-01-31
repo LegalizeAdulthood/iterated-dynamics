@@ -231,7 +231,7 @@ int get_toggles()
    uvalues[k].uval.ch.vlen = 4;
    uvalues[k].uval.ch.llen = 5;
    uvalues[k].uval.ch.list = soundmodes;
-   uvalues[k].uval.ch.val = (old_soundflag = soundflag)&7;
+   uvalues[k].uval.ch.val = (old_soundflag = soundflag) & SOUNDFLAG_ORBITMASK;
 
    if (rangeslen == 0) {
       LOADCHOICES("Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)");
@@ -357,7 +357,7 @@ int get_toggles()
    fract_overwrite = (char)uvalues[++k].uval.ch.val;
 
    soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
-   if (soundflag != old_soundflag && ((soundflag&7) > 1 || (old_soundflag&7) > 1))
+   if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
       j++;
 
    LogFlag = uvalues[++k].uval.Lval;
@@ -987,7 +987,7 @@ int get_cmd_string()
 
    oldhelpmode = helpmode;
    helpmode = HELPCOMMANDS;
-   i = field_prompt(0,"Enter command string to use.",NULL,cmdbuf,60,NULL);
+   i = field_prompt("Enter command string to use.",NULL,cmdbuf,60,NULL);
    helpmode = oldhelpmode;
    if (i >= 0 && cmdbuf[0] != 0) {
        i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);

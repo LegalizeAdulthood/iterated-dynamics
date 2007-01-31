@@ -1371,7 +1371,6 @@ static int menu_checkkey(int curkey,int choice)
    return(0);
 }
 
-
 int input_field(
         int options,          /* &1 numeric, &2 integer, &4 double */
         int attr,             /* display attribute */
@@ -1462,10 +1461,10 @@ int input_field(
             if (offset >= len) break;                /* at end of field */
             if (insert && started && strlen(fld) >= (size_t)len)
                break;                                /* insert & full */
-            if ((options & 1)
+            if ((options & INPUTFIELD_NUMERIC)
               && (curkey < '0' || curkey > '9')
               && curkey != '+' && curkey != '-') {
-               if ((options & 2))
+               if (options & INPUTFIELD_INTEGER)
                   break;
                /* allow scientific notation, and specials "e" and "p" */
                if ( ((curkey != 'e' && curkey != 'E') || offset >= 18)
@@ -1486,7 +1485,7 @@ int input_field(
                fld[offset+1] = 0;
             fld[offset++] = (char)curkey;
             /* if "e" or "p" in first col make number e or pi */
-            if ((options & 3) == 1) { /* floating point */
+            if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC) { /* floating point */
                double tmpd;
                int specialv;
                char tmpfld[30];
@@ -1500,7 +1499,7 @@ int input_field(
                   specialv = 1;
                   }
                if (specialv) {
-                  if ((options & 4) == 0)
+                  if ((options & INPUTFIELD_DOUBLE) == 0)
                      roundfloatd(&tmpd);
                   sprintf(tmpfld,"%.15g",tmpd);
                   tmpfld[len-1] = 0; /* safety, field should be long enough */
@@ -1517,7 +1516,6 @@ inpfld_end:
 }
 
 int field_prompt(
-        int options,        /* &1 numeric value, &2 integer */
         char *hdg,      /* heading, \n delimited lines */
         char *instr,    /* additional instructions or NULL */
         char *fld,          /* the field itself */
@@ -1575,8 +1573,8 @@ int field_prompt(
       }
    else                                   /* default instructions */
       putstringcenter(i,0,80,C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
-   return(input_field(options,C_PROMPT_INPUT,fld,len,
-                      titlerow+titlelines+1,promptcol,checkkey));
+   return input_field(0,C_PROMPT_INPUT,fld,len,
+                      titlerow+titlelines+1,promptcol,checkkey);
 }
 
 

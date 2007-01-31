@@ -420,7 +420,7 @@ void save_palette()
    driver_stack_screen();
    temp1[0] = 0;
    helpmode = HELPCOLORMAP;
-   i = field_prompt(0,"Name of map file to write",NULL,temp1,60,NULL);
+   i = field_prompt("Name of map file to write",NULL,temp1,60,NULL);
    driver_unstack_screen();
    if (i != -1 && temp1[0]) {
       if (strchr(temp1,'.') == NULL)

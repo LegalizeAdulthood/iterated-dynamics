@@ -2864,7 +2864,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
               char buf[20];
               sprintf(buf,"%.3f",1./gamma_val);
               driver_stack_screen();
-              i = field_prompt(0,"Enter gamma value",NULL,buf,20,NULL);
+              i = field_prompt("Enter gamma value",NULL,buf,20,NULL);
               driver_unstack_screen();
               if (i != -1) {
                   sscanf(buf,"%f",&gamma_val);
