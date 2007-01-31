@@ -4,6 +4,7 @@
  */
 #include <assert.h>
 #include <stdio.h>
+#include <time.h>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -598,11 +599,43 @@ win32_key_pressed(Driver *drv)
 	DI(di);
 	int ch = di->key_buffer;
 
-	plot_flush(&di->plot);
-	frame_pump_messages(FALSE);
 	if (ch)
 	{
 		return ch;
+	}
+	{
+		static time_t start = 0;
+		static long ticks_per_second = 0;
+		static long last = 0;
+		static long frames_per_second = 10;
+
+		if (!ticks_per_second)
+		{
+			if (!start)
+			{
+				time(&start);
+				last = readticker();
+			}
+			else
+			{
+				time_t now = time(NULL);
+				long now_ticks = readticker();
+				if (now > start)
+				{
+					ticks_per_second = (now_ticks - last)/(now - start);
+				}
+			}
+		}
+		else
+		{
+			long now = readticker();
+			if ((now - last)*frames_per_second > ticks_per_second)
+			{
+				plot_flush(&di->plot);
+				frame_pump_messages(FALSE);
+				last = now;
+			}
+		}
 	}
 	ch = frame_get_key_press(0);
 	if (ch)
