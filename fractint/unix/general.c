@@ -33,17 +33,14 @@ int DivideOverflow = 0;
 int cpu=0;		/* cpu type: 86, 186, 286, or 386 */
 int fpu=0;		/* fpu type: 0, 87, 287, 387 */
 
-void *extraseg = NULL;		/* extra 64K segment (allocated by init) */
 /* ********************** Mouse Support Variables ************************** */
 
 int lookatmouse=0;	/* see notes at mouseread routine */
-long savebase=0;		/* base clock ticks */ 
-long saveticks=0;	/* save after this many ticks */ 
 int finishrow=0;	/* save when this row is finished */
 
 int inside_help = 0;
 
-extern int slides;	/* 1 for playback */
+extern int g_slides;	/* 1 for playback */
 
 unsigned int toextra(tooffset, fromaddr, fromcount)
 unsigned int tooffset;
@@ -253,24 +250,24 @@ int block;
 	return ch;
     }
     curkey = xgetkey(0);
-    if (slides==1 && curkey == FIK_ESC) {
+    if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
 	stopslideshow();
 	return 0;
     }
 
-    if (curkey==0 && slides==1) {
+    if (curkey==0 && g_slides==SLIDES_PLAY) {
 	curkey = slideshw();
     }
 
     if (curkey==0 && block) {
 	curkey = xgetkey(1);
-	if (slides==1 && curkey == FIK_ESC) {
+	if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
 	    stopslideshow();
 	    return 0;
 	}
     }
 
-    if (curkey && slides==2) {
+    if (curkey && g_slides==SLIDES_RECORD) {
 	recordshw(curkey);
     }
 

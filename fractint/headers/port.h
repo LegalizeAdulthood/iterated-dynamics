@@ -428,4 +428,9 @@ extern long stackavail();
 #define cosl            cos
 #endif
 
+#if !defined(_WIN32)
+#define _snprintf snprintf
+#define _vsnprintf vsnprintf
+#endif
+
 #endif  /* PORT_H */

@@ -63,6 +63,7 @@ extern	int	lookatmouse;
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
 extern unsigned char g_dac_box[256][3];
+extern VIDEOINFO x11_video_table[];
 
 extern void drawbox();
 
@@ -1595,7 +1596,8 @@ x11_init(Driver *drv, int *argc, char **argv)
   erase_text_screen(di);
 
   /* should enumerate visuals here and build video modes for each */
-  memcpy(&g_video_table[g_video_table_len++], &x11_info, sizeof(g_video_table[0]));
+  add_video_mode(drv, &x11_video_table[0]);
+
   return 1;
 }
 
@@ -1759,10 +1761,10 @@ x11_window(Driver *drv)
   x11_flush(drv);
   x11_write_palette(drv);
 
-  g_video_table[0].xdots = sxdots;
-  g_video_table[0].ydots = sydots;
-  g_video_table[0].colors = colors;
-  g_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
+  x11_video_table[0].xdots = sxdots;
+  x11_video_table[0].ydots = sydots;
+  x11_video_table[0].colors = colors;
+  x11_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
 }
 
 /*----------------------------------------------------------------------
@@ -1797,8 +1799,8 @@ x11_resize(Driver *drv)
   if (oldx != width || oldy != height) {
     sxdots = width;
     sydots = height;
-    g_video_table[0].xdots = sxdots;
-    g_video_table[0].ydots = sydots;
+    x11_video_table[0].xdots = sxdots;
+    x11_video_table[0].ydots = sydots;
     oldx = sxdots;
     oldy = sydots;
     di->Xwinwidth = sxdots;
@@ -2357,7 +2359,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
   if (g_disk_flag)
     enddisk();
-  driver_end_video();
+  x11_end_video(drv);
   g_good_mode = 1;
   switch (dotmode) {
   case 0:				/* text */
