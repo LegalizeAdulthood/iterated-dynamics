@@ -994,26 +994,26 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    if (basehertz != 440)
       put_parm(" %s=%d", "hertz",basehertz);
 
-  if (soundflag != 9) {
-   if ((soundflag&7) == 0)
+  if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER)) {
+   if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
       put_parm(" %s=%s", "sound", "off");
-   else if ((soundflag&7) == 1)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
       put_parm(" %s=%s", "sound", "beep");
-   else if ((soundflag&7) == 2)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
       put_parm(" %s=%s", "sound","x");
-   else if ((soundflag&7) == 3)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
       put_parm(" %s=%s", "sound","y");
-   else if ((soundflag&7) == 4)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
       put_parm(" %s=%s", "sound","z");
 #ifndef XFRACT
-   if ((soundflag&7) && (soundflag&7) <=4) {
-      if (soundflag&8)
+   if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z) {
+      if (soundflag & SOUNDFLAG_SPEAKER)
          put_parm("/pc");
-      if (soundflag&16)
+      if (soundflag & SOUNDFLAG_OPL3_FM)
          put_parm("/fm");
-      if (soundflag&32)
+      if (soundflag & SOUNDFLAG_MIDI)
          put_parm("/midi");
-      if (soundflag&64)
+      if (soundflag & SOUNDFLAG_QUANTIZED)
          put_parm("/quant");
    }
 #endif
@@ -1052,7 +1052,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    if (fm_release != 5)
       put_parm(" %s=%d", "srelease",fm_release);
 
-   if (soundflag&64) { /* quantize turned on */
+   if (soundflag & SOUNDFLAG_QUANTIZED) { /* quantize turned on */
       for (i=0; i<=11; i++) if (scale_map[i] != i+1) i=15;
       if (i>12) 
          put_parm(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap",scale_map[0],scale_map[1],scale_map[2],scale_map[3]

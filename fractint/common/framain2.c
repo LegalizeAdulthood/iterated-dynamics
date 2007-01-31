@@ -278,7 +278,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				outln = pot_line;
 			}
-			else if ((soundflag&7) > 1 && !evolving) /* regular gif/fra input file */
+			else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !evolving) /* regular gif/fra input file */
 			{
 				outln = sound_line;      /* sound decoding */
 			}
@@ -878,7 +878,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          i = get_evolve_Parms();
          if (i > 0) {
             start_showorbit = 0;
-            soundflag &= 0xF9; /* turn off only x,y,z */
+            soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
             Log_Auto_Calc = 0; /* turn it off */
          }
       }
