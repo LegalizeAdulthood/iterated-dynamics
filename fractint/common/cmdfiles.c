@@ -235,7 +235,7 @@ int cmdfiles(int argc,char **argv)
    findpath(curarg, tempstring); /* look for SSTOOLS.INI */
    if (tempstring[0] != 0)              /* found it! */
       if ((initfile = fopen(tempstring,"r")) != NULL)
-         cmdfile(initfile,1);           /* process it */
+         cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 
    for (i = 1; i < argc; i++) {         /* cycle through args */
 #ifdef XFRACT
@@ -265,7 +265,7 @@ int cmdfiles(int argc,char **argv)
                }
             }
          if (curarg[0])
-            cmdarg(curarg,0);           /* process simple command */
+            cmdarg(curarg, CMDFILE_AT_CMDLINE);           /* process simple command */
          }
       else if ((sptr = strchr(curarg,'/')) != NULL) { /* @filename/setname? */
          *sptr = 0;
@@ -274,12 +274,12 @@ int cmdfiles(int argc,char **argv)
          strcpy(CommandName,sptr+1);
          if (find_file_item(CommandFile,CommandName,&initfile, 0)<0 || initfile==NULL)
             argerror(curarg);
-         cmdfile(initfile,3);
+         cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
          }
       else {                            /* @filename */
          if ((initfile = fopen(&curarg[1],"r")) == NULL)
             argerror(curarg);
-         cmdfile(initfile,0);
+         cmdfile(initfile, CMDFILE_AT_CMDLINE);
          }
       }
 
@@ -319,7 +319,7 @@ int load_commands(FILE *infile)
    /* '(' or '{' following the desired parameter set's name       */
    int ret;
    initcorners = initparams = 0; /* reset flags for type= */
-   ret = cmdfile(infile,2);
+   ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
 /*
          {
             char msg[MSGLEN];
@@ -592,14 +592,14 @@ static int cmdfile(FILE *handle,int mode)
    char linebuf[513];
    char cmdbuf[10000] = { 0 };
 
-   if (mode == 2 || mode == 3) {
+   if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) {
       while ((i = getc(handle)) != '{' && i != EOF) { }
       for (i=0; i<4; i++)
           CommandComment[i][0] = 0;
       }
    linebuf[0] = 0;
    while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0) {
-      if ((mode == 2 || mode == 3) && strcmp(cmdbuf,"}") == 0) break;
+      if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf,"}") == 0) break;
       if ((i = cmdarg(cmdbuf,mode)) < 0) break;
       changeflag |= i;
       }
@@ -607,7 +607,7 @@ static int cmdfile(FILE *handle,int mode)
 #ifdef XFRACT
    g_init_mode = 0;                /* Skip credits if @file is used. */
 #endif
-   if (changeflag&1)
+   if (changeflag & CMDARG_FRACTAL_PARAM)
    {
       backwards_v18();
       backwards_v19();
@@ -634,7 +634,7 @@ static int next_command(char *cmdbuf,int maxlen,
             ++lineptr;                  /* skip spaces and tabs */
          if (*lineptr == ';' || *lineptr == 0) {
             if (*lineptr == ';'
-              && (mode == 2 || mode == 3)
+              && (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
               && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
                   CommandComment[2][0] == 0 || CommandComment[3][0] == 0)) {
                /* save comment */
@@ -681,7 +681,7 @@ static int next_line(FILE *handle,char *linebuf,int mode)
    char tmpbuf[11];
    toolssection = 0;
    while (file_gets(linebuf,512,handle) >= 0) {
-      if (mode == 1 && linebuf[0] == '[') {     /* check for [fractint] */
+      if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[') {     /* check for [fractint] */
 #ifndef XFRACT
          strncpy(tmpbuf,&linebuf[1],9);
          tmpbuf[9] = 0;
@@ -893,7 +893,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
     }
 
-	if (mode != 2 || debugflag == 110)
+	if (mode != CMDFILE_AT_AFTER_STARTUP || debugflag == 110)
 	{
 		/* these commands are allowed only at startup */
 		if (strcmp(variable, "batch") == 0)     /* batch=?      */
@@ -1134,7 +1134,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			goto badarg;
 		}
-		if (mode == 2 && display3d == 0) /* can't do this in @ command */
+		if (mode == CMDFILE_AT_AFTER_STARTUP && display3d == 0) /* can't do this in @ command */
 		{
 			goto badarg;
 		}
@@ -1676,7 +1676,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			goto badarg;
 		}
-		if (first_init || mode == 2)
+		if (first_init || mode == CMDFILE_AT_AFTER_STARTUP)
 		{
 			if (merge_pathnames(savename, value, mode) < 0)
 			{
@@ -3018,7 +3018,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "lightname") == 0) {     /* lightname=?   */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if (first_init || mode == 2)
+      if (first_init || mode == CMDFILE_AT_AFTER_STARTUP)
          strcpy(light_name, value);
       return 0;
       }

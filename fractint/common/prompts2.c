@@ -990,7 +990,7 @@ int get_cmd_string()
    i = field_prompt(0,"Enter command string to use.",NULL,cmdbuf,60,NULL);
    helpmode = oldhelpmode;
    if (i >= 0 && cmdbuf[0] != 0) {
-       i = cmdarg(cmdbuf, 2);
+       i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
        if (debugflag == 98)
        {
           backwards_v18();
