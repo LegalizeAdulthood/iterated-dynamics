@@ -522,11 +522,11 @@ int fullscreen_prompt(  /* full-screen prompting routine */
          }
       else {
          j = 0;
-         if (curtype == 'i') j = 3;
-         if (curtype == 'L') j = 3;
-         if (curtype == 'd') j = 5;
-         if (curtype == 'D') j = 7;
-         if (curtype == 'f') j = 1;
+         if (curtype == 'i') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+         if (curtype == 'L') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+         if (curtype == 'd') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
+         if (curtype == 'D') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
+         if (curtype == 'f') j = INPUTFIELD_NUMERIC;
          i = input_field(j, C_PROMPT_INPUT, buf, curlen,
                 promptrow+curchoice,valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
          switch (values[curchoice].type) {
@@ -2807,7 +2807,7 @@ static int check_mapfile()
       if (askflag) {
          oldhelpmode = helpmode;
          helpmode = -1;
-         i = field_prompt(0,"Enter name of .MAP file to use,\n"
+         i = field_prompt("Enter name of .MAP file to use,\n"
 				"or '*' to use palette from the image to be loaded.",
 				NULL,temp1,60,NULL);
          helpmode = oldhelpmode;

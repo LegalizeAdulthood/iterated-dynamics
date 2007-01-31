@@ -1437,7 +1437,7 @@ rescan:  /* entry for changed browse parms */
          makepath(tmpmask,drive,dir,fname,ext);
          strcpy(newname,tmpmask);
          strcat(mesg,tmpmask);
-         i = field_prompt(0,mesg,NULL,newname,60,NULL);
+         i = field_prompt(mesg,NULL,newname,60,NULL);
          driver_unstack_screen();
          if ( i != -1)
           if (!rename(tmpmask,newname)) {

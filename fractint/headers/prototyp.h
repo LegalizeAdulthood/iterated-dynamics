@@ -1065,7 +1065,7 @@ extern int strncasecmp(char *,char *,int );
 #endif
 extern int main_menu(int );
 extern int input_field(int ,int ,char *,int ,int ,int ,int (*)(int));
-extern int field_prompt(int ,char *,char *,char *,int ,int (*)(int));
+extern int field_prompt(char *,char *,char *,int ,int (*)(int));
 extern int thinking(int ,char *);
 extern int savegraphics(void);
 extern int restoregraphics(void);
