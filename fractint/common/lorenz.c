@@ -1345,11 +1345,11 @@ int orbit2dfloat()
 	case 1: p0 = &x; p1 = &z; p2 = &y; break;
 	case 2: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (soundflag & 7)
+	switch (soundflag & SOUNDFLAG_ORBITMASK)
 	{
-	case 2: soundvar = &x; break;
-	case 3: soundvar = &y; break;
-	case 4: soundvar = &z; break;
+	case SOUNDFLAG_X: soundvar = &x; break;
+	case SOUNDFLAG_Y: soundvar = &y; break;
+	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 
 	if (inside > 0)
@@ -1414,7 +1414,7 @@ int orbit2dfloat()
 		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
-			if ((soundflag & 7) > 1)
+			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
 				w_snd((int) (*soundvar*100 + basehertz));
 			}
@@ -1493,11 +1493,11 @@ int orbit2dlong()
 	case 1: p0 = &x; p1 = &z; p2 = &y; break;
 	case 2: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (soundflag & 7)
+	switch (soundflag & SOUNDFLAG_ORBITMASK)
 	{
-	case 2: soundvar = &x; break;
-	case 3: soundvar = &y; break;
-	case 4: soundvar = &z; break;
+	case SOUNDFLAG_X: soundvar = &x; break;
+	case SOUNDFLAG_Y: soundvar = &y; break;
+	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 		
 	if (inside > 0)
@@ -1570,7 +1570,7 @@ int orbit2dlong()
 		}
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
-			if ((soundflag & 7) > 1)
+			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
 				double yy;
 				yy = *soundvar;
@@ -1674,10 +1674,10 @@ static int orbit3dlongcalc(void)
          {
             if (realtime)
                g_which_image=1;
-            if ((soundflag&7) > 1)
+            if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
                double yy;
-               yy = inf.viewvect[((soundflag&7) - 2)];
+               yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
                yy = yy/fudge;
                w_snd((int)(yy*100+basehertz));
             }
@@ -1774,8 +1774,8 @@ static int orbit3dfloatcalc(void)
          {
             if (realtime)
                g_which_image=1;
-            if ((soundflag&7) > 1) {
-               w_snd((int)(inf.viewvect[((soundflag&7) - 2)]*100+basehertz));
+            if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
+               w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
             }
             if (oldcol != -1 && connect)
                driver_draw_line(inf.col,inf.row,oldcol,oldrow,color%colors);
@@ -1866,11 +1866,11 @@ int dynam2dfloat()
    p1 = &y;
 
 
-   if ((soundflag&7)==2)
+   if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
       soundvar = &x;
-   else if ((soundflag&7)==3)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
       soundvar = &y;
-   else if ((soundflag&7)==4)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
       soundvar = &z;
 
    count = 0;
@@ -1941,7 +1941,7 @@ int dynam2dfloat()
           row = (int)(cvt.c*x + cvt.d*y + cvt.f);
           if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
           {
-             if ((soundflag&7) > 1)
+             if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                w_snd((int)(*soundvar*100+basehertz));
 
              if (count>=orbit_delay) {
@@ -2058,11 +2058,11 @@ int plotorbits2dfloat(void)
     return(0);
 #endif
 
-   if ((soundflag&7)==2)
+   if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
       soundvar = &x;
-   else if ((soundflag&7)==3)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
       soundvar = &y;
-   else if ((soundflag&7)==4)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
       soundvar = &z;
 
    if (resuming) {
@@ -2099,7 +2099,7 @@ int plotorbits2dfloat(void)
        if ( col > 0 && col < xdots && row > 0 && row < ydots )
 #endif
        {             /* plot if on the screen */
-          if ((soundflag&7) > 1)
+          if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
              w_snd((int)(*soundvar*100+basehertz));
 
           (*plot)(col,row,o_color%colors);

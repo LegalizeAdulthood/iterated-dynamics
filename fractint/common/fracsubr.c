@@ -1402,9 +1402,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
    sxoffs = save_sxoffs;
    syoffs = save_syoffs;
    if (debugflag == 4030) {
-      if ((soundflag&7) == 2) /* sound = x */
+      if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
            w_snd((int)(i*1000/xdots+basehertz));
-      else if ((soundflag&7) > 2) /* sound = y or z */
+      else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
            w_snd((int)(j*1000/ydots+basehertz));
       else if (orbit_delay > 0) 
       {
@@ -1412,11 +1412,11 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
       }
    }
    else {
-      if ((soundflag&7) == 2) /* sound = x */
+      if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
            w_snd((int)(i+basehertz));
-      else if ((soundflag&7) == 3) /* sound = y */
+      else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
            w_snd((int)(j+basehertz));
-      else if ((soundflag&7) == 4) /* sound = z */
+      else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
            w_snd((int)(i+j+basehertz));
       else if (orbit_delay > 0) 
       {

@@ -112,6 +112,22 @@ typedef BYTE BOOLEAN;
 #define CMDFILE_AT_AFTER_STARTUP 2
 #define CMDFILE_AT_CMDLINE_SETNAME 3
 
+#define INPUTFIELD_NUMERIC 1
+#define INPUTFIELD_INTEGER 2
+#define INPUTFIELD_DOUBLE 4
+
+#define SOUNDFLAG_OFF		0
+#define SOUNDFLAG_BEEP		1
+#define SOUNDFLAG_X			2
+#define SOUNDFLAG_Y			3
+#define SOUNDFLAG_Z			4
+#define SOUNDFLAG_ORBITMASK 0x07
+#define SOUNDFLAG_SPEAKER	0x08
+#define SOUNDFLAG_OPL3_FM	0x10
+#define SOUNDFLAG_MIDI		0x20
+#define SOUNDFLAG_QUANTIZED 0x40
+#define SOUNDFLAG_MASK		0x7F
+
 /* these are used to declare arrays for file names */
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH

@@ -365,7 +365,7 @@ static void initvars_restart()          /* <ins> key init */
    dither_flag = 0;                     /* no dithering */
    askvideo = 1;                        /* turn on video-prompt flag */
    fract_overwrite = 0;                 /* don't overwrite           */
-   soundflag = 9;                       /* sound is on to PC speaker */
+   soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
    initbatch = 0;                       /* not in batch mode         */
    checkcurdir = 0;                     /* flag to check current dire for files */
    initsavetime = 0;                    /* no auto-save              */
@@ -2481,9 +2481,9 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
    if (strcmp(variable, "sound") == 0 ) {        /* sound=?,?,? */
       if (totparms > 5)
          goto badarg;
-      soundflag = 0; /* start with a clean slate, add bits as we go */
+      soundflag = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
       if (totparms == 1)
-         soundflag = 8; /* old command, default to PC speaker */
+         soundflag = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 
       /* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
          is modified by an orbits x,y,or z component. and also to turn it on
@@ -2495,34 +2495,35 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
           (according to the western, even tempered system anyway) */
 
       if (charval[0] == 'n' || charval[0] == 'o')
-         soundflag = soundflag & 0xF8; 
+         soundflag &= ~SOUNDFLAG_ORBITMASK; 
       else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
-         soundflag = soundflag | 1;
+         soundflag |= SOUNDFLAG_BEEP;
       else if (charval[0] == 'x')
-         soundflag = soundflag | 2;
+         soundflag |= SOUNDFLAG_X;
       else if (charval[0] == 'y' && strncmp(value, "ye", 2) != 0)
-         soundflag = soundflag | 3;
+         soundflag |= SOUNDFLAG_Y;
       else if (charval[0] == 'z')
-         soundflag = soundflag | 4;
+         soundflag |= SOUNDFLAG_Z;
       else
          goto badarg;
 #if !defined(XFRACT)
       if (totparms > 1) {
        int i;
-         soundflag = soundflag & 7; /* reset options */
+         soundflag &= SOUNDFLAG_ORBITMASK; /* reset options */
          for (i = 1; i < totparms; i++) {
           /* this is for 2 or more options at the same time */
             if (charval[i] == 'f') { /* (try to)switch on opl3 fm synth */
                if (driver_init_fm())
-                  soundflag = soundflag | 16;
-               else soundflag = (soundflag & 0xEF);
+                  soundflag |= SOUNDFLAG_OPL3_FM;
+               else
+				   soundflag &= ~SOUNDFLAG_OPL3_FM;
             }
             else if (charval[i] == 'p')
-               soundflag = soundflag | 8;
+               soundflag |= SOUNDFLAG_SPEAKER;
             else if (charval[i] == 'm')
-               soundflag = soundflag | 32;
+               soundflag |= SOUNDFLAG_MIDI;
             else if (charval[i] == 'q')
-               soundflag = soundflag | 64;
+               soundflag |= SOUNDFLAG_QUANTIZED;
             else
                goto badarg;
          } /* end for */

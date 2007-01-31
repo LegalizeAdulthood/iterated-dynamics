@@ -792,7 +792,7 @@ int calcfract(void)
 
    if (curfractalspecific->calctype == calcfroth)
       froth_cleanup();
-   if ((soundflag&7)>1) /* close sound write file */
+   if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
       close_snd();
    if (truecolor)
       enddisk();
@@ -1894,7 +1894,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       lastz.y = old.y;
    }
 
-   if (((soundflag&7) > 2 || showdot >= 0) && orbit_delay > 0)
+   if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
       check_freq = 16;
    else
       check_freq = 2048;

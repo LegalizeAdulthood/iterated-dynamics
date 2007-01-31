@@ -242,7 +242,7 @@ MandelfpSetup(void)
             /* uncomment this next line if more outside options are added */
             && outside >= -6
             && useinitorbit != 1
-            && (soundflag & 0x07) < 2
+            && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && using_jiim == 0 && bailoutest == Mod
             && (orbitsave&2) == 0)
         {
@@ -380,7 +380,7 @@ JuliafpSetup(void)
             /* uncomment this next line if more outside options are added */
             && outside >= -6
             && useinitorbit != 1
-            && (soundflag & 0x07) < 2
+            && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !finattract
             && using_jiim == 0 && bailoutest == Mod
             && (orbitsave&2) == 0)
