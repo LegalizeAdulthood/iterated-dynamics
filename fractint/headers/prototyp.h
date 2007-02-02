@@ -283,6 +283,7 @@ extern int t16_getline(FILE *,int ,U16 *);
 
 /*  fracsubr -- C file prototypes */
 
+extern void free_grid_pointers(void);
 extern void calcfracinit(void);
 extern void adjust_corner(void);
 #ifndef USE_VARARGS
@@ -485,6 +486,7 @@ extern int near bfANDbailout(void);
 extern int near bfMANHbailout(void);
 extern int near bfMANRbailout(void);
 extern int ant(void);
+extern void free_ant_storage(void);
 extern int LongPhoenixFractal(void);
 extern int PhoenixFractal(void);
 extern int LongPhoenixFractalcplx(void);

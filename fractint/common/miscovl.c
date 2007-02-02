@@ -61,13 +61,6 @@ FILE *parmfile;
 #pragma optimize("e",off)  /* MSC 6.00A messes up next rtn with "e" on */
 #endif
 
-#define LOADBATCHPROMPTS(X)     {\
-   static char tmp[] = { X };\
-   strcpy(ptr,tmp);\
-   choices[promptnum]= ptr;\
-   ptr += sizeof(tmp);\
-   }
-
 void make_batch_file()
 {
 #define MAXPROMPTS 18
@@ -86,11 +79,10 @@ void make_batch_file()
    /****/
 
    int i,j;
-   char *inpcommandfile, *inpcommandname;
-   char *inpcomment[4];
+   char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
+   char inpcomment[4][MAXCMT];
    struct fullscreenvalues paramvalues[18];
-   char * choices[MAXPROMPTS];
-   char *ptr;
+   char *choices[MAXPROMPTS];
    int gotinfile;
    char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
    FILE *infile = NULL;
@@ -104,17 +96,6 @@ void make_batch_file()
    if (s_makepar[1] == 0) /* makepar map case */
       colorsonly = 1;
 
-   /* put comment storage in extraseg */
-   /* TODO: allocate real memory, not reuse shared segment */
-   inpcommandfile = extraseg;
-   inpcommandname = inpcommandfile+80;
-   inpcomment[0]    = inpcommandname+(ITEMNAMELEN + 1);
-   inpcomment[1]    = inpcomment[0] + MAXCMT;
-   inpcomment[2]    = inpcomment[1] + MAXCMT;
-   inpcomment[3]    = inpcomment[2] + MAXCMT;
-
-   /* steal existing array for "choices" */
-   ptr = (char *)(inpcomment[3] + MAXCMT);
    driver_stack_screen();
    oldhelpmode = helpmode;
    helpmode = HELPPARMFILE;
@@ -190,22 +171,22 @@ void make_batch_file()
    {
 prompt_user:
       promptnum = 0;
-      LOADBATCHPROMPTS("Parameter file");
+      choices[promptnum] = "Parameter file";
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcommandfile;
-      LOADBATCHPROMPTS("Name");
+      choices[promptnum] = "Name";
       paramvalues[promptnum].type = 0x100 + ITEMNAMELEN;
       paramvalues[promptnum++].uval.sbuf = inpcommandname;
-      LOADBATCHPROMPTS("Main comment");
+      choices[promptnum] = "Main comment";
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[0];
-      LOADBATCHPROMPTS("Second comment");
+      choices[promptnum] = "Second comment";
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[1];
-      LOADBATCHPROMPTS("Third comment");
+      choices[promptnum] = "Third comment";
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[2];
-      LOADBATCHPROMPTS("Fourth comment");
+      choices[promptnum] = "Fourth comment";
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
@@ -214,34 +195,34 @@ prompt_user:
       if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
 #endif
       {
-         LOADBATCHPROMPTS("Record colors?");
+         choices[promptnum] = "Record colors?";
          paramvalues[promptnum].type = 0x100 + 13;
          paramvalues[promptnum++].uval.sbuf = colorspec;
-         LOADBATCHPROMPTS("    (no | yes | only for full info | @filename to point to a map file)");
+         choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
          paramvalues[promptnum++].type = '*';
-         LOADBATCHPROMPTS("# of colors");
+         choices[promptnum] = "# of colors";
          maxcolorindex = promptnum;
          paramvalues[promptnum].type = 'i';
          paramvalues[promptnum++].uval.ival = maxcolor;
-         LOADBATCHPROMPTS("    (if recording full color info)");
+         choices[promptnum] = "    (if recording full color info)";
          paramvalues[promptnum++].type = '*';
       }
-      LOADBATCHPROMPTS("Maximum line length");
+      choices[promptnum] = "Maximum line length";
       paramvalues[promptnum].type = 'i';
       paramvalues[promptnum++].uval.ival = maxlinelength;
-      LOADBATCHPROMPTS("");
+      choices[promptnum] = "";
       paramvalues[promptnum++].type = '*';
-      LOADBATCHPROMPTS("    **** The following is for generating images in pieces ****");
+      choices[promptnum] = "    **** The following is for generating images in pieces ****";
       paramvalues[promptnum++].type = '*';
-      LOADBATCHPROMPTS("X Multiples");
+      choices[promptnum] = "X Multiples";
       piecespromts = promptnum;
       paramvalues[promptnum].type = 'i';
       paramvalues[promptnum++].uval.ival = xm;
-      LOADBATCHPROMPTS("Y Multiples");
+      choices[promptnum] = "Y Multiples";
       paramvalues[promptnum].type = 'i';
       paramvalues[promptnum++].uval.ival = ym;
 #ifndef XFRACT
-      LOADBATCHPROMPTS("Video mode");
+      choices[promptnum] = "Video mode";
       paramvalues[promptnum].type = 0x100 + 4;
       paramvalues[promptnum++].uval.sbuf = vidmde;
 #endif
@@ -519,19 +500,18 @@ skip_UI:
 #pragma optimize("e",on)  /* back to normal */
 #endif
 
-static struct write_batch_data { /* buffer for parms to break lines nicely */
+static struct write_batch_data /* buffer for parms to break lines nicely */
+{
    int len;
-   char *buf;
-   } *wbdata;
+   char buf[10000];
+} s_wbdata;
 
 void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
-   char *saveshared;
    int i,j,k;
    double Xctr, Yctr;
    LDBL Magnification;
    double Xmagfactor, Rotation, Skew;
-   struct write_batch_data wb_data;
    char *sptr;
    char buf[81];
    bf_t bfXctr=NULL, bfYctr=NULL;
@@ -542,16 +522,11 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       bfXctr = alloc_stack(bflength+2);
       bfYctr = alloc_stack(bflength+2);
    }
-   wbdata = &wb_data;
-   wb_data.len = 0; /* force first parm to start on new line */
+
+   s_wbdata.len = 0; /* force first parm to start on new line */
 
    /* Using near string boxx for buffer after saving to extraseg */
 
-   /* TODO: allocate real memory, not reuse shared segment */
-   saveshared = extraseg;
-   memcpy(saveshared,boxx,10000);
-   memset(boxx,0,10000);
-   wb_data.buf = (char *)boxx;
    if (colorsonly)
       goto docolors;
    if (display3d <= 0) { /* a fractal was generated */
@@ -1200,10 +1175,9 @@ docolors:
          }
       }
 
-   while (wbdata->len) /* flush the buffer */
+   while (s_wbdata.len) /* flush the buffer */
       put_parm_line();
-   /* restore previous boxx data from extraseg */
-   memcpy(boxx, saveshared, 10000);
+
    restore_stack(saved);
 }
 
@@ -1236,13 +1210,13 @@ va_dcl
    parm = va_arg(args,char *);
 #endif
    if (*parm == ' '             /* starting a new parm */
-     && wbdata->len == 0)       /* skip leading space */
+     && s_wbdata.len == 0)       /* skip leading space */
       ++parm;
-   bufptr = wbdata->buf + wbdata->len;
+   bufptr = s_wbdata.buf + s_wbdata.len;
    vsprintf(bufptr,parm,args);
    while (*(bufptr++))
-      ++wbdata->len;
-   while (wbdata->len > 200)
+      ++s_wbdata.len;
+   while (s_wbdata.len > 200)
       put_parm_line();
 }
 
@@ -1253,26 +1227,26 @@ int maxlinelength=72;
 static void put_parm_line()
 {
    int len,c;
-   if ((len = wbdata->len) > NICELINELEN) {
+   if ((len = s_wbdata.len) > NICELINELEN) {
       len = NICELINELEN+1;
-      while (--len != 0 && wbdata->buf[len] != ' ') { }
+      while (--len != 0 && s_wbdata.buf[len] != ' ') { }
       if (len == 0) {
          len = NICELINELEN-1;
          while (++len < MAXLINELEN
-           && wbdata->buf[len] && wbdata->buf[len] != ' ') { }
+           && s_wbdata.buf[len] && s_wbdata.buf[len] != ' ') { }
          }
       }
-   c = wbdata->buf[len];
-   wbdata->buf[len] = 0;
+   c = s_wbdata.buf[len];
+   s_wbdata.buf[len] = 0;
    fputs("  ",parmfile);
-   fputs(wbdata->buf,parmfile);
+   fputs(s_wbdata.buf,parmfile);
    if (c && c != ' ')
       fputc('\\',parmfile);
    fputc('\n',parmfile);
-   if ((wbdata->buf[len] = (char)c) == ' ')
+   if ((s_wbdata.buf[len] = (char)c) == ' ')
       ++len;
-   wbdata->len -= len;
-   strcpy(wbdata->buf,wbdata->buf+len);
+   s_wbdata.len -= len;
+   strcpy(s_wbdata.buf,s_wbdata.buf+len);
 }
 
 int getprecbf_mag()
@@ -1481,7 +1455,7 @@ static void put_bf(int slash,bf_t r, int prec)
    char *buf; /* "/-1.xxxxxxE-1234" */
    char *bptr;
    /* buf = malloc(decimals+11); */
-   buf = wbdata->buf+5000;  /* end of use suffix buffer, 5000 bytes safe */
+   buf = s_wbdata.buf+5000;  /* end of use suffix buffer, 5000 bytes safe */
    bptr = buf;
    if (slash)
       *(bptr++) = '/';

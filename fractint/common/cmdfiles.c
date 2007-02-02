@@ -37,7 +37,7 @@ static void initvars_3d(void);
 static void reset_ifs_defn(void);
 static void parse_textcolors(char *value);
 static int  parse_colors(char *value);
-static int  parse_printer(char *value);
+//static int  parse_printer(char *value);
 static int  get_bf(bf_t, char *);
 static int isabigfloat(char *str);
 
@@ -405,34 +405,6 @@ static void initvars_restart()          /* <ins> key init */
       mapdacbox = NULL;
       }
 
-   Printer_Type = DEFAULT_PRINTER;      /* assume an IBM/EPSON    */
-   Printer_Resolution = PRT_RESOLUTION; /* assume low resolution  */
-   Printer_Titleblock = 0;              /* assume no title block  */
-   Printer_ColorXlat = 0;               /* assume positive image  */
-   Printer_SetScreen = 0;               /* assume default screen  */
-   Printer_SFrequency = 45;             /* New screen frequency K */
-   Printer_SAngle = 45;                 /* New screen angle     K */
-   Printer_SStyle = 1;                  /* New screen style     K */
-   Printer_RFrequency = 45;             /* New screen frequency R */
-   Printer_RAngle = 75;                 /* New screen angle     R */
-   Printer_RStyle = 1;                  /* New screen style     R */
-   Printer_GFrequency = 45;             /* New screen frequency G */
-   Printer_GAngle = 15;                 /* New screen angle     G */
-   Printer_GStyle = 1;                  /* New screen style     G */
-   Printer_BFrequency = 45;             /* New screen frequency B */
-   Printer_BAngle = 0;                  /* New screen angle     B */
-   Printer_BStyle = 1;                  /* New screen style     B */
-#ifndef XFRACT
-   Print_To_File = 0;                   /* No print-to-file       */
-   Printer_CRLF = 0;                    /* Assume CR+LF           */
-#else
-   Print_To_File = 1;                   /* Print-to-file          */
-   Printer_CRLF = 2;                    /* Assume LF              */
-   Printer_Compress = 0;                /* Assume NO PostScript compression */
-#endif
-   EPSFileType = 0;                     /* Assume no save to .EPS */
-   LPTNumber = 1;                       /* assume LPT1 */
-   ColorPS = 0;                         /* Assume NO Color PostScr*/
    major_method = breadth_first;        /* default inverse julia methods */
    minor_method = left_first;   /* default inverse julia methods */
    truecolor = 0;              /* truecolor output flag */
@@ -722,7 +694,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	char    charval[16];                 /* first character of arg    */
 	int     yesnoval[16];                /* 0 if 'n', 1 if 'y', -1 if not */
 	double  ftemp;
-	int     i, j, k, l;
+	int     i, j, k;
 	char    *argptr,*argptr2;
 	int     totparms;                    /* # of / delimited parms    */
 	int     intparms;                    /* # of / delimited ints     */
@@ -2357,126 +2329,21 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable, "printer") == 0 ) {      /* printer=? */
-      if (parse_printer(value) < 0) goto badarg;
-      return 0;
-      }
-
-   if (strcmp(variable, "printfile") == 0) {     /* printfile=? */
-      int existdir;
-      if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if ((existdir=merge_pathnames(PrintName, value, mode))==0)
-         Print_To_File = 1;
-      else if (existdir < 0)
-         init_msg(variable, value, mode);
-      return 0;
-      }
-   if (strcmp(variable, "rleps") == 0) {
-      Printer_Compress = yesnoval[0];
-      return 0;
-      }
-   if (strcmp(variable, "colorps") == 0) {
-      ColorPS = yesnoval[0];
-      return 0;
-      }
-
-   if (strcmp(variable, "epsf") == 0) {          /* EPS type? SWT */
-      Print_To_File = 1;
-      EPSFileType = numval;
-      Printer_Type = 5;
-      if (strcmp(PrintName, "fract001.prn")==0)
-         strcpy(PrintName, "fract001.eps");
-      return 0;
-      }
-
-   if (strcmp(variable, "title") == 0) {         /* Printer title block? SWT */
-      if (yesnoval[0] < 0) goto badarg;
-      Printer_Titleblock = yesnoval[0];
-      return 0;
-      }
-
-   if (strcmp(variable, "translate") == 0) {     /* Translate color? SWT */
-      Printer_ColorXlat=0;
-      if (charval[0] == 'y')
-         Printer_ColorXlat=1;
-      else if (numval > 1 || numval < -1)
-         Printer_ColorXlat=numval;
-      return 0;
-      }
-
-   if (strcmp(variable, "plotstyle") == 0) {     /* plot style? SWT */
-      Printer_SStyle = numval;
-      return 0;
-      }
-
-   if (strcmp(variable, "halftone") == 0) {      /* New halftoning? SWT */
-      if (totparms != intparms) goto badarg;
-      Printer_SetScreen=1;
-      if ((totparms >  0) && ( intval[ 0] >= 0))
-                                          Printer_SFrequency = intval[ 0];
-      if ((totparms >  1) && ( intval[ 1] >= 0))
-                                          Printer_SAngle     = intval[ 1];
-      if ((totparms >  2) && ( intval[ 2] >= 0))
-                                          Printer_SStyle     = intval[ 2];
-      if ((totparms >  3) && ( intval[ 3] >= 0))
-                                          Printer_RFrequency = intval[ 3];
-      if ((totparms >  4) && ( intval[ 4] >= 0))
-                                          Printer_RAngle     = intval[ 4];
-      if ((totparms >  5) && ( intval[ 5] >= 0))
-                                          Printer_RStyle     = intval[ 5];
-      if ((totparms >  6) && ( intval[ 6] >= 0))
-                                          Printer_GFrequency = intval[ 6];
-      if ((totparms >  7) && ( intval[ 7] >= 0))
-                                          Printer_GAngle     = intval[ 7];
-      if ((totparms >  8) && ( intval[ 8] >= 0))
-                                          Printer_GStyle     = intval[ 8];
-      if ((totparms >  9) && ( intval[ 9] >= 0))
-                                          Printer_BFrequency = intval[ 9];
-      if ((totparms > 10) && ( intval[10] >= 0))
-                                          Printer_BAngle     = intval[10];
-      if ((totparms > 11) && ( intval[11] >= 0))
-                                          Printer_BStyle     = intval[11];
-      return 0;
-      }
-
-   if (strcmp(variable, "linefeed") == 0) {      /* Use LF for printer */
-      if      (strcmp(value, "cr")   == 0) Printer_CRLF = 1;
-      else if (strcmp(value, "lf")   == 0) Printer_CRLF = 2;
-      else if (strcmp(value, "crlf") == 0) Printer_CRLF = 0;
-      else goto badarg;
-      return 0;
-      }
-
-   if (strcmp(variable, "comport") == 0 ) {      /* Set the COM parameters */
-      if ((value=strchr(value, '/')) == NULL) goto badarg;
-      switch (atoi(++value)) {
-         case 110:  l = 0;   break;
-         case 150:  l = 32;  break;
-         case 300:  l = 64;  break;
-         case 600:  l = 96;  break;
-         case 1200: l = 128; break;
-         case 2400: l = 160; break;
-         case 4800: l = 192; break;
-         case 9600:
-         default:   l = 224; break;
-         }
-      if ((value=strchr(value, '/')) == NULL) goto badarg;
-      for (k=0; k < (int)strlen(value); k++) {
-         switch (value[k]) {
-            case '7':  l |= 2;  break;
-            case '8':  l |= 3;  break;
-            case 'o':  l |= 8;  break;
-            case 'e':  l |= 24; break;
-            case '2':  l |= 4;  break;
-            }
-         }
-#if !defined(XFRACT) && !defined(_WIN32)
-#ifndef WINFRACT
-      _bios_serialcom(0, numval-1, l);
-#endif
-#endif
-      return 0;
-      }
+	/* deprecated print parameters */
+	if ((strcmp(variable, "printer") == 0)
+		|| (strcmp(variable, "printfile") == 0)
+		|| (strcmp(variable, "rleps") == 0)
+		|| (strcmp(variable, "colorps") == 0)
+		|| (strcmp(variable, "epsf") == 0)
+   		|| (strcmp(variable, "title") == 0)
+   		|| (strcmp(variable, "translate") == 0)
+   		|| (strcmp(variable, "plotstyle") == 0)
+   		|| (strcmp(variable, "halftone") == 0)
+   		|| (strcmp(variable, "linefeed") == 0)
+   		|| (strcmp(variable, "comport") == 0))
+	{
+		return 0;
+	}
 
    if (strcmp(variable, "sound") == 0 ) {        /* sound=?,?,? */
       if (totparms > 5)
@@ -3182,51 +3049,6 @@ static int parse_colors(char *value)
 badcolor:
    return -1;
 }
-
-static int parse_printer(char *value)
-{
-   int k;
-   if (value[0]=='h' && value[1]=='p')
-      Printer_Type=1;                        /* HP LaserJet            */
-   if (value[0]=='i' && value[1]=='b')
-      Printer_Type=2;                        /* IBM Graphics           */
-   if (value[0]=='e' && value[1]=='p')
-      Printer_Type=2;                        /* Epson (model?)         */
-   if (value[0]=='c' && value[1]=='o')
-      Printer_Type=3;                        /* Star (Epson-Comp?) color */
-   if (value[0]=='p') {
-      if (value[1]=='a')
-         Printer_Type=4;                     /* HP Paintjet (color)    */
-      if ((value[1]=='o' || value[1]=='s')) {
-         Printer_Type=5;                     /* PostScript  SWT */
-         if (value[2]=='h' || value[2]=='l')
-            Printer_Type=6;
-         }
-      if (value[1]=='l')
-         Printer_Type=7;                     /* HP Plotter (semi-color) */
-      }
-   if (Printer_Type == 1)                    /* assume low resolution */
-      Printer_Resolution = 75;
-   else
-      Printer_Resolution = 60;
-   if (EPSFileType > 0)                      /* EPS save - force type 5 */
-      Printer_Type = 5;
-   if ((Printer_Type == 5) || (Printer_Type == 6))
-      Printer_Resolution = 150;              /* PostScript def. res. */
-   if ((value=strchr(value,'/')) != NULL) {
-      if ((k=atoi(++value)) >= 0) Printer_Resolution=k;
-      if ((value=strchr(value,'/')) != NULL) {
-         if ((k=atoi(++value))> 0) LPTNumber = k;
-         if (k < 0) {
-            Print_To_File = 1;
-            LPTNumber = 1;
-            }
-         }
-      }
-   return 0;
-}
-
-
 
 static void argerror(char *badarg)      /* oops. couldn't decode this */
 {

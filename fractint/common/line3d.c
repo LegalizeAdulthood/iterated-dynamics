@@ -111,7 +111,7 @@ static struct point bad;    /* out of range value */
 static long num_tris; /* number of triangles output to ray trace file */
 
 /* global variables defined here */
-struct f_point *f_lastrow;
+struct f_point *f_lastrow = NULL;
 void (_fastcall * standardplot) (int, int, int);
 MATRIX m; /* transformation matrix */
 int Ambient;
@@ -135,7 +135,7 @@ int xshift;
 int yshift;
 int bad_value = -10000; /* set bad values to this */
 int bad_check = -3000;  /* check values against this to determine if good */
-struct point *lastrow; /* this array remembers the previous line */
+struct point *lastrow = NULL; /* this array remembers the previous line */
 int RAY = 0;        /* Flag to generate Ray trace compatible files in 3d */
 int BRIEF = 0;      /* 1 = short ray trace files */
 
@@ -2466,7 +2466,7 @@ static int line3dmem(void)
       the purpose of filling in gaps with triangle procedure */
    /* first 8k of extraseg now used in decoder TW 3/95 */
    /* TODO: allocate real memory, not reuse shared segment */
-   lastrow = (struct point *) extraseg;
+   lastrow = (struct point *) malloc(sizeof(struct point)*xdots);
 
    check_extra = sizeof(*lastrow) * xdots;
    if (SPHERE)
@@ -2478,7 +2478,9 @@ static int line3dmem(void)
       f_lastrow = (struct f_point *) (costhetaarray + xdots);
    }
    else
+   {
       f_lastrow = (struct f_point *) (lastrow + xdots);
+   }
    check_extra += sizeof(*f_lastrow) * (xdots);
    if (pot16bit)
    {

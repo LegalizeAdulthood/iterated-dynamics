@@ -419,9 +419,6 @@
 					RelativePath=".\common\parserfp.c">
 				</File>
 				<File
-					RelativePath=".\common\printer.c">
-				</File>
-				<File
 					RelativePath=".\common\rotate.c">
 				</File>
 				<File

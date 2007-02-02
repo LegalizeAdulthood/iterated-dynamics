@@ -216,7 +216,7 @@ typedef    struct fractal_info FRACTAL_INFO;
 #define FRACTAL_INFO_SIZE 504
 #endif
 
-#define VERSION 17  /* file version, independent of system */
+#define FRACTAL_INFO_VERSION 17  /* file version, independent of system */
    /* increment this EVERY time the fractal_info structure changes */
    
 struct fractal_info         /*  for saving data in GIF file     */

@@ -1088,7 +1088,7 @@ typedef struct PRINT_DOC_INFO
 
    int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
 
-   char *buffer;        /* text buffer */
+   char buffer[PRINT_BUFFER_SIZE];        /* text buffer */
 
    char      id[81];        /* buffer to store id in */
    char      title[81];     /* buffer to store title in */
@@ -1371,9 +1371,6 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
    int            success   = 0;
    int            temp_file = -1;
    char      *msg = NULL;
-
-   /* TODO: allocate real memory, not reuse shared segment */
-   info.buffer = extraseg;
 
 /*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
    help_seek(16L);                               /* indeed it should - Bert */

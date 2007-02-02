@@ -45,14 +45,32 @@ static int    resume_offset;            /* offset in resume info gets */
 #define FUDGEFACTOR     29      /* fudge all values up by 2**this */
 #define FUDGEFACTOR2    24      /* (or maybe this)                */
 
+void free_grid_pointers()
+{
+	if (dx0)
+	{
+		free(dx0);
+		dx0 = NULL;
+	}
+	if (lx0)
+	{
+		free(lx0);
+		lx0 = NULL;
+	}
+}
+
 void set_grid_pointers()
 {
-   /* TODO: allocate real memory, not reuse shared segment */
-   dx0 = (double *) extraseg;
-   dy1 = (dx1 = (dy0 = dx0 + xdots) + ydots) + ydots;
-   lx0 = (long *) dx0;
-   ly1 = (lx1 = (ly0 = lx0 + xdots) + ydots) + ydots;
-   set_pixel_calc_functions();
+	free_grid_pointers();
+	dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
+	dy0 = dx0 + xdots;
+	dx1 = dy0 + ydots;
+	dy1 = dx1 + xdots;
+	lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
+	ly0 = lx0 + xdots;
+	lx1 = ly0 + ydots;
+	ly1 = lx1 + xdots;
+	set_pixel_calc_functions();
 }
 
 void fill_dx_array(void)
@@ -518,15 +536,6 @@ expand_retry:
    }
    if (bf_math == 0)
       free_bf_vars();
-   else
-   {
-      /* zap all of extraseg except high area to flush out bugs */
-      /* in production version this code can be deleted */
-      char *extra;
-   /* TODO: allocate real memory, not reuse shared segment */
-      extra = (char *) extraseg;
-      memset(extra,0,(unsigned int)(0x10000l-(bflength+2)*22U));
-   }
 }
 
 #ifdef _MSC_VER

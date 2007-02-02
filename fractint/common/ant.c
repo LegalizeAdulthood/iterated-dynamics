@@ -37,6 +37,8 @@
  */
 static int *s_incx[DIRS];         /* tab for 4 directions */
 static int *s_incy[DIRS];
+static int s_last_xdots = 0;
+static int s_last_ydots = 0;
 
 void
 setwait(long *wait)
@@ -357,6 +359,15 @@ exit_ant:
    return;
 }
 
+void free_ant_storage(void)
+{
+	if (s_incx[0])
+	{
+		free(s_incx[0]);
+		s_incx[0] = NULL;
+	}
+}
+
 /* N.B. use the common memory in extraseg - suffix not large enough*/
 int
 ant(void)
@@ -365,16 +376,24 @@ ant(void)
    int oldhelpmode, rule_len;
    long maxpts, wait;
    char rule[MAX_ANTS];
-   char *extra;
 
-   /* TODO: allocate real memory, not reuse shared segment */
-   extra = extraseg;
+	if (xdots != s_last_xdots || ydots != s_last_ydots)
+	{
+		int *storage = (int *) malloc((xdots + 2)*sizeof(int)*DIRS + (ydots + 2)*sizeof(int)*DIRS);
+		int *y_storage = storage + (xdots + 2)*DIRS;
 
-   for (i = 0; i < DIRS; i++)
-   {
-      s_incx[i] = (int *) (extra + (xdots + 2) * sizeof(int) * i);       /* steal some memory */
-      s_incy[i] = (int *) (extra + (xdots + 2) * sizeof(int) * DIRS + (ydots + 2) *sizeof(int) * i);     /* steal some memory */
-   }
+		s_last_xdots = xdots;
+		s_last_ydots = ydots;
+
+		free_ant_storage();	/* free old memory */
+		for (i = 0; i < DIRS; i++)
+		{
+			s_incx[i] = storage;
+			storage += xdots + 2;
+			s_incy[i] = y_storage;
+			y_storage += ydots + 2;
+		}
+	}
 
 /* In this vectors put all the possible point that the ants can visit.
  * Wrap them from a side to the other insted of simply end calculation

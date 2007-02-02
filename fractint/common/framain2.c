@@ -1375,16 +1375,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       make_batch_file();
       break;
    case FIK_CTL_P:                    /* print current image          */
-      note_zoom();
-      Print_Screen();
-      restore_zoom();
-      if (!driver_key_pressed())
-         driver_buzzer(BUZZER_COMPLETE);
-      else
-      {
-         driver_buzzer(BUZZER_INTERRUPT);
-         driver_get_key();
-      }
+	   driver_buzzer(BUZZER_INTERRUPT);
       return CONTINUE;
    case FIK_ENTER:                  /* Enter                        */
    case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
@@ -2577,15 +2568,17 @@ void checkfreemem(int secondpass)
 			maxhistory--;
 		}
 	}
-	if (extraseg == 0 || tmp == NULL)
+	if (tmp == NULL)
 	{
 		driver_buzzer(BUZZER_ERROR);
+		/* TODO: eliminate use of printf */
 		printf("%s"," I'm sorry, but you don't have enough free memory \n to run this program.\n\n");
 		exit(1);
 	}
 	free(tmp); /* was just to check for min space */
 	if (secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
 	{
+		/* TODO: eliminate use of printf */
 		printf("%s%d\n%s\n","To save memory, reduced maxhistory to ",maxhistory, "press any key to continue");
 		driver_get_key();
 	}
