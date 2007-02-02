@@ -361,7 +361,8 @@ static int _fastcall save_rule(char *rule,char **saveptr)
    int i;
    char *tmpfar;
    i=(int) strlen(rule)+1;
-   if ((tmpfar=(char *)malloc((long)i))==NULL) {
+   tmpfar = (char *) malloc(i);
+   if (tmpfar == NULL) {
        return -1;
    }
    *saveptr=tmpfar;
@@ -378,7 +379,8 @@ static int _fastcall append_rule(char *rule, int index)
    for (i = 0; *(old++); i++)
       ;
    j = (int) strlen(rule) + 1;
-   if ((dst = (char *)malloc((long)(i + j))) == NULL)
+   dst = (char *)malloc((long)(i + j));
+   if (dst == NULL)
       return -1;
 
    old = sav;
@@ -628,7 +630,8 @@ static void lsysi_dodrawc(struct lsys_turtlestatei *cmd)
 static void lsysi_dodrawgt(struct lsys_turtlestatei *cmd)
 {
   cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
-  if ((cmd->curcolor %= colors) == 0)
+  cmd->curcolor %= colors;
+  if (cmd->curcolor == 0)
     cmd->curcolor = (char)(colors-1);
 }
 
@@ -686,7 +689,8 @@ if (overflow)     /* integer math routines overflowed */
           saverang=ts->realangle;
           savex=ts->xpos;
           savey=ts->ypos;
-          if ((command=findsize(command+1,ts,rules,depth)) == NULL)
+          command = findsize(command+1, ts, rules, depth);
+		  if (command == NULL)
              return(NULL);
           ts->angle=saveang;
           ts->reverse=saverev;
@@ -804,7 +808,8 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
           savex=ts->xpos;
           savey=ts->ypos;
           savecolor=ts->curcolor;
-          if ((command=drawLSysI(command+1,ts,rules,depth)) == NULL)
+          command = drawLSysI(command+1, ts, rules, depth);
+		  if (command == NULL)
              return(NULL);
           ts->angle=saveang;
           ts->reverse=saverev;

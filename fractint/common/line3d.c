@@ -1382,7 +1382,8 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
    FILE *fps;
 
    /* Open File for both reading and writing */
-   if ((fps = dir_fopen(workdir,File_Name2, "w+b")) == NULL)
+   fps = dir_fopen(workdir,File_Name2, "w+b");
+   if (fps == NULL)
    {
       File_Error(File_Name2, 1);
       return -1;              /* Oops, somethings wrong! */
@@ -1466,7 +1467,8 @@ int targa_validate(char *File_Name)
    int i;
 
    /* Attempt to open source file for reading */
-   if ((fp = dir_fopen(workdir,File_Name, "rb")) == NULL)
+   fp = dir_fopen(workdir,File_Name, "rb");
+   if (fp == NULL)
    {
       File_Error(File_Name, 1);
       return -1;              /* Oops, file does not exist */
@@ -1688,7 +1690,8 @@ static int _fastcall RAY_Header(void)
 {
    /* Open the ray tracing output file */
    check_writefile(ray_name, ".ray");
-   if ((File_Ptr1 = fopen(ray_name, "w")) == NULL)
+   File_Ptr1 = fopen(ray_name, "w");
+   if (File_Ptr1 == NULL)
       return -1;              /* Oops, somethings wrong! */
 
    if (RAY == 2)

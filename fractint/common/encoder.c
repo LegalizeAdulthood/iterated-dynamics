@@ -132,7 +132,8 @@ restart:
    if (resave_flag == 2)        /* final save of savetime set? */
       resave_flag = 0;
 
-   if ((g_outfile = fopen(tmpfile, "wb")) == NULL)
+   g_outfile = fopen(tmpfile, "wb");
+   if (g_outfile == NULL)
    {
       sprintf(tmpmsg, "Can't create %s", tmpfile);
       stopmsg(0, tmpmsg);

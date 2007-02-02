@@ -236,18 +236,22 @@ static int _fastcall new_subD (int x1,int y1,int x2,int y2, int recur)
                 subx.r[subx.t-2])+1);
          }
 
-         if ((i = getpix(nx, y)) == 0)
+         i = getpix(nx, y);
+		 if (i == 0)
             i = adjust(nx,ny1,nx,y ,nx,ny);
          v = i;
-         if ((i = getpix(x, ny)) == 0)
+         i = getpix(x, ny);
+		 if (i == 0)
             i = adjust(nx1,ny,x ,ny,nx,ny);
          v += i;
          if (getpix(x,y) == 0)
          {
-            if ((i = getpix(x, ny1)) == 0)
+            i = getpix(x, ny1);
+			if (i == 0)
                i = adjust(nx1,ny1,x ,ny1,nx,ny1);
             v += i;
-            if ((i = getpix(nx1, y)) == 0)
+            i = getpix(nx1, y);
+			if (i == 0)
                i = adjust(nx1,ny1,nx1,y ,nx1,ny);
             v += i;
             plot(x,y,(U16)((v + 2) >> 2));
@@ -278,16 +282,20 @@ static void _fastcall subDivide(int x1,int y1,int x2,int y2)
 
    x = (x1+x2)>>1;
    y = (y1+y2)>>1;
-   if ((v=getpix(x,y1)) == 0)
+   v=getpix(x,y1);
+   if (v == 0)
       v=adjust(x1,y1,x ,y1,x2,y1);
    i=v;
-   if ((v=getpix(x2,y)) == 0)
+   v=getpix(x2,y);
+   if (v == 0)
       v=adjust(x2,y1,x2,y ,x2,y2);
    i+=v;
-   if ((v=getpix(x,y2)) == 0)
+   v=getpix(x,y2);
+   if (v == 0)
       v=adjust(x1,y2,x ,y2,x2,y2);
    i+=v;
-   if ((v=getpix(x1,y)) == 0)
+   v=getpix(x1,y);
+   if (v == 0)
       v=adjust(x1,y1,x1,y ,x1,y2);
    i+=v;
 
@@ -1329,7 +1337,8 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
                 goto jumpout;
                 }
             temp = fabs(Rate-2.0*Rate*Population);
-                if ((total *= (temp))==0) {
+                total *= temp;
+				if (total==0) {
                 overflow = TRUE;
                 goto jumpout;
                 }

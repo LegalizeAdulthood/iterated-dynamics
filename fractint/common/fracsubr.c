@@ -167,8 +167,8 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
  
    if (!(curfractalspecific->flags & BF_MATH))
    {
-      int tofloat;
-      if ((tofloat=curfractalspecific->tofloat) == NOFRACTAL)
+      int tofloat = curfractalspecific->tofloat;
+      if (tofloat == NOFRACTAL)
          bf_math = 0;
       else if (!(fractalspecific[tofloat].flags & BF_MATH))
          bf_math = 0;
@@ -1123,7 +1123,8 @@ int alloc_resume(int alloclen, int version)
    if (resume_info != 0) /* free the prior area if there is one */
       MemoryRelease(resume_info);
    /* TODO: MemoryAlloc */
-   if ((resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY)) == 0)
+   resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY);
+   if (resume_info == 0)
    {
       stopmsg(0,"Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
@@ -1337,7 +1338,8 @@ int snd_open(void)
    static char soundname[] = {"sound001.txt"};
    if ((orbitsave&2) != 0 && snd_fp == NULL)
    {
-      if ((snd_fp = fopen(soundname,"w"))==NULL)
+	   snd_fp = fopen(soundname,"w");
+      if (snd_fp == NULL)
       {
          stopmsg(0, "Can't open SOUND*.TXT");
       }

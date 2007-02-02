@@ -1397,9 +1397,11 @@ int ifsload()                   /* read in IFS parameters */
             ret = -1;
             break;
       }
-      if ((bufptr = strtok( NULL, seps ))==NULL)
+      bufptr = strtok( NULL, seps );
+	  if (bufptr==NULL)
       {
-         if ((bufptr = get_ifs_token(buf,ifsfile)) == NULL)
+         bufptr = get_ifs_token(buf,ifsfile);
+		 if (bufptr == NULL)
          {
             ret = -1;
             break;
@@ -1625,7 +1627,8 @@ int file_gets(char *buf,int maxlen,FILE *infile)
    if (feof(infile)) return -1;
    len = 0;
    while (len < maxlen) {
-      if ((c = getc(infile)) == EOF || c == '\032') {
+      c = getc(infile);
+	  if (c == EOF || c == '\032') {
          if (len) break;
          return -1;
          }

@@ -113,7 +113,8 @@ int gifview()
          strcat(temp1,ALTERNATEFRACTALTYPE);
          }
       }
-   if ((fpin = fopen(temp1, "rb")) == NULL) {
+   fpin = fopen(temp1, "rb");
+   if (fpin == NULL) {
       return (-1);
       }
 

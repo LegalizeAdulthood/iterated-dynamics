@@ -184,7 +184,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					? 1 : (double)sydots / (double)sxdots / screenaspect);
 				if ((xdots = viewxdots) != 0)
 				{	/* xdots specified */
-					if ((ydots = viewydots) == 0) /* calc ydots? */
+					ydots = viewydots;
+					if (ydots == 0) /* calc ydots? */
 					{
 						ydots = (int)((double)xdots * ftemp + 0.5);
 					}
@@ -2031,7 +2032,8 @@ static int call_line3d(BYTE *pixels, int linelen)
 static void note_zoom()
 {
    if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
-      if ((savezoom = (char *)malloc((long)(5*boxcount))) == NULL)
+      savezoom = (char *)malloc((long)(5*boxcount));
+	  if (savezoom == NULL)
          clear_zoombox(); /* not enuf mem so clear the box */
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
@@ -2116,7 +2118,8 @@ int cmp_line(BYTE *pixels, int linelen)
 {
    int row,col;
    int oldcolor;
-   if ((row = g_row_count++) == 0) {
+   row = g_row_count++;
+   if (row == 0) {
       errcount = 0;
       cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
       outln_cleanup = cmp_line_cleanup;

@@ -1399,7 +1399,8 @@ void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg 
          }
       }
 
-   if ( (info.file = fopen(outfname, "wt")) == NULL )
+   info.file = fopen(outfname, "wt");
+   if (info.file == NULL )
       {
       msg = "Unable to create output file.\n";
       goto ErrorAbort;

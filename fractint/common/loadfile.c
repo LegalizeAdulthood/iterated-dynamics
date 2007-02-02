@@ -559,7 +559,8 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    blk_6_info->got_data = 0; /* initialize to no data */
    blk_7_info->got_data = 0; /* initialize to no data */
 
-   if ((fp = fopen(gif_file,"rb"))==NULL)
+   fp = fopen(gif_file,"rb");
+   if (fp==NULL)
       return(-1);
    fread(gifstart,13,1,fp);
    if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
@@ -689,7 +690,8 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 2: /* resume info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
 			 /* TODO: MemoryAlloc */
-                  if ((blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY)) == 0)
+                  blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY);
+				  if (blk_2_info->resume_data == 0)
                      info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
                   else {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);

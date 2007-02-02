@@ -435,7 +435,8 @@ int get_toggles2()
    k = k - 3;
    for (i= 0; i < 3; i++) {
       uvalues[++k].type = 's';
-      if ((old_inversion[i] = inversion[i]) == AUTOINVERT)
+      old_inversion[i] = inversion[i];
+	  if (inversion[i] == AUTOINVERT)
          sprintf(uvalues[k].uval.sval,"auto");
       else
          sprintf(uvalues[k].uval.sval,"%-1.15lg",inversion[i]);
@@ -1117,7 +1118,8 @@ int get_rds_params(void) {
          uvalues[k++].type = '*';
          for (i=0; i<sizeof(rds6); i++)
             rds6[i] = ' ';
-         if ((p = strrchr(stereomapname,SLASHC))==NULL ||
+         p = strrchr(stereomapname,SLASHC);
+		 if (p==NULL ||
                  (int) strlen(stereomapname) < sizeof(rds6)-2)
             p = strlwr(stereomapname);
          else
@@ -1876,7 +1878,8 @@ int splitpath(char *file_template,char *drive,char *dir,char *fname,char *ext)
 		ext[0]   = 0;
 	}
 
-	if ((length = (int) strlen(file_template)) == 0)
+	length = (int) strlen(file_template);
+	if (length == 0)
 	{
 		return(0);
 	}

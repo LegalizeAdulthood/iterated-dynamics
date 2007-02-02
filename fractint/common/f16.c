@@ -50,7 +50,8 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 
     strcpy(filename, fname);
     if (has_ext(filename) == NULL) strcat(filename, ".TGA");
-    if ((fp = fopen(filename, READMODE)) == NULL) return NULL;
+    fp = fopen(filename, READMODE);
+	if (fp == NULL) return NULL;
 
     fread(header, HEADERSIZE, 1, fp);
     if ((header[O_FILETYPE] != T_RLERGB) || (header[O_ESIZE] != 16)) {

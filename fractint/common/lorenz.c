@@ -215,14 +215,16 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 {
    double det, xd, yd;
 
-   if ((det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin))==0)
+   det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
+   if (det == 0)
       return(-1);
    xd = dxsize/det;
    scrn_cnvt->a =  xd*(yymax-yy3rd);
    scrn_cnvt->b =  xd*(xx3rd-xxmin);
    scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*yymax;
 
-   if ((det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin))==0)
+   det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
+   if (det == 0)
       return(-1);
    yd = dysize/det;
    scrn_cnvt->c =  yd*(yymin-yy3rd);
@@ -1980,14 +1982,16 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 {
    double det, xd, yd;
 
-   if ((det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin))==0)
+   det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
+   if (det == 0)
       return(-1);
    xd = dxsize/det;
    scrn_cnvt->a =  xd*(oymax-oy3rd);
    scrn_cnvt->b =  xd*(ox3rd-oxmin);
    scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;
 
-   if ((det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin))==0)
+   det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
+   if (det == 0)
       return(-1);
    yd = dysize/det;
    scrn_cnvt->c =  yd*(oymin-oy3rd);
@@ -2001,8 +2005,8 @@ int plotorbits2dsetup(void)
 
 #ifndef XFRACT
    if (curfractalspecific->isinteger != 0) {
-      int tofloat;
-      if ((tofloat = curfractalspecific->tofloat) == NOFRACTAL)
+      int tofloat = curfractalspecific->tofloat;
+      if (tofloat == NOFRACTAL)
          return(-1);
       floatflag = usr_floatflag = 1; /* force floating point */
       curfractalspecific = &fractalspecific[tofloat];
@@ -2138,7 +2142,7 @@ int funny_glasses_call(int (*calc)(void))
             stopmsg(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it,\n"
 				"then hit <s> to save, hit any other key to create second image.");
-            while ((i = driver_get_key()) == 's' || i == 'S') {
+            for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) {
                diskisactive = 1;
                savetodisk(savename);
                diskisactive = 0;
@@ -2309,7 +2313,8 @@ static int ifs2d(void)
 
    srand(1);
    color_method = (int)param[0];
-   if ((localifs=(long *)malloc((long)numaffine*IFSPARM*sizeof(long)))==NULL)
+   localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
+   if (localifs == NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);
@@ -2394,7 +2399,8 @@ static int ifs3dlong(void)
    struct long3dvtinf inf;
    srand(1);
    color_method = (int)param[0];
-   if ((localifs=(long *)malloc((long)numaffine*IFS3DPARM*sizeof(long)))==NULL)
+   localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
+   if (localifs == NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
       return(-1);
