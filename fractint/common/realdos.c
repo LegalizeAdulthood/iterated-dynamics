@@ -621,7 +621,8 @@ int fullscreen_choice(
 		i = 1;
 	}
 #else
-	if ((i = (80 / boxwidth - colwidth) / 2 - 1) == 0) /* to allow wider prompts */
+	i = (80 / boxwidth - colwidth) / 2 - 1;
+	if (i == 0) /* to allow wider prompts */
 	{
 		i = 1;
 	}
@@ -731,7 +732,8 @@ int fullscreen_choice(
 			for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
 			{
 				/* display the choices */
-				if ((k = attributes[j = i + topleftchoice] & 3) == 1)
+				k = attributes[j = i + topleftchoice] & 3;
+				if (k == 1)
 				{
 					k = C_PROMPT_LO;
 				}
@@ -811,7 +813,8 @@ int fullscreen_choice(
 #endif
 
 		i = current - topleftchoice;           /* unhighlight current choice */
-		if ((k = attributes[current] & 3) == 1)
+		k = attributes[current] & 3;
+		if (k == 1)
 		{
 			k = C_PROMPT_LO;
 		}

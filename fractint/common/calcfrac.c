@@ -2934,7 +2934,8 @@ int  bound_trace_main(void)
                         && row <= iystop)
                     {
                     /* the order of operations in this next line is critical */
-                    if ((color = getcolor(col, row)) == bkcolor && (*calctype)()== -1)
+						color = getcolor(col, row);
+                    if (color == bkcolor && (*calctype)()== -1)
                                 /* color, row, col are global for (*calctype)() */
                         {
                         if (showdot != bkcolor) /* remove showdot pixel */
@@ -2997,8 +2998,14 @@ whenever going_to is South or West
                                 || (going_to == West && coming_from != East))
                             { /* fill a row, but only once */
                             right = col;
-                            while (--right >= ixstart && (color = getcolor(right,row)) == trail_color)
-                                ; /* do nothing */
+                            while (--right >= ixstart)
+							{
+								color = getcolor(right,row);
+								if (color == trail_color)
+								{
+									break;
+								}
+							}
                             if (color == bkcolor) /* check last color */
                                 {
                                 left = right;
@@ -3159,7 +3166,8 @@ static int solidguess(void)
             reset_periodicity = 1;
             for (col=ixstart; col<=ixstop; col+=maxblock)
             {
-               if ((i=(*calctype)()) == -1)
+				i=(*calctype)();
+               if (i == -1)
                   break;
                reset_periodicity = 0;
             }
@@ -3252,7 +3260,7 @@ static int solidguess(void)
    return 0;
 }
 
-#define calcadot(c,x,y) { col=x; row=y; if ((c=(*calctype)())== -1) return -1; }
+#define calcadot(c,x,y) { col=x; row=y; c=(*calctype)(); if (c == -1) return -1; }
 
 static int _fastcall guessrow(int firstpass,int y,int blocksize)
 {

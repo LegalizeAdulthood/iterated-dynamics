@@ -25,7 +25,8 @@ tgaview()
    unsigned int width;
    struct fractal_info info;
 
-   if ((fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info))==NULL)
+   fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
+   if (fptarga==NULL)
       return(-1);
 
    g_row_count = 0;

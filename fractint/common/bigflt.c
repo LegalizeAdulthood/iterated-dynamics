@@ -1724,7 +1724,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
     /* add exp's */
     rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
 
-    positive = is_bf_neg(n1) == is_bf_neg(n2); /* are they the same sign? */
+    positive = (is_bf_neg(n1) == is_bf_neg(n2)); /* are they the same sign? */
 
     bnl = bnlength;
     bnlength = bflength;

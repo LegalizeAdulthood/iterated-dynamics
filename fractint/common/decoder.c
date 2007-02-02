@@ -265,8 +265,10 @@ short decoder(short linewidth)
 
          /* Continue reading codes until we get a non-clear code (Another
           * unlikely, but possible case...) */
-         while ((c = get_next_code()) == clear)
-            ;
+		 do
+		 {
+			c = get_next_code();
+		 } while (c == clear);
 
          /* If we get an ending code immediately after a clear code (Yet
           * another unlikely case), then break out of the loop. */

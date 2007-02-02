@@ -198,7 +198,8 @@ start:
    {
       if (i < 80)
          buffer[i++] = (char)out;
-      if ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n' || out == EOF)
+      out=fgetc(fpss);
+	  if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
          break;
    }
    buffer[i] = 0;
@@ -289,7 +290,8 @@ start:
 int
 startslideshow()
 {
-   if ((fpss=fopen(autoname,"r"))==NULL)
+   fpss=fopen(autoname,"r");
+   if (fpss==NULL)
       g_slides = SLIDES_OFF;
    ticks = 0;
    quotes = 0;
@@ -313,8 +315,11 @@ void recordshw(int key)
    dt = (float)ticks;      /* save time of last call */
    ticks=clock_ticks();  /* current time */
    if (fpss==NULL)
-      if ((fpss=fopen(autoname,"w"))==NULL)
+   {
+	   fpss=fopen(autoname,"w");
+      if (fpss==NULL)
          return;
+   }
    dt = ticks-dt;
    dt /= CLK_TCK;  /* dt now in seconds */
    if (dt > .5) /* don't bother with less than half a second */

@@ -277,7 +277,8 @@ int cmdfiles(int argc,char **argv)
          cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
          }
       else {                            /* @filename */
-         if ((initfile = fopen(&curarg[1],"r")) == NULL)
+         initfile = fopen(&curarg[1],"r");
+		 if (initfile == NULL)
             argerror(curarg);
          cmdfile(initfile, CMDFILE_AT_CMDLINE);
          }
@@ -342,7 +343,8 @@ static void initvars_run()              /* once per run init */
    char *p;
    init_rseed = (int)time(NULL);
    init_comments();
-   if ((p = getenv("TMP")) == NULL)
+   p = getenv("TMP");
+   if (p == NULL)
       p = getenv("TEMP");
    if (p != NULL)
    {
@@ -716,13 +718,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			*argptr += 'a' - 'A';
 		}
-		if (*argptr == '=' && strncmp(curarg, "colors=", 7) == 0)
+		else if (*argptr == '=')
 		{
-			break;                         /* don't convert colors=value */
-		}
-		if (*argptr == '=' && strncmp(curarg, "comment", 7) == 0)
-		{
-			break;                         /* don't convert comment=value */
+			/* don't convert colors=value or comment=value */
+			if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
+			{
+				break;
+			}
 		}
 		++argptr;
     }
@@ -1447,7 +1449,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			{
 				goto badarg;
 			}
-			if ((value = strchr(value, '/')) == NULL)
+			value = strchr(value, '/');
+			if (value == NULL)
 			{
 				break;
 			}
@@ -1626,7 +1629,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			goto badarg;
 		}
-		if ((ranges = (int *)malloc(sizeof(int)*entries)) == NULL)
+		ranges = (int *)malloc(sizeof(int)*entries);
+		if (ranges == NULL)
 		{
 			stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
 			return -1;
@@ -1752,7 +1756,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 				potparam[k] = atoi(value);
 			}
 			k++;
-			if ((value = strchr(value, '/')) == NULL)
+			value = strchr(value, '/');
+			if (value == NULL)
 			{
 				k = 99;
 			}
@@ -2618,7 +2623,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
    if (strcmp(variable, "ifsfile") == 0) {    /* ifsfile=?? */
       int existdir;
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if ((existdir=merge_pathnames(IFSFileName, value, mode))==0)
+      existdir=merge_pathnames(IFSFileName, value, mode);
+	  if (existdir==0)
          reset_ifs_defn();
       else if (existdir < 0)
          init_msg(variable, value, mode);
@@ -2964,7 +2970,8 @@ static void parse_textcolors(char *value)
             if (i == j || (i == 0 && j == 8)) /* force contrast */
                j = 15;
             txtcolor[k] = (BYTE)(i * 16 + j);
-            if ((value = strchr(value,'/')) == NULL) break;
+            value = strchr(value,'/');
+			if (value == NULL) break;
             }
          ++value;
          ++k;

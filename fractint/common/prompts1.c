@@ -311,8 +311,8 @@ int fullscreen_prompt(  /* full-screen prompting routine */
 	  strcpy(hdgline, hdg);
       for (i=0; i<titlelines-1; i++)
       {
-         char *next;
-         if ((next = strchr(hdgline,'\n')) == NULL)
+         char *next = strchr(hdgline,'\n');
+         if (next == NULL)
             break; /* shouldn't happen */
          *next = '\0';
          titlewidth = (int) strlen(hdgline);
@@ -866,7 +866,8 @@ int get_fracttype()             /* prompt for and select fractal type */
    while (1) {
       if ((t = select_fracttype(fractype)) < 0)
          break;
-      if ((i = select_type_params(t, fractype)) == 0) { /* ok, all done */
+      i = select_type_params(t, fractype);
+	  if (i == 0) { /* ok, all done */
          done = 0;
          break;
          }
@@ -1202,7 +1203,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    long oldbailout = 0L;
    int promptnum;
    char msg[120];
-   char *typename, *tmpptr;
+   char *type_name, *tmpptr;
    char bailoutmsg[50];
    int ret = 0;
    int oldhelpmode;
@@ -1393,8 +1394,9 @@ gfp_top:
       paramvalues[promptnum].uval.ch.list = trignameptr;
       choices[promptnum++] = (char *)trg[i];
       }
-   if (*(typename = curfractalspecific->name) == '*')
-        ++typename;
+   type_name = curfractalspecific->name;
+   if (*type_name == '*')
+        ++type_name;
 
    i = curfractalspecific->orbit_bailout;
 
@@ -1420,7 +1422,7 @@ gfp_top:
          paramvalues[promptnum].type = 'L';
          paramvalues[promptnum++].uval.Lval = (oldbailout = bailout);
          paramvalues[promptnum].type = '*';
-         tmpptr = typename;
+         tmpptr = type_name;
          if (usr_biomorph != -1)
          {
             i = 100;
@@ -1528,7 +1530,7 @@ gfp_top:
    if (julibrot)
       sprintf(msg,"Julibrot Parameters (orbit= %s)",juliorbitname);
    else
-      sprintf(msg,"Parameters for fractal type %s",typename);
+      sprintf(msg,"Parameters for fractal type %s",type_name);
    if (bf_math == 0)
    {
       strcat(msg,"\n(Press "FK_F6" for corner parameters)");
@@ -1733,7 +1735,8 @@ long get_file_entry(int type,char *title,char *fmask,
          }
       setvbuf(gfe_file,tstack,_IOFBF,4096); /* improves speed when file is big */
       newfile = 0;
-      if ((entry_pointer = gfe_choose_entry(type,title,filename,entryname)) == -2) {
+      entry_pointer = gfe_choose_entry(type,title,filename,entryname);
+	  if (entry_pointer == -2) {
          newfile = 1; /* go to file list, */
          continue;    /* back to getafilename */
          }
@@ -1818,7 +1821,8 @@ int scan_entries(FILE * infile, void * ch, char *itemname)
    {                            /* scan the file for entry names */
       int c, len;
 top:
-      if ((c = skip_white_space(infile, &file_offset)) == ';')
+      c = skip_white_space(infile, &file_offset);
+	  if (c == ';')
       {
          c = skip_comment(infile, &file_offset);
          if (c == EOF || c == '\032')
@@ -2082,7 +2086,8 @@ static int check_gfe_key(int curkey,int choice)
                driver_put_string(i,0,C_GENERAL_MED,blanks);
             driver_put_string(4,0,C_GENERAL_MED,infbuf);
          }
-         if ((i = getakeynohelp()) == FIK_DOWN_ARROW		|| i == FIK_CTL_DOWN_ARROW
+         i = getakeynohelp();
+		 if (i == FIK_DOWN_ARROW		|| i == FIK_CTL_DOWN_ARROW
                              || i == FIK_UP_ARROW		|| i == FIK_CTL_UP_ARROW
                              || i == FIK_LEFT_ARROW		|| i == FIK_CTL_LEFT_ARROW
                              || i == FIK_RIGHT_ARROW	|| i == FIK_CTL_RIGHT_ARROW
@@ -2280,7 +2285,10 @@ static void format_parmfile_line(int choice,char *buf)
    char line[80];
    fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
    while (getc(gfe_file) != '{') { }
-   while ((c = getc(gfe_file)) == ' ' || c == '\t' || c == ';') { }
+   do
+   {
+		c = getc(gfe_file);
+   } while (c == ' ' || c == '\t' || c == ';');
    i = 0;
    while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032') {
       line[i++] = (char)((c == '\t') ? ' ' : c);

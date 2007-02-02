@@ -330,7 +330,8 @@ skip_UI:
          setvbuf(infile, tstack, _IOFBF, 4096); /* improves speed */
 #endif
       }
-      if ((parmfile = fopen(outname, "wt")) == NULL)
+      parmfile = fopen(outname, "wt");
+	  if (parmfile == NULL)
       {
          sprintf(buf, "Can't create %s", outname);
          stopmsg(0, buf);
@@ -373,7 +374,8 @@ skip_UI:
             have3rd = 1;
          else
             have3rd = 0;
-         if ((fpbat = dir_fopen(workdir,"makemig.bat", "w")) == NULL)
+         fpbat = dir_fopen(workdir,"makemig.bat", "w");
+		 if (fpbat == NULL)
             xm = ym = 0;
          pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   /* calculate stepsizes */
          pdely  = (yymax - yy3rd) / (ym * pydots - 1);
@@ -473,8 +475,10 @@ skip_UI:
 
       if (gotinfile)
       {                         /* copy the rest of the file */
-         while ((i = file_gets(buf, 255, infile)) == 0)
-            ; /* skip blanks */
+		  do
+		  {
+			i = file_gets(buf, 255, infile);
+		  } while (i == 0); /* skip blanks */
          while (i >= 0)
          {
             fputs(buf, parmfile);
@@ -538,7 +542,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       else
         put_parm("=%d",g_release);
 
-      if (*(sptr = curfractalspecific->name) == '*') ++sptr;
+      sptr = curfractalspecific->name;
+	  if (*sptr == '*') ++sptr;
       put_parm( " %s=%s", "type",sptr);
 
       if (fractype == JULIBROT || fractype == JULIBROTFP)
@@ -1186,7 +1191,10 @@ static void put_filename(char *keyword,char *fname)
    char *p;
    if (*fname && !endswithslash(fname)) {
       if ((p = strrchr(fname, SLASHC)) != NULL)
-         if (*(fname = p+1) == 0) return;
+	  {
+		  fname = p+1;
+		  if (*fname == 0) return;
+	  }
       put_parm(" %s=%s",keyword,fname);
       }
 }
@@ -1243,7 +1251,8 @@ static void put_parm_line()
    if (c && c != ' ')
       fputc('\\',parmfile);
    fputc('\n',parmfile);
-   if ((s_wbdata.buf[len] = (char)c) == ' ')
+   s_wbdata.buf[len] = (char)c;
+   if (c == ' ')
       ++len;
    s_wbdata.len -= len;
    strcpy(s_wbdata.buf,s_wbdata.buf+len);
@@ -1277,10 +1286,13 @@ static int getprec(double a,double b,double c)
    double diff,temp;
    int digits;
    double highv = 1.0E20;
-   if ((diff = fabs(a - b)) == 0.0) diff = highv;
-   if ((temp = fabs(a - c)) == 0.0) temp = highv;
+   diff = fabs(a - b);
+   if (diff == 0.0) diff = highv;
+   temp = fabs(a - c);
+   if (temp == 0.0) temp = highv;
    if (temp < diff) diff = temp;
-   if ((temp = fabs(b - c)) == 0.0) temp = highv;
+   temp = fabs(b - c);
+   if (temp == 0.0) temp = highv;
    if (temp < diff) diff = temp;
    digits = 7;
    if (debugflag >= 700 && debugflag < 720 )
@@ -1471,7 +1483,8 @@ void shell_to_dos()
    int drv;
    char *comspec;
    char curdir[FILE_MAX_DIR],*s;
-   if ((comspec = getenv("COMSPEC")) == NULL)
+   comspec = getenv("COMSPEC");
+   if (comspec == NULL)
       printf("Cannot find COMMAND.COM.\n");
    else {
       putenv("PROMPT='EXIT' returns to FRACTINT.$_$p$g");
@@ -1735,7 +1748,8 @@ int select_video_mode(int curmode)
 #else
 	k = g_video_table[0].keynum;
 #endif
-	if ((ret = k) == 0)  /* selected entry not a copied (assigned to key) one */
+	ret = k;
+	if (k == 0)  /* selected entry not a copied (assigned to key) one */
 	{
 		memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
 					(char *)&g_video_entry,sizeof(*g_video_table));
@@ -1763,7 +1777,8 @@ void format_vid_table(int choice,char *buf)
    biosflag = (char)((g_video_entry.dotmode % 100 == DOTMODE_SLOW_BIOS) ? 'B' : ' ');
    sprintf(buf,"%-5s %-25s %5d %5d ",  /* 44 chars */
            kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
-   if ((truecolorbits = g_video_entry.dotmode/1000) == 0)
+   truecolorbits = g_video_entry.dotmode/1000;
+   if (truecolorbits == 0)
       sprintf(local_buf,"%s%3d",  /* 47 chars */
            buf, g_video_entry.colors);
    else 
@@ -1817,8 +1832,10 @@ static int check_modekey(int curkey,int choice)
 static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 {
    int i,j;
-   if ((i = g_video_table[*((int *)p1)].keynum) == 0) i = 9999;
-   if ((j = g_video_table[*((int *)p2)].keynum) == 0) j = 9999;
+   i = g_video_table[*((int *)p1)].keynum;
+   if (i == 0) i = 9999;
+   j = g_video_table[*((int *)p2)].keynum;
+   if (j == 0) j = 9999;
    if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
       return(-1);
    return(1);
@@ -1845,7 +1862,8 @@ static void update_fractint_cfg()
    while (--i >= 0 && outname[i] != SLASHC)
    outname[i] = 0;
    strcat(outname,"fractint.tmp");
-   if ((outfile = fopen(outname,"w")) == NULL) {
+   outfile = fopen(outname,"w");
+   if (outfile == NULL) {
       sprintf(buf,"Can't create %s",outname);
       stopmsg(0,buf);
       return;
@@ -1872,7 +1890,8 @@ static void update_fractint_cfg()
             j += 8;
             }
          buf[i] = 0;
-         if ((truecolorbits = vident.dotmode/1000) == 0)
+         truecolorbits = vident.dotmode/1000;
+		 if (truecolorbits == 0)
             sprintf(colorsbuf,"%3d",vident.colors);
          else 
             sprintf(colorsbuf,"%3s",
@@ -1951,7 +1970,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 				printf(" \n Generating multi-image GIF file %s using", gifout);
 				printf(" %d X and %d Y components\n\n", xmult, ymult);
 				/* attempt to create the output file */
-				if ((out = fopen(gifout,"wb")) == NULL)
+				out = fopen(gifout,"wb");
+				if (out == NULL)
 				{
 					printf("Cannot create output file %s!\n", gifout);
 					exit(1);
@@ -1960,7 +1980,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
 			sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
 
-			if ((in = fopen(gifin,"rb")) == NULL)
+			in = fopen(gifin,"rb");
+			if (in == NULL)
 			{
 				printf("Can't open file %s!\n", gifin);
 				exit(1);
@@ -2085,7 +2106,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							errorflag = 7;
 						}
-						if ((i = temp[0]) == 0)
+						i = temp[0];
+						if (i == 0)
 						{
 							break;
 						}
@@ -2131,7 +2153,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 								errorflag = 10;
 							}
 						}
-						if ((i = temp[0]) == 0)
+						i = temp[0];
+						if (i == 0)
 						{
 							break;
 						}

@@ -3046,7 +3046,8 @@ int frmgetconstant(FILE * openfile, struct token_st * tok)
                getting_base = 0;
                got_decimal_already = 0;
                filepos=ftell(openfile);
-               if ((c = frmgetchar(openfile)) == '-' || c == '+') {
+               c = frmgetchar(openfile);
+			   if (c == '-' || c == '+') {
                   tok->token_str[i++] = (char) c;
                   filepos = ftell(openfile);
                }
@@ -3118,7 +3119,8 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
                fprintf(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
-            if ((c = frmgetchar(openfile)) == '.' || isdigit(c)) {
+            c = frmgetchar(openfile);
+			if (c == '.' || isdigit(c)) {
                if (debug_token != NULL) {
                   fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
                }
@@ -3275,7 +3277,9 @@ void frm_get_eos (FILE * openfile, struct token_st * this_token)
 {
    long last_filepos = ftell(openfile);
    int c;
-   while ((c = frmgetchar(openfile)) == '\n' || c == ',' || c == ':') {
+
+   for (c = frmgetchar(openfile); (c == '\n' || c == ',' || c == ':'); c = frmgetchar(openfile))
+   {
       if (c == ':') {
     this_token->token_str[0] = ':';
       }
@@ -3316,14 +3320,16 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          this_token->token_str[0] = (char) c;
          filepos = ftell(openfile);
          if (c=='<' || c=='>' || c=='=') {
-            if ((c=frmgetchar(openfile)) == '=')
+            c=frmgetchar(openfile);
+			if (c == '=')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
             }
          }
          else if (c=='!') {
-            if ((c=frmgetchar(openfile)) == '=')
+            c=frmgetchar(openfile);
+			if (c == '=')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
@@ -3334,13 +3340,15 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
             }
          }
          else if (c=='|') {
-            if ((c=frmgetchar(openfile)) == '|')
+            c=frmgetchar(openfile);
+			if (c == '|')
                this_token->token_str[i++] = (char) c;
             else
                fseek(openfile, filepos, SEEK_SET);
          }
          else if (c=='&') {
-            if ((c=frmgetchar(openfile)) == '&')
+            c=frmgetchar(openfile);
+			if (c == '&')
                this_token->token_str[i++] = (char) c;
             else {
                fseek(openfile, filepos, SEEK_SET);
@@ -3910,7 +3918,8 @@ void frm_error(FILE * open_file, long begin_frm)
       fseek(open_file, begin_frm, SEEK_SET);
       line_number = 1;
       while (ftell(open_file) != errors[j].error_pos) {
-         if ((i = fgetc(open_file)) == '\n') {
+         i = fgetc(open_file);
+		 if (i == '\n') {
             line_number++;
          }
          else if (i == EOF || i == '}') {
@@ -4062,7 +4071,8 @@ void init_const_lists()
 
 struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st tok) {
    if (p == NULL) {
-      if ((p = var_list_alloc()) == NULL)
+      p = var_list_alloc();
+	  if (p == NULL)
          return NULL;
       strcpy(p->name, tok.token_str);
       p->next_item = NULL;
@@ -4070,7 +4080,8 @@ struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st to
    else if (strcmp(p->name, tok.token_str) == 0) {
    }
    else {
-      if ((p->next_item = add_var_to_list(p->next_item, tok)) == NULL)
+      p->next_item = add_var_to_list(p->next_item, tok);
+	  if (p->next_item == NULL)
          return NULL;
    }
    return p;
@@ -4078,7 +4089,8 @@ struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st to
 
 struct const_list_st *  add_const_to_list (struct const_list_st * p, struct token_st tok) {
    if (p == NULL) {
-      if ((p = const_list_alloc()) == NULL)
+      p = const_list_alloc();
+	  if (p == NULL)
          return NULL;
       p->complex_const.x = tok.token_const.x;
       p->complex_const.y = tok.token_const.y;
@@ -4087,8 +4099,11 @@ struct const_list_st *  add_const_to_list (struct const_list_st * p, struct toke
    else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y) {
    }
    else
-      if ((p->next_item = add_const_to_list(p->next_item, tok)) == NULL)
+   {
+	   p->next_item = add_const_to_list(p->next_item, tok);
+	   if (p->next_item == NULL)
          return NULL;
+   }
    return p;
 }
 
@@ -4352,7 +4367,8 @@ int frm_prescan (FILE * open_file)
                }
             }
             ExpectingArg = 0;
-/*            if ((var_list = add_var_to_list (var_list, this_token)) == NULL) {
+/*            var_list = add_var_to_list (var_list, this_token);
+			  if (var_list == NULL) {
                stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
                fseek(open_file, orig_pos, SEEK_SET);
                init_var_list();
@@ -4412,7 +4428,8 @@ int frm_prescan (FILE * open_file)
                }
             }
             ExpectingArg = 0;
-/*            if ((real_list = add_const_to_list (real_list, this_token)) == NULL) {
+/*            real_list = add_const_to_list (real_list, this_token);
+			  if (real_list == NULL) {
                stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
                fseek(open_file, orig_pos, SEEK_SET);
                init_var_list();
@@ -4433,7 +4450,8 @@ int frm_prescan (FILE * open_file)
                }
             }
             ExpectingArg = 0;
-/*          if ((complx_list = add_const_to_list (complx_list, this_token)) == NULL) {
+/*          complx_list = add_const_to_list (complx_list, this_token);
+            if (complx_list == NULL) {
                stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
                fseek(open_file, orig_pos, SEEK_SET);
                init_var_list();

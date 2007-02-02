@@ -130,7 +130,8 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          basin = 1;
       if (degree > 16)
       {
-         if ((roots=(_CMPLX *)malloc(degree*sizeof(_CMPLX)))==NULL)
+		  roots = (_CMPLX *) malloc(degree*sizeof(_CMPLX));
+         if (roots == NULL)
          {
             roots = staticroots;
             degree = 16;
@@ -156,7 +157,8 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 
       if (degree > 16)
       {
-         if ((MPCroots=(struct MPC *)malloc(degree*sizeof(struct MPC)))==NULL)
+		  MPCroots = (struct MPC *) malloc(degree*sizeof(struct MPC));
+         if (MPCroots == NULL)
          {
             MPCroots = (struct MPC *)staticroots;
             degree = 16;
