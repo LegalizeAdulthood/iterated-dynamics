@@ -191,8 +191,6 @@ restart:
 
    if (!driver_diskp())
    {                            /* supress this on disk-video */
-      if (active_system == 0)
-      {                         /* no bars in Windows version */
          outcolor1 = outcolor1s;
          outcolor2 = outcolor2s;
          for (j = 0; j <= last_colorbar; j++)
@@ -211,10 +209,6 @@ restart:
                   getcolor(xdots - 1 - i, j) ^ outcolor2);
             }
          }
-      }
-#ifdef XFRACT
-      driver_put_string(5, 0, 0, "Saving done\n");
-#endif
    }
    else                         /* disk-video */
       dvid_status(1, "");
@@ -1023,7 +1017,6 @@ nomatch:
               cl_block();
          } /* end for xdot */
          if (! driver_diskp()		/* supress this on disk-video */
-             && active_system == 0      /* and in Windows version     */
              && ydot == rownum)
          {
             if ((ydot & 4) == 0)

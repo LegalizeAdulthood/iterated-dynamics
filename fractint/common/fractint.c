@@ -77,7 +77,6 @@ int compiled_by_turboc = 0;
    the following variables are out here only so
    that the calcfract() and assembler routines can get at them easily
 */
-        int     active_system = 0;      /* 0 for DOS, WINFRAC for Windows */
         int     dotmode;                /* video access method      */
         int     textsafe2;              /* textsafe override from g_video_table */
         int     g_ok_to_print;              /* 0 if printf() won't work */

@@ -1129,8 +1129,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "video") == 0)         /* video=? */
 	{
-		if (active_system == 0)
-		{
 			k = check_vidmode_keyname(value);
 			if (k == 0)
 			{
@@ -1149,7 +1147,6 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			{
 				goto badarg;
 			}
-		}
 		return 3;
 	}
 
@@ -3054,15 +3051,11 @@ static void argerror(char *badarg)      /* oops. couldn't decode this */
 {
    char msg[300];
    if ((int)strlen(badarg) > 70) badarg[70] = 0;
-   if (active_system == 0 /* DOS */
-     && first_init)       /* & this is 1st call to cmdfiles */
+   if (first_init)       /* this is 1st call to cmdfiles */
       sprintf(msg,"%s%s%s","\
 Oops. I couldn't understand the argument:\n  ",badarg,"\n\n\
 (see the Startup Help screens or documentation for a complete\n\
  argument list with descriptions)");
-   else
-      sprintf(msg,"%s%s","\
-Oops. I couldn't understand the argument:\n  ",badarg);
    stopmsg(0,msg);
    if (initbatch) {
       initbatch = 4;
@@ -3102,8 +3095,6 @@ void set_3d_defaults()
       XSCALE    = 90;
       YSCALE    = 90;
       FILLTYPE  = 0;
-      if (active_system != 0)
-         FILLTYPE = 2;
       XLIGHT    = 1;
       YLIGHT    = -1;
       ZLIGHT    = 1;
@@ -3176,8 +3167,7 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
       strcat(cmd,"=");
    if (badfilename)
       sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
-   if (active_system == 0 /* DOS */
-     && first_init) {     /* & cmdfiles hasn't finished 1st try */
+   if (first_init) {     /* & cmdfiles hasn't finished 1st try */
       if (row == 1 && badfilename) {
 	     driver_set_for_text();
          driver_put_string(0,0,15, "Fractint found the following problems when parsing commands: ");

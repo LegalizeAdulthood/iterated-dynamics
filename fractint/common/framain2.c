@@ -348,10 +348,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			copy_bf(bfsy3rd, bfy3rd);
 		}
 		save_history_info();
-		if (display3d || showfile)
-		{      /* paranoia: these vars don't get set */
-			save_system  = active_system;  /*   unless really doing some work,   */
-		}                              /*   so simple <r> + <s> keeps number */
 
 		if (showfile == 0)
 		{               /* image has been loaded */

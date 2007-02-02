@@ -1056,7 +1056,6 @@ extern int fullscreen_choice(int options, char *hdg, char *hdg2,
 							 void (*formatitem)(int, char *), char *speedstring,
 							 int (*speedprompt)(int, int, int, char *, int),
 							 int (*checkkey)(int, int));
-extern int clear_screen(int);
 #if !defined(WINFRACT)
 extern int showtempmsg(char *);
 extern void cleartempmsg(void);
