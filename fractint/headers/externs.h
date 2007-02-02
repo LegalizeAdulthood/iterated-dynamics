@@ -8,7 +8,6 @@
 
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int                   active_system;						/* = 0 for DOS, = WINFRACT for WinFract */
 extern int                   g_adapter;							/* index into g_video_table[] */
 extern AlternateMath         alternatemath[];					/* alternate math function pointers */
 extern int                   Ambient;							/* Ambient= parameter value */

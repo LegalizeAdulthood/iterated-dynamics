@@ -2134,7 +2134,6 @@ int funny_glasses_call(int (*calc)(void))
    if (g_glasses_type && status == 0 && display3d)
    {
       if (g_glasses_type==3)  { /* photographer's mode */
-         if (active_system == 0) { /* dos version */
             int i;
             stopmsg(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it,\n"
@@ -2146,11 +2145,6 @@ int funny_glasses_call(int (*calc)(void))
                }
             /* is there a better way to clear the screen in graphics mode? */
             driver_set_video_mode(&g_video_entry);
-         }
-         else {                   /* Windows version */
-            stopmsg(0,"First (Left Eye) image is complete");
-            clear_screen(0);
-            }
       }
       g_which_image = 2;
       if (curfractalspecific->flags & INFCALC)
@@ -2161,9 +2155,7 @@ int funny_glasses_call(int (*calc)(void))
       if ((status = calc()) != 0)
          goto done;
       if (g_glasses_type==3) /* photographer's mode */
-         if (active_system == 0) { /* dos version */
             stopmsg(STOPMSG_INFO_ONLY,"Second image (right eye) is ready");
-         }
    }
 done:
    if (g_glasses_type == 4 && sxdots >= 2*xdots)

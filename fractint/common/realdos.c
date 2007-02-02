@@ -61,8 +61,7 @@ int stopmsg (int flags, char *msg)
       fprintf(fp,"%s\n",msg);
       fclose(fp);
    }
-   if (active_system == 0 /* DOS */
-     && first_init) {     /* & cmdfiles hasn't finished 1st try */
+   if (first_init) {     /* & cmdfiles hasn't finished 1st try */
 #ifdef XFRACT
       driver_set_for_text();
       driver_buzzer(BUZZER_ERROR);
@@ -168,8 +167,7 @@ int showtempmsg(char *msgparm)
 		dvid_status(0, msg);
 		return 0;
 	}
-	if (active_system == 0 /* DOS */
-		&& first_init)      /* & cmdfiles hasn't finished 1st try */
+	if (first_init)      /* & cmdfiles hasn't finished 1st try */
 	{
 		printf("%s\n", msg);
 		return 0;
@@ -1619,13 +1617,6 @@ int thinking(int options,char *msg)
    driver_hide_text_cursor(); /* turn off cursor */
    thinkstate = (thinkstate + 1) & 3;
    return (driver_key_pressed());
-}
-
-
-int clear_screen(int dummy)  /* a stub for a windows only subroutine */
-{
-   dummy=0; /* quite the warning */
-   return 0;
 }
 
 
