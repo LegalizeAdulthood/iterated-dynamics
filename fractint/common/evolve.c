@@ -311,13 +311,6 @@ void varyinv(GENEBASE gene[], int randval, int i)
    invert = (inversion[0] == 0.0) ? 0 : 3 ;
   }
 
-#define LOADCHOICES(X)     {\
-   static char tmp[] = { X };\
-   strcpy(ptr,(char *)tmp);\
-   choices[++k]= ptr;\
-   ptr += sizeof(tmp);\
-   }
-
 /* --------------------------------------------------------------------- */
 /*
     get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
@@ -331,12 +324,11 @@ int get_the_rest(void)
   char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
   int i,k,num, numtrig;
   char *choices[20];
-  char *ptr;
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
 
    /* TODO: allocate real memory, not reuse shared segment */
-  ptr = (char *) extraseg;
+//  ptr = (char *) extraseg;
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -376,13 +368,13 @@ choose_vars_restart:
       uvalues[k].uval.ch.val =  gene[NUMGENES - 1].mutate;
    }
 
-   LOADCHOICES("");
+   choices[++k]= "";
    uvalues[k].type = '*';
-   LOADCHOICES("Press F2 to set all to off");
+   choices[++k]= "Press F2 to set all to off";
    uvalues[k].type ='*';
-   LOADCHOICES("Press F3 to set all on");
+   choices[++k]= "Press F3 to set all on";
    uvalues[k].type = '*';
-   LOADCHOICES("Press F4 to randomize all");
+   choices[++k]= "Press F4 to randomize all";
    uvalues[k].type = '*';
 
    i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,NULL);
@@ -427,7 +419,6 @@ int get_variations(void)
   char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
   int i,k,num, numparams;
   char *choices[20];
-  char *ptr;
   struct fullscreenvalues uvalues[20];
   GENEBASE gene[NUMGENES];
   int firstparm = 0;
@@ -435,7 +426,7 @@ int get_variations(void)
   int chngd = -1;
 
    /* TODO: allocate real memory, not reuse shared segment */
-  ptr = (char *) extraseg;
+//  ptr = (char *) extraseg;
 
    MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
@@ -493,15 +484,15 @@ choose_vars_restart:
       uvalues[k].uval.ch.val =  gene[num].mutate;
    }
 
-   LOADCHOICES("");
+   choices[++k]= "";
    uvalues[k].type = '*';
-   LOADCHOICES("Press F2 to set all to off");
+   choices[++k]= "Press F2 to set all to off";
    uvalues[k].type ='*';
-   LOADCHOICES("Press F3 to set all on");
+   choices[++k]= "Press F3 to set all on";
    uvalues[k].type = '*';
-   LOADCHOICES("Press F4 to randomize all");
+   choices[++k]= "Press F4 to randomize all";
    uvalues[k].type = '*';
-   LOADCHOICES("Press F6 for second page"); /* F5 gets eaten */
+   choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
    uvalues[k].type = '*';
 
    i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,NULL);
@@ -566,7 +557,6 @@ void set_mutation_level(int strength)
 int get_evolve_Parms(void)
 {
    char *choices[20];
-   char *ptr;
    int oldhelpmode;
    struct fullscreenvalues uvalues[20];
    int i,j, k, tmp;
@@ -586,7 +576,7 @@ int get_evolve_Parms(void)
 get_evol_restart:
 
    /* TODO: allocate real memory, not reuse shared segment */
-   ptr = (char *) extraseg;
+//   ptr = (char *) extraseg;
    if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
    /* adjust field param to make some sense when changing from random modes*/
    /* maybe should adjust for aspect ratio here? */
@@ -598,62 +588,62 @@ get_evol_restart:
 
    k = -1;
 
-   LOADCHOICES("Evolution mode? (no for full screen)");
+   choices[++k]= "Evolution mode? (no for full screen)";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = evolving&1;
 
-   LOADCHOICES("Image grid size (odd numbers only)");
+   choices[++k]= "Image grid size (odd numbers only)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = gridsz;
 
    if (explore_check()) {  /* test to see if any parms are set to linear */
                            /* variation 'explore mode' */
-     LOADCHOICES("Show parameter zoom box?")
+     choices[++k]= "Show parameter zoom box?";
      uvalues[k].type = 'y';
      uvalues[k].uval.ch.val = ((evolving & PARMBOX) / PARMBOX);
 
-     LOADCHOICES("x parameter range (across screen)");
+     choices[++k]= "x parameter range (across screen)";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval = paramrangex;
 
-     LOADCHOICES("x parameter offset (left hand edge)");
+     choices[++k]= "x parameter offset (left hand edge)";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval = opx;
 
-     LOADCHOICES("y parameter range (up screen)");
+     choices[++k]= "y parameter range (up screen)";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval = paramrangey;
 
-     LOADCHOICES("y parameter offset (lower edge)");
+     choices[++k]= "y parameter offset (lower edge)";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval= opy;
    }
 
-     LOADCHOICES("Max random mutation");
+     choices[++k]= "Max random mutation";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval = fiddlefactor;
 
-     LOADCHOICES("Mutation reduction factor (between generations)");
+     choices[++k]= "Mutation reduction factor (between generations)";
      uvalues[k].type = 'f';
      uvalues[k].uval.dval = fiddle_reduction;
 
-   LOADCHOICES("Grouting? ");
+   choices[++k]= "Grouting? ";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT); 
 
-   LOADCHOICES("");
+   choices[++k]= "";
    uvalues[k].type = '*';
 
-   LOADCHOICES("Press F4 to reset view parameters to defaults.");
+   choices[++k]= "Press F4 to reset view parameters to defaults.";
    uvalues[k].type = '*';
 
-   LOADCHOICES("Press F2 to halve mutation levels");
+   choices[++k]= "Press F2 to halve mutation levels";
    uvalues[k].type = '*';
 
-   LOADCHOICES("Press F3 to double mutation levels" );
+   choices[++k]= "Press F3 to double mutation levels" ;
    uvalues[k].type ='*';
 
-   LOADCHOICES("Press F6 to control which parameters are varied");
+   choices[++k]= "Press F6 to control which parameters are varied";
    uvalues[k].type = '*';
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPEVOL; 

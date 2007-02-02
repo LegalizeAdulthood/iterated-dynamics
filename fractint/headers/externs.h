@@ -72,7 +72,6 @@ extern int                   color;
 extern char                  colorfile[];
 extern long                  coloriter;
 extern int                   colorpreloaded;
-extern int                   ColorPS;
 extern int                   colors;
 extern int                   colorstate;
 extern int                   g_color_bright;					/* brightest color in palette */
@@ -139,10 +138,9 @@ extern double *				 dy0;
 extern double *				 dy1;
 extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
-extern int                   EPSFileType;
+//extern int                   EPSFileType;
 extern int                   escape_exit;
 extern BYTE                  exitmode;
-extern void *				 extraseg;
 extern int                   evolving;
 extern U16                   evolve_handle;
 extern int                   g_eye_separation;
@@ -273,7 +271,7 @@ extern _LCMPLX *             longparm;
 extern int                   lookatmouse;
 extern _LCMPLX               lparm2;
 extern _LCMPLX               lparm;
-extern int                   LPTNumber;
+//extern int                   LPTNumber;
 extern long                  ltempsqrx;
 extern long                  ltempsqry;
 extern _LCMPLX               ltmp;
@@ -405,6 +403,7 @@ extern char                  preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;
+#if 0
 extern int                   Printer_BAngle;
 extern int                   Printer_BFrequency;
 extern int                   Printer_BStyle;
@@ -426,6 +425,7 @@ extern int                   Printer_Titleblock;
 extern int                   Printer_Type;
 extern char                  PrintName[];
 extern int                   Print_To_File;
+#endif
 extern U16                   prmboxhandle;
 extern int                   prmboxcount;
 extern int                   pseudox;

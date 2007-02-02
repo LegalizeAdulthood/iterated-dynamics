@@ -158,13 +158,10 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 int outline_stereo(BYTE * pixels, int linelen)
 {
    int i, j, x, s;
-   int *same;
-   int *colour;
+   int *same = _alloca(sizeof(int)*ydots);
+   int *colour = _alloca(sizeof(int)*xdots);
    if ((Y) >= ydots)
       return(1);
-   /* TODO: allocate real memory, not reuse shared segment */
-   same   = (int *)extraseg;
-   colour = &same[ydots];
 
    for (x = 0; x < xdots; ++x)
       same[x] = x;
@@ -230,11 +227,8 @@ int do_AutoStereo(void)
    time_t ltime;
    unsigned char *buf = (unsigned char *)decoderline;
    /* following two lines re-use existing arrays in Fractint */
-   int *same;
-   int *colour;
-   /* TODO: allocate real memory, not reuse shared segment */
-   same   = (int *)extraseg;
-   colour = &same[ydots];
+   int *same = _alloca(sizeof(int)*xdots);
+   int *colour = _alloca(sizeof(int)*xdots);
 
    pv = &v;   /* set static vars to stack structure */
    pv->savedac = savedacbox;

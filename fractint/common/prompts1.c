@@ -1764,7 +1764,7 @@ struct entryinfo {
    char name[ITEMNAMELEN+2];
    long point; /* points to the ( or the { following the name */
    };
-static struct entryinfo **gfe_choices; /* for format_getparm_line */
+static struct entryinfo *gfe_choices; /* for format_getparm_line */
 static char *gfe_title;
 
 /* skip to next non-white space character and return it */
@@ -1922,95 +1922,92 @@ top:
    return numentries;
 }
 
-static long gfe_choose_entry(int type,char *title,char *filename,char *entryname)
 /* subrtn of get_file_entry, separated so that storage gets freed up */
+static long gfe_choose_entry(int type, char *title, char *filename, char *entryname)
 {
 #ifdef XFRACT
-   static char o_instr[]={"Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort "};
-/* keep the above line length < 80 characters */
+	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
+	/* keep the above line length < 80 characters */
 #else
-   static char o_instr[]={"Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort "};
+	char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
 #endif
-   int numentries, i;
-   char buf[101];
-   struct entryinfo * *choices;
-   int *attributes;
-   void (*formatitem)(int, char *);
-   int boxwidth,boxdepth,colwidth;
-   static int dosort = 1;
-   char *instr;
-   /* steal existing array for "choices" */
-   /* TODO: allocate real memory, not reuse shared segment */
-   choices = (struct entryinfo **)extraseg;
-   /* leave room for details F2 */
-   choices = choices + (2048/sizeof(struct entryinfo **));
-   choices[0] = (struct entryinfo *)(choices + MAXENTRIES+1);
-   attributes = (int *)(choices[0] + MAXENTRIES+1);
-   instr = (char *)(attributes + MAXENTRIES +1);
-   gfe_choices = &choices[0];
-   gfe_title = title;
+	int numentries, i;
+	char buf[101];
+	struct entryinfo choices[MAXENTRIES];
+	int attributes[MAXENTRIES];
+	void (*formatitem)(int, char *);
+	int boxwidth, boxdepth, colwidth;
+	char instr[80];
+
+	static int dosort = 1;
+
+	gfe_choices = &choices[0];
+	gfe_title = title;
+
 retry:
-   attributes[0] = 1;
-   for (i=1; i<MAXENTRIES+1; i++)
-   {
-      choices[i] = choices[i-1] + 1;
-      attributes[i] = 1;
-   }
+	for (i = 0; i < MAXENTRIES+1; i++)
+	{
+		attributes[i] = 1;
+	}
 
-   numentries = 0;
-   helptitle(); /* to display a clue when file big and next is slow */
+	numentries = 0;
+	helptitle(); /* to display a clue when file big and next is slow */
 
-   numentries=scan_entries(gfe_file,choices,NULL);
-   if (numentries == 0) {
-      stopmsg(0, "File doesn't contain any valid entries");
-      fclose(gfe_file);
-      return -2; /* back to file list */
-      }
-   strcpy(instr,o_instr);
-   if (dosort)
-   {
-      strcat(instr,"off");
-      shell_sort((char *)choices,numentries,sizeof(char *),lccompare);
-   }
-   else
-      strcat(instr,"on");
+	numentries = scan_entries(gfe_file, choices, NULL);
+	if (numentries == 0)
+	{
+		stopmsg(0, "File doesn't contain any valid entries");
+		fclose(gfe_file);
+		return -2; /* back to file list */
+	}
+	strcpy(instr, o_instr);
+	if (dosort)
+	{
+		strcat(instr, "off");
+		shell_sort((char *) choices, numentries, sizeof(char *), lccompare);
+	}
+	else
+	{
+		strcat(instr, "on");
+	}
 
-   strcpy(buf,entryname); /* preset to last choice made */
-   sprintf(temp1,"%s Selection\nFile: %s",title,filename);
-   formatitem = NULL;
-   boxwidth = colwidth = boxdepth = 0;
-   if (type == GETPARM) {
-      formatitem = format_parmfile_line;
-      boxwidth = 1;
-      boxdepth = 16;
-      colwidth = 76;
-      }
+	strcpy(buf, entryname); /* preset to last choice made */
+	sprintf(temp1, "%s Selection\nFile: %s", title, filename);
+	formatitem = NULL;
+	boxwidth = colwidth = boxdepth = 0;
+	if (type == GETPARM)
+	{
+		formatitem = format_parmfile_line;
+		boxwidth = 1;
+		boxdepth = 16;
+		colwidth = 76;
+	}
    
-   i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-	   temp1,NULL,instr,numentries,(char **)choices,
-                           attributes,boxwidth,boxdepth,colwidth,0,
-                           formatitem,buf,NULL,check_gfe_key);
-   if (i == 0-FIK_F4)
-   {
-     rewind(gfe_file);
-     dosort = 1-dosort;
-     goto retry;
-   }
-   fclose(gfe_file);
-   if (i < 0) {
-      if (i == 0-FIK_F6)
-         return -2; /* go back to file list */
-      return -1;    /* cancel */
-      }
-   strcpy(entryname, choices[i]->name);
-   return choices[i]->point;
+	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+		temp1, NULL, instr, numentries, (char **) choices,
+		attributes, boxwidth, boxdepth, colwidth, 0,
+		formatitem, buf, NULL, check_gfe_key);
+	if (i == -FIK_F4)
+	{
+		rewind(gfe_file);
+		dosort = 1-dosort;
+		goto retry;
+	}
+	fclose(gfe_file);
+	if (i < 0)
+	{
+		/* go back to file list or cancel */
+		return (i == -FIK_F6) ? -2 : -1;
+	}
+	strcpy(entryname, choices[i].name);
+	return choices[i].point;
 }
 
 
 static int check_gfe_key(int curkey,int choice)
 {
    char infhdg[60];
-   char *infbuf;
+   char infbuf[25*80];
    int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
    int top_line = 0;
    int left_column = 0;
@@ -2031,9 +2028,7 @@ static int check_gfe_key(int curkey,int choice)
       int comment = 0;
       int c = 0;
       int widthct = 0;
-   /* TODO: allocate real memory, not reuse shared segment */
-      infbuf = extraseg;
-      fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
+      fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
       while ((c = fgetc(gfe_file)) != EOF && c != '\032') {
          if (c == ';')
             comment = 1;
@@ -2054,10 +2049,10 @@ static int check_gfe_key(int curkey,int choice)
          }
       }
       if (c == EOF || c == '\032') { /* should never happen */
-         fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
+         fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
          in_scrolling_mode = 0;
       }
-      fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
+      fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
       load_entry_text(gfe_file,infbuf, 17, 0, 0);
       if (lines_in_entry > 17 || widest_entry_line > 74)
          in_scrolling_mode = 1;
@@ -2081,7 +2076,7 @@ static int check_gfe_key(int curkey,int choice)
       while (!done) {
          if (rewrite_infbuf) {
             rewrite_infbuf = 0;
-            fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
+            fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
             load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
             for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                driver_put_string(i,0,C_GENERAL_MED,blanks);
@@ -2283,7 +2278,7 @@ static void format_parmfile_line(int choice,char *buf)
 {
    int c,i;
    char line[80];
-   fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
+   fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
    while (getc(gfe_file) != '{') { }
    while ((c = getc(gfe_file)) == ' ' || c == '\t' || c == ';') { }
    i = 0;
@@ -2293,9 +2288,9 @@ static void format_parmfile_line(int choice,char *buf)
       }
    line[i] = 0;
 #ifndef XFRACT
-   sprintf(buf,"%-20Fs%-56s",gfe_choices[choice]->name,line);
+   sprintf(buf,"%-20Fs%-56s",gfe_choices[choice].name,line);
 #else
-   sprintf(buf,"%-20s%-56s",gfe_choices[choice]->name,line);
+   sprintf(buf,"%-20s%-56s",gfe_choices[choice].name,line);
 #endif
 }
 

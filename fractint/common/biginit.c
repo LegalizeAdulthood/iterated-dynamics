@@ -28,7 +28,8 @@ int bnstep, bnlength, intlength, rlength, padding, shiftfactor, decimals;
 int bflength, rbflength, bfdecimals;
 
 /* used internally by bignum.c routines */
-static bn_t bnroot=BIG_NULL;
+static char s_storage[4096];
+static bn_t bnroot= (bn_t) &s_storage[0];
 static bn_t stack_ptr; /* memory allocator base after global variables */
 bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6; /* rlength  */
 bn_t bntmpcpy1, bntmpcpy2;                           /* bnlength */
@@ -121,16 +122,8 @@ static void init_bf_2(void)
 
     calc_lengths();
 
-   /* TODO: allocate real memory, not reuse shared segment */
-    /* allocate all the memory at once within the same segment (DOS) */
-#if defined(BIG_FAR) || defined(BIG_ANSI_C)
-    bnroot = (bf_t) extraseg;
-#else /* BASED or NEAR  */
-    bnroot = (bf_t) 0;  /* ENDVID is to avoid g_video_table */
-#endif
-#ifdef BIG_BASED
-    bignum_seg = (_segment)extraseg;
-#endif
+    bnroot = (bf_t) &s_storage[0];
+
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
     if ((i = find_alternate_math(fractype, BIGNUM)) > -1)

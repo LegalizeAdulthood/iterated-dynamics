@@ -766,7 +766,7 @@ int tab_display_2(char *msg)
 	row++;
 	show_str_var("tempdir",     tempdir,      &row, msg);
 	show_str_var("workdir",     workdir,      &row, msg);
-	show_str_var("printfile",   PrintName,    &row, msg);
+//	show_str_var("printfile",   PrintName,    &row, msg);
 	show_str_var("filename",    readname,     &row, msg);
 	show_str_var("formulafile", FormFileName, &row, msg);
 	show_str_var("savename",    savename,     &row, msg);
@@ -840,8 +840,6 @@ int tab_display()       /* display the status of the current image */
 	int saved=0;
 	int dec;
 	int k;
-	U16 save_extra_handle = 0;
-	BYTE *ptr_to_extraseg = NULL;
 	int hasformparam = 0;
 
 	if (calc_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
@@ -855,14 +853,6 @@ int tab_display()       /* display the status of the current image */
 	driver_stack_screen();
 	if (bf_math)
 	{
-		/* Save memory from the beginning of extraseg to ENDVID=22400 */
-		/* This is so the bf_math manipulations here don't corrupt */
-		/* the video modes or screen prompts. */
-		/* TODO: allocate real memory, not reuse shared segment */
-		ptr_to_extraseg = extraseg;
-		/* TODO: MemoryAlloc */
-		save_extra_handle = MemoryAlloc((U16)22400, 1L, MEMORY);
-		MoveToMemory(ptr_to_extraseg, (U16)22400, 1L, 0L, save_extra_handle);
 		saved = save_stack();
 		bfXctr = alloc_stack(bflength+2);
 		bfYctr = alloc_stack(bflength+2);
@@ -1297,9 +1287,6 @@ top:
 	if (bf_math)
 	{
 		restore_stack(saved);
-		MoveFromMemory(ptr_to_extraseg, (U16)22400, 1L, 0L, save_extra_handle);
-		MemoryRelease(save_extra_handle);
-		save_extra_handle = 0;
 	}
 	return 0;
 }

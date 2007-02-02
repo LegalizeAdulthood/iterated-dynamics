@@ -32,8 +32,8 @@ void intro(void)
 	int       toprow, botrow, i, j, delaymax;
 	char      oldchar;
 	int       authors[100];              /* this should be enough for awhile */
-	char *credits;
-	char *screen_text;
+	char credits[32768];
+	char screen_text[32768];
 	int       oldlookatmouse;
 	int       oldhelpmode;
 
@@ -42,12 +42,8 @@ void intro(void)
 	oldhelpmode = helpmode;
 	lookatmouse = 0;                     /* de-activate full mouse checking */
 
-	/* TODO: allocate real memory, not reuse shared segment */
-	screen_text = extraseg;
-
 	i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
 	screen_text[i++] = '\0';
-	credits = screen_text + i;
 	i = 32767 + read_help_topic(INTRO_CREDITS, 0, 32767, credits);
 	credits[i++] = '\0';
 

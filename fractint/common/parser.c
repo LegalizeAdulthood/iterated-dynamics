@@ -188,14 +188,14 @@ union Arg *Arg1, *Arg2;
 
 /* CAE fp  made some of the following non-static for PARSERA.ASM */
 /* Some of these variables should be renamed for safety */
-union Arg s[20], * *Store, * *Load;     /* static CAE fp */
+union Arg s[20], **Store, **Load;     /* static CAE fp */
 int StoPtr, LodPtr, OpPtr;      /* static CAE fp */
 int var_count;
 int complx_count;
 int real_count;
 
 
-void (* *f)(void) = (void(* *)(void))0; /* static CAE fp */
+void (**f)(void) = (void (**)(void))0; /* static CAE fp */
 
 short int ismand = 1;
 
@@ -3810,95 +3810,78 @@ long total_formula_mem;
 BYTE used_extra = 0;
 static void parser_allocate(void)
 {
-   /* CAE fp changed below for v18 */
-   /* Note that XFRACT will waste about 6k here for pfls */
-   /* Somewhat more memory is now allocated than in v17 here */
-   /* however Store and Load were reduced in size to help make up for it */
+	/* CAE fp changed below for v18 */
+	/* Note that XFRACT will waste about 6k here for pfls */
+	/* Somewhat more memory is now allocated than in v17 here */
+	/* however Store and Load were reduced in size to help make up for it */
+	long f_size,Store_size,Load_size,v_size, p_size;
+	int pass, is_bad_form=0;
+	long end_dx_array;
+	/* TW Jan 1 1996 Made two passes to determine actual values of
+		Max_Ops and Max_Args. */
+	for (pass = 0; pass < 2; pass++)
+	{
+		free_workarea();
+		if (pass == 0)
+		{
+			Max_Ops = 2300; /* this value uses up about 64K memory */
+			Max_Args = (unsigned) (Max_Ops/2.5);
+		}
+		f_size = sizeof(void (**)(void))*Max_Ops;
+		Store_size = sizeof(union Arg *)*MAX_STORES;
+		Load_size = sizeof(union Arg *)*MAX_LOADS;
+		v_size = sizeof(struct ConstArg)*Max_Args;
+		p_size = sizeof(struct fls *)*Max_Ops;
+		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
+			+ sizeof(struct PEND_OP)*Max_Ops;
+		used_extra = 0;
+		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
-   long f_size,Store_size,Load_size,v_size, p_size;
-   int pass, is_bad_form=0;
-   long end_dx_array;
-   /* TW Jan 1 1996 Made two passes to determine actual values of
-      Max_Ops and Max_Args. Now use the end of extraseg if possible, so
-      if less than 2048x2048 resolution is used, usually no malloc
-      calls are needed */
-   for (pass = 0; pass < 2; pass++)
-   {
-      free_workarea();
-      if (pass == 0) {
-         Max_Ops = 2300; /* this value uses up about 64K memory */
-         Max_Args = (unsigned)(Max_Ops/2.5);
-      }
-      f_size = sizeof(void(* *)(void)) * Max_Ops;
-      Store_size = sizeof(union Arg *) * MAX_STORES;
-      Load_size = sizeof(union Arg *) * MAX_LOADS;
-      v_size = sizeof(struct ConstArg) * Max_Args;
-      p_size = sizeof(struct fls *) * Max_Ops;
-      total_formula_mem = f_size+Load_size+Store_size+v_size+p_size /*+ jump_size*/
-         + sizeof(struct PEND_OP) * Max_Ops;
-      used_extra = 0;
+		if (pass == 0 || is_bad_form)
+		{
+			typespecific_workarea = NULL;
+			used_extra = 0;
+		}
+		else if (is_bad_form == 0)
+		{
+			typespecific_workarea = (char *)
+				malloc(f_size + Load_size + Store_size + v_size + p_size);
+			used_extra = 0;
+		}
+		f = (void (**)(void)) typespecific_workarea;
+		Store = (union Arg **) (f + Max_Ops);
+		Load = (union Arg **) (Store + MAX_STORES);
+		v = (struct ConstArg *) (Load + MAX_LOADS);
+		pfls = (struct fls *) (v + Max_Args);
 
-      if (use_grid)
-         end_dx_array = 2L*(long)(xdots+ydots)*sizeof(double);
-      else
-         end_dx_array = 0;
-
-      if (pass == 0 || is_bad_form)
-      {
-   /* TODO: allocate real memory, not reuse shared segment */
-         typespecific_workarea = (char *)extraseg;
-         used_extra = 1;
-      }
-      else if (1L<<16 > end_dx_array + total_formula_mem)
-      {
-   /* TODO: allocate real memory, not reuse shared segment */
-         typespecific_workarea = (char *)extraseg + end_dx_array;
-         used_extra = 1;
-      }
-      else if (is_bad_form == 0)
-      {
-         typespecific_workarea =
-            (char *)malloc((long)(f_size+Load_size+Store_size+v_size+p_size));
-         used_extra = 0;
-      }
-      f = (void(* *)(void))typespecific_workarea;
-      Store = (union Arg * *)(f + Max_Ops);
-      Load = (union Arg * *)(Store + MAX_STORES);
-      v = (struct ConstArg *)(Load + MAX_LOADS);
-      pfls = (struct fls *)(v + Max_Args);
-
-      if (pass == 0)
-      {
-         if ((is_bad_form = ParseStr(FormStr,pass)) == 0)
-         {
-            /* per Chuck Ebbert, fudge these up a little */
-            Max_Ops = posp+4;
-            Max_Args = vsp+4;
-         }
-         typespecific_workarea = NULL;
-      }
-   }
-   uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
+		if (pass == 0)
+		{
+			is_bad_form = ParseStr(FormStr, pass);
+			if (is_bad_form == 0)
+			{
+				/* per Chuck Ebbert, fudge these up a little */
+				Max_Ops = posp + 4;
+				Max_Args = vsp + 4;
+			}
+			typespecific_workarea = NULL;
+		}
+	}
+	uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
 }
 
 void free_workarea()
 {
-   if (typespecific_workarea && used_extra == 0) {
-      free(typespecific_workarea);
-   }
-   typespecific_workarea = NULL;
-   Store = (union Arg * *)0;
-   Load = (union Arg * *)0;
-   v = (struct ConstArg *)0;
-   f = (void(* *)(void))0;      /* CAE fp */
-   pfls = (struct fls * )0;   /* CAE fp */
-   total_formula_mem = 0;
-
-   /* restore extraseg */
-   if (integerfractal && !invert)
-      fill_lx_array();
-   else
-      fill_dx_array();
+	if (typespecific_workarea)
+	{
+		free(typespecific_workarea);
+	}
+	typespecific_workarea = NULL;
+	Store = (union Arg **) NULL;
+	Load = (union Arg **) NULL;
+	v = (struct ConstArg *) NULL;
+	f = (void (**)(void)) NULL;      /* CAE fp */
+	pfls = (struct fls * ) NULL;   /* CAE fp */
+	total_formula_mem = 0;
 }
 
 

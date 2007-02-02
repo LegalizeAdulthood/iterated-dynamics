@@ -70,7 +70,7 @@ static BYTE paletteEGA[] =
    63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
 };
 
-int savetodisk(char *filename)      /* save-to-disk routine */
+static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 {
    char tmpmsg[41];                 /* before openfile in case of overrun */
    char openfile[FILE_MAX_PATH], openfiletype[10];
@@ -239,6 +239,28 @@ restart:
    if (initsavetime < 0)
       goodbye();
    return 0;
+}
+
+enum tag_save_format
+{
+	SAVEFORMAT_GIF = 0,
+	SAVEFORMAT_PNG,
+	SAVEFORMAT_JPEG
+};
+typedef enum tag_save_format e_save_format;
+
+int savetodisk(char *filename)
+{
+	e_save_format format = SAVEFORMAT_GIF;
+
+	switch (format)
+	{
+	case SAVEFORMAT_GIF:
+		return gif_savetodisk(filename);
+
+	default:
+		return -1;
+	}
 }
 
 int encoder()
@@ -646,7 +668,7 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
       maxfn = 0;
    /* set save parameters in save structure */
    strcpy(save_info->info_id, INFO_ID);
-   save_info->version = VERSION;
+   save_info->version = FRACTAL_INFO_VERSION;
 
    if (maxit <= SHRT_MAX)
       save_info->iterationsold = (short) maxit;
@@ -839,7 +861,7 @@ unsigned int strlocn[10240];
 BYTE block[4096];
 #endif
 
-static long *htab;
+static long htab[HSIZE];
 static unsigned short *codetab = (unsigned short *)strlocn;
 
 /*
@@ -906,8 +928,6 @@ static int compress(int rowlimit)
    int tempkey;
    char accum_stack[256];
    accum = accum_stack;
-   /* TODO: allocate real memory, not reuse shared segment */
-   htab = (long *) extraseg;
    
    outcolor1 = 0;               /* use these colors to show progress */
    outcolor2 = 1;               /* (this has nothing to do with GIF) */
