@@ -142,7 +142,7 @@ fractals.c fractint.c framain2.c \
 frasetup.c gifview.c hc.c hcmplx.c help.c \
 intro.c jb.c jiim.c line3d.c loadfdos.c loadfile.c loadmap.c lorenz.c \
 lsys.c lsysf.c memory.c miscfrac.c miscovl.c miscres.c \
-mpmath_c.c parser.c parserfp.c plot3d.c printer.c prompts1.c \
+mpmath_c.c parser.c parserfp.c plot3d.c prompts1.c \
 prompts2.c realdos.c rotate.c slideshw.c soi.c soi1.c stereo.c \
 targa.c testpt.c tgaview.c zoom.c Makefile
 
@@ -208,7 +208,7 @@ $(COMDIR)/loadfdos.o $(COMDIR)/loadfile.o $(COMDIR)/loadmap.o \
 $(COMDIR)/lorenz.o $(COMDIR)/lsys.o $(COMDIR)/lsysf.o $(COMDIR)/memory.o \
 $(COMDIR)/miscfrac.o $(COMDIR)/miscovl.o $(COMDIR)/miscres.o \
 $(COMDIR)/mpmath_c.o $(COMDIR)/parser.o $(COMDIR)/parserfp.o \
-$(COMDIR)/plot3d.o $(COMDIR)/printer.o $(COMDIR)/prompts1.o \
+$(COMDIR)/plot3d.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \

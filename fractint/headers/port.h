@@ -431,6 +431,7 @@ extern long stackavail();
 #if !defined(_WIN32)
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
+#define _alloca alloca
 #endif
 
 #endif  /* PORT_H */

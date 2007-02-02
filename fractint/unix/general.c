@@ -42,33 +42,6 @@ int inside_help = 0;
 
 extern int g_slides;	/* 1 for playback */
 
-unsigned int toextra(tooffset, fromaddr, fromcount)
-unsigned int tooffset;
-char *fromaddr;
-int fromcount;
-{
-    bcopy(fromaddr,(char *)(extraseg+tooffset),fromcount);
-    return tooffset;
-}
-
-unsigned int fromextra(fromoffset, toaddr, tocount)
-unsigned int fromoffset;
-char *toaddr;
-int tocount;
-{
-    bcopy((char *)(extraseg+fromoffset),toaddr,tocount);
-    return fromoffset;
-}
-
-unsigned int
-cmpextra(cmpoffset,cmpaddr,cmpcount)
-unsigned int cmpoffset;
-char *cmpaddr;
-int cmpcount;
-{
-    return bcmp((char *)(extraseg+cmpoffset),cmpaddr,cmpcount);
-}
-
 /*
 ; ****************** Function initasmvars() *****************************
 */
@@ -77,7 +50,6 @@ initasmvars(void)
 {
     if (cpu!=0) return;
     overflow = 0;
-    extraseg = malloc(0x18000);
 
     /* set cpu type */
     cpu = 1;
