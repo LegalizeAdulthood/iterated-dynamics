@@ -44,3 +44,9 @@ windows settings to full screen 1600x1200 (some applications actually do
 this) and then revert back when Fractint terminates.  If I choose 
 1600x1200 now, most of the picture is off screen with no way no scroll 
 as the scrollbars are also off-screen!
+
+Beta 3
+==========================================================================
+save info from DOS GIF files isn't understood by the Windows version and
+vice-versa; the structure is probably defined with "int" instead of "int16",
+so all the integer quantities are too big.
