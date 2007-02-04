@@ -1086,25 +1086,6 @@ copy fractint.hlp $(ProjectDir)
 				</File>
 			</Filter>
 		</Filter>
-		<Filter
-			Name="X11"
-			Filter="">
-			<File
-				RelativePath=".\x11\d_x11.c">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
-		</Filter>
 		<File
 			RelativePath=".\BUGS.txt">
 		</File>
