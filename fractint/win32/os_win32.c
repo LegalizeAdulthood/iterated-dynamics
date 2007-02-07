@@ -798,17 +798,21 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 {
 	int result = 0;
 
+#if !defined(_DEBUG)
 	__try
+#endif
 	{
 		g_tos = (char *) &result;
 		g_instance = instance;
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 		result = main(__argc, __argv);
 	}
+#if !defined(_DEBUG)
 	__except (CreateMiniDump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
 	{
 		result = -1;
 	}
+#endif
 
 	return result;
 }
