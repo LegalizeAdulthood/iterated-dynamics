@@ -63,13 +63,13 @@ void set_grid_pointers()
 {
 	free_grid_pointers();
 	dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
-	dy0 = dx0 + xdots;
+	dy1 = dx0 + xdots;
+	dy0 = dy1 + xdots;
 	dx1 = dy0 + ydots;
-	dy1 = dx1 + xdots;
 	lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
-	ly0 = lx0 + xdots;
+	ly1 = lx0 + xdots;
+	ly0 = ly1 + xdots;
 	lx1 = ly0 + ydots;
-	ly1 = lx1 + xdots;
 	set_pixel_calc_functions();
 }
 
