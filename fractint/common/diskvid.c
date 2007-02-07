@@ -70,10 +70,6 @@ static void _fastcall  mem_seek(long);
 
 int startdisk()
 {
-	if (!diskisactive)
-	{
-		return 0;
-	}
 	headerlength = disktarga = 0;
 	return common_startdisk(sxdots, sydots, colors);
 }

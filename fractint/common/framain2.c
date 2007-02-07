@@ -102,7 +102,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
 
 			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
-			diskisactive = 1;              /* flag for disk-video routines */
 
 			if (overlay3d && !initbatch)
 			{
@@ -155,7 +154,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				g_video_entry.ydots = ydots;
 			}
 
-			diskisactive = 0;              /* flag for disk-video routines */
 			if (savedac || colorpreloaded)
 			{
 				memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
@@ -368,7 +366,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		else
 		{                            /* draw an image */
-			diskisactive = 1;              /* flag for disk-video routines */
 			if (initsavetime != 0          /* autosave and resumable? */
 					&& (curfractalspecific->flags&NORESUME) == 0)
 			{
@@ -514,7 +511,6 @@ done:
 			{
 				dvid_status(0, "Image has been completed");
 			}
-			diskisactive = 0;              /* flag for disk-video routines */
 		}
 #ifndef XFRACT
 		boxcount = 0;                     /* no zoom box yet  */
@@ -1306,11 +1302,9 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
    case 's':                    /* save-to-disk                 */
       if (driver_diskp() && disktarga == 1)
          return CONTINUE;  /* disk video and targa, nothing to save */
-      diskisactive = 1;         /* flag for disk-video routines */
       note_zoom();
       savetodisk(savename);
       restore_zoom();
-      diskisactive = 0;         /* flag for disk-video routines */
       return CONTINUE;
    case '#':                    /* 3D overlay                   */
 #ifdef XFRACT
@@ -1687,7 +1681,6 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       xdots = sxdots;
       ydots = sydots; /* for full screen save and pointer move stuff */
       px = py = gridsz / 2;
-      diskisactive = 1;         /* flag for disk-video routines */
       param_history(1); /* restore old history */
       fiddleparms(gene, 0);
       drawparmbox(1);
@@ -1696,7 +1689,6 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       py = oldpy;
       param_history(1); /* restore old history */
       fiddleparms(gene, unspiralmap());
-      diskisactive = 0;         /* flag for disk-video routines */
       sxoffs = oldsxoffs;
       syoffs = oldsyoffs;
       xdots = oldxdots;
