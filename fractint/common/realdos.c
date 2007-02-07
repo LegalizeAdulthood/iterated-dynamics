@@ -26,7 +26,7 @@ static int menu_checkkey(int curkey,int choice);
 #define PRODUCTION
 */
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
-int g_patch_level = 6;	/* patchlevel for DOS version */
+int g_patch_level = 7;	/* patchlevel for DOS version */
 #ifdef XFRACT
 int xrelease=304;
 #endif
