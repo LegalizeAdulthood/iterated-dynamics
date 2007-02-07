@@ -420,7 +420,9 @@ int MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       break;
 
    case MEMORY: /* MoveToMemory */
+#if defined(_WIN32)
 	   _ASSERTE(handletable[handle].Linearmem.size >= size*count + start);
+#endif
 		memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
 		success = TRUE; /* No way to gauge success or failure */
 		break;
