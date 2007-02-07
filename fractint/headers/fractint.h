@@ -218,7 +218,12 @@ typedef    struct fractal_info FRACTAL_INFO;
 
 #define FRACTAL_INFO_VERSION 17  /* file version, independent of system */
    /* increment this EVERY time the fractal_info structure changes */
-   
+
+/* TODO: instead of hacking the padding here, adjust the code that reads
+   this structure */
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
 struct fractal_info         /*  for saving data in GIF file     */
 {
     char  info_id[8];       /* Unique identifier for info block */
@@ -343,6 +348,9 @@ struct fractal_info         /*  for saving data in GIF file     */
     double math_tol[2];
     short future[7];     /* for stuff we haven't thought of yet */
 };
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
 
 #define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
 struct history_info
@@ -1098,7 +1106,9 @@ typedef struct frm_jump_st {
    int      DestJumpIndex;
 } JUMP_CONTROL_ST;
 
-
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
 struct ext_blk_2 {
    char got_data;
    int length;
@@ -1166,6 +1176,9 @@ struct ext_blk_7 {
    short keep_scrn_coords;
    char drawmode;
    };
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
 
 struct SearchPath {
    char par[FILE_MAX_PATH];
