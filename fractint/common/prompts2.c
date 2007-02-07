@@ -1436,9 +1436,20 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 }
 #endif
 
+struct tagCHOICE
+{
+	char name[13];
+	char full_name[FILE_MAX_PATH];
+	char type;
+};
+typedef struct tagCHOICE CHOICE;
+
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {
-   return(strncasecmp(*((char * *)arg1),*((char **)arg2),40));
+	CHOICE *choice1 = (CHOICE *) arg1;
+	CHOICE *choice2 = (CHOICE *) arg2;
+
+   return strncasecmp(choice1->name, choice2->name, NUM_OF(choice1->name));
 }
 
 
@@ -1456,11 +1467,8 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	int out;
 	int retried;
 	/* Only the first 13 characters of file names are displayed... */
-	struct CHOICE
-	{
-		char name[13];
-		char type;
-	} choices[MAXNUMFILES];
+	CHOICE choices[MAXNUMFILES];
+	char *screen_choices[MAXNUMFILES];
 	int attributes[MAXNUMFILES];
 	int filecount;   /* how many files */
 	int dircount;    /* how many directories */
@@ -1477,6 +1485,7 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
 			attributes[i] = 1;
+			screen_choices[i] = choices[i].name;
 	}
 	/* save filename */
 	strcpy(old_flname, flname);
@@ -1538,8 +1547,9 @@ retry_dir:
 				strcat(DTA.filename, SLASH);
 			}
 			strncpy(choices[++filecount].name, DTA.filename, 13);
-			choices[filecount].name[12] = '\0';
+			choices[filecount].name[12] = 0;
 			choices[filecount].type = 1;
+			strcpy(choices[filecount].full_name, DTA.filename);
 			dircount++;
 			if (strcmp(DTA.filename, "..") == 0)
 			{
@@ -1578,6 +1588,7 @@ retry_dir:
 				{
 					strncpy(choices[++filecount].name, DTA.filename, 13);
 					choices[filecount].type = 0;
+					strcpy(choices[filecount].full_name, DTA.filename);
 				}
 			}
 			out = fr_findnext();
@@ -1594,7 +1605,7 @@ retry_dir:
 	if (dosort)
 	{
 		strcat(instr, "off");
-		shell_sort((void **) choices, filecount, sizeof(char *), lccompare); /* sort file list */
+		shell_sort((void **) choices, filecount, sizeof(CHOICE), lccompare); /* sort file list */
 	}
 	else
 	{
@@ -1627,9 +1638,10 @@ retry_dir:
 			i = 0;
 		}
 	}
-   
+
+
 	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, NULL, instr, filecount, (char **) choices,
+		temp1, NULL, instr, filecount, screen_choices,
 		attributes, 5, 99, 12, i, NULL, speedstr, filename_speedstr, check_f6_key);
 	if (i == -FIK_F4)
 	{
@@ -1684,13 +1696,13 @@ retry_dir:
 			}
 			else  /* go down a directory */
 			{
-				strcat(dir, choices[i].name);
+				strcat(dir, choices[i].full_name);
 			}
 			fix_dirname(dir);
 			makepath(flname, drive, dir, "", "");
 			goto restart;
 		}
-		splitpath(choices[i].name, NULL, NULL, fname, ext);
+		splitpath(choices[i].full_name, NULL, NULL, fname, ext);
 		makepath(flname, drive, dir, fname, ext);
 	}
 	else
