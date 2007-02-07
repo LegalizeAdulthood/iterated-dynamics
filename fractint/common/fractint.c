@@ -108,7 +108,6 @@ int compiled_by_turboc = 0;
         int     bitshift;               /* fudgefactor              */
 
         int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-        int     diskisactive;           /* disk-video drivers flag  */
         int hasinverse = 0;
         /* note that integer grid is set when integerfractal && !invert;    */
         /* otherwise the floating point grid is set; never both at once     */
@@ -313,7 +312,6 @@ restart:   /* insert key re-starts here */
 	}
 	adapter_detect();                    /* check what video is really present */
 
-	diskisactive = 0;                    /* disk-video is inactive */
 	driver_set_for_text();                      /* switch to text mode */
 	savedac = 0;                         /* don't save the VGA DAC */
 

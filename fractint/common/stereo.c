@@ -342,9 +342,7 @@ int do_AutoStereo(void)
             break;
          case 's':
          case 'S':
-            diskisactive = 1;           /* flag for disk-video routines */
             savetodisk(savename);
-            diskisactive = 0;
             break;
          default:
             if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
