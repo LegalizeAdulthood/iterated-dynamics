@@ -165,12 +165,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	{
 		vident = &g_video_table[i];
 		if (info->xdots == vident->xdots && info->ydots == vident->ydots
-			&& filecolors == vident->colors
-			&& info->videomodeax == vident->videomodeax
-			&& info->videomodebx == vident->videomodebx
-			&& info->videomodecx == vident->videomodecx
-			&& info->videomodedx == vident->videomodedx
-			&& info->dotmode%100 == vident->dotmode%100)
+			&& filecolors == vident->colors)
 		{
 			g_init_mode = i;
 			break;
