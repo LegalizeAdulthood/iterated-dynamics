@@ -68,6 +68,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
    int     i = 0;                           /* temporary loop counters      */
    int kbdchar;
    int mms_value;
+
+#if defined(_WIN32)
+		_ASSERTE(_CrtCheckMemory());
+#endif
    frommandel = 0;
    if (resumeflag)
       goto resumeloop;
