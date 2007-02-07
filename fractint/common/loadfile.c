@@ -39,499 +39,604 @@ int ldcheck = 0;
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
-   struct fractal_info read_info;
-   char oldfloatflag;
-   char msg[110];
-   struct ext_blk_2 blk_2_info;
-   struct ext_blk_3 blk_3_info;
-   struct ext_blk_4 blk_4_info;
-   struct ext_blk_5 blk_5_info;
-   struct ext_blk_6 blk_6_info;
-   struct ext_blk_7 blk_7_info;
+	struct fractal_info read_info;
+	char oldfloatflag;
+	char msg[110];
+	struct ext_blk_2 blk_2_info;
+	struct ext_blk_3 blk_3_info;
+	struct ext_blk_4 blk_4_info;
+	struct ext_blk_5 blk_5_info;
+	struct ext_blk_6 blk_6_info;
+	struct ext_blk_7 blk_7_info;
 
-   showfile = 1;                /* for any abort exit, pretend done */
-   g_init_mode = -1;               /* no viewing mode set yet */
-   oldfloatflag = usr_floatflag;
-   loaded3d = 0;
-   if (fastrestore)
-      viewwindow=0;
-   if (has_ext(readname) == NULL)
-      strcat(readname,".gif");
+	showfile = 1;                /* for any abort exit, pretend done */
+	g_init_mode = -1;               /* no viewing mode set yet */
+	oldfloatflag = usr_floatflag;
+	loaded3d = 0;
+	if (fastrestore)
+	{
+		viewwindow = 0;
+	}
+	if (has_ext(readname) == NULL)
+	{
+		strcat(readname, ".gif");
+	}
 
-   if (find_fractal_info(readname,&read_info,&blk_2_info,&blk_3_info,
-                        &blk_4_info,&blk_5_info,&blk_6_info,&blk_7_info)) {
-      /* didn't find a useable file */
-      sprintf(msg,"Sorry, %s isn't a file I can decode.",readname);
-      stopmsg(0,msg);
-      return(-1);
-      }
+	if (find_fractal_info(readname, &read_info, &blk_2_info, &blk_3_info,
+		&blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
+	{
+		/* didn't find a useable file */
+		sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
+		stopmsg(0, msg);
+		return -1;
+	}
 
-   maxit        = read_info.iterationsold;
-   fractype     = read_info.fractal_type;
-   if (fractype < 0 || fractype >= num_fractal_types) {
-      sprintf(msg,"Warning: %s has a bad fractal type; using 0",readname);
-      fractype = 0;
-   }
-   curfractalspecific = &fractalspecific[fractype];
-   xxmin        = read_info.xmin;
-   xxmax        = read_info.xmax;
-   yymin        = read_info.ymin;
-   yymax        = read_info.ymax;
-   param[0]     = read_info.creal;
-   param[1]     = read_info.cimag;
-   save_release = 1100; /* unless we find out better later on */
+	maxit        = read_info.iterationsold;
+	fractype     = read_info.fractal_type;
+	if (fractype < 0 || fractype >= num_fractal_types)
+	{
+		sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname);
+		fractype = 0;
+	}
+	curfractalspecific = &fractalspecific[fractype];
+	xxmin        = read_info.xmin;
+	xxmax        = read_info.xmax;
+	yymin        = read_info.ymin;
+	yymax        = read_info.ymax;
+	param[0]     = read_info.creal;
+	param[1]     = read_info.cimag;
+	save_release = 1100; /* unless we find out better later on */
 
-   invert = 0;
-   if (read_info.version > 0) {
-      param[2]      = read_info.parm3;
-      roundfloatd(&param[2]);
-      param[3]      = read_info.parm4;
-      roundfloatd(&param[3]);
-      potparam[0]   = read_info.potential[0];
-      potparam[1]   = read_info.potential[1];
-      potparam[2]   = read_info.potential[2];
-      if (*s_makepar == '\0')
-         colors = read_info.colors;
-      potflag       = (potparam[0] != 0.0);
-      rflag         = read_info.rflag;
-      rseed         = read_info.rseed;
-      inside        = read_info.inside;
-      LogFlag       = read_info.logmapold;
-      inversion[0]  = read_info.invert[0];
-      inversion[1]  = read_info.invert[1];
-      inversion[2]  = read_info.invert[2];
-      if (inversion[0] != 0.0)
-         invert = 3;
-      decomp[0]     = read_info.decomp[0];
-      decomp[1]     = read_info.decomp[1];
-      usr_biomorph  = read_info.biomorph;
-      forcesymmetry = read_info.symmetry;
-      }
+	invert = 0;
+	if (read_info.version > 0)
+	{
+		param[2]      = read_info.parm3;
+		roundfloatd(&param[2]);
+		param[3]      = read_info.parm4;
+		roundfloatd(&param[3]);
+		potparam[0]   = read_info.potential[0];
+		potparam[1]   = read_info.potential[1];
+		potparam[2]   = read_info.potential[2];
+		if (*s_makepar == '\0')
+		{
+			colors = read_info.colors;
+		}
+		potflag       = (potparam[0] != 0.0);
+		rflag         = read_info.rflag;
+		rseed         = read_info.rseed;
+		inside        = read_info.inside;
+		LogFlag       = read_info.logmapold;
+		inversion[0]  = read_info.invert[0];
+		inversion[1]  = read_info.invert[1];
+		inversion[2]  = read_info.invert[2];
+		if (inversion[0] != 0.0)
+		{
+			invert = 3;
+		}
+		decomp[0]     = read_info.decomp[0];
+		decomp[1]     = read_info.decomp[1];
+		usr_biomorph  = read_info.biomorph;
+		forcesymmetry = read_info.symmetry;
+	}
 
-   if (read_info.version > 1) {
-      save_release  = 1200;
-      if (!display3d
-        && (read_info.version <= 4 || read_info.flag3d > 0
-            || (curfractalspecific->flags&PARMS3D) )) {
-         int i;
-         for (i = 0; i < 16; i++)
-            init3d[i] = read_info.init3d[i];
-         previewfactor   = read_info.previewfactor;
-         xtrans          = read_info.xtrans;
-         ytrans          = read_info.ytrans;
-         red_crop_left   = read_info.red_crop_left;
-         red_crop_right  = read_info.red_crop_right;
-         blue_crop_left  = read_info.blue_crop_left;
-         blue_crop_right = read_info.blue_crop_right;
-         red_bright      = read_info.red_bright;
-         blue_bright     = read_info.blue_bright;
-         xadjust         = read_info.xadjust;
-         g_eye_separation   = read_info.eyeseparation;
-         g_glasses_type     = read_info.glassestype;
-         }
-      }
+	if (read_info.version > 1)
+	{
+		save_release  = 1200;
+		if (!display3d
+			&& (read_info.version <= 4 || read_info.flag3d > 0
+				|| (curfractalspecific->flags & PARMS3D) ))
+		{
+			int i;
+			for (i = 0; i < 16; i++)
+			{
+				init3d[i] = read_info.init3d[i];
+			}
+			previewfactor   = read_info.previewfactor;
+			xtrans          = read_info.xtrans;
+			ytrans          = read_info.ytrans;
+			red_crop_left   = read_info.red_crop_left;
+			red_crop_right  = read_info.red_crop_right;
+			blue_crop_left  = read_info.blue_crop_left;
+			blue_crop_right = read_info.blue_crop_right;
+			red_bright      = read_info.red_bright;
+			blue_bright     = read_info.blue_bright;
+			xadjust         = read_info.xadjust;
+			g_eye_separation   = read_info.eyeseparation;
+			g_glasses_type     = read_info.glassestype;
+		}
+	}
 
-   if (read_info.version > 2) {
-      save_release = 1300;
-      outside      = read_info.outside;
-      }
+	if (read_info.version > 2)
+	{
+		save_release = 1300;
+		outside      = read_info.outside;
+	}
 
-   calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
-   xx3rd = xxmin;
-   yy3rd = yymin;
-   usr_distest = 0;
-   calctime = 0;
-   if (read_info.version > 3) {
-      save_release = 1400;
-      xx3rd       = read_info.x3rd;
-      yy3rd       = read_info.y3rd;
-      calc_status = read_info.calc_status;
-      usr_stdcalcmode = read_info.stdcalcmode;
-      three_pass = 0;
-      if (usr_stdcalcmode == 127)
-      {
-         three_pass = 1;
-         usr_stdcalcmode = '3';
-      }
-      usr_distest     = read_info.distestold;
-      usr_floatflag   = (char)read_info.floatflag;
-      bailout     = read_info.bailoutold;
-      calctime    = read_info.calctime;
-      trigndx[0]  = read_info.trigndx[0];
-      trigndx[1]  = read_info.trigndx[1];
-      trigndx[2]  = read_info.trigndx[2];
-      trigndx[3]  = read_info.trigndx[3];
-      finattract  = read_info.finattract;
-      initorbit.x = read_info.initorbit[0];
-      initorbit.y = read_info.initorbit[1];
-      useinitorbit = read_info.useinitorbit;
-      usr_periodicitycheck = read_info.periodicity;
-      }
+	calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
+	xx3rd = xxmin;
+	yy3rd = yymin;
+	usr_distest = 0;
+	calctime = 0;
+	if (read_info.version > 3)
+	{
+		save_release = 1400;
+		xx3rd       = read_info.x3rd;
+		yy3rd       = read_info.y3rd;
+		calc_status = read_info.calc_status;
+		usr_stdcalcmode = read_info.stdcalcmode;
+		three_pass = 0;
+		if (usr_stdcalcmode == 127)
+		{
+			three_pass = 1;
+			usr_stdcalcmode = '3';
+		}
+		usr_distest     = read_info.distestold;
+		usr_floatflag   = (char)read_info.floatflag;
+		bailout     = read_info.bailoutold;
+		calctime    = read_info.calctime;
+		trigndx[0]  = read_info.trigndx[0];
+		trigndx[1]  = read_info.trigndx[1];
+		trigndx[2]  = read_info.trigndx[2];
+		trigndx[3]  = read_info.trigndx[3];
+		finattract  = read_info.finattract;
+		initorbit.x = read_info.initorbit[0];
+		initorbit.y = read_info.initorbit[1];
+		useinitorbit = read_info.useinitorbit;
+		usr_periodicitycheck = read_info.periodicity;
+	}
 
-   pot16bit = 0;
-   save_system = 0;
-   if (read_info.version > 4) {
-      pot16bit     = read_info.pot16bit;
-      if (pot16bit)
-         filexdots >>= 1;
-      fileaspectratio = read_info.faspectratio;
-      if (fileaspectratio < 0.01)       /* fix files produced in early v14.1 */
-         fileaspectratio = screenaspect;
-      save_system  = read_info.system;
-      save_release = read_info.release; /* from fmt 5 on we know real number */
-      if (read_info.version == 5        /* except a few early fmt 5 cases: */
-          && (save_release <= 0 || save_release >= 4000)) {
-         save_release = 1410;
-         save_system = 0;
-         }
-      if (!display3d && read_info.flag3d > 0) {
-         loaded3d       = 1;
-         Ambient        = read_info.ambient;
-         RANDOMIZE      = read_info.randomize;
-         haze           = read_info.haze;
-         transparent[0] = read_info.transparent[0];
-         transparent[1] = read_info.transparent[1];
-         }
-      }
+	pot16bit = 0;
+	save_system = 0;
+	if (read_info.version > 4)
+	{
+		pot16bit     = read_info.pot16bit;
+		if (pot16bit)
+		{
+			filexdots >>= 1;
+		}
+		fileaspectratio = read_info.faspectratio;
+		if (fileaspectratio < 0.01)       /* fix files produced in early v14.1 */
+		{
+			fileaspectratio = screenaspect;
+		}
+		save_system  = read_info.system;
+		save_release = read_info.release; /* from fmt 5 on we know real number */
+		if (read_info.version == 5        /* except a few early fmt 5 cases: */
+			&& (save_release <= 0 || save_release >= 4000))
+		{
+			save_release = 1410;
+			save_system = 0;
+		}
+		if (!display3d && read_info.flag3d > 0)
+		{
+			loaded3d       = 1;
+			Ambient        = read_info.ambient;
+			RANDOMIZE      = read_info.randomize;
+			haze           = read_info.haze;
+			transparent[0] = read_info.transparent[0];
+			transparent[1] = read_info.transparent[1];
+		}
+	}
 
-   rotate_lo = 1; rotate_hi = 255;
-   distestwidth = 71;
-   if (read_info.version > 5) {
-      rotate_lo         = read_info.rotate_lo;
-      rotate_hi         = read_info.rotate_hi;
-      distestwidth      = read_info.distestwidth;
-      }
+	rotate_lo = 1; rotate_hi = 255;
+	distestwidth = 71;
+	if (read_info.version > 5)
+	{
+		rotate_lo         = read_info.rotate_lo;
+		rotate_hi         = read_info.rotate_hi;
+		distestwidth      = read_info.distestwidth;
+	}
 
-   if (read_info.version > 6) {
-      param[2]          = read_info.dparm3;
-      param[3]          = read_info.dparm4;
-      }
+	if (read_info.version > 6)
+	{
+		param[2]          = read_info.dparm3;
+		param[3]          = read_info.dparm4;
+	}
 
-   if (read_info.version > 7) {
-      fillcolor         = read_info.fillcolor;
-      }
+	if (read_info.version > 7)
+	{
+		fillcolor         = read_info.fillcolor;
+	}
 
-   if (read_info.version > 8) {
-   mxmaxfp   =  read_info.mxmaxfp        ;
-   mxminfp   =  read_info.mxminfp        ;
-   mymaxfp   =  read_info.mymaxfp        ;
-   myminfp   =  read_info.myminfp        ;
-   zdots     =  read_info.zdots          ;
-   originfp  =  read_info.originfp       ;
-   depthfp   =  read_info.depthfp        ;
-   heightfp  =  read_info.heightfp       ;
-   widthfp   =  read_info.widthfp        ;
-   distfp    =  read_info.distfp         ;
-   eyesfp    =  read_info.eyesfp         ;
-   neworbittype = read_info.orbittype    ;
-   juli3Dmode   = read_info.juli3Dmode   ;
-   maxfn    =   (char)read_info.maxfn          ;
-   major_method = (enum Major)read_info.inversejulia >> 8;
-   minor_method = (enum Minor)read_info.inversejulia & 255;
-   param[4] = read_info.dparm5;
-   param[5] = read_info.dparm6;
-   param[6] = read_info.dparm7;
-   param[7] = read_info.dparm8;
-   param[8] = read_info.dparm9;
-   param[9] = read_info.dparm10;
-      }
+	if (read_info.version > 8)
+	{
+		mxmaxfp   =  read_info.mxmaxfp        ;
+		mxminfp   =  read_info.mxminfp        ;
+		mymaxfp   =  read_info.mymaxfp        ;
+		myminfp   =  read_info.myminfp        ;
+		zdots     =  read_info.zdots          ;
+		originfp  =  read_info.originfp       ;
+		depthfp   =  read_info.depthfp        ;
+		heightfp  =  read_info.heightfp       ;
+		widthfp   =  read_info.widthfp        ;
+		distfp    =  read_info.distfp         ;
+		eyesfp    =  read_info.eyesfp         ;
+		neworbittype = read_info.orbittype    ;
+		juli3Dmode   = read_info.juli3Dmode   ;
+		maxfn    =   (char)read_info.maxfn          ;
+		major_method = (enum Major)read_info.inversejulia >> 8;
+		minor_method = (enum Minor)read_info.inversejulia & 255;
+		param[4] = read_info.dparm5;
+		param[5] = read_info.dparm6;
+		param[6] = read_info.dparm7;
+		param[7] = read_info.dparm8;
+		param[8] = read_info.dparm9;
+		param[9] = read_info.dparm10;
+	}
 
-   if (read_info.version < 4 && read_info.version != 0) { /* pre-version 14.0? */
-      backwardscompat(&read_info); /* translate obsolete types */
-      if (LogFlag)
-         LogFlag = 2;
-      usr_floatflag = (char)((curfractalspecific->isinteger) ? 0 : 1);
-      }
+	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
+	{
+		backwardscompat(&read_info); /* translate obsolete types */
+		if (LogFlag)
+		{
+			LogFlag = 2;
+		}
+		usr_floatflag = (char) (curfractalspecific->isinteger ? 0 : 1);
+	}
 
-   if (read_info.version < 5 && read_info.version != 0) { /* pre-version 15.0? */
-      if (LogFlag == 2) /* logmap=old changed again in format 5! */
-         LogFlag = -1;
-      if (decomp[0] > 0 && decomp[1] > 0)
-         bailout = decomp[1];
-      }
-   if (potflag) /* in version 15.x and 16.x logmap didn't work with pot */
-      if (read_info.version == 6 || read_info.version == 7)
-         LogFlag = 0;
-   set_trig_pointers(-1);
+	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
+	{
+		if (LogFlag == 2) /* logmap=old changed again in format 5! */
+		{
+			LogFlag = -1;
+		}
+		if (decomp[0] > 0 && decomp[1] > 0)
+		{
+			bailout = decomp[1];
+		}
+	}
+	if (potflag) /* in version 15.x and 16.x logmap didn't work with pot */
+	{
+		if (read_info.version == 6 || read_info.version == 7)
+		{
+			LogFlag = 0;
+		}
+	}
+	set_trig_pointers(-1);
 
-   if (read_info.version < 9 && read_info.version != 0) { /* pre-version 18.0? */
-      /* forcesymmetry==1000 means we want to force symmetry but don't
-         know which symmetry yet, will find out in setsymmetry() */
-      if (outside==REAL || outside==IMAG || outside==MULT || outside==SUM
-        || outside==ATAN)
-         if (forcesymmetry == 999)
-            forcesymmetry = 1000;
-      }
-   if (save_release < 1725 && read_info.version != 0) { /* pre-version 17.25 */
-      set_if_old_bif(); /* translate bifurcation types */
-      functionpreloaded = 1;
-   }
+	if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
+	{
+		/* forcesymmetry==1000 means we want to force symmetry but don't
+			know which symmetry yet, will find out in setsymmetry() */
+		if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
+			|| outside == ATAN)
+		{
+			if (forcesymmetry == 999)
+			{
+				forcesymmetry = 1000;
+			}
+		}
+	}
+	if (save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
+	{
+		set_if_old_bif(); /* translate bifurcation types */
+		functionpreloaded = 1;
+	}
 
-   if (read_info.version > 9)
-   { /* post-version 18.22 */
-      bailout     = read_info.bailout; /* use long bailout */
-      bailoutest = (enum bailouts)read_info.bailoutest;
-   }
-   else
-      bailoutest = Mod;
-   setbailoutformula(bailoutest);
+	if (read_info.version > 9)
+	{ /* post-version 18.22 */
+		bailout     = read_info.bailout; /* use long bailout */
+		bailoutest = (enum bailouts) read_info.bailoutest;
+	}
+	else
+	{
+		bailoutest = Mod;
+	}
+	setbailoutformula(bailoutest);
 
-   if (read_info.version > 9) {
-     /* post-version 18.23 */
-      maxit = read_info.iterations; /* use long maxit */
-     /* post-version 18.27 */
-      old_demm_colors = read_info.old_demm_colors;
-   }
+	if (read_info.version > 9)
+	{
+		/* post-version 18.23 */
+		maxit = read_info.iterations; /* use long maxit */
+		/* post-version 18.27 */
+		old_demm_colors = read_info.old_demm_colors;
+	}
 
-   if (read_info.version > 10) { /* post-version 19.20 */
-      LogFlag = read_info.logmap;
-      usr_distest= read_info.distest;
-   }
+	if (read_info.version > 10) /* post-version 19.20 */
+	{
+		LogFlag = read_info.logmap;
+		usr_distest = read_info.distest;
+	}
 
-   if (read_info.version > 11) { /* post-version 19.20, inversion fix */
-      inversion[0] = read_info.dinvert[0];
-      inversion[1] = read_info.dinvert[1];
-      inversion[2] = read_info.dinvert[2];
-      Log_Fly_Calc = read_info.logcalc;
-      stoppass     = read_info.stoppass;
-   }
+	if (read_info.version > 11) /* post-version 19.20, inversion fix */
+	{
+		inversion[0] = read_info.dinvert[0];
+		inversion[1] = read_info.dinvert[1];
+		inversion[2] = read_info.dinvert[2];
+		Log_Fly_Calc = read_info.logcalc;
+		stoppass     = read_info.stoppass;
+	}
 
-   if (read_info.version > 12) { /* post-version 19.60 */
-      quick_calc   = read_info.quick_calc;
-      closeprox    = read_info.closeprox;
-      if (fractype == FPPOPCORN || fractype == LPOPCORN ||
-          fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
-          fractype == LATOO)
-            functionpreloaded = 1;
-   }
+	if (read_info.version > 12) /* post-version 19.60 */
+	{
+		quick_calc   = read_info.quick_calc;
+		closeprox    = read_info.closeprox;
+		if (fractype == FPPOPCORN || fractype == LPOPCORN ||
+			fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
+			fractype == LATOO)
+		{
+				functionpreloaded = 1;
+		}
+	}
 
-   nobof=0;
-   if (read_info.version > 13) { /* post-version 20.1.2 */
-      nobof = read_info.nobof;
-   }
+	nobof = 0;
+	if (read_info.version > 13) /* post-version 20.1.2 */
+	{
+		nobof = read_info.nobof;
+	}
 
-   /* if (read_info.version > 14)  post-version 20.1.12 */
-   /* modified saved evolver structure JCO 12JUL01 */
-   Log_Auto_Calc = 0;  /* make sure it's turned off */
+	/* if (read_info.version > 14)  post-version 20.1.12 */
+	/* modified saved evolver structure JCO 12JUL01 */
+	Log_Auto_Calc = 0;  /* make sure it's turned off */
 
-   orbit_interval = 1;
-   if (read_info.version > 15) { /* post-version 20.3.2 */
-      orbit_interval = read_info.orbit_interval;
-   }
+	orbit_interval = 1;
+	if (read_info.version > 15) /* post-version 20.3.2 */
+	{
+		orbit_interval = read_info.orbit_interval;
+	}
 
-   orbit_delay = 0;
-   math_tol[0] = 0.05;
-   math_tol[1] = 0.05;
-   if (read_info.version > 16) { /* post-version 20.4.0 */
-      orbit_delay = read_info.orbit_delay;
-      math_tol[0] = read_info.math_tol[0];
-      math_tol[1] = read_info.math_tol[1];
-   }
+	orbit_delay = 0;
+	math_tol[0] = 0.05;
+	math_tol[1] = 0.05;
+	if (read_info.version > 16) /* post-version 20.4.0 */
+	{
+		orbit_delay = read_info.orbit_delay;
+		math_tol[0] = read_info.math_tol[0];
+		math_tol[1] = read_info.math_tol[1];
+	}
 
-   backwards_v18();
-   backwards_v19();
-   backwards_v20();
+	backwards_v18();
+	backwards_v19();
+	backwards_v20();
 
-   if (display3d)                   /* PB - a klooge till the meaning of */
-      usr_floatflag = oldfloatflag; /*  floatflag in line3d is clarified */
+	if (display3d)                   /* PB - a klooge till the meaning of */
+	{
+		usr_floatflag = oldfloatflag; /*  floatflag in line3d is clarified */
+	}
 
-   if (overlay3d) {
-      g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
-      if (filexdots > xdots || fileydots > ydots) {
-         stopmsg(0,"Can't overlay with a larger image");
-         g_init_mode = -1;
-         return(-1);
-         }
-      }
-   else {
-      int olddisplay3d,i;
-      char oldfloatflag;
-      olddisplay3d = display3d;
-      oldfloatflag = floatflag;
-      display3d = loaded3d;      /* for <tab> display during next */
-      floatflag = usr_floatflag; /* ditto */
-      i = get_video_mode(&read_info,&blk_3_info);
-      display3d = olddisplay3d;
-      floatflag = oldfloatflag;
-      if (i) {
-         if (blk_2_info.got_data == 1) {
-            MemoryRelease((U16)blk_2_info.resume_data);
-            blk_2_info.length = 0;
-         }
-         g_init_mode = -1;
-         return(-1);
-         }
-      }
-
-   if (display3d) {
-      calc_status = CALCSTAT_PARAMS_CHANGED;
-      fractype = PLASMA;
-      curfractalspecific = &fractalspecific[PLASMA];
-      param[0] = 0;
-      if (!initbatch)
-         if (get_3d_params() < 0) {
-            g_init_mode = -1;
-            return(-1);
-            }
-      }
-
-   if (resume_info != 0) { /* free the prior area if there is one */
-      MemoryRelease(resume_info);
-      resume_info = 0;
-      }
-
-   if (blk_2_info.got_data == 1)
-          {
-          resume_info = (U16)blk_2_info.resume_data;
-          resume_len = blk_2_info.length;
-          }
-
-   if (blk_3_info.got_data == 1)
-          {
-          char *nameptr;
-          switch (read_info.fractal_type) {
-             case LSYSTEM:
-                nameptr = LName;
-                break;
-             case IFS:
-             case IFS3D:
-                nameptr = IFSName;
-                break;
-             default:
-                nameptr = FormName;
-                uses_p1 = blk_3_info.uses_p1;
-                uses_p2 = blk_3_info.uses_p2;
-                uses_p3 = blk_3_info.uses_p3;
-                uses_ismand = blk_3_info.uses_ismand;
-                ismand = blk_3_info.ismand;
-                uses_p4 = blk_3_info.uses_p4;
-                uses_p5 = blk_3_info.uses_p5;
-                break;
-             }
-          blk_3_info.form_name[ITEMNAMELEN] = 0;
-          strcpy(nameptr,blk_3_info.form_name);
-          /* perhaps in future add more here, check block_len for
-             backward compatibility */
-          }
-
-   if (rangeslen) { /* free prior ranges */
-     free((char *)ranges);
-     rangeslen = 0;
-   }
-
-   if (blk_4_info.got_data == 1)
-          {
-          ranges = (int *)blk_4_info.range_data;
-          rangeslen = blk_4_info.length;
-#ifdef XFRACT
-          fix_ranges(ranges,rangeslen,1);
+	if (overlay3d)
+	{
+		g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
+		if (filexdots > xdots || fileydots > ydots)
+		{
+			stopmsg(0, "Can't overlay with a larger image");
+			g_init_mode = -1;
+			return -1;
+		}
+	}
+	else
+	{
+		int olddisplay3d, i;
+		char oldfloatflag;
+		olddisplay3d = display3d;
+		oldfloatflag = floatflag;
+		display3d = loaded3d;      /* for <tab> display during next */
+		floatflag = usr_floatflag; /* ditto */
+		i = get_video_mode(&read_info, &blk_3_info);
+#if defined(_WIN32)
+		_ASSERTE(_CrtCheckMemory());
 #endif
-          }
+		display3d = olddisplay3d;
+		floatflag = oldfloatflag;
+		if (i)
+		{
+			if (blk_2_info.got_data == 1)
+			{
+				MemoryRelease((U16) blk_2_info.resume_data);
+				blk_2_info.length = 0;
+			}
+			g_init_mode = -1;
+			return -1;
+		}
+	}
 
-   if (blk_5_info.got_data == 1)
-          {
-          bf_math = 1;
-          init_bf_length(read_info.bflength);
-          memcpy((char *)bfxmin,blk_5_info.apm_data,blk_5_info.length);
-          free(blk_5_info.apm_data);
-          }
-   else
-      bf_math = 0;
+	if (display3d)
+	{
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		fractype = PLASMA;
+		curfractalspecific = &fractalspecific[PLASMA];
+		param[0] = 0;
+		if (!initbatch)
+		{
+			if (get_3d_params() < 0)
+			{
+				g_init_mode = -1;
+				return -1;
+			}
+		}
+	}
 
-   if (blk_6_info.got_data == 1)
-   {
-          struct evolution_info resume_e_info;
-          GENEBASE gene[NUMGENES];
-          int i;
+	if (resume_info != 0) /* free the prior area if there is one */
+	{
+		MemoryRelease(resume_info);
+		resume_info = 0;
+	}
 
-		  /* TODO: MemoryAlloc */
-          if (gene_handle == 0)
-             gene_handle = MemoryAlloc((U16)sizeof(gene),1L,MEMORY);
-          MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-          if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
-             /* Increasing NUMGENES moves ecount in the data structure */
-             /* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
-             blk_6_info.ecount = blk_6_info.mutate[NUMGENES-4];
-          if (blk_6_info.ecount != blk_6_info.gridsz * blk_6_info.gridsz
-             && calc_status != CALCSTAT_COMPLETED) {
-             calc_status = CALCSTAT_RESUMABLE;
-			 /* TODO: MemoryAlloc */
-             if (evolve_handle == 0)
-                evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info),1L,MEMORY);
-             resume_e_info.paramrangex  = blk_6_info.paramrangex;
-             resume_e_info.paramrangey  = blk_6_info.paramrangey;
-             resume_e_info.opx          = blk_6_info.opx;
-             resume_e_info.opy          = blk_6_info.opy;
-             resume_e_info.odpx         = blk_6_info.odpx;
-             resume_e_info.odpy         = blk_6_info.odpy;
-             resume_e_info.px           = blk_6_info.px;
-             resume_e_info.py           = blk_6_info.py;
-             resume_e_info.sxoffs       = blk_6_info.sxoffs;
-             resume_e_info.syoffs       = blk_6_info.syoffs;
-             resume_e_info.xdots        = blk_6_info.xdots;
-             resume_e_info.ydots        = blk_6_info.ydots;
-             resume_e_info.gridsz       = blk_6_info.gridsz;
-             resume_e_info.evolving     = blk_6_info.evolving;
-             resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
-             resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
-             resume_e_info.ecount       = blk_6_info.ecount;
-             MoveToMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
-          } else {
-             if (evolve_handle != 0)  /* Image completed, release it. */
-                MemoryRelease(evolve_handle);
-             evolve_handle = 0;
-             calc_status = CALCSTAT_COMPLETED;
-          }
-          paramrangex  = blk_6_info.paramrangex;
-          paramrangey  = blk_6_info.paramrangey;
-          opx = newopx = blk_6_info.opx;
-          opy = newopy = blk_6_info.opy;
-          odpx = newodpx = (char)blk_6_info.odpx;
-          odpy = newodpy = (char)blk_6_info.odpy;
-          px           = blk_6_info.px;
-          py           = blk_6_info.py;
-          sxoffs       = blk_6_info.sxoffs;
-          syoffs       = blk_6_info.syoffs;
-          xdots        = blk_6_info.xdots;
-          ydots        = blk_6_info.ydots;
-          gridsz       = blk_6_info.gridsz;
-          this_gen_rseed = blk_6_info.this_gen_rseed;
-          fiddlefactor   = blk_6_info.fiddlefactor;
-          evolving = viewwindow = (int)blk_6_info.evolving;
-          dpx=paramrangex/(gridsz-1);
-          dpy=paramrangey/(gridsz-1);
-          if (read_info.version > 14)
-             for (i = 0; i < NUMGENES; i++)
-                gene[i].mutate = (int)blk_6_info.mutate[i];
-          else {
-             for (i = 0; i < 6; i++)
-                gene[i].mutate = (int)blk_6_info.mutate[i];
-             for (i = 6; i < 10; i++)
-                gene[i].mutate = 0;
-             for (i = 10; i < NUMGENES; i++)
-                gene[i].mutate = (int)blk_6_info.mutate[i-4];
-          }
-          MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-          param_history(0); /* store history */
-   }
-   else {
-          evolving = FALSE;
-   }
+	if (blk_2_info.got_data == 1)
+	{
+		resume_info = (U16) blk_2_info.resume_data;
+		resume_len = blk_2_info.length;
+	}
 
-   if (blk_7_info.got_data == 1) {
-          oxmin       = blk_7_info.oxmin;
-          oxmax       = blk_7_info.oxmax;
-          oymin       = blk_7_info.oymin;
-          oymax       = blk_7_info.oymax;
-          ox3rd       = blk_7_info.ox3rd;
-          oy3rd       = blk_7_info.oy3rd;
-          keep_scrn_coords = blk_7_info.keep_scrn_coords;
-          drawmode    = blk_7_info.drawmode;
-          if (keep_scrn_coords) set_orbit_corners = 1;
-   }
+	if (blk_3_info.got_data == 1)
+	{
+		char *nameptr;
+		switch (read_info.fractal_type)
+		{
+		case LSYSTEM:
+			nameptr = LName;
+			break;
 
-   showfile = 0;                   /* trigger the file load */
-   return(0);
+		case IFS:
+		case IFS3D:
+			nameptr = IFSName;
+			break;
+
+		default:
+			nameptr = FormName;
+			uses_p1 = blk_3_info.uses_p1;
+			uses_p2 = blk_3_info.uses_p2;
+			uses_p3 = blk_3_info.uses_p3;
+			uses_ismand = blk_3_info.uses_ismand;
+			ismand = blk_3_info.ismand;
+			uses_p4 = blk_3_info.uses_p4;
+			uses_p5 = blk_3_info.uses_p5;
+			break;
+		}
+		blk_3_info.form_name[ITEMNAMELEN] = 0;
+		strcpy(nameptr, blk_3_info.form_name);
+		/* perhaps in future add more here, check block_len for backward compatibility */
+	}
+
+	if (rangeslen) /* free prior ranges */
+	{
+		free(ranges);
+		ranges = NULL;
+		rangeslen = 0;
+	}
+
+	if (blk_4_info.got_data == 1)
+	{
+		ranges = (int *) blk_4_info.range_data;
+		rangeslen = blk_4_info.length;
+#ifdef XFRACT
+        fix_ranges(ranges,rangeslen,1);
+#endif
+    }
+
+	if (blk_5_info.got_data == 1)
+	{
+		bf_math = 1;
+		init_bf_length(read_info.bflength);
+		memcpy((char *) bfxmin, blk_5_info.apm_data, blk_5_info.length);
+		free(blk_5_info.apm_data);
+	}
+	else
+	{
+		bf_math = 0;
+	}
+
+	if (blk_6_info.got_data == 1)
+	{
+		struct evolution_info resume_e_info;
+		GENEBASE gene[NUMGENES];
+		int i;
+
+		/* TODO: MemoryAlloc */
+        if (gene_handle == 0)
+		{
+            gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
+		}
+        MoveFromMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
+		{
+			/* Increasing NUMGENES moves ecount in the data structure */
+			/* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
+			blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
+		}
+        if (blk_6_info.ecount != blk_6_info.gridsz*blk_6_info.gridsz
+            && calc_status != CALCSTAT_COMPLETED)
+		{
+			calc_status = CALCSTAT_RESUMABLE;
+			/* TODO: MemoryAlloc */
+			if (evolve_handle == 0)
+			{
+				evolve_handle = MemoryAlloc((U16) sizeof(resume_e_info), 1L, MEMORY);
+			}
+			resume_e_info.paramrangex  = blk_6_info.paramrangex;
+			resume_e_info.paramrangey  = blk_6_info.paramrangey;
+			resume_e_info.opx          = blk_6_info.opx;
+			resume_e_info.opy          = blk_6_info.opy;
+			resume_e_info.odpx         = blk_6_info.odpx;
+			resume_e_info.odpy         = blk_6_info.odpy;
+			resume_e_info.px           = blk_6_info.px;
+			resume_e_info.py           = blk_6_info.py;
+			resume_e_info.sxoffs       = blk_6_info.sxoffs;
+			resume_e_info.syoffs       = blk_6_info.syoffs;
+			resume_e_info.xdots        = blk_6_info.xdots;
+			resume_e_info.ydots        = blk_6_info.ydots;
+			resume_e_info.gridsz       = blk_6_info.gridsz;
+			resume_e_info.evolving     = blk_6_info.evolving;
+			resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
+			resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
+			resume_e_info.ecount       = blk_6_info.ecount;
+			MoveToMemory((BYTE *) &resume_e_info, (U16) sizeof(resume_e_info), 1L, 0L, evolve_handle);
+        }
+		else
+		{
+			if (evolve_handle != 0)  /* Image completed, release it. */
+			{
+				MemoryRelease(evolve_handle);
+			}
+			evolve_handle = 0;
+			calc_status = CALCSTAT_COMPLETED;
+        }
+        paramrangex  = blk_6_info.paramrangex;
+        paramrangey  = blk_6_info.paramrangey;
+        opx = newopx = blk_6_info.opx;
+        opy = newopy = blk_6_info.opy;
+        odpx = newodpx = (char) blk_6_info.odpx;
+        odpy = newodpy = (char) blk_6_info.odpy;
+        px           = blk_6_info.px;
+        py           = blk_6_info.py;
+        sxoffs       = blk_6_info.sxoffs;
+        syoffs       = blk_6_info.syoffs;
+        xdots        = blk_6_info.xdots;
+        ydots        = blk_6_info.ydots;
+        gridsz       = blk_6_info.gridsz;
+        this_gen_rseed = blk_6_info.this_gen_rseed;
+        fiddlefactor   = blk_6_info.fiddlefactor;
+        evolving = viewwindow = (int) blk_6_info.evolving;
+        dpx = paramrangex/(gridsz - 1);
+        dpy = paramrangey/(gridsz - 1);
+		if (read_info.version > 14)
+		{
+			for (i = 0; i < NUMGENES; i++)
+			{
+				gene[i].mutate = (int) blk_6_info.mutate[i];
+			}
+		}
+		else
+		{
+			for (i = 0; i < 6; i++)
+			{
+				gene[i].mutate = (int) blk_6_info.mutate[i];
+			}
+			for (i = 6; i < 10; i++)
+			{
+				gene[i].mutate = 0;
+			}
+			for (i = 10; i < NUMGENES; i++)
+			{
+				gene[i].mutate = (int) blk_6_info.mutate[i-4];
+			}
+		}
+        MoveToMemory((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
+        param_history(0); /* store history */
+	}
+	else
+	{
+		evolving = FALSE;
+	}
+
+	if (blk_7_info.got_data == 1)
+	{
+        oxmin       = blk_7_info.oxmin;
+        oxmax       = blk_7_info.oxmax;
+        oymin       = blk_7_info.oymin;
+        oymax       = blk_7_info.oymax;
+        ox3rd       = blk_7_info.ox3rd;
+        oy3rd       = blk_7_info.oy3rd;
+        keep_scrn_coords = blk_7_info.keep_scrn_coords;
+        drawmode    = blk_7_info.drawmode;
+        if (keep_scrn_coords)
+		{
+			set_orbit_corners = 1;
+		}
+	}
+
+	showfile = 0;                   /* trigger the file load */
+	return 0;
 }
 
 static int find_fractal_info(char *gif_file,struct fractal_info *info,
@@ -627,6 +732,8 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    memset(info,0,FRACTAL_INFO_SIZE);
    fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE+254)/255;
    fseek(fp,(long)(-1-fractinf_len),SEEK_END);
+   /* TODO: revise this to read members one at a time so we get natural alignment
+      of fields within the FRACTAL_INFO structure for the platform */
    fread(info,1,FRACTAL_INFO_SIZE,fp);
    if (strcmp(INFO_ID,info->info_id) == 0) {
 #ifdef XFRACT
@@ -647,6 +754,8 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
             if (!strcmp(INFO_ID,&tmpbuf[i])) { /* found header? */
                strcpy(info->info_id,INFO_ID);
                fseek(fp,(long)(hdr_offset=i-offset),SEEK_END);
+				/* TODO: revise this to read members one at a time so we get natural alignment
+					of fields within the FRACTAL_INFO structure for the platform */
                fread(info,1,FRACTAL_INFO_SIZE,fp);
 #ifdef XFRACT
                decode_fractal_info(info,1);
