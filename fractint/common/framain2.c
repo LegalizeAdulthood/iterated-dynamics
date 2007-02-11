@@ -1479,9 +1479,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
       {
          g_adapter = k;
-/*                if (g_video_table[g_adapter].dotmode != 11       Took out so that */
-/*                  || g_video_table[g_adapter].colors != colors)  DAC is not reset */
-/*                   savedac = 0;                    when changing video modes */
          if (g_video_table[g_adapter].colors != colors)
             savedac = 0;
          calc_status = CALCSTAT_PARAMS_CHANGED;
