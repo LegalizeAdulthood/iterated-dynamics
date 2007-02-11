@@ -217,14 +217,10 @@ static int CheckBounds (long start, long length, U16 handle)
 
 void DisplayMemory (void)
 {
-   long tmpfar;
-   U32 tmpdisk;
    char buf[MSGLEN];
-   extern unsigned long GetDiskSpace(void);
+   extern unsigned long get_disk_space(void);
 
-   tmpdisk = GetDiskSpace(); /* fix this for XFRACT ????? */
-   tmpfar = fr_farfree();
-   sprintf(buf, "memory=%ld, disk=%lu", tmpfar, tmpdisk);
+   sprintf(buf, "disk=%lu", get_disk_space());
    stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
