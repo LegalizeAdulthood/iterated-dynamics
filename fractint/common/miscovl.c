@@ -1476,97 +1476,6 @@ static void put_bf(int slash,bf_t r, int prec)
    put_parm(buf);
 }
 
-#if !defined(XFRACT) && !defined(_WIN32)
-#include <direct.h>
-void shell_to_dos()
-{
-   int drv;
-   char *comspec;
-   char curdir[FILE_MAX_DIR],*s;
-   comspec = getenv("COMSPEC");
-   if (comspec == NULL)
-      printf("Cannot find COMMAND.COM.\n");
-   else {
-      putenv("PROMPT='EXIT' returns to FRACTINT.$_$p$g");
-      s = getcwd(curdir,100);
-      drv = _getdrive();
-      spawnl(P_WAIT, comspec, NULL);
-      if (drv)
-         _chdrive(drv);
-      if (s)
-         chdir(s);
-      }
-}
-
-size_t showstack(void)
-{
-   return(stackavail());
-}
-
-long fr_farfree(void)
-{
-   long j,j2;
-   BYTE huge *fartempptr;
-   j = 0;
-   j2 = 0x80000L;
-   while ((j2 >>= 1) != 0)
-      if ((fartempptr = (BYTE huge *)malloc(j+j2)) != NULL) {
-         free((void *)fartempptr);
-         j += j2;
-         }
-   return(j);
-}
-
-void showfreemem(void)
-{
-   char *tempptr;
-   unsigned i,i2;
-
-   char adapter_name[8];        /* entry lenth from VIDEO.ASM */
-   char *adapter_ptr;
-
-   printf("\n CPU type: %d  FPU type: %d", cpu, fpu);
-
-   adapter_ptr = &supervga_list;
-
-   for (i = 0 ; ; i++) {         /* find the SuperVGA entry */
-       int j;
-       memcpy(adapter_name , adapter_ptr, 8);
-       adapter_ptr += 8;
-       if (adapter_name[0] == ' ') break;       /* end-of-the-list */
-       if (adapter_name[6] == 0) continue;      /* not our adapter */
-       adapter_name[6] = ' ';
-       for (j = 0; j < 8; j++)
-           if (adapter_name[j] == ' ')
-               adapter_name[j] = 0;
-       printf("  Video chip: %d (%s)",i+1,adapter_name);
-       }
-   printf("\n\n");
-
-   i = 0;
-   i2 = 0x8000;
-   while ((i2 >>= 1) != 0)
-      if ((tempptr = malloc(i+i2)) != NULL) {
-         free(tempptr);
-         i += i2;
-         }
-   printf(" %d NEAR bytes free \n", i);
-
-   printf(" %ld FAR bytes free ", fr_farfree());
-   {
-      size_t stack;
-      stack = showstack();
-/*      if (stack >= 0) */ /* stack is unsigned */
-         printf("\n %u STACK bytes free",stack);
-   }
-   printf("\n %ld used by HISTORY structure",
-      sizeof(HISTORY)*(unsigned long)maxhistory);
-   printf("\n %d video table used",showvidlength());
-   printf("\n\n %s...\n", "press any key to continue");
-   driver_get_key();
-}
-#endif
-
 #if 0
 void edit_text_colors()
 {
@@ -1769,12 +1678,10 @@ void format_vid_table(int choice,char *buf)
 {
    char local_buf[81];
    char kname[5];
-   char biosflag;
    int truecolorbits;
    memcpy((char *)&g_video_entry,(char *)&g_video_table[entsptr[choice]],
               sizeof(g_video_entry));
    vidmode_keyname(g_video_entry.keynum,kname);
-   biosflag = (char)((g_video_entry.dotmode % 100 == DOTMODE_SLOW_BIOS) ? 'B' : ' ');
    sprintf(buf,"%-5s %-25s %5d %5d ",  /* 44 chars */
            kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
    truecolorbits = g_video_entry.dotmode/1000;
@@ -1787,8 +1694,8 @@ void format_vid_table(int choice,char *buf)
                 (truecolorbits == 3)?"16m":
                 (truecolorbits == 2)?"64k":
                 (truecolorbits == 1)?"32k":"???");
-   sprintf(buf,"%s%c %.12s %.12s",  /* 74 chars */
-           local_buf, biosflag, g_video_entry.driver->name, g_video_entry.comment);
+   sprintf(buf,"%s %.12s %.12s",  /* 74 chars */
+           local_buf, g_video_entry.driver->name, g_video_entry.comment);
 }
 
 #ifndef XFRACT
