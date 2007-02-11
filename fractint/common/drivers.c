@@ -323,4 +323,10 @@ driver_restore_graphics(void)
 	(*g_driver->restore_graphics)(g_driver);
 }
 
+void
+driver_get_max_screen(int *xmax, int *ymax)
+{
+	(*g_driver->get_max_screen)(g_driver, xmax, ymax);
+}
+
 #endif
