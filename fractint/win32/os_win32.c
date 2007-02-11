@@ -213,7 +213,6 @@ VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
 int g_vxdots = 0;
 
 /* Global variables that should be phased out (old video mode stuff) */
-int g_video_vram = 0;
 int g_virtual_screens = 0;
 
 
@@ -585,6 +584,7 @@ void scroll_relative(int bycol, int byrow)
 {
 	if (g_video_scroll)
 	{
+		_ASSERTE(0 && "scroll_relative called");
 		// blt pixels around :-)
 	}
 }
@@ -714,16 +714,22 @@ void showfreemem(void)
 	_ASSERTE(FALSE);
 }
 
-long fr_farfree(void)
+unsigned long get_disk_space(void)
 {
-	/* TODO */
-	return 0x8FFFFL;
-}
-
-unsigned long GetDiskSpace(void)
-{
-	/* TODO */
-	return 0x7FFFFFFF;
+	ULARGE_INTEGER space;
+	unsigned long result = 0;
+	if (GetDiskFreeSpaceEx(NULL, &space, NULL, NULL))
+	{
+		if (space.HighPart)
+		{
+			result = ~0UL;
+		}
+		else
+		{
+			result = space.LowPart;
+		}
+	}
+	return result;
 }
 
 void windows_shell_to_dos()
