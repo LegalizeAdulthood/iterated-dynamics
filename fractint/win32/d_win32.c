@@ -342,10 +342,17 @@ win32_init(Driver *drv, int *argc, char **argv)
 
 	/* add default list of video modes */
 	{
+		RECT desktop;
 		int m;
+
+		GetClientRect(GetDesktopWindow(), &desktop);
 		for (m = 0; m < NUM_OF(modes); m++)
 		{
-			add_video_mode(drv, &modes[m]);
+			if ((modes[m].xdots <= desktop.right) &&
+				(modes[m].ydots <= desktop.bottom))
+			{
+				add_video_mode(drv, &modes[m]);
+			}
 		}
 	}
 
@@ -1076,7 +1083,19 @@ win32_put_char_attr(Driver *drv, int char_attr)
 static int
 win32_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	return (mode->colors == 256) ? 1 : 0;
+	RECT desktop;
+	GetClientRect(GetDesktopWindow(), &desktop);
+
+	/* allow modes <= size of screen with 256 colors and dotmode=19
+	   ax/bx/cx/dx must be zero. */
+	return (mode->xdots <= desktop.right) &&
+		(mode->ydots <= desktop.bottom) &&
+		(mode->colors == 256) &&
+		(mode->videomodeax == 0) &&
+		(mode->videomodebx == 0) &&
+		(mode->videomodecx == 0) &&
+		(mode->videomodedx == 0) &&
+		(mode->dotmode == 19);
 }
 
 static void
@@ -1143,6 +1162,21 @@ win32_restore_graphics(Driver *drv)
 {
 	DI(di);
 	plot_restore_graphics(&di->plot);
+}
+
+static void
+win32_get_max_screen(Driver *drv, int *xmax, int *ymax)
+{
+	RECT desktop;
+	GetClientRect(GetDesktopWindow(), &desktop);
+	if (xmax != NULL)
+	{
+		*xmax = desktop.right;
+	}
+	if (ymax != NULL)
+	{
+		*ymax = desktop.bottom;
+	}
 }
 
 static Win32Driver win32_driver_info =
