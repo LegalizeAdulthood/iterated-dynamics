@@ -560,7 +560,6 @@ extern int                   g_video_scroll;
 extern int                   g_video_start_x;
 extern int                   g_video_start_y;
 extern int                   g_video_type;						/* video adapter type */
-extern int                   g_video_vram;
 extern VECTOR                view;
 extern int                   viewcrop;
 extern float                 viewreduction;
