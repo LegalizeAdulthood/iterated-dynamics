@@ -24,42 +24,42 @@ is in the allocations of memory for the big numbers.
 #ifdef BIG_BASED
 _segment bignum_seg;
 #endif
-int bnstep, bnlength, intlength, rlength, padding, shiftfactor, decimals;
-int bflength, rbflength, bfdecimals;
+int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
+int bflength = 0, rbflength = 0, bfdecimals = 0;
 
 /* used internally by bignum.c routines */
 static char s_storage[4096];
-static bn_t bnroot= (bn_t) &s_storage[0];
-static bn_t stack_ptr; /* memory allocator base after global variables */
-bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6; /* rlength  */
-bn_t bntmpcpy1, bntmpcpy2;                           /* bnlength */
+static bn_t bnroot = BIG_NULL;
+static bn_t stack_ptr = BIG_NULL; /* memory allocator base after global variables */
+bn_t bntmp1 = BIG_NULL, bntmp2 = BIG_NULL, bntmp3 = BIG_NULL, bntmp4 = BIG_NULL, bntmp5 = BIG_NULL, bntmp6 = BIG_NULL; /* rlength  */
+bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           /* bnlength */
 
 /* used by other routines */
-bn_t bnxmin, bnxmax, bnymin, bnymax, bnx3rd, bny3rd;        /* bnlength */
-bn_t bnxdel, bnydel, bnxdel2, bnydel2, bnclosenuff;         /* bnlength */
-bn_t bntmpsqrx, bntmpsqry, bntmp;                           /* rlength  */
-_BNCMPLX bnold, /* bnnew, */ bnparm, bnsaved;               /* bnlength */
-_BNCMPLX bnnew;                                              /* rlength */
-bn_t bn_pi;                                           /* TAKES NO SPACE */
+bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        /* bnlength */
+bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         /* bnlength */
+bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           /* rlength  */
+_BNCMPLX bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               /* bnlength */
+_BNCMPLX bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
+bn_t bn_pi = BIG_NULL;                                           /* TAKES NO SPACE */
 
-bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;     /* rbflength+2 */
-bf_t bftmpcpy1, bftmpcpy2;                               /* rbflength+2 */
-bf_t bfxdel, bfydel, bfxdel2, bfydel2, bfclosenuff;      /* rbflength+2 */
-bf_t bftmpsqrx, bftmpsqry;                               /* rbflength+2 */
-_BFCMPLX /* bfold,  bfnew, */ bfparm, bfsaved;            /* bflength+2 */
-_BFCMPLX bfold,  bfnew;                                  /* rbflength+2 */
-bf_t bf_pi;                                           /* TAKES NO SPACE */
-bf_t big_pi;                                              /* bflength+2 */
+bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength+2 */
+bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength+2 */
+bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength+2 */
+bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength+2 */
+_BFCMPLX /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength+2 */
+_BFCMPLX bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength+2 */
+bf_t bf_pi = BIG_NULL;                                           /* TAKES NO SPACE */
+bf_t big_pi = BIG_NULL;                                              /* bflength+2 */
 
 /* for testing only */
 
 /* used by other routines */
-bf_t bfxmin, bfxmax, bfymin, bfymax, bfx3rd, bfy3rd;      /* bflength+2 */
-bf_t bfsxmin, bfsxmax, bfsymin, bfsymax, bfsx3rd, bfsy3rd;/* bflength+2 */
+bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength+2 */
+bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;/* bflength+2 */
 bf_t bfparms[10];                                    /* (bflength+2)*10 */
-bf_t bftmp;
+bf_t bftmp = BIG_NULL;
 
-bf_t bf10tmp;                                              /* dec+4 */
+bf_t bf10tmp = BIG_NULL;                                              /* dec+4 */
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
