@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 
 	initasmvars();                       /* initialize ASM stuff */
 	InitMemory();
-	checkfreemem(0);
+
 	/* let drivers add their video modes */
 	if (! init_drivers(&argc, argv))
 	{
@@ -275,7 +275,6 @@ restart:   /* insert key re-starts here */
 	cmdfiles(argc,argv);         /* process the command-line */
 	dopause(0);                  /* pause for error msg if not batch */
 	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
-	checkfreemem(1);
 	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{
 		check_samename();
@@ -316,11 +315,6 @@ restart:   /* insert key re-starts here */
 	savedac = 0;                         /* don't save the VGA DAC */
 
 #ifndef XFRACT
-	if (debugflag == 10000)              /* check for free memory */
-	{
-		showfreemem();
-	}
-
 	if (g_bad_config < 0)                   /* fractint.cfg bad, no msg yet */
 	{
 		bad_fractint_cfg_msg();
