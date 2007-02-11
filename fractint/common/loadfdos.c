@@ -53,14 +53,12 @@ struct vidinf {
    these bits represent the sort sequence for video mode list */
 #define VI_EXACT 0x8000 /* unless the one and only exact match */
 #define VI_NOKEY   512  /* if no function key assigned */
-#define VI_DISK1   256  /* disk video and size not exact */
 #define VI_SSMALL  128  /* screen smaller than file's screen */
 #define VI_SBIG     64  /* screen bigger than file's screen */
 #define VI_VSMALL   32  /* screen smaller than file's view */
 #define VI_VBIG     16  /* screen bigger than file's view */
 #define VI_CSMALL    8  /* mode has too few colors */
 #define VI_CBIG      4  /* mode has excess colors */
-#define VI_DISK2     2  /* disk video */
 #define VI_ASPECT    1  /* aspect ratio bad */
 
 #ifndef XFRACT
@@ -120,45 +118,6 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	VIDEOINFO *vident;
 
 	g_init_mode = -1;
-
-	/* try to change any VESA entries to fit the loaded image size */
-	/* TODO: virtual screens? video ram? VESA/DOS be gone! */
-	if (g_virtual_screens && g_video_vram && g_init_mode == -1)
-	{
-		unsigned long vram = (unsigned long)g_video_vram << 16,
-						need = (unsigned long)info->xdots * info->ydots;
-		if (need <= vram)
-		{
-			char over[25]; /* overwrite comments with original resolutions */
-			int bppx;      /* bytesperpixel multiplier */
-			for (i = 0; i < g_video_table_len; ++i)
-			{
-				vident = &g_video_table[i];
-				if (vident->dotmode%100 == DOTMODE_VESA && vident->colors >= 256
-				&& (info->xdots > vident->xdots || info->ydots > vident->ydots)
-				&& vram >= (unsigned long)
-					(info->xdots < vident->xdots ? vident->xdots : info->xdots)
-					* (info->ydots < vident->ydots ? vident->ydots : info->ydots)
-					* ((bppx = vident->dotmode/1000) < 2 ? ++bppx : bppx))
-				{
-#if defined(_WIN32)
-					_ASSERTE(FALSE && "Trying to set video mode table from command-file?");
-#endif
-					sprintf(over, "<-VIRTUAL! at %4u x %4u",vident->xdots,vident->ydots);
-					strcpy((char *)vident->comment, (char *)over);
-
-					if (info->xdots > vident->xdots)
-					{
-						vident->xdots = info->xdots;
-					}
-					if (info->ydots > vident->ydots)
-					{
-						vident->ydots = info->ydots;
-					}
-				}  /* change entry to force VESA virtual scanline setup */
-			}
-		}
-	}
 
 	/* try to find exact match for vid mode */
 	for (i = 0; i < g_video_table_len; ++i)
@@ -228,16 +187,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		{
 			tmpflags -= VI_EXACT;
 		}
-		if (g_video_entry.dotmode%100 == DOTMODE_RAMDISK)
-		{
-			tmpflags |= VI_DISK2;
-			if ((tmpflags & (VI_SBIG+VI_SSMALL+VI_VBIG+VI_VSMALL)) != 0)
-			{
-				tmpflags |= VI_DISK1;
-			}
-		}
-		if (fileaspectratio != 0 && g_video_entry.dotmode%100 != DOTMODE_RAMDISK
-			&& (tmpflags & VI_VSMALL) == 0)
+		if (fileaspectratio != 0 && (tmpflags & VI_VSMALL) == 0)
 		{
 			ftemp = vid_aspect(filexdots, fileydots);
 			if (ftemp < fileaspectratio * 0.98 ||
@@ -442,10 +392,6 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		{
 			tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
 			tmpydots = (fileydots + skipydots - 1) / skipydots;
-			if (fileaspectratio == 0 || g_video_entry.dotmode%100 == DOTMODE_RAMDISK)
-			{
-				break;
-			}
 			/* reduce further if that improves aspect */
 			if ((ftemp = vid_aspect(tmpxdots, tmpydots)) > fileaspectratio)
 			{
