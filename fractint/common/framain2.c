@@ -179,11 +179,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			if (viewwindow)
 			{
 				/* bypass for VESA virtual screen */
-				ftemp = finalaspectratio *
-					((dotmode == DOTMODE_VESA &&
-						((g_vesa_x_res && g_vesa_x_res != sxdots) ||
-						 (g_vesa_y_res && g_vesa_y_res != sydots)))
-					? 1 : (double)sydots / (double)sxdots / screenaspect);
+				ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/screenaspect);
 				if ((xdots = viewxdots) != 0)
 				{	/* xdots specified */
 					ydots = viewydots;
@@ -1235,32 +1231,11 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       }
       break;
    case 'd':                    /* shell to MS-DOS              */
-#if !defined(XFRACT)
       driver_stack_screen();
-      if (75000L > fr_farfree()) {
-         driver_unstack_screen();
-         stopmsg(0, "Not enough memory to Shell-to-DOS");
-         break;
-      }
-      if (axmode == 0 || axmode > 7)
-      {
-         driver_put_string(0, 0, 7,
-			"Note:  Your graphics image is still squirreled away in your video\n"
-			"adapter's memory.  Switching video modes will clobber part of that\n"
-			"image.  Sorry - it's the best we could do.");
-         driver_move_cursor(6, 0);
-      }
       driver_shell();
       driver_unstack_screen();
-#else
-      setclear();
-      printf("\n\nShelling to Linux/Unix - type 'exit' to return\n\n");
-      driver_shell();
-      putprompt();
-      return CONTINUE;
-#endif
-/*             calc_status = CALCSTAT_PARAMS_CHANGED; */
       break;
+
    case 'c':                    /* switch to color cycling      */
    case '+':                    /* rotate palette               */
    case '-':                    /* rotate palette               */
@@ -2543,39 +2518,3 @@ static void _fastcall restore_history_info(int i)
       break;
    }
 }
-
-void checkfreemem(int secondpass)
-{
-	int oldmaxhistory;
-	char *tmp;
-	tmp = (char *)malloc(4096L);
-	oldmaxhistory = maxhistory;
-	if (secondpass && !history)
-	{
-		while (maxhistory > 0) /* decrease history if necessary */
-		{
-			/* TODO: MemoryAlloc */
-			history = MemoryAlloc((U16)sizeof(HISTORY),(long)maxhistory,MEMORY);
-			if (history)
-			{
-				break;
-			}
-			maxhistory--;
-		}
-	}
-	if (tmp == NULL)
-	{
-		driver_buzzer(BUZZER_ERROR);
-		/* TODO: eliminate use of printf */
-		printf("%s"," I'm sorry, but you don't have enough free memory \n to run this program.\n\n");
-		exit(1);
-	}
-	free(tmp); /* was just to check for min space */
-	if (secondpass && (maxhistory < oldmaxhistory || (history == 0 && oldmaxhistory != 0)))
-	{
-		/* TODO: eliminate use of printf */
-		printf("%s%d\n%s\n","To save memory, reduced maxhistory to ",maxhistory, "press any key to continue");
-		driver_get_key();
-	}
-}
-
