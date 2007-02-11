@@ -842,7 +842,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
                 }
             }
         k = !k; /* toggle */
-#ifdef CALCULATING_BIG_PI
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         printf("."); /* lets you know it's doing something */
 #endif
         } while (!cos_done || !sin_done);
@@ -960,7 +960,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         bf_pi = orig_bf_pi + orig_bflength - bflength;
         bftmp3 = orig_bftmp3 + orig_bflength - bflength;
 
-#ifdef CALCULATING_BIG_PI
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         printf("\natan() loop #%i, bflength=%i\nsincos() loops\n", i, bflength);
 #endif
         unsafe_sincos_bf(bftmp4, bftmp5, bftmp3);   /* sin(r), cos(r) */
@@ -971,13 +971,13 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
         unsafe_mult_bf(bftmp1, bftmp5, bftmp4); /* cos(r) * (sin(r) - n*cos(r)) */
         copy_bf(bftmp3, r);
         unsafe_sub_a_bf(r, bftmp1); /* r - cos(r) * (sin(r) - n*cos(r)) */
-#ifdef CALCULATING_BIG_PI
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         putchar('\n');
         bf_hexdump(r);
 #endif
         if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8 ) /* if match or almost match */
             {
-#ifdef CALCULATING_BIG_PI
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
             printf("atan() loop comp=%i\n", comp);
 #endif
             if (comp < 4  /* perfect or near perfect match */
@@ -987,7 +987,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
                 almost_match++;
             }
 
-#ifdef CALCULATING_BIG_PI
+#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
         if (bflength == orig_bflength && comp >= 8)
             printf("atan() loop comp=%i\n", comp);
 #endif
