@@ -367,10 +367,17 @@ win32_disk_resize(Driver *drv)
 {
 	DI(di);
 
+	frame_resize(di->wintext.max_width, di->wintext.max_height);
 	if ((sxdots == di->width) && (sydots == di->height)) 
 	{
 		return 0;
 	}
+
+	if (g_disk_flag)
+	{
+		enddisk();
+	}
+	startdisk();
 
 	return !0;
 }
@@ -740,12 +747,6 @@ win32_disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 
 	win32_disk_resize(drv);
 
-	if (g_disk_flag)
-	{
-		enddisk();
-	}
-
-	startdisk();
 	set_disk_dot();
 	set_normal_line();
 }
@@ -1050,7 +1051,14 @@ win32_disk_put_char_attr(Driver *drv, int char_attr)
 static int
 win32_disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	return (mode->colors == 256) ? 1 : 0;
+	/* allow modes of any size with 256 colors and dotmode=19
+	   ax/bx/cx/dx must be zero. */
+	return (mode->colors == 256) &&
+		(mode->videomodeax == 0) &&
+		(mode->videomodebx == 0) &&
+		(mode->videomodecx == 0) &&
+		(mode->videomodedx == 0) &&
+		(mode->dotmode == 19);
 }
 
 static void
@@ -1102,6 +1110,18 @@ static void win32_disk_save_graphics(Driver *drv)
 
 static void win32_disk_restore_graphics(Driver *drv)
 {
+}
+
+static void win32_disk_get_max_screen(Driver *drv, int *xmax, int *ymax)
+{
+	if (xmax != NULL)
+	{
+		*xmax = -1;
+	}
+	if (ymax != NULL)
+	{
+		*ymax = -1;
+	}
 }
 
 static Win32DiskDriver win32_disk_driver_info =
