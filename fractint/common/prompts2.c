@@ -663,288 +663,204 @@ pass_option_restart:
 
 int get_view_params()
 {
-   char *choices[16];
-   int oldhelpmode;
-   struct fullscreenvalues uvalues[25];
-   int i, k;
-   float old_viewreduction,old_aspectratio;
-   int old_viewwindow,old_viewxdots,old_viewydots,old_sxdots,old_sydots;
-   unsigned long estm_xmax=32767,estm_ymax=32767;
-    char dim1[50];
+	char *choices[16];
+	int oldhelpmode;
+	struct fullscreenvalues uvalues[25];
+	int i, k;
+	float old_viewreduction, old_aspectratio;
+	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
+	int xmax, ymax;
+	char dim1[50];
 	char dim2[50];
-#ifndef XFRACT
-   /* TODO: virtual screens? video ram? VESA/DOS be gone! */
-   unsigned long vidmem = (unsigned long)g_video_vram << 16;
-   int truebytes = g_video_entry.dotmode/1000;
 
-   if (dotmode == DOTMODE_VESA)          /* setvideo might have changed mode 27 to 28 */
-      dotmode = g_video_entry.dotmode%100;
-#endif
+	driver_get_max_screen(&xmax, &ymax);
 
-/*
-   Because the scrolling (and virtual screen width) must be
-   aligned to 8 bytes, that gives:
-
-   8 pixels for 8 bit (truebytes == 0; ++truebytes == 1;)
-   4 pixels for 15 bit (truebytes == 1; ++truebytes == 2;)
-   4 pixels for 16 bit (truebytes == 2;)
-   8 pixels for 24 bit (truebytes == 3;)
-   2 pixels for 32 bit (truebytes == 4;)
-
-   so for odd truebytes (8 and 24 bit) it does &= ..FFF8 (&= -8)
-   if truebytes==2 (15 and 16 bit) it does &= ..FFFC (&= -4)
-   if truebytes==4 (32 bit) it does &= ..FFFE (&= -2)
-*/
-
-#ifndef XFRACT
-   if (dotmode == DOTMODE_VESA && g_virtual_screens) {
-      /* virtual screen limits estimation */
-      if (truebytes < 2)
-         ++truebytes;
-      vidmem /= truebytes;
-      estm_xmax = g_vesa_y_res ? vidmem/g_vesa_y_res : 0;
-      estm_ymax = g_vesa_x_res ? vidmem/g_vesa_x_res : 0;
-      estm_xmax &= truebytes&1 ? -8 : truebytes - 6;
-   }
-#endif
-
-   old_viewwindow    = viewwindow;
-   old_viewreduction = viewreduction;
-   old_aspectratio   = finalaspectratio;
-   old_viewxdots     = viewxdots;
-   old_viewydots     = viewydots;
-   old_sxdots        = sxdots;
-   old_sydots        = sydots;
+	old_viewwindow    = viewwindow;
+	old_viewreduction = viewreduction;
+	old_aspectratio   = finalaspectratio;
+	old_viewxdots     = viewxdots;
+	old_viewydots     = viewydots;
+	old_sxdots        = sxdots;
+	old_sydots        = sydots;
 
 get_view_restart:
-   /* fill up the previous values arrays */
-   k = -1;
+	/* fill up the previous values arrays */
+	k = -1;
 
-   if (!driver_diskp()) {
-      choices[++k] = "Preview display? (no for full screen)";
-      uvalues[k].type = 'y';
-      uvalues[k].uval.ch.val = viewwindow;
+	if (!driver_diskp())
+	{
+		choices[++k] = "Preview display? (no for full screen)";
+		uvalues[k].type = 'y';
+		uvalues[k].uval.ch.val = viewwindow;
 
-      choices[++k] = "Auto window size reduction factor";
-      uvalues[k].type = 'f';
-      uvalues[k].uval.dval = viewreduction;
+		choices[++k] = "Auto window size reduction factor";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval = viewreduction;
 
-      choices[++k] = "Final media overall aspect ratio, y/x";
-      uvalues[k].type = 'f';
-      uvalues[k].uval.dval = finalaspectratio;
+		choices[++k] = "Final media overall aspect ratio, y/x";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval = finalaspectratio;
 
-      choices[++k] = "Crop starting coordinates to new aspect ratio?";
-      uvalues[k].type = 'y';
-      uvalues[k].uval.ch.val = viewcrop;
+		choices[++k] = "Crop starting coordinates to new aspect ratio?";
+		uvalues[k].type = 'y';
+		uvalues[k].uval.ch.val = viewcrop;
 
-      choices[++k] = "Explicit size x pixels (0 for auto size)";
-      uvalues[k].type = 'i';
-      uvalues[k].uval.ival = viewxdots;
+		choices[++k] = "Explicit size x pixels (0 for auto size)";
+		uvalues[k].type = 'i';
+		uvalues[k].uval.ival = viewxdots;
 
-      choices[++k] = "              y pixels (0 to base on aspect ratio)";
-      uvalues[k].type = 'i';
-      uvalues[k].uval.ival = viewydots;
-   }
+		choices[++k] = "              y pixels (0 to base on aspect ratio)";
+		uvalues[k].type = 'i';
+		uvalues[k].uval.ival = viewydots;
+	}
 
-   choices[++k] = "";
-   uvalues[k].type = '*';
+	choices[++k] = "";
+	uvalues[k].type = '*';
 
-#ifndef XFRACT
-   if (g_virtual_screens && dotmode == DOTMODE_VESA && g_checked_vvs && !g_video_scroll) {
-      choices[++k] = "Your graphics card does NOT support virtual screens.";
-      uvalues[k].type = '*';
-   }
-#endif
+	choices[++k] = "Virtual screen total x pixels";
+	uvalues[k].type = 'i';
+	uvalues[k].uval.ival = sxdots;
 
-   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
-      choices[++k] = "Virtual screen total x pixels";
-      uvalues[k].type = 'i';
-      uvalues[k].uval.ival = sxdots;
+	choices[++k] = driver_diskp() ?
+		"                     y pixels" : 
+		"                     y pixels (0: by aspect ratio)";
+	uvalues[k].type = 'i';
+	uvalues[k].uval.ival = sydots;
 
-      if (driver_diskp()) {
-         choices[++k] = "                     y pixels";
-      }
-      else {
-         choices[++k] = "                     y pixels (0: by aspect ratio)";
-      }
-      uvalues[k].type = 'i';
-      uvalues[k].uval.ival = sydots;
-   }
+	choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
+	uvalues[k].type = 'y';
+	uvalues[k].uval.ch.val = video_cutboth;
 
-#ifndef XFRACT
-   if (g_virtual_screens && dotmode == DOTMODE_VESA) {
-      char *scrolltypes[] ={"fixed","relaxed"};
+	{
+		char *scrolltypes[] ={"fixed","relaxed"};
+		choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
+		uvalues[k].type = 'l';
+		uvalues[k].uval.ch.vlen = 7;
+		uvalues[k].uval.ch.llen = sizeof(scrolltypes)/sizeof(*scrolltypes);
+		uvalues[k].uval.ch.list = scrolltypes;
+		uvalues[k].uval.ch.val = zscroll;
+	}
 
-      choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
-      uvalues[k].type = 'y';
-      uvalues[k].uval.ch.val = video_cutboth;
+	choices[++k] = "";
+	uvalues[k].type = '*';
 
-      choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
-      uvalues[k].type = 'l';
-      uvalues[k].uval.ch.vlen = 7;
-      uvalues[k].uval.ch.llen = sizeof(scrolltypes)/sizeof(*scrolltypes);
-      uvalues[k].uval.ch.list = scrolltypes;
-      uvalues[k].uval.ch.val = zscroll;
+	sprintf(dim1, "Video memory limits: (for y = %4u) x <= %lu", ymax,  xmax);
+	choices[++k]= dim1;
+	uvalues[k].type = '*';
 
-      choices[++k] = "";
-      uvalues[k].type = '*';
+	sprintf(dim2, "                     (for x = %4u) y <= %lu", xmax, ymax);
+	choices[++k]= dim2;
+	uvalues[k].type = '*';
 
-      sprintf(dim1,"%s%4u%s%lu","Video memory limits: (for y = ",g_vesa_y_res, ") x <= ",estm_xmax);
-      choices[++k]= dim1;
-      uvalues[k].type = '*';
+	choices[++k] = "";
+	uvalues[k].type = '*';
 
-      sprintf(dim2,"%s%4u%s%lu",(char *)"                     (for x = ",g_vesa_x_res, ") y <= ",estm_ymax);
-      choices[++k]= dim2;
-      uvalues[k].type = '*';
+	if (!driver_diskp())
+	{
+		choices[++k] = "Press F4 to reset view parameters to defaults.";
+		uvalues[k].type = '*';
+	}
 
-      choices[++k] = "";
-      uvalues[k].type = '*';
-   }
-#endif
+	oldhelpmode = helpmode;     /* this prevents HELP from activating */
+	helpmode = HELPVIEW;
+	i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,NULL);
+	helpmode = oldhelpmode;     /* re-enable HELP */
+	if (i < 0)
+	{
+		return -1;
+	}
 
-   if (!driver_diskp()) {
-      choices[++k] = "Press F4 to reset view parameters to defaults.";
-      uvalues[k].type = '*';
-   }
+	if (i == FIK_F4 && !driver_diskp())
+	{
+		viewwindow = viewxdots = viewydots = 0;
+		viewreduction = (float) 4.2;
+		viewcrop = 1;
+		finalaspectratio = screenaspect;
+		sxdots = old_sxdots;
+		sydots = old_sydots;
+		video_cutboth = 1;
+		zscroll = 1;
+		goto get_view_restart;
+	}
 
-   oldhelpmode = helpmode;     /* this prevents HELP from activating */
-   helpmode = HELPVIEW;
-   i = fullscreen_prompt("View Window Options",k+1,choices,uvalues,16,NULL);
-   helpmode = oldhelpmode;     /* re-enable HELP */
-   if (i < 0) {
-      return(-1);
-      }
+	/* now check out the results (*hopefully* in the same order <grin>) */
+	k = -1;
 
-   if (i == FIK_F4 && !driver_diskp()) {
-      viewwindow = viewxdots = viewydots = 0;
-      viewreduction = (float)4.2;
-      viewcrop = 1;
-      finalaspectratio = screenaspect;
-      if (dotmode == DOTMODE_VESA) {
-         sxdots = g_vesa_x_res ? g_vesa_x_res : old_sxdots;
-         sydots = g_vesa_y_res ? g_vesa_y_res : old_sydots;
-         video_cutboth = 1;
-         zscroll = 1;
-      }
-      goto get_view_restart;
-      }
+	if (!driver_diskp())
+	{
+		viewwindow = uvalues[++k].uval.ch.val;
+		viewreduction = (float) uvalues[++k].uval.dval;
+		finalaspectratio = (float) uvalues[++k].uval.dval;
+		viewcrop = uvalues[++k].uval.ch.val;
+		viewxdots = uvalues[++k].uval.ival;
+		viewydots = uvalues[++k].uval.ival;
+	}
 
-   /* now check out the results (*hopefully* in the same order <grin>) */
-   k = -1;
+	++k;
 
-   if (!driver_diskp()) {
-      viewwindow = uvalues[++k].uval.ch.val;
+    sxdots = uvalues[++k].uval.ival;
+    sydots = uvalues[++k].uval.ival;
+    video_cutboth = uvalues[++k].uval.ch.val;
+    zscroll = uvalues[++k].uval.ch.val;
 
-      viewreduction = (float)uvalues[++k].uval.dval;
+    if ((xmax != -1) && (sxdots > xmax))
+	{
+        sxdots = (int) xmax;
+	}
+    if (sxdots < 2)
+	{
+        sxdots = 2;
+	}
+	if (sydots == 0) /* auto by aspect ratio request */
+	{
+		if (finalaspectratio == 0.0)
+		{
+			finalaspectratio = (viewwindow && viewxdots != 0 && viewydots != 0) ?
+				((float) viewydots)/((float) viewxdots) : old_aspectratio;
+		}
+		sydots = (int) (finalaspectratio*sxdots + 0.5);
+	}
+	if ((ymax != -1) && (sydots > ymax))
+	{
+		sydots = ymax;
+	}
+	if (sydots < 2)
+	{
+		sydots = 2;
+	}
 
-      finalaspectratio = (float)uvalues[++k].uval.dval;
+	if (driver_diskp())
+	{
+		g_video_entry.xdots = sxdots;
+		g_video_entry.ydots = sydots;
+		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
+		if (finalaspectratio == 0.0)
+		{
+			finalaspectratio = ((float) sydots)/((float) sxdots);
+		}
+	}
 
-      viewcrop = uvalues[++k].uval.ch.val;
+	if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
+	{
+		finalaspectratio = ((float) viewydots)/((float) viewxdots);
+	}
+	else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+	{
+		finalaspectratio = old_aspectratio;
+	}
 
-      viewxdots = uvalues[++k].uval.ival;
-      viewydots = uvalues[++k].uval.ival;
-   }
+	if (finalaspectratio != old_aspectratio && viewcrop)
+	{
+		aspectratio_crop(old_aspectratio, finalaspectratio);
+	}
 
-   ++k;
-
-   if (g_virtual_screens && dotmode == DOTMODE_VESA && g_checked_vvs && !g_video_scroll)
-      ++k;  /* add 1 if not supported line is inserted */
-
-   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
-      sxdots = uvalues[++k].uval.ival;
-      sydots = uvalues[++k].uval.ival;
-#ifndef XFRACT
-      video_cutboth = uvalues[++k].uval.ch.val;
-      zscroll = uvalues[++k].uval.ch.val;
-#endif
-
-      if ((unsigned long)sxdots > estm_xmax)
-         sxdots = (int)estm_xmax;
-      if (sxdots < 2)
-         sxdots = 2;
-      if (sydots == 0 && dotmode == DOTMODE_VESA) { /* auto by aspect ratio request */
-         if (finalaspectratio == 0.0) {
-            if (viewwindow && viewxdots != 0 && viewydots != 0)
-               finalaspectratio = (float)viewydots/viewxdots;
-            else
-               finalaspectratio = old_aspectratio;
-         }
-         sydots = (int)(finalaspectratio * sxdots + 0.5);
-      }
-      if ((unsigned long)sydots > estm_ymax)
-         sydots = (int)estm_ymax;
-      if (sydots < 2)
-         sydots = 2;
-   }
-
-#ifndef XFRACT
-   if (g_virtual_screens && dotmode == DOTMODE_VESA) {
-
-      /* virtual screen smaller than physical screen, use view window */
-      if (sxdots < g_vesa_x_res && sydots < g_vesa_y_res) {
-         viewwindow = 1;
-         viewxdots = sxdots;
-         viewydots = sydots;
-         sxdots    = g_vesa_x_res;
-         sydots    = g_vesa_y_res;
-      } else {
-         viewwindow = 0; /* make sure it is off */
-         viewxdots = 0;
-         viewydots = 0;
-      }
-
-      /* if virtual screen is too large */
-      if ( (unsigned long)((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots)
-            * ((sydots < g_vesa_y_res) ? g_vesa_y_res : sydots) > vidmem) {
-        /* and we have to keep ratio */
-        if (video_cutboth) {
-           double tmp,virtaspect = (double)sydots / sxdots;
-
-           /* we need vidmem >= x * y == x * x * virtaspect */
-           tmp = sqrt(vidmem / virtaspect);
-           sxdots = (tmp > (double)estm_xmax) ? (int)estm_xmax : (int)tmp;
-           sxdots &= truebytes&1 ? -8 : truebytes - 6;
-           if (sxdots < 2)
-               sxdots = 2;
-           tmp = sxdots * virtaspect;
-           sydots = (tmp > (double)estm_ymax) ? (int)estm_ymax : (int)tmp;
-           /* if sydots < 2 here, then sxdots > estm_xmax */
-        }
-        else { /* cut only the y value */
-           sydots = (int)((double)vidmem / ((sxdots < g_vesa_x_res) ? g_vesa_x_res : sxdots));
-        }
-      }
-   }
-#endif
-
-   if (driver_diskp() || (g_virtual_screens && dotmode == DOTMODE_VESA)) {
-      g_video_entry.xdots = sxdots;
-      g_video_entry.ydots = sydots;
-      memcpy((char *)&g_video_table[g_adapter],(char *)&g_video_entry,
-                    sizeof(g_video_entry));
-      if (finalaspectratio == 0.0)
-         finalaspectratio = (float)sydots/sxdots;
-   }
-
-   if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
-      finalaspectratio = (float)viewydots/viewxdots;
-   else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
-      finalaspectratio = old_aspectratio;
-
-   if (finalaspectratio != old_aspectratio && viewcrop)
-      aspectratio_crop(old_aspectratio,finalaspectratio);
-
-   i = 0;
-   if (viewwindow != old_viewwindow
-      || sxdots != old_sxdots || sydots != old_sydots
-      || (viewwindow
-         && (  viewreduction != old_viewreduction
-            || finalaspectratio != old_aspectratio
-            || viewxdots != old_viewxdots
-            || (viewydots != old_viewydots && viewxdots) ) ) )
-      i = 1;
-
-   return(i);
+	return (viewwindow != old_viewwindow
+		|| sxdots != old_sxdots || sydots != old_sydots
+		|| (viewwindow
+			&& (viewreduction != old_viewreduction
+				|| finalaspectratio != old_aspectratio
+				|| viewxdots != old_viewxdots
+				|| (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;
 }
 
 /*
