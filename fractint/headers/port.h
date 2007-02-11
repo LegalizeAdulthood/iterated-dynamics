@@ -98,11 +98,6 @@ extern long stackavail();
 #  ifdef XFRACT           /* XFRACT forces unix configuration! --CWM-- */
 /* XFRACT forces unix configuration! --CWM-- */
 
-/* CAE added ltoa, overwrite fix for HP-UX v9 26Jan95  */
-#    ifdef _HPUX_SOURCE
-#      define ltoa fr_ltoa
-#    endif
-
 #    ifdef MSDOS
 #      undef MSDOS
 #    endif
