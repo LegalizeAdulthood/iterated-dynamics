@@ -541,7 +541,6 @@ extern void flip_image(int kbdchar);
 extern void reset_zoom_corners(void);
 #endif
 extern void setup287code(void);
-extern void checkfreemem(int);
 
 /*  frasetup -- C file prototypes */
 
@@ -720,9 +719,6 @@ extern void froth_cleanup(void);
 /*  miscovl -- C file prototypes */
 
 extern void make_batch_file(void);
-extern void shell_to_dos(void);
-extern long fr_farfree(void);
-extern void showfreemem(void);
 extern void edit_text_colors(void);
 extern int select_video_mode(int );
 extern void format_vid_table(int choice,char *buf);
