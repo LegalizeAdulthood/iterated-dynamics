@@ -271,7 +271,7 @@ int line3d(BYTE * pixels, unsigned linelen)
    if (driver_diskp())
    {
       char s[40];
-      sprintf(s, "%s%d", "mapping to 3d, reading line ", currow);
+      sprintf(s, "mapping to 3d, reading line %d", currow);
       dvid_status(1, s);
    }
 
@@ -1343,16 +1343,16 @@ static void File_Error(char *File_Name1, int ERROR)
    switch (ERROR)
    {
    case 1:                      /* Can't Open */
-      sprintf(msgbuf, "%s%s%s >", "OOPS, ", "couldn't open  < ", File_Name1);
+      sprintf(msgbuf, "OOPS, couldn't open  < %s >", File_Name1);
       break;
    case 2:                      /* Not enough room */
-      sprintf(msgbuf, "%s%s%s >", "OOPS, ", "ran out of disk space. < ", File_Name1);
+      sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", File_Name1);
       break;
    case 3:                      /* Image wrong size */
-      sprintf(msgbuf, "%s%s", "OOPS, ", "image wrong size\n");
+      sprintf(msgbuf, "OOPS, image wrong size\n");
       break;
    case 4:                      /* Wrong file type */
-      sprintf(msgbuf, "%s%s", "OOPS, ", "can't handle this type of file.\n");
+      sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
       break;
    }
    stopmsg(0, msgbuf);
@@ -1709,7 +1709,7 @@ static int _fastcall RAY_Header(void)
 ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 
    if (RAY != 7)
-      fprintf(File_Ptr1, "%s%#4.2f%s", "{ Created by FRACTINT Ver. ", g_release / 100., " }\n\n");
+      fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
 
    if (RAY == 5)
       fprintf(File_Ptr1, "*/\n");
@@ -1718,34 +1718,33 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
    /* Set the default color */
    if (RAY == 1)
    {
-      fprintf(File_Ptr1, "%s%s", "DECLARE       ", "F_Dflt");
-      fprintf(File_Ptr1, " = ");
-      fprintf(File_Ptr1, "%s%s", "COLOR  ", "RED 0.8 GREEN 0.4 BLUE 0.1\n");
+      fprintf(File_Ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
    }
    if (BRIEF)
    {
       if (RAY == 2)
       {
-         fprintf(File_Ptr1, "%s%s", "surf={diff=", "0.8 0.4 0.1");
-         fprintf(File_Ptr1, ";}\n");
+         fprintf(File_Ptr1, "surf={diff=0.8 0.4 0.1;}\n");
       }
       if (RAY == 4)
       {
-         fprintf(File_Ptr1, "f ");
-         fprintf(File_Ptr1, "%s%s", "0.8 0.4 0.1", "0.95 0.05 5 0 0\n");
+         fprintf(File_Ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
       }
       if (RAY == 5)
-         fprintf(File_Ptr1, "%s%s", "applysurf diffuse ", "0.8 0.4 0.1");
+         fprintf(File_Ptr1, "applysurf diffuse 0.8 0.4 0.1");
    }
    if (RAY != 7)
       fprintf(File_Ptr1, "\n");
 
    /* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
    if (RAY == 5)
-      fprintf(File_Ptr1, "%s%s%s", "/* make a gridded aggregate. this size grid is fast for landscapes. */\n", "/* make z grid = 1 always for landscapes. */\n\n", "grid 33 25 1\n");
+      fprintf(File_Ptr1,
+	    "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
+		"/* make z grid = 1 always for landscapes. */\n\n"
+		"grid 33 25 1\n");
 
    if (RAY == 6)
-      fprintf(File_Ptr1, "%s", "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+      fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
 
    return 0;
 }
@@ -1809,13 +1808,13 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 
    /* Describe the triangle */
    if (RAY == 1)
-      fprintf(File_Ptr1, " %s\n  %s", "OBJECT", "TRIANGLE ");
+      fprintf(File_Ptr1, " OBJECT\n  TRIANGLE ");
    if (RAY == 2 && !BRIEF)
-      fprintf(File_Ptr1, "%s", "surf={diff=");
+      fprintf(File_Ptr1, "surf={diff=");
    if (RAY == 4 && !BRIEF)
       fprintf(File_Ptr1, "f");
    if (RAY == 5 && !BRIEF)
-      fprintf(File_Ptr1, "%s", "applysurf diffuse ");
+      fprintf(File_Ptr1, "applysurf diffuse ");
 
    if (!BRIEF && RAY != 1 && RAY != 7)
       for (i = 0; i <= 2; i++)
@@ -1825,12 +1824,12 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
    {
       if (!BRIEF)
          fprintf(File_Ptr1, ";}\n");
-      fprintf(File_Ptr1, "%s", "polygon={points=3;");
+      fprintf(File_Ptr1, "polygon={points=3;");
    }
    if (RAY == 4)
    {
       if (!BRIEF)
-         fprintf(File_Ptr1, "%s", "0.95 0.05 5 0 0\n");
+         fprintf(File_Ptr1, "0.95 0.05 5 0 0\n");
       fprintf(File_Ptr1, "p 3");
    }
    if (RAY == 5)
@@ -1838,7 +1837,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
       if (!BRIEF)
          fprintf(File_Ptr1, "\n");
       /* EB & DG: removed "T" after "triangle" */
-      fprintf(File_Ptr1, "%s", "triangle");
+      fprintf(File_Ptr1, "triangle");
    }
 
    if (RAY == 7)
@@ -1850,9 +1849,9 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
          fprintf(File_Ptr1, "\n");
 
       if (RAY == 1)
-         fprintf(File_Ptr1, "%s", "      <");
+         fprintf(File_Ptr1, "      <");
       if (RAY == 2)
-         fprintf(File_Ptr1, "%s", " vertex =  ");
+         fprintf(File_Ptr1, " vertex =  ");
       if (RAY > 3 && RAY != 7)
          fprintf(File_Ptr1, " ");
 
@@ -1880,23 +1879,16 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 
    if (RAY == 1)
    {
-      fprintf(File_Ptr1, " %s%s\n", "END_", "TRIANGLE ");
+      fprintf(File_Ptr1, " END_TRIANGLE \n");
       if (!BRIEF)
       {
          fprintf(File_Ptr1,
-                 "  %s   %s%s% #4.4f %s% #4.4f %s% #4.4f\n%s %s%s",
-                 "TEXTURE\n",
-                 "COLOR  ",
-                 "RED",   c[0],
-                 "GREEN", c[1],
-                 "BLUE",  c[2],
-                 "      AMBIENT 0.25 DIFFUSE 0.75",
-                 "END_",
-                 "TEXTURE\n");
+                 "  TEXTURE\n"
+				 "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
+				 "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
+                 c[0], c[1], c[2]);
       }
-      fprintf(File_Ptr1, "  %s%s  %s%s",
-              "COLOR  ", "F_Dflt",
-              "END_", "OBJECT");
+      fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
       triangle_bounds(pt_t);    /* update bounding info */
    }
    if (RAY == 2)
@@ -1948,7 +1940,7 @@ static int _fastcall start_object(void)
    min_xyz[0] = min_xyz[1] = min_xyz[2] = (float)999999.0;
    max_xyz[0] = max_xyz[1] = max_xyz[2] = (float)-999999.0;
 
-   fprintf(File_Ptr1, "%s\n", "COMPOSITE");
+   fprintf(File_Ptr1, "COMPOSITE\n");
    return 0;
 }
 
@@ -1986,18 +1978,18 @@ static int _fastcall end_object(int triout)
          }
 
          /* Add the bounding box info */
-         fprintf(File_Ptr1, "%s  %s", " BOUNDED_BY\n", "INTERSECTION\n");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", "-1.0 ", " 0.0 ", " 0.0 ", -min_xyz[0], "END_", "PLANE");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", " 1.0 ", " 0.0 ", " 0.0 ", max_xyz[0], "END_", "PLANE");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", " 0.0 ", "-1.0 ", " 0.0 ", -min_xyz[1], "END_", "PLANE");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", " 0.0 ", " 1.0 ", " 0.0 ", max_xyz[1], "END_", "PLANE");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", " 0.0 ", " 0.0 ", "-1.0 ", -min_xyz[2], "END_", "PLANE");
-         fprintf(File_Ptr1, "   %s <%s%s%s> % #4.3f %s%s\n", "PLANE", " 0.0 ", " 0.0 ", " 1.0 ", max_xyz[2], "END_", "PLANE");
-         fprintf(File_Ptr1, "  %s%s%s", "END_", "INTERSECTION\n", " END_BOUND\n");
+         fprintf(File_Ptr1, " BOUNDED_BY\n  INTERSECTION\n");
+         fprintf(File_Ptr1, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[0]);
+         fprintf(File_Ptr1, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[0]);
+         fprintf(File_Ptr1, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -min_xyz[1]);
+         fprintf(File_Ptr1, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  max_xyz[1]);
+         fprintf(File_Ptr1, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -min_xyz[2]);
+         fprintf(File_Ptr1, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  max_xyz[2]);
+         fprintf(File_Ptr1, "  END_INTERSECTION\n END_BOUND\n");
       }
 
       /* Complete the composite object statement */
-      fprintf(File_Ptr1, "%s%s\n", "END_", "COMPOSITE");
+      fprintf(File_Ptr1, "END_%s\n", "COMPOSITE");
    }
 
    if (RAY != 6 && RAY != 5)
@@ -2024,7 +2016,7 @@ static void line3d_cleanup(void)
             "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
       if (RAY == 6)
       {
-         fprintf(File_Ptr1, "%s", "LineList From To\n");
+         fprintf(File_Ptr1, "LineList From To\n");
          for (i = 0; i < RO; i++)
             for (j = 0; j <= CO_MAX; j++)
             {
@@ -2038,7 +2030,7 @@ static void line3d_cleanup(void)
          fprintf(File_Ptr1, "\n\n--");
       }
       if (RAY != 7)
-         fprintf(File_Ptr1, "%s%ld }*/\n\n", "{ No. Of Triangles = ", num_tris);
+         fprintf(File_Ptr1, "{ No. Of Triangles = %ld }*/\n\n", num_tris);
       if (RAY == 7)
          fprintf(File_Ptr1, "  0\nENDSEC\n  0\nEOF\n");
       fclose(File_Ptr1);
@@ -2523,7 +2515,7 @@ static int line3dmem(void)
    if (debugflag == 2222 || check_extra > (1L << 16))
    {
       char tmpmsg[70];
-      sprintf(tmpmsg, "used %ld%s", check_extra, " of extra segment");
+      sprintf(tmpmsg, "used %ld of extra segment", check_extra);
       stopmsg(STOPMSG_NO_BUZZER, tmpmsg);
    }
    return 0;
