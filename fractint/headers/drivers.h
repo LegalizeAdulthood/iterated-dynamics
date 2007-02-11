@@ -44,6 +44,7 @@ struct tagDriver
 	/* driver description */			const char *description;
 	/* init the driver */				int (*init)(Driver *drv, int *argc, char **argv);
 	/* validate a fractint.cfg mode */	int (*validate_mode)(Driver *drv, VIDEOINFO *mode);
+	/* find max screen extents */		void (*get_max_screen)(Driver *drv, int *xmax, int *ymax);
 	/* shutdown the driver */			void (*terminate)(Driver *drv);
 	/* pause this driver */				void (*pause)(Driver *drv);
 	/* resume this driver */			void (*resume)(Driver *drv);
@@ -101,6 +102,7 @@ struct tagDriver
 	#name_, desc_, \
     name_##_init, \
 	name_##_validate_mode, \
+	name_##_get_max_screen, \
     name_##_terminate, \
 	name_##_pause, \
 	name_##_resume, \
@@ -189,6 +191,7 @@ extern void driver_set_video_mode(VIDEOINFO *mode);
 #if defined(USE_DRIVER_FUNCTIONS)
 
 extern int driver_validate_mode(VIDEOINFO *mode);
+extern void driver_get_max_screen(int *xmax, int *ymax);
 extern void driver_terminate(void);
 // pause and resume are only used internally in drivers.c
 extern void driver_schedule_alarm(int secs);
@@ -238,6 +241,7 @@ extern void driver_delay(int ms);
 #else
 
 #define driver_validate_mode(mode_)					(*g_driver->validate_mode)(g_driver, mode_)
+#define driver_get_max_screen(xmax_, ymax_)			(*g_driver->get_max_screen)(g_driver, xmax_, ymax_)
 #define driver_terminate()							(*g_driver->terminate)(g_driver)
 // pause and resume are only used internally in drivers.c
 #define void driver_schedule_alarm(_secs)			(*g_driver->schedule_alarm)(g_driver, _secs)
