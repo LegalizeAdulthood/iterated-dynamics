@@ -29,7 +29,7 @@ static int  cmdfile(FILE *,int);
 static int  next_command(char *,int,FILE *,char *,int *,int);
 static int  next_line(FILE *,char *,int);
 int  cmdarg(char *,int);
-static void argerror(char *);
+static void argerror(const char *);
 static void initvars_run(void);
 static void initvars_restart(void);
 static void initvars_fractal(void);
@@ -3054,20 +3054,31 @@ badcolor:
    return -1;
 }
 
-static void argerror(char *badarg)      /* oops. couldn't decode this */
+static void argerror(const char *badarg)      /* oops. couldn't decode this */
 {
-   char msg[300];
-   if ((int)strlen(badarg) > 70) badarg[70] = 0;
-   if (first_init)       /* this is 1st call to cmdfiles */
-      sprintf(msg,"%s%s%s","\
-Oops. I couldn't understand the argument:\n  ",badarg,"\n\n\
-(see the Startup Help screens or documentation for a complete\n\
- argument list with descriptions)");
-   stopmsg(0,msg);
-   if (initbatch) {
-      initbatch = 4;
-      goodbye();
-   }
+	char msg[300];
+	char spillover[71];
+	if ((int) strlen(badarg) > 70)
+	{
+		strncpy(spillover, badarg, 70);
+		spillover[70] = 0;
+		badarg = spillover;
+	}
+    sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", badarg);
+
+	if (first_init)       /* this is 1st call to cmdfiles */
+	{
+		strcat(msg, "\n"
+			"\n"
+			"(see the Startup Help screens or documentation for a complete\n"
+			" argument list with descriptions)");
+	}
+	stopmsg(0, msg);
+	if (initbatch)
+	{
+		initbatch = 4;
+		goodbye();
+	}
 }
 
 void set_3d_defaults()
