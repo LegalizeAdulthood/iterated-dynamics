@@ -624,11 +624,8 @@ win32_disk_key_pressed(Driver *drv)
 		return ch;
 	}
 	ch = frame_get_key_press(0);
-	if (ch)
-	{
-		ch = handle_help_tab(ch);
-		di->key_buffer = ch;
-	}
+	ch = handle_help_tab(ch);
+	di->key_buffer = ch;
 
 	return ch;
 }
