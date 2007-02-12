@@ -2366,16 +2366,6 @@ get_f3d_exit:
 /* --------------------------------------------------------------------- */
 /* These macros streamline the "save near space" campaign */
 
-#define LOADPROMPTS3D(X)     {\
-   static char tmp[] = { X };\
-   prompts3d[++k]= tmp;\
-   }
-
-#define LOADPROMPTSCHOICES(X)     {\
-   static char tmp[] = { X };\
-   choices[k++]= tmp;\
-   }
-
 int get_3d_params()     /* prompt for 3D parameters */
 {
    char *choices[11];
@@ -2400,50 +2390,50 @@ restart_1:
 
    k= -1;
 
-   LOADPROMPTS3D("Preview Mode?");
+   prompts3d[++k] = "Preview Mode?";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = preview;
 
-   LOADPROMPTS3D("    Show Box?");
+   prompts3d[++k] = "    Show Box?";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = showbox;
 
-   LOADPROMPTS3D("Coarseness, preview/grid/ray (in y dir)");
+   prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = previewfactor;
 
-   LOADPROMPTS3D("Spherical Projection?");
+   prompts3d[++k] = "Spherical Projection?";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = sphere = SPHERE;
 
-   LOADPROMPTS3D("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,");
+   prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = g_glasses_type;
 
-   LOADPROMPTS3D("                  3=photo,4=stereo pair)");
+   prompts3d[++k] = "                  3=photo,4=stereo pair)";
    uvalues[k].type = '*';
 
-   LOADPROMPTS3D("Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,");
+   prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = RAY;
 
-   LOADPROMPTS3D("                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)");
+   prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
    uvalues[k].type = '*';
 
-   LOADPROMPTS3D("    Brief output?");
+   prompts3d[++k] = "    Brief output?";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = BRIEF;
 
    check_writefile(ray_name,".ray");
-   LOADPROMPTS3D("    Output File Name");
+   prompts3d[++k] = "    Output File Name";
    uvalues[k].type = 's';
    strcpy(uvalues[k].uval.sval,ray_name);
 
-   LOADPROMPTS3D("Targa output?");
+   prompts3d[++k] = "Targa output?";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = Targa_Out;
 
-   LOADPROMPTS3D("Use grayscale value for depth? (if \"no\" uses color number)");
+   prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
    uvalues[k].type = 'y';
    uvalues[k].uval.ch.val = grayflag;
 
@@ -2515,20 +2505,20 @@ restart_1:
    if (!RAY)
    {
       k = 0;
-      LOADPROMPTSCHOICES("make a surface grid");
-      LOADPROMPTSCHOICES("just draw the points");
-      LOADPROMPTSCHOICES("connect the dots (wire frame)");
-      LOADPROMPTSCHOICES("surface fill (colors interpolated)");
-      LOADPROMPTSCHOICES("surface fill (colors not interpolated)");
-      LOADPROMPTSCHOICES("solid fill (bars up from \"ground\")");
+      choices[k++] = "make a surface grid";
+      choices[k++] = "just draw the points";
+      choices[k++] = "connect the dots (wire frame)";
+      choices[k++] = "surface fill (colors interpolated)";
+      choices[k++] = "surface fill (colors not interpolated)";
+      choices[k++] = "solid fill (bars up from \"ground\")";
       if (SPHERE)
       {
-             LOADPROMPTSCHOICES("light source");
+             choices[k++] = "light source";
       }
       else
       {
-             LOADPROMPTSCHOICES("light source before transformation");
-             LOADPROMPTSCHOICES("light source after transformation");
+             choices[k++] = "light source before transformation";
+             choices[k++] = "light source after transformation";
       }
       for (i = 0; i < k; ++i)
          attributes[i] = 1;
@@ -2553,23 +2543,23 @@ restart_1:
    if (SPHERE)
    {
       k = -1;
-      LOADPROMPTS3D("Longitude start (degrees)");
-      LOADPROMPTS3D("Longitude stop  (degrees)");
-      LOADPROMPTS3D("Latitude start  (degrees)");
-      LOADPROMPTS3D("Latitude stop   (degrees)");
-      LOADPROMPTS3D("Radius scaling factor in pct");
+      prompts3d[++k] = "Longitude start (degrees)";
+      prompts3d[++k] = "Longitude stop  (degrees)";
+      prompts3d[++k] = "Latitude start  (degrees)";
+      prompts3d[++k] = "Latitude stop   (degrees)";
+      prompts3d[++k] = "Radius scaling factor in pct";
    }
    else
    {
       k = -1;
       if (!RAY)
       {
-             LOADPROMPTS3D("X-axis rotation in degrees");
-         LOADPROMPTS3D("Y-axis rotation in degrees");
-             LOADPROMPTS3D("Z-axis rotation in degrees");
+             prompts3d[++k] = "X-axis rotation in degrees";
+         prompts3d[++k] = "Y-axis rotation in degrees";
+             prompts3d[++k] = "Z-axis rotation in degrees";
       }
-      LOADPROMPTS3D("X-axis scaling factor in pct");
-      LOADPROMPTS3D("Y-axis scaling factor in pct");
+      prompts3d[++k] = "X-axis scaling factor in pct";
+      prompts3d[++k] = "Y-axis scaling factor in pct";
    }
    k = -1;
    if (!(RAY && !SPHERE))
@@ -2587,46 +2577,46 @@ restart_1:
    uvalues[++k].uval.ival   = YSCALE    ;
    uvalues[k].type = 'i';
 
-   LOADPROMPTS3D("Surface Roughness scaling factor in pct");
+   prompts3d[++k] = "Surface Roughness scaling factor in pct";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = ROUGH     ;
 
-   LOADPROMPTS3D("'Water Level' (minimum color value)");
+   prompts3d[++k] = "'Water Level' (minimum color value)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = WATERLINE ;
 
    if (!RAY)
    {
-      LOADPROMPTS3D("Perspective distance [1 - 999, 0 for no persp])");
+      prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = ZVIEWER     ;
 
-      LOADPROMPTS3D("X shift with perspective (positive = right)");
+      prompts3d[++k] = "X shift with perspective (positive = right)";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = XSHIFT    ;
 
-      LOADPROMPTS3D("Y shift with perspective (positive = up   )");
+      prompts3d[++k] = "Y shift with perspective (positive = up   )";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = YSHIFT    ;
 
-      LOADPROMPTS3D("Image non-perspective X adjust (positive = right)");
+      prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = xtrans    ;
 
-      LOADPROMPTS3D("Image non-perspective Y adjust (positive = up)");
+      prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = ytrans    ;
 
-      LOADPROMPTS3D("First transparent color");
+      prompts3d[++k] = "First transparent color";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = transparent[0];
 
-      LOADPROMPTS3D("Last transparent color");
+      prompts3d[++k] = "Last transparent color";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = transparent[1];
    }
 
-   LOADPROMPTS3D("Randomize Colors      (0 - 7, '0' disables)");
+   prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
    uvalues[k].type = 'i';
    uvalues[k++].uval.ival = RANDOMIZE;
 
@@ -2691,25 +2681,25 @@ static int get_light_params()
 
    if (ILLUMINE || RAY)
    {
-   LOADPROMPTS3D("X value light vector");
+   prompts3d[++k] = "X value light vector";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = XLIGHT    ;
 
-   LOADPROMPTS3D("Y value light vector");
+   prompts3d[++k] = "Y value light vector";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = YLIGHT    ;
 
-   LOADPROMPTS3D("Z value light vector");
+   prompts3d[++k] = "Z value light vector";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = ZLIGHT    ;
 
                 if (!RAY)
                 {
-   LOADPROMPTS3D("Light Source Smoothing Factor");
+   prompts3d[++k] = "Light Source Smoothing Factor";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = LIGHTAVG  ;
 
-   LOADPROMPTS3D("Ambient");
+   prompts3d[++k] = "Ambient";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = Ambient;
                 }
@@ -2717,38 +2707,38 @@ static int get_light_params()
 
    if (Targa_Out && !RAY)
    {
-        LOADPROMPTS3D("Haze Factor        (0 - 100, '0' disables)");
+        prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
         uvalues[k].type = 'i';
         uvalues[k].uval.ival= haze;
 
                 if (!Targa_Overlay)
         check_writefile(light_name,".tga");
-      LOADPROMPTS3D("Targa File Name  (Assume .tga)");
+      prompts3d[++k] = "Targa File Name  (Assume .tga)";
         uvalues[k].type = 's';
         strcpy(uvalues[k].uval.sval,light_name);
 
-      LOADPROMPTS3D("Back Ground Color (0 - 255)");
+      prompts3d[++k] = "Back Ground Color (0 - 255)";
       uvalues[k].type = '*';
 
-      LOADPROMPTS3D("   Red");
+      prompts3d[++k] = "   Red";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = (int)back_color[0];
 
-      LOADPROMPTS3D("   Green");
+      prompts3d[++k] = "   Green";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = (int)back_color[1];
 
-      LOADPROMPTS3D("   Blue");
+      prompts3d[++k] = "   Blue";
       uvalues[k].type = 'i';
       uvalues[k].uval.ival = (int)back_color[2];
 
-      LOADPROMPTS3D("Overlay Targa File? (Y/N)");
+      prompts3d[++k] = "Overlay Targa File? (Y/N)";
       uvalues[k].type = 'y';
       uvalues[k].uval.ch.val = Targa_Overlay;
 
    }
 
-   LOADPROMPTS3D("");
+   prompts3d[++k] = "";
 
    oldhelpmode = helpmode;
    helpmode = HELP3DLIGHT;
@@ -2875,41 +2865,41 @@ static int get_funny_glasses_params()
    }
 
    k = -1;
-   LOADPROMPTS3D("Interocular distance (as % of screen)");
+   prompts3d[++k] = "Interocular distance (as % of screen)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival= g_eye_separation;
 
-   LOADPROMPTS3D("Convergence adjust (positive = spread greater)");
+   prompts3d[++k] = "Convergence adjust (positive = spread greater)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = xadjust;
 
-   LOADPROMPTS3D("Left  red image crop (% of screen)");
+   prompts3d[++k] = "Left  red image crop (% of screen)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = red_crop_left;
 
-   LOADPROMPTS3D("Right red image crop (% of screen)");
+   prompts3d[++k] = "Right red image crop (% of screen)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = red_crop_right;
 
-   LOADPROMPTS3D("Left  blue image crop (% of screen)");
+   prompts3d[++k] = "Left  blue image crop (% of screen)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = blue_crop_left;
 
-   LOADPROMPTS3D("Right blue image crop (% of screen)");
+   prompts3d[++k] = "Right blue image crop (% of screen)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = blue_crop_right;
 
-   LOADPROMPTS3D("Red brightness factor (%)");
+   prompts3d[++k] = "Red brightness factor (%)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = red_bright;
 
-   LOADPROMPTS3D("Blue brightness factor (%)");
+   prompts3d[++k] = "Blue brightness factor (%)";
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = blue_bright;
 
    if (g_glasses_type == 1 || g_glasses_type == 2)
    {
-      LOADPROMPTS3D("Map File name");
+      prompts3d[++k] = "Map File name";
       uvalues[k].type = 's';
       strcpy(uvalues[k].uval.sval,funnyglasses_map_name);
    }
