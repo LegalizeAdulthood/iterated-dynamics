@@ -93,23 +93,20 @@ struct tagWin32Driver
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
 	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
 #define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
-#define MODE27(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 27)
-#define MODE28(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 28)
 static VIDEOINFO modes[] =
 {
-	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  200),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  400),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  360,  480),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  400),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  240),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  400,  300),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  480,  360),
+	MODE19("Win32 GDI Video          ", "                        ", 0,  600,  450),
 	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  480),
-	MODE27("Win32 GDI Video          ", "                        ", 0,  800,  600),
-	MODE27("Win32 GDI Video          ", "                        ", 0,  1024, 768),
-	MODE28("Win32 GDI Video          ", "                        ", 0,  1280, 1024),
-	MODE28("Win32 GDI Video          ", "                        ", 0, 1024, 1024),
-	MODE28("Win32 GDI Video          ", "                        ", 0, 1600, 1200),
-	MODE28("Win32 GDI Video          ", "                        ", 0, 2048, 2048),
-	MODE28("Win32 GDI Video          ", "                        ", 0, 4096, 4096),
-	MODE28("Win32 GDI Video          ", "                        ", 0, 8192, 8192)
+	MODE19("Win32 GDI Video          ", "                        ", 0,  800,  600),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1024,  768),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1200,  900),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1280,  960),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1400, 1050),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1500, 1125),
+	MODE19("Win32 GDI Video          ", "                        ", 0, 1600, 1200)
 };
 #undef MODE28
 #undef MODE27
@@ -129,28 +126,12 @@ static VIDEOINFO modes[] =
 static int
 check_arg(Win32Driver *di, char *arg)
 {
-#if 0
-	if (strcmp(arg, "-disk") == 0)
-	{
-		return 1;
-	}
-	else if (strcmp(arg, "-simple") == 0)
-	{
-		di->simple_input = 1;
-		return 1;
-	}
-	else if (strcmp(arg, "-geometry") == 0 && *i+1 < argc)
-	{
-		di->Xgeometry = argv[(*i)+1];
-		(*i)++;
-		return 1;
-	}
-#endif
-
 	return 0;
 }
 
-/* handle_help_tab
+/* handle_special_keys
+ *
+ * First, do some slideshow processing.  Then handle F1 and TAB display.
  *
  * Because we want context sensitive help to work everywhere, with the
  * help to display indicated by a non-zero value in helpmode, we need
@@ -162,9 +143,26 @@ check_arg(Win32Driver *di, char *arg)
  * recursing on ourselves as help will invoke get key!
  */
 static int
-handle_help_tab(int ch)
+handle_special_keys(int ch)
 {
 	static int inside_help = 0;
+
+	if (SLIDES_PLAY == g_slides)
+	{
+		if (ch == FIK_ESC)
+		{
+			stopslideshow();
+			ch = 0;
+		}
+		else if (!ch)
+		{
+			ch = slideshw();
+		}
+	}
+	else if ((SLIDES_RECORD == g_slides) && ch)
+	{
+		recordshw(ch);
+	}
 
 	if (FIK_F1 == ch && helpmode && !inside_help)
 	{
@@ -251,6 +249,42 @@ static void center_windows(Win32Driver *di, BOOL center_graphics)
 		status = SetWindowPos(center, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	}
 	_ASSERTE(status);
+}
+
+static void win32_flush(Win32Driver *di)
+{
+	static time_t start = 0;
+	static long ticks_per_second = 0;
+	static long last = 0;
+	static long frames_per_second = 10;
+
+	if (!ticks_per_second)
+	{
+		if (!start)
+		{
+			time(&start);
+			last = readticker();
+		}
+		else
+		{
+			time_t now = time(NULL);
+			long now_ticks = readticker();
+			if (now > start)
+			{
+				ticks_per_second = (now_ticks - last)/(now - start);
+			}
+		}
+	}
+	else
+	{
+		long now = readticker();
+		if ((now - last)*frames_per_second > ticks_per_second)
+		{
+			plot_flush(&di->plot);
+			frame_pump_messages(FALSE);
+			last = now;
+		}
+	}
 }
 
 /***********************************************************************
@@ -610,45 +644,9 @@ win32_key_pressed(Driver *drv)
 	{
 		return ch;
 	}
-	{
-		static time_t start = 0;
-		static long ticks_per_second = 0;
-		static long last = 0;
-		static long frames_per_second = 10;
-
-		if (!ticks_per_second)
-		{
-			if (!start)
-			{
-				time(&start);
-				last = readticker();
-			}
-			else
-			{
-				time_t now = time(NULL);
-				long now_ticks = readticker();
-				if (now > start)
-				{
-					ticks_per_second = (now_ticks - last)/(now - start);
-				}
-			}
-		}
-		else
-		{
-			long now = readticker();
-			if ((now - last)*frames_per_second > ticks_per_second)
-			{
-				plot_flush(&di->plot);
-				frame_pump_messages(FALSE);
-				last = now;
-			}
-		}
-	}
-	ch = frame_get_key_press(0);
-	if (ch)
-	{
-		di->key_buffer = handle_help_tab(ch);
-	}
+	win32_flush(di);
+	ch = handle_special_keys(frame_get_key_press(0));
+	di->key_buffer = ch;
 
 	return ch;
 }
@@ -688,7 +686,7 @@ win32_get_key(Driver *drv)
 		}
 		else
 		{
-			ch = handle_help_tab(frame_get_key_press(1));
+			ch = handle_special_keys(frame_get_key_press(1));
 		}
 	}
 	while (ch == 0);
