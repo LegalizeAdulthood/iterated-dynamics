@@ -8,11 +8,13 @@
 #include "fractint.h"
 #include "wintext.h"
 #include "frame.h"
+#include "drivers.h"
 
 Frame g_frame = { 0 };
 
 static void frame_OnClose(HWND window)
 {
+	PostQuitMessage(0);
 }
 
 static void frame_OnSetFocus(HWND window, HWND old_focus)
@@ -163,6 +165,7 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 {
 	switch (message)
 	{
+	case WM_CLOSE:			HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);					break;
 	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo); break;
 	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);			break;
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);			break;
@@ -209,8 +212,9 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 int frame_pump_messages(int waitflag)
 {
 	MSG msg;
+	BOOL quitting = FALSE;
 
-	for (;;)
+	while (!quitting)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
@@ -221,12 +225,24 @@ int frame_pump_messages(int waitflag)
 			}
 		}
 
-		if (GetMessage(&msg, NULL, 0, 0))
 		{
-			// translate accelerator here?
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			int result = GetMessage(&msg, NULL, 0, 0);
+			if (result > 0)
+			{
+				// translate accelerator here?
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else if (0 == result)
+			{
+				quitting = TRUE;
+			}
 		}
+	}
+
+	if (quitting)
+	{
+		goodbye();
 	}
 
 	return g_frame.keypress_count == 0 ? 0 : 1;
