@@ -8,7 +8,7 @@ Alpha 1:
 
 -----
 
-Slideshow stuff is all messed up.  Works partially, but when we're blocked
+Slideshow stuff works partially, but when we're blocked
 on Windows waiting for an event, we need a way to timeout and return to the
 slideshow.  Could use a SetTimer if we knew the time from the slideshow
 code.  The old slideshow code did a busy wait polling for keyboard input,
@@ -21,35 +21,15 @@ Ctrl^Pad+ and Ctrl^Pad- zoombox rotation doesn't work..
 
 mouse does not work
 
-and those double-height video modes,
-as far as i can recall, there's some pixel
-aspect ratio variable burried somewhere..
-
-..wouldn't it be nice if one could specify
-the canvas size directly, say, at the view
-window prompt screen? (..well, later..)
-
-III) started fractint, selected a mode like 8-8-8, or 1280x1024 (formerly VESA),
--- went to the "View Window Options" screen (<v>), changed nothing, submit
--> "insufficient free memory/disk space" ... reason:
-
-VESA virtual screen setup is here in effect, trying to figure out the size of the
-video memory -- of course it fails, in win32 environment.. so untill someone
-implements a win32 fullscreen mode AND a win32 virtual screen setup,
-there is no use for virtual screens in a windowed context and i suggest
-turning it off (e.g. make "virtual=n" a default setting)
-
-If I choose a video mode of 1600x1200, I would prefer it to change my 
-windows settings to full screen 1600x1200 (some applications actually do 
-this) and then revert back when Fractint terminates.  If I choose 
-1600x1200 now, most of the picture is off screen with no way no scroll 
-as the scrollbars are also off-screen!
+Video modes with pixel dimensions other than 4/3 aspect ratio assume
+non-square pixels?
 
 Beta 3
 ==========================================================================
+With debugflag=10000, error messages are reported for disk video mode when:
 start fractint, pick any disk video mode (e.g. 320x200),
 let it render, wait for completion, then go to the <v> screen,
-change 320 to 32, submit it -> crash
+change 320 to 32, submit it
 
 start fractint, pick a video mode > 320x200, render mandelbrot,
 go to the <v> screen, "Preview display?" -> "yes", <Enter>,
