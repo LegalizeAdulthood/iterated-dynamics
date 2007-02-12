@@ -1069,269 +1069,360 @@ int strncasecmp(char *s,char *t,int ct)
 }
 #endif
 
-#define LOADPROMPTSCHOICES(X,Y)     {\
-   static char tmp[] = { Y };\
-   choices[X]= (char *)tmp;\
-   }
-
 static int menutype;
 #define MENU_HDG 3
 #define MENU_ITEM 1
 
 int main_menu(int fullmenu)
 {
-   char *choices[44]; /* 2 columns * 22 rows */
-   int attributes[44];
-   int choicekey[44];
-   int i;
-   int nextleft,nextright;
-   int oldtabmode /* ,oldhelpmode */;
-   int showjuliatoggle;
-   oldtabmode = tabmode;
-   /* oldhelpmode = helpmode; */
+	char *choices[44]; /* 2 columns * 22 rows */
+	int attributes[44];
+	int choicekey[44];
+	int i;
+	int nextleft, nextright;
+	int oldtabmode;
+	int showjuliatoggle;
+	oldtabmode = tabmode;
+
 top:
-   menutype = fullmenu;
-   tabmode = 0;
-   showjuliatoggle = 0;
-   for (i = 0; i < 44; ++i) {
-      attributes[i] = 256;
-      choices[i] = "";
-      choicekey[i] = -1;
-      }
-   nextleft = -2;
-   nextright = -1;
+	menutype = fullmenu;
+	tabmode = 0;
+	showjuliatoggle = 0;
+	for (i = 0; i < 44; ++i)
+	{
+		attributes[i] = 256;
+		choices[i] = "";
+		choicekey[i] = -1;
+	}
+	nextleft = -2;
+	nextright = -1;
 
-   if (fullmenu) {
-      LOADPROMPTSCHOICES(nextleft+=2,"      CURRENT IMAGE         ");
-      attributes[nextleft] = 256+MENU_HDG;
-      choicekey[nextleft+=2] = 13; /* enter */
-      attributes[nextleft] = MENU_ITEM;
-      if (calc_status == CALCSTAT_RESUMABLE)
-      {
-         LOADPROMPTSCHOICES(nextleft,"continue calculation        ");
-      }
-      else
-      {
-         LOADPROMPTSCHOICES(nextleft,"return to image             ");
-      }
-      choicekey[nextleft+=2] = 9; /* tab */
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"info about image      <tab> ");
-      choicekey[nextleft+=2] = 'o';
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"orbits window          <o>  ");
-      if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
-          nextleft+=2;
-      }
-   LOADPROMPTSCHOICES(nextleft+=2,"      NEW IMAGE             ");
-   attributes[nextleft] = 256+MENU_HDG;
+	if (fullmenu)
+	{
+		nextleft += 2;
+		choices[nextleft] = "      CURRENT IMAGE         ";
+		attributes[nextleft] = 256+MENU_HDG;
+
+		nextleft += 2;
+		choicekey[nextleft] = 13; /* enter */
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = (calc_status == CALCSTAT_RESUMABLE) ?
+			"continue calculation        " :
+			"return to image             ";
+
+		nextleft += 2;
+		choicekey[nextleft] = 9; /* tab */
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "info about image      <tab> ";
+
+		nextleft += 2;
+		choicekey[nextleft] = 'o';
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "orbits window          <o>  ";
+		if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+		{
+			nextleft += 2;
+		}
+	}
+
+	nextleft += 2;
+	choices[nextleft] = "      NEW IMAGE             ";
+	attributes[nextleft] = 256+MENU_HDG;
+
+	nextleft += 2;
+	choicekey[nextleft] = FIK_DELETE;
+	attributes[nextleft] = MENU_ITEM;
 #ifdef XFRACT
-   choicekey[nextleft+=2] = FIK_DELETE;
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"draw fractal           <D>  ");
+	choices[nextleft] = "draw fractal           <D>  ";
 #else
-   choicekey[nextleft+=2] = FIK_DELETE;
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"select video mode...  <del> ");
+	choices[nextleft] = "select video mode...  <del> ";
 #endif
-   choicekey[nextleft+=2] = 't';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"select fractal type    <t>  ");
-   if (fullmenu) {
-      if ((curfractalspecific->tojulia != NOFRACTAL
-          && param[0] == 0.0 && param[1] == 0.0)
-          || curfractalspecific->tomandel != NOFRACTAL) {
-             choicekey[nextleft+=2] = ' ';
-             attributes[nextleft] = MENU_ITEM;
-             LOADPROMPTSCHOICES(nextleft,"toggle to/from julia <space>");
-             showjuliatoggle = 1;
-          }
-      if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA) {
-             choicekey[nextleft+=2] = 'j';
-             attributes[nextleft] = MENU_ITEM;
-             LOADPROMPTSCHOICES(nextleft,"toggle to/from inverse <j>  ");
-             showjuliatoggle = 1;
-          }
-      choicekey[nextleft+=2] = 'h';
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"return to prior image  <h>   ");
 
-      choicekey[nextleft+=2] = 8;
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"reverse thru history <ctl-h> ");
-   }
-   else
-      nextleft += 2;
-   LOADPROMPTSCHOICES(nextleft+=2,"      OPTIONS                ");
-   attributes[nextleft] = 256+MENU_HDG;
-   choicekey[nextleft+=2] = 'x';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"basic options...       <x>  ");
-   choicekey[nextleft+=2] = 'y';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"extended options...    <y>  ");
-   choicekey[nextleft+=2] = 'z';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"type-specific parms... <z>  ");
-   choicekey[nextleft+=2] = 'p';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"passes options...      <p>  ");
-   choicekey[nextleft+=2] = 'v';
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"view window options... <v>  ");
-   if (showjuliatoggle == 0)
-   {
-      choicekey[nextleft+=2] = 'i';
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"fractal 3D parms...    <i>  ");
-   }
-   choicekey[nextleft+=2] = 2;
-   attributes[nextleft] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextleft,"browse parms...      <ctl-b>");
+	nextleft += 2;
+	choicekey[nextleft] = 't';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "select fractal type    <t>  ";
 
-   if (fullmenu) {
-      choicekey[nextleft+=2] = 5;
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"evolver parms...     <ctl-e>");
-   }
+	if (fullmenu)
+	{
+		if ((curfractalspecific->tojulia != NOFRACTAL
+			&& param[0] == 0.0 && param[1] == 0.0)
+			|| curfractalspecific->tomandel != NOFRACTAL)
+		{
+			nextleft += 2;
+			choicekey[nextleft] = FIK_SPACE;
+			attributes[nextleft] = MENU_ITEM;
+			choices[nextleft] = "toggle to/from julia <space>";
+			showjuliatoggle = 1;
+		}
+		if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
+		{
+			nextleft += 2;
+			choicekey[nextleft] = 'j';
+			attributes[nextleft] = MENU_ITEM;
+			choices[nextleft] = "toggle to/from inverse <j>  ";
+			showjuliatoggle = 1;
+		}
+
+		nextleft += 2;
+		choicekey[nextleft] = 'h';
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "return to prior image  <h>   ";
+
+		nextleft += 2;
+		choicekey[nextleft] = FIK_BACKSPACE;
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "reverse thru history <ctl-h> ";
+	}
+	else
+	{
+		nextleft += 2;
+	}
+
+	nextleft += 2;
+	choices[nextleft] = "      OPTIONS                ";
+	attributes[nextleft] = 256+MENU_HDG;
+
+	nextleft += 2;
+	choicekey[nextleft] = 'x';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "basic options...       <x>  ";
+
+	nextleft += 2;
+	choicekey[nextleft] = 'y';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "extended options...    <y>  ";
+
+	nextleft += 2;
+	choicekey[nextleft] = 'z';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "type-specific parms... <z>  ";
+
+	nextleft += 2;
+	choicekey[nextleft] = 'p';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "passes options...      <p>  ";
+
+	nextleft += 2;
+	choicekey[nextleft] = 'v';
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "view window options... <v>  ";
+
+	if (showjuliatoggle == 0)
+	{
+		nextleft += 2;
+		choicekey[nextleft] = 'i';
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "fractal 3D parms...    <i>  ";
+	}
+
+	nextleft += 2;
+	choicekey[nextleft] = FIK_CTL_B;
+	attributes[nextleft] = MENU_ITEM;
+	choices[nextleft] = "browse parms...      <ctl-b>";
+
+	if (fullmenu)
+	{
+		nextleft += 2;
+		choicekey[nextleft] = FIK_CTL_E;
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "evolver parms...     <ctl-e>";
+
 #ifndef XFRACT
-   if (fullmenu) {
-      choicekey[nextleft+=2] = 6;
-      attributes[nextleft] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextleft,"sound parms...       <ctl-f>");
-   }
+		nextleft += 2;
+		choicekey[nextleft] = FIK_CTL_F;
+		attributes[nextleft] = MENU_ITEM;
+		choices[nextleft] = "sound parms...       <ctl-f>";
 #endif
-   LOADPROMPTSCHOICES(nextright+=2,"        FILE                  ");
-   attributes[nextright] = 256+MENU_HDG;
-   choicekey[nextright+=2] = '@';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"run saved command set... <@>  ");
-   if (fullmenu) {
-      choicekey[nextright+=2] = 's';
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"save image to file       <s>  ");
-      }
-   choicekey[nextright+=2] = 'r';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"load image from file...  <r>  ");
-   choicekey[nextright+=2] = '3';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"3d transform from file...<3>  ");
-   if (fullmenu) {
-      choicekey[nextright+=2] = '#';
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"3d overlay from file.....<#>  ");
-      choicekey[nextright+=2] = 'b';
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"save current parameters..<b>  ");
-      choicekey[nextright+=2] = 16;
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"print image          <ctl-p>  ");
-      }
-#ifdef XFRACT
-   choicekey[nextright+=2] = 'd';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"shell to Linux/Unix      <d>  ");
-#else
-   choicekey[nextright+=2] = 'd';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"shell to dos             <d>  ");
-#endif
-   choicekey[nextright+=2] = 'g';
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"give command string      <g>  ");
-   choicekey[nextright+=2] = FIK_ESC;
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"quit "FRACTINT"           <esc> ");
-   choicekey[nextright+=2] = FIK_INSERT;
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,"restart "FRACTINT"        <ins> ");
-#ifdef XFRACT
-   if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16) {
-#else
-   if (fullmenu && g_got_real_dac && colors >= 16) {
-#endif
-      /* nextright += 2; */
-      LOADPROMPTSCHOICES(nextright+=2,"       COLORS                 ");
-      attributes[nextright] = 256+MENU_HDG;
-      choicekey[nextright+=2] = 'c';
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"color cycling mode       <c>  ");
-      choicekey[nextright+=2] = '+';
-      attributes[nextright] = MENU_ITEM;
-      LOADPROMPTSCHOICES(nextright,"rotate palette      <+>, <->  ");
-      if (colors > 16) {
-         if (!g_really_ega) {
-            choicekey[nextright+=2] = 'e';
-            attributes[nextright] = MENU_ITEM;
-            LOADPROMPTSCHOICES(nextright,"palette editing mode     <e>  ");
-         }
-         choicekey[nextright+=2] = 'a';
-         attributes[nextright] = MENU_ITEM;
-         LOADPROMPTSCHOICES(nextright,"make starfield           <a>  ");
-      }
-   }
-   choicekey[nextright+=2] = 1;
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,   "ant automaton          <ctl-a>");
+	}
 
-   choicekey[nextright+=2] = 19;
-   attributes[nextright] = MENU_ITEM;
-   LOADPROMPTSCHOICES(nextright,   "stereogram             <ctl-s>");
+	nextright += 2;
+	attributes[nextright] = 256 + MENU_HDG;
+	choices[nextright] = "        FILE                  ";
 
-   i = (driver_key_pressed()) ? driver_get_key() : 0;
-   if (menu_checkkey(i,0) == 0) {
-      helpmode = HELPMAIN;         /* switch help modes */
-      if ((nextleft += 2) < nextright)
-         nextleft = nextright + 1;
-      i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
-          "MAIN MENU",
-          NULL,NULL,nextleft,(char * *)choices,attributes,
-          2,nextleft/2,29,0,NULL,NULL,NULL,menu_checkkey);
-      if (i == -1)     /* escape */
-         i = FIK_ESC;
-      else if (i < 0)
-         i = 0 - i;
-      else {                      /* user selected a choice */
-         i = choicekey[i];
-         switch (i) {             /* check for special cases */
-            case -10:             /* zoombox functions */
-               helpmode = HELPZOOM;
-               help(0);
-               i = 0;
-               break;
-            }
-         }
-      }
-   if (i == FIK_ESC) {             /* escape from menu exits Fractint */
+	nextright += 2;
+	choicekey[nextright] = '@';
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "run saved command set... <@>  ";
+
+	if (fullmenu)
+	{
+		nextright += 2;
+		choicekey[nextright] = 's';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "save image to file       <s>  ";
+	}
+
+	nextright += 2;
+	choicekey[nextright] = 'r';
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "load image from file...  <r>  ";
+
+	nextright += 2;
+	choicekey[nextright] = '3';
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "3d transform from file...<3>  ";
+
+	if (fullmenu)
+	{
+		nextright += 2;
+		choicekey[nextright] = '#';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "3d overlay from file.....<#>  ";
+
+		nextright += 2;
+		choicekey[nextright] = 'b';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "save current parameters..<b>  ";
+
+		nextright += 2;
+		choicekey[nextright] = 16;
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "print image          <ctl-p>  ";
+	}
+
+	nextright += 2;
+	choicekey[nextright] = 'd';
+	attributes[nextright] = MENU_ITEM;
 #ifdef XFRACT
-      static char s[] = "Exit from Xfractint (y/n)? y";
+	choices[nextright] = "shell to Linux/Unix      <d>  ";
 #else
-      static char s[] = "Exit from Fractint (y/n)? y";
+	choices[nextright] = "shell to dos             <d>  ";
 #endif
-      helptitle();
-      driver_set_attr(1,0,C_GENERAL_MED,24*80);
-      for (i = 9; i <= 11; ++i)
-         driver_set_attr(i,18,C_GENERAL_INPUT,40);
-      putstringcenter(10,18,40,C_GENERAL_INPUT,s);
-      driver_hide_text_cursor();
-      while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13) {
-         if (i == 'n' || i == 'N')
-            goto top;
-         }
-      goodbye();
-      }
-   if (i == FIK_TAB) {
-      tab_display();
-      i = 0;
-      }
-   if (i == FIK_ENTER || i == FIK_ENTER_2)
-      i = 0;                 /* don't trigger new calc */
-   tabmode = oldtabmode;
-   return(i);
+
+	nextright += 2;
+	choicekey[nextright] = 'g';
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "give command string      <g>  ";
+
+	nextright += 2;
+	choicekey[nextright] = FIK_ESC;
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "quit "FRACTINT"           <esc> ";
+
+	nextright += 2;
+	choicekey[nextright] = FIK_INSERT;
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "restart "FRACTINT"        <ins> ";
+
+#ifdef XFRACT
+	if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16)
+#else
+	if (fullmenu && g_got_real_dac && colors >= 16)
+#endif
+	{
+		nextright += 2;
+		choices[nextright] = "       COLORS                 ";
+		attributes[nextright] = 256+MENU_HDG;
+
+		nextright += 2;
+		choicekey[nextright] = 'c';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "color cycling mode       <c>  ";
+
+		nextright += 2;
+		choicekey[nextright] = '+';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "rotate palette      <+>, <->  ";
+
+		if (colors > 16)
+		{
+			if (!g_really_ega)
+			{
+				nextright += 2;
+				choicekey[nextright] = 'e';
+				attributes[nextright] = MENU_ITEM;
+				choices[nextright] = "palette editing mode     <e>  ";
+			}
+
+			nextright += 2;
+			choicekey[nextright] = 'a';
+			attributes[nextright] = MENU_ITEM;
+			choices[nextright] = "make starfield           <a>  ";
+		}
+	}
+
+	nextright += 2;
+	choicekey[nextright] = FIK_CTL_A;
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "ant automaton          <ctl-a>";
+
+	nextright += 2;
+	choicekey[nextright] = FIK_CTL_S;
+	attributes[nextright] = MENU_ITEM;
+	choices[nextright] = "stereogram             <ctl-s>";
+
+	i = driver_key_pressed() ? driver_get_key() : 0;
+	if (menu_checkkey(i, 0) == 0)
+	{
+		helpmode = HELPMAIN;         /* switch help modes */
+		nextleft += 2;
+		if (nextleft < nextright)
+		{
+			nextleft = nextright + 1;
+		}
+		i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
+			"MAIN MENU",
+			NULL, NULL, nextleft, (char **) choices, attributes,
+			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
+		if (i == -1)     /* escape */
+		{
+			i = FIK_ESC;
+		}
+		else if (i < 0)
+		{
+			i = 0 - i;
+		}
+		else                      /* user selected a choice */
+		{
+			i = choicekey[i];
+			if (-10 == i)
+			{
+				helpmode = HELPZOOM;
+				help(0);
+				i = 0;
+			}
+		}
+	}
+	if (i == FIK_ESC)             /* escape from menu exits Fractint */
+	{
+		helptitle();
+		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
+		for (i = 9; i <= 11; ++i)
+		{
+			driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
+		}
+		putstringcenter(10, 18, 40, C_GENERAL_INPUT,
+#ifdef XFRACT
+			"Exit from Xfractint (y/n)? y"
+#else
+			"Exit from Fractint (y/n)? y"
+#endif
+			);
+		driver_hide_text_cursor();
+		while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
+		{
+			if (i == 'n' || i == 'N')
+			{
+				goto top;
+			}
+		}
+		goodbye();
+	}
+	if (i == FIK_TAB)
+	{
+		tab_display();
+		i = 0;
+	}
+	if (i == FIK_ENTER || i == FIK_ENTER_2)
+	{
+		i = 0;                 /* don't trigger new calc */
+	}
+	tabmode = oldtabmode;
+	return i;
 }
 
-static int menu_checkkey(int curkey,int choice)
+static int menu_checkkey(int curkey, int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
    int testkey;
    testkey = choice; /* for warning only */
