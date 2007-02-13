@@ -11,8 +11,6 @@ went by.
 
 Beta 1
 ==========================================================================
-Ctrl^Pad+ and Ctrl^Pad- zoombox rotation doesn't work..
-
 no mouse support
 
 Video modes with pixel dimensions other than 4/3 aspect ratio assume
