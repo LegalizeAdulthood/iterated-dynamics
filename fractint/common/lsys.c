@@ -3,7 +3,9 @@
 #ifdef __TURBOC__
 #include <alloc.h>
 #else
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 #endif
 
   /* see Fractint.c for a description of the "include"  hierarchy */

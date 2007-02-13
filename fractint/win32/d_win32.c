@@ -271,7 +271,7 @@ static void win32_flush(Win32Driver *di)
 			long now_ticks = readticker();
 			if (now > start)
 			{
-				ticks_per_second = (now_ticks - last)/(now - start);
+				ticks_per_second = (now_ticks - last)/((long) (now - start));
 			}
 		}
 	}
