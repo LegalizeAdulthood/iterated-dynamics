@@ -7,7 +7,9 @@ is in the allocations of memory for the big numbers.
 */
 
 #include <string.h>
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -110,10 +112,6 @@ long startstack = 0;
 long maxstack = 0;
 int bf_save_len = 0;
 
-/* ??? for some strange reason, msc 7.0 hangs here without this pragma. ??? */
-#ifndef XFRACT
-#pragma optimize( "", off )
-#endif
 static void init_bf_2(void)
     {
     int i;
@@ -332,10 +330,6 @@ void free_bf_vars()
    bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals=0;
    bflength=rbflength=bfdecimals=0;
    }
-
-#ifndef XFRACT
-#pragma optimize( "", on )
-#endif
 
 /************************************************************************/
 /* Memory allocator routines start here.                                */

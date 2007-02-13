@@ -60,6 +60,9 @@
 
 #if defined(_WIN32)
 #include <io.h>
+#define _CRT_SECURE_NO_DEPRECATE
+/* disable unsafe CRT warnings */
+#pragma warning(disable: 4996)
 #endif
 
 #ifndef USE_VARARGS

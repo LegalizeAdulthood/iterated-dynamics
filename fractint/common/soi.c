@@ -13,7 +13,9 @@
  */
 #include <time.h>
 #include <string.h>
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"

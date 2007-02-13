@@ -27,7 +27,9 @@
 #ifdef __TURBOC__
 #include <alloc.h>
 #elif !defined(__386BSD__)
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 #endif
 
 #ifdef XFRACT

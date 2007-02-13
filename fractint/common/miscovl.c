@@ -7,7 +7,9 @@
 #include <time.h>
 
 #ifndef XFRACT
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 #include <process.h>
 #include <io.h>
 #endif

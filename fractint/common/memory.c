@@ -1,6 +1,8 @@
 #include <string.h>
 #include <limits.h>
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 
 #ifndef USE_VARARGS
 #include <stdarg.h>

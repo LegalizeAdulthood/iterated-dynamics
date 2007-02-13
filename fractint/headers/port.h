@@ -14,6 +14,9 @@
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#define _CRT_SECURE_NO_DEPRECATE
+/* disable unsafe CRT warnings */
+#pragma warning(disable: 4996)
 #endif
 
 #if !defined(XFRACT) && !defined(_WIN32)

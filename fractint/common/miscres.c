@@ -5,7 +5,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#if !defined(_WIN32)
 #include <malloc.h>
+#endif
 
 #ifndef XFRACT
 #include <io.h>
