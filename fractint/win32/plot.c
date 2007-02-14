@@ -16,7 +16,7 @@
 #include "plot.h"
 #include "ods.h"
 
-#define TIMER_ID 1
+#define PLOT_TIMER_ID 1
 
 static Plot *s_plot = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
@@ -555,15 +555,15 @@ int plot_write_palette(Plot *me)
 	return 0;
 }
 
-static VOID CALLBACK frame_timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
 	InvalidateRect(window, NULL, FALSE);
-	KillTimer(window, TIMER_ID);
+	KillTimer(window, PLOT_TIMER_ID);
 }
 
 void plot_schedule_alarm(Plot *me, int delay)
 {
-	UINT_PTR result = SetTimer(me->window, TIMER_ID, delay, frame_timer_redraw);
+	UINT_PTR result = SetTimer(me->window, PLOT_TIMER_ID, delay, redraw);
 	if (!result)
 	{
 		DWORD error = GetLastError();
