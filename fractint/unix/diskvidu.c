@@ -45,8 +45,6 @@ int made_dsktemp = 0;
 
 int startdisk()
 {
-   if (!diskisactive)
-      return(0);
    headerlength = disktarga = 0;
    return (common_startdisk(sxdots,sydots,colors));
    }
