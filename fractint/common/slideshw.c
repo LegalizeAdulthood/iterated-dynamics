@@ -52,7 +52,7 @@ static struct scancodes scancodes[] =
 	{ FIK_CTL_UP_ARROW,		"CTRL_UP"   },
 	{ FIK_CTL_END,			"CTRL_END"  },
 	{ FIK_CTL_HOME,			"CTRL_HOME" },
-	{ -1,             NULL       }
+	{ -1,					NULL		}
 };
 #define stop sizeof(scancodes)/sizeof(struct scancodes)-1
 
@@ -258,6 +258,7 @@ start:
       {
          float fticks;
          err = fscanf(fpss,"%f",&fticks); /* how many ticks to wait */
+		 driver_set_keyboard_timeout((int) (fticks*1000.f));
          fticks *= CLK_TCK;             /* convert from seconds to ticks */
          if (err==1)
          {
