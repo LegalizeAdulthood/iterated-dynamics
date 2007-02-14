@@ -2127,7 +2127,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       if (totparms > 5 || floatparms-intparms > 2 || intparms > 4)
          goto badarg;
       viewwindow = 1;
-      viewreduction = (float)4.2;  /* reset default values */
+      viewreduction = 4.2f;  /* reset default values */
       finalaspectratio = screenaspect;
       viewcrop = 1; /* yes */
       viewxdots = viewydots = 0;
