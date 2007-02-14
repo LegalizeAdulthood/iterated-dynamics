@@ -1,23 +1,11 @@
-Known issues in this release, from oldest to newest:
+This file describes known issues in this release, from oldest to newest:
 
-Alpha 1:
-==========================================================================
-AutoKey stuff works partially, but when we're blocked
-on Windows waiting for an event, we need a way to timeout and return to the
-slideshow.  Could use a SetTimer if we knew the time from the slideshow
-code.  The old slideshow code did a busy wait polling for keyboard input,
-where the slideshow would have a chance to inject a key if enough time
-went by.
-
-Beta 1
-==========================================================================
-no mouse support
+There is no mouse support.  Zooming is by keyboard only.
 
 Video modes with pixel dimensions other than 4/3 aspect ratio assume
-non-square pixels?
+non-square pixels.  The images all render fine, but they appear stretched
+or squashed.
 
-Beta 3
-==========================================================================
 With debugflag=10000, error messages are reported for disk video mode when:
 start fractint, pick any disk video mode (e.g. 320x200),
 let it render, wait for completion, then go to the <v> screen,
