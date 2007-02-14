@@ -448,7 +448,7 @@ extern _CMPLX                SaveC;
 extern int                   savedac;
 extern char                  savename[];
 extern long                  saveticks;
-extern int *				 save_orbit;
+extern int	 				 save_orbit[];
 extern int                   save_release;
 extern int                   save_system;
 extern int                   scale_map[];

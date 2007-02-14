@@ -114,7 +114,7 @@ unsigned long lm;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
 int     show_orbit;                     /* flag to turn on and off */
 int     orbit_ptr;                      /* pointer into save_orbit array */
-int *save_orbit;                    /* array to save orbit values */
+int save_orbit[1500];                    /* array to save orbit values */
 int     orbit_color=15;                 /* XOR color */
 
 int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
@@ -638,7 +638,6 @@ int calcfract(void)
       atan_colors = 180;
 
    /* ORBIT stuff */
-   save_orbit = (int *)((double huge *)dx0 + 4*OLDMAXPIXELS);
    show_orbit = start_showorbit;
    orbit_ptr = 0;
    orbit_color = 15;

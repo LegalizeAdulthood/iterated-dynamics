@@ -1392,7 +1392,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 {
    int i, j, c;
    int save_sxoffs,save_syoffs;
-   if (orbit_ptr >= 1500) return;
+   if (orbit_ptr >= 1500-3) return;
    i = (int)(dy * plotmx1 - dx * plotmx2); i += sxoffs;
    if (i < 0 || i >= sxdots) return;
    j = (int)(dx * plotmy1 - dy * plotmy2); j += syoffs;
@@ -1456,7 +1456,7 @@ void scrub_orbit(void)
    save_sxoffs = sxoffs;
    save_syoffs = syoffs;
    sxoffs = syoffs = 0;
-   while (orbit_ptr > 0)
+   while (orbit_ptr >= 3)
    {
       c = *(save_orbit + --orbit_ptr);
       j = *(save_orbit + --orbit_ptr);
