@@ -205,19 +205,21 @@ show_hide_windows(HWND show, HWND hide)
 static void
 max_size(Win32Driver *di, int *width, int *height, BOOL *center_graphics)
 {
-	*center_graphics = TRUE;
+	BOOL center_x = TRUE;
+	BOOL center_y = TRUE;
 	*width = di->wintext.max_width;
 	*height = di->wintext.max_height;
-	if (xdots > *width)
+	if (g_video_table[g_adapter].xdots > *width)
 	{
-		*width = xdots;
-		*center_graphics = FALSE;
+		*width = g_video_table[g_adapter].xdots;
+		center_x = FALSE;
 	}
-	if (ydots > *height)
+	if (g_video_table[g_adapter].ydots > *height)
 	{
-		*height = ydots;
-		*center_graphics = FALSE;
+		*height = g_video_table[g_adapter].ydots;
+		center_y = FALSE;
 	}
+	*center_graphics = (center_x || center_y);
 }
 
 static void center_windows(Win32Driver *di, BOOL center_graphics)
@@ -405,7 +407,7 @@ win32_resize(Driver *drv)
 	int width, height;
 	BOOL center_graphics;
 
-	if ((xdots == di->plot.width) && (ydots == di->plot.height))
+	if ((g_video_table[g_adapter].xdots == di->plot.width) && (g_video_table[g_adapter].ydots == di->plot.height))
 	{
 		return 0;
 	}
