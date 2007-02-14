@@ -329,4 +329,10 @@ driver_get_max_screen(int *xmax, int *ymax)
 	(*g_driver->get_max_screen)(g_driver, xmax, ymax);
 }
 
+void
+driver_set_keyboard_timeout(int ms)
+{
+	(*g_driver->set_keyboard_timeout)(g_driver, ms);
+}
+
 #endif

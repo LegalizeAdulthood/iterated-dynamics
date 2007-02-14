@@ -90,11 +90,12 @@ struct tagDriver
 										int (*sound_on)(Driver *drv, int frequency);
 										void (*sound_off)(Driver *drv);
 										void (*mute)(Driver *drv);
+
 										int (*diskp)(Driver *drv);
 										int (*get_char_attr)(Driver *drv);
 										void (*put_char_attr)(Driver *drv, int char_attr);
-
 										void (*delay)(Driver *drv, int ms);
+										void (*set_keyboard_timeout)(Driver *drv, int ms);
 };
 
 #define STD_DRIVER_STRUCT(name_, desc_) \
@@ -149,7 +150,8 @@ struct tagDriver
     name_##_diskp, \
 	name_##_get_char_attr, \
 	name_##_put_char_attr, \
-	name_##_delay \
+	name_##_delay, \
+	name_##_set_keyboard_timeout \
   }
 
 /* Define the drivers to be included in the compilation:
@@ -237,6 +239,7 @@ extern int driver_diskp(void);
 extern int driver_get_char_attr(void);
 extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);
+extern void driver_set_keyboard_timeout(int ms);
 
 #else
 
@@ -287,6 +290,7 @@ extern void driver_delay(int ms);
 #define driver_get_char_attr()						(*g_driver->get_char_attr)(g_driver)
 #define driver_put_char_attr(char_attr_)			(*g_driver->put_char_attr)(g_driver, char_attr_)
 #define driver_delay(ms_)							(*g_driver->delay)(g_driver, ms_)
+#define driver_set_keyboard_timeout(ms_)			(*g_driver->set_keyboard_timeout)(g_driver, ms_)
 
 #endif
 
