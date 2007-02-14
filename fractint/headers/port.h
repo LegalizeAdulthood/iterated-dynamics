@@ -35,7 +35,7 @@
 extern long stackavail();
 #endif
 
-#if (defined(__STDC__) || defined(__cplusplus) || defined(_MSC_VER) || defined(__TURBOC__)) && !defined(STDC)
+#if (defined(__STDC__) || defined(__cplusplus) || defined(_MSC_VER)) && !defined(STDC)
 #  define STDC
 #endif
 
@@ -47,12 +47,6 @@ extern long stackavail();
 #  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
 #    define const
 #  endif
-#endif
-
-#ifdef __TURBOC__
-#  define _matherr matherr
-#  define _stackavail stackavail
-#  define USE_BIGNUM_C_CODE
 #endif
 
 /* If endian.h is not present, it can be handled in the code below, */
@@ -114,10 +108,6 @@ extern long stackavail();
 #    endif
 #  endif  /* XFRACT  */
 #endif /* _WIN32 */
-
-#ifdef __TURBOC__
-   #define __cdecl cdecl
-#endif
 
 #if defined(_WIN32)
 		/*================================== Win32 definitions */

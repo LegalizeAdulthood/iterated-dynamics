@@ -191,7 +191,6 @@ char supervga_list[] =
 	0, 0								//        dw      0
 };
 int g_svga_type = 0;
-int g_text_type = 0;
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
