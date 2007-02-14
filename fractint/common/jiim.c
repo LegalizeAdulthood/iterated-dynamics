@@ -46,10 +46,6 @@
 #include <varargs.h>
 #endif
 
-#ifdef __TURBOC__
-#   include <mem.h>   /* to get mem...() declarations */
-#endif
-
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"

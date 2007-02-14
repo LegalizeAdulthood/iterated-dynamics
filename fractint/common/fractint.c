@@ -57,22 +57,6 @@ long timer_start,timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
 char *fract_dir1="", *fract_dir2="";
 
-#if !defined(_WIN32)
-#ifdef __TURBOC__
-/* yes, I *know* it's supposed to be compatible with Microsoft C,
-   but some of the routines need to know if the "C" code
-   has been compiled with Turbo-C.  This flag is a 1 if FRACTINT.C
-   (and presumably the other routines as well) has been compiled
-   with Turbo-C. */
-int compiled_by_turboc = 1;
-
-/* set size to be used for overlays, a bit bigger than largest (help) */
-unsigned _ovrbuffer = 54 * 64; /* that's 54k for overlays, counted in paragraphs */
-#else
-int compiled_by_turboc = 0;
-#endif
-#endif
-
 /*
    the following variables are out here only so
    that the calcfract() and assembler routines can get at them easily

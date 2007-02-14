@@ -121,10 +121,6 @@
 #include <varargs.h>
 #endif
 
-#ifdef __TURBOC__
-#   include <mem.h>   /* to get mem...() declarations */
-#endif
-
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -1245,9 +1241,6 @@ static CEditor *CEditor_Construct( int x, int y, char letter,
    return me;
    }
 
-#ifdef __TURBOC__
-#   pragma argsused   /* kills "arg not used" warning */
-#endif
 #ifdef __CLINT__
 #   pragma argsused   /* kills "arg not used" warning */
 #endif
@@ -1587,9 +1580,6 @@ static void RGBEditor__other_key(int key, CEditor *ceditor, VOIDPTR info) /* pri
       }
    }
 
-#ifdef __TURBOC__
-#   pragma argsused   /* kills "arg not used" warning */
-#endif
 #ifdef __CLINT__
 #   pragma argsused   /* kills "arg not used" warning */
 #endif
@@ -2491,9 +2481,6 @@ static void PalTable__DoCurs(PalTable *me, int key)
    }
 
 
-#ifdef __TURBOC__
-#   pragma argsused
-#endif
 #ifdef __CLINT__
 #   pragma argsused
 #endif

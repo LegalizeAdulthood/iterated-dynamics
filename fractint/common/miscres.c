@@ -19,10 +19,6 @@
 #include <varargs.h>
 #endif
 
-/*#ifdef __TURBOC__
-#include <dir.h>
-#endif  */
-
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -68,11 +64,7 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 		}
 	}
 	fullpathname[0] = 0;                         /* indicate none found */
-/* #ifdef __TURBOC__ */                         /* look for the file */
-/*   strcpy(fullpathname,searchpath(temp_path)); */
-/* #else */
 	_searchenv(temp_path,"PATH",fullpathname);
-/* #endif */
 	if (fullpathname[0] != 0)                    /* found it! */
 	{
 		if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) /* stupid klooge! */
