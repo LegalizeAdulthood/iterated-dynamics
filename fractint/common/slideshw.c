@@ -95,8 +95,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
 {
    int savescrn[80];
    int i;
-   if (g_text_type > 1)
-      return(1);
+
    for (i=0; i<80; i++)
    {
       driver_move_cursor(row,i);
@@ -117,9 +116,8 @@ static void message(int secs, char *buf)
 {
 	char nearbuf[41] = { 0 };
 	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
-	if (g_text_type < 2)
-		showtempmsg_txt(0,0,7,secs,nearbuf);
-	else if (showtempmsg(nearbuf) == 0)
+	showtempmsg_txt(0,0,7,secs,nearbuf);
+	if (showtempmsg(nearbuf) == 0)
     {
 		sleep_secs(secs);
 		cleartempmsg();
