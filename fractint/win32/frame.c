@@ -10,6 +10,8 @@
 #include "frame.h"
 #include "drivers.h"
 
+#define FRAME_TIMER_ID 2
+
 Frame g_frame = { 0 };
 
 static void frame_OnClose(HWND window)
@@ -160,6 +162,13 @@ static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 	info->ptMinTrackSize = info->ptMaxSize;
 }
 
+static void frame_OnTimer(HWND window, UINT id)
+{
+	_ASSERTE(g_frame.window == window);
+	_ASSERTE(FRAME_TIMER_ID == id);
+	g_frame.timed_out = TRUE;
+}
+
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	switch (message)
@@ -172,6 +181,7 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);				break;
 	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);			break;
 	case WM_CHAR:			HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);					break;
+	case WM_TIMER:			HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);					break;
 	default:				return DefWindowProc(window, message, wp, lp);					break;
 	}
 	return 0;
@@ -212,15 +222,18 @@ int frame_pump_messages(int waitflag)
 {
 	MSG msg;
 	BOOL quitting = FALSE;
+	g_frame.timed_out = FALSE;
 
 	while (!quitting)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
 			/* no messages waiting */
-			if (waitflag == 0 || g_frame.keypress_count != 0)
+			if (!waitflag
+				|| (g_frame.keypress_count != 0)
+				|| (waitflag && g_frame.timed_out))
 			{
-				return (g_frame.keypress_count == 0) ? 0 : 1;
+				return (g_frame.keypress_count > 0) ? 1 : 0;
 			}
 		}
 
@@ -247,15 +260,19 @@ int frame_pump_messages(int waitflag)
 	return g_frame.keypress_count == 0 ? 0 : 1;
 }
 
-int frame_get_key_press(int option)
+int frame_get_key_press(int wait_for_key)
 {
 	int i;
 
-	frame_pump_messages(option);
+	frame_pump_messages(wait_for_key);
+	if (wait_for_key && g_frame.timed_out)
+	{
+		return 0;
+	}
 
 	if (g_frame.keypress_count == 0)
 	{
-		_ASSERTE(option == 0);
+		_ASSERTE(wait_for_key == 0);
 		return 0;
 	}
 
@@ -311,4 +328,14 @@ void frame_resize(int width, int height)
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
 
+}
+
+void frame_set_keyboard_timeout(int ms)
+{
+	UINT_PTR result = SetTimer(g_frame.window, FRAME_TIMER_ID, ms, NULL);
+	if (!result)
+	{
+		DWORD error = GetLastError();
+		_ASSERTE(result);
+	}
 }
