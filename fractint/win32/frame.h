@@ -15,6 +15,7 @@ struct tagFrame
 	int nc_height;
 	HWND child;
 	BOOL has_focus;
+	BOOL timed_out;
 
 	/* the keypress buffer */
 	unsigned int  keypress_count;
@@ -32,5 +33,6 @@ extern int frame_get_key_press(int option);
 extern int frame_pump_messages(int waitflag);
 extern void frame_schedule_alarm(int soon);
 extern void frame_resize(int width, int height);
+extern void frame_set_keyboard_timeout(int ms);
 
 #endif
