@@ -1177,6 +1177,12 @@ win32_get_max_screen(Driver *drv, int *xmax, int *ymax)
 	}
 }
 
+static void
+win32_set_keyboard_timeout(Driver *drv, int ms)
+{
+	frame_set_keyboard_timeout(ms);
+}
+
 static Win32Driver win32_driver_info =
 {
 	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows."),

@@ -1121,6 +1121,10 @@ static void win32_disk_get_max_screen(Driver *drv, int *xmax, int *ymax)
 	}
 }
 
+static void win32_disk_set_keyboard_timeout(Driver *drv, int ms)
+{
+}
+
 static Win32DiskDriver win32_disk_driver_info =
 {
 	STD_DRIVER_STRUCT(win32_disk, "A disk video driver for 32-bit Windows.")
