@@ -158,7 +158,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 int outline_stereo(BYTE * pixels, int linelen)
 {
    int i, j, x, s;
-   int *same = _alloca(sizeof(int)*ydots);
+   int *same = _alloca(sizeof(int)*xdots);
    int *colour = _alloca(sizeof(int)*xdots);
    if ((Y) >= ydots)
       return(1);
