@@ -1764,7 +1764,7 @@ x11_window(Driver *drv)
   x11_video_table[0].xdots = sxdots;
   x11_video_table[0].ydots = sydots;
   x11_video_table[0].colors = colors;
-  x11_video_table[0].dotmode = DOTMODE_ROLL_YOUR_OWN;
+  x11_video_table[0].dotmode = 19;
 }
 
 /*----------------------------------------------------------------------
@@ -2575,7 +2575,13 @@ static void x11_delay(Driver *drv, int ms)
 {
 }
 
+static void x11_get_max_screen(Driver *drv, int *width, int *height)
+{
+}
 
+static void x11_set_keyboard_timeout(Driver *drv, int ms)
+{
+}
 
 
 /*
