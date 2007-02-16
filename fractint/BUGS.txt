@@ -6,7 +6,7 @@ There is no mouse support.  Panning and zooming is by keyboard only.
 
 Video modes with pixel dimensions other than 4/3 aspect ratio assume
 non-square pixels.  The images all render fine, but they appear stretched
-or squashed.
+or squashed.  The choice of resolutions in fractint.cfg reflect this.
 
 With debugflag=10000, error messages are reported for disk video mode when:
 start fractint, pick any disk video mode (e.g. 320x200),
