@@ -76,7 +76,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
    if (resumeflag)
       goto resumeloop;
 
-   for (;;)                    /* eternal loop */
+   while (1)                    /* eternal loop */
    {
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
@@ -84,10 +84,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		if (calc_status != CALCSTAT_RESUMABLE || showfile == 0)
 		{
-			if (driver_resize())
-			{
-				calc_status = CALCSTAT_NO_FRACTAL;
-			}
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
 			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
