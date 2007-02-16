@@ -1,5 +1,7 @@
 This file describes known issues in this release, from oldest to newest:
 
+There is no sound output support.
+
 There is no mouse support.  Panning and zooming is by keyboard only.
 
 Video modes with pixel dimensions other than 4/3 aspect ratio assume
