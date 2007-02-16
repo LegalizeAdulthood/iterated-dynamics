@@ -40,6 +40,8 @@ copy: $(FILES)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
+d_x11.o: d_x11.c ${HFD}/drivers.h
+
 calcmand.o: calcmand.c ${HFD}/port.h
 
 calmanfp.o: calmanfp.c ${HFD}/port.h ${HFD}/fractype.h
