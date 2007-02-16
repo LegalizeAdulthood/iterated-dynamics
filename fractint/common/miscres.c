@@ -774,8 +774,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, col, row);
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
-		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u Used_extra %u",
-			total_formula_mem, posp, vsp, used_extra);
+		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",
+			total_formula_mem, posp, vsp);
 		write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
 			StoPtr, LodPtr, Max_Ops, Max_Args, LastInitOp);
 	}
