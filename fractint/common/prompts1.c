@@ -894,14 +894,15 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
    int i, j;
 #define MAXFTYPES 200
    char tname[40];
+   struct FT_CHOICE storage[MAXFTYPES] = { 0 };
    struct FT_CHOICE *choices[MAXFTYPES];
    int attributes[MAXFTYPES];
 
    /* steal existing array for "choices" */
-   choices[0] = (struct FT_CHOICE *)boxy;
+   choices[0] = &storage[0];
    attributes[0] = 1;
    for (i = 1; i < MAXFTYPES; ++i) {
-      choices[i] = choices[i-1] + 1;
+      choices[i] = &storage[i];
       attributes[i] = 1;
       }
    ft_choices = &choices[0];
@@ -1798,14 +1799,13 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE * infile, void * ch, char *itemname)
+int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
 {
       /*
       function returns the number of entries found; if a
       specific entry is being looked for, returns -1 if
       the entry is found, 0 otherwise.
       */
-   struct entryinfo ** choices;
    char buf[101];
    int exclude_entry;
    long name_offset, temp_offset;   /*rev 5/23/96 to add temp_offset,
@@ -1814,8 +1814,6 @@ int scan_entries(FILE * infile, void * ch, char *itemname)
                                       '}' - GGM */
    long file_offset = -1;
    int numentries = 0;
-
-   choices = (struct entryinfo * *) ch;
 
    for (;;)
    {                            /* scan the file for entry names */
@@ -1909,8 +1907,8 @@ top:
          {
             if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
             {
-               strcpy(choices[numentries]->name, buf);
-               choices[numentries]->point = name_offset;
+               strcpy(choices[numentries].name, buf);
+               choices[numentries].point = name_offset;
                if (++numentries >= MAXENTRIES)
                {
                   sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
@@ -1937,27 +1935,29 @@ static long gfe_choose_entry(int type, char *title, char *filename, char *entryn
 #endif
 	int numentries, i;
 	char buf[101];
-	struct entryinfo choices[MAXENTRIES];
-	int attributes[MAXENTRIES];
+	struct entryinfo storage[MAXENTRIES + 1];
+	struct entryinfo *choices[MAXENTRIES + 1] = { NULL };
+	int attributes[MAXENTRIES + 1] = { 0 };
 	void (*formatitem)(int, char *);
 	int boxwidth, boxdepth, colwidth;
 	char instr[80];
 
 	static int dosort = 1;
 
-	gfe_choices = &choices[0];
+	gfe_choices = &storage[0];
 	gfe_title = title;
 
 retry:
 	for (i = 0; i < MAXENTRIES+1; i++)
 	{
+		choices[i] = &storage[i];
 		attributes[i] = 1;
 	}
 
 	numentries = 0;
 	helptitle(); /* to display a clue when file big and next is slow */
 
-	numentries = scan_entries(gfe_file, choices, NULL);
+	numentries = scan_entries(gfe_file, &storage[0], NULL);
 	if (numentries == 0)
 	{
 		stopmsg(0, "File doesn't contain any valid entries");
@@ -1968,7 +1968,7 @@ retry:
 	if (dosort)
 	{
 		strcat(instr, "off");
-		shell_sort((char *) choices, numentries, sizeof(char *), lccompare);
+		shell_sort((char *) &choices, numentries, sizeof(struct entryinfo *), lccompare);
 	}
 	else
 	{
@@ -2003,8 +2003,8 @@ retry:
 		/* go back to file list or cancel */
 		return (i == -FIK_F6) ? -2 : -1;
 	}
-	strcpy(entryname, choices[i].name);
-	return choices[i].point;
+	strcpy(entryname, choices[i]->name);
+	return choices[i]->point;
 }
 
 
