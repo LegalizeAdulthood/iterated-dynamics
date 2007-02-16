@@ -1362,10 +1362,10 @@ typedef struct tagCHOICE CHOICE;
 
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {
-	CHOICE *choice1 = (CHOICE *) arg1;
-	CHOICE *choice2 = (CHOICE *) arg2;
+	CHOICE **choice1 = (CHOICE **) arg1;
+	CHOICE **choice2 = (CHOICE **) arg2;
 
-   return strncasecmp(choice1->name, choice2->name, NUM_OF(choice1->name));
+   return strncasecmp((*choice1)->name, (*choice2)->name, NUM_OF((*choice1)->name));
 }
 
 
