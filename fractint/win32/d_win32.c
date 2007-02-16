@@ -19,115 +19,12 @@
 #include "WinText.h"
 #include "frame.h"
 #include "plot.h"
+#include "d_win32.h"
 #include "ods.h"
-
-extern int windows_delay(int ms);
 
 extern HINSTANCE g_instance;
 
-#define MAXSCREENS 10
-#define DRAW_INTERVAL 6
-#define TIMER_ID 1
-
-#define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
-
-#define DI(name_) Win32Driver *name_ = (Win32Driver *) drv
-
-typedef struct tagWin32Driver Win32Driver;
-struct tagWin32Driver
-{
-	Driver pub;
-
-	Frame frame;
-	Plot plot;
-	WinText wintext;
-
-	BOOL text_not_graphics;
-
-	/* key_buffer
-	*
-	* When we peeked ahead and saw a keypress, stash it here for later
-	* feeding to our caller.
-	*/
-	int key_buffer;
-
-	int screen_count;
-	BYTE *saved_screens[MAXSCREENS];
-	int saved_cursor[MAXSCREENS+1];
-	BOOL cursor_shown;
-	int cursor_row;
-	int cursor_col;
-};
-
-/* VIDEOINFO:															*/
-/*         char    name[26];       Adapter name (IBM EGA, etc)          */
-/*         char    comment[26];    Comments (UNTESTED, etc)             */
-/*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-/*         int     videomodeax;    begin with INT 10H, AX=(this)        */
-/*         int     videomodebx;                 ...and BX=(this)        */
-/*         int     videomodecx;                 ...and CX=(this)        */
-/*         int     videomodedx;                 ...and DX=(this)        */
-/*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-/*         int     dotmode;        video access method used by asm code */
-/*                                      1 == BIOS 10H, AH=12,13 (SLOW)  */
-/*                                      2 == access like EGA/VGA        */
-/*                                      3 == access like MCGA           */
-/*                                      4 == Tseng-like  SuperVGA*256   */
-/*                                      5 == P'dise-like SuperVGA*256   */
-/*                                      6 == Vega-like   SuperVGA*256   */
-/*                                      7 == "Tweaked" IBM-VGA ...*256  */
-/*                                      8 == "Tweaked" SuperVGA ...*256 */
-/*                                      9 == Targa Format               */
-/*                                      10 = Hercules                   */
-/*                                      11 = "disk video" (no screen)   */
-/*                                      12 = 8514/A                     */
-/*                                      13 = CGA 320x200x4, 640x200x2   */
-/*                                      14 = Tandy 1000                 */
-/*                                      15 = TRIDENT  SuperVGA*256      */
-/*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     xdots;          number of dots across the screen     */
-/*         int     ydots;          number of dots down the screen       */
-/*         int     colors;         number of colors available           */
-
-#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
-static VIDEOINFO modes[] =
-{
-	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  240),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  400,  300),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  480,  360),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  600,  450),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  480),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  800,  600),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1024,  768),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1200,  900),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1280,  960),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1400, 1050),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1500, 1125),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1600, 1200)
-};
-#undef MODE28
-#undef MODE27
-#undef MODE19
-#undef DRIVER_MODE
-
-/* check_arg
- *
- *	See if we want to do something with the argument.
- *
- * Results:
- *	Returns 1 if we parsed the argument.
- *
- * Side effects:
- *	Increments i if we use more than 1 argument.
- */
-static int
-check_arg(Win32Driver *di, char *arg)
-{
-	return 0;
-}
+#define DI(name_) Win32BaseDriver *name_ = (Win32BaseDriver *) drv
 
 /* handle_special_keys
  *
@@ -183,77 +80,7 @@ handle_special_keys(int ch)
 	return ch;
 }
 
-static void
-parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
-{
-	/* do something like XParseGeometry() */
-	if (2 == sscanf(spec, "%dx%d", width, height))
-	{
-		/* all we care about is width and height for disk output */
-		*x = 0;
-		*y = 0;
-	}
-}
-
-static void
-show_hide_windows(HWND show, HWND hide)
-{
-	ShowWindow(show, SW_NORMAL);
-	ShowWindow(hide, SW_HIDE);
-}
-
-static void
-max_size(Win32Driver *di, int *width, int *height, BOOL *center_graphics)
-{
-	BOOL center_x = TRUE;
-	BOOL center_y = TRUE;
-	*width = di->wintext.max_width;
-	*height = di->wintext.max_height;
-	if (g_video_table[g_adapter].xdots > *width)
-	{
-		*width = g_video_table[g_adapter].xdots;
-		center_x = FALSE;
-	}
-	if (g_video_table[g_adapter].ydots > *height)
-	{
-		*height = g_video_table[g_adapter].ydots;
-		center_y = FALSE;
-	}
-	*center_graphics = (center_x || center_y);
-}
-
-static void center_windows(Win32Driver *di, BOOL center_graphics)
-{
-	HWND center, zero;
-	int width, height;
-	BOOL status;
-
-	if (center_graphics)
-	{
-		zero = di->wintext.hWndCopy;
-		center = di->plot.window;
-		width = di->plot.width;
-		height = di->plot.height;
-	}
-	else
-	{
-		zero = di->plot.window;
-		center = di->wintext.hWndCopy;
-		width = di->wintext.max_width;
-		height = di->wintext.max_height;
-	}
-
-	status = SetWindowPos(zero, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	_ASSERTE(status);
-	{
-		int x = (g_frame.width - width)/2;
-		int y = (g_frame.height - height)/2;
-		status = SetWindowPos(center, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	}
-	_ASSERTE(status);
-}
-
-static void win32_flush(Win32Driver *di)
+static void flush_output(void)
 {
 	static time_t start = 0;
 	static long ticks_per_second = 0;
@@ -282,7 +109,7 @@ static void win32_flush(Win32Driver *di)
 		long now = readticker();
 		if ((now - last)*frames_per_second > ticks_per_second)
 		{
-			plot_flush(&di->plot);
+			driver_flush();
 			frame_pump_messages(FALSE);
 			last = now;
 		}
@@ -308,13 +135,13 @@ static void win32_flush(Win32Driver *di)
 *
 *----------------------------------------------------------------------
 */
-static void
+void
 win32_terminate(Driver *drv)
 {
 	DI(di);
 	ODS("win32_terminate");
 
-	plot_terminate(&di->plot);
+	/* plot_terminate(&di->plot); */
 	wintext_destroy(&di->wintext);
 	{
 		int i;
@@ -343,7 +170,7 @@ win32_terminate(Driver *drv)
 *
 *----------------------------------------------------------------------
 */
-static int
+int
 win32_init(Driver *drv, int *argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
@@ -355,275 +182,8 @@ win32_init(Driver *drv, int *argc, char **argv)
 	{
 		return FALSE;
 	}
-	plot_init(&di->plot, g_instance, "Plot");
-
-	/* filter out driver arguments */
-	{
-		int i;
-
-		for (i = 0; i < *argc; i++)
-		{
-			if (check_arg(di, argv[i]))
-			{
-				int j;
-				for (j = i; j < *argc-1; j++)
-				{
-					argv[j] = argv[j+1];
-				}
-				argv[j] = NULL;
-				--*argc;
-			}
-		}
-	}
-
-	/* add default list of video modes */
-	{
-		RECT desktop;
-		int m;
-
-		GetClientRect(GetDesktopWindow(), &desktop);
-		for (m = 0; m < NUM_OF(modes); m++)
-		{
-			if ((modes[m].xdots <= desktop.right) &&
-				(modes[m].ydots <= desktop.bottom))
-			{
-				add_video_mode(drv, &modes[m]);
-			}
-		}
-	}
 
 	return TRUE;
-}
-
-/* win32_resize
- *
- * Check if we need resizing.  If no, return 0.
- * If yes, resize internal buffers and return 1.
- */
-static int
-win32_resize(Driver *drv)
-{
-	DI(di);
-	int width, height;
-	BOOL center_graphics;
-
-	if ((g_video_table[g_adapter].xdots == di->plot.width) && (g_video_table[g_adapter].ydots == di->plot.height))
-	{
-		return 0;
-	}
-
-	max_size(di, &width, &height, &center_graphics);
-	frame_resize(width, height);
-	plot_resize(&di->plot);
-	center_windows(di, center_graphics);
-	return 1;
-}
-
-
-/*----------------------------------------------------------------------
-* win32_read_palette
-*
-*	Reads the current video palette into g_dac_box.
-*	
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Fills in g_dac_box.
-*
-*----------------------------------------------------------------------
-*/
-static int
-win32_read_palette(Driver *drv)
-{
-	DI(di);
-	return plot_read_palette(&di->plot);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_write_palette --
-*	Writes g_dac_box into the video palette.
-*	
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Changes the displayed colors.
-*
-*----------------------------------------------------------------------
-*/
-static int
-win32_write_palette(Driver *drv)
-{
-	DI(di);
-	return plot_write_palette(&di->plot);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_schedule_alarm --
-*
-*	Start the refresh alarm
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Starts the alarm.
-*
-*----------------------------------------------------------------------
-*/
-static void
-win32_schedule_alarm(Driver *drv, int soon)
-{
-	DI(di);
-	soon = (soon ? 1 : DRAW_INTERVAL)*1000;
-	if (di->text_not_graphics)
-	{
-		wintext_schedule_alarm(&di->wintext, soon);
-	}
-	else
-	{
-		plot_schedule_alarm(&di->plot, soon);
-	}
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_write_pixel --
-*
-*	Write a point to the screen
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Draws point.
-*
-*----------------------------------------------------------------------
-*/
-static void 
-win32_write_pixel(Driver *drv, int x, int y, int color)
-{
-	DI(di);
-	plot_write_pixel(&di->plot, x, y, color);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_read_pixel --
-*
-*	Read a point from the screen
-*
-* Results:
-*	Value of point.
-*
-* Side effects:
-*	None.
-*
-*----------------------------------------------------------------------
-*/
-static int
-win32_read_pixel(Driver *drv, int x, int y)
-{
-	DI(di);
-	return plot_read_pixel(&di->plot, x, y);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_write_span --
-*
-*	Write a line of pixels to the screen.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Draws pixels.
-*
-*----------------------------------------------------------------------
-*/
-static void
-win32_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
-{
-	DI(di);
-	plot_write_span(&di->plot, x, y, lastx, pixels);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_read_span --
-*
-*	Reads a line of pixels from the screen.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Gets pixels
-*
-*----------------------------------------------------------------------
-*/
-static void
-win32_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
-{
-	DI(di);
-	plot_read_span(&di->plot, y, x, lastx, pixels);
-}
-
-static void
-win32_set_line_mode(Driver *drv, int mode)
-{
-	DI(di);
-	plot_set_line_mode(&di->plot, mode);
-}
-
-static void
-win32_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
-{
-	DI(di);
-	plot_draw_line(&di->plot, x1, y1, x2, y2, color);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* win32_redraw --
-*
-*	Refresh the screen.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Redraws the screen.
-*
-*----------------------------------------------------------------------
-*/
-static void
-win32_redraw(Driver *drv)
-{
-	DI(di);
-	ODS("win32_redraw");
-	if (di->text_not_graphics)
-	{
-		wintext_paintscreen(&di->wintext, 0, 80, 0, 25);
-	}
-	else
-	{
-		plot_redraw(&di->plot);
-	}
-	frame_pump_messages(FALSE);
 }
 
 /* win32_key_pressed
@@ -636,7 +196,7 @@ win32_redraw(Driver *drv)
  * message pump, stash it in the one key buffer for later use by
  * get_key.
  */
-static int
+int
 win32_key_pressed(Driver *drv)
 {
 	DI(di);
@@ -646,7 +206,7 @@ win32_key_pressed(Driver *drv)
 	{
 		return ch;
 	}
-	win32_flush(di);
+	flush_output();
 	ch = handle_special_keys(frame_get_key_press(0));
 	di->key_buffer = ch;
 
@@ -672,13 +232,12 @@ void win32_unget_key(Driver *drv, int key)
  * If we get it, pass it off to handle tab and help displays.  If those
  * displays ate the key, then get another one.
  */
-static int
+int
 win32_get_key(Driver *drv)
 {
 	DI(di);
 	int ch;
 	
-	plot_flush(&di->plot);
 	do
 	{
 		if (di->key_buffer)
@@ -696,22 +255,6 @@ win32_get_key(Driver *drv)
 	return ch;
 }
 
-static void
-win32_window(Driver *drv)
-{
-	DI(di);
-	int width;
-	int height;
-	BOOL center_graphics;
-
-	max_size(di, &width, &height, &center_graphics);
-	frame_window(width, height);
-	di->wintext.hWndParent = g_frame.window;
-	wintext_texton(&di->wintext);
-	plot_window(&di->plot, g_frame.window);
-	center_windows(di, center_graphics);
-}
-
 /*
 *----------------------------------------------------------------------
 *
@@ -727,14 +270,34 @@ win32_window(Driver *drv)
 *
 *----------------------------------------------------------------------
 */
-static void
+void
 win32_shell(Driver *drv)
 {
 	DI(di);
-	windows_shell_to_dos();
+	STARTUPINFO si =
+	{
+		sizeof(si)
+	};
+	PROCESS_INFORMATION pi = { 0 };
+	char *comspec = getenv("COMSPEC");
+
+	if (NULL == comspec)
+	{
+		comspec = "cmd.exe";
+	}
+	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
+	{
+		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
+		while (WAIT_TIMEOUT == status)
+		{
+			frame_pump_messages(0);
+			status = WaitForSingleObject(pi.hProcess, 1000); 
+		}
+		CloseHandle(pi.hProcess);
+	}
 }
 
-static void
+void
 win32_hide_text_cursor(Driver *drv)
 {
 	DI(di);
@@ -746,42 +309,9 @@ win32_hide_text_cursor(Driver *drv)
 	ODS("win32_hide_text_cursor");
 }
 
-static void
-win32_set_for_text(Driver *drv)
-{
-	DI(di);
-	di->text_not_graphics = TRUE;
-	show_hide_windows(di->wintext.hWndCopy, di->plot.window);
-}
-
-static void
-win32_set_for_graphics(Driver *drv)
-{
-	DI(di);
-	di->text_not_graphics = FALSE;
-	show_hide_windows(di->plot.window, di->wintext.hWndCopy);
-	win32_hide_text_cursor(drv);
-}
-
-/* win32_set_clear
-*/
-static void
-win32_set_clear(Driver *drv)
-{
-	DI(di);
-	if (di->text_not_graphics)
-	{
-		wintext_clear(&di->wintext);
-	}
-	else
-	{
-		plot_clear(&di->plot);
-	}
-}
-
 /* win32_set_video_mode
 */
-static void
+void
 win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	extern void set_normal_dot(void);
@@ -806,8 +336,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		driver_read_palette();
 	}
 
-	win32_resize(drv);
-	plot_clear(&di->plot);
+	driver_resize();
 
 	if (g_disk_flag)
 	{
@@ -817,15 +346,14 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	set_normal_dot();
 	set_normal_line();
 
-	win32_set_for_graphics(drv);
-	win32_set_clear(drv);
+	driver_set_for_graphics();
+	driver_set_clear();
 }
 
-static void
+void
 win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
 	DI(di);
-	_ASSERTE(di->text_not_graphics);
 	if (-1 != row)
 	{
 		g_text_row = row;
@@ -847,21 +375,18 @@ win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 *
 *       Scroll the screen up (from toprow to botrow)
 */
-static void
+void
 win32_scroll_up(Driver *drv, int top, int bot)
 {
 	DI(di);
-	_ASSERTE(di->text_not_graphics);
+
 	wintext_scroll_up(&di->wintext, top, bot);
 }
 
-static void
+void
 win32_move_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
-
-	_ASSERTE(di->text_not_graphics);
-	ODS2("win32_move_cursor %d,%d", row, col);
 
 	if (row != -1)
 	{
@@ -879,12 +404,11 @@ win32_move_cursor(Driver *drv, int row, int col)
 	di->cursor_shown = TRUE;
 }
 
-static void
+void
 win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
 	DI(di);
 
-	_ASSERTE(di->text_not_graphics);
 	if (-1 != row)
 	{
 		g_text_row = row;
@@ -900,48 +424,45 @@ win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 * Implement stack and unstack window functions by using multiple curses
 * windows.
 */
-static void
+void
 win32_stack_screen(Driver *drv)
 {
 	DI(di);
 
-	ODS("win32_stack_screen");
 	di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
 	if (++di->screen_count)
 	{
 		/* already have some stacked */
 		int i = di->screen_count - 1;
 
-		_ASSERTE(di->text_not_graphics);
-		_ASSERTE(i < MAXSCREENS);
-		if (i >= MAXSCREENS)
+		_ASSERTE(i < WIN32_MAXSCREENS);
+		if (i >= WIN32_MAXSCREENS)
 		{
 			/* bug, missing unstack? */
 			stopmsg(STOPMSG_NO_STACK, "stackscreen overflow");
 			exit(1);
 		}
 		di->saved_screens[i] = wintext_screen_get(&di->wintext);
-		win32_set_clear(drv);
+		driver_set_clear();
 	}
 	else
 	{
-		win32_set_for_text(drv);
-		win32_set_clear(drv);
+		driver_set_for_text();
+		driver_set_clear();
 	}
 }
 
-static void
+void
 win32_unstack_screen(Driver *drv)
 {
 	DI(di);
 
-	ODS("win32_unstack_screen");
 	_ASSERTE(di->screen_count >= 0);
 	g_text_row = di->saved_cursor[di->screen_count] / 80;
 	g_text_col = di->saved_cursor[di->screen_count] % 80;
 	if (--di->screen_count >= 0)
-	{ /* unstack */
-		_ASSERTE(di->text_not_graphics);
+	{
+		/* unstack */
 		wintext_screen_set(&di->wintext, di->saved_screens[di->screen_count]);
 		free(di->saved_screens[di->screen_count]);
 		di->saved_screens[di->screen_count] = NULL;
@@ -949,18 +470,18 @@ win32_unstack_screen(Driver *drv)
 	}
 	else
 	{
-		win32_set_for_graphics(drv);
+		driver_set_for_graphics();
 	}
 }
 
-static void
+void
 win32_discard_screen(Driver *drv)
 {
 	DI(di);
 
 	if (--di->screen_count >= 0)
-	{ /* unstack */
-		_ASSERTE(di->text_not_graphics);
+	{
+		/* unstack */
 		if (di->saved_screens[di->screen_count])
 		{
 			free(di->saved_screens[di->screen_count]);
@@ -969,51 +490,50 @@ win32_discard_screen(Driver *drv)
 	}
 	else
 	{
-		win32_set_for_graphics(drv);
+		driver_set_for_graphics();
 	}
 }
 
-static int
+int
 win32_init_fm(Driver *drv)
 {
 	ODS("win32_init_fm");
-	_ASSERTE(0 && "win32_init_fm called");
 	return 0;
 }
 
-static void
+void
 win32_buzzer(Driver *drv, int kind)
 {
 	ODS1("win32_buzzer %d", kind);
 	MessageBeep(MB_OK);
 }
 
-static int
+int
 win32_sound_on(Driver *drv, int freq)
 {
 	ODS1("win32_sound_on %d", freq);
 	return 0;
 }
 
-static void
+void
 win32_sound_off(Driver *drv)
 {
 	ODS("win32_sound_off");
 }
 
-static void
+void
 win32_mute(Driver *drv)
 {
 	ODS("win32_mute");
 }
 
-static int
+int
 win32_diskp(Driver *drv)
 {
 	return 0;
 }
 
-static int
+int
 win32_key_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
@@ -1050,7 +570,7 @@ win32_key_cursor(Driver *drv, int row, int col)
 	return result;
 }
 
-static int
+int
 win32_wait_key_pressed(Driver *drv, int timeout)
 {
 	int count = 10;
@@ -1066,139 +586,46 @@ win32_wait_key_pressed(Driver *drv, int timeout)
 	return driver_key_pressed();
 }
 
-static int
+int
 win32_get_char_attr(Driver *drv)
 {
 	DI(di);
 	return wintext_get_char_attr(&di->wintext, g_text_row, g_text_col);
 }
 
-static void
+void
 win32_put_char_attr(Driver *drv, int char_attr)
 {
 	DI(di);
 	wintext_put_char_attr(&di->wintext, g_text_row, g_text_col, char_attr);
 }
 
-static int
-win32_validate_mode(Driver *drv, VIDEOINFO *mode)
-{
-	RECT desktop;
-	GetClientRect(GetDesktopWindow(), &desktop);
-
-	/* allow modes <= size of screen with 256 colors and dotmode=19
-	   ax/bx/cx/dx must be zero. */
-	return (mode->xdots <= desktop.right) &&
-		(mode->ydots <= desktop.bottom) &&
-		(mode->colors == 256) &&
-		(mode->videomodeax == 0) &&
-		(mode->videomodebx == 0) &&
-		(mode->videomodecx == 0) &&
-		(mode->videomodedx == 0) &&
-		(mode->dotmode == 19);
-}
-
-static void
+void
 win32_delay(Driver *drv, int ms)
 {
 	DI(di);
-	windows_delay(ms);
-}
 
-static void
-win32_pause(Driver *drv)
-{
-	DI(di);
-	if (di->wintext.hWndCopy)
+	frame_pump_messages(FALSE);
+	if (ms >= 0)
 	{
-		ShowWindow(di->wintext.hWndCopy, SW_HIDE);
-	}
-	if (di->plot.window)
-	{
-		ShowWindow(di->plot.window, SW_HIDE);
+		Sleep(ms);
 	}
 }
 
-static void
-win32_resume(Driver *drv)
-{
-	DI(di);
-	if (!di->wintext.hWndCopy)
-	{
-		win32_window(drv);
-	}
-
-	ShowWindow(di->wintext.hWndCopy, SW_NORMAL);
-	wintext_resume(&di->wintext);
-}
-
-static void
+void
 win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a)
 {
+	_ASSERTE(0 && "win32_get_truecolor called.");
 }
 
-static void
+void
 win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
 {
+	_ASSERTE(0 && "win32_put_truecolor called.");
 }
 
-static void
-win32_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
-{
-	DI(di);
-	_ASSERTE(!di->text_not_graphics);
-	plot_display_string(&di->plot, x, y, fg, bg, text);
-}
-
-static void
-win32_save_graphics(Driver *drv)
-{
-	DI(di);
-	plot_save_graphics(&di->plot);
-}
-
-static void
-win32_restore_graphics(Driver *drv)
-{
-	DI(di);
-	plot_restore_graphics(&di->plot);
-}
-
-static void
-win32_get_max_screen(Driver *drv, int *xmax, int *ymax)
-{
-	RECT desktop;
-	GetClientRect(GetDesktopWindow(), &desktop);
-	if (xmax != NULL)
-	{
-		*xmax = desktop.right;
-	}
-	if (ymax != NULL)
-	{
-		*ymax = desktop.bottom;
-	}
-}
-
-static void
+void
 win32_set_keyboard_timeout(Driver *drv, int ms)
 {
 	frame_set_keyboard_timeout(ms);
 }
-
-static Win32Driver win32_driver_info =
-{
-	STD_DRIVER_STRUCT(win32, "A GDI driver for 32-bit Windows."),
-	{ 0 },				/* Frame */
-	{ 0 },				/* WinText */
-	{ 0 },				/* Plot */
-	TRUE,				/* text_not_graphics */
-	0,					/* key_buffer */
-	-1,					/* screen_count */
-	{ NULL },			/* saved_screens */
-	{ 0 },				/* saved_cursor */
-	FALSE,				/* cursor_shown */
-	0,					/* cursor_row */
-	0					/* cursor_col */
-};
-
-Driver *win32_driver = &win32_driver_info.pub;

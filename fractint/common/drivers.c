@@ -6,11 +6,9 @@
 
 #include <string.h>
 
-extern Driver *fractint_driver;
-extern Driver *disk_driver;
 extern Driver *x11_driver;
-extern Driver *win32_driver;
-extern Driver *win32_disk_driver;
+extern Driver *gdi_driver;
+extern Driver *disk_driver;
 
 /* list of drivers that are supported by source code in fractint */
 /* default driver is first one in the list that initializes. */
@@ -54,11 +52,11 @@ init_drivers(int *argc, char **argv)
 #endif
 
 #if HAVE_WIN32_DISK_DRIVER
-	load_driver(win32_disk_driver, argc, argv);
+	load_driver(disk_driver, argc, argv);
 #endif
 
-#if HAVE_WIN32_DRIVER
-	load_driver(win32_driver, argc, argv);
+#if HAVE_GDI_DRIVER
+	load_driver(gdi_driver, argc, argv);
 #endif
 
 	return num_drivers;		/* number of drivers supported at runtime */
@@ -333,6 +331,12 @@ void
 driver_set_keyboard_timeout(int ms)
 {
 	(*g_driver->set_keyboard_timeout)(g_driver, ms);
+}
+
+void
+driver_flush(void)
+{
+	(*g_driver->flush)(g_driver);
 }
 
 #endif

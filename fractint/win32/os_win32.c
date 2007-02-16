@@ -500,20 +500,6 @@ long readticker(void)
 }
 
 /*
-; ***************** Function delay(int delaytime) ************************
-;
-;       performs a delay loop for 'delaytime' milliseconds
-*/
-void windows_delay(int delaytime)
-{
-	frame_pump_messages(FALSE);
-	if (delaytime >= 0)
-	{
-		Sleep(delaytime);
-	}
-}
-
-/*
 ; *************** Function spindac(direction, rstep) ********************
 
 ;       Rotate the MCGA/VGA DAC in the (plus or minus) "direction"
@@ -729,31 +715,6 @@ unsigned long get_disk_space(void)
 		}
 	}
 	return result;
-}
-
-void windows_shell_to_dos()
-{
-	STARTUPINFO si =
-	{
-		sizeof(si)
-	};
-	PROCESS_INFORMATION pi = { 0 };
-	char *comspec = getenv("COMSPEC");
-
-	if (NULL == comspec)
-	{
-		comspec = "cmd.exe";
-	}
-	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
-	{
-		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
-		while (WAIT_TIMEOUT == status)
-		{
-			frame_pump_messages(0);
-			status = WaitForSingleObject(pi.hProcess, 1000); 
-		}
-		CloseHandle(pi.hProcess);
-	}
 }
 
 static void CreateMiniDump(EXCEPTION_POINTERS *ep)

@@ -228,7 +228,13 @@
 				RelativePath=".\win32\d_win32.c">
 			</File>
 			<File
+				RelativePath=".\win32\d_win32.h">
+			</File>
+			<File
 				RelativePath=".\win32\d_win32_disk.c">
+			</File>
+			<File
+				RelativePath=".\win32\d_win32_gdi.c">
 			</File>
 			<File
 				RelativePath=".\win32\fpu087.c">
