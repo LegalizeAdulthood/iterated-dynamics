@@ -312,8 +312,8 @@ void footer_msg(int *i, int options, char *speedstring)
       (speedstring) ? "Use the cursor keys or type a value to make a selection"
 		: "Use the cursor keys to highlight your selection");
    putstringcenter(*(i++), 0, 80, C_PROMPT_BKGRD,
-         (options&CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
-      : ((options&CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
+         (options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
+      : ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
 	  : "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
@@ -573,7 +573,7 @@ int fullscreen_choice(
 				++reqdrows;
 			}
 		}
-		if ((options & 8))          /* show std instr too */
+		if ((options & CHOICE_INSTRUCTIONS))          /* show std instr too */
 		{
 			reqdrows += 2;
 		}
@@ -675,7 +675,7 @@ int fullscreen_choice(
 		driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
 	}
 	i = topleftrow + boxdepth + 1;
-	if (instr == NULL || (options & 8))   /* display default instructions */
+	if (instr == NULL || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
 	{
 		if (i < 20)
 		{
