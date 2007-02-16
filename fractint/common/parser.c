@@ -164,7 +164,7 @@ struct token_st {
 #define MAX_LOADS  ((unsigned)(Max_Ops*.8))  /* and 80% can be loads */
 /* PB 901103 made some of the following static for safety */
 
-static struct PEND_OP *o;
+static struct PEND_OP o[2300];
 
 #if 0
 static void ops_allocate(void);
@@ -2156,15 +2156,7 @@ static int ParseStr(char *Str, int pass) {
    SetRandom = Randomized = 0;
    uses_jump = 0;
    jump_index = 0;
-   if (pass == 0)
-      o = (struct PEND_OP *)
-    ((char *)typespecific_workarea + total_formula_mem-sizeof(struct PEND_OP) * Max_Ops);
-   else if (used_extra == 1)
-      o = (struct PEND_OP *)
-    ((char *)typespecific_workarea + total_formula_mem-sizeof(struct PEND_OP) * Max_Ops);
-   else
-      o = (struct PEND_OP *)malloc(sizeof(struct PEND_OP) * (long)Max_Ops);
-   if ( !o || !typespecific_workarea) {
+   if (!typespecific_workarea) {
       stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
       return 1;
    }
@@ -2636,8 +2628,6 @@ static int ParseStr(char *Str, int pass) {
          LastOp--;
       }
    }
-   if (pass > 0 && used_extra == 0)
-      free(o);
    return 0;
 }
 
@@ -3743,7 +3733,8 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 int fpFormulaSetup(void) {
 
    int RunFormRes;              /* CAE fp */
-#if !defined(XFRACT)
+   /* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
+#if !defined(XFRACT) && !defined(_WIN32)
    if (fpu > 0) {
       MathType = D_MATH;
       /* CAE changed below for fp */
@@ -3815,7 +3806,6 @@ void init_misc()
         */
 
 long total_formula_mem;
-BYTE used_extra = 0;
 static void parser_allocate(void)
 {
 	/* CAE fp changed below for v18 */
@@ -3842,19 +3832,16 @@ static void parser_allocate(void)
 		p_size = sizeof(struct fls *)*Max_Ops;
 		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
 			+ sizeof(struct PEND_OP)*Max_Ops;
-		used_extra = 0;
 		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
-		if (pass == 0 || is_bad_form)
+		if (pass == 0)
 		{
-			typespecific_workarea = NULL;
-			used_extra = 0;
+			typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		}
 		else if (is_bad_form == 0)
 		{
 			typespecific_workarea = (char *)
 				malloc(f_size + Load_size + Store_size + v_size + p_size);
-			used_extra = 0;
 		}
 		f = (void (**)(void)) typespecific_workarea;
 		Store = (union Arg **) (f + Max_Ops);
@@ -3871,7 +3858,6 @@ static void parser_allocate(void)
 				Max_Ops = posp + 4;
 				Max_Args = vsp + 4;
 			}
-			typespecific_workarea = NULL;
 		}
 	}
 	uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
