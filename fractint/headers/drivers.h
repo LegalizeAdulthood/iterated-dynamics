@@ -96,6 +96,7 @@ struct tagDriver
 										void (*put_char_attr)(Driver *drv, int char_attr);
 										void (*delay)(Driver *drv, int ms);
 										void (*set_keyboard_timeout)(Driver *drv, int ms);
+										void (*flush)(Driver *drv);
 };
 
 #define STD_DRIVER_STRUCT(name_, desc_) \
@@ -151,30 +152,30 @@ struct tagDriver
 	name_##_get_char_attr, \
 	name_##_put_char_attr, \
 	name_##_delay, \
-	name_##_set_keyboard_timeout \
+	name_##_set_keyboard_timeout, \
+	name_##_flush \
   }
 
 /* Define the drivers to be included in the compilation:
 
-    HAVE_FRACTINT_DRIVER	Classic FRACTINT code path
-    HAVE_DISK_DRIVER		Curses based disk driver
-    HAVE_X11_DRIVER		XFractint code path
-    HAVE_WIN32_DRIVER		Win32/GDI driver
+    HAVE_CURSES_DRIVER		Curses based disk driver
+    HAVE_X11_DRIVER			XFractint code path
+    HAVE_GDI_DRIVER			Win32 GDI driver
     HAVE_WIN32_DISK_DRIVER	Win32 disk driver
 */
 #if defined(XFRACT)
 #define HAVE_X11_DRIVER			1
-#define HAVE_WIN32_DRIVER		0
+#define HAVE_GDI_DRIVER			0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(MSDOS)
 #define HAVE_X11_DRIVER			0
-#define HAVE_WIN32_DRIVER		0
+#define HAVE_GDI_DRIVER			0
 #define HAVE_WIN32_DISK_DRIVER	0
 #endif
 #if defined(_WIN32)
 #define HAVE_X11_DRIVER			0
-#define HAVE_WIN32_DRIVER		1
+#define HAVE_GDI_DRIVER			1
 #define HAVE_WIN32_DISK_DRIVER	1
 #endif
 
@@ -240,6 +241,7 @@ extern int driver_get_char_attr(void);
 extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);
 extern void driver_set_keyboard_timeout(int ms);
+extern void driver_flush(void);
 
 #else
 
@@ -291,6 +293,7 @@ extern void driver_set_keyboard_timeout(int ms);
 #define driver_put_char_attr(char_attr_)			(*g_driver->put_char_attr)(g_driver, char_attr_)
 #define driver_delay(ms_)							(*g_driver->delay)(g_driver, ms_)
 #define driver_set_keyboard_timeout(ms_)			(*g_driver->set_keyboard_timeout)(g_driver, ms_)
+#define driver_flush()								(*g_driver->flush)(g_driver)
 
 #endif
 
