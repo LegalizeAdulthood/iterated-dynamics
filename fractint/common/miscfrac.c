@@ -1543,7 +1543,7 @@ int cellular () {
    if (!rflag) ++rseed;
 
 /* generate rule table from parameter 1 */
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
    n = param[1];
 #else
    /* gcc can't manage to convert a big double to an unsigned long properly. */
@@ -1744,7 +1744,7 @@ contloop:
    }
    if (nxtscreenflag) {
      param[3] += iystop + 1;
-     start_row = -1; /* after 1st iteration its = 0 */
+     start_row = 0;
      goto contloop;
    }
   abort_cellular(CELLULAR_DONE, 0);
