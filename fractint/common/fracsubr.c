@@ -242,6 +242,9 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    }
 
 init_restart:
+#if defined(_WIN32)
+   _ASSERTE(_CrtCheckMemory());
+#endif
 
    /* the following variables may be forced to a different setting due to
       calc routine constraints;  usr_xxx is what the user last said is wanted,
