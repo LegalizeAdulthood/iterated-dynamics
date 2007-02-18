@@ -184,53 +184,50 @@ show_hide_windows(HWND show, HWND hide)
 }
 
 static void
-max_size(GDIDriver *di, int *width, int *height, BOOL *center_graphics)
+max_size(GDIDriver *di, int *width, int *height, BOOL *center_x, BOOL *center_y)
 {
-	BOOL center_x = TRUE;
-	BOOL center_y = TRUE;
 	*width = di->base.wintext.max_width;
 	*height = di->base.wintext.max_height;
 	if (g_video_table[g_adapter].xdots > *width)
 	{
 		*width = g_video_table[g_adapter].xdots;
-		center_x = FALSE;
+		*center_x = FALSE;
 	}
 	if (g_video_table[g_adapter].ydots > *height)
 	{
 		*height = g_video_table[g_adapter].ydots;
-		center_y = FALSE;
+		*center_y = FALSE;
 	}
-	*center_graphics = (center_x || center_y);
 }
 
-static void center_windows(GDIDriver *di, BOOL center_graphics)
+static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
 {
-	HWND center, zero;
-	int width, height;
+	POINT text_pos = { 0 }, plot_pos = { 0 };
 	BOOL status;
 
-	if (center_graphics)
+	if (center_x)
 	{
-		zero = di->base.wintext.hWndCopy;
-		center = di->plot.window;
-		width = di->plot.width;
-		height = di->plot.height;
+		plot_pos.x = (g_frame.width - di->plot.width)/2;
 	}
 	else
 	{
-		zero = di->plot.window;
-		center = di->base.wintext.hWndCopy;
-		width = di->base.wintext.max_width;
-		height = di->base.wintext.max_height;
+		text_pos.x = (g_frame.width - di->base.wintext.max_width)/2;
 	}
 
-	status = SetWindowPos(zero, NULL, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
-	_ASSERTE(status);
+	if (center_y)
 	{
-		int x = (g_frame.width - width)/2;
-		int y = (g_frame.height - height)/2;
-		status = SetWindowPos(center, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+		plot_pos.y = (g_frame.height - di->plot.height)/2;
 	}
+	else
+	{
+		text_pos.y = (g_frame.height - di->base.wintext.max_height)/2;
+	}
+
+	status = SetWindowPos(di->plot.window, NULL,
+		plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+	_ASSERTE(status);
+	status = SetWindowPos(di->base.wintext.hWndCopy, NULL,
+		text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
 }
 
@@ -339,17 +336,17 @@ gdi_resize(Driver *drv)
 {
 	DI(di);
 	int width, height;
-	BOOL center_graphics;
+	BOOL center_graphics_x, center_graphics_y;
 
 	if ((g_video_table[g_adapter].xdots == di->plot.width) && (g_video_table[g_adapter].ydots == di->plot.height))
 	{
 		return 0;
 	}
 
-	max_size(di, &width, &height, &center_graphics);
+	max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
 	frame_resize(width, height);
 	plot_resize(&di->plot);
-	center_windows(di, center_graphics);
+	center_windows(di, center_graphics_x, center_graphics_y);
 	return 1;
 }
 
@@ -566,14 +563,14 @@ gdi_window(Driver *drv)
 	DI(di);
 	int width;
 	int height;
-	BOOL center_graphics;
+	BOOL center_x, center_y;
 
-	max_size(di, &width, &height, &center_graphics);
+	max_size(di, &width, &height, &center_x, &center_y);
 	frame_window(width, height);
 	di->base.wintext.hWndParent = g_frame.window;
 	wintext_texton(&di->base.wintext);
 	plot_window(&di->plot, g_frame.window);
-	center_windows(di, center_graphics);
+	center_windows(di, center_x, center_y);
 }
 
 static void
