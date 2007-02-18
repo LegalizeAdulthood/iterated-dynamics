@@ -260,6 +260,25 @@ gdi_terminate(Driver *drv)
 	win32_terminate(drv);
 }
 
+static void
+gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
+{
+	RECT desktop;
+	GetClientRect(GetDesktopWindow(), &desktop);
+	desktop.right -= GetSystemMetrics(SM_CXFRAME)*2;
+	desktop.bottom -= GetSystemMetrics(SM_CYFRAME)*2
+		+ GetSystemMetrics(SM_CYCAPTION) - 1;
+
+	if (xmax != NULL)
+	{
+		*xmax = desktop.right;
+	}
+	if (ymax != NULL)
+	{
+		*ymax = desktop.bottom;
+	}
+}
+
 /*----------------------------------------------------------------------
 *
 * gdi_init --
@@ -309,14 +328,15 @@ gdi_init(Driver *drv, int *argc, char **argv)
 
 	/* add default list of video modes */
 	{
-		RECT desktop;
+		int width, height;
 		int m;
 
-		GetClientRect(GetDesktopWindow(), &desktop);
+		gdi_get_max_screen(drv, &width, &height);
+
 		for (m = 0; m < NUM_OF(modes); m++)
 		{
-			if ((modes[m].xdots <= desktop.right) &&
-				(modes[m].ydots <= desktop.bottom))
+			if ((modes[m].xdots <= width) &&
+				(modes[m].ydots <= height))
 			{
 				add_video_mode(drv, &modes[m]);
 			}
@@ -840,13 +860,13 @@ gdi_mute(Driver *drv)
 static int
 gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	RECT desktop;
-	GetClientRect(GetDesktopWindow(), &desktop);
+	int width, height;
+	gdi_get_max_screen(drv, &width, &height);
 
 	/* allow modes <= size of screen with 256 colors and dotmode=19
 	   ax/bx/cx/dx must be zero. */
-	return (mode->xdots <= desktop.right) &&
-		(mode->ydots <= desktop.bottom) &&
+	return (mode->xdots <= width) &&
+		(mode->ydots <= height) &&
 		(mode->colors == 256) &&
 		(mode->videomodeax == 0) &&
 		(mode->videomodebx == 0) &&
@@ -902,21 +922,6 @@ gdi_restore_graphics(Driver *drv)
 {
 	DI(di);
 	plot_restore_graphics(&di->plot);
-}
-
-static void
-gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
-{
-	RECT desktop;
-	GetClientRect(GetDesktopWindow(), &desktop);
-	if (xmax != NULL)
-	{
-		*xmax = desktop.right;
-	}
-	if (ymax != NULL)
-	{
-		*ymax = desktop.bottom;
-	}
 }
 
 static void
