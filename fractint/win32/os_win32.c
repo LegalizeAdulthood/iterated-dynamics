@@ -717,8 +717,15 @@ unsigned long get_disk_space(void)
 	return result;
 }
 
+typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
+						   PMINIDUMP_EXCEPTION_INFORMATION exceptions,
+						   PMINIDUMP_USER_STREAM_INFORMATION user,
+						   PMINIDUMP_CALLBACK_INFORMATION callback);
+
 static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
+	MiniDumpWriteDumpProc *dumper = NULL;
+	HMODULE debughlp = LoadLibrary("dbghelp.dll");
 	char minidump[MAX_PATH] = "fractint.dmp";
 	MINIDUMP_EXCEPTION_INFORMATION mdei =
 	{
@@ -730,6 +737,14 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	BOOL status = 0;
 	int i = 1;
 
+	if (debughlp == NULL)
+	{
+		MessageBox(NULL, "An unexpected error occurred.  FractInt will now exit.",
+			"FractInt: Unexpected Error", MB_OK);
+		return;
+	}
+	dumper = (MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump");
+
 	while (PathFileExists(minidump))
 	{
 		sprintf(minidump, "fractint-%d.dmp", i++);
@@ -738,7 +753,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 		0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 	_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
 
-	status = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(),
+	status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
 		dump_file, MiniDumpNormal, &mdei, NULL, NULL);
 	_ASSERTE(status);
 	if (!status)
@@ -752,6 +767,10 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 		status = CloseHandle(dump_file);
 		_ASSERTE(status);
 	}
+	dumper = NULL;
+	status = FreeLibrary(debughlp);
+	_ASSERTE(status);
+
 	{
 		char msg[MAX_PATH*2];
 		sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
