@@ -338,12 +338,15 @@ gdi_resize(Driver *drv)
 	int width, height;
 	BOOL center_graphics_x, center_graphics_y;
 
-	if ((g_video_table[g_adapter].xdots == di->plot.width) && (g_video_table[g_adapter].ydots == di->plot.height))
+	max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
+	if ((g_video_table[g_adapter].xdots == di->plot.width)
+		&& (g_video_table[g_adapter].ydots == di->plot.height)
+		&& (width == g_frame.width)
+		&& (height == g_frame.height))
 	{
 		return 0;
 	}
 
-	max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
 	frame_resize(width, height);
 	plot_resize(&di->plot);
 	center_windows(di, center_graphics_x, center_graphics_y);
