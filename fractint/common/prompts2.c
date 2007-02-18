@@ -1362,10 +1362,10 @@ typedef struct tagCHOICE CHOICE;
 
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {
-	CHOICE **choice1 = (CHOICE **) arg1;
-	CHOICE **choice2 = (CHOICE **) arg2;
+	char **choice1 = (char **) arg1;
+	char **choice2 = (char **) arg2;
 
-   return strncasecmp((*choice1)->name, (*choice2)->name, NUM_OF((*choice1)->name));
+   return stricmp(*choice1, *choice2);
 }
 
 
@@ -1383,8 +1383,8 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	int out;
 	int retried;
 	/* Only the first 13 characters of file names are displayed... */
-	CHOICE choices[MAXNUMFILES];
-	char *screen_choices[MAXNUMFILES];
+	CHOICE storage[MAXNUMFILES];
+	CHOICE *choices[MAXNUMFILES];
 	int attributes[MAXNUMFILES];
 	int filecount;   /* how many files */
 	int dircount;    /* how many directories */
@@ -1401,7 +1401,7 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
 			attributes[i] = 1;
-			screen_choices[i] = choices[i].name;
+			choices[i] = &storage[i];
 	}
 	/* save filename */
 	strcpy(old_flname, flname);
@@ -1462,10 +1462,10 @@ retry_dir:
 			{
 				strcat(DTA.filename, SLASH);
 			}
-			strncpy(choices[++filecount].name, DTA.filename, 13);
-			choices[filecount].name[12] = 0;
-			choices[filecount].type = 1;
-			strcpy(choices[filecount].full_name, DTA.filename);
+			strncpy(choices[++filecount]->name, DTA.filename, 13);
+			choices[filecount]->name[12] = 0;
+			choices[filecount]->type = 1;
+			strcpy(choices[filecount]->full_name, DTA.filename);
 			dircount++;
 			if (strcmp(DTA.filename, "..") == 0)
 			{
@@ -1497,14 +1497,14 @@ retry_dir:
 					splitpath(DTA.filename, NULL, NULL, fname, ext);
 					/* just using speedstr as a handy buffer */
 					makepath(speedstr, drive, dir, fname, ext);
-					strncpy(choices[++filecount].name, DTA.filename, 13);
-					choices[filecount].type = 0;
+					strncpy(choices[++filecount]->name, DTA.filename, 13);
+					choices[filecount]->type = 0;
 				}
 				else
 				{
-					strncpy(choices[++filecount].name, DTA.filename, 13);
-					choices[filecount].type = 0;
-					strcpy(choices[filecount].full_name, DTA.filename);
+					strncpy(choices[++filecount]->name, DTA.filename, 13);
+					choices[filecount]->type = 0;
+					strcpy(choices[filecount]->full_name, DTA.filename);
 				}
 			}
 			out = fr_findnext();
@@ -1512,8 +1512,8 @@ retry_dir:
 	} while (++j < numtemplates);
 	if (++filecount == 0)
 	{
-		strcpy(choices[filecount].name, "*nofiles*");
-		choices[filecount].type = 0;
+		strcpy(choices[filecount]->name, "*nofiles*");
+		choices[filecount]->type = 0;
 		++filecount;
 	}
 
@@ -1521,7 +1521,7 @@ retry_dir:
 	if (dosort)
 	{
 		strcat(instr, "off");
-		shell_sort((void **) choices, filecount, sizeof(CHOICE), lccompare); /* sort file list */
+		shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); /* sort file list */
 	}
 	else
 	{
@@ -1544,7 +1544,7 @@ retry_dir:
 	{
 		for (i = 0; i < filecount; i++) /* find first file */
 		{
-			if (choices[i].type == 0)
+			if (choices[i]->type == 0)
 			{
 				break;
 			}
@@ -1557,7 +1557,7 @@ retry_dir:
 
 
 	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, NULL, instr, filecount, screen_choices,
+		temp1, NULL, instr, filecount, (char **) choices,
 		attributes, 5, 99, 12, i, NULL, speedstr, filename_speedstr, check_f6_key);
 	if (i == -FIK_F4)
 	{
@@ -1588,9 +1588,9 @@ retry_dir:
 	}
 	if (speedstr[0] == 0 || speedstate == MATCHING)
 	{
-		if (choices[i].type)
+		if (choices[i]->type)
 		{
-			if (strcmp(choices[i].name, "..") == 0) /* go up a directory */
+			if (strcmp(choices[i]->name, "..") == 0) /* go up a directory */
 			{
 				if (strcmp(dir, DOTSLASH) == 0)
 				{
@@ -1612,13 +1612,13 @@ retry_dir:
 			}
 			else  /* go down a directory */
 			{
-				strcat(dir, choices[i].full_name);
+				strcat(dir, choices[i]->full_name);
 			}
 			fix_dirname(dir);
 			makepath(flname, drive, dir, "", "");
 			goto restart;
 		}
-		splitpath(choices[i].full_name, NULL, NULL, fname, ext);
+		splitpath(choices[i]->full_name, NULL, NULL, fname, ext);
 		makepath(flname, drive, dir, fname, ext);
 	}
 	else
