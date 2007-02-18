@@ -495,18 +495,6 @@ int calctypeshowdot(void)
    return out;
 }
 
-/* use top of extraseg for LogTable if room */
-int logtable_in_extra_ok(void)
-{
-   if (((2L*(long)(xdots+ydots)*sizeof(double)+MaxLTSize+1) < (1L<<16))
-      && (bf_math==0)
-      && (fractype != FORMULA)
-      && (fractype != FFORMULA))
-      return 1;
-   else
-      return 0;
-}
-
 /******* calcfract - the top level routine for generating an image *******/
 
 int calcfract(void)
@@ -586,10 +574,7 @@ int calcfract(void)
 
    if ((LogFlag || rangeslen) && !Log_Calc)
    {
-      if (logtable_in_extra_ok())
-         LogTable = (BYTE *)(dx0 + 2*(xdots+ydots));
-      else
-         LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
+        LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
 
       if (LogTable == NULL)
       {
@@ -780,9 +765,8 @@ int calcfract(void)
 
    if (LogTable && !Log_Calc)
    {
-      if (!logtable_in_extra_ok())
-         free(LogTable);   /* free if not using extraseg */
-      LogTable = NULL;
+		free(LogTable);   /* free if not using extraseg */
+		LogTable = NULL;
    }
    if (typespecific_workarea)
    {
