@@ -259,6 +259,17 @@ restart:   /* insert key re-starts here */
 	cmdfiles(argc,argv);         /* process the command-line */
 	dopause(0);                  /* pause for error msg if not batch */
 	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
+
+	while (maxhistory > 0) /* decrease history if necessary */
+    {
+        history = MemoryAlloc((U16) sizeof(HISTORY),(long) maxhistory, MEMORY);
+        if (history)
+		{
+			break;
+		}
+        maxhistory--;
+    }
+
 	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{
 		check_samename();
