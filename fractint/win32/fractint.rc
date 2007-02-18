@@ -78,15 +78,15 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "beta 4"
+            VALUE "Comments", "beta 5"
             VALUE "CompanyName", "Stone Soup Group"
             VALUE "FileDescription", "fractint"
-            VALUE "FileVersion", "20.99.7.0"
+            VALUE "FileVersion", "20.99.8.0"
             VALUE "InternalName", "fractint"
             VALUE "LegalCopyright", "Copyright (C) 2007"
             VALUE "OriginalFilename", "fractint.rc"
             VALUE "ProductName", " fractint"
-            VALUE "ProductVersion", "20.99.7.0"
+            VALUE "ProductVersion", "20.99.8.0"
         END
     END
     BLOCK "VarFileInfo"
