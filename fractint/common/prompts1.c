@@ -923,7 +923,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
       choices[j]->num = i;      /* remember where the real item is */
       }
    numtypes = j + 1;
-   shell_sort(choices,numtypes,sizeof(char *),lccompare); /* sort list */
+   shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
    j = 0;
    for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
       if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
@@ -1768,7 +1768,7 @@ struct entryinfo {
    char name[ITEMNAMELEN+2];
    long point; /* points to the ( or the { following the name */
    };
-static struct entryinfo *gfe_choices; /* for format_getparm_line */
+static struct entryinfo **gfe_choices; /* for format_getparm_line */
 static char *gfe_title;
 
 /* skip to next non-white space character and return it */
@@ -1944,7 +1944,7 @@ static long gfe_choose_entry(int type, char *title, char *filename, char *entryn
 
 	static int dosort = 1;
 
-	gfe_choices = &storage[0];
+	gfe_choices = &choices[0];
 	gfe_title = title;
 
 retry:
@@ -2032,7 +2032,7 @@ static int check_gfe_key(int curkey,int choice)
       int comment = 0;
       int c = 0;
       int widthct = 0;
-      fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
+      fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
       while ((c = fgetc(gfe_file)) != EOF && c != '\032') {
          if (c == ';')
             comment = 1;
@@ -2053,10 +2053,10 @@ static int check_gfe_key(int curkey,int choice)
          }
       }
       if (c == EOF || c == '\032') { /* should never happen */
-         fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
+         fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
          in_scrolling_mode = 0;
       }
-      fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
+      fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
       load_entry_text(gfe_file,infbuf, 17, 0, 0);
       if (lines_in_entry > 17 || widest_entry_line > 74)
          in_scrolling_mode = 1;
@@ -2080,7 +2080,7 @@ static int check_gfe_key(int curkey,int choice)
       while (!done) {
          if (rewrite_infbuf) {
             rewrite_infbuf = 0;
-            fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
+            fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
             load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
             for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                driver_put_string(i,0,C_GENERAL_MED,blanks);
@@ -2283,7 +2283,7 @@ static void format_parmfile_line(int choice,char *buf)
 {
    int c,i;
    char line[80];
-   fseek(gfe_file,gfe_choices[choice].point,SEEK_SET);
+   fseek(gfe_file,gfe_choices[choice]->point,SEEK_SET);
    while (getc(gfe_file) != '{') { }
    do
    {
@@ -2296,9 +2296,9 @@ static void format_parmfile_line(int choice,char *buf)
       }
    line[i] = 0;
 #ifndef XFRACT
-   sprintf(buf,"%-20Fs%-56s",gfe_choices[choice].name,line);
+   sprintf(buf,"%-20Fs%-56s",gfe_choices[choice]->name,line);
 #else
-   sprintf(buf,"%-20s%-56s",gfe_choices[choice].name,line);
+   sprintf(buf,"%-20s%-56s",gfe_choices[choice]->name,line);
 #endif
 }
 
