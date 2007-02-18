@@ -1210,7 +1210,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          if (*kbdchar == '\\' || *kbdchar == 'h')
             if (--historyptr < 0)
                historyptr = maxhistory - 1;
-         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
+         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
             if (++historyptr >= maxhistory)
                historyptr = 0;
          restore_history_info(historyptr);
