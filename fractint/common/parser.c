@@ -3834,15 +3834,7 @@ static void parser_allocate(void)
 			+ sizeof(struct PEND_OP)*Max_Ops;
 		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
-		if (pass == 0)
-		{
-			typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
-		}
-		else if (is_bad_form == 0)
-		{
-			typespecific_workarea = (char *)
-				malloc(f_size + Load_size + Store_size + v_size + p_size);
-		}
+		typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)(void)) typespecific_workarea;
 		Store = (union Arg **) (f + Max_Ops);
 		Load = (union Arg **) (Store + MAX_STORES);
