@@ -756,7 +756,9 @@ double *MP2d086(struct MP x)
 {
 	/* TODO: implement */
 	static double ans = 0.0;
+#if defined(_WIN32)
 	_ASSERTE(0 && "MP2d086 called.");
+#endif
 	return &ans;
 }
 
@@ -994,7 +996,9 @@ MPadd086    ENDP
 struct MP *MPadd086(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPadd086 called.");
+#endif
 	return &Ans;
 }
 
@@ -1071,7 +1075,9 @@ MPcmp086    ENDP
 int MPcmp086(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPcmp086 called.");
+#endif
 	return 0;
 }
 
@@ -1175,7 +1181,9 @@ MPdiv086    ENDP
 struct MP *MPdiv086(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPdiv086 called.");
+#endif
 	return &Ans;
 }
 
@@ -1410,7 +1418,9 @@ d2MP386     ENDP
 struct MP *d2MP386(double x)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "d2MP386 called.");
+#endif
 	return &Ans;
 }
 
@@ -1458,7 +1468,9 @@ double *MP2d386(struct MP x)
 {
 	/* TODO: implement */
 	static double ans = 0.0;
+#if defined(_WIN32)
 	_ASSERTE(0 && "MP2d386 called.");
+#endif
 	return &ans;
 }
 
@@ -1611,7 +1623,9 @@ MPadd086    ENDP
 struct MP *MPadd(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPadd called.");
+#endif
 	return &Ans;
 }
 
@@ -1711,7 +1725,9 @@ MPadd386    ENDP
 struct MP *MPadd386(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPadd386 called.");
+#endif
 	return &Ans;
 }
 
@@ -1774,7 +1790,9 @@ MPcmp386    ENDP
 int MPcmp386(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPcmp386 called.");
+#endif
 	return 0;
 }
 
@@ -1836,7 +1854,9 @@ MPdiv386    ENDP
 struct MP *MPdiv386(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPdiv386 called.");
+#endif
 	return &Ans;
 }
 
@@ -1900,7 +1920,9 @@ MPmul386    ENDP
 struct MP *MPmul386(struct MP x, struct MP y)
 {
 	/* TODO: implement */
+#if defined(_WIN32)
 	_ASSERTE(0 && "MPmul386 called.");
+#endif
 	return &Ans;
 }
 
@@ -1964,7 +1986,9 @@ fg2MP086    ENDP
 */
 struct MP *fg2MP086(long x, int fg)
 {
+#if defined(_WIN32)
 	_ASSERTE(0 && "fg2MP086 called");
+#endif
 	return &Ans;
 }
 
@@ -2005,7 +2029,9 @@ fg2MP386    ENDP
 */
 struct MP *fg2MP386(long x, int fg)
 {
+#if defined(_WIN32)
 	_ASSERTE(0 && "fg2MP386 called");
+#endif
 	return &Ans;
 }
 
