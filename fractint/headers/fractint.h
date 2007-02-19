@@ -1081,7 +1081,7 @@ typedef struct frm_jump_st {
 struct ext_blk_2 {
    char got_data;
    int length;
-   int resume_data;
+   char *resume_data;
    };
 
 struct ext_blk_3 {

@@ -422,7 +422,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			if (blk_2_info.got_data == 1)
 			{
-				MemoryRelease((U16) blk_2_info.resume_data);
+				free(blk_2_info.resume_data);
 				blk_2_info.length = 0;
 			}
 			g_init_mode = -1;
@@ -446,15 +446,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 	}
 
-	if (resume_info != 0) /* free the prior area if there is one */
-	{
-		MemoryRelease(resume_info);
-		resume_info = 0;
-	}
+	end_resume();
 
 	if (blk_2_info.got_data == 1)
 	{
-		resume_info = (U16) blk_2_info.resume_data;
+		resume_info = blk_2_info.resume_data;
 		resume_len = blk_2_info.length;
 	}
 
@@ -519,15 +515,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (blk_6_info.got_data == 1)
 	{
 		struct evolution_info resume_e_info;
-		GENEBASE gene[NUMGENES];
 		int i;
 
-		/* TODO: MemoryAlloc */
-        if (gene_handle == 0)
-		{
-            gene_handle = MemoryAlloc((U16) sizeof(gene), 1L, MEMORY);
-		}
-        MoveFromMemory((BYTE *)&gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
         if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
 		{
 			/* Increasing NUMGENES moves ecount in the data structure */
@@ -593,25 +582,24 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			for (i = 0; i < NUMGENES; i++)
 			{
-				gene[i].mutate = (int) blk_6_info.mutate[i];
+				g_genes[i].mutate = (int) blk_6_info.mutate[i];
 			}
 		}
 		else
 		{
 			for (i = 0; i < 6; i++)
 			{
-				gene[i].mutate = (int) blk_6_info.mutate[i];
+				g_genes[i].mutate = (int) blk_6_info.mutate[i];
 			}
 			for (i = 6; i < 10; i++)
 			{
-				gene[i].mutate = 0;
+				g_genes[i].mutate = 0;
 			}
 			for (i = 10; i < NUMGENES; i++)
 			{
-				gene[i].mutate = (int) blk_6_info.mutate[i-4];
+				g_genes[i].mutate = (int) blk_6_info.mutate[i-4];
 			}
 		}
-        MoveToMemory((BYTE *) &gene, (U16) sizeof(gene), 1L, 0L, gene_handle);
         param_history(0); /* store history */
 	}
 	else
@@ -798,14 +786,12 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   break;
                case 2: /* resume info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-			 /* TODO: MemoryAlloc */
-                  blk_2_info->resume_data = MemoryAlloc((U16)1,(long)data_len,MEMORY);
+                  blk_2_info->resume_data = malloc(data_len);
 				  if (blk_2_info->resume_data == 0)
                      info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
                   else {
                      fseek(fp,(long)(0-block_len),SEEK_CUR);
-                     load_ext_blk((char *)block,data_len);
-                     MoveToMemory((BYTE *)block,(U16)1,(long)data_len,0,(U16)blk_2_info->resume_data);
+                     load_ext_blk(blk_2_info->resume_data, data_len);
                      blk_2_info->length = data_len;
                      blk_2_info->got_data = 1; /* got data */
                      }
@@ -1384,7 +1370,9 @@ rescan:  /* entry for changed browse parms */
          }
 
         if (blk_2_info.got_data == 1) /* Clean up any memory allocated */
-           MemoryRelease((U16)blk_2_info.resume_data);
+		{
+			free(blk_2_info.resume_data);
+		}
         if (blk_4_info.got_data == 1) /* Clean up any memory allocated */
            free(blk_4_info.range_data);
         if (blk_5_info.got_data == 1) /* Clean up any memory allocated */

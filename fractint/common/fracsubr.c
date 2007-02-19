@@ -42,6 +42,8 @@ static void   _fastcall smallest_add_bf(bf_t);
 static int    resume_offset;            /* offset in resume info gets */
        int    taborhelp;    /* kludge for sound and tab or help key press */
 
+static int resume_info_len = 0;
+
 #define FUDGEFACTOR     29      /* fudge all values up by 2**this */
 #define FUDGEFACTOR2    24      /* (or maybe this)                */
 
@@ -1101,8 +1103,8 @@ va_dcl
    int len;
 #endif
 
-   if (resume_info == 0)
-      return(-1);
+   if (resume_info == NULL)
+      return -1;
 #ifndef USE_VARARGS
    va_start(arg_marker,len);
 #else
@@ -1112,8 +1114,10 @@ va_dcl
    while (len)
    {
       source_ptr = (BYTE *)va_arg(arg_marker,char *);
-/*      memcpy(resume_info+resume_len,source_ptr,len); */
-      MoveToMemory(source_ptr,(U16)1,(long)len,resume_len,resume_info);
+#if defined(_WIN32)
+		_ASSERTE(resume_len + len <= resume_info_len);
+#endif
+	  memcpy(&resume_info[resume_len], source_ptr, len);
       resume_len += len;
       len = va_arg(arg_marker,int);
    }
@@ -1123,15 +1127,16 @@ va_dcl
 
 int alloc_resume(int alloclen, int version)
 { /* WARNING! if alloclen > 4096B, problems may occur with GIF save/restore */
-   if (resume_info != 0) /* free the prior area if there is one */
-      MemoryRelease(resume_info);
-   /* TODO: MemoryAlloc */
-   resume_info = MemoryAlloc((U16)sizeof(alloclen), (long)alloclen, MEMORY);
-   if (resume_info == 0)
+	end_resume();
+
+	resume_info_len = alloclen*alloclen;
+	resume_info = malloc(resume_info_len);
+   if (resume_info == NULL)
    {
       stopmsg(0,"Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
       calc_status = CALCSTAT_NON_RESUMABLE;
+	  resume_info_len = 0;
       return(-1);
    }
    resume_len = 0;
@@ -1153,7 +1158,7 @@ va_dcl
    int len;
 #endif
 
-   if (resume_info == 0)
+   if (resume_info == NULL)
       return(-1);
 #ifndef USE_VARARGS
    va_start(arg_marker,len);
@@ -1164,8 +1169,10 @@ va_dcl
    while (len)
    {
       dest_ptr = (BYTE *)va_arg(arg_marker,char *);
-/*      memcpy(dest_ptr,resume_info+resume_offset,len); */
-      MoveFromMemory(dest_ptr,(U16)1,(long)len,resume_offset,resume_info);
+#if defined(_WIN32)
+	  _ASSERTE(resume_offset + len <= resume_info_len);
+#endif
+		memcpy(dest_ptr, &resume_info[resume_offset], len);
       resume_offset += len;
       len = va_arg(arg_marker,int);
    }
@@ -1176,7 +1183,7 @@ va_dcl
 int start_resume(void)
 {
    int version;
-   if (resume_info == 0)
+   if (resume_info == NULL)
       return(-1);
    resume_offset = 0;
    get_resume(sizeof(version),&version,0);
@@ -1185,10 +1192,11 @@ int start_resume(void)
 
 void end_resume(void)
 {
-   if (resume_info != 0) /* free the prior area if there is one */
+   if (resume_info != NULL) /* free the prior area if there is one */
    {
-      MemoryRelease(resume_info);
-      resume_info = 0;
+      free(resume_info);
+      resume_info = NULL;
+	  resume_info_len = 0;
    }
 }
 

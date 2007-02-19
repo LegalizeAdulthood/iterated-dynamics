@@ -423,12 +423,11 @@ int encoder()
       if (interrupted)
          save_info.calc_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
       save_info.tot_extend_len = 0;
-      if (resume_info != 0 && save_info.calc_status == CALCSTAT_RESUMABLE)
+      if (resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
       {
          /* resume info block, 002 */
          save_info.tot_extend_len += extend_blk_len(resume_len);
-         MoveFromMemory((BYTE *)block,(U16)1,(long)resume_len,0,resume_info);
-         if (!put_extend_blk(2, resume_len, (char *)block))
+         if (!put_extend_blk(2, resume_len, resume_info))
             goto oops;
       }
 /* save_info.fractal_type gets modified in setup_save_info() in float only
@@ -469,8 +468,6 @@ int encoder()
           struct evolution_info esave_info;
           int i;
           struct evolution_info resume_e_info;
-          GENEBASE gene[NUMGENES];
-          MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
           if (evolve_handle == 0 || calc_status == CALCSTAT_COMPLETED) {
              esave_info.paramrangex     = paramrangex;
              esave_info.paramrangey     = paramrangey;
@@ -511,7 +508,9 @@ int encoder()
              esave_info.ecount          = resume_e_info.ecount;
           }
           for (i = 0; i < NUMGENES; i++)
-             esave_info.mutate[i] = (short)gene[i].mutate;
+		  {
+             esave_info.mutate[i] = (short)g_genes[i].mutate;
+		  }
 
           for (i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
              esave_info.future[i] = 0;
