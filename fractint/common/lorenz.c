@@ -1190,9 +1190,6 @@ int dynamfloat(double *x, double *y, double *z)
 {
       _CMPLX cp,tmp;
       double newx,newy;
-#ifndef XFRACT
-      newx = *z; /* for warning only */
-#endif
       cp.x = b* *x;
       cp.y = 0;
       CMPLXtrig0(cp, tmp);
@@ -1878,6 +1875,8 @@ int dynam2dfloat()
    count = 0;
    if (inside > 0)
       color = inside;
+   else
+	   color = 1;
    if (color >= colors)
       color = 1;
    oldcol = oldrow = -1;
