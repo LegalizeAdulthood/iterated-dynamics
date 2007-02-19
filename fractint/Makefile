@@ -139,7 +139,7 @@ OLDSRC = \
 bignumc.c calcfrac.c cmdfiles.c decoder.c editpal.c \
 encoder.c evolve.c f16.c fracsubr.c fractalb.c fractalp.c \
 fractals.c fractint.c framain2.c \
-frasetup.c gifview.c hc.c hcmplx.c help.c \
+frasetup.c gifview.c hc.c hcmplx.c help.c history.c \
 intro.c jb.c jiim.c line3d.c loadfdos.c loadfile.c loadmap.c lorenz.c \
 lsys.c lsysf.c memory.c miscfrac.c miscovl.c miscres.c \
 mpmath_c.c parser.c parserfp.c plot3d.c prompts1.c \
@@ -202,7 +202,7 @@ $(COMDIR)/drivers.o $(COMDIR)/editpal.o \
 $(COMDIR)/encoder.o $(COMDIR)/evolve.o $(COMDIR)/f16.o $(COMDIR)/fracsubr.o \
 $(COMDIR)/fractalb.o $(COMDIR)/fractalp.o $(COMDIR)/fractals.o \
 $(COMDIR)/fractint.o $(COMDIR)/framain2.o $(COMDIR)/frasetup.o \
-$(COMDIR)/gifview.o $(COMDIR)/hcmplx.o $(COMDIR)/help.o \
+$(COMDIR)/gifview.o $(COMDIR)/hcmplx.o $(COMDIR)/help.o $(COMDIR)/history.o \
 $(COMDIR)/intro.o $(COMDIR)/jb.o $(COMDIR)/jiim.o $(COMDIR)/line3d.o \
 $(COMDIR)/loadfdos.o $(COMDIR)/loadfile.o $(COMDIR)/loadmap.o \
 $(COMDIR)/lorenz.o $(COMDIR)/lsys.o $(COMDIR)/lsysf.o $(COMDIR)/memory.o \
