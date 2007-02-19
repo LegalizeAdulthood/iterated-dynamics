@@ -1017,7 +1017,8 @@ extern void setbailoutformula(enum bailouts);
 extern int find_extra_param(int);
 extern void load_params(int fractype);
 extern int check_orbit_name(char *);
-extern int scan_entries(FILE *infile, void *ch, char *itemname);
+struct entryinfo;
+extern int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname);
 
 /*  prompts2 -- C file prototypes */
 
