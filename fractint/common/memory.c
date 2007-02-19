@@ -274,6 +274,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    int success, use_this_type;
    long toallocate;
 
+#if defined(_WIN32)
+   _ASSERTE(stored_at != MEMORY);
+#endif
    success = FALSE;
    toallocate = count * size;
    if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
@@ -301,9 +304,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 /* attempt to allocate requested memory type */
    switch (use_this_type)
    {
-   default:
    case NOWHERE: /* MemoryAlloc */
       use_this_type = NOWHERE; /* in case nonsense value is passed */
+#if defined(_WIN32)
+	  _ASSERTE(use_this_type != NOWHERE);
+#endif
       break;
 
    case MEMORY: /* MemoryAlloc */
@@ -315,6 +320,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
       success = TRUE;
       break;
 
+   default:
    case DISK: /* MemoryAlloc */
       memfile[9] = (char)(handle % 10 + (int)'0');
       memfile[8] = (char)((handle % 100) / 10 + (int)'0');
@@ -479,11 +485,12 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
       break;
 
    case MEMORY: /* MoveFromMemory */
-      for (i=0; i<size; i++) {
-         memcpy(buffer, handletable[handle].Linearmem.memory+start, (U16)count);
-         start += count;
-         buffer += count;
-      }
+	   for (i = 0; i < count; i++)
+	   {
+		   memcpy(buffer, handletable[handle].Linearmem.memory + start, (U16) size);
+		   start += size;
+		   buffer += size;
+	   }
       success = TRUE; /* No way to gauge success or failure */
       break;
 
