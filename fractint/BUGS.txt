@@ -15,3 +15,5 @@ change 320 to 32, submit it.  This problem is present in the DOS fractint.
 
 <\> or <h> or <ctrl-h>  just redraws the current image instead of moving
 backwards through the history buffer.
+
+When you change fractal types, the colormap is reset to the default.
