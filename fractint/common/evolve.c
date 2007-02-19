@@ -4,7 +4,6 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #define PARMBOX 128
-U16 gene_handle = 0;
 
 /* px and py are coordinates in the parameter grid (small images on screen) */
 /* evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz) */
@@ -29,10 +28,10 @@ char odpx,odpy,newodpx,newodpy;
    fiddle_reduction is used to decrease fiddlefactor from one generation to the
    next to eventually produce a stable population */
 
-U16 prmboxhandle = 0;
-U16 imgboxhandle = 0;
-int prmboxcount,imgboxcount;
-U16 oldhistory_handle = 0;
+static int *prmbox = NULL;
+static int *imgbox = NULL;
+int prmboxcount = 0;
+static int imgboxcount;
 
 struct phistory_info      /* for saving evolution data of center image */
 {
@@ -61,6 +60,8 @@ struct phistory_info      /* for saving evolution data of center image */
 
 typedef struct phistory_info    PARAMHIST;
 
+static PARAMHIST oldhistory = { 0 };
+
 void param_history(int mode);
 void varydbl(GENEBASE gene[],int randval,int i);
 int varyint( int randvalue, int limit, int mode);
@@ -78,55 +79,34 @@ void set_mutation_level(int);
 void SetupParamBox(void);
 void ReleaseParamBox(void);
 
-void initgene(void) /* set up pointers and mutation params for all usable image
-                   control variables in fractint... revise as necessary when
-                   new vars come along... dont forget to increment NUMGENES
-                   (in fractint.h ) as well */
+GENEBASE g_genes[NUMGENES] =
 {
- int i = 0;
- /* 0 = dont vary, 1= with x axis, 2 = with y */
- /* 3 = with x+y, 4 = with x-y, 5 = random, 6 = weighted random */
-  /*     Use only 15 letters below: 123456789012345 */
-  GENEBASE gene[NUMGENES] = {
-    { &param[0],   varydbl,     5, "Param 1 real",1 },
-    { &param[1],   varydbl,     5, "Param 1 imag",1 },
-    { &param[2],   varydbl,     0, "Param 2 real",1 },
-    { &param[3],   varydbl,     0, "Param 2 imag",1 },
-    { &param[4],   varydbl,     0, "Param 3 real",1 },
-    { &param[5],   varydbl,     0, "Param 3 imag",1 },
-    { &param[6],   varydbl,     0, "Param 4 real",1 },
-    { &param[7],   varydbl,     0, "Param 4 imag",1 },
-    { &param[8],   varydbl,     0, "Param 5 real",1 },
-    { &param[9],   varydbl,     0, "Param 5 imag",1 },
-    { &inside,     varyinside,  0, "inside color",2 },
-    { &outside,    varyoutside, 0, "outside color",3 },
-    { &decomp[0],  varypwr2,    0, "decomposition",4 },
-    { &inversion[0],varyinv,    0, "invert radius",7 },
-    { &inversion[1],varyinv,    0, "invert center x",7 },
-    { &inversion[2],varyinv,    0, "invert center y",7 },
-    { &trigndx[0], varytrig,    0, "trig function 1",5 },
-    { &trigndx[1], varytrig,    0, "trig fn 2",5 },
-    { &trigndx[2], varytrig,    0, "trig fn 3",5 },
-    { &trigndx[3], varytrig,    0, "trig fn 4",5 },
-    { &bailoutest, varybotest,  0, "bailout test",6 }
-  };
-
-  /* TODO: MemoryAlloc, MoveToMemory */
-  if (gene_handle == 0)
-     gene_handle = MemoryAlloc((U16)sizeof(gene),1L,MEMORY);
-  MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-}
+	{ &param[0],   varydbl,     5, "Param 1 real", 1 },
+	{ &param[1],   varydbl,     5, "Param 1 imag", 1 },
+	{ &param[2],   varydbl,     0, "Param 2 real", 1 },
+	{ &param[3],   varydbl,     0, "Param 2 imag", 1 },
+	{ &param[4],   varydbl,     0, "Param 3 real", 1 },
+	{ &param[5],   varydbl,     0, "Param 3 imag", 1 },
+	{ &param[6],   varydbl,     0, "Param 4 real", 1 },
+	{ &param[7],   varydbl,     0, "Param 4 imag", 1 },
+	{ &param[8],   varydbl,     0, "Param 5 real", 1 },
+	{ &param[9],   varydbl,     0, "Param 5 imag", 1 },
+	{ &inside,     varyinside,  0, "inside color", 2 },
+	{ &outside,    varyoutside, 0, "outside color", 3 },
+	{ &decomp[0],  varypwr2,    0, "decomposition", 4 },
+	{ &inversion[0],varyinv,    0, "invert radius", 7 },
+	{ &inversion[1],varyinv,    0, "invert center x", 7 },
+	{ &inversion[2],varyinv,    0, "invert center y", 7 },
+	{ &trigndx[0], varytrig,    0, "trig function 1", 5 },
+	{ &trigndx[1], varytrig,    0, "trig fn 2", 5 },
+	{ &trigndx[2], varytrig,    0, "trig fn 3", 5 },
+	{ &trigndx[3], varytrig,    0, "trig fn 4", 5 },
+	{ &bailoutest, varybotest,  0, "bailout test", 6 }
+};
 
 void param_history(int mode)
 { /* mode = 0 for save old history,
      mode = 1 for restore old history */
-
-   PARAMHIST oldhistory;
-
-   /* TODO: MemoryAlloc */
-   if (oldhistory_handle == 0)
-      oldhistory_handle = MemoryAlloc((U16)sizeof(oldhistory),1L,MEMORY);
-
    if (mode == 0) { /* save the old parameter history */
       oldhistory.param0 = param[0];
       oldhistory.param1 = param[1];
@@ -149,11 +129,9 @@ void param_history(int mode)
       oldhistory.trigndx2 = trigndx[2];
       oldhistory.trigndx3 = trigndx[3];
       oldhistory.bailoutest = bailoutest;
-      MoveToMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
    }
 
    if (mode == 1) { /* restore the old parameter history */
-      MoveFromMemory((BYTE *)&oldhistory, (U16)sizeof(oldhistory), 1L, 0L, oldhistory_handle);
       param[0] = oldhistory.param0;
       param[1] = oldhistory.param1;
       param[2] = oldhistory.param2;
@@ -325,12 +303,6 @@ int get_the_rest(void)
   int i,k,num, numtrig;
   char *choices[20];
   struct fullscreenvalues uvalues[20];
-  GENEBASE gene[NUMGENES];
-
-   /* TODO: allocate real memory, not reuse shared segment */
-//  ptr = (char *) extraseg;
-
-   MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
    numtrig = (curfractalspecific->flags >> 6) & 7;
    if (fractype==FORMULA || fractype==FFORMULA ) {
@@ -341,31 +313,31 @@ choose_vars_restart:
 
    k = -1;
    for (num = MAXPARAMS; num < (NUMGENES - 5); num++) {
-      choices[++k]=gene[num].name;
+      choices[++k]=g_genes[num].name;
       uvalues[k].type = 'l';
       uvalues[k].uval.ch.vlen = 7;
       uvalues[k].uval.ch.llen = 7;
       uvalues[k].uval.ch.list = evolvmodes;
-      uvalues[k].uval.ch.val =  gene[num].mutate;
+      uvalues[k].uval.ch.val =  g_genes[num].mutate;
    }
 
    for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) {
-      choices[++k]=gene[num].name;
+      choices[++k]=g_genes[num].name;
       uvalues[k].type = 'l';
       uvalues[k].uval.ch.vlen = 7;
       uvalues[k].uval.ch.llen = 7;
       uvalues[k].uval.ch.list = evolvmodes;
-      uvalues[k].uval.ch.val =  gene[num].mutate;
+      uvalues[k].uval.ch.val =  g_genes[num].mutate;
    }
 
    if (curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) ) {
-      choices[++k]=gene[NUMGENES - 1].name;
+      choices[++k]=g_genes[NUMGENES - 1].name;
       uvalues[k].type = 'l';
       uvalues[k].uval.ch.vlen = 7;
       uvalues[k].uval.ch.llen = 7;
       uvalues[k].uval.ch.list = evolvmodes;
-      uvalues[k].uval.ch.val =  gene[NUMGENES - 1].mutate;
+      uvalues[k].uval.ch.val =  g_genes[NUMGENES - 1].mutate;
    }
 
    choices[++k]= "";
@@ -382,15 +354,15 @@ choose_vars_restart:
    switch (i) {
      case FIK_F2: /* set all off */
        for (num = MAXPARAMS; num < NUMGENES; num++)
-          gene[num].mutate = 0;
+          g_genes[num].mutate = 0;
        goto choose_vars_restart;
      case FIK_F3: /* set all on..alternate x and y for field map */
        for (num = MAXPARAMS; num < NUMGENES; num ++ )
-          gene[num].mutate = (char)((num % 2) + 1);
+          g_genes[num].mutate = (char)((num % 2) + 1);
        goto choose_vars_restart;
      case FIK_F4: /* Randomize all */
        for (num =MAXPARAMS; num < NUMGENES; num ++ )
-          gene[num].mutate = (char)(rand() % 6);
+          g_genes[num].mutate = (char)(rand() % 6);
        goto choose_vars_restart;
      case -1:
        return(-1);
@@ -401,16 +373,15 @@ choose_vars_restart:
    /* read out values */
    k = -1;
    for ( num = MAXPARAMS; num < (NUMGENES - 5); num++)
-      gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+      g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
    for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) 
-      gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+      g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 
    if (curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST) )
-      gene[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
+      g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
 
-   MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
    return(1); /* if you were here, you want to regenerate */
 }
 
@@ -420,15 +391,9 @@ int get_variations(void)
   int i,k,num, numparams;
   char *choices[20];
   struct fullscreenvalues uvalues[20];
-  GENEBASE gene[NUMGENES];
   int firstparm = 0;
   int lastparm  = MAXPARAMS;
   int chngd = -1;
-
-   /* TODO: allocate real memory, not reuse shared segment */
-//  ptr = (char *) extraseg;
-
-   MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
    if (fractype == FORMULA || fractype == FFORMULA) {
       if (uses_p1)  /* set first parameter */
@@ -476,12 +441,12 @@ choose_vars_restart:
       if (fractype == FORMULA || fractype == FFORMULA)
         if (paramnotused(num))
            continue;
-      choices[++k]=gene[num].name;
+      choices[++k]=g_genes[num].name;
       uvalues[k].type = 'l';
       uvalues[k].uval.ch.vlen = 7;
       uvalues[k].uval.ch.llen = 7;
       uvalues[k].uval.ch.list = evolvmodes;
-      uvalues[k].uval.ch.val =  gene[num].mutate;
+      uvalues[k].uval.ch.val =  g_genes[num].mutate;
    }
 
    choices[++k]= "";
@@ -500,20 +465,31 @@ choose_vars_restart:
    switch (i) {
      case FIK_F2: /* set all off */
        for (num = 0; num < MAXPARAMS; num++)
-          gene[num].mutate = 0;
+          g_genes[num].mutate = 0;
        goto choose_vars_restart;
      case FIK_F3: /* set all on..alternate x and y for field map */
        for (num = 0; num < MAXPARAMS; num ++ )
-          gene[num].mutate = (char)((num % 2) + 1);
+          g_genes[num].mutate = (char)((num % 2) + 1);
        goto choose_vars_restart;
      case FIK_F4: /* Randomize all */
        for (num =0; num < MAXPARAMS; num ++ )
-          gene[num].mutate = (char)(rand() % 6);
+          g_genes[num].mutate = (char)(rand() % 6);
        goto choose_vars_restart;
      case FIK_F6: /* go to second screen, put array away first */
-       MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
-       chngd = get_the_rest();
-       MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+		 {
+			GENEBASE save[NUMGENES];
+			int g;
+
+			for (g = 0; g < NUMGENES; g++)
+			{
+				save[g] = g_genes[g];
+			}
+			chngd = get_the_rest();
+			for (g = 0; g < NUMGENES; g++)
+			{
+				g_genes[g] = save[g];
+			}
+		 }
        goto choose_vars_restart;
      case -1:
        return(chngd);
@@ -527,10 +503,9 @@ choose_vars_restart:
       if (fractype == FORMULA || fractype == FFORMULA)
         if (paramnotused(num))
            continue;
-      gene[num].mutate = (char)(uvalues[++k].uval.ch.val);
+      g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
    }
 
-   MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
    return(1); /* if you were here, you want to regenerate */
 }
 
@@ -539,18 +514,13 @@ void set_mutation_level(int strength)
 /* scan through the gene array turning on random variation for all parms that */
 /* are suitable for this level of mutation */
  int i;
- GENEBASE gene[NUMGENES];
- /* get the gene array from memory */
- MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
 
  for (i=0;i<NUMGENES;i++) {
-   if (gene[i].level <= strength)
-      gene[i].mutate = 5; /* 5 = random mutation mode */
+   if (g_genes[i].level <= strength)
+      g_genes[i].mutate = 5; /* 5 = random mutation mode */
    else
-      gene[i].mutate = 0;
+      g_genes[i].mutate = 0;
  }
- /* now put the gene array back in memory */
- MoveToMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
  return;
 }
 
@@ -761,37 +731,47 @@ if (j==FIK_F6) {
 
 void SetupParamBox(void)
 {
-   int vidsize;
-   prmboxcount = 0;
-   parmzoom=((double)gridsz-1.0)/2.0;
-/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */  
-   vidsize = (xdots+ydots) * 4 * sizeof(int) ;
-   vidsize = vidsize + xdots + ydots + 2 ;
-   /* TODO: MemoryAlloc */
-   if (prmboxhandle == 0)
-      prmboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
-   if (prmboxhandle == 0 ) {
-     texttempmsg("Sorry...can't allocate mem for parmbox");
-     evolving=0;
-   }
-   prmboxcount=0;
+	int vidsize;
+	prmboxcount = 0;
+	parmzoom=((double)gridsz-1.0)/2.0;
+	/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */  
+	vidsize = (xdots + ydots)*4*sizeof(int);
+	vidsize += xdots + ydots + 2;
+	if (!prmbox)
+	{
+		prmbox = (int *) malloc(vidsize);
+	}
+	if (!prmbox)
+	{
+		texttempmsg("Sorry...can't allocate mem for parmbox");
+		evolving=0;
+	}
+	prmboxcount=0;
 
-/* vidsize = (vidsize / gridsz)+3 ; */ /* allocate less mem for smaller box */
-/* taken out above as *all* pixels get plotted in small boxes */
-   /* TODO: MemoryAlloc */
-   if (imgboxhandle == 0)
-      imgboxhandle = MemoryAlloc((U16)(vidsize),1L,MEMORY);
-   if (!imgboxhandle) {
-     texttempmsg("Sorry...can't allocate mem for imagebox");
-   }
+	/* vidsize = (vidsize / gridsz)+3 ; */ /* allocate less mem for smaller box */
+	/* taken out above as *all* pixels get plotted in small boxes */
+	if (!imgbox)
+	{
+		imgbox = (int *) malloc(vidsize);
+	}
+	if (!imgbox)
+	{
+		texttempmsg("Sorry...can't allocate mem for imagebox");
+	}
 }
 
 void ReleaseParamBox(void)
 {
-   MemoryRelease(prmboxhandle);
-   MemoryRelease(imgboxhandle);
-   prmboxhandle = 0;
-   imgboxhandle = 0; 
+	if (prmbox)
+	{
+		free(prmbox);
+		prmbox = NULL;
+	}
+	if (imgbox)
+	{
+		free(imgbox);
+		imgbox = NULL;
+	}
 }
 
 void set_current_params(void)
@@ -858,10 +838,9 @@ int explore_check(void)
 /* needed */
    int nonrandom = FALSE;
    int i;
-   GENEBASE gene[NUMGENES];
-   MoveFromMemory((BYTE *)&gene, (U16)sizeof(gene), 1L, 0L, gene_handle);
+
    for (i=0;i<NUMGENES && !(nonrandom);i++)
-      if ((gene[i].mutate > 0) && (gene[i].mutate < 5)) nonrandom = TRUE;
+      if ((g_genes[i].mutate > 0) && (g_genes[i].mutate < 5)) nonrandom = TRUE;
    return(nonrandom);
 }
 
@@ -876,16 +855,16 @@ int grout;
  imgboxcount = boxcount;
  if (boxcount) {
    /* stash normal zoombox pixels */
-   MoveToMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,imgboxhandle);
-   MoveToMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,imgboxhandle);
-   MoveToMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,imgboxhandle);
+	 memcpy(&imgbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
+	 memcpy(&imgbox[boxcount], &boxy[0], boxcount*sizeof(boxy[0]));
+	 memcpy(&imgbox[boxcount*2], &boxvalues[0], boxcount*sizeof(boxvalues[0]));
    clearbox(); /* to avoid probs when one box overlaps the other */
  }
  if (prmboxcount!=0)  { /* clear last parmbox */
    boxcount=prmboxcount;
-   MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
-   MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
-   MoveFromMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,prmboxhandle);
+   memcpy(&boxx[0], &prmbox[0], boxcount*sizeof(boxx[0]));
+   memcpy(&boxy[0], &prmbox[boxcount], boxcount*sizeof(boxy[0]));
+   memcpy(&boxvalues[0], &prmbox[boxcount*2], boxcount*sizeof(boxvalues[0]));
    clearbox();
  }
 
@@ -919,17 +898,17 @@ int grout;
  if (boxcount) {
    dispbox();
    /* stash pixel values for later */
-   MoveToMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,prmboxhandle);
-   MoveToMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,prmboxhandle);
-   MoveToMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,prmboxhandle);
+   memcpy(&prmbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
+   memcpy(&prmbox[boxcount], &boxy[0], boxcount*sizeof(boxy[0]));
+   memcpy(&prmbox[boxcount*2], &boxvalues[0], boxcount*sizeof(boxvalues[0]));
    }
  prmboxcount = boxcount;
  boxcount = imgboxcount;
  if (imgboxcount) {
    /* and move back old values so that everything can proceed as normal */
-   MoveFromMemory((BYTE *)boxx,(U16)(boxcount*2),1L,0L,imgboxhandle);
-   MoveFromMemory((BYTE *)boxy,(U16)(boxcount*2),1L,1L,imgboxhandle);
-   MoveFromMemory((BYTE *)boxvalues,(U16)boxcount,1L,4L,imgboxhandle);
+	memcpy(&boxx[0], &imgbox[0], boxcount*sizeof(boxx[0]));
+	memcpy(&boxy[0], &imgbox[boxcount], boxcount*sizeof(boxy[0]));
+	memcpy(&boxvalues[0], &imgbox[boxcount*2], boxcount*sizeof(boxvalues[0]));
    dispbox();
  }
  return;

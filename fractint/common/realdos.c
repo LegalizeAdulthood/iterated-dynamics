@@ -120,7 +120,7 @@ int stopmsg (int flags, char *msg)
 }
 
 
-static U16 temptextsave = 0;
+static BYTE *temptextsave = 0;
 static int  textxdots,textydots;
 
 /* texttempmsg(msg) displays a text message of up to 40 characters, waits
@@ -142,18 +142,17 @@ int texttempmsg(char *msgparm)
 
 void freetempmsg()
 {
-	if (temptextsave != 0)
+	if (temptextsave != NULL)
 	{
-		MemoryRelease(temptextsave);
+		free(temptextsave);
+		temptextsave = NULL;
 	}
-	temptextsave = 0;
 }
 
 int showtempmsg(char *msgparm)
 {
 	static long size = 0;
 	char msg[41];
-	BYTE buffer[640];
 	BYTE *fontptr = NULL;
 	int i;
 	int xrepeat = 0;
@@ -179,14 +178,14 @@ int showtempmsg(char *msgparm)
 	textydots = yrepeat * 8;
 
 	/* worst case needs 10k */
-	if (temptextsave != 0)
+	if (temptextsave != NULL)
 	{
-		if (size != (long) textxdots * (long) textydots)
+		if (size != (long) textxdots*textydots)
 		{
 			freetempmsg();
 		}
 	}
-	size = (long) textxdots * (long) textydots;
+	size = (long) textxdots*textydots;
 	save_sxoffs = sxoffs;
 	save_syoffs = syoffs;
 	if (g_video_scroll)
@@ -198,18 +197,17 @@ int showtempmsg(char *msgparm)
 	{
 		sxoffs = syoffs = 0;
 	}
-	if (temptextsave == 0) /* only save screen first time called */
+	if (temptextsave == NULL) /* only save screen first time called */
 	{
 		/* TODO: MemoryAlloc, MoveToMemory */
-		temptextsave = MemoryAlloc((U16)textxdots, (long)textydots, MEMORY);
-		if (temptextsave == 0)
+		temptextsave = malloc(textxdots*textydots);
+		if (temptextsave == NULL)
 		{
 			return -1; /* sorry, message not displayed */
 		}
 		for (i = 0; i < textydots; ++i)
 		{
-			get_line(i, 0, textxdots-1, buffer);
-			MoveToMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
+			get_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
 		}
 	}
 
@@ -223,14 +221,13 @@ int showtempmsg(char *msgparm)
 
 void cleartempmsg()
 {
-	BYTE buffer[640];
 	int i;
 	int save_sxoffs, save_syoffs;
 	if (driver_diskp()) /* disk video, easy */
 	{
 		dvid_status(0, "");
 	}
-	else if (temptextsave != 0)
+	else if (temptextsave != NULL)
 	{
 		save_sxoffs = sxoffs;
 		save_syoffs = syoffs;
@@ -245,13 +242,12 @@ void cleartempmsg()
 		}
 		for (i = 0; i < textydots; ++i)
 		{
-			MoveFromMemory(buffer, (U16)textxdots, 1L, (long)i, temptextsave);
-			put_line(i, 0, textxdots-1, buffer);
+			put_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
 		}
 		if (using_jiim == 0)  /* jiim frees memory with freetempmsg() */
 		{
-			MemoryRelease(temptextsave);
-			temptextsave = 0;
+			free(temptextsave);
+			temptextsave = NULL;
 		}
 		sxoffs = save_sxoffs;
 		syoffs = save_syoffs;

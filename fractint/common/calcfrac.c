@@ -122,7 +122,7 @@ int     symmetry;          /* symmetry flag */
 int     reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int     kbdcount, max_kbdcount;    /* avoids checking keyboard too often */
 
-U16 resume_info = 0;                    /* handle to resume info if allocated */
+char *resume_info = NULL;                    /* resume info if allocated */
 int resuming;                           /* nonzero if resuming after interrupt */
 int num_worklist;                       /* resume worklist for standard engine */
 WORKLIST worklist[MAXCALCWORK];

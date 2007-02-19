@@ -117,8 +117,6 @@ char *fract_dir1="", *fract_dir2="";
         int     video_cutboth;          /* nonzero to keep virtual aspect */
         int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
-/*      HISTORY  *history = NULL; */
-        U16 history = 0;
         int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
@@ -240,7 +238,6 @@ restart:   /* insert key re-starts here */
 	fiddle_reduction = 1.0;
 	this_gen_rseed = (unsigned int)clock_ticks();
 	srand(this_gen_rseed);
-	initgene(); /*initialise pointers to lots of fractint variables for the evolution engine*/
 	start_showorbit = 0;
 	showdot = -1; /* turn off showdot if entered with <g> command */
 	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
@@ -260,15 +257,7 @@ restart:   /* insert key re-starts here */
 	dopause(0);                  /* pause for error msg if not batch */
 	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
 
-	while (maxhistory > 0) /* decrease history if necessary */
-    {
-        history = MemoryAlloc((U16) sizeof(HISTORY),(long) maxhistory, MEMORY);
-        if (history)
-		{
-			break;
-		}
-        maxhistory--;
-    }
+	history_allocate();
 
 	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
 	{

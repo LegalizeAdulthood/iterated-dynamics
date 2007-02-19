@@ -55,11 +55,8 @@
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
-#define newx(size)     mem_alloc(size)
-#define delete(block)  block=NULL
-
 int show_numbers =0;              /* toggle for display of coords */
-U16 memory_handle = 0;
+static char *rect_buff = NULL;
 FILE *file;
 int windows = 0;               /* windows management system */
 
@@ -174,13 +171,13 @@ void circle(int radius, int color)
  int    SecretExperimentalMode;
  float  luckyx = 0, luckyy = 0;
 
-static void fillrect(int x, int y, int width, int depth, int color)
+static void fillrect(int x, int y, int width, int height, int color)
 {
    /* fast version of fillrect */
    if (hasinverse == 0)
       return;
    memset(dstack, color % colors, width);
-   while (depth-- > 0)
+   while (height-- > 0)
    {
       if (driver_key_pressed()) /* we could do this less often when in fast modes */
          return;
@@ -417,49 +414,45 @@ DeQueueLong()
  * End MIIM section;
  */
 
-static void SaveRect(int x, int y, int width, int depth)
+static void SaveRect(int x, int y, int width, int height)
 {
-   char buff[MAXRECT];
-   int  yoff;
-   if (hasinverse == 0)
-      return;
-   /* first, do any de-allocationg */
+	if (hasinverse == 0)
+	{
+		return;
+	}
+	rect_buff = malloc(width*height);
+	if (rect_buff != NULL)
+	{
+		char *buff = rect_buff;
+		int yoff;
 
-   if (memory_handle != 0)
-      MemoryRelease(memory_handle);
-
-   /* allocate space and store the rect */
-
-   memset(dstack, g_color_dark, width);
-   /* TODO: MemoryAlloc */
-   if ((memory_handle = MemoryAlloc( (U16)width, (long)depth, MEMORY)) != 0)
-   {
-      Cursor_Hide();
-      for (yoff=0; yoff<depth; yoff++)
-      {
-         getrow(x, y+yoff, width, buff);
-         putrow(x, y+yoff, width, (char *)dstack);
-         MoveToMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
-      }
-      Cursor_Show();
-   }
+		Cursor_Hide();
+		for (yoff = 0; yoff < height; yoff++)
+		{
+			getrow(x, y+yoff, width, buff);
+			putrow(x, y+yoff, width, (char *) dstack);
+			buff += width;
+		}
+		Cursor_Show();
+	}
 }
 
 
-static void RestoreRect(int x, int y, int width, int depth)
+static void RestoreRect(int x, int y, int width, int height)
 {
-   char buff[MAXRECT];
-   int  yoff;
-   if (hasinverse == 0)
-      return;
+	char *buff = rect_buff;
+	int  yoff;
 
-    Cursor_Hide();
-    for (yoff=0; yoff<depth; yoff++)
-       {
-          MoveFromMemory((BYTE *)buff, (U16)width, 1L, (long)(yoff), memory_handle);
-          putrow(x, y+yoff, width, buff);
-       }
-    Cursor_Show();
+	if (hasinverse == 0)
+		return;
+
+	Cursor_Hide();
+	for (yoff =0; yoff<height; yoff++)
+    {
+		putrow(x, y+yoff, width, buff);
+		buff += width;
+    }
+	Cursor_Show();
 }
 
 /*
@@ -524,8 +517,7 @@ void Jiim(int which)         /* called by fractint */
    oldcalctype = calctype;
    show_numbers = 0;
    using_jiim = 1;
-   mem_init(strlocn, 10*1024);
-   line_buff = newx(max(sxdots,sydots));
+   line_buff = malloc(max(sxdots,sydots));
    aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
          actively_computing = 1;
    SetAspect(aspect);
@@ -1232,11 +1224,16 @@ finish:
 #ifdef XFRACT
    Cursor_EndMouseTracking();
 #endif
-   delete(line_buff);
+   if (line_buff)
+   {
+		free(line_buff);
+		line_buff = NULL;
+   }
 
-   if (memory_handle != 0) {
-      MemoryRelease(memory_handle);
-      memory_handle = 0;
+   if (rect_buff)
+   {
+	   free(rect_buff);
+	   rect_buff = NULL;
    }
 #if 0
    if (memory)                  /* done with memory, free it */

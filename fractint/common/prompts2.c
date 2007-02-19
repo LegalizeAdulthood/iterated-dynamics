@@ -1149,7 +1149,7 @@ void goodbye(void)                  /* we done.  Bail out */
 		free(mapdacbox);
 		mapdacbox = NULL;
 	}
-	if (resume_info != 0)
+	if (resume_info != NULL)
 	{
 		end_resume();
 	}
@@ -1157,22 +1157,8 @@ void goodbye(void)                  /* we done.  Bail out */
 	{
 		MemoryRelease(evolve_handle);
 	}
-	if (gene_handle != 0)
-	{
-		MemoryRelease(gene_handle);
-	}
-	if (imgboxhandle != 0 || prmboxhandle != 0)
-	{
-		ReleaseParamBox();
-	}
-	if (history != 0)
-	{
-		MemoryRelease(history);
-	}
-	if (oldhistory_handle != 0)
-	{
-		MemoryRelease(oldhistory_handle);
-	}
+	ReleaseParamBox();
+	history_free();
 	if (ifs_defn != NULL)
 	{
 		free(ifs_defn);
