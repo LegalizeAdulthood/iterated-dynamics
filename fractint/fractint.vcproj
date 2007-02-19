@@ -351,6 +351,9 @@
 					RelativePath=".\common\frasetup.c">
 				</File>
 				<File
+					RelativePath=".\common\history.c">
+				</File>
+				<File
 					RelativePath=".\common\soi.c">
 				</File>
 				<File
