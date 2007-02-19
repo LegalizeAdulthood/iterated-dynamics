@@ -95,6 +95,15 @@ extern int near asmfpANDbailout(void);
 extern int near asmfpMANHbailout(void);
 extern int near asmfpMANRbailout(void);
 
+/* history -- C file prototypes */
+
+void _fastcall restore_history_info(void);
+void _fastcall save_history_info(void);
+void history_allocate(void);
+void history_free(void);
+void history_back(void);
+void history_forward(void);
+
 /*  mpmath_a -- assembler file prototypes */
 
 extern struct MP * MPmul086(struct MP , struct MP );
@@ -261,7 +270,6 @@ extern int _fastcall new_to_old(int new_fractype);
 
 /*  evolve -- C file prototypes */
 
-extern  void initgene(void);
 extern  void param_history(int);
 extern  int get_variations(void);
 extern  int get_evolve_Parms(void);
