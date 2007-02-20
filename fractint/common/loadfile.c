@@ -1242,9 +1242,9 @@ static void bftransform( bf_t, bf_t, struct dblcoords * );
 
 char browsename[FILE_MAX_FNAME]; /* name for browse file */
 struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
-U16 boxxhandle;
-U16 boxyhandle;
-U16 boxvalueshandle;
+static int *boxx_storage = NULL;
+static int *boxy_storage = NULL;
+static int *boxvalues_storage = NULL;
 
 /* here because must be visible inside several routines */
 static struct affine *cvt; 
@@ -1274,7 +1274,7 @@ int fgetwindow(void)
     char tmpmask[FILE_MAX_PATH];
     int vid_too_big = 0;
     int no_memory = 0;
-    U16 vidlength;
+    int vidlength;
     int saved;
 #ifdef XFRACT
     U32 blinks;
@@ -1295,7 +1295,8 @@ int fgetwindow(void)
    bt_e = alloc_stack(rbflength+2);
    bt_f = alloc_stack(rbflength+2);
 
-   if ((vidlength = (U16)(sxdots + sydots)) > (U16)4096)
+   vidlength = sxdots + sydots;
+   if (vidlength > 4096)
       vid_too_big = 2;
    /* 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words */
    /* 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues */
@@ -1303,10 +1304,10 @@ int fgetwindow(void)
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
 	/* TODO: MemoryAlloc */
-   boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
-   boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
-   boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
-   if (!boxxhandle || !boxyhandle || !boxvalueshandle)
+	boxx_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
+	boxy_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
+	boxvalues_storage = (int *) malloc(vidlength/2*MAX_WINDOWS_OPEN*sizeof(int));
+   if (!boxx_storage || !boxy_storage || !boxvalues_storage)
       no_memory = 1;
 
      /* set up complex-plane-to-screen transformation */
@@ -1360,9 +1361,10 @@ rescan:  /* entry for changed browse parms */
            boxcount <<= 1; /*boxcount*2;*/ /* double for byte count */
            winlist.boxcount = boxcount;
 		   browse_windows[wincount] = winlist;
-           MoveToMemory((BYTE *)boxx,vidlength,1L,(long)wincount,boxxhandle);
-           MoveToMemory((BYTE *)boxy,vidlength,1L,(long)wincount,boxyhandle);
-           MoveToMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)wincount,boxvalueshandle);
+
+		   memcpy(&boxx_storage[wincount*vidlength], boxx, vidlength*sizeof(int));
+		   memcpy(&boxy_storage[wincount*vidlength], boxy, vidlength*sizeof(int));
+		   memcpy(&boxvalues_storage[wincount*vidlength/2], boxvalues, vidlength/2*sizeof(int));
            wincount++;
          }
 
@@ -1396,9 +1398,9 @@ rescan:  /* entry for changed browse parms */
       driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
       index=0;done = 0;
 	  winlist = browse_windows[index];
-      MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
-      MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-      MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+	  memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+	  memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+	  memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
       showtempmsg(winlist.name);
       while ( !done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
@@ -1445,9 +1447,9 @@ rescan:  /* entry for changed browse parms */
              if ( index < 0 )  index = wincount -1 ;
            }
 		   winlist = browse_windows[index];
-           MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
-           MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-           MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+		   memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+		   memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+		   memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
            showtempmsg(winlist.name);
            break;
 #ifndef XFRACT
@@ -1582,9 +1584,9 @@ rescan:  /* entry for changed browse parms */
        for (index=wincount-1;index>=0;index--){ /* don't need index, reuse it */
 			winlist = browse_windows[index];
           boxcount = winlist.boxcount;
-          MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
-          MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
-          MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
+		  memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+		  memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+		  memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
           boxcount >>= 1;
           if (boxcount > 0 )
 #ifdef XFRACT
@@ -1605,9 +1607,9 @@ rescan:  /* entry for changed browse parms */
    no_sub_images = TRUE;
  }
 
- MemoryRelease(boxxhandle);
- MemoryRelease(boxyhandle);
- MemoryRelease(boxvalueshandle);
+ free(boxx_storage);
+ free(boxy_storage);
+ free(boxvalues_storage);
  restore_stack(saved);
  if (!oldbf_math)
     free_bf_vars();
