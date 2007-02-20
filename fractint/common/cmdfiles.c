@@ -56,7 +56,7 @@ char    readname[FILE_MAX_PATH];/* name of fractal input file */
 char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
 char    orgfrmdir[FILE_MAX_DIR] = {""};/*name of directory for orgfrm files*/
-char    gifmask[13] = {""};
+char    gifmask[FILE_MAX_PATH] = {""};
 char    PrintName[FILE_MAX_PATH]={"fract001.prn"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH]={"fract001"};  /* save files using this name */
 char    autoname[FILE_MAX_PATH]={"auto.key"}; /* record auto keystrokes here */
