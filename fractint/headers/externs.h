@@ -140,7 +140,7 @@ extern double                dysize;
 extern int                   escape_exit;
 extern BYTE                  exitmode;
 extern int                   evolving;
-extern U16                   evolve_handle;
+extern void *				 evolve_handle;
 extern int                   g_eye_separation;
 extern float                 eyesfp;
 extern int                   fastrestore;
