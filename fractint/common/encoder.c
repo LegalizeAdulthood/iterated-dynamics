@@ -468,7 +468,7 @@ int encoder()
           struct evolution_info esave_info;
           int i;
           struct evolution_info resume_e_info;
-          if (evolve_handle == 0 || calc_status == CALCSTAT_COMPLETED) {
+          if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED) {
              esave_info.paramrangex     = paramrangex;
              esave_info.paramrangey     = paramrangey;
              esave_info.opx             = opx;
@@ -488,7 +488,7 @@ int encoder()
              esave_info.ecount          = (short) (gridsz * gridsz); /* flag for done */
           }
           else { /* we will need the resuming information */
-             MoveFromMemory((BYTE *)&resume_e_info,(U16)sizeof(resume_e_info),1L,0L,evolve_handle);
+			  memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
              esave_info.paramrangex     = resume_e_info.paramrangex;
              esave_info.paramrangey     = resume_e_info.paramrangey;
              esave_info.opx             = resume_e_info.opx;

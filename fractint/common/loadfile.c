@@ -527,10 +527,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
             && calc_status != CALCSTAT_COMPLETED)
 		{
 			calc_status = CALCSTAT_RESUMABLE;
-			/* TODO: MemoryAlloc */
-			if (evolve_handle == 0)
+			if (evolve_handle == NULL)
 			{
-				evolve_handle = MemoryAlloc((U16) sizeof(resume_e_info), 1L, MEMORY);
+				evolve_handle = malloc(sizeof(resume_e_info));
 			}
 			resume_e_info.paramrangex  = blk_6_info.paramrangex;
 			resume_e_info.paramrangey  = blk_6_info.paramrangey;
@@ -549,15 +548,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
 			resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
 			resume_e_info.ecount       = blk_6_info.ecount;
-			MoveToMemory((BYTE *) &resume_e_info, (U16) sizeof(resume_e_info), 1L, 0L, evolve_handle);
+			memcpy(evolve_handle, &resume_e_info, sizeof(resume_e_info));
         }
 		else
 		{
-			if (evolve_handle != 0)  /* Image completed, release it. */
+			if (evolve_handle != NULL)  /* Image completed, release it. */
 			{
-				MemoryRelease(evolve_handle);
+				free(evolve_handle);
+				evolve_handle = NULL;
 			}
-			evolve_handle = 0;
 			calc_status = CALCSTAT_COMPLETED;
         }
         paramrangex  = blk_6_info.paramrangex;

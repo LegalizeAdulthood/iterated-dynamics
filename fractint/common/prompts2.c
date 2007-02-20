@@ -1153,9 +1153,9 @@ void goodbye(void)                  /* we done.  Bail out */
 	{
 		end_resume();
 	}
-	if (evolve_handle != 0)
+	if (evolve_handle != NULL)
 	{
-		MemoryRelease(evolve_handle);
+		free(evolve_handle);
 	}
 	ReleaseParamBox();
 	history_free();

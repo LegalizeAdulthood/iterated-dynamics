@@ -50,7 +50,7 @@ static  void restore_zoom(void);
 static  void move_zoombox(int keynum);
 static  void cmp_line_cleanup(void);
 
-U16 evolve_handle = 0;
+void *evolve_handle = NULL;
 char old_stdcalcmode;
 static char *savezoom;
 void (*outln_cleanup) (void);
@@ -375,9 +375,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				int grout, ecount, tmpxdots, tmpydots, gridsqr;
 				struct evolution_info resume_e_info;
 
-				if ((evolve_handle != 0) && (calc_status == CALCSTAT_RESUMABLE))
+				if ((evolve_handle != NULL) && (calc_status == CALCSTAT_RESUMABLE))
 				{
-					MoveFromMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+					memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
 					paramrangex  = resume_e_info.paramrangex;
 					paramrangey  = resume_e_info.paramrangey;
 					opx = newopx = resume_e_info.opx;
@@ -395,8 +395,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					fiddlefactor   = resume_e_info.fiddlefactor;
 					evolving     = viewwindow = resume_e_info.evolving;
 					ecount       = resume_e_info.ecount;
-					MemoryRelease(evolve_handle);  /* We're done with it, release it. */
-					evolve_handle = 0;
+					free(evolve_handle);  /* We're done with it, release it. */
+					evolve_handle = NULL;
 				}
 				else
 				{ /* not resuming, start from the beginning */
@@ -445,10 +445,9 @@ done:
 				}
 				else
 				{	/* interrupted screen generation, save info */
-					/* TODO: MemoryAlloc */
-					if (evolve_handle == 0)
+					if (evolve_handle == NULL)
 					{
-						evolve_handle = MemoryAlloc((U16)sizeof(resume_e_info), 1L, MEMORY);
+						evolve_handle = malloc(sizeof(resume_e_info));
 					}
 					resume_e_info.paramrangex     = paramrangex;
 					resume_e_info.paramrangey     = paramrangey;
@@ -467,7 +466,7 @@ done:
 					resume_e_info.fiddlefactor    = fiddlefactor;
 					resume_e_info.evolving        = (short)evolving;
 					resume_e_info.ecount          = (short) ecount;
-					MoveToMemory((BYTE *)&resume_e_info, (U16)sizeof(resume_e_info), 1L, 0L, evolve_handle);
+					memcpy(evolve_handle, &resume_e_info, sizeof(resume_e_info));
 				}
 				sxoffs = syoffs = 0;
 				xdots = sxdots;
