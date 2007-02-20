@@ -1224,7 +1224,7 @@ return (ret);
      struct coords itr;
      struct coords ibr;
      double win_size;   /* box size for drawindow() */
-     char name[13];     /* for filename */
+     char name[FILE_MAX_FNAME];     /* for filename */
      int boxcount;      /* bytes of saved screen info */
      };
 
@@ -1241,7 +1241,7 @@ static void bfsetup_convert_to_screen( void );
 static void bftransform( bf_t, bf_t, struct dblcoords * );
 
 char browsename[13]; /* name for browse file */
-U16 browsehandle;
+struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
 U16 boxxhandle;
 U16 boxyhandle;
 U16 boxvalueshandle;
@@ -1275,7 +1275,6 @@ int fgetwindow(void)
     int vid_too_big = 0;
     int no_memory = 0;
     U16 vidlength;
-    BYTE *winlistptr = (BYTE *)&winlist;
     int saved;
 #ifdef XFRACT
     U32 blinks;
@@ -1304,11 +1303,10 @@ int fgetwindow(void)
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
 	/* TODO: MemoryAlloc */
-   browsehandle = MemoryAlloc((U16)sizeof(struct window),(long)MAX_WINDOWS_OPEN,MEMORY);
    boxxhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
    boxyhandle = MemoryAlloc((U16)(vidlength),(long)MAX_WINDOWS_OPEN,MEMORY);
    boxvalueshandle = MemoryAlloc((U16)(vidlength>>1),(long)MAX_WINDOWS_OPEN,MEMORY);
-   if (!browsehandle || !boxxhandle || !boxyhandle || !boxvalueshandle)
+   if (!boxxhandle || !boxyhandle || !boxvalueshandle)
       no_memory = 1;
 
      /* set up complex-plane-to-screen transformation */
@@ -1348,8 +1346,8 @@ rescan:  /* entry for changed browse parms */
        splitpath(DTA.filename,NULL,NULL,fname,ext);
        makepath(tmpmask,drive,dir,fname,ext);
        if ( !find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
-                                     &blk_4_info,&blk_5_info,&blk_6_info,
-				     &blk_7_info) &&
+								&blk_4_info,&blk_5_info,&blk_6_info,
+								&blk_7_info) &&
            (typeOK(&read_info,&blk_3_info) || !brwschecktype) &&
            (paramsOK(&read_info) || !brwscheckparms) &&
            stricmp(browsename,DTA.filename) &&
@@ -1361,7 +1359,7 @@ rescan:  /* entry for changed browse parms */
            drawindow(color_of_box,&winlist);
            boxcount <<= 1; /*boxcount*2;*/ /* double for byte count */
            winlist.boxcount = boxcount;
-           MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)wincount,browsehandle);
+		   browse_windows[wincount] = winlist;
            MoveToMemory((BYTE *)boxx,vidlength,1L,(long)wincount,boxxhandle);
            MoveToMemory((BYTE *)boxy,vidlength,1L,(long)wincount,boxyhandle);
            MoveToMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)wincount,boxvalueshandle);
@@ -1397,7 +1395,7 @@ rescan:  /* entry for changed browse parms */
  {
       driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
       index=0;done = 0;
-      MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+	  winlist = browse_windows[index];
       MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
       MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
       MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
@@ -1446,7 +1444,7 @@ rescan:  /* entry for changed browse parms */
              index -- ;
              if ( index < 0 )  index = wincount -1 ;
            }
-           MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+		   winlist = browse_windows[index];
            MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
            MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
            MoveFromMemory((BYTE *)boxvalues,(U16)(vidlength>>1),1L,(long)index,boxvalueshandle);
@@ -1456,20 +1454,20 @@ rescan:  /* entry for changed browse parms */
         case FIK_CTL_INSERT:
           color_of_box += key_count(FIK_CTL_INSERT);
           for (i=0 ; i < wincount ; i++) {
-              MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
+			  winlist = browse_windows[i];
               drawindow(color_of_box,&winlist);
           }
-          MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+		  winlist = browse_windows[index];
           drawindow(color_of_box,&winlist);
           break;
 
         case FIK_CTL_DEL:
           color_of_box -= key_count(FIK_CTL_DEL);
           for (i=0 ; i < wincount ; i++) {
-              MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)i,browsehandle);
+			  winlist = browse_windows[i];
               drawindow(color_of_box,&winlist);
           }
-          MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+		  winlist = browse_windows[index];
           drawindow(color_of_box,&winlist);
           break;
 #endif
@@ -1551,7 +1549,7 @@ rescan:  /* entry for changed browse parms */
            strcpy(winlist.name,tmpmask);
            }
           }
-         MoveToMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+		  browse_windows[index] = winlist;
          showtempmsg(winlist.name);
          break;
 
@@ -1582,7 +1580,7 @@ rescan:  /* entry for changed browse parms */
     cleartempmsg();
     if (done >= 1 && done < 4) {
        for (index=wincount-1;index>=0;index--){ /* don't need index, reuse it */
-          MoveFromMemory(winlistptr,(U16)sizeof(struct window),1L,(long)index,browsehandle);
+			winlist = browse_windows[index];
           boxcount = winlist.boxcount;
           MoveFromMemory((BYTE *)boxx,vidlength,1L,(long)index,boxxhandle);
           MoveFromMemory((BYTE *)boxy,vidlength,1L,(long)index,boxyhandle);
@@ -1607,7 +1605,6 @@ rescan:  /* entry for changed browse parms */
    no_sub_images = TRUE;
  }
 
- MemoryRelease(browsehandle);
  MemoryRelease(boxxhandle);
  MemoryRelease(boxyhandle);
  MemoryRelease(boxvalueshandle);
