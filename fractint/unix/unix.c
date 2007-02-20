@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -14,6 +15,25 @@
 #include <string.h>
 #include <ctype.h>
 #include "port.h"
+
+#ifndef XFRACT
+#include <io.h>
+#elif !defined(__386BSD__) && !defined(_WIN32)
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifdef DIRENT
+#include <dirent.h>
+#elif !defined(__SVR4)
+#include <sys/dir.h>
+#else
+#include <dirent.h>
+#ifndef DIRENT
+#define DIRENT
+#endif
+#endif
+
+#endif
 
 #define FILE_MAX_PATH  256       /* max length of path+filename  */
 #define FILE_MAX_DIR   256       /* max length of directory name */
@@ -549,26 +569,12 @@ uclock_t usec_clock(void)
 
 /* --------------------------------------------------------------------- */
 
-#if !defined(_WIN32)
-#ifdef XFRACT
 static char searchdir[FILE_MAX_DIR];
 static char searchname[FILE_MAX_PATH];
 static char searchext[FILE_MAX_EXT];
 static DIR *currdir = NULL;
-#endif
 int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
-#ifndef XFRACT
-     union REGS regs;
-     regs.h.ah = 0x1A;             /* Set DTA to filedata */
-     regs.x.dx = (unsigned)&DTA;
-     intdos(&regs, &regs);
-     regs.h.ah = 0x4E;             /* Find 1st file meeting path */
-     regs.x.dx = (unsigned)path;
-     regs.x.cx = FILEATTR;
-     intdos(&regs, &regs);
-     return(regs.x.ax);            /* Return error code */
-#else
      if (currdir != NULL) {
          closedir(currdir);
          currdir = NULL;
@@ -584,18 +590,10 @@ int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fi
      } else {
          return fr_findnext();
      }
-#endif
 }
 
 int  fr_findnext()              /* Find next file (or subdir) meeting above path/filespec */
 {
-#ifndef XFRACT
-     union REGS regs;
-     regs.h.ah = 0x4F;             /* Find next file meeting path */
-     regs.x.dx = (unsigned)&DTA;
-     intdos(&regs, &regs);
-     return(regs.x.ax);
-#else
 #ifdef DIRENT
      struct dirent *dirEntry;
 #else
@@ -613,27 +611,24 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
              return -1;
          } else if (dirEntry->d_ino != 0) {
              splitpath(dirEntry->d_name,NULL,NULL,thisname,thisext);
-             strncpy(DTA.filename,dirEntry->d_name,13);
-             DTA.filename[12]='\0';
+             /* strncpy(DTA.filename,dirEntry->d_name,13); */
+             /* DTA.filename[12]='\0'; */
              strcpy(tmpname,searchdir);
              strcat(tmpname,dirEntry->d_name);
              stat(tmpname,&sbuf);
-             DTA.size = sbuf.st_size;
+             /* DTA.size = sbuf.st_size; */
              if ((sbuf.st_mode&S_IFMT)==S_IFREG &&
                  (searchname[0]=='*' || strcmp(searchname,thisname)==0) &&
                  (searchext[0]=='*' || strcmp(searchext,thisext)==0)) {
-                 DTA.attribute = 0;
+                 /* DTA.attribute = 0; */
                  return 0;
              }
 	     else if (((sbuf.st_mode&S_IFMT)==S_IFDIR) &&
                  ((searchname[0]=='*' || searchext[0]=='*') ||
                  (strcmp(searchname,thisname)==0))) {
-                 DTA.attribute = SUBDIR;
+                 /* DTA.attribute = SUBDIR; */
                  return 0;
              }
          }
      }
-#endif
 }
-#endif /* !_WIN32 */
-
