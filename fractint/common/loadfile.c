@@ -1240,7 +1240,7 @@ static void check_history( char *, char * );
 static void bfsetup_convert_to_screen( void );
 static void bftransform( bf_t, bf_t, struct dblcoords * );
 
-char browsename[13]; /* name for browse file */
+char browsename[FILE_MAX_FNAME]; /* name for browse file */
 struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
 U16 boxxhandle;
 U16 boxyhandle;

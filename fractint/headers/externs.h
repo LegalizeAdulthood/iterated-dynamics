@@ -50,7 +50,7 @@ extern int                   boxvalues[];
 extern int                   boxx[];
 extern int                   boxy[];
 extern int                   BRIEF;
-extern char                  browsemask[13];
+extern char                  browsemask[];
 extern char                  browsename[];
 extern int                   browsing;
 extern char                  brwscheckparms;
