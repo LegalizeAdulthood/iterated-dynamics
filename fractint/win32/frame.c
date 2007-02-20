@@ -167,6 +167,7 @@ static void frame_OnTimer(HWND window, UINT id)
 	_ASSERTE(g_frame.window == window);
 	_ASSERTE(FRAME_TIMER_ID == id);
 	g_frame.timed_out = TRUE;
+	KillTimer(window, FRAME_TIMER_ID);
 }
 
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -336,6 +337,6 @@ void frame_set_keyboard_timeout(int ms)
 	if (!result)
 	{
 		DWORD error = GetLastError();
-		_ASSERTE(result);
+		_ASSERTE(result == FRAME_TIMER_ID);
 	}
 }
