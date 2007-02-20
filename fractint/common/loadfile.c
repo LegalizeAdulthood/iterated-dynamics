@@ -1303,7 +1303,6 @@ int fgetwindow(void)
 #ifdef XFRACT
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
-	/* TODO: MemoryAlloc */
 	boxx_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
 	boxy_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
 	boxvalues_storage = (int *) malloc(vidlength/2*MAX_WINDOWS_OPEN*sizeof(int));

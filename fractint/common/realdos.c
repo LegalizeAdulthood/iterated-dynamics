@@ -199,7 +199,6 @@ int showtempmsg(char *msgparm)
 	}
 	if (temptextsave == NULL) /* only save screen first time called */
 	{
-		/* TODO: MemoryAlloc, MoveToMemory */
 		temptextsave = malloc(textxdots*textydots);
 		if (temptextsave == NULL)
 		{
