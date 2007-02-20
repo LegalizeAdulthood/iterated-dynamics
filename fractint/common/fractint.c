@@ -156,7 +156,7 @@ int  minbox;
 int no_sub_images;
 int autobrowse,doublecaution;
 char brwscheckparms,brwschecktype;
-char browsemask[13];
+char browsemask[FILE_MAX_FNAME];
 int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
 
 

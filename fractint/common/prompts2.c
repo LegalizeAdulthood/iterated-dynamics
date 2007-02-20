@@ -2363,7 +2363,7 @@ int get_browse_params()
    int old_autobrowse,old_brwschecktype,old_brwscheckparms,old_doublecaution;
    int old_minbox;
    double old_toosmall;
-   char old_browsemask[13];
+   char old_browsemask[FILE_MAX_FNAME];
 
    old_autobrowse     = autobrowse;
    old_brwschecktype  = brwschecktype;
