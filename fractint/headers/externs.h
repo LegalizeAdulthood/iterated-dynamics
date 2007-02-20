@@ -156,7 +156,7 @@ extern int                   filecolors;
 extern int                   filetype;
 extern int                   filexdots;
 extern int                   fileydots;
-extern char                  file_name_stack[16][13];
+extern char                  file_name_stack[16][FILE_MAX_FNAME];
 extern int                   fillcolor;
 extern float                 finalaspectratio;
 extern int                   finattract;

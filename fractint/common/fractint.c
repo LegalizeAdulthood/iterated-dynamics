@@ -149,7 +149,7 @@ int max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
 int        savedac;                     /* save-the-Video DAC flag      */
 int browsing;                 /* browse mode flag */
-char file_name_stack[16][13]; /* array of file names used while browsing */
+char file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while browsing */
 int name_stack_ptr ;
 double toosmall;
 int  minbox;
