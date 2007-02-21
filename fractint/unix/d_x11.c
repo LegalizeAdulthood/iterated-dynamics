@@ -150,6 +150,7 @@ struct tagDriverX11 {
   int button_num;
   int last_x, last_y;
   int dx, dy;
+  int keyboard_timeout;
 };
 
 /* convenience macro to declare local variable di pointing to private
@@ -2577,12 +2578,17 @@ static void x11_delay(Driver *drv, int ms)
 
 static void x11_get_max_screen(Driver *drv, int *width, int *height)
 {
+  DIX11(di);
+
+  *width = di->Xsc->width;
+  *height = di->Xsc->height;
 }
 
 static void x11_set_keyboard_timeout(Driver *drv, int ms)
 {
+  DIX11(di);
+  di->keyboard_timeout = ms;
 }
-
 
 /*
  * place this last in the file to avoid having to forward declare routines
@@ -2637,7 +2643,8 @@ static DriverX11 x11_driver_info = {
   0,					/* shift_mode */
   0,					/* button_num */
   0, 0,					/* last_x, last_y */
-  0, 0					/* dx, dy */
+  0, 0,					/* dx, dy */
+  0						/* keyboard timeout */
 };
 
 Driver *x11_driver = &x11_driver_info.pub;
