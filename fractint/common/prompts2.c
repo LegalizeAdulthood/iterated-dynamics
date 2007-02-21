@@ -670,8 +670,8 @@ int get_view_params()
 	float old_viewreduction, old_aspectratio;
 	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
 	int xmax, ymax;
-	char dim1[50];
-	char dim2[50];
+	char dim1[80];
+	char dim2[80];
 
 	driver_get_max_screen(&xmax, &ymax);
 
