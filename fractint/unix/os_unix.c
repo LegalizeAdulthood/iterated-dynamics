@@ -96,12 +96,6 @@ int expand_dirname(char *dirname, char *drive)
   return -1;
 }
 
-long fr_farfree(void)
-{
-	/* TODO */
-	return 0x8FFFFL;
-}
-
 unsigned long get_disk_space(void)
 {
     struct statfs space;
