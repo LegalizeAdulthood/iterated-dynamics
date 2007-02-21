@@ -1,3 +1,7 @@
+#if defined(LINUX)
+#include <sys/statfs.h>
+#endif
+
 #include "port.h"
 #include "cmplx.h"
 #include "fractint.h"
@@ -100,8 +104,13 @@ long fr_farfree(void)
 
 unsigned long get_disk_space(void)
 {
-	/* TODO */
-	return 0x7FFFFFFF;
+    struct statfs space;
+	if (!statfs(".", &space))
+    {
+	    return 0;
+	}
+
+	return space.f_bavail != -1 ? space.f_bavail*512 : 0;
 }
 
 void init_failure(const char *message)
