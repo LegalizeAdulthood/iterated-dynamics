@@ -65,6 +65,10 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 	}
 	fullpathname[0] = 0;                         /* indicate none found */
 	_searchenv(temp_path,"PATH",fullpathname);
+	if (!fullpathname[0])
+	{
+		_searchenv(temp_path, "FRACTDIR", fullpathname);
+	}
 	if (fullpathname[0] != 0)                    /* found it! */
 	{
 		if (strncmp(&fullpathname[2],SLASHSLASH,2) == 0) /* stupid klooge! */
