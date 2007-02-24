@@ -127,48 +127,50 @@ static void DisplayError(int stored_at, long howmuch)
 
 static int check_for_mem(int stored_at, long howmuch)
 {
-/* This function returns an adjusted stored_at value. */
-/* This is where the memory requested can be allocated. */
+	/* This function returns an adjusted stored_at value. */
+	/* This is where the memory requested can be allocated. */
+	long maxmem = 1024*1024; /* 1 MB */
+	BYTE *temp;
+	int use_this_type = NOWHERE;
 
-   long maxmem;
-   BYTE *temp;
-   int use_this_type;
+	if (debugflag == 420)
+	{
+		stored_at = DISK;
+	}
+	if (debugflag == 422)
+	{
+		stored_at = MEMORY;
+	}
 
-   use_this_type = NOWHERE;
-   maxmem = (long)USHRT_MAX;
+	switch (stored_at)
+	{
+	case MEMORY: /* check_for_mem */
+		if (maxmem > howmuch)
+		{
+			temp = (BYTE *) malloc(howmuch);
+			if (temp != NULL) /* minimum free space + requested amount */
+			{
+				free(temp);
+				use_this_type = MEMORY;
+				break;
+			}
+		}
 
-   if (debugflag == 420)
-      stored_at = DISK;
-   if (debugflag == 422)
-      stored_at = MEMORY;
+	case DISK: /* check_for_mem */
+	default: /* just in case a nonsense number gets used */
+		if (CheckDiskSpace(howmuch))
+		{
+			use_this_type = DISK;
+			break;
+		}
+		/* failed, fall through, no memory available */
 
-   switch (stored_at)
-   {
-   case MEMORY: /* check_for_mem */
-      if (maxmem > howmuch) {
-         temp = (BYTE *)malloc(howmuch + FAR_RESERVE);
-         if (temp != NULL) { /* minimum free space + requested amount */
-            free(temp);
-            use_this_type = MEMORY;
-            break;
-         }
-      }
-
-   case DISK: /* check_for_mem */
-   default: /* just in case a nonsense number gets used */
-      if (CheckDiskSpace(howmuch)) {
-         use_this_type = DISK;
-         break;
-      }
- /* failed, fall through, no memory available */
-
-   case NOWHERE: /* check_for_mem */
-      use_this_type = NOWHERE;
-      break;
-
+	case NOWHERE: /* check_for_mem */
+		use_this_type = NOWHERE;
+		break;
    } /* end of switch */
 
-   return(use_this_type);
+   return use_this_type;
 }
 
 static U16 next_handle()
