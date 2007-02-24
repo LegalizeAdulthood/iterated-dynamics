@@ -88,7 +88,7 @@ int     display3d;              /* 3D display flag: 0 = OFF */
 int     overlay3d;              /* 3D overlay flag: 0 = OFF */
 int     init3d[20];             /* '3d=nn/nn/nn/...' values */
 int     checkcurdir;            /* flag to check current dir for files */
-int     initbatch;              /* 1 if batch run (no kbd)  */
+int     initbatch = 0;			/* 1 if batch run (no kbd)  */
 int     initsavetime;           /* autosave minutes         */
 _CMPLX  initorbit;              /* initial orbitvalue */
 char    useinitorbit;           /* flag for initorbit */
@@ -368,7 +368,7 @@ static void initvars_restart()          /* <ins> key init */
    askvideo = 1;                        /* turn on video-prompt flag */
    fract_overwrite = 0;                 /* don't overwrite           */
    soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
-   initbatch = 0;                       /* not in batch mode         */
+   initbatch = INIT_BATCH_NONE;			/* not in batch mode         */
    checkcurdir = 0;                     /* flag to check current dire for files */
    initsavetime = 0;                    /* no auto-save              */
    g_init_mode = -1;                       /* no initial video mode     */
@@ -3076,7 +3076,7 @@ static void argerror(const char *badarg)      /* oops. couldn't decode this */
 	stopmsg(0, msg);
 	if (initbatch)
 	{
-		initbatch = 4;
+		initbatch = INIT_BATCH_BAILOUT_INTERRUPTED;
 		goodbye();
 	}
 }
@@ -3171,11 +3171,11 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
    char cmd[80];
    static int row = 1;
 
-   if (initbatch == 1) { /* in batch mode */
+   if (initbatch == INIT_BATCH_NORMAL) { /* in batch mode */
       if (badfilename)
          /* uncomment next if wish to cause abort in batch mode for
             errors in CMDFILES.C such as parsing SSTOOLS.INI */
-         /* initbatch = 4; */ /* used to set errorlevel */
+         /* initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; */ /* used to set errorlevel */
       return -1;
    }
    strncpy(cmd,cmdstr,30);
@@ -3195,11 +3195,7 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
       else if (row > 1){
          driver_put_string(++row,0,15, "Press Escape to abort, any other key to continue");
          driver_move_cursor(row+1,0);
-         /*
-         if (getakeynohelp()==27)
-            goodbye();
-         */
-         dopause(2);  /* defer getakeynohelp until after parseing */
+         dopause(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
       }
    }
    else if (badfilename)
@@ -3210,27 +3206,34 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
 /* defer pause until after parsing so we know if in batch mode */
 void dopause(int action)
 {
-   static unsigned char needpause = 0;
-   switch (action)
-   {
-   case 0:
-      if (initbatch == 0)
-      {
-         if (needpause == 1)
-            driver_get_key();
-         else if (needpause == 2)
-            if (getakeynohelp() == FIK_ESC)
-               goodbye();
-      }
-      needpause = 0;
-      break;
-   case 1:
-   case 2:
-      needpause = (char)action;
-      break;
-   default:
-      break;
-   }
+	static int needpause = PAUSE_ERROR_NO_BATCH;
+	switch (action)
+	{
+	case PAUSE_ERROR_NO_BATCH:
+		if (initbatch == INIT_BATCH_NONE)
+		{
+			if (needpause == PAUSE_ERROR_ANY)
+			{
+				driver_get_key();
+			}
+			else if (needpause == PAUSE_ERROR_GOODBYE)
+			{
+				if (getakeynohelp() == FIK_ESC)
+				{
+					goodbye();
+				}
+			}
+		}
+		needpause = PAUSE_ERROR_NO_BATCH;
+		break;
+
+	case PAUSE_ERROR_ANY:
+	case PAUSE_ERROR_GOODBYE:
+		needpause = action;
+		break;
+	default:
+		break;
+	}
 }
 
 /* 

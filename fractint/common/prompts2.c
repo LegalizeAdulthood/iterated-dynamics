@@ -1188,11 +1188,11 @@ void goodbye(void)                  /* we done.  Bail out */
 	stopslideshow();
 	end_help();
 	ret = 0;
-	if (initbatch == 3) /* exit with error code for batch file */
+	if (initbatch == INIT_BATCH_BAILOUT_ERROR) /* exit with error code for batch file */
 	{
 		ret = 2;
 	}
-	else if (initbatch == 4)
+	else if (initbatch == INIT_BATCH_BAILOUT_INTERRUPTED)
 	{
 		ret = 1;
 	}
