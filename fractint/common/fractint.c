@@ -7,6 +7,14 @@
 #include <time.h>
 #include <signal.h>
 
+/* for getcwd() */
+#if defined(LINUX)
+#include <unistd.h>
+#endif
+#if defined(_WIN32)
+#include <direct.h>
+#endif
+
 #ifndef XFRACT
 #include <io.h>
 #endif
@@ -188,12 +196,54 @@ static void my_floating_point_err(int sig)
       overflow = 1;
 }
 
+char g_exe_path[FILE_MAX_PATH] = { 0 };
+
+static void set_exe_path(char *path)
+{
+	splitpath(path, NULL, g_exe_path, NULL, NULL);
+	if (g_exe_path[0] != SLASHC)
+	{
+		/* relative path */
+		char cwd[FILE_MAX_PATH];
+		char *result = getcwd(cwd, NUM_OF(cwd));
+		if (result)
+		{
+			char *end = &cwd[strlen(cwd)];
+			if (end[-1] != SLASHC)
+			{
+				strcat(end, SLASH);
+			}
+			strcat(end, g_exe_path);
+			strcpy(g_exe_path, end);
+		}
+		else
+		{
+			strcpy(g_exe_path, DOTSLASH);
+			strcat(g_exe_path, path);
+		}
+	}
+}
+
+
 int main(int argc, char **argv)
 {
 	int resumeflag;
 	int kbdchar;						/* keyboard key-hit value       */
 	int kbdmore;						/* continuation variable        */
 	char stacked=0;						/* flag to indicate screen stacked */
+
+	set_exe_path(argv[0]);
+
+	fract_dir1 = getenv("FRACTDIR");
+	if (fract_dir1==NULL)
+	{
+		fract_dir1 = ".";
+	}
+#ifdef SRCDIR
+	fract_dir2 = SRCDIR;
+#else
+	fract_dir2 = ".";
+#endif
 
 	/* this traps non-math library floating point errors */
 	signal( SIGFPE, my_floating_point_err );
@@ -242,24 +292,13 @@ restart:   /* insert key re-starts here */
 	showdot = -1; /* turn off showdot if entered with <g> command */
 	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
-	fract_dir1 = getenv("FRACTDIR");
-	if (fract_dir1==NULL)
-	{
-		fract_dir1 = ".";
-	}
-#ifdef SRCDIR
-	fract_dir2 = SRCDIR;
-#else
-	fract_dir2 = ".";
-#endif
-
 	cmdfiles(argc,argv);         /* process the command-line */
-	dopause(0);                  /* pause for error msg if not batch */
+	dopause(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
 	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
 
 	history_allocate();
 
-	if (debugflag==450 && initbatch==1)   /* abort if savename already exists */
+	if (debugflag==450 && initbatch==INIT_BATCH_NORMAL)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
@@ -431,7 +470,7 @@ imagestart:                             /* calc/display a new image */
 		if (calc_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
 			calc_status = CALCSTAT_PARAMS_CHANGED;
 
-	if (initbatch == 0)
+	if (initbatch == INIT_BATCH_NONE)
 		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
 
 	cyclelimit = initcyclelimit;         /* default cycle limit   */
@@ -442,7 +481,7 @@ imagestart:                             /* calc/display a new image */
 	{
 		if (initbatch)                          /* batch, nothing to do */
 		{
-			initbatch = 4;                 /* exit with error condition set */
+			initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
 			goodbye();
 		}
 		kbdchar = main_menu(0);
