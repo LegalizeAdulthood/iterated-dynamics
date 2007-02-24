@@ -170,7 +170,10 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
 		left*me->char_width, top*me->char_height,
 		(right+1)*me->char_width, (bot+1)*me->char_height			
 	};
-	InvalidateRect(me->hWndCopy, &exposed, FALSE);
+	if (me->hWndCopy)
+	{
+		InvalidateRect(me->hWndCopy, &exposed, FALSE);
+	}
 }
 
 /*
