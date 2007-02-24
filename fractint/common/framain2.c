@@ -232,7 +232,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		/* assume we save next time (except jb) */
 		savedac = (savedac == 0) ? 2 : 1;
-		if (initbatch == 0)
+		if (initbatch == INIT_BATCH_NONE)
 		{
 			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
 		}
@@ -342,9 +342,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		if (showfile == 0)
 		{               /* image has been loaded */
 			showfile = 1;
-			if (initbatch == 1 && calc_status == CALCSTAT_RESUMABLE)
+			if (initbatch == INIT_BATCH_NORMAL && calc_status == CALCSTAT_RESUMABLE)
 			{
-				initbatch = -1; /* flag to finish calc before save */
+				initbatch = INIT_BATCH_FINISH_CALC; /* flag to finish calc before save */
 			}
 			if (loaded3d)      /* 'r' of image created with '3' */
 			{
@@ -536,7 +536,7 @@ resumeloop:                             /* return here on failed overlays */
 					kbdchar = FIK_ENTER;
 				}
 			}
-			else if (initbatch == 0)      /* not batch mode */
+			else if (initbatch == INIT_BATCH_NONE)      /* not batch mode */
 			{
 #ifndef XFRACT
 				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
@@ -612,32 +612,32 @@ resumeloop:                             /* return here on failed overlays */
 				/* initbatch == 4   bailout with errorlevel == 1, interrupted, try to save */
 				/* initbatch == 5   was 4, now do a save */
 
-				if (initbatch == -1)       /* finish calc */
+				if (initbatch == INIT_BATCH_FINISH_CALC)       /* finish calc */
 				{
 					kbdchar = FIK_ENTER;
-					initbatch = 1;
+					initbatch = INIT_BATCH_NORMAL;
 				}
-				else if (initbatch == 1 || initbatch == 4 )        /* save-to-disk */
+				else if (initbatch == INIT_BATCH_NORMAL || initbatch == INIT_BATCH_BAILOUT_INTERRUPTED) /* save-to-disk */
 				{
 /*
 					while (driver_key_pressed())
 						driver_get_key();
 */
 					kbdchar = (debugflag == 50) ? 'r' : 's';
-					if (initbatch == 1)
+					if (initbatch == INIT_BATCH_NORMAL)
 					{
-						initbatch = 2;
+						initbatch = INIT_BATCH_SAVE;
 					}
-					if (initbatch == 4)
+					if (initbatch == INIT_BATCH_BAILOUT_INTERRUPTED)
 					{
-						initbatch = 5;
+						initbatch = INIT_BATCH_BAILOUT_SAVE;
 					}
 				}
 				else
 				{
 					if (calc_status != CALCSTAT_COMPLETED)
 					{
-						initbatch = 3; /* bailout with error */
+						initbatch = INIT_BATCH_BAILOUT_ERROR; /* bailout with error */
 					}
 					goodbye();               /* done, exit */
 				}
@@ -1288,7 +1288,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
          if (debugflag == 50)
          {
             comparegif = overlay3d = 1;
-            if (initbatch == 2)
+            if (initbatch == INIT_BATCH_SAVE)
             {
                driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
@@ -1657,7 +1657,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          if (debugflag == 50)
          {
             comparegif = overlay3d = 1;
-            if (initbatch == 2)
+            if (initbatch == INIT_BATCH_SAVE)
             {
                driver_stack_screen();   /* save graphics image */
                strcpy(readname, savename);
@@ -2071,7 +2071,7 @@ int cmp_line(BYTE *pixels, int linelen)
          if (oldcolor==0)
             putcolor(col,row,1);
          ++errcount;
-         if (initbatch == 0)
+         if (initbatch == INIT_BATCH_NONE)
             fprintf(cmp_fp,"#%5d col %3d row %3d old %3d new %3d\n",
                errcount,col,row,oldcolor,pixels[col]);
          }

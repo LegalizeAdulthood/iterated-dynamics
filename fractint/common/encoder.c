@@ -217,14 +217,14 @@ restart:
    if (interrupted)
    {
       texttempmsg(" *interrupted* save ");
-      if (initbatch >= 1)
-         initbatch = 3;         /* if batch mode, set error level */
+      if (initbatch >= INIT_BATCH_NORMAL)
+         initbatch = INIT_BATCH_BAILOUT_ERROR;         /* if batch mode, set error level */
       return -1;
    }
    if (timedsave == 0)
    {
       driver_buzzer(BUZZER_COMPLETE);
-      if (initbatch == 0)
+      if (initbatch == INIT_BATCH_NONE)
       {
          extract_filename(tmpfile, openfile);
          sprintf(tmpmsg, " File saved as %s ", tmpfile);
