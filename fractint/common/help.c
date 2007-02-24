@@ -936,34 +936,11 @@ static int can_read_file(char *path)
 
 
 static int exe_path(char *filename, char *path)
-   {
-#if !defined(XFRACT) && !defined(_WIN32)
-   char *ptr;
-
-   if (dos_version() >= 300)  /* DOS version 3.00+ ? */
-      {
-      extern char **__argv;
-      strcpy(path, __argv[0]);   /* note: __argv may be undocumented in MSC */
-      if (strcmp(filename,"FRACTINT.EXE")==0)
-         if (can_read_file(path))
-            return (1);
-      ptr = strrchr(path, SLASHC);
-      if (ptr == NULL)
-         ptr = path;
-      else
-         ++ptr;
-      strcpy(ptr, filename);
-      return (1);
-      }
-
-   return (0);
-#else
-   strcpy(path,SRCDIR);
-   strcat(path,"/");
-   strcat(path,filename);
-   return 1;
-#endif
-   }
+{
+	strcpy(path, g_exe_path);
+	strcat(path, filename);
+	return 1;
+}
 
 static int find_file(char *filename, char *path)
 {
@@ -1424,7 +1401,7 @@ int init_help(void)
 
 #ifndef WINFRACT
 #if !defined(XFRACT) && !defined(_WIN32)
-	if (help_file == -1)         /* now look for help files in FRACTINT.EXE */
+	if (help_file == NULL)         /* now look for help files in FRACTINT.EXE */
     {
 /*
       static char err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
@@ -1432,7 +1409,7 @@ int init_help(void)
 
 		if (find_file("FRACTINT.EXE", path))
         {
-			if ((help_file = open(path, O_RDONLY|O_BINARY)) != -1)
+			if ((help_file = fopen(path, "rb")) != NULL)
 			{
 				long help_offset;
 
@@ -1448,15 +1425,15 @@ int init_help(void)
 
 				if (hs.sig != HELP_SIG)
 				{
-					close(help_file);
-					help_file = -1;
+					fclose(help_file);
+					help_file = NULL;
 				}
 				else
 				{
 					if (hs.version != FIHELP_VERSION)
 					{
-						close(help_file);
-						help_file = -1;
+						fclose(help_file);
+						help_file = NULL;
 						stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
 					}
 					else
