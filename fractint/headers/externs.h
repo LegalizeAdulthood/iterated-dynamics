@@ -138,6 +138,7 @@ extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
 //extern int                   EPSFileType;
 extern int                   escape_exit;
+extern char					 g_exe_path[];
 extern BYTE                  exitmode;
 extern int                   evolving;
 extern void *				 evolve_handle;
