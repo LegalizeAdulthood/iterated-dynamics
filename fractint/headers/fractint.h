@@ -26,6 +26,21 @@ typedef BYTE BOOLEAN;
 #endif
 
 #define NUM_BOXES 4096
+
+/* dopause() values */
+#define PAUSE_ERROR_NO_BATCH 0
+#define PAUSE_ERROR_ANY 1
+#define PAUSE_ERROR_GOODBYE 2
+
+/* initbatch values */
+#define INIT_BATCH_FINISH_CALC -1
+#define INIT_BATCH_NONE 0
+#define INIT_BATCH_NORMAL 1
+#define INIT_BATCH_SAVE 2
+#define INIT_BATCH_BAILOUT_ERROR 3
+#define INIT_BATCH_BAILOUT_INTERRUPTED 4
+#define INIT_BATCH_BAILOUT_SAVE 5
+
 /* driver_buzzer() codes */
 #define BUZZER_COMPLETE 0
 #define BUZZER_INTERRUPT 1
