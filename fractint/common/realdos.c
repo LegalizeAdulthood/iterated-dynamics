@@ -50,10 +50,10 @@ int stopmsg (int flags, char *msg)
 {
    int ret,toprow,color,savelookatmouse;
    static unsigned char batchmode = 0;
-   if (debugflag != 0 || initbatch >= 1)
+   if (debugflag != 0 || initbatch >= INIT_BATCH_NORMAL)
    {
       static FILE *fp = NULL;
-      if (fp==NULL && initbatch == 0)
+      if (fp==NULL && initbatch == INIT_BATCH_NONE)
          fp=dir_fopen(workdir,"stopmsg.txt","w");
       else
          fp=dir_fopen(workdir,"stopmsg.txt","a");
@@ -62,25 +62,11 @@ int stopmsg (int flags, char *msg)
       fclose(fp);
    }
    if (first_init) {     /* & cmdfiles hasn't finished 1st try */
-#ifdef XFRACT
-      driver_set_for_text();
-      driver_buzzer(BUZZER_ERROR);
-      driver_put_string(0,0,15, "*** Error during startup:");
-      driver_put_string(2,0,15,msg);
-      driver_move_cursor(8,0);
-#if !defined(WIN32)
-      sleep(1);
-#endif
-      close_drivers();
-      exit(1);
-#else
-      printf("%s\n",msg);
-      dopause(1); /* pause deferred until after cmdfiles */
-      return(0);
-#endif
+	   init_failure(msg);
+	   goodbye();
       }
-   if (initbatch >= 1 || batchmode) { /* in batch mode */
-      initbatch = 4; /* used to set errorlevel */
+   if (initbatch >= INIT_BATCH_NORMAL || batchmode) { /* in batch mode */
+      initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
       batchmode = 1; /* fixes *second* stopmsg in batch mode bug */
       return (-1);
       }
