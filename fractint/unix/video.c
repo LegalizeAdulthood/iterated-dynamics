@@ -36,7 +36,6 @@ int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int boxcolor = 0;		/* Zoom-Box color */
-int g_really_ega = 0;		/* 1 if its an EGA posing as a VGA */
 int g_got_real_dac = 0;		/* 1 if loaddac has a dacbox */
 int g_row_count = 0;		/* row-counter for decoder and out_line */
 int video_type = 0;		/* actual video adapter type:
