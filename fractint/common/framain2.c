@@ -1241,7 +1241,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
             return CONTINUE;
       }
       clear_zoombox();
-      if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
+      if (g_dac_box[0][0] != 255 && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;
@@ -1599,7 +1599,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             return CONTINUE;
       }
       clear_zoombox();
-      if (g_dac_box[0][0] != 255 && !g_really_ega && colors >= 16
+      if (g_dac_box[0][0] != 255 && colors >= 16
           && !driver_diskp())
       {
          int oldhelpmode;

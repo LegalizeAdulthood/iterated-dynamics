@@ -186,15 +186,12 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
                   fkey = 10;break;
             }
 #endif
-            if (g_really_ega) fkey = (fkey+1)>>1; /* limit on EGA */
             fstep = 1;
             incr = 999;
             break;
          case FIK_ENTER:                    /* enter key: randomize all colors */
          case FIK_ENTER_2:                  /* also the Numeric-Keypad Enter */
             fkey = rand15()/3277 + 1;
-            if (g_really_ega)              /* limit on EGAs */
-               fkey = (fkey+1)>>1;
             fstep = 1;
             incr = 999;
             oldstep = step;
@@ -215,7 +212,6 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             if (driver_diskp()) break;
             if (changecolor    == -1) changecolor = 2;
             if (changedirection == 0) changedirection = 1;
-            if (g_really_ega) break;       /* no sense on real EGAs */
             for (i = 1; i < 256; i++) {
                g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
                if (g_dac_box[i][changecolor] == 64)
@@ -288,7 +284,6 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             pauserotate();              /* pause */
             break;
          default:                       /* maybe a new palette */
-            if (g_really_ega) break;       /* no sense on real EGAs */
             fkey = 0;                   /* disable random generation */
             if (kbdchar == FIK_SF1) set_palette(Black, White);
             if (kbdchar == FIK_SF2) set_palette(Red, Yellow);

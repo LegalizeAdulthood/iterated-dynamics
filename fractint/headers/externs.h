@@ -415,7 +415,6 @@ extern int                   RAY;
 extern char                  ray_name[];
 extern char                  readname[];
 extern long                  realcoloriter;
-extern int                   g_really_ega;						/* "really an EGA" (faking a VGA) flag */
 extern char                  recordcolors;
 extern int                   red_bright;
 extern int                   red_crop_left;
