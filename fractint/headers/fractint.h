@@ -887,6 +887,15 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_ALT_A			1030
 #define FIK_ALT_S			1031
 #define FIK_ALT_F1			1104
+#define FIK_ALT_F2			1105
+#define FIK_ALT_F3			1106
+#define FIK_ALT_F4			1107
+#define FIK_ALT_F5			1108
+#define FIK_ALT_F6			1109
+#define FIK_ALT_F7			1110
+#define FIK_ALT_F8			1111
+#define FIK_ALT_F9			1112
+#define FIK_ALT_F10			1113
 
 #define FIK_CTL_A			1
 #define FIK_CTL_B			2
@@ -907,6 +916,15 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_CTL_ENTER		10
 #define FIK_CTL_ENTER_2		1010
 #define FIK_CTL_F1			1094
+#define FIK_CTL_F2			1095
+#define FIK_CTL_F3			1096
+#define FIK_CTL_F4			1097
+#define FIK_CTL_F5			1098
+#define FIK_CTL_F6			1099
+#define FIK_CTL_F7			1100
+#define FIK_CTL_F8			1101
+#define FIK_CTL_F9			1102
+#define FIK_CTL_F10			1103
 #define FIK_CTL_HOME		1119
 #define FIK_CTL_INSERT		1146
 #define FIK_CTL_LEFT_ARROW	1115
