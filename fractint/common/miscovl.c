@@ -105,9 +105,9 @@ void make_batch_file()
    maxcolor = colors;
    strcpy(colorspec,"y");
 #ifndef XFRACT
-   if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
+   if ((g_got_real_dac) || (g_is_true_color && !truemode))
 #else
-   if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
+   if ((g_got_real_dac) || (g_is_true_color && !truemode) || fake_lut)
 #endif
    {
       --maxcolor;
@@ -192,9 +192,9 @@ prompt_user:
       paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
       paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
-      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
+      if (g_got_real_dac || (g_is_true_color && !truemode))
 #else
-      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
+      if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
 #endif
       {
          choices[promptnum] = "Record colors?";
@@ -245,9 +245,9 @@ prompt_user:
       for (i=0; i<4; i++)
          strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
-      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode))
+      if (g_got_real_dac || (g_is_true_color && !truemode))
 #else
-      if ((g_got_real_dac && !g_really_ega) || (g_is_true_color && !truemode) || fake_lut)
+      if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
 #endif
          if (paramvalues[maxcolorindex].uval.ival > 0 &&
              paramvalues[maxcolorindex].uval.ival <= 256)

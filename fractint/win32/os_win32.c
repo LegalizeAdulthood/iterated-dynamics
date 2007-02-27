@@ -140,10 +140,9 @@ int g_is_true_color = 0;
 long linitx = 0;
 long linity = 0;
 int lookatmouse = 0;
-BYTE olddacbox[256][3];
+BYTE olddacbox[256][3] = { 0 };
 int overflow = 0;
 int polyphony = 0;
-int g_really_ega = 0;
 char rlebuf[258] = { 0 };
 int g_row_count = 0;
 long savebase = 0;				/* base clock ticks */ 
