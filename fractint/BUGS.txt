@@ -12,8 +12,3 @@ With debugflag=10000, error messages are reported for disk video mode when:
 start fractint, pick any disk video mode (e.g. 320x200),
 let it render, wait for completion, then go to the <v> screen,
 change 320 to 32, submit it.  This problem is present in the DOS fractint.
-
-<\> or <h> or <ctrl-h>  just redraws the current image instead of moving
-backwards through the history buffer.
-
-When you change fractal types, the colormap is reset to the default.
