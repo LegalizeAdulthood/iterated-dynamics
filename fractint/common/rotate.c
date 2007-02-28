@@ -215,7 +215,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             for (i = 1; i < 256; i++) {
                g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
                if (g_dac_box[i][changecolor] == 64)
-               g_dac_box[i][changecolor] = 63;
+				  g_dac_box[i][changecolor] = 63;
                if (g_dac_box[i][changecolor] == 255)
                   g_dac_box[i][changecolor] = 0;
                }
