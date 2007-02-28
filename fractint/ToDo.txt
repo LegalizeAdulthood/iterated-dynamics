@@ -90,7 +90,7 @@ Miscellaneous
   inversion but allowing any distortion/mapping to be applied.
 - Support to plot grids, axes, scales, color scales, legends etc. to
   illustrate the images onscreen
-- Support fot HSB/HLS color models.
+- Support for HSB/HLS color models.
 - Distributed/collaborative computing of fractals over the network.
 
 
