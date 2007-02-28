@@ -2984,7 +2984,7 @@ whenever going_to is South or West
                             while (--right >= ixstart)
 							{
 								color = getcolor(right,row);
-								if (color == trail_color)
+								if (color != trail_color)
 								{
 									break;
 								}
