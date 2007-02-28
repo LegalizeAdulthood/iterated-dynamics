@@ -118,7 +118,7 @@ int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int cpu, fpu;                        /* cpu, fpu flags */
-unsigned char g_dac_box[256][3];
+unsigned char g_dac_box[256][3] = { 0 };
 int g_dac_learn = 0;
 int dacnorm = 0;
 int g_dac_count = 0;
@@ -362,7 +362,9 @@ find_special_colors (void)
 	}
 
 	if (!(g_got_real_dac || fake_lut))
+	{
 		return;
+	}
 
 	for (i = 0; i < colors; i++)
 	{
@@ -506,35 +508,60 @@ long readticker(void)
 */
 void spindac(int dir, int inc)
 {
-	int i, top;
-	unsigned char tmp[3];
-	unsigned char *dacbot;
-	int len;
 	if (colors < 16)
-		return;
-	if (g_is_true_color && truemode)
-		return;
-	if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
 	{
-		top = rotate_hi > colors ? colors - 1 : rotate_hi;
-		dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-		len = (top - rotate_lo) * 3 * sizeof (unsigned char);
+		return;
+	}
+	if (g_is_true_color && truemode)
+	{
+		return;
+	}
+
+	if ((dir != 0) && (rotate_lo < colors) && (rotate_lo < rotate_hi))
+	{
+		int top = (rotate_hi > colors) ? colors - 1 : rotate_hi;
 		if (dir > 0)
 		{
+			int i;
 			for (i = 0; i < inc; i++)
 			{
-				memcpy(tmp, dacbot, 3 * sizeof(unsigned char));
-				memcpy(dacbot, dacbot + 3 * sizeof(unsigned char), len);
-				memcpy(dacbot + len, tmp, 3 * sizeof(unsigned char));
+				int j;
+				BYTE tmp[3];
+
+				tmp[0] = g_dac_box[rotate_lo][0];
+				tmp[1] = g_dac_box[rotate_lo][1];
+				tmp[2] = g_dac_box[rotate_lo][2];
+				for (j = rotate_lo; j < top; j++)
+				{
+					g_dac_box[j][0] = g_dac_box[j+1][0];
+					g_dac_box[j][1] = g_dac_box[j+1][1];
+					g_dac_box[j][2] = g_dac_box[j+1][2];
+				}
+				g_dac_box[top][0] = tmp[0];
+				g_dac_box[top][1] = tmp[1];
+				g_dac_box[top][2] = tmp[2];
 			}
 		}
 		else
 		{
+			int i;
 			for (i = 0; i < inc; i++)
 			{
-				memcpy(tmp, dacbot + len, 3 * sizeof(unsigned char));
-				memcpy(dacbot + 3 * sizeof(unsigned char), dacbot, len);
-				memcpy(dacbot, tmp, 3 * sizeof(unsigned char));
+				int j;
+				BYTE tmp[3];
+
+				tmp[0] = g_dac_box[top][0];
+				tmp[1] = g_dac_box[top][1];
+				tmp[2] = g_dac_box[top][2];
+				for (j = top; j > rotate_lo; j--)
+				{
+					g_dac_box[j][0] = g_dac_box[j-1][0];
+					g_dac_box[j][1] = g_dac_box[j-1][1];
+					g_dac_box[j][2] = g_dac_box[j-1][2];
+				}
+				g_dac_box[rotate_lo][0] = tmp[0];
+				g_dac_box[rotate_lo][1] = tmp[1];
+				g_dac_box[rotate_lo][2] = tmp[2];
 			}
 		}
 	}
