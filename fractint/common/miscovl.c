@@ -1492,7 +1492,7 @@ void edit_text_colors()
    save_debugflag = debugflag;
    save_lookatmouse = lookatmouse;
    debugflag = 0;   /* don't get called recursively */
-   lookatmouse = 2; /* text mouse sensitivity */
+   lookatmouse = LOOK_MOUSE_TEXT; /* text mouse sensitivity */
    row = col = bkgrd = rowt = rowf = colt = colf = 0;
    /* TODO: allocate real memory, not reuse shared segment */
    vidmem = MK_FP(0xB800,0);

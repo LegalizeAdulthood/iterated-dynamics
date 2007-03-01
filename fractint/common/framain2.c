@@ -539,9 +539,9 @@ resumeloop:                             /* return here on failed overlays */
 			else if (initbatch == INIT_BATCH_NONE)      /* not batch mode */
 			{
 #ifndef XFRACT
-				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : 3;
+				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
 #else
-				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : 3;
+				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
 #endif
 				if (calc_status == CALCSTAT_RESUMABLE && zwidth == 0 && !driver_key_pressed())
 				{

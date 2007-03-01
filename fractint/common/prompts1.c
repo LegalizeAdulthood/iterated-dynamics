@@ -115,7 +115,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
    char blanks[78];               /* used to clear text box                */
 
    savelookatmouse = lookatmouse;
-   lookatmouse = 0;
+   lookatmouse = LOOK_MOUSE_NONE;
    promptfkeys = fkeymask;
    memset(blanks,' ',77);   /* initialize string of blanks */
    blanks[77] = (char) 0;
@@ -777,7 +777,7 @@ static int input_field_list(
    int i, j;
    int ret,savelookatmouse;
    savelookatmouse = lookatmouse;
-   lookatmouse = 0;
+   lookatmouse = LOOK_MOUSE_NONE;
    for (initval = 0; initval < llen; ++initval)
       if (strcmp(fld,list[initval]) == 0) break;
    if (initval >= llen) initval = 0;

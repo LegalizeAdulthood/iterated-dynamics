@@ -27,6 +27,12 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* lookatmouse values */
+#define LOOK_MOUSE_NONE		0
+#define LOOK_MOUSE_GRAPHICS	1
+#define LOOK_MOUSE_TEXT		2
+#define LOOK_MOUSE_ZOOM_BOX	3
+
 /* dopause() values */
 #define PAUSE_ERROR_NO_BATCH 0
 #define PAUSE_ERROR_ANY 1

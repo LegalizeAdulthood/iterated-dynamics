@@ -40,7 +40,7 @@ void intro(void)
 	timer_start -= clock_ticks();                /* "time out" during help */
 	oldlookatmouse = lookatmouse;
 	oldhelpmode = helpmode;
-	lookatmouse = 0;                     /* de-activate full mouse checking */
+	lookatmouse = LOOK_MOUSE_NONE;                     /* de-activate full mouse checking */
 
 	i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
 	screen_text[i++] = '\0';

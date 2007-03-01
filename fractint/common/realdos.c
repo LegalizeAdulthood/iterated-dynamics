@@ -72,7 +72,7 @@ int stopmsg (int flags, char *msg)
       }
    ret = 0;
    savelookatmouse = lookatmouse;
-   lookatmouse = -13;
+   lookatmouse = -FIK_ENTER;
    if ((flags & STOPMSG_NO_STACK))
       blankrows(toprow=12,10,7);
    else {
@@ -459,7 +459,7 @@ int fullscreen_choice(
 
 	scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
 	savelookatmouse = lookatmouse;
-	lookatmouse = 0;
+	lookatmouse = LOOK_MOUSE_NONE;
 	ret = -1;
 	/* preset current to passed string */
 	if (speedstring && (i = (int) strlen(speedstring)) > 0)
@@ -1457,7 +1457,7 @@ int input_field(
    int i, j;
    int ret,savelookatmouse;
    savelookatmouse = lookatmouse;
-   lookatmouse = 0;
+   lookatmouse = LOOK_MOUSE_NONE;
    ret = -1;
    strcpy(savefld,fld);
    insert = started = offset = 0;

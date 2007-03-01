@@ -521,7 +521,7 @@ void Jiim(int which)         /* called by fractint */
    aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
          actively_computing = 1;
    SetAspect(aspect);
-   lookatmouse = 3;
+   lookatmouse = LOOK_MOUSE_ZOOM_BOX;
 
    /* this code moved from just below to avoid boxx/strlocn conflict */
    if (which == ORBIT)
