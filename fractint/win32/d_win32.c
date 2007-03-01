@@ -26,6 +26,33 @@ extern HINSTANCE g_instance;
 
 #define DI(name_) Win32BaseDriver *name_ = (Win32BaseDriver *) drv
 
+/*
+; New (Apr '90) mouse code by Pieter Branderhorst follows.
+; The variable lookatmouse controls it all.  Callers of keypressed and
+; getakey should set lookatmouse to:
+;      0  ignore the mouse entirely
+;     <0  only test for left button click; if it occurs return fake key
+;           number 0-lookatmouse
+;      1  return enter key for left button, arrow keys for mouse movement,
+;           mouse sensitivity is suitable for graphics cursor
+;      2  same as 1 but sensitivity is suitable for text cursor
+;      3  specials for zoombox, left/right double-clicks generate fake
+;           keys, mouse movement generates a variety of fake keys
+;           depending on state of buttons
+; Mouse movement is accumulated & saved across calls.  Eg if mouse has been
+; moved up-right quickly, the next few calls to getakey might return:
+;      right,right,up,right,up
+; Minor jiggling of the mouse generates no keystroke, and is forgotten (not
+; accumulated with additional movement) if no additional movement in the
+; same direction occurs within a short interval.
+; Movements on angles near horiz/vert are treated as horiz/vert; the nearness
+; tolerated varies depending on mode.
+; Any movement not picked up by calling routine within a short time of mouse
+; stopping is forgotten.  (This does not apply to button pushes in modes<3.)
+; Mouseread would be more accurate if interrupt-driven, but with the usage
+; in fractint (tight getakey loops while mouse active) there's no need.
+*/
+
 /* handle_special_keys
  *
  * First, do some slideshow processing.  Then handle F1 and TAB display.

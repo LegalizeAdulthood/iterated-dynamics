@@ -797,7 +797,7 @@ int help(int action)
     }
 
 	oldlookatmouse = lookatmouse;
-	lookatmouse = 0;
+	lookatmouse = LOOK_MOUSE_NONE;
 	timer_start -= clock_ticks();
 	driver_stack_screen();
 

@@ -3438,7 +3438,7 @@ void EditPalette(void)       /* called by fractint */
 
    line_buff = newx(max(sxdots,sydots));
 
-   lookatmouse = 3;
+   lookatmouse = LOOK_MOUSE_ZOOM_BOX;
    sxoffs = syoffs = 0;
 
    reserve_colors = TRUE;

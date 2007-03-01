@@ -375,7 +375,7 @@ restorestart:
 		memcpy(g_dac_box,olddacbox,256*3);   /* restore in case colors= present */
 	}
 
-	lookatmouse = 0;                     /* ignore mouse */
+	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
 	while (showfile <= 0)              /* image is to be loaded */
 	{
@@ -435,7 +435,7 @@ restorestart:
 
 	helpmode = HELPMENU;                 /* now use this help mode */
 	tabmode = 1;
-	lookatmouse = 0;                     /* ignore mouse */
+	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
 	if (((overlay3d && !initbatch) || stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
