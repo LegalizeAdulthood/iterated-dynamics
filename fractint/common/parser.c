@@ -3760,24 +3760,20 @@ int fpFormulaSetup(void) {
 #endif
 }
 
-int intFormulaSetup(void) {
+int intFormulaSetup(void)
+{
 #if defined(XFRACT) || defined(_WIN32)
-	static int been_here = 0;
-	if (!been_here)
-	{
-		stopmsg(0, "This integer fractal type is unimplemented;\n"
-			"Use float=yes to get a real image.");
-		been_here = 1;
-	}
-	return 0;
+	extern int integer_unsupported(void);
+
+	return integer_unsupported();
 #else
-      MathType = L_MATH;
-      fg = (double)(1L << bitshift);
-      fgLimit = (double)0x7fffffffL / fg;
-      ShiftBack = 32 - bitshift;
+    MathType = L_MATH;
+    fg = (double)(1L << bitshift);
+    fgLimit = (double)0x7fffffffL / fg;
+    ShiftBack = 32 - bitshift;
+    return !RunForm(FormName, 0);
 #endif
-      return !RunForm(FormName, 0);
-   }
+}
 
 
 /* TIW added 06-20-90 so functions can be called from fractals.c */

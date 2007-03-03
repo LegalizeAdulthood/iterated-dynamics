@@ -719,24 +719,11 @@ Barnsley2FPFractal(void)
 int
 JuliaFractal(void)
 {
-#if !defined(XFRACT)
    /* used for C prototype of fast integer math routines for classic
       Mandelbrot and Julia */
    lnew.x  = ltempsqrx - ltempsqry + longparm->x;
    lnew.y = multiply(lold.x, lold.y, bitshiftless1) + longparm->y;
    return longbailout();
-#elif !defined(__386BSD__)
-	{
-		static int been_here = 0;
-		if (!been_here)
-		{
-			stopmsg(0, "This integer fractal type is unimplemented;\n"
-				"Use float=yes to get a real image.");
-			been_here = 1;
-		}
-		return 0;
-	}
-#endif
 }
 
 int
