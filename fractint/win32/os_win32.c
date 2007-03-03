@@ -799,7 +799,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
 	{
 		char msg[MAX_PATH*2];
-		sprintf(msg, "Unexpected error, crash dump saved to %s.\n"
+		sprintf(msg, "Unexpected error, crash dump saved to '%s'.\n"
 			"Please include this file with your bug report.", minidump);
 		MessageBox(NULL, msg, "FractInt: Unexpected Error", MB_OK);
 	}
