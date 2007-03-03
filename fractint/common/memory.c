@@ -129,7 +129,7 @@ static int check_for_mem(int stored_at, long howmuch)
 {
 	/* This function returns an adjusted stored_at value. */
 	/* This is where the memory requested can be allocated. */
-	long maxmem = 1024*1024; /* 1 MB */
+	long maxmem = (1 << 20);
 	BYTE *temp;
 	int use_this_type = NOWHERE;
 
@@ -276,9 +276,6 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    int success, use_this_type;
    long toallocate;
 
-#if defined(_WIN32)
-   _ASSERTE(stored_at != MEMORY);
-#endif
    success = FALSE;
    toallocate = count * size;
    if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
