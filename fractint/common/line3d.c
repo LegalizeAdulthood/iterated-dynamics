@@ -2436,7 +2436,7 @@ static int first_time(int linelen, VECTOR v)
       lastrow[i] = bad;
       f_lastrow[i] = f_bad;
    }
-   got_status = 3;
+   got_status = GOT_STATUS_3D;
    return 0;
 } /* end of once-per-image intializations */
 

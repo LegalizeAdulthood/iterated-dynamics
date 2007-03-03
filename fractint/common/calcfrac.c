@@ -1098,7 +1098,7 @@ static int diffusion_scan(void)
 
    log2 = (double) log (2.0);
 
-   got_status = 5;
+   got_status = GOT_STATUS_DIFFUSION;
 
    /* note: the max size of 2048x2048 gives us a 22 bit counter that will */
    /* fit any 32 bit architecture, the maxinum limit for this case would  */
@@ -1358,7 +1358,7 @@ char drawmode = 'r';
 
 static int sticky_orbits(void)
 {
-   got_status = 6; /* for <tab> screen */
+   got_status = GOT_STATUS_ORBITS; /* for <tab> screen */
    totpasses = 1;
 
    if (plotorbits2dsetup() == -1) {
@@ -1585,7 +1585,7 @@ static int OneOrTwoPass(void)
 
 static int _fastcall StandardCalc(int passnum)
 {
-   got_status = 0;
+   got_status = GOT_STATUS_12PASS;
    curpass = passnum;
    row = yybegin;
    col = xxbegin;
@@ -2868,7 +2868,7 @@ int  bound_trace_main(void)
         return -1;
         }
 
-    got_status = 2;
+    got_status = GOT_STATUS_BOUNDARY_TRACE;
     max_putline_length = 0; /* reset max_putline_length */
     for (currow = iystart; currow <= iystop; currow++)
         {
@@ -3116,7 +3116,7 @@ static int solidguess(void)
    iystart = yybegin;
    iystart &= -1 - (maxblock-1);
 
-   got_status = 1;
+   got_status = GOT_STATUS_GUESSING;
 
    if (workpass == 0) /* otherwise first pass already done */
    {
@@ -3914,7 +3914,7 @@ static int tesseral(void)
       }
    }
 
-   got_status = 4; /* for tab_display */
+   got_status = GOT_STATUS_TESSERAL; /* for tab_display */
 
    while (tp >= (struct tess *)&dstack[0]) { /* do next box */
       curcol = tp->x1; /* for tab_display */
