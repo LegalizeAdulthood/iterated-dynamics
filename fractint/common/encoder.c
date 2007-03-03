@@ -95,7 +95,7 @@ restart:
       strcpy(openfiletype, period);
       *period = 0;
    }
-   if (resave_flag != 1)
+   if (resave_flag != RESAVE_YES)
       updatesavename(filename); /* for next time */
 
    strcat(openfile, openfiletype);
@@ -107,9 +107,9 @@ restart:
    {                                  /* file already exists */
       if (fract_overwrite == 0)
       {
-         if (resave_flag == 0)
+         if (resave_flag == RESAVE_NO)
             goto restart;
-         if (started_resaves == 0)
+         if (started_resaves == FALSE)
          {                      /* first save of a savetime set */
             updatesavename(filename);
             goto restart;
@@ -128,9 +128,9 @@ restart:
       strcat(tmpfile, "fractint.tmp");
    }
 
-   started_resaves = (resave_flag == 1) ? 1 : 0;
-   if (resave_flag == 2)        /* final save of savetime set? */
-      resave_flag = 0;
+   started_resaves = (resave_flag == RESAVE_YES) ? TRUE : FALSE;
+   if (resave_flag == RESAVE_DONE)        /* final save of savetime set? */
+      resave_flag = RESAVE_NO;
 
    g_outfile = fopen(tmpfile, "wb");
    if (g_outfile == NULL)

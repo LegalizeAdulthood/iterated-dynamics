@@ -357,12 +357,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					&& (curfractalspecific->flags&NORESUME) == 0)
 			{
 				savebase = readticker(); /* calc's start time */
-				saveticks = abs(initsavetime);
-				saveticks *= 1092; /* bios ticks/minute */
-				if ((saveticks & 65535L) == 0)
-				{
-					++saveticks; /* make low word nonzero */
-				}
+				saveticks = initsavetime*60*1000; /* in milliseconds */
 				finishrow = -1;
             }
 			browsing = FALSE;      /* regenerate image, turn off browsing */
@@ -526,13 +521,13 @@ resumeloop:                             /* return here on failed overlays */
 				{       /* woke up for timed save */
 					driver_get_key();     /* eat the dummy char */
 					kbdchar = 's'; /* do the save */
-					resave_flag = 1;
+					resave_flag = RESAVE_YES;
 					timedsave = 2;
 				}
 				else
 				{                      /* save done, resume */
 					timedsave = 0;
-					resave_flag = 2;
+					resave_flag = RESAVE_DONE;
 					kbdchar = FIK_ENTER;
 				}
 			}
@@ -1308,7 +1303,8 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
       if (resave_flag)
       {
          updatesavename(savename);      /* do the pending increment */
-         resave_flag = started_resaves = 0;
+         resave_flag = RESAVE_NO;
+		 started_resaves = FALSE;
       }
       showfile = -1;
       return RESTORESTART;
@@ -1677,7 +1673,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       if (resave_flag)
       {
          updatesavename(savename);      /* do the pending increment */
-         resave_flag = started_resaves = 0;
+         resave_flag = RESAVE_NO;
+		 started_resaves = FALSE;
       }
       showfile = -1;
       return RESTORESTART;

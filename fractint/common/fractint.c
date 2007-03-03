@@ -130,8 +130,8 @@ char *fract_dir1="", *fract_dir2="";
 /* variables defined by the command line/files processor */
 int     comparegif=0;                   /* compare two gif files flag */
 int     timedsave=0;                    /* when doing a timed save */
-int     resave_flag=0;                  /* tells encoder not to incr filename */
-int     started_resaves=0;              /* but incr on first resave */
+int     resave_flag=RESAVE_NO;                  /* tells encoder not to incr filename */
+int     started_resaves=FALSE;              /* but incr on first resave */
 int     save_system;                    /* from and for save files */
 int     tabmode = 1;                    /* tab display enabled */
 
