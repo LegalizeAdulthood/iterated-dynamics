@@ -27,6 +27,16 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* got_status values */
+#define GOT_STATUS_NONE -1
+#define GOT_STATUS_12PASS 0
+#define GOT_STATUS_GUESSING 1
+#define GOT_STATUS_BOUNDARY_TRACE 2
+#define GOT_STATUS_3D 3
+#define GOT_STATUS_TESSERAL 4
+#define GOT_STATUS_DIFFUSION 5
+#define GOT_STATUS_ORBITS 6
+
 /* resave_flag values */
 #define RESAVE_NO 0
 #define RESAVE_YES 1

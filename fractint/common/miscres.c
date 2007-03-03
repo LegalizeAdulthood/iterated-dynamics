@@ -999,11 +999,12 @@ top:
 
 	++s_row;
 
-	if (got_status >= 0 && (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE))
+	if ((got_status >= GOT_STATUS_12PASS) &&
+		(calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE))
 	{
 		switch (got_status)
 		{
-		case 0:
+		case GOT_STATUS_12PASS:
 			sprintf(msg, "%d Pass Mode", totpasses);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			if (usr_stdcalcmode == '3')
@@ -1011,32 +1012,32 @@ top:
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
-		case 1:
+		case GOT_STATUS_GUESSING:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
 			if (usr_stdcalcmode == '3')
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
-		case 2:
+		case GOT_STATUS_BOUNDARY_TRACE:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
 			break;
-		case 3:
+		case GOT_STATUS_3D:
 			sprintf(msg, "Processing row %d (of %d) of input image", currow, fileydots);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			break;
-		case 4:
+		case GOT_STATUS_TESSERAL:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Tesseral");
 			break;
-		case 5:		
+		case GOT_STATUS_DIFFUSION:		
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Diffusion");
 			break;
-		case 6:
+		case GOT_STATUS_ORBITS:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Orbits");
 			break;
 		}
 		++s_row;
-		if (got_status == 5 )
+		if (got_status == GOT_STATUS_DIFFUSION)
 		{
 			sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
 					(100.0 * dif_counter)/dif_limit,
@@ -1045,12 +1046,12 @@ top:
 			++s_row;
 		}
 		else
-		if (got_status != 3)
+		if (got_status != GOT_STATUS_3D)
 		{
 			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
 					yystart, xxstart, yystop, xxstop);
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-			if (got_status == 2 || got_status == 4)  /* btm or tesseral */
+			if (got_status == GOT_STATUS_BOUNDARY_TRACE || got_status == GOT_STATUS_TESSERAL)  /* btm or tesseral */
 			{
 				driver_put_string(-1, -1, C_GENERAL_MED, "at ");
 				sprintf(msg, "[%d, %d]", currow, curcol);
@@ -1081,7 +1082,7 @@ top:
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
 	get_calculation_time(msg, calctime);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((got_status == 5) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
+	if ((got_status == GOT_STATUS_DIFFUSION) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
 		get_calculation_time( msg, (long)(calctime*((dif_limit*1.0)/dif_counter)) );
