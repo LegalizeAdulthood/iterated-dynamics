@@ -687,7 +687,8 @@ int calcfract(void)
       end_resume();
       if (resave_flag) {
          updatesavename(savename); /* do the pending increment */
-         resave_flag = started_resaves = 0;
+         resave_flag = RESAVE_NO;
+		 started_resaves = FALSE;
          }
       calctime = 0;
    }

@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* resave_flag values */
+#define RESAVE_NO 0
+#define RESAVE_YES 1
+#define RESAVE_DONE 2
+
 /* lookatmouse values */
 #define LOOK_MOUSE_NONE		0
 #define LOOK_MOUSE_GRAPHICS	1
