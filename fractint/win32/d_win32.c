@@ -51,7 +51,422 @@ extern HINSTANCE g_instance;
 ; stopping is forgotten.  (This does not apply to button pushes in modes<3.)
 ; Mouseread would be more accurate if interrupt-driven, but with the usage
 ; in fractint (tight getakey loops while mouse active) there's no need.
+
+; translate table for mouse movement -> fake keys
+mousefkey dw   1077,1075,1080,1072  ; right,left,down,up     just movement
+        dw        0,   0,1081,1073  ;            ,pgdn,pgup  + left button
+        dw    1144,1142,1147,1146  ; kpad+,kpad-,cdel,cins  + rt   button
+        dw    1117,1119,1118,1132  ; ctl-end,home,pgdn,pgup + mid/multi
 */
+int mousefkey[16] =
+{
+	FIK_RIGHT_ARROW,	FIK_LEFT_ARROW,	FIK_DOWN_ARROW,		FIK_UP_ARROW,
+	0,					0,				FIK_PAGE_DOWN,		FIK_PAGE_UP,
+	FIK_CTL_PLUS,		FIK_CTL_MINUS,	FIK_CTL_DEL,		FIK_CTL_INSERT,
+	FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP
+};
+
+int lookatmouse = LOOK_MOUSE_NONE;
+static int previous_look_mouse = LOOK_MOUSE_NONE;
+static int mousetime = 0;				/* time of last mouseread call */
+static int mlbtimer = 0;				/* time of left button 1st click */
+static int mrbtimer = 0;				/* time of right button 1st click */
+static int mhtimer = 0;					/* time of last horiz move */
+static int mvtimer = 0;					/* time of last vert  move */
+static int mhmickeys = 0;				/* pending horiz movement */
+static int mvmickeys = 0;				/* pending vert  movement */
+static int mbstatus = 0;				/* status of mouse buttons */
+static int mbclicks = 0;				/* had 1 click so far? &1 mlb, &2 mrb */
+#define MOUSE_LEFT_CLICK 1
+#define MOUSE_RIGHT_CLICK 2
+
+/* timed save variables, handled by readmouse: */
+static int savechktime = 0;				/* time of last autosave check */
+long savebase = 0;						/* base clock ticks */
+long saveticks = 0;						/* save after this many ticks */
+int finishrow = 0;						/* save when this row is finished */
+
+/*
+DclickTime    equ 9   ; ticks within which 2nd click must occur
+JitterTime    equ 6   ; idle ticks before turfing unreported mickeys
+TextHSens     equ 22  ; horizontal sensitivity in text mode
+TextVSens     equ 44  ; vertical sensitivity in text mode
+GraphSens     equ 5   ; sensitivity in graphics mode; gets lower @ higher res
+ZoomSens      equ 20  ; sensitivity for zoom box sizing/rotation
+TextVHLimit   equ 6   ; treat angles < 1:6  as straight
+GraphVHLimit  equ 14  ; treat angles < 1:14 as straight
+ZoomVHLimit   equ 1   ; treat angles < 1:1  as straight
+JitterMickeys equ 3   ; mickeys to ignore before noticing motion
+*/
+#define DclickTime 9
+#define JitterTime 6
+#define TextHSens 22
+#define TextVSens 44
+#define GraphSens 5
+#define ZoomSens 20
+#define TextVHLimit 6
+#define GraphVHLimit 14
+#define ZoomVHLimit 1
+#define JitterMickeys 3
+
+int left_button_pressed(void)
+{
+	return 0;
+}
+
+int left_button_released(void)
+{
+	return 0;
+}
+
+int right_button_pressed(void)
+{
+	return 0;
+}
+
+int right_button_released(void)
+{
+	return 0;
+}
+
+int button_states(void)
+{
+	return 0;
+}
+
+int get_mouse_motion(void)
+{
+	return 0;
+}
+
+int mouse_x = 0;
+int mouse_y = 0;
+
+int mouseread(void)
+{
+	int ax, bx, cx, dx;
+	int moveaxis = 0;
+	int ticker = readticker();
+
+	if (saveticks && (ticker != savechktime))
+	{
+		savechktime = ticker;
+		ticker -= savebase;
+		if (ticker > saveticks)
+		{
+			if (finishrow == 1)
+			{
+				if (calc_status != CALCSTAT_IN_PROGRESS)
+				{
+					if ((got_status != GOT_STATUS_12PASS) && (got_status != GOT_STATUS_GUESSING))
+					{
+						finishrow = currow;
+						goto mouse0;
+					}
+				}
+			}
+			else if (currow == finishrow)
+			{
+				goto mouse0;
+			}
+			timedsave = TRUE;
+			return 9999;
+		}
+	}
+
+mouse0:
+	if (lookatmouse != previous_look_mouse)
+	{
+		/* lookatmouse changed, reset everything */
+		previous_look_mouse = lookatmouse;
+		mbclicks = 0;
+		mbstatus = 0;
+		mhmickeys = 0;
+		mvmickeys = 0;
+	}
+	if (lookatmouse != LOOK_MOUSE_NONE)
+	{
+		if (readticker() != mousetime)
+		{
+			goto mnewtick;
+		}
+		if (lookatmouse >= 0)
+		{
+			goto mouse5;
+		}
+	}
+	return 0;
+
+mnewtick:
+	mousetime = readticker();
+	if (LOOK_MOUSE_ZOOM_BOX == lookatmouse)
+	{
+		goto mouse2;
+	}
+	if (left_button_pressed())
+	{
+		goto mleftb;
+	}
+	if (lookatmouse < 0)
+	{
+		return 0;
+	}
+	goto mouse3;
+
+mleftb:
+	if (lookatmouse > LOOK_MOUSE_NONE)
+	{
+		return FIK_ENTER;
+	}
+	return -lookatmouse;
+
+mouse2:
+	if (left_button_released())
+	{
+		if (mbclicks & MOUSE_LEFT_CLICK)
+		{
+			goto mslbgo;
+		}
+
+		mlbtimer = mousetime;
+		mbclicks |= MOUSE_LEFT_CLICK;
+		goto mousrb;
+	}
+	else
+	{
+		goto msnolb;
+	}
+
+mslbgo:
+	mbclicks = ~MOUSE_LEFT_CLICK;
+	return FIK_ENTER;
+
+msnolb:
+	if (mousetime - mlbtimer > DclickTime)
+	{
+		mbclicks = ~MOUSE_LEFT_CLICK;
+	}
+
+mousrb:
+	if (right_button_pressed())
+	{
+		if (mbclicks & MOUSE_RIGHT_CLICK)
+		{
+			goto msrbgo;
+		}
+		mrbtimer = mousetime;
+		mbclicks |= MOUSE_RIGHT_CLICK;
+		goto mouse3;
+	}
+	else
+	{
+		goto msnorb;
+	}
+
+msrbgo:
+	mbclicks &= ~MOUSE_RIGHT_CLICK;
+	return FIK_CTL_ENTER;
+
+msnorb:
+	if (mousetime - mrbtimer > DclickTime)
+	{
+		mbclicks |= ~MOUSE_LEFT_CLICK;
+	}
+
+mouse3:
+	if (button_states() != mbstatus)
+	{
+		mbstatus = button_states();
+		mhmickeys = 0;
+		mvmickeys = 0;
+	}
+	get_mouse_motion();
+	if (mouse_x > 0)
+	{
+		goto moushm;
+	}
+	if (mousetime - mhtimer > JitterTime)
+	{
+		goto mousev;
+	}
+	mhmickeys = 0;
+	goto mousev;
+
+moushm:
+	mhmickeys += mouse_x;
+
+mousev:
+	if (mouse_y > 0)
+	{
+		goto mousvm;
+	}
+	if (mousetime - mvtimer > JitterTime)
+	{
+		goto mouse5;
+	}
+	mvmickeys = 0;
+	goto mouse5;
+
+mousvm:
+	mvtimer = mousetime;
+	mvmickeys += mouse_y;
+
+mouse5:
+	bx = (mhmickeys > 0) ? mhmickeys : -mhmickeys;
+	cx = (mvmickeys > 0) ? mvmickeys : -mvmickeys;
+	moveaxis = 0;
+	if (bx < cx)
+	{
+		int tmp = bx;
+		bx = cx;
+		cx = tmp;
+		moveaxis = 1;
+	}
+
+	if (LOOK_MOUSE_TEXT == lookatmouse)
+	{
+		ax = TextVHLimit;
+		goto mangl2;
+	}
+	if (LOOK_MOUSE_ZOOM_BOX != lookatmouse)
+	{
+		ax = GraphVHLimit;
+		goto mangl2;
+	}
+	if (mbstatus == 0)
+	{
+		ax = ZoomVHLimit;
+		goto mangl2;
+	}
+
+mangl2:
+	ax *= cx;
+	if (ax > bx)
+	{
+		goto mchkmv;
+	}
+	if (moveaxis != 0)
+	{
+		goto mzeroh;
+	}
+	mvmickeys = 0;
+	goto mchkmv;
+
+mzeroh:
+	mhmickeys = 0;
+
+mchkmv:
+	if (LOOK_MOUSE_TEXT == lookatmouse)
+	{
+		goto mchkmt;
+	}
+	dx = ZoomSens + JitterMickeys;
+	if (LOOK_MOUSE_ZOOM_BOX != lookatmouse)
+	{
+		goto mchkmg;
+	}
+	if (mbstatus != 0)
+	{
+		goto mchkm2;
+	}
+
+mchkmg:
+	dx = GraphSens;
+	cx = sxdots;
+
+mchkg2:
+	if (cx < 400)
+	{
+		goto mchkg3;
+	}
+	cx >>= 1;
+	dx >>= 1;
+	dx++;
+	goto mchkg2;
+
+mchkg3:
+	dx += JitterMickeys;
+	goto mchkm2;
+
+mchkmt:
+	dx = TextVSens + JitterMickeys;
+	if (moveaxis != 0)
+	{
+		goto mchkm2;
+	}
+	dx = TextHSens + JitterMickeys;
+
+mchkm2:
+	if (bx >= dx)
+	{
+		goto mmove;
+	}
+	return 0;
+
+mmove:
+	dx -= JitterMickeys;
+	if (moveaxis != 0)
+	{
+		goto mmovev;
+	}
+	if (mhmickeys < 0)
+	{
+		goto mmovh2;
+	}
+	mhmickeys -= dx;
+	bx = 0;
+	goto mmoveb;
+
+mmovh2:
+	mhmickeys += dx;
+	bx = 2;
+	goto mmoveb;
+
+mmovev:
+	if (mvmickeys < 0)
+	{
+		goto mmovv2;
+	}
+	mvmickeys -= dx;
+	bx = 4;
+	goto mmoveb;
+
+mmovv2:
+	mvmickeys += dx;
+	bx = 6;
+
+mmoveb:
+	if (LOOK_MOUSE_ZOOM_BOX == lookatmouse)
+	{
+		goto mmovek;
+	}
+	if (mbstatus != 1)
+	{
+		goto mmovb2;
+	}
+	bx += 8;
+	goto mmovek;
+
+mmovb2:
+	if (mbstatus != 2)
+	{
+		goto mmovb3;
+	}
+	bx += 16;
+	goto mmovek;
+
+mmovb3:
+	if (mbstatus == 0)
+	{
+		goto mmovek;
+	}
+	bx += 24;
+
+mmovek:
+	ax = mousefkey[bx];
+
+	return ax;
+}
 
 /* handle_special_keys
  *
