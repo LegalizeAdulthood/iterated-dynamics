@@ -1947,7 +1947,7 @@ xhandleevents()
 
 #define MSCALE 1
 
-		    if (lookatmouse==3 && bnum != 0) {
+		    if (lookatmouse==LOOK_MOUSE_ZOOM_BOX && bnum != 0) {
 			dx += (xevent.xmotion.x-lastx)/MSCALE;
 			dy += (xevent.xmotion.y-lasty)/MSCALE;
 			lastx = xevent.xmotion.x;
@@ -1964,7 +1964,7 @@ xhandleevents()
 		{
 		int done = 0;
 		int banding = 0;
-		if (lookatmouse==3 || zoomoff == 0) {
+		if (lookatmouse==LOOK_MOUSE_ZOOM_BOX || zoomoff == 0) {
 		    lastx = xevent.xbutton.x;
 		    lasty = xevent.xbutton.y;
 		    break;
@@ -2089,7 +2089,7 @@ xhandleevents()
 	}  /* End switch */
     }  /* End while */
 
-    if (!xbufkey && editpal_cursor && !inside_help && lookatmouse == 3 &&
+    if (!xbufkey && editpal_cursor && !inside_help && lookatmouse == LOOK_MOUSE_ZOOM_BOX &&
 	    (dx != 0 || dy != 0)) {
 	if (ABS(dx)>ABS(dy)) {
 	    if (dx>0) {

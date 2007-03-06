@@ -35,7 +35,7 @@ int fpu=0;		/* fpu type: 0, 87, 287, 387 */
 
 /* ********************** Mouse Support Variables ************************** */
 
-int lookatmouse=0;	/* see notes at mouseread routine */
+int lookatmouse=LOOK_MOUSE_NONE;	/* see notes at mouseread routine */
 int finishrow=0;	/* save when this row is finished */
 
 int inside_help = 0;
