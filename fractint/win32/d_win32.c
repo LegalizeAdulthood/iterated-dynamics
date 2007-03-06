@@ -179,7 +179,6 @@ int mouseread(int ch)
 		}
 	}
 
-mouse0:
 	if (lookatmouse != previous_look_mouse)
 	{
 		/* lookatmouse changed, reset everything */
@@ -193,7 +192,39 @@ mouse0:
 	{
 		if (readticker() != mousetime)
 		{
-			goto mnewtick;
+			mousetime = readticker();
+			if (LOOK_MOUSE_ZOOM_BOX == lookatmouse)
+			{
+				if (left_button_released())
+				{
+					if (mbclicks & MOUSE_CLICK_LEFT)
+					{
+						mbclicks = ~MOUSE_CLICK_LEFT;
+						return FIK_ENTER;
+					}
+
+					mlbtimer = mousetime;
+					mbclicks |= MOUSE_CLICK_LEFT;
+					goto mousrb;
+				}
+				else
+				{
+					goto msnolb;
+				}
+			}
+			if (left_button_pressed())
+			{
+				if (lookatmouse > LOOK_MOUSE_NONE)
+				{
+					return FIK_ENTER;
+				}
+				return -lookatmouse;
+			}
+			if (lookatmouse < 0)
+			{
+				return 0;
+			}
+			goto mouse3;
 		}
 		if (lookatmouse >= 0)
 		{
@@ -201,50 +232,6 @@ mouse0:
 		}
 	}
 	return 0;
-
-mnewtick:
-	mousetime = readticker();
-	if (LOOK_MOUSE_ZOOM_BOX == lookatmouse)
-	{
-		goto mouse2;
-	}
-	if (left_button_pressed())
-	{
-		goto mleftb;
-	}
-	if (lookatmouse < 0)
-	{
-		return 0;
-	}
-	goto mouse3;
-
-mleftb:
-	if (lookatmouse > LOOK_MOUSE_NONE)
-	{
-		return FIK_ENTER;
-	}
-	return -lookatmouse;
-
-mouse2:
-	if (left_button_released())
-	{
-		if (mbclicks & MOUSE_CLICK_LEFT)
-		{
-			goto mslbgo;
-		}
-
-		mlbtimer = mousetime;
-		mbclicks |= MOUSE_CLICK_LEFT;
-		goto mousrb;
-	}
-	else
-	{
-		goto msnolb;
-	}
-
-mslbgo:
-	mbclicks = ~MOUSE_CLICK_LEFT;
-	return FIK_ENTER;
 
 msnolb:
 	if (mousetime - mlbtimer > DclickTime)
@@ -257,7 +244,8 @@ mousrb:
 	{
 		if (mbclicks & MOUSE_CLICK_RIGHT)
 		{
-			goto msrbgo;
+			mbclicks &= ~MOUSE_CLICK_RIGHT;
+			return FIK_CTL_ENTER;
 		}
 		mrbtimer = mousetime;
 		mbclicks |= MOUSE_CLICK_RIGHT;
@@ -267,10 +255,6 @@ mousrb:
 	{
 		goto msnorb;
 	}
-
-msrbgo:
-	mbclicks &= ~MOUSE_CLICK_RIGHT;
-	return FIK_CTL_ENTER;
 
 msnorb:
 	if (mousetime - mrbtimer > DclickTime)
@@ -331,20 +315,15 @@ mouse5:
 	if (LOOK_MOUSE_TEXT == lookatmouse)
 	{
 		ax = TextVHLimit;
-		goto mangl2;
 	}
-	if (LOOK_MOUSE_ZOOM_BOX != lookatmouse)
+	else if (LOOK_MOUSE_ZOOM_BOX != lookatmouse)
 	{
 		ax = GraphVHLimit;
-		goto mangl2;
 	}
-	if (mbstatus == MOUSE_CLICK_NONE)
+	else if (mbstatus == MOUSE_CLICK_NONE)
 	{
 		ax = ZoomVHLimit;
-		goto mangl2;
 	}
-
-mangl2:
 	ax *= cx;
 	if (ax > bx)
 	{
@@ -352,13 +331,12 @@ mangl2:
 	}
 	if (moveaxis != 0)
 	{
-		goto mzeroh;
+		mhmickeys = 0;
 	}
-	mvmickeys = 0;
-	goto mchkmv;
-
-mzeroh:
-	mhmickeys = 0;
+	else
+	{
+		mvmickeys = 0;
+	}
 
 mchkmv:
 	if (LOOK_MOUSE_TEXT == lookatmouse)
@@ -379,36 +357,29 @@ mchkmg:
 	dx = GraphSens;
 	cx = sxdots;
 
-mchkg2:
-	if (cx < 400)
+	while (!(cx < 400))
 	{
-		goto mchkg3;
+		cx >>= 1;
+		dx >>= 1;
+		dx++;
 	}
-	cx >>= 1;
-	dx >>= 1;
-	dx++;
-	goto mchkg2;
 
-mchkg3:
 	dx += JitterMickeys;
 	goto mchkm2;
 
 mchkmt:
 	dx = TextVSens + JitterMickeys;
-	if (moveaxis != 0)
+	if (moveaxis == 0)
 	{
-		goto mchkm2;
+		dx = TextHSens + JitterMickeys;
 	}
-	dx = TextHSens + JitterMickeys;
 
 mchkm2:
-	if (bx >= dx)
+	if (!(bx >= dx))
 	{
-		goto mmove;
+		return 0;
 	}
-	return 0;
 
-mmove:
 	dx -= JitterMickeys;
 	if (moveaxis != 0)
 	{
@@ -445,29 +416,18 @@ mmoveb:
 	{
 		goto mmovek;
 	}
-	if (mbstatus != MOUSE_CLICK_LEFT)
-	{
-		goto mmovb2;
-	}
-	bx += 8;
-	goto mmovek;
 
-mmovb2:
-	if (mbstatus != MOUSE_CLICK_RIGHT)
+	switch (mbstatus)
 	{
-		goto mmovb3;
+	case MOUSE_CLICK_LEFT: bx += 8; break;
+	case MOUSE_CLICK_RIGHT: bx += 16; break;
+	case MOUSE_CLICK_NONE: break;
+	default:
+		bx += 24;
 	}
-	bx += 16;
-	goto mmovek;
-
-mmovb3:
-	if (mbstatus == MOUSE_CLICK_NONE)
-	{
-		goto mmovek;
-	}
-	bx += 24;
 
 mmovek:
+	_ASSERTE(bx < NUM_OF(mousefkey));
 	ax = mousefkey[bx];
 
 	return ax;
