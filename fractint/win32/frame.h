@@ -3,6 +3,9 @@
 
 #define KEYBUFMAX 80
 
+#define BUTTON_LEFT 0
+#define BUTTON_RIGHT 1
+
 typedef struct tagFrame Frame;
 struct tagFrame
 {
@@ -22,6 +25,11 @@ struct tagFrame
 	unsigned int  keypress_head;
 	unsigned int  keypress_tail;
 	unsigned int  keypress_buffer[KEYBUFMAX];
+
+	/* mouse data */
+	BOOL button_down[2];
+	int start_x, start_y;
+	int delta_x, delta_y;
 };
 
 extern Frame g_frame;

@@ -75,10 +75,13 @@ static int mhtimer = 0;					/* time of last horiz move */
 static int mvtimer = 0;					/* time of last vert  move */
 static int mhmickeys = 0;				/* pending horiz movement */
 static int mvmickeys = 0;				/* pending vert  movement */
-static int mbstatus = 0;				/* status of mouse buttons */
+static int mbstatus = 0;				/* status of mouse buttons: MOUSE_CLICK_{NONE, LEFT, RIGHT} */
 static int mbclicks = 0;				/* had 1 click so far? &1 mlb, &2 mrb */
-#define MOUSE_LEFT_CLICK 1
-#define MOUSE_RIGHT_CLICK 2
+#define MOUSE_CLICK_NONE 0
+#define MOUSE_CLICK_LEFT 1
+#define MOUSE_CLICK_RIGHT 2
+int mouse_x = 0;
+int mouse_y = 0;
 
 /* timed save variables, handled by readmouse: */
 static int savechktime = 0;				/* time of last autosave check */
@@ -111,42 +114,46 @@ JitterMickeys equ 3   ; mickeys to ignore before noticing motion
 
 int left_button_pressed(void)
 {
-	return 0;
+	return g_frame.button_down[BUTTON_LEFT];
 }
 
 int left_button_released(void)
 {
-	return 0;
+	return !g_frame.button_down[BUTTON_LEFT];
 }
 
 int right_button_pressed(void)
 {
-	return 0;
+	return g_frame.button_down[BUTTON_RIGHT];
 }
 
 int right_button_released(void)
 {
-	return 0;
+	return !g_frame.button_down[BUTTON_RIGHT];
 }
 
 int button_states(void)
 {
-	return 0;
+	return (g_frame.button_down[BUTTON_LEFT] ? MOUSE_CLICK_LEFT : 0) |
+		(g_frame.button_down[BUTTON_RIGHT] ? MOUSE_CLICK_RIGHT : 0);
 }
 
-int get_mouse_motion(void)
+void get_mouse_motion(void)
 {
-	return 0;
+	mouse_x = g_frame.start_x;
+	mouse_y = g_frame.start_y;
 }
 
-int mouse_x = 0;
-int mouse_y = 0;
-
-int mouseread(void)
+int mouseread(int ch)
 {
 	int ax, bx, cx, dx;
 	int moveaxis = 0;
 	int ticker = readticker();
+
+	if (ch != 0)
+	{
+		return ch;
+	}
 
 	if (saveticks && (ticker != savechktime))
 	{
@@ -161,16 +168,14 @@ int mouseread(void)
 					if ((got_status != GOT_STATUS_12PASS) && (got_status != GOT_STATUS_GUESSING))
 					{
 						finishrow = currow;
-						goto mouse0;
 					}
 				}
 			}
-			else if (currow == finishrow)
+			else if (currow != finishrow)
 			{
-				goto mouse0;
+				timedsave = TRUE;
+				return 9999;
 			}
-			timedsave = TRUE;
-			return 9999;
 		}
 	}
 
@@ -180,7 +185,7 @@ mouse0:
 		/* lookatmouse changed, reset everything */
 		previous_look_mouse = lookatmouse;
 		mbclicks = 0;
-		mbstatus = 0;
+		mbstatus = MOUSE_CLICK_NONE;
 		mhmickeys = 0;
 		mvmickeys = 0;
 	}
@@ -223,13 +228,13 @@ mleftb:
 mouse2:
 	if (left_button_released())
 	{
-		if (mbclicks & MOUSE_LEFT_CLICK)
+		if (mbclicks & MOUSE_CLICK_LEFT)
 		{
 			goto mslbgo;
 		}
 
 		mlbtimer = mousetime;
-		mbclicks |= MOUSE_LEFT_CLICK;
+		mbclicks |= MOUSE_CLICK_LEFT;
 		goto mousrb;
 	}
 	else
@@ -238,24 +243,24 @@ mouse2:
 	}
 
 mslbgo:
-	mbclicks = ~MOUSE_LEFT_CLICK;
+	mbclicks = ~MOUSE_CLICK_LEFT;
 	return FIK_ENTER;
 
 msnolb:
 	if (mousetime - mlbtimer > DclickTime)
 	{
-		mbclicks = ~MOUSE_LEFT_CLICK;
+		mbclicks = ~MOUSE_CLICK_LEFT;
 	}
 
 mousrb:
 	if (right_button_pressed())
 	{
-		if (mbclicks & MOUSE_RIGHT_CLICK)
+		if (mbclicks & MOUSE_CLICK_RIGHT)
 		{
 			goto msrbgo;
 		}
 		mrbtimer = mousetime;
-		mbclicks |= MOUSE_RIGHT_CLICK;
+		mbclicks |= MOUSE_CLICK_RIGHT;
 		goto mouse3;
 	}
 	else
@@ -264,13 +269,13 @@ mousrb:
 	}
 
 msrbgo:
-	mbclicks &= ~MOUSE_RIGHT_CLICK;
+	mbclicks &= ~MOUSE_CLICK_RIGHT;
 	return FIK_CTL_ENTER;
 
 msnorb:
 	if (mousetime - mrbtimer > DclickTime)
 	{
-		mbclicks |= ~MOUSE_LEFT_CLICK;
+		mbclicks |= ~MOUSE_CLICK_LEFT;
 	}
 
 mouse3:
@@ -333,7 +338,7 @@ mouse5:
 		ax = GraphVHLimit;
 		goto mangl2;
 	}
-	if (mbstatus == 0)
+	if (mbstatus == MOUSE_CLICK_NONE)
 	{
 		ax = ZoomVHLimit;
 		goto mangl2;
@@ -365,7 +370,7 @@ mchkmv:
 	{
 		goto mchkmg;
 	}
-	if (mbstatus != 0)
+	if (mbstatus != MOUSE_CLICK_NONE)
 	{
 		goto mchkm2;
 	}
@@ -440,7 +445,7 @@ mmoveb:
 	{
 		goto mmovek;
 	}
-	if (mbstatus != 1)
+	if (mbstatus != MOUSE_CLICK_LEFT)
 	{
 		goto mmovb2;
 	}
@@ -448,7 +453,7 @@ mmoveb:
 	goto mmovek;
 
 mmovb2:
-	if (mbstatus != 2)
+	if (mbstatus != MOUSE_CLICK_RIGHT)
 	{
 		goto mmovb3;
 	}
@@ -456,7 +461,7 @@ mmovb2:
 	goto mmovek;
 
 mmovb3:
-	if (mbstatus == 0)
+	if (mbstatus == MOUSE_CLICK_NONE)
 	{
 		goto mmovek;
 	}
@@ -649,7 +654,8 @@ win32_key_pressed(Driver *drv)
 		return ch;
 	}
 	flush_output();
-	ch = handle_special_keys(frame_get_key_press(0));
+	ch = handle_special_keys(mouseread(frame_get_key_press(0)));
+	_ASSERTE(di->key_buffer == 0);
 	di->key_buffer = ch;
 
 	return ch;
@@ -689,7 +695,7 @@ win32_get_key(Driver *drv)
 		}
 		else
 		{
-			ch = handle_special_keys(frame_get_key_press(1));
+			ch = handle_special_keys(mouseread(frame_get_key_press(1)));
 		}
 	}
 	while (ch == 0);

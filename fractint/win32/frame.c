@@ -170,6 +170,32 @@ static void frame_OnTimer(HWND window, UINT id)
 	KillTimer(window, FRAME_TIMER_ID);
 }
 
+static frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	g_frame.start_x = x;
+	g_frame.start_x = y;
+}
+
+static void frame_OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_LEFT] = TRUE;
+}
+
+static void frame_OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_LEFT] = FALSE;
+}
+
+static void frame_OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_RIGHT] = TRUE;
+}
+
+static void frame_OnRButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_RIGHT] = FALSE;
+}
+
 static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	switch (message)
@@ -183,6 +209,11 @@ static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM 
 	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);			break;
 	case WM_CHAR:			HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);					break;
 	case WM_TIMER:			HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);					break;
+	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_OnMouseMove);			break;
+	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_OnLButtonDown);		break;
+	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, frame_OnLButtonUp);			break;
+	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_OnRButtonDown);		break;
+	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, frame_OnRButtonUp);			break;
 	default:				return DefWindowProc(window, message, wp, lp);					break;
 	}
 	return 0;
