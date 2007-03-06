@@ -63,7 +63,7 @@ extern int time_to_resume;             /* time to resume? */
 int text_type = 0;
 int textrow = 0, textcol = 0;
 int textrbase = 0, textcbase = 0;
-int lookatmouse;
+int lookatmouse = LOOK_MOUSE_NONE;
 
 /* fullscreen_choice options */
 #define CHOICERETURNKEY   1
@@ -125,7 +125,7 @@ static char choiceinstr2c[]="Press ENTER for highlighted choice, or F1 for help"
    int ret,savelookatmouse;
 
    savelookatmouse = lookatmouse;
-   lookatmouse = 0;
+   lookatmouse = LOOK_MOUSE_NONE;
    ret = -1;
    if (speedstring
      && (i = strlen(speedstring)) > 0) { /* preset current to passed string */
@@ -479,7 +479,7 @@ int input_field(
    int i, j;
    int ret,savelookatmouse;
    savelookatmouse = lookatmouse;
-   lookatmouse = 0;
+   lookatmouse = LOOK_MOUSE_NONE;
    ret = -1;
    strcpy(savefld,fld);
    insert = started = offset = 0;
