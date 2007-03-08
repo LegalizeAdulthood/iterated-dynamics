@@ -1048,6 +1048,7 @@ extern int dir_remove(char *,char *);
 extern FILE *dir_fopen(char *, char *, char *);
 extern void extract_filename(char *, char *);
 extern char *has_ext(char *source);
+extern int integer_unsupported(void);
 
 /*  realdos -- C file prototypes */
 
