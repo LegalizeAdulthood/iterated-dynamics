@@ -2561,3 +2561,11 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1,VO
             *(char **)(v+(j+gap)*sz) = temp;
          }
 }
+
+int integer_unsupported(void)
+{
+	stopmsg(0, "This integer fractal type is unimplemented;\n"
+		"Use float=yes or the <X> screen to get a real image.");
+
+	return 0;
+}

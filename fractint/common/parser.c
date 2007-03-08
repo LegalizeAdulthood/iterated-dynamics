@@ -3763,8 +3763,6 @@ int fpFormulaSetup(void) {
 int intFormulaSetup(void)
 {
 #if defined(XFRACT) || defined(_WIN32)
-	extern int integer_unsupported(void);
-
 	return integer_unsupported();
 #else
     MathType = L_MATH;

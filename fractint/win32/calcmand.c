@@ -40,14 +40,6 @@ static int savedincr = 0;
 static int period = 0;
 static long firstsavedand = 0;
 
-int integer_unsupported(void)
-{
-	stopmsg(0, "This integer fractal type is unimplemented;\n"
-		"Use float=yes or the <X> screen to get a real image.");
-
-	return 0;
-}
-
 long cdecl
 calcmandasm(void)
 {
