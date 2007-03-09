@@ -172,8 +172,18 @@ static void frame_OnTimer(HWND window, UINT id)
 
 static frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	g_frame.start_x = x;
-	g_frame.start_x = y;
+#if 0
+	if (editpal_cursor)
+	{
+		if (lookatmouse != LOOK_MOUSE_NONE && (keyFlags & (MK_LBUTTON | MK_RBUTTON)))
+		{
+			g_frame.delta_x += x - g_frame.start_x;
+			g_frame.delta_y += y - g_frame.start_y;
+			g_frame.start_x = x;
+			g_frame.start_x = y;
+		}
+	}
+#endif
 }
 
 static void frame_OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
