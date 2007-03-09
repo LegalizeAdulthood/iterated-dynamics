@@ -479,6 +479,9 @@
 				Name="ui"
 				Filter="">
 				<File
+					RelativePath=".\common\font8x8.c">
+				</File>
+				<File
 					RelativePath=".\common\fractint.c">
 				</File>
 				<File
