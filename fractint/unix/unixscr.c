@@ -60,6 +60,8 @@
 #include <asm/socket.h>
 #endif
 
+#define MSCALE 1
+
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int) iocount)
 
@@ -1926,6 +1928,371 @@ int XZoomWaiting = 0;
 #define MIN(x, y) ((x) < (y)?(x):(y))
 #define SIGN(x) ((x) > 0?1:-1)
 
+void OnKeyRelease(XKeyEvent *xkey, int *ctl_mode, int *shift_mode)
+{
+	char buffer[1];
+	KeySym keysym;
+	XLookupString(xkey, buffer, 1, &keysym, NULL);
+	switch (keysym)
+	{
+	case XK_Control_L:
+	case XK_Control_R:
+		*ctl_mode = 0;
+		break;
+	case XK_Shift_L:
+	case XK_Shift_R:
+		*shift_mode = 0;
+		break;
+	}
+}
+
+static void OnKeyPress(XKeyEvent *xkey, int *ctl_mode, int *shift_mode)
+{
+	int charcount;
+	char buffer[1];
+	KeySym keysym;
+	charcount = XLookupString(xkey, buffer, 1, &keysym, NULL);
+	switch (keysym)
+	{
+	case XK_Control_L:
+	case XK_Control_R:
+		*ctl_mode = 1;
+		return;
+	case XK_Shift_L:
+	case XK_Shift_R:
+		*shift_mode = 1;
+		break;
+	case XK_Home:
+	case XK_R7:
+		xbufkey = *ctl_mode ? FIK_CTL_HOME : FIK_HOME;
+		return;
+	case XK_Left:
+	case XK_R10:
+		xbufkey = *ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
+		return;
+	case XK_Right:
+	case XK_R12:
+		xbufkey = *ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
+		return;
+	case XK_Down:
+	case XK_R14:
+		xbufkey = *ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
+		return;
+	case XK_Up:
+	case XK_R8:
+		xbufkey = *ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
+		return;
+	case XK_Insert:
+		xbufkey = *ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
+		return;
+	case XK_Delete:
+		xbufkey = *ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
+		return;
+	case XK_End:
+	case XK_R13:
+		xbufkey = *ctl_mode ? FIK_CTL_END : FIK_END;
+		return;
+	case XK_Help:
+		xbufkey = FIK_F1;
+		return;
+	case XK_Prior:
+	case XK_R9:
+		xbufkey = *ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
+		return;
+	case XK_Next:
+	case XK_R15:
+		xbufkey = *ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
+		return;
+	case XK_F1:
+	case XK_L1:
+		xbufkey = shift_mode ? FIK_SF1 : FIK_F1;
+		return;
+	case XK_F2:
+	case XK_L2:
+		xbufkey = shift_mode ? FIK_SF2: FIK_F2;
+		return;
+	case XK_F3:
+	case XK_L3:
+		xbufkey = shift_mode ? FIK_SF3: FIK_F3;
+		return;
+	case XK_F4:
+	case XK_L4:
+		xbufkey = shift_mode ? FIK_SF4: FIK_F4;
+		return;
+	case XK_F5:
+	case XK_L5:
+		xbufkey = shift_mode ? FIK_SF5: FIK_F5;
+		return;
+	case XK_F6:
+	case XK_L6:
+		xbufkey = shift_mode ? FIK_SF6: FIK_F6;
+		return;
+	case XK_F7:
+	case XK_L7:
+		xbufkey = shift_mode ? FIK_SF7: FIK_F7;
+		return;
+	case XK_F8:
+	case XK_L8:
+		xbufkey = shift_mode ? FIK_SF8: FIK_F8;
+		return;
+	case XK_F9:
+	case XK_L9:
+		xbufkey = shift_mode ? FIK_SF9: FIK_F9;
+		return;
+	case XK_F10:
+	case XK_L10:
+		xbufkey = shift_mode ? FIK_SF10: FIK_F10;
+		return;
+	case '+':
+		xbufkey = *ctl_mode ? FIK_CTL_PLUS : '+';
+		return;
+	case '-':
+		xbufkey = *ctl_mode ? FIK_CTL_MINUS : '-';
+		return;
+		break;
+#if 0
+		/* The following need to be somewhere else, otherwise these keys are not available */
+		/* in any other mode.  For example, the '0' and '=' keys won't work with the <g> command */
+		/* or the <b> command. JCO 06-23-2001 */
+	case XK_0:
+	case XK_KP_0:
+		step = 0;
+		initdacbox();
+		if (drawing_or_drawn) xbufkey = 'D';
+		return;
+	case XK_exclam:
+		step = (step & 126) + 1 - (step & 1);
+		initdacbox();
+		if (drawing_or_drawn) xbufkey = 'D';
+		return;
+	case XK_greater:
+		step = (step+2) % 50;
+		initdacbox();
+		xbufkey = 'D';
+		return;
+	case XK_less:
+		step = (step+48) % 50;
+		initdacbox();
+		if (drawing_or_drawn) xbufkey = 'D';
+		return;
+	case XK_parenright:
+		step = (step+12) % 50;
+		initdacbox();
+		if (drawing_or_drawn) xbufkey = 'D';
+		return;
+	case XK_parenleft:
+		step = (step+38) % 50;
+		initdacbox();
+		if (drawing_or_drawn) xbufkey = 'D';
+		return;
+	case XK_equal:
+	case XK_KP_Equal:
+		xbufkey = 'D';
+		return;
+#endif
+	case XK_Return:
+	case XK_KP_Enter:
+		xbufkey = *ctl_mode ? CTL('T') : '\n';
+		return;
+	}
+	if (charcount == 1)
+	{
+		xbufkey = buffer[0];
+		if (xbufkey == '\003')
+		{
+			goodbye();
+		}
+	}
+}
+
+static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *lastx, int *lasty)
+{
+	if (editpal_cursor && !inside_help)
+	{
+		while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask, xevent))
+		{
+		}
+
+		if (xevent->xmotion.state&Button2Mask ||
+			(xevent->xmotion.state&Button1Mask &&
+			xevent->xmotion.state&Button3Mask))
+		{
+			*bnum = 3;
+		}
+		else if (xevent->xmotion.state&Button1Mask)
+		{
+			*bnum = 1;
+		}
+		else if (xevent->xmotion.state&Button3Mask)
+		{
+			*bnum = 2;
+		}
+		else
+		{
+			*bnum = 0;
+		}
+
+		if (lookatmouse == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
+		{
+			*dx += (xevent->xmotion.x-lastx)/MSCALE;
+			*dy += (xevent->xmotion.y-lasty)/MSCALE;
+			*lastx = xevent->xmotion.x;
+			*lasty = xevent->xmotion.y;
+		}
+		else
+		{
+			Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
+			xbufkey = FIK_ENTER;
+		}
+	}
+}
+
+static void OnButtonPress(XEvent *xevent, int *bandx0, int *bandy0, int *bandx1, int *bandy1)
+{
+	int done = 0;
+	int banding = 0;
+	if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == 0)
+	{
+		lastx = xevent->xbutton.x;
+		lasty = xevent->xbutton.y;
+		break;
+	}
+	bandx1 = bandx0 = xevent->xbutton.x;
+	bandy1 = bandy0 = xevent->xbutton.y;
+	while (!done)
+	{
+		XNextEvent(Xdp, &xevent);
+		switch (xevent->type)
+		{
+		case MotionNotify:
+			while ( XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
+				&xevent))
+			{}
+			if (banding)
+			{
+				XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+					MIN(bandy0, bandy1), ABS(bandx1-bandx0),
+					ABS(bandy1-bandy0));
+			}
+			bandx1 = xevent->xmotion.x;
+			bandy1 = xevent.xmotion.y;
+			if (ABS(bandx1-bandx0)*finalaspectratio >
+				ABS(bandy1-bandy0))
+			{
+				bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
+					finalaspectratio + bandy0;
+			}
+			else
+			{
+				bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
+					finalaspectratio + bandx0;
+			}
+			if (!banding)
+			{
+				/* Don't start rubber-banding until the mouse
+				gets moved.  Otherwise a click messes up the
+				window */
+				if (ABS(bandx1-bandx0) > 10 ||
+					ABS(bandy1-bandy0) > 10)
+				{
+					banding = 1;
+					XSetForeground(Xdp, Xgc, colors-1);
+					XSetFunction(Xdp, Xgc, GXxor);
+				}
+			}
+			if (banding)
+			{
+				XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+					MIN(bandy0, bandy1), ABS(bandx1-bandx0),
+					ABS(bandy1-bandy0));
+			}
+			XFlush(Xdp);
+			break;
+		case ButtonRelease:
+			done = 1;
+			break;
+		}
+	}
+	if (!banding)
+	{
+		break;
+	}
+	XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
+		MIN(bandy0, bandy1), ABS(bandx1-bandx0),
+		ABS(bandy1-bandy0));
+	if (bandx1 == bandx0)
+	{
+		bandx1 = bandx0+1;
+	}
+	if (bandy1 == bandy0)
+	{
+		bandy1 = bandy0+1;
+	}
+	zrotate = 0;
+	zskew = 0;
+	zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
+	zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
+	zwidth = ABS(bandx1-bandx0)/dxsize;
+	zdepth = zwidth;
+	if (!inside_help)
+	{
+		xbufkey = FIK_ENTER;
+	}
+	if (xlastcolor != -1)
+	{
+		XSetForeground(Xdp, Xgc, xlastcolor);
+	}
+	XSetFunction(Xdp, Xgc, xlastfcn);
+	XZoomWaiting = 1;
+	drawbox(0);
+}
+
+static int OnConfigureNotify(void)
+{
+	XSelectInput(Xdp, Xw, KeyPressMask | KeyReleaseMask | ExposureMask |
+		ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
+	resize_flag = 1;
+	drawn = drawing_or_drawn;
+	if (resizeWindow())
+	{
+		if (drawn)
+		{
+			xbufkey = 'D';
+			return 1;
+		}
+	}
+	XSelectInput(Xdp, Xw, KeyPressMask | KeyReleaseMask | ExposureMask |
+		ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
+		StructureNotifyMask);
+	return 0;
+}
+
+static void OnExpose(XExposeEvent *xexpose)
+{
+	if (!doesBacking)
+	{
+		int x, y, w, h;
+		x = xexpose->x;
+		y = xexpose->y;
+		w = xexpose->width;
+		h = xexpose->height;
+		if (x+w > sxdots)
+		{
+			w = sxdots-x;
+		}
+		if (y+h > sydots)
+		{
+			h = sydots-y;
+		}
+		if (x < sxdots && y < sydots && w > 0 && h > 0)
+		{
+			XPutImage(Xdp, Xw, Xgc, Ximage,
+				xexpose->x, xexpose->y, xexpose->x, xexpose->y,
+				xexpose->width, xexpose->height);
+		}
+	}
+}
+
 /*
 *----------------------------------------------------------------------
 *
@@ -1962,372 +2329,28 @@ xhandleevents()
 	{
 		XNextEvent(Xdp, &xevent);
 
-		switch (((XAnyEvent *) &xevent) ->type)
+		switch (((XAnyEvent *) &xevent)->type)
 		{
 		case KeyRelease:
-			{
-				char buffer[1];
-				KeySym keysym;
-				(void) XLookupString(&xevent.xkey, buffer, 1, &keysym, NULL);
-				switch (keysym)
-				{
-				case XK_Control_L:
-				case XK_Control_R:
-					ctl_mode = 0;
-					break;
-				case XK_Shift_L:
-				case XK_Shift_R:
-					shift_mode = 0;
-					break;
-				}
-			}
+			OnKeyRelease(&xevent.xkey, &ctl_mode, &shift_mode);
 			break;
 		case KeyPress:
-			{
-				int charcount;
-				char buffer[1];
-				KeySym keysym;
-				charcount = XLookupString(&xevent.xkey, buffer, 1, &keysym, NULL);
-				switch (keysym)
-				{
-				case XK_Control_L:
-				case XK_Control_R:
-					ctl_mode = 1;
-					return;
-				case XK_Shift_L:
-				case XK_Shift_R:
-					shift_mode = 1;
-					break;
-				case XK_Home:
-				case XK_R7:
-					xbufkey = ctl_mode ? FIK_CTL_HOME : FIK_HOME;
-					return;
-				case XK_Left:
-				case XK_R10:
-					xbufkey = ctl_mode ? FIK_CTL_LEFT_ARROW : FIK_LEFT_ARROW;
-					return;
-				case XK_Right:
-				case XK_R12:
-					xbufkey = ctl_mode ? FIK_CTL_RIGHT_ARROW : FIK_RIGHT_ARROW;
-					return;
-				case XK_Down:
-				case XK_R14:
-					xbufkey = ctl_mode ? FIK_CTL_DOWN_ARROW : FIK_DOWN_ARROW;
-					return;
-				case XK_Up:
-				case XK_R8:
-					xbufkey = ctl_mode ? FIK_CTL_UP_ARROW : FIK_UP_ARROW;
-					return;
-				case XK_Insert:
-					xbufkey = ctl_mode ? FIK_CTL_INSERT : FIK_INSERT;
-					return;
-				case XK_Delete:
-					xbufkey = ctl_mode ? FIK_CTL_DEL : FIK_DELETE;
-					return;
-				case XK_End:
-				case XK_R13:
-					xbufkey = ctl_mode ? FIK_CTL_END : FIK_END;
-					return;
-				case XK_Help:
-					xbufkey = FIK_F1;
-					return;
-				case XK_Prior:
-				case XK_R9:
-					xbufkey = ctl_mode ? FIK_CTL_PAGE_UP : FIK_PAGE_UP;
-					return;
-				case XK_Next:
-				case XK_R15:
-					xbufkey = ctl_mode ? FIK_CTL_PAGE_DOWN : FIK_PAGE_DOWN;
-					return;
-				case XK_F1:
-				case XK_L1:
-					xbufkey = shift_mode ? FIK_SF1 : FIK_F1;
-					return;
-				case XK_F2:
-				case XK_L2:
-					xbufkey = shift_mode ? FIK_SF2: FIK_F2;
-					return;
-				case XK_F3:
-				case XK_L3:
-					xbufkey = shift_mode ? FIK_SF3: FIK_F3;
-					return;
-				case XK_F4:
-				case XK_L4:
-					xbufkey = shift_mode ? FIK_SF4: FIK_F4;
-					return;
-				case XK_F5:
-				case XK_L5:
-					xbufkey = shift_mode ? FIK_SF5: FIK_F5;
-					return;
-				case XK_F6:
-				case XK_L6:
-					xbufkey = shift_mode ? FIK_SF6: FIK_F6;
-					return;
-				case XK_F7:
-				case XK_L7:
-					xbufkey = shift_mode ? FIK_SF7: FIK_F7;
-					return;
-				case XK_F8:
-				case XK_L8:
-					xbufkey = shift_mode ? FIK_SF8: FIK_F8;
-					return;
-				case XK_F9:
-				case XK_L9:
-					xbufkey = shift_mode ? FIK_SF9: FIK_F9;
-					return;
-				case XK_F10:
-				case XK_L10:
-					xbufkey = shift_mode ? FIK_SF10: FIK_F10;
-					return;
-				case '+':
-					xbufkey = ctl_mode ? FIK_CTL_PLUS : '+';
-					return;
-				case '-':
-					xbufkey = ctl_mode ? FIK_CTL_MINUS : '-';
-					return;
-					break;
-#if 0
-					/* The following need to be somewhere else, otherwise these keys are not available */
-					/* in any other mode.  For example, the '0' and '=' keys won't work with the <g> command */
-					/* or the <b> command. JCO 06-23-2001 */
-				case XK_0:
-				case XK_KP_0:
-					step = 0;
-					initdacbox();
-					if (drawing_or_drawn) xbufkey = 'D';
-					return;
-				case XK_exclam:
-					step = (step & 126) + 1 - (step & 1);
-					initdacbox();
-					if (drawing_or_drawn) xbufkey = 'D';
-					return;
-				case XK_greater:
-					step = (step+2) % 50;
-					initdacbox();
-					xbufkey = 'D';
-					return;
-				case XK_less:
-					step = (step+48) % 50;
-					initdacbox();
-					if (drawing_or_drawn) xbufkey = 'D';
-					return;
-				case XK_parenright:
-					step = (step+12) % 50;
-					initdacbox();
-					if (drawing_or_drawn) xbufkey = 'D';
-					return;
-				case XK_parenleft:
-					step = (step+38) % 50;
-					initdacbox();
-					if (drawing_or_drawn) xbufkey = 'D';
-					return;
-				case XK_equal:
-				case XK_KP_Equal:
-					xbufkey = 'D';
-					return;
-#endif
-				case XK_Return:
-				case XK_KP_Enter:
-					xbufkey = ctl_mode ? CTL('T') : '\n';
-					return;
-				}
-				if (charcount == 1)
-				{
-					xbufkey = buffer[0];
-					if (xbufkey == '\003')
-					{
-						goodbye();
-					}
-				}
-			}
+			OnKeyPress(&xevent.xkey, &ctl_mode, &shift_mode);
 			break;
 		case MotionNotify:
-			{
-				if (editpal_cursor && !inside_help)
-				{
-					while ( XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
-						&xevent))
-					{}
-
-					if (xevent.xmotion.state&Button2Mask ||
-						(xevent.xmotion.state&Button1Mask &&
-						xevent.xmotion.state&Button3Mask))
-					{
-						bnum = 3;
-					}
-					else if (xevent.xmotion.state&Button1Mask)
-					{
-						bnum = 1;
-					}
-					else if (xevent.xmotion.state&Button3Mask)
-					{
-						bnum = 2;
-					}
-					else
-					{
-						bnum = 0;
-					}
-
-#define MSCALE 1
-
-					if (lookatmouse == LOOK_MOUSE_ZOOM_BOX && bnum != 0)
-					{
-						dx += (xevent.xmotion.x-lastx)/MSCALE;
-						dy += (xevent.xmotion.y-lasty)/MSCALE;
-						lastx = xevent.xmotion.x;
-						lasty = xevent.xmotion.y;
-					}
-					else
-					{
-						Cursor_SetPos(xevent.xmotion.x, xevent.xmotion.y);
-						xbufkey = FIK_ENTER;
-					}
-
-				}
-			}
+			OnMotionNotify(&xevent, &bnum, &dx, &dy, &lastx, &lasty);
 			break;
 		case ButtonPress:
-			{
-				int done = 0;
-				int banding = 0;
-				if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == 0)
-				{
-					lastx = xevent.xbutton.x;
-					lasty = xevent.xbutton.y;
-					break;
-				}
-				bandx1 = bandx0 = xevent.xbutton.x;
-				bandy1 = bandy0 = xevent.xbutton.y;
-				while (!done)
-				{
-					XNextEvent(Xdp, &xevent);
-					switch (xevent.type)
-					{
-					case MotionNotify:
-						while ( XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
-							&xevent))
-						{}
-						if (banding)
-						{
-							XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-								MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-								ABS(bandy1-bandy0));
-						}
-						bandx1 = xevent.xmotion.x;
-						bandy1 = xevent.xmotion.y;
-						if (ABS(bandx1-bandx0)*finalaspectratio >
-							ABS(bandy1-bandy0))
-						{
-							bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-								finalaspectratio + bandy0;
-						}
-						else
-						{
-							bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-								finalaspectratio + bandx0;
-						}
-						if (!banding)
-						{
-							/* Don't start rubber-banding until the mouse
-							gets moved.  Otherwise a click messes up the
-							window */
-							if (ABS(bandx1-bandx0) > 10 ||
-								ABS(bandy1-bandy0) > 10)
-							{
-								banding = 1;
-								XSetForeground(Xdp, Xgc, colors-1);
-								XSetFunction(Xdp, Xgc, GXxor);
-							}
-						}
-						if (banding)
-						{
-							XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-								MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-								ABS(bandy1-bandy0));
-						}
-						XFlush(Xdp);
-						break;
-					case ButtonRelease:
-						done = 1;
-						break;
-					}
-				}
-				if (!banding)
-				{
-					break;
-				}
-				XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-					MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-					ABS(bandy1-bandy0));
-				if (bandx1 == bandx0)
-				{
-					bandx1 = bandx0+1;
-				}
-				if (bandy1 == bandy0)
-				{
-					bandy1 = bandy0+1;
-				}
-				zrotate = 0;
-				zskew = 0;
-				zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
-				zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
-				zwidth = ABS(bandx1-bandx0)/dxsize;
-				zdepth = zwidth;
-				if (!inside_help)
-				{
-					xbufkey = FIK_ENTER;
-				}
-				if (xlastcolor != -1)
-				{
-					XSetForeground(Xdp, Xgc, xlastcolor);
-				}
-				XSetFunction(Xdp, Xgc, xlastfcn);
-				XZoomWaiting = 1;
-				drawbox(0);
-			}
+			OnButtonPress(&xevent, &bandx0, &bandy0, &bandx1, &bandy1);
 			break;
 		case ConfigureNotify:
-			XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
-				ButtonPressMask|ButtonReleaseMask|PointerMotionMask);
-			resize_flag = 1;
-			drawn = drawing_or_drawn;
-			if (resizeWindow())
+			if (OnConfigureNotify())
 			{
-				if (drawn)
-				{
-					xbufkey = 'D';
-					return;
-				}
+				return;
 			}
-			XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
-				ButtonPressMask|ButtonReleaseMask|
-				PointerMotionMask|StructureNotifyMask);
 			break;
 		case Expose:
-			if (!doesBacking)
-			{
-				int x, y, w, h;
-				x = xevent.xexpose.x;
-				y = xevent.xexpose.y;
-				w = xevent.xexpose.width;
-				h = xevent.xexpose.height;
-				if (x+w > sxdots)
-				{
-					w = sxdots-x;
-				}
-				if (y+h > sydots)
-				{
-					h = sydots-y;
-				}
-				if (x < sxdots && y < sydots && w > 0 && h > 0)
-				{
-
-					XPutImage(Xdp, Xw, Xgc, Ximage, xevent.xexpose.x,
-						xevent.xexpose.y, xevent.xexpose.x,
-						xevent.xexpose.y, xevent.xexpose.width,
-						xevent.xexpose.height);
-				}
-			}
+			OnExpose();
 			break;
 		default:
 			/* All events selected by StructureNotifyMask
