@@ -173,6 +173,7 @@ extern int                   fm_release;
 extern int                   fm_sustain;
 extern int                   fm_wavetype;
 extern int                   fm_vol; /*volume of OPL-3 soundcard output*/
+extern const BYTE			 g_font_8x8[8][1024/8];
 extern int                   forcesymmetry;
 extern char                  FormFileName[];
 extern char                  FormName[];
