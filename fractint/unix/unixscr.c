@@ -2134,8 +2134,8 @@ static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *las
 
 		if (lookatmouse == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
 		{
-			*dx += (xevent->xmotion.x-lastx)/MSCALE;
-			*dy += (xevent->xmotion.y-lasty)/MSCALE;
+			*dx += (xevent->xmotion.x-*lastx)/MSCALE;
+			*dy += (xevent->xmotion.y-*lasty)/MSCALE;
 			*lastx = xevent->xmotion.x;
 			*lasty = xevent->xmotion.y;
 		}
@@ -2147,53 +2147,55 @@ static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *las
 	}
 }
 
-static void OnButtonPress(XEvent *xevent, int *bandx0, int *bandy0, int *bandx1, int *bandy1)
+static void OnButtonPress(XEvent *xevent,
+						  int *bandx0, int *bandy0, int *bandx1, int *bandy1,
+						  int *lastx, int *lasty)
 {
 	int done = 0;
 	int banding = 0;
 	if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == 0)
 	{
-		lastx = xevent->xbutton.x;
-		lasty = xevent->xbutton.y;
-		break;
+		*lastx = xevent->xbutton.x;
+		*lasty = xevent->xbutton.y;
+		return;
 	}
-	bandx1 = bandx0 = xevent->xbutton.x;
-	bandy1 = bandy0 = xevent->xbutton.y;
+	*bandx1 = *bandx0 = xevent->xbutton.x;
+	*bandy1 = *bandy0 = xevent->xbutton.y;
 	while (!done)
 	{
-		XNextEvent(Xdp, &xevent);
+		XNextEvent(Xdp, xevent);
 		switch (xevent->type)
 		{
 		case MotionNotify:
-			while ( XCheckWindowEvent(Xdp, Xw, PointerMotionMask,
-				&xevent))
-			{}
+			while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask, xevent))
+			{
+			}
 			if (banding)
 			{
-				XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-					MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-					ABS(bandy1-bandy0));
+				XDrawRectangle(Xdp, Xw, Xgc, MIN(*bandx0, *bandx1),
+					MIN(*bandy0, *bandy1), ABS(*bandx1-*bandx0),
+					ABS(*bandy1-*bandy0));
 			}
-			bandx1 = xevent->xmotion.x;
-			bandy1 = xevent.xmotion.y;
-			if (ABS(bandx1-bandx0)*finalaspectratio >
-				ABS(bandy1-bandy0))
+			*bandx1 = xevent->xmotion.x;
+			*bandy1 = xevent->xmotion.y;
+			if (ABS(*bandx1-*bandx0)*finalaspectratio >
+				ABS(*bandy1-*bandy0))
 			{
-				bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-					finalaspectratio + bandy0;
+				*bandy1 = SIGN(*bandy1-*bandy0)*ABS(*bandx1-*bandx0)*
+					finalaspectratio + *bandy0;
 			}
 			else
 			{
-				bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-					finalaspectratio + bandx0;
+				*bandx1 = SIGN(*bandx1-*bandx0)*ABS(*bandy1-*bandy0)/
+					finalaspectratio + *bandx0;
 			}
 			if (!banding)
 			{
 				/* Don't start rubber-banding until the mouse
 				gets moved.  Otherwise a click messes up the
 				window */
-				if (ABS(bandx1-bandx0) > 10 ||
-					ABS(bandy1-bandy0) > 10)
+				if (ABS(*bandx1-*bandx0) > 10 ||
+					ABS(*bandy1-*bandy0) > 10)
 				{
 					banding = 1;
 					XSetForeground(Xdp, Xgc, colors-1);
@@ -2202,9 +2204,9 @@ static void OnButtonPress(XEvent *xevent, int *bandx0, int *bandy0, int *bandx1,
 			}
 			if (banding)
 			{
-				XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-					MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-					ABS(bandy1-bandy0));
+				XDrawRectangle(Xdp, Xw, Xgc, MIN(*bandx0, *bandx1),
+					MIN(*bandy0, *bandy1), ABS(*bandx1-*bandx0),
+					ABS(*bandy1-*bandy0));
 			}
 			XFlush(Xdp);
 			break;
@@ -2215,24 +2217,24 @@ static void OnButtonPress(XEvent *xevent, int *bandx0, int *bandy0, int *bandx1,
 	}
 	if (!banding)
 	{
-		break;
+	  return;
 	}
-	XDrawRectangle(Xdp, Xw, Xgc, MIN(bandx0, bandx1),
-		MIN(bandy0, bandy1), ABS(bandx1-bandx0),
-		ABS(bandy1-bandy0));
-	if (bandx1 == bandx0)
+	XDrawRectangle(Xdp, Xw, Xgc, MIN(*bandx0, *bandx1),
+		MIN(*bandy0, *bandy1), ABS(*bandx1-*bandx0),
+		ABS(*bandy1-*bandy0));
+	if (*bandx1 == *bandx0)
 	{
-		bandx1 = bandx0+1;
+		*bandx1 = *bandx0+1;
 	}
-	if (bandy1 == bandy0)
+	if (*bandy1 == *bandy0)
 	{
-		bandy1 = bandy0+1;
+		*bandy1 = *bandy0+1;
 	}
 	zrotate = 0;
 	zskew = 0;
-	zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
-	zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
-	zwidth = ABS(bandx1-bandx0)/dxsize;
+	zbx = (MIN(*bandx0, *bandx1)-sxoffs)/dxsize;
+	zby = (MIN(*bandy0, *bandy1)-syoffs)/dysize;
+	zwidth = ABS(*bandx1-*bandx0)/dxsize;
 	zdepth = zwidth;
 	if (!inside_help)
 	{
@@ -2247,15 +2249,15 @@ static void OnButtonPress(XEvent *xevent, int *bandx0, int *bandy0, int *bandx1,
 	drawbox(0);
 }
 
-static int OnConfigureNotify(void)
+static int OnConfigureNotify(int *drawn)
 {
 	XSelectInput(Xdp, Xw, KeyPressMask | KeyReleaseMask | ExposureMask |
 		ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 	resize_flag = 1;
-	drawn = drawing_or_drawn;
+	*drawn = drawing_or_drawn;
 	if (resizeWindow())
 	{
-		if (drawn)
+		if (*drawn)
 		{
 			xbufkey = 'D';
 			return 1;
@@ -2341,16 +2343,17 @@ xhandleevents()
 			OnMotionNotify(&xevent, &bnum, &dx, &dy, &lastx, &lasty);
 			break;
 		case ButtonPress:
-			OnButtonPress(&xevent, &bandx0, &bandy0, &bandx1, &bandy1);
+			OnButtonPress(&xevent, &bandx0, &bandy0, &bandx1, &bandy1,
+						  &lastx, &lasty);
 			break;
 		case ConfigureNotify:
-			if (OnConfigureNotify())
+			if (OnConfigureNotify(&drawn))
 			{
 				return;
 			}
 			break;
 		case Expose:
-			OnExpose();
+			OnExpose(&xevent.xexpose);
 			break;
 		default:
 			/* All events selected by StructureNotifyMask
