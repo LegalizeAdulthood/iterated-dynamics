@@ -120,25 +120,6 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					return RESTORESTART;
 				}
 
-				if (g_virtual_screens && (xdots > sxdots || ydots > sydots))
-				{
-					char buf[120];
-					static char msgxy1[] = {"Can't set virtual line that long, width cut down."};
-					static char msgxy2[] = {"Not enough video memory for that many lines, height cut down."};
-					if (xdots > sxdots && ydots > sydots)
-					{
-						sprintf(buf, "%s\n%s", (char *) msgxy1, (char *) msgxy2);
-						stopmsg(0, buf);
-					}
-					else if (ydots > sydots)
-					{
-						stopmsg(0, msgxy2);
-					}
-					else
-					{
-						stopmsg(0, msgxy1);
-					}
-				}
 				xdots = sxdots;
 				ydots = sydots;
 				g_video_entry.xdots = xdots;
