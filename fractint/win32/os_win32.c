@@ -206,10 +206,6 @@ int g_video_start_y = 0;
 VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
 int g_vxdots = 0;
 
-/* Global variables that should be phased out (old video mode stuff) */
-int g_virtual_screens = 0;
-
-
 /* Global functions
  *
  * These were either copied from a .c file under unix, or
