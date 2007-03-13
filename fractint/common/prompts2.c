@@ -747,17 +747,6 @@ get_view_restart:
 	choices[++k] = "";
 	uvalues[k].type = '*';
 
-	sprintf(dim1, "Video memory limits: (for y = %4u) x <= %lu", ymax,  xmax);
-	choices[++k]= dim1;
-	uvalues[k].type = '*';
-
-	sprintf(dim2, "                     (for x = %4u) y <= %lu", xmax, ymax);
-	choices[++k]= dim2;
-	uvalues[k].type = '*';
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
 	if (!driver_diskp())
 	{
 		choices[++k] = "Press F4 to reset view parameters to defaults.";
@@ -2564,8 +2553,13 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1,VO
 
 int integer_unsupported(void)
 {
-	stopmsg(0, "This integer fractal type is unimplemented;\n"
-		"Use float=yes or the <X> screen to get a real image.");
+	static int last_fractype = -1;
+	if (fractype != last_fractype)
+	{
+		last_fractype = fractype;
+		stopmsg(0, "This integer fractal type is unimplemented;\n"
+			"Use float=yes or the <X> screen to get a real image.");
+	}
 
 	return 0;
 }
