@@ -673,8 +673,6 @@ int get_view_params()
 	float old_viewreduction, old_aspectratio;
 	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
 	int xmax, ymax;
-	char dim1[80];
-	char dim2[80];
 
 	driver_get_max_screen(&xmax, &ymax);
 
@@ -715,33 +713,15 @@ get_view_restart:
 		choices[++k] = "              y pixels (0 to base on aspect ratio)";
 		uvalues[k].type = 'i';
 		uvalues[k].uval.ival = viewydots;
-	}
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Virtual screen total x pixels";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = sxdots;
-
-	choices[++k] = driver_diskp() ?
-		"                     y pixels" : 
-		"                     y pixels (0: by aspect ratio)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = sydots;
-
-	choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = video_cutboth;
-
+	} else
 	{
-		char *scrolltypes[] ={"fixed","relaxed"};
-		choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.vlen = 7;
-		uvalues[k].uval.ch.llen = sizeof(scrolltypes)/sizeof(*scrolltypes);
-		uvalues[k].uval.ch.list = scrolltypes;
-		uvalues[k].uval.ch.val = zscroll;
+		choices[++k] = "Disk Video x pixels";
+		uvalues[k].type = 'i';
+		uvalues[k].uval.ival = sxdots;
+
+		choices[++k] = "           y pixels";
+		uvalues[k].type = 'i';
+		uvalues[k].uval.ival = sydots;
 	}
 
 	choices[++k] = "";
@@ -770,8 +750,6 @@ get_view_restart:
 		finalaspectratio = screenaspect;
 		sxdots = old_sxdots;
 		sydots = old_sydots;
-		video_cutboth = 1;
-		zscroll = 1;
 		goto get_view_restart;
 	}
 
@@ -786,64 +764,50 @@ get_view_restart:
 		viewcrop = uvalues[++k].uval.ch.val;
 		viewxdots = uvalues[++k].uval.ival;
 		viewydots = uvalues[++k].uval.ival;
+	} else
+	{
+	  sxdots = uvalues[++k].uval.ival;
+	  sydots = uvalues[++k].uval.ival;
+		if ((xmax != -1) && (sxdots > xmax))
+		{
+			sxdots = (int) xmax;
+		}
+		if (sxdots < 2)
+		{
+			sxdots = 2;
+		}
+		if ((ymax != -1) && (sydots > ymax))
+		{
+			sydots = ymax;
+		}
+		if (sydots < 2)
+		{
+			sydots = 2;
+		}
 	}
-
 	++k;
 
-    sxdots = uvalues[++k].uval.ival;
-    sydots = uvalues[++k].uval.ival;
-    video_cutboth = uvalues[++k].uval.ch.val;
-    zscroll = uvalues[++k].uval.ch.val;
-
-    if ((xmax != -1) && (sxdots > xmax))
+	if (!driver_diskp())
 	{
-        sxdots = (int) xmax;
-	}
-    if (sxdots < 2)
-	{
-        sxdots = 2;
-	}
-	if (sydots == 0) /* auto by aspect ratio request */
-	{
-		if (finalaspectratio == 0.0)
+		if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
 		{
-			finalaspectratio = (viewwindow && viewxdots != 0 && viewydots != 0) ?
-				((float) viewydots)/((float) viewxdots) : old_aspectratio;
+			finalaspectratio = ((float) viewydots)/((float) viewxdots);
 		}
-		sydots = (int) (finalaspectratio*sxdots + 0.5);
-	}
-	if ((ymax != -1) && (sydots > ymax))
-	{
-		sydots = ymax;
-	}
-	if (sydots < 2)
-	{
-		sydots = 2;
-	}
+		else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+		{
+			finalaspectratio = old_aspectratio;
+		}
 
-	if (driver_diskp())
+		if (finalaspectratio != old_aspectratio && viewcrop)
+		{
+			aspectratio_crop(old_aspectratio, finalaspectratio);
+		}
+	} else
 	{
 		g_video_entry.xdots = sxdots;
 		g_video_entry.ydots = sydots;
+		finalaspectratio = ((float) sydots)/((float) sxdots);
 		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
-		if (finalaspectratio == 0.0)
-		{
-			finalaspectratio = ((float) sydots)/((float) sxdots);
-		}
-	}
-
-	if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
-	{
-		finalaspectratio = ((float) viewydots)/((float) viewxdots);
-	}
-	else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
-	{
-		finalaspectratio = old_aspectratio;
-	}
-
-	if (finalaspectratio != old_aspectratio && viewcrop)
-	{
-		aspectratio_crop(old_aspectratio, finalaspectratio);
 	}
 
 	return (viewwindow != old_viewwindow
