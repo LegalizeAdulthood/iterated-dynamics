@@ -996,6 +996,9 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_TAB				9
 #define FIK_UP_ARROW		1072
 
+/* not really a key, but a special trigger */
+#define FIK_SAVE_TIME		9999
+
 /* text colors */
 #define BLACK      0
 #define BLUE       1
