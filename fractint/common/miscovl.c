@@ -1478,93 +1478,133 @@ static void put_bf(int slash,bf_t r, int prec)
    put_parm(buf);
 }
 
-#if 0
 void edit_text_colors()
 {
-	/* TODO: make this work for a driver situation */
-   int save_debugflag,save_lookatmouse;
-   int row,col,bkgrd;
-   int rowf,colf,rowt,colt;
-   char *vidmem;
-   char *savescreen;
-   char *farp1; char *farp2;
-   int i,j,k;
-   save_debugflag = debugflag;
-   save_lookatmouse = lookatmouse;
-   debugflag = 0;   /* don't get called recursively */
-   lookatmouse = LOOK_MOUSE_TEXT; /* text mouse sensitivity */
-   row = col = bkgrd = rowt = rowf = colt = colf = 0;
-   /* TODO: allocate real memory, not reuse shared segment */
-   vidmem = MK_FP(0xB800,0);
-   while (1) {
-      if (row < 0)  row = 0;
-      if (row > 24) row = 24;
-      if (col < 0)  col = 0;
-      if (col > 79) col = 79;
-      driver_move_cursor(row,col);
-      i = driver_get_key();
-      if (i >= 'a' && i <= 'z') i -= 32; /* uppercase */
-      switch (i) {
-         case 27: /* esc */
-            debugflag = save_debugflag;
-            lookatmouse = save_lookatmouse;
-            driver_hide_text_cursor();
-            return;
-         case '/':
-            farp1 = savescreen = (char *)malloc(4000L);
-            farp2 = vidmem;
-            for (i = 0; i < 4000; ++i) { /* save and blank */
-               *(farp1++) = *farp2;
-               *(farp2++) = 0;
-               }
-            for (i = 0; i < 8; ++i)       /* 8 bkgrd attrs */
-               for (j = 0; j < 16; ++j) { /* 16 fgrd attrs */
-                  k = i*16 + j;
-                  farp1 = vidmem + i*320 + j*10;
-                  *(farp1++) = ' '; *(farp1++) = (char)k;
-                  *(farp1++) = (char)(i+'0'); *(farp1++) = (char)k;
-                  *(farp1++) = (char)((j < 10) ? j+'0' : j+'A'-10); *(farp1++) = (char)k;
-                  *(farp1++) = ' '; *(farp1++) = (char)k;
-                  }
-            driver_get_key();
-            farp1 = vidmem;
-            farp2 = savescreen;
-            for (i = 0; i < 4000; ++i) /* restore */
-               *(farp1++) = *(farp2++);
-            free(savescreen);
-            break;
-         case ',':
-            rowf = row; colf = col; break;
-         case '.':
-            rowt = row; colt = col; break;
-         case ' ': /* next color is background */
-            bkgrd = 1; break;
-         case 1075: /* cursor left  */
-            --col; break;
-         case 1077: /* cursor right */
-            ++col; break;
-         case 1072: /* cursor up    */
-            --row; break;
-         case 1080: /* cursor down  */
-            ++row; break;
-         case 13:   /* enter */
-            *(vidmem + row*160 + col*2) = (char)driver_get_key();
-            break;
-         default:
-            if (i >= '0' && i <= '9')      i -= '0';
-            else if (i >= 'A' && i <= 'F') i -= 'A'-10;
-            else break;
-            for (j = rowf; j <= rowt; ++j)
-               for (k = colf; k <= colt; ++k) {
-                  farp1 = vidmem + j*160 + k*2 + 1;
-                  if (bkgrd) *farp1 = (char)((*farp1 & 15) + i * 16);
-                  else       *farp1 = (char)((*farp1 & 0xf0) + i);
-                  }
-            bkgrd = 0;
-         }
-      }
+	int	save_debugflag,	save_lookatmouse;
+	int	row, col, bkgrd;
+	int	rowf, colf, rowt, colt;
+	int	i, j, k;
+
+	save_debugflag = debugflag;
+	save_lookatmouse = lookatmouse;
+	debugflag =	0;	 /*	don't get called recursively */
+	lookatmouse	= LOOK_MOUSE_TEXT; /* text mouse sensitivity */
+	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
+
+	while (1)
+	{
+		if (row	< 0)
+		{
+			row = 0;
+		}
+		else if (row > 24)
+		{
+			row =	24;
+		}
+		if (col < 0)
+		{
+			col = 0;
+		}
+		else if (col > 79)
+		{
+			col =	79;
+		}
+		driver_move_cursor(row, col);
+		i =	toupper(driver_get_key());
+
+		switch (i)
+		{
+		case FIK_ESC:
+			debugflag =	save_debugflag;
+			lookatmouse	= save_lookatmouse;
+			driver_hide_text_cursor();
+			return;
+		case '/':
+			driver_hide_text_cursor();
+			driver_stack_screen();
+			for	(i = 0;	i <	8; ++i)		  /* 8 bkgrd attrs */
+			{
+				for	(j = 0;	j <	16;	++j) /*	16 fgrd	attrs */
+				{
+					_ASSERTE(_CrtCheckMemory());
+					k =	(i*16 + j);
+					driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
+					driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
+					driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j+'0' : j+'A'-10) << 8) | k);
+					driver_put_char_attr_rowcol(i*2, j*5 + 3, (' ' << 8) | k);
+				}
+			}
+			driver_get_key();
+			driver_unstack_screen();
+			driver_move_cursor(row, col);
+			break;
+		case ',':
+			rowf = row;
+			colf = col;
+			break;
+		case '.':
+			rowt = row;
+			colt = col;
+			break;
+		case ' ': /* next color is	background */
+			bkgrd =	1;
+			break;
+		case FIK_LEFT_ARROW: /* cursor	left  */
+			--col;
+			break;
+		case FIK_RIGHT_ARROW: /* cursor right */
+			++col;
+			break;
+		case FIK_UP_ARROW:	/* cursor up	*/
+			--row;
+			break;
+		case FIK_DOWN_ARROW: /* cursor	down  */
+			++row;
+			break;
+		case FIK_ENTER:   /* enter	*/
+			{
+				int char_attr = driver_get_char_attr_rowcol(row, col);
+				char_attr &= ~0xFF;
+				char_attr |= driver_get_key() & 0xFF;
+				driver_put_char_attr_rowcol(row, col, char_attr);
+			}
+			break;
+		default:
+			if (i >= '0' &&	i <= '9')
+			{
+				i -= '0';
+			}
+			else if	(i >= 'A' && i <= 'F')
+			{
+				i -= 'A' - 10;
+			}
+			else
+			{
+				break;
+			}
+			for	(j = rowf; j <=	rowt; ++j)
+			{
+				for (k = colf; k <= colt; ++k)
+				{
+					int char_attr;
+					char_attr = driver_get_char_attr_rowcol(j, k);
+					if (bkgrd)
+					{
+						char_attr &= 0xFF0F;
+						char_attr |= (i & 0xF) << 4;
+					}
+					else
+					{
+						char_attr &= 0xFFF0;
+						char_attr |= i & 0xF;
+					}
+					driver_put_char_attr_rowcol(j, k, char_attr);
+				}
+			}
+			bkgrd =	0;
+		}
+	}
 }
-#endif
 
 static int *entsptr;
 static int modes_changed;
