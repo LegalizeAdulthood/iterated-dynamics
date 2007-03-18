@@ -52,6 +52,8 @@ extern int win32_key_cursor(Driver *drv, int row, int col);
 extern int win32_wait_key_pressed(Driver *drv, int timeout);
 extern int win32_get_char_attr(Driver *drv);
 extern void win32_put_char_attr(Driver *drv, int char_attr);
+extern int win32_get_char_attr_rowcol(Driver *drv, int row, int col);
+extern void win32_put_char_attr_rowcol(Driver *drv, int row, int col, int char_attr);
 extern void win32_delay(Driver *drv, int ms);
 extern void win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a);
 extern void win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a);

@@ -273,6 +273,17 @@ driver_put_char_attr(int char_attr)
 	(*g_driver->put_char_attr)(g_driver, char_attr);
 }
 
+int driver_get_char_attr_rowcol(int row, int col)
+{
+	return (*g_driver->get_char_attr_rowcol)(g_driver, row, col);
+}
+
+void
+driver_put_char_attr_rowcol(int row, int col, int char_attr)
+{
+	(*g_driver->put_char_attr_rowcol)(g_driver, row, col, char_attr);
+}
+
 int
 driver_validate_mode(VIDEOINFO *mode)
 {

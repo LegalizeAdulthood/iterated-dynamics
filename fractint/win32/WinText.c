@@ -700,7 +700,7 @@ void wintext_clear(WinText *me)
 	for (y = 0; y < WINTEXT_MAX_ROW; y++)
 	{
 		memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
-		memset(&me->attrs[y][0], 0xf0, (size_t) WINTEXT_MAX_COL);
+		memset(&me->attrs[y][0], ' ', (size_t) WINTEXT_MAX_COL);
 	}
     InvalidateRect(me->hWndCopy, NULL, FALSE);
 }
@@ -755,8 +755,11 @@ int wintext_get_char_attr(WinText *me, int row, int col)
 
 void wintext_put_char_attr(WinText *me, int row, int col, int char_attr)
 {
+	_ASSERTE(WINTEXT_MAX_ROW > row);
+	_ASSERTE(WINTEXT_MAX_COL > col);
 	me->chars[row][col] = (char_attr >> 8) & 0xFF;
 	me->attrs[row][col] = (char_attr & 0xFF);
+	invalidate(me, col, row, col, row);
 }
 
 void wintext_resume(WinText *me)

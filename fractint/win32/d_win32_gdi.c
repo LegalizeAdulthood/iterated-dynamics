@@ -963,6 +963,7 @@ static GDIDriver gdi_driver_info =
 			win32_init_fm, win32_buzzer, win32_sound_on, win32_sound_off, win32_mute,
 			win32_diskp,
 			win32_get_char_attr, win32_put_char_attr,
+			win32_get_char_attr_rowcol, win32_put_char_attr_rowcol,
 			win32_delay,
 			win32_set_keyboard_timeout,
 			gdi_flush

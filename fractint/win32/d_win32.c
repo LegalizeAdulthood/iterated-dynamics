@@ -144,17 +144,455 @@ void get_mouse_motion(void)
 	mouse_y = g_frame.start_y;
 }
 
+/*
+MOUSE_GET_POSITION_STATUS	equ 03h
+	INT 33,3 - Get Mouse Position and Button Status
+		AX = 03
+	on return:
+		CX = horizontal (X) position  (0..639)
+		DX = vertical (Y) position  (0..199)
+		BX = button status:
+
+			|F-8|7|6|5|4|3|2|1|0|  Button Status
+			|  | | | | | | | `---- left button (1 = pressed)
+			|  | | | | | | `----- right button (1 = pressed)
+			`------------------- unused
+
+		- values returned in CX, DX are the same regardless of video mode
+*/
+void mouse_get_position_status(int *horiz, int *vert, int *status)
+{
+}
+
+/*
+MOUSE_GET_BUTTON_PRESS		equ 05h
+	INT 33,5 - Get Mouse Button Press Information
+		AX = 5
+		BX = 0	left button
+			1	right button
+	on return:
+		BX = count of button presses (0-32767), set to zero after call
+		CX = horizontal position at last press
+		DX = vertical position at last press
+		AX = status:
+
+			|F-8|7|6|5|4|3|2|1|0|  Button Status
+			|  | | | | | | | `---- left button (1 = pressed)
+			|  | | | | | | `----- right button (1 = pressed)
+			`------------------- unused
+*/
+void mouse_get_button_press(int button, int *count, int *horiz, int *vert, int *status)
+{
+}
+
+/*
+MOUSE_GET_BUTTON_RELEASE	equ 06h
+	INT 33,6 - Get Mouse Button Release Information
+		AX = 6
+		BX = 0	left button
+			1	right button
+	on return:
+		BX = count of button releases (0-32767), set to zero after call
+		CX = horizontal position at last release
+		DX = vertical position at last release
+		AX = status
+
+			|F-8|7|6|5|4|3|2|1|0|  Button status
+			|  | | | | | | | `---- left button (1 = pressed)
+			|  | | | | | | `----- right button (1 = pressed)
+			`------------------- unused
+*/
+void mouse_get_button_release(int button, int *count, int *horiz, int *vert, int *status)
+{
+}
+
+/*
+MOUSE_GET_MOTION_COUNTERS	equ 0Bh
+	INT 33,B - Read Mouse Motion Counters
+		AX = 0B
+	on return:
+		CX = horizontal mickey count (-32768 to 32767)
+		DX = vertical mickey count (-32768 to 32767)
+
+		- count values are 1/200 inch intervals (1/200 in. = 1 mickey)
+*/
+void mouse_get_motion_counters(int *horizontal_mickeys, int *vertical_mickeys)
+{
+}
+
+/*
+; New (Apr '90) mouse code by Pieter Branderhorst follows.
+; The variable lookatmouse controls it all.  Callers of keypressed and
+; getakey should set lookatmouse to:
+;      0  ignore the mouse entirely
+;     <0  only test for left button click; if it occurs return fake key
+;           number 0-lookatmouse
+;      1  return enter key for left button, arrow keys for mouse movement,
+;           mouse sensitivity is suitable for graphics cursor
+;      2  same as 1 but sensitivity is suitable for text cursor
+;      3  specials for zoombox, left/right double-clicks generate fake
+;           keys, mouse movement generates a variety of fake keys
+;           depending on state of buttons
+; Mouse movement is accumulated & saved across calls.  Eg if mouse has been
+; moved up-right quickly, the next few calls to getakey might return:
+;      right,right,up,right,up
+; Minor jiggling of the mouse generates no keystroke, and is forgotten (not
+; accumulated with additional movement) if no additional movement in the
+; same direction occurs within a short interval.
+; Movements on angles near horiz/vert are treated as horiz/vert; the nearness
+; tolerated varies depending on mode.
+; Any movement not picked up by calling routine within a short time of mouse
+; stopping is forgotten.  (This does not apply to button pushes in modes<3.)
+; Mouseread would be more accurate if interrupt-driven, but with the usage
+; in fractint (tight getakey loops while mouse active) there's no need.
+
+; translate table for mouse movement -> fake keys
+mousefkey dw   1077,1075,1080,1072  ; right,left,down,up     just movement
+        dw        0,   0,1081,1073  ;            ,pgdn,pgup  + left button
+        dw    1144,1142,1147,1146  ; kpad+,kpad-,cdel,cins  + rt   button
+        dw    1117,1119,1118,1132  ; ctl-end,home,pgdn,pgup + mid/multi
+
+DclickTime    equ 9   ; ticks within which 2nd click must occur
+JitterTime    equ 6   ; idle ticks before turfing unreported mickeys
+TextHSens     equ 22  ; horizontal sensitivity in text mode
+TextVSens     equ 44  ; vertical sensitivity in text mode
+GraphSens     equ 5   ; sensitivity in graphics mode; gets lower @ higher res
+ZoomSens      equ 20  ; sensitivity for zoom box sizing/rotation
+TextVHLimit   equ 6   ; treat angles < 1:6  as straight
+GraphVHLimit  equ 14  ; treat angles < 1:14 as straight
+ZoomVHLimit   equ 1   ; treat angles < 1:1  as straight
+JitterMickeys equ 3   ; mickeys to ignore before noticing motion
+
+BIOS_MOUSE					equ 33h
+MOUSE_GET_POSITION_STATUS	equ 03h
+MOUSE_GET_BUTTON_PRESS		equ 05h
+MOUSE_GET_BUTTON_RELEASE	equ 06h
+MOUSE_GET_MOTION_COUNTERS	equ 0Bh
+MOUSE_LEFT					equ 0h
+MOUSE_RIGHT					equ 1h
+
+mouseread proc near USES bx cx dx
+        local   moveaxis:word
+
+        ; check if it is time to do an autosave
+        cmp     saveticks,0     ; autosave timer running?
+        je      mouse0          ;  nope
+        sub     ax,ax           ; reset ES to BIOS data area
+        mov     es,ax           ;  see notes at mouse1 in similar code
+tickread:
+        mov     ax,es:046ch     ; obtain the current timer value
+        cmp     ax,savechktime  ; a new clock tick since last check?
+        je      mouse0          ;  nope, save a dozen opcodes or so
+        mov     dx,es:046eh     ; high word of ticker
+        cmp     ax,es:046ch     ; did a tick get counted just as we looked?
+        jne     tickread        ; yep, reread both words to be safe
+        mov     savechktime,ax
+        sub     ax,savebase     ; calculate ticks since timer started
+        sbb     dx,savebase+2
+        jns     tickcompare
+        add     ax,0b0h         ; wrapped past midnight, add a day
+        adc     dx,018h
+tickcompare:
+        cmp     dx,saveticks+2  ; check if past autosave time
+        jb      mouse0
+        ja      ticksavetime
+        cmp     ax,saveticks
+        jb      mouse0
+ticksavetime:                   ; it is time to do a save
+        mov     ax,finishrow
+        cmp     ax,-1           ; waiting for the end of a row before save?
+        jne     tickcheckrow    ;  yup, go check row
+        cmp     calc_status,1   ; safety check, calc active?
+        jne     tickdosave      ;  nope, don't check type of calc
+        cmp     got_status,0    ; 1pass or 2pass?
+        je      ticknoterow     ;  yup
+        cmp     got_status,1    ; solid guessing?
+        jne     tickdosave      ;  not 1pass, 2pass, ssg, so save immediately
+ticknoterow:
+        mov     ax,currow       ; note the current row
+        mov     finishrow,ax    ;  ...
+        jmp     short mouse0    ; and keep working for now
+tickcheckrow:
+        cmp     ax,currow       ; started a new row since timer went off?
+        je      mouse0          ;  nope, don't do the save yet
+tickdosave:
+        mov     timedsave,1     ; tell mainline what's up
+        mov     ax,9999         ; a dummy key value, never gets used
+        jmp     mouseret
+
+mouse0: ; now the mouse stuff
+        cmp     mouse,-1
+        jne     mouseidle       ; no mouse, that was easy
+        mov     ax,lookatmouse
+        cmp     ax,prevlamouse
+        je      mouse1
+
+        ; lookatmouse changed, reset everything
+        mov     prevlamouse,ax
+        mov     mbclicks,0
+        mov     mbstatus,0
+        mov     mhmickeys,0
+        mov     mvmickeys,0
+        ; note: don't use int 33 func 0 nor 21 to reset, they're SLOW
+        mov     ax,MOUSE_GET_BUTTON_RELEASE          ; reset button counts by reading them
+        mov     bx,MOUSE_LEFT
+        int     BIOS_MOUSE
+        mov     ax,MOUSE_GET_BUTTON_RELEASE
+        mov     bx,MOUSE_RIGHT
+        int     BIOS_MOUSE
+        mov     ax,MOUSE_GET_BUTTON_PRESS
+        mov     bx,MOUSE_LEFT
+        int     BIOS_MOUSE
+        mov     ax,MOUSE_GET_MOTION_COUNTERS          ; reset motion counters by reading
+        int     BIOS_MOUSE
+        mov     ax,lookatmouse
+
+mouse1: or      ax,ax
+        jz      mouseidle       ; check nothing when lookatmouse=0
+        ; following code directly accesses bios tick counter; it would be
+        ; better not to rely on addr (use int 1A instead) but old PCs don't
+        ; have the required int, the addr is constant in bios to date, and
+        ; fractint startup already counts on it, so:
+        mov     ax,0            ; reset ES to BIOS data area
+        mov     es,ax           ;  ...
+        mov     dx,es:46ch      ; obtain the current timer value
+        cmp     dx,mousetime
+        ; if timer same as last call, skip int 33s:  reduces expense and gives
+        ; caller a chance to read all pending stuff and paint something
+        jne     mnewtick
+        cmp     lookatmouse,0   ; interested in anything other than left button?
+        jl      mouseidle       ; nope, done
+        jmp     mouse5
+
+mouseidle:
+        clc                     ; tell caller no mouse activity this time
+        ret
+
+mnewtick: ; new tick, read buttons and motion
+        mov     mousetime,dx    ; note current timer
+        cmp     lookatmouse,3
+        je      mouse2          ; skip button press if mode 3
+
+        ; check press of left button
+        mov     ax,MOUSE_GET_BUTTON_PRESS          ; get button press info
+        mov     bx,MOUSE_LEFT            ; for left button
+        int     BIOS_MOUSE
+        or      bx,bx
+        jnz     mleftb
+        cmp     lookatmouse,0
+        jl      mouseidle       ; exit if nothing but left button matters
+        jmp     mouse3          ; not mode 3 so skip past button release stuff
+mleftb: mov     ax,13
+        cmp     lookatmouse,0
+        jg      mouser          ; return fake key enter
+        mov     ax,lookatmouse  ; return fake key 0-lookatmouse
+        neg     ax
+mouser: jmp     mouseret
+
+mouse2: ; mode 3, check for double clicks
+        mov     ax,MOUSE_GET_BUTTON_RELEASE          ; get button release info
+        mov     bx,MOUSE_LEFT            ; left button
+        int     BIOS_MOUSE
+        mov     dx,mousetime
+        cmp     bx,1            ; left button released?
+        jl      msnolb          ; go check timer if not
+        jg      mslbgo          ; double click
+        test    mbclicks,1      ; had a 1st click already?
+        jnz     mslbgo          ; yup, double click
+        mov     mlbtimer,dx     ; note time of 1st click
+        or      mbclicks,1
+        jmp     short mousrb
+mslbgo: and     mbclicks,0ffh-1
+        mov     ax,13           ; fake key enter
+        jmp     mouseret
+msnolb: sub     dx,mlbtimer     ; clear 1st click if its been too long
+        cmp     dx,DclickTime
+        jb      mousrb
+        and     mbclicks,0ffh-1 ; forget 1st click if any
+        ; next all the same code for right button
+mousrb: mov     ax,MOUSE_GET_BUTTON_RELEASE          ; get button release info
+        mov     bx,MOUSE_RIGHT            ; right button
+        int     BIOS_MOUSE
+        ; now much the same as for left
+        mov     dx,mousetime
+        cmp     bx,1
+        jl      msnorb
+        jg      msrbgo
+        test    mbclicks,2
+        jnz     msrbgo
+        mov     mrbtimer,dx
+        or      mbclicks,2
+        jmp     short mouse3
+msrbgo: and     mbclicks,0ffh-2
+        mov     ax,1010         ; fake key ctl-enter
+        jmp     mouseret
+msnorb: sub     dx,mrbtimer
+        cmp     dx,DclickTime
+        jb      mouse3
+        and     mbclicks,0ffh-2
+
+        ; get buttons state, if any changed reset mickey counters
+mouse3: mov     ax,MOUSE_GET_MOTION_COUNTERS          ; get button status
+        int     BIOS_MOUSE
+        and     bl,7            ; just the button bits
+        cmp     bl,mbstatus     ; any changed?
+        je      mouse4
+        mov     mbstatus,bl     ; yup, reset stuff
+        mov     mhmickeys,0
+        mov     mvmickeys,0
+        mov     ax,MOUSE_GET_MOTION_COUNTERS
+        int     BIOS_MOUSE             ; reset driver's mickeys by reading them
+
+        ; get motion counters, forget any jiggle
+mouse4: mov     ax,MOUSE_GET_MOTION_COUNTERS          ; get motion counters
+        int     BIOS_MOUSE
+        mov     bx,mousetime    ; just to have it in a register
+        cmp     cx,0            ; horiz motion?
+        jne     moushm          ; yup, go accum it
+        mov     ax,bx
+        sub     ax,mhtimer
+        cmp     ax,JitterTime   ; timeout since last horiz motion?
+        jb      mousev
+        mov     mhmickeys,0
+        jmp     short mousev
+moushm: mov     mhtimer,bx      ; note time of latest motion
+        add     mhmickeys,cx
+        ; same as above for vertical movement:
+mousev: cmp     dx,0            ; vert motion?
+        jne     mousvm
+        mov     ax,bx
+        sub     ax,mvtimer
+        cmp     ax,JitterTime
+        jb      mouse5
+        mov     mvmickeys,0
+        jmp     short mouse5
+mousvm: mov     mvtimer,bx
+        add     mvmickeys,dx
+
+        ; pick the axis with largest pending movement
+mouse5: mov     bx,mhmickeys
+        or      bx,bx
+        jns     mchkv
+        neg     bx              ; make it +ve
+mchkv:  mov     cx,mvmickeys
+        or      cx,cx
+        jns     mchkmx
+        neg     cx
+mchkmx: mov     moveaxis,0      ; flag that we're going horiz
+        cmp     bx,cx           ; horiz>=vert?
+        jge     mangle
+        xchg    bx,cx           ; nope, use vert
+        mov     moveaxis,1      ; flag that we're going vert
+
+        ; if moving nearly horiz/vert, make it exactly horiz/vert
+mangle: mov     ax,TextVHLimit
+        cmp     lookatmouse,2   ; slow (text) mode?
+        je      mangl2
+        mov     ax,GraphVHLimit
+        cmp     lookatmouse,3   ; special mode?
+        jne     mangl2
+        cmp     mbstatus,0      ; yup, any buttons down?
+        je      mangl2
+        mov     ax,ZoomVHLimit  ; yup, special zoom functions
+mangl2: mul     cx              ; smaller axis * limit
+        cmp     ax,bx
+        ja      mchkmv          ; min*ratio <= max?
+        cmp     moveaxis,0      ; yup, clear the smaller movement axis
+        jne     mzeroh
+        mov     mvmickeys,0
+        jmp     short mchkmv
+mzeroh: mov     mhmickeys,0
+
+        ; pick sensitivity to use
+mchkmv: cmp     lookatmouse,2   ; slow (text) mode?
+        je      mchkmt
+        mov     dx,ZoomSens+JitterMickeys
+        cmp     lookatmouse,3   ; special mode?
+        jne     mchkmg
+        cmp     mbstatus,0      ; yup, any buttons down?
+        jne     mchkm2          ; yup, use zoomsens
+mchkmg: mov     dx,GraphSens
+        mov     cx,sxdots       ; reduce sensitivity for higher res
+mchkg2: cmp     cx,400          ; horiz dots >= 400?
+        jl      mchkg3
+        shr     cx,1            ; horiz/2
+        shr     dx,1
+        inc     dx              ; sensitivity/2+1
+        jmp     short mchkg2
+mchkg3: add     dx,JitterMickeys
+        jmp     short mchkm2
+mchkmt: mov     dx,TextVSens+JitterMickeys
+        cmp     moveaxis,0
+        jne     mchkm2
+        mov     dx,TextHSens+JitterMickeys ; slower on X axis than Y
+
+        ; is largest movement past threshold?
+mchkm2: cmp     bx,dx
+        jge     mmove
+        jmp     mouseidle       ; no movement past threshold, return nothing
+
+        ; set bx for right/left/down/up, and reduce the pending mickeys
+mmove:  sub     dx,JitterMickeys
+        cmp     moveaxis,0
+        jne     mmovev
+        cmp     mhmickeys,0
+        jl      mmovh2
+        sub     mhmickeys,dx    ; horiz, right
+        mov     bx,0
+        jmp     short mmoveb
+mmovh2: add     mhmickeys,dx    ; horiz, left
+        mov     bx,2
+        jmp     short mmoveb
+mmovev: cmp     mvmickeys,0
+        jl      mmovv2
+        sub     mvmickeys,dx    ; vert, down
+        mov     bx,4
+        jmp     short mmoveb
+mmovv2: add     mvmickeys,dx    ; vert, up
+        mov     bx,6
+
+        ; modify bx if a button is being held down
+mmoveb: cmp     lookatmouse,3
+        jne     mmovek          ; only modify in mode 3
+        cmp     mbstatus,1
+        jne     mmovb2
+        add     bx,8            ; modify by left button
+        jmp     short mmovek
+mmovb2: cmp     mbstatus,2
+        jne     mmovb3
+        add     bx,16           ; modify by rb
+        jmp     short mmovek
+mmovb3: cmp     mbstatus,0
+        je      mmovek
+        add     bx,24           ; modify by middle or multiple
+
+        ; finally, get the fake key number
+mmovek: mov     ax,mousefkey[bx]
+
+mouseret:
+        stc
+        ret
+mouseread endp
+*/
+/*
+	http://heim.ifi.uio.no/~stanisls/helppc/int_table.html
+	http://heim.ifi.uio.no/~stanisls/helppc/int_10.html INT 10 - Video BIOS Services
+	http://heim.ifi.uio.no/~stanisls/helppc/int_16.html INT 16 - Keyboard BIOS Services
+	http://heim.ifi.uio.no/~stanisls/helppc/int_33.html INT 33 - Mouse Function Calls
+*/
 int mouseread(int ch)
 {
 	int ax, bx, cx, dx;
 	int moveaxis = 0;
-	int ticker = readticker();
+	int ticker;
 
 	if (ch != 0)
 	{
 		return ch;
 	}
 
+	/* now check for automatic/periodic saving... */
+	ticker = readticker();
 	if (saveticks && (ticker != savechktime))
 	{
 		savechktime = ticker;
@@ -179,6 +617,9 @@ int mouseread(int ch)
 		}
 	}
 
+	/* no save needed, now check some mouse movement stuff */
+
+	/* did lookatmouse change since we were last here? */
 	if (lookatmouse != previous_look_mouse)
 	{
 		/* lookatmouse changed, reset everything */
@@ -188,6 +629,8 @@ int mouseread(int ch)
 		mhmickeys = 0;
 		mvmickeys = 0;
 	}
+
+	/* are we doing any mouse snooping? */
 	if (lookatmouse != LOOK_MOUSE_NONE)
 	{
 		if (readticker() != mousetime)
@@ -205,20 +648,16 @@ int mouseread(int ch)
 
 					mlbtimer = mousetime;
 					mbclicks |= MOUSE_CLICK_LEFT;
-					goto mousrb;
+					goto mouse_right_button;
 				}
 				else
 				{
-					goto msnolb;
+					goto mouse_no_left_button;
 				}
 			}
 			if (left_button_pressed())
 			{
-				if (lookatmouse > LOOK_MOUSE_NONE)
-				{
-					return FIK_ENTER;
-				}
-				return -lookatmouse;
+				return (lookatmouse > LOOK_MOUSE_NONE) ? FIK_ENTER : -lookatmouse;
 			}
 			if (lookatmouse < 0)
 			{
@@ -233,13 +672,13 @@ int mouseread(int ch)
 	}
 	return 0;
 
-msnolb:
+mouse_no_left_button:
 	if (mousetime - mlbtimer > DclickTime)
 	{
 		mbclicks = ~MOUSE_CLICK_LEFT;
 	}
 
-mousrb:
+mouse_right_button:
 	if (right_button_pressed())
 	{
 		if (mbclicks & MOUSE_CLICK_RIGHT)
@@ -251,12 +690,7 @@ mousrb:
 		mbclicks |= MOUSE_CLICK_RIGHT;
 		goto mouse3;
 	}
-	else
-	{
-		goto msnorb;
-	}
 
-msnorb:
 	if (mousetime - mrbtimer > DclickTime)
 	{
 		mbclicks |= ~MOUSE_CLICK_LEFT;
@@ -272,22 +706,22 @@ mouse3:
 	get_mouse_motion();
 	if (mouse_x > 0)
 	{
-		goto moushm;
+		goto mouse_horizontal_motion;
 	}
 	if (mousetime - mhtimer > JitterTime)
 	{
-		goto mousev;
+		goto mouse_vertical;
 	}
 	mhmickeys = 0;
-	goto mousev;
+	goto mouse_vertical;
 
-moushm:
+mouse_horizontal_motion:
 	mhmickeys += mouse_x;
 
-mousev:
+mouse_vertical:
 	if (mouse_y > 0)
 	{
-		goto mousvm;
+		goto mouse_vertical_motion;
 	}
 	if (mousetime - mvtimer > JitterTime)
 	{
@@ -296,7 +730,7 @@ mousev:
 	mvmickeys = 0;
 	goto mouse5;
 
-mousvm:
+mouse_vertical_motion:
 	mvtimer = mousetime;
 	mvmickeys += mouse_y;
 
@@ -327,7 +761,7 @@ mouse5:
 	ax *= cx;
 	if (ax > bx)
 	{
-		goto mchkmv;
+		goto mouse_check_move;
 	}
 	if (moveaxis != 0)
 	{
@@ -338,7 +772,7 @@ mouse5:
 		mvmickeys = 0;
 	}
 
-mchkmv:
+mouse_check_move:
 	if (LOOK_MOUSE_TEXT == lookatmouse)
 	{
 		goto mchkmt;
@@ -451,21 +885,32 @@ handle_special_keys(int ch)
 {
 	static int inside_help = 0;
 
-	if (SLIDES_PLAY == g_slides)
+	if (ch != 9999)
 	{
-		if (ch == FIK_ESC)
+		if (SLIDES_PLAY == g_slides)
 		{
-			stopslideshow();
-			ch = 0;
+			if (ch == FIK_ESC)
+			{
+				stopslideshow();
+				ch = 0;
+			}
+			else if (!ch)
+			{
+				ch = slideshw();
+			}
 		}
-		else if (!ch)
+		else if ((SLIDES_RECORD == g_slides) && ch)
 		{
-			ch = slideshw();
+			recordshw(ch);
 		}
 	}
-	else if ((SLIDES_RECORD == g_slides) && ch)
+	if (3000 == debugflag)
 	{
-		recordshw(ch);
+		if ('~' == ch)
+		{
+			edit_text_colors();
+			ch = 0;
+		}
 	}
 
 	if (FIK_F1 == ch && helpmode && !inside_help)
@@ -614,7 +1059,7 @@ win32_key_pressed(Driver *drv)
 		return ch;
 	}
 	flush_output();
-	ch = handle_special_keys(mouseread(frame_get_key_press(0)));
+	ch = handle_special_keys(frame_get_key_press(0));
 	_ASSERTE(di->key_buffer == 0);
 	di->key_buffer = ch;
 
@@ -655,7 +1100,7 @@ win32_get_key(Driver *drv)
 		}
 		else
 		{
-			ch = handle_special_keys(mouseread(frame_get_key_press(1)));
+			ch = handle_special_keys(frame_get_key_press(1));
 		}
 	}
 	while (ch == 0);
@@ -1006,6 +1451,20 @@ win32_put_char_attr(Driver *drv, int char_attr)
 {
 	DI(di);
 	wintext_put_char_attr(&di->wintext, g_text_row, g_text_col, char_attr);
+}
+
+int
+win32_get_char_attr_rowcol(Driver *drv, int row, int col)
+{
+	DI(di);
+	return wintext_get_char_attr(&di->wintext, row, col);
+}
+
+void
+win32_put_char_attr_rowcol(Driver *drv, int row, int col, int char_attr)
+{
+	DI(di);
+	wintext_put_char_attr(&di->wintext, row, col, char_attr);
 }
 
 void

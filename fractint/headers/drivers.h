@@ -94,6 +94,8 @@ struct tagDriver
 										int (*diskp)(Driver *drv);
 										int (*get_char_attr)(Driver *drv);
 										void (*put_char_attr)(Driver *drv, int char_attr);
+										int (*get_char_attr_rowcol)(Driver *drv, int row, int col);
+										void (*put_char_attr_rowcol)(Driver *drv, int row, int col, int char_attr);
 										void (*delay)(Driver *drv, int ms);
 										void (*set_keyboard_timeout)(Driver *drv, int ms);
 										void (*flush)(Driver *drv);
@@ -151,6 +153,8 @@ struct tagDriver
     name_##_diskp, \
 	name_##_get_char_attr, \
 	name_##_put_char_attr, \
+	name_##_get_char_attr_rowcol, \
+	name_##_put_char_attr_rowcol, \
 	name_##_delay, \
 	name_##_set_keyboard_timeout, \
 	name_##_flush \
@@ -242,6 +246,8 @@ extern void driver_put_char_attr(int char_attr);
 extern void driver_delay(int ms);
 extern void driver_set_keyboard_timeout(int ms);
 extern void driver_flush(void);
+extern int driver_get_char_attr_rowcol(int row, int col);
+extern void driver_put_char_attr_rowcol(int row, int col, int char_attr);
 
 #else
 
@@ -294,6 +300,8 @@ extern void driver_flush(void);
 #define driver_delay(ms_)							(*g_driver->delay)(g_driver, ms_)
 #define driver_set_keyboard_timeout(ms_)			(*g_driver->set_keyboard_timeout)(g_driver, ms_)
 #define driver_flush()								(*g_driver->flush)(g_driver)
+#define driver_get_char_attr_rowcol(row_, col_)		(*g_driver->get_char_attr_rowcol)(g_driver, row_, col_)
+#define driver_put_char_attr_rowcol(r_, c_, a_)		(*g_driver->set_char_attr_rowcol)(g_driver, r_, c_, a_)
 
 #endif
 
