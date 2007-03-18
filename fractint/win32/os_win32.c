@@ -694,23 +694,6 @@ uclock_t usec_clock(void)
    return result; 
 }
 
-/*
-; ************* function scroll_center(tocol, torow) *************************
-
-; scroll_center --------------------------------------------------------------
-; * this is meant to be an universal scrolling redirection routine
-;   (if scrolling will be coded for the other modes too, the VESAscroll
-;   call should be replaced by a preset variable (like in proc newbank))
-; * arguments passed are the coords of the screen center because
-;   there is no universal way to determine physical screen resolution
-; ------------------------------------------------------------12-08-2002-ChCh-
-*/
-void scroll_center(int tocol, int torow)
-{
-	/* TODO */
-	_ASSERTE(FALSE);
-}
-
 void showfreemem(void)
 {
 	/* TODO */
