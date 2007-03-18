@@ -122,8 +122,6 @@ char *fract_dir1="", *fract_dir2="";
         int     viewcrop;               /* nonzero to crop default coords */
         float   finalaspectratio;       /* for view shape and rotation */
         int     viewxdots,viewydots;    /* explicit view sizing */
-        int     video_cutboth;          /* nonzero to keep virtual aspect */
-        int     zscroll;                /* screen/zoombox 0 fixed, 1 relaxed */
 
         int maxhistory = 10;
 
