@@ -5,6 +5,7 @@
 
 #define BUTTON_LEFT 0
 #define BUTTON_RIGHT 1
+#define BUTTON_MIDDLE 2
 
 typedef struct tagFrame Frame;
 struct tagFrame
@@ -27,7 +28,7 @@ struct tagFrame
 	unsigned int  keypress_buffer[KEYBUFMAX];
 
 	/* mouse data */
-	BOOL button_down[2];
+	BOOL button_down[3];
 	int start_x, start_y;
 	int delta_x, delta_y;
 };
@@ -42,5 +43,7 @@ extern int frame_pump_messages(int waitflag);
 extern void frame_schedule_alarm(int soon);
 extern void frame_resize(int width, int height);
 extern void frame_set_keyboard_timeout(int ms);
+
+extern LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp);
 
 #endif
