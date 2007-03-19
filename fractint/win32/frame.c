@@ -12,7 +12,32 @@
 
 #define FRAME_TIMER_ID 2
 
+#define TextHSens 22
+#define TextVSens 44
+#define GraphSens 5
+#define ZoomSens 20
+#define TextVHLimit 6
+#define GraphVHLimit 14
+#define ZoomVHLimit 1
+#define JitterMickeys 3
+
 Frame g_frame = { 0 };
+
+/*
+; translate table for mouse movement -> fake keys
+mousefkey dw   1077,1075,1080,1072  ; right,left,down,up     just movement
+        dw        0,   0,1081,1073  ;            ,pgdn,pgup  + left button
+        dw    1144,1142,1147,1146  ; kpad+,kpad-,cdel,cins  + rt   button
+        dw    1117,1119,1118,1132  ; ctl-end,home,pgdn,pgup + mid/multi
+*/
+static int s_mouse_keys[16] =
+{
+	/* right			left			down				up */
+	FIK_RIGHT_ARROW,	FIK_LEFT_ARROW,	FIK_DOWN_ARROW,		FIK_UP_ARROW,	/* no buttons */
+	0,					0,				FIK_PAGE_DOWN,		FIK_PAGE_UP,	/* left button */
+	FIK_CTL_PLUS,		FIK_CTL_MINUS,	FIK_CTL_DEL,		FIK_CTL_INSERT,	/* right button */	
+	FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP	/* middle button */
+};
 
 static void frame_OnClose(HWND window)
 {
@@ -170,61 +195,119 @@ static void frame_OnTimer(HWND window, UINT id)
 	KillTimer(window, FRAME_TIMER_ID);
 }
 
-static frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-#if 0
-	if (editpal_cursor)
+	int key_index;
+
+	/* if we're mouse snooping and there's a button down, then record delta movement */
+	if ((LOOK_MOUSE_NONE == lookatmouse)
+		|| (!g_frame.button_down[BUTTON_LEFT]
+			&& !g_frame.button_down[BUTTON_RIGHT]
+			&& !g_frame.button_down[BUTTON_MIDDLE]))
 	{
-		if (lookatmouse != LOOK_MOUSE_NONE && (keyFlags & (MK_LBUTTON | MK_RBUTTON)))
-		{
-			g_frame.delta_x += x - g_frame.start_x;
-			g_frame.delta_y += y - g_frame.start_y;
-			g_frame.start_x = x;
-			g_frame.start_x = y;
-		}
+		return;
 	}
-#endif
+
+	g_frame.delta_x += x - g_frame.start_x;
+	g_frame.delta_y += y - g_frame.start_y;
+	g_frame.start_x = x;
+	g_frame.start_y = y;
+
+	/* ignore small movements */
+	if ((abs(g_frame.delta_x) < GraphSens + JitterMickeys)
+		&& (abs(g_frame.delta_y) < GraphSens + JitterMickeys))
+	{
+		return;
+	}
+
+	if (abs(g_frame.delta_x) < abs(g_frame.delta_y))
+	{
+		/* y-axis changes more */
+		key_index = (g_frame.delta_y < 0) ? 3 : 2;
+	}
+	else
+	{
+		/* x-axis changes more */
+		key_index = (g_frame.delta_x < 0) ? 1 : 0;
+	}
+
+	/* synthesize keystroke */
+	if (g_frame.button_down[BUTTON_LEFT])
+	{
+		key_index += 4;
+	}
+	else if (g_frame.button_down[BUTTON_RIGHT])
+	{
+		key_index += 8;
+	}
+	else if (g_frame.button_down[BUTTON_MIDDLE])
+	{
+		key_index += 12;
+	}
+	frame_add_key_press(s_mouse_keys[key_index]);
 }
 
-static void frame_OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+static void frame_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_LEFT] = TRUE;
+	if (doubleClick && (LOOK_MOUSE_NONE != lookatmouse))
+	{
+		frame_add_key_press(FIK_ENTER);
+	}
 }
 
-static void frame_OnLButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+static void frame_OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_LEFT] = FALSE;
 }
 
-static void frame_OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
+static void frame_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_RIGHT] = TRUE;
+	if (doubleClick && (LOOK_MOUSE_NONE != lookatmouse))
+	{
+		frame_add_key_press(FIK_CTL_ENTER);
+	}
 }
 
-static void frame_OnRButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+static void frame_OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_RIGHT] = FALSE;
 }
 
-static LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+static void frame_OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_MIDDLE] = TRUE;
+}
+
+static void frame_OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	g_frame.button_down[BUTTON_MIDDLE] = FALSE;
+}
+
+LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	switch (message)
 	{
-	case WM_CLOSE:			HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);					break;
-	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo); break;
-	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);			break;
-	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);			break;
-	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, frame_OnPaint);					break;
-	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);				break;
-	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);			break;
-	case WM_CHAR:			HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);					break;
-	case WM_TIMER:			HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);					break;
-	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_OnMouseMove);			break;
-	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_OnLButtonDown);		break;
-	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, frame_OnLButtonUp);			break;
-	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_OnRButtonDown);		break;
-	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, frame_OnRButtonUp);			break;
-	default:				return DefWindowProc(window, message, wp, lp);					break;
+	case WM_CLOSE:			HANDLE_WM_CLOSE(window, wp, lp, frame_OnClose);						break;
+	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(window, wp, lp, frame_OnGetMinMaxInfo); 	break;
+	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(window, wp, lp, frame_OnSetFocus);				break;
+	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(window, wp, lp, frame_OnKillFocus);				break;
+	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, frame_OnPaint);						break;
+	case WM_KEYDOWN:		HANDLE_WM_KEYDOWN(window, wp, lp, frame_OnKeyDown);					break;
+	case WM_SYSKEYDOWN:		HANDLE_WM_SYSKEYDOWN(window, wp, lp, frame_OnKeyDown);				break;
+	case WM_CHAR:			HANDLE_WM_CHAR(window, wp, lp, frame_OnChar);						break;
+	case WM_TIMER:			HANDLE_WM_TIMER(window, wp, lp, frame_OnTimer);						break;
+	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, frame_OnMouseMove);				break;
+	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, frame_OnLeftButtonDown);		break;
+	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, frame_OnLeftButtonUp);			break;
+	case WM_LBUTTONDBLCLK:	HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, frame_OnLeftButtonDown);	break;
+	case WM_MBUTTONDOWN:	HANDLE_WM_MBUTTONDOWN(window, wp, lp, frame_OnMiddleButtonDown); 	break;
+	case WM_MBUTTONUP:		HANDLE_WM_MBUTTONUP(window, wp, lp, frame_OnMiddleButtonUp);		break;
+	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, frame_OnRightButtonDown);		break;
+	case WM_RBUTTONDBLCLK:	HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, frame_OnRightButtonDown);	break;
+	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, frame_OnRightButtonUp);			break;
+	default:				return DefWindowProc(window, message, wp, lp);						break;
 	}
 	return 0;
 }
@@ -241,7 +324,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 		g_frame.instance = instance;
 		strcpy(g_frame.title, title);
 
-		wc.style = 0;
+		wc.style = CS_DBLCLKS;
 		wc.lpfnWndProc = frame_proc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;

@@ -15,6 +15,7 @@
 
 #include "plot.h"
 #include "ods.h"
+#include "frame.h"
 
 #define PLOT_TIMER_ID 1
 
@@ -140,12 +141,51 @@ static void plot_OnPaint(HWND window)
 	EndPaint(window, &ps);
 }
 
+/* forward all mouse events to the frame */
+static void plot_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+{
+	FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+}
+static void plot_OnLeftButtonUp(HWND hwnd, int x, int y, int keyFlags)
+{
+	FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+}
+static void plot_OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+{
+	FORWARD_WM_MBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+}
+static void plot_OnMiddleButtonUp(HWND hwnd, int x, int y, int keyFlags)
+{
+	FORWARD_WM_MBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+}
+static void plot_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+{
+	FORWARD_WM_RBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+}
+static void plot_OnRightButtonUp(HWND hwnd, int x, int y, int keyFlags)
+{
+	FORWARD_WM_RBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+}
+static void plot_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+{
+	FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, frame_proc);
+}
+
 static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	_ASSERTE(s_plot != NULL);
 	switch (message)
 	{
-	case WM_PAINT: HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint); break;
+	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint); break;
+	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);			break;
+	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLeftButtonDown);	break;
+	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLeftButtonUp);		break;
+	case WM_LBUTTONDBLCLK:	HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, plot_OnLeftButtonDown);	break;
+	case WM_MBUTTONDOWN:	HANDLE_WM_MBUTTONDOWN(window, wp, lp, plot_OnMiddleButtonDown);	break;
+	case WM_MBUTTONUP:		HANDLE_WM_MBUTTONUP(window, wp, lp, plot_OnMiddleButtonUp);		break;
+	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, plot_OnRightButtonDown);	break;
+	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, plot_OnRightButtonUp);		break;
+	case WM_RBUTTONDBLCLK:	HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, plot_OnRightButtonDown); break;
 
 	default: return DefWindowProc(window, message, wp, lp);
 	}
@@ -201,7 +241,7 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 	result = GetClassInfo(me->instance, s_window_class, &wc);
 	if (!result)
 	{
-		wc.style = 0;
+		wc.style = CS_DBLCLKS;
 		wc.lpfnWndProc = plot_proc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
