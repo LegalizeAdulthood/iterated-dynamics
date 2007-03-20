@@ -31,6 +31,7 @@ struct tagFrame
 	BOOL button_down[3];
 	int start_x, start_y;
 	int delta_x, delta_y;
+	int look_mouse;
 };
 
 extern Frame g_frame;
