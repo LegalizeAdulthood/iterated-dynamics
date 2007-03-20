@@ -1314,6 +1314,40 @@ static int handle_save_to_disk(void)
     return CONTINUE;
 }
 
+static int handle_evolver_save_to_disk(void)
+{
+	int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+
+	if (driver_diskp() && disktarga == 1)
+	{
+		return CONTINUE;  /* disk video and targa, nothing to save */
+	}
+
+	oldsxoffs = sxoffs;
+    oldsyoffs = syoffs;
+    oldxdots = xdots;
+    oldydots = ydots;
+    oldpx = px;
+    oldpy = py;
+    sxoffs = syoffs = 0;
+    xdots = sxdots;
+    ydots = sydots; /* for full screen save and pointer move stuff */
+    px = py = gridsz / 2;
+    param_history(1); /* restore old history */
+    fiddleparms(g_genes, 0);
+    drawparmbox(1);
+    savetodisk(savename);
+    px = oldpx;
+    py = oldpy;
+    param_history(1); /* restore old history */
+    fiddleparms(g_genes, unspiralmap());
+    sxoffs = oldsxoffs;
+    syoffs = oldsyoffs;
+    xdots = oldxdots;
+    ydots = oldydots;
+    return CONTINUE;
+}
+
 static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 {
 	comparegif = 0;
@@ -1843,7 +1877,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
-		i = handle_evolver_history(stacked, *kbdchar);
+		i = handle_evolver_history(stacked, kbdchar);
 		if (i != 0)
 		{
 			return i;
@@ -1863,35 +1897,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 		break;
 
 	case 's':                    /* save-to-disk                 */
-{     int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+		return handle_evolver_save_to_disk();
 
-      if (driver_diskp() && disktarga == 1)
-         return CONTINUE;  /* disk video and targa, nothing to save */
-
-	  oldsxoffs = sxoffs;
-      oldsyoffs = syoffs;
-      oldxdots = xdots;
-      oldydots = ydots;
-      oldpx = px;
-      oldpy = py;
-      sxoffs = syoffs = 0;
-      xdots = sxdots;
-      ydots = sydots; /* for full screen save and pointer move stuff */
-      px = py = gridsz / 2;
-      param_history(1); /* restore old history */
-      fiddleparms(g_genes, 0);
-      drawparmbox(1);
-      savetodisk(savename);
-      px = oldpx;
-      py = oldpy;
-      param_history(1); /* restore old history */
-      fiddleparms(g_genes, unspiralmap());
-      sxoffs = oldsxoffs;
-      syoffs = oldsyoffs;
-      xdots = oldxdots;
-      ydots = oldydots;
-}
-      return CONTINUE;
    case 'r':                    /* restore-from                 */
       comparegif = 0;
       *frommandel = 0;
