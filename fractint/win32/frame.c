@@ -61,13 +61,13 @@ static void frame_OnPaint(HWND window)
 	EndPaint(window, &ps);
 }
 
-static void frame_add_key_press(unsigned int key)
+static int frame_add_key_press(unsigned int key)
 {
 	if (g_frame.keypress_count >= KEYBUFMAX)
 	{
 		_ASSERTE(g_frame.keypress_count < KEYBUFMAX);
 		/* no room */
-		return;
+		return 1;
 	}
 
 	g_frame.keypress_buffer[g_frame.keypress_head] = key;
@@ -76,6 +76,7 @@ static void frame_add_key_press(unsigned int key)
 		g_frame.keypress_head = 0;
 	}
 	g_frame.keypress_count++;
+	return (g_frame.keypress_count == KEYBUFMAX);
 }
 
 static int mod_key(int modifier, int code, int fik, int *j)
@@ -200,51 +201,57 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	int key_index;
 
 	/* if we're mouse snooping and there's a button down, then record delta movement */
-	if ((LOOK_MOUSE_NONE == lookatmouse)
-		|| (!g_frame.button_down[BUTTON_LEFT]
-			&& !g_frame.button_down[BUTTON_RIGHT]
-			&& !g_frame.button_down[BUTTON_MIDDLE]))
+	if (LOOK_MOUSE_NONE == lookatmouse)
 	{
 		return;
 	}
 
-	g_frame.delta_x += x - g_frame.start_x;
-	g_frame.delta_y += y - g_frame.start_y;
+	if (-1 != g_frame.start_x && -1 != g_frame.start_y)
+	{
+		g_frame.delta_x += x - g_frame.start_x;
+		g_frame.delta_y += y - g_frame.start_y;
+	}
 	g_frame.start_x = x;
 	g_frame.start_y = y;
 
 	/* ignore small movements */
-	if ((abs(g_frame.delta_x) < GraphSens + JitterMickeys)
-		&& (abs(g_frame.delta_y) < GraphSens + JitterMickeys))
+	while ((abs(g_frame.delta_x) > GraphSens + JitterMickeys)
+			|| (abs(g_frame.delta_y) > GraphSens + JitterMickeys))
 	{
-		return;
-	}
+		if (abs(g_frame.delta_x) > abs(g_frame.delta_y))
+		{
+			/* x-axis changes more */
+			key_index = (g_frame.delta_x > 0) ? 0 : 1;
+		}
+		else
+		{
+			/* y-axis changes more */
+			key_index = (g_frame.delta_y > 0) ? 2 : 3;
+		}
 
-	if (abs(g_frame.delta_x) < abs(g_frame.delta_y))
-	{
-		/* y-axis changes more */
-		key_index = (g_frame.delta_y < 0) ? 3 : 2;
-	}
-	else
-	{
-		/* x-axis changes more */
-		key_index = (g_frame.delta_x < 0) ? 1 : 0;
-	}
+		/* synthesize keystroke */
+		if (g_frame.button_down[BUTTON_LEFT])
+		{
+			key_index += 4;
+		}
+		else if (g_frame.button_down[BUTTON_RIGHT])
+		{
+			key_index += 8;
+		}
+		else if (g_frame.button_down[BUTTON_MIDDLE])
+		{
+			key_index += 12;
+		}
+		else
+		{
+			/* no buttons down */
 
-	/* synthesize keystroke */
-	if (g_frame.button_down[BUTTON_LEFT])
-	{
-		key_index += 4;
+		}
+		if (frame_add_key_press(s_mouse_keys[key_index]))
+		{
+			return;
+		}
 	}
-	else if (g_frame.button_down[BUTTON_RIGHT])
-	{
-		key_index += 8;
-	}
-	else if (g_frame.button_down[BUTTON_MIDDLE])
-	{
-		key_index += 12;
-	}
-	frame_add_key_press(s_mouse_keys[key_index]);
 }
 
 static void frame_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
@@ -388,6 +395,18 @@ int frame_pump_messages(int waitflag)
 int frame_get_key_press(int wait_for_key)
 {
 	int i;
+
+	if (lookatmouse != g_frame.look_mouse)
+	{
+		g_frame.look_mouse = lookatmouse;
+		g_frame.delta_x = 0;
+		g_frame.delta_y = 0;
+		g_frame.start_x = -1;
+		g_frame.start_y = -1;
+		g_frame.button_down[BUTTON_LEFT] = FALSE;
+		g_frame.button_down[BUTTON_MIDDLE] = FALSE;
+		g_frame.button_down[BUTTON_RIGHT] = FALSE;
+	}
 
 	frame_pump_messages(wait_for_key);
 	if (wait_for_key && g_frame.timed_out)
