@@ -1899,43 +1899,9 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 	case 's':                    /* save-to-disk                 */
 		return handle_evolver_save_to_disk();
 
-   case 'r':                    /* restore-from                 */
-      comparegif = 0;
-      *frommandel = 0;
-      if (browsing)
-      {
-         browsing = FALSE;
-      }
-      if (*kbdchar == 'r')
-      {
-         if (debugflag == 50)
-         {
-            comparegif = overlay3d = 1;
-            if (initbatch == INIT_BATCH_SAVE)
-            {
-               driver_stack_screen();   /* save graphics image */
-               strcpy(readname, savename);
-               showfile = 0;
-               return RESTORESTART;
-            }
-         }
-         else
-            comparegif = overlay3d = 0;
-         display3d = 0;
-      }
-      driver_stack_screen();            /* save graphics image */
-      if (overlay3d)
-         *stacked = 0;
-      else
-         *stacked = 1;
-      if (resave_flag)
-      {
-         updatesavename(savename);      /* do the pending increment */
-         resave_flag = RESAVE_NO;
-		 started_resaves = FALSE;
-      }
-      showfile = -1;
-      return RESTORESTART;
+	case 'r':                    /* restore-from                 */
+		return handle_restore_from(frommandel, *kbdchar, stacked);
+
    case FIK_ENTER:                  /* Enter                        */
    case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
