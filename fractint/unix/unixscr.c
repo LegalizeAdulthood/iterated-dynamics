@@ -2153,7 +2153,7 @@ static void OnButtonPress(XEvent *xevent,
 {
 	int done = 0;
 	int banding = 0;
-	if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == 0)
+	if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == FALSE)
 	{
 		*lastx = xevent->xbutton.x;
 		*lasty = xevent->xbutton.y;
