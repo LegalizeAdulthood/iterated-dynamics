@@ -576,7 +576,7 @@ imagestart:                             /* calc/display a new image */
       /* buzzer(2); */                          /* unrecognized key */
 			}
 
-	zoomoff = 1;                 /* zooming is enabled */
+	zoomoff = TRUE;                 /* zooming is enabled */
 	helpmode = HELPMAIN;         /* now use this help mode */
 	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
