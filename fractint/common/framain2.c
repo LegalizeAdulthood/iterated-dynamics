@@ -779,10 +779,10 @@ static int handle_fractal_type(int *frommandel)
 		{
 			driver_set_for_text();     /* reset to text mode      */
 		}
-		return TRUE;
+		return IMAGESTART;
 	}
 	driver_unstack_screen();
-	return FALSE;
+	return 0;
 }
 
 static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
@@ -993,7 +993,7 @@ static int handle_ant(void)
 	{
 		param[i] = oldparm[i];
 	}
-	return (err >= 0);
+	return (err >= 0) ? CONTINUE : 0;
 }
 
 static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
@@ -1569,6 +1569,12 @@ static void handle_zoom_stretch(int narrower)
 	}
 }
 
+static int handle_restart(void)
+{
+	driver_set_for_text();           /* force text mode */
+	return RESTART;
+}
+
 int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
 {
 	long old_maxit;
@@ -1585,11 +1591,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 	switch (*kbdchar)
 	{
 	case 't':                    /* new fractal type             */
-		if (handle_fractal_type(frommandel))
-		{
-			return IMAGESTART;
-		}
-		break;
+		return handle_fractal_type(frommandel);
 
 	case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
 	case FIK_CTL_Y:
@@ -1629,11 +1631,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 		break;
 
 	case FIK_CTL_A:                     /* ^a Ant */
-		if (handle_ant())
-		{
-			return CONTINUE;
-		}
-		break;
+		return handle_ant();
 
 	case 'k':                    /* ^s is irritating, give user a single key */
 	case FIK_CTL_S:                     /* ^s RDS */
@@ -1674,7 +1672,6 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 
 	case 'e':                    /* switch to color editing      */
 		return handle_color_editing(kbdmore);
-		break;
 
 	case 's':                    /* save-to-disk                 */
 		return handle_save_to_disk();
@@ -1719,8 +1716,7 @@ do_3d_transform:
 		break;
 
 	case FIK_INSERT:         /* insert                       */
-		driver_set_for_text();           /* force text mode */
-		return RESTART;
+		return handle_restart();
 
 	case FIK_LEFT_ARROW:             /* cursor left                  */
 	case FIK_RIGHT_ARROW:            /* cursor right                 */
@@ -1775,6 +1771,7 @@ do_3d_transform:
 	default:                     /* other (maybe a valid Fn key) */
 		return handle_video_mode(*kbdchar, kbdmore);
    }                            /* end of the big switch */
+
    return 0;
 }
 
@@ -2029,8 +2026,6 @@ static void handle_mutation_off(int *kbdmore)
 
 int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
 {
-	int i, k;
-
 	switch (*kbdchar)
 	{
 	case 't':                    /* new fractal type             */
@@ -2061,11 +2056,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
-		i = handle_evolver_history(stacked, kbdchar);
-		if (i != 0)
-		{
-			return i;
-		}
+		return handle_evolver_history(stacked, kbdchar);
 
 	case 'c':                    /* switch to color cycling      */
 	case '+':                    /* rotate palette               */
@@ -2073,12 +2064,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 		return handle_color_cycling(*kbdchar);
 
 	case 'e':                    /* switch to color editing      */
-		i = handle_color_editing(kbdmore);
-		if (i != 0)
-		{
-			return i;
-		}
-		break;
+		return handle_color_editing(kbdmore);
 
 	case 's':                    /* save-to-disk                 */
 		return handle_evolver_save_to_disk();
@@ -2088,30 +2074,16 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 
 	case FIK_ENTER:                  /* Enter                        */
 	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
-#ifdef XFRACT
-		XZoomWaiting = 0;
-#endif
-		if (zwidth != 0.0)
-		{                         /* do a zoom */
-			init_pan_or_recalc(0);
-			*kbdmore = 0;
-		}
-		if (calc_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
-		{
-			*kbdmore = 0;
-		}
+		handle_zoom_in(kbdmore);
 		break;
 
 	case FIK_CTL_ENTER:              /* control-Enter                */
 	case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
-		init_pan_or_recalc(1);
-		*kbdmore = 0;
-		zoomout();                /* calc corners for zooming out */
+		handle_zoom_out(kbdmore);
 		break;
 
 	case FIK_INSERT:         /* insert                       */
-		driver_set_for_text();           /* force text mode */
-		return RESTART;
+		return handle_restart();
 
 	case FIK_LEFT_ARROW:             /* cursor left                  */
 	case FIK_RIGHT_ARROW:            /* cursor right                 */
@@ -2199,13 +2171,9 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 		/* fall through */
 
 	default:             /* other (maybe valid Fn key */
-		i = handle_video_mode(*kbdchar, kbdmore);
-		if (i != 0)
-		{
-			return i;
-		}
-		break;
+		return handle_video_mode(*kbdchar, kbdmore);
 	}                            /* end of the big evolver switch */
+
 	return 0;
 }
 
