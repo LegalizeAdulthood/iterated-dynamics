@@ -530,13 +530,12 @@ expand_retry:
 
    /* calculate factors which plot real values to screen co-ords */
    /* calcfrac.c plot_orbit routines have comments about this    */
-   ftemp = (double)((0.0-delyy2) * delxx2 * dxsize * dysize
-           - (xxmax-xx3rd) * (yy3rd-yymax));
+   ftemp = (double)(-delyy2*delxx2*dxsize*dysize - (xxmax - xx3rd)*(yy3rd - yymax));
    if (ftemp != 0)
    {
       plotmx1 = (double)(delxx2 * dxsize * dysize / ftemp);
       plotmx2 = (yy3rd-yymax) * dxsize / ftemp;
-      plotmy1 = (double)((0.0-delyy2) * dxsize * dysize / ftemp);
+      plotmy1 = (double)(-delyy2*dxsize*dysize/ftemp);
       plotmy2 = (xxmax-xx3rd) * dysize / ftemp;
    }
    if (bf_math == 0)
@@ -848,7 +847,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
           cmp_bf(sub_bf(bftemp,bcornerx[i],blimit),badjx) > 0)
          copy_bf(badjx,bftemp);
 
-      /* if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
+      /* if (cornerx[i] < -limit && (ftemp = cornerx[i] + limit) < adjx)
          adjx = ftemp; */
       if (cmp_bf(bcornerx[i],neg_bf(btmp1,blimit)) < 0 &&
           cmp_bf(add_bf(bftemp,bcornerx[i],blimit),badjx) < 0)
@@ -860,7 +859,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
           cmp_bf(sub_bf(bftemp,bcornery[i],blimit),badjy) > 0)
          copy_bf(badjy,bftemp);
 
-      /* if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
+      /* if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
          adjy = ftemp; */
       if (cmp_bf(bcornery[i],neg_bf(btmp1,blimit)) < 0 &&
           cmp_bf(add_bf(bftemp,bcornery[i],blimit),badjy) < 0)
@@ -973,11 +972,11 @@ static void _fastcall adjust_to_limits(double expand)
    for (i=0; i<4; ++i) {
       if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
          adjx = ftemp;
-      if (cornerx[i] < 0.0-limit && (ftemp = cornerx[i] + limit) < adjx)
+      if (cornerx[i] < -limit && (ftemp = cornerx[i] + limit) < adjx)
          adjx = ftemp;
       if (cornery[i] > limit     && (ftemp = cornery[i] - limit) > adjy)
          adjy = ftemp;
-      if (cornery[i] < 0.0-limit && (ftemp = cornery[i] + limit) < adjy)
+      if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
          adjy = ftemp;
       }
    if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
@@ -1015,16 +1014,16 @@ static int _fastcall ratio_bad(double actual, double desired)
    else
       tol = math_tol[1];
    if (tol <= 0.0)
-      return(1);
+      return 1;
    else if (tol >= 1.0)
-      return(0);         
+      return 0;         
    ftemp = 0;
    if (desired != 0 && debugflag != 3400)
       ftemp = actual / desired;
    if (desired != 0 && debugflag != 3400)
       if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0+tol))
-         return(1);
-   return(0);
+         return 1;
+   return 0;
 }
 
 
@@ -1122,7 +1121,7 @@ va_dcl
       len = va_arg(arg_marker,int);
    }
    va_end(arg_marker);
-   return(0);
+   return 0;
 }
 
 int alloc_resume(int alloclen, int version)
@@ -1137,12 +1136,12 @@ int alloc_resume(int alloclen, int version)
 			"You will not be able to resume calculating this image.");
       calc_status = CALCSTAT_NON_RESUMABLE;
 	  resume_info_len = 0;
-      return(-1);
+      return -1;
    }
    resume_len = 0;
    put_resume(sizeof(version),&version,0);
    calc_status = CALCSTAT_RESUMABLE;
-   return(0);
+   return 0;
 }
 
 #ifndef USE_VARARGS
@@ -1159,7 +1158,7 @@ va_dcl
 #endif
 
    if (resume_info == NULL)
-      return(-1);
+      return -1;
 #ifndef USE_VARARGS
    va_start(arg_marker,len);
 #else
@@ -1177,17 +1176,17 @@ va_dcl
       len = va_arg(arg_marker,int);
    }
    va_end(arg_marker);
-   return(0);
+   return 0;
 }
 
 int start_resume(void)
 {
    int version;
    if (resume_info == NULL)
-      return(-1);
+      return -1;
    resume_offset = 0;
    get_resume(sizeof(version),&version,0);
-   return(version);
+   return version;
 }
 
 void end_resume(void)
@@ -1211,16 +1210,16 @@ void end_resume(void)
        lx0[col] == (col/width) * Xs + xxmin
        lx1[row] == row * delxx
        ly0[row] == (row/D) * Ys + yymax
-       ly1[col] == col * (0-delyy)
+       ly1[col] == col * (-delyy)
   so:
        realx == (col/W) * Xs + xxmin + row * delxx
-       realy == (row/D) * Ys + yymax + col * (0-delyy)
+       realy == (row/D) * Ys + yymax + col * (-delyy)
   and therefore:
        row == (realx-xxmin - (col/W)*Xs) / Xv    (1)
        col == (realy-yymax - (row/D)*Ys) / Yv    (2)
   substitute (2) into (1) and solve for row:
-       row == ((realx-xxmin)*(0-delyy2)*W*D - (realy-yymax)*Xs*D)
-                      / ((0-delyy2)*W*delxx2*D-Ys*Xs)
+       row == ((realx-xxmin)*(-delyy2)*W*D - (realy-yymax)*Xs*D)
+                      / ((-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
 /* sleep N * a tenth of a millisecond */
@@ -1359,7 +1358,7 @@ int snd_open(void)
          updatesavename(soundname);
       }
    }
-   return(snd_fp != NULL);
+   return snd_fp != NULL;
 }
 
 /* This routine plays a tone in the speaker and optionally writes a file
@@ -1484,7 +1483,7 @@ int yfrom, int yto, int ybegin,
 int pass, int sym)
 {
    if (num_worklist >= MAXCALCWORK)
-      return(-1);
+      return -1;
    worklist[num_worklist].xxstart = xfrom;
    worklist[num_worklist].xxstop  = xto;
    worklist[num_worklist].xxbegin = xbegin;
@@ -1495,7 +1494,7 @@ int pass, int sym)
    worklist[num_worklist].sym     = sym;
    ++num_worklist;
    tidy_worklist();
-   return(0);
+   return 0;
 }
 
 static int _fastcall combine_worklist(void) /* look for 2 entries which can freely merge */
@@ -1516,13 +1515,13 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
                   if (worklist[i].yystop+1 == worklist[j].yystart)
                   {
                      worklist[i].yystop = worklist[j].yystop;
-                     return(j);
+                     return j;
                   }
                   if (worklist[j].yystop+1 == worklist[i].yystart)
                   {
                      worklist[i].yystart = worklist[j].yystart;
                      worklist[i].yybegin = worklist[j].yybegin;
-                     return(j);
+                     return j;
                   }
                }
                if ( worklist[i].yystart == worklist[j].yystart
@@ -1532,17 +1531,17 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
                   if (worklist[i].xxstop+1 == worklist[j].xxstart)
                   {
                      worklist[i].xxstop = worklist[j].xxstop;
-                     return(j);
+                     return j;
                   }
                   if (worklist[j].xxstop+1 == worklist[i].xxstart)
                   {
                      worklist[i].xxstart = worklist[j].xxstart;
                      worklist[i].xxbegin = worklist[j].xxbegin;
-                     return(j);
+                     return j;
                   }
                }
             }
-   return(0); /* nothing combined */
+   return 0; /* nothing combined */
 }
 
 void tidy_worklist(void) /* combine mergeable entries, resort */
@@ -1668,5 +1667,5 @@ int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
    /* increase blocksize if prefix array not big enough */
    while (blocksize*(maxxblk-2)<xdots || blocksize*(maxyblk-2)*16<ydots)
       blocksize+=blocksize;
-   return(blocksize);
+   return blocksize;
 }

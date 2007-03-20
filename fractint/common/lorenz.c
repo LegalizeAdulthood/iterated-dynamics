@@ -217,7 +217,7 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 
    det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
    if (det == 0)
-      return(-1);
+      return -1;
    xd = dxsize/det;
    scrn_cnvt->a =  xd*(yymax-yy3rd);
    scrn_cnvt->b =  xd*(xx3rd-xxmin);
@@ -225,12 +225,12 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 
    det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
    if (det == 0)
-      return(-1);
+      return -1;
    yd = dysize/det;
    scrn_cnvt->c =  yd*(yymin-yy3rd);
    scrn_cnvt->d =  yd*(xx3rd-xxmax);
    scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
-   return(0);
+   return 0;
 }
 
 static int l_setup_convert_to_screen(struct l_affine *l_cvt)
@@ -239,12 +239,12 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 
    /* MCP 7-7-91, This function should return a something! */
    if (setup_convert_to_screen(&cvt))
-      return(-1);
+      return -1;
    l_cvt->a = (long)(cvt.a*fudge); l_cvt->b = (long)(cvt.b*fudge); l_cvt->c = (long)(cvt.c*fudge);
    l_cvt->d = (long)(cvt.d*fudge); l_cvt->e = (long)(cvt.e*fudge); l_cvt->f = (long)(cvt.f*fudge);
 
    /* MCP 7-7-91 */
-   return(0);
+   return 0;
 }
 
 /******************************************************************/
@@ -374,7 +374,7 @@ lrwalk:
    l_adt = multiply(l_a,l_dt,bitshift);
    l_bdt = multiply(l_b,l_dt,bitshift);
    l_cdt = multiply(l_c,l_dt,bitshift);
-   return(1);
+   return 1;
 }
 
 #define COSB   dx
@@ -545,7 +545,7 @@ rwalk:
    bdt = b*dt;
    cdt = c*dt;
 
-   return(1);
+   return 1;
 }
 
 /******************************************************************/
@@ -894,7 +894,7 @@ int inverse_julia_orbit(double *x, double *y, double *z)
                   *y = -(*y);
       }
    }
-   return(0);
+   return 0;
 }
 #endif
 
@@ -909,7 +909,7 @@ int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
       *l_x += l_dx;
       *l_y += l_dy;
       *l_z += l_dz;
-      return(0);
+      return 0;
 }
 
 int lorenz3d1floatorbit(double *x, double *y, double *z)
@@ -930,7 +930,7 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
       *x += dx;
       *y += dy;
       *z += dz;
-      return(0);
+      return 0;
 }
 
 int lorenz3dfloatorbit(double *x, double *y, double *z)
@@ -947,7 +947,7 @@ int lorenz3dfloatorbit(double *x, double *y, double *z)
       *x += dx;
       *y += dy;
       *z += dz;
-      return(0);
+      return 0;
 }
 
 int lorenz3d3floatorbit(double *x, double *y, double *z)
@@ -971,7 +971,7 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
       *x += dx;
       *y += dy;
       *z += dz;
-      return(0);
+      return 0;
 }
 
 int lorenz3d4floatorbit(double *x, double *y, double *z)
@@ -992,7 +992,7 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
       *x += dx;
       *y += dy;
       *z += dz;
-      return(0);
+      return 0;
 }
 
 int henonfloatorbit(double *x, double *y, double *z)
@@ -1003,7 +1003,7 @@ int henonfloatorbit(double *x, double *y, double *z)
       newy  = b*(*x);
       *x = newx;
       *y = newy;
-      return(0);
+      return 0;
 }
 
 int henonlongorbit(long *l_x, long *l_y, long *l_z)
@@ -1016,7 +1016,7 @@ int henonlongorbit(long *l_x, long *l_y, long *l_z)
       newy  = multiply(l_b,*l_x,bitshift);
       *l_x = newx;
       *l_y = newy;
-      return(0);
+      return 0;
 }
 
 int rosslerfloatorbit(double *x, double *y, double *z)
@@ -1031,7 +1031,7 @@ int rosslerfloatorbit(double *x, double *y, double *z)
       *x += dx;
       *y += dy;
       *z += dz;
-      return(0);
+      return 0;
 }
 
 int pickoverfloatorbit(double *x, double *y, double *z)
@@ -1043,7 +1043,7 @@ int pickoverfloatorbit(double *x, double *y, double *z)
       *x = newx;
       *y = newy;
       *z = newz;
-      return(0);
+      return 0;
 }
 /* page 149 "Science of Fractal Images" */
 int gingerbreadfloatorbit(double *x, double *y, double *z)
@@ -1053,7 +1053,7 @@ int gingerbreadfloatorbit(double *x, double *y, double *z)
       newx = 1 - (*y) + fabs(*x);
       *y = *x;
       *x = newx;
-      return(0);
+      return 0;
 }
 
 int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
@@ -1070,7 +1070,7 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
       *l_y += l_dy;
       *l_z += l_dz;
 
-      return(0);
+      return 0;
 }
 
 /* OSTEP  = Orbit Step (and inner orbit value) */
@@ -1089,12 +1089,12 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
       t = 0;
       *z = orbit;
       if (orbit > c)
-         return(1);
+         return 1;
    }
    srr = (*s)-(*r)*(*r);
    (*s)=(*r)*sinx+srr*cosx;
    (*r)=(*r)*cosx-srr*sinx;
-   return(0);
+   return 0;
 }
 
 int kamtoruslongorbit(long *r, long *s, long *z)
@@ -1107,12 +1107,12 @@ int kamtoruslongorbit(long *r, long *s, long *z)
       t = 0;
       *z = l_orbit;
       if (l_orbit > l_c)
-         return(1);
+         return 1;
    }
    srr = (*s)-multiply((*r),(*r),bitshift);
    (*s)=multiply((*r),l_sinx,bitshift)+multiply(srr,l_cosx,bitshift);
    (*r)=multiply((*r),l_cosx,bitshift)-multiply(srr,l_sinx,bitshift);
-   return(0);
+   return 0;
 }
 
 int hopalong2dfloatorbit(double *x, double *y, double *z)
@@ -1122,7 +1122,7 @@ int hopalong2dfloatorbit(double *x, double *y, double *z)
    tmp = *y - sign(*x)*sqrt(fabs(b*(*x)-c));
    *y = a - *x;
    *x = tmp;
-   return(0);
+   return 0;
 }
 
 /* from Michael Peters and HOP */
@@ -1134,7 +1134,7 @@ int chip2dfloatorbit(double *x, double *y, double *z)
                        * atan(sqr(log(fabs(c*(*x)-b))));
    *y = a - *x;
    *x = tmp;
-   return(0);
+   return 0;
 }
 
 /* from Michael Peters and HOP */
@@ -1146,7 +1146,7 @@ int quadruptwo2dfloatorbit(double *x, double *y, double *z)
                        * atan(sqr(log(fabs(c*(*x)-b))));
    *y = a - *x;
    *x = tmp;
-   return(0);
+   return 0;
 }
 
 /* from Michael Peters and HOP */
@@ -1157,7 +1157,7 @@ int threeply2dfloatorbit(double *x, double *y, double *z)
    tmp = *y - sign(*x)*(fabs(sin(*x)*COSB+c-(*x)*SINABC));
    *y = a - *x;
    *x = tmp;
-   return(0);
+   return 0;
 }
 
 int martin2dfloatorbit(double *x, double *y, double *z)
@@ -1167,7 +1167,7 @@ int martin2dfloatorbit(double *x, double *y, double *z)
    tmp = *y - sin(*x);
    *y = a - *x;
    *x = tmp;
-   return(0);
+   return 0;
 }
 
 int mandelcloudfloat(double *x, double *y, double *z)
@@ -1183,7 +1183,7 @@ int mandelcloudfloat(double *x, double *y, double *z)
     newy = 2*(*x)*(*y)+b;
     *x = newx;
     *y = newy;
-    return(0);
+    return 0;
 }
 
 int dynamfloat(double *x, double *y, double *z)
@@ -1204,7 +1204,7 @@ int dynamfloat(double *x, double *y, double *z)
       newx = *x - dt*sin(*y + a*tmp.x);
       *x = newx;
       *y = newy;
-      return(0);
+      return 0;
 }
 
 /* dmf */
@@ -1241,7 +1241,7 @@ int iconfloatorbit(double *x, double *y, double *z)
     *y = p * oldy - GAMMA * zimag + OMEGA * oldx;
 
     *z = zzbar;
-    return(0);
+    return 0;
 }
 #ifdef LAMBDA  /* Tim says this will make me a "good citizen" */
 #undef LAMBDA  /* Yeah, but you were bad, Dan - LAMBDA was already */
@@ -1286,7 +1286,7 @@ int latoofloatorbit(double *x, double *y, double *z)
     CMPLXtrig3(old,g_new);
     *y  = PAR_D * g_new.x + tmp;
 
-    return(0);
+    return 0;
 }
 
 #undef PAR_A
@@ -1686,7 +1686,7 @@ static int orbit3dlongcalc(void)
                (*plot)(inf.col,inf.row,color%colors);
          }
          else if (inf.col == -2)
-            return(ret);
+            return ret;
          oldcol = inf.col;
          oldrow = inf.row;
          if (realtime)
@@ -1701,7 +1701,7 @@ static int orbit3dlongcalc(void)
                   (*plot)(inf.col1,inf.row1,color%colors);
             }
             else if (inf.col1 == -2)
-               return(ret);
+               return ret;
             oldcol1 = inf.col1;
             oldrow1 = inf.row1;
          }
@@ -1709,7 +1709,7 @@ static int orbit3dlongcalc(void)
    }
    if (fp)
       fclose(fp);
-   return(ret);
+   return ret;
 }
 
 
@@ -1782,7 +1782,7 @@ static int orbit3dfloatcalc(void)
                (*plot)(inf.col,inf.row,color%colors);
          }
          else if (inf.col == -2)
-            return(ret);
+            return ret;
          oldcol = inf.col;
          oldrow = inf.row;
          if (realtime)
@@ -1797,7 +1797,7 @@ static int orbit3dfloatcalc(void)
                   (*plot)(inf.col1,inf.row1,color%colors);
             }
             else if (inf.col1 == -2)
-               return(ret);
+               return ret;
             oldcol1 = inf.col1;
             oldrow1 = inf.row1;
          }
@@ -1805,7 +1805,7 @@ static int orbit3dfloatcalc(void)
    }
    if (fp)
       fclose(fp);
-   return(ret);
+   return ret;
 }
 
 int dynam2dfloatsetup()
@@ -1833,7 +1833,7 @@ int dynam2dfloatsetup()
    if (outside == SUM) {
        plot = plothist;
    }
-   return(1);
+   return 1;
 }
 
 /*
@@ -1955,7 +1955,7 @@ int dynam2dfloat()
              oldrow = row;
           }
           else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
-            return(ret);
+            return ret;
           else
              oldrow = oldcol = -1;
 
@@ -1967,7 +1967,7 @@ int dynam2dfloat()
    }
    if (fp)
       fclose(fp);
-   return(ret);
+   return ret;
 }
 
 int keep_scrn_coords = 0;
@@ -1983,7 +1983,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 
    det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
    if (det == 0)
-      return(-1);
+      return -1;
    xd = dxsize/det;
    scrn_cnvt->a =  xd*(oymax-oy3rd);
    scrn_cnvt->b =  xd*(ox3rd-oxmin);
@@ -1991,12 +1991,12 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 
    det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
    if (det == 0)
-      return(-1);
+      return -1;
    yd = dysize/det;
    scrn_cnvt->c =  yd*(oymin-oy3rd);
    scrn_cnvt->d =  yd*(ox3rd-oxmax);
    scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;
-   return(0);
+   return 0;
 }
 
 int plotorbits2dsetup(void)
@@ -2006,7 +2006,7 @@ int plotorbits2dsetup(void)
    if (curfractalspecific->isinteger != 0) {
       int tofloat = curfractalspecific->tofloat;
       if (tofloat == NOFRACTAL)
-         return(-1);
+         return -1;
       floatflag = usr_floatflag = 1; /* force floating point */
       curfractalspecific = &fractalspecific[tofloat];
       fractype = tofloat;
@@ -2018,10 +2018,10 @@ int plotorbits2dsetup(void)
    /* setup affine screen coord conversion */
    if (keep_scrn_coords) {
       if (setup_orbits_to_screen(&o_cvt))
-         return(-1);
+         return -1;
    } else {
       if (setup_convert_to_screen(&o_cvt))
-         return(-1);
+         return -1;
    }
    /* set so truncation to int rounds to nearest */
    o_cvt.e += 0.5;
@@ -2035,7 +2035,7 @@ int plotorbits2dsetup(void)
    if (outside == SUM) {
        plot = plothist;
    }
-   return(1);
+   return 1;
 }
 
 int plotorbits2dfloat(void)
@@ -2050,7 +2050,7 @@ int plotorbits2dfloat(void)
       driver_mute();
       alloc_resume(100,1);
       put_resume(sizeof(o_color),&o_color, 0);
-      return(-1);
+      return -1;
    }
 
 #if 0
@@ -2058,7 +2058,7 @@ int plotorbits2dfloat(void)
     row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
     if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
        (*plot)(col,row,1);
-    return(0);
+    return 0;
 #endif
 
    if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
@@ -2110,10 +2110,10 @@ int plotorbits2dfloat(void)
        else
        {             /* off screen, don't continue unless periodicity=0 */
           if (periodicitycheck)
-             return(0); /* skip to next pixel */
+             return 0; /* skip to next pixel */
        }
    }
-   return(0);
+   return 0;
 }
 
 /* this function's only purpose is to manage funnyglasses related */
@@ -2167,7 +2167,7 @@ done:
       ydots = sydots;
       viewwindow = 0;
    }
-   return(status);
+   return status;
 }
 
 /* double version - mainly for testing */
@@ -2256,7 +2256,7 @@ static int ifs3dfloat(void)
                (*plot)(inf.col,inf.row,color);
          }
          else if (inf.col == -2)
-            return(ret);
+            return ret;
          if (realtime)
          {
             g_which_image=2;
@@ -2271,22 +2271,22 @@ static int ifs3dfloat(void)
                   (*plot)(inf.col1,inf.row1,color);
             }
             else if (inf.col1 == -2)
-               return(ret);
+               return ret;
          }
       }
    } /* end while */
    if (fp)
       fclose(fp);
-   return(ret);
+   return ret;
 }
 
 int ifs()                       /* front-end for ifs2d and ifs3d */
 {
    if (ifs_defn == NULL && ifsload() < 0)
-      return(-1);
+      return -1;
    if (driver_diskp())                /* this would KILL a disk drive! */
       notdiskmsg();
-   return((ifs_type == 0) ? ifs2d() : ifs3d());
+   return (ifs_type == 0) ? ifs2d() : ifs3d();
 }
 
 
@@ -2314,7 +2314,7 @@ static int ifs2d(void)
    if (localifs == NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
-      return(-1);
+      return -1;
    }
 
    for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
@@ -2372,12 +2372,12 @@ static int ifs2d(void)
             (*plot)(col,row,color);
       }
       else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
-            return(ret);
+            return ret;
    }
    if (fp)
       fclose(fp);
    free(localifs);
-   return(ret);
+   return ret;
 }
 
 static int ifs3dlong(void)
@@ -2400,7 +2400,7 @@ static int ifs3dlong(void)
    if (localifs == NULL)
    {
       stopmsg(0,insufficient_ifs_mem);
-      return(-1);
+      return -1;
    }
 
    /* setup affine screen coord conversion */
@@ -2466,7 +2466,7 @@ static int ifs3dlong(void)
       if (long3dviewtransf(&inf))
       {
          if ((long)abs(inf.row) + (long)abs(inf.col) > BAD_PIXEL) /* sanity check */
-            return(ret);
+            return ret;
          /* plot if inside window */
          if (inf.col >= 0)
          {
@@ -2498,7 +2498,7 @@ static int ifs3dlong(void)
    if (fp)
       fclose(fp);
    free(localifs);
-   return(ret);
+   return ret;
 }
 
 static void setupmatrix(MATRIX doublemat)
@@ -2523,7 +2523,7 @@ int orbit3dfloat()
       realtime = 1;
    else
       realtime = 0;
-   return(funny_glasses_call(orbit3dfloatcalc));
+   return funny_glasses_call(orbit3dfloatcalc);
 }
 
 int orbit3dlong()
@@ -2533,7 +2533,7 @@ int orbit3dlong()
       realtime = 1;
    else
       realtime = 0;
-   return(funny_glasses_call(orbit3dlongcalc));
+   return funny_glasses_call(orbit3dlongcalc);
 }
 
 static int ifs3d(void)
@@ -2545,9 +2545,9 @@ static int ifs3d(void)
    else
       realtime = 0;
    if (floatflag)
-      return(funny_glasses_call(ifs3dfloat)); /* double version of ifs3d */
+      return funny_glasses_call(ifs3dfloat); /* double version of ifs3d */
    else
-      return(funny_glasses_call(ifs3dlong));  /* long version of ifs3d   */
+      return funny_glasses_call(ifs3dlong);  /* long version of ifs3d   */
 }
 
 
@@ -2633,7 +2633,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
                   inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
             }
       }
-      return(0);
+      return 0;
    }
 
    /* apply perspective if requested */
@@ -2699,7 +2699,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
            inf->col1= inf->row1 = -1;
       }
    }
-   return(1);
+   return 1;
 }
 
 static int float3dviewtransf(struct float3dvtinf *inf)
@@ -2762,7 +2762,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
             trans(tmpx,tmpy,tmpz,inf->doublemat1);
             }
          }
-      return(0);
+      return 0;
       }
 
    /* apply perspective if requested */
@@ -2797,7 +2797,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
            inf->col1= inf->row1 = -1;
       }
    }
-   return(1);
+   return 1;
 }
 
 static FILE *open_orbitsave(void)

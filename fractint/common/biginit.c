@@ -287,7 +287,7 @@ static int save_bf_vars(void)
       bf_save_len = 0;
       ret = -1;
       }
-   return(ret);
+   return ret;
    }
 
 /************************************************************************/
@@ -297,7 +297,7 @@ static int restore_bf_vars(void)
    bf_t ptr;
    int i;
    if (bf_save_len == 0)
-      return(-1);
+      return -1;
    ptr  = bnroot;
    convert_bf(bfxmin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
    convert_bf(bfxmax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
@@ -319,7 +319,7 @@ static int restore_bf_vars(void)
 
    /* scrub save area */
    memset(bnroot,0,(bf_save_len+2)*22);
-   return(0);
+   return 0;
    }
 
 /*******************************************/
@@ -341,7 +341,7 @@ bn_t alloc_stack(size_t size)
    if (bf_math == 0)
       {
       stopmsg(0,"alloc_stack called with bf_math==0");
-      return(0);
+      return 0;
       }
    stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 
@@ -354,7 +354,7 @@ bn_t alloc_stack(size_t size)
    if (stack_addr > maxptr)
       maxptr = stack_addr;
    stack_ptr += size;   /* increment stack pointer */
-   return(stack_ptr - size);
+   return stack_ptr - size;
    }
 
 /************************************************************************/

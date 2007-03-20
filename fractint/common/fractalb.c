@@ -300,7 +300,7 @@ int  bnIMAGbailout()
       return 1;
    copy_bn(bnold.x, bnnew.x);
    copy_bn(bnold.y, bnnew.y);
-   return(0);
+   return 0;
 }
 
 int  bnORbailout()
@@ -315,7 +315,7 @@ int  bnORbailout()
       return 1;
    copy_bn(bnold.x, bnnew.x);
    copy_bn(bnold.y, bnnew.y);
-   return(0);
+   return 0;
 }
 
 int  bnANDbailout()
@@ -330,7 +330,7 @@ int  bnANDbailout()
       return 1;
    copy_bn(bnold.x, bnnew.x);
    copy_bn(bnold.y, bnnew.y);
-   return(0);
+   return 0;
 }
 
 int  bnMANHbailout()
@@ -349,7 +349,7 @@ int  bnMANHbailout()
       return 1;
    copy_bn(bnold.x, bnnew.x);
    copy_bn(bnold.y, bnnew.y);
-   return(0);
+   return 0;
 }
 
 int  bnMANRbailout()
@@ -366,7 +366,7 @@ int  bnMANRbailout()
       return 1;
    copy_bn(bnold.x, bnnew.x);
    copy_bn(bnold.y, bnnew.y);
-   return(0);
+   return 0;
 }
 
 int  bfMODbailout()
@@ -411,7 +411,7 @@ int  bfIMAGbailout()
       return 1;
    copy_bf(bfold.x, bfnew.x);
    copy_bf(bfold.y, bfnew.y);
-   return(0);
+   return 0;
 }
 
 int  bfORbailout()
@@ -426,7 +426,7 @@ int  bfORbailout()
       return 1;
    copy_bf(bfold.x, bfnew.x);
    copy_bf(bfold.y, bfnew.y);
-   return(0);
+   return 0;
 }
 
 int  bfANDbailout()
@@ -441,7 +441,7 @@ int  bfANDbailout()
       return 1;
    copy_bf(bfold.x, bfnew.x);
    copy_bf(bfold.y, bfnew.y);
-   return(0);
+   return 0;
 }
 
 int  bfMANHbailout()
@@ -460,7 +460,7 @@ int  bfMANHbailout()
       return 1;
    copy_bf(bfold.x, bfnew.x);
    copy_bf(bfold.y, bfnew.y);
-   return(0);
+   return 0;
 }
 
 int  bfMANRbailout()
@@ -477,7 +477,7 @@ int  bfMANRbailout()
       return 1;
    copy_bf(bfold.x, bfnew.x);
    copy_bf(bfold.y, bfnew.y);
-   return(0);
+   return 0;
 }
 
 int MandelbnSetup()
@@ -924,7 +924,7 @@ _CMPLX cmplxbntofloat(_BNCMPLX *s)
    _CMPLX t;
    t.x = (double)bntofloat(s->x);
    t.y = (double)bntofloat(s->y);
-   return(t);
+   return t;
 }
 
 _CMPLX cmplxbftofloat(_BFCMPLX *s)
@@ -932,7 +932,7 @@ _CMPLX cmplxbftofloat(_BFCMPLX *s)
    _CMPLX t;
    t.x = (double)bftofloat(s->x);
    t.y = (double)bftofloat(s->y);
-   return(t);
+   return t;
 }
 
 _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
@@ -943,7 +943,7 @@ _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
    ln_bf(t->x,t->x);
    half_a_bf(t->x);
    atan2_bf(t->y,s->y,s->x);
-   return(t);
+   return t;
 }
 
 _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
@@ -959,7 +959,7 @@ _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
    mult_bf(t->y, x->y, y->x);
    add_bf(t->y,tmp1,t->y);
    restore_stack(saved);
-   return(t);
+   return t;
 }
 
 _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
@@ -978,7 +978,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
       {
       clear_bf(t->x);
       clear_bf(t->y);
-      return(t);
+      return t;
       }
 
    cmplxlog_bf(t, xx);
@@ -988,7 +988,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
    mult_bf(t->x, e2x, cosy);
    mult_bf(t->y, e2x, siny);
    restore_stack(saved);
-   return(t);
+   return t;
 }
 
 _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
@@ -999,7 +999,7 @@ _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
    ln_bn(t->x,t->x+shiftfactor);
    half_a_bn(t->x);
    atan2_bn(t->y,s->y,s->x);
-   return(t);
+   return t;
 }
 
 _BNCMPLX *cplxmul_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
@@ -1015,7 +1015,7 @@ _BNCMPLX *cplxmul_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
    mult_bn(t->y, x->y, y->x);
    add_bn(t->y,tmp1+shiftfactor,t->y+shiftfactor);
    restore_stack(saved);
-   return(t);
+   return t;
 }
 
 /* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
@@ -1035,7 +1035,7 @@ _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
       {
       clear_bn(t->x);
       clear_bn(t->y);
-      return(t);
+      return t;
       }
 
    cmplxlog_bn(t, xx);
@@ -1045,5 +1045,5 @@ _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
    mult_bn(t->x, e2x, cosy);
    mult_bn(t->y, e2x, siny);
    restore_stack(saved);
-   return(t);
+   return t;
 }

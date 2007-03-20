@@ -1608,7 +1608,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			if ((j = intval[i++]) < 0) /* striping */
 			{
-				if ((j = 0-j) < 1 || j >= 16384 || i >= totparms)
+				if ((j = -j) < 1 || j >= 16384 || i >= totparms)
 				{
 					goto badarg;
 				}

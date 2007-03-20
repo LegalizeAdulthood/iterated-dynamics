@@ -653,11 +653,11 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 
    fp = fopen(gif_file,"rb");
    if (fp==NULL)
-      return(-1);
+      return -1;
    fread(gifstart,13,1,fp);
    if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
       fclose(fp);
-      return(-1);
+      return -1;
    }
 
    filetype = 0; /* GIF */
@@ -735,7 +735,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       offset = 80; /* don't even check last 80 bytes of file for id */
       while (offset < fractinf_len+513) { /* allow 512 garbage at eof */
          offset += 100; /* go back 100 bytes at a time */
-         fseek(fp,(long)(0-offset),SEEK_END);
+         fseek(fp,(long) -offset,SEEK_END);
          fread(tmpbuf,1,110,fp); /* read 10 extra for string compare */
          for (i = 0; i < 100; ++i)
             if (!strcmp(INFO_ID,&tmpbuf[i])) { /* found header? */
@@ -789,7 +789,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 				  if (blk_2_info->resume_data == 0)
                      info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
                   else {
-                     fseek(fp,(long)(0-block_len),SEEK_CUR);
+                     fseek(fp,(long) -block_len,SEEK_CUR);
                      load_ext_blk(blk_2_info->resume_data, data_len);
                      blk_2_info->length = data_len;
                      blk_2_info->got_data = 1; /* got data */
@@ -798,7 +798,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 3: /* formula info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                 /* check data_len for backward compatibility */
-                  fseek(fp,(long)(0-block_len),SEEK_CUR);
+                  fseek(fp,(long) -block_len,SEEK_CUR);
                   load_ext_blk((char *)&fload_info,data_len);
                   strcpy(blk_3_info->form_name,fload_info.form_name);
                   blk_3_info->length = data_len;
@@ -825,7 +825,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 4: /* ranges info */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                   if ((blk_4_info->range_data = (int *)malloc((long)data_len)) != NULL) {
-                     fseek(fp,(long)(0-block_len),SEEK_CUR);
+                     fseek(fp,(long) -block_len,SEEK_CUR);
                      load_ext_blk((char *)blk_4_info->range_data,data_len);
                      blk_4_info->length = data_len/2;
                      blk_4_info->got_data = 1; /* got data */
@@ -834,7 +834,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                case 5: /* extended precision parameters  */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
                   if ((blk_5_info->apm_data = (char *)malloc((long)data_len)) != NULL) {
-                     fseek(fp,(long)(0-block_len),SEEK_CUR);
+                     fseek(fp,(long) -block_len,SEEK_CUR);
                      load_ext_blk(blk_5_info->apm_data,data_len);
                      blk_5_info->length = data_len;
                      blk_5_info->got_data = 1; /* got data */
@@ -842,7 +842,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   break;
                case 6: /* evolver params */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                  fseek(fp,(long)(0-block_len),SEEK_CUR);
+                  fseek(fp,(long) -block_len,SEEK_CUR);
                   load_ext_blk((char *)&eload_info,data_len);
                   /* XFRACT processing of doubles here */
 #ifdef XFRACT
@@ -873,7 +873,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
                   break;
                case 7: /* orbits parameters  */
                   skip_ext_blk(&block_len,&data_len); /* once to get lengths */
-                  fseek(fp,(long)(0-block_len),SEEK_CUR);
+                  fseek(fp,(long) -block_len,SEEK_CUR);
                   load_ext_blk((char *)&oload_info,data_len);
                   /* XFRACT processing of doubles here */
 #ifdef XFRACT
@@ -898,7 +898,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 
       fclose(fp);
       fileaspectratio = screenaspect; /* if not >= v15, this is correct */
-      return(0);
+      return 0;
       }
 
    strcpy(info->info_id, "GIFFILE");
@@ -925,7 +925,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 
    /* zero means we won */
    fclose(fp);
-   return(0);
+   return 0;
 }
 
 static void load_ext_blk(char *loadptr,int loadlen)
@@ -1192,7 +1192,7 @@ int ret = 0;
            save_release <= 2002)
        )
      ret = 1;
-   return(ret);
+   return ret;
 }
 
 static int fix_bof(void)
@@ -1615,7 +1615,7 @@ rescan:  /* entry for changed browse parms */
  bf_math = oldbf_math;
  floatflag = usr_floatflag;
 
- return(c);
+ return c;
 }
 
 
@@ -1859,16 +1859,16 @@ static char is_visible_window
 
  restore_stack(saved);
  if (cant_see) /* do it this way so bignum stack is released */
-    return(FALSE);
+    return FALSE;
 
  /* now see how many corners are on the screen, accept if one or more */
- if ( tl.x >=(0-sxoffs) && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs) ) cornercount ++;
- if ( bl.x >=(0-sxoffs) && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs) ) cornercount ++;
- if ( tr.x >=(0-sxoffs) && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs) ) cornercount ++;
- if ( br.x >=(0-sxoffs) && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs) ) cornercount ++;
+ if ( tl.x >=-sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs) ) cornercount ++;
+ if ( bl.x >=-sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs) ) cornercount ++;
+ if ( tr.x >=-sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs) ) cornercount ++;
+ if ( br.x >=-sxoffs && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs) ) cornercount ++;
 
- if (cornercount >=1 ) return( TRUE );
-    else return( FALSE );
+ if (cornercount >=1 ) return  TRUE ;
+    else return  FALSE ;
  }
 
 static char paramsOK( struct fractal_info *info )
@@ -1916,9 +1916,9 @@ double tmpparm9, tmpparm10;
        fabs(tmpparm9 - param[8]) < MINDIF &&
        fabs(tmpparm10 - param[9]) < MINDIF &&
        info->invert[0] - inversion[0] < MINDIF)
-      return(1); /* parameters are in range */
+      return 1; /* parameters are in range */
    else
-      return(0);
+      return 0;
 }
 
 static char functionOK( struct fractal_info *info, int numfn)
@@ -1930,9 +1930,9 @@ static char functionOK( struct fractal_info *info, int numfn)
         mzmatch++;
    }
    if (mzmatch > 0)
-     return(0);
+     return 0;
    else
-     return(1); /* they all match */
+     return 1; /* they all match */
 }
 
 static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
@@ -1945,24 +1945,24 @@ static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
        {
          numfn = maxfn;
          if (numfn>0)
-           return(functionOK(info, numfn));
+           return functionOK(info, numfn);
          else
-           return(1); /* match up formula names with no functions */
+           return 1; /* match up formula names with no functions */
        }
        else
-         return(0); /* two formulas but names don't match */
+         return 0; /* two formulas but names don't match */
    }
    else if (info->fractal_type == fractype ||
            info->fractal_type == curfractalspecific->tofloat)
    {
      numfn = (curfractalspecific->flags >> 6) & 7;
      if (numfn>0)
-       return(functionOK(info, numfn));
+       return functionOK(info, numfn);
      else
-       return(1); /* match types with no functions */
+       return 1; /* match types with no functions */
    }
    else
-       return(0); /* no match */
+       return 0; /* no match */
 }
 
 static void check_history ( char *oldname, char *newname )

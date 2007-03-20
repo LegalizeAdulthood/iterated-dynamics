@@ -24,7 +24,7 @@ extern int  driver_get_key(void);
 
 int teststart()     /* this routine is called just before the fractal starts */
 {
-   return( 0 );
+   return  0 ;
 }
 
 void testend()       /* this routine is called just after the fractal ends */
@@ -52,5 +52,5 @@ long maxit,int inside)
       magnitude = newreal * newreal + newimag * newimag;
    }
    if (color >= maxit) color = inside;
-   return((int)color);
+   return (int)color;
 }

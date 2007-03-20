@@ -264,7 +264,7 @@ int pstopmsg(int x,char *msg)
       fprintf(fp,"%s\n",msg);
       fflush(fp);
    }
-   return(x); /* just to quiet warnings */
+   return x; /* just to quiet warnings */
 }
 
 #define stopmsg pstopmsg

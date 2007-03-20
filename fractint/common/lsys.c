@@ -668,7 +668,7 @@ if (overflow)     /* integer math routines overflowed */
             if ((*rulind)->ch==command->ch) {
                tran=1;
                if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
-                  return(NULL);
+                  return NULL;
             }
       }
       if (!depth || !tran) {
@@ -689,7 +689,7 @@ if (overflow)     /* integer math routines overflowed */
           savey=ts->ypos;
           command = findsize(command+1, ts, rules, depth);
 		  if (command == NULL)
-             return(NULL);
+             return NULL;
           ts->angle=saveang;
           ts->reverse=saverev;
           ts->size=savesize;
@@ -808,7 +808,7 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
           savecolor=ts->curcolor;
           command = drawLSysI(command+1, ts, rules, depth);
 		  if (command == NULL)
-             return(NULL);
+             return NULL;
           ts->angle=saveang;
           ts->reverse=saverev;
           ts->size=savesize;

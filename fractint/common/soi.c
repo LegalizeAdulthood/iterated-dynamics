@@ -1058,7 +1058,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	     iter);
 rhombus_done:
   rhombus_depth--;
-  return(status);
+  return status;
 }
 
 void soi_ldbl(void)

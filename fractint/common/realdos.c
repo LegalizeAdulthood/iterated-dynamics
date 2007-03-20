@@ -307,7 +307,7 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
    if (width>=80) width=79; /* Some systems choke in column 80 */
 #endif
    while (msg[i]) ++i; /* strlen for a */
-   if (i == 0) return(-1);
+   if (i == 0) return -1;
    if (i >= width) i = width - 1; /* sanity check */
    j = (width - i) / 2;
    j -= (width + 10 - i) / 20; /* when wide a bit left of center looks better */
@@ -820,10 +820,10 @@ int fullscreen_choice(
         case FIK_ESC:
 			goto fs_choice_end;
         case FIK_DOWN_ARROW:
-			rev_increment = 0 - (increment = boxwidth);
+			rev_increment = -(increment = boxwidth);
 			break;
         case FIK_CTL_DOWN_ARROW:
-			rev_increment = 0 - (increment = boxwidth);
+			rev_increment = -(increment = boxwidth);
 			{
 				int newcurrent = current;
 				while ((newcurrent += boxwidth) != current)
@@ -844,10 +844,10 @@ int fullscreen_choice(
 			}
 			break;
         case FIK_UP_ARROW:
-			increment = 0 - (rev_increment = boxwidth);
+			increment = -(rev_increment = boxwidth);
 			break;
         case FIK_CTL_UP_ARROW:
-			increment = 0 - (rev_increment = boxwidth);
+			increment = -(rev_increment = boxwidth);
 			{
 				int newcurrent = current;
 				while ((newcurrent-=boxwidth) != current)
@@ -1045,8 +1045,8 @@ int strncasecmp(char *s,char *t,int ct)
 {
    for (; (tolower(*s) == tolower(*t)) && --ct ; s++,t++)
       if (*s == '\0')
-         return(0);
-   return(tolower(*s) - tolower(*t));
+         return 0;
+   return tolower(*s) - tolower(*t);
 }
 #endif
 
@@ -1349,7 +1349,7 @@ top:
 		}
 		else if (i < 0)
 		{
-			i = 0 - i;
+			i = -i;
 		}
 		else                      /* user selected a choice */
 		{
@@ -1407,38 +1407,38 @@ static int menu_checkkey(int curkey, int choice)
    testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
    /* We use F2 for shift-@, annoyingly enough */
-   if (testkey == FIK_F2) return(0-testkey);
+   if (testkey == FIK_F2) return -testkey;
 #endif
    if (testkey == '2')
       testkey = '@';
    if (strchr("#@2txyzgvir3dj",testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
      || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F) /*RB 6== ctrl-F for sound menu */
-      return(0-testkey);
+      return -testkey;
    if (menutype) {
       if (strchr("\\sobpkrh",testkey) || testkey == FIK_TAB
         || testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
         || testkey == FIK_CTL_P
         || testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
-         return(0-testkey);
+         return -testkey;
       if (testkey == ' ')
          if ((curfractalspecific->tojulia != NOFRACTAL
               && param[0] == 0.0 && param[1] == 0.0)
            || curfractalspecific->tomandel != NOFRACTAL)
-         return(0-testkey);
+         return -testkey;
       if (g_got_real_dac && colors >= 16) {
          if (strchr("c+-",testkey))
-            return(0-testkey);
+            return -testkey;
          if (colors > 16
            && (testkey == 'a' || (testkey == 'e')))
-            return(0-testkey);
+            return -testkey;
          }
       /* Alt-A and Alt-S */
       if (testkey == FIK_ALT_A || testkey == FIK_ALT_S )
-         return(0-testkey);
+         return -testkey;
       }
    if (check_vidmode_key(0,testkey) >= 0)
-      return(0-testkey);
-   return(0);
+      return -testkey;
+   return 0;
 }
 
 int input_field(
@@ -1582,7 +1582,7 @@ int input_field(
       }
 inpfld_end:
    lookatmouse = savelookatmouse;
-   return(ret);
+   return ret;
 }
 
 int field_prompt(
@@ -1668,7 +1668,7 @@ int thinking(int options,char *msg)
          thinkstate = -1;
          driver_unstack_screen();
          }
-      return(0);
+      return 0;
       }
    if (thinkstate < 0) {
       driver_stack_screen();
@@ -1719,7 +1719,7 @@ int showvidlength()
 {
    int sz;
    sz = (sizeof(VIDEOINFO)+sizeof(int))*MAXVIDEOMODES;
-   return(sz);
+   return sz;
 }
 
 int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
@@ -1907,22 +1907,22 @@ int check_vidmode_key(int option,int k)
    /* returns g_video_table entry number if the passed keystroke is a  */
    /* function key currently assigned to a video mode, -1 otherwise */
    if (k == 1400)              /* special value from select_vid_mode  */
-      return(MAXVIDEOMODES-1); /* for last entry with no key assigned */
+      return MAXVIDEOMODES-1; /* for last entry with no key assigned */
    if (k != 0) {
       if (option == 0) { /* check resident video mode table */
          for (i = 0; i < MAXVIDEOMODES; ++i) {
             if (g_video_table[i].keynum == k)
-               return(i);
+               return i;
             }
          }
       else { /* check full g_video_table */
          for (i = 0; i < g_video_table_len; ++i) {
             if (g_video_table[i].keynum == k)
-               return(i);
+               return i;
             }
          }
    }
-   return(-1);
+   return -1;
 }
 
 int check_vidmode_keyname(char *kname)
@@ -1943,22 +1943,22 @@ int check_vidmode_keyname(char *kname)
       ++kname;
       }
    if (*kname != 'F' && *kname != 'f')
-      return(0);
+      return 0;
    if (*++kname < '1' || *kname > '9')
-      return(0);
+      return 0;
    i = *kname - '0';
    if (*++kname != 0 && *kname != ' ') {
       if (*kname != '0' || i != 1)
-         return(0);
+         return 0;
       i = 10;
       ++kname;
       }
    while (*kname)
       if (*(kname++) != ' ')
-         return(0);
+         return 0;
    if ((i += keyset) < 2)
       i = 0;
-   return(i);
+   return i;
 }
 
 void vidmode_keyname(int k,char *buf)

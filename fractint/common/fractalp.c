@@ -2334,5 +2334,5 @@ int typehasparm(int type,int parm,char *buf)
 
    if (ret && buf != NULL)
       strcpy(buf,ret);
-   return(ret?1:0);
+   return ret ? 1 : 0;
 }

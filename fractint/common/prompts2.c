@@ -259,7 +259,7 @@ int get_toggles()
    i = fullscreen_prompt("Basic Options\n(not all combinations make sense)",k+1,choices,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
-      return(-1);
+      return -1;
       }
 
    /* now check out the results (*hopefully* in the same order <grin>) */
@@ -381,7 +381,7 @@ int get_toggles()
 
 /* if (j >= 1) j = 1; need to know how many prompts changed for quick_calc JCO 6/23/2001 */
 
-   return(j);
+   return j;
 }
 
 /*
@@ -462,7 +462,7 @@ int get_toggles2()
 		k+1,choices,uvalues,0,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
-      return(-1);
+      return -1;
       }
 
    /* now check out the results (*hopefully* in the same order <grin>) */
@@ -522,7 +522,7 @@ int get_toggles2()
       rotate_hi = old_rotate_hi;
       }
 
-   return(j);
+   return j;
 }
 
 
@@ -585,7 +585,7 @@ pass_option_restart:
 		"(Press "FK_F6" for calculation parameters)",k+1,choices,uvalues,0x44,NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
-      return(-1);
+      return -1;
       }
 
    /* now check out the results (*hopefully* in the same order <grin>) */
@@ -645,7 +645,7 @@ pass_option_restart:
       goto pass_option_restart;
    }
 
-   return(j + ret);
+   return j + ret;
 }
 
 
@@ -847,7 +847,7 @@ int get_cmd_string()
        }
    }
 
-   return(i);
+   return i;
 }
 
 
@@ -881,7 +881,7 @@ int starfield(void)
    if (ValidateLuts(GreyFile) != 0) {
       stopmsg(0,"Unable to load ALTERN.MAP");
       busy = 0;
-      return(-1);
+      return -1;
       }
    spindac(0,1);                 /* load it, but don't spin */
    for (row = 0; row < ydots; row++) {
@@ -889,7 +889,7 @@ int starfield(void)
          if (driver_key_pressed()) {
             driver_buzzer(BUZZER_INTERRUPT);
             busy = 0;
-            return(1);
+            return 1;
             }
          c = getcolor(col, row);
          if (c == inside)
@@ -899,7 +899,7 @@ int starfield(void)
    }
    driver_buzzer(BUZZER_COMPLETE);
    busy = 0;
-   return(0);
+   return 0;
 }
 
 int get_starfield_params(void) {
@@ -915,7 +915,7 @@ int get_starfield_params(void) {
 
    if (colors < 255) {
       stopmsg(0,"starfield requires 256 color mode");
-      return(-1);
+      return -1;
    }
    for (i = 0; i < 3; i++) {
       uvalues[i].uval.dval = starfield_values[i];
@@ -928,12 +928,12 @@ int get_starfield_params(void) {
    helpmode = oldhelpmode;
    driver_unstack_screen();
    if (i < 0) {
-      return(-1);
+      return -1;
       }
    for (i = 0; i < 3; i++)
       starfield_values[i] = uvalues[i].uval.dval;
 
-   return(0);
+   return 0;
 }
 
 static char *masks[] = {"*.pot","*.gif"};
@@ -1033,7 +1033,7 @@ int get_rds_params(void) {
       break;
    }
    driver_unstack_screen();
-   return(ret);
+   return ret;
 }
 
 int get_a_number(double *x, double *y)
@@ -1059,7 +1059,7 @@ int get_a_number(double *x, double *y)
    i = fullscreen_prompt("Set Cursor Coordinates",k+1,choices,uvalues,25,NULL);
    if (i < 0) {
       driver_unstack_screen();
-      return(-1);
+      return -1;
       }
 
    /* now check out the results (*hopefully* in the same order <grin>) */
@@ -1069,7 +1069,7 @@ int get_a_number(double *x, double *y)
    *y = uvalues[++k].uval.dval;
 
    driver_unstack_screen();
-   return(i);
+   return i;
 }
 
 /* --------------------------------------------------------------------- */
@@ -1090,7 +1090,7 @@ int get_commands()              /* execute commands from file */
       ret = load_commands(parmfile);
       }
    helpmode = oldhelpmode;
-   return(ret);
+   return ret;
 }
 
 /* --------------------------------------------------------------------- */
@@ -1543,9 +1543,9 @@ static int check_f6_key(int curkey,int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
    choice = 0; /* to suppress warning only */
    if (curkey == FIK_F6)
-      return 0-FIK_F6;
+      return -FIK_F6;
    else if (curkey == FIK_F4)
-      return 0-FIK_F4;
+      return -FIK_F4;
    return 0;
 }
 
@@ -1568,7 +1568,7 @@ static int filename_speedstr(int row, int col, int vid,
       prompt = speed_prompt;
       }
    driver_put_string(row,col,vid,prompt);
-   return((int) strlen(prompt));
+   return (int) strlen(prompt);
 }
 
 #if !defined(_WIN32)
@@ -1580,7 +1580,7 @@ int isadirectory(char *s)
    unsigned attrib = 0;
 #endif
    if (strchr(s,'*') || strchr(s,'?'))
-      return(0); /* for my purposes, not a directory */
+      return 0; /* for my purposes, not a directory */
 
    len = (int) strlen(s);
    if (len > 0)
@@ -1591,7 +1591,7 @@ int isadirectory(char *s)
 #ifdef _MSC_VER
    if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
    {
-      return(1);  /* not a directory or doesn't exist */
+      return 1;  /* not a directory or doesn't exist */
    }
    else if (sv == SLASHC)
    {
@@ -1600,34 +1600,34 @@ int isadirectory(char *s)
       if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
       {
          s[len-1] = sv;
-         return(1);
+         return 1;
       }
       s[len-1] = sv;
    }
-   return(0);
+   return 0;
 #else
    if (fr_findfirst(s) != 0) /* couldn't find it */
    {
       /* any better ideas?? */
      if (sv == SLASHC) /* we'll guess it is a directory */
-         return(1);
+         return 1;
       else
-         return(0);  /* no slashes - we'll guess it's a file */
+         return 0;  /* no slashes - we'll guess it's a file */
    }
    else if ((DTA.attribute & SUBDIR) != 0) {
       if (sv == SLASHC) {
       /* strip trailing slash and try again */
          s[len-1] = 0;
          if (fr_findfirst(s) != 0) /* couldn't find it */
-             return(0);
+             return 0;
          else if ((DTA.attribute & SUBDIR) != 0)
-             return(1);   /* we're SURE it's a directory */
+             return 1;   /* we're SURE it's a directory */
          else
-             return(0);
+             return 0;
       } else
-         return(1);   /* we're SURE it's a directory */
+         return 1;   /* we're SURE it's a directory */
    }
-   return(0);
+   return 0;
 #endif
 }
 #endif
@@ -1660,7 +1660,7 @@ int splitpath(char *file_template,char *drive,char *dir,char *fname,char *ext)
 	length = (int) strlen(file_template);
 	if (length == 0)
 	{
-		return(0);
+		return 0;
 	}
 
 	offset = 0;
@@ -1705,7 +1705,7 @@ int splitpath(char *file_template,char *drive,char *dir,char *fname,char *ext)
 	}
 	else
 	{
-		return(0);
+		return 0;
 	}
 
 	/* get fname */
@@ -1754,7 +1754,7 @@ int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 	if (template_str)
 		*template_str = 0;
 	else
-		return(-1);
+		return -1;
 #ifndef XFRACT
 	if (drive)
 		strcpy(template_str,drive);
@@ -1794,7 +1794,7 @@ int dir_remove(char *dir,char *filename)
 {
    char tmp[FILE_MAX_PATH];
    dir_name(tmp,dir,filename);
-   return(remove(tmp));
+   return remove(tmp);
 }
 
 /* fopens file in dir directory */
@@ -1802,7 +1802,7 @@ FILE *dir_fopen(char *dir, char *filename, char *mode )
 {
    char tmp[FILE_MAX_PATH];
    dir_name(tmp,dir,filename);
-   return(fopen(tmp,mode));
+   return fopen(tmp,mode);
 }
 
 /*
@@ -1822,7 +1822,7 @@ int cmpdbl(double old, double new)
    prompt_valuestring(buf,&val);   /* convert "old" to string */
 
    old = atof(buf);                /* convert back */
-   return(fabs(old-new)<DBL_EPSILON?0:1);  /* zero if same */
+   return fabs(old-new)<DBL_EPSILON?0:1;  /* zero if same */
 }
 
 int get_corners()
@@ -1928,7 +1928,7 @@ gc_loop:
       xxmin = oxxmin; xxmax = oxxmax;
       yymin = oyymin; yymax = oyymax;
       xx3rd = oxx3rd; yy3rd = oyy3rd;
-      return(-1);
+      return -1;
       }
 
    if (prompt_ret == FIK_F4) { /* reset to type defaults */
@@ -2009,7 +2009,7 @@ gc_loop:
       return 0;
    }
    else
-      return(1);
+      return 1;
 }
 
 static int get_screen_corners(void)
@@ -2122,7 +2122,7 @@ gsc_loop:
       xxmin = svxxmin; xxmax = svxxmax;
       yymin = svyymin; yymax = svyymax;
       xx3rd = svxx3rd; yy3rd = svyy3rd;
-      return(-1);
+      return -1;
       }
 
    if (prompt_ret == FIK_F4) { /* reset to type defaults */
@@ -2212,7 +2212,7 @@ gsc_loop:
       xxmin = svxxmin; xxmax = svxxmax;
       yymin = svyymin; yymax = svyymax;
       xx3rd = svxx3rd; yy3rd = svyy3rd;
-      return(1);
+      return 1;
    }
 }
 
@@ -2284,7 +2284,7 @@ get_brws_restart:
    i = fullscreen_prompt("Browse ('L'ook) Mode Options",k+1,choices,uvalues,16,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
-      return(0);
+      return 0;
       }
 
    if (i == FIK_F4) {
@@ -2336,7 +2336,7 @@ get_brws_restart:
       i = 0;
    }
 
-   return(i);
+   return i;
 }
 
 /* merge existing full path with new one  */
@@ -2469,7 +2469,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
       }
    }
    makepath(oldfullpath,drive1,dir1,fname1,ext1);
-   return(isadir);
+   return isadir;
 }
 
 /* extract just the filename/extension portion of a path */
@@ -2492,7 +2492,7 @@ char *has_ext(char *source)
    if (ext != NULL)
       if (*ext != 0)
          ret = strrchr(source,'.');
-   return(ret);
+   return ret;
 }
 
 

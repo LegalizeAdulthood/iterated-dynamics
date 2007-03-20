@@ -166,7 +166,7 @@ void drawbox(int drawit)
     }
     /* do the same for botleft & topright */
     tmpx = zwidth/-2 - fxadj;
-    tmpy = 0.0-tmpy;
+    tmpy = -tmpy;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = zbx + dx - fxadj;
@@ -547,34 +547,34 @@ void aspectratio_crop(float oldaspect,float newaspect)
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 {   int i,j;
     if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
-        return(0); /* not resumable, not complete */
+        return 0; /* not resumable, not complete */
     if ( curfractalspecific->calctype != StandardFractal
       && curfractalspecific->calctype != calcmand
       && curfractalspecific->calctype != calcmandfp
       && curfractalspecific->calctype != lyapunov
       && curfractalspecific->calctype != calcfroth)
-        return(0); /* not a worklist-driven type */
+        return 0; /* not a worklist-driven type */
     if (zwidth != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
-        return(0); /* not a full size unrotated unskewed zoombox */
+        return 0; /* not a full size unrotated unskewed zoombox */
     if (stdcalcmode == 't')
-        return(0); /* tesselate, can't do it */
+        return 0; /* tesselate, can't do it */
     if (stdcalcmode == 'd')
-	return(0); /* diffusion scan: can't do it either */
+	return 0; /* diffusion scan: can't do it either */
     if (stdcalcmode == 'o')
-	return(0); /* orbits, can't do it */
+	return 0; /* orbits, can't do it */
 
     /* can pan if we get this far */
 
     if (calc_status == CALCSTAT_COMPLETED)
-        return(1); /* image completed, align on any pixel */
+        return 1; /* image completed, align on any pixel */
     if (potflag && pot16bit)
-        return(1); /* 1 pass forced so align on any pixel */
+        return 1; /* 1 pass forced so align on any pixel */
     if (stdcalcmode == 'b')
-        return(1); /* btm, align on any pixel */
+        return 1; /* btm, align on any pixel */
     if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS)) {
         if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
-           return(2);
-        return(1); /* assume 1pass */
+           return 2;
+        return 1; /* assume 1pass */
         }
     /* solid guessing */
     start_resume();
@@ -587,7 +587,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
     j = ssg_blocksize(); /* worst-case alignment requirement */
     while (--i >= 0)
         j = j>>1; /* reduce requirement */
-    return(j);
+    return j;
     }
 
 static void _fastcall move_row(int fromrow,int torow,int col)
@@ -610,22 +610,22 @@ static void _fastcall move_row(int fromrow,int torow,int col)
 int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist & pan */
 {   int i,j,row,col,y,alignmask,listfull;
     if (zwidth == 0.0)
-        return(0); /* no zoombox, leave calc_status as is */
+        return 0; /* no zoombox, leave calc_status as is */
     /* got a zoombox */
     if ((alignmask=check_pan()-1) < 0 || evolving) {
         calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
-        return(0); }
+        return 0; }
     if (zbx == 0.0 && zby == 0.0) {
         clearbox();
-        return(0); } /* box is full screen, leave calc_status as is */
+        return 0; } /* box is full screen, leave calc_status as is */
     col = (int)(zbx*(dxsize+PIXELROUND)); /* calc dest col,row of topleft pixel */
     row = (int)(zby*(dysize+PIXELROUND));
     if (do_zoomout) { /* invert row and col */
-        row = 0-row;
-        col = 0-col; }
+        row = -row;
+        col = -col; }
     if ((row&alignmask) != 0 || (col&alignmask) != 0) {
         calc_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
-        return(0); }
+        return 0; }
     /* pan */
     num_worklist = 0;
     if (calc_status == CALCSTAT_RESUMABLE) {
@@ -645,13 +645,13 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     listfull = i = 0;
     j = ydots-1;
     if (row < 0) {
-        listfull |= add_worklist(0,xdots-1,0,0,0-row-1,0,0,0);
-        i = 0 - row; }
+        listfull |= add_worklist(0,xdots-1,0,0,-row-1,0,0,0);
+        i = -row; }
     if (row > 0) {
         listfull |= add_worklist(0,xdots-1,0,ydots-row,ydots-1,ydots-row,0,0);
         j = ydots - row - 1; }
     if (col < 0)
-        listfull |= add_worklist(0,0-col-1,0,i,j,i,0,0);
+        listfull |= add_worklist(0,-col-1,0,i,j,i,0,0);
     if (col > 0)
         listfull |= add_worklist(xdots-col,xdots-1,xdots-col,i,j,i,0,0);
     if (listfull != 0) {
@@ -662,7 +662,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
             drawbox(1); }
         else
             calc_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
-        return(0); }
+        return 0; }
     /* now we're committed */
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
@@ -673,7 +673,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     fix_worklist(); /* fixup any out of bounds worklist entries */
     alloc_resume(sizeof(worklist)+20,2); /* post the new worklist */
     put_resume(sizeof(num_worklist),&num_worklist,sizeof(worklist),worklist,0);
-    return(0);
+    return 0;
     }
 
 static void _fastcall restart_window(int wknum)

@@ -222,7 +222,7 @@ int lclpy = gridsz - py - 1;
      }
        break;
  }
- return(ret);
+ return ret;
 }
 
 int wrapped_positive_varyint( int randvalue, int limit, int mode )
@@ -230,9 +230,9 @@ int wrapped_positive_varyint( int randvalue, int limit, int mode )
    int i;
    i = varyint(randvalue,limit,mode);
    if (i < 0)
-      return(limit + i);
+      return limit + i;
    else
-      return(i);
+      return i;
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
@@ -365,7 +365,7 @@ choose_vars_restart:
           g_genes[num].mutate = (char)(rand() % 6);
        goto choose_vars_restart;
      case -1:
-       return(-1);
+       return -1;
      default:
        break;
    }
@@ -382,7 +382,7 @@ choose_vars_restart:
        (curfractalspecific->flags & BAILTEST) )
       g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
 
-   return(1); /* if you were here, you want to regenerate */
+   return 1; /* if you were here, you want to regenerate */
 }
 
 int get_variations(void)
@@ -492,7 +492,7 @@ choose_vars_restart:
 		 }
        goto choose_vars_restart;
      case -1:
-       return(chngd);
+       return chngd;
      default:
        break;
    }
@@ -506,7 +506,7 @@ choose_vars_restart:
       g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
    }
 
-   return(1); /* if you were here, you want to regenerate */
+   return 1; /* if you were here, you want to regenerate */
 }
 
 void set_mutation_level(int strength)
@@ -629,7 +629,7 @@ get_evol_restart:
    opy           = old_opy;
    fiddlefactor  = old_fiddlefactor;
 
-      return(-1);
+      return -1;
    }
 
    if (i == FIK_F4) {
@@ -667,7 +667,7 @@ get_evol_restart:
    viewwindow = evolving = uvalues[++k].uval.ch.val;
 
    if (!evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
-      return(1);              /* the following code can set evolving even if it's off */
+      return 1;              /* the following code can set evolving even if it's off */
 
    gridsz = uvalues[++k].uval.ival;
    tmp = sxdots / (MINPIXELS<<1);
@@ -726,7 +726,7 @@ if (j==FIK_F6) {
       fiddle_reduction = 1.0;
       goto get_evol_restart;
    }
-   return(i);
+   return i;
 }
 
 void SetupParamBox(void)
@@ -841,7 +841,7 @@ int explore_check(void)
 
    for (i=0;i<NUMGENES && !(nonrandom);i++)
       if ((g_genes[i].mutate > 0) && (g_genes[i].mutate < 5)) nonrandom = TRUE;
-   return(nonrandom);
+   return nonrandom;
 }
 
 void drawparmbox(int mode)
@@ -986,9 +986,9 @@ int unspiralmap(void)
      }
      oldgridsz = gridsz;
      px = py = mid;
-     return(0);
+     return 0;
   }
-  return(ecountbox[px][py]);
+  return ecountbox[px][py];
 }
 
   /* points to ponder.....

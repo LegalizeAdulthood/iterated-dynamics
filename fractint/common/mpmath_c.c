@@ -26,25 +26,25 @@
 
 struct MP *MPsub(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
-   return(MPadd(x, y));
+   return MPadd(x, y);
 }
 
 /* added by TW */
 struct MP *MPsub086(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
-   return(MPadd086(x, y));
+   return MPadd086(x, y);
 }
 
 /* added by TW */
 struct MP *MPsub386(struct MP x, struct MP y) {
    y.Exp ^= 0x8000;
-   return(MPadd386(x, y));
+   return MPadd386(x, y);
 }
 
 struct MP *MPabs(struct MP x) {
    Ans = x;
    Ans.Exp &= 0x7fff;
-   return(&Ans);
+   return &Ans;
 }
 
 struct MPC MPCsqr(struct MPC x) {
@@ -53,11 +53,11 @@ struct MPC MPCsqr(struct MPC x) {
         z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
         z.y = *pMPmul(x.x, x.y);
         z.y.Exp++;
-   return(z);
+   return z;
 }
 
 struct MP MPCmod(struct MPC x) {
-        return(*pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y)));
+        return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
 }
 
 struct MPC MPCmul(struct MPC x, struct MPC y) {
@@ -65,7 +65,7 @@ struct MPC MPCmul(struct MPC x, struct MPC y) {
 
         z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
         z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
-   return(z);
+   return z;
 }
 
 struct MPC MPCdiv(struct MPC x, struct MPC y) {
@@ -75,7 +75,7 @@ struct MPC MPCdiv(struct MPC x, struct MPC y) {
         y.y.Exp ^= 0x8000;
         y.x = *pMPdiv(y.x, mod);
         y.y = *pMPdiv(y.y, mod);
-   return(MPCmul(x, y));
+   return MPCmul(x, y);
 }
 
 struct MPC MPCadd(struct MPC x, struct MPC y) {
@@ -83,7 +83,7 @@ struct MPC MPCadd(struct MPC x, struct MPC y) {
 
         z.x = *pMPadd(x.x, y.x);
         z.y = *pMPadd(x.y, y.y);
-   return(z);
+   return z;
 }
 
 struct MPC MPCsub(struct MPC x, struct MPC y) {
@@ -91,7 +91,7 @@ struct MPC MPCsub(struct MPC x, struct MPC y) {
 
         z.x = *pMPsub(x.x, y.x);
         z.y = *pMPsub(x.y, y.y);
-   return(z);
+   return z;
 }
 
 struct MPC MPCone = { {0x3fff, 0x80000000l},
@@ -119,7 +119,7 @@ struct MPC MPCpow(struct MPC x, int exp) {
       }
       exp >>= 1;
    }
-   return(z);
+   return z;
 }
 
 int MPCcmp(struct MPC x, struct MPC y) {
@@ -128,10 +128,10 @@ int MPCcmp(struct MPC x, struct MPC y) {
         if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) {
                 z.x = MPCmod(x);
                 z.y = MPCmod(y);
-                return(pMPcmp(z.x, z.y));
+                return pMPcmp(z.x, z.y);
    }
    else
-      return(0);
+      return 0;
 }
 
 _CMPLX MPC2cmplx(struct MPC x) {
@@ -139,7 +139,7 @@ _CMPLX MPC2cmplx(struct MPC x) {
 
         z.x = *pMP2d(x.x);
         z.y = *pMP2d(x.y);
-   return(z);
+   return z;
 }
 
 struct MPC cmplx2MPC(_CMPLX z) {
@@ -147,7 +147,7 @@ struct MPC cmplx2MPC(_CMPLX z) {
 
         x.x = *pd2MP(z.x);
         x.y = *pd2MP(z.y);
-   return(x);
+   return x;
 }
 
 /* function pointer versions added by Tim Wegner 12/07/89 */
@@ -198,7 +198,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
    if (ldcheck == 0)
       if (xx.x == 0 && xx.y == 0) {
          z.x = z.y = 0.0;
-         return(z);
+         return z;
       }
 
    FPUcplxlog(&xx, &cLog);
@@ -215,7 +215,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
       z.x = e2x * cosy;
       z.y = e2x * siny;
    }
-   return(z);
+   return z;
 }
 
 /*
@@ -457,7 +457,7 @@ void SetupLogTable(void) {
    } else if (LogFlag == -1) { /* old log function */
       mlf = (colors - 1) / log(MaxLTSize);
    } else if (LogFlag <= -2) { /* sqrt function */
-      if ((lf = 0 - LogFlag) >= (unsigned long)MaxLTSize)
+      if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
          lf = MaxLTSize - 1;
       mlf = (colors - 2) / sqrt(MaxLTSize - lf);
    }
@@ -495,7 +495,7 @@ void SetupLogTable(void) {
             LogTable[prev++] = (BYTE)n;
       }
    } else {
-      if ((lf = 0 - LogFlag) >= (unsigned long)MaxLTSize)
+      if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
          lf = MaxLTSize - 1;
       Fg2Float((long)(MaxLTSize-lf), 0, m);
       fSqrt14(m, m);
@@ -525,9 +525,9 @@ long logtablecalc(long citer) {
    long ret = 0;
 
    if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
-      return(citer);
+      return citer;
    if (LogTable && !Log_Calc)
-      return(LogTable[(long)min(citer, MaxLTSize)]);
+      return LogTable[(long)min(citer, MaxLTSize)];
 
    if (LogFlag > 0) { /* new log function */
       if ((unsigned long)citer <= lf + 1)
@@ -563,7 +563,7 @@ long ExpFloat14(long xx) {
 
    f = 23 - (int)RegFloat2Fg(RegDivFloat(xx, *(long*)&fLogTwo), 0);
    Ans = ExpFudged(RegFloat2Fg(xx, 16), f);
-   return(RegFg2Float(Ans, (char)f));
+   return RegFg2Float(Ans, (char)f);
 }
 
 double TwoPi;
@@ -582,7 +582,7 @@ int ComplexNewtonSetup(void) {
       FPUcplxlog(&croot, &BaseLog);
       TwoPi = asin(1.0) * 4;
    }
-   return(1);
+   return 1;
 }
 
 int ComplexNewton(void) {
@@ -601,7 +601,7 @@ int ComplexNewton(void) {
    tmp.x = g_new.x - croot.x;
    tmp.y = g_new.y - croot.y;
    if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
-      return(1);
+      return 1;
 
    FPUcplxmul(&g_new, &cd1, &tmp);
    tmp.x += croot.x;
@@ -611,10 +611,10 @@ int ComplexNewton(void) {
    FPUcplxdiv(&tmp, &cd1, &old);
    if (overflow)
    {
-      return(1);
+      return 1;
    }
    g_new = old;
-   return(0);
+   return 0;
 }
 
 int ComplexBasin(void) {
@@ -649,7 +649,7 @@ int ComplexBasin(void) {
       coloriter += 2;
       if (coloriter < 0)
          coloriter += 128;
-      return(1);
+      return 1;
    }
 
    FPUcplxmul(&g_new, &cd1, &tmp);
@@ -660,10 +660,10 @@ int ComplexBasin(void) {
    FPUcplxdiv(&tmp, &cd1, &old);
    if (overflow)
    {
-      return(1);
+      return 1;
    }
    g_new = old;
-   return(0);
+   return 0;
 }
 
 /*
@@ -692,9 +692,9 @@ int GausianNumber(int Probability, int Range) {
       r = r - Range;
       if (r < 0)
          r = -r;
-      return(Range - r + Offset);
+      return Range - r + Offset;
    }
-   return(Offset);
+   return Offset;
 }
 
 #endif

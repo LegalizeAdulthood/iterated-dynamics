@@ -219,7 +219,7 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
       }
    intlength = saveintlength;
    bnlength  = savebnlength;
-   return(0);
+   return 0;
    }
 
 /********************************************************************/
@@ -335,7 +335,7 @@ int strlen_needed()
     length += decimals;  /* decimal part */
     length += 2;         /* decimal point and sign */
     length += 4;         /* null and a little extra for safety */
-    return(length);
+    return length;
     }
 
 /********************************************************************/
@@ -1254,7 +1254,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
          copy_bn(r, bn_pi); /* negative x axis, 180 deg */
       else    /* signx >= 0    positive x axis, 0 */
          clear_bn(r);
-      return(r);
+      return r;
       }
    if (signx == 0)
       {
@@ -1262,7 +1262,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
       half_a_bn(r);      /* +90 deg */
       if (signy < 0)
          neg_a_bn(r);    /* -90 deg */
-      return(r);
+      return r;
       }
 
    if (signy < 0)
@@ -1275,7 +1275,7 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
       sub_bn(r,bn_pi,r);
    if (signy < 0)
       neg_a_bn(r);
-   return(r);
+   return r;
    }
 
 

@@ -79,7 +79,7 @@ int startvideo()
 /* assume that the encoded values in FRACTINT.CFG or FARVIDEO.ASM
    have been set to accomplish this (AX = 0x13, BX = CX = DX = 0)  */
 
-return(0);                              /* set flag: video started */
+return 0;                              /* set flag: video started */
 
 /*   or, we could have done this instead and encoded AX = 0xFF
      in FRACTINT.CFG/FARVIDEO.ASM:
@@ -96,7 +96,7 @@ int86(0x10,&regs,&regs);
 int endvideo()
 {
 
-return(0);                              /* set flag: video ended */
+return 0;                              /* set flag: video ended */
 
 }
 
@@ -127,7 +127,7 @@ regs.x.cx = x;
 regs.x.dx = y;
 int86(0x10,&regs,&regs);
 
-return((unsigned int)regs.h.al);        /* return pixel color */
+return (unsigned int)regs.h.al;        /* return pixel color */
 #endif
 }
 

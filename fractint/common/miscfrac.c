@@ -41,7 +41,7 @@ int test(void)
       end_resume();
    }
    if (teststart()) /* assume it was stand-alone, doesn't want passes logic */
-      return(0);
+      return 0;
    numpasses = (stdcalcmode == '1') ? 0 : 1;
    for (passes=startpass; passes <= numpasses ; passes++)
    {
@@ -57,7 +57,7 @@ int test(void)
                testend();
                alloc_resume(20,1);
                put_resume(sizeof(row),&row,sizeof(passes),&passes,0);
-               return(-1);
+               return -1;
             }
             color = testpt(init.x,init.y,parm.x,parm.y,maxit,inside);
             if (color >= colors) { /* avoid trouble if color is 0 */
@@ -74,7 +74,7 @@ int test(void)
       startrow = passes + 1;
    }
    testend();
-   return(0);
+   return 0;
 }
 
 /***************** standalone engine for "plasma" ********************/
@@ -95,7 +95,7 @@ U16 rand16(void)
    value = (U16)(value + (rand15()&1));
    if (value < 1)
       value = 1;
-   return(value);
+   return value;
 }
 
 void _fastcall putpot(int x, int y, U16 color)
@@ -134,7 +134,7 @@ U16 _fastcall getpot(int x, int y)
 
    color = (U16)readdisk(x+sxoffs,y+syoffs);
    color = (U16)((color << 8) + (U16) readdisk(x+sxoffs,y+sydots+syoffs));
-   return(color);
+   return color;
 }
 
 static int plasma_check;                        /* to limit kbd checking */
@@ -157,7 +157,7 @@ static U16 _fastcall adjust(int xa,int ya,int x,int y,int xb,int yb)
    if (pseudorandom < 1)
       pseudorandom = 1;
    plot(x,y,(U16)pseudorandom);
-   return((U16)pseudorandom);
+   return (U16)pseudorandom;
 }
 
 
@@ -197,7 +197,7 @@ static int _fastcall new_subD (int x1,int y1,int x2,int y2, int recur)
          if (driver_key_pressed())
          {
             plasma_check--;
-            return(1);
+            return 1;
          }
       while (suby.r[suby.t-1] < (BYTE)recur)
       {
@@ -262,7 +262,7 @@ static int _fastcall new_subD (int x1,int y1,int x2,int y2, int recur)
 
       if (suby.r[suby.t-1] == (BYTE)recur) suby.t = (BYTE)(suby.t - 2);
    }
-   return(0);
+   return 0;
 }
 
 static void _fastcall subDivide(int x1,int y1,int x2,int y2)
@@ -323,7 +323,7 @@ int plasma()
 		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
 		"mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
 		"640x350x16 mode]).");
-      return(-1);
+      return -1;
    }
    iparmx = (int)(param[0] * 8);
    if (parm.x <= 0.0) iparmx = 0;
@@ -447,7 +447,7 @@ int plasma()
    }
    plot    = putcolor;
    getpix  = (U16(_fastcall *)(int,int))getcolor;
-   return(n);
+   return n;
 }
 
 #define dac ((Palettetype *)g_dac_box)
@@ -792,7 +792,7 @@ int Bifurcation(void)
    if ((verhulst_array = (int *) malloc(array_size)) == NULL)
    {
       stopmsg(0, "Insufficient free memory for calculation.");
-      return(-1);
+      return -1;
    }
 
    LPI = (long)(PI * fudge);
@@ -834,7 +834,7 @@ int Bifurcation(void)
          free((char *)verhulst_array);
          alloc_resume(10,1);
          put_resume(sizeof(column),&column,0);
-         return(-1);
+         return -1;
       }
 
       if (integerfractal)
@@ -859,7 +859,7 @@ int Bifurcation(void)
       column++;
    }
    free((char *)verhulst_array);
-   return(0);
+   return 0;
 }
 
 static void verhulst()          /* P. F. Verhulst (1845) */
@@ -961,15 +961,15 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
       if (integerfractal)
       {
          if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
-            return(1);
+            return 1;
       }
       else
       {
          if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
-            return(1);
+            return 1;
       }
    }
-   return(0);
+   return 0;
 }
 
 /**********************************************************************/
@@ -1133,7 +1133,7 @@ int BifurcMaySetup()
    param[2] = (double)beta;
 
    timer(0,curfractalspecific->calctype);
-   return(0);
+   return 0;
   }
 
 /* Here Endeth the Generalised Bifurcation Fractal Engine   */
@@ -1165,13 +1165,13 @@ int popcorn()   /* subset of std engine */
          {
             alloc_resume(10,1);
             put_resume(sizeof(row),&row,0);
-            return(-1);
+            return -1;
          }
          reset_periodicity = 0;
       }
    }
    calc_status = CALCSTAT_COMPLETED;
-   return(0);
+   return 0;
 }
 
 /******************* standalone engine for "lyapunov" *********************/
@@ -1591,7 +1591,7 @@ int cellular () {
 #endif
    if (cell_array[0]==NULL || cell_array[1]==NULL) {
       abort_cellular(BAD_MEM, 0);
-      return(-1);
+      return -1;
    }
 
 /* nxtscreenflag toggled by space bar in fractint.c, 1 for continuous */
@@ -1664,7 +1664,7 @@ int cellular () {
        if (t>rule_digits || t<0) {
          thinking(0, NULL);
          abort_cellular(BAD_T, t);
-         return(-1);
+         return -1;
        }
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
@@ -1674,7 +1674,7 @@ int cellular () {
          if (t>rule_digits || t<0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
-           return(-1);
+           return -1;
          }
          cell_array[notfilled][col] = (BYTE)cell_table[t];
        }
@@ -1717,7 +1717,7 @@ contloop:
        if (t>rule_digits || t<0) {
          thinking(0, NULL);
          abort_cellular(BAD_T, t);
-         return(-1);
+         return -1;
        }
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
@@ -1727,7 +1727,7 @@ contloop:
          if (t>rule_digits || t<0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
-           return(-1);
+           return -1;
          }
          cell_array[notfilled][col] = (BYTE)cell_table[t];
        }
@@ -1757,7 +1757,7 @@ int CellularSetup(void)
       nxtscreenflag = 0; /* initialize flag */
    }
    timer(0,curfractalspecific->calctype);
-   return(0);
+   return 0;
 }
 
 static void set_Cellular_palette()

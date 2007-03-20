@@ -127,7 +127,7 @@ int gifview()
       if (tmp < 0)
       {
          close_file();
-         return(-1);
+         return -1;
       }
    }
 
@@ -137,7 +137,7 @@ int gifview()
       buffer[5] < 'A' || buffer[5] > 'z' )
    {
       close_file();
-      return(-1);
+      return -1;
    }
 
    width  = buffer[6] | (buffer[7] << 8);
@@ -148,7 +148,7 @@ int gifview()
    if ((buffer[10] & 0x80)==0)    /* color map (better be!) */
    {
       close_file();
-      return(-1);
+      return -1;
    }
    numcolors = 1 << planes;
 
@@ -162,7 +162,7 @@ int gifview()
          if ((k = get_byte()) < 0)
          {
             close_file();
-            return(-1);
+            return -1;
          }
          if ((!display3d || (g_glasses_type != 1 && g_glasses_type != 2))
                        && !dontreadcolor)
@@ -269,7 +269,7 @@ int gifview()
                 for (j = 0; j < 3; j++) {
                    if ((k = get_byte()) < 0) {
                       close_file();
-                      return(-1);
+                      return -1;
                       }
                    }
                 }
@@ -322,7 +322,7 @@ int gifview()
         ditherbuf = NULL;
         }
 
-   return(status);
+   return status;
 }
 
 static void close_file()
@@ -343,7 +343,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
    put_line(row, startcol, stopcol, pixels);
    g_row_count++;
 
-   return(0);
+   return 0;
 }
 
 static int out_line_dither(BYTE *pixels, int linelen)
@@ -406,7 +406,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
          g_row_count++;
       }
    }   
-   return(0);
+   return 0;
 }
 
 static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
@@ -421,10 +421,10 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       if (driver_key_pressed())
       {
         driver_mute();
-        return(-1);
+        return -1;
       }
    }
-   return(0);
+   return 0;
 }
 
 int sound_line(BYTE *pixels, int linelen)
@@ -460,7 +460,7 @@ int sound_line(BYTE *pixels, int linelen)
    driver_mute();
    if (driver_key_pressed())
       ret = -1;
-   return(ret);
+   return ret;
 }   
 
 int pot_line(BYTE *pixels, int linelen)
@@ -478,5 +478,5 @@ int pot_line(BYTE *pixels, int linelen)
    for (col = 0; col < xdots; ++col)
       writedisk(col+sxoffs,row+syoffs,*(pixels+col));
    g_row_count = saverowcount + 1;
-   return(0);
+   return 0;
 }

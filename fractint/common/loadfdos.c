@@ -67,12 +67,12 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
    struct vidinf CONST *ptr1,*ptr2;
    ptr1 = (struct vidinf CONST *)p1;
    ptr2 = (struct vidinf CONST *)p2;
-   if (ptr1->flags < ptr2->flags) return(-1);
-   if (ptr1->flags > ptr2->flags) return(1);
-   if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum) return(-1);
-   if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum) return(1);
-   if (ptr1->entnum < ptr2->entnum) return(-1);
-   return(1);
+   if (ptr1->flags < ptr2->flags) return -1;
+   if (ptr1->flags > ptr2->flags) return 1;
+   if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum) return -1;
+   if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum) return 1;
+   if (ptr1->entnum < ptr2->entnum) return -1;
+   return 1;
 }
 
 static void format_vid_inf(int i,char *err,char *buf)

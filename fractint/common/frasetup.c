@@ -39,7 +39,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
       calctype = StandardFractal;
       longparm = &linit;
    }
-   return(1);
+   return 1;
 }
 
 int
@@ -59,7 +59,7 @@ JuliaSetup(void)            /* Julia Routine */
       longparm = &lparm;
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
    }
-   return(1);
+   return 1;
 }
 
 int
@@ -187,7 +187,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
    if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
       setMPfunctions();
 #endif
-   return(1);
+   return 1;
 }
 
 
@@ -195,7 +195,7 @@ int
 StandaloneSetup(void)
 {
    timer(0,curfractalspecific->calctype);
-   return(0);           /* effectively disable solid-guessing */
+   return 0;           /* effectively disable solid-guessing */
 }
 
 int
@@ -204,7 +204,7 @@ UnitySetup(void)
    periodicitycheck = 0;
    FgOne = (1L << bitshift);
    FgTwo = FgOne + FgOne;
-   return(1);
+   return 1;
 }
 
 int
@@ -349,7 +349,7 @@ MandelfpSetup(void)
    default:
       break;
    }
-   return(1);
+   return 1;
 }
 
 int
@@ -512,7 +512,7 @@ JuliafpSetup(void)
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
       break;
    }
-   return(1);
+   return 1;
 }
 
 int
@@ -562,7 +562,7 @@ MandellongSetup(void)
      if (trigndx[0] == 14) /* FLIP */
         symmetry = NOSYM;
     }
-   return(1);
+   return 1;
 }
 
 int
@@ -629,7 +629,7 @@ JulialongSetup(void)
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
       break;
    }
-   return(1);
+   return 1;
 }
 
 int
@@ -644,7 +644,7 @@ TrigPlusSqrlongSetup(void)
       else if (lparm2.x == -fudge)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubSqrFractal;
    }
-   return(JulialongSetup());
+   return JulialongSetup();
 }
 
 int
@@ -659,7 +659,7 @@ TrigPlusSqrfpSetup(void)
       else if (parm2.x == -1.0)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubSqrfpFractal;
    }
-   return(JuliafpSetup());
+   return JuliafpSetup();
 }
 
 int
@@ -667,7 +667,7 @@ TrigPlusTriglongSetup(void)
 {
    FnPlusFnSym();
    if (trigndx[1] == SQR)
-      return(TrigPlusSqrlongSetup());
+      return TrigPlusSqrlongSetup();
    curfractalspecific->per_pixel =  long_julia_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
    if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
@@ -677,7 +677,7 @@ TrigPlusTriglongSetup(void)
       else if (lparm2.x == -fudge)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubTrigFractal;
    }
-   return(JulialongSetup());
+   return JulialongSetup();
 }
 
 int
@@ -685,7 +685,7 @@ TrigPlusTrigfpSetup(void)
 {
    FnPlusFnSym();
    if (trigndx[1] == SQR)
-      return(TrigPlusSqrfpSetup());
+      return TrigPlusSqrfpSetup();
    curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
    curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
    if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
@@ -695,7 +695,7 @@ TrigPlusTrigfpSetup(void)
       else if (parm2.x == -1.0)  /* Skinner variant */
          curfractalspecific->orbitcalc =  SkinnerTrigSubTrigfpFractal;
    }
-   return(JuliafpSetup());
+   return JuliafpSetup();
 }
 
 int
@@ -720,7 +720,7 @@ FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
     }                 /* defaults to XAXIS symmetry JCO 5/6/92 */
    else
       symmetry = NOSYM;
-   return(0);
+   return 0;
 }
 
 int
@@ -734,7 +734,7 @@ LambdaTrigOrTrigSetup(void)
    if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
       symmetry = XAXIS;
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
-   return(1);
+   return 1;
 }
 
 int
@@ -748,7 +748,7 @@ JuliaTrigOrTrigSetup(void)
    if (trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
      symmetry = NOSYM;
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
-   return(1);
+   return 1;
 }
 
 int
@@ -761,7 +761,7 @@ ManlamTrigOrTrigSetup(void)
       symmetry = NOSYM;
    if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
       symmetry = NOSYM;
-   return(1);
+   return 1;
 }
 
 int
@@ -772,7 +772,7 @@ MandelTrigOrTrigSetup(void)
    floatparm = &init;
    if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
       symmetry = NOSYM;
-   return(1);
+   return 1;
 }
 
 
@@ -833,7 +833,7 @@ ZXTrigPlusZSetup(void)
          else if (lparm2.x == -fudge)  /* Skinner variant */
                  curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
       }
-      return(JulialongSetup());
+      return JulialongSetup();
    }
    else
    {
@@ -846,7 +846,7 @@ ZXTrigPlusZSetup(void)
                  curfractalspecific->orbitcalc =  SkinnerZXTrigSubZfpFractal;
       }
    }
-   return(JuliafpSetup());
+   return JuliafpSetup();
 }
 
 int
@@ -895,9 +895,9 @@ LambdaTrigSetup(void)
    }
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
    if (isinteger)
-      return(JulialongSetup());
+      return JulialongSetup();
    else
-      return(JuliafpSetup());
+      return JuliafpSetup();
 }
 
 int
@@ -920,9 +920,9 @@ JuliafnPlusZsqrdSetup(void)
     /* default is for NOSYM symmetry */
    }
    if (curfractalspecific->isinteger)
-      return(JulialongSetup());
+      return JulialongSetup();
    else
-      return(JuliafpSetup());
+      return JuliafpSetup();
 }
 
 int
@@ -941,9 +941,9 @@ SqrTrigSetup(void)
     /* default is for XAXIS symmetry */
    }
    if (curfractalspecific->isinteger)
-      return(JulialongSetup());
+      return JulialongSetup();
    else
-      return(JuliafpSetup());
+      return JuliafpSetup();
 }
 
 int
@@ -982,9 +982,9 @@ FnXFnSetup(void)
       if (trigndx[0]==9 && trigndx[1] ==9) symmetry = PI_SYM;
    }
    if (curfractalspecific->isinteger)
-      return(JulialongSetup());
+      return JulialongSetup();
    else
-      return(JuliafpSetup());
+      return JuliafpSetup();
 }
 
 int
@@ -1027,9 +1027,9 @@ MandelTrigSetup(void)
       break;
    }
    if (isinteger)
-      return(MandellongSetup());
+      return MandellongSetup();
    else
-      return(MandelfpSetup());
+      return MandelfpSetup();
 }
 
 int
@@ -1056,7 +1056,7 @@ MarksJuliaSetup(void)
    }
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
 #endif
-   return(1);
+   return 1;
 }
 
 int
@@ -1081,7 +1081,7 @@ MarksJuliafpSetup(void)
       coefficient.y = 0.0;
    }
    get_julia_attractor (0.0, 0.0);      /* an attractor? */
-   return(1);
+   return 1;
 }
 
 int
@@ -1092,7 +1092,7 @@ SierpinskiSetup(void)
    ltmp.x = 1;
    ltmp.x = ltmp.x << bitshift; /* ltmp.x = 1 */
    ltmp.y = ltmp.x >> 1;                        /* ltmp.y = .5 */
-   return(1);
+   return 1;
 }
 
 int
@@ -1102,7 +1102,7 @@ SierpinskiFPSetup(void)
    periodicitycheck = 0;                /* disable periodicity checks */
    tmp.x = 1;
    tmp.y = 0.5;
-   return(1);
+   return 1;
 }
 
 int
@@ -1143,7 +1143,7 @@ HalleySetup(void)
      symmetry = XAXIS;   /* odd */
    else
      symmetry = XYAXIS; /* even */
-   return(1);
+   return 1;
 }
 
 int
@@ -1175,7 +1175,7 @@ PhoenixSetup(void)
        curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
    }
 
-   return(1);
+   return 1;
 }
 
 int
@@ -1221,7 +1221,7 @@ PhoenixCplxSetup(void)
        curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
    }
 
-   return(1);
+   return 1;
 }
 
 int
@@ -1253,7 +1253,7 @@ MandPhoenixSetup(void)
        curfractalspecific->orbitcalc =  LongPhoenixMinusFractal;
    }
 
-   return(1);
+   return 1;
 }
 
 int
@@ -1287,7 +1287,7 @@ MandPhoenixCplxSetup(void)
        curfractalspecific->orbitcalc =  LongPhoenixCplxMinusFractal;
    }
 
-   return(1);
+   return 1;
 }
 
 int
@@ -1295,7 +1295,7 @@ StandardSetup(void)
 {
    if (fractype==UNITYFP)
       periodicitycheck=0;
-   return(1);
+   return 1;
 }
 
 int

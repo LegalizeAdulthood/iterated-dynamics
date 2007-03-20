@@ -146,7 +146,7 @@ int strlen_needed_bf()
     length += 2;         /* e and sign */
     length += 4;         /* exponent */
     length += 4;         /* null and a little extra for safety */
-    return(length);
+    return length;
     }
 
 /********************************************************************/
@@ -1035,7 +1035,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
          copy_bf(r, bf_pi); /* negative x axis, 180 deg */
       else    /* signx >= 0    positive x axis, 0 */
          clear_bf(r);
-      return(r);
+      return r;
       }
    if (signx == 0)
       {
@@ -1043,7 +1043,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
       half_a_bf(r);      /* +90 deg */
       if (signy < 0)
          neg_a_bf(r);    /* -90 deg */
-      return(r);
+      return r;
       }
 
    if (signy < 0)
@@ -1056,7 +1056,7 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
       sub_bf(r,bf_pi,r);
    if (signy < 0)
       neg_a_bf(r);
-   return(r);
+   return r;
    }
 
 /**********************************************************************/
@@ -1253,7 +1253,7 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
       memcpy(newnum+newbflength-oldbflength,old,oldbflength+2);
    else
       memcpy(newnum,old+oldbflength-newbflength,newbflength+2);
-   return(0);
+   return 0;
    }
 
 /* The following used to be in bigfltc.c */

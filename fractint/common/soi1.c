@@ -57,7 +57,7 @@ static long iteration1(register DBLS cr, register DBLS ci,
       magnitude = newreal * newreal + newimag * newimag;
    }
    if (color >= maxit) color = BASIN_COLOR;
-   return((int)color);
+   return (int)color;
 }
 #endif
 
@@ -76,7 +76,7 @@ static long iteration(register DBLS cr, register DBLS ci,
       start++;
    if (start >= maxit) 
       start = BASIN_COLOR;
-   return(start);
+   return start;
 }
 #if 0
 JuliafpFractal()
@@ -84,7 +84,7 @@ JuliafpFractal()
    /* floating point version of classical Mandelbrot/Julia */
    new.x = tempsqrx - tempsqry + floatparm->x;
    new.y = 2.0 * old.x * old.y + floatparm->y;
-   return(floatbailout());
+   return floatbailout();
 }
 #endif
 
@@ -907,7 +907,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	     iter);
 rhombus_done:
   rhombus_depth--;
-  return(status);
+  return status;
 }
 
 void soi(void)

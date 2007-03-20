@@ -63,7 +63,7 @@ static int get_scancode(char *mn)
    for (i=0; i< stop; i++)
       if (strcmp((char *)mn,scancodes[i].mnemonic)==0)
          break;
-   return(scancodes[i].code);
+   return scancodes[i].code;
 }
 
 static void get_mnemonic(int code,char *mnemonic)
@@ -109,7 +109,7 @@ static int showtempmsg_txt(int row, int col, int attr,int secs,char *txt)
       driver_move_cursor(row,i);
       driver_put_char_attr(savescrn[i]);
    }
-   return(0);
+   return 0;
 }
 
 static void message(int secs, char *buf)
@@ -132,7 +132,7 @@ int slideshw()
    if (calcwait)
    {
       if (calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
-         return(0); /* wait for calc to finish before reading more keystrokes */
+         return 0; /* wait for calc to finish before reading more keystrokes */
       calcwait = 0;
    }
    if (fpss==NULL)   /* open files first time through */
@@ -145,7 +145,7 @@ int slideshw()
    if (ticks) /* if waiting, see if waited long enough */
    {
       if (clock_ticks() - starttick < ticks) /* haven't waited long enough */
-         return(0);
+         return 0;
       ticks = 0;
    }
    if (++slowcount <= 18)
@@ -158,13 +158,13 @@ int slideshw()
    if (repeats>0)
    {
       repeats--;
-      return(last1);
+      return last1;
    }
 start:
    if (quotes) /* reading a quoted string */
    {
       if ((out=fgetc(fpss)) != '\"' && out != EOF)
-         return(last1 = out);
+         return last1 = out;
       quotes = 0;
    }
    /* skip white space: */
@@ -173,7 +173,7 @@ start:
    {
       case EOF:
          stopslideshow();
-         return(0);
+         return 0;
       case '\"':        /* begin quoted string */
          quotes = 1;
          goto start;
@@ -188,7 +188,7 @@ start:
             last1 = repeats = 0;
          }
          repeats -= 2;
-         return(out = last1);
+         return out = last1;
    }
 
    i = 0;
@@ -245,7 +245,7 @@ start:
             if (feof(fpss))
             {
                slideshowerr("GOTO target not found");
-               return(0);
+               return 0;
             }
             goto start;
          }
@@ -283,7 +283,7 @@ start:
       slideshowerr(msg);
       out = 0;
    }
-   return(last1 = out);
+   return last1 = out;
 }
 
 int
@@ -296,7 +296,7 @@ startslideshow()
    quotes = 0;
    calcwait = 0;
    slowcount = 0;
-   return(g_slides);
+   return g_slides;
 }
 
 void stopslideshow()
