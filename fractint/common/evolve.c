@@ -3,11 +3,10 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#define PARMBOX 128
 
 /* px and py are coordinates in the parameter grid (small images on screen) */
 /* evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz) */
-int px,py,evolving,gridsz;
+int px, py, evolving, gridsz;
 #define MAXGRIDSZ 51  /* This is arbitrary, = 1024/20 */
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
@@ -547,7 +546,7 @@ get_evol_restart:
 
    /* TODO: allocate real memory, not reuse shared segment */
 //   ptr = (char *) extraseg;
-   if ((evolving & RANDWALK)||(evolving & RANDPARAM)) {
+   if ((evolving & EVOLVE_RAND_WALK)||(evolving & EVOLVE_RAND_PARAM)) {
    /* adjust field param to make some sense when changing from random modes*/
    /* maybe should adjust for aspect ratio here? */
       paramrangex = paramrangey = fiddlefactor * 2;
@@ -560,7 +559,7 @@ get_evol_restart:
 
    choices[++k]= "Evolution mode? (no for full screen)";
    uvalues[k].type = 'y';
-   uvalues[k].uval.ch.val = evolving&1;
+   uvalues[k].uval.ch.val = evolving & EVOLVE_FIELD_MAP;
 
    choices[++k]= "Image grid size (odd numbers only)";
    uvalues[k].type = 'i';
@@ -570,7 +569,7 @@ get_evol_restart:
                            /* variation 'explore mode' */
      choices[++k]= "Show parameter zoom box?";
      uvalues[k].type = 'y';
-     uvalues[k].uval.ch.val = ((evolving & PARMBOX) / PARMBOX);
+     uvalues[k].uval.ch.val = ((evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
 
      choices[++k]= "x parameter range (across screen)";
      uvalues[k].type = 'f';
@@ -599,7 +598,7 @@ get_evol_restart:
 
    choices[++k]= "Grouting? ";
    uvalues[k].type = 'y';
-   uvalues[k].uval.ch.val = !((evolving & NOGROUT) / NOGROUT); 
+   uvalues[k].uval.ch.val = !((evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
 
    choices[++k]= "";
    uvalues[k].type = '*';
@@ -681,7 +680,7 @@ get_evol_restart:
       gridsz = 3;
    gridsz |= 1; /* make sure gridsz is odd */
    if (explore_check()) {
-     tmp = (PARMBOX * uvalues[++k].uval.ch.val);
+     tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
      if (evolving)
         evolving += tmp;
      paramrangex = uvalues[++k].uval.dval;
@@ -694,7 +693,7 @@ get_evol_restart:
 
      fiddle_reduction = uvalues[++k].uval.dval;
 
-   if (!(uvalues[++k].uval.ch.val)) evolving = evolving + NOGROUT;
+   if (!(uvalues[++k].uval.ch.val)) evolving = evolving + EVOLVE_NO_GROUT;
 
    viewxdots = (sxdots / gridsz)-2;
    viewydots = (sydots / gridsz)-2;
@@ -850,8 +849,8 @@ void drawparmbox(int mode)
 /* clears boxes off screen if mode=1, otherwise, redraws boxes */
 struct coords tl,tr,bl,br;
 int grout;
- if (!(evolving & PARMBOX)) return; /* don't draw if not asked to! */
- grout = !((evolving & NOGROUT)/NOGROUT) ;
+ if (!(evolving & EVOLVE_PARM_BOX)) return; /* don't draw if not asked to! */
+ grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
  imgboxcount = boxcount;
  if (boxcount) {
    /* stash normal zoombox pixels */

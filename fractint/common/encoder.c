@@ -463,7 +463,7 @@ int encoder()
       }
 
       /* Extended parameters block 006 */
-      if (evolving&1)
+      if (evolving & EVOLVE_FIELD_MAP)
       {
           struct evolution_info esave_info;
           int i;
@@ -482,7 +482,7 @@ int encoder()
              esave_info.xdots           = (short)xdots;
              esave_info.ydots           = (short)ydots;
              esave_info.gridsz          = (short)gridsz;
-             esave_info.evolving        = (short)evolving;
+             esave_info.evolving        = (short) evolving;
              esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
              esave_info.fiddlefactor    = fiddlefactor;
              esave_info.ecount          = (short) (gridsz * gridsz); /* flag for done */
@@ -502,7 +502,7 @@ int encoder()
              esave_info.xdots           = (short)resume_e_info.xdots;
              esave_info.ydots           = (short)resume_e_info.ydots;
              esave_info.gridsz          = (short)resume_e_info.gridsz;
-             esave_info.evolving        = (short)resume_e_info.evolving;
+             esave_info.evolving        = (short) resume_e_info.evolving;
              esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
              esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
              esave_info.ecount          = resume_e_info.ecount;

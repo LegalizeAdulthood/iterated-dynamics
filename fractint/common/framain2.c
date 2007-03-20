@@ -179,7 +179,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				else if (((xdots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (ydots <= 1)) /* work with the sound feature */
-					&& !(evolving&1))
+					&& !(evolving & EVOLVE_FIELD_MAP))
 				{	/* so ssg works */
 					/* but no check if in evolve mode to allow lots of small views*/
 					stopmsg(0, "View window too small; using full screen.");
@@ -187,7 +187,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					xdots = sxdots;
 					ydots = sydots;
 				}
-				if ((evolving & 1) && (curfractalspecific->flags & INFCALC))
+				if ((evolving & EVOLVE_FIELD_MAP) && (curfractalspecific->flags & INFCALC))
 				{
 					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
 					evolving = evolving -1;
@@ -195,11 +195,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					xdots = sxdots;
 					ydots = sydots;
 				}
-				if (evolving & 1)
+				if (evolving & EVOLVE_FIELD_MAP)
 				{
-					xdots = (sxdots / gridsz)-!((evolving & NOGROUT)/NOGROUT);
+					xdots = (sxdots / gridsz)-!((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					xdots = xdots - (xdots % 4); /* trim to multiple of 4 for SSG */
-					ydots = (sydots / gridsz)-!((evolving & NOGROUT)/NOGROUT);
+					ydots = (sydots / gridsz)-!((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					ydots = ydots - (ydots % 4);
 				}
 				else
@@ -345,7 +345,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			/*rb*/
 			name_stack_ptr = -1;   /* reset pointer */
 			browsename[0] = '\0';  /* null */
-			if (viewwindow && (evolving&1) && (calc_status != CALCSTAT_COMPLETED))
+			if (viewwindow && (evolving & EVOLVE_FIELD_MAP) && (calc_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
 				int grout, ecount, tmpxdots, tmpydots, gridsqr;
@@ -391,7 +391,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				prmboxcount = 0;
 				dpx = paramrangex/(gridsz-1);
 				dpy = paramrangey/(gridsz-1);
-				grout  = !((evolving & NOGROUT)/NOGROUT);
+				grout  = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 				tmpxdots = xdots+grout;
 				tmpydots = ydots+grout;
 				gridsqr = gridsz * gridsz;
@@ -800,12 +800,12 @@ static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
 	}
 	switch (kbdchar)
 	{
-	case 'x':		i = get_toggles(); break;
-	case 'y':		i = get_toggles2(); break;
-	case 'p':		i = passes_options(); break;
-	case 'z':		i = get_fract_params(1); break;
-	case 'v':		i = get_view_params(); break;
-	case FIK_CTL_B:	i = get_browse_params(); break;
+	case 'x':		i = get_toggles();			break;
+	case 'y':		i = get_toggles2();			break;
+	case 'p':		i = passes_options();		break;
+	case 'z':		i = get_fract_params(1);	break;
+	case 'v':		i = get_view_params();		break;
+	case FIK_CTL_B:	i = get_browse_params();	break;
 
 	case FIK_CTL_E:
         i = get_evolve_Parms();
@@ -1820,7 +1820,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 	if (boxcount)
 	{
 		int grout;
-		if (evolving & 1)
+		if (evolving & EVOLVE_FIELD_MAP)
 		{
 			if (*kbdchar == FIK_CTL_LEFT_ARROW)
 			{
@@ -1854,7 +1854,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 			{
 				py = 0;
 			}
-			grout = !((evolving & NOGROUT)/NOGROUT);
+			grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 			sxoffs = px * (int)(dxsize + 1 + grout);
 			syoffs = py * (int)(dysize + 1 + grout);
 
@@ -1912,11 +1912,11 @@ static void handle_evolver_zoom(int zoom_in)
 				zbx = zby = 0;
 				find_special_colors();
 				boxcolor = g_color_bright;
-				if (evolving & 1) /*rb*/
+				if (evolving & EVOLVE_FIELD_MAP) /*rb*/
 				{
 					/* set screen view params back (previously changed to allow
 					   full screen saves in viewwindow mode) */
-					int grout = !((evolving & NOGROUT) / NOGROUT);
+					int grout = !((evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
 					sxoffs = px * (int) (dxsize + 1 + grout);
 					syoffs = py * (int) (dysize + 1 + grout);
 					SetupParamBox();
@@ -1937,7 +1937,7 @@ static void handle_evolver_zoom(int zoom_in)
 			if (zwidth >= 0.999 && zdepth >= 0.999) /* end zoombox */
 			{
 				zwidth = 0;
-				if (evolving & 1)
+				if (evolving & EVOLVE_FIELD_MAP)
 				{
 					drawparmbox(1); /* clear boxes off screen */
 					ReleaseParamBox();
