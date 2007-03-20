@@ -806,6 +806,7 @@ static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
 	case 'z':		i = get_fract_params(1); break;
 	case 'v':		i = get_view_params(); break;
 	case FIK_CTL_B:	i = get_browse_params(); break;
+
 	case FIK_CTL_E:
         i = get_evolve_Parms();
         if (i > 0)
@@ -815,7 +816,9 @@ static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
 			Log_Auto_Calc = 0; /* turn it off */
         }
 		break;
+
 	case FIK_CTL_F:	i = get_sound_params(); break;
+
 	default:
         i = get_cmd_string();
 		break;
@@ -846,6 +849,47 @@ static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
 	else if (i > 0)
 	{              /* time to redraw? */
 		quick_calc = 0;
+		param_history(0); /* save history */
+		*kbdmore = 0;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+	}
+}
+
+static void handle_evolver_options(int kbdchar, int *kbdmore)
+{
+	int i;
+	clear_zoombox();
+	if (fromtext_flag == 1)
+	{
+		fromtext_flag = 0;
+	}
+	else
+	{
+		driver_stack_screen();
+	}
+	switch (kbdchar)
+	{
+	case 'x': i = get_toggles(); break;
+	case 'y': i = get_toggles2(); break;
+	case 'p': i = passes_options(); break;
+	case 'z': i = get_fract_params(1); break;
+
+	case FIK_CTL_E:
+	case FIK_SPACE:
+		i = get_evolve_Parms();
+		break;
+
+	default:
+		i = get_cmd_string();
+		break;
+	}
+	driver_unstack_screen();
+	if (evolving && truecolor)
+	{
+		truecolor = 0; /* truecolor doesn't play well with the evolver */
+	}
+	if (i > 0)              /* time to redraw? */
+	{
 		param_history(0); /* save history */
 		*kbdmore = 0;
 		calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -1727,6 +1771,44 @@ do_3d_transform:
    return 0;
 }
 
+static void handle_evolver_exit(int *kbdmore)
+{
+	evolving = viewwindow = 0;
+	param_history(0); /* save history */
+	*kbdmore = 0;
+	calc_status = CALCSTAT_PARAMS_CHANGED;
+}
+
+static int handle_evolver_history(char *stacked, int *kbdchar)
+{
+	if (maxhistory > 0 && bf_math == 0)
+	{
+		if (*kbdchar == '\\' || *kbdchar == 'h')
+		{
+			history_back();
+		}
+		else if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
+		{
+			history_forward();
+		}
+		restore_history_info();
+		zoomoff = TRUE;
+		g_init_mode = g_adapter;
+		if (curfractalspecific->isinteger != 0
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
+			usr_floatflag = 0;
+		}
+		if (curfractalspecific->isinteger == 0
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
+			usr_floatflag = 1;
+		}
+		return IMAGESTART;
+	}
+	return 0;
+}
+
 int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
 {
 	int i, k;
@@ -1739,114 +1821,48 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 			return IMAGESTART;
 		}
 		break;
-   case 'x':                    /* invoke options screen        */
-   case 'y':
-   case 'p':                    /* passes options      */
-   case 'z':                    /* type specific parms */
-   case 'g':
-   case FIK_CTL_E:
-   case FIK_SPACE:
-      clear_zoombox();
-      if (fromtext_flag == 1)
-         fromtext_flag = 0;
-      else
-         driver_stack_screen();
-      if (*kbdchar == 'x')
-         i = get_toggles();
-      else if (*kbdchar == 'y')
-         i = get_toggles2();
-      else if (*kbdchar == 'p')
-         i = passes_options();
-      else if (*kbdchar == 'z')
-         i = get_fract_params(1);
-      else if (*kbdchar == 5 || *kbdchar == FIK_SPACE)
-         i = get_evolve_Parms();
-      else
-         i = get_cmd_string();
-      driver_unstack_screen();
-      if (evolving && truecolor)
-         truecolor = 0; /* truecolor doesn't play well with the evolver */
-      if (i > 0) {              /* time to redraw? */
-         param_history(0); /* save history */
-         *kbdmore = 0;
-		 calc_status = CALCSTAT_PARAMS_CHANGED;
-      }
-      break;
-   case 'b': /* quick exit from evolve mode */
-      evolving = viewwindow = 0;
-      param_history(0); /* save history */
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
 
-   case 'f':                    /* floating pt toggle           */
-      if (usr_floatflag == 0)
-         usr_floatflag = 1;
-      else if (stdcalcmode != 'o') /* don't go there */
-         usr_floatflag = 0;
-      g_init_mode = g_adapter;
-      return IMAGESTART;
-   case '\\':                   /* return to prev image    */
-   case FIK_CTL_BACKSLASH:
-   case 'h':
-   case FIK_BACKSPACE:
-      if (maxhistory > 0 && bf_math == 0)
-      {
-         if (*kbdchar == '\\' || *kbdchar == 'h')
-			 history_back();
-         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
-			 history_forward();
-         restore_history_info();
-         zoomoff = TRUE;
-         g_init_mode = g_adapter;
-         if (curfractalspecific->isinteger != 0 &&
-             curfractalspecific->tofloat != NOFRACTAL)
-            usr_floatflag = 0;
-         if (curfractalspecific->isinteger == 0 &&
-             curfractalspecific->tofloat != NOFRACTAL)
-            usr_floatflag = 1;
-         return IMAGESTART;
-      }
-      break;
-   case 'c':                    /* switch to color cycling      */
-   case '+':                    /* rotate palette               */
-   case '-':                    /* rotate palette               */
-      clear_zoombox();
-      memcpy(olddacbox, g_dac_box, 256 * 3);
-      rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, g_dac_box, 256 * 3))
-      {
-         colorstate = 1;
-         save_history_info();
-      }
-      return CONTINUE;
-   case 'e':                    /* switch to color editing      */
-      if (g_is_true_color && !initbatch) { /* don't enter palette editor */
-         if (load_palette() >= 0) {
-            *kbdmore = 0;
-			calc_status = CALCSTAT_PARAMS_CHANGED;
-            break;
-         } else
-            return CONTINUE;
-      }
-      clear_zoombox();
-      if (g_dac_box[0][0] != 255 && colors >= 16
-          && !driver_diskp())
-      {
-         int oldhelpmode;
-         oldhelpmode = helpmode;
-         memcpy(olddacbox, g_dac_box, 256 * 3);
-         helpmode = HELPXHAIR;
-         EditPalette();
-         helpmode = oldhelpmode;
-         if (memcmp(olddacbox, g_dac_box, 256 * 3))
-         {
-            colorstate = 1;
-            save_history_info();
-         }
-      }
-      return CONTINUE;
-   case 's':                    /* save-to-disk                 */
+	case 'x':                    /* invoke options screen        */
+	case 'y':
+	case 'p':                    /* passes options      */
+	case 'z':                    /* type specific parms */
+	case 'g':
+	case FIK_CTL_E:
+	case FIK_SPACE:
+		handle_evolver_options(*kbdchar, kbdmore);
+		break;
+
+	case 'b': /* quick exit from evolve mode */
+		handle_evolver_exit(kbdmore);
+		break;
+
+	case 'f':                    /* floating pt toggle           */
+		return handle_toggle_float();
+
+	case '\\':                   /* return to prev image    */
+	case FIK_CTL_BACKSLASH:
+	case 'h':
+	case FIK_BACKSPACE:
+		i = handle_evolver_history(stacked, *kbdchar);
+		if (i != 0)
+		{
+			return i;
+		}
+
+	case 'c':                    /* switch to color cycling      */
+	case '+':                    /* rotate palette               */
+	case '-':                    /* rotate palette               */
+		return handle_color_cycling(*kbdchar);
+
+	case 'e':                    /* switch to color editing      */
+		i = handle_color_editing(kbdmore);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
+
+	case 's':                    /* save-to-disk                 */
 {     int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
 
       if (driver_diskp() && disktarga == 1)
