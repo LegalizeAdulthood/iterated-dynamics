@@ -142,7 +142,7 @@ int putstringwrap(int *row,int col1,int col2,int color,char *str,int maxrow)
        length -= col2-col1;
        col1 = decpt; /* align with decimal */
     }
-    return(done);
+    return done;
 }
 
 #define rad_to_deg(x) ((x)*(180.0/PI)) /* most people "think" in degrees */
@@ -657,7 +657,7 @@ int set_trig_array(int k, char *name)
          break;
       }
    }
-   return(0);
+   return 0;
 }
 void set_trig_pointers(int which)
 {
@@ -1325,8 +1325,8 @@ int endswithslash(char *fl)
    len = (int) strlen(fl);
    if (len)
       if (fl[--len] == SLASHC)
-         return(1);
-   return(0);
+         return 1;
+   return 0;
 }
 
 /* --------------------------------------------------------------------- */
@@ -1337,13 +1337,13 @@ char *get_ifs_token(char *buf,FILE *ifsfile)
    while (1)
    {
       if (file_gets(buf,200,ifsfile) < 0)
-         return(NULL);
+         return NULL;
       else
       {
          if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
             *bufptr = 0;
          if ((bufptr = strtok(buf, seps)) != NULL)
-            return(bufptr);
+            return bufptr;
       }
    }
 }
@@ -1366,7 +1366,7 @@ int ifsload()                   /* read in IFS parameters */
    ifs_type = 0;
    rowsize = IFSPARM;
    if (find_file_item(IFSFileName,IFSName,&ifsfile, 3) < 0)
-      return(-1);
+      return -1;
 
    file_gets(buf,200,ifsfile);
    if ((bufptr = strchr(buf,';')) != NULL) /* use ';' as comment to eol */
@@ -1433,7 +1433,7 @@ int ifsload()                   /* read in IFS parameters */
          for (i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
             ifs_defn[i] = ((float *)tstack)[i];
    }
-   return(ret);
+   return ret;
 }
 /* TW 5-31-94 - added search of current directory for entry files if
    entry item not found */
@@ -1607,14 +1607,14 @@ int find_file_item(char *filename,char *itemname,FILE **fileptr, int itemtype)
    if (!found) {
       sprintf(fullpath,"'%s' file entry item not found",itemname);
       stopmsg(0,fullpath);
-      return(-1);
+      return -1;
    }
    /* found file */
    if (fileptr != NULL)
       *fileptr = infile;
    else if (infile != NULL)
       fclose(infile);
-   return(0);
+   return 0;
 }
 
 
@@ -1679,17 +1679,17 @@ int _cdecl _matherr( struct exception *except )
            if ( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.0;
-              return(1);
+              return 1;
            }
            else if ( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 1.0;
-              return(1);
+              return 1;
            }
            else if ( strcmp( except->name, "log") == 0 )
            {
               except->retval = 1.0;
-              return(1);
+              return 1;
            }
        }
     }
@@ -1699,17 +1699,17 @@ int _cdecl _matherr( struct exception *except )
            if ( strcmp( except->name, "sin") == 0 )
            {
               except->retval = 0.5;
-              return(1);
+              return 1;
            }
            else if ( strcmp( except->name, "cos") == 0 )
            {
               except->retval = 0.5;
-              return(1);
+              return 1;
            }
     }
     /* shucks, no idea what went wrong, but our motto is "keep going!" */
     except->retval = 1.0;
-    return(1);
+    return 1;
 }
 #endif
 #endif

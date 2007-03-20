@@ -279,7 +279,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
    success = FALSE;
    toallocate = count * size;
    if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
-      return((U16)success); /* or it wraps around to negative */
+      return (U16)success; /* or it wraps around to negative */
 
 /* check structure for requested memory type (add em up) to see if
    sufficient amount is available to grant request */
@@ -296,7 +296,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
    if (handle >= MAXHANDLES || handle <= 0) {
       DisplayHandle(handle);
-      return((U16)success);
+      return (U16)success;
    /* Oops, do something about this! ????? */
    }
 
@@ -414,7 +414,7 @@ int MoveToMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
    tomove = (long)count * size;
    if (debugflag == 10000)
       if (CheckBounds(start, tomove, handle))
-         return(success); /* out of bounds, don't do it */
+         return success; /* out of bounds, don't do it */
 
    switch (handletable[handle].Nowhere.stored_at)
    {
@@ -475,7 +475,7 @@ int MoveFromMemory(BYTE *buffer,U16 size,long count,long offset,U16 handle)
    tomove = (long)count * size;
    if (debugflag == 10000)
       if (CheckBounds(start, tomove, handle))
-         return(success); /* out of bounds, don't do it */
+         return success; /* out of bounds, don't do it */
 
    switch (handletable[handle].Nowhere.stored_at)
    {
@@ -538,7 +538,7 @@ int SetMemory(int value,U16 size,long count,long offset,U16 handle)
    tomove = (long)count * size;
    if (debugflag == 10000)
       if (CheckBounds(start, tomove, handle))
-         return(success); /* out of bounds, don't do it */
+         return success; /* out of bounds, don't do it */
 
    switch (handletable[handle].Nowhere.stored_at)
    {

@@ -1133,7 +1133,7 @@ static int _fastcall offscreen(struct point pt)
          if (pt.y >= 0)
             if (pt.y < ydots)
                return 0;      /* point is ok */
-   if (abs(pt.x) > 0 - bad_check || abs(pt.y) > 0 - bad_check)
+   if (abs(pt.x) > -bad_check || abs(pt.y) > -bad_check)
       return 99;              /* point is bad */
    return 1;                  /* point is off the screen */
 }

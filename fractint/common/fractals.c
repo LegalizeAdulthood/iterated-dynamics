@@ -78,7 +78,7 @@ int     bitshiftless1;                  /* bit shift less 1 */
 #endif
 
 #define modulus(z)       (sqr((z).x)+sqr((z).y))
-#define conjugate(pz)   ((pz)->y = 0.0 - (pz)->y)
+#define conjugate(pz)   ((pz)->y = - (pz)->y)
 #define distance(z1,z2)  (sqr((z1).x-(z2).x)+sqr((z1).y-(z2).y))
 #define pMPsqr(z) (*pMPmul((z),(z)))
 #define MPdistance(z1,z2)  (*pMPadd(pMPsqr(*pMPsub((z1).x,(z2).x)),pMPsqr(*pMPsub((z1).y,(z2).y))))

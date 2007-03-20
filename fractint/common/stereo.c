@@ -130,7 +130,7 @@ static int get_min_max(void)
       }
    }
    cleartempmsg();
-   return(0);
+   return 0;
 }
 
 void toggle_bars(int *bars, int barwidth, int *colour)
@@ -161,7 +161,7 @@ int outline_stereo(BYTE * pixels, int linelen)
    int *same = _alloca(sizeof(int)*xdots);
    int *colour = _alloca(sizeof(int)*xdots);
    if ((Y) >= ydots)
-      return(1);
+      return 1;
 
    for (x = 0; x < xdots; ++x)
       same[x] = x;
@@ -209,7 +209,7 @@ int outline_stereo(BYTE * pixels, int linelen)
       putcolor(x, Y, colour[x]);
    }
    (Y)++;
-   return(0);
+   return 0;
 }
 
 

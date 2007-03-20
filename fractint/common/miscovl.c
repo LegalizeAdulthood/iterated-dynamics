@@ -117,8 +117,8 @@ void make_batch_file()
          maxcolor = inside;
       if (outside > 0 && outside > maxcolor)
          maxcolor = outside;
-      if (distest < 0 && 0 - distest > maxcolor)
-         maxcolor = (int)(0 - distest);
+      if (distest < 0 && -distest > maxcolor)
+         maxcolor = (int) -distest;
       if (decomp[0] > maxcolor)
          maxcolor = decomp[0] - 1;
       if (potflag && potparam[0] >= maxcolor)
@@ -1277,10 +1277,10 @@ int getprecbf_mag()
    /* I don't know if this is portable, but something needs to */
    /* be used in case compiler's LDBL_MAX is not big enough    */
    if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
-      return(-1);
+      return -1;
 
    dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
-   return(dec);
+   return dec;
 }
 
 static int getprec(double a,double b,double c)
@@ -1303,7 +1303,7 @@ static int getprec(double a,double b,double c)
       diff *= 10;
       ++digits;
       }
-   return(digits);
+   return digits;
 }
 
 /* This function calculates the precision needed to distiguish adjacent
@@ -1355,7 +1355,7 @@ int getprecbf(int rezflag)
    if (cmp_bf(del1,clear_bf(del2)) == 0)
    {
       restore_stack(saved);
-      return(-1);
+      return -1;
    }
    digits = 1;
    while (cmp_bf(del1,one) < 0)
@@ -1366,7 +1366,7 @@ int getprecbf(int rezflag)
    digits = max(digits,3);
    restore_stack(saved);
    dec = getprecbf_mag();
-   return(max(digits,dec));
+   return max(digits,dec);
 }
 
 #ifdef _MSC_VER
@@ -1404,7 +1404,7 @@ int getprecdbl(int rezflag)
 #ifdef DEBUG
       showcornersdbl("getprecdbl");
 #endif
-      return(-1);
+      return -1;
    }
    digits = 1;
    while (del1 < 1.0)
@@ -1413,7 +1413,7 @@ int getprecdbl(int rezflag)
       del1 *= 10;
    }
    digits = max(digits,3);
-   return(digits);
+   return digits;
 }
 
 #ifdef _MSC_VER
@@ -1745,7 +1745,7 @@ static int check_modekey(int curkey,int choice)
 {
    int i,j,k,ret;
    if ((i = check_vidmode_key(1,curkey)) >= 0)
-      return(-1-i);
+      return -1-i;
    i = entsptr[choice];
    ret = 0;
    if ( (curkey == '-' || curkey == '+')
@@ -1774,7 +1774,7 @@ static int check_modekey(int curkey,int choice)
             }
          }
       }
-   return(ret);
+   return ret;
 }
 #endif
 
@@ -1786,8 +1786,8 @@ static int entcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
    j = g_video_table[*((int *)p2)].keynum;
    if (j == 0) j = 9999;
    if (i < j || (i == j && *((int *)p1) < *((int *)p2)))
-      return(-1);
-   return(1);
+      return -1;
+   return 1;
 }
 
 static void update_fractint_cfg()
@@ -2395,7 +2395,7 @@ static char *expand_var(char *var, char *buf)
       stopmsg(0,buff);
       out = "";
    }
-   return(out);
+   return out;
 }
 
 #define MAXVNAME  13

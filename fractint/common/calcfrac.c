@@ -2326,7 +2326,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       {
          if (distest > 0)
             goto plot_inside;   /* show it as an inside point */
-         coloriter = 0 - distest;       /* show boundary as specified color */
+         coloriter = -distest;       /* show boundary as specified color */
          goto plot_pixel;       /* no further adjustments apply */
       }
       if (colors == 2)
@@ -3685,14 +3685,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
    {
       if (bf_math)
       {
-         /* ftemp = (0.0-yymax) / (yymin-yymax); */
+         /* ftemp = -yymax / (yymin-yymax); */
          sub_bf(bft1,bfymin,bfymax);
          div_bf(bft1,bfymax,bft1);
          neg_a_bf(bft1);
          ftemp = (double)bftofloat(bft1);
       }
       else
-         ftemp = (0.0-yymax) / (yymin-yymax);
+         ftemp = -yymax / (yymin-yymax);
       ftemp *= (ydots-1);
       ftemp += 0.25;
       xaxis_row = (int)ftemp;
@@ -3704,14 +3704,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
    {
       if (bf_math)
       {
-         /* ftemp = (0.0-xxmin) / (xxmax-xxmin); */
+         /* ftemp = -xxmin / (xxmax-xxmin); */
          sub_bf(bft1,bfxmax,bfxmin);
          div_bf(bft1,bfxmin,bft1);
          neg_a_bf(bft1);
          ftemp = (double)bftofloat(bft1);
       }
       else
-         ftemp = (0.0-xxmin) / (xxmax-xxmin);
+         ftemp = -xxmin / (xxmax-xxmin);
       ftemp *= (xdots-1);
       ftemp += 0.25;
       yaxis_col = (int)ftemp;

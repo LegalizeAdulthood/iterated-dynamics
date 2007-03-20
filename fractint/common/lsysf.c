@@ -309,7 +309,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
             if ((*rulind)->ch==command->ch) {
                tran=1;
                if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
-                  return(NULL);
+                  return NULL;
             }
       }
       if (!depth || !tran) {
@@ -340,7 +340,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
           lsys_prepfpu(ts);
           command = findsize(command+1, ts, rules, depth);
 		  if (command == NULL)
-             return(NULL);
+             return NULL;
           lsys_donefpu(ts);
           ts->angle=saveang;
           ts->reverse=saverev;
@@ -475,7 +475,7 @@ drawLSysF(struct lsys_cmd *command,struct lsys_turtlestatef *ts, struct lsys_cmd
           lsys_prepfpu(ts);
           command = drawLSysF(command+1, ts, rules, depth);
 		  if (command == NULL)
-             return(NULL);
+             return NULL;
           lsys_donefpu(ts);
           ts->angle=saveang;
           ts->reverse=saverev;

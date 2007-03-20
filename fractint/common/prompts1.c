@@ -2023,9 +2023,9 @@ static int check_gfe_key(int curkey,int choice)
    blanks[78] = (char) 0;
 
    if (curkey == FIK_F6)
-      return 0-FIK_F6;
+      return -FIK_F6;
    if (curkey == FIK_F4)
-      return 0-FIK_F4;
+      return -FIK_F4;
    if (curkey == FIK_F2) {
       int widest_entry_line = 0;
       int lines_in_entry = 0;
