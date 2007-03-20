@@ -291,10 +291,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
         }
 
-		zoomoff = 1;                      /* zooming is enabled */
+		zoomoff = TRUE;                      /* zooming is enabled */
 		if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
 		{
-			zoomoff = 0;                   /* for these cases disable zooming */
+			zoomoff = FALSE;                   /* for these cases disable zooming */
 		}
 		if (!evolving)
 		{
@@ -652,7 +652,7 @@ resumeloop:                             /* return here on failed overlays */
 			case CONTINUE:		continue;
 			default:			break;
 			}
-			if (zoomoff == 1 && *kbdmore == 1) /* draw/clear a zoom box? */
+			if (zoomoff == TRUE && *kbdmore == 1) /* draw/clear a zoom box? */
 			{
 				drawbox(1);
 			}
@@ -748,743 +748,997 @@ static int look(char *stacked)
 	return 0;
 }
 
+static int handle_fractal_type(int *frommandel)
+{
+	int i;
+
+	julibrot = 0;
+	clear_zoombox();
+	driver_stack_screen();
+	i = get_fracttype();
+	if (i >= 0)
+	{
+		driver_discard_screen();
+		savedac = 0;
+		save_release = g_release;
+		no_mag_calc = 0;
+		use_old_period = 0;
+		bad_outside = 0;
+		ldcheck = 0;
+		set_current_params();
+		odpx = odpy = newodpx = newodpy = 0;
+		fiddlefactor = 1;           /* reset param evolution stuff */
+		set_orbit_corners = 0;
+		param_history(0); /* save history */
+		if (i == 0)
+		{
+			g_init_mode = g_adapter;
+			*frommandel = 0;
+		}
+		else if (g_init_mode < 0) /* it is supposed to be... */
+		{
+			driver_set_for_text();     /* reset to text mode      */
+		}
+		return TRUE;
+	}
+	driver_unstack_screen();
+	return FALSE;
+}
+
+static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
+{
+	int i;
+	*old_maxit = maxit;
+	clear_zoombox();
+	if (fromtext_flag == 1)
+	{
+		fromtext_flag = 0;
+	}
+	else
+	{
+		driver_stack_screen();
+	}
+	switch (kbdchar)
+	{
+	case 'x':		i = get_toggles(); break;
+	case 'y':		i = get_toggles2(); break;
+	case 'p':		i = passes_options(); break;
+	case 'z':		i = get_fract_params(1); break;
+	case 'v':		i = get_view_params(); break;
+	case FIK_CTL_B:	i = get_browse_params(); break;
+	case FIK_CTL_E:
+        i = get_evolve_Parms();
+        if (i > 0)
+		{
+			start_showorbit = 0;
+			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
+			Log_Auto_Calc = 0; /* turn it off */
+        }
+		break;
+	case FIK_CTL_F:	i = get_sound_params(); break;
+	default:
+        i = get_cmd_string();
+		break;
+	}
+    driver_unstack_screen();
+    if (evolving && truecolor)
+	{
+        truecolor = 0; /* truecolor doesn't play well with the evolver */
+	}
+    if (maxit > *old_maxit
+		&& inside >= 0
+		&& calc_status == CALCSTAT_COMPLETED
+		&& curfractalspecific->calctype == StandardFractal
+		&& !LogFlag
+		&& !truecolor /* recalc not yet implemented with truecolor */
+		&& !(usr_stdcalcmode == 't' && fillcolor > -1) /* tesseral with fill doesn't work */
+		&& !(usr_stdcalcmode == 'o')
+		&& i == 1 /* nothing else changed */
+		&& outside != ATAN)
+	{
+		quick_calc = 1;
+		old_stdcalcmode = usr_stdcalcmode;
+		usr_stdcalcmode = '1';
+		*kbdmore = 0;
+		calc_status = CALCSTAT_RESUMABLE;
+		i = 0;
+	}
+	else if (i > 0)
+	{              /* time to redraw? */
+		quick_calc = 0;
+		param_history(0); /* save history */
+		*kbdmore = 0;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+	}
+}
+
+static int handle_execute_commands(int *kbdchar, int *kbdmore)
+{
+	int i;
+    driver_stack_screen();
+    i = get_commands();
+    if (g_init_mode != -1)
+	{                         /* video= was specified */
+		g_adapter = g_init_mode;
+		g_init_mode = -1;
+		i |= CMDARG_FRACTAL_PARAM;
+		savedac = 0;
+	}
+	else if (colorpreloaded)
+	{                         /* colors= was specified */
+		spindac(0, 1);
+		colorpreloaded = 0;
+	}
+	else if (i & CMDARG_RESET)         /* reset was specified */
+	{
+		savedac = 0;
+	}
+	if (i & CMDARG_3D_YES)
+	{                         /* 3d = was specified */
+		*kbdchar = '3';
+		driver_unstack_screen();
+		return TRUE;
+	}
+	if (i & CMDARG_FRACTAL_PARAM)
+	{                         /* fractal parameter changed */
+		driver_discard_screen();
+		/* backwards_v18();*/  /* moved this to cmdfiles.c */
+		/* backwards_v19();*/
+		*kbdmore = 0;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+	}
+	else
+	{
+		driver_unstack_screen();
+	}
+
+	return FALSE;
+}
+
+static int handle_toggle_float(void)
+{
+    if (usr_floatflag == 0)
+	{
+        usr_floatflag = 1;
+	}
+    else if (stdcalcmode != 'o') /* don't go there */
+	{
+        usr_floatflag = 0;
+	}
+    g_init_mode = g_adapter;
+    return IMAGESTART;
+}
+
+static int handle_ant(void)
+{
+	int oldtype, err, i;
+	double oldparm[MAXPARAMS];
+
+	clear_zoombox();
+	oldtype = fractype;
+	for (i = 0; i < MAXPARAMS; i++)
+	{
+		oldparm[i] = param[i];
+	}
+	if (fractype != ANT)
+	{
+		fractype = ANT;
+		curfractalspecific = &fractalspecific[fractype];
+		load_params(fractype);
+	}
+	if (!fromtext_flag)
+	{
+		driver_stack_screen();
+	}
+	fromtext_flag = 0;
+	err = get_fract_params(2);
+	if (err >= 0)
+	{
+		driver_unstack_screen();
+		if (ant() >= 0)
+		{
+			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
+	}
+	else
+	{
+		driver_unstack_screen();
+	}
+	fractype = oldtype;
+	for (i = 0; i < MAXPARAMS; i++)
+	{
+		param[i] = oldparm[i];
+	}
+	return (err >= 0);
+}
+
+static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
+{
+	_ASSERTE(continue_check && recalc_check);
+	clear_zoombox();
+	if ((*continue_check)() >= 0)
+	{
+		if ((*recalc_check)() >= 0)
+		{
+			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void handle_3d_params(int *kbdmore)
+{
+	if (get_fract3d_params() >= 0)    /* get the parameters */
+	{
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		*kbdmore = 0;    /* time to redraw */
+	}
+}
+
+static void handle_orbits(void)
+{
+	/* must use standard fractal and have a float variant */
+	if ((fractalspecific[fractype].calctype == StandardFractal
+			|| fractalspecific[fractype].calctype == calcfroth)
+		&& (fractalspecific[fractype].isinteger == FALSE
+			|| fractalspecific[fractype].tofloat != NOFRACTAL)
+		&& !bf_math /* for now no arbitrary precision support */
+		&& !(g_is_true_color && truemode))
+	{
+		clear_zoombox();
+		Jiim(ORBIT);
+	}
+}
+
+static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
+{
+	static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
+	static double  jxx3rd, jyy3rd;
+
+	if (bf_math || evolving)
+	{
+		return;
+	}
+	if (fractype == CELLULAR)
+	{
+		nxtscreenflag = !nxtscreenflag;
+		calc_status = CALCSTAT_RESUMABLE;
+		*kbdmore = 0;
+		return;
+	}
+
+	if (fractype == FORMULA || fractype == FFORMULA)
+	{
+		if (ismand)
+		{
+			fractalspecific[fractype].tojulia = fractype;
+			fractalspecific[fractype].tomandel = NOFRACTAL;
+			ismand = 0;
+		}
+		else
+		{
+			fractalspecific[fractype].tojulia = NOFRACTAL;
+			fractalspecific[fractype].tomandel = fractype;
+			ismand = 1;
+		}
+	}
+
+	if (curfractalspecific->tojulia != NOFRACTAL
+		&& param[0] == 0.0
+		&& param[1] == 0.0)
+	{
+		/* switch to corresponding Julia set */
+		int key;
+		hasinverse = (fractype == MANDEL || fractype == MANDELFP)
+			&& (bf_math == 0) ? TRUE : FALSE;
+		clear_zoombox();
+		Jiim(JIIM);
+		key = driver_get_key();    /* flush keyboard buffer */
+		if (key != FIK_SPACE)
+		{
+			driver_unget_key(key);
+			return;
+		}
+		fractype = curfractalspecific->tojulia;
+		curfractalspecific = &fractalspecific[fractype];
+		if (xcjul == BIG || ycjul == BIG)
+		{
+			param[0] = (xxmax + xxmin) / 2;
+			param[1] = (yymax + yymin) / 2;
+		}
+		else
+		{
+			param[0] = xcjul;
+			param[1] = ycjul;
+			xcjul = ycjul = BIG;
+		}
+		jxxmin = sxmin;
+		jxxmax = sxmax;
+		jyymax = symax;
+		jyymin = symin;
+		jxx3rd = sx3rd;
+		jyy3rd = sy3rd;
+		*frommandel = 1;
+		xxmin = curfractalspecific->xmin;
+		xxmax = curfractalspecific->xmax;
+		yymin = curfractalspecific->ymin;
+		yymax = curfractalspecific->ymax;
+		xx3rd = xxmin;
+		yy3rd = yymin;
+		if (usr_distest == 0
+			&& usr_biomorph != -1
+			&& bitshift != 29)
+		{
+			xxmin *= 3.0;
+			xxmax *= 3.0;
+			yymin *= 3.0;
+			yymax *= 3.0;
+			xx3rd *= 3.0;
+			yy3rd *= 3.0;
+		}
+		zoomoff = TRUE;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		*kbdmore = 0;
+	}
+	else if (curfractalspecific->tomandel != NOFRACTAL)
+	{
+		/* switch to corresponding Mandel set */
+		fractype = curfractalspecific->tomandel;
+		curfractalspecific = &fractalspecific[fractype];
+		if (*frommandel)
+		{
+			xxmin = jxxmin;
+			xxmax = jxxmax;
+			yymin = jyymin;
+			yymax = jyymax;
+			xx3rd = jxx3rd;
+			yy3rd = jyy3rd;
+		}
+		else
+		{
+			xxmin = xx3rd = curfractalspecific->xmin;
+			xxmax = curfractalspecific->xmax;
+			yymin = yy3rd = curfractalspecific->ymin;
+			yymax = curfractalspecific->ymax;
+		}
+		SaveC.x = param[0];
+		SaveC.y = param[1];
+		param[0] = 0;
+		param[1] = 0;
+		zoomoff = TRUE;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		*kbdmore = 0;
+	}
+	else
+	{
+		driver_buzzer(BUZZER_ERROR);          /* can't switch */
+	}
+}
+
+static void handle_inverse_julia_toggle(int *kbdmore)
+{
+	/* if the inverse types proliferate, something more elegant will be
+	* needed */
+	if (fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA)
+	{
+		static int oldtype = -1;
+		if (fractype == JULIA || fractype == JULIAFP)
+		{
+			oldtype = fractype;
+			fractype = INVERSEJULIA;
+		}
+		else if (fractype == INVERSEJULIA)
+		{
+			fractype = (oldtype != -1) ? oldtype : JULIA;
+		}
+		curfractalspecific = &fractalspecific[fractype];
+		zoomoff = TRUE;
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		*kbdmore = 0;
+	}
+#if 0
+	else if (fractype == MANDEL || fractype == MANDELFP)
+	{
+		clear_zoombox();
+		Jiim(JIIM);
+	}
+#endif
+	else
+	{
+		driver_buzzer(BUZZER_ERROR);
+	}
+}
+
+static int handle_history(char *stacked, int kbdchar)
+{
+	if (name_stack_ptr >= 1)
+	{
+		/* go back one file if somewhere to go (ie. browsing) */
+		name_stack_ptr--;
+		while (file_name_stack[name_stack_ptr][0] == '\0' 
+			&& name_stack_ptr >= 0)
+		{
+			name_stack_ptr--;
+		}
+		if (name_stack_ptr < 0) /* oops, must have deleted first one */
+		{
+			return 0;
+		}
+		strcpy(browsename, file_name_stack[name_stack_ptr]);
+		/*
+		splitpath(browsename, NULL, NULL, fname, ext);
+		splitpath(readname, drive, dir, NULL, NULL);
+		makepath(readname, drive, dir, fname, ext);
+		*/
+		merge_pathnames(readname, browsename, 2);
+		browsing = TRUE;
+		no_sub_images = FALSE;
+		showfile = 0;
+		if (askvideo)
+		{
+			driver_stack_screen();      /* save graphics image */
+			*stacked = 1;
+		}
+		return RESTORESTART;
+	}
+	else if (maxhistory > 0 && bf_math == 0)
+	{
+		if (kbdchar == '\\' || kbdchar == 'h')
+		{
+			history_back();
+		}
+		else if (kbdchar == FIK_CTL_BACKSLASH || kbdchar == FIK_BACKSPACE)
+		{
+			history_forward();
+		}
+		restore_history_info();
+		zoomoff = TRUE;
+		g_init_mode = g_adapter;
+		if (curfractalspecific->isinteger != 0
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
+			usr_floatflag = 0;
+		}
+		if (curfractalspecific->isinteger == 0
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
+			usr_floatflag = 1;
+		}
+		return IMAGESTART;
+	}
+
+	return 0;
+}
+
+static int handle_color_cycling(int kbdchar)
+{
+	clear_zoombox();
+	memcpy(olddacbox, g_dac_box, 256 * 3);
+	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
+	if (memcmp(olddacbox, g_dac_box, 256 * 3))
+	{
+		colorstate = 1;
+		save_history_info();
+	}
+	return CONTINUE;
+}
+
+static int handle_color_editing(int *kbdmore)
+{
+	if (g_is_true_color && !initbatch) /* don't enter palette editor */
+	{
+		if (load_palette() >= 0)
+		{
+			*kbdmore = 0;
+			calc_status = CALCSTAT_PARAMS_CHANGED;
+			return 0;
+		}
+		else
+		{
+			return CONTINUE;
+		}
+	}
+	clear_zoombox();
+	if (g_dac_box[0][0] != 255
+		&& colors >= 16
+		&& !driver_diskp())
+	{
+		int oldhelpmode = helpmode;
+		memcpy(olddacbox, g_dac_box, 256*3);
+		helpmode = HELPXHAIR;
+		EditPalette();
+		helpmode = oldhelpmode;
+		if (memcmp(olddacbox, g_dac_box, 256*3))
+		{
+			colorstate = 1;
+			save_history_info();
+		}
+	}
+	return CONTINUE;
+}
+
+static int handle_save_to_disk(void)
+{
+    if (driver_diskp() && disktarga == 1)
+	{
+        return CONTINUE;  /* disk video and targa, nothing to save */
+	}
+    note_zoom();
+    savetodisk(savename);
+    restore_zoom();
+    return CONTINUE;
+}
+
+static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
+{
+	comparegif = 0;
+	*frommandel = 0;
+	if (browsing)
+	{
+		browsing = FALSE;
+	}
+	if (kbdchar == 'r')
+	{
+		if (debugflag == 50)
+		{
+			comparegif = overlay3d = 1;
+			if (initbatch == INIT_BATCH_SAVE)
+			{
+				driver_stack_screen();   /* save graphics image */
+				strcpy(readname, savename);
+				showfile = 0;
+				return RESTORESTART;
+			}
+		}
+		else
+		{
+			comparegif = overlay3d = 0;
+		}
+		display3d = 0;
+	}
+	driver_stack_screen();            /* save graphics image */
+	*stacked = overlay3d ? 0 : 1;
+	if (resave_flag)
+	{
+		updatesavename(savename);      /* do the pending increment */
+		resave_flag = RESAVE_NO;
+		started_resaves = FALSE;
+	}
+	showfile = -1;
+	return RESTORESTART;
+}
+
+static int handle_look_for_files(char *stacked)
+{
+	if ((zwidth != 0) || driver_diskp())
+	{
+		browsing = FALSE;
+		driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
+	}
+	else if (look(stacked))
+	{
+		return RESTORESTART;
+	}
+	return 0;
+}
+
+static void handle_zoom_in(int *kbdmore)
+{
+#ifdef XFRACT
+	XZoomWaiting = 0;
+#endif
+	if (zwidth != 0.0)
+	{                         /* do a zoom */
+		init_pan_or_recalc(0);
+		*kbdmore = 0;
+	}
+	if (calc_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
+	{
+		*kbdmore = 0;
+	}
+}
+
+static void handle_zoom_out(int *kbdmore)
+{
+	if (zwidth != 0.0)
+	{
+		init_pan_or_recalc(1);
+		*kbdmore = 0;
+		zoomout();                /* calc corners for zooming out */
+	}
+}
+
+static void handle_zoom_skew(int negative)
+{
+	if (negative)
+	{
+		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+		{
+			int i = key_count(FIK_CTL_HOME);
+			if ((zskew -= 0.02 * i) < -0.48)
+			{
+				zskew = -0.48;
+			}
+		}
+	}
+	else
+	{
+		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+		{
+			int i = key_count(FIK_CTL_END);
+			if ((zskew += 0.02 * i) > 0.48)
+			{
+				zskew = 0.48;
+			}
+		}
+	}
+}
+
+static void handle_select_video(int *kbdchar)
+{
+	driver_stack_screen();
+	*kbdchar = select_video_mode(g_adapter);
+	if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
+	{
+		driver_discard_screen();
+	}
+	else
+	{
+		driver_unstack_screen();
+	}
+}
+
+static void handle_mutation_level(int kbdchar, int *kbdmore)
+{
+	viewwindow = evolving = 1;
+	set_mutation_level(kbdchar-1119);
+	param_history(0); /* save parameter history */
+	*kbdmore = 0;
+	calc_status = CALCSTAT_PARAMS_CHANGED;
+}
+
+static int handle_video_mode(int kbdchar, int *kbdmore)
+{
+	int k = check_vidmode_key(0, kbdchar);
+	if (k >= 0)
+	{
+		g_adapter = k;
+		if (g_video_table[g_adapter].colors != colors)
+		{
+			savedac = 0;
+		}
+		calc_status = CALCSTAT_PARAMS_CHANGED;
+		*kbdmore = 0;
+		return CONTINUE;
+	}
+	return 0;
+}
+
+static void handle_z_rotate(int increase)
+{
+	if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+	{
+		if (increase)
+		{
+			zrotate += key_count(FIK_CTL_MINUS);
+		}
+		else
+		{
+			zrotate -= key_count(FIK_CTL_PLUS);
+		}
+	}
+}
+
+static void handle_box_color(int increase)
+{
+	if (increase)
+	{
+		boxcolor += key_count(FIK_CTL_INSERT);
+	}
+	else
+	{
+		boxcolor -= key_count(FIK_CTL_DEL);
+	}
+}
+
+static void handle_zoom_resize(int zoom_in)
+{
+	if (zoom_in)
+	{
+		if (zoomoff == TRUE)
+		{
+			if (zwidth == 0)
+			{                      /* start zoombox */
+				zwidth = zdepth = 1.0;
+				zskew = 0.0;
+				zrotate = 0;
+				zbx = zby = 0.0;
+				find_special_colors();
+				boxcolor = g_color_bright;
+				px = py = gridsz/2;
+				moveboxf(0.0, 0.0); /* force scrolling */
+			}
+			else
+			{
+				resizebox(-key_count(FIK_PAGE_UP));
+			}
+		}
+	}
+	else
+	{
+		/* zoom out */
+		if (boxcount)
+		{
+			if (zwidth >= 0.999 && zdepth >= 0.999) /* end zoombox */
+			{
+				zwidth = 0.0;
+			}
+			else
+			{
+				resizebox(key_count(FIK_PAGE_DOWN));
+			}
+		}
+	}
+}
+
+static void handle_zoom_stretch(int narrower)
+{
+	if (boxcount)
+	{
+		chgboxi(0, narrower ?
+			-2*key_count(FIK_CTL_PAGE_UP) : 2*key_count(FIK_CTL_PAGE_DOWN));
+	}
+}
+
 int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
 {
-   int i,k;
-   static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
-   static double  jxx3rd, jyy3rd;
-   long old_maxit;
-   /*
-   char drive[FILE_MAX_DRIVE];
-   char dir[FILE_MAX_DIR];
-   char fname[FILE_MAX_FNAME];
-   char ext[FILE_MAX_EXT];
-   */
-   if (quick_calc && calc_status == CALCSTAT_COMPLETED) {
-      quick_calc = 0;
-      usr_stdcalcmode = old_stdcalcmode;
-   }
-   if (quick_calc && calc_status != CALCSTAT_COMPLETED)
-      usr_stdcalcmode = old_stdcalcmode;
-   switch (*kbdchar)
-   {
-   case 't':                    /* new fractal type             */
-      julibrot = 0;
-      clear_zoombox();
-      driver_stack_screen();
-      if ((i = get_fracttype()) >= 0)
-      {
-         driver_discard_screen();
-         savedac = 0;
-         save_release = g_release;
-         no_mag_calc = 0;
-         use_old_period = 0;
-         bad_outside = 0;
-         ldcheck = 0;
-         set_current_params();
-         odpx=odpy=newodpx=newodpy=0;
-         fiddlefactor = 1;           /* reset param evolution stuff */
-         set_orbit_corners = 0;
-         param_history(0); /* save history */
-         if (i == 0)
-         {
-            g_init_mode = g_adapter;
-            *frommandel = 0;
-         }
-         else if (g_init_mode < 0) /* it is supposed to be... */
-            driver_set_for_text();     /* reset to text mode      */
-         return IMAGESTART;
-      }
-      driver_unstack_screen();
-      break;
-   case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
-   case FIK_CTL_Y:
-   case FIK_CTL_Z:
-      flip_image(*kbdchar);
-      break;
-   case 'x':                    /* invoke options screen        */
-   case 'y':
-   case 'p':                    /* passes options      */
-   case 'z':                    /* type specific parms */
-   case 'g':
-   case 'v':
-   case FIK_CTL_B:
-   case FIK_CTL_E:
-   case FIK_CTL_F:
-      old_maxit = maxit;
-      clear_zoombox();
-      if (fromtext_flag == 1)
-         fromtext_flag = 0;
-      else
-         driver_stack_screen();
-      if (*kbdchar == 'x')
-         i = get_toggles();
-      else if (*kbdchar == 'y')
-         i = get_toggles2();
-      else if (*kbdchar == 'p')
-         i = passes_options();
-      else if (*kbdchar == 'z')
-         i = get_fract_params(1);
-      else if (*kbdchar == 'v')
-         i = get_view_params(); /* get the parameters */
-      else if (*kbdchar == FIK_CTL_B)
-         i = get_browse_params();
-      else if (*kbdchar == FIK_CTL_E) {
-         i = get_evolve_Parms();
-         if (i > 0) {
-            start_showorbit = 0;
-            soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
-            Log_Auto_Calc = 0; /* turn it off */
-         }
-      }
-      else if (*kbdchar == FIK_CTL_F)
-         i = get_sound_params();
-      else
-         i = get_cmd_string();
-      driver_unstack_screen();
-      if (evolving && truecolor)
-         truecolor = 0; /* truecolor doesn't play well with the evolver */
-      if (maxit > old_maxit && inside >= 0 && calc_status == CALCSTAT_COMPLETED &&
-         curfractalspecific->calctype == StandardFractal && !LogFlag &&
-         !truecolor &&    /* recalc not yet implemented with truecolor */
-         !(usr_stdcalcmode == 't' && fillcolor > -1) &&
-               /* tesseral with fill doesn't work */
-         !(usr_stdcalcmode == 'o') &&
-         i == 1 && /* nothing else changed */
-         outside != ATAN ) {
-            quick_calc = 1;
-            old_stdcalcmode = usr_stdcalcmode;
-            usr_stdcalcmode = '1';
-            *kbdmore = 0;
-            calc_status = CALCSTAT_RESUMABLE;
-            i = 0;
-         }
-      else if (i > 0) {              /* time to redraw? */
-         quick_calc = 0;
-         param_history(0); /* save history */
-         *kbdmore = 0;
-		 calc_status = CALCSTAT_PARAMS_CHANGED;
-      }
-      break;
-#ifndef XFRACT
-   case '@':                    /* execute commands */
-   case '2':                    /* execute commands */
-#else
-   case FIK_F2:                     /* execute commands */
-#endif
-      driver_stack_screen();
-      i = get_commands();
-      if (g_init_mode != -1)
-      {                         /* video= was specified */
-         g_adapter = g_init_mode;
-         g_init_mode = -1;
-         i |= CMDARG_FRACTAL_PARAM;
-         savedac = 0;
-      }
-      else if (colorpreloaded)
-      {                         /* colors= was specified */
-         spindac(0, 1);
-         colorpreloaded = 0;
-      }
-      else if (i & CMDARG_RESET)         /* reset was specified */
-         savedac = 0;
-      if (i & CMDARG_3D_YES)
-      {                         /* 3d = was specified */
-         *kbdchar = '3';
-         driver_unstack_screen();
-         goto do_3d_transform;  /* pretend '3' was keyed */
-      }
-      if (i & CMDARG_FRACTAL_PARAM)
-      {                         /* fractal parameter changed */
-         driver_discard_screen();
-         /* backwards_v18();*/  /* moved this to cmdfiles.c */
-         /* backwards_v19();*/
-         *kbdmore = 0;
-		 calc_status = CALCSTAT_PARAMS_CHANGED;
-      }
-      else
-         driver_unstack_screen();
-      break;
-   case 'f':                    /* floating pt toggle           */
-      if (usr_floatflag == 0)
-         usr_floatflag = 1;
-      else if (stdcalcmode != 'o') /* don't go there */
-         usr_floatflag = 0;
-      g_init_mode = g_adapter;
-      return IMAGESTART;
-   case 'i':                    /* 3d fractal parms */
-      if (get_fract3d_params() >= 0)    /* get the parameters */
-	  {
-         calc_status = CALCSTAT_PARAMS_CHANGED;
-		 *kbdmore = 0;    /* time to redraw */
-	  }
-      break;
-#if 0
-   case 'w':
-      /*chk_keys();*/
-      /*julman();*/
-      break;
-#endif
-   case FIK_CTL_A:                     /* ^a Ant */
-      clear_zoombox();
-      {
-         int oldtype, err, i;
-         double oldparm[MAXPARAMS];
-         oldtype = fractype;
-         for (i=0; i<MAXPARAMS; i++)
-            oldparm[i] = param[i];
-         if (fractype != ANT)
-         {
-            fractype = ANT;
-            curfractalspecific = &fractalspecific[fractype];
-            load_params(fractype);
-         }
-         if (!fromtext_flag)
-            driver_stack_screen();
-         fromtext_flag = 0;
-         if ((err = get_fract_params(2)) >= 0)
-         {
-            driver_unstack_screen();
-            if (ant() >= 0)
-               calc_status = CALCSTAT_PARAMS_CHANGED;
-         }
-         else
-            driver_unstack_screen();
-         fractype = oldtype;
-         for (i=0; i<MAXPARAMS; i++)
-            param[i] = oldparm[i];
-         if (err >= 0)
-            return CONTINUE;
-      }
-      break;
-   case 'k':                    /* ^s is irritating, give user a single key */
-   case FIK_CTL_S:                     /* ^s RDS */
-      clear_zoombox();
-      if (get_rds_params() >= 0)
-      {
-         if (do_AutoStereo() >= 0)
-            calc_status = CALCSTAT_PARAMS_CHANGED;
-         return CONTINUE;
-      }
-      break;
-   case 'a':                    /* starfield parms               */
-      clear_zoombox();
-      if (get_starfield_params() >= 0)
-      {
-         if (starfield() >= 0)
-            calc_status = CALCSTAT_PARAMS_CHANGED;
-         return CONTINUE;
-      }
-      break;
-   case FIK_CTL_O:                     /* ctrl-o */
-   case 'o':
-      /* must use standard fractal and have a float variant */
-      if ((fractalspecific[fractype].calctype == StandardFractal
-           || fractalspecific[fractype].calctype == calcfroth) &&
-          (fractalspecific[fractype].isinteger == 0 ||
-           fractalspecific[fractype].tofloat != NOFRACTAL) &&
-           !bf_math && /* for now no arbitrary precision support */
-           !(g_is_true_color && truemode) )
-      {
-         clear_zoombox();
-         Jiim(ORBIT);
-      }
-      break;
-   case FIK_SPACE:                  /* spacebar, toggle mand/julia   */
-      if (bf_math || evolving)
-         break;
-      if (fractype == CELLULAR)
-      {
-         if (nxtscreenflag)
-            nxtscreenflag = 0;  /* toggle flag to stop generation */
-         else
-            nxtscreenflag = 1;  /* toggle flag to generate next screen */
-         calc_status = CALCSTAT_RESUMABLE;
-         *kbdmore = 0;
-      }
-      else
-      {
-         if (fractype == FORMULA || fractype == FFORMULA)
-         {
-            if (ismand)
-            {
-               fractalspecific[fractype].tojulia = fractype;
-               fractalspecific[fractype].tomandel = NOFRACTAL;
-               ismand = 0;
-            }
-            else
-            {
-               fractalspecific[fractype].tojulia = NOFRACTAL;
-               fractalspecific[fractype].tomandel = fractype;
-               ismand = 1;
-            }
-         }
-         if (curfractalspecific->tojulia != NOFRACTAL
-             && param[0] == 0.0 && param[1] == 0.0)
-         {
-            /* switch to corresponding Julia set */
-            int key;
-            if ((fractype == MANDEL || fractype == MANDELFP) && bf_math == 0)
-                  hasinverse = 1;
-            else
-                  hasinverse = 0;
-            clear_zoombox();
-            Jiim(JIIM);
-            key = driver_get_key();    /* flush keyboard buffer */
-            if (key != FIK_SPACE)
-            {
-                  driver_unget_key(key);
-                  break;
-            }
-            fractype = curfractalspecific->tojulia;
-            curfractalspecific = &fractalspecific[fractype];
-            if (xcjul == BIG || ycjul == BIG)
-            {
-               param[0] = (xxmax + xxmin) / 2;
-               param[1] = (yymax + yymin) / 2;
-            }
-            else
-            {
-               param[0] = xcjul;
-               param[1] = ycjul;
-               xcjul = ycjul = BIG;
-            }
-            jxxmin = sxmin;
-            jxxmax = sxmax;
-            jyymax = symax;
-            jyymin = symin;
-            jxx3rd = sx3rd;
-            jyy3rd = sy3rd;
-            *frommandel = 1;
-            xxmin = curfractalspecific->xmin;
-            xxmax = curfractalspecific->xmax;
-            yymin = curfractalspecific->ymin;
-            yymax = curfractalspecific->ymax;
-            xx3rd = xxmin;
-            yy3rd = yymin;
-            if (usr_distest == 0 && usr_biomorph != -1 && bitshift != 29)
-            {
-               xxmin *= 3.0;
-               xxmax *= 3.0;
-               yymin *= 3.0;
-               yymax *= 3.0;
-               xx3rd *= 3.0;
-               yy3rd *= 3.0;
-            }
-            zoomoff = 1;
-            calc_status = CALCSTAT_PARAMS_CHANGED;
-            *kbdmore = 0;
-         }
-         else if (curfractalspecific->tomandel != NOFRACTAL)
-         {
-            /* switch to corresponding Mandel set */
-            fractype = curfractalspecific->tomandel;
-            curfractalspecific = &fractalspecific[fractype];
-            if (*frommandel)
-            {
-               xxmin = jxxmin;
-               xxmax = jxxmax;
-               yymin = jyymin;
-               yymax = jyymax;
-               xx3rd = jxx3rd;
-               yy3rd = jyy3rd;
-            }
-            else
-            {
-               xxmin = xx3rd = curfractalspecific->xmin;
-               xxmax = curfractalspecific->xmax;
-               yymin = yy3rd = curfractalspecific->ymin;
-               yymax = curfractalspecific->ymax;
-            }
-            SaveC.x = param[0];
-            SaveC.y = param[1];
-            param[0] = 0;
-            param[1] = 0;
-            zoomoff = 1;
-            calc_status = CALCSTAT_PARAMS_CHANGED;
-            *kbdmore = 0;
-         }
-         else
-            driver_buzzer(BUZZER_ERROR);          /* can't switch */
-      }                         /* end of else for if == cellular */
-      break;
-   case 'j':                    /* inverse julia toggle */
-      /* if the inverse types proliferate, something more elegant will be
-       * needed */
-      if (fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA)
-      {
-         static int oldtype = -1;
-         if (fractype == JULIA || fractype == JULIAFP)
-         {
-            oldtype = fractype;
-            fractype = INVERSEJULIA;
-         }
-         else if (fractype == INVERSEJULIA)
-         {
-            if (oldtype != -1)
-               fractype = oldtype;
-            else
-               fractype = JULIA;
-         }
-         curfractalspecific = &fractalspecific[fractype];
-         zoomoff = 1;
-         calc_status = CALCSTAT_PARAMS_CHANGED;
-         *kbdmore = 0;
-      }
-#if 0
-      else if (fractype == MANDEL || fractype == MANDELFP)
-      {
-         clear_zoombox();
-         Jiim(JIIM);
-      }
-#endif
-      else
-         driver_buzzer(BUZZER_ERROR);
-      break;
-   case '\\':                   /* return to prev image    */
-   case FIK_CTL_BACKSLASH:
-   case 'h':
-   case FIK_BACKSPACE:
-      if (name_stack_ptr >= 1)
-      {
-         /* go back one file if somewhere to go (ie. browsing) */
-         name_stack_ptr--;
-         while (file_name_stack[name_stack_ptr][0] == '\0' 
-                && name_stack_ptr >= 0)
-            name_stack_ptr--;
-         if (name_stack_ptr < 0) /* oops, must have deleted first one */
-            break;
-         strcpy(browsename, file_name_stack[name_stack_ptr]);
-         /*
-         splitpath(browsename, NULL, NULL, fname, ext);
-         splitpath(readname, drive, dir, NULL, NULL);
-         makepath(readname, drive, dir, fname, ext);
-         */
-         merge_pathnames(readname,browsename,2);
-         browsing = TRUE;
-         no_sub_images = FALSE;
-         showfile = 0;
-         if (askvideo)
-         {
-            driver_stack_screen();      /* save graphics image */
-            *stacked = 1;
-         }
-         return RESTORESTART;
-      }
-      else if (maxhistory > 0 && bf_math == 0)
-      {
-         if (*kbdchar == '\\' || *kbdchar == 'h')
-			 history_back();
-         if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
-			 history_forward();
-         restore_history_info();
-         zoomoff = 1;
-         g_init_mode = g_adapter;
-         if (curfractalspecific->isinteger != 0 &&
-             curfractalspecific->tofloat != NOFRACTAL)
-            usr_floatflag = 0;
-         if (curfractalspecific->isinteger == 0 &&
-             curfractalspecific->tofloat != NOFRACTAL)
-            usr_floatflag = 1;
-         return IMAGESTART;
-      }
-      break;
-   case 'd':                    /* shell to MS-DOS              */
-      driver_stack_screen();
-      driver_shell();
-      driver_unstack_screen();
-      break;
+	int i;
+	long old_maxit;
 
-   case 'c':                    /* switch to color cycling      */
-   case '+':                    /* rotate palette               */
-   case '-':                    /* rotate palette               */
-      clear_zoombox();
-      memcpy(olddacbox, g_dac_box, 256 * 3);
-      rotate((*kbdchar == 'c') ? 0 : ((*kbdchar == '+') ? 1 : -1));
-      if (memcmp(olddacbox, g_dac_box, 256 * 3))
-      {
-         colorstate = 1;
-         save_history_info();
-      }
-      return CONTINUE;
-   case 'e':                    /* switch to color editing      */
-      if (g_is_true_color && !initbatch) { /* don't enter palette editor */
-         if (load_palette() >= 0) {
-            *kbdmore = 0;
-			calc_status = CALCSTAT_PARAMS_CHANGED;
-            break;
-         } else
-            return CONTINUE;
-      }
-      clear_zoombox();
-      if (g_dac_box[0][0] != 255 && colors >= 16
-          && !driver_diskp())
-      {
-         int oldhelpmode;
-         oldhelpmode = helpmode;
-         memcpy(olddacbox, g_dac_box, 256 * 3);
-         helpmode = HELPXHAIR;
-         EditPalette();
-         helpmode = oldhelpmode;
-         if (memcmp(olddacbox, g_dac_box, 256 * 3))
-         {
-            colorstate = 1;
-            save_history_info();
-         }
-      }
-      return CONTINUE;
-   case 's':                    /* save-to-disk                 */
-      if (driver_diskp() && disktarga == 1)
-         return CONTINUE;  /* disk video and targa, nothing to save */
-      note_zoom();
-      savetodisk(savename);
-      restore_zoom();
-      return CONTINUE;
-   case '#':                    /* 3D overlay                   */
-#ifdef XFRACT
-   case FIK_F3:                     /* 3D overlay                   */
-#endif
-      clear_zoombox();
-      overlay3d = 1;
-   case '3':                    /* restore-from (3d)            */
-    do_3d_transform:
-      if (overlay3d)
-         display3d = 2;         /* for <b> command               */
-      else
-         display3d = 1;
-   case 'r':                    /* restore-from                 */
-      comparegif = 0;
-      *frommandel = 0;
-      if (browsing)
-      {
-         browsing = FALSE;
-      }
-      if (*kbdchar == 'r')
-      {
-         if (debugflag == 50)
-         {
-            comparegif = overlay3d = 1;
-            if (initbatch == INIT_BATCH_SAVE)
-            {
-               driver_stack_screen();   /* save graphics image */
-               strcpy(readname, savename);
-               showfile = 0;
-               return RESTORESTART;
-            }
-         }
-         else
-            comparegif = overlay3d = 0;
-         display3d = 0;
-      }
-      driver_stack_screen();            /* save graphics image */
-      if (overlay3d)
-         *stacked = 0;
-      else
-         *stacked = 1;
-      if (resave_flag)
-      {
-         updatesavename(savename);      /* do the pending increment */
-         resave_flag = RESAVE_NO;
-		 started_resaves = FALSE;
-      }
-      showfile = -1;
-      return RESTORESTART;
-   case 'l':
-   case 'L':                    /* Look for other files within this view */
-		if ((zwidth != 0) || driver_diskp())
+	if (quick_calc && calc_status == CALCSTAT_COMPLETED)
+	{
+		quick_calc = 0;
+		usr_stdcalcmode = old_stdcalcmode;
+	}
+	if (quick_calc && calc_status != CALCSTAT_COMPLETED)
+	{
+		usr_stdcalcmode = old_stdcalcmode;
+	}
+	switch (*kbdchar)
+	{
+	case 't':                    /* new fractal type             */
+		if (handle_fractal_type(frommandel))
 		{
-			browsing = FALSE;
-			driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
-		}
-		else if (look(stacked))
-		{
-			return RESTORESTART;
+			return IMAGESTART;
 		}
 		break;
-   case 'b':                    /* make batch file              */
-      make_batch_file();
-      break;
-   case FIK_CTL_P:                    /* print current image          */
-	   driver_buzzer(BUZZER_INTERRUPT);
-      return CONTINUE;
-   case FIK_ENTER:                  /* Enter                        */
-   case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
-#ifdef XFRACT
-      XZoomWaiting = 0;
+
+	case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
+	case FIK_CTL_Y:
+	case FIK_CTL_Z:
+		flip_image(*kbdchar);
+		break;
+
+	case 'x':                    /* invoke options screen        */
+	case 'y':
+	case 'p':                    /* passes options      */
+	case 'z':                    /* type specific parms */
+	case 'g':
+	case 'v':
+	case FIK_CTL_B:
+	case FIK_CTL_E:
+	case FIK_CTL_F:
+		handle_options(*kbdchar, kbdmore, &old_maxit);
+		break;
+
+#ifndef XFRACT
+	case '@':                    /* execute commands */
+	case '2':                    /* execute commands */
+#else
+	case FIK_F2:                     /* execute commands */
 #endif
-      if (zwidth != 0.0)
-      {                         /* do a zoom */
-         init_pan_or_recalc(0);
-         *kbdmore = 0;
-      }
-      if (calc_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
-         *kbdmore = 0;
-      break;
-   case FIK_CTL_ENTER:              /* control-Enter                */
-   case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
-      init_pan_or_recalc(1);
-      *kbdmore = 0;
-      zoomout();                /* calc corners for zooming out */
-      break;
-   case FIK_INSERT:         /* insert                       */
-      driver_set_for_text();           /* force text mode */
-      return RESTART;
-   case FIK_LEFT_ARROW:             /* cursor left                  */
-   case FIK_RIGHT_ARROW:            /* cursor right                 */
-   case FIK_UP_ARROW:               /* cursor up                    */
-   case FIK_DOWN_ARROW:             /* cursor down                  */
-        move_zoombox(*kbdchar);
-        break;
-   case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
-   case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
-   case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
-   case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
-       move_zoombox(*kbdchar);
-       break;
-   case FIK_CTL_HOME:               /* Ctrl-home                    */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-      {
-         i = key_count(FIK_CTL_HOME);
-         if ((zskew -= 0.02 * i) < -0.48)
-            zskew = -0.48;
-      }
-      break;
-   case FIK_CTL_END:                /* Ctrl-end                     */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-      {
-         i = key_count(FIK_CTL_END);
-         if ((zskew += 0.02 * i) > 0.48)
-            zskew = 0.48;
-      }
-      break;
-   case FIK_CTL_PAGE_UP:            /* Ctrl-pgup                    */
-      if (boxcount)
-         chgboxi(0, -2 * key_count(FIK_CTL_PAGE_UP));
-      break;
-   case FIK_CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
-      if (boxcount)
-         chgboxi(0, 2 * key_count(FIK_CTL_PAGE_DOWN));
-      break;
+		if (handle_execute_commands(kbdchar, kbdmore))
+		{
+			goto do_3d_transform;  /* pretend '3' was keyed */
+		}
+		break;
 
-   case FIK_PAGE_UP:                /* page up                      */
-      if (zoomoff == 1)
-      {
-         if (zwidth == 0)
-         {                      /* start zoombox */
-            zwidth = zdepth = 1;
-            zskew = zrotate = 0;
-            zbx = zby = 0;
-            find_special_colors();
-            boxcolor = g_color_bright;
-            px = py = gridsz/2;
-            moveboxf(0.0,0.0); /* force scrolling */
-         }
-         else
-            resizebox(0 - key_count(FIK_PAGE_UP));
-      }
-      break;
-   case FIK_PAGE_DOWN:              /* page down                    */
-      if (boxcount)
-      {
-         if (zwidth >= .999 && zdepth >= 0.999) /* end zoombox */
-            zwidth = 0;
-         else
-            resizebox(key_count(FIK_PAGE_DOWN));
-      }
-      break;
-   case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate += key_count(FIK_CTL_MINUS);
-      break;
-   case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate -= key_count(FIK_CTL_PLUS);
-      break;
-   case FIK_CTL_INSERT:             /* Ctrl-ins                 */
-      boxcolor += key_count(FIK_CTL_INSERT);
-      break;
-   case FIK_CTL_DEL:                /* Ctrl-del                 */
-      boxcolor -= key_count(FIK_CTL_DEL);
-      break;
+	case 'f':
+		return handle_toggle_float();
 
-   case 1120: /* alt + number keys set mutation level and start evolution engine */
-   case 1121: 
-   case 1122: 
-   case 1123:
-   case 1124:
-   case 1125:
-   case 1126:
-/*
-   case 1127:
-   case 1128:
-*/
-      viewwindow = evolving = 1;
-      set_mutation_level(*kbdchar-1119);
-      param_history(0); /* save parameter history */
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
+	case 'i':                    /* 3d fractal parms */
+		handle_3d_params(kbdmore);
+		break;
 
-   case FIK_DELETE:         /* select video mode from list */
-   {
-      driver_stack_screen();
-      *kbdchar = select_video_mode(g_adapter);
-      if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
-         driver_discard_screen();
-      else
-         driver_unstack_screen();
-      /* fall through */
-   }
-   default:                     /* other (maybe a valid Fn key) */
-      if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
-      {
-         g_adapter = k;
-         if (g_video_table[g_adapter].colors != colors)
-            savedac = 0;
-         calc_status = CALCSTAT_PARAMS_CHANGED;
-         *kbdmore = 0;
-         return CONTINUE;
-      }
-      break;
+	case FIK_CTL_A:                     /* ^a Ant */
+		if (handle_ant())
+		{
+			return CONTINUE;
+		}
+		break;
+
+	case 'k':                    /* ^s is irritating, give user a single key */
+	case FIK_CTL_S:                     /* ^s RDS */
+		if (handle_recalc(get_rds_params, do_AutoStereo))
+		{
+			return CONTINUE;
+		}
+		break;
+
+	case 'a':                    /* starfield parms               */
+		if (handle_recalc(get_starfield_params, starfield))
+		{
+			return CONTINUE;
+		}
+		break;
+
+	case FIK_CTL_O:                     /* ctrl-o */
+	case 'o':
+		handle_orbits();
+		break;
+
+	case FIK_SPACE:                  /* spacebar, toggle mand/julia   */
+		handle_mandelbrot_julia_toggle(kbdmore, frommandel);
+		break;
+
+	case 'j':                    /* inverse julia toggle */
+		handle_inverse_julia_toggle(kbdmore);
+		break;
+
+	case '\\':                   /* return to prev image    */
+	case FIK_CTL_BACKSLASH:
+	case 'h':
+	case FIK_BACKSPACE:
+		i = handle_history(stacked, *kbdchar);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
+
+	case 'd':                    /* shell to MS-DOS              */
+		driver_stack_screen();
+		driver_shell();
+		driver_unstack_screen();
+		break;
+
+	case 'c':                    /* switch to color cycling      */
+	case '+':                    /* rotate palette               */
+	case '-':                    /* rotate palette               */
+		return handle_color_cycling(*kbdchar);
+
+	case 'e':                    /* switch to color editing      */
+		i = handle_color_editing(kbdmore);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
+
+	case 's':                    /* save-to-disk                 */
+		return handle_save_to_disk();
+
+	case '#':                    /* 3D overlay                   */
+#ifdef XFRACT
+	case FIK_F3:                     /* 3D overlay                   */
+#endif
+		clear_zoombox();
+		overlay3d = 1;
+		/* fall through */
+
+do_3d_transform:
+	case '3':                    /* restore-from (3d)            */
+		display3d = overlay3d ? 2 : 1; /* for <b> command               */
+		/* fall through */
+
+	case 'r':                    /* restore-from                 */
+		return handle_restore_from(frommandel, *kbdchar, stacked);
+
+	case 'l':
+	case 'L':                    /* Look for other files within this view */
+		i = handle_look_for_files(stacked);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
+
+	case 'b':                    /* make batch file              */
+		make_batch_file();
+		break;
+
+	case FIK_CTL_P:                    /* print current image          */
+		driver_buzzer(BUZZER_INTERRUPT);
+		return CONTINUE;
+
+	case FIK_ENTER:                  /* Enter                        */
+	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
+		handle_zoom_in(kbdmore);
+		break;
+
+	case FIK_CTL_ENTER:              /* control-Enter                */
+	case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
+		handle_zoom_out(kbdmore);
+		break;
+
+	case FIK_INSERT:         /* insert                       */
+		driver_set_for_text();           /* force text mode */
+		return RESTART;
+
+	case FIK_LEFT_ARROW:             /* cursor left                  */
+	case FIK_RIGHT_ARROW:            /* cursor right                 */
+	case FIK_UP_ARROW:               /* cursor up                    */
+	case FIK_DOWN_ARROW:             /* cursor down                  */
+	case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
+	case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
+	case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
+	case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
+		move_zoombox(*kbdchar);
+		break;
+
+	case FIK_CTL_HOME:               /* Ctrl-home                    */
+	case FIK_CTL_END:                /* Ctrl-end                     */
+		handle_zoom_skew(*kbdchar == FIK_CTL_HOME);
+		break;
+
+	case FIK_CTL_PAGE_UP:            /* Ctrl-pgup                    */
+	case FIK_CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
+		handle_zoom_stretch(FIK_CTL_PAGE_UP == *kbdchar);
+		break;
+
+	case FIK_PAGE_UP:                /* page up                      */
+	case FIK_PAGE_DOWN:              /* page down                    */
+		handle_zoom_resize(FIK_PAGE_UP == *kbdchar);
+		break;
+
+	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
+	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
+		handle_z_rotate(FIK_CTL_MINUS == *kbdchar);
+		break;
+
+	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
+	case FIK_CTL_DEL:                /* Ctrl-del                 */
+		handle_box_color(FIK_CTL_INSERT == *kbdchar);
+		break;
+
+	case FIK_ALT_1: /* alt + number keys set mutation level and start evolution engine */
+	case FIK_ALT_2: 
+	case FIK_ALT_3: 
+	case FIK_ALT_4:
+	case FIK_ALT_5:
+	case FIK_ALT_6:
+	case FIK_ALT_7:
+		handle_mutation_level(*kbdchar, kbdmore);
+		break;
+
+	case FIK_DELETE:         /* select video mode from list */
+		handle_select_video(kbdchar);
+		/* fall through */
+
+	default:                     /* other (maybe a valid Fn key) */
+		i = handle_video_mode(*kbdchar, kbdmore);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
    }                            /* end of the big switch */
    return 0;
 }
 
 int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
 {
-   int i,k;
+	int i, k;
 
-   switch (*kbdchar)
-   {
-   case 't':                    /* new fractal type             */
-     julibrot = 0;
-     clear_zoombox();
-     driver_stack_screen();
-      if ((i = get_fracttype()) >= 0)
-      {
-         driver_discard_screen();
-         savedac = 0;
-         save_release = g_release;
-         no_mag_calc = 0;
-         use_old_period = 0;
-         bad_outside = 0;
-         ldcheck = 0;
-         set_current_params();
-         odpx=odpy=newodpx=newodpy=0;
-         fiddlefactor = 1;           /* reset param evolution stuff */
-         set_orbit_corners = 0;
-         param_history(0); /* save history */
-         if (i == 0)
-         {
-            g_init_mode = g_adapter;
-            *frommandel = 0;
-         }
-         else if (g_init_mode < 0) /* it is supposed to be... */
-            driver_set_for_text();     /* reset to text mode      */
-         return IMAGESTART;
-      }
-      driver_unstack_screen();
-      break;
+	switch (*kbdchar)
+	{
+	case 't':                    /* new fractal type             */
+		if (handle_fractal_type(frommandel))
+		{
+			return IMAGESTART;
+		}
+		break;
    case 'x':                    /* invoke options screen        */
    case 'y':
    case 'p':                    /* passes options      */
@@ -1543,7 +1797,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == 8)
 			 history_forward();
          restore_history_info();
-         zoomoff = 1;
+         zoomoff = TRUE;
          g_init_mode = g_adapter;
          if (curfractalspecific->isinteger != 0 &&
              curfractalspecific->tofloat != NOFRACTAL)
@@ -1761,7 +2015,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
       break;
 
    case FIK_PAGE_UP:                /* page up                      */
-      if (zoomoff == 1)
+      if (zoomoff == TRUE)
       {
          if (zwidth == 0)
          {                      /* start zoombox */
@@ -1782,7 +2036,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
             moveboxf(0.0,0.0); /* force scrolling */
          }
          else
-            resizebox(0 - key_count(FIK_PAGE_UP));
+            resizebox(-key_count(FIK_PAGE_UP));
       }
       break;
    case FIK_PAGE_DOWN:              /* page down                    */
@@ -1808,10 +2062,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
          zrotate -= key_count(FIK_CTL_PLUS);
       break;
    case FIK_CTL_INSERT:             /* Ctrl-ins                 */
-      boxcolor += key_count(FIK_CTL_INSERT);
-      break;
    case FIK_CTL_DEL:                /* Ctrl-del                 */
-      boxcolor -= key_count(FIK_CTL_DEL);
+		handle_box_color(FIK_CTL_INSERT == *kbdchar);
       break;
 
    /* grabbed a couple of video mode keys, user can change to these using
