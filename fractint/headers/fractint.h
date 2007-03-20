@@ -694,10 +694,11 @@ enum Minor  {left_first, right_first};
 
 
 /* more bitmasks for evolution mode flag */
-#define FIELDMAP        1    /*steady field varyiations across screen */
-#define RANDWALK        2    /* newparm = lastparm +- rand()                   */
-#define RANDPARAM       4    /* newparm = constant +- rand()                   */
-#define NOGROUT         8    /* no gaps between images                                   */
+#define EVOLVE_FIELD_MAP	1	/*steady field varyiations across screen */
+#define EVOLVE_RAND_WALK	2	/* newparm = lastparm +- rand()                   */
+#define EVOLVE_RAND_PARAM	4	/* newparm = constant +- rand()                   */
+#define EVOLVE_NO_GROUT		8	/* no gaps between images                                   */
+#define EVOLVE_PARM_BOX		128
 
 
 extern struct fractalspecificstuff fractalspecific[];
@@ -916,6 +917,13 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define FIK_ALT_F8			1111
 #define FIK_ALT_F9			1112
 #define FIK_ALT_F10			1113
+#define FIK_ALT_1			1120
+#define FIK_ALT_2			1121
+#define FIK_ALT_3			1122
+#define FIK_ALT_4			1123
+#define FIK_ALT_5			1124
+#define FIK_ALT_6			1125
+#define FIK_ALT_7			1126
 
 #define FIK_CTL_A			1
 #define FIK_CTL_B			2
