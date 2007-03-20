@@ -1006,9 +1006,9 @@ static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
 		{
 			calc_status = CALCSTAT_PARAMS_CHANGED;
 		}
-		return TRUE;
+		return CONTINUE;
 	}
-	return FALSE;
+	return 0;
 }
 
 static void handle_3d_params(int *kbdmore)
@@ -1467,11 +1467,11 @@ static void handle_select_video(int *kbdchar)
 	}
 }
 
-static void handle_mutation_level(int kbdchar, int *kbdmore)
+static void handle_mutation_level(int forward, int amount, int *kbdmore)
 {
 	viewwindow = evolving = 1;
-	set_mutation_level(kbdchar-1119);
-	param_history(0); /* save parameter history */
+	set_mutation_level(amount);
+	param_history(forward); /* save parameter history */
 	*kbdmore = 0;
 	calc_status = CALCSTAT_PARAMS_CHANGED;
 }
@@ -1571,7 +1571,6 @@ static void handle_zoom_stretch(int narrower)
 
 int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
 {
-	int i;
 	long old_maxit;
 
 	if (quick_calc && calc_status == CALCSTAT_COMPLETED)
@@ -1638,18 +1637,10 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 
 	case 'k':                    /* ^s is irritating, give user a single key */
 	case FIK_CTL_S:                     /* ^s RDS */
-		if (handle_recalc(get_rds_params, do_AutoStereo))
-		{
-			return CONTINUE;
-		}
-		break;
+		return handle_recalc(get_rds_params, do_AutoStereo);
 
 	case 'a':                    /* starfield parms               */
-		if (handle_recalc(get_starfield_params, starfield))
-		{
-			return CONTINUE;
-		}
-		break;
+		return handle_recalc(get_starfield_params, starfield);
 
 	case FIK_CTL_O:                     /* ctrl-o */
 	case 'o':
@@ -1668,12 +1659,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
-		i = handle_history(stacked, *kbdchar);
-		if (i != 0)
-		{
-			return i;
-		}
-		break;
+		return handle_history(stacked, *kbdchar);
 
 	case 'd':                    /* shell to MS-DOS              */
 		driver_stack_screen();
@@ -1687,11 +1673,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 		return handle_color_cycling(*kbdchar);
 
 	case 'e':                    /* switch to color editing      */
-		i = handle_color_editing(kbdmore);
-		if (i != 0)
-		{
-			return i;
-		}
+		return handle_color_editing(kbdmore);
 		break;
 
 	case 's':                    /* save-to-disk                 */
@@ -1715,11 +1697,7 @@ do_3d_transform:
 
 	case 'l':
 	case 'L':                    /* Look for other files within this view */
-		i = handle_look_for_files(stacked);
-		if (i != 0)
-		{
-			return i;
-		}
+		return handle_look_for_files(stacked);
 		break;
 
 	case 'b':                    /* make batch file              */
@@ -1787,7 +1765,7 @@ do_3d_transform:
 	case FIK_ALT_5:
 	case FIK_ALT_6:
 	case FIK_ALT_7:
-		handle_mutation_level(*kbdchar, kbdmore);
+		handle_mutation_level(FALSE, *kbdchar - FIK_ALT_1 + 1, kbdmore);
 		break;
 
 	case FIK_DELETE:         /* select video mode from list */
@@ -1795,12 +1773,7 @@ do_3d_transform:
 		/* fall through */
 
 	default:                     /* other (maybe a valid Fn key) */
-		i = handle_video_mode(*kbdchar, kbdmore);
-		if (i != 0)
-		{
-			return i;
-		}
-		break;
+		return handle_video_mode(*kbdchar, kbdmore);
    }                            /* end of the big switch */
    return 0;
 }
@@ -1841,6 +1814,217 @@ static int handle_evolver_history(char *stacked, int *kbdchar)
 		return IMAGESTART;
 	}
 	return 0;
+}
+
+static void handle_evolver_move_selection(int *kbdchar)
+{
+	/* borrow ctrl cursor keys for moving selection box */
+	/* in evolver mode */
+	if (boxcount)
+	{
+		int grout;
+		if (evolving & 1)
+		{
+			if (*kbdchar == FIK_CTL_LEFT_ARROW)
+			{
+				px--;
+			}
+			if (*kbdchar == FIK_CTL_RIGHT_ARROW)
+			{
+				px++;
+			}
+			if (*kbdchar == FIK_CTL_UP_ARROW)
+			{
+				py--;
+			}
+			if (*kbdchar == FIK_CTL_DOWN_ARROW)
+			{
+				py++;
+			}
+			if (px < 0)
+			{
+				px = gridsz-1;
+			}
+			if (px > (gridsz-1))
+			{
+				px = 0;
+			}
+			if (py < 0)
+			{
+				py = gridsz-1;
+			}
+			if (py > (gridsz-1))
+			{
+				py = 0;
+			}
+			grout = !((evolving & NOGROUT)/NOGROUT);
+			sxoffs = px * (int)(dxsize + 1 + grout);
+			syoffs = py * (int)(dysize + 1 + grout);
+
+			param_history(1); /* restore old history */
+			fiddleparms(g_genes, unspiralmap()); /* change all parameters */
+						/* to values appropriate to the image selected */
+			set_evolve_ranges();
+			chgboxi(0, 0);
+			drawparmbox(0);
+		}
+	}
+	else                       /* if no zoombox, scroll by arrows */
+	{
+		move_zoombox(*kbdchar);
+	}
+}
+
+static void handle_evolver_param_zoom(int zoom_out)
+{
+	if (prmboxcount)
+	{
+		if (zoom_out)
+		{
+			parmzoom -= 1.0;
+			if (parmzoom < 1.0)
+			{
+				parmzoom = 1.0;
+			}
+			drawparmbox(0);
+			set_evolve_ranges();
+		}
+		else
+		{
+			parmzoom += 1.0;
+			if (parmzoom > (double) gridsz/2.0)
+			{
+				parmzoom = (double) gridsz/2.0;
+			}
+			drawparmbox(0);
+			set_evolve_ranges();
+		}
+	}
+}
+
+static void handle_evolver_zoom(int zoom_in)
+{
+	if (zoom_in)
+	{
+		if (zoomoff == TRUE)
+		{
+			if (zwidth == 0)
+			{                      /* start zoombox */
+				zwidth = zdepth = 1;
+				zskew = zrotate = 0;
+				zbx = zby = 0;
+				find_special_colors();
+				boxcolor = g_color_bright;
+				if (evolving & 1) /*rb*/
+				{
+					/* set screen view params back (previously changed to allow
+					   full screen saves in viewwindow mode) */
+					int grout = !((evolving & NOGROUT) / NOGROUT);
+					sxoffs = px * (int) (dxsize + 1 + grout);
+					syoffs = py * (int) (dysize + 1 + grout);
+					SetupParamBox();
+					drawparmbox(0);
+				}
+				moveboxf(0.0,0.0); /* force scrolling */
+			}
+			else
+			{
+				resizebox(-key_count(FIK_PAGE_UP));
+			}
+		}
+	}
+	else
+	{
+		if (boxcount)
+		{
+			if (zwidth >= 0.999 && zdepth >= 0.999) /* end zoombox */
+			{
+				zwidth = 0;
+				if (evolving & 1)
+				{
+					drawparmbox(1); /* clear boxes off screen */
+					ReleaseParamBox();
+				}
+			}
+			else
+			{
+				resizebox(key_count(FIK_PAGE_DOWN));
+			}
+		}
+	}
+}
+
+static void handle_evolver_mutation(int halve, int *kbdmore)
+{
+	if (halve)
+	{
+		fiddlefactor /= 2;
+		paramrangex /= 2;
+		newopx = opx + paramrangex / 2;
+		paramrangey /= 2;
+		newopy = opy + paramrangey / 2;
+	}
+	else
+	{
+		double centerx, centery;
+		fiddlefactor *= 2;
+		centerx = opx + paramrangex / 2;
+		paramrangex *= 2;
+		newopx = centerx - paramrangex / 2;
+		centery = opy + paramrangey / 2;
+		paramrangey *= 2;
+		newopy = centery - paramrangey / 2;
+	}
+	*kbdmore = 0;
+	calc_status = CALCSTAT_PARAMS_CHANGED;
+}
+
+static void handle_evolver_grid_size(int decrement, int *kbdmore)
+{
+	if (decrement)
+	{
+		if (gridsz > 3)
+		{
+			gridsz -= 2;  /* gridsz must have odd value only */
+			*kbdmore = 0;
+			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
+	}
+	else
+	{
+		if (gridsz < sxdots/(MINPIXELS << 1))
+		{
+			gridsz += 2;
+			*kbdmore = 0;
+			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
+	}
+}
+
+static void handle_evolver_toggle(int *kbdmore)
+{
+	int i;
+	for (i = 0; i < NUMGENES; i++)
+	{
+		if (g_genes[i].mutate == 5)
+		{
+			g_genes[i].mutate = 6;
+			continue;
+		}
+		if (g_genes[i].mutate == 6)
+		{
+			g_genes[i].mutate = 5;
+		}
+	}
+	*kbdmore = 0;
+	calc_status = CALCSTAT_PARAMS_CHANGED;
+}
+
+static void handle_mutation_off(int *kbdmore)
+{
+	evolving = viewwindow = 0;
+	*kbdmore = 0;
+	calc_status = CALCSTAT_PARAMS_CHANGED;
 }
 
 int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
@@ -1902,279 +2086,127 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 	case 'r':                    /* restore-from                 */
 		return handle_restore_from(frommandel, *kbdchar, stacked);
 
-   case FIK_ENTER:                  /* Enter                        */
-   case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
+	case FIK_ENTER:                  /* Enter                        */
+	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 #ifdef XFRACT
-      XZoomWaiting = 0;
+		XZoomWaiting = 0;
 #endif
-      if (zwidth != 0.0)
-      {                         /* do a zoom */
-         init_pan_or_recalc(0);
-         *kbdmore = 0;
-      }
-      if (calc_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
-         *kbdmore = 0;
-      break;
-   case FIK_CTL_ENTER:              /* control-Enter                */
-   case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
-      init_pan_or_recalc(1);
-      *kbdmore = 0;
-      zoomout();                /* calc corners for zooming out */
-      break;
-   case FIK_INSERT:         /* insert                       */
-      driver_set_for_text();           /* force text mode */
-      return RESTART;
-   case FIK_LEFT_ARROW:             /* cursor left                  */
-   case FIK_RIGHT_ARROW:            /* cursor right                 */
-   case FIK_UP_ARROW:               /* cursor up                    */
-   case FIK_DOWN_ARROW:             /* cursor down                  */
-        move_zoombox(*kbdchar);
-        break;
-   case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
-   case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
-   case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
-   case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
-        /* borrow ctrl cursor keys for moving selection box */
-        /* in evolver mode */
-     if (boxcount) {
-        int grout;
-        if (evolving&1) {
-             if (*kbdchar == FIK_CTL_LEFT_ARROW) {
-                px--;
-             }
-             if (*kbdchar == FIK_CTL_RIGHT_ARROW) {
-                px++;
-             }
-             if (*kbdchar == FIK_CTL_UP_ARROW) {
-                py--;
-             }
-             if (*kbdchar == FIK_CTL_DOWN_ARROW) {
-                py++;
-             }
-             if (px <0 ) px = gridsz-1;
-             if (px >(gridsz-1)) px = 0;
-             if (py <0) py = gridsz-1;
-             if (py > (gridsz-1)) py = 0;
-             grout = !((evolving & NOGROUT)/NOGROUT) ;
-             sxoffs = px * (int)(dxsize+1+grout);
-             syoffs = py * (int)(dysize+1+grout);
+		if (zwidth != 0.0)
+		{                         /* do a zoom */
+			init_pan_or_recalc(0);
+			*kbdmore = 0;
+		}
+		if (calc_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
+		{
+			*kbdmore = 0;
+		}
+		break;
 
-             param_history(1); /* restore old history */
-             fiddleparms(g_genes, unspiralmap()); /* change all parameters */
-                         /* to values appropriate to the image selected */
-             set_evolve_ranges();
-             chgboxi(0,0);
-             drawparmbox(0);
-        }
-     }
-     else                       /* if no zoombox, scroll by arrows */
-        move_zoombox(*kbdchar);
-     break;
-   case FIK_CTL_HOME:               /* Ctrl-home                    */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-      {
-         i = key_count(FIK_CTL_HOME);
-         if ((zskew -= 0.02 * i) < -0.48)
-            zskew = -0.48;
-      }
-      break;
-   case FIK_CTL_END:                /* Ctrl-end                     */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-      {
-         i = key_count(FIK_CTL_END);
-         if ((zskew += 0.02 * i) > 0.48)
-            zskew = 0.48;
-      }
-      break;
-   case FIK_CTL_PAGE_UP:
-      if (prmboxcount) {
-        parmzoom -= 1.0;
-        if (parmzoom<1.0) parmzoom=1.0;
-        drawparmbox(0);
-        set_evolve_ranges();
-      }
-      break;
-   case FIK_CTL_PAGE_DOWN:
-      if (prmboxcount) {
-        parmzoom += 1.0;
-        if (parmzoom>(double)gridsz/2.0) parmzoom=(double)gridsz/2.0;
-        drawparmbox(0);
-        set_evolve_ranges();
-      }
-      break;
+	case FIK_CTL_ENTER:              /* control-Enter                */
+	case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
+		init_pan_or_recalc(1);
+		*kbdmore = 0;
+		zoomout();                /* calc corners for zooming out */
+		break;
 
-   case FIK_PAGE_UP:                /* page up                      */
-      if (zoomoff == TRUE)
-      {
-         if (zwidth == 0)
-         {                      /* start zoombox */
-            zwidth = zdepth = 1;
-            zskew = zrotate = 0;
-            zbx = zby = 0;
-            find_special_colors();
-            boxcolor = g_color_bright;
-     /*rb*/ if (evolving&1) {
-              /* set screen view params back (previously changed to allow
-                          full screen saves in viewwindow mode) */
-                   int grout = !((evolving & NOGROUT) / NOGROUT);
-                   sxoffs = px * (int)(dxsize+1+grout);
-                   syoffs = py * (int)(dysize+1+grout);
-                   SetupParamBox();
-                   drawparmbox(0);
-            }
-            moveboxf(0.0,0.0); /* force scrolling */
-         }
-         else
-            resizebox(-key_count(FIK_PAGE_UP));
-      }
-      break;
-   case FIK_PAGE_DOWN:              /* page down                    */
-      if (boxcount)
-      {
-         if (zwidth >= .999 && zdepth >= 0.999) { /* end zoombox */
-            zwidth = 0;
-            if (evolving&1) {
-               drawparmbox(1); /* clear boxes off screen */
-               ReleaseParamBox();
-            }
-         }
-         else
-            resizebox(key_count(FIK_PAGE_DOWN));
-      }
-      break;
-   case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate += key_count(FIK_CTL_MINUS);
-      break;
-   case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
-      if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
-         zrotate -= key_count(FIK_CTL_PLUS);
-      break;
-   case FIK_CTL_INSERT:             /* Ctrl-ins                 */
-   case FIK_CTL_DEL:                /* Ctrl-del                 */
+	case FIK_INSERT:         /* insert                       */
+		driver_set_for_text();           /* force text mode */
+		return RESTART;
+
+	case FIK_LEFT_ARROW:             /* cursor left                  */
+	case FIK_RIGHT_ARROW:            /* cursor right                 */
+	case FIK_UP_ARROW:               /* cursor up                    */
+	case FIK_DOWN_ARROW:             /* cursor down                  */
+		move_zoombox(*kbdchar);
+		break;
+
+	case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
+	case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
+	case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
+	case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
+		handle_evolver_move_selection(kbdchar);
+		break;
+
+	case FIK_CTL_HOME:               /* Ctrl-home                    */
+	case FIK_CTL_END:                /* Ctrl-end                     */
+		handle_zoom_skew(*kbdchar == FIK_CTL_HOME);
+		break;
+
+	case FIK_CTL_PAGE_UP:
+	case FIK_CTL_PAGE_DOWN:
+		handle_evolver_param_zoom(FIK_CTL_PAGE_UP == *kbdchar);
+		break;
+
+	case FIK_PAGE_UP:                /* page up                      */
+	case FIK_PAGE_DOWN:              /* page down                    */
+		handle_evolver_zoom(FIK_PAGE_UP == *kbdchar);
+		break;
+
+	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
+	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
+		handle_z_rotate(FIK_CTL_MINUS == *kbdchar);
+		break;
+
+	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
+	case FIK_CTL_DEL:                /* Ctrl-del                 */
 		handle_box_color(FIK_CTL_INSERT == *kbdchar);
-      break;
+		break;
 
-   /* grabbed a couple of video mode keys, user can change to these using
-       delete and the menu if necessary */
+	/* grabbed a couple of video mode keys, user can change to these using
+		delete and the menu if necessary */
 
-   case FIK_F2: /* halve mutation params and regen */
-      fiddlefactor = fiddlefactor / 2;
-      paramrangex = paramrangex / 2;
-      newopx = opx + paramrangex / 2;
-      paramrangey = paramrangey / 2;
-      newopy = opy + paramrangey / 2;
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
+	case FIK_F2: /* halve mutation params and regen */
+	case FIK_F3: /*double mutation parameters and regenerate */
+		handle_evolver_mutation(FIK_F2 == *kbdchar, kbdmore);
+		break;
 
-   case FIK_F3: /*double mutation parameters and regenerate */
-   {
-    double centerx, centery;
-      fiddlefactor = fiddlefactor * 2;
-      centerx = opx + paramrangex / 2;
-      paramrangex = paramrangex * 2;
-      newopx = centerx - paramrangex / 2;
-      centery = opy + paramrangey / 2;
-      paramrangey = paramrangey * 2;
-      newopy = centery - paramrangey / 2;
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
-   }
+	case FIK_F4: /*decrement  gridsize and regen */
+	case FIK_F5: /* increment gridsize and regen */
+		handle_evolver_grid_size(FIK_F4 == *kbdchar, kbdmore);
+		break;
 
-   case FIK_F4: /*decrement  gridsize and regen */
-      if (gridsz > 3) {
-        gridsz = gridsz - 2;  /* gridsz must have odd value only */
-        *kbdmore = 0;
-		calc_status = CALCSTAT_PARAMS_CHANGED;
-        }
-      break;
+	case FIK_F6: /* toggle all variables selected for random variation to
+				center weighted variation and vice versa */
+		handle_evolver_toggle(kbdmore);
+		break;
 
-   case FIK_F5: /* increment gridsize and regen */
-      if (gridsz < (sxdots / (MINPIXELS<<1))) {
-         gridsz = gridsz + 2;
-         *kbdmore = 0;
-		 calc_status = CALCSTAT_PARAMS_CHANGED;
-         }
-      break;
+	case FIK_ALT_1: /* alt + number keys set mutation level */
+	case FIK_ALT_2: 
+	case FIK_ALT_3: 
+	case FIK_ALT_4:
+	case FIK_ALT_5:
+	case FIK_ALT_6:
+	case FIK_ALT_7:
+		handle_mutation_level(TRUE, *kbdchar - FIK_ALT_1 + 1, kbdmore);
+		break;
 
-   case FIK_F6: /* toggle all variables selected for random variation to
-               center weighted variation and vice versa */
-         {
-          int i;
-          for (i =0;i < NUMGENES; i++) {
-            if (g_genes[i].mutate == 5) {
-               g_genes[i].mutate = 6;
-               continue;
-            }
-            if (g_genes[i].mutate == 6) g_genes[i].mutate = 5;
-          }
-        }
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+		handle_mutation_level(TRUE, *kbdchar - (int) '1' + 1, kbdmore);
+		break;
 
-   case 1120: /* alt + number keys set mutation level */
-   case 1121: 
-   case 1122: 
-   case 1123:
-   case 1124:
-   case 1125:
-   case 1126:
-/*
-   case 1127:
-   case 1128:
-*/
-      set_mutation_level(*kbdchar-1119);
-      param_history(1); /* restore old history */
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
+	case '0': /* mutation level 0 == turn off evolving */ 
+		handle_mutation_off(kbdmore);
+		break;
 
-   case '1':
-   case '2':
-   case '3':
-   case '4':
-   case '5':
-   case '6':
-   case '7':
-/*  add these in when more parameters can be varied
-   case '8':
-   case '9':
-*/
-      set_mutation_level(*kbdchar-(int)'0');
-      param_history(1); /* restore old history */
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
-   case '0': /* mutation level 0 == turn off evolving */ 
-      evolving = viewwindow = 0;
-      *kbdmore = 0;
-	  calc_status = CALCSTAT_PARAMS_CHANGED;
-      break;
+	case FIK_DELETE:         /* select video mode from list */
+		handle_select_video(kbdchar);
+		/* fall through */
 
-   case FIK_DELETE:         /* select video mode from list */
-      driver_stack_screen();
-      *kbdchar = select_video_mode(g_adapter);
-      if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
-         driver_discard_screen();
-      else
-         driver_unstack_screen();
-      /* fall through */
-   default:             /* other (maybe valid Fn key */
-      if ((k = check_vidmode_key(0, *kbdchar)) >= 0)
-      {
-         g_adapter = k;
-         if (g_video_table[g_adapter].colors != colors)
-            savedac = 0;
-         calc_status = CALCSTAT_PARAMS_CHANGED;
-         *kbdmore = 0;
-         return CONTINUE;
-      }
-      break;
-   }                            /* end of the big evolver switch */
-   return 0;
+	default:             /* other (maybe valid Fn key */
+		i = handle_video_mode(*kbdchar, kbdmore);
+		if (i != 0)
+		{
+			return i;
+		}
+		break;
+	}                            /* end of the big evolver switch */
+	return 0;
 }
 
 static int call_line3d(BYTE *pixels, int linelen)
