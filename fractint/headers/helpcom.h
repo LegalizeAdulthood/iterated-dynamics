@@ -174,7 +174,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
 
 #ifndef XFRACT
 #define getint(ptr) (*(int *)(ptr))
-#define setint(ptr,n) (*(int *)(ptr)) = n
+#define setint(ptr, n) (*(int *)(ptr)) = n
 #else
 /* Get an int from an unaligned pointer
  * This routine is needed because this program uses unaligned 2 byte

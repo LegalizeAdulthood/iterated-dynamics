@@ -732,7 +732,7 @@ extern struct fractalspecificstuff *curfractalspecific;
 #endif
 
 #ifndef lsqr
-#define lsqr(x) (multiply((x),(x),bitshift))
+#define lsqr(x) (multiply((x), (x), bitshift))
 #endif
 
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
@@ -887,11 +887,11 @@ typedef struct workliststuff        WORKLIST;
 #define MAXCALCWORK 12
 
 struct coords {
-    int x,y;
+    int x, y;
     };
 
 struct dblcoords {
-    double x,y;
+    double x, y;
     };
 
 extern BYTE trigndx[];

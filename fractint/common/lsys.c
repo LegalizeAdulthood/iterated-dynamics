@@ -19,11 +19,11 @@ struct lsys_cmd {
 static int _fastcall readLSystemFile(char *);
 static void _fastcall free_rules_mem(void);
 static int _fastcall rule_present(char symbol);
-static int _fastcall save_rule(char *,char **);
+static int _fastcall save_rule(char *, char **);
 static int _fastcall append_rule(char *rule, int index);
 static void free_lcmds(void);
-static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *,struct lsys_turtlestatei *, struct lsys_cmd **,int);
-static struct lsys_cmd * drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth);
+static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *, struct lsys_turtlestatei *, struct lsys_cmd **, int);
+static struct lsys_cmd * drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
 static int lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
 static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
 static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
@@ -72,11 +72,11 @@ LDBL _fastcall getnumber(char **str)
 {
    char numstr[30];
    LDBL ret;
-   int i,root,inverse;
+   int i, root, inverse;
 
    root=0;
    inverse=0;
-   strcpy(numstr,"");
+   strcpy(numstr, "");
    (*str)++;
    switch (**str)
    {
@@ -123,12 +123,12 @@ static int _fastcall readLSystemFile(char *str)
    int c;
    char **rulind;
    int err=0;
-   int linenum,check=0;
-   char inline1[MAX_LSYS_LINE_LEN+1],fixed[MAX_LSYS_LINE_LEN+1],*word;
+   int linenum, check=0;
+   char inline1[MAX_LSYS_LINE_LEN+1], fixed[MAX_LSYS_LINE_LEN+1], *word;
    FILE *infile;
    char msgbuf[481]; /* enough for 6 full lines */
 
-   if (find_file_item(LFileName,str,&infile, ITEMTYPE_L_SYSTEM) < 0)
+   if (find_file_item(LFileName, str, &infile, ITEMTYPE_L_SYSTEM) < 0)
       return -1;
    while ((c = fgetc(infile)) != '{')
       if (c == EOF) return -1;
@@ -137,31 +137,31 @@ static int _fastcall readLSystemFile(char *str)
    rulind= &ruleptrs[1];
    msgbuf[0]=(char)(linenum=0);
 
-   while (file_gets(inline1,MAX_LSYS_LINE_LEN,infile) > -1)  /* Max line length chars */
+   while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  /* Max line length chars */
    {
       linenum++;
-      if ((word = strchr(inline1,';')) != NULL) /* strip comment */
+      if ((word = strchr(inline1, ';')) != NULL) /* strip comment */
          *word = 0;
       strlwr(inline1);
 
-      if ((int)strspn(inline1," \t\n") < (int)strlen(inline1)) /* not a blank line */
+      if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) /* not a blank line */
       {
-         word=strtok(inline1," =\t\n");
-         if (!strcmp(word,"axiom"))
+         word=strtok(inline1, " =\t\n");
+         if (!strcmp(word, "axiom"))
          {
-            if (save_rule(strtok(NULL," \t\n"),&ruleptrs[0])) {
-                strcat(msgbuf,"Error:  out of memory\n");
+            if (save_rule(strtok(NULL, " \t\n"), &ruleptrs[0])) {
+                strcat(msgbuf, "Error:  out of memory\n");
                 ++err;
                 break;
             }
             check=1;
          }
-         else if (!strcmp(word,"angle"))
+         else if (!strcmp(word, "angle"))
          {
-            maxangle=(char)atoi(strtok(NULL," \t\n"));
+            maxangle=(char)atoi(strtok(NULL, " \t\n"));
             check=1;
          }
-         else if (!strcmp(word,"}"))
+         else if (!strcmp(word, "}"))
             break;
          else if (!word[1])
          {
@@ -171,24 +171,24 @@ static int _fastcall readLSystemFile(char *str)
             if (strchr("+-/\\@|!c<>][", *word))
             {
                sprintf(&msgbuf[strlen(msgbuf)],
-               "Syntax error line %d: Redefined reserved symbol %s\n",linenum,word);
+               "Syntax error line %d: Redefined reserved symbol %s\n", linenum, word);
                ++err;
                break;
             }
-            temp = strtok(NULL," =\t\n");
+            temp = strtok(NULL, " =\t\n");
             index = rule_present(*word);
 
             if (!index)
             {
-               strcpy(fixed,word);
+               strcpy(fixed, word);
                if (temp)
-                  strcat(fixed,temp);
-               memerr = save_rule(fixed,rulind++);
+                  strcat(fixed, temp);
+               memerr = save_rule(fixed, rulind++);
             }
             else if (temp)
             {
-               strcpy(fixed,temp);
-               memerr = append_rule(fixed,index);
+               strcpy(fixed, temp);
+               memerr = append_rule(fixed, index);
             }
             if (memerr) {
                 strcat(msgbuf, "Error:  out of memory\n");
@@ -201,17 +201,17 @@ static int _fastcall readLSystemFile(char *str)
             if (err<6)
             {
                sprintf(&msgbuf[strlen(msgbuf)],
-                       "Syntax error line %d: %s\n",linenum,word);
+                       "Syntax error line %d: %s\n", linenum, word);
                ++err;
             }
          if (check)
          {
             check=0;
-            if ((word=strtok(NULL," \t\n"))!=NULL)
+            if ((word=strtok(NULL, " \t\n"))!=NULL)
                if (err<6)
                {
                   sprintf(&msgbuf[strlen(msgbuf)],
-                         "Extra text after command line %d: %s\n",linenum,word);
+                         "Extra text after command line %d: %s\n", linenum, word);
                   ++err;
                }
          }
@@ -220,18 +220,18 @@ static int _fastcall readLSystemFile(char *str)
    fclose(infile);
    if (!ruleptrs[0] && err<6)
    {
-      strcat(msgbuf,"Error:  no axiom\n");
+      strcat(msgbuf, "Error:  no axiom\n");
       ++err;
    }
    if ((maxangle<3||maxangle>50) && err<6)
    {
-      strcat(msgbuf,"Error:  illegal or missing angle\n");
+      strcat(msgbuf, "Error:  illegal or missing angle\n");
       ++err;
    }
    if (err)
    {
       msgbuf[strlen(msgbuf)-1]=0; /* strip trailing \n */
-      stopmsg(0,msgbuf);
+      stopmsg(0, msgbuf);
       return -1;
    }
    *rulind=NULL;
@@ -354,7 +354,7 @@ static int _fastcall rule_present(char symbol)
    return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static int _fastcall save_rule(char *rule,char **saveptr)
+static int _fastcall save_rule(char *rule, char **saveptr)
 {
    int i;
    char *tmpfar;
@@ -582,7 +582,7 @@ static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
   cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 /* xpos+=size*aspect*cos(realangle*PI/180); */
 /* ypos+=size*sin(realangle*PI/180); */
-  driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+  driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_dodrawm(struct lsys_turtlestatei *cmd)
@@ -617,7 +617,7 @@ static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
   cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
 /* xpos+=size*coss[angle]; */
 /* ypos+=size*sins[angle]; */
-  driver_draw_line(lastx,lasty,(int)(cmd->xpos >> 19),(int)(cmd->ypos >> 19),cmd->curcolor);
+  driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_dodrawc(struct lsys_turtlestatei *cmd)
@@ -667,7 +667,7 @@ if (overflow)     /* integer math routines overflowed */
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch==command->ch) {
                tran=1;
-               if (findsize((*rulind)+1,ts,rules,depth-1) == NULL)
+               if (findsize((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
@@ -677,8 +677,8 @@ if (overflow)     /* integer math routines overflowed */
           (*command->f)(ts);
           }
         else if (command->ch == '[') {
-          char saveang,saverev;
-          long savesize,savex,savey;
+          char saveang, saverev;
+          long savesize, savex, savey;
           unsigned long saverang;
 
           saveang=ts->angle;
@@ -706,7 +706,7 @@ if (overflow)     /* integer math routines overflowed */
 static int
 lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
-   float horiz,vert;
+   float horiz, vert;
    double xmin, xmax, ymin, ymax;
    double locsize;
    double locaspect;
@@ -725,7 +725,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
    ts->reverse =
    ts->counter = 0;
    ts->size=FIXEDPT(1L);
-   fsret = findsize(command,ts,rules,depth);
+   fsret = findsize(command, ts, rules, depth);
    thinking(0, NULL); /* erase thinking message if any */
    xmin = (double) ts->xmin / FIXEDMUL;
    xmax = (double) ts->xmax / FIXEDMUL;
@@ -759,7 +759,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 }
 
 static struct lsys_cmd *
-drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd **rules,int depth)
+drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
    struct lsys_cmd **rulind;
    int tran;
@@ -785,7 +785,7 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran=1;
-               if (drawLSysI((*rulind)+1,ts,rules,depth-1) == NULL)
+               if (drawLSysI((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
@@ -795,8 +795,8 @@ drawLSysI(struct lsys_cmd *command,struct lsys_turtlestatei *ts, struct lsys_cmd
           (*command->f)(ts);
           }
         else if (command->ch == '[') {
-          char saveang,saverev,savecolor;
-          long savesize,savex,savey;
+          char saveang, saverev, savecolor;
+          long savesize, savex, savey;
           unsigned long saverang;
 
           saveang=ts->angle;
