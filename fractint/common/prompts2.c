@@ -72,11 +72,6 @@ static  int get_screen_corners(void);
 
 struct DIR_SEARCH DTA;          /* Allocate DTA and define structure */
 
-#define GETFORMULA 0
-#define GETLSYS    1
-#define GETIFS     2
-#define GETPARM    3
-
 char commandmask[13] = {"*.par"};
 
 /* --------------------------------------------------------------------- */
@@ -1083,7 +1078,7 @@ int get_commands()              /* execute commands from file */
    ret = 0;
    oldhelpmode = helpmode;
    helpmode = HELPPARMFILE;
-   if ((point = get_file_entry(GETPARM,"Parameter Set",
+   if ((point = get_file_entry(GETFILE_PARAMETER,"Parameter Set",
                                commandmask,CommandFile,CommandName)) >= 0
      && (parmfile = fopen(CommandFile,"rb")) != NULL) {
       fseek(parmfile,point,SEEK_SET);
