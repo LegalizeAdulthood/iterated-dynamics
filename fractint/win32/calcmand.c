@@ -53,7 +53,7 @@ calc_mand_floating_point(void)
     long savedand;
     int savedincr;
     long tmpfsd;
-	long x,y,x2, y2, xy, Cx, Cy, savedx, savedy;
+	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
 	oldcoloriter = (periodicitycheck == 0) ? 0 : (maxit - 250);
 	tmpfsd = maxit - firstsavedand;

@@ -734,14 +734,14 @@ int line3d(BYTE * pixels, unsigned linelen)
                            /* use next instead if you ever need details:
                             * static char tmp[] = {"debug, vector err"};
                             * char msg[200]; #ifndef XFRACT
-                            * sprintf(msg,"%s\n%f %f %f\n%f %f %f\n%f %f
-                            * %f", #else sprintf(msg,"%s\n%f %f %f\n%f %f
+                            * sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
+                            * %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
                             * %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
                             * f_cur.color, f_lastrow[col].x,
                             * f_lastrow[col].y, f_lastrow[col].color,
                             * f_lastrow[col-1].x,
-                            * f_lastrow[col-1].y,f_lastrow[col-1].color);
-                            * stopmsg(0,msg); */
+                            * f_lastrow[col-1].y, f_lastrow[col-1].color);
+                            * stopmsg(0, msg); */
                         }
                         cur.color = (int)(f_cur.color = (float) colors);
                      }
@@ -1382,7 +1382,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
    FILE *fps;
 
    /* Open File for both reading and writing */
-   fps = dir_fopen(workdir,File_Name2, "w+b");
+   fps = dir_fopen(workdir, File_Name2, "w+b");
    if (fps == NULL)
    {
       File_Error(File_Name2, 1);
@@ -1444,7 +1444,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
          fclose(fps);
          if (overlay)
             fclose(Source);
-         dir_remove(workdir,File_Name2);
+         dir_remove(workdir, File_Name2);
          File_Error(File_Name2, 2);
          return -2;
       }
@@ -1455,7 +1455,7 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
    if (targa_startdisk(fps, T_header_24) != 0)
    {
       enddisk();
-      dir_remove(workdir,File_Name2);
+      dir_remove(workdir, File_Name2);
       return -4;
    }
    return 0;
@@ -1467,7 +1467,7 @@ int targa_validate(char *File_Name)
    int i;
 
    /* Attempt to open source file for reading */
-   fp = dir_fopen(workdir,File_Name, "rb");
+   fp = dir_fopen(workdir, File_Name, "rb");
    if (fp == NULL)
    {
       File_Error(File_Name, 1);
@@ -2493,7 +2493,7 @@ static int line3dmem(void)
       {
          static struct minmax *got_mem = NULL;
          if (debugflag == 2222)
-            stopmsg(0,"malloc minmax");
+            stopmsg(0, "malloc minmax");
          /* not using extra segment so decrement check_extra */
          check_extra -= sizeof(struct minmax) * ydots;
          if (got_mem == NULL)

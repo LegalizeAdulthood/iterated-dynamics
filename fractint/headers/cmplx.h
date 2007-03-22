@@ -4,25 +4,25 @@
 
 
 struct DHyperComplex {
-    double x,y;
-    double z,t;
+    double x, y;
+    double z, t;
 };
 
 struct LHyperComplex {
-    long x,y;
-    long z,t;
+    long x, y;
+    long z, t;
 };
 
 struct DComplex {
-    double x,y;
+    double x, y;
 };
 
 struct LDComplex {
-    LDBL x,y;
+    LDBL x, y;
 };
 
 struct LComplex {
-    long x,y;
+    long x, y;
 };
 
 typedef struct  DComplex         _CMPLX;

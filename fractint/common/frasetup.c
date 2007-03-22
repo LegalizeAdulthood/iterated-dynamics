@@ -194,7 +194,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 int
 StandaloneSetup(void)
 {
-   timer(0,curfractalspecific->calctype);
+   timer(0, curfractalspecific->calctype);
    return 0;           /* effectively disable solid-guessing */
 }
 
@@ -473,7 +473,7 @@ JuliafpSetup(void)
       if (trigndx[0] != SQR)
          symmetry=NOSYM;
    case QUATJULFP:
-      attractors = 0;   /* attractors broken since code checks r,i not j,k */
+      attractors = 0;   /* attractors broken since code checks r, i not j, k */
       periodicitycheck = 0;
       if (param[4] != 0.0 || param[5] != 0)
          symmetry = NOSYM;
@@ -704,11 +704,11 @@ FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
    static char fnplusfn[7][7] =
    {/* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
    /* fn1 */
-   /* sin */ {PI_SYM,XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
-   /* cos */ {XAXIS, PI_SYM,XAXIS,  XYAXIS,XAXIS, XAXIS, XAXIS},
-   /* sinh*/ {XYAXIS,XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
-   /* cosh*/ {XAXIS, XYAXIS,XAXIS,  XYAXIS,XAXIS, XAXIS, XAXIS},
-   /* exp */ {XAXIS, XYAXIS,XAXIS,  XAXIS, XYAXIS,XAXIS, XAXIS},
+   /* sin */ {PI_SYM, XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
+   /* cos */ {XAXIS, PI_SYM, XAXIS,  XYAXIS, XAXIS, XAXIS, XAXIS},
+   /* sinh*/ {XYAXIS, XAXIS, XYAXIS, XAXIS, XAXIS, XAXIS, XAXIS},
+   /* cosh*/ {XAXIS, XYAXIS, XAXIS,  XYAXIS, XAXIS, XAXIS, XAXIS},
+   /* exp */ {XAXIS, XYAXIS, XAXIS,  XAXIS, XYAXIS, XAXIS, XAXIS},
    /* log */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XAXIS},
    /* sqr */ {XAXIS, XAXIS, XAXIS,  XAXIS, XAXIS, XAXIS, XYAXIS}
    };
@@ -781,10 +781,10 @@ ZXTrigPlusZSetup(void)
 {
 /*   static char ZXTrigPlusZSym1[] = */
    /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
-/*           {XAXIS,XYAXIS,XAXIS,XYAXIS,XAXIS,NOSYM,XYAXIS}; */
+/*           {XAXIS, XYAXIS, XAXIS, XYAXIS, XAXIS, NOSYM, XYAXIS}; */
 /*   static char ZXTrigPlusZSym2[] = */
    /* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
-/*           {NOSYM,ORIGIN,NOSYM,ORIGIN,NOSYM,NOSYM,ORIGIN}; */
+/*           {NOSYM, ORIGIN, NOSYM, ORIGIN, NOSYM, NOSYM, ORIGIN}; */
 
    if (param[1] == 0.0 && param[3] == 0.0)
 /*      symmetry = ZXTrigPlusZSym1[trigndx[0]]; */
@@ -905,7 +905,7 @@ JuliafnPlusZsqrdSetup(void)
 {
 /*   static char fnpluszsqrd[] = */
    /* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
-   /* sin    {NOSYM,ORIGIN,NOSYM,ORIGIN,ORIGIN,NOSYM,NOSYM}; */
+   /* sin    {NOSYM, ORIGIN, NOSYM, ORIGIN, ORIGIN, NOSYM, NOSYM}; */
 
 /*   symmetry = fnpluszsqrd[trigndx[0]];   JCO  5/8/92 */
    switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
@@ -930,7 +930,7 @@ SqrTrigSetup(void)
 {
 /*   static char SqrTrigSym[] = */
    /* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
-/*           {PI_SYM,PI_SYM,XYAXIS,XYAXIS,XYAXIS,XAXIS,XAXIS}; */
+/*           {PI_SYM, PI_SYM, XYAXIS, XYAXIS, XYAXIS, XAXIS, XAXIS}; */
 /*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
    switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
    {
@@ -952,13 +952,13 @@ FnXFnSetup(void)
    static char fnxfn[7][7] =
    {/* fn2 ->sin     cos    sinh    cosh  exp    log    sqr */
    /* fn1 */
-   /* sin */ {PI_SYM,YAXIS, XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-   /* cos */ {YAXIS, PI_SYM,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-   /* sinh*/ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
-   /* cosh*/ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XAXIS, NOSYM, XYAXIS},
+   /* sin */ {PI_SYM, YAXIS, XYAXIS, XYAXIS, XAXIS, NOSYM, XYAXIS},
+   /* cos */ {YAXIS, PI_SYM, XYAXIS, XYAXIS, XAXIS, NOSYM, XYAXIS},
+   /* sinh*/ {XYAXIS, XYAXIS, XYAXIS, XYAXIS, XAXIS, NOSYM, XYAXIS},
+   /* cosh*/ {XYAXIS, XYAXIS, XYAXIS, XYAXIS, XAXIS, NOSYM, XYAXIS},
    /* exp */ {XAXIS, XAXIS, XAXIS, XAXIS, XAXIS, NOSYM, XYAXIS},
    /* log */ {NOSYM, NOSYM, NOSYM, NOSYM, NOSYM, XAXIS, NOSYM},
-   /* sqr */ {XYAXIS,XYAXIS,XYAXIS,XYAXIS,XYAXIS,NOSYM, XYAXIS},
+   /* sqr */ {XYAXIS, XYAXIS, XYAXIS, XYAXIS, XYAXIS, NOSYM, XYAXIS},
    };
    /*
    if (trigndx[0]==EXP || trigndx[0]==LOG || trigndx[1]==EXP || trigndx[1]==LOG)
@@ -1042,11 +1042,11 @@ MarksJuliaSetup(void)
    longparm = &lparm;
    lold = *longparm;
    if (c_exp > 3)
-      lcpower(&lold,c_exp-1,&lcoefficient,bitshift);
+      lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
    else if (c_exp == 3)
    {
-      lcoefficient.x = multiply(lold.x,lold.x,bitshift) - multiply(lold.y,lold.y,bitshift);
-      lcoefficient.y = multiply(lold.x,lold.y,bitshiftless1);
+      lcoefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
+      lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
    }
    else if (c_exp == 2)
       lcoefficient = lold;
@@ -1068,7 +1068,7 @@ MarksJuliafpSetup(void)
    floatparm = &parm;
    old = *floatparm;
    if (c_exp > 3)
-      cpower(&old,c_exp-1,&coefficient);
+      cpower(&old, c_exp-1, &coefficient);
    else if (c_exp == 3)
    {
       coefficient.x = sqr(old.x) - sqr(old.y);

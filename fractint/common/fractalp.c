@@ -109,19 +109,19 @@ static char cell_strt[] = {"#Starting Row Number"};
 
 MOREPARAMS moreparams[] =
 {
-    {ICON             ,{ "Omega", "+Degree of symmetry",   "","","",""},{0,3,0,0,0,0}},
-    {ICON3D           ,{ "Omega", "+Degree of symmetry",   "","","",""},{0,3,0,0,0,0}},
-    {HYPERCMPLXJFP    ,{ "zj",      "zk",          "","","",""},{0,0,0,0,0,0}},
-    {QUATJULFP        ,{ "zj",      "zk",          "","","",""},{0,0,0,0,0,0}},
-    {PHOENIXCPLX      ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {PHOENIXFPCPLX    ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {MANDPHOENIXCPLX  ,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {MANDPHOENIXFPCPLX,{ degreeZ, "",          "","","",""},{0,0,0,0,0,0}},
-    {FORMULA  ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
-    {FFORMULA ,{ p3real,p3imag,p4real,p4imag,p5real,p5imag},{0,0,0,0,0,0}},
-    {ANT              ,{ "+Wrap?",s_randomseed,"","","",""},{1,0,0,0,0,0}},
-    {MANDELBROTMIX4   ,{ p3real,p3imag,        "","","",""},{0,0,0,0,0,0}},
-    {-1               ,{ NULL,NULL,NULL,NULL,NULL,NULL    },{0,0,0,0,0,0}}
+    {ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+    {ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+    {HYPERCMPLXJFP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {QUATJULFP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {PHOENIXCPLX      , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {PHOENIXFPCPLX    , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {MANDPHOENIXCPLX  , { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {MANDPHOENIXFPCPLX, { degreeZ, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {FORMULA  , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
+    {FFORMULA , { p3real, p3imag, p4real, p4imag, p5real, p5imag}, {0, 0, 0, 0, 0, 0}},
+    {ANT              , { "+Wrap?", s_randomseed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
+    {MANDELBROTMIX4   , { p3real, p3imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+    {-1               , { NULL, NULL, NULL, NULL, NULL, NULL    }, {0, 0, 0, 0, 0, 0}}
 };
 
 /*
@@ -131,11 +131,11 @@ struct alternatemathstuff alternatemath[] =
 {
 #define USEBN
 #ifdef USEBN
-   {JULIAFP, 1,JuliabnFractal,juliabn_per_pixel,  MandelbnSetup},
-   {MANDELFP,1,JuliabnFractal,mandelbn_per_pixel, MandelbnSetup},
+   {JULIAFP, 1, JuliabnFractal, juliabn_per_pixel,  MandelbnSetup},
+   {MANDELFP, 1, JuliabnFractal, mandelbn_per_pixel, MandelbnSetup},
 #else
-   {JULIAFP, 2,JuliabfFractal,juliabf_per_pixel,  MandelbfSetup},
-   {MANDELFP,2,JuliabfFractal,mandelbf_per_pixel, MandelbfSetup},
+   {JULIAFP, 2, JuliabfFractal, juliabf_per_pixel,  MandelbfSetup},
+   {MANDELFP, 2, JuliabfFractal, mandelbf_per_pixel, MandelbfSetup},
 #endif
 /*
 NOTE: The default precision for bf_math=BIGNUM is not high enough
@@ -143,9 +143,9 @@ NOTE: The default precision for bf_math=BIGNUM is not high enough
       of the usual BIGFLT (2), then set bfdigits on the command to
       increase the precision.
 */
-   {FPJULIAZPOWER,2,JuliaZpowerbfFractal,juliabf_per_pixel, MandelbfSetup  },
-   {FPMANDELZPOWER,2,JuliaZpowerbfFractal,mandelbf_per_pixel, MandelbfSetup},
-   {-1,            0,NULL,                NULL,               NULL         }
+   {FPJULIAZPOWER, 2, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
+   {FPMANDELZPOWER, 2, JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
+   {-1,            0, NULL,                NULL,               NULL         }
 };
 
 /* These are only needed for types with both integer and float variations */
@@ -241,7 +241,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_MANDEL, HF_MANDEL, WINFRAC+BAILTEST,
       (float)-2.5, (float)1.5, (float)-1.5, (float)1.5,
       1, JULIA, NOFRACTAL, MANDELFP, XAXIS_NOPARM,
-      JuliaFractal, mandel_per_pixel,MandelSetup, StandardFractal,
+      JuliaFractal, mandel_per_pixel, MandelSetup, StandardFractal,
       STDBAILOUT
    },
 
@@ -333,7 +333,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_MANDFN, HF_MANDFN, TRIG1+WINFRAC,
       (float)-8.0, (float)8.0, (float)-6.0, (float)6.0,
       0, LAMBDATRIGFP, NOFRACTAL, MANDELTRIG, XYAXIS_NOPARM,
-      LambdaTrigfpFractal,othermandelfp_per_pixel,MandelTrigSetup,
+      LambdaTrigfpFractal, othermandelfp_per_pixel, MandelTrigSetup,
                                                          StandardFractal,
       LTRIGBAILOUT
    },
@@ -393,7 +393,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_BARNS, HF_BARNSM1, WINFRAC+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
-      1, BARNSLEYJ1,NOFRACTAL, BARNSLEYM1FP, XYAXIS_NOPARM,
+      1, BARNSLEYJ1, NOFRACTAL, BARNSLEYM1FP, XYAXIS_NOPARM,
       Barnsley1Fractal, long_mandel_per_pixel, MandellongSetup,
                                                         StandardFractal,
       STDBAILOUT
@@ -474,7 +474,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_MLAMBDA, HF_MLAMBDA, WINFRAC+BAILTEST,
       (float)-3.0, (float)5.0, (float)-3.0, (float)3.0,
       1, LAMBDA, NOFRACTAL, MANDELLAMBDAFP, XAXIS_NOPARM,
-      LambdaFractal, mandel_per_pixel,MandellongSetup, StandardFractal,
+      LambdaFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
       STDBAILOUT
    },
 
@@ -562,7 +562,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_BARNS, HF_BARNSM3, WINFRAC+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
-      1, BARNSLEYJ3,NOFRACTAL, BARNSLEYM3FP, XAXIS_NOPARM,
+      1, BARNSLEYJ3, NOFRACTAL, BARNSLEYM3FP, XAXIS_NOPARM,
       Barnsley3Fractal, long_mandel_per_pixel, MandellongSetup,
                                                       StandardFractal,
       STDBAILOUT
@@ -911,7 +911,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1+WINFRAC+OKJB+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
-      16, NOFRACTAL, LMANTRIGPLUSEXP,FPJULTRIGPLUSEXP, NOSYM,
+      16, NOFRACTAL, LMANTRIGPLUSEXP, FPJULTRIGPLUSEXP, NOSYM,
       LongTrigPlusExponentFractal, long_julia_per_pixel, JulialongSetup,
                                                            StandardFractal,
       STDBAILOUT
@@ -1115,7 +1115,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_BARNS, HF_BARNSM1, WINFRAC+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
-      0, BARNSLEYJ1FP,NOFRACTAL, BARNSLEYM1, XYAXIS_NOPARM,
+      0, BARNSLEYJ1FP, NOFRACTAL, BARNSLEYM1, XYAXIS_NOPARM,
       Barnsley1FPFractal, othermandelfp_per_pixel, MandelfpSetup,
                                                        StandardFractal,
       STDBAILOUT
@@ -1139,7 +1139,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_BARNS, HF_BARNSM2, WINFRAC+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
-      0, BARNSLEYJ2FP,NOFRACTAL, BARNSLEYM2, YAXIS_NOPARM,
+      0, BARNSLEYJ2FP, NOFRACTAL, BARNSLEYM2, YAXIS_NOPARM,
       Barnsley2FPFractal, othermandelfp_per_pixel, MandelfpSetup,
                                                         StandardFractal,
       STDBAILOUT
@@ -1283,7 +1283,7 @@ struct fractalspecificstuff fractalspecific[]=
    {
    "diffusion",
       {"+Border size",
-       "+Type (0=Central,1=Falling,2=Square Cavity)",
+       "+Type (0=Central, 1=Falling, 2=Square Cavity)",
        "+Color change rate (0=Random)",
         ""
       },
@@ -1324,7 +1324,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_SCOTSKIN, HF_SPIDER, WINFRAC+BAILTEST,
       (float)-2.5, (float)1.5, (float)-1.5, (float)1.5,
       1, NOFRACTAL, NOFRACTAL, SPIDERFP, XAXIS_NOPARM,
-      SpiderFractal, mandel_per_pixel, MandellongSetup,StandardFractal,
+      SpiderFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
       STDBAILOUT
    },
 
@@ -1346,7 +1346,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_MAGNET, HF_MAGM1, WINFRAC,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
-      0, MAGNET1J,NOFRACTAL,NOFRACTAL, XAXIS_NOPARM,
+      0, MAGNET1J, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
       Magnet1Fractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
       100
    },
@@ -1357,7 +1357,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0, 0},
       HT_MAGNET, HF_MAGJ1, WINFRAC,
       (float)-8.0, (float)8.0, (float)-6.0, (float)6.0,
-      0, NOFRACTAL,MAGNET1M,NOFRACTAL, XAXIS_NOIMAG,
+      0, NOFRACTAL, MAGNET1M, NOFRACTAL, XAXIS_NOIMAG,
       Magnet1Fractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
       100
    },
@@ -1446,7 +1446,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_POPCORN, HF_POPCJUL, WINFRAC+TRIG4,
       (float)-3.0, (float)3.0, (float)-2.25, (float)2.25,
       0, NOFRACTAL, NOFRACTAL, LPOPCORNJUL, NOSYM,
-      PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup,StandardFractal,
+      PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, StandardFractal,
       STDBAILOUT
    },
 
@@ -1768,7 +1768,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0.5, 0},
       HT_FNORFN, HF_MANDELFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
-      16, LJULFNFN, NOFRACTAL, FPMANFNFN,XAXIS_NOPARM,
+      16, LJULFNFN, NOFRACTAL, FPMANFNFN, XAXIS_NOPARM,
       JuliaTrigOrTrigFractal, long_mandel_per_pixel,
                                    MandelTrigOrTrigSetup, StandardFractal,
       LTRIGBAILOUT
@@ -1780,7 +1780,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0, 0, 0.5, 0},
       HT_FNORFN, HF_MANDELFNFN, TRIG2+WINFRAC+BAILTEST,
       (float)-4.0, (float)4.0, (float)-3.0, (float)3.0,
-      0, FPJULFNFN, NOFRACTAL, LMANFNFN,XAXIS_NOPARM,
+      0, FPJULFNFN, NOFRACTAL, LMANFNFN, XAXIS_NOPARM,
       JuliaTrigOrTrigfpFractal, othermandelfp_per_pixel,
                                     MandelTrigOrTrigSetup, StandardFractal,
       LTRIGBAILOUT
@@ -2056,7 +2056,7 @@ struct fractalspecificstuff fractalspecific[]=
       HT_MANDJUL4, HF_JULIA4, WINFRAC+OKJB+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
       0, NOFRACTAL, MANDEL4FP, JULIA4, ORIGIN,
-      Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup,StandardFractal,
+      Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
       STDBAILOUT
    },
 
@@ -2114,7 +2114,7 @@ struct fractalspecificstuff fractalspecific[]=
       {0.2, 0, 0.3, 0},
       HT_PHOENIX, HF_PHOENIXCPLX, WINFRAC+MORE+BAILTEST,
       (float)-2.0, (float)2.0, (float)-1.5, (float)1.5,
-      1, NOFRACTAL, MANDPHOENIXCPLX,PHOENIXFPCPLX, ORIGIN,
+      1, NOFRACTAL, MANDPHOENIXCPLX, PHOENIXFPCPLX, ORIGIN,
       LongPhoenixFractalcplx, long_phoenix_per_pixel, PhoenixCplxSetup,
                                                            StandardFractal,
       STDBAILOUT
@@ -2174,7 +2174,7 @@ struct fractalspecificstuff fractalspecific[]=
    {
    "chip",
       {"a", "b", "c", ""},
-      {-15,-19,1,0},
+      {-15, -19, 1, 0},
       HT_MARTIN, HF_CHIP, NOGUESS+NOTRACE+INFCALC+WINFRAC,
       (float)-760.0, (float)760.0, (float)-570.0, (float)570.0,
       0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
@@ -2315,7 +2315,7 @@ int paramnotused(int parm)
  *  Pass in NULL for buf if only the existence of the parameter is 
  *  needed, and not the prompt string.
  */
-int typehasparm(int type,int parm,char *buf)
+int typehasparm(int type, int parm, char *buf)
 {
    int extra;
    char *ret = NULL;
@@ -2333,6 +2333,6 @@ int typehasparm(int type,int parm,char *buf)
          ret = NULL;
 
    if (ret && buf != NULL)
-      strcpy(buf,ret);
+      strcpy(buf, ret);
    return ret ? 1 : 0;
 }
