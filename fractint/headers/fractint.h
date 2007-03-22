@@ -27,6 +27,13 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_glasses_type values */
+#define STEREO_NONE			0
+#define STEREO_ALTERNATE	1
+#define STEREO_SUPERIMPOSE	2
+#define STEREO_PHOTO		3
+#define STEREO_PAIR			4
+
 /* find_file_item itemtypes */
 #define ITEMTYPE_PARAMETER	0
 #define ITEMTYPE_FORMULA	1

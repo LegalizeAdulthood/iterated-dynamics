@@ -2129,14 +2129,14 @@ int funny_glasses_call(int (*calc)(void))
    plot_setup();
    plot = standardplot;
    status = calc();
-   if (realtime && g_glasses_type < 3)
+   if (realtime && g_glasses_type < STEREO_PHOTO)
    {
       realtime = 0;
       goto done;
    }
    if (g_glasses_type && status == 0 && display3d)
    {
-      if (g_glasses_type==3)  { /* photographer's mode */
+      if (g_glasses_type==STEREO_PHOTO)  { /* photographer's mode */
             int i;
             stopmsg(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it,\n"
@@ -2155,11 +2155,11 @@ int funny_glasses_call(int (*calc)(void))
       /* is there a better way to clear the graphics screen ? */
       if ((status = calc()) != 0)
          goto done;
-      if (g_glasses_type==3) /* photographer's mode */
+      if (g_glasses_type==STEREO_PHOTO) /* photographer's mode */
             stopmsg(STOPMSG_INFO_ONLY,"Second image (right eye) is ready");
    }
 done:
-   if (g_glasses_type == 4 && sxdots >= 2*xdots)
+   if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
    {
       /* turn off view windows so will save properly */
       sxoffs = syoffs = 0;
@@ -2519,7 +2519,7 @@ static void setupmatrix(MATRIX doublemat)
 int orbit3dfloat()
 {
    display3d = -1;
-   if (0 < g_glasses_type && g_glasses_type < 3)
+   if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
       realtime = 1;
    else
       realtime = 0;
@@ -2529,7 +2529,7 @@ int orbit3dfloat()
 int orbit3dlong()
 {
    display3d = -1;
-   if (0 < g_glasses_type && g_glasses_type < 3)
+   if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
       realtime = 1;
    else
       realtime = 0;
@@ -2540,7 +2540,7 @@ static int ifs3d(void)
 {
    display3d = -1;
 
-   if (0 < g_glasses_type && g_glasses_type < 3)
+   if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
       realtime = 1;
    else
       realtime = 0;

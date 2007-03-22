@@ -1148,7 +1148,7 @@ static void _fastcall clipcolor(int x, int y, int color)
 
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(g_glasses_type == 1 || g_glasses_type == 2))
+         if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
             targa_color(x, y, color);
    }
 }
@@ -1170,7 +1170,7 @@ static void _fastcall T_clipcolor(int x, int y, int color)
       standardplot(x, y, color);/* I guess we can plot then  */
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(g_glasses_type == 1 || g_glasses_type == 2))
+         if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
             targa_color(x, y, color);
    }
 }
@@ -1213,7 +1213,7 @@ static void _fastcall interpcolor(int x, int y, int color)
    {
       if (Targa_Out)
          /* standardplot modifies color in these types */
-         if (!(g_glasses_type == 1 || g_glasses_type == 2))
+         if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
             D = targa_color(x, y, color);
 
       if (FILLTYPE >= 5) {
@@ -1244,7 +1244,7 @@ int _fastcall targa_color(int x, int y, int color)
    unsigned long H, S, V;
    BYTE RGB[3];
 
-   if (FILLTYPE == 2 || g_glasses_type == 1 || g_glasses_type == 2 || truecolor)
+   if (FILLTYPE == 2 || g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE || truecolor)
       Real_Color = (BYTE)color;       /* So Targa gets interpolated color */
 
    switch (truemode)
@@ -1270,7 +1270,7 @@ int _fastcall targa_color(int x, int y, int color)
    R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
 
    /* Modify original S and V components */
-   if (FILLTYPE > 4 && !(g_glasses_type == 1 || g_glasses_type == 2))
+   if (FILLTYPE > 4 && !(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
       /* Adjust for Ambient */
       V = (V * (65535L - (unsigned) (color * IAmbient))) / 65535L;
 
@@ -2103,7 +2103,7 @@ static int first_time(int linelen, VECTOR v)
    if (g_which_image < 2)
       T_Safe = 0; /* Not safe yet to mess with the source image */
 
-   if (Targa_Out && !((g_glasses_type == 1 || g_glasses_type == 2)
+   if (Targa_Out && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
                  && g_which_image == 2))
    {
       if (Targa_Overlay)

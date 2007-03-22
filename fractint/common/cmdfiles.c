@@ -528,7 +528,7 @@ static void initvars_3d()               /* init vars affecting 3d */
    xadjust = 0;
    yadjust = 0;
    g_eye_separation = 0;
-   g_glasses_type = 0;
+   g_glasses_type = STEREO_NONE;
    previewfactor = 20;
    red_crop_left   = 4;
    red_crop_right  = 0;
