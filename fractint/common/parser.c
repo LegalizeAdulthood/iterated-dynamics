@@ -3403,7 +3403,7 @@ int frm_get_param_stuff (char * Name)
    if (FormName[0] == 0 ) {
       return 0;  /*  and don't reset the pointers  */
    }
-   if (find_file_item(FormFileName,Name,&entry_file, 1)) {
+   if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) {
       stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
       return 0;
    }
@@ -3699,7 +3699,7 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
    }
 
    /* TW 5-31-94 add search for FRM files in directory */
-   if (find_file_item(FormFileName,Name,&entry_file, 1)) {
+   if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) {
       stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
       return 1;
    }

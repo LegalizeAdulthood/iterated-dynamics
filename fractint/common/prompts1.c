@@ -122,7 +122,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
 	if (extrainfo && *extrainfo)
 	{
 		if (fractype == FORMULA || fractype == FFORMULA) {
-			find_file_item(FormFileName, FormName, &scroll_file, 1);
+			find_file_item(FormFileName, FormName, &scroll_file, ITEMTYPE_FORMULA);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
@@ -1234,23 +1234,28 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    curfractalspecific = &fractalspecific[curtype];
    tstack[0] = 0;
    if ((i = curfractalspecific->helpformula) < -1) {
+	   int itemtype = ITEMTYPE_PARAMETER;
       if (i == -2) { /* special for formula */
          filename = FormFileName;
          entryname = FormName;
+		 itemtype = ITEMTYPE_FORMULA;
          }
       else if (i == -3)  {       /* special for lsystem */
          filename = LFileName;
          entryname = LName;
+		 itemtype = ITEMTYPE_L_SYSTEM;
          }
       else if (i == -4)  {       /* special for ifs */
          filename = IFSFileName;
          entryname = IFSName;
+		 itemtype = ITEMTYPE_IFS;
          }
       else { /* this shouldn't happen */
+		  _ASSERTE(FALSE);
          filename = NULL;
          entryname = NULL;
       }
-      if (find_file_item(filename,entryname,&entryfile, -1-i) == 0) {
+      if (find_file_item(filename,entryname,&entryfile, itemtype) == 0) {
          load_entry_text(entryfile,tstack,17, 0, 0);
          fclose(entryfile);
          if (fractype == FORMULA || fractype == FFORMULA)
