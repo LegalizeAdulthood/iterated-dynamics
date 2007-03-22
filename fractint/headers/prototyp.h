@@ -239,10 +239,8 @@ extern int ToMemDisk(long,int,void *);
 /*  editpal -- C file prototypes */
 
 extern void EditPalette(void );
-extern VOIDPTR mem_alloc(unsigned size);
 void putrow(int x, int y, int width, char *buff);
 void getrow(int x, int y, int width, char *buff);
-void mem_init(VOIDPTR block, unsigned size);
 /* void hline(int x, int y, int width, int color); */
 int Cursor_WaitKey(void);
 void Cursor_CheckBlink(void);
