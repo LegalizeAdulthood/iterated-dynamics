@@ -272,7 +272,7 @@ int cmdfiles(int argc,char **argv)
          if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
             init_msg("",CommandFile,0);
          strcpy(CommandName,sptr+1);
-         if (find_file_item(CommandFile,CommandName,&initfile, 0)<0 || initfile==NULL)
+         if (find_file_item(CommandFile,CommandName,&initfile, ITEMTYPE_PARAMETER)<0 || initfile==NULL)
             argerror(curarg);
          cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
          }

@@ -27,6 +27,18 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* find_file_item itemtypes */
+#define ITEMTYPE_PARAMETER	0
+#define ITEMTYPE_FORMULA	1
+#define ITEMTYPE_L_SYSTEM	2
+#define ITEMTYPE_IFS		3
+
+/* getfileentry and find_file_item itemtype values */
+#define GETFILE_FORMULA		0
+#define GETFILE_L_SYSTEM	1
+#define GETFILE_IFS			2
+#define GETFILE_PARAMETER	3
+
 /* got_status values */
 #define GOT_STATUS_NONE -1
 #define GOT_STATUS_12PASS 0
