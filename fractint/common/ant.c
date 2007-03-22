@@ -52,25 +52,25 @@ setwait(long *wait)
       while ((int)strlen(msg) < 15)
          strcat(msg, " ");
       msg[15] = '\0';
-      showtempmsg((char *) msg);
+      showtempmsg(msg);
       kbdchar = driver_get_key();
       switch (kbdchar)
       {
       case FIK_CTL_RIGHT_ARROW:
       case FIK_CTL_UP_ARROW:
-         (*wait) += 100;
+         *wait += 100;
          break;
       case FIK_RIGHT_ARROW:
       case FIK_UP_ARROW:
-         (*wait) += 10;
+         *wait += 10;
          break;
       case FIK_CTL_DOWN_ARROW:
       case FIK_CTL_LEFT_ARROW:
-         (*wait) -= 100;
+         *wait -= 100;
          break;
       case FIK_LEFT_ARROW:
       case FIK_DOWN_ARROW:
-         (*wait) -= 10;
+         *wait -= 10;
          break;
       default:
          cleartempmsg();
