@@ -18,7 +18,7 @@ int g_which_image;
 int xxadjust1;
 int yyadjust1;
 int g_eye_separation = 0;
-int g_glasses_type = 0;
+int g_glasses_type = STEREO_NONE;
 int xshift1;
 int yshift1;
 int xtrans = 0;
@@ -389,11 +389,11 @@ void plot_setup()
     /* set funny glasses plot function */
     switch (g_glasses_type)
     {
-    case 1:
+    case STEREO_ALTERNATE:
         standardplot = plot3dalternate;
         break;
 
-    case 2:
+    case STEREO_SUPERIMPOSE:
         if (colors == 256)
             if (fractype != IFS3D)
                 standardplot = plot3dsuperimpose256;
@@ -441,14 +441,14 @@ void plot_setup()
             xxadjust = (int)(((xtrans+xadjust)* (double)xdots)/100);
             xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
-            if (g_glasses_type == 4 && sxdots >= 2*xdots)
+            if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
                sxoffs = sxdots / 2 - xdots;
             break;
 
         case 2:
             xshift  -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
-            if (g_glasses_type == 4 && sxdots >= 2*xdots)
+            if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
                sxoffs = sxdots / 2;
             break;
         }
@@ -460,9 +460,9 @@ void plot_setup()
     if (mapset)
     {
         ValidateLuts(MAP_name); /* read the palette file */
-        if (g_glasses_type==1 || g_glasses_type==2)
+        if (g_glasses_type==STEREO_ALTERNATE || g_glasses_type==STEREO_SUPERIMPOSE)
         {
-            if (g_glasses_type == 2 && colors < 256)
+            if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
             {
                 g_dac_box[PAL_RED  ][0] = 63;
                 g_dac_box[PAL_RED  ][1] =  0;

@@ -2353,7 +2353,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
    XSHIFT  =  uvalues[k++].uval.ival;
    YSHIFT  =  uvalues[k++].uval.ival;
    g_glasses_type = uvalues[k++].uval.ival;
-   if (g_glasses_type < 0 || g_glasses_type > 4) g_glasses_type = 0;
+   if (g_glasses_type < 0 || g_glasses_type > STEREO_PAIR) g_glasses_type = 0;
    if (g_glasses_type)
       if (get_funny_glasses_params() || check_mapfile())
          ret = -1;
@@ -2492,8 +2492,8 @@ restart_1:
 
    if (g_glasses_type < 0)
       g_glasses_type = 0;
-   if (g_glasses_type > 4)
-      g_glasses_type = 4;
+   if (g_glasses_type > STEREO_PAIR)
+      g_glasses_type = STEREO_PAIR;
    if (g_glasses_type)
       g_which_image = 1;
 
@@ -2791,7 +2791,7 @@ static int check_mapfile()
    strcpy(temp1,"*");
    if (mapset)
       strcpy(temp1,MAP_name);
-   if (!(g_glasses_type == 1 || g_glasses_type == 2))
+   if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
       askflag = 1;
    else
       merge_pathnames(temp1,funnyglasses_map_name,0);
@@ -2851,9 +2851,9 @@ static int get_funny_glasses_params()
       }
    }
 
-   if (g_glasses_type == 1)
+   if (g_glasses_type == STEREO_ALTERNATE)
       strcpy(funnyglasses_map_name,Glasses1Map);
-   else if (g_glasses_type == 2)
+   else if (g_glasses_type == STEREO_SUPERIMPOSE)
    {
       if (FILLTYPE == -1)
          strcpy(funnyglasses_map_name,"grid.map");
@@ -2897,7 +2897,7 @@ static int get_funny_glasses_params()
    uvalues[k].type = 'i';
    uvalues[k].uval.ival = blue_bright;
 
-   if (g_glasses_type == 1 || g_glasses_type == 2)
+   if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
    {
       prompts3d[++k] = "Map File name";
       uvalues[k].type = 's';
@@ -2921,7 +2921,7 @@ static int get_funny_glasses_params()
    red_bright      =  uvalues[k++].uval.ival;
    blue_bright     =  uvalues[k++].uval.ival;
 
-   if (g_glasses_type == 1 || g_glasses_type == 2)
+   if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
       strcpy(funnyglasses_map_name,uvalues[k].uval.sval);
    return 0;
 }
