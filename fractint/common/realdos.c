@@ -1499,6 +1499,7 @@ int input_field(
             break;
          case FIK_BACKSPACE:
          case 127:                              /* backspace */
+			 _ASSERTE(127 != curkey);
             if (offset > 0) {
                j = (int) strlen(fld);
                for (i = offset-1; i < j; ++i)

@@ -56,11 +56,6 @@ static  int get_light_params(void );
 static  int check_mapfile(void );
 static  int get_funny_glasses_params(void );
 
-#define GETFORMULA 0
-#define GETLSYS    1
-#define GETIFS     2
-#define GETPARM    3
-
 static char funnyglasses_map_name[16];
 char ifsmask[13]     = {"*.ifs"};
 char formmask[13]    = {"*.frm"};
@@ -559,7 +554,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
 
       switch (i) {
          case 0:  /* enter  */
-            done = 13;
+            done = FIK_ENTER;
             break;
          case -1: /* escape */
          case FIK_F2:
@@ -976,21 +971,21 @@ sel_type_restart:
 
    if (fractype == LSYSTEM) {
       helpmode = HT_LSYS;
-      if (get_file_entry(GETLSYS,"L-System",lsysmask,LFileName,LName) < 0) {
+      if (get_file_entry(GETFILE_L_SYSTEM, "L-System",lsysmask,LFileName,LName) < 0) {
          ret = 1;
          goto sel_type_exit;
          }
       }
    if (fractype == FORMULA || fractype == FFORMULA) {
       helpmode = HT_FORMULA;
-      if (get_file_entry(GETFORMULA,"Formula",formmask,FormFileName,FormName) < 0) {
+      if (get_file_entry(GETFILE_FORMULA, "Formula",formmask,FormFileName,FormName) < 0) {
          ret = 1;
          goto sel_type_exit;
          }
       }
    if (fractype == IFS || fractype == IFS3D) {
       helpmode = HT_IFS;
-      if (get_file_entry(GETIFS,"IFS",ifsmask,IFSFileName,IFSName) < 0) {
+      if (get_file_entry(GETFILE_IFS, "IFS",ifsmask,IFSFileName,IFSName) < 0) {
         ret = 1;
         goto sel_type_exit;
         }
@@ -1744,13 +1739,13 @@ long get_file_entry(int type,char *title,char *fmask,
       if (entry_pointer == -1)
          return -1;
       switch (type) {
-         case GETFORMULA:
+         case GETFILE_FORMULA:
             if (RunForm(entryname, 1) == 0) return 0;
             break;
-         case GETLSYS:
+         case GETFILE_L_SYSTEM:
             if (LLoad() == 0) return 0;
             break;
-         case GETIFS:
+         case GETFILE_IFS:
             if (ifsload() == 0) {
                fractype = (ifs_type == 0) ? IFS : IFS3D;
                curfractalspecific = &fractalspecific[fractype];
@@ -1758,7 +1753,7 @@ long get_file_entry(int type,char *title,char *fmask,
                return 0;
                }
             break;
-         case GETPARM:
+         case GETFILE_PARAMETER:
             return entry_pointer;
          }
       }
@@ -1979,7 +1974,7 @@ retry:
 	sprintf(temp1, "%s Selection\nFile: %s", title, filename);
 	formatitem = NULL;
 	boxwidth = colwidth = boxdepth = 0;
-	if (type == GETPARM)
+	if (type == GETFILE_PARAMETER)
 	{
 		formatitem = format_parmfile_line;
 		boxwidth = 1;
