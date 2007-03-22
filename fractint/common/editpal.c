@@ -154,9 +154,9 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 #define TITLE_LEN (8)
 
 
-#define newx(size)     mem_alloc(size)
-#define new(class)     (class *)(mem_alloc(sizeof(class)))
-#define delete(block)  block=NULL  /* just for warning */
+#define NEWX(size)     malloc(size)
+#define NEWC(class)     (class *)(malloc(sizeof(class)))
+#define DELETE(block)  (free(block), block=NULL)  /* just for warning */
 
 #ifdef XFRACT
 int editpal_cursor = 0;
@@ -570,52 +570,6 @@ static void drect(int x, int y, int width, int depth)
 
 
 /*
- * A very simple memory "allocator".
- *
- * Each call to mem_alloc() returns size bytes from the array mem_block.
- *
- * Be sure to call mem_init() before using mem_alloc()!
- *
- */
-
-static char     *mem_block;
-static unsigned  mem_avail;
-
-
-void mem_init(VOIDPTR block, unsigned size)
-   {
-   mem_block = (char *)block;
-   mem_avail = size;
-   }
-
-
-VOIDPTR mem_alloc(unsigned size)
-   {
-   VOIDPTR block;
-
-#ifndef XFRACT
-   if (size & 1)
-      ++size;   /* allocate even sizes */
-#else
-   size = (size+3)&~3; /* allocate word-aligned memory */
-#endif
-
-   if (mem_avail < size)   /* don't let this happen! */
-      {
-      stopmsg(0, "editpal.c: Out of memory!\n");
-      exit(1);
-      }
-
-   block = mem_block;
-   mem_avail -= size;
-   mem_block += size;
-
-   return block;
-   }
-
-
-
-/*
  * misc. routines
  *
  */
@@ -699,7 +653,7 @@ BOOLEAN Cursor_Construct(void)
    if (the_cursor != NULL)
       return FALSE;
 
-   the_cursor = new(Cursor);
+   the_cursor = NEWC(Cursor);
 
    the_cursor->x          = sxdots/2;
    the_cursor->y          = sydots/2;
@@ -714,7 +668,7 @@ BOOLEAN Cursor_Construct(void)
 void Cursor_Destroy(void)
    {
    if (the_cursor != NULL)
-      delete(the_cursor);
+      DELETE(the_cursor);
 
    the_cursor = NULL;
    }
@@ -911,7 +865,7 @@ struct _MoveBox
 
 static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int base_depth)
    {
-   MoveBox *me = new(MoveBox);
+   MoveBox *me = NEWC(MoveBox);
 
    me->x           = x;
    me->y           = y;
@@ -920,10 +874,10 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
    me->base_depth  = base_depth;
    me->moved       = FALSE;
    me->should_hide = FALSE;
-   me->t           = newx(sxdots);
-   me->b           = newx(sxdots);
-   me->l           = newx(sydots);
-   me->r           = newx(sydots);
+   me->t           = NEWX(sxdots);
+   me->b           = NEWX(sxdots);
+   me->l           = NEWX(sydots);
+   me->r           = NEWX(sydots);
 
    return me;
    }
@@ -931,11 +885,11 @@ static MoveBox *MoveBox_Construct(int x, int y, int csize, int base_width, int b
 
 static void MoveBox_Destroy(MoveBox *me)
    {
-   delete(me->t);
-   delete(me->b);
-   delete(me->l);
-   delete(me->r);
-   delete(me);
+   DELETE(me->t);
+   DELETE(me->b);
+   DELETE(me->l);
+   DELETE(me->r);
+   DELETE(me);
    }
 
 
@@ -1227,7 +1181,7 @@ static CEditor *CEditor_Construct( int x, int y, char letter,
                                    void (*change)(), VOIDPTR info)
 #endif
    {
-   CEditor *me = new(CEditor);
+   CEditor *me = NEWC(CEditor);
 
    me->x         = x;
    me->y         = y;
@@ -1247,7 +1201,7 @@ static CEditor *CEditor_Construct( int x, int y, char letter,
 
 static void CEditor_Destroy(CEditor *me)
    {
-   delete(me);
+   DELETE(me);
    }
 
 
@@ -1482,7 +1436,7 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(),
                                       void (*change)(), VOIDPTR info)
 #endif
    {
-   RGBEditor      *me     = new(RGBEditor);
+   RGBEditor      *me     = NEWC(RGBEditor);
    static char letter[] = "RGB";
    int             ctr;
 
@@ -1507,7 +1461,7 @@ static void RGBEditor_Destroy(RGBEditor *me)
    CEditor_Destroy(me->color[0]);
    CEditor_Destroy(me->color[1]);
    CEditor_Destroy(me->color[2]);
-   delete(me);
+   DELETE(me);
    }
 
 
@@ -3224,7 +3178,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
 
 static PalTable *PalTable_Construct(void)
    {
-   PalTable     *me = new(PalTable);
+   PalTable     *me = NEWC(PalTable);
    int           csize;
    int           ctr;
    PALENTRY *mem_block;
@@ -3355,7 +3309,7 @@ static void PalTable_Destroy(PalTable *me)
    RGBEditor_Destroy(me->rgb[0]);
    RGBEditor_Destroy(me->rgb[1]);
    MoveBox_Destroy(me->movebox);
-   delete(me);
+   DELETE(me);
    }
 
 
@@ -3429,14 +3383,12 @@ void EditPalette(void)       /* called by fractint */
    int       oldsyoffs      = syoffs;
    PalTable *pt;
 
-   mem_init(strlocn, 10*1024);
-
    if (sxdots < 133 || sydots < 174)
       return; /* prevents crash when physical screen is too small */
 
    plot = putcolor;
 
-   line_buff = newx(max(sxdots,sydots));
+   line_buff = NEWX(max(sxdots,sydots));
 
    lookatmouse = LOOK_MOUSE_ZOOM_BOX;
    sxoffs = syoffs = 0;
@@ -3455,5 +3407,5 @@ void EditPalette(void)       /* called by fractint */
    lookatmouse = oldlookatmouse;
    sxoffs = oldsxoffs;
    syoffs = oldsyoffs;
-   delete(line_buff);
+   DELETE(line_buff);
    }
