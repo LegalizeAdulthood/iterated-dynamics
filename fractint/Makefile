@@ -90,14 +90,14 @@ AFLAGS = -f elf -w+orphan-labels
 ifeq ($(AS),/usr/bin/nasm)
 
 #CFLAGS = -I. -D_CONST $(DEFINES)
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -g \
          -march=pentium -DNASM -fno-builtin
 #         -march=athlon64 -DNASM -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -DNASM -fno-builtin
 
 else
 
-CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -O2 \
+CFLAGS = -I$(HFD) $(DEFINES) -g -DBIG_ANSI_C -DLINUX -g \
          -march=pentium -fno-builtin
 #         -march=athlon64 -fno-builtin
 #CFLAGS = -I. $(DEFINES) -g -DBIG_ANSI_C -DLINUX -Os -fno-builtin
