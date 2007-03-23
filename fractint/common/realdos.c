@@ -1499,7 +1499,9 @@ int input_field(
             break;
          case FIK_BACKSPACE:
          case 127:                              /* backspace */
+#if defined(_WIN32)
 			 _ASSERTE(127 != curkey);
+#endif
             if (offset > 0) {
                j = (int) strlen(fld);
                for (i = offset-1; i < j; ++i)

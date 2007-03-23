@@ -65,7 +65,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
    int mms_value;
 
 #if defined(_WIN32)
-		_ASSERTE(_CrtCheckMemory());
+	_ASSERTE(_CrtCheckMemory());
 #endif
    frommandel = 0;
    if (resumeflag)
@@ -785,7 +785,7 @@ static int handle_fractal_type(int *frommandel)
 	return 0;
 }
 
-static void handle_options(int kbdchar, int *kbdmore, int *old_maxit)
+static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 {
 	int i;
 	*old_maxit = maxit;
@@ -998,7 +998,9 @@ static int handle_ant(void)
 
 static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
 {
+#if defined(_WIN32)
 	_ASSERTE(continue_check && recalc_check);
+#endif
 	clear_zoombox();
 	if ((*continue_check)() >= 0)
 	{

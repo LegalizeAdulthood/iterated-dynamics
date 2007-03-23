@@ -2590,6 +2590,17 @@ static void x11_set_keyboard_timeout(Driver *drv, int ms)
   di->keyboard_timeout = ms;
 }
 
+static int x11_get_char_attr_rowcol(Driver *drv, int row, int col)
+{
+	return 0;
+}
+
+static void x11_put_char_attr_rowcol(Driver *drv, int row, int col,
+	int char_attr)
+{
+}
+
+
 /*
  * place this last in the file to avoid having to forward declare routines
  */

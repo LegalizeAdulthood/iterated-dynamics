@@ -1251,7 +1251,9 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		 itemtype = ITEMTYPE_IFS;
          }
       else { /* this shouldn't happen */
+#if defined(_WIN32)
 		  _ASSERTE(FALSE);
+#endif
          filename = NULL;
          entryname = NULL;
       }

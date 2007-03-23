@@ -1523,7 +1523,9 @@ void edit_text_colors()
 			{
 				for	(j = 0;	j <	16;	++j) /*	16 fgrd	attrs */
 				{
+#if defined(_WIN32)
 					_ASSERTE(_CrtCheckMemory());
+#endif
 					k =	(i*16 + j);
 					driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
 					driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
