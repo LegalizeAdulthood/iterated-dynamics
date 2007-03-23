@@ -558,35 +558,35 @@ void Jiim(int which)         /* called by fractint */
       savehasinverse = hasinverse;
       hasinverse = 1;
       SaveRect(0,0,xdots,ydots);
-      sxoffs = g_video_start_x;
-      syoffs = g_video_start_y;
+      sxoffs = 0;
+      syoffs = 0;
       RestoreRect(0,0,xdots,ydots);
       hasinverse = savehasinverse;
    }
 
-   if (xdots == g_vesa_x_res || ydots == g_vesa_y_res ||
-       g_vesa_x_res-xdots < g_vesa_x_res/3 ||
-       g_vesa_y_res-ydots < g_vesa_y_res/3 ||
+   if(xdots == sxdots || ydots == sydots ||
+       sxdots-xdots < sxdots/3 ||
+       sydots-ydots < sydots/3 ||
        xdots >= MAXRECT )
    {
       /* this mode puts orbit/julia in an overlapping window 1/3 the size of
          the physical screen */
       windows = 0; /* full screen or large view window */
-      xd = g_vesa_x_res / 3;
-      yd = g_vesa_y_res / 3;
-      xc = g_video_start_x + xd * 2;
-      yc = g_video_start_y + yd * 2;
-      xoff = g_video_start_x + xd * 5 / 2;
-      yoff = g_video_start_y + yd * 5 / 2;
+      xd = sxdots / 3;
+      yd = sydots / 3;
+      xc = xd * 2;
+      yc = yd * 2;
+      xoff = xd * 5 / 2;
+      yoff = yd * 5 / 2;
    }
-   else if (xdots > g_vesa_x_res/3 && ydots > g_vesa_y_res/3)
+   else if(xdots > sxdots/3 && ydots > sydots/3)
    {
       /* Julia/orbit and fractal don't overlap */
       windows = 1;
-      xd = g_vesa_x_res - xdots;
-      yd = g_vesa_y_res - ydots;
-      xc = g_video_start_x + xdots;
-      yc = g_video_start_y + ydots;
+      xd = sxdots-xdots;
+      yd = sydots-ydots;
+      xc = xdots;
+      yc = ydots;
       xoff = xc + xd/2;
       yoff = yc + yd/2;
 
@@ -595,12 +595,12 @@ void Jiim(int which)         /* called by fractint */
    {
       /* Julia/orbit takes whole screen */
       windows = 2;
-      xd = g_vesa_x_res;
-      yd = g_vesa_y_res;
-      xc = g_video_start_x;
-      yc = g_video_start_y;
-      xoff = g_video_start_x + xd/2;
-      yoff = g_video_start_y + yd/2;
+      xd = sxdots;
+      yd = sydots;
+      xc = 0;
+      yc = 0;
+      xoff = xd/2;
+      yoff = yd/2;
    }
 
    xfactor = (int)(xd/5.33);
@@ -783,9 +783,9 @@ void Jiim(int which)         /* called by fractint */
             case 'H':   /* hide fractal toggle */
                if (windows == 2)
                   windows = 3;
-               else if (windows == 3 && xd == g_vesa_x_res)
+               else if(windows == 3 && xd == sxdots)
                {
-                  RestoreRect(g_video_start_x, g_video_start_y, xdots, ydots);
+                  RestoreRect(0, 0, xdots, ydots);
                   windows = 2;
                }
                break;
@@ -877,7 +877,7 @@ void Jiim(int which)         /* called by fractint */
                Cursor_Show();
             }
             else
-               driver_display_string(5, g_vesa_y_res-show_numbers, WHITE, BLACK, str);
+               driver_display_string(5, sydots-show_numbers, WHITE, BLACK, str);
          }
          iter = 1;
          old.x = old.y = lold.x = lold.y = 0;
@@ -917,10 +917,10 @@ void Jiim(int which)         /* called by fractint */
          if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
          {
             RestoreRect(xc,yc,xd,yd);
-            if (xc == g_video_start_x + xd*2)
-               xc = g_video_start_x + 2;
+            if (xc == xd*2)
+               xc = 2;
             else
-               xc = g_video_start_x + xd*2;
+               xc = xd*2;
             xoff = xc + xd /  2;
             SaveRect(xc,yc,xd,yd);
          }
@@ -1205,7 +1205,7 @@ finish:
          }
          else
             fillrect(xc, yc, xd, yd, g_color_dark);
-         if (windows == 3 && xd == g_vesa_x_res) /* unhide */
+         if (windows == 3 && xd == sxdots) /* unhide */
          {
             RestoreRect(0, 0, xdots, ydots);
             windows = 2;
