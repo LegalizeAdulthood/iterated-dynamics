@@ -86,19 +86,19 @@ void intro(void)
 	driver_hide_text_cursor();
 	helpmode = HELPMENU;
 	while (! driver_key_pressed())
-    {
+	{
 #ifdef XFRACT
 		if (slowdisplay) delaymax *= 15;
 #endif
 		for (j = 0; j < delaymax && !(driver_key_pressed()); j++)
 			driver_delay(100);
 		if (driver_key_pressed() == FIK_SPACE)
-        {      /* spacebar pauses */
+		{      /* spacebar pauses */
 			driver_get_key();
 			driver_wait_key_pressed(0);
 			if (driver_key_pressed() == FIK_SPACE)
 				driver_get_key();
-        }
+		}
 		delaymax = 15;
 		driver_scroll_up(toprow, botrow);
 		i++;
@@ -110,7 +110,7 @@ void intro(void)
 		driver_set_attr(botrow, 0, C_CONTRIB, 80);
 		credits[authors[i + 1]] = oldchar;
 		driver_hide_text_cursor(); /* turn it off */
-    }
+	}
 
 	lookatmouse = oldlookatmouse;                /* restore the mouse-checking */
 	helpmode = oldhelpmode;

@@ -23,17 +23,17 @@
 /* makes a handly list of jul-man pairs, not for release */
 static void julman()
 {
-   FILE *fp;
-   int i;
-   fp = dir_fopen(workdir, "toggle.txt", "w");
-   i = -1;
-   while (fractalspecific[++i].name)
-   {
-      if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
-         fprintf(fp, "%s  %s\n", fractalspecific[i].name,
+	FILE *fp;
+	int i;
+	fp = dir_fopen(workdir, "toggle.txt", "w");
+	i = -1;
+	while (fractalspecific[++i].name)
+	{
+		if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
+			fprintf(fp, "%s  %s\n", fractalspecific[i].name,
              fractalspecific[fractalspecific[i].tojulia].name);
-   }
-   fclose(fp);
+	}
+	fclose(fp);
 }
 #endif
 
@@ -57,22 +57,22 @@ void (*outln_cleanup) (void);
 
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {
-   int     frommandel;                  /* if julia entered from mandel */
-   int     axmode = 0; /* video mode (BIOS ##)    */
-   double  ftemp;                       /* fp temp                      */
-   int     i = 0;                           /* temporary loop counters      */
-   int kbdchar;
-   int mms_value;
+	int     frommandel;                  /* if julia entered from mandel */
+	int     axmode = 0; /* video mode (BIOS ##)    */
+	double  ftemp;                       /* fp temp                      */
+	int     i = 0;                           /* temporary loop counters      */
+	int kbdchar;
+	int mms_value;
 
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
-   frommandel = 0;
-   if (resumeflag)
-      goto resumeloop;
+	frommandel = 0;
+	if (resumeflag)
+		goto resumeloop;
 
-   while (1)                    /* eternal loop */
-   {
+	while (1)                    /* eternal loop */
+	{
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
@@ -147,7 +147,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 #endif
 				}
 				colorstate = 0;
-            }
+				}
 			if (viewwindow)
 			{
 				/* bypass for VESA virtual screen */
@@ -289,7 +289,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					texttempmsg("*** load incomplete ***");
 				}
 			}
-        }
+		}
 
 		zoomoff = TRUE;                      /* zooming is enabled */
 		if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
@@ -340,7 +340,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				savebase = readticker(); /* calc's start time */
 				saveticks = initsavetime*60*1000; /* in milliseconds */
 				finishrow = -1;
-            }
+				}
 			browsing = FALSE;      /* regenerate image, turn off browsing */
 			/*rb*/
 			name_stack_ptr = -1;   /* reset pointer */
@@ -486,7 +486,7 @@ done:
 			cyclelimit = 256;              /* plasma clouds need quick spins */
 			g_dac_count = 256;
 			g_dac_learn = 1;
-         }
+			}
 
 resumeloop:                             /* return here on failed overlays */
 #if defined(_WIN32)
@@ -666,67 +666,67 @@ resumeloop:                             /* return here on failed overlays */
 
 static int look(char *stacked)
 {
-    int oldhelpmode;
-    oldhelpmode = helpmode;
-    helpmode = HELPBROWSE;
-    switch (fgetwindow())
-    {
-    case FIK_ENTER:
-    case FIK_ENTER_2:
-        showfile = 0;       /* trigger load */
-        browsing = TRUE;    /* but don't ask for the file name as it's
+	int oldhelpmode;
+	oldhelpmode = helpmode;
+	helpmode = HELPBROWSE;
+	switch (fgetwindow())
+	{
+	case FIK_ENTER:
+	case FIK_ENTER_2:
+		showfile = 0;       /* trigger load */
+		browsing = TRUE;    /* but don't ask for the file name as it's
                                 * just been selected */
-        if (name_stack_ptr == 15)
-        {                   /* about to run off the end of the file
+		if (name_stack_ptr == 15)
+		{                   /* about to run off the end of the file
                                 * history stack so shift it all back one to
                                 * make room, lose the 1st one */
-            int tmp;
-            for (tmp = 1; tmp < 16; tmp++)
+				int tmp;
+				for (tmp = 1; tmp < 16; tmp++)
 			{
                 strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
 			}
-            name_stack_ptr = 14;
-        }
-        name_stack_ptr++;
-        strcpy(file_name_stack[name_stack_ptr], browsename);
-        /*
-        splitpath(browsename, NULL, NULL, fname, ext);
-        splitpath(readname, drive, dir, NULL, NULL);
-        makepath(readname, drive, dir, fname, ext);
-        */
-        merge_pathnames(readname, browsename, 2);
-        if (askvideo)
-        {
-            driver_stack_screen();   /* save graphics image */
-            *stacked = 1;
-        }
-        return 1;       /* hop off and do it!! */
+				name_stack_ptr = 14;
+		}
+		name_stack_ptr++;
+		strcpy(file_name_stack[name_stack_ptr], browsename);
+		/*
+		splitpath(browsename, NULL, NULL, fname, ext);
+		splitpath(readname, drive, dir, NULL, NULL);
+		makepath(readname, drive, dir, fname, ext);
+		*/
+		merge_pathnames(readname, browsename, 2);
+		if (askvideo)
+		{
+				driver_stack_screen();   /* save graphics image */
+				*stacked = 1;
+		}
+		return 1;       /* hop off and do it!! */
 
 	case '\\':
-        if (name_stack_ptr >= 1)
-        {
-            /* go back one file if somewhere to go (ie. browsing) */
-            name_stack_ptr--;
-            while (file_name_stack[name_stack_ptr][0] == '\0' 
+		if (name_stack_ptr >= 1)
+		{
+				/* go back one file if somewhere to go (ie. browsing) */
+				name_stack_ptr--;
+				while (file_name_stack[name_stack_ptr][0] == '\0' 
                     && name_stack_ptr >= 0)
 			{
                 name_stack_ptr--;
 			}
-            if (name_stack_ptr < 0) /* oops, must have deleted first one */
+				if (name_stack_ptr < 0) /* oops, must have deleted first one */
 			{
                 break;
 			}
-            strcpy(browsename, file_name_stack[name_stack_ptr]);
-            merge_pathnames(readname, browsename, 2);
-            browsing = TRUE;
-            showfile = 0;
-            if (askvideo)
-            {
+				strcpy(browsename, file_name_stack[name_stack_ptr]);
+				merge_pathnames(readname, browsename, 2);
+				browsing = TRUE;
+				showfile = 0;
+				if (askvideo)
+				{
                 driver_stack_screen(); /* save graphics image */
                 *stacked = 1;
-            }
-            return 1;
-        }                   /* otherwise fall through and turn off
+				}
+				return 1;
+		}                   /* otherwise fall through and turn off
                              * browsing */
 	case FIK_ESC:
 	case 'l':              /* turn it off */
@@ -808,27 +808,27 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	case FIK_CTL_B:	i = get_browse_params();	break;
 
 	case FIK_CTL_E:
-        i = get_evolve_Parms();
-        if (i > 0)
+		i = get_evolve_Parms();
+		if (i > 0)
 		{
 			start_showorbit = 0;
 			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
 			Log_Auto_Calc = 0; /* turn it off */
-        }
+		}
 		break;
 
 	case FIK_CTL_F:	i = get_sound_params(); break;
 
 	default:
-        i = get_cmd_string();
+		i = get_cmd_string();
 		break;
 	}
-    driver_unstack_screen();
-    if (evolving && truecolor)
+	driver_unstack_screen();
+	if (evolving && truecolor)
 	{
-        truecolor = 0; /* truecolor doesn't play well with the evolver */
+		truecolor = 0; /* truecolor doesn't play well with the evolver */
 	}
-    if (maxit > *old_maxit
+	if (maxit > *old_maxit
 		&& inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
 		&& curfractalspecific->calctype == StandardFractal
@@ -899,9 +899,9 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 static int handle_execute_commands(int *kbdchar, int *kbdmore)
 {
 	int i;
-    driver_stack_screen();
-    i = get_commands();
-    if (g_init_mode != -1)
+	driver_stack_screen();
+	i = get_commands();
+	if (g_init_mode != -1)
 	{                         /* video= was specified */
 		g_adapter = g_init_mode;
 		g_init_mode = -1;
@@ -941,16 +941,16 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 
 static int handle_toggle_float(void)
 {
-    if (usr_floatflag == 0)
+	if (usr_floatflag == 0)
 	{
-        usr_floatflag = 1;
+		usr_floatflag = 1;
 	}
-    else if (stdcalcmode != 'o') /* don't go there */
+	else if (stdcalcmode != 'o') /* don't go there */
 	{
-        usr_floatflag = 0;
+		usr_floatflag = 0;
 	}
-    g_init_mode = g_adapter;
-    return IMAGESTART;
+	g_init_mode = g_adapter;
+	return IMAGESTART;
 }
 
 static int handle_ant(void)
@@ -1306,14 +1306,14 @@ static int handle_color_editing(int *kbdmore)
 
 static int handle_save_to_disk(void)
 {
-    if (driver_diskp() && disktarga == 1)
+	if (driver_diskp() && disktarga == 1)
 	{
-        return CONTINUE;  /* disk video and targa, nothing to save */
+		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
-    note_zoom();
-    savetodisk(savename);
-    restore_zoom();
-    return CONTINUE;
+	note_zoom();
+	savetodisk(savename);
+	restore_zoom();
+	return CONTINUE;
 }
 
 static int handle_evolver_save_to_disk(void)
@@ -1326,28 +1326,28 @@ static int handle_evolver_save_to_disk(void)
 	}
 
 	oldsxoffs = sxoffs;
-    oldsyoffs = syoffs;
-    oldxdots = xdots;
-    oldydots = ydots;
-    oldpx = px;
-    oldpy = py;
-    sxoffs = syoffs = 0;
-    xdots = sxdots;
-    ydots = sydots; /* for full screen save and pointer move stuff */
-    px = py = gridsz / 2;
-    param_history(1); /* restore old history */
-    fiddleparms(g_genes, 0);
-    drawparmbox(1);
-    savetodisk(savename);
-    px = oldpx;
-    py = oldpy;
-    param_history(1); /* restore old history */
-    fiddleparms(g_genes, unspiralmap());
-    sxoffs = oldsxoffs;
-    syoffs = oldsyoffs;
-    xdots = oldxdots;
-    ydots = oldydots;
-    return CONTINUE;
+	oldsyoffs = syoffs;
+	oldxdots = xdots;
+	oldydots = ydots;
+	oldpx = px;
+	oldpy = py;
+	sxoffs = syoffs = 0;
+	xdots = sxdots;
+	ydots = sydots; /* for full screen save and pointer move stuff */
+	px = py = gridsz / 2;
+	param_history(1); /* restore old history */
+	fiddleparms(g_genes, 0);
+	drawparmbox(1);
+	savetodisk(savename);
+	px = oldpx;
+	py = oldpy;
+	param_history(1); /* restore old history */
+	fiddleparms(g_genes, unspiralmap());
+	sxoffs = oldsxoffs;
+	syoffs = oldsyoffs;
+	xdots = oldxdots;
+	ydots = oldydots;
+	return CONTINUE;
 }
 
 static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
@@ -1772,9 +1772,9 @@ do_3d_transform:
 
 	default:                     /* other (maybe a valid Fn key) */
 		return handle_video_mode(*kbdchar, kbdmore);
-   }                            /* end of the big switch */
+	}                            /* end of the big switch */
 
-   return 0;
+	return 0;
 }
 
 static void handle_evolver_exit(int *kbdmore)
@@ -2181,89 +2181,89 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 
 static int call_line3d(BYTE *pixels, int linelen)
 {
-   /* this routine exists because line3d might be in an overlay */
-   return line3d(pixels, linelen);
+	/* this routine exists because line3d might be in an overlay */
+	return line3d(pixels, linelen);
 }
 
 static void note_zoom()
 {
-   if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
-      savezoom = (char *)malloc((long)(5*boxcount));
+	if (boxcount) { /* save zoombox stuff in mem before encode (mem reused) */
+		savezoom = (char *)malloc((long)(5*boxcount));
 	  if (savezoom == NULL)
-         clear_zoombox(); /* not enuf mem so clear the box */
-      else {
-         reset_zoom_corners(); /* reset these to overall image, not box */
-         memcpy(savezoom, boxx, boxcount*2);
-         memcpy(savezoom + boxcount*2, boxy, boxcount*2);
-         memcpy(savezoom + boxcount*4, boxvalues, boxcount);
-         }
-      }
+			clear_zoombox(); /* not enuf mem so clear the box */
+		else {
+			reset_zoom_corners(); /* reset these to overall image, not box */
+			memcpy(savezoom, boxx, boxcount*2);
+			memcpy(savezoom + boxcount*2, boxy, boxcount*2);
+			memcpy(savezoom + boxcount*4, boxvalues, boxcount);
+			}
+		}
 }
 
 static void restore_zoom()
 {
-   if (boxcount) { /* restore zoombox arrays */
-      memcpy(boxx, savezoom, boxcount*2);
-      memcpy(boxy, savezoom + boxcount*2, boxcount*2);
-      memcpy(boxvalues, savezoom + boxcount*4, boxcount);
-      free(savezoom);
-      drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
-      }
+	if (boxcount) { /* restore zoombox arrays */
+		memcpy(boxx, savezoom, boxcount*2);
+		memcpy(boxy, savezoom + boxcount*2, boxcount*2);
+		memcpy(boxvalues, savezoom + boxcount*4, boxcount);
+		free(savezoom);
+		drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
+		}
 }
 
 /* do all pending movement at once for smooth mouse diagonal moves */
 static void move_zoombox(int keynum)
 {  int vertical, horizontal, getmore;
-   vertical = horizontal = 0;
-   getmore = 1;
-   while (getmore) {
-      switch (keynum) {
-         case FIK_LEFT_ARROW:               /* cursor left */
-            --horizontal;
-            break;
-         case FIK_RIGHT_ARROW:              /* cursor right */
-            ++horizontal;
-            break;
-         case FIK_UP_ARROW:                 /* cursor up */
-            --vertical;
-            break;
-         case FIK_DOWN_ARROW:               /* cursor down */
-            ++vertical;
-            break;
-         case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
-            horizontal -= 8;
-            break;
-         case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
-            horizontal += 8;
-            break;
-         case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
-            vertical -= 8;
-            break;
-         case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
-            vertical += 8;
-            break;                      /* += 8 needed by VESA scrolling */
-         default:
-            getmore = 0;
-         }
-      if (getmore) {
-         if (getmore == 2)              /* eat last key used */
-            driver_get_key();
-         getmore = 2;
-         keynum = driver_key_pressed();         /* next pending key */
-         }
-      }
-   if (boxcount) {
+	vertical = horizontal = 0;
+	getmore = 1;
+	while (getmore) {
+		switch (keynum) {
+			case FIK_LEFT_ARROW:               /* cursor left */
+				--horizontal;
+				break;
+			case FIK_RIGHT_ARROW:              /* cursor right */
+				++horizontal;
+				break;
+			case FIK_UP_ARROW:                 /* cursor up */
+				--vertical;
+				break;
+			case FIK_DOWN_ARROW:               /* cursor down */
+				++vertical;
+				break;
+			case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
+				horizontal -= 8;
+				break;
+			case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
+				horizontal += 8;
+				break;
+			case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
+				vertical -= 8;
+				break;
+			case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
+				vertical += 8;
+				break;                      /* += 8 needed by VESA scrolling */
+			default:
+				getmore = 0;
+			}
+		if (getmore) {
+			if (getmore == 2)              /* eat last key used */
+				driver_get_key();
+			getmore = 2;
+			keynum = driver_key_pressed();         /* next pending key */
+			}
+		}
+	if (boxcount) {
 /*
-      if (horizontal != 0)
-         moveboxf((double)horizontal/dxsize, 0.0);
-      if (vertical != 0)
-         moveboxf(0.0, (double)vertical/dysize);
+		if (horizontal != 0)
+			moveboxf((double)horizontal/dxsize, 0.0);
+		if (vertical != 0)
+			moveboxf(0.0, (double)vertical/dysize);
 */
-      moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
-      }
+		moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
+		}
 #ifndef XFRACT
-   else                                 /* if no zoombox, scroll by arrows */
-      scroll_relative(horizontal, vertical);
+	else                                 /* if no zoombox, scroll by arrows */
+		scroll_relative(horizontal, vertical);
 #endif
 }
 
@@ -2272,96 +2272,96 @@ static FILE *cmp_fp;
 static int errcount;
 int cmp_line(BYTE *pixels, int linelen)
 {
-   int row, col;
-   int oldcolor;
-   row = g_row_count++;
-   if (row == 0) {
-      errcount = 0;
-      cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
-      outln_cleanup = cmp_line_cleanup;
-      }
-   if (pot16bit) { /* 16 bit info, ignore odd numbered rows */
-      if ((row & 1) != 0) return 0;
-      row >>= 1;
-      }
-   for (col = 0; col < linelen; col++) {
-      oldcolor=getcolor(col, row);
-      if (oldcolor == (int)pixels[col])
-         putcolor(col, row, 0);
-      else {
-         if (oldcolor == 0)
-            putcolor(col, row, 1);
-         ++errcount;
-         if (initbatch == INIT_BATCH_NONE)
-            fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
-               errcount, col, row, oldcolor, pixels[col]);
-         }
-      }
-   return 0;
+	int row, col;
+	int oldcolor;
+	row = g_row_count++;
+	if (row == 0) {
+		errcount = 0;
+		cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
+		outln_cleanup = cmp_line_cleanup;
+		}
+	if (pot16bit) { /* 16 bit info, ignore odd numbered rows */
+		if ((row & 1) != 0) return 0;
+		row >>= 1;
+		}
+	for (col = 0; col < linelen; col++) {
+		oldcolor=getcolor(col, row);
+		if (oldcolor == (int)pixels[col])
+			putcolor(col, row, 0);
+		else {
+			if (oldcolor == 0)
+				putcolor(col, row, 1);
+			++errcount;
+			if (initbatch == INIT_BATCH_NONE)
+				fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
+					errcount, col, row, oldcolor, pixels[col]);
+			}
+		}
+	return 0;
 }
 
 static void cmp_line_cleanup(void)
 {
-   char *timestring;
-   time_t ltime;
-   if (initbatch) {
-      time(&ltime);
-      timestring = ctime(&ltime);
-      timestring[24] = 0; /*clobber newline in time string */
-      fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-                     timestring, readname, errcount);
-      }
-   fclose(cmp_fp);
+	char *timestring;
+	time_t ltime;
+	if (initbatch) {
+		time(&ltime);
+		timestring = ctime(&ltime);
+		timestring[24] = 0; /*clobber newline in time string */
+		fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
+							timestring, readname, errcount);
+		}
+	fclose(cmp_fp);
 }
 
 void clear_zoombox()
 {
-   zwidth = 0;
-   drawbox(0);
-   reset_zoom_corners();
+	zwidth = 0;
+	drawbox(0);
+	reset_zoom_corners();
 }
 
 void reset_zoom_corners()
 {
-   xxmin = sxmin;
-   xxmax = sxmax;
-   xx3rd = sx3rd;
-   yymax = symax;
-   yymin = symin;
-   yy3rd = sy3rd;
-   if (bf_math)
-   {
-      copy_bf(bfxmin, bfsxmin);
-      copy_bf(bfxmax, bfsxmax);
-      copy_bf(bfymin, bfsymin);
-      copy_bf(bfymax, bfsymax);
-      copy_bf(bfx3rd, bfsx3rd);
-      copy_bf(bfy3rd, bfsy3rd);
-   }
+	xxmin = sxmin;
+	xxmax = sxmax;
+	xx3rd = sx3rd;
+	yymax = symax;
+	yymin = symin;
+	yy3rd = sy3rd;
+	if (bf_math)
+	{
+		copy_bf(bfxmin, bfsxmin);
+		copy_bf(bfxmax, bfsxmax);
+		copy_bf(bfymin, bfsymin);
+		copy_bf(bfymax, bfsymax);
+		copy_bf(bfx3rd, bfsx3rd);
+		copy_bf(bfy3rd, bfsy3rd);
+	}
 }
 
 /*
-   Function setup287code is called by main() when a 287
-   or better fpu is detected.
+	Function setup287code is called by main() when a 287
+	or better fpu is detected.
 */
 #define ORBPTR(x) fractalspecific[x].orbitcalc
 void setup287code()
 {
-   ORBPTR(MANDELFP)       = ORBPTR(JULIAFP)      = FJuliafpFractal;
-   ORBPTR(BARNSLEYM1FP)   = ORBPTR(BARNSLEYJ1FP) = FBarnsley1FPFractal;
-   ORBPTR(BARNSLEYM2FP)   = ORBPTR(BARNSLEYJ2FP) = FBarnsley2FPFractal;
-   ORBPTR(MANOWARFP)      = ORBPTR(MANOWARJFP)   = FManOWarfpFractal;
-   ORBPTR(MANDELLAMBDAFP) = ORBPTR(LAMBDAFP)     = FLambdaFPFractal;
+	ORBPTR(MANDELFP)       = ORBPTR(JULIAFP)      = FJuliafpFractal;
+	ORBPTR(BARNSLEYM1FP)   = ORBPTR(BARNSLEYJ1FP) = FBarnsley1FPFractal;
+	ORBPTR(BARNSLEYM2FP)   = ORBPTR(BARNSLEYJ2FP) = FBarnsley2FPFractal;
+	ORBPTR(MANOWARFP)      = ORBPTR(MANOWARJFP)   = FManOWarfpFractal;
+	ORBPTR(MANDELLAMBDAFP) = ORBPTR(LAMBDAFP)     = FLambdaFPFractal;
 }
 
 /* read keystrokes while = specified key, return 1 + count;       */
 /* used to catch up when moving zoombox is slower than keyboard */
 int key_count(int keynum)
 {  int ctr;
-   ctr = 1;
-   while (driver_key_pressed() == keynum) {
-      driver_get_key();
-      ++ctr;
-      }
-   return ctr;
+	ctr = 1;
+	while (driver_key_pressed() == keynum) {
+		driver_get_key();
+		++ctr;
+		}
+	return ctr;
 }

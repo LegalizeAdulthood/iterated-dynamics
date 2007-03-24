@@ -49,10 +49,10 @@ calcmandasm(void)
 static long cdecl
 calc_mand_floating_point(void)
 {
-    long cx;
-    long savedand;
-    int savedincr;
-    long tmpfsd;
+	long cx;
+	long savedand;
+	int savedincr;
+	long tmpfsd;
 	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
 	oldcoloriter = (periodicitycheck == 0) ? 0 : (maxit - 250);
@@ -64,11 +64,11 @@ calc_mand_floating_point(void)
 
 	savedx = 0;
 	savedy = 0;
-    orbit_ptr = 0;
-    savedand = firstsavedand;
-    savedincr = 1;             /* start checking the very first time */
-    kbdcount--;                /* Only check the keyboard sometimes */
-    if (kbdcount < 0)
+	orbit_ptr = 0;
+	savedand = firstsavedand;
+	savedincr = 1;             /* start checking the very first time */
+	kbdcount--;                /* Only check the keyboard sometimes */
+	if (kbdcount < 0)
 	{
 		int key;
 		kbdcount = 1000;
@@ -88,8 +88,8 @@ calc_mand_floating_point(void)
 		}
 	}
 
-    cx = maxit;
-    if (fractype != JULIA)
+	cx = maxit;
+	if (fractype != JULIA)
 	{
 		/* Mandelbrot_87 */
 		Cx = linitx;

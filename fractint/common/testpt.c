@@ -24,7 +24,7 @@ extern int  driver_get_key(void);
 
 int teststart()     /* this routine is called just before the fractal starts */
 {
-   return  0 ;
+	return  0 ;
 }
 
 void testend()       /* this routine is called just after the fractal ends */
@@ -37,20 +37,20 @@ void testend()       /* this routine is called just after the fractal ends */
 int testpt(double initreal, double initimag, double parm1, double parm2,
 long maxit, int inside)
 {
-   double oldreal, oldimag, newreal, newimag, magnitude;
-   long color;
-   oldreal=parm1;
-   oldimag=parm2;
-   magnitude = 0.0;
-   color = 0;
-   while ((magnitude < 4.0) && (color < maxit)) {
-      newreal = oldreal * oldreal - oldimag * oldimag + initreal;
-      newimag = 2 * oldreal * oldimag + initimag;
-      color++;
-      oldreal = newreal;
-      oldimag = newimag;
-      magnitude = newreal * newreal + newimag * newimag;
-   }
-   if (color >= maxit) color = inside;
-   return (int)color;
+	double oldreal, oldimag, newreal, newimag, magnitude;
+	long color;
+	oldreal=parm1;
+	oldimag=parm2;
+	magnitude = 0.0;
+	color = 0;
+	while ((magnitude < 4.0) && (color < maxit)) {
+		newreal = oldreal * oldreal - oldimag * oldimag + initreal;
+		newimag = 2 * oldreal * oldimag + initimag;
+		color++;
+		oldreal = newreal;
+		oldimag = newimag;
+		magnitude = newreal * newreal + newimag * newimag;
+	}
+	if (color >= maxit) color = inside;
+	return (int)color;
 }

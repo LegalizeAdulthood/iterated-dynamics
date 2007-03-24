@@ -1,6 +1,6 @@
 /*
 
-        Roll-Your-Own video mode (DOTMODE 19) routines.
+		Roll-Your-Own video mode (DOTMODE 19) routines.
 
 Even if you don't have an assembler, you can add your own video-mode
 routines to FRACTINT by adding a video mode of the appropriate resolution
@@ -61,13 +61,13 @@ in assembler.
 /* these are declared in PROTOTYPE.H */
 
 #if 0
-   int  dotmode;                /* video access method (= 19)      */
-   int  sxdots, sydots;         /* total # of dots on the screen   */
-   int  colors;                 /* maximum colors available        */
+	int  dotmode;                /* video access method (= 19)      */
+	int  sxdots, sydots;         /* total # of dots on the screen   */
+	int  colors;                 /* maximum colors available        */
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 
-   BYTE dacbox[256][3];
+	BYTE dacbox[256][3];
 
 #endif
 
@@ -77,7 +77,7 @@ int startvideo()
 {
 
 /* assume that the encoded values in FRACTINT.CFG or FARVIDEO.ASM
-   have been set to accomplish this (AX = 0x13, BX = CX = DX = 0)  */
+	have been set to accomplish this (AX = 0x13, BX = CX = DX = 0)  */
 
 return 0;                              /* set flag: video started */
 

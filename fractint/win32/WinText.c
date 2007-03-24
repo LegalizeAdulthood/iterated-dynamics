@@ -27,87 +27,87 @@ static int carrot_count = 0;
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 /*
-        WINTEXT.C handles the character-based "prompt screens",
-        using a 24x80 character-window driver that I wrote originally
-        for the Windows port of the DOS-based "Screen Generator"
-        commercial package - Bert Tyler
+		WINTEXT.C handles the character-based "prompt screens",
+		using a 24x80 character-window driver that I wrote originally
+		for the Windows port of the DOS-based "Screen Generator"
+		commercial package - Bert Tyler
 
 		Modified for Win32 by Richard Thomson
 
-        the subroutines and their functions are:
+		the subroutines and their functions are:
 
 BOOL wintext_initialize(HANDLE hInstance, LPSTR title);
-    Registers and initializes the text window - must be called
-    once (and only once).  Its parameters are the handle of the application
-    instance and a pointer to a string containing the title of the window.
+	Registers and initializes the text window - must be called
+	once (and only once).  Its parameters are the handle of the application
+	instance and a pointer to a string containing the title of the window.
 void wintext_destroy();
-    Destroys items like bitmaps that the initialization routine has
-    created.  Should be called once (and only once) as your program exits.
+	Destroys items like bitmaps that the initialization routine has
+	created.  Should be called once (and only once) as your program exits.
 
 int wintext_texton();
-    Brings up and blanks out the text window.  No parameters.
+	Brings up and blanks out the text window.  No parameters.
 int wintext_textoff();
-    Removes the text window.  No parameters.
+	Removes the text window.  No parameters.
 
 void wintext_putstring(int xpos, int ypos, int attrib, const char *string);
-    Sends a character string to the screen starting at (xpos, ypos)
-    using the (CGA-style and, yes, it should be a 'char') specified attribute.
+	Sends a character string to the screen starting at (xpos, ypos)
+	using the (CGA-style and, yes, it should be a 'char') specified attribute.
 void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
-    Repaints the rectangular portion of the text screen specified by
-    the four parameters, which are in character co-ordinates.  This
-    routine is called automatically by 'wintext_putstring()' as well as
-    other internal routines whenever Windows uncovers the window.  It can
-    also be called  manually by your program when it wants a portion
-    of the screen updated (the actual data is kept in two arrays, which
-    your program has presumably updated:)
-       unsigned char chars[WINTEXT_MAX_ROW][80]  holds the text
-       unsigned char attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
+	Repaints the rectangular portion of the text screen specified by
+	the four parameters, which are in character co-ordinates.  This
+	routine is called automatically by 'wintext_putstring()' as well as
+	other internal routines whenever Windows uncovers the window.  It can
+	also be called  manually by your program when it wants a portion
+	of the screen updated (the actual data is kept in two arrays, which
+	your program has presumably updated:)
+		unsigned char chars[WINTEXT_MAX_ROW][80]  holds the text
+		unsigned char attrs[WINTEXT_MAX_ROW][80]  holds the (CGA-style) attributes
 
 void wintext_cursor(int xpos, int ypos, int cursor_type);
-    Sets the cursor to character position (xpos, ypos) and switches to
-    a cursor type specified by 'cursor_type': 0 = none, 1 = underline,
-    2 = block cursor.  A cursor type of -1 means use whatever cursor
-    type (0, 1, or 2) was already active.
+	Sets the cursor to character position (xpos, ypos) and switches to
+	a cursor type specified by 'cursor_type': 0 = none, 1 = underline,
+	2 = block cursor.  A cursor type of -1 means use whatever cursor
+	type (0, 1, or 2) was already active.
 
 unsigned int wintext_getkeypress(int option);
-    A simple keypress-retriever that, based on the parameter, either checks
-    for any keypress activity (option = 0) or waits for a keypress before
-    returning (option != 0).  Returns a 0 to indicate no keystroke, or the
-    keystroke itself.  Up to 80 keystrokes are queued in an internal buffer.
-    If the text window is not open, returns an ESCAPE keystroke (27).
-    The keystroke is returned as an integer value identical to that a
-    DOS program receives in AX when it invokes INT 16H, AX = 0 or 1.
+	A simple keypress-retriever that, based on the parameter, either checks
+	for any keypress activity (option = 0) or waits for a keypress before
+	returning (option != 0).  Returns a 0 to indicate no keystroke, or the
+	keystroke itself.  Up to 80 keystrokes are queued in an internal buffer.
+	If the text window is not open, returns an ESCAPE keystroke (27).
+	The keystroke is returned as an integer value identical to that a
+	DOS program receives in AX when it invokes INT 16H, AX = 0 or 1.
 
 int wintext_look_for_activity(int option);
-    An internal routine that handles buffered keystrokes and lets
-    Windows messaging (multitasking) take place.  Called with option=0,
-    it returns without waiting for the presence of a keystroke.  Called
-    with option !=0, it waits for a keystroke before returning.  Returns
-    1 if a keystroke is pending, 0 if none pending.  Called internally
-    (and automatically) by 'wintext_getkeypress()'.
+	An internal routine that handles buffered keystrokes and lets
+	Windows messaging (multitasking) take place.  Called with option=0,
+	it returns without waiting for the presence of a keystroke.  Called
+	with option !=0, it waits for a keystroke before returning.  Returns
+	1 if a keystroke is pending, 0 if none pending.  Called internally
+	(and automatically) by 'wintext_getkeypress()'.
 void wintext_addkeypress(unsigned int);
-    An internal routine, called by 'wintext_look_for_activity()' and
-    'wintext_proc()', that adds keystrokes to an internal buffer.
-    Never called directly by the applications program.
+	An internal routine, called by 'wintext_look_for_activity()' and
+	'wintext_proc()', that adds keystrokes to an internal buffer.
+	Never called directly by the applications program.
 long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
-    An internal routine that handles all message functions while
-    the text window is on the screen.  Never called directly by
-    the applications program, but must be referenced as a call-back
-    routine by your ".DEF" file.
+	An internal routine that handles all message functions while
+	the text window is on the screen.  Never called directly by
+	the applications program, but must be referenced as a call-back
+	routine by your ".DEF" file.
 
-        The 'me->textmode' flag tracks the current textmode status.
-        Note that pressing Alt-F4 closes and destroys the window *and*
-        resets this flag (to 1), so the main program should look at
-        this flag whenever it is possible that Alt-F4 has been hit!
-        ('wintext_getkeypress()' returns a 27 (ESCAPE) if this happens)
-        (Note that you can use an 'WM_CLOSE' case to handle this situation.)
-        The 'me->textmode' values are:
-                0 = the initialization routine has never been called!
-                1 = text mode is *not* active
-                2 = text mode *is* active
-        There is also a 'me->AltF4hit' flag that is non-zero if
-        the window has been closed (by an Alt-F4, or a WM_CLOSE sequence)
-        but the application program hasn't officially closed the window yet.
+		The 'me->textmode' flag tracks the current textmode status.
+		Note that pressing Alt-F4 closes and destroys the window *and*
+		resets this flag (to 1), so the main program should look at
+		this flag whenever it is possible that Alt-F4 has been hit!
+		('wintext_getkeypress()' returns a 27 (ESCAPE) if this happens)
+		(Note that you can use an 'WM_CLOSE' case to handle this situation.)
+		The 'me->textmode' values are:
+			0 = the initialization routine has never been called!
+			1 = text mode is *not* active
+			2 = text mode *is* active
+		There is also a 'me->AltF4hit' flag that is non-zero if
+		the window has been closed (by an Alt-F4, or a WM_CLOSE sequence)
+		but the application program hasn't officially closed the window yet.
 */
 
 /* function prototypes */
@@ -177,23 +177,23 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
 }
 
 /*
-     Register the text window - a one-time function which perfomrs
-     all of the neccessary registration and initialization
+	Register the text window - a one-time function which perfomrs
+	all of the neccessary registration and initialization
 */
 
 BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 {
-    BOOL return_value;
-    HDC hDC;
-    HFONT hOldFont;
-    TEXTMETRIC TextMetric;
-    int i, j;
-    WNDCLASS  wc;
+	BOOL return_value;
+	HDC hDC;
+	HFONT hOldFont;
+	TEXTMETRIC TextMetric;
+	int i, j;
+	WNDCLASS  wc;
 
 	ODS("wintext_initialize");
-    me->hInstance = hInstance;
+	me->hInstance = hInstance;
 	strcpy(me->title_text, titletext);
-    me->hWndParent = hWndParent;
+	me->hWndParent = hWndParent;
 
 	return_value = GetClassInfo(hInstance, s_window_class, &wc);
 	if (!return_value)
@@ -212,50 +212,50 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 		return_value = RegisterClass(&wc);
 	}
 
-    /* set up the font characteristics */
-    me->char_font = OEM_FIXED_FONT;
-    me->hFont = GetStockObject(me->char_font);
-    hDC=GetDC(hWndParent);
-    hOldFont = SelectObject(hDC, me->hFont);
-    GetTextMetrics(hDC, &TextMetric);
-    SelectObject(hDC, hOldFont);
-    ReleaseDC(hWndParent, hDC);
-    me->char_width  = TextMetric.tmMaxCharWidth;
-    me->char_height = TextMetric.tmHeight;
-    me->char_xchars = WINTEXT_MAX_COL;
-    me->char_ychars = WINTEXT_MAX_ROW;
+	/* set up the font characteristics */
+	me->char_font = OEM_FIXED_FONT;
+	me->hFont = GetStockObject(me->char_font);
+	hDC=GetDC(hWndParent);
+	hOldFont = SelectObject(hDC, me->hFont);
+	GetTextMetrics(hDC, &TextMetric);
+	SelectObject(hDC, hOldFont);
+	ReleaseDC(hWndParent, hDC);
+	me->char_width  = TextMetric.tmMaxCharWidth;
+	me->char_height = TextMetric.tmHeight;
+	me->char_xchars = WINTEXT_MAX_COL;
+	me->char_ychars = WINTEXT_MAX_ROW;
 
 	/* maximum screen width */
-    me->max_width = me->char_xchars*me->char_width;
-    /* maximum screen height */
+	me->max_width = me->char_xchars*me->char_width;
+	/* maximum screen height */
 	me->max_height = me->char_ychars*me->char_height;
 
-    /* set up the font and caret information */
-    for (i = 0; i < 3; i++)
+	/* set up the font and caret information */
+	for (i = 0; i < 3; i++)
 	{
 		size_t count = NUM_OF(me->cursor_pattern[0])*sizeof(me->cursor_pattern[0][0]);
 		memset(&me->cursor_pattern[i][0], 0, count);
 	}
-    for (j = me->char_height-2; j < me->char_height; j++)
+	for (j = me->char_height-2; j < me->char_height; j++)
 	{
-        me->cursor_pattern[1][j] = 0x00ff;
+		me->cursor_pattern[1][j] = 0x00ff;
 	}
-    for (j = 0; j < me->char_height; j++)
+	for (j = 0; j < me->char_height; j++)
 	{
-        me->cursor_pattern[2][j] = 0x00ff;
+		me->cursor_pattern[2][j] = 0x00ff;
 	}
-    me->bitmap[0] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[0][0]);
-    me->bitmap[1] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[1][0]);
-    me->bitmap[2] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[2][0]);
+	me->bitmap[0] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[0][0]);
+	me->bitmap[1] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[1][0]);
+	me->bitmap[2] = CreateBitmap(8, me->char_height, 1, 1, &me->cursor_pattern[2][0]);
 
-    me->textmode = 1;
-    me->AltF4hit = 0;
+	me->textmode = 1;
+	me->AltF4hit = 0;
 
-    return return_value;
+	return return_value;
 }
 
 /*
-        clean-up routine
+		clean-up routine
 */
 void wintext_destroy(WinText *me)
 {
@@ -265,88 +265,88 @@ void wintext_destroy(WinText *me)
 
 	if (me->textmode == 2)  /* text is still active! */
 	{
-        wintext_textoff(me);
+		wintext_textoff(me);
 	}
-    if (me->textmode != 1)  /* not in the right mode */
+	if (me->textmode != 1)  /* not in the right mode */
 	{
-        return;
+		return;
 	}
 
-    for (i = 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 	{
-        DeleteObject((HANDLE) me->bitmap[i]);
+		DeleteObject((HANDLE) me->bitmap[i]);
 	}
-    me->textmode = 0;
-    me->AltF4hit = 0;
+	me->textmode = 0;
+	me->AltF4hit = 0;
 }
 
 
 /*
-     Set up the text window and clear it
+	Set up the text window and clear it
 */
 int wintext_texton(WinText *me)
 {
-    HWND hWnd;
+	HWND hWnd;
 
 	ODS("wintext_texton");
 
-    if (me->textmode != 1)  /* not in the right mode */
+	if (me->textmode != 1)  /* not in the right mode */
 	{
-        return 0;
+		return 0;
 	}
 
-    /* initialize the cursor */
-    me->cursor_x    = 0;
-    me->cursor_y    = 0;
-    me->cursor_type = 0;
-    me->cursor_owned = 0;
+	/* initialize the cursor */
+	me->cursor_x    = 0;
+	me->cursor_y    = 0;
+	me->cursor_type = 0;
+	me->cursor_owned = 0;
 	me->showing_cursor = FALSE;
 
 	/* make sure g_me points to me because CreateWindow
 	 * is going to call the window procedure.
 	 */
 	g_me = me;
-    hWnd = CreateWindow(s_window_class,
-        me->title_text,
+	hWnd = CreateWindow(s_window_class,
+		me->title_text,
 		(NULL == me->hWndParent) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
-        CW_USEDEFAULT,               /* default horizontal position */
-        CW_USEDEFAULT,               /* default vertical position */
-        me->max_width,
-        me->max_height,
-        me->hWndParent,
-        NULL,
-        me->hInstance,
-        NULL);
+		CW_USEDEFAULT,               /* default horizontal position */
+		CW_USEDEFAULT,               /* default vertical position */
+		me->max_width,
+		me->max_height,
+		me->hWndParent,
+		NULL,
+		me->hInstance,
+		NULL);
 	_ASSERTE(hWnd);
 
-    /* squirrel away a global copy of 'hWnd' for later */
-    me->hWndCopy = hWnd;
+	/* squirrel away a global copy of 'hWnd' for later */
+	me->hWndCopy = hWnd;
 
-    me->textmode = 2;
-    me->AltF4hit = 0;
+	me->textmode = 2;
+	me->AltF4hit = 0;
 
-    ShowWindow(me->hWndCopy, SW_SHOWNORMAL);
-    UpdateWindow(me->hWndCopy);
-    InvalidateRect(me->hWndCopy, NULL, FALSE);
+	ShowWindow(me->hWndCopy, SW_SHOWNORMAL);
+	UpdateWindow(me->hWndCopy);
+	InvalidateRect(me->hWndCopy, NULL, FALSE);
 
-    return 0;
+	return 0;
 }
 
 /*
-     Remove the text window
+	Remove the text window
 */
 
 int wintext_textoff(WinText *me)
 {
 	ODS("wintext_textoff");
-    me->AltF4hit = 0;
-    if (me->textmode != 2)  /* not in the right mode */
+	me->AltF4hit = 0;
+	if (me->textmode != 2)  /* not in the right mode */
 	{
-        return 0;
+		return 0;
 	}
-    DestroyWindow(me->hWndCopy);
-    me->textmode = 1;
-    return 0;
+	DestroyWindow(me->hWndCopy);
+	me->textmode = 1;
+	return 0;
 }
 
 static void wintext_OnClose(HWND window)
@@ -397,8 +397,8 @@ void wintext_kill_focus(void)
 
 static void wintext_OnPaint(HWND window)
 {
-    PAINTSTRUCT ps;
-    HDC hDC = BeginPaint(window, &ps);
+	PAINTSTRUCT ps;
+	HDC hDC = BeginPaint(window, &ps);
 
 	/* the routine below handles *all* window updates */
 	int xmin = ps.rcPaint.left/g_me->char_width;
@@ -432,7 +432,7 @@ static void wintext_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 }
 
 /*
-        Window-handling procedure
+		Window-handling procedure
 */
 LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -442,10 +442,10 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	}
 	else if (hWnd != g_me->hWndCopy)  /* ??? not the text-mode window! */
 	{
-         return DefWindowProc(hWnd, message, wParam, lParam);
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-    switch (message)
+	switch (message)
 	{
 	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, wintext_OnGetMinMaxInfo); break;
 	case WM_CLOSE:			HANDLE_WM_CLOSE(hWnd, wParam, lParam, wintext_OnClose);			break;
@@ -454,51 +454,51 @@ LRESULT CALLBACK wintext_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, wintext_OnKillFocus); break;
 	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, wintext_OnPaint);			break;
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
-    }
-    return 0;
+	}
+	return 0;
 }
 
 /*
-        general routine to send a string to the screen
+		general routine to send a string to the screen
 */
 
 void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *string, int *end_row, int *end_col)
 {
 	int i, j, k, maxrow, maxcol;
-    char xc, xa;
+	char xc, xa;
 
 	ODS("wintext_putstring");
 
 	xa = (attrib & 0x0ff);
-    j = maxrow = ypos;
-    k = maxcol = xpos-1;
+	j = maxrow = ypos;
+	k = maxcol = xpos-1;
 
-    for (i = 0; (xc = string[i]) != 0; i++)
+	for (i = 0; (xc = string[i]) != 0; i++)
 	{
-        if (xc == 13 || xc == 10)
+		if (xc == 13 || xc == 10)
 		{
-            if (j < WINTEXT_MAX_ROW-1) j++;
-            k = xpos-1;
+			if (j < WINTEXT_MAX_ROW-1) j++;
+			k = xpos-1;
 		}
-        else
+		else
 		{
-            if ((++k) >= WINTEXT_MAX_COL)
+			if ((++k) >= WINTEXT_MAX_COL)
 			{
-                if (j < WINTEXT_MAX_ROW-1) j++;
-                k = xpos;
-            }
-            if (maxrow < j) maxrow = j;
-            if (maxcol < k) maxcol = k;
-            me->chars[j][k] = xc;
-            me->attrs[j][k] = xa;
-        }
-    }
-    if (i > 0)
+				if (j < WINTEXT_MAX_ROW-1) j++;
+				k = xpos;
+			}
+			if (maxrow < j) maxrow = j;
+			if (maxcol < k) maxcol = k;
+			me->chars[j][k] = xc;
+			me->attrs[j][k] = xa;
+		}
+	}
+	if (i > 0)
 	{
 		invalidate(me, xpos, ypos, maxcol, maxrow);
 		*end_row = j;
 		*end_col = k + 1;
-    }
+	}
 }
 
 void wintext_scroll_up(WinText *me, int top, int bot)
@@ -524,14 +524,14 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 }
 
 /*
-     general routine to repaint the screen
+	general routine to repaint the screen
 */
 
 void wintext_paintscreen(WinText *me, 
-    int xmin,       /* update this rectangular section */
-    int xmax,       /* of the 'screen'                 */
-    int ymin,
-    int ymax)
+	int xmin,       /* update this rectangular section */
+	int xmax,       /* of the 'screen'                 */
+	int ymin,
+	int ymax)
 {
 	int i, j, k;
 	int istart, jstart, length, foreground, background;
@@ -558,9 +558,9 @@ void wintext_paintscreen(WinText *me,
 			{
 				me->chars[j][i] = ' ';
 				me->attrs[j][i] = k;
-            }
-        }
-    }
+			}
+		}
+	}
 
 	if (xmin < 0) xmin = 0;
 	if (xmax >= me->char_xchars) xmax = me->char_xchars-1;
@@ -610,7 +610,7 @@ void wintext_paintscreen(WinText *me,
 						jstart*me->char_height,
 						&me->chars[jstart][istart],
 						length);
-                }
+				}
 				oldbk = background;
 				oldfg = foreground;
 				istart = i;
@@ -619,7 +619,7 @@ void wintext_paintscreen(WinText *me,
 			}
 			length++;
 		}
-    }
+	}
 
 	if (TRUE == me->showing_cursor)
 	//if (me->cursor_owned != 0)
@@ -641,33 +641,33 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 		return;
 	}
 
-    me->cursor_x = xpos;
-    me->cursor_y = ypos;
-    if (cursor_type >= 0) me->cursor_type = cursor_type;
-    if (me->cursor_type < 0) me->cursor_type = 0;
-    if (me->cursor_type > 2) me->cursor_type = 2;
+	me->cursor_x = xpos;
+	me->cursor_y = ypos;
+	if (cursor_type >= 0) me->cursor_type = cursor_type;
+	if (me->cursor_type < 0) me->cursor_type = 0;
+	if (me->cursor_type > 2) me->cursor_type = 2;
 	if (FALSE == me->showing_cursor)
 	{
 		x = me->cursor_x*me->char_width;
 		y = me->cursor_y*me->char_height;
-        CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
+		CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
 			me->char_width, me->char_height);
-        SetCaretPos(x, y);
+		SetCaretPos(x, y);
 		ODS3("======================== Show Caret %d #2 (%d,%d)", ++carrot_count, x, y);
-        ShowCaret(me->hWndCopy);
+		ShowCaret(me->hWndCopy);
 		me->showing_cursor = TRUE;
 	}
 	else
-    //if (me->cursor_owned != 0)
-    {
-        /* CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
+	//if (me->cursor_owned != 0)
+	{
+		/* CreateCaret(me->hWndCopy, me->bitmap[me->cursor_type],
 			me->char_width, me->char_height); */
 		x = me->cursor_x*me->char_width;
 		y = me->cursor_y*me->char_height;
-        SetCaretPos(x, y);
-        /*SetCaretBlinkTime(500); */
+		SetCaretPos(x, y);
+		/*SetCaretBlinkTime(500); */
 		ODS2("======================== Set Caret Pos #1 (%d,%d)", x, y);
-        /*ShowCaret(me->hWndCopy); */
+		/*ShowCaret(me->hWndCopy); */
 	}
 }
 
@@ -702,7 +702,7 @@ void wintext_clear(WinText *me)
 		memset(&me->chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
 		memset(&me->attrs[y][0], ' ', (size_t) WINTEXT_MAX_COL);
 	}
-    InvalidateRect(me->hWndCopy, NULL, FALSE);
+	InvalidateRect(me->hWndCopy, NULL, FALSE);
 }
 
 BYTE *wintext_screen_get(WinText *me)

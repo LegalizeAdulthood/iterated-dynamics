@@ -136,43 +136,43 @@ int fform_per_pixel(void)
 ; --------------------------------------------------------------------------
 ;       orbitcalc function follows
 ; --------------------------------------------------------------------------
-   public          _fFormula
-   align           16
+	public          _fFormula
+	align           16
 _fFormula          proc far
-      push         di                  ; don't build a frame here
-      mov          di,offset DGROUP:_s ; reset this for stk overflow area
-      mov          bx,_InitOpPtr       ; bx -> one before first token
-      mov          ax,WORD PTR _InitJumpIndex
-      mov          WORD PTR _jump_index,ax
-      mov          ax,ds               ; save ds in ax
-      lds          cx,_fLastOp         ; ds:cx -> last token
-      mov          es,ax               ; es -> DGROUP
-   assume          es:DGROUP, ds:nothing
-      push         si
+	push         di                  ; don't build a frame here
+	mov          di,offset DGROUP:_s ; reset this for stk overflow area
+	mov          bx,_InitOpPtr       ; bx -> one before first token
+	mov          ax,WORD PTR _InitJumpIndex
+	mov          WORD PTR _jump_index,ax
+	mov          ax,ds               ; save ds in ax
+	lds          cx,_fLastOp         ; ds:cx -> last token
+	mov          es,ax               ; es -> DGROUP
+	assume          es:DGROUP, ds:nothing
+	push         si
 
-   ; ;; ;align           8
+	; ;; ;align           8
 inner_loop:                            ; new loop             CAE 1 Dec 1998
-      mov          si,WORD PTR [bx + 2]
-      call         WORD PTR [bx]
+	mov          si,WORD PTR [bx + 2]
+	call         WORD PTR [bx]
 ;      mov          si,WORD PTR [bx + 6]  ; now set si to operand pointer
 ;      call         WORD PTR [bx + 4]     ; ...and jump to operator fn
 ;      add          bx,8     ; JCO removed loop unroll, 12/5/99
-      add          bx,4
-      jmp          short inner_loop
+	add          bx,4
+	jmp          short inner_loop
 
-   ; ;; ;align           8
+	; ;; ;align           8
 past_loop:
-   ; NOTE: AX was set by the last operator fn called.
-      mov          si,_PtrToZ          ; ds:si -> z
-      mov          di,offset DGROUP:_new ; es:di -> new
-      mov          cx,4                ; get ready to move 4 dwords
-      rep          movsd               ; new = z
-      mov          bx,es               ; put seg dgroup in bx
-      pop          si
-      pop          di                  ; restore si, di
-      mov          ds,bx               ; restore ds from bx before return
-   assume          ds:DGROUP, es:nothing
-      ret                              ; return AX unmodified
+	; NOTE: AX was set by the last operator fn called.
+	mov          si,_PtrToZ          ; ds:si -> z
+	mov          di,offset DGROUP:_new ; es:di -> new
+	mov          cx,4                ; get ready to move 4 dwords
+	rep          movsd               ; new = z
+	mov          bx,es               ; put seg dgroup in bx
+	pop          si
+	pop          di                  ; restore si, di
+	mov          ds,bx               ; restore ds from bx before return
+	assume          ds:DGROUP, es:nothing
+	ret                              ; return AX unmodified
 _fFormula          endp
 */
 int fFormula(void)
@@ -185,29 +185,29 @@ int fFormula(void)
 ; --------------------------------------------------------------------------
 ; called once per image
 ; --------------------------------------------------------------------------
-   public          _Img_Setup
-   align           2
-   ; Changed to FAR, FRAME/UNFRAME added by CAE 09OCT93
+	public          _Img_Setup
+	align           2
+	; Changed to FAR, FRAME/UNFRAME added by CAE 09OCT93
 _Img_Setup         proc far
-      FRAME        <si,di>
-      les          si,_pfls            ; es:si = &pfls[0]
+	FRAME        <si,di>
+	les          si,_pfls            ; es:si = &pfls[0]
 
-      mov          di,_LastOp          ; load index of lastop
+	mov          di,_LastOp          ; load index of lastop
 
-      dec          di                  ; flastop now points at last operator
-      ; above added by CAE 09OCT93 because of loop logic changes
+	dec          di                  ; flastop now points at last operator
+	; above added by CAE 09OCT93 because of loop logic changes
 
-      shl          di,2                ; convert to offset
-      mov          bx,offset DGROUP:_fLastOp ; set bx for store
-      add          di,si               ; di = offset lastop
-      mov          WORD PTR [bx],di    ; save value of flastop
-      mov          ax,es               ; es has segment value
-      mov          WORD PTR [bx + 2],ax  ; save seg for easy reload
-      mov          ax,word ptr _v      ; build a ptr to Z
-      add          ax,3*CARG + CPFX
-      mov          _PtrToZ,ax          ; and save it
-      UNFRAME      <di,si>
-      ret
+	shl          di,2                ; convert to offset
+	mov          bx,offset DGROUP:_fLastOp ; set bx for store
+	add          di,si               ; di = offset lastop
+	mov          WORD PTR [bx],di    ; save value of flastop
+	mov          ax,es               ; es has segment value
+	mov          WORD PTR [bx + 2],ax  ; save seg for easy reload
+	mov          ax,word ptr _v      ; build a ptr to Z
+	add          ax,3*CARG + CPFX
+	mov          _PtrToZ,ax          ; and save it
+	UNFRAME      <di,si>
+	ret
 _Img_Setup         endp
 */
 void Img_Setup(void)

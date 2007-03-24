@@ -26,9 +26,9 @@ Frame g_frame = { 0 };
 /*
 ; translate table for mouse movement -> fake keys
 mousefkey dw   1077,1075,1080,1072  ; right,left,down,up     just movement
-        dw        0,   0,1081,1073  ;            ,pgdn,pgup  + left button
-        dw    1144,1142,1147,1146  ; kpad+,kpad-,cdel,cins  + rt   button
-        dw    1117,1119,1118,1132  ; ctl-end,home,pgdn,pgup + mid/multi
+		dw        0,   0,1081,1073  ;            ,pgdn,pgup  + left button
+		dw    1144,1142,1147,1146  ; kpad+,kpad-,cdel,cins  + rt   button
+		dw    1117,1119,1118,1132  ; ctl-end,home,pgdn,pgup + mid/multi
 */
 static int s_mouse_keys[16] =
 {
@@ -56,8 +56,8 @@ static void frame_OnKillFocus(HWND window, HWND old_focus)
 
 static void frame_OnPaint(HWND window)
 {
-    PAINTSTRUCT ps;
-    HDC hDC = BeginPaint(window, &ps);
+	PAINTSTRUCT ps;
+	HDC hDC = BeginPaint(window, &ps);
 	EndPaint(window, &ps);
 }
 
@@ -321,9 +321,9 @@ LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 
 void frame_init(HINSTANCE instance, LPCSTR title)
 {
-    BOOL status;
+	BOOL status;
 	LPCSTR windowClass = "FractintFrame";
-    WNDCLASS  wc;
+	WNDCLASS  wc;
 
 	status = GetClassInfo(instance, windowClass, &wc);
 	if (!status)
@@ -346,8 +346,8 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 	}
 
 	g_frame.keypress_count = 0;
-    g_frame.keypress_head  = 0;
-    g_frame.keypress_tail  = 0;
+	g_frame.keypress_head  = 0;
+	g_frame.keypress_tail  = 0;
 }
 
 int frame_pump_messages(int waitflag)

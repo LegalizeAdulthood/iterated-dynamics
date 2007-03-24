@@ -71,87 +71,87 @@ unsigned int xAspect, yAspect;
 
 void SetAspect(double aspect)
 {
-   xAspect = 0;
-   yAspect = 0;
-   aspect = fabs(aspect);
-   if (aspect != 1.0) {
-      if (aspect > 1.0)
-         yAspect = (unsigned int)(65536.0 / aspect);
-      else
-         xAspect = (unsigned int)(65536.0 * aspect);
-   }
+	xAspect = 0;
+	yAspect = 0;
+	aspect = fabs(aspect);
+	if (aspect != 1.0) {
+		if (aspect > 1.0)
+			yAspect = (unsigned int)(65536.0 / aspect);
+		else
+			xAspect = (unsigned int)(65536.0 * aspect);
+	}
 }
 
 void _fastcall c_putcolor(int x, int y, int color)
-   {
-   /* avoid writing outside window */
-   if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
-      return ;
-   if (y >= sydots - show_numbers) /* avoid overwriting coords */
-      return;
-   if (windows == 2) /* avoid overwriting fractal */
-      if (0 <= x && x < xdots && 0 <= y && y < ydots)
-         return;
-   putcolor(x, y, color);
-   }
+	{
+	/* avoid writing outside window */
+	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+		return ;
+	if (y >= sydots - show_numbers) /* avoid overwriting coords */
+		return;
+	if (windows == 2) /* avoid overwriting fractal */
+		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+			return;
+	putcolor(x, y, color);
+	}
 
 
 int  c_getcolor(int x, int y)
-   {
-   /* avoid reading outside window */
-   if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
-      return 1000;
-   if (y >= sydots - show_numbers) /* avoid overreading coords */
-      return 1000;
-   if (windows == 2) /* avoid overreading fractal */
-      if (0 <= x && x < xdots && 0 <= y && y < ydots)
-         return 1000;
-   return getcolor(x, y);
-   }
+	{
+	/* avoid reading outside window */
+	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+		return 1000;
+	if (y >= sydots - show_numbers) /* avoid overreading coords */
+		return 1000;
+	if (windows == 2) /* avoid overreading fractal */
+		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+			return 1000;
+	return getcolor(x, y);
+	}
 
 void circleplot(int x, int y, int color)
 {
-   if (xAspect == 0)
-      if (yAspect == 0)
-         c_putcolor(x + xbase, y + ybase, color);
-      else
-         c_putcolor(x + xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
-   else
-      c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y + ybase, color);
+	if (xAspect == 0)
+		if (yAspect == 0)
+			c_putcolor(x + xbase, y + ybase, color);
+		else
+			c_putcolor(x + xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
+	else
+		c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y + ybase, color);
 }
 
 void plot8(int x, int y, int color)
 {
-   circleplot(x, y, color);
-   circleplot(-x, y, color);
-   circleplot(x, -y, color);
-   circleplot(-x, -y, color);
-   circleplot(y, x, color);
-   circleplot(-y, x, color);
-   circleplot(y, -x, color);
-   circleplot(-y, -x, color);
+	circleplot(x, y, color);
+	circleplot(-x, y, color);
+	circleplot(x, -y, color);
+	circleplot(-x, -y, color);
+	circleplot(y, x, color);
+	circleplot(-y, x, color);
+	circleplot(y, -x, color);
+	circleplot(-y, -x, color);
 }
 
 void circle(int radius, int color)
 {
-   int x, y, sum;
+	int x, y, sum;
 
-   x = 0;
-   y = radius << 1;
-   sum = 0;
+	x = 0;
+	y = radius << 1;
+	sum = 0;
 
-   while (x <= y)
-   {
-      if (!(x & 1))   /* plot if x is even */
-         plot8(x >> 1, (y + 1) >> 1, color);
-      sum += (x << 1) + 1;
-      x++;
-      if (sum > 0)
-      {
-         sum -= (y << 1) - 1;
-         y--;
-      }
-   }
+	while (x <= y)
+	{
+		if (!(x & 1))   /* plot if x is even */
+			plot8(x >> 1, (y + 1) >> 1, color);
+		sum += (x << 1) + 1;
+		x++;
+		if (sum > 0)
+		{
+			sum -= (y << 1) - 1;
+			y--;
+		}
+	}
 }
 
 
@@ -173,16 +173,16 @@ void circle(int radius, int color)
 
 static void fillrect(int x, int y, int width, int height, int color)
 {
-   /* fast version of fillrect */
-   if (hasinverse == 0)
-      return;
-   memset(dstack, color % colors, width);
-   while (height-- > 0)
-   {
-      if (driver_key_pressed()) /* we could do this less often when in fast modes */
-         return;
-      putrow(x, y++, width, (char *)dstack);
-   }
+	/* fast version of fillrect */
+	if (hasinverse == 0)
+		return;
+	memset(dstack, color % colors, width);
+	while (height-- > 0)
+	{
+		if (driver_key_pressed()) /* we could do this less often when in fast modes */
+			return;
+		putrow(x, y++, width, (char *)dstack);
+	}
 }
 
 /*
@@ -194,27 +194,27 @@ static void fillrect(int x, int y, int width, int height, int color)
 int
 QueueEmpty()            /* True if NO points remain in queue */
 {
-   return ListFront == ListBack;
+	return ListFront == ListBack;
 }
 
 #if 0 /* not used */
 int
 QueueFull()             /* True if room for NO more points in queue */
 {
-   return ((ListFront + 1) % ListSize) == ListBack;
+	return ((ListFront + 1) % ListSize) == ListBack;
 }
 #endif
 
 int
 QueueFullAlmost()       /* True if room for ONE more point in queue */
 {
-   return ((ListFront + 2) % ListSize) == ListBack;
+	return ((ListFront + 2) % ListSize) == ListBack;
 }
 
 void
 ClearQueue()
 {
-   ListFront = ListBack = lsize = lmax = 0;
+	ListFront = ListBack = lsize = lmax = 0;
 }
 
 
@@ -225,187 +225,187 @@ ClearQueue()
 
 int Init_Queue(unsigned long request)
 {
-   if (driver_diskp())
-   {
-      stopmsg(0, "Don't try this in disk video mode, kids...\n");
-      ListSize = 0;
-      return 0;
-   }
+	if (driver_diskp())
+	{
+		stopmsg(0, "Don't try this in disk video mode, kids...\n");
+		ListSize = 0;
+		return 0;
+	}
 
 #if 0
-   if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
-      if ((largest = xmmlongest()) > request / 128)
-         request   = (unsigned long) largest * 128L;
+	if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
+		if ((largest = xmmlongest()) > request / 128)
+			request   = (unsigned long) largest * 128L;
 #endif
 
-   for (ListSize = request; ListSize > 1024; ListSize /= 2)
-      switch (common_startdisk(ListSize * 8, 1, 256))
-      {
-         case 0:                        /* success */
-            ListFront = ListBack = 0;
-            lsize = lmax = 0;
-            return 1;
-         case -1:
-            continue;                   /* try smaller queue size */
-         case -2:
-            ListSize = 0;               /* cancelled by user      */
-            return 0;
-      }
+	for (ListSize = request; ListSize > 1024; ListSize /= 2)
+		switch (common_startdisk(ListSize * 8, 1, 256))
+		{
+			case 0:                        /* success */
+				ListFront = ListBack = 0;
+				lsize = lmax = 0;
+				return 1;
+			case -1:
+				continue;                   /* try smaller queue size */
+			case -2:
+				ListSize = 0;               /* cancelled by user      */
+				return 0;
+		}
 
-   /* failed to get memory for MIIM Queue */
-   ListSize = 0;
-   return 0;
+	/* failed to get memory for MIIM Queue */
+	ListSize = 0;
+	return 0;
 }
 
 void
 Free_Queue()
 {
-   enddisk();
-   ListFront = ListBack = ListSize = lsize = lmax = 0;
+	enddisk();
+	ListFront = ListBack = ListSize = lsize = lmax = 0;
 }
 
 int
 PushLong(long x, long y)
 {
-   if (((ListFront + 1) % ListSize) != ListBack)
-   {
-      if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
+	if (((ListFront + 1) % ListSize) != ListBack)
+	{
+		if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
           ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
-      {
-         ListFront = (ListFront + 1) % ListSize;
-         if (++lsize > lmax)
-         {
-            lmax   = lsize;
-            luckyx = (float)x;
-            luckyy = (float)y;
-         }
-         return 1;
-      }
-   }
-   return 0;                    /* fail */
+		{
+			ListFront = (ListFront + 1) % ListSize;
+			if (++lsize > lmax)
+			{
+				lmax   = lsize;
+				luckyx = (float)x;
+				luckyy = (float)y;
+			}
+			return 1;
+		}
+	}
+	return 0;                    /* fail */
 }
 
 int
 PushFloat(float x, float y)
 {
-   if (((ListFront + 1) % ListSize) != ListBack)
-   {
-      if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
+	if (((ListFront + 1) % ListSize) != ListBack)
+	{
+		if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
           ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
-      {
-         ListFront = (ListFront + 1) % ListSize;
-         if (++lsize > lmax)
-         {
-            lmax   = lsize;
-            luckyx = x;
-            luckyy = y;
-         }
-         return 1;
-      }
-   }
-   return 0;                    /* fail */
+		{
+			ListFront = (ListFront + 1) % ListSize;
+			if (++lsize > lmax)
+			{
+				lmax   = lsize;
+				luckyx = x;
+				luckyy = y;
+			}
+			return 1;
+		}
+	}
+	return 0;                    /* fail */
 }
 
 _CMPLX
 PopFloat()
 {
-   _CMPLX pop;
-   float  popx, popy;
+	_CMPLX pop;
+	float  popx, popy;
 
-   if (!QueueEmpty())
-   {
-      ListFront--;
-      if (ListFront < 0)
+	if (!QueueEmpty())
+	{
+		ListFront--;
+		if (ListFront < 0)
           ListFront = ListSize - 1;
-      if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
+		if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
           FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
-      {
-         pop.x = popx;
-         pop.y = popy;
-         --lsize;
-      }
-      return pop;
-   }
-   pop.x = 0;
-   pop.y = 0;
-   return pop;
+		{
+			pop.x = popx;
+			pop.y = popy;
+			--lsize;
+		}
+		return pop;
+	}
+	pop.x = 0;
+	pop.y = 0;
+	return pop;
 }
 
 LCMPLX
 PopLong()
 {
-   LCMPLX pop;
+	LCMPLX pop;
 
-   if (!QueueEmpty())
-   {
-      ListFront--;
-      if (ListFront < 0)
+	if (!QueueEmpty())
+	{
+		ListFront--;
+		if (ListFront < 0)
           ListFront = ListSize - 1;
-      if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x) &&
+		if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x) &&
           FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
-         --lsize;
-      return pop;
-   }
-   pop.x = 0;
-   pop.y = 0;
-   return pop;
+			--lsize;
+		return pop;
+	}
+	pop.x = 0;
+	pop.y = 0;
+	return pop;
 }
 
 int
 EnQueueFloat(float x, float y)
 {
-   return PushFloat(x, y);
+	return PushFloat(x, y);
 }
 
 int
 EnQueueLong(long x, long y)
 {
-   return PushLong(x, y);
+	return PushLong(x, y);
 }
 
 _CMPLX
 DeQueueFloat()
 {
-   _CMPLX out;
-   float outx, outy;
+	_CMPLX out;
+	float outx, outy;
 
-   if (ListBack != ListFront)
-   {
-      if (FromMemDisk(8*ListBack, sizeof(outx), &outx) &&
+	if (ListBack != ListFront)
+	{
+		if (FromMemDisk(8*ListBack, sizeof(outx), &outx) &&
           FromMemDisk(8*ListBack +sizeof(outx), sizeof(outy), &outy))
-      {
-         ListBack = (ListBack + 1) % ListSize;
-         out.x = outx;
-         out.y = outy;
-         lsize--;
-      }
-      return out;
-   }
-   out.x = 0;
-   out.y = 0;
-   return out;
+		{
+			ListBack = (ListBack + 1) % ListSize;
+			out.x = outx;
+			out.y = outy;
+			lsize--;
+		}
+		return out;
+	}
+	out.x = 0;
+	out.y = 0;
+	return out;
 }
 
 LCMPLX
 DeQueueLong()
 {
-   LCMPLX out;
-   out.x = 0;
-   out.y = 0;
+	LCMPLX out;
+	out.x = 0;
+	out.y = 0;
 
-   if (ListBack != ListFront)
-   {
-      if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x) &&
+	if (ListBack != ListFront)
+	{
+		if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x) &&
           FromMemDisk(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
-      {
-         ListBack = (ListBack + 1) % ListSize;
-         lsize--;
-      }
-      return out;
-   }
-   out.x = 0;
-   out.y = 0;
-   return out;
+		{
+			ListBack = (ListBack + 1) % ListSize;
+			lsize--;
+		}
+		return out;
+	}
+	out.x = 0;
+	out.y = 0;
+	return out;
 }
 
 
@@ -448,10 +448,10 @@ static void RestoreRect(int x, int y, int width, int height)
 
 	Cursor_Hide();
 	for (yoff =0; yoff < height; yoff++)
-    {
+	{
 		putrow(x, y + yoff, width, buff);
 		buff += width;
-    }
+	}
 	Cursor_Show();
 }
 
@@ -463,371 +463,371 @@ _CMPLX SaveC = {-3000.0, -3000.0};
 
 void Jiim(int which)         /* called by fractint */
 {
-   struct affine cvt;
-   int exact = 0;
-   int oldhelpmode;
-   int count = 0;            /* coloring julia */
-   static int mode = 0;      /* point, circle, ... */
-   int       oldlookatmouse = lookatmouse;
-   double cr, ci, r;
-   int xfactor, yfactor;             /* aspect ratio          */
+	struct affine cvt;
+	int exact = 0;
+	int oldhelpmode;
+	int count = 0;            /* coloring julia */
+	static int mode = 0;      /* point, circle, ... */
+	int       oldlookatmouse = lookatmouse;
+	double cr, ci, r;
+	int xfactor, yfactor;             /* aspect ratio          */
 
-   int xoff, yoff;                   /* center of the window  */
-   int x, y;
-   int still, kbdchar= -1;
+	int xoff, yoff;                   /* center of the window  */
+	int x, y;
+	int still, kbdchar= -1;
 
-   long iter;
-   int color;
-   float zoom;
-   int oldsxoffs, oldsyoffs;
-   int savehasinverse;
-   int (*oldcalctype)(void);
-   int old_x, old_y;
-   double aspect;
-   static int randir = 0;
-   static int rancnt = 0;
-   int actively_computing = 1;
-   int first_time = 1;
-   int old_debugflag;
+	long iter;
+	int color;
+	float zoom;
+	int oldsxoffs, oldsyoffs;
+	int savehasinverse;
+	int (*oldcalctype)(void);
+	int old_x, old_y;
+	double aspect;
+	static int randir = 0;
+	static int rancnt = 0;
+	int actively_computing = 1;
+	int first_time = 1;
+	int old_debugflag;
 
-   old_debugflag = debugflag;
-   /* must use standard fractal or be calcfroth */
-   if (fractalspecific[fractype].calctype != StandardFractal
+	old_debugflag = debugflag;
+	/* must use standard fractal or be calcfroth */
+	if (fractalspecific[fractype].calctype != StandardFractal
        && fractalspecific[fractype].calctype != calcfroth)
        return;
-   oldhelpmode = helpmode;
-   if (which == JIIM)
-      helpmode = HELP_JIIM;
-   else
-   {
-      helpmode = HELP_ORBITS;
-      hasinverse = 1;
+	oldhelpmode = helpmode;
+	if (which == JIIM)
+		helpmode = HELP_JIIM;
+	else
+	{
+		helpmode = HELP_ORBITS;
+		hasinverse = 1;
 
 #if 0 /* I don't think this is needed any more */
-      /* Earth to Chuck Ebbert - remove this code when your code supports
-         my changes to PARSER.C */
-      if (fractype == FFORMULA)
-      {
-         debugflag = 90;
-      }
+		/* Earth to Chuck Ebbert - remove this code when your code supports
+			my changes to PARSER.C */
+		if (fractype == FFORMULA)
+		{
+			debugflag = 90;
+		}
 #endif
-   }
-   oldsxoffs = sxoffs;
-   oldsyoffs = syoffs;
-   oldcalctype = calctype;
-   show_numbers = 0;
-   using_jiim = 1;
-   line_buff = malloc(max(sxdots, sydots));
-   aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
-         actively_computing = 1;
-   SetAspect(aspect);
-   lookatmouse = LOOK_MOUSE_ZOOM_BOX;
+	}
+	oldsxoffs = sxoffs;
+	oldsyoffs = syoffs;
+	oldcalctype = calctype;
+	show_numbers = 0;
+	using_jiim = 1;
+	line_buff = malloc(max(sxdots, sydots));
+	aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
+			actively_computing = 1;
+	SetAspect(aspect);
+	lookatmouse = LOOK_MOUSE_ZOOM_BOX;
 
-   /* this code moved from just below to avoid boxx/strlocn conflict */
-   if (which == ORBIT)
-      (*PER_IMAGE)();
-   else
-      color = g_color_bright;
-   /* end moved code */
+	/* this code moved from just below to avoid boxx/strlocn conflict */
+	if (which == ORBIT)
+		(*PER_IMAGE)();
+	else
+		color = g_color_bright;
+	/* end moved code */
 
-   Cursor_Construct();
+	Cursor_Construct();
 
 /*
  * MIIM code:
  * Grab memory for Queue/Stack before SaveRect gets it.
  */
-   OKtoMIIM  = 0;
-   if (which == JIIM && debugflag != 300)
-      OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
+	OKtoMIIM  = 0;
+	if (which == JIIM && debugflag != 300)
+		OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
 
-   maxhits = 1;
-   if (which == ORBIT)
-      plot = c_putcolor;                /* for line with clipping */
+	maxhits = 1;
+	if (which == ORBIT)
+		plot = c_putcolor;                /* for line with clipping */
 
 /*
  * end MIIM code.
  */
 
-   if (!g_video_scroll) {
-      g_vesa_x_res = sxdots;
-      g_vesa_y_res = sydots;
-   }
+	if (!g_video_scroll) {
+		g_vesa_x_res = sxdots;
+		g_vesa_y_res = sydots;
+	}
 
-   if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
-   {
-      savehasinverse = hasinverse;
-      hasinverse = 1;
-      SaveRect(0, 0, xdots, ydots);
-      sxoffs = 0;
-      syoffs = 0;
-      RestoreRect(0, 0, xdots, ydots);
-      hasinverse = savehasinverse;
-   }
+	if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
+	{
+		savehasinverse = hasinverse;
+		hasinverse = 1;
+		SaveRect(0, 0, xdots, ydots);
+		sxoffs = 0;
+		syoffs = 0;
+		RestoreRect(0, 0, xdots, ydots);
+		hasinverse = savehasinverse;
+	}
 
-   if (xdots == sxdots || ydots == sydots ||
+	if (xdots == sxdots || ydots == sydots ||
        sxdots-xdots < sxdots/3 ||
        sydots-ydots < sydots/3 ||
        xdots >= MAXRECT)
-   {
-      /* this mode puts orbit/julia in an overlapping window 1/3 the size of
-         the physical screen */
-      windows = 0; /* full screen or large view window */
-      xd = sxdots / 3;
-      yd = sydots / 3;
-      xc = xd * 2;
-      yc = yd * 2;
-      xoff = xd * 5 / 2;
-      yoff = yd * 5 / 2;
-   }
-   else if (xdots > sxdots/3 && ydots > sydots/3)
-   {
-      /* Julia/orbit and fractal don't overlap */
-      windows = 1;
-      xd = sxdots-xdots;
-      yd = sydots-ydots;
-      xc = xdots;
-      yc = ydots;
-      xoff = xc + xd/2;
-      yoff = yc + yd/2;
+	{
+		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
+			the physical screen */
+		windows = 0; /* full screen or large view window */
+		xd = sxdots / 3;
+		yd = sydots / 3;
+		xc = xd * 2;
+		yc = yd * 2;
+		xoff = xd * 5 / 2;
+		yoff = yd * 5 / 2;
+	}
+	else if (xdots > sxdots/3 && ydots > sydots/3)
+	{
+		/* Julia/orbit and fractal don't overlap */
+		windows = 1;
+		xd = sxdots-xdots;
+		yd = sydots-ydots;
+		xc = xdots;
+		yc = ydots;
+		xoff = xc + xd/2;
+		yoff = yc + yd/2;
 
-   }
-   else
-   {
-      /* Julia/orbit takes whole screen */
-      windows = 2;
-      xd = sxdots;
-      yd = sydots;
-      xc = 0;
-      yc = 0;
-      xoff = xd/2;
-      yoff = yd/2;
-   }
+	}
+	else
+	{
+		/* Julia/orbit takes whole screen */
+		windows = 2;
+		xd = sxdots;
+		yd = sydots;
+		xc = 0;
+		yc = 0;
+		xoff = xd/2;
+		yoff = yd/2;
+	}
 
-   xfactor = (int)(xd/5.33);
-   yfactor = (int)(-yd/4);
+	xfactor = (int)(xd/5.33);
+	yfactor = (int)(-yd/4);
 
-   if (windows == 0)
-      SaveRect(xc, yc, xd, yd);
-   else if (windows == 2)  /* leave the fractal */
-   {
-      fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-      fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
-   }
-   else  /* blank whole window */
-      fillrect(xc, yc, xd, yd, g_color_dark);
+	if (windows == 0)
+		SaveRect(xc, yc, xd, yd);
+	else if (windows == 2)  /* leave the fractal */
+	{
+		fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
+		fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+	}
+	else  /* blank whole window */
+		fillrect(xc, yc, xd, yd, g_color_dark);
 
-   setup_convert_to_screen(&cvt);
+	setup_convert_to_screen(&cvt);
 
-   /* reuse last location if inside window */
-   col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
-   row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
-   if (col < 0 || col >= xdots ||
-      row < 0 || row >= ydots)
-   {
-      cr = (xxmax + xxmin) / 2.0;
-      ci = (yymax + yymin) / 2.0;
-   }
-   else
-   {
-      cr = SaveC.x;
-      ci = SaveC.y;
-   }
+	/* reuse last location if inside window */
+	col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
+	row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
+	if (col < 0 || col >= xdots ||
+		row < 0 || row >= ydots)
+	{
+		cr = (xxmax + xxmin) / 2.0;
+		ci = (yymax + yymin) / 2.0;
+	}
+	else
+	{
+		cr = SaveC.x;
+		ci = SaveC.y;
+	}
 
-   old_x = old_y = -1;
+	old_x = old_y = -1;
 
-   col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-   row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+	col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
+	row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
-   /* possible extraseg arrays have been trashed, so set up again */
-   if (integerfractal)
-      fill_lx_array();
-   else
-      fill_dx_array();
+	/* possible extraseg arrays have been trashed, so set up again */
+	if (integerfractal)
+		fill_lx_array();
+	else
+		fill_dx_array();
 
-   Cursor_SetPos(col, row);
-   Cursor_Show();
-   color = g_color_bright;
+	Cursor_SetPos(col, row);
+	Cursor_Show();
+	color = g_color_bright;
 
-   iter = 1;
-   still = 1;
-   zoom = 1;
+	iter = 1;
+	still = 1;
+	zoom = 1;
 
 #ifdef XFRACT
-   Cursor_StartMouseTracking();
+	Cursor_StartMouseTracking();
 #endif
 
-   while (still)
-   {
-      int dcol, drow;
-      if (actively_computing) {
+	while (still)
+	{
+		int dcol, drow;
+		if (actively_computing) {
           Cursor_CheckBlink();
-      } else {
+		} else {
           Cursor_WaitKey();
-      }
-      if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
-      {
-         first_time = 0;
-         while (driver_key_pressed())
-         {
-            Cursor_WaitKey();
-            kbdchar = driver_get_key();
+		}
+		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
+		{
+			first_time = 0;
+			while (driver_key_pressed())
+			{
+				Cursor_WaitKey();
+				kbdchar = driver_get_key();
 
-            dcol = drow = 0;
-            xcjul = BIG;
-            ycjul = BIG;
-            switch (kbdchar)
-            {
-            case 1143:    /* ctrl - keypad 5 */
-            case 1076:    /* keypad 5        */
-               break;     /* do nothing */
-            case FIK_CTL_PAGE_UP:
-               dcol = 4;
-               drow = -4;
-               break;
-            case FIK_CTL_PAGE_DOWN:
-               dcol = 4;
-               drow = 4;
-               break;
-            case FIK_CTL_HOME:
-               dcol = -4;
-               drow = -4;
-               break;
-            case FIK_CTL_END:
-               dcol = -4;
-               drow = 4;
-               break;
-            case FIK_PAGE_UP:
-               dcol = 1;
-               drow = -1;
-               break;
-            case FIK_PAGE_DOWN:
-               dcol = 1;
-               drow = 1;
-               break;
-            case FIK_HOME:
-               dcol = -1;
-               drow = -1;
-               break;
-            case FIK_END:
-               dcol = -1;
-               drow = 1;
-               break;
-            case FIK_UP_ARROW:
-               drow = -1;
-               break;
-            case FIK_DOWN_ARROW:
-               drow = 1;
-               break;
-            case FIK_LEFT_ARROW:
-               dcol = -1;
-               break;
-            case FIK_RIGHT_ARROW:
-               dcol = 1;
-               break;
-            case FIK_CTL_UP_ARROW:
-               drow = -4;
-               break;
-            case FIK_CTL_DOWN_ARROW:
-               drow = 4;
-               break;
-            case FIK_CTL_LEFT_ARROW:
-               dcol = -4;
-               break;
-            case FIK_CTL_RIGHT_ARROW:
-               dcol = 4;
-               break;
-            case 'z':
-            case 'Z':
-               zoom = (float)1.0;
-               break;
-            case '<':
-            case ',':
-               zoom /= (float)1.15;
-               break;
-            case '>':
-            case '.':
-               zoom *= (float)1.15;
-               break;
-            case FIK_SPACE:
-               xcjul = cr;
-               ycjul = ci;
-               goto finish;
-               /* break; */
-            case 'c':   /* circle toggle */
-            case 'C':   /* circle toggle */
-               mode = mode ^ 1;
-               break;
-            case 'l':
-            case 'L':
-               mode = mode ^ 2;
-               break;
-            case 'n':
-            case 'N':
-               show_numbers = 8 - show_numbers;
-               if (windows == 0 && show_numbers == 0)
-               {
-                  Cursor_Hide();
-                  cleartempmsg();
-                  Cursor_Show();
-               }
-               break;
-            case 'p':
-            case 'P':
-               get_a_number(&cr, &ci);
-               exact = 1;
-               col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-               row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
-               dcol = drow = 0;
-               break;
-            case 'h':   /* hide fractal toggle */
-            case 'H':   /* hide fractal toggle */
-               if (windows == 2)
-                  windows = 3;
-               else if (windows == 3 && xd == sxdots)
-               {
-                  RestoreRect(0, 0, xdots, ydots);
-                  windows = 2;
-               }
-               break;
+				dcol = drow = 0;
+				xcjul = BIG;
+				ycjul = BIG;
+				switch (kbdchar)
+				{
+				case 1143:    /* ctrl - keypad 5 */
+				case 1076:    /* keypad 5        */
+					break;     /* do nothing */
+				case FIK_CTL_PAGE_UP:
+					dcol = 4;
+					drow = -4;
+					break;
+				case FIK_CTL_PAGE_DOWN:
+					dcol = 4;
+					drow = 4;
+					break;
+				case FIK_CTL_HOME:
+					dcol = -4;
+					drow = -4;
+					break;
+				case FIK_CTL_END:
+					dcol = -4;
+					drow = 4;
+					break;
+				case FIK_PAGE_UP:
+					dcol = 1;
+					drow = -1;
+					break;
+				case FIK_PAGE_DOWN:
+					dcol = 1;
+					drow = 1;
+					break;
+				case FIK_HOME:
+					dcol = -1;
+					drow = -1;
+					break;
+				case FIK_END:
+					dcol = -1;
+					drow = 1;
+					break;
+				case FIK_UP_ARROW:
+					drow = -1;
+					break;
+				case FIK_DOWN_ARROW:
+					drow = 1;
+					break;
+				case FIK_LEFT_ARROW:
+					dcol = -1;
+					break;
+				case FIK_RIGHT_ARROW:
+					dcol = 1;
+					break;
+				case FIK_CTL_UP_ARROW:
+					drow = -4;
+					break;
+				case FIK_CTL_DOWN_ARROW:
+					drow = 4;
+					break;
+				case FIK_CTL_LEFT_ARROW:
+					dcol = -4;
+					break;
+				case FIK_CTL_RIGHT_ARROW:
+					dcol = 4;
+					break;
+				case 'z':
+				case 'Z':
+					zoom = 1.0f;
+					break;
+				case '<':
+				case ',':
+					zoom /= 1.15f;
+					break;
+				case '>':
+				case '.':
+					zoom *= 1.15f;
+					break;
+				case FIK_SPACE:
+					xcjul = cr;
+					ycjul = ci;
+					goto finish;
+					/* break; */
+				case 'c':   /* circle toggle */
+				case 'C':   /* circle toggle */
+					mode = mode ^ 1;
+					break;
+				case 'l':
+				case 'L':
+					mode = mode ^ 2;
+					break;
+				case 'n':
+				case 'N':
+					show_numbers = 8 - show_numbers;
+					if (windows == 0 && show_numbers == 0)
+					{
+						Cursor_Hide();
+						cleartempmsg();
+						Cursor_Show();
+					}
+					break;
+				case 'p':
+				case 'P':
+					get_a_number(&cr, &ci);
+					exact = 1;
+					col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
+					row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+					dcol = drow = 0;
+					break;
+				case 'h':   /* hide fractal toggle */
+				case 'H':   /* hide fractal toggle */
+					if (windows == 2)
+						windows = 3;
+					else if (windows == 3 && xd == sxdots)
+					{
+						RestoreRect(0, 0, xdots, ydots);
+						windows = 2;
+					}
+					break;
 #ifdef XFRACT
-            case FIK_ENTER:
+				case FIK_ENTER:
                 break;
 #endif
-            case '0':
-            case '1':
-            case '2':
+				case '0':
+				case '1':
+				case '2':
 /*          case '3': */  /* don't use '3', it's already meaningful */
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-               if (which == JIIM)
-               {
-                  SecretExperimentalMode = kbdchar - '0';
-                  break;
-               }
-            default:
-               still = 0;
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					if (which == JIIM)
+					{
+						SecretExperimentalMode = kbdchar - '0';
+						break;
+					}
+				default:
+					still = 0;
 /*             ismand = (short)(1 - ismand); */
-            }  /* switch */
-            if (kbdchar == 's' || kbdchar == 'S')
-               goto finish;
-            if (dcol > 0 || drow > 0)
-               exact = 0;
-            col += dcol;
-            row += drow;
+				}  /* switch */
+				if (kbdchar == 's' || kbdchar == 'S')
+					goto finish;
+				if (dcol > 0 || drow > 0)
+					exact = 0;
+				col += dcol;
+				row += drow;
 #ifdef XFRACT
-            if (kbdchar == FIK_ENTER) {
+				if (kbdchar == FIK_ENTER) {
                 /* We want to use the position of the cursor */
                 exact = 0;
                 col = Cursor_GetX();
                 row = Cursor_GetY();
-            }
+				}
 #endif
 
-            /* keep cursor in logical screen */
+				/* keep cursor in logical screen */
            if (col >= xdots) {
               col = xdots -1; exact = 0;
            }
@@ -841,182 +841,182 @@ void Jiim(int which)         /* called by fractint */
               row = 0; exact = 0;
            }
 
-            Cursor_SetPos(col, row);
-         }  /* end while (driver_key_pressed) */
+				Cursor_SetPos(col, row);
+			}  /* end while (driver_key_pressed) */
 
-         if (exact == 0)
-         {
-            if (integerfractal)
-            {
-               cr = lxpixel();
-               ci = lypixel();
-               cr /= (1L << bitshift);
-               ci /= (1L << bitshift);
-            }
-            else
-            {
-               cr = dxpixel();
-               ci = dypixel();
-            }
-         }
-         actively_computing = 1;
-         if (show_numbers) /* write coordinates on screen */
-         {
-            char str[41];
-            sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(col, row));
-            if (windows == 0)
-            {
-               /* show temp msg will clear self if new msg is a
-                  different length - pad to length 40*/
-               while ((int)strlen(str) < 40)
-                  strcat(str, " ");
-               str[40] = 0;
-               Cursor_Hide();
-               actively_computing = 1;
-               showtempmsg(str);
-               Cursor_Show();
-            }
-            else
-               driver_display_string(5, sydots-show_numbers, WHITE, BLACK, str);
-         }
-         iter = 1;
-         old.x = old.y = lold.x = lold.y = 0;
-         SaveC.x = init.x =  cr;
-         SaveC.y = init.y =  ci;
-         linit.x = (long)(init.x*fudge);
-         linit.y = (long)(init.y*fudge);
+			if (exact == 0)
+			{
+				if (integerfractal)
+				{
+					cr = lxpixel();
+					ci = lypixel();
+					cr /= (1L << bitshift);
+					ci /= (1L << bitshift);
+				}
+				else
+				{
+					cr = dxpixel();
+					ci = dypixel();
+				}
+			}
+			actively_computing = 1;
+			if (show_numbers) /* write coordinates on screen */
+			{
+				char str[41];
+				sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(col, row));
+				if (windows == 0)
+				{
+					/* show temp msg will clear self if new msg is a
+						different length - pad to length 40*/
+					while ((int)strlen(str) < 40)
+						strcat(str, " ");
+					str[40] = 0;
+					Cursor_Hide();
+					actively_computing = 1;
+					showtempmsg(str);
+					Cursor_Show();
+				}
+				else
+					driver_display_string(5, sydots-show_numbers, WHITE, BLACK, str);
+			}
+			iter = 1;
+			old.x = old.y = lold.x = lold.y = 0;
+			SaveC.x = init.x =  cr;
+			SaveC.y = init.y =  ci;
+			linit.x = (long)(init.x*fudge);
+			linit.y = (long)(init.y*fudge);
 
-         old_x = old_y = -1;
+			old_x = old_y = -1;
 /*
  * MIIM code:
  * compute fixed points and use them as starting points of JIIM
  */
-         if (which == JIIM && OKtoMIIM)
-         {
-            _CMPLX f1, f2, Sqrt;        /* Fixed points of Julia */
+			if (which == JIIM && OKtoMIIM)
+			{
+				_CMPLX f1, f2, Sqrt;        /* Fixed points of Julia */
 
-            Sqrt = ComplexSqrtFloat(1 - 4 * cr, -4 * ci);
-            f1.x = (1 + Sqrt.x) / 2;
-            f2.x = (1 - Sqrt.x) / 2;
-            f1.y =  Sqrt.y / 2;
-            f2.y = -Sqrt.y / 2;
+				Sqrt = ComplexSqrtFloat(1 - 4 * cr, -4 * ci);
+				f1.x = (1 + Sqrt.x) / 2;
+				f2.x = (1 - Sqrt.x) / 2;
+				f1.y =  Sqrt.y / 2;
+				f2.y = -Sqrt.y / 2;
 
-            ClearQueue();
-            maxhits = 1;
-            EnQueueFloat((float)f1.x, (float)f1.y);
-            EnQueueFloat((float)f2.x, (float)f2.y);
-         }
+				ClearQueue();
+				maxhits = 1;
+				EnQueueFloat((float)f1.x, (float)f1.y);
+				EnQueueFloat((float)f2.x, (float)f2.y);
+			}
 /*
  * End MIIM code.
  */
-         if (which == ORBIT)
-         {
+			if (which == ORBIT)
+			{
            PER_PIXEL();
-         }  
-         /* move window if bumped */
-         if (windows == 0 && col > xc && col < xc + xd && row > yc && row < yc + yd)
-         {
-            RestoreRect(xc, yc, xd, yd);
-            if (xc == xd*2)
-               xc = 2;
-            else
-               xc = xd*2;
-            xoff = xc + xd /  2;
-            SaveRect(xc, yc, xd, yd);
-         }
-         if (windows == 2)
-         {
-            fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
-            fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
-         }
-         else
-            fillrect(xc, yc, xd, yd, g_color_dark);
+			}  
+			/* move window if bumped */
+			if (windows == 0 && col > xc && col < xc + xd && row > yc && row < yc + yd)
+			{
+				RestoreRect(xc, yc, xd, yd);
+				if (xc == xd*2)
+					xc = 2;
+				else
+					xc = xd*2;
+				xoff = xc + xd /  2;
+				SaveRect(xc, yc, xd, yd);
+			}
+			if (windows == 2)
+			{
+				fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
+				fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
+			}
+			else
+				fillrect(xc, yc, xd, yd, g_color_dark);
 
-      } /* end if (driver_key_pressed) */
+		} /* end if (driver_key_pressed) */
 
-      if (which == JIIM)
-      {
-         if (hasinverse == 0)
-            continue;
+		if (which == JIIM)
+		{
+			if (hasinverse == 0)
+				continue;
 /*
  * MIIM code:
  * If we have MIIM queue allocated, then use MIIM method.
  */
-         if (OKtoMIIM)
-         {
-            if (QueueEmpty())
-            {
-               if (maxhits < colors - 1 && maxhits < 5 &&
-                  (luckyx != 0.0 || luckyy != 0.0))
-               {
-                  int i;
+			if (OKtoMIIM)
+			{
+				if (QueueEmpty())
+				{
+					if (maxhits < colors - 1 && maxhits < 5 &&
+						(luckyx != 0.0 || luckyy != 0.0))
+					{
+						int i;
 
-                  lsize  = lmax   = 0;
-                  old.x  = g_new.x  = luckyx;
-                  old.y  = g_new.y  = luckyy;
-                  luckyx = luckyy = (float)0.0;
-                  for (i = 0; i < 199; i++)
-                  {
-                     old = ComplexSqrtFloat(old.x - cr, old.y - ci);
-                     g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
-                     EnQueueFloat((float)g_new.x,  (float)g_new.y);
-                     EnQueueFloat((float)-old.x, (float)-old.y);
-                  }
-                  maxhits++;
-               }
-               else
-                  continue;             /* loop while (still) */
-            }
+						lsize  = lmax   = 0;
+						old.x  = g_new.x  = luckyx;
+						old.y  = g_new.y  = luckyy;
+						luckyx = luckyy = 0.0f;
+						for (i = 0; i < 199; i++)
+						{
+							old = ComplexSqrtFloat(old.x - cr, old.y - ci);
+							g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
+							EnQueueFloat((float)g_new.x,  (float)g_new.y);
+							EnQueueFloat((float)-old.x, (float)-old.y);
+						}
+						maxhits++;
+					}
+					else
+						continue;             /* loop while (still) */
+				}
 
-            old = DeQueueFloat();
+				old = DeQueueFloat();
 
 #if 0 /* try a different new method */
-            if (lsize < (lmax / 8) && maxhits < 5)      /* NEW METHOD */
-               if (maxhits < colors - 1)
+				if (lsize < (lmax / 8) && maxhits < 5)      /* NEW METHOD */
+					if (maxhits < colors - 1)
                    maxhits++;
 #endif
-            x = (int)(old.x * xfactor * zoom + xoff);
-            y = (int)(old.y * yfactor * zoom + yoff);
-            color = c_getcolor(x, y);
-            if (color < maxhits)
-            {
-               c_putcolor(x, y, color + 1);
-               g_new = ComplexSqrtFloat(old.x - cr, old.y - ci);
-               EnQueueFloat((float)g_new.x,  (float)g_new.y);
-               EnQueueFloat((float)-g_new.x, (float)-g_new.y);
-            }
-         }
-         else
-         {
+				x = (int)(old.x * xfactor * zoom + xoff);
+				y = (int)(old.y * yfactor * zoom + yoff);
+				color = c_getcolor(x, y);
+				if (color < maxhits)
+				{
+					c_putcolor(x, y, color + 1);
+					g_new = ComplexSqrtFloat(old.x - cr, old.y - ci);
+					EnQueueFloat((float)g_new.x,  (float)g_new.y);
+					EnQueueFloat((float)-g_new.x, (float)-g_new.y);
+				}
+			}
+			else
+			{
 /*
  * end Msnyder code, commence if not MIIM code.
  */
-         old.x -= cr;
-         old.y -= ci;
-         r = old.x*old.x + old.y*old.y;
-         if (r > 10.0)
-         {
+			old.x -= cr;
+			old.y -= ci;
+			r = old.x*old.x + old.y*old.y;
+			if (r > 10.0)
+			{
              old.x = old.y = 0.0; /* avoids math error */
              iter = 1;
              r = 0;
-         }
-         iter++;
-         color = ((count++) >> 5)%colors; /* chg color every 32 pts */
-         if (color == 0)
+			}
+			iter++;
+			color = ((count++) >> 5)%colors; /* chg color every 32 pts */
+			if (color == 0)
           color = 1;
 
 /*       r = sqrt(old.x*old.x + old.y*old.y); calculated above */
-         r = sqrt(r);
-         g_new.x = sqrt(fabs((r + old.x)/2));
-         if (old.y < 0)
-            g_new.x = -g_new.x;
+			r = sqrt(r);
+			g_new.x = sqrt(fabs((r + old.x)/2));
+			if (old.y < 0)
+				g_new.x = -g_new.x;
 
-         g_new.y = sqrt(fabs((r - old.x)/2));
+			g_new.y = sqrt(fabs((r - old.x)/2));
 
 
-         switch (SecretExperimentalMode) {
-            case 0:                     /* unmodified random walk */
-            default:
+			switch (SecretExperimentalMode) {
+				case 0:                     /* unmodified random walk */
+				default:
                 if (rand() % 2)
                 {
                    g_new.x = -g_new.x;
@@ -1025,7 +1025,7 @@ void Jiim(int which)         /* called by fractint */
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 break;
-            case 1:                     /* always go one direction */
+				case 1:                     /* always go one direction */
                 if (SaveC.y < 0)
                 {
                    g_new.x = -g_new.x;
@@ -1034,7 +1034,7 @@ void Jiim(int which)         /* called by fractint */
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 break;
-            case 2:                     /* go one dir, draw the other */
+				case 2:                     /* go one dir, draw the other */
                 if (SaveC.y < 0)
                 {
                    g_new.x = -g_new.x;
@@ -1043,7 +1043,7 @@ void Jiim(int which)         /* called by fractint */
                 x = (int)(-g_new.x * xfactor * zoom + xoff);
                 y = (int)(-g_new.y * yfactor * zoom + yoff);
                 break;
-            case 4:                     /* go negative if max color */
+				case 4:                     /* go negative if max color */
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 if (c_getcolor(x, y) == colors - 1)
@@ -1054,7 +1054,7 @@ void Jiim(int which)         /* called by fractint */
                    y = (int)(g_new.y * yfactor * zoom + yoff);
                 }
                 break;
-            case 5:                     /* go positive if max color */
+				case 5:                     /* go positive if max color */
                 g_new.x = -g_new.x;
                 g_new.y = -g_new.y;
                 x = (int)(g_new.x * xfactor * zoom + xoff);
@@ -1065,7 +1065,7 @@ void Jiim(int which)         /* called by fractint */
                    y = (int)(g_new.y * yfactor * zoom + yoff);
                 }
                 break;
-            case 7:
+				case 7:
                 if (SaveC.y < 0)
                 {
                    g_new.x = -g_new.x;
@@ -1093,7 +1093,7 @@ void Jiim(int which)         /* called by fractint */
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 break;
-            case 8:                     /* go in long zig zags */
+				case 8:                     /* go in long zig zags */
                 if (rancnt >= 300)
                     rancnt = -300;
                 if (rancnt < 0)
@@ -1104,81 +1104,81 @@ void Jiim(int which)         /* called by fractint */
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 break;
-            case 9:                     /* "random run" */
+				case 9:                     /* "random run" */
                 switch (randir) {
                     case 0:             /* go random direction for a while */
-                        if (rand() % 2)
-                        {
+								if (rand() % 2)
+								{
                             g_new.x = -g_new.x;
                             g_new.y = -g_new.y;
-                        }
-                        if (++rancnt > 1024)
-                        {
+								}
+								if (++rancnt > 1024)
+								{
                             rancnt = 0;
                             if (rand() % 2)
                                 randir =  1;
                             else
                                 randir = -1;
-                        }
-                        break;
+								}
+								break;
                     case 1:             /* now go negative dir for a while */
-                        g_new.x = -g_new.x;
-                        g_new.y = -g_new.y;
-                        /* fall through */
+								g_new.x = -g_new.x;
+								g_new.y = -g_new.y;
+								/* fall through */
                     case -1:            /* now go positive dir for a while */
-                        if (++rancnt > 512)
+								if (++rancnt > 512)
                             randir = rancnt = 0;
-                        break;
+								break;
                 }
                 x = (int)(g_new.x * xfactor * zoom + xoff);
                 y = (int)(g_new.y * yfactor * zoom + yoff);
                 break;
-         } /* end switch SecretMode (sorry about the indentation) */
-         } /* end if not MIIM */
-      }
-      else /* orbits */
-      {
-         if (iter < maxit)
-         {
-            color = (int)iter%colors;
-            if (integerfractal)
-            {
-               old.x = lold.x; old.x /= fudge;
-               old.y = lold.y; old.y /= fudge;
-            }
-            x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
-            y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
-            if ((*ORBITCALC)())
-               iter = maxit;
-            else
-               iter++;
-         }
-         else
-         {
-            x = y = -1;
-            actively_computing = 0;
-         }
-      }
-      if (which == ORBIT || iter > 10)
-      {
-         if (mode == 0)                  /* pixels  */
-            c_putcolor(x, y, color);
-         else if (mode & 1)            /* circles */
-         {
-            xbase = x;
-            ybase = y;
-            circle((int)(zoom*(xd >> 1)/iter), color);
-         }
-         if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
-         {
-            driver_draw_line(x, y, old_x, old_y, color);
-         }
-         old_x = x;
-         old_y = y;
-      }
-      old = g_new;
-      lold = lnew;
-   } /* end while (still) */
+			} /* end switch SecretMode (sorry about the indentation) */
+			} /* end if not MIIM */
+		}
+		else /* orbits */
+		{
+			if (iter < maxit)
+			{
+				color = (int)iter%colors;
+				if (integerfractal)
+				{
+					old.x = lold.x; old.x /= fudge;
+					old.y = lold.y; old.y /= fudge;
+				}
+				x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
+				y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
+				if ((*ORBITCALC)())
+					iter = maxit;
+				else
+					iter++;
+			}
+			else
+			{
+				x = y = -1;
+				actively_computing = 0;
+			}
+		}
+		if (which == ORBIT || iter > 10)
+		{
+			if (mode == 0)                  /* pixels  */
+				c_putcolor(x, y, color);
+			else if (mode & 1)            /* circles */
+			{
+				xbase = x;
+				ybase = y;
+				circle((int)(zoom*(xd >> 1)/iter), color);
+			}
+			if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+			{
+				driver_draw_line(x, y, old_x, old_y, color);
+			}
+			old_x = x;
+			old_y = y;
+		}
+		old = g_new;
+		lold = lnew;
+	} /* end while (still) */
 finish:
 
 /*
@@ -1186,93 +1186,93 @@ finish:
  * free MIIM queue
  */
 
-   Free_Queue();
+	Free_Queue();
 /*
  * end Msnyder code.
  */
 
-   if (kbdchar != 's'&& kbdchar != 'S')
-   {
-      Cursor_Hide();
-      if (windows == 0)
-         RestoreRect(xc, yc, xd, yd);
-      else if (windows >= 2)
-      {
-         if (windows == 2)
-         {
-            fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-            fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
-         }
-         else
-            fillrect(xc, yc, xd, yd, g_color_dark);
-         if (windows == 3 && xd == sxdots) /* unhide */
-         {
-            RestoreRect(0, 0, xdots, ydots);
-            windows = 2;
-         }
-         Cursor_Hide();
-         savehasinverse = hasinverse;
-         hasinverse = 1;
-         SaveRect(0, 0, xdots, ydots);
-         sxoffs = oldsxoffs;
-         syoffs = oldsyoffs;
-         RestoreRect(0, 0, xdots, ydots);
-         hasinverse = savehasinverse;
-      }
-   }
-   Cursor_Destroy();
+	if (kbdchar != 's'&& kbdchar != 'S')
+	{
+		Cursor_Hide();
+		if (windows == 0)
+			RestoreRect(xc, yc, xd, yd);
+		else if (windows >= 2)
+		{
+			if (windows == 2)
+			{
+				fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
+				fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+			}
+			else
+				fillrect(xc, yc, xd, yd, g_color_dark);
+			if (windows == 3 && xd == sxdots) /* unhide */
+			{
+				RestoreRect(0, 0, xdots, ydots);
+				windows = 2;
+			}
+			Cursor_Hide();
+			savehasinverse = hasinverse;
+			hasinverse = 1;
+			SaveRect(0, 0, xdots, ydots);
+			sxoffs = oldsxoffs;
+			syoffs = oldsyoffs;
+			RestoreRect(0, 0, xdots, ydots);
+			hasinverse = savehasinverse;
+		}
+	}
+	Cursor_Destroy();
 #ifdef XFRACT
-   Cursor_EndMouseTracking();
+	Cursor_EndMouseTracking();
 #endif
-   if (line_buff)
-   {
+	if (line_buff)
+	{
 		free(line_buff);
 		line_buff = NULL;
-   }
+	}
 
-   if (rect_buff)
-   {
+	if (rect_buff)
+	{
 	   free(rect_buff);
 	   rect_buff = NULL;
-   }
+	}
 #if 0
-   if (memory)                  /* done with memory, free it */
-   {
-      free(memory);
-      memory = NULL;
-   }
+	if (memory)                  /* done with memory, free it */
+	{
+		free(memory);
+		memory = NULL;
+	}
 #endif
 
-   lookatmouse = oldlookatmouse;
-   using_jiim = 0;
-   calctype = oldcalctype;
-   debugflag = old_debugflag; /* yo Chuck! */
-   helpmode = oldhelpmode;
-   if (kbdchar == 's' || kbdchar == 'S')
-   {
-      viewwindow = viewxdots = viewydots = 0;
-      viewreduction = (float)4.2;
-      viewcrop = 1;
-      finalaspectratio = screenaspect;
-      xdots = sxdots;
-      ydots = sydots;
-      dxsize = xdots - 1;
-      dysize = ydots - 1;
-      sxoffs = 0;
-      syoffs = 0;
-      freetempmsg();
-   }
-   else
-      cleartempmsg();
-   if (file != NULL)
-      {
-      fclose(file);
-      file = NULL;
-      dir_remove(tempdir, scrnfile);
-      }
-   show_numbers = 0;
-   driver_unget_key(kbdchar);
+	lookatmouse = oldlookatmouse;
+	using_jiim = 0;
+	calctype = oldcalctype;
+	debugflag = old_debugflag; /* yo Chuck! */
+	helpmode = oldhelpmode;
+	if (kbdchar == 's' || kbdchar == 'S')
+	{
+		viewwindow = viewxdots = viewydots = 0;
+		viewreduction = 4.2f;
+		viewcrop = 1;
+		finalaspectratio = screenaspect;
+		xdots = sxdots;
+		ydots = sydots;
+		dxsize = xdots - 1;
+		dysize = ydots - 1;
+		sxoffs = 0;
+		syoffs = 0;
+		freetempmsg();
+	}
+	else
+		cleartempmsg();
+	if (file != NULL)
+		{
+		fclose(file);
+		file = NULL;
+		dir_remove(tempdir, scrnfile);
+		}
+	show_numbers = 0;
+	driver_unget_key(kbdchar);
 
-   if (curfractalspecific->calctype == calcfroth)
-      froth_cleanup();
+	if (curfractalspecific->calctype == calcfroth)
+		froth_cleanup();
 }

@@ -295,7 +295,7 @@ long stackavail()
 */
 long divide(long x, long y, int n)
 {
-    return (long) (((float) x) / ((float) y)*(float) (1 << n));
+	return (long) (((float) x) / ((float) y)*(float) (1 << n));
 }
 
 /*
@@ -317,13 +317,13 @@ long divide(long x, long y, int n)
  */
 long multiply(long x, long y, int n)
 {
-    register long l;
-    l = (long) (((float) x) * ((float) y)/(float) (1 << n));
-    if (l == 0x7fffffff)
+	register long l;
+	l = (long) (((float) x) * ((float) y)/(float) (1 << n));
+	if (l == 0x7fffffff)
 	{
 		overflow = 1;
-    }
-    return l;
+	}
+	return l;
 }
 
 /*
@@ -687,11 +687,11 @@ void restart_uclock(void)
 typedef unsigned long uclock_t;
 uclock_t usec_clock(void)
 {
-   uclock_t result = 0;
-   /* TODO */
-   _ASSERTE(FALSE);
+	uclock_t result = 0;
+	/* TODO */
+	_ASSERTE(FALSE);
 
-   return result; 
+	return result; 
 }
 
 void showfreemem(void)
