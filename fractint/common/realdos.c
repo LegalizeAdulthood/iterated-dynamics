@@ -61,11 +61,13 @@ int stopmsg (int flags, char *msg)
 		fprintf(fp, "%s\n", msg);
 		fclose(fp);
 	}
-	if (first_init) {     /* & cmdfiles hasn't finished 1st try */
+	if (first_init)  /* & cmdfiles hasn't finished 1st try */
+	{
 	   init_failure(msg);
 	   goodbye();
 		}
-	if (initbatch >= INIT_BATCH_NORMAL || batchmode) { /* in batch mode */
+	if (initbatch >= INIT_BATCH_NORMAL || batchmode)  /* in batch mode */
+	{
 		initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
 		batchmode = 1; /* fixes *second* stopmsg in batch mode bug */
 		return -1;
@@ -75,7 +77,8 @@ int stopmsg (int flags, char *msg)
 	lookatmouse = -FIK_ENTER;
 	if ((flags & STOPMSG_NO_STACK))
 		blankrows(toprow = 12, 10, 7);
-	else {
+	else 
+	{
 		driver_stack_screen();
 		toprow = 4;
 		driver_move_cursor(4, 0);
@@ -260,11 +263,13 @@ void helptitle()
 #endif   
 	sprintf(buf, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
 	strcat(msg, buf);
-	if (g_release%10) {
+	if (g_release%10) 
+	{
 		sprintf(buf, "%01d", g_release%10);
 		strcat(msg, buf);
 		}
-	if (g_patch_level) {
+	if (g_patch_level) 
+	{
 		sprintf(buf, ".%d", g_patch_level);
 		strcat(msg, buf);
 		}
@@ -344,11 +349,13 @@ void show_speedstring(int speedrow,
 	memset(buf, ' ', 80);
 	buf[80] = 0;
 	driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
-	if (*speedstring) {                 /* got a speedstring on the go */
+	if (*speedstring)  /* got a speedstring on the go */
+	{
 		driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
 		if (speedprompt)
 			j = speedprompt(speedrow, 16, C_CHOICE_SP_INSTR, speedstring, speed_match);
-		else {
+		else 
+		{
 			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt);
 			j = sizeof(speed_prompt)-1;
 			}
@@ -385,11 +392,14 @@ void process_speedstring(char    *speedstring,
 		speedstring[i] = (char)curkey;
 		speedstring[++i] = 0;
 	}
-	if (i > 0)  {    /* locate matching type */
+	if (i > 0)   /* locate matching type */
+	{
 		*pcurrent = 0;
 		while (*pcurrent < numchoices
-		&& (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0) {
-			if (comp_result < 0 && !is_unsorted) {
+		&& (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0) 
+		{
+			if (comp_result < 0 && !is_unsorted) 
+			{
 				*pcurrent -= *pcurrent ? 1 : 0;
 				break;
 			}
@@ -401,10 +411,13 @@ void process_speedstring(char    *speedstring,
 				/*if the list is unsorted, and the entry found is not the exact
               entry, then go looking for the exact entry.
 				*/
-		else if (is_unsorted && choices[*pcurrent][i]) {
+		else if (is_unsorted && choices[*pcurrent][i]) 
+		{
 			int temp = *pcurrent;
-			while (++temp < numchoices) {
-				if (!choices[temp][i] && !strncasecmp(speedstring, choices[temp], i)) {
+			while (++temp < numchoices) 
+			{
+				if (!choices[temp][i] && !strncasecmp(speedstring, choices[temp], i)) 
+				{
 					*pcurrent = temp;
 					break;
 				}
@@ -1414,7 +1427,8 @@ static int menu_checkkey(int curkey, int choice)
 	if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
      || testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F) /*RB 6== ctrl-F for sound menu */
 		return -testkey;
-	if (menutype) {
+	if (menutype) 
+	{
 		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
 		|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
 		|| testkey == FIK_CTL_P
@@ -1425,7 +1439,8 @@ static int menu_checkkey(int curkey, int choice)
               && param[0] == 0.0 && param[1] == 0.0)
            || curfractalspecific->tomandel != NOFRACTAL)
 			return -testkey;
-		if (g_got_real_dac && colors >= 16) {
+		if (g_got_real_dac && colors >= 16) 
+		{
 			if (strchr("c+-", testkey))
 				return -testkey;
 			if (colors > 16
@@ -1462,19 +1477,22 @@ int input_field(
 	strcpy(savefld, fld);
 	insert = started = offset = 0;
 	display = 1;
-	while (1) {
+	while (1) 
+	{
 		strcpy(buf, fld);
 		i = (int) strlen(buf);
 		while (i < len)
 			buf[i++] = ' ';
 		buf[len] = 0;
-		if (display) {                                /* display current value */
+		if (display)  /* display current value */
+		{
 			driver_put_string(row, col, attr, buf);
 			display = 0;
 			}
 		curkey = driver_key_cursor(row + insert, col + offset);  /* get a keystroke */
 		if (curkey == 1047) curkey = 47; /* numeric slash */
-		switch (curkey) {
+		switch (curkey) 
+		{
 			case FIK_ENTER:
 			case FIK_ENTER_2:
 				ret = 0;
@@ -1502,7 +1520,8 @@ int input_field(
 #if defined(_WIN32)
 			 _ASSERTE(127 != curkey);
 #endif
-				if (offset > 0) {
+				if (offset > 0) 
+				{
 					j = (int) strlen(fld);
 					for (i = offset-1; i < j; ++i)
 						fld[i] = fld[i + 1];
@@ -1526,7 +1545,8 @@ int input_field(
 				display = 1;
 				break;
 			default:
-				if (nonalpha(curkey)) {
+				if (nonalpha(curkey)) 
+				{
 					if (checkkey && (ret = (*checkkey)(curkey)) != 0)
 						goto inpfld_end;
 					break;                                /* non alphanum char */
@@ -1536,7 +1556,8 @@ int input_field(
 					break;                                /* insert & full */
 				if ((options & INPUTFIELD_NUMERIC)
               && (curkey < '0' || curkey > '9')
-              && curkey != '+' && curkey != '-') {
+              && curkey != '+' && curkey != '-') 
+              {
 					if (options & INPUTFIELD_INTEGER)
 						break;
 					/* allow scientific notation, and specials "e" and "p" */
@@ -1547,9 +1568,11 @@ int input_field(
 					}
 				if (started == 0) /* first char is data, zap field */
 					fld[0] = 0;
-				if (insert) {
+				if (insert) 
+				{
 					j = (int) strlen(fld);
-					while (j >= offset) {
+					while (j >= offset) 
+					{
 						fld[j + 1] = fld[j];
 						--j;
 						}
@@ -1558,20 +1581,24 @@ int input_field(
 					fld[offset + 1] = 0;
 				fld[offset++] = (char)curkey;
 				/* if "e" or "p" in first col make number e or pi */
-				if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC) { /* floating point */
+				if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)  /* floating point */
+				{
 					double tmpd;
 					int specialv;
 					char tmpfld[30];
 					specialv = 0;
-					if (*fld == 'e' || *fld == 'E') {
+					if (*fld == 'e' || *fld == 'E') 
+					{
 						tmpd = exp(1.0);
 						specialv = 1;
 						}
-					if (*fld == 'p' || *fld == 'P') {
+					if (*fld == 'p' || *fld == 'P') 
+					{
 						tmpd = atan(1.0)*4;
 						specialv = 1;
 						}
-					if (specialv) {
+					if (specialv) 
+					{
 						if ((options & INPUTFIELD_DOUBLE) == 0)
 							roundfloatd(&tmpd);
 						sprintf(tmpfld, "%.15g", tmpd);
@@ -1606,8 +1633,10 @@ int field_prompt(
 	charptr = hdg;                         /* count title lines, find widest */
 	i = boxwidth = 0;
 	titlelines = 1;
-	while (*charptr) {
-		if (*(charptr++) == '\n') {
+	while (*charptr) 
+	{
+		if (*(charptr++) == '\n') 
+		{
 			++titlelines;
 			i = -1;
 			}
@@ -1633,11 +1662,13 @@ int field_prompt(
 	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); /* display heading */
 	g_text_cbase = 0;
 	i = titlerow + titlelines + 4;
-	if (instr) {                           /* display caller's instructions */
+	if (instr)  /* display caller's instructions */
+	{
 		charptr = instr;
 		j = -1;
 		while ((buf[++j] = *(charptr++)) != 0)
-			if (buf[j] == '\n') {
+			if (buf[j] == '\n') 
+			{
 				buf[j] = 0;
 				putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
 				j = -1;
@@ -1666,14 +1697,17 @@ int thinking(int options, char *msg)
 	static int thinkcol;
 	static int count = 0;
 	char buf[81];
-	if (options == 0) {
-		if (thinkstate >= 0) {
+	if (options == 0) 
+	{
+		if (thinkstate >= 0) 
+		{
 			thinkstate = -1;
 			driver_unstack_screen();
 			}
 		return 0;
 		}
-	if (thinkstate < 0) {
+	if (thinkstate < 0) 
+	{
 		driver_stack_screen();
 		thinkstate = 0;
 		helptitle();
@@ -1684,7 +1718,8 @@ int thinking(int options, char *msg)
 		thinkcol = g_text_col - 3;
 		count = 0;
 		}
-	if ((count++) < 100) {
+	if ((count++) < 100) 
+	{
        return 0;
 	}
 	count = 0;
@@ -1911,15 +1946,20 @@ int check_vidmode_key(int option, int k)
 	/* function key currently assigned to a video mode, -1 otherwise */
 	if (k == 1400)              /* special value from select_vid_mode  */
 		return MAXVIDEOMODES-1; /* for last entry with no key assigned */
-	if (k != 0) {
-		if (option == 0) { /* check resident video mode table */
-			for (i = 0; i < MAXVIDEOMODES; ++i) {
+	if (k != 0) 
+	{
+		if (option == 0)  /* check resident video mode table */
+		{
+			for (i = 0; i < MAXVIDEOMODES; ++i) 
+			{
 				if (g_video_table[i].keynum == k)
 					return i;
 				}
 			}
-		else { /* check full g_video_table */
-			for (i = 0; i < g_video_table_len; ++i) {
+		else  /* check full g_video_table */
+		{
+			for (i = 0; i < g_video_table_len; ++i) 
+			{
 				if (g_video_table[i].keynum == k)
 					return i;
 				}
@@ -1933,15 +1973,18 @@ int check_vidmode_keyname(char *kname)
 	/* returns key number for the passed keyname, 0 if not a keyname */
 	int i, keyset;
 	keyset = 1058;
-	if (*kname == 'S' || *kname == 's') {
+	if (*kname == 'S' || *kname == 's') 
+	{
 		keyset = 1083;
 		++kname;
 		}
-	else if (*kname == 'C' || *kname == 'c') {
+	else if (*kname == 'C' || *kname == 'c') 
+	{
 		keyset = 1093;
 		++kname;
 		}
-	else if (*kname == 'A' || *kname == 'a') {
+	else if (*kname == 'A' || *kname == 'a') 
+	{
 		keyset = 1103;
 		++kname;
 		}
@@ -1950,7 +1993,8 @@ int check_vidmode_keyname(char *kname)
 	if (*++kname < '1' || *kname > '9')
 		return 0;
 	i = *kname - '0';
-	if (*++kname != 0 && *kname != ' ') {
+	if (*++kname != 0 && *kname != ' ') 
+	{
 		if (*kname != '0' || i != 1)
 			return 0;
 		i = 10;
@@ -1968,16 +2012,20 @@ void vidmode_keyname(int k, char *buf)
 {
 	/* set buffer to name of passed key number */
 	*buf = 0;
-	if (k > 0) {
-		if (k > 1103) {
+	if (k > 0) 
+	{
+		if (k > 1103) 
+		{
 			*(buf++) = 'A';
 			k -= 1103;
 			}
-		else if (k > 1093) {
+		else if (k > 1093) 
+		{
 			*(buf++) = 'C';
 			k -= 1093;
 			}
-		else if (k > 1083) {
+		else if (k > 1083) 
+		{
 			*(buf++) = 'S';
 			k -= 1083;
 			}

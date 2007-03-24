@@ -13,10 +13,12 @@
 #undef max
 #endif
 
-struct lsys_cmd {
+struct lsys_cmd 
+{
 	void (*f)(struct lsys_turtlestatef *);
 	int ptype;
-	union {
+	union 
+	{
 		long n;
 		LDBL nf;
 	} parm;
@@ -30,19 +32,23 @@ static struct lsys_cmd *_fastcall findsize(struct lsys_cmd *, struct lsys_turtle
 
 /* Define blanks for portability */
 #if defined(XFRACT) || defined(_WIN32)
-void lsysf_prepfpu(struct lsys_turtlestatef *x) { }
-void lsysf_donefpu(struct lsys_turtlestatef *x) { }
+void lsysf_prepfpu(struct lsys_turtlestatef *x) 
+{ }
+void lsysf_donefpu(struct lsys_turtlestatef *x) 
+{ }
 #endif
 
 
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 {
-	if (cmd->reverse) {
+	if (cmd->reverse) 
+	{
 		if (++cmd->angle == cmd->maxangle)
 				cmd->angle = 0;
 	}
-	else {
+	else 
+	{
 		if (cmd->angle)
 				cmd->angle--;
 		else
@@ -57,11 +63,13 @@ extern void lsysf_doplus(struct lsys_turtlestatef *cmd);
 /* This is the same as lsys_doplus, except maxangle is a power of 2. */
 static void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd)
 {
-	if (cmd->reverse) {
+	if (cmd->reverse) 
+	{
 		cmd->angle++;
 		cmd->angle &= cmd->dmaxangle;
 	}
-	else {
+	else 
+	{
 		cmd->angle--;
 		cmd->angle &= cmd->dmaxangle;
 	}
@@ -73,13 +81,15 @@ extern void lsysf_doplus_pow2(struct lsys_turtlestatef *cmd);
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus(struct lsys_turtlestatef *cmd)
 {
-	if (cmd->reverse) {
+	if (cmd->reverse) 
+	{
 		if (cmd->angle)
 				cmd->angle--;
 		else
 				cmd->angle = cmd->dmaxangle;
 	}
-	else {
+	else 
+	{
 		if (++cmd->angle == cmd->maxangle)
 				cmd->angle = 0;
 	}
@@ -91,11 +101,13 @@ extern void lsysf_dominus(struct lsys_turtlestatef *cmd);
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysf_dominus_pow2(struct lsys_turtlestatef *cmd)
 {
-	if (cmd->reverse) {
+	if (cmd->reverse) 
+	{
 		cmd->angle--;
 		cmd->angle &= cmd->dmaxangle;
 	}
-	else {
+	else 
+	{
 		cmd->angle++;
 		cmd->angle &= cmd->dmaxangle;
 	}
@@ -289,32 +301,41 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 	if (overflow)     /* integer math routines overflowed */
 		return NULL;
 
-	if (stackavail() < 400) { /* leave some margin for calling subrtns */
+	if (stackavail() < 400)  /* leave some margin for calling subrtns */
+	{
 		ts->stackoflow = 1;
 		return NULL;
 	}
 
 
-	while (command->ch && command->ch != ']') {
-		if (! (ts->counter++)) {
+	while (command->ch && command->ch != ']') 
+	{
+		if (! (ts->counter++)) 
+		{
 			/* let user know we're not dead */
-			if (thinking(1, "L-System thinking (higher orders take longer)")) {
+			if (thinking(1, "L-System thinking (higher orders take longer)")) 
+			{
 				ts->counter--;
 				return NULL;
 			}
 		}
 		tran = 0;
-		if (depth) {
+		if (depth) 
+		{
 			for (rulind=rules; *rulind; rulind++)
-				if ((*rulind)->ch == command->ch) {
+				if ((*rulind)->ch == command->ch) 
+				{
 					tran = 1;
 					if (findsize((*rulind) + 1, ts, rules, depth-1) == NULL)
 						return NULL;
 				}
 		}
-		if (!depth || !tran) {
-		if (command->f) {
-				switch (command->ptype) {
+		if (!depth || !tran) 
+		{
+		if (command->f) 
+		{
+				switch (command->ptype) 
+				{
                 case 4:
                     ts->parm.n = command->parm.n;
                     break;
@@ -326,7 +347,8 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 				}
 				(*command->f)(ts);
 		}
-		else if (command->ch == '[') {
+		else if (command->ch == '[') 
+		{
           char saveang, saverev;
           LDBL savesize, savex, savey, saverang;
 
@@ -424,31 +446,40 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 		return NULL;
 
 
-	if (stackavail() < 400) { /* leave some margin for calling subrtns */
+	if (stackavail() < 400)  /* leave some margin for calling subrtns */
+	{
 		ts->stackoflow = 1;
 		return NULL;
 	}
 
 
-	while (command->ch && command->ch != ']') {
-		if (!(ts->counter++)) {
-			if (driver_key_pressed()) {
+	while (command->ch && command->ch != ']') 
+	{
+		if (!(ts->counter++)) 
+		{
+			if (driver_key_pressed()) 
+			{
 				ts->counter--;
 				return NULL;
 			}
 		}
 		tran = 0;
-		if (depth) {
+		if (depth) 
+		{
 			for (rulind=rules; *rulind; rulind++)
-				if ((*rulind)->ch == command->ch) {
+				if ((*rulind)->ch == command->ch) 
+				{
 					tran = 1;
 					if (drawLSysF((*rulind) + 1, ts, rules, depth-1) == NULL)
 						return NULL;
 				}
 		}
-		if (!depth || !tran) {
-		if (command->f) {
-				switch (command->ptype) {
+		if (!depth || !tran) 
+		{
+		if (command->f) 
+		{
+				switch (command->ptype) 
+				{
                 case 4:
                     ts->parm.n = command->parm.n;
                     break;
@@ -460,7 +491,8 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 				}
 				(*command->f)(ts);
 		}
-		else if (command->ch == '[') {
+		else if (command->ch == '[') 
+		{
           char saveang, saverev, savecolor;
           LDBL savesize, savex, savey, saverang;
 
@@ -514,16 +546,19 @@ LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts)
   void (*dogf)() =   lsysf_dosizegf;
 
   ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
-  if (ret == NULL) {
+  if (ret == NULL) 
+  {
        ts->stackoflow = 1;
        return NULL;
        }
-  while (*s) {
+  while (*s) 
+  {
 	f = NULL;
 	num = 0;
 	ptype = 4;
 	ret[n].ch = *s;
-	switch (*s) {
+	switch (*s) 
+	{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
 		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
@@ -549,9 +584,11 @@ LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts)
 	if (ptype == 4)
 		ret[n].parm.n = num;
 	ret[n].ptype = ptype;
-	if (++n == max) {
+	if (++n == max) 
+	{
 		doub = (struct lsys_cmd *) malloc((long) max*2*sizeof(struct lsys_cmd));
-		if (doub == NULL) {
+		if (doub == NULL) 
+		{
 			free(ret);
 			ts->stackoflow = 1;
 			return NULL;
@@ -569,7 +606,8 @@ LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts)
   n++;
 
   doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-  if (doub == NULL) {
+  if (doub == NULL) 
+  {
        free(ret);
        ts->stackoflow = 1;
        return NULL;
@@ -601,16 +639,19 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
   void (*drawg)() =  lsysf_dodrawg;
 
   ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
-  if (ret == NULL) {
+  if (ret == NULL) 
+  {
        ts->stackoflow = 1;
        return NULL;
        }
-  while (*s) {
+  while (*s) 
+  {
 	f = NULL;
 	num = 0;
 	ptype = 4;
 	ret[n].ch = *s;
-	switch (*s) {
+	switch (*s) 
+	{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
 		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
@@ -639,9 +680,11 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
 	if (ptype == 4)
 		ret[n].parm.n = (long)num;
 	ret[n].ptype = ptype;
-	if (++n == max) {
+	if (++n == max) 
+	{
 		doub = (struct lsys_cmd *) malloc((long) max*2*sizeof(struct lsys_cmd));
-		if (doub == NULL) {
+		if (doub == NULL) 
+		{
            free(ret);
            ts->stackoflow = 1;
            return NULL;
@@ -659,7 +702,8 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
   n++;
 
   doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-  if (doub == NULL) {
+  if (doub == NULL) 
+  {
        free(ret);
        ts->stackoflow = 1;
        return NULL;
@@ -679,7 +723,8 @@ void _fastcall lsysf_dosincos(void)
 
 	locaspect=screenaspect*xdots/ydots;
 	twopimax = TWOPI / maxangle;
-	for (i = 0; i < maxangle; i++) {
+	for (i = 0; i < maxangle; i++) 
+	{
 		twopimaxi = i*twopimax;
 		sins_f[i]= sinl(twopimaxi);
 		coss_f[i]= locaspect*cosl(twopimaxi);

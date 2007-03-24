@@ -48,7 +48,8 @@ static long iteration1(register DBLS cr, register DBLS ci,
 	color = start;
 	oldreal = re;
 	oldimag = im;
-	while ((magnitude < 16.0) && (color < maxit)) {
+	while ((magnitude < 16.0) && (color < maxit)) 
+	{
 		newreal = oldreal*oldreal - oldimag*oldimag + cr;
 		newimag = 2*oldreal*oldimag + ci;
 		color++;

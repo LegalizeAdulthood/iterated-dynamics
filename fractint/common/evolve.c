@@ -106,7 +106,8 @@ GENEBASE g_genes[NUMGENES] =
 void param_history(int mode)
 { /* mode = 0 for save old history,
      mode = 1 for restore old history */
-	if (mode == 0) { /* save the old parameter history */
+	if (mode == 0)  /* save the old parameter history */
+	{
 		oldhistory.param0 = param[0];
 		oldhistory.param1 = param[1];
 		oldhistory.param2 = param[2];
@@ -130,7 +131,8 @@ void param_history(int mode)
 		oldhistory.bailoutest = bailoutest;
 	}
 
-	if (mode == 1) { /* restore the old parameter history */
+	if (mode == 1)  /* restore the old parameter history */
+	{
 		param[0] = oldhistory.param0;
 		param[1] = oldhistory.param1;
 		param[2] = oldhistory.param2;
@@ -159,7 +161,8 @@ void param_history(int mode)
 void varydbl(GENEBASE gene[],int randval,int i) /* routine to vary doubles */
 {
 int lclpy = gridsz - py - 1;
-	switch (gene[i].mutate) {
+	switch (gene[i].mutate) 
+	{
 	default:
 	case 0:
        break;
@@ -193,7 +196,8 @@ int varyint(int randvalue, int limit, int mode)
 {
 int ret = 0;
 int lclpy = gridsz - py - 1;
- switch (mode) {
+ switch (mode) 
+ {
 	default:
 	case 0:
      break;
@@ -253,7 +257,8 @@ void varyoutside(GENEBASE gene[], int randval, int i)
 void varybotest(GENEBASE gene[], int randval, int i)
  {
 	int choices[7]={Mod, Real, Imag, Or, And, Manh, Manr};
-	if (gene[i].mutate) {
+	if (gene[i].mutate) 
+	{
      *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
      /* move this next bit to varybot where it belongs */
      setbailoutformula(bailoutest);
@@ -304,14 +309,16 @@ int get_the_rest(void)
   struct fullscreenvalues uvalues[20];
 
 	numtrig = (curfractalspecific->flags >> 6) & 7;
-	if (fractype == FORMULA || fractype == FFORMULA) {
+	if (fractype == FORMULA || fractype == FFORMULA) 
+	{
 		numtrig = maxfn;
 		}
 
 choose_vars_restart:
 
 	k = -1;
-	for (num = MAXPARAMS; num < (NUMGENES - 5); num++) {
+	for (num = MAXPARAMS; num < (NUMGENES - 5); num++) 
+	{
 		choices[++k]=g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
@@ -320,7 +327,8 @@ choose_vars_restart:
 		uvalues[k].uval.ch.val =  g_genes[num].mutate;
 	}
 
-	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) {
+	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++) 
+	{
 		choices[++k]=g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
@@ -330,7 +338,8 @@ choose_vars_restart:
 	}
 
 	if (curfractalspecific->calctype == StandardFractal &&
-       (curfractalspecific->flags & BAILTEST)) {
+       (curfractalspecific->flags & BAILTEST)) 
+       {
 		choices[++k]=g_genes[NUMGENES - 1].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
@@ -350,7 +359,8 @@ choose_vars_restart:
 
 	i = fullscreen_prompt("Variable tweak central 2 of 2",k + 1,choices,uvalues,28,NULL);
 
-	switch (i) {
+	switch (i) 
+	{
      case FIK_F2: /* set all off */
        for (num = MAXPARAMS; num < NUMGENES; num++)
           g_genes[num].mutate = 0;
@@ -394,7 +404,8 @@ int get_variations(void)
   int lastparm  = MAXPARAMS;
   int chngd = -1;
 
-	if (fractype == FORMULA || fractype == FFORMULA) {
+	if (fractype == FORMULA || fractype == FFORMULA) 
+	{
 		if (uses_p1)  /* set first parameter */
 			firstparm = 0;
 		else if (uses_p2)
@@ -421,7 +432,8 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (typehasparm(julibrot?neworbittype:fractype,i,NULL) == 0) {
+		if (typehasparm(julibrot?neworbittype:fractype,i,NULL) == 0) 
+		{
 			if (fractype == FORMULA || fractype == FFORMULA)
            if (paramnotused(i))
               continue;
@@ -436,7 +448,8 @@ int get_variations(void)
 choose_vars_restart:
 
 	k = -1;
-	for (num = firstparm; num < lastparm; num++) {
+	for (num = firstparm; num < lastparm; num++) 
+	{
 		if (fractype == FORMULA || fractype == FFORMULA)
 		if (paramnotused(num))
            continue;
@@ -461,7 +474,8 @@ choose_vars_restart:
 
 	i = fullscreen_prompt("Variable tweak central 1 of 2",k + 1,choices,uvalues,92,NULL);
 
-	switch (i) {
+	switch (i) 
+	{
      case FIK_F2: /* set all off */
        for (num = 0; num < MAXPARAMS; num++)
           g_genes[num].mutate = 0;
@@ -498,7 +512,8 @@ choose_vars_restart:
 
 	/* read out values */
 	k = -1;
-	for (num = firstparm; num < lastparm; num++) {
+	for (num = firstparm; num < lastparm; num++) 
+	{
 		if (fractype == FORMULA || fractype == FFORMULA)
 		if (paramnotused(num))
            continue;
@@ -514,7 +529,8 @@ void set_mutation_level(int strength)
 /* are suitable for this level of mutation */
  int i;
 
- for (i = 0; i < NUMGENES; i++) {
+ for (i = 0; i < NUMGENES; i++) 
+ {
 	if (g_genes[i].level <= strength)
 		g_genes[i].mutate = 5; /* 5 = random mutation mode */
 	else
@@ -546,7 +562,8 @@ get_evol_restart:
 
 	/* TODO: allocate real memory, not reuse shared segment */
 //   ptr = (char *) extraseg;
-	if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM)) {
+	if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM)) 
+	{
 	/* adjust field param to make some sense when changing from random modes*/
 	/* maybe should adjust for aspect ratio here? */
 		paramrangex = paramrangey = fiddlefactor*2;
@@ -565,7 +582,8 @@ get_evol_restart:
 	uvalues[k].type = 'i';
 	uvalues[k].uval.ival = gridsz;
 
-	if (explore_check()) {  /* test to see if any parms are set to linear */
+	if (explore_check())  /* test to see if any parms are set to linear */
+	{
 									/* variation 'explore mode' */
      choices[++k]= "Show parameter zoom box?";
      uvalues[k].type = 'y';
@@ -618,7 +636,8 @@ get_evol_restart:
 	helpmode = HELPEVOL; 
 	i = fullscreen_prompt("Evolution Mode Options",k + 1,choices,uvalues,255,NULL);
 	helpmode = oldhelpmode;     /* re-enable HELP */
-	if (i < 0) {
+	if (i < 0) 
+	{
 	/* in case this point has been reached after calling sub menu with F6 */
 	evolving      = old_evolving;
 	gridsz        = old_gridsz;
@@ -631,13 +650,15 @@ get_evol_restart:
 		return -1;
 	}
 
-	if (i == FIK_F4) {
+	if (i == FIK_F4) 
+	{
 		set_current_params();
 		fiddlefactor = 1;
 		fiddle_reduction = 1.0;
 		goto get_evol_restart;
 	}
-	if (i == FIK_F2) {
+	if (i == FIK_F2) 
+	{
 		paramrangex = paramrangex / 2;
 		opx = newopx = opx + paramrangex / 2;
 		paramrangey = paramrangey / 2;
@@ -645,7 +666,8 @@ get_evol_restart:
 		fiddlefactor = fiddlefactor / 2;
 		goto get_evol_restart;
 	}
-	if (i == FIK_F3) {
+	if (i == FIK_F3) 
+	{
 	double centerx, centery;
 		centerx = opx + paramrangex / 2;
 		paramrangex = paramrangex*2;
@@ -679,7 +701,8 @@ get_evol_restart:
 	if (gridsz < 3)
 		gridsz = 3;
 	gridsz |= 1; /* make sure gridsz is odd */
-	if (explore_check()) {
+	if (explore_check()) 
+	{
      tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
      if (evolving)
 		evolving += tmp;
@@ -713,7 +736,8 @@ get_evol_restart:
 
 	if (!evolving && (evolving == old_evolving)) i = 0;
 
-if (j == FIK_F6) {
+if (j == FIK_F6) 
+{
 		old_variations = get_variations();
 		set_current_params();
 		if (old_variations > 0)
@@ -852,14 +876,16 @@ int grout;
  if (!(evolving & EVOLVE_PARM_BOX)) return; /* don't draw if not asked to! */
  grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
  imgboxcount = boxcount;
- if (boxcount) {
+ if (boxcount) 
+ {
 	/* stash normal zoombox pixels */
 	 memcpy(&imgbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
 	 memcpy(&imgbox[boxcount], &boxy[0], boxcount*sizeof(boxy[0]));
 	 memcpy(&imgbox[boxcount*2], &boxvalues[0], boxcount*sizeof(boxvalues[0]));
 	clearbox(); /* to avoid probs when one box overlaps the other */
  }
- if (prmboxcount != 0)  { /* clear last parmbox */
+ if (prmboxcount != 0)   /* clear last parmbox */
+ {
 	boxcount=prmboxcount;
 	memcpy(&boxx[0], &prmbox[0], boxcount*sizeof(boxx[0]));
 	memcpy(&boxy[0], &prmbox[boxcount], boxcount*sizeof(boxy[0]));
@@ -867,7 +893,8 @@ int grout;
 	clearbox();
  }
 
- if (mode == 1) {
+ if (mode == 1) 
+ {
 	boxcount = imgboxcount;
 	prmboxcount = 0;
 	return;
@@ -894,7 +921,8 @@ int grout;
  boxy[3] = bl.y + syoffs;
  boxcount = 8;
 #endif
- if (boxcount) {
+ if (boxcount) 
+ {
 	dispbox();
 	/* stash pixel values for later */
 	memcpy(&prmbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
@@ -903,7 +931,8 @@ int grout;
 	}
  prmboxcount = boxcount;
  boxcount = imgboxcount;
- if (imgboxcount) {
+ if (imgboxcount) 
+ {
 	/* and move back old values so that everything can proceed as normal */
 	memcpy(&boxx[0], &imgbox[0], boxcount*sizeof(boxx[0]));
 	memcpy(&boxy[0], &imgbox[boxcount], boxcount*sizeof(boxy[0]));
@@ -936,29 +965,35 @@ void spiralmap(int count)
   int i,mid,offset;
   i = 0;
   mid = gridsz / 2;
-  if (count == 0) { /* start in the middle */
+  if (count == 0)  /* start in the middle */
+  {
 	px = py = mid;
 	return;
   }
-  for (offset = 1; offset <= mid; offset ++) {
+  for (offset = 1; offset <= mid; offset ++) 
+  {
 	/* first do the top row */
 	py = (mid - offset);
-	for (px = (mid - offset) + 1; px <mid + offset; px++) {
+	for (px = (mid - offset) + 1; px <mid + offset; px++) 
+	{
 		i++;
 		if (i == count) return;
 	}
 	/* then do the right hand column */
-	for (; py < mid + offset; py++) {
+	for (; py < mid + offset; py++) 
+	{
 		i++;
 		if (i == count) return;
 	}
 	/* then reverse along the bottom row */
-	for (; px > mid - offset; px--) {
+	for (; px > mid - offset; px--) 
+	{
 		i++;
 		if (i == count) return;
 	}
 	/* then up the left to finish */
-	for (; py >= mid - offset; py--) {
+	for (; py >= mid - offset; py--) 
+	{
 		i++;
 		if (i == count) return;
 	}
@@ -974,12 +1009,14 @@ int unspiralmap(void)
   static int oldgridsz = 0;
 
   mid = gridsz / 2;
-  if ((px == mid && py == mid) || (oldgridsz != gridsz)) {
+  if ((px == mid && py == mid) || (oldgridsz != gridsz)) 
+  {
 	int i, gridsqr;
 	/* set up array and return */
      gridsqr = gridsz*gridsz;
      ecountbox[px][py] = 0;  /* we know the first one, do the rest */
-     for (i = 1; i < gridsqr; i++) {
+     for (i = 1; i < gridsqr; i++) 
+     {
 			spiralmap(i);
 			ecountbox[px][py] = i;
      }

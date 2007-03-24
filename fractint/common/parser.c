@@ -48,7 +48,8 @@ unsigned Max_Args = MAX_ARGS;
 
 unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
 
-struct PEND_OP {
+struct PEND_OP 
+{
 	void (*f)(void);
 	int p;
 };
@@ -148,7 +149,8 @@ static int frm_prescan (FILE *open_file);
 #define OPEN_PARENS            1
 #define CLOSE_PARENS          -1
 
-struct token_st {
+struct token_st 
+{
 	char token_str[80];
 	int token_type;
 	int token_id;
@@ -171,12 +173,14 @@ static void ops_allocate(void);
 static void vars_allocate(void);
 #endif
 
-struct var_list_st {
+struct var_list_st 
+{
 	char name[34];
 	struct var_list_st *next_item;
 } *var_list;
 
-struct const_list_st {
+struct const_list_st 
+{
 	_CMPLX complex_const;
 	struct const_list_st *next_item;
 } *complx_list, *real_list;
@@ -354,7 +358,8 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	Arg1->d.x = (double)Arg1->l.x / fg;
 	Arg1->d.y = y;
 	(*fct)();
-	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {
+	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) 
+	{
 		Arg1->l.x = (long)(Arg1->d.x*fg);
 		Arg1->l.y = (long)(Arg1->d.y*fg);
 	}
@@ -522,9 +527,12 @@ void dStkLodSqr2()
 	LodPtr++;
 }
 
-void dStkStoDup(){}
-void dStkStoSqr(){}
-void dStkStoSqr0(){}
+void dStkStoDup()
+{}
+void dStkStoSqr()
+{}
+void dStkStoSqr0()
+{}
 
 void dStkLodDbl()
 {
@@ -535,8 +543,10 @@ void dStkLodDbl()
 	LodPtr++;
 }
 
-void dStkStoDbl(){}
-void dStkReal2(){}
+void dStkStoDbl()
+{}
+void dStkReal2()
+{}
 
 void dStkSqr0()
 {
@@ -553,20 +563,23 @@ void dStkSqr3()
 
 
 
-void dStkAbs(void) {
+void dStkAbs(void) 
+{
 	Arg1->d.x = fabs(Arg1->d.x);
 	Arg1->d.y = fabs(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkAbs(void) {
+void mStkAbs(void) 
+{
 	if (Arg1->m.x.Exp < 0)
 		Arg1->m.x.Exp = -Arg1->m.x.Exp;
 	if (Arg1->m.y.Exp < 0)
 		Arg1->m.y.Exp = -Arg1->m.y.Exp;
 }
 
-void lStkAbs(void) {
+void lStkAbs(void) 
+{
 	Arg1->l.x = labs(Arg1->l.x);
 	Arg1->l.y = labs(Arg1->l.y);
 }
@@ -574,7 +587,8 @@ void lStkAbs(void) {
 
 void (*StkAbs)(void) = dStkAbs;
 
-void dStkSqr(void) {
+void dStkSqr(void) 
+{
 	LastSqr.d.x = Arg1->d.x*Arg1->d.x;
 	LastSqr.d.y = Arg1->d.y*Arg1->d.y;
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
@@ -584,7 +598,8 @@ void dStkSqr(void) {
 }
 
 #if !defined(XFRACT)
-void mStkSqr(void) {
+void mStkSqr(void) 
+{
 	LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
 	LastSqr.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
 	Arg1->m.y = *MPmul(Arg1->m.x, Arg1->m.y);
@@ -594,7 +609,8 @@ void mStkSqr(void) {
 	LastSqr.m.y.Mant = (long)(LastSqr.m.y.Exp = 0);
 }
 
-void lStkSqr(void) {
+void lStkSqr(void) 
+{
 	LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift);
 	LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, bitshift);
 	Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, bitshift) << 1;
@@ -606,7 +622,8 @@ void lStkSqr(void) {
 
 void (*StkSqr)(void) = dStkSqr;
 
-void dStkAdd(void) {
+void dStkAdd(void) 
+{
 	Arg2->d.x += Arg1->d.x;
 	Arg2->d.y += Arg1->d.y;
 	Arg1--;
@@ -615,13 +632,15 @@ void dStkAdd(void) {
 
 #if !defined(XFRACT)
 
-void mStkAdd(void) {
+void mStkAdd(void) 
+{
 	Arg2->m = MPCadd(Arg2->m, Arg1->m);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkAdd(void) {
+void lStkAdd(void) 
+{
 	Arg2->l.x += Arg1->l.x;
 	Arg2->l.y += Arg1->l.y;
 	Arg1--;
@@ -631,7 +650,8 @@ void lStkAdd(void) {
 
 void (*StkAdd)(void) = dStkAdd;
 
-void dStkSub(void) {
+void dStkSub(void) 
+{
 	Arg2->d.x -= Arg1->d.x;
 	Arg2->d.y -= Arg1->d.y;
 	Arg1--;
@@ -639,13 +659,15 @@ void dStkSub(void) {
 }
 
 #if !defined(XFRACT)
-void mStkSub(void) {
+void mStkSub(void) 
+{
 	Arg2->m = MPCsub(Arg2->m, Arg1->m);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkSub(void) {
+void lStkSub(void) 
+{
 	Arg2->l.x -= Arg1->l.x;
 	Arg2->l.y -= Arg1->l.y;
 	Arg1--;
@@ -655,33 +677,39 @@ void lStkSub(void) {
 
 void (*StkSub)(void) = dStkSub;
 
-void dStkConj(void) {
+void dStkConj(void) 
+{
 	Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkConj(void) {
+void mStkConj(void) 
+{
 	Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkConj(void) {
+void lStkConj(void) 
+{
 	Arg1->l.y = -Arg1->l.y;
 }
 #endif
 
 void (*StkConj)(void) = dStkConj;
 
-void dStkFloor(void) {
+void dStkFloor(void) 
+{
 	Arg1->d.x = floor(Arg1->d.x);
 	Arg1->d.y = floor(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkFloor(void) {
+void mStkFloor(void) 
+{
 	mStkFunct(dStkFloor);   /* call lStk via dStk */
 }
 
-void lStkFloor(void) {
+void lStkFloor(void) 
+{
 	/*
 	* Kill fractional part. This operation truncates negative numbers
 	* toward negative infinity as desired.
@@ -695,17 +723,20 @@ void lStkFloor(void) {
 
 void (*StkFloor)(void) = dStkFloor;
 
-void dStkCeil(void) {
+void dStkCeil(void) 
+{
 	Arg1->d.x = ceil(Arg1->d.x);
 	Arg1->d.y = ceil(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkCeil(void) {
+void mStkCeil(void) 
+{
 	mStkFunct(dStkCeil);   /* call lStk via dStk */
 }
 
-void lStkCeil(void) {
+void lStkCeil(void) 
+{
 	/* the shift operation does the "floor" operation, so we
 		negate everything before the operation */
 	Arg1->l.x = (-Arg1->l.x) >> bitshift;
@@ -717,17 +748,20 @@ void lStkCeil(void) {
 
 void (*StkCeil)(void) = dStkCeil;
 
-void dStkTrunc(void) {
+void dStkTrunc(void) 
+{
 	Arg1->d.x = (int)(Arg1->d.x);
 	Arg1->d.y = (int)(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkTrunc(void) {
+void mStkTrunc(void) 
+{
 	mStkFunct(dStkTrunc);   /* call lStk via dStk */
 }
 
-void lStkTrunc(void) {
+void lStkTrunc(void) 
+{
 	/* shifting and shifting back truncates positive numbers,
 		so we make the numbers positive */
 	int signx, signy;
@@ -746,17 +780,20 @@ void lStkTrunc(void) {
 
 void (*StkTrunc)(void) = dStkTrunc;
 
-void dStkRound(void) {
+void dStkRound(void) 
+{
 	Arg1->d.x = floor(Arg1->d.x + .5);
 	Arg1->d.y = floor(Arg1->d.y + .5);
 }
 
 #if !defined(XFRACT)
-void mStkRound(void) {
+void mStkRound(void) 
+{
 	mStkFunct(dStkRound);   /* call lStk via dStk */
 }
 
-void lStkRound(void) {
+void lStkRound(void) 
+{
 	/* Add .5 then truncate */
 	Arg1->l.x += (1L << bitshiftless1);
 	Arg1->l.y += (1L << bitshiftless1);
@@ -766,34 +803,40 @@ void lStkRound(void) {
 
 void (*StkRound)(void) = dStkRound;
 
-void dStkZero(void) {
+void dStkZero(void) 
+{
 	Arg1->d.y = Arg1->d.x = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkZero(void) {
+void mStkZero(void) 
+{
 	Arg1->m.x.Mant = Arg1->m.x.Exp = 0;
 	Arg1->m.y.Mant = Arg1->m.y.Exp = 0;
 }
 
-void lStkZero(void) {
+void lStkZero(void) 
+{
 	Arg1->l.y = Arg1->l.x = 0;
 }
 #endif
 
 void (*StkZero)(void) = dStkZero;
 
-void dStkOne(void) {
+void dStkOne(void) 
+{
 	Arg1->d.x = 1.0;
 	Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkOne(void) {
+void mStkOne(void) 
+{
 	Arg1->m = MPCone;
 }
 
-void lStkOne(void) {
+void lStkOne(void) 
+{
 	Arg1->l.x = (long) fg;
 	Arg1->l.y = 0L;
 }
@@ -802,34 +845,40 @@ void lStkOne(void) {
 void (*StkOne)(void) = dStkOne;
 
 
-void dStkReal(void) {
+void dStkReal(void) 
+{
 	Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkReal(void) {
+void mStkReal(void) 
+{
 	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkReal(void) {
+void lStkReal(void) 
+{
 	Arg1->l.y = 0l;
 }
 #endif
 
 void (*StkReal)(void) = dStkReal;
 
-void dStkImag(void) {
+void dStkImag(void) 
+{
 	Arg1->d.x = Arg1->d.y;
 	Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkImag(void) {
+void mStkImag(void) 
+{
 	Arg1->m.x = Arg1->m.y;
 	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkImag(void) {
+void lStkImag(void) 
+{
 	Arg1->l.x = Arg1->l.y;
 	Arg1->l.y = 0l;
 }
@@ -837,18 +886,21 @@ void lStkImag(void) {
 
 void (*StkImag)(void) = dStkImag;
 
-void dStkNeg(void) {
+void dStkNeg(void) 
+{
 	Arg1->d.x = -Arg1->d.x;
 	Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkNeg(void) {
+void mStkNeg(void) 
+{
 	Arg1->m.x.Exp ^= 0x8000;
 	Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkNeg(void) {
+void lStkNeg(void) 
+{
 	Arg1->l.x = -Arg1->l.x;
 	Arg1->l.y = -Arg1->l.y;
 }
@@ -856,20 +908,23 @@ void lStkNeg(void) {
 
 void (*StkNeg)(void) = dStkNeg;
 
-void dStkMul(void) {
+void dStkMul(void) 
+{
 	FPUcplxmul(&Arg2->d, &Arg1->d, &Arg2->d);
 	Arg1--;
 	Arg2--;
 }
 
 #if !defined(XFRACT)
-void mStkMul(void) {
+void mStkMul(void) 
+{
 	Arg2->m = MPCmul(Arg2->m, Arg1->m);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkMul(void) {
+void lStkMul(void) 
+{
 	long x, y;
 
 	x = multiply(Arg2->l.x, Arg1->l.x, bitshift) -
@@ -885,20 +940,23 @@ void lStkMul(void) {
 
 void (*StkMul)(void) = dStkMul;
 
-void dStkDiv(void) {
+void dStkDiv(void) 
+{
 	FPUcplxdiv(&Arg2->d, &Arg1->d, &Arg2->d);
 	Arg1--;
 	Arg2--;
 }
 
 #if !defined(XFRACT)
-void mStkDiv(void) {
+void mStkDiv(void) 
+{
 	Arg2->m = MPCdiv(Arg2->m, Arg1->m);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkDiv(void) {
+void lStkDiv(void) 
+{
 	long x, y, mod, x2, y2;
 
 	mod = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
@@ -917,18 +975,21 @@ void lStkDiv(void) {
 
 void (*StkDiv)(void) = dStkDiv;
 
-void dStkMod(void) {
+void dStkMod(void) 
+{
 	Arg1->d.x = (Arg1->d.x*Arg1->d.x) + (Arg1->d.y*Arg1->d.y);
 	Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkMod(void) {
+void mStkMod(void) 
+{
 	Arg1->m.x = MPCmod(Arg1->m);
 	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
 }
 
-void lStkMod(void) {
+void lStkMod(void) 
+{
 /*   Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) + */
 /*   multiply(Arg2->l.y, Arg1->l.y, bitshift); */
 /*** I don't understand how this ever worked correctly! JCO 12/31/94 ***/
@@ -939,7 +1000,8 @@ void lStkMod(void) {
 	Arg1->l.y = 0L;
 }
 
-void lStkModOld(void) {
+void lStkModOld(void) 
+{
 	Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
 	multiply(Arg2->l.y, Arg1->l.y, bitshift);
 	if (Arg1->l.x < 0)
@@ -950,19 +1012,22 @@ void lStkModOld(void) {
 
 void (*StkMod)(void) = dStkMod;
 
-void StkSto(void) {
+void StkSto(void) 
+{
 	*Store[StoPtr++] = *Arg1;
 }
 
 void (*PtrStkSto)(void) = StkSto;
 
-void StkLod(void) {
+void StkLod(void) 
+{
 	Arg1++;
 	Arg2++;
 	*Arg1 = *Load[LodPtr++];
 }
 
-void StkClr(void) {
+void StkClr(void) 
+{
 	s[0] = *Arg1;
 	Arg1 = &s[0];
 	Arg2 = Arg1;
@@ -973,7 +1038,8 @@ void (*PtrStkClr)(void) = StkClr;
 
 /* MCP 4-9-91, Added Flip() */
 
-void dStkFlip(void) {
+void dStkFlip(void) 
+{
 	double t;
 
 	t = Arg1->d.x;
@@ -982,7 +1048,8 @@ void dStkFlip(void) {
 }
 
 #if !defined(XFRACT)
-void mStkFlip(void) {
+void mStkFlip(void) 
+{
 	struct MP t;
 
 	t = Arg1->m.x;
@@ -990,7 +1057,8 @@ void mStkFlip(void) {
 	Arg1->m.y = t;
 }
 
-void lStkFlip(void) {
+void lStkFlip(void) 
+{
 	long t;
 
 	t = Arg1->l.x;
@@ -1001,7 +1069,8 @@ void lStkFlip(void) {
 
 void (*StkFlip)(void) = dStkFlip;
 
-void dStkSin(void) {
+void dStkSin(void) 
+{
 	double sinx, cosx, sinhy, coshy;
 
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
@@ -1011,11 +1080,13 @@ void dStkSin(void) {
 }
 
 #if !defined(XFRACT)
-void mStkSin(void) {
+void mStkSin(void) 
+{
 	mStkFunct(dStkSin);   /* call lStk via dStk */
 }
 
-void lStkSin(void) {
+void lStkSin(void) 
+{
 	long x, y, sinx, cosx, sinhy, coshy;
 	x = Arg1->l.x >> Delta16;
 	y = Arg1->l.y >> Delta16;
@@ -1031,7 +1102,8 @@ void (*StkSin)(void) = dStkSin;
 /* The following functions are supported by both the parser and for fn
 	variable replacement. TIW 04-22-91 */
 
-void dStkTan(void) {
+void dStkTan(void) 
+{
 	double sinx, cosx, sinhy, coshy, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
@@ -1044,11 +1116,13 @@ void dStkTan(void) {
 }
 
 #if !defined(XFRACT)
-void mStkTan(void) {
+void mStkTan(void) 
+{
 	mStkFunct(dStkTan);   /* call lStk via dStk */
 }
 
-void lStkTan(void) {
+void lStkTan(void) 
+{
 	long x, y, sinx, cosx, sinhy, coshy, denom;
 	x = Arg1->l.x >> Delta16;
 	x = x << 1;
@@ -1065,7 +1139,8 @@ void lStkTan(void) {
 
 void (*StkTan)(void) = dStkTan;
 
-void dStkTanh(void) {
+void dStkTanh(void) 
+{
 	double siny, cosy, sinhx, coshx, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
@@ -1078,11 +1153,13 @@ void dStkTanh(void) {
 }
 
 #if !defined(XFRACT)
-void mStkTanh(void) {
+void mStkTanh(void) 
+{
 	mStkFunct(dStkTanh);   /* call lStk via dStk */
 }
 
-void lStkTanh(void) {
+void lStkTanh(void) 
+{
 	long x, y, siny, cosy, sinhx, coshx, denom;
 	x = Arg1->l.x >> Delta16;
 	x = x << 1;
@@ -1099,7 +1176,8 @@ void lStkTanh(void) {
 
 void (*StkTanh)(void) = dStkTanh;
 
-void dStkCoTan(void) {
+void dStkCoTan(void) 
+{
 	double sinx, cosx, sinhy, coshy, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
@@ -1112,11 +1190,13 @@ void dStkCoTan(void) {
 }
 
 #if !defined(XFRACT)
-void mStkCoTan(void) {
+void mStkCoTan(void) 
+{
 	mStkFunct(dStkCoTan);   /* call lStk via dStk */
 }
 
-void lStkCoTan(void) {
+void lStkCoTan(void) 
+{
 	long x, y, sinx, cosx, sinhy, coshy, denom;
 	x = Arg1->l.x >> Delta16;
 	x = x << 1;
@@ -1133,7 +1213,8 @@ void lStkCoTan(void) {
 
 void (*StkCoTan)(void) = dStkCoTan;
 
-void dStkCoTanh(void) {
+void dStkCoTanh(void) 
+{
 	double siny, cosy, sinhx, coshx, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
@@ -1146,11 +1227,13 @@ void dStkCoTanh(void) {
 }
 
 #if !defined(XFRACT)
-void mStkCoTanh(void) {
+void mStkCoTanh(void) 
+{
 	mStkFunct(dStkCoTanh);   /* call lStk via dStk */
 }
 
-void lStkCoTanh(void) {
+void lStkCoTanh(void) 
+{
 	long x, y, siny, cosy, sinhx, coshx, denom;
 	x = Arg1->l.x >> Delta16;
 	x = x << 1;
@@ -1173,7 +1256,8 @@ void (*StkCoTanh)(void) = dStkCoTanh;
 	in miscres.c but are placed here because they follow the pattern of
 	the other parser functions. TIW 04-22-91 */
 
-void dStkRecip(void) {
+void dStkRecip(void) 
+{
 	double mod;
 	mod =Arg1->d.x*Arg1->d.x + Arg1->d.y*Arg1->d.y;
 	ChkFloatDenom(mod);
@@ -1182,10 +1266,12 @@ void dStkRecip(void) {
 }
 
 #if !defined(XFRACT)
-void mStkRecip(void) {
+void mStkRecip(void) 
+{
 	struct MP mod;
 	mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
-	if (mod.Mant == 0L) {
+	if (mod.Mant == 0L) 
+	{
 		overflow = 1;
 		return;
 	}
@@ -1194,23 +1280,28 @@ void mStkRecip(void) {
 	Arg1->m.y.Exp ^= 0x8000;
 }
 
-void lStkRecip(void) {
+void lStkRecip(void) 
+{
 	long mod;
 	mod = multiply(Arg1->l.x,Arg1->l.x,bitshift)
 		+ multiply(Arg1->l.y,Arg1->l.y,bitshift);
-	if (save_release > 1920) {
+	if (save_release > 1920) 
+	{
 		ChkLongDenom(mod);
-	} else if (mod <= 0L) return;
+	}
+	else if (mod <= 0L) return;
 	Arg1->l.x =  divide(Arg1->l.x,mod,bitshift);
 	Arg1->l.y = -divide(Arg1->l.y,mod,bitshift);
 }
 #endif
 
-void StkIdent(void) { /* do nothing - the function Z */
+void StkIdent(void)  /* do nothing - the function Z */
+{
 }
 /* End TIW 04-22-91 */
 
-void dStkSinh(void) {
+void dStkSinh(void) 
+{
 	double siny, cosy, sinhx, coshx;
 
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
@@ -1220,11 +1311,13 @@ void dStkSinh(void) {
 }
 
 #if !defined(XFRACT)
-void mStkSinh(void) {
+void mStkSinh(void) 
+{
 	mStkFunct(dStkSinh);   /* call lStk via dStk */
 }
 
-void lStkSinh(void) {
+void lStkSinh(void) 
+{
 	long x, y, sinhx, coshx, siny, cosy;
 
 	x = Arg1->l.x >> Delta16;
@@ -1238,7 +1331,8 @@ void lStkSinh(void) {
 
 void (*StkSinh)(void) = dStkSinh;
 
-void dStkCos(void) {
+void dStkCos(void) 
+{
 	double sinx, cosx, sinhy, coshy;
 
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
@@ -1248,11 +1342,13 @@ void dStkCos(void) {
 }
 
 #if !defined(XFRACT)
-void mStkCos(void) {
+void mStkCos(void) 
+{
 	mStkFunct(dStkCos);   /* call lStk via dStk */
 }
 
-void lStkCos(void) {
+void lStkCos(void) 
+{
 	long x, y, sinx, cosx, sinhy, coshy;
 
 	x = Arg1->l.x >> Delta16;
@@ -1268,17 +1364,20 @@ void (*StkCos)(void) = dStkCos;
 
 /* Bogus version of cos, to replicate bug which was in regular cos till v16: */
 
-void dStkCosXX(void) {
+void dStkCosXX(void) 
+{
 	dStkCos();
 	Arg1->d.y = -Arg1->d.y;
 }
 
 #if !defined(XFRACT)
-void mStkCosXX(void) {
+void mStkCosXX(void) 
+{
 	mStkFunct(dStkCosXX);   /* call lStk via dStk */
 }
 
-void lStkCosXX(void) {
+void lStkCosXX(void) 
+{
 	lStkCos();
 	Arg1->l.y = -Arg1->l.y;
 }
@@ -1286,7 +1385,8 @@ void lStkCosXX(void) {
 
 void (*StkCosXX)(void) = dStkCosXX;
 
-void dStkCosh(void) {
+void dStkCosh(void) 
+{
 	double siny, cosy, sinhx, coshx;
 
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
@@ -1296,11 +1396,13 @@ void dStkCosh(void) {
 }
 
 #if !defined(XFRACT)
-void mStkCosh(void) {
+void mStkCosh(void) 
+{
 	mStkFunct(dStkCosh);   /* call lStk via dStk */
 }
 
-void lStkCosh(void) {
+void lStkCosh(void) 
+{
 	long x, y, sinhx, coshx, siny, cosy;
 
 	x = Arg1->l.x >> Delta16;
@@ -1316,112 +1418,133 @@ void (*StkCosh)(void) = dStkCosh;
 
 /* TIW added arc functions here 11-25-94 */
 
-void dStkASin(void) {
+void dStkASin(void) 
+{
 	Arcsinz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkASin(void) {
+void mStkASin(void) 
+{
 	mStkFunct(dStkASin);
 }
 
-void lStkASin(void) {
+void lStkASin(void) 
+{
 	lStkFunct(dStkASin);
 }
 #endif
 
 void (*StkASin)(void) = dStkASin;
 
-void dStkASinh(void) {
+void dStkASinh(void) 
+{
 	Arcsinhz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkASinh(void) {
+void mStkASinh(void) 
+{
 	mStkFunct(dStkASinh);
 }
 
-void lStkASinh(void) {
+void lStkASinh(void) 
+{
 	lStkFunct(dStkASinh);
 }
 #endif
 
 void (*StkASinh)(void) = dStkASinh;
 
-void dStkACos(void) {
+void dStkACos(void) 
+{
 	Arccosz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkACos(void) {
+void mStkACos(void) 
+{
 	mStkFunct(dStkACos);
 }
 
-void lStkACos(void) {
+void lStkACos(void) 
+{
 	lStkFunct(dStkACos);
 }
 #endif
 
 void (*StkACos)(void) = dStkACos;
 
-void dStkACosh(void) {
+void dStkACosh(void) 
+{
 	Arccoshz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkACosh(void) {
+void mStkACosh(void) 
+{
 	mStkFunct(dStkACosh);
 }
 
-void lStkACosh(void) {
+void lStkACosh(void) 
+{
 	lStkFunct(dStkACosh);
 }
 #endif
 
 void (*StkACosh)(void) = dStkACosh;
 
-void dStkATan(void) {
+void dStkATan(void) 
+{
 	Arctanz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkATan(void) {
+void mStkATan(void) 
+{
 	mStkFunct(dStkATan);
 }
 
-void lStkATan(void) {
+void lStkATan(void) 
+{
 	lStkFunct(dStkATan);
 }
 #endif
 
 void (*StkATan)(void) = dStkATan;
 
-void dStkATanh(void) {
+void dStkATanh(void) 
+{
 	Arctanhz(Arg1->d, &(Arg1->d));
 }
 
 #if !defined(XFRACT)
-void mStkATanh(void) {
+void mStkATanh(void) 
+{
 	mStkFunct(dStkATanh);
 }
 
-void lStkATanh(void) {
+void lStkATanh(void) 
+{
 	lStkFunct(dStkATanh);
 }
 #endif
 
 void (*StkATanh)(void) = dStkATanh;
 
-void dStkSqrt(void) {
+void dStkSqrt(void) 
+{
 	Arg1->d = ComplexSqrtFloat(Arg1->d.x, Arg1->d.y);
 }
 
 #if !defined(XFRACT)
-void mStkSqrt(void) {
+void mStkSqrt(void) 
+{
 	mStkFunct(dStkSqrt);
 }
 
-void lStkSqrt(void) {
+void lStkSqrt(void) 
+{
 	/* lStkFunct(dStkSqrt); */
 	Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
 }
@@ -1429,17 +1552,20 @@ void lStkSqrt(void) {
 
 void (*StkSqrt)(void) = dStkSqrt;
 
-void dStkCAbs(void) {
+void dStkCAbs(void) 
+{
 	Arg1->d.x = sqrt(sqr(Arg1->d.x) + sqr(Arg1->d.y));
 	Arg1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
-void mStkCAbs(void) {
+void mStkCAbs(void) 
+{
 	mStkFunct(dStkCAbs);
 }
 
-void lStkCAbs(void) {
+void lStkCAbs(void) 
+{
 	lStkFunct(dStkCAbs);
 }
 #endif
@@ -1448,7 +1574,8 @@ void (*StkCAbs)(void) = dStkCAbs;
 
 /* TIW end arc functions 11-25-94 */
 
-void dStkLT(void) {
+void dStkLT(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x < Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1456,14 +1583,16 @@ void dStkLT(void) {
 }
 
 #if !defined(XFRACT)
-void mStkLT(void) {
+void mStkLT(void) 
+{
 	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
 	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkLT(void) {
+void lStkLT(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1473,7 +1602,8 @@ void lStkLT(void) {
 
 void (*StkLT)(void) = dStkLT;
 
-void dStkGT(void) {
+void dStkGT(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x > Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1481,14 +1611,16 @@ void dStkGT(void) {
 }
 
 #if !defined(XFRACT)
-void mStkGT(void) {
+void mStkGT(void) 
+{
 	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
 	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkGT(void) {
+void lStkGT(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1498,7 +1630,8 @@ void lStkGT(void) {
 
 void (*StkGT)(void) = dStkGT;
 
-void dStkLTE(void) {
+void dStkLTE(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x <= Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1506,7 +1639,8 @@ void dStkLTE(void) {
 }
 
 #if !defined(XFRACT)
-void mStkLTE(void) {
+void mStkLTE(void) 
+{
 	int comp;
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
@@ -1516,7 +1650,8 @@ void mStkLTE(void) {
 	Arg2--;
 }
 
-void lStkLTE(void) {
+void lStkLTE(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1526,7 +1661,8 @@ void lStkLTE(void) {
 
 void (*StkLTE)(void) = dStkLTE;
 
-void dStkGTE(void) {
+void dStkGTE(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x >= Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1534,7 +1670,8 @@ void dStkGTE(void) {
 }
 
 #if !defined(XFRACT)
-void mStkGTE(void) {
+void mStkGTE(void) 
+{
 	int comp;
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
@@ -1544,7 +1681,8 @@ void mStkGTE(void) {
 	Arg2--;
 }
 
-void lStkGTE(void) {
+void lStkGTE(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1554,7 +1692,8 @@ void lStkGTE(void) {
 
 void (*StkGTE)(void) = dStkGTE;
 
-void dStkEQ(void) {
+void dStkEQ(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x == Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1562,7 +1701,8 @@ void dStkEQ(void) {
 }
 
 #if !defined(XFRACT)
-void mStkEQ(void) {
+void mStkEQ(void) 
+{
 	int comp;
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
@@ -1572,7 +1712,8 @@ void mStkEQ(void) {
 	Arg2--;
 }
 
-void lStkEQ(void) {
+void lStkEQ(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1582,7 +1723,8 @@ void lStkEQ(void) {
 
 void (*StkEQ)(void) = dStkEQ;
 
-void dStkNE(void) {
+void dStkNE(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x != Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1590,7 +1732,8 @@ void dStkNE(void) {
 }
 
 #if !defined(XFRACT)
-void mStkNE(void) {
+void mStkNE(void) 
+{
 	int comp;
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
@@ -1600,7 +1743,8 @@ void mStkNE(void) {
 	Arg2--;
 }
 
-void lStkNE(void) {
+void lStkNE(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1610,7 +1754,8 @@ void lStkNE(void) {
 
 void (*StkNE)(void) = dStkNE;
 
-void dStkOR(void) {
+void dStkOR(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x || Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1618,14 +1763,16 @@ void dStkOR(void) {
 }
 
 #if !defined(XFRACT)
-void mStkOR(void) {
+void mStkOR(void) 
+{
 	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
 	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkOR(void) {
+void lStkOR(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1635,7 +1782,8 @@ void lStkOR(void) {
 
 void (*StkOR)(void) = dStkOR;
 
-void dStkAND(void) {
+void dStkAND(void) 
+{
 	Arg2->d.x = (double)(Arg2->d.x && Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
@@ -1643,14 +1791,16 @@ void dStkAND(void) {
 }
 
 #if !defined(XFRACT)
-void mStkAND(void) {
+void mStkAND(void) 
+{
 	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
 	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
 	Arg1--;
 	Arg2--;
 }
 
-void lStkAND(void) {
+void lStkAND(void) 
+{
 	Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << bitshift; /* JCO 12/26/94 */
 	Arg2->l.y = 0l;
 	Arg1--;
@@ -1659,28 +1809,33 @@ void lStkAND(void) {
 #endif
 
 void (*StkAND)(void) = dStkAND;
-void dStkLog(void) {
+void dStkLog(void) 
+{
 	FPUcplxlog(&Arg1->d, &Arg1->d);
 }
 
 #if !defined(XFRACT)
-void mStkLog(void) {
+void mStkLog(void) 
+{
 	mStkFunct(dStkLog);   /* call lStk via dStk */
 }
 
-void lStkLog(void) {
+void lStkLog(void) 
+{
 	lStkFunct(dStkLog);
 }
 #endif
 
 void (*StkLog)(void) = dStkLog;
 
-void FPUcplxexp(_CMPLX *x, _CMPLX *z) {
+void FPUcplxexp(_CMPLX *x, _CMPLX *z) 
+{
 	double e2x, siny, cosy;
 
 	if (fpu >= 387)
 		FPUcplxexp387(x, z);
-	else {
+	else 
+	{
 		e2x = exp(x->x);
 		FPUsincos(&x->y, &siny, &cosy);
 		z->x = e2x*cosy;
@@ -1688,30 +1843,35 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z) {
 	}
 }
 
-	void dStkExp(void) {
+	void dStkExp(void) 
+	{
 		FPUcplxexp(&Arg1->d, &Arg1->d);
 	}
 
 #if !defined(XFRACT)
-void mStkExp(void) {
+void mStkExp(void) 
+{
 	mStkFunct(dStkExp);   /* call lStk via dStk */
 }
 
-void lStkExp(void) {
+void lStkExp(void) 
+{
 	lStkFunct(dStkExp);
 }
 #endif
 
 void (*StkExp)(void) = dStkExp;
 
-void dStkPwr(void) {
+void dStkPwr(void) 
+{
 	Arg2->d = ComplexPower(Arg2->d, Arg1->d);
 	Arg1--;
 	Arg2--;
 }
 
 #if !defined(XFRACT)
-void mStkPwr(void) {
+void mStkPwr(void) 
+{
 	_CMPLX x, y;
 
 	x = MPC2cmplx(Arg2->m);
@@ -1722,7 +1882,8 @@ void mStkPwr(void) {
 	Arg2--;
 }
 
-void lStkPwr(void) {
+void lStkPwr(void) 
+{
 	_CMPLX x, y;
 
 	x.x = (double)Arg2->l.x / fg;
@@ -1730,7 +1891,8 @@ void lStkPwr(void) {
 	y.x = (double)Arg1->l.x / fg;
 	y.y = (double)Arg1->l.y / fg;
 	x = ComplexPower(x, y);
-	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit) {
+	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit) 
+	{
 		Arg2->l.x = (long)(x.x*fg);
 		Arg2->l.y = (long)(x.y*fg);
 	}
@@ -1743,7 +1905,8 @@ void lStkPwr(void) {
 
 void (*StkPwr)(void) = dStkPwr;
 
-void EndInit(void) {
+void EndInit(void) 
+{
 	LastInitOp = OpPtr;
 	InitJumpIndex = jump_index;
 }
@@ -1820,11 +1983,14 @@ void StkJumpLabel (void)
 }
 
 
-unsigned SkipWhiteSpace(char *Str) {
+unsigned SkipWhiteSpace(char *Str) 
+{
 	unsigned n, Done;
 
-	for (Done = n = 0; !Done; n++) {
-		switch (Str[n]) {
+	for (Done = n = 0; !Done; n++) 
+	{
+		switch (Str[n]) 
+		{
 		case ' ':
 		case '\t':
 		case '\n':
@@ -1838,28 +2004,34 @@ unsigned SkipWhiteSpace(char *Str) {
 }
 
 /* detect if constant is part of a (a,b) construct */
-static int isconst_pair(char *Str) {
+static int isconst_pair(char *Str) 
+{
 	int n,j;
 	int answer = 0;
 	/* skip past first number */
 	for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++);
-	if (Str[n] == ',') {
+	if (Str[n] == ',') 
+	{
 		j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
 		if (isdigit(Str[j])
           || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
-          || Str[j] == '.') {
+          || Str[j] == '.') 
+          {
 				answer = 1;
 		}
 	}
 	return answer;
 }
 
-struct ConstArg *isconst(char *Str, int Len) {
+struct ConstArg *isconst(char *Str, int Len) 
+{
 	_CMPLX z;
 	unsigned n, j;
 	/* next line enforces variable vs constant naming convention */
-	for (n = 0; n < vsp; n++) {
-		if (v[n].len == Len) {
+	for (n = 0; n < vsp; n++) 
+	{
+		if (v[n].len == Len) 
+		{
 			if (!strnicmp(v[n].s, Str, Len))
 			{
 				if (n == 1)        /* The formula uses 'p1'. */
@@ -1892,7 +2064,8 @@ struct ConstArg *isconst(char *Str, int Len) {
 
 #if !defined(XFRACT)
 	/* v[vsp].a should already be zeroed out */
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case M_MATH:
 		v[vsp].a.m.x.Mant = v[vsp].a.m.x.Exp = 0;
 		v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp = 0;
@@ -1905,19 +2078,23 @@ struct ConstArg *isconst(char *Str, int Len) {
 
 	if (isdigit(Str[0])
        || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
-       || Str[0] == '.') {
-		if (o[posp-1].f == StkNeg) {
+       || Str[0] == '.') 
+       {
+		if (o[posp-1].f == StkNeg) 
+		{
 			posp--;
 			Str = Str - 1;
 			InitN--;
 			v[vsp].len++;
 		}
 		for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++);
-		if (Str[n] == ',') {
+		if (Str[n] == ',') 
+		{
 			j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
 			if (isdigit(Str[j])
              || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
-             || Str[j] == '.') {
+             || Str[j] == '.') 
+             {
 				z.y = atof(&Str[j]);
 				for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++);
 				v[vsp].len = j;
@@ -1928,7 +2105,8 @@ struct ConstArg *isconst(char *Str, int Len) {
 		else
 			z.y = 0.0;
 		z.x = atof(Str);
-		switch (MathType) {
+		switch (MathType) 
+		{
 		case D_MATH:
 			v[vsp].a.d = z;
 			break;
@@ -1948,7 +2126,8 @@ struct ConstArg *isconst(char *Str, int Len) {
 }
 
 
-struct FNCT_LIST {
+struct FNCT_LIST 
+{
 	char *s;              /* TIW 03-31-91 added far */
 	void (**ptr)(void);
 };
@@ -1959,7 +2138,8 @@ void (*StkTrig1)(void) = dStkSqr;
 void (*StkTrig2)(void) = dStkSinh;
 void (*StkTrig3)(void) = dStkCosh;
 
-char * JumpList[] = {
+char * JumpList[] = 
+{
 	"if",
 	"elseif",
 	"else",
@@ -1992,7 +2172,8 @@ int isjump(char *Str, int Len)
 char maxfn = 0;
 /* TIW 03-30-91 STOP */
 
-struct FNCT_LIST FnctList[] = {   /* TIW 03-31-91 added far */
+struct FNCT_LIST FnctList[] =  /* TIW 03-31-91 added far */
+{
 	{"sin",   &StkSin},
 	{"sinh",  &StkSinh},
 	{"cos",   &StkCos},
@@ -2029,7 +2210,8 @@ struct FNCT_LIST FnctList[] = {   /* TIW 03-31-91 added far */
 	{"round", &StkRound},   /* TIW 06-30-96 */
 };
 
-char *OPList[] = {
+char *OPList[] = 
+{
 	",",	/*  0 */
 	"!=",	/*  1 */
 	"=",	/*  2 */
@@ -2050,8 +2232,10 @@ char *OPList[] = {
 };
 
 
-void NotAFnct(void) { }
-void FnctNotFound(void) { }
+void NotAFnct(void) 
+{ }
+void FnctNotFound(void) 
+{ }
 
 /* determine if s names a function and if so which one */
 /* TIW 04-22-91 */
@@ -2079,10 +2263,14 @@ void (*isfunct(char *Str, int Len))(void)
 	int functnum;    /* TIW 04-22-91 */
 
 	n = SkipWhiteSpace(&Str[Len]);
-	if (Str[Len + n] == '(') {
-		for (n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++) {
-			if ((int) strlen(FnctList[n].s) == Len) {        /* TIW 03-31-91 added far */
-				if (!strnicmp(FnctList[n].s, Str, Len)) {  /* TIW 03-31-91 added far */
+	if (Str[Len + n] == '(') 
+	{
+		for (n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++) 
+		{
+			if ((int) strlen(FnctList[n].s) == Len)  /* TIW 03-31-91 added far */
+			{
+				if (!strnicmp(FnctList[n].s, Str, Len))  /* TIW 03-31-91 added far */
+				{
 					/* count function variables */
 					if ((functnum = whichfn(Str, Len)) != 0)    /* TIW 04-22-91 */
 						if (functnum > maxfn)                  /* TIW 04-22-91 */
@@ -2096,14 +2284,16 @@ void (*isfunct(char *Str, int Len))(void)
 	return NotAFnct;
 }
 
-void RecSortPrec(void) {
+void RecSortPrec(void) 
+{
 	int ThisOp = NextOp++;
 	while (o[ThisOp].p > o[NextOp].p && NextOp < posp)
 		RecSortPrec();
 	f[OpPtr++] = o[ThisOp].f;
 }
 
-static char *Constants[] = {
+static char *Constants[] = 
+{
 	"pixel",        /* v[0] */
 	"p1",           /* v[1] */
 	"p2",           /* v[2] */
@@ -2125,10 +2315,13 @@ static char *Constants[] = {
 	"p5"            /* v[18] */
 };
 
-struct SYMETRY {
+struct SYMETRY 
+{
 	char *s;
 	int n;
-} SymStr[] = {
+}
+SymStr[] = 
+{
 	{"NOSYM",         0},
 	{"XAXIS_NOPARM", -1},
 	{"XAXIS",         1},
@@ -2146,7 +2339,8 @@ struct SYMETRY {
 	{"",              0}
 };
 
-static int ParseStr(char *Str, int pass) {
+static int ParseStr(char *Str, int pass) 
+{
 	struct ConstArg *c;
 	int ModFlag = 999, Len, Equals = 0, Mod[20], mdstk = 0;
 	int jumptype;
@@ -2156,11 +2350,13 @@ static int ParseStr(char *Str, int pass) {
 	SetRandom = Randomized = 0;
 	uses_jump = 0;
 	jump_index = 0;
-	if (!typespecific_workarea) {
+	if (!typespecific_workarea) 
+	{
 		stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return 1;
 	}
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case D_MATH:
 		StkAdd = dStkAdd;
 		StkSub = dStkSub;
@@ -2333,7 +2529,8 @@ static int ParseStr(char *Str, int pass) {
 #endif
 	}
 	maxfn = 0;   /* TIW 03-30-91 */
-	for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++) {
+	for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++) 
+	{
 		v[vsp].s = Constants[vsp];
 		v[vsp].len = (int) strlen(Constants[vsp]);
 	}
@@ -2354,7 +2551,8 @@ static int ParseStr(char *Str, int pass) {
 	v[16].a.d.x = Rotation;
 	v[16].a.d.y = Skew;
 
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case D_MATH:
 		v[1].a.d.x = param[0];
 		v[1].a.d.y = param[1];
@@ -2427,11 +2625,13 @@ static int ParseStr(char *Str, int pass) {
 
 	LastInitOp = paren = OpPtr = LodPtr = StoPtr = posp = 0;
 	ExpectingArg = 1;
-	for (n = 0; Str[n]; n++) {
+	for (n = 0; Str[n]; n++) 
+	{
 		if (!Str[n])
 			break;
 		InitN = n;
-		switch (Str[n]) {
+		switch (Str[n]) 
+		{
 			case ' ':
 			case '\t':
 			case '\r':
@@ -2444,17 +2644,20 @@ static int ParseStr(char *Str, int pass) {
 				paren--;
 				break;
 			case '|':
-				if (Str[n + 1] == '|') {
+				if (Str[n + 1] == '|') 
+				{
 					ExpectingArg = 1;
 					n++;
 					o[posp].f = StkOR;
 					o[posp++].p = 7 - (paren + Equals)*15;
 				}
-				else if (ModFlag == paren-1) {
+				else if (ModFlag == paren-1) 
+				{
 					paren--;
 					ModFlag = Mod[--mdstk];
 				}
-				else {
+				else 
+				{
 					Mod[mdstk++] = ModFlag;
 					o[posp].f = StkMod;
 					o[posp++].p = 2 - (paren + Equals)*15;
@@ -2463,7 +2666,8 @@ static int ParseStr(char *Str, int pass) {
 				break;
 			case ',':
 			case ';':
-				if (!ExpectingArg) {
+				if (!ExpectingArg) 
+				{
 					ExpectingArg = 1;
 					o[posp].f = (void(*)(void))0;
 					o[posp++].p = 15;
@@ -2487,11 +2691,13 @@ static int ParseStr(char *Str, int pass) {
 				o[posp++].p = 4 - (paren + Equals)*15;
 				break;
 			case '-':
-				if (ExpectingArg) {
+				if (ExpectingArg) 
+				{
 					o[posp].f = StkNeg;
 					o[posp++].p = 2 - (paren + Equals)*15;
 				}
-				else {
+				else 
+				{
 					o[posp].f = StkSub;
 					o[posp++].p = 4 - (paren + Equals)*15;
 					ExpectingArg = 1;
@@ -2511,7 +2717,8 @@ static int ParseStr(char *Str, int pass) {
 				break;
 			case '<':
 				ExpectingArg = 1;
-				if (Str[n + 1] == '=') {
+				if (Str[n + 1] == '=') 
+				{
 					n++;
 					o[posp].f = StkLTE;
 				}
@@ -2521,7 +2728,8 @@ static int ParseStr(char *Str, int pass) {
 				break;
 			case '>':
 				ExpectingArg = 1;
-				if (Str[n + 1] == '=') {
+				if (Str[n + 1] == '=') 
+				{
 					n++;
 					o[posp].f = StkGTE;
 				}
@@ -2546,12 +2754,14 @@ static int ParseStr(char *Str, int pass) {
 				break;
 			case '=':
 				ExpectingArg = 1;
-				if (Str[n + 1] == '=') {
+				if (Str[n + 1] == '=') 
+				{
 					n++;
 					o[posp].f = StkEQ;
 					o[posp++].p = 6 - (paren + Equals)*15;
 				}
-				else {
+				else 
+				{
 					o[posp-1].f = StkSto;
 					o[posp-1].p = 5 - (paren + Equals)*15;
 					Store[StoPtr++] = Load[--LodPtr];
@@ -2563,9 +2773,11 @@ static int ParseStr(char *Str, int pass) {
 					n++;
 				Len = (n + 1)-InitN;
 				ExpectingArg = 0;
-				if ((jumptype = isjump(&Str[InitN], Len)) != 0) {
+				if ((jumptype = isjump(&Str[InitN], Len)) != 0) 
+				{
 					uses_jump = 1;
-					switch (jumptype) {
+					switch (jumptype) 
+					{
 						case 1:                      /* if */
 							ExpectingArg = 1;
 							jump_control[jump_index++].type = 1;
@@ -2599,13 +2811,16 @@ static int ParseStr(char *Str, int pass) {
 							break;
 					}
 				}
-				else {
+				else 
+				{
 					o[posp].f = isfunct(&Str[InitN], Len);
-					if (o[posp].f != NotAFnct) {
+					if (o[posp].f != NotAFnct) 
+					{
 						o[posp++].p = 1 - (paren + Equals)*15;
 						ExpectingArg = 1;
 					}
-					else {
+					else 
+					{
 						c = isconst(&Str[InitN], Len);
 						Load[LodPtr++] = &(c->a);
 						o[posp].f = StkLod;
@@ -2620,10 +2835,12 @@ static int ParseStr(char *Str, int pass) {
 	o[posp++].p = 16;
 	NextOp = 0;
 	LastOp = posp;
-	while (NextOp < posp) {
+	while (NextOp < posp) 
+	{
 		if (o[NextOp].f)
 			RecSortPrec();
-		else {
+		else 
+		{
 			NextOp++;
 			LastOp--;
 		}
@@ -2632,7 +2849,8 @@ static int ParseStr(char *Str, int pass) {
 }
 
 
-int Formula(void) {
+int Formula(void) 
+{
 	if (FormName[0] == 0 || overflow) return 1;
 
 	LodPtr = InitLodPtr;
@@ -2659,7 +2877,8 @@ int Formula(void) {
 
 	Arg1 = &s[0];
 	Arg2 = Arg1-1;
-	while (OpPtr < (int)LastOp) {
+	while (OpPtr < (int)LastOp) 
+	{
 		f[OpPtr]();
 		OpPtr++;
 #ifdef WATCH_MP
@@ -2670,7 +2889,8 @@ int Formula(void) {
 #endif
 	}
 
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case D_MATH:
 		old = g_new = v[3].a.d;
 		return Arg1->d.x == 0.0;
@@ -2688,7 +2908,8 @@ int Formula(void) {
 	return 1;
 }
 
-int form_per_pixel(void) {
+int form_per_pixel(void) 
+{
 	if (FormName[0] == 0) return 1;
 	overflow = LodPtr = StoPtr = OpPtr = jump_index = 0;
 	Arg1 = &s[0];
@@ -2699,7 +2920,8 @@ int form_per_pixel(void) {
 	v[10].a.d.x = (double)col;
 	v[10].a.d.y = (double)row;
 
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case D_MATH:
 		if ((row + col)&1)
 			v[9].a.d.x = 1.0;
@@ -2713,7 +2935,8 @@ int form_per_pixel(void) {
 	case M_MATH:
 		if ((row + col)&1)
 			v[9].a.m = MPCone;
-		else {
+		else 
+		{
 			v[9].a.m.x.Mant = v[9].a.m.x.Exp = 0;
 			v[9].a.m.y.Mant = v[9].a.m.y.Exp = 0;
 		}
@@ -2781,7 +3004,8 @@ int form_per_pixel(void) {
 
 	if (LastInitOp)
 		LastInitOp = LastOp;
-	while (OpPtr < LastInitOp) {
+	while (OpPtr < LastInitOp) 
+	{
 		f[OpPtr]();
 		OpPtr++;
 	}
@@ -2789,7 +3013,8 @@ int form_per_pixel(void) {
 	InitStoPtr = StoPtr;
 	InitOpPtr = OpPtr;
 	/* Set old variable for orbits TIW 12-18-93 */
-	switch (MathType) {
+	switch (MathType) 
+	{
 	case D_MATH:
 		old = v[3].a.d;
 		break;
@@ -2813,9 +3038,11 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
 {
 	int i   = endif_index;
 	int ljp = endif_index; /* ljp means "last jump processed" */
-	while (i > 0) {
+	while (i > 0) 
+	{
 		i--;
-		switch (jump_control[i].type) {
+		switch (jump_control[i].type) 
+		{
 			case 1:    /*if (); this concludes processing of this group*/
 				jump_control[i].ptrs = jump_data[ljp];
 				jump_control[i].DestJumpIndex = ljp + 1;
@@ -2854,9 +3081,12 @@ int fill_jump_struct(void)
 
 	JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-	for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++) {
-		if (find_new_func) {
-			switch (jump_control[i].type) {
+	for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++) 
+	{
+		if (find_new_func) 
+		{
+			switch (jump_control[i].type) 
+			{
 				case 1:
 					JumpFunc = StkJumpOnFalse;
 					break;
@@ -2882,7 +3112,8 @@ int fill_jump_struct(void)
 			loadcount++;
 		else if (*(f[OpPtr]) == StkSto)
 			storecount++;
-		else if (*(f[OpPtr]) == JumpFunc) {
+		else if (*(f[OpPtr]) == JumpFunc) 
+		{
 			jump_data[i].JumpOpPtr = OpPtr;
 			jump_data[i].JumpLodPtr = loadcount;
 			jump_data[i].JumpStoPtr = storecount;
@@ -2893,11 +3124,13 @@ int fill_jump_struct(void)
 
 	/* Following for safety only; all should always be false */
 	if (i != jump_index || jump_control[i - 1].type != 4
-           || jump_control[0].type != 1) {
+           || jump_control[0].type != 1) 
+           {
 		return 1;
 	}
 
-	while (i > 0) {
+	while (i > 0) 
+	{
 		i--;
 		i = fill_if_group(i, jump_data);
 	}
@@ -2911,9 +3144,11 @@ int frmgetchar (FILE *openfile)
 	int c;
 	int done = 0;
 	int linewrap = 0;
-	while (!done) {
+	while (!done) 
+	{
 		c = getc(openfile);
-		switch (c) {
+		switch (c) 
+		{
 			case '\r': case ' ' : case '\t' :
            break;
 			case '\\':
@@ -2942,8 +3177,10 @@ int frmgetchar (FILE *openfile)
 void getfuncinfo(struct token_st *tok)
 {
 	int i;
-	for (i = 0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) {
-		if (!strcmp(FnctList[i].s, tok->token_str)) {
+	for (i = 0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) 
+	{
+		if (!strcmp(FnctList[i].s, tok->token_str)) 
+		{
 			tok->token_id = i;
 			if (i >= 11 && i <= 14)
 				tok->token_type = PARAM_FUNCTION;
@@ -2953,8 +3190,10 @@ void getfuncinfo(struct token_st *tok)
 		}
 	}
 
-	for (i = 0; i < 4; i++) { /*pick up flow control*/
-		if (!strcmp(JumpList[i], tok->token_str)) {
+	for (i = 0; i < 4; i++)  /*pick up flow control*/
+	{
+		if (!strcmp(JumpList[i], tok->token_str)) 
+		{
 			tok->token_type = FLOW_CONTROL;
 			tok->token_id   = i + 1;
 			return;
@@ -2969,10 +3208,13 @@ void getvarinfo(struct token_st *tok)
 {
 	int i;
 
-	for (i = 0; i < sizeof(Constants) / sizeof(char*); i++) {
-		if (!strcmp(Constants[i], tok->token_str)) {
+	for (i = 0; i < sizeof(Constants) / sizeof(char*); i++) 
+	{
+		if (!strcmp(Constants[i], tok->token_str)) 
+		{
 			tok->token_id = i;
-			switch (i) {
+			switch (i) 
+			{
 				case 1: case 2: case 8: case 13: case 17: case 18:
 					tok->token_type = PARAM_VARIABLE;
 					break;
@@ -3005,8 +3247,10 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	tok->token_const.y = 0.0;
 	if (tok->token_str[0] == '.')
 		got_decimal_already = 1;
-	while (!done) {
-		switch (c=frmgetchar(openfile)) {
+	while (!done) 
+	{
+		switch (c=frmgetchar(openfile)) 
+		{
 			case EOF: case '\032':
 				tok->token_str[i] = (char) 0;
 				tok->token_type = NOT_A_TOKEN;
@@ -3017,56 +3261,65 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 				filepos=ftell(openfile);
 				break;
 			case '.':
-				if (got_decimal_already || !getting_base) {
+				if (got_decimal_already || !getting_base) 
+				{
 					tok->token_str[i++] = (char) c;
 					tok->token_str[i++] = (char) 0;
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id = ILL_FORMED_CONSTANT;
 					return 0;
              }
-				else {
+				else 
+				{
 					tok->token_str[i++] = (char) c;
 					got_decimal_already = 1;
 					filepos=ftell(openfile);
 				}
 				break;
 			default :
-				if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1))) {
+				if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1))) 
+				{
 					tok->token_str[i++] = (char) c;
 					getting_base = 0;
 					got_decimal_already = 0;
 					filepos=ftell(openfile);
 					c = frmgetchar(openfile);
-			   if (c == '-' || c == '+') {
+			   if (c == '-' || c == '+') 
+			   {
 						tok->token_str[i++] = (char) c;
 						filepos = ftell(openfile);
 					}
-					else {
+					else 
+					{
 						fseek(openfile, filepos, SEEK_SET);
 					}
 				}
-				else if (isalpha(c) || c == '_') {
+				else if (isalpha(c) || c == '_') 
+				{
 					tok->token_str[i++] = (char) c;
 					tok->token_str[i++] = (char) 0;
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id = ILL_FORMED_CONSTANT;
 					return 0;
 				}
-				else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1)) {
+				else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1)) 
+				{
 					tok->token_str[i++] = (char) c;
 					tok->token_str[i++] = (char) 0;
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id = ILL_FORMED_CONSTANT;
 					return 0;
 				}
-				else {
+				else 
+				{
 					fseek(openfile, filepos, SEEK_SET);
 					tok->token_str[i++] = (char) 0;
 					done = 1;
 				}
 				break;
 		}
-		if (i == 33 && tok->token_str[32]) {
+		if (i == 33 && tok->token_str[32]) 
+		{
 			tok->token_str[33] = (char) 0;
 			tok->token_type = NOT_A_TOKEN;
 			tok->token_id = TOKEN_TOO_LONG;
@@ -3092,54 +3345,69 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
 	filepos = ftell(openfile);
-	if (debugflag == 96) {
+	if (debugflag == 96) 
+	{
 		debug_token = fopen("frmconst.txt","at");
 	}
 
-	while (!done) {
-		switch (c = frmgetchar(openfile)) {
+	while (!done) 
+	{
+		switch (c = frmgetchar(openfile)) 
+		{
 			CASE_NUM : case '.':
-				if (debug_token != NULL) {
+				if (debug_token != NULL) 
+				{
 					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 				}
 				temp_tok.token_str[0] = (char) c;
 				break;
 			case '-' :
-				if (debug_token != NULL) {
+				if (debug_token != NULL) 
+				{
 					fprintf(debug_token,  "First char is a minus\n");
 				}
 				sign_value = -1;
 				c = frmgetchar(openfile);
-			if (c == '.' || isdigit(c)) {
-					if (debug_token != NULL) {
+			if (c == '.' || isdigit(c)) 
+			{
+					if (debug_token != NULL) 
+					{
 						fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 					}
 					temp_tok.token_str[0] = (char) c;
 				}
-				else {
-					if (debug_token != NULL) {
+				else 
+				{
+					if (debug_token != NULL) 
+					{
 						fprintf(debug_token,  "First char not a . or NUM\n");
 					}
 					done = 1;
 				}
 				break;
 			default:
-				if (debug_token != NULL) {
+				if (debug_token != NULL) 
+				{
               fprintf(debug_token,  "First char not a . or NUM\n");
 				}
 				done = 1;
 				break;
 		}
-		if (debug_token != NULL) {
+		if (debug_token != NULL) 
+		{
 				fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
 		}
-		if (!done && frmgetconstant (openfile, &temp_tok)) {
+		if (!done && frmgetconstant (openfile, &temp_tok)) 
+		{
 			c = frmgetchar(openfile);
-			if (debug_token != NULL) {
+			if (debug_token != NULL) 
+			{
 				fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
 			}
-			if (getting_real && c == ',') {   /*we have the real part now*/
-				if (sign_value == -1) {
+			if (getting_real && c == ',')  /*we have the real part now*/
+			{
+				if (sign_value == -1) 
+				{
               strcat(tok->token_str, "-");
 				}
 				strcat(tok->token_str, temp_tok.token_str);
@@ -3148,8 +3416,10 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 				getting_real = 0;
 				sign_value = 1;
 			}
-			else if (!getting_real && c == ')') { /* we have the complex part */
-				if (sign_value == -1) {
+			else if (!getting_real && c == ')')  /* we have the complex part */
+			{
+				if (sign_value == -1) 
+				{
               strcat(tok->token_str, "-");
 				}
 				strcat(tok->token_str, temp_tok.token_str);
@@ -3157,7 +3427,8 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 				tok->token_const.y = temp_tok.token_const.x*sign_value;
 				tok->token_type = tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
 				tok->token_id   = 0;
-				if (debug_token != NULL) {
+				if (debug_token != NULL) 
+				{
 					fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
 					fclose (debug_token);
 				}
@@ -3174,7 +3445,8 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	tok->token_const.y = tok->token_const.x = 0.0;
 	tok->token_type = PARENS;
 	tok->token_id = OPEN_PARENS;
-	if (debug_token != NULL) {
+	if (debug_token != NULL) 
+	{
      fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
      fclose (debug_token);
 	}
@@ -3188,29 +3460,35 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 	int var_name_too_long = 0;
 	long filepos;
 	long last_filepos = ftell(openfile);
-	while ((c=frmgetchar(openfile)) != EOF && c != '\032') {
+	while ((c=frmgetchar(openfile)) != EOF && c != '\032') 
+	{
 		filepos = ftell(openfile);
-		switch (c) {
+		switch (c) 
+		{
 			CASE_ALPHA: CASE_NUM: case '_':
 				if (i < 79)
 					tok->token_str[i++] = (char) c;
-				else {
+				else 
+				{
 					tok->token_str[i] = (char) 0;
 				}
-				if (i == 33) {
+				if (i == 33) 
+				{
 					var_name_too_long = 1;
 				}
 				last_filepos = filepos;
 				break;
 			default:
-				if (c == '.') { /*illegal character in variable or func name*/
+				if (c == '.')  /*illegal character in variable or func name*/
+				{
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id   = ILLEGAL_VARIABLE_NAME;
 					tok->token_str[i++] = '.';
 					tok->token_str[i] = (char) 0;
 					return 0;
 				}
-				else if (var_name_too_long) {
+				else if (var_name_too_long) 
+				{
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id   = TOKEN_TOO_LONG;
 					tok->token_str[i] = (char) 0;
@@ -3220,10 +3498,12 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 				tok->token_str[i] = (char) 0;
 				fseek(openfile, last_filepos, SEEK_SET);
 				getfuncinfo(tok);
-				if (c == '(') { /*getfuncinfo() correctly filled structure*/
+				if (c == '(')  /*getfuncinfo() correctly filled structure*/
+				{
 					if (tok->token_type == NOT_A_TOKEN)
 						return 0;
-					else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4)) {
+					else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4)) 
+					{
 						tok->token_type = NOT_A_TOKEN;
 						tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
 						return 0;
@@ -3232,26 +3512,31 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 						return 1;
 				}
 				/*can't use function names as variables*/
-				else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION) {
+				else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION) 
+				{
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id   = FUNC_USED_AS_VAR;
 					return 0;
 				}
-				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2)) {
+				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2)) 
+				{
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id   = JUMP_MISSING_BOOLEAN;
 					return 0;
 				}
-				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4)) {
+				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4)) 
+				{
 					if (c == ',' || c == '\n' || c == ':')
                  return 1;
-					else {
+					else 
+					{
 						tok->token_type = NOT_A_TOKEN;
 						tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
 						return 0;
 					}
 				}
-				else {
+				else 
+				{
 					getvarinfo(tok);
 					return 1;
 				}
@@ -3270,19 +3555,23 @@ void frm_get_eos (FILE *openfile, struct token_st *this_token)
 
 	for (c = frmgetchar(openfile); (c == '\n' || c == ',' || c == ':'); c = frmgetchar(openfile))
 	{
-		if (c == ':') {
+		if (c == ':') 
+		{
 	this_token->token_str[0] = ':';
 		}
 		last_filepos = ftell(openfile);
 	}
-	if (c == '}') {
+	if (c == '}') 
+	{
 		this_token->token_str[0] = '}';
 		this_token->token_type = END_OF_FORMULA;
 		this_token->token_id   = 0;
 	}
-	else {
+	else 
+	{
 		fseek (openfile, last_filepos, SEEK_SET);
-		if (this_token->token_str[0] == '\n') {
+		if (this_token->token_str[0] == '\n') 
+		{
 	this_token->token_str[0] = ',';
 		}
 	}
@@ -3298,7 +3587,8 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 	int i = 1;
 	long filepos;
 
-	switch (c = frmgetchar(openfile)) {
+	switch (c = frmgetchar(openfile)) 
+	{
 		CASE_NUM: case '.':
 			this_token->token_str[0] = (char) c;
 			return frmgetconstant(openfile, this_token);
@@ -3309,19 +3599,23 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			this_token->token_type = OPERATOR; /* this may be changed below */
 			this_token->token_str[0] = (char) c;
 			filepos = ftell(openfile);
-			if (c == '<' || c == '>' || c == '=') {
+			if (c == '<' || c == '>' || c == '=') 
+			{
 				c=frmgetchar(openfile);
 			if (c == '=')
 					this_token->token_str[i++] = (char) c;
-				else {
+				else 
+				{
 					fseek(openfile, filepos, SEEK_SET);
 				}
 			}
-			else if (c == '!') {
+			else if (c == '!') 
+			{
 				c=frmgetchar(openfile);
 			if (c == '=')
 					this_token->token_str[i++] = (char) c;
-				else {
+				else 
+				{
 					fseek(openfile, filepos, SEEK_SET);
 					this_token->token_str[1] = (char) 0;
 					this_token->token_type = NOT_A_TOKEN;
@@ -3329,18 +3623,21 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 					return 0;
 				}
 			}
-			else if (c == '|') {
+			else if (c == '|') 
+			{
 				c=frmgetchar(openfile);
 			if (c == '|')
 					this_token->token_str[i++] = (char) c;
 				else
 					fseek(openfile, filepos, SEEK_SET);
 			}
-			else if (c == '&') {
+			else if (c == '&') 
+			{
 				c=frmgetchar(openfile);
 			if (c == '&')
 					this_token->token_str[i++] = (char) c;
-				else {
+				else 
+				{
 					fseek(openfile, filepos, SEEK_SET);
 					this_token->token_str[1] = (char) 0;
 					this_token->token_type = NOT_A_TOKEN;
@@ -3348,20 +3645,24 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 					return 0;
 				}
 			}
-			else if (this_token->token_str[0] == '}') {
+			else if (this_token->token_str[0] == '}') 
+			{
 				this_token->token_type = END_OF_FORMULA;
 				this_token->token_id   = 0;
 			}
 			else if (this_token->token_str[0] == '\n'
              || this_token->token_str[0] == ','
-             || this_token->token_str[0] == ':') {
+             || this_token->token_str[0] == ':') 
+             {
 				frm_get_eos(openfile, this_token);
 			}
-			else if (this_token->token_str[0] == ')') {
+			else if (this_token->token_str[0] == ')') 
+			{
 				this_token->token_type = PARENS;
 				this_token->token_id = CLOSE_PARENS;
 			}
-			else if (this_token->token_str[0] == '(') {
+			else if (this_token->token_str[0] == '(') 
+			{
               /* the following function will set token_type to PARENS and
                  token_id to OPEN_PARENS if this is not the start of a
                  complex constant */
@@ -3369,9 +3670,12 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 					return 1;
 			}
 			this_token->token_str[i] = (char) 0;
-			if (this_token->token_type == OPERATOR) {
-				for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++) {
-					if (!strcmp(OPList[i], this_token->token_str)) {
+			if (this_token->token_type == OPERATOR) 
+			{
+				for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++) 
+				{
+					if (!strcmp(OPList[i], this_token->token_str)) 
+					{
 						this_token->token_id = i;
 					}
 				}
@@ -3400,37 +3704,45 @@ int frm_get_param_stuff(char *Name)
 	uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
 	uses_p4 = uses_p5 = 0;
 
-	if (FormName[0] == 0) {
+	if (FormName[0] == 0) 
+	{
 		return 0;  /*  and don't reset the pointers  */
 	}
-	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) {
+	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) 
+	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
 	}
 	while ((c=frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
      {}
-	if (c != '{') {
+	if (c != '{') 
+	{
 		stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
 		fclose(entry_file);
 		return 0;
 	}
 
-	if (debugflag == 96) {
+	if (debugflag == 96) 
+	{
 		if ((debug_token = fopen("frmtokens.txt","at")) != NULL)
 			fprintf(debug_token,"%s\n", Name);
 	}
-	while (frmgettoken(entry_file, &current_token)) {
-		if (debug_token != NULL) {
+	while (frmgettoken(entry_file, &current_token)) 
+	{
+		if (debug_token != NULL) 
+		{
 			fprintf(debug_token,"%s\n", current_token.token_str);
 			fprintf(debug_token,"token_type is %d\n", current_token.token_type);
 			fprintf(debug_token,"token_id is %d\n", current_token.token_id);
-			if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT) {
+			if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT) 
+			{
 				fprintf(debug_token,"Real value is %f\n", current_token.token_const.x);
 				fprintf(debug_token,"Imag value is %f\n", current_token.token_const.y);
 			}
 			fprintf(debug_token,"\n");
 		}
-		switch (current_token.token_type) {
+		switch (current_token.token_type) 
+		{
 			case PARAM_VARIABLE:
 				if (current_token.token_id == 1)
 					uses_p1 = 1;
@@ -3454,7 +3766,8 @@ int frm_get_param_stuff(char *Name)
 	fclose(entry_file);
 	if (debug_token)
 		fclose(debug_token);
-	if (current_token.token_type != END_OF_FORMULA) {
+	if (current_token.token_type != END_OF_FORMULA) 
+	{
 		uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
 		uses_p4 = uses_p5 = 0;
 		return 0;
@@ -3475,8 +3788,10 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 
      /* first, test name */
 	done = at_end_of_name = i = 0;
-	while (!done) {
-		switch (c = getc(open_file)) {
+	while (!done) 
+	{
+		switch (c = getc(open_file)) 
+		{
 			case EOF: case '\032':
 				stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
 				return 0;
@@ -3496,7 +3811,8 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		}
 	}
 
-	if (i > ITEMNAMELEN) {
+	if (i > ITEMNAMELEN) 
+	{
 		int j;
 		int k = (int) strlen(ParseErrs(PE_FORMULA_NAME_TOO_LARGE));
 		char msgbuf[100];
@@ -3511,11 +3827,14 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 	}
 		/* get symmetry */
 	symmetry = 0;
-	if (c == '(') {
+	if (c == '(') 
+	{
 		char sym_buf[20];
 		done = i = 0;
-		while (!done) {
-			switch (c = getc(open_file)) {
+		while (!done) 
+		{
+			switch (c = getc(open_file)) 
+			{
 				case EOF: case '\032':
 					stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
 					return 0;
@@ -3537,13 +3856,16 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			}
 		}
 		sym_buf[i] = (char) 0;
-		for (i = 0; SymStr[i].s[0]; i++) {
-			if (!stricmp(SymStr[i].s, sym_buf)) {
+		for (i = 0; SymStr[i].s[0]; i++) 
+		{
+			if (!stricmp(SymStr[i].s, sym_buf)) 
+			{
 				symmetry = SymStr[i].n;
 				break;
 			}
 		}
-		if (SymStr[i].s[0] == (char) 0 && report_bad_sym) {
+		if (SymStr[i].s[0] == (char) 0 && report_bad_sym) 
+		{
 			char *msgbuf = (char *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
 			strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
@@ -3553,10 +3875,13 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			free(msgbuf);
 		}
 	}
-	if (c != '{') {
+	if (c != '{') 
+	{
 		done = 0;
-		while (!done) {
-			switch (c = getc(open_file)) {
+		while (!done) 
+		{
+			switch (c = getc(open_file)) 
+			{
 				case EOF: case '\032':
 					stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_UNEXPECTED_EOF));
 					return 0;
@@ -3575,7 +3900,8 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 }
 
 
-static char *PrepareFormula(FILE *File, int from_prompts1c) {
+static char *PrepareFormula(FILE *File, int from_prompts1c) 
+{
 
 	/* GGM 5-23-96: replaces FindFormula(). This function sets the
        symmetry and converts a formula into a string  with no spaces,
@@ -3597,23 +3923,27 @@ static char *PrepareFormula(FILE *File, int from_prompts1c) {
 
 	/*Test for a repeat*/
 
-	if (frm_check_name_and_sym(File, from_prompts1c) == 0) {
+	if (frm_check_name_and_sym(File, from_prompts1c) == 0) 
+	{
 		fseek(File, filepos, SEEK_SET);
 		return NULL;
 	}
-	if (!frm_prescan(File)) {
+	if (!frm_prescan(File)) 
+	{
 		fseek(File, filepos, SEEK_SET);
 		return NULL;
 	}
 
-	if (chars_in_formula > 8190) {
+	if (chars_in_formula > 8190) 
+	{
 		fseek(File, filepos, SEEK_SET);
 		return NULL;
 	}
 
 	if (debugflag == 96)
 	{
-		if ((debug_fp = fopen("debugfrm.txt","at")) != NULL) {
+		if ((debug_fp = fopen("debugfrm.txt","at")) != NULL) 
+		{
 			fprintf(debug_fp,"%s\n",FormName);
 			if (symmetry != 0)
 				fprintf(debug_fp,"%s\n", SymStr[symmetry].s);
@@ -3626,30 +3956,36 @@ static char *PrepareFormula(FILE *File, int from_prompts1c) {
 	Done = 0;
 
 	/*skip opening end-of-lines */
-	while (!Done) {
+	while (!Done) 
+	{
 		frmgettoken(File, &temp_tok);
-		if (temp_tok.token_type == NOT_A_TOKEN) {
+		if (temp_tok.token_type == NOT_A_TOKEN) 
+		{
 			stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(File, filepos, SEEK_SET);
 			return NULL;
 		}
-		else if (temp_tok.token_type == END_OF_FORMULA) {
+		else if (temp_tok.token_type == END_OF_FORMULA) 
+		{
 			stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
 			fseek(File, filepos, SEEK_SET);
 			return NULL;
 		}
 		if (temp_tok.token_str[0] == ',')
 			;
-		else {
+		else 
+		{
 			strcat(FormulaStr, temp_tok.token_str);
 			Done = 1;
 		}
 	}
 
 	Done = 0;
-	while (!Done) {
+	while (!Done) 
+	{
 		frmgettoken(File, &temp_tok);
-		switch (temp_tok.token_type) {
+		switch (temp_tok.token_type) 
+		{
 			case NOT_A_TOKEN:
 				stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 				fseek(File, filepos, SEEK_SET);
@@ -3676,7 +4012,8 @@ static char *PrepareFormula(FILE *File, int from_prompts1c) {
 	return FormulaStr;
 }
 
-int BadFormula(void) {
+int BadFormula(void) 
+{
 	/*  moved from Parsera.Asm by CAE  12 July 1993  */
 
 	/*  this is called when a formula is bad, instead of calling  */
@@ -3684,7 +4021,8 @@ int BadFormula(void) {
 	return 1;
 }
 
-int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurred  */
+int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred  */
+{
 
 	FILE *entry_file = NULL;
 
@@ -3694,12 +4032,14 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 	curfractalspecific->per_pixel = BadFormula;
 	curfractalspecific->orbitcalc = BadFormula;
 
-	if (FormName[0] == 0){
+	if (FormName[0] == 0)
+	{
 		return 1;  /*  and don't reset the pointers  */
 	}
 
 	/* TW 5-31-94 add search for FRM files in directory */
-	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) {
+	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) 
+	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 1;
 	}
@@ -3714,7 +4054,8 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 			return 1;   /*  parse failed, don't change fn pointers  */
 		else
 		{
-			if (uses_jump == 1 && fill_jump_struct() == 1) {
+			if (uses_jump == 1 && fill_jump_struct() == 1) 
+			{
 				stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
 				return 1;
 			}
@@ -3730,12 +4071,14 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
 }
 
 
-int fpFormulaSetup(void) {
+int fpFormulaSetup(void) 
+{
 
 	int RunFormRes;              /* CAE fp */
 	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
-	if (fpu > 0) {
+	if (fpu > 0) 
+	{
 		MathType = D_MATH;
 		/* CAE changed below for fp */
 		RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
@@ -3744,7 +4087,8 @@ int fpFormulaSetup(void) {
 			return CvtStk(); /* run fast assembler code in parsera.asm */
 		return RunFormRes;
 	}
-	else {
+	else 
+	{
 		MathType = M_MATH;
 		return !RunForm(FormName, 0);
 	}
@@ -3865,7 +4209,8 @@ void free_workarea()
 }
 
 
-struct error_data_st {
+struct error_data_st 
+{
 	long start_pos;
 	long error_pos;
 	int error_number;
@@ -3885,16 +4230,20 @@ void frm_error(FILE *open_file, long begin_frm)
 	int initialization_error;
 	strcpy (msgbuf, "\n");
 
-	for (j = 0; j < 3 && errors[j].start_pos; j++) {
+	for (j = 0; j < 3 && errors[j].start_pos; j++) 
+	{
 		initialization_error = errors[j].error_number == PE_SECOND_COLON ? 1 : 0;
 		fseek(open_file, begin_frm, SEEK_SET);
 		line_number = 1;
-		while (ftell(open_file) != errors[j].error_pos) {
+		while (ftell(open_file) != errors[j].error_pos) 
+		{
 			i = fgetc(open_file);
-		 if (i == '\n') {
+		 if (i == '\n') 
+		 {
 				line_number++;
 			}
-			else if (i == EOF || i == '}') {
+			else if (i == EOF || i == '}') 
+			{
 				stopmsg(0, "Unexpected EOF or end-of-formula in error function.\n");
 				fseek (open_file, errors[j].error_pos, SEEK_SET);
 				frmgettoken(open_file, &tok); /*reset file to end of error token */
@@ -3908,9 +4257,11 @@ void frm_error(FILE *open_file, long begin_frm)
 */    fseek(open_file, errors[j].start_pos, SEEK_SET);
 		statement_len = token_count = 0;
 		done = 0;
-		while (!done) {
+		while (!done) 
+		{
 			filepos = ftell (open_file);
-			if (filepos == errors[j].error_pos)  {
+			if (filepos == errors[j].error_pos)  
+			{
 /*          stopmsg(0, "About to get error token\n");
 */          chars_to_error = statement_len;
 				frmgettoken(open_file, &tok);
@@ -3920,7 +4271,8 @@ void frm_error(FILE *open_file, long begin_frm)
 /*          sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
 				stopmsg (0, debugmsg);
 */       }
-			else {
+			else 
+			{
 				frmgettoken(open_file, &tok);
 /*          sprintf(debugmsg, "Just got %s\n", tok.token_str);
 				stopmsg (0, debugmsg);
@@ -3930,29 +4282,35 @@ void frm_error(FILE *open_file, long begin_frm)
 			if ((tok.token_type == END_OF_FORMULA)
           || (tok.token_type == OPERATOR
                    && (tok.token_id == 0 || tok.token_id == 11))
-          || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE)){
+          || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
+          {
 				done = 1;
-				if (token_count > 1 && !initialization_error) {
+				if (token_count > 1 && !initialization_error) 
+				{
 					token_count--;
 				}
 			}
 		}
 		fseek(open_file, errors[j].start_pos, SEEK_SET);
-		if (chars_in_error < 74) {
-			while (chars_to_error + chars_in_error > 74) {
+		if (chars_in_error < 74) 
+		{
+			while (chars_to_error + chars_in_error > 74) 
+			{
 /*          stopmsg(0, "chars in error less than 74, but late in line");
 */          frmgettoken(open_file, &tok);
 				chars_to_error -= (int) strlen(tok.token_str);
 				token_count--;
 			}
 		}
-		else {
+		else 
+		{
 			fseek(open_file, errors[j].error_pos, SEEK_SET);
 			chars_to_error = 0;
 			token_count = 1;
 		}
 /*    stopmsg(0, "Back to beginning of statement to build msgbuf");
-*/    while ((int) strlen(&msgbuf[i]) <= 74 && token_count--) {
+*/    while ((int) strlen(&msgbuf[i]) <= 74 && token_count--) 
+{
 			frmgettoken (open_file, &tok);
 			strcat (msgbuf, tok.token_str);
 /*         stopmsg(0, &msgbuf[i]);
@@ -3968,7 +4326,8 @@ void frm_error(FILE *open_file, long begin_frm)
 /*    sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
 		stopmsg(0, debugmsg);
 */
-		if (errors[j].error_number == PE_TOKEN_TOO_LONG) {
+		if (errors[j].error_number == PE_TOKEN_TOO_LONG) 
+		{
 			chars_in_error = 33;
 		}
 		while (chars_in_error-- && (int) strlen(&msgbuf[i]) <= 74)
@@ -3983,7 +4342,8 @@ void display_var_list()
 {
 	struct var_list_st *p;
 	stopmsg(0, "List of user defined variables:\n");
-	for (p = var_list; p; p=p->next_item) {
+	for (p = var_list; p; p=p->next_item) 
+	{
 		stopmsg(0, p->name);
 	}
 
@@ -3994,31 +4354,36 @@ void display_const_lists()
 	struct const_list_st *p;
 	char msgbuf[800];
 	stopmsg (0, "Complex constants are:");
-	for (p = complx_list; p; p=p->next_item) {
+	for (p = complx_list; p; p=p->next_item) 
+	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
 		stopmsg(0, msgbuf);
 	}
 	stopmsg (0, "Real constants are:");
-	for (p = real_list; p; p=p->next_item) {
+	for (p = real_list; p; p=p->next_item) 
+	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
 		stopmsg(0, msgbuf);
 	}
 }
 
 
-struct var_list_st *var_list_alloc() {
+struct var_list_st *var_list_alloc() 
+{
 	return (struct var_list_st *) malloc(sizeof(struct var_list_st));
 }
 
 
-struct const_list_st  *const_list_alloc() {
+struct const_list_st  *const_list_alloc() 
+{
 	return (struct const_list_st *) malloc(sizeof(struct const_list_st));
 }
 
 void init_var_list()
 {
 	struct var_list_st *temp, *p;
-	for (p = var_list; p; p=temp) {
+	for (p = var_list; p; p=temp) 
+	{
 		temp = p->next_item;
 		free(p);
 	}
@@ -4029,12 +4394,14 @@ void init_var_list()
 void init_const_lists()
 {
 	struct const_list_st *temp, *p;
-	for (p = complx_list; p; p=temp) {
+	for (p = complx_list; p; p=temp) 
+	{
 		temp = p->next_item;
 		free(p);
 	}
 	complx_list = NULL;
-	for (p = real_list; p; p=temp) {
+	for (p = real_list; p; p=temp) 
+	{
 		temp = p->next_item;
 		free(p);
 	}
@@ -4043,16 +4410,19 @@ void init_const_lists()
 
 struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 {
-	if (p == NULL) {
+	if (p == NULL) 
+	{
 		p = var_list_alloc();
 	  if (p == NULL)
 			return NULL;
 		strcpy(p->name, tok.token_str);
 		p->next_item = NULL;
 	}
-	else if (strcmp(p->name, tok.token_str) == 0) {
+	else if (strcmp(p->name, tok.token_str) == 0) 
+	{
 	}
-	else {
+	else 
+	{
 		p->next_item = add_var_to_list(p->next_item, tok);
 	  if (p->next_item == NULL)
 			return NULL;
@@ -4062,7 +4432,8 @@ struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 
 struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st tok)
 {
-	if (p == NULL) {
+	if (p == NULL) 
+	{
 		p = const_list_alloc();
 	  if (p == NULL)
 			return NULL;
@@ -4070,7 +4441,8 @@ struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st
 		p->complex_const.y = tok.token_const.y;
 		p->next_item = NULL;
 	}
-	else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y) {
+	else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y) 
+	{
 	}
 	else
 	{
@@ -4091,13 +4463,16 @@ void count_lists()
 	complx_count = 0;
 	real_count = 0;
 
-	for (p = var_list; p; p=p->next_item) {
+	for (p = var_list; p; p=p->next_item) 
+	{
 		var_count++;
 	}
-	for (q = complx_list; q; q=q->next_item) {
+	for (q = complx_list; q; q=q->next_item) 
+	{
 		complx_count++;
 	}
-	for (q = real_list; q; q=q->next_item) {
+	for (q = real_list; q; q=q->next_item) 
+	{
 		real_count++;
 	}
 /*   sprintf(msgbuf, "Number of vars is %d\nNumber of complx is %d\nNumber of real is %d\n", var_count, complx_count, real_count);
@@ -4151,13 +4526,15 @@ int frm_prescan(FILE *open_file)
 	init_const_lists();
 
 	orig_pos = statement_pos = ftell(open_file);
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 3; i++) 
+	{
 		errors[i].start_pos    = 0L;
 		errors[i].error_pos    = 0L;
 		errors[i].error_number = 0;
 	}
 
-	while (!done) {
+	while (!done) 
+	{
 /*    char msgbuf[80] = "Just got ";
 */    filepos = ftell (open_file);
 		frmgettoken (open_file, &this_token);
@@ -4170,72 +4547,83 @@ int frm_prescan(FILE *open_file)
 		stopmsg (0, debugmsg);
 */
 		chars_in_formula += (int) strlen(this_token.token_str);
-		switch (this_token.token_type) {
+		switch (this_token.token_type) 
+		{
 			case NOT_A_TOKEN:
 				assignment_ok = 0;
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case END_OF_FILE:
 						stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
 						fseek(open_file, orig_pos, SEEK_SET);
 						return 0;
 					case ILLEGAL_CHARACTER:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_ILLEGAL_CHAR;
 						}
 						break;
 					case ILLEGAL_VARIABLE_NAME:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_ILLEGAL_VAR_NAME;
 						}
 						break;
 					case TOKEN_TOO_LONG:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_TOKEN_TOO_LONG;
 						}
 						break;
 					case FUNC_USED_AS_VAR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_FUNC_USED_AS_VAR;
 						}
 						break;
 					case JUMP_MISSING_BOOLEAN:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_JUMP_NEEDS_BOOLEAN;
 						}
 						break;
 					case JUMP_WITH_ILLEGAL_CHAR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_NO_CHAR_AFTER_THIS_JUMP;
 						}
 						break;
 					case UNDEFINED_FUNCTION:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_UNDEFINED_FUNCTION;
 						}
 						break;
 					case ILLEGAL_OPERATOR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_UNDEFINED_OPERATOR;
 						}
 						break;
 					case ILL_FORMED_CONSTANT:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+						{
 							errors[errors_found].start_pos      = statement_pos;
 							errors[errors_found].error_pos      = filepos;
 							errors[errors_found++].error_number = PE_INVALID_CONST;
@@ -4250,17 +4638,22 @@ int frm_prescan(FILE *open_file)
 			case PARENS:
 				assignment_ok = 0;
 				NewStatement = 0;
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case OPEN_PARENS:
-						if (++paren > max_parens) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (++paren > max_parens) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_NESTING_TO_DEEP;
 							}
 						}
-						else if (!ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						else if (!ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
@@ -4269,29 +4662,37 @@ int frm_prescan(FILE *open_file)
 						waiting_for_mod = waiting_for_mod << 1;
 						break;
 					case CLOSE_PARENS:
-						if (paren) {
+						if (paren) 
+						{
 							paren--;
 						}                           
-						else {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						else 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
 							}
 							paren = 0;
 						}
-						if (waiting_for_mod & 1L) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (waiting_for_mod & 1L) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
 							}
 						}
-						else {
+						else 
+						{
 							waiting_for_mod = waiting_for_mod >> 1;
 						}
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4306,14 +4707,17 @@ int frm_prescan(FILE *open_file)
 				number_of_ops++;
 				number_of_loads++;
 				NewStatement = 0;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 					}
 				}
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case 1:
 						break;
 					case 2:
@@ -4333,8 +4737,10 @@ int frm_prescan(FILE *open_file)
 				number_of_ops++;
 				number_of_loads++;
 				NewStatement = 0;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
@@ -4342,7 +4748,8 @@ int frm_prescan(FILE *open_file)
 				}
 				ExpectingArg = 0;
 /*            var_list = add_var_to_list (var_list, this_token);
-			  if (var_list == NULL) {
+			  if (var_list == NULL) 
+			  {
 					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 					fseek(open_file, orig_pos, SEEK_SET);
 					init_var_list();
@@ -4354,14 +4761,17 @@ int frm_prescan(FILE *open_file)
 				number_of_ops++;
 				number_of_loads++;
 				NewStatement = 0;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 					}
 				}
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case 0:     /* pixel */
 						break;
 					case 3:     /* z */
@@ -4394,8 +4804,10 @@ int frm_prescan(FILE *open_file)
 				number_of_ops++;
 				number_of_loads++;
 				NewStatement = 0;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
@@ -4403,7 +4815,8 @@ int frm_prescan(FILE *open_file)
 				}
 				ExpectingArg = 0;
 /*            real_list = add_const_to_list (real_list, this_token);
-			  if (real_list == NULL) {
+			  if (real_list == NULL) 
+			  {
 					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 					fseek(open_file, orig_pos, SEEK_SET);
 					init_var_list();
@@ -4416,8 +4829,10 @@ int frm_prescan(FILE *open_file)
 				number_of_ops++;
 				number_of_loads++;
 				NewStatement = 0;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
@@ -4425,7 +4840,8 @@ int frm_prescan(FILE *open_file)
 				}
 				ExpectingArg = 0;
 /*          complx_list = add_const_to_list (complx_list, this_token);
-				if (complx_list == NULL) {
+				if (complx_list == NULL) 
+				{
 					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 					fseek(open_file, orig_pos, SEEK_SET);
 					init_var_list();
@@ -4437,14 +4853,17 @@ int frm_prescan(FILE *open_file)
 				assignment_ok = 0;
 				NewStatement = 0;
 				number_of_ops++;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 					}
 				}
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case 0:
 						break;
 					case 1:
@@ -4515,14 +4934,17 @@ int frm_prescan(FILE *open_file)
 				assignment_ok = 0;
 				NewStatement = 0;
 				number_of_ops++;
-				if (!ExpectingArg) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!ExpectingArg) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 					}
 				}
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case 11:
 						break;
 					case 12:
@@ -4540,16 +4962,20 @@ int frm_prescan(FILE *open_file)
 				assignment_ok = 0;
 				number_of_ops++;
 				number_of_jumps++;
-				if (!NewStatement) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (!NewStatement) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_JUMP_NOT_FIRST;
 					}
 				}
-				else {
+				else 
+				{
 					uses_jump = 1;
-					switch (this_token.token_id) {
+					switch (this_token.token_id) 
+					{
 						case 1:  /* if */
 							else_has_been_used = else_has_been_used << 1;
 							waiting_for_endif++;
@@ -4557,15 +4983,19 @@ int frm_prescan(FILE *open_file)
 						case 2: /*ELSEIF*/
 							number_of_ops += 3; /*else + two clear statements*/
 							number_of_jumps++;  /* this involves two jumps */
-							if (else_has_been_used % 2) {
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+							if (else_has_been_used % 2) 
+							{
+								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+								{
 									errors[errors_found].start_pos      = statement_pos;
 									errors[errors_found].error_pos      = filepos;
 									errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
 								}
 							}
-							else if (!waiting_for_endif) {
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+							else if (!waiting_for_endif) 
+							{
+								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+								{
 									errors[errors_found].start_pos      = statement_pos;
 									errors[errors_found].error_pos      = filepos;
 									errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
@@ -4573,15 +5003,19 @@ int frm_prescan(FILE *open_file)
 							}
 							break;
 						case 3: /*ELSE*/
-							if (else_has_been_used % 2) {
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+							if (else_has_been_used % 2) 
+							{
+								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+								{
 									errors[errors_found].start_pos      = statement_pos;
 									errors[errors_found].error_pos      = filepos;
 									errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
 								}
 							}
-							else if (!waiting_for_endif) {
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+							else if (!waiting_for_endif) 
+							{
+								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+								{
 									errors[errors_found].start_pos      = statement_pos;
 									errors[errors_found].error_pos      = filepos;
 									errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
@@ -4592,8 +5026,10 @@ int frm_prescan(FILE *open_file)
 						case 4: /*ENDIF*/
 							else_has_been_used = else_has_been_used >> 1;
 							waiting_for_endif--;
-							if (waiting_for_endif < 0) {
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+							if (waiting_for_endif < 0) 
+							{
+								if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+								{
 									errors[errors_found].start_pos      = statement_pos;
 									errors[errors_found].error_pos      = filepos;
 									errors[errors_found++].error_number = PE_ENDIF_WITH_NO_IF;
@@ -4608,48 +5044,60 @@ int frm_prescan(FILE *open_file)
 				break;
 			case OPERATOR:
 				number_of_ops++; /*This will be corrected below in certain cases*/
-				switch (this_token.token_id) {
+				switch (this_token.token_id) 
+				{
 					case 0: case 11:    /* end of statement and : */
 						number_of_ops++; /* ParseStr inserts a dummy op*/
-						if (paren) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (paren) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
 							}
 							paren = 0;
 						}
-						if (waiting_for_mod) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (waiting_for_mod) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
 							}
 							waiting_for_mod = 0;
 						}
-						if (!ExpectingArg) {
+						if (!ExpectingArg) 
+						{
 							if (this_token.token_id == 11)
 								number_of_ops += 2;
 							else
 								number_of_ops++;
 						}
-						else if (!NewStatement) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						else if (!NewStatement) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 							}
 						}
-						if (this_token.token_id == 11 && waiting_for_endif) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (this_token.token_id == 11 && waiting_for_endif) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_UNMATCHED_IF_IN_INIT_SECTION;
 							}
 							waiting_for_endif = 0;
 						}
-						if (this_token.token_id == 11 && already_got_colon) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (this_token.token_id == 11 && already_got_colon) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SECOND_COLON;
@@ -4662,8 +5110,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 1:     /* != */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4675,8 +5125,10 @@ int frm_prescan(FILE *open_file)
 						number_of_ops--; /*this just converts a load to a store*/
 						number_of_loads--;
 						number_of_stores++;
-						if (!assignment_ok) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!assignment_ok) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
@@ -4686,8 +5138,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 3:     /* == */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4697,8 +5151,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 4:     /* < */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4708,8 +5164,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 5:     /* <= */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4719,8 +5177,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 6:     /* > */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4730,8 +5190,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 7:     /* >= */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4741,18 +5203,23 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 8:     /* | */ /* (half of the modulus operator */
 						assignment_ok = 0;
-						if (!waiting_for_mod & 1L) {
+						if (!waiting_for_mod & 1L) 
+						{
 							number_of_ops--;
 						}
-						if (!(waiting_for_mod & 1L) && !ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (!(waiting_for_mod & 1L) && !ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 							}
 						}
-						else if ((waiting_for_mod & 1L) && ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						else if ((waiting_for_mod & 1L) && ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4762,8 +5229,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 9:     /* || */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4773,8 +5242,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 10:    /* && */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4784,8 +5255,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 12:    /* + */ /* case 11 (":") is up with case 0 */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4799,8 +5272,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 14:    /* * */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4810,8 +5285,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 15:    /* / */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4821,8 +5298,10 @@ int frm_prescan(FILE *open_file)
 						break;
 					case 16:    /* ^ */
 						assignment_ok = 0;
-						if (ExpectingArg) {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (ExpectingArg) 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4830,8 +5309,10 @@ int frm_prescan(FILE *open_file)
 						}
 						filepos = ftell(open_file);
 						frmgettoken (open_file, &this_token);
-						if (this_token.token_str[0] == '-') {
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+						if (this_token.token_str[0] == '-') 
+						{
+							if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+							{
 								errors[errors_found].start_pos      = statement_pos;
 								errors[errors_found].error_pos      = filepos;
 								errors[errors_found++].error_number = PE_NO_NEG_AFTER_EXPONENT;
@@ -4847,32 +5328,40 @@ int frm_prescan(FILE *open_file)
 				break;
 			case END_OF_FORMULA:
 				number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
-				if (paren) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (paren) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
 					}
 					paren = 0;
 				}
-				if (waiting_for_mod) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (waiting_for_mod) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
 					}
 					waiting_for_mod = 0;
 				}
-				if (waiting_for_endif) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (waiting_for_endif) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_IF_WITH_NO_ENDIF;
 					}
 					waiting_for_endif = 0;
 				}
-				if (ExpectingArg && !NewStatement) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (ExpectingArg && !NewStatement) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
@@ -4880,8 +5369,10 @@ int frm_prescan(FILE *open_file)
 					statement_pos = ftell(open_file);
 				}
 
-				if (number_of_jumps >= MAX_JUMPS) {
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
+				if (number_of_jumps >= MAX_JUMPS) 
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos) 
+					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
@@ -4898,7 +5389,8 @@ int frm_prescan(FILE *open_file)
 		if (errors_found == 3)
 			done = 1;
 	}
-	if (errors[0].start_pos) {
+	if (errors[0].start_pos) 
+	{
 /*    sprintf (debugmsg, "Errors structure on entering frm_error\n 0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
           errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
           errors[1].start_pos, errors[1].error_pos, errors[1].error_number,

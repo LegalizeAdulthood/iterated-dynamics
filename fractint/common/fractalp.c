@@ -2281,7 +2281,8 @@ int paramnotused(int parm)
 	if (fractype != FORMULA && fractype != FFORMULA)
 		return 0;
 
-	switch (parm/2) {
+	switch (parm/2) 
+	{
 		case 0:
 			if (!uses_p1)
 				ret = 1;

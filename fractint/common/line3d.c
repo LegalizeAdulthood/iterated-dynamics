@@ -1214,7 +1214,8 @@ static void _fastcall interpcolor(int x, int y, int color)
 			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
 				D = targa_color(x, y, color);
 
-		if (FILLTYPE >= 5) {
+		if (FILLTYPE >= 5) 
+		{
 			if (Real_V && Targa_Out)
 				color = D;
 			else
@@ -1570,19 +1571,22 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
 	R1 = (((*V - R)*60) << 6) / DENOM; /* distance of color from red   */
 	G1 = (((*V - G)*60) << 6) / DENOM; /* distance of color from green */
 	B1 = (((*V - B)*60) << 6) / DENOM; /* distance of color from blue  */
-	if (*V == R) {
+	if (*V == R) 
+	{
 		if (MIN == G)
 			*H = (300 << 6) + B1;
 		else
 			*H = (60 << 6) - G1;
 	}
-	if (*V == G) {
+	if (*V == G) 
+	{
 		if (MIN == B)
 			*H = (60 << 6) + R1;
 		else
 			*H = (180 << 6) - B1;
 	}
-	if (*V == B) {
+	if (*V == B) 
+	{
 		if (MIN == R)
 			*H = (180 << 6) + G1;
 		else

@@ -45,7 +45,8 @@ static void   format_vid_inf(int i,char *err,char *buf);
 #endif
 static double vid_aspect(int tryxdots,int tryydots);
 
-struct vidinf {
+struct vidinf 
+{
 	int entnum;     /* g_video_entry subscript */
 	unsigned flags; /* flags for sort's compare, defined below */
 	};

@@ -468,7 +468,8 @@ int encoder()
           struct evolution_info esave_info;
           int i;
           struct evolution_info resume_e_info;
-          if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED) {
+          if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED) 
+          {
              esave_info.paramrangex     = paramrangex;
              esave_info.paramrangey     = paramrangey;
              esave_info.opx             = opx;
@@ -487,7 +488,8 @@ int encoder()
              esave_info.fiddlefactor    = fiddlefactor;
              esave_info.ecount          = (short) (gridsz*gridsz); /* flag for done */
           }
-          else { /* we will need the resuming information */
+          else  /* we will need the resuming information */
+          {
 			  memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
              esave_info.paramrangex     = resume_e_info.paramrangex;
              esave_info.paramrangey     = resume_e_info.paramrangey;
@@ -988,7 +990,8 @@ static int compress(int rowlimit)
 				{
                 ent = codetab[i];
                 continue;
-				} else if ((long)htab[i] < 0)      /* empty slot */
+				}
+				else if ((long)htab[i] < 0)      /* empty slot */
                 goto nomatch;
 				disp = hsize_reg - i;           /* secondary hash (after G. Knott) */
 				if (i == 0)
@@ -1164,7 +1167,8 @@ static void _fastcall char_out(int c)
  */
 static void _fastcall flush_char(void)
 {
-	if (a_count > 0) {
+	if (a_count > 0) 
+	{
 		fputc(a_count, g_outfile);
 		fwrite(accum, 1, a_count, g_outfile);
 		a_count = 0;
