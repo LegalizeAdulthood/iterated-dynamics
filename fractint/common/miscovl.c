@@ -20,7 +20,7 @@
 #include <varargs.h>
 #endif
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -250,15 +250,15 @@ prompt_user:
 		if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
 #endif
 			if (paramvalues[maxcolorindex].uval.ival > 0 &&
-             paramvalues[maxcolorindex].uval.ival <= 256)
+					paramvalues[maxcolorindex].uval.ival <= 256)
 				maxcolor = paramvalues[maxcolorindex].uval.ival;
 		promptnum = piecespromts;
 		{
 			int newmaxlinelength;
 			newmaxlinelength = paramvalues[promptnum-3].uval.ival;
 			if (maxlinelength != newmaxlinelength &&
-              newmaxlinelength >= MINMAXLINELENGTH &&
-              newmaxlinelength <= MAXMAXLINELENGTH)
+					newmaxlinelength >= MINMAXLINELENGTH &&
+					newmaxlinelength <= MAXMAXLINELENGTH)
 				maxlinelength = newmaxlinelength;
 		}
 		xm = paramvalues[promptnum++].uval.ival;
@@ -267,42 +267,42 @@ prompt_user:
 
 		/* sanity checks */
 		{
-		long xtotal, ytotal;
+			long xtotal, ytotal;
 #ifndef XFRACT
-		int i;
+			int i;
 
-		/* get resolution from the video name (which must be valid) */
-		pxdots = pydots = 0;
-		if ((i = check_vidmode_keyname(vidmde)) > 0)
-          if ((i = check_vidmode_key(0, i)) >= 0)
-          {
-              /* get the resolution of this video mode */
-              pxdots = g_video_table[i].xdots;
-              pydots = g_video_table[i].ydots;
-              }
-		if (pxdots == 0 && (xm > 1 || ym > 1))
-		{
-          /* no corresponding video mode! */
-          stopmsg(0, "Invalid video mode entry!");
-          goto prompt_user;
-          }
+			/* get resolution from the video name (which must be valid) */
+			pxdots = pydots = 0;
+			if ((i = check_vidmode_keyname(vidmde)) > 0)
+				if ((i = check_vidmode_key(0, i)) >= 0)
+				{
+					/* get the resolution of this video mode */
+					pxdots = g_video_table[i].xdots;
+					pydots = g_video_table[i].ydots;
+				}
+			if (pxdots == 0 && (xm > 1 || ym > 1))
+			{
+				/* no corresponding video mode! */
+				stopmsg(0, "Invalid video mode entry!");
+				goto prompt_user;
+			}
 #endif
 
-		/* bounds range on xm, ym */
-		if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
-		{
-          stopmsg(0, "X and Y components must be 1 to 36");
-          goto prompt_user;
-          }
+			/* bounds range on xm, ym */
+			if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
+			{
+				stopmsg(0, "X and Y components must be 1 to 36");
+				goto prompt_user;
+			}
 
-		/* another sanity check: total resolution cannot exceed 65535 */
-		xtotal = xm;  ytotal = ym;
-		xtotal *= pxdots;  ytotal *= pydots;
-		if (xtotal > 65535L || ytotal > 65535L)
-		{
-			stopmsg(0, "Total resolution (X or Y) cannot exceed 65535");
-			goto prompt_user;
-        }
+			/* another sanity check: total resolution cannot exceed 65535 */
+			xtotal = xm;  ytotal = ym;
+			xtotal *= pxdots;  ytotal *= pydots;
+			if (xtotal > 65535L || ytotal > 65535L)
+			{
+				stopmsg(0, "Total resolution (X or Y) cannot exceed 65535");
+				goto prompt_user;
+			}
 		}
 skip_UI:
 		if (*s_makepar == 0)
@@ -1583,7 +1583,7 @@ void edit_text_colors()
 			driver_unstack_screen();
 			driver_move_cursor(row, col);
 			break;
-		case ', ':
+		case ',':
 			rowf = row;
 			colf = col;
 			break;

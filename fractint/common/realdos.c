@@ -1818,7 +1818,7 @@ void load_fractint_config(void)
 				}
 				tempstring[i] = ' '; /* convert tab (or whatever) to blank */
 			}
-			else if (tempstring[i] == ', ' && ++j < 11)
+			else if (tempstring[i] == ',' && ++j < 11)
 			{
 #if defined(_WIN32)
 				_ASSERTE(j >= 0 && j < 11);
