@@ -277,7 +277,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	long toallocate;
 
 	success = FALSE;
-	toallocate = count * size;
+	toallocate = count*size;
 	if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
 		return (U16)success; /* or it wraps around to negative */
 
@@ -410,8 +410,8 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	int success;
 
 	success = FALSE;
-	start = (long)offset * size;
-	tomove = (long)count * size;
+	start = (long)offset*size;
+	tomove = (long)count*size;
 	if (debugflag == 10000)
 		if (CheckBounds(start, tomove, handle))
 			return success; /* out of bounds, don't do it */
@@ -471,8 +471,8 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	int success;
 
 	success = FALSE;
-	start = (long)offset * size;
-	tomove = (long)count * size;
+	start = (long)offset*size;
+	tomove = (long)count*size;
 	if (debugflag == 10000)
 		if (CheckBounds(start, tomove, handle))
 			return success; /* out of bounds, don't do it */
@@ -534,8 +534,8 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 	int success;
 
 	success = FALSE;
-	start = (long)offset * size;
-	tomove = (long)count * size;
+	start = (long)offset*size;
+	tomove = (long)count*size;
 	if (debugflag == 10000)
 		if (CheckBounds(start, tomove, handle))
 			return success; /* out of bounds, don't do it */

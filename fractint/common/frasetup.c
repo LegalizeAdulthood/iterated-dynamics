@@ -1072,7 +1072,7 @@ MarksJuliafpSetup(void)
 	else if (c_exp == 3)
 	{
 		coefficient.x = sqr(old.x) - sqr(old.y);
-		coefficient.y = old.x * old.y * 2;
+		coefficient.y = old.x*old.y*2;
 	}
 	else if (c_exp == 2)
 		coefficient = old;
@@ -1125,7 +1125,7 @@ HalleySetup(void)
 
 /*  precalculated values */
 	AplusOne = degree + 1; /* a + 1 */
-	Ap1deg = AplusOne * degree;
+	Ap1deg = AplusOne*degree;
 
 #if !defined(XFRACT)
 	if (fractype == MPHALLEY) {

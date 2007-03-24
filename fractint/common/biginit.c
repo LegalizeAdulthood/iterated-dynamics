@@ -87,7 +87,7 @@ void calc_lengths(void)
 #endif
 
 	if (bnlength % bnstep != 0)
-		bnlength = (bnlength / bnstep + 1) * bnstep;
+		bnlength = (bnlength / bnstep + 1)*bnstep;
 	if (bnlength == bnstep)
 		padding = bnlength;
 	else

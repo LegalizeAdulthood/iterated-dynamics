@@ -795,7 +795,7 @@ JuliabnFractal()
 	sub_a_bn(bntmpsqrx + shiftfactor, bntmpsqry + shiftfactor);
 	add_bn(bnnew.x, bntmpsqrx + shiftfactor, bnparm.x);
 
-	/* new.y = 2 * bnold.x * bnold.y + parm.y; */
+	/* new.y = 2*bnold.x*bnold.y + parm.y; */
 	mult_bn(bntmp, bnold.x, bnold.y); /* ok to use unsafe here */
 	double_a_bn(bntmp + shiftfactor);
 	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
@@ -810,7 +810,7 @@ JuliabfFractal()
 	sub_a_bf(bftmpsqrx, bftmpsqry);
 	add_bf(bfnew.x, bftmpsqrx, bfparm.x);
 
-	/* new.y = 2 * bfold.x * bfold.y + parm.y; */
+	/* new.y = 2*bfold.x*bfold.y + parm.y; */
 	mult_bf(bftmp, bfold.x, bfold.y); /* ok to use unsafe here */
 	double_a_bf(bftmp);
 	add_bf(bfnew.y, bftmp, bfparm.y);
@@ -882,7 +882,7 @@ JuliabnFractal()
 	*/
 	add_bn(bnnew.x, bntmpsqrx + shiftfactor, bnparm.x);
 
-	/* new.y = 2 * bnold.x * bnold.y + old.y; */
+	/* new.y = 2*bnold.x*bnold.y + old.y; */
 	/* Multiply bnold.x*bnold.y to rlength precision. */
 	mult_bn(bntmp, bnold.x, bnold.y);
 

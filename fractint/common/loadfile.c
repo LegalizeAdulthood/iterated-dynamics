@@ -667,13 +667,13 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 	fileaspectratio = 0; /* unknown */
 	if (gifstart[12]) { /* calc reasonably close value from gif header */
 		fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
-                      * (double)fileydots / (double)filexdots);
+                     *(double)fileydots / (double)filexdots);
 		if (fileaspectratio > screenaspect-0.03
 		&& fileaspectratio < screenaspect + 0.03)
 			fileaspectratio = screenaspect;
 		}
 	else
-		if (fileydots * 4 == filexdots * 3) /* assume the common square pixels */
+		if (fileydots*4 == filexdots*3) /* assume the common square pixels */
 			fileaspectratio = screenaspect;
 
 	if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
@@ -1040,11 +1040,11 @@ static void backwardscompat(struct fractal_info *info)
 			break;
 		case DEMM         :
 			fractype = MANDELFP;
-			usr_distest = (info->ydots - 1) * 2;
+			usr_distest = (info->ydots - 1)*2;
 			break;
 		case DEMJ         :
 			fractype = JULIAFP;
-			usr_distest = (info->ydots - 1) * 2;
+			usr_distest = (info->ydots - 1)*2;
 			break;
 		case MANDELLAMBDA :
 			useinitorbit = 2;
@@ -1670,8 +1670,8 @@ static void drawindow(int colour,struct window *info)
 static void transform(struct dblcoords *point)
 {
   double tmp_pt_x;
-  tmp_pt_x = cvt->a * point->x + cvt->b * point->y + cvt->e;
-  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
+  tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
+  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
   point->x = tmp_pt_x;
 }
 
@@ -1692,7 +1692,7 @@ static char is_visible_window
 		orig_shiftfactor,
 		orig_rbflength;
  double toobig, tmp_sqrt;
- toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots)) * 1.5;
+ toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots))*1.5;
   /* arbitrary value... stops browser zooming out too far */
  cornercount = 0;
  cant_see = 0;
@@ -2080,14 +2080,14 @@ static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
 	bt_tmp1 = alloc_stack(rbflength + 2);
 	bt_tmp2 = alloc_stack(rbflength + 2);
 
-/*  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e; */
+/*  point->x = cvt->a*point->x + cvt->b*point->y + cvt->e; */
 	mult_bf(bt_tmp1, n_a, bt_x);
 	mult_bf(bt_tmp2, n_b, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_e);
 	point->x = (double)bftofloat(bt_tmp1);
 
-/*  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f; */
+/*  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f; */
 	mult_bf(bt_tmp1, n_c, bt_x);
 	mult_bf(bt_tmp2, n_d, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);

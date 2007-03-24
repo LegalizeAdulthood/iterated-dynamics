@@ -100,7 +100,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	char buf[81];
 
 		/* scrolling related variables */
-	FILE * scroll_file = NULL;     /* file with extrainfo entry to scroll   */
+	FILE *scroll_file = NULL;     /* file with extrainfo entry to scroll   */
 	long scroll_file_start = 0;    /* where entry starts in scroll_file     */
 	int in_scrolling_mode = 0;     /* will be 1 if need to scroll extrainfo */
 	int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
@@ -1801,7 +1801,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
+int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname)
 {
 		/*
 		function returns the number of entries found; if a
@@ -2525,7 +2525,7 @@ restart_1:
 		for (i = 0; i < k; ++i)
 			attributes[i] = 1;
 		helpmode = HELP3DFILL;
-		i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char * *)choices, attributes,
+		i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
 										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
 		helpmode = oldhelpmode;
 		if (i < 0)

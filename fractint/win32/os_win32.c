@@ -318,7 +318,7 @@ long divide(long x, long y, int n)
 long multiply(long x, long y, int n)
 {
 	register long l;
-	l = (long) (((float) x) * ((float) y)/(float) (1 << n));
+	l = (long) (((float) x)*((float) y)/(float) (1 << n));
 	if (l == 0x7fffffff)
 	{
 		overflow = 1;

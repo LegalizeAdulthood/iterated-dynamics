@@ -2965,7 +2965,7 @@ static void parse_textcolors(char *value)
 				j = hexval & 15;
 				if (i == j || (i == 0 && j == 8)) /* force contrast */
 					j = 15;
-				txtcolor[k] = (BYTE)(i * 16 + j);
+				txtcolor[k] = (BYTE) (i*16 + j);
 				value = strchr(value,'/');
 			if (value == NULL) break;
 				}

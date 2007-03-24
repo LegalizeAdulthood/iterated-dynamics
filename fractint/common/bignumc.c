@@ -353,7 +353,7 @@ bn_t half_a_bn(bn_t r)
 	}
 
 /************************************************************************/
-/* r = n1 * n2                                                          */
+/* r = n1*n2                                                          */
 /* Note: r will be a double wide result, 2*bnlength                     */
 /*       n1 and n2 can be the same pointer                              */
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
@@ -392,7 +392,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 		n2p = n2;
 		for (j = 0; j < steps; j++)
 				{
-				prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
+				prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); /* U16*U16=U32 */
 				sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
 				big_set16(rp2, (U16)sum); /* save the lower 2 bytes */
 				sum >>= 16;             /* keep just the upper 2 bytes */
@@ -427,7 +427,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	}
 
 /************************************************************************/
-/* r = n1 * n2 calculating only the top rlength bytes                   */
+/* r = n1*n2 calculating only the top rlength bytes                   */
 /* Note: r will be of length rlength                                    */
 /*       2*bnlength <= rlength < bnlength                               */
 /*       n1 and n2 can be the same pointer                              */
@@ -468,7 +468,7 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 		n2p = n2;
 		for (j = 0; j < steps; j++)
 				{
-				prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
+				prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); /* U16*U16=U32 */
 				sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
 				big_set16(rp2, (U16)sum); /* save the lower 2 bytes */
 				sum >>= 16;             /* keep just the upper 2 bytes */
@@ -549,7 +549,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 				n2p = n1p + 2;  /* set n2p pointer to 1 step beyond n1p */
 				for (j = 0; j < steps; j++)
                 {
-                prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
+                prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); /* U16*U16=U32 */
                 sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
                 big_set16(rp2, (U16)sum); /* save the lower 2 bytes */
                 sum >>= 16;             /* keep just the upper 2 bytes */
@@ -569,7 +569,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
                 carry_steps--;
                 }
 				n1p += 2;           /* increase by two bytes */
-				rp2 = rp1 += 4;     /* increase by 2 * two bytes */
+				rp2 = rp1 += 4;     /* increase by 2*two bytes */
 				carry_steps = doublesteps -= 2;   /* reduce the carry steps needed */
 				steps--;
 				}
@@ -588,7 +588,7 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 	for (i = 0; i < steps; i++)
 		{
 		/* square it */
-		prod = (U32)big_access16(n1p) * (U32)big_access16(n1p); /* U16*U16=U32 */
+		prod = (U32)big_access16(n1p)*(U32)big_access16(n1p); /* U16*U16=U32 */
 		sum = (U32)big_access16(rp1) + prod; /* add to previous, including overflow */
 		big_set16(rp1, (U16)sum); /* save the lower 2 bytes */
 		sum >>= 16;             /* keep just the upper 2 bytes */
@@ -662,7 +662,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 				{
 				for (j = 0; j < steps; j++)
                 {
-                prod = (U32)big_access16(n1p) * (U32)big_access16(n2p); /* U16*U16=U32 */
+                prod = (U32)big_access16(n1p)*(U32)big_access16(n2p); /* U16*U16=U32 */
                 sum = (U32)big_access16(rp2) + prod; /* add to previous, including overflow */
                 big_set16(rp2, (U16)sum); /* save the lower 2 bytes */
                 sum >>= 16;             /* keep just the upper 2 bytes */
@@ -727,7 +727,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	for (; i > 0; i--)
 		{
 		/* square it */
-		prod = (U32)big_access16(n1p) * (U32)big_access16(n1p); /* U16*U16=U32 */
+		prod = (U32)big_access16(n1p)*(U32)big_access16(n1p); /* U16*U16=U32 */
 		sum = (U32)big_access16(rp1) + prod; /* add to previous, including overflow */
 		big_set16(rp1, (U16)sum); /* save the lower 2 bytes */
 		sum >>= 16;             /* keep just the upper 2 bytes */
@@ -750,7 +750,7 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	}
 
 /********************************************************************/
-/* r = n * u  where u is an unsigned integer */
+/* r = n*u  where u is an unsigned integer */
 bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 	{
 	int i;
@@ -759,7 +759,7 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 		{
-		prod += (U32)big_access16(n + i) * u ; /* n*u */
+		prod += (U32)big_access16(n + i)*u ; /* n*u */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 		}
@@ -776,7 +776,7 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 		{
-		prod += (U32)big_access16(r + i) * u ; /* r*u */
+		prod += (U32)big_access16(r + i)*u ; /* r*u */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 		}

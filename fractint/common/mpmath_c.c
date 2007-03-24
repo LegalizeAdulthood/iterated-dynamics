@@ -212,8 +212,8 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 		else
 			e2x = exp(t.x);
 		FPUsincos(&t.y, &siny, &cosy);
-		z.x = e2x * cosy;
-		z.y = e2x * siny;
+		z.x = e2x*cosy;
+		z.y = e2x*siny;
 	}
 	return z;
 }
@@ -351,9 +351,9 @@ long lsqrt(long f)
 
 	if (a == 0)                                   /* one-time compute consts */
 	{
-		a = (long)(fudge * .41731);
-		b = (long)(fudge * .59016);
-		c = (long)(fudge * .7071067811);
+		a = (long)(fudge*.41731);
+		b = (long)(fudge*.59016);
+		c = (long)(fudge*.7071067811);
 	}
 
 	N  = 0;
@@ -394,12 +394,12 @@ LCMPLX ComplexSqrtLong(long x, long y)
 #ifndef LONGSQRT
 	mag       = sqrt(sqrt(((double) multiply(x, x, bitshift))/fudge +
                          ((double) multiply(y, y, bitshift))/ fudge));
-	maglong   = (long)(mag * fudge);
+	maglong   = (long)(mag*fudge);
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, bitshift) + multiply(y, y, bitshift)));
 #endif
 	theta     = atan2((double) y/fudge, (double) x/fudge)/2;
-	thetalong = (long)(theta * SinCosFudge);
+	thetalong = (long)(theta*SinCosFudge);
 	SinCos086(thetalong, &result.y, &result.x);
 	result.x  = multiply(result.x << (bitshift - 16), maglong, bitshift);
 	result.y  = multiply(result.y << (bitshift - 16), maglong, bitshift);
@@ -539,19 +539,19 @@ long logtablecalc(long citer) {
 				ret = (long)(citer - lf);
 		}
 		else
-			ret = (long)(mlf * log(citer - lf)) + 1;
+			ret = (long)(mlf*log(citer - lf)) + 1;
 	} else if (LogFlag == -1) { /* old log function */
 		if (citer == 0)
 			ret = 1;
 		else
-			ret = (long)(mlf * log(citer)) + 1;
+			ret = (long)(mlf*log(citer)) + 1;
 	} else if (LogFlag <= -2) { /* sqrt function */
 		if ((unsigned long)citer <= lf)
 			ret = 1;
-		else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf * mlf))
+		else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf*mlf))
 			ret = (long)(citer - lf + 1);
 		else
-			ret = (long)(mlf * sqrt(citer - lf)) + 1;
+			ret = (long)(mlf*sqrt(citer - lf)) + 1;
 	}
 	return ret;
 }
@@ -580,7 +580,7 @@ int ComplexNewtonSetup(void) {
 		cdegree.x = param[0];
 		cdegree.y = param[1];
 		FPUcplxlog(&croot, &BaseLog);
-		TwoPi = asin(1.0) * 4;
+		TwoPi = asin(1.0)*4;
 	}
 	return 1;
 }
@@ -588,9 +588,9 @@ int ComplexNewtonSetup(void) {
 int ComplexNewton(void) {
 	_CMPLX cd1;
 
-	/* new = ((cdegree-1) * old**cdegree) + croot
+	/* new = ((cdegree-1)*old**cdegree) + croot
 				----------------------------------
-                 cdegree * old**(cdegree-1)         */
+                 cdegree*old**(cdegree-1)         */
 
 	cd1.x = cdegree.x - 1.0;
 	cd1.y = cdegree.y;
@@ -621,9 +621,9 @@ int ComplexBasin(void) {
 	_CMPLX cd1;
 	double mod;
 
-	/* new = ((cdegree-1) * old**cdegree) + croot
+	/* new = ((cdegree-1)*old**cdegree) + croot
 				----------------------------------
-                 cdegree * old**(cdegree-1)         */
+                 cdegree*old**(cdegree-1)         */
 
 	cd1.x = cdegree.x - 1.0;
 	cd1.y = cdegree.y;

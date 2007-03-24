@@ -299,8 +299,8 @@ int orbit3dlongsetup()
 	{
 		LCMPLX Sqrt;
 
-		CxLong = (long)(param[0] * fudge);
-		CyLong = (long)(param[1] * fudge);
+		CxLong = (long)(param[0]*fudge);
+		CyLong = (long)(param[1]*fudge);
 
 		mxhits    = (int) param[2];
 		run_length = (int) param[3];
@@ -313,14 +313,14 @@ int orbit3dlongsetup()
 		setup_convert_to_screen(&cvt);
 		/* Note: using bitshift of 21 for affine, 24 otherwise */
 
-		lcvt.a = (long)(cvt.a * (1L << 21));
-		lcvt.b = (long)(cvt.b * (1L << 21));
-		lcvt.c = (long)(cvt.c * (1L << 21));
-		lcvt.d = (long)(cvt.d * (1L << 21));
-		lcvt.e = (long)(cvt.e * (1L << 21));
-		lcvt.f = (long)(cvt.f * (1L << 21));
+		lcvt.a = (long)(cvt.a*(1L << 21));
+		lcvt.b = (long)(cvt.b*(1L << 21));
+		lcvt.c = (long)(cvt.c*(1L << 21));
+		lcvt.d = (long)(cvt.d*(1L << 21));
+		lcvt.e = (long)(cvt.e*(1L << 21));
+		lcvt.f = (long)(cvt.f*(1L << 21));
 
-		Sqrt = ComplexSqrtLong(fudge - 4 * CxLong, -4 * CyLong);
+		Sqrt = ComplexSqrtLong(fudge - 4*CxLong, -4*CyLong);
 
 		switch (major_method) {
 			case breadth_first:
@@ -489,7 +489,7 @@ int orbit3dfloatsetup()
 		setup_convert_to_screen(&cvt);
 
 		/* find fixed points: guaranteed to be in the set */
-		Sqrt = ComplexSqrtFloat(1 - 4 * Cx, -4 * Cy);
+		Sqrt = ComplexSqrtFloat(1 - 4*Cx, -4*Cy);
 		switch ((int) major_method) {
 			case breadth_first:
 				if (Init_Queue((long)32*1024) == 0)
@@ -617,8 +617,8 @@ Minverse_julia_orbit()
 	/*
 	* Next, find its pixel position
 	*/
-	newcol = (int)(cvt.a * g_new.x + cvt.b * g_new.y + cvt.e);
-	newrow = (int)(cvt.c * g_new.x + cvt.d * g_new.y + cvt.f);
+	newcol = (int)(cvt.a*g_new.x + cvt.b*g_new.y + cvt.e);
+	newrow = (int)(cvt.c*g_new.x + cvt.d*g_new.y + cvt.f);
 
 	/*
 	* Now find the next point(s), and flip a coin to choose one.
@@ -635,10 +635,10 @@ Minverse_julia_orbit()
        */
 		switch (major_method) {
 			case breadth_first:
-				EnQueueFloat((float)(leftright * g_new.x), (float)(leftright * g_new.y));
+				EnQueueFloat((float)(leftright*g_new.x), (float)(leftright*g_new.y));
 				return 1;
 			case depth_first:
-				PushFloat   ((float)(leftright * g_new.x), (float)(leftright * g_new.y));
+				PushFloat   ((float)(leftright*g_new.x), (float)(leftright*g_new.y));
 				return 1;
 			case random_run:
 			case random_walk:
@@ -703,8 +703,8 @@ Minverse_julia_orbit()
 					g_new.y = -g_new.y;
 					break;
 				case 2:     /* random direction */
-					g_new.x = leftright * g_new.x;
-					g_new.y = leftright * g_new.y;
+					g_new.x = leftright*g_new.x;
+					g_new.y = leftright*g_new.y;
 					break;
 			}
 			if (color < colors-1)
@@ -713,8 +713,8 @@ Minverse_julia_orbit()
 		case random_walk:
 			if (color < colors-1)
 				putcolor(newcol, newrow, color + 1);
-			g_new.x = leftright * g_new.x;
-			g_new.y = leftright * g_new.y;
+			g_new.x = leftright*g_new.x;
+			g_new.y = leftright*g_new.y;
 			break;
 	}
 	return 1;
@@ -799,11 +799,11 @@ Linverse_julia_orbit()
 		switch (major_method) {
 			case breadth_first:
 				lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-				EnQueueLong(color * lnew.x, color * lnew.y);
+				EnQueueLong(color*lnew.x, color*lnew.y);
 				break;
 			case depth_first:
 				lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-				PushLong(color * lnew.x, color * lnew.y);
+				PushLong(color*lnew.x, color*lnew.y);
 				break;
 			case random_run:
 				random_len--;
@@ -983,10 +983,10 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
 		/* 4-lobe Lorenz */
 		dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
              (adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
-             (2 * ((*x)*(*x) + (*y)*(*y)));
+             (2*((*x)*(*x) + (*y)*(*y)));
 		dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
              (-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
-             (2 * ((*x)*(*x) + (*y)*(*y)));
+             (2*((*x)*(*x) + (*y)*(*y)));
 		dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
 
 		*x += dx;
@@ -1130,8 +1130,8 @@ int chip2dfloatorbit(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x) * cos(sqr(log(fabs(b*(*x)-c))))
-                       * atan(sqr(log(fabs(c*(*x)-b))));
+	tmp = *y - sign(*x)*cos(sqr(log(fabs(b*(*x)-c))))
+*atan(sqr(log(fabs(c*(*x)-b))));
 	*y = a - *x;
 	*x = tmp;
 	return 0;
@@ -1142,8 +1142,8 @@ int quadruptwo2dfloatorbit(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x) * sin(log(fabs(b*(*x)-c)))
-                       * atan(sqr(log(fabs(c*(*x)-b))));
+	tmp = *y - sign(*x)*sin(log(fabs(b*(*x)-c)))
+*atan(sqr(log(fabs(c*(*x)-b))));
 	*y = a - *x;
 	*x = tmp;
 	return 0;
@@ -1225,20 +1225,20 @@ int iconfloatorbit(double *x, double *y, double *z)
 	oldx = *x;
 	oldy = *y;
 
-	zzbar = oldx * oldx + oldy * oldy;
+	zzbar = oldx*oldx + oldy*oldy;
 	zreal = oldx;
 	zimag = oldy;
 
 	for (i = 1; i <= DEGREE-2; i++) {
-		za = zreal * oldx - zimag * oldy;
-		zb = zimag * oldx + zreal * oldy;
+		za = zreal*oldx - zimag*oldy;
+		zb = zimag*oldx + zreal*oldy;
 		zreal = za;
 		zimag = zb;
 	}
-	zn = oldx * zreal - oldy * zimag;
-	p = LAMBDA + ALPHA * zzbar + BETA * zn;
-	*x = p * oldx + GAMMA * zreal - OMEGA * oldy;
-	*y = p * oldy - GAMMA * zimag + OMEGA * oldx;
+	zn = oldx*zreal - oldy*zimag;
+	p = LAMBDA + ALPHA*zzbar + BETA*zn;
+	*x = p*oldx + GAMMA*zreal - OMEGA*oldy;
+	*y = p*oldy - GAMMA*zimag + OMEGA*oldx;
 
 	*z = zzbar;
 	return 0;
@@ -1266,25 +1266,25 @@ int latoofloatorbit(double *x, double *y, double *z)
 	xold = *x;
 	yold = *y;
 
-/*    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B); */
-	old.x = yold * PAR_B;
-	old.y = 0;          /* old = (y * B) + 0i (in the complex)*/
+/*    *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B); */
+	old.x = yold*PAR_B;
+	old.y = 0;          /* old = (y*B) + 0i (in the complex)*/
 	CMPLXtrig0(old, g_new);
 	tmp = (double) g_new.x;
-	old.x = xold * PAR_B;
-	old.y = 0;          /* old = (x * B) + 0i */
+	old.x = xold*PAR_B;
+	old.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig1(old, g_new);
-	*x  = PAR_C * g_new.x + tmp;
+	*x  = PAR_C*g_new.x + tmp;
 
-/*    *y = sin(xold * PAR_A) + PAR_D * sin(yold * PAR_A); */
-	old.x = xold * PAR_A;
-	old.y = 0;          /* old = (y * A) + 0i (in the complex)*/
+/*    *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); */
+	old.x = xold*PAR_A;
+	old.y = 0;          /* old = (y*A) + 0i (in the complex)*/
 	CMPLXtrig2(old, g_new);
 	tmp = (double) g_new.x;
-	old.x = yold * PAR_A;
-	old.y = 0;          /* old = (x * B) + 0i */
+	old.x = yold*PAR_A;
+	old.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig3(old, g_new);
-	*y  = PAR_D * g_new.x + tmp;
+	*y  = PAR_D*g_new.x + tmp;
 
 	return 0;
 }
@@ -2227,15 +2227,15 @@ static int ifs3dfloat(void)
 
 		/* calculate image of last point under selected iterated function */
 		ffptr = ifs_defn + k*IFS3DPARM; /* point to first parm in row */
-		newx = *ffptr * inf.orbit[0] +
-             *(ffptr + 1) * inf.orbit[1] +
-             *(ffptr + 2) * inf.orbit[2] + *(ffptr + 9);
-		newy = *(ffptr + 3) * inf.orbit[0] +
-             *(ffptr + 4) * inf.orbit[1] +
-             *(ffptr + 5) * inf.orbit[2] + *(ffptr + 10);
-		newz = *(ffptr + 6) * inf.orbit[0] +
-             *(ffptr + 7) * inf.orbit[1] +
-             *(ffptr + 8) * inf.orbit[2] + *(ffptr + 11);
+		newx = *ffptr*inf.orbit[0] +
+             *(ffptr + 1)*inf.orbit[1] +
+             *(ffptr + 2)*inf.orbit[2] + *(ffptr + 9);
+		newy = *(ffptr + 3)*inf.orbit[0] +
+             *(ffptr + 4)*inf.orbit[1] +
+             *(ffptr + 5)*inf.orbit[2] + *(ffptr + 10);
+		newz = *(ffptr + 6)*inf.orbit[0] +
+             *(ffptr + 7)*inf.orbit[1] +
+             *(ffptr + 8)*inf.orbit[2] + *(ffptr + 11);
 
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;
@@ -2320,7 +2320,7 @@ static int ifs2d(void)
 
 	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
 		for (j = 0; j < IFSPARM; j++)
-			localifs[i*IFSPARM + j] = (long)(ifs_defn[i*IFSPARM + j] * fudge);
+			localifs[i*IFSPARM + j] = (long)(ifs_defn[i*IFSPARM + j]*fudge);
 
 	tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2409,7 +2409,7 @@ static int ifs3dlong(void)
 
 	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
 		for (j = 0; j < IFS3DPARM; j++)
-			localifs[i*IFS3DPARM + j] = (long)(ifs_defn[i*IFS3DPARM + j] * fudge);
+			localifs[i*IFS3DPARM + j] = (long)(ifs_defn[i*IFS3DPARM + j]*fudge);
 
 	tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2567,9 +2567,9 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++)
 			{
-				inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
+				inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
 				if (realtime)
-					inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
+					inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
 			}
 	}
 
@@ -2623,9 +2623,9 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 			for (i = 0; i < 4; i++)
 				for (j = 0; j < 4; j++)
 				{
-					inf->longmat[i][j] = (long)(inf->doublemat[i][j] * fudge);
+					inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
 					if (realtime)
-						inf->longmat1[i][j] = (long)(inf->doublemat1[i][j] * fudge);
+						inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
 				}
 		}
 		return 0;

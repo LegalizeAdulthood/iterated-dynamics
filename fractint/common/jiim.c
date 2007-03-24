@@ -78,7 +78,7 @@ void SetAspect(double aspect)
 		if (aspect > 1.0)
 			yAspect = (unsigned int)(65536.0 / aspect);
 		else
-			xAspect = (unsigned int)(65536.0 * aspect);
+			xAspect = (unsigned int)(65536.0*aspect);
 	}
 }
 
@@ -115,9 +115,9 @@ void circleplot(int x, int y, int color)
 		if (yAspect == 0)
 			c_putcolor(x + xbase, y + ybase, color);
 		else
-			c_putcolor(x + xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
+			c_putcolor(x + xbase, (short)(ybase + (((long) y*(long) yAspect) >> 16)), color);
 	else
-		c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y + ybase, color);
+		c_putcolor((int)(xbase + (((long) x*(long) xAspect) >> 16)), y + ybase, color);
 }
 
 void plot8(int x, int y, int color)
@@ -235,11 +235,11 @@ int Init_Queue(unsigned long request)
 #if 0
 	if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
 		if ((largest = xmmlongest()) > request / 128)
-			request   = (unsigned long) largest * 128L;
+			request   = (unsigned long) largest*128L;
 #endif
 
 	for (ListSize = request; ListSize > 1024; ListSize /= 2)
-		switch (common_startdisk(ListSize * 8, 1, 256))
+		switch (common_startdisk(ListSize*8, 1, 256))
 		{
 			case 0:                        /* success */
 				ListFront = ListBack = 0;
@@ -574,10 +574,10 @@ void Jiim(int which)         /* called by fractint */
 		windows = 0; /* full screen or large view window */
 		xd = sxdots / 3;
 		yd = sydots / 3;
-		xc = xd * 2;
-		yc = yd * 2;
-		xoff = xd * 5 / 2;
-		yoff = yd * 5 / 2;
+		xc = xd*2;
+		yc = yd*2;
+		xoff = xd*5 / 2;
+		yoff = yd*5 / 2;
 	}
 	else if (xdots > sxdots/3 && ydots > sydots/3)
 	{
@@ -895,7 +895,7 @@ void Jiim(int which)         /* called by fractint */
 			{
 				_CMPLX f1, f2, Sqrt;        /* Fixed points of Julia */
 
-				Sqrt = ComplexSqrtFloat(1 - 4 * cr, -4 * ci);
+				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
 				f1.x = (1 + Sqrt.x) / 2;
 				f2.x = (1 - Sqrt.x) / 2;
 				f1.y =  Sqrt.y / 2;
@@ -975,8 +975,8 @@ void Jiim(int which)         /* called by fractint */
 					if (maxhits < colors - 1)
                    maxhits++;
 #endif
-				x = (int)(old.x * xfactor * zoom + xoff);
-				y = (int)(old.y * yfactor * zoom + yoff);
+				x = (int)(old.x*xfactor*zoom + xoff);
+				y = (int)(old.y*yfactor*zoom + yoff);
 				color = c_getcolor(x, y);
 				if (color < maxhits)
 				{
@@ -1022,8 +1022,8 @@ void Jiim(int which)         /* called by fractint */
                    g_new.x = -g_new.x;
                    g_new.y = -g_new.y;
                 }
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 break;
 				case 1:                     /* always go one direction */
                 if (SaveC.y < 0)
@@ -1031,8 +1031,8 @@ void Jiim(int which)         /* called by fractint */
                    g_new.x = -g_new.x;
                    g_new.y = -g_new.y;
                 }
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 break;
 				case 2:                     /* go one dir, draw the other */
                 if (SaveC.y < 0)
@@ -1040,29 +1040,29 @@ void Jiim(int which)         /* called by fractint */
                    g_new.x = -g_new.x;
                    g_new.y = -g_new.y;
                 }
-                x = (int)(-g_new.x * xfactor * zoom + xoff);
-                y = (int)(-g_new.y * yfactor * zoom + yoff);
+                x = (int)(-g_new.x*xfactor*zoom + xoff);
+                y = (int)(-g_new.y*yfactor*zoom + yoff);
                 break;
 				case 4:                     /* go negative if max color */
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 if (c_getcolor(x, y) == colors - 1)
                 {
                    g_new.x = -g_new.x;
                    g_new.y = -g_new.y;
-                   x = (int)(g_new.x * xfactor * zoom + xoff);
-                   y = (int)(g_new.y * yfactor * zoom + yoff);
+                   x = (int)(g_new.x*xfactor*zoom + xoff);
+                   y = (int)(g_new.y*yfactor*zoom + yoff);
                 }
                 break;
 				case 5:                     /* go positive if max color */
                 g_new.x = -g_new.x;
                 g_new.y = -g_new.y;
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 if (c_getcolor(x, y) == colors - 1)
                 {
-                   x = (int)(g_new.x * xfactor * zoom + xoff);
-                   y = (int)(g_new.y * yfactor * zoom + yoff);
+                   x = (int)(g_new.x*xfactor*zoom + xoff);
+                   y = (int)(g_new.y*yfactor*zoom + yoff);
                 }
                 break;
 				case 7:
@@ -1071,8 +1071,8 @@ void Jiim(int which)         /* called by fractint */
                    g_new.x = -g_new.x;
                    g_new.y = -g_new.y;
                 }
-                x = (int)(-g_new.x * xfactor * zoom + xoff);
-                y = (int)(-g_new.y * yfactor * zoom + yoff);
+                x = (int)(-g_new.x*xfactor*zoom + xoff);
+                y = (int)(-g_new.y*yfactor*zoom + yoff);
                 if (iter > 10)
                 {
                    if (mode == 0)                        /* pixels  */
@@ -1090,8 +1090,8 @@ void Jiim(int which)         /* called by fractint */
                    old_x = x;
                    old_y = y;
                 }
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 break;
 				case 8:                     /* go in long zig zags */
                 if (rancnt >= 300)
@@ -1101,8 +1101,8 @@ void Jiim(int which)         /* called by fractint */
                     g_new.x = -g_new.x;
                     g_new.y = -g_new.y;
                 }
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 break;
 				case 9:                     /* "random run" */
                 switch (randir) {
@@ -1130,8 +1130,8 @@ void Jiim(int which)         /* called by fractint */
                             randir = rancnt = 0;
 								break;
                 }
-                x = (int)(g_new.x * xfactor * zoom + xoff);
-                y = (int)(g_new.y * yfactor * zoom + yoff);
+                x = (int)(g_new.x*xfactor*zoom + xoff);
+                y = (int)(g_new.y*yfactor*zoom + yoff);
                 break;
 			} /* end switch SecretMode (sorry about the indentation) */
 			} /* end if not MIIM */
@@ -1146,8 +1146,8 @@ void Jiim(int which)         /* called by fractint */
 					old.x = lold.x; old.x /= fudge;
 					old.y = lold.y; old.y /= fudge;
 				}
-				x = (int)((old.x - init.x) * xfactor * 3 * zoom + xoff);
-				y = (int)((old.y - init.y) * yfactor * 3 * zoom + yoff);
+				x = (int)((old.x - init.x)*xfactor*3*zoom + xoff);
+				y = (int)((old.y - init.y)*yfactor*3*zoom + yoff);
 				if ((*ORBITCALC)())
 					iter = maxit;
 				else

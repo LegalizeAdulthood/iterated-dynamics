@@ -669,17 +669,17 @@ int calcfract(void)
 	rqlim2 = sqrt(rqlim);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
-		lparm.x = (long)(parm.x * fudge);    /* real portion of Lambda */
-		lparm.y = (long)(parm.y * fudge);    /* imaginary portion of Lambda */
-		lparm2.x = (long)(parm2.x * fudge);  /* real portion of Lambda2 */
-		lparm2.y = (long)(parm2.y * fudge);  /* imaginary portion of Lambda2 */
-		llimit = (long)(rqlim * fudge);      /* stop if magnitude exceeds this */
+		lparm.x = (long)(parm.x*fudge);    /* real portion of Lambda */
+		lparm.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
+		lparm2.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
+		lparm2.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
+		llimit = (long)(rqlim*fudge);      /* stop if magnitude exceeds this */
 		if (llimit <= 0) llimit = 0x7fffffffL; /* klooge for integer math */
-		llimit2 = (long)(rqlim2 * fudge);    /* stop if magnitude exceeds this */
-		lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
+		llimit2 = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
+		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
-		linitorbit.x = (long)(initorbit.x * fudge);
-		linitorbit.y = (long)(initorbit.y * fudge);
+		linitorbit.x = (long)(initorbit.x*fudge);
+		linitorbit.y = (long)(initorbit.y*fudge);
 	}
 	resuming = (calc_status == CALCSTAT_RESUMABLE);
 	if (!resuming) /* free resume_info memory if any is hanging around */
@@ -712,7 +712,7 @@ int calcfract(void)
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-			lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
+			lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 			setsymmetry(symmetry, 0);
 			timer(0, calctype); /* non-standard fractal engine */
 		}
@@ -916,15 +916,15 @@ static void perform_worklist()
 			dem_delta *= sqr(ftemp)/10000; /* multiply by thickness desired */
 		else
 			dem_delta *= 1/(sqr(ftemp)*10000); /* multiply by thickness desired */
-		dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) ) * aspect
+		dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
           + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
 		ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
 		if (use_old_distest)
-			dem_toobig = sqr(ftemp) * sqr(ftemp2) * 4 / dem_delta;
+			dem_toobig = sqr(ftemp)*sqr(ftemp2)*4 / dem_delta;
 		else
-			dem_toobig = fabs(ftemp) * fabs(ftemp2) * 2 / sqrt(dem_delta);
+			dem_toobig = fabs(ftemp)*fabs(ftemp2)*2 / sqrt(dem_delta);
 	}
 
 	while (num_worklist > 0)
@@ -1028,14 +1028,14 @@ static void perform_worklist()
 
 		/* some common initialization for escape-time pixel level routines */
 		closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-		lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
+		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 		kbdcount=max_kbdcount;
 
 		setsymmetry(symmetry, 1);
 
 		if (!(resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
        {  /* calculate round screen edges to work out best start for logmap */
-			LogFlag = (autologmap() * (LogFlag / labs(LogFlag)));
+			LogFlag = (autologmap()*(LogFlag / labs(LogFlag)));
 			SetupLogTable();
        }
 
@@ -1192,8 +1192,8 @@ static int diffusion_engine (void) {
 	nx = (int) floor((ixstop-ixstart + 1)/s );
 	ny = (int) floor((iystop-iystart + 1)/s );
 
-	rem_x = (ixstop-ixstart + 1) - nx * s;
-	rem_y = (iystop-iystart + 1) - ny * s;
+	rem_x = (ixstop-ixstart + 1) - nx*s;
+	rem_y = (iystop-iystart + 1) - ny*s;
 
 	if (yybegin == iystart && workpass == 0) { /* if restarting on pan: */
 		dif_counter =0l;
@@ -1261,8 +1261,8 @@ static int diffusion_engine (void) {
        do {
 		j = 0;
 		do {
-           col = ixstart + colo + i * s; /* get the right tiles */
-           row = iystart + rowo + j * s;
+           col = ixstart + colo + i*s; /* get the right tiles */
+           row = iystart + rowo + j*s;
 
            calculate;
            plot_block(col, row, sqsz, color);
@@ -1270,7 +1270,7 @@ static int diffusion_engine (void) {
 		} while (j < ny);
      /* in the last tile we may not need to plot the point */
      if (rowo < rem_y) {
-		row = iystart + rowo + ny * s;
+		row = iystart + rowo + ny*s;
 
 		calculate;
 		plot_block_lim(col, row, sqsz, color);
@@ -1279,17 +1279,17 @@ static int diffusion_engine (void) {
        } while (i < nx);
        /* in the last tile we may not need to plot the point */
        if (colo < rem_x) {
-     col = ixstart + colo + nx * s;
+     col = ixstart + colo + nx*s;
      j = 0;
      do {
-		row = iystart + rowo + j * s; /* get the right tiles */
+		row = iystart + rowo + j*s; /* get the right tiles */
 
 		calculate;
 		plot_block_lim(col, row, sqsz, color);
 		j++;
      } while (j < ny);
      if (rowo < rem_y) {
-		row = iystart + rowo + ny * s;
+		row = iystart + rowo + ny*s;
 
 		calculate;
 		plot_block_lim(col, row, sqsz, color);
@@ -1308,8 +1308,8 @@ static int diffusion_engine (void) {
 		do {
        j = 0;
        do {
-     col = ixstart + colo + i * s; /* get the right tiles */
-     row = iystart + rowo + j * s;
+     col = ixstart + colo + i*s; /* get the right tiles */
+     row = iystart + rowo + j*s;
 
      calculate;
      (*plot)(col, row, color);
@@ -1317,7 +1317,7 @@ static int diffusion_engine (void) {
        } while (j < ny);
        /* in the last tile we may not need to plot the point */
        if (rowo < rem_y) {
-     row = iystart + rowo + ny * s;
+     row = iystart + rowo + ny*s;
 
      calculate;
      (*plot)(col, row, color);
@@ -1326,17 +1326,17 @@ static int diffusion_engine (void) {
 		} while (i < nx);
 		/* in the last tile we may nnt need to plot the point */
 		if (colo < rem_x) {
-       col = ixstart + colo + nx * s;
+       col = ixstart + colo + nx*s;
        j = 0;
        do {
-     row = iystart + rowo + j * s; /* get the right tiles */
+     row = iystart + rowo + j*s; /* get the right tiles */
 
      calculate;
      (*plot)(col, row, color);
      j++;
        } while (j < ny);
        if (rowo < rem_y) {
-     row = iystart + rowo + ny * s;
+     row = iystart + rowo + ny*s;
 
      calculate;
      (*plot)(col, row, color);
@@ -1427,9 +1427,9 @@ static int sticky_orbits(void)
 				row = iystop;
 				final = xxbegin;
 			}
-			inc1 = 2 * abs (dY);            /* determine increments and initial G */
+			inc1 = 2*abs (dY);            /* determine increments and initial G */
 			G = inc1 - abs (dX);
-			inc2 = 2 * (abs (dY) - abs (dX));
+			inc2 = 2*(abs (dY) - abs (dX));
 			if (pos_slope)
 				while (col <= final)    /* step through columns checking for new row */
 				{
@@ -1479,9 +1479,9 @@ static int sticky_orbits(void)
 				row = iystop;
 				final = yybegin;
 		}
-		inc1 = 2 * abs (dX);            /* determine increments and initial G */
+		inc1 = 2*abs (dX);            /* determine increments and initial G */
 		G = inc1 - abs (dY);
-		inc2 = 2 * (abs (dX) - abs (dY));
+		inc2 = 2*(abs (dX) - abs (dY));
 		if (pos_slope)
            while (row <= final)    /* step through rows checking for new column */
            {
@@ -1538,9 +1538,9 @@ static int sticky_orbits(void)
 
 		while (angle < Rotation)
 		{
-	 theta = (double)angle * factor; 
-			col = (int)(xfactor + (Xctr + Xmagfactor * cos(theta)));
-			row = (int)(yfactor + (Yctr + Xmagfactor * sin(theta)));
+	 theta = (double)angle*factor; 
+			col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
+			row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
 			if (plotorbits2dfloat() == -1)
 			{
 				add_worklist(angle, 0, 0, 0, 0, 0, 0, worksym);
@@ -1913,10 +1913,10 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			/* Original code by Phil Wilson, hacked around by PB */
 			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
 			if (dem_mandel)
-				ftemp = 2 * (old.x * deriv.x - old.y * deriv.y) + 1;
+				ftemp = 2*(old.x*deriv.x - old.y*deriv.y) + 1;
 			else
-				ftemp = 2 * (old.x * deriv.x - old.y * deriv.y);
-			deriv.y = 2 * (old.y * deriv.x + old.x * deriv.y);
+				ftemp = 2*(old.x*deriv.x - old.y*deriv.y);
+			deriv.y = 2*(old.y*deriv.x + old.x*deriv.y);
 			deriv.x = ftemp;
 			if (use_old_distest) {
 				if (sqr(deriv.x) + sqr(deriv.y) > dem_toobig)
@@ -1989,8 +1989,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                     g_new.y = STARTRAILMAX;
                  if (g_new.y < -STARTRAILMAX)
                     g_new.y = -STARTRAILMAX;
-                 tempsqrx = g_new.x * g_new.x;
-                 tempsqry = g_new.y * g_new.y;
+                 tempsqrx = g_new.x*g_new.x;
+                 tempsqry = g_new.y*g_new.y;
                  magnitude = tempsqrx + tempsqry;
                  old = g_new;
 					}
@@ -2303,13 +2303,13 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		else if (outside == IMAG)          /* "imag" */
 			coloriter += (long)g_new.y + 7;
 		else if (outside == MULT  && g_new.y)  /* "mult" */
-          coloriter = (long)((double)coloriter * (g_new.x/g_new.y));
+          coloriter = (long)((double)coloriter*(g_new.x/g_new.y));
 		else if (outside == SUM)           /* "sum" */
           coloriter += (long)(g_new.x + g_new.y);
 		else if (outside == ATAN)          /* "atan" */
           coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
 		else if (outside == FMOD)
-          coloriter = (long)(memvalue * colors / closeprox);
+          coloriter = (long)(memvalue*colors / closeprox);
 		else if (outside == TDIS) {
           coloriter = (long)(totaldist);
 }
@@ -2332,7 +2332,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			dist = 0;
 		else {
 			temp = log(dist);
-			dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y) );
+			dist = dist*sqr(temp) / (sqr(deriv.x) + sqr(deriv.y) );
 		}
 		if (dist < dem_delta)     /* point is on the edge */
 		{
@@ -2426,7 +2426,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		}
 		else if (inside == FMODI)
 		{
-			coloriter = (long)(memvalue * colors / closeprox);
+			coloriter = (long)(memvalue*colors / closeprox);
 		}
 		else if (inside == ATANI)          /* "atan" */
 			if (integerfractal) {
@@ -2437,7 +2437,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			else
 				coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
 		else if (inside == BOF60)
-			coloriter = (long)(sqrt(min_orbit) * 75);
+			coloriter = (long)(sqrt(min_orbit)*75);
 		else if (inside == BOF61)
 			coloriter = min_index;
 		else if (inside == ZMAG)
@@ -2447,12 +2447,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				/*
 				g_new.x = ((double)lnew.x) / fudge;
 				g_new.y = ((double)lnew.y) / fudge;
-				coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit >> 1) + 1);
+				coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge)*(maxit >> 1) + 1);
 				*/
-				coloriter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
+				coloriter = (long)(((double)lmagnitud/fudge)*(maxit >> 1) + 1);
 			}
 			else
-				coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
+				coloriter = (long)((sqr(g_new.x) + sqr(g_new.y))*(maxit >> 1) + 1);
 		}
 		else /* inside == -1 */
 			coloriter = maxit;
@@ -2538,19 +2538,19 @@ static void decomposition(void)
 		if (reset_fudge != fudge)
 		{
 			reset_fudge = fudge;
-			/* lcos45     = (long)(cos45 * fudge); */
-			lsin45     = (long)(sin45 * fudge);
-			lcos22_5   = (long)(cos22_5 * fudge);
-			lsin22_5   = (long)(sin22_5 * fudge);
-			lcos11_25  = (long)(cos11_25 * fudge);
-			lsin11_25  = (long)(sin11_25 * fudge);
-			lcos5_625  = (long)(cos5_625 * fudge);
-			lsin5_625  = (long)(sin5_625 * fudge);
-			ltan22_5   = (long)(tan22_5 * fudge);
-			ltan11_25  = (long)(tan11_25 * fudge);
-			ltan5_625  = (long)(tan5_625 * fudge);
-			ltan2_8125 = (long)(tan2_8125 * fudge);
-			ltan1_4063 = (long)(tan1_4063 * fudge);
+			/* lcos45     = (long)(cos45*fudge); */
+			lsin45     = (long)(sin45*fudge);
+			lcos22_5   = (long)(cos22_5*fudge);
+			lsin22_5   = (long)(sin22_5*fudge);
+			lcos11_25  = (long)(cos11_25*fudge);
+			lsin11_25  = (long)(sin11_25*fudge);
+			lcos5_625  = (long)(cos5_625*fudge);
+			lsin5_625  = (long)(sin5_625*fudge);
+			ltan22_5   = (long)(tan22_5*fudge);
+			ltan11_25  = (long)(tan11_25*fudge);
+			ltan5_625  = (long)(tan5_625*fudge);
+			ltan2_8125 = (long)(tan2_8125*fudge);
+			ltan1_4063 = (long)(tan1_4063*fudge);
 		}
 		if (lnew.y < 0)
 		{
@@ -2826,7 +2826,7 @@ static int _fastcall potential(double mag, long iterations)
 	else /* inside < 0 implies inside=maxit, so use 1st pot param instead */
 		pot = (float)potparam[0];
 
-	i_pot = (int)((l_pot = (long)(pot * 256)) >> 8);
+	i_pot = (int)((l_pot = (long)(pot*256)) >> 8);
 	if (i_pot >= colors)
 	{
 		i_pot = colors - 1;

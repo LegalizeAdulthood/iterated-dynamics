@@ -226,7 +226,7 @@ over_bailout_87:
 		}
 		else if (outside == MULT && g_new.y != 0.0)
 		{
-		coloriter = (long) ((double) coloriter * (g_new.x/g_new.y));
+		coloriter = (long) ((double) coloriter*(g_new.x/g_new.y));
 		}
 		else if (outside == SUM)
 		{

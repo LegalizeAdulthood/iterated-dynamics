@@ -583,7 +583,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 bf_t exp_bf(bf_t r, bf_t n)
 	{
 	U16 fact = 1;
-	S16 BIGDIST * testexp, BIGDIST * rexp;
+	S16 BIGDIST *testexp, BIGDIST *rexp;
 
 	testexp = (S16 BIGDIST *)(bftmp2 + bflength);
 	rexp = (S16 BIGDIST *)(r + bflength);
@@ -723,7 +723,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	int k = 0, i, halves;
 	int signcos = 0, signsin = 0, switch_sincos = 0;
 	int sin_done = 0, cos_done = 0;
-	S16 BIGDIST * testexp, BIGDIST * cexp, BIGDIST * sexp;
+	S16 BIGDIST *testexp, BIGDIST *cexp, BIGDIST *sexp;
 
 	testexp = (S16 BIGDIST *)(bftmp1 + bflength);
 	cexp = (S16 BIGDIST *)(c + bflength);
@@ -968,9 +968,9 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		copy_bf(bftmp1, bftmp5);
 		unsafe_mult_bf(bftmp2, n, bftmp1);     /* n*cos(r) */
 		unsafe_sub_a_bf(bftmp4, bftmp2); /* sin(r) - n*cos(r) */
-		unsafe_mult_bf(bftmp1, bftmp5, bftmp4); /* cos(r) * (sin(r) - n*cos(r)) */
+		unsafe_mult_bf(bftmp1, bftmp5, bftmp4); /* cos(r)*(sin(r) - n*cos(r)) */
 		copy_bf(bftmp3, r);
-		unsafe_sub_a_bf(r, bftmp1); /* r - cos(r) * (sin(r) - n*cos(r)) */
+		unsafe_sub_a_bf(r, bftmp1); /* r - cos(r)*(sin(r) - n*cos(r)) */
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 		putchar('\n');
 		bf_hexdump(r);
@@ -1666,7 +1666,7 @@ bf_t half_a_bf(bf_t r)
 	}
 
 /************************************************************************/
-/* r = n1 * n2                                                          */
+/* r = n1*n2                                                          */
 /* Note: r will be a double wide result, 2*bflength                     */
 /*       n1 and n2 can be the same pointer                              */
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
@@ -1701,7 +1701,7 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	}
 
 /************************************************************************/
-/* r = n1 * n2 calculating only the top rlength bytes                   */
+/* r = n1*n2 calculating only the top rlength bytes                   */
 /* Note: r will be of length rlength                                    */
 /*       2*bflength <= rlength < bflength                               */
 /*       n1 and n2 can be the same pointer                              */
@@ -1770,7 +1770,7 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 	dbfl = 2*bflength; /* double width bflength */
 	rexp  = (S16 BIGDIST *)(r + dbfl); /* note: 2*bflength */
 	nexp = (S16 BIGDIST *)(n + bflength);
-	big_setS16(rexp, 2 * big_accessS16(nexp));
+	big_setS16(rexp, 2*big_accessS16(nexp));
 
 	bnl = bnlength;
 	bnlength = bflength;
@@ -1808,7 +1808,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 		}
 
 	nexp = (S16 BIGDIST *)(n + bflength);
-	rexp = (S16)(2 * big_accessS16(nexp));
+	rexp = (S16)(2*big_accessS16(nexp));
 
 	bnl = bnlength;
 	bnlength = bflength;
@@ -1830,7 +1830,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 	}
 
 /********************************************************************/
-/* r = n * u  where u is an unsigned integer */
+/* r = n*u  where u is an unsigned integer */
 /* SIDE-EFFECTS: n can be "de-normalized" and lose precision */
 bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 	{
@@ -2202,7 +2202,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 	overflow = 0;
 	for (d = dec; d > 0; d--)
 		{
-		value = r[d] * n + overflow;
+		value = r[d]*n + overflow;
 		r[d] = (BYTE)(value % 10);
 		overflow = value / 10;
 		}

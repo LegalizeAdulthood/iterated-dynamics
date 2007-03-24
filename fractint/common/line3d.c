@@ -64,8 +64,8 @@ static void _fastcall putminmax(int, int, int);
 static void _fastcall triangle_bounds(float pt_t[3][3]);
 static void _fastcall T_clipcolor(int, int, int);
 static void _fastcall vdraw_line(double *, double *, int color);
-static void (_fastcall * fillplot) (int, int, int);
-static void (_fastcall * normalplot) (int, int, int);
+static void (_fastcall *fillplot) (int, int, int);
+static void (_fastcall *normalplot) (int, int, int);
 
 /* static variables */
 static float deltaphi;          /* increment of latitude, longitude */
@@ -112,7 +112,7 @@ static long num_tris; /* number of triangles output to ray trace file */
 
 /* global variables defined here */
 struct f_point *f_lastrow = NULL;
-void (_fastcall * standardplot) (int, int, int);
+void (_fastcall *standardplot) (int, int, int);
 MATRIX m; /* transformation matrix */
 int Ambient;
 int RANDOMIZE;
@@ -148,7 +148,7 @@ static VECTOR tmpcross;
 static struct point oldlast = { 0, 0, 0 }; /* old pixels */
 
 
-int line3d(BYTE * pixels, unsigned linelen)
+int line3d(BYTE *pixels, unsigned linelen)
 {
 	int tout;                    /* triangle has been sent to ray trace file */
 	int RND;
@@ -223,9 +223,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 			int pal, colornum;
 			colornum = pixels[col];
 			/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-			pal = ((int) g_dac_box[colornum][0] * 77 +
-					(int) g_dac_box[colornum][1] * 151 +
-					(int) g_dac_box[colornum][2] * 28);
+			pal = ((int) g_dac_box[colornum][0]*77 +
+					(int) g_dac_box[colornum][1]*151 +
+					(int) g_dac_box[colornum][2]*28);
 			pal >>= 6;
 			pixels[col] = (BYTE) pal;
 		}
@@ -289,7 +289,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 
 		if (RAY || preview || FILLTYPE < 0)
 		{
-			next = (int) (col + aspect * localpreviewfactor);
+			next = (int) (col + aspect*localpreviewfactor);
 			if (next == col)
 				next = col + 1;
 		}
@@ -327,9 +327,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 			/************************************************************/
 
 			if (rscale < 0.0)
-				r = R + Rfactor * (double) f_cur.color * costheta;
+				r = R + Rfactor*(double) f_cur.color*costheta;
 			else if (rscale > 0.0)
-				r = R - rXrscale + Rfactor * (double) f_cur.color * costheta;
+				r = R - rXrscale + Rfactor*(double) f_cur.color*costheta;
 			else
 				r = R;
 			/* Allow Ray trace to go through so display ok */
@@ -337,23 +337,23 @@ int line3d(BYTE * pixels, unsigned linelen)
 			{  /* mrr how do lv[] and cur and f_cur all relate */
 				/* NOTE: fudge was pre-calculated above in r and R */
 				/* (almost) guarantee negative */
-				lv[2] = (long) (-R - r * costheta * sinphi);     /* z */
+				lv[2] = (long) (-R - r*costheta*sinphi);     /* z */
 				if ((lv[2] > zcutoff) && !FILLTYPE < 0)
 				{
 					cur = bad;
 					f_cur = f_bad;
 					goto loopbottom;      /* another goto ! */
 				}
-				lv[0] = (long) (xcenter + sintheta * sclx * r);  /* x */
-				lv[1] = (long) (ycenter + costheta * cosphi * scly * r); /* y */
+				lv[0] = (long) (xcenter + sintheta*sclx*r);  /* x */
+				lv[1] = (long) (ycenter + costheta*cosphi*scly*r); /* y */
 
 				if ((FILLTYPE >= 5) || RAY)
 				{     /* calculate illumination normal before persp */
 
 					r0 = r / 65536L;
-					f_cur.x = (float) (xcenter0 + sintheta * sclx * r0);
-					f_cur.y = (float) (ycenter0 + costheta * cosphi * scly * r0);
-					f_cur.color = (float) (-r0 * costheta * sinphi);
+					f_cur.x = (float) (xcenter0 + sintheta*sclx*r0);
+					f_cur.y = (float) (ycenter0 + costheta*cosphi*scly*r0);
+					f_cur.color = (float) (-r0*costheta*sinphi);
 				}
 				if (!(usr_floatflag || RAY))
 				{
@@ -384,12 +384,12 @@ int line3d(BYTE * pixels, unsigned linelen)
 			{
 				/* mrr Why the xx- and yyadjust here and not above? */
 				cur.x = (int) (f_cur.x = (float) (xcenter
-										+ sintheta * sclx * r + xxadjust));
+										+ sintheta*sclx*r + xxadjust));
 				cur.y = (int) (f_cur.y = (float) (ycenter
-										+ costheta * cosphi * scly * r + yyadjust));
+										+ costheta*cosphi*scly*r + yyadjust));
 				if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for
                                                 * filltype > 5? */
-					f_cur.color = (float) (-r * costheta * sinphi * sclz);
+					f_cur.color = (float) (-r*costheta*sinphi*sclz);
 				v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
 			}
 		}
@@ -411,7 +411,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 				lv[1] = lv[1] << 16;
 				if (filetype || pot16bit)        /* don't truncate fractional
                                                 * part */
-					lv[2] = (long) (f_cur.color * 65536.0);
+					lv[2] = (long) (f_cur.color*65536.0);
 				else
 					/* there IS no fractaional part here! */
 				{
@@ -457,9 +457,9 @@ int line3d(BYTE * pixels, unsigned linelen)
 
 					if (RAY == 6)
 					{
-						f_cur.x = f_cur.x * (2.0f / xdots) - 1.0f;
-						f_cur.y = f_cur.y * (2.0f / ydots) - 1.0f;
-						f_cur.color = -f_cur.color * (2.0f / numcolors) - 1.0f;
+						f_cur.x = f_cur.x*(2.0f / xdots) - 1.0f;
+						f_cur.y = f_cur.y*(2.0f / ydots) - 1.0f;
+						f_cur.color = -f_cur.color*(2.0f / numcolors) - 1.0f;
 					}
 				}
 
@@ -480,7 +480,7 @@ int line3d(BYTE * pixels, unsigned linelen)
 			if (cur.color > WATERLINE)
 			{
 				RND = rand15() >> 8;     /* 7-bit number */
-				RND = RND * RND >> rand_factor;  /* n-bit number */
+				RND = RND*RND >> rand_factor;  /* n-bit number */
 
 				if (rand() & 1)
 					RND = -RND;   /* Make +/- n-bit number */
@@ -714,11 +714,11 @@ int line3d(BYTE * pixels, unsigned linelen)
 								crossavg[2] = cross[2];
 								crossnotinit = 0;
 							}
-							tmpcross[0] = (crossavg[0] * LIGHTAVG + cross[0]) /
+							tmpcross[0] = (crossavg[0]*LIGHTAVG + cross[0]) /
 								(LIGHTAVG + 1);
-							tmpcross[1] = (crossavg[1] * LIGHTAVG + cross[1]) /
+							tmpcross[1] = (crossavg[1]*LIGHTAVG + cross[1]) /
 								(LIGHTAVG + 1);
-							tmpcross[2] = (crossavg[2] * LIGHTAVG + cross[2]) /
+							tmpcross[2] = (crossavg[2]*LIGHTAVG + cross[2]) /
 								(LIGHTAVG + 1);
 							cross[0] = tmpcross[0];
 							cross[1] = tmpcross[1];
@@ -730,16 +730,16 @@ int line3d(BYTE * pixels, unsigned linelen)
 								{
 									stopmsg(0, "debug, normal vector err2");
 									/* use next instead if you ever need details:
-                            * static char tmp[] = {"debug, vector err"};
-                            * char msg[200]; #ifndef XFRACT
-                            * sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
-                            * %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
-                            * %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
-                            * f_cur.color, f_lastrow[col].x,
-                            * f_lastrow[col].y, f_lastrow[col].color,
-                            * f_lastrow[col-1].x,
-                            * f_lastrow[col-1].y, f_lastrow[col-1].color);
-                            * stopmsg(0, msg); */
+									* static char tmp[] = {"debug, vector err"};
+									* char msg[200]; #ifndef XFRACT
+									* sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
+									* %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
+									* %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
+									* f_cur.color, f_lastrow[col].x,
+									* f_lastrow[col].y, f_lastrow[col].color,
+									* f_lastrow[col-1].x,
+									* f_lastrow[col-1].y, f_lastrow[col-1].color);
+									* stopmsg(0, msg); */
 								}
 								cur.color = (int)(f_cur.color = (float) colors);
 							}
@@ -821,8 +821,8 @@ int line3d(BYTE * pixels, unsigned linelen)
 		}
 		else
 		{
-			sinphi = twocosdeltaphi * oldsinphi2 - oldsinphi1;
-			cosphi = twocosdeltaphi * oldcosphi2 - oldcosphi1;
+			sinphi = twocosdeltaphi*oldsinphi2 - oldsinphi1;
+			cosphi = twocosdeltaphi*oldcosphi2 - oldcosphi1;
 			oldsinphi1 = oldsinphi2;
 			oldsinphi2 = sinphi;
 			oldcosphi1 = oldcosphi2;
@@ -966,7 +966,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	/* always use perspective to aid viewing */
 	temp = view[2];              /* save perspective distance for a later
                                  * restore */
-	view[2] = -P * 300.0 / 100.0;
+	view[2] = -P*300.0 / 100.0;
 
 	for (i = 0; i < 4; i++)
 	{
@@ -978,8 +978,8 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	/* Adjust for aspect */
 	for (i = 0; i < 4; i++)
 	{
-		S[0][i][0] = S[0][i][0] * aspect;
-		S[1][i][0] = S[1][i][0] * aspect;
+		S[0][i][0] = S[0][i][0]*aspect;
+		S[1][i][0] = S[1][i][0]*aspect;
 	}
 
 	/* draw box connecting transformed points. NOTE order and COLORS */
@@ -1016,16 +1016,16 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 	if (rect)                    /* Draw a rectangle */
 	{
 		for (i = 0; i < 4; i++)
-			if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2 * bad_check &&
-             fabs(V[i][1] - V[(i + 1) % 4][1]) < -2 * bad_check)
+			if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*bad_check &&
+             fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*bad_check)
 				vdraw_line(V[i], V[(i + 1) % 4], color);
 	}
 	else
 		/* Draw 2 lines instead */
 	{
 		for (i = 0; i < 3; i += 2)
-			if (fabs(V[i][0] - V[i + 1][0]) < -2 * bad_check &&
-             fabs(V[i][1] - V[i + 1][1]) < -2 * bad_check)
+			if (fabs(V[i][0] - V[i + 1][0]) < -2*bad_check &&
+             fabs(V[i][1] - V[i + 1][1]) < -2*bad_check)
 				vdraw_line(V[i], V[i + 1], color);
 	}
 	return;
@@ -1198,9 +1198,9 @@ static void _fastcall interpcolor(int x, int y, int color)
 	if (D)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
-		color = (int) (((long) (d2 + d3) * (long) p1.color +
-                      (long) (d1 + d3) * (long) p2.color +
-                      (long) (d1 + d2) * (long) p3.color) / D);
+		color = (int) (((long) (d2 + d3)*(long) p1.color +
+                      (long) (d1 + d3)*(long) p2.color +
+                      (long) (d1 + d2)*(long) p3.color) / D);
 	}
 
 	if (0 <= x && x < xdots &&
@@ -1219,7 +1219,7 @@ static void _fastcall interpcolor(int x, int y, int color)
 				color = D;
 			else
 			{
-				color = (1 + (unsigned) color * IAmbient) / 256;
+				color = (1 + (unsigned) color*IAmbient) / 256;
 				if (color == 0)
 					color = 1;
 			}
@@ -1270,22 +1270,22 @@ int _fastcall targa_color(int x, int y, int color)
 	/* Modify original S and V components */
 	if (FILLTYPE > 4 && !(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
 		/* Adjust for Ambient */
-		V = (V * (65535L - (unsigned) (color * IAmbient))) / 65535L;
+		V = (V*(65535L - (unsigned) (color*IAmbient))) / 65535L;
 
 	if (haze)
 	{
 		/* Haze lowers sat of colors */
-		S = (unsigned long) (S * HAZE_MULT) / 100;
+		S = (unsigned long) (S*HAZE_MULT) / 100;
 		if (V >= 32640)           /* Haze reduces contrast */
 		{
 			V = V - 32640;
-			V = (unsigned long) ((V * HAZE_MULT) / 100);
+			V = (unsigned long) ((V*HAZE_MULT) / 100);
 			V = V + 32640;
 		}
 		else
 		{
 			V = 32640 - V;
-			V = (unsigned long) ((V * HAZE_MULT) / 100);
+			V = (unsigned long) ((V*HAZE_MULT) / 100);
 			V = 32640 - V;
 		}
 	}
@@ -1293,7 +1293,7 @@ int _fastcall targa_color(int x, int y, int color)
 	H_R(&RGB[0], &RGB[1], &RGB[2], H, S, V);
 
 	if (Real_V)
-		V = (35 * (int) RGB[0] + 45 * (int) RGB[1] + 20 * (int) RGB[2]) / 100;
+		V = (35*(int) RGB[0] + 45*(int) RGB[1] + 20*(int) RGB[2]) / 100;
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
@@ -1302,7 +1302,7 @@ int _fastcall targa_color(int x, int y, int color)
 	return (int) (255 - V);
 }
 
-static int set_pixel_buff(BYTE * pixels, BYTE * fraction, unsigned linelen)
+static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
 	int i;
 	if ((evenoddrow++ & 1) == 0) /* even rows are color value */
@@ -1374,7 +1374,7 @@ static void File_Error(char *File_Name1, int ERROR)
 /*                                                                      */
 /* **********************************************************************/
 
-int startdisk1(char *File_Name2, FILE * Source, int overlay)
+int startdisk1(char *File_Name2, FILE *Source, int overlay)
 {
 	int i, j, k, inc;
 	FILE *fps;
@@ -1567,9 +1567,9 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
 		*V = *V << 8;
 		return 0;
 	}
-	R1 = (((*V - R) * 60) << 6) / DENOM; /* distance of color from red   */
-	G1 = (((*V - G) * 60) << 6) / DENOM; /* distance of color from green */
-	B1 = (((*V - B) * 60) << 6) / DENOM; /* distance of color from blue  */
+	R1 = (((*V - R)*60) << 6) / DENOM; /* distance of color from red   */
+	G1 = (((*V - G)*60) << 6) / DENOM; /* distance of color from green */
+	B1 = (((*V - B)*60) << 6) / DENOM; /* distance of color from blue  */
 	if (*V == R) {
 		if (MIN == G)
 			*H = (300 << 6) + B1;
@@ -1602,9 +1602,9 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 	I = (int) (H / 3840);
 	RMD = (int) (H % 3840);      /* RMD = fractional part of H    */
 
-	P1 = ((V * (65535L - S)) / 65280L) >> 8;
-	P2 = (((V * (65535L - (S * RMD) / 3840)) / 65280L) - 1) >> 8;
-	P3 = (((V * (65535L - (S * (3840 - RMD)) / 3840)) / 65280L)) >> 8;
+	P1 = ((V*(65535L - S)) / 65280L) >> 8;
+	P2 = (((V*(65535L - (S*RMD) / 3840)) / 65280L) - 1) >> 8;
+	P3 = (((V*(65535L - (S*(3840 - RMD)) / 3840)) / 65280L)) >> 8;
 	V = V >> 8;
 	switch (I)
 	{
@@ -1769,25 +1769,25 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 	float pt_t[3][3];
 
 	/* Normalize each vertex to screen size and adjust coordinate system */
-	pt_t[0][0] = 2 * pt1.x / xdots - 1;
-	pt_t[0][1] = (2 * pt1.y / ydots - 1);
-	pt_t[0][2] = -2 * pt1.color / numcolors - 1;
-	pt_t[1][0] = 2 * pt2.x / xdots - 1;
-	pt_t[1][1] = (2 * pt2.y / ydots - 1);
-	pt_t[1][2] = -2 * pt2.color / numcolors - 1;
-	pt_t[2][0] = 2 * pt3.x / xdots - 1;
-	pt_t[2][1] = (2 * pt3.y / ydots - 1);
-	pt_t[2][2] = -2 * pt3.color / numcolors - 1;
+	pt_t[0][0] = 2*pt1.x / xdots - 1;
+	pt_t[0][1] = (2*pt1.y / ydots - 1);
+	pt_t[0][2] = -2*pt1.color / numcolors - 1;
+	pt_t[1][0] = 2*pt2.x / xdots - 1;
+	pt_t[1][1] = (2*pt2.y / ydots - 1);
+	pt_t[1][2] = -2*pt2.color / numcolors - 1;
+	pt_t[2][0] = 2*pt3.x / xdots - 1;
+	pt_t[2][1] = (2*pt3.y / ydots - 1);
+	pt_t[2][2] = -2*pt3.color / numcolors - 1;
 
 	/* Color of triangle is average of colors of its verticies */
 	if (!BRIEF)
 		for (i = 0; i <= 2; i++)
 #ifdef __SVR4
 			c[i] = (float) ((int)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-				/ (3 * 63));
+				/ (3*63));
 #else
 			c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-				/ (3 * 63);
+				/ (3*63);
 #endif
 
 	/* get rid of degenerate triangles: any two points equal */
@@ -1858,9 +1858,9 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 			if (RAY == 7)
 			{
 				/* write 3dface entity to dxf file */
-				fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
+				fprintf(File_Ptr1, "%3d\n%g\n", 10*(j + 1) + i, pt_t[i][j]);
 				if (i == 2)         /* 3dface needs 4 vertecies */
-					fprintf(File_Ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
+					fprintf(File_Ptr1, "%3d\n%g\n", 10*(j + 1) + i + 1,
 						pt_t[i][j]);
 			}
 			else if (!(RAY == 4 || RAY == 5))
@@ -1970,8 +1970,8 @@ static int _fastcall end_object(int triout)
 				}
 				else
 				{
-					min_xyz[i] -= (max_xyz[i] - min_xyz[i]) * 0.01f;
-					max_xyz[i] += (max_xyz[i] - min_xyz[i]) * 0.01f;
+					min_xyz[i] -= (max_xyz[i] - min_xyz[i])*0.01f;
+					max_xyz[i] += (max_xyz[i] - min_xyz[i])*0.01f;
 				}
 			}
 
@@ -2056,7 +2056,7 @@ static void set_upr_lwr(void)
 	upr_lwr[1] = (BYTE)(xdots >> 8);
 	upr_lwr[2] = (BYTE)(ydots & 0xff);
 	upr_lwr[3] = (BYTE)(ydots >> 8);
-	line_length1 = 3 * xdots;    /* line length @ 3 bytes per pixel  */
+	line_length1 = 3*xdots;    /* line length @ 3 bytes per pixel  */
 }
 
 static int first_time(int linelen, VECTOR v)
@@ -2079,7 +2079,7 @@ static int first_time(int linelen, VECTOR v)
 	/* mark as in-progress, and enable <tab> timer display */
 	calc_status = CALCSTAT_IN_PROGRESS;
 
-	IAmbient = (unsigned int) (255 * (float) (100 - Ambient) / 100.0);
+	IAmbient = (unsigned int) (255*(float) (100 - Ambient) / 100.0);
 	if (IAmbient < 1)
 		IAmbient = 1;
 
@@ -2209,9 +2209,9 @@ static int first_time(int linelen, VECTOR v)
 	/* z value of user's eye - should be more negative than extreme negative
 	* part of image */
 	if (SPHERE)                  /* sphere case */
-		lview[2] = -(long) ((double) ydots * (double) ZVIEWER / 100.0);
+		lview[2] = -(long) ((double) ydots*(double) ZVIEWER / 100.0);
 	else                         /* non-sphere case */
-		lview[2] = (long) ((zmin - zmax) * (double) ZVIEWER / 100.0);
+		lview[2] = (long) ((zmin - zmax)*(double) ZVIEWER / 100.0);
 
 	view[0] = lview[0];
 	view[1] = lview[1];
@@ -2237,7 +2237,7 @@ static int first_time(int linelen, VECTOR v)
        * convert m to long integers shifted 16 bits */
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++)
-				llm[i][j] = (long) (m[i][j] * 65536.0);
+				llm[i][j] = (long) (m[i][j]*65536.0);
 
 	}
 	else
@@ -2247,12 +2247,12 @@ static int first_time(int linelen, VECTOR v)
        * latitude; bottom 90 degrees */
 
 		/* Map X to this LATITUDE range */
-		theta1 = (float) (THETA1 * PI / 180.0);
-		theta2 = (float) (THETA2 * PI / 180.0);
+		theta1 = (float) (THETA1*PI / 180.0);
+		theta2 = (float) (THETA2*PI / 180.0);
 
 		/* Map Y to this LONGITUDE range */
-		phi1 = (float) (PHI1 * PI / 180.0);
-		phi2 = (float) (PHI2 * PI / 180.0);
+		phi1 = (float) (PHI1*PI / 180.0);
+		phi2 = (float) (PHI2*PI / 180.0);
 
 		theta = theta1;
 
@@ -2269,7 +2269,7 @@ static int first_time(int linelen, VECTOR v)
 		/*                                                                   */
 		/* Precalculate 2*cos(deltaangle), sin(start) and sin(start + delta).  */
 		/* Then apply recursively:                                           */
-		/* sin(angle + 2*delta) = sin(angle + delta) * 2cosdelta - sin(angle)    */
+		/* sin(angle + 2*delta) = sin(angle + delta)*2cosdelta - sin(angle)    */
 		/*                                                                   */
 		/* Similarly for cosine. Neat!                                       */
 		/*********************************************************************/
@@ -2283,14 +2283,14 @@ static int first_time(int linelen, VECTOR v)
 		costhetaarray[1] = (float) cos((double) (theta + deltatheta));
 
 		/* sin,cos delta theta */
-		twocosdeltatheta = (float) (2.0 * cos((double) deltatheta));
+		twocosdeltatheta = (float) (2.0*cos((double) deltatheta));
 
 		/* build table of other sin,cos with trig identity */
 		for (i = 2; i < (int) linelen; i++)
 		{
-			sinthetaarray[i] = sinthetaarray[i - 1] * twocosdeltatheta -
+			sinthetaarray[i] = sinthetaarray[i - 1]*twocosdeltatheta -
 				sinthetaarray[i - 2];
-			costhetaarray[i] = costhetaarray[i - 1] * twocosdeltatheta -
+			costhetaarray[i] = costhetaarray[i - 1]*twocosdeltatheta -
 				costhetaarray[i - 2];
 		}
 
@@ -2305,18 +2305,18 @@ static int first_time(int linelen, VECTOR v)
 		oldcosphi2 = (float) cos((double) (phi1 + deltaphi));
 
 		/* sin,cos delta phi */
-		twocosdeltaphi = (float) (2.0 * cos((double) deltaphi));
+		twocosdeltaphi = (float) (2.0*cos((double) deltaphi));
 
 
 		/* affects how rough planet terrain is */
 		if (ROUGH)
-			rscale = .3 * ROUGH / 100.0;
+			rscale = .3*ROUGH / 100.0;
 
 		/* radius of planet */
 		R = (double) (ydots) / 2;
 
 		/* precalculate factor */
-		rXrscale = R * rscale;
+		rXrscale = R*rscale;
 
 		sclz = sclx = scly = RADIUS / 100.0;      /* Need x,y,z for RAY */
 
@@ -2324,7 +2324,7 @@ static int first_time(int linelen, VECTOR v)
 		sclx *= aspect;
 
 		/* precalculation factor used in sphere calc */
-		Rfactor = rscale * R / (double) zcoord;
+		Rfactor = rscale*R / (double) zcoord;
 
 		if (persp)                /* precalculate fudge factor */
 		{
@@ -2340,10 +2340,10 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
           * from being written */
-			zview = -(long) ((double) ydots * (double) ZVIEWER / 100.0);
+			zview = -(long) ((double) ydots*(double) ZVIEWER / 100.0);
 			radius = (double) (ydots) / 2;
 			angle = atan(-radius / (zview + radius));
-			zcutoff = -radius - sin(angle) * radius;
+			zcutoff = -radius - sin(angle)*radius;
 			zcutoff *= 1.1;        /* for safety */
 			zcutoff *= 65536L;
 		}
@@ -2393,21 +2393,21 @@ static int first_time(int linelen, VECTOR v)
 		normalize_vector(direct);
 
 		/* move light vector to be more clear with grey scale maps */
-		origin[0] = (3 * xdots) / 16;
-		origin[1] = (3 * ydots) / 4;
+		origin[0] = (3*xdots) / 16;
+		origin[1] = (3*ydots) / 4;
 		if (FILLTYPE == 6)
-			origin[1] = (11 * ydots) / 16;
+			origin[1] = (11*ydots) / 16;
 
 		origin[2] = 0.0;
 
 		v_length = min(xdots, ydots) / 2;
 		if (persp && ZVIEWER <= P)
-			v_length *= (long) (P + 600) / ((long) (ZVIEWER + 600) * 2);
+			v_length *= (long) (P + 600) / ((long) (ZVIEWER + 600)*2);
 
 		/* Set direct[] to point from origin[] in direction of untransformed
        * light_direction (direct[]). */
 		for (i = 0; i < 3; i++)
-			direct[i] = origin[i] + direct[i] * v_length;
+			direct[i] = origin[i] + direct[i]*v_length;
 
 		/* center light box */
 		for (i = 0; i < 2; i++)
@@ -2462,24 +2462,24 @@ static int line3dmem(void)
 	/* TODO: allocate real memory, not reuse shared segment */
 	lastrow = (struct point *) malloc(sizeof(struct point)*xdots);
 
-	check_extra = sizeof(*lastrow) * xdots;
+	check_extra = sizeof(*lastrow)*xdots;
 	if (SPHERE)
 	{
 		sinthetaarray = (float *) (lastrow + xdots);
-		check_extra += sizeof(*sinthetaarray) * xdots;
+		check_extra += sizeof(*sinthetaarray)*xdots;
 		costhetaarray = (float *) (sinthetaarray + xdots);
-		check_extra += sizeof(*costhetaarray) * xdots;
+		check_extra += sizeof(*costhetaarray)*xdots;
 		f_lastrow = (struct f_point *) (costhetaarray + xdots);
 	}
 	else
 	{
 		f_lastrow = (struct f_point *) (lastrow + xdots);
 	}
-	check_extra += sizeof(*f_lastrow) * (xdots);
+	check_extra += sizeof(*f_lastrow)*(xdots);
 	if (pot16bit)
 	{
 		fraction = (BYTE *) (f_lastrow + xdots);
-		check_extra += sizeof(*fraction) * xdots;
+		check_extra += sizeof(*fraction)*xdots;
 	}
 	minmax_x = (struct minmax *) NULL;
 
@@ -2487,14 +2487,14 @@ static int line3dmem(void)
 	if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
 	{
 		/* end of arrays if we use extra segement */
-		check_extra += sizeof(struct minmax) * ydots;
+		check_extra += sizeof(struct minmax)*ydots;
 		if (check_extra > (1L << 16))     /* run out of extra segment? */
 		{
 			static struct minmax *got_mem = NULL;
 			if (debugflag == 2222)
 				stopmsg(0, "malloc minmax");
 			/* not using extra segment so decrement check_extra */
-			check_extra -= sizeof(struct minmax) * ydots;
+			check_extra -= sizeof(struct minmax)*ydots;
 			if (got_mem == NULL)
 				got_mem = (struct minmax *) (malloc(OLDMAXPIXELS *
                                                     sizeof(struct minmax)));

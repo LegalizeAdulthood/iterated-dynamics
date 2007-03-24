@@ -434,11 +434,11 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
 		if (gamma_val == 1)
           {
           pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-						(int) p1->red   + (int) (rm * curr));
+						(int) p1->red   + (int) (rm*curr));
           pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-              (int) p1->green + (int) (gm * curr));
+              (int) p1->green + (int) (gm*curr));
           pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-						(int) p1->blue  + (int) (bm * curr));
+						(int) p1->blue  + (int) (bm*curr));
           }
           else
           {
@@ -1338,7 +1338,7 @@ static int CEditor_Edit(CEditor *me)
 			case '7':
 			case '8':
 			case '9':
-				me->val = (key - '0') * 10;
+				me->val = (key - '0')*10;
 				if (me->val > 63)
 					me->val = 63;
 				CEditor_Draw(me);
@@ -2069,8 +2069,8 @@ static void PalTable__Draw(PalTable *me)
 
 	for (pal = 0; pal < 256; pal++)
 		{
-		xoff = PalTable_PALX + (pal%16) * me->csize;
-		yoff = PalTable_PALY + (pal/16) * me->csize;
+		xoff = PalTable_PALX + (pal%16)*me->csize;
+		yoff = PalTable_PALY + (pal/16)*me->csize;
 
 		if (pal >= colors)
 			{
@@ -3188,7 +3188,7 @@ static PalTable *PalTable_Construct(void)
 
 	if (temp != NULL)
 		{
-		mem_block = (PALENTRY *)malloc(256L*3 * 8);
+		mem_block = (PALENTRY *)malloc(256L*3*8);
 
 		if (mem_block == NULL)
 			{

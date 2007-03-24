@@ -67,9 +67,9 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 				row = Y2;
 				final = X1;
 		}
-		inc1 = 2 * abs (dY);            /* determine increments and initial G */
+		inc1 = 2*abs (dY);            /* determine increments and initial G */
 		G = inc1 - abs (dX);
-		inc2 = 2 * (abs (dY) - abs (dX));
+		inc2 = 2*(abs (dY) - abs (dX));
 		if (pos_slope)
 				while (col <= final)    /* step through columns checking for new row */
 				{
@@ -111,9 +111,9 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 				row = Y2;
 				final = Y1;
 		}
-		inc1 = 2 * abs (dX);            /* determine increments and initial G */
+		inc1 = 2*abs (dX);            /* determine increments and initial G */
 		G = inc1 - abs (dY);
-		inc2 = 2 * (abs (dX) - abs (dY));
+		inc2 = 2*(abs (dX) - abs (dY));
 		if (pos_slope)
 				while (row <= final)    /* step through rows checking for new column */
 				{
@@ -422,17 +422,17 @@ void plot_setup()
 		break;
 	}
 
-	xshift1 = xshift = (int)((XSHIFT * (double)xdots)/100);
-	yshift1 = yshift = (int)((YSHIFT * (double)ydots)/100);
+	xshift1 = xshift = (int)((XSHIFT*(double)xdots)/100);
+	yshift1 = yshift = (int)((YSHIFT*(double)ydots)/100);
 
 	if (g_glasses_type)
 	{
-		red_local_left  =   (int)((red_crop_left      * (double)xdots)/100.0);
-		red_local_right =   (int)(((100 - red_crop_right) * (double)xdots)/100.0);
-		blue_local_left =   (int)((blue_crop_left     * (double)xdots)/100.0);
-		blue_local_right =  (int)(((100 - blue_crop_right) * (double)xdots)/100.0);
-		d_red_bright    =   (double)red_bright/100.0;
-		d_blue_bright   =   (double)blue_bright/100.0;
+		red_local_left  =   (int) ((red_crop_left*(double) xdots)/100.0);
+		red_local_right =   (int) (((100 - red_crop_right)*(double) xdots)/100.0);
+		blue_local_left =   (int) ((blue_crop_left*(double) xdots)/100.0);
+		blue_local_right =  (int) (((100 - blue_crop_right)*(double) xdots)/100.0);
+		d_red_bright    =   (double) red_bright/100.0;
+		d_blue_bright   =   (double) blue_bright/100.0;
 
 		switch (g_which_image)
 		{
@@ -478,8 +478,8 @@ void plot_setup()
 				}
 				for (i = 0; i < 256; i++)
 				{
-                g_dac_box[i][0] = (BYTE)(g_dac_box[i][0] * d_red_bright);
-                g_dac_box[i][2] = (BYTE)(g_dac_box[i][2] * d_blue_bright);
+                g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
+                g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
 				}
 		}
 		spindac(0, 1); /* load it, but don't spin */

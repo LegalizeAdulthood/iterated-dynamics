@@ -44,12 +44,12 @@ long maxit, int inside)
 	magnitude = 0.0;
 	color = 0;
 	while ((magnitude < 4.0) && (color < maxit)) {
-		newreal = oldreal * oldreal - oldimag * oldimag + initreal;
-		newimag = 2 * oldreal * oldimag + initimag;
+		newreal = oldreal*oldreal - oldimag*oldimag + initreal;
+		newimag = 2*oldreal*oldimag + initimag;
 		color++;
 		oldreal = newreal;
 		oldimag = newimag;
-		magnitude = newreal * newreal + newimag * newimag;
+		magnitude = newreal*newreal + newimag*newimag;
 	}
 	if (color >= maxit) color = inside;
 	return (int)color;
