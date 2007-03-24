@@ -16,7 +16,7 @@ int ValidateLuts(char * fn)
 FILE * f;
 unsigned        r, g, b, index;
 char    line[160];
-char    temp[FILE_MAX_PATH+1];
+char    temp[FILE_MAX_PATH + 1];
 char    temp_fn[FILE_MAX_PATH];
         strcpy(temp,MAP_name);
         strcpy(temp_fn,fn);

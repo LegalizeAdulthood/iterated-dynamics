@@ -221,9 +221,9 @@ init_clut(BYTE clut[256][3])
 	int i;
 	for (i = 0; i < 256; i++)
 	{
-		clut[i][0] = (i >> 5)*8+7;
-		clut[i][1] = (((i+16) & 28) >> 2)*8+7;
-		clut[i][2] = (((i+2) & 3))*16+15;
+		clut[i][0] = (i >> 5)*8 + 7;
+		clut[i][1] = (((i + 16) & 28) >> 2)*8 + 7;
+		clut[i][2] = (((i + 2) & 3))*16 + 15;
 	}
 	clut[0][0] = clut[0][1] = clut[0][2] = 0;
 	clut[1][0] = clut[1][1] = clut[1][2] = 63;
@@ -327,7 +327,7 @@ void plot_write_pixel(Plot *me, int x, int y, int color)
 	_ASSERTE(x >= 0 && x < me->width);
 	_ASSERTE(y >= 0 && y < me->height);
 	me->pixels[(me->height - y - 1)*me->row_len + x] = (BYTE) (color & 0xFF);
-	plot_set_dirty_region(me, x, y, x+1, y+1);
+	plot_set_dirty_region(me, x, y, x + 1, y + 1);
 }
 
 int plot_read_pixel(Plot *me, int x, int y)
@@ -341,13 +341,13 @@ int plot_read_pixel(Plot *me, int x, int y)
 void plot_write_span(Plot *me, int y, int x, int lastx, const BYTE *pixels)
 {
 	int i;
-	int width = lastx-x+1;
+	int width = lastx-x + 1;
 
 	for (i = 0; i < width; i++)
 	{
-		plot_write_pixel(me, x+i, y, pixels[i]);
+		plot_write_pixel(me, x + i, y, pixels[i]);
 	}
-	plot_set_dirty_region(me, x, y, lastx+1, y+1);
+	plot_set_dirty_region(me, x, y, lastx + 1, y + 1);
 }
 
 void plot_flush(Plot *me)

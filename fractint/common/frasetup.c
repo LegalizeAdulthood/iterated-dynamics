@@ -313,7 +313,7 @@ MandelfpSetup(void)
    case MANDELEXP:
       symmetry = XAXIS_NOPARM;
       break;
-/* Added to account for symmetry in manfn+exp and manfn+zsqrd */
+/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
 /*     JCO 2/29/92 */
    case FPMANTRIGPLUSEXP:
    case FPMANTRIGPLUSZSQRD:
@@ -455,7 +455,7 @@ JuliafpSetup(void)
          symmetry=XAXIS;
       get_julia_attractor (0.0, 0.0);   /* another attractor? */
       break;
-/* Added to account for symmetry in julfn+exp and julfn+zsqrd */
+/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
 /*     JCO 2/29/92 */
    case FPJULTRIGPLUSEXP:
    case FPJULTRIGPLUSZSQRD:
@@ -541,9 +541,9 @@ MandellongSetup(void)
       if (param[3] != 0 || (double)c_exp != param[2])
          symmetry = NOSYM;
     }
-/* Added to account for symmetry in manfn+exp and manfn+zsqrd */
+/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
 /*     JCO 2/29/92 */
-   if ((fractype == LMANTRIGPLUSEXP)||(fractype == LMANTRIGPLUSZSQRD))
+   if ((fractype == LMANTRIGPLUSEXP) || (fractype == LMANTRIGPLUSZSQRD))
    {
      if (parm.y == 0.0)
         symmetry = XAXIS;
@@ -588,7 +588,7 @@ JulialongSetup(void)
       if (lparm.y == 0)
          symmetry = XAXIS;
       break;
-/* Added to account for symmetry in julfn+exp and julfn+zsqrd */
+/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
 /*     JCO 2/29/92 */
    case LJULTRIGPLUSEXP:
    case LJULTRIGPLUSZSQRD:
@@ -699,7 +699,7 @@ TrigPlusTrigfpSetup(void)
 }
 
 int
-FnPlusFnSym(void) /* set symmetry matrix for fn+fn type */
+FnPlusFnSym(void) /* set symmetry matrix for fn + fn type */
 {
    static char fnplusfn[7][7] =
    {/* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
@@ -963,9 +963,9 @@ FnXFnSetup(void)
    /*
    if (trigndx[0] == EXP || trigndx[0] == LOG || trigndx[1] == EXP || trigndx[1] == LOG)
       symmetry = XAXIS;
-   else if ((trigndx[0] == SIN && trigndx[1] == SIN)||(trigndx[0] == COS && trigndx[1] == COS))
+   else if ((trigndx[0] == SIN && trigndx[1] == SIN) || (trigndx[0] == COS && trigndx[1] == COS))
       symmetry = PI_SYM;
-   else if ((trigndx[0] == SIN && trigndx[1] == COS)||(trigndx[0] == COS && trigndx[1] == SIN))
+   else if ((trigndx[0] == SIN && trigndx[1] == COS) || (trigndx[0] == COS && trigndx[1] == SIN))
       symmetry = YAXIS;
    else
       symmetry = XYAXIS;
@@ -1124,7 +1124,7 @@ HalleySetup(void)
    param[0] = (double)degree;
 
 /*  precalculated values */
-   AplusOne = degree + 1; /* a+1 */
+   AplusOne = degree + 1; /* a + 1 */
    Ap1deg = AplusOne * degree;
 
 #if !defined(XFRACT)

@@ -95,7 +95,7 @@ int get_toggles()
 {
    char *choices[20];
    int oldhelpmode;
-   char prevsavename[FILE_MAX_DIR+1];
+   char prevsavename[FILE_MAX_DIR + 1];
    char *savenameptr;
    struct fullscreenvalues uvalues[25];
    int i, j, k;
@@ -251,7 +251,7 @@ int get_toggles()
 
    oldhelpmode = helpmode;
    helpmode = HELPXOPTS;
-   i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k+1, choices, uvalues, 0, NULL);
+   i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return -1;
@@ -454,7 +454,7 @@ int get_toggles2()
    helpmode = HELPYOPTS;
    i = fullscreen_prompt("Extended Options\n"
 		"(not all combinations make sense)",
-		k+1, choices, uvalues, 0, NULL);
+		k + 1, choices, uvalues, 0, NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return -1;
@@ -577,7 +577,7 @@ pass_option_restart:
    i = fullscreen_prompt("Passes Options\n"
 		"(not all combinations make sense)\n"
 		"(Press "FK_F2" for corner parameters)\n"
-		"(Press "FK_F6" for calculation parameters)", k+1, choices, uvalues, 0x44, NULL);
+		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
    helpmode = oldhelpmode;
    if (i < 0) {
       return -1;
@@ -730,7 +730,7 @@ get_view_restart:
 
 	oldhelpmode = helpmode;     /* this prevents HELP from activating */
 	helpmode = HELPVIEW;
-	i = fullscreen_prompt("View Window Options", k+1, choices, uvalues, 16, NULL);
+	i = fullscreen_prompt("View Window Options", k + 1, choices, uvalues, 16, NULL);
 	helpmode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
@@ -992,7 +992,7 @@ int get_rds_params(void) {
          else
             p++;
          /* center file name */
-         rds6[(sizeof(rds6)-(int) strlen(p)+2)/2] = 0;
+         rds6[(sizeof(rds6)-(int) strlen(p) + 2)/2] = 0;
          strcat(rds6, "[");
          strcat(rds6, p);
          strcat(rds6, "]");
@@ -1051,7 +1051,7 @@ int get_a_number(double *x, double *y)
    uvalues[k].type = 'd';
    uvalues[k].uval.dval = *y;
 
-   i = fullscreen_prompt("Set Cursor Coordinates", k+1, choices, uvalues, 25, NULL);
+   i = fullscreen_prompt("Set Cursor Coordinates", k + 1, choices, uvalues, 25, NULL);
    if (i < 0) {
       driver_unstack_screen();
       return -1;
@@ -1162,20 +1162,20 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
    char *ra;
    ra = (char *)ra1;
    ra -= sz;
-   ll=(n >> 1)+1;
+   ll=(n >> 1) + 1;
    ir=n;
 
    while (1)
    {
       if (ll > 1)
-         rra = *((char **)(ra+(--ll)*sz));
+         rra = *((char **)(ra + (--ll)*sz));
       else
       {
-         rra = *((char * *)(ra+ir*sz));
-         *((char * *)(ra+ir*sz))=*((char * *)(ra+sz));
+         rra = *((char * *)(ra + ir*sz));
+         *((char * *)(ra + ir*sz))=*((char * *)(ra + sz));
          if (--ir == 1)
          {
-            *((char * *)(ra+sz))=rra;
+            *((char * *)(ra + sz))=rra;
             return;
          }
       }
@@ -1183,17 +1183,17 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
       j = ll <<1;
       while (j <= ir)
       {
-         if (j < ir && (fct(ra+j*sz, ra+(j+1)*sz) < 0))
+         if (j < ir && (fct(ra + j*sz, ra + (j + 1)*sz) < 0))
             ++j;
-         if (fct(&rra, ra+j*sz) < 0)
+         if (fct(&rra, ra + j*sz) < 0)
          {
-            *((char * *)(ra+i*sz)) = *((char * *)(ra+j*sz));
+            *((char * *)(ra + i*sz)) = *((char * *)(ra + j*sz));
             j += (i=j);
          }
          else
-            j=ir+1;
+            j=ir + 1;
       }
-      *((char * *)(ra+i*sz))=rra;
+      *((char * *)(ra + i*sz))=rra;
    }
 }
 #endif
@@ -1715,7 +1715,7 @@ int splitpath(char *file_template, char *drive, char *dir, char *fname, char *ex
 		{
 			/* tmp++; */ /* first character past "." */
 			len = (int) (tmp - (char *)&file_template[offset]);
-			if ((len > 0) && (offset+len < length) && fname)
+			if ((len > 0) && (offset + len < length) && fname)
 			{
 				strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
 				if (len < FILE_MAX_FNAME)
@@ -1915,7 +1915,7 @@ gc_loop:
 
    oldhelpmode = helpmode;
    helpmode = HELPCOORDS;
-   prompt_ret = fullscreen_prompt("Image Coordinates", nump+1, prompts, values, 0x90, NULL);
+   prompt_ret = fullscreen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
    helpmode = oldhelpmode;
 
    if (prompt_ret < 0) {
@@ -2105,7 +2105,7 @@ gsc_loop:
 
    oldhelpmode = helpmode;
    helpmode = HELPSCRNCOORDS;
-   prompt_ret = fullscreen_prompt("Screen Coordinates", nump+1, prompts, values, 0x90, NULL);
+   prompt_ret = fullscreen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
    helpmode = oldhelpmode;
 
    if (prompt_ret < 0) {
@@ -2276,7 +2276,7 @@ get_brws_restart:
 
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPBRWSPARMS;
-   i = fullscreen_prompt("Browse ('L'ook) Mode Options", k+1, choices, uvalues, 16, NULL);
+   i = fullscreen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
       return 0;
@@ -2502,11 +2502,11 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
       for (i = gap; i < n; i++)
          for (j=i-gap; j >= 0; j -= gap)
          {
-            if (fct((char **)(v+j*sz), (char **)(v+(j+gap)*sz)) <= 0)
+            if (fct((char **)(v + j*sz), (char **)(v + (j + gap)*sz)) <= 0)
                break;
-            temp = *(char **)(v+j*sz);
-            *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
-            *(char **)(v+(j+gap)*sz) = temp;
+            temp = *(char **)(v + j*sz);
+            *(char **)(v + j*sz) = *(char **)(v + (j + gap)*sz);
+            *(char **)(v + (j + gap)*sz) = temp;
          }
 }
 

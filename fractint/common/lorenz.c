@@ -133,14 +133,14 @@ int projection = 2; /* projection plane - default is to plot x-y */
    to rectangular screen. We know this map must map parallelogram corners to
    screen corners, so we have following equations:
 
-      a*xxmin+b*yymax+e == 0        (upper left)
-      c*xxmin+d*yymax+f == 0
+      a*xxmin + b*yymax + e == 0        (upper left)
+      c*xxmin + d*yymax + f == 0
 
-      a*xx3rd+b*yy3rd+e == 0        (lower left)
-      c*xx3rd+d*yy3rd+f == ydots-1
+      a*xx3rd + b*yy3rd + e == 0        (lower left)
+      c*xx3rd + d*yy3rd + f == ydots-1
 
-      a*xxmax+b*yymin+e == xdots-1  (lower right)
-      c*xxmax+d*yymin+f == ydots-1
+      a*xxmax + b*yymin + e == xdots-1  (lower right)
+      c*xxmax + d*yymin + f == ydots-1
 
       First we must solve for a, b, c, d, e, f - (which we do once per image),
       then we just apply the transformation to each orbit value.
@@ -165,9 +165,9 @@ int projection = 2; /* projection plane - default is to plot x-y */
   the unknowns e and f have the same coefficient: 1.
 
   First set of 3 equations:
-     a*xxmin+b*yymax+e == 0
-     a*xx3rd+b*yy3rd+e == 0
-     a*xxmax+b*yymin+e == xdots-1
+     a*xxmin + b*yymax + e == 0
+     a*xx3rd + b*yy3rd + e == 0
+     a*xxmax + b*yymin + e == xdots-1
   To make things easy to read, I just replace xxmin, xxmax, xx3rd by x1,
   x2, x3 (ditto for yy...) and xdots-1 by xd.
 
@@ -190,9 +190,9 @@ int projection = 2; /* projection plane - default is to plot x-y */
 
 The same technique can be applied to the second set of equations:
 
-   c*xxmin+d*yymax+f == 0
-   c*xx3rd+d*yy3rd+f == ydots-1
-   c*xxmax+d*yymin+f == ydots-1
+   c*xxmin + d*yymax + f == 0
+   c*xx3rd + d*yy3rd + f == ydots-1
+   c*xxmax + d*yymin + f == ydots-1
 
    c*x1 + d*y2 + f == 0    (1)
    c*x3 + d*y3 + f == yd   (2)
@@ -468,7 +468,7 @@ int orbit3dfloatsetup()
       if (fractype == THREEPLY)
       {
          COSB   = cos(b);
-         SINABC = sin(a+b+c);
+         SINABC = sin(a + b + c);
       }
    }
    else if (fractype == INVERSEJULIAFP)
@@ -656,7 +656,7 @@ Minverse_julia_orbit()
       case breadth_first:
          if (color < mxhits)
          {
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
 /*          g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
             EnQueueFloat((float)g_new.x, (float)g_new.y);
             EnQueueFloat((float)-g_new.x, (float)-g_new.y);
@@ -665,7 +665,7 @@ Minverse_julia_orbit()
       case depth_first:
          if (color < mxhits)
          {
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
 /*          g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
             if (minor_method == left_first)
             {
@@ -708,11 +708,11 @@ Minverse_julia_orbit()
                break;
          }
          if (color < colors-1)
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
          break;
       case random_walk:
          if (color < colors-1)
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
          g_new.x = leftright * g_new.x;
          g_new.y = leftright * g_new.y;
          break;
@@ -823,7 +823,7 @@ Linverse_julia_orbit()
       case breadth_first:
          if (color < mxhits)
          {
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
             EnQueueLong(lnew.x,  lnew.y);
             EnQueueLong(-lnew.x, -lnew.y);
@@ -832,7 +832,7 @@ Linverse_julia_orbit()
       case depth_first:
          if (color < mxhits)
          {
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
             if (minor_method == left_first)
             {
@@ -861,7 +861,7 @@ Linverse_julia_orbit()
          /* fall through */
       case random_walk:
          if (color < colors-1)
-            putcolor(newcol, newrow, color+1);
+            putcolor(newcol, newrow, color + 1);
          break;
    }
    return 1;
@@ -921,9 +921,9 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
       zdt = (*z)*dt;
 
       /* 1-lobe Lorenz */
-      norm = sqrt((*x)*(*x)+(*y)*(*y));
+      norm = sqrt((*x)*(*x) + (*y)*(*y));
       dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
-      dy   = (bdt-adt)*(*x) - (adt+dt)*(*y) + (bdt+adt)*norm - xdt*(*z) -
+      dy   = (bdt-adt)*(*x) - (adt + dt)*(*y) + (bdt + adt)*norm - xdt*(*z) -
              norm*zdt;
       dz   = (ydt/2) - cdt*(*z);
 
@@ -959,13 +959,13 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
       zdt = (*z)*dt;
 
       /* 3-lobe Lorenz */
-      norm = sqrt((*x)*(*x)+(*y)*(*y));
-      dx   = (-(adt+dt)*(*x) + (adt-bdt+zdt)*(*y)) / 3 +
+      norm = sqrt((*x)*(*x) + (*y)*(*y));
+      dx   = (-(adt + dt)*(*x) + (adt-bdt + zdt)*(*y)) / 3 +
              ((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
-             2*(bdt+adt-zdt)*(*x)*(*y))/(3*norm);
-      dy   = ((bdt-adt-zdt)*(*x) - (adt+dt)*(*y)) / 3 +
+             2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
+      dy   = ((bdt-adt-zdt)*(*x) - (adt + dt)*(*y)) / 3 +
              (2*(adt-dt)*(*x)*(*y) +
-             (bdt+adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
+             (bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
       dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
 
       *x += dx;
@@ -981,12 +981,12 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
       zdt = (*z)*dt;
 
       /* 4-lobe Lorenz */
-      dx   = (-adt*(*x)*(*x)*(*x) + (2*adt+bdt-zdt)*(*x)*(*x)*(*y) +
+      dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
              (adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
-             (2 * ((*x)*(*x)+(*y)*(*y)));
+             (2 * ((*x)*(*x) + (*y)*(*y)));
       dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
-             (-2*adt-bdt+zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
-             (2 * ((*x)*(*x)+(*y)*(*y)));
+             (-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
+             (2 * ((*x)*(*x) + (*y)*(*y)));
       dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
 
       *x += dx;
@@ -1092,7 +1092,7 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
          return 1;
    }
    srr = (*s)-(*r)*(*r);
-   (*s)=(*r)*sinx+srr*cosx;
+   (*s)=(*r)*sinx + srr*cosx;
    (*r)=(*r)*cosx-srr*sinx;
    return 0;
 }
@@ -1110,7 +1110,7 @@ int kamtoruslongorbit(long *r, long *s, long *z)
          return 1;
    }
    srr = (*s)-multiply((*r), (*r), bitshift);
-   (*s)=multiply((*r), l_sinx, bitshift)+multiply(srr, l_cosx, bitshift);
+   (*s)=multiply((*r), l_sinx, bitshift) + multiply(srr, l_cosx, bitshift);
    (*r)=multiply((*r), l_cosx, bitshift)-multiply(srr, l_sinx, bitshift);
    return 0;
 }
@@ -1154,7 +1154,7 @@ int threeply2dfloatorbit(double *x, double *y, double *z)
 {
    double tmp;
    *z = *x; /* for warning only */
-   tmp = *y - sign(*x)*(fabs(sin(*x)*COSB+c-(*x)*SINABC));
+   tmp = *y - sign(*x)*(fabs(sin(*x)*COSB + c-(*x)*SINABC));
    *y = a - *x;
    *x = tmp;
    return 0;
@@ -1178,9 +1178,9 @@ int mandelcloudfloat(double *x, double *y, double *z)
 #endif
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
-    if (x2+y2 > 2) return 1;
-    newx = x2-y2+a;
-    newy = 2*(*x)*(*y)+b;
+    if (x2 + y2 > 2) return 1;
+    newx = x2-y2 + a;
+    newy = 2*(*x)*(*y) + b;
     *x = newx;
     *y = newy;
     return 0;
@@ -1431,7 +1431,7 @@ int orbit2dfloat()
 			else
 			{
 				/* should this be using plothist()? */
-				color = getcolor(col, row)+1;
+				color = getcolor(col, row) + 1;
 				if (color < colors) /* color sticks on last value */
 				{
 					(*plot)(col, row, color);
@@ -1574,7 +1574,7 @@ int orbit2dlong()
 				double yy;
 				yy = *soundvar;
 				yy = yy/fudge;
-				w_snd((int)(yy*100+basehertz));
+				w_snd((int)(yy*100 + basehertz));
 			}
 			if (oldcol != -1 && connect)
 			{
@@ -1678,7 +1678,7 @@ static int orbit3dlongcalc(void)
                double yy;
                yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
                yy = yy/fudge;
-               w_snd((int)(yy*100+basehertz));
+               w_snd((int)(yy*100 + basehertz));
             }
             if (oldcol != -1 && connect)
                driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
@@ -1774,7 +1774,7 @@ static int orbit3dfloatcalc(void)
             if (realtime)
                g_which_image = 1;
             if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
-               w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
+               w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
             }
             if (oldcol != -1 && connect)
                driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
@@ -1919,9 +1919,9 @@ int dynam2dfloat()
           }
       }
 
-      xpixel = dxsize*(xstep+.5)/d;
-      ypixel = dysize*(ystep+.5)/d;
-      x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
+      xpixel = dxsize*(xstep + .5)/d;
+      ypixel = dysize*(ystep + .5)/d;
+      x = (double)((xxmin + delxx*xpixel) + (delxx2*ypixel));
       y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
       if (fractype == MANDELCLOUD) {
           a = x;
@@ -1943,7 +1943,7 @@ int dynam2dfloat()
           if (col >= 0 && col < xdots && row >= 0 && row < ydots)
           {
              if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-               w_snd((int)(*soundvar*100+basehertz));
+               w_snd((int)(*soundvar*100 + basehertz));
 
              if (count >= orbit_delay) {
                  if (oldcol != -1 && connect)
@@ -2103,7 +2103,7 @@ int plotorbits2dfloat(void)
 #endif
        {             /* plot if on the screen */
           if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-             w_snd((int)(*soundvar*100+basehertz));
+             w_snd((int)(*soundvar*100 + basehertz));
 
           (*plot)(col, row, o_color%colors);
        }
@@ -2221,21 +2221,21 @@ static int ifs3dfloat(void)
       k = 0;
       while (sum < r && ++k < numaffine*IFS3DPARM)
       {
-         sum += ifs_defn[k*IFS3DPARM+12];
-         if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; /* for safety */
+         sum += ifs_defn[k*IFS3DPARM + 12];
+         if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) break; /* for safety */
       }
 
       /* calculate image of last point under selected iterated function */
       ffptr = ifs_defn + k*IFS3DPARM; /* point to first parm in row */
       newx = *ffptr * inf.orbit[0] +
-             *(ffptr+1) * inf.orbit[1] +
-             *(ffptr+2) * inf.orbit[2] + *(ffptr+9);
-      newy = *(ffptr+3) * inf.orbit[0] +
-             *(ffptr+4) * inf.orbit[1] +
-             *(ffptr+5) * inf.orbit[2] + *(ffptr+10);
-      newz = *(ffptr+6) * inf.orbit[0] +
-             *(ffptr+7) * inf.orbit[1] +
-             *(ffptr+8) * inf.orbit[2] + *(ffptr+11);
+             *(ffptr + 1) * inf.orbit[1] +
+             *(ffptr + 2) * inf.orbit[2] + *(ffptr + 9);
+      newy = *(ffptr + 3) * inf.orbit[0] +
+             *(ffptr + 4) * inf.orbit[1] +
+             *(ffptr + 5) * inf.orbit[2] + *(ffptr + 10);
+      newz = *(ffptr + 6) * inf.orbit[0] +
+             *(ffptr + 7) * inf.orbit[1] +
+             *(ffptr + 8) * inf.orbit[2] + *(ffptr + 11);
 
       inf.orbit[0] = newx;
       inf.orbit[1] = newy;
@@ -2250,9 +2250,9 @@ static int ifs3dfloat(void)
             if (realtime)
                g_which_image = 1;
             if (color_method)
-               color = (k%colors)+1;
+               color = (k%colors) + 1;
             else
-            color = getcolor(inf.col, inf.row)+1;
+            color = getcolor(inf.col, inf.row) + 1;
             if (color < colors) /* color sticks on last value */
                (*plot)(inf.col, inf.row, color);
          }
@@ -2265,9 +2265,9 @@ static int ifs3dfloat(void)
             if (inf.col1 >= 0)
             {
               if (color_method)
-                 color = (k%colors)+1;
+                 color = (k%colors) + 1;
               else
-                color = getcolor(inf.col1, inf.row1)+1;
+                color = getcolor(inf.col1, inf.row1) + 1;
                 if (color < colors) /* color sticks on last value */
                   (*plot)(inf.col1, inf.row1, color);
             }
@@ -2320,7 +2320,7 @@ static int ifs2d(void)
 
    for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
       for (j = 0; j < IFSPARM; j++)
-         localifs[i*IFSPARM+j] = (long)(ifs_defn[i*IFSPARM+j] * fudge);
+         localifs[i*IFSPARM + j] = (long)(ifs_defn[i*IFSPARM + j] * fudge);
 
    tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2347,7 +2347,7 @@ static int ifs2d(void)
       sum = localifs[6];  /* [0][6] */
       k = 0;
       while (sum < r && k < numaffine-1) /* fixed bug of error if sum < 1 */
-         sum += localifs[++k*IFSPARM+6];
+         sum += localifs[++k*IFSPARM + 6];
       /* calculate image of last point under selected iterated function */
       lfptr = localifs + k*IFSPARM; /* point to first parm in row */
       newx = multiply(lfptr[0], x, bitshift) +
@@ -2366,9 +2366,9 @@ static int ifs2d(void)
       {
          /* color is count of hits on this pixel */
          if (color_method)
-            color = (k%colors)+1;
+            color = (k%colors) + 1;
          else
-         color = getcolor(col, row)+1;
+         color = getcolor(col, row) + 1;
          if (color < colors) /* color sticks on last value */
             (*plot)(col, row, color);
       }
@@ -2409,7 +2409,7 @@ static int ifs3dlong(void)
 
    for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
       for (j = 0; j < IFS3DPARM; j++)
-         localifs[i*IFS3DPARM+j] = (long)(ifs_defn[i*IFS3DPARM+j] * fudge);
+         localifs[i*IFS3DPARM + j] = (long)(ifs_defn[i*IFS3DPARM + j] * fudge);
 
    tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2440,8 +2440,8 @@ static int ifs3dlong(void)
       k = 0;
       while (sum < r && ++k < numaffine*IFS3DPARM)
       {
-         sum += localifs[k*IFS3DPARM+12];
-         if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; /* for safety */
+         sum += localifs[k*IFS3DPARM + 12];
+         if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) break; /* for safety */
       }
 
       /* calculate image of last point under selected iterated function */
@@ -2474,9 +2474,9 @@ static int ifs3dlong(void)
             if (realtime)
                g_which_image = 1;
             if (color_method)
-               color = (k%colors)+1;
+               color = (k%colors) + 1;
             else
-            color = getcolor(inf.col, inf.row)+1;
+            color = getcolor(inf.col, inf.row) + 1;
             if (color < colors) /* color sticks on last value */
                (*plot)(inf.col, inf.row, color);
          }
@@ -2487,9 +2487,9 @@ static int ifs3dlong(void)
             if (inf.col1 >= 0)
             {
                if (color_method)
-                  color = (k%colors)+1;
+                  color = (k%colors) + 1;
                else
-               color = getcolor(inf.col1, inf.row1)+1;
+               color = getcolor(inf.col1, inf.row1) + 1;
                if (color < colors) /* color sticks on last value */
                   (*plot)(inf.col1, inf.row1, color);
             }
@@ -2671,7 +2671,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
               + xxadjust);
    if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
    {
-      if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
+      if ((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
         inf->col= inf->row = -2;
       else
         inf->col= inf->row = -1;
@@ -2688,7 +2688,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
                   + xxadjust1);
       if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
       {
-         if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
+         if ((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
            inf->col1= inf->row1 = -2;
          else
            inf->col1= inf->row1 = -1;
@@ -2773,7 +2773,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
             + inf->cvt.e + xxadjust);
    if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
    {
-      if ((long)abs(inf->col)+(long)abs(inf->row) > BAD_PIXEL)
+      if ((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
         inf->col= inf->row = -2;
       else
         inf->col= inf->row = -1;
@@ -2786,7 +2786,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
                 + inf->cvt.e + xxadjust1);
       if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
       {
-         if ((long)abs(inf->col1)+(long)abs(inf->row1) > BAD_PIXEL)
+         if ((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
            inf->col1= inf->row1 = -2;
          else
            inf->col1= inf->row1 = -1;
@@ -2812,7 +2812,7 @@ static FILE *open_orbitsave(void)
 /* Plot a histogram by incrementing the pixel each time it it touched */
 static void _fastcall plothist(int x, int y, int color)
 {
-	color = getcolor(x, y)+1;
+	color = getcolor(x, y) + 1;
 	if (color >= colors)
 	{
 		color = 1;

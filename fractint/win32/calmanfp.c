@@ -93,8 +93,8 @@ long calcmandfpasm_c(void)
 		/* Mandelbrot_87 */
 		Cx = init.x;
 		Cy = init.y;
-		x = parm.x+Cx;
-		y = parm.y+Cy;
+		x = parm.x + Cx;
+		y = parm.y + Cy;
 	}
 	else
 	{
@@ -106,8 +106,8 @@ long calcmandfpasm_c(void)
 		x2 = x*x;
 		y2 = y*y;
 		xy = x*y;
-		x = x2-y2+Cx;
-		y = 2*xy+Cy;
+		x = x2-y2 + Cx;
+		y = 2*xy + Cy;
 	}
 	x2 = x*x;
 	y2 = y*y;
@@ -116,12 +116,12 @@ long calcmandfpasm_c(void)
 	/* top_of_cs_loop_87 */
 	while (--cx > 0)
 	{
-		x = x2-y2+Cx;
-		y = 2*xy+Cy;
+		x = x2-y2 + Cx;
+		y = 2*xy + Cy;
 		x2 = x*x;
 		y2 = y*y;
 		xy = x*y;
-		magnitude = x2+y2;
+		magnitude = x2 + y2;
 
 		if (magnitude >= rqlim)
 		{

@@ -56,7 +56,7 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
    */
 
 #define sins ((long *)(boxy))
-#define coss (((long *)(boxy)+50)) /* 50 after the start of sins */
+#define coss (((long *)(boxy) + 50)) /* 50 after the start of sins */
 static char *ruleptrs[MAXRULES];
 static struct lsys_cmd *rules2[MAXRULES];
 char maxangle;
@@ -124,7 +124,7 @@ static int _fastcall readLSystemFile(char *str)
    char **rulind;
    int err = 0;
    int linenum, check = 0;
-   char inline1[MAX_LSYS_LINE_LEN+1], fixed[MAX_LSYS_LINE_LEN+1], *word;
+   char inline1[MAX_LSYS_LINE_LEN + 1], fixed[MAX_LSYS_LINE_LEN + 1], *word;
    FILE *infile;
    char msgbuf[481]; /* enough for 6 full lines */
 
@@ -223,7 +223,7 @@ static int _fastcall readLSystemFile(char *str)
       strcat(msgbuf, "Error:  no axiom\n");
       ++err;
    }
-   if ((maxangle < 3||maxangle > 50) && err < 6)
+   if ((maxangle < 3 || maxangle > 50) && err < 6)
    {
       strcat(msgbuf, "Error:  illegal or missing angle\n");
       ++err;
@@ -358,7 +358,7 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 {
    int i;
    char *tmpfar;
-   i=(int) strlen(rule)+1;
+   i=(int) strlen(rule) + 1;
    tmpfar = (char *) malloc(i);
    if (tmpfar == NULL) {
        return -1;
@@ -667,7 +667,7 @@ if (overflow)     /* integer math routines overflowed */
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran = 1;
-               if (findsize((*rulind)+1, ts, rules, depth-1) == NULL)
+               if (findsize((*rulind) + 1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
@@ -687,7 +687,7 @@ if (overflow)     /* integer math routines overflowed */
           saverang=ts->realangle;
           savex=ts->xpos;
           savey=ts->ypos;
-          command = findsize(command+1, ts, rules, depth);
+          command = findsize(command + 1, ts, rules, depth);
 		  if (command == NULL)
              return NULL;
           ts->angle=saveang;
@@ -746,13 +746,13 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
    if (horiz == 1E37)
       ts->xpos = FIXEDPT(xdots/2);
    else
-/*    ts->xpos = FIXEDPT(-xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2); */
-      ts->xpos = FIXEDPT((xdots-locsize*(xmax+xmin))/2);
+/*    ts->xpos = FIXEDPT(-xmin*(locsize) + 5 + ((xdots-10)-(locsize)*(xmax-xmin))/2); */
+      ts->xpos = FIXEDPT((xdots-locsize*(xmax + xmin))/2);
    if (vert == 1E37)
       ts->ypos = FIXEDPT(ydots/2);
    else
-/*    ts->ypos = FIXEDPT(-ymin*(locsize)+3+((ydots-6)-(locsize)*(ymax-ymin))/2); */
-      ts->ypos = FIXEDPT((ydots-locsize*(ymax+ymin))/2);
+/*    ts->ypos = FIXEDPT(-ymin*(locsize) + 3 + ((ydots-6)-(locsize)*(ymax-ymin))/2); */
+      ts->ypos = FIXEDPT((ydots-locsize*(ymax + ymin))/2);
    ts->size = FIXEDPT(locsize);
 
    return 1;
@@ -785,11 +785,11 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran = 1;
-               if (drawLSysI((*rulind)+1, ts, rules, depth-1) == NULL)
+               if (drawLSysI((*rulind) + 1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
-      if (!depth||!tran) {
+      if (!depth || !tran) {
         if (command->f) {
           ts->num = command->n;
           (*command->f)(ts);
@@ -806,7 +806,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
           savex=ts->xpos;
           savey=ts->ypos;
           savecolor=ts->curcolor;
-          command = drawLSysI(command+1, ts, rules, depth);
+          command = drawLSysI(command + 1, ts, rules, depth);
 		  if (command == NULL)
              return NULL;
           ts->angle=saveang;

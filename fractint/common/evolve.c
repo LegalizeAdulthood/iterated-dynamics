@@ -170,10 +170,10 @@ int lclpy = gridsz - py - 1;
        *(double *)gene[i].addr = lclpy * dpy + opy; /*same for y */
        break;
     case   3:
-       *(double *)gene[i].addr = px*dpx+opx +(lclpy*dpy)+opy; /*and x+y */
+       *(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
        break;
     case 4:
-       *(double *)gene[i].addr = (px*dpx+opx)-(lclpy*dpy+opy); /*and x-y*/
+       *(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
        break;
     case 5:
        *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor;
@@ -198,16 +198,16 @@ int lclpy = gridsz - py - 1;
    case 0:
      break;
    case 1: /* vary with x */
-     ret = (odpx+px)%limit;
+     ret = (odpx + px)%limit;
      break;
    case 2: /* vary with y */
-     ret = (odpy+lclpy)%limit;
+     ret = (odpy + lclpy)%limit;
      break;
-   case 3: /* vary with x+y */
-     ret = (odpx+px+odpy+lclpy)%limit;
+   case 3: /* vary with x + y */
+     ret = (odpx + px + odpy + lclpy)%limit;
      break;
    case 4: /* vary with x-y */
-     ret = (odpx+px)-(odpy+lclpy)%limit;
+     ret = (odpx + px)-(odpy + lclpy)%limit;
      break;
    case 5: /* random mutation */
      ret = randvalue % limit;
@@ -298,7 +298,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest(void)
 {
-  char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
+  char *evolvmodes[]={"no","x","y","x + y","x-y","random","spread"};
   int i,k,num, numtrig;
   char *choices[20];
   struct fullscreenvalues uvalues[20];
@@ -348,7 +348,7 @@ choose_vars_restart:
    choices[++k]= "Press F4 to randomize all";
    uvalues[k].type = '*';
 
-   i = fullscreen_prompt("Variable tweak central 2 of 2",k+1,choices,uvalues,28,NULL);
+   i = fullscreen_prompt("Variable tweak central 2 of 2",k + 1,choices,uvalues,28,NULL);
 
    switch (i) {
      case FIK_F2: /* set all off */
@@ -459,7 +459,7 @@ choose_vars_restart:
    choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
    uvalues[k].type = '*';
 
-   i = fullscreen_prompt("Variable tweak central 1 of 2",k+1,choices,uvalues,92,NULL);
+   i = fullscreen_prompt("Variable tweak central 1 of 2",k + 1,choices,uvalues,92,NULL);
 
    switch (i) {
      case FIK_F2: /* set all off */
@@ -546,7 +546,7 @@ get_evol_restart:
 
    /* TODO: allocate real memory, not reuse shared segment */
 //   ptr = (char *) extraseg;
-   if ((evolving & EVOLVE_RAND_WALK)||(evolving & EVOLVE_RAND_PARAM)) {
+   if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM)) {
    /* adjust field param to make some sense when changing from random modes*/
    /* maybe should adjust for aspect ratio here? */
       paramrangex = paramrangey = fiddlefactor * 2;
@@ -616,7 +616,7 @@ get_evol_restart:
    uvalues[k].type = '*';
    oldhelpmode = helpmode;     /* this prevents HELP from activating */
    helpmode = HELPEVOL; 
-   i = fullscreen_prompt("Evolution Mode Options",k+1,choices,uvalues,255,NULL);
+   i = fullscreen_prompt("Evolution Mode Options",k + 1,choices,uvalues,255,NULL);
    helpmode = oldhelpmode;     /* re-enable HELP */
    if (i < 0) {
    /* in case this point has been reached after calling sub menu with F6 */
@@ -747,7 +747,7 @@ void SetupParamBox(void)
 	}
 	prmboxcount = 0;
 
-	/* vidsize = (vidsize / gridsz)+3 ; */ /* allocate less mem for smaller box */
+	/* vidsize = (vidsize / gridsz) + 3 ; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
 	if (!imgbox)
 	{
@@ -875,10 +875,10 @@ int grout;
 
  boxcount =0;
  /*draw larger box to show parm zooming range */
- tl.x = bl.x = ((px -(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs-1;
- tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize+1+grout))-syoffs-1; 
- br.x = tr.x = ((px +1+(int)parmzoom) * (int)(dxsize+1+grout))-sxoffs;
- br.y = bl.y = ((py +1+(int)parmzoom) * (int)(dysize+1+grout))-syoffs;
+ tl.x = bl.x = ((px -(int)parmzoom) * (int)(dxsize + 1 + grout))-sxoffs-1;
+ tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize + 1 + grout))-syoffs-1; 
+ br.x = tr.x = ((px +1 + (int)parmzoom) * (int)(dxsize + 1 + grout))-sxoffs;
+ br.y = bl.y = ((py +1 + (int)parmzoom) * (int)(dysize + 1 + grout))-syoffs;
 #ifndef XFRACT
  addbox(br); addbox(tr); addbox(bl); addbox(tl);
  drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y);
@@ -919,11 +919,11 @@ int lclpy = gridsz - py - 1;
   /* set up ranges and offsets for parameter explorer/evolver */
   paramrangex=dpx*(parmzoom*2.0);
   paramrangey=dpy*(parmzoom*2.0);
-  newopx=opx+(((double)px-parmzoom)*dpx);
-  newopy=opy+(((double)lclpy-parmzoom)*dpy);
+  newopx=opx + (((double)px-parmzoom)*dpx);
+  newopy=opy + (((double)lclpy-parmzoom)*dpy);
 
-  newodpx=(char)(odpx+(px-gridsz/2));
-  newodpy=(char)(odpy+(lclpy-gridsz/2));
+  newodpx=(char)(odpx + (px-gridsz/2));
+  newodpy=(char)(odpy + (lclpy-gridsz/2));
   return;
 }
 
@@ -943,7 +943,7 @@ void spiralmap(int count)
   for (offset = 1; offset <= mid; offset ++) {
     /* first do the top row */
     py = (mid - offset);
-    for (px = (mid - offset)+1; px <mid+offset; px++) {
+    for (px = (mid - offset) + 1; px <mid + offset; px++) {
       i++;
       if (i == count) return;
     }

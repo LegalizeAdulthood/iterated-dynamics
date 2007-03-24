@@ -196,7 +196,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 					/* now tok is TOK_SPACE or TOK_LINK or TOK_WORD */
 
-					if (col+width > SCREEN_WIDTH)
+					if (col + width > SCREEN_WIDTH)
 					{          /* go to next line... */
 						col = margin;
 						++row;
@@ -209,14 +209,14 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 					if (tok == TOK_LINK)
 					{
-						display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
+						display_text(row, col, C_HELP_LINK, curr + 1 + 3*sizeof(int), width);
 						if (num_link != NULL)
 						{
 							link[*num_link].r         = (BYTE)row;
 							link[*num_link].c         = (BYTE)col;
-							link[*num_link].topic_num = getint(curr+1);
-							link[*num_link].topic_off = getint(curr+1+sizeof(int));
-							link[*num_link].offset    = (unsigned) ((curr+1+3*sizeof(int)) - text);
+							link[*num_link].topic_num = getint(curr + 1);
+							link[*num_link].topic_off = getint(curr + 1 + sizeof(int));
+							link[*num_link].offset    = (unsigned) ((curr + 1 + 3*sizeof(int)) - text);
 							link[*num_link].width     = width;
 							++(*num_link);
 						}
@@ -250,14 +250,14 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 			break;
 
         case TOK_LINK:
-            display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
+            display_text(row, col, C_HELP_LINK, curr + 1 + 3*sizeof(int), width);
             if (num_link != NULL)
             {
 				link[*num_link].r         = (BYTE)row;
 				link[*num_link].c         = (BYTE)col;
-				link[*num_link].topic_num = getint(curr+1);
-				link[*num_link].topic_off = getint(curr+1+sizeof(int));
-				link[*num_link].offset    = (unsigned) ((curr+1+3*sizeof(int)) - text);
+				link[*num_link].topic_num = getint(curr + 1);
+				link[*num_link].topic_off = getint(curr + 1 + sizeof(int));
+				link[*num_link].offset    = (unsigned) ((curr + 1 + 3*sizeof(int)) - text);
 				link[*num_link].width     = width;
 				++(*num_link);
             }
@@ -376,7 +376,7 @@ static void display_page(char *title, char *text, unsigned text_len,
 	helpinstr();
 	driver_set_attr(2, 0, C_HELP_BODY, 80*22);
 	putstringcenter(1, 0, 80, C_HELP_HDG, title);
-	sprintf(temp, "%2d of %d", page+1, num_pages);
+	sprintf(temp, "%2d of %d", page + 1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
 	driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #else
@@ -462,7 +462,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 		if (ctr != curr_link &&
            ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
         {
-			temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c+temp->width-1);
+			temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c + temp->width-1);
 			/* if >= 3 lines between, prioritize on vertical distance: */
 			if ((temp_dist = dist1(temp->r, curr->r)) >= 4)
 			{
@@ -552,7 +552,7 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
    link = NULL;   /* just for warning */
    switch (key)
       {
-      case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link+1 ;
+      case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1 ;
       case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1 ;
       default:       assert(0);  return -1;
       }
@@ -595,7 +595,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    int       action;
    BYTE ch;
 
-   where     = topic_offset[curr->topic_num]+sizeof(int); /* to skip flags */
+   where     = topic_offset[curr->topic_num] + sizeof(int); /* to skip flags */
    curr_link = curr->link;
 
    help_seek(where);
@@ -615,7 +615,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
    for (page = 0; page < num_pages; page++)
       if (curr->topic_off >= page_table[page].offset &&
-          curr->topic_off <  page_table[page].offset+page_table[page].len)
+          curr->topic_off <  page_table[page].offset + page_table[page].len)
          break;
 
    assert(page < num_pages);
@@ -627,7 +627,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
       {
       if (draw_page)
          {
-         help_seek(where+page_table[page].offset);
+         help_seek(where + page_table[page].offset);
          fread(buffer, sizeof(char), page_table[page].len, help_file);
 
          num_link = 0;
@@ -887,7 +887,7 @@ int help(int action)
 				int ctr;
 
 				for (ctr = 0; ctr < MAX_HIST-1; ctr++)
-					hist[ctr] = hist[ctr+1];
+					hist[ctr] = hist[ctr + 1];
 
 				curr_hist = MAX_HIST-1;
 			}
@@ -989,7 +989,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
       curr_base += sizeof(int);
       }
 
-   read_len = (off+len > curr_len) ? curr_len - off : len;
+   read_len = (off + len > curr_len) ? curr_len - off : len;
 
    if (read_len > 0)
       {
@@ -997,12 +997,12 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
       fread(buf, sizeof(char), read_len, help_file);
       }
 
-   return curr_len - (off+len) ;
+   return curr_len - (off + len) ;
    }
 
 int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
    /*
-    * reads text from a help topic.  Returns number of bytes from (off+len)
+    * reads text from a help topic.  Returns number of bytes from (off + len)
     * to end of topic.  On "EOF" returns a negative number representing
     * number of bytes not read.
     */
@@ -1162,7 +1162,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          return 1;
 
       case PD_GET_LINK_PAGE:
-         pd->i = getint(pd->s+sizeof(long));
+         pd->i = getint(pd->s + sizeof(long));
          return (pd->i == -1) ? 0 : 1 ;
 
       case PD_RELEASE_TOPIC:
@@ -1317,7 +1317,7 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
    FILE *temp_file = NULL;
    char      *msg = NULL;
 
-/*   help_seek((long)sizeof(int)+sizeof(long));         Strange -- should be 8 -- CWM */
+/*   help_seek((long)sizeof(int) + sizeof(long));         Strange -- should be 8 -- CWM */
    help_seek(16L);                               /* indeed it should - Bert */
    fread(&info.num_contents, sizeof(int), 1, help_file);
    fread(&info.num_page, sizeof(int), 1, help_file);
@@ -1395,7 +1395,7 @@ ErrorAbort:
 int init_help(void)
 {
 	struct help_sig_info hs = { 0 };
-	char path[FILE_MAX_PATH+1];
+	char path[FILE_MAX_PATH + 1];
 
 	help_file = NULL;
 
@@ -1461,7 +1461,7 @@ int init_help(void)
 		{
 			if ((help_file = fopen(path, "rb")) != NULL)
 			{
-				fread(&hs, sizeof(long)+sizeof(int), 1, help_file);
+				fread(&hs, sizeof(long) + sizeof(int), 1, help_file);
 
 				if (hs.sig != HELP_SIG)
 				{
@@ -1475,7 +1475,7 @@ int init_help(void)
 				}
 				else
 				{
-					base_off = sizeof(long)+sizeof(int);
+					base_off = sizeof(long) + sizeof(int);
 				}
 			}
 		}

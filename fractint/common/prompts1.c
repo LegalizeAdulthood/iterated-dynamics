@@ -235,7 +235,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
       --boxrow;
       ++boxlines;
       }
-   instrrow = boxrow+boxlines;
+   instrrow = boxrow + boxlines;
    if (instrrow + 3 + extralines < 25) {
       ++boxlines;    /* blank at bottom of box */
       ++instrrow;
@@ -312,9 +312,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
          *next = '\0';
          titlewidth = (int) strlen(hdgline);
          g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
-         driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
+         driver_put_string(titlerow + i, 0, C_PROMPT_HI, hdgline);
          *next = '\n';
-         hdgline = next+1;
+         hdgline = next + 1;
       }
         /* add scrolling key message, if applicable */
       if (in_scrolling_mode) {
@@ -324,7 +324,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
       titlewidth = (int) strlen(hdgline);
       g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
-      driver_put_string(titlerow+i, 0, C_PROMPT_HI, hdgline);
+      driver_put_string(titlerow + i, 0, C_PROMPT_HI, hdgline);
    }
 
    /* display extra info */
@@ -347,35 +347,35 @@ int fullscreen_prompt(/* full-screen prompting routine */
       memset(buf, S1, 80); buf[boxwidth-2] = 0;
       g_text_cbase = boxcol + 1;
       driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
-      driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, buf);
+      driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, buf);
       --g_text_cbase;
       driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S5);
-      driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, S2);
+      driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, S2);
       g_text_cbase += boxwidth - 1;
       driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S6);
-      driver_put_string(extrarow+extralines-1, 0, C_PROMPT_BKGRD, S3);
+      driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, S3);
 
       g_text_cbase = boxcol;
 
       for (i = 1; i < extralines-1; ++i) {
-         driver_put_string(extrarow+i, 0, C_PROMPT_BKGRD, S4);
-         driver_put_string(extrarow+i, boxwidth-1, C_PROMPT_BKGRD, S4);
+         driver_put_string(extrarow + i, 0, C_PROMPT_BKGRD, S4);
+         driver_put_string(extrarow + i, boxwidth-1, C_PROMPT_BKGRD, S4);
       }
       g_text_cbase += (boxwidth - extrawidth) / 2;
-      driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+      driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
    }
 
    g_text_cbase = 0;
 
    /* display empty box */
    for (i = 0; i < boxlines; ++i)
-      driver_set_attr(boxrow+i, boxcol, C_PROMPT_LO, boxwidth);
+      driver_set_attr(boxrow + i, boxcol, C_PROMPT_LO, boxwidth);
 
    /* display initial values */
    for (i = 0; i < numprompts; i++) {
-      driver_put_string(promptrow+i, promptcol, C_PROMPT_LO, prompts[i]);
+      driver_put_string(promptrow + i, promptcol, C_PROMPT_LO, prompts[i]);
       prompt_valuestring(buf, &values[i]);
-      driver_put_string(promptrow+i, valuecol, C_PROMPT_LO, buf);
+      driver_put_string(promptrow + i, valuecol, C_PROMPT_LO, buf);
    }
 
 
@@ -393,8 +393,8 @@ int fullscreen_prompt(/* full-screen prompting routine */
             load_entry_text(scroll_file, extrainfo, extralines - 2,
                         scroll_row_status, scroll_column_status);
             for (i = 1; i <= extralines - 2; i++)
-               driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
-            driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+               driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+            driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
          }
 		 /* TODO: rework key interaction to blocking wait */
         while (!driver_key_pressed()) { }
@@ -467,7 +467,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
             case FIK_F8:
             case FIK_F9:
             case FIK_F10:
-               if (promptfkeys & (1 << (done+1-FIK_F1)))
+               if (promptfkeys & (1 << (done + 1-FIK_F1)))
                   goto fullscreen_exit;
          }
       }
@@ -478,7 +478,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
    if (numprompts > 1)
       putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
 	  "Use " UPARR1 " and " DNARR1 " to select values to change");
-   putstringcenter(instrrow+1, 0, 80, C_PROMPT_BKGRD,
+   putstringcenter(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
          (helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
    done = 0;
@@ -492,8 +492,8 @@ int fullscreen_prompt(/* full-screen prompting routine */
          load_entry_text(scroll_file, extrainfo, extralines - 2,
                              scroll_row_status, scroll_column_status);
          for (i = 1; i <= extralines - 2; i++)
-            driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
-         driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
+            driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+         driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
          g_text_cbase = j;
       }
 
@@ -504,13 +504,13 @@ int fullscreen_prompt(/* full-screen prompting routine */
                    (curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
       else
          rewrite_extrainfo = 0;
-      driver_put_string(promptrow+curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
+      driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
 
       if (curtype == 'l') {
          i = input_field_list(
                 C_PROMPT_CHOOSE, buf, curlen,
                 values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
-                promptrow+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
          for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
             if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0) break;
          values[curchoice].uval.ch.val = j;
@@ -523,7 +523,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
          if (curtype == 'D') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
          if (curtype == 'f') j = INPUTFIELD_NUMERIC;
          i = input_field(j, C_PROMPT_INPUT, buf, curlen,
-                promptrow+curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+                promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
          switch (values[curchoice].type) {
             case 'd':
             case 'D':
@@ -542,15 +542,15 @@ int fullscreen_prompt(/* full-screen prompting routine */
             case 's':
                strncpy(values[curchoice].uval.sval, buf, 16);
                break;
-            default: /* assume 0x100+n */
+            default: /* assume 0x100 + n */
                strcpy(values[curchoice].uval.sbuf, buf);
             }
          }
 
-      driver_put_string(promptrow+curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
+      driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
       j = (int) strlen(buf);
       memset(&buf[j], ' ', 80-j); buf[curlen] = 0;
-      driver_put_string(promptrow+curchoice, valuecol, C_PROMPT_LO,  buf);
+      driver_put_string(promptrow + curchoice, valuecol, C_PROMPT_LO,  buf);
 
       switch (i) {
          case 0:  /* enter  */
@@ -666,7 +666,7 @@ int prompt_valuestring(char *buf, struct fullscreenvalues *val)
              sprintf(buf, "%ld", (long)(val->uval.dval-.5));
          }
          else {
-             sprintf(buf, "%ld", (long)(val->uval.dval+.5));
+             sprintf(buf, "%ld", (long)(val->uval.dval + .5));
          }
          ret = 20;
          break;
@@ -694,7 +694,7 @@ int prompt_valuestring(char *buf, struct fullscreenvalues *val)
          strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
          ret = val->uval.ch.vlen;
          break;
-      default: /* assume 0x100+n */
+      default: /* assume 0x100 + n */
          strcpy(buf, val->uval.sbuf);
          ret = val->type & 0xff;
       }
@@ -718,7 +718,7 @@ int prompt_checkkey(int curkey)
       case FIK_F8:
       case FIK_F9:
       case FIK_F10:
-         if (promptfkeys & (1 << (curkey+1-FIK_F1)))
+         if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
             return curkey;
       }
    return 0;
@@ -749,7 +749,7 @@ int prompt_checkkey_scroll(int curkey)
       case FIK_F8:
       case FIK_F9:
       case FIK_F10:
-         if (promptfkeys & (1 << (curkey+1-FIK_F1)))
+         if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
             return curkey;
       }
    return 0;
@@ -949,7 +949,7 @@ static int sel_fractype_help(int curkey, int choice)
    int oldhelpmode;
    if (curkey == FIK_F2) {
       oldhelpmode = helpmode;
-      helpmode = fractalspecific[(*(ft_choices+choice))->num].helptext;
+      helpmode = fractalspecific[(*(ft_choices + choice))->num].helptext;
       help(0);
       helpmode = oldhelpmode;
       }
@@ -1065,7 +1065,7 @@ void set_default_parms()
    }
    if ((extra=find_extra_param(fractype)) > -1)
       for (i = 0; i < MAXPARAMS-4; i++)
-         param[i+4] = moreparams[extra].paramvalue[i];
+         param[i + 4] = moreparams[extra].paramvalue[i];
    if (debugflag != 3200)
       bf_math = 0;
    else if (bf_math)
@@ -1289,7 +1289,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
             }
          }
       while (--j >= 0 && tstack[j] == '\n') { }
-      tstack[j+1] = 0;
+      tstack[j + 1] = 0;
       }
 gfp_top:
    promptnum = 0;
@@ -1563,7 +1563,7 @@ gfp_top:
             ret = 1;
      }
      promptnum = 0;
-     for (i = firstparm; i < numparams+firstparm; i++)
+     for (i = firstparm; i < numparams + firstparm; i++)
      {
         if (curtype == FORMULA || curtype == FFORMULA)
            if (paramnotused(i))
@@ -1638,7 +1638,7 @@ gfp_top:
       if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
       {
          if (paramvalues[promptnum].uval.ch.val != major_method ||
-             paramvalues[promptnum+1].uval.ch.val != minor_method)
+             paramvalues[promptnum + 1].uval.ch.val != minor_method)
             ret = 1;
          major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
          minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
@@ -1683,7 +1683,7 @@ void load_params(int fractype)
    }
    if ((extra=find_extra_param(fractype)) > -1)
       for (i = 0; i < MAXPARAMS-4; i++)
-         param[i+4] = moreparams[extra].paramvalue[i];
+         param[i + 4] = moreparams[extra].paramvalue[i];
 }
 
 int check_orbit_name(char *orbitname)
@@ -1767,7 +1767,7 @@ long get_file_entry(int type, char *title, char *fmask,
 }
 
 struct entryinfo {
-   char name[ITEMNAMELEN+2];
+   char name[ITEMNAMELEN + 2];
    long point; /* points to the (or the { following the name */
    };
 static struct entryinfo **gfe_choices; /* for format_getparm_line */
@@ -1950,7 +1950,7 @@ static long gfe_choose_entry(int type, char *title, char *filename, char *entryn
 	gfe_title = title;
 
 retry:
-	for (i = 0; i < MAXENTRIES+1; i++)
+	for (i = 0; i < MAXENTRIES + 1; i++)
 	{
 		choices[i] = &storage[i];
 		attributes[i] = 1;
@@ -2442,7 +2442,7 @@ restart_1:
    oldhelpmode = helpmode;
    helpmode = HELP3DMODE;
 
-   k = fullscreen_prompt("3D Mode Selection", k+1, prompts3d, uvalues, 0, NULL);
+   k = fullscreen_prompt("3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
    helpmode = oldhelpmode;
    if (k < 0) {
       return -1;
@@ -2526,7 +2526,7 @@ restart_1:
          attributes[i] = 1;
       helpmode = HELP3DFILL;
       i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char * *)choices, attributes,
-                              0, 0, 0, FILLTYPE+1, NULL, NULL, NULL, NULL);
+                              0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
       helpmode = oldhelpmode;
       if (i < 0)
          goto restart_1;
@@ -2908,7 +2908,7 @@ static int get_funny_glasses_params()
 
    oldhelpmode = helpmode;
    helpmode = HELP3DGLASSES;
-   k = fullscreen_prompt("Funny Glasses Parameters", k+1, prompts3d, uvalues, 0, NULL);
+   k = fullscreen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
    helpmode = oldhelpmode;
    if (k < 0)
       return -1;

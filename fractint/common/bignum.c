@@ -63,7 +63,7 @@ r <--------------------------- 2*bnlength ----------------------------->
 
 If this double wide bignumber, r, needs to be converted to a normal,
 single width bignumber, this is easily done with pointer arithmetic.  The
-converted value starts at r+shiftfactor (where shiftfactor =
+converted value starts at r + shiftfactor (where shiftfactor =
 bnlength-intlength) and continues for bnlength bytes.  The lower order
 bytes and the upper integer part of the double wide number can then be
 ignored.
@@ -87,7 +87,7 @@ value of rlength must be in the range: 2*bnlength <= rlength < bnlength.
 The amount by which rlength exceeds bnlength accounts for the extra bytes
 that must be multiplied so that the first bnlength bytes are correct.
 These extra bytes are refered to in the code as the "padding," that is:
-rlength=bnlength+padding.
+rlength=bnlength + padding.
 
 All three of the values, bnlength, rlength, and therefore padding, must be
 multiples of the size of memory blocks being used for arithmetic (2 on
@@ -106,7 +106,7 @@ eliminating the possiblity of overflowing the number.
 
 If r needs to be converted to a normal, single width bignumber, this is
 easily done with pointer arithmetic.  The converted value starts at
-r+shiftfactor (where shiftfactor = padding-intlength) and continues for
+r + shiftfactor (where shiftfactor = padding-intlength) and continues for
 bnlength bytes.  The lower order bytes and the upper integer part of the
 double wide number can then be ignored.
 
@@ -208,13 +208,13 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
       /* This will keep the integer part from overflowing past the array. */
       bnlength = oldbnlength - oldintlength + min(oldintlength, newintlength);
 
-      memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
+      memcpy(newnum + newbnlength-newintlength-oldbnlength + oldintlength,
                old, bnlength);
       }
    else
       {
       bnlength = newbnlength - newintlength + min(oldintlength, newintlength);
-      memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
+      memcpy(newnum, old + oldbnlength-oldintlength-newbnlength + newintlength,
                bnlength);
       }
    intlength = saveintlength;
@@ -598,12 +598,12 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
         unsafe_mult_bn(bntmp1, r, n); /* bntmp1=rn */
         inttobn(bntmp2, 1);  /* bntmp2 = 1.0 */
-        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0) /* if not different */
+        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1 + shiftfactor) == 0) /* if not different */
             break;  /* they must be the same */
         inttobn(bntmp2, 2); /* bntmp2 = 2.0 */
-        sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); /* bntmp3=2-rn */
+        sub_bn(bntmp3, bntmp2, bntmp1 + shiftfactor); /* bntmp3=2-rn */
         unsafe_mult_bn(bntmp1, r, bntmp3); /* bntmp1=r(2-rn) */
-        copy_bn(r, bntmp1+shiftfactor); /* r = bntmp1 */
+        copy_bn(r, bntmp1 + shiftfactor); /* r = bntmp1 */
         }
 
     /* restore original values */
@@ -691,14 +691,14 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 
     /* shift n1, n2 */
     /* important!, use memmove(), not memcpy() */
-    memmove(n1+scale1, n1, bnlength-scale1); /* shift bytes over */
+    memmove(n1 + scale1, n1, bnlength-scale1); /* shift bytes over */
     memset(n1, 0, scale1);  /* zero out the rest */
-    memmove(n2+scale2, n2, bnlength-scale2); /* shift bytes over */
+    memmove(n2 + scale2, n2, bnlength-scale2); /* shift bytes over */
     memset(n2, 0, scale2);  /* zero out the rest */
 
     unsafe_inv_bn(r, n2);
     unsafe_mult_bn(bntmp1, n1, r);
-    copy_bn(r, bntmp1+shiftfactor); /* r = bntmp1 */
+    copy_bn(r, bntmp1 + shiftfactor); /* r = bntmp1 */
 
     if (scale1 != scale2)
         {
@@ -706,13 +706,13 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         if (scale1 > scale2) /* answer is too big, adjust it */
             {
             scale = scale1-scale2;
-            memmove(r, r+scale, bnlength-scale); /* shift bytes over */
-            memset(r+bnlength-scale, 0, scale);  /* zero out the rest */
+            memmove(r, r + scale, bnlength-scale); /* shift bytes over */
+            memset(r + bnlength-scale, 0, scale);  /* zero out the rest */
             }
         else if (scale1 < scale2) /* answer is too small, adjust it */
             {
             scale = scale2-scale1;
-            memmove(r+scale, r, bnlength-scale); /* shift bytes over */
+            memmove(r + scale, r, bnlength-scale); /* shift bytes over */
             memset(r, 0, scale);                 /* zero out the rest */
             }
         /* else scale1 == scale2 */
@@ -740,7 +740,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
          orig_rlength,
          orig_shiftfactor;
 
-/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r) */
+/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r + n/r) */
 
     if (is_bn_neg(n))
         { /* sqrt of a neg, return 0 */
@@ -836,7 +836,7 @@ bn_t exp_bn(bn_t r, bn_t n)
         {
         /* copy n, if n is negative, mult_bn() alters n */
         unsafe_mult_bn(bntmp3, bntmp2, copy_bn(bntmp1, n));
-        copy_bn(bntmp2, bntmp3+shiftfactor);
+        copy_bn(bntmp2, bntmp3 + shiftfactor);
         div_a_bn_int(bntmp2, fact);
         if (!is_bn_not_zero(bntmp2))
             break; /* too small to register */
@@ -862,7 +862,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
          orig_rlength,
          orig_shiftfactor;
 
-/* use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1 */
+/* use Newton's recursive method for zeroing in on ln(n): r=r + n*exp(-r)-1 */
 
     if (is_bn_neg(n) || is_bn_zero(n))
         { /* error, return largest neg value */
@@ -930,8 +930,8 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         bntmp4 = orig_bntmp4 + orig_bnlength - bnlength;
         exp_bn(bntmp6, r);     /* exp(-r) */
         unsafe_mult_bn(bntmp2, bntmp6, n);  /* n*exp(-r) */
-        sub_a_bn(bntmp2+shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
-        sub_a_bn(r, bntmp2+shiftfactor);        /* -r - (n*exp(-r) - 1) */
+        sub_a_bn(bntmp2 + shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
+        sub_a_bn(r, bntmp2 + shiftfactor);        /* -r - (n*exp(-r) - 1) */
 
         if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
             {
@@ -1048,7 +1048,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
         {
         /* even terms for cosine */
         unsafe_mult_bn(bntmp2, bntmp1, n);
-        copy_bn(bntmp1, bntmp2+shiftfactor);
+        copy_bn(bntmp1, bntmp2 + shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
             break; /* too small to register */
@@ -1059,7 +1059,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 
         /* odd terms for sine */
         unsafe_mult_bn(bntmp2, bntmp1, n);
-        copy_bn(bntmp1, bntmp2+shiftfactor);
+        copy_bn(bntmp1, bntmp2 + shiftfactor);
         div_a_bn_int(bntmp1, fact++);
         if (!is_bn_not_zero(bntmp1))
             break; /* too small to register */
@@ -1079,10 +1079,10 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
      for (i = 0; i < halves; i++)
          {
          unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
-         double_bn(s, bntmp2+shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
+         double_bn(s, bntmp2 + shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
          unsafe_square_bn(bntmp2, c);
-         double_a_bn(bntmp2+shiftfactor);
-         sub_bn(c, bntmp2+shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
+         double_a_bn(bntmp2 + shiftfactor);
+         sub_bn(c, bntmp2 + shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
          }
 
     if (switch_sincos)
@@ -1188,9 +1188,9 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         copy_bn(bntmp3, r); /* restore bntmp3 from sincos_bn() */
         copy_bn(bntmp1, bntmp5);
         unsafe_mult_bn(bntmp2, n, bntmp1);     /* n*cos(r) */
-        sub_a_bn(bntmp4, bntmp2+shiftfactor); /* sin(r) - n*cos(r) */
+        sub_a_bn(bntmp4, bntmp2 + shiftfactor); /* sin(r) - n*cos(r) */
         unsafe_mult_bn(bntmp1, bntmp5, bntmp4); /* cos(r) * (sin(r) - n*cos(r)) */
-        sub_a_bn(r, bntmp1+shiftfactor); /* r - cos(r) * (sin(r) - n*cos(r)) */
+        sub_a_bn(r, bntmp1 + shiftfactor); /* r - cos(r) * (sin(r) - n*cos(r)) */
 
 #ifdef CALCULATING_BIG_PI
         putchar('\n');

@@ -152,7 +152,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
       rhombus_stack[i] = 0;
  
   /* set up grid array compactly leaving space at end */
-  /* space req for grid is 2(xdots+ydots)*sizeof(long or double) */
+  /* space req for grid is 2(xdots + ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
    xytemp = xdots + ydots;
    if (((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
@@ -185,7 +185,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
    if (bf_math)
    {
       gotprec=getprecbf(CURRENTREZ);
-      if ((gotprec <= DBL_DIG+1 && debugflag != 3200) || math_tol[1] >= 1.0)
+      if ((gotprec <= DBL_DIG + 1 && debugflag != 3200) || math_tol[1] >= 1.0)
       {
          bfcornerstofloat();
          bf_math = 0;
@@ -580,15 +580,15 @@ void adjust_cornerbf(void)
    bf_t bftemp, bftemp2;
    bf_t btmp1;
    int saved; saved = save_stack();
-   bftemp  = alloc_stack(rbflength+2);
-   bftemp2 = alloc_stack(rbflength+2);
-   btmp1  =  alloc_stack(rbflength+2);
+   bftemp  = alloc_stack(rbflength + 2);
+   bftemp2 = alloc_stack(rbflength + 2);
+   btmp1  =  alloc_stack(rbflength + 2);
 
    /* While we're at it, let's adjust the Xmagfactor as well */
    /* use bftemp, bftemp2 as bfXctr, bfYctr */
    cvtcentermagbf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
    ftemp = fabs(Xmagfactor);
-   if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1+aspectdrift))
+   if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1 + aspectdrift))
       {
       Xmagfactor = sign(Xmagfactor);
       cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
@@ -655,7 +655,7 @@ void adjust_corner(void)
       /* While we're at it, let's adjust the Xmagfactor as well */
       cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
       ftemp = fabs(Xmagfactor);
-      if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1+aspectdrift))
+      if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1 + aspectdrift))
          {
          Xmagfactor = sign(Xmagfactor);
          cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -689,27 +689,27 @@ static void _fastcall adjust_to_limitsbf(double expand)
    bf_t bexpand;
    int i;
    int saved; saved = save_stack();
-   bcornerx[0] = alloc_stack(rbflength+2);
-   bcornerx[1] = alloc_stack(rbflength+2);
-   bcornerx[2] = alloc_stack(rbflength+2);
-   bcornerx[3] = alloc_stack(rbflength+2);
-   bcornery[0] = alloc_stack(rbflength+2);
-   bcornery[1] = alloc_stack(rbflength+2);
-   bcornery[2] = alloc_stack(rbflength+2);
-   bcornery[3] = alloc_stack(rbflength+2);
-   blowx       = alloc_stack(rbflength+2);
-   bhighx      = alloc_stack(rbflength+2);
-   blowy       = alloc_stack(rbflength+2);
-   bhighy      = alloc_stack(rbflength+2);
-   blimit      = alloc_stack(rbflength+2);
-   bftemp      = alloc_stack(rbflength+2);
-   bcenterx    = alloc_stack(rbflength+2);
-   bcentery    = alloc_stack(rbflength+2);
-   badjx       = alloc_stack(rbflength+2);
-   badjy       = alloc_stack(rbflength+2);
-   btmp1       = alloc_stack(rbflength+2);
-   btmp2       = alloc_stack(rbflength+2);
-   bexpand     = alloc_stack(rbflength+2);
+   bcornerx[0] = alloc_stack(rbflength + 2);
+   bcornerx[1] = alloc_stack(rbflength + 2);
+   bcornerx[2] = alloc_stack(rbflength + 2);
+   bcornerx[3] = alloc_stack(rbflength + 2);
+   bcornery[0] = alloc_stack(rbflength + 2);
+   bcornery[1] = alloc_stack(rbflength + 2);
+   bcornery[2] = alloc_stack(rbflength + 2);
+   bcornery[3] = alloc_stack(rbflength + 2);
+   blowx       = alloc_stack(rbflength + 2);
+   bhighx      = alloc_stack(rbflength + 2);
+   blowy       = alloc_stack(rbflength + 2);
+   bhighy      = alloc_stack(rbflength + 2);
+   blimit      = alloc_stack(rbflength + 2);
+   bftemp      = alloc_stack(rbflength + 2);
+   bcenterx    = alloc_stack(rbflength + 2);
+   bcentery    = alloc_stack(rbflength + 2);
+   badjx       = alloc_stack(rbflength + 2);
+   badjy       = alloc_stack(rbflength + 2);
+   btmp1       = alloc_stack(rbflength + 2);
+   btmp2       = alloc_stack(rbflength + 2);
+   bexpand     = alloc_stack(rbflength + 2);
 
    limit = 32767.99;
 
@@ -721,7 +721,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
    add_bf(bcenterx, bfxmin, bfxmax);
    half_a_bf(bcenterx);
 
-   /* centery = (yymin+yymax)/2; */
+   /* centery = (yymin + yymax)/2; */
    add_bf(bcentery, bfymin, bfymax);
    half_a_bf(bcentery);
 
@@ -757,7 +757,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
    /* cornerx[2] = xx3rd; */
    copy_bf(bcornerx[2], bfx3rd);
 
-   /* cornerx[3] = xxmin+(xxmax-xx3rd); */
+   /* cornerx[3] = xxmin + (xxmax-xx3rd); */
    sub_bf(bcornerx[3], bfxmax, bfx3rd);
    add_a_bf(bcornerx[3], bfxmin);
 
@@ -770,7 +770,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
    /* cornery[2] = yy3rd; */
    copy_bf(bcornery[2], bfy3rd);
 
-   /* cornery[3] = yymin+(yymax-yy3rd); */
+   /* cornery[3] = yymin + (yymax-yy3rd); */
    sub_bf(bcornery[3], bfymax, bfy3rd);
    add_a_bf(bcornery[3], bfymin);
 
@@ -905,8 +905,8 @@ static void _fastcall adjust_to_limits(double expand)
       if (bitshift >= 29) limit = 3.99;
    }
 
-   centerx = (xxmin+xxmax)/2;
-   centery = (yymin+yymax)/2;
+   centerx = (xxmin + xxmax)/2;
+   centery = (yymin + yymax)/2;
 
    if (xxmin == centerx) { /* ohoh, infinitely thin, fix it */
       smallest_add(&xxmax);
@@ -928,12 +928,12 @@ static void _fastcall adjust_to_limits(double expand)
    cornerx[0] = xxmin;
    cornerx[1] = xxmax;
    cornerx[2] = xx3rd;
-   cornerx[3] = xxmin+(xxmax-xx3rd);
+   cornerx[3] = xxmin + (xxmax-xx3rd);
 
    cornery[0] = yymax;
    cornery[1] = yymin;
    cornery[2] = yy3rd;
-   cornery[3] = yymin+(yymax-yy3rd);
+   cornery[3] = yymin + (yymax-yy3rd);
 
    /* if caller wants image size adjusted, do that first */
    if (expand != 1.0)
@@ -1001,7 +1001,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 {
    bf_t btmp1;
    int saved; saved = save_stack();
-   btmp1 = alloc_stack(bflength+2);
+   btmp1 = alloc_stack(bflength + 2);
    mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
    add_a_bf(num, btmp1);
    restore_stack(saved);
@@ -1022,7 +1022,7 @@ static int _fastcall ratio_bad(double actual, double desired)
    if (desired != 0 && debugflag != 3400)
       ftemp = actual / desired;
    if (desired != 0 && debugflag != 3400)
-      if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0+tol))
+      if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0 + tol))
          return 1;
    return 0;
 }
@@ -1067,7 +1067,7 @@ static int _fastcall ratio_bad(double actual, double desired)
          optional, frees the memory area sooner than would happen otherwise
 
    Example, save info:
-      alloc_resume(sizeof(parmarray)+100, 2);
+      alloc_resume(sizeof(parmarray) + 100, 2);
       put_resume(sizeof(row), &row, sizeof(col), &col,
                  sizeof(parmarray), parmarray, 0);
     restore info:
@@ -1425,9 +1425,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
    syoffs = save_syoffs;
    if (debugflag == 4030) {
       if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-           w_snd((int)(i*1000/xdots+basehertz));
+           w_snd((int)(i*1000/xdots + basehertz));
       else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
-           w_snd((int)(j*1000/ydots+basehertz));
+           w_snd((int)(j*1000/ydots + basehertz));
       else if (orbit_delay > 0) 
       {
          wait_until(0, orbit_delay);
@@ -1435,11 +1435,11 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
    }
    else {
       if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-           w_snd((int)(i+basehertz));
+           w_snd((int)(i + basehertz));
       else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
-           w_snd((int)(j+basehertz));
+           w_snd((int)(j + basehertz));
       else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
-           w_snd((int)(i+j+basehertz));
+           w_snd((int)(i + j + basehertz));
       else if (orbit_delay > 0) 
       {
          wait_until(0, orbit_delay);
@@ -1503,7 +1503,7 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
    int i, j;
    for (i = 0; i < num_worklist; ++i)
       if (worklist[i].yystart == worklist[i].yybegin)
-         for (j=i+1; j < num_worklist; ++j)
+         for (j=i + 1; j < num_worklist; ++j)
             if (worklist[j].sym == worklist[i].sym
                 && worklist[j].yystart == worklist[j].yybegin
                 && worklist[j].xxstart == worklist[j].xxbegin
@@ -1513,12 +1513,12 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
                    && worklist[i].xxbegin == worklist[j].xxbegin
                    && worklist[i].xxstop  == worklist[j].xxstop)
                {
-                  if (worklist[i].yystop+1 == worklist[j].yystart)
+                  if (worklist[i].yystop + 1 == worklist[j].yystart)
                   {
                      worklist[i].yystop = worklist[j].yystop;
                      return j;
                   }
-                  if (worklist[j].yystop+1 == worklist[i].yystart)
+                  if (worklist[j].yystop + 1 == worklist[i].yystart)
                   {
                      worklist[i].yystart = worklist[j].yystart;
                      worklist[i].yybegin = worklist[j].yybegin;
@@ -1529,12 +1529,12 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
                    && worklist[i].yybegin == worklist[j].yybegin
                    && worklist[i].yystop  == worklist[j].yystop)
                {
-                  if (worklist[i].xxstop+1 == worklist[j].xxstart)
+                  if (worklist[i].xxstop + 1 == worklist[j].xxstart)
                   {
                      worklist[i].xxstop = worklist[j].xxstop;
                      return j;
                   }
-                  if (worklist[j].xxstop+1 == worklist[i].xxstart)
+                  if (worklist[j].xxstop + 1 == worklist[i].xxstart)
                   {
                      worklist[i].xxstart = worklist[j].xxstart;
                      worklist[i].xxbegin = worklist[j].xxbegin;
@@ -1556,7 +1556,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
       --num_worklist;
    }
    for (i = 0; i < num_worklist; ++i)
-      for (j=i+1; j < num_worklist; ++j)
+      for (j=i + 1; j < num_worklist; ++j)
          if (worklist[j].pass < worklist[i].pass
              || (worklist[j].pass == worklist[i].pass
              && (worklist[j].yystart < worklist[i].yystart
@@ -1625,7 +1625,7 @@ void get_julia_attractor (double real, double imag)
                 && labs(lresult.y-lnew.y) < lclosenuff)
             {
                lattr[attractors] = lnew;
-               attrperiod[attractors] = i+1;
+               attrperiod[attractors] = i + 1;
                attractors++;   /* another attractor - coloured lakes ! */
                break;
             }
@@ -1636,7 +1636,7 @@ void get_julia_attractor (double real, double imag)
                 && fabs(result.y-g_new.y) < closenuff)
             {
                attr[attractors] = g_new;
-               attrperiod[attractors] = i+1;
+               attrperiod[attractors] = i + 1;
                attractors++;   /* another attractor - coloured lakes ! */
                break;
             }

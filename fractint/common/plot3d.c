@@ -239,7 +239,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color|(tmp&240));
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
             }
         }
     }
@@ -254,8 +254,8 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
                     targa_color(x, y, color|(tmp&15));
                 else
                 {
-                    targa_readdisk (x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -290,7 +290,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color|tmp);
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
              }
         }
     }
@@ -304,8 +304,8 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
                     targa_color(x, y, color|tmp);
                 else
                 {
-                    targa_readdisk (x+sxoffs, y+syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
+                    targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
                 }
             }
         }
@@ -321,7 +321,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 
     /* my mind is STILL fried - lower indices = darker colors is EASIER! */
     color = colors - color;
-    if ((g_which_image == 1) && !((x+y)&1)) /* - lower half palette */
+    if ((g_which_image == 1) && !((x + y)&1)) /* - lower half palette */
     {
         if (red_local_left < x && x < red_local_right)
         {
@@ -330,20 +330,20 @@ void _fastcall plot3dalternate(int x, int y, int color)
                 if (!ILLUMINE)
                     targa_color(x, y, color >> 1);
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
+                    targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
             }
         }
     }
-    else if ((g_which_image == 2) && ((x+y)&1)) /* - upper half palette */
+    else if ((g_which_image == 2) && ((x + y)&1)) /* - upper half palette */
     {
         if (blue_local_left < x && x < blue_local_right)
         {
-            putcolor(x, y, (color >> 1)+(colors >> 1));
+            putcolor(x, y, (color >> 1) + (colors >> 1));
             if (Targa_Out) {
                 if (!ILLUMINE)
-                    targa_color(x, y, (color >> 1)+(colors >> 1));
+                    targa_color(x, y, (color >> 1) + (colors >> 1));
                 else
-                    targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
+                    targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
             }
         }
     }
@@ -438,7 +438,7 @@ void plot_setup()
         {
         case 1:
             xshift  += (int)((g_eye_separation* (double)xdots)/200);
-            xxadjust = (int)(((xtrans+xadjust)* (double)xdots)/100);
+            xxadjust = (int)(((xtrans + xadjust)* (double)xdots)/100);
             xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
             xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
             if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)

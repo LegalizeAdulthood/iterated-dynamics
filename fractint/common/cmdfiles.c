@@ -142,51 +142,51 @@ static char initcorners,initparams;
 struct fractalspecificstuff *curfractalspecific = NULL;
 
 char FormFileName[FILE_MAX_PATH]; /* file to find (type=)formulas in */
-char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
+char FormName[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
 char LFileName[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
-char LName[ITEMNAMELEN+1];       /* Name of L-System */
+char LName[ITEMNAMELEN + 1];       /* Name of L-System */
 char CommandFile[FILE_MAX_PATH]; /* file to find command sets in */
-char CommandName[ITEMNAMELEN+1]; /* Name of Command set */
+char CommandName[ITEMNAMELEN + 1]; /* Name of Command set */
 char CommandComment[4][MAXCMT];    /* comments for command set */
 char IFSFileName[FILE_MAX_PATH]; /* file to find (type=)IFS in */
-char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
+char IFSName[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
 float *ifs_defn = NULL;     /* ifs parameters */
 int  ifs_type;                  /* 0=2d, 1=3d */
 int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
 
 BYTE txtcolor[]={
-      BLUE*16+L_WHITE,    /* C_TITLE           title background */
-      BLUE*16+L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
-      GREEN*16+YELLOW,    /* C_HELP_HDG        help page title line */
-      WHITE*16+BLACK,     /* C_HELP_BODY       help page body */
-      GREEN*16+GRAY,      /* C_HELP_INSTR      help page instr at bottom */
-      WHITE*16+BLUE,      /* C_HELP_LINK       help page links */
-      CYAN*16+BLUE,       /* C_HELP_CURLINK    help page current link */
-      WHITE*16+GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
-      WHITE*16+BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
-      BLUE*16+WHITE,      /* C_PROMPT_LO       prompt/choice text */
-      BLUE*16+L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
-      BLUE*16+YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
-      GREEN*16+L_WHITE,   /* C_PROMPT_INPUT    fullscreen_prompt input */
-      CYAN*16+L_WHITE,    /* C_PROMPT_CHOOSE   fullscreen_prompt choice */
-      MAGENTA*16+L_WHITE, /* C_CHOICE_CURRENT  fullscreen_choice input */
-      BLACK*16+WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
-      BLACK*16+L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
-      WHITE*16+BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
-      WHITE*16+BLACK,     /* C_GENERAL_MED */
-      WHITE*16+GRAY,      /* C_GENERAL_LO */
-      BLACK*16+L_WHITE,   /* C_GENERAL_INPUT */
-      WHITE*16+BLACK,     /* C_DVID_BKGRD      disk video */
-      BLACK*16+YELLOW,    /* C_DVID_HI */
-      BLACK*16+L_WHITE,   /* C_DVID_LO */
-      RED*16+L_WHITE,     /* C_STOP_ERR        stop message, error */
-      GREEN*16+BLACK,     /* C_STOP_INFO       stop message, info */
-      BLUE*16+WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
-      GREEN*16+BLACK,     /* C_AUTHDIV1        title screen dividers */
-      GREEN*16+GRAY,      /* C_AUTHDIV2        title screen dividers */
-      BLACK*16+L_WHITE,   /* C_PRIMARY         primary authors */
-      BLACK*16+WHITE      /* C_CONTRIB         contributing authors */
+      BLUE*16 + L_WHITE,    /* C_TITLE           title background */
+      BLUE*16 + L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
+      GREEN*16 + YELLOW,    /* C_HELP_HDG        help page title line */
+      WHITE*16 + BLACK,     /* C_HELP_BODY       help page body */
+      GREEN*16 + GRAY,      /* C_HELP_INSTR      help page instr at bottom */
+      WHITE*16 + BLUE,      /* C_HELP_LINK       help page links */
+      CYAN*16 + BLUE,       /* C_HELP_CURLINK    help page current link */
+      WHITE*16 + GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
+      WHITE*16 + BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
+      BLUE*16 + WHITE,      /* C_PROMPT_LO       prompt/choice text */
+      BLUE*16 + L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
+      BLUE*16 + YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
+      GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    fullscreen_prompt input */
+      CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   fullscreen_prompt choice */
+      MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  fullscreen_choice input */
+      BLACK*16 + WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
+      BLACK*16 + L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
+      WHITE*16 + BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
+      WHITE*16 + BLACK,     /* C_GENERAL_MED */
+      WHITE*16 + GRAY,      /* C_GENERAL_LO */
+      BLACK*16 + L_WHITE,   /* C_GENERAL_INPUT */
+      WHITE*16 + BLACK,     /* C_DVID_BKGRD      disk video */
+      BLACK*16 + YELLOW,    /* C_DVID_HI */
+      BLACK*16 + L_WHITE,   /* C_DVID_LO */
+      RED*16 + L_WHITE,     /* C_STOP_ERR        stop message, error */
+      GREEN*16 + BLACK,     /* C_STOP_INFO       stop message, info */
+      BLUE*16 + WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
+      GREEN*16 + BLACK,     /* C_AUTHDIV1        title screen dividers */
+      GREEN*16 + GRAY,      /* C_AUTHDIV2        title screen dividers */
+      BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
+      BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
       };
 
 char s_makepar[] =          "makepar";
@@ -213,7 +213,7 @@ int getpower10(LDBL x)
 #else
     sprintf(string,"%+.1le", x);
 #endif
-    p = atoi(string+5);
+    p = atoi(string + 5);
     return p;
 }
 
@@ -271,7 +271,7 @@ int cmdfiles(int argc,char **argv)
          *sptr = 0;
          if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
             init_msg("",CommandFile,0);
-         strcpy(CommandName,sptr+1);
+         strcpy(CommandName,sptr + 1);
          if (find_file_item(CommandFile,CommandName,&initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
             argerror(curarg);
          cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
@@ -514,7 +514,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    fm_release = 5;                      /* short release   */
    fm_wavetype = 0;                     /* sin wave */
    polyphony = 0;                       /* no polyphony    */
-   for (i = 0; i <= 11; i++) scale_map[i]=i+1;    /* straight mapping of notes in octave */
+   for (i = 0; i <= 11; i++) scale_map[i]=i + 1;    /* straight mapping of notes in octave */
 #endif
 }
 
@@ -613,7 +613,7 @@ static int next_command(char *cmdbuf,int maxlen,
                  && (*lineptr == ' ' || *lineptr == '\t')) { }
                if (*lineptr) {
                   if ((int)strlen(lineptr) >= MAXCMT)
-                     *(lineptr+MAXCMT-1) = 0;
+                     *(lineptr + MAXCMT-1) = 0;
                   for (i = 0; i < 4; i++)
                      if (CommandComment[i][0] == 0)
                      {
@@ -628,7 +628,7 @@ static int next_command(char *cmdbuf,int maxlen,
             }
          }
       if (*lineptr == '\\'              /* continuation onto next line? */
-        && *(lineptr+1) == 0) {
+        && *(lineptr + 1) == 0) {
          if (next_line(handle,linebuf,mode) != 0) {
             argerror(cmdbuf);           /* missing continuation */
             return -1;
@@ -994,7 +994,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			if (slash != NULL)
 			{
 				*slash = 0;
-				next = slash+1;
+				next = slash + 1;
 			}
 
 			strcpy(CommandFile, value);
@@ -1979,7 +1979,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		initcorners = 1;
 		/* good first approx, but dec could be too big */
 		dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-		if ((dec > DBL_DIG+1 || debugflag == 3200) && debugflag != 3400)
+		if ((dec > DBL_DIG + 1 || debugflag == 3200) && debugflag != 3400)
 		{
 			int old_bf_math;
 
@@ -2168,7 +2168,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
       dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
 
-      if ((dec <= DBL_DIG+1 && debugflag != 3200) || debugflag == 3400) { /* rough estimate that double is OK */
+      if ((dec <= DBL_DIG + 1 && debugflag != 3200) || debugflag == 3400) { /* rough estimate that double is OK */
          Xctr = floatval[0];
          Yctr = floatval[1];
          /* Magnification = floatval[2]; */  /* already done above */
@@ -2201,8 +2201,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
          }
          usemag = 1;
          saved = save_stack();
-         bXctr            = alloc_stack(bflength+2);
-         bYctr            = alloc_stack(bflength+2);
+         bXctr            = alloc_stack(bflength + 2);
+         bYctr            = alloc_stack(bflength + 2);
          /* Xctr = floatval[0]; */
          get_bf(bXctr, floatvalstr[0]);
          /* Yctr = floatval[1]; */
@@ -2819,13 +2819,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
 
    if (strcmp(variable, "ambient") == 0) {       /* ambient=? */
-      if (numval < 0||numval > 100) goto badarg;
+      if (numval < 0 || numval > 100) goto badarg;
       Ambient = numval;
       return 2;
       }
 
    if (strcmp(variable, "haze") == 0) {          /* haze=? */
-      if (numval < 0||numval > 100) goto badarg;
+      if (numval < 0 || numval > 100) goto badarg;
       haze = numval;
       return 2;
       }
@@ -2943,17 +2943,17 @@ static void parse_textcolors(char *value)
    int i,j,k,hexval;
    if (strcmp(value, "mono") == 0) {
       for (k = 0; k < sizeof(txtcolor); ++k)
-         txtcolor[k] = BLACK*16+WHITE;
+         txtcolor[k] = BLACK*16 + WHITE;
    /* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
-                     = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16+BLACK; */
+                     = C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16 + BLACK; */
       txtcolor[6] = txtcolor[12] = txtcolor[13] = txtcolor[14] = txtcolor[20]
-                  = txtcolor[27] = txtcolor[28] = WHITE*16+BLACK;
+                  = txtcolor[27] = txtcolor[28] = WHITE*16 + BLACK;
       /* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
                  = C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
-                 = C_STOP_INFO = BLACK*16+L_WHITE; */
+                 = C_STOP_INFO = BLACK*16 + L_WHITE; */
       txtcolor[0] = txtcolor[2] = txtcolor[5] = txtcolor[11] = txtcolor[16]
                   = txtcolor[17] = txtcolor[22] = txtcolor[24]
-                  = txtcolor[25] = BLACK*16+L_WHITE;
+                  = txtcolor[25] = BLACK*16 + L_WHITE;
       }
    else {
       k = 0;
@@ -2999,7 +2999,7 @@ static int parse_colors(char *value)
          if (i >= 256) goto badcolor;
          if (*value == '<') {
             if (i == 0 || smooth
-              || (smooth = atoi(value+1)) < 2
+              || (smooth = atoi(value + 1)) < 2
               || (value = strchr(value,'>')) == NULL)
                goto badcolor;
             i += smooth;
@@ -3020,13 +3020,13 @@ static int parse_colors(char *value)
                   cnum = 0;
                   if ((k - (int)g_dac_box[start][j]) == 0) {
                      while (++cnum < spread)
-                        g_dac_box[start+cnum][j] = (BYTE)k;
+                        g_dac_box[start + cnum][j] = (BYTE)k;
                      }
                   else {
                      while (++cnum < spread)
-                        g_dac_box[start+cnum][j] =
+                        g_dac_box[start + cnum][j] =
             (BYTE)((cnum *g_dac_box[i][j]
-            + (i-(start+cnum))*g_dac_box[start][j]
+            + (i-(start + cnum))*g_dac_box[start][j]
             + spread/2)
             / (BYTE) spread);
                      }
@@ -3190,7 +3190,7 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
          driver_put_string(row++,0,7,msg);
       else if (row > 1){
          driver_put_string(++row,0,15, "Press Escape to abort, any other key to continue");
-         driver_move_cursor(row+1,0);
+         driver_move_cursor(row + 1,0);
          dopause(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
       }
    }

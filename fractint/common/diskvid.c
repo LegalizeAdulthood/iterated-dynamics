@@ -32,7 +32,7 @@ static int disktarga;
 #define CACHEMIN 4      /* minimum cache size in Kbytes */
 #define CACHEMAX 64     /* maximum cache size in Kbytes */
 #define FREEMEM  33     /* try to leave this much memory unallocated */
-#define HASHSIZE 1024   /* power of 2, near CACHEMAX/(BLOCKLEN+8) */
+#define HASHSIZE 1024   /* power of 2, near CACHEMAX/(BLOCKLEN + 8) */
 
 static struct cache		/* structure of each cache entry */
 {
@@ -133,11 +133,11 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  /* init rest to background */
 		for (i = 0; i < BOXDEPTH; ++i)
 		{
-			driver_set_attr(BOXROW+i, BOXCOL, C_DVID_LO, BOXWIDTH);  /* init box */
+			driver_set_attr(BOXROW + i, BOXCOL, C_DVID_LO, BOXWIDTH);  /* init box */
 		}
-		driver_put_string(BOXROW+2, BOXCOL+4, C_DVID_HI, "'Disk-Video' mode");
+		driver_put_string(BOXROW + 2, BOXCOL + 4, C_DVID_HI, "'Disk-Video' mode");
 		sprintf(buf, "Screen resolution: %d x %d", sxdots, sydots);
-		driver_put_string(BOXROW+4, BOXCOL+4, C_DVID_LO, buf);
+		driver_put_string(BOXROW + 4, BOXCOL + 4, C_DVID_LO, buf);
 		if (disktarga)
 		{
 			driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
@@ -149,8 +149,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 			driver_put_string(-1, -1, C_DVID_LO, buf);
 		}
 		sprintf(buf, "Save name: %s", savename);
-		driver_put_string(BOXROW+8, BOXCOL+4, C_DVID_LO, buf);
-		driver_put_string(BOXROW+10, BOXCOL+4, C_DVID_LO, "Status:");
+		driver_put_string(BOXROW + 8, BOXCOL + 4, C_DVID_LO, buf);
+		driver_put_string(BOXROW + 10, BOXCOL + 4, C_DVID_LO, "Status:");
 		dvid_status(0, "clearing the 'screen'");
     }
 	cur_offset = seek_offset = high_offset = -1;
@@ -179,7 +179,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size)
 	{
 		longtmp = ((int)cache_size < freemem) ?
-			(long)cache_size << 11 : (long)(cache_size+freemem) << 10;
+			(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
 		if ((tempfar = malloc(longtmp)) != NULL)
 		{
 			free(tempfar);
@@ -207,7 +207,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	{
 		char buf[50];
 		sprintf(buf, "Cache size: %dK", cache_size);
-		driver_put_string(BOXROW+6, BOXCOL+4, C_DVID_LO, buf);
+		driver_put_string(BOXROW + 6, BOXCOL + 4, C_DVID_LO, buf);
 	}
 
 	/* preset cache to all invalid entries so we don't need free list logic */
@@ -264,7 +264,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 
 	if (driver_diskp())
 	{
-		driver_put_string(BOXROW+2, BOXCOL+23, C_DVID_LO,
+		driver_put_string(BOXROW + 2, BOXCOL + 23, C_DVID_LO,
 			(MemoryType(dv_handle) == DISK) ? "Using your Disk Drive" : "Using your memory");
 	}
 
@@ -403,7 +403,7 @@ void targa_readdisk(unsigned int col, unsigned int row,
 	col *= 3;
 	*blue  = (BYTE)readdisk(col, row);
 	*green = (BYTE)readdisk(++col, row);
-	*red   = (BYTE)readdisk(col+1, row);
+	*red   = (BYTE)readdisk(col + 1, row);
 }
 
 void writedisk(int col, int row, int color)
@@ -470,7 +470,7 @@ void targa_writedisk(unsigned int col, unsigned int row,
 {
 	writedisk(col *= 3, row, blue);
 	writedisk(++col, row, green);
-	writedisk(col+1, row, red);
+	writedisk(col + 1, row, red);
 }
 
 static void _fastcall  findload_cache(long offset) /* used by read/write */
@@ -516,7 +516,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 	tbloffset = (int) ((char *)cache_lru - (char *)cache_start);
 	while (*fwd_link != tbloffset)
 	{
-		fwd_link = &((struct cache *)((char *)cache_start+*fwd_link))->hashlink;
+		fwd_link = &((struct cache *)((char *)cache_start + *fwd_link))->hashlink;
 	}
 	*fwd_link = cache_lru->hashlink;
 	/* load block */
@@ -653,19 +653,19 @@ write_stuff:
 			mem_putc((BYTE)
 						((((((((((((((*pixelptr
 						<< 1)
-						| *(pixelptr+1))
+						| *(pixelptr + 1))
 						<< 1)
-						| *(pixelptr+2))
+						| *(pixelptr + 2))
 						<< 1)
-						| *(pixelptr+3))
+						| *(pixelptr + 3))
 						<< 1)
-						| *(pixelptr+4))
+						| *(pixelptr + 4))
 						<< 1)
-						| *(pixelptr+5))
+						| *(pixelptr + 5))
 						<< 1)
-						| *(pixelptr+6))
+						| *(pixelptr + 6))
 						<< 1)
-						| *(pixelptr+7)));
+						| *(pixelptr + 7)));
 			pixelptr += 8;
 		}
 		break;
@@ -745,6 +745,6 @@ void dvid_status(int line, char *msg)
 		line -= 100;
 		attrib = C_STOP_ERR;
 	}
-	driver_put_string(BOXROW+10+line, BOXCOL+12, attrib, buf);
+	driver_put_string(BOXROW + 10 + line, BOXCOL + 12, attrib, buf);
 	driver_hide_text_cursor();
 }

@@ -57,7 +57,7 @@ int get_bytes(BYTE *where,int how_many)
  */
 
 #if defined(XFRACT) || defined(_WIN32)
-BYTE decoderline[MAXPIXELS+1]; /* write-line routines use this */
+BYTE decoderline[MAXPIXELS + 1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAXPIXELS 
 #else
 #define DECODERLINE_WIDTH 2048 /* width of decoderline, can be smaller */
@@ -240,10 +240,10 @@ int gifview()
          /* adjustments for handling MIGs */
          gifview_image_top  = top;
          if (skipxdots > 0)
-             gifview_image_top /= (skipydots+1);
+             gifview_image_top /= (skipydots + 1);
          gifview_image_left = left;
          if (skipydots > 0)
-             gifview_image_left /= (skipxdots+1);
+             gifview_image_left /= (skipxdots + 1);
          if (outln == out_line)
          {
             /* what about continuous potential???? */
@@ -339,7 +339,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
    row = gifview_image_top + g_row_count;
    startcol = gifview_image_left;
-   stopcol = startcol+linelen-1;
+   stopcol = startcol + linelen-1;
    put_line(row, startcol, stopcol, pixels);
    g_row_count++;
 
@@ -350,16 +350,16 @@ static int out_line_dither(BYTE *pixels, int linelen)
 {
     int i,nexterr,brt,err;
         if (ditherbuf == NULL)
-        ditherbuf = (char *)malloc(linelen+1);
-        memset(ditherbuf, 0, linelen+1);
+        ditherbuf = (char *)malloc(linelen + 1);
+        memset(ditherbuf, 0, linelen + 1);
 
     nexterr = (rand()&0x1f)-16;
     for (i = 0; i < linelen; i++) {
 #ifdef __SVR4
-        brt = (int)((g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
+        brt = (int)((g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
             g_dac_box[pixels[i]][2]*2)) >> 4; /* brightness from 0 to 63 */
 #else
-        brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
+        brt = (g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
             g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to 63 */
 #endif
         brt += nexterr;
@@ -370,9 +370,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
             pixels[i] = 0;
             err = brt;
         }
-        nexterr = ditherbuf[i+1]+err/3;
+        nexterr = ditherbuf[i + 1] + err/3;
         ditherbuf[i] = (char)(err/3);
-        ditherbuf[i+1] = (char)(err/3);
+        ditherbuf[i + 1] = (char)(err/3);
     }
     return out_line(pixels, linelen);
 }
@@ -386,7 +386,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
    int extra;
    while (linelen > 0)
    {
-      extra = colcount+linelen-twidth;
+      extra = colcount + linelen-twidth;
       if (extra > 0) /* line wraps */
       {   
           put_line(g_row_count, colcount, twidth-1, pixels);
@@ -396,7 +396,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
       }
       else
       {
-          put_line(g_row_count, colcount, colcount+linelen-1, pixels);
+          put_line(g_row_count, colcount, colcount + linelen-1, pixels);
           colcount += linelen;
           linelen = 0;
       }
@@ -417,7 +417,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
       putcolor(col,row,*pixels);
       if (orbit_delay > 0)
          sleepms(orbit_delay);
-      w_snd((int)((int)(*pixels++)*3000/colors+basehertz));
+      w_snd((int)((int)(*pixels++)*3000/colors + basehertz));
       if (driver_key_pressed())
       {
         driver_mute();
@@ -435,7 +435,7 @@ int sound_line(BYTE *pixels, int linelen)
    int ret = 0;
    while (linelen > 0)
    {
-      extra = colcount+linelen-twidth;
+      extra = colcount + linelen-twidth;
       if (extra > 0) /* line wraps */
       {   
           if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
@@ -446,7 +446,7 @@ int sound_line(BYTE *pixels, int linelen)
       }
       else
       {
-          if (put_sound_line(g_row_count, colcount, colcount+linelen-1, pixels))
+          if (put_sound_line(g_row_count, colcount, colcount + linelen-1, pixels))
              break;
           colcount += linelen;
           linelen = 0;
@@ -476,7 +476,7 @@ int pot_line(BYTE *pixels, int linelen)
    else if (!driver_diskp()) /* even line - display the line too */
       out_line(pixels,linelen);
    for (col = 0; col < xdots; ++col)
-      writedisk(col+sxoffs,row+syoffs,*(pixels+col));
+      writedisk(col + sxoffs,row + syoffs,*(pixels + col));
    g_row_count = saverowcount + 1;
    return 0;
 }

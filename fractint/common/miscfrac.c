@@ -45,7 +45,7 @@ int test(void)
    numpasses = (stdcalcmode == '1') ? 0 : 1;
    for (passes=startpass; passes <= numpasses ; passes++)
    {
-      for (row = startrow; row <= iystop; row=row+1+numpasses)
+      for (row = startrow; row <= iystop; row=row + 1 + numpasses)
       {
          for (col = 0; col <= ixstop; col++)       /* look at each point on screen */
          {
@@ -68,7 +68,7 @@ int test(void)
             }
             (*plot)(col, row, color);
             if (numpasses && (passes == 0))
-               (*plot)(col, row+1, color);
+               (*plot)(col, row + 1, color);
          }
       }
       startrow = passes + 1;
@@ -106,8 +106,8 @@ void _fastcall putpot(int x, int y, U16 color)
    /* we don't write this if driver_diskp() because the above putcolor
          was already a "writedisk" in that case */
    if (!driver_diskp())
-      writedisk(x+sxoffs, y+syoffs, color >> 8);    /* upper 8 bits */
-   writedisk(x+sxoffs, y+sydots+syoffs, color&255); /* lower 8 bits */
+      writedisk(x + sxoffs, y + syoffs, color >> 8);    /* upper 8 bits */
+   writedisk(x + sxoffs, y + sydots + syoffs, color&255); /* lower 8 bits */
 }
 
 /* fixes border */
@@ -132,8 +132,8 @@ U16 _fastcall getpot(int x, int y)
 {
    U16 color;
 
-   color = (U16)readdisk(x+sxoffs, y+syoffs);
-   color = (U16)((color << 8) + (U16) readdisk(x+sxoffs, y+sydots+syoffs));
+   color = (U16)readdisk(x + sxoffs, y + syoffs);
+   color = (U16)((color << 8) + (U16) readdisk(x + sxoffs, y + sydots + syoffs));
    return color;
 }
 
@@ -143,10 +143,10 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
    S32 pseudorandom;
    pseudorandom = ((S32)iparmx)*((rand15()-16383));
-/*   pseudorandom = pseudorandom*(abs(xa-xb)+abs(ya-yb)); */
+/*   pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
    pseudorandom = pseudorandom * recur1;
    pseudorandom = pseudorandom >> shiftvalue;
-   pseudorandom = (((S32)getpix(xa, ya)+(S32)getpix(xb, yb)+1) >> 1)+pseudorandom;
+   pseudorandom = (((S32)getpix(xa, ya) + (S32)getpix(xb, yb) + 1) >> 1) + pseudorandom;
    if (max_plasma == 0)
    {
       if (pseudorandom >= pcolors)
@@ -214,7 +214,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
          ny   = suby.v[suby.t-2];
          suby.r[suby.t] = suby.r[suby.t-1];
          y    = suby.v[suby.t-1]   = (ny1 + ny) >> 1;
-         suby.r[suby.t-1]   = (BYTE)(max(suby.r[suby.t], suby.r[suby.t-2])+1);
+         suby.r[suby.t-1]   = (BYTE)(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
       }
       subx.t = 2;
       nx  = subx.v[0] = x2;
@@ -233,7 +233,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
             subx.r[subx.t] = subx.r[subx.t-1];
             x    = subx.v[subx.t-1]   = (nx1 + nx) >> 1;
             subx.r[subx.t-1]   = (BYTE)(max(subx.r[subx.t],
-                subx.r[subx.t-2])+1);
+                subx.r[subx.t-2]) + 1);
          }
 
          i = getpix(nx, y);
@@ -280,8 +280,8 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
    recur_level++;
    recur1 = (int)(320L >> recur_level);
 
-   x = (x1+x2) >> 1;
-   y = (y1+y2) >> 1;
+   x = (x1 + x2) >> 1;
+   y = (y1 + y2) >> 1;
    v=getpix(x, y1);
    if (v == 0)
       v=adjust(x1, y1, x , y1, x2, y1);
@@ -300,7 +300,7 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
    i += v;
 
    if (getpix(x, y) == 0)
-      plot(x, y, (U16)((i+2) >> 2));
+      plot(x, y, (U16)((i + 2) >> 2));
 
    subDivide(x1, y1, x , y);
    subDivide(x , y1, x2, y);
@@ -402,7 +402,7 @@ int plasma()
    {
       pcolors = min(colors, max_colors);
       for (n = 0; n < 4; n++)
-         rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+         rnd[n] = (U16)(1 + (((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
    }
    else
       for (n = 0; n < 4; n++)
@@ -470,24 +470,24 @@ static void set_Plasma_palette()
       dac[i].green     = (BYTE)((i*(int)Green.green + (86-i)*(int)Blue.green)/85);
       dac[i].blue      = (BYTE)((i*(int)Green.blue  + (86-i)*(int)Blue.blue)/85);
 
-      dac[i+85].red    = (BYTE)((i*(int)Red.red   + (86-i)*(int)Green.red)/85);
-      dac[i+85].green  = (BYTE)((i*(int)Red.green + (86-i)*(int)Green.green)/85);
-      dac[i+85].blue   = (BYTE)((i*(int)Red.blue  + (86-i)*(int)Green.blue)/85);
+      dac[i + 85].red    = (BYTE)((i*(int)Red.red   + (86-i)*(int)Green.red)/85);
+      dac[i + 85].green  = (BYTE)((i*(int)Red.green + (86-i)*(int)Green.green)/85);
+      dac[i + 85].blue   = (BYTE)((i*(int)Red.blue  + (86-i)*(int)Green.blue)/85);
 
-      dac[i+170].red   = (BYTE)((i*(int)Blue.red   + (86-i)*(int)Red.red)/85);
-      dac[i+170].green = (BYTE)((i*(int)Blue.green + (86-i)*(int)Red.green)/85);
-      dac[i+170].blue  = (BYTE)((i*(int)Blue.blue  + (86-i)*(int)Red.blue)/85);
+      dac[i + 170].red   = (BYTE)((i*(int)Blue.red   + (86-i)*(int)Red.red)/85);
+      dac[i + 170].green = (BYTE)((i*(int)Blue.green + (86-i)*(int)Red.green)/85);
+      dac[i + 170].blue  = (BYTE)((i*(int)Blue.blue  + (86-i)*(int)Red.blue)/85);
 #else
       dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
       dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);  
       dac[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
  
-      dac[i+85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
-      dac[i+85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);   
-      dac[i+85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85); 
-      dac[i+170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
-      dac[i+170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
-      dac[i+170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
+      dac[i + 85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
+      dac[i + 85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);   
+      dac[i + 85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85); 
+      dac[i + 170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
+      dac[i + 170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
+      dac[i + 170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
 #endif
    }
    spindac(0, 1);
@@ -578,16 +578,16 @@ int diffusion()
            if (xdots > ydots)
               for (i = 0; i < ydots; i++){
                  putcolor(xdots/2-ydots/2 , i , currentcolor);
-                 putcolor(xdots/2+ydots/2 , i , currentcolor);
-                 putcolor(xdots/2-ydots/2+i , 0 , currentcolor);
-                 putcolor(xdots/2-ydots/2+i , ydots-1 , currentcolor);
+                 putcolor(xdots/2 + ydots/2 , i , currentcolor);
+                 putcolor(xdots/2-ydots/2 + i , 0 , currentcolor);
+                 putcolor(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
               }
            else 
               for (i = 0; i < xdots; i++){
-                 putcolor(0 , ydots/2-xdots/2+i , currentcolor);
-                 putcolor(xdots-1 , ydots/2-xdots/2+i , currentcolor);
+                 putcolor(0 , ydots/2-xdots/2 + i , currentcolor);
+                 putcolor(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
                  putcolor(i , ydots/2-xdots/2 , currentcolor);
-                 putcolor(i , ydots/2+xdots/2 , currentcolor);
+                 putcolor(i , ydots/2 + xdots/2 , currentcolor);
               }
            break;
    }
@@ -606,7 +606,7 @@ int diffusion()
       case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
               y=ymin;
-              x=RANDOM(xmax-xmin) + (xdots-xmax+xmin)/2;
+              x=RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
               break;
       case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
@@ -622,9 +622,9 @@ int diffusion()
       /* Loop as long as the point (x, y) is surrounded by color 0 */
       /* on all eight sides                                       */
 
-      while ((getcolor(x+1, y+1) == 0) && (getcolor(x+1, y) == 0) &&
-          (getcolor(x+1, y-1) == 0) && (getcolor(x  , y+1) == 0) &&
-          (getcolor(x  , y-1) == 0) && (getcolor(x-1, y+1) == 0) &&
+      while ((getcolor(x + 1, y + 1) == 0) && (getcolor(x + 1, y) == 0) &&
+          (getcolor(x + 1, y-1) == 0) && (getcolor(x  , y + 1) == 0) &&
+          (getcolor(x  , y-1) == 0) && (getcolor(x-1, y + 1) == 0) &&
           (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
       {
          /* Erase moving point */
@@ -675,13 +675,13 @@ int diffusion()
 
          /* Show the moving point */
          if (show_orbit)
-            putcolor(x, y, RANDOM(colors-1)+1);
+            putcolor(x, y, RANDOM(colors-1) + 1);
 
       } /* End of loop, now fix the point */
 
       /* If we're doing colorshifting then use currentcolor, otherwise 
          pick one at random */
-      putcolor(x, y, colorshift?currentcolor:RANDOM(colors-1)+1);
+      putcolor(x, y, colorshift?currentcolor:RANDOM(colors-1) + 1);
 
       /* If we're doing colorshifting then check to see if we need to shift*/
       if (colorshift){
@@ -698,8 +698,8 @@ int diffusion()
          fractal. */
  
       switch (mode) {
-      case 0: if (((x+border) > xmax) || ((x-border) < xmin)
-                    || ((y-border) < ymin) || ((y+border) > ymax))
+      case 0: if (((x + border) > xmax) || ((x-border) < xmin)
+                    || ((y-border) < ymin) || ((y + border) > ymax))
               {
                  /* Increase box size, but not past the edge of the screen */
                  ymin--;
@@ -1206,10 +1206,10 @@ int lyapunov () {
         return -1;
         }
     overflow=FALSE;
-    if (param[1] == 1) Population = (1.0+rand())/(2.0+RAND_MAX);
+    if (param[1] == 1) Population = (1.0 + rand())/(2.0 + RAND_MAX);
     else if (param[1] == 0) {
         if (fabs(Population) > BIG || Population == 0 || Population == 1)
-            Population = (1.0+rand())/(2.0+RAND_MAX);
+            Population = (1.0 + rand())/(2.0 + RAND_MAX);
         }
     else Population = param[1];
     (*plot)(col, row, 1);
@@ -1444,7 +1444,7 @@ void abort_cellular(int err, int t)
          if (i == 0)
             msg[14] = (char)(rule_digits + 48);
          else {
-            msg[13] = (char)(i+48);
+            msg[13] = (char)(i + 48);
             msg[14] = (char)((rule_digits % 10) + 48);
          }
          stopmsg(0, msg);
@@ -1531,8 +1531,8 @@ int cellular () {
          init_string[i] = 0; /* zero the array */
       t2 = (S16) ((16 - t)/2);
       for (i = 0; i < (U16)t; i++) { /* center initial string in array */
-         init_string[i+t2] = (U16)(buf[i] - 48); /* change character to number */
-         if (init_string[i+t2] > (U16)k_1) {
+         init_string[i + t2] = (U16)(buf[i] - 48); /* change character to number */
+         if (init_string[i + t2] > (U16)k_1) {
             abort_cellular(STRING2, 0);
             return -1;
          }
@@ -1586,8 +1586,8 @@ int cellular () {
    cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
    cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
 #else
-   cell_array[0] = (BYTE *)malloc(ixstop+1);
-   cell_array[1] = (BYTE *)malloc(ixstop+1);
+   cell_array[0] = (BYTE *)malloc(ixstop + 1);
+   cell_array[1] = (BYTE *)malloc(ixstop + 1);
 #endif
    if (cell_array[0] == NULL || cell_array[1] == NULL) {
       abort_cellular(BAD_MEM, 0);
@@ -1624,7 +1624,7 @@ int cellular () {
          cell_array[filled][col] = 0;
       }
       i = 0;
-      for (col=(ixstop-16)/2; col < (ixstop+16)/2; col++) { /* insert initial */
+      for (col=(ixstop-16)/2; col < (ixstop + 16)/2; col++) { /* insert initial */
          cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
       }
     } /* end of if not random */
@@ -1659,7 +1659,7 @@ int cellular () {
       }
 
        t = 0; /* do first cell */
-       for (twor=(U16)(r+r), i = 0; i <= twor; i++)
+       for (twor=(U16)(r + r), i = 0; i <= twor; i++)
            t = (S16)(t + (S16)cell_array[filled][i]);
        if (t > rule_digits || t < 0) {
          thinking(0, NULL);
@@ -1669,8 +1669,8 @@ int cellular () {
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
            /* use a rolling sum in t */
-       for (col=r+1; col < ixstop-r; col++) { /* now do the rest */
-         t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
+       for (col=r + 1; col < ixstop-r; col++) { /* now do the rest */
+         t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
          if (t > rule_digits || t < 0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
@@ -1712,7 +1712,7 @@ contloop:
       }
 
        t = 0; /* do first cell */
-       for (twor=(U16)(r+r), i = 0; i <= twor; i++)
+       for (twor=(U16)(r + r), i = 0; i <= twor; i++)
            t = (S16)(t + (S16)cell_array[filled][i]);
        if (t > rule_digits || t < 0) {
          thinking(0, NULL);
@@ -1722,8 +1722,8 @@ contloop:
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
            /* use a rolling sum in t */
-       for (col=r+1; col < ixstop-r; col++) { /* now do the rest */
-         t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
+       for (col=r + 1; col < ixstop-r; col++) { /* now do the rest */
+         t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
          if (t > rule_digits || t < 0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
@@ -1974,13 +1974,13 @@ int froth_setup(void)
    /* if 2 attractors, use same shades as 3 attractors */
    fsp->shades = (colors-1) / max(3, fsp->attractors);
 
-   /* rqlim needs to be at least sq(1+sqrt(1+sq(a))), */
+   /* rqlim needs to be at least sq(1 + sqrt(1 + sq(a))), */
    /* which is never bigger than 6.93..., so we'll call it 7.0 */
    if (rqlim < 7.0)
       rqlim = 7.0;
    set_Froth_palette();
    /* make the best of the .map situation */
-   orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1)+1 : colors-1;
+   orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1) + 1 : colors-1;
 
    if (integerfractal)
       {
@@ -2053,15 +2053,15 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
              && ((tempsqrx=sqr(old.x)) + (tempsqry=sqr(old.y)) < rqlim)
              && (coloriter < maxit))
          {
-         /* simple formula: z = z^2 + conj(z*(-1+ai)) */
+         /* simple formula: z = z^2 + conj(z*(-1 + ai)) */
          /* but it's the attractor that makes this so interesting */
          g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
-         old.y += (old.x+old.x)*old.y - fsp->fl.f.a*old.x;
+         old.y += (old.x + old.x)*old.y - fsp->fl.f.a*old.x;
          old.x = g_new.x;
          if (fsp->repeat_mapping)
             {
             g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
-            old.y += (old.x+old.x)*old.y - fsp->fl.f.a*old.x;
+            old.y += (old.x + old.x)*old.y - fsp->fl.f.a*old.x;
             old.x = g_new.x;
             }
 
@@ -2147,7 +2147,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
       while (!found_attractor && ((lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y))) < llimit)
              && (lmagnitud >= 0) && (coloriter < maxit))
          {
-         /* simple formula: z = z^2 + conj(z*(-1+ai)) */
+         /* simple formula: z = z^2 + conj(z*(-1 + ai)) */
          /* but it's the attractor that makes this so interesting */
          lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
          lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);

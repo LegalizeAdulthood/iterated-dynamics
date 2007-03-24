@@ -226,7 +226,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 
 #define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
-/* rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)} */
+/* rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)} */
 void Arcsinz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX tempz1, tempz2;
@@ -242,7 +242,7 @@ void Arcsinz(_CMPLX z, _CMPLX *rz)
 }   /* end. Arcsinz */
 
 
-/* rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)} */
+/* rz=Arccos(z)=-i*Log{z + sqrt(z*z-1)} */
 void Arccosz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp;
@@ -268,7 +268,7 @@ void Arcsinhz(_CMPLX z, _CMPLX *rz)
   FPUcplxlog(&temp, rz);
 }  /* end. Arcsinhz */
 
-/* rz=Arccosh(z)=Log(z+sqrt(z*z-1)} */
+/* rz=Arccosh(z)=Log(z + sqrt(z*z-1)} */
 void Arccoshz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX tempz;
@@ -279,7 +279,7 @@ void Arccoshz(_CMPLX z, _CMPLX *rz)
   FPUcplxlog(&tempz, rz);
 }   /* end. Arccoshz */
 
-/* rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)} */
+/* rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)} */
 void Arctanhz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp0, temp1, temp2;
@@ -294,7 +294,7 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
       return;
     }
     else if (fabs(z.x) < 1.0 && z.y == 0.0){
-      rz->x = log((1+z.x)/(1-z.x))/2;
+      rz->x = log((1 + z.x)/(1-z.x))/2;
       rz->y = 0;
       return;
     }
@@ -309,7 +309,7 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
   }
 }   /* end. Arctanhz */
 
-/* rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)} */
+/* rz=Arctan(z)=i/2*Log{(1-i*z)/(1 + i*z)} */
 void Arctanz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp0, temp1, temp2, temp3;
@@ -396,7 +396,7 @@ LCMPLX ComplexSqrtLong(long x, long y)
                          ((double) multiply(y, y, bitshift))/ fudge));
    maglong   = (long)(mag * fudge);
 #else
-   maglong   = lsqrt(lsqrt(multiply(x, x, bitshift)+multiply(y, y, bitshift)));
+   maglong   = lsqrt(lsqrt(multiply(x, x, bitshift) + multiply(y, y, bitshift)));
 #endif
    theta     = atan2((double) y/fudge, (double) x/fudge)/2;
    thetalong = (long)(theta * SinCosFudge);
@@ -518,7 +518,7 @@ void SetupLogTable(void) {
    if (LogFlag != -1)
       for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
          if (LogTable[sptop] > LogTable[sptop-1])
-            LogTable[sptop] = (BYTE)(LogTable[sptop-1]+1);
+            LogTable[sptop] = (BYTE)(LogTable[sptop-1] + 1);
 }
 
 long logtablecalc(long citer) {
@@ -671,10 +671,10 @@ int ComplexBasin(void) {
  * The right half of the distribution is folded onto the lower half.
  * That is, the curve slopes up to the peak and then drops to 0.
  * The larger slope is, the smaller the standard deviation.
- * The values vary from 0+offset to range+offset, with the peak
- * at range+offset.
+ * The values vary from 0 + offset to range + offset, with the peak
+ * at range + offset.
  * To make this more complicated, you only have a
- * 1 in Distribution*(1-Probability/Range*con)+1 chance of getting a
+ * 1 in Distribution*(1-Probability/Range*con) + 1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
 int GausianNumber(int Probability, int Range) {
@@ -724,7 +724,7 @@ InRangeOfDouble:
    shl   ax, 1
    rcr   si, 1
 
-   mov   dx, WORD PTR [xMant+2]
+   mov   dx, WORD PTR [xMant + 2]
    mov   ax, WORD PTR [xMant]
    shl   ax, 1
    rcl   dx, 1
@@ -741,9 +741,9 @@ InRangeOfDouble:
    or    dx, si
 
 StoreAns:
-   mov   WORD PTR Double+6, dx
-   mov   WORD PTR Double+4, ax
-   mov   WORD PTR Double+2, bx
+   mov   WORD PTR Double + 6, dx
+   mov   WORD PTR Double + 4, ax
+   mov   WORD PTR Double + 2, bx
    xor   bx, bx
    mov   WORD PTR Double, bx
 
@@ -764,9 +764,9 @@ double *MP2d086(struct MP x)
 
 /*
 d2MP086     PROC     uses si di, x:QWORD
-   mov   dx, word ptr [x+6]
-   mov   ax, word ptr [x+4]
-   mov   bx, word ptr [x+2]
+   mov   dx, word ptr [x + 6]
+   mov   ax, word ptr [x + 4]
+   mov   bx, word ptr [x + 2]
    mov   cx, word ptr [x]
    mov   si, dx
    shl   si, 1
@@ -792,7 +792,7 @@ d2MP086     PROC     uses si di, x:QWORD
 
 StoreAns:
    mov   Ans.Exp, si
-   mov   word ptr Ans.Mant+2, dx
+   mov   word ptr Ans.Mant + 2, dx
    mov   word ptr Ans.Mant, ax
 
    lea   ax, Ans
@@ -812,9 +812,9 @@ struct MP *d2MP086(double x)
 	{
 		__asm
 		{
-			mov dx, word ptr [x+6]
-			mov ax, word ptr [x+4]
-			mov bx, word ptr [x+2]
+			mov dx, word ptr [x + 6]
+			mov ax, word ptr [x + 4]
+			mov bx, word ptr [x + 2]
 			mov cx, word ptr [x]
 			xor	esi, esi
 			mov   si, dx
@@ -840,7 +840,7 @@ struct MP *d2MP086(double x)
 			rcr   ax, 1
 
 			mov   Ans.Exp, esi
-			mov   word ptr Ans.Mant+2, dx
+			mov   word ptr Ans.Mant + 2, dx
 			mov   word ptr Ans.Mant, ax
 		}
 	}
@@ -850,7 +850,7 @@ struct MP *d2MP086(double x)
 /*
 MPadd086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
    mov   si, xExp
-   mov   dx, WORD PTR [xMant+2]
+   mov   dx, WORD PTR [xMant + 2]
    mov   ax, WORD PTR [xMant]
 
    mov   di, yExp
@@ -864,7 +864,7 @@ MPadd086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
    jg    XisGreater
 
    xchg  si, di
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    xchg  ax, WORD PTR [yMant]
 
 XisGreater:
@@ -879,15 +879,15 @@ ChkSixteen:
    jl    SixteenBitShift
 
    sub   cx, 16
-   mov   bx, WORD PTR [yMant+2]
+   mov   bx, WORD PTR [yMant + 2]
    shr   bx, cl
    mov   WORD PTR [yMant], bx
-   mov   WORD PTR [yMant+2], 0
+   mov   WORD PTR [yMant + 2], 0
    jmp   SameMag
 
 SixteenBitShift:
-   mov   bx, WORD PTR [yMant+2]
-   shr   WORD PTR [yMant+2], cl
+   mov   bx, WORD PTR [yMant + 2]
+   shr   WORD PTR [yMant + 2], cl
    shr   WORD PTR [yMant], cl
    neg   cl
    add   cl, 16
@@ -896,7 +896,7 @@ SixteenBitShift:
 
 SameMag:
    add   ax, WORD PTR [yMant]
-   adc   dx, WORD PTR [yMant+2]
+   adc   dx, WORD PTR [yMant + 2]
    jc    ShiftCarry
    jmp   StoreAns
 
@@ -922,7 +922,7 @@ Subtract:
    sub   cx, di
    jnz   DifferentMag
 
-   cmp   dx, WORD PTR [yMant+2]
+   cmp   dx, WORD PTR [yMant + 2]
    jg    SubtractNumbers
    jne   SwapNumbers
 
@@ -933,7 +933,7 @@ Subtract:
 SwapNumbers:
    xor   si, 8000h
    xchg  ax, WORD PTR [yMant]
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    jmp   SubtractNumbers
 
 DifferentMag:
@@ -942,7 +942,7 @@ DifferentMag:
 
    xchg  si, di
    xchg  ax, WORD PTR [yMant]
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    xor   si, 8000h
    neg   cx
 
@@ -954,15 +954,15 @@ NoSwap:
    jl    SixteenBitShift2
 
    sub   cx, 16
-   mov   bx, WORD PTR [yMant+2]
+   mov   bx, WORD PTR [yMant + 2]
    shr   bx, cl
    mov   WORD PTR [yMant], bx
-   mov   WORD PTR [yMant+2], 0
+   mov   WORD PTR [yMant + 2], 0
    jmp   SubtractNumbers
 
 SixteenBitShift2:
-   mov   bx, WORD PTR [yMant+2]
-   shr   WORD PTR [yMant+2], cl
+   mov   bx, WORD PTR [yMant + 2]
+   shr   WORD PTR [yMant + 2], cl
    shr   WORD PTR [yMant], cl
    neg   cl
    add   cl, 16
@@ -971,7 +971,7 @@ SixteenBitShift2:
 
 SubtractNumbers:
    sub   ax, WORD PTR [yMant]
-   sbb   dx, WORD PTR [yMant+2]
+   sbb   dx, WORD PTR [yMant + 2]
 
 BitScanRight:
    or    dx, dx
@@ -985,7 +985,7 @@ BitScanRight:
 
 StoreAns:
    mov   Ans.Exp, si
-   mov   WORD PTR Ans.Mant+2, dx
+   mov   WORD PTR Ans.Mant + 2, dx
    mov   WORD PTR Ans.Mant, ax
 
    lea   ax, Ans
@@ -1009,10 +1009,10 @@ LOCAL Rev:WORD, Flag:WORD
    mov   Flag, 0
    mov   ax, xExp
    mov   dx, WORD PTR [xMant]
-   mov   si, WORD PTR [xMant+2]
+   mov   si, WORD PTR [xMant + 2]
    mov   bx, yExp
    mov   cx, WORD PTR [yMant]
-   mov   di, WORD PTR [yMant+2]
+   mov   di, WORD PTR [yMant + 2]
    or    ax, ax
    jns   AtLeastOnePos
 
@@ -1108,12 +1108,12 @@ ZeroAns:
 NoOverflow:
    mov   Ans.Exp, ax
 
-   mov   dx, WORD PTR [xMant+2]
+   mov   dx, WORD PTR [xMant + 2]
    mov   ax, WORD PTR [xMant]
    or    dx, dx
    jz    ZeroAns
 
-   mov   cx, WORD PTR [yMant+2]
+   mov   cx, WORD PTR [yMant + 2]
    mov   bx, WORD PTR [yMant]
    or    cx, cx
    jz    Overflow
@@ -1172,7 +1172,7 @@ RemReallyNeg:
 
 StoreMant:
    mov   WORD PTR Ans.Mant, ax
-   mov   WORD PTR Ans.Mant+2, dx
+   mov   WORD PTR Ans.Mant + 2, dx
    lea   ax, Ans
    mov   dx, ds
    ret
@@ -1202,9 +1202,9 @@ MPmul086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
    jno   NoOverflow
 
 Overflow:
-   or    word ptr [xMant+2], 0
+   or    word ptr [xMant + 2], 0
    jz    ZeroAns
-   or    word ptr [yMant+2], 0
+   or    word ptr [yMant + 2], 0
    jz    ZeroAns
 
    mov   MPOverflow, 1
@@ -1218,9 +1218,9 @@ ZeroAns:
 NoOverflow:
    mov   Ans.Exp, ax
 
-   mov   si, word ptr [xMant+2]
+   mov   si, word ptr [xMant + 2]
    mov   bx, word ptr [xMant]
-   mov   di, word ptr [yMant+2]
+   mov   di, word ptr [yMant + 2]
    mov   cx, word ptr [yMant]
 
    mov   ax, si
@@ -1272,7 +1272,7 @@ NoOverflow:
    jo    Overflow
 
 StoreMant:
-   mov   word ptr Ans.Mant+2, dx
+   mov   word ptr Ans.Mant + 2, dx
    mov   word ptr Ans.Mant, ax
 
    lea   ax, Ans
@@ -1300,9 +1300,9 @@ struct MP *MPmul086(struct MP x, struct MP y)
 		jno   NoOverflow
 
 	Overflow:
-		or    word ptr [x.Mant+2], 0
+		or    word ptr [x.Mant + 2], 0
 		jz    ZeroAns
-		or    word ptr [y.Mant+2], 0
+		or    word ptr [y.Mant + 2], 0
 		jz    ZeroAns
 
 		mov   MPOverflow, 1
@@ -1316,9 +1316,9 @@ struct MP *MPmul086(struct MP x, struct MP y)
 	NoOverflow:
 		mov   Ans.Exp, eax
 
-		mov   si, word ptr [x.Mant+2]
+		mov   si, word ptr [x.Mant + 2]
 		mov   bx, word ptr [x.Mant]
-		mov   di, word ptr [y.Mant+2]
+		mov   di, word ptr [y.Mant + 2]
 		mov   cx, word ptr [y.Mant]
 
 		mov   ax, si
@@ -1370,7 +1370,7 @@ struct MP *MPmul086(struct MP x, struct MP y)
 		jo    Overflow
 
 	StoreMant:
-		mov   word ptr Ans.Mant+2, dx
+		mov   word ptr Ans.Mant + 2, dx
 		mov   word ptr Ans.Mant, ax
 	}
 
@@ -1379,9 +1379,9 @@ struct MP *MPmul086(struct MP x, struct MP y)
 
 /*
 d2MP386     PROC     uses si di, x:QWORD
-   mov   si, WORD PTR [x+6]
+   mov   si, WORD PTR [x + 6]
 .386
-   mov   edx, DWORD PTR [x+4]
+   mov   edx, DWORD PTR [x + 4]
    mov   eax, DWORD PTR [x]
 
    mov   ebx, edx
@@ -1455,7 +1455,7 @@ InRangeOfDouble:
    shrd  edx, ebx, 12
 
 StoreAns:
-   mov   DWORD PTR Double+4, edx
+   mov   DWORD PTR Double + 4, edx
    mov   DWORD PTR Double, eax
 
    lea   ax, Double
@@ -1477,7 +1477,7 @@ double *MP2d386(struct MP x)
 /*
 MPadd086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
    mov   si, xExp
-   mov   dx, WORD PTR [xMant+2]
+   mov   dx, WORD PTR [xMant + 2]
    mov   ax, WORD PTR [xMant]
 
    mov   di, yExp
@@ -1491,7 +1491,7 @@ MPadd086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
    jg    XisGreater
 
    xchg  si, di
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    xchg  ax, WORD PTR [yMant]
 
 XisGreater:
@@ -1506,15 +1506,15 @@ ChkSixteen:
    jl    SixteenBitShift
 
    sub   cx, 16
-   mov   bx, WORD PTR [yMant+2]
+   mov   bx, WORD PTR [yMant + 2]
    shr   bx, cl
    mov   WORD PTR [yMant], bx
-   mov   WORD PTR [yMant+2], 0
+   mov   WORD PTR [yMant + 2], 0
    jmp   SameMag
 
 SixteenBitShift:
-   mov   bx, WORD PTR [yMant+2]
-   shr   WORD PTR [yMant+2], cl
+   mov   bx, WORD PTR [yMant + 2]
+   shr   WORD PTR [yMant + 2], cl
    shr   WORD PTR [yMant], cl
    neg   cl
    add   cl, 16
@@ -1523,7 +1523,7 @@ SixteenBitShift:
 
 SameMag:
    add   ax, WORD PTR [yMant]
-   adc   dx, WORD PTR [yMant+2]
+   adc   dx, WORD PTR [yMant + 2]
    jc    ShiftCarry
    jmp   StoreAns
 
@@ -1549,7 +1549,7 @@ Subtract:
    sub   cx, di
    jnz   DifferentMag
 
-   cmp   dx, WORD PTR [yMant+2]
+   cmp   dx, WORD PTR [yMant + 2]
    jg    SubtractNumbers
    jne   SwapNumbers
 
@@ -1560,7 +1560,7 @@ Subtract:
 SwapNumbers:
    xor   si, 8000h
    xchg  ax, WORD PTR [yMant]
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    jmp   SubtractNumbers
 
 DifferentMag:
@@ -1569,7 +1569,7 @@ DifferentMag:
 
    xchg  si, di
    xchg  ax, WORD PTR [yMant]
-   xchg  dx, WORD PTR [yMant+2]
+   xchg  dx, WORD PTR [yMant + 2]
    xor   si, 8000h
    neg   cx
 
@@ -1581,15 +1581,15 @@ NoSwap:
    jl    SixteenBitShift2
 
    sub   cx, 16
-   mov   bx, WORD PTR [yMant+2]
+   mov   bx, WORD PTR [yMant + 2]
    shr   bx, cl
    mov   WORD PTR [yMant], bx
-   mov   WORD PTR [yMant+2], 0
+   mov   WORD PTR [yMant + 2], 0
    jmp   SubtractNumbers
 
 SixteenBitShift2:
-   mov   bx, WORD PTR [yMant+2]
-   shr   WORD PTR [yMant+2], cl
+   mov   bx, WORD PTR [yMant + 2]
+   shr   WORD PTR [yMant + 2], cl
    shr   WORD PTR [yMant], cl
    neg   cl
    add   cl, 16
@@ -1598,7 +1598,7 @@ SixteenBitShift2:
 
 SubtractNumbers:
    sub   ax, WORD PTR [yMant]
-   sbb   dx, WORD PTR [yMant+2]
+   sbb   dx, WORD PTR [yMant + 2]
 
 BitScanRight:
    or    dx, dx
@@ -1612,7 +1612,7 @@ BitScanRight:
 
 StoreAns:
    mov   Ans.Exp, si
-   mov   WORD PTR Ans.Mant+2, dx
+   mov   WORD PTR Ans.Mant + 2, dx
    mov   WORD PTR Ans.Mant, ax
 
    lea   ax, Ans
@@ -1877,9 +1877,9 @@ MPmul386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
    jno   NoOverflow
 
 Overflow:
-   or    WORD PTR [xMant+2], 0
+   or    WORD PTR [xMant + 2], 0
    jz    ZeroAns
-   or    WORD PTR [yMant+2], 0
+   or    WORD PTR [yMant + 2], 0
    jz    ZeroAns
 
    mov   MPOverflow, 1
@@ -1951,7 +1951,7 @@ int MPcmp(struct MP x, struct MP y)
 /*
 fg2MP086    PROC     x:DWORD, fg:WORD
    mov   ax, WORD PTR [x]
-   mov   dx, WORD PTR [x+2]
+   mov   dx, WORD PTR [x + 2]
    mov   cx, ax
    or    cx, dx
    jz    ExitFg2MP
@@ -1977,7 +1977,7 @@ BitScanRight:
 
 ExitFg2MP:
    mov   Ans.Exp, cx
-   mov   WORD PTR Ans.Mant+2, dx
+   mov   WORD PTR Ans.Mant + 2, dx
    mov   WORD PTR Ans.Mant, ax
    lea   ax, Ans
    mov   dx, ds

@@ -94,8 +94,8 @@ calc_mand_floating_point(void)
 		/* Mandelbrot_87 */
 		Cx = linitx;
 		Cy = linity;
-		x = lparm.x+Cx;
-		y = lparm.y+Cy;
+		x = lparm.x + Cx;
+		y = lparm.y + Cy;
 	}
 	else
 	{
@@ -107,8 +107,8 @@ calc_mand_floating_point(void)
 		x2 = FUDGE_MUL(x, x);
 		y2 = FUDGE_MUL(y, y);
 		xy = FUDGE_MUL(x, y);
-		x = x2-y2+Cx;
-		y = 2*xy+Cy;
+		x = x2-y2 + Cx;
+		y = 2*xy + Cy;
 	}
 	x2 = FUDGE_MUL(x, x);
 	y2 = FUDGE_MUL(y, y);
@@ -117,12 +117,12 @@ calc_mand_floating_point(void)
 	/* top_of_cs_loop_87 */
 	while (--cx > 0)
 	{
-		x = x2-y2+Cx;
-		y = 2*xy+Cy;
+		x = x2-y2 + Cx;
+		y = 2*xy + Cy;
 		x2 = FUDGE_MUL(x, x);
 		y2 = FUDGE_MUL(y, y);
 		xy = FUDGE_MUL(x, y);
-		magnitude = x2+y2;
+		magnitude = x2 + y2;
 
 		if (magnitude >= lm)
 		{
@@ -262,56 +262,56 @@ initparms:
 		mov		dword ptr y, eax			;  ...
 
 		mov		eax, dword ptr maxit		; setup k = maxit
-		mov		edx, dword ptr maxit+4
+		mov		edx, dword ptr maxit + 4
 		add		eax, 1						;	(+ 1)
 		adc		edx, 0
 		mov		dword ptr k, eax			;  (decrementing	to 0 is	faster)
-		mov		dword ptr k+4, edx
+		mov		dword ptr k + 4, edx
 
 		cmp		fractype, 1					; julia or	mandelbrot set?
 		je		short dojulia				; julia	set	- go there
 
 		sub		dword ptr k, 1				;	we know	the	first iteration	passed
-		sbb		dword ptr k+4, 0			;	we know	the	first iteration	passed
-		mov		edx, dword ptr linitx+4		; add x += linitx
+		sbb		dword ptr k + 4, 0			;	we know	the	first iteration	passed
+		mov		edx, dword ptr linitx + 4		; add x += linitx
 		mov		eax, dword ptr linitx		;  ...
 		add		dword ptr x, eax			;  ...
-		adc		dword ptr x+4, edx			;  ...
-		mov		edx, dword ptr linity+4		; add y += linity
+		adc		dword ptr x + 4, edx			;  ...
+		mov		edx, dword ptr linity + 4		; add y += linity
 		mov		eax, dword ptr linity		;  ...
 		add		dword ptr y, eax			;  ...
-		adc		dword ptr y+4, edx			;  ...
+		adc		dword ptr y + 4, edx			;  ...
 		jmp		short doeither				; branch around	the	julia switch
 
 dojulia:									; Julia	Set	initialization
 											; "fudge" Mandelbrot start-up values
 		mov		eax, dword ptr x			; switch	x with linitx
-		mov		edx, dword ptr x+4			;  ...
+		mov		edx, dword ptr x + 4			;  ...
 		mov		ebx, dword ptr linitx		;  ...
-		mov		ecx, dword ptr linitx+4		;  ...
+		mov		ecx, dword ptr linitx + 4		;  ...
 		mov		dword ptr x, ebx			;  ...
-		mov		dword ptr x+4, ecx			;  ...
+		mov		dword ptr x + 4, ecx			;  ...
 		mov		dword ptr linitx, eax		;  ...
-		mov		dword ptr linitx+4,	edx		;  ...
+		mov		dword ptr linitx + 4,	edx		;  ...
 
 		mov		eax, dword ptr y			; switch	y with linity
-		mov		edx, dword ptr y+4			;  ...
+		mov		edx, dword ptr y + 4			;  ...
 		mov		ebx, dword ptr linity		;  ...
-		mov		ecx, dword ptr linity+4		;  ...
+		mov		ecx, dword ptr linity + 4		;  ...
 		mov		dword ptr y, ebx			;  ...
-		mov		dword ptr y+4, ecx			;  ...
+		mov		dword ptr y + 4, ecx			;  ...
 		mov		dword ptr linity, eax		;  ...
-		mov		dword ptr linity+4,	edx		;  ...
+		mov		dword ptr linity + 4,	edx		;  ...
 
 doeither:									; common Mandelbrot, Julia set code
 		mov		period,	0					; claim periodicity of	1
 		mov		eax, dword ptr firstsavedand ; initial periodicity check
 		mov		dword ptr savedand,	eax		; initial periodicity check
-		mov		eax, dword ptr firstsavedand+4 ; initial periodicity check
-		mov		dword ptr savedand+4, eax	; initial periodicity check
+		mov		eax, dword ptr firstsavedand + 4 ; initial periodicity check
+		mov		dword ptr savedand + 4, eax	; initial periodicity check
 		mov		savedincr, 1				;	flag for incrementing periodicity
-		mov		dword ptr savedx+4,	0ffffh	;	impossible value of	"old" x
-		mov		dword ptr savedy+4,	0ffffh	;	impossible value of	"old" y
+		mov		dword ptr savedx + 4,	0ffffh	;	impossible value of	"old" x
+		mov		dword ptr savedy + 4,	0ffffh	;	impossible value of	"old" y
 		mov		orbit_ptr, 0				; clear orbits
 
 		dec		kbdcount					; decrement	the	keyboard counter
@@ -327,7 +327,7 @@ slowkbd:
 		mov		kbdcount, 5000				; else, stuff an appropriate count	val
 		cmp		cpu, 386					; ("appropriate" to the CPU)
 		jae		short kbddiskadj			;  ...
-		cmp		dword ptr delmin+4,	8		;	is 16-bit math good	enough?
+		cmp		dword ptr delmin + 4,	8		;	is 16-bit math good	enough?
 		ja		kbddiskadj					;  yes.	test less often
 		mov		kbdcount, 500				;	no.	 test more often
 kbddiskadj:
@@ -353,7 +353,7 @@ orbitkey:
 keyhit:	mov		eax, -1						;	return with	-1
 		mov		edx, eax
 		mov		dword ptr coloriter, eax	; set coloriter to -1
-		mov		dword ptr coloriter+4, edx
+		mov		dword ptr coloriter + 4, edx
 		pop		esi
 		pop		edi
 		pop		ebp
@@ -364,7 +364,7 @@ nokey:
 		jne		no16bitcode					;  yup.	 slow down.
 		cmp		cpu, 386					; are we on a 386?
 		jae		short code386bit			;  YAY!! 386-class speed!
-		cmp		dword ptr delmin+4,	8		;	OK,	we're desperate.  16 bits OK?
+		cmp		dword ptr delmin + 4,	8		;	OK,	we're desperate.  16 bits OK?
 		ja		yes16bitcode				;  YAY!	 16-bit	speed!
 no16bitcode:
 		call	code32bit					; BOO!! nap time.  Full 32 bit math
@@ -378,12 +378,12 @@ yes16bitcode:
 		jmp		kloopend					;  bypass the 386-specific code.
 
 code386bit:
-		cmp		delmin+4, 8					; is 16-bit	math good enough?
+		cmp		delmin + 4, 8					; is 16-bit	math good enough?
 		jbe		code386_32					; nope,	go do 32 bit stuff
 
 		; 16 bit on	386, now we	are	really gonna move
-		movsx	esi, dword ptr x+4			;	use	SI for X
-		movsx	edi, dword ptr y+4			;	use	DI for Y
+		movsx	esi, dword ptr x + 4			;	use	SI for X
+		movsx	edi, dword ptr y + 4			;	use	DI for Y
 		push	ebp
 		mov		ebp, -1
 		shl		ebp, FUDGE_FACTOR_BITS-1
@@ -408,16 +408,16 @@ kloop386_16:   ; ecx=bitshift-16, ebp=overflow.mask
 
 		add		eax, edx					; compute (x*x +	y*y) / fudge
 
-		cmp		eax, dword ptr lm+4			; while (xx+yy <	lm)
+		cmp		eax, dword ptr lm + 4			; while (xx + yy <	lm)
 		jae		short end386_16				;  ...
 
 		imul	edi, esi					; compute (y *	x)
 		shl		edi, 1						; ( * 2 / fudge)
 		sar		edi, cl
-		add		edi, dword ptr linity+4		; (2*y*x) / fudge + linity
+		add		edi, dword ptr linity + 4		; (2*y*x) / fudge + linity
 		movsx	edi, edi					;	save as	y
 
-		add		ebx, dword ptr linitx+4		; (from above) (x*x - y*y)/fudge	+ linitx
+		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/fudge	+ linitx
 		movsx	esi, bx						; save	as x
 
 		mov		eax, k						; rearranged for speed
@@ -446,19 +446,19 @@ chkpd386_16:
 		test	eax, savedand				; save	on 0, check	on anything	else
 		jz		short chksv386_16			;  time	to save	a new "old"	value
 		mov		ebx, esi					; load up x
-		xor		ebx, dword ptr savedx+4		; does X	match?
-		cmp		ebx, dword ptr lclosenuff+4	;  truncate	to appropriate precision
+		xor		ebx, dword ptr savedx + 4		; does X	match?
+		cmp		ebx, dword ptr lclosenuff + 4	;  truncate	to appropriate precision
 		ja		short nonmax386_16			;  nope.  forget it.
 		mov		ebx, edi					; now test y
-		xor		ebx, dword ptr savedy+4		; does Y	match?
-		cmp		ebx, dword ptr lclosenuff+4	;  truncate	to appropriate precision
+		xor		ebx, dword ptr savedy + 4		; does Y	match?
+		cmp		ebx, dword ptr lclosenuff + 4	;  truncate	to appropriate precision
 		ja		short nonmax386_16			;  nope.  forget it.
 		mov		period,	1					; note	that we	have found periodicity
 		mov		k, 0						; pretend maxit reached
 		jmp		short end386_16
 chksv386_16:
-		mov		dword ptr savedx+4,	esi		; save x
-		mov		dword ptr savedy+4,	edi		; save y
+		mov		dword ptr savedx + 4,	esi		; save x
+		mov		dword ptr savedy + 4,	edi		; save y
 		dec		savedincr					; time to change the periodicity?
 		jnz		short nonmax386_16			;  nope.
 		shl		savedand, 1					; well	then, let's	try	this one!
@@ -605,15 +605,15 @@ kloopend:
 noorbit2:
 
 		mov		eax, dword ptr k			; set old color
-		mov		edx, dword ptr k+4			; set old color
+		mov		edx, dword ptr k + 4			; set old color
 		sub		eax, 10						;	minus 10, for safety
 		sbb		edx, 0
 		mov		dword ptr oldcoloriter,	eax	; and save it as	the	"old" color
-		mov		dword ptr oldcoloriter+4, edx ; and save it as	the	"old" color
+		mov		dword ptr oldcoloriter + 4, edx ; and save it as	the	"old" color
 		mov		eax, dword ptr maxit		; compute color
-		mov		edx, dword ptr maxit+4		; compute color
+		mov		edx, dword ptr maxit + 4		; compute color
 		sub		eax, dword ptr k			;  (first, re-compute "k")
-		sbb		edx, dword ptr k+4			;  (first, re-compute "k")
+		sbb		edx, dword ptr k + 4			;  (first, re-compute "k")
 		sub		kbdcount, eax				;	adjust the keyboard	count
 		cmp		edx, 0						;	convert	any	"outlier" region
 		js		short kludge_for_julia		;  k can be	> maxit!!!
@@ -625,13 +625,13 @@ kludge_for_julia:
 		sub		edx, edx
 coloradjust1:								;	 at	least one loop.
 		mov		dword ptr realcoloriter, eax	; result before adjustments
-		mov		dword ptr realcoloriter+4, edx	; result before adjustments
-		cmp		edx, dword ptr maxit+4			; did we max out on iterations?
+		mov		dword ptr realcoloriter + 4, edx	; result before adjustments
+		cmp		edx, dword ptr maxit + 4			; did we max out on iterations?
 		jne		short notmax					;  nope.
 		cmp		eax, dword ptr maxit			; did we max out on iterations?
 		jne		short notmax					;  nope.
 		mov		dword ptr oldcoloriter,	eax		; set "oldcolor" to maximum
-		mov		dword ptr oldcoloriter+4, edx	; set "oldcolor" to maximum
+		mov		dword ptr oldcoloriter + 4, edx	; set "oldcolor" to maximum
 		cmp		inside,	0					; is "inside" >= 0?
 		jl		wedone						;  nope.  leave	it at "maxit"
 		mov		eax, inside					;	reset max-out color	to default
@@ -649,7 +649,7 @@ notmax:
 
 wedone:										;
 		mov		dword ptr coloriter, eax	; save the color	result
-		mov		dword ptr coloriter+4, edx	; save	the	color result
+		mov		dword ptr coloriter + 4, edx	; save	the	color result
 		pop		esi
 		pop		edi
 		pop		ebp
@@ -660,13 +660,13 @@ wedone:										;
 ;		Performs "short-cut" 16-bit	math where we can get away with	it.
 ; CJLT has modified	it,	mostly by preshifting x	and	y to fg30 from fg29
 ; or, since	we ignore the lower	16 bits, fg14 from fg13.
-; If this shift	overflows we are outside x*x+y*y=2,	so have	escaped.
+; If this shift	overflows we are outside x*x + y*y=2,	so have	escaped.
 ; Also,	he commented out several conditional jumps which he	calculated could
 ; never	be taken (e.g. mov eax,	esi	/ imul esi ; cannot overflow).
 
 code16bit:
-		mov		esi, dword ptr x+4			; use SI	for	X fg13
-		mov		edi, dword ptr y+4			; use DI	for	Y fg13
+		mov		esi, dword ptr x + 4			; use SI	for	X fg13
+		mov		edi, dword ptr y + 4			; use DI	for	Y fg13
 
 start16bit:
 		add		esi, esi					; CJLT-Convert to	fg14
@@ -674,7 +674,7 @@ start16bit:
 		jmp		end16bit					; overflows if <-2 or >2
 not_end16bit1:
 		mov		eax, esi					; compute (x	* x)
-		imul	esi							; Answer is fg14+14-16=fg12
+		imul	esi							; Answer is fg14 + 14-16=fg12
 		shl		eax, 1						;	 ...
 		rcl		edx, 1						;	 ...
 		jno		not_end16bit2
@@ -700,36 +700,36 @@ not_end16bit3:
 		add		ecx, edx					; compute (x*x +	y*y) / fudge
 		jo		end16bit					; bail out if too high
 
-		cmp		ecx, dword ptr lm+4			; while (xx+yy <	lm)
+		cmp		ecx, dword ptr lm + 4			; while (xx + yy <	lm)
 		jae		end16bit					;  ...
 		sub		dword ptr k, 1				;	while (k < maxit)
-		sbb		dword ptr k+4, 0
+		sbb		dword ptr k + 4, 0
 		jnz		notdoneyet
 		cmp		dword ptr k, 0
 		jz		end16bit					;  we done.
 notdoneyet:
-		mov		eax, edi					; compute (y	* x) fg14+14=fg28
+		mov		eax, edi					; compute (y	* x) fg14 + 14=fg28
 		imul	esi							;	...
 		shl		eax, 1						;	 ...
 		rcl		edx, 1						;	 ...
 		shl		eax, 1						;	 shift two bits
 		rcl		edx, 1						;	 cannot	overflow as	|x| <= 2,	|y| <= 2
-		add		edx, dword ptr linity+4		; (2*y*x) / fudge + linity
+		add		edx, dword ptr linity + 4		; (2*y*x) / fudge + linity
 		jo		end16bit					; bail out if too high
 		mov		edi, edx					; save as y
 
-		add		ebx, dword ptr linitx+4		; (from above) (x*x - y*y)/fudge	+ linitx
+		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/fudge	+ linitx
 		jo		end16bit					; bail out if too high
 		mov		esi, ebx					; save as x
 
-		mov		edx, dword ptr oldcoloriter+4	; recall	the	old	color
-		cmp		edx, dword ptr k+4				; check it against this iter
+		mov		edx, dword ptr oldcoloriter + 4	; recall	the	old	color
+		cmp		edx, dword ptr k + 4				; check it against this iter
 		jb		short nonmax3					;  nope.  bypass periodicity check.
 		mov		eax, dword ptr oldcoloriter		; recall	the	old	color
 		cmp		eax, dword ptr k				; check it against this iter
 		jb		short nonmax3					;  nope.  bypass periodicity check.
-		mov		dword ptr x+4, esi				; save x	for	periodicity	check
-		mov		dword ptr y+4, edi				; save y	for	periodicity	check
+		mov		dword ptr x + 4, esi				; save x	for	periodicity	check
+		mov		dword ptr y + 4, edi				; save y	for	periodicity	check
 		call	checkperiod						; check	for	periodicity
 nonmax3:
 		mov		eax, dword ptr k			; set up	to test	for	key	stroke
@@ -765,21 +765,21 @@ checkperiod:								; periodicity check
 		mov		eax, dword ptr k			; set up to	test for save-time
 		test	eax, dword ptr savedand		; save on 0,	check on anything else
 		jnz		notimeyet					;  NOT time	to save	a new "old"	value
-		mov		edx, dword ptr k+4 ; set up	to test	for	save-time
-		test	edx, dword ptr savedand+4	; save on 0,	check on anything else
+		mov		edx, dword ptr k + 4 ; set up	to test	for	save-time
+		test	edx, dword ptr savedand + 4	; save on 0,	check on anything else
 		jz		checksave					;  time	to save	a new "old"	value
 notimeyet:
-		mov		edx, dword ptr x+4			; load up x
-		xor		edx, dword ptr savedx+4
-		cmp		edx, dword ptr lclosenuff+4
+		mov		edx, dword ptr x + 4			; load up x
+		xor		edx, dword ptr savedx + 4
+		cmp		edx, dword ptr lclosenuff + 4
 		ja		checkdone
 		mov		eax, dword ptr x			; load up x
 		xor		eax, dword ptr savedx
 		cmp		eax, dword ptr lclosenuff
 		ja		checkdone
-		mov		edx, dword ptr y+4			; load up y
-		xor		edx, dword ptr savedy+4
-		cmp		edx, dword ptr lclosenuff+4
+		mov		edx, dword ptr y + 4			; load up y
+		xor		edx, dword ptr savedy + 4
+		cmp		edx, dword ptr lclosenuff + 4
 		ja		checkdone
 		mov		eax, dword ptr y			; load up y
 		xor		eax, dword ptr savedy
@@ -787,22 +787,22 @@ notimeyet:
 		ja		checkdone
 		mov		period,	1					; note	that we	have found periodicity
 		mov		dword ptr k, 1				;	pretend	maxit reached
-		mov		dword ptr k+4, 0			;	pretend	maxit reached
+		mov		dword ptr k + 4, 0			;	pretend	maxit reached
 checksave:
-		mov		edx, dword ptr x+4			; load up x
-		mov		dword ptr savedx+4,	edx		;  and save it
+		mov		edx, dword ptr x + 4			; load up x
+		mov		dword ptr savedx + 4,	edx		;  and save it
 		mov		eax, dword ptr x			; load up x
 		mov		dword ptr savedx, eax		;  and save it
-		mov		edx, dword ptr y+4			; load up y
-		mov		dword ptr savedy+4,	edx		;  and save it
+		mov		edx, dword ptr y + 4			; load up y
+		mov		dword ptr savedy + 4,	edx		;  and save it
 		mov		eax, dword ptr y			; load up y
 		mov		dword ptr savedy, eax		;  and save it
 		dec		savedincr					; time to change the periodicity?
 		jnz		checkdone					;  nope.
 		shl		dword ptr savedand,	1		;	well then, let's try this one!
-		rcl		dword ptr savedand+4, 1		;	well then, let's try this one!
+		rcl		dword ptr savedand + 4, 1		;	well then, let's try this one!
 		add		dword ptr savedand,	1		;	 (2**n +1)
-		adc		dword ptr savedand+4, 0		;	 (2**n +1)
+		adc		dword ptr savedand + 4, 0		;	 (2**n +1)
 		mov		eax, nextsavedincr			;	and	reset the increment	flag
 		mov		savedincr, eax				;	and	reset the increment	flag
 checkdone:
@@ -826,14 +826,14 @@ checkdone:
 ;
 ; Note that square returns DI, AX squared in	DX,	AX now.
 ; DI, AX is	first converted	to unsigned	fg31 form.
-; (For its square to be	representable in fg29 (range -4..+3.999)
-; DI:AX	must be	in the range 0..+1.999 which fits neatly into unsigned fg31.)
+; (For its square to be	representable in fg29 (range -4.. + 3.999)
+; DI:AX	must be	in the range 0.. + 1.999 which fits neatly into unsigned fg31.)
 ; This allows us to	ignore the part	of the answer corresponding	to AX*AX as	it
 ; is less than half	a least	significant	bit	of the final answer.
 ; I	thought	you'd like that.
 ;
 ; As we	prescaled DI:AX, we	need to	shift the answer 1 bit to the right	to
-; end up in	fg29 form since	29=(29+2)+(29+2)-32-1
+; end up in	fg29 form since	29=(29 + 2) + (29 + 2)-32-1
 ; However, the mid term	AX*DI is needed	twice, so the shifts cancel.
 ;
 ; Since	abs(x) and abs(y) in fg31 form will	be needed in calculating 2*X*Y
@@ -855,7 +855,7 @@ code32bit:
 ;		iteration loop
 
 nextit:	mov		eax, dword ptr y			; eax=low(y)
-		mov		edi, dword ptr y+4			; edi=high(y)
+		mov		edi, dword ptr y + 4			; edi=high(y)
 
 		; square	done1						; square	y and quit via done1 if	it overflows
 		shl		eax, 1						; Multiply	by 2 to	convert	to fg30
@@ -890,7 +890,7 @@ notneg:	shl		eax, 1						; Multiply	by 2 again to give fg31
 		mov		esi, eax					; square	returns	results	in edx,	eax
 		mov		ebp, edx					; save y*y in ebp, esi
 		mov		eax, dword ptr x
-		mov		edi, dword ptr x+4
+		mov		edi, dword ptr x + 4
 
 		; square	 done2						; square x	and	quit via done2 if it overflows
 		shl		eax, 1						; Multiply	by 2 to	convert	to fg30
@@ -940,7 +940,7 @@ done0:										; exit here	if key hit
 ;---------------------------------------------------------------------------
 
 nextxy:	sub		dword ptr k, 1				;	while (k < maxit)
-		sbb		dword ptr k+4, 0
+		sbb		dword ptr k + 4, 0
 		jnz		tryagain
 		cmp		dword ptr k, 0
 		jz		done4						;  we done.
@@ -948,11 +948,11 @@ tryagain:
 		sub		ecx, esi					; subtract y*y from x*x
 		sbb		edx, ebp					;  ...
 		add		ecx, dword ptr linitx		; add "A"
-		adc		edx, dword ptr linitx+4		;  ...
+		adc		edx, dword ptr linitx + 4		;  ...
 		jo		done4						;CJLT-Must detect overflow here
 											; but increment	loop count first
-		mov		dword ptr x, ecx			; store new x = x*x-y*y+a
-		mov		dword ptr x+4, edx			;  ...
+		mov		dword ptr x, ecx			; store new x = x*x-y*y + a
+		mov		dword ptr x + 4, edx			;  ...
 
 ; now calculate	x*y
 ;
@@ -991,12 +991,12 @@ tryagain:
 		xor		bl,	bl						; Clear	negswt
 signok:
 		add		eax, dword ptr linity
-		adc		edx, dword ptr linity+4		; edx, eax =	2(X*Y)+B
+		adc		edx, dword ptr linity + 4		; edx, eax =	2(X*Y) + B
 		jo		done1
 		mov		dword ptr y, eax			; save the new value	of y
-		mov		dword ptr y+4, edx			;  ...
-		mov		edx, dword ptr oldcoloriter+4 ; recall	the	old	color
-		cmp		edx, dword ptr k+4			; check it against this iter
+		mov		dword ptr y + 4, edx			;  ...
+		mov		edx, dword ptr oldcoloriter + 4 ; recall	the	old	color
+		cmp		edx, dword ptr k + 4			; check it against this iter
 		jb		short chkkey4				;  nope.  bypass periodicity check.
 		mov		eax, dword ptr oldcoloriter	; recall	the	old	color
 		cmp		eax, dword ptr k			; check it against this iter
@@ -1025,9 +1025,9 @@ notakey4:
 horbit:	push	bx							; save my flags
 		mov		eax, -1						;	color for plot orbit
 		push	eax							;	...
-		push	dword ptr y+4				; co-ordinates	for	plot orbit
+		push	dword ptr y + 4				; co-ordinates	for	plot orbit
 		push	dword ptr y					;	...
-		push	dword ptr x+4				;	...
+		push	dword ptr x + 4				;	...
 		push	dword ptr x					;	...
 		call	iplot_orbit					; display the orbit
 		add		sp,	5*2						; clear out the parameters

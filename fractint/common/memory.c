@@ -548,7 +548,7 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 
    case MEMORY: /* SetMemory */
       for (i = 0; i < size; i++) {
-         memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
+         memset(handletable[handle].Linearmem.memory + start, value, (U16)count);
          start += count;
       }
       success = TRUE; /* No way to gauge success or failure */

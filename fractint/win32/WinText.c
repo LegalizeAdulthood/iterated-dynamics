@@ -168,7 +168,7 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
 	RECT exposed =
 	{
 		left*me->char_width, top*me->char_height,
-		(right+1)*me->char_width, (bot+1)*me->char_height			
+		(right + 1)*me->char_width, (bot + 1)*me->char_height			
 	};
 	if (me->hWndCopy)
 	{
@@ -497,7 +497,7 @@ void wintext_putstring(WinText *me, int xpos, int ypos, int attrib, const char *
 	{
 		invalidate(me, xpos, ypos, maxcol, maxrow);
 		*end_row = j;
-		*end_col = k+1;
+		*end_col = k + 1;
     }
 }
 
@@ -508,8 +508,8 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 	{
 		unsigned char *chars = &me->chars[row][0];
 		unsigned char *attrs = &me->attrs[row][0];
-		unsigned char *next_chars = &me->chars[row+1][0];
-		unsigned char *next_attrs = &me->attrs[row+1][0];
+		unsigned char *next_chars = &me->chars[row + 1][0];
+		unsigned char *next_attrs = &me->attrs[row + 1][0];
 		int col;
 
 		for (col = 0; col < WINTEXT_MAX_COL; col++)
@@ -590,7 +590,7 @@ void wintext_paintscreen(WinText *me,
 		length = 0;
 		oldbk = 99;
 		oldfg = 99;
-		for (i = xmin; i <= xmax+1; i++)
+		for (i = xmin; i <= xmax + 1; i++)
 		{
 			k = -1;
 			if (i <= xmax)
@@ -679,7 +679,7 @@ void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 	ymin = ymax = row;
 	for (i = 0; i < count; i++)
 	{
-		me->attrs[row][col+i] = (unsigned char) (attr & 0xFF);
+		me->attrs[row][col + i] = (unsigned char) (attr & 0xFF);
 	}
 	if (xmin + count >= WINTEXT_MAX_COL)
 	{

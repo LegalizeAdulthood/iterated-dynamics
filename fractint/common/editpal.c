@@ -229,14 +229,14 @@ static void setpal(int pal, int r, int g, int b)
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(g_dac_box+first, pal, how_many*3);
+   memmove(g_dac_box + first, pal, how_many*3);
    spindac(0,1);
    }
 
 
 static void getpalrange(int first, int how_many, PALENTRY *pal)
    {
-   memmove(pal, g_dac_box+first, how_many*3);
+   memmove(pal, g_dac_box + first, how_many*3);
    }
 
 
@@ -252,7 +252,7 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
       while (dir-- > 0)
          {
          memmove(&hold, &pal[hi],  3);
-         memmove(&pal[lo+1], &pal[lo], 3*(size-1));
+         memmove(&pal[lo + 1], &pal[lo], 3*(size-1));
          memmove(&pal[lo], &hold, 3);
          }
       }
@@ -262,7 +262,7 @@ static void rotatepal(PALENTRY *pal, int dir, int lo, int hi)
       while (dir++ < 0)
          {
          memmove(&hold, &pal[lo], 3);
-         memmove(&pal[lo], &pal[lo+1], 3*(size-1));
+         memmove(&pal[lo], &pal[lo + 1], 3*(size-1));
          memmove(&pal[hi], &hold,  3);
          }
       }
@@ -332,7 +332,7 @@ int clip_getcolor(int x, int y)
 static void hline(int x, int y, int width, int color)
    {
    memset(line_buff, color, width);
-   clip_put_line(y, x, x+width-1, line_buff);
+   clip_put_line(y, x, x + width-1, line_buff);
    }
 
 
@@ -345,13 +345,13 @@ static void vline(int x, int y, int depth, int color)
 
 void getrow(int x, int y, int width, char *buff)
    {
-   clip_get_line(y, x, x+width-1, (BYTE *)buff);
+   clip_get_line(y, x, x + width-1, (BYTE *)buff);
    }
 
 
 void putrow(int x, int y, int width, char *buff)
    {
-   clip_put_line(y, x, x+width-1, (BYTE *)buff);
+   clip_put_line(y, x, x + width-1, (BYTE *)buff);
    }
 
 
@@ -379,10 +379,10 @@ static void fillrect(int x, int y, int width, int depth, int color)
 static void rect(int x, int y, int width, int depth, int color)
    {
    hline(x, y, width, color);
-   hline(x, y+depth-1, width, color);
+   hline(x, y + depth-1, width, color);
 
    vline(x, y, depth, color);
-   vline(x+width-1, y, depth, color);
+   vline(x + width-1, y, depth, color);
    }
 
 
@@ -562,10 +562,10 @@ static void vdline(int x, int y, int depth)
 static void drect(int x, int y, int width, int depth)
    {
    hdline(x, y, width);
-   hdline(x, y+depth-1, width);
+   hdline(x, y + depth-1, width);
 
    vdline(x, y, depth);
-   vdline(x+width-1, y, depth);
+   vdline(x + width-1, y, depth);
    }
 
 
@@ -584,18 +584,18 @@ static BOOLEAN is_reserved(int color)
 
 static BOOLEAN is_in_box(int x, int y, int bx, int by, int bw, int bd)
    {
-   return (BOOLEAN) ((x >= bx) && (y >= by) && (x < bx+bw) && (y < by+bd));
+   return (BOOLEAN) ((x >= bx) && (y >= by) && (x < bx + bw) && (y < by + bd));
    }
 
 
 
 static void draw_diamond(int x, int y, int color)
    {
-   putcolor (x+2, y+0,    color);
-   hline    (x+1, y+1, 3, color);
-   hline    (x+0, y+2, 5, color);
-   hline    (x+1, y+3, 3, color);
-   putcolor (x+2, y+4,    color);
+   putcolor (x + 2, y + 0,    color);
+   hline    (x + 1, y + 1, 3, color);
+   hline    (x + 0, y + 2, 5, color);
+   hline    (x + 1, y + 3, 3, color);
+   putcolor (x + 2, y + 4,    color);
    }
 
 
@@ -683,30 +683,30 @@ static void Cursor__Draw(void)
    color = (the_cursor->blink) ? g_color_medium : g_color_dark;
 
    vline(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, color);
-   vline(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, color);
+   vline(the_cursor->x, the_cursor->y + 2,             CURSOR_SIZE, color);
 
    hline(the_cursor->x-CURSOR_SIZE-1, the_cursor->y, CURSOR_SIZE, color);
-   hline(the_cursor->x+2,             the_cursor->y, CURSOR_SIZE, color);
+   hline(the_cursor->x + 2,             the_cursor->y, CURSOR_SIZE, color);
    }
 
 
 static void Cursor__Save(void)
    {
    vgetrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
-   vgetrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
+   vgetrow(the_cursor->x, the_cursor->y + 2,             CURSOR_SIZE, the_cursor->b);
 
    getrow(the_cursor->x-CURSOR_SIZE-1, the_cursor->y,  CURSOR_SIZE, the_cursor->l);
-   getrow(the_cursor->x+2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
+   getrow(the_cursor->x + 2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
    }
 
 
 static void Cursor__Restore(void)
    {
    vputrow(the_cursor->x, the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, the_cursor->t);
-   vputrow(the_cursor->x, the_cursor->y+2,             CURSOR_SIZE, the_cursor->b);
+   vputrow(the_cursor->x, the_cursor->y + 2,             CURSOR_SIZE, the_cursor->b);
 
    putrow(the_cursor->x-CURSOR_SIZE-1, the_cursor->y,  CURSOR_SIZE, the_cursor->l);
-   putrow(the_cursor->x+2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
+   putrow(the_cursor->x + 2,             the_cursor->y,  CURSOR_SIZE, the_cursor->r);
    }
 
 
@@ -919,36 +919,36 @@ static void MoveBox_SetCSize(MoveBox *me, int csize)
 
 static void MoveBox__Draw(MoveBox *me)  /* private */
    {
-   int width = me->base_width + me->csize*16+1,
-       depth = me->base_depth + me->csize*16+1;
+   int width = me->base_width + me->csize*16 + 1,
+       depth = me->base_depth + me->csize*16 + 1;
    int x     = me->x,
        y     = me->y;
 
 
    getrow (x, y,         width, me->t);
-   getrow (x, y+depth-1, width, me->b);
+   getrow (x, y + depth-1, width, me->b);
 
    vgetrow(x,         y, depth, me->l);
-   vgetrow(x+width-1, y, depth, me->r);
+   vgetrow(x + width-1, y, depth, me->r);
 
    hdline(x, y,         width);
-   hdline(x, y+depth-1, width);
+   hdline(x, y + depth-1, width);
 
    vdline(x,         y, depth);
-   vdline(x+width-1, y, depth);
+   vdline(x + width-1, y, depth);
    }
 
 
 static void MoveBox__Erase(MoveBox *me)   /* private */
    {
-   int width = me->base_width + me->csize*16+1,
-       depth = me->base_depth + me->csize*16+1;
+   int width = me->base_width + me->csize*16 + 1,
+       depth = me->base_depth + me->csize*16 + 1;
 
    vputrow(me->x,         me->y, depth, me->l);
-   vputrow(me->x+width-1, me->y, depth, me->r);
+   vputrow(me->x + width-1, me->y, depth, me->r);
 
    putrow(me->x, me->y,         width, me->t);
-   putrow(me->x, me->y+depth-1, width, me->b);
+   putrow(me->x, me->y + depth-1, width, me->b);
    }
 
 
@@ -995,11 +995,11 @@ static void MoveBox__Move(MoveBox *me, int key)
    if (xoff < 0) xoff = 0;
    if (yoff < 0) yoff = 0;
 
-   if (xoff+me->base_width+me->csize*16+1 > sxdots)
-       xoff = sxdots - (me->base_width+me->csize*16+1);
+   if (xoff + me->base_width + me->csize*16 + 1 > sxdots)
+       xoff = sxdots - (me->base_width + me->csize*16 + 1);
 
-   if (yoff+me->base_depth+me->csize*16+1 > sydots)
-      yoff = sydots - (me->base_depth+me->csize*16+1);
+   if (yoff + me->base_depth + me->csize*16 + 1 > sydots)
+      yoff = sydots - (me->base_depth + me->csize*16 + 1);
 
    if (xoff != me->x || yoff != me->y)
       {
@@ -1073,17 +1073,17 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
             {
             int max_width = min(sxdots, MAX_WIDTH);
 
-            if (me->base_depth+(me->csize+CSIZE_INC)*16+1 < sydots  &&
-                me->base_width+(me->csize+CSIZE_INC)*16+1 < max_width)
+            if (me->base_depth + (me->csize + CSIZE_INC)*16 + 1 < sydots  &&
+                me->base_width + (me->csize + CSIZE_INC)*16 + 1 < max_width)
                {
                MoveBox__Erase(me);
                me->x -= (CSIZE_INC*16) / 2;
                me->y -= (CSIZE_INC*16) / 2;
                me->csize += CSIZE_INC;
-               if (me->y+me->base_depth+me->csize*16+1 > sydots)
-                  me->y = sydots - (me->base_depth+me->csize*16+1);
-               if (me->x+me->base_width+me->csize*16+1 > max_width)
-                  me->x = max_width - (me->base_width+me->csize*16+1);
+               if (me->y + me->base_depth + me->csize*16 + 1 > sydots)
+                  me->y = sydots - (me->base_depth + me->csize*16 + 1);
+               if (me->x + me->base_width + me->csize*16 + 1 > max_width)
+                  me->x = max_width - (me->base_width + me->csize*16 + 1);
                if (me->y < 0)
                   me->y = 0;
                if (me->x < 0)
@@ -1166,8 +1166,8 @@ struct _CEditor
    static int  CEditor_Edit    (CEditor *);
 #endif
 
-#define CEditor_WIDTH (8*3+4)
-#define CEditor_DEPTH (8+4)
+#define CEditor_WIDTH (8*3 + 4)
+#define CEditor_DEPTH (8 + 4)
 
 
 
@@ -1211,7 +1211,7 @@ static void CEditor_Draw(CEditor *me)
       return;
 
    Cursor_Hide();
-   displayf(me->x+2, me->y+2, fg_color, bg_color, "%c%02d", me->letter, me->val);
+   displayf(me->x + 2, me->y + 2, fg_color, bg_color, "%c%02d", me->letter, me->val);
    Cursor_Show();
    }
 
@@ -1421,9 +1421,9 @@ struct _RGBEditor
    static PALENTRY RGBEditor_GetRGB   (RGBEditor *me);
 
 #define RGBEditor_WIDTH 62
-#define RGBEditor_DEPTH (1+1+CEditor_DEPTH*3-2+2)
+#define RGBEditor_DEPTH (1 + 1 + CEditor_DEPTH*3-2 + 2)
 
-#define RGBEditor_BWIDTH (RGBEditor_WIDTH - (2+CEditor_WIDTH+1 + 2))
+#define RGBEditor_BWIDTH (RGBEditor_WIDTH - (2 + CEditor_WIDTH + 1 + 2))
 #define RGBEditor_BDEPTH (RGBEditor_DEPTH - 4)
 
 
@@ -1556,9 +1556,9 @@ static void RGBEditor_SetPos(RGBEditor *me, int x, int y)
    me->x = x;
    me->y = y;
 
-   CEditor_SetPos(me->color[0], x+2, y+2);
-   CEditor_SetPos(me->color[1], x+2, y+2+CEditor_DEPTH-1);
-   CEditor_SetPos(me->color[2], x+2, y+2+CEditor_DEPTH-1+CEditor_DEPTH-1);
+   CEditor_SetPos(me->color[0], x + 2, y + 2);
+   CEditor_SetPos(me->color[1], x + 2, y + 2 + CEditor_DEPTH-1);
+   CEditor_SetPos(me->color[2], x + 2, y + 2 + CEditor_DEPTH-1 + CEditor_DEPTH-1);
    }
 
 
@@ -1568,15 +1568,15 @@ static void RGBEditor_BlankSampleBox(RGBEditor *me)
       return ;
 
    Cursor_Hide();
-   fillrect(me->x+2+CEditor_WIDTH+1+1, me->y+2+1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
+   fillrect(me->x + 2 + CEditor_WIDTH + 1 + 1, me->y + 2 + 1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
    Cursor_Show();
    }
 
 
 static void RGBEditor_Update(RGBEditor *me)
    {
-   int x1 = me->x+2+CEditor_WIDTH+1+1,
-       y1 = me->y+2+1;
+   int x1 = me->x + 2 + CEditor_WIDTH + 1 + 1,
+       y1 = me->y + 2 + 1;
 
    if (me->hidden)
       return ;
@@ -1586,13 +1586,13 @@ static void RGBEditor_Update(RGBEditor *me)
    if (me->pal >= colors)
       {
       fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
-      draw_diamond(x1+(RGBEditor_BWIDTH-5)/2, y1+(RGBEditor_BDEPTH-5)/2, fg_color);
+      draw_diamond(x1 + (RGBEditor_BWIDTH-5)/2, y1 + (RGBEditor_BDEPTH-5)/2, fg_color);
       }
 
    else if (is_reserved(me->pal))
       {
-      int x2 = x1+RGBEditor_BWIDTH-3,
-          y2 = y1+RGBEditor_BDEPTH-3;
+      int x2 = x1 + RGBEditor_BWIDTH-3,
+          y2 = y1 + RGBEditor_BDEPTH-3;
 
       fillrect(x1, y1, RGBEditor_BWIDTH-2, RGBEditor_BDEPTH-2, bg_color);
       driver_draw_line(x1, y1, x2, y2, fg_color);
@@ -1615,8 +1615,8 @@ static void RGBEditor_Draw(RGBEditor *me)
 
    Cursor_Hide();
    drect(me->x, me->y, RGBEditor_WIDTH, RGBEditor_DEPTH);
-   fillrect(me->x+1, me->y+1, RGBEditor_WIDTH-2, RGBEditor_DEPTH-2, bg_color);
-   rect(me->x+1+CEditor_WIDTH+2, me->y+2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, fg_color);
+   fillrect(me->x + 1, me->y + 1, RGBEditor_WIDTH-2, RGBEditor_DEPTH-2, bg_color);
+   rect(me->x + 1 + CEditor_WIDTH + 2, me->y + 2, RGBEditor_BWIDTH, RGBEditor_BDEPTH, fg_color);
    RGBEditor_Update(me);
    Cursor_Show();
    }
@@ -1766,7 +1766,7 @@ struct  _PalTable
 
 
 #define PalTable_PALX (1)
-#define PalTable_PALY (2+RGBEditor_DEPTH+2)
+#define PalTable_PALY (2 + RGBEditor_DEPTH + 2)
 
 #define UNDO_DATA        (1)
 #define UNDO_DATA_SINGLE (2)
@@ -1833,7 +1833,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
       {
       putc(UNDO_DATA_SINGLE, me->undo_file);
       putc(first, me->undo_file);
-      fwrite(me->pal+first, 3, 1, me->undo_file);
+      fwrite(me->pal + first, 3, 1, me->undo_file);
       putw(1 + 1 + 3 + sizeof(int), me->undo_file);
       }
    else
@@ -1841,7 +1841,7 @@ static void PalTable__SaveUndoData(PalTable *me, int first, int last)
       putc(UNDO_DATA, me->undo_file);
       putc(first, me->undo_file);
       putc(last,  me->undo_file);
-      fwrite(me->pal+first, 3, num, me->undo_file);
+      fwrite(me->pal + first, 3, num, me->undo_file);
       putw(1 + 2 + (num*3) + sizeof(int), me->undo_file);
       }
 
@@ -1898,9 +1898,9 @@ static void PalTable__UndoProcess(PalTable *me, int delta)   /* undo/redo common
          fread(temp, 3, num, me->undo_file);
 
          fseek(me->undo_file, -(num*3), SEEK_CUR);  /* go to start of undo/redo data */
-         fwrite(me->pal+first, 3, num, me->undo_file);  /* write redo/undo data */
+         fwrite(me->pal + first, 3, num, me->undo_file);  /* write redo/undo data */
 
-         memmove(me->pal+first, temp, num*3);
+         memmove(me->pal + first, temp, num*3);
 
          PalTable__UpdateDAC(me);
 
@@ -1989,9 +1989,9 @@ static void PalTable__Redo(PalTable *me)
 static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
    {
    int color;
-   int width = 1+(me->csize*16)+1+1;
+   int width = 1 + (me->csize*16) + 1 + 1;
 
-   if (!me->hidden && (width - (RGBEditor_WIDTH*2+4) >= STATUS_LEN*8))
+   if (!me->hidden && (width - (RGBEditor_WIDTH*2 + 4) >= STATUS_LEN*8))
       {
       int x = me->x + 2 + RGBEditor_WIDTH,
           y = me->y + PalTable_PALY - 10;
@@ -2030,9 +2030,9 @@ static void PalTable__HlPal(PalTable *me, int pnum, int color)
    Cursor_Hide();
 
    if (color < 0)
-      drect(x, y, size+1, size+1);
+      drect(x, y, size + 1, size + 1);
    else
-      rect(x, y, size+1, size+1, color);
+      rect(x, y, size + 1, size + 1, color);
 
    Cursor_Show();
    }
@@ -2049,19 +2049,19 @@ static void PalTable__Draw(PalTable *me)
 
    Cursor_Hide();
 
-   width = 1+(me->csize*16)+1+1;
+   width = 1 + (me->csize*16) + 1 + 1;
 
-   rect(me->x, me->y, width, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1, fg_color);
+   rect(me->x, me->y, width, 2 + RGBEditor_DEPTH + 2 + (me->csize*16) + 1 + 1, fg_color);
 
-   fillrect(me->x+1, me->y+1, width-2, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1-2, bg_color);
+   fillrect(me->x + 1, me->y + 1, width-2, 2 + RGBEditor_DEPTH + 2 + (me->csize*16) + 1 + 1-2, bg_color);
 
-   hline(me->x, me->y+PalTable_PALY-1, width, fg_color);
+   hline(me->x, me->y + PalTable_PALY-1, width, fg_color);
 
-   if (width - (RGBEditor_WIDTH*2+4) >= TITLE_LEN*8)
+   if (width - (RGBEditor_WIDTH*2 + 4) >= TITLE_LEN*8)
       {
       int center = (width - TITLE_LEN*8) / 2;
 
-      displayf(me->x+center, me->y+RGBEditor_DEPTH/2-6, fg_color, bg_color, TITLE);
+      displayf(me->x + center, me->y + RGBEditor_DEPTH/2-6, fg_color, bg_color, TITLE);
       }
 
    RGBEditor_Draw(me->rgb[0]);
@@ -2249,8 +2249,8 @@ static void PalTable__SaveRect(PalTable *me)
       Cursor_Hide();
       for (yoff = 0; yoff < depth; yoff++)
          {
-         getrow(me->x, me->y+yoff, width, buff);
-         hline (me->x, me->y+yoff, width, bg_color);
+         getrow(me->x, me->y + yoff, width, buff);
+         hline (me->x, me->y + yoff, width, bg_color);
          memcpy(ptr,bufptr, width);
          ptr += width;
          }
@@ -2263,7 +2263,7 @@ static void PalTable__SaveRect(PalTable *me)
 
       if (me->file == NULL)
          {
-         me->file = dir_fopen(tempdir,scrnfile, "w+b");
+         me->file = dir_fopen(tempdir,scrnfile, "w + b");
          if (me->file == NULL)
             {
             me->stored_at = NOWHERE;
@@ -2276,8 +2276,8 @@ static void PalTable__SaveRect(PalTable *me)
       Cursor_Hide();
       for (yoff = 0; yoff < depth; yoff++)
          {
-         getrow(me->x, me->y+yoff, width, buff);
-         hline (me->x, me->y+yoff, width, bg_color);
+         getrow(me->x, me->y + yoff, width, buff);
+         hline (me->x, me->y + yoff, width, bg_color);
          if (fwrite(buff, width, 1, me->file) != 1)
             {
             driver_buzzer(BUZZER_ERROR);
@@ -2312,7 +2312,7 @@ static void PalTable__RestoreRect(PalTable *me)
                driver_buzzer(BUZZER_ERROR);
                break;
                }
-            putrow(me->x, me->y+yoff, width, buff);
+            putrow(me->x, me->y + yoff, width, buff);
             }
          Cursor_Show();
          break;
@@ -2326,7 +2326,7 @@ static void PalTable__RestoreRect(PalTable *me)
          for (yoff = 0; yoff < depth; yoff++)
             {
             memcpy(bufptr, ptr, width);
-            putrow(me->x, me->y+yoff, width, buff);
+            putrow(me->x, me->y + yoff, width, buff);
             ptr += width;
             }
          Cursor_Show();
@@ -2346,8 +2346,8 @@ static void PalTable__SetPos(PalTable *me, int x, int y)
    me->x = x;
    me->y = y;
 
-   RGBEditor_SetPos(me->rgb[0], x+2, y+2);
-   RGBEditor_SetPos(me->rgb[1], x+width-2-RGBEditor_WIDTH, y+2);
+   RGBEditor_SetPos(me->rgb[0], x + 2, y + 2);
+   RGBEditor_SetPos(me->rgb[1], x + width-2-RGBEditor_WIDTH, y + 2);
    }
 
 
@@ -2367,7 +2367,7 @@ static int PalTable__GetCursorColor(PalTable *me)
 
    if (is_reserved(color))
       {
-      if (is_in_box(x, y, me->x, me->y, 1+(me->csize*16)+1+1, 2+RGBEditor_DEPTH+2+(me->csize*16)+1+1))
+      if (is_in_box(x, y, me->x, me->y, 1 + (me->csize*16) + 1 + 1, 2 + RGBEditor_DEPTH + 2 + (me->csize*16) + 1 + 1))
          {  /* is the cursor over the editor? */
          x -= me->x + PalTable_PALX;
          y -= me->y + PalTable_PALY;
@@ -2497,7 +2497,7 @@ static void PalTable__UpdateDAC(PalTable *me)
             b=t;
             }
 
-         memmove(g_dac_box[a], &me->pal[a], 3*(1+(b-a)));
+         memmove(g_dac_box[a], &me->pal[a], 3*(1 + (b-a)));
          }
       }
    else
@@ -3094,7 +3094,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
                   }
 
                PalTable__SaveUndoData(me, a, b);
-               palrangetogrey(me->pal, a, 1+(b-a));
+               palrangetogrey(me->pal, a, 1 + (b-a));
                break;
                }
             }
@@ -3135,7 +3135,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
                   }
 
                PalTable__SaveUndoData(me, a, b);
-               palrangetonegative(me->pal, a, 1+(b-a));
+               palrangetonegative(me->pal, a, 1 + (b-a));
                break;
                }
             }
@@ -3208,7 +3208,7 @@ static PalTable *PalTable_Construct(void)
    me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key,
                   PalTable__change, me);
 
-   me->movebox = MoveBox_Construct(0,0,0, PalTable_PALX+1, PalTable_PALY+1);
+   me->movebox = MoveBox_Construct(0,0,0, PalTable_PALX + 1, PalTable_PALY + 1);
 
    me->active      = 0;
    me->curr[0]     = 1;
@@ -3237,10 +3237,10 @@ static PalTable *PalTable_Construct(void)
 
    if (g_video_scroll) {
       PalTable__SetPos(me, g_video_start_x, g_video_start_y);
-      csize = ((g_vesa_y_res-(PalTable_PALY+1+1)) / 2) / 16;
+      csize = ((g_vesa_y_res-(PalTable_PALY + 1 + 1)) / 2) / 16;
    } else {
       PalTable__SetPos(me, 0, 0);
-      csize = ((sydots-(PalTable_PALY+1+1)) / 2) / 16;
+      csize = ((sydots-(PalTable_PALY + 1 + 1)) / 2) / 16;
    }
 
    if (csize < CSIZE_MIN)

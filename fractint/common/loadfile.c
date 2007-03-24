@@ -669,7 +669,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                       * (double)fileydots / (double)filexdots);
       if (fileaspectratio > screenaspect-0.03
-        && fileaspectratio < screenaspect+0.03)
+        && fileaspectratio < screenaspect + 0.03)
          fileaspectratio = screenaspect;
       }
    else
@@ -717,7 +717,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    */
 
    memset(info,0,FRACTAL_INFO_SIZE);
-   fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE+254)/255;
+   fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
    fseek(fp,(long)(-1-fractinf_len),SEEK_END);
    /* TODO: revise this to read members one at a time so we get natural alignment
       of fields within the FRACTAL_INFO structure for the platform */
@@ -733,7 +733,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       char tmpbuf[110];
       hdr_offset = 0;
       offset = 80; /* don't even check last 80 bytes of file for id */
-      while (offset < fractinf_len+513) { /* allow 512 garbage at eof */
+      while (offset < fractinf_len + 513) { /* allow 512 garbage at eof */
          offset += 100; /* go back 100 bytes at a time */
          fseek(fp,(long) -offset,SEEK_END);
          fread(tmpbuf,1,110,fp); /* read 10 extra for string compare */
@@ -1288,18 +1288,18 @@ int fgetwindow(void)
       calc_status = oldcalc_status;
    }
    saved = save_stack();
-   bt_a = alloc_stack(rbflength+2);
-   bt_b = alloc_stack(rbflength+2);
-   bt_c = alloc_stack(rbflength+2);
-   bt_d = alloc_stack(rbflength+2);
-   bt_e = alloc_stack(rbflength+2);
-   bt_f = alloc_stack(rbflength+2);
+   bt_a = alloc_stack(rbflength + 2);
+   bt_b = alloc_stack(rbflength + 2);
+   bt_c = alloc_stack(rbflength + 2);
+   bt_d = alloc_stack(rbflength + 2);
+   bt_e = alloc_stack(rbflength + 2);
+   bt_f = alloc_stack(rbflength + 2);
 
    vidlength = sxdots + sydots;
    if (vidlength > 4096)
       vid_too_big = 2;
    /* 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words */
-   /* 4096 = 10240/2.5 based on size of boxx+boxy+boxvalues */
+   /* 4096 = 10240/2.5 based on size of boxx + boxy + boxvalues */
 #ifdef XFRACT
    vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
@@ -1692,7 +1692,7 @@ static char is_visible_window
       orig_shiftfactor,
       orig_rbflength;
  double toobig, tmp_sqrt;
- toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
+ toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots)) * 1.5;
   /* arbitrary value... stops browser zooming out too far */
  cornercount = 0;
  cant_see = 0;
@@ -1706,7 +1706,7 @@ static char is_visible_window
    orig_shiftfactor   = shiftfactor;
    orig_rbflength     = rbflength;
 /*
-   if (oldbf_math && info->bf_math && (bnlength+4 < info->bflength)) {
+   if (oldbf_math && info->bf_math && (bnlength + 4 < info->bflength)) {
       bnlength = info->bflength;
       calc_lengths();
    }
@@ -1751,11 +1751,11 @@ static char is_visible_window
       bt_t6   = alloc_stack(two_di_len);
 
       memcpy((char *)bt_t1,blk_5_info->apm_data,(two_di_len));
-      memcpy((char *)bt_t2,blk_5_info->apm_data+two_di_len,(two_di_len));
-      memcpy((char *)bt_t3,blk_5_info->apm_data+2*two_di_len,(two_di_len));
-      memcpy((char *)bt_t4,blk_5_info->apm_data+3*two_di_len,(two_di_len));
-      memcpy((char *)bt_t5,blk_5_info->apm_data+4*two_di_len,(two_di_len));
-      memcpy((char *)bt_t6,blk_5_info->apm_data+5*two_di_len,(two_di_len));
+      memcpy((char *)bt_t2,blk_5_info->apm_data + two_di_len,(two_di_len));
+      memcpy((char *)bt_t3,blk_5_info->apm_data + 2*two_di_len,(two_di_len));
+      memcpy((char *)bt_t4,blk_5_info->apm_data + 3*two_di_len,(two_di_len));
+      memcpy((char *)bt_t5,blk_5_info->apm_data + 4*two_di_len,(two_di_len));
+      memcpy((char *)bt_t6,blk_5_info->apm_data + 5*two_di_len,(two_di_len));
 
       convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
       convert_bf(bt_xmax, bt_t2, two_len, two_di_len);
@@ -1788,7 +1788,7 @@ static char is_visible_window
    if (oldbf_math || info->bf_math) {
       if (!info->bf_math) {
          floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
-         floattobf(bt_y, (info->ymax)+(info->ymin-info->y3rd));
+         floattobf(bt_y, (info->ymax) + (info->ymin-info->y3rd));
       }
       else {
          neg_a_bf(sub_bf(bt_x, bt_x3rd, bt_xmin));
@@ -1800,7 +1800,7 @@ static char is_visible_window
    }
    else {
       tr.x=(info->xmax)-(info->x3rd-info->xmin);
-      tr.y=(info->ymax)+(info->ymin-info->y3rd);
+      tr.y=(info->ymax) + (info->ymin-info->y3rd);
       transform(&tr);
    }
    list->itr.x=(int)(tr.x + 0.5);
@@ -1991,13 +1991,13 @@ static void bfsetup_convert_to_screen(void)
  int saved;
 
    saved = save_stack();
-   bt_inter1 = alloc_stack(rbflength+2);
-   bt_inter2 = alloc_stack(rbflength+2);
-   bt_det = alloc_stack(rbflength+2);
-   bt_xd  = alloc_stack(rbflength+2);
-   bt_yd  = alloc_stack(rbflength+2);
-   bt_tmp1 = alloc_stack(rbflength+2);
-   bt_tmp2 = alloc_stack(rbflength+2);
+   bt_inter1 = alloc_stack(rbflength + 2);
+   bt_inter2 = alloc_stack(rbflength + 2);
+   bt_det = alloc_stack(rbflength + 2);
+   bt_xd  = alloc_stack(rbflength + 2);
+   bt_yd  = alloc_stack(rbflength + 2);
+   bt_tmp1 = alloc_stack(rbflength + 2);
+   bt_tmp2 = alloc_stack(rbflength + 2);
 
    /* xx3rd-xxmin */
    sub_bf(bt_inter1, bfx3rd, bfxmin);
@@ -2077,8 +2077,8 @@ static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
   int saved;
 
    saved = save_stack();
-   bt_tmp1 = alloc_stack(rbflength+2);
-   bt_tmp2 = alloc_stack(rbflength+2);
+   bt_tmp1 = alloc_stack(rbflength + 2);
+   bt_tmp2 = alloc_stack(rbflength + 2);
 
 /*  point->x = cvt->a * point->x + cvt->b * point->y + cvt->e; */
    mult_bf(bt_tmp1, n_a, bt_x);

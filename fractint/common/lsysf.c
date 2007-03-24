@@ -24,7 +24,7 @@ struct lsys_cmd {
 };
 
 #define sins_f ((LDBL *)(boxy))
-#define coss_f (((LDBL *)(boxy)+50))
+#define coss_f (((LDBL *)(boxy) + 50))
 
 static struct lsys_cmd * _fastcall findsize(struct lsys_cmd *, struct lsys_turtlestatef *, struct lsys_cmd **, int);
 
@@ -308,7 +308,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran = 1;
-               if (findsize((*rulind)+1, ts, rules, depth-1) == NULL)
+               if (findsize((*rulind) + 1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
@@ -338,7 +338,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
           savex=ts->xpos;
           savey=ts->ypos;
           lsys_prepfpu(ts);
-          command = findsize(command+1, ts, rules, depth);
+          command = findsize(command + 1, ts, rules, depth);
 		  if (command == NULL)
              return NULL;
           lsys_donefpu(ts);
@@ -402,13 +402,13 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
    if (horiz == 1E37)
       ts->xpos = xdots/2;
    else
-/*    ts->xpos = -xmin*(locsize)+5+((xdots-10)-(locsize)*(xmax-xmin))/2; */
-      ts->xpos = (xdots-locsize*(xmax+xmin))/2;
+/*    ts->xpos = -xmin*(locsize) + 5 + ((xdots-10)-(locsize)*(xmax-xmin))/2; */
+      ts->xpos = (xdots-locsize*(xmax + xmin))/2;
    if (vert == 1E37)
       ts->ypos = ydots/2;
    else
-/*    ts->ypos = -ymin*(locsize)+3+((ydots-6)-(locsize)*(ymax-ymin))/2; */
-      ts->ypos = (ydots-locsize*(ymax+ymin))/2;
+/*    ts->ypos = -ymin*(locsize) + 3 + ((ydots-6)-(locsize)*(ymax-ymin))/2; */
+      ts->ypos = (ydots-locsize*(ymax + ymin))/2;
    ts->size = locsize;
 
    return 1;
@@ -442,11 +442,11 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
                tran = 1;
-               if (drawLSysF((*rulind)+1, ts, rules, depth-1) == NULL)
+               if (drawLSysF((*rulind) + 1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
       }
-      if (!depth||!tran) {
+      if (!depth || !tran) {
         if (command->f) {
             switch (command->ptype) {
                 case 4:
@@ -473,7 +473,7 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
           savey=ts->ypos;
           savecolor=ts->curcolor;
           lsys_prepfpu(ts);
-          command = drawLSysF(command+1, ts, rules, depth);
+          command = drawLSysF(command + 1, ts, rules, depth);
 		  if (command == NULL)
              return NULL;
           lsys_donefpu(ts);

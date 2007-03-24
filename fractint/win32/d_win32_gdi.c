@@ -318,7 +318,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
 				int j;
 				for (j = i; j < *argc-1; j++)
 				{
-					argv[j] = argv[j+1];
+					argv[j] = argv[j + 1];
 				}
 				argv[j] = NULL;
 				--*argc;
@@ -756,7 +756,7 @@ gdi_stack_screen(Driver *drv)
 	DI(di);
 
 	ODS("gdi_stack_screen");
-	di->base.saved_cursor[di->base.screen_count+1] = g_text_row*80 + g_text_col;
+	di->base.saved_cursor[di->base.screen_count + 1] = g_text_row*80 + g_text_col;
 	if (++di->base.screen_count)
 	{
 		/* already have some stacked */
