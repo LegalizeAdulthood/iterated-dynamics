@@ -187,7 +187,7 @@ restart:
    if (newfile == 0 && interrupted >= 0)
    {                            /* replace the real file */
       unlink(openfile);         /* success assumed since we checked */
-      rename(tmpfile, openfile);/* earlier with access              */
+      rename(tmpfile, openfile); /* earlier with access              */
    }
 
    if (!driver_diskp())
@@ -275,7 +275,7 @@ int encoder()
    for (i = colors; i >= 2; i /= 2)
       bitsperpixel++;
 
-   startbits = bitsperpixel + 1;/* start coding with this many bits */
+   startbits = bitsperpixel + 1; /* start coding with this many bits */
    if (colors == 2)
       startbits++;              /* B&W Klooge */
 #else
@@ -684,7 +684,7 @@ static void _fastcall setup_save_info(struct fractal_info * save_info)
    save_info->xdots = (short) g_video_entry.xdots;
    save_info->ydots = (short) g_video_entry.ydots;
    save_info->colors = (short) g_video_entry.colors;
-   save_info->parm3 = 0;        /* pre version==7 fields */
+   save_info->parm3 = 0;        /* pre version == 7 fields */
    save_info->parm4 = 0;
    save_info->dparm3 = param[2];
    save_info->dparm4 = param[3];
@@ -869,7 +869,7 @@ static unsigned short *codetab = (unsigned short *)strlocn;
 
 #define tab_prefixof(i)   codetab[i]
 #define tab_suffixof(i)   ((char_type *)(htab))[i]
-#define de_stack          ((char_type *)&tab_suffixof((int)1<<BITSF))
+#define de_stack          ((char_type *)&tab_suffixof((int)1 << BITSF))
 
 static int free_ent;                  /* first unused entry */
 

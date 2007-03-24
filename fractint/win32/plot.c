@@ -219,7 +219,7 @@ static void
 init_clut(BYTE clut[256][3])
 {
 	int i;
-	for (i=0;i < 256;i++)
+	for (i = 0; i < 256; i++)
 	{
 		clut[i][0] = (i >> 5)*8+7;
 		clut[i][1] = (((i+16) & 28) >> 2)*8+7;

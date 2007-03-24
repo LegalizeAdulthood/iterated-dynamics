@@ -33,7 +33,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 {
 int  kbdchar, more, last, next;
 int fkey, step, fstep, istep, jstep, oldstep;
-int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
+int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
 int i, changecolor, changedirection;
 int oldhelpmode;
 int rotate_max, rotate_size;
@@ -98,9 +98,9 @@ static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
                   togreen   = rand15() >> 9;
                   toblue    = rand15() >> 9;
                   }
-               g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred  )*incr)/fstep));
+               g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred)*incr)/fstep));
                g_dac_box[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
-               g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue )*incr)/fstep));
+               g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
                }
             }
          if (step >= rotate_size) step = oldstep;
@@ -111,7 +111,7 @@ static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
       if (paused && (kbdchar != ' '
                  && kbdchar != 'c'
                  && kbdchar != FIK_HOME
-                 && kbdchar != 'C' ))
+                 && kbdchar != 'C'))
          paused = 0;                    /* clear paused condition       */
       switch (kbdchar) {
          case '+':                      /* '+' means rotate forward     */
@@ -165,25 +165,25 @@ static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 #else
             switch (kbdchar) {
                case FIK_F1:
-                  fkey = 1;break;
+                  fkey = 1; break;
                case FIK_F2:
-                  fkey = 2;break;
+                  fkey = 2; break;
                case FIK_F3:
-                  fkey = 3;break;
+                  fkey = 3; break;
                case FIK_F4:
-                  fkey = 4;break;
+                  fkey = 4; break;
                case FIK_F5:
-                  fkey = 5;break;
+                  fkey = 5; break;
                case FIK_F6:
-                  fkey = 6;break;
+                  fkey = 6; break;
                case FIK_F7:
-                  fkey = 7;break;
+                  fkey = 7; break;
                case FIK_F8:
-                  fkey = 8;break;
+                  fkey = 8; break;
                case FIK_F9:
-                  fkey = 9;break;
+                  fkey = 9; break;
                case FIK_F10:
-                  fkey = 10;break;
+                  fkey = 10; break;
             }
 #endif
             fstep = 1;
@@ -364,7 +364,7 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for (i=1; i<=255; i++)                  /* fill the palette     */
+   for (i = 1; i <= 255; i++)                  /* fill the palette     */
       for (j = 0; j < 3; j++)
 #ifdef __SVR4
          g_dac_box[i][j] = (BYTE)((int)(i*start[j] + (256-i)*finish[j])/255);
@@ -377,13 +377,13 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for (i=1; i<=128; i++)
+   for (i = 1; i <= 128; i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         g_dac_box[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j] )/128);
+         g_dac_box[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j])/128);
          g_dac_box[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
 #else
-         g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j] )/128);
+         g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
          g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
 #endif
       }
@@ -393,14 +393,14 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
    int i, j;
    g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-   for (i=1; i<=85; i++)
+   for (i = 1; i <= 85; i++)
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
-         g_dac_box[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j] )/85);
+         g_dac_box[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j])/85);
          g_dac_box[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
          g_dac_box[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
 #else
-         g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j] )/85);
+         g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
          g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
          g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
 #endif

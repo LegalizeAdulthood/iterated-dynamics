@@ -123,7 +123,7 @@ static int get_min_max(void)
       for (xd = 0; xd < xdots; xd++)
       {
          ldepth = getdepth(xd,yd);
-         if ( ldepth < MINC)
+         if (ldepth < MINC)
             MINC = ldepth;
          if (ldepth > MAXC)
             MAXC = ldepth;
@@ -221,7 +221,7 @@ int do_AutoStereo(void)
 {
    struct static_vars v;
    BYTE savedacbox[256*3];
-   int oldhelpmode, ret=0;
+   int oldhelpmode, ret = 0;
    int i, j, done;
    int bars, ct, kbdchar, barwidth;
    time_t ltime;
@@ -303,7 +303,7 @@ int do_AutoStereo(void)
              ret = 1;
              goto exit_stereo;
           }
-          for (i=0; i<xdots; i++)
+          for (i = 0; i < xdots; i++)
              buf[i] = (unsigned char)(rand()%colors);
           outline_stereo(buf,xdots);
       }
@@ -325,7 +325,7 @@ int do_AutoStereo(void)
       bars = 0;
    toggle_bars(&bars, barwidth, colour);
    done = 0;
-   while (done==0)
+   while (done == 0)
    {
 	   driver_wait_key_pressed(0);
       kbdchar = driver_get_key();

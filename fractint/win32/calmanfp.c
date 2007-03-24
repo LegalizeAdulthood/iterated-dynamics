@@ -23,7 +23,7 @@ void calcmandfpasmstart(void)
 	oldcoloriter = 0;
 }
 
-#define ABS(x) ((x)<0?-(x):(x))
+#define ABS(x) ((x) < 0?-(x):(x))
 
 /* If USE_NEW is 1, the magnitude is used for periodicity checking instead
    of the x and y values.  This is experimental. */
@@ -74,7 +74,7 @@ long calcmandfpasm_c(void)
 		key = driver_key_pressed();
 		if (key)
 		{
-			if (key=='o' || key=='O')
+			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
 				show_orbit = 1-show_orbit;
@@ -142,17 +142,17 @@ long calcmandfpasm_c(void)
 				savedincr--;
 				if (savedincr == 0)
 				{
-					savedand = (savedand<<1) + 1;
+					savedand = (savedand << 1) + 1;
 					savedincr = nextsavedincr;
 				}
 			}
 			else
 			{
 #if USE_NEW
-				if (ABS(magnitude-savedmag)<closenuff)
+				if (ABS(magnitude-savedmag) < closenuff)
 				{
 #else
-				if (ABS(savedx-x)<closenuff && ABS(savedy-y)<closenuff)
+				if (ABS(savedx-x) < closenuff && ABS(savedy-y) < closenuff)
 				{
 #endif
 /*		    oldcoloriter = 65535;  */

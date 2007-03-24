@@ -241,7 +241,7 @@ zline(long x, long y)
             break;
       if (n == maxit)
       {
-         if (juli3Dmode==3)
+         if (juli3Dmode == 3)
          {
             color = (int) (128l * zpixel / zdots);
             if ((row + col) & 1)

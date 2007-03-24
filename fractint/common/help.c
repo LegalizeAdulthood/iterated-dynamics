@@ -37,8 +37,8 @@
 #define ACTION_PREV2        2        /* special - go back two topics */
 #define ACTION_INDEX        3
 #define ACTION_QUIT         4
-#define F_HIST              (1<<0)   /* flags for help_topic() */
-#define F_INDEX             (1<<1)
+#define F_HIST              (1 << 0)   /* flags for help_topic() */
+#define F_INDEX             (1 << 1)
 #define MAX_PAGE_SIZE       (80*25)  /* no page of text may be larger */
 #define TEXT_START_ROW      2        /* start print the help text here */
 
@@ -78,7 +78,7 @@ struct help_sig_info
 	unsigned long base;     /* only if added to fractint.exe */
 };
 
-void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg );
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg);
 static int print_doc_msg_func(int pnum, int num_pages);
 
 /* stuff from fractint */
@@ -378,10 +378,10 @@ static void display_page(char *title, char *text, unsigned text_len,
 	putstringcenter(1, 0, 80, C_HELP_HDG, title);
 	sprintf(temp, "%2d of %d", page+1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
-	driver_put_string(1, 79-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+	driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #else
 	/* Some systems (Ultrix) mess up if you write to column 80 */
-	driver_put_string(1, 78-(6 + ((num_pages>=10)?2:1)), C_HELP_INSTR, temp);
+	driver_put_string(1, 78-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
 #endif
 
 	if (text != NULL)
@@ -457,7 +457,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 	best    = NULL;
 	curr_c2 = curr->c + curr->width - 1;
 
-	for (ctr=0, temp=link; ctr<num_link; ctr++, temp++)
+	for (ctr = 0, temp=link; ctr < num_link; ctr++, temp++)
     {
 		if (ctr != curr_link &&
            ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
@@ -552,8 +552,8 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
    link = NULL;   /* just for warning */
    switch (key)
       {
-      case FIK_TAB:      return (curr_link>=num_link-1) ? -1 : curr_link+1 ;
-      case FIK_SHF_TAB: return (curr_link<=0)          ? -1 : curr_link-1 ;
+      case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link+1 ;
+      case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1 ;
       default:       assert(0);  return -1;
       }
    }
@@ -564,12 +564,12 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 
    if (num_link > 1)
       {
-      if ( f == NULL )
+      if (f == NULL)
          t = val;
       else
          t = (*f)(link, num_link, *curr, val);
 
-      if ( t >= 0 && t != *curr )
+      if (t >= 0 && t != *curr)
          {
          color_link(&link[*curr], C_HELP_LINK);
          *curr = t;
@@ -601,21 +601,21 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    help_seek(where);
 
    fread(&num_pages, sizeof(int), 1, help_file);
-   assert(num_pages>0 && num_pages<=max_pages);
+   assert(num_pages > 0 && num_pages <= max_pages);
 
    fread(page_table, 3*sizeof(int), num_pages, help_file);
 
    fread(&ch, sizeof(char), 1, help_file);
    len = ch;
-   assert(len<81);
+   assert(len < 81);
    fread(title, sizeof(char), len, help_file);
    title[len] = '\0';
 
    where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
 
-   for (page=0; page<num_pages; page++)
+   for (page = 0; page < num_pages; page++)
       if (curr->topic_off >= page_table[page].offset &&
-          curr->topic_off <  page_table[page].offset+page_table[page].len )
+          curr->topic_off <  page_table[page].offset+page_table[page].len)
          break;
 
    assert(page < num_pages);
@@ -634,11 +634,11 @@ static int help_topic(HIST *curr, HIST *next, int flags)
          display_page(title, buffer, page_table[page].len, page, num_pages,
                       page_table[page].margin, &num_link, link_table);
 
-         if (draw_page==2)
+         if (draw_page == 2)
             {
-            assert(num_link<=0 || (curr_link>=0 && curr_link<num_link));
+            assert(num_link <= 0 || (curr_link >= 0 && curr_link < num_link));
             }
-         else if (draw_page==3)
+         else if (draw_page == 3)
             curr_link = num_link - 1;
          else
             curr_link = 0;
@@ -654,7 +654,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
       switch (key)
          {
          case FIK_PAGE_DOWN:
-            if (page<num_pages-1)
+            if (page < num_pages-1)
                {
                page++;
                draw_page = 1;
@@ -662,7 +662,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_PAGE_UP:
-            if (page>0)
+            if (page > 0)
                {
                page--;
                draw_page = 1;
@@ -670,7 +670,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_HOME:
-            if ( page != 0 )
+            if (page != 0)
                {
                page = 0;
                draw_page = 1;
@@ -680,7 +680,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_END:
-            if ( page != num_pages-1 )
+            if (page != num_pages-1)
                {
                page = num_pages-1;
                draw_page = 3;
@@ -690,8 +690,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_TAB:
-            if ( !do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-                 page<num_pages-1 )
+            if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+                 page < num_pages-1)
                {
                ++page;
                draw_page = 1;
@@ -699,8 +699,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_SHF_TAB:
-            if ( !do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-                 page>0 )
+            if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+                 page > 0)
                {
                --page;
                draw_page = 3;
@@ -708,8 +708,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_DOWN_ARROW:
-            if ( !do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
-                 page<num_pages-1 )
+            if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
+                 page < num_pages-1)
                {
                ++page;
                draw_page = 1;
@@ -717,8 +717,8 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
 
          case FIK_UP_ARROW:
-            if ( !do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
-                 page>0 )
+            if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
+                 page > 0)
                {
                --page;
                draw_page = 3;
@@ -759,7 +759,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
             break;
          } /* switch */
       }
-   while ( action == -1 );
+   while (action == -1);
 
    curr->topic_off = page_table[page].offset;
    curr->link      = curr_link;
@@ -853,16 +853,16 @@ int help(int action)
 		if (curr_hist > 0)
 			flags |= F_HIST;
 
-		if ( curr.topic_num >= 0 )
+		if (curr.topic_num >= 0)
 			action = help_topic(&curr, &next, flags);
 		else
         {
-			if ( curr.topic_num == -100 )
+			if (curr.topic_num == -100)
 			{
 				print_document("FRACTINT.DOC", print_doc_msg_func, 1);
 				action = ACTION_PREV2;
 			}
-			else if ( curr.topic_num == -101 )
+			else if (curr.topic_num == -101)
 				action = ACTION_PREV2;
 			else
             {
@@ -880,13 +880,13 @@ int help(int action)
 			}
         } /* else */
 
-		if ( action != ACTION_PREV && action != ACTION_PREV2 )
+		if (action != ACTION_PREV && action != ACTION_PREV2)
         {
 			if (curr_hist >= MAX_HIST)
             {
 				int ctr;
 
-				for (ctr=0; ctr<MAX_HIST-1; ctr++)
+				for (ctr = 0; ctr < MAX_HIST-1; ctr++)
 					hist[ctr] = hist[ctr+1];
 
 				curr_hist = MAX_HIST-1;
@@ -925,7 +925,7 @@ static int can_read_file(char *path)
    {
    int handle;
 
-   if ( (handle=open(path, O_RDONLY)) != -1)
+   if ((handle=open(path, O_RDONLY)) != -1)
       {
       close(handle);
       return 1;
@@ -962,7 +962,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
    static int  curr_len;
    int         read_len;
 
-   if ( topic != curr_topic )
+   if (topic != curr_topic)
       {
       int t;
       char ch;
@@ -977,13 +977,13 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
       fread(&t, sizeof(int), 1, help_file); /* read num_pages */
       curr_base += sizeof(int) + t*3*sizeof(int); /* skip page info */
 
-      if (t>0)
+      if (t > 0)
          help_seek(curr_base);
       fread(&ch, sizeof(char), 1, help_file);                  /* read title_len */
       t = ch;
       curr_base += 1 + t;                       /* skip title */
 
-      if (t>0)
+      if (t > 0)
          help_seek(curr_base);
       fread(&curr_len, sizeof(int), 1, help_file); /* read topic len */
       curr_base += sizeof(int);
@@ -1050,16 +1050,16 @@ typedef struct PRINT_DOC_INFO
    int       spaces;        /* number of spaces in a row */
    } PRINT_DOC_INFO;
 
-void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg );
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg);
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
    {
-   while ( n-- > 0 )
+   while (n-- > 0)
       {
-      if (c==' ')
+      if (c == ' ')
          ++info->spaces;
 
-      else if (c=='\n' || c=='\f')
+      else if (c == '\n' || c == '\f')
          {
          info->start_of_line = 1;
          info->spaces = 0;   /* strip spaces before a new-line */
@@ -1089,12 +1089,12 @@ static void printers(PRINT_DOC_INFO *info, char *s, int n)
    {
    if (n > 0)
       {
-      while ( n-- > 0 )
+      while (n-- > 0)
          printerc(info, *s++, 1);
       }
    else
       {
-      while ( *s != '\0' )
+      while (*s != '\0')
          printerc(info, *s++, 1);
       }
    }
@@ -1108,10 +1108,10 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
    switch (cmd)
       {
       case PD_GET_CONTENT:
-         if ( ++info->cnum >= info->num_contents )
+         if (++info->cnum >= info->num_contents)
             return 0;
 
-         help_seek( info->content_pos );
+         help_seek(info->content_pos);
 
          fread(&t, sizeof(int), 1, help_file);      /* read flags */
          info->content_pos += sizeof(int);
@@ -1124,21 +1124,21 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 		 {
 			 tmp = ftell(help_file);
 		 }
-         assert(t<80);
+         assert(t < 80);
          fread(info->id, sizeof(char), t, help_file);  /* read the id */
          info->content_pos += 1 + t;
          info->id[t] = '\0';
 
          fread(&ch, sizeof(char), 1, help_file);       /* read title len */
          t = ch;
-         assert(t<80);
+         assert(t < 80);
          fread(info->title, sizeof(char), t, help_file); /* read the title */
          info->content_pos += 1 + t;
          info->title[t] = '\0';
 
          fread(&ch, sizeof(char), 1, help_file);       /* read num_topic */
          t = ch;
-         assert(t<MAX_NUM_TOPIC_SEC);
+         assert(t < MAX_NUM_TOPIC_SEC);
          fread(info->topic_num, sizeof(int), t, help_file);  /* read topic_num[] */
          info->num_topic = t;
          info->content_pos += 1 + t*sizeof(int);
@@ -1150,7 +1150,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          return 1;
 
       case PD_GET_TOPIC:
-         if ( ++info->tnum >= info->num_topic )
+         if (++info->tnum >= info->num_topic)
             return 0;
 
          t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
@@ -1184,7 +1184,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          int  width = PAGE_WIDTH + PAGE_INDENT;
          int  keep_going;
 
-         if ( info->msg_func != NULL )
+         if (info->msg_func != NULL)
             keep_going = (*info->msg_func)(pd->pnum, info->num_page);
          else
             keep_going = 1;
@@ -1193,7 +1193,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
          memset(line, ' ', 81);
          sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
-                                ( (g_release%10) ? '0'+(g_release%10) : ' ') );
+                                ((g_release%10) ? '0'+(g_release%10) : ' '));
          memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
          sprintf(buff, "Page %d", pd->pnum);
@@ -1251,7 +1251,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
    char temp[10];
    int  key;
 
-   if ( pnum == -1 )    /* successful completion */
+   if (pnum == -1)    /* successful completion */
       {
       driver_buzzer(BUZZER_COMPLETE);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
@@ -1259,7 +1259,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
       return 0;
       }
 
-   if ( pnum == -2 )   /* aborted */
+   if (pnum == -2)   /* aborted */
       {
       driver_buzzer(BUZZER_INTERRUPT);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
@@ -1279,13 +1279,13 @@ static int print_doc_msg_func(int pnum, int num_pages)
       driver_hide_text_cursor();
       }
 
-   sprintf(temp, "%d%%", (int)( (100.0 / num_pages) * pnum ) );
+   sprintf(temp, "%d%%", (int)((100.0 / num_pages) * pnum));
    driver_put_string(7, 41, C_HELP_LINK, temp);
 
-   while ( driver_key_pressed() )
+   while (driver_key_pressed())
       {
       key = driver_get_key();
-      if ( key == FIK_ESC )
+      if (key == FIK_ESC)
          return 0;    /* user abort */
       }
 
@@ -1310,7 +1310,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 	return result;
 }
 
-void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg )
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg)
    {
    PRINT_DOC_INFO info;
    int            success   = 0;
@@ -1326,18 +1326,18 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
    info.content_pos = 6*sizeof(int) + num_topic*sizeof(long) + num_label*2*sizeof(int);
    info.msg_func = msg_func;
 
-   if ( msg_func != NULL )
+   if (msg_func != NULL)
       msg_func(0, info.num_page);   /* initialize */
 
-   if ( save_extraseg )
+   if (save_extraseg)
       {
-      if ( (temp_file=fopen(TEMP_FILE_NAME, "wb")) == NULL )
+      if ((temp_file=fopen(TEMP_FILE_NAME, "wb")) == NULL)
          {
          msg = "Unable to create temporary file.\n";
          goto ErrorAbort;
          }
 
-      if ( fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE )
+      if (fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
          {
          msg = "Error writing temporary file.\n";
          goto ErrorAbort;
@@ -1345,7 +1345,7 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
       }
 
    info.file = fopen(outfname, "wt");
-   if (info.file == NULL )
+   if (info.file == NULL)
       {
       msg = "Unable to create output file.\n";
       goto ErrorAbort;
@@ -1359,15 +1359,15 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
                               (PD_FUNC)print_doc_output,   &info);
    fclose(info.file);
 
-   if ( save_extraseg )
+   if (save_extraseg)
       {
-      if ( fseek(temp_file, 0L, SEEK_SET) != 0L )
+      if (fseek(temp_file, 0L, SEEK_SET) != 0L)
          {
          msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
          goto ErrorAbort;
          }
 
-      if ( fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE )
+      if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
          {
          msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
          goto ErrorAbort;
@@ -1382,14 +1382,14 @@ ErrorAbort:
       temp_file = NULL;
       }
 
-   if ( msg != NULL )
+   if (msg != NULL)
       {
       helptitle();
       stopmsg(STOPMSG_NO_STACK, msg);
       }
 
-   else if ( msg_func != NULL )
-      msg_func((success) ? -1 : -2, info.num_page );
+   else if (msg_func != NULL)
+      msg_func((success) ? -1 : -2, info.num_page);
    }
 
 int init_help(void)

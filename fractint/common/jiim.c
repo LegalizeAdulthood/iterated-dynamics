@@ -85,7 +85,7 @@ void SetAspect(double aspect)
 void _fastcall c_putcolor(int x, int y, int color)
    {
    /* avoid writing outside window */
-   if ( x < xc || y < yc || x >= xc + xd || y >= yc + yd )
+   if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
       return ;
    if (y >= sydots - show_numbers) /* avoid overwriting coords */
       return;
@@ -99,7 +99,7 @@ void _fastcall c_putcolor(int x, int y, int color)
 int  c_getcolor(int x, int y)
    {
    /* avoid reading outside window */
-   if ( x < xc || y < yc || x >= xc + xd || y >= yc + yd )
+   if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
       return 1000;
    if (y >= sydots - show_numbers) /* avoid overreading coords */
       return 1000;
@@ -142,8 +142,8 @@ void circle(int radius, int color)
 
    while (x <= y)
    {
-      if ( !(x & 1) )   /* plot if x is even */
-         plot8( x >> 1, (y+1) >> 1, color);
+      if (!(x & 1))   /* plot if x is even */
+         plot8(x >> 1, (y+1) >> 1, color);
       sum += (x << 1) + 1;
       x++;
       if (sum > 0)
@@ -447,7 +447,7 @@ static void RestoreRect(int x, int y, int width, int height)
 		return;
 
 	Cursor_Hide();
-	for (yoff =0; yoff<height; yoff++)
+	for (yoff =0; yoff < height; yoff++)
     {
 		putrow(x, y+yoff, width, buff);
 		buff += width;
@@ -564,10 +564,10 @@ void Jiim(int which)         /* called by fractint */
       hasinverse = savehasinverse;
    }
 
-   if(xdots == sxdots || ydots == sydots ||
+   if (xdots == sxdots || ydots == sydots ||
        sxdots-xdots < sxdots/3 ||
        sydots-ydots < sydots/3 ||
-       xdots >= MAXRECT )
+       xdots >= MAXRECT)
    {
       /* this mode puts orbit/julia in an overlapping window 1/3 the size of
          the physical screen */
@@ -579,7 +579,7 @@ void Jiim(int which)         /* called by fractint */
       xoff = xd * 5 / 2;
       yoff = yd * 5 / 2;
    }
-   else if(xdots > sxdots/3 && ydots > sydots/3)
+   else if (xdots > sxdots/3 && ydots > sydots/3)
    {
       /* Julia/orbit and fractal don't overlap */
       windows = 1;
@@ -783,7 +783,7 @@ void Jiim(int which)         /* called by fractint */
             case 'H':   /* hide fractal toggle */
                if (windows == 2)
                   windows = 3;
-               else if(windows == 3 && xd == sxdots)
+               else if (windows == 3 && xd == sxdots)
                {
                   RestoreRect(0, 0, xdots, ydots);
                   windows = 2;
@@ -821,7 +821,7 @@ void Jiim(int which)         /* called by fractint */
 #ifdef XFRACT
             if (kbdchar == FIK_ENTER) {
                 /* We want to use the position of the cursor */
-                exact=0;
+                exact = 0;
                 col = Cursor_GetX();
                 row = Cursor_GetY();
             }
@@ -850,8 +850,8 @@ void Jiim(int which)         /* called by fractint */
             {
                cr = lxpixel();
                ci = lypixel();
-               cr /= (1L<<bitshift);
-               ci /= (1L<<bitshift);
+               cr /= (1L << bitshift);
+               ci /= (1L << bitshift);
             }
             else
             {
@@ -914,7 +914,7 @@ void Jiim(int which)         /* called by fractint */
            PER_PIXEL();
          }  
          /* move window if bumped */
-         if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
+         if (windows == 0 && col > xc && col < xc+xd && row > yc && row < yc+yd)
          {
             RestoreRect(xc, yc, xd, yd);
             if (xc == xd*2)
@@ -955,11 +955,11 @@ void Jiim(int which)         /* called by fractint */
                   old.x  = g_new.x  = luckyx;
                   old.y  = g_new.y  = luckyy;
                   luckyx = luckyy = (float)0.0;
-                  for (i=0; i<199; i++)
+                  for (i = 0; i < 199; i++)
                   {
                      old = ComplexSqrtFloat(old.x - cr, old.y - ci);
                      g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
-                     EnQueueFloat( (float)g_new.x,  (float)g_new.y);
+                     EnQueueFloat((float)g_new.x,  (float)g_new.y);
                      EnQueueFloat((float)-old.x, (float)-old.y);
                   }
                   maxhits++;
@@ -982,7 +982,7 @@ void Jiim(int which)         /* called by fractint */
             {
                c_putcolor(x, y, color + 1);
                g_new = ComplexSqrtFloat(old.x - cr, old.y - ci);
-               EnQueueFloat( (float)g_new.x,  (float)g_new.y);
+               EnQueueFloat((float)g_new.x,  (float)g_new.y);
                EnQueueFloat((float)-g_new.x, (float)-g_new.y);
             }
          }
@@ -1001,8 +1001,8 @@ void Jiim(int which)         /* called by fractint */
              r = 0;
          }
          iter++;
-         color = ((count++)>>5)%colors; /* chg color every 32 pts */
-         if (color==0)
+         color = ((count++) >> 5)%colors; /* chg color every 32 pts */
+         if (color == 0)
           color = 1;
 
 /*       r = sqrt(old.x*old.x + old.y*old.y); calculated above */
@@ -1196,7 +1196,7 @@ finish:
       Cursor_Hide();
       if (windows == 0)
          RestoreRect(xc, yc, xd, yd);
-      else if (windows >= 2 )
+      else if (windows >= 2)
       {
          if (windows == 2)
          {

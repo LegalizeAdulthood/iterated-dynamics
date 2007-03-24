@@ -124,7 +124,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		save_release  = 1200;
 		if (!display3d
 			&& (read_info.version <= 4 || read_info.flag3d > 0
-				|| (curfractalspecific->flags & PARMS3D) ))
+				|| (curfractalspecific->flags & PARMS3D)))
 		{
 			int i;
 			for (i = 0; i < 16; i++)
@@ -652,7 +652,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    blk_7_info->got_data = 0; /* initialize to no data */
 
    fp = fopen(gif_file,"rb");
-   if (fp==NULL)
+   if (fp == NULL)
       return -1;
    fread(gifstart,13,1,fp);
    if (strncmp((char *)gifstart,"GIF",3) != 0) { /* not GIF, maybe old .tga? */
@@ -668,7 +668,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    if (gifstart[12]) { /* calc reasonably close value from gif header */
       fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
                       * (double)fileydots / (double)filexdots);
-      if ( fileaspectratio > screenaspect-0.03
+      if (fileaspectratio > screenaspect-0.03
         && fileaspectratio < screenaspect+0.03)
          fileaspectratio = screenaspect;
       }
@@ -676,7 +676,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       if (fileydots * 4 == filexdots * 3) /* assume the common square pixels */
          fileaspectratio = screenaspect;
 
-   if (*s_makepar == 0 && (gifstart[10] & 0x80)!=0)
+   if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
    {
       for (i = 0; i < filecolors; i++)
       {
@@ -704,7 +704,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
       (the main extension block) from end of file, looking for a literal known
       to be at start of our block info.  Then we scan forward a bit, in case
       the file is from an earlier fractint vsn with shorter fractal_info.
-      If fractal_info is found and is from vsn>=14, it includes the total length
+      If fractal_info is found and is from vsn >= 14, it includes the total length
       of all extension blocks; we then scan them all first to last to load
       any optional ones which are present.
       Defined extension blocks:
@@ -913,10 +913,10 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
    info->y3rd = -1;
    info->creal = 0;
    info->cimag = 0;
-   info->videomodeax=255;
-   info->videomodebx=255;
-   info->videomodecx=255;
-   info->videomodedx=255;
+   info->videomodeax = 255;
+   info->videomodebx = 255;
+   info->videomodecx = 255;
+   info->videomodedx = 255;
    info->dotmode = 0;
    info->xdots = (short)filexdots;
    info->ydots = (short)fileydots;
@@ -1105,29 +1105,29 @@ void backwards_v18(void)
 {
   if (!functionpreloaded)
     set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
-  if (fractype==MANDELTRIG && usr_floatflag==1
+  if (fractype == MANDELTRIG && usr_floatflag == 1
          && save_release < 1800 && bailout == 0)
     bailout = 2500;
-  if (fractype==LAMBDATRIG && usr_floatflag==1
+  if (fractype == LAMBDATRIG && usr_floatflag == 1
          && save_release < 1800 && bailout == 0)
     bailout = 2500;
 }
 
 void backwards_v19(void)
 {
-  if (fractype==MARKSJULIA && save_release < 1825) {
+  if (fractype == MARKSJULIA && save_release < 1825) {
     if (param[2] == 0)
        param[2] = 2;
     else
        param[2] += 1;
   }
-  if (fractype==MARKSJULIAFP && save_release < 1825) {
+  if (fractype == MARKSJULIAFP && save_release < 1825) {
     if (param[2] == 0)
        param[2] = 2;
     else
        param[2] += 1;
   }
-  if ((fractype==FORMULA || fractype==FFORMULA) && save_release < 1824)
+  if ((fractype == FORMULA || fractype == FFORMULA) && save_release < 1824)
     inversion[0] = inversion[1] = inversion[2] = invert = 0;
   if (fix_bof())
     no_mag_calc = 1; /* fractal has old bof60/61 problem with magnitude */
@@ -1177,7 +1177,7 @@ int ret = 0;
        (fractype == TRIGSQR && save_release < 1900) ||
        (inside == STARTRAIL && save_release < 1825) ||
        (maxit > 32767 && save_release <= 1950) ||
-       (distest && save_release <=1950) ||
+       (distest && save_release <= 1950) ||
        ((outside <= REAL && outside >= ATAN) &&
           save_release <= 1960) ||
        (fractype == FPPOPCORN && save_release <= 1960) ||
@@ -1190,7 +1190,7 @@ int ret = 0;
        ((fractype == JULIBROT || fractype == JULIBROTFP) &&
           (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP) &&
            save_release <= 2002)
-       )
+)
      ret = 1;
    return ret;
 }
@@ -1201,7 +1201,7 @@ int ret = 0;
  if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
     if ((curfractalspecific->calctype == StandardFractal &&
         (curfractalspecific->flags & BAILTEST) == 0) ||
-        (fractype==FORMULA || fractype==FFORMULA))
+        (fractype == FORMULA || fractype == FFORMULA))
         ret = 1;
 return ret;
 }
@@ -1229,16 +1229,16 @@ return ret;
      };
 
 /* prototypes */
-static void drawindow( int, struct window * );
+static void drawindow(int, struct window *);
 static char is_visible_window
-            ( struct window *, struct fractal_info *, struct ext_blk_5 * );
-static void transform( struct dblcoords * );
-static char paramsOK( struct fractal_info * );
-static char typeOK( struct fractal_info *, struct ext_blk_3 * );
-static char functionOK( struct fractal_info *, int );
-static void check_history( char *, char * );
-static void bfsetup_convert_to_screen( void );
-static void bftransform( bf_t, bf_t, struct dblcoords * );
+            (struct window *, struct fractal_info *, struct ext_blk_5 *);
+static void transform(struct dblcoords *);
+static char paramsOK(struct fractal_info *);
+static char typeOK(struct fractal_info *, struct ext_blk_3 *);
+static char functionOK(struct fractal_info *, int);
+static void check_history(char *, char *);
+static void bfsetup_convert_to_screen(void);
+static void bftransform(bf_t, bf_t, struct dblcoords *);
 
 char browsename[FILE_MAX_FNAME]; /* name for browse file */
 struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
@@ -1334,7 +1334,7 @@ rescan:  /* entry for changed browse parms */
      splitpath(readname,drive,dir,NULL,NULL);
      splitpath(browsemask,NULL,NULL,fname,ext);
      makepath(tmpmask,drive,dir,fname,ext);
-     done=(vid_too_big==2) || no_memory || fr_findfirst(tmpmask);
+     done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
                                    /* draw all visible windows */
      while (!done)
      {
@@ -1345,7 +1345,7 @@ rescan:  /* entry for changed browse parms */
        }
        splitpath(DTA.filename,NULL,NULL,fname,ext);
        makepath(tmpmask,drive,dir,fname,ext);
-       if ( !find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
+       if (!find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
 								&blk_4_info,&blk_5_info,&blk_6_info,
 								&blk_7_info) &&
            (typeOK(&read_info,&blk_3_info) || !brwschecktype) &&
@@ -1353,7 +1353,7 @@ rescan:  /* entry for changed browse parms */
            stricmp(browsename,DTA.filename) &&
            blk_6_info.got_data != 1 &&
            is_visible_window(&winlist,&read_info,&blk_5_info)
-         )
+)
          {
            strcpy(winlist.name,DTA.filename);
            drawindow(color_of_box,&winlist);
@@ -1381,27 +1381,27 @@ rescan:  /* entry for changed browse parms */
 
       if (no_memory)
       {
-       texttempmsg("Sorry...not enough memory to browse.");/* doesn't work if NO memory available, go figure */
+       texttempmsg("Sorry...not enough memory to browse."); /* doesn't work if NO memory available, go figure */
       }
       if (wincount >= MAX_WINDOWS_OPEN)
       { /* hard code message at MAX_WINDOWS_OPEN = 450 */
        texttempmsg("Sorry...no more space, 450 displayed.");
       }
-      if (vid_too_big==2)
+      if (vid_too_big == 2)
       {
        texttempmsg("Xdots + Ydots > 4096.");
       }
- c=0;
+ c = 0;
  if (wincount)
  {
       driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
-      index=0;done = 0;
+      index = 0; done = 0;
 	  winlist = browse_windows[index];
 	  memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 	  memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
 	  memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
       showtempmsg(winlist.name);
-      while ( !done)  /* on exit done = 1 for quick exit,
+      while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
                                  done = 3 for rescan
                                  done = 4 for set boxes and exit to save image */
@@ -1412,7 +1412,7 @@ rescan:  /* entry for changed browse parms */
         while (!driver_key_pressed())
         {
           time(&thistime);
-          if (difftime(thistime,lastime) > .2 ) {
+          if (difftime(thistime,lastime) > .2) {
              lastime=thistime;
              toggle = 1- toggle;
           }
@@ -1436,14 +1436,14 @@ rescan:  /* entry for changed browse parms */
          case FIK_DOWN_ARROW:
          case FIK_UP_ARROW:
            cleartempmsg();
-           drawindow(color_of_box,&winlist);/* dim last window */
-           if (c==FIK_RIGHT_ARROW || c== FIK_UP_ARROW) {
+           drawindow(color_of_box,&winlist); /* dim last window */
+           if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW) {
               index++;                     /* shift attention to next window */
-              if (index >= wincount) index=0;
+              if (index >= wincount) index = 0;
            }
            else {
              index -- ;
-             if ( index < 0 )  index = wincount -1 ;
+             if (index < 0)  index = wincount -1 ;
            }
 		   winlist = browse_windows[index];
 		   memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
@@ -1454,7 +1454,7 @@ rescan:  /* entry for changed browse parms */
 #ifndef XFRACT
         case FIK_CTL_INSERT:
           color_of_box += key_count(FIK_CTL_INSERT);
-          for (i=0 ; i < wincount ; i++) {
+          for (i = 0 ; i < wincount ; i++) {
 			  winlist = browse_windows[i];
               drawindow(color_of_box,&winlist);
           }
@@ -1464,7 +1464,7 @@ rescan:  /* entry for changed browse parms */
 
         case FIK_CTL_DEL:
           color_of_box -= key_count(FIK_CTL_DEL);
-          for (i=0 ; i < wincount ; i++) {
+          for (i = 0 ; i < wincount ; i++) {
 			  winlist = browse_windows[i];
               drawindow(color_of_box,&winlist);
           }
@@ -1496,15 +1496,15 @@ rescan:  /* entry for changed browse parms */
 		  driver_wait_key_pressed(0);
           cleartempmsg();
           c = driver_get_key();
-          if ( c == 'Y' && doublecaution ) {
+          if (c == 'Y' && doublecaution) {
            texttempmsg("ARE YOU SURE???? (Y/N)");
-            if ( driver_get_key() != 'Y') c = 'N';
+            if (driver_get_key() != 'Y') c = 'N';
           }
-          if ( c == 'Y' ) {
+          if (c == 'Y') {
           splitpath(readname,drive,dir,NULL,NULL);
           splitpath(winlist.name,NULL,NULL,fname,ext);
           makepath(tmpmask,drive,dir,fname,ext);
-          if ( !unlink(tmpmask)) {
+          if (!unlink(tmpmask)) {
           /* do a rescan */
             done = 3;
             strcpy(oldname,winlist.name);
@@ -1512,7 +1512,7 @@ rescan:  /* entry for changed browse parms */
             check_history(oldname,tmpmask);
             break;
             }
-          else if ( errno == EACCES ) {
+          else if (errno == EACCES) {
               texttempmsg("Sorry...it's a read only file, can't del");
               showtempmsg(winlist.name);
               break;
@@ -1536,7 +1536,7 @@ rescan:  /* entry for changed browse parms */
          strcat(mesg,tmpmask);
          i = field_prompt(mesg,NULL,newname,60,NULL);
          driver_unstack_screen();
-         if ( i != -1)
+         if (i != -1)
           if (!rename(tmpmask,newname)) {
             if (errno == EACCES)
             {
@@ -1580,14 +1580,14 @@ rescan:  /* entry for changed browse parms */
     /* now clean up memory (and the screen if necessary) */
     cleartempmsg();
     if (done >= 1 && done < 4) {
-       for (index=wincount-1;index>=0;index--){ /* don't need index, reuse it */
+       for (index=wincount-1; index >= 0; index--){ /* don't need index, reuse it */
 			winlist = browse_windows[index];
           boxcount = winlist.boxcount;
 		  memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 		  memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
 		  memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
           boxcount >>= 1;
-          if (boxcount > 0 )
+          if (boxcount > 0)
 #ifdef XFRACT
         /* Turn all boxes off */
              drawindow(g_color_bright,&winlist);
@@ -1676,8 +1676,8 @@ static void transform(struct dblcoords *point)
 }
 
 static char is_visible_window
-            ( struct window *list, struct fractal_info *info,
-              struct ext_blk_5 *blk_5_info )
+            (struct window *list, struct fractal_info *info,
+              struct ext_blk_5 *blk_5_info)
 {
  struct dblcoords tl,tr,bl,br;
  bf_t bt_x, bt_y;
@@ -1694,7 +1694,7 @@ static char is_visible_window
  double toobig, tmp_sqrt;
  toobig = sqrt(sqr((double)sxdots)+sqr((double)sydots)) * 1.5;
   /* arbitrary value... stops browser zooming out too far */
- cornercount=0;
+ cornercount = 0;
  cant_see = 0;
 
    saved = save_stack();
@@ -1844,9 +1844,9 @@ static char is_visible_window
 
    tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
    list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
-   if (tmp_sqrt < toosmall ) cant_see = 1;
+   if (tmp_sqrt < toosmall) cant_see = 1;
  /* reject anything too small onscreen */
-   if (tmp_sqrt > toobig   ) cant_see = 1;
+   if (tmp_sqrt > toobig) cant_see = 1;
  /* or too big... */
 
  /* restore original values */
@@ -1862,16 +1862,16 @@ static char is_visible_window
     return FALSE;
 
  /* now see how many corners are on the screen, accept if one or more */
- if ( tl.x >=-sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >=(0-syoffs) && tl.y<= (sydots-syoffs) ) cornercount ++;
- if ( bl.x >=-sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >=(0-syoffs) && bl.y<= (sydots-syoffs) ) cornercount ++;
- if ( tr.x >=-sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >=(0-syoffs) && tr.y<= (sydots-syoffs) ) cornercount ++;
- if ( br.x >=-sxoffs && br.x <= (sxdots-sxoffs) && br.y >=(0-syoffs) && br.y<= (sydots-syoffs) ) cornercount ++;
+ if (tl.x >= -sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs)) cornercount ++;
+ if (bl.x >= -sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs)) cornercount ++;
+ if (tr.x >= -sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs)) cornercount ++;
+ if (br.x >= -sxoffs && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs)) cornercount ++;
 
- if (cornercount >=1 ) return  TRUE ;
+ if (cornercount >= 1) return  TRUE ;
     else return  FALSE ;
  }
 
-static char paramsOK( struct fractal_info *info )
+static char paramsOK(struct fractal_info *info)
 {
 double tmpparm3, tmpparm4;
 double tmpparm5, tmpparm6;
@@ -1879,7 +1879,7 @@ double tmpparm7, tmpparm8;
 double tmpparm9, tmpparm10;
 #define MINDIF 0.001
 
-   if ( info->version > 6) {
+   if (info->version > 6) {
      tmpparm3 = info->dparm3;
      tmpparm4 = info->dparm4;
    }
@@ -1889,7 +1889,7 @@ double tmpparm9, tmpparm10;
      tmpparm4 = info->parm4;
      roundfloatd(&tmpparm4);
    }
-   if ( info->version > 8) {
+   if (info->version > 8) {
      tmpparm5 = info->dparm5;
      tmpparm6 = info->dparm6;
      tmpparm7 = info->dparm7;
@@ -1905,7 +1905,7 @@ double tmpparm9, tmpparm10;
      tmpparm9 = 0.0;
      tmpparm10 = 0.0;
    }
-   if ( fabs(info->creal - param[0]) < MINDIF &&
+   if (fabs(info->creal - param[0]) < MINDIF &&
        fabs(info->cimag - param[1]) < MINDIF &&
        fabs(tmpparm3 - param[2]) < MINDIF &&
        fabs(tmpparm4 - param[3]) < MINDIF &&
@@ -1921,12 +1921,12 @@ double tmpparm9, tmpparm10;
       return 0;
 }
 
-static char functionOK( struct fractal_info *info, int numfn)
+static char functionOK(struct fractal_info *info, int numfn)
 {
  int i, mzmatch;
    mzmatch = 0;
-   for (i=0; i<numfn; i++){
-     if ( info->trigndx[i] != trigndx[i] )
+   for (i = 0; i < numfn; i++){
+     if (info->trigndx[i] != trigndx[i])
         mzmatch++;
    }
    if (mzmatch > 0)
@@ -1935,16 +1935,16 @@ static char functionOK( struct fractal_info *info, int numfn)
      return 1; /* they all match */
 }
 
-static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
+static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 {
  int numfn;
-   if ( (fractype == FORMULA || fractype == FFORMULA) &&
-     (info->fractal_type == FORMULA || info->fractal_type == FFORMULA) )
+   if ((fractype == FORMULA || fractype == FFORMULA) &&
+     (info->fractal_type == FORMULA || info->fractal_type == FFORMULA))
    {
-       if ( !stricmp(blk_3_info->form_name,FormName) )
+       if (!stricmp(blk_3_info->form_name,FormName))
        {
          numfn = maxfn;
-         if (numfn>0)
+         if (numfn > 0)
            return functionOK(info, numfn);
          else
            return 1; /* match up formula names with no functions */
@@ -1956,7 +1956,7 @@ static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
            info->fractal_type == curfractalspecific->tofloat)
    {
      numfn = (curfractalspecific->flags >> 6) & 7;
-     if (numfn>0)
+     if (numfn > 0)
        return functionOK(info, numfn);
      else
        return 1; /* match types with no functions */
@@ -1965,7 +1965,7 @@ static char typeOK( struct fractal_info *info, struct ext_blk_3 *blk_3_info )
        return 0; /* no match */
 }
 
-static void check_history ( char *oldname, char *newname )
+static void check_history (char *oldname, char *newname)
 {
 int i;
 
@@ -1976,7 +1976,7 @@ int i;
 /* name_stack_ptr is also maintained in framain2.c.  It is the index into */
 /*  file_name_stack[]. */
 
-   for (i=0;i<name_stack_ptr;i++) {
+   for (i = 0; i < name_stack_ptr; i++) {
       if (stricmp(file_name_stack[i],oldname) == 0) /* we have a match */
          strcpy(file_name_stack[i],newname);    /* insert the new name */
    }

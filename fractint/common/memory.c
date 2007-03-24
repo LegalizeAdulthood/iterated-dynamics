@@ -198,7 +198,7 @@ static int CheckBounds (long start, long length, U16 handle)
        return 1;
       }
    if (handletable[handle].Nowhere.stored_at == DISK &&
-         (stackavail() <= DISKWRITELEN) )
+         (stackavail() <= DISKWRITELEN))
       {
        stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
        DisplayHandle(handle);
@@ -547,7 +547,7 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
       break;
 
    case MEMORY: /* SetMemory */
-      for (i=0; i<size; i++) {
+      for (i = 0; i < size; i++) {
          memset(handletable[handle].Linearmem.memory+start, value, (U16)count);
          start += count;
       }

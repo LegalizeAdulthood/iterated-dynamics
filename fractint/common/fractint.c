@@ -126,8 +126,8 @@ char *fract_dir1="", *fract_dir2="";
         int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
-int     comparegif=0;                   /* compare two gif files flag */
-int     timedsave=0;                    /* when doing a timed save */
+int     comparegif = 0;                   /* compare two gif files flag */
+int     timedsave = 0;                    /* when doing a timed save */
 int     resave_flag=RESAVE_NO;                  /* tells encoder not to incr filename */
 int     started_resaves=FALSE;              /* but incr on first resave */
 int     save_system;                    /* from and for save files */
@@ -182,7 +182,7 @@ void check_samename(void)
       if (strcmp(fname, "fract001"))
       {
          makepath(path, drive, dir, fname, "gif");
-         if (access(path, 0)==0)
+         if (access(path, 0) == 0)
          exit(0);
       }
    }
@@ -228,12 +228,12 @@ int main(int argc, char **argv)
 	int resumeflag;
 	int kbdchar;						/* keyboard key-hit value       */
 	int kbdmore;						/* continuation variable        */
-	char stacked=0;						/* flag to indicate screen stacked */
+	char stacked = 0;						/* flag to indicate screen stacked */
 
 	set_exe_path(argv[0]);
 
 	fract_dir1 = getenv("FRACTDIR");
-	if (fract_dir1==NULL)
+	if (fract_dir1 == NULL)
 	{
 		fract_dir1 = ".";
 	}
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 #endif
 
 	/* this traps non-math library floating point errors */
-	signal( SIGFPE, my_floating_point_err );
+	signal(SIGFPE, my_floating_point_err);
 
 	initasmvars();                       /* initialize ASM stuff */
 	InitMemory();
@@ -296,7 +296,7 @@ restart:   /* insert key re-starts here */
 
 	history_allocate();
 
-	if (debugflag==450 && initbatch==INIT_BATCH_NORMAL)   /* abort if savename already exists */
+	if (debugflag == 450 && initbatch == INIT_BATCH_NORMAL)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
@@ -307,12 +307,12 @@ restart:   /* insert key re-starts here */
 	{
 		cpu =  86; /* for testing purposes */
 	}
-	if (debugflag == 2870 && fpu >= 287 )
+	if (debugflag == 2870 && fpu >= 287)
 	{
 		fpu = 287; /* for testing purposes */
 		cpu = 286;
 	}
-	if (debugflag ==  870 && fpu >=  87 )
+	if (debugflag ==  870 && fpu >=  87)
 	{
 		fpu =  87; /* for testing purposes */
 		cpu =  86;
@@ -379,7 +379,7 @@ restorestart:
 	{
 		char *hdg;
 		tabmode = 0;
-		if (!browsing )     /*RB*/
+		if (!browsing)     /*RB*/
 		{
 			if (overlay3d)
 			{
@@ -441,7 +441,7 @@ restorestart:
 		stacked = 0;
 		overlay3d = 0;                    /* forget overlays */
 		display3d = 0;                    /* forget 3D */
-		if (calc_status ==CALCSTAT_NON_RESUMABLE)
+		if (calc_status == CALCSTAT_NON_RESUMABLE)
 			calc_status = CALCSTAT_PARAMS_CHANGED;
 		resumeflag = 1;
 		goto resumeloop;                  /* ooh, this is ugly */
@@ -640,7 +640,7 @@ va_dcl
    char *timestring;
    time_t ltime;
    FILE *fp = NULL;
-   int out=0;
+   int out = 0;
    int i;
    int do_bench;
 
@@ -655,7 +655,7 @@ va_dcl
 #endif
 
    do_bench = timerflag; /* record time? */
-   if (timertype == 2)   /* encoder, record time only if debug=200 */
+   if (timertype == 2)   /* encoder, record time only if debug = 200 */
       do_bench = (debugflag == 200);
    if (do_bench)
       fp=dir_fopen(workdir, "bench", "a");
@@ -672,7 +672,7 @@ va_dcl
          out = encoder();            /* not indirect, safer with overlays */
          break;
       }
-   /* next assumes CLK_TCK is 10^n, n>=2 */
+   /* next assumes CLK_TCK is 10^n, n >= 2 */
    timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
 
    if (do_bench) {

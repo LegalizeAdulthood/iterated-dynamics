@@ -722,7 +722,7 @@ static int look(char *stacked)
             showfile = 0;
             if (askvideo)
             {
-                driver_stack_screen();/* save graphics image */
+                driver_stack_screen(); /* save graphics image */
                 *stacked = 1;
             }
             return 1;
@@ -926,8 +926,8 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	if (i & CMDARG_FRACTAL_PARAM)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
-		/* backwards_v18();*/  /* moved this to cmdfiles.c */
-		/* backwards_v19();*/
+		/* backwards_v18(); */  /* moved this to cmdfiles.c */
+		/* backwards_v19(); */
 		*kbdmore = 0;
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 	}
@@ -2284,12 +2284,12 @@ int cmp_line(BYTE *pixels, int linelen)
       if ((row & 1) != 0) return 0;
       row >>= 1;
       }
-   for (col=0; col<linelen; col++) {
+   for (col = 0; col < linelen; col++) {
       oldcolor=getcolor(col, row);
-      if (oldcolor==(int)pixels[col])
+      if (oldcolor == (int)pixels[col])
          putcolor(col, row, 0);
       else {
-         if (oldcolor==0)
+         if (oldcolor == 0)
             putcolor(col, row, 1);
          ++errcount;
          if (initbatch == INIT_BATCH_NONE)

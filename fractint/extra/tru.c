@@ -15,8 +15,8 @@ void rgbmap(long maxiter, long iter,
    if (iter > maxi)
       maxi = iter;
    *b = iter & 0xff;
-   *g = (iter>>8) & 0xff;
-   *r = (iter>>16) & 0xff;
+   *g = (iter >> 8) & 0xff;
+   *r = (iter >> 16) & 0xff;
 }
 
 main()
@@ -28,12 +28,12 @@ main()
    char buf1[12];
    char buf2[2];
 
-   if ((fpin = fopen("iterates.tga","rb"))==NULL)
+   if ((fpin = fopen("iterates.tga","rb")) == NULL)
    {
       fprintf(stderr,"Can't open flat.out\n");
       exit(1);
    }
-   if ((fpout = fopen("new.tga","wb"))==NULL)
+   if ((fpout = fopen("new.tga","wb")) == NULL)
    {
       fprintf(stderr,"Can't open new.tga\n");
       exit(1);
@@ -52,13 +52,13 @@ main()
 
    printf("xdots %d ydots %d maxiter %ld\n",xdots,ydots,maxiter);
 
-   for(j=0;j<ydots;j++)
+   for (j = 0; j < ydots; j++)
    {
 //      printf("row %2d maxi %6ld   \r",j,maxi);
-      for(i=0;i<xdots;i++)
+      for (i = 0; i < xdots; i++)
       {
          iter = 0;
-         if ((err=fread(&iter,3,1,fpin))==0)
+         if ((err=fread(&iter,3,1,fpin)) == 0)
          {
             printf("err at row %d col %d\n",j,i);
             exit(1);

@@ -362,7 +362,7 @@ int get_toggles()
    decomp[0] = uvalues[++k].uval.ival;
    if (decomp[0] != old_decomp) j++;
 
-   if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4)==0)
+   if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
       fillcolor = -1;
    else
       fillcolor = atoi(uvalues[k].uval.sval);
@@ -956,7 +956,7 @@ int get_rds_params(void) {
    {
       ret = 0;
 
-      k=0;
+      k = 0;
       uvalues[k].uval.ival = AutoStereo_depth;
       uvalues[k++].type = 'i';
 
@@ -983,10 +983,10 @@ int get_rds_params(void) {
          uvalues[k++].type = 'y';
 
          uvalues[k++].type = '*';
-         for (i=0; i<sizeof(rds6); i++)
+         for (i = 0; i < sizeof(rds6); i++)
             rds6[i] = ' ';
          p = strrchr(stereomapname, SLASHC);
-		 if (p==NULL ||
+		 if (p == NULL ||
                  (int) strlen(stereomapname) < sizeof(rds6)-2)
             p = strlwr(stereomapname);
          else
@@ -1009,7 +1009,7 @@ int get_rds_params(void) {
          }
       else
       {
-         k=0;
+         k = 0;
          AutoStereo_depth = uvalues[k++].uval.ival;
          AutoStereo_width = uvalues[k++].uval.dval;
          grayflag         = (char)uvalues[k++].uval.ch.val;
@@ -1162,12 +1162,12 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
    char *ra;
    ra = (char *)ra1;
    ra -= sz;
-   ll=(n>>1)+1;
+   ll=(n >> 1)+1;
    ir=n;
 
    while (1)
    {
-      if (ll>1)
+      if (ll > 1)
          rra = *((char **)(ra+(--ll)*sz));
       else
       {
@@ -1183,7 +1183,7 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
       j = ll <<1;
       while (j <= ir)
       {
-         if (j<ir && (fct(ra+j*sz, ra+(j+1)*sz) < 0))
+         if (j < ir && (fct(ra+j*sz, ra+(j+1)*sz) < 0))
             ++j;
          if (fct(&rra, ra+j*sz) < 0)
          {
@@ -1548,7 +1548,7 @@ static int filename_speedstr(int row, int col, int vid,
                              char *speedstring, int speed_match)
 {
    char *prompt;
-   if ( strchr(speedstring, ':')
+   if (strchr(speedstring, ':')
      || strchr(speedstring, '*') || strchr(speedstring, '*')
      || strchr(speedstring, '?')) {
       speedstate = TEMPLATE;  /* template */
@@ -1793,7 +1793,7 @@ int dir_remove(char *dir, char *filename)
 }
 
 /* fopens file in dir directory */
-FILE *dir_fopen(char *dir, char *filename, char *mode )
+FILE *dir_fopen(char *dir, char *filename, char *mode)
 {
    char tmp[FILE_MAX_PATH];
    dir_name(tmp, dir, filename);
@@ -1817,7 +1817,7 @@ int cmpdbl(double old, double new)
    prompt_valuestring(buf, &val);   /* convert "old" to string */
 
    old = atof(buf);                /* convert back */
-   return fabs(old-new)<DBL_EPSILON?0:1;  /* zero if same */
+   return fabs(old-new) < DBL_EPSILON?0:1;  /* zero if same */
 }
 
 int get_corners()
@@ -1939,7 +1939,7 @@ gc_loop:
       }
 
    if (cmag) {
-      if ( cmpdbl(Xctr         , values[0].uval.dval)
+      if (cmpdbl(Xctr         , values[0].uval.dval)
         || cmpdbl(Yctr         , values[1].uval.dval)
         || cmpdbl((double)Magnification, values[2].uval.dval)
         || cmpdbl(Xmagfactor   , values[3].uval.dval)
@@ -2138,7 +2138,7 @@ gsc_loop:
       }
 
    if (cmag) {
-      if ( cmpdbl(Xctr         , values[0].uval.dval)
+      if (cmpdbl(Xctr         , values[0].uval.dval)
         || cmpdbl(Yctr         , values[1].uval.dval)
         || cmpdbl((double)Magnification, values[2].uval.dval)
         || cmpdbl(Xmagfactor   , values[3].uval.dval)
@@ -2308,10 +2308,10 @@ get_brws_restart:
    doublecaution = uvalues[++k].uval.ch.val;
 
    toosmall  = uvalues[++k].uval.dval;
-   if (toosmall < 0 ) toosmall = 0 ;
+   if (toosmall < 0) toosmall = 0 ;
 
    minbox = uvalues[++k].uval.ival;
-     if (minbox < 1 ) minbox = 1;
+     if (minbox < 1) minbox = 1;
      if (minbox > 10) minbox = 10;
 
    strcpy(browsemask, uvalues[++k].uval.sval);
@@ -2323,7 +2323,7 @@ get_brws_restart:
        doublecaution != old_doublecaution ||
        toosmall != old_toosmall ||
        minbox != old_minbox ||
-       !stricmp(browsemask, old_browsemask) )
+       !stricmp(browsemask, old_browsemask))
         i = -3;
 
    if (evolving) { /* can't browse */
@@ -2368,13 +2368,13 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    char ext1[FILE_MAX_EXT];
 
    /* no dot or slash so assume a file */
-   if (strchr(newfilename, '.')==NULL && strchr(newfilename, SLASHC) == NULL)
-      isafile=1;
+   if (strchr(newfilename, '.') == NULL && strchr(newfilename, SLASHC) == NULL)
+      isafile = 1;
    if ((isadir = isadirectory(newfilename)) != 0)
       fix_dirname(newfilename);
 #if 0
    /* if slash by itself, it's a directory */
-   if (strcmp(newfilename, SLASH)==0)
+   if (strcmp(newfilename, SLASH) == 0)
       isadir = 1;
 #endif
 #ifndef XFRACT
@@ -2404,7 +2404,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    /* if dot, slash, its relative to the current directory, set up full path */
    if (newfilename[0] == '.' &&
            newfilename[1] == SLASHC) {
-      int len, test_dir=0;
+      int len, test_dir = 0;
       temp_path[0] = (char)('a' + _getdrive() - 1);
       temp_path[1] = ':';
       temp_path[2] = 0;
@@ -2423,7 +2423,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
    strcpy(newfilename, temp_path);
 #endif
    /* check existence */
-   if (isadir==0 || isafile==1)
+   if (isadir == 0 || isafile == 1)
    {
        if (fr_findfirst(newfilename) == 0) {
           if (DTA.attribute & SUBDIR) /* exists and is dir */
@@ -2499,8 +2499,8 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
    char *v;
    v = (char *)v1;
    for (gap = n/2; gap > 0; gap /= 2)
-      for (i = gap; i<n; i++)
-         for (j=i-gap; j>=0; j -= gap)
+      for (i = gap; i < n; i++)
+         for (j=i-gap; j >= 0; j -= gap)
          {
             if (fct((char **)(v+j*sz), (char **)(v+(j+gap)*sz)) <= 0)
                break;

@@ -50,7 +50,7 @@ n <----------- bnlength ----------->
 
 
 FULL DOUBLE PRECISION MULTIPLICATION:
-( full_mult_bn(), full_square_bn() )
+(full_mult_bn(), full_square_bn())
 
 The product of two bignumbers, n1 and n2, will be a result, r, which is
 a double wide bignumber.  The integer part will also be twice as wide,
@@ -78,7 +78,7 @@ r <--------------------------- 2*bnlength ----------------------------->
 
 
 PARTIAL PRECISION MULTIPLICATION:
-( mult_bn(), square_bn() )
+(mult_bn(), square_bn())
 
 In most cases, full double precision multiplication is not necessary.  The
 lower order bytes are usually thrown away anyway.  The non-"full"
@@ -149,39 +149,39 @@ double wide number can then be ignored.
 #ifdef ACCESS_BY_BYTE
 U32 big_access32(BYTE BIGDIST *addr)
     {
-    return addr[0] | ((U32)addr[1]<<8) | ((U32)addr[2]<<16) | ((U32)addr[3]<<24);
+    return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
     }
 
 U16 big_access16(BYTE BIGDIST *addr)
     {
-    return (U16)addr[0] | ((U16)addr[1]<<8);
+    return (U16)addr[0] | ((U16)addr[1] << 8);
     }
 
 S16 big_accessS16(S16 BIGDIST *addr)
     {
-    return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1]<<8);
+    return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1] << 8);
     }
 
 U32 big_set32(BYTE BIGDIST *addr, U32 val)
     {
     addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val>>8)&0xff);
-    addr[2] = (BYTE)((val>>16)&0xff);
-    addr[3] = (BYTE)((val>>24)&0xff);
+    addr[1] = (BYTE)((val >> 8)&0xff);
+    addr[2] = (BYTE)((val >> 16)&0xff);
+    addr[3] = (BYTE)((val >> 24)&0xff);
     return val;
     }
 
 U16 big_set16(BYTE BIGDIST *addr, U16 val)
     {
     addr[0] = (BYTE)(val&0xff);
-    addr[1] = (BYTE)((val>>8)&0xff);
+    addr[1] = (BYTE)((val >> 8)&0xff);
     return val;
     }
 
 S16 big_setS16(S16 BIGDIST *addr, S16 val)
     {
     ((BYTE *)addr)[0] = (BYTE)(val&0xff);
-    ((BYTE *)addr)[1] = (BYTE)((val>>8)&0xff);
+    ((BYTE *)addr)[1] = (BYTE)((val >> 8)&0xff);
     return val;
     }
 
@@ -229,7 +229,7 @@ void bn_hexdump(bn_t r)
     {
     int i;
 
-    for (i=0; i<bnlength; i++)
+    for (i = 0; i < bnlength; i++)
         printf("%02X ", r[i]);
     printf("\n");
     return;
@@ -246,7 +246,7 @@ bn_t strtobn(bn_t r, char *s)
     {
     unsigned l;
     bn_t onesbyte;
-    int signflag=0;
+    int signflag = 0;
     long longval;
 
     clear_bn(r);
@@ -348,7 +348,7 @@ int strlen_needed()
 
 char *unsafe_bntostr(char *s, int dec, bn_t r)
     {
-    int l=0, d;
+    int l = 0, d;
     bn_t onesbyte;
     long longval = 0;
 
@@ -376,7 +376,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
     ltoa(longval, s, 10);
     l = (int) strlen(s);
     s[l++] = '.';
-    for (d=0; d < dec; d++)
+    for (d = 0; d < dec; d++)
         {
         *onesbyte = 0;  /* clear out highest byte */
         mult_a_bn_int(r, 10);
@@ -451,7 +451,7 @@ bn_t floattobn(bn_t r, LDBL f)
 #else
     bn_t onesbyte;
     int i;
-    int signflag=0;
+    int signflag = 0;
 
     clear_bn(r);
     onesbyte = r + bnlength - intlength;
@@ -523,7 +523,7 @@ bn_t abs_a_bn(bn_t r)
 /*      n ends up as |n|    Make copy first if necessary.           */
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
     {
-    int signflag=0, i;
+    int signflag = 0, i;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n; /* orig_bntmp1 not needed here */
@@ -547,7 +547,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
         return r;
         }
     f = 1/f; /* approximate inverse */
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) /* check for overflow */
         {
         max_bn(r);
@@ -585,7 +585,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate inverse */
     clear_bn(bntmp2); /* will be used as 1.0 and 2.0 */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
         {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -598,7 +598,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 
         unsafe_mult_bn(bntmp1, r, n); /* bntmp1=rn */
         inttobn(bntmp2, 1);  /* bntmp2 = 1.0 */
-        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0 ) /* if not different */
+        if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1+shiftfactor) == 0) /* if not different */
             break;  /* they must be the same */
         inttobn(bntmp2, 2); /* bntmp2 = 2.0 */
         sub_bn(bntmp3, bntmp2, bntmp1+shiftfactor); /* bntmp3=2-rn */
@@ -631,7 +631,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 /*      Make copies first if necessary.                             */
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
     {
-    int scale1, scale2, scale, sign=0, i;
+    int scale1, scale2, scale, sign = 0, i;
     long maxval;
     LDBL a, b, f;
 
@@ -649,7 +649,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
         return r;
         }
     f = a/b; /* approximate quotient */
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) /* check for overflow */
         {
         max_bn(r);
@@ -732,7 +732,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 /*      n ends up as |n|                                            */
 bn_t sqrt_bn(bn_t r, bn_t n)
     {
-    int i, comp, almost_match=0;
+    int i, comp, almost_match = 0;
     LDBL f;
     bn_t orig_r, orig_n;
     int  orig_bnlength,
@@ -780,7 +780,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate sqrt */
     copy_bn(bntmp4, r);
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
         {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -795,7 +795,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
         unsafe_div_bn(bntmp4, bntmp5, bntmp6);
         add_a_bn(r, bntmp4);
         half_a_bn(r);
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8 ) /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8) /* if match or almost match */
             {
             if (comp < 4  /* perfect or near perfect match */
                 || almost_match == 1) /* close enough for 2nd time */
@@ -821,7 +821,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 /* uses bntmp1, bntmp2, bntmp3 - global temp bignumbers             */
 bn_t exp_bn(bn_t r, bn_t n)
     {
-    U16 fact=1;
+    U16 fact = 1;
 
     if (is_bn_zero(n))
         {
@@ -830,9 +830,9 @@ bn_t exp_bn(bn_t r, bn_t n)
         }
 
 /* use Taylor Series (very slow convergence) */
-    inttobn(r, 1); /* start with r=1.0 */
+    inttobn(r, 1); /* start with r = 1.0 */
     copy_bn(bntmp2, r);
-    for (;;)
+    while (1)
         {
         /* copy n, if n is negative, mult_bn() alters n */
         unsafe_mult_bn(bntmp3, bntmp2, copy_bn(bntmp1, n));
@@ -853,7 +853,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 /*      n ends up as |n|                                            */
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
     {
-    int i, comp, almost_match=0;
+    int i, comp, almost_match = 0;
     long maxval;
     LDBL f;
     bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
@@ -873,7 +873,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
     f = bntofloat(n);
     f = logl(f); /* approximate ln(x) */
-    maxval = (1L << ((intlength<<3)-1)) - 1;
+    maxval = (1L << ((intlength << 3)-1)) - 1;
     if (f > maxval) /* check for overflow */
         {
         max_bn(r);
@@ -917,7 +917,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
     neg_a_bn(r); /* -r */
     copy_bn(bntmp5, r); /* -r */
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
         {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -933,7 +933,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
         sub_a_bn(bntmp2+shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
         sub_a_bn(r, bntmp2+shiftfactor);        /* -r - (n*exp(-r) - 1) */
 
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8 ) /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
             {
             if (comp < 4  /* perfect or near perfect match */
                 || almost_match == 1) /* close enough for 2nd time */
@@ -965,9 +965,9 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 /*      n ends up as |n| mod (pi/4)                                 */
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
     {
-    U16 fact=2;
-    int k=0, i, halves;
-    int signcos=0, signsin=0, switch_sincos=0;
+    U16 fact = 2;
+    int k = 0, i, halves;
+    int signcos = 0, signsin = 0, switch_sincos = 0;
 
 #ifndef CALCULATING_BIG_PI
     /* assure range 0 <= x < pi/4 */
@@ -1041,10 +1041,10 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 
 /* use Taylor Series (very slow convergence) */
     copy_bn(s, n); /* start with s=n */
-    inttobn(c, 1); /* start with c=1 */
+    inttobn(c, 1); /* start with c = 1 */
     copy_bn(bntmp1, n); /* the current x^n/n! */
 
-    for (;;)
+    while (1)
         {
         /* even terms for cosine */
         unsafe_mult_bn(bntmp2, bntmp1, n);
@@ -1107,7 +1107,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
     {
-    int i, comp, almost_match=0, signflag=0;
+    int i, comp, almost_match = 0, signflag = 0;
     LDBL f;
     bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
     int  orig_bnlength,
@@ -1169,7 +1169,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     floattobn(r, f); /* start with approximate atan */
     copy_bn(bntmp3, r);
 
-    for (i=0; i<25; i++) /* safety net, this shouldn't ever be needed */
+    for (i = 0; i < 25; i++) /* safety net, this shouldn't ever be needed */
         {
         /* adjust lengths */
         bnlength <<= 1; /* double precision */
@@ -1196,7 +1196,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
         putchar('\n');
         bn_hexdump(r);
 #endif
-        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8 ) /* if match or almost match */
+        if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8) /* if match or almost match */
             {
 #ifdef CALCULATING_BIG_PI
             printf("atan() loop comp=%i\n", comp);

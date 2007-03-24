@@ -52,9 +52,9 @@ static  long gfe_choose_entry(int, char *, char *, char *);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
-static  int get_light_params(void );
-static  int check_mapfile(void );
-static  int get_funny_glasses_params(void );
+static  int get_light_params(void);
+static  int check_mapfile(void);
+static  int get_funny_glasses_params(void);
 
 static char funnyglasses_map_name[16];
 char ifsmask[13]     = {"*.ifs"};
@@ -71,18 +71,18 @@ int promptfkeys;
 
    /* These need to be global because F6 exits fullscreen_prompt() */
 int scroll_row_status;    /* will be set to first line of extra info to
-                             be displayed ( 0 = top line) */
+                             be displayed (0 = top line) */
 int scroll_column_status; /* will be set to first column of extra info to
-                             be displayed ( 0 = leftmost column )*/
+                             be displayed (0 = leftmost column)*/
 
-int fullscreen_prompt(  /* full-screen prompting routine */
+int fullscreen_prompt(/* full-screen prompting routine */
         char *hdg,          /* heading, lines separated by \n */
         int numprompts,         /* there are this many prompts (max) */
         char **prompts,     /* array of prompting pointers */
         struct fullscreenvalues *values, /* array of values */
         int fkeymask,           /* bit n on if Fn to cause return */
         char *extrainfo     /* extra info box to display, \n separated */
-        )
+)
 {
    char *hdgscan;
    int titlelines, titlewidth, titlerow;
@@ -153,7 +153,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
          }
          else if (c == '\t')
             widthct += 7 - widthct % 8;
-         else if ( c == '\r')
+         else if (c == '\r')
             continue;
          if (++widthct > widest_entry_line)
             widest_entry_line = widthct;
@@ -304,7 +304,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
       /* center each line of heading independently */
       int i;
 	  strcpy(hdgline, hdg);
-      for (i=0; i<titlelines-1; i++)
+      for (i = 0; i < titlelines-1; i++)
       {
          char *next = strchr(hdgline, '\n');
          if (next == NULL)
@@ -392,7 +392,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
             fseek(scroll_file, scroll_file_start, SEEK_SET);
             load_entry_text(scroll_file, extrainfo, extralines - 2,
                         scroll_row_status, scroll_column_status);
-            for (i=1; i <= extralines - 2; i++)
+            for (i = 1; i <= extralines - 2; i++)
                driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
             driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
          }
@@ -467,7 +467,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
             case FIK_F8:
             case FIK_F9:
             case FIK_F10:
-               if (promptfkeys & (1<<(done+1-FIK_F1)) )
+               if (promptfkeys & (1 << (done+1-FIK_F1)))
                   goto fullscreen_exit;
          }
       }
@@ -491,7 +491,7 @@ int fullscreen_prompt(  /* full-screen prompting routine */
          fseek(scroll_file, scroll_file_start, SEEK_SET);
          load_entry_text(scroll_file, extrainfo, extralines - 2,
                              scroll_row_status, scroll_column_status);
-         for (i=1; i <= extralines - 2; i++)
+         for (i = 1; i <= extralines - 2; i++)
             driver_put_string(extrarow+i, 0, C_PROMPT_TEXT, blanks);
          driver_put_string(extrarow+1, 0, C_PROMPT_TEXT, extrainfo);
          g_text_cbase = j;
@@ -662,7 +662,7 @@ int prompt_valuestring(char *buf, struct fullscreenvalues *val)
             }
          break;
       case 'D':
-         if (val->uval.dval<0) { /* We have to round the right way */
+         if (val->uval.dval < 0) { /* We have to round the right way */
              sprintf(buf, "%ld", (long)(val->uval.dval-.5));
          }
          else {
@@ -718,7 +718,7 @@ int prompt_checkkey(int curkey)
       case FIK_F8:
       case FIK_F9:
       case FIK_F10:
-         if (promptfkeys & (1<<(curkey+1-FIK_F1)) )
+         if (promptfkeys & (1 << (curkey+1-FIK_F1)))
             return curkey;
       }
    return 0;
@@ -749,7 +749,7 @@ int prompt_checkkey_scroll(int curkey)
       case FIK_F8:
       case FIK_F9:
       case FIK_F10:
-         if (promptfkeys & (1<<(curkey+1-FIK_F1)) )
+         if (promptfkeys & (1 << (curkey+1-FIK_F1)))
             return curkey;
       }
    return 0;
@@ -764,7 +764,7 @@ static int input_field_list(
         int row,              /* display row */
         int col,              /* display column */
         int (*checkkey)(int)  /* routine to check non data keys, or NULL */
-        )
+)
 {
    int initval, curval;
    char buf[81];
@@ -814,7 +814,7 @@ static int input_field_list(
             for (i = 0; i < llen; ++i) {
                if (++j >= llen)
                   j = 0;
-               if ( (*list[j] & 0xdf) == (curkey & 0xdf)) {
+               if ((*list[j] & 0xdf) == (curkey & 0xdf)) {
                   curval = j;
                   break;
                   }
@@ -845,7 +845,7 @@ static int compare(const VOIDPTR i, const VOIDPTR j)
 static void clear_line(int row, int start, int stop, int color) /* clear part of a line */
 {
    int col;
-   for (col=start; col<= stop; col++)
+   for (col=start; col <= stop; col++)
       driver_put_string(row, col, color, " ");
 }
 
@@ -956,10 +956,10 @@ static int sel_fractype_help(int curkey, int choice)
    return 0;
 }
 
-int select_type_params( /* prompt for new fractal type parameters */
+int select_type_params(/* prompt for new fractal type parameters */
         int newfractype,        /* new fractal type */
         int oldfractype         /* previous fractal type */
-        )
+)
 {
    int ret, oldhelpmode;
 
@@ -1012,9 +1012,9 @@ sel_type_restart:
     * Next assumes that user going between popcorn and popcornjul
     * might not want to change function variables 
     */
-   if (((fractype    == FPPOPCORN   ) || (fractype    == LPOPCORN   ) ||
+   if (((fractype    == FPPOPCORN) || (fractype    == LPOPCORN) ||
        (fractype    == FPPOPCORNJUL) || (fractype    == LPOPCORNJUL)) &&
-     !((oldfractype == FPPOPCORN   ) || (oldfractype == LPOPCORN   ) ||
+     !((oldfractype == FPPOPCORN) || (oldfractype == LPOPCORN) ||
        (oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
       set_function_parm_defaults();
         
@@ -1064,7 +1064,7 @@ void set_default_parms()
          roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
    }
    if ((extra=find_extra_param(fractype)) > -1)
-      for (i=0; i<MAXPARAMS-4; i++)
+      for (i = 0; i < MAXPARAMS-4; i++)
          param[i+4] = moreparams[extra].paramvalue[i];
    if (debugflag != 3200)
       bf_math = 0;
@@ -1222,7 +1222,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
    double oldparam[MAXPARAMS];
    int fkeymask = 0x40;
    oldbailout = bailout;
-   if (fractype==JULIBROT || fractype==JULIBROTFP)
+   if (fractype == JULIBROT || fractype == JULIBROTFP)
       julibrot = 1;
    else
       julibrot = 0;
@@ -1382,7 +1382,7 @@ gfp_top:
       numparams = lastparm - firstparm;
 
    numtrig = (curfractalspecific->flags >> 6) & 7;
-   if (curtype==FORMULA || curtype==FFORMULA ) {
+   if (curtype == FORMULA || curtype == FFORMULA) {
       numtrig = maxfn;
       }
 
@@ -1403,8 +1403,8 @@ gfp_top:
 
    i = curfractalspecific->orbit_bailout;
 
-   if ( i != 0 && curfractalspecific->calctype == StandardFractal &&
-       (curfractalspecific->flags & BAILTEST) ) {
+   if (i != 0 && curfractalspecific->calctype == StandardFractal &&
+       (curfractalspecific->flags & BAILTEST)) {
       paramvalues[promptnum].type = 'l';
       paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
       paramvalues[promptnum].uval.ch.llen = 7;
@@ -1517,7 +1517,7 @@ gfp_top:
       paramvalues[promptnum++].uval.ch.val  = minor_method;
    }
 
-   if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) {
+   if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand) {
       choices[promptnum] = "ismand";
       paramvalues[promptnum].type = 'y';
       paramvalues[promptnum++].uval.ch.val = ismand?1:0;
@@ -1563,7 +1563,7 @@ gfp_top:
             ret = 1;
      }
      promptnum = 0;
-     for ( i = firstparm; i < numparams+firstparm; i++)
+     for (i = firstparm; i < numparams+firstparm; i++)
      {
         if (curtype == FORMULA || curtype == FFORMULA)
            if (paramnotused(i))
@@ -1576,7 +1576,7 @@ gfp_top:
         ++promptnum;
     }
 
-   for ( i = 0; i < numtrig; i++)
+   for (i = 0; i < numtrig; i++)
    {
       if (paramvalues[promptnum].uval.ch.val != (int)trigndx[i])
       {
@@ -1594,8 +1594,8 @@ gfp_top:
 
    i = curfractalspecific->orbit_bailout;
 
-   if ( i != 0 && curfractalspecific->calctype == StandardFractal &&
-       (curfractalspecific->flags & BAILTEST) ) {
+   if (i != 0 && curfractalspecific->calctype == StandardFractal &&
+       (curfractalspecific->flags & BAILTEST)) {
       if (paramvalues[promptnum].uval.ch.val != (int)bailoutest) {
         bailoutest = (enum bailouts)paramvalues[promptnum].uval.ch.val;
         ret = 1;
@@ -1643,7 +1643,7 @@ gfp_top:
          major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
          minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
       }
-     if ((curtype==FORMULA || curtype==FFORMULA) && uses_ismand) 
+     if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand) 
      {
         if (ismand != (short int)paramvalues[promptnum].uval.ch.val)
         {
@@ -1682,7 +1682,7 @@ void load_params(int fractype)
         roundfloatd(&param[i]); /* don't round cellular or ant */
    }
    if ((extra=find_extra_param(fractype)) > -1)
-      for (i=0; i<MAXPARAMS-4; i++)
+      for (i = 0; i < MAXPARAMS-4; i++)
          param[i+4] = moreparams[extra].paramvalue[i];
 }
 
@@ -1695,7 +1695,7 @@ int check_orbit_name(char *orbitname)
 
    numtypes = build_fractal_list(fractals, &last_val, nameptr);
    bad = 1;
-   for (i=0; i<numtypes; i++)
+   for (i = 0; i < numtypes; i++)
    {
       if (strcmp(orbitname, nameptr[i]) == 0)
       {
@@ -1768,7 +1768,7 @@ long get_file_entry(int type, char *title, char *fmask,
 
 struct entryinfo {
    char name[ITEMNAMELEN+2];
-   long point; /* points to the ( or the { following the name */
+   long point; /* points to the (or the { following the name */
    };
 static struct entryinfo **gfe_choices; /* for format_getparm_line */
 static char *gfe_title;
@@ -1817,7 +1817,7 @@ int scan_entries(FILE * infile, struct entryinfo *choices, char *itemname)
    long file_offset = -1;
    int numentries = 0;
 
-   for (;;)
+   while (1)
    {                            /* scan the file for entry names */
       int c, len;
 top:
@@ -2045,7 +2045,7 @@ static int check_gfe_key(int curkey, int choice)
          }
          else if (c == '\t')
             widthct += 7 - widthct % 8;
-         else if ( c == '\r')
+         else if (c == '\r')
             continue;
          if (++widthct > widest_entry_line)
             widest_entry_line = widthct;
@@ -2179,7 +2179,7 @@ static void load_entry_text(
        */
 
    int linelen, i;
-   int comment=0;
+   int comment = 0;
    int c = 0;
    int tabpos = 7 - (startcol % 8);
 
@@ -2216,7 +2216,7 @@ static void load_entry_text(
             *buf = (char) 0;
             return;
          }
-         if ( c == '\r') {
+         if (c == '\r') {
             i--;
             continue;
          }
@@ -2317,7 +2317,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 		"Z-axis rotation in degrees",
 		"Perspective distance [1 - 999, 0 for no persp]",
 		"X shift with perspective (positive = right)",
-		"Y shift with perspective (positive = up   )",
+		"Y shift with perspective (positive = up)",
 		"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
 	};
 
@@ -2448,7 +2448,7 @@ restart_1:
       return -1;
       }
 
-   k=0;
+   k = 0;
 
    preview = (char)uvalues[k++].uval.ch.val;
 
@@ -2841,7 +2841,7 @@ static int get_funny_glasses_params()
       ZVIEWER = 150;
    if (g_eye_separation == 0)
    {
-      if (fractype==IFS3D || fractype==LLORENZ3D || fractype==FPLORENZ3D)
+      if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
       {
          g_eye_separation =  2;
          xadjust       = -2;
@@ -2934,87 +2934,87 @@ void setbailoutformula(enum bailouts test) {
      case Mod:
      default:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpMODbailout;
+           floatbailout = (int (*)(void))asmfpMODbailout;
          else
-           floatbailout = (int ( *)(void))fpMODbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lMODbailout;
+           floatbailout = (int (*)(void))fpMODbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lMODbailout;
          else
-           longbailout = (int ( *)(void))asmlMODbailout;
-         bignumbailout = (int ( *)(void))bnMODbailout;
-         bigfltbailout = (int ( *)(void))bfMODbailout;
-         break;}
+           longbailout = (int (*)(void))asmlMODbailout;
+         bignumbailout = (int (*)(void))bnMODbailout;
+         bigfltbailout = (int (*)(void))bfMODbailout;
+         break; }
      case Real: {
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpREALbailout;
+           floatbailout = (int (*)(void))asmfpREALbailout;
          else
-           floatbailout = (int ( *)(void))fpREALbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lREALbailout;
+           floatbailout = (int (*)(void))fpREALbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lREALbailout;
          else
-           longbailout = (int ( *)(void))asmlREALbailout;
-         bignumbailout = (int ( *)(void))bnREALbailout;
-         bigfltbailout = (int ( *)(void))bfREALbailout;
-         break;}
+           longbailout = (int (*)(void))asmlREALbailout;
+         bignumbailout = (int (*)(void))bnREALbailout;
+         bigfltbailout = (int (*)(void))bfREALbailout;
+         break; }
      case Imag:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpIMAGbailout;
+           floatbailout = (int (*)(void))asmfpIMAGbailout;
          else
-           floatbailout = (int ( *)(void))fpIMAGbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lIMAGbailout;
+           floatbailout = (int (*)(void))fpIMAGbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lIMAGbailout;
          else
-           longbailout = (int ( *)(void))asmlIMAGbailout;
-         bignumbailout = (int ( *)(void))bnIMAGbailout;
-         bigfltbailout = (int ( *)(void))bfIMAGbailout;
-         break;}
+           longbailout = (int (*)(void))asmlIMAGbailout;
+         bignumbailout = (int (*)(void))bnIMAGbailout;
+         bigfltbailout = (int (*)(void))bfIMAGbailout;
+         break; }
      case Or:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpORbailout;
+           floatbailout = (int (*)(void))asmfpORbailout;
          else
-           floatbailout = (int ( *)(void))fpORbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lORbailout;
+           floatbailout = (int (*)(void))fpORbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lORbailout;
          else
-           longbailout = (int ( *)(void))asmlORbailout;
-         bignumbailout = (int ( *)(void))bnORbailout;
-         bigfltbailout = (int ( *)(void))bfORbailout;
-         break;}
+           longbailout = (int (*)(void))asmlORbailout;
+         bignumbailout = (int (*)(void))bnORbailout;
+         bigfltbailout = (int (*)(void))bfORbailout;
+         break; }
      case And:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpANDbailout;
+           floatbailout = (int (*)(void))asmfpANDbailout;
          else
-           floatbailout = (int ( *)(void))fpANDbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lANDbailout;
+           floatbailout = (int (*)(void))fpANDbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lANDbailout;
          else
-           longbailout = (int ( *)(void))asmlANDbailout;
-         bignumbailout = (int ( *)(void))bnANDbailout;
-         bigfltbailout = (int ( *)(void))bfANDbailout;
-         break;}
+           longbailout = (int (*)(void))asmlANDbailout;
+         bignumbailout = (int (*)(void))bnANDbailout;
+         bigfltbailout = (int (*)(void))bfANDbailout;
+         break; }
      case Manh:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpMANHbailout;
+           floatbailout = (int (*)(void))asmfpMANHbailout;
          else
-           floatbailout = (int ( *)(void))fpMANHbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lMANHbailout;
+           floatbailout = (int (*)(void))fpMANHbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lMANHbailout;
          else
-           longbailout = (int ( *)(void))asmlMANHbailout;
-         bignumbailout = (int ( *)(void))bnMANHbailout;
-         bigfltbailout = (int ( *)(void))bfMANHbailout;
-         break;}
+           longbailout = (int (*)(void))asmlMANHbailout;
+         bignumbailout = (int (*)(void))bnMANHbailout;
+         bigfltbailout = (int (*)(void))bfMANHbailout;
+         break; }
      case Manr:{
          if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
-           floatbailout = (int ( *)(void))asmfpMANRbailout;
+           floatbailout = (int (*)(void))asmfpMANRbailout;
          else
-           floatbailout = (int ( *)(void))fpMANRbailout;
-         if (cpu >=386 && debugflag != 8088)    /* Fast 386 math */
-           longbailout = (int ( *)(void))asm386lMANRbailout;
+           floatbailout = (int (*)(void))fpMANRbailout;
+         if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+           longbailout = (int (*)(void))asm386lMANRbailout;
          else
-           longbailout = (int ( *)(void))asmlMANRbailout;
-         bignumbailout = (int ( *)(void))bnMANRbailout;
-         bigfltbailout = (int ( *)(void))bfMANRbailout;
-         break;}
+           longbailout = (int (*)(void))asmlMANRbailout;
+         bignumbailout = (int (*)(void))bnMANRbailout;
+         bigfltbailout = (int (*)(void))bfMANRbailout;
+         break; }
    }
 }

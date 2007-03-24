@@ -576,7 +576,7 @@ void wintext_paintscreen(WinText *me,
 	//if (me->cursor_owned != 0)
 	{
 		ODS1("======================== Hide Caret %d", --carrot_count);
-		HideCaret( me->hWndCopy );
+		HideCaret(me->hWndCopy);
 	}
 
 	/*
@@ -625,7 +625,7 @@ void wintext_paintscreen(WinText *me,
 	//if (me->cursor_owned != 0)
 	{
 		ODS1("======================== Show Caret %d", ++carrot_count);
-		ShowCaret( me->hWndCopy );
+		ShowCaret(me->hWndCopy);
 	}
 
 	ReleaseDC(me->hWndCopy, hDC);
@@ -665,9 +665,9 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 		x = me->cursor_x*me->char_width;
 		y = me->cursor_y*me->char_height;
         SetCaretPos(x, y);
-        /*SetCaretBlinkTime(500);*/
+        /*SetCaretBlinkTime(500); */
 		ODS2("======================== Set Caret Pos #1 (%d,%d)", x, y);
-        /*ShowCaret(me->hWndCopy);*/
+        /*ShowCaret(me->hWndCopy); */
 	}
 }
 

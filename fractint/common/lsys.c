@@ -60,7 +60,7 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
 static char *ruleptrs[MAXRULES];
 static struct lsys_cmd *rules2[MAXRULES];
 char maxangle;
-static char loaded=0;
+static char loaded = 0;
 
 
 int _fastcall ispow2(int n)
@@ -74,34 +74,34 @@ LDBL _fastcall getnumber(char **str)
    LDBL ret;
    int i, root, inverse;
 
-   root=0;
-   inverse=0;
+   root = 0;
+   inverse = 0;
    strcpy(numstr, "");
    (*str)++;
    switch (**str)
    {
    case 'q':
-      root=1;
+      root = 1;
       (*str)++;
       break;
    case 'i':
-      inverse=1;
+      inverse = 1;
       (*str)++;
       break;
    }
    switch (**str)
    {
    case 'q':
-      root=1;
+      root = 1;
       (*str)++;
       break;
    case 'i':
-      inverse=1;
+      inverse = 1;
       (*str)++;
       break;
    }
-   i=0;
-   while ((**str<='9' && **str>='0') || **str=='.')
+   i = 0;
+   while ((**str <= '9' && **str >= '0') || **str == '.')
    {
       numstr[i++]= **str;
       (*str)++;
@@ -122,8 +122,8 @@ static int _fastcall readLSystemFile(char *str)
 {
    int c;
    char **rulind;
-   int err=0;
-   int linenum, check=0;
+   int err = 0;
+   int linenum, check = 0;
    char inline1[MAX_LSYS_LINE_LEN+1], fixed[MAX_LSYS_LINE_LEN+1], *word;
    FILE *infile;
    char msgbuf[481]; /* enough for 6 full lines */
@@ -132,10 +132,10 @@ static int _fastcall readLSystemFile(char *str)
       return -1;
    while ((c = fgetc(infile)) != '{')
       if (c == EOF) return -1;
-   maxangle=0;
-   for (linenum=0; linenum<MAXRULES; ++linenum) ruleptrs[linenum]=NULL;
+   maxangle = 0;
+   for (linenum = 0; linenum < MAXRULES; ++linenum) ruleptrs[linenum]=NULL;
    rulind= &ruleptrs[1];
-   msgbuf[0]=(char)(linenum=0);
+   msgbuf[0]=(char)(linenum = 0);
 
    while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  /* Max line length chars */
    {
@@ -154,12 +154,12 @@ static int _fastcall readLSystemFile(char *str)
                 ++err;
                 break;
             }
-            check=1;
+            check = 1;
          }
          else if (!strcmp(word, "angle"))
          {
             maxangle=(char)atoi(strtok(NULL, " \t\n"));
-            check=1;
+            check = 1;
          }
          else if (!strcmp(word, "}"))
             break;
@@ -195,10 +195,10 @@ static int _fastcall readLSystemFile(char *str)
                 ++err;
                 break;
             }
-            check=1;
+            check = 1;
          }
          else
-            if (err<6)
+            if (err < 6)
             {
                sprintf(&msgbuf[strlen(msgbuf)],
                        "Syntax error line %d: %s\n", linenum, word);
@@ -206,9 +206,9 @@ static int _fastcall readLSystemFile(char *str)
             }
          if (check)
          {
-            check=0;
-            if ((word=strtok(NULL, " \t\n"))!=NULL)
-               if (err<6)
+            check = 0;
+            if ((word=strtok(NULL, " \t\n")) != NULL)
+               if (err < 6)
                {
                   sprintf(&msgbuf[strlen(msgbuf)],
                          "Extra text after command line %d: %s\n", linenum, word);
@@ -218,12 +218,12 @@ static int _fastcall readLSystemFile(char *str)
       }
    }
    fclose(infile);
-   if (!ruleptrs[0] && err<6)
+   if (!ruleptrs[0] && err < 6)
    {
       strcat(msgbuf, "Error:  no axiom\n");
       ++err;
    }
-   if ((maxangle<3||maxangle>50) && err<6)
+   if ((maxangle < 3||maxangle > 50) && err < 6)
    {
       strcat(msgbuf, "Error:  illegal or missing angle\n");
       ++err;
@@ -245,14 +245,14 @@ int Lsystem(void)
    struct lsys_cmd **sc;
    int stackoflow = 0;
 
-   if ( (!loaded) && LLoad())
+   if ((!loaded) && LLoad())
      return -1;
 
    overflow = 0;                /* reset integer math overflow flag */
 
    order=(int)param[0];
-   if (order<=0)
-     order=0;
+   if (order <= 0)
+     order = 0;
    if (usr_floatflag)
         overflow = 1;
    else {
@@ -278,7 +278,7 @@ int Lsystem(void)
             *sc = NULL;
 
             /* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
-            if ((ts.curcolor=15) > colors)
+            if ((ts.curcolor = 15) > colors)
                 ts.curcolor=(char)(colors-1);
             drawLSysI(rules2[0], &ts, &rules2[1], order);
         }
@@ -313,7 +313,7 @@ int Lsystem(void)
             *sc = NULL;
 
             /* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
-            if ((ts.curcolor=15) > colors)
+            if ((ts.curcolor = 15) > colors)
                 ts.curcolor=(char)(colors-1);
             lsys_prepfpu(&ts);
             drawLSysF(rules2[0], &ts, &rules2[1], order);
@@ -323,7 +323,7 @@ int Lsystem(void)
    }
    free_rules_mem();
    free_lcmds();
-   loaded=0;
+   loaded = 0;
    return 0;
 }
 
@@ -331,17 +331,17 @@ int LLoad(void)
 {
    if (readLSystemFile(LName)) { /* error occurred */
       free_rules_mem();
-      loaded=0;
+      loaded = 0;
       return -1;
    }
-   loaded=1;
+   loaded = 1;
    return 0;
 }
 
 static void _fastcall free_rules_mem(void)
 {
    int i;
-   for (i=0; i<MAXRULES; ++i)
+   for (i = 0; i < MAXRULES; ++i)
       if (ruleptrs[i]) free(ruleptrs[i]);
 }
 
@@ -364,7 +364,7 @@ static int _fastcall save_rule(char *rule, char **saveptr)
        return -1;
    }
    *saveptr=tmpfar;
-   while (--i>=0) *(tmpfar++)= *(rule++);
+   while (--i >= 0) *(tmpfar++)= *(rule++);
    return 0;
 }
 
@@ -545,24 +545,24 @@ static void lsysi_dosizedm(struct lsys_turtlestatei *cmd)
     cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
     cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 
-/* xpos+=size*aspect*cos(realangle*PI/180); */
-/* ypos+=size*sin(realangle*PI/180); */
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+/* xpos += size*aspect*cos(realangle*PI/180); */
+/* ypos += size*sin(realangle*PI/180); */
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 
 static void lsysi_dosizegf(struct lsys_turtlestatei *cmd)
 {
   cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
   cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
-/* xpos+=size*coss[angle]; */
-/* ypos+=size*sins[angle]; */
-  if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-  if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-  if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-  if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+/* xpos += size*coss[angle]; */
+/* ypos += size*sins[angle]; */
+  if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+  if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+  if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+  if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 
 static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
@@ -580,8 +580,8 @@ static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
   lasty=(int) (cmd->ypos >> 19);
   cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
   cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
-/* xpos+=size*aspect*cos(realangle*PI/180); */
-/* ypos+=size*sin(realangle*PI/180); */
+/* xpos += size*aspect*cos(realangle*PI/180); */
+/* ypos += size*sin(realangle*PI/180); */
   driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
@@ -595,8 +595,8 @@ static void lsysi_dodrawm(struct lsys_turtlestatei *cmd)
   fixedsin = (long) (s * FIXEDLT1);
   fixedcos = (long) (c * FIXEDLT1);
 
-/* xpos+=size*aspect*cos(realangle*PI/180); */
-/* ypos+=size*sin(realangle*PI/180); */
+/* xpos += size*aspect*cos(realangle*PI/180); */
+/* ypos += size*sin(realangle*PI/180); */
   cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
   cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
@@ -605,8 +605,8 @@ static void lsysi_dodrawg(struct lsys_turtlestatei *cmd)
 {
   cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
   cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
-/* xpos+=size*coss[angle]; */
-/* ypos+=size*sins[angle]; */
+/* xpos += size*coss[angle]; */
+/* ypos += size*sins[angle]; */
 }
 
 static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
@@ -615,8 +615,8 @@ static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
   int lasty = (int) (cmd->ypos >> 19);
   cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
   cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
-/* xpos+=size*coss[angle]; */
-/* ypos+=size*sins[angle]; */
+/* xpos += size*coss[angle]; */
+/* ypos += size*sins[angle]; */
   driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
@@ -654,7 +654,7 @@ if (overflow)     /* integer math routines overflowed */
       return NULL;
    }
 
-   while (command->ch && command->ch !=']') {
+   while (command->ch && command->ch != ']') {
       if (! (ts->counter++)) {
          /* let user know we're not dead */
          if (thinking(1, "L-System thinking (higher orders take longer)")) {
@@ -662,11 +662,11 @@ if (overflow)     /* integer math routines overflowed */
             return NULL;
          }
       }
-      tran=0;
+      tran = 0;
       if (depth) {
          for (rulind=rules; *rulind; rulind++)
-            if ((*rulind)->ch==command->ch) {
-               tran=1;
+            if ((*rulind)->ch == command->ch) {
+               tran = 1;
                if (findsize((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
@@ -741,7 +741,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
       vert = (float)1E37;
    else
       vert = (float)((ydots-6) /(ymax-ymin));
-   locsize = (vert<horiz) ? vert : horiz;
+   locsize = (vert < horiz) ? vert : horiz;
 
    if (horiz == 1E37)
       ts->xpos = FIXEDPT(xdots/2);
@@ -773,18 +773,18 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
    }
 
 
-   while (command->ch && command->ch !=']') {
+   while (command->ch && command->ch != ']') {
       if (!(ts->counter++)) {
          if (driver_key_pressed()) {
             ts->counter--;
             return NULL;
          }
       }
-      tran=0;
+      tran = 0;
       if (depth) {
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
-               tran=1;
+               tran = 1;
                if (drawLSysI((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
@@ -1001,7 +1001,7 @@ static void _fastcall lsysi_dosincos(void)
 
    locaspect=screenaspect*xdots/ydots;
    twopimax = TWOPI / maxangle;
-   for (i=0; i<maxangle; i++) {
+   for (i = 0; i < maxangle; i++) {
       twopimaxi = i * twopimax;
       FPUsincos(&twopimaxi, &s, &c);
       sins[i] = (long) (s * FIXEDLT1);

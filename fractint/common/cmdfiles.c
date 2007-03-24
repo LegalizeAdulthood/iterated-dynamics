@@ -42,25 +42,25 @@ static int  get_bf(bf_t, char *);
 static int isabigfloat(char *str);
 
 /* variables defined by the command line/files processor */
-int     stoppass=0;             /* stop at this guessing pass early */
-int     pseudox=0;              /* xdots to use for video independence */
-int     pseudoy=0;              /* ydots to use for video independence */
-int     bfdigits=0;             /* digits to use (force) for bf_math */
+int     stoppass = 0;             /* stop at this guessing pass early */
+int     pseudox = 0;              /* xdots to use for video independence */
+int     pseudoy = 0;              /* ydots to use for video independence */
+int     bfdigits = 0;             /* digits to use (force) for bf_math */
 int     showdot=-1;             /* color to show crawling graphics cursor */
 int     sizedot;                /* size of dot crawling cursor */
 char    recordcolors;           /* default PAR color-writing method */
-char    autoshowdot=0;          /* dark, medium, bright */
-char    start_showorbit=0;      /* show orbits on at start of fractal */
+char    autoshowdot = 0;          /* dark, medium, bright */
+char    start_showorbit = 0;      /* show orbits on at start of fractal */
 char    temp1[256];             /* temporary strings        */
-char    readname[FILE_MAX_PATH];/* name of fractal input file */
+char    readname[FILE_MAX_PATH]; /* name of fractal input file */
 char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
-char    orgfrmdir[FILE_MAX_DIR] = {""};/*name of directory for orgfrm files*/
+char    orgfrmdir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
 char    gifmask[FILE_MAX_PATH] = {""};
 char    PrintName[FILE_MAX_PATH]={"fract001.prn"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH]={"fract001"};  /* save files using this name */
 char    autoname[FILE_MAX_PATH]={"auto.key"}; /* record auto keystrokes here */
-int     potflag=0;              /* continuous potential enabled? */
+int     potflag = 0;              /* continuous potential enabled? */
 int     pot16bit;               /* store 16 bit continuous potential values */
 int     gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
 int     dither_flag;            /* 1 if want to dither GIFs */
@@ -107,12 +107,12 @@ int     colorstate;             /* 0, g_dac_box matches default (bios or map=) *
                                 /* 2, g_dac_box matches the colorfile map      */
 int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
-char    dontreadcolor=0;        /* flag for reading color from GIF */
+char    dontreadcolor = 0;        /* flag for reading color from GIF */
 double  math_tol[2]={.05,.05};  /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
-char    colorfile[FILE_MAX_PATH];/* from last <l> <s> or colors=@filename */
+char    colorfile[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
 int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
@@ -136,19 +136,19 @@ int     Log_Auto_Calc = 0;  /* auto calculate logmap */
 int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images */
 
 int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
-int first_init=1;               /* first time into cmdfiles? */
+int first_init = 1;               /* first time into cmdfiles? */
 static int init_rseed;
 static char initcorners,initparams;
 struct fractalspecificstuff *curfractalspecific = NULL;
 
-char FormFileName[FILE_MAX_PATH];/* file to find (type=)formulas in */
+char FormFileName[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char FormName[ITEMNAMELEN+1];    /* Name of the Formula (if not null) */
 char LFileName[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
 char LName[ITEMNAMELEN+1];       /* Name of L-System */
 char CommandFile[FILE_MAX_PATH]; /* file to find command sets in */
 char CommandName[ITEMNAMELEN+1]; /* Name of Command set */
 char CommandComment[4][MAXCMT];    /* comments for command set */
-char IFSFileName[FILE_MAX_PATH];/* file to find (type=)IFS in */
+char IFSFileName[FILE_MAX_PATH]; /* file to find (type=)IFS in */
 char IFSName[ITEMNAMELEN+1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
 float *ifs_defn = NULL;     /* ifs parameters */
@@ -252,7 +252,7 @@ int cmdfiles(int argc,char **argv)
                strcat(tempstring,".gif");
             if ((initfile = fopen(tempstring,"rb")) != NULL) {
                fread(tempstring,6,1,initfile);
-               if ( tempstring[0] == 'G'
+               if (tempstring[0] == 'G'
                  && tempstring[1] == 'I'
                  && tempstring[2] == 'F'
                  && tempstring[3] >= '8' && tempstring[3] <= '9'
@@ -272,7 +272,7 @@ int cmdfiles(int argc,char **argv)
          if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
             init_msg("",CommandFile,0);
          strcpy(CommandName,sptr+1);
-         if (find_file_item(CommandFile,CommandName,&initfile, ITEMTYPE_PARAMETER)<0 || initfile==NULL)
+         if (find_file_item(CommandFile,CommandName,&initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
             argerror(curarg);
          cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
          }
@@ -300,7 +300,7 @@ int cmdfiles(int argc,char **argv)
             stopmsg(0,msg);
          }
 */
-   if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
+   if (colorpreloaded && showfile == 0) /* PAR reads a file and sets color */
       dontreadcolor = 1;   /* don't read colors from GIF */
    else
       dontreadcolor = 0;   /* read colors from GIF */
@@ -330,7 +330,7 @@ int load_commands(FILE *infile)
          }
 */
 
-   if (colorpreloaded && showfile==0) /* PAR reads a file and sets color */
+   if (colorpreloaded && showfile == 0) /* PAR reads a file and sets color */
       dontreadcolor = 1;   /* don't read colors from GIF */
    else
       dontreadcolor = 0;   /* read colors from GIF */
@@ -387,7 +387,7 @@ static void initvars_restart()          /* <ins> key init */
    LName[0] = 0;
    strcpy(CommandFile, "fractint.par");
    CommandName[0] = 0;
-   for (i=0; i<4; i++)
+   for (i = 0; i < 4; i++)
       CommandComment[i][0] = 0;
    strcpy(IFSFileName, "fractint.ifs");
    IFSName[0] = 0;
@@ -397,7 +397,7 @@ static void initvars_restart()          /* <ins> key init */
    strcpy(readname,DOTSLASH);           /* initially current directory */
    showfile = 1;
    /* next should perhaps be fractal re-init, not just <ins> ? */
-   initcyclelimit=55;                   /* spin-DAC default speed limit */
+   initcyclelimit = 55;                   /* spin-DAC default speed limit */
    mapset = 0;                          /* no map= name active */
    if (mapdacbox) {
       free(mapdacbox);
@@ -485,10 +485,10 @@ static void initvars_fractal()          /* init vars affecting calculation */
 
    old_demm_colors = 0;
    bailoutest    = Mod;
-   floatbailout  = (int ( *)(void))fpMODbailout;
-   longbailout   = (int ( *)(void))asmlMODbailout;
-   bignumbailout = (int ( *)(void))bnMODbailout;
-   bigfltbailout = (int ( *)(void))bfMODbailout;
+   floatbailout  = (int (*)(void))fpMODbailout;
+   longbailout   = (int (*)(void))asmlMODbailout;
+   bignumbailout = (int (*)(void))bnMODbailout;
+   bigfltbailout = (int (*)(void))bfMODbailout;
 
    functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
    mxminfp = -.83;
@@ -514,7 +514,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
    fm_release = 5;                      /* short release   */
    fm_wavetype = 0;                     /* sin wave */
    polyphony = 0;                       /* no polyphony    */
-   for (i=0; i<=11; i++) scale_map[i]=i+1;    /* straight mapping of notes in octave */
+   for (i = 0; i <= 11; i++) scale_map[i]=i+1;    /* straight mapping of notes in octave */
 #endif
 }
 
@@ -565,7 +565,7 @@ static int cmdfile(FILE *handle,int mode)
 
    if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) {
       while ((i = getc(handle)) != '{' && i != EOF) { }
-      for (i=0; i<4; i++)
+      for (i = 0; i < 4; i++)
           CommandComment[i][0] = 0;
       }
    linebuf[0] = 0;
@@ -614,7 +614,7 @@ static int next_command(char *cmdbuf,int maxlen,
                if (*lineptr) {
                   if ((int)strlen(lineptr) >= MAXCMT)
                      *(lineptr+MAXCMT-1) = 0;
-                  for (i=0; i<4; i++)
+                  for (i = 0; i < 4; i++)
                      if (CommandComment[i][0] == 0)
                      {
                         strcpy(CommandComment[i],lineptr);
@@ -776,7 +776,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			numval = NONNUMERIC;
 		}
 		i = -1;
-		if ( totparms < 16)
+		if (totparms < 16)
 		{
 			charval[totparms] = *argptr;                      /* first letter of value  */
 			if (charval[totparms] == 'n')
@@ -897,7 +897,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
 
 		/* adapter= no longer used */
-		if (strcmp(variable, "adapter") == 0)    /* adapter==?     */
+		if (strcmp(variable, "adapter") == 0)    /* adapter == ?     */
 		{
 			/* adapter parameter no longer used; check for bad argument anyway */
 			if ((strcmp(value, "egamono") != 0)	&& (strcmp(value, "hgc") != 0) &&
@@ -915,7 +915,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			return 3;
 		}
 
-		if (strcmp(variable,"textsafe") == 0 )  /* textsafe==? */
+		if (strcmp(variable,"textsafe") == 0)  /* textsafe == ? */
 		{
 			/* textsafe no longer used, do validity checking, but gobble argument */
 			if (first_init)
@@ -1002,7 +1002,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			{
 				strcat(CommandFile, ".par");
 			}
-			if (strcmp(readname, DOTSLASH)==0)
+			if (strcmp(readname, DOTSLASH) == 0)
 			{
 				*readname = 0;
 			}
@@ -1402,7 +1402,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "fillcolor") == 0)       /* fillcolor */
 	{
-		if (strcmp(value, "normal")==0)
+		if (strcmp(value, "normal") == 0)
 		{
 			fillcolor = -1;
 		}
@@ -1744,7 +1744,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		k = 0;
 		while (k < 3 && *value)
 		{
-			if (k==1)
+			if (k == 1)
 			{
 				potparam[k] = atof(value);
 			}
@@ -1850,7 +1850,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "initorbit") == 0)     /* initorbit=?,? */
 	{
-		if (strcmp(value, "pixel")==0)
+		if (strcmp(value, "pixel") == 0)
 		{
 			useinitorbit = 2;
 		}
@@ -2145,7 +2145,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
    if (strcmp(variable, "center-mag") == 0) {    /* center-mag=?,?,?[,?,?,?] */
       int dec;
 
-      if ( (totparms != floatparms)
+      if ((totparms != floatparms)
         || (totparms != 0 && totparms < 3)
         || (totparms >= 3 && floatval[2] == 0.0))
          goto badarg;
@@ -2227,7 +2227,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
    }
 
-   if (strcmp(variable, "aspectdrift") == 0 ) {  /* aspectdrift=? */
+   if (strcmp(variable, "aspectdrift") == 0) {  /* aspectdrift=? */
       if (floatparms != 1 || floatval[0] < 0)
          goto badarg;
       aspectdrift = (float)floatval[0];
@@ -2245,22 +2245,22 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable, "olddemmcolors") == 0 ) {     /* olddemmcolors=?   */
+   if (strcmp(variable, "olddemmcolors") == 0) {     /* olddemmcolors=?   */
       if (yesnoval[0] < 0) goto badarg;
       old_demm_colors = yesnoval[0];
       return 0;
       }
 
-   if (strcmp(variable, "askvideo") == 0 ) {     /* askvideo=?   */
+   if (strcmp(variable, "askvideo") == 0) {     /* askvideo=?   */
       if (yesnoval[0] < 0) goto badarg;
       askvideo = yesnoval[0];
       return 0;
       }
 
-   if (strcmp(variable, "ramvideo") == 0 )       /* ramvideo=?   */
+   if (strcmp(variable, "ramvideo") == 0)       /* ramvideo=?   */
       return 0; /* just ignore and return, for old time's sake */
 
-   if (strcmp(variable, "float") == 0 ) {        /* float=? */
+   if (strcmp(variable, "float") == 0) {        /* float=? */
       if (yesnoval[0] < 0) goto badarg;
 #ifndef XFRACT
       usr_floatflag = (char)yesnoval[0];
@@ -2270,13 +2270,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 3;
       }
 
-   if (strcmp(variable, "fastrestore") == 0 ) {   /* fastrestore=? */
+   if (strcmp(variable, "fastrestore") == 0) {   /* fastrestore=? */
       if (yesnoval[0] < 0) goto badarg;
       fastrestore = (char)yesnoval[0];
       return 0;
       }
 
-   if (strcmp(variable, "orgfrmdir") == 0 ) {   /* orgfrmdir=? */
+   if (strcmp(variable, "orgfrmdir") == 0) {   /* orgfrmdir=? */
       if (valuelen > (FILE_MAX_DIR-1)) goto badarg;
       if (isadirectory(value) == 0) goto badarg;
       orgfrmsearch = 1;
@@ -2285,12 +2285,12 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 0;
    }
 
-   if (strcmp(variable, "biomorph") == 0 ) {     /* biomorph=? */
+   if (strcmp(variable, "biomorph") == 0) {     /* biomorph=? */
       usr_biomorph = numval;
       return 1;
       }
 
-   if (strcmp(variable, "orbitsave") == 0 ) {     /* orbitsave=? */
+   if (strcmp(variable, "orbitsave") == 0) {     /* orbitsave=? */
       if (charval[0] == 's')
          orbitsave |= ORBITSAVE_SOUND;
       else if (yesnoval[0] < 0) goto badarg;
@@ -2298,32 +2298,32 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable, "bailout") == 0 ) {      /* bailout=? */
+   if (strcmp(variable, "bailout") == 0) {      /* bailout=? */
       if (floatval[0] < 1 || floatval[0] > 2100000000L) goto badarg;
       bailout = (long)floatval[0];
       return 1;
       }
 
-   if (strcmp(variable, "bailoutest") == 0 ) {   /* bailoutest=? */
-      if     (strcmp(value, "mod" )==0) bailoutest = Mod;
-      else if (strcmp(value, "real")==0) bailoutest = Real;
-      else if (strcmp(value, "imag")==0) bailoutest = Imag;
-      else if (strcmp(value, "or"  )==0) bailoutest = Or;
-      else if (strcmp(value, "and" )==0) bailoutest = And;
-      else if (strcmp(value, "manh")==0) bailoutest = Manh;
-      else if (strcmp(value, "manr")==0) bailoutest = Manr;
+   if (strcmp(variable, "bailoutest") == 0) {   /* bailoutest=? */
+      if     (strcmp(value, "mod") == 0) bailoutest = Mod;
+      else if (strcmp(value, "real") == 0) bailoutest = Real;
+      else if (strcmp(value, "imag") == 0) bailoutest = Imag;
+      else if (strcmp(value, "or") == 0) bailoutest = Or;
+      else if (strcmp(value, "and") == 0) bailoutest = And;
+      else if (strcmp(value, "manh") == 0) bailoutest = Manh;
+      else if (strcmp(value, "manr") == 0) bailoutest = Manr;
       else goto badarg;
       setbailoutformula(bailoutest);
       return 1;
       }
 
-   if (strcmp(variable, "symmetry") == 0 ) {     /* symmetry=? */
-      if     (strcmp(value, "xaxis" )==0) forcesymmetry = XAXIS;
-      else if (strcmp(value, "yaxis" )==0) forcesymmetry = YAXIS;
-      else if (strcmp(value, "xyaxis")==0) forcesymmetry = XYAXIS;
-      else if (strcmp(value, "origin")==0) forcesymmetry = ORIGIN;
-      else if (strcmp(value, "pi"    )==0) forcesymmetry = PI_SYM;
-      else if (strcmp(value, "none"  )==0) forcesymmetry = NOSYM;
+   if (strcmp(variable, "symmetry") == 0) {     /* symmetry=? */
+      if     (strcmp(value, "xaxis") == 0) forcesymmetry = XAXIS;
+      else if (strcmp(value, "yaxis") == 0) forcesymmetry = YAXIS;
+      else if (strcmp(value, "xyaxis") == 0) forcesymmetry = XYAXIS;
+      else if (strcmp(value, "origin") == 0) forcesymmetry = ORIGIN;
+      else if (strcmp(value, "pi") == 0) forcesymmetry = PI_SYM;
+      else if (strcmp(value, "none") == 0) forcesymmetry = NOSYM;
       else goto badarg;
       return 1;
       }
@@ -2344,7 +2344,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 	}
 
-   if (strcmp(variable, "sound") == 0 ) {        /* sound=?,?,? */
+   if (strcmp(variable, "sound") == 0) {        /* sound=?,?,? */
       if (totparms > 5)
          goto badarg;
       soundflag = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
@@ -2456,7 +2456,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
    if (strcmp(variable, "scalemap") == 0) {      /* Scalemap=?,?,?,?,?,?,?,?,?,?,? */
       int counter;
       if (totparms != intparms) goto badarg;
-      for (counter=0; counter <=11; counter++)
+      for (counter = 0; counter <=11; counter++)
          if ((totparms > counter) && (intval[counter] > 0)
            && (intval[counter] < 13))
              scale_map[counter] = intval[counter];
@@ -2464,12 +2464,12 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 0;
    } 
 
-   if (strcmp(variable, "periodicity") == 0 ) {  /* periodicity=? */
-      usr_periodicitycheck=1;
+   if (strcmp(variable, "periodicity") == 0) {  /* periodicity=? */
+      usr_periodicitycheck = 1;
       if ((charval[0] == 'n') || (numval == 0))
-         usr_periodicitycheck=0;
+         usr_periodicitycheck = 0;
       else if (charval[0] == 'y')
-         usr_periodicitycheck=1;
+         usr_periodicitycheck = 1;
       else if (charval[0] == 's')   /* 's' for 'show' */
          usr_periodicitycheck= -1;
       else if (numval == NONNUMERIC)
@@ -2481,7 +2481,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable, "logmap") == 0 ) {       /* logmap=? */
+   if (strcmp(variable, "logmap") == 0) {       /* logmap=? */
       Log_Auto_Calc = 0;   /* turn this off if loading a PAR */
       if (charval[0] == 'y')
          LogFlag = 1;                           /* palette is logarithmic */
@@ -2494,7 +2494,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return 1;
       }
 
-   if (strcmp(variable, "logmode") == 0 ) {       /* logmode=? */
+   if (strcmp(variable, "logmode") == 0) {       /* logmode=? */
       Log_Fly_Calc = 0;                         /* turn off if error */
       Log_Auto_Calc = 0;
       if (charval[0] == 'f')
@@ -2551,7 +2551,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
          else   
          {
             showdot=numval;
-            if (showdot<0)
+            if (showdot < 0)
                showdot=-1;
          }
          if (totparms > 1 && intparms > 0)
@@ -2593,7 +2593,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "formulafile") == 0) {   /* formulafile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if (merge_pathnames(FormFileName, value, mode)<0)
+      if (merge_pathnames(FormFileName, value, mode) < 0)
          init_msg(variable, value, mode);
       return 1;
       }
@@ -2606,7 +2606,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "lfile") == 0) {    /* lfile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if (merge_pathnames(LFileName, value, mode)<0)
+      if (merge_pathnames(LFileName, value, mode) < 0)
          init_msg(variable, value, mode);
       return 1;
       }
@@ -2621,7 +2621,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       int existdir;
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
       existdir=merge_pathnames(IFSFileName, value, mode);
-	  if (existdir==0)
+	  if (existdir == 0)
          reset_ifs_defn();
       else if (existdir < 0)
          init_msg(variable, value, mode);
@@ -2639,13 +2639,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "parmfile") == 0) {   /* parmfile=? */
       if (valuelen > (FILE_MAX_PATH-1)) goto badarg;
-      if (merge_pathnames(CommandFile, value, mode)<0)
+      if (merge_pathnames(CommandFile, value, mode) < 0)
          init_msg(variable, value, mode);
       return 1;
       }
 
    if (strcmp(variable, "stereo") == 0) {        /* stereo=? */
-      if ((numval<0) || (numval>4)) goto badarg;
+      if ((numval < 0) || (numval > 4)) goto badarg;
       g_glasses_type = numval;
       return 3;
       }
@@ -2710,10 +2710,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
 
    if (strcmp(variable, "3d") == 0) {            /* 3d=?/?/..    */
-      if (strcmp(value, "overlay")==0) {
+      if (strcmp(value, "overlay") == 0) {
          yesnoval[0]=1;
          if (calc_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
-            overlay3d=1;
+            overlay3d = 1;
       }
       else if (yesnoval[0] < 0) goto badarg;
       display3d = yesnoval[0];
@@ -2721,7 +2721,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       return (display3d) ? 6 : 2;
       }
 
-   if (strcmp(variable, "sphere") == 0 ) {       /* sphere=? */
+   if (strcmp(variable, "sphere") == 0) {       /* sphere=? */
       if (yesnoval[0] < 0) goto badarg;
       SPHERE = yesnoval[0];
       return 2;
@@ -2742,7 +2742,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
 
    if (strcmp(variable, "waterline") == 0) {     /* waterline=?  */
-      if (numval<0) goto badarg;
+      if (numval < 0) goto badarg;
       WATERLINE = numval;
       return 2;
       }
@@ -2762,7 +2762,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
 
    if (strcmp(variable, "smoothing") == 0) {     /* smoothing=?  */
-      if (numval<0) goto badarg;
+      if (numval < 0) goto badarg;
       LIGHTAVG = numval;
       return 2;
       }
@@ -2813,19 +2813,19 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
       }
 
    if (strcmp(variable, "randomize") == 0) {     /* RANDOMIZE=? */
-      if (numval<0 || numval>7) goto badarg;
+      if (numval < 0 || numval > 7) goto badarg;
       RANDOMIZE = numval;
       return 2;
       }
 
    if (strcmp(variable, "ambient") == 0) {       /* ambient=? */
-      if (numval<0||numval>100) goto badarg;
+      if (numval < 0||numval > 100) goto badarg;
       Ambient = numval;
       return 2;
       }
 
    if (strcmp(variable, "haze") == 0) {          /* haze=? */
-      if (numval<0||numval>100) goto badarg;
+      if (numval < 0||numval > 100) goto badarg;
       haze = numval;
       return 2;
       }
@@ -2875,7 +2875,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "background") == 0) {     /* background=?/? */
       if (totparms != 3 || intparms != 3) goto badarg;
-                for (i=0;i<3;i++)
+                for (i = 0; i < 3; i++)
                         if (intval[i] & ~0xff)
                                 goto badarg;
       back_color[0] = (BYTE)intval[0];
@@ -2932,7 +2932,7 @@ badarg:
 
 #ifdef _MSC_VER
 #if (_MSC_VER >= 600)
-#pragma optimize( "el", on )
+#pragma optimize("el", on)
 #endif
 #endif
 
@@ -2957,7 +2957,7 @@ static void parse_textcolors(char *value)
       }
    else {
       k = 0;
-      while ( k < sizeof(txtcolor)) {
+      while (k < sizeof(txtcolor)) {
          if (*value == 0) break;
          if (*value != '/') {
             sscanf(value,"%x",&hexval);
@@ -2979,7 +2979,7 @@ static int parse_colors(char *value)
 {
    int i,j,k;
    if (*value == '@') {
-      if (merge_pathnames(MAP_name,&value[1],3)<0)
+      if (merge_pathnames(MAP_name,&value[1],3) < 0)
          init_msg("",&value[1],3);
       if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
          goto badcolor;
@@ -2987,7 +2987,7 @@ static int parse_colors(char *value)
         mapset = 1;
         }
       else {
-        if (merge_pathnames(colorfile,&value[1],3)<0)
+        if (merge_pathnames(colorfile,&value[1],3) < 0)
           init_msg("",&value[1],3);
         colorstate = 2;
         }
@@ -3025,9 +3025,9 @@ static int parse_colors(char *value)
                   else {
                      while (++cnum < spread)
                         g_dac_box[start+cnum][j] =
-            (BYTE)(( cnum *g_dac_box[i][j]
+            (BYTE)((cnum *g_dac_box[i][j]
             + (i-(start+cnum))*g_dac_box[start][j]
-            + spread/2 )
+            + spread/2)
             / (BYTE) spread);
                      }
                   }
@@ -3147,7 +3147,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 {
    int i,tmp,max_str;
    max_str = 0;
-   for (i=0; i<totparms; i++)
+   for (i = 0; i < totparms; i++)
       if ((tmp=get_curarg_len(floatvalstr[i])) > max_str)
          max_str = tmp;
    return max_str;
@@ -3239,20 +3239,20 @@ void dopause(int action)
 static int isabigfloat(char *str)
 {
    /* [+|-]numbers][.]numbers[+|-][e|g]numbers */
-   int result=1;
+   int result = 1;
    char *s = str;
-   int numdot=0;
-   int nume=0;
-   int numsign=0;
+   int numdot = 0;
+   int nume = 0;
+   int numsign = 0;
    while (*s != 0 && *s != '/' && *s != ' ')
    {
       if (*s == '-' || *s == '+') numsign++;
       else if (*s == '.') numdot++;
       else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G') nume++;
-      else if (!isdigit(*s)) {result=0; break;}
+      else if (!isdigit(*s)) {result = 0; break; }
       s++;
    }
-   if (numdot > 1 || numsign > 2 || nume > 1) result=0;
+   if (numdot > 1 || numsign > 2 || nume > 1) result = 0;
    return result;
 }
 

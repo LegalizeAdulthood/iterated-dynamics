@@ -399,7 +399,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_vesa_y_res = 0;					/* virtual screen limits estimation */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
-	if (dotmode !=0)
+	if (dotmode != 0)
 	{
 		g_and_color = colors-1;
 		boxcount = 0;

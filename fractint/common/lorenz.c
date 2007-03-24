@@ -261,26 +261,26 @@ int orbit3dlongsetup()
    connect = 1;
    waste = 100;
    projection = 2;
-   if (fractype==LHENON || fractype==KAM || fractype==KAM3D ||
-       fractype==INVERSEJULIA)
-      connect=0;
-   if (fractype==LROSSLER)
+   if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
+       fractype == INVERSEJULIA)
+      connect = 0;
+   if (fractype == LROSSLER)
       waste = 500;
-   if (fractype==LLORENZ)
+   if (fractype == LLORENZ)
       projection = 1;
 
    initorbitlong[0] = fudge;  /* initial conditions */
    initorbitlong[1] = fudge;
    initorbitlong[2] = fudge;
 
-   if (fractype==LHENON)
+   if (fractype == LHENON)
    {
       l_a =  (long)(param[0]*fudge);
       l_b =  (long)(param[1]*fudge);
       l_c =  (long)(param[2]*fudge);
       l_d =  (long)(param[3]*fudge);
    }
-   else if (fractype==KAM || fractype==KAM3D)
+   else if (fractype == KAM || fractype == KAM3D)
    {
       maxct = 1L;
       a   = param[0];           /* angle */
@@ -387,28 +387,28 @@ int orbit3dfloatsetup()
    waste = 100;
    projection = 2;
 
-   if (fractype==FPHENON || fractype==FPPICKOVER || fractype==FPGINGERBREAD
+   if (fractype == FPHENON || fractype == FPPICKOVER || fractype == FPGINGERBREAD
             || fractype == KAMFP || fractype == KAM3DFP
             || fractype == FPHOPALONG || fractype == INVERSEJULIAFP)
-      connect=0;
-   if (fractype==FPLORENZ3D1 || fractype==FPLORENZ3D3 ||
-      fractype==FPLORENZ3D4)
+      connect = 0;
+   if (fractype == FPLORENZ3D1 || fractype == FPLORENZ3D3 ||
+      fractype == FPLORENZ3D4)
       waste = 750;
-   if (fractype==FPROSSLER)
+   if (fractype == FPROSSLER)
       waste = 500;
-   if (fractype==FPLORENZ)
+   if (fractype == FPLORENZ)
       projection = 1; /* plot x and z */
 
    initorbitfp[0] = 1;  /* initial conditions */
    initorbitfp[1] = 1;
    initorbitfp[2] = 1;
-   if (fractype==FPGINGERBREAD)
+   if (fractype == FPGINGERBREAD)
    {
       initorbitfp[0] = param[0];        /* initial conditions */
       initorbitfp[1] = param[1];
    }
 
-   if (fractype==ICON || fractype==ICON3D)        /* DMF */
+   if (fractype == ICON || fractype == ICON3D)        /* DMF */
    {
       initorbitfp[0] = 0.01;  /* initial conditions */
       initorbitfp[1] = 0.003;
@@ -416,19 +416,19 @@ int orbit3dfloatsetup()
       waste = 2000;
    }
 
-   if (fractype==LATOO)        /* HB */
+   if (fractype == LATOO)        /* HB */
    {
       connect = 0;
    }
 
-   if (fractype==FPHENON || fractype==FPPICKOVER)
+   if (fractype == FPHENON || fractype == FPPICKOVER)
    {
       a =  param[0];
       b =  param[1];
       c =  param[2];
       d =  param[3];
    }
-   else if (fractype==ICON || fractype==ICON3D)        /* DMF */
+   else if (fractype == ICON || fractype == ICON3D)        /* DMF */
    {
       initorbitfp[0] = 0.01;  /* initial conditions */
       initorbitfp[1] = 0.003;
@@ -440,7 +440,7 @@ int orbit3dfloatsetup()
       c  =   param[2];
       d  =   param[3];
    }
-   else if (fractype==KAMFP || fractype==KAM3DFP)
+   else if (fractype == KAMFP || fractype == KAM3DFP)
    {
       maxct = 1L;
       a = param[0];           /* angle */
@@ -454,8 +454,8 @@ int orbit3dfloatsetup()
       orbit = 0;
       initorbitfp[0] = initorbitfp[1] = initorbitfp[2] = 0;
    }
-   else if (fractype==FPHOPALONG || fractype==FPMARTIN || fractype==CHIP
-        || fractype==QUADRUPTWO || fractype==THREEPLY)
+   else if (fractype == FPHOPALONG || fractype == FPMARTIN || fractype == CHIP
+        || fractype == QUADRUPTWO || fractype == THREEPLY)
    {
       initorbitfp[0] = 0;  /* initial conditions */
       initorbitfp[1] = 0;
@@ -465,7 +465,7 @@ int orbit3dfloatsetup()
       b =  param[1];
       c =  param[2];
       d =  param[3];
-      if (fractype==THREEPLY)
+      if (fractype == THREEPLY)
       {
          COSB   = cos(b);
          SINABC = sin(a+b+c);
@@ -658,7 +658,7 @@ Minverse_julia_orbit()
          {
             putcolor(newcol, newrow, color+1);
 /*          g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
-            EnQueueFloat( (float)g_new.x, (float)g_new.y);
+            EnQueueFloat((float)g_new.x, (float)g_new.y);
             EnQueueFloat((float)-g_new.x, (float)-g_new.y);
          }
          break;
@@ -673,18 +673,18 @@ Minverse_julia_orbit()
                   PushFloat((float)-g_new.x, (float)-g_new.y);
                else
                {
-                  PushFloat( (float)g_new.x, (float)g_new.y);
+                  PushFloat((float)g_new.x, (float)g_new.y);
                   PushFloat((float)-g_new.x, (float)-g_new.y);
                }
             }
             else
             {
                if (QueueFullAlmost())
-                  PushFloat( (float)g_new.x, (float)g_new.y);
+                  PushFloat((float)g_new.x, (float)g_new.y);
                else
                {
                   PushFloat((float)-g_new.x, (float)-g_new.y);
-                  PushFloat( (float)g_new.x, (float)g_new.y);
+                  PushFloat((float)g_new.x, (float)g_new.y);
                }
             }
          }
@@ -825,7 +825,7 @@ Linverse_julia_orbit()
          {
             putcolor(newcol, newrow, color+1);
             lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-            EnQueueLong( lnew.x,  lnew.y);
+            EnQueueLong(lnew.x,  lnew.y);
             EnQueueLong(-lnew.x, -lnew.y);
          }
          break;
@@ -840,18 +840,18 @@ Linverse_julia_orbit()
                   PushLong(-lnew.x, -lnew.y);
                else
                {
-                  PushLong( lnew.x,  lnew.y);
+                  PushLong(lnew.x,  lnew.y);
                   PushLong(-lnew.x, -lnew.y);
                }
             }
             else
             {
                if (QueueFullAlmost())
-                  PushLong( lnew.x,  lnew.y);
+                  PushLong(lnew.x,  lnew.y);
                else
                {
                   PushLong(-lnew.x, -lnew.y);
-                  PushLong( lnew.x,  lnew.y);
+                  PushLong(lnew.x,  lnew.y);
                }
             }
          }
@@ -1178,7 +1178,7 @@ int mandelcloudfloat(double *x, double *y, double *z)
 #endif
     x2 = (*x)*(*x);
     y2 = (*y)*(*y);
-    if (x2+y2>2) return 1;
+    if (x2+y2 > 2) return 1;
     newx = x2-y2+a;
     newy = 2*(*x)*(*y)+b;
     *x = newx;
@@ -1229,7 +1229,7 @@ int iconfloatorbit(double *x, double *y, double *z)
     zreal = oldx;
     zimag = oldy;
 
-    for (i=1; i <= DEGREE-2; i++) {
+    for (i = 1; i <= DEGREE-2; i++) {
         za = zreal * oldx - zimag * oldy;
         zb = zimag * oldx + zreal * oldy;
         zreal = za;
@@ -1672,7 +1672,7 @@ static int orbit3dlongcalc(void)
          if (inf.col >= 0)
          {
             if (realtime)
-               g_which_image=1;
+               g_which_image = 1;
             if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
             {
                double yy;
@@ -1691,7 +1691,7 @@ static int orbit3dlongcalc(void)
          oldrow = inf.row;
          if (realtime)
          {
-            g_which_image=2;
+            g_which_image = 2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -1772,7 +1772,7 @@ static int orbit3dfloatcalc(void)
          if (inf.col >= 0)
          {
             if (realtime)
-               g_which_image=1;
+               g_which_image = 1;
             if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
                w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100+basehertz));
             }
@@ -1787,7 +1787,7 @@ static int orbit3dfloatcalc(void)
          oldrow = inf.row;
          if (realtime)
          {
-            g_which_image=2;
+            g_which_image = 2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -1813,22 +1813,22 @@ int dynam2dfloatsetup()
    connect = 0;
    euler = 0;
    d = param[0]; /* number of intervals */
-   if (d<0) {
+   if (d < 0) {
       d = -d;
       connect = 1;
    }
-   else if (d==0) {
+   else if (d == 0) {
       d = 1;
    }
-   if (fractype==DYNAMICFP) {
+   if (fractype == DYNAMICFP) {
        a = param[2]; /* parameter */
        b = param[3]; /* parameter */
        dt = param[1]; /* step size */
-       if (dt<0) {
+       if (dt < 0) {
           dt = -dt;
           euler = 1;
        }
-       if (dt==0) dt = 0.01;
+       if (dt == 0) dt = 0.01;
    }
    if (outside == SUM) {
        plot = plothist;
@@ -1865,11 +1865,11 @@ int dynam2dfloat()
    p1 = &y;
 
 
-   if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
+   if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
       soundvar = &x;
-   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
       soundvar = &y;
-   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
       soundvar = &z;
 
    count = 0;
@@ -1909,10 +1909,10 @@ int dynam2dfloat()
       }
 
       xstep ++;
-      if (xstep>=d) {
+      if (xstep >= d) {
           xstep = 0;
           ystep ++;
-          if (ystep>d) {
+          if (ystep > d) {
               driver_mute();
               ret = -1;
               break;
@@ -1923,7 +1923,7 @@ int dynam2dfloat()
       ypixel = dysize*(ystep+.5)/d;
       x = (double)((xxmin+delxx*xpixel) + (delxx2*ypixel));
       y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
-      if (fractype==MANDELCLOUD) {
+      if (fractype == MANDELCLOUD) {
           a = x;
           b = y;
       }
@@ -1932,7 +1932,7 @@ int dynam2dfloat()
       if (++color >= colors)   /* another color to switch to? */
           color = 1;    /* (don't use the background color) */
 
-      for (count=0;count<maxit;count++) {
+      for (count = 0; count < maxit; count++) {
 
           if (count % 2048L == 0)
              if (driver_key_pressed())
@@ -1940,12 +1940,12 @@ int dynam2dfloat()
 
           col = (int)(cvt.a*x + cvt.b*y + cvt.e);
           row = (int)(cvt.c*x + cvt.d*y + cvt.f);
-          if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+          if (col >= 0 && col < xdots && row >= 0 && row < ydots)
           {
              if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
                w_snd((int)(*soundvar*100+basehertz));
 
-             if (count>=orbit_delay) {
+             if (count >= orbit_delay) {
                  if (oldcol != -1 && connect)
                     driver_draw_line(col, row, oldcol, oldrow, color%colors);
                  else if (count > 0 || fractype != MANDELCLOUD)
@@ -2056,16 +2056,16 @@ int plotorbits2dfloat(void)
 #if 0
     col = (int)(o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
     row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
-    if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+    if (col >= 0 && col < xdots && row >= 0 && row < ydots)
        (*plot)(col, row, 1);
     return 0;
 #endif
 
-   if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_X)
+   if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
       soundvar = &x;
-   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Y)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
       soundvar = &y;
-   else if ((soundflag & SOUNDFLAG_ORBITMASK)==SOUNDFLAG_Z)
+   else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
       soundvar = &z;
 
    if (resuming) {
@@ -2096,10 +2096,10 @@ int plotorbits2dfloat(void)
        col = (int)(o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
        row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
 #ifdef XFRACT
-       if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+       if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 #else
 /* don't know why the next line is necessary, the one above should work */
-       if ( col > 0 && col < xdots && row > 0 && row < ydots )
+       if (col > 0 && col < xdots && row > 0 && row < ydots)
 #endif
        {             /* plot if on the screen */
           if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
@@ -2136,7 +2136,7 @@ int funny_glasses_call(int (*calc)(void))
    }
    if (g_glasses_type && status == 0 && display3d)
    {
-      if (g_glasses_type==STEREO_PHOTO)  { /* photographer's mode */
+      if (g_glasses_type == STEREO_PHOTO)  { /* photographer's mode */
             int i;
             stopmsg(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it, \n"
@@ -2156,7 +2156,7 @@ int funny_glasses_call(int (*calc)(void))
       status = calc();
 	  if (status != 0)
          goto done;
-      if (g_glasses_type==STEREO_PHOTO) /* photographer's mode */
+      if (g_glasses_type == STEREO_PHOTO) /* photographer's mode */
             stopmsg(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
    }
 done:
@@ -2219,7 +2219,7 @@ static int ifs3dfloat(void)
       /* pick which iterated function to execute, weighted by probability */
       sum = ifs_defn[12]; /* [0][12] */
       k = 0;
-      while ( sum < r && ++k < numaffine*IFS3DPARM)
+      while (sum < r && ++k < numaffine*IFS3DPARM)
       {
          sum += ifs_defn[k*IFS3DPARM+12];
          if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; /* for safety */
@@ -2248,19 +2248,19 @@ static int ifs3dfloat(void)
          if (inf.col >= 0)
          {
             if (realtime)
-               g_which_image=1;
+               g_which_image = 1;
             if (color_method)
                color = (k%colors)+1;
             else
             color = getcolor(inf.col, inf.row)+1;
-            if ( color < colors ) /* color sticks on last value */
+            if (color < colors) /* color sticks on last value */
                (*plot)(inf.col, inf.row, color);
          }
          else if (inf.col == -2)
             return ret;
          if (realtime)
          {
-            g_which_image=2;
+            g_which_image = 2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -2268,7 +2268,7 @@ static int ifs3dfloat(void)
                  color = (k%colors)+1;
               else
                 color = getcolor(inf.col1, inf.row1)+1;
-                if ( color < colors ) /* color sticks on last value */
+                if (color < colors) /* color sticks on last value */
                   (*plot)(inf.col1, inf.row1, color);
             }
             else if (inf.col1 == -2)
@@ -2346,7 +2346,7 @@ static int ifs2d(void)
       /* pick which iterated function to execute, weighted by probability */
       sum = localifs[6];  /* [0][6] */
       k = 0;
-      while ( sum < r && k < numaffine-1) /* fixed bug of error if sum < 1 */
+      while (sum < r && k < numaffine-1) /* fixed bug of error if sum < 1 */
          sum += localifs[++k*IFSPARM+6];
       /* calculate image of last point under selected iterated function */
       lfptr = localifs + k*IFSPARM; /* point to first parm in row */
@@ -2362,14 +2362,14 @@ static int ifs2d(void)
       /* plot if inside window */
       col = (int)((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
       row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
-      if ( col >= 0 && col < xdots && row >= 0 && row < ydots )
+      if (col >= 0 && col < xdots && row >= 0 && row < ydots)
       {
          /* color is count of hits on this pixel */
          if (color_method)
             color = (k%colors)+1;
          else
          color = getcolor(col, row)+1;
-         if ( color < colors ) /* color sticks on last value */
+         if (color < colors) /* color sticks on last value */
             (*plot)(col, row, color);
       }
       else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
@@ -2438,7 +2438,7 @@ static int ifs3dlong(void)
       /* pick which iterated function to execute, weighted by probability */
       sum = localifs[12];  /* [0][12] */
       k = 0;
-      while ( sum < r && ++k < numaffine*IFS3DPARM)
+      while (sum < r && ++k < numaffine*IFS3DPARM)
       {
          sum += localifs[k*IFS3DPARM+12];
          if (ifs_defn[(k+1)*IFS3DPARM+12] == 0) break; /* for safety */
@@ -2472,17 +2472,17 @@ static int ifs3dlong(void)
          if (inf.col >= 0)
          {
             if (realtime)
-               g_which_image=1;
+               g_which_image = 1;
             if (color_method)
                color = (k%colors)+1;
             else
             color = getcolor(inf.col, inf.row)+1;
-            if ( color < colors ) /* color sticks on last value */
+            if (color < colors) /* color sticks on last value */
                (*plot)(inf.col, inf.row, color);
          }
          if (realtime)
          {
-            g_which_image=2;
+            g_which_image = 2;
             /* plot if inside window */
             if (inf.col1 >= 0)
             {
@@ -2490,7 +2490,7 @@ static int ifs3dlong(void)
                   color = (k%colors)+1;
                else
                color = getcolor(inf.col1, inf.row1)+1;
-               if ( color < colors ) /* color sticks on last value */
+               if (color < colors) /* color sticks on last value */
                   (*plot)(inf.col1, inf.row1, color);
             }
          }
@@ -2513,7 +2513,7 @@ static void setupmatrix(MATRIX doublemat)
    zrot ((double)ZROT / 57.29577, doublemat);
 
    /* apply scale */
-/*   scale((double)XSCALE/100.0, (double)YSCALE/100.0, (double)ROUGH/100.0, doublemat);*/
+/*   scale((double)XSCALE/100.0, (double)YSCALE/100.0, (double)ROUGH/100.0, doublemat); */
 
 }
 
@@ -2541,14 +2541,8 @@ static int ifs3d(void)
 {
    display3d = -1;
 
-   if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
-      realtime = 1;
-   else
-      realtime = 0;
-   if (floatflag)
-      return funny_glasses_call(ifs3dfloat); /* double version of ifs3d */
-   else
-      return funny_glasses_call(ifs3dlong);  /* long version of ifs3d   */
+   realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+   return funny_glasses_call(floatflag ? ifs3dfloat : ifs3dlong); /* double, long version of ifs3d */
 }
 
 
@@ -2561,7 +2555,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 
    if (coloriter == 1)  /* initialize on first call */
    {
-      for (i=0; i<3; i++)
+      for (i = 0; i < 3; i++)
       {
          inf->minvals[i] =  1L << 30;
          inf->maxvals[i] = -inf->minvals[i];
@@ -2587,7 +2581,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
    if (coloriter <= waste) /* waste this many points to find minz and maxz */
    {
       /* find minz and maxz */
-      for (i=0; i<3; i++)
+      for (i = 0; i < 3; i++)
          if ((tmp = inf->viewvect[i]) < inf->minvals[i])
             inf->minvals[i] = tmp;
          else if (tmp > inf->maxvals[i])
@@ -2622,7 +2616,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
             tmpz = -((double)inf->maxvals[2]) / fudge;
             trans(tmpx, tmpy, tmpz, inf->doublemat1);
          }
-         for (i=0; i<3; i++)
+         for (i = 0; i < 3; i++)
             view[i] = (double)inf->iview[i] / fudge;
 
          /* copy xform matrix to long for for fixed point math */
@@ -2640,21 +2634,21 @@ static int long3dviewtransf(struct long3dvtinf *inf)
    /* apply perspective if requested */
    if (ZVIEWER)
    {
-      if (debugflag==22 || ZVIEWER < 100) /* use float for small persp */
+      if (debugflag == 22 || ZVIEWER < 100) /* use float for small persp */
       {
          /* use float perspective calc */
          VECTOR tmpv;
-         for (i=0; i<3; i++)
+         for (i = 0; i < 3; i++)
             tmpv[i] = (double)inf->viewvect[i] / fudge;
          perspective(tmpv);
-         for (i=0; i<3; i++)
+         for (i = 0; i < 3; i++)
             inf->viewvect[i] = (long)(tmpv[i]*fudge);
          if (realtime)
          {
-            for (i=0; i<3; i++)
+            for (i = 0; i < 3; i++)
                tmpv[i] = (double)inf->viewvect1[i] / fudge;
             perspective(tmpv);
-            for (i=0; i<3; i++)
+            for (i = 0; i < 3; i++)
                inf->viewvect1[i] = (long)(tmpv[i]*fudge);
          }
       }
@@ -2711,7 +2705,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 
    if (coloriter == 1)  /* initialize on first call */
    {
-      for (i=0; i<3; i++)
+      for (i = 0; i < 3; i++)
       {
          inf->minvals[i] =  100000.0; /* impossible value */
          inf->maxvals[i] = -100000.0;
@@ -2722,14 +2716,14 @@ static int float3dviewtransf(struct float3dvtinf *inf)
    }
 
    /* 3D VIEWING TRANSFORM */
-   vmult(inf->orbit, inf->doublemat, inf->viewvect );
+   vmult(inf->orbit, inf->doublemat, inf->viewvect);
    if (realtime)
       vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
 
    if (coloriter <= waste) /* waste this many points to find minz and maxz */
    {
       /* find minz and maxz */
-      for (i=0; i<3; i++)
+      for (i = 0; i < 3; i++)
          if ((tmp = inf->viewvect[i]) < inf->minvals[i])
             inf->minvals[i] = tmp;
          else if (tmp > inf->maxvals[i])
@@ -2803,21 +2797,25 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 
 static FILE *open_orbitsave(void)
 {
-   FILE *fp;
-   if ((orbitsave & ORBITSAVE_RAW) && (fp = fopen("orbits.raw", "w")) != NULL)
-   {
-      fprintf(fp, "pointlist x y z color\n");
-      return fp;
-   }
-   return NULL;
+	FILE *fp = NULL;
+	if (orbitsave & ORBITSAVE_RAW)
+	{
+		fp = fopen("orbits.raw", "w");
+		if (fp)
+		{
+			fprintf(fp, "pointlist x y z color\n");
+		}
+	}
+	return fp;
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */
 static void _fastcall plothist(int x, int y, int color)
 {
-    color = getcolor(x, y)+1;
-    if (color >= colors)
-        color = 1;
-    putcolor(x, y, color);
+	color = getcolor(x, y)+1;
+	if (color >= colors)
+	{
+		color = 1;
+	}
+	putcolor(x, y, color);
 }
-

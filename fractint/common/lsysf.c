@@ -175,10 +175,10 @@ static void lsysf_dosizedm(struct lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * cmd->aspect * c;
     cmd->ypos += cmd->size * s;
 
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 #else
 extern void lsysf_dosizedm(struct lsys_turtlestatef *cmd, long n);
@@ -190,10 +190,10 @@ static void lsysf_dosizegf(struct lsys_turtlestatef *cmd)
     cmd->xpos += cmd->size * coss_f[(int)cmd->angle];
     cmd->ypos += cmd->size * sins_f[(int)cmd->angle];
 
-    if (cmd->xpos>cmd->xmax) cmd->xmax=cmd->xpos;
-    if (cmd->ypos>cmd->ymax) cmd->ymax=cmd->ypos;
-    if (cmd->xpos<cmd->xmin) cmd->xmin=cmd->xpos;
-    if (cmd->ypos<cmd->ymin) cmd->ymin=cmd->ypos;
+    if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
+    if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
+    if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
+    if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
 }
 #else
 extern void lsysf_dosizegf(struct lsys_turtlestatef *cmd);
@@ -295,7 +295,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
    }
 
 
-   while (command->ch && command->ch !=']') {
+   while (command->ch && command->ch != ']') {
       if (! (ts->counter++)) {
          /* let user know we're not dead */
          if (thinking(1, "L-System thinking (higher orders take longer)")) {
@@ -303,11 +303,11 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
             return NULL;
          }
       }
-      tran=0;
+      tran = 0;
       if (depth) {
          for (rulind=rules; *rulind; rulind++)
-            if ((*rulind)->ch==command->ch) {
-               tran=1;
+            if ((*rulind)->ch == command->ch) {
+               tran = 1;
                if (findsize((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
@@ -397,7 +397,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
       vert = (float)1E37;
    else
       vert = (float)((ydots-6) /(ymax-ymin));
-   locsize = (vert<horiz) ? vert : horiz;
+   locsize = (vert < horiz) ? vert : horiz;
 
    if (horiz == 1E37)
       ts->xpos = xdots/2;
@@ -430,18 +430,18 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
    }
 
 
-   while (command->ch && command->ch !=']') {
+   while (command->ch && command->ch != ']') {
       if (!(ts->counter++)) {
          if (driver_key_pressed()) {
             ts->counter--;
             return NULL;
          }
       }
-      tran=0;
+      tran = 0;
       if (depth) {
          for (rulind=rules; *rulind; rulind++)
             if ((*rulind)->ch == command->ch) {
-               tran=1;
+               tran = 1;
                if (drawLSysF((*rulind)+1, ts, rules, depth-1) == NULL)
                   return NULL;
             }
@@ -679,7 +679,7 @@ void _fastcall lsysf_dosincos(void)
 
    locaspect=screenaspect*xdots/ydots;
    twopimax = TWOPI / maxangle;
-   for (i=0; i<maxangle; i++) {
+   for (i = 0; i < maxangle; i++) {
       twopimaxi = i * twopimax;
       sins_f[i]= sinl(twopimaxi);
       coss_f[i]= locaspect * cosl(twopimaxi);

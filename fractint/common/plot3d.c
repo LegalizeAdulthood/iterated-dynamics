@@ -325,23 +325,23 @@ void _fastcall plot3dalternate(int x, int y, int color)
     {
         if (red_local_left < x && x < red_local_right)
         {
-            putcolor(x, y, color>>1);
+            putcolor(x, y, color >> 1);
             if (Targa_Out) {
                 if (!ILLUMINE)
-                    targa_color(x, y, color>>1);
+                    targa_color(x, y, color >> 1);
                 else
                     targa_writedisk (x+sxoffs, y+syoffs, t_c, 0, 0);
             }
         }
     }
-    else if ((g_which_image == 2) && ((x+y)&1) ) /* - upper half palette */
+    else if ((g_which_image == 2) && ((x+y)&1)) /* - upper half palette */
     {
         if (blue_local_left < x && x < blue_local_right)
         {
-            putcolor(x, y, (color>>1)+(colors>>1));
+            putcolor(x, y, (color >> 1)+(colors >> 1));
             if (Targa_Out) {
                 if (!ILLUMINE)
-                    targa_color(x, y, (color>>1)+(colors>>1));
+                    targa_color(x, y, (color >> 1)+(colors >> 1));
                 else
                     targa_writedisk (x+sxoffs, y+syoffs, T_RED, 0, t_c);
             }
@@ -460,7 +460,7 @@ void plot_setup()
     if (mapset)
     {
         ValidateLuts(MAP_name); /* read the palette file */
-        if (g_glasses_type==STEREO_ALTERNATE || g_glasses_type==STEREO_SUPERIMPOSE)
+        if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
         {
             if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
             {
@@ -476,7 +476,7 @@ void plot_setup()
                 g_dac_box[PAL_MAGENTA][1] =    0;
                 g_dac_box[PAL_MAGENTA][2] = 63;
             }
-            for (i=0;i<256;i++)
+            for (i = 0; i < 256; i++)
             {
                 g_dac_box[i][0] = (BYTE)(g_dac_box[i][0] * d_red_bright);
                 g_dac_box[i][2] = (BYTE)(g_dac_box[i][2] * d_blue_bright);
