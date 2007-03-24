@@ -1343,7 +1343,7 @@ int endswithslash(char *fl)
 }
 
 /* --------------------------------------------------------------------- */
-static char seps[] = {"' ', '\t', \n', \r'"};
+static char seps[] = {" \t\n\r"};
 char *get_ifs_token(char *buf, FILE *ifsfile)
 {
 	char *bufptr;
