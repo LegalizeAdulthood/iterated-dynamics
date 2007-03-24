@@ -42,22 +42,22 @@ static long iteration1(register DBLS cr, register DBLS ci,
 	      register DBLS re, register DBLS im,
 	      long start)
 {
-   DBLS oldreal, oldimag, newreal, newimag, magnitude;
-   long color;
-   magnitude = 0.0;
-   color = start;
-   oldreal = re;
-   oldimag = im;
-   while ((magnitude < 16.0) && (color < maxit)) {
-      newreal = oldreal * oldreal - oldimag * oldimag + cr;
-      newimag = 2 * oldreal * oldimag + ci;
-      color++;
-      oldreal = newreal;
-      oldimag = newimag;
-      magnitude = newreal * newreal + newimag * newimag;
-   }
-   if (color >= maxit) color = BASIN_COLOR;
-   return (int)color;
+	DBLS oldreal, oldimag, newreal, newimag, magnitude;
+	long color;
+	magnitude = 0.0;
+	color = start;
+	oldreal = re;
+	oldimag = im;
+	while ((magnitude < 16.0) && (color < maxit)) {
+		newreal = oldreal * oldreal - oldimag * oldimag + cr;
+		newimag = 2 * oldreal * oldimag + ci;
+		color++;
+		oldreal = newreal;
+		oldimag = newimag;
+		magnitude = newreal * newreal + newimag * newimag;
+	}
+	if (color >= maxit) color = BASIN_COLOR;
+	return (int)color;
 }
 #endif
 
@@ -65,44 +65,44 @@ static long iteration(register DBLS cr, register DBLS ci,
 	      register DBLS re, register DBLS im,
 	      long start)
 {
-   old.x = re;
-   old.y = im;
-   tempsqrx = sqr(old.x);
-   tempsqry = sqr(old.y);
-   floatparm = &init;
-   floatparm->x = cr;
-   floatparm->y = ci;
-   while (ORBITCALC() == 0 && start < maxit)
-      start++;
-   if (start >= maxit) 
-      start = BASIN_COLOR;
-   return start;
+	old.x = re;
+	old.y = im;
+	tempsqrx = sqr(old.x);
+	tempsqry = sqr(old.y);
+	floatparm = &init;
+	floatparm->x = cr;
+	floatparm->y = ci;
+	while (ORBITCALC() == 0 && start < maxit)
+		start++;
+	if (start >= maxit) 
+		start = BASIN_COLOR;
+	return start;
 }
 #if 0
 JuliafpFractal()
 {
-   /* floating point version of classical Mandelbrot/Julia */
-   new.x = tempsqrx - tempsqry + floatparm->x;
-   new.y = 2.0 * old.x * old.y + floatparm->y;
-   return floatbailout();
+	/* floating point version of classical Mandelbrot/Julia */
+	new.x = tempsqrx - tempsqry + floatparm->x;
+	new.y = 2.0 * old.x * old.y + floatparm->y;
+	return floatbailout();
 }
 #endif
 
 static void puthline(int x1, int y1, int x2, int color)
 {
-   int x;
-   for (x=x1; x <= x2; x++)
-      (*plot)(x, y1, color);
+	int x;
+	for (x=x1; x <= x2; x++)
+		(*plot)(x, y1, color);
 }
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
   for (; y1 <= y2; y1++)
-    puthline(x1, y1, x2, color);
+	puthline(x1, y1, x2, color);
 }
 
 /* maximum side length beyond which we start regular scanning instead of
-   subdividing */
+	subdividing */
 #define SCAN 16
 
 /* pixel interleave used in scanning */
@@ -121,7 +121,7 @@ interpolate(cre1, midr, cre2, \
 	    interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
      
 /* compute the value of the interpolation polynomial at (x, y)
-   from saved values before interpolation failed to stay within tolerance */
+	from saved values before interpolation failed to stay within tolerance */
 #define GET_SAVED_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
 	    interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
@@ -134,9 +134,9 @@ interpolate(cre1, midr, cre2, \
 	    interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
      
 /* compute the value of the interpolation polynomial at (x, y)
-   during scanning. Here, key values do not change, so we can precompute
-   coefficients in one direction and simply evaluate the polynomial
-   during scanning. */
+	during scanning. Here, key values do not change, so we can precompute
+	coefficients in one direction and simply evaluate the polynomial
+	during scanning. */
 #define GET_SCAN_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
 	    EVALUATE(cre1, midr, br10, br11, br12, x), \
@@ -149,7 +149,7 @@ interpolate(cre1, midr, cre2, \
 	    EVALUATE(cim1, midi, bi30, bi31, bi32, y), x)
 
 /* compute coefficients of Newton polynomial (b0, .., b2) from
-   (x0, w0), .., (x2, w2). */
+	(x0, w0), .., (x2, w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
 b0=w0; \
 b1=(w1-w0)/(x1-x0); \
@@ -160,8 +160,8 @@ b2=((w2-w1)/(x2-x1)-b1)/(x2-x0)
 ((b2*(t-x1) + b1)*(t-x0) + b0)
      
 /* Newton Interpolation.
-   It computes the value of the interpolation polynomial given by
-   (x0, w0)..(x2, w2) at x:=t */
+	It computes the value of the interpolation polynomial given by
+	(x0, w0)..(x2, w2) at x:=t */
 static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 			  DBLS w0, DBLS w1, DBLS w2,
 			  DBLS t)
@@ -177,14 +177,14 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
   return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
   /*
   if (t < x1)
-    return w0 + ((t-x0)/(x1-x0))*(w1-w0);
+	return w0 + ((t-x0)/(x1-x0))*(w1-w0);
   else
-    return w1 + ((t-x1)/(x2-x1))*(w2-w1); */
+	return w1 + ((t-x1)/(x2-x1))*(w2-w1); */
 }
 
 /* SOICompute - Perform simultaneous orbit iteration for a given rectangle
 
-   Input: cre1..cim2 : values defining the four corners of the rectangle
+	Input: cre1..cim2 : values defining the four corners of the rectangle
           x1..y2     : corresponding pixel values
 	  zre1..zim9 : intermediate iterated values of the key points (key values)
 	  
@@ -203,11 +203,11 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 	  iter       : current number of iterations
 	  */
 static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
-            zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
+				zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
 /* 
-   The purpose of this macro is to reduce the number of parameters of the 
-   function rhombus(), since this is a recursive function, and stack space
-   under DOS is extremely limited. 
+	The purpose of this macro is to reduce the number of parameters of the 
+	function rhombus(), since this is a recursive function, and stack space
+	under DOS is extremely limited. 
 */
    
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
@@ -418,7 +418,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
      the sizeofstring array (8k). The first 660 bytes is for
      static variables, then we make our own "stack" with copies
      for each recursive call of rhombus() for the rest.
-   */  
+	*/  
   mem_int    = (int *)sizeofstring;
   mem_static = (DBLS *)(mem_int + 13);
   mem = mem_static+ 66 + 50*rhombus_depth;
@@ -431,39 +431,39 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   rhombus_stack[rhombus_depth] = avail;
 
   if (driver_key_pressed())
-    {
-    status = 1;
-    goto rhombus_done;
-    }
+	{
+	status = 1;
+	goto rhombus_done;
+	}
   if (iter > maxit)
-    {
-      putbox(x1, y1, x2, y2, 0);
-      status = 0;
-      goto rhombus_done;
-    }
+	{
+		putbox(x1, y1, x2, y2, 0);
+		status = 0;
+		goto rhombus_done;
+	}
   
   if ((y2-y1 <= SCAN) || (avail < minstack))
-    {
-      /* finish up the image by scanning the rectangle */
-    scan:
-      INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
-      INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
-      INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
+	{
+		/* finish up the image by scanning the rectangle */
+	scan:
+		INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
+		INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
+		INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
       
-      INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
-      INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
-      INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
+		INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
+		INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
+		INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
       
-      restep=(cre2-cre1)/(x2-x1);
-      imstep=(cim2-cim1)/(y2-y1);
-      interstep=INTERLEAVE*restep;
+		restep=(cre2-cre1)/(x2-x1);
+		imstep=(cim2-cim1)/(y2-y1);
+		interstep=INTERLEAVE*restep;
       
-      for (y=y1, im=cim1; y < y2; y++, im += imstep)
+		for (y=y1, im=cim1; y < y2; y++, im += imstep)
 	{
 	  if (driver_key_pressed())
 	    {
 	    status = 1;
-            goto rhombus_done;
+				goto rhombus_done;
 	    }
 	  zre=GET_SCAN_REAL(cre1, im);
 	  zim=GET_SCAN_IMAG(cre1, im);
@@ -471,7 +471,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
           if (savecolor < 0)
           {
 	    status = 1;
-            goto rhombus_done;
+				goto rhombus_done;
           }   
 	  savex=x1;
 	  for (x=x1 + INTERLEAVE, re=cre1 + interstep; x < x2;
@@ -534,9 +534,9 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	  else
 	    (*plot)(savex, y, (int)(savecolor&255));
 	}
-        status = 0;
-        goto rhombus_done;
-      }
+		status = 0;
+		goto rhombus_done;
+		}
 
   rq1=zre1*zre1; iq1=zim1*zim1;
   rq2=zre2*zre2; iq2=zim2*zim2;
@@ -579,136 +579,136 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   
   while (1)
   {
-      sr1=zre1; si1=zim1;
-      sr2=zre2; si2=zim2;
-      sr3=zre3; si3=zim3;
-      sr4=zre4; si4=zim4;
-      sr5=zre5; si5=zim5;
-      sr6=zre6; si6=zim6;
-      sr7=zre7; si7=zim7;
-      sr8=zre8; si8=zim8;
-      sr9=zre9; si9=zim9;
+		sr1=zre1; si1=zim1;
+		sr2=zre2; si2=zim2;
+		sr3=zre3; si3=zim3;
+		sr4=zre4; si4=zim4;
+		sr5=zre5; si5=zim5;
+		sr6=zre6; si6=zim6;
+		sr7=zre7; si7=zim7;
+		sr8=zre8; si8=zim8;
+		sr9=zre9; si9=zim9;
 
 
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
-        tempsqrx = rq; \
-        tempsqry = iq; \
-        old.x = zr; \
-        old.y = zi; \
-        floatparm->x = cr; \
-        floatparm->y = ci; \
-        esc = ORBITCALC(); \
-        rq = tempsqrx; \
-        iq = tempsqry; \
-        zr = new.x; \
-        zi = new.y
+		tempsqrx = rq; \
+		tempsqry = iq; \
+		old.x = zr; \
+		old.y = zi; \
+		floatparm->x = cr; \
+		floatparm->y = ci; \
+		esc = ORBITCALC(); \
+		rq = tempsqrx; \
+		iq = tempsqry; \
+		zr = new.x; \
+		zi = new.y
 
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc) \
-      zi=(zi + zi)*zr + ci; \
-      zr=rq-iq + cr; \
-      rq=zr*zr; \
-      iq=zi*zi; \
-      esc = ((rq + iq) > 16.0)?1:0
+		zi=(zi + zi)*zr + ci; \
+		zr=rq-iq + cr; \
+		rq=zr*zr; \
+		iq=zi*zi; \
+		esc = ((rq + iq) > 16.0)?1:0
 
-      /* iterate key values */
-      SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
+		/* iterate key values */
+		SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
 /*
-      zim1=(zim1 + zim1)*zre1 + cim1;
-      zre1=rq1-iq1 + cre1;
-      rq1=zre1*zre1;
-      iq1=zim1*zim1;
+		zim1=(zim1 + zim1)*zre1 + cim1;
+		zre1=rq1-iq1 + cre1;
+		rq1=zre1*zre1;
+		iq1=zim1*zim1;
 */      
-      SOI_ORBIT(zre2, rq2, zim2, iq2, cre2, cim1, esc2);
+		SOI_ORBIT(zre2, rq2, zim2, iq2, cre2, cim1, esc2);
 /*
-      zim2=(zim2 + zim2)*zre2 + cim1;
-      zre2=rq2-iq2 + cre2;
-      rq2=zre2*zre2;
-      iq2=zim2*zim2;
+		zim2=(zim2 + zim2)*zre2 + cim1;
+		zre2=rq2-iq2 + cre2;
+		rq2=zre2*zre2;
+		iq2=zim2*zim2;
 */      
-      SOI_ORBIT(zre3, rq3, zim3, iq3, cre1, cim2, esc3);
+		SOI_ORBIT(zre3, rq3, zim3, iq3, cre1, cim2, esc3);
 /*
-      zim3=(zim3 + zim3)*zre3 + cim2;
-      zre3=rq3-iq3 + cre1;
-      rq3=zre3*zre3;
-      iq3=zim3*zim3;
+		zim3=(zim3 + zim3)*zre3 + cim2;
+		zre3=rq3-iq3 + cre1;
+		rq3=zre3*zre3;
+		iq3=zim3*zim3;
 */      
-      SOI_ORBIT(zre4, rq4, zim4, iq4, cre2, cim2, esc4);
+		SOI_ORBIT(zre4, rq4, zim4, iq4, cre2, cim2, esc4);
 /*
-      zim4=(zim4 + zim4)*zre4 + cim2;
-      zre4=rq4-iq4 + cre2;
-      rq4=zre4*zre4;
-      iq4=zim4*zim4;
+		zim4=(zim4 + zim4)*zre4 + cim2;
+		zre4=rq4-iq4 + cre2;
+		rq4=zre4*zre4;
+		iq4=zim4*zim4;
 */
-      SOI_ORBIT(zre5, rq5, zim5, iq5, midr, cim1, esc5);
+		SOI_ORBIT(zre5, rq5, zim5, iq5, midr, cim1, esc5);
 /*
-      zim5=(zim5 + zim5)*zre5 + cim1;
-      zre5=rq5-iq5 + midr;
-      rq5=zre5*zre5;
-      iq5=zim5*zim5;
+		zim5=(zim5 + zim5)*zre5 + cim1;
+		zre5=rq5-iq5 + midr;
+		rq5=zre5*zre5;
+		iq5=zim5*zim5;
 */      
-      SOI_ORBIT(zre6, rq6, zim6, iq6, cre1, midi, esc6);
+		SOI_ORBIT(zre6, rq6, zim6, iq6, cre1, midi, esc6);
 /*
-      zim6=(zim6 + zim6)*zre6 + midi;
-      zre6=rq6-iq6 + cre1;
-      rq6=zre6*zre6;
-      iq6=zim6*zim6;
+		zim6=(zim6 + zim6)*zre6 + midi;
+		zre6=rq6-iq6 + cre1;
+		rq6=zre6*zre6;
+		iq6=zim6*zim6;
 */      
-      SOI_ORBIT(zre7, rq7, zim7, iq7, cre2, midi, esc7);
+		SOI_ORBIT(zre7, rq7, zim7, iq7, cre2, midi, esc7);
 /*
-      zim7=(zim7 + zim7)*zre7 + midi;
-      zre7=rq7-iq7 + cre2;
-      rq7=zre7*zre7;
-      iq7=zim7*zim7;
+		zim7=(zim7 + zim7)*zre7 + midi;
+		zre7=rq7-iq7 + cre2;
+		rq7=zre7*zre7;
+		iq7=zim7*zim7;
 */      
-      SOI_ORBIT(zre8, rq8, zim8, iq8, midr, cim2, esc8);
+		SOI_ORBIT(zre8, rq8, zim8, iq8, midr, cim2, esc8);
 /*
-      zim8=(zim8 + zim8)*zre8 + cim2;
-      zre8=rq8-iq8 + midr;
-      rq8=zre8*zre8;
-      iq8=zim8*zim8;
+		zim8=(zim8 + zim8)*zre8 + cim2;
+		zre8=rq8-iq8 + midr;
+		rq8=zre8*zre8;
+		iq8=zim8*zim8;
 */      
-      SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, esc9);
+		SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, esc9);
 /*
-      zim9=(zim9 + zim9)*zre9 + midi;
-      zre9=rq9-iq9 + midr;
-      rq9=zre9*zre9;
-      iq9=zim9*zim9;
+		zim9=(zim9 + zim9)*zre9 + midi;
+		zre9=rq9-iq9 + midr;
+		rq9=zre9*zre9;
+		iq9=zim9*zim9;
 */
-      /* iterate test point */
-      SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
+		/* iterate test point */
+		SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
 /*
-      tzi1=(tzi1 + tzi1)*tzr1 + ci1;
-      tzr1=trq1-tiq1 + cr1;
-      trq1=tzr1*tzr1;
-      tiq1=tzi1*tzi1;
+		tzi1=(tzi1 + tzi1)*tzr1 + ci1;
+		tzr1=trq1-tiq1 + cr1;
+		trq1=tzr1*tzr1;
+		tiq1=tzi1*tzi1;
 */
       
-      SOI_ORBIT(tzr2, trq2, tzi2, tiq2, cr2, ci1, tesc2);
+		SOI_ORBIT(tzr2, trq2, tzi2, tiq2, cr2, ci1, tesc2);
 /*
-      tzi2=(tzi2 + tzi2)*tzr2 + ci1;
-      tzr2=trq2-tiq2 + cr2;
-      trq2=tzr2*tzr2;
-      tiq2=tzi2*tzi2;
+		tzi2=(tzi2 + tzi2)*tzr2 + ci1;
+		tzr2=trq2-tiq2 + cr2;
+		trq2=tzr2*tzr2;
+		tiq2=tzi2*tzi2;
 */
-      SOI_ORBIT(tzr3, trq3, tzi3, tiq3, cr1, ci2, tesc3);
+		SOI_ORBIT(tzr3, trq3, tzi3, tiq3, cr1, ci2, tesc3);
 /*
-      tzi3=(tzi3 + tzi3)*tzr3 + ci2;
-      tzr3=trq3-tiq3 + cr1;
-      trq3=tzr3*tzr3;
-      tiq3=tzi3*tzi3;
+		tzi3=(tzi3 + tzi3)*tzr3 + ci2;
+		tzr3=trq3-tiq3 + cr1;
+		trq3=tzr3*tzr3;
+		tiq3=tzi3*tzi3;
 */
-      SOI_ORBIT(tzr4, trq4, tzi4, tiq4, cr2, ci2, tesc4);
+		SOI_ORBIT(tzr4, trq4, tzi4, tiq4, cr2, ci2, tesc4);
 /*
-      tzi4=(tzi4 + tzi4)*tzr4 + ci2;
-      tzr4=trq4-tiq4 + cr2;
-      trq4=tzr4*tzr4;
-      tiq4=tzi4*tzi4;
+		tzi4=(tzi4 + tzi4)*tzr4 + ci2;
+		tzr4=trq4-tiq4 + cr2;
+		trq4=tzr4*tzr4;
+		tiq4=tzi4*tzi4;
 */
-      iter++;
+		iter++;
 
-      /* if one of the iterated values bails out, subdivide */
+		/* if one of the iterated values bails out, subdivide */
 /*
-      if ((rq1 + iq1) > 16.0||
+		if ((rq1 + iq1) > 16.0||
 	 (rq2 + iq2) > 16.0||
 	 (rq3 + iq3) > 16.0||
 	 (rq4 + iq4) > 16.0||
@@ -723,95 +723,95 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	 (trq4 + tiq4) > 16.0)
 	break;
 */
-      if (esc1 || esc2 || esc3 || esc4 || esc5 || esc6 || esc7 || esc8 || esc9||
-         tesc1 || tesc2 || tesc3 || tesc4)
-         break;
+		if (esc1 || esc2 || esc3 || esc4 || esc5 || esc6 || esc7 || esc8 || esc9||
+			tesc1 || tesc2 || tesc3 || tesc4)
+			break;
          
-      /* if maximum number of iterations is reached, the whole rectangle
+		/* if maximum number of iterations is reached, the whole rectangle
 	 can be assumed part of M. This is of course best case behavior
 	 of SOI, we seldomly get there */
-      if (iter > maxit)
+		if (iter > maxit)
 	{
 	  putbox(x1, y1, x2, y2, 0);
           status = 0;
           goto rhombus_done;
 	}
 
-      /* now for all test points, check whether they exceed the
+		/* now for all test points, check whether they exceed the
 	 allowed tolerance. if so, subdivide */
-      l1=GET_REAL(cr1, ci1);
-      l1=(tzr1 == 0.0)?
+		l1=GET_REAL(cr1, ci1);
+		l1=(tzr1 == 0.0)?
 	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr1;
-      if (FABS(1.0-l1) > twidth)
+		if (FABS(1.0-l1) > twidth)
 	break;
       
-      l2=GET_IMAG(cr1, ci1);
-      l2=(tzi1 == 0.0)?
+		l2=GET_IMAG(cr1, ci1);
+		l2=(tzi1 == 0.0)?
 	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi1;
-      if (FABS(1.0-l2) > twidth)
+		if (FABS(1.0-l2) > twidth)
 	break;
       
-      l1=GET_REAL(cr2, ci1);
-      l1=(tzr2 == 0.0)?
+		l1=GET_REAL(cr2, ci1);
+		l1=(tzr2 == 0.0)?
 	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr2;
-      if (FABS(1.0-l1) > twidth)
+		if (FABS(1.0-l1) > twidth)
 	break;
 
-      l2=GET_IMAG(cr2, ci1);
-      l2=(tzi2 == 0.0)?
+		l2=GET_IMAG(cr2, ci1);
+		l2=(tzi2 == 0.0)?
 	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi2;
-      if (FABS(1.0-l2) > twidth)
+		if (FABS(1.0-l2) > twidth)
 	break;
 
-      l1=GET_REAL(cr1, ci2);
-      l1=(tzr3 == 0.0)?
+		l1=GET_REAL(cr1, ci2);
+		l1=(tzr3 == 0.0)?
 	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr3;
-      if (FABS(1.0-l1) > twidth)
+		if (FABS(1.0-l1) > twidth)
 	break;
       
-      l2=GET_IMAG(cr1, ci2);
-      l2=(tzi3 == 0.0)?
+		l2=GET_IMAG(cr1, ci2);
+		l2=(tzi3 == 0.0)?
 	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi3;
-      if (FABS(1.0-l2) > twidth)
+		if (FABS(1.0-l2) > twidth)
 	break;
       
-      l1=GET_REAL(cr2, ci2);
-      l1=(tzr4 == 0.0)?
+		l1=GET_REAL(cr2, ci2);
+		l1=(tzr4 == 0.0)?
 	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr4;
-      if (FABS(1.0-l1) > twidth)
+		if (FABS(1.0-l1) > twidth)
 	break;
 
-      l2=GET_IMAG(cr2, ci2);
-      l2=(tzi4 == 0.0)?
+		l2=GET_IMAG(cr2, ci2);
+		l2=(tzi4 == 0.0)?
 	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi4;
-      if (FABS(1.0-l2) > twidth)
+		if (FABS(1.0-l2) > twidth)
 	break;
-    }
+	}
 
   iter--;
 
   /* this is a little heuristic I tried to improve performance. */
   if (iter-before < 10)
-    {
-      zre1=sr1; zim1=si1;
-      zre2=sr2; zim2=si2;
-      zre3=sr3; zim3=si3;
-      zre4=sr4; zim4=si4;
-      zre5=sr5; zim5=si5;
-      zre6=sr6; zim6=si6;
-      zre7=sr7; zim7=si7;
-      zre8=sr8; zim8=si8;
-      zre9=sr9; zim9=si9;
-      goto scan;
-    }
+	{
+		zre1=sr1; zim1=si1;
+		zre2=sr2; zim2=si2;
+		zre3=sr3; zim3=si3;
+		zre4=sr4; zim4=si4;
+		zre5=sr5; zim5=si5;
+		zre6=sr6; zim6=si6;
+		zre7=sr7; zim7=si7;
+		zre8=sr8; zim8=si8;
+		zre9=sr9; zim9=si9;
+		goto scan;
+	}
 
   /* compute key values for subsequent rectangles */
   
@@ -912,27 +912,27 @@ rhombus_done:
 
 void soi(void)
 {
-   int status;
-   DBLS tolerance = 0.1;
-   DBLS stepx, stepy;
-   DBLS xxminl, xxmaxl, yyminl, yymaxl;
-   minstackavail = 30000;
-   rhombus_depth = -1;
-   max_rhombus_depth = 0;
-   if (bf_math)
-   {
-      xxminl = (DBLS)bftofloat(bfxmin);
-      yyminl = (DBLS)bftofloat(bfymin);
-      xxmaxl = (DBLS)bftofloat(bfxmax);
-      yymaxl = (DBLS)bftofloat(bfymax);
-   }
-   else
-   {
-      xxminl = xxmin;
-      yyminl = yymin;
-      xxmaxl = xxmax;
-      yymaxl = yymax;
-   }
+	int status;
+	DBLS tolerance = 0.1;
+	DBLS stepx, stepy;
+	DBLS xxminl, xxmaxl, yyminl, yymaxl;
+	minstackavail = 30000;
+	rhombus_depth = -1;
+	max_rhombus_depth = 0;
+	if (bf_math)
+	{
+		xxminl = (DBLS)bftofloat(bfxmin);
+		yyminl = (DBLS)bftofloat(bfymin);
+		xxmaxl = (DBLS)bftofloat(bfxmax);
+		yymaxl = (DBLS)bftofloat(bfymax);
+	}
+	else
+	{
+		xxminl = xxmin;
+		yyminl = yymin;
+		xxmaxl = xxmax;
+		yymaxl = yymax;
+	}
   twidth=tolerance/(xdots-1);
   stepx = (xxmaxl - xxminl) / xdots;
   stepy = (yyminl - yymaxl) / ydots;

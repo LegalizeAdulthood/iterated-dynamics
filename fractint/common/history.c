@@ -1,6 +1,6 @@
 /*  HISTORY.C
-    History routines taken out of framain2.c to make them accessable
-    to WinFract */
+	History routines taken out of framain2.c to make them accessable
+	to WinFract */
 
   /* see Fractint.c for a description of the "include"  hierarchy */
 #include <string.h>
@@ -383,14 +383,14 @@ void _fastcall restore_history_info(void)
 void history_allocate(void)
 {
 	while (maxhistory > 0) /* decrease history if necessary */
-    {
-        history = (HISTORY *) malloc(sizeof(HISTORY)*maxhistory);
-        if (history)
+	{
+		history = (HISTORY *) malloc(sizeof(HISTORY)*maxhistory);
+		if (history)
 		{
 			break;
 		}
-        maxhistory--;
-    }
+		maxhistory--;
+	}
 }
 
 void history_free(void)
@@ -404,9 +404,9 @@ void history_free(void)
 void history_back(void)
 {
 	--historyptr;
-    if (historyptr <= 0)
+	if (historyptr <= 0)
 	{
-        historyptr = maxhistory - 1;
+		historyptr = maxhistory - 1;
 	}
 	historyflag = 1;
 }

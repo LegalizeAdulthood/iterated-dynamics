@@ -111,7 +111,7 @@ init_pixels(Plot *me)
 static void plot_OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
-    HDC dc = BeginPaint(window, &ps);
+	HDC dc = BeginPaint(window, &ps);
 	RECT *r = &ps.rcPaint;
 	int width = r->right - r->left;
 	int height = r->bottom - r->top;
@@ -232,10 +232,10 @@ init_clut(BYTE clut[256][3])
 
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 {
-    WNDCLASS  wc;
+	WNDCLASS  wc;
 	int result;
 
-    me->instance = instance;
+	me->instance = instance;
 	strcpy(me->title, title);
 
 	result = GetClassInfo(me->instance, s_window_class, &wc);
@@ -255,7 +255,7 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 		result = RegisterClass(&wc);
 	}
 
-    return result;
+	return result;
 }
 
 void plot_terminate(Plot *me)

@@ -26,7 +26,7 @@ void calcmandfpasmstart(void)
 #define ABS(x) ((x) < 0?-(x):(x))
 
 /* If USE_NEW is 1, the magnitude is used for periodicity checking instead
-   of the x and y values.  This is experimental. */
+	of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
 long calcmandfpasm_c(void)

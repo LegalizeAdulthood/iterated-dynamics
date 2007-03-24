@@ -1,11 +1,11 @@
 /*
-   "Disk-Video" (and RAM-Video and Expanded-Memory Video) routines
+	"Disk-Video" (and RAM-Video and Expanded-Memory Video) routines
 
-   Reworked with fast caching July '90 by Pieter Branderhorst.
-   (I'm proud of this cache handler, had to get my name on it!)
-   Caution when modifying any code in here:  bugs are possible which
-   slow the cache substantially but don't cause incorrect results.
-   Do timing tests for a variety of situations after any change.
+	Reworked with fast caching July '90 by Pieter Branderhorst.
+	(I'm proud of this cache handler, had to get my name on it!)
+	Caution when modifying any code in here:  bugs are possible which
+	slow the cache substantially but don't cause incorrect results.
+	Do timing tests for a variety of situations after any change.
 
 */
 
@@ -152,7 +152,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		driver_put_string(BOXROW + 8, BOXCOL + 4, C_DVID_LO, buf);
 		driver_put_string(BOXROW + 10, BOXCOL + 4, C_DVID_LO, "Status:");
 		dvid_status(0, "clearing the 'screen'");
-    }
+	}
 	cur_offset = seek_offset = high_offset = -1;
 	cur_row    = -1;
 	if (disktarga)
@@ -185,7 +185,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 			free(tempfar);
 			break;
 		}
-    }
+	}
 	if (debugflag == 4200)
 	{
 		cache_size = CACHEMIN;
@@ -546,28 +546,28 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 			}
 			break;
 
-        case 1:
+		case 1:
 			for (i = 0; i < BLOCKLEN/2; ++i) {
 				tmpchar = mem_getc();
 				*(pixelptr++) = (BYTE)(tmpchar >> 4);
 				*(pixelptr++) = (BYTE)(tmpchar & 15);
 				}
 			break;
-        case 2:
+		case 2:
 			for (i = 0; i < BLOCKLEN/4; ++i) {
 				tmpchar = mem_getc();
 				for (j = 6; j >= 0; j -= 2)
 					*(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
 				}
 			break;
-        case 3:
+		case 3:
 			for (i = 0; i < BLOCKLEN/8; ++i) {
 				tmpchar = mem_getc();
 				for (j = 7; j >= 0; --j)
 					*(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
 				}
 			break;
-        }
+		}
 	}
 	/* add new block to its hash chain */
 	fwd_link = &hash_ptr[(((unsigned short)offset >> BLOCKSHIFT) & (HASHSIZE-1))];
@@ -688,10 +688,10 @@ write_stuff:
 }
 
 /* Seek, mem_getc, mem_putc routines follow.
-   Note that the calling logic always separates mem_getc and mem_putc
-   sequences with a seek between them.  A mem_getc is never followed by
-   a mem_putc nor v.v. without a seek between them.
-   */
+	Note that the calling logic always separates mem_getc and mem_putc
+	sequences with a seek between them.  A mem_getc is never followed by
+	a mem_putc nor v.v. without a seek between them.
+	*/
 static void _fastcall  mem_seek(long offset)        /* mem seek */
 {
 	offset += headerlength;
