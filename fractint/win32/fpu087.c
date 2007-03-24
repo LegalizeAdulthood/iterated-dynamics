@@ -33,23 +33,23 @@ void FPUaptan387(double *y, double *x, double *atan)
 void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
 	double tx;
-	tx = x->x * y->x - x->y * y->y;
-	z->y = x->x * y->y + x->y * y->x;
+	tx = x->x*y->x - x->y*y->y;
+	z->y = x->x*y->y + x->y*y->x;
 	z->x = tx;
 }
 
 void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
 	double mod, tx, yxmod, yymod;
-	mod = y->x * y->x + y->y * y->y;
+	mod = y->x*y->x + y->y*y->y;
 	if (mod == 0)
 	{
 		DivideOverflow++;
 	}
 	yxmod = y->x / mod;
 	yymod = - y->y / mod;
-	tx = x->x * yxmod - x->y * yymod;
-	z->y = x->x * yymod + x->y * yxmod;
+	tx = x->x*yxmod - x->y*yymod;
+	z->y = x->x*yymod + x->y*yxmod;
 	z->x = tx;
 }
 

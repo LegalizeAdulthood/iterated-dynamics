@@ -83,9 +83,9 @@ init_pixels(Plot *me)
 	}
 	me->width = sxdots;
 	me->height = sydots;
-	me->row_len = me->width * sizeof(me->pixels[0]);
+	me->row_len = me->width*sizeof(me->pixels[0]);
 	me->row_len = ((me->row_len + 3)/4)*4;
-	me->pixels_len = me->row_len * me->height;
+	me->pixels_len = me->row_len*me->height;
 	_ASSERTE(me->pixels_len > 0);
 	me->pixels = (BYTE *) malloc(me->pixels_len);
 	memset(me->pixels, 0, me->pixels_len);

@@ -107,30 +107,30 @@ JulibrotSetup(void)
 			bitshift = fractalspecific[neworbittype].isinteger;
 		fg = (double) (1L << bitshift);
 		fg16 = (double) (1L << 16);
-		jxmin = (long) (xxmin * fg);
-		jxmax = (long) (xxmax * fg);
+		jxmin = (long) (xxmin*fg);
+		jxmax = (long) (xxmax*fg);
 		xoffset = (jxmax + jxmin) / 2;    /* Calculate average */
-		jymin = (long) (yymin * fg);
-		jymax = (long) (yymax * fg);
+		jymin = (long) (yymin*fg);
+		jymax = (long) (yymax*fg);
 		yoffset = (jymax + jymin) / 2;    /* Calculate average */
-		mxmin = (long) (mxminfp * fg);
-		mxmax = (long) (mxmaxfp * fg);
-		mymin = (long) (myminfp * fg);
-		mymax = (long) (mymaxfp * fg);
-		origin = (long) (originfp * fg16);
-		depth = (long) (depthfp * fg16);
-		width = (long) (widthfp * fg16);
-		dist = (long) (distfp * fg16);
-		eyes = (long) (eyesfp * fg16);
-		brratio = (long) (brratiofp * fg16);
+		mxmin = (long) (mxminfp*fg);
+		mxmax = (long) (mxmaxfp*fg);
+		mymin = (long) (myminfp*fg);
+		mymax = (long) (mymaxfp*fg);
+		origin = (long) (originfp*fg16);
+		depth = (long) (depthfp*fg16);
+		width = (long) (widthfp*fg16);
+		dist = (long) (distfp*fg16);
+		eyes = (long) (eyesfp*fg16);
+		brratio = (long) (brratiofp*fg16);
 		dmx = (mxmax - mxmin) / zdots;
 		dmy = (mymax - mymin) / zdots;
 		longparm = &jbc;
 
-		x_per_inch = (long) ((xxmin - xxmax) / widthfp * fg);
-		y_per_inch = (long) ((yymax - yymin) / heightfp * fg);
-		inch_per_xdot = (long) ((widthfp / xdots) * fg16);
-		inch_per_ydot = (long) ((heightfp / ydots) * fg16);
+		x_per_inch = (long) ((xxmin - xxmax) / widthfp*fg);
+		y_per_inch = (long) ((yymax - yymin) / heightfp*fg);
+		inch_per_xdot = (long) ((widthfp / xdots)*fg16);
+		inch_per_ydot = (long) ((heightfp / ydots)*fg16);
 		initz = origin - (depth / 2);
 		if (juli3Dmode == 0)
 			RightEye.x = 0l;
@@ -140,7 +140,7 @@ JulibrotSetup(void)
 		LeftEye.y = RightEye.y = 0l;
 		LeftEye.zx = RightEye.zx = dist;
 		LeftEye.zy = RightEye.zy = dist;
-		bbase = (int) (128.0 * brratiofp);
+		bbase = (int) (128.0*brratiofp);
 	}
 #endif
 
@@ -188,13 +188,13 @@ jb_per_pixel(void)
 int
 jbfp_per_pixel(void)
 {
-	jxfp = ((Perfp->x - xpixelfp) * initzfp / distfp - xpixelfp) * x_per_inchfp;
+	jxfp = ((Perfp->x - xpixelfp)*initzfp / distfp - xpixelfp)*x_per_inchfp;
 	jxfp += xoffsetfp;
-	djxfp = (depthfp / distfp) * (Perfp->x - xpixelfp) * x_per_inchfp / zdots;
+	djxfp = (depthfp / distfp)*(Perfp->x - xpixelfp)*x_per_inchfp / zdots;
 
-	jyfp = ((Perfp->y - ypixelfp) * initzfp / distfp - ypixelfp) * y_per_inchfp;
+	jyfp = ((Perfp->y - ypixelfp)*initzfp / distfp - ypixelfp)*y_per_inchfp;
 	jyfp += yoffsetfp;
-	djyfp = depthfp / distfp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
+	djyfp = depthfp / distfp*(Perfp->y - ypixelfp)*y_per_inchfp / zdots;
 
 	return 1;
 }
@@ -243,7 +243,7 @@ zline(long x, long y)
 		{
 			if (juli3Dmode == 3)
 			{
-				color = (int) (128l * zpixel / zdots);
+				color = (int) (128l*zpixel / zdots);
 				if ((row + col) & 1)
 				{
 
@@ -261,7 +261,7 @@ zline(long x, long y)
 			}
 			else
 			{
-				color = (int) (254l * zpixel / zdots);
+				color = (int) (254l*zpixel / zdots);
 				(*plot) (col, row, color + 1);
 			}
 			plotted = 1;
@@ -349,12 +349,12 @@ zlinefp(double x, double y)
 		{
 			if (juli3Dmode == 3)
 			{
-				color = (int) (128l * zpixel / zdots);
+				color = (int) (128l*zpixel / zdots);
 				if ((row + col) & 1)
 					(*plot) (col, row, 127 - color);
 				else
 				{
-					color = (int)(color * brratiofp);
+					color = (int)(color*brratiofp);
 					if (color < 1)
 						color = 1;
 					if (color > 127)
@@ -364,7 +364,7 @@ zlinefp(double x, double y)
 			}
 			else
 			{
-				color = (int) (254l * zpixel / zdots);
+				color = (int) (254l*zpixel / zdots);
 				(*plot) (col, row, color + 1);
 			}
 			plotted = 1;

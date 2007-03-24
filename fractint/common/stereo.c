@@ -97,9 +97,9 @@ static int getdepth(int xd, int yd)
 	if (grayflag)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-		pal = ((int) dac[pal][0] * 77 +
-             (int) dac[pal][1] * 151 +
-             (int) dac[pal][2] * 28);
+		pal = ((int) dac[pal][0]*77 +
+             (int) dac[pal][1]*151 +
+             (int) dac[pal][2]*28);
 		pal >>= 6;
 	}
 	return pal;
@@ -155,7 +155,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 	*bars = 1 - *bars;
 }
 
-int outline_stereo(BYTE * pixels, int linelen)
+int outline_stereo(BYTE *pixels, int linelen)
 {
 	int i, j, x, s;
 	int *same = _alloca(sizeof(int)*xdots);
@@ -168,10 +168,10 @@ int outline_stereo(BYTE * pixels, int linelen)
 	for (x = 0; x < xdots; ++x)
 	{
 		if (REVERSE)
-			SEP = GROUND - (int) (DEPTH * (getdepth(x, Y) - MINC) / MAXCC);
+			SEP = GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC);
 		else
-			SEP = GROUND - (int) (DEPTH * (MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
-		SEP =  (int)((SEP * 10.0) / WIDTH);        /* adjust for media WIDTH */
+			SEP = GROUND - (int) (DEPTH*(MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
+		SEP =  (int)((SEP*10.0) / WIDTH);        /* adjust for media WIDTH */
 
 		/* get average value under calibration bars */
 		if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
@@ -240,7 +240,7 @@ int do_AutoStereo(void)
 	oldhelpmode = helpmode;
 	helpmode = RDSKEYS;
 	driver_save_graphics();                      /* save graphics image */
-	memcpy(savedacbox, g_dac_box, 256 * 3);  /* save colors */
+	memcpy(savedacbox, g_dac_box, 256*3);  /* save colors */
 
 	if (xdots > OLDMAXPIXELS)
 	{
@@ -259,7 +259,7 @@ int do_AutoStereo(void)
 		REVERSE = 1;
 	else
 		REVERSE = 0;
-	DEPTH = ((long) xdots * (long) AutoStereo_depth) / 4000L;
+	DEPTH = ((long) xdots*(long) AutoStereo_depth) / 4000L;
 	DEPTH = labs(DEPTH) + 1;
 	if (get_min_max())
 	{
@@ -357,7 +357,7 @@ int do_AutoStereo(void)
 	exit_stereo:
 	helpmode = oldhelpmode;
 	driver_restore_graphics();
-	memcpy(g_dac_box, savedacbox, 256 * 3);
+	memcpy(g_dac_box, savedacbox, 256*3);
 	spindac(0, 1);
 	return ret;
 }

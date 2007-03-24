@@ -79,7 +79,7 @@ int test(void)
 
 /***************** standalone engine for "plasma" ********************/
 
-static int iparmx;      /* iparmx = parm.x * 8 */
+static int iparmx;      /* iparmx = parm.x*8 */
 static int shiftvalue;  /* shift based on #colors */
 static int recur1=1;
 static int pcolors;
@@ -144,7 +144,7 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 	S32 pseudorandom;
 	pseudorandom = ((S32)iparmx)*((rand15()-16383));
 /*   pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
-	pseudorandom = pseudorandom * recur1;
+	pseudorandom = pseudorandom*recur1;
 	pseudorandom = pseudorandom >> shiftvalue;
 	pseudorandom = (((S32)getpix(xa, ya) + (S32)getpix(xb, yb) + 1) >> 1) + pseudorandom;
 	if (max_plasma == 0)
@@ -180,7 +180,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 	/*
 	recur1=1;
 	for (i = 1; i <= recur; i++)
-		recur1 = recur1 * 2;
+		recur1 = recur1*2;
 	recur1=320/recur1;
 	*/
 	recur1 = (int)(320L >> recur);
@@ -325,7 +325,7 @@ int plasma()
 		"640x350x16 mode]).");
 		return -1;
 	}
-	iparmx = (int)(param[0] * 8);
+	iparmx = (int)(param[0]*8);
 	if (parm.x <= 0.0) iparmx = 0;
 	if (parm.x >= 100) iparmx = 800;
 	param[0] = (double)iparmx / 8.0;  /* let user know what was used */
@@ -424,7 +424,7 @@ int plasma()
 		recur1 = i = k = 1;
 		while (new_subD(0, 0, xdots-1, ydots-1, i) == 0)
 		{
-			k = k * 2;
+			k = k*2;
 			if (k  >(int)max(xdots-1, ydots-1))
 				break;
 			if (driver_key_pressed())
@@ -788,14 +788,14 @@ int Bifurcation(void)
 		get_resume(sizeof(column), &column, 0);
 		end_resume();
 	}
-	array_size =  (iystop + 1) * sizeof(int); /* should be iystop + 1 */
+	array_size =  (iystop + 1)*sizeof(int); /* should be iystop + 1 */
 	if ((verhulst_array = (int *) malloc(array_size)) == NULL)
 	{
 		stopmsg(0, "Insufficient free memory for calculation.");
 		return -1;
 	}
 
-	LPI = (long)(PI * fudge);
+	LPI = (long)(PI*fudge);
 
 	for (row = 0; row <= iystop; row++) /* should be iystop */
 		verhulst_array[row] = 0;
@@ -980,7 +980,7 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 #if defined(XFRACT) || defined(_WIN32)
 int BifurcLambda() /* Used by lyanupov */
   {
-	Population = Rate * Population * (1 - Population);
+	Population = Rate*Population*(1 - Population);
 	return fabs(Population) > BIG;
   }
 #endif
@@ -992,11 +992,11 @@ int BifurcLambda() /* Used by lyanupov */
 
 int BifurcVerhulstTrig()
   {
-/*  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop)) */
+/*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
-	Population += Rate * tmp.x * (1 - tmp.x);
+	Population += Rate*tmp.x*(1 - tmp.x);
 	return fabs(Population) > BIG;
   }
 
@@ -1014,11 +1014,11 @@ int LongBifurcVerhulstTrig()
 
 int BifurcStewartTrig()
   {
-/*  Population = (Rate * fn(Population) * fn(Population)) - 1.0 */
+/*  Population = (Rate*fn(Population)*fn(Population)) - 1.0 */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
-	Population = (Rate * tmp.x * tmp.x) - 1.0;
+	Population = (Rate*tmp.x*tmp.x) - 1.0;
 	return fabs(Population) > BIG;
   }
 
@@ -1037,10 +1037,10 @@ int LongBifurcStewartTrig()
 
 int BifurcSetTrigPi()
   {
-	tmp.x = Population * PI;
+	tmp.x = Population*PI;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
-	Population = Rate * tmp.x;
+	Population = Rate*tmp.x;
 	return fabs(Population) > BIG;
   }
 
@@ -1057,10 +1057,10 @@ int LongBifurcSetTrigPi()
 
 int BifurcAddTrigPi()
   {
-	tmp.x = Population * PI;
+	tmp.x = Population*PI;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
-	Population += Rate * tmp.x;
+	Population += Rate*tmp.x;
 	return fabs(Population) > BIG;
   }
 
@@ -1077,11 +1077,11 @@ int LongBifurcAddTrigPi()
 
 int BifurcLambdaTrig()
   {
-/*  Population = Rate * fn(Population) * (1 - fn(Population)) */
+/*  Population = Rate*fn(Population)*(1 - fn(Population)) */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
-	Population = Rate * tmp.x * (1 - tmp.x);
+	Population = Rate*tmp.x*(1 - tmp.x);
 	return fabs(Population) > BIG;
   }
 
@@ -1107,7 +1107,7 @@ int BifurcMay()
 				Computers, Pattern, Chaos, and Beauty, page 153 */
 	tmp.x = 1.0 + Population;
 	tmp.x = pow(tmp.x, -beta); /* pow in math.h included with mpmath.h */
-	Population = (Rate * Population) * tmp.x;
+	Population = (Rate*Population)*tmp.x;
 	return fabs(Population) > BIG;
   }
 
@@ -1116,7 +1116,7 @@ int LongBifurcMay()
 #if !defined(XFRACT)
 	ltmp.x = lPopulation + fudge;
 	ltmp.y = 0;
-	lparm2.x = beta * fudge;
+	lparm2.x = beta*fudge;
 	LCMPLXpwr(ltmp, lparm2, ltmp);
 	lPopulation = multiply(lRate, lPopulation, bitshift);
 	lPopulation = divide(lPopulation, ltmp.x, bitshift);
@@ -1361,7 +1361,7 @@ jumpout:
 		lyap = -temp/((double) lyaLength*i);
 	else
 		lyap = 1 - exp(temp/((double) lyaLength*i));
-		color = 1 + (int)(lyap * (colors-1));
+		color = 1 + (int)(lyap*(colors-1));
 		}
 	return color;
 }
@@ -1515,7 +1515,7 @@ int cellular () {
 	r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
 	k = (U16)(kr / 10); /* Number of different states, k=3 has states 0, 1, 2 */
 	k_1 = (S16)(k - 1); /* Highest state value, k=3 has highest state value of 2 */
-	rule_digits = (S16)((r * 2 + 1) * k_1 + 1); /* Number of digits in the rule */
+	rule_digits = (S16)((r*2 + 1)*k_1 + 1); /* Number of digits in the rule */
 
 	if ((!rflag) && randparam == -1)
        --rseed;
@@ -1958,16 +1958,16 @@ int froth_setup(void)
 		fsp->fl.f.top_x4 = froth_top_x_mapping(fsp->fl.f.top_x3);
 
 		/* rotate 120 degrees counter-clock-wise */
-		fsp->fl.f.left_x1 = fsp->fl.f.top_x1 * cos_theta - y0 * sin_theta;
-		fsp->fl.f.left_x2 = fsp->fl.f.top_x2 * cos_theta - y0 * sin_theta;
-		fsp->fl.f.left_x3 = fsp->fl.f.top_x3 * cos_theta - y0 * sin_theta;
-		fsp->fl.f.left_x4 = fsp->fl.f.top_x4 * cos_theta - y0 * sin_theta;
+		fsp->fl.f.left_x1 = fsp->fl.f.top_x1*cos_theta - y0*sin_theta;
+		fsp->fl.f.left_x2 = fsp->fl.f.top_x2*cos_theta - y0*sin_theta;
+		fsp->fl.f.left_x3 = fsp->fl.f.top_x3*cos_theta - y0*sin_theta;
+		fsp->fl.f.left_x4 = fsp->fl.f.top_x4*cos_theta - y0*sin_theta;
 
 		/* rotate 120 degrees clock-wise */
-		fsp->fl.f.right_x1 = fsp->fl.f.top_x1 * cos_theta + y0 * sin_theta;
-		fsp->fl.f.right_x2 = fsp->fl.f.top_x2 * cos_theta + y0 * sin_theta;
-		fsp->fl.f.right_x3 = fsp->fl.f.top_x3 * cos_theta + y0 * sin_theta;
-		fsp->fl.f.right_x4 = fsp->fl.f.top_x4 * cos_theta + y0 * sin_theta;
+		fsp->fl.f.right_x1 = fsp->fl.f.top_x1*cos_theta + y0*sin_theta;
+		fsp->fl.f.right_x2 = fsp->fl.f.top_x2*cos_theta + y0*sin_theta;
+		fsp->fl.f.right_x3 = fsp->fl.f.top_x3*cos_theta + y0*sin_theta;
+		fsp->fl.f.right_x4 = fsp->fl.f.top_x4*cos_theta + y0*sin_theta;
 
 		}
 
@@ -2135,8 +2135,8 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 		if (invert)
 			{
 			invertz2(&tmp);
-			lold.x = (long)(tmp.x * fudge);
-			lold.y = (long)(tmp.y * fudge);
+			lold.x = (long)(tmp.x*fudge);
+			lold.y = (long)(tmp.y*fudge);
 			}
 		else
 			{
@@ -2249,10 +2249,10 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
                 coloriter = fsp->shades;
 				}
 			else
-				coloriter = fsp->shades * coloriter / maxit;
+				coloriter = fsp->shades*coloriter / maxit;
 			if (coloriter == 0)
 				coloriter = 1;
-			coloriter += fsp->shades * (found_attractor-1);
+			coloriter += fsp->shades*(found_attractor-1);
 			}
 		else if (colors >= 16)
 			{ /* only alternate coloring scheme available for 16 colors */
@@ -2274,7 +2274,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					coloriter = 4;
 				else
 					coloriter = 5;
-				coloriter += 5 * (found_attractor-1);
+				coloriter += 5*(found_attractor-1);
 				}
 			else /* 6 attractors */
 				{
@@ -2282,7 +2282,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					coloriter = 1;
 				else
 					coloriter = 2;
-				coloriter += 2 * (found_attractor-1);
+				coloriter += 2*(found_attractor-1);
 				}
 			}
 		else /* use a color corresponding to the attractor */

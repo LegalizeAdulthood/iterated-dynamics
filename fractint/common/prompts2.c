@@ -870,7 +870,7 @@ int starfield(void)
 	if (starfield_values[2] > 100.0) starfield_values[2] = 100.0;
 
 	Distribution = (int)(starfield_values[0]);
-	con  = (long)(((starfield_values[1]) / 100.0) * (1L << 16));
+	con  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	Slope = (int)(starfield_values[2]);
 
 	if (ValidateLuts(GreyFile) != 0) {
@@ -1171,11 +1171,11 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 			rra = *((char **)(ra + (--ll)*sz));
 		else
 		{
-			rra = *((char * *)(ra + ir*sz));
-			*((char * *)(ra + ir*sz))=*((char * *)(ra + sz));
+			rra = *((char **)(ra + ir*sz));
+			*((char **)(ra + ir*sz))=*((char **)(ra + sz));
 			if (--ir == 1)
 			{
-				*((char * *)(ra + sz))=rra;
+				*((char **)(ra + sz))=rra;
 				return;
 			}
 		}
@@ -1187,13 +1187,13 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 				++j;
 			if (fct(&rra, ra + j*sz) < 0)
 			{
-				*((char * *)(ra + i*sz)) = *((char * *)(ra + j*sz));
+				*((char **)(ra + i*sz)) = *((char **)(ra + j*sz));
 				j += (i=j);
 			}
 			else
 				j=ir + 1;
 		}
-		*((char * *)(ra + i*sz))=rra;
+		*((char **)(ra + i*sz))=rra;
 	}
 }
 #endif

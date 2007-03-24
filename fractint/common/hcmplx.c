@@ -8,23 +8,23 @@ void HComplexMult(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
 	/* it is possible to reoganize this code and reduce the multiplies
 		from 16 to 10, but on my 486 it is SLOWER !!! so I left it
 		like this - Tim Wegner */
-	out->x = arg1->x * arg2->x - arg1->y * arg2->y
-           - arg1->z * arg2->z + arg1->t * arg2->t;
-	out->y = arg1->y * arg2->x + arg1->x * arg2->y
-           - arg1->t * arg2->z - arg1->z * arg2->t;
-	out->z = arg1->z * arg2->x - arg1->t * arg2->y
-           + arg1->x * arg2->z - arg1->y * arg2->t;
-	out->t = arg1->t * arg2->x + arg1->z * arg2->y
-           + arg1->y * arg2->z + arg1->x * arg2->t;
+	out->x = arg1->x*arg2->x - arg1->y*arg2->y
+           - arg1->z*arg2->z + arg1->t*arg2->t;
+	out->y = arg1->y*arg2->x + arg1->x*arg2->y
+           - arg1->t*arg2->z - arg1->z*arg2->t;
+	out->z = arg1->z*arg2->x - arg1->t*arg2->y
+           + arg1->x*arg2->z - arg1->y*arg2->t;
+	out->t = arg1->t*arg2->x + arg1->z*arg2->y
+           + arg1->y*arg2->z + arg1->x*arg2->t;
 }
 
 void HComplexSqr(_HCMPLX *arg, _HCMPLX *out)
 {
-	out->x = arg->x * arg->x - arg->y * arg->y
-           - arg->z * arg->z + arg->t * arg->t;
-	out->y = 2 * arg->x * arg->y - 2 * arg->z * arg->t;
-	out->z = 2 * arg->z * arg->x - 2 * arg->t * arg->y;
-	out->t = 2 * arg->t * arg->x + 2 * arg->z * arg->y;
+	out->x = arg->x*arg->x - arg->y*arg->y
+           - arg->z*arg->z + arg->t*arg->t;
+	out->y = 2*arg->x*arg->y - 2*arg->z*arg->t;
+	out->z = 2*arg->z*arg->x - 2*arg->t*arg->y;
+	out->t = 2*arg->t*arg->x + 2*arg->z*arg->y;
 }
 
 int HComplexInv(_HCMPLX *arg, _HCMPLX *out)
@@ -37,12 +37,12 @@ int HComplexInv(_HCMPLX *arg, _HCMPLX *out)
 	if (det == 0.0)
 		return -1;
 	mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
-	xt_minus_yz = arg->x * arg->t - arg->y * arg->z;
+	xt_minus_yz = arg->x*arg->t - arg->y*arg->z;
 
-	out->x = (arg->x * mod - 2 * arg->t * xt_minus_yz)/det;
-	out->y = (-arg->y * mod - 2 * arg->z * xt_minus_yz)/det;
-	out->z = (-arg->z * mod - 2 * arg->y * xt_minus_yz)/det;
-	out->t = (arg->t * mod - 2 * arg->x * xt_minus_yz)/det;
+	out->x = (arg->x*mod - 2*arg->t*xt_minus_yz)/det;
+	out->y = (-arg->y*mod - 2*arg->z*xt_minus_yz)/det;
+	out->z = (-arg->z*mod - 2*arg->y*xt_minus_yz)/det;
+	out->t = (arg->t*mod - 2*arg->x*xt_minus_yz)/det;
 	return 0;
 }
 

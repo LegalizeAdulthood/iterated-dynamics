@@ -62,7 +62,7 @@ JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 
 int jump_index, InitJumpIndex;
 
-static int frm_prescan (FILE * open_file);
+static int frm_prescan (FILE *open_file);
 
 #define CASE_TERMINATOR case',':\
                         case '\n':\
@@ -173,13 +173,13 @@ static void vars_allocate(void);
 
 struct var_list_st {
 	char name[34];
-	struct var_list_st * next_item;
-} * var_list;
+	struct var_list_st *next_item;
+} *var_list;
 
 struct const_list_st {
 	_CMPLX complex_const;
-	struct const_list_st * next_item;
-} * complx_list, * real_list;
+	struct const_list_st *next_item;
+} *complx_list, *real_list;
 
 static void parser_allocate(void);
 
@@ -355,8 +355,8 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	Arg1->d.y = y;
 	(*fct)();
 	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {
-		Arg1->l.x = (long)(Arg1->d.x * fg);
-		Arg1->l.y = (long)(Arg1->d.y * fg);
+		Arg1->l.x = (long)(Arg1->d.x*fg);
+		Arg1->l.y = (long)(Arg1->d.y*fg);
 	}
 	else
 		overflow = 1;
@@ -377,8 +377,8 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	Arg1->d.y = y; \
 	(*fct)(); \
 	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {\
-		Arg1->l.x = (long)(Arg1->d.x * fg); \
-		Arg1->l.y = (long)(Arg1->d.y * fg); \
+		Arg1->l.x = (long)(Arg1->d.x*fg); \
+		Arg1->l.y = (long)(Arg1->d.y*fg); \
 	}\
 	else\
 		overflow = 1; \
@@ -482,8 +482,8 @@ void mStkSRand(void)
 
 void dStkSRand(void)
 {
-	Arg1->l.x = (long)(Arg1->d.x * (1L << bitshift));
-	Arg1->l.y = (long)(Arg1->d.y * (1L << bitshift));
+	Arg1->l.x = (long)(Arg1->d.x*(1L << bitshift));
+	Arg1->l.y = (long)(Arg1->d.y*(1L << bitshift));
 	SetRandFnct();
 	dRandom();
 	Arg1->d = v[7].a.d;
@@ -504,8 +504,8 @@ void dStkLodSqr()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.y = Load[LodPtr]->d.x * Load[LodPtr]->d.y * 2.0;
-	Arg1->d.x = (Load[LodPtr]->d.x * Load[LodPtr]->d.x) - (Load[LodPtr]->d.y * Load[LodPtr]->d.y);
+	Arg1->d.y = Load[LodPtr]->d.x*Load[LodPtr]->d.y*2.0;
+	Arg1->d.x = (Load[LodPtr]->d.x*Load[LodPtr]->d.x) - (Load[LodPtr]->d.y*Load[LodPtr]->d.y);
 	LodPtr++;
 }
 
@@ -513,9 +513,9 @@ void dStkLodSqr2()
 {
 	Arg1++;
 	Arg2++;
-	LastSqr.d.x = Load[LodPtr]->d.x * Load[LodPtr]->d.x;
-	LastSqr.d.y = Load[LodPtr]->d.y * Load[LodPtr]->d.y;
-	Arg1->d.y = Load[LodPtr]->d.x * Load[LodPtr]->d.y * 2.0;
+	LastSqr.d.x = Load[LodPtr]->d.x*Load[LodPtr]->d.x;
+	LastSqr.d.y = Load[LodPtr]->d.y*Load[LodPtr]->d.y;
+	Arg1->d.y = Load[LodPtr]->d.x*Load[LodPtr]->d.y*2.0;
 	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
 	LastSqr.d.x += LastSqr.d.y;
 	LastSqr.d.y = 0;
@@ -530,8 +530,8 @@ void dStkLodDbl()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.x = Load[LodPtr]->d.x * 2.0;
-	Arg1->d.y = Load[LodPtr]->d.y * 2.0;
+	Arg1->d.x = Load[LodPtr]->d.x*2.0;
+	Arg1->d.y = Load[LodPtr]->d.y*2.0;
 	LodPtr++;
 }
 
@@ -540,15 +540,15 @@ void dStkReal2(){}
 
 void dStkSqr0()
 {
-	LastSqr.d.y = Arg1->d.y * Arg1->d.y; /* use LastSqr as temp storage */
-	Arg1->d.y = Arg1->d.x * Arg1->d.y * 2.0;
-	Arg1->d.x = Arg1->d.x * Arg1->d.x - LastSqr.d.y;
+	LastSqr.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
+	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
+	Arg1->d.x = Arg1->d.x*Arg1->d.x - LastSqr.d.y;
 }
 
 
 void dStkSqr3()
 {
-	Arg1->d.x = Arg1->d.x * Arg1->d.x;
+	Arg1->d.x = Arg1->d.x*Arg1->d.x;
 }
 
 
@@ -575,9 +575,9 @@ void lStkAbs(void) {
 void (*StkAbs)(void) = dStkAbs;
 
 void dStkSqr(void) {
-	LastSqr.d.x = Arg1->d.x * Arg1->d.x;
-	LastSqr.d.y = Arg1->d.y * Arg1->d.y;
-	Arg1->d.y = Arg1->d.x * Arg1->d.y * 2.0;
+	LastSqr.d.x = Arg1->d.x*Arg1->d.x;
+	LastSqr.d.y = Arg1->d.y*Arg1->d.y;
+	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
 	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
 	LastSqr.d.x += LastSqr.d.y;
 	LastSqr.d.y = 0;
@@ -918,7 +918,7 @@ void lStkDiv(void) {
 void (*StkDiv)(void) = dStkDiv;
 
 void dStkMod(void) {
-	Arg1->d.x = (Arg1->d.x * Arg1->d.x) + (Arg1->d.y * Arg1->d.y);
+	Arg1->d.x = (Arg1->d.x*Arg1->d.x) + (Arg1->d.y*Arg1->d.y);
 	Arg1->d.y = 0.0;
 }
 
@@ -1175,7 +1175,7 @@ void (*StkCoTanh)(void) = dStkCoTanh;
 
 void dStkRecip(void) {
 	double mod;
-	mod =Arg1->d.x * Arg1->d.x + Arg1->d.y * Arg1->d.y;
+	mod =Arg1->d.x*Arg1->d.x + Arg1->d.y*Arg1->d.y;
 	ChkFloatDenom(mod);
 	Arg1->d.x =  Arg1->d.x/mod;
 	Arg1->d.y = -Arg1->d.y/mod;
@@ -1683,8 +1683,8 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z) {
 	else {
 		e2x = exp(x->x);
 		FPUsincos(&x->y, &siny, &cosy);
-		z->x = e2x * cosy;
-		z->y = e2x * siny;
+		z->x = e2x*cosy;
+		z->y = e2x*siny;
 	}
 }
 
@@ -1731,8 +1731,8 @@ void lStkPwr(void) {
 	y.y = (double)Arg1->l.y / fg;
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit) {
-		Arg2->l.x = (long)(x.x * fg);
-		Arg2->l.y = (long)(x.y * fg);
+		Arg2->l.x = (long)(x.x*fg);
+		Arg2->l.y = (long)(x.y*fg);
 	}
 	else
 		overflow = 1;
@@ -1937,8 +1937,8 @@ struct ConstArg *isconst(char *Str, int Len) {
 			v[vsp].a.m = cmplx2MPC(z);
 			break;
 		case L_MATH:
-			v[vsp].a.l.x = (long)(z.x * fg);
-			v[vsp].a.l.y = (long)(z.y * fg);
+			v[vsp].a.l.x = (long)(z.x*fg);
+			v[vsp].a.l.y = (long)(z.y*fg);
 			break;
 #endif
 		}
@@ -2338,7 +2338,7 @@ static int ParseStr(char *Str, int pass) {
 		v[vsp].len = (int) strlen(Constants[vsp]);
 	}
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-	const_pi = atan(1.0) * 4;
+	const_pi = atan(1.0)*4;
 	const_e  = exp(1.0);
 	v[7].a.d.x = v[7].a.d.y = 0.0;
 	v[11].a.d.x = (double)xdots;
@@ -2395,32 +2395,32 @@ static int ParseStr(char *Str, int pass) {
 		v[18].a.m.y = *d2MP(param[9]);
 		break;
 	case L_MATH:
-		v[1].a.l.x = (long)(param[0] * fg);
-		v[1].a.l.y = (long)(param[1] * fg);
-		v[2].a.l.x = (long)(param[2] * fg);
-		v[2].a.l.y = (long)(param[3] * fg);
-		v[5].a.l.x = (long)(const_pi * fg);
+		v[1].a.l.x = (long)(param[0]*fg);
+		v[1].a.l.y = (long)(param[1]*fg);
+		v[2].a.l.x = (long)(param[2]*fg);
+		v[2].a.l.y = (long)(param[3]*fg);
+		v[5].a.l.x = (long)(const_pi*fg);
 		v[5].a.l.y = 0L;
-		v[6].a.l.x = (long)(const_e * fg);
+		v[6].a.l.x = (long)(const_e*fg);
 		v[6].a.l.y = 0L;
-		v[8].a.l.x = (long)(param[4] * fg);
-		v[8].a.l.y = (long)(param[5] * fg);
+		v[8].a.l.x = (long)(param[4]*fg);
+		v[8].a.l.y = (long)(param[5]*fg);
 		v[11].a.l.x = xdots; v[11].a.l.x <<= bitshift;
 		v[11].a.l.y = ydots; v[11].a.l.y <<= bitshift;
 		v[12].a.l.x = maxit; v[12].a.l.x <<= bitshift;
 		v[12].a.l.y = 0L;
 		v[13].a.l.x = ismand; v[13].a.l.x <<= bitshift;
 		v[13].a.l.y = 0L;
-		v[14].a.l.x = (long)(v[14].a.d.x * fg);
-		v[14].a.l.y = (long)(v[14].a.d.y * fg);
-		v[15].a.l.x = (long)(v[15].a.d.x * fg);
-		v[15].a.l.y = (long)(v[15].a.d.y * fg);
-		v[16].a.l.x = (long)(v[16].a.d.x * fg);
-		v[16].a.l.y = (long)(v[16].a.d.y * fg);
-		v[17].a.l.x = (long)(param[6] * fg);
-		v[17].a.l.y = (long)(param[7] * fg);
-		v[18].a.l.x = (long)(param[8] * fg);
-		v[18].a.l.y = (long)(param[9] * fg);
+		v[14].a.l.x = (long)(v[14].a.d.x*fg);
+		v[14].a.l.y = (long)(v[14].a.d.y*fg);
+		v[15].a.l.x = (long)(v[15].a.d.x*fg);
+		v[15].a.l.y = (long)(v[15].a.d.y*fg);
+		v[16].a.l.x = (long)(v[16].a.d.x*fg);
+		v[16].a.l.y = (long)(v[16].a.d.y*fg);
+		v[17].a.l.x = (long)(param[6]*fg);
+		v[17].a.l.y = (long)(param[7]*fg);
+		v[18].a.l.x = (long)(param[8]*fg);
+		v[18].a.l.y = (long)(param[9]*fg);
 		break;
 #endif
 	}
@@ -2720,7 +2720,7 @@ int form_per_pixel(void) {
 		v[10].a.m = cmplx2MPC(v[10].a.d);
 		break;
 	case L_MATH:
-		v[9].a.l.x = (long) (((row + col)&1) * fg);
+		v[9].a.l.x = (long) (((row + col)&1)*fg);
 		v[9].a.l.y = 0L;
 		v[10].a.l.x = col;   v[10].a.l.x <<= bitshift;
 		v[10].a.l.y = row;   v[10].a.l.y <<= bitshift;
@@ -2906,7 +2906,7 @@ int fill_jump_struct(void)
 
 static char *FormStr;
 
-int frmgetchar (FILE * openfile)
+int frmgetchar (FILE *openfile)
 {
 	int c;
 	int done = 0;
@@ -2939,7 +2939,7 @@ int frmgetchar (FILE * openfile)
 
 /* This function also gets flow control info */
 
-void getfuncinfo(struct token_st * tok)
+void getfuncinfo(struct token_st *tok)
 {
 	int i;
 	for (i = 0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) {
@@ -2965,7 +2965,7 @@ void getfuncinfo(struct token_st * tok)
 	return;
 }
 
-void getvarinfo(struct token_st * tok)
+void getvarinfo(struct token_st *tok)
 {
 	int i;
 
@@ -2993,7 +2993,7 @@ void getvarinfo(struct token_st * tok)
 
 /* returns 1 on success, 0 on NOT_A_TOKEN */
 
-int frmgetconstant(FILE * openfile, struct token_st * tok)
+int frmgetconstant(FILE *openfile, struct token_st *tok)
 {
 	int c;
 	int i = 1;
@@ -3079,7 +3079,7 @@ int frmgetconstant(FILE * openfile, struct token_st * tok)
 	return 1;
 }
 
-void is_complex_constant(FILE * openfile, struct token_st * tok)
+void is_complex_constant(FILE *openfile, struct token_st *tok)
 {
 	/* should test to make sure tok->token_str[0] == '(' */
 	struct token_st temp_tok;
@@ -3088,7 +3088,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
 	int sign_value = 1;
 	int done = 0;
 	int getting_real = 1;
-	FILE * debug_token = NULL;
+	FILE *debug_token = NULL;
 	tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
 	filepos = ftell(openfile);
@@ -3144,7 +3144,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
 				}
 				strcat(tok->token_str, temp_tok.token_str);
 				strcat(tok->token_str, ",");
-				tok->token_const.x = temp_tok.token_const.x * sign_value;
+				tok->token_const.x = temp_tok.token_const.x*sign_value;
 				getting_real = 0;
 				sign_value = 1;
 			}
@@ -3154,7 +3154,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
 				}
 				strcat(tok->token_str, temp_tok.token_str);
 				strcat(tok->token_str, ")");
-				tok->token_const.y = temp_tok.token_const.x * sign_value;
+				tok->token_const.y = temp_tok.token_const.x*sign_value;
 				tok->token_type = tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
 				tok->token_id   = 0;
 				if (debug_token != NULL) {
@@ -3181,7 +3181,7 @@ void is_complex_constant(FILE * openfile, struct token_st * tok)
 	return;
 }
 
-int frmgetalpha(FILE * openfile, struct token_st * tok)
+int frmgetalpha(FILE *openfile, struct token_st *tok)
 {
 	int c;
 	int i = 1;
@@ -3263,7 +3263,7 @@ int frmgetalpha(FILE * openfile, struct token_st * tok)
 	return 0;
 }
 
-void frm_get_eos (FILE * openfile, struct token_st * this_token)
+void frm_get_eos (FILE *openfile, struct token_st *this_token)
 {
 	long last_filepos = ftell(openfile);
 	int c;
@@ -3292,7 +3292,7 @@ void frm_get_eos (FILE * openfile, struct token_st * this_token)
   NOT_A_TOKEN and END_OF_FORMULA
 */
 
-int frmgettoken(FILE * openfile, struct token_st * this_token)
+int frmgettoken(FILE *openfile, struct token_st *this_token)
 {
 	int c;
 	int i = 1;
@@ -3391,12 +3391,12 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
 	}
 }
 
-int frm_get_param_stuff (char * Name)
+int frm_get_param_stuff(char *Name)
 {
 	FILE *debug_token = NULL;
 	int c;
 	struct token_st current_token;
-	FILE * entry_file = NULL;
+	FILE *entry_file = NULL;
 	uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
 	uses_p4 = uses_p5 = 0;
 
@@ -3468,7 +3468,7 @@ int frm_get_param_stuff (char * Name)
      are found which should cause the formula not to be executed
 */
 
-int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
+int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 {
 	long filepos = ftell(open_file);
 	int c, i, done, at_end_of_name;
@@ -3544,7 +3544,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
 			}
 		}
 		if (SymStr[i].s[0] == (char) 0 && report_bad_sym) {
-			char * msgbuf = (char *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
+			char *msgbuf = (char *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + (int) strlen(sym_buf) + 6);
 			strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
@@ -3575,7 +3575,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
 }
 
 
-static char *PrepareFormula(FILE * File, int from_prompts1c) {
+static char *PrepareFormula(FILE *File, int from_prompts1c) {
 
 	/* GGM 5-23-96: replaces FindFormula(). This function sets the
        symmetry and converts a formula into a string  with no spaces,
@@ -3686,7 +3686,7 @@ int BadFormula(void) {
 
 int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurred  */
 
-	FILE * entry_file = NULL;
+	FILE *entry_file = NULL;
 
 	/*  CAE changed fn 12 July 1993 to fix problem when formula not found  */
 
@@ -3872,7 +3872,7 @@ struct error_data_st {
 } errors[3];
 
 
-void frm_error(FILE * open_file, long begin_frm)
+void frm_error(FILE *open_file, long begin_frm)
 {
 	struct token_st tok;
 /* char debugmsg[500];
@@ -3981,7 +3981,7 @@ void frm_error(FILE * open_file, long begin_frm)
 
 void display_var_list()
 {
-	struct var_list_st * p;
+	struct var_list_st *p;
 	stopmsg(0, "List of user defined variables:\n");
 	for (p = var_list; p; p=p->next_item) {
 		stopmsg(0, p->name);
@@ -3991,7 +3991,7 @@ void display_var_list()
 
 void display_const_lists()
 {
-	struct const_list_st * p;
+	struct const_list_st *p;
 	char msgbuf[800];
 	stopmsg (0, "Complex constants are:");
 	for (p = complx_list; p; p=p->next_item) {
@@ -4017,7 +4017,7 @@ struct const_list_st  *const_list_alloc() {
 
 void init_var_list()
 {
-	struct var_list_st * temp, * p;
+	struct var_list_st *temp, *p;
 	for (p = var_list; p; p=temp) {
 		temp = p->next_item;
 		free(p);
@@ -4028,7 +4028,7 @@ void init_var_list()
 
 void init_const_lists()
 {
-	struct const_list_st * temp, * p;
+	struct const_list_st *temp, *p;
 	for (p = complx_list; p; p=temp) {
 		temp = p->next_item;
 		free(p);
@@ -4041,7 +4041,8 @@ void init_const_lists()
 	real_list = NULL;
 }
 
-struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st tok) {
+struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
+{
 	if (p == NULL) {
 		p = var_list_alloc();
 	  if (p == NULL)
@@ -4059,7 +4060,8 @@ struct var_list_st * add_var_to_list (struct var_list_st * p, struct token_st to
 	return p;
 }
 
-struct const_list_st *  add_const_to_list (struct const_list_st * p, struct token_st tok) {
+struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st tok)
+{
 	if (p == NULL) {
 		p = const_list_alloc();
 	  if (p == NULL)
@@ -4082,8 +4084,8 @@ struct const_list_st *  add_const_to_list (struct const_list_st * p, struct toke
 void count_lists()
 {
 /* char msgbuf[800];
-*/ struct var_list_st * p;
-	struct const_list_st * q;
+*/ struct var_list_st *p;
+	struct const_list_st *q;
 
 	var_count = 0;
 	complx_count = 0;
@@ -4117,7 +4119,7 @@ int disable_fastparser;
 int must_use_float;
 
 
-int frm_prescan (FILE * open_file)
+int frm_prescan(FILE *open_file)
 {
 	long filepos;
 	int i;
@@ -4132,7 +4134,7 @@ int frm_prescan (FILE * open_file)
 	unsigned long else_has_been_used = 0;
 	unsigned long waiting_for_mod = 0;
 	int waiting_for_endif = 0;
-	int max_parens = sizeof(long) * 8;
+	int max_parens = sizeof(long)*8;
 /* char debugmsg[800];
 	stopmsg (0, "Entering prescan");
 */

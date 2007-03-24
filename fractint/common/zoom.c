@@ -336,12 +336,12 @@ void resizebox(int steps)
 {
 	double deltax, deltay;
 	if (zdepth*screenaspect > zwidth) { /* box larger on y axis */
-		deltay = steps * 0.036 / screenaspect;
-		deltax = zwidth * deltay / zdepth;
+		deltay = steps*0.036 / screenaspect;
+		deltax = zwidth*deltay / zdepth;
 		}
 	else {                              /* box larger on x axis */
-		deltax = steps * 0.036;
-		deltay = zdepth * deltax / zwidth;
+		deltax = steps*0.036;
+		deltay = zdepth*deltax / zwidth;
 		}
 	chgboxf(deltax, deltay);
 	}
@@ -376,12 +376,12 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0, 0) topleft thru (1, 1) bottom right */
 
-	/* tempx = dy * plotmx1 - dx * plotmx2; */
+	/* tempx = dy*plotmx1 - dx*plotmx2; */
 	mult_bf(btmp1, bfdy, bfplotmx1);
 	mult_bf(btmp2, bfdx, bfplotmx2);
 	sub_bf(btempx, btmp1, btmp2);
 
-	/* tempy = dx * plotmy1 - dy * plotmy2; */
+	/* tempy = dx*plotmy1 - dy*plotmy2; */
 	mult_bf(btmp1, bfdx, bfplotmy1);
 	mult_bf(btmp2, bfdy, bfplotmy2);
 	sub_bf(btempy, btmp1, btmp2);
@@ -416,8 +416,8 @@ static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy,
 	double tempx, tempy;
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0, 0) topleft thru (1, 1) bottom right */
-	tempx = dy * plotmx1 - dx * plotmx2;
-	tempy = dx * plotmy1 - dy * plotmy2;
+	tempx = dy*plotmx1 - dx*plotmx2;
+	tempy = dx*plotmy1 - dy*plotmy2;
 
 	/* calc new corner by extending from current screen corners */
 	*newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
@@ -526,15 +526,15 @@ void aspectratio_crop(float oldaspect, float newaspect)
 	double ftemp, xmargin, ymargin;
 	if (newaspect > oldaspect) { /* new ratio is taller, crop x */
 		ftemp = (1.0 - oldaspect / newaspect) / 2;
-		xmargin = (xxmax - xx3rd) * ftemp;
-		ymargin = (yymin - yy3rd) * ftemp;
+		xmargin = (xxmax - xx3rd)*ftemp;
+		ymargin = (yymin - yy3rd)*ftemp;
 		xx3rd += xmargin;
 		yy3rd += ymargin;
 		}
 	else                       { /* new ratio is wider, crop y */
 		ftemp = (1.0 - newaspect / oldaspect) / 2;
-		xmargin = (xx3rd - xxmin) * ftemp;
-		ymargin = (yy3rd - yymax) * ftemp;
+		xmargin = (xx3rd - xxmin)*ftemp;
+		ymargin = (yy3rd - yymax)*ftemp;
 		xx3rd -= xmargin;
 		yy3rd -= ymargin;
 		}

@@ -62,7 +62,7 @@ static long oldmemoffset = 0;
 static BYTE *membufptr;
 
 static void _fastcall  findload_cache(long);
-static struct cache * _fastcall  find_cache(long);
+static struct cache *_fastcall  find_cache(long);
 static void  write_cache_lru(void);
 static void _fastcall  mem_putc(BYTE);
 static BYTE  mem_getc(void);
@@ -226,7 +226,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		*fwd_link = (int) ((char *)ptr1 - (char *)cache_start);
 	}
 
-	memorysize = (long)(newcolsize) * newrowsize + headerlength;
+	memorysize = (long)(newcolsize)*newrowsize + headerlength;
 	if ((i = (short)memorysize & (BLOCKLEN-1)) != 0)
 	{
 		memorysize += BLOCKLEN - i;
@@ -365,7 +365,7 @@ int readdisk(int col, int row)
 			return 0;
 		}
 		cur_row = row;
-		cur_row_base = (long) cur_row * rowsize;
+		cur_row_base = (long) cur_row*rowsize;
 	}
 	if (col >= rowsize)
 	{
@@ -427,7 +427,7 @@ void writedisk(int col, int row, int color)
 		{
 			return;
 		}
-		cur_row_base = (long) (cur_row = row) * rowsize;
+		cur_row_base = (long) (cur_row = row)*rowsize;
 	}
 	if (col >= rowsize)
 	{
@@ -578,7 +578,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 }
 
 /* lookup for write_cache_lru */
-static struct cache * _fastcall  find_cache(long offset)
+static struct cache *_fastcall  find_cache(long offset)
 {
 #ifndef XFRACT
 	unsigned int tbloffset;

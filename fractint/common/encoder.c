@@ -14,11 +14,11 @@
 #include "drivers.h"
 
 static int compress(int rowlimit);
-static int _fastcall shftwrite(BYTE * color, int numcolors);
+static int _fastcall shftwrite(BYTE *color, int numcolors);
 static int _fastcall extend_blk_len(int datalen);
-static int _fastcall put_extend_blk(int block_id, int block_len, char * block_data);
+static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data);
 static int _fastcall store_item_name(char *);
-static void _fastcall setup_save_info(struct fractal_info * save_info);
+static void _fastcall setup_save_info(struct fractal_info *save_info);
 
 /*
 								Save-To-Disk Routines (GIF)
@@ -203,7 +203,7 @@ restart:
 					if (++outcolor2 >= colors)
 						outcolor2 = 0;
 				}
-				for (i = 0; 250 * i < xdots; i++)
+				for (i = 0; 250*i < xdots; i++)
 				{  /* clear vert status bars */
 					putcolor(i, j, getcolor(i, j) ^ outcolor1);
 					putcolor(xdots - 1 - i, j, 
@@ -309,7 +309,7 @@ int encoder()
 		/* pot16bit info is stored as: file:    double width rows, right side
        * of row is low 8 bits diskvid: ydots rows of colors followed by ydots
        * rows of low 8 bits decoder: returns (row of color info then row of
-       * low 8 bits) * ydots */
+       * low 8 bits)*ydots */
 		rowlimit <<= 1;
 		width <<= 1;
 	}
@@ -328,16 +328,16 @@ int encoder()
 	/* TODO: pixel aspect ratio should be 1:1? */
 	if (viewwindow                               /* less than full screen?  */
        && (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
-		i = (int) (((double) sydots / (double) sxdots) * 64.0 / screenaspect - 14.5);
+		i = (int) (((double) sydots / (double) sxdots)*64.0 / screenaspect - 14.5);
 	else   /* must risk loss of precision if numbers low */
-		i = (int) ((((double) ydots / (double) xdots) / finalaspectratio) * 64 - 14.5);
+		i = (int) ((((double) ydots / (double) xdots) / finalaspectratio)*64 - 14.5);
 	if (i < 1)
 		i = 1;
 	if (i > 255)
 		i = 255;
 	if (gif87a_flag)
 		i = 0;                    /* for some decoders which can't handle
-                                 * aspect */
+									* aspect */
 	if (fputc(i, g_outfile) != i)
 		goto oops;                /* pixel aspect ratio */
 
@@ -444,21 +444,21 @@ int encoder()
 		if (display3d <= 0 && rangeslen)
 		{
 			/* ranges block, 004 */
-			save_info.tot_extend_len += extend_blk_len(rangeslen * 2);
+			save_info.tot_extend_len += extend_blk_len(rangeslen*2);
 #ifdef XFRACT
 			fix_ranges(ranges, rangeslen, 0);
 #endif
-			if (!put_extend_blk(4, rangeslen * 2, (char *) ranges))
+			if (!put_extend_blk(4, rangeslen*2, (char *) ranges))
 				goto oops;
 
 		}
 		/* Extended parameters block 005 */
 		if (bf_math)
 		{
-			save_info.tot_extend_len += extend_blk_len(22 * (bflength + 2));
+			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
 			/* note: this assumes variables allocated in order starting with
           * bfxmin in init_bf2() in BIGNUM.C */
-			if (!put_extend_blk(5, 22 * (bflength + 2), (char *) bfxmin))
+			if (!put_extend_blk(5, 22*(bflength + 2), (char *) bfxmin))
 				goto oops;
 		}
 
@@ -485,7 +485,7 @@ int encoder()
              esave_info.evolving        = (short) evolving;
              esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
              esave_info.fiddlefactor    = fiddlefactor;
-             esave_info.ecount          = (short) (gridsz * gridsz); /* flag for done */
+             esave_info.ecount          = (short) (gridsz*gridsz); /* flag for done */
           }
           else { /* we will need the resuming information */
 			  memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
@@ -577,14 +577,14 @@ oops:
 
 /* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
 /* shift IBM colors to GIF */
-static int _fastcall shftwrite(BYTE * color, int numcolors)
+static int _fastcall shftwrite(BYTE *color, int numcolors)
 {
 	BYTE thiscolor;
 	int i, j;
 	for (i = 0; i < numcolors; i++)
 		for (j = 0; j < 3; j++)
 		{
-			thiscolor = color[3 * i + j];
+			thiscolor = color[3*i + j];
 			thiscolor = (BYTE) (thiscolor << 2);
 			thiscolor = (BYTE) (thiscolor + (BYTE) (thiscolor >> 6));
 			if (fputc(thiscolor, g_outfile) != (int) thiscolor)
@@ -599,7 +599,7 @@ static int _fastcall extend_blk_len(int datalen)
 	/* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
-static int _fastcall put_extend_blk(int block_id, int block_len, char * block_data)
+static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data)
 {
 	int i, j;
 	char header[15];
@@ -655,7 +655,7 @@ static int _fastcall store_item_name(char *nameptr)
 	return extend_blk_len(sizeof(fsave_info));
 }
 
-static void _fastcall setup_save_info(struct fractal_info * save_info)
+static void _fastcall setup_save_info(struct fractal_info *save_info)
 {
 	int i;
 	if (fractype != FORMULA && fractype != FFORMULA)
@@ -1026,7 +1026,7 @@ nomatch:
 					if (++outcolor2 >= colors)
 						outcolor2 = 0;
 				}
-				for (i = 0; 250 * i < xdots; i++)
+				for (i = 0; 250*i < xdots; i++)
 				{  /* display vert status bars */
 					/* (this is NOT GIF-related)  */
 					putcolor(i, ydot, getcolor(i, ydot) ^ outcolor1);

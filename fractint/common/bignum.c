@@ -1189,8 +1189,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		copy_bn(bntmp1, bntmp5);
 		unsafe_mult_bn(bntmp2, n, bntmp1);     /* n*cos(r) */
 		sub_a_bn(bntmp4, bntmp2 + shiftfactor); /* sin(r) - n*cos(r) */
-		unsafe_mult_bn(bntmp1, bntmp5, bntmp4); /* cos(r) * (sin(r) - n*cos(r)) */
-		sub_a_bn(r, bntmp1 + shiftfactor); /* r - cos(r) * (sin(r) - n*cos(r)) */
+		unsafe_mult_bn(bntmp1, bntmp5, bntmp4); /* cos(r)*(sin(r) - n*cos(r)) */
+		sub_a_bn(r, bntmp1 + shiftfactor); /* r - cos(r)*(sin(r) - n*cos(r)) */
 
 #ifdef CALCULATING_BIG_PI
 		putchar('\n');

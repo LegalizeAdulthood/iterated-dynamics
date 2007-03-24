@@ -157,13 +157,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					ydots = viewydots;
 					if (ydots == 0) /* calc ydots? */
 					{
-						ydots = (int)((double)xdots * ftemp + 0.5);
+						ydots = (int)((double)xdots*ftemp + 0.5);
 					}
 				}
 				else if (finalaspectratio <= screenaspect)
 				{
 					xdots = (int)((double)sxdots / viewreduction + 0.5);
-					ydots = (int)((double)xdots * ftemp + 0.5);
+					ydots = (int)((double)xdots*ftemp + 0.5);
 				}
 				else
 				{
@@ -383,7 +383,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					}
 					param_history(0); /* save old history */
 					ecount = 0;
-					fiddlefactor = fiddlefactor * fiddle_reduction;
+					fiddlefactor = fiddlefactor*fiddle_reduction;
 					opx = newopx; opy = newopy;
 					odpx = newodpx; odpy = newodpy; /*odpx used for discrete parms like
 														inside, outside, trigfn etc */
@@ -394,12 +394,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				grout  = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 				tmpxdots = xdots + grout;
 				tmpydots = ydots + grout;
-				gridsqr = gridsz * gridsz;
+				gridsqr = gridsz*gridsz;
 				while (ecount < gridsqr)
 				{
 					spiralmap(ecount); /* sets px & py */
-					sxoffs = tmpxdots * px;
-					syoffs = tmpydots * py;
+					sxoffs = tmpxdots*px;
+					syoffs = tmpydots*py;
 					param_history(1); /* restore old history */
 					fiddleparms(g_genes, ecount);
 					calcfracinit();
@@ -1260,9 +1260,9 @@ static int handle_history(char *stacked, int kbdchar)
 static int handle_color_cycling(int kbdchar)
 {
 	clear_zoombox();
-	memcpy(olddacbox, g_dac_box, 256 * 3);
+	memcpy(olddacbox, g_dac_box, 256*3);
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-	if (memcmp(olddacbox, g_dac_box, 256 * 3))
+	if (memcmp(olddacbox, g_dac_box, 256*3))
 	{
 		colorstate = 1;
 		save_history_info();
@@ -1436,7 +1436,7 @@ static void handle_zoom_skew(int negative)
 		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_HOME);
-			if ((zskew -= 0.02 * i) < -0.48)
+			if ((zskew -= 0.02*i) < -0.48)
 			{
 				zskew = -0.48;
 			}
@@ -1447,7 +1447,7 @@ static void handle_zoom_skew(int negative)
 		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_END);
-			if ((zskew += 0.02 * i) > 0.48)
+			if ((zskew += 0.02*i) > 0.48)
 			{
 				zskew = 0.48;
 			}
@@ -1857,8 +1857,8 @@ static void handle_evolver_move_selection(int *kbdchar)
 				py = 0;
 			}
 			grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			sxoffs = px * (int)(dxsize + 1 + grout);
-			syoffs = py * (int)(dysize + 1 + grout);
+			sxoffs = px*(int)(dxsize + 1 + grout);
+			syoffs = py*(int)(dysize + 1 + grout);
 
 			param_history(1); /* restore old history */
 			fiddleparms(g_genes, unspiralmap()); /* change all parameters */
@@ -1919,8 +1919,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in viewwindow mode) */
 					int grout = !((evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
-					sxoffs = px * (int) (dxsize + 1 + grout);
-					syoffs = py * (int) (dysize + 1 + grout);
+					sxoffs = px*(int) (dxsize + 1 + grout);
+					syoffs = py*(int) (dysize + 1 + grout);
 					SetupParamBox();
 					drawparmbox(0);
 				}

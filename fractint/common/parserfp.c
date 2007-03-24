@@ -122,7 +122,7 @@ struct fls *pfls = (struct fls *)0;
 
 extern union Arg *Arg1, *Arg2;
 extern double _1_, _2_;
-extern union Arg s[20], * *Store, * *Load;
+extern union Arg s[20], **Store, **Load;
 extern int StoPtr, LodPtr, OpPtr;
 extern unsigned int vsp, LastOp;
 extern struct ConstArg *v;
@@ -223,7 +223,7 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 /* if first char not alpha, or const p1, p2, or p3 are being accessed  */
 /*    then this is a const.  */
 #define IS_CONST(x) \
-		(!isalpha(**(((char * *)x) - 2)) \
+		(!isalpha(**(((char **)x) - 2)) \
 		|| (x == &PARM1 && p1const) \
 		|| (x == &PARM2 && p2const) \
 		|| (x == &PARM3 && p3const) \

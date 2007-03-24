@@ -49,12 +49,12 @@ static long iteration1(register DBLS cr, register DBLS ci,
 	oldreal = re;
 	oldimag = im;
 	while ((magnitude < 16.0) && (color < maxit)) {
-		newreal = oldreal * oldreal - oldimag * oldimag + cr;
-		newimag = 2 * oldreal * oldimag + ci;
+		newreal = oldreal*oldreal - oldimag*oldimag + cr;
+		newimag = 2*oldreal*oldimag + ci;
 		color++;
 		oldreal = newreal;
 		oldimag = newimag;
-		magnitude = newreal * newreal + newimag * newimag;
+		magnitude = newreal*newreal + newimag*newimag;
 	}
 	if (color >= maxit) color = BASIN_COLOR;
 	return (int)color;
@@ -83,7 +83,7 @@ JuliafpFractal()
 {
 	/* floating point version of classical Mandelbrot/Julia */
 	new.x = tempsqrx - tempsqry + floatparm->x;
-	new.y = 2.0 * old.x * old.y + floatparm->y;
+	new.y = 2.0*old.x*old.y + floatparm->y;
 	return floatbailout();
 }
 #endif

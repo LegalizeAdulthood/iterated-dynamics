@@ -92,8 +92,8 @@ static void format_vid_inf(int i,char *err,char *buf)
 static double vid_aspect(int tryxdots,int tryydots)
 {  /* calc resulting aspect ratio for specified dots in current mode */
 	return (double)tryydots / (double)tryxdots
-		* (double)g_video_entry.xdots / (double)g_video_entry.ydots
-		* screenaspect;
+		*(double)g_video_entry.xdots / (double)g_video_entry.ydots
+		*screenaspect;
 	}
 
 #ifndef XFRACT
@@ -190,8 +190,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		if (fileaspectratio != 0 && (tmpflags & VI_VSMALL) == 0)
 		{
 			ftemp = vid_aspect(filexdots, fileydots);
-			if (ftemp < fileaspectratio * 0.98 ||
-				ftemp > fileaspectratio * 1.02)
+			if (ftemp < fileaspectratio*0.98 ||
+				ftemp > fileaspectratio*1.02)
 			{
 				tmpflags |= VI_ASPECT;
 			}
@@ -379,11 +379,11 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 			calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		skipxdots = skipydots = 1;
-		while (skipxdots * g_video_entry.xdots < filexdots)
+		while (skipxdots*g_video_entry.xdots < filexdots)
 		{
 			++skipxdots;
 		}
-		while (skipydots * g_video_entry.ydots < fileydots)
+		while (skipydots*g_video_entry.ydots < fileydots)
 		{
 			++skipydots;
 		}
@@ -439,7 +439,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	{
 		finalaspectratio = screenaspect;
 	}
-	i = (int)(finalaspectratio * 1000.0 + 0.5);
+	i = (int)(finalaspectratio*1000.0 + 0.5);
 	finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
 
 	/* setup view window stuff */
@@ -448,19 +448,19 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 	{
 		/* image not exactly same size as screen */
 		viewwindow = 1;
-		ftemp = finalaspectratio
-				* (double)g_video_entry.ydots / (double)g_video_entry.xdots
+		ftemp = finalaspectratio*
+			(double)g_video_entry.ydots / (double)g_video_entry.xdots
 				/ screenaspect;
 		if (finalaspectratio <= screenaspect)
 		{
-			i = (int)((double)g_video_entry.xdots / (double)filexdots * 20.0 + 0.5);
+			i = (int)((double)g_video_entry.xdots / (double)filexdots*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
 			i = (int)((double)g_video_entry.xdots / tmpreduce + 0.5);
-			j = (int)((double)i * ftemp + 0.5);
+			j = (int)((double)i*ftemp + 0.5);
 		}
 		else
 		{
-			i = (int)((double)g_video_entry.ydots / (double)fileydots * 20.0 + 0.5);
+			i = (int)((double)g_video_entry.ydots / (double)fileydots*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
 			j = (int)((double)g_video_entry.ydots / tmpreduce + 0.5);
 			i = (int)((double)j / ftemp + 0.5);

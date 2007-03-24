@@ -23,7 +23,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 
-#define RANDOM(n)       ((int)((long)((long)rand() * (long)(n)) >> 15)) /* Generate Random
+#define RANDOM(n)       ((int)((long)((long)rand()*(long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */
 #define MAX_ANTS        256
 #define XO              (xdots/2)
@@ -103,7 +103,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		for (color = 0; color < MAX_ANTS; color++)
 		{                         /* init the rules and colors for the
                                  * turkmites: 1 turn left, -1 turn right */
-			rule[color] = 1 - (RANDOM(2) * 2);
+			rule[color] = 1 - (RANDOM(2)*2);
 			next_col[color] = color + 1;
 		}
 		/* close the cycle */
@@ -114,7 +114,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		for (color = 0; color < rule_len; color++)
 		{                         /* init the rules and colors for the
                                  * turkmites: 1 turn left, -1 turn right */
-			rule[color] = (ru[color] * 2) - 1;
+			rule[color] = (ru[color]*2) - 1;
 			next_col[color] = color + 1;
 		}
 		/* repeats to last color */
@@ -266,7 +266,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	else
 	{                            /* the same rule the user wants for every
                                  * turkmite (max rule_len = 16 bit) */
-		rule_len = min(rule_len, 8 * sizeof(int));
+		rule_len = min(rule_len, 8*sizeof(int));
 		for (i = 0, rule[0] = 0; i < rule_len; i++)
 			rule[0] = (rule[0] << 1) | ru[i];
 		for (color = MAX_ANTS - 1; color; color--)

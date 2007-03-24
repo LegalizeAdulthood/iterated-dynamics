@@ -160,8 +160,8 @@ int showtempmsg(char *msgparm)
 
 	xrepeat = (sxdots >= 640) ? 2 : 1;
 	yrepeat = (sydots >= 300) ? 2 : 1;
-	textxdots = (int) strlen(msg) * xrepeat * 8;
-	textydots = yrepeat * 8;
+	textxdots = (int) strlen(msg)*xrepeat*8;
+	textydots = yrepeat*8;
 
 	/* worst case needs 10k */
 	if (temptextsave != NULL)
@@ -616,7 +616,7 @@ int fullscreen_choice(
 		i = 3;
 	}
 #endif
-	j = boxwidth * (colwidth += i) + i;     /* overall width of box */
+	j = boxwidth*(colwidth += i) + i;     /* overall width of box */
 	if (j < titlewidth + 2)
 	{
 		j = titlewidth + 2;
@@ -690,7 +690,7 @@ int fullscreen_choice(
 		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
 	}
 
-	boxitems = boxwidth * boxdepth;
+	boxitems = boxwidth*boxdepth;
 	topleftchoice = 0;                      /* pick topleft for init display */
 	while (current - topleftchoice >= boxitems
 		|| (current - topleftchoice > boxitems/2
@@ -1056,7 +1056,7 @@ static int menutype;
 
 int main_menu(int fullmenu)
 {
-	char *choices[44]; /* 2 columns * 22 rows */
+	char *choices[44]; /* 2 columns*22 rows */
 	int attributes[44];
 	int choicekey[44];
 	int i;
@@ -1568,7 +1568,7 @@ int input_field(
 						specialv = 1;
 						}
 					if (*fld == 'p' || *fld == 'P') {
-						tmpd = atan(1.0) * 4;
+						tmpd = atan(1.0)*4;
 						specialv = 1;
 						}
 					if (specialv) {
@@ -1626,7 +1626,7 @@ int field_prompt(
 	if ((i = (82-boxwidth)/4) > 3)
 		i = 3;
 	j -= i;
-	boxwidth += i * 2;
+	boxwidth += i*2;
 	for (i = -1; i < titlelines + 3; ++i)    /* draw empty box */
 		driver_set_attr(titlerow + i, j, C_PROMPT_LO, boxwidth);
 	g_text_cbase = titlecol;                  /* set left margin for putstring */
@@ -1851,7 +1851,7 @@ void load_fractint_config(void)
 		vident.videomodebx = bx;
 		vident.videomodecx = cx;
 		vident.videomodedx = dx;
-		vident.dotmode     = truecolorbits * 1000 + textsafe2 * 100 + dotmode;
+		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
 		vident.xdots       = (short)xdots;
 		vident.ydots       = (short)ydots;
 		vident.colors      = colors;

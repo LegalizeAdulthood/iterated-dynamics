@@ -164,10 +164,10 @@ int lclpy = gridsz - py - 1;
 	case 0:
        break;
 	case 1:
-       *(double *)gene[i].addr = px * dpx + opx; /*paramspace x coord * per view delta px + offset */
+       *(double *)gene[i].addr = px*dpx + opx; /*paramspace x coord*per view delta px + offset */
        break;
 	case 2: 
-       *(double *)gene[i].addr = lclpy * dpy + opy; /*same for y */
+       *(double *)gene[i].addr = lclpy*dpy + opy; /*same for y */
        break;
 	case   3:
        *(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
@@ -176,13 +176,13 @@ int lclpy = gridsz - py - 1;
        *(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
        break;
 	case 5:
-       *(double *)gene[i].addr += (((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor;
+       *(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
        break;
 	case 6:  /* weighted random mutation, further out = further change */
        {
        int mid = gridsz /2;
        double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-       *(double *)gene[i].addr += ((((double)randval / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius;
+       *(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius;
        }
        break;
 	}
@@ -216,7 +216,7 @@ int lclpy = gridsz - py - 1;
      {
      int mid = gridsz /2;
      double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-     ret = (int)((((randvalue / RAND_MAX) * 2 * fiddlefactor) - fiddlefactor) * radius);
+     ret = (int)((((randvalue / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius);
      ret %= limit;
      }
        break;
@@ -549,7 +549,7 @@ get_evol_restart:
 	if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM)) {
 	/* adjust field param to make some sense when changing from random modes*/
 	/* maybe should adjust for aspect ratio here? */
-		paramrangex = paramrangey = fiddlefactor * 2;
+		paramrangex = paramrangey = fiddlefactor*2;
 		opx = param[0] - fiddlefactor;
 		opy = param[1] - fiddlefactor;
 		/* set middle image to last selected and edges to +- fiddlefactor */
@@ -648,12 +648,12 @@ get_evol_restart:
 	if (i == FIK_F3) {
 	double centerx, centery;
 		centerx = opx + paramrangex / 2;
-		paramrangex = paramrangex * 2;
+		paramrangex = paramrangex*2;
 		opx = newopx = centerx - paramrangex / 2;
 		centery = opy + paramrangey / 2;
-		paramrangey = paramrangey * 2;
+		paramrangey = paramrangey*2;
 		opy = newopy = centery - paramrangey / 2;
-		fiddlefactor = fiddlefactor * 2;
+		fiddlefactor = fiddlefactor*2;
 		goto get_evol_restart;
 	}
 
@@ -875,10 +875,10 @@ int grout;
 
  boxcount =0;
  /*draw larger box to show parm zooming range */
- tl.x = bl.x = ((px -(int)parmzoom) * (int)(dxsize + 1 + grout))-sxoffs-1;
- tl.y = tr.y = ((py -(int)parmzoom) * (int)(dysize + 1 + grout))-syoffs-1; 
- br.x = tr.x = ((px +1 + (int)parmzoom) * (int)(dxsize + 1 + grout))-sxoffs;
- br.y = bl.y = ((py +1 + (int)parmzoom) * (int)(dysize + 1 + grout))-syoffs;
+ tl.x = bl.x = ((px -(int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs-1;
+ tl.y = tr.y = ((py -(int)parmzoom)*(int)(dysize + 1 + grout))-syoffs-1; 
+ br.x = tr.x = ((px +1 + (int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs;
+ br.y = bl.y = ((py +1 + (int)parmzoom)*(int)(dysize + 1 + grout))-syoffs;
 #ifndef XFRACT
  addbox(br); addbox(tr); addbox(bl); addbox(tl);
  drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y);
@@ -977,7 +977,7 @@ int unspiralmap(void)
   if ((px == mid && py == mid) || (oldgridsz != gridsz)) {
 	int i, gridsqr;
 	/* set up array and return */
-     gridsqr = gridsz * gridsz;
+     gridsqr = gridsz*gridsz;
      ecountbox[px][py] = 0;  /* we know the first one, do the rest */
      for (i = 1; i < gridsqr; i++) {
 			spiralmap(i);

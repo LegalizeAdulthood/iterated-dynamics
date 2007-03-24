@@ -155,8 +155,8 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
   /* space req for grid is 2(xdots + ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
 	xytemp = xdots + ydots;
-	if (((usr_floatflag == 0) && (xytemp * sizeof(long) > 32768)) ||
-       ((usr_floatflag == 1) && (xytemp * sizeof(double) > 32768)) ||
+	if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768)) ||
+       ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768)) ||
 			debugflag == 3800)
 	{
 		use_grid = 0;
@@ -534,10 +534,10 @@ expand_retry:
 	ftemp = (double)(-delyy2*delxx2*dxsize*dysize - (xxmax - xx3rd)*(yy3rd - yymax));
 	if (ftemp != 0)
 	{
-		plotmx1 = (double)(delxx2 * dxsize * dysize / ftemp);
-		plotmx2 = (yy3rd-yymax) * dxsize / ftemp;
+		plotmx1 = (double)(delxx2*dxsize*dysize / ftemp);
+		plotmx2 = (yy3rd-yymax)*dxsize / ftemp;
 		plotmy1 = (double)(-delyy2*dxsize*dysize/ftemp);
-		plotmy2 = (xxmax-xx3rd) * dysize / ftemp;
+		plotmy2 = (xxmax-xx3rd)*dysize / ftemp;
 	}
 	if (bf_math == 0)
 		free_bf_vars();
@@ -994,7 +994,7 @@ static void _fastcall adjust_to_limits(double expand)
 
 static void _fastcall smallest_add(double *num)
 {
-	*num += *num * 5.0e-16;
+	*num += *num*5.0e-16;
 }
 
 static void _fastcall smallest_add_bf(bf_t num)
@@ -1208,13 +1208,13 @@ void end_resume(void)
 	We know that:
        realx == lx0[col] + lx1[row]
        realy == ly0[row] + ly1[col]
-       lx0[col] == (col/width) * Xs + xxmin
-       lx1[row] == row * delxx
-       ly0[row] == (row/D) * Ys + yymax
-       ly1[col] == col * (-delyy)
+       lx0[col] == (col/width)*Xs + xxmin
+       lx1[row] == row*delxx
+       ly0[row] == (row/D)*Ys + yymax
+       ly1[col] == col*(-delyy)
   so:
-       realx == (col/W) * Xs + xxmin + row * delxx
-       realy == (row/D) * Ys + yymax + col * (-delyy)
+       realx == (col/W)*Xs + xxmin + row*delxx
+       realy == (row/D)*Ys + yymax + col*(-delyy)
   and therefore:
        row == (realx-xxmin - (col/W)*Xs) / Xv    (1)
        col == (realy-yymax - (row/D)*Ys) / Yv    (2)
@@ -1223,7 +1223,7 @@ void end_resume(void)
                       / ((-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
-/* sleep N * a tenth of a millisecond */
+/* sleep N*a tenth of a millisecond */
 
 void sleepms_old(long ms)
 {
@@ -1253,7 +1253,7 @@ void sleepms_old(long ms)
               ftimex(&t1);
 				}
 				while (t2.time == t1.time && t2.millitm == t1.millitm);
-           sleepms_old(10L * SLEEPINIT); /* about 1/4 sec */
+           sleepms_old(10L*SLEEPINIT); /* about 1/4 sec */
            ftimex(&t2);
            if (driver_key_pressed()) {
               scalems = 0L;
@@ -1268,14 +1268,14 @@ void sleepms_old(long ms)
            ftimex(&t1);
            }
 			while (t2.time == t1.time && t2.millitm == t1.millitm);
-		sleepms_old(10L * SLEEPINIT);
+		sleepms_old(10L*SLEEPINIT);
 		ftimex(&t2);
 		if ((i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm) < elapsed)
            elapsed = (i == 0) ? 1 : i;
-		scalems = (long)((float)SLEEPINIT/(float)(elapsed) * scalems);
+		scalems = (long)((float)SLEEPINIT/(float)(elapsed)*scalems);
 		cleartempmsg();
 	}
-	if (ms > 10L * SLEEPINIT) { /* using ftime is probably more accurate */
+	if (ms > 10L*SLEEPINIT) { /* using ftime is probably more accurate */
 		ms /= 10;
 		ftimex(&t1);
 		while (1) {
@@ -1404,9 +1404,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
 	if (orbit_ptr >= 1500-3) return;
-	i = (int)(dy * plotmx1 - dx * plotmx2); i += sxoffs;
+	i = (int)(dy*plotmx1 - dx*plotmx2); i += sxoffs;
 	if (i < 0 || i >= sxdots) return;
-	j = (int)(dx * plotmy1 - dy * plotmy2); j += syoffs;
+	j = (int)(dx*plotmy1 - dy*plotmy2); j += syoffs;
 	if (j < 0 || j >= sydots) return;
 	save_sxoffs = sxoffs;
 	save_syoffs = syoffs;

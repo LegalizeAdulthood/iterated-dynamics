@@ -85,7 +85,7 @@ static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 		else while (!driver_key_pressed()) { /* rotate until key hit, at least once so step=oldstep ok */
 			if (fkey > 0) {                /* randomizing is on */
 				for (istep = 0; istep < step; istep++) {
-					jstep = next + (istep * direction);
+					jstep = next + (istep*direction);
 					while (jstep < rotate_lo)  jstep += rotate_size;
 					while (jstep > rotate_max) jstep -= rotate_size;
 					if (++incr > fstep) {    /* time to randomize */

@@ -379,10 +379,10 @@ skip_UI:
 			fpbat = dir_fopen(workdir, "makemig.bat", "w");
 		 if (fpbat == NULL)
 				xm = ym = 0;
-			pdelx  = (xxmax - xx3rd) / (xm * pxdots - 1);   /* calculate stepsizes */
-			pdely  = (yymax - yy3rd) / (ym * pydots - 1);
-			pdelx2 = (xx3rd - xxmin) / (ym * pydots - 1);
-			pdely2 = (yy3rd - yymin) / (xm * pxdots - 1);
+			pdelx  = (xxmax - xx3rd) / (xm*pxdots - 1);   /* calculate stepsizes */
+			pdely  = (yymax - yy3rd) / (ym*pydots - 1);
+			pdelx2 = (xx3rd - xxmin) / (ym*pydots - 1);
+			pdely2 = (yy3rd - yymin) / (xm*pxdots - 1);
 
 			/* save corners */
 			pxxmin = xxmin;
@@ -624,14 +624,14 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			/* Round to avoid ugly decimals, precision here is not critical */
 			/* Don't round Xmagfactor if it's small */
 			if (fabs(Xmagfactor) > 0.5) /* or so, exact value isn't important */
-				Xmagfactor = (sign(Xmagfactor) * (long)(fabs(Xmagfactor) * 1e4 + 0.5)) / 1e4;
+				Xmagfactor = (sign(Xmagfactor)*(long)(fabs(Xmagfactor)*1e4 + 0.5)) / 1e4;
 			/* Just truncate these angles.  Who cares about 1/1000 of a degree */
 			/* Somebody does.  Some rotated and/or skewed images are slightly */
 			/* off when recreated from a PAR using 1/1000. */
 			/* JCO 08052001 */
 #if 0
-			Rotation   = (long)(Rotation   * 1e3)/1e3;
-			Skew       = (long)(Skew       * 1e3)/1e3;
+			Rotation   = (long)(Rotation*1e3)/1e3;
+			Skew       = (long)(Skew*1e3)/1e3;
 #endif
 			if (Xmagfactor != 1 || Rotation != 0 || Skew != 0)
 			{ /* Only put what is necessary */
@@ -1211,7 +1211,7 @@ va_dcl
 #ifndef USE_VARARGS
 	va_start(args, parm);
 #else
-	char * parm;
+	char *parm;
 
 	va_start(args);
 	parm = va_arg(args, char *);
@@ -1947,8 +1947,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 			{
 				allxres = xres;             /* save the "master" resolution */
 				allyres = yres;
-				xtot = xres * xmult;        /* adjust the image size */
-				ytot = yres * ymult;
+				xtot = xres*xmult;        /* adjust the image size */
+				ytot = yres*ymult;
 				memcpy(&temp[6], &xtot, 2);
 				memcpy(&temp[8], &ytot, 2);
 				if (gif87a_flag)
@@ -2010,8 +2010,8 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					}
 					memcpy(&xloc, &temp[1], 2); /* X-location */
 					memcpy(&yloc, &temp[3], 2); /* Y-location */
-					xloc += (xstep * xres);     /* adjust the locations */
-					yloc += (ystep * yres);
+					xloc += (xstep*xres);     /* adjust the locations */
+					yloc += (ystep*yres);
 					memcpy(&temp[1], &xloc, 2);
 					memcpy(&temp[3], &yloc, 2);
 					if (fwrite(temp, 10, 1, out) != 1)     /* write out the Image Descriptor */

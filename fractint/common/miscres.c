@@ -172,7 +172,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 		*Xctr = (xxmin + xxmax)/2.0;
 		*Yctr = (yymin + yymax)/2.0;
 		*Magnification  = 2.0/Height;
-		*Xmagfactor =  Height / (DEFAULTASPECT * Width);
+		*Xmagfactor =  Height / (DEFAULTASPECT*Width);
 		*Rotation = 0.0;
 		*Skew = 0.0;
 		}
@@ -201,10 +201,10 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 		*Xctr = (xxmin + xxmax)*0.5;
 		*Yctr = (yymin + yymax)*0.5;
    
-		Height = b * sin(tmpa);
+		Height = b*sin(tmpa);
    
 		*Magnification  = 2.0/Height; /* 1/(h/2) */
-		*Xmagfactor = Height / (DEFAULTASPECT * a);
+		*Xmagfactor = Height / (DEFAULTASPECT*a);
    
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -263,7 +263,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 		Xmagfactor = 1.0;
 
 	h = (double)(1/Magnification);
-	w = h / (DEFAULTASPECT * Xmagfactor);
+	w = h / (DEFAULTASPECT*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
@@ -288,20 +288,20 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 	cosrot = cos(Rotation);
 
 	/* top left */
-	x = xxmin * cosrot + yymax *  sinrot;
-	y = -xxmin * sinrot + yymax *  cosrot;
+	x = xxmin*cosrot + yymax*sinrot;
+	y = -xxmin*sinrot + yymax*cosrot;
 	xxmin = x + Xctr;
 	yymax = y + Yctr;
 
 	/* bottom right */
-	x = xxmax * cosrot + yymin *  sinrot;
-	y = -xxmax * sinrot + yymin *  cosrot;
+	x = xxmax*cosrot + yymin*sinrot;
+	y = -xxmax*sinrot + yymin*cosrot;
 	xxmax = x + Xctr;
 	yymin = y + Yctr;
 
 	/* bottom left */
-	x = xx3rd * cosrot + yy3rd *  sinrot;
-	y = -xx3rd * sinrot + yy3rd *  cosrot;
+	x = xx3rd*cosrot + yy3rd*sinrot;
+	y = -xx3rd*sinrot + yy3rd*cosrot;
 	xx3rd = x + Xctr;
 	yy3rd = y + Yctr;
 
@@ -343,7 +343,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		add_bf(Yctr, bfymin, bfymax);
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
-		*Xmagfactor =  (double)(Height / (DEFAULTASPECT * Width));
+		*Xmagfactor =  (double)(Height / (DEFAULTASPECT*Width));
 		*Rotation = 0.0;
 		*Skew = 0.0;
 	}
@@ -378,7 +378,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		/* atan2() only depends on the ratio, this puts it in double's range */
 		signx = sign(tmpx1);
 		if (signx)
-			tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
+			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy / |tmpx| */
 		*Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
    
 		/* tmpx = xxmin - xx3rd; */
@@ -401,9 +401,9 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		add_bf(Yctr, bfymin, bfymax);
 		half_a_bf(Yctr);
    
-		Height = b * sin(tmpa);
+		Height = b*sin(tmpa);
 		*Magnification  = 2/Height; /* 1/(h/2) */
-		*Xmagfactor = (double)(Height / (DEFAULTASPECT * a));
+		*Xmagfactor = (double)(Height / (DEFAULTASPECT*a));
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -444,7 +444,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 
 	h = 1/Magnification;
 	floattobf(bfh, h);
-	w = h / (DEFAULTASPECT * Xmagfactor);
+	w = h / (DEFAULTASPECT*Xmagfactor);
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
@@ -478,8 +478,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	cosrot = cos(Rotation);
 
 	/* top left */
-	x =  xmin * cosrot + ymax *  sinrot;
-	y = -xmin * sinrot + ymax *  cosrot;
+	x =  xmin*cosrot + ymax*sinrot;
+	y = -xmin*sinrot + ymax*cosrot;
 	/* xxmin = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfxmin, bftmp, Xctr);
@@ -488,8 +488,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	add_bf(bfymax, bftmp, Yctr);
 
 	/* bottom right */
-	x =  xmax * cosrot + ymin *  sinrot;
-	y = -xmax * sinrot + ymin *  cosrot;
+	x =  xmax*cosrot + ymin*sinrot;
+	y = -xmax*sinrot + ymin*cosrot;
 	/* xxmax = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfxmax, bftmp, Xctr);
@@ -498,8 +498,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	add_bf(bfymin, bftmp, Yctr);
 
 	/* bottom left */
-	x =  x3rd * cosrot + y3rd *  sinrot;
-	y = -x3rd * sinrot + y3rd *  cosrot;
+	x =  x3rd*cosrot + y3rd*sinrot;
+	y = -x3rd*sinrot + y3rd*cosrot;
 	/* xx3rd = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfx3rd, bftmp, Xctr);
@@ -1040,7 +1040,7 @@ top:
 		if (got_status == GOT_STATUS_DIFFUSION)
 		{
 			sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-					(100.0 * dif_counter)/dif_limit,
+					(100.0*dif_counter)/dif_limit,
 					dif_counter, dif_limit, bits);
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
 			++s_row;

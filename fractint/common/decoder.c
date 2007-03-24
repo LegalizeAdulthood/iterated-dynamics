@@ -456,7 +456,7 @@ static short get_next_code()
 }
 
 /* called in parent reoutine to set byte_buff */
-void set_byte_buff(BYTE * ptr)
+void set_byte_buff(BYTE *ptr)
 {
 	byte_buff = ptr;
 }
