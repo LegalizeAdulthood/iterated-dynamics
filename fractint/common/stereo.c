@@ -327,7 +327,7 @@ int do_AutoStereo(void)
 	done = 0;
 	while (done == 0)
 	{
-	   driver_wait_key_pressed(0);
+		driver_wait_key_pressed(0);
 		kbdchar = driver_get_key();
 		switch (kbdchar)
 		{

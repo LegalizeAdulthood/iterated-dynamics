@@ -1,4 +1,4 @@
-/* 
+/*
   Fractint writes the escape iteration of fractal to a 24 bit Targa file
   called ITERATES.TGA. This program reads that file and recovers the
   iteration value. You can write your own truecolor mapping algorithm. It
@@ -62,7 +62,7 @@ main()
 			{
 				printf("err at row %d col %d\n",j,i);
 				exit(1);
-			}   
+			}
 			printf("row %2d col %2d iter %8ld          \n",j,i,iter);
 			/* map iterations to colors */
 			rgbmap(maxiter,iter,&red,&green,&blue);

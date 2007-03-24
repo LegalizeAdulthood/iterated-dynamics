@@ -758,10 +758,10 @@ void Cursor_Move(int xoff, int yoff)
 	}
 
 
-int Cursor_GetX(void)   
+int Cursor_GetX(void)
 { return the_cursor->x; }
 
-int Cursor_GetY(void)   
+int Cursor_GetY(void)
 { return the_cursor->y; }
 
 
@@ -813,7 +813,7 @@ void Cursor_CheckBlink(void)
 int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
 	{
 
-	while (!driver_wait_key_pressed(1)) 
+	while (!driver_wait_key_pressed(1))
 	{
        Cursor_CheckBlink();
 	}
@@ -896,19 +896,19 @@ static void MoveBox_Destroy(MoveBox *me)
 	}
 
 
-static BOOLEAN MoveBox_Moved(MoveBox *me) 
+static BOOLEAN MoveBox_Moved(MoveBox *me)
 { return me->moved; }
 
-static BOOLEAN MoveBox_ShouldHide(MoveBox *me) 
+static BOOLEAN MoveBox_ShouldHide(MoveBox *me)
 { return me->should_hide; }
 
-static int MoveBox_X(MoveBox *me)      
+static int MoveBox_X(MoveBox *me)
 { return me->x; }
 
-static int MoveBox_Y(MoveBox *me)      
+static int MoveBox_Y(MoveBox *me)
 { return me->y; }
 
-static int MoveBox_CSize(MoveBox *me)  
+static int MoveBox_CSize(MoveBox *me)
 { return me->csize; }
 
 
@@ -2816,10 +2816,10 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
               driver_stack_screen();
               i = field_prompt("Enter gamma value",NULL,buf,20,NULL);
               driver_unstack_screen();
-              if (i != -1) 
+              if (i != -1)
               {
 						sscanf(buf,"%f",&gamma_val);
-						if (gamma_val == 0) 
+						if (gamma_val == 0)
 						{
                       gamma_val = 0.0000000001f;
 						}
@@ -3246,12 +3246,12 @@ static PalTable *PalTable_Construct(void)
 	RGBEditor_SetRGB(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
 	RGBEditor_SetRGB(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
 
-	if (g_video_scroll) 
+	if (g_video_scroll)
 	{
 		PalTable__SetPos(me, g_video_start_x, g_video_start_y);
 		csize = ((g_vesa_y_res-(PalTable_PALY + 1 + 1)) / 2) / 16;
 	}
-	else 
+	else
 	{
 		PalTable__SetPos(me, 0, 0);
 		csize = ((sydots-(PalTable_PALY + 1 + 1)) / 2) / 16;

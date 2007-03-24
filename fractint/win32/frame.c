@@ -35,7 +35,7 @@ static int s_mouse_keys[16] =
 	/* right			left			down				up */
 	FIK_RIGHT_ARROW,	FIK_LEFT_ARROW,	FIK_DOWN_ARROW,		FIK_UP_ARROW,	/* no buttons */
 	0,					0,				FIK_PAGE_DOWN,		FIK_PAGE_UP,	/* left button */
-	FIK_CTL_PLUS,		FIK_CTL_MINUS,	FIK_CTL_DEL,		FIK_CTL_INSERT,	/* right button */	
+	FIK_CTL_PLUS,		FIK_CTL_MINUS,	FIK_CTL_DEL,		FIK_CTL_INSERT,	/* right button */
 	FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP	/* middle button */
 };
 
@@ -465,7 +465,7 @@ void frame_window(int width, int height)
 void frame_resize(int width, int height)
 {
 	BOOL status;
-	
+
 	frame_adjust_size(width, height);
 	status = SetWindowPos(g_frame.window, NULL,
 		0, 0, g_frame.nc_width, g_frame.nc_height,

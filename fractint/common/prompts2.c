@@ -46,7 +46,7 @@
 #include <direct.h>
 #endif
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -121,20 +121,20 @@ int get_toggles()
 	uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
 	uvalues[k].uval.ch.list = calcmodes;
 	uvalues[k].uval.ch.val = (usr_stdcalcmode == '1') ? 0
-                          : (usr_stdcalcmode == '2') ? 1
-                          : (usr_stdcalcmode == '3') ? 2
-                          : (usr_stdcalcmode == 'g' && stoppass == 0) ? 3
-                          : (usr_stdcalcmode == 'g' && stoppass == 1) ? 4
-                          : (usr_stdcalcmode == 'g' && stoppass == 2) ? 5
-                          : (usr_stdcalcmode == 'g' && stoppass == 3) ? 6
-                          : (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
-                          : (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
-                          : (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
-                          : (usr_stdcalcmode == 'b') ? 10 
-			  : (usr_stdcalcmode == 's') ? 11
-			  : (usr_stdcalcmode == 't') ? 12
-			  : (usr_stdcalcmode == 'd') ? 13
-                          :        /* "o"rbits */      14;
+                        : (usr_stdcalcmode == '2') ? 1
+                        : (usr_stdcalcmode == '3') ? 2
+                        : (usr_stdcalcmode == 'g' && stoppass == 0) ? 3
+                        : (usr_stdcalcmode == 'g' && stoppass == 1) ? 4
+                        : (usr_stdcalcmode == 'g' && stoppass == 2) ? 5
+                        : (usr_stdcalcmode == 'g' && stoppass == 3) ? 6
+                        : (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
+                        : (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
+                        : (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
+                        : (usr_stdcalcmode == 'b') ? 10
+						: (usr_stdcalcmode == 's') ? 11
+						: (usr_stdcalcmode == 't') ? 12
+						: (usr_stdcalcmode == 'd') ? 13
+                        :        /* "o"rbits */      14;
 	old_usr_stdcalcmode = usr_stdcalcmode;
 	old_stoppass = stoppass;
 #ifndef XFRACT
@@ -219,12 +219,12 @@ int get_toggles()
 	uvalues[k].uval.ch.list = soundmodes;
 	uvalues[k].uval.ch.val = (old_soundflag = soundflag) & SOUNDFLAG_ORBITMASK;
 
-	if (rangeslen == 0) 
+	if (rangeslen == 0)
 	{
 		choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
 		uvalues[k].type = 'L';
 		}
-	else 
+	else
 	{
 		choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
 		uvalues[k].type = '*';
@@ -255,7 +255,7 @@ int get_toggles()
 	helpmode = HELPXOPTS;
 	i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
-	if (i < 0) 
+	if (i < 0)
 	{
 		return -1;
 		}
@@ -277,7 +277,7 @@ int get_toggles()
 	if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
 	if (old_stoppass != stoppass) j++;
 #ifndef XFRACT
-	if (uvalues[++k].uval.ch.val != usr_floatflag) 
+	if (uvalues[++k].uval.ch.val != usr_floatflag)
 	{
 		usr_floatflag = (char)uvalues[k].uval.ch.val;
 		j++;
@@ -345,7 +345,7 @@ int get_toggles()
 	if (strcmp(savename, prevsavename))
 	{
 		resave_flag = RESAVE_NO;
-	  started_resaves = FALSE; /* forget pending increment */
+		started_resaves = FALSE; /* forget pending increment */
 	}
 	fract_overwrite = (char)uvalues[++k].uval.ch.val;
 
@@ -354,7 +354,7 @@ int get_toggles()
 		j++;
 
 	LogFlag = uvalues[++k].uval.Lval;
-	if (LogFlag != old_logflag) 
+	if (LogFlag != old_logflag)
 	{
 		j++;
 		Log_Auto_Calc = 0;  /* turn it off, use the supplied value */
@@ -436,11 +436,11 @@ int get_toggles2()
 	choices[++k] = "          center X coordinate or \"auto\"";
 	choices[++k] = "          center Y coordinate or \"auto\"";
 	k = k - 3;
-	for (i= 0; i < 3; i++) 
+	for (i= 0; i < 3; i++)
 	{
 		uvalues[++k].type = 's';
 		old_inversion[i] = inversion[i];
-	  if (inversion[i] == AUTOINVERT)
+		if (inversion[i] == AUTOINVERT)
 			sprintf(uvalues[k].uval.sval, "auto");
 		else
 			sprintf(uvalues[k].uval.sval, "%-1.15lg", inversion[i]);
@@ -462,7 +462,7 @@ int get_toggles2()
 		"(not all combinations make sense)",
 		k + 1, choices, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
-	if (i < 0) 
+	if (i < 0)
 	{
 		return -1;
 		}
@@ -471,7 +471,7 @@ int get_toggles2()
 	k = -1;
 	j = 0;   /* return code */
 
-	if (uvalues[++k].uval.ch.val != finattract) 
+	if (uvalues[++k].uval.ch.val != finattract)
 	{
 		finattract = uvalues[k].uval.ch.val;
 		j = 1;
@@ -486,7 +486,7 @@ int get_toggles2()
 	potparam[2] = uvalues[++k].uval.ival;
 	if (potparam[0] != 0.0 && potparam[2] != old_potparam[2]) j = 1;
 
-	if (uvalues[++k].uval.ch.val != pot16bit) 
+	if (uvalues[++k].uval.ch.val != pot16bit)
 	{
 		pot16bit = uvalues[k].uval.ch.val;
 		if (pot16bit)  /* turned it on */
@@ -508,7 +508,7 @@ int get_toggles2()
 	distestwidth = uvalues[k].uval.ival;
 	if (usr_distest && distestwidth != old_distestwidth) j = 1;
 
-	for (i = 0; i < 3; i++) 
+	for (i = 0; i < 3; i++)
 	{
 		if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
 			inversion[i] = AUTOINVERT;
@@ -523,7 +523,7 @@ int get_toggles2()
 
 	rotate_lo = uvalues[++k].uval.ival;
 	rotate_hi = uvalues[++k].uval.ival;
-	if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi) 
+	if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi)
 	{
 		rotate_lo = old_rotate_lo;
 		rotate_hi = old_rotate_hi;
@@ -580,8 +580,8 @@ pass_option_restart:
 	uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
 	uvalues[k].uval.ch.list = passcalcmodes;
 	uvalues[k].uval.ch.val = (drawmode == 'r') ? 0
-                          : (drawmode == 'l') ? 1
-			  :   /* function */    2;
+							: (drawmode == 'l') ? 1
+							:   /* function */    2;
 	old_drawmode = drawmode;
 
 	oldhelpmode = helpmode;
@@ -591,7 +591,7 @@ pass_option_restart:
 		"(Press "FK_F2" for corner parameters)\n"
 		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
 	helpmode = oldhelpmode;
-	if (i < 0) 
+	if (i < 0)
 	{
 		return -1;
 		}
@@ -637,9 +637,9 @@ pass_option_restart:
 	}
 	if (drawmode != old_drawmode) j = 1;
 
-	if (i == FIK_F2) 
+	if (i == FIK_F2)
 	{
-		if (get_screen_corners() > 0) 
+		if (get_screen_corners() > 0)
 		{
 			ret = 1;
 		}
@@ -647,9 +647,9 @@ pass_option_restart:
 		goto pass_option_restart;
 	}
 
-	if (i == FIK_F6) 
+	if (i == FIK_F6)
 	{
-		if (get_corners() > 0) 
+		if (get_corners() > 0)
 		{
 			ret = 1;
 		}
@@ -780,8 +780,8 @@ get_view_restart:
 	}
 	else
 	{
-	  sxdots = uvalues[++k].uval.ival;
-	  sydots = uvalues[++k].uval.ival;
+		sxdots = uvalues[++k].uval.ival;
+		sydots = uvalues[++k].uval.ival;
 		if ((xmax != -1) && (sxdots > xmax))
 		{
 			sxdots = (int) xmax;
@@ -852,15 +852,15 @@ int get_cmd_string()
 	helpmode = HELPCOMMANDS;
 	i = field_prompt("Enter command string to use.", NULL, cmdbuf, 60, NULL);
 	helpmode = oldhelpmode;
-	if (i >= 0 && cmdbuf[0] != 0) 
+	if (i >= 0 && cmdbuf[0] != 0)
 	{
-       i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
-       if (debugflag == 98)
-       {
-          backwards_v18();
-          backwards_v19();
-          backwards_v20();
-       }
+		i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
+		if (debugflag == 98)
+		{
+			backwards_v18();
+			backwards_v19();
+			backwards_v20();
+		}
 	}
 
 	return i;
@@ -873,10 +873,10 @@ int Distribution = 30, Offset = 0, Slope = 25;
 long con;
 
 
-       double starfield_values[4] = 
-       {
-		30.0, 100.0, 5.0, 0.0
-		};
+double starfield_values[4] =
+{
+	30.0, 100.0, 5.0, 0.0
+};
 
 char GreyFile[] = "altern.map";
 
@@ -895,18 +895,18 @@ int starfield(void)
 	con  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	Slope = (int)(starfield_values[2]);
 
-	if (ValidateLuts(GreyFile) != 0) 
+	if (ValidateLuts(GreyFile) != 0)
 	{
 		stopmsg(0, "Unable to load ALTERN.MAP");
 		busy = 0;
 		return -1;
 		}
 	spindac(0, 1);                 /* load it, but don't spin */
-	for (row = 0; row < ydots; row++) 
+	for (row = 0; row < ydots; row++)
 	{
-		for (col = 0; col < xdots; col++) 
+		for (col = 0; col < xdots; col++)
 		{
-			if (driver_key_pressed()) 
+			if (driver_key_pressed())
 			{
 				driver_buzzer(BUZZER_INTERRUPT);
 				busy = 0;
@@ -923,7 +923,7 @@ int starfield(void)
 	return 0;
 }
 
-int get_starfield_params(void) 
+int get_starfield_params(void)
 {
 	struct fullscreenvalues uvalues[3];
 	int oldhelpmode;
@@ -935,12 +935,12 @@ int get_starfield_params(void)
 		"Ratio of Dim stars to Bright"
 	};
 
-	if (colors < 255) 
+	if (colors < 255)
 	{
 		stopmsg(0, "starfield requires 256 color mode");
 		return -1;
 	}
-	for (i = 0; i < 3; i++) 
+	for (i = 0; i < 3; i++)
 	{
 		uvalues[i].uval.dval = starfield_values[i];
 		uvalues[i].type = 'f';
@@ -951,7 +951,7 @@ int get_starfield_params(void)
 	i = fullscreen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
 	driver_unstack_screen();
-	if (i < 0) 
+	if (i < 0)
 	{
 		return -1;
 		}
@@ -963,7 +963,7 @@ int get_starfield_params(void)
 
 static char *masks[] = {"*.pot", "*.gif"};
 
-int get_rds_params(void) 
+int get_rds_params(void)
 {
 	char rds6[60];
 	char *stereobars[] = {"none", "middle", "top"};
@@ -1017,8 +1017,8 @@ int get_rds_params(void)
 			for (i = 0; i < sizeof(rds6); i++)
 				rds6[i] = ' ';
 			p = strrchr(stereomapname, SLASHC);
-		 if (p == NULL ||
-                 (int) strlen(stereomapname) < sizeof(rds6)-2)
+			if (p == NULL ||
+					(int) strlen(stereomapname) < sizeof(rds6)-2)
 				p = strlwr(stereomapname);
 			else
 				p++;
@@ -1034,7 +1034,7 @@ int get_rds_params(void)
 		helpmode = HELPRDS;
 		i = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
 		helpmode = oldhelpmode;
-		if (i < 0) 
+		if (i < 0)
 		{
 			ret = -1;
 			break;
@@ -1084,7 +1084,7 @@ int get_a_number(double *x, double *y)
 	uvalues[k].uval.dval = *y;
 
 	i = fullscreen_prompt("Set Cursor Coordinates", k + 1, choices, uvalues, 25, NULL);
-	if (i < 0) 
+	if (i < 0)
 	{
 		driver_unstack_screen();
 		return -1;
@@ -1112,12 +1112,12 @@ int get_commands()              /* execute commands from file */
 	oldhelpmode = helpmode;
 	helpmode = HELPPARMFILE;
 	if ((point = get_file_entry(GETFILE_PARAMETER, "Parameter Set",
-                               commandmask, CommandFile, CommandName)) >= 0
-     && (parmfile = fopen(CommandFile, "rb")) != NULL) 
-     {
+								commandmask, CommandFile, CommandName)) >= 0
+		&& (parmfile = fopen(CommandFile, "rb")) != NULL)
+	{
 		fseek(parmfile, point, SEEK_SET);
 		ret = load_commands(parmfile);
-		}
+	}
 	helpmode = oldhelpmode;
 	return ret;
 }
@@ -1580,22 +1580,22 @@ static int check_f6_key(int curkey, int choice)
 }
 
 static int filename_speedstr(int row, int col, int vid,
-                             char *speedstring, int speed_match)
+							char *speedstring, int speed_match)
 {
 	char *prompt;
 	if (strchr(speedstring, ':')
-     || strchr(speedstring, '*') || strchr(speedstring, '*')
-     || strchr(speedstring, '?')) 
-     {
+		|| strchr(speedstring, '*') || strchr(speedstring, '*')
+		|| strchr(speedstring, '?'))
+	{
 		speedstate = TEMPLATE;  /* template */
 		prompt = "File Template";
-		}
-	else if (speed_match) 
+	}
+	else if (speed_match)
 	{
 		speedstate = SEARCHPATH; /* does not match list */
 		prompt = "Search Path for";
 		}
-	else 
+	else
 	{
 		speedstate = MATCHING;
 		prompt = speed_prompt;
@@ -1642,23 +1642,23 @@ int isadirectory(char *s)
 	if (fr_findfirst(s) != 0) /* couldn't find it */
 	{
 		/* any better ideas?? */
-     if (sv == SLASHC) /* we'll guess it is a directory */
+		if (sv == SLASHC) /* we'll guess it is a directory */
 			return 1;
 		else
 			return 0;  /* no slashes - we'll guess it's a file */
 	}
-	else if ((DTA.attribute & SUBDIR) != 0) 
+	else if ((DTA.attribute & SUBDIR) != 0)
 	{
-		if (sv == SLASHC) 
+		if (sv == SLASHC)
 		{
-		/* strip trailing slash and try again */
+			/* strip trailing slash and try again */
 			s[len-1] = 0;
 			if (fr_findfirst(s) != 0) /* couldn't find it */
-             return 0;
+				return 0;
 			else if ((DTA.attribute & SUBDIR) != 0)
-             return 1;   /* we're SURE it's a directory */
+				return 1;   /* we're SURE it's a directory */
 			else
-             return 0;
+				return 0;
 		}
 		else
 			return 1;   /* we're SURE it's a directory */
@@ -1892,7 +1892,7 @@ gc_loop:
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
-	if (cmag) 
+	if (cmag)
 	{
 		prompts[++nump]= "Center X";
 		values[nump].uval.dval = Xctr;
@@ -1912,9 +1912,9 @@ gc_loop:
 		values[nump].type = '*';
 		}
 
-	else 
+	else
 	{
-		if (drawmode == 'l') 
+		if (drawmode == 'l')
 		{
 			prompts[++nump]= "Left End Point";
 			values[nump].type = '*';
@@ -1929,7 +1929,7 @@ gc_loop:
 			prompts[++nump] = yprompt;
 			values[nump].uval.dval = yymin;
 		}
-		else 
+		else
 		{
 			prompts[++nump]= "Top-Left Corner";
 			values[nump].type = '*';
@@ -1964,7 +1964,7 @@ gc_loop:
 	prompt_ret = fullscreen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
 	helpmode = oldhelpmode;
 
-	if (prompt_ret < 0) 
+	if (prompt_ret < 0)
 	{
 		usemag = ousemag;
 		xxmin = oxxmin; xxmax = oxxmax;
@@ -1986,7 +1986,7 @@ gc_loop:
 		goto gc_loop;
 		}
 
-	if (cmag) 
+	if (cmag)
 	{
 		if (cmpdbl(Xctr         , values[0].uval.dval)
 		|| cmpdbl(Yctr         , values[1].uval.dval)
@@ -2007,9 +2007,9 @@ gc_loop:
 		}
 	}
 
-	else 
+	else
 	{
-		if (drawmode == 'l') 
+		if (drawmode == 'l')
 		{
 			nump = 1;
 			xxmin = values[nump++].uval.dval;
@@ -2018,7 +2018,7 @@ gc_loop:
 			xxmax = values[nump++].uval.dval;
 			yymin = values[nump++].uval.dval;
 		}
-		else 
+		else
 		{
 			nump = 1;
 			xxmin = values[nump++].uval.dval;
@@ -2029,7 +2029,7 @@ gc_loop:
 			nump++;
 			xx3rd = values[nump++].uval.dval;
 			yy3rd = values[nump++].uval.dval;
-			if (xx3rd == 0 && yy3rd == 0) 
+			if (xx3rd == 0 && yy3rd == 0)
 			{
 				xx3rd = xxmin;
 				yy3rd = yymin;
@@ -2052,7 +2052,7 @@ gc_loop:
 	if (!cmpdbl(oxxmin, xxmin) && !cmpdbl(oxxmax, xxmax) && !cmpdbl(oyymin, yymin) &&
 		!cmpdbl(oyymax, yymax) && !cmpdbl(oxx3rd, xx3rd) && !cmpdbl(oyy3rd, yy3rd))
 	{
-     /* no change, restore values to avoid drift */
+		/* no change, restore values to avoid drift */
 		xxmin = oxxmin; xxmax = oxxmax;
 		yymin = oyymin; yymax = oyymax;
 		xx3rd = oxx3rd; yy3rd = oyy3rd;
@@ -2089,7 +2089,7 @@ static int get_screen_corners(void)
 	svyymax = yymax;
 	svyy3rd = yy3rd;
 
-	if (!set_orbit_corners && !keep_scrn_coords) 
+	if (!set_orbit_corners && !keep_scrn_coords)
 	{
 		oxmin = xxmin;
 		oxmax = xxmax;
@@ -2114,7 +2114,7 @@ gsc_loop:
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
-	if (cmag) 
+	if (cmag)
 	{
 		prompts[++nump]= "Center X";
 		values[nump].uval.dval = Xctr;
@@ -2133,7 +2133,7 @@ gsc_loop:
 		prompts[++nump]= "Press "FK_F7" to switch to \"corners\" mode";
 		values[nump].type = '*';
 	}
-	else 
+	else
 	{
 		prompts[++nump]= "Top-Left Corner";
 		values[nump].type = '*';
@@ -2167,7 +2167,7 @@ gsc_loop:
 	prompt_ret = fullscreen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
 	helpmode = oldhelpmode;
 
-	if (prompt_ret < 0) 
+	if (prompt_ret < 0)
 	{
 		usemag = ousemag;
 		oxmin = oxxmin; oxmax = oxxmax;
@@ -2198,7 +2198,7 @@ gsc_loop:
 		goto gsc_loop;
 		}
 
-	if (cmag) 
+	if (cmag)
 	{
 		if (cmpdbl(Xctr         , values[0].uval.dval)
 		|| cmpdbl(Yctr         , values[1].uval.dval)
@@ -2222,7 +2222,7 @@ gsc_loop:
 			ox3rd = xx3rd; oy3rd = yy3rd;
 		}
 	}
-	else 
+	else
 	{
 		nump = 1;
 		oxmin = values[nump++].uval.dval;
@@ -2233,7 +2233,7 @@ gsc_loop:
 		nump++;
 		ox3rd = values[nump++].uval.dval;
 		oy3rd = values[nump++].uval.dval;
-		if (ox3rd == 0 && oy3rd == 0) 
+		if (ox3rd == 0 && oy3rd == 0)
 		{
 			ox3rd = oxmin;
 			oy3rd = oymin;
@@ -2255,7 +2255,7 @@ gsc_loop:
 	if (!cmpdbl(oxxmin, oxmin) && !cmpdbl(oxxmax, oxmax) && !cmpdbl(oyymin, oymin) &&
 		!cmpdbl(oyymax, oymax) && !cmpdbl(oxx3rd, ox3rd) && !cmpdbl(oyy3rd, oy3rd))
 	{
-     /* no change, restore values to avoid drift */
+		/* no change, restore values to avoid drift */
 		oxmin = oxxmin; oxmax = oxxmax;
 		oymin = oyymin; oymax = oyymax;
 		ox3rd = oxx3rd; oy3rd = oyy3rd;
@@ -2265,7 +2265,7 @@ gsc_loop:
 		xx3rd = svxx3rd; yy3rd = svyy3rd;
 		return 0;
 	}
-	else 
+	else
 	{
 		set_orbit_corners = 1;
 		keep_scrn_coords = 1;
@@ -2344,12 +2344,12 @@ get_brws_restart:
 	helpmode = HELPBRWSPARMS;
 	i = fullscreen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
 	helpmode = oldhelpmode;     /* re-enable HELP */
-	if (i < 0) 
+	if (i < 0)
 	{
 		return 0;
 		}
 
-	if (i == FIK_F4) 
+	if (i == FIK_F4)
 	{
 		toosmall = 6;
 		autobrowse = FALSE;
@@ -2379,19 +2379,19 @@ get_brws_restart:
 	if (toosmall < 0) toosmall = 0 ;
 
 	minbox = uvalues[++k].uval.ival;
-     if (minbox < 1) minbox = 1;
-     if (minbox > 10) minbox = 10;
+	if (minbox < 1) minbox = 1;
+	if (minbox > 10) minbox = 10;
 
 	strcpy(browsemask, uvalues[++k].uval.sval);
 
 	i = 0;
 	if (autobrowse != old_autobrowse ||
-       brwschecktype != old_brwschecktype ||
-       brwscheckparms != old_brwscheckparms ||
-       doublecaution != old_doublecaution ||
-       toosmall != old_toosmall ||
-       minbox != old_minbox ||
-       !stricmp(browsemask, old_browsemask))
+			brwschecktype != old_brwschecktype ||
+			brwscheckparms != old_brwscheckparms ||
+			doublecaution != old_doublecaution ||
+			toosmall != old_toosmall ||
+			minbox != old_minbox ||
+			!stricmp(browsemask, old_browsemask))
 		i = -3;
 
 	if (evolving)  /* can't browse */
@@ -2449,21 +2449,19 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 #ifndef XFRACT
 	/* if drive, colon, slash, is a directory */
 	if ((int) strlen(newfilename) == 3 &&
-           newfilename[1] == ':' &&
-           newfilename[2] == SLASHC)
+			newfilename[1] == ':' &&
+			newfilename[2] == SLASHC)
 		isadir = 1;
 	/* if drive, colon, with no slash, is a directory */
-	if ((int) strlen(newfilename) == 2 &&
-           newfilename[1] == ':') 
-           {
+	if ((int) strlen(newfilename) == 2 && newfilename[1] == ':')
+	{
 		newfilename[2] = SLASHC;
 		newfilename[3] = 0;
 		isadir = 1;
-		}
+	}
 	/* if dot, slash, '0', its the current directory, set up full path */
-	if (newfilename[0] == '.' &&
-           newfilename[1] == SLASHC && newfilename[2] == 0) 
-           {
+	if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
+	{
 		temp_path[0] = (char)('a' + _getdrive() - 1);
 		temp_path[1] = ':';
 		temp_path[2] = 0;
@@ -2471,11 +2469,10 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 		strcat(temp_path, newfilename);
 		strcpy(newfilename, temp_path);
 		isadir = 1;
-		}
+	}
 	/* if dot, slash, its relative to the current directory, set up full path */
-	if (newfilename[0] == '.' &&
-           newfilename[1] == SLASHC) 
-           {
+	if (newfilename[0] == '.' && newfilename[1] == SLASHC)
+	{
 		int len, test_dir = 0;
 		temp_path[0] = (char)('a' + _getdrive() - 1);
 		temp_path[1] = ':';
@@ -2485,7 +2482,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 		expand_dirname(newfilename, temp_path);
 		strcat(temp_path, newfilename);
 		strcpy(newfilename, temp_path);
-		if (!test_dir) 
+		if (!test_dir)
 		{
 			len = (int) strlen(newfilename);
 			newfilename[len-1] = 0; /* get rid of slash added by expand_dirname */
@@ -2498,17 +2495,17 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	/* check existence */
 	if (isadir == 0 || isafile == 1)
 	{
-       if (fr_findfirst(newfilename) == 0) 
-       {
-          if (DTA.attribute & SUBDIR) /* exists and is dir */
-          {
-             fix_dirname(newfilename);  /* add trailing slash */
-             isadir = 1;
-             isafile = 0;
-          }
-          else
-             isafile = 1;
-       }
+		if (fr_findfirst(newfilename) == 0)
+		{
+			if (DTA.attribute & SUBDIR) /* exists and is dir */
+			{
+				fix_dirname(newfilename);  /* add trailing slash */
+				isadir = 1;
+				isafile = 0;
+			}
+			else
+				isafile = 1;
+		}
 	}
 
 	splitpath(newfilename, drive, dir, fname, ext);

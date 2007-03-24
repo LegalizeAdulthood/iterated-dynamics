@@ -48,17 +48,17 @@ int get_bytes(BYTE *where,int how_many)
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
  * larger buffer gives better performance. However, this buffer does not
- * have to be a whole line width, although historically in Fractint it has 
+ * have to be a whole line width, although historically in Fractint it has
  * been: images were decoded line by line and a whole line written to the
  * screen at once. The requirement to have a whole line buffered at once
- * has now been relaxed in order to support larger images. The one exception 
+ * has now been relaxed in order to support larger images. The one exception
  * to this is in the case where the image is being decoded to a smaller size.
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
 #if defined(XFRACT) || defined(_WIN32)
 BYTE decoderline[MAXPIXELS + 1]; /* write-line routines use this */
-#define DECODERLINE_WIDTH MAXPIXELS 
+#define DECODERLINE_WIDTH MAXPIXELS
 #else
 #define DECODERLINE_WIDTH 2048 /* width of decoderline, can be smaller */
 #endif
@@ -78,8 +78,8 @@ int gifview()
 	int i, j, k, planes;
 	BYTE linebuf[DECODERLINE_WIDTH];
 	decoderline1 = linebuf;
-   
-#if 0   
+
+#if 0
 	{
 		char msg[100];
 		sprintf(msg,"Stack free in gifview: %d",stackavail());
@@ -94,20 +94,20 @@ int gifview()
 
 	/* initialize the col and row count for write-lines */
 	colcount = g_row_count = 0;
-   
+
 	/* Open the file */
 	if (outln == outline_stereo)
 		strcpy(temp1,stereomapname);
 	else
 		strcpy(temp1,readname);
-	if (has_ext(temp1) == NULL) 
+	if (has_ext(temp1) == NULL)
 	{
 		strcat(temp1,DEFAULTFRACTALTYPE);
-		if ((fpin = fopen(temp1,"rb")) != NULL) 
+		if ((fpin = fopen(temp1,"rb")) != NULL)
 		{
 			fclose(fpin);
 			}
-		else 
+		else
 		{
 			if (outln == outline_stereo)
 				strcpy(temp1,stereomapname);
@@ -117,7 +117,7 @@ int gifview()
 			}
 		}
 	fpin = fopen(temp1, "rb");
-	if (fpin == NULL) 
+	if (fpin == NULL)
 	{
 		return -1;
 		}
@@ -156,14 +156,14 @@ int gifview()
 	}
 	numcolors = 1 << planes;
 
-	if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) 
+	if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
 	{
 			outln = out_line_dither;
 	}
 
 	for (i = 0; i < (int)numcolors; i++)
 	{
-		for (j = 0; j < 3; j++) 
+		for (j = 0; j < 3; j++)
 		{
 			if ((k = get_byte()) < 0)
 			{
@@ -273,11 +273,11 @@ int gifview()
              planes = (buffer[8] & 0x0F) + 1;
              numcolors = 1 << planes;
              /* skip local map */
-             for (i = 0; i < numcolors; i++) 
+             for (i = 0; i < numcolors; i++)
              {
-                for (j = 0; j < 3; j++) 
+                for (j = 0; j < 3; j++)
                 {
-                   if ((k = get_byte()) < 0) 
+                   if ((k = get_byte()) < 0)
                    {
                       close_file();
                       return -1;
@@ -292,9 +292,9 @@ int gifview()
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
 				calc_status = CALCSTAT_PARAMS_CHANGED;
 			busy = 1;      /* for slideshow CALCWAIT */
-			/* 
-          * Call decoder(width) via timer. 
-          * Width is limited to DECODERLINE_WIDTH. 
+			/*
+          * Call decoder(width) via timer.
+          * Width is limited to DECODERLINE_WIDTH.
           */
 			if (skipxdots == 0)
 				width = min(width,DECODERLINE_WIDTH);
@@ -303,7 +303,7 @@ int gifview()
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
 				calctime = timer_interval; /* note how long it took */
-				if (driver_key_pressed() != 0) 
+				if (driver_key_pressed() != 0)
 				{
 					calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
 					finished = 1;
@@ -312,7 +312,7 @@ int gifview()
 					calc_status = CALCSTAT_COMPLETED; /* complete */
 			}
 			/* Hey! the decoder doesn't read the last (0-length) block!! */
-			if (get_byte() != 0) 
+			if (get_byte() != 0)
 			{
              status = -1;
              finished = 1;
@@ -369,7 +369,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 		memset(ditherbuf, 0, linelen + 1);
 
 	nexterr = (rand()&0x1f)-16;
-	for (i = 0; i < linelen; i++) 
+	for (i = 0; i < linelen; i++)
 	{
 #ifdef __SVR4
 		brt = (int)((g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
@@ -379,12 +379,12 @@ static int out_line_dither(BYTE *pixels, int linelen)
 				g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to 63 */
 #endif
 		brt += nexterr;
-		if (brt > 32) 
+		if (brt > 32)
 		{
 				pixels[i] = 1;
 				err = brt-63;
 		}
-		else 
+		else
 		{
 				pixels[i] = 0;
 				err = brt;
@@ -407,7 +407,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 	{
 		extra = colcount + linelen-twidth;
 		if (extra > 0) /* line wraps */
-		{   
+		{
           put_line(g_row_count, colcount, twidth-1, pixels);
           pixels += twidth-colcount;
           linelen -= twidth-colcount;
@@ -424,7 +424,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 			colcount = 0;
 			g_row_count++;
 		}
-	}   
+	}
 	return 0;
 }
 
@@ -456,7 +456,7 @@ int sound_line(BYTE *pixels, int linelen)
 	{
 		extra = colcount + linelen-twidth;
 		if (extra > 0) /* line wraps */
-		{   
+		{
           if (put_sound_line(g_row_count, colcount, twidth-1, pixels))
              break;
           pixels += twidth-colcount;
@@ -475,12 +475,12 @@ int sound_line(BYTE *pixels, int linelen)
 			colcount = 0;
 			g_row_count++;
 		}
-	}   
+	}
 	driver_mute();
 	if (driver_key_pressed())
 		ret = -1;
 	return ret;
-}   
+}
 
 int pot_line(BYTE *pixels, int linelen)
 {

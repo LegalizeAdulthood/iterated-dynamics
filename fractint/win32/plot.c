@@ -398,7 +398,7 @@ int plot_resize(Plot *me)
 {
 	BOOL status;
 
-	if ((sxdots == me->width) && (sydots == me->height)) 
+	if ((sxdots == me->width) && (sydots == me->height))
 	{
 		return 0;
 	}

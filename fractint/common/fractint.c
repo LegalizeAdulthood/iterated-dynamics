@@ -259,7 +259,7 @@ int main(int argc, char **argv)
 	load_fractint_config();
 	init_help();
 
-	
+
 restart:   /* insert key re-starts here */
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -274,7 +274,7 @@ restart:   /* insert key re-starts here */
 	strcpy(browsemask, "*.gif");
 	strcpy(browsename, "            ");
 	name_stack_ptr= -1; /* init loaded files stack */
-   
+
 	evolving = FALSE;
 	paramrangex = 4;
 	opx = newopx = -2.0;
@@ -519,10 +519,10 @@ imagestart:                             /* calc/display a new image */
 				kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 			}
 #ifndef XFRACT
-			if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#') 
+			if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
 			{
 #else
-				if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3) 
+				if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
 				{
 #endif
 					display3d = 0;
@@ -583,7 +583,7 @@ imagestart:                             /* calc/display a new image */
 					get_fract3d_params(); /* get the parameters */
 					goto imagestart;
 				}
-				if (kbdchar == 'g') 
+				if (kbdchar == 'g')
 				{
 					get_cmd_string(); /* get command string */
 					goto imagestart;
@@ -675,7 +675,7 @@ va_dcl
 	if (do_bench)
 		fp=dir_fopen(workdir, "bench", "a");
 	timer_start = clock_ticks();
-	switch (timertype) 
+	switch (timertype)
 	{
 		case 0:
 			out = (*(int(*)(void))subrtn)();
@@ -691,12 +691,12 @@ va_dcl
 	/* next assumes CLK_TCK is 10^n, n >= 2 */
 	timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
 
-	if (do_bench) 
+	if (do_bench)
 	{
 		time(&ltime);
 		timestring = ctime(&ltime);
 		timestring[24] = 0; /*clobber newline in time string */
-		switch (timertype) 
+		switch (timertype)
 		{
 			case 1:
 				fprintf(fp, "decode ");

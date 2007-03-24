@@ -340,7 +340,7 @@ static double xt, yt, t2;
 */
 void cpower(_CMPLX *base, int exp, _CMPLX *result)
 {
-	if (exp < 0) 
+	if (exp < 0)
 	{
 		cpower(base, -exp, result);
 		CMPLXrecip(*result, *result);
@@ -386,7 +386,7 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 	static long maxarg;
 	maxarg = 64L << bitshift;
 
-	if (exp < 0) 
+	if (exp < 0)
 	{
 		overflow = lcpower(base, -exp, result, bitshift);
 		LCMPLXrecip(*result, *result);
@@ -501,11 +501,11 @@ int NewtonFractal2(void)
                 which root of 1 it converged to */
               if (distance(roots[i], old) < threshold)
               {
-						if (basin == 2) 
+						if (basin == 2)
 						{
                       tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
 						}
-						else 
+						else
 						{
                       tmpcolor = 1 + i;
 						}
@@ -821,7 +821,7 @@ LambdaexponentFractal(void)
 	{
 		FLOATEXPBAILOUT();
 	}
-	else 
+	else
 	{
 		OLD_FLOATEXPBAILOUT();
 	}
@@ -1050,7 +1050,7 @@ longCmplxZpowerFractal(void)
 	y.x = (double)lparm2.x / fudge;
 	y.y = (double)lparm2.y / fudge;
 	x = ComplexPower(x, y);
-	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit) 
+	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
 	{
 		lnew.x = (long)(x.x*fudge);
 		lnew.y = (long)(x.y*fudge);
@@ -1725,7 +1725,7 @@ struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
 	MPOverflow = 0;
 	mpcXtoAlessOne.x = mpcold.x;
 	mpcXtoAlessOne.y = mpcold.y;
-	for (ihal = 2; ihal < degree; ihal++) 
+	for (ihal = 2; ihal < degree; ihal++)
 	{
      mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
      mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
@@ -1790,7 +1790,7 @@ _CMPLX FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
 _CMPLX relax;
 
 	XtoAlessOne = old;
-	for (ihal = 2; ihal < degree; ihal++) 
+	for (ihal = 2; ihal < degree; ihal++)
 	{
      FPUcplxmul(&old, &XtoAlessOne, &XtoAlessOne);
 	}
@@ -2132,7 +2132,7 @@ static int TryFloatFractal(int (*fpFractal)(void))
 		lnew.x = (long)(g_new.x/fudge); /* this error has been here a long time */
 		lnew.y = (long)(g_new.y/fudge);
 	}
-	else 
+	else
 	{
 		lnew.x = (long)(g_new.x*fudge);
 		lnew.y = (long)(g_new.y*fudge);
@@ -2454,7 +2454,7 @@ ManOWarfpFractal(void)
 }
 
 /*
-	MarksMandelPwr (XAXIS) 
+	MarksMandelPwr (XAXIS)
 	{
 		z = pixel, c = z ^ (z - 1):
 			z = c*sqr(z) + pixel,
@@ -2725,7 +2725,7 @@ int mandel_per_pixel(void)
 		linit.x = (long)(init.x*fudge);
 		linit.y = (long)(init.y*fudge);
 	}
-	else 
+	else
 	{
 		linit.x = lxpixel();
 		if (save_release >= 2004)
@@ -2786,7 +2786,7 @@ int marksmandel_per_pixel()
 		linit.x = (long)(init.x*fudge);
 		linit.y = (long)(init.y*fudge);
 	}
-	else 
+	else
 	{
 		linit.x = lxpixel();
 		if (save_release >= 2004)
@@ -2803,7 +2803,7 @@ int marksmandel_per_pixel()
 
 	if (c_exp > 3)
 		lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
-	else if (c_exp == 3) 
+	else if (c_exp == 3)
 	{
 		lcoefficient.x = multiply(lold.x, lold.x, bitshift)
 			- multiply(lold.y, lold.y, bitshift);
@@ -2811,7 +2811,7 @@ int marksmandel_per_pixel()
 	}
 	else if (c_exp == 2)
 		lcoefficient = lold;
-	else if (c_exp < 2) 
+	else if (c_exp < 2)
 	{
 		lcoefficient.x = 1L << bitshift;
 		lcoefficient.y = 0L;
@@ -2829,7 +2829,7 @@ int marksmandelfp_per_pixel()
 
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -2849,14 +2849,14 @@ int marksmandelfp_per_pixel()
 
 	if (c_exp > 3)
 		cpower(&old, c_exp-1, &coefficient);
-	else if (c_exp == 3) 
+	else if (c_exp == 3)
 	{
 		coefficient.x = tempsqrx - tempsqry;
 		coefficient.y = old.x*old.y*2;
 	}
 	else if (c_exp == 2)
 		coefficient = old;
-	else if (c_exp < 2) 
+	else if (c_exp < 2)
 	{
 		coefficient.x = 1.0;
 		coefficient.y = 0.0;
@@ -2882,7 +2882,7 @@ int mandelfp_per_pixel(void)
 
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -2979,7 +2979,7 @@ int othermandelfp_per_pixel(void)
 {
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -3003,7 +3003,7 @@ int MPCHalley_per_pixel(void)
 	/* MPC halley */
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -3023,7 +3023,7 @@ int Halley_per_pixel(void)
 {
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -3085,7 +3085,7 @@ int MarksCplxMandperp(void)
 {
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -3192,7 +3192,7 @@ int mandphoenix_per_pixel(void)
 {
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
@@ -3228,7 +3228,7 @@ QuaternionFPFractal(void)
 	n3 = 2*a0*a3 + qck;
 	/* Check bailout */
 	magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
-	if (magnitude > rqlim) 
+	if (magnitude > rqlim)
 	{
        return 1;
 	}
@@ -3263,7 +3263,7 @@ HyperComplexFPFractal(void)
 
 	/* Check bailout */
 	magnitude = sqr(old.x) + sqr(old.y) + sqr(floatparm->x) + sqr(floatparm->y);
-	if (magnitude > rqlim) 
+	if (magnitude > rqlim)
 	{
        return 1;
 	}
@@ -3403,7 +3403,7 @@ int MandelbrotMix4fp_per_pixel(void)
 {
 	if (invert)
 		invertz2(&init);
-	else 
+	else
 	{
 		init.x = dxpixel();
 		init.y = dypixel();

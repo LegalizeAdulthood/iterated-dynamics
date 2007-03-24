@@ -378,7 +378,7 @@ gdi_resize(Driver *drv)
 * gdi_read_palette
 *
 *	Reads the current video palette into g_dac_box.
-*	
+*
 *
 * Results:
 *	None.
@@ -400,7 +400,7 @@ gdi_read_palette(Driver *drv)
 *
 * gdi_write_palette --
 *	Writes g_dac_box into the video palette.
-*	
+*
 *
 * Results:
 *	None.
@@ -462,7 +462,7 @@ gdi_schedule_alarm(Driver *drv, int soon)
 *
 *----------------------------------------------------------------------
 */
-static void 
+static void
 gdi_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DI(di);

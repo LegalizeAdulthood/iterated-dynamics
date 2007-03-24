@@ -254,14 +254,14 @@ int cmdfiles(int argc,char **argv)
 				strcpy(tempstring,curarg);
 				if (has_ext(curarg) == NULL)
 					strcat(tempstring,".gif");
-				if ((initfile = fopen(tempstring,"rb")) != NULL) 
+				if ((initfile = fopen(tempstring,"rb")) != NULL)
 				{
 					fread(tempstring,6,1,initfile);
 					if (tempstring[0] == 'G'
                  && tempstring[1] == 'I'
                  && tempstring[2] == 'F'
                  && tempstring[3] >= '8' && tempstring[3] <= '9'
-                 && tempstring[4] >= '0' && tempstring[4] <= '9') 
+                 && tempstring[4] >= '0' && tempstring[4] <= '9')
                  {
 						strcpy(readname,curarg);
 						extract_filename(browsename,readname);
@@ -292,7 +292,7 @@ int cmdfiles(int argc,char **argv)
 			}
 		}
 
-	if (first_init == 0) 
+	if (first_init == 0)
 	{
 		g_init_mode = -1; /* don't set video when <ins> key used */
 		showfile = 1;  /* nor startup image file              */
@@ -302,7 +302,7 @@ int cmdfiles(int argc,char **argv)
 
 	if (debugflag != 110)
        first_init = 0;
-/*       
+/*
 {
 				char msg[MSGLEN];
 				sprintf(msg,"cmdfiles colorpreloaded %d showfile %d savedac %d",
@@ -409,7 +409,7 @@ static void initvars_restart()          /* <ins> key init */
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	initcyclelimit = 55;                   /* spin-DAC default speed limit */
 	mapset = 0;                          /* no map= name active */
-	if (mapdacbox) 
+	if (mapdacbox)
 	{
 		free(mapdacbox);
 		mapdacbox = NULL;
@@ -468,7 +468,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	set_trig_array(1, "sqr");
 	set_trig_array(2, "sinh");
 	set_trig_array(3, "cosh");
-	if (rangeslen) 
+	if (rangeslen)
 	{
 		free((char *)ranges);
 		rangeslen = 0;
@@ -554,7 +554,7 @@ static void initvars_3d()               /* init vars affecting 3d */
 
 static void reset_ifs_defn()
 {
-	if (ifs_defn) 
+	if (ifs_defn)
 	{
 		free((char *)ifs_defn);
 		ifs_defn = NULL;
@@ -576,15 +576,15 @@ static int cmdfile(FILE *handle,int mode)
 	char linebuf[513];
 	char cmdbuf[10000] = { 0 };
 
-	if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) 
+	if (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
 	{
-		while ((i = getc(handle)) != '{' && i != EOF) 
+		while ((i = getc(handle)) != '{' && i != EOF)
 		{ }
 		for (i = 0; i < 4; i++)
           CommandComment[i][0] = 0;
 		}
 	linebuf[0] = 0;
-	while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0) 
+	while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0)
 	{
 		if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf,"}") == 0) break;
 		if ((i = cmdarg(cmdbuf,mode)) < 0) break;
@@ -610,9 +610,9 @@ static int next_command(char *cmdbuf,int maxlen,
 	int cmdlen = 0;
 	char *lineptr;
 	lineptr = linebuf + *lineoffset;
-	while (1) 
+	while (1)
 	{
-		while (*lineptr <= ' ' || *lineptr == ';') 
+		while (*lineptr <= ' ' || *lineptr == ';')
 		{
 			if (cmdlen)  /* space or ; marks end of command */
 			{
@@ -622,18 +622,18 @@ static int next_command(char *cmdbuf,int maxlen,
 				}
 			while (*lineptr && *lineptr <= ' ')
 				++lineptr;                  /* skip spaces and tabs */
-			if (*lineptr == ';' || *lineptr == 0) 
+			if (*lineptr == ';' || *lineptr == 0)
 			{
 				if (*lineptr == ';'
               && (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
               && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
-						CommandComment[2][0] == 0 || CommandComment[3][0] == 0)) 
+						CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
 						{
 					/* save comment */
 					while (*(++lineptr)
-                 && (*lineptr == ' ' || *lineptr == '\t')) 
+                 && (*lineptr == ' ' || *lineptr == '\t'))
                  { }
-					if (*lineptr) 
+					if (*lineptr)
 					{
 						if ((int)strlen(lineptr) >= MAXCMT)
 							*(lineptr + MAXCMT-1) = 0;
@@ -641,7 +641,7 @@ static int next_command(char *cmdbuf,int maxlen,
 							if (CommandComment[i][0] == 0)
 							{
 								strcpy(CommandComment[i],lineptr);
-								break;   
+								break;
 							}
 						}
 					}
@@ -651,9 +651,9 @@ static int next_command(char *cmdbuf,int maxlen,
 				}
 			}
 		if (*lineptr == '\\'              /* continuation onto next line? */
-		&& *(lineptr + 1) == 0) 
+		&& *(lineptr + 1) == 0)
 		{
-			if (next_line(handle,linebuf,mode) != 0) 
+			if (next_line(handle,linebuf,mode) != 0)
 			{
 				argerror(cmdbuf);           /* missing continuation */
 				return -1;
@@ -677,7 +677,7 @@ static int next_line(FILE *handle,char *linebuf,int mode)
 	int toolssection;
 	char tmpbuf[11];
 	toolssection = 0;
-	while (file_gets(linebuf,512,handle) >= 0) 
+	while (file_gets(linebuf,512,handle) >= 0)
 	{
 		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  /* check for [fractint] */
 		{
@@ -1040,7 +1040,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 				{
 					extract_filename(CommandName, readname);
 				}
-				else if (*MAP_name != 0)   
+				else if (*MAP_name != 0)
 				{
 					extract_filename(CommandName, MAP_name);
 				}
@@ -1048,7 +1048,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 				{
 					goto badarg;
 				}
-			}   
+			}
 			else
 			{
 				strncpy(CommandName, next, ITEMNAMELEN);
@@ -1305,7 +1305,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	}
 
 	if (strcmp(variable, "dither") == 0) /* dither=? */
-	{       
+	{
 		if (yesnoval[0] < 0)
 		{
 			goto badarg;
@@ -2226,7 +2226,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			old_bf_math = bf_math;
 			if (!bf_math || dec > decimals)
 				init_bf_dec(dec);
-			if (old_bf_math == 0) 
+			if (old_bf_math == 0)
 			{
 				int k;
 				for (k = 0; k < MAXPARAMS; k++)
@@ -2273,7 +2273,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		if (totparms != floatparms || (totparms != 1 && totparms != 3))
 			goto badarg;
 		invert = ((inversion[0] = floatval[0]) != 0.0) ? totparms : 0;
-		if (totparms == 3) 
+		if (totparms == 3)
 		{
 			inversion[1] = floatval[1];
 			inversion[2] = floatval[2];
@@ -2408,7 +2408,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
           (according to the western, even tempered system anyway) */
 
 		if (charval[0] == 'n' || charval[0] == 'o')
-			soundflag &= ~SOUNDFLAG_ORBITMASK; 
+			soundflag &= ~SOUNDFLAG_ORBITMASK;
 		else if ((strncmp(value, "ye", 2) == 0) || (charval[0] == 'b'))
 			soundflag |= SOUNDFLAG_BEEP;
 		else if (charval[0] == 'x')
@@ -2420,11 +2420,11 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		else
 			goto badarg;
 #if !defined(XFRACT)
-		if (totparms > 1) 
+		if (totparms > 1)
 		{
        int i;
 			soundflag &= SOUNDFLAG_ORBITMASK; /* reset options */
-			for (i = 1; i < totparms; i++) 
+			for (i = 1; i < totparms; i++)
 			{
           /* this is for 2 or more options at the same time */
 				if (charval[i] == 'f')  /* (try to)switch on opl3 fm synth */
@@ -2459,7 +2459,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 		}
 
-	if (strcmp(variable, "attenuate") == 0) 
+	if (strcmp(variable, "attenuate") == 0)
 	{
 		if (charval[0] == 'n')
 			hi_atten = 0;
@@ -2474,13 +2474,13 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 		}
 
-	if (strcmp(variable, "polyphony") == 0) 
+	if (strcmp(variable, "polyphony") == 0)
 	{
 		if (numval > 9)
 			goto badarg;
 		polyphony = abs(numval-1);
 		return 0;
-	} 
+	}
 
 	if (strcmp(variable, "wavetype") == 0)  /* wavetype = ? */
 	{
@@ -2505,7 +2505,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		fm_sustain = numval & 0x0F;
 		return 0;
 	}
-   
+
 	if (strcmp(variable, "srelease") == 0)  /* release = ? */
 	{
 		fm_release = numval & 0x0F;
@@ -2522,7 +2522,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
              scale_map[counter] = intval[counter];
 #endif
 		return 0;
-	} 
+	}
 
 	if (strcmp(variable, "periodicity") == 0)  /* periodicity=? */
 	{
@@ -2564,7 +2564,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			Log_Fly_Calc = 1;                      /* calculate on the fly */
 		else if (charval[0] == 't')
 			Log_Fly_Calc = 2;                      /* force use of LogTable */
-		else if (charval[0] == 'a') 
+		else if (charval[0] == 'a')
 		{
 			Log_Auto_Calc = 1;                     /* force auto calc of logmap */
 		}
@@ -2581,20 +2581,20 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 		}
 
-	if (strcmp(variable, "rseed") == 0) 
+	if (strcmp(variable, "rseed") == 0)
 	{
 		rseed = numval;
 		rflag = 1;
 		return 1;
 		}
 
-	if (strcmp(variable, "orbitdelay") == 0) 
+	if (strcmp(variable, "orbitdelay") == 0)
 	{
 		orbit_delay = numval;
 		return 0;
 		}
 
-	if (strcmp(variable, "orbitinterval") == 0) 
+	if (strcmp(variable, "orbitinterval") == 0)
 	{
 		orbit_interval = numval;
 		if (orbit_interval < 1)
@@ -2604,7 +2604,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 		}
 
-	if (strcmp(variable, "showdot") == 0) 
+	if (strcmp(variable, "showdot") == 0)
 	{
 		showdot = 15;
 		if (totparms > 0)
@@ -2617,7 +2617,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 				else
 					goto badarg;
 			}
-			else   
+			else
 			{
 				showdot=numval;
 				if (showdot < 0)
@@ -2626,8 +2626,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			if (totparms > 1 && intparms > 0)
 				sizedot = intval[1];
 			if (sizedot < 0)
-				sizedot = 0;   
-		}      
+				sizedot = 0;
+		}
 		return 0;
 		}
 
@@ -2637,7 +2637,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 0;
 		}
 
-	if (strcmp(variable, "decomp") == 0) 
+	if (strcmp(variable, "decomp") == 0)
 	{
 		if (totparms != intparms || totparms < 1) goto badarg;
 		decomp[0] = intval[0];
@@ -2647,14 +2647,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 1;
 		}
 
-	if (strcmp(variable, "distest") == 0) 
+	if (strcmp(variable, "distest") == 0)
 	{
 		if (totparms != intparms || totparms < 1) goto badarg;
 		usr_distest = (long)floatval[0];
 		distestwidth = 71;
 		if (totparms > 1)
 			distestwidth = intval[1];
-		if (totparms > 3 && intval[2] > 0 && intval[3] > 0) 
+		if (totparms > 3 && intval[2] > 0 && intval[3] > 0)
 		{
 			pseudox = intval[2];
 			pseudoy = intval[3];
@@ -2687,7 +2687,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		return 1;
 		}
 
-	if (strcmp(variable, "lname") == 0) 
+	if (strcmp(variable, "lname") == 0)
 	{
 		if (valuelen > ITEMNAMELEN) goto badarg;
 		strcpy(LName, value);
@@ -2800,7 +2800,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "3d") == 0)  /* 3d=?/?/..    */
 	{
-		if (strcmp(value, "overlay") == 0) 
+		if (strcmp(value, "overlay") == 0)
 		{
 			yesnoval[0]=1;
 			if (calc_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
@@ -3061,7 +3061,7 @@ badarg:
 static void parse_textcolors(char *value)
 {
 	int i,j,k,hexval;
-	if (strcmp(value, "mono") == 0) 
+	if (strcmp(value, "mono") == 0)
 	{
 		for (k = 0; k < sizeof(txtcolor); ++k)
 			txtcolor[k] = BLACK*16 + WHITE;
@@ -3076,13 +3076,13 @@ static void parse_textcolors(char *value)
 						= txtcolor[17] = txtcolor[22] = txtcolor[24]
 						= txtcolor[25] = BLACK*16 + L_WHITE;
 		}
-	else 
+	else
 	{
 		k = 0;
-		while (k < sizeof(txtcolor)) 
+		while (k < sizeof(txtcolor))
 		{
 			if (*value == 0) break;
-			if (*value != '/') 
+			if (*value != '/')
 			{
 				sscanf(value,"%x",&hexval);
 				i = (hexval / 16) & 7;
@@ -3102,31 +3102,31 @@ static void parse_textcolors(char *value)
 static int parse_colors(char *value)
 {
 	int i,j,k;
-	if (*value == '@') 
+	if (*value == '@')
 	{
 		if (merge_pathnames(MAP_name,&value[1],3) < 0)
 			init_msg("",&value[1],3);
 		if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
 			goto badcolor;
-		if (display3d) 
+		if (display3d)
 		{
 		mapset = 1;
 		}
-		else 
+		else
 		{
 		if (merge_pathnames(colorfile,&value[1],3) < 0)
           init_msg("",&value[1],3);
 		colorstate = 2;
 		}
 		}
-	else 
+	else
 	{
 		int smooth;
 		i = smooth = 0;
-		while (*value) 
+		while (*value)
 		{
 			if (i >= 256) goto badcolor;
-			if (*value == '<') 
+			if (*value == '<')
 			{
 				if (i == 0 || smooth
               || (smooth = atoi(value + 1)) < 2
@@ -3135,9 +3135,9 @@ static int parse_colors(char *value)
 				i += smooth;
 				++value;
 				}
-			else 
+			else
 			{
-				for (j = 0; j < 3; ++j) 
+				for (j = 0; j < 3; ++j)
 				{
 					if ((k = *(value++)) < '0')  goto badcolor;
 					else if (k <= '9')       k -= '0';
@@ -3146,17 +3146,17 @@ static int parse_colors(char *value)
 					else if (k < '_' || k > 'z') goto badcolor;
 					else                     k -= ('_'-36);
 					g_dac_box[i][j] = (BYTE)k;
-					if (smooth) 
+					if (smooth)
 					{
 						int start,spread,cnum;
 						start = i - (spread = smooth + 1);
 						cnum = 0;
-						if ((k - (int)g_dac_box[start][j]) == 0) 
+						if ((k - (int)g_dac_box[start][j]) == 0)
 						{
 							while (++cnum < spread)
 								g_dac_box[start + cnum][j] = (BYTE)k;
 							}
-						else 
+						else
 						{
 							while (++cnum < spread)
 								g_dac_box[start + cnum][j] =
@@ -3227,7 +3227,7 @@ void set_3d_defaults()
 	RANDOMIZE = 0;
 	haze      = 0;
 	back_color[0] = 51; back_color[1] = 153; back_color[2] = 200;
-	if (SPHERE) 
+	if (SPHERE)
 	{
 		PHI1      =  180;
 		PHI2      =  0;
@@ -3239,7 +3239,7 @@ void set_3d_defaults()
 		YLIGHT    = 1;
 		ZLIGHT    = 1;
 		}
-	else 
+	else
 	{
 		XROT      = 60;
 		YROT      = 30;
@@ -3322,9 +3322,9 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
 		sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
 	if (first_init)  /* & cmdfiles hasn't finished 1st try */
 	{
-		if (row == 1 && badfilename) 
+		if (row == 1 && badfilename)
 		{
-	     driver_set_for_text();
+			driver_set_for_text();
 			driver_put_string(0,0,15, "Fractint found the following problems when parsing commands: ");
 		}
 		if (badfilename)
@@ -3374,7 +3374,7 @@ void dopause(int action)
 	}
 }
 
-/* 
+/*
 	Crude function to detect a floating point number. Intended for
 	use with arbitrary precision.
 */
@@ -3391,7 +3391,7 @@ static int isabigfloat(char *str)
 		if (*s == '-' || *s == '+') numsign++;
 		else if (*s == '.') numdot++;
 		else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G') nume++;
-		else if (!isdigit(*s)) 
+		else if (!isdigit(*s))
 		{result = 0; break; }
 		s++;
 	}

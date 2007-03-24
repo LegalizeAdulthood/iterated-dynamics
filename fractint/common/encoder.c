@@ -29,7 +29,7 @@ The compression logic in this file has been replaced by the classic
 UNIX compress code. We have extensively modified the sources to fit
 Fractint's needs, but have left the original credits where they
 appear. Thanks to the original authors for making available these
-classic and reliable sources. Of course, they are not responsible for 
+classic and reliable sources. Of course, they are not responsible for
 all the changes we have made to integrate their sources into Fractint.
 
 MEMORY ALLOCATION
@@ -38,7 +38,7 @@ There are two large arrays:
 
 	long htab[HSIZE]              (5003*4 = 20012 bytes)
 	unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
-   
+
 At the moment these arrays reuse extraseg and strlocn, respectively.
 
 */
@@ -206,7 +206,7 @@ restart:
 				for (i = 0; 250*i < xdots; i++)
 				{  /* clear vert status bars */
 					putcolor(i, j, getcolor(i, j) ^ outcolor1);
-					putcolor(xdots - 1 - i, j, 
+					putcolor(xdots - 1 - i, j,
 						getcolor(xdots - 1 - i, j) ^ outcolor2);
 				}
 			}
@@ -307,9 +307,9 @@ int encoder()
 	if (save16bit)
 	{
 		/* pot16bit info is stored as: file:    double width rows, right side
-       * of row is low 8 bits diskvid: ydots rows of colors followed by ydots
-       * rows of low 8 bits decoder: returns (row of color info then row of
-       * low 8 bits)*ydots */
+		* of row is low 8 bits diskvid: ydots rows of colors followed by ydots
+		* rows of low 8 bits decoder: returns (row of color info then row of
+		* low 8 bits)*ydots */
 		rowlimit <<= 1;
 		width <<= 1;
 	}
@@ -317,8 +317,8 @@ int encoder()
 		goto oops;                /* screen descriptor */
 	if (write2(&ydots, 2, 1, g_outfile) != 1)
 		goto oops;
-	x = (BYTE) (128 + ((6 - 1) << 4) + (bitsperpixel - 1));      /* color resolution == 6
-                                                                 * bits worth */
+	/* color resolution == 6 bits worth */
+	x = (BYTE) (128 + ((6 - 1) << 4) + (bitsperpixel - 1));
 	if (write1(&x, 1, 1, g_outfile) != 1)
 		goto oops;
 	if (fputc(0, g_outfile) != 0)
@@ -327,7 +327,7 @@ int encoder()
 
 	/* TODO: pixel aspect ratio should be 1:1? */
 	if (viewwindow                               /* less than full screen?  */
-       && (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
+			&& (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
 		i = (int) (((double) sydots / (double) sxdots)*64.0 / screenaspect - 14.5);
 	else   /* must risk loss of precision if numbers low */
 		i = (int) ((((double) ydots / (double) xdots) / finalaspectratio)*64 - 14.5);
@@ -430,17 +430,14 @@ int encoder()
 			if (!put_extend_blk(2, resume_len, resume_info))
 				goto oops;
 		}
-/* save_info.fractal_type gets modified in setup_save_info() in float only
-	version, so we need to use fractype.  JCO 06JAN01 */
-/*    if (save_info.fractal_type == FORMULA || save_info.fractal_type == FFORMULA) */
+		/* save_info.fractal_type gets modified in setup_save_info() in float only
+			version, so we need to use fractype.  JCO 06JAN01 */
 		if (fractype == FORMULA || fractype == FFORMULA)
-           save_info.tot_extend_len += store_item_name(FormName);
-/*    if (save_info.fractal_type == LSYSTEM) */
+			save_info.tot_extend_len += store_item_name(FormName);
 		if (fractype == LSYSTEM)
 			save_info.tot_extend_len += store_item_name(LName);
-/*    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D) */
 		if (fractype == IFS || fractype == IFS3D)
-           save_info.tot_extend_len += store_item_name(IFSName);
+			save_info.tot_extend_len += store_item_name(IFSName);
 		if (display3d <= 0 && rangeslen)
 		{
 			/* ranges block, 004 */
@@ -450,14 +447,13 @@ int encoder()
 #endif
 			if (!put_extend_blk(4, rangeslen*2, (char *) ranges))
 				goto oops;
-
 		}
 		/* Extended parameters block 005 */
 		if (bf_math)
 		{
 			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
 			/* note: this assumes variables allocated in order starting with
-          * bfxmin in init_bf2() in BIGNUM.C */
+			 * bfxmin in init_bf2() in BIGNUM.C */
 			if (!put_extend_blk(5, 22*(bflength + 2), (char *) bfxmin))
 				goto oops;
 		}
@@ -465,92 +461,92 @@ int encoder()
 		/* Extended parameters block 006 */
 		if (evolving & EVOLVE_FIELD_MAP)
 		{
-          struct evolution_info esave_info;
-          int i;
-          struct evolution_info resume_e_info;
-          if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED) 
-          {
-             esave_info.paramrangex     = paramrangex;
-             esave_info.paramrangey     = paramrangey;
-             esave_info.opx             = opx;
-             esave_info.opy             = opy;
-             esave_info.odpx            = (short)odpx;
-             esave_info.odpy            = (short)odpy;
-             esave_info.px              = (short)px;
-             esave_info.py              = (short)py;
-             esave_info.sxoffs          = (short)sxoffs;
-             esave_info.syoffs          = (short)syoffs;
-             esave_info.xdots           = (short)xdots;
-             esave_info.ydots           = (short)ydots;
-             esave_info.gridsz          = (short)gridsz;
-             esave_info.evolving        = (short) evolving;
-             esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
-             esave_info.fiddlefactor    = fiddlefactor;
-             esave_info.ecount          = (short) (gridsz*gridsz); /* flag for done */
-          }
-          else  /* we will need the resuming information */
-          {
-			  memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
-             esave_info.paramrangex     = resume_e_info.paramrangex;
-             esave_info.paramrangey     = resume_e_info.paramrangey;
-             esave_info.opx             = resume_e_info.opx;
-             esave_info.opy             = resume_e_info.opy;
-             esave_info.odpx            = (short)resume_e_info.odpx;
-             esave_info.odpy            = (short)resume_e_info.odpy;
-             esave_info.px              = (short)resume_e_info.px;
-             esave_info.py              = (short)resume_e_info.py;
-             esave_info.sxoffs          = (short)resume_e_info.sxoffs;
-             esave_info.syoffs          = (short)resume_e_info.syoffs;
-             esave_info.xdots           = (short)resume_e_info.xdots;
-             esave_info.ydots           = (short)resume_e_info.ydots;
-             esave_info.gridsz          = (short)resume_e_info.gridsz;
-             esave_info.evolving        = (short) resume_e_info.evolving;
-             esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
-             esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
-             esave_info.ecount          = resume_e_info.ecount;
-          }
-          for (i = 0; i < NUMGENES; i++)
-		  {
-             esave_info.mutate[i] = (short)g_genes[i].mutate;
-		  }
+			struct evolution_info esave_info;
+			int i;
+			struct evolution_info resume_e_info;
+			if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED)
+			{
+				esave_info.paramrangex     = paramrangex;
+				esave_info.paramrangey     = paramrangey;
+				esave_info.opx             = opx;
+				esave_info.opy             = opy;
+				esave_info.odpx            = (short)odpx;
+				esave_info.odpy            = (short)odpy;
+				esave_info.px              = (short)px;
+				esave_info.py              = (short)py;
+				esave_info.sxoffs          = (short)sxoffs;
+				esave_info.syoffs          = (short)syoffs;
+				esave_info.xdots           = (short)xdots;
+				esave_info.ydots           = (short)ydots;
+				esave_info.gridsz          = (short)gridsz;
+				esave_info.evolving        = (short) evolving;
+				esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
+				esave_info.fiddlefactor    = fiddlefactor;
+				esave_info.ecount          = (short) (gridsz*gridsz); /* flag for done */
+			}
+			else  /* we will need the resuming information */
+			{
+				memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
+				esave_info.paramrangex     = resume_e_info.paramrangex;
+				esave_info.paramrangey     = resume_e_info.paramrangey;
+				esave_info.opx             = resume_e_info.opx;
+				esave_info.opy             = resume_e_info.opy;
+				esave_info.odpx            = (short)resume_e_info.odpx;
+				esave_info.odpy            = (short)resume_e_info.odpy;
+				esave_info.px              = (short)resume_e_info.px;
+				esave_info.py              = (short)resume_e_info.py;
+				esave_info.sxoffs          = (short)resume_e_info.sxoffs;
+				esave_info.syoffs          = (short)resume_e_info.syoffs;
+				esave_info.xdots           = (short)resume_e_info.xdots;
+				esave_info.ydots           = (short)resume_e_info.ydots;
+				esave_info.gridsz          = (short)resume_e_info.gridsz;
+				esave_info.evolving        = (short) resume_e_info.evolving;
+				esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
+				esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
+				esave_info.ecount          = resume_e_info.ecount;
+			}
+			for (i = 0; i < NUMGENES; i++)
+			{
+				esave_info.mutate[i] = (short)g_genes[i].mutate;
+			}
 
-          for (i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
-             esave_info.future[i] = 0;
+			for (i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
+				esave_info.future[i] = 0;
 
-          /* some XFRACT logic for the doubles needed here */
+			/* some XFRACT logic for the doubles needed here */
 #ifdef XFRACT
-          decode_evolver_info(&esave_info, 0);
+			decode_evolver_info(&esave_info, 0);
 #endif
-          /* evolution info block, 006 */
-          save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
-          if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
-             goto oops;
+			/* evolution info block, 006 */
+			save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
+			if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
+				goto oops;
 		}
 
 		/* Extended parameters block 007 */
 		if (stdcalcmode == 'o')
 		{
-          struct orbits_info osave_info;
-          int i;
-          osave_info.oxmin     = oxmin;
-          osave_info.oxmax     = oxmax;
-          osave_info.oymin     = oymin;
-          osave_info.oymax     = oymax;
-          osave_info.ox3rd     = ox3rd;
-          osave_info.oy3rd     = oy3rd;
-          osave_info.keep_scrn_coords= (short)keep_scrn_coords;
-          osave_info.drawmode  = drawmode;
-          for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
-             osave_info.future[i] = 0;
+			struct orbits_info osave_info;
+			int i;
+			osave_info.oxmin     = oxmin;
+			osave_info.oxmax     = oxmax;
+			osave_info.oymin     = oymin;
+			osave_info.oymax     = oymax;
+			osave_info.ox3rd     = ox3rd;
+			osave_info.oy3rd     = oy3rd;
+			osave_info.keep_scrn_coords= (short)keep_scrn_coords;
+			osave_info.drawmode  = drawmode;
+			for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
+				osave_info.future[i] = 0;
 
-          /* some XFRACT logic for the doubles needed here */
+			/* some XFRACT logic for the doubles needed here */
 #ifdef XFRACT
-          decode_orbits_info(&osave_info, 0);
+			decode_orbits_info(&osave_info, 0);
 #endif
-          /* orbits info block, 007 */
-          save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
-          if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
-             goto oops;
+			/* orbits info block, 007 */
+			save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
+			if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
+				goto oops;
 		}
 
 		/* main and last block, 001 */
@@ -570,11 +566,9 @@ int encoder()
 	return interrupted;
 
 oops:
-	{
-		fflush(g_outfile);
-		stopmsg(0,"Error Writing to disk (Disk full?)");
-		return 1;
-	}
+	fflush(g_outfile);
+	stopmsg(0,"Error Writing to disk (Disk full?)");
+	return 1;
 }
 
 /* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
@@ -808,7 +802,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->math_tol[1] = math_tol[1];
 	for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
 		save_info->future[i] = 0;
-      
+
 }
 
 /***************************************************************************
@@ -816,9 +810,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
  *  GIFENCOD.C       - GIF Image compression routines
  *
  *  Lempel-Ziv compression based on 'compress'.  GIF modifications by
- *  David Rowley (mgardi@watdcsu.waterloo.edu). 
+ *  David Rowley (mgardi@watdcsu.waterloo.edu).
  *  Thoroughly massaged by the Stone Soup team for Fractint's purposes.
- * 
+ *
  ***************************************************************************/
 
 #define BITSF   12
@@ -884,7 +878,7 @@ static int clear_flg = 0;
 /*
  * compress stdin to stdout
  *
- * Algorithm:  use open addressing double hashing (no chaining) on the 
+ * Algorithm:  use open addressing double hashing (no chaining) on the
  * prefix code / next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
@@ -924,7 +918,7 @@ static int compress(int rowlimit)
 	int tempkey;
 	char accum_stack[256];
 	accum = accum_stack;
-   
+
 	outcolor1 = 0;               /* use these colors to show progress */
 	outcolor2 = 1;               /* (this has nothing to do with GIF) */
 
@@ -985,8 +979,8 @@ static int compress(int rowlimit)
 				}
 				fcode = (long) (((long) color << maxbits) + ent);
 				i = (((int)color << hshift) ^ ent);    /* xor hashing */
-     
-				if (htab[i] == fcode) 
+
+				if (htab[i] == fcode)
 				{
                 ent = codetab[i];
                 continue;
@@ -999,23 +993,23 @@ static int compress(int rowlimit)
 probe:
 				if ((i -= disp) < 0)
 					i += hsize_reg;
-     
-				if (htab[i] == fcode) 
+
+				if (htab[i] == fcode)
 				{
                 ent = codetab[i];
                 continue;
 				}
-				if ((long)htab[i] > 0) 
+				if ((long)htab[i] > 0)
                 goto probe;
 nomatch:
 				output ((int) ent);
 				ent = color;
-				if (free_ent < maxmaxcode) 
+				if (free_ent < maxmaxcode)
 				{
                 /* code -> hashtable */
-                codetab[i] = (unsigned short)free_ent++; 
+                codetab[i] = (unsigned short)free_ent++;
                 htab[i] = fcode;
-				} 
+				}
 				else
               cl_block();
 			} /* end for xdot */
@@ -1033,7 +1027,7 @@ nomatch:
 				{  /* display vert status bars */
 					/* (this is NOT GIF-related)  */
 					putcolor(i, ydot, getcolor(i, ydot) ^ outcolor1);
-					putcolor(xdots - 1 - i, ydot, 
+					putcolor(xdots - 1 - i, ydot,
 						getcolor(xdots - 1 - i, ydot) ^ outcolor2);
 				}
 				last_colorbar = ydot;
@@ -1049,7 +1043,7 @@ nomatch:
 				driver_get_key();   /* eat the keystroke */
 		} /* end for ydot */
 	} /* end for rownum */
-   
+
 	/*
 	* Put out the final code.
 	*/
@@ -1078,22 +1072,22 @@ nomatch:
 
 static void _fastcall output(int code)
 {
-	static unsigned long masks[] = 
+	static unsigned long masks[] =
 		{ 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
                 0x001F, 0x003F, 0x007F, 0x00FF,
                 0x01FF, 0x03FF, 0x07FF, 0x0FFF,
                 0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF };
-                
+
 	cur_accum &= masks[ cur_bits ];
 
 	if (cur_bits > 0)
 		cur_accum |= ((long)code << cur_bits);
 	else
 		cur_accum = code;
-   
+
 	cur_bits += n_bits;
 
-	while (cur_bits >= 8) 
+	while (cur_bits >= 8)
 	{
 		char_out((unsigned int)(cur_accum & 0xff));
 		cur_accum >>= 8;
@@ -1104,15 +1098,15 @@ static void _fastcall output(int code)
 	* If the next entry is going to be too big for the code size,
 	* then increase it, if possible.
 	*/
-	if (free_ent > maxcode || clear_flg) 
+	if (free_ent > maxcode || clear_flg)
 	{
-		if (clear_flg) 
+		if (clear_flg)
 		{
 			maxcode = MAXCODE (n_bits = startbits);
 			clear_flg = 0;
-      
-		} 
-		else 
+
+		}
+		else
 		{
 			n_bits++;
 			if (n_bits == maxbits)
@@ -1121,13 +1115,13 @@ static void _fastcall output(int code)
 				maxcode = MAXCODE(n_bits);
 		}
 	}
-   
-	if (code == EOFCode) 
+
+	if (code == EOFCode)
 	{
 		/*
        * At EOF, write the rest of the buffer.
        */
-       while (cur_bits > 0) 
+       while (cur_bits > 0)
        {
           char_out((unsigned int)(cur_accum & 0xff));
           cur_accum >>= 8;
@@ -1135,7 +1129,7 @@ static void _fastcall output(int code)
        }
 
        flush_char();
-  
+
        fflush(g_outfile);
 	}
 }
@@ -1158,7 +1152,7 @@ static void _fastcall cl_block(void)             /* table clear for block compre
 static void _fastcall char_out(int c)
 {
 	accum[ a_count++ ] = (char)c;
-	if (a_count >= 254) 
+	if (a_count >= 254)
 		flush_char();
 }
 
@@ -1167,10 +1161,10 @@ static void _fastcall char_out(int c)
  */
 static void _fastcall flush_char(void)
 {
-	if (a_count > 0) 
+	if (a_count > 0)
 	{
 		fputc(a_count, g_outfile);
 		fwrite(accum, 1, a_count, g_outfile);
 		a_count = 0;
 	}
-}  
+}
