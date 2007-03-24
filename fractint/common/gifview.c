@@ -100,12 +100,15 @@ int gifview()
 		strcpy(temp1,stereomapname);
 	else
 		strcpy(temp1,readname);
-	if (has_ext(temp1) == NULL) {
+	if (has_ext(temp1) == NULL) 
+	{
 		strcat(temp1,DEFAULTFRACTALTYPE);
-		if ((fpin = fopen(temp1,"rb")) != NULL) {
+		if ((fpin = fopen(temp1,"rb")) != NULL) 
+		{
 			fclose(fpin);
 			}
-		else {
+		else 
+		{
 			if (outln == outline_stereo)
 				strcpy(temp1,stereomapname);
 			else
@@ -114,7 +117,8 @@ int gifview()
 			}
 		}
 	fpin = fopen(temp1, "rb");
-	if (fpin == NULL) {
+	if (fpin == NULL) 
+	{
 		return -1;
 		}
 
@@ -152,13 +156,15 @@ int gifview()
 	}
 	numcolors = 1 << planes;
 
-	if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) {
+	if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) 
+	{
 			outln = out_line_dither;
 	}
 
 	for (i = 0; i < (int)numcolors; i++)
 	{
-		for (j = 0; j < 3; j++) {
+		for (j = 0; j < 3; j++) 
+		{
 			if ((k = get_byte()) < 0)
 			{
 				close_file();
@@ -179,7 +185,8 @@ int gifview()
 	}
 	if (g_dac_box[0][0] != 255)
 		spindac(0,1);       /* update the DAC */
-	if (driver_diskp()){ /* disk-video */
+	if (driver_diskp()) /* disk-video */
+	{
 		char fname[FILE_MAX_FNAME];
 		char ext[FILE_MAX_EXT];
 		char tmpname[15];
@@ -260,14 +267,18 @@ int gifview()
 			if (pot16bit) width >>= 1;
 
 			/* Skip local color palette */
-			if ((buffer[8] & 0x80) == 0x80) {      /* local map? */
+			if ((buffer[8] & 0x80) == 0x80)  /* local map? */
+			{
              int numcolors;    /* make this local */
              planes = (buffer[8] & 0x0F) + 1;
              numcolors = 1 << planes;
              /* skip local map */
-             for (i = 0; i < numcolors; i++) {
-                for (j = 0; j < 3; j++) {
-                   if ((k = get_byte()) < 0) {
+             for (i = 0; i < numcolors; i++) 
+             {
+                for (j = 0; j < 3; j++) 
+                {
+                   if ((k = get_byte()) < 0) 
+                   {
                       close_file();
                       return -1;
                       }
@@ -292,7 +303,8 @@ int gifview()
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
 				calctime = timer_interval; /* note how long it took */
-				if (driver_key_pressed() != 0) {
+				if (driver_key_pressed() != 0) 
+				{
 					calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
 					finished = 1;
 					}
@@ -300,7 +312,8 @@ int gifview()
 					calc_status = CALCSTAT_COMPLETED; /* complete */
 			}
 			/* Hey! the decoder doesn't read the last (0-length) block!! */
-			if (get_byte() != 0) {
+			if (get_byte() != 0) 
+			{
              status = -1;
              finished = 1;
              }
@@ -312,12 +325,14 @@ int gifview()
 		}
 	}
 	close_file();
-	if (driver_diskp()) { /* disk-video */
+	if (driver_diskp())  /* disk-video */
+	{
 		dvid_status(0,"Restore completed");
 		dvid_status(1,"");
 		}
 
-		if (ditherbuf != NULL) { /* we're done, free dither memory */
+		if (ditherbuf != NULL)  /* we're done, free dither memory */
+		{
 				free(ditherbuf);
 		ditherbuf = NULL;
 		}
@@ -354,7 +369,8 @@ static int out_line_dither(BYTE *pixels, int linelen)
 		memset(ditherbuf, 0, linelen + 1);
 
 	nexterr = (rand()&0x1f)-16;
-	for (i = 0; i < linelen; i++) {
+	for (i = 0; i < linelen; i++) 
+	{
 #ifdef __SVR4
 		brt = (int)((g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
 				g_dac_box[pixels[i]][2]*2)) >> 4; /* brightness from 0 to 63 */
@@ -363,10 +379,13 @@ static int out_line_dither(BYTE *pixels, int linelen)
 				g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to 63 */
 #endif
 		brt += nexterr;
-		if (brt > 32) {
+		if (brt > 32) 
+		{
 				pixels[i] = 1;
 				err = brt-63;
-		} else {
+		}
+		else 
+		{
 				pixels[i] = 0;
 				err = brt;
 		}

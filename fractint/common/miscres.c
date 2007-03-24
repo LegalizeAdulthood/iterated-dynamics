@@ -137,7 +137,8 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
           str[col2-col1 + 2] = save2;
           str += col2-col1;
           (*row)++;
-       } else
+       }
+       else
           driver_put_string(*row, col1, color, str);
        length -= col2-col1;
        col1 = decpt; /* align with decimal */
@@ -532,7 +533,8 @@ void updatesavename(char *filename) /* go to the next file name */
 	while (*hold == '0')         /* skip leading zeros */
 		hold++;
 	save = hold;
-	while (*save) {              /* check for all nines */
+	while (*save)  /* check for all nines */
+	{
 		if (*save != '9')
 			break;
 		save++;
@@ -558,7 +560,8 @@ nextname:
 	strcpy(opentype, ext);
 #if 0
 	for (i = 0; i < (int)strlen(openfile); i++)
-		if (openfile[i] == '.') {
+		if (openfile[i] == '.') 
+		{
 			strcpy(opentype, &openfile[i]);
 			openfile[i] = 0;
 			}
@@ -575,7 +578,8 @@ nextname:
 		return 0;
 	}
 	/* file already exists */
-	if (fract_overwrite == 0) {
+	if (fract_overwrite == 0) 
+	{
 		updatesavename(name);
 		goto nextname;
 		}
@@ -624,10 +628,12 @@ static void trigdetails(char *buf)
 		curfractalspecific == &fractalspecific[FFORMULA])
 		numfn = maxfn;
 	*buf = 0; /* null string if none */
-	if (numfn > 0) {
+	if (numfn > 0) 
+	{
 		strcpy(buf, trigfn[trigndx[0]].name);
 		i = 0;
-		while (++i < numfn) {
+		while (++i < numfn) 
+		{
 			sprintf(tmpbuf, "/%s", trigfn[trigndx[i]].name);
 			strcat(buf, tmpbuf);
 			}
@@ -1297,20 +1303,27 @@ static void area(void)
 	int x, y;
 	char buf[160];
 	long cnt = 0;
-	if (inside < 0) {
+	if (inside < 0) 
+	{
 		stopmsg(0, "Need solid inside to compute area");
 		return;
 	}
-	for (y = 0; y < ydots; y++) {
-		for (x = 0; x < xdots; x++) {
-          if (getcolor(x, y) == inside) {
+	for (y = 0; y < ydots; y++) 
+	{
+		for (x = 0; x < xdots; x++) 
+		{
+          if (getcolor(x, y) == inside) 
+          {
               cnt++;
           }
 		}
 	}
-	if (inside > 0 && outside < 0 && maxit > inside) {
+	if (inside > 0 && outside < 0 && maxit > inside) 
+	{
 		msg = "Warning: inside may not be unique\n";
-	} else {
+	}
+	else 
+	{
 		msg = "";
 	}
 		sprintf(buf, "%s%ld inside pixels of %ld%s%f",
@@ -1358,7 +1371,8 @@ int ifsload()                   /* read in IFS parameters */
 	char *bufptr;
 	int ret, rowsize;
 
-	if (ifs_defn) { /* release prior parms */
+	if (ifs_defn)  /* release prior parms */
+	{
 		free((char *)ifs_defn);
 		ifs_defn = NULL;
 		}
@@ -1374,8 +1388,10 @@ int ifsload()                   /* read in IFS parameters */
 
 	strlwr(buf);
 	bufptr = &buf[0];
-	while (*bufptr) {
-		if (strncmp(bufptr, "(3d)", 4) == 0) {
+	while (*bufptr) 
+	{
+		if (strncmp(bufptr, "(3d)", 4) == 0) 
+		{
 			ifs_type = 1;
 			rowsize = IFS3DPARM;
 			}
@@ -1412,20 +1428,24 @@ int ifsload()                   /* read in IFS parameters */
 			break;
 	}
 
-	if ((i % rowsize) != 0 || *bufptr != '}') {
+	if ((i % rowsize) != 0 || *bufptr != '}') 
+	{
 		stopmsg(0, "invalid IFS definition");
 		ret = -1;
 		}
-	if (i == 0 && ret == 0) {
+	if (i == 0 && ret == 0) 
+	{
 		stopmsg(0, "Empty IFS definition");
 		ret = -1;
 		}
 	fclose(ifsfile);
 
-	if (ret == 0) {
+	if (ret == 0) 
+	{
 		numaffine = i/rowsize;
 		if ((ifs_defn = (float *)malloc(
-								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL) {
+								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL) 
+								{
      stopmsg(0, insufficient_ifs_mem);
 			ret = -1;
 			}
@@ -1453,25 +1473,33 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 	splitpath(filename, drive, dir, fname, ext);
 	makepath(fullpath, "", "", fname, ext);
-	if (stricmp(filename, CommandFile)) {
-		if ((infile=fopen(filename, "rb")) != NULL) {
-			if (scan_entries(infile, NULL, itemname) == -1) {
+	if (stricmp(filename, CommandFile)) 
+	{
+		if ((infile=fopen(filename, "rb")) != NULL) 
+		{
+			if (scan_entries(infile, NULL, itemname) == -1) 
+			{
 				found = 1;
 			}
-			else {
+			else 
+			{
 				fclose(infile);
 				infile = NULL;
 			}
 		}
 
-		if (!found && checkcurdir) {
+		if (!found && checkcurdir) 
+		{
 			makepath(fullpath, "", DOTSLASH, fname, ext);
-			if ((infile=fopen(fullpath, "rb")) != NULL) {
-				if (scan_entries(infile, NULL, itemname) == -1) {
+			if ((infile=fopen(fullpath, "rb")) != NULL) 
+			{
+				if (scan_entries(infile, NULL, itemname) == -1) 
+				{
 					strcpy(filename, fullpath);
 					found = 1;
 				}
-				else {
+				else 
+				{
 					fclose(infile);
 					infile = NULL;
 				}
@@ -1479,7 +1507,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		}
 	}
 
-	switch (itemtype) {
+	switch (itemtype) 
+	{
 		case 1:
 			strcpy(parsearchname, "frm:");
 			strcat(parsearchname, itemname);
@@ -1509,54 +1538,68 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 			break;
 	}
 
-	if (!found) {
-		if ((infile=fopen(CommandFile, "rb")) != NULL) {
-			if (scan_entries(infile, NULL, parsearchname) == -1) {
+	if (!found) 
+	{
+		if ((infile=fopen(CommandFile, "rb")) != NULL) 
+		{
+			if (scan_entries(infile, NULL, parsearchname) == -1) 
+			{
 				strcpy(filename, CommandFile);
 				found = 1;
 			}
-			else {
+			else 
+			{
 				fclose(infile);
 				infile = NULL;
 			}
 		}
 	}
 
-	if (!found) {
+	if (!found) 
+	{
 		makepath(fullpath, drive, dir, fname, ext);
-		if ((infile=fopen(fullpath, "rb")) != NULL) {
-			if (scan_entries(infile, NULL, itemname) == -1) {
+		if ((infile=fopen(fullpath, "rb")) != NULL) 
+		{
+			if (scan_entries(infile, NULL, itemname) == -1) 
+			{
 				strcpy(filename, fullpath);
 				found = 1;
 			}
-			else {
+			else 
+			{
 				fclose(infile);
 				infile = NULL;
 			}
 		}
 	}
 
-	if (!found) {  /* search for file */
+	if (!found)  /* search for file */
+	{
 		int out;
 		makepath(fullpath, drive, dir, "*", defaultextension);
 		out = fr_findfirst(fullpath);
-		while (out == 0) {
+		while (out == 0) 
+		{
 			char msg[200];
 			DTA.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2]=0;
 			sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
 			showtempmsg(msg);
 			if (!(DTA.attribute & SUBDIR) &&
              strcmp(DTA.filename, ".")&&
-             strcmp(DTA.filename, "..")) {
+             strcmp(DTA.filename, "..")) 
+             {
 				splitpath(DTA.filename, NULL, NULL, fname, ext);
 				makepath(fullpath, drive, dir, fname, ext);
-				if ((infile=fopen(fullpath, "rb")) != NULL) {
-					if (scan_entries(infile, NULL, itemname) == -1) {
+				if ((infile=fopen(fullpath, "rb")) != NULL) 
+				{
+					if (scan_entries(infile, NULL, itemname) == -1) 
+					{
 						strcpy(filename, fullpath);
 						found = 1;
 						break;
 					}
-					else {
+					else 
+					{
 						fclose(infile);
 						infile = NULL;
 					}
@@ -1567,44 +1610,55 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		cleartempmsg();
 	}
 
-	if (!found && orgfrmsearch && itemtype == 1) {
+	if (!found && orgfrmsearch && itemtype == 1) 
+	{
 		splitpath(orgfrmdir, drive, dir, NULL, NULL);
 		fname[0] = '_';
 		fname[1] = (char) 0;
-		if (isalpha(itemname[0])) {
-			if (strnicmp(itemname, "carr", 4)) {
+		if (isalpha(itemname[0])) 
+		{
+			if (strnicmp(itemname, "carr", 4)) 
+			{
 				fname[1] = itemname[0];
 				fname[2] = (char) 0;
 			}
-			else if (isdigit(itemname[4])) {
+			else if (isdigit(itemname[4])) 
+			{
 				strcat(fname, "rc");
 				fname[3] = itemname[4];
 				fname[4] = (char) 0;
 			}
-			else {
+			else 
+			{
 				strcat(fname, "rc");
 			}
 		}
-		else if (isdigit(itemname[0])) {
+		else if (isdigit(itemname[0])) 
+		{
 			strcat(fname, "num");
 		}
-		else {
+		else 
+		{
 			strcat(fname, "chr");
 		}
 		makepath(fullpath, drive, dir, fname, defaultextension);
-		if ((infile=fopen(fullpath, "rb")) != NULL) {
-			if (scan_entries(infile, NULL, itemname) == -1) {
+		if ((infile=fopen(fullpath, "rb")) != NULL) 
+		{
+			if (scan_entries(infile, NULL, itemname) == -1) 
+			{
 				strcpy(filename, fullpath);
 				found = 1;
 			}
-			else {
+			else 
+			{
 				fclose(infile);
 				infile = NULL;
 			}
 		}
 	}
 
-	if (!found) {
+	if (!found) 
+	{
 		sprintf(fullpath, "'%s' file entry item not found", itemname);
 		stopmsg(0, fullpath);
 		return -1;
@@ -1625,9 +1679,11 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 	/* returns -1 at eof, length of string otherwise */
 	if (feof(infile)) return -1;
 	len = 0;
-	while (len < maxlen) {
+	while (len < maxlen) 
+	{
 		c = getc(infile);
-	  if (c == EOF || c == '\032') {
+	  if (c == EOF || c == '\032') 
+	  {
 			if (len) break;
 			return -1;
 			}

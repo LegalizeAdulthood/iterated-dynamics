@@ -845,7 +845,8 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 		printf("."); /* lets you know it's doing something */
 #endif
-		} while (!cos_done || !sin_done);
+		}
+		while (!cos_done || !sin_done);
 
 #ifndef CALCULATING_BIG_PI
 		/* now need to undo what was done by cutting angles in half */

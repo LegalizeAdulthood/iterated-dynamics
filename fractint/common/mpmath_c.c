@@ -24,30 +24,35 @@
 
 #if !defined(XFRACT)
 
-struct MP *MPsub(struct MP x, struct MP y) {
+struct MP *MPsub(struct MP x, struct MP y) 
+{
 	y.Exp ^= 0x8000;
 	return MPadd(x, y);
 }
 
 /* added by TW */
-struct MP *MPsub086(struct MP x, struct MP y) {
+struct MP *MPsub086(struct MP x, struct MP y) 
+{
 	y.Exp ^= 0x8000;
 	return MPadd086(x, y);
 }
 
 /* added by TW */
-struct MP *MPsub386(struct MP x, struct MP y) {
+struct MP *MPsub386(struct MP x, struct MP y) 
+{
 	y.Exp ^= 0x8000;
 	return MPadd386(x, y);
 }
 
-struct MP *MPabs(struct MP x) {
+struct MP *MPabs(struct MP x) 
+{
 	Ans = x;
 	Ans.Exp &= 0x7fff;
 	return &Ans;
 }
 
-struct MPC MPCsqr(struct MPC x) {
+struct MPC MPCsqr(struct MPC x) 
+{
 	struct MPC z;
 
 		z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
@@ -56,11 +61,13 @@ struct MPC MPCsqr(struct MPC x) {
 	return z;
 }
 
-struct MP MPCmod(struct MPC x) {
+struct MP MPCmod(struct MPC x) 
+{
 		return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
 }
 
-struct MPC MPCmul(struct MPC x, struct MPC y) {
+struct MPC MPCmul(struct MPC x, struct MPC y) 
+{
 	struct MPC z;
 
 		z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
@@ -68,7 +75,8 @@ struct MPC MPCmul(struct MPC x, struct MPC y) {
 	return z;
 }
 
-struct MPC MPCdiv(struct MPC x, struct MPC y) {
+struct MPC MPCdiv(struct MPC x, struct MPC y) 
+{
 	struct MP mod;
 
 	mod = MPCmod(y);
@@ -78,7 +86,8 @@ struct MPC MPCdiv(struct MPC x, struct MPC y) {
 	return MPCmul(x, y);
 }
 
-struct MPC MPCadd(struct MPC x, struct MPC y) {
+struct MPC MPCadd(struct MPC x, struct MPC y) 
+{
 	struct MPC z;
 
 		z.x = *pMPadd(x.x, y.x);
@@ -86,7 +95,8 @@ struct MPC MPCadd(struct MPC x, struct MPC y) {
 	return z;
 }
 
-struct MPC MPCsub(struct MPC x, struct MPC y) {
+struct MPC MPCsub(struct MPC x, struct MPC y) 
+{
 	struct MPC z;
 
 		z.x = *pMPsub(x.x, y.x);
@@ -98,7 +108,8 @@ struct MPC MPCone = { {0x3fff, 0x80000000l},
                       {0, 0l}
                     };
 
-struct MPC MPCpow(struct MPC x, int exp) {
+struct MPC MPCpow(struct MPC x, int exp) 
+{
 	struct MPC z;
 	struct MPC zz;
 
@@ -107,12 +118,14 @@ struct MPC MPCpow(struct MPC x, int exp) {
 	else
 		z = MPCone;
 	exp >>= 1;
-	while (exp) {
+	while (exp) 
+	{
                 zz.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
                 zz.y = *pMPmul(x.x, x.y);
                 zz.y.Exp++;
 		x = zz;
-		if (exp & 1) {
+		if (exp & 1) 
+		{
                         zz.x = *pMPsub(*pMPmul(z.x, x.x), *pMPmul(z.y, x.y));
                         zz.y = *pMPadd(*pMPmul(z.x, x.y), *pMPmul(z.y, x.x));
 			z = zz;
@@ -122,10 +135,12 @@ struct MPC MPCpow(struct MPC x, int exp) {
 	return z;
 }
 
-int MPCcmp(struct MPC x, struct MPC y) {
+int MPCcmp(struct MPC x, struct MPC y) 
+{
 	struct MPC z;
 
-		if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) {
+		if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y)) 
+		{
                 z.x = MPCmod(x);
                 z.y = MPCmod(y);
                 return pMPcmp(z.x, z.y);
@@ -134,7 +149,8 @@ int MPCcmp(struct MPC x, struct MPC y) {
 		return 0;
 }
 
-_CMPLX MPC2cmplx(struct MPC x) {
+_CMPLX MPC2cmplx(struct MPC x) 
+{
 	_CMPLX z;
 
 		z.x = *pMP2d(x.x);
@@ -142,7 +158,8 @@ _CMPLX MPC2cmplx(struct MPC x) {
 	return z;
 }
 
-struct MPC cmplx2MPC(_CMPLX z) {
+struct MPC cmplx2MPC(_CMPLX z) 
+{
 	struct MPC x;
 
 		x.x = *pd2MP(z.x);
@@ -161,7 +178,8 @@ struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 /* struct MP  *(*pfg2MP)(long x, int fg)          = fg2MP086; */
 
-void setMPfunctions(void) {
+void setMPfunctions(void) 
+{
 	if (cpu >= 386)
 	{
 		pMPmul = MPmul386;
@@ -189,14 +207,16 @@ void setMPfunctions(void) {
 #define sqr(x) ((x)*(x))
 #endif
 
-_CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
+_CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) 
+{
 	_CMPLX z, cLog, t;
 	double e2x, siny, cosy;
 
 	/* fixes power bug - if any complaints, backwards compatibility hook
 		goes here TIW 3/95 */
 	if (ldcheck == 0)
-		if (xx.x == 0 && xx.y == 0) {
+		if (xx.x == 0 && xx.y == 0) 
+		{
 			z.x = z.y = 0.0;
 			return z;
 		}
@@ -206,7 +226,8 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 
 	if (fpu >= 387)
 		FPUcplxexp387(&t, &z);
-	else {
+	else 
+	{
 		if (t.x < -690)
 			e2x = 0;
 		else
@@ -284,21 +305,26 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp0, temp1, temp2;
 
-  if (z.x == 0.0){
+  if (z.x == 0.0)
+  {
 	rz->x = 0;
 	rz->y = atan(z.y);
 	return;
   }
-  else{
-	if (fabs(z.x) == 1.0 && z.y == 0.0){
+  else
+  {
+	if (fabs(z.x) == 1.0 && z.y == 0.0)
+	{
 		return;
 	}
-	else if (fabs(z.x) < 1.0 && z.y == 0.0){
+	else if (fabs(z.x) < 1.0 && z.y == 0.0)
+	{
 		rz->x = log((1 + z.x)/(1-z.x))/2;
 		rz->y = 0;
 		return;
 	}
-	else{
+	else
+	{
 		temp0.x = 1 + z.x; temp0.y = z.y;             /* temp0 = 1 + z */
 		temp1.x = 1 - z.x; temp1.y = -z.y;            /* temp1 = 1 - z */
 		FPUcplxdiv(&temp0, &temp1, &temp2);
@@ -315,16 +341,19 @@ void Arctanz(_CMPLX z, _CMPLX *rz)
   _CMPLX temp0, temp1, temp2, temp3;
   if (z.x == 0.0 && z.y == 0.0)
 	rz->x = rz->y = 0;
-  else if (z.x != 0.0 && z.y == 0.0){
+  else if (z.x != 0.0 && z.y == 0.0)
+  {
 	rz->x = atan(z.x);
 	rz->y = 0;
   }
-  else if (z.x == 0.0 && z.y != 0.0){
+  else if (z.x == 0.0 && z.y != 0.0)
+  {
 	temp0.x = z.y;  temp0.y = 0.0;
 	Arctanhz(temp0, &temp0);
 	rz->x = -temp0.y; rz->y = temp0.x;              /* i*temp0 */
   }
-  else if (z.x != 0.0 && z.y != 0.0){
+  else if (z.x != 0.0 && z.y != 0.0)
+  {
 
 	temp0.x = -z.y; temp0.y = z.x;                  /* i*z */
 	temp1.x = 1 - temp0.x; temp1.y = -temp0.y;      /* temp1 = 1 - temp0 */
@@ -443,20 +472,27 @@ static unsigned long lf;
 		LogFlag < -1  -- use quadratic palettes based on square roots && compress
 	*/
 
-void SetupLogTable(void) {
+void SetupLogTable(void) 
+{
 	float l, f, c, m;
 	unsigned long prev, limit, sptop;
 	unsigned n;
 
- if (save_release > 1920 || Log_Fly_Calc == 1) { /* set up on-the-fly variables */
-	if (LogFlag > 0) { /* new log function */
+ if (save_release > 1920 || Log_Fly_Calc == 1)  /* set up on-the-fly variables */
+ {
+	if (LogFlag > 0)  /* new log function */
+	{
 		lf = (LogFlag > 1) ? LogFlag : 0;
 		if (lf >= (unsigned long)MaxLTSize)
 			lf = MaxLTSize - 1;
 		mlf = (colors - (lf?2:1)) / log(MaxLTSize - lf);
-	} else if (LogFlag == -1) { /* old log function */
+	}
+	else if (LogFlag == -1)  /* old log function */
+	{
 		mlf = (colors - 1) / log(MaxLTSize);
-	} else if (LogFlag <= -2) { /* sqrt function */
+	}
+	else if (LogFlag <= -2)  /* sqrt function */
+	{
 		if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
 			lf = MaxLTSize - 1;
 		mlf = (colors - 2) / sqrt(MaxLTSize - lf);
@@ -466,7 +502,8 @@ void SetupLogTable(void) {
  if (Log_Calc)
 	return; /* LogTable not defined, bail out now */
 
- if (save_release > 1920 && !Log_Calc) {
+ if (save_release > 1920 && !Log_Calc) 
+ {
 	Log_Calc = 1;   /* turn it on */
 	for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
 		LogTable[prev] = (BYTE)logtablecalc((long)prev);
@@ -474,7 +511,8 @@ void SetupLogTable(void) {
 	return;
  }
 
-	if (LogFlag > -2) {
+	if (LogFlag > -2) 
+	{
 		lf = (LogFlag > 1) ? LogFlag : 0;
 		if (lf >= (unsigned long)MaxLTSize)
 			lf = MaxLTSize - 1;
@@ -484,7 +522,8 @@ void SetupLogTable(void) {
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 			LogTable[prev] = 1;
-		for (n = (lf?2:1); n < (unsigned int)colors; n++) {
+		for (n = (lf?2:1); n < (unsigned int)colors; n++) 
+		{
 			Fg2Float((long)n, 0, f);
 			fMul16(f, m, f);
 			fExp14(f, l);
@@ -494,7 +533,9 @@ void SetupLogTable(void) {
 			while (prev <= limit)
 				LogTable[prev++] = (BYTE)n;
 		}
-	} else {
+	}
+	else 
+	{
 		if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
 			lf = MaxLTSize - 1;
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
@@ -503,7 +544,8 @@ void SetupLogTable(void) {
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 			LogTable[prev] = 1;
-		for (n = 2; n < (unsigned int)colors; n++) {
+		for (n = 2; n < (unsigned int)colors; n++) 
+		{
 			Fg2Float((long)n, 0, f);
 			fMul16(f, m, f);
 			fMul16(f, f, l);
@@ -521,7 +563,8 @@ void SetupLogTable(void) {
 				LogTable[sptop] = (BYTE)(LogTable[sptop-1] + 1);
 }
 
-long logtablecalc(long citer) {
+long logtablecalc(long citer) 
+{
 	long ret = 0;
 
 	if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
@@ -529,10 +572,12 @@ long logtablecalc(long citer) {
 	if (LogTable && !Log_Calc)
 		return LogTable[(long)min(citer, MaxLTSize)];
 
-	if (LogFlag > 0) { /* new log function */
+	if (LogFlag > 0)  /* new log function */
+	{
 		if ((unsigned long)citer <= lf + 1)
 			ret = 1;
-		else if ((citer - lf) / log(citer - lf) <= mlf) {
+		else if ((citer - lf) / log(citer - lf) <= mlf) 
+		{
 			if (save_release < 2002)
 				ret = (long)(citer - lf + (lf?1:0));
 			else
@@ -540,12 +585,16 @@ long logtablecalc(long citer) {
 		}
 		else
 			ret = (long)(mlf*log(citer - lf)) + 1;
-	} else if (LogFlag == -1) { /* old log function */
+	}
+	else if (LogFlag == -1)  /* old log function */
+	{
 		if (citer == 0)
 			ret = 1;
 		else
 			ret = (long)(mlf*log(citer)) + 1;
-	} else if (LogFlag <= -2) { /* sqrt function */
+	}
+	else if (LogFlag <= -2)  /* sqrt function */
+	{
 		if ((unsigned long)citer <= lf)
 			ret = 1;
 		else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf*mlf))
@@ -556,7 +605,8 @@ long logtablecalc(long citer) {
 	return ret;
 }
 
-long ExpFloat14(long xx) {
+long ExpFloat14(long xx) 
+{
 	static float fLogTwo = 0.6931472f;
 	int f;
 	long Ans;
@@ -570,11 +620,13 @@ double TwoPi;
 _CMPLX temp, BaseLog;
 _CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
-int ComplexNewtonSetup(void) {
+int ComplexNewtonSetup(void) 
+{
 	threshold = .001;
 	periodicitycheck = 0;
 	if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
-		param[3] != 0.0) {
+		param[3] != 0.0) 
+		{
 		croot.x = param[2];
 		croot.y = param[3];
 		cdegree.x = param[0];
@@ -585,7 +637,8 @@ int ComplexNewtonSetup(void) {
 	return 1;
 }
 
-int ComplexNewton(void) {
+int ComplexNewton(void) 
+{
 	_CMPLX cd1;
 
 	/* new = ((cdegree-1)*old**cdegree) + croot
@@ -617,7 +670,8 @@ int ComplexNewton(void) {
 	return 0;
 }
 
-int ComplexBasin(void) {
+int ComplexBasin(void) 
+{
 	_CMPLX cd1;
 	double mod;
 
@@ -633,14 +687,16 @@ int ComplexBasin(void) {
 
 	tmp.x = g_new.x - croot.x;
 	tmp.y = g_new.y - croot.y;
-	if ((sqr(tmp.x) + sqr(tmp.y)) < threshold) {
+	if ((sqr(tmp.x) + sqr(tmp.y)) < threshold) 
+	{
 		if (fabs(old.y) < .01)
 			old.y = 0.0;
 		FPUcplxlog(&old, &temp);
 		FPUcplxmul(&temp, &cdegree, &tmp);
 		mod = tmp.y/TwoPi;
 		coloriter = (long)mod;
-		if (fabs(mod - coloriter) > 0.5) {
+		if (fabs(mod - coloriter) > 0.5) 
+		{
 			if (mod < 0.0)
 				coloriter--;
 			else
@@ -677,14 +733,16 @@ int ComplexBasin(void) {
  * 1 in Distribution*(1-Probability/Range*con) + 1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
-int GausianNumber(int Probability, int Range) {
+int GausianNumber(int Probability, int Range) 
+{
 	int n, r;
 	long Accum = 0, p;
 
 	p = divide((long)Probability << 16, (long)Range << 16, 16);
 	p = multiply(p, con, 16);
 	p = multiply((long)Distribution << 16, p, 16);
-	if (!(rand15() % (Distribution - (int)(p >> 16) + 1))) {
+	if (!(rand15() % (Distribution - (int)(p >> 16) + 1))) 
+	{
 		for (n = 0; n < Slope; n++)
 			Accum += rand15();
 		Accum /= Slope;

@@ -322,7 +322,8 @@ int orbit3dlongsetup()
 
 		Sqrt = ComplexSqrtLong(fudge - 4*CxLong, -4*CyLong);
 
-		switch (major_method) {
+		switch (major_method) 
+		{
 			case breadth_first:
 				if (Init_Queue((long)32*1024) == 0)
 				{ /* can't get queue memory: fall back to random walk */
@@ -340,7 +341,8 @@ int orbit3dlongsetup()
 					major_method = random_walk;
 					goto lrwalk;
 				}
-				switch (minor_method) {
+				switch (minor_method) 
+				{
 					case left_first:
 						PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
 						PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
@@ -490,7 +492,8 @@ int orbit3dfloatsetup()
 
 		/* find fixed points: guaranteed to be in the set */
 		Sqrt = ComplexSqrtFloat(1 - 4*Cx, -4*Cy);
-		switch ((int) major_method) {
+		switch ((int) major_method) 
+		{
 			case breadth_first:
 				if (Init_Queue((long)32*1024) == 0)
 				{ /* can't get queue memory: fall back to random walk */
@@ -508,7 +511,8 @@ int orbit3dfloatsetup()
 					major_method = random_walk;
 					goto rwalk;
 				}
-				switch (minor_method) {
+				switch (minor_method) 
+				{
 					case left_first:
 						PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
 						PushFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
@@ -566,7 +570,8 @@ Minverse_julia_orbit()
 	/*
 	* First, compute new point
 	*/
-	switch (major_method) {
+	switch (major_method) 
+	{
 		case breadth_first:
 			if (QueueEmpty())
 				return -1;
@@ -595,7 +600,8 @@ Minverse_julia_orbit()
 				random_len = RANDOM(run_length);
 				random_dir = RANDOM(3);
 			}
-			switch (random_dir) {
+			switch (random_dir) 
+			{
 				case 0:     /* left */
 					break;
 				case 1:     /* right */
@@ -633,7 +639,8 @@ Minverse_julia_orbit()
        * MIIM must skip points that are off the screen boundary,
        * since it cannot read their color.
        */
-		switch (major_method) {
+		switch (major_method) 
+		{
 			case breadth_first:
 				EnQueueFloat((float)(leftright*g_new.x), (float)(leftright*g_new.y));
 				return 1;
@@ -652,7 +659,8 @@ Minverse_julia_orbit()
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
-	switch (major_method) {
+	switch (major_method) 
+	{
 		case breadth_first:
 			if (color < mxhits)
 			{
@@ -695,7 +703,8 @@ Minverse_julia_orbit()
 				random_len = RANDOM(run_length);
 				random_dir = RANDOM(3);
 			}
-			switch (random_dir) {
+			switch (random_dir) 
+			{
 				case 0:     /* left */
 					break;
 				case 1:     /* right */
@@ -731,7 +740,8 @@ Linverse_julia_orbit()
 	/*
 	* First, compute new point
 	*/
-	switch (major_method) {
+	switch (major_method) 
+	{
 		case breadth_first:
 			if (QueueEmpty())
 				return -1;
@@ -757,7 +767,8 @@ Linverse_julia_orbit()
 				random_len = RANDOM(run_length);
 				random_dir = RANDOM(3);
 			}
-			switch (random_dir) {
+			switch (random_dir) 
+			{
 				case 0:     /* left */
 					break;
 				case 1:     /* right */
@@ -796,7 +807,8 @@ Linverse_julia_orbit()
 			color =  1;
 		else
 			color = -1;
-		switch (major_method) {
+		switch (major_method) 
+		{
 			case breadth_first:
 				lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
 				EnQueueLong(color*lnew.x, color*lnew.y);
@@ -819,7 +831,8 @@ Linverse_julia_orbit()
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
-	switch (major_method) {
+	switch (major_method) 
+	{
 		case breadth_first:
 			if (color < mxhits)
 			{
@@ -1194,7 +1207,8 @@ int dynamfloat(double *x, double *y, double *z)
 		cp.y = 0;
 		CMPLXtrig0(cp, tmp);
 		newy = *y + dt*sin(*x + a*tmp.x);
-		if (euler) {
+		if (euler) 
+		{
           *y = newy;
 		}
 
@@ -1229,7 +1243,8 @@ int iconfloatorbit(double *x, double *y, double *z)
 	zreal = oldx;
 	zimag = oldy;
 
-	for (i = 1; i <= DEGREE-2; i++) {
+	for (i = 1; i <= DEGREE-2; i++) 
+	{
 		za = zreal*oldx - zimag*oldy;
 		zb = zimag*oldx + zreal*oldy;
 		zreal = za;
@@ -1773,7 +1788,8 @@ static int orbit3dfloatcalc(void)
 			{
 				if (realtime)
 					g_which_image = 1;
-				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) {
+				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) 
+				{
 					w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
 				}
 				if (oldcol != -1 && connect)
@@ -1813,24 +1829,29 @@ int dynam2dfloatsetup()
 	connect = 0;
 	euler = 0;
 	d = param[0]; /* number of intervals */
-	if (d < 0) {
+	if (d < 0) 
+	{
 		d = -d;
 		connect = 1;
 	}
-	else if (d == 0) {
+	else if (d == 0) 
+	{
 		d = 1;
 	}
-	if (fractype == DYNAMICFP) {
+	if (fractype == DYNAMICFP) 
+	{
        a = param[2]; /* parameter */
        b = param[3]; /* parameter */
        dt = param[1]; /* step size */
-       if (dt < 0) {
+       if (dt < 0) 
+       {
           dt = -dt;
           euler = 1;
        }
        if (dt == 0) dt = 0.01;
 	}
-	if (outside == SUM) {
+	if (outside == SUM) 
+	{
        plot = plothist;
 	}
 	return 1;
@@ -1884,7 +1905,8 @@ int dynam2dfloat()
 	xstep = -1;
 	ystep = 0;
 
-	if (resuming) {
+	if (resuming) 
+	{
        start_resume();
        get_resume(sizeof(count), &count, sizeof(color), &color,
                  sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
@@ -1909,10 +1931,12 @@ int dynam2dfloat()
 		}
 
 		xstep ++;
-		if (xstep >= d) {
+		if (xstep >= d) 
+		{
           xstep = 0;
           ystep ++;
-          if (ystep > d) {
+          if (ystep > d) 
+          {
               driver_mute();
               ret = -1;
               break;
@@ -1923,7 +1947,8 @@ int dynam2dfloat()
 		ypixel = dysize*(ystep + .5)/d;
 		x = (double)((xxmin + delxx*xpixel) + (delxx2*ypixel));
 		y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
-		if (fractype == MANDELCLOUD) {
+		if (fractype == MANDELCLOUD) 
+		{
           a = x;
           b = y;
 		}
@@ -1932,7 +1957,8 @@ int dynam2dfloat()
 		if (++color >= colors)   /* another color to switch to? */
           color = 1;    /* (don't use the background color) */
 
-		for (count = 0; count < maxit; count++) {
+		for (count = 0; count < maxit; count++) 
+		{
 
           if (count % 2048L == 0)
              if (driver_key_pressed())
@@ -1945,7 +1971,8 @@ int dynam2dfloat()
              if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 					w_snd((int)(*soundvar*100 + basehertz));
 
-             if (count >= orbit_delay) {
+             if (count >= orbit_delay) 
+             {
                  if (oldcol != -1 && connect)
                     driver_draw_line(col, row, oldcol, oldrow, color%colors);
                  else if (count > 0 || fractype != MANDELCLOUD)
@@ -2003,7 +2030,8 @@ int plotorbits2dsetup(void)
 {
 
 #ifndef XFRACT
-	if (curfractalspecific->isinteger != 0) {
+	if (curfractalspecific->isinteger != 0) 
+	{
 		int tofloat = curfractalspecific->tofloat;
 		if (tofloat == NOFRACTAL)
 			return -1;
@@ -2016,10 +2044,13 @@ int plotorbits2dsetup(void)
 	PER_IMAGE();
 
 	/* setup affine screen coord conversion */
-	if (keep_scrn_coords) {
+	if (keep_scrn_coords) 
+	{
 		if (setup_orbits_to_screen(&o_cvt))
 			return -1;
-	} else {
+	}
+	else 
+	{
 		if (setup_convert_to_screen(&o_cvt))
 			return -1;
 	}
@@ -2032,7 +2063,8 @@ int plotorbits2dsetup(void)
 
 	o_color = 1;
 
-	if (outside == SUM) {
+	if (outside == SUM) 
+	{
        plot = plothist;
 	}
 	return 1;
@@ -2068,7 +2100,8 @@ int plotorbits2dfloat(void)
 	else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 		soundvar = &z;
 
-	if (resuming) {
+	if (resuming) 
+	{
        start_resume();
        get_resume(sizeof(o_color), &o_color, 0);
        end_resume();
@@ -2076,7 +2109,8 @@ int plotorbits2dfloat(void)
 
 	if (inside > 0)
 		o_color = inside;
-	else { /* inside <= 0 */
+	else  /* inside <= 0 */
+	{
 		o_color++;
 		if (o_color >= colors) /* another color to switch to? */
           o_color = 1;    /* (don't use the background color) */
@@ -2084,7 +2118,8 @@ int plotorbits2dfloat(void)
 
 	PER_PIXEL(); /* initialize the calculations */
 
-	for (count = 0; count < maxit; count++) {
+	for (count = 0; count < maxit; count++) 
+	{
 
        if (ORBITCALC() == 1 && periodicitycheck)
           continue;  /* bailed out, don't plot */
@@ -2136,12 +2171,14 @@ int funny_glasses_call(int (*calc)(void))
 	}
 	if (g_glasses_type && status == 0 && display3d)
 	{
-		if (g_glasses_type == STEREO_PHOTO)  { /* photographer's mode */
+		if (g_glasses_type == STEREO_PHOTO)   /* photographer's mode */
+		{
 				int i;
 				stopmsg(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it, \n"
 				"then hit <s> to save, hit any other key to create second image.");
-				for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) {
+				for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key()) 
+				{
 					savetodisk(savename);
 					}
 				/* is there a better way to clear the screen in graphics mode? */

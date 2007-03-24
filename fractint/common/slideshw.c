@@ -168,7 +168,8 @@ start:
 		quotes = 0;
 	}
 	/* skip white space: */
-	while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') { }
+	while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') 
+	{ }
 	switch (out)
 	{
 		case EOF:
@@ -178,7 +179,8 @@ start:
 			quotes = 1;
 			goto start;
 		case ';':         /* comment from here to end of line, skip it */
-			while ((out=fgetc(fpss)) != '\n' && out != EOF) { }
+			while ((out=fgetc(fpss)) != '\n' && out != EOF) 
+			{ }
 			goto start;
 		case '*':
 			if (fscanf(fpss, "%d", &repeats) != 1
@@ -241,7 +243,8 @@ start:
 				do
 				{
 					err = fscanf(fpss, "%s", buffer1);
-				} while (err == 1 && strcmp(buffer1, buffer) != 0);
+				}
+				while (err == 1 && strcmp(buffer1, buffer) != 0);
 				if (feof(fpss))
 				{
 					slideshowerr("GOTO target not found");
@@ -366,7 +369,8 @@ static void sleep_secs(int secs)
 {
 	long stop;
 	stop = clock_ticks() + (long)secs*CLK_TCK;
-	while (clock_ticks() < stop && kbhit() == 0) { } /* bailout if key hit */
+	while (clock_ticks() < stop && kbhit() == 0) 
+	{ } /* bailout if key hit */
 }
 
 static void slideshowerr(char *msg)

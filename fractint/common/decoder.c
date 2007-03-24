@@ -268,7 +268,8 @@ short decoder(short linewidth)
 		 do
 		 {
 			c = get_next_code();
-		 } while (c == clear);
+		 }
+		 while (c == clear);
 
 			/* If we get an ending code immediately after a clear code (Yet
           * another unlikely case), then break out of the loop. */
@@ -327,7 +328,8 @@ short decoder(short linewidth)
 					{
 						*(bufptr + j) = suffix[code];
 						code = prefix[code];
-					} while (--j > 0);
+					}
+					while (--j > 0);
 					*bufptr = (BYTE) code;
 					bufptr += ++i;
 					bufcnt -= i;
