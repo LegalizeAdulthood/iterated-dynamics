@@ -55,7 +55,7 @@ void _fastcall save_history_info(void)
 	current.invert[0]			= inversion[0];
 	current.invert[1]			= inversion[1];
 	current.invert[2]			= inversion[2];
-	current.decomp				= (short) decomp[0];;
+	current.decomp				= (short) decomp[0]; ;
 	current.biomorph			= (short) biomorph;
 	current.symmetry			= (short) forcesymmetry;
 	current.init3d[0]			= (short) init3d[0];

@@ -38,7 +38,7 @@
 /* routines in this module      */
 
 #ifndef XFRACT
-static int    vidcompare(VOIDCONSTPTR ,VOIDCONSTPTR );
+static int    vidcompare(VOIDCONSTPTR ,VOIDCONSTPTR);
 static void   format_item(int,char *);
 static int    check_modekey(int,int);
 static void   format_vid_inf(int i,char *err,char *buf);
@@ -388,7 +388,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 			++skipydots;
 		}
 		i = j = 0;
-		for (;;)
+		while (1)
 		{
 			tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
 			tmpydots = (fileydots + skipydots - 1) / skipydots;

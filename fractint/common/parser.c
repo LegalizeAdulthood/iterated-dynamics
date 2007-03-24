@@ -17,7 +17,7 @@
     (203) 276-9721
 */
 
-/*      Chuck Ebbert (CompuServe [76306,1226] ) changed code marked 'CAE fp'    */
+/*      Chuck Ebbert (CompuServe [76306,1226]) changed code marked 'CAE fp'    */
 /*   for fast 387 floating-point math.  See PARSERA.ASM and PARSERFP.C */
 /*   (13 Dec 1992.)  */
 /* */
@@ -218,8 +218,8 @@ unsigned int chars_in_formula;
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)\
     if ((denom == 0 || overflow) && save_release > 1920) {\
-        overflow = 1;\
-        return;\
+        overflow = 1; \
+        return; \
     }\
     else if (denom == 0)\
         return
@@ -227,8 +227,8 @@ unsigned int chars_in_formula;
 
 #define ChkFloatDenom(denom)\
     if (fabs(denom) <= DBL_MIN) {\
-        if (save_release > 1920) overflow = 1;\
-        return;\
+        if (save_release > 1920) overflow = 1; \
+        return; \
     }
 
 #define LastSqr v[4].a
@@ -364,24 +364,24 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 #else  /* use Macro form for (?) greater speed */
   /* call lStk via dStk */
 #define mStkFunct(fct)  \
-   Arg1->d = MPC2cmplx(Arg1->m);\
-   (*fct)();\
+   Arg1->d = MPC2cmplx(Arg1->m); \
+   (*fct)(); \
    Arg1->m = cmplx2MPC(Arg1->d);
 
 
 /* call lStk via dStk */
 #define lStkFunct(fct) {\
-   double y;\
-   y = (double)Arg1->l.y / fg;\
-   Arg1->d.x = (double)Arg1->l.x / fg;\
-   Arg1->d.y = y;\
-   (*fct)();\
+   double y; \
+   y = (double)Arg1->l.y / fg; \
+   Arg1->d.x = (double)Arg1->l.x / fg; \
+   Arg1->d.y = y; \
+   (*fct)(); \
    if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {\
-      Arg1->l.x = (long)(Arg1->d.x * fg);\
-      Arg1->l.y = (long)(Arg1->d.y * fg);\
+      Arg1->l.x = (long)(Arg1->d.x * fg); \
+      Arg1->l.y = (long)(Arg1->d.y * fg); \
    }\
    else\
-      overflow = 1;\
+      overflow = 1; \
 }
 
 
@@ -494,10 +494,10 @@ void (*StkSRand)(void) = dStkSRand;
 
 void dStkLodDup()
 {
-   Arg1+=2;
-   Arg2+=2;
+   Arg1 += 2;
+   Arg2 += 2;
    *Arg2 = *Arg1 = *Load[LodPtr];
-   LodPtr+=2;
+   LodPtr += 2;
 }
 
 void dStkLodSqr()
@@ -758,8 +758,8 @@ void mStkRound(void) {
 
 void lStkRound(void) {
    /* Add .5 then truncate */
-   Arg1->l.x += (1L<<bitshiftless1);
-   Arg1->l.y += (1L<<bitshiftless1);
+   Arg1->l.x += (1L << bitshiftless1);
+   Arg1->l.y += (1L << bitshiftless1);
    lStkFloor();
 }
 #endif
@@ -1200,7 +1200,7 @@ void lStkRecip(void) {
       + multiply(Arg1->l.y,Arg1->l.y,bitshift);
    if (save_release > 1920) {
       ChkLongDenom(mod);
-   } else if (mod<=0L) return;
+   } else if (mod <= 0L) return;
    Arg1->l.x =  divide(Arg1->l.x,mod,bitshift);
    Arg1->l.y = -divide(Arg1->l.y,mod,bitshift);
 }
@@ -2244,9 +2244,9 @@ static int ParseStr(char *Str, int pass) {
       StkTrig3 = mtrig3;  /* TIW 03-30-91 */
       StkFlip = mStkFlip;
       StkTan  = mStkTan;  /* TIW 04-22-91 */
-      StkTanh  = mStkTanh;/* TIW 04-22-91 */
+      StkTanh  = mStkTanh; /* TIW 04-22-91 */
       StkCoTan  = mStkCoTan;  /* TIW 04-24-91 */
-      StkCoTanh  = mStkCoTanh;/* TIW 04-24-91 */
+      StkCoTanh  = mStkCoTanh; /* TIW 04-24-91 */
       StkCosXX = mStkCosXX;   /* PB  04-28-91 */
       StkGT  = mStkGT;         /* MCP 11-3-91 */
       StkGTE = mStkGTE;        /* MCP 11-3-91 */
@@ -2820,7 +2820,7 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
             return i;
-         case 2:    /*elseif* ( 2 jumps, the else and the if*/
+         case 2:    /*elseif* (2 jumps, the else and the if*/
                /* first, the "if" part */
             jump_control[i].ptrs = jump_data[ljp];
             jump_control[i].DestJumpIndex = ljp + 1;
@@ -2942,7 +2942,7 @@ int frmgetchar (FILE * openfile)
 void getfuncinfo(struct token_st * tok)
 {
    int i;
-   for (i=0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) {
+   for (i = 0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++) {
       if (!strcmp(FnctList[i].s, tok->token_str)) {
          tok->token_id = i;
          if (i >= 11 && i <= 14)
@@ -2953,7 +2953,7 @@ void getfuncinfo(struct token_st * tok)
       }
    }
 
-   for (i=0; i < 4; i++) { /*pick up flow control*/
+   for (i = 0; i < 4; i++) { /*pick up flow control*/
       if (!strcmp(JumpList[i], tok->token_str)) {
          tok->token_type = FLOW_CONTROL;
          tok->token_id   = i + 1;
@@ -2969,7 +2969,7 @@ void getvarinfo(struct token_st * tok)
 {
    int i;
 
-   for (i=0; i < sizeof(Constants) / sizeof(char*); i++) {
+   for (i = 0; i < sizeof(Constants) / sizeof(char*); i++) {
       if (!strcmp(Constants[i], tok->token_str)) {
          tok->token_id = i;
          switch (i) {
@@ -3192,13 +3192,13 @@ int frmgetalpha(FILE * openfile, struct token_st * tok)
       filepos = ftell(openfile);
       switch (c) {
          CASE_ALPHA: CASE_NUM: case '_':
-            if (i<79)
+            if (i < 79)
                tok->token_str[i++] = (char) c;
             else {
                tok->token_str[i] = (char) 0;
             }
             if (i == 33) {
-               var_name_too_long=1;
+               var_name_too_long = 1;
             }
             last_filepos = filepos;
             break;
@@ -3220,7 +3220,7 @@ int frmgetalpha(FILE * openfile, struct token_st * tok)
             tok->token_str[i] = (char) 0;
             fseek(openfile, last_filepos, SEEK_SET);
             getfuncinfo(tok);
-            if (c=='(') { /*getfuncinfo() correctly filled structure*/
+            if (c == '(') { /*getfuncinfo() correctly filled structure*/
                if (tok->token_type == NOT_A_TOKEN)
                   return 0;
                else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4)) {
@@ -3295,7 +3295,7 @@ void frm_get_eos (FILE * openfile, struct token_st * this_token)
 int frmgettoken(FILE * openfile, struct token_st * this_token)
 {
    int c;
-   int i=1;
+   int i = 1;
    long filepos;
 
    switch (c = frmgetchar(openfile)) {
@@ -3309,7 +3309,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          this_token->token_type = OPERATOR; /* this may be changed below */
          this_token->token_str[0] = (char) c;
          filepos = ftell(openfile);
-         if (c=='<' || c=='>' || c=='=') {
+         if (c == '<' || c == '>' || c == '=') {
             c=frmgetchar(openfile);
 			if (c == '=')
                this_token->token_str[i++] = (char) c;
@@ -3317,7 +3317,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
                fseek(openfile, filepos, SEEK_SET);
             }
          }
-         else if (c=='!') {
+         else if (c == '!') {
             c=frmgetchar(openfile);
 			if (c == '=')
                this_token->token_str[i++] = (char) c;
@@ -3329,14 +3329,14 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
                return 0;
             }
          }
-         else if (c=='|') {
+         else if (c == '|') {
             c=frmgetchar(openfile);
 			if (c == '|')
                this_token->token_str[i++] = (char) c;
             else
                fseek(openfile, filepos, SEEK_SET);
          }
-         else if (c=='&') {
+         else if (c == '&') {
             c=frmgetchar(openfile);
 			if (c == '&')
                this_token->token_str[i++] = (char) c;
@@ -3354,7 +3354,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          }
          else if (this_token->token_str[0] == '\n'
              || this_token->token_str[0] == ','
-             || this_token->token_str[0] == ':' ) {
+             || this_token->token_str[0] == ':') {
             frm_get_eos(openfile, this_token);
          }
          else if (this_token->token_str[0] == ')') {
@@ -3370,7 +3370,7 @@ int frmgettoken(FILE * openfile, struct token_st * this_token)
          }
          this_token->token_str[i] = (char) 0;
          if (this_token->token_type == OPERATOR) {
-            for (i=0; i < sizeof(OPList)/sizeof(OPList[0]); i++) {
+            for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++) {
                if (!strcmp(OPList[i], this_token->token_str)) {
                   this_token->token_id = i;
                }
@@ -3400,7 +3400,7 @@ int frm_get_param_stuff (char * Name)
    uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
    uses_p4 = uses_p5 = 0;
 
-   if (FormName[0] == 0 ) {
+   if (FormName[0] == 0) {
       return 0;  /*  and don't reset the pointers  */
    }
    if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA)) {
@@ -3694,7 +3694,7 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
    curfractalspecific->per_pixel = BadFormula;
    curfractalspecific->orbitcalc = BadFormula;
 
-   if (FormName[0] == 0 ){
+   if (FormName[0] == 0){
       return 1;  /*  and don't reset the pointers  */
    }
 
@@ -3704,7 +3704,7 @@ int RunForm(char *Name, int from_prompts1c) {  /*  returns 1 if an error occurre
       return 1;
    }
 
-   FormStr = PrepareFormula(entry_file, from_prompts1c );
+   FormStr = PrepareFormula(entry_file, from_prompts1c);
    fclose(entry_file);
 
    if (FormStr)  /*  No errors while making string */
@@ -3739,7 +3739,7 @@ int fpFormulaSetup(void) {
       MathType = D_MATH;
       /* CAE changed below for fp */
       RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-      if (RunFormRes && fpu >=387 && debugflag != 90 && (orbitsave & ORBITSAVE_SOUND) == 0
+      if (RunFormRes && fpu >= 387 && debugflag != 90 && (orbitsave & ORBITSAVE_SOUND) == 0
             && !Randomized)
          return CvtStk(); /* run fast assembler code in parsera.asm */
       return RunFormRes;
@@ -3807,7 +3807,7 @@ static void parser_allocate(void)
 	/* Somewhat more memory is now allocated than in v17 here */
 	/* however Store and Load were reduced in size to help make up for it */
 	long f_size,Store_size,Load_size,v_size, p_size;
-	int pass, is_bad_form=0;
+	int pass, is_bad_form = 0;
 	long end_dx_array;
 	/* TW Jan 1 1996 Made two passes to determine actual values of
 		Max_Ops and Max_Args. */
@@ -3860,7 +3860,7 @@ void free_workarea()
 	Load = (union Arg **) NULL;
 	v = (struct ConstArg *) NULL;
 	f = (void (**)(void)) NULL;      /* CAE fp */
-	pfls = (struct fls * ) NULL;   /* CAE fp */
+	pfls = (struct fls *) NULL;   /* CAE fp */
 	total_formula_mem = 0;
 }
 
@@ -3876,7 +3876,7 @@ void frm_error(FILE * open_file, long begin_frm)
 {
    struct token_st tok;
 /* char debugmsg[500];
-*/ int i, chars_to_error=0, chars_in_error=0, token_count;
+*/ int i, chars_to_error = 0, chars_in_error = 0, token_count;
    int statement_len, line_number;
    int done;
    char msgbuf[900];
@@ -3885,7 +3885,7 @@ void frm_error(FILE * open_file, long begin_frm)
    int initialization_error;
    strcpy (msgbuf, "\n");
 
-   for (j=0; j < 3 && errors[j].start_pos; j++) {
+   for (j = 0; j < 3 && errors[j].start_pos; j++) {
       initialization_error = errors[j].error_number == PE_SECOND_COLON ? 1 : 0;
       fseek(open_file, begin_frm, SEEK_SET);
       line_number = 1;
@@ -3952,7 +3952,7 @@ void frm_error(FILE * open_file, long begin_frm)
          token_count = 1;
       }
 /*    stopmsg(0, "Back to beginning of statement to build msgbuf");
-*/    while ((int) strlen(&msgbuf[i]) <=74 && token_count--) {
+*/    while ((int) strlen(&msgbuf[i]) <= 74 && token_count--) {
          frmgettoken (open_file, &tok);
          strcat (msgbuf, tok.token_str);
 /*         stopmsg(0, &msgbuf[i]);
@@ -3971,7 +3971,7 @@ void frm_error(FILE * open_file, long begin_frm)
       if (errors[j].error_number == PE_TOKEN_TOO_LONG) {
          chars_in_error = 33;
       }
-      while (chars_in_error-- && (int) strlen(&msgbuf[i]) <=74)
+      while (chars_in_error-- && (int) strlen(&msgbuf[i]) <= 74)
          strcat (msgbuf, "^");
       strcat (msgbuf, "\n");
    }
@@ -4844,7 +4844,7 @@ int frm_prescan (FILE * open_file)
             }
             break;
          case END_OF_FORMULA:
-            number_of_ops+= 3; /* Just need one, but a couple of extra just for the heck of it */
+            number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
             if (paren) {
                if (!errors_found || errors[errors_found-1].start_pos != statement_pos) {
                   errors[errors_found].start_pos      = statement_pos;

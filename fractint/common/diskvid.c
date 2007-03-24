@@ -495,7 +495,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 		tbloffset = cur_cache->hashlink;
 	}
 	/* must load the cache entry from backing store */
-	for (;;)  /* look around for something not recently used */
+	while (1)  /* look around for something not recently used */
 	{
 		if (++cache_lru >= cache_end)
 		{
@@ -653,17 +653,17 @@ write_stuff:
 			mem_putc((BYTE)
 						((((((((((((((*pixelptr
 						<< 1)
-						| *(pixelptr+1) )
+						| *(pixelptr+1))
 						<< 1)
-						| *(pixelptr+2) )
+						| *(pixelptr+2))
 						<< 1)
-						| *(pixelptr+3) )
+						| *(pixelptr+3))
 						<< 1)
-						| *(pixelptr+4) )
+						| *(pixelptr+4))
 						<< 1)
-						| *(pixelptr+5) )
+						| *(pixelptr+5))
 						<< 1)
-						| *(pixelptr+6) )
+						| *(pixelptr+6))
 						<< 1)
 						| *(pixelptr+7)));
 			pixelptr += 8;

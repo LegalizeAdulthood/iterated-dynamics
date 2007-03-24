@@ -84,7 +84,7 @@ static float oldcosphi2, oldsinphi2;
 static BYTE *fraction;      /* float version of pixels array */
 static float min_xyz[3], max_xyz[3];        /* For Raytrace output */
 static int line_length1;
-static int T_header_24 = 18;/* Size of current Targa-24 header */
+static int T_header_24 = 18; /* Size of current Targa-24 header */
 static FILE *File_Ptr1 = NULL;
 static unsigned int IAmbient;
 static int rand_factor;
@@ -106,7 +106,7 @@ static float *costhetaarray;    /* all cosine thetas go here */
 static double rXrscale;     /* precalculation factor */
 static int persp;  /* flag for indicating perspective transformations */
 static struct point p1, p2, p3;
-static struct f_point f_bad;/* out of range value */
+static struct f_point f_bad; /* out of range value */
 static struct point bad;    /* out of range value */
 static long num_tris; /* number of triangles output to ray trace file */
 
@@ -117,7 +117,7 @@ MATRIX m; /* transformation matrix */
 int Ambient;
 int RANDOMIZE;
 int haze;
-int Real_V = 0; /* mrr Actual value of V for fillytpe>4 monochrome images */
+int Real_V = 0; /* mrr Actual value of V for fillytpe > 4 monochrome images */
 char light_name[FILE_MAX_PATH] = "fract001";
 int Targa_Overlay, error;
 char targa_temp[14] = "fractemp.tga";
@@ -390,7 +390,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                cur.y = (int) (f_cur.y = (float) (ycenter
                                  + costheta * cosphi * scly * r + yyadjust));
                if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for
-                                                 * filltype>5? */
+                                                 * filltype > 5? */
                   f_cur.color = (float) (-r * costheta * sinphi * sclz);
                v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
             }
@@ -761,7 +761,7 @@ int line3d(BYTE * pixels, unsigned linelen)
                 * SOMETHING plots. These conditions shouldn't happen but just
                 * in case                                        */
                if (cur.color < 1)       /* prevent transparent colors */
-                  cur.color = 1;/* avoid background */
+                  cur.color = 1; /* avoid background */
                if (cur.color > colors - 1)
                   cur.color = colors - 1;
 
@@ -1167,7 +1167,7 @@ static void _fastcall T_clipcolor(int x, int y, int color)
    /* Lets make sure its not a transparent color  */
        (transparent[0] > color || color > transparent[1]))
    {
-      standardplot(x, y, color);/* I guess we can plot then  */
+      standardplot(x, y, color); /* I guess we can plot then  */
       if (Targa_Out)
          /* standardplot modifies color in these types */
          if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
@@ -1260,8 +1260,8 @@ int _fastcall targa_color(int x, int y, int color)
       case 1:
       {
          RGB[0] = (BYTE)((realcoloriter >> 16) & 0xff);  /* red   */
-         RGB[1] = (BYTE)((realcoloriter >> 8 ) & 0xff);  /* green */
-         RGB[2] = (BYTE)((realcoloriter      ) & 0xff);  /* blue  */
+         RGB[1] = (BYTE)((realcoloriter >> 8) & 0xff);  /* green */
+         RGB[2] = (BYTE)((realcoloriter) & 0xff);  /* blue  */
          break;
       }
    }
@@ -1422,9 +1422,9 @@ int startdisk1(char *File_Name2, FILE * Source, int overlay)
    if (truecolor) /* write maxit */
    {
       fputc((BYTE)(maxit       & 0xff), fps);
-      fputc((BYTE)((maxit>>8 ) & 0xff), fps);
-      fputc((BYTE)((maxit>>16) & 0xff), fps);
-      fputc((BYTE)((maxit>>24) & 0xff), fps);
+      fputc((BYTE)((maxit >> 8) & 0xff), fps);
+      fputc((BYTE)((maxit >> 16) & 0xff), fps);
+      fputc((BYTE)((maxit >> 24) & 0xff), fps);
    }
 
    /* Finished with the header, now lets work on the display area  */
@@ -1650,7 +1650,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /* EB & DG fiddled with outputs for Rayshade so they work. with v4.x.      */
 /* EB == eli brandt.     ebrandt@jarthur.claremont.edu                     */
 /* DG == dan goldwater.  daniel_goldwater@brown.edu & dgold@math.umass.edu */
-/*  (NOTE: all the stuff we fiddled with is commented with "EB & DG" )     */
+/*  (NOTE: all the stuff we fiddled with is commented with "EB & DG")     */
 /* general raytracing code info/notes:                                     */
 /*                                                                         */
 /*  ray == 0 means no raytracer output  ray == 7 is for dxf                */
@@ -2360,7 +2360,7 @@ static int first_time(int linelen, VECTOR v)
 
       if (transparent[0] || transparent[1])
          /* If transparent colors are set */
-         fillplot = T_clipcolor;/* Use the transparent plot function  */
+         fillplot = T_clipcolor; /* Use the transparent plot function  */
    }
 
    /* Both Sphere and Normal 3D */

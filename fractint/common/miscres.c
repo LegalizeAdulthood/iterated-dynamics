@@ -104,7 +104,7 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
     length = (int) strlen(str);
     padding = 3; /* space between col1 and decimal. */
     /* find decimal point */
-    for (decpt=0; decpt < length; decpt++)
+    for (decpt = 0; decpt < length; decpt++)
        if (str[decpt] == '.')
           break;
     if (decpt >= length)
@@ -154,7 +154,7 @@ zoom box.  Same goes for the Skew angles
 */
 
 #ifdef _MSC_VER
-#pragma optimize( "", off )
+#pragma optimize("", off)
 #endif
 
 void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
@@ -188,7 +188,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
       tmpy1 = yymin - yy3rd;
       a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
       a = sqrt(a2);
-      *Rotation = -rad_to_deg(atan2( tmpy1, tmpx1 )); /* negative for image rotation */
+      *Rotation = -rad_to_deg(atan2(tmpy1, tmpx1)); /* negative for image rotation */
    
       tmpx2 = xxmin - xx3rd;
       tmpy2 = yymax - yy3rd;
@@ -208,7 +208,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
    
       /* if vector_a cross vector_b is negative */
       /* then adjust for left-hand coordinate system */
-      if ( tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+      if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
       {
          *Skew = -*Skew;
          *Xmagfactor = -*Xmagfactor;
@@ -315,7 +315,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
    LDBL Width, Height;
    LDBL a, b; /* bottom, left, diagonal */
    LDBL a2, b2, c2; /* squares of above */
-   LDBL tmpx1, tmpx2, tmpy=0.0, tmpy1, tmpy2 ;
+   LDBL tmpx1, tmpx2, tmpy = 0.0, tmpy1, tmpy2 ;
    double tmpa; /* temporary x, y, angle */
    bf_t bfWidth, bfHeight;
    bf_t bftmpx, bftmpy;
@@ -379,7 +379,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       signx = sign(tmpx1);
       if (signx)
          tmpy = tmpy1/tmpx1 * signx;    /* tmpy = tmpy / |tmpx| */
-      *Rotation = (double)(-rad_to_deg(atan2( (double)tmpy, signx ))); /* negative for image rotation */
+      *Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
    
       /* tmpx = xxmin - xx3rd; */
       sub_bf(bftmpx, bfxmin, bfx3rd);
@@ -407,7 +407,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
       /* if vector_a cross vector_b is negative */
       /* then adjust for left-hand coordinate system */
-      if ( tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+      if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
       {
          *Skew = -*Skew;
          *Xmagfactor = -*Xmagfactor;
@@ -512,7 +512,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 }
 
 #ifdef _MSC_VER
-#pragma optimize( "", on )
+#pragma optimize("", on)
 #endif
 
 void updatesavename(char *filename) /* go to the next file name */
@@ -616,15 +616,15 @@ static void trigdetails(char *buf)
 {
    int i, numfn;
    char tmpbuf[20];
-   if (fractype==JULIBROT || fractype==JULIBROTFP)
+   if (fractype == JULIBROT || fractype == JULIBROTFP)
       numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
    else
       numfn = (curfractalspecific->flags >> 6) & 7;
    if (curfractalspecific == &fractalspecific[FORMULA] ||
-      curfractalspecific == &fractalspecific[FFORMULA]  )
+      curfractalspecific == &fractalspecific[FFORMULA])
       numfn = maxfn;
    *buf = 0; /* null string if none */
-   if (numfn>0) {
+   if (numfn > 0) {
       strcpy(buf, trigfn[trigndx[0]].name);
       i = 0;
       while (++i < numfn) {
@@ -648,9 +648,9 @@ int set_trig_array(int k, char *name)
 
    strlwr(trigname);
 
-   for (i=0; i<numtrigfn; i++)
+   for (i = 0; i < numtrigfn; i++)
    {
-      if (strcmp(trigname, trigfn[i].name)==0)
+      if (strcmp(trigname, trigfn[i].name) == 0)
       {
          trigndx[k] = (BYTE)i;
          set_trig_pointers(k);
@@ -694,7 +694,7 @@ void set_trig_pointers(int which)
       dtrig3 = trigfn[trigndx[3]].dfunct;
       break;
    default: /* do 'em all */
-      for (i=0; i<4; i++)
+      for (i = 0; i < 4; i++)
          set_trig_pointers(i);
       break;
    }
@@ -835,7 +835,7 @@ int tab_display()       /* display the status of the current image */
 	char msg[350];
 	char *msgptr;
 	int key;
-	int saved=0;
+	int saved = 0;
 	int dec;
 	int k;
 	int hasformparam = 0;
@@ -844,7 +844,7 @@ int tab_display()       /* display the status of the current image */
 	{
 		return 0;                /* (no TAB on the credits screen) */
 	}
-	if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n>=2 */
+	if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
 	{
 		calctime += (clock_ticks() - timer_start) / (CLK_TCK/100);
 	}
@@ -1085,7 +1085,7 @@ top:
 	if ((got_status == GOT_STATUS_DIFFUSION) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-		get_calculation_time( msg, (long)(calctime*((dif_limit*1.0)/dif_counter)) );
+		get_calculation_time(msg, (long)(calctime*((dif_limit*1.0)/dif_counter)));
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
@@ -1296,19 +1296,19 @@ static void area(void)
     char *msg;
     int x, y;
     char buf[160];
-    long cnt=0;
-    if (inside<0) {
+    long cnt = 0;
+    if (inside < 0) {
       stopmsg(0, "Need solid inside to compute area");
       return;
     }
-    for (y=0;y<ydots;y++) {
-      for (x=0;x<xdots;x++) {
-          if (getcolor(x, y)==inside) {
+    for (y = 0; y < ydots; y++) {
+      for (x = 0; x < xdots; x++) {
+          if (getcolor(x, y) == inside) {
               cnt++;
           }
       }
     }
-    if (inside>0 && outside<0 && maxit>inside) {
+    if (inside > 0 && outside < 0 && maxit > inside) {
       msg = "Warning: inside may not be unique\n";
     } else {
       msg = "";
@@ -1396,8 +1396,8 @@ int ifsload()                   /* read in IFS parameters */
             ret = -1;
             break;
       }
-      bufptr = strtok( NULL, seps );
-	  if (bufptr==NULL)
+      bufptr = strtok(NULL, seps);
+	  if (bufptr == NULL)
       {
          bufptr = get_ifs_token(buf, ifsfile);
 		 if (bufptr == NULL)
@@ -1644,9 +1644,9 @@ int matherr_ct = 0;
 #ifndef XFRACT
 #ifdef WINFRACT
 /* call this something else to dodge the QC4WIN bullet... */
-int win_matherr( struct exception *except )
+int win_matherr(struct exception *except)
 #else
-int _cdecl _matherr( struct exception *except )
+int _cdecl _matherr(struct exception *except)
 #endif
 {
     if (debugflag != 0)
@@ -1655,7 +1655,7 @@ int _cdecl _matherr( struct exception *except )
        if (matherr_ct++ == 0)
           if (debugflag == 4000 || debugflag == 3200)
              stopmsg(0, "Math error, but we'll try to keep going");
-       if (fp==NULL)
+       if (fp == NULL)
           fp = fopen("matherr", "w");
        if (matherr_ct < 100)
        {
@@ -1667,7 +1667,7 @@ int _cdecl _matherr( struct exception *except )
           matherr_ct = 100;
 
     }
-    if ( except->type == DOMAIN )
+    if (except->type == DOMAIN)
     {
         char buf[40];
         sprintf(buf, "%e", except->arg1);
@@ -1676,32 +1676,32 @@ int _cdecl _matherr( struct exception *except )
         if (strstr(buf, "IN")||strstr(buf, "NAN"))  /* trashed arg? */
                            /* "IND" with MSC, "INF" with BC++ */
         {
-           if ( strcmp( except->name, "sin") == 0 )
+           if (strcmp(except->name, "sin") == 0)
            {
               except->retval = 0.0;
               return 1;
            }
-           else if ( strcmp( except->name, "cos") == 0 )
+           else if (strcmp(except->name, "cos") == 0)
            {
               except->retval = 1.0;
               return 1;
            }
-           else if ( strcmp( except->name, "log") == 0 )
+           else if (strcmp(except->name, "log") == 0)
            {
               except->retval = 1.0;
               return 1;
            }
        }
     }
-    if ( except->type == TLOSS )
+    if (except->type == TLOSS)
     {
        /* try valiantly to keep going */
-           if ( strcmp( except->name, "sin") == 0 )
+           if (strcmp(except->name, "sin") == 0)
            {
               except->retval = 0.5;
               return 1;
            }
-           else if ( strcmp( except->name, "cos") == 0 )
+           else if (strcmp(except->name, "cos") == 0)
            {
               except->retval = 0.5;
               return 1;
@@ -1734,7 +1734,7 @@ void fix_inversion(double *x) /* make double converted from string look ok */
 /* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
 /* tan(x) can return -tan(x) if -pi/2 < x < pi/2       */
 /* if tan(x) has been called before outside this range. */
-double fixtan( double x )
+double fixtan(double x)
    {
    double y;
 

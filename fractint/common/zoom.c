@@ -49,7 +49,7 @@ void dispbox(void)
    int boxc = (colors-1)&boxcolor;
    unsigned char *values = (unsigned char *)boxvalues;
    int rgb[3];
-   for (i=0; i<boxcount; i++)
+   for (i = 0; i < boxcount; i++)
    {
       if (g_is_true_color && truemode)
       {
@@ -62,7 +62,7 @@ void dispbox(void)
    }
 /* There is an interaction between getcolor and putcolor, so separate them */
    if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
-      for (i=0; i<boxcount; i++)
+      for (i = 0; i < boxcount; i++)
       {
          if (colors == 2)
             putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
@@ -81,7 +81,7 @@ void clearbox(void)
    else
    {
       unsigned char *values = (unsigned char *)boxvalues;
-      for (i=0; i<boxcount; i++)
+      for (i = 0; i < boxcount; i++)
       {
          putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, values[i]);
       }
@@ -95,9 +95,9 @@ void drawbox(int drawit)
     double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
     double fxwidth, fxskew, fydepth, fyskew, fxadj;
     bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
-    int saved=0;
-    if (zwidth==0) { /* no box to draw */
-        if (boxcount!=0) { /* remove the old box from display */
+    int saved = 0;
+    if (zwidth == 0) { /* no box to draw */
+        if (boxcount != 0) { /* remove the old box from display */
             clearbox(); 
             boxcount = 0; }
         reset_zoom_corners();
@@ -186,7 +186,7 @@ void drawbox(int drawit)
     tr.x   = (int)(ftemp1*(dxsize+PIXELROUND));
     tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
 
-    if (boxcount!=0) { /* remove the old box from display */
+    if (boxcount != 0) { /* remove the old box from display */
         clearbox(); 
         boxcount = 0; }
 
@@ -219,21 +219,21 @@ void _fastcall drawlines(struct coords fr, struct coords to,
     struct coords tmpp, line1, line2;
 
     if (abs(to.x-fr.x) > abs(to.y-fr.y)) { /* delta.x > delta.y */
-        if (fr.x>to.x) { /* swap so from.x is < to.x */
+        if (fr.x > to.x) { /* swap so from.x is < to.x */
             tmpp = fr; fr = to; to = tmpp; }
         xincr = (to.x-fr.x)*4/sxdots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
         ctr = (to.x-fr.x-1)/xincr;
         altdec = abs(to.y-fr.y)*xincr;
         altinc = to.x-fr.x;
         altctr = altinc/2;
-        yincr = (to.y>fr.y)?1:-1;
+        yincr = (to.y > fr.y)?1:-1;
         line2.x = (line1.x = fr.x) + dx;
         line2.y = (line1.y = fr.y) + dy;
-        while (--ctr>=0) {
+        while (--ctr >= 0) {
             line1.x += xincr;
             line2.x += xincr;
             altctr -= altdec;
-            while (altctr<0) {
+            while (altctr < 0) {
                 altctr  += altinc;
                 line1.y += yincr;
                 line2.y += yincr;
@@ -244,21 +244,21 @@ void _fastcall drawlines(struct coords fr, struct coords to,
         }
 
     else { /* delta.y > delta.x */
-        if (fr.y>to.y) { /* swap so from.y is < to.y */
+        if (fr.y > to.y) { /* swap so from.y is < to.y */
             tmpp = fr; fr = to; to = tmpp; }
         yincr = (to.y-fr.y)*4/sydots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
         ctr = (to.y-fr.y-1)/yincr;
         altdec = abs(to.x-fr.x)*yincr;
         altinc = to.y-fr.y;
         altctr = altinc/2;
-        xincr = (to.x>fr.x) ? 1 : -1;
+        xincr = (to.x > fr.x) ? 1 : -1;
         line2.x = (line1.x = fr.x) + dx;
         line2.y = (line1.y = fr.y) + dy;
-        while (--ctr>=0) {
+        while (--ctr >= 0) {
             line1.y += yincr;
             line2.y += yincr;
             altctr  -= altdec;
-            while (altctr<0) {
+            while (altctr < 0) {
                 altctr  += altinc;
                 line1.x += xincr;
                 line2.x += xincr;
@@ -287,7 +287,7 @@ void _fastcall addbox(struct coords point)
 void moveboxf(double dx, double dy)
 {   int align, row, col;
     align = check_pan();
-    if (dx!=0.0) {
+    if (dx != 0.0) {
         if ((zbx += dx) + zwidth/2 < 0)  /* center must stay onscreen */
             zbx = zwidth/-2;
         if (zbx + zwidth/2 > 1)
@@ -298,7 +298,7 @@ void moveboxf(double dx, double dy)
             col -= col & (align-1); /* adjust col to pass alignment */
             zbx = (double)col/dxsize; }
         }
-    if (dy!=0.0) {
+    if (dy != 0.0) {
         if ((zby += dy) + zdepth/2 < 0)
             zby = zdepth/-2;
         if (zby + zdepth/2 > 1)
@@ -348,7 +348,7 @@ void resizebox(int steps)
 
 void chgboxi(int dw, int dd)
 {   /* change size by pixels */
-    chgboxf( (double)dw/dxsize, (double)dd/dysize );
+    chgboxf((double)dw/dxsize, (double)dd/dysize );
     }
 #ifdef C6
 #pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
@@ -548,7 +548,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 {   int i, j;
     if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
         return 0; /* not resumable, not complete */
-    if ( curfractalspecific->calctype != StandardFractal
+    if (curfractalspecific->calctype != StandardFractal
       && curfractalspecific->calctype != calcmand
       && curfractalspecific->calctype != calcmandfp
       && curfractalspecific->calctype != lyapunov
@@ -581,12 +581,12 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
     get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
     /* don't do end_resume! we're just looking */
     i = 9;
-    for (j=0; j<num_worklist; ++j) /* find lowest pass in any pending window */
+    for (j = 0; j < num_worklist; ++j) /* find lowest pass in any pending window */
         if (worklist[j].pass < i)
             i = worklist[j].pass;
     j = ssg_blocksize(); /* worst-case alignment requirement */
     while (--i >= 0)
-        j = j>>1; /* reduce requirement */
+        j = j >> 1; /* reduce requirement */
     return j;
     }
 
@@ -633,7 +633,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
        get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
        } /* don't do end_resume! we might still change our mind */
     /* adjust existing worklist entries */
-    for (i=0; i<num_worklist; ++i) {
+    for (i = 0; i < num_worklist; ++i) {
         worklist[i].yystart -= row;
         worklist[i].yystop  -= row;
         worklist[i].yybegin -= row;
@@ -667,9 +667,9 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
     if (row > 0) /* move image up */
-        for (y=0; y<ydots; ++y) move_row(y+row, y, col);
+        for (y = 0; y < ydots; ++y) move_row(y+row, y, col);
     else         /* move image down */
-        for (y=ydots; --y>=0;)  move_row(y+row, y, col);
+        for (y=ydots; --y >= 0; )  move_row(y+row, y, col);
     fix_worklist(); /* fixup any out of bounds worklist entries */
     alloc_resume(sizeof(worklist)+20, 2); /* post the new worklist */
     put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
@@ -694,11 +694,11 @@ static void _fastcall restart_window(int wknum)
 static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
 {   int i, j, k;
     WORKLIST *wk;
-    for (i=0; i<num_worklist; ++i) {
+    for (i = 0; i < num_worklist; ++i) {
         wk = &worklist[i];
-        if ( wk->yystart >= ydots || wk->yystop < 0
+        if (wk->yystart >= ydots || wk->yystop < 0
           || wk->xxstart >= xdots || wk->xxstop < 0) { /* offscreen, delete */
-            for (j=i+1; j<num_worklist; ++j)
+            for (j=i+1; j < num_worklist; ++j)
                 worklist[j-1] = worklist[j];
             --num_worklist;
             --i;

@@ -57,7 +57,7 @@ bf_t big_pi = BIG_NULL;                                              /* bflength
 
 /* used by other routines */
 bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength+2 */
-bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL;/* bflength+2 */
+bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL; /* bflength+2 */
 bf_t bfparms[10];                                    /* (bflength+2)*10 */
 bf_t bftmp = BIG_NULL;
 
@@ -131,7 +131,7 @@ static void init_bf_2(void)
     else
        bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
 
-    floatflag=1;
+    floatflag = 1;
 
     /* Now split up the memory among the pointers */
     /* internal pointers */
@@ -233,7 +233,7 @@ static void init_bf_2(void)
     bfymax     = bnroot+ptr; ptr += bflength+2;
     bfx3rd     = bnroot+ptr; ptr += bflength+2;
     bfy3rd     = bnroot+ptr; ptr += bflength+2;
-    for (i=0; i<10; i++)
+    for (i = 0; i < 10; i++)
        {
        bfparms[i]  = bnroot+ptr; ptr += bflength+2;
        }
@@ -305,7 +305,7 @@ static int restore_bf_vars(void)
    convert_bf(bfymax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
    convert_bf(bfx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
    convert_bf(bfy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   for (i=0; i<10; i++)
+   for (i = 0; i < 10; i++)
       {
       convert_bf(bfparms[i], ptr, bflength, bf_save_len);
       ptr += bf_save_len+2;
@@ -327,8 +327,8 @@ static int restore_bf_vars(void)
 void free_bf_vars()
    {
    bf_save_len = bf_math = 0;
-   bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals=0;
-   bflength=rbflength=bfdecimals=0;
+   bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals = 0;
+   bflength=rbflength=bfdecimals = 0;
    }
 
 /************************************************************************/

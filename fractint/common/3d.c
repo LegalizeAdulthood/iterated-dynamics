@@ -66,9 +66,9 @@ ROTZ(i) =           cosi  sini    0     0
 void identity(MATRIX m)
 {
    int i, j;
-   for (i=0; i<CMAX; i++)
-   for (j=0; j<RMAX; j++)
-      if (i==j)
+   for (i = 0; i < CMAX; i++)
+   for (j = 0; j < RMAX; j++)
+      if (i == j)
          m[j][i] = 1.0;
       else
           m[j][i] = 0.0;
@@ -81,8 +81,8 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
         in case parameter mat3 == mat2 or mat 1 */
      MATRIX newmat;
      int i, j;
-     for (i=0; i<4; i++)
-     for (j=0; j<4; j++)
+     for (i = 0; i < 4; i++)
+     for (j = 0; j < 4; j++)
         newmat[j][i] =  mat1[j][0]*mat2[0][i]+
                      mat1[j][1]*mat2[1][i]+
                      mat1[j][2]*mat2[2][i]+
@@ -211,10 +211,10 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
    VECTOR tmp;
    int i, j;
-   for (j=0; j<CMAX-1; j++)
+   for (j = 0; j < CMAX-1; j++)
    {
       tmp[j] = 0.0;
-      for (i=0; i<RMAX-1; i++)
+      for (i = 0; i < RMAX-1; i++)
          tmp[j] += s[i]*m[i][j];
       /* vector is really four dimensional with last component always 1 */
       tmp[j] += m[3][j];
@@ -232,10 +232,10 @@ void mult_vec(VECTOR s)
 {
    VECTOR tmp;
    int i, j;
-   for (j=0; j<CMAX-1; j++)
+   for (j = 0; j < CMAX-1; j++)
    {
       tmp[j] = 0.0;
-      for (i=0; i<RMAX-1; i++)
+      for (i = 0; i < RMAX-1; i++)
          tmp[j] += s[i]*m[i][j];
       /* vector is really four dimensional with last component always 1 */
       tmp[j] += m[3][j];
@@ -262,7 +262,7 @@ perspective(VECTOR v)
    v[1] = (v[1]*view[2] - view[1]*v[2])/denom;
 
    /* calculation of z if needed later */
-   /* v[2] =  v[2]/denom;*/
+   /* v[2] =  v[2]/denom; */
    return 0;
 }
 
@@ -283,10 +283,10 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
    k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
    if (lview[2] == 0 && t0[0] == 0) k--;
 
-   for (j=0; j<k; j++)
+   for (j = 0; j < k; j++)
    {
       tmp[j] = 0;
-      for (i=0; i<RMAX-1; i++)
+      for (i = 0; i < RMAX-1; i++)
          tmp[j] += multiply(s[i], m[i][j], bitshift);
       /* vector is really four dimensional with last component always 1 */
       tmp[j] += m[3][j];
@@ -308,7 +308,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
       if (denom >= 0)           /* bail out if point is "behind" us */
       {
            t[0] = bad_value;
-           t[0] = t[0]<<bitshift;
+           t[0] = t[0] << bitshift;
            t[1] = t[0];
            t[2] = t[0];
            return -1;
@@ -349,7 +349,7 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
    if (denom >= 0)              /* bail out if point is "behind" us */
    {
         lv[0] = bad_value;
-        lv[0] = lv[0]<<bitshift;
+        lv[0] = lv[0] << bitshift;
         lv[1] = lv[0];
         lv[2] = lv[0];
         return -1;
@@ -378,10 +378,10 @@ int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
    overflow = 0;
    k = CMAX-1;
 
-   for (j=0; j<k; j++)
+   for (j = 0; j < k; j++)
    {
       tmp[j] = 0;
-      for (i=0; i<RMAX-1; i++)
+      for (i = 0; i < RMAX-1; i++)
          tmp[j] += multiply(s[i], m[i][j], bitshift);
       /* vector is really four dimensional with last component always 1 */
       tmp[j] += m[3][j];

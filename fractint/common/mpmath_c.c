@@ -231,13 +231,13 @@ void Arcsinz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX tempz1, tempz2;
 
-  FPUcplxmul( &z, &z, &tempz1);
+  FPUcplxmul(&z, &z, &tempz1);
   tempz1.x = 1 - tempz1.x; tempz1.y = -tempz1.y;  /* tempz1 = 1 - tempz1 */
-  Sqrtz( tempz1, &tempz1);
+  Sqrtz(tempz1, &tempz1);
 
   tempz2.x = -z.y; tempz2.y = z.x;                /* tempz2 = i*z  */
   tempz1.x += tempz2.x;  tempz1.y += tempz2.y;    /* tempz1 += tempz2 */
-  FPUcplxlog( &tempz1, &tempz1);
+  FPUcplxlog(&tempz1, &tempz1);
   rz->x = tempz1.y;  rz->y = -tempz1.x;           /* rz = (-i)*tempz1 */
 }   /* end. Arcsinz */
 
@@ -247,13 +247,13 @@ void Arccosz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp;
 
-  FPUcplxmul( &z, &z, &temp);
+  FPUcplxmul(&z, &z, &temp);
   temp.x -= 1;                                 /* temp = temp - 1 */
-  Sqrtz( temp, &temp);
+  Sqrtz(temp, &temp);
 
   temp.x += z.x; temp.y += z.y;                /* temp = z + temp */
 
-  FPUcplxlog( &temp, &temp);
+  FPUcplxlog(&temp, &temp);
   rz->x = temp.y;  rz->y = -temp.x;              /* rz = (-i)*tempz1 */
 }   /* end. Arccosz */
 
@@ -261,22 +261,22 @@ void Arcsinhz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp;
 
-  FPUcplxmul( &z, &z, &temp);
+  FPUcplxmul(&z, &z, &temp);
   temp.x += 1;                                 /* temp = temp + 1 */
-  Sqrtz( temp, &temp);
+  Sqrtz(temp, &temp);
   temp.x += z.x; temp.y += z.y;                /* temp = z + temp */
-  FPUcplxlog( &temp, rz);
+  FPUcplxlog(&temp, rz);
 }  /* end. Arcsinhz */
 
 /* rz=Arccosh(z)=Log(z+sqrt(z*z-1)} */
 void Arccoshz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX tempz;
-  FPUcplxmul( &z, &z, &tempz);
+  FPUcplxmul(&z, &z, &tempz);
   tempz.x -= 1;                              /* tempz = tempz - 1 */
-  Sqrtz( tempz, &tempz);
+  Sqrtz(tempz, &tempz);
   tempz.x = z.x + tempz.x; tempz.y = z.y + tempz.y;  /* tempz = z + tempz */
-  FPUcplxlog( &tempz, rz);
+  FPUcplxlog(&tempz, rz);
 }   /* end. Arccoshz */
 
 /* rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)} */
@@ -284,16 +284,16 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp0, temp1, temp2;
 
-  if ( z.x == 0.0){
+  if (z.x == 0.0){
     rz->x = 0;
-    rz->y = atan( z.y);
+    rz->y = atan(z.y);
     return;
   }
   else{
-    if ( fabs(z.x) == 1.0 && z.y == 0.0){
+    if (fabs(z.x) == 1.0 && z.y == 0.0){
       return;
     }
-    else if ( fabs( z.x) < 1.0 && z.y == 0.0){
+    else if (fabs(z.x) < 1.0 && z.y == 0.0){
       rz->x = log((1+z.x)/(1-z.x))/2;
       rz->y = 0;
       return;
@@ -301,8 +301,8 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
     else{
       temp0.x = 1 + z.x; temp0.y = z.y;             /* temp0 = 1 + z */
       temp1.x = 1 - z.x; temp1.y = -z.y;            /* temp1 = 1 - z */
-      FPUcplxdiv( &temp0, &temp1, &temp2);
-      FPUcplxlog( &temp2, &temp2);
+      FPUcplxdiv(&temp0, &temp1, &temp2);
+      FPUcplxlog(&temp2, &temp2);
       rz->x = .5*temp2.x; rz->y = .5*temp2.y;       /* rz = .5*temp2 */
       return;
     }
@@ -313,25 +313,25 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
 void Arctanz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp0, temp1, temp2, temp3;
-  if ( z.x == 0.0 && z.y == 0.0)
+  if (z.x == 0.0 && z.y == 0.0)
     rz->x = rz->y = 0;
-  else if ( z.x != 0.0 && z.y == 0.0){
-    rz->x = atan( z.x);
+  else if (z.x != 0.0 && z.y == 0.0){
+    rz->x = atan(z.x);
     rz->y = 0;
   }
-  else if ( z.x == 0.0 && z.y != 0.0){
+  else if (z.x == 0.0 && z.y != 0.0){
     temp0.x = z.y;  temp0.y = 0.0;
-    Arctanhz( temp0, &temp0);
+    Arctanhz(temp0, &temp0);
     rz->x = -temp0.y; rz->y = temp0.x;              /* i*temp0 */
   }
-  else if ( z.x != 0.0 && z.y != 0.0){
+  else if (z.x != 0.0 && z.y != 0.0){
 
     temp0.x = -z.y; temp0.y = z.x;                  /* i*z */
     temp1.x = 1 - temp0.x; temp1.y = -temp0.y;      /* temp1 = 1 - temp0 */
     temp2.x = 1 + temp0.x; temp2.y = temp0.y;       /* temp2 = 1 + temp0 */
 
-    FPUcplxdiv( &temp1, &temp2, &temp3);
-    FPUcplxlog( &temp3, &temp3);
+    FPUcplxdiv(&temp1, &temp2, &temp3);
+    FPUcplxlog(&temp3, &temp3);
     rz->x = -temp3.y*.5; rz->y = .5*temp3.x;           /* .5*i*temp0 */
   }
 }   /* end. Arctanz */
@@ -342,14 +342,14 @@ long lsqrt(long f)
 {
     int N;
     unsigned long y0, z;
-    static long a=0, b=0, c=0;                  /* constant factors */
+    static long a = 0, b = 0, c = 0;                  /* constant factors */
 
     if (f == 0)
         return f;
     if (f <  0)
         return 0;
 
-    if (a==0)                                   /* one-time compute consts */
+    if (a == 0)                                   /* one-time compute consts */
     {
         a = (long)(fudge * .41731);
         b = (long)(fudge * .59016);
@@ -371,7 +371,7 @@ long lsqrt(long f)
     y0 = a + multiply(b, f,  bitshift);         /* Newton's approximation */
 
     z  = y0 + divide (f, y0, bitshift);
-    y0 = (z>>2) + divide(f, z,  bitshift);
+    y0 = (z >> 2) + divide(f, z,  bitshift);
 
     if (N % 2)
     {

@@ -134,7 +134,7 @@ int gifview()
    if (strncmp((char *)buffer,"GIF87a",3) ||             /* use updated GIF specs */
       buffer[3] < '0' || buffer[3] > '9' ||
       buffer[4] < '0' || buffer[4] > '9' ||
-      buffer[5] < 'A' || buffer[5] > 'z' )
+      buffer[5] < 'A' || buffer[5] > 'z')
    {
       close_file();
       return -1;
@@ -145,14 +145,14 @@ int gifview()
    planes = (buffer[10] & 0x0F) + 1;
    gifview_image_twidth = width;
 
-   if ((buffer[10] & 0x80)==0)    /* color map (better be!) */
+   if ((buffer[10] & 0x80) == 0)    /* color map (better be!) */
    {
       close_file();
       return -1;
    }
    numcolors = 1 << planes;
 
-   if (dither_flag && numcolors>2 && colors==2 && outln==out_line) {
+   if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line) {
          outln = out_line_dither;
    }
 
@@ -244,7 +244,7 @@ int gifview()
          gifview_image_left = left;
          if (skipydots > 0)
              gifview_image_left /= (skipxdots+1);
-         if (outln==out_line)
+         if (outln == out_line)
          {
             /* what about continuous potential???? */
             if (width != gifview_image_twidth || top != 0)
@@ -260,7 +260,7 @@ int gifview()
          if (pot16bit) width >>= 1;
 
          /* Skip local color palette */
-         if ((buffer[8] & 0x80)==0x80) {      /* local map? */
+         if ((buffer[8] & 0x80) == 0x80) {      /* local map? */
              int numcolors;    /* make this local */
              planes = (buffer[8] & 0x0F) + 1;
              numcolors = 1 << planes;
@@ -351,19 +351,19 @@ static int out_line_dither(BYTE *pixels, int linelen)
     int i,nexterr,brt,err;
         if (ditherbuf == NULL)
         ditherbuf = (char *)malloc(linelen+1);
-        memset( ditherbuf, 0, linelen+1);
+        memset(ditherbuf, 0, linelen+1);
 
     nexterr = (rand()&0x1f)-16;
-    for (i=0;i<linelen;i++) {
+    for (i = 0; i < linelen; i++) {
 #ifdef __SVR4
         brt = (int)((g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
-            g_dac_box[pixels[i]][2]*2))>>4; /* brightness from 0 to 63 */
+            g_dac_box[pixels[i]][2]*2)) >> 4; /* brightness from 0 to 63 */
 #else
         brt = (g_dac_box[pixels[i]][0]*5+g_dac_box[pixels[i]][1]*9 +
-            g_dac_box[pixels[i]][2]*2)>>4; /* brightness from 0 to 63 */
+            g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to 63 */
 #endif
         brt += nexterr;
-        if (brt>32) {
+        if (brt > 32) {
             pixels[i] = 1;
             err = brt-63;
         } else {
@@ -381,7 +381,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 
 static int out_line_too_wide(BYTE *pixels, int linelen)
 {
-   /* int twidth = gifview_image_twidth;*/
+   /* int twidth = gifview_image_twidth; */
    int twidth = xdots;
    int extra;
    while (linelen > 0)
@@ -412,7 +412,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
    int col;
-   for (col=colstart; col<=colstop; col++)
+   for (col=colstart; col <= colstop; col++)
    {
       putcolor(col,row,*pixels);
       if (orbit_delay > 0)
@@ -429,10 +429,10 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 
 int sound_line(BYTE *pixels, int linelen)
 {
-   /* int twidth = gifview_image_twidth;*/
+   /* int twidth = gifview_image_twidth; */
    int twidth = xdots;
    int extra;
-   int ret=0;
+   int ret = 0;
    while (linelen > 0)
    {
       extra = colcount+linelen-twidth;

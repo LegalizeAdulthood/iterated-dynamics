@@ -113,7 +113,7 @@ void _fastcall putpot(int x, int y, U16 color)
 /* fixes border */
 void _fastcall putpotborder(int x, int y, U16 color)
 {
-   if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
+   if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
       color = (U16)outside;
    putpot(x, y, color);
 }
@@ -121,7 +121,7 @@ void _fastcall putpotborder(int x, int y, U16 color)
 /* fixes border */
 void _fastcall putcolorborder(int x, int y, int color)
 {
-   if ((x==0) || (y==0) || (x==xdots-1) || (y==ydots-1))
+   if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
       color = outside;
    if (color < 1)
       color = 1;
@@ -143,10 +143,10 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
    S32 pseudorandom;
    pseudorandom = ((S32)iparmx)*((rand15()-16383));
-/*   pseudorandom = pseudorandom*(abs(xa-xb)+abs(ya-yb));*/
+/*   pseudorandom = pseudorandom*(abs(xa-xb)+abs(ya-yb)); */
    pseudorandom = pseudorandom * recur1;
    pseudorandom = pseudorandom >> shiftvalue;
-   pseudorandom = (((S32)getpix(xa, ya)+(S32)getpix(xb, yb)+1)>>1)+pseudorandom;
+   pseudorandom = (((S32)getpix(xa, ya)+(S32)getpix(xb, yb)+1) >> 1)+pseudorandom;
    if (max_plasma == 0)
    {
       if (pseudorandom >= pcolors)
@@ -179,7 +179,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 
    /*
    recur1=1;
-   for (i=1;i<=recur;i++)
+   for (i = 1; i <= recur; i++)
       recur1 = recur1 * 2;
    recur1=320/recur1;
    */
@@ -275,13 +275,13 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
          plasma_check--;
          return;
       }
-   if (x2-x1<2 && y2-y1<2)
+   if (x2-x1 < 2 && y2-y1 < 2)
       return;
    recur_level++;
    recur1 = (int)(320L >> recur_level);
 
-   x = (x1+x2)>>1;
-   y = (y1+y2)>>1;
+   x = (x1+x2) >> 1;
+   y = (y1+y2) >> 1;
    v=getpix(x, y1);
    if (v == 0)
       v=adjust(x1, y1, x , y1, x2, y1);
@@ -289,18 +289,18 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
    v=getpix(x2, y);
    if (v == 0)
       v=adjust(x2, y1, x2, y , x2, y2);
-   i+=v;
+   i += v;
    v=getpix(x, y2);
    if (v == 0)
       v=adjust(x1, y2, x , y2, x2, y2);
-   i+=v;
+   i += v;
    v=getpix(x1, y);
    if (v == 0)
       v=adjust(x1, y1, x1, y , x1, y2);
-   i+=v;
+   i += v;
 
    if (getpix(x, y) == 0)
-      plot(x, y, (U16)((i+2)>>2));
+      plot(x, y, (U16)((i+2) >> 2));
 
    subDivide(x1, y1, x , y);
    subDivide(x , y1, x2, y);
@@ -402,19 +402,19 @@ int plasma()
    {
       pcolors = min(colors, max_colors);
       for (n = 0; n < 4; n++)
-         rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1))>>(shiftvalue-11)));
+         rnd[n] = (U16)(1+(((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
    }
    else
       for (n = 0; n < 4; n++)
          rnd[n] = rand16();
-   if (debugflag==3600)
+   if (debugflag == 3600)
       for (n = 0; n < 4; n++)
          rnd[n] = 1;
 
-   plot(      0,      0,  rnd[0]);
+   plot(0,      0,  rnd[0]);
    plot(xdots-1,      0,  rnd[1]);
    plot(xdots-1, ydots-1,  rnd[2]);
-   plot(      0, ydots-1,  rnd[3]);
+   plot(0, ydots-1,  rnd[3]);
 
    recur_level = 0;
    if (param[1] == 0)
@@ -422,7 +422,7 @@ int plasma()
    else
    {
       recur1 = i = k = 1;
-      while (new_subD(0, 0, xdots-1, ydots-1, i)==0)
+      while (new_subD(0, 0, xdots-1, ydots-1, i) == 0)
       {
          k = k * 2;
          if (k  >(int)max(xdots-1, ydots-1))
@@ -463,7 +463,7 @@ static void set_Plasma_palette()
    dac[0].red  = 0 ;
    dac[0].green= 0 ;
    dac[0].blue = 0 ;
-   for (i=1; i<=85; i++)
+   for (i = 1; i <= 85; i++)
    {
 #ifdef __SVR4
       dac[i].red       = (BYTE)((i*(int)Green.red   + (86-i)*(int)Blue.red)/85);
@@ -529,7 +529,7 @@ int diffusion()
    currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
 
    if (mode > 2)
-      mode=0;
+      mode = 0;
 
    if (border <= 0)
       border = 10;
@@ -571,19 +571,19 @@ int diffusion()
            putcolor(xdots / 2, ydots / 2, currentcolor);  
            break;
    case 1: /* Line along the bottom */
-           for (i=0;i<=xdots;i++)
+           for (i = 0; i <= xdots; i++)
            putcolor(i, ydots-1, currentcolor);
            break;
    case 2: /* Large square that fills the screen */
            if (xdots > ydots)
-              for (i=0;i<ydots;i++){
+              for (i = 0; i < ydots; i++){
                  putcolor(xdots/2-ydots/2 , i , currentcolor);
                  putcolor(xdots/2+ydots/2 , i , currentcolor);
                  putcolor(xdots/2-ydots/2+i , 0 , currentcolor);
                  putcolor(xdots/2-ydots/2+i , ydots-1 , currentcolor);
               }
            else 
-              for (i=0;i<xdots;i++){
+              for (i = 0; i < xdots; i++){
                  putcolor(0 , ydots/2-xdots/2+i , currentcolor);
                  putcolor(xdots-1 , ydots/2-xdots/2+i , currentcolor);
                  putcolor(i , ydots/2-xdots/2 , currentcolor);
@@ -596,7 +596,7 @@ int diffusion()
    {
       switch (mode) {
       case 0: /* Release new point on a circle inside the box */
-               angle=2*(double)rand()/(RAND_MAX/PI);
+               angle = 2*(double)rand()/(RAND_MAX/PI);
                FPUsincos(&angle, &sine, &cosine);
                x = (int)(cosine*(xmax-xmin) + xdots);
                y = (int)(sine  *(ymax-ymin) + ydots);
@@ -610,7 +610,7 @@ int diffusion()
               break;
       case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
-               angle=2*(double)rand()/(RAND_MAX/PI);
+               angle = 2*(double)rand()/(RAND_MAX/PI);
                FPUsincos(&angle, &sine, &cosine);
                x = (int)(cosine*radius + xdots);
                y = (int)(sine  *radius + ydots);
@@ -631,25 +631,25 @@ int diffusion()
          if (show_orbit)
             putcolor(x, y, 0);
 
-         if (mode==0){  /* Make sure point is inside the box */
-            if (x==xmax)
+         if (mode == 0){  /* Make sure point is inside the box */
+            if (x == xmax)
                x--;
-            else if (x==xmin)
+            else if (x == xmin)
                x++;
-            if (y==ymax)
+            if (y == ymax)
                y--;
-            else if (y==ymin)
+            else if (y == ymin)
                y++;
          }
 
-         if (mode==1) /* Make sure point is on the screen below ymin, but
+         if (mode == 1) /* Make sure point is on the screen below ymin, but
                     we need a 1 pixel margin because of the next random step.*/
          {
-            if (x>=xdots-1)
+            if (x >= xdots-1)
                x--;
-            else if (x<=1)
+            else if (x <= 1)
                x++;
-            if (y<ymin)
+            if (y < ymin)
                y++;
          }
 
@@ -662,7 +662,7 @@ int diffusion()
             if (check_key())
             {
                alloc_resume(20, 1);
-               if (mode!=2)
+               if (mode != 2)
                   put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
                       sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
                else
@@ -698,28 +698,28 @@ int diffusion()
          fractal. */
  
       switch (mode) {
-      case 0: if (((x+border)>xmax) || ((x-border)<xmin)
-                    || ((y-border)<ymin) || ((y+border)>ymax))
+      case 0: if (((x+border) > xmax) || ((x-border) < xmin)
+                    || ((y-border) < ymin) || ((y+border) > ymax))
               {
                  /* Increase box size, but not past the edge of the screen */
                  ymin--;
                  ymax++;
                  xmin--;
                  xmax++;
-                 if ((ymin==0) || (xmin==0))
+                 if ((ymin == 0) || (xmin == 0))
                     return 0;
               }
               break;
       case 1: /* Decrease ymin, but not past top of screen */
               if (y-border < ymin)
                  ymin--;
-              if (ymin==0)
+              if (ymin == 0)
                  return 0;
               break;
       case 2: /* Decrease the radius where points are released to stay away 
                  from the fractal.  It might be decreased by 1 or 2 */
               r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
-              if (r<=border*border) 
+              if (r <= border*border) 
                 return 0;
               while ((radius-border)*(radius-border) > r)
                  radius--;
@@ -843,7 +843,7 @@ int Bifurcation(void)
          Rate = (double)(xxmin + column*delxx);
       verhulst();        /* calculate array once per column */
 
-      for (row = iystop; row >= 0; row--) /* should be iystop & >=0 */
+      for (row = iystop; row >= 0; row--) /* should be iystop & >= 0 */
       {
          int color;
          color = verhulst_array[row];
@@ -851,7 +851,7 @@ int Bifurcation(void)
             color = inside;
          else if ((!color) && mono)
             color = outside_x;
-         else if (color>=colors)
+         else if (color >= colors)
             color = colors-1;
          verhulst_array[row] = 0;
          (*plot)(column, row, color); /* was row-1, but that's not right? */
@@ -870,11 +870,11 @@ static void verhulst()          /* P. F. Verhulst (1845) */
     if (integerfractal)
        lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
     else
-       Population = (parm.y == 0 ) ? SEED : parm.y;
+       Population = (parm.y == 0) ? SEED : parm.y;
 
    errors = overflow = FALSE;
 
-   for (counter=0 ; counter < filter_cycles ; counter++)
+   for (counter = 0 ; counter < filter_cycles ; counter++)
    {
       errors = curfractalspecific->orbitcalc();
       if (errors)
@@ -883,7 +883,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
    if (half_time_check) /* check for periodicity at half-time */
    {
       Bif_Period_Init();
-      for (counter=0 ; counter < (unsigned long)maxit ; counter++)
+      for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
       {
          errors = curfractalspecific->orbitcalc();
          if (errors) return;
@@ -891,7 +891,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
       }
       if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
       {
-         for (counter=0 ; counter < filter_cycles ; counter++)
+         for (counter = 0 ; counter < filter_cycles ; counter++)
          {
             errors = curfractalspecific->orbitcalc();
             if (errors) return;
@@ -900,7 +900,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
    }
 
    if (periodicitycheck) Bif_Period_Init();
-   for (counter=0 ; counter < (unsigned long)maxit ; counter++)
+   for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
    {
       errors = curfractalspecific->orbitcalc();
       if (errors) return;
@@ -1097,7 +1097,7 @@ int LongBifurcLambdaTrig()
     return overflow;
   }
 
-#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
+#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2); \
          lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
 
 long beta;
@@ -1206,9 +1206,9 @@ int lyapunov () {
         return -1;
         }
     overflow=FALSE;
-    if (param[1]==1) Population = (1.0+rand())/(2.0+RAND_MAX);
-    else if (param[1]==0) {
-        if (fabs(Population)>BIG || Population==0 || Population==1)
+    if (param[1] == 1) Population = (1.0+rand())/(2.0+RAND_MAX);
+    else if (param[1] == 0) {
+        if (fabs(Population) > BIG || Population == 0 || Population == 1)
             Population = (1.0+rand())/(2.0+RAND_MAX);
         }
     else Population = param[1];
@@ -1230,7 +1230,7 @@ int lyapunov () {
 #if WES
         color=lyapunov_cycles(a, b);
 #else
-    if (lyaSeedOK && a>0 && b>0 && a<=4 && b<=4)
+    if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
         color=lyapunov_cycles(filter_cycles, Population, a, b);
     else
         color=lyapunov_cycles_in_c(filter_cycles, a, b);
@@ -1238,9 +1238,9 @@ int lyapunov () {
 #else
     color=lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
-    if (inside>0 && color==0)
+    if (inside > 0 && color == 0)
         color = inside;
-    else if (color>=colors)
+    else if (color >= colors)
         color = colors-1;
     (*plot)(col, row, color);
     return color;
@@ -1279,31 +1279,31 @@ int lya_setup () {
     long i;
     int t;
 
-    if ((filter_cycles=(long)param[2])==0)
+    if ((filter_cycles=(long)param[2]) == 0)
         filter_cycles=maxit/2;
-    lyaSeedOK = param[1]>0 && param[1]<=1 && debugflag!=90;
+    lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
     lyaLength = 1;
 
     i = (long)param[0];
 #if !defined(XFRACT)
-    if (save_release<1732) i &= 0x0FFFFL; /* make it a short to reproduce prior stuff*/
+    if (save_release < 1732) i &= 0x0FFFFL; /* make it a short to reproduce prior stuff*/
 #endif
     lyaRxy[0] = 1;
-    for (t=31; t>=0; t--)
-        if (i & (1<<t)) break;
-    for (; t>=0; t--)
-        lyaRxy[lyaLength++] = (i & (1<<t)) != 0;
+    for (t = 31; t >= 0; t--)
+        if (i & (1 << t)) break;
+    for (; t >= 0; t--)
+        lyaRxy[lyaLength++] = (i & (1 << t)) != 0;
     lyaRxy[lyaLength++] = 0;
-    if (save_release<1732)              /* swap axes prior to 1732 */
-        for (t=lyaLength; t>=0; t--)
+    if (save_release < 1732)              /* swap axes prior to 1732 */
+        for (t=lyaLength; t >= 0; t--)
             lyaRxy[t] = !lyaRxy[t];
-    if (save_release<1731) {            /* ignore inside=, stdcalcmode */
+    if (save_release < 1731) {            /* ignore inside=, stdcalcmode */
         stdcalcmode='1';
-        if (inside==1) inside = 0;
+        if (inside == 1) inside = 0;
         }
-    if (inside<0) {
+    if (inside < 0) {
         stopmsg(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-        inside=1;
+        inside = 1;
         }
     if (usr_stdcalcmode == 'o') { /* Oops, lyapunov type */
         usr_stdcalcmode = '1';  /* doesn't use new & breaks orbits */
@@ -1320,8 +1320,8 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
 
     total = 1.0;
     lnadjust = 0;
-    for (i=0; i<filter_cycles; i++) {
-        for (count=0; count<lyaLength; count++) {
+    for (i = 0; i < filter_cycles; i++) {
+        for (count = 0; count < lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
                 overflow = TRUE;
@@ -1329,7 +1329,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
                 }
             }
         }
-    for (i=0; i < maxit/2; i++) {
+    for (i = 0; i < maxit/2; i++) {
         for (count = 0; count < lyaLength; count++) {
             Rate = lyaRxy[count] ? a : b;
             if (curfractalspecific->orbitcalc()) {
@@ -1338,7 +1338,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b) {
                 }
             temp = fabs(Rate-2.0*Rate*Population);
                 total *= temp;
-				if (total==0) {
+				if (total == 0) {
                 overflow = TRUE;
                 goto jumpout;
                 }
@@ -1441,7 +1441,7 @@ void abort_cellular(int err, int t)
          {
          static char msg[]={"Rule must be    digits long" };
          i = rule_digits / 10;
-         if (i==0)
+         if (i == 0)
             msg[14] = (char)(rule_digits + 48);
          else {
             msg[13] = (char)(i+48);
@@ -1523,16 +1523,16 @@ int cellular () {
       n = param[0];
       sprintf(buf, "%.16g", n); /* # of digits in initial string */
       t = (S16)strlen(buf);
-      if (t>16 || t <= 0) {
+      if (t > 16 || t <= 0) {
          abort_cellular(STRING1, 0);
          return -1;
       }
-      for (i=0;i<16;i++)
+      for (i = 0; i < 16; i++)
          init_string[i] = 0; /* zero the array */
       t2 = (S16) ((16 - t)/2);
-      for (i=0;i<(U16)t;i++) { /* center initial string in array */
+      for (i = 0; i < (U16)t; i++) { /* center initial string in array */
          init_string[i+t2] = (U16)(buf[i] - 48); /* change character to number */
-         if (init_string[i+t2]>(U16)k_1) {
+         if (init_string[i+t2] > (U16)k_1) {
             abort_cellular(STRING2, 0);
             return -1;
          }
@@ -1547,7 +1547,7 @@ int cellular () {
    n = param[1];
 #else
    /* gcc can't manage to convert a big double to an unsigned long properly. */
-   if (param[1]>0x7fffffff) {
+   if (param[1] > 0x7fffffff) {
        n = (param[1]-0x7fffffff);
        n += 0x7fffffff;
    } else {
@@ -1556,7 +1556,7 @@ int cellular () {
 #endif
    if (n == 0) { /* calculate a random rule */
       n = rand()%(int)k;
-      for (i=1;i<(U16)rule_digits;i++) {
+      for (i = 1; i < (U16)rule_digits; i++) {
          n *= 10;
          n += rand()%(int)k;
       }
@@ -1568,11 +1568,11 @@ int cellular () {
       abort_cellular(RULELENGTH, 0);
       return -1;
    }
-   for (i=0;i<(U16)rule_digits;i++) /* zero the table */
+   for (i = 0; i < (U16)rule_digits; i++) /* zero the table */
       cell_table[i] = 0;
-   for (i=0;i<(U16)t;i++) { /* reverse order */
+   for (i = 0; i < (U16)t; i++) { /* reverse order */
       cell_table[i] = (U16)(buf[t-i-1] - 48); /* change character to number */
-      if (cell_table[i]>(U16)k_1) {
+      if (cell_table[i] > (U16)k_1) {
          abort_cellular(TABLEK, 0);
          return -1;
       }
@@ -1589,7 +1589,7 @@ int cellular () {
    cell_array[0] = (BYTE *)malloc(ixstop+1);
    cell_array[1] = (BYTE *)malloc(ixstop+1);
 #endif
-   if (cell_array[0]==NULL || cell_array[1]==NULL) {
+   if (cell_array[0] == NULL || cell_array[1] == NULL) {
       abort_cellular(BAD_MEM, 0);
       return -1;
    }
@@ -1613,18 +1613,18 @@ int cellular () {
       start_row = -1; /* after 1st iteration its = 0 */
    }
    else {
-    if (rflag || randparam==0 || randparam==-1){
-      for (col=0;col<=ixstop;col++) {
+    if (rflag || randparam == 0 || randparam == -1){
+      for (col = 0; col <= ixstop; col++) {
          cell_array[filled][col] = (BYTE)(rand()%(int)k);
       }
     } /* end of if random */
 
     else {
-      for (col=0;col<=ixstop;col++) { /* Clear from end to end */
+      for (col = 0; col <= ixstop; col++) { /* Clear from end to end */
          cell_array[filled][col] = 0;
       }
       i = 0;
-      for (col=(ixstop-16)/2;col<(ixstop+16)/2;col++) { /* insert initial */
+      for (col=(ixstop-16)/2; col < (ixstop+16)/2; col++) { /* insert initial */
          cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
       }
     } /* end of if not random */
@@ -1643,25 +1643,25 @@ int cellular () {
      U32 big_row;
      for (big_row = (U32)start_row; big_row < lnnmbr; big_row++) {
       thinking(1, "Cellular thinking (higher start row takes longer)");
-      if (rflag || randparam==0 || randparam==-1){
+      if (rflag || randparam == 0 || randparam == -1){
        /* Use a random border */
-       for (i=0;i<=(U16)r;i++) {
+       for (i = 0; i <= (U16)r; i++) {
          cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
          cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
        }
       }
       else {
        /* Use a zero border */
-       for (i=0;i<=(U16)r;i++) {
+       for (i = 0; i <= (U16)r; i++) {
          cell_array[notfilled][i]=0;
          cell_array[notfilled][ixstop-i]=0;
        }
       }
 
        t = 0; /* do first cell */
-       for (twor=(U16)(r+r), i=0;i<=twor;i++)
+       for (twor=(U16)(r+r), i = 0; i <= twor; i++)
            t = (S16)(t + (S16)cell_array[filled][i]);
-       if (t>rule_digits || t<0) {
+       if (t > rule_digits || t < 0) {
          thinking(0, NULL);
          abort_cellular(BAD_T, t);
          return -1;
@@ -1669,9 +1669,9 @@ int cellular () {
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
            /* use a rolling sum in t */
-       for (col=r+1;col<ixstop-r;col++) { /* now do the rest */
+       for (col=r+1; col < ixstop-r; col++) { /* now do the rest */
          t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-         if (t>rule_digits || t<0) {
+         if (t > rule_digits || t < 0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
            return -1;
@@ -1696,25 +1696,25 @@ int cellular () {
 contloop:
    for (row = start_row; row <= iystop; row++) {
 
-      if (rflag || randparam==0 || randparam==-1){
+      if (rflag || randparam == 0 || randparam == -1){
        /* Use a random border */
-       for (i=0;i<=(U16)r;i++) {
+       for (i = 0; i <= (U16)r; i++) {
          cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
          cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
        }
       }
       else {
        /* Use a zero border */
-       for (i=0;i<=(U16)r;i++) {
+       for (i = 0; i <= (U16)r; i++) {
          cell_array[notfilled][i]=0;
          cell_array[notfilled][ixstop-i]=0;
        }
       }
 
        t = 0; /* do first cell */
-       for (twor=(U16)(r+r), i=0;i<=twor;i++)
+       for (twor=(U16)(r+r), i = 0; i <= twor; i++)
            t = (S16)(t + (S16)cell_array[filled][i]);
-       if (t>rule_digits || t<0) {
+       if (t > rule_digits || t < 0) {
          thinking(0, NULL);
          abort_cellular(BAD_T, t);
          return -1;
@@ -1722,9 +1722,9 @@ contloop:
        cell_array[notfilled][r] = (BYTE)cell_table[t];
 
            /* use a rolling sum in t */
-       for (col=r+1;col<ixstop-r;col++) { /* now do the rest */
+       for (col=r+1; col < ixstop-r; col++) { /* now do the rest */
          t = (S16)(t + cell_array[filled][col+r] - cell_array[filled][col-r-1]);
-         if (t>rule_digits || t<0) {
+         if (t > rule_digits || t < 0) {
            thinking(0, NULL);
            abort_cellular(BAD_T, t);
            return -1;
@@ -1800,7 +1800,7 @@ static void set_Cellular_palette()
 /* frothy basin routines */
 
 #define FROTH_BITSHIFT      28
-#define FROTH_D_TO_L(x)     ((long)((x)*(1L<<FROTH_BITSHIFT)))
+#define FROTH_D_TO_L(x)     ((long)((x)*(1L << FROTH_BITSHIFT)))
 #define FROTH_CLOSE         1e-6      /* seems like a good value */
 #define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
 #define SQRT3               1.732050807568877193
@@ -1977,10 +1977,10 @@ int froth_setup(void)
    /* rqlim needs to be at least sq(1+sqrt(1+sq(a))), */
    /* which is never bigger than 6.93..., so we'll call it 7.0 */
    if (rqlim < 7.0)
-      rqlim=7.0;
+      rqlim = 7.0;
    set_Froth_palette();
    /* make the best of the .map situation */
-   orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades<<1)+1 : colors-1;
+   orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1)+1 : colors-1;
 
    if (integerfractal)
       {
@@ -2021,7 +2021,7 @@ void froth_cleanup(void)
 /* Froth Fractal type */
 int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
      {
-     int found_attractor=0;
+     int found_attractor = 0;
 
    if (check_key()) {
         return -1;
@@ -2034,7 +2034,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 
    orbit_ptr = 0;
    coloriter = 0;
-   if (showdot>0)
+   if (showdot > 0)
       (*plot) (col, row, showdot%colors);
    if (!integerfractal) /* fp mode */
       {
@@ -2150,7 +2150,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
          /* simple formula: z = z^2 + conj(z*(-1+ai)) */
          /* but it's the attractor that makes this so interesting */
          lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-         lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+         lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
          lold.x = lnew.x;
          if (fsp->repeat_mapping)
             {
@@ -2158,7 +2158,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
             if ((lmagnitud > llimit) || (lmagnitud < 0))
                break;
             lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-            lold.y += (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+            lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
             lold.x = lnew.x;
             }
          coloriter++;
@@ -2261,7 +2261,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 /* Trying to make a better 16 color distribution. */
 /* Since their are only a few possiblities, just handle each case. */
 /* This is a mostly guess work here. */
-         lshade = (coloriter<<16)/maxit;
+         lshade = (coloriter << 16)/maxit;
          if (fsp->attractors != 6) /* either 2 or 3 attractors */
             {
             if (lshade < 2622)       /* 0.04 */
@@ -2345,14 +2345,14 @@ int froth_per_orbit(void)
    else  /* integer mode */
       {
       lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-      lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+      lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
       if (fsp->repeat_mapping)
          {
          if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
             return 1;
          lold = lnew;
          lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-         lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift)<<1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+         lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
          }
       if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
          return 1;

@@ -28,7 +28,7 @@ static int menu_checkkey(int curkey, int choice);
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
 int g_patch_level = 9;	/* patchlevel for DOS version */
 #ifdef XFRACT
-int xrelease=304;
+int xrelease = 304;
 #endif
 
 /* int stopmsg(flags, message) displays message and waits for a key:
@@ -53,7 +53,7 @@ int stopmsg (int flags, char *msg)
    if (debugflag != 0 || initbatch >= INIT_BATCH_NORMAL)
    {
       static FILE *fp = NULL;
-      if (fp==NULL && initbatch == INIT_BATCH_NONE)
+      if (fp == NULL && initbatch == INIT_BATCH_NONE)
          fp=dir_fopen(workdir, "stopmsg.txt", "w");
       else
          fp=dir_fopen(workdir, "stopmsg.txt", "a");
@@ -74,7 +74,7 @@ int stopmsg (int flags, char *msg)
    savelookatmouse = lookatmouse;
    lookatmouse = -FIK_ENTER;
    if ((flags & STOPMSG_NO_STACK))
-      blankrows(toprow=12, 10, 7);
+      blankrows(toprow = 12, 10, 7);
    else {
       driver_stack_screen();
       toprow = 4;
@@ -256,7 +256,7 @@ void helptitle()
    sprintf(msg, "XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
            xrelease/100, xrelease%100, g_release/100, g_release%100);
 #else
-   *msg=0;
+   *msg = 0;
 #endif   
    sprintf(buf, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
    strcat(msg, buf);
@@ -304,7 +304,7 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
    int i, j, k;
    i = 0;
 #ifdef XFRACT
-   if (width>=80) width=79; /* Some systems choke in column 80 */
+   if (width >= 80) width = 79; /* Some systems choke in column 80 */
 #endif
    while (msg[i]) ++i; /* strlen for a */
    if (i == 0) return -1;
@@ -388,7 +388,7 @@ void process_speedstring(char    *speedstring,
    if (i > 0)  {    /* locate matching type */
       *pcurrent = 0;
       while (*pcurrent < numchoices
-        && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i))!=0) {
+        && (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0) {
          if (comp_result < 0 && !is_unsorted) {
             *pcurrent -= *pcurrent ? 1 : 0;
             break;
@@ -435,7 +435,7 @@ int fullscreen_choice(
     int (*speedprompt)(int, int, int, char *, int), /* routine to display prompt or NULL      */
     int (*checkkey)(int, int)      /* routine to check keystroke or NULL     */
 )
-    /* return is: n>=0 for choice n selected,
+    /* return is: n >= 0 for choice n selected,
                   -1 for escape
                   k for checkkey routine return value k (if not 0 nor -1)
                   speedstring[0] != 0 on return if string is present
@@ -493,7 +493,7 @@ int fullscreen_choice(
 		}
 	}
 
-	for (;;)
+	while (1)
 	{
 		if (current >= numchoices)  /* no real choice in the list? */
 		{
@@ -700,7 +700,7 @@ int fullscreen_choice(
 	}
 	redisplay = 1;
 	topleftrow -= scrunch;
-	for (;;) /* main loop */
+	while (1) /* main loop */
 	{
 		if (redisplay)                       /* display the current choices */
 		{
@@ -850,7 +850,7 @@ int fullscreen_choice(
 			increment = -(rev_increment = boxwidth);
 			{
 				int newcurrent = current;
-				while ((newcurrent-=boxwidth) != current)
+				while ((newcurrent -= boxwidth) != current)
 				{
 					if (newcurrent < 0)
 					{
@@ -1002,7 +1002,7 @@ int fullscreen_choice(
 				speedstring[0] = 0;
 			}
 		}
-		for (;;)
+		while (1)
 		{                 /* adjust to a non-comment choice */
 			if (current < 0 || current >= numchoices)
 			{
@@ -1100,7 +1100,7 @@ top:
 		choicekey[nextleft] = 'o';
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "orbits window          <o>  ";
-		if (!(fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA))
+		if (!(fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA))
 		{
 			nextleft += 2;
 		}
@@ -1136,7 +1136,7 @@ top:
 			choices[nextleft] = "toggle to/from julia <space>";
 			showjuliatoggle = 1;
 		}
-		if (fractype==JULIA || fractype==JULIAFP || fractype==INVERSEJULIA)
+		if (fractype == JULIA || fractype == JULIAFP || fractype == INVERSEJULIA)
 		{
 			nextleft += 2;
 			choicekey[nextleft] = 'j';
@@ -1376,7 +1376,7 @@ top:
 #else
 			"Exit from Fractint (y/n)? y"
 #endif
-			);
+);
 		driver_hide_text_cursor();
 		while ((i = driver_get_key()) != 'y' && i != 'Y' && i != 13)
 		{
@@ -1404,7 +1404,7 @@ static int menu_checkkey(int curkey, int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
    int testkey;
    testkey = choice; /* for warning only */
-   testkey = (curkey>='A' && curkey<='Z') ? curkey+('a'-'A') : curkey;
+   testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
 #ifdef XFRACT
    /* We use F2 for shift-@, annoyingly enough */
    if (testkey == FIK_F2) return -testkey;
@@ -1540,7 +1540,7 @@ int input_field(
                if (options & INPUTFIELD_INTEGER)
                   break;
                /* allow scientific notation, and specials "e" and "p" */
-               if ( ((curkey != 'e' && curkey != 'E') || offset >= 18)
+               if (((curkey != 'e' && curkey != 'E') || offset >= 18)
                  && ((curkey != 'p' && curkey != 'P') || offset != 0 )
                  && curkey != '.')
                   break;
@@ -1684,7 +1684,7 @@ int thinking(int options, char *msg)
       thinkcol = g_text_col - 3;
       count = 0;
       }
-   if ((count++)<100) {
+   if ((count++) < 100) {
        return 0;
    }
    count = 0;
@@ -1773,7 +1773,7 @@ void load_fractint_config(void)
 		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
 		i = j = -1;
 		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
-		for (;;)
+		while (1)
 		{
 			if (tempstring[++i] < ' ')
 			{

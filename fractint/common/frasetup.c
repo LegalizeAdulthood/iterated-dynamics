@@ -122,7 +122,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
       roots = staticroots;
    }
 
-   if (fractype==NEWTBASIN)
+   if (fractype == NEWTBASIN)
    {
       if (parm.y)
          basin = 2; /*stripes */
@@ -141,14 +141,14 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          roots = staticroots;
 
       /* list of roots to discover where we converged for newtbasin */
-      for (i=0; i<degree; i++)
+      for (i = 0; i < degree; i++)
       {
          roots[i].x = cos(i*twopi/(double)degree);
          roots[i].y = sin(i*twopi/(double)degree);
       }
    }
 #if !defined(XFRACT)
-   else if (fractype==MPNEWTBASIN)
+   else if (fractype == MPNEWTBASIN)
    {
      if (parm.y)
          basin = 2; /*stripes */
@@ -168,7 +168,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
          MPCroots = (struct MPC *)staticroots;
 
       /* list of roots to discover where we converged for newtbasin */
-      for (i=0; i<degree; i++)
+      for (i = 0; i < degree; i++)
       {
          MPCroots[i].x = *pd2MP(cos(i*twopi/(double)degree));
          MPCroots[i].y = *pd2MP(sin(i*twopi/(double)degree));
@@ -307,8 +307,8 @@ MandelfpSetup(void)
       attractors = 1;
       break;
    case SPIDERFP:
-      if (periodicitycheck==1) /* if not user set */
-         periodicitycheck=4;
+      if (periodicitycheck == 1) /* if not user set */
+         periodicitycheck = 4;
       break;
    case MANDELEXP:
       symmetry = XAXIS_NOPARM;
@@ -357,7 +357,7 @@ JuliafpSetup(void)
 {
    c_exp = (int)param[2];
    floatparm = &parm;
-   if (fractype==COMPLEXMARKSJUL)
+   if (fractype == COMPLEXMARKSJUL)
    {
       pwr.x = param[2] - 1.0;
       pwr.y = param[3];
@@ -429,7 +429,7 @@ JuliafpSetup(void)
         }
         break;
    case FPJULIAZPOWER:
-      if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2] )
+      if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
          symmetry = NOSYM;
       if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = floatZpowerFractal;
@@ -494,7 +494,7 @@ JuliafpSetup(void)
             if (fractype == FPPOPCORNJUL)
                symmetry = ORIGIN;
          }
-         if (save_release <=1960)
+         if (save_release <= 1960)
             curfractalspecific->orbitcalc = PopcornFractal_Old;
          else if (default_functions && debugflag == 96)
             curfractalspecific->orbitcalc = PopcornFractal;
@@ -520,30 +520,30 @@ MandellongSetup(void)
 {
    FgHalf = fudge >> 1;
    c_exp = (int)param[2];
-   if (fractype==MARKSMANDEL && c_exp < 1){
+   if (fractype == MARKSMANDEL && c_exp < 1){
       c_exp = 1;
       param[2] = 1;
    }
-   if ((fractype==MARKSMANDEL   && !(c_exp & 1)) ||
-       (fractype==LMANDELZPOWER && (c_exp & 1)))
+   if ((fractype == MARKSMANDEL   && !(c_exp & 1)) ||
+       (fractype == LMANDELZPOWER && (c_exp & 1)))
       symmetry = XYAXIS_NOPARM;    /* odd exponents */
-   if ((fractype==MARKSMANDEL && (c_exp & 1)) || fractype==LMANDELEXP)
+   if ((fractype == MARKSMANDEL && (c_exp & 1)) || fractype == LMANDELEXP)
       symmetry = XAXIS_NOPARM;
-   if (fractype==SPIDER && periodicitycheck==1)
-      periodicitycheck=4;
+   if (fractype == SPIDER && periodicitycheck == 1)
+      periodicitycheck = 4;
    longparm = &linit;
-   if (fractype==LMANDELZPOWER)
+   if (fractype == LMANDELZPOWER)
    {
       if (param[3] == 0.0 && debugflag != 6000  && (double)c_exp == param[2])
           fractalspecific[fractype].orbitcalc = longZpowerFractal;
       else
           fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
-      if (param[3] != 0 || (double)c_exp != param[2] )
+      if (param[3] != 0 || (double)c_exp != param[2])
          symmetry = NOSYM;
     }
 /* Added to account for symmetry in manfn+exp and manfn+zsqrd */
 /*     JCO 2/29/92 */
-   if ((fractype==LMANTRIGPLUSEXP)||(fractype==LMANTRIGPLUSZSQRD))
+   if ((fractype == LMANTRIGPLUSEXP)||(fractype == LMANTRIGPLUSZSQRD))
    {
      if (parm.y == 0.0)
         symmetry = XAXIS;
@@ -616,7 +616,7 @@ JulialongSetup(void)
             if (fractype == LPOPCORNJUL)
                symmetry = ORIGIN;
          }
-         if (save_release <=1960)
+         if (save_release <= 1960)
             curfractalspecific->orbitcalc = LPopcornFractal_Old;
          else if (default_functions && debugflag == 96)
             curfractalspecific->orbitcalc = LPopcornFractal;
@@ -961,11 +961,11 @@ FnXFnSetup(void)
    /* sqr */ {XYAXIS, XYAXIS, XYAXIS, XYAXIS, XYAXIS, NOSYM, XYAXIS},
    };
    /*
-   if (trigndx[0]==EXP || trigndx[0]==LOG || trigndx[1]==EXP || trigndx[1]==LOG)
+   if (trigndx[0] == EXP || trigndx[0] == LOG || trigndx[1] == EXP || trigndx[1] == LOG)
       symmetry = XAXIS;
-   else if ((trigndx[0]==SIN && trigndx[1]==SIN)||(trigndx[0]==COS && trigndx[1]==COS))
+   else if ((trigndx[0] == SIN && trigndx[1] == SIN)||(trigndx[0] == COS && trigndx[1] == COS))
       symmetry = PI_SYM;
-   else if ((trigndx[0]==SIN && trigndx[1]==COS)||(trigndx[0]==COS && trigndx[1]==SIN))
+   else if ((trigndx[0] == SIN && trigndx[1] == COS)||(trigndx[0] == COS && trigndx[1] == SIN))
       symmetry = YAXIS;
    else
       symmetry = XYAXIS;
@@ -974,12 +974,12 @@ FnXFnSetup(void)
         symmetry = fnxfn[trigndx[0]][trigndx[1]];  /* JCO 5/22/92 */
                     /* defaults to XAXIS symmetry JCO 5/22/92 */
    else {  /* added to complete the symmetry JCO 5/22/92 */
-      if (trigndx[0]==LOG || trigndx[1] ==LOG) symmetry = NOSYM;
-      if (trigndx[0]==9 || trigndx[1] ==9) { /* 'real' cos */
-         if (trigndx[0]==SIN || trigndx[1] ==SIN) symmetry = PI_SYM;
-         if (trigndx[0]==COS || trigndx[1] ==COS) symmetry = PI_SYM;
+      if (trigndx[0] == LOG || trigndx[1] == LOG) symmetry = NOSYM;
+      if (trigndx[0] == 9 || trigndx[1] == 9) { /* 'real' cos */
+         if (trigndx[0] == SIN || trigndx[1] == SIN) symmetry = PI_SYM;
+         if (trigndx[0] == COS || trigndx[1] == COS) symmetry = PI_SYM;
       }
-      if (trigndx[0]==9 && trigndx[1] ==9) symmetry = PI_SYM;
+      if (trigndx[0] == 9 && trigndx[1] == 9) symmetry = PI_SYM;
    }
    if (curfractalspecific->isinteger)
       return JulialongSetup();
@@ -1109,7 +1109,7 @@ int
 HalleySetup(void)
 {
    /* Halley */
-   periodicitycheck=0;
+   periodicitycheck = 0;
 
    if (usr_floatflag)
      fractype = HALLEY; /* float on */
@@ -1293,8 +1293,8 @@ MandPhoenixCplxSetup(void)
 int
 StandardSetup(void)
 {
-   if (fractype==UNITYFP)
-      periodicitycheck=0;
+   if (fractype == UNITYFP)
+      periodicitycheck = 0;
    return 1;
 }
 

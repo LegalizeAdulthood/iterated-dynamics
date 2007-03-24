@@ -46,14 +46,14 @@ void showcornersdbl(char *s)
 		"delx2= %.20Lf dely2= %.20Lf",
 		s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
 		delxx, delyy, delxx2, delyy2);
-   if (stopmsg(0, msg)==-1)
+   if (stopmsg(0, msg) == -1)
       goodbye();
 }
 
 /* show floating point and bignumber corners */
 void showcorners(char *s)
 {
-   int dec=20;
+   int dec = 20;
    char msg[100], msg1[100], msg3[100];
    bntostr(msg, dec, bnxmin);
    sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
@@ -75,7 +75,7 @@ void showcorners(char *s)
    bntostr(msg, dec, bny3rd);
    sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
    strcat(msg3, msg1);
-   if (stopmsg(0, msg3)==-1)
+   if (stopmsg(0, msg3) == -1)
       goodbye();
 }
 
@@ -90,7 +90,7 @@ bfdecimals=%d ",
                s, bnstep, bnlength, intlength, rlength, padding,
                shiftfactor, decimals, bflength, rbflength,
                bfdecimals);
-   if (stopmsg(0, msg)==-1)
+   if (stopmsg(0, msg) == -1)
       goodbye();
 }
 
@@ -120,13 +120,13 @@ void showcornersbf(char *s)
    bftostr(msg, dec, bfy3rd);
    sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
    strcat(msg3, msg1);
-   if (stopmsg(0, msg3)==-1)
+   if (stopmsg(0, msg3) == -1)
       goodbye();
 }
 
 void showcornersbfs(char *s)
 {
-   int dec=20;
+   int dec = 20;
    char msg[100], msg1[100], msg3[500];
    bftostr(msg, dec, bfsxmin);
    sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, xxmin);
@@ -148,7 +148,7 @@ void showcornersbfs(char *s)
    bftostr(msg, dec, bfsy3rd);
    sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, yy3rd);
    strcat(msg3, msg1);
-   if (stopmsg(0, msg3)==-1)
+   if (stopmsg(0, msg3) == -1)
       goodbye();
 }
 
@@ -158,7 +158,7 @@ void show_two_bf(char *s1, bf_t t1, char *s2, bf_t t2, int digits)
    bftostr_e(msg1, digits, t1);
    bftostr_e(msg2, digits, t2);
    sprintf(msg3, "\n%s->%s\n%s->%s", s1, msg1, s2, msg2);
-   if (stopmsg(0, msg3)==-1)
+   if (stopmsg(0, msg3) == -1)
       goodbye();
 }
 
@@ -169,7 +169,7 @@ void show_three_bf(char *s1, bf_t t1, char *s2, bf_t t2, char *s3, bf_t t3, int 
    bftostr_e(msg2, digits, t2);
    bftostr_e(msg3, digits, t3);
    sprintf(msg4, "\n%s->%s\n%s->%s\n%s->%s", s1, msg1, s2, msg2, s3, msg3);
-   if (stopmsg(0, msg4)==-1)
+   if (stopmsg(0, msg4) == -1)
       goodbye();
 }
 
@@ -190,7 +190,7 @@ void showaspect(char *s)
             s,
             (yymax-yymin)/(xxmax-xxmin),
             str);
-   if (stopmsg(0, msg)==-1)
+   if (stopmsg(0, msg) == -1)
       goodbye();
    restore_stack(saved);
 }
@@ -198,21 +198,21 @@ void showaspect(char *s)
 /* compare a double and bignumber */
 void comparevalues(char *s, LDBL x, bn_t bnx)
 {
-   int dec=40;
+   int dec = 40;
    char msg[100], msg1[100];
    bntostr(msg, dec, bnx);
    sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-   if (stopmsg(0, msg1)==-1)
+   if (stopmsg(0, msg1) == -1)
       goodbye();
 }
 /* compare a double and bignumber */
 void comparevaluesbf(char *s, LDBL x, bf_t bfx)
 {
-   int dec=40;
+   int dec = 40;
    char msg[300], msg1[300];
    bftostr_e(msg, dec, bfx);
    sprintf(msg1, "%s\nbignum=%s\ndouble=%.20Lf\n\n", s, msg, x);
-   if (stopmsg(0, msg1)==-1)
+   if (stopmsg(0, msg1) == -1)
       goodbye();
 }
 
@@ -224,7 +224,7 @@ void show_var_bf(char *s, bf_t n)
         strcat(msg, " ");
         bftostr_e(msg+strlen(s), 40, n);
         msg[79] = 0;
-        if (stopmsg(0, msg)==-1)
+        if (stopmsg(0, msg) == -1)
             goodbye();
     }
 
@@ -242,7 +242,7 @@ void bfcornerstofloat(void)
       xx3rd = (double)bftofloat(bfx3rd);
       yy3rd = (double)bftofloat(bfy3rd);
    }
-   for (i=0; i<MAXPARAMS; i++)
+   for (i = 0; i < MAXPARAMS; i++)
       if (typehasparm(fractype, i, NULL))
          param[i] = (double)bftofloat(bfparms[i]);
 }
@@ -548,7 +548,7 @@ int MandelbnSetup()
          init_big_pi();
          bftobn(bnparm.x, bfparms[0]);
          bftobn(bnparm.y, bfparms[1]);
-         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2] )
+         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
             symmetry = NOSYM;
          break;
    }
@@ -625,7 +625,7 @@ int MandelbfSetup()
          init_big_pi();
          copy_bf(bfparm.x, bfparms[0]);
          copy_bf(bfparm.y, bfparms[1]);
-         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2] )
+         if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
             symmetry = NOSYM;
          break;
    }
@@ -946,7 +946,7 @@ _BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
    return t;
 }
 
-_BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
+_BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
 {
    bf_t tmp1;
    int saved; saved = save_stack();
@@ -1002,7 +1002,7 @@ _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
    return t;
 }
 
-_BNCMPLX *cplxmul_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
+_BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 {
    bn_t tmp1;
    int saved; saved = save_stack();

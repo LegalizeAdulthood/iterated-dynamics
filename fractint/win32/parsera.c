@@ -3,7 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-#define FN(name_) void fStk##name_(void) { _ASSERTE(0 && "Called " #name_ ); }
+#define FN(name_) void fStk##name_(void) { _ASSERTE(0 && "Called " #name_); }
 
 FN(Abs)
 FN(ACos)
@@ -150,7 +150,7 @@ _fFormula          proc far
    assume          es:DGROUP, ds:nothing
       push         si
 
-   ;;;;align           8
+   ; ;; ;align           8
 inner_loop:                            ; new loop             CAE 1 Dec 1998
       mov          si,WORD PTR [bx+2]
       call         WORD PTR [bx]
@@ -160,7 +160,7 @@ inner_loop:                            ; new loop             CAE 1 Dec 1998
       add          bx,4
       jmp          short inner_loop
 
-   ;;;;align           8
+   ; ;; ;align           8
 past_loop:
    ; NOTE: AX was set by the last operator fn called.
       mov          si,_PtrToZ          ; ds:si -> z

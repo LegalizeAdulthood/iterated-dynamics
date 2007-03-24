@@ -26,11 +26,11 @@ tgaview()
    struct fractal_info info;
 
    fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
-   if (fptarga==NULL)
+   if (fptarga == NULL)
       return -1;
 
    g_row_count = 0;
-   for (i=0; i<(int)height; ++i)
+   for (i = 0; i < (int)height; ++i)
    {
        t16_getline(fptarga, width, (U16 *)boxx);
        if ((*outln)((void *)boxx,width))
@@ -58,8 +58,8 @@ outlin16(BYTE *buffer,int linelen)
     int i;
     U16 *buf;
     buf = (U16 *)buffer;
-    for (i=0; i<linelen; i++)
-       putcolor(i,g_row_count,buf[i]>>8);
+    for (i = 0; i < linelen; i++)
+       putcolor(i,g_row_count,buf[i] >> 8);
     g_row_count++;
     return 0;
 }

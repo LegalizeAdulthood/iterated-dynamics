@@ -39,8 +39,8 @@ int rhombus_stack[10];
 int rhombus_depth;
 int max_rhombus_depth;
 int minstackavail;
-/* int minstack=1700; */ /* need this much stack to recurse */
-int minstack=2200; /* and this much stack to not crash when <tab> is pressed */
+/* int minstack = 1700; */ /* need this much stack to recurse */
+int minstack = 2200; /* and this much stack to not crash when <tab> is pressed */
 static DBLS twidth;
 static DBLS equal;
 static char baxinxx = FALSE;
@@ -50,12 +50,12 @@ long iteration(register DBLS cr, register DBLS ci,
 	      register DBLS re, register DBLS im,
 	      long start)
 {
-  register long iter, offset=0;
+  register long iter, offset = 0;
   int k, n;
   register DBLS ren, imn, sre, sim;
 #ifdef INTEL
   register float mag;
-  register unsigned long bail=0x41800000, magi; /* bail=16.0 */
+  register unsigned long bail = 0x41800000, magi; /* bail=16.0 */
   register unsigned long eq=*(unsigned long *)&equal;
 #else
   register DBLS mag;
@@ -68,100 +68,100 @@ long iteration(register DBLS cr, register DBLS ci,
       sre=re; sim=im;
       ren=re*re;
       imn=im*im;
-      if (start!=0)
+      if (start != 0)
 	{
 	  offset=maxit-start+7;
-	  iter=offset>>3;
-	  offset&=7;
+	  iter=offset >> 3;
+	  offset &= 7;
 	  offset=(8-offset);
 	}
       else
-	iter=maxit>>3;
-      k=n=8;
+	iter=maxit >> 3;
+      k=n = 8;
       
       do
 	{
 	  im=im*re;
 	  re=ren-imn;
-	  im+=im;
-	  re+=cr;
-	  im+=ci;
+	  im += im;
+	  re += cr;
+	  im += ci;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 	  
 #ifdef INTEL
 	  mag=FABS(sre-re);
 	  magi=*(unsigned long *)&mag;
-	  if (magi<eq)
+	  if (magi < eq)
 	    {
 	      mag=FABS(sim-im);
 	      magi=*(unsigned long *)&mag;
-	      if (magi<eq)
+	      if (magi < eq)
 		return BASIN_COLOR;
 	    }
 #else /* INTEL */
-	  if (FABS(sre-re)<equal&&FABS(sim-im)<equal)
+	  if (FABS(sre-re) < equal&&FABS(sim-im) < equal)
 	    return BASIN_COLOR;
 #endif /* INTEL */
        
-	  k-=8;
-	  if (k<=0)
+	  k -= 8;
+	  if (k <= 0)
 	    {
-	      n<<=1;
+	      n <<= 1;
 	      sre=re;
 	      sim=im;
 	      k=n;
@@ -175,88 +175,88 @@ long iteration(register DBLS cr, register DBLS ci,
 #endif
 	}
 #ifdef INTEL
-      while (magi<bail&&--iter!=0);
+      while (magi < bail&&--iter != 0);
 #else
-      while (mag<16.0&&--iter!=0);
+      while (mag < 16.0&&--iter != 0);
 #endif
     }
   else
     {
       ren=re*re;
       imn=im*im;
-      if (start!=0)
+      if (start != 0)
 	{
 	  offset=maxit-start+7;
-	  iter=offset>>3;
-	  offset&=7;
+	  iter=offset >> 3;
+	  offset &= 7;
 	  offset=(8-offset);
 	}
       else
-	iter=maxit>>3;
+	iter=maxit >> 3;
 
       do
 	{      
 	  im=im*re;
 	  re=ren-imn;
-	  im+=im;
-	  re+=cr;
-	  im+=ci;
+	  im += im;
+	  re += cr;
+	  im += ci;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*re;
 	  ren=re+im;
 	  re=re-im;
-	  imn+=imn;
+	  imn += imn;
 	  re=ren*re;
 	  im=imn+ci;
-	  re+=cr;
+	  re += cr;
 
 	  imn=im*im;
 	  ren=re*re;
@@ -266,13 +266,13 @@ long iteration(register DBLS cr, register DBLS ci,
 #endif
 	}
 #ifdef INTEL
-      while (magi<bail&&--iter!=0);
+      while (magi < bail&&--iter != 0);
 #else
-      while (mag<16.0&&--iter!=0);
+      while (mag < 16.0&&--iter != 0);
 #endif
     }
   
-  if (iter==0)
+  if (iter == 0)
     {
       baxinxx=TRUE;
       return BASIN_COLOR;
@@ -311,13 +311,13 @@ long iteration(register DBLS cr, register DBLS ci,
 static void puthline(int x1, int y1, int x2, int color)
 {
    int x;
-   for (x=x1; x<=x2; x++)
+   for (x=x1; x <= x2; x++)
       (*plot)(x, y1, color);
 }
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
-  for (; y1<=y2; y1++)
+  for (; y1 <= y2; y1++)
     puthline(x1, y1, x2, color);
 }
 
@@ -371,8 +371,8 @@ interpolate(cre1, midr, cre2, \
 /* compute coefficients of Newton polynomial (b0, .., b2) from
    (x0, w0), .., (x2, w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-b0=w0;\
-b1=(w1-w0)/(LDBL)(x1-x0);\
+b0=w0; \
+b1=(w1-w0)/(LDBL)(x1-x0); \
 b2=((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0)
 
 /* evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t */     
@@ -392,14 +392,14 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
   b1=(r1*b2-r2*b1)/(x2-x1);
   b0=(r0*b1-r2*b0)/(x2-x0);
 
-  return (DBLS)b0;*/
+  return (DBLS)b0; */
   b=(b1-b0)/(x1-x0);
   return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1)+b)*(t-x0)+b0;
   /*
-  if (t<x1)
+  if (t < x1)
     return w0+((t-x0)/(LDBL)(x1-x0))*(w1-w0);
   else
-    return w1+((t-x1)/(LDBL)(x2-x1))*(w2-w1);*/
+    return w1+((t-x1)/(LDBL)(x2-x1))*(w2-w1); */
 }
 
 /* SOICompute - Perform simultaneous orbit iteration for a given rectangle
@@ -432,15 +432,15 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
    
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
  ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
- zre1=(ZRE1);zim1=(ZIM1);\
- zre2=(ZRE2);zim2=(ZIM2);\
- zre3=(ZRE3);zim3=(ZIM3);\
- zre4=(ZRE4);zim4=(ZIM4);\
- zre5=(ZRE5);zim5=(ZIM5);\
- zre6=(ZRE6);zim6=(ZIM6);\
- zre7=(ZRE7);zim7=(ZIM7);\
- zre8=(ZRE8);zim8=(ZIM8);\
- zre9=(ZRE9);zim9=(ZIM9);\
+ zre1=(ZRE1); zim1=(ZIM1); \
+ zre2=(ZRE2); zim2=(ZIM2); \
+ zre3=(ZRE3); zim3=(ZIM3); \
+ zre4=(ZRE4); zim4=(ZIM4); \
+ zre5=(ZRE5); zim5=(ZIM5); \
+ zre6=(ZRE6); zim6=(ZIM6); \
+ zre7=(ZRE7); zim7=(ZIM7); \
+ zre8=(ZRE8); zim8=(ZIM8); \
+ zre9=(ZRE9); zim9=(ZIM9); \
  status=rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER))
 
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
@@ -639,14 +639,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
     status = 1;
     goto rhombus_done;
     }
-  if (iter>maxit)
+  if (iter > maxit)
     {
       putbox(x1, y1, x2, y2, 0);
       status = 0;
       goto rhombus_done;
     }
   
-  if ((y2-y1<=SCAN) || (avail < minstack))
+  if ((y2-y1 <= SCAN) || (avail < minstack))
     {
       /* finish up the image by scanning the rectangle */
     scan:
@@ -662,7 +662,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       imstep=(cim2-cim1)/(y2-y1);
       interstep=INTERLEAVE*restep;
       
-      for (y=y1, im=cim1; y<y2; y++, im+=imstep)
+      for (y=y1, im=cim1; y < y2; y++, im += imstep)
 	{
 	  if (driver_key_pressed())
 	    {
@@ -678,8 +678,8 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
             goto rhombus_done;
           }   
 	  savex=x1;
-	  for(x=x1+INTERLEAVE, re=cre1+interstep; x<x2;
-	      x+=INTERLEAVE, re+=interstep)
+	  for (x=x1+INTERLEAVE, re=cre1+interstep; x < x2;
+	      x += INTERLEAVE, re += interstep)
 	    {
 	      zre=GET_SCAN_REAL(re, im);
 	      zim=GET_SCAN_IMAG(re, im);
@@ -690,10 +690,10 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                 status = 1;
                 goto rhombus_done;
                 }
-              else if (color==savecolor)
+              else if (color == savecolor)
 		continue;
 	      
-	      for (z=x-1, helpre=re-restep; z>x-INTERLEAVE; z--, helpre-=restep)
+	      for (z=x-1, helpre=re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
 		{
 		  zre=GET_SCAN_REAL(helpre, im);
 		  zim=GET_SCAN_IMAG(helpre, im);
@@ -703,12 +703,12 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
           	    status = 1;
                     goto rhombus_done;
 		    }
-		  else if (helpcolor==savecolor)
+		  else if (helpcolor == savecolor)
 		    break;
 		  (*plot)(z, y, (int)(helpcolor&255));
 		}
 	      
-	      if (savex<z)
+	      if (savex < z)
 		puthline(savex, y, z, (int)(savecolor&255));
 	      else
 		(*plot)(savex, y, (int)(savecolor&255));
@@ -717,7 +717,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	      savecolor = color;
 	    }
 	  
-	  for (z=x2-1, helpre=cre2-restep; z>savex; z--, helpre-=restep)
+	  for (z=x2-1, helpre=cre2-restep; z > savex; z--, helpre -= restep)
 	    {
 	      zre=GET_SCAN_REAL(helpre, im);
 	      zim=GET_SCAN_IMAG(helpre, im);
@@ -727,13 +727,13 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
                 status = 1;
                 goto rhombus_done;
 		}
-	      else if (helpcolor==savecolor)
+	      else if (helpcolor == savecolor)
 		break;
 	      
 	      (*plot)(z, y, (int)(helpcolor&255));
 	    }
 	  
-	  if (savex<z)
+	  if (savex < z)
 	    puthline(savex, y, z, (int)(savecolor&255));
 	  else
 	    (*plot)(savex, y, (int)(savecolor&255));
@@ -863,25 +863,25 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       iter++;
 
       /* if one of the iterated values bails out, subdivide */
-      if ((rq1+iq1)>16.0||
-	 (rq2+iq2)>16.0||
-	 (rq3+iq3)>16.0||
-	 (rq4+iq4)>16.0||
-	 (rq5+iq5)>16.0||
-	 (rq6+iq6)>16.0||
-	 (rq7+iq7)>16.0||
-	 (rq8+iq8)>16.0||
-	 (rq9+iq9)>16.0||
-	 (trq1+tiq1)>16.0||
-	 (trq2+tiq2)>16.0||
-	 (trq3+tiq3)>16.0||
-	 (trq4+tiq4)>16.0)
+      if ((rq1+iq1) > 16.0||
+	 (rq2+iq2) > 16.0||
+	 (rq3+iq3) > 16.0||
+	 (rq4+iq4) > 16.0||
+	 (rq5+iq5) > 16.0||
+	 (rq6+iq6) > 16.0||
+	 (rq7+iq7) > 16.0||
+	 (rq8+iq8) > 16.0||
+	 (rq9+iq9) > 16.0||
+	 (trq1+tiq1) > 16.0||
+	 (trq2+tiq2) > 16.0||
+	 (trq3+tiq3) > 16.0||
+	 (trq4+tiq4) > 16.0)
 	break;
 
       /* if maximum number of iterations is reached, the whole rectangle
 	 can be assumed part of M. This is of course best case behavior
 	 of SOI, we seldomly get there */
-      if (iter>maxit)
+      if (iter > maxit)
 	{
 	  putbox(x1, y1, x2, y2, 0);
           status = 0;
@@ -891,66 +891,66 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
       /* now for all test points, check whether they exceed the
 	 allowed tolerance. if so, subdivide */
       l1=GET_REAL(cr1, ci1);
-      l1=(tzr1==0.0)?
-	(l1==0.0)?1.0:1000.0:
+      l1=(tzr1 == 0.0)?
+	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr1;
-      if (FABS(1.0-l1)>twidth)
+      if (FABS(1.0-l1) > twidth)
 	break;
       
       l2=GET_IMAG(cr1, ci1);
-      l2=(tzi1==0.0)?
-	(l2==0.0)?1.0:1000.0:
+      l2=(tzi1 == 0.0)?
+	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi1;
-      if (FABS(1.0-l2)>twidth)
+      if (FABS(1.0-l2) > twidth)
 	break;
       
       l1=GET_REAL(cr2, ci1);
-      l1=(tzr2==0.0)?
-	(l1==0.0)?1.0:1000.0:
+      l1=(tzr2 == 0.0)?
+	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr2;
-      if (FABS(1.0-l1)>twidth)
+      if (FABS(1.0-l1) > twidth)
 	break;
 
       l2=GET_IMAG(cr2, ci1);
-      l2=(tzi2==0.0)?
-	(l2==0.0)?1.0:1000.0:
+      l2=(tzi2 == 0.0)?
+	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi2;
-      if (FABS(1.0-l2)>twidth)
+      if (FABS(1.0-l2) > twidth)
 	break;
 
       l1=GET_REAL(cr1, ci2);
-      l1=(tzr3==0.0)?
-	(l1==0.0)?1.0:1000.0:
+      l1=(tzr3 == 0.0)?
+	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr3;
-      if (FABS(1.0-l1)>twidth)
+      if (FABS(1.0-l1) > twidth)
 	break;
       
       l2=GET_IMAG(cr1, ci2);
-      l2=(tzi3==0.0)?
-	(l2==0.0)?1.0:1000.0:
+      l2=(tzi3 == 0.0)?
+	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi3;
-      if (FABS(1.0-l2)>twidth)
+      if (FABS(1.0-l2) > twidth)
 	break;
       
       l1=GET_REAL(cr2, ci2);
-      l1=(tzr4==0.0)?
-	(l1==0.0)?1.0:1000.0:
+      l1=(tzr4 == 0.0)?
+	(l1 == 0.0)?1.0:1000.0:
 	l1/tzr4;
-      if (FABS(1.0-l1)>twidth)
+      if (FABS(1.0-l1) > twidth)
 	break;
 
       l2=GET_IMAG(cr2, ci2);
-      l2=(tzi4==0.0)?
-	(l2==0.0)?1.0:1000.0:
+      l2=(tzi4 == 0.0)?
+	(l2 == 0.0)?1.0:1000.0:
 	l2/tzi4;
-      if (FABS(1.0-l2)>twidth)
+      if (FABS(1.0-l2) > twidth)
 	break;
     }
 
   iter--;
 
   /* this is a little heuristic I tried to improve performance. */
-  if (iter-before<10)
+  if (iter-before < 10)
     {
       zre1=sr1; zim1=si1;
       zre2=sr2; zim2=si2;
@@ -1012,7 +1012,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
   im93=GET_SAVED_IMAG(cr1, ci2);
   im94=GET_SAVED_IMAG(cr2, ci2);
 
-  RHOMBUS(cre1, midr, cim1, midi, x1, ((x1+x2)>>1), y1, ((y1+y2)>>1),
+  RHOMBUS(cre1, midr, cim1, midi, x1, ((x1+x2) >> 1), y1, ((y1+y2) >> 1),
 	     sr1, si1,
 	     sr5, si5,
 	     sr6, si6,
@@ -1023,7 +1023,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	     re15, im15,
 	     re91, im91,
 	     iter);
-  RHOMBUS(midr, cre2, cim1, midi, (x1+x2)>>1, x2, y1, (y1+y2)>>1,
+  RHOMBUS(midr, cre2, cim1, midi, (x1+x2) >> 1, x2, y1, (y1+y2) >> 1,
 	     sr5, si5,
 	     sr2, si2,
 	     sr9, si9,
@@ -1034,7 +1034,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	     re16, im16,
 	     re92, im92,
 	     iter);
-  RHOMBUS(cre1, midr, midi, cim2, x1, (x1+x2)>>1, (y1+y2)>>1, y2,
+  RHOMBUS(cre1, midr, midi, cim2, x1, (x1+x2) >> 1, (y1+y2) >> 1, y2,
 	     sr6, si6,
 	     sr9, si9,
 	     sr3, si3,
@@ -1045,7 +1045,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	     re20, im20,
 	     re93, im93,
 	     iter);
-  RHOMBUS(midr, cre2, midi, cim2, (x1+x2)>>1, x2, (y1+y2)>>1, y2,
+  RHOMBUS(midr, cre2, midi, cim2, (x1+x2) >> 1, x2, (y1+y2) >> 1, y2,
 	     sr9, si9,
 	     sr7, si7,
 	     sr8, si8,
@@ -1064,7 +1064,7 @@ rhombus_done:
 void soi_ldbl(void)
 {
    int status;
-   DBLS tolerance=0.1;
+   DBLS tolerance = 0.1;
    DBLS stepx, stepy;
    DBLS xxminl, xxmaxl, yyminl, yymaxl;
    minstackavail = 30000;

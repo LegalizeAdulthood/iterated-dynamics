@@ -115,7 +115,7 @@ unsigned long lm;               /* magnitude limit (CALCMAND) */
 int     show_orbit;                     /* flag to turn on and off */
 int     orbit_ptr;                      /* pointer into save_orbit array */
 int save_orbit[1500];                    /* array to save orbit values */
-int     orbit_color=15;                 /* XOR color */
+int     orbit_color = 15;                 /* XOR color */
 
 int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
 int     symmetry;          /* symmetry flag */
@@ -145,7 +145,7 @@ int curpass, totpasses;
 int currow, curcol;
 
 /* static vars for diffusion scan */
-unsigned bits=0; 		/* number of bits in the counter */
+unsigned bits = 0; 		/* number of bits in the counter */
 unsigned long dif_counter; 	/* the diffusion counter */
 unsigned long dif_limit; 	/* the diffusion counter */
 
@@ -229,7 +229,7 @@ static int showdot_width = 0;
 double fmodtest(void)
 {
    double result;
-   if (inside==FMODI && save_release <= 2000) /* for backwards compatibility */
+   if (inside == FMODI && save_release <= 2000) /* for backwards compatibility */
    {
       if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
          result=sqr(g_new.x)+sqr(g_new.y);
@@ -389,9 +389,9 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
    switch (direction)
    {
       case LOWER_RIGHT:
-         for (j=starty; j<=stopy; startx++, j++)
+         for (j=starty; j <= stopy; startx++, j++)
          {
-            if (action==SAVE)
+            if (action == SAVE)
             {
                get_line(j, startx, stopx, savedots+ct);
                sym_fill_line(j, startx, stopx, fillbuff);
@@ -402,9 +402,9 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
          }
          break;
       case UPPER_RIGHT:
-         for (j=starty; j>=stopy; startx++, j--)
+         for (j=starty; j >= stopy; startx++, j--)
          {
-            if (action==SAVE)
+            if (action == SAVE)
             {
                get_line(j, startx, stopx, savedots+ct);
                sym_fill_line(j, startx, stopx, fillbuff);
@@ -415,9 +415,9 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
          }
          break;
       case LOWER_LEFT:
-         for (j=starty; j<=stopy; stopx--, j++)
+         for (j=starty; j <= stopy; stopx--, j++)
          {
-            if (action==SAVE)
+            if (action == SAVE)
             {
                get_line(j, startx, stopx, savedots+ct);
                sym_fill_line(j, startx, stopx, fillbuff);
@@ -428,9 +428,9 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
          }
          break;
       case UPPER_LEFT:
-         for (j=starty; j>=stopy; stopx--, j--)
+         for (j=starty; j >= stopy; stopx--, j--)
          {
-            if (action==SAVE)
+            if (action == SAVE)
             {
                get_line(j, startx, stopx, savedots+ct);
                sym_fill_line(j, startx, stopx, fillbuff);
@@ -506,14 +506,14 @@ int calcfract(void)
    /* added yet another level of indirection to putcolor!!! TW */
    putcolor = putcolor_a;
    if (g_is_true_color && truemode)
-      /* Have to force passes=1 */
+      /* Have to force passes = 1 */
       usr_stdcalcmode = stdcalcmode = '1';
    if (truecolor)
    {
       check_writefile(light_name, ".tga");
-      if (startdisk1(light_name, NULL, 0)==0)
+      if (startdisk1(light_name, NULL, 0) == 0)
       {
-         /* Have to force passes=1 */
+         /* Have to force passes = 1 */
          usr_stdcalcmode = stdcalcmode = '1';
          putcolor = puttruecolor_disk;
       }
@@ -677,7 +677,7 @@ int calcfract(void)
       if (llimit <= 0) llimit = 0x7fffffffL; /* klooge for integer math */
       llimit2 = (long)(rqlim2 * fudge);    /* stop if magnitude exceeds this */
       lclosenuff = (long)(closenuff * fudge); /* "close enough" value */
-      l16triglim = 8L<<16;         /* domain limit of fast trig functions */
+      l16triglim = 8L << 16;         /* domain limit of fast trig functions */
       linitorbit.x = (long)(initorbit.x * fudge);
       linitorbit.y = (long)(initorbit.y * fudge);
    }
@@ -786,10 +786,10 @@ int calcfract(void)
 /* locate alternate math record */
 int find_alternate_math(int type, int math)
 {
-   int i, ret, curtype /* , curmath=0 */;
+   int i, ret, curtype /* , curmath = 0 */;
    /* unsigned umath; */
    ret = -1;
-   if (math==0)
+   if (math == 0)
       return ret;
    i= -1;
 #if 0  /* for now at least, the only alternatemath is bignum and bigflt math */
@@ -916,8 +916,8 @@ static void perform_worklist()
          dem_delta *= sqr(ftemp)/10000; /* multiply by thickness desired */
       else
          dem_delta *= 1/(sqr(ftemp)*10000); /* multiply by thickness desired */
-      dem_width = ( sqrt( sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) ) * aspect
-          + sqrt( sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
+      dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) ) * aspect
+          + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
       ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
       ftemp += 3; /* bailout plus just a bit */
       ftemp2 = log(ftemp);
@@ -944,7 +944,7 @@ static void perform_worklist()
       workpass = worklist[0].pass;
       worksym  = worklist[0].sym;
       --num_worklist;
-      for (i=0; i<num_worklist; ++i)
+      for (i = 0; i < num_worklist; ++i)
          worklist[i] = worklist[i+1];
 
       calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
@@ -1033,9 +1033,9 @@ static void perform_worklist()
 
       setsymmetry(symmetry, 1);
 
-      if (!(resuming)&&(labs(LogFlag) ==2 || (LogFlag && Log_Auto_Calc)))
+      if (!(resuming)&&(labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
        {  /* calculate round screen edges to work out best start for logmap */
-         LogFlag = ( autologmap() * (LogFlag / labs(LogFlag)));
+         LogFlag = (autologmap() * (LogFlag / labs(LogFlag)));
          SetupLogTable();
        }
 
@@ -1043,7 +1043,7 @@ static void perform_worklist()
       switch (stdcalcmode)
       {
       case 's':
-         if (debugflag==3444)
+         if (debugflag == 3444)
             soi_ldbl();
          else
             soi();
@@ -1105,7 +1105,7 @@ static int diffusion_scan(void)
    /* fit any 32 bit architecture, the maxinum limit for this case would  */
    /* be 65536x65536 (HB) */
 
-   bits = (unsigned) (min ( log (iystop-iystart+1), log(ixstop-ixstart+1) )/log2 );
+   bits = (unsigned) (min (log (iystop-iystart+1), log(ixstop-ixstart+1) )/log2 );
    bits <<= 1; /* double for two axes */
    dif_limit = 1l << bits;
 
@@ -1125,29 +1125,37 @@ static int diffusion_scan(void)
    top left cornet at (x, y) with optimization from sym_fill_line */
 #define plot_block(x, y, s, c) \
     memset(dstack, (c), (s)); \
-    for (ty=(y); ty<(y)+(s); ty++) \
+    for (ty=(y); ty < (y)+(s); ty++) \
        sym_fill_line(ty, (x), (x)+(s)-1, dstack)
 
 /* macro that does the same as above, but checks the limits in x and y */
 #define plot_block_lim(x, y, s, c) \
     memset(dstack, (c), (s)); \
-    for (ty=(y); ty<min((y)+(s), iystop+1); ty++) \
+    for (ty=(y); ty < min((y)+(s), iystop+1); ty++) \
        sym_fill_line(ty, (x), min((x)+(s)-1, ixstop), dstack)
 
 /* macro: count_to_int(dif_counter, colo, rowo) */
 /* (inlined  function:) */
-#define count_to_int(C, x, y)\
-   \
-   tC = C; \
-   \
-   x =dif_la[tC&0xFF];         y =dif_lb[tC&0xFF]; tC>>=8;   \
-   x <<=4; x+=dif_la[tC&0xFF]; y <<=4; y+=dif_lb[tC&0xFF]; tC>>=8; \
-   x <<=4; x+=dif_la[tC&0xFF]; y <<=4; y+=dif_lb[tC&0xFF]; tC>>=8; \
-   x >>= dif_offset;           y >>= dif_offset
+#define count_to_int(C, x, y) \
+	tC = C; \
+	x = dif_la[tC&0xFF]; \
+	y = dif_lb[tC&0xFF]; \
+	tC >>= 8; \
+	x <<= 4; \
+	x += dif_la[tC&0xFF]; \
+	y <<= 4; y += dif_lb[tC&0xFF]; \
+	tC >>= 8; \
+	x <<= 4; \
+	x += dif_la[tC&0xFF]; \
+	y <<= 4; \
+	y += dif_lb[tC&0xFF]; \
+	tC >>= 8; \
+	x >>= dif_offset; \
+	y >>= dif_offset
 /* end of inlined function */
 
 /* REMOVED: counter byte 3 */                                                          \
-/* (x) <<=4; (x)+=dif_la[tC&0(x)FF]; (y) <<=4; (y)+=dif_lb[tC&0(x)FF]; tC>>=8;
+/* (x) < <= 4; (x) += dif_la[tC&0(x)FF]; (y) < <= 4; (y) += dif_lb[tC&0(x)FF]; tC >>= 8;
    --> eliminated this and made (*) because fractint user coordinates up to
    2048(x)2048 what means a counter of 24 bits or 3 bytes */
 
@@ -1181,8 +1189,8 @@ static int diffusion_engine (void) {
 
    int s = 1 << (bits/2); /* size of the square */
 
-   nx = (int) floor( (ixstop-ixstart+1)/s );
-   ny = (int) floor( (iystop-iystart+1)/s );
+   nx = (int) floor((ixstop-ixstart+1)/s );
+   ny = (int) floor((iystop-iystart+1)/s );
 
    rem_x = (ixstop-ixstart+1) - nx * s;
    rem_y = (iystop-iystart+1) - ny * s;
@@ -1191,7 +1199,7 @@ static int diffusion_engine (void) {
       dif_counter =0l;
    } else {
       /* yybegin and passes contain data for resuming the type: */
-      dif_counter = (((long) ((unsigned)yybegin))<<16) | ((unsigned)workpass);
+      dif_counter = (((long) ((unsigned)yybegin)) << 16) | ((unsigned)workpass);
    }
 
    dif_offset = 12-(bits/2); /* offset to adjust coordinates */
@@ -1199,14 +1207,14 @@ static int diffusion_engine (void) {
 
    /*************************************/
    /* only the points (dithering only) :*/
-   if ( fillcolor==0 ){
-      while (dif_counter < (dif_limit>>1)) {
+   if (fillcolor == 0 ){
+      while (dif_counter < (dif_limit >> 1)) {
          count_to_int(dif_counter, colo, rowo);
 
-         i=0;
+         i = 0;
          col = ixstart + colo; /* get the right tiles */
          do {
-            j=0;
+            j = 0;
             row = iystart + rowo ;
             do {
                calculate;
@@ -1226,7 +1234,7 @@ static int diffusion_engine (void) {
          /* in the last x tiles we may not need to plot the point */ if
          (colo < rem_x) {
             row = iystart + rowo;
-            j=0;
+            j = 0;
             do {
                calculate;
                (*plot)(col, row, color);
@@ -1243,15 +1251,15 @@ static int diffusion_engine (void) {
    } else {
    /*********************************/
    /* with progressive filling :    */
-      while (dif_counter < (dif_limit>>1))
+      while (dif_counter < (dif_limit >> 1))
       {
-       sqsz=1<<( (int)(bits-(int)( log(dif_counter+0.5)/log2 )-1)/2 );
+       sqsz = 1 << ((int)(bits-(int)(log(dif_counter+0.5)/log2 )-1)/2 );
 
        count_to_int(dif_counter, colo, rowo);
 
-       i=0;
+       i = 0;
        do {
-        j=0;
+        j = 0;
         do {
            col = ixstart + colo + i * s; /* get the right tiles */
            row = iystart + rowo + j * s;
@@ -1272,7 +1280,7 @@ static int diffusion_engine (void) {
        /* in the last tile we may not need to plot the point */
        if (colo < rem_x) {
      col = ixstart + colo + nx * s;
-     j=0;
+     j = 0;
      do {
         row = iystart + rowo + j * s; /* get the right tiles */
 
@@ -1296,9 +1304,9 @@ static int diffusion_engine (void) {
    {
       count_to_int(dif_counter, colo, rowo);
 
-      i=0;
+      i = 0;
       do {
-       j=0;
+       j = 0;
        do {
      col = ixstart + colo + i * s; /* get the right tiles */
      row = iystart + rowo + j * s;
@@ -1319,7 +1327,7 @@ static int diffusion_engine (void) {
       /* in the last tile we may nnt need to plot the point */
       if (colo < rem_x) {
        col = ixstart + colo + nx * s;
-       j=0;
+       j = 0;
        do {
      row = iystart + rowo + j * s; /* get the right tiles */
 
@@ -1346,11 +1354,11 @@ static void count_to_int (long unsigned C, int *r, int *l) {
 
    *r = *l = 0;
 
-   for (i = bits; i>0; i -= 2){
-      *r <<=1; *r += C % 2; C >>= 1;
-      *l <<=1; *l += C % 2; C >>= 1;
+   for (i = bits; i > 0; i -= 2){
+      *r < <= 1; *r += C % 2; C >>= 1;
+      *l < <= 1; *l += C % 2; C >>= 1;
    }
-   *l = (*l+*r)%(1<<(bits/2));  * a+b mod 2^k *
+   *l = (*l+*r)%(1 << (bits/2));  * a+b mod 2^k *
 
 }
 */
@@ -1760,7 +1768,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    lcloseprox = (long)(closeprox*fudge);
    savemaxit = maxit;
 #ifdef NUMSAVED
-   for (i=0; i<NUMSAVED; i++)
+   for (i = 0; i < NUMSAVED; i++)
    {
       caught[i] = 0L;
       changed[i] = 0L;
@@ -1769,7 +1777,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    if (inside == STARTRAIL)
    {
       int i;
-      for (i=0; i<16; i++)
+      for (i = 0; i < 16; i++)
          tantable[i] = 0.0;
       if (save_release > 1824) maxit = 16;
    }
@@ -1842,7 +1850,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
    }
    orbit_ptr = 0;
    coloriter = 0;
-   if (fractype==JULIAFP || fractype==JULIA)
+   if (fractype == JULIAFP || fractype == JULIA)
       coloriter = -1;
    caught_a_cycle = 0;
    if (inside == PERIOD) {
@@ -1876,7 +1884,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       }
       else if (bf_math == BIGNUM)
          old = cmplxbntofloat(&bnold);
-      else if (bf_math==BIGFLT)
+      else if (bf_math == BIGFLT)
          old = cmplxbftofloat(&bfold);
       lastz.x = old.x;
       lastz.y = old.y;
@@ -1918,7 +1926,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             if (max(fabs(deriv.x), fabs(deriv.y)) > dem_toobig)
                break;
          /* if above exit taken, the later test vs dem_delta will place this
-                    point on the boundary, because mag(old)<bailout just now */
+                    point on the boundary, because mag(old) < bailout just now */
 
          if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
          {
@@ -1947,14 +1955,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          {
             if (bf_math == BIGNUM)
                g_new = cmplxbntofloat(&bnnew);
-            else if (bf_math==BIGFLT)
+            else if (bf_math == BIGFLT)
                g_new = cmplxbftofloat(&bfnew);
             plot_orbit(g_new.x, g_new.y, -1);
          }
          else
             iplot_orbit(lnew.x, lnew.y, -1);
       }
-      if ( inside < -1)
+      if (inside < -1)
       {
          if (bf_math == BIGNUM)
             g_new = cmplxbntofloat(&bnnew);
@@ -2000,12 +2008,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             {
                if (labs(lnew.x) < labs(lcloseprox))
                {
-                  hooper = (lcloseprox>0? 1 : -1); /* close to y axis */
+                  hooper = (lcloseprox > 0? 1 : -1); /* close to y axis */
                   goto plot_inside;
                }
                else if (labs(lnew.y) < labs(lcloseprox))
                {
-                  hooper = (lcloseprox>0 ? 2: -2); /* close to x axis */
+                  hooper = (lcloseprox > 0 ? 2: -2); /* close to x axis */
                   goto plot_inside;
                }
             }
@@ -2013,12 +2021,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             {
                if (fabs(g_new.x) < fabs(closeprox))
                {
-                  hooper = (closeprox>0? 1 : -1); /* close to y axis */
+                  hooper = (closeprox > 0? 1 : -1); /* close to y axis */
                   goto plot_inside;
                }
                else if (fabs(g_new.y) < fabs(closeprox))
                {
-                  hooper = (closeprox>0? 2 : -2); /* close to x axis */
+                  hooper = (closeprox > 0? 2 : -2); /* close to x axis */
                   goto plot_inside;
                }
             }
@@ -2103,7 +2111,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                       if ((lat.x + lat.y) < l_at_rad)
                       {
                          attracted = TRUE;
-                         if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
+                         if (finattract < 0) coloriter = (coloriter%attrperiod[i])+1;
                          break;
                       }
                    }
@@ -2120,12 +2128,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 {
                    at.y = g_new.y - attr[i].y;
                    at.y = sqr(at.y);
-                   if ( at.y < f_at_rad)
+                   if (at.y < f_at_rad)
                    {
                       if ((at.x + at.y) < f_at_rad)
                       {
                          attracted = TRUE;
-                         if (finattract<0) coloriter = (coloriter%attrperiod[i])+1;
+                         if (finattract < 0) coloriter = (coloriter%attrperiod[i])+1;
                          break;
                       }
                    }
@@ -2142,7 +2150,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          {
             savedcoloriter = coloriter;
             if (integerfractal)
-               lsaved = lnew;/* integer fractals */
+               lsaved = lnew; /* integer fractals */
             else if (bf_math == BIGNUM)
             {
                copy_bn(bnsaved.x, bnnew.x);
@@ -2167,7 +2175,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             if (--savedincr == 0)    /* time to lengthen the periodicity? */
             {
                savedand = (savedand << 1) + 1;       /* longer periodicity */
-               savedincr = nextsavedincr;/* restart counter */
+               savedincr = nextsavedincr; /* restart counter */
             }
          }
          else                /* check against an old save */
@@ -2197,7 +2205,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                      caught_a_cycle = 1;
 #ifdef NUMSAVED
                int i;
-                for (i=0; i<=zctr; i++)
+                for (i = 0; i <= zctr; i++)
                 {
                    if (caught[i] == 0)
                    {
@@ -2214,7 +2222,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 char msg[MSGLEN];
                 static FILE *fp = NULL;
                 static char c;
-                if (fp==NULL)
+                if (fp == NULL)
                    fp = dir_fopen(workdir, "cycles.txt", "w");
 #endif
                 cyclelen = coloriter-savedcoloriter;
@@ -2224,7 +2232,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
                 if (zctr > 1 && zctr < NUMSAVED)
                 {
                    int i;
-                   for (i=0; i<zctr; i++)
+                   for (i = 0; i < zctr; i++)
                       fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
                 }
                 fflush(fp);
@@ -2256,12 +2264,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          g_new.x = ((double)lnew.x) / fudge;
          g_new.y = ((double)lnew.y) / fudge;
       }
-      else if (bf_math==BIGNUM)
+      else if (bf_math == BIGNUM)
       {
          g_new.x = (double)bntofloat(bnnew.x);
          g_new.y = (double)bntofloat(bnnew.y);
       }
-      else if (bf_math==BIGFLT)
+      else if (bf_math == BIGFLT)
       {
          g_new.x = (double)bftofloat(bfnew.x);
          g_new.y = (double)bftofloat(bfnew.y);
@@ -2284,7 +2292,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          g_new.x = ((double)lnew.x) / fudge;
          g_new.y = ((double)lnew.y) / fudge;
       }
-      else if (bf_math==1)
+      else if (bf_math == 1)
       {
          g_new.x = (double)bntofloat(bnnew.x);
          g_new.y = (double)bntofloat(bnnew.y);
@@ -2308,7 +2316,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 
       /* eliminate negative colors & wrap arounds */
-      if ((coloriter <= 0 || coloriter > maxit) && outside!=FMOD) {
+      if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD) {
          if (save_release < 1961)
              coloriter = 0;
          else
@@ -2324,7 +2332,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          dist = 0;
       else {
          temp = log(dist);
-         dist = dist * sqr(temp) / ( sqr(deriv.x) + sqr(deriv.y) );
+         dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y) );
       }
       if (dist < dem_delta)     /* point is on the edge */
       {
@@ -2388,7 +2396,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
          int i;
          double diff;
          coloriter = 0;
-         for (i=1; i<16; i++)
+         for (i = 1; i < 16; i++)
          {
             diff = tantable[0] - tantable[i];
             if (fabs(diff) < .05)
@@ -2398,8 +2406,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             }
          }
       }
-      else if (inside== PERIOD) {
-          if (cyclelen>0) {
+      else if (inside == PERIOD) {
+          if (cyclelen > 0) {
               coloriter = cyclelen;
           } else {
               coloriter = maxit;
@@ -2407,11 +2415,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
       }
       else if (inside == EPSCROSS)
       {
-         if (hooper==1)
+         if (hooper == 1)
             coloriter = green;
-         else if (hooper==2)
+         else if (hooper == 2)
             coloriter = yellow;
-         else if ( hooper==0)
+         else if (hooper == 0)
             coloriter = maxit;
          if (show_orbit)
             scrub_orbit();
@@ -2439,12 +2447,12 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
             /*
             g_new.x = ((double)lnew.x) / fudge;
             g_new.y = ((double)lnew.y) / fudge;
-            coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit>>1) + 1);
+            coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge) * (maxit >> 1) + 1);
             */
-            coloriter = (long)(((double)lmagnitud/fudge) * (maxit>>1) + 1);
+            coloriter = (long)(((double)lmagnitud/fudge) * (maxit >> 1) + 1);
          }
          else
-            coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit>>1) + 1);
+            coloriter = (long)((sqr(g_new.x) + sqr(g_new.y)) * (maxit >> 1) + 1);
       }
       else /* inside == -1 */
          coloriter = maxit;
@@ -2558,8 +2566,8 @@ static void decomposition(void)
       if (decomp[0] == 2 && save_release >= 1827)
       {
         save_temp = temp;
-        if (temp==2) save_temp = 3;
-        if (temp==3) save_temp = 2;
+        if (temp == 2) save_temp = 3;
+        if (temp == 3) save_temp = 2;
       }
 
       if (decomp[0] >= 8)
@@ -2653,8 +2661,8 @@ static void decomposition(void)
       if (decomp[0] == 2 && save_release >= 1827)
       {
         save_temp = temp;
-        if (temp==2) save_temp = 3;
-        if (temp==3) save_temp = 2;
+        if (temp == 2) save_temp = 3;
+        if (temp == 3) save_temp = 2;
       }
       if (decomp[0] >= 8)
       {
@@ -2886,7 +2894,7 @@ int  bound_trace_main(void)
             trail_color = color;
             row = currow;
             col = curcol;
-            if ((*calctype)()== -1) /* color, row, col are global */
+            if ((*calctype)() == -1) /* color, row, col are global */
                 {
                 if (showdot != bkcolor) /* remove showdot pixel */
                    (*plot)(col, row, bkcolor);
@@ -2923,7 +2931,7 @@ int  bound_trace_main(void)
                     {
                     /* the order of operations in this next line is critical */
 						color = getcolor(col, row);
-                    if (color == bkcolor && (*calctype)()== -1)
+                    if (color == bkcolor && (*calctype)() == -1)
                                 /* color, row, col are global for (*calctype)() */
                         {
                         if (showdot != bkcolor) /* remove showdot pixel */
@@ -3017,7 +3025,7 @@ whenever going_to is South or West
                                 } /* end of fill line */
 
 #if 0 /* don't interupt with a check_key() during fill */
-                            if (--kbdcount<=0)
+                            if (--kbdcount <= 0)
                                 {
                                 if (check_key())
                                     {
@@ -3099,7 +3107,7 @@ static int solidguess(void)
    unsigned int *pfxp0, *pfxp1;
    unsigned int u;
 
-   guessplot=(plot!=putcolor && plot!=symplot2 && plot!=symplot2J);
+   guessplot=(plot != putcolor && plot != symplot2 && plot != symplot2J);
    /* check if guessing at bottom & right edges is ok */
    bottom_guess = (plot == symplot2 || (plot == putcolor && iystop+1 == ydots));
    right_guess  = (plot == symplot2J
@@ -3132,9 +3140,9 @@ static int solidguess(void)
          memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
          reset_periodicity = 1;
          row=iystart;
-         for (col=ixstart; col<=ixstop; col+=maxblock)
+         for (col=ixstart; col <= ixstop; col += maxblock)
          { /* calc top row */
-            if ((*calctype)()== -1)
+            if ((*calctype)() == -1)
             {
                add_worklist(xxstart, xxstop, xxbegin, yystart, yystop, yybegin, 0, worksym);
                goto exit_solidguess;
@@ -3144,15 +3152,15 @@ static int solidguess(void)
       }
       else
          memset(&tprefix[1][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
-      for (y=iystart; y<=iystop; y+=blocksize)
+      for (y=iystart; y <= iystop; y += blocksize)
       {
          currow = y;
          i = 0;
-         if (y+blocksize<=iystop)
+         if (y+blocksize <= iystop)
          { /* calc the row below */
             row=y+blocksize;
             reset_periodicity = 1;
-            for (col=ixstart; col<=ixstop; col+=maxblock)
+            for (col=ixstart; col <= ixstop; col += maxblock)
             {
 				i=(*calctype)();
                if (i == -1)
@@ -3181,29 +3189,29 @@ static int solidguess(void)
       /* calculate skip flags for skippable blocks */
       xlim=(ixstop+maxblock)/maxblock+1;
       ylim=((iystop+maxblock)/maxblock+15)/16+1;
-      if (right_guess==0) /* no right edge guessing, zap border */
-         for (y=0; y<=ylim; ++y)
+      if (right_guess == 0) /* no right edge guessing, zap border */
+         for (y = 0; y <= ylim; ++y)
             tprefix[1][y][xlim]= 0xffff;
-      if (bottom_guess==0) /* no bottom edge guessing, zap border */
+      if (bottom_guess == 0) /* no bottom edge guessing, zap border */
       {
          i=(iystop+maxblock)/maxblock+1;
          y=i/16+1;
-         i=1<<(i&15);
-         for (x=0; x<=xlim; ++x)
-            tprefix[1][y][x]|=i;
+         i = 1 << (i&15);
+         for (x = 0; x <= xlim; ++x)
+            tprefix[1][y][x] |= i;
       }
       /* set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1] */
-      for (y=0; ++y<ylim; )
+      for (y = 0; ++y < ylim; )
       {
          pfxp0= (unsigned int *)&tprefix[0][y][0];
          pfxp1= (unsigned int *)&tprefix[1][y][0];
-         for (x=0; ++x<xlim; )
+         for (x = 0; ++x < xlim; )
          {
             ++pfxp1;
             u= *(pfxp1-1)|*pfxp1|*(pfxp1+1);
-            *(++pfxp0)=u|(u>>1)|(u<<1)
-               |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1)))>>15)
-                  |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1)))<<15);
+            *(++pfxp0)=u|(u >> 1)|(u << 1)
+               |((*(pfxp1-(maxxblk+1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1))) >> 15)
+                  |((*(pfxp1+(maxxblk-1))|*(pfxp1+maxxblk)|*(pfxp1+(maxxblk+1))) << 15);
          }
       }
    }
@@ -3215,15 +3223,15 @@ static int solidguess(void)
    /* remaining pass(es), halve blocksize & quarter each blocksize**2 */
    i = workpass;
    while (--i > 0) /* allow for already done passes */
-      blocksize = blocksize>>1;
+      blocksize = blocksize >> 1;
    reset_periodicity = 0;
-   while ((blocksize=blocksize>>1)>=2)
+   while ((blocksize=blocksize >> 1) >= 2)
    {
       if (stoppass > 0)
          if (workpass >= stoppass)
             goto exit_solidguess;
       curpass = workpass + 1;
-      for (y=iystart; y<=iystop; y+=blocksize)
+      for (y=iystart; y <= iystop; y += blocksize)
       {
          currow = y;
          if (guessrow(0, y, blocksize) != 0)
@@ -3236,7 +3244,7 @@ static int solidguess(void)
       }
       ++workpass;
       if (num_worklist /* work list not empty, do one pass at a time */
-      && blocksize>2) /* if 2, we just did last pass */
+      && blocksize > 2) /* if 2, we just did last pass */
       {
          add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, workpass, worksym);
          goto exit_solidguess;
@@ -3265,38 +3273,38 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 
    c44 = c41 = c42 = 0;  /* just for warning */
 
-   halfblock=blocksize>>1;
+   halfblock=blocksize >> 1;
    i=y/maxblock;
-   pfxptr= (unsigned int *)&tprefix[firstpass][(i>>4)+1][ixstart/maxblock];
-   pfxmask=1<<(i&15);
+   pfxptr= (unsigned int *)&tprefix[firstpass][(i >> 4)+1][ixstart/maxblock];
+   pfxmask = 1 << (i&15);
    ylesshalf=y-halfblock;
    ylessblock=y-blocksize; /* constants, for speed */
    yplushalf=y+halfblock;
    yplusblock=y+blocksize;
    prev11= -1;
    c24=c12=c13=c22=getcolor(ixstart, y);
-   c31=c21=getcolor(ixstart, (y>0)?ylesshalf:0);
-   if (yplusblock<=iystop)
+   c31=c21=getcolor(ixstart, (y > 0)?ylesshalf:0);
+   if (yplusblock <= iystop)
       c24=getcolor(ixstart, yplusblock);
-   else if (bottom_guess==0)
+   else if (bottom_guess == 0)
       c24= -1;
    guessed12=guessed13=0;
 
-   for (x=ixstart; x<=ixstop; )  /* increment at end, or when doing continue */
+   for (x=ixstart; x <= ixstop; )  /* increment at end, or when doing continue */
    {
-      if ((x&(maxblock-1))==0)  /* time for skip flag stuff */
+      if ((x&(maxblock-1)) == 0)  /* time for skip flag stuff */
       {
          ++pfxptr;
-         if (firstpass==0 && (*pfxptr&pfxmask)==0)  /* check for fast skip */
+         if (firstpass == 0 && (*pfxptr&pfxmask) == 0)  /* check for fast skip */
          {
             /* next useful in testing to make skips visible */
             /*
-            if (halfblock==1)
+            if (halfblock == 1)
             {
                (*plot)(x+1, y, 0); (*plot)(x, y+1, 0); (*plot)(x+1, y+1, 0);
             }
             */
-            x+=maxblock;
+            x += maxblock;
             prev11=c31=c21=c24=c12=c13=c22;
             guessed12=guessed13=0;
             continue;
@@ -3307,59 +3315,59 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
          plotblock(0, x, y, c22);
       /* setup variables */
       xplusblock=(xplushalf=x+halfblock)+halfblock;
-      if (xplushalf>ixstop)
+      if (xplushalf > ixstop)
       {
-         if (right_guess==0)
+         if (right_guess == 0)
             c31= -1;
       }
-      else if (y>0)
+      else if (y > 0)
          c31=getcolor(xplushalf, ylesshalf);
-      if (xplusblock<=ixstop)
+      if (xplusblock <= ixstop)
       {
-         if (yplusblock<=iystop)
+         if (yplusblock <= iystop)
             c44=getcolor(xplusblock, yplusblock);
-         c41=getcolor(xplusblock, (y>0)?ylesshalf:0);
+         c41=getcolor(xplusblock, (y > 0)?ylesshalf:0);
          c42=getcolor(xplusblock, y);
       }
-      else if (right_guess==0)
+      else if (right_guess == 0)
          c41=c42=c44= -1;
-      if (yplusblock>iystop)
+      if (yplusblock > iystop)
          c44=(bottom_guess)?c42:-1;
 
       /* guess or calc the remaining 3 quarters of current block */
       guessed23=guessed32=guessed33=1;
       c23=c32=c33=c22;
-      if (yplushalf>iystop)
+      if (yplushalf > iystop)
       {
-         if (bottom_guess==0)
+         if (bottom_guess == 0)
             c23=c33= -1;
          guessed23=guessed33= -1;
          guessed13=0; /* fix for ydots not divisible by four bug TW 2/16/97 */
       }
-      if (xplushalf>ixstop)
+      if (xplushalf > ixstop)
       {
-         if (right_guess==0)
+         if (right_guess == 0)
             c32=c33= -1;
          guessed32=guessed33= -1;
       }
       while (1) /* go around till none of 23, 32, 33 change anymore */
       {
-         if (guessed33>0
-             && (c33!=c44 || c33!=c42 || c33!=c24 || c33!=c32 || c33!=c23))
+         if (guessed33 > 0
+             && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
          {
             calcadot(c33, xplushalf, yplushalf);
             guessed33=0;
          }
-         if (guessed32>0
-             && (c32!=c33 || c32!=c42 || c32!=c31 || c32!=c21
-             || c32!=c41 || c32!=c23))
+         if (guessed32 > 0
+             && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
+             || c32 != c41 || c32 != c23))
          {
             calcadot(c32, xplushalf, y);
             guessed32=0;
             continue;
          }
-         if (guessed23>0
-             && (c23!=c33 || c23!=c24 || c23!=c13 || c23!=c12 || c23!=c32))
+         if (guessed23 > 0
+             && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
          {
             calcadot(c23, x, yplushalf);
             guessed23=0;
@@ -3369,19 +3377,19 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
       }
 
       if (firstpass) /* note whether any of block's contents were calculated */
-         if (guessed23==0 || guessed32==0 || guessed33==0)
-            *pfxptr|=pfxmask;
+         if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
+            *pfxptr |= pfxmask;
 
-      if (halfblock>1) { /* not last pass, check if something to display */
+      if (halfblock > 1) { /* not last pass, check if something to display */
          if (firstpass)  /* display guessed corners, fill in block */
          {
             if (guessplot)
             {
-               if (guessed23>0)
+               if (guessed23 > 0)
                   (*plot)(x, yplushalf, c23);
-               if (guessed32>0)
+               if (guessed32 > 0)
                   (*plot)(xplushalf, y, c32);
-               if (guessed33>0)
+               if (guessed33 > 0)
                   (*plot)(xplushalf, yplushalf, c33);
             }
             plotblock(1, x, yplushalf, c23);
@@ -3390,53 +3398,53 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
          }
          else  /* repaint changed blocks */
          {
-            if (c23!=c22)
+            if (c23 != c22)
                plotblock(-1, x, yplushalf, c23);
-            if (c32!=c22)
+            if (c32 != c22)
                plotblock(-1, xplushalf, y, c32);
-            if (c33!=c22)
+            if (c33 != c22)
                plotblock(-1, xplushalf, yplushalf, c33);
          }
       }
 
       /* check if some calcs in this block mean earlier guesses need fixing */
-      fix21=((c22!=c12 || c22!=c32)
-          && c21==c22 && c21==c31 && c21==prev11
-          && y>0
-          && (x==ixstart || c21==getcolor(x-halfblock, ylessblock))
-          && (xplushalf>ixstop || c21==getcolor(xplushalf, ylessblock))
-          && c21==getcolor(x, ylessblock));
-      fix31=(c22!=c32
-          && c31==c22 && c31==c42 && c31==c21 && c31==c41
-          && y>0 && xplushalf<=ixstop
-          && c31==getcolor(xplushalf, ylessblock)
-          && (xplusblock>ixstop || c31==getcolor(xplusblock, ylessblock))
-          && c31==getcolor(x, ylessblock));
+      fix21=((c22 != c12 || c22 != c32)
+          && c21 == c22 && c21 == c31 && c21 == prev11
+          && y > 0
+          && (x == ixstart || c21 == getcolor(x-halfblock, ylessblock))
+          && (xplushalf > ixstop || c21 == getcolor(xplushalf, ylessblock))
+          && c21 == getcolor(x, ylessblock));
+      fix31=(c22 != c32
+          && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
+          && y > 0 && xplushalf <= ixstop
+          && c31 == getcolor(xplushalf, ylessblock)
+          && (xplusblock > ixstop || c31 == getcolor(xplusblock, ylessblock))
+          && c31 == getcolor(x, ylessblock));
       prev11=c31; /* for next time around */
       if (fix21)
       {
          calcadot(c21, x, ylesshalf);
-         if (halfblock>1 && c21!=c22)
+         if (halfblock > 1 && c21 != c22)
             plotblock(-1, x, ylesshalf, c21);
       }
       if (fix31)
       {
          calcadot(c31, xplushalf, ylesshalf);
-         if (halfblock>1 && c31!=c22)
+         if (halfblock > 1 && c31 != c22)
             plotblock(-1, xplushalf, ylesshalf, c31);
       }
-      if (c23!=c22)
+      if (c23 != c22)
       {
          if (guessed12)
          {
             calcadot(c12, x-halfblock, y);
-            if (halfblock>1 && c12!=c22)
+            if (halfblock > 1 && c12 != c22)
                plotblock(-1, x-halfblock, y, c12);
          }
          if (guessed13)
          {
             calcadot(c13, x-halfblock, yplushalf);
-            if (halfblock>1 && c13!=c22)
+            if (halfblock > 1 && c13 != c22)
                plotblock(-1, x-halfblock, yplushalf, c13);
          }
       }
@@ -3447,38 +3455,38 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
       c12=c32;
       guessed12=guessed32;
       guessed13=guessed33;
-      x+=blocksize;
+      x += blocksize;
    } /* end x loop */
 
-   if (firstpass==0 || guessplot) return 0;
+   if (firstpass == 0 || guessplot) return 0;
 
    /* paint rows the fast way */
-   for (i=0; i<halfblock; ++i)
+   for (i = 0; i < halfblock; ++i)
    {
-      if ((j=y+i)<=iystop)
+      if ((j=y+i) <= iystop)
          put_line(j, xxstart, ixstop, &dstack[xxstart]);
-      if ((j=y+i+halfblock)<=iystop)
+      if ((j=y+i+halfblock) <= iystop)
          put_line(j, xxstart, ixstop, &dstack[xxstart+OLDMAXPIXELS]);
       if (driver_key_pressed()) return -1;
    }
-   if (plot!=putcolor)  /* symmetry, just vertical & origin the fast way */
+   if (plot != putcolor)  /* symmetry, just vertical & origin the fast way */
    {
-      if (plot==symplot2J) /* origin sym, reverse lines */
-         for (i=(ixstop+xxstart+1)/2; --i>=xxstart; )
+      if (plot == symplot2J) /* origin sym, reverse lines */
+         for (i=(ixstop+xxstart+1)/2; --i >= xxstart; )
          {
             color=dstack[i];
             dstack[i]=dstack[j=ixstop-(i-xxstart)];
             dstack[j]=(BYTE)color;
-            j+=OLDMAXPIXELS;
+            j += OLDMAXPIXELS;
             color=dstack[i+OLDMAXPIXELS];
             dstack[i+OLDMAXPIXELS]=dstack[j];
             dstack[j]=(BYTE)color;
          }
-      for (i=0; i<halfblock; ++i)
+      for (i = 0; i < halfblock; ++i)
       {
-         if ((j=yystop-(y+i-yystart))>iystop && j<ydots)
+         if ((j=yystop-(y+i-yystart)) > iystop && j < ydots)
             put_line(j, xxstart, ixstop, &dstack[xxstart]);
-         if ((j=yystop-(y+i+halfblock-yystart))>iystop && j<ydots)
+         if ((j=yystop-(y+i+halfblock-yystart)) > iystop && j < ydots)
             put_line(j, xxstart, ixstop, &dstack[xxstart+OLDMAXPIXELS]);
          if (driver_key_pressed()) return -1;
       }
@@ -3489,30 +3497,30 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 static void _fastcall plotblock(int buildrow, int x, int y, int color)
 {
    int i, xlim, ylim;
-   if ((xlim=x+halfblock)>ixstop)
+   if ((xlim=x+halfblock) > ixstop)
       xlim=ixstop+1;
-   if (buildrow>=0 && guessplot==0) /* save it for later put_line */
+   if (buildrow >= 0 && guessplot == 0) /* save it for later put_line */
    {
-      if (buildrow==0)
-         for (i=x; i<xlim; ++i)
+      if (buildrow == 0)
+         for (i=x; i < xlim; ++i)
             dstack[i]=(BYTE)color;
       else
-         for (i=x; i<xlim; ++i)
+         for (i=x; i < xlim; ++i)
             dstack[i+OLDMAXPIXELS]=(BYTE)color;
-      if (x>=xxstart) /* when x reduced for alignment, paint those dots too */
+      if (x >= xxstart) /* when x reduced for alignment, paint those dots too */
          return; /* the usual case */
    }
    /* paint it */
-   if ((ylim=y+halfblock)>iystop)
+   if ((ylim=y+halfblock) > iystop)
    {
-      if (y>iystop)
+      if (y > iystop)
          return;
       ylim=iystop+1;
    }
-   for (i=x; ++i<xlim; )
+   for (i=x; ++i < xlim; )
       (*plot)(i, y, color); /* skip 1st dot on 1st row */
-   while (++y<ylim)
-      for (i=x; i<xlim; ++i)
+   while (++y < ylim)
+      for (i=x; i < xlim; ++i)
          (*plot)(i, y, color);
 }
 
@@ -3608,11 +3616,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
    int i;
    int parmszero, parmsnoreal, parmsnoimag;
    int xaxis_row, yaxis_col;         /* pixel number for origin */
-   int xaxis_between=0, yaxis_between=0; /* if axis between 2 pixels, not on one */
-   int xaxis_on_screen=0, yaxis_on_screen=0;
+   int xaxis_between = 0, yaxis_between = 0; /* if axis between 2 pixels, not on one */
+   int xaxis_on_screen = 0, yaxis_on_screen = 0;
    double ftemp;
    bf_t bft1;
-   int saved=0;
+   int saved = 0;
    symmetry = 1;
    if (stdcalcmode == 's' || stdcalcmode == 'o')
       return;
@@ -3629,7 +3637,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
          return;
    if ((potflag && pot16bit) || (invert && inversion[2] != 0.0)
        || decomp[0] != 0
-       || xxmin!=xx3rd || yymin!=yy3rd)
+       || xxmin != xx3rd || yymin != yy3rd)
       return;
    if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && forcesymmetry == 999)
       return;
@@ -3637,10 +3645,10 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
       sym = forcesymmetry;
    else if (forcesymmetry == 1000)
       forcesymmetry = sym;  /* for backwards compatibility */
-   else if (outside==REAL || outside==IMAG || outside==MULT || outside==SUM
-          || outside==ATAN || bailoutest==Manr || outside==FMOD)
+   else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
+          || outside == ATAN || bailoutest == Manr || outside == FMOD)
       return;
-   else if (inside==FMODI || outside==TDIS)
+   else if (inside == FMODI || outside == TDIS)
       return;
    parmszero = (parm.x == 0.0 && parm.y == 0.0 && useinitorbit != 1);
    parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
@@ -3785,7 +3793,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
          break;
    case ORIGIN:                      /* Origin Symmetry */
       originsym:
-      if ( xsym_split(xaxis_row, xaxis_between) == 0
+      if (xsym_split(xaxis_row, xaxis_between) == 0
           && ysym_split(yaxis_col, yaxis_between) == 0)
       {
          plot = symplot2J;
@@ -3816,7 +3824,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
          goto originsym;
       plot = symPIplot ;
       symmetry = 0;
-      if ( xsym_split(xaxis_row, xaxis_between) == 0
+      if (xsym_split(xaxis_row, xaxis_between) == 0
           && ysym_split(yaxis_col, yaxis_between) == 0)
          if (parm.y == 0.0)
             plot = symPIplot4J; /* both axes */
@@ -3836,7 +3844,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
       else
          pixelpi = (int)((PI/fabs(xxmax-xxmin))*xdots); /* PI in pixels */
 
-      if ( (ixstop = xxstart+pixelpi-1 ) > xxstop)
+      if ((ixstop = xxstart+pixelpi-1 ) > xxstop)
          ixstop = xxstop;
       if (plot == symPIplot4J && ixstop > (i = (xxstart+xxstop)/2))
          ixstop = i;
@@ -4054,7 +4062,7 @@ static int tesseral(void)
          ++ysize;
       }
       add_worklist(xxstart, xxstop, xxstart, yystart, yystop,
-          (ysize<<12)+tp->y1, (xsize<<12)+tp->x1, worksym);
+          (ysize << 12)+tp->y1, (xsize << 12)+tp->x1, worksym);
       return -1;
    }
    return 0;
@@ -4122,10 +4130,10 @@ static long autologmap(void)   /*RB*/
  int ystop = ydots - 1; /* don't use symetry */
  long old_maxit;
  mincolour=LONG_MAX;
- row=0;
+ row = 0;
  reset_periodicity = 0;
  old_maxit = maxit;
- for (col=0;col<xstop;col++) /* top row */
+ for (col = 0; col < xstop; col++) /* top row */
     {
       color=(*calctype)();
       if (color == -1) goto ack; /* key pressed, bailout */
@@ -4133,12 +4141,12 @@ static long autologmap(void)   /*RB*/
         mincolour=realcoloriter ;
         maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
         }
-      if ( col >=32 ) (*plot)(col-32, row, 0);
+      if (col >= 32 ) (*plot)(col-32, row, 0);
     }                                    /* these lines tidy up for BTM etc */
-    for (lag=32;lag>0;lag--) (*plot)(col-lag, row, 0);
+    for (lag = 32; lag > 0; lag--) (*plot)(col-lag, row, 0);
 
  col=xstop;
- for (row=0;row<ystop;row++) /* right  side */
+ for (row = 0; row < ystop; row++) /* right  side */
     {
       color=(*calctype)();
       if (color == -1) goto ack; /* key pressed, bailout */
@@ -4146,12 +4154,12 @@ static long autologmap(void)   /*RB*/
         mincolour=realcoloriter ;
         maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
         }
-      if ( row >=32 ) (*plot)(col, row-32, 0);
+      if (row >= 32 ) (*plot)(col, row-32, 0);
     }
-    for (lag=32;lag>0;lag--) (*plot)(col, row-lag, 0);
+    for (lag = 32; lag > 0; lag--) (*plot)(col, row-lag, 0);
 
- col=0;
- for (row=0;row<ystop;row++) /* left  side */
+ col = 0;
+ for (row = 0; row < ystop; row++) /* left  side */
     {
       color=(*calctype)();
       if (color == -1) goto ack; /* key pressed, bailout */
@@ -4159,12 +4167,12 @@ static long autologmap(void)   /*RB*/
         mincolour=realcoloriter ;
         maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
         }
-      if ( row >=32 ) (*plot)(col, row-32, 0);
+      if (row >= 32 ) (*plot)(col, row-32, 0);
     }
-    for (lag=32;lag>0;lag--) (*plot)(col, row-lag, 0);
+    for (lag = 32; lag > 0; lag--) (*plot)(col, row-lag, 0);
 
  row=ystop ;
- for (col=0;col<xstop;col++) /* bottom row */
+ for (col = 0; col < xstop; col++) /* bottom row */
     {
       color=(*calctype)();
       if (color == -1) goto ack; /* key pressed, bailout */
@@ -4172,12 +4180,12 @@ static long autologmap(void)   /*RB*/
         mincolour=realcoloriter ;
         maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
         }
-      if ( col >=32 ) (*plot)(col-32, row, 0);
+      if (col >= 32 ) (*plot)(col-32, row, 0);
     }
-    for (lag=32;lag>0;lag--) (*plot)(col-lag, row, 0);
+    for (lag = 32; lag > 0; lag--) (*plot)(col-lag, row, 0);
 
  ack: /* bailout here if key is pressed */
- if (mincolour==2) resuming=1; /* insure autologmap not called again */
+ if (mincolour == 2) resuming = 1; /* insure autologmap not called again */
  maxit = old_maxit;
 
  return mincolour ;
@@ -4212,7 +4220,7 @@ void _fastcall symPIplot4J(int x, int y, int color)
    while (x <= (xxstart+xxstop)/2)
    {
       j = xxstop-(x-xxstart);
-      putcolor(       x , y , color) ;
+      putcolor(x , y , color) ;
       if (j < xdots)
          putcolor(j , y , color) ;
       if ((i=yystop-(y-yystart)) > iystop && i < ydots)
@@ -4258,12 +4266,12 @@ void _fastcall symplot4(int x, int y, int color)
 {
    int i, j;
    j = xxstop-(x-xxstart);
-   putcolor(       x , y, color) ;
+   putcolor(x , y, color) ;
    if (j < xdots)
-      putcolor(    j , y, color) ;
+      putcolor(j , y, color) ;
    if ((i=yystop-(y-yystart)) > iystop && i < ydots)
    {
-      putcolor(    x , i, color) ;
+      putcolor(x , i, color) ;
       if (j < xdots)
          putcolor(j , i, color) ;
    }
@@ -4274,8 +4282,8 @@ void _fastcall symplot2basin(int x, int y, int color)
 {
    int i, stripe;
    putcolor(x, y, color) ;
-   if (basin==2 && color > 8)
-      stripe=8;
+   if (basin == 2 && color > 8)
+      stripe = 8;
    else
       stripe = 0;
    if ((i=yystop-(y-yystart)) > iystop && i < ydots)
@@ -4296,7 +4304,7 @@ void _fastcall symplot4basin(int x, int y, int color)
       symplot4(x, y, color);
       return;
    }
-   if (basin==2 && color > 8)
+   if (basin == 2 && color > 8)
       stripe = 8;
    else
       stripe = 0;
@@ -4307,12 +4315,12 @@ void _fastcall symplot4basin(int x, int y, int color)
    else
       color1 = degree/2+degree+2 - color;
    j = xxstop-(x-xxstart);
-   putcolor(       x, y, color+stripe) ;
+   putcolor(x, y, color+stripe) ;
    if (j < xdots)
-      putcolor(    j, y, color1+stripe) ;
+      putcolor(j, y, color1+stripe) ;
    if ((i=yystop-(y-yystart)) > iystop && i < ydots)
    {
-      putcolor(    x, i, stripe + (degree+1 - color)%degree+1) ;
+      putcolor(x, i, stripe + (degree+1 - color)%degree+1) ;
       if (j < xdots)
          putcolor(j, i, stripe + (degree+1 - color1)%degree+1) ;
    }
@@ -4323,7 +4331,7 @@ static void _fastcall puttruecolor_disk(int x, int y, int color)
    putcolor_a(x, y, color);
 
    targa_color(x, y, color);
-/* writedisk(x*=3, y, (BYTE)((realcoloriter      ) & 0xff)); */ /* blue  */
+/* writedisk(x *= 3, y, (BYTE)((realcoloriter      ) & 0xff)); */ /* blue  */
 /* writedisk(++x, y, (BYTE)((realcoloriter >> 8 ) & 0xff)); */ /* green */
 /* writedisk(x+1, y, (BYTE)((realcoloriter >> 16) & 0xff)); */ /* red   */
 

@@ -57,7 +57,7 @@ char par_comment[4][MAXCMT];
 
 FILE *parmfile;
 
-#define PAR_KEY(x)  ( x < 10 ? '0' + x : 'a' - 10 + x)
+#define PAR_KEY(x)  (x < 10 ? '0' + x : 'a' - 10 + x)
 
 #ifdef _MSC_VER
 #pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
@@ -153,7 +153,7 @@ void make_batch_file()
    }
    strcpy(inpcommandfile, CommandFile);
    strcpy(inpcommandname, CommandName);
-   for (i=0; i<4; i++)
+   for (i = 0; i < 4; i++)
    {
       expand_comments(CommandComment[i], par_comment[i]);
       strcpy(inpcomment[i], CommandComment[i]);
@@ -242,7 +242,7 @@ prompt_user:
       if (has_ext(CommandFile) == NULL)
          strcat(CommandFile, ".par");   /* default extension .par */
       strcpy(CommandName, inpcommandname);
-      for (i=0; i<4; i++)
+      for (i = 0; i < 4; i++)
          strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 #ifndef XFRACT
       if (g_got_real_dac || (g_is_true_color && !truemode))
@@ -396,7 +396,7 @@ skip_UI:
             int w;
             char c;
             char PCommandName[80];
-            w=0;
+            w = 0;
             while (w < (int)strlen(CommandName))
             {
                c = CommandName[w];
@@ -435,11 +435,11 @@ skip_UI:
             /* guarantee that there are no blank comments above the last
                non-blank par_comment */
             int i, last;
-            for (last=-1, i=0; i<4; i++)
+            for (last=-1, i = 0; i < 4; i++)
                if (*par_comment[i])
                   last=i;
-            for (i=0; i<last; i++)
-               if (*CommandComment[i]=='\0')
+            for (i = 0; i < last; i++)
+               if (*CommandComment[i] == '\0')
                   strcpy(CommandComment[i], ";");
          }
          if (CommandComment[0][0])
@@ -451,7 +451,7 @@ skip_UI:
             memset(buf, ' ', 23);
             buf[23] = 0;
             buf[21] = ';';
-            for (k=1; k<4; k++)
+            for (k = 1; k < 4; k++)
                if (CommandComment[k][0])
                   fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
             if (g_patch_level != 0 && colorsonly == 0)
@@ -560,7 +560,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          {
             char *name;
             name = fractalspecific[neworbittype].name;
-            if (*name=='*')
+            if (*name == '*')
                name++;
             put_parm(" orbitname=%s", name);
          }
@@ -643,7 +643,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
                put_float(1, Xmagfactor, 4); /* put_float() uses %g */
             if (Rotation != 0 || Skew != 0)
             {
-               /* Use precision=6 here.  These angle have already been rounded        */
+               /* Use precision = 6 here.  These angle have already been rounded        */
                /* to 3 decimal places, but angles like 123.456 degrees need 6         */
                /* sig figs to get 3 decimal places.  Trailing 0's are dropped anyway. */
                /* Changed to 18 to address rotated and skewed problem w/ PARs */
@@ -691,7 +691,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       }
 
       for (i = (MAXPARAMS-1); i >= 0; --i)
-          if (typehasparm((fractype==JULIBROT || fractype==JULIBROTFP)
+          if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
                           ?neworbittype:fractype, i, NULL)) break;
 
       if (i >= 0) {
@@ -779,7 +779,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
             put_parm("%d", inside);
          }
       if (closeprox != 0.01 && (inside == EPSCROSS || inside == FMODI
-          || outside==FMOD) ) {
+          || outside == FMOD)) {
          put_parm(" proximity=%.15g", closeprox);
          }
       if (outside != -1)
@@ -847,15 +847,15 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
          if (forcesymmetry == 1000 && ii == 1 && jj == 1)
             stopmsg(0, "Regenerate before <b> to get correct symmetry");
          put_parm(" symmetry=");
-         if (forcesymmetry==XAXIS)
+         if (forcesymmetry == XAXIS)
             put_parm("xaxis");
-         else if (forcesymmetry==YAXIS)
+         else if (forcesymmetry == YAXIS)
             put_parm("yaxis");
-         else if (forcesymmetry==XYAXIS)
+         else if (forcesymmetry == XYAXIS)
             put_parm("xyaxis");
-         else if (forcesymmetry==ORIGIN)
+         else if (forcesymmetry == ORIGIN)
             put_parm("origin");
-         else if (forcesymmetry==PI_SYM)
+         else if (forcesymmetry == PI_SYM)
             put_parm("pi");
          else
             put_parm("none");
@@ -1016,7 +1016,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    if (polyphony != 0)
      put_parm(" polyphony=%d", polyphony+1);
    
-   if (fm_wavetype !=0)
+   if (fm_wavetype != 0)
      put_parm(" wavetype=%d", fm_wavetype);
    
    if (fm_attack != 5)
@@ -1032,8 +1032,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       put_parm(" srelease=%d", fm_release);
 
    if (soundflag & SOUNDFLAG_QUANTIZED) { /* quantize turned on */
-      for (i=0; i<=11; i++) if (scale_map[i] != i+1) i=15;
-      if (i>12) 
+      for (i = 0; i <= 11; i++) if (scale_map[i] != i+1) i = 15;
+      if (i > 12) 
          put_parm(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", scale_map[0], scale_map[1], scale_map[2], scale_map[3]
             , scale_map[4], scale_map[5], scale_map[6], scale_map[7], scale_map[8]
             , scale_map[9], scale_map[10], scale_map[11]);
@@ -1083,7 +1083,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
    if (*colorinf != 'n')
    {
-      if (recordcolors=='c' && *colorinf == '@')
+      if (recordcolors == 'c' && *colorinf == '@')
       {
          put_parm_line();
          put_parm("; colors=");
@@ -1092,7 +1092,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       }
 docolors:
       put_parm(" colors=");
-      if (recordcolors !='c' && recordcolors != 'y' && *colorinf == '@')
+      if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
          put_parm(colorinf);
       else {
          int curc, scanc, force, diffmag = -1;
@@ -1227,7 +1227,7 @@ va_dcl
       put_parm_line();
 }
 
-int maxlinelength=72;
+int maxlinelength = 72;
 #define MAXLINELEN  maxlinelength
 #define NICELINELEN (MAXLINELEN-4)
 
@@ -1294,7 +1294,7 @@ static int getprec(double a, double b, double c)
    if (temp == 0.0) temp = highv;
    if (temp < diff) diff = temp;
    digits = 7;
-   if (debugflag >= 700 && debugflag < 720 )
+   if (debugflag >= 700 && debugflag < 720)
       digits =  debugflag - 700;
    while (diff < 1.0 && digits <= DBL_DIG+1) {
       diff *= 10;
@@ -1305,7 +1305,7 @@ static int getprec(double a, double b, double c)
 
 /* This function calculates the precision needed to distiguish adjacent
    pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
-   (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
+   (if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int getprecbf(int rezflag)
 {
    bf_t del1, del2, one, bfxxdel, bfxxdel2, bfyydel, bfyydel2;
@@ -1372,7 +1372,7 @@ int getprecbf(int rezflag)
 
 /* This function calculates the precision needed to distiguish adjacent
    pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
-   (if rez==MAXREZ) or at current resolution (if rez==CURRENTREZ)    */
+   (if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int getprecdbl(int rezflag)
 {
    LDBL del1, del2, xdel, xdel2, ydel, ydel2;
@@ -1430,7 +1430,7 @@ static void strip_zeros(char *buf)
    strlwr(buf);
    if ((dptr = strchr(buf, '.')) != 0) {
       ++dptr;
-      if ((exptr = strchr(buf, 'e')) !=0)  /* scientific notation with 'e'? */
+      if ((exptr = strchr(buf, 'e')) != 0)  /* scientific notation with 'e'? */
          bptr = exptr;
       else
          bptr = buf + strlen(buf);
@@ -1747,7 +1747,7 @@ static int check_modekey(int curkey, int choice)
       return -1-i;
    i = entsptr[choice];
    ret = 0;
-   if ( (curkey == '-' || curkey == '+')
+   if ((curkey == '-' || curkey == '+')
      && (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084)) {
       if (g_bad_config)
          stopmsg(0, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
@@ -1994,7 +1994,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 				exit(1);
             }
 
-			for (;;)                       /* process each information block */
+			while (1)                       /* process each information block */
 			{
 				memset(temp, 0, 10);
 				if (fread(temp, 1, 1, in) != 1)    /* read the block identifier */
@@ -2040,7 +2040,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					{
 						errorflag = 6;
 					}
-					for (;;)
+					while (1)
 					{
 						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
 						{
@@ -2084,7 +2084,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 							errorflag = 9;
 						}
 					}
-					for (;;)
+					while (1)
 					{
 						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
 						{
@@ -2305,7 +2305,7 @@ static char *expand_var(char *var, char *buf)
    time_t ltime;
    char *str, *out;
    
-   time( &ltime );
+   time(&ltime);
    str = ctime(&ltime);
 
    /* ctime format             */
@@ -2406,7 +2406,7 @@ void expand_comments(char *target, char *source)
 {
    int i, j, k, escape = 0;
    char c, oldc, varname[MAXVNAME];
-   i=j=k=0;
+   i=j=k = 0;
    c = oldc = 0;
    while (i < MAXCMT && j < MAXCMT && (c = *(source+i++)) != '\0')
    {
@@ -2451,7 +2451,7 @@ void parse_comments(char *value)
 {
    int i;
    char *next, save;
-   for (i=0; i<4; i++)
+   for (i = 0; i < 4; i++)
    {
       save = '\0';
       if (*value == 0) 
@@ -2477,6 +2477,6 @@ void parse_comments(char *value)
 void init_comments()
 {
    int i;
-   for (i=0; i<4; i++)
+   for (i = 0; i < 4; i++)
       par_comment[i][0] = '\0';
 }

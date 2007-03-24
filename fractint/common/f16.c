@@ -70,7 +70,7 @@ int t16_getline(FILE *fp, int hs, U16 *data)
 {
     int i;
 
-    for (i=0; i<hs; ++i) {
+    for (i = 0; i < hs; ++i) {
         if (state == 0) {
             bufp = 0;
             if ((count = getc(fp)) > 127) {

@@ -19,7 +19,7 @@
 #define FUDGE_MUL(x_,y_) MulDiv(x_, y_, FUDGE_FACTOR)
 
 #define KEYPRESSDELAY 32767
-#define ABS(x) ((x)<0?-(x):(x))
+#define ABS(x) ((x) < 0?-(x):(x))
 
 extern unsigned long lm;
 extern int atan_colors;
@@ -75,7 +75,7 @@ calc_mand_floating_point(void)
 		key = driver_key_pressed();
 		if (key)
 		{
-			if (key=='o' || key=='O')
+			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
 				show_orbit = 1-show_orbit;
@@ -662,16 +662,16 @@ wedone:										;
 ; or, since	we ignore the lower	16 bits, fg14 from fg13.
 ; If this shift	overflows we are outside x*x+y*y=2,	so have	escaped.
 ; Also,	he commented out several conditional jumps which he	calculated could
-; never	be taken (e.g. mov eax,	esi	/ imul esi ;cannot overflow).
+; never	be taken (e.g. mov eax,	esi	/ imul esi ; cannot overflow).
 
 code16bit:
 		mov		esi, dword ptr x+4			; use SI	for	X fg13
 		mov		edi, dword ptr y+4			; use DI	for	Y fg13
 
 start16bit:
-		add		esi, esi					;CJLT-Convert to	fg14
+		add		esi, esi					; CJLT-Convert to	fg14
 		jno		not_end16bit1
-		jmp		end16bit					;overflows if <-2 or >2
+		jmp		end16bit					; overflows if <-2 or >2
 not_end16bit1:
 		mov		eax, esi					; compute (x	* x)
 		imul	esi							; Answer is fg14+14-16=fg12
@@ -682,11 +682,11 @@ not_end16bit1:
 not_end16bit2:
 		mov		ebx, edx					; save this for a tad
 
-;ditto for y*y...
+; ditto for y*y...
 
-		add		edi, edi					;CJLT-Convert to	fg14
+		add		edi, edi					; CJLT-Convert to	fg14
 		jno		not_end16bit3
-		jmp		end16bit					;overflows if <-2 or >2
+		jmp		end16bit					; overflows if <-2 or >2
 not_end16bit3:
 		mov		eax, edi					; compute (y	* y)
 		imul	edi							;	...
@@ -713,7 +713,7 @@ notdoneyet:
 		shl		eax, 1						;	 ...
 		rcl		edx, 1						;	 ...
 		shl		eax, 1						;	 shift two bits
-		rcl		edx, 1						;	 cannot	overflow as	|x|<=2,	|y|<=2
+		rcl		edx, 1						;	 cannot	overflow as	|x| <= 2,	|y| <= 2
 		add		edx, dword ptr linity+4		; (2*y*x) / fudge + linity
 		jo		end16bit					; bail out if too high
 		mov		edi, edx					; save as y
@@ -824,7 +824,7 @@ checkdone:
 ;		1 time out of 65536! (I	benchmarked	it.	Just removing the tests	speeds
 ;		us up by 3%.)
 ;
-;Note that square returns DI, AX squared in	DX,	AX now.
+; Note that square returns DI, AX squared in	DX,	AX now.
 ; DI, AX is	first converted	to unsigned	fg31 form.
 ; (For its square to be	representable in fg29 (range -4..+3.999)
 ; DI:AX	must be	in the range 0..+1.999 which fits neatly into unsigned fg31.)
@@ -857,34 +857,34 @@ code32bit:
 nextit:	mov		eax, dword ptr y			; eax=low(y)
 		mov		edi, dword ptr y+4			; edi=high(y)
 
-		;square	done1						;square	y and quit via done1 if	it overflows
-		shl		eax, 1						;Multiply	by 2 to	convert	to fg30
-		rcl		edi, 1						;If this overflows DI:AX was negative
+		; square	done1						; square	y and quit via done1 if	it overflows
+		shl		eax, 1						; Multiply	by 2 to	convert	to fg30
+		rcl		edi, 1						; If this overflows DI:AX was negative
 		jnc		notneg
 		not		eax							; so negate it
 		not		edi							; ...
 		add		eax, 1						;	...
 		adc		edi, 0						;	...
 		not		bl							; change negswt
-notneg:	shl		eax, 1						;Multiply	by 2 again to give fg31
-		rcl		edi, 1						;If this gives a carry then DI:AX	was	>=2.0
-											;If	its	high bit is	set	then DI:AX was >=1.0
-											;This is OK, but note that this	means that
-											;DI:AX must	now	be treated as unsigned.
+notneg:	shl		eax, 1						; Multiply	by 2 again to give fg31
+		rcl		edi, 1						; If this gives a carry then DI:AX	was	>= 2.0
+											; If	its	high bit is	set	then DI:AX was >= 1.0
+											; This is OK, but note that this	means that
+											; DI:AX must	now	be treated as unsigned.
 		jc		done1
 		push	edi							; save	y or x (in fg31	form) on stack
 		push	eax							; ...
-		mul		edi							;GET MIDDLE PART -	2*A*B
-		mov		bh,	ah						;Miraculously,	it needs no	shifting!
+		mul		edi							; GET MIDDLE PART -	2*A*B
+		mov		bh,	ah						; Miraculously,	it needs no	shifting!
 		mov		ecx, edx
 		mov		eax, edi
-		mul		eax							;SQUARE HIGH HWORD	- A*A
-		shl		bh,	1						;See if we	round up
-		adc		eax, 1						;Anyway, add 1 to	round up/down accurately
+		mul		eax							; SQUARE HIGH HWORD	- A*A
+		shl		bh,	1						; See if we	round up
+		adc		eax, 1						; Anyway, add 1 to	round up/down accurately
 		adc		edx, 0
-		shr		edx, 1						;This	needs shifting one bit
+		shr		edx, 1						; This	needs shifting one bit
 		rcr		eax, 1
-		add		eax, ecx					;Add	in the 2*A*B term
+		add		eax, ecx					; Add	in the 2*A*B term
 		adc		edx, 0
 
 		mov		esi, eax					; square	returns	results	in edx,	eax
@@ -892,18 +892,18 @@ notneg:	shl		eax, 1						;Multiply	by 2 again to give fg31
 		mov		eax, dword ptr x
 		mov		edi, dword ptr x+4
 
-		;square	 done2						; square x	and	quit via done2 if it overflows
-		shl		eax, 1						;Multiply	by 2 to	convert	to fg30
-		rcl		edi, 1						;If this overflows DI:AX was negative
+		; square	 done2						; square x	and	quit via done2 if it overflows
+		shl		eax, 1						; Multiply	by 2 to	convert	to fg30
+		rcl		edi, 1						; If this overflows DI:AX was negative
 		jnc		notneg2
 		not		eax							; so negate it
 		not		edi							; ...
 		add		eax, 1						;	...
 		adc		edi, 0						;	...
 		not		bl							; change negswt
-notneg2: shl	 eax, 1						;Multiply by	2 again	to give	fg31
-		rcl		edi, 1						;If this gives a carry then DI:AX	was	>=2.0
-											;If	its	high bit is	set	then DI:AX was >=1.0
+notneg2: shl	 eax, 1						; Multiply by	2 again	to give	fg31
+		rcl		edi, 1						; If this gives a carry then DI:AX	was	>= 2.0
+											; If	its	high bit is	set	then DI:AX was >= 1.0
 											;This is OK, but note that this	means that
 											;DI:AX must	now	be treated as unsigned.
 		jc		done2
@@ -975,20 +975,20 @@ tryagain:
 		add		bh,	ah
 		adc		ecx, edx
 		adc		ebp, 0
-		mov		eax, esi					;Yhigh
-		mul		edi							;Xhigh	* Yhigh
-		shl		bh,	1						;round	up/down
-		adc		eax, ecx					;Answer-low
-		adc		edx, ebp					;Answer-high
-											;NOTE: The answer is 0..3.9999 in fg29
-		js		done1						;Overflow if high bit set
+		mov		eax, esi					; Yhigh
+		mul		edi							; Xhigh	* Yhigh
+		shl		bh,	1						; round	up/down
+		adc		eax, ecx					; Answer-low
+		adc		edx, ebp					; Answer-high
+											; NOTE: The answer is 0..3.9999 in fg29
+		js		done1						; Overflow if high bit set
 		or		bl,	bl						; ZERO	IF NONE	OR BOTH	X ,	Y NEG
 		jz		signok						; ONE IF ONLY ONE OF X OR Y	IS NEG
 		not		eax							; negate result
 		not		edx							;	...
 		add		eax, 1						;	 ...
 		adc		edx, 0						;	 ...
-		xor		bl,	bl						;Clear	negswt
+		xor		bl,	bl						; Clear	negswt
 signok:
 		add		eax, dword ptr linity
 		adc		edx, dword ptr linity+4		; edx, eax =	2(X*Y)+B
@@ -1020,7 +1020,7 @@ notakey4:
 
 		cmp		show_orbit,	0				; orbiting	on?
 		jne		horbit						;  yep.
-		jmp		nextit						;go	around again
+		jmp		nextit						; go	around again
 
 horbit:	push	bx							; save my flags
 		mov		eax, -1						;	color for plot orbit
