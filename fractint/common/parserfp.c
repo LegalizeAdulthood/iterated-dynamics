@@ -66,7 +66,7 @@
 /*          optimizer.  (fStkOne() was added for this.)  */
 
 /* 31 Oct 1993 CAE  */
-/*    Optimizer converts '2*x' and 'x*2' to 'x+x'. */
+/*    Optimizer converts '2*x' and 'x*2' to 'x + x'. */
 /*        "     recognizes LastSqr as a real if not stored to.  */
 
 /* 9 Oct 1993 CAE  */
@@ -497,7 +497,7 @@ awful_error:
    /* this if statement inserts a stack push or pull into the token array  */
    /*   it would be much better to do this *after* optimization  */
    if ((int)stkcnt < MinStk) { /* not enough operands on fpu stack  */
-      DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt+2);
+      DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt + 2);
       OPPTR(cvtptrx) = NO_OPERAND;
       FNPTR(cvtptrx++) = fStkPull2;  /* so adjust the stack, pull operand  */
       stkcnt += 2;
@@ -626,7 +626,7 @@ awful_error:
             /* because  push lod lod  is impossible so is  push loddup  */
             DBUGMSG("pusha *loddup (add) -> (*loddbl),stk += 2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptr  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptr  */
          }
          else if (cvtptrx != 0 && FNPTR(cvtptrx-1) == fStkPush4){
             DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
@@ -649,7 +649,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push load (add) -> (*plodadd),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
             ffptr = fStkPLodAdd;
          }
          else {
@@ -662,7 +662,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push lodreal (add) -> (*lodrealadd),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
          }
          else {
             DBUGMSG("*lodreal (add) -> (*lodrealadd)");
@@ -674,7 +674,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push lodimag (add) -> (*lodimagadd),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
          }
          else {
             DBUGMSG("*lodimag (add) -> (*lodimagadd)");
@@ -692,7 +692,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push lod (sub) -> (*plodsub),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
             ffptr = fStkPLodSub;
          }
          else {
@@ -705,7 +705,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push lodreal (sub) -> (*lodrealsub),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
          }
          else {
             DBUGMSG("*lodreal (sub) -> (*lodrealsub)");
@@ -717,7 +717,7 @@ awful_error:
          if (FNPTR(cvtptrx-1) == fStkPush2){
             DBUGMSG("*push lodimag (sub) -> (*lodimagsub),stk+=2");
             REMOVE_PUSH;
-            OPPTR(cvtptrx) = OPPTR(cvtptrx+1);  /* fix opptrs  */
+            OPPTR(cvtptrx) = OPPTR(cvtptrx + 1);  /* fix opptrs  */
          }
          else {
             DBUGMSG("*lodimag (sub) -> (*lodimagsub)");
@@ -754,7 +754,7 @@ awful_error:
             }
             else {
                DBUGMSG("op *lod push (mul) -> op pusha (*lodmul)");
-               OPPTR(cvtptrx+1) = OPPTR(cvtptrx);  /* fix operand ptr  */
+               OPPTR(cvtptrx + 1) = OPPTR(cvtptrx);  /* fix operand ptr  */
                FNPTR(cvtptrx) = fStkPush2a;
                OPPTR(cvtptrx) = NO_OPERAND;
                cvtptrx++;
@@ -776,7 +776,7 @@ awful_error:
 
          if (FNPTR(cvtptrx-1) == fStkLodRealC
                && Load[LodPtr-2]->d.x == _2_){
-            /* -- Convert '2*a' into 'a+a'.                CAE 31OCT93  */
+            /* -- Convert '2*a' into 'a + a'.                CAE 31OCT93  */
             if (FNPTR(cvtptrx) == NO_FUNCTION){
                DBUGMSG("lodreal[2] (*lodmul[b])"
                      " -> (*loddbl[b])");
@@ -785,13 +785,13 @@ awful_error:
             else if (FNPTR(cvtptrx) == fStkPush2a){
                DBUGMSG("lodreal[2] *pusha (lodmul[b])"
                      " -> loddbl[b],stk+=2");
-               OPPTR(cvtptrx-1) = OPPTR(cvtptrx+1);
+               OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);
                stkcnt += 2;
             }
             else if (FNPTR(cvtptrx) == fStkPush4){
                DBUGMSG("lodreal[2] *push4 (lodmul[b])"
                      " -> loddbl[b],stk+=4");
-               OPPTR(cvtptrx-1) = OPPTR(cvtptrx+1);
+               OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);
                stkcnt += 4;
             }
             FNPTR(--cvtptrx) = NO_FUNCTION;  /* so no increment later  */
@@ -815,7 +815,7 @@ awful_error:
                      " -> lod[b] (*lodrealmul[a]),stk+=2");
                /* set this fn ptr to null so cvtptrx won't be incr later  */
                FNPTR(cvtptrx) = NO_FUNCTION;
-               OPPTR(cvtptrx-1) = OPPTR(cvtptrx+1);  /* prev lodptr=this  */
+               OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);  /* prev lodptr=this  */
                stkcnt += 2;
             }
             else if (FNPTR(cvtptrx) == fStkPush4){

@@ -152,10 +152,10 @@ _fFormula          proc far
 
    ; ;; ;align           8
 inner_loop:                            ; new loop             CAE 1 Dec 1998
-      mov          si,WORD PTR [bx+2]
+      mov          si,WORD PTR [bx + 2]
       call         WORD PTR [bx]
-;      mov          si,WORD PTR [bx+6]  ; now set si to operand pointer
-;      call         WORD PTR [bx+4]     ; ...and jump to operator fn
+;      mov          si,WORD PTR [bx + 6]  ; now set si to operand pointer
+;      call         WORD PTR [bx + 4]     ; ...and jump to operator fn
 ;      add          bx,8     ; JCO removed loop unroll, 12/5/99
       add          bx,4
       jmp          short inner_loop
@@ -202,9 +202,9 @@ _Img_Setup         proc far
       add          di,si               ; di = offset lastop
       mov          WORD PTR [bx],di    ; save value of flastop
       mov          ax,es               ; es has segment value
-      mov          WORD PTR [bx+2],ax  ; save seg for easy reload
+      mov          WORD PTR [bx + 2],ax  ; save seg for easy reload
       mov          ax,word ptr _v      ; build a ptr to Z
-      add          ax,3*CARG+CPFX
+      add          ax,3*CARG + CPFX
       mov          _PtrToZ,ax          ; and save it
       UNFRAME      <di,si>
       ret

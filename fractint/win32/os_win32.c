@@ -525,9 +525,9 @@ void spindac(int dir, int inc)
 				tmp[2] = g_dac_box[rotate_lo][2];
 				for (j = rotate_lo; j < top; j++)
 				{
-					g_dac_box[j][0] = g_dac_box[j+1][0];
-					g_dac_box[j][1] = g_dac_box[j+1][1];
-					g_dac_box[j][2] = g_dac_box[j+1][2];
+					g_dac_box[j][0] = g_dac_box[j + 1][0];
+					g_dac_box[j][1] = g_dac_box[j + 1][1];
+					g_dac_box[j][2] = g_dac_box[j + 1][2];
 				}
 				g_dac_box[top][0] = tmp[0];
 				g_dac_box[top][1] = tmp[1];
@@ -863,8 +863,8 @@ int abortmsg(char *file, unsigned int line, int flags, char *msg)
 void
 ods(const char *file, unsigned int line, const char *format, ...)
 {
-	char full_msg[MAX_PATH+1];
-	char app_msg[MAX_PATH+1];
+	char full_msg[MAX_PATH + 1];
+	char app_msg[MAX_PATH + 1];
 	va_list args;
 
 	va_start(args, format);

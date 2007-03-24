@@ -113,11 +113,11 @@ void circleplot(int x, int y, int color)
 {
    if (xAspect == 0)
       if (yAspect == 0)
-         c_putcolor(x+xbase, y+ybase, color);
+         c_putcolor(x + xbase, y + ybase, color);
       else
-         c_putcolor(x+xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
+         c_putcolor(x + xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
    else
-      c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y+ybase, color);
+      c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y + ybase, color);
 }
 
 void plot8(int x, int y, int color)
@@ -143,7 +143,7 @@ void circle(int radius, int color)
    while (x <= y)
    {
       if (!(x & 1))   /* plot if x is even */
-         plot8(x >> 1, (y+1) >> 1, color);
+         plot8(x >> 1, (y + 1) >> 1, color);
       sum += (x << 1) + 1;
       x++;
       if (sum > 0)
@@ -429,8 +429,8 @@ static void SaveRect(int x, int y, int width, int height)
 		Cursor_Hide();
 		for (yoff = 0; yoff < height; yoff++)
 		{
-			getrow(x, y+yoff, width, buff);
-			putrow(x, y+yoff, width, (char *) dstack);
+			getrow(x, y + yoff, width, buff);
+			putrow(x, y + yoff, width, (char *) dstack);
 			buff += width;
 		}
 		Cursor_Show();
@@ -449,7 +449,7 @@ static void RestoreRect(int x, int y, int width, int height)
 	Cursor_Hide();
 	for (yoff =0; yoff < height; yoff++)
     {
-		putrow(x, y+yoff, width, buff);
+		putrow(x, y + yoff, width, buff);
 		buff += width;
     }
 	Cursor_Show();
@@ -914,7 +914,7 @@ void Jiim(int which)         /* called by fractint */
            PER_PIXEL();
          }  
          /* move window if bumped */
-         if (windows == 0 && col > xc && col < xc+xd && row > yc && row < yc+yd)
+         if (windows == 0 && col > xc && col < xc + xd && row > yc && row < yc + yd)
          {
             RestoreRect(xc, yc, xd, yd);
             if (xc == xd*2)

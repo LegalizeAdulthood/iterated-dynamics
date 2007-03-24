@@ -23,8 +23,8 @@ void bf_hexdump(bf_t r)
     int i;
 
     for (i = 0; i < bflength; i++)
-        printf("%02X ", *(r+i));
-    printf(" e %04hX ", (S16)big_access16(r+bflength));
+        printf("%02X ", *(r + i));
+    printf(" e %04hX ", (S16)big_access16(r + bflength));
     printf("\n");
     return;
     }
@@ -62,7 +62,7 @@ bf_t strtobf(bf_t r, char *s)
         e = strchr(s, 'E');
     if (e != NULL)
         {
-        powerten = atoi(e+1);    /* read in the e (x10^) part */
+        powerten = atoi(e + 1);    /* read in the e (x10^) part */
         l = e - 1; /* just before e */
         }
     else
@@ -174,7 +174,7 @@ char *unsafe_bftostr(char *s, int dec, bf_t r)
 
     copy_bf(bftmp1, r);
     unsafe_bftobf10(bf10tmp, dec, bftmp1);
-    power = (S16)big_access16(bf10tmp+dec+2); /* where the exponent is stored */
+    power = (S16)big_access16(bf10tmp + dec + 2); /* where the exponent is stored */
     if (power > -4 && power < 6) /* tinker with this */
         bf10tostr_f(s, dec, bf10tmp);
     else
@@ -224,14 +224,14 @@ char *unsafe_bftostr_f(char *s, int dec, bf_t r)
 /*********************************************************************/
 /*  bn = floor(bf)                                                   */
 /*  Converts a bigfloat to a bignumber (integer)                     */
-/*  bflength must be at least bnlength+2                             */
+/*  bflength must be at least bnlength + 2                             */
 bn_t bftobn(bn_t n, bf_t f)
     {
     int fexp;
     int movebytes;
     BYTE hibyte;
 
-    fexp = (S16)big_access16(f+bflength);
+    fexp = (S16)big_access16(f + bflength);
     if (fexp >= intlength)
         { /* if it's too big, use max value */
         max_bn(n);
@@ -248,22 +248,22 @@ bn_t bftobn(bn_t n, bf_t f)
 
     /* already checked for over/underflow, this should be ok */
     movebytes = bnlength - intlength + fexp + 1;
-    memcpy(n, f+bflength-movebytes-1, movebytes);
-    hibyte = *(f+bflength-1);
-    memset(n+movebytes, hibyte, bnlength-movebytes); /* sign extends */
+    memcpy(n, f + bflength-movebytes-1, movebytes);
+    hibyte = *(f + bflength-1);
+    memset(n + movebytes, hibyte, bnlength-movebytes); /* sign extends */
     return n;
     }
 
 /*********************************************************************/
 /*  bf = bn                                                          */
 /*  Converts a bignumber (integer) to a bigfloat                     */
-/*  bflength must be at least bnlength+2                             */
+/*  bflength must be at least bnlength + 2                             */
 bf_t bntobf(bf_t f, bn_t n)
     {
-    memcpy(f+bflength-bnlength-1, n, bnlength);
+    memcpy(f + bflength-bnlength-1, n, bnlength);
     memset(f, 0, bflength - bnlength - 1);
-    *(f+bflength-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); /* sign extend */
-    big_set16(f+bflength, (S16)(intlength - 1)); /* exp */
+    *(f + bflength-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); /* sign extend */
+    big_set16(f + bflength, (S16)(intlength - 1)); /* exp */
     norm_bf(f);
     return f;
     }
@@ -274,8 +274,8 @@ bf_t bntobf(bf_t f, bn_t n)
 bf_t inttobf(bf_t r, long longval)
     {
     clear_bf(r);
-    big_set32(r+bflength-4, (S32)longval);
-    big_set16(r+bflength, (S16)2);
+    big_set32(r + bflength-4, (S32)longval);
+    big_set16(r + bflength, (S16)2);
     norm_bf(r);
     return r;
     }
@@ -289,7 +289,7 @@ long bftoint(bf_t f)
     int fexp;
     long longval;
 
-    fexp = (S16)big_access16(f+bflength);
+    fexp = (S16)big_access16(f + bflength);
     if (fexp > 3)
         {
         longval = 0x7FFFFFFFL;
@@ -297,7 +297,7 @@ long bftoint(bf_t f)
             longval = -longval;
         return longval;
         }
-    longval = big_access32(f+bflength-5);
+    longval = big_access32(f + bflength-5);
     longval >>= 8*(3-fexp);
     return longval;
     }
@@ -356,8 +356,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
         neg_a_bf(n);
         }
 
-    fexp = (S16)big_access16(n+bflength);
-    big_set16(n+bflength, (S16)0); /* put within LDBL range */
+    fexp = (S16)big_access16(n + bflength);
+    big_set16(n + bflength, (S16)0); /* put within LDBL range */
 
     f = bftofloat(n);
     if (f == 0) /* division by zero */
@@ -432,9 +432,9 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
         {
         neg_a_bf(r);
         }
-    rexp = (S16)big_access16(r+bflength);
+    rexp = (S16)big_access16(r + bflength);
     rexp -= fexp;
-    big_set16(r+bflength, (S16)rexp); /* adjust result exponent */
+    big_set16(r + bflength, (S16)rexp); /* adjust result exponent */
     return r;
     }
 
@@ -452,8 +452,8 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
 
     /* first, check for valid data */
 
-    aexp = (S16)big_access16(n1+bflength);
-    big_set16(n1+bflength, (S16)0); /* put within LDBL range */
+    aexp = (S16)big_access16(n1 + bflength);
+    big_set16(n1 + bflength, (S16)0); /* put within LDBL range */
 
     a = bftofloat(n1);
     if (a == 0) /* division into zero */
@@ -462,8 +462,8 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
         }
 
-    bexp = (S16)big_access16(n2+bflength);
-    big_set16(n2+bflength, (S16)0); /* put within LDBL range */
+    bexp = (S16)big_access16(n2 + bflength);
+    big_set16(n2 + bflength, (S16)0); /* put within LDBL range */
 
     b = bftofloat(n2);
     if (b == 0) /* division by zero */
@@ -476,9 +476,9 @@ bf_t unsafe_div_bf(bf_t r, bf_t n1, bf_t n2)
     unsafe_mult_bf(bftmp1, n1, r);
     copy_bf(r, bftmp1); /* r = bftmp1 */
 
-    rexp = (S16)big_access16(r+bflength);
+    rexp = (S16)big_access16(r + bflength);
     rexp += aexp - bexp;
-    big_set16(r+bflength, (S16)rexp); /* adjust result exponent */
+    big_set16(r + bflength, (S16)rexp); /* adjust result exponent */
 
     return r;
     }
@@ -500,7 +500,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
          orig_shiftfactor,
          orig_rbflength;
 
-/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r+n/r) */
+/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r + n/r) */
 
     if (is_bf_neg(n))
         { /* sqrt of a neg, return 0 */
@@ -585,8 +585,8 @@ bf_t exp_bf(bf_t r, bf_t n)
     U16 fact = 1;
     S16 BIGDIST * testexp, BIGDIST * rexp;
 
-    testexp = (S16 BIGDIST *)(bftmp2+bflength);
-    rexp = (S16 BIGDIST *)(r+bflength);
+    testexp = (S16 BIGDIST *)(bftmp2 + bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
 
     if (is_bf_zero(n))
         {
@@ -628,7 +628,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
          orig_shiftfactor,
          orig_rbflength;
 
-/* use Newton's recursive method for zeroing in on ln(n): r=r+n*exp(-r)-1 */
+/* use Newton's recursive method for zeroing in on ln(n): r=r + n*exp(-r)-1 */
 
     if (is_bf_neg(n) || is_bf_zero(n))
         { /* error, return largest neg value */
@@ -725,9 +725,9 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
     int sin_done = 0, cos_done = 0;
     S16 BIGDIST * testexp, BIGDIST * cexp, BIGDIST * sexp;
 
-    testexp = (S16 BIGDIST *)(bftmp1+bflength);
-    cexp = (S16 BIGDIST *)(c+bflength);
-    sexp = (S16 BIGDIST *)(s+bflength);
+    testexp = (S16 BIGDIST *)(bftmp1 + bflength);
+    cexp = (S16 BIGDIST *)(c + bflength);
+    sexp = (S16 BIGDIST *)(s + bflength);
 
 #ifndef CALCULATING_BIG_PI
     /* assure range 0 <= x < pi/4 */
@@ -1250,9 +1250,9 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
    bflength      = savebflength;
 
    if (newbflength > oldbflength)
-      memcpy(newnum+newbflength-oldbflength, old, oldbflength+2);
+      memcpy(newnum + newbflength-oldbflength, old, oldbflength + 2);
    else
-      memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
+      memcpy(newnum, old + oldbflength-newbflength, newbflength + 2);
    return 0;
    }
 
@@ -1265,15 +1265,15 @@ bf_t norm_bf(bf_t r)
     BYTE hi_byte;
     S16 BIGDIST *rexp;
 
-    rexp  = (S16 BIGDIST *)(r+bflength);
+    rexp  = (S16 BIGDIST *)(r + bflength);
 
     /* check for overflow */
     hi_byte = r[bflength-1];
     if (hi_byte != 0x00 && hi_byte != 0xFF)
         {
-        memmove(r, r+1, bflength-1);
+        memmove(r, r + 1, bflength-1);
         r[bflength-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
-        big_setS16(rexp, big_accessS16(rexp)+(S16)1);   /* exp */
+        big_setS16(rexp, big_accessS16(rexp) + (S16)1);   /* exp */
         }
 
     /* check for underflow */
@@ -1288,7 +1288,7 @@ bf_t norm_bf(bf_t r)
             scale -= 2;
             if (scale > 0) /* it did underflow */
                 {
-                memmove(r+scale, r, bflength-scale-1);
+                memmove(r + scale, r, bflength-scale-1);
                 memset(r, 0, scale);
                 big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    /* exp */
                 }
@@ -1319,16 +1319,16 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 
     /* scale n1 or n2 */
     /* compare exp's */
-    n1exp = (S16 BIGDIST *)(n1+bflength);
-    n2exp = (S16 BIGDIST *)(n2+bflength);
+    n1exp = (S16 BIGDIST *)(n1 + bflength);
+    n2exp = (S16 BIGDIST *)(n2 + bflength);
     if (big_accessS16(n1exp) > big_accessS16(n2exp))
         { /* scale n2 */
         scale = big_accessS16(n1exp) - big_accessS16(n2exp); /* n1exp - n2exp */
         if (scale < bflength)
             {
             fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-            memmove(n2, n2+scale, bflength-scale);
-            memset(n2+bflength-scale, fill_byte, scale);
+            memmove(n2, n2 + scale, bflength-scale);
+            memset(n2 + bflength-scale, fill_byte, scale);
             }
         else
             clear_bf(n2);
@@ -1341,8 +1341,8 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
         if (scale < bflength)
             {
             fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-            memmove(n1, n1+scale, bflength-scale);
-            memset(n1+bflength-scale, fill_byte, scale);
+            memmove(n1, n1 + scale, bflength-scale);
+            memset(n1 + bflength-scale, fill_byte, scale);
             }
         else
             clear_bf(n1);
@@ -1359,7 +1359,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 bf_t max_bf(bf_t r)
     {
     inttobf(r, 1);
-    big_set16(r+bflength, (S16)(LDBL_MAX_EXP/8));
+    big_set16(r + bflength, (S16)(LDBL_MAX_EXP/8));
     return r;
     }
 
@@ -1388,8 +1388,8 @@ int cmp_bf(bf_t n1, bf_t n2)
     /* signs are the same */
 
     /* compare exponents, using signed comparisons */
-    n1exp = (S16 BIGDIST *)(n1+bflength);
-    n2exp = (S16 BIGDIST *)(n2+bflength);
+    n1exp = (S16 BIGDIST *)(n1 + bflength);
+    n2exp = (S16 BIGDIST *)(n2 + bflength);
     if (big_accessS16(n1exp) > big_accessS16(n2exp))
         return sign1*(bflength);
     else if (big_accessS16(n1exp) < big_accessS16(n2exp))
@@ -1400,19 +1400,19 @@ int cmp_bf(bf_t n1, bf_t n2)
     /* two bytes at a time */
     for (i=bflength-2; i >= 0; i -= 2)
         {
-        if ((value1=big_access16(n1+i)) > (value2=big_access16(n2+i)))
+        if ((value1=big_access16(n1 + i)) > (value2=big_access16(n2 + i)))
             { /* now determine which of the two bytes was different */
             if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
-                return i+2; /* high byte was different */
+                return i + 2; /* high byte was different */
             else
-                return i+1; /* low byte was different */
+                return i + 1; /* low byte was different */
             }
         else if (value1 < value2)
             { /* now determine which of the two bytes was different */
             if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
-                return -(i+2); /* high byte was different */
+                return -(i + 2); /* high byte was different */
             else
-                return -(i+1); /* low byte was different */
+                return -(i + 1); /* low byte was different */
             }
         }
     return 0;
@@ -1462,7 +1462,7 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
         }
 
-    rexp = (S16 BIGDIST *)(r+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
     big_setS16(rexp, adjust_bf_add(n1, n2));
 
     bnl = bnlength;
@@ -1521,7 +1521,7 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
         }
 
-    rexp = (S16 BIGDIST *)(r+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
     big_setS16(rexp, adjust_bf_add(n1, n2));
 
     bnl = bnlength;
@@ -1567,8 +1567,8 @@ bf_t neg_bf(bf_t r, bf_t n)
     int bnl;
     S16 BIGDIST *rexp, BIGDIST *nexp;
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
     bnl = bnlength;
@@ -1602,8 +1602,8 @@ bf_t double_bf(bf_t r, bf_t n)
     int bnl;
     S16 BIGDIST *rexp, BIGDIST *nexp;
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
     bnl = bnlength;
@@ -1637,8 +1637,8 @@ bf_t half_bf(bf_t r, bf_t n)
     int bnl;
     S16 BIGDIST *rexp, BIGDIST *nexp;
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
     bnl = bnlength;
@@ -1684,9 +1684,9 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
         }
 
     dbfl = 2*bflength; /* double width bflength */
-    rexp  = (S16 BIGDIST *)(r+dbfl); /* note: 2*bflength */
-    n1exp = (S16 BIGDIST *)(n1+bflength);
-    n2exp = (S16 BIGDIST *)(n2+bflength);
+    rexp  = (S16 BIGDIST *)(r + dbfl); /* note: 2*bflength */
+    n1exp = (S16 BIGDIST *)(n1 + bflength);
+    n2exp = (S16 BIGDIST *)(n2 + bflength);
     /* add exp's */
     big_setS16(rexp, (S16)(big_accessS16(n1exp) + big_accessS16(n2exp)));
 
@@ -1719,8 +1719,8 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
         return r;
         }
 
-    n1exp = (S16 BIGDIST *)(n1+bflength);
-    n2exp = (S16 BIGDIST *)(n2+bflength);
+    n1exp = (S16 BIGDIST *)(n1 + bflength);
+    n2exp = (S16 BIGDIST *)(n2 + bflength);
     /* add exp's */
     rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
 
@@ -1736,10 +1736,10 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 
     bfl = bflength;
     bflength = rbflength;
-    big_set16(r+bflength, (S16)(rexp+2)); /* adjust after mult */
+    big_set16(r + bflength, (S16)(rexp + 2)); /* adjust after mult */
     norm_sign_bf(r, positive);
     bflength = bfl;
-    memmove(r, r+padding, bflength+2); /* shift back */
+    memmove(r, r + padding, bflength + 2); /* shift back */
 
     return r;
     }
@@ -1749,9 +1749,9 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 /*   because of the symmetry involved, n^2 is much faster than n*n      */
 /*   for a bignumber of length l                                        */
 /*      n*n takes l^2 multiplications                                   */
-/*      n^2 takes (l^2+l)/2 multiplications                             */
+/*      n^2 takes (l^2 + l)/2 multiplications                             */
 /*          which is about 1/2 n*n as l gets large                      */
-/*  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)*/
+/*  uses the fact that (a + b + c + ...)^2 = (a^2 + b^2 + c^2 + ...) + 2(ab + ac + bc + ...)*/
 /*                                                                      */
 /* SIDE-EFFECTS: n is changed to its absolute value                     */
 bf_t unsafe_full_square_bf(bf_t r, bf_t n)
@@ -1768,8 +1768,8 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
         }
 
     dbfl = 2*bflength; /* double width bflength */
-    rexp  = (S16 BIGDIST *)(r+dbfl); /* note: 2*bflength */
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp  = (S16 BIGDIST *)(r + dbfl); /* note: 2*bflength */
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, 2 * big_accessS16(nexp));
 
     bnl = bnlength;
@@ -1788,9 +1788,9 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 /*   because of the symmetry involved, n^2 is much faster than n*n      */
 /*   for a bignumber of length l                                        */
 /*      n*n takes l^2 multiplications                                   */
-/*      n^2 takes (l^2+l)/2 multiplications                             */
+/*      n^2 takes (l^2 + l)/2 multiplications                             */
 /*          which is about 1/2 n*n as l gets large                      */
-/*  uses the fact that (a+b+c+...)^2 = (a^2+b^2+c^2+...)+2(ab+ac+bc+...)*/
+/*  uses the fact that (a + b + c + ...)^2 = (a^2 + b^2 + c^2 + ...) + 2(ab + ac + bc + ...)*/
 /*                                                                      */
 /* Note: r will be of length rlength                                    */
 /*       2*bflength >= rlength > bflength                               */
@@ -1807,7 +1807,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
         return r;
         }
 
-    nexp = (S16 BIGDIST *)(n+bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     rexp = (S16)(2 * big_accessS16(nexp));
 
     bnl = bnlength;
@@ -1820,11 +1820,11 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 
     bfl = bflength;
     bflength = rbflength;
-    big_set16(r+bflength, (S16)(rexp+2)); /* adjust after mult */
+    big_set16(r + bflength, (S16)(rexp + 2)); /* adjust after mult */
 
     norm_sign_bf(r, 1);
     bflength = bfl;
-    memmove(r, r+padding, bflength+2); /* shift back */
+    memmove(r, r + padding, bflength + 2); /* shift back */
 
     return r;
     }
@@ -1838,8 +1838,8 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
     int bnl;
     S16 BIGDIST *rexp, BIGDIST *nexp;
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
     positive = !is_bf_neg(n);
@@ -1851,8 +1851,8 @@ multiplication is performed.
 */
     if (u > 0x00FF)
         { /* un-normalize n */
-        memmove(n, n+1, bflength-1);  /* this sign extends as well */
-        big_setS16(rexp, big_accessS16(rexp)+(S16)1);
+        memmove(n, n + 1, bflength-1);  /* this sign extends as well */
+        big_setS16(rexp, big_accessS16(rexp) + (S16)1);
         }
 
     bnl = bnlength;
@@ -1872,7 +1872,7 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
     int bnl;
     S16 BIGDIST *rexp;
 
-    rexp = (S16 BIGDIST *)(r+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
     positive = !is_bf_neg(r);
 
 /*
@@ -1882,8 +1882,8 @@ multiplication is performed.
 */
     if (u > 0x00FF)
         { /* un-normalize n */
-        memmove(r, r+1, bflength-1);  /* this sign extends as well */
-        big_setS16(rexp, big_accessS16(rexp)+(S16)1);
+        memmove(r, r + 1, bflength-1);  /* this sign extends as well */
+        big_setS16(rexp, big_accessS16(rexp) + (S16)1);
         }
 
     bnl = bnlength;
@@ -1910,8 +1910,8 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
         return r;
         }
 
-    rexp = (S16 BIGDIST *)(r+bflength);
-    nexp = (S16 BIGDIST *)(n+bflength);
+    rexp = (S16 BIGDIST *)(r + bflength);
+    nexp = (S16 BIGDIST *)(n + bflength);
     big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
     bnl = bnlength;
@@ -2100,7 +2100,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
       return r;
       }
 
-   onesbyte = n + bflength - 1;           /* really it's n+bflength-2 */
+   onesbyte = n + bflength - 1;           /* really it's n + bflength-2 */
    power256 = (S16)big_access16(n + bflength) + 1; /* so adjust power256 by 1  */
 
    if (dec == 0)
@@ -2165,10 +2165,10 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
       if (d == 0) /* rounding went back to the first digit and it overflowed */
          {
          r[1] = 0;
-         memmove(r+2, r+1, dec-1);
+         memmove(r + 2, r + 1, dec-1);
          r[1] = 1;
          p = (S16)big_access16(power10);
-         big_set16(power10, (U16)(p+1));
+         big_set16(power10, (U16)(p + 1));
          }
       }
    r[dec] = 0; /* truncate the rounded digit */
@@ -2209,7 +2209,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
    while (overflow)
       {
       p++;
-      memmove(r+2, r+1, dec-1);
+      memmove(r + 2, r + 1, dec-1);
       r[1] = (BYTE)(overflow % 10);
       overflow = overflow / 10;
       }
@@ -2347,7 +2347,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
       *(s++) = '-';
    if (p >= 0)
       {
-      for (d = 1; d <= p+1; d++)
+      for (d = 1; d <= p + 1; d++)
          *(s++) = (char)(n[d] + '0');
       *(s++) = '.';
       for (; d <= dec; d++)
@@ -2357,7 +2357,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
       {
       *(s++) = '0';
       *(s++) = '.';
-      for (d = 0; d > p+1; d--)
+      for (d = 0; d > p + 1; d--)
          *(s++) = '0';
       for (d = 1; d <= dec; d++)
          *(s++) = (char)(n[d] + '0');

@@ -747,8 +747,8 @@ void lStkTrunc(void) {
 void (*StkTrunc)(void) = dStkTrunc;
 
 void dStkRound(void) {
-   Arg1->d.x = floor(Arg1->d.x+.5);
-   Arg1->d.y = floor(Arg1->d.y+.5);
+   Arg1->d.x = floor(Arg1->d.x + .5);
+   Arg1->d.y = floor(Arg1->d.y + .5);
 }
 
 #if !defined(XFRACT)
@@ -1430,7 +1430,7 @@ void lStkSqrt(void) {
 void (*StkSqrt)(void) = dStkSqrt;
 
 void dStkCAbs(void) {
-   Arg1->d.x = sqrt(sqr(Arg1->d.x)+sqr(Arg1->d.y));
+   Arg1->d.x = sqrt(sqr(Arg1->d.x) + sqr(Arg1->d.y));
    Arg1->d.y = 0.0;
 }
 
@@ -1844,9 +1844,9 @@ static int isconst_pair(char *Str) {
    /* skip past first number */
    for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++);
    if (Str[n] == ',') {
-      j = n + SkipWhiteSpace(&Str[n+1]) + 1;
+      j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
       if (isdigit(Str[j])
-          || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+          || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
           || Str[j] == '.') {
             answer = 1;
       }
@@ -1914,9 +1914,9 @@ struct ConstArg *isconst(char *Str, int Len) {
       }
       for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++);
       if (Str[n] == ',') {
-         j = n + SkipWhiteSpace(&Str[n+1]) + 1;
+         j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
          if (isdigit(Str[j])
-             || (Str[j] == '-' && (isdigit(Str[j+1]) || Str[j+1] == '.'))
+             || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
              || Str[j] == '.') {
             z.y = atof(&Str[j]);
             for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++);
@@ -2063,7 +2063,7 @@ int whichfn(char *s, int len)
    else if (strnicmp(s,"fn",2))
       out = 0;
    else
-      out = atoi(s+2);
+      out = atoi(s + 2);
    if (out < 1 || out > 4)
       out = 0;
    return out;
@@ -2079,7 +2079,7 @@ void (*isfunct(char *Str, int Len))(void)
    int functnum;    /* TIW 04-22-91 */
 
    n = SkipWhiteSpace(&Str[Len]);
-   if (Str[Len+n] == '(') {
+   if (Str[Len + n] == '(') {
       for (n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++) {
          if ((int) strlen(FnctList[n].s) == Len) {        /* TIW 03-31-91 added far */
             if (!strnicmp(FnctList[n].s, Str, Len)) {  /* TIW 03-31-91 added far */
@@ -2444,7 +2444,7 @@ static int ParseStr(char *Str, int pass) {
             paren--;
             break;
          case '|':
-            if (Str[n+1] == '|') {
+            if (Str[n + 1] == '|') {
                ExpectingArg = 1;
                n++;
                o[posp].f = StkOR;
@@ -2511,7 +2511,7 @@ static int ParseStr(char *Str, int pass) {
             break;
          case '<':
             ExpectingArg = 1;
-            if (Str[n+1] == '=') {
+            if (Str[n + 1] == '=') {
                n++;
                o[posp].f = StkLTE;
             }
@@ -2521,7 +2521,7 @@ static int ParseStr(char *Str, int pass) {
             break;
          case '>':
             ExpectingArg = 1;
-            if (Str[n+1] == '=') {
+            if (Str[n + 1] == '=') {
                n++;
                o[posp].f = StkGTE;
             }
@@ -2546,7 +2546,7 @@ static int ParseStr(char *Str, int pass) {
             break;
          case '=':
             ExpectingArg = 1;
-            if (Str[n+1] == '=') {
+            if (Str[n + 1] == '=') {
                n++;
                o[posp].f = StkEQ;
                o[posp++].p = 6 - (paren + Equals)*15;
@@ -2559,9 +2559,9 @@ static int ParseStr(char *Str, int pass) {
             }
             break;
          default:
-            while (isalnum(Str[n+1]) || Str[n+1] == '.' || Str[n+1] == '_')
+            while (isalnum(Str[n + 1]) || Str[n + 1] == '.' || Str[n + 1] == '_')
                n++;
-            Len = (n+1)-InitN;
+            Len = (n + 1)-InitN;
             ExpectingArg = 0;
             if ((jumptype = isjump(&Str[InitN], Len)) != 0) {
                uses_jump = 1;
@@ -2701,7 +2701,7 @@ int form_per_pixel(void) {
 
    switch (MathType) {
    case D_MATH:
-      if ((row+col)&1)
+      if ((row + col)&1)
          v[9].a.d.x = 1.0;
       else
          v[9].a.d.x = 0.0;
@@ -2711,7 +2711,7 @@ int form_per_pixel(void) {
 
 #if !defined(XFRACT)
    case M_MATH:
-      if ((row+col)&1)
+      if ((row + col)&1)
          v[9].a.m = MPCone;
       else {
          v[9].a.m.x.Mant = v[9].a.m.x.Exp = 0;
@@ -2720,7 +2720,7 @@ int form_per_pixel(void) {
       v[10].a.m = cmplx2MPC(v[10].a.d);
       break;
    case L_MATH:
-      v[9].a.l.x = (long) (((row+col)&1) * fg);
+      v[9].a.l.x = (long) (((row + col)&1) * fg);
       v[9].a.l.y = 0L;
       v[10].a.l.x = col;   v[10].a.l.x <<= bitshift;
       v[10].a.l.y = row;   v[10].a.l.y <<= bitshift;
@@ -2746,7 +2746,7 @@ int form_per_pixel(void) {
             break;
          case L_MATH:
             /* watch out for overflow */
-            if (sqr(old.x)+sqr(old.y) >= 127)
+            if (sqr(old.x) + sqr(old.y) >= 127)
             {
                old.x = 8;  /* value to bail out in one iteration */
                old.y = 8;
@@ -3504,8 +3504,8 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       strcat(msgbuf, ":\n   ");
       fseek(open_file, filepos, SEEK_SET);
       for (j = 0; j < i && j < 25; j++)
-         msgbuf[j+k+2] = (char) getc(open_file);
-      msgbuf[j+k+2] = (char) 0;
+         msgbuf[j + k + 2] = (char) getc(open_file);
+      msgbuf[j + k + 2] = (char) 0;
       stopmsg(STOPMSG_FIXED_FONT, msgbuf);
       return 0;
    }

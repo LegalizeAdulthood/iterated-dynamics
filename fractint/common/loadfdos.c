@@ -261,7 +261,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 			{
 				i = (int) strlen(temp1);
 				temp1[i] = (char)((save_release%10) + '0');
-				temp1[i+1] = 0;
+				temp1[i + 1] = 0;
 			}
 			if (save_system == 0 && save_release <= 1410)
 			{
@@ -399,7 +399,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 				{
 					break; /* already reduced x, don't reduce y */
 				}
-				ftemp2 = vid_aspect(tmpxdots, (fileydots+skipydots)/(skipydots+1));
+				ftemp2 = vid_aspect(tmpxdots, (fileydots + skipydots)/(skipydots + 1));
 				if (ftemp2 < fileaspectratio &&
 					ftemp/fileaspectratio *0.9 <= fileaspectratio/ftemp2)
 				{
@@ -414,7 +414,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 				{
 					break; /* already reduced y, don't reduce x */
 				}
-				ftemp2 = vid_aspect((filexdots+skipxdots)/(skipxdots+1), tmpydots);
+				ftemp2 = vid_aspect((filexdots + skipxdots)/(skipxdots + 1), tmpydots);
 				if (ftemp2 > fileaspectratio &&
 					fileaspectratio/ftemp *0.9 <= ftemp2/fileaspectratio)
 				{
@@ -435,7 +435,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		finalaspectratio = (float)vid_aspect(filexdots, fileydots);
 	}
 	if (finalaspectratio >= screenaspect-0.02
-		&& finalaspectratio <= screenaspect+0.02)
+		&& finalaspectratio <= screenaspect + 0.02)
 	{
 		finalaspectratio = screenaspect;
 	}
@@ -492,7 +492,7 @@ static void format_item(int choice,char *buf)
    unsigned tmpflags;
    errbuf[0] = 0;
    tmpflags = vidptr[choice].flags;
-   if (tmpflags & (VI_VSMALL+VI_CSMALL+VI_ASPECT)) strcat(errbuf,"*");
+   if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT)) strcat(errbuf,"*");
    if (tmpflags & VI_VSMALL) strcat(errbuf,"R");
    if (tmpflags & VI_CSMALL) strcat(errbuf,"C");
    if (tmpflags & VI_ASPECT) strcat(errbuf,"A");

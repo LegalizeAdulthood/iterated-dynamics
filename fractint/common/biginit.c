@@ -44,24 +44,24 @@ _BNCMPLX bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_N
 _BNCMPLX bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
 bn_t bn_pi = BIG_NULL;                                           /* TAKES NO SPACE */
 
-bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength+2 */
-bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength+2 */
-bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength+2 */
-bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength+2 */
-_BFCMPLX /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength+2 */
-_BFCMPLX bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength+2 */
+bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength + 2 */
+bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength + 2 */
+bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength + 2 */
+bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength + 2 */
+_BFCMPLX /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength + 2 */
+_BFCMPLX bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength + 2 */
 bf_t bf_pi = BIG_NULL;                                           /* TAKES NO SPACE */
-bf_t big_pi = BIG_NULL;                                              /* bflength+2 */
+bf_t big_pi = BIG_NULL;                                              /* bflength + 2 */
 
 /* for testing only */
 
 /* used by other routines */
-bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength+2 */
-bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL; /* bflength+2 */
-bf_t bfparms[10];                                    /* (bflength+2)*10 */
+bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength + 2 */
+bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL; /* bflength + 2 */
+bf_t bfparms[10];                                    /* (bflength + 2)*10 */
 bf_t bftmp = BIG_NULL;
 
-bf_t bf10tmp = BIG_NULL;                                              /* dec+4 */
+bf_t bf10tmp = BIG_NULL;                                              /* dec + 4 */
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -98,7 +98,7 @@ void calc_lengths(void)
     /* Change to bnlength-intlength for full multiplications.              */
     shiftfactor = padding - intlength;
 
-    bflength = bnlength+bnstep; /* one extra step for added precision */
+    bflength = bnlength + bnstep; /* one extra step for added precision */
     rbflength = bflength + padding;
     bfdecimals = (int)((bflength-2)*LOG10_256);
     }
@@ -136,86 +136,86 @@ static void init_bf_2(void)
     /* Now split up the memory among the pointers */
     /* internal pointers */
     ptr        = 0;
-    bntmp1     = bnroot+ptr; ptr += rlength;
-    bntmp2     = bnroot+ptr; ptr += rlength;
-    bntmp3     = bnroot+ptr; ptr += rlength;
-    bntmp4     = bnroot+ptr; ptr += rlength;
-    bntmp5     = bnroot+ptr; ptr += rlength;
-    bntmp6     = bnroot+ptr; ptr += rlength;
+    bntmp1     = bnroot + ptr; ptr += rlength;
+    bntmp2     = bnroot + ptr; ptr += rlength;
+    bntmp3     = bnroot + ptr; ptr += rlength;
+    bntmp4     = bnroot + ptr; ptr += rlength;
+    bntmp5     = bnroot + ptr; ptr += rlength;
+    bntmp6     = bnroot + ptr; ptr += rlength;
 
-    bftmp1     = bnroot+ptr; ptr += rbflength+2;
-    bftmp2     = bnroot+ptr; ptr += rbflength+2;
-    bftmp3     = bnroot+ptr; ptr += rbflength+2;
-    bftmp4     = bnroot+ptr; ptr += rbflength+2;
-    bftmp5     = bnroot+ptr; ptr += rbflength+2;
-    bftmp6     = bnroot+ptr; ptr += rbflength+2;
+    bftmp1     = bnroot + ptr; ptr += rbflength + 2;
+    bftmp2     = bnroot + ptr; ptr += rbflength + 2;
+    bftmp3     = bnroot + ptr; ptr += rbflength + 2;
+    bftmp4     = bnroot + ptr; ptr += rbflength + 2;
+    bftmp5     = bnroot + ptr; ptr += rbflength + 2;
+    bftmp6     = bnroot + ptr; ptr += rbflength + 2;
 
-    bftmpcpy1  = bnroot+ptr; ptr += (rbflength+2)*2;
-    bftmpcpy2  = bnroot+ptr; ptr += (rbflength+2)*2;
+    bftmpcpy1  = bnroot + ptr; ptr += (rbflength + 2)*2;
+    bftmpcpy2  = bnroot + ptr; ptr += (rbflength + 2)*2;
 
-    bntmpcpy1  = bnroot+ptr; ptr += (rlength*2);
-    bntmpcpy2  = bnroot+ptr; ptr += (rlength*2);
+    bntmpcpy1  = bnroot + ptr; ptr += (rlength*2);
+    bntmpcpy2  = bnroot + ptr; ptr += (rlength*2);
 
     if (bf_math == BIGNUM)
     {
-    bnxmin     = bnroot+ptr; ptr += bnlength;
-    bnxmax     = bnroot+ptr; ptr += bnlength;
-    bnymin     = bnroot+ptr; ptr += bnlength;
-    bnymax     = bnroot+ptr; ptr += bnlength;
-    bnx3rd     = bnroot+ptr; ptr += bnlength;
-    bny3rd     = bnroot+ptr; ptr += bnlength;
-    bnxdel     = bnroot+ptr; ptr += bnlength;
-    bnydel     = bnroot+ptr; ptr += bnlength;
-    bnxdel2    = bnroot+ptr; ptr += bnlength;
-    bnydel2    = bnroot+ptr; ptr += bnlength;
-    bnold.x    = bnroot+ptr; ptr += rlength;
-    bnold.y    = bnroot+ptr; ptr += rlength;
-    bnnew.x    = bnroot+ptr; ptr += rlength;
-    bnnew.y    = bnroot+ptr; ptr += rlength;
-    bnsaved.x  = bnroot+ptr; ptr += bnlength;
-    bnsaved.y  = bnroot+ptr; ptr += bnlength;
-    bnclosenuff= bnroot+ptr; ptr += bnlength;
-    bnparm.x   = bnroot+ptr; ptr += bnlength;
-    bnparm.y   = bnroot+ptr; ptr += bnlength;
-    bntmpsqrx  = bnroot+ptr; ptr += rlength;
-    bntmpsqry  = bnroot+ptr; ptr += rlength;
-    bntmp      = bnroot+ptr; ptr += rlength;
+    bnxmin     = bnroot + ptr; ptr += bnlength;
+    bnxmax     = bnroot + ptr; ptr += bnlength;
+    bnymin     = bnroot + ptr; ptr += bnlength;
+    bnymax     = bnroot + ptr; ptr += bnlength;
+    bnx3rd     = bnroot + ptr; ptr += bnlength;
+    bny3rd     = bnroot + ptr; ptr += bnlength;
+    bnxdel     = bnroot + ptr; ptr += bnlength;
+    bnydel     = bnroot + ptr; ptr += bnlength;
+    bnxdel2    = bnroot + ptr; ptr += bnlength;
+    bnydel2    = bnroot + ptr; ptr += bnlength;
+    bnold.x    = bnroot + ptr; ptr += rlength;
+    bnold.y    = bnroot + ptr; ptr += rlength;
+    bnnew.x    = bnroot + ptr; ptr += rlength;
+    bnnew.y    = bnroot + ptr; ptr += rlength;
+    bnsaved.x  = bnroot + ptr; ptr += bnlength;
+    bnsaved.y  = bnroot + ptr; ptr += bnlength;
+    bnclosenuff= bnroot + ptr; ptr += bnlength;
+    bnparm.x   = bnroot + ptr; ptr += bnlength;
+    bnparm.y   = bnroot + ptr; ptr += bnlength;
+    bntmpsqrx  = bnroot + ptr; ptr += rlength;
+    bntmpsqry  = bnroot + ptr; ptr += rlength;
+    bntmp      = bnroot + ptr; ptr += rlength;
     }
     if (bf_math == BIGFLT)
     {
-    bfxdel     = bnroot+ptr; ptr += bflength+2;
-    bfydel     = bnroot+ptr; ptr += bflength+2;
-    bfxdel2    = bnroot+ptr; ptr += bflength+2;
-    bfydel2    = bnroot+ptr; ptr += bflength+2;
-    bfold.x    = bnroot+ptr; ptr += rbflength+2;
-    bfold.y    = bnroot+ptr; ptr += rbflength+2;
-    bfnew.x    = bnroot+ptr; ptr += rbflength+2;
-    bfnew.y    = bnroot+ptr; ptr += rbflength+2;
-    bfsaved.x  = bnroot+ptr; ptr += bflength+2;
-    bfsaved.y  = bnroot+ptr; ptr += bflength+2;
-    bfclosenuff= bnroot+ptr; ptr += bflength+2;
-    bfparm.x   = bnroot+ptr; ptr += bflength+2;
-    bfparm.y   = bnroot+ptr; ptr += bflength+2;
-    bftmpsqrx  = bnroot+ptr; ptr += rbflength+2;
-    bftmpsqry  = bnroot+ptr; ptr += rbflength+2;
-    big_pi     = bnroot+ptr; ptr += bflength+2;
-    bftmp      = bnroot+ptr; ptr += rbflength+2;
+    bfxdel     = bnroot + ptr; ptr += bflength + 2;
+    bfydel     = bnroot + ptr; ptr += bflength + 2;
+    bfxdel2    = bnroot + ptr; ptr += bflength + 2;
+    bfydel2    = bnroot + ptr; ptr += bflength + 2;
+    bfold.x    = bnroot + ptr; ptr += rbflength + 2;
+    bfold.y    = bnroot + ptr; ptr += rbflength + 2;
+    bfnew.x    = bnroot + ptr; ptr += rbflength + 2;
+    bfnew.y    = bnroot + ptr; ptr += rbflength + 2;
+    bfsaved.x  = bnroot + ptr; ptr += bflength + 2;
+    bfsaved.y  = bnroot + ptr; ptr += bflength + 2;
+    bfclosenuff= bnroot + ptr; ptr += bflength + 2;
+    bfparm.x   = bnroot + ptr; ptr += bflength + 2;
+    bfparm.y   = bnroot + ptr; ptr += bflength + 2;
+    bftmpsqrx  = bnroot + ptr; ptr += rbflength + 2;
+    bftmpsqry  = bnroot + ptr; ptr += rbflength + 2;
+    big_pi     = bnroot + ptr; ptr += bflength + 2;
+    bftmp      = bnroot + ptr; ptr += rbflength + 2;
     }
-    bf10tmp    = bnroot+ptr; ptr += bfdecimals+4;
+    bf10tmp    = bnroot + ptr; ptr += bfdecimals + 4;
 
     /* ptr needs to be 16-bit aligned on some systems */
-    ptr = (ptr+1)&~1;
+    ptr = (ptr + 1)&~1;
 
     stack_ptr  = bnroot + ptr;
     startstack = ptr;
 
     /* max stack offset from bnroot */
-    maxstack = (long)0x10000l-(bflength+2)*22-ENDVID;
+    maxstack = (long)0x10000l-(bflength + 2)*22-ENDVID;
 
     /* sanity check */
     /* leave room for NUMVARS variables allocated from stack */
     /* also leave room for the safe area at top of segment */
-    if (ptr + NUMVARS*(bflength+2) > maxstack)
+    if (ptr + NUMVARS*(bflength + 2) > maxstack)
        {
        char msg[80];
        sprintf(msg, "Requested precision of %d too high, aborting", decimals);
@@ -227,31 +227,31 @@ static void init_bf_2(void)
     /* this area is safe - use for variables that are used outside fractal*/
     /* generation - e.g. zoom box variables */
     ptr  = maxstack;
-    bfxmin     = bnroot+ptr; ptr += bflength+2;
-    bfxmax     = bnroot+ptr; ptr += bflength+2;
-    bfymin     = bnroot+ptr; ptr += bflength+2;
-    bfymax     = bnroot+ptr; ptr += bflength+2;
-    bfx3rd     = bnroot+ptr; ptr += bflength+2;
-    bfy3rd     = bnroot+ptr; ptr += bflength+2;
+    bfxmin     = bnroot + ptr; ptr += bflength + 2;
+    bfxmax     = bnroot + ptr; ptr += bflength + 2;
+    bfymin     = bnroot + ptr; ptr += bflength + 2;
+    bfymax     = bnroot + ptr; ptr += bflength + 2;
+    bfx3rd     = bnroot + ptr; ptr += bflength + 2;
+    bfy3rd     = bnroot + ptr; ptr += bflength + 2;
     for (i = 0; i < 10; i++)
        {
-       bfparms[i]  = bnroot+ptr; ptr += bflength+2;
+       bfparms[i]  = bnroot + ptr; ptr += bflength + 2;
        }
-    bfsxmin    = bnroot+ptr; ptr += bflength+2;
-    bfsxmax    = bnroot+ptr; ptr += bflength+2;
-    bfsymin    = bnroot+ptr; ptr += bflength+2;
-    bfsymax    = bnroot+ptr; ptr += bflength+2;
-    bfsx3rd    = bnroot+ptr; ptr += bflength+2;
-    bfsy3rd    = bnroot+ptr; ptr += bflength+2;
+    bfsxmin    = bnroot + ptr; ptr += bflength + 2;
+    bfsxmax    = bnroot + ptr; ptr += bflength + 2;
+    bfsymin    = bnroot + ptr; ptr += bflength + 2;
+    bfsymax    = bnroot + ptr; ptr += bflength + 2;
+    bfsx3rd    = bnroot + ptr; ptr += bflength + 2;
+    bfsy3rd    = bnroot + ptr; ptr += bflength + 2;
     /* end safe vars */
 
     /* good citizens initialize variables */
     if (bf_save_len)  /* leave save area */
-       memset(bnroot+(bf_save_len+2)*22, 0, (unsigned)(startstack-(bf_save_len+2)*22));
+       memset(bnroot + (bf_save_len + 2)*22, 0, (unsigned)(startstack-(bf_save_len + 2)*22));
     else /* first time through - nothing saved */
        {
        /* high variables */
-       memset(bnroot+maxstack, 0, (bflength+2)*22);
+       memset(bnroot + maxstack, 0, (bflength + 2)*22);
        /* low variables */
        memset(bnroot, 0, (unsigned)startstack);
        }
@@ -275,7 +275,7 @@ static int save_bf_vars(void)
    unsigned int mem;
    if (bnroot != BIG_NULL)
       {
-      mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
+      mem = (bflength + 2)*22;  /* 6 corners + 6 save corners + 10 params */
       bf_save_len = bflength;
       memcpy(bnroot, bfxmin, mem);
       /* scrub old high area */
@@ -299,26 +299,26 @@ static int restore_bf_vars(void)
    if (bf_save_len == 0)
       return -1;
    ptr  = bnroot;
-   convert_bf(bfxmin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfxmax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfymin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfymax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfxmin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfxmax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfymin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfymax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
    for (i = 0; i < 10; i++)
       {
       convert_bf(bfparms[i], ptr, bflength, bf_save_len);
-      ptr += bf_save_len+2;
+      ptr += bf_save_len + 2;
       }
-   convert_bf(bfsxmin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsxmax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsymin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsymax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsxmin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfsxmax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfsymin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfsymax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfsx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
+   convert_bf(bfsy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 
    /* scrub save area */
-   memset(bnroot, 0, (bf_save_len+2)*22);
+   memset(bnroot, 0, (bf_save_len + 2)*22);
    return 0;
    }
 
@@ -343,7 +343,7 @@ bn_t alloc_stack(size_t size)
       stopmsg(0, "alloc_stack called with bf_math==0");
       return 0;
       }
-   stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
+   stack_addr = (long)((stack_ptr-bnroot) + size); /* +ENDVID, part of bnroot */
 
    if (stack_addr > maxstack)
       {
@@ -369,7 +369,7 @@ int save_stack(void)
 /*    allocated since save_stack()                                   */
 void restore_stack(int old_offset)
    {
-   stack_ptr  = bnroot+old_offset;
+   stack_ptr  = bnroot + old_offset;
    }
 
 /************************************************************************/
@@ -509,7 +509,7 @@ void init_big_pi(void)
               /* or bf_t int length of 2 + 2 byte exp  */
          };
 
-    length = bflength+2; /* 2 byte exp */
+    length = bflength + 2; /* 2 byte exp */
     pi_offset = sizeof pi_table - length;
     memcpy(big_pi, pi_table + pi_offset, length);
 

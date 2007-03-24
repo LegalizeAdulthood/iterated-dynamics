@@ -26,7 +26,7 @@
 #include "drivers.h"
 #include "helpdefs.h"
 
-char stereomapname[FILE_MAX_DIR+1] = {""};
+char stereomapname[FILE_MAX_DIR + 1] = {""};
 int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
 char grayflag = 0;              /* flag to use gray value rather than color

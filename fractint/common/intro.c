@@ -51,12 +51,12 @@ void intro(void)
 	authors[j] = 0;              /* find the start of each credit-line */
 	for (i = 0; credits[i] != 0; i++)
 		if (credits[i] == 10)
-			authors[++j] = i+1;
-	authors[j+1] = i;
+			authors[++j] = i + 1;
+	authors[j + 1] = i;
 
 	helptitle();
 #define END_MAIN_AUTHOR 5
-	toprow = END_MAIN_AUTHOR+1;
+	toprow = END_MAIN_AUTHOR + 1;
 #ifndef XFRACT
 	botrow = 21;
 #else
@@ -77,11 +77,11 @@ void intro(void)
 	i = botrow - toprow;
 	srand((unsigned int)clock_ticks());
 	j = rand()%(j-(botrow-toprow)); /* first to use */
-	i = j+botrow-toprow; /* last to use */
-	oldchar = credits[authors[i+1]];
-	credits[authors[i+1]] = 0;
-	driver_put_string(toprow, 0, C_CONTRIB, credits+authors[j]);
-	credits[authors[i+1]] = oldchar;
+	i = j + botrow-toprow; /* last to use */
+	oldchar = credits[authors[i + 1]];
+	credits[authors[i + 1]] = 0;
+	driver_put_string(toprow, 0, C_CONTRIB, credits + authors[j]);
+	credits[authors[i + 1]] = oldchar;
 	delaymax = 10;
 	driver_hide_text_cursor();
 	helpmode = HELPMENU;
@@ -104,11 +104,11 @@ void intro(void)
 		i++;
 		if (credits[authors[i]] == 0)
 			i = 0;
-		oldchar = credits[authors[i+1]];
-		credits[authors[i+1]] = 0;
+		oldchar = credits[authors[i + 1]];
+		credits[authors[i + 1]] = 0;
 		driver_put_string(botrow, 0, C_CONTRIB, &credits[authors[i]]);
 		driver_set_attr(botrow, 0, C_CONTRIB, 80);
-		credits[authors[i+1]] = oldchar;
+		credits[authors[i + 1]] = oldchar;
 		driver_hide_text_cursor(); /* turn it off */
     }
 

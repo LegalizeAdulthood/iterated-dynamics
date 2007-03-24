@@ -122,9 +122,9 @@ check_arg(Win32DiskDriver *di, char *arg)
 		di->base.simple_input = 1;
 		return 1;
 	}
-	else if (strcmp(arg, "-geometry") == 0 && *i+1 < argc)
+	else if (strcmp(arg, "-geometry") == 0 && *i + 1 < argc)
 	{
-		di->base.Xgeometry = argv[(*i)+1];
+		di->base.Xgeometry = argv[(*i) + 1];
 		(*i)++;
 		return 1;
 	}
@@ -160,9 +160,9 @@ initdacbox()
 	int i;
 	for (i = 0; i < 256; i++)
 	{
-		g_dac_box[i][0] = (i >> 5)*8+7;
-		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
-		g_dac_box[i][2] = (((i+2) & 3))*16+15;
+		g_dac_box[i][0] = (i >> 5)*8 + 7;
+		g_dac_box[i][1] = (((i + 16) & 28) >> 2)*8 + 7;
+		g_dac_box[i][2] = (((i + 2) & 3))*16 + 15;
 	}
 	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
 	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 255;
@@ -277,7 +277,7 @@ disk_init(Driver *drv, int *argc, char **argv)
 				int j;
 				for (j = i; j < *argc-1; j++)
 				{
-					argv[j] = argv[j+1];
+					argv[j] = argv[j + 1];
 				}
 				argv[j] = NULL;
 				--*argc;
@@ -472,12 +472,12 @@ static void
 disk_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int i;
-	int width = lastx-x+1;
+	int width = lastx-x + 1;
 	ODS3("disk_write_span (%d,%d,%d)", y, x, lastx);
 
 	for (i = 0; i < width; i++)
 	{
-		disk_write_pixel(drv, x+i, y, pixels[i]);
+		disk_write_pixel(drv, x + i, y, pixels[i]);
 	}
 }
 
@@ -501,10 +501,10 @@ disk_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	ODS3("disk_read_span (%d,%d,%d)", y, x, lastx);
-	width = lastx-x+1;
+	width = lastx-x + 1;
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = disk_read_pixel(drv, x+i, y);
+		pixels[i] = disk_read_pixel(drv, x + i, y);
 	}
 }
 
@@ -797,7 +797,7 @@ disk_stack_screen(Driver *drv)
 	Win32DiskDriver *di = (Win32DiskDriver *) drv;
 	ODS("disk_stack_screen");
 
-	di->base.saved_cursor[di->base.screen_count+1] = g_text_row*80 + g_text_col;
+	di->base.saved_cursor[di->base.screen_count + 1] = g_text_row*80 + g_text_col;
 	if (++di->base.screen_count)
 	{
 		/* already have some stacked */

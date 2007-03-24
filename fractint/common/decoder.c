@@ -192,7 +192,7 @@ short sizeofstring[MAX_CODES + 1];  /* size of string list */
 short decoder(short linewidth)
 {
 #if defined(XFRACT) || defined(_WIN32)
-   U16 prefix[MAX_CODES+1];     /* Prefix linked list */
+   U16 prefix[MAX_CODES + 1];     /* Prefix linked list */
 #endif
    BYTE *sp;
    short code;

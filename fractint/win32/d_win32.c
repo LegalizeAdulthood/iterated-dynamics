@@ -503,7 +503,7 @@ win32_stack_screen(Driver *drv)
 {
 	DI(di);
 
-	di->saved_cursor[di->screen_count+1] = g_text_row*80 + g_text_col;
+	di->saved_cursor[di->screen_count + 1] = g_text_row*80 + g_text_col;
 	if (++di->screen_count)
 	{
 		/* already have some stacked */

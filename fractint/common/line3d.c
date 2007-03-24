@@ -319,9 +319,9 @@ int line3d(BYTE * pixels, unsigned linelen)
             /************************************************************/
             /* KEEP THIS FOR DOCS - original formula --                 */
             /* if (rscale < 0.0)                                         */
-            /* r = 1.0+((double)cur.color/(double)zcoord)*rscale;       */
+            /* r = 1.0 + ((double)cur.color/(double)zcoord)*rscale;       */
             /* else                                                     */
-            /* r = 1.0-rscale+((double)cur.color/(double)zcoord)*rscale;*/
+            /* r = 1.0-rscale + ((double)cur.color/(double)zcoord)*rscale;*/
             /* R = (double)ydots/2;                                     */
             /* r = r*R;                                                 */
             /* cur.x = xdots/2 + sclx*r*sintheta*aspect + xup ;         */
@@ -2269,9 +2269,9 @@ static int first_time(int linelen, VECTOR v)
       /* latitude, and near the bottom of this routine to incrementally    */
       /* calculate longitude.                                              */
       /*                                                                   */
-      /* Precalculate 2*cos(deltaangle), sin(start) and sin(start+delta).  */
+      /* Precalculate 2*cos(deltaangle), sin(start) and sin(start + delta).  */
       /* Then apply recursively:                                           */
-      /* sin(angle+2*delta) = sin(angle+delta) * 2cosdelta - sin(angle)    */
+      /* sin(angle + 2*delta) = sin(angle + delta) * 2cosdelta - sin(angle)    */
       /*                                                                   */
       /* Similarly for cosine. Neat!                                       */
       /*********************************************************************/

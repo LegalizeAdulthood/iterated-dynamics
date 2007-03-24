@@ -83,12 +83,12 @@ int stopmsg (int flags, char *msg)
    g_text_cbase = 2; /* left margin is 2 */
    driver_put_string(toprow, 0, 7, msg);
    if (flags & STOPMSG_CANCEL)
-      driver_put_string(g_text_row+2, 0, 7, "Escape to cancel, any other key to continue...");
+      driver_put_string(g_text_row + 2, 0, 7, "Escape to cancel, any other key to continue...");
    else
-      driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
+      driver_put_string(g_text_row + 2, 0, 7, "Any key to continue...");
    g_text_cbase = 0; /* back to full line */
    color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-   driver_set_attr(toprow, 0, color, (g_text_row+1-toprow)*80);
+   driver_set_attr(toprow, 0, color, (g_text_row + 1-toprow)*80);
    driver_hide_text_cursor();   /* cursor off */
    if ((flags & STOPMSG_NO_BUZZER) == 0)
       driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
@@ -357,9 +357,9 @@ void show_speedstring(int speedrow,
       while (i < 30)
          buf[i++] = ' ';
       buf[i] = 0;
-      driver_put_string(speedrow, 16+j, C_CHOICE_SP_INSTR, " ");
-      driver_put_string(speedrow, 17+j, C_CHOICE_SP_KEYIN, buf);
-      driver_move_cursor(speedrow, 17+j+(int) strlen(speedstring));
+      driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
+      driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
+      driver_move_cursor(speedrow, 17 + j + (int) strlen(speedstring));
       }
    else
       driver_hide_text_cursor();
@@ -617,7 +617,7 @@ int fullscreen_choice(
 	}
 #endif
 	j = boxwidth * (colwidth += i) + i;     /* overall width of box */
-	if (j < titlewidth+2)
+	if (j < titlewidth + 2)
 	{
 		j = titlewidth + 2;
 	}
@@ -1082,7 +1082,7 @@ top:
 	{
 		nextleft += 2;
 		choices[nextleft] = "      CURRENT IMAGE         ";
-		attributes[nextleft] = 256+MENU_HDG;
+		attributes[nextleft] = 256 + MENU_HDG;
 
 		nextleft += 2;
 		choicekey[nextleft] = 13; /* enter */
@@ -1108,7 +1108,7 @@ top:
 
 	nextleft += 2;
 	choices[nextleft] = "      NEW IMAGE             ";
-	attributes[nextleft] = 256+MENU_HDG;
+	attributes[nextleft] = 256 + MENU_HDG;
 
 	nextleft += 2;
 	choicekey[nextleft] = FIK_DELETE;
@@ -1162,7 +1162,7 @@ top:
 
 	nextleft += 2;
 	choices[nextleft] = "      OPTIONS                ";
-	attributes[nextleft] = 256+MENU_HDG;
+	attributes[nextleft] = 256 + MENU_HDG;
 
 	nextleft += 2;
 	choicekey[nextleft] = 'x';
@@ -1294,7 +1294,7 @@ top:
 	{
 		nextright += 2;
 		choices[nextright] = "       COLORS                 ";
-		attributes[nextright] = 256+MENU_HDG;
+		attributes[nextright] = 256 + MENU_HDG;
 
 		nextright += 2;
 		choicekey[nextright] = 'c';
@@ -1404,7 +1404,7 @@ static int menu_checkkey(int curkey, int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
    int testkey;
    testkey = choice; /* for warning only */
-   testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey+('a'-'A') : curkey;
+   testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
 #ifdef XFRACT
    /* We use F2 for shift-@, annoyingly enough */
    if (testkey == FIK_F2) return -testkey;
@@ -1472,7 +1472,7 @@ int input_field(
          driver_put_string(row, col, attr, buf);
          display = 0;
          }
-      curkey = driver_key_cursor(row+insert, col+offset);  /* get a keystroke */
+      curkey = driver_key_cursor(row + insert, col + offset);  /* get a keystroke */
       if (curkey == 1047) curkey = 47; /* numeric slash */
       switch (curkey) {
          case FIK_ENTER:
@@ -1505,7 +1505,7 @@ int input_field(
             if (offset > 0) {
                j = (int) strlen(fld);
                for (i = offset-1; i < j; ++i)
-                  fld[i] = fld[i+1];
+                  fld[i] = fld[i + 1];
                --offset;
                }
             started = display = 1;
@@ -1513,7 +1513,7 @@ int input_field(
          case FIK_DELETE:                           /* delete */
             j = (int) strlen(fld);
             for (i = offset; i < j; ++i)
-               fld[i] = fld[i+1];
+               fld[i] = fld[i + 1];
             started = display = 1;
             break;
          case FIK_INSERT:                           /* insert */
@@ -1550,12 +1550,12 @@ int input_field(
             if (insert) {
                j = (int) strlen(fld);
                while (j >= offset) {
-                  fld[j+1] = fld[j];
+                  fld[j + 1] = fld[j];
                   --j;
                   }
                }
             if ((size_t)offset >= strlen(fld))
-               fld[offset+1] = 0;
+               fld[offset + 1] = 0;
             fld[offset++] = (char)curkey;
             /* if "e" or "p" in first col make number e or pi */
             if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC) { /* floating point */
@@ -1627,8 +1627,8 @@ int field_prompt(
       i = 3;
    j -= i;
    boxwidth += i * 2;
-   for (i = -1; i < titlelines+3; ++i)    /* draw empty box */
-      driver_set_attr(titlerow+i, j, C_PROMPT_LO, boxwidth);
+   for (i = -1; i < titlelines + 3; ++i)    /* draw empty box */
+      driver_set_attr(titlerow + i, j, C_PROMPT_LO, boxwidth);
    g_text_cbase = titlecol;                  /* set left margin for putstring */
    driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); /* display heading */
    g_text_cbase = 0;
@@ -1647,7 +1647,7 @@ int field_prompt(
    else                                   /* default instructions */
       putstringcenter(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
    return input_field(0, C_PROMPT_INPUT, fld, len,
-                      titlerow+titlelines+1, promptcol, checkkey);
+                      titlerow + titlelines + 1, promptcol, checkkey);
 }
 
 
@@ -1721,7 +1721,7 @@ int g_video_table_len;                 /* number of entries in above           *
 int showvidlength()
 {
    int sz;
-   sz = (sizeof(VIDEOINFO)+sizeof(int))*MAXVIDEOMODES;
+   sz = (sizeof(VIDEOINFO) + sizeof(int))*MAXVIDEOMODES;
    return sz;
 }
 
@@ -1788,7 +1788,7 @@ void load_fractint_config(void)
 #if defined(_WIN32)
 				_ASSERTE(j >= 0 && j < 11);
 #endif
-				fields[j] = &tempstring[i+1]; /* remember start of next field */
+				fields[j] = &tempstring[i + 1]; /* remember start of next field */
 				tempstring[i] = 0;   /* make field a separate string */
 			}
 		}

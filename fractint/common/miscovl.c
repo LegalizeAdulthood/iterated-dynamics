@@ -81,12 +81,12 @@ void make_batch_file()
    /****/
 
    int i, j;
-   char inpcommandfile[80], inpcommandname[ITEMNAMELEN+1];
+   char inpcommandfile[80], inpcommandname[ITEMNAMELEN + 1];
    char inpcomment[4][MAXCMT];
    struct fullscreenvalues paramvalues[18];
    char *choices[MAXPROMPTS];
    int gotinfile;
-   char outname[FILE_MAX_PATH+1], buf[256], buf2[128];
+   char outname[FILE_MAX_PATH + 1], buf[256], buf2[128];
    FILE *infile = NULL;
    FILE *fpbat = NULL;
    char colorspec[14];
@@ -413,13 +413,13 @@ skip_UI:
             }
             fprintf(parmfile, "%-19s{", PCommandName);
             xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-            xxmax = pxxmin + pdelx*((i+1)*pxdots - 1) + pdelx2*((j+1)*pydots - 1);
-            yymin = pyymax - pdely*((j+1)*pydots - 1) - pdely2*((i+1)*pxdots - 1);
+            xxmax = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
+            yymin = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
             yymax = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
             if (have3rd)
             {
-               xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j+1)*pydots - 1);
-               yy3rd = pyymax - pdely*((j+1)*pydots - 1) - pdely2*(i*pxdots);
+               xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
+               yy3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
             }
             else
             {
@@ -525,8 +525,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    saved = save_stack();
    if (bf_math)
    {
-      bfXctr = alloc_stack(bflength+2);
-      bfYctr = alloc_stack(bflength+2);
+      bfXctr = alloc_stack(bflength + 2);
+      bfYctr = alloc_stack(bflength + 2);
    }
 
    s_wbdata.len = 0; /* force first parm to start on new line */
@@ -1014,7 +1014,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
    }
 
    if (polyphony != 0)
-     put_parm(" polyphony=%d", polyphony+1);
+     put_parm(" polyphony=%d", polyphony + 1);
    
    if (fm_wavetype != 0)
      put_parm(" wavetype=%d", fm_wavetype);
@@ -1032,7 +1032,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
       put_parm(" srelease=%d", fm_release);
 
    if (soundflag & SOUNDFLAG_QUANTIZED) { /* quantize turned on */
-      for (i = 0; i <= 11; i++) if (scale_map[i] != i+1) i = 15;
+      for (i = 0; i <= 11; i++) if (scale_map[i] != i + 1) i = 15;
       if (i > 12) 
          put_parm(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", scale_map[0], scale_map[1], scale_map[2], scale_map[3]
             , scale_map[4], scale_map[5], scale_map[6], scale_map[7], scale_map[8]
@@ -1135,9 +1135,9 @@ docolors:
                for (k = 0; k <= i; ++k) {
                   for (j = 0; j < 3; ++j) { /* check pattern of chg per color */
                      /* Sylvie Gallet's fix */
-                     if (debugflag != 910 && scanc > (curc+4) && scanc < maxcolor-5)
+                     if (debugflag != 910 && scanc > (curc + 4) && scanc < maxcolor-5)
                         if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
-                                - g_dac_box[scanc+5][j]) >= 2)
+                                - g_dac_box[scanc + 5][j]) >= 2)
                            break;
                      /* end Sylvie's fix */       
                      delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
@@ -1191,7 +1191,7 @@ static void put_filename(char *keyword, char *fname)
    if (*fname && !endswithslash(fname)) {
       if ((p = strrchr(fname, SLASHC)) != NULL)
 	  {
-		  fname = p+1;
+		  fname = p + 1;
 		  if (*fname == 0) return;
 	  }
       put_parm(" %s=%s", keyword, fname);
@@ -1235,7 +1235,7 @@ static void put_parm_line()
 {
    int len, c;
    if ((len = s_wbdata.len) > NICELINELEN) {
-      len = NICELINELEN+1;
+      len = NICELINELEN + 1;
       while (--len != 0 && s_wbdata.buf[len] != ' ') { }
       if (len == 0) {
          len = NICELINELEN-1;
@@ -1254,7 +1254,7 @@ static void put_parm_line()
    if (c == ' ')
       ++len;
    s_wbdata.len -= len;
-   strcpy(s_wbdata.buf, s_wbdata.buf+len);
+   strcpy(s_wbdata.buf, s_wbdata.buf + len);
 }
 
 int getprecbf_mag()
@@ -1265,8 +1265,8 @@ int getprecbf_mag()
    int saved, dec;
 
    saved = save_stack();
-   bXctr            = alloc_stack(bflength+2);
-   bYctr            = alloc_stack(bflength+2);
+   bXctr            = alloc_stack(bflength + 2);
+   bYctr            = alloc_stack(bflength + 2);
    /* this is just to find Magnification */
    cvtcentermagbf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
    restore_stack(saved);
@@ -1296,7 +1296,7 @@ static int getprec(double a, double b, double c)
    digits = 7;
    if (debugflag >= 700 && debugflag < 720)
       digits =  debugflag - 700;
-   while (diff < 1.0 && digits <= DBL_DIG+1) {
+   while (diff < 1.0 && digits <= DBL_DIG + 1) {
       diff *= 10;
       ++digits;
       }
@@ -1313,13 +1313,13 @@ int getprecbf(int rezflag)
    int saved;
    int rez;
    saved    = save_stack();
-   del1     = alloc_stack(bflength+2);
-   del2     = alloc_stack(bflength+2);
-   one      = alloc_stack(bflength+2);
-   bfxxdel   = alloc_stack(bflength+2);
-   bfxxdel2  = alloc_stack(bflength+2);
-   bfyydel   = alloc_stack(bflength+2);
-   bfyydel2  = alloc_stack(bflength+2);
+   del1     = alloc_stack(bflength + 2);
+   del2     = alloc_stack(bflength + 2);
+   one      = alloc_stack(bflength + 2);
+   bfxxdel   = alloc_stack(bflength + 2);
+   bfxxdel2  = alloc_stack(bflength + 2);
+   bfyydel   = alloc_stack(bflength + 2);
+   bfyydel2  = alloc_stack(bflength + 2);
    floattobf(one, 1.0);
    if (rezflag == MAXREZ)
       rez = OLDMAXPIXELS -1;
@@ -1465,8 +1465,8 @@ static void put_bf(int slash, bf_t r, int prec)
 {
    char *buf; /* "/-1.xxxxxxE-1234" */
    char *bptr;
-   /* buf = malloc(decimals+11); */
-   buf = s_wbdata.buf+5000;  /* end of use suffix buffer, 5000 bytes safe */
+   /* buf = malloc(decimals + 11); */
+   buf = s_wbdata.buf + 5000;  /* end of use suffix buffer, 5000 bytes safe */
    bptr = buf;
    if (slash)
       *(bptr++) = '/';
@@ -1529,7 +1529,7 @@ void edit_text_colors()
 					k =	(i*16 + j);
 					driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
 					driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
-					driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j+'0' : j+'A'-10) << 8) | k);
+					driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j + '0' : j + 'A'-10) << 8) | k);
 					driver_put_char_attr_rowcol(i*2, j*5 + 3, (' ' << 8) | k);
 				}
 			}
@@ -2408,7 +2408,7 @@ void expand_comments(char *target, char *source)
    char c, oldc, varname[MAXVNAME];
    i=j=k = 0;
    c = oldc = 0;
-   while (i < MAXCMT && j < MAXCMT && (c = *(source+i++)) != '\0')
+   while (i < MAXCMT && j < MAXCMT && (c = *(source + i++)) != '\0')
    {
       if (c == '\\' && oldc != '\\')
       {
@@ -2433,17 +2433,17 @@ void expand_comments(char *target, char *source)
          char *varstr;
          varname[k] = 0;
          varstr = expand_var(varname, buf);
-         strncpy(target+j, varstr, MAXCMT-j-1);
+         strncpy(target + j, varstr, MAXCMT-j-1);
          j += (int) strlen(varstr);
       }
       else if (c == esc_char && escape != 0 && oldc != '\\')
          k = 0;
       else if ((c != esc_char || oldc == '\\') && escape == 0)
-         *(target+j++) = c;
+         *(target + j++) = c;
       oldc = c;
    }   
    if (*source != '\0')
-      *(target+min(j, MAXCMT-1)) = '\0';
+      *(target + min(j, MAXCMT-1)) = '\0';
 }
 
 /* extract comments from the comments= command */
@@ -2470,7 +2470,7 @@ void parse_comments(char *value)
          break;
       if (save != '\0')
          *next = save;
-      value = next+1;
+      value = next + 1;
    }
 }
    

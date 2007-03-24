@@ -338,7 +338,7 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 		wc.hInstance = g_frame.instance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND+1);
+		wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND + 1);
 		wc.lpszMenuName = g_frame.title;
 		wc.lpszClassName = windowClass;
 

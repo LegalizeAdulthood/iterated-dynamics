@@ -114,7 +114,7 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
     else
        padding = 0;
     col1 += padding;
-    decpt += col1+1; /* column just past where decimal is */
+    decpt += col1 + 1; /* column just past where decimal is */
     while (length > 0)
     {
        if (col2-col1 < length)
@@ -123,18 +123,18 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
              done = 1;
           else
              done = 0;
-          save1 = str[col2-col1+1];
-          save2 = str[col2-col1+2];
+          save1 = str[col2-col1 + 1];
+          save2 = str[col2-col1 + 2];
           if (done)
-             str[col2-col1+1]   = '+';
+             str[col2-col1 + 1]   = '+';
           else
-             str[col2-col1+1]   = '\\';
-          str[col2-col1+2] = 0;
+             str[col2-col1 + 1]   = '\\';
+          str[col2-col1 + 2] = 0;
           driver_put_string(*row, col1, color, str);
           if (done == 1)
              break;
-          str[col2-col1+1] = save1;
-          str[col2-col1+2] = save2;
+          str[col2-col1 + 1] = save1;
+          str[col2-col1 + 2] = save2;
           str += col2-col1;
           (*row)++;
        } else
@@ -195,7 +195,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
       b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
       b = sqrt(b2);
    
-      tmpa = acos((a2+b2-c2)/(2*a*b)); /* save tmpa for later use */
+      tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
       *Skew = 90.0 - rad_to_deg(tmpa);
    
       *Xctr = (xxmin + xxmax)*0.5;
@@ -328,8 +328,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
    /* if (xx3rd == xxmin && yy3rd == yymin) */
    if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
    { /* no rotation or skewing, but stretching is allowed */
-      bfWidth  = alloc_stack(bflength+2);
-      bfHeight = alloc_stack(bflength+2);
+      bfWidth  = alloc_stack(bflength + 2);
+      bfHeight = alloc_stack(bflength + 2);
       /* Width  = xxmax - xxmin; */
       sub_bf(bfWidth, bfxmax, bfxmin);
       Width  = bftofloat(bfWidth);
@@ -349,8 +349,8 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
    }
    else
    {
-      bftmpx = alloc_stack(bflength+2);
-      bftmpy = alloc_stack(bflength+2);
+      bftmpx = alloc_stack(bflength + 2);
+      bftmpy = alloc_stack(bflength + 2);
    
       /* set up triangle ABC, having sides abc */
       /* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
@@ -390,7 +390,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
       b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
       b = sqrtl(b2);
    
-      tmpa = acos((double)((a2+b2-c2)/(2*a*b))); /* save tmpa for later use */
+      tmpa = acos((double)((a2 + b2-c2)/(2*a*b))); /* save tmpa for later use */
       *Skew = 90 - rad_to_deg(tmpa);
    
       /* these are the only two variables that must use big precision */
@@ -436,8 +436,8 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
    int saved;
 
    saved = save_stack();
-   bfh = alloc_stack(bflength+2);
-   bfw = alloc_stack(bflength+2);
+   bfh = alloc_stack(bflength + 2);
+   bfw = alloc_stack(bflength + 2);
 
    if (Xmagfactor == 0.0)
       Xmagfactor = 1.0;
@@ -463,7 +463,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
       return;
       }
 
-   bftmp = alloc_stack(bflength+2);
+   bftmp = alloc_stack(bflength + 2);
    /* in unrotated, untranslated coordinate system */
    tanskew = tan(deg_to_rad(Skew));
    xmin = -w + h*tanskew;
@@ -542,7 +542,7 @@ void updatesavename(char *filename) /* go to the next file name */
                                 /* your last letter if you go to far.    */
    else
       save = hold;
-   sprintf(save, "%ld", atol(hold)+1); /* increment the number */
+   sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
    makepath(filename, drive, dir, fname, ext);
 }
 
@@ -756,7 +756,7 @@ int tab_display_2(char *msg)
 	write_row(++row, "%ld of %ld bignum memory used", maxptr, maxstack);
 	write_row(++row, "   %ld used for bignum globals", startstack);
 	write_row(++row, "   %ld stack used == %ld variables of length %d",
-			maxptr-startstack, (long)((maxptr-startstack)/(rbflength+2)), rbflength+2);
+			maxptr-startstack, (long)((maxptr-startstack)/(rbflength + 2)), rbflength + 2);
 	if (bf_math)
 	{
 		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
@@ -786,7 +786,7 @@ int tab_display_2(char *msg)
 	else if (rhombus_stack[0])
 	{
 		write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-			max_rhombus_depth+1,
+			max_rhombus_depth + 1,
 			rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
 			rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
 			rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
@@ -852,8 +852,8 @@ int tab_display()       /* display the status of the current image */
 	if (bf_math)
 	{
 		saved = save_stack();
-		bfXctr = alloc_stack(bflength+2);
-		bfYctr = alloc_stack(bflength+2);
+		bfXctr = alloc_stack(bflength + 2);
+		bfYctr = alloc_stack(bflength + 2);
 	}
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
@@ -885,39 +885,39 @@ top:
 		i = 0;
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row+1, 16, C_GENERAL_HI, FormName);
-			i = (int) strlen(FormName)+1;
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
+			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, FormName);
+			i = (int) strlen(FormName) + 1;
+			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(FormFileName) >= 29)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, FormFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, FormFileName);
 		}
 		trigdetails(msg);
-		driver_put_string(s_row+1, 16+i, C_GENERAL_HI, msg);
+		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
 		if (fractype == LSYSTEM)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row+1, 16, C_GENERAL_HI, LName);
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
+			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, LName);
+			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(LFileName) >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, LFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, LFileName);
 		}
 		if (fractype == IFS || fractype == IFS3D)
 		{
-			driver_put_string(s_row+1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row+1, 16, C_GENERAL_HI, IFSName);
-			driver_put_string(s_row+2, 3, C_GENERAL_MED, "Item file:");
+			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, IFSName);
+			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
 			if ((int) strlen(IFSFileName) >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row+2+addrow, 16, C_GENERAL_HI, IFSFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, IFSFileName);
 		}
 	}
 
@@ -943,7 +943,7 @@ top:
 
 	if (helpmode == HELPCYCLING)
 	{
-		driver_put_string(s_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
+		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
 	++s_row;
 	/* if (bf_math == 0) */
@@ -1213,7 +1213,7 @@ top:
 					col = -1;
 				if (k == 0) /* only true with first displayed parameter */
 					driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
-				sprintf(msg, "%3d: ", i+1);
+				sprintf(msg, "%3d: ", i + 1);
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
 				if (*p == '+')
 					sprintf(msg, "%-12d", (int)param[i]);
@@ -1382,7 +1382,7 @@ int ifsload()                   /* read in IFS parameters */
       ++bufptr;
       }
 
-   for (i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
+   for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
       ((float *)tstack)[i] = 0;
    i = ret = 0;
    bufptr = get_ifs_token(buf, ifsfile);
@@ -1425,12 +1425,12 @@ int ifsload()                   /* read in IFS parameters */
    if (ret == 0) {
       numaffine = i/rowsize;
       if ((ifs_defn = (float *)malloc(
-                        (long)((NUMIFS+1)*IFS3DPARM*sizeof(float)))) == NULL) {
+                        (long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL) {
      stopmsg(0, insufficient_ifs_mem);
          ret = -1;
          }
       else
-         for (i = 0; i < (NUMIFS+1)*IFS3DPARM; ++i)
+         for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
             ifs_defn[i] = ((float *)tstack)[i];
    }
    return ret;
@@ -1542,7 +1542,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
       out = fr_findfirst(fullpath);
       while (out == 0) {
          char msg[200];
-         DTA.filename[FILE_MAX_FNAME+FILE_MAX_EXT-2]=0;
+         DTA.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2]=0;
          sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
          showtempmsg(msg);
          if (!(DTA.attribute & SUBDIR) &&
@@ -1673,7 +1673,7 @@ int _cdecl _matherr(struct exception *except)
         sprintf(buf, "%e", except->arg1);
         /* This test may be unnecessary - from my experiments if the
            argument is too large or small the error is TLOSS not DOMAIN */
-        if (strstr(buf, "IN")||strstr(buf, "NAN"))  /* trashed arg? */
+        if (strstr(buf, "IN") || strstr(buf, "NAN"))  /* trashed arg? */
                            /* "IND" with MSC, "INF" with BC++ */
         {
            if (strcmp(except->name, "sin") == 0)

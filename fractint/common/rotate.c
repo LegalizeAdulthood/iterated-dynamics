@@ -381,10 +381,10 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
          g_dac_box[i][j]     = (BYTE)((int)(i*finish[j] + (128-i)*start[j])/128);
-         g_dac_box[i+127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
+         g_dac_box[i + 127][j] = (BYTE)((int)(i*start[j]  + (128-i)*finish[j])/128);
 #else
          g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
-         g_dac_box[i+127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
+         g_dac_box[i + 127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
 #endif
       }
 }
@@ -397,12 +397,12 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
       for (j = 0; j < 3; j++) {
 #ifdef __SVR4
          g_dac_box[i][j]     = (BYTE)((int)(i*middle[j] + (86-i)*start[j])/85);
-         g_dac_box[i+85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
-         g_dac_box[i+170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
+         g_dac_box[i + 85][j]  = (BYTE)((int)(i*finish[j] + (86-i)*middle[j])/85);
+         g_dac_box[i + 170][j] = (BYTE)((int)(i*start[j]  + (86-i)*finish[j])/85);
 #else
          g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
-         g_dac_box[i+85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
-         g_dac_box[i+170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
+         g_dac_box[i + 85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
+         g_dac_box[i + 170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
 #endif
       }
 }

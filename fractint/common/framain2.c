@@ -392,8 +392,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				dpx = paramrangex/(gridsz-1);
 				dpy = paramrangey/(gridsz-1);
 				grout  = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-				tmpxdots = xdots+grout;
-				tmpydots = ydots+grout;
+				tmpxdots = xdots + grout;
+				tmpydots = ydots + grout;
 				gridsqr = gridsz * gridsz;
 				while (ecount < gridsqr)
 				{
@@ -2194,8 +2194,8 @@ static void note_zoom()
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
          memcpy(savezoom, boxx, boxcount*2);
-         memcpy(savezoom+boxcount*2, boxy, boxcount*2);
-         memcpy(savezoom+boxcount*4, boxvalues, boxcount);
+         memcpy(savezoom + boxcount*2, boxy, boxcount*2);
+         memcpy(savezoom + boxcount*4, boxvalues, boxcount);
          }
       }
 }
@@ -2204,8 +2204,8 @@ static void restore_zoom()
 {
    if (boxcount) { /* restore zoombox arrays */
       memcpy(boxx, savezoom, boxcount*2);
-      memcpy(boxy, savezoom+boxcount*2, boxcount*2);
-      memcpy(boxvalues, savezoom+boxcount*4, boxcount);
+      memcpy(boxy, savezoom + boxcount*2, boxcount*2);
+      memcpy(boxvalues, savezoom + boxcount*4, boxcount);
       free(savezoom);
       drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
       }
@@ -2354,7 +2354,7 @@ void setup287code()
    ORBPTR(MANDELLAMBDAFP) = ORBPTR(LAMBDAFP)     = FLambdaFPFractal;
 }
 
-/* read keystrokes while = specified key, return 1+count;       */
+/* read keystrokes while = specified key, return 1 + count;       */
 /* used to catch up when moving zoombox is slower than keyboard */
 int key_count(int keynum)
 {  int ctr;

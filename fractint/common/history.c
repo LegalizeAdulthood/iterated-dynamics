@@ -155,16 +155,16 @@ void _fastcall save_history_info(void)
 	case FORMULA:
 	case FFORMULA:
 		strncpy(current.filename, FormFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, FormName, ITEMNAMELEN+1);
+		strncpy(current.itemname, FormName, ITEMNAMELEN + 1);
 		break;
 	case IFS:
 	case IFS3D:
 		strncpy(current.filename, IFSFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, IFSName, ITEMNAMELEN+1);
+		strncpy(current.itemname, IFSName, ITEMNAMELEN + 1);
 		break;
 	case LSYSTEM:
 		strncpy(current.filename, LFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, LName, ITEMNAMELEN+1);
+		strncpy(current.itemname, LName, ITEMNAMELEN + 1);
 		break;
 	default:
 		*(current.filename) = 0;
@@ -364,16 +364,16 @@ void _fastcall restore_history_info(void)
 	case FORMULA:
 	case FFORMULA:
 		strncpy(FormFileName, last.filename, FILE_MAX_PATH);
-		strncpy(FormName, last.itemname, ITEMNAMELEN+1);
+		strncpy(FormName, last.itemname, ITEMNAMELEN + 1);
 		break;
 	case IFS:
 	case IFS3D:
 		strncpy(IFSFileName, last.filename, FILE_MAX_PATH);
-		strncpy(IFSName, last.itemname, ITEMNAMELEN+1);
+		strncpy(IFSName, last.itemname, ITEMNAMELEN + 1);
 		break;
 	case LSYSTEM:
 		strncpy(LFileName, last.filename, FILE_MAX_PATH);
-		strncpy(LName, last.itemname, ITEMNAMELEN+1);
+		strncpy(LName, last.itemname, ITEMNAMELEN + 1);
 		break;
 	default:
 		break;

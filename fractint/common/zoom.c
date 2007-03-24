@@ -27,9 +27,9 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
    bf_t btmp1, btmp2 , btmp3;
    int saved; saved = save_stack();
-   btmp1 = alloc_stack(rbflength+2);
-   btmp2 = alloc_stack(rbflength+2);
-   btmp3 = alloc_stack(rbflength+2);
+   btmp1 = alloc_stack(rbflength + 2);
+   btmp2 = alloc_stack(rbflength + 2);
+   btmp3 = alloc_stack(rbflength + 2);
 
    /* use target as temporary variable */
    floattobf(btmp3, p2);
@@ -105,11 +105,11 @@ void drawbox(int drawit)
     if (bf_math)
     {
        saved = save_stack();
-       bffxwidth = alloc_stack(rbflength+2);
-       bffxskew  = alloc_stack(rbflength+2);
-       bffydepth = alloc_stack(rbflength+2);
-       bffyskew  = alloc_stack(rbflength+2);
-       bffxadj   = alloc_stack(rbflength+2);
+       bffxwidth = alloc_stack(rbflength + 2);
+       bffxskew  = alloc_stack(rbflength + 2);
+       bffydepth = alloc_stack(rbflength + 2);
+       bffyskew  = alloc_stack(rbflength + 2);
+       bffxadj   = alloc_stack(rbflength + 2);
     }
     ftemp1 = PI*zrotate/72; /* convert to radians */
     rotcos = cos(ftemp1);   /* sin & cos of rotation */
@@ -133,7 +133,7 @@ void drawbox(int drawit)
     }
 
     /* calc co-ords of topleft & botright corners of box */
-    tmpx = zwidth/-2+fxadj; /* from zoombox center as origin, on xdots scale */
+    tmpx = zwidth/-2 + fxadj; /* from zoombox center as origin, on xdots scale */
     tmpy = zdepth*finalaspectratio/2;
     dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; /* delta x to rotate topleft */
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy); /* delta y to rotate topleft */
@@ -142,8 +142,8 @@ void drawbox(int drawit)
     ftemp1 = zbx + dx + fxadj;
     ftemp2 = zby + dy/finalaspectratio;
 
-    tl.x   = (int)(ftemp1*(dxsize+PIXELROUND)); /* screen co-ords */
-    tl.y   = (int)(ftemp2*(dysize+PIXELROUND));
+    tl.x   = (int)(ftemp1*(dxsize + PIXELROUND)); /* screen co-ords */
+    tl.y   = (int)(ftemp2*(dysize + PIXELROUND));
     xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
     yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
     if (bf_math)
@@ -155,8 +155,8 @@ void drawbox(int drawit)
     /* calc co-ords of bottom right */
     ftemp1 = zbx + zwidth - dx - fxadj;
     ftemp2 = zby - dy/finalaspectratio + zdepth;
-    br.x   = (int)(ftemp1*(dxsize+PIXELROUND));
-    br.y   = (int)(ftemp2*(dysize+PIXELROUND));
+    br.x   = (int)(ftemp1*(dxsize + PIXELROUND));
+    br.y   = (int)(ftemp2*(dysize + PIXELROUND));
     xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
     if (bf_math)
@@ -171,8 +171,8 @@ void drawbox(int drawit)
     dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
     ftemp1 = zbx + dx - fxadj;
     ftemp2 = zby + dy/finalaspectratio + zdepth;
-    bl.x   = (int)(ftemp1*(dxsize+PIXELROUND));
-    bl.y   = (int)(ftemp2*(dysize+PIXELROUND));
+    bl.x   = (int)(ftemp1*(dxsize + PIXELROUND));
+    bl.y   = (int)(ftemp2*(dysize + PIXELROUND));
     xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
     yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
     if (bf_math)
@@ -183,8 +183,8 @@ void drawbox(int drawit)
     }
     ftemp1 = zbx + zwidth - dx + fxadj;
     ftemp2 = zby - dy/finalaspectratio;
-    tr.x   = (int)(ftemp1*(dxsize+PIXELROUND));
-    tr.y   = (int)(ftemp2*(dysize+PIXELROUND));
+    tr.x   = (int)(ftemp1*(dxsize + PIXELROUND));
+    tr.y   = (int)(ftemp2*(dysize + PIXELROUND));
 
     if (boxcount != 0) { /* remove the old box from display */
         clearbox(); 
@@ -221,7 +221,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
     if (abs(to.x-fr.x) > abs(to.y-fr.y)) { /* delta.x > delta.y */
         if (fr.x > to.x) { /* swap so from.x is < to.x */
             tmpp = fr; fr = to; to = tmpp; }
-        xincr = (to.x-fr.x)*4/sxdots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
+        xincr = (to.x-fr.x)*4/sxdots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
         ctr = (to.x-fr.x-1)/xincr;
         altdec = abs(to.y-fr.y)*xincr;
         altinc = to.x-fr.x;
@@ -246,7 +246,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
     else { /* delta.y > delta.x */
         if (fr.y > to.y) { /* swap so from.y is < to.y */
             tmpp = fr; fr = to; to = tmpp; }
-        yincr = (to.y-fr.y)*4/sydots+1; /* do every 1st, 2nd, 3rd, or 4th dot */
+        yincr = (to.y-fr.y)*4/sydots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
         ctr = (to.y-fr.y-1)/yincr;
         altdec = abs(to.x-fr.x)*yincr;
         altinc = to.y-fr.y;
@@ -293,7 +293,7 @@ void moveboxf(double dx, double dy)
         if (zbx + zwidth/2 > 1)
             zbx = 1.0 - zwidth/2;
         if (align != 0
-          && ((col = (int)(zbx*(dxsize+PIXELROUND))) & (align-1)) != 0) {
+          && ((col = (int)(zbx*(dxsize + PIXELROUND))) & (align-1)) != 0) {
             if (dx > 0) col += align;
             col -= col & (align-1); /* adjust col to pass alignment */
             zbx = (double)col/dxsize; }
@@ -304,7 +304,7 @@ void moveboxf(double dx, double dy)
         if (zby + zdepth/2 > 1)
             zby = 1.0 - zdepth/2;
         if (align != 0
-          && ((row = (int)(zby*(dysize+PIXELROUND))) & (align-1)) != 0) {
+          && ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0) {
             if (dy > 0) row += align;
             row -= row & (align-1);
             zby = (double)row/dysize; }
@@ -319,14 +319,14 @@ void moveboxf(double dx, double dy)
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
 {
-    if (zwidth+dwidth > 1)
+    if (zwidth + dwidth > 1)
         dwidth = 1.0-zwidth;
-    if (zwidth+dwidth < 0.05)
+    if (zwidth + dwidth < 0.05)
         dwidth = 0.05-zwidth;
     zwidth += dwidth;
-    if (zdepth+ddepth > 1)
+    if (zdepth + ddepth > 1)
         ddepth = 1.0-zdepth;
-    if (zdepth+ddepth < 0.05)
+    if (zdepth + ddepth < 0.05)
         ddepth = 0.05-zdepth;
     zdepth += ddepth;
     moveboxf(dwidth/-2, ddepth/-2); /* keep it centered & check limits */
@@ -364,14 +364,14 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
     bf_t btmp2a, btmp4a;
     int saved; saved = save_stack();
 
-    btmp1  = alloc_stack(rbflength+2);
-    btmp2  = alloc_stack(rbflength+2);
-    btmp3  = alloc_stack(rbflength+2);
-    btmp4  = alloc_stack(rbflength+2);
-    btmp2a = alloc_stack(rbflength+2);
-    btmp4a = alloc_stack(rbflength+2);
-    btempx = alloc_stack(rbflength+2);
-    btempy = alloc_stack(rbflength+2);
+    btmp1  = alloc_stack(rbflength + 2);
+    btmp2  = alloc_stack(rbflength + 2);
+    btmp3  = alloc_stack(rbflength + 2);
+    btmp4  = alloc_stack(rbflength + 2);
+    btmp2a = alloc_stack(rbflength + 2);
+    btmp4a = alloc_stack(rbflength + 2);
+    btempx = alloc_stack(rbflength + 2);
+    btempy = alloc_stack(rbflength + 2);
 
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0, 0) topleft thru (1, 1) bottom right */
@@ -439,19 +439,19 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
     bf_t tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2;
     int saved;
     saved = save_stack();
-    savbfxmin = alloc_stack(rbflength+2);
-    savbfymax = alloc_stack(rbflength+2);
-    bfftemp   = alloc_stack(rbflength+2);
-    tmp1      = alloc_stack(rbflength+2);
-    tmp2      = alloc_stack(rbflength+2);
-    tmp3      = alloc_stack(rbflength+2);
-    tmp4      = alloc_stack(rbflength+2);
-    tmp5      = alloc_stack(rbflength+2);
-    tmp6      = alloc_stack(rbflength+2);
-    bfplotmx1 = alloc_stack(rbflength+2);
-    bfplotmx2 = alloc_stack(rbflength+2);
-    bfplotmy1 = alloc_stack(rbflength+2);
-    bfplotmy2 = alloc_stack(rbflength+2);
+    savbfxmin = alloc_stack(rbflength + 2);
+    savbfymax = alloc_stack(rbflength + 2);
+    bfftemp   = alloc_stack(rbflength + 2);
+    tmp1      = alloc_stack(rbflength + 2);
+    tmp2      = alloc_stack(rbflength + 2);
+    tmp3      = alloc_stack(rbflength + 2);
+    tmp4      = alloc_stack(rbflength + 2);
+    tmp5      = alloc_stack(rbflength + 2);
+    tmp6      = alloc_stack(rbflength + 2);
+    bfplotmx1 = alloc_stack(rbflength + 2);
+    bfplotmx2 = alloc_stack(rbflength + 2);
+    bfplotmy1 = alloc_stack(rbflength + 2);
+    bfplotmy2 = alloc_stack(rbflength + 2);
     /* ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax); */
     sub_bf(tmp1, bfymin, bfy3rd);
     sub_bf(tmp2, bfx3rd, bfxmin);
@@ -618,8 +618,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     if (zbx == 0.0 && zby == 0.0) {
         clearbox();
         return 0; } /* box is full screen, leave calc_status as is */
-    col = (int)(zbx*(dxsize+PIXELROUND)); /* calc dest col, row of topleft pixel */
-    row = (int)(zby*(dysize+PIXELROUND));
+    col = (int)(zbx*(dxsize + PIXELROUND)); /* calc dest col, row of topleft pixel */
+    row = (int)(zby*(dysize + PIXELROUND));
     if (do_zoomout) { /* invert row and col */
         row = -row;
         col = -col; }
@@ -667,11 +667,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
     calc_status = CALCSTAT_RESUMABLE;
     clearbox();
     if (row > 0) /* move image up */
-        for (y = 0; y < ydots; ++y) move_row(y+row, y, col);
+        for (y = 0; y < ydots; ++y) move_row(y + row, y, col);
     else         /* move image down */
-        for (y=ydots; --y >= 0; )  move_row(y+row, y, col);
+        for (y=ydots; --y >= 0; )  move_row(y + row, y, col);
     fix_worklist(); /* fixup any out of bounds worklist entries */
-    alloc_resume(sizeof(worklist)+20, 2); /* post the new worklist */
+    alloc_resume(sizeof(worklist) + 20, 2); /* post the new worklist */
     put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
     return 0;
     }
@@ -698,7 +698,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
         wk = &worklist[i];
         if (wk->yystart >= ydots || wk->yystop < 0
           || wk->xxstart >= xdots || wk->xxstop < 0) { /* offscreen, delete */
-            for (j=i+1; j < num_worklist; ++j)
+            for (j=i + 1; j < num_worklist; ++j)
                 worklist[j-1] = worklist[j];
             --num_worklist;
             --i;
@@ -713,7 +713,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].yystart = 0;
                     worklist[num_worklist++].yystop = j;
-                    wk->yystart = j+1; }
+                    wk->yystart = j + 1; }
                 else
                     wk->yystart = 0;
                 restart_window(i); /* restart the no-longer sym part */
@@ -742,7 +742,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
                     worklist[num_worklist] = worklist[i];
                     worklist[num_worklist].xxstart = 0;
                     worklist[num_worklist++].xxstop = j;
-                    wk->xxstart = j+1; }
+                    wk->xxstart = j + 1; }
                 else
                     wk->xxstart = 0;
                 restart_window(i); /* restart the no-longer sym part */
