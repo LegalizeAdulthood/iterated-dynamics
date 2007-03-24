@@ -139,7 +139,7 @@ long RegDivFloat(long x, long y)
 }
 
 /*
- * This routine on the IBM converts shifted integer x, FudgeFact to 
+ * This routine on the IBM converts shifted integer x, FudgeFact to
  * the 4 byte number: exp, mant, mant, mant
  * Instead of using exp/mant format, we'll just use floats.
  * Note: If sizeof(float) != sizeof(long), we're hosed.

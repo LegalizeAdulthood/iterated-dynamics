@@ -83,12 +83,12 @@ void fill_dx_array(void)
 		dx0[0] = xxmin;              /* fill up the x, y grids */
 		dy0[0] = yymax;
 		dx1[0] = dy1[0] = 0;
-		for (i = 1; i < xdots; i++) 
+		for (i = 1; i < xdots; i++)
 		{
 			dx0[i] = (double)(dx0[0] + i*delxx);
 			dy1[i] = (double)(dy1[0] - i*delyy2);
 		}
-		for (i = 1; i < ydots; i++) 
+		for (i = 1; i < ydots; i++)
 		{
 			dy0[i] = (double)(dy0[0] - i*delyy);
 			dx1[i] = (double)(dx1[0] + i*delxx2);
@@ -105,12 +105,12 @@ void fill_lx_array(void)
 		lx0[0] = xmin;               /* fill up the x, y grids */
 		ly0[0] = ymax;
 		lx1[0] = ly1[0] = 0;
-		for (i = 1; i < xdots; i++) 
+		for (i = 1; i < xdots; i++)
 		{
 			lx0[i] = lx0[i-1] + delx;
 			ly1[i] = ly1[i-1] - dely2;
 		}
-		for (i = 1; i < ydots; i++) 
+		for (i = 1; i < ydots; i++)
 		{
 			ly0[i] = ly0[i-1] - dely;
 			lx1[i] = lx1[i-1] + delx2;
@@ -154,7 +154,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	coloriter=oldcoloriter = 0L;
 	for (i = 0; i < 10; i++)
 		rhombus_stack[i] = 0;
- 
+
   /* set up grid array compactly leaving space at end */
   /* space req for grid is 2(xdots + ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
@@ -167,10 +167,10 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 		floatflag = usr_floatflag = 1;
 	}
 	else
-		use_grid = 1;   
+		use_grid = 1;
 
 	set_grid_pointers();
- 
+
 	if (!(curfractalspecific->flags & BF_MATH))
 	{
 		int tofloat = curfractalspecific->tofloat;
@@ -241,7 +241,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	/* if floating pt only, set floatflag for TAB screen */
 	if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
 		floatflag = 1;
-	if (usr_stdcalcmode == 's') 
+	if (usr_stdcalcmode == 's')
 	{
 		if (fractype == MANDEL || fractype == MANDELFP)
 			floatflag = 1;
@@ -267,7 +267,7 @@ init_restart:
      && colors >= 64
      && (curfractalspecific->calctype == StandardFractal
 			|| curfractalspecific->calctype == calcmand
-			|| curfractalspecific->calctype == calcmandfp)) 
+			|| curfractalspecific->calctype == calcmandfp))
 			{
 		potflag = 1;
 		distest = usr_distest = 0;    /* can't do distest too */
@@ -282,7 +282,7 @@ init_restart:
 		&& curfractalspecific->tofloat != NOFRACTAL)
 			fractype = curfractalspecific->tofloat;
 		}
-	else 
+	else
 	{
 		if (curfractalspecific->isinteger == 0
 		&& curfractalspecific->tofloat != NOFRACTAL)
@@ -325,7 +325,7 @@ init_restart:
 	if (integerfractal) /* the bailout limit mustn't be too high here */
 		if (rqlim > 127.0) rqlim = 127.0;
 
-	if ((curfractalspecific->flags&NOROTATE) != 0) 
+	if ((curfractalspecific->flags&NOROTATE) != 0)
 	{
 		/* ensure min < max and unrotated rectangle */
 		if (xxmin > xxmax) { ftemp = xxmax; xxmax = xxmin; xxmin = ftemp; }
@@ -340,7 +340,7 @@ init_restart:
 	if (integerfractal == 0)  /* float? */
 	{
 		i = curfractalspecific->tofloat;
-	  if (i != NOFRACTAL) /* -> int? */
+		if (i != NOFRACTAL) /* -> int? */
 		{
 			if (fractalspecific[i].isinteger > 1) /* specific shift? */
 				bitshift = fractalspecific[i].isinteger;
@@ -454,12 +454,12 @@ expand_retry:
 			/* this way of defining the dx and dy arrays is not the most
 				accurate, but it is kept because it is used to determine
 				the limit of resolution */
-			for (i = 1; i < xdots; i++) 
+			for (i = 1; i < xdots; i++)
 			{
 				dx0 = (double)(dx0 + (double)delxx);
 				dy1 = (double)(dy1 - (double)delyy2);
 				}
-			for (i = 1; i < ydots; i++) 
+			for (i = 1; i < ydots; i++)
 			{
 				dy0 = (double)(dy0 - (double)delyy);
 				dx1 = (double)(dx1 + (double)delxx2);
@@ -496,15 +496,15 @@ expand_retry:
 				}
 				if (fabs(yy3rd-yymax) > fabs(yymin-yy3rd))
 				{
-					testy_exact = yy3rd-yymax; 
+					testy_exact = yy3rd-yymax;
 					testy_try   = dy0-yymax;
 				}
 				else
 				{
-					testy_exact = yymin-yy3rd; 
+					testy_exact = yymin-yy3rd;
 					testy_try   = dy1;
 				}
-				if (ratio_bad(testx_try, testx_exact) || 
+				if (ratio_bad(testx_try, testx_exact) ||
 					ratio_bad(testy_try, testy_exact))
 				{
 					if (curfractalspecific->flags & BF_MATH)
@@ -676,7 +676,7 @@ void adjust_corner(void)
 			}
 		}
 
-	if ((ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd))) 
+	if ((ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)))
 	{
 		if (ftemp*10000 < ftemp2 && yy3rd != yymax)
 			xx3rd = xxmin;
@@ -685,7 +685,7 @@ void adjust_corner(void)
 	if (ftemp2*10000 < ftemp && yy3rd != yymin)
 		xx3rd = xxmax;
 
-	if ((ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd))) 
+	if ((ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)))
 	{
 		if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
 			yy3rd = yymin;
@@ -750,7 +750,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 		}
 
 	/* if (bfymin == centery) */
-	if (cmp_bf(bfymin, bcentery) == 0) 
+	if (cmp_bf(bfymin, bcentery) == 0)
 	{
 		smallest_add_bf(bfymax);
 		/* bfymin -= bfymax-centery; */
@@ -795,7 +795,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 	/* if caller wants image size adjusted, do that first */
 	if (expand != 1.0)
 	{
-		for (i = 0; i < 4; ++i) 
+		for (i = 0; i < 4; ++i)
 		{
 			/* cornerx[i] = centerx + (cornerx[i]-centerx)*expand; */
 			sub_bf(btmp1, bcornerx[i], bcenterx);
@@ -816,7 +816,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 	/* lowy = highy = cornery[0]; */
 	copy_bf(blowy, bcornery[0]); copy_bf(bhighy, bcornery[0]);
 
-	for (i = 1; i < 4; ++i) 
+	for (i = 1; i < 4; ++i)
 	{
 		/* if (cornerx[i] < lowx)               lowx  = cornerx[i]; */
 		if (cmp_bf(bcornerx[i], blowx) < 0)   copy_bf(blowx, bcornerx[i]);
@@ -845,7 +845,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 	div_bf(bftemp, btmp1, btmp2);
 	floattobf(btmp1, 1.0);
 	if (cmp_bf(bftemp, btmp1) < 0)
-		for (i = 0; i < 4; ++i) 
+		for (i = 0; i < 4; ++i)
 		{
 			/* cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp; */
 			sub_bf(btmp1, bcornerx[i], bcenterx);
@@ -862,7 +862,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 	/* adjx = adjy = 0; */
 	clear_bf(badjx); clear_bf(badjy);
 
-	for (i = 0; i < 4; ++i) 
+	for (i = 0; i < 4; ++i)
 	{
 		/* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
 			adjx = ftemp; */
@@ -920,7 +920,7 @@ static void _fastcall adjust_to_limits(double expand)
 
 	limit = 32767.99;
 
-	if (integerfractal) 
+	if (integerfractal)
 	{
 		if (save_release > 1940) /* let user reproduce old GIF's and PAR's */
 			limit = 1023.99;
@@ -937,7 +937,7 @@ static void _fastcall adjust_to_limits(double expand)
 		xxmin -= xxmax-centerx;
 		}
 
-	if (yymin == centery) 
+	if (yymin == centery)
 	{
 		smallest_add(&yymax);
 		yymin -= yymax-centery;
@@ -963,7 +963,7 @@ static void _fastcall adjust_to_limits(double expand)
 	/* if caller wants image size adjusted, do that first */
 	if (expand != 1.0)
 	{
-		for (i = 0; i < 4; ++i) 
+		for (i = 0; i < 4; ++i)
 		{
 			cornerx[i] = centerx + (cornerx[i]-centerx)*expand;
 			cornery[i] = centery + (cornery[i]-centery)*expand;
@@ -973,7 +973,7 @@ static void _fastcall adjust_to_limits(double expand)
 	lowx = highx = cornerx[0];
 	lowy = highy = cornery[0];
 
-	for (i = 1; i < 4; ++i) 
+	for (i = 1; i < 4; ++i)
 	{
 		if (cornerx[i] < lowx)               lowx  = cornerx[i];
 		if (cornerx[i] > highx)              highx = cornerx[i];
@@ -987,9 +987,9 @@ static void _fastcall adjust_to_limits(double expand)
 	if (highy-lowy > ftemp) ftemp = highy-lowy;
 
 	/* if image is too large, downsize it maintaining center */
-	if ((ftemp = limit*2/ftemp) < 1.0) 
+	if ((ftemp = limit*2/ftemp) < 1.0)
 	{
-		for (i = 0; i < 4; ++i) 
+		for (i = 0; i < 4; ++i)
 		{
 			cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
 			cornery[i] = centery + (cornery[i]-centery)*ftemp;
@@ -999,7 +999,7 @@ static void _fastcall adjust_to_limits(double expand)
 	/* if any corner has x or y past limit, move the image */
 	adjx = adjy = 0;
 
-	for (i = 0; i < 4; ++i) 
+	for (i = 0; i < 4; ++i)
 	{
 		if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
 			adjx = ftemp;
@@ -1038,7 +1038,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 }
 
 static int _fastcall ratio_bad(double actual, double desired)
-{  
+{
 	double ftemp, tol;
 	if (integerfractal)
 		tol = math_tol[0];
@@ -1047,7 +1047,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 	if (tol <= 0.0)
 		return 1;
 	else if (tol >= 1.0)
-		return 0;         
+		return 0;
 	ftemp = 0;
 	if (desired != 0 && debugflag != 3400)
 		ftemp = actual / desired;
@@ -1147,7 +1147,7 @@ va_dcl
 #if defined(_WIN32)
 		_ASSERTE(resume_len + len <= resume_info_len);
 #endif
-	  memcpy(&resume_info[resume_len], source_ptr, len);
+		memcpy(&resume_info[resume_len], source_ptr, len);
 		resume_len += len;
 		len = va_arg(arg_marker, int);
 	}
@@ -1166,7 +1166,7 @@ int alloc_resume(int alloclen, int version)
 		stopmsg(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
 		calc_status = CALCSTAT_NON_RESUMABLE;
-	  resume_info_len = 0;
+		resume_info_len = 0;
 		return -1;
 	}
 	resume_len = 0;
@@ -1200,7 +1200,7 @@ va_dcl
 	{
 		dest_ptr = (BYTE *)va_arg(arg_marker, char *);
 #if defined(_WIN32)
-	  _ASSERTE(resume_offset + len <= resume_info_len);
+		_ASSERTE(resume_offset + len <= resume_info_len);
 #endif
 		memcpy(dest_ptr, &resume_info[resume_offset], len);
 		resume_offset += len;
@@ -1226,7 +1226,7 @@ void end_resume(void)
 	{
 		free(resume_info);
 		resume_info = NULL;
-	  resume_info_len = 0;
+		resume_info_len = 0;
 	}
 }
 
@@ -1286,7 +1286,7 @@ void sleepms_old(long ms)
 				while (t2.time == t1.time && t2.millitm == t1.millitm);
            sleepms_old(10L*SLEEPINIT); /* about 1/4 sec */
            ftimex(&t2);
-           if (driver_key_pressed()) 
+           if (driver_key_pressed())
            {
               scalems = 0L;
               cleartempmsg();
@@ -1312,7 +1312,7 @@ void sleepms_old(long ms)
 	{
 		ms /= 10;
 		ftimex(&t1);
-		while (1) 
+		while (1)
 		{
            if (driver_key_pressed()) break;
            ftimex(&t2);
@@ -1320,7 +1320,7 @@ void sleepms_old(long ms)
 		}
 	}
 	else
-		if (!driver_key_pressed()) 
+		if (!driver_key_pressed())
 		{
            ms *= scalems;
            while (ms-- >= 0);
@@ -1342,7 +1342,7 @@ static void sleepms_new(long ms)
 void sleepms(long ms)
 {
   if (debugflag == 4020)
-     sleepms_old(ms);   
+     sleepms_old(ms);
   else
      sleepms_new(ms);
 }
@@ -1358,7 +1358,7 @@ void wait_until(int index, uclock_t wait_time)
 	if (debugflag == 4020)
 		sleepms_old(wait_time);
 	else
-	{   
+	{
 		uclock_t now;
 		while ((now = usec_clock()) < next_time[index])
 			if (driver_key_pressed()) break;
@@ -1385,7 +1385,7 @@ int snd_open(void)
 	static char soundname[] = {"sound001.txt"};
 	if ((orbitsave & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
 	{
-	   snd_fp = fopen(soundname, "w");
+		snd_fp = fopen(soundname, "w");
 		if (snd_fp == NULL)
 		{
 			stopmsg(0, "Can't open SOUND*.TXT");
@@ -1413,7 +1413,7 @@ void w_snd(int tone)
 					/* must not then call soundoff(), else indexes out of synch */
 /*   if (20 < tone && tone < 15000)  better limits? */
 /*   if (10 < tone && tone < 5000)  better limits? */
-		if (driver_sound_on(tone)) 
+		if (driver_sound_on(tone))
 		{
 			wait_until(0, orbit_delay);
 			if (!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
@@ -1461,18 +1461,18 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 		putcolor(i, j, color);
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
-	if (debugflag == 4030) 
+	if (debugflag == 4030)
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
            w_snd((int)(i*1000/xdots + basehertz));
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
            w_snd((int)(j*1000/ydots + basehertz));
-		else if (orbit_delay > 0) 
+		else if (orbit_delay > 0)
 		{
 			wait_until(0, orbit_delay);
 		}
 	}
-	else 
+	else
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
            w_snd((int)(i + basehertz));
@@ -1480,7 +1480,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
            w_snd((int)(j + basehertz));
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
            w_snd((int)(i + j + basehertz));
-		else if (orbit_delay > 0) 
+		else if (orbit_delay > 0)
 		{
 			wait_until(0, orbit_delay);
 		}
@@ -1655,7 +1655,7 @@ void get_julia_attractor (double real, double imag)
 			lresult = lnew;
 		else
 			result =  g_new;
-     for (i = 0; i < 10; i++) 
+     for (i = 0; i < 10; i++)
      {
 		overflow = 0;
 		if (!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
@@ -1683,7 +1683,7 @@ void get_julia_attractor (double real, double imag)
 				}
 			}
 		}
-		else 
+		else
 		{
           break;
 		}

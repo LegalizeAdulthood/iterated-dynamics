@@ -2209,9 +2209,9 @@ struct fractalspecificstuff fractalspecific[]=
 		{"h", "p", "", ""},
 		{0.739, 0.739, 0, 0},
 		HT_VL, HF_VL, WINFRAC,
-		0.0f, 6.0f, 0.0f, 4.5f, 
+		0.0f, 6.0f, 0.0f, 4.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		VLfpFractal, otherjuliafp_per_pixel, VLSetup, StandardFractal, 
+		VLfpFractal, otherjuliafp_per_pixel, VLSetup, StandardFractal,
 		256
 	},
 
@@ -2222,11 +2222,11 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_ESCHER, HF_ESCHER, WINFRAC,
 		-1.6f, 1.6f, -1.2f, 1.2f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, ORIGIN,
-		EscherfpFractal, juliafp_per_pixel, StandardSetup, 
+		EscherfpFractal, juliafp_per_pixel, StandardSetup,
           StandardFractal,
 		STDBAILOUT
-	},                     
-  
+	},
+
 /* From Pickovers' "Chaos in Wonderland"      */
 /* included by Humberto R. Baptista           */
 /* code adapted from king.cpp bt James Rankin */
@@ -2281,7 +2281,7 @@ int paramnotused(int parm)
 	if (fractype != FORMULA && fractype != FFORMULA)
 		return 0;
 
-	switch (parm/2) 
+	switch (parm/2)
 	{
 		case 0:
 			if (!uses_p1)
@@ -2310,10 +2310,10 @@ int paramnotused(int parm)
 	return ret;
 }
 
-/* 
+/*
  *  Returns 1 if parameter number parm exists for type. If the
- *  parameter exists, the parameter prompt string is copied to buf. 
- *  Pass in NULL for buf if only the existence of the parameter is 
+ *  parameter exists, the parameter prompt string is copied to buf.
+ *  Pass in NULL for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
 int typehasparm(int type, int parm, char *buf)

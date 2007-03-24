@@ -707,7 +707,7 @@ static int look(char *stacked)
 		{
 				/* go back one file if somewhere to go (ie. browsing) */
 				name_stack_ptr--;
-				while (file_name_stack[name_stack_ptr][0] == '\0' 
+				while (file_name_stack[name_stack_ptr][0] == '\0'
                     && name_stack_ptr >= 0)
 			{
                 name_stack_ptr--;
@@ -1202,7 +1202,7 @@ static int handle_history(char *stacked, int kbdchar)
 	{
 		/* go back one file if somewhere to go (ie. browsing) */
 		name_stack_ptr--;
-		while (file_name_stack[name_stack_ptr][0] == '\0' 
+		while (file_name_stack[name_stack_ptr][0] == '\0'
 			&& name_stack_ptr >= 0)
 		{
 			name_stack_ptr--;
@@ -1757,8 +1757,8 @@ do_3d_transform:
 		break;
 
 	case FIK_ALT_1: /* alt + number keys set mutation level and start evolution engine */
-	case FIK_ALT_2: 
-	case FIK_ALT_3: 
+	case FIK_ALT_2:
+	case FIK_ALT_3:
 	case FIK_ALT_4:
 	case FIK_ALT_5:
 	case FIK_ALT_6:
@@ -2145,8 +2145,8 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 		break;
 
 	case FIK_ALT_1: /* alt + number keys set mutation level */
-	case FIK_ALT_2: 
-	case FIK_ALT_3: 
+	case FIK_ALT_2:
+	case FIK_ALT_3:
 	case FIK_ALT_4:
 	case FIK_ALT_5:
 	case FIK_ALT_6:
@@ -2164,7 +2164,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 		handle_mutation_level(TRUE, *kbdchar - (int) '1' + 1, kbdmore);
 		break;
 
-	case '0': /* mutation level 0 == turn off evolving */ 
+	case '0': /* mutation level 0 == turn off evolving */
 		handle_mutation_off(kbdmore);
 		break;
 
@@ -2190,9 +2190,9 @@ static void note_zoom()
 	if (boxcount)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
 		savezoom = (char *)malloc((long)(5*boxcount));
-	  if (savezoom == NULL)
+		if (savezoom == NULL)
 			clear_zoombox(); /* not enuf mem so clear the box */
-		else 
+		else
 		{
 			reset_zoom_corners(); /* reset these to overall image, not box */
 			memcpy(savezoom, boxx, boxcount*2);
@@ -2219,9 +2219,9 @@ static void move_zoombox(int keynum)
 {  int vertical, horizontal, getmore;
 	vertical = horizontal = 0;
 	getmore = 1;
-	while (getmore) 
+	while (getmore)
 	{
-		switch (keynum) 
+		switch (keynum)
 		{
 			case FIK_LEFT_ARROW:               /* cursor left */
 				--horizontal;
@@ -2250,7 +2250,7 @@ static void move_zoombox(int keynum)
 			default:
 				getmore = 0;
 			}
-		if (getmore) 
+		if (getmore)
 		{
 			if (getmore == 2)              /* eat last key used */
 				driver_get_key();
@@ -2258,7 +2258,7 @@ static void move_zoombox(int keynum)
 			keynum = driver_key_pressed();         /* next pending key */
 			}
 		}
-	if (boxcount) 
+	if (boxcount)
 	{
 /*
 		if (horizontal != 0)
@@ -2282,7 +2282,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	int row, col;
 	int oldcolor;
 	row = g_row_count++;
-	if (row == 0) 
+	if (row == 0)
 	{
 		errcount = 0;
 		cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
@@ -2293,12 +2293,12 @@ int cmp_line(BYTE *pixels, int linelen)
 		if ((row & 1) != 0) return 0;
 		row >>= 1;
 		}
-	for (col = 0; col < linelen; col++) 
+	for (col = 0; col < linelen; col++)
 	{
 		oldcolor=getcolor(col, row);
 		if (oldcolor == (int)pixels[col])
 			putcolor(col, row, 0);
-		else 
+		else
 		{
 			if (oldcolor == 0)
 				putcolor(col, row, 1);
@@ -2315,7 +2315,7 @@ static void cmp_line_cleanup(void)
 {
 	char *timestring;
 	time_t ltime;
-	if (initbatch) 
+	if (initbatch)
 	{
 		time(&ltime);
 		timestring = ctime(&ltime);
@@ -2371,7 +2371,7 @@ void setup287code()
 int key_count(int keynum)
 {  int ctr;
 	ctr = 1;
-	while (driver_key_pressed() == keynum) 
+	while (driver_key_pressed() == keynum)
 	{
 		driver_get_key();
 		++ctr;

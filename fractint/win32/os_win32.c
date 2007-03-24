@@ -691,7 +691,7 @@ uclock_t usec_clock(void)
 	/* TODO */
 	_ASSERTE(FALSE);
 
-	return result; 
+	return result;
 }
 
 void showfreemem(void)
@@ -719,9 +719,9 @@ unsigned long get_disk_space(void)
 }
 
 typedef BOOL MiniDumpWriteDumpProc(HANDLE process, DWORD pid, HANDLE file, MINIDUMP_TYPE dumpType,
-						   PMINIDUMP_EXCEPTION_INFORMATION exceptions,
-						   PMINIDUMP_USER_STREAM_INFORMATION user,
-						   PMINIDUMP_CALLBACK_INFORMATION callback);
+									PMINIDUMP_EXCEPTION_INFORMATION exceptions,
+									PMINIDUMP_USER_STREAM_INFORMATION user,
+									PMINIDUMP_CALLBACK_INFORMATION callback);
 
 static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {

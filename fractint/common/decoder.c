@@ -264,22 +264,22 @@ short decoder(short linewidth)
 			top_slot = (short) (1 << curr_size);
 
 			/* Continue reading codes until we get a non-clear code (Another
-          * unlikely, but possible case...) */
-		 do
-		 {
-			c = get_next_code();
-		 }
-		 while (c == clear);
+			* unlikely, but possible case...) */
+			do
+			{
+				c = get_next_code();
+			}
+			while (c == clear);
 
 			/* If we get an ending code immediately after a clear code (Yet
-          * another unlikely case), then break out of the loop. */
+			* another unlikely case), then break out of the loop. */
 			if (c == ending)
 				break;
 
 			/* Finally, if the code is beyond the range of already set codes,
-          * (This one had better NOT happen...   I have no idea what will
-          * result from this, but I doubt it will look good...) then set it
-          * to color zero. */
+			* (This one had better NOT happen...   I have no idea what will
+			* result from this, but I doubt it will look good...) then set it
+			* to color zero. */
 			if (c >= slot)
 				c = 0;
 
@@ -291,14 +291,14 @@ short decoder(short linewidth)
 		else
 		{
 			/* In this case, it's not a clear code or an ending code, so it must
-          * be a code code...  So we can now decode the code into a stack of
-          * character codes. (Clear as mud, right?) */
+			* be a code code...  So we can now decode the code into a stack of
+			* character codes. (Clear as mud, right?) */
 			code = c;
 
 			/* Here we go again with one of those off chances...  If, on the off
-          * chance, the code we got is beyond the range of those already set
-          * up (Another thing which had better NOT happen...) we trick the
-          * decoder into thinking it actually got the next slot avail. */
+			* chance, the code we got is beyond the range of those already set
+			* up (Another thing which had better NOT happen...) we trick the
+			* decoder into thinking it actually got the next slot avail. */
 
 			if (code >= slot)
 			{
@@ -312,10 +312,10 @@ short decoder(short linewidth)
 			}
 
 			/* Here we scan back along the linked list of prefixes.  If they can
-          * fit into the output buffer then transfer them direct.  ELSE push
-          * them into the stack until we are down to enough characters that
-          * they do fit.  Output the line then fall through to unstack the
-          * ones that would not fit. */
+			* fit into the output buffer then transfer them direct.  ELSE push
+			* them into the stack until we are down to enough characters that
+			* they do fit.  Output the line then fall through to unstack the
+			* ones that would not fit. */
 			fastloop = NOPE;
 			while (code >= newcodes)
 			{
@@ -356,11 +356,11 @@ short decoder(short linewidth)
 			}
 
 			/* Push the last character on the stack, and set up the new prefix
-          * and suffix, and if the required slot number is greater than that
-          * allowed by the current bit size, increase the bit size.  (NOTE -
-          * If we are all full, we *don't* save the new suffix and prefix...
-          * I'm not certain if this is correct... it might be more proper to
-          * overwrite the last code... */
+			* and suffix, and if the required slot number is greater than that
+			* allowed by the current bit size, increase the bit size.  (NOTE -
+			* If we are all full, we *don't* save the new suffix and prefix...
+			* I'm not certain if this is correct... it might be more proper to
+			* overwrite the last code... */
 			if (fastloop == NOPE)
 				*sp++ = (BYTE) code;
 

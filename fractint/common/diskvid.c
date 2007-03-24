@@ -547,7 +547,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 			break;
 
 		case 1:
-			for (i = 0; i < BLOCKLEN/2; ++i) 
+			for (i = 0; i < BLOCKLEN/2; ++i)
 			{
 				tmpchar = mem_getc();
 				*(pixelptr++) = (BYTE)(tmpchar >> 4);
@@ -555,7 +555,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 				}
 			break;
 		case 2:
-			for (i = 0; i < BLOCKLEN/4; ++i) 
+			for (i = 0; i < BLOCKLEN/4; ++i)
 			{
 				tmpchar = mem_getc();
 				for (j = 6; j >= 0; j -= 2)
@@ -563,7 +563,7 @@ static void _fastcall  findload_cache(long offset) /* used by read/write */
 				}
 			break;
 		case 3:
-			for (i = 0; i < BLOCKLEN/8; ++i) 
+			for (i = 0; i < BLOCKLEN/8; ++i)
 			{
 				tmpchar = mem_getc();
 				for (j = 7; j >= 0; --j)

@@ -168,7 +168,7 @@ void invalidate(WinText *me, int left, int bot, int right, int top)
 	RECT exposed =
 	{
 		left*me->char_width, top*me->char_height,
-		(right + 1)*me->char_width, (bot + 1)*me->char_height			
+		(right + 1)*me->char_width, (bot + 1)*me->char_height
 	};
 	if (me->hWndCopy)
 	{
@@ -527,7 +527,7 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 	general routine to repaint the screen
 */
 
-void wintext_paintscreen(WinText *me, 
+void wintext_paintscreen(WinText *me,
 	int xmin,       /* update this rectangular section */
 	int xmax,       /* of the 'screen'                 */
 	int ymin,

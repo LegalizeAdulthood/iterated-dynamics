@@ -311,7 +311,7 @@ win32_get_key(Driver *drv)
 {
 	DI(di);
 	int ch;
-	
+
 	do
 	{
 		if (di->key_buffer)
@@ -365,7 +365,7 @@ win32_shell(Driver *drv)
 		while (WAIT_TIMEOUT == status)
 		{
 			frame_pump_messages(0);
-			status = WaitForSingleObject(pi.hProcess, 1000); 
+			status = WaitForSingleObject(pi.hProcess, 1000);
 		}
 		CloseHandle(pi.hProcess);
 	}

@@ -5,7 +5,7 @@
 
 #include <string.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -55,7 +55,7 @@ void dispbox(void)
 		{
 			driver_get_truecolor(boxx[i]-sxoffs, boxy[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], NULL);
 			driver_put_truecolor(boxx[i]-sxoffs, boxy[i]-syoffs,
-                      rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
+				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
 		else
 			values[i] = (unsigned char)getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
@@ -100,18 +100,18 @@ void drawbox(int drawit)
 	{
 		if (boxcount != 0)  /* remove the old box from display */
 		{
-				clearbox(); 
+				clearbox();
 				boxcount = 0; }
 		reset_zoom_corners();
 		return; }
 	if (bf_math)
 	{
-       saved = save_stack();
-       bffxwidth = alloc_stack(rbflength + 2);
-       bffxskew  = alloc_stack(rbflength + 2);
-       bffydepth = alloc_stack(rbflength + 2);
-       bffyskew  = alloc_stack(rbflength + 2);
-       bffxadj   = alloc_stack(rbflength + 2);
+		saved = save_stack();
+		bffxwidth = alloc_stack(rbflength + 2);
+		bffxskew  = alloc_stack(rbflength + 2);
+		bffydepth = alloc_stack(rbflength + 2);
+		bffyskew  = alloc_stack(rbflength + 2);
+		bffxadj   = alloc_stack(rbflength + 2);
 	}
 	ftemp1 = PI*zrotate/72; /* convert to radians */
 	rotcos = cos(ftemp1);   /* sin & cos of rotation */
@@ -126,12 +126,12 @@ void drawbox(int drawit)
 
 	if (bf_math)
 	{
-       /* do some calcs just once here to reduce fp work a bit */
-       sub_bf(bffxwidth, bfsxmax, bfsx3rd);
-       sub_bf(bffxskew, bfsx3rd, bfsxmin);
-       sub_bf(bffydepth, bfsy3rd, bfsymax);
-       sub_bf(bffyskew, bfsymin, bfsy3rd);
-       floattobf(bffxadj, fxadj);
+		/* do some calcs just once here to reduce fp work a bit */
+		sub_bf(bffxwidth, bfsxmax, bfsx3rd);
+		sub_bf(bffxskew, bfsx3rd, bfsxmin);
+		sub_bf(bffydepth, bfsy3rd, bfsymax);
+		sub_bf(bffyskew, bfsymin, bfsy3rd);
+		floattobf(bffxadj, fxadj);
 	}
 
 	/* calc co-ords of topleft & botright corners of box */
@@ -150,8 +150,8 @@ void drawbox(int drawit)
 	yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-       calc_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-       calc_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calc_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calc_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 
 	/* calc co-ords of bottom right */
@@ -163,8 +163,8 @@ void drawbox(int drawit)
 	yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-       calc_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-       calc_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calc_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calc_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 	/* do the same for botleft & topright */
 	tmpx = zwidth/-2 - fxadj;
@@ -179,9 +179,9 @@ void drawbox(int drawit)
 	yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-       calc_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-       calc_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
-       restore_stack(saved);
+		calc_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calc_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		restore_stack(saved);
 	}
 	ftemp1 = zbx + zwidth - dx + fxadj;
 	ftemp2 = zby - dy/finalaspectratio;
@@ -190,7 +190,7 @@ void drawbox(int drawit)
 
 	if (boxcount != 0)  /* remove the old box from display */
 	{
-		clearbox(); 
+		clearbox();
 		boxcount = 0; }
 
 	if (drawit)  /* caller wants box drawn as well as co-ords calc'd */
@@ -217,7 +217,7 @@ void drawbox(int drawit)
 	}
 
 void _fastcall drawlines(struct coords fr, struct coords to,
-                                int dx, int dy)
+                        int dx, int dy)
 {   int xincr, yincr, ctr;
 	int altctr, altdec, altinc;
 	struct coords tmpp, line1, line2;
@@ -235,21 +235,21 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 		yincr = (to.y > fr.y)?1:-1;
 		line2.x = (line1.x = fr.x) + dx;
 		line2.y = (line1.y = fr.y) + dy;
-		while (--ctr >= 0) 
+		while (--ctr >= 0)
 		{
-				line1.x += xincr;
-				line2.x += xincr;
-				altctr -= altdec;
-				while (altctr < 0) 
-				{
-                altctr  += altinc;
-                line1.y += yincr;
-                line2.y += yincr;
-                }
-				addbox(line1);
-				addbox(line2);
-				}
-		}
+			line1.x += xincr;
+			line2.x += xincr;
+			altctr -= altdec;
+			while (altctr < 0)
+			{
+				altctr  += altinc;
+				line1.y += yincr;
+				line2.y += yincr;
+			}
+			addbox(line1);
+			addbox(line2);
+			}
+	}
 
 	else  /* delta.y > delta.x */
 	{
@@ -264,22 +264,22 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 		xincr = (to.x > fr.x) ? 1 : -1;
 		line2.x = (line1.x = fr.x) + dx;
 		line2.y = (line1.y = fr.y) + dy;
-		while (--ctr >= 0) 
+		while (--ctr >= 0)
 		{
-				line1.y += yincr;
-				line2.y += yincr;
-				altctr  -= altdec;
-				while (altctr < 0) 
-				{
-                altctr  += altinc;
-                line1.x += xincr;
-                line2.x += xincr;
-                }
-				addbox(line1);
-				addbox(line2);
-				}
+			line1.y += yincr;
+			line2.y += yincr;
+			altctr  -= altdec;
+			while (altctr < 0)
+			{
+				altctr  += altinc;
+				line1.x += xincr;
+				line2.x += xincr;
+			}
+			addbox(line1);
+			addbox(line2);
 		}
 	}
+}
 
 void _fastcall addbox(struct coords point)
 {
@@ -288,8 +288,8 @@ void _fastcall addbox(struct coords point)
 #endif
 	point.x += sxoffs;
 	point.y += syoffs;
-	if (point.x >= 0 && point.x < sxdots && 
-		point.y >= 0 && point.y < sydots) 
+	if (point.x >= 0 && point.x < sxdots &&
+		point.y >= 0 && point.y < sydots)
 		{
 		boxx[boxcount] = point.x;
 		boxy[boxcount] = point.y;
@@ -300,32 +300,34 @@ void _fastcall addbox(struct coords point)
 void moveboxf(double dx, double dy)
 {   int align, row, col;
 	align = check_pan();
-	if (dx != 0.0) 
+	if (dx != 0.0)
 	{
 		if ((zbx += dx) + zwidth/2 < 0)  /* center must stay onscreen */
 				zbx = zwidth/-2;
 		if (zbx + zwidth/2 > 1)
 				zbx = 1.0 - zwidth/2;
 		if (align != 0
-          && ((col = (int)(zbx*(dxsize + PIXELROUND))) & (align-1)) != 0) 
-          {
-				if (dx > 0) col += align;
-				col -= col & (align-1); /* adjust col to pass alignment */
-				zbx = (double)col/dxsize; }
+			&& ((col = (int)(zbx*(dxsize + PIXELROUND))) & (align-1)) != 0)
+		{
+			if (dx > 0) col += align;
+			col -= col & (align-1); /* adjust col to pass alignment */
+			zbx = (double)col/dxsize;
 		}
-	if (dy != 0.0) 
+	}
+	if (dy != 0.0)
 	{
 		if ((zby += dy) + zdepth/2 < 0)
 				zby = zdepth/-2;
 		if (zby + zdepth/2 > 1)
 				zby = 1.0 - zdepth/2;
 		if (align != 0
-          && ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0) 
-          {
-				if (dy > 0) row += align;
-				row -= row & (align-1);
-				zby = (double)row/dysize; }
+			&& ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0)
+		{
+			if (dy > 0) row += align;
+			row -= row & (align-1);
+			zby = (double)row/dysize;
 		}
+	}
 #ifndef XFRACT
 	if (g_video_scroll != 0)  /* scroll screen center to the box center */
 	{
@@ -593,12 +595,12 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 		return 1; /* 1 pass forced so align on any pixel */
 	if (stdcalcmode == 'b')
 		return 1; /* btm, align on any pixel */
-	if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS)) 
+	if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS))
 	{
 		if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
-           return 2;
+			return 2;
 		return 1; /* assume 1pass */
-		}
+	}
 	/* solid guessing */
 	start_resume();
 	get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
@@ -617,11 +619,11 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 /* move a row on the screen */
 {   int startcol, endcol, tocol;
 	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
-	if (fromrow >= 0 && fromrow < ydots) 
+	if (fromrow >= 0 && fromrow < ydots)
 	{
 		tocol = startcol = 0;
 		endcol = xdots-1;
-		if (col < 0) 
+		if (col < 0)
 		{
 				tocol -= col;
 				endcol += col; }
@@ -637,11 +639,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	if (zwidth == 0.0)
 		return 0; /* no zoombox, leave calc_status as is */
 	/* got a zoombox */
-	if ((alignmask=check_pan()-1) < 0 || evolving) 
+	if ((alignmask=check_pan()-1) < 0 || evolving)
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
 		return 0; }
-	if (zbx == 0.0 && zby == 0.0) 
+	if (zbx == 0.0 && zby == 0.0)
 	{
 		clearbox();
 		return 0; } /* box is full screen, leave calc_status as is */
@@ -650,20 +652,22 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	if (do_zoomout)  /* invert row and col */
 	{
 		row = -row;
-		col = -col; }
-	if ((row&alignmask) != 0 || (col&alignmask) != 0) 
+		col = -col;
+	}
+	if ((row&alignmask) != 0 || (col&alignmask) != 0)
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
-		return 0; }
+		return 0;
+	}
 	/* pan */
 	num_worklist = 0;
-	if (calc_status == CALCSTAT_RESUMABLE) 
+	if (calc_status == CALCSTAT_RESUMABLE)
 	{
-       start_resume();
-       get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
-       } /* don't do end_resume! we might still change our mind */
+		start_resume();
+		get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+	} /* don't do end_resume! we might still change our mind */
 	/* adjust existing worklist entries */
-	for (i = 0; i < num_worklist; ++i) 
+	for (i = 0; i < num_worklist; ++i)
 	{
 		worklist[i].yystart -= row;
 		worklist[i].yystop  -= row;
@@ -675,11 +679,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	/* add worklist entries for the new edges */
 	listfull = i = 0;
 	j = ydots-1;
-	if (row < 0) 
+	if (row < 0)
 	{
 		listfull |= add_worklist(0, xdots-1, 0, 0, -row-1, 0, 0, 0);
 		i = -row; }
-	if (row > 0) 
+	if (row > 0)
 	{
 		listfull |= add_worklist(0, xdots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
 		j = ydots - row - 1; }
@@ -687,11 +691,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 		listfull |= add_worklist(0, -col-1, 0, i, j, i, 0, 0);
 	if (col > 0)
 		listfull |= add_worklist(xdots-col, xdots-1, xdots-col, i, j, i, 0, 0);
-	if (listfull != 0) 
+	if (listfull != 0)
 	{
 		if (stopmsg(STOPMSG_CANCEL,
 				"Tables full, can't pan current image.\n"
-				"Cancel resumes old image, continue pans and calculates a new one.")) 
+				"Cancel resumes old image, continue pans and calculates a new one."))
 				{
 				zwidth = 0; /* cancel the zoombox */
 				drawbox(1); }
@@ -713,7 +717,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 
 static void _fastcall restart_window(int wknum)
 /* force a worklist entry to restart */
-{   int yfrom, yto, xfrom, xto;
+{
+	int yfrom, yto, xfrom, xto;
 	if ((yfrom = worklist[wknum].yystart) < 0) yfrom = 0;
 	if ((xfrom = worklist[wknum].xxstart) < 0) xfrom = 0;
 	if ((yto = worklist[wknum].yystop) >= ydots) yto = ydots - 1;
@@ -729,95 +734,105 @@ static void _fastcall restart_window(int wknum)
 static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
 {   int i, j, k;
 	WORKLIST *wk;
-	for (i = 0; i < num_worklist; ++i) 
+	for (i = 0; i < num_worklist; ++i)
 	{
 		wk = &worklist[i];
 		if (wk->yystart >= ydots || wk->yystop < 0
-          || wk->xxstart >= xdots || wk->xxstop < 0)  /* offscreen, delete */
-          {
-				for (j=i + 1; j < num_worklist; ++j)
-                worklist[j-1] = worklist[j];
-				--num_worklist;
-				--i;
-				continue; }
+			|| wk->xxstart >= xdots || wk->xxstop < 0)  /* offscreen, delete */
+		{
+			for (j=i + 1; j < num_worklist; ++j)
+				worklist[j-1] = worklist[j];
+			--num_worklist;
+			--i;
+			continue;
+		}
 		if (wk->yystart < 0)  /* partly off top edge */
 		{
-				if ((wk->sym&1) == 0)  /* no sym, easy */
-				{
-                wk->yystart = 0;
-                wk->xxbegin = 0; }
-				else  /* xaxis symmetry */
-				{
-                if ((j = wk->yystop + wk->yystart) > 0
+			if ((wk->sym&1) == 0)  /* no sym, easy */
+			{
+				wk->yystart = 0;
+				wk->xxbegin = 0;
+			}
+			else  /* xaxis symmetry */
+			{
+				if ((j = wk->yystop + wk->yystart) > 0
 						&& num_worklist < MAXCALCWORK)  /* split the sym part */
-						{
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].yystart = 0;
-                    worklist[num_worklist++].yystop = j;
-                    wk->yystart = j + 1; }
-                else
-                    wk->yystart = 0;
-                restart_window(i); /* restart the no-longer sym part */
+				{
+					worklist[num_worklist] = worklist[i];
+					worklist[num_worklist].yystart = 0;
+					worklist[num_worklist++].yystop = j;
+					wk->yystart = j + 1;
 				}
+				else
+					wk->yystart = 0;
+				restart_window(i); /* restart the no-longer sym part */
+			}
 		}
 		if (wk->yystop >= ydots)  /* partly off bottom edge */
 		{
-           j = ydots-1;
-           if ((wk->sym&1) != 0)  /* uses xaxis symmetry */
-           {
-              if ((k = wk->yystart + (wk->yystop - j)) < j) 
-              {
-                 if (num_worklist >= MAXCALCWORK) /* no room to split */
-                    restart_window(i);
-                 else  /* split it */
-                 {
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].yystart = k;
-                    worklist[num_worklist++].yystop = j;
-                    j = k-1; }
-              }
-              wk->sym &= -1 - 1; }
-           wk->yystop = j; }
+			j = ydots-1;
+			if ((wk->sym&1) != 0)  /* uses xaxis symmetry */
+			{
+				if ((k = wk->yystart + (wk->yystop - j)) < j)
+				{
+					if (num_worklist >= MAXCALCWORK) /* no room to split */
+						restart_window(i);
+					else  /* split it */
+					{
+						worklist[num_worklist] = worklist[i];
+						worklist[num_worklist].yystart = k;
+						worklist[num_worklist++].yystop = j;
+						j = k-1;
+					}
+				}
+				wk->sym &= -1 - 1;
+			}
+			wk->yystop = j;
+		}
 		if (wk->xxstart < 0)  /* partly off left edge */
 		{
-				if ((wk->sym&2) == 0) /* no sym, easy */
-                wk->xxstart = 0;
-				else  /* yaxis symmetry */
+			if ((wk->sym&2) == 0) /* no sym, easy */
+				wk->xxstart = 0;
+			else  /* yaxis symmetry */
+			{
+				if ((j = wk->xxstop + wk->xxstart) > 0
+					&& num_worklist < MAXCALCWORK)  /* split the sym part */
 				{
-                if ((j = wk->xxstop + wk->xxstart) > 0
-						&& num_worklist < MAXCALCWORK)  /* split the sym part */
-						{
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].xxstart = 0;
-                    worklist[num_worklist++].xxstop = j;
-                    wk->xxstart = j + 1; }
-                else
-                    wk->xxstart = 0;
-                restart_window(i); /* restart the no-longer sym part */
+					worklist[num_worklist] = worklist[i];
+					worklist[num_worklist].xxstart = 0;
+					worklist[num_worklist++].xxstop = j;
+					wk->xxstart = j + 1;
 				}
+				else
+					wk->xxstart = 0;
+				restart_window(i); /* restart the no-longer sym part */
+			}
 		}
 		if (wk->xxstop >= xdots)  /* partly off right edge */
 		{
-           j = xdots-1;
-           if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
-           {
-              if ((k = wk->xxstart + (wk->xxstop - j)) < j) 
-              {
-                 if (num_worklist >= MAXCALCWORK) /* no room to split */
-                    restart_window(i);
-                 else  /* split it */
-                 {
-                    worklist[num_worklist] = worklist[i];
-                    worklist[num_worklist].xxstart = k;
-                    worklist[num_worklist++].xxstop = j;
-                    j = k-1; }
-              }
-              wk->sym &= -1 - 2; }
-           wk->xxstop = j; }
+			j = xdots-1;
+			if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
+			{
+				if ((k = wk->xxstart + (wk->xxstop - j)) < j)
+				{
+					if (num_worklist >= MAXCALCWORK) /* no room to split */
+						restart_window(i);
+					else  /* split it */
+					{
+						worklist[num_worklist] = worklist[i];
+						worklist[num_worklist].xxstart = k;
+						worklist[num_worklist++].xxstop = j;
+						j = k-1;
+					}
+				}
+				wk->sym &= -1 - 2;
+			}
+			wk->xxstop = j;
+		}
 		if (wk->yybegin < wk->yystart) wk->yybegin = wk->yystart;
 		if (wk->yybegin > wk->yystop)  wk->yybegin = wk->yystop;
 		if (wk->xxbegin < wk->xxstart) wk->xxbegin = wk->xxstart;
 		if (wk->xxbegin > wk->xxstop)  wk->xxbegin = wk->xxstop;
-		}
+	}
 	tidy_worklist(); /* combine where possible, re-sort */
 }

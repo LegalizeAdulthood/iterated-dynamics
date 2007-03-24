@@ -30,13 +30,13 @@ int ValidateLuts(char *fn)
         strcat(temp,".map");  /* No? Then add .map */
 	findpath(temp, line);        /* search the dos path */
 	f = fopen(line, "r");
-	if (f == NULL) 
+	if (f == NULL)
 	{
         sprintf(line,"Could not load color map %s",fn);
         stopmsg(0,line);
         return 1;
     }
-	for (index = 0; index < 256; index++) 
+	for (index = 0; index < 256; index++)
 	{
         if (fgets(line,100,f) == NULL)
 						break;

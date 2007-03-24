@@ -76,7 +76,7 @@ static void get_mnemonic(int code, char *mnemonic)
 		{
 			strcpy(mnemonic, scancodes[i].mnemonic);
 			break;
-		}   
+		}
 }
 #undef stop
 
@@ -168,7 +168,7 @@ start:
 		quotes = 0;
 	}
 	/* skip white space: */
-	while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n') 
+	while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n')
 	{ }
 	switch (out)
 	{
@@ -179,7 +179,7 @@ start:
 			quotes = 1;
 			goto start;
 		case ';':         /* comment from here to end of line, skip it */
-			while ((out=fgetc(fpss)) != '\n' && out != EOF) 
+			while ((out=fgetc(fpss)) != '\n' && out != EOF)
 			{ }
 			goto start;
 		case '*':
@@ -199,7 +199,7 @@ start:
 		if (i < 80)
 			buffer[i++] = (char)out;
 		out=fgetc(fpss);
-	  if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
+		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
 			break;
 	}
 	buffer[i] = 0;
@@ -259,7 +259,7 @@ start:
 		{
 			float fticks;
 			err = fscanf(fpss, "%f", &fticks); /* how many ticks to wait */
-		 driver_set_keyboard_timeout((int) (fticks*1000.f));
+			driver_set_keyboard_timeout((int) (fticks*1000.f));
 			fticks *= CLK_TCK;             /* convert from seconds to ticks */
 			if (err == 1)
 			{
@@ -318,7 +318,7 @@ void recordshw(int key)
 	ticks=clock_ticks();  /* current time */
 	if (fpss == NULL)
 	{
-	   fpss=fopen(autoname, "w");
+		fpss=fopen(autoname, "w");
 		if (fpss == NULL)
 			return;
 	}
@@ -369,7 +369,7 @@ static void sleep_secs(int secs)
 {
 	long stop;
 	stop = clock_ticks() + (long)secs*CLK_TCK;
-	while (clock_ticks() < stop && kbhit() == 0) 
+	while (clock_ticks() < stop && kbhit() == 0)
 	{ } /* bailout if key hit */
 }
 

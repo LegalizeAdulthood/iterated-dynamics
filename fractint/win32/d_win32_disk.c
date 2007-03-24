@@ -309,7 +309,7 @@ disk_resize(Driver *drv)
 
 	frame_resize(di->base.wintext.max_width, di->base.wintext.max_height);
 	if ((g_video_table[g_adapter].xdots == di->width)
-		&& (g_video_table[g_adapter].ydots == di->height)) 
+		&& (g_video_table[g_adapter].ydots == di->height))
 	{
 		return 0;
 	}
@@ -328,7 +328,7 @@ disk_resize(Driver *drv)
 * disk_read_palette
 *
 *	Reads the current video palette into g_dac_box.
-*	
+*
 *
 * Results:
 *	None.
@@ -362,7 +362,7 @@ disk_read_palette(Driver *drv)
 *
 * disk_write_palette --
 *	Writes g_dac_box into the video palette.
-*	
+*
 *
 * Results:
 *	None.
@@ -426,7 +426,7 @@ disk_schedule_alarm(Driver *drv, int soon)
 *
 *----------------------------------------------------------------------
 */
-static void 
+static void
 disk_write_pixel(Driver *drv, int x, int y, int color)
 {
 	putcolor_a(x, y, color);
@@ -594,7 +594,7 @@ disk_get_key(Driver *drv)
 {
 	DI(di);
 	int ch;
-	
+
 	do
 	{
 		if (di->base.key_buffer)

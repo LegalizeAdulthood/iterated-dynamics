@@ -105,7 +105,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	maxcolor     = 0;
 	threshold    = .3*PI/degree; /* less than half distance between roots */
 #if !defined(XFRACT)
-	if (fractype == MPNEWTON || fractype == MPNEWTBASIN) 
+	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
 		mproverd     = *pd2MP(roverd);
 		mpd1overd    = *pd2MP(d1overd);
@@ -118,7 +118,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	floatmax = FLT_MAX;
 
 	basin = 0;
-	if (roots != staticroots) 
+	if (roots != staticroots)
 	{
 		free(roots);
 		roots = staticroots;
@@ -132,7 +132,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 			basin = 1;
 		if (degree > 16)
 		{
-		  roots = (_CMPLX *) malloc(degree*sizeof(_CMPLX));
+			roots = (_CMPLX *) malloc(degree*sizeof(_CMPLX));
 			if (roots == NULL)
 			{
 				roots = staticroots;
@@ -159,7 +159,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 
 		if (degree > 16)
 		{
-		  MPCroots = (struct MPC *) malloc(degree*sizeof(struct MPC));
+			MPCroots = (struct MPC *) malloc(degree*sizeof(struct MPC));
 			if (MPCroots == NULL)
 			{
 				MPCroots = (struct MPC *)staticroots;
@@ -1056,7 +1056,7 @@ MarksJuliaSetup(void)
 	}
 	else if (c_exp == 2)
 		lcoefficient = lold;
-	else if (c_exp < 2) 
+	else if (c_exp < 2)
 	{
 		lcoefficient.x = 1L << bitshift;
 		lcoefficient.y = 0L;
@@ -1083,7 +1083,7 @@ MarksJuliafpSetup(void)
 	}
 	else if (c_exp == 2)
 		coefficient = old;
-	else if (c_exp < 2) 
+	else if (c_exp < 2)
 	{
 		coefficient.x = 1.0;
 		coefficient.y = 0.0;
@@ -1136,7 +1136,7 @@ HalleySetup(void)
 	Ap1deg = AplusOne*degree;
 
 #if !defined(XFRACT)
-	if (fractype == MPHALLEY) 
+	if (fractype == MPHALLEY)
 	{
 		setMPfunctions();
 		mpAplusOne = *pd2MP((double)AplusOne);
