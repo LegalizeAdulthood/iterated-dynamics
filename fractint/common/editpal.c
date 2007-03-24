@@ -155,7 +155,7 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 
 
 #define NEWX(size)     malloc(size)
-#define NEWC(class)     (class *)(malloc(sizeof(class)))
+#define NEWC(class_)     ((class_ *) malloc(sizeof(class_)))
 #define DELETE(block)  (free(block), block=NULL)  /* just for warning */
 
 #ifdef XFRACT

@@ -304,7 +304,7 @@ long iteration(register DBLS cr, register DBLS ci,
       d=mag;
 #endif
       FREXP(d, &exponent);
-      return (maxit+offset-(((iter-1)<<3)+(long)adjust[exponent>>3]));
+      return maxit + offset - (((iter - 1) << 3) + (long) adjust[exponent >> 3]);
     }
 }
 

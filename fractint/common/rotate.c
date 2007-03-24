@@ -36,9 +36,9 @@ int fkey, step, fstep, istep, jstep, oldstep;
 int incr, fromred=0, fromblue=0, fromgreen=0, tored=0, toblue=0, togreen=0;
 int i, changecolor, changedirection;
 int oldhelpmode;
-int rotate_max,rotate_size;
+int rotate_max, rotate_size;
 
-static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
+static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 
 #ifndef XFRACT
    if (g_got_real_dac == 0                  /* ??? no DAC to rotate! */
@@ -244,7 +244,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
                incr = 999;
                }
             fkey = 0;
-            spindac(direction,1);
+            spindac(direction, 1);
             if (! paused)
                pauserotate();           /* pause */
             break;
@@ -280,7 +280,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
             more = 0;                   /* time to bail out */
             break;
          case FIK_HOME:                     /* restore palette */
-            memcpy(g_dac_box,olddacbox,256*3);
+            memcpy(g_dac_box, olddacbox, 256*3);
             pauserotate();              /* pause */
             break;
          default:                       /* maybe a new palette */
@@ -329,7 +329,7 @@ static int fsteps[] = {2,4,8,12,16,24,32,40,54,100}; /* (for Fkeys) */
 static void pauserotate()               /* pause-the-rotate routine */
 {
 int olddaccount;                        /* saved dac-count value goes here */
-BYTE olddac0,olddac1,olddac2;
+BYTE olddac0, olddac1, olddac2;
 
    if (paused)                          /* if already paused , just clear */
       paused = 0;
@@ -342,19 +342,19 @@ BYTE olddac0,olddac1,olddac2;
       g_dac_box[0][0] = 48;
       g_dac_box[0][1] = 48;
       g_dac_box[0][2] = 48;
-      spindac(0,1);                     /* show white border */
+      spindac(0, 1);                     /* show white border */
       if (driver_diskp())
       {
-         dvid_status(100," Paused in \"color cycling\" mode ");
+         dvid_status(100, " Paused in \"color cycling\" mode ");
       }
       driver_wait_key_pressed(0);                /* wait for any key */
 
 	  if (driver_diskp())
-         dvid_status(0,"");
+         dvid_status(0, "");
       g_dac_box[0][0] = olddac0;
       g_dac_box[0][1] = olddac1;
       g_dac_box[0][2] = olddac2;
-      spindac(0,1);                     /* show black border */
+      spindac(0, 1);                     /* show black border */
       g_dac_count = olddaccount;
       paused = 1;
       }
@@ -412,19 +412,19 @@ void save_palette()
 {
    char palname[FILE_MAX_PATH];
    FILE *dacfile;
-   int i,oldhelpmode;
-   strcpy(palname,MAP_name);
+   int i, oldhelpmode;
+   strcpy(palname, MAP_name);
    oldhelpmode = helpmode;
    driver_stack_screen();
    temp1[0] = 0;
    helpmode = HELPCOLORMAP;
-   i = field_prompt("Name of map file to write",NULL,temp1,60,NULL);
+   i = field_prompt("Name of map file to write", NULL, temp1, 60, NULL);
    driver_unstack_screen();
    if (i != -1 && temp1[0]) {
-      if (strchr(temp1,'.') == NULL)
-         strcat(temp1,".map");
-      merge_pathnames(palname,temp1,2);
-      dacfile = fopen(palname,"w");
+      if (strchr(temp1, '.') == NULL)
+         strcat(temp1, ".map");
+      merge_pathnames(palname, temp1, 2);
+      dacfile = fopen(palname, "w");
       if (dacfile == NULL)
          driver_buzzer(BUZZER_ERROR);
       else {
@@ -437,9 +437,9 @@ void save_palette()
                     g_dac_box[i][0] << 2,
                     g_dac_box[i][1] << 2,
                     g_dac_box[i][2] << 2);
-         memcpy(olddacbox,g_dac_box,256*3);
+         memcpy(olddacbox, g_dac_box, 256*3);
          colorstate = 2;
-         strcpy(colorfile,temp1);
+         strcpy(colorfile, temp1);
          }
       fclose(dacfile);
       }
@@ -449,21 +449,21 @@ void save_palette()
 
 int load_palette(void)
 {
-   int i,oldhelpmode;
+   int i, oldhelpmode;
    char filename[FILE_MAX_PATH];
    oldhelpmode = helpmode;
-   strcpy(filename,MAP_name);
+   strcpy(filename, MAP_name);
    driver_stack_screen();
    helpmode = HELPCOLORMAP;
-   i = getafilename("Select a MAP File",mapmask,filename);
+   i = getafilename("Select a MAP File", mapmask, filename);
    driver_unstack_screen();
    if (i >= 0)
    {
       if (ValidateLuts(filename) == 0)
-         memcpy(olddacbox,g_dac_box,256*3);
-      merge_pathnames(MAP_name,filename,0);
+         memcpy(olddacbox, g_dac_box, 256*3);
+      merge_pathnames(MAP_name, filename, 0);
    }
    helpmode = oldhelpmode;
-   return (i);
+   return i;
 }
 

@@ -61,7 +61,7 @@
 struct videoinfo g_video_entry;
 int helpmode;
 
-long timer_start,timer_interval;        /* timer(...) start & total */
+long timer_start, timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
 char *fract_dir1="", *fract_dir2="";
 
@@ -72,16 +72,16 @@ char *fract_dir1="", *fract_dir2="";
         int     dotmode;                /* video access method      */
         int     textsafe2;              /* textsafe override from g_video_table */
         int     g_ok_to_print;              /* 0 if printf() won't work */
-        int     sxdots,sydots;          /* # of dots on the physical screen    */
-        int     sxoffs,syoffs;          /* physical top left of logical screen */
+        int     sxdots, sydots;          /* # of dots on the physical screen    */
+        int     sxoffs, syoffs;          /* physical top left of logical screen */
         int     xdots, ydots;           /* # of dots on the logical screen     */
         double  dxsize, dysize;         /* xdots-1, ydots-1         */
         int     colors = 256;           /* maximum colors available */
         long    maxit;                  /* try this many iterations */
         int     boxcount;               /* 0 if no zoom-box yet     */
         int     zrotate;                /* zoombox rotation         */
-        double  zbx,zby;                /* topleft of zoombox       */
-        double  zwidth,zdepth,zskew;    /* zoombox size & shape     */
+        double  zbx, zby;                /* topleft of zoombox       */
+        double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
 
         int     fractype;               /* if == 0, use Mandelbrot  */
         char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
@@ -121,7 +121,7 @@ char *fract_dir1="", *fract_dir2="";
         float   viewreduction;          /* window auto-sizing */
         int     viewcrop;               /* nonzero to crop default coords */
         float   finalaspectratio;       /* for view shape and rotation */
-        int     viewxdots,viewydots;    /* explicit view sizing */
+        int     viewxdots, viewydots;    /* explicit view sizing */
 
         int maxhistory = 10;
 
@@ -134,13 +134,13 @@ int     save_system;                    /* from and for save files */
 int     tabmode = 1;                    /* tab display enabled */
 
 /* for historical reasons (before rotation):         */
-/*    top    left  corner of screen is (xxmin,yymax) */
-/*    bottom left  corner of screen is (xx3rd,yy3rd) */
-/*    bottom right corner of screen is (xxmax,yymin) */
-double  xxmin,xxmax,yymin,yymax,xx3rd,yy3rd; /* selected screen corners  */
+/*    top    left  corner of screen is (xxmin, yymax) */
+/*    bottom left  corner of screen is (xx3rd, yy3rd) */
+/*    bottom right corner of screen is (xxmax, yymin) */
+double  xxmin, xxmax, yymin, yymax, xx3rd, yy3rd; /* selected screen corners  */
 long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
-double  sxmin,sxmax,symin,symax,sx3rd,sy3rd; /* displayed screen corners */
-double  plotmx1,plotmx2,plotmy1,plotmy2;     /* real->screen multipliers */
+double  sxmin, sxmax, symin, symax, sx3rd, sy3rd; /* displayed screen corners */
+double  plotmx1, plotmx2, plotmy1, plotmy2;     /* real->screen multipliers */
 
 int calc_status = CALCSTAT_NO_FRACTAL;
 					  /* -1 no fractal                   */
@@ -160,10 +160,10 @@ int name_stack_ptr ;
 double toosmall;
 int  minbox;
 int no_sub_images;
-int autobrowse,doublecaution;
-char brwscheckparms,brwschecktype;
+int autobrowse, doublecaution;
+char brwscheckparms, brwschecktype;
 char browsemask[FILE_MAX_FNAME];
-int scale_map[12] = {1,2,3,4,5,6,7,8,9,10,11,12}; /*RB, array for mapping notes to a (user defined) scale */
+int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
 
 
 #define RESTART           1
@@ -178,11 +178,11 @@ void check_samename(void)
       char fname[FILE_MAX_FNAME];
       char ext[FILE_MAX_EXT];
       char path[FILE_MAX_PATH];
-      splitpath(savename,drive,dir,fname,ext);
-      if (strcmp(fname,"fract001"))
+      splitpath(savename, drive, dir, fname, ext);
+      if (strcmp(fname, "fract001"))
       {
-         makepath(path,drive,dir,fname,"gif");
-         if (access(path,0)==0)
+         makepath(path, drive, dir, fname, "gif");
+         if (access(path, 0)==0)
          exit(0);
       }
    }
@@ -271,8 +271,8 @@ restart:   /* insert key re-starts here */
 	no_sub_images = FALSE;
 	toosmall = 6;
 	minbox   = 3;
-	strcpy(browsemask,"*.gif");
-	strcpy(browsename,"            ");
+	strcpy(browsemask, "*.gif");
+	strcpy(browsename, "            ");
 	name_stack_ptr= -1; /* init loaded files stack */
    
 	evolving = FALSE;
@@ -290,9 +290,9 @@ restart:   /* insert key re-starts here */
 	showdot = -1; /* turn off showdot if entered with <g> command */
 	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
-	cmdfiles(argc,argv);         /* process the command-line */
+	cmdfiles(argc, argv);         /* process the command-line */
 	dopause(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
-	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
+	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
 	history_allocate();
 
@@ -301,7 +301,7 @@ restart:   /* insert key re-starts here */
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox,g_dac_box,256*3);      /* save in case colors= present */
+	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case colors= present */
 
 	if (debugflag == 8088)
 	{
@@ -370,7 +370,7 @@ restorestart:
 
 	if (colorpreloaded)
 	{
-		memcpy(g_dac_box,olddacbox,256*3);   /* restore in case colors= present */
+		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case colors= present */
 	}
 
 	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
@@ -396,7 +396,7 @@ restorestart:
 				hdg = "Select File to Restore";
 				helpmode = HELPSAVEREST;
 			}
-			if (showfile < 0 && getafilename(hdg,gifmask,readname) < 0)
+			if (showfile < 0 && getafilename(hdg, gifmask, readname) < 0)
 			{
 				showfile = 1;               /* cancelled */
 				g_init_mode = -1;
@@ -404,7 +404,7 @@ restorestart:
 			}
 
 			name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			strcpy(file_name_stack[name_stack_ptr],browsename);
+			strcpy(file_name_stack[name_stack_ptr], browsename);
 		}
 
 		evolving = viewwindow = 0;
@@ -486,7 +486,7 @@ imagestart:                             /* calc/display a new image */
 		if (kbdchar == FIK_INSERT) goto restart;      /* restart pgm on Insert Key */
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 			kbdchar = select_video_mode(-1);
-		if ((g_adapter = check_vidmode_key(0,kbdchar)) >= 0)
+		if ((g_adapter = check_vidmode_key(0, kbdchar)) >= 0)
 			break;                                 /* got a video mode now */
 #ifndef XFRACT
 		if ('A' <= kbdchar && kbdchar <= 'Z')
@@ -524,7 +524,7 @@ imagestart:                             /* calc/display a new image */
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 						display3d = 1;
 					if (colorpreloaded)
-						memcpy(olddacbox,g_dac_box,256*3);     /* save in case colors= present */
+						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case colors= present */
 					driver_set_for_text(); /* switch to text mode */
 					showfile = -1;
 					goto restorestart;
@@ -587,7 +587,7 @@ resumeloop:
 
 	param_history(0); /* save old history */
 	/* this switch processes gotos that are now inside function */
-	switch (big_while_loop(&kbdmore,&stacked,resumeflag))
+	switch (big_while_loop(&kbdmore, &stacked, resumeflag))
 	{
 	case RESTART:
 		goto restart;
@@ -625,12 +625,12 @@ int check_key()
 }
 
 /* timer function:
-     timer(0,(*fractal)())              fractal engine
-     timer(1,NULL,int width)            decoder
+     timer(0, (*fractal)())              fractal engine
+     timer(1, NULL, int width)            decoder
      timer(2)                           encoder
   */
 #ifndef USE_VARARGS
-int timer(int timertype,int(*subrtn)(),...)
+int timer(int timertype, int(*subrtn)(), ...)
 #else
 int timer(va_alist)
 va_dcl
@@ -645,7 +645,7 @@ va_dcl
    int do_bench;
 
 #ifndef USE_VARARGS
-   va_start(arg_marker,subrtn);
+   va_start(arg_marker, subrtn);
 #else
    int timertype;
    int (*subrtn)();
@@ -658,14 +658,14 @@ va_dcl
    if (timertype == 2)   /* encoder, record time only if debug=200 */
       do_bench = (debugflag == 200);
    if (do_bench)
-      fp=dir_fopen(workdir,"bench","a");
+      fp=dir_fopen(workdir, "bench", "a");
    timer_start = clock_ticks();
    switch (timertype) {
       case 0:
          out = (*(int(*)(void))subrtn)();
          break;
       case 1:
-         i = va_arg(arg_marker,int);
+         i = va_arg(arg_marker, int);
          out = (int)decoder((short)i); /* not indirect, safer with overlays */
          break;
       case 2:
@@ -681,19 +681,19 @@ va_dcl
       timestring[24] = 0; /*clobber newline in time string */
       switch (timertype) {
          case 1:
-            fprintf(fp,"decode ");
+            fprintf(fp, "decode ");
             break;
          case 2:
-            fprintf(fp,"encode ");
+            fprintf(fp, "encode ");
             break;
          }
-      fprintf(fp,"%s type=%s resolution = %dx%d maxiter=%ld",
+      fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
           timestring,
           curfractalspecific->name,
           xdots,
           ydots,
           maxit);
-      fprintf(fp," time= %ld.%02ld secs\n",timer_interval/100,timer_interval%100);
+      fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
       if (fp != NULL)
          fclose(fp);
       }

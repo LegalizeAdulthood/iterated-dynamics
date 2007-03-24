@@ -224,12 +224,12 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy) {
 
 */
 
-#define Sqrtz(z,rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
+#define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
 /* rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)} */
-void Arcsinz(_CMPLX z,_CMPLX *rz)
+void Arcsinz(_CMPLX z, _CMPLX *rz)
 {
-  _CMPLX tempz1,tempz2;
+  _CMPLX tempz1, tempz2;
 
   FPUcplxmul( &z, &z, &tempz1);
   tempz1.x = 1 - tempz1.x; tempz1.y = -tempz1.y;  /* tempz1 = 1 - tempz1 */
@@ -243,7 +243,7 @@ void Arcsinz(_CMPLX z,_CMPLX *rz)
 
 
 /* rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)} */
-void Arccosz(_CMPLX z,_CMPLX *rz)
+void Arccosz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp;
 
@@ -257,7 +257,7 @@ void Arccosz(_CMPLX z,_CMPLX *rz)
   rz->x = temp.y;  rz->y = -temp.x;              /* rz = (-i)*tempz1 */
 }   /* end. Arccosz */
 
-void Arcsinhz(_CMPLX z,_CMPLX *rz)
+void Arcsinhz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX temp;
 
@@ -269,7 +269,7 @@ void Arcsinhz(_CMPLX z,_CMPLX *rz)
 }  /* end. Arcsinhz */
 
 /* rz=Arccosh(z)=Log(z+sqrt(z*z-1)} */
-void Arccoshz(_CMPLX z,_CMPLX *rz)
+void Arccoshz(_CMPLX z, _CMPLX *rz)
 {
   _CMPLX tempz;
   FPUcplxmul( &z, &z, &tempz);
@@ -280,9 +280,9 @@ void Arccoshz(_CMPLX z,_CMPLX *rz)
 }   /* end. Arccoshz */
 
 /* rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)} */
-void Arctanhz(_CMPLX z,_CMPLX *rz)
+void Arctanhz(_CMPLX z, _CMPLX *rz)
 {
-  _CMPLX temp0,temp1,temp2;
+  _CMPLX temp0, temp1, temp2;
 
   if ( z.x == 0.0){
     rz->x = 0;
@@ -310,9 +310,9 @@ void Arctanhz(_CMPLX z,_CMPLX *rz)
 }   /* end. Arctanhz */
 
 /* rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)} */
-void Arctanz(_CMPLX z,_CMPLX *rz)
+void Arctanz(_CMPLX z, _CMPLX *rz)
 {
-  _CMPLX temp0,temp1,temp2,temp3;
+  _CMPLX temp0, temp1, temp2, temp3;
   if ( z.x == 0.0 && z.y == 0.0)
     rz->x = rz->y = 0;
   else if ( z.x != 0.0 && z.y == 0.0){
@@ -376,7 +376,7 @@ long lsqrt(long f)
     if (N % 2)
     {
         N++;
-        y0 = multiply(c,y0, bitshift);
+        y0 = multiply(c, y0, bitshift);
     }
     N /= 2;
     if (N >= 0)
@@ -392,11 +392,11 @@ LCMPLX ComplexSqrtLong(long x, long y)
    LCMPLX    result;
 
 #ifndef LONGSQRT
-   mag       = sqrt(sqrt(((double) multiply(x,x,bitshift))/fudge +
-                         ((double) multiply(y,y,bitshift))/ fudge));
+   mag       = sqrt(sqrt(((double) multiply(x, x, bitshift))/fudge +
+                         ((double) multiply(y, y, bitshift))/ fudge));
    maglong   = (long)(mag * fudge);
 #else
-   maglong   = lsqrt(lsqrt(multiply(x,x,bitshift)+multiply(y,y,bitshift)));
+   maglong   = lsqrt(lsqrt(multiply(x, x, bitshift)+multiply(y, y, bitshift)));
 #endif
    theta     = atan2((double) y/fudge, (double) x/fudge)/2;
    thetalong = (long)(theta * SinCosFudge);
@@ -553,7 +553,7 @@ long logtablecalc(long citer) {
       else
          ret = (long)(mlf * sqrt(citer - lf)) + 1;
    }
-   return (ret);
+   return ret;
 }
 
 long ExpFloat14(long xx) {
@@ -1930,7 +1930,7 @@ struct MP *MPmul386(struct MP x, struct MP y)
 */
 struct MP *d2MP(double x)
 {
-	return ((cpu >= 386)? d2MP386 : d2MP086)(x);
+	return ((cpu >= 386) ? d2MP386 : d2MP086)(x);
 }
 
 struct MP *MPmul(struct MP x, struct MP y)

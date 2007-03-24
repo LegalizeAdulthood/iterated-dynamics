@@ -195,8 +195,8 @@ int line3d(BYTE * pixels, unsigned linelen)
    /************************************************************************/
    if (g_row_count++ == 0)
    {
-      int err;
-      if ((err = first_time(linelen, v)) != 0)
+      int err = first_time(linelen, v);
+      if (err != 0)
          return err;
       if (xdots > OLDMAXPIXELS)
          return -1;
@@ -2124,7 +2124,8 @@ static int first_time(int linelen, VECTOR v)
 
    zcoord = filecolors;
 
-   if ((err=line3dmem()) != 0)
+   err=line3dmem();
+   if (err != 0)
       return err;
 
 

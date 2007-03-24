@@ -218,8 +218,8 @@ static void init_bf_2(void)
     if (ptr + NUMVARS*(bflength+2) > maxstack)
        {
        char msg[80];
-       sprintf(msg,"Requested precision of %d too high, aborting",decimals);
-       stopmsg(0,msg);
+       sprintf(msg, "Requested precision of %d too high, aborting", decimals);
+       stopmsg(0, msg);
        goodbye();
        }
 
@@ -247,13 +247,13 @@ static void init_bf_2(void)
 
     /* good citizens initialize variables */
     if (bf_save_len)  /* leave save area */
-       memset(bnroot+(bf_save_len+2)*22,0,(unsigned)(startstack-(bf_save_len+2)*22));
+       memset(bnroot+(bf_save_len+2)*22, 0, (unsigned)(startstack-(bf_save_len+2)*22));
     else /* first time through - nothing saved */
        {
        /* high variables */
-       memset(bnroot+maxstack,0,(bflength+2)*22);
+       memset(bnroot+maxstack, 0, (bflength+2)*22);
        /* low variables */
-       memset(bnroot,0,(unsigned)startstack);
+       memset(bnroot, 0, (unsigned)startstack);
        }
 
     restore_bf_vars();
@@ -277,9 +277,9 @@ static int save_bf_vars(void)
       {
       mem = (bflength+2)*22;  /* 6 corners + 6 save corners + 10 params */
       bf_save_len = bflength;
-      memcpy(bnroot,bfxmin,mem);
+      memcpy(bnroot, bfxmin, mem);
       /* scrub old high area */
-      memset(bfxmin,0,mem);
+      memset(bfxmin, 0, mem);
       ret = 0;
       }
    else
@@ -299,26 +299,26 @@ static int restore_bf_vars(void)
    if (bf_save_len == 0)
       return -1;
    ptr  = bnroot;
-   convert_bf(bfxmin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfxmax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfymin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfymax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfx3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfy3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfxmin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfxmax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfymin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfymax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
    for (i=0; i<10; i++)
       {
-      convert_bf(bfparms[i],ptr,bflength,bf_save_len);
+      convert_bf(bfparms[i], ptr, bflength, bf_save_len);
       ptr += bf_save_len+2;
       }
-   convert_bf(bfsxmin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsxmax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsymin,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsymax,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsx3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
-   convert_bf(bfsy3rd,ptr,bflength,bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsxmin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsxmax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsymin, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsymax, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
+   convert_bf(bfsy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len+2;
 
    /* scrub save area */
-   memset(bnroot,0,(bf_save_len+2)*22);
+   memset(bnroot, 0, (bf_save_len+2)*22);
    return 0;
    }
 
@@ -340,14 +340,14 @@ bn_t alloc_stack(size_t size)
    long stack_addr;
    if (bf_math == 0)
       {
-      stopmsg(0,"alloc_stack called with bf_math==0");
+      stopmsg(0, "alloc_stack called with bf_math==0");
       return 0;
       }
    stack_addr = (long)((stack_ptr-bnroot)+size); /* +ENDVID, part of bnroot */
 
    if (stack_addr > maxstack)
       {
-      stopmsg(0,"Aborting, Out of Bignum Stack Space");
+      stopmsg(0, "Aborting, Out of Bignum Stack Space");
       goodbye();
       }
    /* keep track of max ptr */

@@ -31,7 +31,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
        && bitshift == 29 && potflag == 0
        && biomorph == -1 && inside > -59 && outside >= -1
        && useinitorbit != 1 && using_jiim == 0 && bailoutest == Mod
-       && (orbitsave&2) == 0)
+       && (orbitsave & ORBITSAVE_SOUND) == 0)
       calctype = calcmand; /* the normal case - use CALCMAND */
    else
    {
@@ -50,7 +50,7 @@ JuliaSetup(void)            /* Julia Routine */
        && bitshift == 29 && potflag == 0
        && biomorph == -1 && inside > -59 && outside >= -1
        && !finattract && using_jiim == 0 && bailoutest == Mod
-       && (orbitsave&2) == 0)
+       && (orbitsave & ORBITSAVE_SOUND) == 0)
        calctype = calcmand; /* the normal case - use CALCMAND */
    else
    {
@@ -246,7 +246,7 @@ MandelfpSetup(void)
             && useinitorbit != 1
             && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && using_jiim == 0 && bailoutest == Mod
-            && (orbitsave&2) == 0)
+            && (orbitsave & ORBITSAVE_SOUND) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
@@ -385,7 +385,7 @@ JuliafpSetup(void)
             && (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
             && !finattract
             && using_jiim == 0 && bailoutest == Mod
-            && (orbitsave&2) == 0)
+            && (orbitsave & ORBITSAVE_SOUND) == 0)
         {
            calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
@@ -852,8 +852,8 @@ ZXTrigPlusZSetup(void)
 int
 LambdaTrigSetup(void)
 {
-   int isinteger;
-   if ((isinteger = curfractalspecific->isinteger) != 0)
+   int isinteger = curfractalspecific->isinteger;
+   if (isinteger != 0)
       curfractalspecific->orbitcalc =  LambdaTrigFractal;
    else
       curfractalspecific->orbitcalc =  LambdaTrigfpFractal;
@@ -990,8 +990,8 @@ FnXFnSetup(void)
 int
 MandelTrigSetup(void)
 {
-   int isinteger;
-   if ((isinteger = curfractalspecific->isinteger) != 0)
+   int isinteger = curfractalspecific->isinteger;
+   if (isinteger != 0)
       curfractalspecific->orbitcalc =  LambdaTrigFractal;
    else
       curfractalspecific->orbitcalc =  LambdaTrigfpFractal;

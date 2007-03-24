@@ -565,7 +565,7 @@ int encoder()
    if (fwrite(";", 1, 1, g_outfile) != 1)
       goto oops;                /* GIF Terminator */
 
-   return (interrupted);
+   return interrupted;
 
 oops:
    {
@@ -588,14 +588,14 @@ static int _fastcall shftwrite(BYTE * color, int numcolors)
          thiscolor = (BYTE) (thiscolor << 2);
          thiscolor = (BYTE) (thiscolor + (BYTE) (thiscolor >> 6));
          if (fputc(thiscolor, g_outfile) != (int) thiscolor)
-            return (0);
+            return 0;
       }
-   return (1);
+   return 1;
 }
 
 static int _fastcall extend_blk_len(int datalen)
 {
-   return (datalen + (datalen + 254) / 255 + 15);
+   return datalen + (datalen + 254) / 255 + 15;
    /* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
@@ -606,19 +606,19 @@ static int _fastcall put_extend_blk(int block_id, int block_len, char * block_da
    strcpy(header, "!\377\013fractint");
    sprintf(&header[11], "%03u", block_id);
    if (fwrite(header, 14, 1, g_outfile) != 1)
-      return (0);
+      return 0;
    i = (block_len + 254) / 255;
    while (--i >= 0)
    {
       block_len -= (j = min(block_len, 255));
       if (fputc(j, g_outfile) != j)
-         return (0);
+         return 0;
       while (--j >= 0)
          fputc(*(block_data++), g_outfile);
    }
    if (fputc(0, g_outfile) != 0)
-      return (0);
-   return (1);
+      return 0;
+   return 1;
 }
 
 static int _fastcall store_item_name(char *nameptr)
@@ -652,7 +652,7 @@ static int _fastcall store_item_name(char *nameptr)
       fsave_info.future[i] = 0;
    /* formula/lsys/ifs info block, 003 */
    put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
-   return (extend_blk_len(sizeof(fsave_info)));
+   return extend_blk_len(sizeof(fsave_info));
 }
 
 static void _fastcall setup_save_info(struct fractal_info * save_info)
@@ -1052,7 +1052,7 @@ nomatch:
     */
    output((int)ent);
    output((int) EOFCode);
-   return (interrupted);
+   return interrupted;
 }
 
 /*****************************************************************

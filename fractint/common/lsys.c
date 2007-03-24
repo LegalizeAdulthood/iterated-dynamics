@@ -65,7 +65,7 @@ static char loaded=0;
 
 int _fastcall ispow2(int n)
 {
-  return (n == (n & -n));
+  return n == (n & -n);
 }
 
 LDBL _fastcall getnumber(char **str)

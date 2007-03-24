@@ -998,7 +998,8 @@ static void perform_worklist()
             */
             while ((savedotslen=sqr(showdot_width)+5*showdot_width+4) > 1000)
                showdot_width--;
-            if ((savedots = (BYTE *)malloc(savedotslen)) != NULL)
+            savedots = (BYTE *)malloc(savedotslen);
+			if (savedots != NULL)
             {
                savedotslen /= 2;
                fillbuff = savedots + savedotslen;
@@ -1598,10 +1599,13 @@ static int _fastcall StandardCalc(int passnum)
       {
          /* on 2nd pass of two, skip even pts */
          if (quick_calc && !resuming)
-            if ((color = getcolor(col, row)) != inside) {
+		 {
+			 color = getcolor(col, row);
+			 if (color != inside) {
                ++col;
                continue;
             }
+		 }
          if (passnum == 1 || stdcalcmode == '1' || (row&1) != 0 || (col&1) != 0)
          {
             if ((*calctype)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */

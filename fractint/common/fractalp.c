@@ -2279,7 +2279,7 @@ int paramnotused(int parm)
 
    /* sanity check */
    if (fractype != FORMULA && fractype != FFORMULA)
-      return (0);
+      return 0;
 
    switch (parm/2) {
       case 0:
@@ -2306,7 +2306,7 @@ int paramnotused(int parm)
          ret = 0;
          break;
    }
-   return (ret);
+   return ret;
 }
 
 /* 

@@ -2153,7 +2153,8 @@ int funny_glasses_call(int (*calc)(void))
       plot_setup();
       plot = standardplot;
       /* is there a better way to clear the graphics screen ? */
-      if ((status = calc()) != 0)
+      status = calc();
+	  if (status != 0)
          goto done;
       if (g_glasses_type==STEREO_PHOTO) /* photographer's mode */
             stopmsg(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
@@ -2803,7 +2804,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 static FILE *open_orbitsave(void)
 {
    FILE *fp;
-   if ((orbitsave&1) && (fp = fopen("orbits.raw", "w")) != NULL)
+   if ((orbitsave & ORBITSAVE_RAW) && (fp = fopen("orbits.raw", "w")) != NULL)
    {
       fprintf(fp, "pointlist x y z color\n");
       return fp;

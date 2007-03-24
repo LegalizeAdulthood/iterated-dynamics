@@ -981,7 +981,7 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 int BifurcLambda() /* Used by lyanupov */
   {
     Population = Rate * Population * (1 - Population);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 #endif
 
@@ -997,7 +997,7 @@ int BifurcVerhulstTrig()
     tmp.y = 0;
     CMPLXtrig0(tmp, tmp);
     Population += Rate * tmp.x * (1 - tmp.x);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcVerhulstTrig()
@@ -1009,7 +1009,7 @@ int LongBifurcVerhulstTrig()
     ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
     lPopulation += multiply(lRate, ltmp.y, bitshift);
 #endif
-    return (overflow);
+    return overflow;
   }
 
 int BifurcStewartTrig()
@@ -1019,7 +1019,7 @@ int BifurcStewartTrig()
     tmp.y = 0;
     CMPLXtrig0(tmp, tmp);
     Population = (Rate * tmp.x * tmp.x) - 1.0;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcStewartTrig()
@@ -1032,7 +1032,7 @@ int LongBifurcStewartTrig()
     lPopulation = multiply(lPopulation, lRate,      bitshift);
     lPopulation -= fudge;
 #endif
-    return (overflow);
+    return overflow;
   }
 
 int BifurcSetTrigPi()
@@ -1041,7 +1041,7 @@ int BifurcSetTrigPi()
     tmp.y = 0;
     CMPLXtrig0(tmp, tmp);
     Population = Rate * tmp.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcSetTrigPi()
@@ -1052,7 +1052,7 @@ int LongBifurcSetTrigPi()
     LCMPLXtrig0(ltmp, ltmp);
     lPopulation = multiply(lRate, ltmp.x, bitshift);
 #endif
-    return (overflow);
+    return overflow;
   }
 
 int BifurcAddTrigPi()
@@ -1061,7 +1061,7 @@ int BifurcAddTrigPi()
     tmp.y = 0;
     CMPLXtrig0(tmp, tmp);
     Population += Rate * tmp.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcAddTrigPi()
@@ -1072,7 +1072,7 @@ int LongBifurcAddTrigPi()
     LCMPLXtrig0(ltmp, ltmp);
     lPopulation += multiply(lRate, ltmp.x, bitshift);
 #endif
-    return (overflow);
+    return overflow;
   }
 
 int BifurcLambdaTrig()
@@ -1082,7 +1082,7 @@ int BifurcLambdaTrig()
     tmp.y = 0;
     CMPLXtrig0(tmp, tmp);
     Population = Rate * tmp.x * (1 - tmp.x);
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcLambdaTrig()
@@ -1094,7 +1094,7 @@ int LongBifurcLambdaTrig()
     ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
     lPopulation = multiply(lRate, ltmp.y, bitshift);
 #endif
-    return (overflow);
+    return overflow;
   }
 
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
@@ -1108,7 +1108,7 @@ int BifurcMay()
     tmp.x = 1.0 + Population;
     tmp.x = pow(tmp.x, -beta); /* pow in math.h included with mpmath.h */
     Population = (Rate * Population) * tmp.x;
-    return (fabs(Population) > BIG);
+    return fabs(Population) > BIG;
   }
 
 int LongBifurcMay()
@@ -1121,7 +1121,7 @@ int LongBifurcMay()
     lPopulation = multiply(lRate, lPopulation, bitshift);
     lPopulation = divide(lPopulation, ltmp.x, bitshift);
 #endif
-    return (overflow);
+    return overflow;
   }
 
 int BifurcMaySetup()
@@ -2232,7 +2232,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
    if ((kbdcount -= abs((int)realcoloriter)) <= 0)
       {
       if (check_key())
-         return (-1);
+         return -1;
       kbdcount = max_kbdcount;
       }
 

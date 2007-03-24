@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* orbitsave values */
+#define ORBITSAVE_NONE	0
+#define ORBITSAVE_RAW	1
+#define ORBITSAVE_SOUND 2
+
 /* g_glasses_type values */
 #define STEREO_NONE			0
 #define STEREO_ALTERNATE	1

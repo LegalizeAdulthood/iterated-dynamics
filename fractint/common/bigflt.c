@@ -73,7 +73,7 @@ bf_t strtobf(bf_t r, char *s)
         while (*l >= '0' && *l <= '9') /* while a digit */
             {
             onesbyte = (BYTE)(*(l--) - '0');
-            inttobf(bftmp1,onesbyte);
+            inttobf(bftmp1, onesbyte);
             unsafe_add_a_bf(r, bftmp1);
             div_a_bf_int(r, 10);
             }
@@ -84,7 +84,7 @@ bf_t strtobf(bf_t r, char *s)
             while (keeplooping) /* while a digit */
                 {
                 onesbyte = (BYTE)(*(l--) - '0');
-                inttobf(bftmp1,onesbyte);
+                inttobf(bftmp1, onesbyte);
                 unsafe_add_a_bf(r, bftmp1);
                 keeplooping = *l >= '0' && *l <= '9' && l>=s;
                 if (keeplooping)
@@ -101,7 +101,7 @@ bf_t strtobf(bf_t r, char *s)
         while (keeplooping) /* while a digit */
             {
             onesbyte = (BYTE)(*(l--) - '0');
-            inttobf(bftmp1,onesbyte);
+            inttobf(bftmp1, onesbyte);
             unsafe_add_a_bf(r, bftmp1);
             keeplooping = *l >= '0' && *l <= '9' && l>=s;
             if (keeplooping)
@@ -313,7 +313,7 @@ int sign_bf(bf_t n)
 /* r = |n|                                                          */
 bf_t abs_bf(bf_t r, bf_t n)
     {
-    copy_bf(r,n);
+    copy_bf(r, n);
     if (is_bf_neg(r))
        {
        neg_a_bf(r);
@@ -853,7 +853,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
             {
             unsafe_mult_bf(bftmp2, s, c); /* no need for safe mult */
             double_bf(s, bftmp2); /* sin(2x) = 2*sin(x)*cos(x) */
-            unsafe_square_bf(bftmp2,c);
+            unsafe_square_bf(bftmp2, c);
             double_a_bf(bftmp2);
             inttobf(bftmp1, 1);
             unsafe_sub_bf(c, bftmp2, bftmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
@@ -1020,7 +1020,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
     }
 
 /********************************************************************/
-/* atan2(r,ny,nx)                                                     */
+/* atan2(r, ny, nx)                                                     */
 /* uses bftmp1 - bftmp6 - global temp bigfloats                     */
 bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
    {
@@ -1050,10 +1050,10 @@ bf_t unsafe_atan2_bf(bf_t r, bf_t ny, bf_t nx)
       neg_a_bf(ny);
    if (signx < 0)
       neg_a_bf(nx);
-   unsafe_div_bf(bftmp6,ny,nx);
+   unsafe_div_bf(bftmp6, ny, nx);
    unsafe_atan_bf(r, bftmp6);
    if (signx < 0)
-      sub_bf(r,bf_pi,r);
+      sub_bf(r, bf_pi, r);
    if (signy < 0)
       neg_a_bf(r);
    return r;
@@ -1250,9 +1250,9 @@ int convert_bf(bf_t newnum, bf_t old, int newbflength, int oldbflength)
    bflength      = savebflength;
 
    if (newbflength > oldbflength)
-      memcpy(newnum+newbflength-oldbflength,old,oldbflength+2);
+      memcpy(newnum+newbflength-oldbflength, old, oldbflength+2);
    else
-      memcpy(newnum,old+oldbflength-newbflength,newbflength+2);
+      memcpy(newnum, old+oldbflength-newbflength, newbflength+2);
    return 0;
    }
 
@@ -1273,7 +1273,7 @@ bf_t norm_bf(bf_t r)
         {
         memmove(r, r+1, bflength-1);
         r[bflength-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
-        big_setS16(rexp,big_accessS16(rexp)+(S16)1);   /* exp */
+        big_setS16(rexp, big_accessS16(rexp)+(S16)1);   /* exp */
         }
 
     /* check for underflow */
@@ -1282,7 +1282,7 @@ bf_t norm_bf(bf_t r)
         for (scale = 2; scale < bflength && r[bflength-scale] == hi_byte; scale++)
             ; /* do nothing */
         if (scale == bflength && hi_byte == 0) /* zero */
-            big_setS16(rexp,0);
+            big_setS16(rexp, 0);
         else
             {
             scale -= 2;
@@ -1290,7 +1290,7 @@ bf_t norm_bf(bf_t r)
                 {
                 memmove(r+scale, r, bflength-scale-1);
                 memset(r, 0, scale);
-                big_setS16(rexp,big_accessS16(rexp)-(S16)scale);    /* exp */
+                big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    /* exp */
                 }
             }
         }
@@ -1332,7 +1332,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
             }
         else
             clear_bf(n2);
-        big_setS16(n2exp,big_accessS16(n1exp)); /* *n2exp = *n1exp; set exp's = */
+        big_setS16(n2exp, big_accessS16(n1exp)); /* *n2exp = *n1exp; set exp's = */
         rexp = big_accessS16(n2exp);
         }
     else if (big_accessS16(n1exp) < big_accessS16(n2exp))
@@ -1346,7 +1346,7 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
             }
         else
             clear_bf(n1);
-        big_setS16(n1exp,big_accessS16(n2exp)); /* *n1exp = *n2exp; set exp's = */
+        big_setS16(n1exp, big_accessS16(n2exp)); /* *n1exp = *n2exp; set exp's = */
         rexp = big_accessS16(n2exp);
         }
     else
@@ -1403,9 +1403,9 @@ int cmp_bf(bf_t n1, bf_t n2)
         if ( (value1=big_access16(n1+i)) > (value2=big_access16(n2+i)) )
             { /* now determine which of the two bytes was different */
             if ( (value1&0xFF00) > (value2&0xFF00) ) /* compare just high bytes */
-                return (i+2); /* high byte was different */
+                return i+2; /* high byte was different */
             else
-                return (i+1); /* low byte was different */
+                return i+1; /* low byte was different */
             }
         else if (value1 < value2)
             { /* now determine which of the two bytes was different */
@@ -1463,7 +1463,7 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
         }
 
     rexp = (S16 BIGDIST *)(r+bflength);
-    big_setS16(rexp,adjust_bf_add(n1, n2));
+    big_setS16(rexp, adjust_bf_add(n1, n2));
 
     bnl = bnlength;
     bnlength = bflength;
@@ -1522,7 +1522,7 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
         }
 
     rexp = (S16 BIGDIST *)(r+bflength);
-    big_setS16(rexp,adjust_bf_add(n1, n2));
+    big_setS16(rexp, adjust_bf_add(n1, n2));
 
     bnl = bnlength;
     bnlength = bflength;
@@ -1541,7 +1541,7 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 
     if (is_bf_zero(r))
         {
-        neg_bf(r,n);
+        neg_bf(r, n);
         return r;
         }
     if (is_bf_zero(n))
@@ -1852,7 +1852,7 @@ multiplication is performed.
     if (u > 0x00FF)
         { /* un-normalize n */
         memmove(n, n+1, bflength-1);  /* this sign extends as well */
-        big_setS16(rexp,big_accessS16(rexp)+(S16)1);
+        big_setS16(rexp, big_accessS16(rexp)+(S16)1);
         }
 
     bnl = bnlength;
@@ -1883,7 +1883,7 @@ multiplication is performed.
     if (u > 0x00FF)
         { /* un-normalize n */
         memmove(r, r+1, bflength-1);  /* this sign extends as well */
-        big_setS16(rexp,big_accessS16(rexp)+(S16)1);
+        big_setS16(rexp, big_accessS16(rexp)+(S16)1);
         }
 
     bnl = bnlength;
