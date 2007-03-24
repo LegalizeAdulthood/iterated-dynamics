@@ -95,9 +95,9 @@ int cmp_bn(bn_t n1, bn_t n2)
          (Svalue2=big_accessS16((S16 BIGDIST *)(n2+bnlength-2))) )
         { /* now determine which of the two bytes was different */
         if ( (S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00) ) /* compare just high bytes */
-            return (bnlength); /* high byte was different */
+            return bnlength; /* high byte was different */
         else
-            return (bnlength-1); /* low byte was different */
+            return bnlength-1; /* low byte was different */
         }
     else if (Svalue1 < Svalue2)
         { /* now determine which of the two bytes was different */
@@ -113,9 +113,9 @@ int cmp_bn(bn_t n1, bn_t n2)
         if ( (value1=big_access16(n1+i)) > (value2=big_access16(n2+i)) )
             { /* now determine which of the two bytes was different */
             if ( (value1&0xFF00) > (value2&0xFF00) ) /* compare just high bytes */
-                return (i+2); /* high byte was different */
+                return i+2; /* high byte was different */
             else
-                return (i+1); /* low byte was different */
+                return i+1; /* low byte was different */
             }
         else if (value1 < value2)
             { /* now determine which of the two bytes was different */
@@ -948,9 +948,9 @@ bf_t floattobf1(bf_t r, LDBL f)
     {
     char msg[80];
 #ifdef USE_LONG_DOUBLE
-    sprintf(msg,"%-.22Le",f);
+    sprintf(msg,"%-.22Le", f);
 #else
-    sprintf(msg,"%-.22le",f);
+    sprintf(msg,"%-.22le", f);
 #endif
     strtobf(r,msg);
     return r;

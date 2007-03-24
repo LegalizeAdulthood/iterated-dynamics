@@ -282,16 +282,16 @@ init_restart:
    /* match Julibrot with integer mode of orbit */
    if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
    {
-      int i;
-      if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+      int i = fractalspecific[neworbittype].tofloat;
+      if (i != NOFRACTAL)
          neworbittype = i;
       else
          fractype = JULIBROT;
    }
    else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger==0)
    {
-      int i;
-      if ((i=fractalspecific[neworbittype].tofloat) != NOFRACTAL)
+      int i = fractalspecific[neworbittype].tofloat;
+      if (i != NOFRACTAL)
          neworbittype = i;
       else
          fractype = JULIBROTFP;
@@ -328,7 +328,8 @@ init_restart:
    if (integerfractal > 1)  /* use specific override from table */
       bitshift = integerfractal;
    if (integerfractal == 0) { /* float? */
-      if ((i = curfractalspecific->tofloat) != NOFRACTAL) /* -> int? */
+      i = curfractalspecific->tofloat;
+	  if (i != NOFRACTAL) /* -> int? */
       {
          if (fractalspecific[i].isinteger > 1) /* specific shift? */
             bitshift = fractalspecific[i].isinteger;
@@ -1346,7 +1347,7 @@ static FILE *snd_fp = NULL;
 int snd_open(void)
 {
    static char soundname[] = {"sound001.txt"};
-   if ((orbitsave&2) != 0 && snd_fp == NULL)
+   if ((orbitsave & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
    {
 	   snd_fp = fopen(soundname, "w");
       if (snd_fp == NULL)
@@ -1365,7 +1366,7 @@ int snd_open(void)
    if the orbitsave variable is turned on */
 void w_snd(int tone)
 {
-   if ((orbitsave&2) != 0)
+   if ((orbitsave & ORBITSAVE_SOUND) != 0)
    {
       if (snd_open())
          fprintf(snd_fp, "%-d\n", tone);

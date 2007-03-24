@@ -124,7 +124,7 @@ int fastrestore = 0;          /* 1 - reset viewwindows prior to a restore
 int orgfrmsearch = 0;            /* 1 - user has specified a directory for
                                      Orgform formula compilation files */
 
-int     orbitsave = 0;          /* for IFS and LORENZ to output acrospin file */
+int     orbitsave = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
 int orbit_delay;                /* clock ticks delating orbit release */
 int     transparent[2];         /* transparency min/max values */
 long    LogFlag;                /* Logarithmic palette flag: 0 = no */
@@ -2292,7 +2292,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
    if (strcmp(variable, "orbitsave") == 0 ) {     /* orbitsave=? */
       if (charval[0] == 's')
-         orbitsave |= 2;
+         orbitsave |= ORBITSAVE_SOUND;
       else if (yesnoval[0] < 0) goto badarg;
       orbitsave |= yesnoval[0];
       return 1;

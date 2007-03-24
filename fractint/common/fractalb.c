@@ -561,7 +561,7 @@ int MandelbnSetup()
    floattobn(bnparm.y, param[1]);
    */
    restore_stack(saved);
-   return (1);
+   return 1;
 }
 
 int MandelbfSetup()
@@ -631,7 +631,7 @@ int MandelbfSetup()
    }
 
    restore_stack(saved);
-   return (1);
+   return 1;
 }
 
 int mandelbn_per_pixel()
@@ -677,7 +677,7 @@ int mandelbn_per_pixel()
    square_bn(bntmpsqrx, bnnew.x);
    square_bn(bntmpsqry, bnnew.y);
 
-   return (1);                  /* 1st iteration has been done */
+   return 1;                  /* 1st iteration has been done */
 }
 
 int mandelbf_per_pixel()
@@ -723,7 +723,7 @@ int mandelbf_per_pixel()
    square_bf(bftmpsqrx, bfnew.x);
    square_bf(bftmpsqry, bfnew.y);
 
-   return (1);                  /* 1st iteration has been done */
+   return 1;                  /* 1st iteration has been done */
 }
 
 int
@@ -751,7 +751,7 @@ juliabn_per_pixel()
    square_bn(bntmpsqrx, bnnew.x);
    square_bn(bntmpsqry, bnnew.y);
 
-   return (1);                  /* 1st iteration has been done */
+   return 1;                  /* 1st iteration has been done */
 }
 
 int
@@ -779,7 +779,7 @@ juliabf_per_pixel()
    square_bf(bftmpsqrx, bfnew.x);
    square_bf(bftmpsqry, bfnew.y);
 
-   return (1);                  /* 1st iteration has been done */
+   return 1;                  /* 1st iteration has been done */
 }
 
 int
@@ -914,8 +914,8 @@ JuliabnFractal()
     */
 
    if ((magnitude = *mod) >= rqlim)
-      return (1);
-   return (0);
+      return 1;
+   return 0;
 }
 #endif
 

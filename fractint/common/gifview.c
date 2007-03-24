@@ -37,7 +37,7 @@ static unsigned int gifview_image_twidth; /* (for migs) */
 
 int get_byte()
 {
-   return (getc(fpin)); /* EOF is -1, as desired */
+   return getc(fpin); /* EOF is -1, as desired */
 }
 
 int get_bytes(BYTE *where,int how_many)
@@ -115,7 +115,7 @@ int gifview()
       }
    fpin = fopen(temp1, "rb");
    if (fpin == NULL) {
-      return (-1);
+      return -1;
       }
 
    /* Get the screen description */

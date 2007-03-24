@@ -102,7 +102,7 @@ static int getdepth(int xd, int yd)
              (int) dac[pal][2] * 28);
       pal >>= 6;
    }
-   return (pal);
+   return pal;
 }
 
 /*
@@ -117,7 +117,7 @@ static int get_min_max(void)
    for (yd = 0; yd < ydots; yd++)
    {
       if (driver_key_pressed())
-         return (1);
+         return 1;
       if (yd == 20)
          showtempmsg("Getting min and max");
       for (xd = 0; xd < xdots; xd++)
@@ -358,6 +358,6 @@ int do_AutoStereo(void)
    helpmode = oldhelpmode;
    driver_restore_graphics();
    memcpy(g_dac_box, savedacbox, 256 * 3);
-   spindac(0,1);
-   return (ret);
+   spindac(0, 1);
+   return ret;
 }

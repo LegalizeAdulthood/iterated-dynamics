@@ -217,9 +217,9 @@ short decoder(short linewidth)
    /* Initialize for decoding a new image... */
 
    if ((size = (short) get_byte()) < 0)
-      return (size);
+      return size;
    if (size < 2 || 9 < size)
-      return (BAD_CODE_SIZE);
+      return BAD_CODE_SIZE;
 
    curr_size = (short) (size + 1);
    top_slot = (short) (1 << curr_size);
@@ -253,7 +253,7 @@ short decoder(short linewidth)
 
       /* If we had a file error, return without completing the decode */
       if (c < 0)
-         return (0);
+         return 0;
 
       /* If the code is a clear code, reinitialize all necessary items. */
       if (c == clear)
@@ -336,11 +336,11 @@ short decoder(short linewidth)
                   if (--yskip < 0)
                   {
                      if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
-                        return (ret);
+                        return ret;
                      yskip = skipydots;
                   }
                   if (driver_key_pressed())
-                     return (-1);
+                     return -1;
                   bufptr = decoderline;
                   bufcnt = linewidth;
                   xskip = 0;
@@ -389,11 +389,11 @@ short decoder(short linewidth)
             if (--yskip < 0)
             {
                if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
-                  return (ret);
+                  return ret;
                yskip = skipydots;
             }
             if (driver_key_pressed())
-               return (-1);
+               return -1;
             bufptr = decoderline;
             bufcnt = linewidth;
             xskip = 0;
@@ -403,7 +403,7 @@ short decoder(short linewidth)
    /* PB note that if last line is incomplete, we're not going to try to emit
     * it;  original code did, but did so via out_line and therefore couldn't
     * have worked well in all cases... */
-   return (0);
+   return 0;
 }
 
 /***** Program **********************************************************/
@@ -424,7 +424,7 @@ static short get_next_code()
          /* Out of bytes in current block, so read next block */
          pbytes = byte_buff;
          if ((navail_bytes = (short) get_byte()) < 0)
-            return (navail_bytes);
+            return navail_bytes;
          else if (navail_bytes)
             get_bytes(byte_buff, navail_bytes);
       }
@@ -442,7 +442,7 @@ static short get_next_code()
          /* Out of bytes in current block, so read next block */
          pbytes = byte_buff;
          if ((navail_bytes = (short) get_byte()) < 0)
-            return (navail_bytes);
+            return navail_bytes;
          else if (navail_bytes)
             get_bytes(byte_buff, navail_bytes);
       }
@@ -452,7 +452,7 @@ static short get_next_code()
       --navail_bytes;
    }
    nbits_left -= curr_size;
-   return ((short) (ret_code & code_mask[curr_size]));
+   return (short) (ret_code & code_mask[curr_size]);
 }
 
 /* called in parent reoutine to set byte_buff */

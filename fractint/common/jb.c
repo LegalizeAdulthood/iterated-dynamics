@@ -71,7 +71,7 @@ JulibrotSetup(void)
    if (colors < 255)
    {
       stopmsg(0, "Sorry, but Julibrots require a 256-color video mode");
-      return (0);
+      return 0;
    }
 #endif
 
@@ -154,12 +154,12 @@ JulibrotSetup(void)
    if (savedac != 1)
    {
    if (ValidateLuts(mapname) != 0)
-      return (0);
+      return 0;
    spindac(0, 1);               /* load it, but don't spin */
       if (savedac == 2)
         savedac = 1;
    }
-   return (r >= 0);
+   return r >= 0;
 }
 
 
@@ -182,7 +182,7 @@ jb_per_pixel(void)
    djy = multiply(djy, Per->y - ypixel, 16) << (bitshift - 16);
    djy = multiply(djy, y_per_inch, bitshift) / zdots;
 
-   return (1);
+   return 1;
 }
 
 int
@@ -196,7 +196,7 @@ jbfp_per_pixel(void)
    jyfp += yoffsetfp;
    djyfp = depthfp / distfp * (Perfp->y - ypixelfp) * y_per_inchfp / zdots;
 
-   return (1);
+   return 1;
 }
 
 static int zpixel, plotted;
@@ -233,7 +233,7 @@ zline(long x, long y)
       jbc.x = mx;
       jbc.y = my;
       if (driver_key_pressed())
-         return (-1);
+         return -1;
       ltempsqrx = multiply(lold.x, lold.x, bitshift);
       ltempsqry = multiply(lold.y, lold.y, bitshift);
       for (n = 0; n < maxit; n++)
@@ -272,7 +272,7 @@ zline(long x, long y)
       jx += djx;
       jy += djy;
    }
-   return (0);
+   return 0;
 }
 
 int
@@ -333,11 +333,11 @@ zlinefp(double x, double y)
       {
          keychk = 0;
          if (driver_key_pressed())
-            return (-1);
+            return -1;
       }
 #else
       if (driver_key_pressed())
-         return (-1);
+         return -1;
 #endif
       tempsqrx = sqr(old.x);
       tempsqry = sqr(old.y);
@@ -375,7 +375,7 @@ zlinefp(double x, double y)
       jxfp += djxfp;
       jyfp += djyfp;
    }
-   return (0);
+   return 0;
 }
 
 int
@@ -403,11 +403,11 @@ Std4dFractal(void)
          col = xdot;
          row = ydot;
          if (zline(x, y) < 0)
-            return (-1);
+            return -1;
          col = xdots - col - 1;
          row = ydots - row - 1;
          if (zline(-x, -y) < 0)
-            return (-1);
+            return -1;
       }
       if (plotted == 0)
       {
@@ -417,7 +417,7 @@ Std4dFractal(void)
            break;
       }
    }
-   return (0);
+   return 0;
 }
 int
 Std4dfpFractal(void)
@@ -444,11 +444,11 @@ Std4dfpFractal(void)
          col = xdot;
          row = ydot;
          if (zlinefp(x, y) < 0)
-            return (-1);
+            return -1;
          col = xdots - col - 1;
          row = ydots - row - 1;
          if (zlinefp(-x, -y) < 0)
-            return (-1);
+            return -1;
       }
       if (plotted == 0)
       {
@@ -458,5 +458,5 @@ Std4dfpFractal(void)
            break;
       }
    }
-   return (0);
+   return 0;
 }

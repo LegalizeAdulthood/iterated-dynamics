@@ -209,12 +209,12 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
       bnlength = oldbnlength - oldintlength + min(oldintlength, newintlength);
 
       memcpy(newnum+newbnlength-newintlength-oldbnlength+oldintlength,
-               old,bnlength);
+               old, bnlength);
       }
    else
       {
       bnlength = newbnlength - newintlength + min(oldintlength, newintlength);
-      memcpy(newnum,old+oldbnlength-oldintlength-newbnlength+newintlength,
+      memcpy(newnum, old+oldbnlength-oldintlength-newbnlength+newintlength,
                bnlength);
       }
    intlength = saveintlength;
@@ -501,7 +501,7 @@ int sign_bn(bn_t n)
 /* r = |n|                                                          */
 bn_t abs_bn(bn_t r, bn_t n)
     {
-    copy_bn(r,n);
+    copy_bn(r, n);
     if (is_bn_neg(r))
         neg_a_bn(r);
     return r;
@@ -1080,7 +1080,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
          {
          unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
          double_bn(s, bntmp2+shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
-         unsafe_square_bn(bntmp2,c);
+         unsafe_square_bn(bntmp2, c);
          double_a_bn(bntmp2+shiftfactor);
          sub_bn(c, bntmp2+shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
          }
@@ -1239,7 +1239,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
     }
 
 /********************************************************************/
-/* atan2(r,ny,nx)                                                     */
+/* atan2(r, ny, nx)                                                     */
 /* uses bntmp1 - bntmp6 - global temp bigfloats                     */
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
    {
@@ -1269,10 +1269,10 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
       neg_a_bn(ny);
    if (signx < 0)
       neg_a_bn(nx);
-   unsafe_div_bn(bntmp6,ny,nx);
+   unsafe_div_bn(bntmp6, ny, nx);
    unsafe_atan_bn(r, bntmp6);
    if (signx < 0)
-      sub_bn(r,bn_pi,r);
+      sub_bn(r, bn_pi, r);
    if (signy < 0)
       neg_a_bn(r);
    return r;

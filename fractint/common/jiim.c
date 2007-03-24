@@ -113,28 +113,28 @@ void circleplot(int x, int y, int color)
 {
    if (xAspect == 0)
       if (yAspect == 0)
-         c_putcolor(x+xbase, y+ybase,color);
+         c_putcolor(x+xbase, y+ybase, color);
       else
-         c_putcolor(x+xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)),color);
+         c_putcolor(x+xbase, (short)(ybase + (((long) y * (long) yAspect) >> 16)), color);
    else
       c_putcolor((int)(xbase + (((long) x * (long) xAspect) >> 16)), y+ybase, color);
 }
 
 void plot8(int x, int y, int color)
 {
-   circleplot(x,y,color);
-   circleplot(-x,y,color);
-   circleplot(x,-y,color);
-   circleplot(-x,-y,color);
-   circleplot(y,x,color);
-   circleplot(-y,x,color);
-   circleplot(y,-x,color);
-   circleplot(-y,-x,color);
+   circleplot(x, y, color);
+   circleplot(-x, y, color);
+   circleplot(x, -y, color);
+   circleplot(-x, -y, color);
+   circleplot(y, x, color);
+   circleplot(-y, x, color);
+   circleplot(y, -x, color);
+   circleplot(-y, -x, color);
 }
 
 void circle(int radius, int color)
 {
-   int x,y,sum;
+   int x, y, sum;
 
    x = 0;
    y = radius << 1;
@@ -194,21 +194,21 @@ static void fillrect(int x, int y, int width, int height, int color)
 int
 QueueEmpty()            /* True if NO points remain in queue */
 {
-   return (ListFront == ListBack);
+   return ListFront == ListBack;
 }
 
 #if 0 /* not used */
 int
 QueueFull()             /* True if room for NO more points in queue */
 {
-   return (((ListFront + 1) % ListSize) == ListBack);
+   return ((ListFront + 1) % ListSize) == ListBack;
 }
 #endif
 
 int
 QueueFullAlmost()       /* True if room for ONE more point in queue */
 {
-   return (((ListFront + 2) % ListSize) == ListBack);
+   return ((ListFront + 2) % ListSize) == ListBack;
 }
 
 void
@@ -517,7 +517,7 @@ void Jiim(int which)         /* called by fractint */
    oldcalctype = calctype;
    show_numbers = 0;
    using_jiim = 1;
-   line_buff = malloc(max(sxdots,sydots));
+   line_buff = malloc(max(sxdots, sydots));
    aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
          actively_computing = 1;
    SetAspect(aspect);
@@ -557,10 +557,10 @@ void Jiim(int which)         /* called by fractint */
    {
       savehasinverse = hasinverse;
       hasinverse = 1;
-      SaveRect(0,0,xdots,ydots);
+      SaveRect(0, 0, xdots, ydots);
       sxoffs = 0;
       syoffs = 0;
-      RestoreRect(0,0,xdots,ydots);
+      RestoreRect(0, 0, xdots, ydots);
       hasinverse = savehasinverse;
    }
 
@@ -607,7 +607,7 @@ void Jiim(int which)         /* called by fractint */
    yfactor = (int)(-yd/4);
 
    if (windows == 0)
-      SaveRect(xc,yc,xd,yd);
+      SaveRect(xc, yc, xd, yd);
    else if (windows == 2)  /* leave the fractal */
    {
       fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
@@ -773,7 +773,7 @@ void Jiim(int which)         /* called by fractint */
                break;
             case 'p':
             case 'P':
-               get_a_number(&cr,&ci);
+               get_a_number(&cr, &ci);
                exact = 1;
                col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
                row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
@@ -841,7 +841,7 @@ void Jiim(int which)         /* called by fractint */
               row = 0; exact = 0;
            }
 
-            Cursor_SetPos(col,row);
+            Cursor_SetPos(col, row);
          }  /* end while (driver_key_pressed) */
 
          if (exact == 0)
@@ -863,13 +863,13 @@ void Jiim(int which)         /* called by fractint */
          if (show_numbers) /* write coordinates on screen */
          {
             char str[41];
-            sprintf(str,"%16.14f %16.14f %3d",cr,ci,getcolor(col,row));
+            sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(col, row));
             if (windows == 0)
             {
                /* show temp msg will clear self if new msg is a
                   different length - pad to length 40*/
                while ((int)strlen(str) < 40)
-                  strcat(str," ");
+                  strcat(str, " ");
                str[40] = 0;
                Cursor_Hide();
                actively_computing = 1;
@@ -916,13 +916,13 @@ void Jiim(int which)         /* called by fractint */
          /* move window if bumped */
          if (windows==0 && col>xc && col < xc+xd && row>yc && row < yc+yd)
          {
-            RestoreRect(xc,yc,xd,yd);
+            RestoreRect(xc, yc, xd, yd);
             if (xc == xd*2)
                xc = 2;
             else
                xc = xd*2;
             xoff = xc + xd /  2;
-            SaveRect(xc,yc,xd,yd);
+            SaveRect(xc, yc, xd, yd);
          }
          if (windows == 2)
          {
@@ -1081,7 +1081,7 @@ void Jiim(int which)         /* called by fractint */
                    {
                       xbase = x;
                       ybase = y;
-                      circle((int)(zoom*(xd >> 1)/iter),color);
+                      circle((int)(zoom*(xd >> 1)/iter), color);
                    }
                    if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
                    {
@@ -1167,7 +1167,7 @@ void Jiim(int which)         /* called by fractint */
          {
             xbase = x;
             ybase = y;
-            circle((int)(zoom*(xd >> 1)/iter),color);
+            circle((int)(zoom*(xd >> 1)/iter), color);
          }
          if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
          {
@@ -1195,7 +1195,7 @@ finish:
    {
       Cursor_Hide();
       if (windows == 0)
-         RestoreRect(xc,yc,xd,yd);
+         RestoreRect(xc, yc, xd, yd);
       else if (windows >= 2 )
       {
          if (windows == 2)
@@ -1213,10 +1213,10 @@ finish:
          Cursor_Hide();
          savehasinverse = hasinverse;
          hasinverse = 1;
-         SaveRect(0,0,xdots,ydots);
+         SaveRect(0, 0, xdots, ydots);
          sxoffs = oldsxoffs;
          syoffs = oldsyoffs;
-         RestoreRect(0,0,xdots,ydots);
+         RestoreRect(0, 0, xdots, ydots);
          hasinverse = savehasinverse;
       }
    }
@@ -1268,7 +1268,7 @@ finish:
       {
       fclose(file);
       file = NULL;
-      dir_remove(tempdir,scrnfile);
+      dir_remove(tempdir, scrnfile);
       }
    show_numbers = 0;
    driver_unget_key(kbdchar);

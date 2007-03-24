@@ -78,7 +78,7 @@ struct help_sig_info
 	unsigned long base;     /* only if added to fractint.exe */
 };
 
-void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg );
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg );
 static int print_doc_msg_func(int pnum, int num_pages);
 
 /* stuff from fractint */
@@ -303,22 +303,22 @@ static void color_link(LINK *link, int color)
 }
 
 /* #define PUT_KEY(name, descrip)
-		putstring(-1,-1,C_HELP_INSTR_KEYS,name),
-		putstring(-1,-1,C_HELP_INSTR," "descrip"  ")
+		putstring(-1, -1, C_HELP_INSTR_KEYS, name),
+		putstring(-1, -1, C_HELP_INSTR, " "descrip"  ")
 */
 #if defined(_WIN32)
-#define PUT_KEY(name_,desc_) put_key(name_,desc_)
+#define PUT_KEY(name_, desc_) put_key(name_, desc_)
 #else
 #if !defined(XFRACT)
 #define PUT_KEY(name, descrip)								\
-	driver_put_string(-1,-1,C_HELP_INSTR,name),				\
-	driver_put_string(-1,-1,C_HELP_INSTR,":"descrip"  ")
+	driver_put_string(-1, -1, C_HELP_INSTR, name), 				\
+	driver_put_string(-1, -1, C_HELP_INSTR, ":"descrip"  ")
 #else
 #define PUT_KEY(name, descrip)						\
-	driver_put_string(-1,-1,C_HELP_INSTR,name);		\
-	driver_put_string(-1,-1,C_HELP_INSTR,":");		\
-	driver_put_string(-1,-1,C_HELP_INSTR,descrip);	\
-	driver_put_string(-1,-1,C_HELP_INSTR,"  ")
+	driver_put_string(-1, -1, C_HELP_INSTR, name);		\
+	driver_put_string(-1, -1, C_HELP_INSTR, ":");		\
+	driver_put_string(-1, -1, C_HELP_INSTR, descrip);	\
+	driver_put_string(-1, -1, C_HELP_INSTR, "  ")
 #endif
 #endif
 
@@ -444,7 +444,7 @@ static int dist1(int a, int b)
 {
 	int t = a - b;
 
-	return (abs(t));
+	return abs(t);
 }
 
 static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
@@ -552,13 +552,13 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
    link = NULL;   /* just for warning */
    switch (key)
       {
-      case FIK_TAB:      return ( (curr_link>=num_link-1) ? -1 : curr_link+1 );
-      case FIK_SHF_TAB: return ( (curr_link<=0)          ? -1 : curr_link-1 );
-      default:       assert(0);  return (-1);
+      case FIK_TAB:      return (curr_link>=num_link-1) ? -1 : curr_link+1 ;
+      case FIK_SHF_TAB: return (curr_link<=0)          ? -1 : curr_link-1 ;
+      default:       assert(0);  return -1;
       }
    }
 
-static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *,int,int,int), int val)
+static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, int, int, int), int val)
    {
    int t;
 
@@ -574,11 +574,11 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *,int
          color_link(&link[*curr], C_HELP_LINK);
          *curr = t;
          color_link(&link[*curr], C_HELP_CURLINK);
-         return (1);
+         return 1;
          }
       }
 
-   return (0);
+   return 0;
    }
 
 static int help_topic(HIST *curr, HIST *next, int flags)
@@ -764,7 +764,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
    curr->topic_off = page_table[page].offset;
    curr->link      = curr_link;
 
-   return (action);
+   return action;
    }
 
 int help(int action)
@@ -916,7 +916,7 @@ static int dos_version(void)
    r.x.ax = 0x3000;
    intdos(&r, &r);
 
-   return (r.h.al*100 + r.h.ah);
+   return r.h.al*100 + r.h.ah;
    }
 
 #endif
@@ -928,10 +928,10 @@ static int can_read_file(char *path)
    if ( (handle=open(path, O_RDONLY)) != -1)
       {
       close(handle);
-      return (1);
+      return 1;
       }
    else
-      return (0);
+      return 0;
    }
 
 
@@ -997,7 +997,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
       fread(buf, sizeof(char), read_len, help_file);
       }
 
-   return ( curr_len - (off+len) );
+   return curr_len - (off+len) ;
    }
 
 int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
@@ -1010,7 +1010,7 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
    int ret;
    ret = _read_help_topic(label[label_num].topic_num,
                           label[label_num].topic_off + off, len, buf);
-   return ( ret );
+   return ret ;
    }
 
 #define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
@@ -1050,7 +1050,7 @@ typedef struct PRINT_DOC_INFO
    int       spaces;        /* number of spaces in a row */
    } PRINT_DOC_INFO;
 
-void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg );
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg );
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
    {
@@ -1109,7 +1109,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
       {
       case PD_GET_CONTENT:
          if ( ++info->cnum >= info->num_contents )
-            return (0);
+            return 0;
 
          help_seek( info->content_pos );
 
@@ -1147,11 +1147,11 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
          pd->id = info->id;
          pd->title = info->title;
-         return (1);
+         return 1;
 
       case PD_GET_TOPIC:
          if ( ++info->tnum >= info->num_topic )
-            return (0);
+            return 0;
 
          t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
 
@@ -1159,17 +1159,17 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
          pd->curr = info->buffer;
          pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
-         return (1);
+         return 1;
 
       case PD_GET_LINK_PAGE:
          pd->i = getint(pd->s+sizeof(long));
-         return ( (pd->i == -1) ? 0 : 1 );
+         return (pd->i == -1) ? 0 : 1 ;
 
       case PD_RELEASE_TOPIC:
-         return (1);
+         return 1;
 
       default:
-         return (0);
+         return 0;
       }
    }
 
@@ -1192,7 +1192,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          info->margin = 0;
 
          memset(line, ' ', 81);
-         sprintf(buff, "Fractint Version %d.%01d%c",g_release/100, (g_release%100)/10,
+         sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
                                 ( (g_release%10) ? '0'+(g_release%10) : ' ') );
          memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
@@ -1205,22 +1205,22 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
          info->margin = PAGE_INDENT;
 
-         return ( keep_going );
+         return keep_going ;
          }
 
       case PD_FOOTING:
          info->margin = 0;
          printerc(info, '\f', 1);
          info->margin = PAGE_INDENT;
-         return (1);
+         return 1;
 
       case PD_PRINT:
          printers(info, pd->s, pd->i);
-         return (1);
+         return 1;
 
       case PD_PRINTN:
          printerc(info, *pd->s, pd->i);
-         return (1);
+         return 1;
 
       case PD_PRINT_SEC:
          info->margin = TITLE_INDENT;
@@ -1232,17 +1232,17 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
          printers(info, pd->title, 0);
          printerc(info, '\n', 1);
          info->margin = PAGE_INDENT;
-         return (1);
+         return 1;
 
       case PD_START_SECTION:
       case PD_START_TOPIC:
       case PD_SET_SECTION_PAGE:
       case PD_SET_TOPIC_PAGE:
       case PD_PERIODIC:
-         return (1);
+         return 1;
 
       default:
-         return (0);
+         return 0;
       }
    }
 
@@ -1256,7 +1256,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
       driver_buzzer(BUZZER_COMPLETE);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
       driver_get_key();
-      return (0);
+      return 0;
       }
 
    if ( pnum == -2 )   /* aborted */
@@ -1264,7 +1264,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
       driver_buzzer(BUZZER_INTERRUPT);
       putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
       driver_get_key();
-      return (0);
+      return 0;
       }
 
    if (pnum == 0)   /* initialization */
@@ -1286,10 +1286,10 @@ static int print_doc_msg_func(int pnum, int num_pages)
       {
       key = driver_get_key();
       if ( key == FIK_ESC )
-         return (0);    /* user abort */
+         return 0;    /* user abort */
       }
 
-   return (1);   /* AOK -- continue */
+   return 1;   /* AOK -- continue */
    }
 
 int makedoc_msg_func(int pnum, int num_pages)
@@ -1310,7 +1310,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 	return result;
 }
 
-void print_document(char *outfname, int (*msg_func)(int,int), int save_extraseg )
+void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg )
    {
    PRINT_DOC_INFO info;
    int            success   = 0;
@@ -1516,7 +1516,7 @@ int init_help(void)
 		help_file = NULL;
 		stopmsg(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
-		return (-2);
+		return -2;
 	}
 
 	/* read in the tables... */

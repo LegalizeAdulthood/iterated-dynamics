@@ -76,7 +76,7 @@ static int frame_add_key_press(unsigned int key)
 		g_frame.keypress_head = 0;
 	}
 	g_frame.keypress_count++;
-	return (g_frame.keypress_count == KEYBUFMAX);
+	return g_frame.keypress_count == KEYBUFMAX;
 }
 
 static int mod_key(int modifier, int code, int fik, int *j)

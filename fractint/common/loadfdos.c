@@ -505,6 +505,7 @@ static int check_modekey(int curkey,int choice)
 {
    int i;
    i=choice; /* avoid warning */
-   return (((i = check_vidmode_key(0,curkey)) >= 0) ? -100-i : 0);
+   i = check_vidmode_key(0,curkey);
+   return (i >= 0) ? -100-i : 0;
 }
 #endif

@@ -25,12 +25,12 @@ static void julman()
 {
    FILE *fp;
    int i;
-   fp = dir_fopen(workdir,"toggle.txt","w");
+   fp = dir_fopen(workdir, "toggle.txt", "w");
    i = -1;
    while (fractalspecific[++i].name)
    {
       if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
-         fprintf(fp,"%s  %s\n",fractalspecific[i].name,
+         fprintf(fp, "%s  %s\n", fractalspecific[i].name,
              fractalspecific[fractalspecific[i].tojulia].name);
    }
    fclose(fp);
@@ -39,8 +39,8 @@ static void julman()
 
 /* routines in this module      */
 
-int main_menu_switch(int*,int*,int*,char*,int);
-int evolver_menu_switch(int*,int*,int*,char*);
+int main_menu_switch(int*, int*, int*, char*, int);
+int evolver_menu_switch(int*, int*, int*, char*);
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag);
 static void move_zoombox(int);
 char fromtext_flag = 0;         /* = 1 if we're in graphics mode */
@@ -717,7 +717,7 @@ static int look(char *stacked)
                 break;
 			}
             strcpy(browsename, file_name_stack[name_stack_ptr]);
-            merge_pathnames(readname,browsename,2);
+            merge_pathnames(readname, browsename, 2);
             browsing = TRUE;
             showfile = 0;
             if (askvideo)
@@ -812,7 +812,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
         if (i > 0)
 		{
 			start_showorbit = 0;
-			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x,y,z */
+			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
 			Log_Auto_Calc = 0; /* turn it off */
         }
 		break;
@@ -1924,7 +1924,7 @@ static void handle_evolver_zoom(int zoom_in)
 					SetupParamBox();
 					drawparmbox(0);
 				}
-				moveboxf(0.0,0.0); /* force scrolling */
+				moveboxf(0.0, 0.0); /* force scrolling */
 			}
 			else
 			{
@@ -2182,7 +2182,7 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stack
 static int call_line3d(BYTE *pixels, int linelen)
 {
    /* this routine exists because line3d might be in an overlay */
-   return line3d(pixels,linelen);
+   return line3d(pixels, linelen);
 }
 
 static void note_zoom()
@@ -2193,9 +2193,9 @@ static void note_zoom()
          clear_zoombox(); /* not enuf mem so clear the box */
       else {
          reset_zoom_corners(); /* reset these to overall image, not box */
-         memcpy(savezoom,boxx,boxcount*2);
-         memcpy(savezoom+boxcount*2,boxy,boxcount*2);
-         memcpy(savezoom+boxcount*4,boxvalues,boxcount);
+         memcpy(savezoom, boxx, boxcount*2);
+         memcpy(savezoom+boxcount*2, boxy, boxcount*2);
+         memcpy(savezoom+boxcount*4, boxvalues, boxcount);
          }
       }
 }
@@ -2203,9 +2203,9 @@ static void note_zoom()
 static void restore_zoom()
 {
    if (boxcount) { /* restore zoombox arrays */
-      memcpy(boxx,savezoom,boxcount*2);
-      memcpy(boxy,savezoom+boxcount*2,boxcount*2);
-      memcpy(boxvalues,savezoom+boxcount*4,boxcount);
+      memcpy(boxx, savezoom, boxcount*2);
+      memcpy(boxy, savezoom+boxcount*2, boxcount*2);
+      memcpy(boxvalues, savezoom+boxcount*4, boxcount);
       free(savezoom);
       drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
       }
@@ -2255,15 +2255,15 @@ static void move_zoombox(int keynum)
    if (boxcount) {
 /*
       if (horizontal != 0)
-         moveboxf((double)horizontal/dxsize,0.0);
+         moveboxf((double)horizontal/dxsize, 0.0);
       if (vertical != 0)
-         moveboxf(0.0,(double)vertical/dysize);
+         moveboxf(0.0, (double)vertical/dysize);
 */
-      moveboxf((double)horizontal/dxsize,(double)vertical/dysize);
+      moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
       }
 #ifndef XFRACT
    else                                 /* if no zoombox, scroll by arrows */
-      scroll_relative(horizontal,vertical);
+      scroll_relative(horizontal, vertical);
 #endif
 }
 
@@ -2272,12 +2272,12 @@ static FILE *cmp_fp;
 static int errcount;
 int cmp_line(BYTE *pixels, int linelen)
 {
-   int row,col;
+   int row, col;
    int oldcolor;
    row = g_row_count++;
    if (row == 0) {
       errcount = 0;
-      cmp_fp = dir_fopen(workdir,"cmperr",(initbatch)?"a":"w");
+      cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
       outln_cleanup = cmp_line_cleanup;
       }
    if (pot16bit) { /* 16 bit info, ignore odd numbered rows */
@@ -2285,16 +2285,16 @@ int cmp_line(BYTE *pixels, int linelen)
       row >>= 1;
       }
    for (col=0; col<linelen; col++) {
-      oldcolor=getcolor(col,row);
+      oldcolor=getcolor(col, row);
       if (oldcolor==(int)pixels[col])
-         putcolor(col,row,0);
+         putcolor(col, row, 0);
       else {
          if (oldcolor==0)
-            putcolor(col,row,1);
+            putcolor(col, row, 1);
          ++errcount;
          if (initbatch == INIT_BATCH_NONE)
-            fprintf(cmp_fp,"#%5d col %3d row %3d old %3d new %3d\n",
-               errcount,col,row,oldcolor,pixels[col]);
+            fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
+               errcount, col, row, oldcolor, pixels[col]);
          }
       }
    return 0;
@@ -2308,8 +2308,8 @@ static void cmp_line_cleanup(void)
       time(&ltime);
       timestring = ctime(&ltime);
       timestring[24] = 0; /*clobber newline in time string */
-      fprintf(cmp_fp,"%s compare to %s has %5d errs\n",
-                     timestring,readname,errcount);
+      fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
+                     timestring, readname, errcount);
       }
    fclose(cmp_fp);
 }
@@ -2331,12 +2331,12 @@ void reset_zoom_corners()
    yy3rd = sy3rd;
    if (bf_math)
    {
-      copy_bf(bfxmin,bfsxmin);
-      copy_bf(bfxmax,bfsxmax);
-      copy_bf(bfymin,bfsymin);
-      copy_bf(bfymax,bfsymax);
-      copy_bf(bfx3rd,bfsx3rd);
-      copy_bf(bfy3rd,bfsy3rd);
+      copy_bf(bfxmin, bfsxmin);
+      copy_bf(bfxmax, bfsxmax);
+      copy_bf(bfymin, bfsymin);
+      copy_bf(bfymax, bfsymax);
+      copy_bf(bfx3rd, bfsx3rd);
+      copy_bf(bfy3rd, bfsy3rd);
    }
 }
 

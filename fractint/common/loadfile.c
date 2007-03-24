@@ -1203,7 +1203,7 @@ int ret = 0;
         (curfractalspecific->flags & BAILTEST) == 0) ||
         (fractype==FORMULA || fractype==FFORMULA))
         ret = 1;
-return (ret);
+return ret;
 }
 
 static int fix_period_bof(void)
@@ -1211,7 +1211,7 @@ static int fix_period_bof(void)
 int ret = 0;
  if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
     ret = 1;
-return (ret);
+return ret;
 }
 
 /* browse code RB*/
