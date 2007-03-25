@@ -41,7 +41,9 @@ int test(void)
 		end_resume();
 	}
 	if (teststart()) /* assume it was stand-alone, doesn't want passes logic */
+	{
 		return 0;
+	}
 	numpasses = (stdcalcmode == '1') ? 0 : 1;
 	for (passes=startpass; passes <= numpasses ; passes++)
 	{
@@ -63,13 +65,19 @@ int test(void)
 				if (color >= colors)  /* avoid trouble if color is 0 */
 				{
 					if (colors < 16)
+					{
 						color &= g_and_color;
+					}
 					else
+					{
 						color = ((color-1) % g_and_color) + 1; /* skip color zero */
+					}
 				}
 				(*plot)(col, row, color);
 				if (numpasses && (passes == 0))
+				{
 					(*plot)(col, row + 1, color);
+				}
 			}
 		}
 		startrow = passes + 1;
@@ -95,19 +103,25 @@ U16 rand16(void)
 	value <<= 1;
 	value = (U16)(value + (rand15()&1));
 	if (value < 1)
+	{
 		value = 1;
+	}
 	return value;
 }
 
 void _fastcall putpot(int x, int y, U16 color)
 {
 	if (color < 1)
+	{
 		color = 1;
+	}
 	putcolor(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
 	/* we don't write this if driver_diskp() because the above putcolor
 			was already a "writedisk" in that case */
 	if (!driver_diskp())
+	{
 		writedisk(x + sxoffs, y + syoffs, color >> 8);    /* upper 8 bits */
+	}
 	writedisk(x + sxoffs, y + sydots + syoffs, color&255); /* lower 8 bits */
 }
 
@@ -115,7 +129,9 @@ void _fastcall putpot(int x, int y, U16 color)
 void _fastcall putpotborder(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+	{
 		color = (U16)outside;
+	}
 	putpot(x, y, color);
 }
 
@@ -123,9 +139,13 @@ void _fastcall putpotborder(int x, int y, U16 color)
 void _fastcall putcolorborder(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+	{
 		color = outside;
+	}
 	if (color < 1)
+	{
 		color = 1;
+	}
 	putcolor(x, y, color);
 }
 
@@ -151,12 +171,18 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 	if (max_plasma == 0)
 	{
 		if (pseudorandom >= pcolors)
+		{
 			pseudorandom = pcolors-1;
+		}
 	}
 	else if (pseudorandom >= (S32)max_plasma)
+	{
 		pseudorandom = max_plasma;
+	}
 	if (pseudorandom < 1)
+	{
 		pseudorandom = 1;
+	}
 	plot(x, y, (U16)pseudorandom);
 	return (U16)pseudorandom;
 }
@@ -182,7 +208,9 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 	/*
 	recur1=1;
 	for (i = 1; i <= recur; i++)
+	{
 		recur1 = recur1*2;
+	}
 	recur1=320/recur1;
 	*/
 	recur1 = (int)(320L >> recur);
@@ -196,11 +224,13 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 	while (suby.t >= 1)
 	{
 		if ((++plasma_check & 0x0f) == 1)
+		{
 			if (driver_key_pressed())
 			{
 				plasma_check--;
 				return 1;
 			}
+		}
 		while (suby.r[suby.t-1] < (BYTE)recur)
 		{
 			/*     1.  Create new entry at top of the stack  */
@@ -239,30 +269,44 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 			}
 
 			i = getpix(nx, y);
-		 if (i == 0)
+			if (i == 0)
+			{
 				i = adjust(nx, ny1, nx, y , nx, ny);
+			}
 			v = i;
 			i = getpix(x, ny);
-		 if (i == 0)
+			if (i == 0)
+			{
 				i = adjust(nx1, ny, x , ny, nx, ny);
+			}
 			v += i;
 			if (getpix(x, y) == 0)
 			{
 				i = getpix(x, ny1);
-			if (i == 0)
-					i = adjust(nx1, ny1, x , ny1, nx, ny1);
+				if (i == 0)
+				{
+						i = adjust(nx1, ny1, x , ny1, nx, ny1);
+				}
 				v += i;
 				i = getpix(nx1, y);
-			if (i == 0)
-					i = adjust(nx1, ny1, nx1, y , nx1, ny);
+				if (i == 0)
+				{
+						i = adjust(nx1, ny1, nx1, y , nx1, ny);
+				}
 				v += i;
 				plot(x, y, (U16)((v + 2) >> 2));
 			}
 
-			if (subx.r[subx.t-1] == (BYTE)recur) subx.t = (BYTE)(subx.t - 2);
+			if (subx.r[subx.t-1] == (BYTE)recur)
+			{
+				subx.t = (BYTE)(subx.t - 2);
+			}
 		}
 
-		if (suby.r[suby.t-1] == (BYTE)recur) suby.t = (BYTE)(suby.t - 2);
+		if (suby.r[suby.t-1] == (BYTE)recur)
+		{
+			suby.t = (BYTE)(suby.t - 2);
+		}
 	}
 	return 0;
 }
@@ -272,13 +316,17 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
 	int x, y;
 	S32 v, i;
 	if ((++plasma_check & 0x7f) == 1)
+	{
 		if (driver_key_pressed())
 		{
 			plasma_check--;
 			return;
 		}
+	}
 	if (x2-x1 < 2 && y2-y1 < 2)
+	{
 		return;
+	}
 	recur_level++;
 	recur1 = (int)(320L >> recur_level);
 
@@ -286,23 +334,33 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
 	y = (y1 + y2) >> 1;
 	v=getpix(x, y1);
 	if (v == 0)
+	{
 		v=adjust(x1, y1, x , y1, x2, y1);
+	}
 	i=v;
 	v=getpix(x2, y);
 	if (v == 0)
+	{
 		v=adjust(x2, y1, x2, y , x2, y2);
+	}
 	i += v;
 	v=getpix(x, y2);
 	if (v == 0)
+	{
 		v=adjust(x1, y2, x , y2, x2, y2);
+	}
 	i += v;
 	v=getpix(x1, y);
 	if (v == 0)
+	{
 		v=adjust(x1, y1, x1, y , x1, y2);
+	}
 	i += v;
 
 	if (getpix(x, y) == 0)
+	{
 		plot(x, y, (U16)((i + 2) >> 2));
+	}
 
 	subDivide(x1, y1, x , y);
 	subDivide(x , y1, x2, y);
@@ -340,9 +398,13 @@ int plasma()
 	if (param[3] > 1) param[3] = 1;
 
 	if ((!rflag) && param[2] == 1)
+	{
 		--rseed;
+	}
 	if (param[2] != 0 && param[2] != 1)
+	{
 		rseed = (int)param[2];
+	}
 	max_plasma = (U16)param[3];  /* max_plasma is used as a flag for potential */
 
 	if (max_plasma != 0)
@@ -352,9 +414,13 @@ int plasma()
 			/* max_plasma = (U16)(1L << 16) -1; */
 			max_plasma = 0xFFFF;
 			if (outside >= 0)
+			{
 				plot    = (PLOT)putpotborder;
+			}
 			else
+			{
 				plot    = (PLOT)putpot;
+			}
 			getpix =  getpot;
 			OldPotFlag = potflag;
 			OldPot16bit = pot16bit;
@@ -364,55 +430,85 @@ int plasma()
 			max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
 			if (outside >= 0)
+			{
 				plot    = putcolorborder;
+			}
 			else
+			{
 				plot    = putcolor;
+			}
 			getpix  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
 		if (outside >= 0)
-		plot    = putcolorborder;
-       else
-		plot    = putcolor;
+		{
+			plot    = putcolorborder;
+		}
+		else
+		{
+			plot    = putcolor;
+		}
 		getpix  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
 	if (!rflag) ++rseed;
 
 	if (colors == 256)                   /* set the (256-color) palette */
+	{
 		set_Plasma_palette();             /* skip this if < 256 colors */
+	}
 
 	if (colors > 16)
+	{
 		shiftvalue = 18;
+	}
 	else
 	{
 		if (colors > 4)
+		{
 			shiftvalue = 22;
+		}
 		else
 		{
 			if (colors > 2)
+			{
 				shiftvalue = 24;
+			}
 			else
+			{
 				shiftvalue = 25;
+			}
 		}
 	}
 	if (max_plasma != 0)
+	{
 		shiftvalue = 10;
+	}
 
 	if (max_plasma == 0)
 	{
 		pcolors = min(colors, max_colors);
 		for (n = 0; n < 4; n++)
+		{
 			rnd[n] = (U16)(1 + (((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+		}
 	}
 	else
+	{
 		for (n = 0; n < 4; n++)
+		{
 			rnd[n] = rand16();
+		}
+	}
 	if (debugflag == 3600)
+	{
 		for (n = 0; n < 4; n++)
+		{
 			rnd[n] = 1;
+		}
+	}
 
 	plot(0,      0,  rnd[0]);
 	plot(xdots-1,      0,  rnd[1]);
@@ -421,7 +517,9 @@ int plasma()
 
 	recur_level = 0;
 	if (param[1] == 0)
+	{
 		subDivide(0, 0, xdots-1, ydots-1);
+	}
 	else
 	{
 		recur1 = i = k = 1;
@@ -429,7 +527,9 @@ int plasma()
 		{
 			k = k*2;
 			if (k  >(int)max(xdots-1, ydots-1))
+			{
 				break;
+			}
 			if (driver_key_pressed())
 			{
 				n = 1;
@@ -439,9 +539,13 @@ int plasma()
 		}
 	}
 	if (!driver_key_pressed())
+	{
 		n = 0;
+	}
 	else
+	{
 		n = 1;
+	}
 	done:
 	if (max_plasma != 0)
 	{
@@ -518,7 +622,9 @@ int diffusion()
 	float r, radius;
 
 	if (driver_diskp())
+	{
 		notdiskmsg();
+	}
 
 	x = y = -1;
 	bitshift = 16;
@@ -532,10 +638,14 @@ int diffusion()
 	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
 
 	if (mode > 2)
+	{
 		mode = 0;
+	}
 
 	if (border <= 0)
+	{
 		border = 10;
+	}
 
 	srand(rseed);
 	if (!rflag) ++rseed;
@@ -556,49 +666,63 @@ int diffusion()
 	if (mode == 2)
 	{
 		if (xdots > ydots)
+		{
 			radius = (float) (ydots - border);
+		}
 		else
+		{
 			radius = (float) (xdots - border);
+		}
 	}
 	if (resuming) /* restore worklist, if we can't the above will stay in place */
 	{
 		start_resume();
 		if (mode != 2)
+		{
 			get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
-             sizeof(ymin), &ymin, 0);
+				sizeof(ymin), &ymin, 0);
+		}
 		else
+		{
 			get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
-             sizeof(radius), &radius, 0);
+				sizeof(radius), &radius, 0);
+		}
 		end_resume();
 	}
 
 	switch (mode)
 	{
 	case 0: /* Single seed point in the center */
-           putcolor(xdots / 2, ydots / 2, currentcolor);
-           break;
+		putcolor(xdots / 2, ydots / 2, currentcolor);
+		break;
 	case 1: /* Line along the bottom */
-           for (i = 0; i <= xdots; i++)
-           putcolor(i, ydots-1, currentcolor);
-           break;
+		for (i = 0; i <= xdots; i++)
+		{
+			putcolor(i, ydots-1, currentcolor);
+		}
+		break;
 	case 2: /* Large square that fills the screen */
-           if (xdots > ydots)
-              for (i = 0; i < ydots; i++)
-              {
-                 putcolor(xdots/2-ydots/2 , i , currentcolor);
-                 putcolor(xdots/2 + ydots/2 , i , currentcolor);
-                 putcolor(xdots/2-ydots/2 + i , 0 , currentcolor);
-                 putcolor(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
-              }
-           else
-              for (i = 0; i < xdots; i++)
-              {
-                 putcolor(0 , ydots/2-xdots/2 + i , currentcolor);
-                 putcolor(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
-                 putcolor(i , ydots/2-xdots/2 , currentcolor);
-                 putcolor(i , ydots/2 + xdots/2 , currentcolor);
-              }
-           break;
+		if (xdots > ydots)
+		{
+			for (i = 0; i < ydots; i++)
+			{
+				putcolor(xdots/2-ydots/2 , i , currentcolor);
+				putcolor(xdots/2 + ydots/2 , i , currentcolor);
+				putcolor(xdots/2-ydots/2 + i , 0 , currentcolor);
+				putcolor(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
+			}
+		}
+		else
+		{
+			for (i = 0; i < xdots; i++)
+			{
+				putcolor(0 , ydots/2-xdots/2 + i , currentcolor);
+				putcolor(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
+				putcolor(i , ydots/2-xdots/2 , currentcolor);
+				putcolor(i , ydots/2 + xdots/2 , currentcolor);
+			}
+		}
+		break;
 	}
 
 	while (1)
@@ -606,62 +730,78 @@ int diffusion()
 		switch (mode)
 		{
 		case 0: /* Release new point on a circle inside the box */
-					angle = 2*(double)rand()/(RAND_MAX/PI);
-					FPUsincos(&angle, &sine, &cosine);
-					x = (int)(cosine*(xmax-xmin) + xdots);
-					y = (int)(sine  *(ymax-ymin) + ydots);
-					x = x >> 1; /* divide by 2 */
-					y = y >> 1;
-					break;
+			angle = 2*(double)rand()/(RAND_MAX/PI);
+			FPUsincos(&angle, &sine, &cosine);
+			x = (int)(cosine*(xmax-xmin) + xdots);
+			y = (int)(sine  *(ymax-ymin) + ydots);
+			x = x >> 1; /* divide by 2 */
+			y = y >> 1;
+			break;
 		case 1: /* Release new point on the line ymin somewhere between xmin
-                 and xmax */
-              y=ymin;
-              x=RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
-              break;
+					and xmax */
+			y=ymin;
+			x=RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
+			break;
 		case 2: /* Release new point on a circle inside the box with radius
-                 given by the radius variable */
-					angle = 2*(double)rand()/(RAND_MAX/PI);
-					FPUsincos(&angle, &sine, &cosine);
-					x = (int)(cosine*radius + xdots);
-					y = (int)(sine  *radius + ydots);
-					x = x >> 1;
-					y = y >> 1;
-					break;
+					given by the radius variable */
+			angle = 2*(double)rand()/(RAND_MAX/PI);
+			FPUsincos(&angle, &sine, &cosine);
+			x = (int)(cosine*radius + xdots);
+			y = (int)(sine  *radius + ydots);
+			x = x >> 1;
+			y = y >> 1;
+			break;
 		}
 
 		/* Loop as long as the point (x, y) is surrounded by color 0 */
 		/* on all eight sides                                       */
 
 		while ((getcolor(x + 1, y + 1) == 0) && (getcolor(x + 1, y) == 0) &&
-          (getcolor(x + 1, y-1) == 0) && (getcolor(x  , y + 1) == 0) &&
-          (getcolor(x  , y-1) == 0) && (getcolor(x-1, y + 1) == 0) &&
-          (getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
+			(getcolor(x + 1, y-1) == 0) && (getcolor(x  , y + 1) == 0) &&
+			(getcolor(x  , y-1) == 0) && (getcolor(x-1, y + 1) == 0) &&
+			(getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
 		{
 			/* Erase moving point */
 			if (show_orbit)
+			{
 				putcolor(x, y, 0);
+			}
 
 			if (mode == 0) /* Make sure point is inside the box */
 			{
 				if (x == xmax)
+				{
 					x--;
+				}
 				else if (x == xmin)
+				{
 					x++;
+				}
 				if (y == ymax)
+				{
 					y--;
+				}
 				else if (y == ymin)
+				{
 					y++;
+				}
 			}
 
 			if (mode == 1) /* Make sure point is on the screen below ymin, but
-                    we need a 1 pixel margin because of the next random step.*/
+							we need a 1 pixel margin because of the next random step.*/
 			{
 				if (x >= xdots-1)
+				{
 					x--;
+				}
 				else if (x <= 1)
+				{
 					x++;
+				}
 				if (y < ymin)
+				{
 					y++;
+				}
 			}
 
 			/* Take one random step */
@@ -670,23 +810,30 @@ int diffusion()
 
 			/* Check keyboard */
 			if ((++plasma_check & 0x7f) == 1)
+			{
 				if (check_key())
 				{
 					alloc_resume(20, 1);
 					if (mode != 2)
+					{
 						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-                      sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
+							sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
+					}
 					else
+					{
 						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-                      sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
-
+							sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
+					}
 					plasma_check--;
 					return 1;
 				}
+			}
 
 			/* Show the moving point */
 			if (show_orbit)
+			{
 				putcolor(x, y, RANDOM(colors-1) + 1);
+			}
 
 		} /* End of loop, now fix the point */
 
@@ -712,32 +859,43 @@ int diffusion()
 
 		switch (mode)
 		{
-		case 0: if (((x + border) > xmax) || ((x-border) < xmin)
-                    || ((y-border) < ymin) || ((y + border) > ymax))
-              {
-                 /* Increase box size, but not past the edge of the screen */
-                 ymin--;
-                 ymax++;
-                 xmin--;
-                 xmax++;
-                 if ((ymin == 0) || (xmin == 0))
-                    return 0;
-              }
-              break;
+		case 0:
+			if (((x + border) > xmax) || ((x-border) < xmin)
+				|| ((y-border) < ymin) || ((y + border) > ymax))
+			{
+				/* Increase box size, but not past the edge of the screen */
+				ymin--;
+				ymax++;
+				xmin--;
+				xmax++;
+				if ((ymin == 0) || (xmin == 0))
+				{
+					return 0;
+				}
+			}
+			break;
 		case 1: /* Decrease ymin, but not past top of screen */
-              if (y-border < ymin)
-                 ymin--;
-              if (ymin == 0)
-                 return 0;
-              break;
+			if (y-border < ymin)
+			{
+				ymin--;
+			}
+			if (ymin == 0)
+			{
+				return 0;
+			}
+			break;
 		case 2: /* Decrease the radius where points are released to stay away
-                 from the fractal.  It might be decreased by 1 or 2 */
-              r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
-              if (r <= border*border)
-                return 0;
-              while ((radius-border)*(radius-border) > r)
-                 radius--;
-              break;
+					from the fractal.  It might be decreased by 1 or 2 */
+			r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
+			if (r <= border*border)
+			{
+				return 0;
+			}
+			while ((radius-border)*(radius-border) > r)
+			{
+				radius--;
+			}
+			break;
 		}
 	}
 }
@@ -813,11 +971,15 @@ int Bifurcation(void)
 	LPI = (long)(PI*fudge);
 
 	for (row = 0; row <= iystop; row++) /* should be iystop */
+	{
 		verhulst_array[row] = 0;
+	}
 
 	mono = 0;
 	if (colors == 2)
+	{
 		mono = 1;
+	}
 	if (mono)
 	{
 		if (inside)
@@ -826,7 +988,9 @@ int Bifurcation(void)
 			inside = 1;
 		}
 		else
+		{
 			outside_x = 1;
+		}
 	}
 
 	filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
@@ -838,9 +1002,13 @@ int Bifurcation(void)
 	}
 
 	if (integerfractal)
+	{
 		linit.y = ymax - iystop*dely;            /* Y-value of    */
+	}
 	else
+	{
 		init.y = (double)(yymax - iystop*delyy); /* bottom pixels */
+	}
 
 	while (column <= ixstop)
 	{
@@ -853,9 +1021,13 @@ int Bifurcation(void)
 		}
 
 		if (integerfractal)
+		{
 			lRate = xmin + column*delx;
+		}
 		else
+		{
 			Rate = (double)(xxmin + column*delxx);
+		}
 		verhulst();        /* calculate array once per column */
 
 		for (row = iystop; row >= 0; row--) /* should be iystop & >= 0 */
@@ -863,11 +1035,17 @@ int Bifurcation(void)
 			int color;
 			color = verhulst_array[row];
 			if (color && mono)
+			{
 				color = inside;
+			}
 			else if ((!color) && mono)
+			{
 				color = outside_x;
+			}
 			else if (color >= colors)
+			{
 				color = colors-1;
+			}
 			verhulst_array[row] = 0;
 			(*plot)(column, row, color); /* was row-1, but that's not right? */
 		}
@@ -883,9 +1061,13 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	unsigned long counter;
 
 	if (integerfractal)
-       lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
+	{
+		lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
+	}
 	else
-       Population = (parm.y == 0) ? SEED : parm.y;
+	{
+		Population = (parm.y == 0) ? SEED : parm.y;
+	}
 
 	errors = overflow = FALSE;
 
@@ -893,7 +1075,9 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	{
 		errors = curfractalspecific->orbitcalc();
 		if (errors)
+		{
 			return;
+		}
 	}
 	if (half_time_check) /* check for periodicity at half-time */
 	{
@@ -922,13 +1106,19 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		if (integerfractal)
+		{
 			pixel_row = iystop - (int)((lPopulation - linit.y) / dely); /* iystop */
+		}
 		else
+		{
 			pixel_row = iystop - (int)((Population - init.y) / delyy);
+		}
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
+		{
 			verhulst_array[ pixel_row ] ++;
+		}
 		if (periodicitycheck && Bif_Periodic(counter))
 		{
 			if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
@@ -976,12 +1166,16 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 		if (integerfractal)
 		{
 			if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
+			{
 				return 1;
+			}
 		}
 		else
 		{
 			if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
+			{
 				return 1;
+			}
 		}
 	}
 	return 0;
@@ -1144,7 +1338,9 @@ int BifurcMaySetup()
 
 	beta = (long)param[2];
 	if (beta < 2)
+	{
 		beta = 2;
+	}
 	param[2] = (double)beta;
 
 	timer(0, curfractalspecific->calctype);
@@ -1227,7 +1423,9 @@ int lyapunov ()
 	else if (param[1] == 0)
 	{
 		if (fabs(Population) > BIG || Population == 0 || Population == 1)
+		{
 				Population = (1.0 + rand())/(2.0 + RAND_MAX);
+		}
 		}
 	else Population = param[1];
 	(*plot)(col, row, 1);
@@ -1251,17 +1449,25 @@ int lyapunov ()
 		color=lyapunov_cycles(a, b);
 #else
 	if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
+	{
 		color=lyapunov_cycles(filter_cycles, Population, a, b);
+	}
 	else
+	{
 		color=lyapunov_cycles_in_c(filter_cycles, a, b);
+	}
 #endif
 #else
 	color=lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 	if (inside > 0 && color == 0)
+	{
 		color = inside;
+	}
 	else if (color >= colors)
+	{
 		color = colors-1;
+	}
 	(*plot)(col, row, color);
 	return color;
 }
@@ -1302,7 +1508,9 @@ int lya_setup ()
 
 	filter_cycles=(long)param[2];
 	if (filter_cycles == 0)
+	{
 		filter_cycles=maxit/2;
+	}
 	lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
 	lyaLength = 1;
 
@@ -1314,11 +1522,15 @@ int lya_setup ()
 	for (t = 31; t >= 0; t--)
 		if (i & (1 << t)) break;
 	for (; t >= 0; t--)
+	{
 		lyaRxy[lyaLength++] = (i & (1 << t)) != 0;
+	}
 	lyaRxy[lyaLength++] = 0;
 	if (save_release < 1732)              /* swap axes prior to 1732 */
 		for (t=lyaLength; t >= 0; t--)
+		{
 				lyaRxy[t] = !lyaRxy[t];
+		}
 	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
 		stdcalcmode='1';
@@ -1391,13 +1603,19 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 jumpout:
 	temp = log(total) + lnadjust;
 	if (overflow || total <= 0 || temp > 0)
+	{
 		color = 0;
+	}
 	else
 	{
 		if (LogFlag)
+		{
 			lyap = -temp/((double) lyaLength*i);
+		}
 		else
+		{
 			lyap = 1 - exp(temp/((double) lyaLength*i));
+		}
 		color = 1 + (int)(lyap*(colors-1));
 	}
 	return color;
@@ -1479,7 +1697,9 @@ void abort_cellular(int err, int t)
 			static char msg[]={"Rule must be    digits long" };
 			i = rule_digits / 10;
 			if (i == 0)
+			{
 				msg[14] = (char)(rule_digits + 48);
+			}
 			else
 			{
 				msg[13] = (char)(i + 48);
@@ -1497,17 +1717,13 @@ void abort_cellular(int err, int t)
 			break;
 	}
 	if (cell_array[0] != NULL)
-#if !defined(XFRACT) && !defined(_WIN32)
-		cell_array[0] = NULL;
-#else
+	{
 		free((char *)cell_array[0]);
-#endif
+	}
 	if (cell_array[1] != NULL)
-#if !defined(XFRACT) && !defined(_WIN32)
-		cell_array[1] = NULL;
-#else
+	{
 		free((char *)cell_array[1]);
-#endif
+	}
 }
 
 int cellular ()
@@ -1558,7 +1774,9 @@ int cellular ()
 	rule_digits = (S16)((r*2 + 1)*k_1 + 1); /* Number of digits in the rule */
 
 	if ((!rflag) && randparam == -1)
-       --rseed;
+	{
+		--rseed;
+	}
 	if (randparam != 0 && randparam != -1)
 	{
 		n = param[0];
@@ -1570,7 +1788,9 @@ int cellular ()
 			return -1;
 		}
 		for (i = 0; i < 16; i++)
+		{
 			init_string[i] = 0; /* zero the array */
+		}
 		t2 = (S16) ((16 - t)/2);
 		for (i = 0; i < (U16)t; i++)  /* center initial string in array */
 		{
@@ -1619,7 +1839,9 @@ int cellular ()
 		return -1;
 	}
 	for (i = 0; i < (U16)rule_digits; i++) /* zero the table */
+	{
 		cell_table[i] = 0;
+	}
 	for (i = 0; i < (U16)t; i++)  /* reverse order */
 	{
 		cell_table[i] = (U16)(buf[t-i-1] - 48); /* change character to number */
@@ -1690,9 +1912,13 @@ int cellular ()
 		}
 	} /* end of if not random */
 	if (lnnmbr != 0)
+	{
 		lstscreenflag = 1;
+	}
 	else
+	{
 		lstscreenflag = 0;
+	}
 	put_line(start_row, 0, ixstop, cell_array[filled]);
 	}
 	start_row++;
@@ -1949,25 +2175,37 @@ static void set_Froth_palette(void)
 	char *mapname;
 
 	if (colorstate != 0) /* 0 means g_dac_box matches default */
+	{
 		return;
+	}
 	if (colors >= 16)
 		{
 		if (colors >= 256)
 			{
 			if (fsp->attractors == 6)
+			{
 				mapname = "froth6.map";
+			}
 			else
+			{
 				mapname = "froth3.map";
+			}
 			}
 		else /* colors >= 16 */
 			{
 			if (fsp->attractors == 6)
+			{
 				mapname = "froth616.map";
+			}
 			else
+			{
 				mapname = "froth316.map";
 			}
+			}
 		if (ValidateLuts(mapname) != 0)
+		{
 			return;
+		}
 		colorstate = 0; /* treat map as default */
 		spindac(0, 1);
 		}
@@ -1982,7 +2220,9 @@ int froth_setup(void)
 
 	/* check for NULL as safety net */
 	if (fsp == NULL)
+	{
 		fsp = (struct froth_struct *)malloc(sizeof (struct froth_struct));
+	}
 	if (fsp == NULL)
 		{
 		stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
@@ -2023,10 +2263,14 @@ int froth_setup(void)
 	else /* use new code */
 		{
 		if (param[0] != 2)
+		{
 			param[0] = 1;
+		}
 		fsp->repeat_mapping = (int)param[0] == 2;
 		if (param[1] != 0)
+		{
 			param[1] = 1;
+		}
 		fsp->altcolor = (int)param[1];
 		fsp->fl.f.a = param[2];
 
@@ -2063,7 +2307,9 @@ int froth_setup(void)
 	/* rqlim needs to be at least sq(1 + sqrt(1 + sq(a))), */
 	/* which is never bigger than 6.93..., so we'll call it 7.0 */
 	if (rqlim < 7.0)
+	{
 		rqlim = 7.0;
+	}
 	set_Froth_palette();
 	/* make the best of the .map situation */
 	orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1) + 1 : colors-1;
@@ -2098,7 +2344,9 @@ int froth_setup(void)
 void froth_cleanup(void)
 	{
 	if (fsp != NULL)
+	{
 		free(fsp);
+	}
 	/* set to NULL as a flag that froth_cleanup() has been called */
 	fsp = NULL;
 	}
@@ -2122,7 +2370,9 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 	orbit_ptr = 0;
 	coloriter = 0;
 	if (showdot > 0)
+	{
 		(*plot) (col, row, showdot%colors);
+	}
 	if (!integerfractal) /* fp mode */
 		{
 		if (invert)
@@ -2157,68 +2407,102 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			if (show_orbit)
 			{
 				if (driver_key_pressed())
+				{
 					break;
+				}
 				plot_orbit(old.x, old.y, -1);
 			}
 
 			if (fabs(fsp->fl.f.halfa-old.y) < FROTH_CLOSE
-                && old.x >= fsp->fl.f.top_x1 && old.x <= fsp->fl.f.top_x2)
-				{
+					&& old.x >= fsp->fl.f.top_x1 && old.x <= fsp->fl.f.top_x2)
+			{
 				if ((!fsp->repeat_mapping && fsp->attractors == 2)
-                || (fsp->repeat_mapping && fsp->attractors == 3))
+					|| (fsp->repeat_mapping && fsp->attractors == 3))
+				{
 					found_attractor = 1;
+				}
 				else if (old.x <= fsp->fl.f.top_x3)
+				{
 					found_attractor = 1;
+				}
 				else if (old.x >= fsp->fl.f.top_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 1;
+					}
 					else
+					{
 						found_attractor = 2;
+					}
              }
 				}
 			else if (fabs(FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
 						&& old.x <= fsp->fl.f.right_x1 && old.x >= fsp->fl.f.right_x2)
 				{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				{
 					found_attractor = 2;
+				}
 				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				{
 					found_attractor = 3;
+				}
 				else if (old.x >= fsp->fl.f.right_x3)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 2;
+					}
 					else
+					{
 						found_attractor = 4;
+					}
 				}
 				else if (old.x <= fsp->fl.f.right_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 3;
+					}
 					else
+					{
 						found_attractor = 6;
+					}
              }
 				}
 			else if (fabs(-FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
 						&& old.x <= fsp->fl.f.left_x1 && old.x >= fsp->fl.f.left_x2)
 				{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				{
 					found_attractor = 2;
+				}
 				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				{
 					found_attractor = 2;
+				}
 				else if (old.x >= fsp->fl.f.left_x3)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 3;
+					}
 					else
+					{
 						found_attractor = 5;
+					}
 				}
 				else if (old.x <= fsp->fl.f.left_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 2;
+					}
 					else
+					{
 						found_attractor = 3;
+					}
              }
 				}
 			}
@@ -2249,7 +2533,9 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 				lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y));
 				if ((lmagnitud > llimit) || (lmagnitud < 0))
+				{
 					break;
+				}
 				lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 				lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
 				lold.x = lnew.x;
@@ -2259,80 +2545,118 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			if (show_orbit)
 			{
 				if (driver_key_pressed())
+				{
 					break;
+				}
 				iplot_orbit(lold.x, lold.y, -1);
 			}
 
 			if (labs(fsp->fl.l.halfa-lold.y) < FROTH_LCLOSE
-              && lold.x > fsp->fl.l.top_x1 && lold.x < fsp->fl.l.top_x2)
-				{
+				&& lold.x > fsp->fl.l.top_x1 && lold.x < fsp->fl.l.top_x2)
+			{
 				if ((!fsp->repeat_mapping && fsp->attractors == 2)
-                || (fsp->repeat_mapping && fsp->attractors == 3))
+					|| (fsp->repeat_mapping && fsp->attractors == 3))
+				{
 					found_attractor = 1;
+				}
 				else if (lold.x <= fsp->fl.l.top_x3)
+				{
 					found_attractor = 1;
+				}
 				else if (lold.x >= fsp->fl.l.top_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 1;
+					}
 					else
+					{
 						found_attractor = 2;
+					}
              }
 				}
 			else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE
 						&& lold.x <= fsp->fl.l.right_x1 && lold.x >= fsp->fl.l.right_x2)
 				{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				{
 					found_attractor = 2;
+				}
 				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				{
 					found_attractor = 3;
+				}
 				else if (lold.x >= fsp->fl.l.right_x3)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 2;
+					}
 					else
+					{
 						found_attractor = 4;
+					}
 				}
 				else if (lold.x <= fsp->fl.l.right_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 3;
+					}
 					else
+					{
 						found_attractor = 6;
+					}
              }
 				}
 			else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE)
 				{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				{
 					found_attractor = 2;
+				}
 				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				{
 					found_attractor = 2;
+				}
 				else if (lold.x >= fsp->fl.l.left_x3)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 3;
+					}
 					else
+					{
 						found_attractor = 5;
+					}
 				}
 				else if (lold.x <= fsp->fl.l.left_x4)
 				{
 					if (!fsp->repeat_mapping)
+					{
 						found_attractor = 2;
+					}
 					else
+					{
 						found_attractor = 3;
+					}
              }
 				}
 			}
 		}
 	if (show_orbit)
+	{
 		scrub_orbit();
+	}
 
 	realcoloriter = coloriter;
 	kbdcount -= abs((int)realcoloriter);
 	if (kbdcount <= 0)
 	{
 		if (check_key())
+		{
 			return -1;
+		}
 		kbdcount = max_kbdcount;
 	}
 
@@ -2346,12 +2670,18 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			if (!fsp->altcolor)
 			{
 				if (coloriter > fsp->shades)
+				{
 					coloriter = fsp->shades;
+				}
 			}
 			else
+			{
 				coloriter = fsp->shades*coloriter / maxit;
+			}
 			if (coloriter == 0)
+			{
 				coloriter = 1;
+			}
 			coloriter += fsp->shades*(found_attractor-1);
 		}
 		else if (colors >= 16)
@@ -2365,32 +2695,50 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			if (fsp->attractors != 6) /* either 2 or 3 attractors */
 			{
 				if (lshade < 2622)       /* 0.04 */
+				{
 					coloriter = 1;
+				}
 				else if (lshade < 10486) /* 0.16 */
+				{
 					coloriter = 2;
+				}
 				else if (lshade < 23593) /* 0.36 */
+				{
 					coloriter = 3;
+				}
 				else if (lshade < 41943L) /* 0.64 */
+				{
 					coloriter = 4;
+				}
 				else
+				{
 					coloriter = 5;
+				}
 				coloriter += 5*(found_attractor-1);
 			}
 			else /* 6 attractors */
 			{
 				if (lshade < 10486)      /* 0.16 */
+				{
 					coloriter = 1;
+				}
 				else
+				{
 					coloriter = 2;
+				}
 				coloriter += 2*(found_attractor-1);
 			}
 		}
 		else /* use a color corresponding to the attractor */
+		{
 			coloriter = found_attractor;
+		}
 		oldcoloriter = coloriter;
 	}
 	else /* outside, or inside but didn't get sucked in by attractor. */
+	{
 		coloriter = 0;
+	}
 
 	color = abs((int)(coloriter));
 
@@ -2440,7 +2788,9 @@ int froth_per_orbit(void)
 		tempsqrx = sqr(g_new.x);
 		tempsqry = sqr(g_new.y);
 		if (tempsqrx + tempsqry >= rqlim)
+		{
 			return 1;
+		}
 		old = g_new;
 	}
 	else  /* integer mode */
@@ -2452,7 +2802,9 @@ int froth_per_orbit(void)
 			ltempsqrx = lsqr(lnew.x);
 			ltempsqry = lsqr(lnew.y);
 			if (ltempsqrx + ltempsqry >= llimit)
+			{
 				return 1;
+			}
 			lold = lnew;
 			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 			lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
@@ -2460,7 +2812,9 @@ int froth_per_orbit(void)
 		ltempsqrx = lsqr(lnew.x);
 		ltempsqry = lsqr(lnew.y);
 		if (ltempsqrx + ltempsqry >= llimit)
+		{
 			return 1;
+		}
 		lold = lnew;
 	}
 	return 0;

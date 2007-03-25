@@ -360,7 +360,7 @@ extern char                  orgfrmdir[];
 extern int                   orgfrmsearch;
 extern float                 originfp;
 extern int (*                outln) (BYTE *, int);
-extern void (*               outln_cleanup) (void);
+extern void (*               outln_cleanup)(void);
 extern int                   outside;
 extern int                   overflow;
 extern int                   overlay3d;

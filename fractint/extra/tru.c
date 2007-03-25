@@ -13,7 +13,9 @@ void rgbmap(long maxiter, long iter,
 	unsigned char *r, unsigned char *g, unsigned char *b)
 {
 	if (iter > maxi)
+	{
 		maxi = iter;
+	}
 	*b = iter & 0xff;
 	*g = (iter >> 8) & 0xff;
 	*r = (iter >> 16) & 0xff;

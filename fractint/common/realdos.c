@@ -54,11 +54,17 @@ int stopmsg (int flags, char *msg)
 	{
 		static FILE *fp = NULL;
 		if (fp == NULL && initbatch == INIT_BATCH_NONE)
+		{
 			fp=dir_fopen(workdir, "stopmsg.txt", "w");
+		}
 		else
+		{
 			fp=dir_fopen(workdir, "stopmsg.txt", "a");
+		}
 		if (fp != NULL)
-		fprintf(fp, "%s\n", msg);
+		{
+			fprintf(fp, "%s\n", msg);
+		}
 		fclose(fp);
 	}
 	if (first_init)  /* & cmdfiles hasn't finished 1st try */
@@ -76,7 +82,9 @@ int stopmsg (int flags, char *msg)
 	savelookatmouse = lookatmouse;
 	lookatmouse = -FIK_ENTER;
 	if ((flags & STOPMSG_NO_STACK))
+	{
 		blankrows(toprow = 12, 10, 7);
+	}
 	else
 	{
 		driver_stack_screen();
@@ -86,7 +94,9 @@ int stopmsg (int flags, char *msg)
 	g_text_cbase = 2; /* left margin is 2 */
 	driver_put_string(toprow, 0, 7, msg);
 	if (flags & STOPMSG_CANCEL)
+	{
 		driver_put_string(g_text_row + 2, 0, 7, "Escape to cancel, any other key to continue...");
+	}
 	else
 		driver_put_string(g_text_row + 2, 0, 7, "Any key to continue...");
 	g_text_cbase = 0; /* back to full line */
@@ -94,16 +104,28 @@ int stopmsg (int flags, char *msg)
 	driver_set_attr(toprow, 0, color, (g_text_row + 1-toprow)*80);
 	driver_hide_text_cursor();   /* cursor off */
 	if ((flags & STOPMSG_NO_BUZZER) == 0)
+	{
 		driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
+	}
 	while (driver_key_pressed()) /* flush any keyahead */
+	{
 		driver_get_key();
+	}
 	if (debugflag != 324)
+	{
 		if (getakeynohelp() == FIK_ESC)
+		{
 			ret = -1;
+		}
+	}
 	if ((flags & STOPMSG_NO_STACK))
+	{
 		blankrows(toprow, 10, 7);
+	}
 	else
+	{
 		driver_unstack_screen();
+	}
 	lookatmouse = savelookatmouse;
 	return ret;
 }
@@ -334,9 +356,13 @@ char speed_prompt[]="Speed key string";
 static int isadirname(char *name)
 {
 	if (*name == '.' || endswithslash(name))
+	{
 		return 1;
+	}
 	else
+	{
 		return 0;
+	}
 }
 
 void show_speedstring(int speedrow,
@@ -353,12 +379,14 @@ void show_speedstring(int speedrow,
 	{
 		driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
 		if (speedprompt)
+		{
 			j = speedprompt(speedrow, 16, C_CHOICE_SP_INSTR, speedstring, speed_match);
+		}
 		else
 		{
 			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt);
 			j = sizeof(speed_prompt)-1;
-			}
+		}
 		strcpy(buf, speedstring);
 		i = (int) strlen(buf);
 		while (i < 30)
@@ -369,7 +397,9 @@ void show_speedstring(int speedrow,
 		driver_move_cursor(speedrow, 17 + j + (int) strlen(speedstring));
 		}
 	else
+	{
 		driver_hide_text_cursor();
+	}
 }
 
 void process_speedstring(char    *speedstring,
@@ -1057,8 +1087,12 @@ fs_choice_end:
 int strncasecmp(char *s, char *t, int ct)
 {
 	for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)
+	{
 		if (*s == '\0')
+		{
 			return 0;
+		}
+	}
 	return tolower(*s) - tolower(*t);
 }
 #endif
@@ -1423,10 +1457,14 @@ static int menu_checkkey(int curkey, int choice)
 	if (testkey == FIK_F2) return -testkey;
 #endif
 	if (testkey == '2')
+	{
 		testkey = '@';
+	}
 	if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
 			|| testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
+	{
 		return -testkey;
+	}
 	if (menutype)
 	{
 		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
@@ -1435,24 +1473,36 @@ static int menu_checkkey(int curkey, int choice)
 		|| testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
 			return -testkey;
 		if (testkey == ' ')
+		{
 			if ((curfractalspecific->tojulia != NOFRACTAL
 					&& param[0] == 0.0 && param[1] == 0.0)
 				|| curfractalspecific->tomandel != NOFRACTAL)
-			return -testkey;
+			{
+				return -testkey;
+			}
+		}
 		if (g_got_real_dac && colors >= 16)
 		{
 			if (strchr("c+-", testkey))
+			{
 				return -testkey;
+			}
 			if (colors > 16
 					&& (testkey == 'a' || (testkey == 'e')))
+			{
 				return -testkey;
+			}
 		}
 		/* Alt-A and Alt-S */
 		if (testkey == FIK_ALT_A || testkey == FIK_ALT_S )
+		{
 			return -testkey;
 		}
+	}
 	if (check_vidmode_key(0, testkey) >= 0)
+	{
 		return -testkey;
+	}
 	return 0;
 }
 
@@ -1551,28 +1601,40 @@ int input_field(
 				{
 					ret = (*checkkey)(curkey);
 					if (ret != 0)
+					{
 						goto inpfld_end;
+					}
 				}
 				break;                                /* non alphanum char */
 			}
 			if (offset >= len)                /* at end of field */
+			{
 				break;
+			}
 			if (insert && started && strlen(fld) >= (size_t)len)
+			{
 				break;                                /* insert & full */
+			}
 			if ((options & INPUTFIELD_NUMERIC)
 					&& (curkey < '0' || curkey > '9')
 					&& curkey != '+' && curkey != '-')
 			{
 				if (options & INPUTFIELD_INTEGER)
+				{
 					break;
+				}
 				/* allow scientific notation, and specials "e" and "p" */
 				if (((curkey != 'e' && curkey != 'E') || offset >= 18)
 						&& ((curkey != 'p' && curkey != 'P') || offset != 0 )
 						&& curkey != '.')
+				{
 					break;
+				}
 			}
 			if (started == 0) /* first char is data, zap field */
+			{
 				fld[0] = 0;
+			}
 			if (insert)
 			{
 				j = (int) strlen(fld);
@@ -1583,7 +1645,9 @@ int input_field(
 				}
 			}
 			if ((size_t)offset >= strlen(fld))
+			{
 				fld[offset + 1] = 0;
+			}
 			fld[offset++] = (char)curkey;
 			/* if "e" or "p" in first col make number e or pi */
 			if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)  /* floating point */
@@ -1605,7 +1669,9 @@ int input_field(
 				if (specialv)
 				{
 					if ((options & INPUTFIELD_DOUBLE) == 0)
+					{
 						roundfloatd(&tmpd);
+					}
 					sprintf(tmpfld, "%.15g", tmpd);
 					tmpfld[len-1] = 0; /* safety, field should be long enough */
 					strcpy(fld, tmpfld);
@@ -1645,12 +1711,16 @@ int field_prompt(
 		{
 			++titlelines;
 			i = -1;
-			}
+		}
 		if (++i > boxwidth)
+		{
 			boxwidth = i;
 		}
+	}
 	if (len > boxwidth)
+	{
 		boxwidth = len;
+	}
 	i = titlelines + 4;                    /* total rows in box */
 	titlerow = (25 - i) / 2;               /* top row of it all when centered */
 	titlerow -= titlerow / 4;              /* higher is better if lots extra */
@@ -1660,11 +1730,15 @@ int field_prompt(
 	j = titlecol;                          /* add margin at each side of box */
 	i = (82-boxwidth)/4;
 	if (i > 3)
+	{
 		i = 3;
+	}
 	j -= i;
 	boxwidth += i*2;
 	for (i = -1; i < titlelines + 3; ++i)    /* draw empty box */
+	{
 		driver_set_attr(titlerow + i, j, C_PROMPT_LO, boxwidth);
+	}
 	g_text_cbase = titlecol;                  /* set left margin for putstring */
 	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); /* display heading */
 	g_text_cbase = 0;
@@ -1960,17 +2034,21 @@ int check_vidmode_key(int option, int k)
 			for (i = 0; i < MAXVIDEOMODES; ++i)
 			{
 				if (g_video_table[i].keynum == k)
+				{
 					return i;
 				}
 			}
+		}
 		else  /* check full g_video_table */
 		{
 			for (i = 0; i < g_video_table_len; ++i)
 			{
 				if (g_video_table[i].keynum == k)
+				{
 					return i;
 				}
 			}
+		}
 	}
 	return -1;
 }
@@ -1984,35 +2062,47 @@ int check_vidmode_keyname(char *kname)
 	{
 		keyset = 1083;
 		++kname;
-		}
+	}
 	else if (*kname == 'C' || *kname == 'c')
 	{
 		keyset = 1093;
 		++kname;
-		}
+	}
 	else if (*kname == 'A' || *kname == 'a')
 	{
 		keyset = 1103;
 		++kname;
-		}
+	}
 	if (*kname != 'F' && *kname != 'f')
+	{
 		return 0;
+	}
 	if (*++kname < '1' || *kname > '9')
+	{
 		return 0;
+	}
 	i = *kname - '0';
 	if (*++kname != 0 && *kname != ' ')
 	{
 		if (*kname != '0' || i != 1)
+		{
 			return 0;
+		}
 		i = 10;
 		++kname;
-		}
+	}
 	while (*kname)
+	{
 		if (*(kname++) != ' ')
+		{
 			return 0;
+		}
+	}
 	i += keyset;
 	if (i < 2)
+	{
 		i = 0;
+	}
 	return i;
 }
 

@@ -149,9 +149,13 @@ int get_toggles()
 	choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
 	uvalues[k].type = 'i';
 	if (inside >= 0)
+	{
 		uvalues[k].uval.ival = inside;
+	}
 	else
+	{
 		uvalues[k].uval.ival = 0;
+	}
 
 	choices[++k] = "Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)";
 	uvalues[k].type = 'l';
@@ -183,9 +187,13 @@ int get_toggles()
 	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
 	uvalues[k].type = 'i';
 	if (outside >= 0)
+	{
 		uvalues[k].uval.ival = outside;
+	}
 	else
+	{
 		uvalues[k].uval.ival = 0;
+	}
 
 	choices[++k] = "Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)";
 	uvalues[k].type = 'l';
@@ -203,9 +211,13 @@ int get_toggles()
 	strcpy(prevsavename, savename);
 	savenameptr = strrchr(savename, SLASHC);
 	if (savenameptr == NULL)
+	{
 		savenameptr = savename;
+	}
 	else
+	{
 		savenameptr++; /* point past slash */
+	}
 	strcpy(uvalues[k].uval.sval, savenameptr);
 
 	choices[++k] = "File Overwrite ('overwrite=')";
@@ -242,9 +254,13 @@ int get_toggles()
 	choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
 	uvalues[k].type = 's';
 	if (fillcolor < 0)
+	{
 		strcpy(uvalues[k].uval.sval, "normal");
+	}
 	else
+	{
 		sprintf(uvalues[k].uval.sval,"%d", fillcolor);
+	}
 	old_fillcolor = fillcolor;
 
 	choices[++k] = "Proximity value for inside=epscross and fmod";
@@ -268,78 +284,121 @@ int get_toggles()
 	stoppass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
 	if (stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
+	{
 		stoppass = 0;
+	}
 
 	if (usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops, lyapunov type */
-                                       /* doesn't use 'new' & breaks orbits */
+										/* doesn't use 'new' & breaks orbits */
+	{
 		usr_stdcalcmode = old_usr_stdcalcmode;
+	}
 
-	if (old_usr_stdcalcmode != usr_stdcalcmode) j++;
-	if (old_stoppass != stoppass) j++;
+	if (old_usr_stdcalcmode != usr_stdcalcmode)
+	{
+		j++;
+	}
+	if (old_stoppass != stoppass)
+	{
+		j++;
+	}
 #ifndef XFRACT
 	if (uvalues[++k].uval.ch.val != usr_floatflag)
 	{
 		usr_floatflag = (char)uvalues[k].uval.ch.val;
 		j++;
-		}
+	}
 #endif
 	++k;
 	maxit = uvalues[k].uval.Lval;
-	if (maxit < 0) maxit = old_maxit;
-	if (maxit < 2) maxit = 2;
+	if (maxit < 0)
+	{
+		maxit = old_maxit;
+	}
+	if (maxit < 2)
+	{
+		maxit = 2;
+	}
 
-	if (maxit != old_maxit) j++;
+	if (maxit != old_maxit)
+	{
+		j++;
+	}
 
 	inside = uvalues[++k].uval.ival;
-	if (inside < 0) inside = -inside;
-	if (inside >= colors) inside = (inside % colors) + (inside / colors);
+	if (inside < 0)
+	{
+		inside = -inside;
+	}
+	if (inside >= colors)
+	{
+		inside = (inside % colors) + (inside / colors);
+	}
 
-	{ int tmp;
-	tmp = uvalues[++k].uval.ch.val;
-	if (tmp > 0)
-		switch (tmp)
+	{
+		int tmp;
+		tmp = uvalues[++k].uval.ch.val;
+		if (tmp > 0)
 		{
-		case 1:
-			inside = -1;  /* maxiter */
-			break;
-		case 2:
-			inside = ZMAG;
-			break;
-		case 3:
-			inside = BOF60;
-			break;
-		case 4:
-			inside = BOF61;
-			break;
-		case 5:
-			inside = EPSCROSS;
-			break;
-		case 6:
-			inside = STARTRAIL;
-			break;
-		case 7:
-			inside = PERIOD;
-			break;
-		case 8:
-			inside = ATANI;
-			break;
-		case 9:
-			inside = FMODI;
-			break;
+			switch (tmp)
+			{
+			case 1:
+				inside = -1;  /* maxiter */
+				break;
+			case 2:
+				inside = ZMAG;
+				break;
+			case 3:
+				inside = BOF60;
+				break;
+			case 4:
+				inside = BOF61;
+				break;
+			case 5:
+				inside = EPSCROSS;
+				break;
+			case 6:
+				inside = STARTRAIL;
+				break;
+			case 7:
+				inside = PERIOD;
+				break;
+			case 8:
+				inside = ATANI;
+				break;
+			case 9:
+				inside = FMODI;
+				break;
+			}
 		}
 	}
-	if (inside != old_inside) j++;
+	if (inside != old_inside)
+	{
+		j++;
+	}
 
 	outside = uvalues[++k].uval.ival;
-	if (outside < 0) outside = -outside;
-	if (outside >= colors) outside = (outside % colors) + (outside / colors);
-
-	{ int tmp;
-	tmp = uvalues[++k].uval.ch.val;
-	if (tmp > 0)
-		outside = -tmp;
+	if (outside < 0)
+	{
+		outside = -outside;
 	}
-	if (outside != old_outside) j++;
+	if (outside >= colors)
+	{
+		outside = (outside % colors) + (outside / colors);
+	}
+
+	{
+		int tmp;
+		tmp = uvalues[++k].uval.ch.val;
+		if (tmp > 0)
+		{
+			outside = -tmp;
+		}
+	}
+	if (outside != old_outside)
+	{
+		j++;
+	}
 
 	strcpy(savenameptr, uvalues[++k].uval.sval);
 	if (strcmp(savename, prevsavename))
@@ -351,7 +410,9 @@ int get_toggles()
 
 	soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
 	if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+	{
 		j++;
+	}
 
 	LogFlag = uvalues[++k].uval.Lval;
 	if (LogFlag != old_logflag)
@@ -368,9 +429,13 @@ int get_toggles()
 	if (decomp[0] != old_decomp) j++;
 
 	if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
+	{
 		fillcolor = -1;
+	}
 	else
+	{
 		fillcolor = atoi(uvalues[k].uval.sval);
+	}
 	if (fillcolor < 0) fillcolor = -1;
 	if (fillcolor >= colors) fillcolor = (fillcolor % colors) + (fillcolor / colors);
 	if (fillcolor != old_fillcolor) j++;
@@ -441,10 +506,14 @@ int get_toggles2()
 		uvalues[++k].type = 's';
 		old_inversion[i] = inversion[i];
 		if (inversion[i] == AUTOINVERT)
+		{
 			sprintf(uvalues[k].uval.sval, "auto");
+		}
 		else
+		{
 			sprintf(uvalues[k].uval.sval, "%-1.15lg", inversion[i]);
 		}
+	}
 	choices[++k] = "  (use fixed radius & center when zooming)";
 	uvalues[k].type = '*';
 
@@ -495,7 +564,9 @@ int get_toggles2()
 			}
 		else /* turned it off */
 			if (!driver_diskp()) /* ditch the disk video */
+			{
 				enddisk();
+			}
 			else /* keep disk video, but ditch the fraction part at end */
 				disk16bit = 0;
 		}
@@ -511,13 +582,19 @@ int get_toggles2()
 	for (i = 0; i < 3; i++)
 	{
 		if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
+		{
 			inversion[i] = AUTOINVERT;
+		}
 		else
+		{
 			inversion[i] = atof(uvalues[k].uval.sval);
+		}
 		if (old_inversion[i] != inversion[i]
-		&& (i == 0 || inversion[0] != 0.0))
+			&& (i == 0 || inversion[0] != 0.0))
+		{
 			j = 1;
 		}
+	}
 	invert = (inversion[0] == 0.0) ? 0 : 3;
 	++k;
 
@@ -527,7 +604,7 @@ int get_toggles2()
 	{
 		rotate_lo = old_rotate_lo;
 		rotate_hi = old_rotate_hi;
-		}
+	}
 
 	return j;
 }
@@ -914,7 +991,9 @@ int starfield(void)
 				}
 			c = getcolor(col, row);
 			if (c == inside)
+			{
 				c = colors-1;
+			}
 			putcolor(col, row, GausianNumber(c, colors));
 		}
 	}
@@ -1021,7 +1100,9 @@ int get_rds_params(void)
 					(int) strlen(stereomapname) < sizeof(rds6)-2)
 				p = strlwr(stereomapname);
 			else
+			{
 				p++;
+			}
 			/* center file name */
 			rds6[(sizeof(rds6)-(int) strlen(p) + 2)/2] = 0;
 			strcat(rds6, "[");
@@ -1048,13 +1129,19 @@ int get_rds_params(void)
 			calibrate        = (char)uvalues[k++].uval.ch.val;
 			image_map        = (char)uvalues[k++].uval.ch.val;
 			if (*stereomapname && image_map)
+			{
 				reuse         = (char)uvalues[k++].uval.ch.val;
+			}
 			else
+			{
 				reuse = 0;
+			}
 			if (image_map && !reuse)
 			{
 				if (getafilename("Select an Imagemap File", masks[1], stereomapname))
+				{
 					continue;
+				}
 			}
 		}
 		break;
@@ -1202,7 +1289,9 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	while (1)
 	{
 		if (ll > 1)
+		{
 			rra = *((char **)(ra + (--ll)*sz));
+		}
 		else
 		{
 			rra = *((char **)(ra + ir*sz));
@@ -1218,7 +1307,9 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 		while (j <= ir)
 		{
 			if (j < ir && (fct(ra + j*sz, ra + (j + 1)*sz) < 0))
+			{
 				++j;
+			}
 			if (fct(&rra, ra + j*sz) < 0)
 			{
 				*((char **)(ra + i*sz)) = *((char **)(ra + j*sz));
@@ -1573,9 +1664,13 @@ static int check_f6_key(int curkey, int choice)
 { /* choice is dummy used by other routines called by fullscreen_choice() */
 	choice = 0; /* to suppress warning only */
 	if (curkey == FIK_F6)
+	{
 		return -FIK_F6;
+	}
 	else if (curkey == FIK_F4)
+	{
 		return -FIK_F4;
+	}
 	return 0;
 }
 
@@ -1594,12 +1689,12 @@ static int filename_speedstr(int row, int col, int vid,
 	{
 		speedstate = SEARCHPATH; /* does not match list */
 		prompt = "Search Path for";
-		}
+	}
 	else
 	{
 		speedstate = MATCHING;
 		prompt = speed_prompt;
-		}
+	}
 	driver_put_string(row, col, vid, prompt);
 	return (int) strlen(prompt);
 }
@@ -1613,13 +1708,19 @@ int isadirectory(char *s)
 	unsigned attrib = 0;
 #endif
 	if (strchr(s, '*') || strchr(s, '?'))
+	{
 		return 0; /* for my purposes, not a directory */
+	}
 
 	len = (int) strlen(s);
 	if (len > 0)
+	{
 		sv = s[len-1];   /* last char */
+	}
 	else
+	{
 		sv = 0;
+	}
 
 #ifdef _MSC_VER
 	if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
@@ -1788,19 +1889,31 @@ int splitpath(char *file_template, char *drive, char *dir, char *fname, char *ex
 int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 {
 	if (template_str)
+	{
 		*template_str = 0;
+	}
 	else
+	{
 		return -1;
+	}
 #ifndef XFRACT
 	if (drive)
+	{
 		strcpy(template_str, drive);
+	}
 #endif
 	if (dir)
+	{
 		strcat(template_str, dir);
+	}
 	if (fname)
+	{
 		strcat(template_str, fname);
+	}
 	if (ext)
+	{
 		strcat(template_str, ext);
+	}
 	return 0;
 }
 
@@ -1812,8 +1925,12 @@ void fix_dirname(char *dirname)
 
 	/* make sure dirname ends with a slash */
 	if (length > 0)
+	{
 		if (dirname[length-1] == SLASHC)
+		{
 			return;
+		}
+	}
 	strcat(dirname, SLASH);
 }
 
@@ -1821,7 +1938,9 @@ static void dir_name(char *target, char *dir, char *name)
 {
 	*target = 0;
 	if (*dir != 0)
+	{
 		strcpy(target, dir);
+	}
 	strcat(target, name);
 }
 
@@ -1888,7 +2007,9 @@ gc_loop:
 		values[i].type = 'd'; /* most values on this screen are type d */
 	cmag = usemag;
 	if (drawmode == 'l')
+	{
 		cmag = 0;
+	}
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
@@ -1944,7 +2065,9 @@ gc_loop:
 			prompts[++nump] = yprompt;
 			values[nump].uval.dval = yymin;
 			if (xxmin == xx3rd && yymin == yy3rd)
+			{
 				xx3rd = yy3rd = 0;
+			}
 			prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
@@ -1971,7 +2094,7 @@ gc_loop:
 		yymin = oyymin; yymax = oyymax;
 		xx3rd = oxx3rd; yy3rd = oyy3rd;
 		return -1;
-		}
+	}
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
@@ -1980,20 +2103,24 @@ gc_loop:
 		yy3rd = yymin = curfractalspecific->ymin;
 		yymax         = curfractalspecific->ymax;
 		if (viewcrop && finalaspectratio != screenaspect)
+		{
 			aspectratio_crop(screenaspect, finalaspectratio);
-		if (bf_math != 0)
-			fractal_floattobf();
-		goto gc_loop;
 		}
+		if (bf_math != 0)
+		{
+			fractal_floattobf();
+		}
+		goto gc_loop;
+	}
 
 	if (cmag)
 	{
 		if (cmpdbl(Xctr         , values[0].uval.dval)
-		|| cmpdbl(Yctr         , values[1].uval.dval)
-		|| cmpdbl((double)Magnification, values[2].uval.dval)
-		|| cmpdbl(Xmagfactor   , values[3].uval.dval)
-		|| cmpdbl(Rotation     , values[4].uval.dval)
-		|| cmpdbl(Skew         , values[5].uval.dval))
+			|| cmpdbl(Yctr         , values[1].uval.dval)
+			|| cmpdbl((double)Magnification, values[2].uval.dval)
+			|| cmpdbl(Xmagfactor   , values[3].uval.dval)
+			|| cmpdbl(Rotation     , values[4].uval.dval)
+			|| cmpdbl(Skew         , values[5].uval.dval))
 		{
 			Xctr          = values[0].uval.dval;
 			Yctr          = values[1].uval.dval;
@@ -2002,7 +2129,9 @@ gc_loop:
 			Rotation      = values[4].uval.dval;
 			Skew          = values[5].uval.dval;
 			if (Xmagfactor == 0)
+			{
 				Xmagfactor = 1;
+			}
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		}
 	}
@@ -2148,7 +2277,9 @@ gsc_loop:
 		prompts[++nump] = yprompt;
 		values[nump].uval.dval = oymin;
 		if (oxmin == ox3rd && oymin == oy3rd)
+		{
 			ox3rd = oy3rd = 0;
+		}
 		prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
 		values[nump].type = '*';
 		prompts[++nump] = xprompt;
@@ -2190,7 +2321,9 @@ gsc_loop:
 		yymin = oymin; yymax = oymax;
 		xx3rd = ox3rd; yy3rd = oy3rd;
 		if (viewcrop && finalaspectratio != screenaspect)
+		{
 			aspectratio_crop(screenaspect, finalaspectratio);
+		}
 
 		oxmin = xxmin; oxmax = xxmax;
 		oymin = yymin; oymax = yymax;
@@ -2214,7 +2347,9 @@ gsc_loop:
 			Rotation      = values[4].uval.dval;
 			Skew          = values[5].uval.dval;
 			if (Xmagfactor == 0)
+			{
 				Xmagfactor = 1;
+			}
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 			/* set screen corners */
 			oxmin = xxmin; oxmax = xxmax;
@@ -2438,14 +2573,20 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 
 	/* no dot or slash so assume a file */
 	if (strchr(newfilename, '.') == NULL && strchr(newfilename, SLASHC) == NULL)
+	{
 		isafile = 1;
+	}
 	isadir = isadirectory(newfilename);
 	if (isadir != 0)
+	{
 		fix_dirname(newfilename);
+	}
 #if 0
 	/* if slash by itself, it's a directory */
 	if (strcmp(newfilename, SLASH) == 0)
+	{
 		isadir = 1;
+	}
 #endif
 #ifndef XFRACT
 	/* if drive, colon, slash, is a directory */
@@ -2479,7 +2620,9 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 		temp_path[1] = ':';
 		temp_path[2] = 0;
 		if (strrchr(newfilename, '.') == newfilename)
-		test_dir = 1;  /* only one '.' assume its a directory */
+		{
+			test_dir = 1;  /* only one '.' assume its a directory */
+		}
 		expand_dirname(newfilename, temp_path);
 		strcat(temp_path, newfilename);
 		strcpy(newfilename, temp_path);
@@ -2512,13 +2655,21 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	splitpath(newfilename, drive, dir, fname, ext);
 	splitpath(oldfullpath, drive1, dir1, fname1, ext1);
 	if ((int) strlen(drive) != 0 && GETPATH)
+	{
 		strcpy(drive1, drive);
+	}
 	if ((int) strlen(dir) != 0 && GETPATH)
+	{
 		strcpy(dir1, dir);
+	}
 	if ((int) strlen(fname) != 0)
+	{
 		strcpy(fname1, fname);
+	}
 	if ((int) strlen(ext) != 0)
+	{
 		strcpy(ext1, ext);
+	}
 	if (isadir == 0 && isafile == 0 && GETPATH)
 	{
 		makepath(oldfullpath, drive1, dir1, NULL, NULL);
@@ -2529,9 +2680,13 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 			/* strip trailing slash */
 			save = oldfullpath[len-1];
 			if (save == SLASHC)
+			{
 				oldfullpath[len-1] = 0;
+			}
 			if (access(oldfullpath, 0))
+			{
 				isadir = -1;
+			}
 			oldfullpath[len-1] = save;
 		}
 	}
@@ -2557,8 +2712,12 @@ char *has_ext(char *source)
 	char *ret = NULL;
 	splitpath(source, NULL, NULL, fname, ext);
 	if (ext != NULL)
+	{
 		if (*ext != 0)
+		{
 			ret = strrchr(source, '.');
+		}
+	}
 	return ret;
 }
 
@@ -2575,7 +2734,9 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 			for (j=i-gap; j >= 0; j -= gap)
 			{
 				if (fct((char **)(v + j*sz), (char **)(v + (j + gap)*sz)) <= 0)
+				{
 					break;
+				}
 				temp = *(char **)(v + j*sz);
 				*(char **)(v + j*sz) = *(char **)(v + (j + gap)*sz);
 				*(char **)(v + (j + gap)*sz) = temp;

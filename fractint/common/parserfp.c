@@ -258,7 +258,9 @@ int pstopmsg(int x,char *msg)
 {
 	static FILE *fp = NULL;
 	if (fp == NULL)
+	{
 		fp = fopen("fpdebug.txt","w");
+	}
 	if (fp)
 	{
 		fprintf(fp,"%s\n",msg);
@@ -491,7 +493,7 @@ static int CvtFptr(void (* ffptr)(void), int MinStk, int FreeStk,
 	if ((Delta != -2 && Delta != 0 && Delta != 2 && Delta != CLEAR_STK)
 			|| (FreeStk != 0 && FreeStk != 2 && FreeStk != 4)
 			|| (MinStk != 0 && MinStk != 2 && MinStk != 4))
-			{
+	{
 awful_error:
 		stopmsg (0,"FATAL INTERNAL PARSER ERROR!");
 		return 0;  /* put out dire message and revert to old parser  */
@@ -1361,9 +1363,13 @@ int fpfill_jump_struct(void)
 				case 2:
 					checkforelse = !checkforelse;
 					if (checkforelse)
+					{
 						JumpFunc = fStkJump;
+					}
 					else
+					{
 						JumpFunc = fStkJumpOnFalse;
+					}
 					break;
 				case 3:
 					JumpFunc = fStkJump;

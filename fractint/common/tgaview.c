@@ -27,7 +27,9 @@ tgaview()
 
 	fptarga = t16_open(readname, (int *)&width, (int *)&height, &cs, (U8 *)&info);
 	if (fptarga == NULL)
+	{
 		return -1;
+	}
 
 	g_row_count = 0;
 	for (i = 0; i < (int)height; ++i)

@@ -115,9 +115,13 @@ struct MPC MPCpow(struct MPC x, int exp)
 	struct MPC zz;
 
 	if (exp & 1)
+	{
 		z = x;
+	}
 	else
+	{
 		z = MPCone;
+	}
 	exp >>= 1;
 	while (exp)
 	{
@@ -147,7 +151,9 @@ int MPCcmp(struct MPC x, struct MPC y)
         return pMPcmp(z.x, z.y);
 	}
 	else
+	{
 		return 0;
+	}
 }
 
 _CMPLX MPC2cmplx(struct MPC x)
@@ -216,23 +222,31 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 	/* fixes power bug - if any complaints, backwards compatibility hook
 		goes here TIW 3/95 */
 	if (ldcheck == 0)
+	{
 		if (xx.x == 0 && xx.y == 0)
 		{
 			z.x = z.y = 0.0;
 			return z;
 		}
+	}
 
 	FPUcplxlog(&xx, &cLog);
 	FPUcplxmul(&cLog, &yy, &t);
 
 	if (fpu >= 387)
+	{
 		FPUcplxexp387(&t, &z);
+	}
 	else
 	{
 		if (t.x < -690)
+		{
 			e2x = 0;
+		}
 		else
+		{
 			e2x = exp(t.x);
+		}
 		FPUsincos(&t.y, &siny, &cosy);
 		z.x = e2x*cosy;
 		z.y = e2x*siny;
@@ -341,7 +355,9 @@ void Arctanz(_CMPLX z, _CMPLX *rz)
 {
 	_CMPLX temp0, temp1, temp2, temp3;
 	if (z.x == 0.0 && z.y == 0.0)
+	{
 		rz->x = rz->y = 0;
+	}
 	else if (z.x != 0.0 && z.y == 0.0)
 	{
 		rz->x = atan(z.x);
@@ -374,9 +390,13 @@ long lsqrt(long f)
 	static long a = 0, b = 0, c = 0;                  /* constant factors */
 
 	if (f == 0)
+	{
 		return f;
+	}
 	if (f <  0)
+	{
 		return 0;
+	}
 
 	if (a == 0)                                   /* one-time compute consts */
 	{
@@ -409,9 +429,13 @@ long lsqrt(long f)
 	}
 	N /= 2;
 	if (N >= 0)
+	{
 		return y0 <<  N;                        /* correct for shift above */
+	}
 	else
+	{
 		return y0 >> -N;
+	}
 }
 #endif
 LCMPLX ComplexSqrtLong(long x, long y)
@@ -442,7 +466,9 @@ _CMPLX ComplexSqrtFloat(double x, double y)
 	_CMPLX  result;
 
 	if (x == 0.0 && y == 0.0)
+	{
 		result.x = result.y = 0.0;
+	}
 	else
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
@@ -484,7 +510,9 @@ void SetupLogTable(void)
 		{
 			lf = (LogFlag > 1) ? LogFlag : 0;
 			if (lf >= (unsigned long)MaxLTSize)
+			{
 				lf = MaxLTSize - 1;
+			}
 			mlf = (colors - (lf?2:1)) / log(MaxLTSize - lf);
 		}
 		else if (LogFlag == -1)  /* old log function */
@@ -495,19 +523,25 @@ void SetupLogTable(void)
 		{
 			lf = -LogFlag;
 			if (lf >= (unsigned long)MaxLTSize)
+			{
 				lf = MaxLTSize - 1;
+			}
 			mlf = (colors - 2) / sqrt(MaxLTSize - lf);
 		}
 	}
 
 	if (Log_Calc)
+	{
 		return; /* LogTable not defined, bail out now */
+	}
 
 	if (save_release > 1920 && !Log_Calc)
 	{
 		Log_Calc = 1;   /* turn it on */
 		for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
+		{
 			LogTable[prev] = (BYTE)logtablecalc((long)prev);
+		}
 		Log_Calc = 0;   /* turn it off, again */
 		return;
 	}
@@ -516,13 +550,17 @@ void SetupLogTable(void)
 	{
 		lf = (LogFlag > 1) ? LogFlag : 0;
 		if (lf >= (unsigned long)MaxLTSize)
+		{
 			lf = MaxLTSize - 1;
+		}
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fLog14(m, m);
 		Fg2Float((long)(colors-(lf?2:1)), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
+		{
 			LogTable[prev] = 1;
+		}
 		for (n = (lf?2:1); n < (unsigned int)colors; n++)
 		{
 			Fg2Float((long)n, 0, f);
@@ -530,22 +568,30 @@ void SetupLogTable(void)
 			fExp14(f, l);
 			limit = (unsigned long)Float2Fg(l, 0) + lf;
 			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+			{
 				limit = MaxLTSize;
+			}
 			while (prev <= limit)
+			{
 				LogTable[prev++] = (BYTE)n;
+			}
 		}
 	}
 	else
 	{
 		lf = -LogFlag;
 		if (lf >= (unsigned long)MaxLTSize)
+		{
 			lf = MaxLTSize - 1;
+		}
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fSqrt14(m, m);
 		Fg2Float((long)(colors-2), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
+		{
 			LogTable[prev] = 1;
+		}
 		for (n = 2; n < (unsigned int)colors; n++)
 		{
 			Fg2Float((long)n, 0, f);
@@ -553,16 +599,26 @@ void SetupLogTable(void)
 			fMul16(f, f, l);
 			limit = (unsigned long)(Float2Fg(l, 0) + lf);
 			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+			{
 				limit = MaxLTSize;
+			}
 			while (prev <= limit)
+			{
 				LogTable[prev++] = (BYTE)n;
+			}
 		}
 	}
 	LogTable[0] = 0;
 	if (LogFlag != -1)
+	{
 		for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
+		{
 			if (LogTable[sptop] > LogTable[sptop-1])
+			{
 				LogTable[sptop] = (BYTE)(LogTable[sptop-1] + 1);
+			}
+		}
+	}
 }
 
 long logtablecalc(long citer)
@@ -570,39 +626,61 @@ long logtablecalc(long citer)
 	long ret = 0;
 
 	if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
+	{
 		return citer;
+	}
 	if (LogTable && !Log_Calc)
+	{
 		return LogTable[(long)min(citer, MaxLTSize)];
+	}
 
 	if (LogFlag > 0)  /* new log function */
 	{
 		if ((unsigned long)citer <= lf + 1)
+		{
 			ret = 1;
+		}
 		else if ((citer - lf) / log(citer - lf) <= mlf)
 		{
 			if (save_release < 2002)
+			{
 				ret = (long)(citer - lf + (lf?1:0));
+			}
 			else
+			{
 				ret = (long)(citer - lf);
+			}
 		}
 		else
+		{
 			ret = (long)(mlf*log(citer - lf)) + 1;
+		}
 	}
 	else if (LogFlag == -1)  /* old log function */
 	{
 		if (citer == 0)
+		{
 			ret = 1;
+		}
 		else
+		{
 			ret = (long)(mlf*log(citer)) + 1;
+		}
 	}
 	else if (LogFlag <= -2)  /* sqrt function */
 	{
 		if ((unsigned long)citer <= lf)
+		{
 			ret = 1;
+		}
 		else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf*mlf))
+		{
 			ret = (long)(citer - lf + 1);
+		}
 		else
+		{
 			ret = (long)(mlf*sqrt(citer - lf)) + 1;
+		}
 	}
 	return ret;
 }
@@ -656,7 +734,9 @@ int ComplexNewton(void)
 	tmp.x = g_new.x - croot.x;
 	tmp.y = g_new.y - croot.y;
 	if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
+	{
 		return 1;
+	}
 
 	FPUcplxmul(&g_new, &cd1, &tmp);
 	tmp.x += croot.x;
@@ -692,7 +772,9 @@ int ComplexBasin(void)
 	if ((sqr(tmp.x) + sqr(tmp.y)) < threshold)
 	{
 		if (fabs(old.y) < .01)
+		{
 			old.y = 0.0;
+		}
 		FPUcplxlog(&old, &temp);
 		FPUcplxmul(&temp, &cdegree, &tmp);
 		mod = tmp.y/TwoPi;
@@ -700,13 +782,19 @@ int ComplexBasin(void)
 		if (fabs(mod - coloriter) > 0.5)
 		{
 			if (mod < 0.0)
+			{
 				coloriter--;
+			}
 			else
+			{
 				coloriter++;
+			}
 		}
 		coloriter += 2;
 		if (coloriter < 0)
+		{
 			coloriter += 128;
+		}
 		return 1;
 	}
 
@@ -746,12 +834,16 @@ int GausianNumber(int Probability, int Range)
 	if (!(rand15() % (Distribution - (int)(p >> 16) + 1)))
 	{
 		for (n = 0; n < Slope; n++)
+		{
 			Accum += rand15();
+		}
 		Accum /= Slope;
 		r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
 		r = r - Range;
 		if (r < 0)
+		{
 			r = -r;
+		}
 		return Range - r + Offset;
 	}
 	return Offset;

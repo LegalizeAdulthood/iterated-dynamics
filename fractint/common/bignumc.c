@@ -95,16 +95,24 @@ int cmp_bn(bn_t n1, bn_t n2)
 			(Svalue2=big_accessS16((S16 BIGDIST *)(n2 + bnlength-2))))
 	{ /* now determine which of the two bytes was different */
 		if ((S16)(Svalue1&0xFF00) > (S16)(Svalue2&0xFF00)) /* compare just high bytes */
+		{
 			return bnlength; /* high byte was different */
+		}
 		else
+		{
 			return bnlength-1; /* low byte was different */
+		}
 	}
 	else if (Svalue1 < Svalue2)
 	{ /* now determine which of the two bytes was different */
 		if ((S16)(Svalue1&0xFF00) < (S16)(Svalue2&0xFF00)) /* compare just high bytes */
+		{
 			return -(bnlength); /* high byte was different */
+		}
 		else
+		{
 			return -(bnlength-1); /* low byte was different */
+		}
 	}
 
 	/* unsigned comparison for the rest */
@@ -115,16 +123,24 @@ int cmp_bn(bn_t n1, bn_t n2)
 		if (value1 > value2)
 		{ /* now determine which of the two bytes was different */
 			if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
+			{
 				return i + 2; /* high byte was different */
+			}
 			else
+			{
 				return i + 1; /* low byte was different */
+			}
 		}
 		else if (value1 < value2)
 		{ /* now determine which of the two bytes was different */
 			if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
+			{
 				return -(i + 2); /* high byte was different */
+			}
 			else
+			{
 				return -(i + 1); /* low byte was different */
+			}
 		}
 	}
 	return 0;
@@ -149,7 +165,9 @@ int is_bn_not_zero(bn_t n)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 		if (big_access16(n + i) != 0)
+		{
 			return 1;
+		}
 	return 0;
 }
 
@@ -446,13 +464,17 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	bnl = bnlength;
 	sign1 = is_bn_neg(n1);
 	if (sign1 != 0) /* =, not == */
+	{
 		neg_a_bn(n1);
+	}
 	samevar = (n1 == n2);
 	if (!samevar) /* check to see if they're the same pointer */
 	{
 		sign2 = is_bn_neg(n2);
 		if (sign2 != 0) /* =, not == */
+		{
 			neg_a_bn(n2);
+		}
 	}
 	n1p = n1;
 	n2 += (bnlength << 1) - rlength;  /* shift n2 over to where it is needed */
@@ -534,7 +556,9 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 	U32 prod, sum;
 
 	if (is_bn_neg(n))  /* don't need to keep track of sign since the */
+	{
 		neg_a_bn(n);   /* answer must be positive. */
+	}
 
 	bnlength <<= 1;
 	clear_bn(r);        /* zero out r, double width */
@@ -638,10 +662,14 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	/* rlength < 2*bnlength (that is, not =).  Therefore, we will take the        */
 	/* easy way out and call full_square_bn() if it is.                           */
 	if (rlength == (bnlength << 1)) /* rlength == 2*bnlength */
+	{
 		return unsafe_full_square_bn(r, n);    /* call full_square_bn() and quit */
+	}
 
 	if (is_bn_neg(n))  /* don't need to keep track of sign since the */
+	{
 		neg_a_bn(n);   /* answer must be positive. */
+	}
 
 	bnl = bnlength;
 	bnlength = rlength;
@@ -795,13 +823,17 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 
 	sign = is_bn_neg(n);
 	if (sign)
+	{
 		neg_a_bn(n);
+	}
 
 	if (u == 0) /* division by zero */
 	{
 		max_bn(r);
 		if (sign)
+		{
 			neg_a_bn(r);
+		}
 		return r;
 	}
 
@@ -815,7 +847,9 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 	}
 
 	if (sign)
+	{
 		neg_a_bn(r);
+	}
 	return r;
 }
 
@@ -829,13 +863,17 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 
 	sign = is_bn_neg(r);
 	if (sign)
+	{
 		neg_a_bn(r);
+	}
 
 	if (u == 0) /* division by zero */
 	{
 		max_bn(r);
 		if (sign)
+		{
 			neg_a_bn(r);
+		}
 		return r;
 	}
 
@@ -849,7 +887,9 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 	}
 
 	if (sign)
+	{
 		neg_a_bn(r);
+	}
 	return r;
 }
 

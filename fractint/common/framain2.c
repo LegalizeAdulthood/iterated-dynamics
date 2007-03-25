@@ -30,8 +30,10 @@ static void julman()
 	while (fractalspecific[++i].name)
 	{
 		if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
+		{
 			fprintf(fp, "%s  %s\n", fractalspecific[i].name,
 				fractalspecific[fractalspecific[i].tojulia].name);
+		}
 	}
 	fclose(fp);
 }
@@ -53,7 +55,7 @@ static  void cmp_line_cleanup(void);
 void *evolve_handle = NULL;
 char old_stdcalcmode;
 static char *savezoom;
-void (*outln_cleanup) (void);
+void (*outln_cleanup)(void);
 
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {
@@ -69,7 +71,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 #endif
 	frommandel = 0;
 	if (resumeflag)
+	{
 		goto resumeloop;
+	}
 
 	while (1)                    /* eternal loop */
 	{
@@ -598,7 +602,9 @@ resumeloop:                             /* return here on failed overlays */
 				{
 /*
 					while (driver_key_pressed())
+					{
 						driver_get_key();
+					}
 */
 					kbdchar = (debugflag == 50) ? 'r' : 's';
 					if (initbatch == INIT_BATCH_NORMAL)
@@ -2194,7 +2200,9 @@ static void note_zoom()
 	{
 		savezoom = (char *)malloc((long)(5*boxcount));
 		if (savezoom == NULL)
+		{
 			clear_zoombox(); /* not enuf mem so clear the box */
+		}
 		else
 		{
 			reset_zoom_corners(); /* reset these to overall image, not box */
@@ -2256,7 +2264,9 @@ static void move_zoombox(int keynum)
 		if (getmore)
 		{
 			if (getmore == 2)              /* eat last key used */
+			{
 				driver_get_key();
+			}
 			getmore = 2;
 			keynum = driver_key_pressed();         /* next pending key */
 			}
@@ -2265,15 +2275,21 @@ static void move_zoombox(int keynum)
 	{
 /*
 		if (horizontal != 0)
+		{
 			moveboxf((double)horizontal/dxsize, 0.0);
+		}
 		if (vertical != 0)
+		{
 			moveboxf(0.0, (double)vertical/dysize);
+		}
 */
 		moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
 		}
 #ifndef XFRACT
 	else                                 /* if no zoombox, scroll by arrows */
+	{
 		scroll_relative(horizontal, vertical);
+	}
 #endif
 }
 
@@ -2300,17 +2316,23 @@ int cmp_line(BYTE *pixels, int linelen)
 	{
 		oldcolor=getcolor(col, row);
 		if (oldcolor == (int)pixels[col])
+		{
 			putcolor(col, row, 0);
+		}
 		else
 		{
 			if (oldcolor == 0)
+			{
 				putcolor(col, row, 1);
+			}
 			++errcount;
 			if (initbatch == INIT_BATCH_NONE)
+			{
 				fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
 					errcount, col, row, oldcolor, pixels[col]);
 			}
 		}
+	}
 	return 0;
 }
 

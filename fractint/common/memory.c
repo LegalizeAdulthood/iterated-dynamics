@@ -74,11 +74,11 @@ static void DisplayError(int stored_at, long howmuch);
 
 /* Routines in this module, visible to outside routines */
 
-void DisplayMemory (void);
+void DisplayMemory(void);
 void DisplayHandle (U16 handle);
 int MemoryType (U16 handle);
-void InitMemory (void);
-void ExitCheck (void);
+void InitMemory(void);
+void ExitCheck(void);
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
 int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
@@ -107,8 +107,12 @@ static void WhichDiskError(int I_O)
 	};
 	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
 	if (debugflag == 10000)
+	{
 		if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+		{
 			goodbye(); /* bailout if ESC */
+		}
+	}
 }
 
 int MemoryType(U16 handle)
@@ -223,7 +227,7 @@ static int CheckBounds (long start, long length, U16 handle)
 	return 0;
 }
 
-void DisplayMemory (void)
+void DisplayMemory(void)
 {
 	char buf[MSGLEN];
 	extern unsigned long get_disk_space(void);
@@ -239,10 +243,12 @@ void DisplayHandle (U16 handle)
 	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
         handletable[handle].Nowhere.size);
 	if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+	{
 		goodbye(); /* bailout if ESC, it's messy, but should work */
+	}
 }
 
-void InitMemory (void)
+void InitMemory(void)
 {
 	int counter;
 
@@ -254,7 +260,7 @@ void InitMemory (void)
 	}
 }
 
-void ExitCheck (void)
+void ExitCheck(void)
 {
 	U16 i;
 	if (numTOTALhandles != 0)
@@ -285,7 +291,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	success = FALSE;
 	toallocate = count*size;
 	if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
+	{
 		return (U16)success; /* or it wraps around to negative */
+	}
 
 /* check structure for requested memory type (add em up) to see if
 	sufficient amount is available to grant request */
@@ -333,12 +341,18 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		memfile[8] = (char)((handle % 100) / 10 + (int)'0');
 		memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
 		if (disktarga)
+		{
 			handletable[handle].Disk.file = dir_fopen(workdir, light_name, "a+b");
+		}
 		else
+		{
 			handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "w+b");
+		}
 		rewind(handletable[handle].Disk.file);
 		if (fseek(handletable[handle].Disk.file, toallocate, SEEK_SET) != 0)
+		{
 			handletable[handle].Disk.file = NULL;
+		}
 		if (handletable[handle].Disk.file == NULL)
 		{
 			handletable[handle].Disk.stored_at = NOWHERE;
@@ -352,9 +366,13 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		success = TRUE;
 		fclose(handletable[handle].Disk.file); /* so clusters aren't lost if we crash while running */
 		if (disktarga)
+		{
 			handletable[handle].Disk.file = dir_fopen(workdir, light_name, "r+b");
+		}
 		else
+		{
 			handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "r+b"); /* reopen */
+		}
 		rewind(handletable[handle].Disk.file);
 		handletable[handle].Disk.size = toallocate;
 		handletable[handle].Disk.stored_at = DISK;
@@ -372,9 +390,13 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	}
 
 	if (success)
+	{
 		return handle;
+	}
 	else      /* return 0 if failure */
+	{
 		return 0;
+	}
 }
 
 void MemoryRelease(U16 handle)
@@ -423,8 +445,12 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	start = (long)offset*size;
 	tomove = (long)count*size;
 	if (debugflag == 10000)
+	{
 		if (CheckBounds(start, tomove, handle))
+		{
 			return success; /* out of bounds, don't do it */
+		}
+	}
 
 	switch (handletable[handle].Nowhere.stored_at)
 	{
@@ -467,7 +493,9 @@ diskerror:
 		break;
 	} /* end of switch */
 	if (!success && debugflag == 10000)
+	{
 		DisplayHandle(handle);
+	}
 	return success;
 }
 
@@ -486,8 +514,12 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	start = (long)offset*size;
 	tomove = (long)count*size;
 	if (debugflag == 10000)
+	{
 		if (CheckBounds(start, tomove, handle))
+		{
 			return success; /* out of bounds, don't do it */
+		}
+	}
 
 	switch (handletable[handle].Nowhere.stored_at)
 	{
@@ -532,7 +564,9 @@ diskerror:
 		break;
 	} /* end of switch */
 	if (!success && debugflag == 10000)
+	{
 		DisplayHandle(handle);
+	}
 	return success;
 }
 
@@ -551,8 +585,12 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 	start = (long)offset*size;
 	tomove = (long)count*size;
 	if (debugflag == 10000)
+	{
 		if (CheckBounds(start, tomove, handle))
+		{
 			return success; /* out of bounds, don't do it */
+		}
+	}
 
 	switch (handletable[handle].Nowhere.stored_at)
 	{
@@ -594,7 +632,9 @@ diskerror:
 		break;
 	} /* end of switch */
 	if (!success && debugflag == 10000)
+	{
 		DisplayHandle(handle);
+	}
 	return success;
 }
 

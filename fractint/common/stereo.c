@@ -117,16 +117,24 @@ static int get_min_max(void)
 	for (yd = 0; yd < ydots; yd++)
 	{
 		if (driver_key_pressed())
+		{
 			return 1;
+		}
 		if (yd == 20)
+		{
 			showtempmsg("Getting min and max");
+		}
 		for (xd = 0; xd < xdots; xd++)
 		{
 			ldepth = getdepth(xd,yd);
 			if (ldepth < MINC)
+			{
 				MINC = ldepth;
+			}
 			if (ldepth > MAXC)
+			{
 				MAXC = ldepth;
+			}
 		}
 	}
 	cleartempmsg();
@@ -161,16 +169,24 @@ int outline_stereo(BYTE *pixels, int linelen)
 	int *same = _alloca(sizeof(int)*xdots);
 	int *colour = _alloca(sizeof(int)*xdots);
 	if ((Y) >= ydots)
+	{
 		return 1;
+	}
 
 	for (x = 0; x < xdots; ++x)
+	{
 		same[x] = x;
+	}
 	for (x = 0; x < xdots; ++x)
 	{
 		if (REVERSE)
+		{
 			SEP = GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC);
+		}
 		else
+		{
 			SEP = GROUND - (int) (DEPTH*(MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
+		}
 		SEP =  (int)((SEP*10.0) / WIDTH);        /* adjust for media WIDTH */
 
 		/* get average value under calibration bars */
@@ -194,7 +210,9 @@ int outline_stereo(BYTE *pixels, int linelen)
 					j = s;
 				}
 				else
+				{
 					i = s;
+				}
 			}
 			same[i] = j;
 		}
@@ -202,10 +220,14 @@ int outline_stereo(BYTE *pixels, int linelen)
 	for (x = xdots - 1; x >= 0; x--)
 	{
 		if (same[x] == x)
+		{
 			/* colour[x] = rand()%colors; */
 			colour[x] = (int)pixels[x%linelen];
+		}
 		else
+		{
 			colour[x] = colour[same[x]];
+		}
 		putcolor(x, Y, colour[x]);
 	}
 	(Y)++;
@@ -253,12 +275,18 @@ int do_AutoStereo(void)
 	/* empircally determined adjustment to make WIDTH scale correctly */
 	WIDTH = AutoStereo_width*.67;
 	if (WIDTH < 1)
+	{
 		WIDTH = 1;
+	}
 	GROUND = xdots / 8;
 	if (AutoStereo_depth < 0)
+	{
 		REVERSE = 1;
+	}
 	else
+	{
 		REVERSE = 0;
+	}
 	DEPTH = ((long) xdots*(long) AutoStereo_depth) / 4000L;
 	DEPTH = labs(DEPTH) + 1;
 	if (get_min_max())
@@ -273,9 +301,13 @@ int do_AutoStereo(void)
 	BARHEIGHT = 1 + ydots / 20;
 	XCEN = xdots/2;
 	if (calibrate > 1)
+	{
 		YCEN = BARHEIGHT/2;
+	}
 	else
+	{
 		YCEN = ydots/2;
+	}
 
 	/* box to average for calibration bars */
 	X1 = XCEN - xdots/16;
@@ -320,9 +352,13 @@ int do_AutoStereo(void)
 			colour[ct++] = getcolor(i - (int)(AVG), j);
 		}
 	if (calibrate)
+	{
 		bars = 1;
+	}
 	else
+	{
 		bars = 0;
+	}
 	toggle_bars(&bars, barwidth, colour);
 	done = 0;
 	while (done == 0)
@@ -346,7 +382,9 @@ int do_AutoStereo(void)
 				break;
 			default:
 				if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+				{
 					kbdchar = 255;
+				}
 				driver_unget_key(kbdchar);
 				driver_buzzer(BUZZER_COMPLETE);
 				done = 1;

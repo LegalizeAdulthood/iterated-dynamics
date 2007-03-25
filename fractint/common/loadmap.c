@@ -27,30 +27,34 @@ int ValidateLuts(char *fn)
 	merge_pathnames(temp,temp_fn,0);
 #endif
 	if (has_ext(temp) == NULL) /* Did name have an extension? */
-        strcat(temp,".map");  /* No? Then add .map */
+	{
+		strcat(temp,".map");  /* No? Then add .map */
+	}
 	findpath(temp, line);        /* search the dos path */
 	f = fopen(line, "r");
 	if (f == NULL)
 	{
-        sprintf(line,"Could not load color map %s",fn);
-        stopmsg(0,line);
-        return 1;
-    }
+		sprintf(line,"Could not load color map %s",fn);
+		stopmsg(0,line);
+		return 1;
+	}
 	for (index = 0; index < 256; index++)
 	{
-        if (fgets(line,100,f) == NULL)
-						break;
-        sscanf(line, "%u %u %u", &r, &g, &b);
-        /** load global dac values **/
-        dac[index].red   = (BYTE)((r%256) >> 2); /* maps default to 8 bits */
-        dac[index].green = (BYTE)((g%256) >> 2); /* DAC wants 6 bits */
-        dac[index].blue  = (BYTE)((b%256) >> 2);
+		if (fgets(line,100,f) == NULL)
+		{
+			break;
+		}
+		sscanf(line, "%u %u %u", &r, &g, &b);
+		/** load global dac values **/
+		dac[index].red   = (BYTE)((r%256) >> 2); /* maps default to 8 bits */
+		dac[index].green = (BYTE)((g%256) >> 2); /* DAC wants 6 bits */
+		dac[index].blue  = (BYTE)((b%256) >> 2);
 	}
 	fclose(f);
 	while (index < 256)   /* zap unset entries */
 	{
-        dac[index].red = dac[index].blue = dac[index].green = 40;
-        ++index;
+		dac[index].red = dac[index].blue = dac[index].green = 40;
+		++index;
 	}
 	colorstate = 2;
 	strcpy(colorfile,fn);

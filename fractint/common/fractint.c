@@ -183,7 +183,9 @@ void check_samename(void)
 		{
 			makepath(path, drive, dir, fname, "gif");
 			if (access(path, 0) == 0)
-			exit(0);
+			{
+				exit(0);
+			}
 		}
 	}
 
@@ -191,7 +193,9 @@ void check_samename(void)
 static void my_floating_point_err(int sig)
 {
 	if (sig != 0)
+	{
 		overflow = 1;
+	}
 }
 
 char g_exe_path[FILE_MAX_PATH] = { 0 };
@@ -442,7 +446,9 @@ restorestart:
 		overlay3d = 0;                    /* forget overlays */
 		display3d = 0;                    /* forget 3D */
 		if (calc_status == CALCSTAT_NON_RESUMABLE)
+		{
 			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
 		resumeflag = 1;
 		goto resumeloop;                  /* ooh, this is ugly */
 	}
@@ -465,11 +471,17 @@ imagestart:                             /* calc/display a new image */
 	got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
 	if (showfile)
+	{
 		if (calc_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
+		{
 			calc_status = CALCSTAT_PARAMS_CHANGED;
+		}
+	}
 
 	if (initbatch == INIT_BATCH_NONE)
+	{
 		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
+	}
 
 	cyclelimit = initcyclelimit;         /* default cycle limit   */
 	g_adapter = g_init_mode;                  /* set the video adapter up */
@@ -485,13 +497,19 @@ imagestart:                             /* calc/display a new image */
 		kbdchar = main_menu(0);
 		if (kbdchar == FIK_INSERT) goto restart;      /* restart pgm on Insert Key */
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
+		{
 			kbdchar = select_video_mode(-1);
+		}
 		g_adapter = check_vidmode_key(0, kbdchar);
 		if (g_adapter >= 0)
+		{
 			break;                                 /* got a video mode now */
+		}
 #ifndef XFRACT
 		if ('A' <= kbdchar && kbdchar <= 'Z')
+		{
 			kbdchar = tolower(kbdchar);
+		}
 #endif
 		if (kbdchar == 'd')  /* shell to DOS */
 		{
@@ -516,7 +534,9 @@ imagestart:                             /* calc/display a new image */
 			{
 #endif
 				if ((get_commands() & CMDARG_3D_YES) == 0)
+				{
 					goto imagestart;
+				}
 				kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 			}
 #ifndef XFRACT
@@ -528,9 +548,13 @@ imagestart:                             /* calc/display a new image */
 #endif
 					display3d = 0;
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
+					{
 						display3d = 1;
+					}
 					if (colorpreloaded)
+					{
 						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case colors= present */
+					}
 					driver_set_for_text(); /* switch to text mode */
 					showfile = -1;
 					goto restorestart;
@@ -574,9 +598,13 @@ imagestart:                             /* calc/display a new image */
 				if (kbdchar == 'f')  /* floating pt toggle */
 				{
 					if (usr_floatflag == 0)
+					{
 						usr_floatflag = 1;
+					}
 					else
+					{
 						usr_floatflag = 0;
+					}
 					goto imagestart;
 				}
 				if (kbdchar == 'i')  /* set 3d fractal parms */
@@ -672,9 +700,13 @@ va_dcl
 
 	do_bench = timerflag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
+	{
 		do_bench = (debugflag == 200);
+	}
 	if (do_bench)
+	{
 		fp=dir_fopen(workdir, "bench", "a");
+	}
 	timer_start = clock_ticks();
 	switch (timertype)
 	{
@@ -714,7 +746,9 @@ va_dcl
 			maxit);
 		fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
 		if (fp != NULL)
+		{
 			fclose(fp);
+		}
 		}
 	return out;
 }

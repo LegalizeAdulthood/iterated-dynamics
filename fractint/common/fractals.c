@@ -148,7 +148,9 @@ int  fpMODbailout(void)
 {
 	magnitude = (tempsqrx=sqr(g_new.x);
 	if (magnitude + (tempsqry=sqr(g_new.y))) >= rqlim)
+	{
 		return 1;
+	}
 	old = g_new;
 	return 0;
 }
@@ -286,7 +288,9 @@ int  fpMANRbailout(void)
 static int  Halleybailout(void)
 {
 	if (fabs(modulus(g_new)-modulus(old)) < parm2.x)
+	{
 		return 1;
+	}
 	old = g_new;
 	return 0;
 }
@@ -301,7 +305,9 @@ static int  MPCHalleybailout(void)
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
 	if (pMPcmp(mptmpbailout, mptmpparm2x) < 0)
+	{
 		return 1;
+	}
 	mpcold = mpcnew;
 	return 0;
 }
@@ -413,12 +419,14 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 	{
 		/*
 		if (labs(lxt) >= maxarg || labs(lyt) >= maxarg)
-           return -1;
+			return -1;
 		*/
 		lt2 = multiply(lxt, lxt, bitshift) - multiply(lyt, lyt, bitshift);
 		lyt = multiply(lxt, lyt, bitshiftless1);
 		if (overflow)
-           return overflow;
+		{
+			return overflow;
+		}
 		lxt = lt2;
 
 		if (exp & 1)
@@ -430,7 +438,9 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 		exp >>= 1;
 	}
 	if (result->x == 0 && result->y == 0)
-       overflow = 1;
+	{
+		overflow = 1;
+	}
 	return overflow;
 }
 #if 0
@@ -482,42 +492,48 @@ int NewtonFractal2(void)
 	static char start = 1;
 	if (start)
 	{
-       start = 0;
+		start = 0;
 	}
 	cpower(&old, degree-1, &tmp);
 	complex_mult(tmp, old, &g_new);
 
 	if (DIST1(g_new) < threshold)
 	{
-       if (fractype == NEWTBASIN || fractype == MPNEWTBASIN)
-       {
-          long tmpcolor;
-          int i;
-          tmpcolor = -1;
-          /* this code determines which degree-th root of root the
-             Newton formula converges to. The roots of a 1 are
-             distributed on a circle of radius 1 about the origin. */
-          for (i = 0; i < degree; i++)
-             /* color in alternating shades with iteration according to
-                which root of 1 it converged to */
-              if (distance(roots[i], old) < threshold)
-              {
-						if (basin == 2)
-						{
-                      tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
-						}
-						else
-						{
-                      tmpcolor = 1 + i;
-						}
-						break;
-              }
-           if (tmpcolor == -1)
-              coloriter = maxcolor;
-           else
-              coloriter = tmpcolor;
-       }
-       return 1;
+		if (fractype == NEWTBASIN || fractype == MPNEWTBASIN)
+		{
+			long tmpcolor;
+			int i;
+			tmpcolor = -1;
+			/* this code determines which degree-th root of root the
+				Newton formula converges to. The roots of a 1 are
+				distributed on a circle of radius 1 about the origin. */
+			for (i = 0; i < degree; i++)
+			{
+				/* color in alternating shades with iteration according to
+					which root of 1 it converged to */
+				if (distance(roots[i], old) < threshold)
+				{
+					if (basin == 2)
+					{
+						tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
+					}
+					else
+					{
+						tmpcolor = 1 + i;
+					}
+					break;
+				}
+			}
+			if (tmpcolor == -1)
+			{
+				coloriter = maxcolor;
+			}
+			else
+			{
+				coloriter = tmpcolor;
+			}
+		}
+		return 1;
 	}
 	g_new.x = d1overd*g_new.x + roverd;
 	g_new.y *= d1overd;
@@ -525,7 +541,9 @@ int NewtonFractal2(void)
 	/* Watch for divide underflow */
 	t2 = tmp.x*tmp.x + tmp.y*tmp.y;
 	if (t2 < FLT_MIN)
+	{
 		return 1;
+	}
 	else
 	{
 		t2 = 1.0 / t2;
@@ -548,7 +566,9 @@ complex_div(_CMPLX numerator, _CMPLX denominator, _CMPLX *pout)
 {
 	double mod = modulus(denominator);
 	if (mod < FLT_MIN)
+	{
 		return 1;
+	}
 	conjugate(&denominator);
 	complex_mult(numerator, denominator, pout);
 	pout->x = pout->x/mod;
@@ -581,20 +601,30 @@ int MPCNewtonFractal(void)
 			int i;
 			tmpcolor = -1;
 			for (i = 0; i < degree; i++)
-             if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
-             {
-				if (basin == 2)
-                   tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
-                else
-					tmpcolor = 1 + i;
-                    break;
-             }
-          if (tmpcolor == -1)
-             coloriter = maxcolor;
-          else
-             coloriter = tmpcolor;
+			{
+				if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
+				{
+					if (basin == 2)
+					{
+						tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
+					}
+					else
+					{
+						tmpcolor = 1 + i;
+					}
+					break;
+				}
+			}
+			if (tmpcolor == -1)
+			{
+				coloriter = maxcolor;
+			}
+			else
+			{
+				coloriter = tmpcolor;
+			}
 		}
-       return 1;
+		return 1;
 	}
 
 	mpcnew.x = *pMPadd(*pMPmul(mpd1overd, mpcnew.x), mproverd);
@@ -788,9 +818,13 @@ SierpinskiFractal(void)
 	lnew.x = (lold.x << 1);              /* new.x = 2*old.x  */
 	lnew.y = (lold.y << 1);              /* new.y = 2*old.y  */
 	if (lold.y > ltmp.y)  /* if old.y > .5 */
+	{
 		lnew.y = lnew.y - ltmp.x; /* new.y = 2*old.y - 1 */
+	}
 	else if (lold.x > ltmp.y)     /* if old.x > .5 */
+	{
 		lnew.x = lnew.x - ltmp.x; /* new.x = 2*old.x - 1 */
+	}
 	/* end barnsley code */
 	return longbailout();
 #else
@@ -807,9 +841,13 @@ SierpinskiFPFractal(void)
 	g_new.x = old.x + old.x;
 	g_new.y = old.y + old.y;
 	if (old.y > .5)
+	{
 		g_new.y = g_new.y - 1;
+	}
 	else if (old.x > .5)
+	{
 		g_new.x = g_new.x - 1;
+	}
 
 	/* end barnsley code */
 	return floatbailout();
@@ -952,7 +990,9 @@ UnityFractal(void)
 		books unless they saw it here first - Mark invented it! */
 	XXOne = multiply(lold.x, lold.x, bitshift) + multiply(lold.y, lold.y, bitshift);
 	if ((XXOne > FgTwo) || (labs(XXOne - FgOne) < delmin))
+	{
 		return 1;
+	}
 	lold.y = multiply(FgTwo - XXOne, lold.x, bitshift);
 	lold.x = multiply(FgTwo - XXOne, lold.y, bitshift);
 	lnew=lold;  /* TW added this line */
@@ -971,7 +1011,9 @@ double XXOne;
 
 	XXOne = sqr(old.x) + sqr(old.y);
 	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
+	{
 		return 1;
+	}
 	old.y = (2.0 - XXOne)* old.x;
 	old.x = (2.0 - XXOne)* old.y;
 	g_new=old;  /* TW added this line */
@@ -1032,7 +1074,9 @@ longZpowerFractal(void)
 {
 #if !defined(XFRACT)
 	if (lcpower(&lold, c_exp, &lnew, bitshift))
+	{
 		lnew.x = lnew.y = 8L << bitshift;
+	}
 	lnew.x += longparm->x;
 	lnew.y += longparm->y;
 	return longbailout();
@@ -1058,7 +1102,9 @@ longCmplxZpowerFractal(void)
 		lnew.y = (long)(x.y*fudge);
 	}
 	else
+	{
 		overflow = 1;
+	}
 	lnew.x += longparm->x;
 	lnew.y += longparm->y;
 	return longbailout();
@@ -1240,7 +1286,9 @@ PopcornFractal_Old(void)
 	tempsqry = sqr(g_new.y);
 	magnitude = tempsqrx + tempsqry;
 	if (magnitude >= rqlim)
+	{
 		return 1;
+	}
 	old = g_new;
 	return 0;
 }
@@ -1280,7 +1328,9 @@ PopcornFractal(void)
 	tempsqry = sqr(g_new.y);
 	magnitude = tempsqrx + tempsqry;
 	if (magnitude >= rqlim || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
+	{
 		return 1;
+	}
 	old = g_new;
 	return 0;
 }
@@ -2156,7 +2206,9 @@ TrigXTrigFractal(void)
 	LCMPLXtrig1(lold, ltmp2);
 	LCMPLXmult(ltmp, ltmp2, lnew);
 	if (overflow)
+	{
 		TryFloatFractal(TrigXTrigfpFractal);
+	}
 	return longbailout();
 #else
 	return 0;
@@ -2268,7 +2320,9 @@ long l16triglim_2 = 8L << 15;
 		LCMPLXtrig0(ltmp, lnew);
 		}
 	if (overflow)
+	{
 		TryFloatFractal(TrigZsqrdfpFractal);
+	}
 	return longbailout();
 #else
 	return 0;
@@ -2556,9 +2610,13 @@ void invertz2(_CMPLX *z)
 
 	tempsqrx = sqr(z->x) + sqr(z->y);  /* Get old radius */
 	if (fabs(tempsqrx) > FLT_MIN)
+	{
 		tempsqrx = f_radius / tempsqrx;
+	}
 	else
+	{
 		tempsqrx = FLT_MAX;   /* a big number, but not TOO big */
+	}
 	z->x *= tempsqrx;      z->y *= tempsqrx;      /* Perform inversion */
 	z->x += f_xcenter; z->y += f_ycenter; /* Renormalize */
 }
@@ -2619,7 +2677,9 @@ int long_mandel_per_pixel(void)
 	/* barnsleym2 */
 	linit.x = lxpixel();
 	if (save_release >= 2004)
+	{
 		linit.y = lypixel();
+	}
 
 	if (invert)
 	{
@@ -2639,9 +2699,13 @@ int long_mandel_per_pixel(void)
 	}
 
 	if (useinitorbit == 1)
+	{
 		lold = linitorbit;
+	}
 	else
+	{
 		lold = linit;
+	}
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -2662,17 +2726,18 @@ int julia_per_pixel(void)
 
 		/* watch out for overflow */
 		if (bitshift <= 24)
+		{
 			if (sqr(old.x) + sqr(old.y) >= 127)
 			{
 				old.x = 8;  /* value to bail out in one iteration */
 				old.y = 8;
 			}
-		if (bitshift >  24)
-			if (sqr(old.x) + sqr(old.y) >= 4.0)
-			{
-				old.x = 2;  /* value to bail out in one iteration */
-				old.y = 2;
-			}
+		}
+		else if (sqr(old.x) + sqr(old.y) >= 4.0)
+		{
+			old.x = 2;  /* value to bail out in one iteration */
+			old.y = 2;
+		}
 
 		/* convert to fudged longs */
 		lold.x = (long)(old.x*fudge);
@@ -2714,17 +2779,18 @@ int mandel_per_pixel(void)
 
 		/* watch out for overflow */
 		if (bitshift <= 24)
+		{
 			if (sqr(init.x) + sqr(init.y) >= 127)
 			{
 				init.x = 8;  /* value to bail out in one iteration */
 				init.y = 8;
 			}
-		if (bitshift >  24)
-			if (sqr(init.x) + sqr(init.y) >= 4)
-			{
-				init.x = 2;  /* value to bail out in one iteration */
-				init.y = 2;
-			}
+		}
+		else if (sqr(init.x) + sqr(init.y) >= 4)
+		{
+			init.x = 2;  /* value to bail out in one iteration */
+			init.y = 2;
+		}
 
 		/* convert to fudged longs */
 		linit.x = (long)(init.x*fudge);
@@ -2734,7 +2800,9 @@ int mandel_per_pixel(void)
 	{
 		linit.x = lxpixel();
 		if (save_release >= 2004)
+		{
 			linit.y = lypixel();
+		}
 	}
 	switch (fractype)
      {
@@ -2749,9 +2817,13 @@ int mandel_per_pixel(void)
 
 	/* alter init value */
 	if (useinitorbit == 1)
+	{
 		lold = linitorbit;
+	}
 	else if (useinitorbit == 2)
+	{
 		lold = linit;
+	}
 
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
@@ -2795,19 +2867,27 @@ int marksmandel_per_pixel()
 	{
 		linit.x = lxpixel();
 		if (save_release >= 2004)
+		{
 			linit.y = lypixel();
+		}
 	}
 
 	if (useinitorbit == 1)
+	{
 		lold = linitorbit;
+	}
 	else
+	{
 		lold = linit;
+	}
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
 
 	if (c_exp > 3)
+	{
 		lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
+	}
 	else if (c_exp == 3)
 	{
 		lcoefficient.x = multiply(lold.x, lold.x, bitshift)
@@ -2815,7 +2895,9 @@ int marksmandel_per_pixel()
 		lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
 	}
 	else if (c_exp == 2)
+	{
 		lcoefficient = lold;
+	}
 	else if (c_exp < 2)
 	{
 		lcoefficient.x = 1L << bitshift;
@@ -2833,18 +2915,26 @@ int marksmandelfp_per_pixel()
 	/* marksmandel */
 
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 
 	if (useinitorbit == 1)
+	{
 		old = initorbit;
+	}
 	else
+	{
 		old = init;
+	}
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -2853,14 +2943,18 @@ int marksmandelfp_per_pixel()
 	tempsqry = sqr(old.y);
 
 	if (c_exp > 3)
+	{
 		cpower(&old, c_exp-1, &coefficient);
+	}
 	else if (c_exp == 3)
 	{
 		coefficient.x = tempsqrx - tempsqry;
 		coefficient.y = old.x*old.y*2;
 	}
 	else if (c_exp == 2)
+	{
 		coefficient = old;
+	}
 	else if (c_exp < 2)
 	{
 		coefficient.x = 1.0;
@@ -2886,12 +2980,16 @@ int mandelfp_per_pixel(void)
 	/* mandelfp */
 
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 	switch (fractype)
 		{
@@ -2911,9 +3009,13 @@ int mandelfp_per_pixel(void)
 
 	/* alter init value */
 	if (useinitorbit == 1)
+	{
 		old = initorbit;
+	}
 	else if (useinitorbit == 2)
+	{
 		old = init;
+	}
 
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
@@ -2939,7 +3041,9 @@ int juliafp_per_pixel(void)
 	/* floating point julia */
 	/* juliafp */
 	if (invert)
+	{
 		invertz2(&old);
+	}
 	else
 	{
      old.x = dxpixel();
@@ -2957,7 +3061,9 @@ int MPCjulia_per_pixel(void)
 	/* floating point julia */
 	/* juliafp */
 	if (invert)
+	{
 		invertz2(&old);
+	}
 	else
 	{
      old.x = dxpixel();
@@ -2983,18 +3089,26 @@ otherrichard8fp_per_pixel(void)
 int othermandelfp_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 
 	if (useinitorbit == 1)
+	{
 		old = initorbit;
+	}
 	else
+	{
 		old = init;
+	}
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3007,12 +3121,16 @@ int MPCHalley_per_pixel(void)
 #if !defined(XFRACT)
 	/* MPC halley */
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 
 	mpcold.x = *pd2MP(init.x);
@@ -3027,12 +3145,16 @@ int MPCHalley_per_pixel(void)
 int Halley_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 
 	old = init;
@@ -3043,7 +3165,9 @@ int Halley_per_pixel(void)
 int otherjuliafp_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&old);
+	}
 	else
 	{
 		old.x = dxpixel();
@@ -3089,12 +3213,16 @@ int quaternionfp_per_pixel(void)
 int MarksCplxMandperp(void)
 {
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 	old.x = init.x + parm.x; /* initial pertubation of parameters set */
 	old.y = init.y + parm.y;
@@ -3141,7 +3269,9 @@ int long_phoenix_per_pixel(void)
 int phoenix_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&old);
+	}
 	else
 	{
 		old.x = dxpixel();
@@ -3158,7 +3288,9 @@ int long_mandphoenix_per_pixel(void)
 #if !defined(XFRACT)
 	linit.x = lxpixel();
 	if (save_release >= 2004)
+	{
 		linit.y = lypixel();
+	}
 
 	if (invert)
 	{
@@ -3178,9 +3310,13 @@ int long_mandphoenix_per_pixel(void)
 	}
 
 	if (useinitorbit == 1)
+	{
 		lold = linitorbit;
+	}
 	else
+	{
 		lold = linit;
+	}
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -3196,18 +3332,26 @@ int long_mandphoenix_per_pixel(void)
 int mandphoenix_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();
 		if (save_release >= 2004)
+		{
 			init.y = dypixel();
+		}
 	}
 
 	if (useinitorbit == 1)
+	{
 		old = initorbit;
+	}
 	else
+	{
 		old = init;
+	}
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3407,7 +3551,9 @@ int MandelbrotMix4Setup(void)
 int MandelbrotMix4fp_per_pixel(void)
 {
 	if (invert)
+	{
 		invertz2(&init);
+	}
 	else
 	{
 		init.x = dxpixel();

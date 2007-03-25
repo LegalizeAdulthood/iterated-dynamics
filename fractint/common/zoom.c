@@ -62,13 +62,19 @@ void dispbox(void)
 	}
 /* There is an interaction between getcolor and putcolor, so separate them */
 	if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
+	{
 		for (i = 0; i < boxcount; i++)
 		{
 			if (colors == 2)
+			{
 				putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
+			}
 			else
+			{
 				putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxc);
+			}
 		}
+	}
 }
 
 void clearbox(void)
@@ -100,10 +106,12 @@ void drawbox(int drawit)
 	{
 		if (boxcount != 0)  /* remove the old box from display */
 		{
-				clearbox();
-				boxcount = 0; }
+			clearbox();
+			boxcount = 0;
+		}
 		reset_zoom_corners();
-		return; }
+		return;
+	}
 	if (bf_math)
 	{
 		saved = save_stack();
@@ -191,7 +199,8 @@ void drawbox(int drawit)
 	if (boxcount != 0)  /* remove the old box from display */
 	{
 		clearbox();
-		boxcount = 0; }
+		boxcount = 0;
+	}
 
 	if (drawit)  /* caller wants box drawn as well as co-ords calc'd */
 	{
@@ -226,7 +235,10 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 	{
 		if (fr.x > to.x)  /* swap so from.x is < to.x */
 		{
-				tmpp = fr; fr = to; to = tmpp; }
+			tmpp = fr;
+			fr = to;
+			to = tmpp;
+		}
 		xincr = (to.x-fr.x)*4/sxdots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
 		ctr = (to.x-fr.x-1)/xincr;
 		altdec = abs(to.y-fr.y)*xincr;
@@ -255,7 +267,10 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 	{
 		if (fr.y > to.y)  /* swap so from.y is < to.y */
 		{
-				tmpp = fr; fr = to; to = tmpp; }
+			tmpp = fr;
+			fr = to;
+			to = tmpp;
+		}
 		yincr = (to.y-fr.y)*4/sydots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
 		ctr = (to.y-fr.y-1)/yincr;
 		altdec = abs(to.x-fr.x)*yincr;
@@ -303,13 +318,20 @@ void moveboxf(double dx, double dy)
 	if (dx != 0.0)
 	{
 		if ((zbx += dx) + zwidth/2 < 0)  /* center must stay onscreen */
-				zbx = zwidth/-2;
+		{
+			zbx = zwidth/-2;
+		}
 		if (zbx + zwidth/2 > 1)
-				zbx = 1.0 - zwidth/2;
+		{
+			zbx = 1.0 - zwidth/2;
+		}
 		if (align != 0
 			&& ((col = (int)(zbx*(dxsize + PIXELROUND))) & (align-1)) != 0)
 		{
-			if (dx > 0) col += align;
+			if (dx > 0)
+			{
+				col += align;
+			}
 			col -= col & (align-1); /* adjust col to pass alignment */
 			zbx = (double)col/dxsize;
 		}
@@ -318,13 +340,20 @@ void moveboxf(double dx, double dy)
 	{
 		zby += dy;
 		if (zby + zdepth/2 < 0)
+		{
 			zby = zdepth/-2;
+		}
 		if (zby + zdepth/2 > 1)
+		{
 			zby = 1.0 - zdepth/2;
+		}
 		if (align != 0
 			&& ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0)
 		{
-			if (dy > 0) row += align;
+			if (dy > 0)
+			{
+				row += align;
+			}
 			row -= row & (align-1);
 			zby = (double)row/dysize;
 		}
@@ -334,24 +363,32 @@ void moveboxf(double dx, double dy)
 	{
 		col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
 		row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
-		}
-#endif
 	}
+#endif
+}
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
 {
 	if (zwidth + dwidth > 1)
+	{
 		dwidth = 1.0-zwidth;
+	}
 	if (zwidth + dwidth < 0.05)
+	{
 		dwidth = 0.05-zwidth;
+	}
 	zwidth += dwidth;
 	if (zdepth + ddepth > 1)
+	{
 		ddepth = 1.0-zdepth;
+	}
 	if (zdepth + ddepth < 0.05)
+	{
 		ddepth = 0.05-zdepth;
+	}
 	zdepth += ddepth;
 	moveboxf(dwidth/-2, ddepth/-2); /* keep it centered & check limits */
-	}
+}
 
 void resizebox(int steps)
 {
@@ -360,14 +397,14 @@ void resizebox(int steps)
 	{
 		deltay = steps*0.036 / screenaspect;
 		deltax = zwidth*deltay / zdepth;
-		}
+	}
 	else  /* box larger on x axis */
 	{
 		deltax = steps*0.036;
 		deltay = zdepth*deltax / zwidth;
-		}
-	chgboxf(deltax, deltay);
 	}
+	chgboxf(deltax, deltay);
+}
 
 void chgboxi(int dw, int dd)
 {   /* change size by pixels */
@@ -537,7 +574,9 @@ void zoomout(void) /* for ctl-enter, calc corners for zooming out */
 		zoomoutbf();
 	}
 	else
+	{
 		zoomoutdbl();
+	}
 }
 
 #ifdef C6
@@ -572,34 +611,54 @@ void aspectratio_crop(float oldaspect, float newaspect)
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 {   int i, j;
 	if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
+	{
 		return 0; /* not resumable, not complete */
+	}
 	if (curfractalspecific->calctype != StandardFractal
 		&& curfractalspecific->calctype != calcmand
 		&& curfractalspecific->calctype != calcmandfp
 		&& curfractalspecific->calctype != lyapunov
 		&& curfractalspecific->calctype != calcfroth)
+	{
 		return 0; /* not a worklist-driven type */
+	}
 	if (zwidth != 1.0 || zdepth != 1.0 || zskew != 0.0 || zrotate != 0.0)
+	{
 		return 0; /* not a full size unrotated unskewed zoombox */
+	}
 	if (stdcalcmode == 't')
+	{
 		return 0; /* tesselate, can't do it */
+	}
 	if (stdcalcmode == 'd')
-	return 0; /* diffusion scan: can't do it either */
+	{
+		return 0; /* diffusion scan: can't do it either */
+	}
 	if (stdcalcmode == 'o')
-	return 0; /* orbits, can't do it */
+	{
+		return 0; /* orbits, can't do it */
+	}
 
 	/* can pan if we get this far */
 
 	if (calc_status == CALCSTAT_COMPLETED)
+	{
 		return 1; /* image completed, align on any pixel */
+	}
 	if (potflag && pot16bit)
+	{
 		return 1; /* 1 pass forced so align on any pixel */
+	}
 	if (stdcalcmode == 'b')
+	{
 		return 1; /* btm, align on any pixel */
+	}
 	if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS))
 	{
 		if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
+		{
 			return 2;
+		}
 		return 1; /* assume 1pass */
 	}
 	/* solid guessing */
@@ -608,17 +667,24 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	/* don't do end_resume! we're just looking */
 	i = 9;
 	for (j = 0; j < num_worklist; ++j) /* find lowest pass in any pending window */
+	{
 		if (worklist[j].pass < i)
-				i = worklist[j].pass;
+		{
+			i = worklist[j].pass;
+		}
+	}
 	j = ssg_blocksize(); /* worst-case alignment requirement */
 	while (--i >= 0)
+	{
 		j = j >> 1; /* reduce requirement */
-	return j;
 	}
+	return j;
+}
 
 static void _fastcall move_row(int fromrow, int torow, int col)
 /* move a row on the screen */
-{   int startcol, endcol, tocol;
+{
+	int startcol, endcol, tocol;
 	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
 	if (fromrow >= 0 && fromrow < ydots)
 	{
@@ -626,29 +692,37 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 		endcol = xdots-1;
 		if (col < 0)
 		{
-				tocol -= col;
-				endcol += col; }
-		if (col > 0)
-				startcol += col;
-		get_line(fromrow, startcol, endcol, (BYTE *)&dstack[tocol]);
+			tocol -= col;
+			endcol += col;
 		}
-	put_line(torow, 0, xdots-1, (BYTE *)dstack);
+		if (col > 0)
+		{
+			startcol += col;
+		}
+		get_line(fromrow, startcol, endcol, (BYTE *)&dstack[tocol]);
 	}
+	put_line(torow, 0, xdots-1, (BYTE *)dstack);
+}
 
 int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist & pan */
-{   int i, j, row, col, y, alignmask, listfull;
+{
+	int i, j, row, col, y, alignmask, listfull;
 	if (zwidth == 0.0)
+	{
 		return 0; /* no zoombox, leave calc_status as is */
+	}
 	/* got a zoombox */
 	alignmask = check_pan()-1;
 	if (alignmask < 0 || evolving)
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
-		return 0; }
+		return 0;
+	}
 	if (zbx == 0.0 && zby == 0.0)
 	{
 		clearbox();
-		return 0; } /* box is full screen, leave calc_status as is */
+		return 0; /* box is full screen, leave calc_status as is */
+	}
 	col = (int)(zbx*(dxsize + PIXELROUND)); /* calc dest col, row of topleft pixel */
 	row = (int)(zby*(dysize + PIXELROUND));
 	if (do_zoomout)  /* invert row and col */
@@ -684,26 +758,36 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	if (row < 0)
 	{
 		listfull |= add_worklist(0, xdots-1, 0, 0, -row-1, 0, 0, 0);
-		i = -row; }
+		i = -row;
+	}
 	if (row > 0)
 	{
 		listfull |= add_worklist(0, xdots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
-		j = ydots - row - 1; }
+		j = ydots - row - 1;
+	}
 	if (col < 0)
+	{
 		listfull |= add_worklist(0, -col-1, 0, i, j, i, 0, 0);
+	}
 	if (col > 0)
+	{
 		listfull |= add_worklist(xdots-col, xdots-1, xdots-col, i, j, i, 0, 0);
+	}
 	if (listfull != 0)
 	{
 		if (stopmsg(STOPMSG_CANCEL,
 				"Tables full, can't pan current image.\n"
 				"Cancel resumes old image, continue pans and calculates a new one."))
-				{
-				zwidth = 0; /* cancel the zoombox */
-				drawbox(1); }
+		{
+			zwidth = 0; /* cancel the zoombox */
+			drawbox(1);
+		}
 		else
-				calc_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
-		return 0; }
+		{
+			calc_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
+		}
+		return 0;
+	}
 	/* now we're committed */
 	calc_status = CALCSTAT_RESUMABLE;
 	clearbox();
@@ -783,7 +867,9 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 				if (k < j)
 				{
 					if (num_worklist >= MAXCALCWORK) /* no room to split */
+					{
 						restart_window(i);
+					}
 					else  /* split it */
 					{
 						worklist[num_worklist] = worklist[i];
@@ -824,7 +910,9 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 				if (k < j)
 				{
 					if (num_worklist >= MAXCALCWORK) /* no room to split */
+					{
 						restart_window(i);
+					}
 					else  /* split it */
 					{
 						worklist[num_worklist] = worklist[i];

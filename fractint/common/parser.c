@@ -63,7 +63,7 @@ JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 
 int jump_index, InitJumpIndex;
 
-static int frm_prescan (FILE *open_file);
+static int frm_prescan(FILE *open_file);
 
 #define CASE_TERMINATOR case',':\
                         case '\n':\
@@ -163,7 +163,7 @@ struct token_st
 /* TW made dependent on Max_Ops */
 
 #define MAX_STORES ((Max_Ops/4)*2)  /* at most only half the ops can be stores */
-#define MAX_LOADS  ((unsigned)(Max_Ops*.8))  /* and 80% can be loads */
+#define MAX_LOADS ((unsigned)(Max_Ops*.8))  /* and 80% can be loads */
 /* PB 901103 made some of the following static for safety */
 
 static struct PEND_OP o[2300];
@@ -319,17 +319,21 @@ static char *ParseErrs(int which)
 	static char e33[] = {"Variable or constant exceeds 32 character limit"};
 	static char e34[] = {"Only one \":\" permitted in a formula"};
 	static char e35[] = {"Invalid ParseErrs code"};
-	static char *ErrStrings[] = { e0,e1,e2,e3,e4,e5,
-                                  e6,e7,e8,e9,e10,
-                                  e11,e12,e13,e14,e15,
-                                  e16,e17,e18,e19,e20,
-                                  e21,e22,e23,e24,e25,
-                                  e26, e27, e28, e29, e30,
-                                  e31, e32, e33, e34, e35
-                                 };
+	static char *ErrStrings[] =
+	{
+		e0,  e1,  e2,  e3,  e4,  e5,
+		e6,  e7,  e8,  e9,  e10,
+		e11, e12, e13, e14, e15,
+		e16, e17, e18, e19, e20,
+		e21, e22, e23, e24, e25,
+		e26, e27, e28, e29, e30,
+		e31, e32, e33, e34, e35
+	};
 	lasterr = sizeof(ErrStrings)/sizeof(ErrStrings[0]) - 1;
 	if (which > lasterr)
-     which = lasterr;
+	{
+		which = lasterr;
+	}
 	return (char *)ErrStrings[which];
 }
 
@@ -364,7 +368,9 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 		Arg1->l.y = (long)(Arg1->d.y*fg);
 	}
 	else
+	{
 		overflow = 1;
+	}
 }
 #else  /* use Macro form for (?) greater speed */
   /* call lStk via dStk */
@@ -439,7 +445,9 @@ void SetRandFnct(void)
 	unsigned Seed;
 
 	if (!SetRandom)
+	{
 		RandNum = Arg1->l.x ^ Arg1->l.y;
+	}
 
 	Seed = (unsigned)RandNum ^ (unsigned)(RandNum >> 16);
 	srand(Seed);
@@ -573,9 +581,13 @@ void dStkAbs(void)
 void mStkAbs(void)
 {
 	if (Arg1->m.x.Exp < 0)
+	{
 		Arg1->m.x.Exp = -Arg1->m.x.Exp;
+	}
 	if (Arg1->m.y.Exp < 0)
+	{
 		Arg1->m.y.Exp = -Arg1->m.y.Exp;
+	}
 }
 
 void lStkAbs(void)
@@ -996,7 +1008,9 @@ void lStkMod(void)
 	Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, bitshift) +
 	multiply(Arg1->l.y, Arg1->l.y, bitshift);
 	if (Arg1->l.x < 0)
+	{
 		overflow = 1;
+	}
 	Arg1->l.y = 0L;
 }
 
@@ -1005,7 +1019,9 @@ void lStkModOld(void)
 	Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, bitshift) +
 	multiply(Arg2->l.y, Arg1->l.y, bitshift);
 	if (Arg1->l.x < 0)
+	{
 		overflow = 1;
+	}
 	Arg1->l.y = 0L;
 }
 #endif
@@ -1833,7 +1849,9 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z)
 	double e2x, siny, cosy;
 
 	if (fpu >= 387)
+	{
 		FPUcplxexp387(x, z);
+	}
 	else
 	{
 		e2x = exp(x->x);
@@ -1897,7 +1915,9 @@ void lStkPwr(void)
 		Arg2->l.y = (long)(x.y*fg);
 	}
 	else
+	{
 		overflow = 1;
+	}
 	Arg1--;
 	Arg2--;
 }
@@ -1913,7 +1933,7 @@ void EndInit(void)
 
 void (*PtrEndInit)(void) = EndInit;
 
-void StkJump (void)
+void StkJump(void)
 {
 	OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
 	LodPtr = jump_control[jump_index].ptrs.JumpLodPtr;
@@ -1921,63 +1941,87 @@ void StkJump (void)
 	jump_index = jump_control[jump_index].DestJumpIndex;
 }
 
-void dStkJumpOnFalse (void)
+void dStkJumpOnFalse(void)
 {
 	if (Arg1->d.x == 0)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 }
 
-void mStkJumpOnFalse (void)
+void mStkJumpOnFalse(void)
 {
 #if !defined(XFRACT)
 	if (Arg1->m.x.Mant == 0)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 #endif
 }
 
-void lStkJumpOnFalse (void)
+void lStkJumpOnFalse(void)
 {
 	if (Arg1->l.x == 0)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 }
 
 void (*StkJumpOnFalse)(void) = dStkJumpOnFalse;
 
-void dStkJumpOnTrue (void)
+void dStkJumpOnTrue(void)
 {
 	if (Arg1->d.x)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 }
 
-void mStkJumpOnTrue (void)
+void mStkJumpOnTrue(void)
 {
 #if !defined(XFRACT)
 	if (Arg1->m.x.Mant)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 #endif
 }
 
-void lStkJumpOnTrue (void)
+void lStkJumpOnTrue(void)
 {
 	if (Arg1->l.x)
+	{
 		StkJump();
+	}
 	else
+	{
 		jump_index++;
+	}
 }
 
 void (*StkJumpOnTrue)(void) = dStkJumpOnTrue;
 
-void StkJumpLabel (void)
+void StkJumpLabel(void)
 {
 	jump_index++;
 }
@@ -2014,10 +2058,10 @@ static int isconst_pair(char *Str)
 	{
 		j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
 		if (isdigit(Str[j])
-          || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
-          || Str[j] == '.')
-          {
-				answer = 1;
+			|| (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
+			|| Str[j] == '.')
+		{
+			answer = 1;
 		}
 	}
 	return answer;
@@ -2035,26 +2079,46 @@ struct ConstArg *isconst(char *Str, int Len)
 			if (!strnicmp(v[n].s, Str, Len))
 			{
 				if (n == 1)        /* The formula uses 'p1'. */
+				{
 					uses_p1 = 1;
+				}
 				if (n == 2)        /* The formula uses 'p2'. */
+				{
 					uses_p2 = 1;
+				}
 				if (n == 7)        /* The formula uses 'rand'. */
+				{
 					RandomSeed();
+				}
 				if (n == 8)        /* The formula uses 'p3'. */
+				{
 					uses_p3 = 1;
+				}
 				if (n == 13)        /* The formula uses 'ismand'. */
+				{
 					uses_ismand = 1;
+				}
 				if (n == 17)        /* The formula uses 'p4'. */
+				{
 					uses_p4 = 1;
+				}
 				if (n == 18)        /* The formula uses 'p5'. */
+				{
 					uses_p5 = 1;
+				}
 #if !defined(XFRACT)
 				if (n == 10 || n == 11 || n == 12)
+				{
 					if (MathType == L_MATH)
+					{
 						driver_unget_key('f');
+					}
+				}
 #endif
 				if (!isconst_pair(Str))
+				{
 					return &v[n];
+				}
 			}
 		}
 	}
@@ -2077,9 +2141,9 @@ struct ConstArg *isconst(char *Str, int Len)
 #endif
 
 	if (isdigit(Str[0])
-       || (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
-       || Str[0] == '.')
-       {
+		|| (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
+		|| Str[0] == '.')
+	{
 		if (o[posp-1].f == StkNeg)
 		{
 			posp--;
@@ -2087,23 +2151,29 @@ struct ConstArg *isconst(char *Str, int Len)
 			InitN--;
 			v[vsp].len++;
 		}
-		for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++);
+		for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++)
+		{
+		}
 		if (Str[n] == ',')
 		{
 			j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
 			if (isdigit(Str[j])
-             || (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
-             || Str[j] == '.')
-             {
+				|| (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
+				|| Str[j] == '.')
+			{
 				z.y = atof(&Str[j]);
 				for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++);
 				v[vsp].len = j;
 			}
 			else
+			{
 				z.y = 0.0;
+			}
 		}
 		else
+		{
 			z.y = 0.0;
+		}
 		z.x = atof(Str);
 		switch (MathType)
 		{
@@ -2162,9 +2232,15 @@ int isjump(char *Str, int Len)
 	int i;
 
 	for (i = 0; *JumpList[i]; i++)
+	{
 		if ((int) strlen(JumpList[i]) == Len)
+		{
 			if (!strnicmp(JumpList[i], Str, Len))
+			{
 				return i + 1;
+			}
+		}
+	}
 	return 0;
 }
 
@@ -2243,13 +2319,21 @@ int whichfn(char *s, int len)
 {
 	int out;
 	if (len != 3)
+	{
 		out = 0;
+	}
 	else if (strnicmp(s,"fn",2))
+	{
 		out = 0;
+	}
 	else
+	{
 		out = atoi(s + 2);
+	}
 	if (out < 1 || out > 4)
+	{
 		out = 0;
+	}
 	return out;
 }
 
@@ -2274,7 +2358,9 @@ void (*isfunct(char *Str, int Len))(void)
 					/* count function variables */
 					if ((functnum = whichfn(Str, Len)) != 0)    /* TIW 04-22-91 */
 						if (functnum > maxfn)                  /* TIW 04-22-91 */
+						{
 							maxfn = (char)functnum;                  /* TIW 04-22-91 */
+						}
 					return *FnctList[n].ptr;
 				}
 			}
@@ -2288,7 +2374,9 @@ void RecSortPrec(void)
 {
 	int ThisOp = NextOp++;
 	while (o[ThisOp].p > o[NextOp].p && NextOp < posp)
+	{
 		RecSortPrec();
+	}
 	f[OpPtr++] = o[ThisOp].f;
 }
 
@@ -2478,10 +2566,14 @@ static int ParseStr(char *Str, int pass)
 		StkSinh = lStkSinh;
 		StkLT = lStkLT;
 		StkLTE = lStkLTE;
-	if (save_release > 1826)
-	StkMod = lStkMod;
-	else
-	StkMod = lStkModOld;
+		if (save_release > 1826)
+		{
+			StkMod = lStkMod;
+		}
+		else
+		{
+			StkMod = lStkModOld;
+		}
 		StkSqr = lStkSqr;
 		StkCos = lStkCos;
 		StkCosh = lStkCosh;
@@ -2628,7 +2720,9 @@ static int ParseStr(char *Str, int pass)
 	for (n = 0; Str[n]; n++)
 	{
 		if (!Str[n])
+		{
 			break;
+		}
 		InitN = n;
 		switch (Str[n])
 		{
@@ -2723,7 +2817,9 @@ static int ParseStr(char *Str, int pass)
 					o[posp].f = StkLTE;
 				}
 				else
+				{
 					o[posp].f = StkLT;
+				}
 				o[posp++].p = 6 - (paren + Equals)*15;
 				break;
 			case '>':
@@ -2734,7 +2830,9 @@ static int ParseStr(char *Str, int pass)
 					o[posp].f = StkGTE;
 				}
 				else
+				{
 					o[posp].f = StkGT;
+				}
 				o[posp++].p = 6 - (paren + Equals)*15;
 				break;
 			case '*':
@@ -2770,7 +2868,9 @@ static int ParseStr(char *Str, int pass)
 				break;
 			default:
 				while (isalnum(Str[n + 1]) || Str[n + 1] == '.' || Str[n + 1] == '_')
+				{
 					n++;
+				}
 				Len = (n + 1)-InitN;
 				ExpectingArg = 0;
 				jumptype = isjump(&Str[InitN], Len);
@@ -2839,7 +2939,9 @@ static int ParseStr(char *Str, int pass)
 	while (NextOp < posp)
 	{
 		if (o[NextOp].f)
+		{
 			RecSortPrec();
+		}
 		else
 		{
 			NextOp++;
@@ -2902,7 +3004,9 @@ int Formula(void)
 	case L_MATH:
 		lold = lnew = v[3].a.l;
 		if (overflow)
+		{
 			return 1;
+		}
 		return Arg1->l.x == 0L;
 #endif
 	}
@@ -2925,9 +3029,13 @@ int form_per_pixel(void)
 	{
 	case D_MATH:
 		if ((row + col)&1)
+		{
 			v[9].a.d.x = 1.0;
+		}
 		else
+		{
 			v[9].a.d.x = 0.0;
+		}
 		v[9].a.d.y = 0.0;
 		break;
 
@@ -2935,7 +3043,9 @@ int form_per_pixel(void)
 #if !defined(XFRACT)
 	case M_MATH:
 		if ((row + col)&1)
+		{
 			v[9].a.m = MPCone;
+		}
 		else
 		{
 			v[9].a.m.x.Mant = v[9].a.m.x.Exp = 0;
@@ -3004,7 +3114,9 @@ int form_per_pixel(void)
 	}
 
 	if (LastInitOp)
+	{
 		LastInitOp = LastOp;
+	}
 	while (OpPtr < LastInitOp)
 	{
 		f[OpPtr]();
@@ -3030,9 +3142,13 @@ int form_per_pixel(void)
 	}
 
 	if (overflow)
+	{
 		return 0;
+	}
 	else
+	{
 		return 1;
+	}
 }
 
 int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
@@ -3094,9 +3210,13 @@ int fill_jump_struct(void)
 				case 2:
 					checkforelse = !checkforelse;
 					if (checkforelse)
+					{
 						JumpFunc = StkJump;
+					}
 					else
+					{
 						JumpFunc = StkJumpOnFalse;
+					}
 					break;
 				case 3:
 					JumpFunc = StkJump;
@@ -3110,9 +3230,13 @@ int fill_jump_struct(void)
 			find_new_func = 0;
 		}
 		if (*(f[OpPtr]) == StkLod)
+		{
 			loadcount++;
+		}
 		else if (*(f[OpPtr]) == StkSto)
+		{
 			storecount++;
+		}
 		else if (*(f[OpPtr]) == JumpFunc)
 		{
 			jump_data[i].JumpOpPtr = OpPtr;
@@ -3150,24 +3274,28 @@ int frmgetchar (FILE *openfile)
 		c = getc(openfile);
 		switch (c)
 		{
-			case '\r': case ' ' : case '\t' :
-           break;
-			case '\\':
-           linewrap = 1;
-           break;
-			case ';' :
-           while ((c = getc(openfile)) != '\n' && c != EOF && c != '\032')
-             {}
-           if (c == EOF || c == '\032')
-              done = 1;
-			case '\n' :
-				if (!linewrap)
-					done = 1;
-				linewrap = 0;
-				break;
-			default:
+		case '\r': case ' ' : case '\t' :
+			break;
+		case '\\':
+			linewrap = 1;
+			break;
+		case ';' :
+			while ((c = getc(openfile)) != '\n' && c != EOF && c != '\032')
+			{}
+			if (c == EOF || c == '\032')
+			{
 				done = 1;
-				break;
+			}
+		case '\n' :
+			if (!linewrap)
+			{
+				done = 1;
+			}
+			linewrap = 0;
+			break;
+		default:
+			done = 1;
+			break;
 		}
 	}
 	return tolower(c);
@@ -3184,9 +3312,13 @@ void getfuncinfo(struct token_st *tok)
 		{
 			tok->token_id = i;
 			if (i >= 11 && i <= 14)
+			{
 				tok->token_type = PARAM_FUNCTION;
+			}
 			else
+			{
 				tok->token_type = FUNCTION;
+			}
 			return;
 		}
 	}
@@ -3247,7 +3379,9 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	tok->token_const.x = 0.0;          /*initialize values to 0*/
 	tok->token_const.y = 0.0;
 	if (tok->token_str[0] == '.')
+	{
 		got_decimal_already = 1;
+	}
 	while (!done)
 	{
 		switch (c=frmgetchar(openfile))
@@ -3436,10 +3570,14 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 				return;
 			}
 			else
+			{
 				done = 1;
+			}
 		}
 		else
+		{
 			done = 1;
+		}
 	}
 	fseek (openfile, filepos, SEEK_SET);
 	tok->token_str[1] = (char) 0;
@@ -3468,7 +3606,9 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 		{
 			CASE_ALPHA: CASE_NUM: case '_':
 				if (i < 79)
+				{
 					tok->token_str[i++] = (char) c;
+				}
 				else
 				{
 					tok->token_str[i] = (char) 0;
@@ -3502,7 +3642,9 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 				if (c == '(')  /*getfuncinfo() correctly filled structure*/
 				{
 					if (tok->token_type == NOT_A_TOKEN)
+					{
 						return 0;
+					}
 					else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 					{
 						tok->token_type = NOT_A_TOKEN;
@@ -3510,7 +3652,9 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 						return 0;
 					}
 					else
+					{
 						return 1;
+					}
 				}
 				/*can't use function names as variables*/
 				else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
@@ -3528,7 +3672,9 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 				{
 					if (c == ',' || c == '\n' || c == ':')
-                 return 1;
+					{
+						return 1;
+					}
 					else
 					{
 						tok->token_type = NOT_A_TOKEN;
@@ -3549,7 +3695,7 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 	return 0;
 }
 
-void frm_get_eos (FILE *openfile, struct token_st *this_token)
+void frm_get_eos(FILE *openfile, struct token_st *this_token)
 {
 	long last_filepos = ftell(openfile);
 	int c;
@@ -3558,7 +3704,7 @@ void frm_get_eos (FILE *openfile, struct token_st *this_token)
 	{
 		if (c == ':')
 		{
-	this_token->token_str[0] = ':';
+			this_token->token_str[0] = ':';
 		}
 		last_filepos = ftell(openfile);
 	}
@@ -3570,10 +3716,10 @@ void frm_get_eos (FILE *openfile, struct token_st *this_token)
 	}
 	else
 	{
-		fseek (openfile, last_filepos, SEEK_SET);
+		fseek(openfile, last_filepos, SEEK_SET);
 		if (this_token->token_str[0] == '\n')
 		{
-	this_token->token_str[0] = ',';
+			this_token->token_str[0] = ',';
 		}
 	}
 }
@@ -3604,7 +3750,9 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			{
 				c=frmgetchar(openfile);
 			if (c == '=')
+			{
 					this_token->token_str[i++] = (char) c;
+			}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3614,7 +3762,9 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			{
 				c=frmgetchar(openfile);
 			if (c == '=')
+			{
 					this_token->token_str[i++] = (char) c;
+			}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3628,15 +3778,21 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			{
 				c=frmgetchar(openfile);
 			if (c == '|')
+			{
 					this_token->token_str[i++] = (char) c;
+			}
 				else
+				{
 					fseek(openfile, filepos, SEEK_SET);
+				}
 			}
 			else if (c == '&')
 			{
 				c=frmgetchar(openfile);
 			if (c == '&')
+			{
 					this_token->token_str[i++] = (char) c;
+			}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3727,7 +3883,9 @@ int frm_get_param_stuff(char *Name)
 	{
 		debug_token = fopen("frmtokens.txt","at");
 		if (debug_token != NULL)
+		{
 			fprintf(debug_token,"%s\n", Name);
+		}
 	}
 	while (frmgettoken(entry_file, &current_token))
 	{
@@ -3747,27 +3905,43 @@ int frm_get_param_stuff(char *Name)
 		{
 			case PARAM_VARIABLE:
 				if (current_token.token_id == 1)
+				{
 					uses_p1 = 1;
+				}
 				else if (current_token.token_id == 2)
+				{
 					uses_p2 = 1;
+				}
 				else if (current_token.token_id == 8)
+				{
 					uses_p3 = 1;
+				}
 				else if (current_token.token_id == 13)
+				{
 					uses_ismand = 1;
+				}
 				else if (current_token.token_id == 17)
+				{
 					uses_p4 = 1;
+				}
 				else if (current_token.token_id == 18)
+				{
 					uses_p5 = 1;
+				}
 				break;
 			case PARAM_FUNCTION:
 				if ((current_token.token_id - 10) > maxfn)
+				{
 					maxfn = (char) (current_token.token_id - 10);
+				}
 				break;
 		}
 	}
 	fclose(entry_file);
 	if (debug_token)
+	{
 		fclose(debug_token);
+	}
 	if (current_token.token_type != END_OF_FORMULA)
 	{
 		uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
@@ -3808,7 +3982,9 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 				break;
 			default :
 				if (!at_end_of_name)
+				{
 					i++;
+				}
 				break;
 		}
 	}
@@ -3822,7 +3998,9 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		strcat(msgbuf, ":\n   ");
 		fseek(open_file, filepos, SEEK_SET);
 		for (j = 0; j < i && j < 25; j++)
+		{
 			msgbuf[j + k + 2] = (char) getc(open_file);
+		}
 		msgbuf[j + k + 2] = (char) 0;
 		stopmsg(STOPMSG_FIXED_FONT, msgbuf);
 		return 0;
@@ -3853,7 +4031,9 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 					break;
 				default :
 					if (i < 19)
+					{
 						sym_buf[i++] = (char) toupper(c);
+					}
 					break;
 			}
 		}
@@ -3949,7 +4129,9 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		{
 			fprintf(debug_fp,"%s\n",FormName);
 			if (symmetry != 0)
+			{
 				fprintf(debug_fp,"%s\n", SymStr[symmetry].s);
+			}
 		}
 	}
 
@@ -3975,7 +4157,9 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 			return NULL;
 		}
 		if (temp_tok.token_str[0] == ',')
+		{
 			;
+		}
 		else
 		{
 			strcat(FormulaStr, temp_tok.token_str);
@@ -4004,9 +4188,13 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 	}
 
 	if (debug_fp != NULL && FormulaStr != NULL)
+	{
 		fprintf(debug_fp,"   %s\n",FormulaStr);
+	}
 	if (debug_fp != NULL)
+	{
 		fclose(debug_fp);
+	}
 
 
 /* sprintf(debugmsg, "Chars in formula per boxx is %u.\n", strlen(FormulaStr));
@@ -4054,7 +4242,9 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 	{
 		parser_allocate();  /*  ParseStr() will test if this alloc worked  */
 		if (ParseStr(FormStr,1))
+		{
 			return 1;   /*  parse failed, don't change fn pointers  */
+		}
 		else
 		{
 			if (uses_jump == 1 && fill_jump_struct() == 1)
@@ -4070,7 +4260,9 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 		}
 	}
 	else
+	{
 		return 1;   /* error in making string*/
+	}
 }
 
 
@@ -4127,7 +4319,9 @@ void init_misc()
 	static struct ConstArg vv[5];
 	static union Arg argfirst,argsecond;
 	if (!v)
+	{
 		v = vv;
+	}
 	Arg1 = &argfirst; Arg2 = &argsecond; /* needed by all the ?Stk* functions */
 	fg = (double)(1L << bitshift);
 	fgLimit = (double)0x7fffffffL / fg;
@@ -4223,8 +4417,8 @@ struct error_data_st
 void frm_error(FILE *open_file, long begin_frm)
 {
 	struct token_st tok;
-/* char debugmsg[500];
-*/ int i, chars_to_error = 0, chars_in_error = 0, token_count;
+	/* char debugmsg[500]; */
+	int i, chars_to_error = 0, chars_in_error = 0, token_count;
 	int statement_len, line_number;
 	int done;
 	char msgbuf[900];
@@ -4255,9 +4449,10 @@ void frm_error(FILE *open_file, long begin_frm)
 		}
 		sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
 		i = (int) strlen(msgbuf);
-/*    sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
+		/* sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
 		stopmsg (0, debugmsg);
-*/    fseek(open_file, errors[j].start_pos, SEEK_SET);
+		*/
+		fseek(open_file, errors[j].start_pos, SEEK_SET);
 		statement_len = token_count = 0;
 		done = 0;
 		while (!done)
@@ -4265,28 +4460,30 @@ void frm_error(FILE *open_file, long begin_frm)
 			filepos = ftell (open_file);
 			if (filepos == errors[j].error_pos)
 			{
-/*          stopmsg(0, "About to get error token\n");
-*/          chars_to_error = statement_len;
+				/* stopmsg(0, "About to get error token\n"); */
+				chars_to_error = statement_len;
 				frmgettoken(open_file, &tok);
 				chars_in_error = (int) strlen(tok.token_str);
 				statement_len += chars_in_error;
 				token_count++;
-/*          sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
+				/* sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
 				stopmsg (0, debugmsg);
-*/       }
+				*/
+			}
 			else
 			{
 				frmgettoken(open_file, &tok);
-/*          sprintf(debugmsg, "Just got %s\n", tok.token_str);
+				/* sprintf(debugmsg, "Just got %s\n", tok.token_str);
 				stopmsg (0, debugmsg);
-*/          statement_len += (int) strlen(tok.token_str);
+				*/
+				statement_len += (int) strlen(tok.token_str);
 				token_count++;
 			}
 			if ((tok.token_type == END_OF_FORMULA)
-          || (tok.token_type == OPERATOR
-                   && (tok.token_id == 0 || tok.token_id == 11))
-          || (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
-          {
+				|| (tok.token_type == OPERATOR
+					&& (tok.token_id == 0 || tok.token_id == 11))
+				|| (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
+			{
 				done = 1;
 				if (token_count > 1 && !initialization_error)
 				{
@@ -4299,8 +4496,8 @@ void frm_error(FILE *open_file, long begin_frm)
 		{
 			while (chars_to_error + chars_in_error > 74)
 			{
-/*          stopmsg(0, "chars in error less than 74, but late in line");
-*/          frmgettoken(open_file, &tok);
+				/* stopmsg(0, "chars in error less than 74, but late in line"); */
+				frmgettoken(open_file, &tok);
 				chars_to_error -= (int) strlen(tok.token_str);
 				token_count--;
 			}
@@ -4311,30 +4508,36 @@ void frm_error(FILE *open_file, long begin_frm)
 			chars_to_error = 0;
 			token_count = 1;
 		}
-/*    stopmsg(0, "Back to beginning of statement to build msgbuf");
-*/    while ((int) strlen(&msgbuf[i]) <= 74 && token_count--)
-{
+		/* stopmsg(0, "Back to beginning of statement to build msgbuf"); */
+		while ((int) strlen(&msgbuf[i]) <= 74 && token_count--)
+		{
 			frmgettoken (open_file, &tok);
 			strcat (msgbuf, tok.token_str);
-/*         stopmsg(0, &msgbuf[i]);
-*/    }
+			/* stopmsg(0, &msgbuf[i]); */
+		}
 		fseek (open_file, errors[j].error_pos, SEEK_SET);
 		frmgettoken (open_file, &tok);
 		if ((int) strlen(&msgbuf[i]) > 74)
+		{
 			msgbuf[i + 74] = (char) 0;
+		}
 		strcat(msgbuf, "\n");
 		i = (int) strlen(msgbuf);
 		while (chars_to_error-- > -2)
+		{
 			strcat (msgbuf, " ");
-/*    sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
+		}
+		/* sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
 		stopmsg(0, debugmsg);
-*/
+		*/
 		if (errors[j].error_number == PE_TOKEN_TOO_LONG)
 		{
 			chars_in_error = 33;
 		}
 		while (chars_in_error-- && (int) strlen(&msgbuf[i]) <= 74)
+		{
 			strcat (msgbuf, "^");
+		}
 		strcat (msgbuf, "\n");
 	}
 	stopmsg (8, msgbuf);
@@ -4417,7 +4620,9 @@ struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 	{
 		p = var_list_alloc();
 		if (p == NULL)
+		{
 			return NULL;
+		}
 		strcpy(p->name, tok.token_str);
 		p->next_item = NULL;
 	}
@@ -4428,7 +4633,9 @@ struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 	{
 		p->next_item = add_var_to_list(p->next_item, tok);
 		if (p->next_item == NULL)
+		{
 			return NULL;
+		}
 	}
 	return p;
 }
@@ -4439,7 +4646,9 @@ struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st
 	{
 		p = const_list_alloc();
 		if (p == NULL)
+		{
 			return NULL;
+		}
 		p->complex_const.x = tok.token_const.x;
 		p->complex_const.y = tok.token_const.y;
 		p->next_item = NULL;
@@ -4451,7 +4660,9 @@ struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st
 	{
 		p->next_item = add_const_to_list(p->next_item, tok);
 		if (p->next_item == NULL)
+		{
 			return NULL;
+		}
 	}
 	return p;
 }
@@ -5076,9 +5287,13 @@ int frm_prescan(FILE *open_file)
 						if (!ExpectingArg)
 						{
 							if (this_token.token_id == 11)
+							{
 								number_of_ops += 2;
+							}
 							else
+							{
 								number_of_ops++;
+							}
 						}
 						else if (!NewStatement)
 						{
@@ -5109,7 +5324,9 @@ int frm_prescan(FILE *open_file)
 							}
 						}
 						if (this_token.token_id == 11)
+						{
 							already_got_colon = 1;
+						}
 						NewStatement = ExpectingArg = assignment_ok = 1;
 						statement_pos = ftell(open_file);
 						break;
@@ -5324,7 +5541,9 @@ int frm_prescan(FILE *open_file)
 							}
 						}
 						else
+						{
 							fseek(open_file, filepos, SEEK_SET);
+						}
 						ExpectingArg = 1;
 						break;
 					default:
@@ -5392,7 +5611,9 @@ int frm_prescan(FILE *open_file)
 				break;
 		}
 		if (errors_found == 3)
+		{
 			done = 1;
+		}
 	}
 	if (errors[0].start_pos)
 	{

@@ -130,8 +130,12 @@ void fractal_floattobf(void)
 	floattobf(bfy3rd, yy3rd);
 
 	for (i = 0; i < MAXPARAMS; i++)
+	{
 		if (typehasparm(fractype, i, NULL))
+		{
 			floattobf(bfparms[i], param[i]);
+		}
+	}
 	calc_status = CALCSTAT_PARAMS_CHANGED;
 }
 
@@ -153,7 +157,9 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	double ftemp;
 	coloriter=oldcoloriter = 0L;
 	for (i = 0; i < 10; i++)
+	{
 		rhombus_stack[i] = 0;
+	}
 
   /* set up grid array compactly leaving space at end */
   /* space req for grid is 2(xdots + ydots)*sizeof(long or double) */
@@ -167,7 +173,9 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 		floatflag = usr_floatflag = 1;
 	}
 	else
+	{
 		use_grid = 1;
+	}
 
 	set_grid_pointers();
 
@@ -175,9 +183,13 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	{
 		int tofloat = curfractalspecific->tofloat;
 		if (tofloat == NOFRACTAL)
+		{
 			bf_math = 0;
+		}
 		else if (!(fractalspecific[tofloat].flags & BF_MATH))
+		{
 			bf_math = 0;
+		}
 		else if (bf_math)
 		{
 			curfractalspecific = &fractalspecific[tofloat];
@@ -195,7 +207,9 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 			bf_math = 0;
 		}
 		else
+		{
 			init_bf_dec(gotprec);
+		}
 	}
 	else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
 	{
@@ -226,27 +240,43 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 		usr_floatflag = 1;
 	}
 	else
+	{
 		free_bf_vars();
+	}
 	if (bf_math)
+	{
 		floatflag = 1;
+	}
 	else
+	{
 		floatflag = usr_floatflag;
+	}
 	if (calc_status == CALCSTAT_RESUMABLE)  /* on resume, ensure floatflag correct */
 	{
 		if (curfractalspecific->isinteger)
+		{
 			floatflag = 0;
+		}
 		else
+		{
 			floatflag = 1;
+		}
 	}
 	/* if floating pt only, set floatflag for TAB screen */
 	if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
+	{
 		floatflag = 1;
+	}
 	if (usr_stdcalcmode == 's')
 	{
 		if (fractype == MANDEL || fractype == MANDELFP)
+		{
 			floatflag = 1;
+		}
 		else
+		{
 			usr_stdcalcmode = '1';
+		}
 	}
 
 init_restart:
@@ -274,7 +304,9 @@ init_restart:
 		}
 
 	if (distest)
+	{
 		floatflag = 1;  /* force floating point for dist est */
+	}
 
 	if (floatflag)  /* ensure type matches floatflag */
 	{
@@ -293,17 +325,25 @@ init_restart:
 	{
 		int i = fractalspecific[neworbittype].tofloat;
 		if (i != NOFRACTAL)
+		{
 			neworbittype = i;
+		}
 		else
+		{
 			fractype = JULIBROT;
+		}
 	}
 	else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
 	{
 		int i = fractalspecific[neworbittype].tofloat;
 		if (i != NOFRACTAL)
+		{
 			neworbittype = i;
+		}
 		else
+		{
 			fractype = JULIBROTFP;
+		}
 	}
 
 	curfractalspecific = &fractalspecific[fractype];
@@ -313,17 +353,27 @@ init_restart:
 /*   if (fractype == JULIBROT)
 		rqlim = 4;
 	else */ if (potflag && potparam[2] != 0.0)
+	{
 		rqlim = potparam[2];
+	}
 /* else if (decomp[0] > 0 && decomp[1] > 0)
 		rqlim = (double)decomp[1]; */
 	else if (bailout) /* user input bailout */
+	{
 		rqlim = bailout;
+	}
 	else if (biomorph != -1) /* biomorph benefits from larger bailout */
+	{
 		rqlim = 100;
+	}
 	else
+	{
 		rqlim = curfractalspecific->orbit_bailout;
+	}
 	if (integerfractal) /* the bailout limit mustn't be too high here */
+	{
 		if (rqlim > 127.0) rqlim = 127.0;
+	}
 
 	if ((curfractalspecific->flags&NOROTATE) != 0)
 	{
@@ -336,17 +386,23 @@ init_restart:
 	/* set up bitshift for integer math */
 	bitshift = FUDGEFACTOR2; /* by default, the smaller shift */
 	if (integerfractal > 1)  /* use specific override from table */
+	{
 		bitshift = integerfractal;
+	}
 	if (integerfractal == 0)  /* float? */
 	{
 		i = curfractalspecific->tofloat;
 		if (i != NOFRACTAL) /* -> int? */
 		{
 			if (fractalspecific[i].isinteger > 1) /* specific shift? */
+			{
 				bitshift = fractalspecific[i].isinteger;
+			}
 		}
 		else
+		{
 			bitshift = 16;  /* to allow larger corners */
+		}
 	}
 /* We want this code if we're using the assembler calcmand */
 	if (fractype == MANDEL || fractype == JULIA)  /* adust shift bits if.. */
@@ -371,7 +427,9 @@ init_restart:
 
 	/* now setup arrays of real coordinates corresponding to each pixel */
 	if (bf_math)
+	{
 		adjust_to_limitsbf(1.0); /* make sure all corners in valid range */
+	}
 	else
 	{
 		adjust_to_limits(1.0); /* make sure all corners in valid range */
@@ -408,26 +466,34 @@ init_restart:
 		if (integerfractal && !invert && use_grid)
 		{
 			if ((delx  == 0 && delxx  != 0.0)
-             || (delx2 == 0 && delxx2 != 0.0)
-             || (dely  == 0 && delyy  != 0.0)
-             || (dely2 == 0 && delyy2 != 0.0))
+				|| (delx2 == 0 && delxx2 != 0.0)
+				|| (dely  == 0 && delyy  != 0.0)
+				|| (dely2 == 0 && delyy2 != 0.0))
+			{
 				goto expand_retry;
+			}
 
 			fill_lx_array();   /* fill up the x, y grids */
 			/* past max res?  check corners within 10% of expected */
 			if (ratio_bad((double)lx0[xdots-1]-xmin, (double)xmax-x3rd)
-             || ratio_bad((double)ly0[ydots-1]-ymax, (double)y3rd-ymax)
-             || ratio_bad((double)lx1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
-             || ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
+				|| ratio_bad((double)ly0[ydots-1]-ymax, (double)y3rd-ymax)
+				|| ratio_bad((double)lx1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
+				|| ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
 			{
 expand_retry:
 				if (integerfractal          /* integer fractal type? */
 					&& curfractalspecific->tofloat != NOFRACTAL)
+				{
 					floatflag = 1;           /* switch to floating pt */
+				}
 				else
+				{
 					adjust_to_limits(2.0);   /* double the size */
+				}
 				if (calc_status == CALCSTAT_RESUMABLE)       /* due to restore of an old file? */
+				{
 					calc_status = CALCSTAT_PARAMS_CHANGED;         /*   whatever, it isn't resumable */
+				}
 				goto init_restart;
 			} /* end if ratio bad */
 
@@ -533,14 +599,20 @@ expand_retry:
 	/*     min(max(delx, delx2), max(dely, dely2)      */
 	ddelmin = fabs((double)delxx);
 	if (fabs((double)delxx2) > ddelmin)
+	{
 		ddelmin = fabs((double)delxx2);
+	}
 	if (fabs((double)delyy) > fabs((double)delyy2))
 	{
 		if (fabs((double)delyy) < ddelmin)
+		{
 			ddelmin = fabs((double)delyy);
+		}
 	}
 	else if (fabs((double)delyy2) < ddelmin)
+	{
 		ddelmin = fabs((double)delyy2);
+	}
 	delmin = fudgetolong(ddelmin);
 
 	/* calculate factors which plot real values to screen co-ords */
@@ -554,7 +626,9 @@ expand_retry:
 		plotmy2 = (xxmax-xx3rd)*dysize / ftemp;
 	}
 	if (bf_math == 0)
+	{
 		free_bf_vars();
+	}
 }
 
 #ifdef _MSC_VER
@@ -681,22 +755,30 @@ void adjust_corner(void)
 	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && yy3rd != yymax)
+		{
 			xx3rd = xxmin;
+		}
 		}
 
 	if (ftemp2*10000 < ftemp && yy3rd != yymin)
+	{
 		xx3rd = xxmax;
+	}
 
 	ftemp=fabs(yy3rd-yymin);
 	ftemp2=fabs(yymax-yy3rd);
 	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
+		{
 			yy3rd = yymin;
+		}
 		}
 
 	if (ftemp2*10000 < ftemp && xx3rd != xxmin)
+	{
 		yy3rd = yymax;
+	}
 
 }
 
@@ -763,11 +845,15 @@ static void _fastcall adjust_to_limitsbf(double expand)
 
 	/* if (bfx3rd == centerx) */
 	if (cmp_bf(bfx3rd, bcenterx) == 0)
+	{
 		smallest_add_bf(bfx3rd);
+	}
 
 	/* if (bfy3rd == centery) */
 	if (cmp_bf(bfy3rd, bcentery) == 0)
+	{
 		smallest_add_bf(bfy3rd);
+	}
 
 	/* setup array for easier manipulation */
 	/* cornerx[0] = xxmin; */
@@ -849,6 +935,7 @@ static void _fastcall adjust_to_limitsbf(double expand)
 	div_bf(bftemp, btmp1, btmp2);
 	floattobf(btmp1, 1.0);
 	if (cmp_bf(bftemp, btmp1) < 0)
+	{
 		for (i = 0; i < 4; ++i)
 		{
 			/* cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp; */
@@ -860,7 +947,8 @@ static void _fastcall adjust_to_limitsbf(double expand)
 			sub_bf(btmp1, bcornery[i], bcentery);
 			mult_bf(bcornery[i], btmp1, bftemp);
 			add_a_bf(bcornery[i], bcentery);
-			}
+		}
+	}
 
 	/* if any corner has x or y past limit, move the image */
 	/* adjx = adjy = 0; */
@@ -871,32 +959,42 @@ static void _fastcall adjust_to_limitsbf(double expand)
 		/* if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
 			adjx = ftemp; */
 		if (cmp_bf(bcornerx[i], blimit) > 0 &&
-          cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+			cmp_bf(sub_bf(bftemp, bcornerx[i], blimit), badjx) > 0)
+		{
 			copy_bf(badjx, bftemp);
+		}
 
 		/* if (cornerx[i] < -limit && (ftemp = cornerx[i] + limit) < adjx)
 			adjx = ftemp; */
 		if (cmp_bf(bcornerx[i], neg_bf(btmp1, blimit)) < 0 &&
-          cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
+			cmp_bf(add_bf(bftemp, bcornerx[i], blimit), badjx) < 0)
+		{
 			copy_bf(badjx, bftemp);
+		}
 
 		/* if (cornery[i] > limit  && (ftemp = cornery[i] - limit) > adjy)
 			adjy = ftemp; */
 		if (cmp_bf(bcornery[i], blimit) > 0 &&
-          cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+			cmp_bf(sub_bf(bftemp, bcornery[i], blimit), badjy) > 0)
+		{
 			copy_bf(badjy, bftemp);
+		}
 
 		/* if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
 			adjy = ftemp; */
 		if (cmp_bf(bcornery[i], neg_bf(btmp1, blimit)) < 0 &&
-          cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
+			cmp_bf(add_bf(bftemp, bcornery[i], blimit), badjy) < 0)
+		{
 			copy_bf(badjy, bftemp);
 		}
+	}
 
 	/* if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
 		calc_status = CALCSTAT_PARAMS_CHANGED; */
 	if (calc_status == CALCSTAT_RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
+	{
 		calc_status = CALCSTAT_PARAMS_CHANGED;
+	}
 
 	/* xxmin = cornerx[0] - adjx; */
 	sub_bf(bfxmin, bcornerx[0], badjx);
@@ -927,9 +1025,17 @@ static void _fastcall adjust_to_limits(double expand)
 	if (integerfractal)
 	{
 		if (save_release > 1940) /* let user reproduce old GIF's and PAR's */
+		{
 			limit = 1023.99;
-		if (bitshift >= 24) limit = 31.99;
-		if (bitshift >= 29) limit = 3.99;
+		}
+		if (bitshift >= 24)
+		{
+			limit = 31.99;
+		}
+		if (bitshift >= 29)
+		{
+			limit = 3.99;
+		}
 	}
 
 	centerx = (xxmin + xxmax)/2;
@@ -939,19 +1045,23 @@ static void _fastcall adjust_to_limits(double expand)
 	{
 		smallest_add(&xxmax);
 		xxmin -= xxmax-centerx;
-		}
+	}
 
 	if (yymin == centery)
 	{
 		smallest_add(&yymax);
 		yymin -= yymax-centery;
-		}
+	}
 
 	if (xx3rd == centerx)
+	{
 		smallest_add(&xx3rd);
+	}
 
 	if (yy3rd == centery)
+	{
 		smallest_add(&yy3rd);
+	}
 
 	/* setup array for easier manipulation */
 	cornerx[0] = xxmin;
@@ -979,16 +1089,31 @@ static void _fastcall adjust_to_limits(double expand)
 
 	for (i = 1; i < 4; ++i)
 	{
-		if (cornerx[i] < lowx)               lowx  = cornerx[i];
-		if (cornerx[i] > highx)              highx = cornerx[i];
-		if (cornery[i] < lowy)               lowy  = cornery[i];
-		if (cornery[i] > highy)              highy = cornery[i];
+		if (cornerx[i] < lowx)
+		{
+			lowx  = cornerx[i];
 		}
+		if (cornerx[i] > highx)
+		{
+			highx = cornerx[i];
+		}
+		if (cornery[i] < lowy)
+		{
+			lowy  = cornery[i];
+		}
+		if (cornery[i] > highy)
+		{
+			highy = cornery[i];
+		}
+	}
 
 	/* if image is too large, downsize it maintaining center */
 	ftemp = highx-lowx;
 
-	if (highy-lowy > ftemp) ftemp = highy-lowy;
+	if (highy-lowy > ftemp)
+	{
+		ftemp = highy-lowy;
+	}
 
 	/* if image is too large, downsize it maintaining center */
 	ftemp = limit*2/ftemp;
@@ -998,7 +1123,7 @@ static void _fastcall adjust_to_limits(double expand)
 		{
 			cornerx[i] = centerx + (cornerx[i]-centerx)*ftemp;
 			cornery[i] = centery + (cornery[i]-centery)*ftemp;
-			}
+		}
 	}
 
 	/* if any corner has x or y past limit, move the image */
@@ -1007,16 +1132,26 @@ static void _fastcall adjust_to_limits(double expand)
 	for (i = 0; i < 4; ++i)
 	{
 		if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
+		{
 			adjx = ftemp;
+		}
 		if (cornerx[i] < -limit && (ftemp = cornerx[i] + limit) < adjx)
+		{
 			adjx = ftemp;
+		}
 		if (cornery[i] > limit     && (ftemp = cornery[i] - limit) > adjy)
-			adjy = ftemp;
-		if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
+		{
 			adjy = ftemp;
 		}
+		if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
+		{
+			adjy = ftemp;
+		}
+	}
 	if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+	{
 		calc_status = CALCSTAT_PARAMS_CHANGED;
+	}
 	xxmin = cornerx[0] - adjx;
 	xxmax = cornerx[1] - adjx;
 	xx3rd = cornerx[2] - adjx;
@@ -1046,21 +1181,33 @@ static int _fastcall ratio_bad(double actual, double desired)
 {
 	double ftemp, tol;
 	if (integerfractal)
+	{
 		tol = math_tol[0];
+	}
 	else
+	{
 		tol = math_tol[1];
+	}
 	if (tol <= 0.0)
+	{
 		return 1;
+	}
 	else if (tol >= 1.0)
+	{
 		return 0;
+	}
 	ftemp = 0;
 	if (desired != 0 && debugflag != 3400)
+	{
 		ftemp = actual / desired;
+	}
 	if (desired != 0 && debugflag != 3400)
 	{
 		ftemp = actual / desired;
 		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
+		{
 			return 1;
+		}
 	}
 	return 0;
 }
@@ -1142,7 +1289,9 @@ va_dcl
 #endif
 
 	if (resume_info == NULL)
+	{
 		return -1;
+	}
 #ifndef USE_VARARGS
 	va_start(arg_marker, len);
 #else
@@ -1197,7 +1346,9 @@ va_dcl
 #endif
 
 	if (resume_info == NULL)
+	{
 		return -1;
+	}
 #ifndef USE_VARARGS
 	va_start(arg_marker, len);
 #else
@@ -1222,7 +1373,9 @@ int start_resume(void)
 {
 	int version;
 	if (resume_info == NULL)
+	{
 		return -1;
+	}
 	resume_offset = 0;
 	get_resume(sizeof(version), &version, 0);
 	return version;
@@ -1285,35 +1438,37 @@ void sleepms_old(long ms)
 		showtempmsg("Calibrating timer");
 		do
 		{
-           scalems *= 2;
-           ftimex(&t2);
-           do  /* wait for the start of a new tick */
-           {
-              ftimex(&t1);
-				}
-				while (t2.time == t1.time && t2.millitm == t1.millitm);
-           sleepms_old(10L*SLEEPINIT); /* about 1/4 sec */
-           ftimex(&t2);
-           if (driver_key_pressed())
-           {
-              scalems = 0L;
-              cleartempmsg();
-              goto sleepexit;
-           }
+			scalems *= 2;
+			ftimex(&t2);
+			do  /* wait for the start of a new tick */
+			{
+				ftimex(&t1);
 			}
-			while ((elapsed = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm)
-                < SLEEPINIT);
+			while (t2.time == t1.time && t2.millitm == t1.millitm);
+			sleepms_old(10L*SLEEPINIT); /* about 1/4 sec */
+			ftimex(&t2);
+			if (driver_key_pressed())
+			{
+				scalems = 0L;
+				cleartempmsg();
+				goto sleepexit;
+			}
+			elapsed = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+		}
+		while (elapsed < SLEEPINIT);
 		/* once more to see if faster (eg multi-tasking) */
 		do  /* wait for the start of a new tick */
 		{
-           ftimex(&t1);
-           }
-			while (t2.time == t1.time && t2.millitm == t1.millitm);
+			ftimex(&t1);
+		}
+		while (t2.time == t1.time && t2.millitm == t1.millitm);
 		sleepms_old(10L*SLEEPINIT);
 		ftimex(&t2);
 		i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		if (i < elapsed)
-           elapsed = (i == 0) ? 1 : i;
+		{
+			elapsed = (i == 0) ? 1 : i;
+		}
 		scalems = (long)((float)SLEEPINIT/(float)(elapsed)*scalems);
 		cleartempmsg();
 	}
@@ -1323,17 +1478,24 @@ void sleepms_old(long ms)
 		ftimex(&t1);
 		while (1)
 		{
-           if (driver_key_pressed()) break;
-           ftimex(&t2);
-           if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms) break;
+			if (driver_key_pressed())
+			{
+				break;
+			}
+			ftimex(&t2);
+			if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
+			{
+				break;
+			}
 		}
 	}
-	else
-		if (!driver_key_pressed())
+	else if (!driver_key_pressed())
+	{
+		ms *= scalems;
+		while (ms-- >= 0)
 		{
-           ms *= scalems;
-           while (ms-- >= 0);
 		}
+	}
 sleepexit:
 	tabmode  = savetabmode;
 	helpmode = savehelpmode;
@@ -1345,15 +1507,24 @@ static void sleepms_new(long ms)
 	uclock_t now = usec_clock();
 	next_time = now + ms*100;
 	while ((now = usec_clock()) < next_time)
-     if (driver_key_pressed()) break;
+	{
+		if (driver_key_pressed())
+		{
+			break;
+		}
+	}
 }
 
 void sleepms(long ms)
 {
-  if (debugflag == 4020)
-     sleepms_old(ms);
-  else
-     sleepms_new(ms);
+	if (debugflag == 4020)
+	{
+		sleepms_old(ms);
+	}
+	else
+	{
+		sleepms_new(ms);
+	}
 }
 
 /*
@@ -1365,12 +1536,16 @@ static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
 	if (debugflag == 4020)
+	{
 		sleepms_old(wait_time);
+	}
 	else
 	{
 		uclock_t now;
 		while ((now = usec_clock()) < next_time[index])
+		{
 			if (driver_key_pressed()) break;
+		}
 		next_time[index] = now + wait_time*100; /* wait until this time next call */
 	}
 }
@@ -1380,7 +1555,9 @@ void reset_clock(void)
 	int i;
 	restart_uclock();
 	for (i = 0; i < MAX_INDEX; i++)
+	{
 		next_time[i] = 0;
+	}
 }
 
 #define LOG2  0.693147180f
@@ -1414,7 +1591,9 @@ void w_snd(int tone)
 	if ((orbitsave & ORBITSAVE_SOUND) != 0)
 	{
 		if (snd_open())
+		{
 			fprintf(snd_fp, "%-d\n", tone);
+		}
 	}
 	taborhelp = 0;
 	if (!driver_key_pressed())  /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
@@ -1426,7 +1605,9 @@ void w_snd(int tone)
 		{
 			wait_until(0, orbit_delay);
 			if (!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
+			{
 				driver_sound_off();
+			}
 		}
 	}
 }
@@ -1442,7 +1623,9 @@ void snd_time_write(void)
 void close_snd(void)
 {
 	if (snd_fp)
+	{
 		fclose(snd_fp);
+	}
 	snd_fp = NULL;
 }
 
@@ -1467,7 +1650,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 		putcolor(i, j, c^orbit_color);
 	}
 	else
+	{
 		putcolor(i, j, color);
+	}
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
 	if (debugflag == 4030)
@@ -1533,7 +1718,9 @@ int yfrom, int yto, int ybegin,
 int pass, int sym)
 {
 	if (num_worklist >= MAXCALCWORK)
+	{
 		return -1;
+	}
 	worklist[num_worklist].xxstart = xfrom;
 	worklist[num_worklist].xxstop  = xto;
 	worklist[num_worklist].xxbegin = xbegin;
@@ -1551,16 +1738,19 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 {
 	int i, j;
 	for (i = 0; i < num_worklist; ++i)
+	{
 		if (worklist[i].yystart == worklist[i].yybegin)
+		{
 			for (j=i + 1; j < num_worklist; ++j)
+			{
 				if (worklist[j].sym == worklist[i].sym
-                && worklist[j].yystart == worklist[j].yybegin
-                && worklist[j].xxstart == worklist[j].xxbegin
-                && worklist[i].pass == worklist[j].pass)
+					&& worklist[j].yystart == worklist[j].yybegin
+					&& worklist[j].xxstart == worklist[j].xxbegin
+					&& worklist[i].pass == worklist[j].pass)
 				{
 					if (worklist[i].xxstart == worklist[j].xxstart
-                   && worklist[i].xxbegin == worklist[j].xxbegin
-                   && worklist[i].xxstop  == worklist[j].xxstop)
+						&& worklist[i].xxbegin == worklist[j].xxbegin
+						&& worklist[i].xxstop  == worklist[j].xxstop)
 					{
 						if (worklist[i].yystop + 1 == worklist[j].yystart)
 						{
@@ -1575,8 +1765,8 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 						}
 					}
 					if (worklist[i].yystart == worklist[j].yystart
-                   && worklist[i].yybegin == worklist[j].yybegin
-                   && worklist[i].yystop  == worklist[j].yystop)
+						&& worklist[i].yybegin == worklist[j].yybegin
+						&& worklist[i].yystop  == worklist[j].yystop)
 					{
 						if (worklist[i].xxstop + 1 == worklist[j].xxstart)
 						{
@@ -1591,6 +1781,9 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 						}
 					}
 				}
+			}
+		}
+	}
 	return 0; /* nothing combined */
 }
 
@@ -1601,21 +1794,27 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 	while ((i=combine_worklist()) != 0)
 	{ /* merged two, delete the gone one */
 		while (++i < num_worklist)
+		{
 			worklist[i-1] = worklist[i];
+		}
 		--num_worklist;
 	}
 	for (i = 0; i < num_worklist; ++i)
+	{
 		for (j=i + 1; j < num_worklist; ++j)
+		{
 			if (worklist[j].pass < worklist[i].pass
-             || (worklist[j].pass == worklist[i].pass
-             && (worklist[j].yystart < worklist[i].yystart
-             || (worklist[j].yystart == worklist[i].yystart
-             && worklist[j].xxstart <  worklist[i].xxstart))))
+				|| (worklist[j].pass == worklist[i].pass
+				&& (worklist[j].yystart < worklist[i].yystart
+				|| (worklist[j].yystart == worklist[i].yystart
+				&& worklist[j].xxstart <  worklist[i].xxstart))))
 			{ /* dumb sort, swap 2 entries to correct order */
 				tempwork = worklist[i];
 				worklist[i] = worklist[j];
 				worklist[j] = tempwork;
 			}
+		}
+	}
 }
 
 
@@ -1628,10 +1827,14 @@ void get_julia_attractor (double real, double imag)
 	int i;
 
 	if (attractors == 0 && finattract == 0) /* not magnet & not requested */
+	{
 		return;
+	}
 
 	if (attractors >= N_ATTR)     /* space for more attractors ?  */
+	{
 		return;                  /* Bad luck - no room left !    */
+	}
 
 	savper = periodicitycheck;
 	savmaxit = maxit;
@@ -1652,18 +1855,26 @@ void get_julia_attractor (double real, double imag)
 	ltempsqry = ltempsqry << bitshift;
 
 	if (maxit < 500)         /* we're going to try at least this hard */
+	{
 		maxit = 500;
+	}
 	coloriter = 0;
 	overflow = 0;
 	while (++coloriter < maxit)
 		if (curfractalspecific->orbitcalc() || overflow)
+		{
 			break;
+		}
 	if (coloriter >= maxit)      /* if orbit stays in the lake */
 	{
 		if (integerfractal)   /* remember where it went to */
+		{
 			lresult = lnew;
+		}
 		else
+		{
 			result =  g_new;
+		}
      for (i = 0; i < 10; i++)
      {
 		overflow = 0;
@@ -1699,7 +1910,9 @@ void get_julia_attractor (double real, double imag)
      }
 	}
 	if (attractors == 0)
+	{
 		periodicitycheck = savper;
+	}
 	maxit = savmaxit;
 }
 
@@ -1719,6 +1932,8 @@ int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
 	}
 	/* increase blocksize if prefix array not big enough */
 	while (blocksize*(maxxblk-2) < xdots || blocksize*(maxyblk-2)*16 < ydots)
+	{
 		blocksize += blocksize;
+	}
 	return blocksize;
 }
