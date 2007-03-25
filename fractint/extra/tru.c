@@ -28,12 +28,14 @@ main()
 	char buf1[12];
 	char buf2[2];
 
-	if ((fpin = fopen("iterates.tga","rb")) == NULL)
+	fpin = fopen("iterates.tga","rb");
+	if (fpin == NULL)
 	{
 		fprintf(stderr,"Can't open flat.out\n");
 		exit(1);
 	}
-	if ((fpout = fopen("new.tga","wb")) == NULL)
+	fpout = fopen("new.tga","wb");
+	if (fpout == NULL)
 	{
 		fprintf(stderr,"Can't open new.tga\n");
 		exit(1);
@@ -58,7 +60,8 @@ main()
 		for (i = 0; i < xdots; i++)
 		{
 			iter = 0;
-			if ((err=fread(&iter,3,1,fpin)) == 0)
+			err = fread(&iter,3,1,fpin);
+			if (err == 0)
 			{
 				printf("err at row %d col %d\n",j,i);
 				exit(1);

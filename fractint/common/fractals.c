@@ -522,7 +522,8 @@ int NewtonFractal2(void)
 	g_new.y *= d1overd;
 
 	/* Watch for divide underflow */
-	if ((t2 = tmp.x*tmp.x + tmp.y*tmp.y) < FLT_MIN)
+	t2 = tmp.x*tmp.x + tmp.y*tmp.y;
+	if (t2 < FLT_MIN)
 		return 1;
 	else
 	{
@@ -544,8 +545,8 @@ complex_mult(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
 int
 complex_div(_CMPLX numerator, _CMPLX denominator, _CMPLX *pout)
 {
-	double mod;
-	if ((mod = modulus(denominator)) < FLT_MIN)
+	double mod = modulus(denominator);
+	if (mod < FLT_MIN)
 		return 1;
 	conjugate(&denominator);
 	complex_mult(numerator, denominator, pout);

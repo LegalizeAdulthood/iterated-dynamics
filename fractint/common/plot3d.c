@@ -57,15 +57,15 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 	{
 		if (dX > 0)         /* determine start point and last column */
 		{
-				col = X1;
-				row = Y1;
-				final = X2;
+			col = X1;
+			row = Y1;
+			final = X2;
 		}
 		else
 		{
-				col = X2;
-				row = Y2;
-				final = X1;
+			col = X2;
+			row = Y2;
+			final = X1;
 		}
 		inc1 = 2*abs (dY);            /* determine increments and initial G */
 		G = inc1 - abs (dX);
@@ -74,7 +74,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
-                (*plot) (col, row, color);
+              		(*plot)(col, row, color);
 				col++;
 				if (G >= 0)             /* it's time to change rows */
 				{
@@ -91,7 +91,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
-				(*plot) (col, row, color);
+				(*plot)(col, row, color);
 				col++;
 				if (G > 0)              /* it's time to change rows */
 				{
@@ -126,7 +126,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (row <= final)    /* step through rows checking for new column */
 			{
-				(*plot) (col, row, color);
+				(*plot)(col, row, color);
 				row++;
 				if (G >= 0)                 /* it's time to change columns */
 				{
@@ -143,7 +143,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (row <= final)    /* step through rows checking for new column */
 			{
-				(*plot) (col, row, color);
+				(*plot)(col, row, color);
 				row++;
 				if (G > 0)                  /* it's time to change columns */
 				{
@@ -212,12 +212,12 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 	{
 		color = PAL_RED;
 		if (tmp > 0 && tmp != color)
-				color = PAL_MAGENTA;
+			color = PAL_MAGENTA;
 		if (red_local_left < x && x < red_local_right)
 		{
-				putcolor(x, y, color);
-				if (Targa_Out)
-                targa_color(x, y, color);
+			putcolor(x, y, color);
+			if (Targa_Out)
+              	targa_color(x, y, color);
 		}
 	}
 	else if (g_which_image == 2) /* BLUE */
@@ -244,9 +244,9 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	{
 		color = colors - color; /*  Reverses color order */
 		if (max_colors == 236)
-		color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
 		else
-		color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
+			color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
 	}
 
 	tmp = getcolor(x, y);
@@ -274,7 +274,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			putcolor(x, y, color|(tmp&15));
 			if (Targa_Out)
 			{
-                if (!ILLUMINE)
+              	if (!ILLUMINE)
 					targa_color(x, y, color|(tmp&15));
 				else
 				{
@@ -297,9 +297,9 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		/* my mind is fried - lower indices = darker colors is EASIER! */
 		color = colors - color; /*  Reverses color order */
 		if (max_colors == 236)
-		color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
 		else
-		color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
+			color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
 									relatively even ranges */
 	}
 
@@ -316,7 +316,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 					targa_color(x, y, color|tmp);
 				else
 					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
-            }
+          		}
 		}
 	}
 	else if (g_which_image == 2) /* BLUE */
@@ -368,10 +368,10 @@ void _fastcall plot3dalternate(int x, int y, int color)
 			putcolor(x, y, (color >> 1) + (colors >> 1));
 			if (Targa_Out)
 			{
-                if (!ILLUMINE)
-                    targa_color(x, y, (color >> 1) + (colors >> 1));
-                else
-                    targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+              	if (!ILLUMINE)
+                  	targa_color(x, y, (color >> 1) + (colors >> 1));
+              	else
+                  	targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
 			}
 		}
 	}
@@ -423,10 +423,10 @@ void plot_setup()
 
 	case STEREO_SUPERIMPOSE:
 		if (colors == 256)
-				if (fractype != IFS3D)
-                standardplot = plot3dsuperimpose256;
-				else
-                standardplot = plotIFS3dsuperimpose256;
+			if (fractype != IFS3D)
+              	standardplot = plot3dsuperimpose256;
+			else
+              	standardplot = plotIFS3dsuperimpose256;
 		else
 				standardplot = plot3dsuperimpose16;
 		break;
@@ -434,15 +434,15 @@ void plot_setup()
 	case 4: /* crosseyed mode */
 		if (sxdots < 2*xdots)
 		{
-           if (XROT == 0 && YROT == 0)
-              standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
-           else
-              standardplot = plot3dcrosseyedB;
+         	if (XROT == 0 && YROT == 0)
+            	standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
+         	else
+            	standardplot = plot3dcrosseyedB;
 		}
 		else if (XROT == 0 && YROT == 0)
-           standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
+         	standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
 		else
-           standardplot = putcolor;
+         	standardplot = putcolor;
 		break;
 
 	default:
@@ -465,20 +465,20 @@ void plot_setup()
 		switch (g_which_image)
 		{
 		case 1:
-				xshift  += (int)((g_eye_separation* (double)xdots)/200);
-				xxadjust = (int)(((xtrans + xadjust)* (double)xdots)/100);
-				xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
-				xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
-				if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
-					sxoffs = sxdots / 2 - xdots;
-				break;
+			xshift  += (int)((g_eye_separation* (double)xdots)/200);
+			xxadjust = (int)(((xtrans + xadjust)* (double)xdots)/100);
+			xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
+			xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
+			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+				sxoffs = sxdots / 2 - xdots;
+			break;
 
 		case 2:
-				xshift  -= (int)((g_eye_separation* (double)xdots)/200);
-				xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
-				if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
-					sxoffs = sxdots / 2;
-				break;
+			xshift  -= (int)((g_eye_separation* (double)xdots)/200);
+			xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
+			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+				sxoffs = sxdots / 2;
+			break;
 		}
 	}
 	else
@@ -490,27 +490,26 @@ void plot_setup()
 		ValidateLuts(MAP_name); /* read the palette file */
 		if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 		{
-				if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
-				{
-                g_dac_box[PAL_RED  ][0] = 63;
-                g_dac_box[PAL_RED  ][1] =  0;
-                g_dac_box[PAL_RED  ][2] =  0;
+			if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
+			{
+              	g_dac_box[PAL_RED  ][0] = 63;
+              	g_dac_box[PAL_RED  ][1] =  0;
+              	g_dac_box[PAL_RED  ][2] =  0;
 
-                g_dac_box[PAL_BLUE ][0] =  0;
-                g_dac_box[PAL_BLUE ][1] =  0;
-                g_dac_box[PAL_BLUE ][2] = 63;
+              	g_dac_box[PAL_BLUE ][0] =  0;
+              	g_dac_box[PAL_BLUE ][1] =  0;
+              	g_dac_box[PAL_BLUE ][2] = 63;
 
-                g_dac_box[PAL_MAGENTA][0] = 63;
-                g_dac_box[PAL_MAGENTA][1] =    0;
-                g_dac_box[PAL_MAGENTA][2] = 63;
-				}
-				for (i = 0; i < 256; i++)
-				{
-                g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
-                g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
-				}
+              	g_dac_box[PAL_MAGENTA][0] = 63;
+              	g_dac_box[PAL_MAGENTA][1] =    0;
+              	g_dac_box[PAL_MAGENTA][2] = 63;
+			}
+			for (i = 0; i < 256; i++)
+			{
+              	g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
+              	g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
+			}
 		}
 		spindac(0, 1); /* load it, but don't spin */
 	}
 }
-

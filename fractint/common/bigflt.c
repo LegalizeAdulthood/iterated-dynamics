@@ -1400,24 +1400,26 @@ int cmp_bf(bf_t n1, bf_t n2)
 	/* so unsigned comparison is ok. */
 	/* two bytes at a time */
 	for (i=bflength-2; i >= 0; i -= 2)
-		{
-		if ((value1=big_access16(n1 + i)) > (value2=big_access16(n2 + i)))
-				{ /* now determine which of the two bytes was different */
-				if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
-                return i + 2; /* high byte was different */
-				else
-                return i + 1; /* low byte was different */
-				}
-		else if (value1 < value2)
-				{ /* now determine which of the two bytes was different */
-				if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
-                return -(i + 2); /* high byte was different */
-				else
-                return -(i + 1); /* low byte was different */
-				}
+	{
+		value1 = big_access16(n1 + i);
+		value2 = big_access16(n2 + i);
+		if (value1 > value2)
+		{ /* now determine which of the two bytes was different */
+			if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
+				return i + 2; /* high byte was different */
+			else
+				return i + 1; /* low byte was different */
 		}
-	return 0;
+		else if (value1 < value2)
+		{ /* now determine which of the two bytes was different */
+			if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
+                return -(i + 2); /* high byte was different */
+			else
+                return -(i + 1); /* low byte was different */
+		}
 	}
+	return 0;
+}
 
 /********************************************************************/
 /* r < 0 ?                                      */

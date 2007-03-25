@@ -75,19 +75,20 @@ int t16_getline(FILE *fp, int hs, U16 *data)
 	{
 		if (state == 0)
 		{
-				bufp = 0;
-				if ((count = getc(fp)) > 127)
-				{
-                state = 1;
-                count -= 127;
-                fread(rlebuf, 2, 1, fp);
-				}
-				else
-				{
-                state = 2;
-                ++count;
-                fread(rlebuf, 2, count, fp);
-				}
+			bufp = 0;
+			count = getc(fp);
+			if (count > 127)
+			{
+				state = 1;
+				count -= 127;
+				fread(rlebuf, 2, 1, fp);
+			}
+			else
+			{
+				state = 2;
+				++count;
+				fread(rlebuf, 2, count, fp);
+			}
 		}
 		GET16(rlebuf[bufp], data[i]);
 		if (--count == 0) state = 0;

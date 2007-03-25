@@ -56,32 +56,32 @@ static int diffusion_scan(void);
 /* lookup tables to avoid too much bit fiddling : */
 static char dif_la[] =
 {
-0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
-2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
-6,14, 6,14,2,10,2,10,6,14, 6,14,1, 9,1, 9, 5,13, 5,13,1, 9,1, 9,5,13,
-5,13, 3,11,3,11,7,15,7,15, 3,11,3,11,7,15, 7,15, 1, 9,1, 9,5,13,5,13,
-1, 9, 1, 9,5,13,5,13,3,11, 3,11,7,15,7,15, 3,11, 3,11,7,15,7,15,0, 8,
-0, 8, 4,12,4,12,0, 8,0, 8, 4,12,4,12,2,10, 2,10, 6,14,6,14,2,10,2,10,
-6,14, 6,14,0, 8,0, 8,4,12, 4,12,0, 8,0, 8, 4,12, 4,12,2,10,2,10,6,14,
-6,14, 2,10,2,10,6,14,6,14, 1, 9,1, 9,5,13, 5,13, 1, 9,1, 9,5,13,5,13,
-3,11, 3,11,7,15,7,15,3,11, 3,11,7,15,7,15, 1, 9, 1, 9,5,13,5,13,1, 9,
-1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
+	0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
+	2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
+	6,14, 6,14,2,10,2,10,6,14, 6,14,1, 9,1, 9, 5,13, 5,13,1, 9,1, 9,5,13,
+	5,13, 3,11,3,11,7,15,7,15, 3,11,3,11,7,15, 7,15, 1, 9,1, 9,5,13,5,13,
+	1, 9, 1, 9,5,13,5,13,3,11, 3,11,7,15,7,15, 3,11, 3,11,7,15,7,15,0, 8,
+	0, 8, 4,12,4,12,0, 8,0, 8, 4,12,4,12,2,10, 2,10, 6,14,6,14,2,10,2,10,
+	6,14, 6,14,0, 8,0, 8,4,12, 4,12,0, 8,0, 8, 4,12, 4,12,2,10,2,10,6,14,
+	6,14, 2,10,2,10,6,14,6,14, 1, 9,1, 9,5,13, 5,13, 1, 9,1, 9,5,13,5,13,
+	3,11, 3,11,7,15,7,15,3,11, 3,11,7,15,7,15, 1, 9, 1, 9,5,13,5,13,1, 9,
+	1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
 static char dif_lb[] =
 {
- 0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
- 6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
- 2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
-13,13, 5, 5,13,13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,
-11, 3, 3,11, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13,
- 5, 9, 1, 1, 9, 9, 1, 1, 9,13, 5, 5,13, 1, 9, 9, 1, 5,13,13, 5, 5,13,
-13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 3,
-11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13, 5, 9, 1, 1, 9,
- 9, 1, 1, 9,13, 5, 5,13, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2, 2,
-10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 4,12,12, 4, 8, 0,
- 0, 8, 8, 0, 0, 8,12, 4, 4,12, 6,14,14, 6,10, 2, 2,10,10, 2, 2,10,14,
- 6, 6,14
+	0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
+	6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
+	2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
+	13,13, 5, 5,13,13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,
+	11, 3, 3,11, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13,
+	5, 9, 1, 1, 9, 9, 1, 1, 9,13, 5, 5,13, 1, 9, 9, 1, 5,13,13, 5, 5,13,
+	13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 3,
+	11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13, 5, 9, 1, 1, 9,
+	9, 1, 1, 9,13, 5, 5,13, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2, 2,
+	10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 4,12,12, 4, 8, 0,
+	0, 8, 8, 0, 0, 8,12, 4, 4,12, 6,14,14, 6,10, 2, 2,10,10, 2, 2,10,14,
+	6, 6,14
 };
 
 /* added for testing autologmap() */
@@ -243,46 +243,36 @@ double fmodtest(void)
 	switch (bailoutest)
 	{
 	case Mod:
-		{
 		if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
 			result=sqr(g_new.x) + sqr(g_new.y);
 		else
 			result=magnitude; /* don't recalculate */
-		}
 		break;
 	case Real:
-		{
 		result=sqr(g_new.x);
-		}
 		break;
 	case Imag:
-		{
 		result=sqr(g_new.y);
-		}
 		break;
 	case Or:
 		{
-		double tmpx, tmpy;
-		if ((tmpx = sqr(g_new.x)) > (tmpy = sqr(g_new.y)))
-			result=tmpx;
-		else
-			result=tmpy;
+			double tmpx, tmpy;
+			tmpx = sqr(g_new.x);
+			tmpy = sqr(g_new.y);
+			if (tmpx > tmpy)
+				result=tmpx;
+			else
+				result=tmpy;
 		}
 		break;
 	case Manh:
-		{
 		result=sqr(fabs(g_new.x) + fabs(g_new.y));
-		}
 		break;
 	case Manr:
-		{
 		result=sqr(g_new.x + g_new.y);
-		}
 		break;
 	default:
-		{
 		result=sqr(g_new.x) + sqr(g_new.y);
-		}
 		break;
 	}
 	return result;
@@ -397,61 +387,61 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 	}
 	switch (direction)
 	{
-		case LOWER_RIGHT:
-			for (j=starty; j <= stopy; startx++, j++)
+	case LOWER_RIGHT:
+		for (j=starty; j <= stopy; startx++, j++)
+		{
+			if (action == SAVE)
 			{
-				if (action == SAVE)
-				{
-					get_line(j, startx, stopx, savedots + ct);
-					sym_fill_line(j, startx, stopx, fillbuff);
-				}
-				else
-					sym_put_line(j, startx, stopx, savedots + ct);
-				ct += stopx-startx + 1;
+				get_line(j, startx, stopx, savedots + ct);
+				sym_fill_line(j, startx, stopx, fillbuff);
 			}
-			break;
-		case UPPER_RIGHT:
-			for (j=starty; j >= stopy; startx++, j--)
+			else
+				sym_put_line(j, startx, stopx, savedots + ct);
+			ct += stopx-startx + 1;
+		}
+		break;
+	case UPPER_RIGHT:
+		for (j=starty; j >= stopy; startx++, j--)
+		{
+			if (action == SAVE)
 			{
-				if (action == SAVE)
-				{
-					get_line(j, startx, stopx, savedots + ct);
-					sym_fill_line(j, startx, stopx, fillbuff);
-				}
-				else
-					sym_put_line(j, startx, stopx, savedots + ct);
-				ct += stopx-startx + 1;
+				get_line(j, startx, stopx, savedots + ct);
+				sym_fill_line(j, startx, stopx, fillbuff);
 			}
-			break;
-		case LOWER_LEFT:
-			for (j=starty; j <= stopy; stopx--, j++)
+			else
+				sym_put_line(j, startx, stopx, savedots + ct);
+			ct += stopx-startx + 1;
+		}
+		break;
+	case LOWER_LEFT:
+		for (j=starty; j <= stopy; stopx--, j++)
+		{
+			if (action == SAVE)
 			{
-				if (action == SAVE)
-				{
-					get_line(j, startx, stopx, savedots + ct);
-					sym_fill_line(j, startx, stopx, fillbuff);
-				}
-				else
-					sym_put_line(j, startx, stopx, savedots + ct);
-				ct += stopx-startx + 1;
+				get_line(j, startx, stopx, savedots + ct);
+				sym_fill_line(j, startx, stopx, fillbuff);
 			}
-			break;
-		case UPPER_LEFT:
-			for (j=starty; j >= stopy; stopx--, j--)
+			else
+				sym_put_line(j, startx, stopx, savedots + ct);
+			ct += stopx-startx + 1;
+		}
+		break;
+	case UPPER_LEFT:
+		for (j=starty; j >= stopy; stopx--, j--)
+		{
+			if (action == SAVE)
 			{
-				if (action == SAVE)
-				{
-					get_line(j, startx, stopx, savedots + ct);
-					sym_fill_line(j, startx, stopx, fillbuff);
-				}
-				else
-					sym_put_line(j, startx, stopx, savedots + ct);
-				ct += stopx-startx + 1;
+				get_line(j, startx, stopx, savedots + ct);
+				sym_fill_line(j, startx, stopx, fillbuff);
 			}
-			break;
+			else
+				sym_put_line(j, startx, stopx, savedots + ct);
+			ct += stopx-startx + 1;
+		}
+		break;
 	}
 	if (action == SAVE)
-		(*plot) (col, row, showdotcolor);
+		(*plot)(col, row, showdotcolor);
 }
 
 int calctypeshowdot(void)
@@ -499,7 +489,8 @@ int calctypeshowdot(void)
 		}
 	}
 	showdotsaverestore(startx, stopx, starty, stopy, direction, SAVE);
-	if (orbit_delay > 0) sleepms(orbit_delay);
+	if (orbit_delay > 0)
+		sleepms(orbit_delay);
 	out = (*calctypetmp)();
 	showdotsaverestore(startx, stopx, starty, stopy, direction, RESTORE);
 	return out;
@@ -552,7 +543,7 @@ int calcfract(void)
 	{
 		stopmsg(0, "Need at least 16 colors to use logmap");
 		LogFlag = 0;
-		}
+	}
 
 	if (use_old_period == 1)
 	{
@@ -562,24 +553,25 @@ int calcfract(void)
 	else
 	{
 		nextsavedincr = (int)log10(maxit); /* works better than log() */
-		if (nextsavedincr < 4) nextsavedincr = 4; /* maintains image with low iterations */
+		if (nextsavedincr < 4)
+			nextsavedincr = 4; /* maintains image with low iterations */
 		firstsavedand = (long)((nextsavedincr*2) + 1);
 	}
 
 	LogTable = NULL;
 	MaxLTSize = maxit;
 	Log_Calc = 0;
-/* below, INT_MAX=32767 only when an integer is two bytes.  Which is not true for Xfractint. */
-/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
+	/* below, INT_MAX=32767 only when an integer is two bytes.  Which is not true for Xfractint. */
+	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
 	if (LogFlag && (((maxit > 32767) && (save_release > 1920))
 		|| Log_Fly_Calc == 1))
-		{
+	{
 		Log_Calc = 1; /* calculate on the fly */
 		SetupLogTable();
 	}
 	else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
            || Log_Fly_Calc == 2))
-           {
+    {
 		MaxLTSize = 32767;
 		Log_Calc = 0; /* use logtable */
 	}
@@ -596,7 +588,7 @@ int calcfract(void)
 		{
 			if (rangeslen || Log_Fly_Calc == 2)
 			{
-           stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
+				stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
 			}
 			else
 			{
@@ -615,11 +607,12 @@ int calcfract(void)
 			{
 				m = flip = 0;
 				altern = 32767;
-				if ((numval = ranges[i++]) < 0)
+				numval = ranges[i++];
+				if (numval < 0)
 				{
 					altern = ranges[i++];    /* sub-range iterations */
 					numval = ranges[i++];
-					}
+				}
 				if (numval > (int)MaxLTSize || i >= rangeslen)
 					numval = (int)MaxLTSize;
 				while (l <= numval)
@@ -629,12 +622,13 @@ int calcfract(void)
 					{
 						flip ^= 1;            /* Alternate colors */
 						m = 0;
-						}
 					}
-				++k;
-				if (altern != 32767) ++k;
 				}
+				++k;
+				if (altern != 32767)
+					++k;
 			}
+		}
 		else
 			SetupLogTable();
 	}
@@ -660,8 +654,7 @@ int calcfract(void)
 
 		if (inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			inversion[0] = min(fabs(xxmax - xxmin),
-             fabs(yymax - yymin)) / 6.0;
+			inversion[0] = min(fabs(xxmax - xxmin), fabs(yymax - yymin)) / 6.0;
 			fix_inversion(&inversion[0]);
 			f_radius = inversion[0];
 		}
@@ -697,7 +690,8 @@ int calcfract(void)
 		lparm2.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
 		lparm2.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
 		llimit = (long)(rqlim*fudge);      /* stop if magnitude exceeds this */
-		if (llimit <= 0) llimit = 0x7fffffffL; /* klooge for integer math */
+		if (llimit <= 0)
+			llimit = 0x7fffffffL; /* klooge for integer math */
 		llimit2 = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
 		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
@@ -718,10 +712,10 @@ int calcfract(void)
 	}
 
 	if (curfractalspecific->calctype != StandardFractal
-       && curfractalspecific->calctype != calcmand
-       && curfractalspecific->calctype != calcmandfp
-       && curfractalspecific->calctype != lyapunov
-       && curfractalspecific->calctype != calcfroth)
+		&& curfractalspecific->calctype != calcmand
+		&& curfractalspecific->calctype != calcmandfp
+		&& curfractalspecific->calctype != lyapunov
+		&& curfractalspecific->calctype != calcfroth)
 	{
 		calctype = curfractalspecific->calctype; /* per_image can override */
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
@@ -824,15 +818,18 @@ int find_alternate_math(int type, int math)
 	if (fractalspecific[type].flags & umath)
 	{
 		while (((curtype=alternatemath[++i].type ) != type
-          || (curmath=alternatemath[i].math) != math) && curtype != -1);
+			|| (curmath=alternatemath[i].math) != math) && curtype != -1)
+		{
+		}
 		if (curtype == type && curmath == math)
-		ret = i;
+			ret = i;
 	}
 #else
 	while ((curtype=alternatemath[++i].type) != type && curtype != -1)
-		;
+	{
+	}
 	if (curtype == type && alternatemath[i].math)
-     ret = i;
+		ret = i;
 #endif
 	return ret;
 }
@@ -847,7 +844,8 @@ static void perform_worklist()
 	int (*sv_per_image)(void) = NULL;  /* once-per-image setup */
 	int i, alt;
 
-	if ((alt=find_alternate_math(fractype, bf_math)) > -1)
+	alt=find_alternate_math(fractype, bf_math);
+	if (alt > -1)
 	{
 		sv_orbitcalc = curfractalspecific->orbitcalc;
 		sv_per_pixel = curfractalspecific->per_pixel;
@@ -926,12 +924,13 @@ static void perform_worklist()
 			if (rqlim < DEM_BAILOUT)         /* so go straight for dem bailout */
 				rqlim = DEM_BAILOUT;
 		if (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
-          || fractype == FORMULA || fractype == FFORMULA)
+				|| fractype == FORMULA || fractype == FFORMULA)
 			dem_mandel = 1; /* must be mandel type, formula, or old PAR/GIF */
 		else
 			dem_mandel = 0;
 		dem_delta = sqr(delxx) + sqr(delyy2);
-		if ((ftemp = sqr(delyy) + sqr(delxx2)) > dem_delta)
+		ftemp = sqr(delyy) + sqr(delxx2);
+		if (ftemp > dem_delta)
 			dem_delta = ftemp;
 		if (distestwidth == 0)
 			distestwidth = 1;
@@ -941,7 +940,7 @@ static void perform_worklist()
 		else
 			dem_delta *= 1/(sqr(ftemp)*10000); /* multiply by thickness desired */
 		dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
-          + sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
+			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
 		ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
@@ -976,24 +975,24 @@ static void perform_worklist()
 		curfractalspecific->per_image();
 		if (showdot >= 0)
 		{
-		find_special_colors();
-		switch (autoshowdot)
-		{
-           case 'd':
-              showdotcolor = g_color_dark%colors;
-              break;
-           case 'm':
-              showdotcolor = g_color_medium%colors;
-              break;
-           case 'b':
-           case 'a':
-              showdotcolor = g_color_bright%colors;
-              break;
-           default:
-              showdotcolor = showdot%colors;
-              break;
-		}
-		if (sizedot <= 0)
+			find_special_colors();
+			switch (autoshowdot)
+			{
+			case 'd':
+				showdotcolor = g_color_dark%colors;
+				break;
+			case 'm':
+				showdotcolor = g_color_medium%colors;
+				break;
+			case 'b':
+			case 'a':
+				showdotcolor = g_color_bright%colors;
+				break;
+			default:
+				showdotcolor = showdot%colors;
+				break;
+			}
+			if (sizedot <= 0)
 				showdot_width = -1;
 			else
 			{
@@ -1023,7 +1022,7 @@ static void perform_worklist()
 				while ((savedotslen=sqr(showdot_width) + 5*showdot_width + 4) > 1000)
 					showdot_width--;
 				savedots = (BYTE *)malloc(savedotslen);
-			if (savedots != NULL)
+				if (savedots != NULL)
 				{
 					savedotslen /= 2;
 					fillbuff = savedots + savedotslen;
@@ -1058,10 +1057,10 @@ static void perform_worklist()
 		setsymmetry(symmetry, 1);
 
 		if (!(resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
-       {  /* calculate round screen edges to work out best start for logmap */
+		{  /* calculate round screen edges to work out best start for logmap */
 			LogFlag = (autologmap()*(LogFlag / labs(LogFlag)));
 			SetupLogTable();
-       }
+		}
 
 		/* call the appropriate escape-time engine */
 		switch (stdcalcmode)
@@ -1136,9 +1135,9 @@ static int diffusion_scan(void)
 	if (diffusion_engine() == -1)
 	{
 		add_worklist(xxstart, xxstop, xxstart, yystart, yystop,
-       (int)(dif_counter >> 16),            /* high, */
-       (int)(dif_counter & 0xffff),         /* low order words */
-       worksym);
+			(int)(dif_counter >> 16),            /* high, */
+			(int)(dif_counter & 0xffff),         /* low order words */
+			worksym);
 		return -1;
 	}
 
@@ -1192,26 +1191,17 @@ static int diffusion_scan(void)
 
 static int diffusion_engine (void)
 {
-
 	double log2 = (double) log (2.0);
-
 	int i, j;
-
 	int nx, ny; /* number of tyles to build in x and y dirs */
        /* made this to complete the area that is not */
        /* a square with sides like 2 ** n */
 	int rem_x, rem_y; /* what is left on the last tile to draw */
-
 	int ty;  /* temp for y */
-
 	long unsigned tC; /* temp for dif_counter */
-
 	int dif_offset; /* offset for adjusting looked-up values */
-
 	int sqsz;  /* size of the block being filled */
-
 	int colo, rowo; /* original col and row */
-
 	int s = 1 << (bits/2); /* size of the square */
 
 	nx = (int) floor((ixstop-ixstart + 1)/s );
@@ -1240,13 +1230,12 @@ static int diffusion_engine (void)
 		while (dif_counter < (dif_limit >> 1))
 		{
 			count_to_int(dif_counter, colo, rowo);
-
 			i = 0;
 			col = ixstart + colo; /* get the right tiles */
 			do
 			{
 				j = 0;
-				row = iystart + rowo ;
+				row = iystart + rowo;
 				do
 				{
 					calculate;
@@ -1255,8 +1244,7 @@ static int diffusion_engine (void)
 					row += s;                  /* next tile */
 				}
 				while (j < ny);
-				/* in the last y tile we may not need to plot the point
-             */
+				/* in the last y tile we may not need to plot the point */
 				if (rowo < rem_y)
 				{
 					calculate;
@@ -1266,8 +1254,8 @@ static int diffusion_engine (void)
 				col += s;
 			}
 			while (i < nx);
-			/* in the last x tiles we may not need to plot the point */ if
-			(colo < rem_x)
+			/* in the last x tiles we may not need to plot the point */
+			if (colo < rem_x)
 			{
 				row = iystart + rowo;
 				j = 0;
@@ -1290,63 +1278,59 @@ static int diffusion_engine (void)
 	}
 	else
 	{
-	/*********************************/
-	/* with progressive filling :    */
+		/*********************************/
+		/* with progressive filling :    */
 		while (dif_counter < (dif_limit >> 1))
 		{
-       sqsz = 1 << ((int)(bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
+			sqsz = 1 << ((int)(bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
+			count_to_int(dif_counter, colo, rowo);
 
-       count_to_int(dif_counter, colo, rowo);
+			i = 0;
+			do
+			{
+				j = 0;
+				do
+				{
+					col = ixstart + colo + i*s; /* get the right tiles */
+					row = iystart + rowo + j*s;
 
-       i = 0;
-       do
-       {
-		j = 0;
-		do
-		{
-           col = ixstart + colo + i*s; /* get the right tiles */
-           row = iystart + rowo + j*s;
+					calculate;
+					plot_block(col, row, sqsz, color);
+					j++;
+				}
+				while (j < ny);
+				/* in the last tile we may not need to plot the point */
+				if (rowo < rem_y)
+				{
+					row = iystart + rowo + ny*s;
+					calculate;
+					plot_block_lim(col, row, sqsz, color);
+				}
+				i++;
+			}
+			while (i < nx);
+			/* in the last tile we may not need to plot the point */
+			if (colo < rem_x)
+			{
+				col = ixstart + colo + nx*s;
+				j = 0;
+				do
+				{
+					row = iystart + rowo + j*s; /* get the right tiles */
+					calculate;
+					plot_block_lim(col, row, sqsz, color);
+					j++;
+				}
+				while (j < ny);
+				if (rowo < rem_y)
+				{
+					row = iystart + rowo + ny*s;
+					calculate;
+					plot_block_lim(col, row, sqsz, color);
+				}
+			}
 
-           calculate;
-           plot_block(col, row, sqsz, color);
-           j++;
-		}
-		while (j < ny);
-     /* in the last tile we may not need to plot the point */
-     if (rowo < rem_y)
-     {
-		row = iystart + rowo + ny*s;
-
-		calculate;
-		plot_block_lim(col, row, sqsz, color);
-     }
-	i++;
-       }
-       while (i < nx);
-       /* in the last tile we may not need to plot the point */
-       if (colo < rem_x)
-       {
-     col = ixstart + colo + nx*s;
-     j = 0;
-     do
-     {
-		row = iystart + rowo + j*s; /* get the right tiles */
-
-		calculate;
-		plot_block_lim(col, row, sqsz, color);
-		j++;
-     }
-     while (j < ny);
-     if (rowo < rem_y)
-     {
-		row = iystart + rowo + ny*s;
-
-		calculate;
-		plot_block_lim(col, row, sqsz, color);
-     }
-       }
-
-       dif_counter++;
+			dif_counter++;
 		}
 	}
 	/* from half dif_limit on we only plot 1x1 points :-) */
@@ -1357,49 +1341,45 @@ static int diffusion_engine (void)
 		i = 0;
 		do
 		{
-       j = 0;
-       do
-       {
-     col = ixstart + colo + i*s; /* get the right tiles */
-     row = iystart + rowo + j*s;
-
-     calculate;
-     (*plot)(col, row, color);
-     j++;
-       }
-       while (j < ny);
-       /* in the last tile we may not need to plot the point */
-       if (rowo < rem_y)
-       {
-     row = iystart + rowo + ny*s;
-
-     calculate;
-     (*plot)(col, row, color);
-       }
-		i++;
+			j = 0;
+			do
+			{
+				col = ixstart + colo + i*s; /* get the right tiles */
+				row = iystart + rowo + j*s;
+				calculate;
+				(*plot)(col, row, color);
+				j++;
+			}
+			while (j < ny);
+			/* in the last tile we may not need to plot the point */
+			if (rowo < rem_y)
+			{
+				row = iystart + rowo + ny*s;
+				calculate;
+				(*plot)(col, row, color);
+			}
+			i++;
 		}
 		while (i < nx);
 		/* in the last tile we may nnt need to plot the point */
 		if (colo < rem_x)
 		{
-       col = ixstart + colo + nx*s;
-       j = 0;
-       do
-       {
-     row = iystart + rowo + j*s; /* get the right tiles */
-
-     calculate;
-     (*plot)(col, row, color);
-     j++;
-       }
-       while (j < ny);
-       if (rowo < rem_y)
-       {
-     row = iystart + rowo + ny*s;
-
-     calculate;
-     (*plot)(col, row, color);
-       }
+			col = ixstart + colo + nx*s;
+			j = 0;
+			do
+			{
+				row = iystart + rowo + j*s; /* get the right tiles */
+				calculate;
+				(*plot)(col, row, color);
+				j++;
+			}
+			while (j < ny);
+			if (rowo < rem_y)
+			{
+				row = iystart + rowo + ny*s;
+				calculate;
+				(*plot)(col, row, color);
+			}
 		}
 		dif_counter++;
 	}
@@ -1441,7 +1421,7 @@ static int sticky_orbits(void)
 	{
 	case 'r':
 	default:
-	/* draw a rectangle */
+		/* draw a rectangle */
 		row = yybegin;
 		col = xxbegin;
 
@@ -1463,155 +1443,153 @@ static int sticky_orbits(void)
 		break;
 	case 'l':
 		{
-		int dX, dY;                     /* vector components */
-		int final,                      /* final row or column number */
-          G,                  /* used to test for new row or column */
-          inc1,           /* G increment when row or column doesn't change */
-          inc2;               /* G increment when row or column changes */
-		char pos_slope;
+			int dX, dY;                     /* vector components */
+			int final,                      /* final row or column number */
+				G,                  /* used to test for new row or column */
+				inc1,           /* G increment when row or column doesn't change */
+				inc2;               /* G increment when row or column changes */
+			char pos_slope;
 
-		dX = ixstop - ixstart;                   /* find vector components */
-		dY = iystop - iystart;
-		pos_slope = (char)(dX > 0);                   /* is slope positive? */
-		if (dY < 0)
-		pos_slope = (char)!pos_slope;
-		if (abs (dX) > abs (dY))                /* shallow line case */
-		{
-			if (dX > 0)         /* determine start point and last column */
+			dX = ixstop - ixstart;                   /* find vector components */
+			dY = iystop - iystart;
+			pos_slope = (char)(dX > 0);                   /* is slope positive? */
+			if (dY < 0)
+				pos_slope = (char)!pos_slope;
+			if (abs(dX) > abs(dY))                /* shallow line case */
 			{
-				col = xxbegin;
-				row = yybegin;
-				final = ixstop;
-			}
-			else
+				if (dX > 0)         /* determine start point and last column */
+				{
+					col = xxbegin;
+					row = yybegin;
+					final = ixstop;
+				}
+				else
+				{
+					col = ixstop;
+					row = iystop;
+					final = xxbegin;
+				}
+				inc1 = 2*abs(dY);            /* determine increments and initial G */
+				G = inc1 - abs(dX);
+				inc2 = 2*(abs(dY) - abs(dX));
+				if (pos_slope)
+					while (col <= final)    /* step through columns checking for new row */
+					{
+						if (plotorbits2dfloat() == -1)
+						{
+							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+							return -1; /* interrupted */
+						}
+						col++;
+						if (G >= 0)             /* it's time to change rows */
+						{
+							row++;      /* positive slope so increment through the rows */
+							G += inc2;
+						}
+						else                        /* stay at the same row */
+							G += inc1;
+					}
+				else
+					while (col <= final)    /* step through columns checking for new row */
+					{
+						if (plotorbits2dfloat() == -1)
+						{
+							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+							return -1; /* interrupted */
+						}
+						col++;
+						if (G > 0)              /* it's time to change rows */
+						{
+							row--;      /* negative slope so decrement through the rows */
+							G += inc2;
+						}
+						else                        /* stay at the same row */
+							G += inc1;
+					}
+			}   /* if |dX| > |dY| */
+			else                            /* steep line case */
 			{
-				col = ixstop;
-				row = iystop;
-				final = xxbegin;
+				if (dY > 0)             /* determine start point and last row */
+				{
+						col = xxbegin;
+						row = yybegin;
+						final = iystop;
+				}
+				else
+				{
+						col = ixstop;
+						row = iystop;
+						final = yybegin;
+				}
+				inc1 = 2*abs(dX);            /* determine increments and initial G */
+				G = inc1 - abs(dY);
+				inc2 = 2*(abs(dX) - abs(dY));
+				if (pos_slope)
+					while (row <= final)    /* step through rows checking for new column */
+					{
+						if (plotorbits2dfloat() == -1)
+						{
+							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+							return -1; /* interrupted */
+						}
+						row++;
+						if (G >= 0)                 /* it's time to change columns */
+						{
+							col++;  /* positive slope so increment through the columns */
+							G += inc2;
+						}
+						else                    /* stay at the same column */
+							G += inc1;
+					}
+				else
+					while (row <= final)    /* step through rows checking for new column */
+					{
+						if (plotorbits2dfloat() == -1)
+						{
+							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+							return -1; /* interrupted */
+						}
+						row++;
+						if (G > 0)                  /* it's time to change columns */
+						{
+							col--;  /* negative slope so decrement through the columns */
+							G += inc2;
+						}
+						else                    /* stay at the same column */
+							G += inc1;
+					}
 			}
-			inc1 = 2*abs (dY);            /* determine increments and initial G */
-			G = inc1 - abs (dX);
-			inc2 = 2*(abs (dY) - abs (dX));
-			if (pos_slope)
-				while (col <= final)    /* step through columns checking for new row */
-				{
-					if (plotorbits2dfloat() == -1)
-					{
-                 add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-                 return -1; /* interrupted */
-					}
-					col++;
-					if (G >= 0)             /* it's time to change rows */
-					{
-						row++;      /* positive slope so increment through the rows */
-						G += inc2;
-					}
-					else                        /* stay at the same row */
-						G += inc1;
-				}
-			else
-				while (col <= final)    /* step through columns checking for new row */
-				{
-					if (plotorbits2dfloat() == -1)
-					{
-                 add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-                 return -1; /* interrupted */
-					}
-					col++;
-					if (G > 0)              /* it's time to change rows */
-					{
-						row--;      /* negative slope so decrement through the rows */
-						G += inc2;
-					}
-					else                        /* stay at the same row */
-						G += inc1;
-				}
-		}   /* if |dX| > |dY| */
-		else                            /* steep line case */
-		{
-		if (dY > 0)             /* determine start point and last row */
-		{
-				col = xxbegin;
-				row = yybegin;
-				final = iystop;
-		}
-		else
-		{
-				col = ixstop;
-				row = iystop;
-				final = yybegin;
-		}
-		inc1 = 2*abs (dX);            /* determine increments and initial G */
-		G = inc1 - abs (dY);
-		inc2 = 2*(abs (dX) - abs (dY));
-		if (pos_slope)
-           while (row <= final)    /* step through rows checking for new column */
-           {
-              if (plotorbits2dfloat() == -1)
-              {
-                add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-                return -1; /* interrupted */
-              }
-              row++;
-              if (G >= 0)                 /* it's time to change columns */
-              {
-						col++;  /* positive slope so increment through the columns */
-						G += inc2;
-              }
-              else                    /* stay at the same column */
-						G += inc1;
-           }
-		else
-           while (row <= final)    /* step through rows checking for new column */
-           {
-              if (plotorbits2dfloat() == -1)
-              {
-                add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-                return -1; /* interrupted */
-              }
-              row++;
-              if (G > 0)                  /* it's time to change columns */
-              {
-                 col--;  /* negative slope so decrement through the columns */
-                 G += inc2;
-              }
-              else                    /* stay at the same column */
-                 G += inc1;
-           }
-		}
 		} /* end case 'l' */
 		break;
 	case 'f':  /* this code does not yet work??? */
 		{
-		double Xctr, Yctr;
-		LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-		double Xmagfactor, Rotation, Skew;
-		int angle;
-		double factor = PI / 180.0;
-		double theta;
-		double xfactor = xdots / 2.0;
-		double yfactor = ydots / 2.0;
+			double Xctr, Yctr;
+			LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
+			double Xmagfactor, Rotation, Skew;
+			int angle;
+			double factor = PI / 180.0;
+			double theta;
+			double xfactor = xdots / 2.0;
+			double yfactor = ydots / 2.0;
 
-		angle = xxbegin;  /* save angle in x parameter */
+			angle = xxbegin;  /* save angle in x parameter */
 
-		cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-		if (Rotation <= 0)
-			Rotation += 360;
+			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+			if (Rotation <= 0)
+				Rotation += 360;
 
-		while (angle < Rotation)
-		{
-			theta = (double)angle*factor;
-			col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
-			row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
-			if (plotorbits2dfloat() == -1)
+			while (angle < Rotation)
 			{
-				add_worklist(angle, 0, 0, 0, 0, 0, 0, worksym);
-				return -1; /* interrupted */
+				theta = (double)angle*factor;
+				col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
+				row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
+				if (plotorbits2dfloat() == -1)
+				{
+					add_worklist(angle, 0, 0, 0, 0, 0, 0, worksym);
+					return -1; /* interrupted */
+				}
+				angle++;
 			}
-			angle++;
-		}
-
-
 		}  /* end case 'f' */
 		break;
 	}  /* end switch */
@@ -1624,7 +1602,8 @@ static int OneOrTwoPass(void)
 	int i;
 
 	totpasses = 1;
-	if (stdcalcmode == '2') totpasses = 2;
+	if (stdcalcmode == '2')
+		totpasses = 2;
 	if (stdcalcmode == '2' && workpass == 0) /* do 1st pass of two */
 	{
 		if (StandardCalc(1) == -1)
@@ -1714,8 +1693,8 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 	if (calcmandasm() >= 0)
 	{
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-		&& (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
-				coloriter = logtablecalc(coloriter);
+				&& (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
+			coloriter = logtablecalc(coloriter);
 		color = abs((int)coloriter);
 		if (coloriter >= colors)  /* don't use color 0 unless from inside/outside */
 		{
@@ -1737,7 +1716,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 		if (debugflag != 470)
 			if (color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 				color = 1;
-		(*plot) (col, row, color);
+		(*plot)(col, row, color);
 	}
 	else
 		color = (int)coloriter;
@@ -1765,8 +1744,8 @@ int calcmandfp(void)
 		if (potflag)
 			coloriter = potential(magnitude, realcoloriter);
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-          && (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
-				coloriter = logtablecalc(coloriter);
+				&& (realcoloriter < maxit || (inside < 0 && coloriter == maxit)))
+			coloriter = logtablecalc(coloriter);
 		color = abs((int)coloriter);
 		if (coloriter >= colors)  /* don't use color 0 unless from inside/outside */
 		{
@@ -1788,7 +1767,7 @@ int calcmandfp(void)
 		if (debugflag != 470)
 			if (color == 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 				color = 1;
-		(*plot) (col, row, color);
+		(*plot)(col, row, color);
 	}
 	else
 		color = (int)coloriter;
@@ -1848,7 +1827,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		int i;
 		for (i = 0; i < 16; i++)
 			tantable[i] = 0.0;
-		if (save_release > 1824) maxit = 16;
+		if (save_release > 1824)
+			maxit = 16;
 	}
 	if (periodicitycheck == 0 || inside == ZMAG || inside == STARTRAIL)
 		oldcoloriter = 2147483647L;       /* don't check periodicity at all */
@@ -1898,11 +1878,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		{
 			if (use_old_distest)
 			{
-           rqlim = rqlim_save;
-           if (distest != 1 || colors == 2) /* not doing regular outside colors */
-				if (rqlim < DEM_BAILOUT)   /* so go straight for dem bailout */
-					rqlim = DEM_BAILOUT;
-           dem_color = -1;
+				rqlim = rqlim_save;
+				if (distest != 1 || colors == 2) /* not doing regular outside colors */
+					if (rqlim < DEM_BAILOUT)   /* so go straight for dem bailout */
+						rqlim = DEM_BAILOUT;
+				dem_color = -1;
 			}
 			deriv.x = 1;
 			deriv.y = 0;
@@ -1931,11 +1911,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	}
 	else
 	{
-     /* Jonathan - don't understand such a low savedand -- how about this? */
+		/* Jonathan - don't understand such a low savedand -- how about this? */
 #ifdef MINSAVEDAND
-       savedand = MINSAVEDAND;
+		savedand = MINSAVEDAND;
 #else
-       savedand = firstsavedand;                /* begin checking every other cycle */
+		savedand = firstsavedand;                /* begin checking every other cycle */
 #endif
 	}
 	savedincr = 1;               /* start checking the very first time */
@@ -1977,11 +1957,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	{
 		/* calculation of one orbit goes here */
 		/* input in "old" -- output in "new" */
-	if (coloriter % check_freq == 0)
-	{
-		if (check_key())
-			return -1;
-	}
+		if (coloriter % check_freq == 0)
+		{
+			if (check_key())
+				return -1;
+		}
 
 		if (distest)
 		{
@@ -2008,28 +1988,28 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 			if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
 			{
-          if (use_old_distest)
-          {
-           if (dem_color < 0)
-           {
-              dem_color = coloriter;
-              dem_new = g_new;
-           }
-           if (rqlim >= DEM_BAILOUT
-           || magnitude >= (rqlim = DEM_BAILOUT)
-           || magnitude == 0)
-              break;
-          }
-          else
-           break;
+				if (use_old_distest)
+				{
+					if (dem_color < 0)
+					{
+						dem_color = coloriter;
+						dem_new = g_new;
+					}
+					if (rqlim >= DEM_BAILOUT
+							|| magnitude >= (rqlim = DEM_BAILOUT)
+							|| magnitude == 0)
+						break;
+				}
+				else
+					break;
 			}
 			old = g_new;
 		}
 
 		/* the usual case */
 		else if ((curfractalspecific->orbitcalc() && inside != STARTRAIL)
-              || overflow)
-				break;
+				|| overflow)
+			break;
 		if (show_orbit)
 		{
 			if (!integerfractal)
@@ -2063,23 +2043,23 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 					if (save_release > 1824)
 					{
-                 if (g_new.x > STARTRAILMAX)
-                    g_new.x = STARTRAILMAX;
-                 if (g_new.x < -STARTRAILMAX)
-                    g_new.x = -STARTRAILMAX;
-                 if (g_new.y > STARTRAILMAX)
-                    g_new.y = STARTRAILMAX;
-                 if (g_new.y < -STARTRAILMAX)
-                    g_new.y = -STARTRAILMAX;
-                 tempsqrx = g_new.x*g_new.x;
-                 tempsqry = g_new.y*g_new.y;
-                 magnitude = tempsqrx + tempsqry;
-                 old = g_new;
+						if (g_new.x > STARTRAILMAX)
+							g_new.x = STARTRAILMAX;
+						if (g_new.x < -STARTRAILMAX)
+							g_new.x = -STARTRAILMAX;
+						if (g_new.y > STARTRAILMAX)
+							g_new.y = STARTRAILMAX;
+						if (g_new.y < -STARTRAILMAX)
+							g_new.y = -STARTRAILMAX;
+						tempsqrx = g_new.x*g_new.x;
+						tempsqry = g_new.y*g_new.y;
+						magnitude = tempsqrx + tempsqry;
+						old = g_new;
 					}
 					{
-					int tmpcolor;
-					tmpcolor = (int)(((coloriter - 1) % g_and_color) + 1);
-					tantable[tmpcolor-1] = g_new.y/(g_new.x + .000001);
+						int tmpcolor;
+						tmpcolor = (int)(((coloriter - 1) % g_and_color) + 1);
+						tantable[tmpcolor-1] = g_new.y/(g_new.x + .000001);
 					}
 				}
 			}
@@ -2134,9 +2114,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					magnitude = lmagnitud;
 					magnitude = magnitude / fudge;
 				}
-				else
-					if (magnitude == 0.0 || no_mag_calc == 0)
-						magnitude = sqr(g_new.x) + sqr(g_new.y);
+				else if (magnitude == 0.0 || no_mag_calc == 0)
+					magnitude = sqr(g_new.x) + sqr(g_new.y);
 				if (magnitude < min_orbit)
 				{
 					min_orbit = magnitude;
@@ -2182,44 +2161,44 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				for (i = 0; i < attractors; i++)
 				{
-                lat.x = lnew.x - lattr[i].x;
-                lat.x = lsqr(lat.x);
-                if (lat.x < l_at_rad)
-                {
-                   lat.y = lnew.y - lattr[i].y;
-                   lat.y = lsqr(lat.y);
-                   if (lat.y < l_at_rad)
-                   {
-                      if ((lat.x + lat.y) < l_at_rad)
-                      {
-                         attracted = TRUE;
-                         if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
-                         break;
-                      }
-                   }
-                }
+					lat.x = lnew.x - lattr[i].x;
+					lat.x = lsqr(lat.x);
+					if (lat.x < l_at_rad)
+					{
+						lat.y = lnew.y - lattr[i].y;
+						lat.y = lsqr(lat.y);
+						if (lat.y < l_at_rad)
+						{
+							if ((lat.x + lat.y) < l_at_rad)
+							{
+								attracted = TRUE;
+								if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
+								break;
+							}
+						}
+					}
 				}
 			}
 			else
 			{
 				for (i = 0; i < attractors; i++)
 				{
-                at.x = g_new.x - attr[i].x;
-                at.x = sqr(at.x);
-                if (at.x < f_at_rad)
-                {
-                   at.y = g_new.y - attr[i].y;
-                   at.y = sqr(at.y);
-                   if (at.y < f_at_rad)
-                   {
-                      if ((at.x + at.y) < f_at_rad)
-                      {
-                         attracted = TRUE;
-                         if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
-                         break;
-                      }
-                   }
-                }
+					at.x = g_new.x - attr[i].x;
+					at.x = sqr(at.x);
+					if (at.x < f_at_rad)
+					{
+						at.y = g_new.y - attr[i].y;
+						at.y = sqr(at.y);
+						if (at.y < f_at_rad)
+						{
+							if ((at.x + at.y) < f_at_rad)
+							{
+								attracted = TRUE;
+								if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
+								break;
+							}
+						}
+					}
 				}
 			}
 			if (attracted)
@@ -2286,42 +2265,43 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						if (fabs(saved.y - g_new.y) < closenuff)
 							caught_a_cycle = 1;
 #ifdef NUMSAVED
-					int i;
-                for (i = 0; i <= zctr; i++)
-                {
-                   if (caught[i] == 0)
-                   {
-                      if (fabs(savedz[i].x - g_new.x) < closenuff)
-                         if (fabs(savedz[i].y - g_new.y) < closenuff)
-                             caught[i] = coloriter;
-                   }
-                }
+					{
+						int i;
+						for (i = 0; i <= zctr; i++)
+						{
+							if (caught[i] == 0)
+							{
+								if (fabs(savedz[i].x - g_new.x) < closenuff)
+									if (fabs(savedz[i].y - g_new.y) < closenuff)
+										caught[i] = coloriter;
+							}
+						}
+					}
 #endif
 				}
 				if (caught_a_cycle)
 				{
 #ifdef NUMSAVED
-                char msg[MSGLEN];
-                static FILE *fp = NULL;
-                static char c;
-                if (fp == NULL)
-                   fp = dir_fopen(workdir, "cycles.txt", "w");
+					char msg[MSGLEN];
+					static FILE *fp = NULL;
+					static char c;
+					if (fp == NULL)
+						fp = dir_fopen(workdir, "cycles.txt", "w");
 #endif
-                cyclelen = coloriter-savedcoloriter;
+					cyclelen = coloriter-savedcoloriter;
 #ifdef NUMSAVED
-                fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-                    row, col, cyclelen, coloriter, savedand);
-                if (zctr > 1 && zctr < NUMSAVED)
-                {
-                   int i;
-                   for (i = 0; i < zctr; i++)
-                      fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
-                }
-                fflush(fp);
+					fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
+						row, col, cyclelen, coloriter, savedand);
+					if (zctr > 1 && zctr < NUMSAVED)
+					{
+						int i;
+						for (i = 0; i < zctr; i++)
+							fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
+					}
+					fflush(fp);
 #endif
-                coloriter = maxit - 1;
+					coloriter = maxit - 1;
 				}
-
 			}
 		}
 	}  /* end while (coloriter++ < maxit) */
@@ -2385,26 +2365,25 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		else if (outside == IMAG)          /* "imag" */
 			coloriter += (long)g_new.y + 7;
 		else if (outside == MULT  && g_new.y)  /* "mult" */
-          coloriter = (long)((double)coloriter*(g_new.x/g_new.y));
+			coloriter = (long)((double)coloriter*(g_new.x/g_new.y));
 		else if (outside == SUM)           /* "sum" */
-          coloriter += (long)(g_new.x + g_new.y);
+			coloriter += (long)(g_new.x + g_new.y);
 		else if (outside == ATAN)          /* "atan" */
-          coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
+			coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
 		else if (outside == FMOD)
-          coloriter = (long)(memvalue*colors / closeprox);
+			coloriter = (long)(memvalue*colors / closeprox);
 		else if (outside == TDIS)
 		{
-          coloriter = (long)(totaldist);
-}
-
+			coloriter = (long)(totaldist);
+		}
 
 		/* eliminate negative colors & wrap arounds */
 		if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
 		{
 			if (save_release < 1961)
-             coloriter = 0;
+				coloriter = 0;
 			else
-             coloriter = 1;
+				coloriter = 1;
 		}
 	}
 
@@ -2459,18 +2438,17 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			if (labs(lnew.x) < llimit2 || labs(lnew.y) < llimit2)
 				coloriter = biomorph;
 		}
-		else
-			if (fabs(g_new.x) < rqlim2 || fabs(g_new.y) < rqlim2)
-				coloriter = biomorph;
+		else if (fabs(g_new.x) < rqlim2 || fabs(g_new.y) < rqlim2)
+			coloriter = biomorph;
 	}
 
 	if (outside >= 0 && attracted == FALSE) /* merge escape-time stripes */
 		coloriter = outside;
 	else if (LogTable || Log_Calc)
-				coloriter = logtablecalc(coloriter);
+		coloriter = logtablecalc(coloriter);
 	goto plot_pixel;
 
-	plot_inside: /* we're "inside" */
+plot_inside: /* we're "inside" */
 	if (periodicitycheck < 0 && caught_a_cycle)
 		coloriter = 7;           /* show periodicity */
 	else if (inside >= 0)
@@ -2551,8 +2529,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			coloriter = logtablecalc(coloriter);
 	}
 
-	plot_pixel:
-
+plot_pixel:
 	color = abs((int)coloriter);
 	if (coloriter >= colors)  /* don't use color 0 unless from inside/outside */
 	{
@@ -2574,10 +2551,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	if (debugflag != 470)
 		if (color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 			color = 1;
-	(*plot) (col, row, color);
+	(*plot)(col, row, color);
 
 	maxit = savemaxit;
-	if ((kbdcount -= abs((int)realcoloriter)) <= 0)
+	kbdcount -= abs((int)realcoloriter);
+	if (kbdcount <= 0)
 	{
 		if (check_key())
 			return -1;
@@ -2594,7 +2572,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 /**************** standardfractal doodad subroutines *********************/
 static void decomposition(void)
 {
-/* static double cos45     = 0.70710678118654750; */ /* cos 45  degrees */
+	/* static double cos45     = 0.70710678118654750; */ /* cos 45  degrees */
 	static double sin45     = 0.70710678118654750; /* sin 45     degrees */
 	static double cos22_5   = 0.92387953251128670; /* cos 22.5   degrees */
 	static double sin22_5   = 0.38268343236508980; /* sin 22.5   degrees */
@@ -2607,7 +2585,7 @@ static void decomposition(void)
 	static double tan5_625  = 0.09849140335716425; /* tan 5.625  degrees */
 	static double tan2_8125 = 0.04912684976946725; /* tan 2.8125 degrees */
 	static double tan1_4063 = 0.02454862210892544; /* tan 1.4063 degrees */
-/* static long lcos45     ;*/ /* cos 45   degrees */
+	/* static long lcos45     ;*/ /* cos 45   degrees */
 	static long lsin45     ; /* sin 45     degrees */
 	static long lcos22_5   ; /* cos 22.5   degrees */
 	static long lsin22_5   ; /* sin 22.5   degrees */
@@ -2659,9 +2637,9 @@ static void decomposition(void)
 		}
 		if (decomp[0] == 2 && save_release >= 1827)
 		{
-		save_temp = temp;
-		if (temp == 2) save_temp = 3;
-		if (temp == 3) save_temp = 2;
+			save_temp = temp;
+			if (temp == 2) save_temp = 3;
+			if (temp == 3) save_temp = 2;
 		}
 
 		if (decomp[0] >= 8)
@@ -2683,9 +2661,9 @@ static void decomposition(void)
 					++temp;
 					lalt = lnew;
 					lnew.x = multiply(lalt.x, lcos45, bitshift) +
-                   multiply(lalt.y, lsin45, bitshift);
+						multiply(lalt.y, lsin45, bitshift);
 					lnew.y = multiply(lalt.x, lsin45, bitshift) -
-                   multiply(lalt.y, lcos45, bitshift);
+						multiply(lalt.y, lcos45, bitshift);
 				}
 
 				if (decomp[0] >= 32)
@@ -2696,9 +2674,9 @@ static void decomposition(void)
 						++temp;
 						lalt = lnew;
 						lnew.x = multiply(lalt.x, lcos22_5, bitshift) +
-                      multiply(lalt.y, lsin22_5, bitshift);
+							multiply(lalt.y, lsin22_5, bitshift);
 						lnew.y = multiply(lalt.x, lsin22_5, bitshift) -
-                      multiply(lalt.y, lcos22_5, bitshift);
+							multiply(lalt.y, lcos22_5, bitshift);
 					}
 
 					if (decomp[0] >= 64)
@@ -2709,9 +2687,9 @@ static void decomposition(void)
 							++temp;
 							lalt = lnew;
 							lnew.x = multiply(lalt.x, lcos11_25, bitshift) +
-                         multiply(lalt.y, lsin11_25, bitshift);
+								multiply(lalt.y, lsin11_25, bitshift);
 							lnew.y = multiply(lalt.x, lsin11_25, bitshift) -
-                         multiply(lalt.y, lcos11_25, bitshift);
+								multiply(lalt.y, lcos11_25, bitshift);
 						}
 
 						if (decomp[0] >= 128)
@@ -2722,9 +2700,9 @@ static void decomposition(void)
 								++temp;
 								lalt = lnew;
 								lnew.x = multiply(lalt.x, lcos5_625, bitshift) +
-                            multiply(lalt.y, lsin5_625, bitshift);
+									multiply(lalt.y, lsin5_625, bitshift);
 								lnew.y = multiply(lalt.x, lsin5_625, bitshift) -
-                            multiply(lalt.y, lcos5_625, bitshift);
+									multiply(lalt.y, lcos5_625, bitshift);
 							}
 
 							if (decomp[0] == 256)
@@ -2754,9 +2732,9 @@ static void decomposition(void)
 		}
 		if (decomp[0] == 2 && save_release >= 1827)
 		{
-		save_temp = temp;
-		if (temp == 2) save_temp = 3;
-		if (temp == 3) save_temp = 2;
+			save_temp = temp;
+			if (temp == 2) save_temp = 3;
+			if (temp == 3) save_temp = 2;
 		}
 		if (decomp[0] >= 8)
 		{
@@ -2832,8 +2810,10 @@ static void decomposition(void)
 	}
 	if (decomp[0] == 2 && save_release >= 1827)
 	{
-		if (save_temp & 2) coloriter = 1;
-		else coloriter = 0;
+		if (save_temp & 2)
+			coloriter = 1;
+		else
+			coloriter = 0;
 		if (colors == 2)
           coloriter++;
 	}
@@ -2958,139 +2938,140 @@ Guenther's code.  I've noted these places with the initials DG.
 
 static
 int  bound_trace_main(void)
-	{
+{
 	enum direction coming_from;
 	unsigned int match_found, continue_loop;
 	int trail_color, fillcolor_used, last_fillcolor_used = -1;
 	int max_putline_length;
 	int right, left, length;
 	if (inside == 0 || outside == 0)
-		{
+	{
 		stopmsg(0, "Boundary tracing cannot be used with inside=0 or outside=0");
 		return -1;
-		}
+	}
 	if (colors < 16)
-		{
+	{
 		stopmsg(0, "Boundary tracing cannot be used with < 16 colors");
 		return -1;
-		}
+	}
 
 	got_status = GOT_STATUS_BOUNDARY_TRACE;
 	max_putline_length = 0; /* reset max_putline_length */
 	for (currow = iystart; currow <= iystop; currow++)
-		{
+	{
 		reset_periodicity = 1; /* reset for a new row */
 		color = bkcolor;
 		for (curcol = ixstart; curcol <= ixstop; curcol++)
-				{
-				if (getcolor(curcol, currow) != bkcolor)
+		{
+			if (getcolor(curcol, currow) != bkcolor)
                 continue;
 
-				trail_color = color;
-				row = currow;
-				col = curcol;
-				if ((*calctype)() == -1) /* color, row, col are global */
-                {
+			trail_color = color;
+			row = currow;
+			col = curcol;
+			if ((*calctype)() == -1) /* color, row, col are global */
+            {
                 if (showdot != bkcolor) /* remove showdot pixel */
                    (*plot)(col, row, bkcolor);
                 if (iystop != yystop)  /* DG */
                    iystop = yystop - (currow - yystart); /* allow for sym */
                 add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
                 return -1;
-                }
-				reset_periodicity = 0; /* normal periodicity checking */
+            }
+			reset_periodicity = 0; /* normal periodicity checking */
 
-				/*
-				This next line may cause a few more pixels to be calculated,
-				but at the savings of quite a bit of overhead
-				*/
-				if (color != trail_color)  /* DG */
+			/*
+			This next line may cause a few more pixels to be calculated,
+			but at the savings of quite a bit of overhead
+			*/
+			if (color != trail_color)  /* DG */
                 continue;
 
-				/* sweep clockwise to trace outline */
-				trail_row = currow;
-				trail_col = curcol;
-				trail_color = color;
-				fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
-				coming_from = West;
-				going_to = East;
-				match_found = 0;
-				continue_loop = TRUE;
-				do
-                {
+			/* sweep clockwise to trace outline */
+			trail_row = currow;
+			trail_col = curcol;
+			trail_color = color;
+			fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
+			coming_from = West;
+			going_to = East;
+			match_found = 0;
+			continue_loop = TRUE;
+			do
+            {
                 step_col_row();
                 if (row >= currow
-								&& col >= ixstart
-								&& col <= ixstop
-								&& row <= iystop)
-                    {
+					&& col >= ixstart
+					&& col <= ixstop
+					&& row <= iystop)
+                {
                     /* the order of operations in this next line is critical */
-						color = getcolor(col, row);
+					color = getcolor(col, row);
                     if (color == bkcolor && (*calctype)() == -1)
                                 /* color, row, col are global for (*calctype)() */
-								{
-								if (showdot != bkcolor) /* remove showdot pixel */
-									(*plot)(col, row, bkcolor);
-								if (iystop != yystop)  /* DG */
-									iystop = yystop - (currow - yystart); /* allow for sym */
-								add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
-								return -1;
-								}
+					{
+						if (showdot != bkcolor) /* remove showdot pixel */
+							(*plot)(col, row, bkcolor);
+						if (iystop != yystop)  /* DG */
+							iystop = yystop - (currow - yystart); /* allow for sym */
+						add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
+						return -1;
+					}
                     else if (color == trail_color)
-								{
-								if (match_found < 4) /* to keep it from overflowing */
-                                match_found++;
-								trail_row = row;
-								trail_col = col;
-								advance_match();
-								}
+					{
+						if (match_found < 4) /* to keep it from overflowing */
+                            match_found++;
+						trail_row = row;
+						trail_col = col;
+						advance_match();
+					}
                     else
-								{
-								advance_no_match();
-								continue_loop = going_to != coming_from || match_found;
-								}
-                    }
+					{
+						advance_no_match();
+						continue_loop = going_to != coming_from || match_found;
+					}
+                }
                 else
-                    {
+                {
                     advance_no_match();
                     continue_loop = going_to != coming_from || match_found;
-                    }
                 }
-                while (continue_loop && (col != curcol || row != currow));
+            }
+			while (continue_loop && (col != curcol || row != currow));
 
-				if (match_found <= 3)  /* DG */
-                { /* no hole */
-                color = bkcolor;
-                reset_periodicity = 1;
-                continue;
-                }
+			if (match_found <= 3)  /* DG */
+			{
+				/* no hole */
+				color = bkcolor;
+				reset_periodicity = 1;
+				continue;
+			}
 
-/*
-Fill in region by looping around again, filling lines to the left
-whenever going_to is South or West
-*/
-				trail_row = currow;
-				trail_col = curcol;
-				coming_from = West;
-				going_to = East;
+			/*
+			Fill in region by looping around again, filling lines to the left
+			whenever going_to is South or West
+			*/
+			trail_row = currow;
+			trail_col = curcol;
+			coming_from = West;
+			going_to = East;
+			do
+            {
+				match_found = FALSE;
 				do
                 {
-                match_found = FALSE;
-                do
-                    {
-                    step_col_row();
-                    if (row >= currow
-                            && col >= ixstart
-                            && col <= ixstop
-                            && row <= iystop
-                            && getcolor(col, row) == trail_color)
-										/* getcolor() must be last */
-								{
-								if (going_to == South
-                                || (going_to == West && coming_from != East))
-                            { /* fill a row, but only once */
-                            right = col;
-                            while (--right >= ixstart)
+					step_col_row();
+					if (row >= currow
+                        && col >= ixstart
+                        && col <= ixstop
+                        && row <= iystop
+                        && getcolor(col, row) == trail_color)
+						/* getcolor() must be last */
+					{
+						if (going_to == South
+                            || (going_to == West && coming_from != East))
+                        { /* fill a row, but only once */
+							right = col;
+							while (--right >= ixstart)
 							{
 								color = getcolor(right, row);
 								if (color != trail_color)
@@ -3098,92 +3079,95 @@ whenever going_to is South or West
 									break;
 								}
 							}
-                            if (color == bkcolor) /* check last color */
-                                {
-                                left = right;
-                                while (getcolor(--left, row) == bkcolor)
-                                      /* Should NOT be possible for left < ixstart */
-                                    ; /* do nothing */
-                                left++; /* one pixel too far */
-                                if (right == left) /* only one hole */
-                                    (*plot)(left, row, fillcolor_used);
-                                else
-                                    { /* fill the line to the left */
-                                    length=right-left + 1;
-                                    if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
-                                        { /* only reset dstack if necessary */
-                                        memset(dstack, fillcolor_used, length);
-                                        last_fillcolor_used = fillcolor_used;
-                                        max_putline_length = length;
-                                        }
-                                    sym_fill_line(row, left, right, dstack);
+							if (color == bkcolor) /* check last color */
+                            {
+								left = right;
+								while (getcolor(--left, row) == bkcolor)
+									/* Should NOT be possible for left < ixstart */
+								{
+									/* do nothing */
+								}
+								left++; /* one pixel too far */
+								if (right == left) /* only one hole */
+									(*plot)(left, row, fillcolor_used);
+								else
+                                { /* fill the line to the left */
+									length=right-left + 1;
+									if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
+                                    { /* only reset dstack if necessary */
+										memset(dstack, fillcolor_used, length);
+										last_fillcolor_used = fillcolor_used;
+										max_putline_length = length;
                                     }
-                                } /* end of fill line */
+									sym_fill_line(row, left, right, dstack);
+								}
+							} /* end of fill line */
 
 #if 0 /* don't interupt with a check_key() during fill */
-                            if (--kbdcount <= 0)
-                                {
-                                if (check_key())
-                                    {
-                                    if (iystop != yystop)
-                                       iystop = yystop - (currow - yystart); /* allow for sym */
-                                    add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
-                                    return -1;
-                                    }
-                                kbdcount=max_kbdcount;
-                                }
-#endif
-                            }
-								trail_row = row;
-								trail_col = col;
-								advance_match();
-								match_found = TRUE;
+							if (--kbdcount <= 0)
+							{
+								if (check_key())
+								{
+									if (iystop != yystop)
+										iystop = yystop - (currow - yystart); /* allow for sym */
+									add_worklist(xxstart, xxstop, curcol, currow, iystop, currow, 0, worksym);
+									return -1;
 								}
-                    else
-								advance_no_match();
-                    }
-                    while (!match_found && going_to != coming_from);
-
-                if (!match_found)
-                    { /* next one has to be a match */
-                    step_col_row();
-                    trail_row = row;
-                    trail_col = col;
-                    advance_match();
-                    }
-                }
-                while (trail_col != curcol || trail_row != currow);
-				reset_periodicity = 1; /* reset after a trace/fill */
-				color = bkcolor;
+								kbdcount=max_kbdcount;
+							}
+#endif
+                        }
+						trail_row = row;
+						trail_col = col;
+						advance_match();
+						match_found = TRUE;
+					}
+					else
+						advance_no_match();
 				}
+				while (!match_found && going_to != coming_from);
+
+				if (!match_found)
+				{ /* next one has to be a match */
+					step_col_row();
+					trail_row = row;
+					trail_col = col;
+					advance_match();
+				}
+			}
+			while (trail_col != curcol || trail_row != currow);
+			reset_periodicity = 1; /* reset after a trace/fill */
+			color = bkcolor;
 		}
-	return 0;
 	}
+
+	return 0;
+}
 
 /*******************************************************************/
 /* take one step in the direction of going_to */
 static void step_col_row()
-	{
+{
 	switch (going_to)
-		{
-		case North:
-				col = trail_col;
-				row = trail_row - 1;
-				break;
-		case East:
-				col = trail_col + 1;
-				row = trail_row;
-				break;
-		case South:
-				col = trail_col;
-				row = trail_row + 1;
-				break;
+	{
+	case North:
+		col = trail_col;
+		row = trail_row - 1;
+		break;
+	case East:
+		col = trail_col + 1;
+		row = trail_row;
+		break;
+	case South:
+		col = trail_col;
+		row = trail_row + 1;
+		break;
 		case West:
-				col = trail_col - 1;
-				row = trail_row;
-				break;
-		}
+			col = trail_col - 1;
+			row = trail_row;
+			break;
 	}
+}
 
 /******************* end of boundary trace method *******************/
 
@@ -3209,7 +3193,7 @@ static int solidguess(void)
 	/* check if guessing at bottom & right edges is ok */
 	bottom_guess = (plot == symplot2 || (plot == putcolor && iystop + 1 == ydots));
 	right_guess  = (plot == symplot2J
-       || ((plot == putcolor || plot == symplot2) && ixstop + 1 == xdots));
+		|| ((plot == putcolor || plot == symplot2) && ixstop + 1 == xdots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (debugflag != 472)
@@ -3260,7 +3244,7 @@ static int solidguess(void)
 				reset_periodicity = 1;
 				for (col=ixstart; col <= ixstop; col += maxblock)
 				{
-				i=(*calctype)();
+					i=(*calctype)();
 					if (i == -1)
 						break;
 					reset_periodicity = 0;
@@ -3307,9 +3291,13 @@ static int solidguess(void)
 			{
 				++pfxp1;
 				u= *(pfxp1-1)|*pfxp1|*(pfxp1 + 1);
-				*(++pfxp0)=u|(u >> 1)|(u << 1)
-					|((*(pfxp1-(maxxblk + 1))|*(pfxp1-maxxblk)|*(pfxp1-(maxxblk-1))) >> 15)
-						|((*(pfxp1 + (maxxblk-1))|*(pfxp1 + maxxblk)|*(pfxp1 + (maxxblk + 1))) << 15);
+				*(++pfxp0) = u | (u >> 1) | (u << 1)
+					| ((*(pfxp1-(maxxblk + 1))
+					| *(pfxp1-maxxblk)
+					| *(pfxp1-(maxxblk-1))) >> 15)
+					| ((*(pfxp1 + (maxxblk-1))
+					| *(pfxp1 + maxxblk)
+					| *(pfxp1 + (maxxblk + 1))) << 15);
 			}
 		}
 	}
@@ -3342,7 +3330,7 @@ static int solidguess(void)
 		}
 		++workpass;
 		if (num_worklist /* work list not empty, do one pass at a time */
-		&& blocksize > 2) /* if 2, we just did last pass */
+			&& blocksize > 2) /* if 2, we just did last pass */
 		{
 			add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, workpass, worksym);
 			goto exit_solidguess;
@@ -3451,21 +3439,21 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		while (1) /* go around till none of 23, 32, 33 change anymore */
 		{
 			if (guessed33 > 0
-             && (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
+				&& (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
 			{
 				calcadot(c33, xplushalf, yplushalf);
 				guessed33=0;
 			}
 			if (guessed32 > 0
-             && (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
-             || c32 != c41 || c32 != c23))
+				&& (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
+					|| c32 != c41 || c32 != c23))
 			{
 				calcadot(c32, xplushalf, y);
 				guessed32=0;
 				continue;
 			}
 			if (guessed23 > 0
-             && (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
+				&& (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
 			{
 				calcadot(c23, x, yplushalf);
 				guessed23=0;
@@ -3508,17 +3496,17 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 
 		/* check if some calcs in this block mean earlier guesses need fixing */
 		fix21=((c22 != c12 || c22 != c32)
-          && c21 == c22 && c21 == c31 && c21 == prev11
-          && y > 0
-          && (x == ixstart || c21 == getcolor(x-halfblock, ylessblock))
-          && (xplushalf > ixstop || c21 == getcolor(xplushalf, ylessblock))
-          && c21 == getcolor(x, ylessblock));
+			&& c21 == c22 && c21 == c31 && c21 == prev11
+			&& y > 0
+			&& (x == ixstart || c21 == getcolor(x-halfblock, ylessblock))
+			&& (xplushalf > ixstop || c21 == getcolor(xplushalf, ylessblock))
+			&& c21 == getcolor(x, ylessblock));
 		fix31=(c22 != c32
-          && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
-          && y > 0 && xplushalf <= ixstop
-          && c31 == getcolor(xplushalf, ylessblock)
-          && (xplusblock > ixstop || c31 == getcolor(xplusblock, ylessblock))
-          && c31 == getcolor(x, ylessblock));
+			&& c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
+			&& y > 0 && xplushalf <= ixstop
+			&& c31 == getcolor(xplushalf, ylessblock)
+			&& (xplusblock > ixstop || c31 == getcolor(xplusblock, ylessblock))
+			&& c31 == getcolor(x, ylessblock));
 		prev11=c31; /* for next time around */
 		if (fix21)
 		{
@@ -3557,14 +3545,17 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		x += blocksize;
 	} /* end x loop */
 
-	if (firstpass == 0 || guessplot) return 0;
+	if (firstpass == 0 || guessplot)
+		return 0;
 
 	/* paint rows the fast way */
 	for (i = 0; i < halfblock; ++i)
 	{
-		if ((j=y + i) <= iystop)
+		j=y + i;
+		if (j <= iystop)
 			put_line(j, xxstart, ixstop, &dstack[xxstart]);
-		if ((j=y + i + halfblock) <= iystop)
+		j=y + i + halfblock;
+		if (j <= iystop)
 			put_line(j, xxstart, ixstop, &dstack[xxstart + OLDMAXPIXELS]);
 		if (driver_key_pressed()) return -1;
 	}
@@ -3583,9 +3574,11 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			}
 		for (i = 0; i < halfblock; ++i)
 		{
-			if ((j=yystop-(y + i-yystart)) > iystop && j < ydots)
+			j=yystop-(y + i-yystart);
+			if (j > iystop && j < ydots)
 				put_line(j, xxstart, ixstop, &dstack[xxstart]);
-			if ((j=yystop-(y + i + halfblock-yystart)) > iystop && j < ydots)
+			j=yystop-(y + i + halfblock-yystart);
+			if (j > iystop && j < ydots)
 				put_line(j, xxstart, ixstop, &dstack[xxstart + OLDMAXPIXELS]);
 			if (driver_key_pressed()) return -1;
 		}
@@ -3596,7 +3589,8 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 static void _fastcall plotblock(int buildrow, int x, int y, int color)
 {
 	int i, xlim, ylim;
-	if ((xlim=x + halfblock) > ixstop)
+	xlim = x + halfblock;
+	if (xlim > ixstop)
 		xlim=ixstop + 1;
 	if (buildrow >= 0 && guessplot == 0) /* save it for later put_line */
 	{
@@ -3610,7 +3604,8 @@ static void _fastcall plotblock(int buildrow, int x, int y, int color)
 			return; /* the usual case */
 	}
 	/* paint it */
-	if ((ylim=y + halfblock) > iystop)
+	ylim=y + halfblock;
+	if (ylim > iystop)
 	{
 		if (y > iystop)
 			return;
@@ -3735,8 +3730,8 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		if (cmp_bf(bfxmin, bfx3rd) || cmp_bf(bfymin, bfy3rd))
 			return;
 	if ((potflag && pot16bit) || (invert && inversion[2] != 0.0)
-       || decomp[0] != 0
-       || xxmin != xx3rd || yymin != yy3rd)
+			|| decomp[0] != 0
+			|| xxmin != xx3rd || yymin != yy3rd)
 		return;
 	if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && forcesymmetry == 999)
 		return;
@@ -3745,7 +3740,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	else if (forcesymmetry == 1000)
 		forcesymmetry = sym;  /* for backwards compatibility */
 	else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-          || outside == ATAN || bailoutest == Manr || outside == FMOD)
+			|| outside == ATAN || bailoutest == Manr || outside == FMOD)
 		return;
 	else if (inside == FMODI || outside == TDIS)
 		return;
@@ -3753,31 +3748,32 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
 	parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
 	switch (fractype)
-	{ case LMANLAMFNFN:      /* These need only P1 checked. */
-     case FPMANLAMFNFN:     /* P2 is used for a switch value */
-     case LMANFNFN:         /* These have NOPARM set in fractalp.c, */
-     case FPMANFNFN:        /* but it only applies to P1. */
-     case FPMANDELZPOWER:   /* or P2 is an exponent */
-     case LMANDELZPOWER:
-     case FPMANZTOZPLUSZPWR:
-     case MARKSMANDEL:
-     case MARKSMANDELFP:
-     case MARKSJULIA:
-     case MARKSJULIAFP:
-       break;
-     case FORMULA:  /* Check P2, P3, P4 and P5 */
-     case FFORMULA:
-       parmszero = (parmszero && param[2] == 0.0 && param[3] == 0.0
-                    && param[4] == 0.0 && param[5] == 0.0
-                    && param[6] == 0.0 && param[7] == 0.0
-                    && param[8] == 0.0 && param[9] == 0.0);
-       parmsnoreal = (parmsnoreal && param[2] == 0.0 && param[4] == 0.0
-                      && param[6] == 0.0 && param[8] == 0.0);
-       parmsnoimag = (parmsnoimag && param[3] == 0.0 && param[5] == 0.0
-                      && param[7] == 0.0 && param[9] == 0.0);
-       break;
-     default:   /* Check P2 for the rest */
-       parmszero = (parmszero && parm2.x == 0.0 && parm2.y == 0.0);
+	{
+	case LMANLAMFNFN:      /* These need only P1 checked. */
+    case FPMANLAMFNFN:     /* P2 is used for a switch value */
+    case LMANFNFN:         /* These have NOPARM set in fractalp.c, */
+    case FPMANFNFN:        /* but it only applies to P1. */
+    case FPMANDELZPOWER:   /* or P2 is an exponent */
+    case LMANDELZPOWER:
+    case FPMANZTOZPLUSZPWR:
+    case MARKSMANDEL:
+    case MARKSMANDELFP:
+    case MARKSJULIA:
+    case MARKSJULIAFP:
+		break;
+    case FORMULA:  /* Check P2, P3, P4 and P5 */
+    case FFORMULA:
+		parmszero = (parmszero && param[2] == 0.0 && param[3] == 0.0
+						&& param[4] == 0.0 && param[5] == 0.0
+						&& param[6] == 0.0 && param[7] == 0.0
+						&& param[8] == 0.0 && param[9] == 0.0);
+		parmsnoreal = (parmsnoreal && param[2] == 0.0 && param[4] == 0.0
+						&& param[6] == 0.0 && param[8] == 0.0);
+		parmsnoimag = (parmsnoimag && param[3] == 0.0 && param[5] == 0.0
+						&& param[7] == 0.0 && param[9] == 0.0);
+		break;
+    default:   /* Check P2 for the rest */
+		parmszero = (parmszero && parm2.x == 0.0 && parm2.y == 0.0);
 	}
 	xaxis_row = yaxis_col = -1;
 	if (bf_math)
@@ -3870,7 +3866,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			if (basin)
 				plot = symplot2basin;
 			else
-				plot = symplot2 ;
+				plot = symplot2;
 			break;
 		case 2: /* just yaxis symmetry */
 			if (basin) /* got no routine for this case */
@@ -3885,7 +3881,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			if (basin)
 				plot = symplot4basin;
 			else
-				plot = symplot4 ;
+				plot = symplot4;
 		}
 		break;
 	case ORIGIN_NOPARM:                       /* Origin Symmetry (no parms)*/
@@ -3894,7 +3890,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case ORIGIN:                      /* Origin Symmetry */
 		originsym:
 		if (xsym_split(xaxis_row, xaxis_between) == 0
-          && ysym_split(yaxis_col, yaxis_between) == 0)
+			&& ysym_split(yaxis_col, yaxis_between) == 0)
 		{
 			plot = symplot2J;
 			ixstop = xxstop; /* didn't want this changed */
@@ -3922,10 +3918,10 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		if (invert && forcesymmetry == 999)
 			goto originsym;
-		plot = symPIplot ;
+		plot = symPIplot;
 		symmetry = 0;
 		if (xsym_split(xaxis_row, xaxis_between) == 0
-          && ysym_split(yaxis_col, yaxis_between) == 0)
+				&& ysym_split(yaxis_col, yaxis_between) == 0)
 			if (parm.y == 0.0)
 				plot = symPIplot4J; /* both axes */
 			else
@@ -3944,7 +3940,8 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		else
 			pixelpi = (int)((PI/fabs(xxmax-xxmin))*xdots); /* PI in pixels */
 
-		if ((ixstop = xxstart + pixelpi-1 ) > xxstop)
+		ixstop = xxstart + pixelpi-1;
+		if (ixstop > xxstop)
 			ixstop = xxstop;
 		if (plot == symPIplot4J && ixstop > (i = (xxstart + xxstop)/2))
 			ixstop = i;
@@ -3992,7 +3989,6 @@ static int tesseral(void)
 			return -1;
 		}
 	}
-
 	else  /* resuming, rebuild work stack */
 	{
 		int i, mid, curx, cury, xsize, ysize;
@@ -4001,11 +3997,13 @@ static int tesseral(void)
 		cury = yybegin & 0xfff;
 		ysize = 1;
 		i = (unsigned)yybegin >> 12;
-		while (--i >= 0) ysize <<= 1;
+		while (--i >= 0)
+			ysize <<= 1;
 		curx = workpass & 0xfff;
 		xsize = 1;
 		i = (unsigned)workpass >> 12;
-		while (--i >= 0) xsize <<= 1;
+		while (--i >= 0)
+			xsize <<= 1;
 		while (1)
 		{
 			tp2 = tp;
@@ -4023,7 +4021,8 @@ static int tesseral(void)
 			}
 			else  /* next divide across */
 			{
-				if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize) break;
+				if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
+					break;
 				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
 				if (mid > cury)  /* stack bottom part */
 				{
@@ -4063,18 +4062,20 @@ static int tesseral(void)
 			goto tess_split;
 
 		{
-		int mid, midcolor;
-		if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
-		{
-			mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
-			midcolor = tesscol(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
-			if (midcolor != tp->top) goto tess_split;
+			int mid, midcolor;
+			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
+			{
+				mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
+				midcolor = tesscol(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
+				if (midcolor != tp->top)
+					goto tess_split;
 			}
-		else  /* divide across the middle */
-		{
-			mid = (tp->y1 + tp->y2) >> 1;           /* Find mid point */
-			midcolor = tessrow(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
-			if (midcolor != tp->top) goto tess_split;
+			else  /* divide across the middle */
+			{
+				mid = (tp->y1 + tp->y2) >> 1;           /* Find mid point */
+				midcolor = tessrow(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
+				if (midcolor != tp->top)
+					goto tess_split;
 			}
 		}
 
@@ -4083,43 +4084,48 @@ static int tesseral(void)
 			i = 0;
 			if (fillcolor != 0)
 			{
-			if (fillcolor > 0)
-				tp->top = fillcolor %colors;
-			if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
-			{
-				for (col = tp->x1 + 1; col < tp->x2; col++)
+				if (fillcolor > 0)
+					tp->top = fillcolor %colors;
+				if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
+				{
+					for (col = tp->x1 + 1; col < tp->x2; col++)
+						for (row = tp->y1 + 1; row < tp->y2; row++)
+						{
+							(*plot)(col, row, tp->top);
+							if (++i > 500)
+							{
+								if (check_key())
+									goto tess_end;
+								i = 0;
+							}
+						}
+				}
+				else  /* use put_line for speed */
+				{
+					memset(&dstack[OLDMAXPIXELS], tp->top, j);
 					for (row = tp->y1 + 1; row < tp->y2; row++)
 					{
-						(*plot)(col, row, tp->top);
-						if (++i > 500)
+						put_line(row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+						if (plot != putcolor) /* symmetry */
 						{
-							if (check_key()) goto tess_end;
+							j = yystop-(row-yystart);
+							if (j > iystop && j < ydots)
+								put_line(j, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+						}
+						if (++i > 25)
+						{
+							if (check_key())
+								goto tess_end;
 							i = 0;
 						}
 					}
-			}
-			else  /* use put_line for speed */
-			{
-				memset(&dstack[OLDMAXPIXELS], tp->top, j);
-				for (row = tp->y1 + 1; row < tp->y2; row++)
-				{
-					put_line(row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
-					if (plot != putcolor) /* symmetry */
-						if ((j = yystop-(row-yystart)) > iystop && j < ydots)
-							put_line(j, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
-					if (++i > 25)
-					{
-						if (check_key()) goto tess_end;
-						i = 0;
-					}
 				}
-			}
 			}
 			--tp;
 		}
 		continue;
 
-		tess_split:
+tess_split:
 		{  /* box not surrounded by same color, sub-divide */
 			int mid, midcolor;
 			struct tess *tp2;
@@ -4127,11 +4133,14 @@ static int tesseral(void)
 			{
 				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
 				midcolor = tesscol(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
-				if (midcolor == -3) goto tess_end;
+				if (midcolor == -3)
+					goto tess_end;
 				if (tp->x2 - mid > 1)  /* right part >= 1 column */
 				{
-					if (tp->top == -1) tp->top = -2;
-					if (tp->bot == -1) tp->bot = -2;
+					if (tp->top == -1)
+						tp->top = -2;
+					if (tp->bot == -1)
+						tp->bot = -2;
 					tp2 = tp;
 					if (mid - tp->x1 > 1)  /* left part >= 1 col, stack right */
 					{
@@ -4149,7 +4158,8 @@ static int tesseral(void)
 			{
 				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
 				midcolor = tessrow(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
-				if (midcolor == -3) goto tess_end;
+				if (midcolor == -3)
+					goto tess_end;
 				if (tp->y2 - mid > 1)  /* bottom part >= 1 column */
 				{
 					if (tp->lft == -1) tp->lft = -2;
@@ -4168,10 +4178,9 @@ static int tesseral(void)
 					--tp;
 			}
 		}
-
 	}
 
-	tess_end:
+tess_end:
 	if (tp >= (struct tess *)&dstack[0])  /* didn't complete */
 	{
 		int i, xsize, ysize;
@@ -4189,11 +4198,10 @@ static int tesseral(void)
 			++ysize;
 		}
 		add_worklist(xxstart, xxstop, xxstart, yystart, yystop,
-          (ysize << 12) + tp->y1, (xsize << 12) + tp->x1, worksym);
+			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, worksym);
 		return -1;
 	}
 	return 0;
-
 } /* tesseral */
 
 static int _fastcall tesschkcol(int x, int y1, int y2)
@@ -4201,7 +4209,8 @@ static int _fastcall tesschkcol(int x, int y1, int y2)
 	int i;
 	i = getcolor(x, ++y1);
 	while (--y2 > y1)
-		if (getcolor(x, y2) != i) return -1;
+		if (getcolor(x, y2) != i)
+			return -1;
 	return i;
 }
 
@@ -4211,7 +4220,8 @@ static int _fastcall tesschkrow(int x1, int x2, int y)
 	i = getcolor(x1, y);
 	while (x2 > x1)
 	{
-		if (getcolor(x2, y) != i) return -1;
+		if (getcolor(x2, y) != i)
+			return -1;
 		--x2;
 	}
 	return i;
@@ -4227,8 +4237,11 @@ static int _fastcall tesscol(int x, int y1, int y2)
 	reset_periodicity = 0;
 	while (++row <= y2)  /* generate the column */
 	{
-		if ((i = (*calctype)()) < 0) return -3;
-		if (i != colcolor) colcolor = -1;
+		i = (*calctype)();
+		if (i < 0)
+			return -3;
+		if (i != colcolor)
+			colcolor = -1;
 	}
 	return colcolor;
 }
@@ -4243,8 +4256,11 @@ static int _fastcall tessrow(int x1, int x2, int y)
 	reset_periodicity = 0;
 	while (++col <= x2)  /* generate the row */
 	{
-		if ((i = (*calctype)()) < 0) return -3;
-		if (i != rowcolor) rowcolor = -1;
+		i = (*calctype)();
+		if (i < 0)
+			return -3;
+		if (i != rowcolor)
+			rowcolor = -1;
 	}
 	return rowcolor;
 }
@@ -4254,75 +4270,88 @@ static int _fastcall tessrow(int x1, int x2, int y)
 
 static long autologmap(void)   /*RB*/
 {  /* calculate round screen edges to avoid wasted colours in logmap */
- long mincolour;
- int lag;
- int xstop = xdots - 1; /* don't use symetry */
- int ystop = ydots - 1; /* don't use symetry */
- long old_maxit;
- mincolour=LONG_MAX;
- row = 0;
- reset_periodicity = 0;
- old_maxit = maxit;
- for (col = 0; col < xstop; col++) /* top row */
+	long mincolour;
+	int lag;
+	int xstop = xdots - 1; /* don't use symetry */
+	int ystop = ydots - 1; /* don't use symetry */
+	long old_maxit;
+	mincolour=LONG_MAX;
+	row = 0;
+	reset_periodicity = 0;
+	old_maxit = maxit;
+	for (col = 0; col < xstop; col++) /* top row */
 	{
 		color=(*calctype)();
-		if (color == -1) goto ack; /* key pressed, bailout */
+		if (color == -1)
+			goto ack; /* key pressed, bailout */
 		if (realcoloriter < mincolour)
 		{
-		mincolour=realcoloriter ;
-		maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			mincolour=realcoloriter;
+			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
-		if (col >= 32 ) (*plot)(col-32, row, 0);
+		if (col >= 32)
+			(*plot)(col-32, row, 0);
 	}                                    /* these lines tidy up for BTM etc */
-	for (lag = 32; lag > 0; lag--) (*plot)(col-lag, row, 0);
+	for (lag = 32; lag > 0; lag--)
+		(*plot)(col-lag, row, 0);
 
- col=xstop;
- for (row = 0; row < ystop; row++) /* right  side */
+	col=xstop;
+	for (row = 0; row < ystop; row++) /* right  side */
 	{
 		color=(*calctype)();
-		if (color == -1) goto ack; /* key pressed, bailout */
+		if (color == -1)
+			goto ack; /* key pressed, bailout */
 		if (realcoloriter < mincolour)
 		{
-		mincolour=realcoloriter ;
-		maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			mincolour=realcoloriter;
+			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
-		if (row >= 32 ) (*plot)(col, row-32, 0);
+		if (row >= 32)
+			(*plot)(col, row-32, 0);
 	}
-	for (lag = 32; lag > 0; lag--) (*plot)(col, row-lag, 0);
+	for (lag = 32; lag > 0; lag--)
+		(*plot)(col, row-lag, 0);
 
- col = 0;
- for (row = 0; row < ystop; row++) /* left  side */
+	col = 0;
+	for (row = 0; row < ystop; row++) /* left  side */
 	{
 		color=(*calctype)();
-		if (color == -1) goto ack; /* key pressed, bailout */
+		if (color == -1)
+			goto ack; /* key pressed, bailout */
 		if (realcoloriter < mincolour)
 		{
-		mincolour=realcoloriter ;
-		maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			mincolour=realcoloriter;
+			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
-		if (row >= 32 ) (*plot)(col, row-32, 0);
+		if (row >= 32)
+			(*plot)(col, row-32, 0);
 	}
-	for (lag = 32; lag > 0; lag--) (*plot)(col, row-lag, 0);
+	for (lag = 32; lag > 0; lag--)
+		(*plot)(col, row-lag, 0);
 
- row=ystop ;
- for (col = 0; col < xstop; col++) /* bottom row */
+	row=ystop;
+	for (col = 0; col < xstop; col++) /* bottom row */
 	{
 		color=(*calctype)();
-		if (color == -1) goto ack; /* key pressed, bailout */
+		if (color == -1)
+			goto ack; /* key pressed, bailout */
 		if (realcoloriter < mincolour)
 		{
-		mincolour=realcoloriter ;
-		maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			mincolour=realcoloriter;
+			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
-		if (col >= 32 ) (*plot)(col-32, row, 0);
+		if (col >= 32)
+			(*plot)(col-32, row, 0);
 	}
-	for (lag = 32; lag > 0; lag--) (*plot)(col-lag, row, 0);
+	for (lag = 32; lag > 0; lag--)
+		(*plot)(col-lag, row, 0);
 
- ack: /* bailout here if key is pressed */
- if (mincolour == 2) resuming = 1; /* insure autologmap not called again */
- maxit = old_maxit;
+ack: /* bailout here if key is pressed */
+	if (mincolour == 2)
+		resuming = 1; /* insure autologmap not called again */
+	maxit = old_maxit;
 
- return mincolour ;
+	return mincolour;
 }
 
 /* Symmetry plot for period PI */
@@ -4330,7 +4359,7 @@ void _fastcall symPIplot(int x, int y, int color)
 {
 	while (x <= xxstop)
 	{
-		putcolor(x, y, color) ;
+		putcolor(x, y, color);
 		x += pixelpi;
 	}
 }
@@ -4340,10 +4369,10 @@ void _fastcall symPIplot2J(int x, int y, int color)
 	int i, j;
 	while (x <= xxstop)
 	{
-		putcolor(x, y, color) ;
+		putcolor(x, y, color);
 		if ((i=yystop-(y-yystart)) > iystop && i < ydots
-          && (j=xxstop-(x-xxstart)) < xdots)
-			putcolor(j, i, color) ;
+				&& (j=xxstop-(x-xxstart)) < xdots)
+			putcolor(j, i, color);
 		x += pixelpi;
 	}
 }
@@ -4354,14 +4383,15 @@ void _fastcall symPIplot4J(int x, int y, int color)
 	while (x <= (xxstart + xxstop)/2)
 	{
 		j = xxstop-(x-xxstart);
-		putcolor(x , y , color) ;
+		putcolor(x , y , color);
 		if (j < xdots)
-			putcolor(j , y , color) ;
-		if ((i=yystop-(y-yystart)) > iystop && i < ydots)
+			putcolor(j , y , color);
+		i=yystop-(y-yystart);
+		if (i > iystop && i < ydots)
 		{
-			putcolor(x , i , color) ;
+			putcolor(x , i , color);
 			if (j < xdots)
-				putcolor(j , i , color) ;
+				putcolor(j , i , color);
 		}
 		x += pixelpi;
 	}
@@ -4371,28 +4401,30 @@ void _fastcall symPIplot4J(int x, int y, int color)
 void _fastcall symplot2(int x, int y, int color)
 {
 	int i;
-	putcolor(x, y, color) ;
-	if ((i=yystop-(y-yystart)) > iystop && i < ydots)
-		putcolor(x, i, color) ;
+	putcolor(x, y, color);
+	i=yystop-(y-yystart);
+	if (i > iystop && i < ydots)
+		putcolor(x, i, color);
 }
 
 /* Symmetry plot for Y Axis Symmetry */
 void _fastcall symplot2Y(int x, int y, int color)
 {
 	int i;
-	putcolor(x, y, color) ;
-	if ((i=xxstop-(x-xxstart)) < xdots)
-		putcolor(i, y, color) ;
+	putcolor(x, y, color);
+	i=xxstop-(x-xxstart);
+	if (i < xdots)
+		putcolor(i, y, color);
 }
 
 /* Symmetry plot for Origin Symmetry */
 void _fastcall symplot2J(int x, int y, int color)
 {
 	int i, j;
-	putcolor(x, y, color) ;
+	putcolor(x, y, color);
 	if ((i=yystop-(y-yystart)) > iystop && i < ydots
        && (j=xxstop-(x-xxstart)) < xdots)
-		putcolor(j, i, color) ;
+		putcolor(j, i, color);
 }
 
 /* Symmetry plot for Both Axis Symmetry */
@@ -4400,14 +4432,15 @@ void _fastcall symplot4(int x, int y, int color)
 {
 	int i, j;
 	j = xxstop-(x-xxstart);
-	putcolor(x , y, color) ;
+	putcolor(x , y, color);
 	if (j < xdots)
-		putcolor(j , y, color) ;
-	if ((i=yystop-(y-yystart)) > iystop && i < ydots)
+		putcolor(j , y, color);
+	i=yystop-(y-yystart);
+	if (i > iystop && i < ydots)
 	{
-		putcolor(x , i, color) ;
+		putcolor(x , i, color);
 		if (j < xdots)
-			putcolor(j , i, color) ;
+			putcolor(j , i, color);
 	}
 }
 
@@ -4415,17 +4448,18 @@ void _fastcall symplot4(int x, int y, int color)
 void _fastcall symplot2basin(int x, int y, int color)
 {
 	int i, stripe;
-	putcolor(x, y, color) ;
+	putcolor(x, y, color);
 	if (basin == 2 && color > 8)
 		stripe = 8;
 	else
 		stripe = 0;
-	if ((i=yystop-(y-yystart)) > iystop && i < ydots)
+	i=yystop-(y-yystart);
+	if (i > iystop && i < ydots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
 		color = (degree + 1-color)%degree + 1;  /* symmetrical color */
 		color += stripe;                    /* add stripe */
-		putcolor(x, i, color)  ;
+		putcolor(x, i, color) ;
 	}
 }
 
@@ -4449,26 +4483,22 @@ void _fastcall symplot4basin(int x, int y, int color)
 	else
 		color1 = degree/2 + degree + 2 - color;
 	j = xxstop-(x-xxstart);
-	putcolor(x, y, color + stripe) ;
+	putcolor(x, y, color + stripe);
 	if (j < xdots)
-		putcolor(j, y, color1 + stripe) ;
-	if ((i=yystop-(y-yystart)) > iystop && i < ydots)
+		putcolor(j, y, color1 + stripe);
+	i=yystop-(y-yystart);
+	if (i > iystop && i < ydots)
 	{
-		putcolor(x, i, stripe + (degree + 1 - color)%degree + 1) ;
+		putcolor(x, i, stripe + (degree + 1 - color)%degree + 1);
 		if (j < xdots)
-			putcolor(j, i, stripe + (degree + 1 - color1)%degree + 1) ;
+			putcolor(j, i, stripe + (degree + 1 - color1)%degree + 1);
 	}
 }
 
 static void _fastcall puttruecolor_disk(int x, int y, int color)
 {
 	putcolor_a(x, y, color);
-
 	targa_color(x, y, color);
-/* writedisk(x *= 3, y, (BYTE)((realcoloriter      ) & 0xff)); */ /* blue  */
-/* writedisk(++x, y, (BYTE)((realcoloriter >> 8 ) & 0xff)); */ /* green */
-/* writedisk(x + 1, y, (BYTE)((realcoloriter >> 16) & 0xff)); */ /* red   */
-
 }
 
 /* Do nothing plot!!! */

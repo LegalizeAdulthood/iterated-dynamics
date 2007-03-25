@@ -803,7 +803,8 @@ int Bifurcation(void)
 		end_resume();
 	}
 	array_size =  (iystop + 1)*sizeof(int); /* should be iystop + 1 */
-	if ((verhulst_array = (int *) malloc(array_size)) == NULL)
+	verhulst_array = (int *) malloc(array_size);
+	if (verhulst_array == NULL)
 	{
 		stopmsg(0, "Insufficient free memory for calculation.");
 		return -1;
@@ -1299,7 +1300,8 @@ int lya_setup ()
 	long i;
 	int t;
 
-	if ((filter_cycles=(long)param[2]) == 0)
+	filter_cycles=(long)param[2];
+	if (filter_cycles == 0)
 		filter_cycles=maxit/2;
 	lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
 	lyaLength = 1;
@@ -2325,41 +2327,42 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 		scrub_orbit();
 
 	realcoloriter = coloriter;
-	if ((kbdcount -= abs((int)realcoloriter)) <= 0)
-		{
+	kbdcount -= abs((int)realcoloriter);
+	if (kbdcount <= 0)
+	{
 		if (check_key())
 			return -1;
 		kbdcount = max_kbdcount;
-		}
+	}
 
-/* inside - Here's where non-palette based images would be nice.  Instead, */
-/* we'll use blocks of (colors-1)/3 or (colors-1)/6 and use special froth  */
-/* color maps in attempt to replicate the images of James Alexander.       */
+	/* inside - Here's where non-palette based images would be nice.  Instead, */
+	/* we'll use blocks of (colors-1)/3 or (colors-1)/6 and use special froth  */
+	/* color maps in attempt to replicate the images of James Alexander.       */
 	if (found_attractor)
-		{
+	{
 		if (colors >= 256)
-			{
+		{
 			if (!fsp->altcolor)
-				{
+			{
 				if (coloriter > fsp->shades)
-                coloriter = fsp->shades;
-				}
+					coloriter = fsp->shades;
+			}
 			else
 				coloriter = fsp->shades*coloriter / maxit;
 			if (coloriter == 0)
 				coloriter = 1;
 			coloriter += fsp->shades*(found_attractor-1);
-			}
+		}
 		else if (colors >= 16)
-			{ /* only alternate coloring scheme available for 16 colors */
+		{ /* only alternate coloring scheme available for 16 colors */
 			long lshade;
 
-/* Trying to make a better 16 color distribution. */
-/* Since their are only a few possiblities, just handle each case. */
-/* This is a mostly guess work here. */
+			/* Trying to make a better 16 color distribution. */
+			/* Since their are only a few possiblities, just handle each case. */
+			/* This is a mostly guess work here. */
 			lshade = (coloriter << 16)/maxit;
 			if (fsp->attractors != 6) /* either 2 or 3 attractors */
-				{
+			{
 				if (lshade < 2622)       /* 0.04 */
 					coloriter = 1;
 				else if (lshade < 10486) /* 0.16 */
@@ -2371,20 +2374,20 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				else
 					coloriter = 5;
 				coloriter += 5*(found_attractor-1);
-				}
+			}
 			else /* 6 attractors */
-				{
+			{
 				if (lshade < 10486)      /* 0.16 */
 					coloriter = 1;
 				else
 					coloriter = 2;
 				coloriter += 2*(found_attractor-1);
-				}
 			}
+		}
 		else /* use a color corresponding to the attractor */
 			coloriter = found_attractor;
 		oldcoloriter = coloriter;
-		}
+	}
 	else /* outside, or inside but didn't get sucked in by attractor. */
 		coloriter = 0;
 
@@ -2393,7 +2396,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 	(*plot)(col, row, color);
 
 	return color;
-	}
+}
 
 /*
 These last two froth functions are for the orbit-in-window feature.
@@ -2401,59 +2404,61 @@ Normally, this feature requires StandardFractal, but since it is the
 attractor that makes the frothybasin type so unique, it is worth
 putting in as a stand-alone.
 */
-
 int froth_per_pixel(void)
-	{
+{
 	if (!integerfractal) /* fp mode */
-		{
+	{
 		old.x = dxpixel();
 		old.y = dypixel();
 		tempsqrx=sqr(old.x);
 		tempsqry=sqr(old.y);
-		}
+	}
 	else  /* integer mode */
-		{
+	{
 		lold.x = lxpixel();
 		lold.y = lypixel();
 		ltempsqrx = multiply(lold.x, lold.x, bitshift);
 		ltempsqry = multiply(lold.y, lold.y, bitshift);
-		}
-	return 0;
 	}
+	return 0;
+}
 
 int froth_per_orbit(void)
-	{
+{
 	if (!integerfractal) /* fp mode */
-		{
+	{
 		g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
 		g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
 		if (fsp->repeat_mapping)
 		{
-		old = g_new;
-		g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
-		g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
+			old = g_new;
+			g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
+			g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
 		}
 
 		if ((tempsqrx=sqr(g_new.x)) + (tempsqry=sqr(g_new.y)) >= rqlim)
 			return 1;
 		old = g_new;
-		}
+	}
 	else  /* integer mode */
-		{
+	{
 		lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 		lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
 		if (fsp->repeat_mapping)
-			{
-			if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
+		{
+			ltempsqrx = lsqr(lnew.x);
+			ltempsqry = lsqr(lnew.y);
+			if (ltempsqrx + ltempsqry >= llimit)
 				return 1;
 			lold = lnew;
 			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 			lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
-			}
-		if ((ltempsqrx=lsqr(lnew.x)) + (ltempsqry=lsqr(lnew.y)) >= llimit)
+		}
+		ltempsqrx = lsqr(lnew.x);
+		ltempsqry = lsqr(lnew.y);
+		if (ltempsqrx + ltempsqry >= llimit)
 			return 1;
 		lold = lnew;
-		}
-	return 0;
 	}
-
+	return 0;
+}

@@ -2619,11 +2619,13 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
-			if ((tmp = inf->viewvect[i]) < inf->minvals[i])
+		{
+			tmp = inf->viewvect[i];
+			if (tmp < inf->minvals[i])
 				inf->minvals[i] = tmp;
 			else if (tmp > inf->maxvals[i])
 				inf->maxvals[i] = tmp;
-
+		}
 		if (coloriter == waste) /* time to work it out */
 		{
 			inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
@@ -2761,10 +2763,13 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
-			if ((tmp = inf->viewvect[i]) < inf->minvals[i])
+		{
+			tmp = inf->viewvect[i];
+			if (tmp < inf->minvals[i])
 				inf->minvals[i] = tmp;
 			else if (tmp > inf->maxvals[i])
 				inf->maxvals[i] = tmp;
+		}
 		if (coloriter == waste) /* time to work it out */
 		{
 			view[0] = view[1] = 0; /* center on origin */

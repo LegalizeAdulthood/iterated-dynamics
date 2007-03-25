@@ -394,7 +394,8 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 			tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
 			tmpydots = (fileydots + skipydots - 1) / skipydots;
 			/* reduce further if that improves aspect */
-			if ((ftemp = vid_aspect(tmpxdots, tmpydots)) > fileaspectratio)
+			ftemp = vid_aspect(tmpxdots, tmpydots);
+			if (ftemp > fileaspectratio)
 			{
 				if (j)
 				{

@@ -2773,7 +2773,8 @@ static int ParseStr(char *Str, int pass)
 					n++;
 				Len = (n + 1)-InitN;
 				ExpectingArg = 0;
-				if ((jumptype = isjump(&Str[InitN], Len)) != 0)
+				jumptype = isjump(&Str[InitN], Len);
+				if (jumptype != 0)
 				{
 					uses_jump = 1;
 					switch (jumptype)
@@ -3724,7 +3725,8 @@ int frm_get_param_stuff(char *Name)
 
 	if (debugflag == 96)
 	{
-		if ((debug_token = fopen("frmtokens.txt","at")) != NULL)
+		debug_token = fopen("frmtokens.txt","at");
+		if (debug_token != NULL)
 			fprintf(debug_token,"%s\n", Name);
 	}
 	while (frmgettoken(entry_file, &current_token))
@@ -3942,7 +3944,8 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 
 	if (debugflag == 96)
 	{
-		if ((debug_fp = fopen("debugfrm.txt","at")) != NULL)
+		debug_fp = fopen("debugfrm.txt","at");
+		if (debug_fp != NULL)
 		{
 			fprintf(debug_fp,"%s\n",FormName);
 			if (symmetry != 0)

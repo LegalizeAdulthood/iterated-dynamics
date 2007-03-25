@@ -124,13 +124,17 @@ static void init_bf_2(void)
 
 	/* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math eg long double */
-	if ((i = find_alternate_math(fractype, BIGNUM)) > -1)
-       bf_math = alternatemath[i].math;
-	else if ((i = find_alternate_math(fractype, BIGFLT)) > -1)
+	i = find_alternate_math(fractype, BIGNUM);
+	if (i > -1)
        bf_math = alternatemath[i].math;
 	else
-       bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
-
+	{
+		i = find_alternate_math(fractype, BIGFLT);
+		if (i > -1)
+			bf_math = alternatemath[i].math;
+		else
+			bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
+	}
 	floatflag = 1;
 
 	/* Now split up the memory among the pointers */

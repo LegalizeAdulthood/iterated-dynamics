@@ -216,7 +216,8 @@ short decoder(short linewidth)
 
 	/* Initialize for decoding a new image... */
 
-	if ((size = (short) get_byte()) < 0)
+	size = (short) get_byte();
+	if (size < 0)
 		return size;
 	if (size < 2 || 9 < size)
 		return BAD_CODE_SIZE;
@@ -337,7 +338,8 @@ short decoder(short linewidth)
 					{
 						if (--yskip < 0)
 						{
-							if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
+							ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
+							if (ret < 0)
 								return ret;
 							yskip = skipydots;
 						}
@@ -390,7 +392,8 @@ short decoder(short linewidth)
 			{
 				if (--yskip < 0)
 				{
-					if ((ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)))) < 0)
+					ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
+					if (ret < 0)
 						return ret;
 					yskip = skipydots;
 				}
@@ -425,7 +428,8 @@ static short get_next_code()
 
 			/* Out of bytes in current block, so read next block */
 			pbytes = byte_buff;
-			if ((navail_bytes = (short) get_byte()) < 0)
+			navail_bytes = (short) get_byte();
+			if (navail_bytes < 0)
 				return navail_bytes;
 			else if (navail_bytes)
 				get_bytes(byte_buff, navail_bytes);
@@ -443,7 +447,8 @@ static short get_next_code()
 
 			/* Out of bytes in current block, so read next block */
 			pbytes = byte_buff;
-			if ((navail_bytes = (short) get_byte()) < 0)
+			navail_bytes = (short) get_byte();
+			if (navail_bytes < 0)
 				return navail_bytes;
 			else if (navail_bytes)
 				get_bytes(byte_buff, navail_bytes);

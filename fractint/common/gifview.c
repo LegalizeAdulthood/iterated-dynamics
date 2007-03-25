@@ -103,10 +103,11 @@ int gifview()
 	if (has_ext(temp1) == NULL)
 	{
 		strcat(temp1,DEFAULTFRACTALTYPE);
-		if ((fpin = fopen(temp1,"rb")) != NULL)
+		fpin = fopen(temp1,"rb");
+		if (fpin != NULL)
 		{
 			fclose(fpin);
-			}
+		}
 		else
 		{
 			if (outln == outline_stereo)
@@ -114,8 +115,8 @@ int gifview()
 			else
 				strcpy(temp1,readname);
 			strcat(temp1,ALTERNATEFRACTALTYPE);
-			}
 		}
+	}
 	fpin = fopen(temp1, "rb");
 	if (fpin == NULL)
 	{
@@ -165,7 +166,8 @@ int gifview()
 	{
 		for (j = 0; j < 3; j++)
 		{
-			if ((k = get_byte()) < 0)
+			k = get_byte();
+			if (k < 0)
 			{
 				close_file();
 				return -1;
@@ -277,7 +279,8 @@ int gifview()
              {
                 for (j = 0; j < 3; j++)
                 {
-                   if ((k = get_byte()) < 0)
+                   k = get_byte();
+				   if (k < 0)
                    {
                       close_file();
                       return -1;

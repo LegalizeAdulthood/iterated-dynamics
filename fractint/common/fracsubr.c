@@ -665,18 +665,20 @@ void adjust_corner(void)
 	LDBL Magnification;
 
 	if (!integerfractal)
-		{
+	{
 		/* While we're at it, let's adjust the Xmagfactor as well */
 		cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		ftemp = fabs(Xmagfactor);
 		if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1 + aspectdrift))
-			{
+		{
 			Xmagfactor = sign(Xmagfactor);
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-			}
 		}
+	}
 
-	if ((ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd)))
+	ftemp = fabs(xx3rd-xxmin);
+	ftemp2 = fabs(xxmax-xx3rd);
+	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && yy3rd != yymax)
 			xx3rd = xxmin;
@@ -685,7 +687,9 @@ void adjust_corner(void)
 	if (ftemp2*10000 < ftemp && yy3rd != yymin)
 		xx3rd = xxmax;
 
-	if ((ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd)))
+	ftemp=fabs(yy3rd-yymin);
+	ftemp2=fabs(yymax-yy3rd);
+	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
 			yy3rd = yymin;
@@ -987,7 +991,8 @@ static void _fastcall adjust_to_limits(double expand)
 	if (highy-lowy > ftemp) ftemp = highy-lowy;
 
 	/* if image is too large, downsize it maintaining center */
-	if ((ftemp = limit*2/ftemp) < 1.0)
+	ftemp = limit*2/ftemp;
+	if (ftemp < 1.0)
 	{
 		for (i = 0; i < 4; ++i)
 		{
@@ -1052,8 +1057,11 @@ static int _fastcall ratio_bad(double actual, double desired)
 	if (desired != 0 && debugflag != 3400)
 		ftemp = actual / desired;
 	if (desired != 0 && debugflag != 3400)
-		if ((ftemp = actual / desired) < (1.0-tol) || ftemp > (1.0 + tol))
+	{
+		ftemp = actual / desired;
+		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
 			return 1;
+	}
 	return 0;
 }
 
@@ -1303,7 +1311,8 @@ void sleepms_old(long ms)
 			while (t2.time == t1.time && t2.millitm == t1.millitm);
 		sleepms_old(10L*SLEEPINIT);
 		ftimex(&t2);
-		if ((i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm) < elapsed)
+		i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+		if (i < elapsed)
            elapsed = (i == 0) ? 1 : i;
 		scalems = (long)((float)SLEEPINIT/(float)(elapsed)*scalems);
 		cleartempmsg();

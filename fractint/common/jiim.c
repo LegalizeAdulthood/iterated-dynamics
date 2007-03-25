@@ -235,8 +235,11 @@ int Init_Queue(unsigned long request)
 
 #if 0
 	if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
-		if ((largest = xmmlongest()) > request / 128)
+	{
+		largest = xmmlongest();
+		if (largest > request / 128)
 			request   = (unsigned long) largest*128L;
+	}
 #endif
 
 	for (ListSize = request; ListSize > 1024; ListSize /= 2)

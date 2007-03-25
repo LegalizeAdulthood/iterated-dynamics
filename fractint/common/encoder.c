@@ -90,7 +90,8 @@ restart:
 	if (save16bit)
 		strcpy(openfiletype, ".pot");
 
-	if ((period = has_ext(openfile)) != NULL)
+	period = has_ext(openfile);
+	if (period != NULL)
 	{
 		strcpy(openfiletype, period);
 		*period = 0;
@@ -982,39 +983,40 @@ static int compress(int rowlimit)
 
 				if (htab[i] == fcode)
 				{
-                ent = codetab[i];
-                continue;
+					ent = codetab[i];
+					continue;
 				}
 				else if ((long)htab[i] < 0)      /* empty slot */
-                goto nomatch;
+					goto nomatch;
 				disp = hsize_reg - i;           /* secondary hash (after G. Knott) */
 				if (i == 0)
-                disp = 1;
+					disp = 1;
 probe:
-				if ((i -= disp) < 0)
+				i -= disp;
+				if (i < 0)
 					i += hsize_reg;
 
 				if (htab[i] == fcode)
 				{
-                ent = codetab[i];
-                continue;
+					ent = codetab[i];
+					continue;
 				}
 				if ((long)htab[i] > 0)
-                goto probe;
+					goto probe;
 nomatch:
 				output ((int) ent);
 				ent = color;
 				if (free_ent < maxmaxcode)
 				{
-                /* code -> hashtable */
-                codetab[i] = (unsigned short)free_ent++;
-                htab[i] = fcode;
+					/* code -> hashtable */
+					codetab[i] = (unsigned short)free_ent++;
+					htab[i] = fcode;
 				}
 				else
-              cl_block();
+					cl_block();
 			} /* end for xdot */
 			if (! driver_diskp()		/* supress this on disk-video */
-             && ydot == rownum)
+				&& ydot == rownum)
 			{
 				if ((ydot & 4) == 0)
 				{

@@ -2323,8 +2323,11 @@ int typehasparm(int type, int parm, char *buf)
 	if (0 <= parm && parm < 4)
 		ret=fractalspecific[type].param[parm];
 	else if (parm >= 4 && parm < MAXPARAMS)
-		if ((extra=find_extra_param(type)) > -1)
+	{
+		extra=find_extra_param(type);
+		if (extra > -1)
 			ret=moreparams[extra].param[parm-4];
+	}
 	if (ret)
 		if (*ret == 0)
 			ret = NULL;

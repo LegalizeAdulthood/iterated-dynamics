@@ -180,7 +180,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	{
 		longtmp = ((int)cache_size < freemem) ?
 			(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
-		if ((tempfar = malloc(longtmp)) != NULL)
+		tempfar = malloc(longtmp);
+		if (tempfar != NULL)
 		{
 			free(tempfar);
 			break;
@@ -227,7 +228,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	}
 
 	memorysize = (long)(newcolsize)*newrowsize + headerlength;
-	if ((i = (short)memorysize & (BLOCKLEN-1)) != 0)
+	i = (short) memorysize & (BLOCKLEN-1);
+	if (i != 0)
 	{
 		memorysize += BLOCKLEN - i;
 	}
@@ -675,7 +677,8 @@ write_stuff:
 	}
 	ptr1->dirty = 0;
 	offset = ptr1->offset + BLOCKLEN;
-	if ((ptr1 = find_cache(offset)) != NULL && ptr1->dirty != 0)
+	ptr1 = find_cache(offset);
+	if (ptr1 != NULL && ptr1->dirty != 0)
 	{
 		goto write_stuff;
 	}

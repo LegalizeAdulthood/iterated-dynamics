@@ -152,7 +152,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{
 				/* bypass for VESA virtual screen */
 				ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/screenaspect);
-				if ((xdots = viewxdots) != 0)
+				xdots = viewxdots;
+				if (xdots != 0)
 				{	/* xdots specified */
 					ydots = viewydots;
 					if (ydots == 0) /* calc ydots? */
@@ -1436,7 +1437,8 @@ static void handle_zoom_skew(int negative)
 		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_HOME);
-			if ((zskew -= 0.02*i) < -0.48)
+			zskew -= 0.02*i;
+			if (zskew < -0.48)
 			{
 				zskew = -0.48;
 			}
@@ -1447,7 +1449,8 @@ static void handle_zoom_skew(int negative)
 		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_END);
-			if ((zskew += 0.02*i) > 0.48)
+			zskew += 0.02*i;
+			if (zskew > 0.48)
 			{
 				zskew = 0.48;
 			}
