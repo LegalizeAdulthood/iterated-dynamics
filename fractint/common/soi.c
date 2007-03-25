@@ -396,8 +396,8 @@ static void putbox(int x1, int y1, int x2, int y2, int color)
 	It computes the value of the interpolation polynomial given by
 	(x0, w0)..(x2, w2) at x:=t */
 static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
-			  DBLS w0, DBLS w1, DBLS w2,
-			  DBLS t)
+		DBLS w0, DBLS w1, DBLS w2,
+		DBLS t)
 {
 	register DBLS b0=w0, b1=w1, b2=w2, b;
 
@@ -418,7 +418,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 /* SOICompute - Perform simultaneous orbit iteration for a given rectangle
 
 	Input: cre1..cim2 : values defining the four corners of the rectangle
-          x1..y2     : corresponding pixel values
+		x1..y2     : corresponding pixel values
 	  zre1..zim9 : intermediate iterated values of the key points (key values)
 
 	  (cre1, cim1)               (cre2, cim1)
@@ -704,10 +704,10 @@ scan:
 
 				color=iteration(re, im, zre, zim, iter);
 				if (color < 0)
-                {
+				{
 					status = 1;
 					goto rhombus_done;
-                }
+				}
 				else if (color == savecolor)
 				{
 					continue;

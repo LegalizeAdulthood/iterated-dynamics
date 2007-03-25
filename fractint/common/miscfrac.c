@@ -6,7 +6,7 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 #include <string.h>
 #include <limits.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -942,8 +942,8 @@ int diffusion()
 /***************************************************************/
 
 #define DEFAULTFILTER 1000     /* "Beauty of Fractals" recommends using 5000
-                               (p.25), but that seems unnecessary. Can
-                               override this value with a nonzero param1 */
+								(p.25), but that seems unnecessary. Can
+								override this value with a nonzero param1 */
 
 #define SEED 0.66               /* starting value for population */
 
@@ -1194,10 +1194,10 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 /**********************************************************************/
 #if defined(XFRACT) || defined(_WIN32)
 int BifurcLambda() /* Used by lyanupov */
-  {
+{
 	Population = Rate*Population*(1 - Population);
 	return fabs(Population) > BIG;
-  }
+}
 #endif
 
 /* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
@@ -1206,17 +1206,17 @@ int BifurcLambda() /* Used by lyanupov */
 #define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d
 
 int BifurcVerhulstTrig()
-  {
+{
 /*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
 	Population += Rate*tmp.x*(1 - tmp.x);
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcVerhulstTrig()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
 	ltmp.y = 0;
@@ -1225,20 +1225,20 @@ int LongBifurcVerhulstTrig()
 	lPopulation += multiply(lRate, ltmp.y, bitshift);
 #endif
 	return overflow;
-  }
+}
 
 int BifurcStewartTrig()
-  {
+{
 /*  Population = (Rate*fn(Population)*fn(Population)) - 1.0 */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
 	Population = (Rate*tmp.x*tmp.x) - 1.0;
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcStewartTrig()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
 	ltmp.y = 0;
@@ -1248,19 +1248,19 @@ int LongBifurcStewartTrig()
 	lPopulation -= fudge;
 #endif
 	return overflow;
-  }
+}
 
 int BifurcSetTrigPi()
-  {
+{
 	tmp.x = Population*PI;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
 	Population = Rate*tmp.x;
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcSetTrigPi()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = multiply(lPopulation, LPI, bitshift);
 	ltmp.y = 0;
@@ -1268,19 +1268,19 @@ int LongBifurcSetTrigPi()
 	lPopulation = multiply(lRate, ltmp.x, bitshift);
 #endif
 	return overflow;
-  }
+}
 
 int BifurcAddTrigPi()
-  {
+{
 	tmp.x = Population*PI;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
 	Population += Rate*tmp.x;
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcAddTrigPi()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = multiply(lPopulation, LPI, bitshift);
 	ltmp.y = 0;
@@ -1288,20 +1288,20 @@ int LongBifurcAddTrigPi()
 	lPopulation += multiply(lRate, ltmp.x, bitshift);
 #endif
 	return overflow;
-  }
+}
 
 int BifurcLambdaTrig()
-  {
+{
 /*  Population = Rate*fn(Population)*(1 - fn(Population)) */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
 	Population = Rate*tmp.x*(1 - tmp.x);
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcLambdaTrig()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
 	ltmp.y = 0;
@@ -1310,7 +1310,7 @@ int LongBifurcLambdaTrig()
 	lPopulation = multiply(lRate, ltmp.y, bitshift);
 #endif
 	return overflow;
-  }
+}
 
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2); \
 			lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
@@ -1318,16 +1318,16 @@ int LongBifurcLambdaTrig()
 long beta;
 
 int BifurcMay()
-  { /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
+{ /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
 	tmp.x = 1.0 + Population;
 	tmp.x = pow(tmp.x, -beta); /* pow in math.h included with mpmath.h */
 	Population = (Rate*Population)*tmp.x;
 	return fabs(Population) > BIG;
-  }
+}
 
 int LongBifurcMay()
-  {
+{
 #if !defined(XFRACT)
 	ltmp.x = lPopulation + fudge;
 	ltmp.y = 0;
@@ -1337,10 +1337,10 @@ int LongBifurcMay()
 	lPopulation = divide(lPopulation, ltmp.x, bitshift);
 #endif
 	return overflow;
-  }
+}
 
 int BifurcMaySetup()
-  {
+{
 
 	beta = (long)param[2];
 	if (beta < 2)
@@ -1351,7 +1351,7 @@ int BifurcMaySetup()
 
 	timer(0, curfractalspecific->calctype);
 	return 0;
-  }
+}
 
 /* Here Endeth the Generalised Bifurcation Fractal Engine   */
 
@@ -1498,15 +1498,15 @@ int lya_setup ()
 
 		A few examples follow:
 				number    sequence
-                0       ab
-                1       aab
-                2       aabb
-                3       aaab
-                4       aabbb
-                5       aabab
-                6       aaabb (this is a duplicate of 4, a rotated inverse)
-                7       aaaab
-                8       aabbbb  etc.
+					0       ab
+					1       aab
+					2       aabb
+					3       aaab
+					4       aabbb
+					5       aabab
+					6       aaabb (this is a duplicate of 4, a rotated inverse)
+					7       aaaab
+					8       aabbbb  etc.
 			*/
 
 	long i;
@@ -1631,14 +1631,14 @@ jumpout:
 /******************* standalone engine for "cellular" ********************/
 /* Originally coded by Ken Shirriff.
 	Modified beyond recognition by Jonathan Osuch.
-     Original or'd the neighborhood, changed to sum the neighborhood
-     Changed prompts and error messages
-     Added CA types
-     Set the palette to some standard? CA colors
-     Changed *cell_array to near and used dstack so put_line and get_line
-       could be used all the time
-     Made space bar generate next screen
-     Increased string/rule size to 16 digits and added CA types 9/20/92
+	Original or'd the neighborhood, changed to sum the neighborhood
+	Changed prompts and error messages
+	Added CA types
+	Set the palette to some standard? CA colors
+	Changed *cell_array to near and used dstack so put_line and get_line
+		could be used all the time
+	Made space bar generate next screen
+	Increased string/rule size to 16 digits and added CA types 9/20/92
 */
 
 #define BAD_T         1
@@ -1753,22 +1753,22 @@ int cellular ()
 	kr = (U16)param[2];
 	switch (kr)
 	{
-     case 21:
-     case 31:
-     case 41:
-     case 51:
-     case 61:
-     case 22:
-     case 32:
-     case 42:
-     case 23:
-     case 33:
-     case 24:
-     case 25:
-     case 26:
-     case 27:
+	case 21:
+	case 31:
+	case 41:
+	case 51:
+	case 61:
+	case 22:
+	case 32:
+	case 42:
+	case 23:
+	case 33:
+	case 24:
+	case 25:
+	case 26:
+	case 27:
 		break;
-     default:
+	default:
 		abort_cellular(TYPEKR, 0);
 		return -1;
 		/* break; */
@@ -1861,8 +1861,8 @@ int cellular ()
 
 	start_row = 0;
 #if !defined(XFRACT) && !defined(_WIN32)
-  /* two 4096 byte arrays, at present at most 2024 + 1 bytes should be */
-  /* needed in each array (max screen width + 1) */
+	/* two 4096 byte arrays, at present at most 2024 + 1 bytes should be */
+	/* needed in each array (max screen width + 1) */
 	cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
 	cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
 #else

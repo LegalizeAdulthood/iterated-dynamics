@@ -13,7 +13,7 @@ fractal routines.
 #include <malloc.h>
 #endif
 #endif
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -988,7 +988,7 @@ JuliabnFractal()
 	bnlength = oldbnlength;
 
 	mod = bntmp + (rlength) - (intlength << 1);  /* where int part starts
-                                                 * after mult */
+													* after mult */
 	/*
 	* equivalent to, but faster than, mod = bn_int(tmp + shiftfactor);
 	*/

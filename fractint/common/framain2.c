@@ -641,8 +641,8 @@ resumeloop:                             /* return here on failed overlays */
 				mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
 			}
 			if (quick_calc && (mms_value == IMAGESTART ||
-                mms_value == RESTORESTART ||
-                mms_value == RESTART))
+				mms_value == RESTORESTART ||
+				mms_value == RESTART))
 			{
 				quick_calc = 0;
 				usr_stdcalcmode = old_stdcalcmode;
@@ -682,11 +682,11 @@ static int look(char *stacked)
 	case FIK_ENTER_2:
 		showfile = 0;       /* trigger load */
 		browsing = TRUE;    /* but don't ask for the file name as it's
-                            * just been selected */
+							* just been selected */
 		if (name_stack_ptr == 15)
-		{                   /* about to run off the end of the file
-                            * history stack so shift it all back one to
-                            * make room, lose the 1st one */
+		{					/* about to run off the end of the file
+							* history stack so shift it all back one to
+							* make room, lose the 1st one */
 			int tmp;
 			for (tmp = 1; tmp < 16; tmp++)
 			{
@@ -734,7 +734,7 @@ static int look(char *stacked)
 			}
 			return 1;
 		}                   /* otherwise fall through and turn off
-                             * browsing */
+							* browsing */
 	case FIK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':

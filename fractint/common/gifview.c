@@ -181,8 +181,10 @@ int gifview()
 				return -1;
 			}
 			if ((!display3d || (g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE))
-                       && !dontreadcolor)
+				&& !dontreadcolor)
+			{
 				g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
+			}
 		}
 	}
 	colorstate = 1; /* colors aren't default and not a known .map file */

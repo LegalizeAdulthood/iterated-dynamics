@@ -10,7 +10,7 @@
 #include <conio.h>
 #endif
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -179,8 +179,11 @@ start:
 		quotes = 0;
 	}
 	/* skip white space: */
-	while ((out=fgetc(fpss)) == ' ' || out == '\t' || out == '\n')
-	{ }
+	do
+	{
+		out=fgetc(fpss);
+	}
+	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
 	{
 		case EOF:
@@ -190,12 +193,15 @@ start:
 			quotes = 1;
 			goto start;
 		case ';':         /* comment from here to end of line, skip it */
-			while ((out=fgetc(fpss)) != '\n' && out != EOF)
-			{ }
+			do
+			{
+				out=fgetc(fpss);
+			}
+			while (out != '\n' && out != EOF);
 			goto start;
 		case '*':
 			if (fscanf(fpss, "%d", &repeats) != 1
-           || repeats <= 1 || repeats >= 256 || feof(fpss))
+				|| repeats <= 1 || repeats >= 256 || feof(fpss))
 			{
 				slideshowerr("error in * argument");
 				last1 = repeats = 0;
@@ -407,7 +413,8 @@ static void sleep_secs(int secs)
 	long stop;
 	stop = clock_ticks() + (long)secs*CLK_TCK;
 	while (clock_ticks() < stop && kbhit() == 0)
-	{ } /* bailout if key hit */
+	{
+	} /* bailout if key hit */
 }
 
 static void slideshowerr(char *msg)

@@ -1,6 +1,6 @@
 /*
 	loadfdos.c - subroutine of loadfile.c (read_overlay) which sets
-                 up video (mode, screen size).
+				up video (mode, screen size).
 	This module is linked as an overlay, should only be called from loadfile.c
 
 	This code was split to a separate module to isolate the DOS only aspects

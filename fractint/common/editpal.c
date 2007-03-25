@@ -147,7 +147,7 @@
 #define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
 
 char scrnfile[] = "FRACTINT.$$1";  /* file where screen portion is */
-                                   /* stored */
+									/* stored */
 char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 #define TITLE   "FRACTINT"
 
@@ -794,10 +794,14 @@ void Cursor_Move(int xoff, int yoff)
 
 
 int Cursor_GetX(void)
-{ return the_cursor->x; }
+{
+	return the_cursor->x;
+}
 
 int Cursor_GetY(void)
-{ return the_cursor->y; }
+{
+	return the_cursor->y;
+}
 
 
 void Cursor_Hide(void)
@@ -937,19 +941,30 @@ static void MoveBox_Destroy(MoveBox *me)
 
 
 static BOOLEAN MoveBox_Moved(MoveBox *me)
-{ return me->moved; }
+{
+	return me->moved;
+}
+
 
 static BOOLEAN MoveBox_ShouldHide(MoveBox *me)
-{ return me->should_hide; }
+{
+	return me->should_hide;
+}
 
 static int MoveBox_X(MoveBox *me)
-{ return me->x; }
+{
+	return me->x;
+}
 
 static int MoveBox_Y(MoveBox *me)
-{ return me->y; }
+{
+	return me->y;
+}
 
 static int MoveBox_CSize(MoveBox *me)
-{ return me->csize; }
+{
+	return me->csize;
+}
 
 
 static void MoveBox_SetPos(MoveBox *me, int x, int y)
@@ -1243,12 +1258,12 @@ struct _CEditor
 
 #ifndef XFRACT
 static CEditor *CEditor_Construct(int x, int y, char letter,
-                                   void (*other_key)(int,CEditor*,VOIDPTR),
-                                   void (*change)(CEditor*, VOIDPTR), VOIDPTR info)
+					void (*other_key)(int,CEditor*,VOIDPTR),
+					void (*change)(CEditor*, VOIDPTR), VOIDPTR info)
 #else
 static CEditor *CEditor_Construct(int x, int y, char letter,
-                                   void (*other_key)(),
-                                   void (*change)(), VOIDPTR info)
+					void (*other_key)(),
+					void (*change)(), VOIDPTR info)
 #endif
 {
 	CEditor *me = NEWC(CEditor);
@@ -1513,10 +1528,10 @@ struct _RGBEditor
 
 #ifndef XFRACT
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEditor*,void*),
-                                      void (*change)(RGBEditor*,void*), VOIDPTR info)
+									void (*change)(RGBEditor*,void*), VOIDPTR info)
 #else
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(),
-                                      void (*change)(), VOIDPTR info)
+									void (*change)(), VOIDPTR info)
 #endif
 {
 	RGBEditor      *me     = NEWC(RGBEditor);

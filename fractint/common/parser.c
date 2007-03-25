@@ -27,7 +27,7 @@
 #include <ctype.h>
 #include <time.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -66,60 +66,60 @@ int jump_index, InitJumpIndex;
 static int frm_prescan(FILE *open_file);
 
 #define CASE_TERMINATOR case',':\
-                        case '\n':\
-                        case '(':\
-                        case ')':\
-                        case '!':\
-                        case '=':\
-                        case '<':\
-                        case '>':\
-                        case '|':\
-                        case '&':\
-                        case '}':\
-                        case ':':\
-                        case '+':\
-                        case '-':\
-                        case '*':\
-                        case '/':\
-                        case '^'
+						case '\n':\
+						case '(':\
+						case ')':\
+						case '!':\
+						case '=':\
+						case '<':\
+						case '>':\
+						case '|':\
+						case '&':\
+						case '}':\
+						case ':':\
+						case '+':\
+						case '-':\
+						case '*':\
+						case '/':\
+						case '^'
 
 #define CASE_ALPHA      case 'a':\
-                        case 'b':\
-                        case 'c':\
-                        case 'd':\
-                        case 'e':\
-                        case 'f':\
-                        case 'g':\
-                        case 'h':\
-                        case 'i':\
-                        case 'j':\
-                        case 'k':\
-                        case 'l':\
-                        case 'm':\
-                        case 'n':\
-                        case 'o':\
-                        case 'p':\
-                        case 'q':\
-                        case 'r':\
-                        case 's':\
-                        case 't':\
-                        case 'u':\
-                        case 'v':\
-                        case 'w':\
-                        case 'x':\
-                        case 'y':\
-                        case 'z'
+						case 'b':\
+						case 'c':\
+						case 'd':\
+						case 'e':\
+						case 'f':\
+						case 'g':\
+						case 'h':\
+						case 'i':\
+						case 'j':\
+						case 'k':\
+						case 'l':\
+						case 'm':\
+						case 'n':\
+						case 'o':\
+						case 'p':\
+						case 'q':\
+						case 'r':\
+						case 's':\
+						case 't':\
+						case 'u':\
+						case 'v':\
+						case 'w':\
+						case 'x':\
+						case 'y':\
+						case 'z'
 
 #define CASE_NUM        case '0':\
-                        case '1':\
-                        case '2':\
-                        case '3':\
-                        case '4':\
-                        case '5':\
-                        case '6':\
-                        case '7':\
-                        case '8':\
-                        case '9'
+						case '1':\
+						case '2':\
+						case '3':\
+						case '4':\
+						case '5':\
+						case '6':\
+						case '7':\
+						case '8':\
+						case '9'
 
 	/* token_type definitions */
 #define NOT_A_TOKEN           0
@@ -2309,9 +2309,11 @@ char *OPList[] =
 
 
 void NotAFnct(void)
-{ }
+{
+}
 void FnctNotFound(void)
-{ }
+{
+}
 
 /* determine if s names a function and if so which one */
 /* TIW 04-22-91 */
@@ -3249,8 +3251,8 @@ int fill_jump_struct(void)
 
 	/* Following for safety only; all should always be false */
 	if (i != jump_index || jump_control[i - 1].type != 4
-           || jump_control[0].type != 1)
-           {
+		|| jump_control[0].type != 1)
+	{
 		return 1;
 	}
 
@@ -3403,7 +3405,7 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 					tok->token_type = NOT_A_TOKEN;
 					tok->token_id = ILL_FORMED_CONSTANT;
 					return 0;
-             }
+				}
 				else
 				{
 					tok->token_str[i++] = (char) c;
@@ -3808,9 +3810,9 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 				this_token->token_id   = 0;
 			}
 			else if (this_token->token_str[0] == '\n'
-             || this_token->token_str[0] == ','
-             || this_token->token_str[0] == ':')
-             {
+				|| this_token->token_str[0] == ','
+				|| this_token->token_str[0] == ':')
+			{
 				frm_get_eos(openfile, this_token);
 			}
 			else if (this_token->token_str[0] == ')')
@@ -3820,9 +3822,9 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			}
 			else if (this_token->token_str[0] == '(')
 			{
-              /* the following function will set token_type to PARENS and
-                 token_id to OPEN_PARENS if this is not the start of a
-                 complex constant */
+				/* the following function will set token_type to PARENS and
+					token_id to OPEN_PARENS if this is not the start of a
+					complex constant */
 				is_complex_constant(openfile, this_token);
 					return 1;
 			}
@@ -3870,8 +3872,12 @@ int frm_get_param_stuff(char *Name)
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
 	}
-	while ((c=frmgetchar(entry_file)) != '{' && c != EOF && c != '\032')
-     {}
+	do
+	{
+		c=frmgetchar(entry_file);
+	}
+	while (c != '{' && c != EOF && c != '\032');
+
 	if (c != '{')
 	{
 		stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
@@ -3962,7 +3968,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 	long filepos = ftell(open_file);
 	int c, i, done, at_end_of_name;
 
-     /* first, test name */
+	/* first, test name */
 	done = at_end_of_name = i = 0;
 	while (!done)
 	{
@@ -4086,12 +4092,12 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 {
 
 	/* GGM 5-23-96: replaces FindFormula(). This function sets the
-       symmetry and converts a formula into a string  with no spaces,
-       and one comma after each expression except where the ':' is placed
-       and except the final expression in the formula. The open file passed
-       as an argument is open in "rb" mode and is positioned at the first
-       letter of the name of the formula to be prepared. This function
-       is called from RunForm() below.
+	symmetry and converts a formula into a string  with no spaces,
+	and one comma after each expression except where the ':' is placed
+	and except the final expression in the formula. The open file passed
+	as an argument is open in "rb" mode and is positioned at the first
+	letter of the name of the formula to be prepared. This function
+	is called from RunForm() below.
 	*/
 
 	FILE *debug_fp = NULL;
@@ -4697,11 +4703,11 @@ void count_lists()
 
 
 /*frm_prescan() takes an open file with the file pointer positioned at
-  the beginning of the relevant formula, and parses the formula, token
-  by token, for syntax errors. The function also accumulates data for
-  memory allocation to be done later.
+the beginning of the relevant formula, and parses the formula, token
+by token, for syntax errors. The function also accumulates data for
+memory allocation to be done later.
 
-  The function returns 1 if success, and 0 if errors are found.
+The function returns 1 if success, and 0 if errors are found.
 */
 
 int disable_fastparser;
@@ -5055,7 +5061,8 @@ int frm_prescan(FILE *open_file)
 					}
 				}
 				ExpectingArg = 0;
-/*          complx_list = add_const_to_list (complx_list, this_token);
+				/*
+				complx_list = add_const_to_list (complx_list, this_token);
 				if (complx_list == NULL)
 				{
 					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
@@ -5063,8 +5070,9 @@ int frm_prescan(FILE *open_file)
 					init_var_list();
 					init_const_lists();
 					return 0;
-             }
-*/           break;
+				}
+				*/
+				break;
 			case FUNCTION:
 				assignment_ok = 0;
 				NewStatement = 0;

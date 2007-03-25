@@ -165,9 +165,9 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
   /* space req for grid is 2(xdots + ydots)*sizeof(long or double) */
   /* space available in extraseg is 65536 Bytes */
 	xytemp = xdots + ydots;
-	if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768)) ||
-       ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768)) ||
-			debugflag == 3800)
+	if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768))
+		|| ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768))
+		|| debugflag == 3800)
 	{
 		use_grid = 0;
 		floatflag = usr_floatflag = 1;
@@ -294,14 +294,14 @@ init_restart:
 
 	potflag = 0;
 	if (potparam[0] != 0.0
-     && colors >= 64
-     && (curfractalspecific->calctype == StandardFractal
+		&& colors >= 64
+		&& (curfractalspecific->calctype == StandardFractal
 			|| curfractalspecific->calctype == calcmand
 			|| curfractalspecific->calctype == calcmandfp))
-			{
+	{
 		potflag = 1;
 		distest = usr_distest = 0;    /* can't do distest too */
-		}
+	}
 
 	if (distest)
 	{
@@ -378,10 +378,20 @@ init_restart:
 	if ((curfractalspecific->flags&NOROTATE) != 0)
 	{
 		/* ensure min < max and unrotated rectangle */
-		if (xxmin > xxmax) { ftemp = xxmax; xxmax = xxmin; xxmin = ftemp; }
-		if (yymin > yymax) { ftemp = yymax; yymax = yymin; yymin = ftemp; }
-		xx3rd = xxmin; yy3rd = yymin;
+		if (xxmin > xxmax)
+		{
+			ftemp = xxmax;
+			xxmax = xxmin;
+			xxmin = ftemp;
 		}
+		if (yymin > yymax)
+		{
+			ftemp = yymax;
+			yymax = yymin;
+			yymin = ftemp;
+		}
+		xx3rd = xxmin; yy3rd = yymin;
+	}
 
 	/* set up bitshift for integer math */
 	bitshift = FUDGEFACTOR2; /* by default, the smaller shift */
@@ -461,7 +471,7 @@ init_restart:
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
 	if (fractype != PLASMA && bf_math == 0
-       && fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
+		&& fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
 	{
 		if (integerfractal && !invert && use_grid)
 		{
@@ -700,9 +710,11 @@ void adjust_cornerbf(void)
 
 	/* else if (ftemp2*10000 < ftemp && yy3rd != yymin) */
 	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-                   && cmp_bf(bfy3rd, bfymin) != 0)
+		&& cmp_bf(bfy3rd, bfymin) != 0)
+	{
 		/* xx3rd = xxmax; */
 		copy_bf(bfx3rd, bfxmax);
+	}
 
 	/* ftemp=fabs(yy3rd-yymin); */
 	abs_a_bf(sub_bf(bftemp, bfy3rd, bfymin));
@@ -715,16 +727,20 @@ void adjust_cornerbf(void)
 	{
 		/* if (ftemp*10000 < ftemp2 && xx3rd != xxmax) */
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-                 && cmp_bf(bfx3rd, bfxmax) != 0)
+			&& cmp_bf(bfx3rd, bfxmax) != 0)
+		{
 			/* yy3rd = yymin; */
 			copy_bf(bfy3rd, bfymin);
+		}
 	}
 
 	/* else if (ftemp2*10000 < ftemp && xx3rd != xxmin) */
-     if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-                      && cmp_bf(bfx3rd, bfxmin) != 0)
+	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
+		&& cmp_bf(bfx3rd, bfxmin) != 0)
+	{
 		/* yy3rd = yymax; */
 		copy_bf(bfy3rd, bfymax);
+	}
 
 
 	restore_stack(saved);
@@ -1237,8 +1253,8 @@ static int _fastcall ratio_bad(double actual, double desired)
 			Version is an arbitrary number so that subsequent revisions of the
 			engine can be made backward compatible.
 			Alloc_resume sets calc_status to CALCSTAT_RESUMABLE if it succeeds;
-		 to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
-		 (and issues warning to user).
+			to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
+			(and issues warning to user).
 		put_resume({bytes, &argument, } ... 0)
 			Can be called as often as required to store the info.
 			Arguments must not be far addresses.
@@ -1254,7 +1270,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 	Example, save info:
 		alloc_resume(sizeof(parmarray) + 100, 2);
 		put_resume(sizeof(row), &row, sizeof(col), &col,
-                 sizeof(parmarray), parmarray, 0);
+				sizeof(parmarray), parmarray, 0);
 	restore info:
 		vsn = start_resume();
 		get_resume(sizeof(row), &row, sizeof(col), &col, 0);
@@ -1394,25 +1410,25 @@ void end_resume(void)
 
 /* Showing orbit requires converting real co-ords to screen co-ords.
 	Define:
-       Xs == xxmax-xx3rd               Ys == yy3rd-yymax
-       W  == xdots-1                   D  == ydots-1
+		Xs == xxmax-xx3rd               Ys == yy3rd-yymax
+		W  == xdots-1                   D  == ydots-1
 	We know that:
-       realx == lx0[col] + lx1[row]
-       realy == ly0[row] + ly1[col]
-       lx0[col] == (col/width)*Xs + xxmin
-       lx1[row] == row*delxx
-       ly0[row] == (row/D)*Ys + yymax
-       ly1[col] == col*(-delyy)
-  so:
-       realx == (col/W)*Xs + xxmin + row*delxx
-       realy == (row/D)*Ys + yymax + col*(-delyy)
-  and therefore:
-       row == (realx-xxmin - (col/W)*Xs) / Xv    (1)
-       col == (realy-yymax - (row/D)*Ys) / Yv    (2)
-  substitute (2) into (1) and solve for row:
-       row == ((realx-xxmin)*(-delyy2)*W*D - (realy-yymax)*Xs*D)
-                      / ((-delyy2)*W*delxx2*D-Ys*Xs)
-  */
+		realx == lx0[col] + lx1[row]
+		realy == ly0[row] + ly1[col]
+		lx0[col] == (col/width)*Xs + xxmin
+		lx1[row] == row*delxx
+		ly0[row] == (row/D)*Ys + yymax
+		ly1[col] == col*(-delyy)
+	so:
+		realx == (col/W)*Xs + xxmin + row*delxx
+		realy == (row/D)*Ys + yymax + col*(-delyy)
+	and therefore:
+		row == (realx-xxmin - (col/W)*Xs) / Xv    (1)
+		col == (realy-yymax - (row/D)*Ys) / Yv    (2)
+	substitute (2) into (1) and solve for row:
+		row == ((realx-xxmin)*(-delyy2)*W*D - (realy-yymax)*Xs*D)
+						/ ((-delyy2)*W*delxx2*D-Ys*Xs)
+*/
 
 /* sleep N*a tenth of a millisecond */
 
@@ -1530,9 +1546,9 @@ void sleepms(long ms)
 }
 
 /*
- * wait until wait_time microseconds from the
- * last call has elapsed.
- */
+* wait until wait_time microseconds from the
+* last call has elapsed.
+*/
 #define MAX_INDEX 2
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)

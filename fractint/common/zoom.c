@@ -226,8 +226,9 @@ void drawbox(int drawit)
 	}
 
 void _fastcall drawlines(struct coords fr, struct coords to,
-                        int dx, int dy)
-{   int xincr, yincr, ctr;
+						int dx, int dy)
+{
+	int xincr, yincr, ctr;
 	int altctr, altdec, altinc;
 	struct coords tmpp, line1, line2;
 
@@ -434,7 +435,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	btempy = alloc_stack(rbflength + 2);
 
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
-       are taken as (0, 0) topleft thru (1, 1) bottom right */
+		are taken as (0, 0) topleft thru (1, 1) bottom right */
 
 	/* tempx = dy*plotmx1 - dx*plotmx2; */
 	mult_bf(btmp1, bfdy, bfplotmx1);
@@ -475,7 +476,7 @@ static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy,
 {
 	double tempx, tempy;
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
-       are taken as (0, 0) topleft thru (1, 1) bottom right */
+		are taken as (0, 0) topleft thru (1, 1) bottom right */
 	tempx = dy*plotmx1 - dx*plotmx2;
 	tempy = dx*plotmy1 - dy*plotmy2;
 

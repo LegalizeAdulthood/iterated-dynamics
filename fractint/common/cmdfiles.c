@@ -9,7 +9,7 @@
 #if !defined(XFRACT) && !defined(_WIN32)
 #include <bios.h>
 #endif
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -103,8 +103,8 @@ int *ranges;                /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
 BYTE *mapdacbox = NULL;     /* map= (default colors)    */
 int     colorstate;             /* 0, g_dac_box matches default (bios or map=) */
-                                /* 1, g_dac_box matches no known defined map   */
-                                /* 2, g_dac_box matches the colorfile map      */
+								/* 1, g_dac_box matches no known defined map   */
+								/* 2, g_dac_box matches the colorfile map      */
 int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor = 0;        /* flag for reading color from GIF */
@@ -116,13 +116,13 @@ char    colorfile[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
 int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
-                                           /* still forced to screenaspect  */
+								/* still forced to screenaspect  */
 int fastrestore = 0;          /* 1 - reset viewwindows prior to a restore
-                                     and do not display warnings when video
-                                     mode changes during restore */
+								and do not display warnings when video
+								mode changes during restore */
 
 int orgfrmsearch = 0;            /* 1 - user has specified a directory for
-                                     Orgform formula compilation files */
+									Orgform formula compilation files */
 
 int     orbitsave = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
 int orbit_delay;                /* clock ticks delating orbit release */
@@ -196,8 +196,8 @@ int lzw[2];
 
 /*
 		cmdfiles(argc,argv) process the command-line arguments
-                it also processes the 'sstools.ini' file and any
-                indirect files ('fractint @myfile')
+				it also processes the 'sstools.ini' file and any
+				indirect files ('fractint @myfile')
 */
 
 /* This probably ought to go somewhere else, but it's used here.        */
@@ -343,7 +343,7 @@ int cmdfiles(int argc,char **argv)
 		dontreadcolor = 0;   /* read colors from GIF */
 	}
 
-     /*set structure of search directories*/
+	/*set structure of search directories*/
 	strcpy(searchfor.par, CommandFile);
 	strcpy(searchfor.frm, FormFileName);
 	strcpy(searchfor.lsys, LFileName);
@@ -653,7 +653,7 @@ static int cmdfile(FILE *handle,int mode)
 }
 
 static int next_command(char *cmdbuf,int maxlen,
-                      FILE *handle,char *linebuf,int *lineoffset,int mode)
+	FILE *handle,char *linebuf,int *lineoffset,int mode)
 {
 	int i;
 	int cmdlen = 0;
@@ -676,14 +676,15 @@ static int next_command(char *cmdbuf,int maxlen,
 			if (*lineptr == ';' || *lineptr == 0)
 			{
 				if (*lineptr == ';'
-              && (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
-              && (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
+					&& (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
+					&& (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
 						CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
-						{
+				{
 					/* save comment */
 					while (*(++lineptr)
-                 && (*lineptr == ' ' || *lineptr == '\t'))
-                 { }
+						&& (*lineptr == ' ' || *lineptr == '\t'))
+					{
+					}
 					if (*lineptr)
 					{
 						if ((int)strlen(lineptr) >= MAXCMT)
@@ -706,7 +707,7 @@ static int next_command(char *cmdbuf,int maxlen,
 			}
 		}
 		if (*lineptr == '\\'              /* continuation onto next line? */
-		&& *(lineptr + 1) == 0)
+			&& *(lineptr + 1) == 0)
 		{
 			if (next_line(handle,linebuf,mode) != 0)
 			{
@@ -757,7 +758,7 @@ static int next_line(FILE *handle,char *linebuf,int mode)
 }
 
 /*
-  cmdarg(string,mode) processes a single command-line/command-file argument
+	cmdarg(string,mode) processes a single command-line/command-file argument
 	return:
 		-1 error, >= 0 ok
 		if ok, return value:
@@ -2516,7 +2517,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			Bit 4 for OPL3 FM soundcard output,
 			Bit 5 will be for midi output (not yet),
 			Bit 6 for whether the tone is quantised to the nearest 'proper' note
-          (according to the western, even tempered system anyway) */
+		(according to the western, even tempered system anyway) */
 
 		if (charval[0] == 'n' || charval[0] == 'o')
 		{
@@ -2749,8 +2750,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	}
 
 	if (strcmp(variable, "debugflag") == 0
-     || strcmp(variable, "debug") == 0)  /* internal use only */
-     {
+		|| strcmp(variable, "debug") == 0)  /* internal use only */
+	{
 		debugflag = numval;
 		timerflag = debugflag & 1;                /* separate timer flag */
 		debugflag -= timerflag;
@@ -3375,9 +3376,11 @@ static int parse_colors(char *value)
 			if (*value == '<')
 			{
 				if (i == 0 || smooth
-              || (smooth = atoi(value + 1)) < 2
-              || (value = strchr(value,'>')) == NULL)
+					|| (smooth = atoi(value + 1)) < 2
+					|| (value = strchr(value,'>')) == NULL)
+				{
 					goto badcolor;
+				}
 				i += smooth;
 				++value;
 			}

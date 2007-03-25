@@ -108,7 +108,7 @@
 #include <ctype.h>
 #include <time.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 
@@ -1343,8 +1343,9 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
 }
 
 int fpfill_jump_struct(void)
-{ /* Completes all entries in jump structure. Returns 1 on error) */
-  /* On entry, jump_index is the number of jump functions in the formula*/
+{
+	/* Completes all entries in jump structure. Returns 1 on error) */
+	/* On entry, jump_index is the number of jump functions in the formula*/
 	int i = 0;
 	int checkforelse = 0;
 	NEW_FN  * JumpFunc = NULL;
@@ -1392,8 +1393,8 @@ int fpfill_jump_struct(void)
 
 		/* Following for safety only; all should always be false */
 	if (i != jump_index || jump_control[i - 1].type != 4
-           || jump_control[0].type != 1)
-           {
+		|| jump_control[0].type != 1)
+	{
 		return 1;
 	}
 

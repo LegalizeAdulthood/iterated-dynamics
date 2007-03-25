@@ -669,9 +669,9 @@ int check_key()
 }
 
 /* timer function:
-     timer(0, (*fractal)())              fractal engine
-     timer(1, NULL, int width)            decoder
-     timer(2)                           encoder
+	timer(0, (*fractal)())              fractal engine
+	timer(1, NULL, int width)            decoder
+	timer(2)                           encoder
 */
 #ifndef USE_VARARGS
 int timer(int timertype, int(*subrtn)(), ...)

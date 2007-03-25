@@ -20,7 +20,7 @@
 #include <string.h>
 #include <time.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -30,7 +30,7 @@ char stereomapname[FILE_MAX_DIR + 1] = {""};
 int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
 char grayflag = 0;              /* flag to use gray value rather than color
-                                 * number */
+								* number */
 char calibrate = 1;             /* add calibration bars to image */
 char image_map = 0;
 
@@ -369,32 +369,32 @@ int do_AutoStereo(void)
 		kbdchar = driver_get_key();
 		switch (kbdchar)
 		{
-			case FIK_ENTER:   /* toggle bars */
-			case FIK_SPACE:
-				toggle_bars(&bars, barwidth, colour);
-				break;
-			case 'c':
-			case '+':
-			case '-':
-				rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-				break;
-			case 's':
-			case 'S':
-				savetodisk(savename);
-				break;
-			default:
-				if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
-				{
-					kbdchar = 255;
-				}
-				driver_unget_key(kbdchar);
-				driver_buzzer(BUZZER_COMPLETE);
-				done = 1;
-				break;
-       }
+		case FIK_ENTER:   /* toggle bars */
+		case FIK_SPACE:
+			toggle_bars(&bars, barwidth, colour);
+			break;
+		case 'c':
+		case '+':
+		case '-':
+			rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
+			break;
+		case 's':
+		case 'S':
+			savetodisk(savename);
+			break;
+		default:
+			if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+			{
+				kbdchar = 255;
+			}
+			driver_unget_key(kbdchar);
+			driver_buzzer(BUZZER_COMPLETE);
+			done = 1;
+			break;
+		}
 	}
 
-	exit_stereo:
+exit_stereo:
 	helpmode = oldhelpmode;
 	driver_restore_graphics();
 	memcpy(g_dac_box, savedacbox, 256*3);
