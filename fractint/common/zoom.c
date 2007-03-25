@@ -316,10 +316,11 @@ void moveboxf(double dx, double dy)
 	}
 	if (dy != 0.0)
 	{
-		if ((zby += dy) + zdepth/2 < 0)
-				zby = zdepth/-2;
+		zby += dy;
+		if (zby + zdepth/2 < 0)
+			zby = zdepth/-2;
 		if (zby + zdepth/2 > 1)
-				zby = 1.0 - zdepth/2;
+			zby = 1.0 - zdepth/2;
 		if (align != 0
 			&& ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0)
 		{
@@ -639,7 +640,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	if (zwidth == 0.0)
 		return 0; /* no zoombox, leave calc_status as is */
 	/* got a zoombox */
-	if ((alignmask=check_pan()-1) < 0 || evolving)
+	alignmask = check_pan()-1;
+	if (alignmask < 0 || evolving)
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
 		return 0; }
@@ -773,7 +775,8 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			j = ydots-1;
 			if ((wk->sym&1) != 0)  /* uses xaxis symmetry */
 			{
-				if ((k = wk->yystart + (wk->yystop - j)) < j)
+				k = wk->yystart + (wk->yystop - j);
+				if (k < j)
 				{
 					if (num_worklist >= MAXCALCWORK) /* no room to split */
 						restart_window(i);
@@ -813,7 +816,8 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			j = xdots-1;
 			if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
 			{
-				if ((k = wk->xxstart + (wk->xxstop - j)) < j)
+				k = wk->xxstart + (wk->xxstop - j);
+				if (k < j)
 				{
 					if (num_worklist >= MAXCALCWORK) /* no room to split */
 						restart_window(i);

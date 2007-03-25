@@ -629,7 +629,8 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
 
-	if ((avail = stackavail()) < minstackavail)
+	avail = stackavail();
+	if (avail < minstackavail)
 		minstackavail = avail;
 	if (rhombus_depth > max_rhombus_depth)
 		max_rhombus_depth = rhombus_depth;

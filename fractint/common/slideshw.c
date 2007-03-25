@@ -163,7 +163,8 @@ int slideshw()
 start:
 	if (quotes) /* reading a quoted string */
 	{
-		if ((out=fgetc(fpss)) != '\"' && out != EOF)
+		out = fgetc(fpss);
+		if (out != '\"' && out != EOF)
 			return last1 = out;
 		quotes = 0;
 	}

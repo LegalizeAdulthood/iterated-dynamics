@@ -2439,7 +2439,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	/* no dot or slash so assume a file */
 	if (strchr(newfilename, '.') == NULL && strchr(newfilename, SLASHC) == NULL)
 		isafile = 1;
-	if ((isadir = isadirectory(newfilename)) != 0)
+	isadir = isadirectory(newfilename);
+	if (isadir != 0)
 		fix_dirname(newfilename);
 #if 0
 	/* if slash by itself, it's a directory */

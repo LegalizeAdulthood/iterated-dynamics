@@ -612,8 +612,7 @@ static void draw_diamond(int x, int y, int color)
  */
 
 struct _Cursor
-	{
-
+{
 	int     x, y;
 	int     hidden;       /* >0 if mouse hidden */
 	long    last_blink;
@@ -628,7 +627,7 @@ struct _Cursor
 	char    b[CURSOR_SIZE];
 	char    l[CURSOR_SIZE];
 	char    r[CURSOR_SIZE];
-	} ;
+};
 
 #define Cursor struct _Cursor
 
@@ -830,7 +829,7 @@ int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
  */
 
 struct _MoveBox
-	{
+{
 	int      x, y;
 	int      base_width,
 				base_depth;
@@ -839,7 +838,7 @@ struct _MoveBox
 	BOOLEAN  should_hide;
 	char    *t, *b,
            *l, *r;
-	} ;
+};
 
 #define MoveBox struct _MoveBox
 
@@ -1127,7 +1126,7 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
  */
 
 struct _CEditor
-	{
+{
 	int       x, y;
 	char      letter;
 	int       val;
@@ -1142,7 +1141,7 @@ struct _CEditor
 #endif
 	void     *info;
 
-	} ;
+};
 
 #define CEditor struct _CEditor
 
@@ -1382,7 +1381,7 @@ static int CEditor_Edit(CEditor *me)
  */
 
 struct _RGBEditor
-	{
+{
 	int       x, y;            /* position */
 	int       curr;            /* 0=r, 1=g, 2=b */
 	int       pal;             /* palette number */
@@ -1397,7 +1396,7 @@ struct _RGBEditor
 	void    (*change)();
 #endif
 	void     *info;
-	} ;
+};
 
 #define RGBEditor struct _RGBEditor
 
@@ -1712,7 +1711,7 @@ Modes:
 
 
 struct  _PalTable
-	{
+{
 	int           x, y;
 	int           csize;
 	int           active;   /* which RGBEditor is active (0,1) */
@@ -1738,7 +1737,7 @@ struct  _PalTable
 	int           top,bottom; /* top and bottom colours of freestyle band */
 	int           bandwidth; /*size of freestyle colour band */
 	BOOLEAN       freestyle;
-	} ;
+};
 
 #define PalTable struct _PalTable
 

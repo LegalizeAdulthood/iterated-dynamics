@@ -566,7 +566,8 @@ nextname:
 			openfile[i] = 0;
 			}
 #endif
-	if ((period = has_ext(openfile)) != NULL)
+	period = has_ext(openfile);
+	if (period != NULL)
 	{
 		strcpy(opentype, period);
 		*period = 0;
@@ -649,7 +650,8 @@ int set_trig_array(int k, char *name)
 	strncpy(trigname, name, 6);
 	trigname[6] = 0; /* safety first */
 
-	if ((slash = strchr(trigname, '/')) != NULL)
+	slash = strchr(trigname, '/');
+	if (slash != NULL)
 		*slash = 0;
 
 	strlwr(trigname);
@@ -1259,7 +1261,8 @@ top:
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
-	if ((s_row += 2) < 23)
+	s_row += 2;
+	if (s_row < 23)
 	{
 		++s_row;
 	}
@@ -1353,9 +1356,11 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 			return NULL;
 		else
 		{
-			if ((bufptr = strchr(buf, ';')) != NULL) /* use ';' as comment to eol */
+			bufptr = strchr(buf, ';');
+			if (bufptr != NULL) /* use ';' as comment to eol */
 				*bufptr = 0;
-			if ((bufptr = strtok(buf, seps)) != NULL)
+			bufptr = strtok(buf, seps);
+			if (bufptr != NULL)
 				return bufptr;
 		}
 	}
@@ -1475,7 +1480,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	makepath(fullpath, "", "", fname, ext);
 	if (stricmp(filename, CommandFile))
 	{
-		if ((infile=fopen(filename, "rb")) != NULL)
+		infile = fopen(filename, "rb");
+		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, itemname) == -1)
 			{
@@ -1491,7 +1497,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		if (!found && checkcurdir)
 		{
 			makepath(fullpath, "", DOTSLASH, fname, ext);
-			if ((infile=fopen(fullpath, "rb")) != NULL)
+			infile = fopen(fullpath, "rb");
+			if (infile != NULL)
 			{
 				if (scan_entries(infile, NULL, itemname) == -1)
 				{
@@ -1540,7 +1547,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 	if (!found)
 	{
-		if ((infile=fopen(CommandFile, "rb")) != NULL)
+		infile = fopen(CommandFile, "rb");
+		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, parsearchname) == -1)
 			{
@@ -1558,7 +1566,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	if (!found)
 	{
 		makepath(fullpath, drive, dir, fname, ext);
-		if ((infile=fopen(fullpath, "rb")) != NULL)
+		infile = fopen(fullpath, "rb");
+		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, itemname) == -1)
 			{
@@ -1590,7 +1599,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 			{
 				splitpath(DTA.filename, NULL, NULL, fname, ext);
 				makepath(fullpath, drive, dir, fname, ext);
-				if ((infile=fopen(fullpath, "rb")) != NULL)
+				infile = fopen(fullpath, "rb");
+				if (infile != NULL)
 				{
 					if (scan_entries(infile, NULL, itemname) == -1)
 					{
@@ -1642,7 +1652,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 			strcat(fname, "chr");
 		}
 		makepath(fullpath, drive, dir, fname, defaultextension);
-		if ((infile=fopen(fullpath, "rb")) != NULL)
+		infile = fopen(fullpath, "rb");
+		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, itemname) == -1)
 			{

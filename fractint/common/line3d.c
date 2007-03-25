@@ -178,12 +178,12 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 	if (transparent[0] || transparent[1])
 		plot = normalplot = T_clipcolor;  /* Use transparent plot function */
-	else                         /* Use the usual FRACTINT plot function with
-                                 * clipping */
+	else
+		/* Use the usual FRACTINT plot function with clipping */
 		plot = normalplot = clipcolor;
 
-	currow = g_row_count;           /* use separate variable to allow for
-                                 * pot16bit files */
+	currow = g_row_count;
+	/* use separate variable to allow for pot16bit files */
 	if (pot16bit)
 		currow >>= 1;
 
@@ -398,7 +398,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			if (!usr_floatflag && !RAY)
 			{
 				if (FILLTYPE >= 5)       /* flag to save vector before
-                                        * perspective */
+                                       	* perspective */
 					lv0[0] = 1;   /* in longvmultpersp calculation */
 				else
 					lv0[0] = 0;
@@ -512,15 +512,15 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 				if (RAY != 6)    /* Output the vertex info */
 					out_triangle(f_cur, f_old, f_lastrow[col],
-                        cur.color, old.color, lastrow[col].color);
+                       	cur.color, old.color, lastrow[col].color);
 
 				tout = 1;
 
 				driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
 				driver_draw_line(old.x, old.y, lastrow[col].x,
-                    lastrow[col].y, old.color);
+                   	lastrow[col].y, old.color);
 				driver_draw_line(lastrow[col].x, lastrow[col].y,
-                    cur.x, cur.y, cur.color);
+                   	cur.x, cur.y, cur.color);
 				num_tris++;
 			}
 
@@ -549,11 +549,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 				tout = 1;
 
 				driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
-                    cur.color);
+                   	cur.color);
 				driver_draw_line(lastrow[next].x, lastrow[next].y, cur.x, cur.y,
-                    cur.color);
+                   	cur.color);
 				driver_draw_line(lastrow[next].x, lastrow[next].y, lastrow[col].x,
-                    lastrow[col].y, lastrow[col].color);
+                   	lastrow[col].y, lastrow[col].color);
 				num_tris++;
 			}
 
@@ -581,7 +581,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						lastrow[col].x < (xdots - bad_check) &&
 						lastrow[col].y < (ydots - bad_check))
 					driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
-                        cur.y, cur.color);
+                       	cur.y, cur.color);
 				break;
 
 			case 0:
@@ -750,7 +750,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						/* we will use this value to shade surface */
 
 						cur.color = (int) (1 + (colors - 2) *
-                            (1.0 - dot_product(cross, light_direction)));
+                           	(1.0 - dot_product(cross, light_direction)));
 					}
 					/* if colors out of range, set them to min or max color index
 					* but avoid background index. This makes colors "opaque" so
@@ -1197,8 +1197,8 @@ static void _fastcall interpcolor(int x, int y, int color)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
 		color = (int) (((long) (d2 + d3)*(long) p1.color +
-                    (long) (d1 + d3)*(long) p2.color +
-                    (long) (d1 + d2)*(long) p3.color) / D);
+                   	(long) (d1 + d3)*(long) p2.color +
+                   	(long) (d1 + d2)*(long) p3.color) / D);
 	}
 
 	if (0 <= x && x < xdots &&
@@ -1918,10 +1918,10 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 		if (!BRIEF)
 		{
 			fprintf(File_Ptr1,
-                "  TEXTURE\n"
+               	"  TEXTURE\n"
 				"   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
 				"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
-                c[0], c[1], c[2]);
+               	c[0], c[1], c[2]);
 		}
 		fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
 		triangle_bounds(pt_t);    /* update bounding info */
@@ -2139,7 +2139,7 @@ static int first_time(int linelen, VECTOR v)
 		T_Safe = 0; /* Not safe yet to mess with the source image */
 
 	if (Targa_Out && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
-        && g_which_image == 2))
+       	&& g_which_image == 2))
 	{
 		if (Targa_Overlay)
 		{

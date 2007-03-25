@@ -110,7 +110,9 @@ int cmp_bn(bn_t n1, bn_t n2)
 	/* unsigned comparison for the rest */
 	for (i=bnlength-4; i >= 0; i -= 2)
 	{
-		if ((value1=big_access16(n1 + i)) > (value2=big_access16(n2 + i)))
+		value1 = big_access16(n1 + i);
+		value2 = big_access16(n2 + i);
+		if (value1 > value2)
 		{ /* now determine which of the two bytes was different */
 			if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
 				return i + 2; /* high byte was different */

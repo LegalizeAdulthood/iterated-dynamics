@@ -196,7 +196,8 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			titlewidth = i;
 	}
 	extralines = extrawidth = i = 0;
-	if ((hdgscan = extrainfo) != 0)
+	hdgscan = extrainfo;
+	if (hdgscan != 0)
 	{
 		if (*hdgscan == 0)
 			extrainfo = NULL;
@@ -305,10 +306,12 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	{
 		boxwidth += 2;
 		--boxcol;
-		}
-	if ((j = titlewidth) < extrawidth)
+	}
+	j = titlewidth;
+	if (j < extrawidth)
 		j = extrawidth;
-	if ((i = j + 4 - boxwidth) > 0)  /* expand box for title/extra */
+	i = j + 4 - boxwidth;
+	if (i > 0)  /* expand box for title/extra */
 	{
 		if (boxwidth + i > 80)
 			i = 80 - boxwidth;
@@ -932,7 +935,8 @@ int get_fracttype()             /* prompt for and select fractal type */
 	oldfractype = fractype;
 	while (1)
 	{
-		if ((t = select_fracttype(fractype)) < 0)
+		t = select_fracttype(fractype);
+		if (t < 0)
 			break;
 		i = select_type_params(t, fractype);
 		if (i == 0)  /* ok, all done */
@@ -1151,7 +1155,8 @@ void set_default_parms()
 				fractype != ANT)
 			roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
 	}
-	if ((extra=find_extra_param(fractype)) > -1)
+	extra = find_extra_param(fractype);
+	if (extra > -1)
 		for (i = 0; i < MAXPARAMS-4; i++)
 			param[i + 4] = moreparams[extra].paramvalue[i];
 	if (debugflag != 3200)
@@ -1321,7 +1326,8 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		curtype = i;
 	curfractalspecific = &fractalspecific[curtype];
 	tstack[0] = 0;
-	if ((i = curfractalspecific->helpformula) < -1)
+	i = curfractalspecific->helpformula;
+	if (i < -1)
 	{
 		int itemtype = ITEMTYPE_PARAMETER;
 		if (i == -2)  /* special for formula */
@@ -1798,7 +1804,8 @@ void load_params(int fractype)
 		if (fractype != CELLULAR && fractype != ANT)
 		roundfloatd(&param[i]); /* don't round cellular or ant */
 	}
-	if ((extra=find_extra_param(fractype)) > -1)
+	extra = find_extra_param(fractype);
+	if (extra > -1)
 		for (i = 0; i < MAXPARAMS-4; i++)
 			param[i + 4] = moreparams[extra].paramvalue[i];
 }

@@ -913,7 +913,8 @@ JuliabnFractal()
 	* equivalent to, but faster than, mod = bn_int(tmp + shiftfactor);
 	*/
 
-	if ((magnitude = *mod) >= rqlim)
+	magnitude = *mod;
+	if (magnitude >= rqlim)
 		return 1;
 	return 0;
 }

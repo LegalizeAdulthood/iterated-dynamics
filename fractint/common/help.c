@@ -464,7 +464,8 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 		{
 			temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c + temp->width-1);
 			/* if >= 3 lines between, prioritize on vertical distance: */
-			if ((temp_dist = dist1(temp->r, curr->r)) >= 4)
+			temp_dist = dist1(temp->r, curr->r);
+			if (temp_dist >= 4)
 			{
 				temp_overlap -= temp_dist*100;
 			}
@@ -922,18 +923,16 @@ static int dos_version(void)
 #endif
 
 static int can_read_file(char *path)
+{
+	int handle = open(path, O_RDONLY);
+	if (handle != -1)
 	{
-	int handle;
-
-	if ((handle=open(path, O_RDONLY)) != -1)
-		{
 		close(handle);
 		return 1;
-		}
+	}
 	else
 		return 0;
-	}
-
+}
 
 static int exe_path(char *filename, char *path)
 {
@@ -1330,26 +1329,27 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
 		msg_func(0, info.num_page);   /* initialize */
 
 	if (save_extraseg)
+	{
+		temp_file = fopen(TEMP_FILE_NAME, "wb");
+		if (temp_file == NULL)
 		{
-		if ((temp_file=fopen(TEMP_FILE_NAME, "wb")) == NULL)
-			{
 			msg = "Unable to create temporary file.\n";
 			goto ErrorAbort;
-			}
+		}
 
 		if (fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-			{
+		{
 			msg = "Error writing temporary file.\n";
 			goto ErrorAbort;
-			}
 		}
+	}
 
 	info.file = fopen(outfname, "wt");
 	if (info.file == NULL)
-		{
+	{
 		msg = "Unable to create output file.\n";
 		goto ErrorAbort;
-		}
+	}
 
 	info.margin = PAGE_INDENT;
 	info.start_of_line = 1;
@@ -1360,37 +1360,36 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
 	fclose(info.file);
 
 	if (save_extraseg)
-		{
+	{
 		if (fseek(temp_file, 0L, SEEK_SET) != 0L)
-			{
+		{
 			msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
 			goto ErrorAbort;
-			}
+		}
 
 		if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-			{
+		{
 			msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
 			goto ErrorAbort;
-			}
 		}
+	}
 
 ErrorAbort:
 	if (temp_file != NULL)
-		{
+	{
 		fclose(temp_file);
 		remove(TEMP_FILE_NAME);
 		temp_file = NULL;
-		}
+	}
 
 	if (msg != NULL)
-		{
+	{
 		helptitle();
 		stopmsg(STOPMSG_NO_STACK, msg);
-		}
-
+	}
 	else if (msg_func != NULL)
 		msg_func((success) ? -1 : -2, info.num_page);
-	}
+}
 
 int init_help(void)
 {
@@ -1403,13 +1402,10 @@ int init_help(void)
 #if !defined(XFRACT) && !defined(_WIN32)
 	if (help_file == NULL)         /* now look for help files in FRACTINT.EXE */
 	{
-/*
-		static char err_not_in_exe[] = "Help not found in FRACTINT.EXE!\n";
-*/
-
 		if (find_file("FRACTINT.EXE", path))
 		{
-			if ((help_file = fopen(path, "rb")) != NULL)
+			help_file = fopen(path, "rb");
+			if (help_file != NULL)
 			{
 				long help_offset;
 
@@ -1459,7 +1455,8 @@ int init_help(void)
 	{
 		if (find_file("fractint.hlp", path))
 		{
-			if ((help_file = fopen(path, "rb")) != NULL)
+			help_file = fopen(path, "rb");
+			if (help_file != NULL)
 			{
 				fread(&hs, sizeof(long) + sizeof(int), 1, help_file);
 

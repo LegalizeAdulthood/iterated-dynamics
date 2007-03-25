@@ -235,8 +235,11 @@ int cmdfiles(int argc,char **argv)
 	strcpy(curarg, "sstools.ini");
 	findpath(curarg, tempstring); /* look for SSTOOLS.INI */
 	if (tempstring[0] != 0)              /* found it! */
-		if ((initfile = fopen(tempstring,"r")) != NULL)
+	{
+		initfile = fopen(tempstring,"r");
+		if (initfile != NULL)
 			cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
+	}
 
 	for (i = 1; i < argc; i++)  /* cycle through args */
 	{
@@ -254,43 +257,48 @@ int cmdfiles(int argc,char **argv)
 				strcpy(tempstring,curarg);
 				if (has_ext(curarg) == NULL)
 					strcat(tempstring,".gif");
-				if ((initfile = fopen(tempstring,"rb")) != NULL)
+				initfile = fopen(tempstring,"rb");
+				if (initfile != NULL)
 				{
 					fread(tempstring,6,1,initfile);
 					if (tempstring[0] == 'G'
-                 && tempstring[1] == 'I'
-                 && tempstring[2] == 'F'
-                 && tempstring[3] >= '8' && tempstring[3] <= '9'
-                 && tempstring[4] >= '0' && tempstring[4] <= '9')
-                 {
+						&& tempstring[1] == 'I'
+						&& tempstring[2] == 'F'
+						&& tempstring[3] >= '8' && tempstring[3] <= '9'
+						&& tempstring[4] >= '0' && tempstring[4] <= '9')
+					{
 						strcpy(readname,curarg);
 						extract_filename(browsename,readname);
 						curarg[0] = (char)(showfile = 0);
-						}
-					fclose(initfile);
 					}
+					fclose(initfile);
 				}
+			}
 			if (curarg[0])
 				cmdarg(curarg, CMDFILE_AT_CMDLINE);           /* process simple command */
-			}
-		else if ((sptr = strchr(curarg,'/')) != NULL)  /* @filename/setname? */
+		}
+		else
 		{
-			*sptr = 0;
-			if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
-				init_msg("",CommandFile,0);
-			strcpy(CommandName,sptr + 1);
-			if (find_file_item(CommandFile,CommandName,&initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
-				argerror(curarg);
-			cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
+			sptr = strchr(curarg,'/');
+			if (sptr != NULL)  /* @filename/setname? */
+			{
+				*sptr = 0;
+				if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
+					init_msg("",CommandFile,0);
+				strcpy(CommandName, sptr + 1);
+				if (find_file_item(CommandFile, CommandName, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
+					argerror(curarg);
+				cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
 			}
-		else  /* @filename */
-		{
-			initfile = fopen(&curarg[1],"r");
-		 if (initfile == NULL)
-				argerror(curarg);
-			cmdfile(initfile, CMDFILE_AT_CMDLINE);
+			else  /* @filename */
+			{
+				initfile = fopen(&curarg[1], "r");
+				if (initfile == NULL)
+					argerror(curarg);
+				cmdfile(initfile, CMDFILE_AT_CMDLINE);
 			}
 		}
+	}
 
 	if (first_init == 0)
 	{
@@ -1636,7 +1644,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			if ((j = intval[i++]) < 0) /* striping */
 			{
-				if ((j = -j) < 1 || j >= 16384 || i >= totparms)
+				j = -j;
+				if (j < 1 || j >= 16384 || i >= totparms)
 				{
 					goto badarg;
 				}
@@ -3286,8 +3295,11 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 	int i,tmp,max_str;
 	max_str = 0;
 	for (i = 0; i < totparms; i++)
-		if ((tmp=get_curarg_len(floatvalstr[i])) > max_str)
+	{
+		tmp = get_curarg_len(floatvalstr[i]);
+		if (tmp > max_str)
 			max_str = tmp;
+	}
 	return max_str;
 }
 

@@ -143,9 +143,11 @@ void make_batch_file()
 
 		if (colorspec[0] == '@')
 		{
-			if ((sptr2 = strrchr(sptr, SLASHC)) != NULL)
+			sptr2 = strrchr(sptr, SLASHC);
+			if (sptr2 != NULL)
 				sptr = sptr2 + 1;
-			if ((sptr2 = strrchr(sptr, ':')) != NULL)
+			sptr2 = strrchr(sptr, ':');
+			if (sptr2 != NULL)
 				sptr = sptr2 + 1;
 			strncpy(&colorspec[1], sptr, 12);
 			colorspec[13] = 0;
@@ -273,13 +275,17 @@ prompt_user:
 
 			/* get resolution from the video name (which must be valid) */
 			pxdots = pydots = 0;
-			if ((i = check_vidmode_keyname(vidmde)) > 0)
-				if ((i = check_vidmode_key(0, i)) >= 0)
+			i = check_vidmode_keyname(vidmde);
+			if (i > 0)
+			{
+				i = check_vidmode_key(0, i);
+				if (i >= 0)
 				{
 					/* get the resolution of this video mode */
 					pxdots = g_video_table[i].xdots;
 					pydots = g_video_table[i].ydots;
 				}
+			}
 			if (pxdots == 0 && (xm > 1 || ym > 1))
 			{
 				/* no corresponding video mode! */
@@ -1228,7 +1234,8 @@ static void put_filename(char *keyword, char *fname)
 	char *p;
 	if (*fname && !endswithslash(fname))
 	{
-		if ((p = strrchr(fname, SLASHC)) != NULL)
+		p = strrchr(fname, SLASHC);
+		if (p != NULL)
 		{
 			fname = p + 1;
 			if (*fname == 0) return;
@@ -1273,7 +1280,8 @@ int maxlinelength = 72;
 static void put_parm_line()
 {
 	int len, c;
-	if ((len = s_wbdata.len) > NICELINELEN)
+	len = s_wbdata.len;
+	if (len > NICELINELEN)
 	{
 		len = NICELINELEN + 1;
 		while (--len != 0 && s_wbdata.buf[len] != ' ')
@@ -1473,7 +1481,8 @@ static void strip_zeros(char *buf)
 {
 	char *dptr, *bptr, *exptr;
 	strlwr(buf);
-	if ((dptr = strchr(buf, '.')) != 0)
+	dptr = strchr(buf, '.');
+	if (dptr != 0)
 	{
 		++dptr;
 		if ((exptr = strchr(buf, 'e')) != 0)  /* scientific notation with 'e'? */
@@ -1789,7 +1798,8 @@ void format_vid_table(int choice, char *buf)
 static int check_modekey(int curkey, int choice)
 {
 	int i, j, k, ret;
-	if ((i = check_vidmode_key(1, curkey)) >= 0)
+	i = check_vidmode_key(1, curkey);
+	if (i >= 0)
 		return -1-i;
 	i = entsptr[choice];
 	ret = 0;

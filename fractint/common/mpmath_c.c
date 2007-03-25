@@ -493,7 +493,8 @@ void SetupLogTable(void)
 		}
 		else if (LogFlag <= -2)  /* sqrt function */
 		{
-			if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
+			lf = -LogFlag;
+			if (lf >= (unsigned long)MaxLTSize)
 				lf = MaxLTSize - 1;
 			mlf = (colors - 2) / sqrt(MaxLTSize - lf);
 		}
@@ -536,7 +537,8 @@ void SetupLogTable(void)
 	}
 	else
 	{
-		if ((lf = -LogFlag) >= (unsigned long)MaxLTSize)
+		lf = -LogFlag;
+		if (lf >= (unsigned long)MaxLTSize)
 			lf = MaxLTSize - 1;
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fSqrt14(m, m);
