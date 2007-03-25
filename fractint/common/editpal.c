@@ -168,20 +168,20 @@ int editpal_cursor = 0;
  */
 
 #if 0
- /* declarations moved to PRORTOTYPE.H - this left for docs */
- BYTE dacbox[256][3];            /* DAC spindac() will use           */
- int         sxdots;             /* width of physical screen         */
- int         sydots;             /* depth of physical screen         */
- int         sxoffs;             /* start of logical screen          */
- int         syoffs;             /* start of logical screen          */
- int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
- int         strlocn[];          /* 10K buffer to store classes in   */
- int         colors;             /* # colors avail.                  */
- int         g_color_bright;       /* brightest color in palette       */
- int         g_color_dark;         /* darkest color in palette         */
- int         g_color_medium;       /* nearest to medbright gray color  */
- int         rotate_lo, rotate_hi;
- int         debugflag;
+/* declarations moved to PRORTOTYPE.H - this left for docs */
+BYTE dacbox[256][3];            /* DAC spindac() will use           */
+int         sxdots;             /* width of physical screen         */
+int         sydots;             /* depth of physical screen         */
+int         sxoffs;             /* start of logical screen          */
+int         syoffs;             /* start of logical screen          */
+int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
+int         strlocn[];          /* 10K buffer to store classes in   */
+int         colors;             /* # colors avail.                  */
+int         g_color_bright;       /* brightest color in palette       */
+int         g_color_dark;         /* darkest color in palette         */
+int         g_color_medium;       /* nearest to medbright gray color  */
+int         rotate_lo, rotate_hi;
+int         debugflag;
 #endif
 int using_jiim = 0;
 
@@ -193,8 +193,8 @@ int using_jiim = 0;
 typedef struct
 {
 	BYTE red,
-                 green,
-                 blue;
+		green,
+		blue;
 } PALENTRY;
 
 
@@ -205,10 +205,10 @@ typedef struct
 
 
 BYTE     *line_buff;   /* must be alloced!!! */
-static BYTE       fg_color,
-                          bg_color;
-static BOOLEAN            reserve_colors;
-static BOOLEAN            inverse;
+static BYTE		fg_color,
+				bg_color;
+static BOOLEAN	reserve_colors;
+static BOOLEAN	inverse;
 
 static float    gamma_val = 1;
 
@@ -450,29 +450,29 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
 {
 	int    curr;
 	double rm = (double)((int) p2->red   - (int) p1->red) / num,
-          gm = (double)((int) p2->green - (int) p1->green) / num,
-          bm = (double)((int) p2->blue  - (int) p1->blue) / num;
+			gm = (double)((int) p2->green - (int) p1->green) / num,
+			bm = (double)((int) p2->blue  - (int) p1->blue) / num;
 
 	for (curr = 0; curr < num; curr += skip)
 	{
 		if (gamma_val == 1)
-          {
-          pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-						(int) p1->red   + (int) (rm*curr));
-          pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-              (int) p1->green + (int) (gm*curr));
-          pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-						(int) p1->blue  + (int) (bm*curr));
-          }
-          else
-          {
-          pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-						(int) (p1->red   + pow(curr/(double)(num-1),gamma_val)*num*rm));
-          pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-						(int) (p1->green + pow(curr/(double)(num-1),gamma_val)*num*gm));
-          pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-						(int) (p1->blue  + pow(curr/(double)(num-1),gamma_val)*num*bm));
-          }
+		{
+			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
+				(int) p1->red   + (int) (rm*curr));
+			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
+				(int) p1->green + (int) (gm*curr));
+			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
+				(int) p1->blue  + (int) (bm*curr));
+		}
+		else
+		{
+			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
+				(int) (p1->red   + pow(curr/(double)(num-1),gamma_val)*num*rm));
+			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
+				(int) (p1->green + pow(curr/(double)(num-1),gamma_val)*num*gm));
+			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
+				(int) (p1->blue  + pow(curr/(double)(num-1),gamma_val)*num*bm));
+		}
 	}
 }
 
@@ -647,9 +647,9 @@ struct _Cursor
 	BOOLEAN blink;
 #if 0
 	char    t[CURSOR_SIZE],        /* save line segments here */
-           b[CURSOR_SIZE],
-           l[CURSOR_SIZE],
-           r[CURSOR_SIZE];
+			b[CURSOR_SIZE],
+			l[CURSOR_SIZE],
+			r[CURSOR_SIZE];
 #endif
 	char    t[CURSOR_SIZE];        /* save line segments here */
 	char    b[CURSOR_SIZE];
@@ -853,10 +853,9 @@ void Cursor_CheckBlink(void)
 
 int Cursor_WaitKey(void)   /* blink cursor while waiting for a key */
 {
-
 	while (!driver_wait_key_pressed(1))
 	{
-       Cursor_CheckBlink();
+		Cursor_CheckBlink();
 	}
 
 	return driver_key_pressed();
@@ -879,7 +878,7 @@ struct _MoveBox
 	BOOLEAN  moved;
 	BOOLEAN  should_hide;
 	char    *t, *b,
-           *l, *r;
+			*l, *r;
 };
 
 #define MoveBox struct _MoveBox
@@ -893,7 +892,7 @@ struct _MoveBox
 /* public: */
 
 	static MoveBox *MoveBox_Construct  (int x, int y, int csize, int base_width,
-                                      int base_depth);
+										int base_depth);
 	static void     MoveBox_Destroy    (MoveBox *me);
 	static BOOLEAN  MoveBox_Process    (MoveBox *me); /* returns FALSE if ESCAPED */
 	static BOOLEAN  MoveBox_Moved      (MoveBox *me);
@@ -969,9 +968,9 @@ static void MoveBox_SetCSize(MoveBox *me, int csize)
 static void MoveBox__Draw(MoveBox *me)  /* private */
 {
 	int width = me->base_width + me->csize*16 + 1,
-       depth = me->base_depth + me->csize*16 + 1;
+		depth = me->base_depth + me->csize*16 + 1;
 	int x     = me->x,
-       y     = me->y;
+		y     = me->y;
 
 
 	getrow (x, y,         width, me->t);
@@ -991,7 +990,7 @@ static void MoveBox__Draw(MoveBox *me)  /* private */
 static void MoveBox__Erase(MoveBox *me)   /* private */
 {
 	int width = me->base_width + me->csize*16 + 1,
-       depth = me->base_depth + me->csize*16 + 1;
+		depth = me->base_depth + me->csize*16 + 1;
 
 	vputrow(me->x,         me->y, depth, me->l);
 	vputrow(me->x + width-1, me->y, depth, me->r);
@@ -1009,7 +1008,7 @@ static void MoveBox__Move(MoveBox *me, int key)
 	BOOLEAN done  = FALSE;
 	BOOLEAN first = TRUE;
 	int     xoff  = 0,
-           yoff  = 0;
+			yoff  = 0;
 
 	while (!done)
 	{
@@ -1072,8 +1071,8 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
 {
 	int     key;
 	int     orig_x     = me->x,
-           orig_y     = me->y,
-           orig_csize = me->csize;
+			orig_y     = me->y,
+			orig_csize = me->csize;
 
 	MoveBox__Draw(me);
 
@@ -1213,8 +1212,8 @@ struct _CEditor
 
 #ifndef XFRACT
 	static CEditor *CEditor_Construct(int x, int y, char letter,
-                                      void (*other_key)(int,CEditor*,void*),
-                                      void (*change)(CEditor*,void*), VOIDPTR info);
+										void (*other_key)(int,CEditor*,void*),
+										void (*change)(CEditor*,void*), VOIDPTR info);
 	static void CEditor_Destroy   (CEditor *me);
 	static void CEditor_Draw      (CEditor *me);
 	static void CEditor_SetPos    (CEditor *me, int x, int y);
@@ -1225,8 +1224,8 @@ struct _CEditor
 	static int  CEditor_Edit      (CEditor *me);
 #else
 	static CEditor *CEditor_Construct(int , int , char ,
-                                    void (*other_key)(),
-                                    void (*change)(), VOIDPTR);
+										void (*other_key)(),
+										void (*change)(), VOIDPTR);
 	static void CEditor_Destroy         (CEditor *);
 	static void CEditor_Draw    (CEditor *);
 	static void CEditor_SetPos  (CEditor *, int , int);
@@ -1525,8 +1524,10 @@ static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(),
 	int             ctr;
 
 	for (ctr = 0; ctr < 3; ctr++)
+	{
 		me->color[ctr] = CEditor_Construct(0, 0, letter[ctr], RGBEditor__other_key,
-                                           RGBEditor__change, me);
+											RGBEditor__change, me);
+	}
 
 	RGBEditor_SetPos(me, x, y);
 	me->curr      = 0;
@@ -2617,7 +2618,7 @@ static void PalTable__UpdateDAC(PalTable *me)
 		else
 		{
 			int a = me->curr[0],
-             b = me->curr[1];
+				b = me->curr[1];
 
 			if (a > b)
 			{

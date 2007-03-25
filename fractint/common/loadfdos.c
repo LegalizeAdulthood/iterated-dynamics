@@ -80,12 +80,12 @@ static void format_vid_inf(int i,char *err,char *buf)
 {
 	char kname[5];
 	memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
-              sizeof(g_video_entry));
+				sizeof(g_video_entry));
 	vidmode_keyname(g_video_entry.keynum,kname);
 	sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
-           kname, g_video_entry.name, err,
-           g_video_entry.xdots, g_video_entry.ydots,
-           g_video_entry.colors, g_video_entry.comment);
+			kname, g_video_entry.name, err,
+			g_video_entry.xdots, g_video_entry.ydots,
+			g_video_entry.colors, g_video_entry.comment);
 	g_video_entry.xdots = 0; /* so tab_display knows to display nothing */
 }
 #endif

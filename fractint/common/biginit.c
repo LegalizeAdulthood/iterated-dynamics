@@ -236,12 +236,12 @@ static void init_bf_2(void)
 	/* leave room for NUMVARS variables allocated from stack */
 	/* also leave room for the safe area at top of segment */
 	if (ptr + NUMVARS*(bflength + 2) > maxstack)
-       {
-       char msg[80];
-       sprintf(msg, "Requested precision of %d too high, aborting", decimals);
-       stopmsg(0, msg);
-       goodbye();
-       }
+	{
+		char msg[80];
+		sprintf(msg, "Requested precision of %d too high, aborting", decimals);
+		stopmsg(0, msg);
+		goodbye();
+	}
 
 	/* room for 6 corners + 6 save corners + 10 params at top of extraseg */
 	/* this area is safe - use for variables that are used outside fractal*/
@@ -254,9 +254,9 @@ static void init_bf_2(void)
 	bfx3rd     = bnroot + ptr; ptr += bflength + 2;
 	bfy3rd     = bnroot + ptr; ptr += bflength + 2;
 	for (i = 0; i < 10; i++)
-       {
-       bfparms[i]  = bnroot + ptr; ptr += bflength + 2;
-       }
+	{
+		bfparms[i]  = bnroot + ptr; ptr += bflength + 2;
+	}
 	bfsxmin    = bnroot + ptr; ptr += bflength + 2;
 	bfsxmax    = bnroot + ptr; ptr += bflength + 2;
 	bfsymin    = bnroot + ptr; ptr += bflength + 2;
@@ -267,14 +267,16 @@ static void init_bf_2(void)
 
 	/* good citizens initialize variables */
 	if (bf_save_len)  /* leave save area */
-       memset(bnroot + (bf_save_len + 2)*22, 0, (unsigned)(startstack-(bf_save_len + 2)*22));
+	{
+		memset(bnroot + (bf_save_len + 2)*22, 0, (unsigned)(startstack-(bf_save_len + 2)*22));
+	}
 	else /* first time through - nothing saved */
-       {
-       /* high variables */
-       memset(bnroot + maxstack, 0, (bflength + 2)*22);
-       /* low variables */
-       memset(bnroot, 0, (unsigned)startstack);
-       }
+	{
+		/* high variables */
+		memset(bnroot + maxstack, 0, (bflength + 2)*22);
+		/* low variables */
+		memset(bnroot, 0, (unsigned)startstack);
+	}
 
 	restore_bf_vars();
 
@@ -448,16 +450,24 @@ void init_bf_length(int bnl)
 	bnlength = bnl;
 
 	if (bailout > 10)    /* arbitrary value */
-       /* using 2 doesn't gain much and requires another test */
-       intlength = 4;
+	{
+		/* using 2 doesn't gain much and requires another test */
+		intlength = 4;
+	}
 	else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
-       intlength = 2;
+	{
+		intlength = 2;
+	}
 	/* the bailout tests need greater dynamic range */
 	else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
 				bailoutest == Manr)
-       intlength = 2;
+	{
+		intlength = 2;
+	}
 	else
-       intlength = 1;
+	{
+		intlength = 1;
+	}
 	/* conservative estimate */
 	decimals = (int)((bnlength-intlength)*LOG10_256);
 	init_bf_2();

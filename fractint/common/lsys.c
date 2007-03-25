@@ -66,7 +66,7 @@ static char loaded = 0;
 
 int _fastcall ispow2(int n)
 {
-  return n == (n & -n);
+	return n == (n & -n);
 }
 
 LDBL _fastcall getnumber(char **str)
@@ -165,9 +165,9 @@ static int _fastcall readLSystemFile(char *str)
 			{
 				if (save_rule(strtok(NULL, " \t\n"), &ruleptrs[0]))
 				{
-                strcat(msgbuf, "Error:  out of memory\n");
-                ++err;
-                break;
+					strcat(msgbuf, "Error:  out of memory\n");
+					++err;
+					break;
 				}
 				check = 1;
 			}
@@ -304,21 +304,23 @@ int Lsystem(void)
 		lsysi_dosincos();
 		if (lsysi_findscale(rules2[0], &ts, &rules2[1], order))
 		{
-				ts.realangle = ts.angle = ts.reverse = 0;
+			ts.realangle = ts.angle = ts.reverse = 0;
 
-				free_lcmds();
-				sc = rules2;
-				for (rulesc = ruleptrs; *rulesc; rulesc++)
-                *sc++ = LSysIDrawTransform(*rulesc, &ts);
-				*sc = NULL;
+			free_lcmds();
+			sc = rules2;
+			for (rulesc = ruleptrs; *rulesc; rulesc++)
+			{
+				*sc++ = LSysIDrawTransform(*rulesc, &ts);
+			}
+			*sc = NULL;
 
-				/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
-				ts.curcolor = 15;
-				if (ts.curcolor > colors)
-				{
-					ts.curcolor=(char)(colors-1);
-				}
-				drawLSysI(rules2[0], &ts, &rules2[1], order);
+			/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
+			ts.curcolor = 15;
+			if (ts.curcolor > colors)
+			{
+				ts.curcolor=(char)(colors-1);
+			}
+			drawLSysI(rules2[0], &ts, &rules2[1], order);
 		}
 		stackoflow = ts.stackoflow;
 	}
@@ -347,23 +349,25 @@ int Lsystem(void)
 		lsysf_dosincos();
 		if (lsysf_findscale(rules2[0], &ts, &rules2[1], order))
 		{
-				ts.realangle = ts.angle = ts.reverse = 0;
+			ts.realangle = ts.angle = ts.reverse = 0;
 
-				free_lcmds();
-				sc = rules2;
-				for (rulesc = ruleptrs; *rulesc; rulesc++)
-                *sc++ = LSysFDrawTransform(*rulesc, &ts);
-				*sc = NULL;
+			free_lcmds();
+			sc = rules2;
+			for (rulesc = ruleptrs; *rulesc; rulesc++)
+			{
+				*sc++ = LSysFDrawTransform(*rulesc, &ts);
+			}
+			*sc = NULL;
 
-				/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
-				ts.curcolor = 15;
-				if (ts.curcolor > colors)
-				{
-					ts.curcolor=(char)(colors-1);
-				}
-				lsys_prepfpu(&ts);
-				drawLSysF(rules2[0], &ts, &rules2[1], order);
-				lsys_donefpu(&ts);
+			/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
+			ts.curcolor = 15;
+			if (ts.curcolor > colors)
+			{
+				ts.curcolor=(char)(colors-1);
+			}
+			lsys_prepfpu(&ts);
+			drawLSysF(rules2[0], &ts, &rules2[1], order);
+			lsys_donefpu(&ts);
 		}
 		overflow = 0;
 	}
@@ -413,7 +417,7 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 	tmpfar = (char *) malloc(i);
 	if (tmpfar == NULL)
 	{
-       return -1;
+		return -1;
 	}
 	*saveptr=tmpfar;
 	while (--i >= 0) *(tmpfar++)= *(rule++);
@@ -447,10 +451,12 @@ static int _fastcall append_rule(char *rule, int index)
 
 static void free_lcmds(void)
 {
-  struct lsys_cmd **sc = rules2;
+	struct lsys_cmd **sc = rules2;
 
-  while (*sc)
-	free(*sc++);
+	while (*sc)
+	{
+		free(*sc++);
+	}
 }
 
 #if defined(XFRACT) || defined(_WIN32)
@@ -961,35 +967,35 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 static struct lsys_cmd *
 LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 {
-  struct lsys_cmd *ret;
-  struct lsys_cmd *doub;
-  int maxval = 10;
-  int n = 0;
-  void (*f)();
-  long num;
+	struct lsys_cmd *ret;
+	struct lsys_cmd *doub;
+	int maxval = 10;
+	int n = 0;
+	void (*f)();
+	long num;
 
-  void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-  void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-  void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+	void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
+	void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
+	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-  void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
-  void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
-  void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
-  void (*dogf)() =   (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
+	void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
+	void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
+	void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
+	void (*dogf)() =   (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
 
-  ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
-  if (ret == NULL)
-  {
-       ts->stackoflow = 1;
-       return NULL;
-       }
-  while (*s)
-  {
-	f = NULL;
-	num = 0;
-	ret[n].ch = *s;
-	switch (*s)
+	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
+	if (ret == NULL)
 	{
+		ts->stackoflow = 1;
+		return NULL;
+	}
+	while (*s)
+	{
+		f = NULL;
+		num = 0;
+		ret[n].ch = *s;
+		switch (*s)
+		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
 		case '/': f = slash;           num = (long) (getnumber(&s)*11930465L);    break;
@@ -1004,80 +1010,80 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:
-		num = 3;
+			num = 3;
 		break;
-	}
+		}
 #if defined(XFRACT)
-	ret[n].f = (void (*)())f;
+		ret[n].f = (void (*)())f;
 #else
-	ret[n].f = (void (*)(struct lsys_turtlestatei *))f;
+		ret[n].f = (void (*)(struct lsys_turtlestatei *))f;
 #endif
-	ret[n].n = num;
-	if (++n == maxval)
-	{
-		doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
-		if (doub == NULL)
+		ret[n].n = num;
+		if (++n == maxval)
 		{
-			free(ret);
-			ts->stackoflow = 1;
-			return NULL;
+			doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+			if (doub == NULL)
+			{
+				free(ret);
+				ts->stackoflow = 1;
+				return NULL;
 			}
-		memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-		free(ret);
-		ret = doub;
-		maxval <<= 1;
+			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
+			free(ret);
+			ret = doub;
+			maxval <<= 1;
+		}
+		s++;
 	}
-	s++;
-  }
-  ret[n].ch = 0;
-  ret[n].f = NULL;
-  ret[n].n = 0;
-  n++;
+	ret[n].ch = 0;
+	ret[n].f = NULL;
+	ret[n].n = 0;
+	n++;
 
-  doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-  if (doub == NULL)
-  {
-       free(ret);
-       ts->stackoflow = 1;
-       return NULL;
-       }
-  memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-  free(ret);
-  return doub;
+	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	if (doub == NULL)
+	{
+		free(ret);
+		ts->stackoflow = 1;
+		return NULL;
+	}
+	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	free(ret);
+	return doub;
 }
 
 static struct lsys_cmd *
 LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 {
-  struct lsys_cmd *ret;
-  struct lsys_cmd *doub;
-  int maxval = 10;
-  int n = 0;
-  void (*f)();
-  long num;
+	struct lsys_cmd *ret;
+	struct lsys_cmd *doub;
+	int maxval = 10;
+	int n = 0;
+	void (*f)();
+	long num;
 
-  void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-  void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-  void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+	void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
+	void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
+	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
 
-  void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
-  void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
-  void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
-  void (*drawg)() =  (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
+	void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
+	void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
+	void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
+	void (*drawg)() =  (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
 
-  ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
-  if (ret == NULL)
-  {
-       ts->stackoflow = 1;
-       return NULL;
-       }
-  while (*s)
-  {
-	f = NULL;
-	num = 0;
-	ret[n].ch = *s;
-	switch (*s)
+	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
+	if (ret == NULL)
 	{
+		ts->stackoflow = 1;
+		return NULL;
+	}
+	while (*s)
+	{
+		f = NULL;
+		num = 0;
+		ret[n].ch = *s;
+		switch (*s)
+		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
 		case '/': f = slash;           num = (long) (getnumber(&s)*11930465L);    break;
@@ -1095,46 +1101,46 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:
-		num = 3;
+			num = 3;
 		break;
-	}
+		}
 #ifdef XFRACT
-	ret[n].f = (void (*)())f;
+		ret[n].f = (void (*)())f;
 #else
-	ret[n].f = (void (*)(struct lsys_turtlestatei *))f;
+		ret[n].f = (void (*)(struct lsys_turtlestatei *))f;
 #endif
-	ret[n].n = num;
-	if (++n == maxval)
-	{
-		doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
-		if (doub == NULL)
+		ret[n].n = num;
+		if (++n == maxval)
 		{
-           free(ret);
-           ts->stackoflow = 1;
-           return NULL;
-           }
-		memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-		free(ret);
-		ret = doub;
-		maxval <<= 1;
+			doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+			if (doub == NULL)
+			{
+				free(ret);
+				ts->stackoflow = 1;
+				return NULL;
+			}
+			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
+			free(ret);
+			ret = doub;
+			maxval <<= 1;
+		}
+		s++;
 	}
-	s++;
-  }
-  ret[n].ch = 0;
-  ret[n].f = NULL;
-  ret[n].n = 0;
-  n++;
+	ret[n].ch = 0;
+	ret[n].f = NULL;
+	ret[n].n = 0;
+	n++;
 
-  doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
-  if (doub == NULL)
-  {
-       free(ret);
-       ts->stackoflow = 1;
-       return NULL;
-       }
-  memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-  free(ret);
-  return doub;
+	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	if (doub == NULL)
+	{
+		free(ret);
+		ts->stackoflow = 1;
+		return NULL;
+	}
+	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	free(ret);
+	return doub;
 }
 
 static void _fastcall lsysi_dosincos(void)

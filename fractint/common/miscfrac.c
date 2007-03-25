@@ -265,7 +265,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 				subx.r[subx.t] = subx.r[subx.t-1];
 				x    = subx.v[subx.t-1]   = (nx1 + nx) >> 1;
 				subx.r[subx.t-1]   = (BYTE)(max(subx.r[subx.t],
-                subx.r[subx.t-2]) + 1);
+				subx.r[subx.t-2]) + 1);
 			}
 
 			i = getpix(nx, y);
@@ -609,10 +609,10 @@ int diffusion()
 	int xmax, ymax, xmin, ymin;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
-                 /*                             1 = falling particles */
-                 /*                             2 = square cavity     */
+					/*                             1 = falling particles */
+					/*                             2 = square cavity     */
 	int colorshift; /* If zero, select colors at random, otherwise shift */
-                   /* the color every colorshift points */
+					/* the color every colorshift points */
 
 	int colorcount, currentcolor;
 
@@ -648,7 +648,10 @@ int diffusion()
 	}
 
 	srand(rseed);
-	if (!rflag) ++rseed;
+	if (!rflag)
+	{
+		++rseed;
+	}
 
 	if (mode == 0)
 	{
@@ -844,13 +847,16 @@ int diffusion()
 		/* If we're doing colorshifting then check to see if we need to shift*/
 		if (colorshift)
 		{
-		if (!--colorcount) /* If the counter reaches zero then shift*/
-		{
-          currentcolor++;      /* Increase the current color and wrap */
-          currentcolor%=colors;  /* around skipping zero */
-          if (!currentcolor) currentcolor++;
-          colorcount=colorshift;  /* and reset the counter */
-		}
+			if (!--colorcount) /* If the counter reaches zero then shift*/
+			{
+				currentcolor++;      /* Increase the current color and wrap */
+				currentcolor%=colors;  /* around skipping zero */
+				if (!currentcolor)
+				{
+					currentcolor++;
+				}
+				colorcount=colorshift;  /* and reset the counter */
+			}
 		}
 
 		/* If the new point is close to an edge, we may need to increase
@@ -1562,43 +1568,43 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 	{
 		for (count = 0; count < lyaLength; count++)
 		{
-				Rate = lyaRxy[count] ? a : b;
-				if (curfractalspecific->orbitcalc())
-				{
-                overflow = TRUE;
-                goto jumpout;
-                }
-				}
+			Rate = lyaRxy[count] ? a : b;
+			if (curfractalspecific->orbitcalc())
+			{
+				overflow = TRUE;
+				goto jumpout;
+			}
 		}
+	}
 	for (i = 0; i < maxit/2; i++)
 	{
 		for (count = 0; count < lyaLength; count++)
 		{
-				Rate = lyaRxy[count] ? a : b;
-				if (curfractalspecific->orbitcalc())
-				{
-                overflow = TRUE;
-                goto jumpout;
-                }
-				temp = fabs(Rate-2.0*Rate*Population);
-                total *= temp;
-				if (total == 0)
-				{
-                overflow = TRUE;
-                goto jumpout;
-                }
-				}
+			Rate = lyaRxy[count] ? a : b;
+			if (curfractalspecific->orbitcalc())
+			{
+				overflow = TRUE;
+				goto jumpout;
+			}
+			temp = fabs(Rate-2.0*Rate*Population);
+			total *= temp;
+			if (total == 0)
+			{
+				overflow = TRUE;
+				goto jumpout;
+			}
+		}
 		while (total > 22026.4657948)
 		{
-				total *= 0.0000453999297625;
-				lnadjust += 10;
-				}
+			total *= 0.0000453999297625;
+			lnadjust += 10;
+		}
 		while (total < 0.0000453999297625)
 		{
-				total *= 22026.4657948;
-				lnadjust -= 10;
-				}
+			total *= 22026.4657948;
+			lnadjust -= 10;
 		}
+	}
 
 jumpout:
 	temp = log(total) + lnadjust;
@@ -1813,12 +1819,12 @@ int cellular ()
 	/* gcc can't manage to convert a big double to an unsigned long properly. */
 	if (param[1] > 0x7fffffff)
 	{
-       n = (param[1]-0x7fffffff);
-       n += 0x7fffffff;
+		n = (param[1]-0x7fffffff);
+		n += 0x7fffffff;
 	}
 	else
 	{
-       n = param[1];
+		n = param[1];
 	}
 #endif
 	if (n == 0)  /* calculate a random rule */
@@ -1928,134 +1934,137 @@ int cellular ()
 /* calculates the (lnnmbr - 1) generation */
 	if (lstscreenflag)  /* line number != 0 & not resuming & not continuing */
 	{
-     U32 big_row;
-     for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
-     {
-		thinking(1, "Cellular thinking (higher start row takes longer)");
-		if (rflag || randparam == 0 || randparam == -1)
+		U32 big_row;
+		for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
 		{
-       /* Use a random border */
-       for (i = 0; i <= (U16)r; i++)
-       {
-			cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-			cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
-       }
-		}
-		else
-		{
-       /* Use a zero border */
-       for (i = 0; i <= (U16)r; i++)
-       {
-			cell_array[notfilled][i]=0;
-			cell_array[notfilled][ixstop-i]=0;
-       }
-		}
+			thinking(1, "Cellular thinking (higher start row takes longer)");
+			if (rflag || randparam == 0 || randparam == -1)
+			{
+				/* Use a random border */
+				for (i = 0; i <= (U16)r; i++)
+				{
+						cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
+						cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+				}
+			}
+			else
+			{
+				/* Use a zero border */
+				for (i = 0; i <= (U16)r; i++)
+				{
+					cell_array[notfilled][i]=0;
+					cell_array[notfilled][ixstop-i]=0;
+				}
+			}
 
-       t = 0; /* do first cell */
-       for (twor=(U16)(r + r), i = 0; i <= twor; i++)
-           t = (S16)(t + (S16)cell_array[filled][i]);
-       if (t > rule_digits || t < 0)
-       {
-			thinking(0, NULL);
-			abort_cellular(BAD_T, t);
-			return -1;
-       }
-       cell_array[notfilled][r] = (BYTE)cell_table[t];
-
-           /* use a rolling sum in t */
-       for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
-       {
-			t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
+			t = 0; /* do first cell */
+			for (twor=(U16)(r + r), i = 0; i <= twor; i++)
+			{
+				t = (S16)(t + (S16)cell_array[filled][i]);
+			}
 			if (t > rule_digits || t < 0)
 			{
-           thinking(0, NULL);
-           abort_cellular(BAD_T, t);
-           return -1;
+				thinking(0, NULL);
+				abort_cellular(BAD_T, t);
+				return -1;
 			}
-			cell_array[notfilled][col] = (BYTE)cell_table[t];
-       }
+			cell_array[notfilled][r] = (BYTE)cell_table[t];
 
-       filled = notfilled;
-       notfilled = (S16)(1-filled);
-       if (driver_key_pressed())
-       {
-          thinking(0, NULL);
-          abort_cellular(INTERUPT, 0);
-          return -1;
-       }
-     }
-	start_row = 0;
-	thinking(0, NULL);
-	lstscreenflag = 0;
+			/* use a rolling sum in t */
+			for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
+			{
+				t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
+				if (t > rule_digits || t < 0)
+				{
+					thinking(0, NULL);
+					abort_cellular(BAD_T, t);
+					return -1;
+				}
+				cell_array[notfilled][col] = (BYTE)cell_table[t];
+			}
+
+			filled = notfilled;
+			notfilled = (S16)(1-filled);
+			if (driver_key_pressed())
+			{
+				thinking(0, NULL);
+				abort_cellular(INTERUPT, 0);
+				return -1;
+			}
+		}
+		start_row = 0;
+		thinking(0, NULL);
+		lstscreenflag = 0;
 	}
 
 /* This section does all the work */
 contloop:
 	for (row = start_row; row <= iystop; row++)
 	{
-
 		if (rflag || randparam == 0 || randparam == -1)
 		{
-       /* Use a random border */
-       for (i = 0; i <= (U16)r; i++)
-       {
-			cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-			cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
-       }
+			/* Use a random border */
+			for (i = 0; i <= (U16)r; i++)
+			{
+				cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
+				cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+			}
 		}
 		else
 		{
-       /* Use a zero border */
-       for (i = 0; i <= (U16)r; i++)
-       {
-			cell_array[notfilled][i]=0;
-			cell_array[notfilled][ixstop-i]=0;
-       }
+			/* Use a zero border */
+			for (i = 0; i <= (U16)r; i++)
+			{
+				cell_array[notfilled][i]=0;
+				cell_array[notfilled][ixstop-i]=0;
+			}
 		}
 
-       t = 0; /* do first cell */
-       for (twor=(U16)(r + r), i = 0; i <= twor; i++)
-           t = (S16)(t + (S16)cell_array[filled][i]);
-       if (t > rule_digits || t < 0)
-       {
+		t = 0; /* do first cell */
+		for (twor=(U16)(r + r), i = 0; i <= twor; i++)
+		{
+			t = (S16)(t + (S16)cell_array[filled][i]);
+		}
+		if (t > rule_digits || t < 0)
+		{
 			thinking(0, NULL);
 			abort_cellular(BAD_T, t);
 			return -1;
-       }
-       cell_array[notfilled][r] = (BYTE)cell_table[t];
+		}
+		cell_array[notfilled][r] = (BYTE)cell_table[t];
 
-           /* use a rolling sum in t */
-       for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
-       {
+		/* use a rolling sum in t */
+		for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
+		{
 			t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
 			if (t > rule_digits || t < 0)
 			{
-           thinking(0, NULL);
-           abort_cellular(BAD_T, t);
-           return -1;
+				thinking(0, NULL);
+				abort_cellular(BAD_T, t);
+				return -1;
 			}
 			cell_array[notfilled][col] = (BYTE)cell_table[t];
-       }
+		}
 
-       filled = notfilled;
-       notfilled = (S16)(1-filled);
-       put_line(row, 0, ixstop, cell_array[filled]);
-       if (driver_key_pressed())
-       {
-          abort_cellular(CELLULAR_DONE, 0);
-          alloc_resume(10, 1);
-          put_resume(sizeof(row), &row, 0);
-          return -1;
-       }
+		filled = notfilled;
+		notfilled = (S16)(1-filled);
+		put_line(row, 0, ixstop, cell_array[filled]);
+		if (driver_key_pressed())
+		{
+			abort_cellular(CELLULAR_DONE, 0);
+			alloc_resume(10, 1);
+			put_resume(sizeof(row), &row, 0);
+			return -1;
+		}
 	}
 	if (nxtscreenflag)
 	{
-     param[3] += iystop + 1;
-     start_row = 0;
-     goto contloop;
+		param[3] += iystop + 1;
+		start_row = 0;
+		goto contloop;
 	}
-  abort_cellular(CELLULAR_DONE, 0);
-  return 1;
+	abort_cellular(CELLULAR_DONE, 0);
+	return 1;
 }
 
 int CellularSetup(void)
@@ -2275,7 +2284,7 @@ int froth_setup(void)
 		fsp->fl.f.a = param[2];
 
 		fsp->attractors = fabs(fsp->fl.f.a) <= FROTH_CRITICAL_A ? (!fsp->repeat_mapping ? 3 : 6)
-                                                              : (!fsp->repeat_mapping ? 2 : 3);
+																: (!fsp->repeat_mapping ? 2 : 3);
 
 		/* new improved values */
 		/* 0.5 is the value that causes the mapping to reach a minimum */
@@ -2354,18 +2363,18 @@ void froth_cleanup(void)
 
 /* Froth Fractal type */
 int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
-     {
-     int found_attractor = 0;
+{
+	int found_attractor = 0;
 
 	if (check_key())
 	{
 		return -1;
-		}
+	}
 
 	if (fsp == NULL)
-		{ /* error occured allocating memory for fsp */
+	{ /* error occured allocating memory for fsp */
 		return 0;
-		}
+	}
 
 	orbit_ptr = 0;
 	coloriter = 0;
@@ -2374,33 +2383,33 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 		(*plot) (col, row, showdot%colors);
 	}
 	if (!integerfractal) /* fp mode */
-		{
+	{
 		if (invert)
-			{
+		{
 			invertz2(&tmp);
 			old = tmp;
-			}
+		}
 		else
-			{
+		{
 			old.x = dxpixel();
 			old.y = dypixel();
-			}
+		}
 
 		while (!found_attractor
-             && ((tempsqrx=sqr(old.x)) + (tempsqry=sqr(old.y)) < rqlim)
-             && (coloriter < maxit))
-			{
+				&& ((tempsqrx=sqr(old.x)) + (tempsqry=sqr(old.y)) < rqlim)
+				&& (coloriter < maxit))
+		{
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
 			g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
 			old.y += (old.x + old.x)*old.y - fsp->fl.f.a*old.x;
 			old.x = g_new.x;
 			if (fsp->repeat_mapping)
-				{
+			{
 				g_new.x = sqr(old.x) - sqr(old.y) - old.x - fsp->fl.f.a*old.y;
 				old.y += (old.x + old.x)*old.y - fsp->fl.f.a*old.x;
 				old.x = g_new.x;
-				}
+			}
 
 			coloriter++;
 
@@ -2435,11 +2444,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 2;
 					}
-             }
 				}
+			}
 			else if (fabs(FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
 						&& old.x <= fsp->fl.f.right_x1 && old.x >= fsp->fl.f.right_x2)
-				{
+			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
 					found_attractor = 2;
@@ -2469,11 +2478,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 6;
 					}
-             }
 				}
+			}
 			else if (fabs(-FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
 						&& old.x <= fsp->fl.f.left_x1 && old.x >= fsp->fl.f.left_x2)
-				{
+			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
 					found_attractor = 2;
@@ -2503,34 +2512,34 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 3;
 					}
-             }
 				}
 			}
 		}
+	}
 	else /* integer mode */
-		{
+	{
 		if (invert)
-			{
+		{
 			invertz2(&tmp);
 			lold.x = (long)(tmp.x*fudge);
 			lold.y = (long)(tmp.y*fudge);
-			}
+		}
 		else
-			{
+		{
 			lold.x = lxpixel();
 			lold.y = lypixel();
-			}
+		}
 
 		while (!found_attractor && ((lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y))) < llimit)
-             && (lmagnitud >= 0) && (coloriter < maxit))
-			{
+				&& (lmagnitud >= 0) && (coloriter < maxit))
+		{
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
 			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 			lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
 			lold.x = lnew.x;
 			if (fsp->repeat_mapping)
-				{
+			{
 				lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y));
 				if ((lmagnitud > llimit) || (lmagnitud < 0))
 				{
@@ -2539,7 +2548,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
 				lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
 				lold.x = lnew.x;
-				}
+			}
 			coloriter++;
 
 			if (show_orbit)
@@ -2573,11 +2582,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 2;
 					}
-             }
 				}
+			}
 			else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE
 						&& lold.x <= fsp->fl.l.right_x1 && lold.x >= fsp->fl.l.right_x2)
-				{
+			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
 					found_attractor = 2;
@@ -2607,10 +2616,10 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 6;
 					}
-             }
 				}
+			}
 			else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE)
-				{
+			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
 					found_attractor = 2;
@@ -2640,10 +2649,10 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 					{
 						found_attractor = 3;
 					}
-             }
 				}
 			}
 		}
+	}
 	if (show_orbit)
 	{
 		scrub_orbit();

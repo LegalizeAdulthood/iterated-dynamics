@@ -109,9 +109,9 @@ int get_toggles()
 	char *calcmodes[] ={"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
 	char *soundmodes[5]={"off", "beep", "x", "y", "z"};
 	char *insidemodes[]={"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
-                         "startrail", "period", "atan", "fmod"};
+						"startrail", "period", "atan", "fmod"};
 	char *outsidemodes[]={"numb", "iter", "real", "imag", "mult", "summ", "atan",
-                         "fmod", "tdis"};
+						"fmod", "tdis"};
 
 	k = -1;
 
@@ -121,20 +121,20 @@ int get_toggles()
 	uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
 	uvalues[k].uval.ch.list = calcmodes;
 	uvalues[k].uval.ch.val = (usr_stdcalcmode == '1') ? 0
-                        : (usr_stdcalcmode == '2') ? 1
-                        : (usr_stdcalcmode == '3') ? 2
-                        : (usr_stdcalcmode == 'g' && stoppass == 0) ? 3
-                        : (usr_stdcalcmode == 'g' && stoppass == 1) ? 4
-                        : (usr_stdcalcmode == 'g' && stoppass == 2) ? 5
-                        : (usr_stdcalcmode == 'g' && stoppass == 3) ? 6
-                        : (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
-                        : (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
-                        : (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
-                        : (usr_stdcalcmode == 'b') ? 10
+						: (usr_stdcalcmode == '2') ? 1
+						: (usr_stdcalcmode == '3') ? 2
+						: (usr_stdcalcmode == 'g' && stoppass == 0) ? 3
+						: (usr_stdcalcmode == 'g' && stoppass == 1) ? 4
+						: (usr_stdcalcmode == 'g' && stoppass == 2) ? 5
+						: (usr_stdcalcmode == 'g' && stoppass == 3) ? 6
+						: (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
+						: (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
+						: (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
+						: (usr_stdcalcmode == 'b') ? 10
 						: (usr_stdcalcmode == 's') ? 11
 						: (usr_stdcalcmode == 't') ? 12
 						: (usr_stdcalcmode == 'd') ? 13
-                        :        /* "o"rbits */      14;
+						:        /* "o"rbits */      14;
 	old_usr_stdcalcmode = usr_stdcalcmode;
 	old_stoppass = stoppass;
 #ifndef XFRACT

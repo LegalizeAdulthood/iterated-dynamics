@@ -98,8 +98,8 @@ static int getdepth(int xd, int yd)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
 		pal = ((int) dac[pal][0]*77 +
-             (int) dac[pal][1]*151 +
-             (int) dac[pal][2]*28);
+				(int) dac[pal][1]*151 +
+				(int) dac[pal][2]*28);
 		pal >>= 6;
 	}
 	return pal;
@@ -330,14 +330,16 @@ int do_AutoStereo(void)
 	{
 		while (Y < ydots)
 		{
-          if (driver_key_pressed())
-          {
-             ret = 1;
-             goto exit_stereo;
-          }
-          for (i = 0; i < xdots; i++)
-             buf[i] = (unsigned char)(rand()%colors);
-          outline_stereo(buf,xdots);
+			if (driver_key_pressed())
+			{
+				ret = 1;
+				goto exit_stereo;
+			}
+			for (i = 0; i < xdots; i++)
+			{
+				buf[i] = (unsigned char)(rand()%colors);
+			}
+			outline_stereo(buf,xdots);
 		}
 	}
 

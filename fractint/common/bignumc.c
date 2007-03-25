@@ -421,12 +421,12 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 			big_set16(rp3 ,(U16)sum); /* save what was the upper two bytes */
 			sum >>= 16;             /* keep just the overflow */
 			for (k = 0; sum != 0 && k < carry_steps; k++)
-		    {
-		        rp3 += 2;               /* move over 2 bytes */
-		        sum += big_access16(rp3);     /* add to what was the overflow */
-		        big_set16(rp3, (U16)sum); /* save what was the overflow */
-		        sum >>= 16;             /* keep just the new overflow */
-		    }
+			{
+				rp3 += 2;               /* move over 2 bytes */
+				sum += big_access16(rp3);     /* add to what was the overflow */
+				big_set16(rp3, (U16)sum); /* save what was the overflow */
+				sum >>= 16;             /* keep just the new overflow */
+			}
 			n2p += 2;       /* to next word */
 			rp2 += 2;
 			carry_steps--;  /* use one less step */

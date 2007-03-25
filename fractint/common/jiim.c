@@ -452,10 +452,6 @@ DeQueueLong()
 
 
 
-/*
- * End MIIM section;
- */
-
 static void SaveRect(int x, int y, int width, int height)
 {
 	if (hasinverse == 0)

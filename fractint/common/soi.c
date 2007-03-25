@@ -328,8 +328,10 @@ static void puthline(int x1, int y1, int x2, int color)
 
 static void putbox(int x1, int y1, int x2, int y2, int color)
 {
-  for (; y1 <= y2; y1++)
-	puthline(x1, y1, x2, color);
+	for (; y1 <= y2; y1++)
+	{
+		puthline(x1, y1, x2, color);
+	}
 }
 
 /* maximum side length beyond which we start regular scanning instead of
@@ -718,7 +720,7 @@ scan:
 					helpcolor=iteration(helpre, im, zre, zim, iter);
 					if (helpcolor < 0)
 					{
-          				status = 1;
+						status = 1;
 						goto rhombus_done;
 					}
 					else if (helpcolor == savecolor)
@@ -1129,21 +1131,21 @@ void soi_ldbl(void)
 		xxmaxl = xxmax;
 		yymaxl = yymax;
 	}
-  twidth=tolerance/(xdots-1);
-  stepx = (xxmaxl - xxminl) / xdots;
-  stepy = (yyminl - yymaxl) / ydots;
-  equal = (stepx < stepy ? stepx : stepy);
+	twidth=tolerance/(xdots-1);
+	stepx = (xxmaxl - xxminl) / xdots;
+	stepy = (yyminl - yymaxl) / ydots;
+	equal = (stepx < stepy ? stepx : stepy);
 
-  RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
-	      0, xdots, 0, ydots,
-	      xxminl, yymaxl,
-	      xxmaxl, yymaxl,
-	      xxminl, yyminl,
-	      xxmaxl, yyminl,
-	      (xxmaxl + xxminl)/2, yymaxl,
-	      xxminl, (yymaxl + yyminl)/2,
-	      xxmaxl, (yymaxl + yyminl)/2,
-	      (xxmaxl + xxminl)/2, yyminl,
-	      (xxminl + xxmaxl)/2, (yymaxl + yyminl)/2,
-  	      1);
+	RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
+		0, xdots, 0, ydots,
+		xxminl, yymaxl,
+		xxmaxl, yymaxl,
+		xxminl, yyminl,
+		xxmaxl, yyminl,
+		(xxmaxl + xxminl)/2, yymaxl,
+		xxminl, (yymaxl + yyminl)/2,
+		xxmaxl, (yymaxl + yyminl)/2,
+		(xxmaxl + xxminl)/2, yyminl,
+		(xxminl + xxmaxl)/2, (yymaxl + yyminl)/2,
+		1);
 }

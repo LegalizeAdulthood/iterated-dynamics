@@ -487,14 +487,14 @@ static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy,
 void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 {
 	/* (xxmin, yymax), etc, are already set to zoombox corners;
-       (sxmin, symax), etc, are still the screen's corners;
-       use the same logic as plot_orbit stuff to first calculate current screen
-       corners relative to the zoombox, as if the zoombox were a square with
-       upper left (0, 0) and width/depth 1; ie calc the current screen corners
-       as if plotting them from the zoombox;
-       then extend these co-ords from current real screen corners to get
-       new actual corners
-       */
+	(sxmin, symax), etc, are still the screen's corners;
+	use the same logic as plot_orbit stuff to first calculate current screen
+	corners relative to the zoombox, as if the zoombox were a square with
+	upper left (0, 0) and width/depth 1; ie calc the current screen corners
+	as if plotting them from the zoombox;
+	then extend these co-ords from current real screen corners to get
+	new actual corners
+	*/
 	bf_t savbfxmin, savbfymax, bfftemp;
 	bf_t tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2;
 	int saved;

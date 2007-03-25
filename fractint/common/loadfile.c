@@ -671,16 +671,17 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
 		fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
-                     *(double)fileydots / (double)filexdots);
+						*(double)fileydots / (double)filexdots);
 		if (fileaspectratio > screenaspect-0.03
-		&& fileaspectratio < screenaspect + 0.03)
-			fileaspectratio = screenaspect;
-		}
-	else
-		if (fileydots*4 == filexdots*3) /* assume the common square pixels */
+			&& fileaspectratio < screenaspect + 0.03)
 		{
 			fileaspectratio = screenaspect;
 		}
+	}
+	else if (fileydots*4 == filexdots*3) /* assume the common square pixels */
+	{
+		fileaspectratio = screenaspect;
+	}
 
 	if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
 	{
@@ -703,15 +704,15 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 	}
 
 	/* Format of .gif extension blocks is:
-          1 byte    '!', extension block identifier
-          1 byte    extension block number, 255
-          1 byte    length of id, 11
+			1 byte    '!', extension block identifier
+			1 byte    extension block number, 255
+			1 byte    length of id, 11
 			11 bytes   alpha id, "fractintnnn" with fractint, nnn is secondary id
-       n * {
-          1 byte    length of block info in bytes
-          x bytes   block info
-           }
-          1 byte    0, extension terminator
+		n * {
+			1 byte    length of block info in bytes
+			x bytes   block info
+			}
+			1 byte    0, extension terminator
 		To scan extension blocks, we first look in file at length of fractal_info
 		(the main extension block) from end of file, looking for a literal known
 		to be at start of our block info.  Then we scan forward a bit, in case
@@ -737,7 +738,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 	if (strcmp(INFO_ID,info->info_id) == 0)
 	{
 #ifdef XFRACT
-       decode_fractal_info(info,1);
+		decode_fractal_info(info,1);
 #endif
 		hdr_offset = -1-fractinf_len;
 	}
@@ -1248,35 +1249,39 @@ void backwards_v20(void)
 
 int check_back(void)
 {
-/*
-	put the features that need to save the value in save_release for backwards
-	compatibility in this routine
-*/
-int ret = 0;
-	if (fractype == LYAPUNOV ||
-       fractype == FROTH || fractype == FROTHFP ||
-       fix_bof() || fix_period_bof() || use_old_distest || decomp[0] == 2 ||
-       (fractype == FORMULA && save_release <= 1920) ||
-       (fractype == FFORMULA && save_release <= 1920) ||
-       (LogFlag != 0 && save_release <= 2001) ||
-       (fractype == TRIGSQR && save_release < 1900) ||
-       (inside == STARTRAIL && save_release < 1825) ||
-       (maxit > 32767 && save_release <= 1950) ||
-       (distest && save_release <= 1950) ||
-       ((outside <= REAL && outside >= ATAN) &&
-          save_release <= 1960) ||
-       (fractype == FPPOPCORN && save_release <= 1960) ||
-       (fractype == LPOPCORN && save_release <= 1960) ||
-       (fractype == FPPOPCORNJUL && save_release <= 1960) ||
-       (fractype == LPOPCORNJUL && save_release <= 1960) ||
-       (inside == FMODI && save_release <= 2000) ||
-       ((inside == ATANI || outside == ATAN) && save_release <= 2002) ||
-       (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002) ||
-       ((fractype == JULIBROT || fractype == JULIBROTFP) &&
-          (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP) &&
-           save_release <= 2002)
-)
-     ret = 1;
+	/*
+		put the features that need to save the value in save_release for backwards
+		compatibility in this routine
+	*/
+	int ret = 0;
+	if (fractype == LYAPUNOV
+		|| fractype == FROTH
+		|| fractype == FROTHFP
+		|| fix_bof()
+		|| fix_period_bof()
+		|| use_old_distest
+		|| decomp[0] == 2
+		|| (fractype == FORMULA && save_release <= 1920)
+		|| (fractype == FFORMULA && save_release <= 1920)
+		|| (LogFlag != 0 && save_release <= 2001)
+		|| (fractype == TRIGSQR && save_release < 1900)
+		|| (inside == STARTRAIL && save_release < 1825)
+		|| (maxit > 32767 && save_release <= 1950)
+		|| (distest && save_release <= 1950)
+		|| ((outside <= REAL && outside >= ATAN) && save_release <= 1960)
+		|| (fractype == FPPOPCORN && save_release <= 1960)
+		|| (fractype == LPOPCORN && save_release <= 1960)
+		|| (fractype == FPPOPCORNJUL && save_release <= 1960)
+		|| (fractype == LPOPCORNJUL && save_release <= 1960)
+		|| (inside == FMODI && save_release <= 2000)
+		|| ((inside == ATANI || outside == ATAN) && save_release <= 2002)
+		|| (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002)
+		|| ((fractype == JULIBROT || fractype == JULIBROTFP)
+			&& (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
+			&& save_release <= 2002))
+	{
+		ret = 1;
+	}
 	return ret;
 }
 
@@ -1309,16 +1314,16 @@ static int fix_period_bof(void)
 
 #define MAX_WINDOWS_OPEN 450
 
-  struct window  /* for fgetwindow on screen browser */
-  {
-     struct coords itl; /* screen coordinates */
-     struct coords ibl;
-     struct coords itr;
-     struct coords ibr;
-     double win_size;   /* box size for drawindow() */
-     char name[FILE_MAX_FNAME];     /* for filename */
-     int boxcount;      /* bytes of saved screen info */
-     };
+struct window  /* for fgetwindow on screen browser */
+{
+	struct coords itl; /* screen coordinates */
+	struct coords ibl;
+	struct coords itr;
+	struct coords ibr;
+	double win_size;   /* box size for drawindow() */
+	char name[FILE_MAX_FNAME];     /* for filename */
+	int boxcount;      /* bytes of saved screen info */
+};
 
 /* prototypes */
 static void drawindow(int, struct window *);
@@ -1423,21 +1428,21 @@ int fgetwindow(void)
 		floattobf(bt_e, cvt->e);
 		floattobf(bt_f, cvt->f);
 	}
-    find_special_colors();
-    color_of_box = g_color_medium;
+	find_special_colors();
+	color_of_box = g_color_medium;
 
 rescan:  /* entry for changed browse parms */
-    time(&lastime);
-    toggle = 0;
-    wincount = 0;
-    no_sub_images = FALSE;
-    splitpath(readname,drive,dir,NULL,NULL);
-    splitpath(browsemask,NULL,NULL,fname,ext);
-    makepath(tmpmask,drive,dir,fname,ext);
-    done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
-                                   /* draw all visible windows */
-    while (!done)
-    {
+	time(&lastime);
+	toggle = 0;
+	wincount = 0;
+	no_sub_images = FALSE;
+	splitpath(readname,drive,dir,NULL,NULL);
+	splitpath(browsemask,NULL,NULL,fname,ext);
+	makepath(tmpmask,drive,dir,fname,ext);
+	done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
+								/* draw all visible windows */
+	while (!done)
+	{
 		if (driver_key_pressed())
 		{
 			driver_get_key();
@@ -1446,14 +1451,12 @@ rescan:  /* entry for changed browse parms */
 		splitpath(DTA.filename,NULL,NULL,fname,ext);
 		makepath(tmpmask,drive,dir,fname,ext);
 		if (!find_fractal_info(tmpmask,&read_info,&blk_2_info,&blk_3_info,
-									&blk_4_info,&blk_5_info,&blk_6_info,
-									&blk_7_info) &&
-			(typeOK(&read_info,&blk_3_info) || !brwschecktype) &&
-			(paramsOK(&read_info) || !brwscheckparms) &&
-			stricmp(browsename,DTA.filename) &&
-			blk_6_info.got_data != 1 &&
-			is_visible_window(&winlist,&read_info,&blk_5_info)
-			)
+				&blk_4_info,&blk_5_info,&blk_6_info, &blk_7_info)
+			&& (typeOK(&read_info,&blk_3_info) || !brwschecktype)
+			&& (paramsOK(&read_info) || !brwscheckparms)
+			&& stricmp(browsename,DTA.filename)
+			&& blk_6_info.got_data != 1
+			&& is_visible_window(&winlist,&read_info,&blk_5_info))
 		{
 			strcpy(winlist.name,DTA.filename);
 			drawindow(color_of_box,&winlist);
@@ -1760,40 +1763,40 @@ static void drawindow(int colour,struct window *info)
 	boxcount = 0;
 	if (info->win_size >= minbox)
 	{
-	/* big enough on screen to show up as a box so draw it */
-	/* corner pixels */
+		/* big enough on screen to show up as a box so draw it */
+		/* corner pixels */
 #ifndef XFRACT
-     addbox(info->itl);
-     addbox(info->itr);
-     addbox(info->ibl);
-     addbox(info->ibr);
-     drawlines(info->itl,info->itr,info->ibl.x-info->itl.x,info->ibl.y-info->itl.y); /* top & bottom lines */
-     drawlines(info->itl,info->ibl,info->itr.x-info->itl.x,info->itr.y-info->itl.y); /* left & right lines */
+		addbox(info->itl);
+		addbox(info->itr);
+		addbox(info->ibl);
+		addbox(info->ibr);
+		drawlines(info->itl,info->itr,info->ibl.x-info->itl.x,info->ibl.y-info->itl.y); /* top & bottom lines */
+		drawlines(info->itl,info->ibl,info->itr.x-info->itl.x,info->itr.y-info->itl.y); /* left & right lines */
 #else
-     boxx[0] = info->itl.x + sxoffs;
-     boxy[0] = info->itl.y + syoffs;
-     boxx[1] = info->itr.x + sxoffs;
-     boxy[1] = info->itr.y + syoffs;
-     boxx[2] = info->ibr.x + sxoffs;
-     boxy[2] = info->ibr.y + syoffs;
-     boxx[3] = info->ibl.x + sxoffs;
-     boxy[3] = info->ibl.y + syoffs;
-     boxcount = 4;
+		boxx[0] = info->itl.x + sxoffs;
+		boxy[0] = info->itl.y + syoffs;
+		boxx[1] = info->itr.x + sxoffs;
+		boxy[1] = info->itr.y + syoffs;
+		boxx[2] = info->ibr.x + sxoffs;
+		boxy[2] = info->ibr.y + syoffs;
+		boxx[3] = info->ibl.x + sxoffs;
+		boxy[3] = info->ibl.y + syoffs;
+		boxcount = 4;
 #endif
-     dispbox();
+		dispbox();
 	}
 	else  /* draw crosshairs */
 	{
 #ifndef XFRACT
-	cross_size = ydots / 45;
-	if (cross_size < 2) cross_size = 2;
-	itr.x = info->itl.x - cross_size;
-	itr.y = info->itl.y;
-	ibl.y = info->itl.y - cross_size;
-	ibl.x = info->itl.x;
-	drawlines(info->itl,itr,ibl.x-itr.x,0); /* top & bottom lines */
-	drawlines(info->itl,ibl,0,itr.y-ibl.y); /* left & right lines */
-	dispbox();
+		cross_size = ydots / 45;
+		if (cross_size < 2) cross_size = 2;
+		itr.x = info->itl.x - cross_size;
+		itr.y = info->itl.y;
+		ibl.y = info->itl.y - cross_size;
+		ibl.x = info->itl.x;
+		drawlines(info->itl,itr,ibl.x-itr.x,0); /* top & bottom lines */
+		drawlines(info->itl,ibl,0,itr.y-ibl.y); /* left & right lines */
+		dispbox();
 #endif
 	}
 }
@@ -1801,33 +1804,32 @@ static void drawindow(int colour,struct window *info)
 /* maps points onto view screen*/
 static void transform(struct dblcoords *point)
 {
-  double tmp_pt_x;
-  tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
-  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
-  point->x = tmp_pt_x;
+	double tmp_pt_x;
+	tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
+	point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
+	point->x = tmp_pt_x;
 }
 
-static char is_visible_window
-				(struct window *list, struct fractal_info *info,
-              struct ext_blk_5 *blk_5_info)
+static char is_visible_window(struct window *list, struct fractal_info *info,
+	struct ext_blk_5 *blk_5_info)
 {
- struct dblcoords tl,tr,bl,br;
- bf_t bt_x, bt_y;
- bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
- int saved;
- int two_len;
- int cornercount, cant_see;
- int  orig_bflength,
+	struct dblcoords tl,tr,bl,br;
+	bf_t bt_x, bt_y;
+	bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
+	int saved;
+	int two_len;
+	int cornercount, cant_see;
+	int  orig_bflength,
 		orig_bnlength,
 		orig_padding,
 		orig_rlength,
 		orig_shiftfactor,
 		orig_rbflength;
- double toobig, tmp_sqrt;
- toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots))*1.5;
-  /* arbitrary value... stops browser zooming out too far */
- cornercount = 0;
- cant_see = 0;
+	double toobig, tmp_sqrt;
+	toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots))*1.5;
+	/* arbitrary value... stops browser zooming out too far */
+	cornercount = 0;
+	cant_see = 0;
 
 	saved = save_stack();
 	/* Save original values. */
@@ -1837,13 +1839,7 @@ static char is_visible_window
 	orig_rlength       = rlength;
 	orig_shiftfactor   = shiftfactor;
 	orig_rbflength     = rbflength;
-/*
-	if (oldbf_math && info->bf_math && (bnlength + 4 < info->bflength))
-	{
-		bnlength = info->bflength;
-		calc_lengths();
-	}
-*/
+
 	two_len = bflength + 2;
 	bt_x = alloc_stack(two_len);
 	bt_y = alloc_stack(two_len);
@@ -1856,8 +1852,8 @@ static char is_visible_window
 
 	if (info->bf_math)
 	{
-	bf_t   bt_t1, bt_t2, bt_t3, bt_t4, bt_t5, bt_t6;
-	int di_bflength, two_di_len, two_rbf;
+		bf_t   bt_t1, bt_t2, bt_t3, bt_t4, bt_t5, bt_t6;
+		int di_bflength, two_di_len, two_rbf;
 
 		di_bflength = info->bflength + bnstep;
 		two_di_len = di_bflength + 2;
@@ -1900,7 +1896,7 @@ static char is_visible_window
 	}
 
 	/* tranform maps real plane co-ords onto the current screen view
-     see above */
+		see above */
 	if (oldbf_math || info->bf_math)
 	{
 		if (!info->bf_math)
@@ -1994,83 +1990,111 @@ static char is_visible_window
 
 	tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
-	if (tmp_sqrt < toosmall) cant_see = 1;
- /* reject anything too small onscreen */
-	if (tmp_sqrt > toobig) cant_see = 1;
- /* or too big... */
+	if (tmp_sqrt < toosmall)
+	{
+		cant_see = 1;
+	}
+	/* reject anything too small onscreen */
+	if (tmp_sqrt > toobig)
+	{
+		cant_see = 1;
+	}
+	/* or too big... */
 
- /* restore original values */
- bflength      = orig_bflength;
- bnlength      = orig_bnlength;
- padding       = orig_padding;
- rlength       = orig_rlength;
- shiftfactor   = orig_shiftfactor;
- rbflength     = orig_rbflength;
+	/* restore original values */
+	bflength      = orig_bflength;
+	bnlength      = orig_bnlength;
+	padding       = orig_padding;
+	rlength       = orig_rlength;
+	shiftfactor   = orig_shiftfactor;
+	rbflength     = orig_rbflength;
 
- restore_stack(saved);
- if (cant_see) /* do it this way so bignum stack is released */
-	return FALSE;
+	restore_stack(saved);
+	if (cant_see) /* do it this way so bignum stack is released */
+	{
+		return FALSE;
+	}
 
- /* now see how many corners are on the screen, accept if one or more */
- if (tl.x >= -sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs)) cornercount ++;
- if (bl.x >= -sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs)) cornercount ++;
- if (tr.x >= -sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs)) cornercount ++;
- if (br.x >= -sxoffs && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs)) cornercount ++;
+	/* now see how many corners are on the screen, accept if one or more */
+	if (tl.x >= -sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
+	{
+		cornercount ++;
+	}
+	if (bl.x >= -sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
+	{
+		cornercount ++;
+	}
+	if (tr.x >= -sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
+	{
+		cornercount ++;
+	}
+	if (br.x >= -sxoffs && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
+	{
+		cornercount ++;
+	}
 
- if (cornercount >= 1) return  TRUE ;
-	else return  FALSE ;
- }
+	if (cornercount >= 1)
+	{
+		return  TRUE;
+	}
+	else
+	{
+		return  FALSE;
+	}
+}
 
 static char paramsOK(struct fractal_info *info)
 {
-double tmpparm3, tmpparm4;
-double tmpparm5, tmpparm6;
-double tmpparm7, tmpparm8;
-double tmpparm9, tmpparm10;
+	double tmpparm3, tmpparm4;
+	double tmpparm5, tmpparm6;
+	double tmpparm7, tmpparm8;
+	double tmpparm9, tmpparm10;
 #define MINDIF 0.001
 
 	if (info->version > 6)
 	{
-     tmpparm3 = info->dparm3;
-     tmpparm4 = info->dparm4;
+		tmpparm3 = info->dparm3;
+		tmpparm4 = info->dparm4;
 	}
 	else
 	{
-     tmpparm3 = info->parm3;
-     roundfloatd(&tmpparm3);
-     tmpparm4 = info->parm4;
-     roundfloatd(&tmpparm4);
+		tmpparm3 = info->parm3;
+		roundfloatd(&tmpparm3);
+		tmpparm4 = info->parm4;
+		roundfloatd(&tmpparm4);
 	}
 	if (info->version > 8)
 	{
-     tmpparm5 = info->dparm5;
-     tmpparm6 = info->dparm6;
-     tmpparm7 = info->dparm7;
-     tmpparm8 = info->dparm8;
-     tmpparm9 = info->dparm9;
-     tmpparm10 = info->dparm10;
+		tmpparm5 = info->dparm5;
+		tmpparm6 = info->dparm6;
+		tmpparm7 = info->dparm7;
+		tmpparm8 = info->dparm8;
+		tmpparm9 = info->dparm9;
+		tmpparm10 = info->dparm10;
 	}
 	else
 	{
-     tmpparm5 = 0.0;
-     tmpparm6 = 0.0;
-     tmpparm7 = 0.0;
-     tmpparm8 = 0.0;
-     tmpparm9 = 0.0;
-     tmpparm10 = 0.0;
+		tmpparm5 = 0.0;
+		tmpparm6 = 0.0;
+		tmpparm7 = 0.0;
+		tmpparm8 = 0.0;
+		tmpparm9 = 0.0;
+		tmpparm10 = 0.0;
 	}
 	if (fabs(info->creal - param[0]) < MINDIF &&
-       fabs(info->cimag - param[1]) < MINDIF &&
-       fabs(tmpparm3 - param[2]) < MINDIF &&
-       fabs(tmpparm4 - param[3]) < MINDIF &&
-       fabs(tmpparm5 - param[4]) < MINDIF &&
-       fabs(tmpparm6 - param[5]) < MINDIF &&
-       fabs(tmpparm7 - param[6]) < MINDIF &&
-       fabs(tmpparm8 - param[7]) < MINDIF &&
-       fabs(tmpparm9 - param[8]) < MINDIF &&
-       fabs(tmpparm10 - param[9]) < MINDIF &&
-       info->invert[0] - inversion[0] < MINDIF)
+		fabs(info->cimag - param[1]) < MINDIF &&
+		fabs(tmpparm3 - param[2]) < MINDIF &&
+		fabs(tmpparm4 - param[3]) < MINDIF &&
+		fabs(tmpparm5 - param[4]) < MINDIF &&
+		fabs(tmpparm6 - param[5]) < MINDIF &&
+		fabs(tmpparm7 - param[6]) < MINDIF &&
+		fabs(tmpparm8 - param[7]) < MINDIF &&
+		fabs(tmpparm9 - param[8]) < MINDIF &&
+		fabs(tmpparm10 - param[9]) < MINDIF &&
+		info->invert[0] - inversion[0] < MINDIF)
+	{
 		return 1; /* parameters are in range */
+	}
 	else
 	{
 		return 0;
@@ -2164,9 +2188,9 @@ static void bfsetup_convert_to_screen(void)
 {
 	/* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
 	/* Call only from within fgetwindow() */
- bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
- bf_t   bt_inter1, bt_inter2;
- int saved;
+	bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
+	bf_t   bt_inter1, bt_inter2;
+	int saved;
 
 	saved = save_stack();
 	bt_inter1 = alloc_stack(rbflength + 2);
@@ -2251,8 +2275,8 @@ static void bfsetup_convert_to_screen(void)
 /* maps points onto view screen*/
 static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
 {
-  bf_t   bt_tmp1, bt_tmp2;
-  int saved;
+	bf_t   bt_tmp1, bt_tmp2;
+	int saved;
 
 	saved = save_stack();
 	bt_tmp1 = alloc_stack(rbflength + 2);

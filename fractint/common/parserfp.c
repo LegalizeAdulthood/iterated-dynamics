@@ -877,7 +877,7 @@ awful_error:
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
 				{
 					DBUGMSG("lodreal[a] (*lodmul[b])"
-                    " -> lod[b] (*lodrealmul[a])");
+						" -> lod[b] (*lodrealmul[a])");
 					OPPTR(cvtptrx-1) = OPPTR(cvtptrx);  /* prev lodptr=this  */
 				}
 				else if (FNPTR(cvtptrx) == fStkPush2a)
@@ -1531,12 +1531,9 @@ int CvtStk()  /* convert the array of ptrs  */
 							(int)(pfe->min_regs),
 							(int)(pfe->free_regs),
 							(int)(pfe->delta));
-					if (!CvtFptr(ntst,
-                      pfe->min_regs,
-                      pfe->free_regs,
-                      pfe->delta))
-                      {
-                   return 1;
+					if (!CvtFptr(ntst, pfe->min_regs, pfe->free_regs, pfe->delta))
+					{
+						return 1;
 					}
 				}
 			}

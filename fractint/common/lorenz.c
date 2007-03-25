@@ -97,7 +97,7 @@ static double initorbitfp[3];
  */
 
 static char NoQueue[] =
-  "Not enough memory: switching to random walk.\n";
+	"Not enough memory: switching to random walk.\n";
 
 static int    mxhits;
 int    run_length;
@@ -835,16 +835,16 @@ Linverse_julia_orbit()
 	* of 24 otherwise, for increased precision.
 	*/
 	newcol = (int)((multiply(lcvt.a, lnew.x >> (bitshift - 21), 21) +
-             multiply(lcvt.b, lnew.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
+			multiply(lcvt.b, lnew.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
 	newrow = (int)((multiply(lcvt.c, lnew.x >> (bitshift - 21), 21) +
-             multiply(lcvt.d, lnew.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
+			multiply(lcvt.d, lnew.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
 	{
 		/*
-       * MIIM must skip points that are off the screen boundary,
-       * since it cannot read their color.
-       */
+		* MIIM must skip points that are off the screen boundary,
+		* since it cannot read their color.
+		*/
 		if (RANDOM(2))
 		{
 			color =  1;
@@ -993,7 +993,7 @@ int lorenz3d1floatorbit(double *x, double *y, double *z)
 		norm = sqrt((*x)*(*x) + (*y)*(*y));
 		dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
 		dy   = (bdt-adt)*(*x) - (adt + dt)*(*y) + (bdt + adt)*norm - xdt*(*z) -
-             norm*zdt;
+				norm*zdt;
 		dz   = (ydt/2) - cdt*(*z);
 
 		*x += dx;
@@ -1030,11 +1030,11 @@ int lorenz3d3floatorbit(double *x, double *y, double *z)
 		/* 3-lobe Lorenz */
 		norm = sqrt((*x)*(*x) + (*y)*(*y));
 		dx   = (-(adt + dt)*(*x) + (adt-bdt + zdt)*(*y)) / 3 +
-             ((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
-             2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
+				((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
+				2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
 		dy   = ((bdt-adt-zdt)*(*x) - (adt + dt)*(*y)) / 3 +
-             (2*(adt-dt)*(*x)*(*y) +
-             (bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
+				(2*(adt-dt)*(*x)*(*y) +
+				(bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
 		dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
 
 		*x += dx;
@@ -1051,11 +1051,11 @@ int lorenz3d4floatorbit(double *x, double *y, double *z)
 
 		/* 4-lobe Lorenz */
 		dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
-             (adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
-             (2*((*x)*(*x) + (*y)*(*y)));
+				(adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
+				(2*((*x)*(*x) + (*y)*(*y)));
 		dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
-             (-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
-             (2*((*x)*(*x) + (*y)*(*y)));
+				(-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
+				(2*((*x)*(*x) + (*y)*(*y)));
 		dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
 
 		*x += dx;
@@ -1261,24 +1261,24 @@ int mandelcloudfloat(double *x, double *y, double *z)
 
 int dynamfloat(double *x, double *y, double *z)
 {
-		_CMPLX cp, tmp;
-		double newx, newy;
-		cp.x = b* *x;
-		cp.y = 0;
-		CMPLXtrig0(cp, tmp);
-		newy = *y + dt*sin(*x + a*tmp.x);
-		if (euler)
-		{
-          *y = newy;
-		}
-
-		cp.x = b* *y;
-		cp.y = 0;
-		CMPLXtrig0(cp, tmp);
-		newx = *x - dt*sin(*y + a*tmp.x);
-		*x = newx;
+	_CMPLX cp, tmp;
+	double newx, newy;
+	cp.x = b* *x;
+	cp.y = 0;
+	CMPLXtrig0(cp, tmp);
+	newy = *y + dt*sin(*x + a*tmp.x);
+	if (euler)
+	{
 		*y = newy;
-		return 0;
+	}
+
+	cp.x = b* *y;
+	cp.y = 0;
+	CMPLXtrig0(cp, tmp);
+	newx = *x - dt*sin(*y + a*tmp.x);
+	*x = newx;
+	*y = newy;
+	return 0;
 }
 
 /* dmf */
@@ -1958,19 +1958,22 @@ int dynam2dfloatsetup()
 	}
 	if (fractype == DYNAMICFP)
 	{
-       a = param[2]; /* parameter */
-       b = param[3]; /* parameter */
-       dt = param[1]; /* step size */
-       if (dt < 0)
-       {
-          dt = -dt;
-          euler = 1;
-       }
-       if (dt == 0) dt = 0.01;
+		a = param[2]; /* parameter */
+		b = param[3]; /* parameter */
+		dt = param[1]; /* step size */
+		if (dt < 0)
+		{
+			dt = -dt;
+			euler = 1;
+		}
+		if (dt == 0)
+		{
+			dt = 0.01;
+		}
 	}
 	if (outside == SUM)
 	{
-       plot = plothist;
+		plot = plothist;
 	}
 	return 1;
 }
@@ -2023,7 +2026,9 @@ int dynam2dfloat()
 		color = inside;
 	}
 	else
-	   color = 1;
+	{
+		color = 1;
+	}
 	if (color >= colors)
 	{
 		color = 1;
@@ -2035,12 +2040,12 @@ int dynam2dfloat()
 
 	if (resuming)
 	{
-       start_resume();
-       get_resume(sizeof(count), &count, sizeof(color), &color,
-                 sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-                 sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
-                 sizeof(ystep), &ystep, 0);
-       end_resume();
+		start_resume();
+		get_resume(sizeof(count), &count, sizeof(color), &color,
+					sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
+					sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
+					sizeof(ystep), &ystep, 0);
+		end_resume();
 	}
 
 	ret = 0;
@@ -2048,27 +2053,27 @@ int dynam2dfloat()
 	{
 		if (driver_key_pressed())
 		{
-             driver_mute();
-             alloc_resume(100, 1);
-             put_resume(sizeof(count), &count, sizeof(color), &color,
+			driver_mute();
+			alloc_resume(100, 1);
+			put_resume(sizeof(count), &count, sizeof(color), &color,
 							sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
 							sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
 							sizeof(ystep), &ystep, 0);
-             ret = -1;
-             break;
+			ret = -1;
+			break;
 		}
 
 		xstep ++;
 		if (xstep >= d)
 		{
-          xstep = 0;
-          ystep ++;
-          if (ystep > d)
-          {
-              driver_mute();
-              ret = -1;
-              break;
-          }
+			xstep = 0;
+			ystep ++;
+			if (ystep > d)
+			{
+				driver_mute();
+				ret = -1;
+				break;
+			}
 		}
 
 		xpixel = dxsize*(xstep + .5)/d;
@@ -2077,13 +2082,15 @@ int dynam2dfloat()
 		y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
 		if (fractype == MANDELCLOUD)
 		{
-          a = x;
-          b = y;
+			a = x;
+			b = y;
 		}
 		oldcol = -1;
 
 		if (++color >= colors)   /* another color to switch to? */
-          color = 1;    /* (don't use the background color) */
+		{
+			color = 1;    /* (don't use the background color) */
+		}
 
 		for (count = 0; count < maxit; count++)
 		{
@@ -2224,7 +2231,7 @@ int plotorbits2dsetup(void)
 
 	if (outside == SUM)
 	{
-       plot = plothist;
+		plot = plothist;
 	}
 	return 1;
 }
@@ -2269,9 +2276,9 @@ int plotorbits2dfloat(void)
 
 	if (resuming)
 	{
-       start_resume();
-       get_resume(sizeof(o_color), &o_color, 0);
-       end_resume();
+		start_resume();
+		get_resume(sizeof(o_color), &o_color, 0);
+		end_resume();
 	}
 
 	if (inside > 0)
@@ -2282,7 +2289,9 @@ int plotorbits2dfloat(void)
 	{
 		o_color++;
 		if (o_color >= colors) /* another color to switch to? */
-          o_color = 1;    /* (don't use the background color) */
+		{
+			o_color = 1;    /* (don't use the background color) */
+		}
 	}
 
 	PER_PIXEL(); /* initialize the calculations */
@@ -2457,14 +2466,14 @@ static int ifs3dfloat(void)
 		/* calculate image of last point under selected iterated function */
 		ffptr = ifs_defn + k*IFS3DPARM; /* point to first parm in row */
 		newx = *ffptr*inf.orbit[0] +
-             *(ffptr + 1)*inf.orbit[1] +
-             *(ffptr + 2)*inf.orbit[2] + *(ffptr + 9);
+				*(ffptr + 1)*inf.orbit[1] +
+				*(ffptr + 2)*inf.orbit[2] + *(ffptr + 9);
 		newy = *(ffptr + 3)*inf.orbit[0] +
-             *(ffptr + 4)*inf.orbit[1] +
-             *(ffptr + 5)*inf.orbit[2] + *(ffptr + 10);
+				*(ffptr + 4)*inf.orbit[1] +
+				*(ffptr + 5)*inf.orbit[2] + *(ffptr + 10);
 		newz = *(ffptr + 6)*inf.orbit[0] +
-             *(ffptr + 7)*inf.orbit[1] +
-             *(ffptr + 8)*inf.orbit[2] + *(ffptr + 11);
+				*(ffptr + 7)*inf.orbit[1] +
+				*(ffptr + 8)*inf.orbit[2] + *(ffptr + 11);
 
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;
@@ -2612,9 +2621,9 @@ static int ifs2d(void)
 		/* calculate image of last point under selected iterated function */
 		lfptr = localifs + k*IFSPARM; /* point to first parm in row */
 		newx = multiply(lfptr[0], x, bitshift) +
-             multiply(lfptr[1], y, bitshift) + lfptr[4];
+				multiply(lfptr[1], y, bitshift) + lfptr[4];
 		newy = multiply(lfptr[2], x, bitshift) +
-             multiply(lfptr[3], y, bitshift) + lfptr[5];
+				multiply(lfptr[3], y, bitshift) + lfptr[5];
 		x = newx;
 		y = newy;
 		if (fp)
@@ -2726,14 +2735,14 @@ static int ifs3dlong(void)
 
 		/* calculate image of last point under selected iterated function */
 		newx = multiply(lfptr[0], inf.orbit[0], bitshift) +
-             multiply(lfptr[1], inf.orbit[1], bitshift) +
-             multiply(lfptr[2], inf.orbit[2], bitshift) + lfptr[9];
+				multiply(lfptr[1], inf.orbit[1], bitshift) +
+				multiply(lfptr[2], inf.orbit[2], bitshift) + lfptr[9];
 		newy = multiply(lfptr[3], inf.orbit[0], bitshift) +
-             multiply(lfptr[4], inf.orbit[1], bitshift) +
-             multiply(lfptr[5], inf.orbit[2], bitshift) + lfptr[10];
+				multiply(lfptr[4], inf.orbit[1], bitshift) +
+				multiply(lfptr[5], inf.orbit[2], bitshift) + lfptr[10];
 		newz = multiply(lfptr[6], inf.orbit[0], bitshift) +
-             multiply(lfptr[7], inf.orbit[1], bitshift) +
-             multiply(lfptr[8], inf.orbit[2], bitshift) + lfptr[11];
+				multiply(lfptr[7], inf.orbit[1], bitshift) +
+				multiply(lfptr[8], inf.orbit[2], bitshift) + lfptr[11];
 
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;

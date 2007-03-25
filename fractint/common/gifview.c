@@ -190,8 +190,8 @@ int gifview()
 	/* don't read if glasses */
 	if (display3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
 	{
-       ValidateLuts(MAP_name);  /* read the palette file */
-       spindac(0,1); /* load it, but don't spin */
+		ValidateLuts(MAP_name);  /* read the palette file */
+		spindac(0,1); /* load it, but don't spin */
 	}
 	if (g_dac_box[0][0] != 255)
 	{
@@ -203,10 +203,10 @@ int gifview()
 		char ext[FILE_MAX_EXT];
 		char tmpname[15];
 		char msg[40];
-       splitpath(temp1,NULL,NULL,fname,ext);
-       makepath(tmpname,NULL,NULL,fname,ext);
-       sprintf(msg,"restoring %s",tmpname);
-       dvid_status(1,msg);
+		splitpath(temp1,NULL,NULL,fname,ext);
+		makepath(tmpname,NULL,NULL,fname,ext);
+		sprintf(msg,"restoring %s",tmpname);
+		dvid_status(1,msg);
 	}
 	dontreadcolor = 0;
 
@@ -278,7 +278,7 @@ int gifview()
 				}
 				else if (width > DECODERLINE_WIDTH && skipxdots == 0)
 				{
-                outln = out_line_too_wide;
+					outln = out_line_too_wide;
 				}
 			}
 
@@ -287,23 +287,23 @@ int gifview()
 			/* Skip local color palette */
 			if ((buffer[8] & 0x80) == 0x80)  /* local map? */
 			{
-             int numcolors;    /* make this local */
-             planes = (buffer[8] & 0x0F) + 1;
-             numcolors = 1 << planes;
-             /* skip local map */
-             for (i = 0; i < numcolors; i++)
-             {
-                for (j = 0; j < 3; j++)
-                {
-                   k = get_byte();
-				   if (k < 0)
-                   {
-                      close_file();
-                      return -1;
-                      }
-                   }
-                }
-             }
+				int numcolors;    /* make this local */
+				planes = (buffer[8] & 0x0F) + 1;
+				numcolors = 1 << planes;
+				/* skip local map */
+				for (i = 0; i < numcolors; i++)
+				{
+					for (j = 0; j < 3; j++)
+					{
+						k = get_byte();
+						if (k < 0)
+						{
+							close_file();
+							return -1;
+						}
+					}
+				}
+			}
 
 			/* initialize the row count for write-lines */
 			g_row_count = 0;
@@ -314,9 +314,9 @@ int gifview()
 			}
 			busy = 1;      /* for slideshow CALCWAIT */
 			/*
-          * Call decoder(width) via timer.
-          * Width is limited to DECODERLINE_WIDTH.
-          */
+			* Call decoder(width) via timer.
+			* Width is limited to DECODERLINE_WIDTH.
+			*/
 			if (skipxdots == 0)
 			{
 				width = min(width,DECODERLINE_WIDTH);
@@ -339,9 +339,9 @@ int gifview()
 			/* Hey! the decoder doesn't read the last (0-length) block!! */
 			if (get_byte() != 0)
 			{
-             status = -1;
-             finished = 1;
-             }
+				status = -1;
+				finished = 1;
+			}
 			break;
 		default:
 			status = -1;
@@ -354,13 +354,13 @@ int gifview()
 	{
 		dvid_status(0,"Restore completed");
 		dvid_status(1,"");
-		}
+	}
 
-		if (ditherbuf != NULL)  /* we're done, free dither memory */
-		{
-				free(ditherbuf);
+	if (ditherbuf != NULL)  /* we're done, free dither memory */
+	{
+		free(ditherbuf);
 		ditherbuf = NULL;
-		}
+	}
 
 	return status;
 }
@@ -435,16 +435,16 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 		extra = colcount + linelen-twidth;
 		if (extra > 0) /* line wraps */
 		{
-          put_line(g_row_count, colcount, twidth-1, pixels);
-          pixels += twidth-colcount;
-          linelen -= twidth-colcount;
-          colcount = twidth;
+			put_line(g_row_count, colcount, twidth-1, pixels);
+			pixels += twidth-colcount;
+			linelen -= twidth-colcount;
+			colcount = twidth;
 		}
 		else
 		{
-          put_line(g_row_count, colcount, colcount + linelen-1, pixels);
-          colcount += linelen;
-          linelen = 0;
+			put_line(g_row_count, colcount, colcount + linelen-1, pixels);
+			colcount += linelen;
+			linelen = 0;
 		}
 		if (colcount >= twidth)
 		{
