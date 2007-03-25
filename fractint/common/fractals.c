@@ -146,8 +146,9 @@ int (*bigfltbailout)(void);
 #if 0
 int  fpMODbailout(void)
 {
-	if ((magnitude = (tempsqrx=sqr(g_new.x))
-                    + (tempsqry=sqr(g_new.y))) >= rqlim) return 1;
+	magnitude = (tempsqrx=sqr(g_new.x);
+	if (magnitude + (tempsqry=sqr(g_new.y))) >= rqlim)
+		return 1;
 	old = g_new;
 	return 0;
 }
@@ -1237,7 +1238,9 @@ PopcornFractal_Old(void)
 	/* PB later: recoded inline, still leaving it weird */
 		tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
-	if ((magnitude = tempsqrx + tempsqry) >= rqlim) return 1;
+	magnitude = tempsqrx + tempsqry;
+	if (magnitude >= rqlim)
+		return 1;
 	old = g_new;
 	return 0;
 }
@@ -1275,9 +1278,9 @@ PopcornFractal(void)
 	/* JCO: sqr's should always be done, else magnitude could be wrong */
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
-	if ((magnitude = tempsqrx + tempsqry) >= rqlim
-     || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
-           return 1;
+	magnitude = tempsqrx + tempsqry;
+	if (magnitude >= rqlim || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
+		return 1;
 	old = g_new;
 	return 0;
 }
@@ -1398,9 +1401,10 @@ PopcornFractalFn(void)
 
 	tempsqrx = sqr(g_new.x);
 	tempsqry = sqr(g_new.y);
-	if ((magnitude = tempsqrx + tempsqry) >= rqlim
-     || fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
-           return 1;
+	magnitude = tempsqrx + tempsqry;
+	if (magnitude >= rqlim
+			|| fabs(g_new.x) > rqlim2 || fabs(g_new.y) > rqlim2)
+        return 1;
 	old = g_new;
 	return 0;
 }

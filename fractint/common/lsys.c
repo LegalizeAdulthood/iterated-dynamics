@@ -141,7 +141,8 @@ static int _fastcall readLSystemFile(char *str)
 	while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  /* Max line length chars */
 	{
 		linenum++;
-		if ((word = strchr(inline1, ';')) != NULL) /* strip comment */
+		word = strchr(inline1, ';');
+		if (word != NULL) /* strip comment */
 			*word = 0;
 		strlwr(inline1);
 

@@ -1138,9 +1138,13 @@ docolors:
 				/* emit color in rgb 3 char encoded form */
 				for (j = 0; j < 3; ++j)
 				{
-					if ((k = g_dac_box[curc][j]) < 10) k += '0';
-					else if (k < 36)                k += ('A' - 10);
-					else                            k += ('_' - 36);
+					k = g_dac_box[curc][j];
+					if (k < 10)
+						k += '0';
+					else if (k < 36)
+						k += ('A' - 10);
+					else
+						k += ('_' - 36);
 					buf[j] = (char)k;
 					}
 				buf[3] = 0;
@@ -1485,7 +1489,8 @@ static void strip_zeros(char *buf)
 	if (dptr != 0)
 	{
 		++dptr;
-		if ((exptr = strchr(buf, 'e')) != 0)  /* scientific notation with 'e'? */
+		exptr = strchr(buf, 'e');
+		if (exptr != 0)  /* scientific notation with 'e'? */
 			bptr = exptr;
 		else
 			bptr = buf + strlen(buf);

@@ -1389,16 +1389,17 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 		}
 
 jumpout:
-	if (overflow || total <= 0 || (temp = log(total) + lnadjust) > 0)
+	temp = log(total) + lnadjust;
+	if (overflow || total <= 0 || temp > 0)
 		color = 0;
 	else
 	{
 		if (LogFlag)
-		lyap = -temp/((double) lyaLength*i);
-	else
-		lyap = 1 - exp(temp/((double) lyaLength*i));
+			lyap = -temp/((double) lyaLength*i);
+		else
+			lyap = 1 - exp(temp/((double) lyaLength*i));
 		color = 1 + (int)(lyap*(colors-1));
-		}
+	}
 	return color;
 }
 
@@ -2436,7 +2437,9 @@ int froth_per_orbit(void)
 			g_new.y = 2.0*old.x*old.y - fsp->fl.f.a*old.x + old.y;
 		}
 
-		if ((tempsqrx=sqr(g_new.x)) + (tempsqry=sqr(g_new.y)) >= rqlim)
+		tempsqrx = sqr(g_new.x);
+		tempsqry = sqr(g_new.y);
+		if (tempsqrx + tempsqry >= rqlim)
 			return 1;
 		old = g_new;
 	}

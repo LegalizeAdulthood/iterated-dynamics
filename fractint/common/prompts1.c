@@ -879,8 +879,12 @@ static int input_field_list(
 			default:
 				if (nonalpha(curkey))
 				{
-					if (checkkey && (ret = (*checkkey)(curkey)) != 0)
-						goto inpfldl_end;
+					if (checkkey)
+					{
+						ret = (*checkkey)(curkey);
+						if (ret != 0)
+							goto inpfldl_end;
+					}
 					break;                                /* non alphanum char */
 					}
 				j = curval;
