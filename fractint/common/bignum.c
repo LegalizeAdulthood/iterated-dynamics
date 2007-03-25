@@ -275,19 +275,19 @@ bn_t strtobn(bn_t r, char *s)
 
 		if (s[l] == '.')
 		{
-				longval = atol(s);
-				switch (intlength)
-                { /* only 1, 2, or 4 are allowed */
-                case 1:
-                    *onesbyte = (BYTE)longval;
-                    break;
-                case 2:
-                    big_set16(onesbyte, (U16)longval);
-                    break;
-                case 4:
-                    big_set32(onesbyte, longval);
-                    break;
-                }
+			longval = atol(s);
+			switch (intlength)
+			{ /* only 1, 2, or 4 are allowed */
+			case 1:
+				*onesbyte = (BYTE)longval;
+				break;
+			case 2:
+				big_set16(onesbyte, (U16)longval);
+				break;
+			case 4:
+				big_set32(onesbyte, longval);
+				break;
+			}
 		}
 	}
 	else
@@ -295,15 +295,15 @@ bn_t strtobn(bn_t r, char *s)
 		longval = atol(s);
 		switch (intlength)
 		{ /* only 1, 2, or 4 are allowed */
-				case 1:
-                *onesbyte = (BYTE)longval;
-                break;
-				case 2:
-                big_set16(onesbyte, (U16)longval);
-                break;
-				case 4:
-                big_set32(onesbyte, longval);
-                break;
+		case 1:
+			*onesbyte = (BYTE)longval;
+			break;
+		case 2:
+			big_set16(onesbyte, (U16)longval);
+			break;
+		case 4:
+			big_set32(onesbyte, longval);
+			break;
 		}
 	}
 
@@ -831,11 +831,15 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 		half_a_bn(r);
 		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8) /* if match or almost match */
 		{
-				if (comp < 4  /* perfect or near perfect match */
-                || almost_match == 1) /* close enough for 2nd time */
-                break;
-				else /* this is the first time they almost matched */
-                almost_match++;
+			if (comp < 4  /* perfect or near perfect match */
+				|| almost_match == 1) /* close enough for 2nd time */
+			{
+				break;
+			}
+			else /* this is the first time they almost matched */
+			{
+				almost_match++;
+			}
 		}
 	}
 
@@ -975,11 +979,15 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 
 		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
 		{
-				if (comp < 4  /* perfect or near perfect match */
-                || almost_match == 1) /* close enough for 2nd time */
-                break;
-				else /* this is the first time they almost matched */
-                almost_match++;
+			if (comp < 4  /* perfect or near perfect match */
+				|| almost_match == 1) /* close enough for 2nd time */
+			{
+				break;
+			}
+			else /* this is the first time they almost matched */
+			{
+				almost_match++;
+			}
 		}
 		copy_bn(bntmp5, r); /* -r */
 	}
@@ -1078,7 +1086,9 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	/* halves = bnlength / 10; */ /* this is experimental */
 	halves = 1;
 	for (i = 0; i < halves; i++)
-       half_a_bn(n);
+	{
+		half_a_bn(n);
+	}
 #endif
 
 /* use Taylor Series (very slow convergence) */
@@ -1128,22 +1138,22 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	}
 
 #ifndef CALCULATING_BIG_PI
-     /* now need to undo what was done by cutting angles in half */
-     inttobn(bntmp1, 1);
-     for (i = 0; i < halves; i++)
+	/* now need to undo what was done by cutting angles in half */
+	inttobn(bntmp1, 1);
+	for (i = 0; i < halves; i++)
 	{
-			unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
-			double_bn(s, bntmp2 + shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
-			unsafe_square_bn(bntmp2, c);
-			double_a_bn(bntmp2 + shiftfactor);
-			sub_bn(c, bntmp2 + shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
+		unsafe_mult_bn(bntmp2, s, c); /* no need for safe mult */
+		double_bn(s, bntmp2 + shiftfactor); /* sin(2x) = 2*sin(x)*cos(x) */
+		unsafe_square_bn(bntmp2, c);
+		double_a_bn(bntmp2 + shiftfactor);
+		sub_bn(c, bntmp2 + shiftfactor, bntmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
 	}
 
 	if (switch_sincos)
 	{
-			copy_bn(bntmp1, s);
-			copy_bn(s, c);
-			copy_bn(c, bntmp1);
+		copy_bn(bntmp1, s);
+		copy_bn(s, c);
+		copy_bn(c, bntmp1);
 	}
 	if (signsin)
 	{
@@ -1155,7 +1165,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	}
 #endif
 
-     return s; /* return sine I guess */
+	return s; /* return sine I guess */
 }
 
 /********************************************************************/
@@ -1261,13 +1271,17 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8) /* if match or almost match */
 		{
 #ifdef CALCULATING_BIG_PI
-				printf("atan() loop comp=%i\n", comp);
+			printf("atan() loop comp=%i\n", comp);
 #endif
-				if (comp < 4  /* perfect or near perfect match */
-                || almost_match == 1) /* close enough for 2nd time */
-                break;
-				else /* this is the first time they almost matched */
-                almost_match++;
+			if (comp < 4  /* perfect or near perfect match */
+				|| almost_match == 1) /* close enough for 2nd time */
+			{
+				break;
+			}
+			else /* this is the first time they almost matched */
+			{
+				almost_match++;
+			}
 		}
 
 #ifdef CALCULATING_BIG_PI

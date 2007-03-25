@@ -434,13 +434,17 @@ void process_speedstring(char    *speedstring,
 				break;
 			}
 			else
-           ++*pcurrent;
+			{
+				++*pcurrent;
+			}
 		}
 		if (*pcurrent >= numchoices) /* bumped end of list */
+		{
 			*pcurrent = numchoices - 1;
 				/*if the list is unsorted, and the entry found is not the exact
 					entry, then go looking for the exact entry.
 				*/
+		}
 		else if (is_unsorted && choices[*pcurrent][i])
 		{
 			int temp = *pcurrent;
@@ -458,25 +462,25 @@ void process_speedstring(char    *speedstring,
 
 
 int fullscreen_choice(
-	int options,                  /* &2 use menu coloring scheme            */
-                                  /* &4 include F1 for help in instructions */
-                                  /* &8 add caller's instr after normal set */
-                                  /* &16 menu items up one line             */
-	char *hdg,                /* heading info, \n delimited             */
-	char *hdg2,               /* column heading or NULL                 */
-	char *instr,              /* instructions, \n delimited, or NULL    */
-	int numchoices,               /* How many choices in list               */
-	char **choices,         /* array of choice strings                */
-	int *attributes,          /* &3: 0 normal color, 1, 3 highlight      */
-                                  /* &256 marks a dummy entry               */
-	int boxwidth,                 /* box width, 0 for calc (in items)       */
-	int boxdepth,                 /* box depth, 0 for calc, 99 for max      */
-	int colwidth,                 /* data width of a column, 0 for calc     */
-	int current,                  /* start with this item                   */
+	int options,					/* &2 use menu coloring scheme            */
+									/* &4 include F1 for help in instructions */
+									/* &8 add caller's instr after normal set */
+									/* &16 menu items up one line             */
+	char *hdg,						/* heading info, \n delimited             */
+	char *hdg2,						/* column heading or NULL                 */
+	char *instr,					/* instructions, \n delimited, or NULL    */
+	int numchoices,					/* How many choices in list               */
+	char **choices,					/* array of choice strings                */
+	int *attributes,				/* &3: 0 normal color, 1, 3 highlight      */
+									/* &256 marks a dummy entry               */
+	int boxwidth,					/* box width, 0 for calc (in items)       */
+	int boxdepth,					/* box depth, 0 for calc, 99 for max      */
+	int colwidth,					/* data width of a column, 0 for calc     */
+	int current,					/* start with this item                   */
 	void (*formatitem)(int, char*), /* routine to display an item or NULL     */
-	char *speedstring,            /* returned speed key value, or NULL      */
+	char *speedstring,				/* returned speed key value, or NULL      */
 	int (*speedprompt)(int, int, int, char *, int), /* routine to display prompt or NULL      */
-	int (*checkkey)(int, int)      /* routine to check keystroke or NULL     */
+	int (*checkkey)(int, int)		/* routine to check keystroke or NULL     */
 )
 	/* return is: n >= 0 for choice n selected,
 						-1 for escape

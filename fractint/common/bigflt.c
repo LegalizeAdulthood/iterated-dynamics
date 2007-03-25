@@ -77,60 +77,60 @@ bf_t strtobf(bf_t r, char *s)
 	if (d != NULL) /* is there a decimal point? */
 	{
 		while (*l >= '0' && *l <= '9') /* while a digit */
-			{
-				onesbyte = (BYTE)(*(l--) - '0');
-				inttobf(bftmp1, onesbyte);
-				unsafe_add_a_bf(r, bftmp1);
-				div_a_bf_int(r, 10);
-			}
+		{
+			onesbyte = (BYTE)(*(l--) - '0');
+			inttobf(bftmp1, onesbyte);
+			unsafe_add_a_bf(r, bftmp1);
+			div_a_bf_int(r, 10);
+		}
 
 		if (*(l--) == '.') /* the digit was found */
-			{
-				keeplooping = *l >= '0' && *l <= '9' && l >= s;
-				while (keeplooping) /* while a digit */
-                {
-                onesbyte = (BYTE)(*(l--) - '0');
-                inttobf(bftmp1, onesbyte);
-                unsafe_add_a_bf(r, bftmp1);
-                keeplooping = *l >= '0' && *l <= '9' && l >= s;
-                if (keeplooping)
-                    {
-                    div_a_bf_int(r, 10);
-                    powerten++;    /* increase the power of ten */
-                    }
-                }
-			}
-	}
-	else
-	{
-		keeplooping = *l >= '0' && *l <= '9' && l >= s;
-		while (keeplooping) /* while a digit */
+		{
+			keeplooping = *l >= '0' && *l <= '9' && l >= s;
+			while (keeplooping) /* while a digit */
 			{
 				onesbyte = (BYTE)(*(l--) - '0');
 				inttobf(bftmp1, onesbyte);
 				unsafe_add_a_bf(r, bftmp1);
 				keeplooping = *l >= '0' && *l <= '9' && l >= s;
 				if (keeplooping)
-                {
-                div_a_bf_int(r, 10);
-                powerten++;    /* increase the power of ten */
-                }
+				{
+					div_a_bf_int(r, 10);
+					powerten++;    /* increase the power of ten */
+				}
 			}
+		}
+	}
+	else
+	{
+		keeplooping = *l >= '0' && *l <= '9' && l >= s;
+		while (keeplooping) /* while a digit */
+		{
+			onesbyte = (BYTE)(*(l--) - '0');
+			inttobf(bftmp1, onesbyte);
+			unsafe_add_a_bf(r, bftmp1);
+			keeplooping = *l >= '0' && *l <= '9' && l >= s;
+			if (keeplooping)
+			{
+				div_a_bf_int(r, 10);
+				powerten++;    /* increase the power of ten */
+			}
+		}
 	}
 
 	if (powerten > 0)
 	{
 		for (; powerten > 0; powerten--)
-			{
-				mult_a_bf_int(r, 10);
-			}
+		{
+			mult_a_bf_int(r, 10);
+		}
 	}
 	else if (powerten < 0)
 	{
 		for (; powerten < 0; powerten++)
-			{
-				div_a_bf_int(r, 10);
-			}
+		{
+			div_a_bf_int(r, 10);
+		}
 	}
 	if (signflag)
 	{
@@ -331,9 +331,9 @@ bf_t abs_bf(bf_t r, bf_t n)
 {
 	copy_bf(r, n);
 	if (is_bf_neg(r))
-       {
-       neg_a_bf(r);
-       }
+	{
+		neg_a_bf(r);
+	}
 	return r;
 }
 
@@ -859,32 +859,40 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 		unsafe_mult_bf(bftmp1, bftmp2, n);
 		div_a_bf_int(bftmp1, fact++);
 		if (!cos_done)
+		{
+			cos_done = (big_accessS16(testexp) < big_accessS16(cexp)-(bflength-2)); /* too small to register */
+			if (!cos_done)
 			{
-				cos_done = (big_accessS16(testexp) < big_accessS16(cexp)-(bflength-2)); /* too small to register */
-				if (!cos_done)
-                {
-                if (k) /* alternate between adding and subtracting */
-                    unsafe_add_a_bf(c, bftmp1);
-                else
-                    unsafe_sub_a_bf(c, bftmp1);
-                }
+				if (k) /* alternate between adding and subtracting */
+				{
+					unsafe_add_a_bf(c, bftmp1);
+				}
+				else
+				{
+					unsafe_sub_a_bf(c, bftmp1);
+				}
 			}
+		}
 
 		/* odd terms for sine */
 		copy_bf(bftmp2, bftmp1);
 		unsafe_mult_bf(bftmp1, bftmp2, n);
 		div_a_bf_int(bftmp1, fact++);
 		if (!sin_done)
+		{
+			sin_done = (big_accessS16(testexp) < big_accessS16(sexp)-(bflength-2)); /* too small to register */
+			if (!sin_done)
 			{
-				sin_done = (big_accessS16(testexp) < big_accessS16(sexp)-(bflength-2)); /* too small to register */
-				if (!sin_done)
-                {
-                if (k) /* alternate between adding and subtracting */
-                    unsafe_add_a_bf(s, bftmp1);
-                else
-                    unsafe_sub_a_bf(s, bftmp1);
-                }
+				if (k) /* alternate between adding and subtracting */
+				{
+					unsafe_add_a_bf(s, bftmp1);
+				}
+				else
+				{
+					unsafe_sub_a_bf(s, bftmp1);
+				}
 			}
+		}
 		k = !k; /* toggle */
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 		printf("."); /* lets you know it's doing something */
@@ -1029,21 +1037,25 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		bf_hexdump(r);
 #endif
 		if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8) /* if match or almost match */
-			{
+		{
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-				printf("atan() loop comp=%i\n", comp);
+			printf("atan() loop comp=%i\n", comp);
 #endif
-				if (comp < 4  /* perfect or near perfect match */
-                || almost_match == 1) /* close enough for 2nd time */
-                break;
-				else /* this is the first time they almost matched */
-                almost_match++;
+			if (comp < 4  /* perfect or near perfect match */
+				|| almost_match == 1) /* close enough for 2nd time */
+			{
+				break;
 			}
+			else /* this is the first time they almost matched */
+			{
+				almost_match++;
+			}
+		}
 
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 		if (bflength == orig_bflength && comp >= 8)
 		{
-				printf("atan() loop comp=%i\n", comp);
+			printf("atan() loop comp=%i\n", comp);
 		}
 #endif
 
@@ -1363,15 +1375,15 @@ bf_t norm_bf(bf_t r)
 				big_setS16(rexp, 0);
 		}
 		else
+		{
+			scale -= 2;
+			if (scale > 0) /* it did underflow */
 			{
-				scale -= 2;
-				if (scale > 0) /* it did underflow */
-                {
-                memmove(r + scale, r, bflength-scale-1);
-                memset(r, 0, scale);
-                big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    /* exp */
-                }
+				memmove(r + scale, r, bflength-scale-1);
+				memset(r, 0, scale);
+				big_setS16(rexp, big_accessS16(rexp)-(S16)scale);    /* exp */
 			}
+		}
 	}
 
 	return r;
@@ -1509,9 +1521,13 @@ int cmp_bf(bf_t n1, bf_t n2)
 		else if (value1 < value2)
 		{ /* now determine which of the two bytes was different */
 			if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
-                return -(i + 2); /* high byte was different */
+			{
+				return -(i + 2); /* high byte was different */
+			}
 			else
-                return -(i + 1); /* low byte was different */
+			{
+				return -(i + 1); /* low byte was different */
+			}
 		}
 	}
 	return 0;

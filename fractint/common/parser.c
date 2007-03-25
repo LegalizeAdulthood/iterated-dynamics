@@ -3523,7 +3523,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 			default:
 				if (debug_token != NULL)
 				{
-              fprintf(debug_token,  "First char not a . or NUM\n");
+					fprintf(debug_token,  "First char not a . or NUM\n");
 				}
 				done = 1;
 				break;
@@ -3543,7 +3543,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 			{
 				if (sign_value == -1)
 				{
-              strcat(tok->token_str, "-");
+					strcat(tok->token_str, "-");
 				}
 				strcat(tok->token_str, temp_tok.token_str);
 				strcat(tok->token_str, ",");
@@ -3555,7 +3555,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 			{
 				if (sign_value == -1)
 				{
-              strcat(tok->token_str, "-");
+					strcat(tok->token_str, "-");
 				}
 				strcat(tok->token_str, temp_tok.token_str);
 				strcat(tok->token_str, ")");
@@ -3586,8 +3586,8 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	tok->token_id = OPEN_PARENS;
 	if (debug_token != NULL)
 	{
-     fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
-     fclose (debug_token);
+		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
+		fclose (debug_token);
 	}
 	return;
 }
@@ -3952,9 +3952,9 @@ int frm_get_param_stuff(char *Name)
 }
 
 /* frm_check_name_and_sym():
-     error checking to the open brace on the first line; return 1
-     on success, 2 if an invalid symmetry is found, and 0 if errors
-     are found which should cause the formula not to be executed
+	error checking to the open brace on the first line; return 1
+	on success, 2 if an invalid symmetry is found, and 0 if errors
+	are found which should cause the formula not to be executed
 */
 
 int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
@@ -4049,7 +4049,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		if (SymStr[i].s[0] == (char) 0 && report_bad_sym)
 		{
 			char *msgbuf = (char *) malloc((int) strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
-                            + (int) strlen(sym_buf) + 6);
+							+ (int) strlen(sym_buf) + 6);
 			strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
 			strcat(msgbuf, sym_buf);
@@ -4755,9 +4755,9 @@ int frm_prescan(FILE *open_file)
 /*    strcat(msgbuf, this_token.token_str);
 		stopmsg (0, msgbuf);
 		sprintf (debugmsg, "Errors structure\n0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-          errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-          errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-          errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
+			errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
+			errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
+			errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
 		stopmsg (0, debugmsg);
 */
 		chars_in_formula += (int) strlen(this_token.token_str);
@@ -5618,9 +5618,9 @@ int frm_prescan(FILE *open_file)
 	if (errors[0].start_pos)
 	{
 /*    sprintf (debugmsg, "Errors structure on entering frm_error\n 0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-          errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-          errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-          errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
+			errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
+			errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
+			errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
 		stopmsg (0, debugmsg);
 */    frm_error(open_file, orig_pos);
 		fseek(open_file, orig_pos, SEEK_SET);

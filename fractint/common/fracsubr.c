@@ -1429,11 +1429,13 @@ void sleepms_old(long ms)
 	if (scalems == 0L) /* calibrate */
 	{
 		/* selects a value of scalems that makes the units
-           10000 per sec independent of CPU speed */
+			10000 per sec independent of CPU speed */
 		int i, elapsed;
 		scalems = 1L;
 		if (driver_key_pressed()) /* check at start, hope to get start of timeslice */
-           goto sleepexit;
+		{
+			goto sleepexit;
+		}
 		/* calibrate, assume slow computer first */
 		showtempmsg("Calibrating timer");
 		do
@@ -1658,9 +1660,13 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	if (debugflag == 4030)
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-           w_snd((int)(i*1000/xdots + basehertz));
+		{
+			w_snd((int)(i*1000/xdots + basehertz));
+		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
-           w_snd((int)(j*1000/ydots + basehertz));
+		{
+			w_snd((int)(j*1000/ydots + basehertz));
+		}
 		else if (orbit_delay > 0)
 		{
 			wait_until(0, orbit_delay);
@@ -1669,11 +1675,17 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	else
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-           w_snd((int)(i + basehertz));
+		{
+			w_snd((int)(i + basehertz));
+		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
-           w_snd((int)(j + basehertz));
+		{
+			w_snd((int)(j + basehertz));
+		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
-           w_snd((int)(i + j + basehertz));
+		{
+			w_snd((int)(i + j + basehertz));
+		}
 		else if (orbit_delay > 0)
 		{
 			wait_until(0, orbit_delay);
@@ -1875,39 +1887,39 @@ void get_julia_attractor (double real, double imag)
 		{
 			result =  g_new;
 		}
-     for (i = 0; i < 10; i++)
-     {
-		overflow = 0;
-		if (!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
-		{                        /* and doesn't move far, probably */
-			if (integerfractal)   /*   found a finite attractor    */
-			{
-				if (labs(lresult.x-lnew.x) < lclosenuff
-                && labs(lresult.y-lnew.y) < lclosenuff)
+		for (i = 0; i < 10; i++)
+		{
+			overflow = 0;
+			if (!curfractalspecific->orbitcalc() && !overflow) /* if it stays in the lake */
+			{                        /* and doesn't move far, probably */
+				if (integerfractal)   /*   found a finite attractor    */
 				{
-					lattr[attractors] = lnew;
-					attrperiod[attractors] = i + 1;
-					attractors++;   /* another attractor - coloured lakes ! */
-					break;
+					if (labs(lresult.x-lnew.x) < lclosenuff
+						&& labs(lresult.y-lnew.y) < lclosenuff)
+					{
+						lattr[attractors] = lnew;
+						attrperiod[attractors] = i + 1;
+						attractors++;   /* another attractor - coloured lakes ! */
+						break;
+					}
+				}
+				else
+				{
+					if (fabs(result.x-g_new.x) < closenuff
+						&& fabs(result.y-g_new.y) < closenuff)
+					{
+						attr[attractors] = g_new;
+						attrperiod[attractors] = i + 1;
+						attractors++;   /* another attractor - coloured lakes ! */
+						break;
+					}
 				}
 			}
 			else
 			{
-				if (fabs(result.x-g_new.x) < closenuff
-                && fabs(result.y-g_new.y) < closenuff)
-				{
-					attr[attractors] = g_new;
-					attrperiod[attractors] = i + 1;
-					attractors++;   /* another attractor - coloured lakes ! */
-					break;
-				}
+				break;
 			}
 		}
-		else
-		{
-          break;
-		}
-     }
 	}
 	if (attractors == 0)
 	{

@@ -76,7 +76,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
-              		(*plot)(col, row, color);
+				(*plot)(col, row, color);
 				col++;
 				if (G >= 0)             /* it's time to change rows */
 				{
@@ -224,7 +224,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 			putcolor(x, y, color);
 			if (Targa_Out)
 			{
-              	targa_color(x, y, color);
+				targa_color(x, y, color);
 			}
 		}
 	}
@@ -297,7 +297,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			putcolor(x, y, color|(tmp&15));
 			if (Targa_Out)
 			{
-              	if (!ILLUMINE)
+				if (!ILLUMINE)
 				{
 					targa_color(x, y, color|(tmp&15));
 				}
@@ -350,7 +350,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				{
 					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
 				}
-          		}
+			}
 		}
 	}
 	else if (g_which_image == 2) /* BLUE */
@@ -570,22 +570,22 @@ void plot_setup()
 		{
 			if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
 			{
-              	g_dac_box[PAL_RED  ][0] = 63;
-              	g_dac_box[PAL_RED  ][1] =  0;
-              	g_dac_box[PAL_RED  ][2] =  0;
+				g_dac_box[PAL_RED  ][0] = 63;
+				g_dac_box[PAL_RED  ][1] =  0;
+				g_dac_box[PAL_RED  ][2] =  0;
 
-              	g_dac_box[PAL_BLUE ][0] =  0;
-              	g_dac_box[PAL_BLUE ][1] =  0;
-              	g_dac_box[PAL_BLUE ][2] = 63;
+				g_dac_box[PAL_BLUE ][0] =  0;
+				g_dac_box[PAL_BLUE ][1] =  0;
+				g_dac_box[PAL_BLUE ][2] = 63;
 
-              	g_dac_box[PAL_MAGENTA][0] = 63;
-              	g_dac_box[PAL_MAGENTA][1] =    0;
-              	g_dac_box[PAL_MAGENTA][2] = 63;
+				g_dac_box[PAL_MAGENTA][0] = 63;
+				g_dac_box[PAL_MAGENTA][1] =    0;
+				g_dac_box[PAL_MAGENTA][2] = 63;
 			}
 			for (i = 0; i < 256; i++)
 			{
-              	g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
-              	g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
+				g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
+				g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
 			}
 		}
 		spindac(0, 1); /* load it, but don't spin */

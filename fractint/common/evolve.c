@@ -165,29 +165,29 @@ int lclpy = gridsz - py - 1;
 	{
 	default:
 	case 0:
-       break;
+		break;
 	case 1:
-       *(double *)gene[i].addr = px*dpx + opx; /*paramspace x coord*per view delta px + offset */
-       break;
+		*(double *)gene[i].addr = px*dpx + opx; /*paramspace x coord*per view delta px + offset */
+		break;
 	case 2:
-       *(double *)gene[i].addr = lclpy*dpy + opy; /*same for y */
-       break;
+		*(double *)gene[i].addr = lclpy*dpy + opy; /*same for y */
+		break;
 	case   3:
-       *(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
-       break;
+		*(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
+		break;
 	case 4:
-       *(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
-       break;
+		*(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
+		break;
 	case 5:
-       *(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
-       break;
+		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
+		break;
 	case 6:  /* weighted random mutation, further out = further change */
-       {
-       int mid = gridsz /2;
-       double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-       *(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius;
-       }
-       break;
+		{
+			int mid = gridsz /2;
+			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
+			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius;
+		}
+		break;
 	}
 return;
 }
@@ -197,35 +197,35 @@ int varyint(int randvalue, int limit, int mode)
 int ret = 0;
 int lclpy = gridsz - py - 1;
  switch (mode)
- {
+{
 	default:
 	case 0:
-     break;
+		break;
 	case 1: /* vary with x */
-     ret = (odpx + px)%limit;
-     break;
+		ret = (odpx + px)%limit;
+		break;
 	case 2: /* vary with y */
-     ret = (odpy + lclpy)%limit;
-     break;
+		ret = (odpy + lclpy)%limit;
+		break;
 	case 3: /* vary with x + y */
-     ret = (odpx + px + odpy + lclpy)%limit;
-     break;
+		ret = (odpx + px + odpy + lclpy)%limit;
+		break;
 	case 4: /* vary with x-y */
-     ret = (odpx + px)-(odpy + lclpy)%limit;
-     break;
+		ret = (odpx + px)-(odpy + lclpy)%limit;
+		break;
 	case 5: /* random mutation */
-     ret = randvalue % limit;
-     break;
+		ret = randvalue % limit;
+		break;
 	case 6:  /* weighted random mutation, further out = further change */
-     {
-     int mid = gridsz /2;
-     double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-     ret = (int)((((randvalue / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius);
-     ret %= limit;
-     }
-       break;
- }
- return ret;
+		{
+			int mid = gridsz /2;
+			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
+			ret = (int)((((randvalue / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius);
+			ret %= limit;
+		}
+		break;
+	}
+	return ret;
 }
 
 int wrapped_positive_varyint(int randvalue, int limit, int mode)
@@ -243,36 +243,36 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
- {
+{
 	int choices[9]={-59,-60,-61,-100,-101,-102,-103,-104,-1};
 	if (gene[i].mutate)
 	{
 		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
 	}
 	return;
- }
+}
 
 void varyoutside(GENEBASE gene[], int randval, int i)
- {
+{
 	int choices[8]={-1,-2,-3,-4,-5,-6,-7,-8};
 	if (gene[i].mutate)
 	{
 		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
 	}
 	return;
- }
+}
 
 void varybotest(GENEBASE gene[], int randval, int i)
- {
+{
 	int choices[7]={Mod, Real, Imag, Or, And, Manh, Manr};
 	if (gene[i].mutate)
 	{
-     *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
-     /* move this next bit to varybot where it belongs */
-     setbailoutformula(bailoutest);
+		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
+		/* move this next bit to varybot where it belongs */
+		setbailoutformula(bailoutest);
 	}
 	return;
- }
+}
 
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
@@ -299,34 +299,34 @@ void varytrig(GENEBASE gene[], int randval, int i)
 }
 
 void varyinv(GENEBASE gene[], int randval, int i)
-  {
+{
 	if (gene[i].mutate)
 	{
 		varydbl(gene,randval,i);
 	}
 	invert = (inversion[0] == 0.0) ? 0 : 3 ;
-  }
+}
 
 /* --------------------------------------------------------------------- */
 /*
 	get_evolve_params() is called from FRACTINT.C whenever the 'ctrl_e' key
 	is pressed.  Return codes are:
 		-1  routine was ESCAPEd - no need to re-generate the images
-     0  minor variable changed.  No need to re-generate the image.
-       1  major parms changed.  Re-generate the images.
+		0  minor variable changed.  No need to re-generate the image.
+		1  major parms changed.  Re-generate the images.
 */
 int get_the_rest(void)
 {
-  char *evolvmodes[]={"no","x","y","x + y","x-y","random","spread"};
-  int i,k,num, numtrig;
-  char *choices[20];
-  struct fullscreenvalues uvalues[20];
+	char *evolvmodes[]={"no","x","y","x + y","x-y","random","spread"};
+	int i,k,num, numtrig;
+	char *choices[20];
+	struct fullscreenvalues uvalues[20];
 
 	numtrig = (curfractalspecific->flags >> 6) & 7;
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		numtrig = maxfn;
-		}
+	}
 
 choose_vars_restart:
 
@@ -352,8 +352,8 @@ choose_vars_restart:
 	}
 
 	if (curfractalspecific->calctype == StandardFractal &&
-       (curfractalspecific->flags & BAILTEST))
-       {
+		(curfractalspecific->flags & BAILTEST))
+	{
 		choices[++k]=g_genes[NUMGENES - 1].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
@@ -375,22 +375,28 @@ choose_vars_restart:
 
 	switch (i)
 	{
-     case FIK_F2: /* set all off */
-       for (num = MAXPARAMS; num < NUMGENES; num++)
-          g_genes[num].mutate = 0;
-       goto choose_vars_restart;
-     case FIK_F3: /* set all on..alternate x and y for field map */
-       for (num = MAXPARAMS; num < NUMGENES; num ++)
-          g_genes[num].mutate = (char)((num % 2) + 1);
-       goto choose_vars_restart;
-     case FIK_F4: /* Randomize all */
-       for (num =MAXPARAMS; num < NUMGENES; num ++)
-          g_genes[num].mutate = (char)(rand() % 6);
-       goto choose_vars_restart;
-     case -1:
-       return -1;
-     default:
-       break;
+	case FIK_F2: /* set all off */
+		for (num = MAXPARAMS; num < NUMGENES; num++)
+		{
+			g_genes[num].mutate = 0;
+		}
+		goto choose_vars_restart;
+	case FIK_F3: /* set all on..alternate x and y for field map */
+		for (num = MAXPARAMS; num < NUMGENES; num ++)
+		{
+			g_genes[num].mutate = (char)((num % 2) + 1);
+		}
+		goto choose_vars_restart;
+	case FIK_F4: /* Randomize all */
+		for (num =MAXPARAMS; num < NUMGENES; num ++)
+		{
+			g_genes[num].mutate = (char)(rand() % 6);
+		}
+		goto choose_vars_restart;
+	case -1:
+		return -1;
+	default:
+		break;
 	}
 
 	/* read out values */
@@ -406,8 +412,10 @@ choose_vars_restart:
 	}
 
 	if (curfractalspecific->calctype == StandardFractal &&
-       (curfractalspecific->flags & BAILTEST))
+		(curfractalspecific->flags & BAILTEST))
+	{
 		g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
+	}
 
 	return 1; /* if you were here, you want to regenerate */
 }
@@ -582,22 +590,22 @@ choose_vars_restart:
 
 void set_mutation_level(int strength)
 {
-/* scan through the gene array turning on random variation for all parms that */
-/* are suitable for this level of mutation */
- int i;
+	/* scan through the gene array turning on random variation for all parms that */
+	/* are suitable for this level of mutation */
+	int i;
 
- for (i = 0; i < NUMGENES; i++)
- {
-	if (g_genes[i].level <= strength)
+	for (i = 0; i < NUMGENES; i++)
 	{
-		g_genes[i].mutate = 5; /* 5 = random mutation mode */
+		if (g_genes[i].level <= strength)
+		{
+			g_genes[i].mutate = 5; /* 5 = random mutation mode */
+		}
+		else
+		{
+			g_genes[i].mutate = 0;
+		}
 	}
-	else
-	{
-		g_genes[i].mutate = 0;
-	}
- }
- return;
+	return;
 }
 
 int get_evolve_Parms(void)
@@ -621,12 +629,10 @@ int get_evolve_Parms(void)
 
 get_evol_restart:
 
-	/* TODO: allocate real memory, not reuse shared segment */
-//   ptr = (char *) extraseg;
 	if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM))
 	{
-	/* adjust field param to make some sense when changing from random modes*/
-	/* maybe should adjust for aspect ratio here? */
+		/* adjust field param to make some sense when changing from random modes*/
+		/* maybe should adjust for aspect ratio here? */
 		paramrangex = paramrangey = fiddlefactor*2;
 		opx = param[0] - fiddlefactor;
 		opy = param[1] - fiddlefactor;
@@ -645,35 +651,35 @@ get_evol_restart:
 
 	if (explore_check())  /* test to see if any parms are set to linear */
 	{
-									/* variation 'explore mode' */
-     choices[++k]= "Show parameter zoom box?";
-     uvalues[k].type = 'y';
-     uvalues[k].uval.ch.val = ((evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
+		/* variation 'explore mode' */
+		choices[++k]= "Show parameter zoom box?";
+		uvalues[k].type = 'y';
+		uvalues[k].uval.ch.val = ((evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
 
-     choices[++k]= "x parameter range (across screen)";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval = paramrangex;
+		choices[++k]= "x parameter range (across screen)";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval = paramrangex;
 
-     choices[++k]= "x parameter offset (left hand edge)";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval = opx;
+		choices[++k]= "x parameter offset (left hand edge)";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval = opx;
 
-     choices[++k]= "y parameter range (up screen)";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval = paramrangey;
+		choices[++k]= "y parameter range (up screen)";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval = paramrangey;
 
-     choices[++k]= "y parameter offset (lower edge)";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval= opy;
+		choices[++k]= "y parameter offset (lower edge)";
+		uvalues[k].type = 'f';
+		uvalues[k].uval.dval= opy;
 	}
 
-     choices[++k]= "Max random mutation";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval = fiddlefactor;
+	choices[++k]= "Max random mutation";
+	uvalues[k].type = 'f';
+	uvalues[k].uval.dval = fiddlefactor;
 
-     choices[++k]= "Mutation reduction factor (between generations)";
-     uvalues[k].type = 'f';
-     uvalues[k].uval.dval = fiddle_reduction;
+	choices[++k]= "Mutation reduction factor (between generations)";
+	uvalues[k].type = 'f';
+	uvalues[k].uval.dval = fiddle_reduction;
 
 	choices[++k]= "Grouting? ";
 	uvalues[k].type = 'y';
@@ -699,14 +705,14 @@ get_evol_restart:
 	helpmode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
-	/* in case this point has been reached after calling sub menu with F6 */
-	evolving      = old_evolving;
-	gridsz        = old_gridsz;
-	paramrangex   = old_paramrangex;
-	paramrangey   = old_paramrangey;
-	opx           = old_opx;
-	opy           = old_opy;
-	fiddlefactor  = old_fiddlefactor;
+		/* in case this point has been reached after calling sub menu with F6 */
+		evolving      = old_evolving;
+		gridsz        = old_gridsz;
+		paramrangex   = old_paramrangex;
+		paramrangey   = old_paramrangey;
+		opx           = old_opx;
+		opy           = old_opy;
+		fiddlefactor  = old_fiddlefactor;
 
 		return -1;
 	}
@@ -729,7 +735,7 @@ get_evol_restart:
 	}
 	if (i == FIK_F3)
 	{
-	double centerx, centery;
+		double centerx, centery;
 		centerx = opx + paramrangex / 2;
 		paramrangex = paramrangex*2;
 		opx = newopx = centerx - paramrangex / 2;
@@ -802,11 +808,13 @@ get_evol_restart:
 	i = 0;
 
 	if (evolving != old_evolving
-	|| (gridsz != old_gridsz) ||(paramrangex != old_paramrangex)
-	|| (opx != old_opx) || (paramrangey != old_paramrangey)
-	|| (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
-	|| (old_variations > 0))
+		|| (gridsz != old_gridsz) ||(paramrangex != old_paramrangex)
+		|| (opx != old_opx) || (paramrangey != old_paramrangey)
+		|| (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
+		|| (old_variations > 0))
+	{
 		i = 1;
+	}
 
 	if (evolving && !old_evolving)
 	{
@@ -815,14 +823,14 @@ get_evol_restart:
 
 	if (!evolving && (evolving == old_evolving)) i = 0;
 
-if (j == FIK_F6)
-{
+	if (j == FIK_F6)
+	{
 		old_variations = get_variations();
 		set_current_params();
 		if (old_variations > 0)
 		{
-          viewwindow = 1;
-          evolving |= 1;   /* leave other settings alone */
+			viewwindow = 1;
+			evolving |= 1;   /* leave other settings alone */
 		}
 		fiddlefactor = 1;
 		fiddle_reduction = 1.0;
@@ -887,62 +895,75 @@ void set_current_params(void)
 
 void fiddleparms(GENEBASE gene[], int ecount)
 {
-/* call with px,py ... parameter set co-ords*/
-/* set random seed then call rnd enough times to get to px,py */
-/* 5/2/96 adding in indirection */
-/* 26/2/96 adding in multiple methods and field map */
-/* 29/4/96 going for proper handling of the whole gene array */
-/*         bung in a pile of switches to allow for expansion to any
-           future variable types */
-/* 11/6/96 scrapped most of switches above and used function pointers
-           instead */
-/* 4/1/97  picking it up again after the last step broke it all horribly! */
+	/* call with px,py ... parameter set co-ords*/
+	/* set random seed then call rnd enough times to get to px,py */
+	/* 5/2/96 adding in indirection */
+	/* 26/2/96 adding in multiple methods and field map */
+	/* 29/4/96 going for proper handling of the whole gene array */
+	/*         bung in a pile of switches to allow for expansion to any
+			future variable types */
+	/* 11/6/96 scrapped most of switches above and used function pointers
+			instead */
+	/* 4/1/97  picking it up again after the last step broke it all horribly! */
 
- int i;
+	int i;
 
-/* when writing routines to vary param types make sure that rand() gets called
-the same number of times whether gene[].mutate is set or not to allow
-user to change it between generations without screwing up the duplicability
-of the sequence and starting from the wrong point */
+	/* when writing routines to vary param types make sure that rand() gets called
+	the same number of times whether gene[].mutate is set or not to allow
+	user to change it between generations without screwing up the duplicability
+	of the sequence and starting from the wrong point */
 
-/* this function has got simpler and simpler throughout the construction of the
- evolver feature and now consists of just these few lines to loop through all
- the variables referenced in the gene array and call the functions required
- to vary them, aren't pointers marvellous! */
+	/* this function has got simpler and simpler throughout the construction of the
+	evolver feature and now consists of just these few lines to loop through all
+	the variables referenced in the gene array and call the functions required
+	to vary them, aren't pointers marvellous! */
 
- if ((px == gridsz / 2) && (py == gridsz / 2)) /* return if middle image */
-	return;
+	if ((px == gridsz / 2) && (py == gridsz / 2)) /* return if middle image */
+	{
+		return;
+	}
 
- set_random(ecount);   /* generate the right number of pseudo randoms */
+	set_random(ecount);   /* generate the right number of pseudo randoms */
 
- for (i = 0; i < NUMGENES; i++)
-	(*(gene[i].varyfunc))(gene,rand(),i);
-
+	for (i = 0; i < NUMGENES; i++)
+	{
+		(*(gene[i].varyfunc))(gene,rand(),i);
+	}
 }
 
 static void set_random(int ecount)
-{ /* This must be called with ecount set correctly for the spiral map. */
-  /* Call this routine to set the random # to the proper value */
-  /* if it may have changed, before fiddleparms() is called. */
-  /* Now called by fiddleparms(). */
- int index,i;
+{
+	/* This must be called with ecount set correctly for the spiral map. */
+	/* Call this routine to set the random # to the proper value */
+	/* if it may have changed, before fiddleparms() is called. */
+	/* Now called by fiddleparms(). */
+	int index,i;
 
- srand(this_gen_rseed);
- for (index = 0; index < ecount; index++)
-	for (i = 0; i < NUMGENES; i++)
-     rand();
+	srand(this_gen_rseed);
+	for (index = 0; index < ecount; index++)
+	{
+		for (i = 0; i < NUMGENES; i++)
+		{
+			rand();
+		}
+	}
 }
 
 int explore_check(void)
 {
-/* checks through gene array to see if any of the parameters are set to */
-/* one of the non random variation modes. Used to see if parmzoom box is */
-/* needed */
+	/* checks through gene array to see if any of the parameters are set to */
+	/* one of the non random variation modes. Used to see if parmzoom box is */
+	/* needed */
 	int nonrandom = FALSE;
 	int i;
 
 	for (i = 0; i < NUMGENES && !(nonrandom); i++)
-		if ((g_genes[i].mutate > 0) && (g_genes[i].mutate < 5)) nonrandom = TRUE;
+	{
+		if ((g_genes[i].mutate > 0) && (g_genes[i].mutate < 5))
+		{
+			nonrandom = TRUE;
+		}
+	}
 	return nonrandom;
 }
 
@@ -952,7 +973,10 @@ void drawparmbox(int mode)
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
 	struct coords tl,tr,bl,br;
 	int grout;
-	if (!(evolving & EVOLVE_PARM_BOX)) return; /* don't draw if not asked to! */
+	if (!(evolving & EVOLVE_PARM_BOX))
+	{
+		return; /* don't draw if not asked to! */
+	}
 	grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 	imgboxcount = boxcount;
 	if (boxcount)
@@ -1096,8 +1120,8 @@ int unspiralmap(void)
 		ecountbox[px][py] = 0;  /* we know the first one, do the rest */
 		for (i = 1; i < gridsqr; i++)
 		{
-				spiralmap(i);
-				ecountbox[px][py] = i;
+			spiralmap(i);
+			ecountbox[px][py] = i;
 		}
 		oldgridsz = gridsz;
 		px = py = mid;

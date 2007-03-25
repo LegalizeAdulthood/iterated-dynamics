@@ -34,19 +34,19 @@ tgaview()
 	g_row_count = 0;
 	for (i = 0; i < (int)height; ++i)
 	{
-       t16_getline(fptarga, width, (U16 *)boxx);
-       if ((*outln)((void *)boxx,width))
-       {
-          fclose(fptarga);
-          fptarga = NULL;
-          return -1;
-       }
-       if (driver_key_pressed())
-       {
-          fclose(fptarga);
-          fptarga = NULL;
-          return -1;
-       }
+		t16_getline(fptarga, width, (U16 *)boxx);
+		if ((*outln)((void *)boxx,width))
+		{
+			fclose(fptarga);
+			fptarga = NULL;
+			return -1;
+		}
+		if (driver_key_pressed())
+		{
+			fclose(fptarga);
+			fptarga = NULL;
+			return -1;
+		}
 	}
 	fclose(fptarga);
 	fptarga = NULL;
@@ -61,7 +61,9 @@ outlin16(BYTE *buffer,int linelen)
 	U16 *buf;
 	buf = (U16 *)buffer;
 	for (i = 0; i < linelen; i++)
-       putcolor(i,g_row_count,buf[i] >> 8);
+	{
+		putcolor(i,g_row_count,buf[i] >> 8);
+	}
 	g_row_count++;
 	return 0;
 }

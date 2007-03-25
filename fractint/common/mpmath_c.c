@@ -125,14 +125,14 @@ struct MPC MPCpow(struct MPC x, int exp)
 	exp >>= 1;
 	while (exp)
 	{
-        zz.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
-        zz.y = *pMPmul(x.x, x.y);
-        zz.y.Exp++;
+		zz.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
+		zz.y = *pMPmul(x.x, x.y);
+		zz.y.Exp++;
 		x = zz;
 		if (exp & 1)
 		{
-            zz.x = *pMPsub(*pMPmul(z.x, x.x), *pMPmul(z.y, x.y));
-            zz.y = *pMPadd(*pMPmul(z.x, x.y), *pMPmul(z.y, x.x));
+			zz.x = *pMPsub(*pMPmul(z.x, x.x), *pMPmul(z.y, x.y));
+			zz.y = *pMPadd(*pMPmul(z.x, x.y), *pMPmul(z.y, x.x));
 			z = zz;
 		}
 		exp >>= 1;
@@ -146,9 +146,9 @@ int MPCcmp(struct MPC x, struct MPC y)
 
 	if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y))
 	{
-        z.x = MPCmod(x);
-        z.y = MPCmod(y);
-        return pMPcmp(z.x, z.y);
+		z.x = MPCmod(x);
+		z.y = MPCmod(y);
+		return pMPcmp(z.x, z.y);
 	}
 	else
 	{

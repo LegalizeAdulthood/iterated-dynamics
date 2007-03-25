@@ -43,7 +43,7 @@
 
 int prompt_valuestring(char *buf, struct fullscreenvalues *val);
 static  int input_field_list(int attr, char *fld, int vlen, char **list, int llen,
-                             int row, int col, int (*checkkey)(int));
+							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
 		int select_type_params(int newfractype, int oldfractype);

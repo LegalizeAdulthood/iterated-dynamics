@@ -241,7 +241,7 @@ void DisplayHandle (U16 handle)
 	char buf[MSGLEN];
 
 	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
-        handletable[handle].Nowhere.size);
+			handletable[handle].Nowhere.size);
 	if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
 	{
 		goodbye(); /* bailout if ESC, it's messy, but should work */

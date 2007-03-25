@@ -46,12 +46,14 @@ int
 JuliaSetup(void)            /* Julia Routine */
 {
 	if (debugflag != 90
-       && !invert && decomp[0] == 0 && rqlim == 4.0
-       && bitshift == 29 && potflag == 0
-       && biomorph == -1 && inside > -59 && outside >= -1
-       && !finattract && using_jiim == 0 && bailoutest == Mod
-       && (orbitsave & ORBITSAVE_SOUND) == 0)
-       calctype = calcmand; /* the normal case - use CALCMAND */
+		&& !invert && decomp[0] == 0 && rqlim == 4.0
+		&& bitshift == 29 && potflag == 0
+		&& biomorph == -1 && inside > -59 && outside >= -1
+		&& !finattract && using_jiim == 0 && bailoutest == Mod
+		&& (orbitsave & ORBITSAVE_SOUND) == 0)
+	{
+		calctype = calcmand; /* the normal case - use CALCMAND */
+	}
 	else
 	{
 		/* special case: use the main processing loop */
@@ -268,64 +270,61 @@ MandelfpSetup(void)
 		break;
 	case MANDELFP:
 		/*
-           floating point code could probably be altered to handle many of
-           the situations that otherwise are using StandardFractal().
-           calcmandfp() can currently handle invert, any rqlim, potflag
-           zmag, epsilon cross, and all the current outside options
-                                                     Wes Loewer 11/03/91
-           Took out support for inside= options, for speed. 7/13/97
+		floating point code could probably be altered to handle many of
+		the situations that otherwise are using StandardFractal().
+		calcmandfp() can currently handle invert, any rqlim, potflag
+		zmag, epsilon cross, and all the current outside options
+													Wes Loewer 11/03/91
+		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (debugflag != 90
-				&& !distest
-				&& decomp[0] == 0
-				&& biomorph == -1
-				&& (inside >= -1)
-				/* uncomment this next line if more outside options are added */
-				&& outside >= -6
-				&& useinitorbit != 1
-				&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-				&& using_jiim == 0 && bailoutest == Mod
-				&& (orbitsave & ORBITSAVE_SOUND) == 0)
+			&& !distest
+			&& decomp[0] == 0
+			&& biomorph == -1
+			&& (inside >= -1)
+			/* uncomment this next line if more outside options are added */
+			&& outside >= -6
+			&& useinitorbit != 1
+			&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+			&& using_jiim == 0 && bailoutest == Mod
+			&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-           calctype = calcmandfp; /* the normal case - use calcmandfp */
+			calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
-           if (cpu >= 386 && fpu >= 387)
-           {
-              calcmandfpasmstart_p5();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
-           }
-           else if (cpu == 286 && fpu >= 287)
-           {
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_287;
-           }
-           else
-
-           {
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_87;
-           }
+			if (cpu >= 386 && fpu >= 387)
+			{
+				calcmandfpasmstart_p5();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+			}
+			else if (cpu == 286 && fpu >= 287)
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+			}
+			else
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+			}
 #else
-           {
 #ifdef NASM
-				if (fpu == -1)
-				{
-              calcmandfpasmstart_p5();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
-				}
-				else
+			if (fpu == -1)
+			{
+				calcmandfpasmstart_p5();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+			}
+			else
 #endif
-				{
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_c;
-				}
-           }
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+			}
 #endif
 		}
 		else
 		{
-           /* special case: use the main processing loop */
-           calctype = StandardFractal;
+			/* special case: use the main processing loop */
+			calctype = StandardFractal;
 		}
 		break;
 	case FPMANDELZPOWER:
@@ -444,45 +443,43 @@ JuliafpSetup(void)
 				&& using_jiim == 0 && bailoutest == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-           calctype = calcmandfp; /* the normal case - use calcmandfp */
+			calctype = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
-           if (cpu >= 386 && fpu >= 387)
-           {
-              calcmandfpasmstart_p5();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
-           }
-           else if (cpu == 286 && fpu >= 287)
-           {
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_287;
-           }
-           else
-           {
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_87;
-           }
+			if (cpu >= 386 && fpu >= 387)
+			{
+				calcmandfpasmstart_p5();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+			}
+			else if (cpu == 286 && fpu >= 287)
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+			}
+			else
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+			}
 #else
-           {
 #ifdef NASM
-				if (fpu == -1)
-				{
-              calcmandfpasmstart_p5();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
-				}
-				else
+			if (fpu == -1)
+			{
+				calcmandfpasmstart_p5();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+			}
+			else
 #endif
-				{
-              calcmandfpasmstart();
-              calcmandfpasm = (long (*)(void))calcmandfpasm_c;
-				}
-           }
+			{
+				calcmandfpasmstart();
+				calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+			}
 #endif
 		}
 		else
 		{
-           /* special case: use the main processing loop */
-           calctype = StandardFractal;
-           get_julia_attractor (0.0, 0.0);   /* another attractor? */
+			/* special case: use the main processing loop */
+			calctype = StandardFractal;
+			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
 		break;
 	case FPJULIAZPOWER:
@@ -590,7 +587,9 @@ JuliafpSetup(void)
 		break;
 	case FPCIRCLE:
 		if (inside == STARTRAIL) /* FPCIRCLE locks up when used with STARTRAIL */
-          inside = 0; /* arbitrarily set inside = NUMB */
+		{
+			inside = 0; /* arbitrarily set inside = NUMB */
+		}
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
 	default:

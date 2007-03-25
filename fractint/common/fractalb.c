@@ -107,7 +107,7 @@ void showcornersbf(char *s)
 	if (dec > 20) dec = 20;
 	bftostr(msg, dec, bfxmin);
 	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
-       msg, xxmin, decimals, bflength);
+		msg, xxmin, decimals, bflength);
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
@@ -743,10 +743,10 @@ int mandelbn_per_pixel()
 	}
 	else
 	{
-     floattobn(bnnew.x, param[0]);
-     floattobn(bnnew.y, param[1]);
-     add_a_bn(bnold.x, bnnew.x);
-     add_a_bn(bnold.y, bnnew.y);
+		floattobn(bnnew.x, param[0]);
+		floattobn(bnnew.y, param[1]);
+		add_a_bn(bnold.x, bnnew.x);
+		add_a_bn(bnold.y, bnnew.y);
 	}
 
 	/* square has side effect - must copy first */
@@ -789,10 +789,10 @@ int mandelbf_per_pixel()
 	}
 	else
 	{
-     floattobf(bfnew.x, param[0]);
-     floattobf(bfnew.y, param[1]);
-     add_a_bf(bfold.x, bfnew.x);
-     add_a_bf(bfold.y, bfnew.y);
+		floattobf(bfnew.x, param[0]);
+		floattobf(bfnew.y, param[1]);
+		add_a_bf(bfold.x, bfnew.x);
+		add_a_bf(bfold.y, bfnew.y);
 	}
 
 	/* square has side effect - must copy first */

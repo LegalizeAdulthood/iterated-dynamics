@@ -1108,7 +1108,9 @@ static int compress(int rowlimit)
 	a_count = 0;
 	hshift = 0;
 	for (fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
-       hshift++;
+	{
+		hshift++;
+	}
 	hshift = 8 - hshift;                /* set hash code range bound */
 
 	memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
@@ -1249,10 +1251,12 @@ nomatch:
 static void _fastcall output(int code)
 {
 	static unsigned long masks[] =
-		{ 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
-                0x001F, 0x003F, 0x007F, 0x00FF,
-                0x01FF, 0x03FF, 0x07FF, 0x0FFF,
-                0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF };
+	{
+		0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
+		0x001F, 0x003F, 0x007F, 0x00FF,
+		0x01FF, 0x03FF, 0x07FF, 0x0FFF,
+		0x1FFF, 0x3FFF, 0x7FFF, 0xFFFF
+	};
 
 	cur_accum &= masks[ cur_bits ];
 
@@ -1303,18 +1307,18 @@ static void _fastcall output(int code)
 	if (code == EOFCode)
 	{
 		/*
-       * At EOF, write the rest of the buffer.
-       */
-       while (cur_bits > 0)
-       {
-          char_out((unsigned int)(cur_accum & 0xff));
-          cur_accum >>= 8;
-          cur_bits -= 8;
-       }
+		* At EOF, write the rest of the buffer.
+		*/
+		while (cur_bits > 0)
+		{
+			char_out((unsigned int)(cur_accum & 0xff));
+			cur_accum >>= 8;
+			cur_bits -= 8;
+		}
 
-       flush_char();
+		flush_char();
 
-       fflush(g_outfile);
+		fflush(g_outfile);
 	}
 }
 
