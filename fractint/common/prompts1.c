@@ -223,10 +223,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 		/* if entry fits in available space, shut off scrolling */
 	if (in_scrolling_mode && scroll_row_status == 0
-        && lines_in_entry == extralines - 2
-        && scroll_column_status == 0
-        && strchr(extrainfo, '\021') == NULL)
-    {
+		&& lines_in_entry == extralines - 2
+		&& scroll_column_status == 0
+		&& strchr(extrainfo, '\021') == NULL)
+	{
 		in_scrolling_mode = 0;
 		fclose(scroll_file);
 		scroll_file = NULL;
@@ -534,7 +534,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			g_text_cbase = 2;
 			fseek(scroll_file, scroll_file_start, SEEK_SET);
 			load_entry_text(scroll_file, extrainfo, extralines - 2,
-                            scroll_row_status, scroll_column_status);
+							scroll_row_status, scroll_column_status);
 			for (i = 1; i <= extralines - 2; i++)
 				driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
 			driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
@@ -545,7 +545,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		curlen = prompt_valuestring(buf, &values[curchoice]);
 		if (!rewrite_extrainfo)
 			putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
-                (curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
+				(curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
 		else
 			rewrite_extrainfo = 0;
 		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
@@ -1674,7 +1674,7 @@ gfp_top:
 		if (bf_math == 0)
 			if (get_corners() > 0)
 				ret = 1;
-    }
+	}
 	promptnum = 0;
 	for (i = firstparm; i < numparams + firstparm; i++)
 	{

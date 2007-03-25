@@ -367,8 +367,8 @@ static void printinstr(void)
 #undef PUT_KEY
 
 static void display_page(char *title, char *text, unsigned text_len,
-						 int page, int num_pages, int start_margin,
-						 int *num_link, LINK *link)
+						int page, int num_pages, int start_margin,
+						int *num_link, LINK *link)
 {
 	char temp[9];
 
@@ -460,7 +460,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 	for (ctr = 0, temp=link; ctr < num_link; ctr++, temp++)
 	{
 		if (ctr != curr_link &&
-           ((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
+			((up && temp->r < curr->r) || (!up && temp->r > curr->r)))
 		{
 			temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c + temp->width-1);
 			/* if >= 3 lines between, prioritize on vertical distance: */
@@ -615,7 +615,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 	for (page = 0; page < num_pages; page++)
 		if (curr->topic_off >= page_table[page].offset &&
-          curr->topic_off <  page_table[page].offset + page_table[page].len)
+				curr->topic_off <  page_table[page].offset + page_table[page].len)
 			break;
 
 	assert(page < num_pages);
@@ -632,7 +632,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 			num_link = 0;
 			display_page(title, buffer, page_table[page].len, page, num_pages,
-                      page_table[page].margin, &num_link, link_table);
+                    page_table[page].margin, &num_link, link_table);
 
 			if (draw_page == 2)
 				{
@@ -691,38 +691,38 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 			case FIK_TAB:
 				if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-                 page < num_pages-1)
-					{
+					page < num_pages-1)
+				{
 					++page;
 					draw_page = 1;
-					}
+				}
 				break;
 
 			case FIK_SHF_TAB:
 				if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-                 page > 0)
-					{
+					page > 0)
+				{
 					--page;
 					draw_page = 3;
-					}
+				}
 				break;
 
 			case FIK_DOWN_ARROW:
 				if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
-                 page < num_pages-1)
-					{
+					page < num_pages-1)
+				{
 					++page;
 					draw_page = 1;
-					}
+				}
 				break;
 
 			case FIK_UP_ARROW:
 				if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
-                 page > 0)
-					{
+					page > 0)
+				{
 					--page;
 					draw_page = 3;
-					}
+				}
 				break;
 
 			case FIK_LEFT_ARROW:
@@ -1006,12 +1006,12 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 	* to end of topic.  On "EOF" returns a negative number representing
 	* number of bytes not read.
 	*/
-	{
+{
 	int ret;
 	ret = _read_help_topic(label[label_num].topic_num,
-                          label[label_num].topic_off + off, len, buf);
+                    label[label_num].topic_off + off, len, buf);
 	return ret ;
-	}
+}
 
 #define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
 #define TEMP_FILE_NAME     "HELP.$$$"    /* temp file for storing extraseg  */
@@ -1020,7 +1020,7 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
                                          /*    single section (CONTENT)     */
 
 typedef struct PRINT_DOC_INFO
-	{
+{
 	int       cnum;          /* current CONTENT num */
 	int       tnum;          /* current topic num */
 
@@ -1028,7 +1028,7 @@ typedef struct PRINT_DOC_INFO
 	int       num_page;      /* total number of pages in document */
 
 	int       num_contents,  /* total number of CONTENT entries */
-             num_topic;     /* number of topics in current CONTENT */
+				num_topic;     /* number of topics in current CONTENT */
 
 	int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
 
@@ -1193,7 +1193,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 			memset(line, ' ', 81);
 			sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release%100)/10,
-                                ((g_release%10) ? '0'+(g_release%10) : ' '));
+                    ((g_release%10) ? '0'+(g_release%10) : ' '));
 			memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
 
 			sprintf(buff, "Page %d", pd->pnum);

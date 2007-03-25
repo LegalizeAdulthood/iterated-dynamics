@@ -250,7 +250,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		if (haze && Targa_Out)
 		{
 			HAZE_MULT = (int) (haze*((float) ((long) (ydots - 1 - currow)*(long) (ydots - 1 - currow))
-									 / (float) ((long) (ydots - 1)*(long) (ydots - 1))));
+									/ (float) ((long) (ydots - 1)*(long) (ydots - 1))));
 			HAZE_MULT = 100 - HAZE_MULT;
 		}
 
@@ -387,8 +387,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 										+ sintheta*sclx*r + xxadjust));
 				cur.y = (int) (f_cur.y = (float) (ycenter
 										+ costheta*cosphi*scly*r + yyadjust));
-				if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for
-                                                * filltype > 5? */
+				if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for filltype > 5? */
 					f_cur.color = (float) (-r*costheta*sinphi*sclz);
 				v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
 			}
@@ -409,8 +408,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				lv[0] = lv[0] << 16;
 				lv[1] = currow;
 				lv[1] = lv[1] << 16;
-				if (filetype || pot16bit)        /* don't truncate fractional
-                                                * part */
+				if (filetype || pot16bit) /* don't truncate fractional part */
 					lv[2] = (long) (f_cur.color*65536.0);
 				else
 					/* there IS no fractaional part here! */
@@ -497,47 +495,47 @@ int line3d(BYTE *pixels, unsigned linelen)
 		if (RAY)
 		{
 			if (col && currow &&
-            old.x > bad_check &&
-            old.x < (xdots - bad_check) &&
-            lastrow[col].x > bad_check &&
-            lastrow[col].y > bad_check &&
-            lastrow[col].x < (xdots - bad_check) &&
-            lastrow[col].y < (ydots - bad_check))
+				old.x > bad_check &&
+				old.x < (xdots - bad_check) &&
+				lastrow[col].x > bad_check &&
+				lastrow[col].y > bad_check &&
+				lastrow[col].x < (xdots - bad_check) &&
+				lastrow[col].y < (ydots - bad_check))
 			{
 				/* Get rid of all the triangles in the plane at the base of
-            * the object */
+				* the object */
 
 				if (f_cur.color == f_water &&
-                f_lastrow[col].color == f_water &&
-                f_lastrow[next].color == f_water)
+						f_lastrow[col].color == f_water &&
+						f_lastrow[next].color == f_water)
 					goto loopbottom;
 
 				if (RAY != 6)    /* Output the vertex info */
 					out_triangle(f_cur, f_old, f_lastrow[col],
-                            cur.color, old.color, lastrow[col].color);
+                        cur.color, old.color, lastrow[col].color);
 
 				tout = 1;
 
 				driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
 				driver_draw_line(old.x, old.y, lastrow[col].x,
-                        lastrow[col].y, old.color);
+                    lastrow[col].y, old.color);
 				driver_draw_line(lastrow[col].x, lastrow[col].y,
-                        cur.x, cur.y, cur.color);
+                    cur.x, cur.y, cur.color);
 				num_tris++;
 			}
 
 			if (col < lastdot && currow &&
-            lastrow[col].x > bad_check &&
-            lastrow[col].y > bad_check &&
-            lastrow[col].x < (xdots - bad_check) &&
-            lastrow[col].y < (ydots - bad_check) &&
-            lastrow[next].x > bad_check &&
-            lastrow[next].y > bad_check &&
-            lastrow[next].x < (xdots - bad_check) &&
-            lastrow[next].y < (ydots - bad_check))
+				lastrow[col].x > bad_check &&
+				lastrow[col].y > bad_check &&
+				lastrow[col].x < (xdots - bad_check) &&
+				lastrow[col].y < (ydots - bad_check) &&
+				lastrow[next].x > bad_check &&
+				lastrow[next].y > bad_check &&
+				lastrow[next].x < (xdots - bad_check) &&
+				lastrow[next].y < (ydots - bad_check))
 			{
 				/* Get rid of all the triangles in the plane at the base of
-                * the object */
+				* the object */
 
 				if (f_cur.color == f_water &&
 						f_lastrow[col].color == f_water &&
@@ -551,18 +549,18 @@ int line3d(BYTE *pixels, unsigned linelen)
 				tout = 1;
 
 				driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x, cur.y,
-                        cur.color);
+                    cur.color);
 				driver_draw_line(lastrow[next].x, lastrow[next].y, cur.x, cur.y,
-                        cur.color);
+                    cur.color);
 				driver_draw_line(lastrow[next].x, lastrow[next].y, lastrow[col].x,
-                        lastrow[col].y, lastrow[col].color);
+                    lastrow[col].y, lastrow[col].color);
 				num_tris++;
 			}
 
 			if (RAY == 6)       /* Output vertex info for Acrospin */
 			{
 				fprintf(File_Ptr1, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
-                    f_cur.x, f_cur.y, f_cur.color, RO, CO);
+					f_cur.x, f_cur.y, f_cur.color, RO, CO);
 				if (CO > CO_MAX)
 					CO_MAX = CO;
 				CO++;
@@ -574,16 +572,16 @@ int line3d(BYTE *pixels, unsigned linelen)
 			{
 			case -1:
 				if (col &&
-                old.x > bad_check &&
-                old.x < (xdots - bad_check))
+						old.x > bad_check &&
+						old.x < (xdots - bad_check))
 					driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 				if (currow &&
-                lastrow[col].x > bad_check &&
-                lastrow[col].y > bad_check &&
-                lastrow[col].x < (xdots - bad_check) &&
-                lastrow[col].y < (ydots - bad_check))
+						lastrow[col].x > bad_check &&
+						lastrow[col].y > bad_check &&
+						lastrow[col].x < (xdots - bad_check) &&
+						lastrow[col].y < (ydots - bad_check))
 					driver_draw_line(lastrow[col].x, lastrow[col].y, cur.x,
-                         cur.y, cur.color);
+                        cur.y, cur.color);
 				break;
 
 			case 0:
@@ -592,9 +590,9 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 			case 1:                /* connect-a-dot */
 				if ((old.x < xdots) && (col) &&
-                old.x > bad_check &&
-                old.y > bad_check)      /* Don't draw from old to cur on col
-                                         * 0 */
+						old.x > bad_check &&
+						old.y > bad_check)      /* Don't draw from old to cur on col
+												* 0 */
 					driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 				break;
 
@@ -679,7 +677,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				if (currow && col)  /* skip first row and first column */
 				{
 					if (f_cur.color < bad_check || f_old.color < bad_check ||
-                   f_lastrow[col].color < bad_check)
+							f_lastrow[col].color < bad_check)
 						break;
 
 					v1[0] = f_cur.x - f_old.x;
@@ -752,12 +750,12 @@ int line3d(BYTE *pixels, unsigned linelen)
 						/* we will use this value to shade surface */
 
 						cur.color = (int) (1 + (colors - 2) *
-                               (1.0 - dot_product(cross, light_direction)));
+                            (1.0 - dot_product(cross, light_direction)));
 					}
 					/* if colors out of range, set them to min or max color index
-                * but avoid background index. This makes colors "opaque" so
-                * SOMETHING plots. These conditions shouldn't happen but just
-                * in case                                        */
+					* but avoid background index. This makes colors "opaque" so
+					* SOMETHING plots. These conditions shouldn't happen but just
+					* in case                                        */
 					if (cur.color < 1)       /* prevent transparent colors */
 						cur.color = 1; /* avoid background */
 					if (cur.color > colors - 1)
@@ -771,7 +769,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						putatriangle(lastrow[next], lastrow[col], cur, cur.color);
 
 					if (col < 2 || currow < 2)       /* don't have valid colors
-                                                 * yet */
+													* yet */
 						break;
 
 					if (col < lastdot)
@@ -782,7 +780,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				}
 				break;
 			}                      /* End of CASE statement for fill type  */
-       loopbottom:
+loopbottom:
 			if (RAY || (FILLTYPE != 0 && FILLTYPE != 4))
 			{
 				/* for triangle and grid fill purposes */
@@ -808,7 +806,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			col++;
 		}                         /* End of while statement for plotting line  */
 	RO++;
- reallythebottom:
+reallythebottom:
 
 	/* stuff that HAS to be done, even in preview mode, goes here */
 	if (SPHERE)
@@ -847,7 +845,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 {
 	int i, j;
 	VECTOR S[2][4];              /* Holds the top an bottom points,
-                                 * S[0][]=bottom */
+								* S[0][]=bottom */
 
 	/* define corners of box fractal is in in x,y,z plane "b" stands for
 	* "bottom" - these points are the corners of the screen in the x-y plane.
@@ -965,7 +963,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
 	/* always use perspective to aid viewing */
 	temp = view[2];              /* save perspective distance for a later
-                                 * restore */
+									* restore */
 	view[2] = -P*300.0 / 100.0;
 
 	for (i = 0; i < 4; i++)
@@ -1017,7 +1015,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 	{
 		for (i = 0; i < 4; i++)
 			if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*bad_check &&
-             fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*bad_check)
+					fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*bad_check)
 				vdraw_line(V[i], V[(i + 1) % 4], color);
 	}
 	else
@@ -1025,7 +1023,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 	{
 		for (i = 0; i < 3; i += 2)
 			if (fabs(V[i][0] - V[i + 1][0]) < -2*bad_check &&
-             fabs(V[i][1] - V[i + 1][1]) < -2*bad_check)
+					fabs(V[i][1] - V[i + 1][1]) < -2*bad_check)
 				vdraw_line(V[i], V[i + 1], color);
 	}
 	return;
@@ -1139,8 +1137,8 @@ static int _fastcall offscreen(struct point pt)
 static void _fastcall clipcolor(int x, int y, int color)
 {
 	if (0 <= x && x < xdots &&
-       0 <= y && y < ydots &&
-       0 <= color && color < filecolors)
+		0 <= y && y < ydots &&
+		0 <= color && color < filecolors)
 	{
 		standardplot(x, y, color);
 
@@ -1160,10 +1158,10 @@ static void _fastcall clipcolor(int x, int y, int color)
 static void _fastcall T_clipcolor(int x, int y, int color)
 {
 	if (0 <= x && x < xdots &&   /* is the point on screen?  */
-       0 <= y && y < ydots &&   /* Yes?  */
-       0 <= color && color < colors &&  /* Colors in valid range?  */
-	/* Lets make sure its not a transparent color  */
-       (transparent[0] > color || color > transparent[1]))
+		0 <= y && y < ydots &&   /* Yes?  */
+		0 <= color && color < colors &&  /* Colors in valid range?  */
+		/* Lets make sure its not a transparent color  */
+		(transparent[0] > color || color > transparent[1]))
 	{
 		standardplot(x, y, color); /* I guess we can plot then  */
 		if (Targa_Out)
@@ -1199,15 +1197,15 @@ static void _fastcall interpcolor(int x, int y, int color)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
 		color = (int) (((long) (d2 + d3)*(long) p1.color +
-                      (long) (d1 + d3)*(long) p2.color +
-                      (long) (d1 + d2)*(long) p3.color) / D);
+                    (long) (d1 + d3)*(long) p2.color +
+                    (long) (d1 + d2)*(long) p3.color) / D);
 	}
 
 	if (0 <= x && x < xdots &&
-       0 <= y && y < ydots &&
-       0 <= color && color < colors &&
-       (transparent[1] == 0 || (int) Real_Color > transparent[1] ||
-		transparent[0] > (int) Real_Color))
+		0 <= y && y < ydots &&
+		0 <= color && color < colors &&
+		(transparent[1] == 0 || (int) Real_Color > transparent[1] ||
+			transparent[0] > (int) Real_Color))
 	{
 		if (Targa_Out)
 			/* standardplot modifies color in these types */
@@ -1309,7 +1307,7 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 	if ((evenoddrow++ & 1) == 0) /* even rows are color value */
 	{
 		for (i = 0; i < (int) linelen; i++)       /* add the fractional part in
-                                                 * odd row */
+													* odd row */
 			fraction[i] = pixels[i];
 		return 1;
 	}
@@ -1329,8 +1327,8 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 
 /**************************************************************************
 
-  Common routine for printing error messages to the screen for Targa
-	and other files
+Common routine for printing error messages to the screen for Targa
+and other files
 
 **************************************************************************/
 
@@ -1522,7 +1520,7 @@ int targa_validate(char *File_Name)
 	fclose(fp);                  /* Close the source */
 
 	T_Safe = 1;                  /* Original file successfully copied to
-                                 * targa_temp */
+									* targa_temp */
 	return 0;
 }
 
@@ -1705,10 +1703,45 @@ static int _fastcall RAY_Header(void)
 	if (RAY == 6)
 		fprintf(File_Ptr1, "--");
 	if (RAY == 7)
-		fprintf(File_Ptr1, "  0\nSECTION\n  2\nTABLES\n  0\nTABLE\n  2\nLAYER\n\
- 70\n     2\n  0\nLAYER\n  2\n0\n 70\n     0\n 62\n     7\n  6\nCONTINUOUS\n\
-  0\nLAYER\n  2\nFRACTAL\n 70\n    64\n 62\n     1\n  6\nCONTINUOUS\n  0\n\
-ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
+		fprintf(File_Ptr1,
+			"  0\n"
+			"SECTION\n"
+			"  2\n"
+			"TABLES\n"
+			"  0\n"
+			"TABLE\n"
+			"  2\n"
+			"LAYER\n"
+			" 70\n"
+			"     2\n"
+			"  0\n"
+			"LAYER\n"
+			"  2\n"
+			"0\n"
+			" 70\n"
+			"     0\n"
+			" 62\n"
+			"     7\n"
+			"  6\n"
+			"CONTINUOUS\n"
+			"  0\n"
+			"LAYER\n"
+			"  2\n"
+			"FRACTAL\n"
+			" 70\n"
+			"    64\n"
+			" 62\n"
+			"     1\n"
+			"  6\n"
+			"CONTINUOUS\n"
+			"  0\n"
+			"ENDTAB\n"
+			"  0\n"
+			"ENDSEC\n"
+			"  0\n"
+			"SECTION\n"
+			"  2\n"
+			"ENTITIES\n");
 
 	if (RAY != 7)
 		fprintf(File_Ptr1, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release / 100.);
@@ -1741,9 +1774,9 @@ ENDTAB\n  0\nENDSEC\n  0\nSECTION\n  2\nENTITIES\n");
 	/* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
 	if (RAY == 5)
 		fprintf(File_Ptr1,
-	    "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
-		"/* make z grid = 1 always for landscapes. */\n\n"
-		"grid 33 25 1\n");
+			"/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
+			"/* make z grid = 1 always for landscapes. */\n\n"
+			"grid 33 25 1\n");
 
 	if (RAY == 6)
 		fprintf(File_Ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
@@ -1796,17 +1829,17 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 
 	/* get rid of degenerate triangles: any two points equal */
 	if ((pt_t[0][0] == pt_t[1][0] &&
-		pt_t[0][1] == pt_t[1][1] &&
-		pt_t[0][2] == pt_t[1][2]) ||
-
-       (pt_t[0][0] == pt_t[2][0] &&
-		pt_t[0][1] == pt_t[2][1] &&
-		pt_t[0][2] == pt_t[2][2]) ||
-
-       (pt_t[2][0] == pt_t[1][0] &&
-		pt_t[2][1] == pt_t[1][1] &&
-		pt_t[2][2] == pt_t[1][2]))
+			pt_t[0][1] == pt_t[1][1] &&
+			pt_t[0][2] == pt_t[1][2]) ||
+		(pt_t[0][0] == pt_t[2][0] &&
+			pt_t[0][1] == pt_t[2][1] &&
+			pt_t[0][2] == pt_t[2][2]) ||
+		(pt_t[2][0] == pt_t[1][0] &&
+			pt_t[2][1] == pt_t[1][1] &&
+			pt_t[2][2] == pt_t[1][2]))
+	{
 		return 0;
+	}
 
 	/* Describe the triangle */
 	if (RAY == 1)
@@ -1885,10 +1918,10 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 		if (!BRIEF)
 		{
 			fprintf(File_Ptr1,
-                 "  TEXTURE\n"
-				 "   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
-				 "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
-                 c[0], c[1], c[2]);
+                "  TEXTURE\n"
+				"   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
+				"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
+                c[0], c[1], c[2]);
 		}
 		fprintf(File_Ptr1, "  COLOR  F_Dflt  END_OBJECT");
 		triangle_bounds(pt_t);    /* update bounding info */
@@ -2106,7 +2139,7 @@ static int first_time(int linelen, VECTOR v)
 		T_Safe = 0; /* Not safe yet to mess with the source image */
 
 	if (Targa_Out && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
-                 && g_which_image == 2))
+        && g_which_image == 2))
 	{
 		if (Targa_Overlay)
 		{
@@ -2138,7 +2171,7 @@ static int first_time(int linelen, VECTOR v)
 		sclz = -ROUGH / 100.0;
 	else
 		rscale = sclz = -0.0001;  /* if rough=0 make it very flat but plot
-                                 * something */
+									* something */
 
 	/* aspect ratio calculation - assume screen is 4 x 3 */
 	aspect = (double) xdots *.75 / (double) ydots;
@@ -2227,7 +2260,7 @@ static int first_time(int linelen, VECTOR v)
 	if (SPHERE == FALSE)         /* sphere skips this */
 	{
 		/* translate back exactly amount we translated earlier plus enough to
-       * center image so maximum values are non-positive */
+		* center image so maximum values are non-positive */
 		trans(((double) xdots - xmax - xmin) / 2,
 				((double) ydots - ymax - ymin) / 2, -zmax, m);
 
@@ -2238,7 +2271,7 @@ static int first_time(int linelen, VECTOR v)
 		trans((double) (xshift), (double) (-yshift), 0.0, m);
 
 		/* matrix m now contains ALL those transforms composed together !!
-       * convert m to long integers shifted 16 bits */
+		* convert m to long integers shifted 16 bits */
 		for (i = 0; i < 4; i++)
 			for (j = 0; j < 4; j++)
 				llm[i][j] = (long) (m[i][j]*65536.0);
@@ -2248,7 +2281,7 @@ static int first_time(int linelen, VECTOR v)
 		/* sphere stuff goes here */
 	{
 		/* Sphere is on side - north pole on right. Top is -90 degrees
-       * latitude; bottom 90 degrees */
+		* latitude; bottom 90 degrees */
 
 		/* Map X to this LATITUDE range */
 		theta1 = (float) (THETA1*PI / 180.0);
@@ -2343,7 +2376,7 @@ static int first_time(int linelen, VECTOR v)
 			R *= 65536.0;
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
-          * from being written */
+			* from being written */
 			zview = -(long) ((double) ydots*(double) ZVIEWER / 100.0);
 			radius = (double) (ydots) / 2;
 			angle = atan(-radius / (zview + radius));
@@ -2378,8 +2411,8 @@ static int first_time(int linelen, VECTOR v)
 	if (FILLTYPE == 6)           /* transform light direction */
 	{
 		/* Think of light direction  as a vector with tail at (0,0,0) and head
-       * at (light_direction). We apply the transformation to BOTH head and
-       * tail and take the difference */
+		* at (light_direction). We apply the transformation to BOTH head and
+		* tail and take the difference */
 
 		v[0] = 0.0;
 		v[1] = 0.0;
@@ -2409,7 +2442,7 @@ static int first_time(int linelen, VECTOR v)
 			v_length *= (long) (P + 600) / ((long) (ZVIEWER + 600)*2);
 
 		/* Set direct[] to point from origin[] in direction of untransformed
-       * light_direction (direct[]). */
+		* light_direction (direct[]). */
 		for (i = 0; i < 3; i++)
 			direct[i] = origin[i] + direct[i]*v_length;
 
@@ -2422,10 +2455,10 @@ static int first_time(int linelen, VECTOR v)
 		}
 
 		/* Draw light source vector and box containing it, draw_light_box will
-       * transform them if necessary. */
+		* transform them if necessary. */
 		draw_light_box(origin, direct, lightm);
 		/* draw box around original field of view to help visualize effect of
-       * rotations 1 means show box - xmin etc. do nothing here */
+		* rotations 1 means show box - xmin etc. do nothing here */
 		if (!SPHERE)
 			corners(m, 1, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
 	}
@@ -2500,8 +2533,7 @@ static int line3dmem(void)
 			/* not using extra segment so decrement check_extra */
 			check_extra -= sizeof(struct minmax)*ydots;
 			if (got_mem == NULL)
-				got_mem = (struct minmax *) (malloc(OLDMAXPIXELS *
-                                                    sizeof(struct minmax)));
+				got_mem = (struct minmax *) (malloc(OLDMAXPIXELS*sizeof(struct minmax)));
 			if (got_mem)
 				minmax_x = got_mem;
 			else

@@ -12,7 +12,7 @@
 #endif
 
 #include <ctype.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -31,7 +31,7 @@ static void julman()
 	{
 		if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
 			fprintf(fp, "%s  %s\n", fractalspecific[i].name,
-             fractalspecific[fractalspecific[i].tojulia].name);
+				fractalspecific[fractalspecific[i].tojulia].name);
 	}
 	fclose(fp);
 }
@@ -634,8 +634,8 @@ resumeloop:                             /* return here on failed overlays */
 				mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
 			}
 			if (quick_calc && (mms_value == IMAGESTART ||
-                            mms_value == RESTORESTART ||
-                            mms_value == RESTART))
+                mms_value == RESTORESTART ||
+                mms_value == RESTART))
 			{
 				quick_calc = 0;
 				usr_stdcalcmode = old_stdcalcmode;
@@ -675,17 +675,17 @@ static int look(char *stacked)
 	case FIK_ENTER_2:
 		showfile = 0;       /* trigger load */
 		browsing = TRUE;    /* but don't ask for the file name as it's
-                                * just been selected */
+                            * just been selected */
 		if (name_stack_ptr == 15)
 		{                   /* about to run off the end of the file
-                                * history stack so shift it all back one to
-                                * make room, lose the 1st one */
-				int tmp;
-				for (tmp = 1; tmp < 16; tmp++)
+                            * history stack so shift it all back one to
+                            * make room, lose the 1st one */
+			int tmp;
+			for (tmp = 1; tmp < 16; tmp++)
 			{
-                strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
+				strcpy(file_name_stack[tmp - 1], file_name_stack[tmp]);
 			}
-				name_stack_ptr = 14;
+			name_stack_ptr = 14;
 		}
 		name_stack_ptr++;
 		strcpy(file_name_stack[name_stack_ptr], browsename);
@@ -705,27 +705,27 @@ static int look(char *stacked)
 	case '\\':
 		if (name_stack_ptr >= 1)
 		{
-				/* go back one file if somewhere to go (ie. browsing) */
+			/* go back one file if somewhere to go (ie. browsing) */
+			name_stack_ptr--;
+			while (file_name_stack[name_stack_ptr][0] == '\0'
+					&& name_stack_ptr >= 0)
+			{
 				name_stack_ptr--;
-				while (file_name_stack[name_stack_ptr][0] == '\0'
-                    && name_stack_ptr >= 0)
-			{
-                name_stack_ptr--;
 			}
-				if (name_stack_ptr < 0) /* oops, must have deleted first one */
+			if (name_stack_ptr < 0) /* oops, must have deleted first one */
 			{
-                break;
+				break;
 			}
-				strcpy(browsename, file_name_stack[name_stack_ptr]);
-				merge_pathnames(readname, browsename, 2);
-				browsing = TRUE;
-				showfile = 0;
-				if (askvideo)
-				{
-                driver_stack_screen(); /* save graphics image */
-                *stacked = 1;
-				}
-				return 1;
+			strcpy(browsename, file_name_stack[name_stack_ptr]);
+			merge_pathnames(readname, browsename, 2);
+			browsing = TRUE;
+			showfile = 0;
+			if (askvideo)
+			{
+				driver_stack_screen(); /* save graphics image */
+				*stacked = 1;
+			}
+			return 1;
 		}                   /* otherwise fall through and turn off
                              * browsing */
 	case FIK_ESC:
