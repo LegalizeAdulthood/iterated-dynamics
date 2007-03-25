@@ -1547,8 +1547,12 @@ int input_field(
 		default:
 			if (nonalpha(curkey))
 			{
-				if (checkkey && (ret = (*checkkey)(curkey)) != 0)
-					goto inpfld_end;
+				if (checkkey)
+				{
+					ret = (*checkkey)(curkey);
+					if (ret != 0)
+						goto inpfld_end;
+				}
 				break;                                /* non alphanum char */
 			}
 			if (offset >= len)                /* at end of field */

@@ -721,10 +721,14 @@ static void _fastcall restart_window(int wknum)
 /* force a worklist entry to restart */
 {
 	int yfrom, yto, xfrom, xto;
-	if ((yfrom = worklist[wknum].yystart) < 0) yfrom = 0;
-	if ((xfrom = worklist[wknum].xxstart) < 0) xfrom = 0;
-	if ((yto = worklist[wknum].yystop) >= ydots) yto = ydots - 1;
-	if ((xto = worklist[wknum].xxstop) >= xdots) xto = xdots - 1;
+	yfrom = worklist[wknum].yystart;
+	if (yfrom < 0) yfrom = 0;
+	xfrom = worklist[wknum].xxstart;
+	if (xfrom < 0) xfrom = 0;
+	yto = worklist[wknum].yystop;
+	if (yto >= ydots) yto = ydots - 1;
+	xto = worklist[wknum].xxstop;
+	if (xto >= xdots) xto = xdots - 1;
 	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
 	while (yfrom <= yto)
 		put_line(yfrom++, xfrom, xto, (BYTE *)dstack);

@@ -278,8 +278,12 @@ start:
 			calcwait = 1;
 			slowcount = out = 0;
 		}
-	else if ((i=check_vidmode_keyname(buffer)) != 0)
-		out = i;
+	else
+	{
+		i = check_vidmode_keyname(buffer);
+		if (i != 0)
+			out = i;
+	}
 	if (out == -12345)
 	{
 		char msg[MSGLEN];
