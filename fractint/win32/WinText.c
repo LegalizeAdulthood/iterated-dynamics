@@ -542,7 +542,9 @@ void wintext_paintscreen(WinText *me,
 	ODS("wintext_paintscreen");
 
 	if (me->textmode != 2)  /* not in the right mode */
+	{
 		return;
+	}
 
 	/* first time through?  Initialize the 'screen' */
 	if (me->buffer_init == 0)

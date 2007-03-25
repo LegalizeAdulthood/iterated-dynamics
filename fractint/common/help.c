@@ -144,9 +144,13 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 	size = width = 0;
 
 	if (start_margin >= 0)
+	{
 		tok = TOK_PARA;
+	}
 	else
+	{
 		tok = -1;
+	}
 
 	while (1)
 	{
@@ -566,9 +570,13 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 	if (num_link > 1)
 		{
 		if (f == NULL)
+		{
 			t = val;
+		}
 		else
+		{
 			t = (*f)(link, num_link, *curr, val);
+		}
 
 		if (t >= 0 && t != *curr)
 			{
@@ -640,12 +648,18 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 				assert(num_link <= 0 || (curr_link >= 0 && curr_link < num_link));
 				}
 			else if (draw_page == 3)
+			{
 				curr_link = num_link - 1;
+			}
 			else
+			{
 				curr_link = 0;
+			}
 
 			if (num_link > 0)
+			{
 				color_link(&link_table[curr_link], C_HELP_CURLINK);
+			}
 
 			draw_page = 0;
 			}
@@ -677,7 +691,9 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 					draw_page = 1;
 					}
 				else
+				{
 					do_move_link(link_table, num_link, &curr_link, NULL, 0);
+				}
 				break;
 
 			case FIK_END:
@@ -687,7 +703,9 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 					draw_page = 3;
 					}
 				else
+				{
 					do_move_link(link_table, num_link, &curr_link, NULL, num_link-1);
+				}
 				break;
 
 			case FIK_TAB:
@@ -741,12 +759,16 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 			case FIK_BACKSPACE:   /* prev topic */
 			case FIK_ALT_F1:
 				if (flags & F_HIST)
+				{
 					action = ACTION_PREV;
+				}
 				break;
 
 			case FIK_F1:    /* help index */
 				if (!(flags & F_INDEX))
+				{
 					action = ACTION_INDEX;
+				}
 				break;
 
 			case FIK_ENTER:
@@ -816,7 +838,9 @@ int help(int action)
 	oldhelpmode = helpmode;
 
 	if (curr_hist <= 0)
+	{
 		action = ACTION_CALL;  /* make sure it isn't ACTION_PREV! */
+	}
 
 	do
 	{
@@ -824,13 +848,17 @@ int help(int action)
 		{
 		case ACTION_PREV2:
 			if (curr_hist > 0)
+			{
 				curr = hist[--curr_hist];
+			}
 
 			/* fall-through */
 
 		case ACTION_PREV:
 			if (curr_hist > 0)
+			{
 				curr = hist[--curr_hist];
+			}
 			break;
 
 		case ACTION_QUIT:
@@ -850,12 +878,18 @@ int help(int action)
 
 		flags = 0;
 		if (curr.topic_num == label[FIHELP_INDEX].topic_num)
+		{
 			flags |= F_INDEX;
+		}
 		if (curr_hist > 0)
+		{
 			flags |= F_HIST;
+		}
 
 		if (curr.topic_num >= 0)
+		{
 			action = help_topic(&curr, &next, flags);
+		}
 		else
 		{
 			if (curr.topic_num == -100)
@@ -864,7 +898,9 @@ int help(int action)
 				action = ACTION_PREV2;
 			}
 			else if (curr.topic_num == -101)
+			{
 				action = ACTION_PREV2;
+			}
 			else
 				{
 				display_page("Unknown Help Topic", NULL, 0, 0, 1, 0, NULL, NULL);
@@ -888,7 +924,9 @@ int help(int action)
 				int ctr;
 
 				for (ctr = 0; ctr < MAX_HIST-1; ctr++)
+				{
 					hist[ctr] = hist[ctr + 1];
+				}
 
 				curr_hist = MAX_HIST-1;
 			}
@@ -931,7 +969,9 @@ static int can_read_file(char *path)
 		return 1;
 	}
 	else
+	{
 		return 0;
+	}
 }
 
 static int exe_path(char *filename, char *path)
@@ -977,13 +1017,17 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
 		curr_base += sizeof(int) + t*3*sizeof(int); /* skip page info */
 
 		if (t > 0)
+		{
 			help_seek(curr_base);
+		}
 		fread(&ch, sizeof(char), 1, help_file);                  /* read title_len */
 		t = ch;
 		curr_base += 1 + t;                       /* skip title */
 
 		if (t > 0)
+		{
 			help_seek(curr_base);
+		}
 		fread(&curr_len, sizeof(int), 1, help_file); /* read topic len */
 		curr_base += sizeof(int);
 		}
@@ -1056,7 +1100,9 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
 	while (n-- > 0)
 		{
 		if (c == ' ')
+		{
 			++info->spaces;
+		}
 
 		else if (c == '\n' || c == '\f')
 			{
@@ -1089,12 +1135,16 @@ static void printers(PRINT_DOC_INFO *info, char *s, int n)
 	if (n > 0)
 		{
 		while (n-- > 0)
+		{
 			printerc(info, *s++, 1);
+		}
 		}
 	else
 		{
 		while (*s != '\0')
+		{
 			printerc(info, *s++, 1);
+		}
 		}
 	}
 
@@ -1108,7 +1158,9 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 		{
 		case PD_GET_CONTENT:
 			if (++info->cnum >= info->num_contents)
+			{
 				return 0;
+			}
 
 			help_seek(info->content_pos);
 
@@ -1150,7 +1202,9 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 		case PD_GET_TOPIC:
 			if (++info->tnum >= info->num_topic)
+			{
 				return 0;
+			}
 
 			t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
 
@@ -1184,9 +1238,13 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			int  keep_going;
 
 			if (info->msg_func != NULL)
+			{
 				keep_going = (*info->msg_func)(pd->pnum, info->num_page);
+			}
 			else
+			{
 				keep_going = 1;
+			}
 
 			info->margin = 0;
 
@@ -1285,7 +1343,9 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		{
 		key = driver_get_key();
 		if (key == FIK_ESC)
+		{
 			return 0;    /* user abort */
+		}
 		}
 
 	return 1;   /* AOK -- continue */
@@ -1326,7 +1386,9 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
 	info.msg_func = msg_func;
 
 	if (msg_func != NULL)
+	{
 		msg_func(0, info.num_page);   /* initialize */
+	}
 
 	if (save_extraseg)
 	{
@@ -1388,7 +1450,9 @@ ErrorAbort:
 		stopmsg(STOPMSG_NO_STACK, msg);
 	}
 	else if (msg_func != NULL)
+	{
 		msg_func((success) ? -1 : -2, info.num_page);
+	}
 }
 
 int init_help(void)

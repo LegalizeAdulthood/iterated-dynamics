@@ -333,7 +333,7 @@ long multiply(long x, long y, int n)
 ;       color which is reasonably bright and reasonably grey.
 */
 void
-find_special_colors (void)
+find_special_colors(void)
 {
 	int maxb = 0;
 	int minb = 9999;
@@ -604,7 +604,9 @@ adapter_detect(void)
 	static int done_detect = 0;
 
 	if (done_detect)
+	{
 		return;
+	}
 	done_detect = 1;
 }
 
@@ -887,7 +889,9 @@ ods(const char *file, unsigned int line, const char *format, ...)
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+	{
 		return;
+	}
 	_ASSERTE(lineread);
 	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -904,7 +908,9 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+	{
 		return;
+	}
 	_ASSERTE(linewrite);
 	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
 }
@@ -1004,7 +1010,9 @@ int getcolor(int xdot, int ydot)
 	_ASSERTE(x1 >= 0 && x1 <= sxdots);
 	_ASSERTE(y1 >= 0 && y1 <= sydots);
 	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+	{
 		return 0;
+	}
 	_ASSERTE(dotread);
 	return (*dotread)(x1, y1);
 }

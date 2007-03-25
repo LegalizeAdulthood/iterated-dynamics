@@ -77,9 +77,13 @@ void SetAspect(double aspect)
 	if (aspect != 1.0)
 	{
 		if (aspect > 1.0)
+		{
 			yAspect = (unsigned int)(65536.0 / aspect);
+		}
 		else
+		{
 			xAspect = (unsigned int)(65536.0*aspect);
+		}
 	}
 }
 
@@ -87,12 +91,18 @@ void _fastcall c_putcolor(int x, int y, int color)
 	{
 	/* avoid writing outside window */
 	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+	{
 		return ;
+	}
 	if (y >= sydots - show_numbers) /* avoid overwriting coords */
+	{
 		return;
+	}
 	if (windows == 2) /* avoid overwriting fractal */
 		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+		{
 			return;
+		}
 	putcolor(x, y, color);
 	}
 
@@ -101,24 +111,38 @@ int  c_getcolor(int x, int y)
 	{
 	/* avoid reading outside window */
 	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+	{
 		return 1000;
+	}
 	if (y >= sydots - show_numbers) /* avoid overreading coords */
+	{
 		return 1000;
+	}
 	if (windows == 2) /* avoid overreading fractal */
 		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+		{
 			return 1000;
+		}
 	return getcolor(x, y);
 	}
 
 void circleplot(int x, int y, int color)
 {
 	if (xAspect == 0)
+	{
 		if (yAspect == 0)
+		{
 			c_putcolor(x + xbase, y + ybase, color);
+		}
 		else
+		{
 			c_putcolor(x + xbase, (short)(ybase + (((long) y*(long) yAspect) >> 16)), color);
+		}
+	}
 	else
+	{
 		c_putcolor((int)(xbase + (((long) x*(long) xAspect) >> 16)), y + ybase, color);
+	}
 }
 
 void plot8(int x, int y, int color)
@@ -144,7 +168,9 @@ void circle(int radius, int color)
 	while (x <= y)
 	{
 		if (!(x & 1))   /* plot if x is even */
+		{
 			plot8(x >> 1, (y + 1) >> 1, color);
+		}
 		sum += (x << 1) + 1;
 		x++;
 		if (sum > 0)
@@ -176,12 +202,16 @@ static void fillrect(int x, int y, int width, int height, int color)
 {
 	/* fast version of fillrect */
 	if (hasinverse == 0)
+	{
 		return;
+	}
 	memset(dstack, color % colors, width);
 	while (height-- > 0)
 	{
 		if (driver_key_pressed()) /* we could do this less often when in fast modes */
+		{
 			return;
+		}
 		putrow(x, y++, width, (char *)dstack);
 	}
 }
@@ -238,7 +268,9 @@ int Init_Queue(unsigned long request)
 	{
 		largest = xmmlongest();
 		if (largest > request / 128)
+		{
 			request   = (unsigned long) largest*128L;
+		}
 	}
 #endif
 
@@ -320,7 +352,9 @@ PopFloat()
 	{
 		ListFront--;
 		if (ListFront < 0)
+		{
 			ListFront = ListSize - 1;
+		}
 		if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
 			FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
 		{
@@ -452,7 +486,9 @@ static void RestoreRect(int x, int y, int width, int height)
 	int  yoff;
 
 	if (hasinverse == 0)
+	{
 		return;
+	}
 
 	Cursor_Hide();
 	for (yoff =0; yoff < height; yoff++)
@@ -792,7 +828,9 @@ void Jiim(int which)         /* called by fractint */
 				case 'h':   /* hide fractal toggle */
 				case 'H':   /* hide fractal toggle */
 					if (windows == 2)
+					{
 						windows = 3;
+					}
 					else if (windows == 3 && xd == sxdots)
 					{
 						RestoreRect(0, 0, xdots, ydots);
@@ -1093,7 +1131,9 @@ void Jiim(int which)         /* called by fractint */
 					if (iter > 10)
 					{
 						if (mode == 0)                        /* pixels  */
+						{
 							c_putcolor(x, y, color);
+						}
 						else if (mode & 1)            /* circles */
 						{
 							xbase = x;
@@ -1112,7 +1152,9 @@ void Jiim(int which)         /* called by fractint */
 					break;
 				case 8:                     /* go in long zig zags */
 					if (rancnt >= 300)
+					{
 						rancnt = -300;
+					}
 					if (rancnt < 0)
 					{
 						g_new.x = -g_new.x;
@@ -1134,9 +1176,13 @@ void Jiim(int which)         /* called by fractint */
 						{
 							rancnt = 0;
 							if (rand() % 2)
+							{
 								randir =  1;
+							}
 							else
+							{
 								randir = -1;
+							}
 						}
 						break;
 					case 1:             /* now go negative dir for a while */
@@ -1145,7 +1191,9 @@ void Jiim(int which)         /* called by fractint */
 						/* fall through */
 					case -1:            /* now go positive dir for a while */
 						if (++rancnt > 512)
+						{
 							randir = rancnt = 0;
+						}
 						break;
 					}
 					x = (int)(g_new.x*xfactor*zoom + xoff);

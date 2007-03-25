@@ -218,9 +218,13 @@ short decoder(short linewidth)
 
 	size = (short) get_byte();
 	if (size < 0)
+	{
 		return size;
+	}
 	if (size < 2 || 9 < size)
+	{
 		return BAD_CODE_SIZE;
+	}
 
 	curr_size = (short) (size + 1);
 	top_slot = (short) (1 << curr_size);
@@ -254,7 +258,9 @@ short decoder(short linewidth)
 
 		/* If we had a file error, return without completing the decode */
 		if (c < 0)
+		{
 			return 0;
+		}
 
 		/* If the code is a clear code, reinitialize all necessary items. */
 		if (c == clear)
@@ -275,14 +281,18 @@ short decoder(short linewidth)
 			/* If we get an ending code immediately after a clear code (Yet
 			* another unlikely case), then break out of the loop. */
 			if (c == ending)
+			{
 				break;
+			}
 
 			/* Finally, if the code is beyond the range of already set codes,
 			* (This one had better NOT happen...   I have no idea what will
 			* result from this, but I doubt it will look good...) then set it
 			* to color zero. */
 			if (c >= slot)
+			{
 				c = 0;
+			}
 
 			out_value = (BYTE) (old_code = c);
 
@@ -340,11 +350,15 @@ short decoder(short linewidth)
 						{
 							ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
 							if (ret < 0)
+							{
 								return ret;
+							}
 							yskip = skipydots;
 						}
 						if (driver_key_pressed())
+						{
 							return -1;
+						}
 						bufptr = decoderline;
 						bufcnt = linewidth;
 						xskip = 0;
@@ -364,7 +378,9 @@ short decoder(short linewidth)
 			* I'm not certain if this is correct... it might be more proper to
 			* overwrite the last code... */
 			if (fastloop == NOPE)
+			{
 				*sp++ = (BYTE) code;
+			}
 
 			if (slot < top_slot)
 			{
@@ -374,11 +390,13 @@ short decoder(short linewidth)
 				old_code = c;
 			}
 			if (slot >= top_slot)
+			{
 				if (curr_size < 12)
 				{
 					top_slot <<= 1;
 					++curr_size;
 				}
+			}
 		}
 		while (sp > dstack)
 		{
@@ -394,11 +412,15 @@ short decoder(short linewidth)
 				{
 					ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
 					if (ret < 0)
+					{
 						return ret;
+					}
 					yskip = skipydots;
 				}
 				if (driver_key_pressed())
+				{
 					return -1;
+				}
 				bufptr = decoderline;
 				bufcnt = linewidth;
 				xskip = 0;
@@ -430,9 +452,13 @@ static short get_next_code()
 			pbytes = byte_buff;
 			navail_bytes = (short) get_byte();
 			if (navail_bytes < 0)
+			{
 				return navail_bytes;
+			}
 			else if (navail_bytes)
+			{
 				get_bytes(byte_buff, navail_bytes);
+			}
 		}
 		b1 = *pbytes++;
 		nbits_left = 8;
@@ -449,9 +475,13 @@ static short get_next_code()
 			pbytes = byte_buff;
 			navail_bytes = (short) get_byte();
 			if (navail_bytes < 0)
+			{
 				return navail_bytes;
+			}
 			else if (navail_bytes)
+			{
 				get_bytes(byte_buff, navail_bytes);
+			}
 		}
 		b1 = *pbytes++;
 		ret_code |= b1 << nbits_left;

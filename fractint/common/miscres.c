@@ -106,13 +106,21 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 	/* find decimal point */
 	for (decpt = 0; decpt < length; decpt++)
 		if (str[decpt] == '.')
+		{
 			break;
+		}
 	if (decpt >= length)
+	{
 		decpt = 0;
+	}
 	if (decpt < padding)
+	{
 		padding -= decpt;
+	}
 	else
+	{
 		padding = 0;
+	}
 	col1 += padding;
 	decpt += col1 + 1; /* column just past where decimal is */
 	while (length > 0)
@@ -120,26 +128,38 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 		if (col2-col1 < length)
 		{
 			if ((*row - startrow + 1) >= maxrow)
+			{
 				done = 1;
+			}
 			else
+			{
 				done = 0;
+			}
 			save1 = str[col2-col1 + 1];
 			save2 = str[col2-col1 + 2];
 			if (done)
+			{
 				str[col2-col1 + 1]   = '+';
+			}
 			else
+			{
 				str[col2-col1 + 1]   = '\\';
+			}
 			str[col2-col1 + 2] = 0;
 			driver_put_string(*row, col1, color, str);
 			if (done == 1)
+			{
 				break;
+			}
 			str[col2-col1 + 1] = save1;
 			str[col2-col1 + 2] = save2;
 			str += col2-col1;
 			(*row)++;
 		}
 		else
+		{
 			driver_put_string(*row, col1, color, str);
+		}
 		length -= col2-col1;
 		col1 = decpt; /* align with decimal */
 	}
@@ -240,7 +260,9 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 			sqr(tymax - yymax) +
 			sqr(ty3rd - yy3rd);
 		if (error > .001)
+		{
 			showcornersdbl("cvtcentermag problem");
+		}
 		xxmin = txmin;
 		xxmax = txmax;
 		xx3rd = tx3rd;
@@ -261,7 +283,9 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 	double tanskew, sinrot, cosrot;
 
 	if (Xmagfactor == 0.0)
+	{
 		Xmagfactor = 1.0;
+	}
 
 	h = (double)(1/Magnification);
 	w = h / (DEFAULTASPECT*Xmagfactor);
@@ -379,7 +403,9 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		/* atan2() only depends on the ratio, this puts it in double's range */
 		signx = sign(tmpx1);
 		if (signx)
+		{
 			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy / |tmpx| */
+		}
 		*Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
 
 		/* tmpx = xxmin - xx3rd; */
@@ -441,7 +467,9 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	bfw = alloc_stack(bflength + 2);
 
 	if (Xmagfactor == 0.0)
+	{
 		Xmagfactor = 1.0;
+	}
 
 	h = 1/Magnification;
 	floattobf(bfh, h);
@@ -528,22 +556,32 @@ void updatesavename(char *filename) /* go to the next file name */
 
 	hold = fname + strlen(fname) - 1; /* start at the end */
 	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
+	{
 		hold--;
+	}
 	hold++;                      /* recover first digit */
 	while (*hold == '0')         /* skip leading zeros */
+	{
 		hold++;
+	}
 	save = hold;
 	while (*save)  /* check for all nines */
 	{
 		if (*save != '9')
+		{
 			break;
+		}
 		save++;
 		}
 	if (!*save)                  /* if the whole thing is nines then back */
+	{
 		save = hold - 1;          /* up one place. Note that this will eat */
+	}
 								/* your last letter if you go to far.    */
 	else
+	{
 		save = hold;
+	}
 	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
 	makepath(filename, drive, dir, fname, ext);
 }
@@ -614,7 +652,9 @@ void showtrig(char *buf) /* return display form of active trig functions */
 	*buf = 0; /* null string if none */
 	trigdetails(tmpbuf);
 	if (tmpbuf[0])
+	{
 		sprintf(buf, " function=%s", tmpbuf);
+	}
 }
 
 static void trigdetails(char *buf)
@@ -622,9 +662,13 @@ static void trigdetails(char *buf)
 	int i, numfn;
 	char tmpbuf[20];
 	if (fractype == JULIBROT || fractype == JULIBROTFP)
+	{
 		numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
+	}
 	else
+	{
 		numfn = (curfractalspecific->flags >> 6) & 7;
+	}
 	if (curfractalspecific == &fractalspecific[FORMULA] ||
 		curfractalspecific == &fractalspecific[FFORMULA])
 		numfn = maxfn;
@@ -652,7 +696,9 @@ int set_trig_array(int k, char *name)
 
 	slash = strchr(trigname, '/');
 	if (slash != NULL)
+	{
 		*slash = 0;
+	}
 
 	strlwr(trigname);
 
@@ -703,7 +749,9 @@ void set_trig_pointers(int which)
 		break;
 	default: /* do 'em all */
 		for (i = 0; i < 4; i++)
+		{
 			set_trig_pointers(i);
+		}
 		break;
 	}
 }
@@ -722,13 +770,17 @@ void get_calculation_time(char *msg, long ctime)
 			(ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
 	}
 	else
+	{
 		strcpy(msg, "A long time! (> 24.855 days)");
+	}
 }
 
 static void show_str_var(char *name, char *var, int *row, char *msg)
 {
 	if (var == NULL)
+	{
 		return;
+	}
 	if (*var != 0)
 	{
 		sprintf(msg, "%s=%s", name, var);
@@ -1218,17 +1270,27 @@ top:
 					col = 9;
 				}
 				else
+				{
 					col = -1;
+				}
 				if (k == 0) /* only true with first displayed parameter */
+				{
 					driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
+				}
 				sprintf(msg, "%3d: ", i + 1);
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
 				if (*p == '+')
+				{
 					sprintf(msg, "%-12d", (int)param[i]);
+				}
 				else if (*p == '#')
+				{
 					sprintf(msg, "%-12lu", (U32)param[i]);
+				}
 				else
+				{
 					sprintf(msg, "%-12.9f", param[i]);
+				}
 				driver_put_string(-1, -1, C_GENERAL_HI, msg);
 				k++;
 			}
@@ -1340,8 +1402,12 @@ int endswithslash(char *fl)
 	int len;
 	len = (int) strlen(fl);
 	if (len)
+	{
 		if (fl[--len] == SLASHC)
+		{
 			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -1353,15 +1419,21 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 	while (1)
 	{
 		if (file_gets(buf, 200, ifsfile) < 0)
+		{
 			return NULL;
+		}
 		else
 		{
 			bufptr = strchr(buf, ';');
 			if (bufptr != NULL) /* use ';' as comment to eol */
+			{
 				*bufptr = 0;
+			}
 			bufptr = strtok(buf, seps);
 			if (bufptr != NULL)
+			{
 				return bufptr;
+			}
 		}
 	}
 }
@@ -1385,11 +1457,15 @@ int ifsload()                   /* read in IFS parameters */
 	ifs_type = 0;
 	rowsize = IFSPARM;
 	if (find_file_item(IFSFileName, IFSName, &ifsfile, 3) < 0)
+	{
 		return -1;
+	}
 
 	file_gets(buf, 200, ifsfile);
 	if ((bufptr = strchr(buf, ';')) != NULL) /* use ';' as comment to eol */
+	{
 		*bufptr = 0;
+	}
 
 	strlwr(buf);
 	bufptr = &buf[0];
@@ -1404,13 +1480,17 @@ int ifsload()                   /* read in IFS parameters */
 		}
 
 	for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
+	{
 		((float *)tstack)[i] = 0;
+	}
 	i = ret = 0;
 	bufptr = get_ifs_token(buf, ifsfile);
 	while (bufptr != NULL)
 	{
 		if (sscanf(bufptr, " %f ", &((float *)tstack)[i]) != 1)
+		{
 			break ;
+		}
 		if (++i >= NUMIFS*rowsize)
 		{
 				stopmsg(0, "IFS definition has too many lines");
@@ -1428,9 +1508,13 @@ int ifsload()                   /* read in IFS parameters */
 			}
 		}
 		if (ret == -1)
+		{
 			break;
+		}
 		if (*bufptr == '}')
+		{
 			break;
+		}
 	}
 
 	if ((i % rowsize) != 0 || *bufptr != '}')
@@ -1456,7 +1540,9 @@ int ifsload()                   /* read in IFS parameters */
 		}
 		else
 			for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
+			{
 				ifs_defn[i] = ((float *)tstack)[i];
+			}
 	}
 	return ret;
 }
@@ -1676,9 +1762,13 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	}
 	/* found file */
 	if (fileptr != NULL)
+	{
 		*fileptr = infile;
+	}
 	else if (infile != NULL)
+	{
 		fclose(infile);
+	}
 	return 0;
 }
 
@@ -1720,10 +1810,16 @@ int _cdecl _matherr(struct exception *except)
 	{
 		static FILE *fp=NULL;
 		if (matherr_ct++ == 0)
+		{
 			if (debugflag == 4000 || debugflag == 3200)
+			{
 				stopmsg(0, "Math error, but we'll try to keep going");
+			}
+		}
 		if (fp == NULL)
+		{
 			fp = fopen("matherr", "w");
+		}
 		if (matherr_ct < 100)
 		{
 			fprintf(fp, "err #%d:  %d\nname: %s\narg:  %e\n",
@@ -1731,7 +1827,9 @@ int _cdecl _matherr(struct exception *except)
 			fflush(fp);
 		}
 		else
+		{
 			matherr_ct = 100;
+		}
 	}
 	if (except->type == DOMAIN)
 	{
@@ -1806,7 +1904,9 @@ double fixtan(double x)
 
 	y = tan(x);
 	if ((x > -PI/2 && x < 0 && y > 0) || (x > 0 && x < PI/2 && y < 0))
+	{
 		y = -y;
+	}
 	return y;
 	}
 #define tan fixtan

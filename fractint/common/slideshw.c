@@ -62,7 +62,9 @@ static int get_scancode(char *mn)
 	i = 0;
 	for (i = 0; i< stop; i++)
 		if (strcmp((char *)mn, scancodes[i].mnemonic) == 0)
+		{
 			break;
+		}
 	return scancodes[i].code;
 }
 
@@ -132,7 +134,9 @@ int slideshw()
 	if (calcwait)
 	{
 		if (calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
+		{
 			return 0; /* wait for calc to finish before reading more keystrokes */
+		}
 		calcwait = 0;
 	}
 	if (fpss == NULL)   /* open files first time through */
@@ -145,7 +149,9 @@ int slideshw()
 	if (ticks) /* if waiting, see if waited long enough */
 	{
 		if (clock_ticks() - starttick < ticks) /* haven't waited long enough */
+		{
 			return 0;
+		}
 		ticks = 0;
 	}
 	if (++slowcount <= 18)
@@ -153,7 +159,9 @@ int slideshw()
 		starttick = clock_ticks();
 		ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
 		if (slowcount > 10)
+		{
 			ticks /= 2;
+		}
 	}
 	if (repeats > 0)
 	{
@@ -165,7 +173,9 @@ start:
 	{
 		out = fgetc(fpss);
 		if (out != '\"' && out != EOF)
+		{
 			return last1 = out;
+		}
 		quotes = 0;
 	}
 	/* skip white space: */
@@ -198,17 +208,25 @@ start:
 	while (1) /* get a token */
 	{
 		if (i < 80)
+		{
 			buffer[i++] = (char)out;
+		}
 		out=fgetc(fpss);
 		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
+		{
 			break;
+		}
 	}
 	buffer[i] = 0;
 	if (buffer[i-1] == ':')
+	{
 		goto start;
+	}
 	out = -12345;
 	if (isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
-			out=atoi(buffer);
+	{
+		out=atoi(buffer);
+	}
 	else if (strcmp((char *)buffer, "MESSAGE") == 0)
 		{
 			int secs;
@@ -255,7 +273,9 @@ start:
 			}
 		}
 	else if ((i = get_scancode(buffer)) > 0)
+	{
 			out = i;
+	}
 	else if (strcmp("WAIT", (char *)buffer) == 0)
 		{
 			float fticks;
@@ -282,7 +302,9 @@ start:
 	{
 		i = check_vidmode_keyname(buffer);
 		if (i != 0)
+		{
 			out = i;
+		}
 	}
 	if (out == -12345)
 	{
@@ -299,7 +321,9 @@ startslideshow()
 {
 	fpss=fopen(autoname, "r");
 	if (fpss == NULL)
+	{
 		g_slides = SLIDES_OFF;
+	}
 	ticks = 0;
 	quotes = 0;
 	calcwait = 0;
@@ -310,7 +334,9 @@ startslideshow()
 void stopslideshow()
 {
 	if (fpss)
+	{
 		fclose(fpss);
+	}
 	fpss = NULL;
 	g_slides = SLIDES_OFF;
 }
@@ -325,7 +351,9 @@ void recordshw(int key)
 	{
 		fpss=fopen(autoname, "w");
 		if (fpss == NULL)
+		{
 			return;
+		}
 	}
 	dt = ticks-dt;
 	dt /= CLK_TCK;  /* dt now in seconds */
@@ -356,15 +384,19 @@ void recordshw(int key)
 		}
 		get_mnemonic(key, mn);
 		if (*mn)
-          fprintf(fpss, "%s", mn);
+		{
+			fprintf(fpss, "%s", mn);
+		}
 		else if (check_vidmode_key(0, key) >= 0)
-			{
-				char buf[10];
-				vidmode_keyname(key, buf);
-				fprintf(fpss, buf);
-			}
+		{
+			char buf[10];
+			vidmode_keyname(key, buf);
+			fprintf(fpss, buf);
+		}
 		else /* not ASCII and not FN key */
+		{
 			fprintf(fpss, "%4d", key);
+		}
 		fputc('\n', fpss);
 	}
 }

@@ -52,7 +52,9 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 	dY = Y2 - Y1;
 	pos_slope = (char)(dX > 0);                   /* is slope positive? */
 	if (dY < 0)
-	pos_slope = (char)!pos_slope;
+	{
+		pos_slope = (char)!pos_slope;
+	}
 	if (abs (dX) > abs (dY))                /* shallow line case */
 	{
 		if (dX > 0)         /* determine start point and last column */
@@ -169,7 +171,9 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 		color = colors - color; /*  Reverses color order */
 		color = color / 4;
 		if (color == 0)
+		{
 			color = 1;
+		}
 	}
 	color = 3;
 	tmp = getcolor(x, y);
@@ -212,24 +216,34 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 	{
 		color = PAL_RED;
 		if (tmp > 0 && tmp != color)
+		{
 			color = PAL_MAGENTA;
+		}
 		if (red_local_left < x && x < red_local_right)
 		{
 			putcolor(x, y, color);
 			if (Targa_Out)
+			{
               	targa_color(x, y, color);
+			}
 		}
 	}
 	else if (g_which_image == 2) /* BLUE */
+	{
 		if (blue_local_left < x && x < blue_local_right)
 		{
 			color = PAL_BLUE;
 			if (tmp > 0 && tmp != color)
+			{
 				color = PAL_MAGENTA;
+			}
 			putcolor(x, y, color);
 			if (Targa_Out)
+			{
 				targa_color(x, y, color);
+			}
 		}
+	}
 }
 
 
@@ -244,9 +258,13 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	{
 		color = colors - color; /*  Reverses color order */
 		if (max_colors == 236)
+		{
 			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+		}
 		else
+		{
 			color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
+		}
 	}
 
 	tmp = getcolor(x, y);
@@ -260,13 +278,18 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
+				{
 					targa_color(x, y, color|(tmp&240));
+				}
 				else
+				{
 					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+				}
 			}
 		}
 	}
 	else if (g_which_image == 2) /* BLUE */
+	{
 		if (blue_local_left < x && x < blue_local_right)
 		{
 			/* Overwrite previous blue, don't mess with existing red */
@@ -275,7 +298,9 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			if (Targa_Out)
 			{
               	if (!ILLUMINE)
+				{
 					targa_color(x, y, color|(tmp&15));
+				}
 				else
 				{
 					targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
@@ -283,6 +308,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 			}
 		}
+	}
 }
 
 void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
@@ -297,10 +323,14 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		/* my mind is fried - lower indices = darker colors is EASIER! */
 		color = colors - color; /*  Reverses color order */
 		if (max_colors == 236)
+		{
 			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
+		}
 		else
+		{
 			color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
 									relatively even ranges */
+		}
 	}
 
 	tmp = getcolor(x, y);
@@ -313,9 +343,13 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
+				{
 					targa_color(x, y, color|tmp);
+				}
 				else
+				{
 					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+				}
           		}
 		}
 	}
@@ -327,7 +361,9 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
+				{
 					targa_color(x, y, color|tmp);
+				}
 				else
 				{
 					targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
@@ -355,9 +391,13 @@ void _fastcall plot3dalternate(int x, int y, int color)
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
+				{
 					targa_color(x, y, color >> 1);
+				}
 				else
+				{
 					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+				}
 			}
 		}
 	}
@@ -368,10 +408,14 @@ void _fastcall plot3dalternate(int x, int y, int color)
 			putcolor(x, y, (color >> 1) + (colors >> 1));
 			if (Targa_Out)
 			{
-              	if (!ILLUMINE)
-                  	targa_color(x, y, (color >> 1) + (colors >> 1));
-              	else
-                  	targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+				if (!ILLUMINE)
+				{
+					targa_color(x, y, (color >> 1) + (colors >> 1));
+				}
+				else
+				{
+					targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+				}
 			}
 		}
 	}
@@ -382,11 +426,17 @@ void _fastcall plot3dcrosseyedA(int x, int y, int color)
 	x /= 2;
 	y /= 2;
 	if (g_which_image == 2)
+	{
 		x += xdots/2;
+	}
 	if (g_row_count >= ydots/2)
+	{
 		/* hidden surface kludge */
 		if (getcolor(x, y) != 0)
+		{
 			return;
+		}
+	}
 	putcolor(x, y, color);
 }
 
@@ -395,16 +445,22 @@ void _fastcall plot3dcrosseyedB(int x, int y, int color)
 	x /= 2;
 	y /= 2;
 	if (g_which_image == 2)
+	{
 		x += xdots/2;
+	}
 	putcolor(x, y, color);
 }
 
 void _fastcall plot3dcrosseyedC(int x, int y, int color)
 {
 	if (g_row_count >= ydots/2)
+	{
 		/* hidden surface kludge */
 		if (getcolor(x, y) != 0)
+		{
 			return;
+		}
+	}
 	putcolor(x, y, color);
 }
 
@@ -423,26 +479,42 @@ void plot_setup()
 
 	case STEREO_SUPERIMPOSE:
 		if (colors == 256)
+		{
 			if (fractype != IFS3D)
-              	standardplot = plot3dsuperimpose256;
+			{
+				standardplot = plot3dsuperimpose256;
+			}
 			else
-              	standardplot = plotIFS3dsuperimpose256;
+			{
+				standardplot = plotIFS3dsuperimpose256;
+			}
+		}
 		else
+		{
 				standardplot = plot3dsuperimpose16;
+		}
 		break;
 
 	case 4: /* crosseyed mode */
 		if (sxdots < 2*xdots)
 		{
-         	if (XROT == 0 && YROT == 0)
-            	standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
-         	else
-            	standardplot = plot3dcrosseyedB;
+			if (XROT == 0 && YROT == 0)
+			{
+				standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
+			}
+			else
+			{
+				standardplot = plot3dcrosseyedB;
+			}
 		}
 		else if (XROT == 0 && YROT == 0)
-         	standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
+		{
+			standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
+		}
 		else
-         	standardplot = putcolor;
+		{
+			standardplot = putcolor;
+		}
 		break;
 
 	default:
@@ -470,19 +542,25 @@ void plot_setup()
 			xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
 			xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+			{
 				sxoffs = sxdots / 2 - xdots;
+			}
 			break;
 
 		case 2:
 			xshift  -= (int)((g_eye_separation* (double)xdots)/200);
 			xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+			{
 				sxoffs = sxdots / 2;
+			}
 			break;
 		}
 	}
 	else
+	{
 		xxadjust = (int)((xtrans* (double)xdots)/100);
+	}
 	yyadjust = (int)(-(ytrans* (double)ydots)/100);
 
 	if (mapset)

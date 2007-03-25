@@ -72,26 +72,36 @@ static int restore_bf_vars(void);
 /*********************************************************************/
 /* given bnlength, calc_lengths will calculate all the other lengths */
 void calc_lengths(void)
-	{
+{
 #if 0
 #ifdef USE_BIGNUM_C_CODE
 	bnstep = 2;
 #else /* use 80x86 asm code */
 	if (cpu >= 386)
+	{
 		bnstep = 4;
+	}
 	else /* cpu <= 286 */
+	{
 		bnstep = 2;
+	}
 #endif
 #else
 		bnstep = 4;  /* use 4 in all cases */
 #endif
 
 	if (bnlength % bnstep != 0)
+	{
 		bnlength = (bnlength / bnstep + 1)*bnstep;
+	}
 	if (bnlength == bnstep)
+	{
 		padding = bnlength;
+	}
 	else
+	{
 		padding = 2*bnstep;
+	}
 	rlength = bnlength + padding;
 
 	/* This shiftfactor assumes non-full multiplications will be performed.*/
@@ -101,7 +111,7 @@ void calc_lengths(void)
 	bflength = bnlength + bnstep; /* one extra step for added precision */
 	rbflength = bflength + padding;
 	bfdecimals = (int)((bflength-2)*LOG10_256);
-	}
+}
 
 /************************************************************************/
 /* intended only to be called from init_bf_dec() or init_bf_length().   */
@@ -113,7 +123,7 @@ long maxstack = 0;
 int bf_save_len = 0;
 
 static void init_bf_2(void)
-	{
+{
 	int i;
 	long ptr;
 	save_bf_vars(); /* copy corners values for conversion */
@@ -123,17 +133,23 @@ static void init_bf_2(void)
 	bnroot = (bf_t) &s_storage[0];
 
 	/* at present time one call would suffice, but this logic allows
-       multiple kinds of alternate math eg long double */
+		multiple kinds of alternate math eg long double */
 	i = find_alternate_math(fractype, BIGNUM);
 	if (i > -1)
-       bf_math = alternatemath[i].math;
+	{
+		bf_math = alternatemath[i].math;
+	}
 	else
 	{
 		i = find_alternate_math(fractype, BIGFLT);
 		if (i > -1)
+		{
 			bf_math = alternatemath[i].math;
+		}
 		else
+		{
 			bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
+		}
 	}
 	floatflag = 1;
 
@@ -267,41 +283,43 @@ static void init_bf_2(void)
 /* call to init_big_pi() has been moved to fractal setup routine */
 /* so as to use only when necessary. */
 
-	}
+}
 
 
 /**********************************************************/
 /* save current corners and parameters to start of bnroot */
 /* to preserve values across calls to init_bf()           */
 static int save_bf_vars(void)
-	{
+{
 	int ret;
 	unsigned int mem;
 	if (bnroot != BIG_NULL)
-		{
+	{
 		mem = (bflength + 2)*22;  /* 6 corners + 6 save corners + 10 params */
 		bf_save_len = bflength;
 		memcpy(bnroot, bfxmin, mem);
 		/* scrub old high area */
 		memset(bfxmin, 0, mem);
 		ret = 0;
-		}
+	}
 	else
-		{
+	{
 		bf_save_len = 0;
 		ret = -1;
-		}
-	return ret;
 	}
+	return ret;
+}
 
 /************************************************************************/
 /* copy current corners and parameters from save location               */
 static int restore_bf_vars(void)
-	{
+{
 	bf_t ptr;
 	int i;
 	if (bf_save_len == 0)
+	{
 		return -1;
+	}
 	ptr  = bnroot;
 	convert_bf(bfxmin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 	convert_bf(bfxmax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
@@ -310,10 +328,10 @@ static int restore_bf_vars(void)
 	convert_bf(bfx3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 	convert_bf(bfy3rd, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 	for (i = 0; i < 10; i++)
-		{
+	{
 		convert_bf(bfparms[i], ptr, bflength, bf_save_len);
 		ptr += bf_save_len + 2;
-		}
+	}
 	convert_bf(bfsxmin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 	convert_bf(bfsxmax, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
 	convert_bf(bfsymin, ptr, bflength, bf_save_len); ptr += bf_save_len + 2;
@@ -324,57 +342,59 @@ static int restore_bf_vars(void)
 	/* scrub save area */
 	memset(bnroot, 0, (bf_save_len + 2)*22);
 	return 0;
-	}
+}
 
 /*******************************************/
 /* free corners and parameters save memory */
 void free_bf_vars()
-	{
+{
 	bf_save_len = bf_math = 0;
 	bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals = 0;
 	bflength=rbflength=bfdecimals = 0;
-	}
+}
 
 /************************************************************************/
 /* Memory allocator routines start here.                                */
 /************************************************************************/
 /* Allocates a bn_t variable on stack                                   */
 bn_t alloc_stack(size_t size)
-	{
+{
 	long stack_addr;
 	if (bf_math == 0)
-		{
+	{
 		stopmsg(0, "alloc_stack called with bf_math==0");
 		return 0;
-		}
+	}
 	stack_addr = (long)((stack_ptr-bnroot) + size); /* +ENDVID, part of bnroot */
 
 	if (stack_addr > maxstack)
-		{
+	{
 		stopmsg(0, "Aborting, Out of Bignum Stack Space");
 		goodbye();
-		}
+	}
 	/* keep track of max ptr */
 	if (stack_addr > maxptr)
+	{
 		maxptr = stack_addr;
+	}
 	stack_ptr += size;   /* increment stack pointer */
 	return stack_ptr - size;
-	}
+}
 
 /************************************************************************/
 /* Returns stack pointer offset so it can be saved.                            */
 int save_stack(void)
-	{
+{
 	return (int) (stack_ptr - bnroot);
-	}
+}
 
 /************************************************************************/
 /* Restores stack pointer, effectively freeing local variables          */
 /*    allocated since save_stack()                                   */
 void restore_stack(int old_offset)
-	{
+{
 	stack_ptr  = bnroot + old_offset;
-	}
+}
 
 /************************************************************************/
 /* Memory allocator routines end here.                                  */
@@ -386,33 +406,45 @@ void restore_stack(int old_offset)
 /*   intl = bytes for integer part (1, 2, or 4)                         */
 
 void init_bf_dec(int dec)
-	{
+{
 	if (bfdigits)
-       decimals=bfdigits;   /* blindly force */
+	{
+		decimals=bfdigits;   /* blindly force */
+	}
 	else
-       decimals = dec;
+	{
+		decimals = dec;
+	}
 	if (bailout > 10)    /* arbitrary value */
-       /* using 2 doesn't gain much and requires another test */
-       intlength = 4;
+	{
+		/* using 2 doesn't gain much and requires another test */
+		intlength = 4;
+	}
 	else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
-       intlength = 2;
+	{
+		intlength = 2;
+	}
 	/* the bailout tests need greater dynamic range */
 	else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
 				bailoutest == Manr)
-       intlength = 2;
+	{
+		intlength = 2;
+	}
 	else
-       intlength = 1;
+	{
+		intlength = 1;
+	}
 	/* conservative estimate */
 	bnlength = intlength + (int)(decimals/LOG10_256) + 1; /* round up */
 	init_bf_2();
-	}
+}
 
 /************************************************************************/
 /* initialize bignumber global variables                                */
 /*   bnl = bignumber length                                             */
 /*   intl = bytes for integer part (1, 2, or 4)                         */
 void init_bf_length(int bnl)
-	{
+{
 	bnlength = bnl;
 
 	if (bailout > 10)    /* arbitrary value */
@@ -429,11 +461,11 @@ void init_bf_length(int bnl)
 	/* conservative estimate */
 	decimals = (int)((bnlength-intlength)*LOG10_256);
 	init_bf_2();
-	}
+}
 
 
 void init_big_pi(void)
-	{
+{
 	/* What, don't you recognize the first 700 digits of pi, */
 	/* in base 256, in reverse order?                        */
 	int length, pi_offset;
@@ -522,4 +554,4 @@ void init_big_pi(void)
 	bf_pi = big_pi;
 	bn_pi = big_pi + (bflength-2) - (bnlength-intlength);
 	return;
-	}
+}

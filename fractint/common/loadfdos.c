@@ -134,7 +134,9 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 
 	/* exit in makepar mode if no exact match of video mode in file */
 	if (*s_makepar == '\0' && g_init_mode == -1)
+	{
 		return 0;
+	}
 
 	if (g_init_mode == -1) /* try to find very good match for vid mode */
 	{

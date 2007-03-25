@@ -150,7 +150,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		while ((c = fgetc(scroll_file)) != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				comment = 1;
+			}
 			else if (c == '\n')
 			{
 				comment = 0;
@@ -158,11 +160,17 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				widthct =  -1;
 			}
 			else if (c == '\t')
+			{
 				widthct += 7 - widthct % 8;
+			}
 			else if (c == '\r')
+			{
 				continue;
+			}
 			if (++widthct > widest_entry_line)
+			{
 				widest_entry_line = widthct;
+			}
 			if (c == '}' && !comment)
 			{
 				lines_in_entry++;
@@ -193,14 +201,18 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			i = -1;
 		}
 		if (++i > titlewidth)
+		{
 			titlewidth = i;
+		}
 	}
 	extralines = extrawidth = i = 0;
 	hdgscan = extrainfo;
 	if (hdgscan != 0)
 	{
 		if (*hdgscan == 0)
+		{
 			extrainfo = NULL;
+		}
 		else  /* count extra lines, find widest */
 		{
 			extralines = 3;
@@ -217,7 +229,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 					i = -1;
 				}
 				if (++i > extrawidth)
+				{
 					extrawidth = i;
+				}
 			}
 		}
 	}
@@ -238,7 +252,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		entry, and no further down scrolling is necessary.
 		*/
 	if (in_scrolling_mode)
+	{
 		vertical_scroll_limit = lines_in_entry - (extralines - 2);
+	}
 
 	/* work out vertical positioning */
 	i = numprompts + titlelines + extralines + 3; /* total rows required */
@@ -259,16 +275,24 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		++boxlines;    /* blank at bottom of box */
 		++instrrow;
 		if (instrrow + 3 + extralines < 25)
+		{
 			++instrrow; /* blank before instructions */
+		}
 		}
 	extrarow = instrrow + 2;
 	if (numprompts > 1) /* 3 instructions lines */
+	{
 		++extrarow;
+	}
 	if (extrarow + extralines < 25)
+	{
 		++extrarow;
+	}
 
 	if (in_scrolling_mode)  /* set box to max width if in scrolling mode */
+	{
 		extrawidth = 76;
+	}
 
 	/* work out horizontal positioning */
 	maxfldwidth = maxpromptwidth = maxcomment = anyinput = 0;
@@ -309,12 +333,16 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	}
 	j = titlewidth;
 	if (j < extrawidth)
+	{
 		j = extrawidth;
+	}
 	i = j + 4 - boxwidth;
 	if (i > 0)  /* expand box for title/extra */
 	{
 		if (boxwidth + i > 80)
+		{
 			i = 80 - boxwidth;
+		}
 		boxwidth += i;
 		boxcol -= i / 2;
 		}
@@ -325,7 +353,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 	/* display box heading */
 	for (i = titlerow; i < boxrow; ++i)
+	{
 		driver_set_attr(i, boxcol, C_PROMPT_HI, boxwidth);
+	}
 
 	{
 		char buffer[256], *hdgline = buffer;
@@ -336,7 +366,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		{
 			char *next = strchr(hdgline, '\n');
 			if (next == NULL)
+			{
 				break; /* shouldn't happen */
+			}
 			*next = '\0';
 			titlewidth = (int) strlen(hdgline);
 			g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
@@ -400,7 +432,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 	/* display empty box */
 	for (i = 0; i < boxlines; ++i)
+	{
 		driver_set_attr(boxrow + i, boxcol, C_PROMPT_LO, boxwidth);
+	}
 
 	/* display initial values */
 	for (i = 0; i < numprompts; i++)
@@ -428,7 +462,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				load_entry_text(scroll_file, extrainfo, extralines - 2,
 								scroll_row_status, scroll_column_status);
 				for (i = 1; i <= extralines - 2; i++)
+				{
 					driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+				}
 				driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
 			}
 			/* TODO: rework key interaction to blocking wait */
@@ -475,7 +511,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 					{
 						scroll_row_status += extralines - 2;
 						if (scroll_row_status > vertical_scroll_limit)
+						{
 							scroll_row_status = vertical_scroll_limit;
+						}
 						rewrite_extrainfo = 1;
 					}
 					break;
@@ -484,7 +522,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 					{
 						scroll_row_status -= extralines - 2;
 						if (scroll_row_status < 0)
+						{
 							scroll_row_status = 0;
+						}
 						rewrite_extrainfo = 1;
 					}
 					break;
@@ -513,7 +553,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				case FIK_F9:
 				case FIK_F10:
 					if (promptfkeys & (1 << (done + 1-FIK_F1)))
+					{
 						goto fullscreen_exit;
+					}
 			}
 		}
 	}
@@ -521,8 +563,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 	/* display footing */
 	if (numprompts > 1)
+	{
 		putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
+	}
 	putstringcenter(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
 		(helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
@@ -539,7 +583,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			load_entry_text(scroll_file, extrainfo, extralines - 2,
 							scroll_row_status, scroll_column_status);
 			for (i = 1; i <= extralines - 2; i++)
+			{
 				driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+			}
 			driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
 			g_text_cbase = j;
 		}
@@ -547,10 +593,14 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		curtype = values[curchoice].type;
 		curlen = prompt_valuestring(buf, &values[curchoice]);
 		if (!rewrite_extrainfo)
+		{
 			putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
 				(curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
+		}
 		else
+		{
 			rewrite_extrainfo = 0;
+		}
 		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
 
 		if (curtype == 'l')
@@ -560,7 +610,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
 				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
 			for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
+			{
 				if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0) break;
+			}
 			values[curchoice].uval.ch.val = j;
 			}
 		else
@@ -670,7 +722,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				{
 					scroll_row_status += extralines - 2;
 					if (scroll_row_status > vertical_scroll_limit)
+					{
 						scroll_row_status = vertical_scroll_limit;
+					}
 					rewrite_extrainfo = 1;
 				}
 				break;
@@ -679,7 +733,9 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				{
 					scroll_row_status -= extralines - 2;
 					if (scroll_row_status < 0)
+					{
 						scroll_row_status = 0;
+					}
 					rewrite_extrainfo = 1;
 				}
 				break;
@@ -788,7 +844,9 @@ int prompt_checkkey(int curkey)
 		case FIK_F9:
 		case FIK_F10:
 			if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+			{
 				return curkey;
+			}
 		}
 	return 0;
 }
@@ -820,7 +878,9 @@ int prompt_checkkey_scroll(int curkey)
 		case FIK_F9:
 		case FIK_F10:
 			if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+			{
 				return curkey;
+			}
 		}
 	return 0;
 }
@@ -844,7 +904,9 @@ static int input_field_list(
 	savelookatmouse = lookatmouse;
 	lookatmouse = LOOK_MOUSE_NONE;
 	for (initval = 0; initval < llen; ++initval)
+	{
 		if (strcmp(fld, list[initval]) == 0) break;
+	}
 	if (initval >= llen) initval = 0;
 	curval = initval;
 	ret = -1;
@@ -853,7 +915,9 @@ static int input_field_list(
 		strcpy(buf, list[curval]);
 		i = (int) strlen(buf);
 		while (i < vlen)
+		{
 			buf[i++] = ' ';
+		}
 		buf[vlen] = 0;
 		driver_put_string(row, col, attr, buf);
 		curkey = driver_key_cursor(row, col); /* get a keystroke */
@@ -867,11 +931,15 @@ static int input_field_list(
 				goto inpfldl_end;
 			case FIK_RIGHT_ARROW:
 				if (++curval >= llen)
+				{
 					curval = 0;
+				}
 				break;
 			case FIK_LEFT_ARROW:
 				if (--curval < 0)
+				{
 					curval = llen - 1;
+				}
 				break;
 			case FIK_F5:
 				curval = initval;
@@ -883,7 +951,9 @@ static int input_field_list(
 					{
 						ret = (*checkkey)(curkey);
 						if (ret != 0)
+						{
 							goto inpfldl_end;
+						}
 					}
 					break;                                /* non alphanum char */
 					}
@@ -891,7 +961,9 @@ static int input_field_list(
 				for (i = 0; i < llen; ++i)
 				{
 					if (++j >= llen)
+					{
 						j = 0;
+					}
 					if ((*list[j] & 0xdf) == (curkey & 0xdf))
 					{
 						curval = j;
@@ -925,7 +997,9 @@ static void clear_line(int row, int start, int stop, int color) /* clear part of
 {
 	int col;
 	for (col=start; col <= stop; col++)
+	{
 		driver_put_string(row, col, color, " ");
+	}
 }
 
 #endif
@@ -941,7 +1015,9 @@ int get_fracttype()             /* prompt for and select fractal type */
 	{
 		t = select_fracttype(fractype);
 		if (t < 0)
+		{
 			break;
+		}
 		i = select_type_params(t, fractype);
 		if (i == 0)  /* ok, all done */
 		{
@@ -949,10 +1025,14 @@ int get_fracttype()             /* prompt for and select fractal type */
 			break;
 			}
 		if (i > 0) /* can't return to prior image anymore */
+		{
 			done = 1;
 		}
+		}
 	if (done < 0)
+	{
 		fractype = oldfractype;
+	}
 	curfractalspecific = &fractalspecific[fractype];
 	return done;
 }
@@ -994,10 +1074,16 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	while (fractalspecific[++i].name)
 	{
 		if (julibrot)
-		if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
-			continue;
+		{
+			if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
+			{
+				continue;
+			}
+		}
 		if (fractalspecific[i].name[0] == '*')
+		{
 			continue;
+		}
 		strcpy(choices[++j]->name, fractalspecific[i].name);
 		choices[j]->name[14] = 0; /* safety */
 		choices[j]->num = i;      /* remember where the real item is */
@@ -1007,7 +1093,9 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	j = 0;
 	for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
 		if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
+		{
 			j = i;
+		}
 
 	tname[0] = 0;
 	done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
@@ -1018,11 +1106,17 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	{
 		done = choices[done]->num;
 		if ((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
+		{
 			strcpy(FormFileName, searchfor.frm);
+		}
 		if (done == LSYSTEM && !strcmp(LFileName, CommandFile))
+		{
 			strcpy(LFileName, searchfor.lsys);
+		}
 		if ((done == IFS || done == IFS3D) && !strcmp(IFSFileName, CommandFile))
+		{
 			strcpy(IFSFileName, searchfor.ifs);
+		}
 	}
 
 
@@ -1119,25 +1213,30 @@ sel_type_restart:
 	set_default_parms();
 
 	if (get_fract_params(0) < 0)
+	{
 		if (fractype == FORMULA || fractype == FFORMULA ||
 				fractype == IFS || fractype == IFS3D ||
 				fractype == LSYSTEM)
+		{
 			goto sel_type_restart;
+		}
 		else
+		{
 			ret = 1;
+		}
+	}
 	else
 	{
 		if (newfractype != oldfractype)
 		{
 			invert = 0;
 			inversion[0] = inversion[1] = inversion[2] = 0;
-			}
 		}
+	}
 
 sel_type_exit:
 	helpmode = oldhelpmode;
 	return ret;
-
 }
 
 void set_default_parms()
@@ -1151,7 +1250,9 @@ void set_default_parms()
 	yy3rd = yymin;
 
 	if (viewcrop && finalaspectratio != screenaspect)
+	{
 		aspectratio_crop(screenaspect, finalaspectratio);
+	}
 	for (i = 0; i < 4; i++)
 	{
 		param[i] = curfractalspecific->paramvalue[i];
@@ -1161,12 +1262,20 @@ void set_default_parms()
 	}
 	extra = find_extra_param(fractype);
 	if (extra > -1)
+	{
 		for (i = 0; i < MAXPARAMS-4; i++)
+		{
 			param[i + 4] = moreparams[extra].paramvalue[i];
+		}
+	}
 	if (debugflag != 3200)
+	{
 		bf_math = 0;
+	}
 	else if (bf_math)
+	{
 		fractal_floattobf();
+	}
 }
 
 #define MAXFRACTALS 25
@@ -1182,11 +1291,15 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 		{
 			fractals[numfractals] = i;
 			if (i == neworbittype || i == fractalspecific[neworbittype].tofloat)
+			{
 				*last_val = numfractals;
+			}
 			nameptr[numfractals] = fractalspecific[i].name;
 			numfractals++;
 			if (numfractals >= MAXFRACTALS)
+			{
 				break;
+			}
 		}
 	}
 	return numfractals;
@@ -1320,9 +1433,13 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	int fkeymask = 0x40;
 	oldbailout = bailout;
 	if (fractype == JULIBROT || fractype == JULIBROTFP)
+	{
 		julibrot = 1;
+	}
 	else
+	{
 		julibrot = 0;
+	}
 	curtype = fractype;
 	if (curfractalspecific->name[0] == '*'
 			&& (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
@@ -1365,7 +1482,9 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 			load_entry_text(entryfile, tstack, 17, 0, 0);
 			fclose(entryfile);
 			if (fractype == FORMULA || fractype == FFORMULA)
+			{
 				frm_get_param_stuff(entryname); /* no error check, should be okay, from above */
+			}
 		}
 	}
 	else if (i >= 0)
@@ -1389,11 +1508,15 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 					k = 1;
 				}
 				else if (c < 16) /* a special help format control char */
+				{
 					break;
+				}
 				else
 				{
 					if (k == 1) /* line starts in column 1 */
+					{
 						break;
+					}
 					k = 0;
 				}
 				tstack[j++] = (char)c;
@@ -1413,12 +1536,16 @@ gfp_top:
 		if (i < 0)
 		{
 			if (ret == 0)
+			{
 				ret = -1;
+			}
 			julibrot = 0;
 			goto gfp_exit;
 		}
 		else
+		{
 			neworbittype = i;
+		}
 		jborbit = &fractalspecific[neworbittype];
 		juliorbitname = jborbit->name;
 	}
@@ -1426,26 +1553,46 @@ gfp_top:
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		if (uses_p1)  /* set first parameter */
+		{
 			firstparm = 0;
+		}
 		else if (uses_p2)
+		{
 			firstparm = 2;
+		}
 		else if (uses_p3)
+		{
 			firstparm = 4;
+		}
 		else if (uses_p4)
+		{
 			firstparm = 6;
+		}
 		else
+		{
 			firstparm = 8; /* uses_p5 or no parameter */
+		}
 
 		if (uses_p5)  /* set last parameter */
+		{
 			lastparm = 10;
+		}
 		else if (uses_p4)
+		{
 			lastparm = 8;
+		}
 		else if (uses_p3)
+		{
 			lastparm = 6;
+		}
 		else if (uses_p2)
+		{
 			lastparm = 4;
+		}
 		else
+		{
 			lastparm = 2; /* uses_p1 or no parameter */
+		}
 	}
 
 	savespecific = curfractalspecific;
@@ -1473,8 +1620,12 @@ gfp_top:
 		if (!typehasparm(julibrot?neworbittype:fractype, i, parmprompt[j]))
 		{
 			if (curtype == FORMULA || curtype == FFORMULA)
+			{
 				if (paramnotused(i))
+				{
 					continue;
+				}
+			}
 			break;
 		}
 		numparams++;
@@ -1487,7 +1638,9 @@ gfp_top:
 			paramvalues[promptnum].type = 'D';
 		}
 		else if (choices[promptnum][0] == '#')
+		{
 			choices[promptnum]++;
+		}
 		sprintf(tmpbuf, "%.17g", param[i]);
 		paramvalues[promptnum].uval.dval = atof(tmpbuf);
 		oldparam[i] = paramvalues[promptnum++].uval.dval;
@@ -1497,7 +1650,9 @@ gfp_top:
 	* parameters work.
 	*/
 	if (curtype == FORMULA || curtype == FFORMULA)
+	{
 		numparams = lastparm - firstparm;
+	}
 
 	numtrig = (curfractalspecific->flags >> 6) & 7;
 	if (curtype == FORMULA || curtype == FFORMULA)
@@ -1507,7 +1662,9 @@ gfp_top:
 
 	i = NUMTRIGFN;
 	while (--i >= 0)
+	{
 		trignameptr[i] = trigfn[i].name;
+	}
 	for (i = 0; i < numtrig; i++)
 	{
 		paramvalues[promptnum].type = 'l';
@@ -1519,7 +1676,9 @@ gfp_top:
 	}
 	type_name = curfractalspecific->name;
 	if (*type_name == '*')
+	{
 		++type_name;
+	}
 
 	i = curfractalspecific->orbit_bailout;
 
@@ -1654,15 +1813,21 @@ gfp_top:
 		goto gfp_exit;
 	}
 	if (julibrot)
+	{
 		sprintf(msg, "Julibrot Parameters (orbit= %s)", juliorbitname);
+	}
 	else
+	{
 		sprintf(msg, "Parameters for fractal type %s", type_name);
+	}
 	if (bf_math == 0)
 	{
 		strcat(msg, "\n(Press "FK_F6" for corner parameters)");
 	}
 	else
+	{
 		fkeymask = 0;
+	}
 	scroll_row_status = 0; /* make sure we start at beginning of entry */
 	scroll_column_status = 0;
 	while (1)
@@ -1674,23 +1839,37 @@ gfp_top:
 		if (i < 0)
 		{
 			if (julibrot)
+			{
 				goto gfp_top;
+			}
 			if (ret == 0)
+			{
 				ret = -1;
+			}
 			goto gfp_exit;
 		}
 		if (i != FIK_F6)
+		{
 			break;
+		}
 		if (bf_math == 0)
+		{
 			if (get_corners() > 0)
+			{
 				ret = 1;
+			}
+		}
 	}
 	promptnum = 0;
 	for (i = firstparm; i < numparams + firstparm; i++)
 	{
 		if (curtype == FORMULA || curtype == FFORMULA)
+		{
 			if (paramnotused(i))
+			{
 				continue;
+			}
+		}
 		if (oldparam[i] != paramvalues[promptnum].uval.dval)
 		{
 			param[i] = paramvalues[promptnum].uval.dval;
@@ -1728,20 +1907,28 @@ gfp_top:
 		promptnum++;
 	}
 	else
+	{
 		bailoutest = Mod;
+	}
 	setbailoutformula(bailoutest);
 
 	if (i)
 	{
 		if (potparam[0] != 0.0 && potparam[2] != 0.0)
+		{
 			promptnum++;
+		}
 		else
 		{
 			bailout = paramvalues[promptnum++].uval.Lval;
 			if (bailout != 0 && (bailout < 1 || bailout > 2100000000L))
+			{
 				bailout = oldbailout;
+			}
 			if (bailout != oldbailout)
+			{
 				ret = 1;
+			}
 			promptnum++;
 		}
 	}
@@ -1792,9 +1979,15 @@ int find_extra_param(int type)
 
 	if (fractalspecific[type].flags&MORE)
 	{
-		while ((curtyp=moreparams[++i].type) != type && curtyp != -1);
+		do
+		{
+			curtyp = moreparams[++i].type;
+		}
+		while (curtyp != type && curtyp != -1);
 		if (curtyp == type)
-		ret = i;
+		{
+			ret = i;
+		}
 	}
 	return ret;
 }
@@ -1806,12 +1999,18 @@ void load_params(int fractype)
 	{
 		param[i] = fractalspecific[fractype].paramvalue[i];
 		if (fractype != CELLULAR && fractype != ANT)
-		roundfloatd(&param[i]); /* don't round cellular or ant */
+		{
+			roundfloatd(&param[i]); /* don't round cellular or ant */
+		}
 	}
 	extra = find_extra_param(fractype);
 	if (extra > -1)
+	{
 		for (i = 0; i < MAXPARAMS-4; i++)
+		{
 			param[i + 4] = moreparams[extra].paramvalue[i];
+		}
+	}
 }
 
 int check_orbit_name(char *orbitname)
@@ -1863,7 +2062,9 @@ long get_file_entry(int type, char *title, char *fmask,
 				}
 			sprintf(buf, "Select %s File", title);
 			if (getafilename(buf, fmask, filename) < 0)
+			{
 				return -1;
+			}
 
 			firsttry = 1; /* if around open loop again it is an error */
 			}
@@ -1876,7 +2077,9 @@ long get_file_entry(int type, char *title, char *fmask,
 			continue;    /* back to getafilename */
 			}
 		if (entry_pointer == -1)
+		{
 			return -1;
+		}
 		switch (type)
 		{
 			case GETFILE_FORMULA:
@@ -1961,7 +2164,9 @@ top:
 		{
 			c = skip_comment(infile, &file_offset);
 			if (c == EOF || c == '\032')
+			{
 				break;
+			}
 			continue;
 		}
 		name_offset = temp_offset = file_offset;
@@ -1972,23 +2177,31 @@ top:
 			&& c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
 		{
 			if (len < 40)
+			{
 				buf[len++] = (char) c;
+			}
 			c = getc(infile);
 			++file_offset;
 			if (c == '\n' || c == '\r')
+			{
 				goto top;
+			}
 		}
 		buf[len] = 0;
 		while (c != '{' &&  c != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				c = skip_comment(infile, &file_offset);
+			}
 			else
 			{
 				c = getc(infile);
 				++file_offset;
 				if (c == '\n' || c == '\r')
+				{
 					goto top;
+				}
 			}
 		}
 		if (c == '{')
@@ -1996,11 +2209,15 @@ top:
 			while (c != '}' && c != EOF && c != '\032')
 			{
 				if (c == ';')
+				{
 					c = skip_comment(infile, &file_offset);
+				}
 				else
 				{
 					if (c == '\n' || c == '\r')     /* reset temp_offset to  */
+					{
 						temp_offset = file_offset;  /* beginning of new line */
+					}
 					c = getc(infile);
 					++file_offset;
 				}
@@ -2020,16 +2237,22 @@ top:
 				}
 			}
 			if (c != '}')   /* i.e. is EOF or '\032'*/
+			{
 				break;
+			}
 
 			if (strnicmp(buf, "frm:", 4) == 0 ||
 					strnicmp(buf, "ifs:", 4) == 0 ||
 					strnicmp(buf, "par:", 4) == 0)
 				exclude_entry = 4;
 			else if (strnicmp(buf, "lsys:", 5) == 0)
+			{
 				exclude_entry = 5;
+			}
 			else
+			{
 				exclude_entry = 0;
+			}
 
 			buf[ITEMNAMELEN + exclude_entry] = 0;
 			if (itemname != NULL)  /* looking for one entry */
@@ -2056,7 +2279,9 @@ top:
 			}
 		}
 		else if (c == EOF || c == '\032')
+		{
 			break;
+		}
 	}
 	return numentries;
 }
@@ -2160,9 +2385,13 @@ static int check_gfe_key(int curkey, int choice)
 	blanks[78] = (char) 0;
 
 	if (curkey == FIK_F6)
+	{
 		return -FIK_F6;
+	}
 	if (curkey == FIK_F4)
+	{
 		return -FIK_F4;
+	}
 	if (curkey == FIK_F2)
 	{
 		int widest_entry_line = 0;
@@ -2174,7 +2403,9 @@ static int check_gfe_key(int curkey, int choice)
 		while ((c = fgetc(gfe_file)) != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				comment = 1;
+			}
 			else if (c == '\n')
 			{
 				comment = 0;
@@ -2182,11 +2413,17 @@ static int check_gfe_key(int curkey, int choice)
 				widthct =  -1;
 			}
 			else if (c == '\t')
+			{
 				widthct += 7 - widthct % 8;
+			}
 			else if (c == '\r')
+			{
 				continue;
+			}
 			if (++widthct > widest_entry_line)
+			{
 				widest_entry_line = widthct;
+			}
 			if (c == '}' && !comment)
 			{
 				lines_in_entry++;
@@ -2201,7 +2438,9 @@ static int check_gfe_key(int curkey, int choice)
 		fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
 		load_entry_text(gfe_file, infbuf, 17, 0, 0);
 		if (lines_in_entry > 17 || widest_entry_line > 74)
+		{
 			in_scrolling_mode = 1;
+		}
 		strcpy(infhdg, gfe_title);
 		strcat(infhdg, " file entry:\n\n");
 		/* ... instead, call help with buffer?  heading added */
@@ -2227,7 +2466,9 @@ static int check_gfe_key(int curkey, int choice)
 				fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
 				load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
 				for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
+				{
 					driver_put_string(i, 0, C_GENERAL_MED, blanks);
+				}
 				driver_put_string(4, 0, C_GENERAL_MED, infbuf);
 			}
 			i = getakeynohelp();
@@ -2275,7 +2516,9 @@ static int check_gfe_key(int curkey, int choice)
 						{
 							top_line += 17;
 							if (top_line > lines_in_entry - 17)
+							{
 								top_line = lines_in_entry - 17;
+							}
 							rewrite_infbuf = 1;
 						}
 						break;
@@ -2284,7 +2527,9 @@ static int check_gfe_key(int curkey, int choice)
 						{
 							top_line -= 17;
 							if (top_line < 0)
+							{
 								top_line = 0;
+							}
 							rewrite_infbuf = 1;
 						}
 						break;
@@ -2308,7 +2553,9 @@ static int check_gfe_key(int curkey, int choice)
 				}
 			}
 			else
+			{
 				done = 1;  /* a key other than scrolling key was pressed */
+			}
 		}
 		g_text_cbase = 0;
 		driver_hide_text_cursor();
@@ -2347,12 +2594,18 @@ static void load_entry_text(
 		while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				comment = 1;
+			}
 			if (c == '}' && !comment)  /* end of entry before start line */
+			{
 				break;                 /* this should never happen       */
+			}
 		}
 		if (c == '\n')
+		{
 			comment = 0;
+		}
 		else  /* reached end of file or end of entry */
 		{
 			*buf = (char) 0;
@@ -2369,7 +2622,9 @@ static void load_entry_text(
 		while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				comment = 1;
+			}
 			if (c == '}' && !comment)  /*reached end of entry*/
 			{
 				*buf = (char) 0;
@@ -2381,7 +2636,9 @@ static void load_entry_text(
 				continue;
 			}
 			if (c == '\t')
+			{
 				i += 7 - (i % 8);
+			}
 			if (c == '\n')  /*need to insert '\n', even for short lines*/
 			{
 				*(buf++) = (char)c;
@@ -2394,7 +2651,9 @@ static void load_entry_text(
 			return;
 		}
 		if (c == '\n')       /* line is already completed */
+		{
 			continue;
+		}
 
 		if (i > startcol)  /* can happen because of <tab> character */
 		{
@@ -2409,9 +2668,13 @@ static void load_entry_text(
 		while ((c = fgetc(entfile)) != EOF && c != '\032')
 		{
 			if (c == ';')
+			{
 				comment = 1;
+			}
 			else if (c == '\n' || c == '\r')
+			{
 				comment = 0;
+			}
 			if (c != '\r')
 			{
 				if (c == '\t')
@@ -2431,10 +2694,14 @@ static void load_entry_text(
 				if (++linelen > 75)
 				{
 					if (linelen == 76)
+					{
 						*(buf++) = '\021';
+					}
 				}
 				else
+				{
 					*(buf++) = (char)c;
+				}
 				if (c == '}' && !comment)  /*reached end of entry*/
 				{
 					*(buf) = (char) 0;
@@ -2449,7 +2716,9 @@ static void load_entry_text(
 		}
 	}
 	if (*(buf-1) == '\n') /* specified that buf will not end with a '\n' */
+	{
 		buf--;
+	}
 	*buf = (char) 0;
 }
 
@@ -2531,10 +2800,17 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 	XSHIFT  =  uvalues[k++].uval.ival;
 	YSHIFT  =  uvalues[k++].uval.ival;
 	g_glasses_type = uvalues[k++].uval.ival;
-	if (g_glasses_type < 0 || g_glasses_type > STEREO_PAIR) g_glasses_type = 0;
+	if (g_glasses_type < 0 || g_glasses_type > STEREO_PAIR)
+	{
+		g_glasses_type = 0;
+	}
 	if (g_glasses_type)
+	{
 		if (get_funny_glasses_params() || check_mapfile())
+		{
 			ret = -1;
+		}
+	}
 
 get_f3d_exit:
 	driver_unstack_screen();
@@ -2559,12 +2835,16 @@ int get_3d_params()     /* prompt for 3D parameters */
 	{
 		extern int wintext_textmode;
 		if (wintext_textmode != 2)  /* are we in textmode? */
-				return 0;              /* no - prompts are already handled */
+		{
+			return 0;              /* no - prompts are already handled */
+		}
 	}
 #endif
 restart_1:
 	if (Targa_Out && overlay3d)
+	{
 		Targa_Overlay = 1;
+	}
 
 	k= -1;
 
@@ -2640,10 +2920,10 @@ restart_1:
 
 	RAY = uvalues[k++].uval.ival;
 	k++;
+	if (RAY == 1)
 	{
-		if (RAY == 1)
-			stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
-			"the online documentation.");
+		stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
+		"the online documentation.");
 	}
 	BRIEF = uvalues[k++].uval.ch.val;
 
@@ -2654,9 +2934,13 @@ restart_1:
 
 	/* check ranges */
 	if (previewfactor < 2)
+	{
 		previewfactor = 2;
+	}
 	if (previewfactor > 2000)
+	{
 		previewfactor = 2000;
+	}
 
 	if (sphere && !SPHERE)
 	{
@@ -2670,16 +2954,26 @@ restart_1:
 	}
 
 	if (g_glasses_type < 0)
+	{
 		g_glasses_type = 0;
+	}
 	if (g_glasses_type > STEREO_PAIR)
+	{
 		g_glasses_type = STEREO_PAIR;
+	}
 	if (g_glasses_type)
+	{
 		g_which_image = 1;
+	}
 
 	if (RAY < 0)
+	{
 		RAY = 0;
+	}
 	if (RAY > 7)
+	{
 		RAY = 7;
+	}
 
 	if (!RAY)
 	{
@@ -2700,22 +2994,30 @@ restart_1:
 			choices[k++] = "light source after transformation";
 		}
 		for (i = 0; i < k; ++i)
+		{
 			attributes[i] = 1;
+		}
 		helpmode = HELP3DFILL;
 		i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
 										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
 		helpmode = oldhelpmode;
 		if (i < 0)
+		{
 			goto restart_1;
+		}
 		FILLTYPE = i-1;
 
 		if (g_glasses_type)
 		{
 			if (get_funny_glasses_params())
+			{
 				goto restart_1;
 			}
+			}
 			if (check_mapfile())
+			{
 				goto restart_1;
+			}
 		}
 	restart_3:
 
@@ -2800,19 +3102,25 @@ restart_1:
 	uvalues[k++].uval.ival = RANDOMIZE;
 
 	if (SPHERE)
+	{
 		s = "Sphere 3D Parameters\n"
 			"Sphere is on its side; North pole to right\n"
 			"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
+	}
 	else
+	{
 		s = "Planar 3D Parameters\n"
 			"Pre-rotation X axis is screen top; Y axis is left side\n"
 			"Pre-rotation Z axis is coming at you out of the screen!";
+	}
 
 	helpmode = HELP3DPARMS;
 	k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
 	if (k < 0)
+	{
 		goto restart_1;
+	}
 
 	k = 0;
 	if (!(RAY && !SPHERE))
@@ -2840,8 +3148,12 @@ restart_1:
 	if (RANDOMIZE <= 0) RANDOMIZE = 0;
 
 	if ((Targa_Out || ILLUMINE || RAY))
+	{
 		if (get_light_params())
-				goto restart_3;
+		{
+			goto restart_3;
+		}
+	}
 return 0;
 }
 
@@ -2891,7 +3203,9 @@ static int get_light_params()
 		uvalues[k].uval.ival= haze;
 
 		if (!Targa_Overlay)
+		{
 			check_writefile(light_name, ".tga");
+		}
 		prompts3d[++k] = "Targa File Name  (Assume .tga)";
 		uvalues[k].type = 's';
 		strcpy(uvalues[k].uval.sval, light_name);
@@ -2924,7 +3238,9 @@ static int get_light_params()
 	k = fullscreen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
 	if (k < 0)
+	{
 		return -1;
+	}
 
 	k = 0;
 	if (ILLUMINE)
@@ -2966,14 +3282,22 @@ static int check_mapfile()
 	int askflag = 0;
 	int i, oldhelpmode;
 	if (dontreadcolor)
+	{
 		return 0;
+	}
 	strcpy(temp1, "*");
 	if (mapset)
+	{
 		strcpy(temp1, MAP_name);
+	}
 	if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+	{
 		askflag = 1;
+	}
 	else
+	{
 		merge_pathnames(temp1, funnyglasses_map_name, 0);
+	}
 
 	while (1)
 	{
@@ -2986,7 +3310,9 @@ static int check_mapfile()
 				NULL, temp1, 60, NULL);
 			helpmode = oldhelpmode;
 			if (i < 0)
+			{
 				return -1;
+			}
 			if (temp1[0] == '*')
 			{
 				mapset = 0;
@@ -3019,7 +3345,9 @@ static int get_funny_glasses_params()
 
 	/* defaults */
 	if (ZVIEWER == 0)
+	{
 		ZVIEWER = 150;
+	}
 	if (g_eye_separation == 0)
 	{
 		if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
@@ -3035,11 +3363,15 @@ static int get_funny_glasses_params()
 	}
 
 	if (g_glasses_type == STEREO_ALTERNATE)
+	{
 		strcpy(funnyglasses_map_name, Glasses1Map);
+	}
 	else if (g_glasses_type == STEREO_SUPERIMPOSE)
 	{
 		if (FILLTYPE == -1)
+		{
 			strcpy(funnyglasses_map_name, "grid.map");
+		}
 		else
 		{
 			strcpy(funnyglasses_map_name, Glasses1Map);
@@ -3092,7 +3424,9 @@ static int get_funny_glasses_params()
 	k = fullscreen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
 	helpmode = oldhelpmode;
 	if (k < 0)
+	{
 		return -1;
+	}
 
 	k = 0;
 	g_eye_separation   =  uvalues[k++].uval.ival;
@@ -3105,7 +3439,9 @@ static int get_funny_glasses_params()
 	blue_bright     =  uvalues[k++].uval.ival;
 
 	if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+	{
 		strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
+	}
 	return 0;
 }
 
@@ -3116,85 +3452,141 @@ void setbailoutformula(enum bailouts test)
 	case Mod:
 	default:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpMODbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpMODbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lMODbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlMODbailout;
+		}
 		bignumbailout = (int (*)(void))bnMODbailout;
 		bigfltbailout = (int (*)(void))bfMODbailout;
 		break;
 	case Real:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpREALbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpREALbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lREALbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlREALbailout;
+		}
 		bignumbailout = (int (*)(void))bnREALbailout;
 		bigfltbailout = (int (*)(void))bfREALbailout;
 		break;
 	case Imag:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpIMAGbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpIMAGbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lIMAGbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlIMAGbailout;
+		}
 		bignumbailout = (int (*)(void))bnIMAGbailout;
 		bigfltbailout = (int (*)(void))bfIMAGbailout;
 		break;
 	case Or:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpORbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpORbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lORbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlORbailout;
+		}
 		bignumbailout = (int (*)(void))bnORbailout;
 		bigfltbailout = (int (*)(void))bfORbailout;
 		break;
 	case And:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpANDbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpANDbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lANDbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlANDbailout;
+		}
 		bignumbailout = (int (*)(void))bnANDbailout;
 		bigfltbailout = (int (*)(void))bfANDbailout;
 		break;
 	case Manh:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpMANHbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpMANHbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lMANHbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlMANHbailout;
+		}
 		bignumbailout = (int (*)(void))bnMANHbailout;
 		bigfltbailout = (int (*)(void))bfMANHbailout;
 		break;
 	case Manr:
 		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		{
 			floatbailout = (int (*)(void))asmfpMANRbailout;
+		}
 		else
+		{
 			floatbailout = (int (*)(void))fpMANRbailout;
+		}
 		if (cpu >= 386 && debugflag != 8088)    /* Fast 386 math */
+		{
 			longbailout = (int (*)(void))asm386lMANRbailout;
+		}
 		else
+		{
 			longbailout = (int (*)(void))asmlMANRbailout;
+		}
 		bignumbailout = (int (*)(void))bnMANRbailout;
 		bigfltbailout = (int (*)(void))bfMANRbailout;
 		break;

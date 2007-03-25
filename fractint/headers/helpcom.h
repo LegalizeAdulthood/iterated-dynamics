@@ -298,7 +298,9 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
             for(;;)
                {
                if ( _size >= (int)len )
-                  break;
+               {
+               	break;
+               }
 
                else if ( *curr == CMD_LITERAL )
                   {
@@ -322,7 +324,9 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
                   ++_size;
                   ++_width;
                   if ( is_hyphen(curr-1) )
-                     break;
+                  {
+                  	break;
+                  }
                   }
 
                else
@@ -581,7 +585,9 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
                      tok = find_token_length(DOC, pd.curr, pd.len, &size, &width);
 
                      if ( tok == TOK_NL || tok == TOK_FF )
-                        break;
+                     {
+                     	break;
+                     }
 
                      if ( tok == TOK_DONE )
                         {
@@ -704,7 +710,9 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
                case TOK_NL:
                   if (skip_blanks && col == 0)
-                     break;
+                  {
+                  	break;
+                  }
 
                   ++pd.lnum;
 
@@ -734,7 +742,9 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
                case TOK_FF:
                   if (skip_blanks)
-                     break;
+                  {
+                  	break;
+                  }
                   if ( !output(PD_FOOTING, &pd, info) )
                      return (0);
                   col = 0;

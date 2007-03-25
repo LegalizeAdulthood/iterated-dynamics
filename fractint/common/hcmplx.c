@@ -32,10 +32,12 @@ int HComplexInv(_HCMPLX *arg, _HCMPLX *out)
 	double det, mod, xt_minus_yz;
 
 	det = (sqr(arg->x - arg->t) + sqr(arg->y + arg->z))*
-        (sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
+		(sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
 
 	if (det == 0.0)
+	{
 		return -1;
+	}
 	mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
 	xt_minus_yz = arg->x*arg->t - arg->y*arg->z;
 

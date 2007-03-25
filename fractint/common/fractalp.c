@@ -2279,33 +2279,45 @@ int paramnotused(int parm)
 
 	/* sanity check */
 	if (fractype != FORMULA && fractype != FFORMULA)
+	{
 		return 0;
+	}
 
 	switch (parm/2)
 	{
-		case 0:
-			if (!uses_p1)
-				ret = 1;
-			break;
-		case 1:
-			if (!uses_p2)
-				ret = 1;
-			break;
-		case 2:
-			if (!uses_p3)
-				ret = 1;
-			break;
-		case 3:
-			if (!uses_p4)
-				ret = 1;
-			break;
-		case 4:
-			if (!uses_p5)
-				ret = 1;
-			break;
-		default:
-			ret = 0;
-			break;
+	case 0:
+		if (!uses_p1)
+		{
+			ret = 1;
+		}
+		break;
+	case 1:
+		if (!uses_p2)
+		{
+			ret = 1;
+		}
+		break;
+	case 2:
+		if (!uses_p3)
+		{
+			ret = 1;
+		}
+		break;
+	case 3:
+		if (!uses_p4)
+		{
+			ret = 1;
+		}
+		break;
+	case 4:
+		if (!uses_p5)
+		{
+			ret = 1;
+		}
+		break;
+	default:
+		ret = 0;
+		break;
 	}
 	return ret;
 }
@@ -2321,22 +2333,36 @@ int typehasparm(int type, int parm, char *buf)
 	int extra;
 	char *ret = NULL;
 	if (0 <= parm && parm < 4)
+	{
 		ret=fractalspecific[type].param[parm];
+	}
 	else if (parm >= 4 && parm < MAXPARAMS)
 	{
 		extra=find_extra_param(type);
 		if (extra > -1)
+		{
 			ret=moreparams[extra].param[parm-4];
+		}
 	}
 	if (ret)
+	{
 		if (*ret == 0)
+		{
 			ret = NULL;
+		}
+	}
 
 	if (type == FORMULA || type == FFORMULA)
+	{
 		if (paramnotused(parm))
+		{
 			ret = NULL;
+		}
+	}
 
 	if (ret && buf != NULL)
+	{
 		strcpy(buf, ret);
+	}
 	return ret ? 1 : 0;
 }

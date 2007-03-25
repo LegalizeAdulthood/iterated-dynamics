@@ -233,16 +233,22 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 	int i;
 	i = varyint(randvalue,limit,mode);
 	if (i < 0)
+	{
 		return limit + i;
+	}
 	else
+	{
 		return i;
+	}
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
  {
 	int choices[9]={-59,-60,-61,-100,-101,-102,-103,-104,-1};
 	if (gene[i].mutate)
-     *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+	{
+		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+	}
 	return;
  }
 
@@ -250,7 +256,9 @@ void varyoutside(GENEBASE gene[], int randval, int i)
  {
 	int choices[8]={-1,-2,-3,-4,-5,-6,-7,-8};
 	if (gene[i].mutate)
-     *(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+	{
+		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+	}
 	return;
  }
 
@@ -267,29 +275,35 @@ void varybotest(GENEBASE gene[], int randval, int i)
  }
 
 void varypwr2(GENEBASE gene[], int randval, int i)
- {
-  int choices[9]={0,2,4,8,16,32,64,128,256};
-  if (gene[i].mutate)
-	*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
-  return;
+{
+	int choices[9]={0,2,4,8,16,32,64,128,256};
+	if (gene[i].mutate)
+	{
+		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+	}
+	return;
 }
 
 void varytrig(GENEBASE gene[], int randval, int i)
- {
-  if (gene[i].mutate)
-  /* Changed following to BYTE since trigfn is an array of BYTEs and if one */
-  /* of the functions isn't varied, it's value was being zeroed by the high */
-  /* BYTE of the preceeding function.  JCO  2 MAY 2001 */
-     *(BYTE*)gene[i].addr=(BYTE)wrapped_positive_varyint(randval,numtrigfn,gene[i].mutate);
-     /* replaced '30' with numtrigfn, set in prompts1.c */
-  set_trig_pointers(5); /*set all trig ptrs up*/
-  return;
- }
+{
+	if (gene[i].mutate)
+	{
+		/* Changed following to BYTE since trigfn is an array of BYTEs and if one */
+		/* of the functions isn't varied, it's value was being zeroed by the high */
+		/* BYTE of the preceeding function.  JCO  2 MAY 2001 */
+		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_varyint(randval, numtrigfn, gene[i].mutate);
+	}
+	/* replaced '30' with numtrigfn, set in prompts1.c */
+	set_trig_pointers(5); /*set all trig ptrs up*/
+	return;
+}
 
 void varyinv(GENEBASE gene[], int randval, int i)
   {
 	if (gene[i].mutate)
+	{
 		varydbl(gene,randval,i);
+	}
 	invert = (inversion[0] == 0.0) ? 0 : 3 ;
   }
 
@@ -382,10 +396,14 @@ choose_vars_restart:
 	/* read out values */
 	k = -1;
 	for (num = MAXPARAMS; num < (NUMGENES - 5); num++)
+	{
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
+	}
 
 	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+	{
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
+	}
 
 	if (curfractalspecific->calctype == StandardFractal &&
        (curfractalspecific->flags & BAILTEST))
@@ -407,26 +425,46 @@ int get_variations(void)
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		if (uses_p1)  /* set first parameter */
+		{
 			firstparm = 0;
+		}
 		else if (uses_p2)
+		{
 			firstparm = 2;
+		}
 		else if (uses_p3)
+		{
 			firstparm = 4;
+		}
 		else if (uses_p4)
+		{
 			firstparm = 6;
+		}
 		else
+		{
 			firstparm = 8; /* uses_p5 or no parameter */
+		}
 
 		if (uses_p5) /* set last parameter */
+		{
 			lastparm = 10;
+		}
 		else if (uses_p4)
+		{
 			lastparm = 8;
+		}
 		else if (uses_p3)
+		{
 			lastparm = 6;
+		}
 		else if (uses_p2)
+		{
 			lastparm = 4;
+		}
 		else
+		{
 			lastparm = 2; /* uses_p1 or no parameter */
+		}
 	}
 
 	numparams = 0;
@@ -435,23 +473,33 @@ int get_variations(void)
 		if (typehasparm(julibrot?neworbittype:fractype,i,NULL) == 0)
 		{
 			if (fractype == FORMULA || fractype == FFORMULA)
+			{
 				if (paramnotused(i))
+				{
 					continue;
+				}
+			}
 			break;
 		}
 		numparams++;
 	}
 
 	if (fractype != FORMULA && fractype != FFORMULA)
+	{
 		lastparm = numparams;
+	}
 
 choose_vars_restart:
 	k = -1;
 	for (num = firstparm; num < lastparm; num++)
 	{
 		if (fractype == FORMULA || fractype == FFORMULA)
-		if (paramnotused(num))
-			continue;
+		{
+			if (paramnotused(num))
+			{
+				continue;
+			}
+		}
 		choices[++k]=g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
@@ -477,15 +525,21 @@ choose_vars_restart:
 	{
 	case FIK_F2: /* set all off */
 		for (num = 0; num < MAXPARAMS; num++)
+		{
 			g_genes[num].mutate = 0;
+		}
 		goto choose_vars_restart;
 	case FIK_F3: /* set all on..alternate x and y for field map */
 		for (num = 0; num < MAXPARAMS; num ++)
+		{
 			g_genes[num].mutate = (char)((num % 2) + 1);
+		}
 		goto choose_vars_restart;
 	case FIK_F4: /* Randomize all */
 		for (num =0; num < MAXPARAMS; num ++)
+		{
 			g_genes[num].mutate = (char)(rand() % 6);
+		}
 		goto choose_vars_restart;
 	case FIK_F6: /* go to second screen, put array away first */
 		{
@@ -514,8 +568,12 @@ choose_vars_restart:
 	for (num = firstparm; num < lastparm; num++)
 	{
 		if (fractype == FORMULA || fractype == FFORMULA)
-		if (paramnotused(num))
-			continue;
+		{
+			if (paramnotused(num))
+			{
+				continue;
+			}
+		}
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 	}
 
@@ -531,9 +589,13 @@ void set_mutation_level(int strength)
  for (i = 0; i < NUMGENES; i++)
  {
 	if (g_genes[i].level <= strength)
+	{
 		g_genes[i].mutate = 5; /* 5 = random mutation mode */
+	}
 	else
+	{
 		g_genes[i].mutate = 0;
+	}
  }
  return;
 }
@@ -687,39 +749,55 @@ get_evol_restart:
 	viewwindow = evolving = uvalues[++k].uval.ch.val;
 
 	if (!evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
+	{
 		return 1;              /* the following code can set evolving even if it's off */
+	}
 
 	gridsz = uvalues[++k].uval.ival;
 	tmp = sxdots / (MINPIXELS << 1);
 	/* (sxdots / 20), max # of subimages @ 20 pixels per subimage */
 	/* MAXGRIDSZ == 1024 / 20 == 51 */
 	if (gridsz > MAXGRIDSZ)
+	{
 		gridsz = MAXGRIDSZ;
+	}
 	if (gridsz > tmp)
+	{
 		gridsz = tmp;
+	}
 	if (gridsz < 3)
+	{
 		gridsz = 3;
+	}
 	gridsz |= 1; /* make sure gridsz is odd */
 	if (explore_check())
 	{
-     tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
-     if (evolving)
-		evolving += tmp;
-     paramrangex = uvalues[++k].uval.dval;
-     newopx = opx = uvalues[++k].uval.dval;
-     paramrangey = uvalues[++k].uval.dval;
-     newopy = opy = uvalues[++k].uval.dval;
+		tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
+		if (evolving)
+		{
+			evolving += tmp;
+		}
+		paramrangex = uvalues[++k].uval.dval;
+		newopx = opx = uvalues[++k].uval.dval;
+		paramrangey = uvalues[++k].uval.dval;
+		newopy = opy = uvalues[++k].uval.dval;
 	}
 
-     fiddlefactor = uvalues[++k].uval.dval;
+	fiddlefactor = uvalues[++k].uval.dval;
 
-     fiddle_reduction = uvalues[++k].uval.dval;
+	fiddle_reduction = uvalues[++k].uval.dval;
 
-	if (!(uvalues[++k].uval.ch.val)) evolving = evolving + EVOLVE_NO_GROUT;
+	if (!(uvalues[++k].uval.ch.val))
+	{
+		evolving = evolving + EVOLVE_NO_GROUT;
+	}
 
 	viewxdots = (sxdots / gridsz)-2;
 	viewydots = (sydots / gridsz)-2;
-	if (!viewwindow) viewxdots=viewydots = 0;
+	if (!viewwindow)
+	{
+		viewxdots=viewydots = 0;
+	}
 
 	i = 0;
 
@@ -731,7 +809,9 @@ get_evol_restart:
 		i = 1;
 
 	if (evolving && !old_evolving)
+	{
 		param_history(0); /* save old history */
+	}
 
 	if (!evolving && (evolving == old_evolving)) i = 0;
 

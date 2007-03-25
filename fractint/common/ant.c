@@ -50,7 +50,9 @@ setwait(long *wait)
 	{
 		sprintf(msg, "Delay %4ld", *wait);
 		while ((int)strlen(msg) < 15)
+		{
 			strcat(msg, " ");
+		}
 		msg[15] = '\0';
 		showtempmsg(msg);
 		kbdchar = driver_get_key();
@@ -77,7 +79,9 @@ setwait(long *wait)
 			return;
 		}
 		if (*wait < 0)
+		{
 			*wait = 0;
+		}
 	}
 }
 
@@ -95,9 +99,13 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	antwrap = ((param[4] == 0) ? 0 : 1);
 	step = (int) wait;
 	if (step == 1)
+	{
 		wait = 0;
+	}
 	else
+	{
 		step = 0;
+	}
 	if (rule_len == 0)
 	{                            /* random rule */
 		for (color = 0; color < MAX_ANTS; color++)
@@ -152,7 +160,9 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		{
 			int done = 0;
 			if (kbdchar == 0)
+			{
 				kbdchar = driver_get_key();
+			}
 			switch (kbdchar)
 			{
 			case FIK_SPACE:
@@ -176,9 +186,13 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				break;
 			}
 			if (done)
+			{
 				goto exit_ant;
+			}
 			if (driver_key_pressed())
+			{
 				driver_get_key();
+			}
 		}
 		for (i = INNER_LOOP; i; i--)
 		{
@@ -197,11 +211,15 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					idir += rule[pixel];
 					idir &= 3;
 					if (antwrap == 0)
+					{
 						if ((idir == 0 && iy == ydots - 1) ||
-                      (idir == 1 && ix == xdots - 1) ||
-                      (idir == 2 && iy == 0) ||
-                      (idir == 3 && ix == 0))
+							(idir == 1 && ix == xdots - 1) ||
+							(idir == 2 && iy == 0) ||
+							(idir == 3 && ix == 0))
+						{
 							goto exit_ant;
+						}
+					}
 					x[color] = s_incx[idir][ix];
 					y[color] = s_incy[idir][iy];
 					dir[color] = idir;
@@ -219,11 +237,15 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					idir += rule[pixel];
 					idir &= 3;
 					if (antwrap == 0)
+					{
 						if ((idir == 0 && iy == ydots - 1) ||
-                      (idir == 1 && ix == xdots - 1) ||
-                      (idir == 2 && iy == 0) ||
-                      (idir == 3 && ix == 0))
+							(idir == 1 && ix == xdots - 1) ||
+							(idir == 2 && iy == 0) ||
+							(idir == 3 && ix == 0))
+						{
 							goto exit_ant;
+						}
+					}
 					x[color] = s_incx[idir][ix];
 					y[color] = s_incy[idir][iy];
 					dir[color] = idir;
@@ -249,9 +271,13 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 
 	step = (int) wait;
 	if (step == 1)
+	{
 		wait = 0;
+	}
 	else
+	{
 		step = 0;
+	}
 	if (rule_len == 0)
 	{                            /* random rule */
 		for (color = MAX_ANTS - 1; color; color--)
@@ -268,7 +294,9 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
                                  * turkmite (max rule_len = 16 bit) */
 		rule_len = min(rule_len, 8*sizeof(int));
 		for (i = 0, rule[0] = 0; i < rule_len; i++)
+		{
 			rule[0] = (rule[0] << 1) | ru[i];
+		}
 		for (color = MAX_ANTS - 1; color; color--)
 		{                         /* init the various turmites N.B. non usa
                                  * x[0], y[0], dir[0] */
@@ -290,7 +318,9 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		{
 			int done = 0;
 			if (kbdchar == 0)
+			{
 				kbdchar = driver_get_key();
+			}
 			switch (kbdchar)
 			{
 			case FIK_SPACE:
@@ -314,9 +344,13 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				break;
 			}
 			if (done)
+			{
 				goto exit_ant;
+			}
 			if (driver_key_pressed())
+			{
 				driver_get_key();
+			}
 		}
 		for (i = INNER_LOOP; i; i--)
 		{
@@ -329,7 +363,9 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				putcolor(ix, iy, 15);
 
 				if (wait > 0 && step == 0)
+				{
 					sleepms(wait);
+				}
 
 				if (rule[pixel] & rule_mask)
 				{                   /* turn right */
@@ -343,11 +379,15 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				}
 				idir &= 3;
 				if (antwrap == 0)
+				{
 					if ((idir == 0 && iy == ydots - 1) ||
-                   (idir == 1 && ix == xdots - 1) ||
-                   (idir == 2 && iy == 0) ||
-                   (idir == 3 && ix == 0))
+						(idir == 1 && ix == xdots - 1) ||
+						(idir == 2 && iy == 0) ||
+						(idir == 3 && ix == 0))
+					{
 						goto exit_ant;
+					}
+				}
 				x[color] = s_incx[idir][ix];
 				y[color] = s_incy[idir][iy];
 				dir[color] = idir;
@@ -405,11 +445,15 @@ ant(void)
 	}
 
 	for (i = 0; i < xdots; i++)
+	{
 		s_incx[3][i] = i + 1;
+	}
 	s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
 
 	for (i = 1; i < xdots; i++)
+	{
 		s_incx[1][i] = i - 1;
+	}
 	s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
 
 	for (i = 0; i < ydots; i++)
@@ -418,11 +462,15 @@ ant(void)
 		s_incy[3][i] = i;
 	}
 	for (i = 0; i < ydots; i++)
+	{
 		s_incy[0][i] = i + 1;
+	}
 	s_incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
                                  * bottom */
 	for (i = 1; i < ydots; i++)
+	{
 		s_incy[2][i] = i - 1;
+	}
 	s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
                                  * top */
 	oldhelpmode = helpmode;
@@ -437,31 +485,47 @@ ant(void)
 		for (i = 0; i < rule_len; i++)
 		{
 			if (rule[i] != '1')
+			{
 				rule[i] = (char) 0;
+			}
 			else
+			{
 				rule[i] = (char) 1;
+			}
 		}
 	}
 	else
+	{
 		rule_len = 0;
+	}
 
 	/* set random seed for reproducibility */
 	if ((!rflag) && param[5] == 1)
+	{
 		--rseed;
+	}
 	if (param[5] != 0 && param[5] != 1)
+	{
 		rseed = (int)param[5];
+	}
 
 	srand(rseed);
 	if (!rflag) ++rseed;
 
 	maxants = (int) param[2];
 	if (maxants < 1)             /* if maxants == 0 maxants random */
+	{
 		maxants = 2 + RANDOM(MAX_ANTS - 2);
+	}
 	else if (maxants > MAX_ANTS)
+	{
 		param[2] = maxants = MAX_ANTS;
+	}
 	type = (int) param[3] - 1;
 	if (type < 0 || type > 1)
+	{
 		type = RANDOM(2);         /* if type == 0 choose a random type */
+	}
 	switch (type)
 	{
 	case 0:
