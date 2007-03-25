@@ -176,15 +176,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 	fudge = 1L << 16;
 
 
-	if (transparent[0] || transparent[1])
-	{
-		plot = normalplot = T_clipcolor;  /* Use transparent plot function */
-	}
-	else
-	{
-		/* Use the usual FRACTINT plot function with clipping */
-		plot = normalplot = clipcolor;
-	}
+	plot = (transparent[0] || transparent[1]) ? T_clipcolor : clipcolor;
+	normalplot = plot;
 
 	currow = g_row_count;
 	/* use separate variable to allow for pot16bit files */
@@ -439,15 +432,9 @@ int line3d(BYTE *pixels, unsigned linelen)
 		{
 			if (!usr_floatflag && !RAY)
 			{
-				if (FILLTYPE >= 5)       /* flag to save vector before
-                                       	* perspective */
-				{
-					lv0[0] = 1;   /* in longvmultpersp calculation */
-				}
-				else
-				{
-					lv0[0] = 0;
-				}
+				/* flag to save vector before perspective */
+				/* in longvmultpersp calculation */
+				lv0[0] = (FILLTYPE >= 5) ? 1 : 0;   
 
 				/* use 32-bit multiply math to snap this out */
 				lv[0] = col;
@@ -459,7 +446,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					lv[2] = (long) (f_cur.color*65536.0);
 				}
 				else
-					/* there IS no fractaional part here! */
+					/* there IS no fractional part here! */
 				{
 					lv[2] = (long) f_cur.color;
 					lv[2] = lv[2] << 16;
@@ -1581,10 +1568,12 @@ int startdisk1(char *File_Name2, FILE *Source, int overlay)
 
 	/* Write the header */
 	if (overlay)                 /* We are overlaying a file */
+	{
 		for (i = 0; i < T_header_24; i++) /* Copy the header from the Source */
 		{
 			fputc(fgetc(Source), fps);
 		}
+	}
 	else
 	{                            /* Write header for a new file */
 		/* ID field size = 0, No color map, Targa type 2 file */
@@ -1633,10 +1622,12 @@ int startdisk1(char *File_Name2, FILE *Source, int overlay)
 				fputc(fgetc(Source), fps);
 			}
 			else
+			{
 				for (k = 2; k > -1; k--)
 				{
 					fputc(back_color[k], fps);       /* Targa order (B, G, R) */
 				}
+			}
 		}
 		if (ferror(fps))
 		{
@@ -1796,36 +1787,15 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
 	B1 = (((*V - B)*60) << 6) / DENOM; /* distance of color from blue  */
 	if (*V == R)
 	{
-		if (MIN == G)
-		{
-			*H = (300 << 6) + B1;
-		}
-		else
-		{
-			*H = (60 << 6) - G1;
-		}
+		*H = (MIN == G) ? (300 << 6) + B1 : (60 << 6) - G1;
 	}
 	if (*V == G)
 	{
-		if (MIN == B)
-		{
-			*H = (60 << 6) + R1;
-		}
-		else
-		{
-			*H = (180 << 6) - B1;
-		}
+		*H = (MIN == B) ? (60 << 6) + R1 : (180 << 6) - B1;
 	}
 	if (*V == B)
 	{
-		if (MIN == R)
-		{
-			*H = (180 << 6) + G1;
-		}
-		else
-		{
-			*H = (300 << 6) - R1;
-		}
+		*H = (MIN == R) ? (180 << 6) + G1 : (300 << 6) - R1;
 	}
 	*V = *V << 8;
 	return 0;
@@ -2516,8 +2486,10 @@ static int first_time(int linelen, VECTOR v)
 		sclz = -ROUGH / 100.0;
 	}
 	else
+	{
 		rscale = sclz = -0.0001;  /* if rough=0 make it very flat but plot
 									* something */
+	}
 
 	/* aspect ratio calculation - assume screen is 4 x 3 */
 	aspect = (double) xdots *.75 / (double) ydots;
@@ -2625,11 +2597,12 @@ static int first_time(int linelen, VECTOR v)
 		/* matrix m now contains ALL those transforms composed together !!
 		* convert m to long integers shifted 16 bits */
 		for (i = 0; i < 4; i++)
+		{
 			for (j = 0; j < 4; j++)
 			{
 				llm[i][j] = (long) (m[i][j]*65536.0);
 			}
-
+		}
 	}
 	else
 		/* sphere stuff goes here */

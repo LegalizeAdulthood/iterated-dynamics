@@ -233,28 +233,16 @@ double fmodtest(void)
 	double result;
 	if (inside == FMODI && save_release <= 2000) /* for backwards compatibility */
 	{
-		if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
-		{
-			result=sqr(g_new.x) + sqr(g_new.y);
-		}
-		else
-		{
-			result=magnitude; /* don't recalculate */
-		}
+		result = (magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+			sqr(g_new.x) + sqr(g_new.y) : magnitude;
 		return result;
 	}
 
 	switch (bailoutest)
 	{
 	case Mod:
-		if (magnitude == 0.0 || no_mag_calc == 0 || integerfractal)
-		{
-			result=sqr(g_new.x) + sqr(g_new.y);
-		}
-		else
-		{
-			result=magnitude; /* don't recalculate */
-		}
+		result = (magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+			sqr(g_new.x) + sqr(g_new.y) : magnitude;
 		break;
 	case Real:
 		result=sqr(g_new.x);
@@ -267,14 +255,7 @@ double fmodtest(void)
 			double tmpx, tmpy;
 			tmpx = sqr(g_new.x);
 			tmpy = sqr(g_new.y);
-			if (tmpx > tmpy)
-			{
-				result=tmpx;
-			}
-			else
-			{
-				result=tmpy;
-			}
+			result = (tmpx > tmpy) ? tmpx : tmpy;
 		}
 		break;
 	case Manh:
@@ -690,14 +671,7 @@ int calcfract(void)
 	}
 	lm = 4L << bitshift;                 /* CALCMAND magnitude limit */
 
-	if (save_release > 2002)
-	{
-		atan_colors = colors;
-	}
-	else
-	{
-		atan_colors = 180;
-	}
+	atan_colors = (save_release > 2002) ? colors : 180;
 
 	/* ORBIT stuff */
 	show_orbit = start_showorbit;
@@ -827,30 +801,16 @@ int calcfract(void)
 				timer(0, (int(*)())perform_worklist);
 				if (calc_status == CALCSTAT_COMPLETED)
 				{
-					if (xdots >= 640)  /* '2' is silly after 'g' for low rez */
-					{
-						stdcalcmode = '2';
-					}
-					else
-					{
-						stdcalcmode = '1';
-					}
-
+					/* '2' is silly after 'g' for low rez */
+					stdcalcmode = (xdots >= 640) ? '2' : '1';
 					timer(0, (int(*)())perform_worklist);
 					three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
-				if (xdots >= 640)
-				{
-					stdcalcmode = '2';
-				}
-				else
-				{
-					stdcalcmode = '1';
-				}
-				timer(0, (int(*)())perform_worklist);
+				stdcalcmode = (xdots >= 640) ? '2' : '1';
+				timer(0, (int (*)()) perform_worklist);
 			}
 			stdcalcmode = (char)oldcalcmode;
 		}
@@ -905,19 +865,24 @@ int find_alternate_math(int type, int math)
 	/* this depends on last two bits of flags */
 	if (fractalspecific[type].flags & umath)
 	{
-		while (((curtype=alternatemath[++i].type ) != type
-			|| (curmath=alternatemath[i].math) != math) && curtype != -1)
+		do
 		{
+			curtype = alternatemath[++i].type;
+			curmath = alternatemath[i].math;
 		}
+		while ((curtype != type || curmath != math) && curtype != -1);
+
 		if (curtype == type && curmath == math)
 		{
 			ret = i;
 		}
 	}
 #else
-	while ((curtype=alternatemath[++i].type) != type && curtype != -1)
+	do
 	{
+		curtype = alternatemath[++i].type;
 	}
+	while (curtype != type && curtype != -1);
 	if (curtype == type && alternatemath[i].math)
 	{
 		ret = i;
@@ -1019,27 +984,22 @@ static void perform_worklist()
 		delxx2 = (xx3rd - xxmin) / dysize;
 		delyy2 = (yy3rd - yymin) / dxsize;
 
-		if (save_release < 1827) /* in case it's changed with <G> */
-		{
-			use_old_distest = 1;
-		}
-		else
-		{
-			use_old_distest = 0;
-		}
+		/* in case it's changed with <G> */
+		use_old_distest = (save_release < 1827) ? 1 : 0;
+
 		rqlim = rqlim_save; /* just in case changed to DEM_BAILOUT earlier */
 		if (distest != 1 || colors == 2) /* not doing regular outside colors */
+		{
 			if (rqlim < DEM_BAILOUT)         /* so go straight for dem bailout */
 			{
 				rqlim = DEM_BAILOUT;
 			}
-		if (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
-				|| fractype == FORMULA || fractype == FFORMULA)
-			dem_mandel = 1; /* must be mandel type, formula, or old PAR/GIF */
-		else
-		{
-			dem_mandel = 0;
 		}
+		/* must be mandel type, formula, or old PAR/GIF */
+		dem_mandel = (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
+				|| fractype == FORMULA || fractype == FFORMULA) ?
+			1 : 0;
+
 		dem_delta = sqr(delxx) + sqr(delyy2);
 		ftemp = sqr(delyy) + sqr(delxx2);
 		if (ftemp > dem_delta)
@@ -1051,27 +1011,17 @@ static void perform_worklist()
 			distestwidth = 1;
 		}
 		ftemp = distestwidth;
-		if (distestwidth > 0)
-		{
-			dem_delta *= sqr(ftemp)/10000; /* multiply by thickness desired */
-		}
-		else
-		{
-			dem_delta *= 1/(sqr(ftemp)*10000); /* multiply by thickness desired */
-		}
+		/* multiply by thickness desired */
+		dem_delta *= (distestwidth > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
 		dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
 			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
 		ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
-		if (use_old_distest)
-		{
-			dem_toobig = sqr(ftemp)*sqr(ftemp2)*4 / dem_delta;
-		}
-		else
-		{
-			dem_toobig = fabs(ftemp)*fabs(ftemp2)*2 / sqrt(dem_delta);
-		}
+		dem_toobig = use_old_distest ?
+			sqr(ftemp)*sqr(ftemp2)*4 / dem_delta
+			:
+			fabs(ftemp)*fabs(ftemp2)*2 / sqrt(dem_delta);
 	}
 
 	while (num_worklist > 0)
@@ -1360,7 +1310,7 @@ static int diffusion_engine(void)
 
 	if (yybegin == iystart && workpass == 0)  /* if restarting on pan: */
 	{
-		dif_counter =0l;
+		dif_counter = 0L;
 	}
 	else
 	{

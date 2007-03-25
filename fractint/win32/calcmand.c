@@ -131,14 +131,7 @@ calc_mand_floating_point(void)
 				lnew.x = x;
 				lnew.y = y;
 			}
-			if (cx - 10 > 0)
-			{
-				oldcoloriter = cx - 10;
-			}
-			else
-			{
-				oldcoloriter = 0;
-			}
+			oldcoloriter = (cx - 10 > 0) ? cx - 10 : 0;
 			realcoloriter = maxit - cx;
 			coloriter = realcoloriter;
 

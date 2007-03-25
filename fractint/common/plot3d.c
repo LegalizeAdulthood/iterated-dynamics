@@ -257,14 +257,10 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
 		color = colors - color; /*  Reverses color order */
-		if (max_colors == 236)
-		{
-			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
-		}
-		else
-		{
-			color = 1 + color / 18; /*  Maps colors 1-255 to 15 even ranges */
-		}
+		color = (max_colors == 236) ?
+			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			: 
+			(1 + color / 18); /*  Maps colors 1-255 to 15 even ranges */
 	}
 
 	tmp = getcolor(x, y);
@@ -322,15 +318,11 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 	{
 		/* my mind is fried - lower indices = darker colors is EASIER! */
 		color = colors - color; /*  Reverses color order */
-		if (max_colors == 236)
-		{
-			color = 1 + color / 21; /*  Maps colors 1-255 to 13 even ranges */
-		}
-		else
-		{
-			color = 1 + color / 18; /*  Looks weird but maps colors 1-255 to 15
-									relatively even ranges */
-		}
+		color = (max_colors == 236) ?
+			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			:
+			(1 + color / 18); /*  Looks weird but maps colors 1-255 to 15
+								relatively even ranges */
 	}
 
 	tmp = getcolor(x, y);
@@ -480,32 +472,19 @@ void plot_setup()
 	case STEREO_SUPERIMPOSE:
 		if (colors == 256)
 		{
-			if (fractype != IFS3D)
-			{
-				standardplot = plot3dsuperimpose256;
-			}
-			else
-			{
-				standardplot = plotIFS3dsuperimpose256;
-			}
+			standardplot = (fractype != IFS3D) ? plot3dsuperimpose256 : plotIFS3dsuperimpose256;
 		}
 		else
 		{
-				standardplot = plot3dsuperimpose16;
+			standardplot = plot3dsuperimpose16;
 		}
 		break;
 
 	case 4: /* crosseyed mode */
 		if (sxdots < 2*xdots)
 		{
-			if (XROT == 0 && YROT == 0)
-			{
-				standardplot = plot3dcrosseyedA; /* use hidden surface kludge */
-			}
-			else
-			{
-				standardplot = plot3dcrosseyedB;
-			}
+			standardplot = (XROT == 0 && YROT == 0) ? plot3dcrosseyedA /* use hidden surface kludge */
+				: plot3dcrosseyedB;
 		}
 		else if (XROT == 0 && YROT == 0)
 		{
