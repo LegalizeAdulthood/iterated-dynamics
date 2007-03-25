@@ -643,7 +643,7 @@ int check_key()
      timer(0, (*fractal)())              fractal engine
      timer(1, NULL, int width)            decoder
      timer(2)                           encoder
-  */
+*/
 #ifndef USE_VARARGS
 int timer(int timertype, int(*subrtn)(), ...)
 #else
@@ -706,11 +706,11 @@ va_dcl
 				break;
 			}
 		fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
-          timestring,
-          curfractalspecific->name,
-          xdots,
-          ydots,
-          maxit);
+			timestring,
+			curfractalspecific->name,
+			xdots,
+			ydots,
+			maxit);
 		fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
 		if (fp != NULL)
 			fclose(fp);

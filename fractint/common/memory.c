@@ -190,36 +190,36 @@ static U16 next_handle()
 static int CheckBounds (long start, long length, U16 handle)
 {
 	if (handletable[handle].Nowhere.size - start - length < 0)
-		{
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
-       DisplayHandle(handle);
-       return 1;
-		}
+	{
+		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
+		DisplayHandle(handle);
+		return 1;
+	}
 	if (length > (long)USHRT_MAX)
-		{
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
-       DisplayHandle(handle);
-       return 1;
-		}
+	{
+		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
+		DisplayHandle(handle);
+		return 1;
+	}
 	if (handletable[handle].Nowhere.stored_at == DISK &&
 			(stackavail() <= DISKWRITELEN))
-		{
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
-       DisplayHandle(handle);
-       return 1;
-		}
+	{
+		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
+		DisplayHandle(handle);
+		return 1;
+	}
 	if (length <= 0)
-		{
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
-       DisplayHandle(handle);
-       return 1;
-		}
+	{
+		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
+		DisplayHandle(handle);
+		return 1;
+	}
 	if (start < 0)
-		{
-       stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
-       DisplayHandle(handle);
-       return 1;
-		}
+	{
+		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
+		DisplayHandle(handle);
+		return 1;
+	}
 	return 0;
 }
 
@@ -237,9 +237,9 @@ void DisplayHandle (U16 handle)
 	char buf[MSGLEN];
 
 	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
-           handletable[handle].Nowhere.size);
+        handletable[handle].Nowhere.size);
 	if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
-     goodbye(); /* bailout if ESC, it's messy, but should work */
+		goodbye(); /* bailout if ESC, it's messy, but should work */
 }
 
 void InitMemory (void)
