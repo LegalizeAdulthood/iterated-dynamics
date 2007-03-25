@@ -194,10 +194,10 @@ return;
 
 int varyint(int randvalue, int limit, int mode)
 {
-int ret = 0;
-int lclpy = gridsz - py - 1;
- switch (mode)
-{
+	int ret = 0;
+	int lclpy = gridsz - py - 1;
+	switch (mode)
+	{
 	default:
 	case 0:
 		break;

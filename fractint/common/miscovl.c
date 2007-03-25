@@ -1627,7 +1627,8 @@ static void put_parm_line()
 	{
 		len = NICELINELEN + 1;
 		while (--len != 0 && s_wbdata.buf[len] != ' ')
-		{ }
+		{
+		}
 		if (len == 0)
 		{
 			len = NICELINELEN-1;

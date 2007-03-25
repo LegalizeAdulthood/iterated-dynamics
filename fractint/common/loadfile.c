@@ -627,12 +627,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 }
 
 static int find_fractal_info(char *gif_file,struct fractal_info *info,
-       struct ext_blk_2 *blk_2_info,
-       struct ext_blk_3 *blk_3_info,
-       struct ext_blk_4 *blk_4_info,
-       struct ext_blk_5 *blk_5_info,
-       struct ext_blk_6 *blk_6_info,
-       struct ext_blk_7 *blk_7_info)
+	struct ext_blk_2 *blk_2_info,
+	struct ext_blk_3 *blk_3_info,
+	struct ext_blk_4 *blk_4_info,
+	struct ext_blk_5 *blk_5_info,
+	struct ext_blk_6 *blk_6_info,
+	struct ext_blk_7 *blk_7_info)
 {
 	BYTE gifstart[18];
 	char temp1[81];
@@ -777,17 +777,19 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 		if (info->version >= 4)
 		{
 			/* first reload main extension block, reasons:
-              might be over 255 chars, and thus earlier load might be bad
-              find exact endpoint, so scan back to start of ext blks works
-				*/
+			might be over 255 chars, and thus earlier load might be bad
+			find exact endpoint, so scan back to start of ext blks works
+			*/
 			fseek(fp,(long)(hdr_offset-15),SEEK_END);
 			scan_extend = 1;
 			while (scan_extend)
 			{
 				if (fgetc(fp) != '!' /* if not what we expect just give up */
-              || fread(temp1,1,13,fp) != 13
-              || strncmp(&temp1[2],"fractint",8))
+					|| fread(temp1,1,13,fp) != 13
+					|| strncmp(&temp1[2],"fractint",8))
+				{
 					break;
+				}
 				temp1[13] = 0;
 				block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
 				switch (block_type)
@@ -1351,7 +1353,7 @@ int oldbf_math;
 
 /* fgetwindow reads all .GIF files and draws window outlines on the screen */
 int fgetwindow(void)
-  {
+{
 	struct affine stack_cvt;
 	struct fractal_info read_info;
 	struct ext_blk_2 blk_2_info;
@@ -1411,7 +1413,7 @@ int fgetwindow(void)
 		no_memory = 1;
 	}
 
-     /* set up complex-plane-to-screen transformation */
+	/* set up complex-plane-to-screen transformation */
 	if (oldbf_math)
 	{
 		bfsetup_convert_to_screen();
@@ -1509,9 +1511,9 @@ rescan:  /* entry for changed browse parms */
 		memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
 		showtempmsg(winlist.name);
 		while (!done)  /* on exit done = 1 for quick exit,
-                                 done = 2 for erase boxes and  exit
-                                 done = 3 for rescan
-                                 done = 4 for set boxes and exit to save image */
+						done = 2 for erase boxes and  exit
+						done = 3 for rescan
+						done = 4 for set boxes and exit to save image */
 		{
 #ifdef XFRACT
 			blinks = 1;

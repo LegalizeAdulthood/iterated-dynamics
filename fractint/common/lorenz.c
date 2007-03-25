@@ -5,7 +5,7 @@
 */
 
 #include <string.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -157,8 +157,8 @@ int projection = 2; /* projection plane - default is to plot x-y */
 	because the code that follows is SO much more compact, at the
 	expense of being less general. Here are Sylvie's notes. I have further
 	optimized the code a slight bit.
-                                               Tim Wegner
-                                               July, 1996
+											Tim Wegner
+											July, 1996
   Sylvie's notes, slightly edited follow:
 
   You don't need 3x3 determinants to solve these sets of equations because
@@ -268,8 +268,10 @@ int orbit3dlongsetup()
 	waste = 100;
 	projection = 2;
 	if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
-       fractype == INVERSEJULIA)
+		fractype == INVERSEJULIA)
+	{
 		connect = 0;
+	}
 	if (fractype == LROSSLER)
 	{
 		waste = 500;
@@ -666,9 +668,9 @@ Minverse_julia_orbit()
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
 	{
 		/*
-       * MIIM must skip points that are off the screen boundary,
-       * since it cannot read their color.
-       */
+		* MIIM must skip points that are off the screen boundary,
+		* since it cannot read their color.
+		*/
 		switch (major_method)
 		{
 			case breadth_first:

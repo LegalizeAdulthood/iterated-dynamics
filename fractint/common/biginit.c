@@ -10,7 +10,7 @@ is in the allocations of memory for the big numbers.
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -552,8 +552,8 @@ void init_big_pi(void)
 			0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13,
 			0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
 			/* . */  0x03, 0x00, 0x00, 0x00
-              /*  <- up to intlength 4 -> */
-              /* or bf_t int length of 2 + 2 byte exp  */
+			/*  <- up to intlength 4 -> */
+			/* or bf_t int length of 2 + 2 byte exp  */
 			};
 
 	length = bflength + 2; /* 2 byte exp */

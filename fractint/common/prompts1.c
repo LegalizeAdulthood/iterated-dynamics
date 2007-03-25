@@ -469,7 +469,8 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			}
 			/* TODO: rework key interaction to blocking wait */
 			while (!driver_key_pressed())
-			{ }
+			{
+			}
 			done = driver_get_key();
 			switch (done)
 			{
@@ -2727,8 +2728,11 @@ static void format_parmfile_line(int choice, char *buf)
 	int c, i;
 	char line[80];
 	fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-	while (getc(gfe_file) != '{')
-	{ }
+	do
+	{
+		c = getc(gfe_file);
+	}
+	while (c != '{');
 	do
 	{
 		c = getc(gfe_file);
@@ -2739,7 +2743,7 @@ static void format_parmfile_line(int choice, char *buf)
 	{
 		line[i++] = (char)((c == '\t') ? ' ' : c);
 		c = getc(gfe_file);
-		}
+	}
 	line[i] = 0;
 #ifndef XFRACT
 	sprintf(buf, "%-20Fs%-56s", gfe_choices[choice]->name, line);

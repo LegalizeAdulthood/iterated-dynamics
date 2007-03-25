@@ -107,10 +107,12 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		step = 0;
 	}
 	if (rule_len == 0)
-	{                            /* random rule */
+	{
+		/* random rule */
 		for (color = 0; color < MAX_ANTS; color++)
-		{                         /* init the rules and colors for the
-                                 * turkmites: 1 turn left, -1 turn right */
+		{
+			/* init the rules and colors for the
+			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = 1 - (RANDOM(2)*2);
 			next_col[color] = color + 1;
 		}
@@ -118,17 +120,20 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		next_col[color] = 0;
 	}
 	else
-	{                            /* user defined rule */
+	{
+		/* user defined rule */
 		for (color = 0; color < rule_len; color++)
-		{                         /* init the rules and colors for the
-                                 * turkmites: 1 turn left, -1 turn right */
+		{
+			/* init the rules and colors for the
+			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = (ru[color]*2) - 1;
 			next_col[color] = color + 1;
 		}
 		/* repeats to last color */
 		for (color = rule_len; color < MAX_ANTS; color++)
-		{                         /* init the rules and colors for the
-                                 * turkmites: 1 turn left, -1 turn right */
+		{
+			/* init the rules and colors for the
+			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = rule[color % rule_len];
 			next_col[color] = color + 1;
 		}
@@ -136,8 +141,9 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		next_col[color] = 0;
 	}
 	for (color = maxtur; color; color--)
-	{                            /* init the various turmites N.B. non usa
-                                 * x[0], y[0], dir[0] */
+	{
+		/* init the various turmites N.B. non usa
+		* x[0], y[0], dir[0] */
 		if (rule_len)
 		{
 			dir[color] = 1;
@@ -279,10 +285,12 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		step = 0;
 	}
 	if (rule_len == 0)
-	{                            /* random rule */
+	{
+		/* random rule */
 		for (color = MAX_ANTS - 1; color; color--)
-		{                         /* init the various turmites N.B. don't use
-                                 * x[0], y[0], dir[0] */
+		{
+			/* init the various turmites N.B. don't use
+			* x[0], y[0], dir[0] */
 			dir[color] = RANDOM(DIRS);
 			rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
 			x[color] = RANDOM(xdots);
@@ -290,23 +298,25 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		}
 	}
 	else
-	{                            /* the same rule the user wants for every
-                                 * turkmite (max rule_len = 16 bit) */
+	{
+		/* the same rule the user wants for every
+		* turkmite (max rule_len = 16 bit) */
 		rule_len = min(rule_len, 8*sizeof(int));
 		for (i = 0, rule[0] = 0; i < rule_len; i++)
 		{
 			rule[0] = (rule[0] << 1) | ru[i];
 		}
 		for (color = MAX_ANTS - 1; color; color--)
-		{                         /* init the various turmites N.B. non usa
-                                 * x[0], y[0], dir[0] */
+		{
+			/* init the various turmites N.B. non usa
+			* x[0], y[0], dir[0] */
 			dir[color] = 0;
 			rule[color] = rule[0];
 			x[color] = XO;
 			y[color] = YO;
 		}
 	}
-/* use this rule when a black pixel is found */
+	/* use this rule when a black pixel is found */
 	rule[0] = 0;
 	rule_mask = 1;
 	maxpts = maxpts / (long) INNER_LOOP;
@@ -368,12 +378,14 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				}
 
 				if (rule[pixel] & rule_mask)
-				{                   /* turn right */
+				{
+					/* turn right */
 					idir--;
 					putcolor(ix, iy, 0);
 				}
 				else
-				{                   /* turn left */
+				{
+					/* turn left */
 					idir++;
 					putcolor(ix, iy, color);
 				}
@@ -435,9 +447,9 @@ ant(void)
 		}
 	}
 
-/* In this vectors put all the possible point that the ants can visit.
- * Wrap them from a side to the other insted of simply end calculation
- */
+	/* In this vectors put all the possible point that the ants can visit.
+	* Wrap them from a side to the other insted of simply end calculation
+	*/
 	for (i = 0; i < xdots; i++)
 	{
 		s_incx[0][i] = i;
@@ -466,13 +478,13 @@ ant(void)
 		s_incy[0][i] = i + 1;
 	}
 	s_incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
-                                 * bottom */
+									* bottom */
 	for (i = 1; i < ydots; i++)
 	{
 		s_incy[2][i] = i - 1;
 	}
 	s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
-                                 * top */
+									* top */
 	oldhelpmode = helpmode;
 	helpmode = ANTCOMMANDS;
 	maxpts = (long) param[1];

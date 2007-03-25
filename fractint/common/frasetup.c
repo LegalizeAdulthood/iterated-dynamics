@@ -27,12 +27,14 @@ int
 MandelSetup(void)           /* Mandelbrot Routine */
 {
 	if (debugflag != 90
-       && !invert && decomp[0] == 0 && rqlim == 4.0
-       && bitshift == 29 && potflag == 0
-       && biomorph == -1 && inside > -59 && outside >= -1
-       && useinitorbit != 1 && using_jiim == 0 && bailoutest == Mod
-       && (orbitsave & ORBITSAVE_SOUND) == 0)
+		&& !invert && decomp[0] == 0 && rqlim == 4.0
+		&& bitshift == 29 && potflag == 0
+		&& biomorph == -1 && inside > -59 && outside >= -1
+		&& useinitorbit != 1 && using_jiim == 0 && bailoutest == Mod
+		&& (orbitsave & ORBITSAVE_SOUND) == 0)
+	{
 		calctype = calcmand; /* the normal case - use CALCMAND */
+	}
 	else
 	{
 		/* special case: use the main processing loop */
@@ -423,12 +425,12 @@ JuliafpSetup(void)
 	{
 	case JULIAFP:
 		/*
-           floating point code could probably be altered to handle many of
-           the situations that otherwise are using StandardFractal().
-           calcmandfp() can currently handle invert, any rqlim, potflag
-           zmag, epsilon cross, and all the current outside options
-                                                     Wes Loewer 11/03/91
-           Took out support for inside= options, for speed. 7/13/97
+		floating point code could probably be altered to handle many of
+		the situations that otherwise are using StandardFractal().
+		calcmandfp() can currently handle invert, any rqlim, potflag
+		zmag, epsilon cross, and all the current outside options
+													Wes Loewer 11/03/91
+		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (debugflag != 90
 				&& !distest
@@ -610,8 +612,10 @@ MandellongSetup(void)
 		param[2] = 1;
 	}
 	if ((fractype == MARKSMANDEL   && !(c_exp & 1)) ||
-       (fractype == LMANDELZPOWER && (c_exp & 1)))
+		(fractype == LMANDELZPOWER && (c_exp & 1)))
+	{
 		symmetry = XYAXIS_NOPARM;    /* odd exponents */
+	}
 	if ((fractype == MARKSMANDEL && (c_exp & 1)) || fractype == LMANDELEXP)
 	{
 		symmetry = XAXIS_NOPARM;
@@ -655,13 +659,17 @@ MandellongSetup(void)
 	}
 	if (fractype == TIMSERROR)
 	{
-     if (trigndx[0] == 14) /* FLIP */
-		symmetry = NOSYM;
+		if (trigndx[0] == 14) /* FLIP */
+		{
+			symmetry = NOSYM;
+		}
 	}
 	if (fractype == MARKSMANDELPWR)
 	{
-     if (trigndx[0] == 14) /* FLIP */
-		symmetry = NOSYM;
+		if (trigndx[0] == 14) /* FLIP */
+		{
+			symmetry = NOSYM;
+		}
 	}
 	return 1;
 }
@@ -1173,7 +1181,7 @@ FnXFnSetup(void)
 	{
 		symmetry = fnxfn[trigndx[0]][trigndx[1]];  /* JCO 5/22/92 */
 	}
-                    /* defaults to XAXIS symmetry JCO 5/22/92 */
+	/* defaults to XAXIS symmetry JCO 5/22/92 */
 	else  /* added to complete the symmetry JCO 5/22/92 */
 	{
 		if (trigndx[0] == LOG || trigndx[1] == LOG) symmetry = NOSYM;

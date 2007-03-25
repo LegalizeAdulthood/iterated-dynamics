@@ -1058,9 +1058,9 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 
 #define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
 #define TEMP_FILE_NAME     "HELP.$$$"    /* temp file for storing extraseg  */
-                                         /*    while printing document      */
+										/*    while printing document      */
 #define MAX_NUM_TOPIC_SEC  (10)          /* max. number of topics under any */
-                                         /*    single section (CONTENT)     */
+										/*    single section (CONTENT)     */
 
 typedef struct PRINT_DOC_INFO
 {

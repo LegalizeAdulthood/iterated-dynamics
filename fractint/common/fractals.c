@@ -44,7 +44,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <malloc.h>
 #endif
 #endif
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -125,14 +125,14 @@ _CMPLX  T_Cm2;        /* 3*(floatparm - 2)                */
 _CMPLX  T_Cm1Cm2;     /* (floatparm - 1)*(floatparm - 2) */
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
-  {
+{
 	T_Cm1.x = floatparm->x - 1.0;   T_Cm1.y = floatparm->y;
 	T_Cm2.x = floatparm->x - 2.0;   T_Cm2.y = floatparm->y;
 	T_Cm1Cm2.x = (T_Cm1.x*T_Cm2.x) - (T_Cm1.y*T_Cm2.y);
 	T_Cm1Cm2.y = (T_Cm1.x*T_Cm2.y) + (T_Cm1.y*T_Cm2.x);
 	T_Cm1.x += T_Cm1.x + T_Cm1.x;   T_Cm1.y += T_Cm1.y + T_Cm1.y;
 	T_Cm2.x += T_Cm2.x + T_Cm2.x;   T_Cm2.y += T_Cm2.y + T_Cm2.y;
-  }
+}
 
 /* -------------------------------------------------------------------- */
 /*              Bailout Routines Macros                                                                                                 */
@@ -2181,7 +2181,7 @@ TrigXTrigfpFractal(void)
 }
 
 #if !defined(XFRACT)
- /* call float version of fractal if integer math overflow */
+/* call float version of fractal if integer math overflow */
 static int TryFloatFractal(int (*fpFractal)(void))
 {
 	overflow = 0;
@@ -2319,15 +2319,17 @@ TrigZsqrdFractal(void) /* this doesn't work very well */
 {
 #if !defined(XFRACT)
 	/* { z=pixel: z=trig(z*z), |z|<TEST } */
-long l16triglim_2 = 8L << 15;
+	long l16triglim_2 = 8L << 15;
 	LCMPLXsqr_old(ltmp);
 	if ((labs(ltmp.x) > l16triglim_2 || labs(ltmp.y) > l16triglim_2) &&
-       save_release > 1900)
+		save_release > 1900)
+	{
 		overflow = 1;
+	}
 	else
-		{
+	{
 		LCMPLXtrig0(ltmp, lnew);
-		}
+	}
 	if (overflow)
 	{
 		TryFloatFractal(TrigZsqrdfpFractal);
@@ -2362,7 +2364,7 @@ SqrTrigfpFractal(void)
 
 int
 Magnet1Fractal(void)    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
-  {                   /*  In "Beauty of Fractals", code by Kev Allen. */
+{                   /*  In "Beauty of Fractals", code by Kev Allen. */
 	_CMPLX top, bot, tmp;
 	double div;
 
@@ -2383,7 +2385,7 @@ Magnet1Fractal(void)    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 	g_new.y += g_new.y;
 
 	return floatbailout();
-  }
+}
 
 /* Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)) /      */
 /*       (3Z**2 + 3(C-2)Z + (C-1)(C-2) + 1))**2  */
@@ -2561,7 +2563,7 @@ MarksMandelPwrFractal(void)
 /* I was coding Marksmandelpower and failed to use some temporary
 	variables. The result was nice, and since my name is not on any fractal,
 	I thought I would immortalize myself with this error!
-                Tim Wegner */
+	Tim Wegner */
 
 int
 TimsErrorfpFractal(void)
@@ -2818,15 +2820,15 @@ int mandel_per_pixel(void)
 		}
 	}
 	switch (fractype)
-     {
-		case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
-				lold.x = FgHalf;
-				lold.y = 0;
-				break;
-		default:
-				lold = linit;
-				break;
-		}
+	{
+	case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
+			lold.x = FgHalf;
+			lold.y = 0;
+			break;
+	default:
+			lold = linit;
+			break;
+	}
 
 	/* alter init value */
 	if (useinitorbit == 1)
