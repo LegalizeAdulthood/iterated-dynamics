@@ -1722,7 +1722,7 @@ static int orbit3dlongcalc(void)
 			{
 				if (realtime)
 				{
-					g_which_image = 1;
+					g_which_image = WHICHIMAGE_RED;
 				}
 				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
@@ -1748,7 +1748,7 @@ static int orbit3dlongcalc(void)
 			oldrow = inf.row;
 			if (realtime)
 			{
-				g_which_image = 2;
+				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
@@ -1843,7 +1843,7 @@ static int orbit3dfloatcalc(void)
 			{
 				if (realtime)
 				{
-					g_which_image = 1;
+					g_which_image = WHICHIMAGE_RED;
 				}
 				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
@@ -1866,7 +1866,7 @@ static int orbit3dfloatcalc(void)
 			oldrow = inf.row;
 			if (realtime)
 			{
-				g_which_image = 2;
+				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
@@ -2286,7 +2286,7 @@ int funny_glasses_call(int (*calc)(void))
 {
 	int status;
 	status = 0;
-	g_which_image = g_glasses_type ? 1 : 0;
+	g_which_image = g_glasses_type ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
 	plot_setup();
 	plot = standardplot;
 	status = calc();
@@ -2310,7 +2310,7 @@ int funny_glasses_call(int (*calc)(void))
 				/* is there a better way to clear the screen in graphics mode? */
 				driver_set_video_mode(&g_video_entry);
 		}
-		g_which_image = 2;
+		g_which_image = WHICHIMAGE_BLUE;
 		if (curfractalspecific->flags & INFCALC)
 		{
 			curfractalspecific->per_image(); /* reset for 2nd image */
@@ -2420,7 +2420,7 @@ static int ifs3dfloat(void)
 			{
 				if (realtime)
 				{
-					g_which_image = 1;
+					g_which_image = WHICHIMAGE_RED;
 				}
 				if (color_method)
 				{
@@ -2441,7 +2441,7 @@ static int ifs3dfloat(void)
 			}
 			if (realtime)
 			{
-				g_which_image = 2;
+				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
@@ -2684,7 +2684,7 @@ static int ifs3dlong(void)
 			{
 				if (realtime)
 				{
-					g_which_image = 1;
+					g_which_image = WHICHIMAGE_RED;
 				}
 				if (color_method)
 				{
@@ -2701,7 +2701,7 @@ static int ifs3dlong(void)
 			}
 			if (realtime)
 			{
-				g_which_image = 2;
+				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
