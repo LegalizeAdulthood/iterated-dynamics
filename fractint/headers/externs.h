@@ -476,12 +476,6 @@ extern int                   StoPtr;
 extern int                   stoppass;
 extern unsigned int          strlocn[];
 extern BYTE                  suffix[];
-#if defined(_WIN32)
-extern char					 supervga_list[];
-#else
-extern char                  supervga_list;
-#endif
-extern int                   g_svga_type;						/* SuperVGA video adapter type */
 extern double                sx3rd;
 extern int                   sxdots;
 extern double                sxmax;
@@ -544,14 +538,9 @@ extern long                  usr_distest;
 extern char                  usr_floatflag;
 extern int                   usr_periodicitycheck;
 extern char                  usr_stdcalcmode;
-extern int                   g_vesa_x_res;
-extern int                   g_vesa_y_res;
 extern struct videoinfo      g_video_entry;
 extern VIDEOINFO             g_video_table[];
 extern int					 g_video_table_len;
-extern int                   g_video_scroll;
-extern int                   g_video_start_x;
-extern int                   g_video_start_y;
 extern int                   g_video_type;						/* video adapter type */
 extern VECTOR                view;
 extern int                   viewcrop;

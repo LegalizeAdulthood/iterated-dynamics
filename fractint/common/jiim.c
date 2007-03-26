@@ -579,12 +579,6 @@ void Jiim(int which)         /* called by fractint */
 		plot = c_putcolor;                /* for line with clipping */
 	}
 
-	if (!g_video_scroll)
-	{
-		g_vesa_x_res = sxdots;
-		g_vesa_y_res = sydots;
-	}
-
 	if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
 	{
 		savehasinverse = hasinverse;

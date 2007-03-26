@@ -359,13 +359,10 @@ void moveboxf(double dx, double dy)
 			zby = (double)row/dysize;
 		}
 	}
-#ifndef XFRACT
-	if (g_video_scroll != 0)  /* scroll screen center to the box center */
-	{
-		col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
-		row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
+	col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
+	row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
 	}
-#endif
+
 }
 
 static void _fastcall chgboxf(double dwidth, double ddepth)

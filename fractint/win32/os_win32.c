@@ -144,59 +144,11 @@ int polyphony = 0;
 char rlebuf[258] = { 0 };
 int g_row_count = 0;
 unsigned int strlocn[10*1024] = { 0 };
-char supervga_list[] =
-{
-	'a', 'h', 'e', 'a', 'd', 'a',		//supervga_list   db      "aheada"
-	0, 0,								//aheada  dw      0
-	'a', 't', 'i', ' ', ' ', ' ',		//        db      "ati   "
-	0, 0,								//ativga  dw      0
-	'c', 'h', 'i', ' ', ' ', ' ',		//        db      "chi   "
-	0, 0,								//chipstech dw    0
-	'e', 'v', 'e', ' ', ' ', ' ',		//        db      "eve   "
-	0, 0,								//everex  dw      0
-	'g', 'e', 'n', ' ', ' ', ' ',		//        db      "gen   "
-	0, 0,								//genoa   dw      0
-	'n', 'c', 'r', ' ', ' ', ' ',		//        db      "ncr   "
-	0, 0,								//ncr     dw      0
-	'o', 'a', 'k', ' ', ' ', ' ',		//        db      "oak   "
-	0, 0,								//oaktech dw      0
-	'p', 'a', 'r', ' ', ' ', ' ',		//        db      "par   "
-	0, 0,								//paradise dw     0
-	't', 'r', 'i', ' ', ' ', ' ',		//        db      "tri   "
-	0, 0,								//trident dw      0
-	't', 's', 'e', 'n', 'g', '3',		//        db      "tseng3"
-	0, 0,								//tseng   dw      0
-	't', 's', 'e', 'n', 'g', '4',		//        db      "tseng4"
-	0, 0,								//tseng4  dw      0
-	'v', 'i', 'd', ' ', ' ', ' ',		//        db      "vid   "
-	0, 0,								//video7  dw      0
-	'a', 'h', 'e', 'a', 'd', 'b',		//        db      "aheadb"
-	0, 0,								//aheadb  dw      0
-	'v', 'e', 's', 'a', ' ', ' ',		//        db      "vesa  "
-	0, 0,								//vesa    dw      0
-	'c', 'i', 'r', 'r', 'u', 's',		//        db      "cirrus"
-	0, 0,								//cirrus  dw      0
-	't', '8', '9', '0', '0', ' ',		//        db      "t8900 "
-	0, 0,								//t8900   dw      0
-	'c', 'o', 'm', 'p', 'a', 'q',		//        db      "compaq"
-	0, 0,								//compaq  dw      0
-	'x', 'g', 'a', ' ', ' ', ' ',		//        db      "xga   "
-	0, 0,								//xga     dw      0
-	' ', ' ', ' ', ' ', ' ', ' ',		//        db      "      "        ; end-of-the-list
-	0, 0								//        dw      0
-};
-int g_svga_type = 0;
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
 int g_text_row = 0;
 char tstack[4096] = { 0 };
-int g_vesa_detect = 0;
-int g_vesa_x_res = 0;
-int g_vesa_y_res = 0;
-int g_video_scroll = 0;
-int g_video_start_x = 0;
-int g_video_start_y = 0;
 /* g_video_table
  *
  *  |--Adapter/Mode-Name------|-------Comments-----------|
@@ -559,37 +511,6 @@ void spindac(int dir, int inc)
 	}
 	driver_write_palette();
 	driver_delay(colors - g_dac_count - 1);
-}
-
-//; ************* function scroll_relative(bycol, byrow) ***********************
-//
-//; scroll_relative ------------------------------------------------------------
-//; * relative screen center scrolling, arguments passed are signed deltas
-//; ------------------------------------------------------------16-08-2002-ChCh-
-//
-//scroll_relative proc    bycol: word, byrow: word
-//        cmp     g_video_scroll,0        ; is the scrolling on?
-//        jne     okletsmove              ;  ok, lets move
-//        jmp     staystill               ;  no, stay still
-//okletsmove:
-//        mov     cx,g_video_start_x         ; where we already are..
-//        mov     dx,g_video_start_y
-//        add     cx,video_cofs_x         ; find the screen center
-//        add     dx,video_cofs_y
-//        add     cx,bycol                ; add the relative shift
-//        add     dx,byrow
-//        call    VESAscroll              ; replace this later with a variable
-//staystill:
-//        ret
-//scroll_relative endp
-
-void scroll_relative(int bycol, int byrow)
-{
-	if (g_video_scroll)
-	{
-		_ASSERTE(0 && "scroll_relative called");
-		// blt pixels around :-)
-	}
 }
 
 /*
