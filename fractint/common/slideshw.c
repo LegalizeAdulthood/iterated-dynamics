@@ -186,28 +186,28 @@ start:
 	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
 	{
-		case EOF:
-			stopslideshow();
-			return 0;
-		case '\"':        /* begin quoted string */
-			quotes = 1;
-			goto start;
-		case ';':         /* comment from here to end of line, skip it */
-			do
-			{
-				out = fgetc(fpss);
-			}
-			while (out != '\n' && out != EOF);
-			goto start;
-		case '*':
-			if (fscanf(fpss, "%d", &repeats) != 1
-				|| repeats <= 1 || repeats >= 256 || feof(fpss))
-			{
-				slideshowerr("error in * argument");
-				last1 = repeats = 0;
-			}
-			repeats -= 2;
-			return out = last1;
+	case EOF:
+		stopslideshow();
+		return 0;
+	case '\"':        /* begin quoted string */
+		quotes = 1;
+		goto start;
+	case ';':         /* comment from here to end of line, skip it */
+		do
+		{
+			out = fgetc(fpss);
+		}
+		while (out != '\n' && out != EOF);
+		goto start;
+	case '*':
+		if (fscanf(fpss, "%d", &repeats) != 1
+			|| repeats <= 1 || repeats >= 256 || feof(fpss))
+		{
+			slideshowerr("error in * argument");
+			last1 = repeats = 0;
+		}
+		repeats -= 2;
+		return out = last1;
 	}
 
 	i = 0;

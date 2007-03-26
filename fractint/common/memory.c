@@ -316,7 +316,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	/* Oops, do something about this! ????? */
 	}
 
-/* attempt to allocate requested memory type */
+	/* attempt to allocate requested memory type */
 	switch (use_this_type)
 	{
 	case NOWHERE: /* MemoryAlloc */
@@ -327,7 +327,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		break;
 
 	case MEMORY: /* MemoryAlloc */
-/* Availability of memory checked in check_for_mem() */
+		/* Availability of memory checked in check_for_mem() */
 		handletable[handle].Linearmem.memory = (BYTE *)malloc(toallocate);
 		handletable[handle].Linearmem.size = toallocate;
 		handletable[handle].Linearmem.stored_at = MEMORY;

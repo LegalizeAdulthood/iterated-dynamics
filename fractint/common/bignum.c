@@ -326,15 +326,15 @@ int strlen_needed()
 	/* first space for integer part */
 	switch (intlength)
 	{
-		case 1:
-			length = 3;  /* max 127 */
-			break;
-		case 2:
-			length = 5;  /* max 32767 */
-			break;
-		case 4:
-			length = 10; /* max 2147483647 */
-			break;
+	case 1:
+		length = 3;  /* max 127 */
+		break;
+	case 2:
+		length = 5;  /* max 32767 */
+		break;
+	case 4:
+		length = 10; /* max 2147483647 */
+		break;
 	}
 	length += decimals;  /* decimal part */
 	length += 2;         /* decimal point and sign */
@@ -369,15 +369,15 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 	}
 	switch (intlength)
 	{ /* only 1, 2, or 4 are allowed */
-		case 1:
-				longval = *onesbyte;
-				break;
-		case 2:
-				longval = big_access16(onesbyte);
-				break;
-		case 4:
-				longval = big_access32(onesbyte);
-				break;
+	case 1:
+		longval = *onesbyte;
+		break;
+	case 2:
+		longval = big_access16(onesbyte);
+		break;
+	case 4:
+		longval = big_access32(onesbyte);
+		break;
 	}
 	ltoa(longval, s, 10);
 	l = (int) strlen(s);
@@ -408,15 +408,15 @@ bn_t inttobn(bn_t r, long longval)
 	onesbyte = r + bnlength - intlength;
 	switch (intlength)
 	{ /* only 1, 2, or 4 are allowed */
-		case 1:
-				*onesbyte = (BYTE)longval;
-				break;
-		case 2:
-				big_set16(onesbyte, (U16)longval);
-				break;
-		case 4:
-				big_set32(onesbyte, longval);
-				break;
+	case 1:
+		*onesbyte = (BYTE)longval;
+		break;
+	case 2:
+		big_set16(onesbyte, (U16)longval);
+		break;
+	case 4:
+		big_set32(onesbyte, longval);
+		break;
 	}
 	return r;
 }
@@ -432,15 +432,15 @@ long bntoint(bn_t n)
 	onesbyte = n + bnlength - intlength;
 	switch (intlength)
 	{ /* only 1, 2, or 4 are allowed */
-		case 1:
-				longval = *onesbyte;
-				break;
-		case 2:
-				longval = big_access16(onesbyte);
-				break;
-		case 4:
-				longval = big_access32(onesbyte);
-				break;
+	case 1:
+		longval = *onesbyte;
+		break;
+	case 2:
+		longval = big_access16(onesbyte);
+		break;
+	case 4:
+		longval = big_access32(onesbyte);
+		break;
 	}
 	return longval;
 }
@@ -472,15 +472,15 @@ bn_t floattobn(bn_t r, LDBL f)
 
 	switch (intlength)
 	{ /* only 1, 2, or 4 are allowed */
-		case 1:
-				*onesbyte = (BYTE)f;
-				break;
-		case 2:
-				big_set16(onesbyte, (U16)f);
-				break;
-		case 4:
-				big_set32(onesbyte, (U32)f);
-				break;
+	case 1:
+		*onesbyte = (BYTE)f;
+		break;
+	case 2:
+		big_set16(onesbyte, (U16)f);
+		break;
+	case 4:
+		big_set32(onesbyte, (U32)f);
+		break;
 	}
 
 	f -= (long)f; /* keep only the decimal part */

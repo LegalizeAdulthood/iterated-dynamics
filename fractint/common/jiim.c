@@ -275,18 +275,20 @@ int Init_Queue(unsigned long request)
 #endif
 
 	for (ListSize = request; ListSize > 1024; ListSize /= 2)
+	{
 		switch (common_startdisk(ListSize*8, 1, 256))
 		{
-			case 0:                        /* success */
-				ListFront = ListBack = 0;
-				lsize = lmax = 0;
-				return 1;
-			case -1:
-				continue;                   /* try smaller queue size */
-			case -2:
-				ListSize = 0;               /* cancelled by user      */
-				return 0;
+		case 0:                        /* success */
+			ListFront = ListBack = 0;
+			lsize = lmax = 0;
+			return 1;
+		case -1:
+			continue;                   /* try smaller queue size */
+		case -2:
+			ListSize = 0;               /* cancelled by user      */
+			return 0;
 		}
+	}
 
 	/* failed to get memory for MIIM Queue */
 	ListSize = 0;

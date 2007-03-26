@@ -474,89 +474,89 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			done = driver_get_key();
 			switch (done)
 			{
-				case FIK_ESC:
-					done = -1;
-				case FIK_ENTER:
-				case FIK_ENTER_2:
-					goto fullscreen_exit;
-				case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
-					if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
-					{
-						scroll_row_status++;
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
-					if (in_scrolling_mode && scroll_row_status > 0)
-					{
-						scroll_row_status--;
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
-					if (in_scrolling_mode && scroll_column_status > 0)
-					{
-						scroll_column_status--;
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
-					if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
-					{
-						scroll_column_status++;
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
-					if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
-					{
-						scroll_row_status += extralines - 2;
-						if (scroll_row_status > vertical_scroll_limit)
-						{
-							scroll_row_status = vertical_scroll_limit;
-						}
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
-					if (in_scrolling_mode && scroll_row_status > 0)
-					{
-						scroll_row_status -= extralines - 2;
-						if (scroll_row_status < 0)
-						{
-							scroll_row_status = 0;
-						}
-						rewrite_extrainfo = 1;
-					}
-					break;
-				case FIK_CTL_END:         /* scrolling key - to end of entry */
-					if (in_scrolling_mode)
+			case FIK_ESC:
+				done = -1;
+			case FIK_ENTER:
+			case FIK_ENTER_2:
+				goto fullscreen_exit;
+			case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
+				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+				{
+					scroll_row_status++;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
+				if (in_scrolling_mode && scroll_row_status > 0)
+				{
+					scroll_row_status--;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
+				if (in_scrolling_mode && scroll_column_status > 0)
+				{
+					scroll_column_status--;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
+				if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
+				{
+					scroll_column_status++;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
+				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+				{
+					scroll_row_status += extralines - 2;
+					if (scroll_row_status > vertical_scroll_limit)
 					{
 						scroll_row_status = vertical_scroll_limit;
-						scroll_column_status = 0;
-						rewrite_extrainfo = 1;
 					}
-					break;
-				case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
-					if (in_scrolling_mode)
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
+				if (in_scrolling_mode && scroll_row_status > 0)
+				{
+					scroll_row_status -= extralines - 2;
+					if (scroll_row_status < 0)
 					{
-						scroll_row_status = scroll_column_status = 0;
-						rewrite_extrainfo = 1;
+						scroll_row_status = 0;
 					}
-					break;
-				case FIK_F2:
-				case FIK_F3:
-				case FIK_F4:
-				case FIK_F5:
-				case FIK_F6:
-				case FIK_F7:
-				case FIK_F8:
-				case FIK_F9:
-				case FIK_F10:
-					if (promptfkeys & (1 << (done + 1-FIK_F1)))
-					{
-						goto fullscreen_exit;
-					}
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_END:         /* scrolling key - to end of entry */
+				if (in_scrolling_mode)
+				{
+					scroll_row_status = vertical_scroll_limit;
+					scroll_column_status = 0;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
+				if (in_scrolling_mode)
+				{
+					scroll_row_status = scroll_column_status = 0;
+					rewrite_extrainfo = 1;
+				}
+				break;
+			case FIK_F2:
+			case FIK_F3:
+			case FIK_F4:
+			case FIK_F5:
+			case FIK_F6:
+			case FIK_F7:
+			case FIK_F8:
+			case FIK_F9:
+			case FIK_F10:
+				if (promptfkeys & (1 << (done + 1-FIK_F1)))
+				{
+					goto fullscreen_exit;
+				}
 			}
 		}
 	}
@@ -628,27 +628,27 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
 			switch (values[curchoice].type)
 			{
-				case 'd':
-				case 'D':
-					values[curchoice].uval.dval = atof(buf);
-					break;
-				case 'f':
-					values[curchoice].uval.dval = atof(buf);
-					roundfloatd(&values[curchoice].uval.dval);
-					break;
-				case 'i':
-					values[curchoice].uval.ival = atoi(buf);
-					break;
-				case 'L':
-					values[curchoice].uval.Lval = atol(buf);
-					break;
-				case 's':
-					strncpy(values[curchoice].uval.sval, buf, 16);
-					break;
-				default: /* assume 0x100 + n */
-					strcpy(values[curchoice].uval.sbuf, buf);
-				}
+			case 'd':
+			case 'D':
+				values[curchoice].uval.dval = atof(buf);
+				break;
+			case 'f':
+				values[curchoice].uval.dval = atof(buf);
+				roundfloatd(&values[curchoice].uval.dval);
+				break;
+			case 'i':
+				values[curchoice].uval.ival = atoi(buf);
+				break;
+			case 'L':
+				values[curchoice].uval.Lval = atol(buf);
+				break;
+			case 's':
+				strncpy(values[curchoice].uval.sval, buf, 16);
+				break;
+			default: /* assume 0x100 + n */
+				strcpy(values[curchoice].uval.sbuf, buf);
 			}
+		}
 
 		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
 		j = (int) strlen(buf);
@@ -657,104 +657,110 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 		switch (i)
 		{
-			case 0:  /* enter  */
-				done = FIK_ENTER;
-				break;
-			case -1: /* escape */
-			case FIK_F2:
-			case FIK_F3:
-			case FIK_F4:
-			case FIK_F5:
-			case FIK_F6:
-			case FIK_F7:
-			case FIK_F8:
-			case FIK_F9:
-			case FIK_F10:
-				done = i;
-				break;
-			case FIK_PAGE_UP:
-				curchoice = -1;
-			case FIK_DOWN_ARROW:
-				do
+		case 0:  /* enter  */
+			done = FIK_ENTER;
+			break;
+		case -1: /* escape */
+		case FIK_F2:
+		case FIK_F3:
+		case FIK_F4:
+		case FIK_F5:
+		case FIK_F6:
+		case FIK_F7:
+		case FIK_F8:
+		case FIK_F9:
+		case FIK_F10:
+			done = i;
+			break;
+		case FIK_PAGE_UP:
+			curchoice = -1;
+		case FIK_DOWN_ARROW:
+			do
+			{
+				if (++curchoice >= numprompts)
 				{
-					if (++curchoice >= numprompts) curchoice = 0;
-					}
-					while (values[curchoice].type == '*');
-				break;
-			case FIK_PAGE_DOWN:
-				curchoice = numprompts;
-			case FIK_UP_ARROW:
-				do
-				{
-					if (--curchoice < 0) curchoice = numprompts - 1;
-					}
-					while (values[curchoice].type == '*');
-				break;
-			case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
-				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
-				{
-					scroll_row_status++;
-					rewrite_extrainfo = 1;
+					curchoice = 0;
 				}
-				break;
-			case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
-				if (in_scrolling_mode && scroll_row_status > 0)
+			}
+			while (values[curchoice].type == '*');
+			break;
+		case FIK_PAGE_DOWN:
+			curchoice = numprompts;
+		case FIK_UP_ARROW:
+			do
+			{
+				if (--curchoice < 0)
 				{
-					scroll_row_status--;
-					rewrite_extrainfo = 1;
+					curchoice = numprompts - 1;
 				}
-				break;
-			case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
-				if (in_scrolling_mode && scroll_column_status > 0)
-				{
-					scroll_column_status--;
-					rewrite_extrainfo = 1;
-				}
-				break;
-			case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
-				if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
-				{
-					scroll_column_status++;
-					rewrite_extrainfo = 1;
-				}
-				break;
-			case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
-				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
-				{
-					scroll_row_status += extralines - 2;
-					if (scroll_row_status > vertical_scroll_limit)
-					{
-						scroll_row_status = vertical_scroll_limit;
-					}
-					rewrite_extrainfo = 1;
-				}
-				break;
-			case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
-				if (in_scrolling_mode && scroll_row_status > 0)
-				{
-					scroll_row_status -= extralines - 2;
-					if (scroll_row_status < 0)
-					{
-						scroll_row_status = 0;
-					}
-					rewrite_extrainfo = 1;
-				}
-				break;
-			case FIK_CTL_END:          /* scrolling key - go to end of entry */
-				if (in_scrolling_mode)
+			}
+			while (values[curchoice].type == '*');
+			break;
+		case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
+			if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+			{
+				scroll_row_status++;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
+			if (in_scrolling_mode && scroll_row_status > 0)
+			{
+				scroll_row_status--;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
+			if (in_scrolling_mode && scroll_column_status > 0)
+			{
+				scroll_column_status--;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
+			if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
+			{
+				scroll_column_status++;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
+			if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+			{
+				scroll_row_status += extralines - 2;
+				if (scroll_row_status > vertical_scroll_limit)
 				{
 					scroll_row_status = vertical_scroll_limit;
-					scroll_column_status = 0;
-					rewrite_extrainfo = 1;
 				}
-				break;
-			case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
-				if (in_scrolling_mode)
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
+			if (in_scrolling_mode && scroll_row_status > 0)
+			{
+				scroll_row_status -= extralines - 2;
+				if (scroll_row_status < 0)
 				{
-					scroll_row_status = scroll_column_status = 0;
-					rewrite_extrainfo = 1;
+					scroll_row_status = 0;
 				}
-				break;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_END:          /* scrolling key - go to end of entry */
+			if (in_scrolling_mode)
+			{
+				scroll_row_status = vertical_scroll_limit;
+				scroll_column_status = 0;
+				rewrite_extrainfo = 1;
+			}
+			break;
+		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
+			if (in_scrolling_mode)
+			{
+				scroll_row_status = scroll_column_status = 0;
+				rewrite_extrainfo = 1;
+			}
+			break;
 		}
 	}
 
@@ -774,55 +780,58 @@ int prompt_valuestring(char *buf, struct fullscreenvalues *val)
 	int i, ret;
 	switch (val->type)
 	{
-		case 'd':
-			ret = 20;
-			i = 16;    /* cellular needs 16 (was 15)*/
-			while (1)
+	case 'd':
+		ret = 20;
+		i = 16;    /* cellular needs 16 (was 15)*/
+		while (1)
+		{
+			sprintf(buf, "%.*g", i, val->uval.dval);
+			if ((int)strlen(buf) <= ret)
 			{
-				sprintf(buf, "%.*g", i, val->uval.dval);
-				if ((int)strlen(buf) <= ret) break;
-				--i;
-				}
-			break;
-		case 'D':
-			if (val->uval.dval < 0)  /* We have to round the right way */
-			{
-				sprintf(buf, "%ld", (long)(val->uval.dval-.5));
+				break;
 			}
-			else
-			{
-				sprintf(buf, "%ld", (long)(val->uval.dval + .5));
-			}
-			ret = 20;
-			break;
-		case 'f':
-			sprintf(buf, "%.7g", val->uval.dval);
-			ret = 14;
-			break;
-		case 'i':
-			sprintf(buf, "%d", val->uval.ival);
-			ret = 6;
-			break;
-		case 'L':
-			sprintf(buf, "%ld", val->uval.Lval);
-			ret = 10;
-			break;
-		case '*':
-			*buf = (char)(ret = 0);
-			break;
-		case 's':
-			strncpy(buf, val->uval.sval, 16);
-			buf[15] = 0;
-			ret = 15;
-			break;
-		case 'l':
-			strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
-			ret = val->uval.ch.vlen;
-			break;
-		default: /* assume 0x100 + n */
-			strcpy(buf, val->uval.sbuf);
-			ret = val->type & 0xff;
+			--i;
 		}
+		break;
+	case 'D':
+		if (val->uval.dval < 0)  /* We have to round the right way */
+		{
+			sprintf(buf, "%ld", (long)(val->uval.dval-.5));
+		}
+		else
+		{
+			sprintf(buf, "%ld", (long)(val->uval.dval + .5));
+		}
+		ret = 20;
+		break;
+	case 'f':
+		sprintf(buf, "%.7g", val->uval.dval);
+		ret = 14;
+		break;
+	case 'i':
+		sprintf(buf, "%d", val->uval.ival);
+		ret = 6;
+		break;
+	case 'L':
+		sprintf(buf, "%ld", val->uval.Lval);
+		ret = 10;
+		break;
+	case '*':
+		*buf = (char)(ret = 0);
+		break;
+	case 's':
+		strncpy(buf, val->uval.sval, 16);
+		buf[15] = 0;
+		ret = 15;
+		break;
+	case 'l':
+		strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
+		ret = val->uval.ch.vlen;
+		break;
+	default: /* assume 0x100 + n */
+		strcpy(buf, val->uval.sbuf);
+		ret = val->type & 0xff;
+	}
 	return ret;
 }
 
@@ -830,25 +839,25 @@ int prompt_checkkey(int curkey)
 {
 	switch (curkey)
 	{
-		case FIK_PAGE_UP:
-		case FIK_DOWN_ARROW:
-		case FIK_PAGE_DOWN:
-		case FIK_UP_ARROW:
+	case FIK_PAGE_UP:
+	case FIK_DOWN_ARROW:
+	case FIK_PAGE_DOWN:
+	case FIK_UP_ARROW:
+		return curkey;
+	case FIK_F2:
+	case FIK_F3:
+	case FIK_F4:
+	case FIK_F5:
+	case FIK_F6:
+	case FIK_F7:
+	case FIK_F8:
+	case FIK_F9:
+	case FIK_F10:
+		if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+		{
 			return curkey;
-		case FIK_F2:
-		case FIK_F3:
-		case FIK_F4:
-		case FIK_F5:
-		case FIK_F6:
-		case FIK_F7:
-		case FIK_F8:
-		case FIK_F9:
-		case FIK_F10:
-			if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
-			{
-				return curkey;
-			}
 		}
+	}
 	return 0;
 }
 
@@ -856,33 +865,33 @@ int prompt_checkkey_scroll(int curkey)
 {
 	switch (curkey)
 	{
-		case FIK_PAGE_UP:
-		case FIK_DOWN_ARROW:
-		case FIK_CTL_DOWN_ARROW:
-		case FIK_PAGE_DOWN:
-		case FIK_UP_ARROW:
-		case FIK_CTL_UP_ARROW:
-		case FIK_CTL_LEFT_ARROW:
-		case FIK_CTL_RIGHT_ARROW:
-		case FIK_CTL_PAGE_DOWN:
-		case FIK_CTL_PAGE_UP:
-		case FIK_CTL_END:
-		case FIK_CTL_HOME:
+	case FIK_PAGE_UP:
+	case FIK_DOWN_ARROW:
+	case FIK_CTL_DOWN_ARROW:
+	case FIK_PAGE_DOWN:
+	case FIK_UP_ARROW:
+	case FIK_CTL_UP_ARROW:
+	case FIK_CTL_LEFT_ARROW:
+	case FIK_CTL_RIGHT_ARROW:
+	case FIK_CTL_PAGE_DOWN:
+	case FIK_CTL_PAGE_UP:
+	case FIK_CTL_END:
+	case FIK_CTL_HOME:
+		return curkey;
+	case FIK_F2:
+	case FIK_F3:
+	case FIK_F4:
+	case FIK_F5:
+	case FIK_F6:
+	case FIK_F7:
+	case FIK_F8:
+	case FIK_F9:
+	case FIK_F10:
+		if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+		{
 			return curkey;
-		case FIK_F2:
-		case FIK_F3:
-		case FIK_F4:
-		case FIK_F5:
-		case FIK_F6:
-		case FIK_F7:
-		case FIK_F8:
-		case FIK_F9:
-		case FIK_F10:
-			if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
-			{
-				return curkey;
-			}
 		}
+	}
 	return 0;
 }
 
@@ -924,55 +933,56 @@ static int input_field_list(
 		curkey = driver_key_cursor(row, col); /* get a keystroke */
 		switch (curkey)
 		{
-			case FIK_ENTER:
-			case FIK_ENTER_2:
-				ret = 0;
-				goto inpfldl_end;
-			case FIK_ESC:
-				goto inpfldl_end;
-			case FIK_RIGHT_ARROW:
-				if (++curval >= llen)
+		case FIK_ENTER:
+		case FIK_ENTER_2:
+			ret = 0;
+			goto inpfldl_end;
+		case FIK_ESC:
+			goto inpfldl_end;
+		case FIK_RIGHT_ARROW:
+			if (++curval >= llen)
+			{
+				curval = 0;
+			}
+			break;
+		case FIK_LEFT_ARROW:
+			if (--curval < 0)
+			{
+				curval = llen - 1;
+			}
+			break;
+		case FIK_F5:
+			curval = initval;
+			break;
+		default:
+			if (nonalpha(curkey))
+			{
+				if (checkkey)
 				{
-					curval = 0;
+					ret = (*checkkey)(curkey);
+					if (ret != 0)
+					{
+						goto inpfldl_end;
+					}
 				}
-				break;
-			case FIK_LEFT_ARROW:
-				if (--curval < 0)
+				break;                                /* non alphanum char */
+			}
+			j = curval;
+			for (i = 0; i < llen; ++i)
+			{
+				if (++j >= llen)
 				{
-					curval = llen - 1;
+					j = 0;
 				}
-				break;
-			case FIK_F5:
-				curval = initval;
-				break;
-			default:
-				if (nonalpha(curkey))
+				if ((*list[j] & 0xdf) == (curkey & 0xdf))
 				{
-					if (checkkey)
-					{
-						ret = (*checkkey)(curkey);
-						if (ret != 0)
-						{
-							goto inpfldl_end;
-						}
-					}
-					break;                                /* non alphanum char */
-					}
-				j = curval;
-				for (i = 0; i < llen; ++i)
-				{
-					if (++j >= llen)
-					{
-						j = 0;
-					}
-					if ((*list[j] & 0xdf) == (curkey & 0xdf))
-					{
-						curval = j;
-						break;
-						}
-					}
+					curval = j;
+					break;
+				}
 			}
 		}
+	}
+
 inpfldl_end:
 	strcpy(fld, list[curval]);
 	lookatmouse = savelookatmouse;
@@ -2083,25 +2093,31 @@ long get_file_entry(int type, char *title, char *fmask,
 		}
 		switch (type)
 		{
-			case GETFILE_FORMULA:
-				if (RunForm(entryname, 1) == 0) return 0;
-				break;
-			case GETFILE_L_SYSTEM:
-				if (LLoad() == 0) return 0;
-				break;
-			case GETFILE_IFS:
-				if (ifsload() == 0)
-				{
-					fractype = (ifs_type == 0) ? IFS : IFS3D;
-					curfractalspecific = &fractalspecific[fractype];
-					set_default_parms(); /* to correct them if 3d */
-					return 0;
-					}
-				break;
-			case GETFILE_PARAMETER:
-				return entry_pointer;
+		case GETFILE_FORMULA:
+			if (RunForm(entryname, 1) == 0)
+			{
+				return 0;
 			}
+			break;
+		case GETFILE_L_SYSTEM:
+			if (LLoad() == 0)
+			{
+				return 0;
+			}
+			break;
+		case GETFILE_IFS:
+			if (ifsload() == 0)
+			{
+				fractype = (ifs_type == 0) ? IFS : IFS3D;
+				curfractalspecific = &fractalspecific[fractype];
+				set_default_parms(); /* to correct them if 3d */
+				return 0;
+			}
+			break;
+		case GETFILE_PARAMETER:
+			return entry_pointer;
 		}
+	}
 }
 
 struct entryinfo
@@ -2484,73 +2500,73 @@ static int check_gfe_key(int curkey, int choice)
 			{
 				switch (i)
 				{
-					case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
-						if (in_scrolling_mode && top_line < lines_in_entry - 17)
-						{
-							top_line++;
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_UP_ARROW: case FIK_CTL_UP_ARROW:  /* up one line */
-						if (in_scrolling_mode && top_line > 0)
-						{
-							top_line--;
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_LEFT_ARROW: case FIK_CTL_LEFT_ARROW:  /* left one column */
-						if (in_scrolling_mode && left_column > 0)
-						{
-							left_column--;
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_RIGHT_ARROW: case FIK_CTL_RIGHT_ARROW: /* right one column */
-						if (in_scrolling_mode && strchr(infbuf, '\021') != NULL)
-						{
-							left_column++;
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_PAGE_DOWN: case FIK_CTL_PAGE_DOWN: /* down 17 lines */
-						if (in_scrolling_mode && top_line < lines_in_entry - 17)
-						{
-							top_line += 17;
-							if (top_line > lines_in_entry - 17)
-							{
-								top_line = lines_in_entry - 17;
-							}
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_PAGE_UP: case FIK_CTL_PAGE_UP: /* up 17 lines */
-						if (in_scrolling_mode && top_line > 0)
-						{
-							top_line -= 17;
-							if (top_line < 0)
-							{
-								top_line = 0;
-							}
-							rewrite_infbuf = 1;
-						}
-						break;
-					case FIK_END: case FIK_CTL_END:       /* to end of entry */
-						if (in_scrolling_mode)
+				case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
+					if (in_scrolling_mode && top_line < lines_in_entry - 17)
+					{
+						top_line++;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_UP_ARROW: case FIK_CTL_UP_ARROW:  /* up one line */
+					if (in_scrolling_mode && top_line > 0)
+					{
+						top_line--;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_LEFT_ARROW: case FIK_CTL_LEFT_ARROW:  /* left one column */
+					if (in_scrolling_mode && left_column > 0)
+					{
+						left_column--;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_RIGHT_ARROW: case FIK_CTL_RIGHT_ARROW: /* right one column */
+					if (in_scrolling_mode && strchr(infbuf, '\021') != NULL)
+					{
+						left_column++;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_PAGE_DOWN: case FIK_CTL_PAGE_DOWN: /* down 17 lines */
+					if (in_scrolling_mode && top_line < lines_in_entry - 17)
+					{
+						top_line += 17;
+						if (top_line > lines_in_entry - 17)
 						{
 							top_line = lines_in_entry - 17;
-							left_column = 0;
-							rewrite_infbuf = 1;
 						}
-						break;
-					case FIK_HOME: case FIK_CTL_HOME:     /* to beginning of entry */
-						if (in_scrolling_mode)
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_PAGE_UP: case FIK_CTL_PAGE_UP: /* up 17 lines */
+					if (in_scrolling_mode && top_line > 0)
+					{
+						top_line -= 17;
+						if (top_line < 0)
 						{
-							top_line = left_column = 0;
-							rewrite_infbuf = 1;
+							top_line = 0;
 						}
-						break;
-					default:
-						break;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_END: case FIK_CTL_END:       /* to end of entry */
+					if (in_scrolling_mode)
+					{
+						top_line = lines_in_entry - 17;
+						left_column = 0;
+						rewrite_infbuf = 1;
+					}
+					break;
+				case FIK_HOME: case FIK_CTL_HOME:     /* to beginning of entry */
+					if (in_scrolling_mode)
+					{
+						top_line = left_column = 0;
+						rewrite_infbuf = 1;
+					}
+					break;
+				default:
+					break;
 				}
 			}
 			else

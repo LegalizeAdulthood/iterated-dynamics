@@ -2721,210 +2721,210 @@ static int ParseStr(char *Str, int pass)
 		InitN = n;
 		switch (Str[n])
 		{
-			case ' ':
-			case '\t':
-			case '\r':
-			case '\n':
-				break;
-			case '(':
-				paren++;
-				break;
-			case ')':
+		case ' ':
+		case '\t':
+		case '\r':
+		case '\n':
+			break;
+		case '(':
+			paren++;
+			break;
+		case ')':
+			paren--;
+			break;
+		case '|':
+			if (Str[n + 1] == '|')
+			{
+				ExpectingArg = 1;
+				n++;
+				o[posp].f = StkOR;
+				o[posp++].p = 7 - (paren + Equals)*15;
+			}
+			else if (ModFlag == paren-1)
+			{
 				paren--;
-				break;
-			case '|':
-				if (Str[n + 1] == '|')
+				ModFlag = Mod[--mdstk];
+			}
+			else
+			{
+				Mod[mdstk++] = ModFlag;
+				o[posp].f = StkMod;
+				o[posp++].p = 2 - (paren + Equals)*15;
+				ModFlag = paren++;
+			}
+			break;
+		case ',':
+		case ';':
+			if (!ExpectingArg)
+			{
+				ExpectingArg = 1;
+				o[posp].f = (void(*)(void))0;
+				o[posp++].p = 15;
+				o[posp].f = StkClr;
+				o[posp++].p = -30000;
+				Equals = paren = 0;
+			}
+			break;
+		case ':':
+			ExpectingArg = 1;
+			o[posp].f = (void(*)(void))0;
+			o[posp++].p = 15;
+			o[posp].f = EndInit;
+			o[posp++].p = -30000;
+			Equals = paren = 0;
+			LastInitOp = 10000;
+			break;
+		case '+':
+			ExpectingArg = 1;
+			o[posp].f = StkAdd;
+			o[posp++].p = 4 - (paren + Equals)*15;
+			break;
+		case '-':
+			if (ExpectingArg)
+			{
+				o[posp].f = StkNeg;
+				o[posp++].p = 2 - (paren + Equals)*15;
+			}
+			else
+			{
+				o[posp].f = StkSub;
+				o[posp++].p = 4 - (paren + Equals)*15;
+				ExpectingArg = 1;
+			}
+			break;
+		case '&':
+			ExpectingArg = 1;
+			n++;
+			o[posp].f = StkAND;
+			o[posp++].p = 7 - (paren + Equals)*15;
+			break;
+		case '!':
+			ExpectingArg = 1;
+			n++;
+			o[posp].f = StkNE;
+			o[posp++].p = 6 - (paren + Equals)*15;
+			break;
+		case '<':
+			ExpectingArg = 1;
+			if (Str[n + 1] == '=')
+			{
+				n++;
+				o[posp].f = StkLTE;
+			}
+			else
+			{
+				o[posp].f = StkLT;
+			}
+			o[posp++].p = 6 - (paren + Equals)*15;
+			break;
+		case '>':
+			ExpectingArg = 1;
+			if (Str[n + 1] == '=')
+			{
+				n++;
+				o[posp].f = StkGTE;
+			}
+			else
+			{
+				o[posp].f = StkGT;
+			}
+			o[posp++].p = 6 - (paren + Equals)*15;
+			break;
+		case '*':
+			ExpectingArg = 1;
+			o[posp].f = StkMul;
+			o[posp++].p = 3 - (paren + Equals)*15;
+			break;
+		case '/':
+			ExpectingArg = 1;
+			o[posp].f = StkDiv;
+			o[posp++].p = 3 - (paren + Equals)*15;
+			break;
+		case '^':
+			ExpectingArg = 1;
+			o[posp].f = StkPwr;
+			o[posp++].p = 2 - (paren + Equals)*15;
+			break;
+		case '=':
+			ExpectingArg = 1;
+			if (Str[n + 1] == '=')
+			{
+				n++;
+				o[posp].f = StkEQ;
+				o[posp++].p = 6 - (paren + Equals)*15;
+			}
+			else
+			{
+				o[posp-1].f = StkSto;
+				o[posp-1].p = 5 - (paren + Equals)*15;
+				Store[StoPtr++] = Load[--LodPtr];
+				Equals++;
+			}
+			break;
+		default:
+			while (isalnum(Str[n + 1]) || Str[n + 1] == '.' || Str[n + 1] == '_')
+			{
+				n++;
+			}
+			Len = (n + 1)-InitN;
+			ExpectingArg = 0;
+			jumptype = isjump(&Str[InitN], Len);
+			if (jumptype != 0)
+			{
+				uses_jump = 1;
+				switch (jumptype)
 				{
+				case 1:                      /* if */
 					ExpectingArg = 1;
-					n++;
-					o[posp].f = StkOR;
-					o[posp++].p = 7 - (paren + Equals)*15;
-				}
-				else if (ModFlag == paren-1)
-				{
-					paren--;
-					ModFlag = Mod[--mdstk];
-				}
-				else
-				{
-					Mod[mdstk++] = ModFlag;
-					o[posp].f = StkMod;
-					o[posp++].p = 2 - (paren + Equals)*15;
-					ModFlag = paren++;
-				}
-				break;
-			case ',':
-			case ';':
-				if (!ExpectingArg)
-				{
+					jump_control[jump_index++].type = 1;
+					o[posp].f = StkJumpOnFalse;
+					o[posp++].p = 1;
+					break;
+				case 2:                     /* elseif */
 					ExpectingArg = 1;
+					jump_control[jump_index++].type = 2;
+					jump_control[jump_index++].type = 2;
+					o[posp].f = StkJump;
+					o[posp++].p = 1;
 					o[posp].f = (void(*)(void))0;
 					o[posp++].p = 15;
 					o[posp].f = StkClr;
 					o[posp++].p = -30000;
-					Equals = paren = 0;
+					o[posp].f = StkJumpOnFalse;
+					o[posp++].p = 1;
+					break;
+				case 3:                     /* else */
+					jump_control[jump_index++].type = 3;
+					o[posp].f = StkJump;
+					o[posp++].p = 1;
+					break;
+				case 4: /* endif */
+					jump_control[jump_index++].type = 4;
+					o[posp].f = StkJumpLabel;
+					o[posp++].p = 1;
+					break;
+				default:
+					break;
 				}
-				break;
-			case ':':
-				ExpectingArg = 1;
-				o[posp].f = (void(*)(void))0;
-				o[posp++].p = 15;
-				o[posp].f = EndInit;
-				o[posp++].p = -30000;
-				Equals = paren = 0;
-				LastInitOp = 10000;
-				break;
-			case '+':
-				ExpectingArg = 1;
-				o[posp].f = StkAdd;
-				o[posp++].p = 4 - (paren + Equals)*15;
-				break;
-			case '-':
-				if (ExpectingArg)
+			}
+			else
+			{
+				o[posp].f = isfunct(&Str[InitN], Len);
+				if (o[posp].f != NotAFnct)
 				{
-					o[posp].f = StkNeg;
-					o[posp++].p = 2 - (paren + Equals)*15;
-				}
-				else
-				{
-					o[posp].f = StkSub;
-					o[posp++].p = 4 - (paren + Equals)*15;
+					o[posp++].p = 1 - (paren + Equals)*15;
 					ExpectingArg = 1;
 				}
-				break;
-			case '&':
-				ExpectingArg = 1;
-				n++;
-				o[posp].f = StkAND;
-				o[posp++].p = 7 - (paren + Equals)*15;
-				break;
-			case '!':
-				ExpectingArg = 1;
-				n++;
-				o[posp].f = StkNE;
-				o[posp++].p = 6 - (paren + Equals)*15;
-				break;
-			case '<':
-				ExpectingArg = 1;
-				if (Str[n + 1] == '=')
-				{
-					n++;
-					o[posp].f = StkLTE;
-				}
 				else
 				{
-					o[posp].f = StkLT;
+					c = isconst(&Str[InitN], Len);
+					Load[LodPtr++] = &(c->a);
+					o[posp].f = StkLod;
+					o[posp++].p = 1 - (paren + Equals)*15;
+					n = InitN + c->len - 1;
 				}
-				o[posp++].p = 6 - (paren + Equals)*15;
-				break;
-			case '>':
-				ExpectingArg = 1;
-				if (Str[n + 1] == '=')
-				{
-					n++;
-					o[posp].f = StkGTE;
-				}
-				else
-				{
-					o[posp].f = StkGT;
-				}
-				o[posp++].p = 6 - (paren + Equals)*15;
-				break;
-			case '*':
-				ExpectingArg = 1;
-				o[posp].f = StkMul;
-				o[posp++].p = 3 - (paren + Equals)*15;
-				break;
-			case '/':
-				ExpectingArg = 1;
-				o[posp].f = StkDiv;
-				o[posp++].p = 3 - (paren + Equals)*15;
-				break;
-			case '^':
-				ExpectingArg = 1;
-				o[posp].f = StkPwr;
-				o[posp++].p = 2 - (paren + Equals)*15;
-				break;
-			case '=':
-				ExpectingArg = 1;
-				if (Str[n + 1] == '=')
-				{
-					n++;
-					o[posp].f = StkEQ;
-					o[posp++].p = 6 - (paren + Equals)*15;
-				}
-				else
-				{
-					o[posp-1].f = StkSto;
-					o[posp-1].p = 5 - (paren + Equals)*15;
-					Store[StoPtr++] = Load[--LodPtr];
-					Equals++;
-				}
-				break;
-			default:
-				while (isalnum(Str[n + 1]) || Str[n + 1] == '.' || Str[n + 1] == '_')
-				{
-					n++;
-				}
-				Len = (n + 1)-InitN;
-				ExpectingArg = 0;
-				jumptype = isjump(&Str[InitN], Len);
-				if (jumptype != 0)
-				{
-					uses_jump = 1;
-					switch (jumptype)
-					{
-						case 1:                      /* if */
-							ExpectingArg = 1;
-							jump_control[jump_index++].type = 1;
-							o[posp].f = StkJumpOnFalse;
-							o[posp++].p = 1;
-							break;
-						case 2:                     /* elseif */
-							ExpectingArg = 1;
-							jump_control[jump_index++].type = 2;
-							jump_control[jump_index++].type = 2;
-							o[posp].f = StkJump;
-							o[posp++].p = 1;
-							o[posp].f = (void(*)(void))0;
-							o[posp++].p = 15;
-							o[posp].f = StkClr;
-							o[posp++].p = -30000;
-							o[posp].f = StkJumpOnFalse;
-							o[posp++].p = 1;
-							break;
-						case 3:                     /* else */
-							jump_control[jump_index++].type = 3;
-							o[posp].f = StkJump;
-							o[posp++].p = 1;
-							break;
-						case 4: /* endif */
-							jump_control[jump_index++].type = 4;
-							o[posp].f = StkJumpLabel;
-							o[posp++].p = 1;
-							break;
-						default:
-							break;
-					}
-				}
-				else
-				{
-					o[posp].f = isfunct(&Str[InitN], Len);
-					if (o[posp].f != NotAFnct)
-					{
-						o[posp++].p = 1 - (paren + Equals)*15;
-						ExpectingArg = 1;
-					}
-					else
-					{
-						c = isconst(&Str[InitN], Len);
-						Load[LodPtr++] = &(c->a);
-						o[posp].f = StkLod;
-						o[posp++].p = 1 - (paren + Equals)*15;
-						n = InitN + c->len - 1;
-					}
-				}
-				break;
+			}
+			break;
 		}
 	}
 	o[posp].f = (void(*)(void))0;
@@ -3143,27 +3143,27 @@ int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
 		i--;
 		switch (jump_control[i].type)
 		{
-			case 1:    /*if (); this concludes processing of this group*/
-				jump_control[i].ptrs = jump_data[ljp];
-				jump_control[i].DestJumpIndex = ljp + 1;
-				return i;
-			case 2:    /*elseif* (2 jumps, the else and the if*/
-					/* first, the "if" part */
-				jump_control[i].ptrs = jump_data[ljp];
-				jump_control[i].DestJumpIndex = ljp + 1;
+		case 1:    /*if (); this concludes processing of this group*/
+			jump_control[i].ptrs = jump_data[ljp];
+			jump_control[i].DestJumpIndex = ljp + 1;
+			return i;
+		case 2:    /*elseif* (2 jumps, the else and the if*/
+				/* first, the "if" part */
+			jump_control[i].ptrs = jump_data[ljp];
+			jump_control[i].DestJumpIndex = ljp + 1;
 
-					/* then, the else part */
-				i--; /*fall through to "else" is intentional*/
-			case 3:
-				jump_control[i].ptrs = jump_data[endif_index];
-				jump_control[i].DestJumpIndex = endif_index + 1;
-				ljp = i;
-				break;
-			case 4:    /*endif*/
-					i = fill_if_group(i, jump_data);
-				break;
-			default:
-				break;
+				/* then, the else part */
+			i--; /*fall through to "else" is intentional*/
+		case 3:
+			jump_control[i].ptrs = jump_data[endif_index];
+			jump_control[i].DestJumpIndex = endif_index + 1;
+			ljp = i;
+			break;
+		case 4:    /*endif*/
+				i = fill_if_group(i, jump_data);
+			break;
+		default:
+			break;
 		}
 	}
 	return -1; /* should never get here */
@@ -3187,21 +3187,21 @@ int fill_jump_struct(void)
 		{
 			switch (jump_control[i].type)
 			{
-				case 1:
-					JumpFunc = StkJumpOnFalse;
-					break;
-				case 2:
-					checkforelse = !checkforelse;
-					JumpFunc = checkforelse ? StkJump : StkJumpOnFalse;
-					break;
-				case 3:
-					JumpFunc = StkJump;
-					break;
-				case 4:
-					JumpFunc = StkJumpLabel;
-					break;
-				default:
-					break;
+			case 1:
+				JumpFunc = StkJumpOnFalse;
+				break;
+			case 2:
+				checkforelse = !checkforelse;
+				JumpFunc = checkforelse ? StkJump : StkJumpOnFalse;
+				break;
+			case 3:
+				JumpFunc = StkJump;
+				break;
+			case 4:
+				JumpFunc = StkJumpLabel;
+				break;
+			default:
+				break;
 			}
 			find_new_func = 0;
 		}
@@ -3256,8 +3256,11 @@ int frmgetchar (FILE *openfile)
 			linewrap = 1;
 			break;
 		case ';' :
-			while ((c = getc(openfile)) != '\n' && c != EOF && c != '\032')
-			{}
+			do
+			{
+				c = getc(openfile);
+			}
+			while (c != '\n' && c != EOF && c != '\032');
 			if (c == EOF || c == '\032')
 			{
 				done = 1;
@@ -3317,12 +3320,12 @@ void getvarinfo(struct token_st *tok)
 			tok->token_id = i;
 			switch (i)
 			{
-				case 1: case 2: case 8: case 13: case 17: case 18:
-					tok->token_type = PARAM_VARIABLE;
-					break;
-				default:
-					tok->token_type = PREDEFINED_VARIABLE;
-					break;
+			case 1: case 2: case 8: case 13: case 17: case 18:
+				tok->token_type = PARAM_VARIABLE;
+				break;
+			default:
+				tok->token_type = PREDEFINED_VARIABLE;
+				break;
 			}
 			return;
 		}
@@ -3355,72 +3358,72 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	{
 		switch (c = frmgetchar(openfile))
 		{
-			case EOF: case '\032':
-				tok->token_str[i] = (char) 0;
-				tok->token_type = NOT_A_TOKEN;
-				tok->token_id   = END_OF_FILE;
-				return 0;
-			CASE_NUM:
+		case EOF: case '\032':
+			tok->token_str[i] = (char) 0;
+			tok->token_type = NOT_A_TOKEN;
+			tok->token_id   = END_OF_FILE;
+			return 0;
+		CASE_NUM:
+			tok->token_str[i++] = (char) c;
+			filepos = ftell(openfile);
+			break;
+		case '.':
+			if (got_decimal_already || !getting_base)
+			{
 				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = (char) 0;
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id = ILL_FORMED_CONSTANT;
+				return 0;
+			}
+			else
+			{
+				tok->token_str[i++] = (char) c;
+				got_decimal_already = 1;
 				filepos = ftell(openfile);
-				break;
-			case '.':
-				if (got_decimal_already || !getting_base)
+			}
+			break;
+		default :
+			if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
+			{
+				tok->token_str[i++] = (char) c;
+				getting_base = 0;
+				got_decimal_already = 0;
+				filepos = ftell(openfile);
+				c = frmgetchar(openfile);
+				if (c == '-' || c == '+')
 				{
 					tok->token_str[i++] = (char) c;
-					tok->token_str[i++] = (char) 0;
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id = ILL_FORMED_CONSTANT;
-					return 0;
-				}
-				else
-				{
-					tok->token_str[i++] = (char) c;
-					got_decimal_already = 1;
 					filepos = ftell(openfile);
-				}
-				break;
-			default :
-				if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
-				{
-					tok->token_str[i++] = (char) c;
-					getting_base = 0;
-					got_decimal_already = 0;
-					filepos = ftell(openfile);
-					c = frmgetchar(openfile);
-					if (c == '-' || c == '+')
-					{
-						tok->token_str[i++] = (char) c;
-						filepos = ftell(openfile);
-					}
-					else
-					{
-						fseek(openfile, filepos, SEEK_SET);
-					}
-				}
-				else if (isalpha(c) || c == '_')
-				{
-					tok->token_str[i++] = (char) c;
-					tok->token_str[i++] = (char) 0;
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id = ILL_FORMED_CONSTANT;
-					return 0;
-				}
-				else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1))
-				{
-					tok->token_str[i++] = (char) c;
-					tok->token_str[i++] = (char) 0;
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id = ILL_FORMED_CONSTANT;
-					return 0;
 				}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
-					tok->token_str[i++] = (char) 0;
-					done = 1;
 				}
-				break;
+			}
+			else if (isalpha(c) || c == '_')
+			{
+				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = (char) 0;
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id = ILL_FORMED_CONSTANT;
+				return 0;
+			}
+			else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1))
+			{
+				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = (char) 0;
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id = ILL_FORMED_CONSTANT;
+				return 0;
+			}
+			else
+			{
+				fseek(openfile, filepos, SEEK_SET);
+				tok->token_str[i++] = (char) 0;
+				done = 1;
+			}
+			break;
 		}
 		if (i == 33 && tok->token_str[32])
 		{
@@ -3458,44 +3461,44 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	{
 		switch (c = frmgetchar(openfile))
 		{
-			CASE_NUM : case '.':
+		CASE_NUM : case '.':
+			if (debug_token != NULL)
+			{
+				fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
+			}
+			temp_tok.token_str[0] = (char) c;
+			break;
+		case '-' :
+			if (debug_token != NULL)
+			{
+				fprintf(debug_token,  "First char is a minus\n");
+			}
+			sign_value = -1;
+			c = frmgetchar(openfile);
+			if (c == '.' || isdigit(c))
+			{
 				if (debug_token != NULL)
 				{
 					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 				}
 				temp_tok.token_str[0] = (char) c;
-				break;
-			case '-' :
-				if (debug_token != NULL)
-				{
-					fprintf(debug_token,  "First char is a minus\n");
-				}
-				sign_value = -1;
-				c = frmgetchar(openfile);
-			if (c == '.' || isdigit(c))
+			}
+			else
 			{
-					if (debug_token != NULL)
-					{
-						fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
-					}
-					temp_tok.token_str[0] = (char) c;
-				}
-				else
-				{
-					if (debug_token != NULL)
-					{
-						fprintf(debug_token,  "First char not a . or NUM\n");
-					}
-					done = 1;
-				}
-				break;
-			default:
 				if (debug_token != NULL)
 				{
 					fprintf(debug_token,  "First char not a . or NUM\n");
 				}
 				done = 1;
-				break;
+			}
+			break;
+		default:
+			if (debug_token != NULL)
+			{
+				fprintf(debug_token,  "First char not a . or NUM\n");
+			}
+			done = 1;
+			break;
 		}
 		if (debug_token != NULL)
 		{
@@ -3705,119 +3708,119 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 
 	switch (c = frmgetchar(openfile))
 	{
-		CASE_NUM: case '.':
-			this_token->token_str[0] = (char) c;
-			return frmgetconstant(openfile, this_token);
-		CASE_ALPHA: case '_':
-			this_token->token_str[0] = (char) c;
-			return frmgetalpha(openfile, this_token);
-		CASE_TERMINATOR:
-			this_token->token_type = OPERATOR; /* this may be changed below */
-			this_token->token_str[0] = (char) c;
-			filepos = ftell(openfile);
-			if (c == '<' || c == '>' || c == '=')
+	CASE_NUM: case '.':
+		this_token->token_str[0] = (char) c;
+		return frmgetconstant(openfile, this_token);
+	CASE_ALPHA: case '_':
+		this_token->token_str[0] = (char) c;
+		return frmgetalpha(openfile, this_token);
+	CASE_TERMINATOR:
+		this_token->token_type = OPERATOR; /* this may be changed below */
+		this_token->token_str[0] = (char) c;
+		filepos = ftell(openfile);
+		if (c == '<' || c == '>' || c == '=')
+		{
+			c = frmgetchar(openfile);
+			if (c == '=')
 			{
-				c = frmgetchar(openfile);
-				if (c == '=')
+				this_token->token_str[i++] = (char) c;
+			}
+			else
+			{
+				fseek(openfile, filepos, SEEK_SET);
+			}
+		}
+		else if (c == '!')
+		{
+			c = frmgetchar(openfile);
+			if (c == '=')
+			{
+				this_token->token_str[i++] = (char) c;
+			}
+			else
+			{
+				fseek(openfile, filepos, SEEK_SET);
+				this_token->token_str[1] = (char) 0;
+				this_token->token_type = NOT_A_TOKEN;
+				this_token->token_id = ILLEGAL_OPERATOR;
+				return 0;
+			}
+		}
+		else if (c == '|')
+		{
+			c = frmgetchar(openfile);
+			if (c == '|')
+			{
+				this_token->token_str[i++] = (char) c;
+			}
+			else
+			{
+				fseek(openfile, filepos, SEEK_SET);
+			}
+		}
+		else if (c == '&')
+		{
+			c = frmgetchar(openfile);
+			if (c == '&')
+			{
+				this_token->token_str[i++] = (char) c;
+			}
+			else
+			{
+				fseek(openfile, filepos, SEEK_SET);
+				this_token->token_str[1] = (char) 0;
+				this_token->token_type = NOT_A_TOKEN;
+				this_token->token_id = ILLEGAL_OPERATOR;
+				return 0;
+			}
+		}
+		else if (this_token->token_str[0] == '}')
+		{
+			this_token->token_type = END_OF_FORMULA;
+			this_token->token_id   = 0;
+		}
+		else if (this_token->token_str[0] == '\n'
+			|| this_token->token_str[0] == ','
+			|| this_token->token_str[0] == ':')
+		{
+			frm_get_eos(openfile, this_token);
+		}
+		else if (this_token->token_str[0] == ')')
+		{
+			this_token->token_type = PARENS;
+			this_token->token_id = CLOSE_PARENS;
+		}
+		else if (this_token->token_str[0] == '(')
+		{
+			/* the following function will set token_type to PARENS and
+				token_id to OPEN_PARENS if this is not the start of a
+				complex constant */
+			is_complex_constant(openfile, this_token);
+				return 1;
+		}
+		this_token->token_str[i] = (char) 0;
+		if (this_token->token_type == OPERATOR)
+		{
+			for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
+			{
+				if (!strcmp(OPList[i], this_token->token_str))
 				{
-					this_token->token_str[i++] = (char) c;
-				}
-				else
-				{
-					fseek(openfile, filepos, SEEK_SET);
+					this_token->token_id = i;
 				}
 			}
-			else if (c == '!')
-			{
-				c = frmgetchar(openfile);
-				if (c == '=')
-				{
-					this_token->token_str[i++] = (char) c;
-				}
-				else
-				{
-					fseek(openfile, filepos, SEEK_SET);
-					this_token->token_str[1] = (char) 0;
-					this_token->token_type = NOT_A_TOKEN;
-					this_token->token_id = ILLEGAL_OPERATOR;
-					return 0;
-				}
-			}
-			else if (c == '|')
-			{
-				c = frmgetchar(openfile);
-				if (c == '|')
-				{
-					this_token->token_str[i++] = (char) c;
-				}
-				else
-				{
-					fseek(openfile, filepos, SEEK_SET);
-				}
-			}
-			else if (c == '&')
-			{
-				c = frmgetchar(openfile);
-				if (c == '&')
-				{
-					this_token->token_str[i++] = (char) c;
-				}
-				else
-				{
-					fseek(openfile, filepos, SEEK_SET);
-					this_token->token_str[1] = (char) 0;
-					this_token->token_type = NOT_A_TOKEN;
-					this_token->token_id = ILLEGAL_OPERATOR;
-					return 0;
-				}
-			}
-			else if (this_token->token_str[0] == '}')
-			{
-				this_token->token_type = END_OF_FORMULA;
-				this_token->token_id   = 0;
-			}
-			else if (this_token->token_str[0] == '\n'
-				|| this_token->token_str[0] == ','
-				|| this_token->token_str[0] == ':')
-			{
-				frm_get_eos(openfile, this_token);
-			}
-			else if (this_token->token_str[0] == ')')
-			{
-				this_token->token_type = PARENS;
-				this_token->token_id = CLOSE_PARENS;
-			}
-			else if (this_token->token_str[0] == '(')
-			{
-				/* the following function will set token_type to PARENS and
-					token_id to OPEN_PARENS if this is not the start of a
-					complex constant */
-				is_complex_constant(openfile, this_token);
-					return 1;
-			}
-			this_token->token_str[i] = (char) 0;
-			if (this_token->token_type == OPERATOR)
-			{
-				for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
-				{
-					if (!strcmp(OPList[i], this_token->token_str))
-					{
-						this_token->token_id = i;
-					}
-				}
-			}
-			return this_token->token_str[0] == '}' ? 0 : 1;
-		case EOF: case '\032':
-			this_token->token_str[0] = (char) 0;
-			this_token->token_type = NOT_A_TOKEN;
-			this_token->token_id = END_OF_FILE;
-			return 0;
-		default:
-			this_token->token_str[0] = (char) c;
-			this_token->token_str[1] = (char) 0;
-			this_token->token_type = NOT_A_TOKEN;
-			this_token->token_id = ILLEGAL_CHARACTER;
-			return 0;
+		}
+		return this_token->token_str[0] == '}' ? 0 : 1;
+	case EOF: case '\032':
+		this_token->token_str[0] = (char) 0;
+		this_token->token_type = NOT_A_TOKEN;
+		this_token->token_id = END_OF_FILE;
+		return 0;
+	default:
+		this_token->token_str[0] = (char) c;
+		this_token->token_str[1] = (char) 0;
+		this_token->token_type = NOT_A_TOKEN;
+		this_token->token_id = ILLEGAL_CHARACTER;
+		return 0;
 	}
 }
 
@@ -3876,38 +3879,38 @@ int frm_get_param_stuff(char *Name)
 		}
 		switch (current_token.token_type)
 		{
-			case PARAM_VARIABLE:
-				if (current_token.token_id == 1)
-				{
-					uses_p1 = 1;
-				}
-				else if (current_token.token_id == 2)
-				{
-					uses_p2 = 1;
-				}
-				else if (current_token.token_id == 8)
-				{
-					uses_p3 = 1;
-				}
-				else if (current_token.token_id == 13)
-				{
-					uses_ismand = 1;
-				}
-				else if (current_token.token_id == 17)
-				{
-					uses_p4 = 1;
-				}
-				else if (current_token.token_id == 18)
-				{
-					uses_p5 = 1;
-				}
-				break;
-			case PARAM_FUNCTION:
-				if ((current_token.token_id - 10) > maxfn)
-				{
-					maxfn = (char) (current_token.token_id - 10);
-				}
-				break;
+		case PARAM_VARIABLE:
+			if (current_token.token_id == 1)
+			{
+				uses_p1 = 1;
+			}
+			else if (current_token.token_id == 2)
+			{
+				uses_p2 = 1;
+			}
+			else if (current_token.token_id == 8)
+			{
+				uses_p3 = 1;
+			}
+			else if (current_token.token_id == 13)
+			{
+				uses_ismand = 1;
+			}
+			else if (current_token.token_id == 17)
+			{
+				uses_p4 = 1;
+			}
+			else if (current_token.token_id == 18)
+			{
+				uses_p5 = 1;
+			}
+			break;
+		case PARAM_FUNCTION:
+			if ((current_token.token_id - 10) > maxfn)
+			{
+				maxfn = (char) (current_token.token_id - 10);
+			}
+			break;
 		}
 	}
 	fclose(entry_file);
@@ -3941,24 +3944,24 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 	{
 		switch (c = getc(open_file))
 		{
-			case EOF: case '\032':
-				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
-				return 0;
-			case '\r': case '\n':
-				stopmsg(0, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-				return 0;
-			case ' ': case '\t':
-				at_end_of_name = 1;
-				break;
-			case '(': case '{':
-				done = 1;
-				break;
-			default :
-				if (!at_end_of_name)
-				{
-					i++;
-				}
-				break;
+		case EOF: case '\032':
+			stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+			return 0;
+		case '\r': case '\n':
+			stopmsg(0, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+			return 0;
+		case ' ': case '\t':
+			at_end_of_name = 1;
+			break;
+		case '(': case '{':
+			done = 1;
+			break;
+		default :
+			if (!at_end_of_name)
+			{
+				i++;
+			}
+			break;
 		}
 	}
 
@@ -3988,26 +3991,26 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		{
 			switch (c = getc(open_file))
 			{
-				case EOF: case '\032':
-					stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
-					return 0;
-				case '\r': case '\n':
-					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-					return 0;
-				case '{':
-					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
-					return 0;
-				case ' ': case '\t':
-					break;
-				case ')':
-					done = 1;
-					break;
-				default :
-					if (i < 19)
-					{
-						sym_buf[i++] = (char) toupper(c);
-					}
-					break;
+			case EOF: case '\032':
+				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+				return 0;
+			case '\r': case '\n':
+				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+				return 0;
+			case '{':
+				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+				return 0;
+			case ' ': case '\t':
+				break;
+			case ')':
+				done = 1;
+				break;
+			default :
+				if (i < 19)
+				{
+					sym_buf[i++] = (char) toupper(c);
+				}
+				break;
 			}
 		}
 		sym_buf[i] = (char) 0;
@@ -4037,17 +4040,17 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		{
 			switch (c = getc(open_file))
 			{
-				case EOF: case '\032':
-					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
-					return 0;
-				case '\r': case '\n':
-					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
-					return 0;
-				case '{':
-					done = 1;
-					break;
-				default :
-					break;
+			case EOF: case '\032':
+				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
+				return 0;
+			case '\r': case '\n':
+				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+				return 0;
+			case '{':
+				done = 1;
+				break;
+			default :
+				break;
 			}
 		}
 	}
@@ -4146,17 +4149,17 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		frmgettoken(File, &temp_tok);
 		switch (temp_tok.token_type)
 		{
-			case NOT_A_TOKEN:
-				stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-				fseek(File, filepos, SEEK_SET);
-				return NULL;
-			case END_OF_FORMULA:
-				Done = 1;
-				fseek(File, filepos, SEEK_SET);
-				break;
-			default:
-				strcat(FormulaStr, temp_tok.token_str);
-				break;
+		case NOT_A_TOKEN:
+			stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+			fseek(File, filepos, SEEK_SET);
+			return NULL;
+		case END_OF_FORMULA:
+			Done = 1;
+			fseek(File, filepos, SEEK_SET);
+			break;
+		default:
+			strcat(FormulaStr, temp_tok.token_str);
+			break;
 		}
 	}
 
@@ -4736,165 +4739,108 @@ int frm_prescan(FILE *open_file)
 		chars_in_formula += (int) strlen(this_token.token_str);
 		switch (this_token.token_type)
 		{
-			case NOT_A_TOKEN:
-				assignment_ok = 0;
-				switch (this_token.token_id)
+		case NOT_A_TOKEN:
+			assignment_ok = 0;
+			switch (this_token.token_id)
+			{
+			case END_OF_FILE:
+				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+				fseek(open_file, orig_pos, SEEK_SET);
+				return 0;
+			case ILLEGAL_CHARACTER:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 				{
-					case END_OF_FILE:
-						stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
-						fseek(open_file, orig_pos, SEEK_SET);
-						return 0;
-					case ILLEGAL_CHARACTER:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_ILLEGAL_CHAR;
-						}
-						break;
-					case ILLEGAL_VARIABLE_NAME:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_ILLEGAL_VAR_NAME;
-						}
-						break;
-					case TOKEN_TOO_LONG:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_TOKEN_TOO_LONG;
-						}
-						break;
-					case FUNC_USED_AS_VAR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_FUNC_USED_AS_VAR;
-						}
-						break;
-					case JUMP_MISSING_BOOLEAN:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_JUMP_NEEDS_BOOLEAN;
-						}
-						break;
-					case JUMP_WITH_ILLEGAL_CHAR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_NO_CHAR_AFTER_THIS_JUMP;
-						}
-						break;
-					case UNDEFINED_FUNCTION:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_UNDEFINED_FUNCTION;
-						}
-						break;
-					case ILLEGAL_OPERATOR:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_UNDEFINED_OPERATOR;
-						}
-						break;
-					case ILL_FORMED_CONSTANT:
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_INVALID_CONST;
-						}
-						break;
-					default:
-						stopmsg(0, "Unexpected arrival at default case in prescan()");
-						fseek(open_file, orig_pos, SEEK_SET);
-						return 0;
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_ILLEGAL_CHAR;
 				}
 				break;
-			case PARENS:
-				assignment_ok = 0;
-				NewStatement = 0;
-				switch (this_token.token_id)
+			case ILLEGAL_VARIABLE_NAME:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 				{
-					case OPEN_PARENS:
-						if (++paren > max_parens)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_NESTING_TO_DEEP;
-							}
-						}
-						else if (!ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-							}
-						}
-						waiting_for_mod = waiting_for_mod << 1;
-						break;
-					case CLOSE_PARENS:
-						if (paren)
-						{
-							paren--;
-						}
-						else
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
-							}
-							paren = 0;
-						}
-						if (waiting_for_mod & 1L)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
-							}
-						}
-						else
-						{
-							waiting_for_mod = waiting_for_mod >> 1;
-						}
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						break;
-					default:
-						break;
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_ILLEGAL_VAR_NAME;
 				}
 				break;
-			case PARAM_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
-				number_of_ops++;
-				number_of_loads++;
-				NewStatement = 0;
-				if (!ExpectingArg)
+			case TOKEN_TOO_LONG:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_TOKEN_TOO_LONG;
+				}
+				break;
+			case FUNC_USED_AS_VAR:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_FUNC_USED_AS_VAR;
+				}
+				break;
+			case JUMP_MISSING_BOOLEAN:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_JUMP_NEEDS_BOOLEAN;
+				}
+				break;
+			case JUMP_WITH_ILLEGAL_CHAR:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_NO_CHAR_AFTER_THIS_JUMP;
+				}
+				break;
+			case UNDEFINED_FUNCTION:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_UNDEFINED_FUNCTION;
+				}
+				break;
+			case ILLEGAL_OPERATOR:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_UNDEFINED_OPERATOR;
+				}
+				break;
+			case ILL_FORMED_CONSTANT:
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_INVALID_CONST;
+				}
+				break;
+			default:
+				stopmsg(0, "Unexpected arrival at default case in prescan()");
+				fseek(open_file, orig_pos, SEEK_SET);
+				return 0;
+			}
+			break;
+		case PARENS:
+			assignment_ok = 0;
+			NewStatement = 0;
+			switch (this_token.token_id)
+			{
+			case OPEN_PARENS:
+				if (++paren > max_parens)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_NESTING_TO_DEEP;
+					}
+				}
+				else if (!ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
@@ -4903,630 +4849,279 @@ int frm_prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 					}
 				}
-				switch (this_token.token_id)
-				{
-					case 1:
-						break;
-					case 2:
-						break;
-					case 8:
-						break;
-					case 17:
-						break;
-					case 18:
-						break;
-					default:
-						break;
-				}
-				ExpectingArg = 0;
+				waiting_for_mod = waiting_for_mod << 1;
 				break;
-			case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
-				number_of_ops++;
-				number_of_loads++;
-				NewStatement = 0;
-				if (!ExpectingArg)
+			case CLOSE_PARENS:
+				if (paren)
+				{
+					paren--;
+				}
+				else
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+						errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
 					}
+					paren = 0;
 				}
-				ExpectingArg = 0;
-/*
-				var_list = add_var_to_list (var_list, this_token);
-				if (var_list == NULL)
-				{
-					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-					fseek(open_file, orig_pos, SEEK_SET);
-					init_var_list();
-					init_const_lists();
-					return 0;
-				}
-*/          break;
-			case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
-				number_of_ops++;
-				number_of_loads++;
-				NewStatement = 0;
-				if (!ExpectingArg)
+				if (waiting_for_mod & 1L)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
-				}
-				switch (this_token.token_id)
-				{
-					case 0:     /* pixel */
-						break;
-					case 3:     /* z */
-						break;
-					case 4:     /* LastSqr */
-						break;
-					case 5:     /* pi */
-						break;
-					case 6:     /* e */
-						break;
-					case 7:     /* rand */
-						break;
-					case 9:     /* whitesq */
-						break;
-					case 10:    /* scrnpix */
-						break;
-					case 11:    /* scrnmax */
-						break;
-					case 12:    /* maxit */
-						break;
-					case 13:    /* ismand */
-						break;
-					default:
-						break;
-				}
-				ExpectingArg = 0;
-				break;
-			case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
-				assignment_ok = 0;
-				number_of_ops++;
-				number_of_loads++;
-				NewStatement = 0;
-				if (!ExpectingArg)
-				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
-				}
-				ExpectingArg = 0;
-/*
-				real_list = add_const_to_list (real_list, this_token);
-				if (real_list == NULL)
-				{
-					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-					fseek(open_file, orig_pos, SEEK_SET);
-					init_var_list();
-					init_const_lists();
-					return 0;
-				}
-*/          break;
-			case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
-				assignment_ok = 0;
-				number_of_ops++;
-				number_of_loads++;
-				NewStatement = 0;
-				if (!ExpectingArg)
-				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
-				}
-				ExpectingArg = 0;
-				/*
-				complx_list = add_const_to_list (complx_list, this_token);
-				if (complx_list == NULL)
-				{
-					stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-					fseek(open_file, orig_pos, SEEK_SET);
-					init_var_list();
-					init_const_lists();
-					return 0;
-				}
-				*/
-				break;
-			case FUNCTION:
-				assignment_ok = 0;
-				NewStatement = 0;
-				number_of_ops++;
-				if (!ExpectingArg)
-				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
-				}
-				switch (this_token.token_id)
-				{
-					case 0:
-						break;
-					case 1:
-						break;
-					case 2:
-						break;
-					case 3:
-						break;
-					case 4:
-						break;
-					case 5:
-						break;
-					case 6:
-						break;
-					case 7:
-						break;
-					case 8:
-						break;
-					case 9:
-						break;
-					case 10:
-						break;
-					case 15:
-						break;
-					case 16:
-						break;
-					case 17:
-						break;
-					case 18:
-						break;
-					case 19:
-						break;
-					case 20:
-						break;
-					case 21:
-						break;
-					case 22:
-						break;
-					case 23:
-						break;
-					case 24:
-						break;
-					case 25:
-						break;
-					case 26:
-						break;
-					case 27:
-						break;
-					case 28:
-						break;
-					case 29:
-						break;
-					case 30:
-						break;
-					case 31:
-						break;
-					case 32:
-						break;
-					case 33:
-						break;
-					case 34:
-						break;
-					default:
-						break;
-				}
-				break;
-			case PARAM_FUNCTION:
-				assignment_ok = 0;
-				NewStatement = 0;
-				number_of_ops++;
-				if (!ExpectingArg)
-				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
-				}
-				switch (this_token.token_id)
-				{
-					case 11:
-						break;
-					case 12:
-						break;
-					case 13:
-						break;
-					case 14:
-						break;
-					default:
-						break;
-				}
-				NewStatement = 0;
-				break;
-			case FLOW_CONTROL:
-				assignment_ok = 0;
-				number_of_ops++;
-				number_of_jumps++;
-				if (!NewStatement)
-				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_JUMP_NOT_FIRST;
+						errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
 					}
 				}
 				else
 				{
-					uses_jump = 1;
-					switch (this_token.token_id)
+					waiting_for_mod = waiting_for_mod >> 1;
+				}
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
-						case 1:  /* if */
-							else_has_been_used = else_has_been_used << 1;
-							waiting_for_endif++;
-							break;
-						case 2: /*ELSEIF*/
-							number_of_ops += 3; /*else + two clear statements*/
-							number_of_jumps++;  /* this involves two jumps */
-							if (else_has_been_used % 2)
-							{
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-								{
-									errors[errors_found].start_pos      = statement_pos;
-									errors[errors_found].error_pos      = filepos;
-									errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
-								}
-							}
-							else if (!waiting_for_endif)
-							{
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-								{
-									errors[errors_found].start_pos      = statement_pos;
-									errors[errors_found].error_pos      = filepos;
-									errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
-								}
-							}
-							break;
-						case 3: /*ELSE*/
-							if (else_has_been_used % 2)
-							{
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-								{
-									errors[errors_found].start_pos      = statement_pos;
-									errors[errors_found].error_pos      = filepos;
-									errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
-								}
-							}
-							else if (!waiting_for_endif)
-							{
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-								{
-									errors[errors_found].start_pos      = statement_pos;
-									errors[errors_found].error_pos      = filepos;
-									errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
-								}
-							}
-							else_has_been_used = else_has_been_used | 1;
-							break;
-						case 4: /*ENDIF*/
-							else_has_been_used = else_has_been_used >> 1;
-							waiting_for_endif--;
-							if (waiting_for_endif < 0)
-							{
-								if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-								{
-									errors[errors_found].start_pos      = statement_pos;
-									errors[errors_found].error_pos      = filepos;
-									errors[errors_found++].error_number = PE_ENDIF_WITH_NO_IF;
-								}
-								waiting_for_endif = 0;
-							}
-							break;
-						default:
-							break;
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
 				break;
-			case OPERATOR:
-				number_of_ops++; /*This will be corrected below in certain cases*/
+			default:
+				break;
+			}
+			break;
+		case PARAM_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
+			number_of_ops++;
+			number_of_loads++;
+			NewStatement = 0;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			ExpectingArg = 0;
+			break;
+		case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
+			number_of_ops++;
+			number_of_loads++;
+			NewStatement = 0;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			ExpectingArg = 0;
+			/*
+			var_list = add_var_to_list (var_list, this_token);
+			if (var_list == NULL)
+			{
+				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				fseek(open_file, orig_pos, SEEK_SET);
+				init_var_list();
+				init_const_lists();
+				return 0;
+			}
+			*/
+			break;
+		case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
+			number_of_ops++;
+			number_of_loads++;
+			NewStatement = 0;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			ExpectingArg = 0;
+			break;
+		case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
+			assignment_ok = 0;
+			number_of_ops++;
+			number_of_loads++;
+			NewStatement = 0;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			ExpectingArg = 0;
+			/*
+			real_list = add_const_to_list (real_list, this_token);
+			if (real_list == NULL)
+			{
+				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				fseek(open_file, orig_pos, SEEK_SET);
+				init_var_list();
+				init_const_lists();
+				return 0;
+			}
+			*/
+			break;
+		case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
+			assignment_ok = 0;
+			number_of_ops++;
+			number_of_loads++;
+			NewStatement = 0;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			ExpectingArg = 0;
+			/*
+			complx_list = add_const_to_list (complx_list, this_token);
+			if (complx_list == NULL)
+			{
+				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				fseek(open_file, orig_pos, SEEK_SET);
+				init_var_list();
+				init_const_lists();
+				return 0;
+			}
+			*/
+			break;
+		case FUNCTION:
+			assignment_ok = 0;
+			NewStatement = 0;
+			number_of_ops++;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			break;
+		case PARAM_FUNCTION:
+			assignment_ok = 0;
+			NewStatement = 0;
+			number_of_ops++;
+			if (!ExpectingArg)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+				}
+			}
+			NewStatement = 0;
+			break;
+		case FLOW_CONTROL:
+			assignment_ok = 0;
+			number_of_ops++;
+			number_of_jumps++;
+			if (!NewStatement)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_JUMP_NOT_FIRST;
+				}
+			}
+			else
+			{
+				uses_jump = 1;
 				switch (this_token.token_id)
 				{
-					case 0: case 11:    /* end of statement and : */
-						number_of_ops++; /* ParseStr inserts a dummy op*/
-						if (paren)
+				case 1:  /* if */
+					else_has_been_used = else_has_been_used << 1;
+					waiting_for_endif++;
+					break;
+				case 2: /*ELSEIF*/
+					number_of_ops += 3; /*else + two clear statements*/
+					number_of_jumps++;  /* this involves two jumps */
+					if (else_has_been_used % 2)
+					{
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
-							}
-							paren = 0;
+							errors[errors_found].start_pos      = statement_pos;
+							errors[errors_found].error_pos      = filepos;
+							errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
 						}
-						if (waiting_for_mod)
+					}
+					else if (!waiting_for_endif)
+					{
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
-							}
-							waiting_for_mod = 0;
+							errors[errors_found].start_pos      = statement_pos;
+							errors[errors_found].error_pos      = filepos;
+							errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
 						}
-						if (!ExpectingArg)
+					}
+					break;
+				case 3: /*ELSE*/
+					if (else_has_been_used % 2)
+					{
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
-							if (this_token.token_id == 11)
-							{
-								number_of_ops += 2;
-							}
-							else
-							{
-								number_of_ops++;
-							}
+							errors[errors_found].start_pos      = statement_pos;
+							errors[errors_found].error_pos      = filepos;
+							errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
 						}
-						else if (!NewStatement)
+					}
+					else if (!waiting_for_endif)
+					{
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
+							errors[errors_found].start_pos      = statement_pos;
+							errors[errors_found].error_pos      = filepos;
+							errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
 						}
-						if (this_token.token_id == 11 && waiting_for_endif)
+					}
+					else_has_been_used = else_has_been_used | 1;
+					break;
+				case 4: /*ENDIF*/
+					else_has_been_used = else_has_been_used >> 1;
+					waiting_for_endif--;
+					if (waiting_for_endif < 0)
+					{
+						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_UNMATCHED_IF_IN_INIT_SECTION;
-							}
-							waiting_for_endif = 0;
+							errors[errors_found].start_pos      = statement_pos;
+							errors[errors_found].error_pos      = filepos;
+							errors[errors_found++].error_number = PE_ENDIF_WITH_NO_IF;
 						}
-						if (this_token.token_id == 11 && already_got_colon)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SECOND_COLON;
-							}
-						}
-						if (this_token.token_id == 11)
-						{
-							already_got_colon = 1;
-						}
-						NewStatement = ExpectingArg = assignment_ok = 1;
-						statement_pos = ftell(open_file);
-						break;
-					case 1:     /* != */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 2:     /* = */
-						number_of_ops--; /*this just converts a load to a store*/
-						number_of_loads--;
-						number_of_stores++;
-						if (!assignment_ok)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 3:     /* == */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 4:     /* < */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 5:     /* <= */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 6:     /* > */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 7:     /* >= */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 8:     /* | */ /* (half of the modulus operator */
-						assignment_ok = 0;
-						if (!waiting_for_mod & 1L)
-						{
-							number_of_ops--;
-						}
-						if (!(waiting_for_mod & 1L) && !ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-							}
-						}
-						else if ((waiting_for_mod & 1L) && ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
-						break;
-					case 9:     /* || */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 10:    /* && */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 12:    /* + */ /* case 11 (":") is up with case 0 */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 13:    /* - */
-						assignment_ok = 0;
-						ExpectingArg = 1;
-						break;
-					case 14:    /* * */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 15:    /* / */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						ExpectingArg = 1;
-						break;
-					case 16:    /* ^ */
-						assignment_ok = 0;
-						if (ExpectingArg)
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-							}
-						}
-						filepos = ftell(open_file);
-						frmgettoken (open_file, &this_token);
-						if (this_token.token_str[0] == '-')
-						{
-							if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-							{
-								errors[errors_found].start_pos      = statement_pos;
-								errors[errors_found].error_pos      = filepos;
-								errors[errors_found++].error_number = PE_NO_NEG_AFTER_EXPONENT;
-							}
-						}
-						else
-						{
-							fseek(open_file, filepos, SEEK_SET);
-						}
-						ExpectingArg = 1;
-						break;
-					default:
-						break;
+						waiting_for_endif = 0;
+					}
+					break;
+				default:
+					break;
 				}
-				break;
-			case END_OF_FORMULA:
-				number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
+			}
+			break;
+		case OPERATOR:
+			number_of_ops++; /*This will be corrected below in certain cases*/
+			switch (this_token.token_id)
+			{
+			case 0: case 11:    /* end of statement and : */
+				number_of_ops++; /* ParseStr inserts a dummy op*/
 				if (paren)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5547,17 +5142,18 @@ int frm_prescan(FILE *open_file)
 					}
 					waiting_for_mod = 0;
 				}
-				if (waiting_for_endif)
+				if (!ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					if (this_token.token_id == 11)
 					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_IF_WITH_NO_ENDIF;
+						number_of_ops += 2;
 					}
-					waiting_for_endif = 0;
+					else
+					{
+						number_of_ops++;
+					}
 				}
-				if (ExpectingArg && !NewStatement)
+				else if (!NewStatement)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
@@ -5565,25 +5161,310 @@ int frm_prescan(FILE *open_file)
 						errors[errors_found].error_pos      = filepos;
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
-					statement_pos = ftell(open_file);
 				}
-
-				if (number_of_jumps >= MAX_JUMPS)
+				if (this_token.token_id == 11 && waiting_for_endif)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 					{
 						errors[errors_found].start_pos      = statement_pos;
 						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
+						errors[errors_found++].error_number = PE_UNMATCHED_IF_IN_INIT_SECTION;
+					}
+					waiting_for_endif = 0;
+				}
+				if (this_token.token_id == 11 && already_got_colon)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SECOND_COLON;
 					}
 				}
-
-
-
-				done = 1;
+				if (this_token.token_id == 11)
+				{
+					already_got_colon = 1;
+				}
+				NewStatement = ExpectingArg = assignment_ok = 1;
+				statement_pos = ftell(open_file);
+				break;
+			case 1:     /* != */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 2:     /* = */
+				number_of_ops--; /*this just converts a load to a store*/
+				number_of_loads--;
+				number_of_stores++;
+				if (!assignment_ok)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 3:     /* == */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 4:     /* < */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 5:     /* <= */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 6:     /* > */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 7:     /* >= */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 8:     /* | */ /* (half of the modulus operator */
+				assignment_ok = 0;
+				if (!waiting_for_mod & 1L)
+				{
+					number_of_ops--;
+				}
+				if (!(waiting_for_mod & 1L) && !ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
+					}
+				}
+				else if ((waiting_for_mod & 1L) && ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
+				break;
+			case 9:     /* || */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 10:    /* && */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 12:    /* + */ /* case 11 (":") is up with case 0 */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 13:    /* - */
+				assignment_ok = 0;
+				ExpectingArg = 1;
+				break;
+			case 14:    /* * */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 15:    /* / */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				ExpectingArg = 1;
+				break;
+			case 16:    /* ^ */
+				assignment_ok = 0;
+				if (ExpectingArg)
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+					}
+				}
+				filepos = ftell(open_file);
+				frmgettoken (open_file, &this_token);
+				if (this_token.token_str[0] == '-')
+				{
+					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+					{
+						errors[errors_found].start_pos      = statement_pos;
+						errors[errors_found].error_pos      = filepos;
+						errors[errors_found++].error_number = PE_NO_NEG_AFTER_EXPONENT;
+					}
+				}
+				else
+				{
+					fseek(open_file, filepos, SEEK_SET);
+				}
+				ExpectingArg = 1;
 				break;
 			default:
 				break;
+			}
+			break;
+		case END_OF_FORMULA:
+			number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
+			if (paren)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
+				}
+				paren = 0;
+			}
+			if (waiting_for_mod)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
+				}
+				waiting_for_mod = 0;
+			}
+			if (waiting_for_endif)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_IF_WITH_NO_ENDIF;
+				}
+				waiting_for_endif = 0;
+			}
+			if (ExpectingArg && !NewStatement)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
+				}
+				statement_pos = ftell(open_file);
+			}
+
+			if (number_of_jumps >= MAX_JUMPS)
+			{
+				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
+				{
+					errors[errors_found].start_pos      = statement_pos;
+					errors[errors_found].error_pos      = filepos;
+					errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
+				}
+			}
+			done = 1;
+			break;
+
+		default:
+			break;
 		}
 		if (errors_found == 3)
 		{

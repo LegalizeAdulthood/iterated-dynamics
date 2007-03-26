@@ -794,148 +794,148 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 				block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
 				switch (block_type)
 				{
-					case 1: /* "fractint001", the main extension block */
-						if (scan_extend == 2)  /* we've been here before, done now */
-						{
-							scan_extend = 0;
-							break;
-							}
-						load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
-#ifdef XFRACT
-						decode_fractal_info(info, 1);
-#endif
-						scan_extend = 2;
-						/* now we know total extension len, back up to first block */
-						fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
+				case 1: /* "fractint001", the main extension block */
+					if (scan_extend == 2)  /* we've been here before, done now */
+					{
+						scan_extend = 0;
 						break;
-					case 2: /* resume info */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						blk_2_info->resume_data = malloc(data_len);
-						if (blk_2_info->resume_data == 0)
-						{
-							info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
-						}
-						else
-						{
-							fseek(fp, (long) -block_len, SEEK_CUR);
-							load_ext_blk(blk_2_info->resume_data, data_len);
-							blk_2_info->length = data_len;
-							blk_2_info->got_data = 1; /* got data */
-						}
-						break;
-					case 3: /* formula info */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						/* check data_len for backward compatibility */
-						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk((char *)&fload_info, data_len);
-						strcpy(blk_3_info->form_name, fload_info.form_name);
-						blk_3_info->length = data_len;
-						blk_3_info->got_data = 1; /* got data */
-						if (data_len < sizeof(fload_info))  /* must be old GIF */
-						{
-							blk_3_info->uses_p1 = 1;
-							blk_3_info->uses_p2 = 1;
-							blk_3_info->uses_p3 = 1;
-							blk_3_info->uses_ismand = 0;
-							blk_3_info->ismand = 1;
-							blk_3_info->uses_p4 = 0;
-							blk_3_info->uses_p5 = 0;
-						}
-						else
-						{
-							blk_3_info->uses_p1 = fload_info.uses_p1;
-							blk_3_info->uses_p2 = fload_info.uses_p2;
-							blk_3_info->uses_p3 = fload_info.uses_p3;
-							blk_3_info->uses_ismand = fload_info.uses_ismand;
-							blk_3_info->ismand = fload_info.ismand;
-							blk_3_info->uses_p4 = fload_info.uses_p4;
-							blk_3_info->uses_p5 = fload_info.uses_p5;
-						}
-						break;
-					case 4: /* ranges info */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						blk_4_info->range_data = (int *)malloc((long)data_len);
-						if (blk_4_info->range_data != NULL)
-						{
-							fseek(fp, (long) -block_len, SEEK_CUR);
-							load_ext_blk((char *)blk_4_info->range_data, data_len);
-							blk_4_info->length = data_len/2;
-							blk_4_info->got_data = 1; /* got data */
-						}
-						break;
-					case 5: /* extended precision parameters  */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						blk_5_info->apm_data = (char *)malloc((long)data_len);
-						if (blk_5_info->apm_data != NULL)
-						{
-							fseek(fp, (long) -block_len, SEEK_CUR);
-							load_ext_blk(blk_5_info->apm_data, data_len);
-							blk_5_info->length = data_len;
-							blk_5_info->got_data = 1; /* got data */
-							}
-						break;
-					case 6: /* evolver params */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk((char *)&eload_info, data_len);
-						/* XFRACT processing of doubles here */
-#ifdef XFRACT
-						decode_evolver_info(&eload_info, 1);
-#endif
-						blk_6_info->length = data_len;
-						blk_6_info->got_data = 1; /* got data */
-
-						blk_6_info->paramrangex     = eload_info.paramrangex;
-						blk_6_info->paramrangey     = eload_info.paramrangey;
-						blk_6_info->opx             = eload_info.opx;
-						blk_6_info->opy             = eload_info.opy;
-						blk_6_info->odpx            = (char)eload_info.odpx;
-						blk_6_info->odpy            = (char)eload_info.odpy;
-						blk_6_info->px              = eload_info.px;
-						blk_6_info->py              = eload_info.py;
-						blk_6_info->sxoffs          = eload_info.sxoffs;
-						blk_6_info->syoffs          = eload_info.syoffs;
-						blk_6_info->xdots           = eload_info.xdots;
-						blk_6_info->ydots           = eload_info.ydots;
-						blk_6_info->gridsz          = eload_info.gridsz;
-						blk_6_info->evolving        = eload_info.evolving;
-						blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
-						blk_6_info->fiddlefactor    = eload_info.fiddlefactor;
-						blk_6_info->ecount          = eload_info.ecount;
-						for (i = 0; i < NUMGENES; i++)
-						{
-							blk_6_info->mutate[i]    = eload_info.mutate[i];
-						}
-						break;
-					case 7: /* orbits parameters  */
-						skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk((char *)&oload_info, data_len);
-						/* XFRACT processing of doubles here */
-#ifdef XFRACT
-						decode_orbits_info(&oload_info, 1);
-#endif
-						blk_7_info->length = data_len;
-						blk_7_info->got_data = 1; /* got data */
-						blk_7_info->oxmin           = oload_info.oxmin;
-						blk_7_info->oxmax           = oload_info.oxmax;
-						blk_7_info->oymin           = oload_info.oymin;
-						blk_7_info->oymax           = oload_info.oymax;
-						blk_7_info->ox3rd           = oload_info.ox3rd;
-						blk_7_info->oy3rd           = oload_info.oy3rd;
-						blk_7_info->keep_scrn_coords = oload_info.keep_scrn_coords;
-						blk_7_info->drawmode        = oload_info.drawmode;
-						break;
-					default:
-						skip_ext_blk(&block_len, &data_len);
 					}
+					load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
+#ifdef XFRACT
+					decode_fractal_info(info, 1);
+#endif
+					scan_extend = 2;
+					/* now we know total extension len, back up to first block */
+					fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
+					break;
+				case 2: /* resume info */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					blk_2_info->resume_data = malloc(data_len);
+					if (blk_2_info->resume_data == 0)
+					{
+						info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+					}
+					else
+					{
+						fseek(fp, (long) -block_len, SEEK_CUR);
+						load_ext_blk(blk_2_info->resume_data, data_len);
+						blk_2_info->length = data_len;
+						blk_2_info->got_data = 1; /* got data */
+					}
+					break;
+				case 3: /* formula info */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					/* check data_len for backward compatibility */
+					fseek(fp, (long) -block_len, SEEK_CUR);
+					load_ext_blk((char *)&fload_info, data_len);
+					strcpy(blk_3_info->form_name, fload_info.form_name);
+					blk_3_info->length = data_len;
+					blk_3_info->got_data = 1; /* got data */
+					if (data_len < sizeof(fload_info))  /* must be old GIF */
+					{
+						blk_3_info->uses_p1 = 1;
+						blk_3_info->uses_p2 = 1;
+						blk_3_info->uses_p3 = 1;
+						blk_3_info->uses_ismand = 0;
+						blk_3_info->ismand = 1;
+						blk_3_info->uses_p4 = 0;
+						blk_3_info->uses_p5 = 0;
+					}
+					else
+					{
+						blk_3_info->uses_p1 = fload_info.uses_p1;
+						blk_3_info->uses_p2 = fload_info.uses_p2;
+						blk_3_info->uses_p3 = fload_info.uses_p3;
+						blk_3_info->uses_ismand = fload_info.uses_ismand;
+						blk_3_info->ismand = fload_info.ismand;
+						blk_3_info->uses_p4 = fload_info.uses_p4;
+						blk_3_info->uses_p5 = fload_info.uses_p5;
+					}
+					break;
+				case 4: /* ranges info */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					blk_4_info->range_data = (int *)malloc((long)data_len);
+					if (blk_4_info->range_data != NULL)
+					{
+						fseek(fp, (long) -block_len, SEEK_CUR);
+						load_ext_blk((char *)blk_4_info->range_data, data_len);
+						blk_4_info->length = data_len/2;
+						blk_4_info->got_data = 1; /* got data */
+					}
+					break;
+				case 5: /* extended precision parameters  */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					blk_5_info->apm_data = (char *)malloc((long)data_len);
+					if (blk_5_info->apm_data != NULL)
+					{
+						fseek(fp, (long) -block_len, SEEK_CUR);
+						load_ext_blk(blk_5_info->apm_data, data_len);
+						blk_5_info->length = data_len;
+						blk_5_info->got_data = 1; /* got data */
+						}
+					break;
+				case 6: /* evolver params */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					fseek(fp, (long) -block_len, SEEK_CUR);
+					load_ext_blk((char *)&eload_info, data_len);
+					/* XFRACT processing of doubles here */
+#ifdef XFRACT
+					decode_evolver_info(&eload_info, 1);
+#endif
+					blk_6_info->length = data_len;
+					blk_6_info->got_data = 1; /* got data */
+
+					blk_6_info->paramrangex     = eload_info.paramrangex;
+					blk_6_info->paramrangey     = eload_info.paramrangey;
+					blk_6_info->opx             = eload_info.opx;
+					blk_6_info->opy             = eload_info.opy;
+					blk_6_info->odpx            = (char)eload_info.odpx;
+					blk_6_info->odpy            = (char)eload_info.odpy;
+					blk_6_info->px              = eload_info.px;
+					blk_6_info->py              = eload_info.py;
+					blk_6_info->sxoffs          = eload_info.sxoffs;
+					blk_6_info->syoffs          = eload_info.syoffs;
+					blk_6_info->xdots           = eload_info.xdots;
+					blk_6_info->ydots           = eload_info.ydots;
+					blk_6_info->gridsz          = eload_info.gridsz;
+					blk_6_info->evolving        = eload_info.evolving;
+					blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
+					blk_6_info->fiddlefactor    = eload_info.fiddlefactor;
+					blk_6_info->ecount          = eload_info.ecount;
+					for (i = 0; i < NUMGENES; i++)
+					{
+						blk_6_info->mutate[i]    = eload_info.mutate[i];
+					}
+					break;
+				case 7: /* orbits parameters  */
+					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+					fseek(fp, (long) -block_len, SEEK_CUR);
+					load_ext_blk((char *)&oload_info, data_len);
+					/* XFRACT processing of doubles here */
+#ifdef XFRACT
+					decode_orbits_info(&oload_info, 1);
+#endif
+					blk_7_info->length = data_len;
+					blk_7_info->got_data = 1; /* got data */
+					blk_7_info->oxmin           = oload_info.oxmin;
+					blk_7_info->oxmax           = oload_info.oxmax;
+					blk_7_info->oymin           = oload_info.oymin;
+					blk_7_info->oymax           = oload_info.oymax;
+					blk_7_info->ox3rd           = oload_info.ox3rd;
+					blk_7_info->oy3rd           = oload_info.oy3rd;
+					blk_7_info->keep_scrn_coords = oload_info.keep_scrn_coords;
+					blk_7_info->drawmode        = oload_info.drawmode;
+					break;
+				default:
+					skip_ext_blk(&block_len, &data_len);
 				}
 			}
+		}
 
 		fclose(fp);
 		fileaspectratio = screenaspect; /* if not >= v15, this is correct */
 		return 0;
-		}
+	}
 
 	strcpy(info->info_id, "GIFFILE");
 	info->iterations = 150;
@@ -1002,122 +1002,122 @@ static void backwardscompat(struct fractal_info *info)
 {
 	switch (fractype)
 	{
-		case LAMBDASINE:
-			fractype = LAMBDATRIGFP;
-			trigndx[0] = SIN;
-			break;
-		case LAMBDACOS    :
-			fractype = LAMBDATRIGFP;
-			trigndx[0] = COS;
-			break;
-		case LAMBDAEXP    :
-			fractype = LAMBDATRIGFP;
-			trigndx[0] = EXP;
-			break;
-		case MANDELSINE   :
-			fractype = MANDELTRIGFP;
-			trigndx[0] = SIN;
-			break;
-		case MANDELCOS    :
-			fractype = MANDELTRIGFP;
-			trigndx[0] = COS;
-			break;
-		case MANDELEXP    :
-			fractype = MANDELTRIGFP;
-			trigndx[0] = EXP;
-			break;
-		case MANDELSINH   :
-			fractype = MANDELTRIGFP;
-			trigndx[0] = SINH;
-			break;
-		case LAMBDASINH   :
-			fractype = LAMBDATRIGFP;
-			trigndx[0] = SINH;
-			break;
-		case MANDELCOSH   :
-			fractype = MANDELTRIGFP;
-			trigndx[0] = COSH;
-			break;
-		case LAMBDACOSH   :
-			fractype = LAMBDATRIGFP;
-			trigndx[0] = COSH;
-			break;
-		case LMANDELSINE  :
-			fractype = MANDELTRIG;
-			trigndx[0] = SIN;
-			break;
-		case LLAMBDASINE  :
-			fractype = LAMBDATRIG;
-			trigndx[0] = SIN;
-			break;
-		case LMANDELCOS   :
-			fractype = MANDELTRIG;
-			trigndx[0] = COS;
-			break;
-		case LLAMBDACOS   :
-			fractype = LAMBDATRIG;
-			trigndx[0] = COS;
-			break;
-		case LMANDELSINH  :
-			fractype = MANDELTRIG;
-			trigndx[0] = SINH;
-			break;
-		case LLAMBDASINH  :
-			fractype = LAMBDATRIG;
-			trigndx[0] = SINH;
-			break;
-		case LMANDELCOSH  :
-			fractype = MANDELTRIG;
-			trigndx[0] = COSH;
-			break;
-		case LLAMBDACOSH  :
-			fractype = LAMBDATRIG;
-			trigndx[0] = COSH;
-			break;
-		case LMANDELEXP   :
-			fractype = MANDELTRIG;
-			trigndx[0] = EXP;
-			break;
-		case LLAMBDAEXP   :
-			fractype = LAMBDATRIG;
-			trigndx[0] = EXP;
-			break;
-		case DEMM         :
-			fractype = MANDELFP;
-			usr_distest = (info->ydots - 1)*2;
-			break;
-		case DEMJ         :
-			fractype = JULIAFP;
-			usr_distest = (info->ydots - 1)*2;
-			break;
-		case MANDELLAMBDA :
-			useinitorbit = 2;
-			break;
-		}
+	case LAMBDASINE:
+		fractype = LAMBDATRIGFP;
+		trigndx[0] = SIN;
+		break;
+	case LAMBDACOS    :
+		fractype = LAMBDATRIGFP;
+		trigndx[0] = COS;
+		break;
+	case LAMBDAEXP    :
+		fractype = LAMBDATRIGFP;
+		trigndx[0] = EXP;
+		break;
+	case MANDELSINE   :
+		fractype = MANDELTRIGFP;
+		trigndx[0] = SIN;
+		break;
+	case MANDELCOS    :
+		fractype = MANDELTRIGFP;
+		trigndx[0] = COS;
+		break;
+	case MANDELEXP    :
+		fractype = MANDELTRIGFP;
+		trigndx[0] = EXP;
+		break;
+	case MANDELSINH   :
+		fractype = MANDELTRIGFP;
+		trigndx[0] = SINH;
+		break;
+	case LAMBDASINH   :
+		fractype = LAMBDATRIGFP;
+		trigndx[0] = SINH;
+		break;
+	case MANDELCOSH   :
+		fractype = MANDELTRIGFP;
+		trigndx[0] = COSH;
+		break;
+	case LAMBDACOSH   :
+		fractype = LAMBDATRIGFP;
+		trigndx[0] = COSH;
+		break;
+	case LMANDELSINE  :
+		fractype = MANDELTRIG;
+		trigndx[0] = SIN;
+		break;
+	case LLAMBDASINE  :
+		fractype = LAMBDATRIG;
+		trigndx[0] = SIN;
+		break;
+	case LMANDELCOS   :
+		fractype = MANDELTRIG;
+		trigndx[0] = COS;
+		break;
+	case LLAMBDACOS   :
+		fractype = LAMBDATRIG;
+		trigndx[0] = COS;
+		break;
+	case LMANDELSINH  :
+		fractype = MANDELTRIG;
+		trigndx[0] = SINH;
+		break;
+	case LLAMBDASINH  :
+		fractype = LAMBDATRIG;
+		trigndx[0] = SINH;
+		break;
+	case LMANDELCOSH  :
+		fractype = MANDELTRIG;
+		trigndx[0] = COSH;
+		break;
+	case LLAMBDACOSH  :
+		fractype = LAMBDATRIG;
+		trigndx[0] = COSH;
+		break;
+	case LMANDELEXP   :
+		fractype = MANDELTRIG;
+		trigndx[0] = EXP;
+		break;
+	case LLAMBDAEXP   :
+		fractype = LAMBDATRIG;
+		trigndx[0] = EXP;
+		break;
+	case DEMM         :
+		fractype = MANDELFP;
+		usr_distest = (info->ydots - 1)*2;
+		break;
+	case DEMJ         :
+		fractype = JULIAFP;
+		usr_distest = (info->ydots - 1)*2;
+		break;
+	case MANDELLAMBDA :
+		useinitorbit = 2;
+		break;
+	}
 	curfractalspecific = &fractalspecific[fractype];
 }
 
 /* switch old bifurcation fractal types to new generalizations */
 void set_if_old_bif(void)
 {
-/* set functions if not set already, may need to check 'functionpreloaded'
-	before calling this routine.  JCO 7/5/92 */
+	/* set functions if not set already, may need to check 'functionpreloaded'
+		before calling this routine.  JCO 7/5/92 */
 
 	switch (fractype)
 	{
-		case BIFURCATION:
-		case LBIFURCATION:
-		case BIFSTEWART:
-		case LBIFSTEWART:
-		case BIFLAMBDA:
-		case LBIFLAMBDA:
+	case BIFURCATION:
+	case LBIFURCATION:
+	case BIFSTEWART:
+	case LBIFSTEWART:
+	case BIFLAMBDA:
+	case LBIFLAMBDA:
 		set_trig_array(0, "ident");
 		break;
 
-		case BIFEQSINPI:
-		case LBIFEQSINPI:
-		case BIFADSINPI:
-		case LBIFADSINPI:
+	case BIFEQSINPI:
+	case LBIFEQSINPI:
+	case BIFADSINPI:
+	case LBIFADSINPI:
 		set_trig_array(0, "sin");
 		break;
 	}
@@ -1128,21 +1128,21 @@ void set_function_parm_defaults(void)
 {
 	switch (fractype)
 	{
-		case FPPOPCORN:
-		case LPOPCORN:
-		case FPPOPCORNJUL:
-		case LPOPCORNJUL:
-			set_trig_array(0, "sin");
-			set_trig_array(1, "tan");
-			set_trig_array(2, "sin");
-			set_trig_array(3, "tan");
-			break;
-		case LATOO:
-			set_trig_array(0, "sin");
-			set_trig_array(1, "sin");
-			set_trig_array(2, "sin");
-			set_trig_array(3, "sin");
-			break;
+	case FPPOPCORN:
+	case LPOPCORN:
+	case FPPOPCORNJUL:
+	case LPOPCORNJUL:
+		set_trig_array(0, "sin");
+		set_trig_array(1, "tan");
+		set_trig_array(2, "sin");
+		set_trig_array(3, "tan");
+		break;
+	case LATOO:
+		set_trig_array(0, "sin");
+		set_trig_array(1, "sin");
+		set_trig_array(2, "sin");
+		set_trig_array(3, "sin");
+		break;
 	}
 }
 
@@ -1509,165 +1509,165 @@ rescan:  /* entry for changed browse parms */
 			c = driver_get_key();
 			switch (c)
 			{
-				case FIK_RIGHT_ARROW:
-				case FIK_LEFT_ARROW:
-				case FIK_DOWN_ARROW:
-				case FIK_UP_ARROW:
-					cleartempmsg();
-					drawindow(color_of_box, &winlist); /* dim last window */
-					if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
+			case FIK_RIGHT_ARROW:
+			case FIK_LEFT_ARROW:
+			case FIK_DOWN_ARROW:
+			case FIK_UP_ARROW:
+				cleartempmsg();
+				drawindow(color_of_box, &winlist); /* dim last window */
+				if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
+				{
+					index++;                     /* shift attention to next window */
+					if (index >= wincount)
 					{
-						index++;                     /* shift attention to next window */
-						if (index >= wincount)
-						{
-							index = 0;
-						}
+						index = 0;
 					}
-					else
+				}
+				else
+				{
+					index --;
+					if (index < 0)
 					{
-						index --;
-						if (index < 0)
-						{
-							index = wincount -1;
-						}
+						index = wincount -1;
 					}
-					winlist = browse_windows[index];
-					memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-					memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-					memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
-					showtempmsg(winlist.name);
-					break;
+				}
+				winlist = browse_windows[index];
+				memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+				showtempmsg(winlist.name);
+				break;
 #ifndef XFRACT
-				case FIK_CTL_INSERT:
-					color_of_box += key_count(FIK_CTL_INSERT);
-					for (i = 0; i < wincount; i++)
-					{
-						winlist = browse_windows[i];
-						drawindow(color_of_box, &winlist);
-					}
-					winlist = browse_windows[index];
+			case FIK_CTL_INSERT:
+				color_of_box += key_count(FIK_CTL_INSERT);
+				for (i = 0; i < wincount; i++)
+				{
+					winlist = browse_windows[i];
 					drawindow(color_of_box, &winlist);
-					break;
+				}
+				winlist = browse_windows[index];
+				drawindow(color_of_box, &winlist);
+				break;
 
-				case FIK_CTL_DEL:
-					color_of_box -= key_count(FIK_CTL_DEL);
-					for (i = 0; i < wincount; i++)
-					{
-						winlist = browse_windows[i];
-						drawindow(color_of_box, &winlist);
-					}
-					winlist = browse_windows[index];
+			case FIK_CTL_DEL:
+				color_of_box -= key_count(FIK_CTL_DEL);
+				for (i = 0; i < wincount; i++)
+				{
+					winlist = browse_windows[i];
 					drawindow(color_of_box, &winlist);
-					break;
+				}
+				winlist = browse_windows[index];
+				drawindow(color_of_box, &winlist);
+				break;
 #endif
-				case FIK_ENTER:
-				case FIK_ENTER_2:   /* this file please */
-					strcpy(browsename, winlist.name);
-					done = 1;
-					break;
+			case FIK_ENTER:
+			case FIK_ENTER_2:   /* this file please */
+				strcpy(browsename, winlist.name);
+				done = 1;
+				break;
 
-				case FIK_ESC:
-				case 'l':
-				case 'L':
+			case FIK_ESC:
+			case 'l':
+			case 'L':
 #ifdef XFRACT
-					/* Need all boxes turned on, turn last one back on. */
-					drawindow(g_color_bright, &winlist);
+				/* Need all boxes turned on, turn last one back on. */
+				drawindow(g_color_bright, &winlist);
 #endif
-					autobrowse = FALSE;
-					done = 2;
-					break;
+				autobrowse = FALSE;
+				done = 2;
+				break;
 
-				case 'D': /* delete file */
-					cleartempmsg();
-					_snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
-					showtempmsg(mesg);
-					driver_wait_key_pressed(0);
-					cleartempmsg();
-					c = driver_get_key();
-					if (c == 'Y' && doublecaution)
-					{
-						texttempmsg("ARE YOU SURE???? (Y/N)");
-						if (driver_get_key() != 'Y') c = 'N';
-					}
-					if (c == 'Y')
-					{
-						splitpath(readname, drive, dir, NULL, NULL);
-						splitpath(winlist.name, NULL, NULL, fname, ext);
-						makepath(tmpmask, drive, dir, fname, ext);
-						if (!unlink(tmpmask))
-						{
-							/* do a rescan */
-							done = 3;
-							strcpy(oldname, winlist.name);
-							tmpmask[0] = '\0';
-							check_history(oldname, tmpmask);
-							break;
-						}
-						else if (errno == EACCES)
-						{
-							texttempmsg("Sorry...it's a read only file, can't del");
-							showtempmsg(winlist.name);
-							break;
-						}
-					}
-					texttempmsg("file not deleted (phew!)");
-					showtempmsg(winlist.name);
-					break;
-
-				case 'R':
-					cleartempmsg();
-					driver_stack_screen();
-					newname[0] = 0;
-					strcpy(mesg, "Enter the new filename for ");
+			case 'D': /* delete file */
+				cleartempmsg();
+				_snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
+				showtempmsg(mesg);
+				driver_wait_key_pressed(0);
+				cleartempmsg();
+				c = driver_get_key();
+				if (c == 'Y' && doublecaution)
+				{
+					texttempmsg("ARE YOU SURE???? (Y/N)");
+					if (driver_get_key() != 'Y') c = 'N';
+				}
+				if (c == 'Y')
+				{
 					splitpath(readname, drive, dir, NULL, NULL);
 					splitpath(winlist.name, NULL, NULL, fname, ext);
 					makepath(tmpmask, drive, dir, fname, ext);
-					strcpy(newname, tmpmask);
-					strcat(mesg, tmpmask);
-					i = field_prompt(mesg, NULL, newname, 60, NULL);
-					driver_unstack_screen();
-					if (i != -1)
+					if (!unlink(tmpmask))
 					{
-						if (!rename(tmpmask, newname))
+						/* do a rescan */
+						done = 3;
+						strcpy(oldname, winlist.name);
+						tmpmask[0] = '\0';
+						check_history(oldname, tmpmask);
+						break;
+					}
+					else if (errno == EACCES)
+					{
+						texttempmsg("Sorry...it's a read only file, can't del");
+						showtempmsg(winlist.name);
+						break;
+					}
+				}
+				texttempmsg("file not deleted (phew!)");
+				showtempmsg(winlist.name);
+				break;
+
+			case 'R':
+				cleartempmsg();
+				driver_stack_screen();
+				newname[0] = 0;
+				strcpy(mesg, "Enter the new filename for ");
+				splitpath(readname, drive, dir, NULL, NULL);
+				splitpath(winlist.name, NULL, NULL, fname, ext);
+				makepath(tmpmask, drive, dir, fname, ext);
+				strcpy(newname, tmpmask);
+				strcat(mesg, tmpmask);
+				i = field_prompt(mesg, NULL, newname, 60, NULL);
+				driver_unstack_screen();
+				if (i != -1)
+				{
+					if (!rename(tmpmask, newname))
+					{
+						if (errno == EACCES)
 						{
-							if (errno == EACCES)
-							{
-								texttempmsg("Sorry....can't rename");
-							}
-							else
-							{
-								splitpath(newname, NULL, NULL, fname, ext);
-								makepath(tmpmask, NULL, NULL, fname, ext);
-								strcpy(oldname, winlist.name);
-								check_history(oldname, tmpmask);
-								strcpy(winlist.name, tmpmask);
-							}
+							texttempmsg("Sorry....can't rename");
+						}
+						else
+						{
+							splitpath(newname, NULL, NULL, fname, ext);
+							makepath(tmpmask, NULL, NULL, fname, ext);
+							strcpy(oldname, winlist.name);
+							check_history(oldname, tmpmask);
+							strcpy(winlist.name, tmpmask);
 						}
 					}
-					browse_windows[index] = winlist;
-					showtempmsg(winlist.name);
-					break;
+				}
+				browse_windows[index] = winlist;
+				showtempmsg(winlist.name);
+				break;
 
-				case FIK_CTL_B:
-					cleartempmsg();
-					driver_stack_screen();
-					done = abs(get_browse_params());
-					driver_unstack_screen();
-					showtempmsg(winlist.name);
-					break;
+			case FIK_CTL_B:
+				cleartempmsg();
+				driver_stack_screen();
+				done = abs(get_browse_params());
+				driver_unstack_screen();
+				showtempmsg(winlist.name);
+				break;
 
-				case 's': /* save image with boxes */
-					autobrowse = FALSE;
-					drawindow(color_of_box, &winlist); /* current window white */
-					done = 4;
-					break;
+			case 's': /* save image with boxes */
+				autobrowse = FALSE;
+				drawindow(color_of_box, &winlist); /* current window white */
+				done = 4;
+				break;
 
-				case '\\': /*back out to last image */
-					done = 2;
-					break;
+			case '\\': /*back out to last image */
+				done = 2;
+				break;
 
-				default:
-					break;
+			default:
+				break;
 			} /*switch */
 		} /*while*/
 

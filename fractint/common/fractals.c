@@ -2780,12 +2780,12 @@ int mandel_per_pixel(void)
 	switch (fractype)
 	{
 	case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
-			lold.x = FgHalf;
-			lold.y = 0;
-			break;
+		lold.x = FgHalf;
+		lold.y = 0;
+		break;
 	default:
-			lold = linit;
-			break;
+		lold = linit;
+		break;
 	}
 
 	/* alter init value */
