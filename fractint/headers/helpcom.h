@@ -169,7 +169,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
  * pointers all over the place.
  */
 int
-getint(char *ptr;)
+getint(char *ptr)
 {
 	int s;
 	bcopy(ptr, &s, sizeof(int));
