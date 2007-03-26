@@ -613,7 +613,8 @@ static void  write_cache_lru()
 	i = 0;
 	while (++i <= WRITEGAP)
 	{
-		if ((ptr2 = find_cache(offset -= BLOCKLEN)) != NULL && ptr2->dirty)
+		ptr2 = find_cache(offset -= BLOCKLEN);
+		if (ptr2 != NULL && ptr2->dirty)
 		{
 			ptr1 = ptr2;
 			i = 0;
@@ -686,7 +687,8 @@ write_stuff:
 	i = 1;
 	while (++i <= WRITEGAP)
 	{
-		if ((ptr1 = find_cache(offset += BLOCKLEN)) != NULL && ptr1->dirty != 0)
+		ptr1 = find_cache(offset += BLOCKLEN);
+		if (ptr1 != NULL && ptr1->dirty != 0)
 		{
 			goto write_seek;
 		}

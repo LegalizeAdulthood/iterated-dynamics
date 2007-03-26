@@ -146,8 +146,9 @@ int (*bigfltbailout)(void);
 #if 0
 int  fpMODbailout(void)
 {
-	magnitude = (tempsqrx = sqr(g_new.x);
-	if (magnitude + (tempsqry = sqr(g_new.y))) >= rqlim)
+	magnitude = tempsqrx = sqr(g_new.x);
+	tempsqry = sqr(g_new.y);
+	if ((magnitude + tempsqry) >= rqlim)
 	{
 		return 1;
 	}
