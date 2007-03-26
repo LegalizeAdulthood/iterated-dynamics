@@ -388,7 +388,7 @@ int find_line_width(int mode, char *curr, unsigned len)
 	{
 		tok = find_token_length(mode, curr, len, &size, &width);
 
-		switch(tok)
+		switch (tok)
 		{
 		case TOK_DONE:
 		case TOK_PARA:

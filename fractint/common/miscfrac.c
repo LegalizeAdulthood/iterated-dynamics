@@ -1474,17 +1474,24 @@ int lya_setup ()
 #endif
 	lyaRxy[0] = 1;
 	for (t = 31; t >= 0; t--)
-		if (i & (1 << t)) break;
+	{
+		if (i & (1 << t))
+		{
+			break;
+		}
+	}
 	for (; t >= 0; t--)
 	{
 		lyaRxy[lyaLength++] = (i & (1 << t)) != 0;
 	}
 	lyaRxy[lyaLength++] = 0;
 	if (save_release < 1732)              /* swap axes prior to 1732 */
+	{
 		for (t = lyaLength; t >= 0; t--)
 		{
 				lyaRxy[t] = !lyaRxy[t];
 		}
+	}
 	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
 		stdcalcmode = '1';

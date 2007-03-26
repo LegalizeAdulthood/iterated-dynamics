@@ -2294,9 +2294,12 @@ int cmp_line(BYTE *pixels, int linelen)
 		}
 	if (pot16bit)  /* 16 bit info, ignore odd numbered rows */
 	{
-		if ((row & 1) != 0) return 0;
-		row >>= 1;
+		if ((row & 1) != 0)
+		{
+			return 0;
 		}
+		row >>= 1;
+	}
 	for (col = 0; col < linelen; col++)
 	{
 		oldcolor = getcolor(col, row);

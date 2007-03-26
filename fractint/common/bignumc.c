@@ -144,10 +144,12 @@ int is_bn_not_zero(bn_t n)
 
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
+	{
 		if (big_access16(n + i) != 0)
 		{
 			return 1;
 		}
+	}
 	return 0;
 }
 

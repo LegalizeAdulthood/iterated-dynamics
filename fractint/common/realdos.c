@@ -1562,7 +1562,9 @@ int input_field(
 			{
 				j = (int) strlen(fld);
 				for (i = offset-1; i < j; ++i)
+				{
 					fld[i] = fld[i + 1];
+				}
 				--offset;
 			}
 			started = display = 1;
@@ -1570,7 +1572,9 @@ int input_field(
 		case FIK_DELETE:                           /* delete */
 			j = (int) strlen(fld);
 			for (i = offset; i < j; ++i)
+			{
 				fld[i] = fld[i + 1];
+			}
 			started = display = 1;
 			break;
 		case FIK_INSERT:                           /* insert */

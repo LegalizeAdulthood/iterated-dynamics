@@ -696,7 +696,8 @@ scan:
 				goto rhombus_done;
 			}
 			savex = x1;
-			for (x = x1 + INTERLEAVE, re = cre1 + interstep; x < x2;
+			for (x = x1 + INTERLEAVE, re = cre1 + interstep;
+				x < x2;
 				x += INTERLEAVE, re += interstep)
 			{
 				zre = GET_SCAN_REAL(re, im);

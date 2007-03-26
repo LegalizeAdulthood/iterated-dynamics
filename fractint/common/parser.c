@@ -2053,7 +2053,9 @@ static int isconst_pair(char *Str)
 	int n, j;
 	int answer = 0;
 	/* skip past first number */
-	for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++);
+	for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
+	{
+	}
 	if (Str[n] == ',')
 	{
 		j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
@@ -2162,7 +2164,9 @@ struct ConstArg *isconst(char *Str, int Len)
 				|| Str[j] == '.')
 			{
 				z.y = atof(&Str[j]);
-				for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++);
+				for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
+				{
+				}
 				v[vsp].len = j;
 			}
 			else

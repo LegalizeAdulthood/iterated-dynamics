@@ -898,34 +898,34 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 		printf("."); /* lets you know it's doing something */
 #endif
 	}
-		while (!cos_done || !sin_done);
+	while (!cos_done || !sin_done);
 
 #ifndef CALCULATING_BIG_PI
-		/* now need to undo what was done by cutting angles in half */
-		for (i = 0; i < halves; i++)
-			{
-				unsafe_mult_bf(bftmp2, s, c); /* no need for safe mult */
-				double_bf(s, bftmp2); /* sin(2x) = 2*sin(x)*cos(x) */
-				unsafe_square_bf(bftmp2, c);
-				double_a_bf(bftmp2);
-				inttobf(bftmp1, 1);
-				unsafe_sub_bf(c, bftmp2, bftmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
-			}
+	/* now need to undo what was done by cutting angles in half */
+	for (i = 0; i < halves; i++)
+	{
+		unsafe_mult_bf(bftmp2, s, c); /* no need for safe mult */
+		double_bf(s, bftmp2); /* sin(2x) = 2*sin(x)*cos(x) */
+		unsafe_square_bf(bftmp2, c);
+		double_a_bf(bftmp2);
+		inttobf(bftmp1, 1);
+		unsafe_sub_bf(c, bftmp2, bftmp1); /* cos(2x) = 2*cos(x)*cos(x) - 1 */
+	}
 
-		if (switch_sincos)
-			{
-				copy_bf(bftmp1, s);
-				copy_bf(s, c);
-				copy_bf(c, bftmp1);
-			}
-		if (signsin)
-		{
-			neg_a_bf(s);
-		}
-		if (signcos)
-		{
-			neg_a_bf(c);
-		}
+	if (switch_sincos)
+	{
+		copy_bf(bftmp1, s);
+		copy_bf(s, c);
+		copy_bf(c, bftmp1);
+	}
+	if (signsin)
+	{
+		neg_a_bf(s);
+	}
+	if (signcos)
+	{
+		neg_a_bf(c);
+	}
 #endif
 
 	return s; /* return sine I guess */

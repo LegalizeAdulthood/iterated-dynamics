@@ -238,10 +238,12 @@ zline(long x, long y)
 		ltempsqrx = multiply(lold.x, lold.x, bitshift);
 		ltempsqry = multiply(lold.y, lold.y, bitshift);
 		for (n = 0; n < maxit; n++)
+		{
 			if (fractalspecific[neworbittype].orbitcalc())
 			{
 				break;
 			}
+		}
 		if (n == maxit)
 		{
 			if (juli3Dmode == 3)
@@ -351,10 +353,12 @@ zlinefp(double x, double y)
 		tempsqry = sqr(old.y);
 
 		for (n = 0; n < maxit; n++)
+		{
 			if (fractalspecific[neworbittype].orbitcalc())
 			{
 				break;
 			}
+		}
 		if (n == maxit)
 		{
 			if (juli3Dmode == 3)

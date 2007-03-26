@@ -524,12 +524,12 @@ expand_retry:
 			{
 				dx0 = (double)(dx0 + (double)delxx);
 				dy1 = (double)(dy1 - (double)delyy2);
-				}
+			}
 			for (i = 1; i < ydots; i++)
 			{
 				dy0 = (double)(dy0 - (double)delyy);
 				dx1 = (double)(dx1 + (double)delxx2);
-				}
+			}
 			if (bf_math == 0) /* redundant test, leave for now */
 			{
 				double testx_try, testx_exact;
