@@ -199,15 +199,7 @@ int showtempmsg(char *msgparm)
 	size = (long) textxdots*textydots;
 	save_sxoffs = sxoffs;
 	save_syoffs = syoffs;
-	if (g_video_scroll)
-	{
-		sxoffs = g_video_start_x;
-		syoffs = g_video_start_y;
-	}
-	else
-	{
-		sxoffs = syoffs = 0;
-	}
+	sxoffs = syoffs = 0;
 	if (temptextsave == NULL) /* only save screen first time called */
 	{
 		temptextsave = malloc(textxdots*textydots);
@@ -241,15 +233,7 @@ void cleartempmsg()
 	{
 		save_sxoffs = sxoffs;
 		save_syoffs = syoffs;
-		if (g_video_scroll)
-		{
-			sxoffs = g_video_start_x;
-			syoffs = g_video_start_y;
-		}
-		else
-		{
-			sxoffs = syoffs = 0;
-		}
+		sxoffs = syoffs = 0;
 		for (i = 0; i < textydots; ++i)
 		{
 			put_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);

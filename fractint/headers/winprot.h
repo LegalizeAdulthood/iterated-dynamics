@@ -143,9 +143,6 @@ extern void setvideotext(void);
 /* added for Win32 port */
 extern void gettruecolor(int, int, int*, int*, int*);
 extern void puttruecolor(int, int, int, int, int);
-extern void scroll_center(int, int);
-extern void scroll_relative(int, int);
-extern void scroll_state(int);
 extern void setnullvideo(void);
 extern void delay(int);
 extern void initasmvars(void);

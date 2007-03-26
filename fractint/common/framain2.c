@@ -519,11 +519,7 @@ resumeloop:                             /* return here on failed overlays */
 			}
 			else if (initbatch == INIT_BATCH_NONE)      /* not batch mode */
 			{
-#ifndef XFRACT
-				lookatmouse = (zwidth == 0 && !g_video_scroll) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
-#else
 				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
-#endif
 				if (calc_status == CALCSTAT_RESUMABLE && zwidth == 0 && !driver_key_pressed())
 				{
 					kbdchar = FIK_ENTER ;  /* no visible reason to stop, continue */
@@ -2279,13 +2275,7 @@ static void move_zoombox(int keynum)
 		}
 */
 		moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
-		}
-#ifndef XFRACT
-	else                                 /* if no zoombox, scroll by arrows */
-	{
-		scroll_relative(horizontal, vertical);
 	}
-#endif
 }
 
 /* displays differences between current image file and new image */

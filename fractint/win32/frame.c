@@ -215,8 +215,8 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	g_frame.start_y = y;
 
 	/* ignore small movements */
-	while ((abs(g_frame.delta_x) > GraphSens + JitterMickeys)
-			|| (abs(g_frame.delta_y) > GraphSens + JitterMickeys))
+	while ((abs(g_frame.delta_x) > (GraphSens + JitterMickeys))
+			|| (abs(g_frame.delta_y) > (GraphSens + JitterMickeys)))
 	{
 		if (abs(g_frame.delta_x) > abs(g_frame.delta_y))
 		{
@@ -427,7 +427,6 @@ int frame_get_key_press(int wait_for_key)
 		g_frame.keypress_tail = 0;
 	}
 	g_frame.keypress_count--;
-
 	return i;
 }
 
