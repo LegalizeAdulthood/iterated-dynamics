@@ -128,8 +128,8 @@ char *fract_dir1="", *fract_dir2="";
 /* variables defined by the command line/files processor */
 int     comparegif = 0;                   /* compare two gif files flag */
 int     timedsave = 0;                    /* when doing a timed save */
-int     resave_flag=RESAVE_NO;                  /* tells encoder not to incr filename */
-int     started_resaves=FALSE;              /* but incr on first resave */
+int     resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
+int     started_resaves = FALSE;              /* but incr on first resave */
 int     save_system;                    /* from and for save files */
 int     tabmode = 1;                    /* tab display enabled */
 
@@ -277,7 +277,7 @@ restart:   /* insert key re-starts here */
 	minbox   = 3;
 	strcpy(browsemask, "*.gif");
 	strcpy(browsename, "            ");
-	name_stack_ptr= -1; /* init loaded files stack */
+	name_stack_ptr = -1; /* init loaded files stack */
 
 	evolving = FALSE;
 	paramrangex = 4;
@@ -691,7 +691,7 @@ va_dcl
 	}
 	if (do_bench)
 	{
-		fp=dir_fopen(workdir, "bench", "a");
+		fp = dir_fopen(workdir, "bench", "a");
 	}
 	timer_start = clock_ticks();
 	switch (timertype)

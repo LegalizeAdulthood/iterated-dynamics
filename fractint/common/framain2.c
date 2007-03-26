@@ -2299,7 +2299,7 @@ int cmp_line(BYTE *pixels, int linelen)
 		}
 	for (col = 0; col < linelen; col++)
 	{
-		oldcolor=getcolor(col, row);
+		oldcolor = getcolor(col, row);
 		if (oldcolor == (int)pixels[col])
 		{
 			putcolor(col, row, 0);

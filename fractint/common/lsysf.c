@@ -207,10 +207,10 @@ static void lsysf_dosizedm(struct lsys_turtlestatef *cmd)
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;
 
-	if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
-	if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
-	if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
-	if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
+	if (cmd->xpos > cmd->xmax) cmd->xmax = cmd->xpos;
+	if (cmd->ypos > cmd->ymax) cmd->ymax = cmd->ypos;
+	if (cmd->xpos < cmd->xmin) cmd->xmin = cmd->xpos;
+	if (cmd->ypos < cmd->ymin) cmd->ymin = cmd->ypos;
 }
 #else
 extern void lsysf_dosizedm(struct lsys_turtlestatef *cmd, long n);
@@ -222,10 +222,10 @@ static void lsysf_dosizegf(struct lsys_turtlestatef *cmd)
 	cmd->xpos += cmd->size*coss_f[(int)cmd->angle];
 	cmd->ypos += cmd->size*sins_f[(int)cmd->angle];
 
-	if (cmd->xpos > cmd->xmax) cmd->xmax=cmd->xpos;
-	if (cmd->ypos > cmd->ymax) cmd->ymax=cmd->ypos;
-	if (cmd->xpos < cmd->xmin) cmd->xmin=cmd->xpos;
-	if (cmd->ypos < cmd->ymin) cmd->ymin=cmd->ypos;
+	if (cmd->xpos > cmd->xmax) cmd->xmax = cmd->xpos;
+	if (cmd->ypos > cmd->ymax) cmd->ymax = cmd->ypos;
+	if (cmd->xpos < cmd->xmin) cmd->xmin = cmd->xpos;
+	if (cmd->ypos < cmd->ymin) cmd->ymin = cmd->ypos;
 }
 #else
 extern void lsysf_dosizegf(struct lsys_turtlestatef *cmd);
@@ -240,8 +240,8 @@ static void lsysf_dodrawd(struct lsys_turtlestatef *cmd)
 	s = sin(angle);
 	c = cos(angle);
 
-	lastx=(int) cmd->xpos;
-	lasty=(int) cmd->ypos;
+	lastx = (int) cmd->xpos;
+	lasty = (int) cmd->ypos;
 
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;
@@ -348,7 +348,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 		tran = 0;
 		if (depth)
 		{
-			for (rulind=rules; *rulind; rulind++)
+			for (rulind = rules; *rulind; rulind++)
 			{
 				if ((*rulind)->ch == command->ch)
 				{
@@ -383,12 +383,12 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 				LDBL savesize, savex, savey, saverang;
 
 				lsys_donefpu(ts);
-				saveang=ts->angle;
-				saverev=ts->reverse;
-				savesize=ts->size;
-				saverang=ts->realangle;
-				savex=ts->xpos;
-				savey=ts->ypos;
+				saveang = ts->angle;
+				saverev = ts->reverse;
+				savesize = ts->size;
+				saverang = ts->realangle;
+				savex = ts->xpos;
+				savey = ts->ypos;
 				lsys_prepfpu(ts);
 				command = findsize(command + 1, ts, rules, depth);
 				if (command == NULL)
@@ -396,12 +396,12 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 					return NULL;
 				}
 				lsys_donefpu(ts);
-				ts->angle=saveang;
-				ts->reverse=saverev;
-				ts->size=savesize;
-				ts->realangle=saverang;
-				ts->xpos=savex;
-				ts->ypos=savey;
+				ts->angle = saveang;
+				ts->reverse = saverev;
+				ts->size = savesize;
+				ts->realangle = saverang;
+				ts->xpos = savex;
+				ts->ypos = savey;
 				lsys_prepfpu(ts);
 			}
 		}
@@ -419,7 +419,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
 	LDBL locaspect;
 	struct lsys_cmd *fsret;
 
-	locaspect=screenaspect*xdots/ydots;
+	locaspect = screenaspect*xdots/ydots;
 	ts->aspect = locaspect;
 	ts->xpos =
 	ts->ypos =
@@ -488,7 +488,7 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 		tran = 0;
 		if (depth)
 		{
-			for (rulind=rules; *rulind; rulind++)
+			for (rulind = rules; *rulind; rulind++)
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = 1;
@@ -521,25 +521,25 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 				LDBL savesize, savex, savey, saverang;
 
 				lsys_donefpu(ts);
-				saveang=ts->angle;
-				saverev=ts->reverse;
-				savesize=ts->size;
-				saverang=ts->realangle;
-				savex=ts->xpos;
-				savey=ts->ypos;
-				savecolor=ts->curcolor;
+				saveang = ts->angle;
+				saverev = ts->reverse;
+				savesize = ts->size;
+				saverang = ts->realangle;
+				savex = ts->xpos;
+				savey = ts->ypos;
+				savecolor = ts->curcolor;
 				lsys_prepfpu(ts);
 				command = drawLSysF(command + 1, ts, rules, depth);
 				if (command == NULL)
 					return NULL;
 				lsys_donefpu(ts);
-				ts->angle=saveang;
-				ts->reverse=saverev;
-				ts->size=savesize;
-				ts->realangle=saverang;
-				ts->xpos=savex;
-				ts->ypos=savey;
-				ts->curcolor=savecolor;
+				ts->angle = saveang;
+				ts->reverse = saverev;
+				ts->size = savesize;
+				ts->realangle = saverang;
+				ts->xpos = savex;
+				ts->ypos = savey;
+				ts->curcolor = savecolor;
 				lsys_prepfpu(ts);
 			}
 		}
@@ -749,12 +749,12 @@ void _fastcall lsysf_dosincos(void)
 	LDBL twopimaxi;
 	int i;
 
-	locaspect=screenaspect*xdots/ydots;
+	locaspect = screenaspect*xdots/ydots;
 	twopimax = TWOPI / maxangle;
 	for (i = 0; i < maxangle; i++)
 	{
 		twopimaxi = i*twopimax;
-		sins_f[i]= sinl(twopimaxi);
-		coss_f[i]= locaspect*cosl(twopimaxi);
+		sins_f[i] = sinl(twopimaxi);
+		coss_f[i] = locaspect*cosl(twopimaxi);
 	}
 }

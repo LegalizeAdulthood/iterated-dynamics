@@ -454,7 +454,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 	best    = NULL;
 	curr_c2 = curr->c + curr->width - 1;
 
-	for (ctr = 0, temp=link; ctr < num_link; ctr++, temp++)
+	for (ctr = 0, temp = link; ctr < num_link; ctr++, temp++)
 	{
 		if (ctr != curr_link &&
 			((up && temp->r < curr->r) || (!up && temp->r > curr->r)))

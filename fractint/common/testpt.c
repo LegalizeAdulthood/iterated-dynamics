@@ -39,8 +39,8 @@ long maxit, int inside)
 {
 	double oldreal, oldimag, newreal, newimag, magnitude;
 	long color;
-	oldreal=parm1;
-	oldimag=parm2;
+	oldreal = parm1;
+	oldimag = parm2;
 	magnitude = 0.0;
 	color = 0;
 	while ((magnitude < 4.0) && (color < maxit))

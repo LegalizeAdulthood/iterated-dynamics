@@ -106,11 +106,11 @@ int get_toggles()
 	int old_fillcolor;
 	int old_stoppass;
 	double old_closeprox;
-	char *calcmodes[] ={"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
-	char *soundmodes[5]={"off", "beep", "x", "y", "z"};
-	char *insidemodes[]={"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
+	char *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
+	char *soundmodes[5] = {"off", "beep", "x", "y", "z"};
+	char *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
 						"startrail", "period", "atan", "fmod"};
-	char *outsidemodes[]={"numb", "iter", "real", "imag", "mult", "summ", "atan",
+	char *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
 						"fmod", "tdis"};
 
 	k = -1;
@@ -501,7 +501,7 @@ int get_toggles2()
 	choices[++k] = "          center X coordinate or \"auto\"";
 	choices[++k] = "          center Y coordinate or \"auto\"";
 	k = k - 3;
-	for (i= 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 	{
 		uvalues[++k].type = 's';
 		old_inversion[i] = inversion[i];
@@ -618,7 +618,7 @@ int passes_options(void)
 {
 	char *choices[20];
 	int oldhelpmode;
-	char *passcalcmodes[] ={"rect", "line"};
+	char *passcalcmodes[] = {"rect", "line"};
 
 	struct fullscreenvalues uvalues[25];
 	int i, j, k;
@@ -1283,8 +1283,8 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	char *ra;
 	ra = (char *)ra1;
 	ra -= sz;
-	ll=(n >> 1) + 1;
-	ir=n;
+	ll = (n >> 1) + 1;
+	ir = n;
 
 	while (1)
 	{
@@ -1295,10 +1295,10 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 		else
 		{
 			rra = *((char **)(ra + ir*sz));
-			*((char **)(ra + ir*sz))=*((char **)(ra + sz));
+			*((char **)(ra + ir*sz)) = *((char **)(ra + sz));
 			if (--ir == 1)
 			{
-				*((char **)(ra + sz))=rra;
+				*((char **)(ra + sz)) = rra;
 				return;
 			}
 		}
@@ -1313,12 +1313,12 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 			if (fct(&rra, ra + j*sz) < 0)
 			{
 				*((char **)(ra + i*sz)) = *((char **)(ra + j*sz));
-				j += (i=j);
+				j += (i = j);
 			}
 			else
-				j=ir + 1;
+				j = ir + 1;
 		}
-		*((char **)(ra + i*sz))=rra;
+		*((char **)(ra + i*sz)) = rra;
 	}
 }
 #endif
@@ -2731,7 +2731,7 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	v = (char *)v1;
 	for (gap = n/2; gap > 0; gap /= 2)
 		for (i = gap; i < n; i++)
-			for (j=i-gap; j >= 0; j -= gap)
+			for (j = i-gap; j >= 0; j -= gap)
 			{
 				if (fct((char **)(v + j*sz), (char **)(v + (j + gap)*sz)) <= 0)
 				{

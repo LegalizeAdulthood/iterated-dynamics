@@ -330,7 +330,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 
 	if (gotrealmode == 0)  /* translate from temp table to permanent */
 	{
-		if ((j = g_video_table[i=g_init_mode].keynum) != 0)
+		if ((j = g_video_table[i = g_init_mode].keynum) != 0)
 		{
 			for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)
 			{
@@ -346,7 +346,7 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 		}
 		if (j == 0) /* mode has no key, add to reserved slot at end */
 		{
-			memcpy((char *)&g_video_table[g_init_mode=MAXVIDEOMODES-1],
+			memcpy((char *)&g_video_table[g_init_mode = MAXVIDEOMODES-1],
 						(char *)&g_video_table[i], sizeof(*g_video_table));
 		}
 	}
@@ -508,7 +508,7 @@ static void format_item(int choice,char *buf)
 static int check_modekey(int curkey,int choice)
 {
 	int i;
-	i=choice; /* avoid warning */
+	i = choice; /* avoid warning */
 	i = check_vidmode_key(0,curkey);
 	return (i >= 0) ? -100-i : 0;
 }

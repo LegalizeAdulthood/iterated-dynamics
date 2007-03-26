@@ -170,10 +170,10 @@ struct MPC cmplx2MPC(_CMPLX z)
 /* function pointer versions added by Tim Wegner 12/07/89 */
 /* int        (*ppMPcmp)() = MPcmp086; */
 int        (*pMPcmp)(struct MP x, struct MP y) = MPcmp086;
-struct MP  *(*pMPmul)(struct MP x, struct MP y)= MPmul086;
-struct MP  *(*pMPdiv)(struct MP x, struct MP y)= MPdiv086;
-struct MP  *(*pMPadd)(struct MP x, struct MP y)= MPadd086;
-struct MP  *(*pMPsub)(struct MP x, struct MP y)= MPsub086;
+struct MP  *(*pMPmul)(struct MP x, struct MP y) = MPmul086;
+struct MP  *(*pMPdiv)(struct MP x, struct MP y) = MPdiv086;
+struct MP  *(*pMPadd)(struct MP x, struct MP y) = MPadd086;
+struct MP  *(*pMPsub)(struct MP x, struct MP y) = MPsub086;
 struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 /* struct MP  *(*pfg2MP)(long x, int fg)          = fg2MP086; */
@@ -336,7 +336,7 @@ void Arctanhz(_CMPLX z, _CMPLX *rz)
 	}
 }   /* end. Arctanhz */
 
-/* rz=Arctan(z)=i/2*Log{(1-i*z)/(1 + i*z)} */
+/* rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)} */
 void Arctanz(_CMPLX z, _CMPLX *rz)
 {
 	_CMPLX temp0, temp1, temp2, temp3;

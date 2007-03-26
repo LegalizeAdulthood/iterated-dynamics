@@ -1158,8 +1158,8 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
 		}
 	}
 	srr = (*s)-(*r)*(*r);
-	(*s)=(*r)*sinx + srr*cosx;
-	(*r)=(*r)*cosx-srr*sinx;
+	(*s) = (*r)*sinx + srr*cosx;
+	(*r) = (*r)*cosx-srr*sinx;
 	return 0;
 }
 
@@ -1178,8 +1178,8 @@ int kamtoruslongorbit(long *r, long *s, long *z)
 		}
 	}
 	srr = (*s)-multiply((*r), (*r), bitshift);
-	(*s)=multiply((*r), l_sinx, bitshift) + multiply(srr, l_cosx, bitshift);
-	(*r)=multiply((*r), l_cosx, bitshift)-multiply(srr, l_sinx, bitshift);
+	(*s) = multiply((*r), l_sinx, bitshift) + multiply(srr, l_cosx, bitshift);
+	(*r) = multiply((*r), l_cosx, bitshift)-multiply(srr, l_sinx, bitshift);
 	return 0;
 }
 

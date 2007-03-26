@@ -46,7 +46,7 @@ int     stoppass = 0;             /* stop at this guessing pass early */
 int     pseudox = 0;              /* xdots to use for video independence */
 int     pseudoy = 0;              /* ydots to use for video independence */
 int     bfdigits = 0;             /* digits to use (force) for bf_math */
-int     showdot=-1;             /* color to show crawling graphics cursor */
+int     showdot = -1;             /* color to show crawling graphics cursor */
 int     sizedot;                /* size of dot crawling cursor */
 char    recordcolors;           /* default PAR color-writing method */
 char    autoshowdot = 0;          /* dark, medium, bright */
@@ -57,9 +57,9 @@ char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
 char    orgfrmdir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
 char    gifmask[FILE_MAX_PATH] = {""};
-char    PrintName[FILE_MAX_PATH]={"fract001.prn"}; /* Name for print-to-file */
-char    savename[FILE_MAX_PATH]={"fract001"};  /* save files using this name */
-char    autoname[FILE_MAX_PATH]={"auto.key"}; /* record auto keystrokes here */
+char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; /* Name for print-to-file */
+char    savename[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
+char    autoname[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
 int     potflag = 0;              /* continuous potential enabled? */
 int     pot16bit;               /* store 16 bit continuous potential values */
 int     gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
@@ -108,7 +108,7 @@ int     colorstate;             /* 0, g_dac_box matches default (bios or map=) *
 int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor = 0;        /* flag for reading color from GIF */
-double  math_tol[2]={.05,.05};  /* For math transition */
+double  math_tol[2] = {.05,.05};  /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
@@ -152,7 +152,7 @@ char IFSFileName[FILE_MAX_PATH]; /* file to find (type=)IFS in */
 char IFSName[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath searchfor;
 float *ifs_defn = NULL;     /* ifs parameters */
-int  ifs_type;                  /* 0=2d, 1=3d */
+int  ifs_type;                  /* 0 = 2d, 1 = 3d */
 int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
 
 BYTE txtcolor[]=
@@ -256,7 +256,7 @@ int cmdfiles(int argc,char **argv)
 		}
 		if (curarg[0] != '@')  /* simple command? */
 		{
-			if (strchr(curarg,'=') == NULL)  /* not xxx=yyy, so check for gif */
+			if (strchr(curarg,'=') == NULL)  /* not xxx = yyy, so check for gif */
 			{
 				strcpy(tempstring,curarg);
 				if (has_ext(curarg) == NULL)
@@ -552,7 +552,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	fm_release = 5;                      /* short release   */
 	fm_wavetype = 0;                     /* sin wave */
 	polyphony = 0;                       /* no polyphony    */
-	for (i = 0; i <= 11; i++) scale_map[i]=i + 1;    /* straight mapping of notes in octave */
+	for (i = 0; i <= 11; i++) scale_map[i] = i + 1;    /* straight mapping of notes in octave */
 #endif
 }
 
@@ -2493,7 +2493,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 		/* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
 			is modified by an orbits x,y,or z component. and also to turn it on
-			or off (0==off, 1==beep (or yes), 2==x, 3==y, 4==z),
+			or off (0==off, 1==beep (or yes), 2==x, 3 == y, 4 == z),
 			Bit 3 is used for flagging the PC speaker sound,
 			Bit 4 for OPL3 FM soundcard output,
 			Bit 5 will be for midi output (not yet),
@@ -2648,7 +2648,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			goto badarg;
 		}
-		for (counter = 0; counter <=11; counter++)
+		for (counter = 0; counter <= 11; counter++)
 		{
 			if ((totparms > counter) && (intval[counter] > 0)
 				&& (intval[counter] < 13))
@@ -2673,7 +2673,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
 		else if (charval[0] == 's')   /* 's' for 'show' */
 		{
-			usr_periodicitycheck= -1;
+			usr_periodicitycheck = -1;
 		}
 		else if (numval == NONNUMERIC)
 		{
@@ -2681,7 +2681,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
 		else if (numval != 0)
 		{
-			usr_periodicitycheck=numval;
+			usr_periodicitycheck = numval;
 		}
 		if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
 		if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
@@ -2785,10 +2785,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			}
 			else
 			{
-				showdot=numval;
+				showdot = numval;
 				if (showdot < 0)
 				{
-					showdot=-1;
+					showdot = -1;
 				}
 			}
 			if (totparms > 1 && intparms > 0)
@@ -2805,7 +2805,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "showorbit") == 0)  /* showorbit=yes|no */
 	{
-		start_showorbit=(char)yesnoval[0];
+		start_showorbit = (char)yesnoval[0];
 		return 0;
 	}
 
@@ -2883,7 +2883,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			goto badarg;
 		}
-		existdir=merge_pathnames(IFSFileName, value, mode);
+		existdir = merge_pathnames(IFSFileName, value, mode);
 		if (existdir == 0)
 		{
 			reset_ifs_defn();
@@ -2995,7 +2995,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	{
 		if (strcmp(value, "overlay") == 0)
 		{
-			yesnoval[0]=1;
+			yesnoval[0] = 1;
 			if (calc_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
 			{
 				overlay3d = 1;
@@ -3491,7 +3491,7 @@ void set_3d_defaults()
 static int get_bf(bf_t bf, char *curarg)
 {
 	char *s;
-	s=strchr(curarg,'/');
+	s = strchr(curarg,'/');
 	if (s)
 	{
 		*s = 0;
@@ -3509,7 +3509,7 @@ int get_curarg_len(char *curarg)
 {
 	int len;
 	char *s;
-	s=strchr(curarg,'/');
+	s = strchr(curarg,'/');
 	if (s)
 	{
 		*s = 0;

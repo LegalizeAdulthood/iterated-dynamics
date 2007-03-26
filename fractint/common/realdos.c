@@ -55,11 +55,11 @@ int stopmsg (int flags, char *msg)
 		static FILE *fp = NULL;
 		if (fp == NULL && initbatch == INIT_BATCH_NONE)
 		{
-			fp=dir_fopen(workdir, "stopmsg.txt", "w");
+			fp = dir_fopen(workdir, "stopmsg.txt", "w");
 		}
 		else
 		{
-			fp=dir_fopen(workdir, "stopmsg.txt", "a");
+			fp = dir_fopen(workdir, "stopmsg.txt", "a");
 		}
 		if (fp != NULL)
 		{
@@ -761,7 +761,7 @@ int fullscreen_choice(
 				if (formatitem)
 				{
 					(*formatitem)(j, buf);
-					charptr=buf;
+					charptr = buf;
 				}
 				else
 				{

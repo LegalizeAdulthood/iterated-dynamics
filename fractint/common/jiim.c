@@ -55,7 +55,7 @@
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
-int show_numbers =0;              /* toggle for display of coords */
+int show_numbers = 0;              /* toggle for display of coords */
 static char *rect_buff = NULL;
 FILE *file;
 int windows = 0;               /* windows management system */
@@ -487,7 +487,7 @@ static void RestoreRect(int x, int y, int width, int height)
 	}
 
 	Cursor_Hide();
-	for (yoff =0; yoff < height; yoff++)
+	for (yoff = 0; yoff < height; yoff++)
 	{
 		putrow(x, y + yoff, width, buff);
 		buff += width;

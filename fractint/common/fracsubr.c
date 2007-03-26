@@ -155,7 +155,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	int i, gotprec;
 	long xytemp;
 	double ftemp;
-	coloriter=oldcoloriter = 0L;
+	coloriter = oldcoloriter = 0L;
 	for (i = 0; i < 10; i++)
 	{
 		rhombus_stack[i] = 0;
@@ -200,7 +200,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	/* switch back to double when zooming out if using arbitrary precision */
 	if (bf_math)
 	{
-		gotprec=getprecbf(CURRENTREZ);
+		gotprec = getprecbf(CURRENTREZ);
 		if ((gotprec <= DBL_DIG + 1 && debugflag != 3200) || math_tol[1] >= 1.0)
 		{
 			bfcornerstofloat();
@@ -213,28 +213,28 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	}
 	else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
 	{
-		fractype=MANDELFP;
+		fractype = MANDELFP;
 		curfractalspecific = &fractalspecific[MANDELFP];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == 3200)
 	{
-		fractype=JULIAFP;
+		fractype = JULIAFP;
 		curfractalspecific = &fractalspecific[JULIAFP];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == 3200)
 	{
-		fractype=FPMANDELZPOWER;
+		fractype = FPMANDELZPOWER;
 		curfractalspecific = &fractalspecific[FPMANDELZPOWER];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == 3200)
 	{
-		fractype=FPJULIAZPOWER;
+		fractype = FPJULIAZPOWER;
 		curfractalspecific = &fractalspecific[FPJULIAZPOWER];
 		fractal_floattobf();
 		usr_floatflag = 1;
@@ -682,13 +682,13 @@ void adjust_cornerbf(void)
 		cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
 		}
 
-	/* ftemp=fabs(xx3rd-xxmin); */
+	/* ftemp = fabs(xx3rd-xxmin); */
 	abs_a_bf(sub_bf(bftemp, bfx3rd, bfxmin));
 
-	/* ftemp2=fabs(xxmax-xx3rd); */
+	/* ftemp2 = fabs(xxmax-xx3rd); */
 	abs_a_bf(sub_bf(bftemp2, bfxmax, bfx3rd));
 
-	/* if ((ftemp=fabs(xx3rd-xxmin)) < (ftemp2=fabs(xxmax-xx3rd))) */
+	/* if ((ftemp = fabs(xx3rd-xxmin)) < (ftemp2 = fabs(xxmax-xx3rd))) */
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
 		/* if (ftemp*10000 < ftemp2 && yy3rd != yymax) */
@@ -706,13 +706,13 @@ void adjust_cornerbf(void)
 		copy_bf(bfx3rd, bfxmax);
 	}
 
-	/* ftemp=fabs(yy3rd-yymin); */
+	/* ftemp = fabs(yy3rd-yymin); */
 	abs_a_bf(sub_bf(bftemp, bfy3rd, bfymin));
 
-	/* ftemp2=fabs(yymax-yy3rd); */
+	/* ftemp2 = fabs(yymax-yy3rd); */
 	abs_a_bf(sub_bf(bftemp2, bfymax, bfy3rd));
 
-	/* if ((ftemp=fabs(yy3rd-yymin)) < (ftemp2=fabs(yymax-yy3rd))) */
+	/* if ((ftemp = fabs(yy3rd-yymin)) < (ftemp2 = fabs(yymax-yy3rd))) */
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
 		/* if (ftemp*10000 < ftemp2 && xx3rd != xxmax) */
@@ -771,8 +771,8 @@ void adjust_corner(void)
 		xx3rd = xxmax;
 	}
 
-	ftemp=fabs(yy3rd-yymin);
-	ftemp2=fabs(yymax-yy3rd);
+	ftemp = fabs(yy3rd-yymin);
+	ftemp2 = fabs(yymax-yy3rd);
 	if (ftemp < ftemp2)
 	{
 		if (ftemp*10000 < ftemp2 && xx3rd != xxmax)
@@ -1752,7 +1752,7 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 	{
 		if (worklist[i].yystart == worklist[i].yybegin)
 		{
-			for (j=i + 1; j < num_worklist; ++j)
+			for (j = i + 1; j < num_worklist; ++j)
 			{
 				if (worklist[j].sym == worklist[i].sym
 					&& worklist[j].yystart == worklist[j].yybegin
@@ -1802,7 +1802,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 {
 	int i, j;
 	WORKLIST tempwork;
-	while ((i=combine_worklist()) != 0)
+	while ((i = combine_worklist()) != 0)
 	{ /* merged two, delete the gone one */
 		while (++i < num_worklist)
 		{
@@ -1812,7 +1812,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 	}
 	for (i = 0; i < num_worklist; ++i)
 	{
-		for (j=i + 1; j < num_worklist; ++j)
+		for (j = i + 1; j < num_worklist; ++j)
 		{
 			if (worklist[j].pass < worklist[i].pass
 				|| (worklist[j].pass == worklist[i].pass

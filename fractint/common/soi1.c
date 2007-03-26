@@ -96,7 +96,7 @@ JuliafpFractal()
 static void puthline(int x1, int y1, int x2, int color)
 {
 	int x;
-	for (x=x1; x <= x2; x++)
+	for (x = x1; x <= x2; x++)
 	{
 		(*plot)(x, y1, color);
 	}
@@ -160,9 +160,9 @@ interpolate(cre1, midr, cre2, \
 /* compute coefficients of Newton polynomial (b0, .., b2) from
 	(x0, w0), .., (x2, w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-	b0=w0; \
-	b1=(w1-w0)/(x1-x0); \
-	b2=((w2-w1)/(x2-x1)-b1)/(x2-x0)
+	b0 = w0; \
+	b1 = (w1-w0)/(x1-x0); \
+	b2 = ((w2-w1)/(x2-x1)-b1)/(x2-x0)
 
 /* evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t */
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
@@ -175,14 +175,14 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 	DBLS w0, DBLS w1, DBLS w2,
 	DBLS t)
 {
-	register DBLS b0=w0, b1=w1, b2=w2, b;
+	register DBLS b0 = w0, b1 = w1, b2 = w2, b;
 
-	/*b0=(r0*b1-r1*b0)/(x1-x0);
-	b1=(r1*b2-r2*b1)/(x2-x1);
-	b0=(r0*b1-r2*b0)/(x2-x0);
+	/*b0 = (r0*b1-r1*b0)/(x1-x0);
+	b1 = (r1*b2-r2*b1)/(x2-x1);
+	b0 = (r0*b1-r2*b0)/(x2-x0);
 
 	return (DBLS)b0; */
-	b=(b1-b0)/(x1-x0);
+	b = (b1-b0)/(x1-x0);
 	return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
 	/*
 	if (t < x1)
@@ -221,16 +221,16 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
 	ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
-	zre1=(ZRE1); zim1=(ZIM1); \
-	zre2=(ZRE2); zim2=(ZIM2); \
-	zre3=(ZRE3); zim3=(ZIM3); \
-	zre4=(ZRE4); zim4=(ZIM4); \
-	zre5=(ZRE5); zim5=(ZIM5); \
-	zre6=(ZRE6); zim6=(ZIM6); \
-	zre7=(ZRE7); zim7=(ZIM7); \
-	zre8=(ZRE8); zim8=(ZIM8); \
-	zre9=(ZRE9); zim9=(ZIM9); \
-	status=rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER))
+	zre1 = (ZRE1); zim1 = (ZIM1); \
+	zre2 = (ZRE2); zim2 = (ZIM2); \
+	zre3 = (ZRE3); zim3 = (ZIM3); \
+	zre4 = (ZRE4); zim4 = (ZIM4); \
+	zre5 = (ZRE5); zim5 = (ZIM5); \
+	zre6 = (ZRE6); zim6 = (ZIM6); \
+	zre7 = (ZRE7); zim7 = (ZIM7); \
+	zre8 = (ZRE8); zim8 = (ZIM8); \
+	zre9 = (ZRE9); zim9 = (ZIM9); \
+	status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER))
 
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	int x1, int x2, int y1, int y2, long iter)
@@ -342,7 +342,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	DBLS *mem;
 	DBLS *mem_static;
 	/* center of rectangle */
-	DBLS midr=(cre1 + cre2)/2, midi=(cim1 + cim2)/2;
+	DBLS midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
 #if 0
 	/* saved values of key values */
@@ -468,33 +468,33 @@ scan:
 		INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
 		INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
-		restep=(cre2-cre1)/(x2-x1);
-		imstep=(cim2-cim1)/(y2-y1);
-		interstep=INTERLEAVE*restep;
+		restep = (cre2-cre1)/(x2-x1);
+		imstep = (cim2-cim1)/(y2-y1);
+		interstep = INTERLEAVE*restep;
 
-		for (y=y1, im=cim1; y < y2; y++, im += imstep)
+		for (y = y1, im = cim1; y < y2; y++, im += imstep)
 		{
 			if (driver_key_pressed())
 			{
 				status = 1;
 				goto rhombus_done;
 			}
-			zre=GET_SCAN_REAL(cre1, im);
-			zim=GET_SCAN_IMAG(cre1, im);
-			savecolor=iteration(cre1, im, zre, zim, iter);
+			zre = GET_SCAN_REAL(cre1, im);
+			zim = GET_SCAN_IMAG(cre1, im);
+			savecolor = iteration(cre1, im, zre, zim, iter);
 			if (savecolor < 0)
 			{
 				status = 1;
 				goto rhombus_done;
 			}
-			savex=x1;
-			for (x=x1 + INTERLEAVE, re=cre1 + interstep; x < x2;
+			savex = x1;
+			for (x = x1 + INTERLEAVE, re = cre1 + interstep; x < x2;
 				x += INTERLEAVE, re += interstep)
 			{
-				zre=GET_SCAN_REAL(re, im);
-				zim=GET_SCAN_IMAG(re, im);
+				zre = GET_SCAN_REAL(re, im);
+				zim = GET_SCAN_IMAG(re, im);
 
-				color=iteration(re, im, zre, zim, iter);
+				color = iteration(re, im, zre, zim, iter);
 				if (color < 0)
 				{
 					status = 1;
@@ -505,11 +505,11 @@ scan:
 					continue;
 				}
 
-				for (z=x-1, helpre=re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
+				for (z = x-1, helpre = re-restep; z > x-INTERLEAVE; z--, helpre -= restep)
 				{
-					zre=GET_SCAN_REAL(helpre, im);
-					zim=GET_SCAN_IMAG(helpre, im);
-					helpcolor=iteration(helpre, im, zre, zim, iter);
+					zre = GET_SCAN_REAL(helpre, im);
+					zim = GET_SCAN_IMAG(helpre, im);
+					helpcolor = iteration(helpre, im, zre, zim, iter);
 					if (helpcolor < 0)
 					{
 						status = 1;
@@ -535,11 +535,11 @@ scan:
 				savecolor = color;
 			}
 
-			for (z=x2-1, helpre=cre2-restep; z > savex; z--, helpre -= restep)
+			for (z = x2-1, helpre = cre2-restep; z > savex; z--, helpre -= restep)
 			{
-				zre=GET_SCAN_REAL(helpre, im);
-				zim=GET_SCAN_IMAG(helpre, im);
-				helpcolor=iteration(helpre, im, zre, zim, iter);
+				zre = GET_SCAN_REAL(helpre, im);
+				zim = GET_SCAN_IMAG(helpre, im);
+				helpcolor = iteration(helpre, im, zre, zim, iter);
 				if (helpcolor < 0)
 				{
 					status = 1;
@@ -566,56 +566,56 @@ scan:
 		goto rhombus_done;
 	}
 
-	rq1=zre1*zre1; iq1=zim1*zim1;
-	rq2=zre2*zre2; iq2=zim2*zim2;
-	rq3=zre3*zre3; iq3=zim3*zim3;
-	rq4=zre4*zre4; iq4=zim4*zim4;
-	rq5=zre5*zre5; iq5=zim5*zim5;
-	rq6=zre6*zre6; iq6=zim6*zim6;
-	rq7=zre7*zre7; iq7=zim7*zim7;
-	rq8=zre8*zre8; iq8=zim8*zim8;
-	rq9=zre9*zre9; iq9=zim9*zim9;
+	rq1 = zre1*zre1; iq1 = zim1*zim1;
+	rq2 = zre2*zre2; iq2 = zim2*zim2;
+	rq3 = zre3*zre3; iq3 = zim3*zim3;
+	rq4 = zre4*zre4; iq4 = zim4*zim4;
+	rq5 = zre5*zre5; iq5 = zim5*zim5;
+	rq6 = zre6*zre6; iq6 = zim6*zim6;
+	rq7 = zre7*zre7; iq7 = zim7*zim7;
+	rq8 = zre8*zre8; iq8 = zim8*zim8;
+	rq9 = zre9*zre9; iq9 = zim9*zim9;
 
-	cr1=0.75*cre1 + 0.25*cre2; cr2=0.25*cre1 + 0.75*cre2;
-	ci1=0.75*cim1 + 0.25*cim2; ci2=0.25*cim1 + 0.75*cim2;
+	cr1 = 0.75*cre1 + 0.25*cre2; cr2 = 0.25*cre1 + 0.75*cre2;
+	ci1 = 0.75*cim1 + 0.25*cim2; ci2 = 0.25*cim1 + 0.75*cim2;
 
-	tzr1=GET_REAL(cr1, ci1);
-	tzi1=GET_IMAG(cr1, ci1);
+	tzr1 = GET_REAL(cr1, ci1);
+	tzi1 = GET_IMAG(cr1, ci1);
 
-	tzr2=GET_REAL(cr2, ci1);
-	tzi2=GET_IMAG(cr2, ci1);
+	tzr2 = GET_REAL(cr2, ci1);
+	tzi2 = GET_IMAG(cr2, ci1);
 
-	tzr3=GET_REAL(cr1, ci2);
-	tzi3=GET_IMAG(cr1, ci2);
+	tzr3 = GET_REAL(cr1, ci2);
+	tzi3 = GET_IMAG(cr1, ci2);
 
-	tzr4=GET_REAL(cr2, ci2);
-	tzi4=GET_IMAG(cr2, ci2);
+	tzr4 = GET_REAL(cr2, ci2);
+	tzi4 = GET_IMAG(cr2, ci2);
 
-	trq1=tzr1*tzr1;
-	tiq1=tzi1*tzi1;
+	trq1 = tzr1*tzr1;
+	tiq1 = tzi1*tzi1;
 
-	trq2=tzr2*tzr2;
-	tiq2=tzi2*tzi2;
+	trq2 = tzr2*tzr2;
+	tiq2 = tzi2*tzi2;
 
-	trq3=tzr3*tzr3;
-	tiq3=tzi3*tzi3;
+	trq3 = tzr3*tzr3;
+	tiq3 = tzi3*tzi3;
 
-	trq4=tzr4*tzr4;
-	tiq4=tzi4*tzi4;
+	trq4 = tzr4*tzr4;
+	tiq4 = tzi4*tzi4;
 
-	before=iter;
+	before = iter;
 
 	while (1)
 	{
-		sr1=zre1; si1=zim1;
-		sr2=zre2; si2=zim2;
-		sr3=zre3; si3=zim3;
-		sr4=zre4; si4=zim4;
-		sr5=zre5; si5=zim5;
-		sr6=zre6; si6=zim6;
-		sr7=zre7; si7=zim7;
-		sr8=zre8; si8=zim8;
-		sr9=zre9; si9=zim9;
+		sr1 = zre1; si1 = zim1;
+		sr2 = zre2; si2 = zim2;
+		sr3 = zre3; si3 = zim3;
+		sr4 = zre4; si4 = zim4;
+		sr5 = zre5; si5 = zim5;
+		sr6 = zre6; si6 = zim6;
+		sr7 = zre7; si7 = zim7;
+		sr8 = zre8; si8 = zim8;
+		sr9 = zre9; si9 = zim9;
 
 
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
@@ -632,105 +632,105 @@ scan:
 		zi = new.y
 
 #define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc) \
-		zi=(zi + zi)*zr + ci; \
-		zr=rq-iq + cr; \
-		rq=zr*zr; \
-		iq=zi*zi; \
+		zi = (zi + zi)*zr + ci; \
+		zr = rq-iq + cr; \
+		rq = zr*zr; \
+		iq = zi*zi; \
 		esc = ((rq + iq) > 16.0)?1:0
 
 		/* iterate key values */
 		SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
 		/*
-		zim1=(zim1 + zim1)*zre1 + cim1;
-		zre1=rq1-iq1 + cre1;
-		rq1=zre1*zre1;
-		iq1=zim1*zim1;
+		zim1 = (zim1 + zim1)*zre1 + cim1;
+		zre1 = rq1-iq1 + cre1;
+		rq1 = zre1*zre1;
+		iq1 = zim1*zim1;
 		*/
 		SOI_ORBIT(zre2, rq2, zim2, iq2, cre2, cim1, esc2);
 		/*
-		zim2=(zim2 + zim2)*zre2 + cim1;
-		zre2=rq2-iq2 + cre2;
-		rq2=zre2*zre2;
-		iq2=zim2*zim2;
+		zim2 = (zim2 + zim2)*zre2 + cim1;
+		zre2 = rq2-iq2 + cre2;
+		rq2 = zre2*zre2;
+		iq2 = zim2*zim2;
 		*/
 		SOI_ORBIT(zre3, rq3, zim3, iq3, cre1, cim2, esc3);
 		/*
-		zim3=(zim3 + zim3)*zre3 + cim2;
-		zre3=rq3-iq3 + cre1;
-		rq3=zre3*zre3;
-		iq3=zim3*zim3;
+		zim3 = (zim3 + zim3)*zre3 + cim2;
+		zre3 = rq3-iq3 + cre1;
+		rq3 = zre3*zre3;
+		iq3 = zim3*zim3;
 		*/
 		SOI_ORBIT(zre4, rq4, zim4, iq4, cre2, cim2, esc4);
 		/*
-		zim4=(zim4 + zim4)*zre4 + cim2;
-		zre4=rq4-iq4 + cre2;
-		rq4=zre4*zre4;
-		iq4=zim4*zim4;
+		zim4 = (zim4 + zim4)*zre4 + cim2;
+		zre4 = rq4-iq4 + cre2;
+		rq4 = zre4*zre4;
+		iq4 = zim4*zim4;
 		*/
 		SOI_ORBIT(zre5, rq5, zim5, iq5, midr, cim1, esc5);
 		/*
-		zim5=(zim5 + zim5)*zre5 + cim1;
-		zre5=rq5-iq5 + midr;
-		rq5=zre5*zre5;
-		iq5=zim5*zim5;
+		zim5 = (zim5 + zim5)*zre5 + cim1;
+		zre5 = rq5-iq5 + midr;
+		rq5 = zre5*zre5;
+		iq5 = zim5*zim5;
 		*/
 		SOI_ORBIT(zre6, rq6, zim6, iq6, cre1, midi, esc6);
 		/*
-		zim6=(zim6 + zim6)*zre6 + midi;
-		zre6=rq6-iq6 + cre1;
-		rq6=zre6*zre6;
-		iq6=zim6*zim6;
+		zim6 = (zim6 + zim6)*zre6 + midi;
+		zre6 = rq6-iq6 + cre1;
+		rq6 = zre6*zre6;
+		iq6 = zim6*zim6;
 		*/
 		SOI_ORBIT(zre7, rq7, zim7, iq7, cre2, midi, esc7);
 		/*
-		zim7=(zim7 + zim7)*zre7 + midi;
-		zre7=rq7-iq7 + cre2;
-		rq7=zre7*zre7;
-		iq7=zim7*zim7;
+		zim7 = (zim7 + zim7)*zre7 + midi;
+		zre7 = rq7-iq7 + cre2;
+		rq7 = zre7*zre7;
+		iq7 = zim7*zim7;
 		*/
 		SOI_ORBIT(zre8, rq8, zim8, iq8, midr, cim2, esc8);
 		/*
-		zim8=(zim8 + zim8)*zre8 + cim2;
-		zre8=rq8-iq8 + midr;
-		rq8=zre8*zre8;
-		iq8=zim8*zim8;
+		zim8 = (zim8 + zim8)*zre8 + cim2;
+		zre8 = rq8-iq8 + midr;
+		rq8 = zre8*zre8;
+		iq8 = zim8*zim8;
 		*/
 		SOI_ORBIT(zre9, rq9, zim9, iq9, midr, midi, esc9);
 		/*
-		zim9=(zim9 + zim9)*zre9 + midi;
-		zre9=rq9-iq9 + midr;
-		rq9=zre9*zre9;
-		iq9=zim9*zim9;
+		zim9 = (zim9 + zim9)*zre9 + midi;
+		zre9 = rq9-iq9 + midr;
+		rq9 = zre9*zre9;
+		iq9 = zim9*zim9;
 		*/
 		/* iterate test point */
 		SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
 		/*
-		tzi1=(tzi1 + tzi1)*tzr1 + ci1;
-		tzr1=trq1-tiq1 + cr1;
-		trq1=tzr1*tzr1;
-		tiq1=tzi1*tzi1;
+		tzi1 = (tzi1 + tzi1)*tzr1 + ci1;
+		tzr1 = trq1-tiq1 + cr1;
+		trq1 = tzr1*tzr1;
+		tiq1 = tzi1*tzi1;
 		*/
 
 		SOI_ORBIT(tzr2, trq2, tzi2, tiq2, cr2, ci1, tesc2);
 		/*
-		tzi2=(tzi2 + tzi2)*tzr2 + ci1;
-		tzr2=trq2-tiq2 + cr2;
-		trq2=tzr2*tzr2;
-		tiq2=tzi2*tzi2;
+		tzi2 = (tzi2 + tzi2)*tzr2 + ci1;
+		tzr2 = trq2-tiq2 + cr2;
+		trq2 = tzr2*tzr2;
+		tiq2 = tzi2*tzi2;
 		*/
 		SOI_ORBIT(tzr3, trq3, tzi3, tiq3, cr1, ci2, tesc3);
 		/*
-		tzi3=(tzi3 + tzi3)*tzr3 + ci2;
-		tzr3=trq3-tiq3 + cr1;
-		trq3=tzr3*tzr3;
-		tiq3=tzi3*tzi3;
+		tzi3 = (tzi3 + tzi3)*tzr3 + ci2;
+		tzr3 = trq3-tiq3 + cr1;
+		trq3 = tzr3*tzr3;
+		tiq3 = tzi3*tzi3;
 		*/
 		SOI_ORBIT(tzr4, trq4, tzi4, tiq4, cr2, ci2, tesc4);
 		/*
-		tzi4=(tzi4 + tzi4)*tzr4 + ci2;
-		tzr4=trq4-tiq4 + cr2;
-		trq4=tzr4*tzr4;
-		tiq4=tzi4*tzi4;
+		tzi4 = (tzi4 + tzi4)*tzr4 + ci2;
+		tzr4 = trq4-tiq4 + cr2;
+		trq4 = tzr4*tzr4;
+		tiq4 = tzi4*tzi4;
 		*/
 		iter++;
 
@@ -770,8 +770,8 @@ scan:
 
 		/* now for all test points, check whether they exceed the
 		allowed tolerance. if so, subdivide */
-		l1=GET_REAL(cr1, ci1);
-		l1=(tzr1 == 0.0)?
+		l1 = GET_REAL(cr1, ci1);
+		l1 = (tzr1 == 0.0)?
 			(l1 == 0.0)?1.0:1000.0:
 			l1/tzr1;
 		if (FABS(1.0-l1) > twidth)
@@ -779,8 +779,8 @@ scan:
 			break;
 		}
 
-		l2=GET_IMAG(cr1, ci1);
-		l2=(tzi1 == 0.0)?
+		l2 = GET_IMAG(cr1, ci1);
+		l2 = (tzi1 == 0.0)?
 			(l2 == 0.0)?1.0:1000.0:
 			l2/tzi1;
 		if (FABS(1.0-l2) > twidth)
@@ -788,8 +788,8 @@ scan:
 			break;
 		}
 
-		l1=GET_REAL(cr2, ci1);
-		l1=(tzr2 == 0.0)?
+		l1 = GET_REAL(cr2, ci1);
+		l1 = (tzr2 == 0.0)?
 			(l1 == 0.0)?1.0:1000.0:
 			l1/tzr2;
 		if (FABS(1.0-l1) > twidth)
@@ -797,8 +797,8 @@ scan:
 			break;
 		}
 
-		l2=GET_IMAG(cr2, ci1);
-		l2=(tzi2 == 0.0)?
+		l2 = GET_IMAG(cr2, ci1);
+		l2 = (tzi2 == 0.0)?
 			(l2 == 0.0)?1.0:1000.0:
 			l2/tzi2;
 		if (FABS(1.0-l2) > twidth)
@@ -806,8 +806,8 @@ scan:
 			break;
 		}
 
-		l1=GET_REAL(cr1, ci2);
-		l1=(tzr3 == 0.0)?
+		l1 = GET_REAL(cr1, ci2);
+		l1 = (tzr3 == 0.0)?
 			(l1 == 0.0)?1.0:1000.0:
 			l1/tzr3;
 		if (FABS(1.0-l1) > twidth)
@@ -815,8 +815,8 @@ scan:
 			break;
 		}
 
-		l2=GET_IMAG(cr1, ci2);
-		l2=(tzi3 == 0.0)?
+		l2 = GET_IMAG(cr1, ci2);
+		l2 = (tzi3 == 0.0)?
 			(l2 == 0.0)?1.0:1000.0:
 			l2/tzi3;
 		if (FABS(1.0-l2) > twidth)
@@ -824,8 +824,8 @@ scan:
 			break;
 		}
 
-		l1=GET_REAL(cr2, ci2);
-		l1=(tzr4 == 0.0)?
+		l1 = GET_REAL(cr2, ci2);
+		l1 = (tzr4 == 0.0)?
 			(l1 == 0.0)?1.0:1000.0:
 			l1/tzr4;
 		if (FABS(1.0-l1) > twidth)
@@ -833,8 +833,8 @@ scan:
 			break;
 		}
 
-		l2=GET_IMAG(cr2, ci2);
-		l2=(tzi4 == 0.0)?
+		l2 = GET_IMAG(cr2, ci2);
+		l2 = (tzi4 == 0.0)?
 			(l2 == 0.0)?1.0:1000.0:
 			l2/tzi4;
 		if (FABS(1.0-l2) > twidth)
@@ -848,65 +848,65 @@ scan:
 	/* this is a little heuristic I tried to improve performance. */
 	if (iter-before < 10)
 	{
-		zre1=sr1; zim1=si1;
-		zre2=sr2; zim2=si2;
-		zre3=sr3; zim3=si3;
-		zre4=sr4; zim4=si4;
-		zre5=sr5; zim5=si5;
-		zre6=sr6; zim6=si6;
-		zre7=sr7; zim7=si7;
-		zre8=sr8; zim8=si8;
-		zre9=sr9; zim9=si9;
+		zre1 = sr1; zim1 = si1;
+		zre2 = sr2; zim2 = si2;
+		zre3 = sr3; zim3 = si3;
+		zre4 = sr4; zim4 = si4;
+		zre5 = sr5; zim5 = si5;
+		zre6 = sr6; zim6 = si6;
+		zre7 = sr7; zim7 = si7;
+		zre8 = sr8; zim8 = si8;
+		zre9 = sr9; zim9 = si9;
 		goto scan;
 	}
 
 	/* compute key values for subsequent rectangles */
 
-	re10=interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
-	im10=interpolate(cre1, midr, cre2, si1, si5, si2, cr1);
+	re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
+	im10 = interpolate(cre1, midr, cre2, si1, si5, si2, cr1);
 
-	re11=interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr2);
-	im11=interpolate(cre1, midr, cre2, si1, si5, si2, cr2);
+	re11 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr2);
+	im11 = interpolate(cre1, midr, cre2, si1, si5, si2, cr2);
 
-	re20=interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr1);
-	im20=interpolate(cre1, midr, cre2, si3, si8, si4, cr1);
+	re20 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr1);
+	im20 = interpolate(cre1, midr, cre2, si3, si8, si4, cr1);
 
-	re21=interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr2);
-	im21=interpolate(cre1, midr, cre2, si3, si8, si4, cr2);
+	re21 = interpolate(cre1, midr, cre2, sr3, sr8, sr4, cr2);
+	im21 = interpolate(cre1, midr, cre2, si3, si8, si4, cr2);
 
-	re15=interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr1);
-	im15=interpolate(cre1, midr, cre2, si6, si9, si7, cr1);
+	re15 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr1);
+	im15 = interpolate(cre1, midr, cre2, si6, si9, si7, cr1);
 
-	re16=interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr2);
-	im16=interpolate(cre1, midr, cre2, si6, si9, si7, cr2);
+	re16 = interpolate(cre1, midr, cre2, sr6, sr9, sr7, cr2);
+	im16 = interpolate(cre1, midr, cre2, si6, si9, si7, cr2);
 
-	re12=interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci1);
-	im12=interpolate(cim1, midi, cim2, si1, si6, si3, ci1);
+	re12 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci1);
+	im12 = interpolate(cim1, midi, cim2, si1, si6, si3, ci1);
 
-	re14=interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci1);
-	im14=interpolate(cim1, midi, cim2, si2, si7, si4, ci1);
+	re14 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci1);
+	im14 = interpolate(cim1, midi, cim2, si2, si7, si4, ci1);
 
-	re17=interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci2);
-	im17=interpolate(cim1, midi, cim2, si1, si6, si3, ci2);
+	re17 = interpolate(cim1, midi, cim2, sr1, sr6, sr3, ci2);
+	im17 = interpolate(cim1, midi, cim2, si1, si6, si3, ci2);
 
-	re19=interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci2);
-	im19=interpolate(cim1, midi, cim2, si2, si7, si4, ci2);
+	re19 = interpolate(cim1, midi, cim2, sr2, sr7, sr4, ci2);
+	im19 = interpolate(cim1, midi, cim2, si2, si7, si4, ci2);
 
-	re13=interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci1);
-	im13=interpolate(cim1, midi, cim2, si5, si9, si8, ci1);
+	re13 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci1);
+	im13 = interpolate(cim1, midi, cim2, si5, si9, si8, ci1);
 
-	re18=interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci2);
-	im18=interpolate(cim1, midi, cim2, si5, si9, si8, ci2);
+	re18 = interpolate(cim1, midi, cim2, sr5, sr9, sr8, ci2);
+	im18 = interpolate(cim1, midi, cim2, si5, si9, si8, ci2);
 
-	re91=GET_SAVED_REAL(cr1, ci1);
-	re92=GET_SAVED_REAL(cr2, ci1);
-	re93=GET_SAVED_REAL(cr1, ci2);
-	re94=GET_SAVED_REAL(cr2, ci2);
+	re91 = GET_SAVED_REAL(cr1, ci1);
+	re92 = GET_SAVED_REAL(cr2, ci1);
+	re93 = GET_SAVED_REAL(cr1, ci2);
+	re94 = GET_SAVED_REAL(cr2, ci2);
 
-	im91=GET_SAVED_IMAG(cr1, ci1);
-	im92=GET_SAVED_IMAG(cr2, ci1);
-	im93=GET_SAVED_IMAG(cr1, ci2);
-	im94=GET_SAVED_IMAG(cr2, ci2);
+	im91 = GET_SAVED_IMAG(cr1, ci1);
+	im92 = GET_SAVED_IMAG(cr2, ci1);
+	im93 = GET_SAVED_IMAG(cr1, ci2);
+	im94 = GET_SAVED_IMAG(cr2, ci2);
 
 	RHOMBUS(cre1, midr, cim1, midi, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
 			sr1, si1,
@@ -981,7 +981,7 @@ void soi(void)
 		xxmaxl = xxmax;
 		yymaxl = yymax;
 	}
-	twidth=tolerance/(xdots-1);
+	twidth = tolerance/(xdots-1);
 	stepx = (xxmaxl - xxminl) / xdots;
 	stepy = (yyminl - yymaxl) / ydots;
 	equal = (stepx < stepy ? stepx : stepy);

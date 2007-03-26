@@ -276,7 +276,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
 	{
-		if (LogFlag == 2) /* logmap=old changed again in format 5! */
+		if (LogFlag == 2) /* logmap = old changed again in format 5! */
 		{
 			LogFlag = -1;
 		}
@@ -758,7 +758,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 				if (!strcmp(INFO_ID,&tmpbuf[i]))  /* found header? */
 				{
 					strcpy(info->info_id,INFO_ID);
-					fseek(fp,(long)(hdr_offset=i-offset),SEEK_END);
+					fseek(fp,(long)(hdr_offset = i-offset),SEEK_END);
 				/* TODO: revise this to read members one at a time so we get natural alignment
 					of fields within the FRACTAL_INFO structure for the platform */
 					fread(info,1,FRACTAL_INFO_SIZE,fp);
@@ -923,7 +923,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 						blk_7_info->oymax           = oload_info.oymax;
 						blk_7_info->ox3rd           = oload_info.ox3rd;
 						blk_7_info->oy3rd           = oload_info.oy3rd;
-						blk_7_info->keep_scrn_coords= oload_info.keep_scrn_coords;
+						blk_7_info->keep_scrn_coords = oload_info.keep_scrn_coords;
 						blk_7_info->drawmode        = oload_info.drawmode;
 						break;
 					default:
@@ -1409,7 +1409,7 @@ rescan:  /* entry for changed browse parms */
 	splitpath(readname,drive,dir,NULL,NULL);
 	splitpath(browsemask,NULL,NULL,fname,ext);
 	makepath(tmpmask,drive,dir,fname,ext);
-	done=(vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
+	done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
 								/* draw all visible windows */
 	while (!done)
 	{
@@ -1453,7 +1453,7 @@ rescan:  /* entry for changed browse parms */
 			free(blk_5_info.apm_data);
 		}
 
-		done=(fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
+		done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
 	}
 
 	if (no_memory)
@@ -1491,7 +1491,7 @@ rescan:  /* entry for changed browse parms */
 				time(&thistime);
 				if (difftime(thistime,lastime) > .2)
 				{
-					lastime=thistime;
+					lastime = thistime;
 					toggle = 1- toggle;
 				}
 				drawindow(toggle ? g_color_bright : g_color_dark, &winlist);   /* flash current window */
@@ -1506,7 +1506,7 @@ rescan:  /* entry for changed browse parms */
 			}
 #endif
 
-			c=driver_get_key();
+			c = driver_get_key();
 			switch (c)
 			{
 				case FIK_RIGHT_ARROW:
@@ -1675,7 +1675,7 @@ rescan:  /* entry for changed browse parms */
 		cleartempmsg();
 		if (done >= 1 && done < 4)
 		{
-			for (index=wincount-1; index >= 0; index--) /* don't need index, reuse it */
+			for (index = wincount-1; index >= 0; index--) /* don't need index, reuse it */
 			{
 				winlist = browse_windows[index];
 				boxcount = winlist.boxcount;
@@ -1728,7 +1728,7 @@ static void drawindow(int colour,struct window *info)
 	struct coords ibl,itr;
 #endif
 
-	boxcolor=colour;
+	boxcolor = colour;
 	boxcount = 0;
 	if (info->win_size >= minbox)
 	{
@@ -1882,12 +1882,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		tl.x=info->xmin;
-		tl.y=info->ymax;
+		tl.x = info->xmin;
+		tl.y = info->ymax;
 		transform(&tl);
 	}
-	list->itl.x=(int)(tl.x + 0.5);
-	list->itl.y=(int)(tl.y + 0.5);
+	list->itl.x = (int)(tl.x + 0.5);
+	list->itl.y = (int)(tl.y + 0.5);
 	if (oldbf_math || info->bf_math)
 	{
 		if (!info->bf_math)
@@ -1906,12 +1906,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		tr.x=(info->xmax)-(info->x3rd-info->xmin);
-		tr.y=(info->ymax) + (info->ymin-info->y3rd);
+		tr.x = (info->xmax)-(info->x3rd-info->xmin);
+		tr.y = (info->ymax) + (info->ymin-info->y3rd);
 		transform(&tr);
 	}
-	list->itr.x=(int)(tr.x + 0.5);
-	list->itr.y=(int)(tr.y + 0.5);
+	list->itr.x = (int)(tr.x + 0.5);
+	list->itr.y = (int)(tr.y + 0.5);
 	if (oldbf_math || info->bf_math)
 	{
 		if (!info->bf_math)
@@ -1928,12 +1928,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		bl.x=info->x3rd;
-		bl.y=info->y3rd;
+		bl.x = info->x3rd;
+		bl.y = info->y3rd;
 		transform(&bl);
 	}
-	list->ibl.x=(int)(bl.x + 0.5);
-	list->ibl.y=(int)(bl.y + 0.5);
+	list->ibl.x = (int)(bl.x + 0.5);
+	list->ibl.y = (int)(bl.y + 0.5);
 	if (oldbf_math || info->bf_math)
 	{
 		if (!info->bf_math)
@@ -1950,12 +1950,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		br.x=info->xmax;
-		br.y=info->ymin;
+		br.x = info->xmax;
+		br.y = info->ymin;
 		transform(&br);
 	}
-	list->ibr.x=(int)(br.x + 0.5);
-	list->ibr.y=(int)(br.y + 0.5);
+	list->ibr.x = (int)(br.x + 0.5);
+	list->ibr.y = (int)(br.y + 0.5);
 
 	tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */

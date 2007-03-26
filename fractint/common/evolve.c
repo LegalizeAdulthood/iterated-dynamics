@@ -21,7 +21,7 @@ char odpx,odpy,newodpx,newodpy;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
 /* variation factors, opx,opy, paramrangex/y dpx, dpy.. used in field mapping
-	for smooth variation across screen. opx =offset param x, dpx = delta param
+	for smooth variation across screen. opx = offset param x, dpx = delta param
 	per image, paramrangex = variation across grid of param ...likewise for py */
 /* fiddlefactor is amount of random mutation used in random modes ,
 	fiddle_reduction is used to decrease fiddlefactor from one generation to the
@@ -237,30 +237,30 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 
 void varyinside(GENEBASE gene[], int randval, int i)
 {
-	int choices[9]={-59,-60,-61,-100,-101,-102,-103,-104,-1};
+	int choices[9] = {-59,-60,-61,-100,-101,-102,-103,-104,-1};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
 	}
 	return;
 }
 
 void varyoutside(GENEBASE gene[], int randval, int i)
 {
-	int choices[8]={-1,-2,-3,-4,-5,-6,-7,-8};
+	int choices[8] = {-1,-2,-3,-4,-5,-6,-7,-8};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
 	}
 	return;
 }
 
 void varybotest(GENEBASE gene[], int randval, int i)
 {
-	int choices[7]={Mod, Real, Imag, Or, And, Manh, Manr};
+	int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
 		/* move this next bit to varybot where it belongs */
 		setbailoutformula(bailoutest);
 	}
@@ -269,10 +269,10 @@ void varybotest(GENEBASE gene[], int randval, int i)
 
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
-	int choices[9]={0,2,4,8,16,32,64,128,256};
+	int choices[9] = {0,2,4,8,16,32,64,128,256};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr=choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
 	}
 	return;
 }
@@ -310,7 +310,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest(void)
 {
-	char *evolvmodes[]={"no","x","y","x + y","x-y","random","spread"};
+	char *evolvmodes[] = {"no","x","y","x + y","x-y","random","spread"};
 	int i,k,num, numtrig;
 	char *choices[20];
 	struct fullscreenvalues uvalues[20];
@@ -326,7 +326,7 @@ choose_vars_restart:
 	k = -1;
 	for (num = MAXPARAMS; num < (NUMGENES - 5); num++)
 	{
-		choices[++k]=g_genes[num].name;
+		choices[++k] = g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
 		uvalues[k].uval.ch.llen = 7;
@@ -336,7 +336,7 @@ choose_vars_restart:
 
 	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
 	{
-		choices[++k]=g_genes[num].name;
+		choices[++k] = g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
 		uvalues[k].uval.ch.llen = 7;
@@ -347,7 +347,7 @@ choose_vars_restart:
 	if (curfractalspecific->calctype == StandardFractal &&
 		(curfractalspecific->flags & BAILTEST))
 	{
-		choices[++k]=g_genes[NUMGENES - 1].name;
+		choices[++k] = g_genes[NUMGENES - 1].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
 		uvalues[k].uval.ch.llen = 7;
@@ -381,7 +381,7 @@ choose_vars_restart:
 		}
 		goto choose_vars_restart;
 	case FIK_F4: /* Randomize all */
-		for (num =MAXPARAMS; num < NUMGENES; num ++)
+		for (num = MAXPARAMS; num < NUMGENES; num ++)
 		{
 			g_genes[num].mutate = (char)(rand() % 6);
 		}
@@ -415,7 +415,7 @@ choose_vars_restart:
 
 int get_variations(void)
 {
-	char *evolvmodes[]={"no","x","y","x+y","x-y","random","spread"};
+	char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
 	int i,k,num, numparams;
 	char *choices[20];
 	struct fullscreenvalues uvalues[20];
@@ -501,7 +501,7 @@ choose_vars_restart:
 				continue;
 			}
 		}
-		choices[++k]=g_genes[num].name;
+		choices[++k] = g_genes[num].name;
 		uvalues[k].type = 'l';
 		uvalues[k].uval.ch.vlen = 7;
 		uvalues[k].uval.ch.llen = 7;
@@ -537,7 +537,7 @@ choose_vars_restart:
 		}
 		goto choose_vars_restart;
 	case FIK_F4: /* Randomize all */
-		for (num =0; num < MAXPARAMS; num ++)
+		for (num = 0; num < MAXPARAMS; num ++)
 		{
 			g_genes[num].mutate = (char)(rand() % 6);
 		}
@@ -656,7 +656,7 @@ get_evol_restart:
 
 		choices[++k]= "y parameter offset (lower edge)";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval= opy;
+		uvalues[k].uval.dval = opy;
 	}
 
 	choices[++k]= "Max random mutation";
@@ -788,7 +788,7 @@ get_evol_restart:
 	viewydots = (sydots / gridsz)-2;
 	if (!viewwindow)
 	{
-		viewxdots=viewydots = 0;
+		viewxdots = viewydots = 0;
 	}
 
 	i = 0;
@@ -829,7 +829,7 @@ void SetupParamBox(void)
 {
 	int vidsize;
 	prmboxcount = 0;
-	parmzoom=((double)gridsz-1.0)/2.0;
+	parmzoom = ((double)gridsz-1.0)/2.0;
 	/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */
 	vidsize = (xdots + ydots)*4*sizeof(int);
 	vidsize += xdots + ydots + 2;
@@ -975,7 +975,7 @@ void drawparmbox(int mode)
 	}
 	if (prmboxcount != 0)   /* clear last parmbox */
 	{
-		boxcount=prmboxcount;
+		boxcount = prmboxcount;
 		memcpy(&boxx[0], &prmbox[0], boxcount*sizeof(boxx[0]));
 		memcpy(&boxy[0], &prmbox[boxcount], boxcount*sizeof(boxy[0]));
 		memcpy(&boxvalues[0], &prmbox[boxcount*2], boxcount*sizeof(boxvalues[0]));
@@ -989,7 +989,7 @@ void drawparmbox(int mode)
 		return;
 	}
 
-	boxcount =0;
+	boxcount = 0;
 	/*draw larger box to show parm zooming range */
 	tl.x = bl.x = ((px -(int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs-1;
 	tl.y = tr.y = ((py -(int)parmzoom)*(int)(dysize + 1 + grout))-syoffs-1;
@@ -1035,13 +1035,13 @@ void set_evolve_ranges(void)
 {
 	int lclpy = gridsz - py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
-	paramrangex=dpx*(parmzoom*2.0);
-	paramrangey=dpy*(parmzoom*2.0);
-	newopx=opx + (((double)px-parmzoom)*dpx);
-	newopy=opy + (((double)lclpy-parmzoom)*dpy);
+	paramrangex = dpx*(parmzoom*2.0);
+	paramrangey = dpy*(parmzoom*2.0);
+	newopx = opx + (((double)px-parmzoom)*dpx);
+	newopy = opy + (((double)lclpy-parmzoom)*dpy);
 
-	newodpx=(char)(odpx + (px-gridsz/2));
-	newodpy=(char)(odpy + (lclpy-gridsz/2));
+	newodpx = (char)(odpx + (px-gridsz/2));
+	newodpy = (char)(odpy + (lclpy-gridsz/2));
 	return;
 }
 

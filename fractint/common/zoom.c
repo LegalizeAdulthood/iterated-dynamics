@@ -790,7 +790,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg worklist &
 	if (row > 0) /* move image up */
 		for (y = 0; y < ydots; ++y) move_row(y + row, y, col);
 	else         /* move image down */
-		for (y=ydots; --y >= 0; )  move_row(y + row, y, col);
+		for (y = ydots; --y >= 0; )  move_row(y + row, y, col);
 	fix_worklist(); /* fixup any out of bounds worklist entries */
 	alloc_resume(sizeof(worklist) + 20, 2); /* post the new worklist */
 	put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
@@ -826,7 +826,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 		if (wk->yystart >= ydots || wk->yystop < 0
 			|| wk->xxstart >= xdots || wk->xxstop < 0)  /* offscreen, delete */
 		{
-			for (j=i + 1; j < num_worklist; ++j)
+			for (j = i + 1; j < num_worklist; ++j)
 				worklist[j-1] = worklist[j];
 			--num_worklist;
 			--i;

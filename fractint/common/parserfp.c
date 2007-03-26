@@ -62,7 +62,7 @@
 /*    Added optimizer support for LodRealPwr and ORClr2 functions.  */
 /*    If stack top is a real, a simpler sqr() or mod() fn will be  */
 /*          called (fStkSqr3() was added.)  */
-/*    The identities x^0=1, x^1=x, and x^-1=recip(x) are now used by the  */
+/*    The identities x^0 = 1, x^1 = x, and x^-1 = recip(x) are now used by the  */
 /*          optimizer.  (fStkOne() was added for this.)  */
 
 /* 31 Oct 1993 CAE  */
@@ -78,7 +78,7 @@
 /*       "     fStkZero added to support new 'zero' function in v18    */
 /*    Added optimization for x^2 -> sqr(x).                            */
 /*    Changed "stopmsg" to "DBUGMSG" and made all macros upper case.   */
-/*       (debugflag=324 now needed for debug msgs to print.)           */
+/*       (debugflag = 324 now needed for debug msgs to print.)           */
 
 /* 12 July 1993 (for v18.1) by CAE to fix optimizer bug  */
 
@@ -101,7 +101,7 @@
 /* Uncomment the next line to enable debug messages.  */
 /* #define TESTFP 1 */
 
-/* Use startup parameter "debugflag=324" to show debug messages after  */
+/* Use startup parameter "debugflag = 324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
 
 #include <string.h>
@@ -873,12 +873,12 @@ awful_error:
 				FNPTR(cvtptrx-1) = fStkLod;  /* prev fn = lod  */
 				/* Moved setting of prev lodptr to below         CAE 31DEC93  */
 				/* This was a bug causing a bad loadptr to be set here  */
-				/* 3 lines marked 'prev lodptr=this' below replace this line  */
+				/* 3 lines marked 'prev lodptr = this' below replace this line  */
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
 				{
 					DBUGMSG("lodreal[a] (*lodmul[b])"
 						" -> lod[b] (*lodrealmul[a])");
-					OPPTR(cvtptrx-1) = OPPTR(cvtptrx);  /* prev lodptr=this  */
+					OPPTR(cvtptrx-1) = OPPTR(cvtptrx);  /* prev lodptr = this  */
 				}
 				else if (FNPTR(cvtptrx) == fStkPush2a)
 				{
@@ -886,7 +886,7 @@ awful_error:
 							" -> lod[b] (*lodrealmul[a]),stk+=2");
 					/* set this fn ptr to null so cvtptrx won't be incr later  */
 					FNPTR(cvtptrx) = NO_FUNCTION;
-					OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);  /* prev lodptr=this  */
+					OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);  /* prev lodptr = this  */
 					stkcnt += 2;
 				}
 				else if (FNPTR(cvtptrx) == fStkPush4)
@@ -894,7 +894,7 @@ awful_error:
 					DBUGMSG("lodreal[a] *push4 (lodmul[b])"
 							" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
 					FNPTR(cvtptrx++) = fStkPush2;
-					OPPTR(cvtptrx-2) = OPPTR(cvtptrx);  /* prev lodptr=this  */
+					OPPTR(cvtptrx-2) = OPPTR(cvtptrx);  /* prev lodptr = this  */
 					/* we know cvtptrx points to a null function now  */
 					stkcnt += 2;
 				}

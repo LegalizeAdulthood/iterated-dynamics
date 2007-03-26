@@ -89,7 +89,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				pauserotate();
 			}
 		}
-		else while (!driver_key_pressed())  /* rotate until key hit, at least once so step=oldstep ok */
+		else while (!driver_key_pressed())  /* rotate until key hit, at least once so step = oldstep ok */
 		{
 			if (fkey > 0)  /* randomizing is on */
 			{
