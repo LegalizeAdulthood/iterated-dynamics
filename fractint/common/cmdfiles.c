@@ -334,14 +334,8 @@ int cmdfiles(int argc,char **argv)
 				stopmsg(0,msg);
 			}
 */
-	if (colorpreloaded && showfile == 0) /* PAR reads a file and sets color */
-	{
-		dontreadcolor = 1;   /* don't read colors from GIF */
-	}
-	else
-	{
-		dontreadcolor = 0;   /* read colors from GIF */
-	}
+	/* PAR reads a file and sets color */
+	dontreadcolor = (colorpreloaded && showfile == 0) ? 1 : 0;
 
 	/*set structure of search directories*/
 	strcpy(searchfor.par, CommandFile);
@@ -368,14 +362,8 @@ int load_commands(FILE *infile)
 			}
 */
 
-	if (colorpreloaded && showfile == 0) /* PAR reads a file and sets color */
-	{
-		dontreadcolor = 1;   /* don't read colors from GIF */
-	}
-	else
-	{
-		dontreadcolor = 0;   /* read colors from GIF */
-	}
+	/* PAR reads a file and sets color */
+	dontreadcolor = (colorpreloaded && showfile == 0) ? 1 : 0;
 	return ret;
 }
 
@@ -1831,14 +1819,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		k = 0;
 		while (k < 3 && *value)
 		{
-			if (k == 1)
-			{
-				potparam[k] = atof(value);
-			}
-			else
-			{
-				potparam[k] = atoi(value);
-			}
+			potparam[k] = (k == 1) ? atof(value) : atoi(value);
 			k++;
 			value = strchr(value, '/');
 			if (value == NULL)

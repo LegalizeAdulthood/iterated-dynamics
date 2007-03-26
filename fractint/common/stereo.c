@@ -147,6 +147,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 	find_special_colors();
 	ct = 0;
 	for (i = XCEN; i < (XCEN) + barwidth; i++)
+	{
 		for (j = YCEN; j < (YCEN) + BARHEIGHT; j++)
 		{
 			if (*bars)
@@ -160,6 +161,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 				putcolor(i - (int)(AVG), j, colour[ct++]);
 			}
 		}
+	}
 	*bars = 1 - *bars;
 }
 
@@ -179,14 +181,9 @@ int outline_stereo(BYTE *pixels, int linelen)
 	}
 	for (x = 0; x < xdots; ++x)
 	{
-		if (REVERSE)
-		{
-			SEP = GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC);
-		}
-		else
-		{
-			SEP = GROUND - (int) (DEPTH*(MAXCC - (getdepth(x, Y) - MINC)) / MAXCC);
-		}
+		SEP = REVERSE
+			? (GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC))
+			: (GROUND - (int) (DEPTH*(MAXCC - (getdepth(x, Y) - MINC)) / MAXCC));
 		SEP =  (int)((SEP*10.0) / WIDTH);        /* adjust for media WIDTH */
 
 		/* get average value under calibration bars */
@@ -219,15 +216,7 @@ int outline_stereo(BYTE *pixels, int linelen)
 	}
 	for (x = xdots - 1; x >= 0; x--)
 	{
-		if (same[x] == x)
-		{
-			/* colour[x] = rand()%colors; */
-			colour[x] = (int)pixels[x%linelen];
-		}
-		else
-		{
-			colour[x] = colour[same[x]];
-		}
+		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
 		putcolor(x, Y, colour[x]);
 	}
 	(Y)++;
@@ -279,14 +268,7 @@ int do_AutoStereo(void)
 		WIDTH = 1;
 	}
 	GROUND = xdots / 8;
-	if (AutoStereo_depth < 0)
-	{
-		REVERSE = 1;
-	}
-	else
-	{
-		REVERSE = 0;
-	}
+	REVERSE = (AutoStereo_depth < 0) ? 1 : 0;
 	DEPTH = ((long) xdots*(long) AutoStereo_depth) / 4000L;
 	DEPTH = labs(DEPTH) + 1;
 	if (get_min_max())
@@ -300,14 +282,7 @@ int do_AutoStereo(void)
 	barwidth  = 1 + xdots / 200;
 	BARHEIGHT = 1 + ydots / 20;
 	XCEN = xdots/2;
-	if (calibrate > 1)
-	{
-		YCEN = BARHEIGHT/2;
-	}
-	else
-	{
-		YCEN = ydots/2;
-	}
+	YCEN = (calibrate > 1) ? BARHEIGHT/2 : ydots/2;
 
 	/* box to average for calibration bars */
 	X1 = XCEN - xdots/16;
@@ -320,11 +295,13 @@ int do_AutoStereo(void)
 	{
 		outln = outline_stereo;
 		while ((Y) < ydots)
+		{
 			if (gifview())
 			{
 				ret = 1;
 				goto exit_stereo;
 			}
+		}
 	}
 	else
 	{
@@ -348,19 +325,14 @@ int do_AutoStereo(void)
 	AVG /= 2;
 	ct = 0;
 	for (i = XCEN; i < XCEN + barwidth; i++)
+	{
 		for (j = YCEN; j < YCEN + BARHEIGHT; j++)
 		{
 			colour[ct++] = getcolor(i + (int)(AVG), j);
 			colour[ct++] = getcolor(i - (int)(AVG), j);
 		}
-	if (calibrate)
-	{
-		bars = 1;
 	}
-	else
-	{
-		bars = 0;
-	}
+	bars = calibrate ? 1 : 0;
 	toggle_bars(&bars, barwidth, colour);
 	done = 0;
 	while (done == 0)

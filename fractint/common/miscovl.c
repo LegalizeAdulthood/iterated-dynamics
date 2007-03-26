@@ -347,22 +347,8 @@ prompt_user:
 skip_UI:
 		if (*s_makepar == 0)
 		{
-			if (filecolors > 0)
-			{
-				strcpy(colorspec, "y");
-			}
-			else
-			{
-				strcpy(colorspec, "n");
-			}
-			if (s_makepar[1] == 0)
-			{
-				maxcolor = 256;
-			}
-			else
-			{
-				maxcolor = filecolors;
-			}
+			strcpy(colorspec, (filecolors > 0) ? "y" : "n");
+			maxcolor = (s_makepar[1] == 0) ? 256 : filecolors;
 		}
 		strcpy(outname, CommandFile);
 		gotinfile = 0;
@@ -430,14 +416,7 @@ skip_UI:
 /***** start here*/
 		if (xm > 1 || ym > 1)
 		{
-			if (xxmin != xx3rd || yymin != yy3rd)
-			{
-				have3rd = 1;
-			}
-			else
-			{
-				have3rd = 0;
-			}
+			have3rd = (xxmin != xx3rd || yymin != yy3rd) ? 1 : 0;
 			fpbat = dir_fopen(workdir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
@@ -817,9 +796,12 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				}
 				else
 #endif
+				{
 					put_parm(" params=%.17g", param[0]);
+				}
 			}
 			for (j = 1; j <= i; ++j)
+			{
 				if (fractype == CELLULAR || fractype == ANT)
 				{
 					put_parm("/%.1f", param[j]);
@@ -833,8 +815,11 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 					}
 					else
 #endif
+					{
 						put_parm("/%.17g", param[j]);
+					}
 				}
+			}
 		}
 
 		if (useinitorbit == 2)
@@ -1225,14 +1210,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 	if (viewwindow == 1)
 	{
 		put_parm(" viewwindows=%g/%g", viewreduction, finalaspectratio);
-		if (viewcrop)
-		{
-			put_parm("/yes");
-		}
-		else
-		{
-			put_parm("/no");
-		}
+		put_parm(viewcrop ? "/yes" : "/no");
 		put_parm("/%d/%d", viewxdots, viewydots);
 	}
 
@@ -1513,22 +1491,21 @@ docolors:
 							{
 								diff1[k][j] = diff2[k][j] = delta;
 							}
-							else
-								if (delta != diff1[k][j] && delta != diff2[k][j])
+							else if (delta != diff1[k][j] && delta != diff2[k][j])
+							{
+								diffmag = abs(delta - diff1[k][j]);
+								if (diff1[k][j] != diff2[k][j] || diffmag != 1)
 								{
-									diffmag = abs(delta - diff1[k][j]);
-									if (diff1[k][j] != diff2[k][j] || diffmag != 1)
-									{
-										break;
-									}
-									diff2[k][j] = delta;
-									}
+									break;
+								}
+								diff2[k][j] = delta;
 							}
-						if (j < 3) break; /* must've exited from inner loop above */
 						}
+						if (j < 3) break; /* must've exited from inner loop above */
+					}
 					if (k <= i) break;   /* must've exited from inner loop above */
 					++scanc;
-					}
+				}
 				/* now scanc-1 is next color which must be written explicitly */
 				if (scanc - curc > 2)  /* good, we have a shaded range */
 				{
@@ -1538,26 +1515,26 @@ docolors:
 						{
 							force = 2;       /* force more between ranges, to stop  */
 							--scanc;         /* "drift" when load/store/load/store/ */
-							}
+						}
 						if (k)  /* more of the same                    */
 						{
 							force += k;
 							--scanc;
-							}
 						}
+					}
 					if (--scanc - curc > 1)
 					{
 						put_parm("<%d>", scanc-curc);
 						curc = scanc;
-						}
+					}
 					else                /* changed our mind */
 					{
 						force = 0;
 					}
-					}
 				}
 			}
 		}
+	}
 
 	while (s_wbdata.len) /* flush the buffer */
 	{
@@ -1725,14 +1702,7 @@ int getprecbf(int rezflag)
 	bfyydel   = alloc_stack(bflength + 2);
 	bfyydel2  = alloc_stack(bflength + 2);
 	floattobf(one, 1.0);
-	if (rezflag == MAXREZ)
-	{
-		rez = OLDMAXPIXELS -1;
-	}
-	else
-	{
-		rez = xdots-1;
-	}
+	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS - 1) : (xdots - 1);
 
 	/* bfxxdel = (bfxmax - bfx3rd)/(xdots-1) */
 	sub_bf(bfxxdel, bfxmax, bfx3rd);
@@ -1790,14 +1760,8 @@ int getprecdbl(int rezflag)
 	LDBL del1, del2, xdel, xdel2, ydel, ydel2;
 	int digits;
 	LDBL rez;
-	if (rezflag == MAXREZ)
-	{
-		rez = OLDMAXPIXELS -1;
-	}
-	else
-	{
-		rez = xdots-1;
-	}
+
+	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS -1) : (xdots-1);
 
 	xdel =  ((LDBL)xxmax - (LDBL)xx3rd)/rez;
 	ydel2 = ((LDBL)yy3rd - (LDBL)yymin)/rez;
@@ -1853,14 +1817,8 @@ static void strip_zeros(char *buf)
 	{
 		++dptr;
 		exptr = strchr(buf, 'e');
-		if (exptr != 0)  /* scientific notation with 'e'? */
-		{
-			bptr = exptr;
-		}
-		else
-		{
-			bptr = buf + strlen(buf);
-		}
+		/* scientific notation with 'e'? */
+		bptr = (exptr != 0) ? exptr : (buf + strlen(buf));
 		while (--bptr > dptr && *bptr == '0')
 		{
 			*bptr = 0;
@@ -1891,7 +1849,9 @@ static void put_float(int slash, double fnum, int prec)
 	}
 	else
 #endif
+	{
 		sprintf(bptr, "%1.*g", prec, (double)fnum);
+	}
 	strip_zeros(bptr);
 	put_parm(buf);
 }

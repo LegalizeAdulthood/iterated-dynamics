@@ -1619,15 +1619,15 @@ static int sticky_orbits(void)
 			{
 				if (dY > 0)             /* determine start point and last row */
 				{
-						col = xxbegin;
-						row = yybegin;
-						final = iystop;
+					col = xxbegin;
+					row = yybegin;
+					final = iystop;
 				}
 				else
 				{
-						col = ixstop;
-						row = iystop;
-						final = yybegin;
+					col = ixstop;
+					row = iystop;
+					final = yybegin;
 				}
 				inc1 = 2*abs(dX);            /* determine increments and initial G */
 				G = inc1 - abs(dY);
@@ -1654,6 +1654,7 @@ static int sticky_orbits(void)
 					}
 				}
 				else
+				{
 					while (row <= final)    /* step through rows checking for new column */
 					{
 						if (plotorbits2dfloat() == -1)
@@ -1672,6 +1673,7 @@ static int sticky_orbits(void)
 							G += inc1;
 						}
 					}
+				}
 			}
 		} /* end case 'l' */
 		break;
@@ -1839,14 +1841,9 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 			}
 			else
 			{
-				if (colors < 16)
-				{
-					color = (int)(coloriter & g_and_color);
-				}
-				else
-				{
-					color = (int)(((coloriter - 1) % g_and_color) + 1);
-				}
+				color = (colors < 16) ?
+					(int)(coloriter & g_and_color)
+					: (int)(((coloriter - 1) % g_and_color) + 1);
 			}
 		}
 		if (debugflag != 470)
@@ -1908,14 +1905,9 @@ int calcmandfp(void)
 			}
 			else
 			{
-				if (colors < 16)
-				{
-					color = (int)(coloriter & g_and_color);
-				}
-				else
-				{
-					color = (int)(((coloriter - 1) % g_and_color) + 1);
-				}
+				color = (colors < 16) ?
+					(int)(coloriter & g_and_color)
+					: (int)(((coloriter - 1) % g_and_color) + 1);
 			}
 		}
 		if (debugflag != 470)
@@ -2134,14 +2126,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		lastz.y = old.y;
 	}
 
-	if (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
-	{
-		check_freq = 16;
-	}
-	else
-	{
-		check_freq = 2048;
-	}
+	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
+		? 16 : 2048;
 
 	if (show_orbit)
 	{
@@ -2165,14 +2151,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			/* Distance estimator for points near Mandelbrot set */
 			/* Original code by Phil Wilson, hacked around by PB */
 			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
-			if (dem_mandel)
-			{
-				ftemp = 2*(old.x*deriv.x - old.y*deriv.y) + 1;
-			}
-			else
-			{
-				ftemp = 2*(old.x*deriv.x - old.y*deriv.y);
-			}
+			ftemp = (dem_mandel) ?
+				2*(old.x*deriv.x - old.y*deriv.y) + 1
+				: 2*(old.x*deriv.x - old.y*deriv.y);
 			deriv.y = 2*(old.y*deriv.x + old.x*deriv.y);
 			deriv.x = ftemp;
 			if (use_old_distest)
@@ -2200,9 +2181,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						dem_new = g_new;
 					}
 					if (rqlim >= DEM_BAILOUT
-							|| magnitude >= (rqlim = DEM_BAILOUT)
-							|| magnitude == 0)
+						|| magnitude >= (rqlim = DEM_BAILOUT)
+						|| magnitude == 0)
+					{
 						break;
+					}
 				}
 				else
 				{
@@ -2666,14 +2649,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		/* eliminate negative colors & wrap arounds */
 		if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
 		{
-			if (save_release < 1961)
-			{
-				coloriter = 0;
-			}
-			else
-			{
-				coloriter = 1;
-			}
+			coloriter = (save_release < 1961) ? 0 : 1;
 		}
 	}
 
@@ -2786,14 +2762,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (inside == PERIOD)
 		{
-			if (cyclelen > 0)
-			{
-				coloriter = cyclelen;
-			}
-			else
-			{
-				coloriter = maxit;
-			}
+			coloriter = (cyclelen > 0) ? cyclelen : maxit;
 		}
 		else if (inside == EPSCROSS)
 		{
@@ -2819,6 +2788,7 @@ plot_inside: /* we're "inside" */
 			coloriter = (long)(memvalue*colors / closeprox);
 		}
 		else if (inside == ATANI)          /* "atan" */
+		{
 			if (integerfractal)
 			{
 				g_new.x = ((double)lnew.x) / fudge;
@@ -2829,6 +2799,7 @@ plot_inside: /* we're "inside" */
 			{
 				coloriter = (long)fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
 			}
+		}
 		else if (inside == BOF60)
 		{
 			coloriter = (long)(sqrt(min_orbit)*75);
@@ -2839,19 +2810,9 @@ plot_inside: /* we're "inside" */
 		}
 		else if (inside == ZMAG)
 		{
-			if (integerfractal)
-			{
-				/*
-				g_new.x = ((double)lnew.x) / fudge;
-				g_new.y = ((double)lnew.y) / fudge;
-				coloriter = (long)((((double)lsqr(lnew.x))/fudge + ((double)lsqr(lnew.y))/fudge)*(maxit >> 1) + 1);
-				*/
-				coloriter = (long)(((double)lmagnitud/fudge)*(maxit >> 1) + 1);
-			}
-			else
-			{
-				coloriter = (long)((sqr(g_new.x) + sqr(g_new.y))*(maxit >> 1) + 1);
-			}
+			coloriter = integerfractal ?
+				(long)(((double)lmagnitud/fudge)*(maxit >> 1) + 1)
+				: (long)((sqr(g_new.x) + sqr(g_new.y))*(maxit >> 1) + 1);
 		}
 		else /* inside == -1 */
 		{
@@ -2880,14 +2841,9 @@ plot_pixel:
 		}
 		else
 		{
-			if (colors < 16)
-			{
-				color = (int)(coloriter & g_and_color);
-			}
-			else
-			{
-				color = (int)(((coloriter - 1) % g_and_color) + 1);
-			}
+			color = (colors < 16) ?
+				(int)(coloriter & g_and_color)
+				: (int)(((coloriter - 1) % g_and_color) + 1);
 		}
 	}
 	if (debugflag != 470)
@@ -3166,14 +3122,7 @@ static void decomposition(void)
 	}
 	if (decomp[0] == 2 && save_release >= 1827)
 	{
-		if (save_temp & 2)
-		{
-			coloriter = 1;
-		}
-		else
-		{
-			coloriter = 0;
-		}
+		coloriter = (save_temp & 2) ? 1 : 0;
 		if (colors == 2)
 		{
 			coloriter++;
@@ -3236,14 +3185,8 @@ static int _fastcall potential(double mag, long iterations)
 			else
 			{
 				d_tmp = log(mag)/(double)pow(2.0, (double)pot);
-				if (d_tmp > FLT_MIN) /* prevent float type underflow */
-				{
-					pot = (float)d_tmp;
-				}
-				else
-				{
-					pot = 0.0f;
-				}
+				/* prevent float type underflow */
+				pot = (d_tmp > FLT_MIN) ? (float) d_tmp : 0.0f;
 			}
 		}
 		/* following transformation strictly for aesthetic reasons */
@@ -4392,14 +4335,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case XAXIS:                       /* X-axis Symmetry */
 		if (xsym_split(xaxis_row, xaxis_between) == 0)
 		{
-			if (basin)
-			{
-				plot = symplot2basin;
-			}
-			else
-			{
-				plot = symplot2;
-			}
+			plot = basin ? symplot2basin : symplot2;
 		}
 		break;
 	case YAXIS_NOPARM:                        /* Y-axis Symmetry (No Parms)*/
@@ -4424,14 +4360,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		switch (worksym & 3)
 		{
 		case 1: /* just xaxis symmetry */
-			if (basin)
-			{
-				plot = symplot2basin;
-			}
-			else
-			{
-				plot = symplot2;
-			}
+			plot = basin ? symplot2basin : symplot2;
 			break;
 		case 2: /* just yaxis symmetry */
 			if (basin) /* got no routine for this case */
@@ -4445,14 +4374,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			}
 			break;
 		case 3: /* both axes */
-			if (basin)
-			{
-				plot = symplot4basin;
-			}
-			else
-			{
-				plot = symplot4;
-			}
+			plot = basin ? symplot4basin : symplot4;
 		}
 		break;
 	case ORIGIN_NOPARM:                       /* Origin Symmetry (no parms)*/
@@ -4503,14 +4425,10 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		symmetry = 0;
 		if (xsym_split(xaxis_row, xaxis_between) == 0
 				&& ysym_split(yaxis_col, yaxis_between) == 0)
-			if (parm.y == 0.0)
-			{
-				plot = symPIplot4J; /* both axes */
-			}
-			else
-			{
-				plot = symPIplot2J; /* origin */
-			}
+		{
+			/* both axes or origin*/
+			plot = (parm.y == 0.0) ? symPIplot4J : symPIplot2J; 
+		}
 		else
 		{
 			iystop = yystop; /* in case first split worked */
@@ -5144,14 +5062,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 {
 	int i, stripe;
 	putcolor(x, y, color);
-	if (basin == 2 && color > 8)
-	{
-		stripe = 8;
-	}
-	else
-	{
-		stripe = 0;
-	}
+	stripe = (basin == 2 && color > 8) ? 8 : 0;
 	i=yystop-(y-yystart);
 	if (i > iystop && i < ydots)
 	{
@@ -5171,24 +5082,10 @@ void _fastcall symplot4basin(int x, int y, int color)
 		symplot4(x, y, color);
 		return;
 	}
-	if (basin == 2 && color > 8)
-	{
-		stripe = 8;
-	}
-	else
-	{
-		stripe = 0;
-	}
+	stripe = (basin == 2 && color > 8) ? 8 : 0;
 	color -= stripe;               /* reconstruct unstriped color */
-	color1 = degree/2 + degree + 2 - color;
-	if (color < degree/2 + 2)
-	{
-		color1 = degree/2 + 2 - color;
-	}
-	else
-	{
-		color1 = degree/2 + degree + 2 - color;
-	}
+	color1 = (color < degree/2 + 2) ?
+		(degree/2 + 2 - color) : (degree/2 + degree + 2 - color);
 	j = xxstop-(x-xxstart);
 	putcolor(x, y, color + stripe);
 	if (j < xdots)

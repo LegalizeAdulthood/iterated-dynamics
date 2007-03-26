@@ -1372,7 +1372,7 @@ bf_t norm_bf(bf_t r)
 		}
 		if (scale == bflength && hi_byte == 0) /* zero */
 		{
-				big_setS16(rexp, 0);
+			big_setS16(rexp, 0);
 		}
 		else
 		{
@@ -1416,11 +1416,11 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 	{ /* scale n2 */
 		scale = big_accessS16(n1exp) - big_accessS16(n2exp); /* n1exp - n2exp */
 		if (scale < bflength)
-			{
-				fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
-				memmove(n2, n2 + scale, bflength-scale);
-				memset(n2 + bflength-scale, fill_byte, scale);
-			}
+		{
+			fill_byte = is_bf_neg(n2) ? 0xFF : 0x00;
+			memmove(n2, n2 + scale, bflength-scale);
+			memset(n2 + bflength-scale, fill_byte, scale);
+		}
 		else
 		{
 			clear_bf(n2);
@@ -1432,11 +1432,11 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 	{ /* scale n1 */
 		scale = big_accessS16(n2exp) - big_accessS16(n1exp);  /* n2exp - n1exp */
 		if (scale < bflength)
-			{
-				fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
-				memmove(n1, n1 + scale, bflength-scale);
-				memset(n1 + bflength-scale, fill_byte, scale);
-			}
+		{
+			fill_byte = is_bf_neg(n1) ? 0xFF : 0x00;
+			memmove(n1, n1 + scale, bflength-scale);
+			memset(n1 + bflength-scale, fill_byte, scale);
+		}
 		else
 		{
 			clear_bf(n1);
@@ -1508,26 +1508,14 @@ int cmp_bf(bf_t n1, bf_t n2)
 		value1 = big_access16(n1 + i);
 		value2 = big_access16(n2 + i);
 		if (value1 > value2)
-		{ /* now determine which of the two bytes was different */
-			if ((value1&0xFF00) > (value2&0xFF00)) /* compare just high bytes */
-			{
-				return i + 2; /* high byte was different */
-			}
-			else
-			{
-				return i + 1; /* low byte was different */
-			}
+		{
+			/* high byte, low byte was different */
+			return ((value1 & 0xFF00) > (value2 & 0xFF00)) ? (i + 2) : (i + 1); 
 		}
 		else if (value1 < value2)
-		{ /* now determine which of the two bytes was different */
-			if ((value1&0xFF00) < (value2&0xFF00)) /* compare just high bytes */
-			{
-				return -(i + 2); /* high byte was different */
-			}
-			else
-			{
-				return -(i + 1); /* low byte was different */
-			}
+		{
+			/* high byte, low byte was different */			
+			return ((value1 & 0xFF00) < (value2 & 0xFF00)) ? -(i + 2) : -(i + 1);
 		}
 	}
 	return 0;
@@ -2049,14 +2037,14 @@ bf_t div_a_bf_int(bf_t r, U16 u)
 	if (u == 0) /* division by zero */
 	{
 		if (is_bf_neg(r))
-			{
-				max_bf(r);
-				neg_a_bf(r);
-			}
+		{
+			max_bf(r);
+			neg_a_bf(r);
+		}
 		else
-			{
-				max_bf(r);
-			}
+		{
+			max_bf(r);
+		}
 		return r;
 	}
 

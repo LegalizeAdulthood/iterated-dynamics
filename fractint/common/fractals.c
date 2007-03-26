@@ -513,25 +513,12 @@ int NewtonFractal2(void)
 					which root of 1 it converged to */
 				if (distance(roots[i], old) < threshold)
 				{
-					if (basin == 2)
-					{
-						tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
-					}
-					else
-					{
-						tmpcolor = 1 + i;
-					}
+					tmpcolor = (basin == 2) ?
+						(1 + (i&7) + ((coloriter&1) << 3)) : (1 + i);
 					break;
 				}
 			}
-			if (tmpcolor == -1)
-			{
-				coloriter = maxcolor;
-			}
-			else
-			{
-				coloriter = tmpcolor;
-			}
+			coloriter = (tmpcolor == -1) ? maxcolor : tmpcolor;
 		}
 		return 1;
 	}
@@ -604,25 +591,12 @@ int MPCNewtonFractal(void)
 			{
 				if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
 				{
-					if (basin == 2)
-					{
-						tmpcolor = 1 + (i&7) + ((coloriter&1) << 3);
-					}
-					else
-					{
-						tmpcolor = 1 + i;
-					}
+					tmpcolor = (basin == 2) ?
+						(1 + (i&7) + ((coloriter&1) << 3)) : (1 + i);
 					break;
 				}
 			}
-			if (tmpcolor == -1)
-			{
-				coloriter = maxcolor;
-			}
-			else
-			{
-				coloriter = tmpcolor;
-			}
+			coloriter = (tmpcolor == -1) ? maxcolor : tmpcolor;
 		}
 		return 1;
 	}
@@ -1265,23 +1239,21 @@ PopcornFractal_Old(void)
 	FPUsincos(&tmp.y, &siny, &cosy);
 	g_new.x = old.x - parm.x*siny;
 	g_new.y = old.y - parm.x*sinx;
-	/*
-	g_new.x = old.x - parm.x*sin(old.y + tan(3*old.y));
-	g_new.y = old.y - parm.x*sin(old.x + tan(3*old.x));
-	*/
 	if (plot == noplot)
 	{
 		plot_orbit(g_new.x, g_new.y, 1 + row%colors);
 		old = g_new;
 	}
 	else
-	/* FLOATBAILOUT(); */
-	/* PB The above line was weird, not what it seems to be!  But, bracketing
+	{
+		/* FLOATBAILOUT(); */
+		/* PB The above line was weird, not what it seems to be!  But, bracketing
 			it or always doing it (either of which seem more likely to be what
 			was intended) changes the image for the worse, so I'm not touching it.
 			Same applies to int form in next routine. */
-	/* PB later: recoded inline, still leaving it weird */
+		/* PB later: recoded inline, still leaving it weird */
 		tempsqrx = sqr(g_new.x);
+	}
 	tempsqry = sqr(g_new.y);
 	magnitude = tempsqrx + tempsqry;
 	if (magnitude >= rqlim)
@@ -1359,9 +1331,9 @@ LPopcornFractal_Old(void)
 		lold = lnew;
 	}
 	else
-	/* LONGBAILOUT(); */
-	/* PB above still the old way, is weird, see notes in FP popcorn case */
 	{
+		/* LONGBAILOUT(); */
+		/* PB above still the old way, is weird, see notes in FP popcorn case */
 		ltempsqrx = lsqr(lnew.x);
 		ltempsqry = lsqr(lnew.y);
 	}
@@ -2624,14 +2596,7 @@ void invertz2(_CMPLX *z)
 	z->x -= f_xcenter; z->y -= f_ycenter;  /* Normalize values to center of circle */
 
 	tempsqrx = sqr(z->x) + sqr(z->y);  /* Get old radius */
-	if (fabs(tempsqrx) > FLT_MIN)
-	{
-		tempsqrx = f_radius / tempsqrx;
-	}
-	else
-	{
-		tempsqrx = FLT_MAX;   /* a big number, but not TOO big */
-	}
+	tempsqrx = (fabs(tempsqrx) > FLT_MIN) ? (f_radius / tempsqrx) : FLT_MAX;
 	z->x *= tempsqrx;      z->y *= tempsqrx;      /* Perform inversion */
 	z->x += f_xcenter; z->y += f_ycenter; /* Renormalize */
 }
@@ -2713,14 +2678,7 @@ int long_mandel_per_pixel(void)
 		linit.y = (long)(init.y*fudge);
 	}
 
-	if (useinitorbit == 1)
-	{
-		lold = linitorbit;
-	}
-	else
-	{
-		lold = linit;
-	}
+	lold = (useinitorbit == 1) ? linitorbit : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -2887,14 +2845,7 @@ int marksmandel_per_pixel()
 		}
 	}
 
-	if (useinitorbit == 1)
-	{
-		lold = linitorbit;
-	}
-	else
-	{
-		lold = linit;
-	}
+	lold = (useinitorbit == 1) ? linitorbit : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -2942,14 +2893,7 @@ int marksmandelfp_per_pixel()
 		}
 	}
 
-	if (useinitorbit == 1)
-	{
-		old = initorbit;
-	}
-	else
-	{
-		old = init;
-	}
+	old = (useinitorbit == 1) ? initorbit : init;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3116,14 +3060,7 @@ int othermandelfp_per_pixel(void)
 		}
 	}
 
-	if (useinitorbit == 1)
-	{
-		old = initorbit;
-	}
-	else
-	{
-		old = init;
-	}
+	old = (useinitorbit == 1) ? initorbit : init;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3324,14 +3261,7 @@ int long_mandphoenix_per_pixel(void)
 		linit.y = (long)(init.y*fudge);
 	}
 
-	if (useinitorbit == 1)
-	{
-		lold = linitorbit;
-	}
-	else
-	{
-		lold = linit;
-	}
+	lold = (useinitorbit == 1) ? linitorbit : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -3359,14 +3289,7 @@ int mandphoenix_per_pixel(void)
 		}
 	}
 
-	if (useinitorbit == 1)
-	{
-		old = initorbit;
-	}
-	else
-	{
-		old = init;
-	}
+	old = (useinitorbit == 1) ? initorbit : init;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;

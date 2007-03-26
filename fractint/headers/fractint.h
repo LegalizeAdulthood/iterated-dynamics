@@ -718,6 +718,7 @@ enum Minor  {left_first, right_first};
 
 
 /* more bitmasks for evolution mode flag */
+#define EVOLVE_NONE			0	/* no evolution */
 #define EVOLVE_FIELD_MAP	1	/*steady field varyiations across screen */
 #define EVOLVE_RAND_WALK	2	/* newparm = lastparm +- rand()                   */
 #define EVOLVE_RAND_PARAM	4	/* newparm = constant +- rand()                   */

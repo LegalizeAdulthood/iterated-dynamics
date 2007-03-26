@@ -674,14 +674,7 @@ void Jiim(int which)         /* called by fractint */
 	row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
 	/* possible extraseg arrays have been trashed, so set up again */
-	if (integerfractal)
-	{
-		fill_lx_array();
-	}
-	else
-	{
-		fill_dx_array();
-	}
+	integerfractal ? fill_lx_array() : fill_dx_array();
 
 	Cursor_SetPos(col, row);
 	Cursor_Show();
@@ -698,14 +691,8 @@ void Jiim(int which)         /* called by fractint */
 	while (still)
 	{
 		int dcol, drow;
-		if (actively_computing)
-		{
-			Cursor_CheckBlink();
-		}
-		else
-		{
-			Cursor_WaitKey();
-		}
+
+		actively_computing ? Cursor_CheckBlink() : Cursor_WaitKey();
 		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
 		{
 			first_time = 0;
@@ -966,14 +953,7 @@ void Jiim(int which)         /* called by fractint */
 			if (windows == 0 && col > xc && col < xc + xd && row > yc && row < yc + yd)
 			{
 				RestoreRect(xc, yc, xd, yd);
-				if (xc == xd*2)
-				{
-					xc = 2;
-				}
-				else
-				{
-					xc = xd*2;
-				}
+				xc = (xc == xd*2) ? 2 : xd*2;
 				xoff = xc + xd /  2;
 				SaveRect(xc, yc, xd, yd);
 			}
@@ -1171,14 +1151,7 @@ void Jiim(int which)         /* called by fractint */
 						if (++rancnt > 1024)
 						{
 							rancnt = 0;
-							if (rand() % 2)
-							{
-								randir =  1;
-							}
-							else
-							{
-								randir = -1;
-							}
+							randir = (rand() % 2) ? 1 : -1;
 						}
 						break;
 					case 1:             /* now go negative dir for a while */

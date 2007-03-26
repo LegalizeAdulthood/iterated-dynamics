@@ -351,14 +351,7 @@ int readdisk(int col, int row)
 					(row >= sydots) ? row-sydots : row); /* adjust when potfile */
 			dvid_status(0, buf);
 		}
-		if (bf_math)
-		{
-			timetodisplay = 10;  /* time-to-g_driver-status counter */
-		}
-		else
-		{
-			timetodisplay = 1000;  /* time-to-g_driver-status counter */
-		}
+		timetodisplay = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
 	}
 	if (row != cur_row) /* try to avoid ghastly code generated for multiply */
 	{

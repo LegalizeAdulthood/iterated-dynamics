@@ -2894,14 +2894,9 @@ static int line3dmem(void)
 		}
 		else /* ok to use extra segment */
 		{
-			if (pot16bit)
-			{
-				minmax_x = (struct minmax *) (fraction + xdots);
-			}
-			else
-			{
-				minmax_x = (struct minmax *) (f_lastrow + xdots);
-			}
+			minmax_x = pot16bit ?
+				(struct minmax *) (fraction + xdots)
+				: (struct minmax *) (f_lastrow + xdots);
 		}
 	}
 	if (debugflag == 2222 || check_extra > (1L << 16))

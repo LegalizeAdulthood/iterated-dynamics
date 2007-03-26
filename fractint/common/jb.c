@@ -85,14 +85,7 @@ JulibrotSetup(void)
 	inch_per_xdotfp = widthfp / xdots;
 	inch_per_ydotfp = heightfp / ydots;
 	initzfp = originfp - (depthfp / 2);
-	if (juli3Dmode == 0)
-	{
-		RightEyefp.x = 0.0;
-	}
-	else
-	{
-		RightEyefp.x = eyesfp / 2;
-	}
+	RightEyefp.x = (juli3Dmode == 0) ? 0.0 : (eyesfp / 2);
 	LeftEyefp.x = -RightEyefp.x;
 	LeftEyefp.y = RightEyefp.y = 0;
 	LeftEyefp.zx = RightEyefp.zx = distfp;
@@ -138,14 +131,7 @@ JulibrotSetup(void)
 		inch_per_xdot = (long) ((widthfp / xdots)*fg16);
 		inch_per_ydot = (long) ((heightfp / ydots)*fg16);
 		initz = origin - (depth / 2);
-		if (juli3Dmode == 0)
-		{
-			RightEye.x = 0l;
-		}
-		else
-		{
-			RightEye.x = eyes / 2;
-		}
+		RightEye.x = (juli3Dmode == 0) ? 0L : (eyes/2);
 		LeftEye.x = -RightEye.x;
 		LeftEye.y = RightEye.y = 0l;
 		LeftEye.zx = RightEye.zx = dist;
@@ -235,14 +221,7 @@ zline(long x, long y)
 		Per = &RightEye;
 		break;
 	case 3:
-		if ((row + col) & 1)
-		{
-			Per = &LeftEye;
-		}
-		else
-		{
-			Per = &RightEye;
-		}
+		Per = ((row + col) & 1) ? &LeftEye : &RightEye;
 		break;
 	}
 	jb_per_pixel();
@@ -323,14 +302,7 @@ zlinefp(double x, double y)
 		Perfp = &RightEyefp;
 		break;
 	case 3:
-		if ((row + col) & 1)
-		{
-			Perfp = &LeftEyefp;
-		}
-		else
-		{
-			Perfp = &RightEyefp;
-		}
+		Perfp = ((row + col) & 1) ? &LeftEyefp : &RightEyefp;
 		break;
 	}
 	jbfp_per_pixel();
@@ -434,14 +406,9 @@ Std4dFractal(void)
 		{
 			c_exp = 1;
 		}
-		if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
-		{
-			fractalspecific[neworbittype].orbitcalc = longZpowerFractal;
-		}
-		else
-		{
-			fractalspecific[neworbittype].orbitcalc = longCmplxZpowerFractal;
-		}
+		fractalspecific[neworbittype].orbitcalc =
+			(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+			? longZpowerFractal : longCmplxZpowerFractal;
 	}
 
 	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= inch_per_ydot)
@@ -486,14 +453,9 @@ Std4dfpFractal(void)
 
 	if (neworbittype == FPJULIAZPOWER)
 	{
-		if (param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
-		{
-			fractalspecific[neworbittype].orbitcalc = floatZpowerFractal;
-		}
-		else
-		{
-			fractalspecific[neworbittype].orbitcalc = floatCmplxZpowerFractal;
-		}
+		fractalspecific[neworbittype].orbitcalc =
+			(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+			? floatZpowerFractal : floatCmplxZpowerFractal;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
 	}
 

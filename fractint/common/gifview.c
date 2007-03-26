@@ -96,33 +96,19 @@ int gifview()
 	colcount = g_row_count = 0;
 
 	/* Open the file */
-	if (outln == outline_stereo)
-	{
-		strcpy(temp1,stereomapname);
-	}
-	else
-	{
-		strcpy(temp1,readname);
-	}
+	strcpy(temp1, (outln == outline_stereo) ? stereomapname : readname);
 	if (has_ext(temp1) == NULL)
 	{
-		strcat(temp1,DEFAULTFRACTALTYPE);
-		fpin = fopen(temp1,"rb");
+		strcat(temp1, DEFAULTFRACTALTYPE);
+		fpin = fopen(temp1, "rb");
 		if (fpin != NULL)
 		{
 			fclose(fpin);
 		}
 		else
 		{
-			if (outln == outline_stereo)
-			{
-				strcpy(temp1,stereomapname);
-			}
-			else
-			{
-				strcpy(temp1,readname);
-			}
-			strcat(temp1,ALTERNATEFRACTALTYPE);
+			strcpy(temp1, (outln == outline_stereo) ? stereomapname : readname);
+			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}
 	fpin = fopen(temp1, "rb");
@@ -332,7 +318,7 @@ int gifview()
 				{
 					calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
 					finished = 1;
-					}
+				}
 				else
 				{
 					calc_status = CALCSTAT_COMPLETED; /* complete */
@@ -410,13 +396,13 @@ static int out_line_dither(BYTE *pixels, int linelen)
 		brt += nexterr;
 		if (brt > 32)
 		{
-				pixels[i] = 1;
-				err = brt-63;
+			pixels[i] = 1;
+			err = brt-63;
 		}
 		else
 		{
-				pixels[i] = 0;
-				err = brt;
+			pixels[i] = 0;
+			err = brt;
 		}
 		nexterr = ditherbuf[i + 1] + err/3;
 		ditherbuf[i] = (char)(err/3);

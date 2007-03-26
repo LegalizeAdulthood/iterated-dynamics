@@ -232,14 +232,7 @@ int wrapped_positive_varyint(int randvalue, int limit, int mode)
 {
 	int i;
 	i = varyint(randvalue,limit,mode);
-	if (i < 0)
-	{
-		return limit + i;
-	}
-	else
-	{
-		return i;
-	}
+	return (i < 0) ? (limit + i) : i;
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
@@ -596,14 +589,7 @@ void set_mutation_level(int strength)
 
 	for (i = 0; i < NUMGENES; i++)
 	{
-		if (g_genes[i].level <= strength)
-		{
-			g_genes[i].mutate = 5; /* 5 = random mutation mode */
-		}
-		else
-		{
-			g_genes[i].mutate = 0;
-		}
+		g_genes[i].mutate = (g_genes[i].level <= strength) ? 5 : 0; /* 5 = random mutation mode */
 	}
 	return;
 }
