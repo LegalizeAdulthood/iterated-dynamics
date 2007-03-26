@@ -1247,13 +1247,17 @@ static int diffusion_scan(void)
 #define plot_block(x, y, s, c) \
 	memset(dstack, (c), (s)); \
 	for (ty = (y); ty < (y) + (s); ty++) \
-		sym_fill_line(ty, (x), (x) + (s)-1, dstack)
+	{ \
+		sym_fill_line(ty, (x), (x) + (s)-1, dstack); \
+	}
 
 /* macro that does the same as above, but checks the limits in x and y */
 #define plot_block_lim(x, y, s, c) \
 	memset(dstack, (c), (s)); \
 	for (ty = (y); ty < min((y) + (s), iystop + 1); ty++) \
-		sym_fill_line(ty, (x), min((x) + (s)-1, ixstop), dstack)
+	{ \
+		sym_fill_line(ty, (x), min((x) + (s)-1, ixstop), dstack); \
+	}
 
 /* macro: count_to_int(dif_counter, colo, rowo) */
 /* (inlined  function:) */
@@ -3626,10 +3630,12 @@ static int solidguess(void)
 		xlim = (ixstop + maxblock)/maxblock + 1;
 		ylim = ((iystop + maxblock)/maxblock + 15)/16 + 1;
 		if (right_guess == 0) /* no right edge guessing, zap border */
+		{
 			for (y = 0; y <= ylim; ++y)
 			{
 				tprefix[1][y][xlim] = 0xffff;
 			}
+		}
 		if (bottom_guess == 0) /* no bottom edge guessing, zap border */
 		{
 			i = (iystop + maxblock)/maxblock + 1;
@@ -3980,6 +3986,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 	if (plot != putcolor)  /* symmetry, just vertical & origin the fast way */
 	{
 		if (plot == symplot2J) /* origin sym, reverse lines */
+		{
 			for (i = (ixstop + xxstart + 1)/2; --i >= xxstart; )
 			{
 				color = dstack[i];
@@ -3990,6 +3997,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 				dstack[i + OLDMAXPIXELS] = dstack[j];
 				dstack[j] = (BYTE)color;
 			}
+		}
 		for (i = 0; i < halfblock; ++i)
 		{
 			j = yystop-(y + i-yystart);
@@ -4052,10 +4060,12 @@ static void _fastcall plotblock(int buildrow, int x, int y, int color)
 		(*plot)(i, y, color); /* skip 1st dot on 1st row */
 	}
 	while (++y < ylim)
+	{
 		for (i = x; i < xlim; ++i)
 		{
 			(*plot)(i, y, color);
 		}
+	}
 }
 
 
@@ -4632,6 +4642,7 @@ static int tesseral(void)
 				if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
 				{
 					for (col = tp->x1 + 1; col < tp->x2; col++)
+					{
 						for (row = tp->y1 + 1; row < tp->y2; row++)
 						{
 							(*plot)(col, row, tp->top);
@@ -4644,6 +4655,7 @@ static int tesseral(void)
 								i = 0;
 							}
 						}
+					}
 				}
 				else  /* use put_line for speed */
 				{

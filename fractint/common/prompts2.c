@@ -1033,9 +1033,11 @@ int get_starfield_params(void)
 	if (i < 0)
 	{
 		return -1;
-		}
+	}
 	for (i = 0; i < 3; i++)
+	{
 		starfield_values[i] = uvalues[i].uval.dval;
+	}
 
 	return 0;
 }
@@ -1094,11 +1096,15 @@ int get_rds_params(void)
 
 			uvalues[k++].type = '*';
 			for (i = 0; i < sizeof(rds6); i++)
+			{
 				rds6[i] = ' ';
+			}
 			p = strrchr(stereomapname, SLASHC);
 			if (p == NULL ||
-					(int) strlen(stereomapname) < sizeof(rds6)-2)
+				(int) strlen(stereomapname) < sizeof(rds6)-2)
+			{
 				p = strlwr(stereomapname);
+			}
 			else
 			{
 				p++;
@@ -1371,8 +1377,8 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	rds = (stereomapname == flname) ? 1 : 0;
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
-			attributes[i] = 1;
-			choices[i] = &storage[i];
+		attributes[i] = 1;
+		choices[i] = &storage[i];
 	}
 	/* save filename */
 	strcpy(old_flname, flname);
@@ -2004,7 +2010,9 @@ int get_corners()
 
 gc_loop:
 	for (i = 0; i < 15; ++i)
+	{
 		values[i].type = 'd'; /* most values on this screen are type d */
+	}
 	cmag = usemag;
 	if (drawmode == 'l')
 	{
@@ -2238,7 +2246,9 @@ static int get_screen_corners(void)
 
 gsc_loop:
 	for (i = 0; i < 15; ++i)
+	{
 		values[i].type = 'd'; /* most values on this screen are type d */
+	}
 	cmag = usemag;
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
@@ -2730,7 +2740,9 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	char *v;
 	v = (char *)v1;
 	for (gap = n/2; gap > 0; gap /= 2)
+	{
 		for (i = gap; i < n; i++)
+		{
 			for (j = i-gap; j >= 0; j -= gap)
 			{
 				if (fct((char **)(v + j*sz), (char **)(v + (j + gap)*sz)) <= 0)
@@ -2741,6 +2753,8 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 				*(char **)(v + j*sz) = *(char **)(v + (j + gap)*sz);
 				*(char **)(v + (j + gap)*sz) = temp;
 			}
+		}
+	}
 }
 
 int integer_unsupported(void)

@@ -214,10 +214,12 @@ int gifview()
 		case '!':                               /* GIF Extension Block */
 			get_byte();                     /* read (and ignore) the ID */
 			while ((i = get_byte()) > 0)    /* get the data length */
+			{
 				for (j = 0; j < i; j++)
 				{
 					get_byte();     /* flush the data */
 				}
+			}
 			break;
 		case ',':
 			/*

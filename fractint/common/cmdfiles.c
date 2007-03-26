@@ -474,9 +474,15 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	bailout = 0;                         /* no user-entered bailout */
 	nobof = 0;  /* use normal bof initialization to make bof images */
 	useinitorbit = 0;
-	for (i = 0; i < MAXPARAMS; i++) param[i] = 0.0;     /* initial parameter values */
-	for (i = 0; i < 3; i++) potparam[i]  = 0.0; /* initial potential values */
-	for (i = 0; i < 3; i++) inversion[i] = 0.0;  /* initial invert values */
+	for (i = 0; i < MAXPARAMS; i++)
+	{
+		param[i] = 0.0;     /* initial parameter values */
+	}
+	for (i = 0; i < 3; i++)
+	{
+		potparam[i]  = 0.0; /* initial potential values */
+		inversion[i] = 0.0;  /* initial invert values */
+	}
 	initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
 	invert = 0;
 	decomp[0] = decomp[1] = 0;
@@ -552,7 +558,10 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	fm_release = 5;                      /* short release   */
 	fm_wavetype = 0;                     /* sin wave */
 	polyphony = 0;                       /* no polyphony    */
-	for (i = 0; i <= 11; i++) scale_map[i] = i + 1;    /* straight mapping of notes in octave */
+	for (i = 0; i <= 11; i++)
+	{
+		scale_map[i] = i + 1;    /* straight mapping of notes in octave */
+	}
 #endif
 }
 
@@ -680,11 +689,13 @@ static int next_command(char *cmdbuf, int maxlen,
 							*(lineptr + MAXCMT-1) = 0;
 						}
 						for (i = 0; i < 4; i++)
+						{
 							if (CommandComment[i][0] == 0)
 							{
 								strcpy(CommandComment[i], lineptr);
 								break;
 							}
+						}
 					}
 				}
 				if (next_line(handle, linebuf, mode) != 0)

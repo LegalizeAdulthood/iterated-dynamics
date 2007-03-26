@@ -2002,9 +2002,9 @@ int
 LongPhoenixCplxPlusFractal(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
-int i;
-_LCMPLX loldplus, lnewminus;
+	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
+	int i;
+	_LCMPLX loldplus, lnewminus;
 	loldplus = lold;
 	ltmp = lold;
 	for (i = 1; i < degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -2050,9 +2050,9 @@ int
 LongPhoenixCplxMinusFractal(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
-int i;
-_LCMPLX loldsqr, lnewminus;
+	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
+	int i;
+	_LCMPLX loldsqr, lnewminus;
 	LCMPLXmult(lold, lold, loldsqr);
 	ltmp = lold;
 	for (i = 1; i < degree; i++)  /* degree >= 3, degree = degree-2 in setup */

@@ -608,9 +608,13 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 	where += sizeof(int) + num_pages*3*sizeof(int) + 1 + len + sizeof(int);
 
 	for (page = 0; page < num_pages; page++)
+	{
 		if (curr->topic_off >= page_table[page].offset &&
 				curr->topic_off <  page_table[page].offset + page_table[page].len)
+		{
 			break;
+		}
+	}
 
 	assert(page < num_pages);
 
@@ -904,7 +908,7 @@ int help(int action)
 		if (action != ACTION_PREV && action != ACTION_PREV2)
 		{
 			if (curr_hist >= MAX_HIST)
-				{
+			{
 				int ctr;
 
 				for (ctr = 0; ctr < MAX_HIST-1; ctr++)

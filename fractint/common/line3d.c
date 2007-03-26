@@ -1486,9 +1486,10 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 	int i;
 	if ((evenoddrow++ & 1) == 0) /* even rows are color value */
 	{
-		for (i = 0; i < (int) linelen; i++)       /* add the fractional part in
-													* odd row */
+		for (i = 0; i < (int) linelen; i++)       /* add the fractional part in odd row */
+		{
 			fraction[i] = pixels[i];
+		}
 		return 1;
 	}
 	else
@@ -1698,11 +1699,13 @@ int targa_validate(char *File_Name)
 	}
 	/* Check Image specs */
 	for (i = 0; i < 4; i++)
+	{
 		if (fgetc(fp) != (int) upr_lwr[i])
 		{
 			File_Error(File_Name, 3);
 			return -1;
 		}
+	}
 
 	if (fgetc(fp) != (int) T24)
 	{
@@ -2226,6 +2229,7 @@ static void _fastcall triangle_bounds(float pt_t[3][3])
 	int i, j;
 
 	for (i = 0; i <= 2; i++)
+	{
 		for (j = 0; j <= 2; j++)
 		{
 			if (pt_t[i][j] < min_xyz[j])
@@ -2237,6 +2241,7 @@ static void _fastcall triangle_bounds(float pt_t[3][3])
 				max_xyz[j] = pt_t[i][j];
 			}
 		}
+	}
 	return;
 }
 
@@ -2347,6 +2352,7 @@ static void line3d_cleanup(void)
 		{
 			fprintf(File_Ptr1, "LineList From To\n");
 			for (i = 0; i < RO; i++)
+			{
 				for (j = 0; j <= CO_MAX; j++)
 				{
 					if (j < CO_MAX)
@@ -2362,6 +2368,7 @@ static void line3d_cleanup(void)
 						fprintf(File_Ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
 					}
 				}
+			}
 			fprintf(File_Ptr1, "\n\n--");
 		}
 		if (RAY != 7)

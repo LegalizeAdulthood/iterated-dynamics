@@ -693,6 +693,7 @@ static int _fastcall shftwrite(BYTE *color, int numcolors)
 	BYTE thiscolor;
 	int i, j;
 	for (i = 0; i < numcolors; i++)
+	{
 		for (j = 0; j < 3; j++)
 		{
 			thiscolor = color[3*i + j];
@@ -703,6 +704,7 @@ static int _fastcall shftwrite(BYTE *color, int numcolors)
 				return 0;
 			}
 		}
+	}
 	return 1;
 }
 

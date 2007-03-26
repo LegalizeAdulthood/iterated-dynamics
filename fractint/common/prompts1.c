@@ -306,20 +306,20 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			values[i].uval.ch.vlen = 3;
 			values[i].uval.ch.list = noyes;
 			values[i].uval.ch.llen = 2;
-			}
+		}
 		j = (int) strlen(prompts[i]);
 		if (values[i].type == '*')
 		{
 			if (j > maxcomment)     maxcomment = j;
-			}
+		}
 		else
 		{
 			anyinput = 1;
 			if (j > maxpromptwidth) maxpromptwidth = j;
 			j = prompt_valuestring(buf, &values[i]);
 			if (j > maxfldwidth)    maxfldwidth = j;
-			}
 		}
+	}
 	boxwidth = maxpromptwidth + maxfldwidth + 2;
 	if (maxcomment > boxwidth) boxwidth = maxcomment;
 	if ((boxwidth += 4) > 80) boxwidth = 80;
@@ -1074,7 +1074,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	{
 		choices[i] = &storage[i];
 		attributes[i] = 1;
-		}
+	}
 	ft_choices = &choices[0];
 
 	/* setup context sensitive help */
@@ -1103,10 +1103,12 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
 	j = 0;
 	for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
+	{
 		if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
 		{
 			j = i;
 		}
+	}
 
 	tname[0] = 0;
 	done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,

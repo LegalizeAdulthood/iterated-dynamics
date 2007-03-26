@@ -144,7 +144,10 @@ static int _fastcall readLSystemFile(char *str)
 		if (c == EOF) return -1;
 	}
 	maxangle = 0;
-	for (linenum = 0; linenum < MAXRULES; ++linenum) ruleptrs[linenum] = NULL;
+	for (linenum = 0; linenum < MAXRULES; ++linenum)
+	{
+		ruleptrs[linenum] = NULL;
+	}
 	rulind = &ruleptrs[1];
 	msgbuf[0] = (char)(linenum = 0);
 
@@ -402,7 +405,7 @@ static int _fastcall rule_present(char symbol)
 {
 	int i;
 
-	for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol ; i++)
+	for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol; i++)
 	{
 		;
 	}
@@ -884,6 +887,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
+			{
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = 1;
@@ -892,6 +896,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 						return NULL;
 					}
 				}
+			}
 		}
 		if (!depth || !tran)
 		{

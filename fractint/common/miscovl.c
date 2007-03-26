@@ -432,107 +432,113 @@ skip_UI:
 			pyymax = yymax;
 		}
 		for (i = 0; i < (int)xm; i++)  /* columns */
-		for (j = 0; j < (int)ym; j++)  /* rows    */
 		{
-			if (xm > 1 || ym > 1)
+			for (j = 0; j < (int)ym; j++)  /* rows    */
 			{
-				int w;
-				char c;
-				char PCommandName[80];
-				w = 0;
-				while (w < (int)strlen(CommandName))
+				if (xm > 1 || ym > 1)
 				{
-					c = CommandName[w];
-					if (isspace(c) || c == 0)
+					int w;
+					char c;
+					char PCommandName[80];
+					w = 0;
+					while (w < (int)strlen(CommandName))
 					{
-						break;
+						c = CommandName[w];
+						if (isspace(c) || c == 0)
+						{
+							break;
+						}
+						PCommandName[w] = c;
+						w++;
 					}
-					PCommandName[w] = c;
-					w++;
-				}
-				PCommandName[w] = 0;
-				{
-					char buf[20];
-					sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
-					strcat(PCommandName, buf);
-				}
-				fprintf(parmfile, "%-19s{", PCommandName);
-				xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-				xxmax = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
-				yymin = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
-				yymax = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
-				if (have3rd)
-				{
-					xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
-					yy3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
+					PCommandName[w] = 0;
+					{
+						char buf[20];
+						sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
+						strcat(PCommandName, buf);
+					}
+					fprintf(parmfile, "%-19s{", PCommandName);
+					xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
+					xxmax = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
+					yymin = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
+					yymax = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
+					if (have3rd)
+					{
+						xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
+						yy3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
+					}
+					else
+					{
+						xx3rd = xxmin;
+						yy3rd = yymin;
+					}
+					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", CommandFile, PCommandName);
+					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
 				}
 				else
 				{
-					xx3rd = xxmin;
-					yy3rd = yymin;
+					fprintf(parmfile, "%-19s{", CommandName);
 				}
-				fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", CommandFile, PCommandName);
-				fprintf(fpbat, "If Errorlevel 2 goto oops\n");
-			}
-			else
-			{
-				fprintf(parmfile, "%-19s{", CommandName);
-			}
-			{
-				/* guarantee that there are no blank comments above the last
+				{
+					/* guarantee that there are no blank comments above the last
 					non-blank par_comment */
-				int i, last;
-				for (last = -1, i = 0; i < 4; i++)
-					if (*par_comment[i])
+					int i, last;
+					for (last = -1, i = 0; i < 4; i++)
 					{
-						last = i;
+						if (*par_comment[i])
+						{
+							last = i;
+						}
 					}
-				for (i = 0; i < last; i++)
-					if (*CommandComment[i] == '\0')
+					for (i = 0; i < last; i++)
 					{
-						strcpy(CommandComment[i], ";");
-					}
-			}
-			if (CommandComment[0][0])
-			{
-				fprintf(parmfile, " ; %s", CommandComment[0]);
-			}
-			fputc('\n', parmfile);
-			{
-				int k;
-				char buf[25];
-				memset(buf, ' ', 23);
-				buf[23] = 0;
-				buf[21] = ';';
-				for (k = 1; k < 4; k++)
-				{
-					if (CommandComment[k][0])
-					{
-						fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
+						if (*CommandComment[i] == '\0')
+						{
+							strcpy(CommandComment[i], ";");
+						}
 					}
 				}
-				if (g_patch_level != 0 && colorsonly == 0)
+				if (CommandComment[0][0])
 				{
-					fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-						Fractint, g_release, g_patch_level);
+					fprintf(parmfile, " ; %s", CommandComment[0]);
 				}
+				fputc('\n', parmfile);
+				{
+					int k;
+					char buf[25];
+					memset(buf, ' ', 23);
+					buf[23] = 0;
+					buf[21] = ';';
+					for (k = 1; k < 4; k++)
+					{
+						if (CommandComment[k][0])
+						{
+							fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
+						}
+					}
+					if (g_patch_level != 0 && colorsonly == 0)
+					{
+						fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
+							Fractint, g_release, g_patch_level);
+					}
+				}
+				write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
+				if (xm > 1 || ym > 1)
+				{
+					fprintf(parmfile, "  video=%s", vidmde);
+					fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
+				}
+				fprintf(parmfile, "  }\n\n");
 			}
-			write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
-			if (xm > 1 || ym > 1)
-			{
-				fprintf(parmfile, "  video=%s", vidmde);
-				fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
-			}
-			fprintf(parmfile, "  }\n\n");
 		}
 		if (xm > 1 || ym > 1)
-			{
+		{
 			fprintf(fpbat, "Fractint makemig=%d/%d\n", xm, ym);
 			fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
 			fprintf(fpbat, ":oops\n");
 			fclose(fpbat);
-			}
-/*******end here */
+		}
+		/*******end here */
 
 		if (gotinfile)
 		{                         /* copy the rest of the file */

@@ -50,10 +50,12 @@ void intro(void)
 	j = 0;
 	authors[j] = 0;              /* find the start of each credit-line */
 	for (i = 0; credits[i] != 0; i++)
+	{
 		if (credits[i] == 10)
 		{
 			authors[++j] = i + 1;
 		}
+	}
 	authors[j + 1] = i;
 
 	helptitle();

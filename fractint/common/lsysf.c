@@ -489,6 +489,7 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
+			{
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = 1;
@@ -497,6 +498,7 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 						return NULL;
 					}
 				}
+			}
 		}
 		if (!depth || !tran)
 		{

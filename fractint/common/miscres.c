@@ -105,10 +105,12 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 	padding = 3; /* space between col1 and decimal. */
 	/* find decimal point */
 	for (decpt = 0; decpt < length; decpt++)
+	{
 		if (str[decpt] == '.')
 		{
 			break;
 		}
+	}
 	if (decpt >= length)
 	{
 		decpt = 0;
@@ -598,11 +600,13 @@ nextname:
 	strcpy(opentype, ext);
 #if 0
 	for (i = 0; i < (int)strlen(openfile); i++)
+	{
 		if (openfile[i] == '.')
 		{
 			strcpy(opentype, &openfile[i]);
 			openfile[i] = 0;
-			}
+		}
+	}
 #endif
 	period = has_ext(openfile);
 	if (period != NULL)
@@ -1470,9 +1474,9 @@ int ifsload()                   /* read in IFS parameters */
 		{
 			ifs_type = 1;
 			rowsize = IFS3DPARM;
-			}
-		++bufptr;
 		}
+		++bufptr;
+	}
 
 	for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 	{
@@ -1534,10 +1538,12 @@ int ifsload()                   /* read in IFS parameters */
 			ret = -1;
 		}
 		else
+		{
 			for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 			{
 				ifs_defn[i] = ((float *)tstack)[i];
 			}
+		}
 	}
 	return ret;
 }

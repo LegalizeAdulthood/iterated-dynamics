@@ -61,10 +61,12 @@ static int get_scancode(char *mn)
 	int i;
 	i = 0;
 	for (i = 0; i< stop; i++)
+	{
 		if (strcmp((char *)mn, scancodes[i].mnemonic) == 0)
 		{
 			break;
 		}
+	}
 	return scancodes[i].code;
 }
 
@@ -74,11 +76,13 @@ static void get_mnemonic(int code, char *mnemonic)
 	i = 0;
 	*mnemonic = 0;
 	for (i = 0; i< stop; i++)
+	{
 		if (code == scancodes[i].code)
 		{
 			strcpy(mnemonic, scancodes[i].mnemonic);
 			break;
 		}
+	}
 }
 #undef stop
 

@@ -755,21 +755,23 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 			fseek(fp, (long) -offset, SEEK_END);
 			fread(tmpbuf, 1, 110, fp); /* read 10 extra for string compare */
 			for (i = 0; i < 100; ++i)
+			{
 				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
 				{
 					strcpy(info->info_id, INFO_ID);
 					fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
-				/* TODO: revise this to read members one at a time so we get natural alignment
-					of fields within the FRACTAL_INFO structure for the platform */
+					/* TODO: revise this to read members one at a time so we get natural alignment
+						of fields within the FRACTAL_INFO structure for the platform */
 					fread(info, 1, FRACTAL_INFO_SIZE, fp);
 #ifdef XFRACT
 					decode_fractal_info(info, 1);
 #endif
 					offset = 10000; /* force exit from outer loop */
 					break;
-					}
+				}
 			}
 		}
+	}
 
 	if (hdr_offset)  /* we found INFO_ID */
 	{

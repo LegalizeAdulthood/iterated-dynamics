@@ -2305,7 +2305,7 @@ int funny_glasses_call(int (*calc)(void))
 				for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
 				{
 					savetodisk(savename);
-					}
+				}
 				/* is there a better way to clear the screen in graphics mode? */
 				driver_set_video_mode(&g_video_entry);
 		}
@@ -2513,10 +2513,12 @@ static int ifs2d(void)
 	}
 
 	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+	{
 		for (j = 0; j < IFSPARM; j++)
 		{
 			localifs[i*IFSPARM + j] = (long)(ifs_defn[i*IFSPARM + j]*fudge);
 		}
+	}
 
 	tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2615,10 +2617,12 @@ static int ifs3dlong(void)
 	l_setup_convert_to_screen(&inf.cvt);
 
 	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
 			localifs[i*IFS3DPARM + j] = (long)(ifs_defn[i*IFS3DPARM + j]*fudge);
 		}
+	}
 
 	tempr = fudge / 32767;        /* find the proper rand() fudge */
 
@@ -2787,6 +2791,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 		}
 		/* copy xform matrix to long for for fixed point math */
 		for (i = 0; i < 4; i++)
+		{
 			for (j = 0; j < 4; j++)
 			{
 				inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
@@ -2795,6 +2800,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 					inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
 				}
 			}
+		}
 	}
 
 	/* 3D VIEWING TRANSFORM */
@@ -2855,6 +2861,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 
 			/* copy xform matrix to long for for fixed point math */
 			for (i = 0; i < 4; i++)
+			{
 				for (j = 0; j < 4; j++)
 				{
 					inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
@@ -2863,6 +2870,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 						inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
 					}
 				}
+			}
 		}
 		return 0;
 	}
