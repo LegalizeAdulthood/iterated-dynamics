@@ -2967,7 +2967,7 @@ restart_1:
 	}
 	if (g_glasses_type)
 	{
-		g_which_image = 1;
+		g_which_image = WHICHIMAGE_RED;
 	}
 
 	if (RAY < 0)

@@ -1815,9 +1815,9 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 	I = (int) (H / 3840);
 	RMD = (int) (H % 3840);      /* RMD = fractional part of H    */
 
-	P1 = ((V*(65535L - S)) / 65280L) >> 8;
-	P2 = (((V*(65535L - (S*RMD) / 3840)) / 65280L) - 1) >> 8;
-	P3 = (((V*(65535L - (S*(3840 - RMD)) / 3840)) / 65280L)) >> 8;
+	P1 = ((V*(65535L - S))/65280L) >> 8;
+	P2 = (((V*(65535L - (S*RMD)/3840))/65280L) - 1) >> 8;
+	P3 = (((V*(65535L - (S*(3840 - RMD))/3840))/65280L)) >> 8;
 	V = V >> 8;
 	switch (I)
 	{
@@ -2443,13 +2443,13 @@ static int first_time(int linelen, VECTOR v)
 	set_upr_lwr();
 	error = 0;
 
-	if (g_which_image < 2)
+	if (g_which_image < WHICHIMAGE_BLUE)
 	{
 		T_Safe = 0; /* Not safe yet to mess with the source image */
 	}
 
 	if (Targa_Out && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
-		&& g_which_image == 2))
+		&& g_which_image == WHICHIMAGE_BLUE))
 	{
 		if (Targa_Overlay)
 		{

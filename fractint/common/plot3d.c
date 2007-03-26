@@ -179,7 +179,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	tmp = getcolor(x, y);
 
 	/* map to 4 colors */
-	if (g_which_image == 1) /* RED */
+	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (red_local_left < x && x < red_local_right)
 		{
@@ -190,7 +190,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 			}
 		}
 	}
-	else if (g_which_image == 2) /* BLUE */
+	else if (g_which_image == WHICHIMAGE_BLUE)
 	{
 		if (blue_local_left < x && x < blue_local_right)
 		{
@@ -212,7 +212,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 
 	tmp = getcolor(x, y);
 
-	if (g_which_image == 1) /* RED */
+	if (g_which_image == WHICHIMAGE_RED)
 	{
 		color = PAL_RED;
 		if (tmp > 0 && tmp != color)
@@ -265,7 +265,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 
 	tmp = getcolor(x, y);
 	/* map to 16 colors */
-	if (g_which_image == 1) /* RED */
+	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (red_local_left < x && x < red_local_right)
 		{
@@ -284,7 +284,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			}
 		}
 	}
-	else if (g_which_image == 2) /* BLUE */
+	else if (g_which_image == WHICHIMAGE_BLUE)
 	{
 		if (blue_local_left < x && x < blue_local_right)
 		{
@@ -327,7 +327,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 
 	tmp = getcolor(x, y);
 	/* map to 16 colors */
-	if (g_which_image == 1) /* RED */
+	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (red_local_left < x && x < red_local_right)
 		{
@@ -345,7 +345,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 			}
 		}
 	}
-	else if (g_which_image == 2) /* BLUE */
+	else if (g_which_image == WHICHIMAGE_BLUE)
 		if (blue_local_left < x && x < blue_local_right)
 		{
 			color = color <<4;
@@ -375,7 +375,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 
 	/* my mind is STILL fried - lower indices = darker colors is EASIER! */
 	color = colors - color;
-	if ((g_which_image == 1) && !((x + y)&1)) /* - lower half palette */
+	if ((g_which_image == WHICHIMAGE_RED) && !((x + y)&1)) /* - lower half palette */
 	{
 		if (red_local_left < x && x < red_local_right)
 		{
@@ -393,7 +393,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 			}
 		}
 	}
-	else if ((g_which_image == 2) && ((x + y)&1)) /* - upper half palette */
+	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y)&1)) /* - upper half palette */
 	{
 		if (blue_local_left < x && x < blue_local_right)
 		{
@@ -417,7 +417,7 @@ void _fastcall plot3dcrosseyedA(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
-	if (g_which_image == 2)
+	if (g_which_image == WHICHIMAGE_BLUE)
 	{
 		x += xdots/2;
 	}
@@ -436,7 +436,7 @@ void _fastcall plot3dcrosseyedB(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
-	if (g_which_image == 2)
+	if (g_which_image == WHICHIMAGE_BLUE)
 	{
 		x += xdots/2;
 	}
@@ -515,7 +515,7 @@ void plot_setup()
 
 		switch (g_which_image)
 		{
-		case 1:
+		case WHICHIMAGE_RED:
 			xshift  += (int)((g_eye_separation* (double)xdots)/200);
 			xxadjust = (int)(((xtrans + xadjust)* (double)xdots)/100);
 			xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
@@ -526,7 +526,7 @@ void plot_setup()
 			}
 			break;
 
-		case 2:
+		case WHICHIMAGE_BLUE:
 			xshift  -= (int)((g_eye_separation* (double)xdots)/200);
 			xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)

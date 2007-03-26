@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_which_image values */
+#define WHICHIMAGE_NONE 0
+#define WHICHIMAGE_RED	1
+#define WHICHIMAGE_BLUE	2
+
 /* FILLTYPE values */
 #define FILLTYPE_SURFACE_GRID	-1
 #define FILLTYPE_POINTS			0
