@@ -4460,9 +4460,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			ixstop = xxstop;
 		}
-		if (plot == symPIplot4J && ixstop > (i = (xxstart + xxstop)/2))
+		if (plot == symPIplot4J)
 		{
-			ixstop = i;
+			i = (xxstart + xxstop)/2;
+			if (ixstop > i)
+			{
+				ixstop = i;
+			}
 		}
 		break;
 	default:                  /* no symmetry */

@@ -1461,7 +1461,8 @@ int ifsload()                   /* read in IFS parameters */
 	}
 
 	file_gets(buf, 200, ifsfile);
-	if ((bufptr = strchr(buf, ';')) != NULL) /* use ';' as comment to eol */
+	bufptr = strchr(buf, ';');
+	if (bufptr != NULL) /* use ';' as comment to eol */
 	{
 		*bufptr = 0;
 	}

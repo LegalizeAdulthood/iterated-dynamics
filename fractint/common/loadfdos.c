@@ -330,7 +330,8 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 
 	if (gotrealmode == 0)  /* translate from temp table to permanent */
 	{
-		if ((j = g_video_table[i = g_init_mode].keynum) != 0)
+		j = g_video_table[i = g_init_mode].keynum;
+		if (j != 0)
 		{
 			for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)
 			{
@@ -434,7 +435,8 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 		--skipydots;
 	}
 
-	if ((finalaspectratio = fileaspectratio) == 0) /* assume display correct */
+	finalaspectratio = fileaspectratio;
+	if (finalaspectratio == 0) /* assume display correct */
 	{
 		finalaspectratio = (float)vid_aspect(filexdots, fileydots);
 	}

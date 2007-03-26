@@ -829,16 +829,20 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 		unsafe_div_bn(bntmp4, bntmp5, bntmp6);
 		add_a_bn(r, bntmp4);
 		half_a_bn(r);
-		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp4))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength)
 		{
-			if (comp < 4  /* perfect or near perfect match */
-				|| almost_match == 1) /* close enough for 2nd time */
+			comp = abs(cmp_bn(r, bntmp4));
+			if (comp < 8) /* if match or almost match */
 			{
-				break;
-			}
-			else /* this is the first time they almost matched */
-			{
-				almost_match++;
+				if (comp < 4  /* perfect or near perfect match */
+					|| almost_match == 1) /* close enough for 2nd time */
+				{
+					break;
+				}
+				else /* this is the first time they almost matched */
+				{
+					almost_match++;
+				}
 			}
 		}
 	}
@@ -977,16 +981,20 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 		sub_a_bn(bntmp2 + shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
 		sub_a_bn(r, bntmp2 + shiftfactor);        /* -r - (n*exp(-r) - 1) */
 
-		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength)
 		{
-			if (comp < 4  /* perfect or near perfect match */
-				|| almost_match == 1) /* close enough for 2nd time */
+			comp = abs(cmp_bn(r, bntmp5));
+			if (comp < 8) /* if match or almost match */
 			{
-				break;
-			}
-			else /* this is the first time they almost matched */
-			{
-				almost_match++;
+				if (comp < 4  /* perfect or near perfect match */
+					|| almost_match == 1) /* close enough for 2nd time */
+				{
+					break;
+				}
+				else /* this is the first time they almost matched */
+				{
+					almost_match++;
+				}
 			}
 		}
 		copy_bn(bntmp5, r); /* -r */
@@ -1268,19 +1276,23 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		putchar('\n');
 		bn_hexdump(r);
 #endif
-		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp3))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength)
 		{
+			comp = abs(cmp_bn(r, bntmp3));
+			if (comp < 8) /* if match or almost match */
+			{
 #ifdef CALCULATING_BIG_PI
-			printf("atan() loop comp=%i\n", comp);
+				printf("atan() loop comp=%i\n", comp);
 #endif
-			if (comp < 4  /* perfect or near perfect match */
-				|| almost_match == 1) /* close enough for 2nd time */
-			{
-				break;
-			}
-			else /* this is the first time they almost matched */
-			{
-				almost_match++;
+				if (comp < 4  /* perfect or near perfect match */
+					|| almost_match == 1) /* close enough for 2nd time */
+				{
+					break;
+				}
+				else /* this is the first time they almost matched */
+				{
+					almost_match++;
+				}
 			}
 		}
 

@@ -2362,11 +2362,14 @@ void (*isfunct(char *Str, int Len))(void)
 				if (!strnicmp(FnctList[n].s, Str, Len))  /* TIW 03-31-91 added far */
 				{
 					/* count function variables */
-					if ((functnum = whichfn(Str, Len)) != 0)    /* TIW 04-22-91 */
+					functnum = whichfn(Str, Len);
+					if (functnum != 0)    /* TIW 04-22-91 */
+					{
 						if (functnum > maxfn)                  /* TIW 04-22-91 */
 						{
 							maxfn = (char)functnum;                  /* TIW 04-22-91 */
 						}
+					}
 					return *FnctList[n].ptr;
 				}
 			}
