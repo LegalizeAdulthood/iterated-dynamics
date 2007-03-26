@@ -19,28 +19,28 @@ int ValidateLuts(char *fn)
 	char    temp[FILE_MAX_PATH + 1];
 	char    temp_fn[FILE_MAX_PATH];
 
-	strcpy(temp,MAP_name);
-	strcpy(temp_fn,fn);
+	strcpy(temp, MAP_name);
+	strcpy(temp_fn, fn);
 #ifdef XFRACT
-	merge_pathnames(temp,temp_fn,3);
+	merge_pathnames(temp, temp_fn, 3);
 #else
-	merge_pathnames(temp,temp_fn,0);
+	merge_pathnames(temp, temp_fn, 0);
 #endif
 	if (has_ext(temp) == NULL) /* Did name have an extension? */
 	{
-		strcat(temp,".map");  /* No? Then add .map */
+		strcat(temp, ".map");  /* No? Then add .map */
 	}
 	findpath(temp, line);        /* search the dos path */
 	f = fopen(line, "r");
 	if (f == NULL)
 	{
-		sprintf(line,"Could not load color map %s",fn);
-		stopmsg(0,line);
+		sprintf(line, "Could not load color map %s", fn);
+		stopmsg(0, line);
 		return 1;
 	}
 	for (index = 0; index < 256; index++)
 	{
-		if (fgets(line,100,f) == NULL)
+		if (fgets(line, 100, f) == NULL)
 		{
 			break;
 		}
@@ -57,7 +57,7 @@ int ValidateLuts(char *fn)
 		++index;
 	}
 	colorstate = 2;
-	strcpy(colorfile,fn);
+	strcpy(colorfile, fn);
 	return 0;
 }
 

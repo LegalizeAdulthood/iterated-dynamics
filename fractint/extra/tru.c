@@ -30,50 +30,50 @@ main()
 	char buf1[12];
 	char buf2[2];
 
-	fpin = fopen("iterates.tga","rb");
+	fpin = fopen("iterates.tga", "rb");
 	if (fpin == NULL)
 	{
-		fprintf(stderr,"Can't open flat.out\n");
+		fprintf(stderr, "Can't open flat.out\n");
 		exit(1);
 	}
-	fpout = fopen("new.tga","wb");
+	fpout = fopen("new.tga", "wb");
 	if (fpout == NULL)
 	{
-		fprintf(stderr,"Can't open new.tga\n");
+		fprintf(stderr, "Can't open new.tga\n");
 		exit(1);
 	}
 
-	fread (buf1,   12,1,fpin);    /* read 12 bytes */
-	fread (&xdots,  2,1,fpin);    /* read xdots */
-	fread (&ydots,  2,1,fpin);    /* read ydots */
-	fread (buf2,    2,1,fpin);    /* read 2 bytes */
-	fread (&maxiter,4,1,fpin);    /* read 4 bytes */
+	fread(buf1,    12, 1, fpin);    /* read 12 bytes */
+	fread(&xdots,   2, 1, fpin);    /* read xdots */
+	fread(&ydots,   2, 1, fpin);    /* read ydots */
+	fread(buf2,     2, 1, fpin);    /* read 2 bytes */
+	fread(&maxiter, 4, 1, fpin);    /* read 4 bytes */
 	buf1[0] = 0; /* were not writing maxiter */
-	fwrite (buf1,  12,1,fpout);   /* write 12 bytes */
-	fwrite (&xdots, 2,1,fpout);   /* write xdots */
-	fwrite (&ydots, 2,1,fpout);   /* write ydots */
-	fwrite (buf2,   2,1,fpout);   /* write 2 bytes */
+	fwrite(buf1,   12, 1, fpout);   /* write 12 bytes */
+	fwrite(&xdots,  2, 1, fpout);   /* write xdots */
+	fwrite(&ydots,  2, 1, fpout);   /* write ydots */
+	fwrite(buf2,    2, 1, fpout);   /* write 2 bytes */
 
-	printf("xdots %d ydots %d maxiter %ld\n",xdots,ydots,maxiter);
+	printf("xdots %d ydots %d maxiter %ld\n", xdots, ydots, maxiter);
 
 	for (j = 0; j < ydots; j++)
 	{
-//      printf("row %2d maxi %6ld   \r",j,maxi);
+//      printf("row %2d maxi %6ld   \r", j, maxi);
 		for (i = 0; i < xdots; i++)
 		{
 			iter = 0;
-			err = fread(&iter,3,1,fpin);
+			err = fread(&iter, 3, 1, fpin);
 			if (err == 0)
 			{
-				printf("err at row %d col %d\n",j,i);
+				printf("err at row %d col %d\n", j, i);
 				exit(1);
 			}
-			printf("row %2d col %2d iter %8ld          \n",j,i,iter);
+			printf("row %2d col %2d iter %8ld          \n", j, i, iter);
 			/* map iterations to colors */
-			rgbmap(maxiter,iter,&red,&green,&blue);
-			fwrite(&blue, 1,1,fpout);
-			fwrite(&green,1,1,fpout);
-			fwrite(&red,  1,1,fpout);
+			rgbmap(maxiter, iter, &red, &green, &blue);
+			fwrite(&blue, 1, 1, fpout);
+			fwrite(&green, 1, 1, fpout);
+			fwrite(&red,  1, 1, fpout);
 		}
 	}
 }

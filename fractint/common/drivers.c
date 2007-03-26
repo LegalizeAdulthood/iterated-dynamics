@@ -131,9 +131,9 @@ driver_terminate(void)
 
 #define METHOD_VOID(name_) \
 void driver_##name_(void) { (*g_driver->name_)(g_driver); }
-#define METHOD(type_,name_) \
+#define METHOD(type_, name_) \
 type_ driver_##name_(void) { return (*g_driver->name_)(g_driver); }
-#define METHOD_INT(name_) METHOD(int,name_)
+#define METHOD_INT(name_) METHOD(int, name_)
 
 void
 driver_schedule_alarm(int soon)

@@ -1,6 +1,6 @@
 /* PARSERFP.C  -- Part of FRACTINT fractal drawer.  */
 
-/*   By Chuck Ebbert  CompuServe [76306,1226]  */
+/*   By Chuck Ebbert  CompuServe [76306, 1226]  */
 /*                     internet: 76306.1226@compuserve.com  */
 
 /* Fast floating-point parser code.  The functions beginning with  */
@@ -74,7 +74,7 @@
 /*    Added "real" stack count variable and debug msgs for stack size. */
 /*    Added optimizer extension for commutative multiply.              */
 /*    P1, P2 will be treated as consts if they are never stored to.    */
-/*    Function fStkStoClr2 now emitted for sto,clr with 2 on stack.    */
+/*    Function fStkStoClr2 now emitted for sto, clr with 2 on stack.    */
 /*       "     fStkZero added to support new 'zero' function in v18    */
 /*    Added optimization for x^2 -> sqr(x).                            */
 /*    Changed "stopmsg" to "DBUGMSG" and made all macros upper case.   */
@@ -254,16 +254,16 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
-int pstopmsg(int x,char *msg)
+int pstopmsg(int x, char *msg)
 {
 	static FILE *fp = NULL;
 	if (fp == NULL)
 	{
-		fp = fopen("fpdebug.txt","w");
+		fp = fopen("fpdebug.txt", "w");
 	}
 	if (fp)
 	{
-		fprintf(fp,"%s\n",msg);
+		fprintf(fp, "%s\n", msg);
 		fflush(fp);
 	}
 	return x; /* just to quiet warnings */
@@ -272,35 +272,35 @@ int pstopmsg(int x,char *msg)
 #define stopmsg pstopmsg
 
 #define DBUGMSG(y) if (debugflag == 324 || debugflag == 322) stopmsg(0, (y))
-#define DBUGMSG1(y,p) \
+#define DBUGMSG1(y, p) \
 		if (debugflag == 324 || debugflag == 322){ \
 			sprintf(cDbgMsg, (y), (p)); \
 			stopmsg(0, cDbgMsg); \
 		}
-#define DBUGMSG2(y,p,q) \
+#define DBUGMSG2(y, p, q) \
 		if (debugflag == 324 || debugflag == 322){ \
 			sprintf(cDbgMsg, (y), (p), (q)); \
 			stopmsg(0, cDbgMsg); \
 		}
-#define DBUGMSG3(y,p,q,r) \
+#define DBUGMSG3(y, p, q, r) \
 		if (debugflag == 324 || debugflag == 322){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r)); \
 			stopmsg(0, cDbgMsg); \
 		}
-#define DBUGMSG4(y,p,q,r,s) \
+#define DBUGMSG4(y, p, q, r, s) \
 		if (debugflag == 324 || debugflag == 322){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
 			stopmsg(0, cDbgMsg); \
 		}
-#define FNAME(a,b,c,d,e,f) a,b,c,d,e,f    /* use the function name string */
+#define FNAME(a, b, c, d, e, f) a, b, c, d, e, f    /* use the function name string */
 #else
 
 #define DBUGMSG(y)
-#define DBUGMSG1(y,p)
-#define DBUGMSG2(y,p,q)
-#define DBUGMSG3(y,p,q,r)
-#define DBUGMSG4(y,p,q,r,s)
-#define FNAME(a,b,c,d,e,f) b,c,d,e,f    /* don't use the function name string */
+#define DBUGMSG1(y, p)
+#define DBUGMSG2(y, p, q)
+#define DBUGMSG3(y, p, q, r)
+#define DBUGMSG4(y, p, q, r, s)
+#define FNAME(a, b, c, d, e, f) b, c, d, e, f    /* don't use the function name string */
 #endif /* TESTFP */
 
 #define FN_LOD            0
@@ -422,7 +422,7 @@ struct fn_entry
 	{FNAME("/",       dStkDiv,     fStkDiv,    4, 2, -2) },          /*  5  */
 	{FNAME("Sto",     StkSto,      fStkSto,    2, 0,  0) },          /*  6  */
 	{FNAME("Sqr",     dStkSqr,     fStkSqr,    2, 2,  0) },          /*  7  */
-	{FNAME(":",       EndInit,     fStkEndInit,0, 0,  CLEAR_STK) },  /*  8  */
+	{FNAME(":",       EndInit,     fStkEndInit, 0, 0,  CLEAR_STK) },  /*  8  */
 	{FNAME("Mod",     dStkMod,     fStkMod,    2, 0,  0) },          /*  9  */
 	{FNAME("<=",      dStkLTE,     fStkLTE,    4, 0, -2) },          /* 10  */
 	{FNAME("Sin",     dStkSin,     fStkSin,    2, 2,  0) },          /* 11  */
@@ -465,10 +465,10 @@ struct fn_entry
 	{FNAME("Ceil",    dStkCeil,    fStkCeil,   2, 0,  0) },          /* 48  */
 	{FNAME("Trunc",   dStkTrunc,   fStkTrunc,  2, 0,  0) },          /* 49  */
 	{FNAME("Round",   dStkRound,   fStkRound,  2, 0,  0) },          /* 50  */
-	{FNAME("Jump",        StkJump,         fStkJump,       0, 0, 0)},/* 51  */
-	{FNAME("JumpOnTrue",  dStkJumpOnTrue,  fStkJumpOnTrue, 2, 0, 0)},/* 52  */
-	{FNAME("JumpOnFalse", dStkJumpOnFalse, fStkJumpOnFalse,2, 0, 0)},/* 53  */
-	{FNAME("JumpLabel",   StkJumpLabel,    fStkJumpLabel,  0, 0, 0)},/* 54  */
+	{FNAME("Jump",        StkJump,         fStkJump,       0, 0, 0)}, /* 51  */
+	{FNAME("JumpOnTrue",  dStkJumpOnTrue,  fStkJumpOnTrue, 2, 0, 0)}, /* 52  */
+	{FNAME("JumpOnFalse", dStkJumpOnFalse, fStkJumpOnFalse, 2, 0, 0)}, /* 53  */
+	{FNAME("JumpLabel",   StkJumpLabel,    fStkJumpLabel,  0, 0, 0)}, /* 54  */
 	{FNAME("One",     dStkOne,     fStkOne,    2, 0,  0) }           /* 55  */
 };
 
@@ -495,7 +495,7 @@ static int CvtFptr(void (* ffptr)(void), int MinStk, int FreeStk,
 			|| (MinStk != 0 && MinStk != 2 && MinStk != 4))
 	{
 awful_error:
-		stopmsg (0,"FATAL INTERNAL PARSER ERROR!");
+		stopmsg (0, "FATAL INTERNAL PARSER ERROR!");
 		return 0;  /* put out dire message and revert to old parser  */
 	}
 
@@ -1185,7 +1185,7 @@ awful_error:
 			dTemp = Load[LodPtr-1]->d.x;
 			if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
 			{
-				/* change ^[-1,0,1,or 2] to recip,one,ident,sqr  CAE 06NOV93  */
+				/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr  CAE 06NOV93  */
 				if (FNPTR(cvtptrx-1) == fStkPush2)
 				{
 					DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"

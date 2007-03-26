@@ -40,9 +40,9 @@ int get_byte()
 	return getc(fpin); /* EOF is -1, as desired */
 }
 
-int get_bytes(BYTE *where,int how_many)
+int get_bytes(BYTE *where, int how_many)
 {
-	return (int) fread((char *)where,1,how_many,fpin); /* EOF is -1, as desired */
+	return (int) fread((char *)where, 1, how_many, fpin); /* EOF is -1, as desired */
 }
 
 /*
@@ -82,8 +82,8 @@ int gifview()
 #if 0
 	{
 		char msg[100];
-		sprintf(msg,"Stack free in gifview: %d",stackavail());
-		stopmsg(0,msg);
+		sprintf(msg, "Stack free in gifview: %d", stackavail());
+		stopmsg(0, msg);
 	}
 #endif
 
@@ -130,7 +130,7 @@ int gifview()
 		}
 	}
 
-	if (strncmp((char *)buffer,"GIF87a",3) ||             /* use updated GIF specs */
+	if (strncmp((char *)buffer, "GIF87a", 3) ||             /* use updated GIF specs */
 		buffer[3] < '0' || buffer[3] > '9' ||
 		buffer[4] < '0' || buffer[4] > '9' ||
 		buffer[5] < 'A' || buffer[5] > 'z')
@@ -179,11 +179,11 @@ int gifview()
 	if (display3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
 	{
 		ValidateLuts(MAP_name);  /* read the palette file */
-		spindac(0,1); /* load it, but don't spin */
+		spindac(0, 1); /* load it, but don't spin */
 	}
 	if (g_dac_box[0][0] != 255)
 	{
-		spindac(0,1);       /* update the DAC */
+		spindac(0, 1);       /* update the DAC */
 	}
 	if (driver_diskp()) /* disk-video */
 	{
@@ -191,10 +191,10 @@ int gifview()
 		char ext[FILE_MAX_EXT];
 		char tmpname[15];
 		char msg[40];
-		splitpath(temp1,NULL,NULL,fname,ext);
-		makepath(tmpname,NULL,NULL,fname,ext);
-		sprintf(msg,"restoring %s",tmpname);
-		dvid_status(1,msg);
+		splitpath(temp1, NULL, NULL, fname, ext);
+		makepath(tmpname, NULL, NULL, fname, ext);
+		sprintf(msg, "restoring %s", tmpname);
+		dvid_status(1, msg);
 	}
 	dontreadcolor = 0;
 
@@ -307,9 +307,9 @@ int gifview()
 			*/
 			if (skipxdots == 0)
 			{
-				width = min(width,DECODERLINE_WIDTH);
+				width = min(width, DECODERLINE_WIDTH);
 			}
-			status = timer(1,NULL,width);
+			status = timer(1, NULL, width);
 			busy = 0;      /* for slideshow CALCWAIT */
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
@@ -340,8 +340,8 @@ int gifview()
 	close_file();
 	if (driver_diskp())  /* disk-video */
 	{
-		dvid_status(0,"Restore completed");
-		dvid_status(1,"");
+		dvid_status(0, "Restore completed");
+		dvid_status(1, "");
 	}
 
 	if (ditherbuf != NULL)  /* we're done, free dither memory */
@@ -376,7 +376,7 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
 static int out_line_dither(BYTE *pixels, int linelen)
 {
-	int i,nexterr,brt,err;
+	int i, nexterr, brt, err;
 	if (ditherbuf == NULL)
 	{
 		ditherbuf = malloc(linelen + 1);
@@ -448,7 +448,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 	int col;
 	for (col = colstart; col <= colstop; col++)
 	{
-		putcolor(col,row,*pixels);
+		putcolor(col, row, *pixels);
 		if (orbit_delay > 0)
 		{
 			sleepms(orbit_delay);
@@ -507,7 +507,7 @@ int sound_line(BYTE *pixels, int linelen)
 
 int pot_line(BYTE *pixels, int linelen)
 {
-	int row,col,saverowcount;
+	int row, col, saverowcount;
 	if (g_row_count == 0)
 		if (pot_startdisk() < 0)
 		{
@@ -521,11 +521,11 @@ int pot_line(BYTE *pixels, int linelen)
 	}
 	else if (!driver_diskp()) /* even line - display the line too */
 	{
-		out_line(pixels,linelen);
+		out_line(pixels, linelen);
 	}
 	for (col = 0; col < xdots; ++col)
 	{
-		writedisk(col + sxoffs,row + syoffs,*(pixels + col));
+		writedisk(col + sxoffs, row + syoffs, *(pixels + col));
 	}
 	g_row_count = saverowcount + 1;
 	return 0;

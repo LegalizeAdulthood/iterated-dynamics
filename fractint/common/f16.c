@@ -4,7 +4,7 @@
 ** strictly Targa16 type 10 files (run-length encoded 16-bit RGB).
 */
 
-/* Lee Daniel Crocker      CompuServe: 73407,2030   <== Preferred
+/* Lee Daniel Crocker      CompuServe: 73407, 2030   <== Preferred
 ** 1380 Jewett Ave.               BIX: lcrocker
 ** Pittsburg, CA  94565        Usenet: ...!ames!pacbell!sactoh0!siva!lee
 **

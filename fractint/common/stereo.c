@@ -126,7 +126,7 @@ static int get_min_max(void)
 		}
 		for (xd = 0; xd < xdots; xd++)
 		{
-			ldepth = getdepth(xd,yd);
+			ldepth = getdepth(xd, yd);
 			if (ldepth < MINC)
 			{
 				MINC = ldepth;
@@ -316,7 +316,7 @@ int do_AutoStereo(void)
 			{
 				buf[i] = (unsigned char)(rand()%colors);
 			}
-			outline_stereo(buf,xdots);
+			outline_stereo(buf, xdots);
 		}
 	}
 

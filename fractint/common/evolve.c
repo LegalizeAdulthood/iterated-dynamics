@@ -14,13 +14,13 @@ unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
-double opx,opy,newopx,newopy,paramrangex,paramrangey,dpx,dpy,fiddlefactor;
+double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
-char odpx,odpy,newodpx,newodpy;
+char odpx, odpy, newodpx, newodpy;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
-/* variation factors, opx,opy, paramrangex/y dpx, dpy.. used in field mapping
+/* variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
 	for smooth variation across screen. opx = offset param x, dpx = delta param
 	per image, paramrangex = variation across grid of param ...likewise for py */
 /* fiddlefactor is amount of random mutation used in random modes ,
@@ -62,7 +62,7 @@ typedef struct phistory_info    PARAMHIST;
 static PARAMHIST oldhistory = { 0 };
 
 void param_history(int mode);
-void varydbl(GENEBASE gene[],int randval,int i);
+void varydbl(GENEBASE gene[], int randval, int i);
 int varyint(int randvalue, int limit, int mode);
 int wrapped_positive_varyint(int randvalue, int limit, int mode);
 void varyinside(GENEBASE gene[], int randval, int i);
@@ -93,9 +93,9 @@ GENEBASE g_genes[NUMGENES] =
 	{ &inside,     varyinside,  0, "inside color", 2 },
 	{ &outside,    varyoutside, 0, "outside color", 3 },
 	{ &decomp[0],  varypwr2,    0, "decomposition", 4 },
-	{ &inversion[0],varyinv,    0, "invert radius", 7 },
-	{ &inversion[1],varyinv,    0, "invert center x", 7 },
-	{ &inversion[2],varyinv,    0, "invert center y", 7 },
+	{ &inversion[0], varyinv,    0, "invert radius", 7 },
+	{ &inversion[1], varyinv,    0, "invert center x", 7 },
+	{ &inversion[2], varyinv,    0, "invert center y", 7 },
 	{ &trigndx[0], varytrig,    0, "trig function 1", 5 },
 	{ &trigndx[1], varytrig,    0, "trig fn 2", 5 },
 	{ &trigndx[2], varytrig,    0, "trig fn 3", 5 },
@@ -158,7 +158,7 @@ void param_history(int mode)
 	}
 }
 
-void varydbl(GENEBASE gene[],int randval,int i) /* routine to vary doubles */
+void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
 int lclpy = gridsz - py - 1;
 	switch (gene[i].mutate)
@@ -231,26 +231,26 @@ int varyint(int randvalue, int limit, int mode)
 int wrapped_positive_varyint(int randvalue, int limit, int mode)
 {
 	int i;
-	i = varyint(randvalue,limit,mode);
+	i = varyint(randvalue, limit, mode);
 	return (i < 0) ? (limit + i) : i;
 }
 
 void varyinside(GENEBASE gene[], int randval, int i)
 {
-	int choices[9] = {-59,-60,-61,-100,-101,-102,-103,-104,-1};
+	int choices[9] = {-59, -60, -61, -100, -101, -102, -103, -104, -1};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
 	}
 	return;
 }
 
 void varyoutside(GENEBASE gene[], int randval, int i)
 {
-	int choices[8] = {-1,-2,-3,-4,-5,-6,-7,-8};
+	int choices[8] = {-1, -2, -3, -4, -5, -6, -7, -8};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,8,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
 	}
 	return;
 }
@@ -260,7 +260,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 	int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,7,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
 		/* move this next bit to varybot where it belongs */
 		setbailoutformula(bailoutest);
 	}
@@ -269,10 +269,10 @@ void varybotest(GENEBASE gene[], int randval, int i)
 
 void varypwr2(GENEBASE gene[], int randval, int i)
 {
-	int choices[9] = {0,2,4,8,16,32,64,128,256};
+	int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval,9,gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
 	}
 	return;
 }
@@ -295,7 +295,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
-		varydbl(gene,randval,i);
+		varydbl(gene, randval, i);
 	}
 	invert = (inversion[0] == 0.0) ? 0 : 3 ;
 }
@@ -310,8 +310,8 @@ void varyinv(GENEBASE gene[], int randval, int i)
 */
 int get_the_rest(void)
 {
-	char *evolvmodes[] = {"no","x","y","x + y","x-y","random","spread"};
-	int i,k,num, numtrig;
+	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+	int i, k, num, numtrig;
 	char *choices[20];
 	struct fullscreenvalues uvalues[20];
 
@@ -364,7 +364,7 @@ choose_vars_restart:
 	choices[++k]= "Press F4 to randomize all";
 	uvalues[k].type = '*';
 
-	i = fullscreen_prompt("Variable tweak central 2 of 2",k + 1,choices,uvalues,28,NULL);
+	i = fullscreen_prompt("Variable tweak central 2 of 2", k + 1, choices, uvalues, 28, NULL);
 
 	switch (i)
 	{
@@ -415,8 +415,8 @@ choose_vars_restart:
 
 int get_variations(void)
 {
-	char *evolvmodes[] = {"no","x","y","x+y","x-y","random","spread"};
-	int i,k,num, numparams;
+	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+	int i, k, num, numparams;
 	char *choices[20];
 	struct fullscreenvalues uvalues[20];
 	int firstparm = 0;
@@ -471,7 +471,7 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (typehasparm(julibrot?neworbittype:fractype,i,NULL) == 0)
+		if (typehasparm(julibrot?neworbittype:fractype, i, NULL) == 0)
 		{
 			if (fractype == FORMULA || fractype == FFORMULA)
 			{
@@ -520,7 +520,7 @@ choose_vars_restart:
 	choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
 	uvalues[k].type = '*';
 
-	i = fullscreen_prompt("Variable tweak central 1 of 2",k + 1,choices,uvalues,92,NULL);
+	i = fullscreen_prompt("Variable tweak central 1 of 2", k + 1, choices, uvalues, 92, NULL);
 
 	switch (i)
 	{
@@ -599,10 +599,10 @@ int get_evolve_Parms(void)
 	char *choices[20];
 	int oldhelpmode;
 	struct fullscreenvalues uvalues[20];
-	int i,j, k, tmp;
-	int old_evolving,old_gridsz;
+	int i, j, k, tmp;
+	int old_evolving, old_gridsz;
 	int old_variations = 0;
-	double old_paramrangex,old_paramrangey,old_opx,old_opy,old_fiddlefactor;
+	double old_paramrangex, old_paramrangey, old_opx, old_opy, old_fiddlefactor;
 
 	/* fill up the previous values arrays */
 	old_evolving      = evolving;
@@ -687,7 +687,7 @@ get_evol_restart:
 	uvalues[k].type = '*';
 	oldhelpmode = helpmode;     /* this prevents HELP from activating */
 	helpmode = HELPEVOL;
-	i = fullscreen_prompt("Evolution Mode Options",k + 1,choices,uvalues,255,NULL);
+	i = fullscreen_prompt("Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
 	helpmode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
@@ -881,8 +881,8 @@ void set_current_params(void)
 
 void fiddleparms(GENEBASE gene[], int ecount)
 {
-	/* call with px,py ... parameter set co-ords*/
-	/* set random seed then call rnd enough times to get to px,py */
+	/* call with px, py ... parameter set co-ords*/
+	/* set random seed then call rnd enough times to get to px, py */
 	/* 5/2/96 adding in indirection */
 	/* 26/2/96 adding in multiple methods and field map */
 	/* 29/4/96 going for proper handling of the whole gene array */
@@ -913,7 +913,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
 
 	for (i = 0; i < NUMGENES; i++)
 	{
-		(*(gene[i].varyfunc))(gene,rand(),i);
+		(*(gene[i].varyfunc))(gene, rand(), i);
 	}
 }
 
@@ -923,7 +923,7 @@ static void set_random(int ecount)
 	/* Call this routine to set the random # to the proper value */
 	/* if it may have changed, before fiddleparms() is called. */
 	/* Now called by fiddleparms(). */
-	int index,i;
+	int index, i;
 
 	srand(this_gen_rseed);
 	for (index = 0; index < ecount; index++)
@@ -957,7 +957,7 @@ void drawparmbox(int mode)
 {
 	/* draws parameter zoom box in evolver mode */
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
-	struct coords tl,tr,bl,br;
+	struct coords tl, tr, bl, br;
 	int grout;
 	if (!(evolving & EVOLVE_PARM_BOX))
 	{
@@ -997,8 +997,8 @@ void drawparmbox(int mode)
 	br.y = bl.y = ((py +1 + (int)parmzoom)*(int)(dysize + 1 + grout))-syoffs;
 #ifndef XFRACT
 	addbox(br); addbox(tr); addbox(bl); addbox(tl);
-	drawlines(tl,tr,bl.x-tl.x,bl.y-tl.y);
-	drawlines(tl,bl,tr.x-tl.x,tr.y-tl.y);
+	drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
+	drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
 	boxx[0] = tl.x + sxoffs;
 	boxy[0] = tl.y + syoffs;
@@ -1051,7 +1051,7 @@ void spiralmap(int count)
 	/* more intuitively useful order of drawing the sub images.  */
 	/* All the malarky with count is to allow resuming */
 
-	int i,mid,offset;
+	int i, mid, offset;
 	i = 0;
 	mid = gridsz / 2;
 	if (count == 0)  /* start in the middle */

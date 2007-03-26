@@ -22,16 +22,16 @@ The four routines are:
                  an invalid INT 10H call - "do-nothing" logic.
 
  endvideo()      do whatever you have to do to get it out of that
-                 special video mode (in case 'setvideo(3,0,0,0)'
+                 special video mode (in case 'setvideo(3, 0, 0, 0)'
                  won't do it) - this routine will typically be empty,
                  but some adapters like the 8514/A and TARGA need
                  special handling which would go here.
 
  writevideo(int x, int y, int color)  write a pixel using color number
-                 'color' at screen coordinates x,y (where 0,0 is the
-                 top left corner, and sxdots,0 is the top right corner)
+                 'color' at screen coordinates x, y (where 0, 0 is the
+                 top left corner, and sxdots, 0 is the top right corner)
 
- int readvideo(int x, int y)  return the color number of pixel x,y
+ int readvideo(int x, int y)  return the color number of pixel x, y
                  using the same coordinate logic as 'writevideo()'
 
  int readvideopalette() read the contents of the adapter's video
@@ -87,7 +87,7 @@ return 0;                              /* set flag: video started */
 union REGS regs;
 
 regs.x.ax = 0x13;
-int86(0x10,&regs,&regs);
+int86(0x10, &regs, &regs);
 
 */
 
@@ -110,7 +110,7 @@ regs.h.al = (char)color;
 regs.x.bx = 0;
 regs.x.cx = x;
 regs.x.dx = y;
-int86(0x10,&regs,&regs);
+int86(0x10, &regs, &regs);
 #endif
 }
 
@@ -125,7 +125,7 @@ regs.x.ax = 0x0d00;                     /* invoke INT 10H with AH = 0DH */
 regs.x.bx = 0;
 regs.x.cx = x;
 regs.x.dx = y;
-int86(0x10,&regs,&regs);
+int86(0x10, &regs, &regs);
 
 return (unsigned int)regs.h.al;        /* return pixel color */
 #endif

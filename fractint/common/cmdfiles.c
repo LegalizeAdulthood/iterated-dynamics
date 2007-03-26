@@ -25,10 +25,10 @@
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #endif
 
-static int  cmdfile(FILE *,int);
-static int  next_command(char *,int,FILE *,char *,int *,int);
-static int  next_line(FILE *,char *,int);
-int  cmdarg(char *,int);
+static int  cmdfile(FILE *, int);
+static int  next_command(char *, int, FILE *, char *, int *, int);
+static int  next_line(FILE *, char *, int);
+int  cmdarg(char *, int);
 static void argerror(const char *);
 static void initvars_run(void);
 static void initvars_restart(void);
@@ -98,7 +98,7 @@ BYTE    usemag;                 /* use center-mag corners   */
 long    bailout;                /* user input bailout value */
 enum bailouts bailoutest;       /* test used for determining bailout */
 double  inversion[3];           /* radius, xcenter, ycenter */
-int     rotate_lo,rotate_hi;    /* cycling color range      */
+int     rotate_lo, rotate_hi;    /* cycling color range      */
 int *ranges;                /* iter->color ranges mapping */
 int     rangeslen = 0;          /* size of ranges array     */
 BYTE *mapdacbox = NULL;     /* map= (default colors)    */
@@ -108,7 +108,7 @@ int     colorstate;             /* 0, g_dac_box matches default (bios or map=) *
 int     colorpreloaded;         /* if g_dac_box preloaded for next mode select */
 int     save_release;           /* release creating PAR file*/
 char    dontreadcolor = 0;        /* flag for reading color from GIF */
-double  math_tol[2] = {.05,.05};  /* For math transition */
+double  math_tol[2] = {.05, .05};  /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
 int truemode = 0;               /* truecolor coloring scheme */
@@ -138,7 +138,7 @@ int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images *
 int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
 int first_init = 1;               /* first time into cmdfiles? */
 static int init_rseed;
-static char initcorners,initparams;
+static char initcorners, initparams;
 struct fractalspecificstuff *curfractalspecific = NULL;
 
 char FormFileName[FILE_MAX_PATH]; /* file to find (type=)formulas in */
@@ -195,7 +195,7 @@ char s_makepar[] =          "makepar";
 int lzw[2];
 
 /*
-		cmdfiles(argc,argv) process the command-line arguments
+		cmdfiles(argc, argv) process the command-line arguments
 				it also processes the 'sstools.ini' file and any
 				indirect files ('fractint @myfile')
 */
@@ -210,9 +210,9 @@ int getpower10(LDBL x)
 	int p;
 
 #ifdef USE_LONG_DOUBLE
-	sprintf(string,"%+.1Le", x);
+	sprintf(string, "%+.1Le", x);
 #else
-	sprintf(string,"%+.1le", x);
+	sprintf(string, "%+.1le", x);
 #endif
 	p = atoi(string + 5);
 	return p;
@@ -220,7 +220,7 @@ int getpower10(LDBL x)
 
 
 
-int cmdfiles(int argc,char **argv)
+int cmdfiles(int argc, char **argv)
 {
 	int     i;
 	char    curarg[141];
@@ -236,7 +236,7 @@ int cmdfiles(int argc,char **argv)
 	findpath(curarg, tempstring); /* look for SSTOOLS.INI */
 	if (tempstring[0] != 0)              /* found it! */
 	{
-		initfile = fopen(tempstring,"r");
+		initfile = fopen(tempstring, "r");
 		if (initfile != NULL)
 		{
 			cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
@@ -247,34 +247,34 @@ int cmdfiles(int argc,char **argv)
 	{
 #ifdef XFRACT
 		/* Let the xfract code take a look at the argument */
-		if (unixarg(argc,argv,&i)) continue;
+		if (unixarg(argc, argv, &i)) continue;
 #endif
-		strcpy(curarg,argv[i]);
+		strcpy(curarg, argv[i]);
 		if (curarg[0] == ';')             /* start of comments? */
 		{
 			break;
 		}
 		if (curarg[0] != '@')  /* simple command? */
 		{
-			if (strchr(curarg,'=') == NULL)  /* not xxx = yyy, so check for gif */
+			if (strchr(curarg, '=') == NULL)  /* not xxx = yyy, so check for gif */
 			{
-				strcpy(tempstring,curarg);
+				strcpy(tempstring, curarg);
 				if (has_ext(curarg) == NULL)
 				{
-					strcat(tempstring,".gif");
+					strcat(tempstring, ".gif");
 				}
-				initfile = fopen(tempstring,"rb");
+				initfile = fopen(tempstring, "rb");
 				if (initfile != NULL)
 				{
-					fread(tempstring,6,1,initfile);
+					fread(tempstring, 6, 1, initfile);
 					if (tempstring[0] == 'G'
 						&& tempstring[1] == 'I'
 						&& tempstring[2] == 'F'
 						&& tempstring[3] >= '8' && tempstring[3] <= '9'
 						&& tempstring[4] >= '0' && tempstring[4] <= '9')
 					{
-						strcpy(readname,curarg);
-						extract_filename(browsename,readname);
+						strcpy(readname, curarg);
+						extract_filename(browsename, readname);
 						curarg[0] = (char)(showfile = 0);
 					}
 					fclose(initfile);
@@ -287,13 +287,13 @@ int cmdfiles(int argc,char **argv)
 		}
 		else
 		{
-			sptr = strchr(curarg,'/');
+			sptr = strchr(curarg, '/');
 			if (sptr != NULL)  /* @filename/setname? */
 			{
 				*sptr = 0;
 				if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
 				{
-					init_msg("",CommandFile,0);
+					init_msg("", CommandFile, 0);
 				}
 				strcpy(CommandName, sptr + 1);
 				if (find_file_item(CommandFile, CommandName, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
@@ -320,7 +320,7 @@ int cmdfiles(int argc,char **argv)
 		showfile = 1;  /* nor startup image file              */
 	}
 
-	init_msg("",NULL,0);  /* this causes driver_get_key if init_msg called on runup */
+	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
 	if (debugflag != 110)
 	{
@@ -329,9 +329,9 @@ int cmdfiles(int argc,char **argv)
 /*
 {
 				char msg[MSGLEN];
-				sprintf(msg,"cmdfiles colorpreloaded %d showfile %d savedac %d",
+				sprintf(msg, "cmdfiles colorpreloaded %d showfile %d savedac %d",
 				colorpreloaded, showfile, savedac);
-				stopmsg(0,msg);
+				stopmsg(0, msg);
 			}
 */
 	/* PAR reads a file and sets color */
@@ -356,9 +356,9 @@ int load_commands(FILE *infile)
 /*
 			{
 				char msg[MSGLEN];
-				sprintf(msg,"load commands colorpreloaded %d showfile %d savedac %d",
+				sprintf(msg, "load commands colorpreloaded %d showfile %d savedac %d",
 				colorpreloaded, showfile, savedac);
-				stopmsg(0,msg);
+				stopmsg(0, msg);
 			}
 */
 
@@ -382,7 +382,7 @@ static void initvars_run()              /* once per run init */
 	{
 		if (isadirectory(p) != 0)
 		{
-			strcpy(tempdir,p);
+			strcpy(tempdir, p);
 			fix_dirname(tempdir);
 		}
 	}
@@ -430,7 +430,7 @@ static void initvars_restart()          /* <ins> key init */
 	reset_ifs_defn();
 	rflag = 0;                           /* not a fixed srand() seed */
 	rseed = init_rseed;
-	strcpy(readname,DOTSLASH);           /* initially current directory */
+	strcpy(readname, DOTSLASH);           /* initially current directory */
 	showfile = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	initcyclelimit = 55;                   /* spin-DAC default speed limit */
@@ -588,7 +588,7 @@ static void reset_ifs_defn()
 }
 
 
-static int cmdfile(FILE *handle,int mode)
+static int cmdfile(FILE *handle, int mode)
 	/* mode = 0 command line @filename         */
 	/*        1 sstools.ini                    */
 	/*        2 <@> command after startup      */
@@ -615,13 +615,13 @@ static int cmdfile(FILE *handle,int mode)
 		}
 	}
 	linebuf[0] = 0;
-	while (next_command(cmdbuf,10000,handle,linebuf,&lineoffset,mode) > 0)
+	while (next_command(cmdbuf, 10000, handle, linebuf, &lineoffset, mode) > 0)
 	{
-		if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf,"}") == 0)
+		if ((mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME) && strcmp(cmdbuf, "}") == 0)
 		{
 			break;
 		}
-		if ((i = cmdarg(cmdbuf,mode)) < 0)
+		if ((i = cmdarg(cmdbuf, mode)) < 0)
 		{
 			break;
 		}
@@ -640,8 +640,8 @@ static int cmdfile(FILE *handle,int mode)
 	return changeflag;
 }
 
-static int next_command(char *cmdbuf,int maxlen,
-	FILE *handle,char *linebuf,int *lineoffset,int mode)
+static int next_command(char *cmdbuf, int maxlen,
+	FILE *handle, char *linebuf, int *lineoffset, int mode)
 {
 	int i;
 	int cmdlen = 0;
@@ -682,12 +682,12 @@ static int next_command(char *cmdbuf,int maxlen,
 						for (i = 0; i < 4; i++)
 							if (CommandComment[i][0] == 0)
 							{
-								strcpy(CommandComment[i],lineptr);
+								strcpy(CommandComment[i], lineptr);
 								break;
 							}
 					}
 				}
-				if (next_line(handle,linebuf,mode) != 0)
+				if (next_line(handle, linebuf, mode) != 0)
 				{
 					return -1; /* eof */
 				}
@@ -697,7 +697,7 @@ static int next_command(char *cmdbuf,int maxlen,
 		if (*lineptr == '\\'              /* continuation onto next line? */
 			&& *(lineptr + 1) == 0)
 		{
-			if (next_line(handle,linebuf,mode) != 0)
+			if (next_line(handle, linebuf, mode) != 0)
 			{
 				argerror(cmdbuf);           /* missing continuation */
 				return -1;
@@ -718,25 +718,25 @@ static int next_command(char *cmdbuf,int maxlen,
 	}
 }
 
-static int next_line(FILE *handle,char *linebuf,int mode)
+static int next_line(FILE *handle, char *linebuf, int mode)
 {
 	int toolssection;
 	char tmpbuf[11];
 	toolssection = 0;
-	while (file_gets(linebuf,512,handle) >= 0)
+	while (file_gets(linebuf, 512, handle) >= 0)
 	{
 		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  /* check for [fractint] */
 		{
 #ifndef XFRACT
-			strncpy(tmpbuf,&linebuf[1],9);
+			strncpy(tmpbuf, &linebuf[1], 9);
 			tmpbuf[9] = 0;
 			strlwr(tmpbuf);
-			toolssection = strncmp(tmpbuf,"fractint]",9);
+			toolssection = strncmp(tmpbuf, "fractint]", 9);
 #else
-			strncpy(tmpbuf,&linebuf[1],10);
+			strncpy(tmpbuf, &linebuf[1], 10);
 			tmpbuf[10] = 0;
 			strlwr(tmpbuf);
-			toolssection = strncmp(tmpbuf,"xfractint]",10);
+			toolssection = strncmp(tmpbuf, "xfractint]", 10);
 #endif
 			continue;                              /* skip tools section heading */
 		}
@@ -746,7 +746,7 @@ static int next_line(FILE *handle,char *linebuf,int mode)
 }
 
 /*
-	cmdarg(string,mode) processes a single command-line/command-file argument
+	cmdarg(string, mode) processes a single command-line/command-file argument
 	return:
 		-1 error, >= 0 ok
 		if ok, return value:
@@ -768,7 +768,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	int     yesnoval[16];                /* 0 if 'n', 1 if 'y', -1 if not */
 	double  ftemp;
 	int     i, j, k;
-	char    *argptr,*argptr2;
+	char    *argptr, *argptr2;
 	int     totparms;                    /* # of / delimited parms    */
 	int     intparms;                    /* # of / delimited ints     */
 	int     floatparms;                  /* # of / delimited floats   */
@@ -838,7 +838,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	{
 		long ll;
 		lastarg = 0;
-		argptr2 = strchr(argptr,'/');
+		argptr2 = strchr(argptr, '/');
 		if (argptr2 == NULL)     /* find next '/' */
 		{
 			argptr2 = argptr + strlen(argptr);
@@ -989,7 +989,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			return 3;
 		}
 
-		if (strcmp(variable,"textsafe") == 0)  /* textsafe == ? */
+		if (strcmp(variable, "textsafe") == 0)  /* textsafe == ? */
 		{
 			/* textsafe no longer used, do validity checking, but gobble argument */
 			if (first_init)
@@ -1057,7 +1057,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 #endif
 		}
 
-		if (strcmp(variable,s_makepar) == 0)
+		if (strcmp(variable, s_makepar) == 0)
 		{
 			char *slash, *next = NULL;
 			if (totparms < 1 || totparms > 2)
@@ -2491,8 +2491,8 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 			soundflag = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 		}
 
-		/* soundflag is used as a bitfield... bit 0,1,2 used for whether sound
-			is modified by an orbits x,y,or z component. and also to turn it on
+		/* soundflag is used as a bitfield... bit 0, 1, 2 used for whether sound
+			is modified by an orbits x, y, or z component. and also to turn it on
 			or off (0==off, 1==beep (or yes), 2==x, 3 == y, 4 == z),
 			Bit 3 is used for flagging the PC speaker sound,
 			Bit 4 for OPL3 FM soundcard output,
@@ -3278,7 +3278,7 @@ badarg:
 
 static void parse_textcolors(char *value)
 {
-	int i,j,k,hexval;
+	int i, j, k, hexval;
 	if (strcmp(value, "mono") == 0)
 	{
 		for (k = 0; k < sizeof(txtcolor); ++k)
@@ -3304,7 +3304,7 @@ static void parse_textcolors(char *value)
 			if (*value == 0) break;
 			if (*value != '/')
 			{
-				sscanf(value,"%x",&hexval);
+				sscanf(value, "%x", &hexval);
 				i = (hexval / 16) & 7;
 				j = hexval & 15;
 				if (i == j || (i == 0 && j == 8)) /* force contrast */
@@ -3312,7 +3312,7 @@ static void parse_textcolors(char *value)
 					j = 15;
 				}
 				txtcolor[k] = (BYTE) (i*16 + j);
-				value = strchr(value,'/');
+				value = strchr(value, '/');
 				if (value == NULL) break;
 			}
 			++value;
@@ -3323,12 +3323,12 @@ static void parse_textcolors(char *value)
 
 static int parse_colors(char *value)
 {
-	int i,j,k;
+	int i, j, k;
 	if (*value == '@')
 	{
-		if (merge_pathnames(MAP_name,&value[1],3) < 0)
+		if (merge_pathnames(MAP_name, &value[1], 3) < 0)
 		{
-			init_msg("",&value[1],3);
+			init_msg("", &value[1], 3);
 		}
 		if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
 		{
@@ -3340,9 +3340,9 @@ static int parse_colors(char *value)
 		}
 		else
 		{
-			if (merge_pathnames(colorfile,&value[1],3) < 0)
+			if (merge_pathnames(colorfile, &value[1], 3) < 0)
 			{
-				init_msg("",&value[1],3);
+				init_msg("", &value[1], 3);
 			}
 			colorstate = 2;
 		}
@@ -3358,7 +3358,7 @@ static int parse_colors(char *value)
 			{
 				if (i == 0 || smooth
 					|| (smooth = atoi(value + 1)) < 2
-					|| (value = strchr(value,'>')) == NULL)
+					|| (value = strchr(value, '>')) == NULL)
 				{
 					goto badcolor;
 				}
@@ -3378,7 +3378,7 @@ static int parse_colors(char *value)
 					g_dac_box[i][j] = (BYTE)k;
 					if (smooth)
 					{
-						int start,spread,cnum;
+						int start, spread, cnum;
 						start = i - (spread = smooth + 1);
 						cnum = 0;
 						if ((k - (int)g_dac_box[start][j]) == 0)
@@ -3414,7 +3414,7 @@ static int parse_colors(char *value)
 		colorstate = 1;
 	}
 	colorpreloaded = 1;
-	memcpy(olddacbox,g_dac_box,256*3);
+	memcpy(olddacbox, g_dac_box, 256*3);
 	return 0;
 badcolor:
 	return -1;
@@ -3491,12 +3491,12 @@ void set_3d_defaults()
 static int get_bf(bf_t bf, char *curarg)
 {
 	char *s;
-	s = strchr(curarg,'/');
+	s = strchr(curarg, '/');
 	if (s)
 	{
 		*s = 0;
 	}
-	strtobf(bf,curarg);
+	strtobf(bf, curarg);
 	if (s)
 	{
 		*s = '/';
@@ -3509,7 +3509,7 @@ int get_curarg_len(char *curarg)
 {
 	int len;
 	char *s;
-	s = strchr(curarg,'/');
+	s = strchr(curarg, '/');
 	if (s)
 	{
 		*s = 0;
@@ -3525,7 +3525,7 @@ int get_curarg_len(char *curarg)
 /* Get max length of current args */
 int get_max_curarg_len(char *floatvalstr[], int totparms)
 {
-	int i,tmp,max_str;
+	int i, tmp, max_str;
 	max_str = 0;
 	for (i = 0; i < totparms; i++)
 	{
@@ -3544,7 +3544,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stopmsg() but can be used in cmdfiles()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
-int init_msg(char *cmdstr,char *badfilename,int mode)
+int init_msg(char *cmdstr, char *badfilename, int mode)
 {
 	char *modestr[4] =
 		{"command line", "sstools.ini", "PAR file", "PAR file"};
@@ -3562,38 +3562,38 @@ int init_msg(char *cmdstr,char *badfilename,int mode)
 			return -1;
 		}
 	}
-	strncpy(cmd,cmdstr,30);
+	strncpy(cmd, cmdstr, 30);
 	cmd[29] = 0;
 
 	if (*cmd)
 	{
-		strcat(cmd,"=");
+		strcat(cmd, "=");
 	}
 	if (badfilename)
 	{
-		sprintf(msg,"Can't find %s%s, please check %s",cmd,badfilename,modestr[mode]);
+		sprintf(msg, "Can't find %s%s, please check %s", cmd, badfilename, modestr[mode]);
 	}
 	if (first_init)  /* & cmdfiles hasn't finished 1st try */
 	{
 		if (row == 1 && badfilename)
 		{
 			driver_set_for_text();
-			driver_put_string(0,0,15, "Fractint found the following problems when parsing commands: ");
+			driver_put_string(0, 0, 15, "Fractint found the following problems when parsing commands: ");
 		}
 		if (badfilename)
 		{
-			driver_put_string(row++,0,7,msg);
+			driver_put_string(row++, 0, 7, msg);
 		}
 		else if (row > 1)
 		{
-			driver_put_string(++row,0,15, "Press Escape to abort, any other key to continue");
-			driver_move_cursor(row + 1,0);
+			driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
+			driver_move_cursor(row + 1, 0);
 			dopause(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
 		}
 	}
 	else if (badfilename)
 	{
-		stopmsg(0,msg);
+		stopmsg(0, msg);
 	}
 	return 0;
 }

@@ -1,4 +1,4 @@
-/* Parser.c (C) 1990, Mark C. Peterson, CompuServe [70441,3353]
+/* Parser.c (C) 1990, Mark C. Peterson, CompuServe [70441, 3353]
 	All rights reserved.
 
 	Code may be used in any program provided the author is credited
@@ -17,7 +17,7 @@
 	(203) 276-9721
 */
 
-/*      Chuck Ebbert (CompuServe [76306,1226]) changed code marked 'CAE fp'    */
+/*      Chuck Ebbert (CompuServe [76306, 1226]) changed code marked 'CAE fp'    */
 /*   for fast 387 floating-point math.  See PARSERA.ASM and PARSERFP.C */
 /*   (13 Dec 1992.)  */
 /* */
@@ -975,7 +975,7 @@ void lStkDiv(void)
 	multiply(Arg1->l.y, Arg1->l.y, bitshift);
 	x = divide(Arg1->l.x, mod, bitshift);
 	y = -divide(Arg1->l.y, mod, bitshift);
-	/* pb 900617 changed next 4 lines to use x2,y2 instead of x,y */
+	/* pb 900617 changed next 4 lines to use x2, y2 instead of x, y */
 	x2 = multiply(Arg2->l.x, x, bitshift) - multiply(Arg2->l.y, y, bitshift);
 	y2 = multiply(Arg2->l.y, x, bitshift) + multiply(Arg2->l.x, y, bitshift);
 	Arg2->l.x = x2;
@@ -1148,8 +1148,8 @@ void lStkTan(void)
 	SinhCosh086(y, &sinhy, &coshy);
 	denom = cosx + coshy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinx,denom,bitshift);
-	Arg1->l.y = divide(sinhy,denom,bitshift);
+	Arg1->l.x = divide(sinx, denom, bitshift);
+	Arg1->l.y = divide(sinhy, denom, bitshift);
 }
 #endif
 
@@ -1185,8 +1185,8 @@ void lStkTanh(void)
 	SinhCosh086(x, &sinhx, &coshx);
 	denom = coshx + cosy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinhx,denom,bitshift);
-	Arg1->l.y = divide(siny,denom,bitshift);
+	Arg1->l.x = divide(sinhx, denom, bitshift);
+	Arg1->l.y = divide(siny, denom, bitshift);
 }
 #endif
 
@@ -1222,8 +1222,8 @@ void lStkCoTan(void)
 	SinhCosh086(y, &sinhy, &coshy);
 	denom = coshy - cosx;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinx,denom,bitshift);
-	Arg1->l.y = -divide(sinhy,denom,bitshift);
+	Arg1->l.x = divide(sinx, denom, bitshift);
+	Arg1->l.y = -divide(sinhy, denom, bitshift);
 }
 #endif
 
@@ -1259,8 +1259,8 @@ void lStkCoTanh(void)
 	SinhCosh086(x, &sinhx, &coshx);
 	denom = coshx - cosy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinhx,denom,bitshift);
-	Arg1->l.y = -divide(siny,denom,bitshift);
+	Arg1->l.x = divide(sinhx, denom, bitshift);
+	Arg1->l.y = -divide(siny, denom, bitshift);
 }
 #endif
 
@@ -1285,29 +1285,29 @@ void dStkRecip(void)
 void mStkRecip(void)
 {
 	struct MP mod;
-	mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x),*MPmul(Arg1->m.y, Arg1->m.y));
+	mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
 	if (mod.Mant == 0L)
 	{
 		overflow = 1;
 		return;
 	}
-	Arg1->m.x = *MPdiv(Arg1->m.x,mod);
-	Arg1->m.y = *MPdiv(Arg1->m.y,mod);
+	Arg1->m.x = *MPdiv(Arg1->m.x, mod);
+	Arg1->m.y = *MPdiv(Arg1->m.y, mod);
 	Arg1->m.y.Exp ^= 0x8000;
 }
 
 void lStkRecip(void)
 {
 	long mod;
-	mod = multiply(Arg1->l.x,Arg1->l.x,bitshift)
-		+ multiply(Arg1->l.y,Arg1->l.y,bitshift);
+	mod = multiply(Arg1->l.x, Arg1->l.x, bitshift)
+		+ multiply(Arg1->l.y, Arg1->l.y, bitshift);
 	if (save_release > 1920)
 	{
 		ChkLongDenom(mod);
 	}
 	else if (mod <= 0L) return;
-	Arg1->l.x =  divide(Arg1->l.x,mod,bitshift);
-	Arg1->l.y = -divide(Arg1->l.y,mod,bitshift);
+	Arg1->l.x =  divide(Arg1->l.x, mod, bitshift);
+	Arg1->l.y = -divide(Arg1->l.y, mod, bitshift);
 }
 #endif
 
@@ -2047,10 +2047,10 @@ unsigned SkipWhiteSpace(char *Str)
 	return n - 1;
 }
 
-/* detect if constant is part of a (a,b) construct */
+/* detect if constant is part of a (a, b) construct */
 static int isconst_pair(char *Str)
 {
-	int n,j;
+	int n, j;
 	int answer = 0;
 	/* skip past first number */
 	for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++);
@@ -2269,7 +2269,7 @@ struct FNCT_LIST FnctList[] =  /* TIW 03-31-91 added far */
 	{"tan",   &StkTan},     /* TIW 04-22-91 */
 	{"tanh",  &StkTanh},    /* TIW 04-22-91 */
 	{"cotan", &StkCoTan},   /* TIW 04-24-91 */
-	{"cotanh",&StkCoTanh},  /* TIW 04-24-91 */
+	{"cotanh", &StkCoTanh},  /* TIW 04-24-91 */
 	{"cosxx", &StkCosXX},   /* PB  04-28-91 */
 	{"srand", &StkSRand},   /* MCP 11-21-91 */
 	{"asin",  &StkASin},    /* TIW 11-26-94 */
@@ -2324,7 +2324,7 @@ int whichfn(char *s, int len)
 	{
 		out = 0;
 	}
-	else if (strnicmp(s,"fn",2))
+	else if (strnicmp(s, "fn", 2))
 	{
 		out = 0;
 	}
@@ -2417,11 +2417,11 @@ SymStr[] =
 	{"XAXIS",         1},
 	{"YAXIS_NOPARM", -2},
 	{"YAXIS",         2},
-	{"XYAXIS_NOPARM",-3},
+	{"XYAXIS_NOPARM", -3},
 	{"XYAXIS",        3},
-	{"ORIGIN_NOPARM",-4},
+	{"ORIGIN_NOPARM", -4},
 	{"ORIGIN",        4},
-	{"PI_SYM_NOPARM",-5},
+	{"PI_SYM_NOPARM", -5},
 	{"PI_SYM",        5},
 	{"XAXIS_NOIMAG", -6},
 	{"XAXIS_NOREAL",  6},
@@ -2442,7 +2442,7 @@ static int ParseStr(char *Str, int pass)
 	jump_index = 0;
 	if (!typespecific_workarea)
 	{
-		stopmsg(0,ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+		stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return 1;
 	}
 	switch (MathType)
@@ -3451,7 +3451,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	filepos = ftell(openfile);
 	if (debugflag == 96)
 	{
-		debug_token = fopen("frmconst.txt","at");
+		debug_token = fopen("frmconst.txt", "at");
 	}
 
 	while (!done)
@@ -3834,7 +3834,7 @@ int frm_get_param_stuff(char *Name)
 	{
 		return 0;  /*  and don't reset the pointers  */
 	}
-	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(FormFileName, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
@@ -3847,32 +3847,32 @@ int frm_get_param_stuff(char *Name)
 
 	if (c != '{')
 	{
-		stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+		stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
 		fclose(entry_file);
 		return 0;
 	}
 
 	if (debugflag == 96)
 	{
-		debug_token = fopen("frmtokens.txt","at");
+		debug_token = fopen("frmtokens.txt", "at");
 		if (debug_token != NULL)
 		{
-			fprintf(debug_token,"%s\n", Name);
+			fprintf(debug_token, "%s\n", Name);
 		}
 	}
 	while (frmgettoken(entry_file, &current_token))
 	{
 		if (debug_token != NULL)
 		{
-			fprintf(debug_token,"%s\n", current_token.token_str);
-			fprintf(debug_token,"token_type is %d\n", current_token.token_type);
-			fprintf(debug_token,"token_id is %d\n", current_token.token_id);
+			fprintf(debug_token, "%s\n", current_token.token_str);
+			fprintf(debug_token, "token_type is %d\n", current_token.token_type);
+			fprintf(debug_token, "token_id is %d\n", current_token.token_id);
 			if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT)
 			{
-				fprintf(debug_token,"Real value is %f\n", current_token.token_const.x);
-				fprintf(debug_token,"Imag value is %f\n", current_token.token_const.y);
+				fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
+				fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
 			}
-			fprintf(debug_token,"\n");
+			fprintf(debug_token, "\n");
 		}
 		switch (current_token.token_type)
 		{
@@ -3942,10 +3942,10 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		switch (c = getc(open_file))
 		{
 			case EOF: case '\032':
-				stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
 				return 0;
 			case '\r': case '\n':
-				stopmsg(0,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+				stopmsg(0, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 				return 0;
 			case ' ': case '\t':
 				at_end_of_name = 1;
@@ -3989,13 +3989,13 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			switch (c = getc(open_file))
 			{
 				case EOF: case '\032':
-					stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+					stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
 					return 0;
 				case '\r': case '\n':
-					stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 					return 0;
 				case '{':
-					stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
 					return 0;
 				case ' ': case '\t':
 					break;
@@ -4038,10 +4038,10 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			switch (c = getc(open_file))
 			{
 				case EOF: case '\032':
-					stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_UNEXPECTED_EOF));
+					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
 					return 0;
 				case '\r': case '\n':
-					stopmsg(STOPMSG_FIXED_FONT,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+					stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 					return 0;
 				case '{':
 					done = 1;
@@ -4097,13 +4097,13 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 
 	if (debugflag == 96)
 	{
-		debug_fp = fopen("debugfrm.txt","at");
+		debug_fp = fopen("debugfrm.txt", "at");
 		if (debug_fp != NULL)
 		{
-			fprintf(debug_fp,"%s\n",FormName);
+			fprintf(debug_fp, "%s\n", FormName);
 			if (symmetry != 0)
 			{
-				fprintf(debug_fp,"%s\n", SymStr[symmetry].s);
+				fprintf(debug_fp, "%s\n", SymStr[symmetry].s);
 			}
 		}
 	}
@@ -4162,7 +4162,7 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 
 	if (debug_fp != NULL && FormulaStr != NULL)
 	{
-		fprintf(debug_fp,"   %s\n",FormulaStr);
+		fprintf(debug_fp, "   %s\n", FormulaStr);
 	}
 	if (debug_fp != NULL)
 	{
@@ -4202,7 +4202,7 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 	}
 
 	/* TW 5-31-94 add search for FRM files in directory */
-	if (find_file_item(FormFileName,Name,&entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(FormFileName, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 1;
@@ -4214,7 +4214,7 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 	if (FormStr)  /*  No errors while making string */
 	{
 		parser_allocate();  /*  ParseStr() will test if this alloc worked  */
-		if (ParseStr(FormStr,1))
+		if (ParseStr(FormStr, 1))
 		{
 			return 1;   /*  parse failed, don't change fn pointers  */
 		}
@@ -4290,7 +4290,7 @@ int intFormulaSetup(void)
 void init_misc()
 {
 	static struct ConstArg vv[5];
-	static union Arg argfirst,argsecond;
+	static union Arg argfirst, argsecond;
 	if (!v)
 	{
 		v = vv;
@@ -4320,7 +4320,7 @@ static void parser_allocate(void)
 	/* Note that XFRACT will waste about 6k here for pfls */
 	/* Somewhat more memory is now allocated than in v17 here */
 	/* however Store and Load were reduced in size to help make up for it */
-	long f_size,Store_size,Load_size,v_size, p_size;
+	long f_size, Store_size, Load_size, v_size, p_size;
 	int pass, is_bad_form = 0;
 	long end_dx_array;
 	/* TW Jan 1 1996 Made two passes to determine actual values of
@@ -4741,7 +4741,7 @@ int frm_prescan(FILE *open_file)
 				switch (this_token.token_id)
 				{
 					case END_OF_FILE:
-						stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+						stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
 						fseek(open_file, orig_pos, SEEK_SET);
 						return 0;
 					case ILLEGAL_CHARACTER:
