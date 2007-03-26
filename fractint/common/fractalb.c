@@ -87,13 +87,13 @@ void showcorners(char *s)
 void showbfglobals(char *s)
 {
 	char msg[300];
-	sprintf(msg, "%s\n\
-bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n\
-shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n\
-bfdecimals=%d ",
-					s, bnstep, bnlength, intlength, rlength, padding,
-					shiftfactor, decimals, bflength, rbflength,
-					bfdecimals);
+	sprintf(msg, "%s\n"
+		"bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n"
+		"shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"
+		"bfdecimals=%d ",
+		s, bnstep, bnlength, intlength, rlength, padding,
+		shiftfactor, decimals, bflength, rbflength,
+		bfdecimals);
 	if (stopmsg(0, msg) == -1)
 	{
 		goodbye();
@@ -102,7 +102,7 @@ bfdecimals=%d ",
 
 void showcornersbf(char *s)
 {
-	int dec=decimals;
+	int dec = decimals;
 	char msg[100], msg1[100], msg3[600];
 	if (dec > 20) dec = 20;
 	bftostr(msg, dec, bfxmin);

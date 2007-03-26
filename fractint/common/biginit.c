@@ -181,7 +181,7 @@ static void init_bf_2(void)
 	bnnew.y    = bnroot + ptr; ptr += rlength;
 	bnsaved.x  = bnroot + ptr; ptr += bnlength;
 	bnsaved.y  = bnroot + ptr; ptr += bnlength;
-	bnclosenuff= bnroot + ptr; ptr += bnlength;
+	bnclosenuff = bnroot + ptr; ptr += bnlength;
 	bnparm.x   = bnroot + ptr; ptr += bnlength;
 	bnparm.y   = bnroot + ptr; ptr += bnlength;
 	bntmpsqrx  = bnroot + ptr; ptr += rlength;
@@ -200,7 +200,7 @@ static void init_bf_2(void)
 	bfnew.y    = bnroot + ptr; ptr += rbflength + 2;
 	bfsaved.x  = bnroot + ptr; ptr += bflength + 2;
 	bfsaved.y  = bnroot + ptr; ptr += bflength + 2;
-	bfclosenuff= bnroot + ptr; ptr += bflength + 2;
+	bfclosenuff = bnroot + ptr; ptr += bflength + 2;
 	bfparm.x   = bnroot + ptr; ptr += bflength + 2;
 	bfparm.y   = bnroot + ptr; ptr += bflength + 2;
 	bftmpsqrx  = bnroot + ptr; ptr += rbflength + 2;
@@ -338,8 +338,8 @@ static int restore_bf_vars(void)
 void free_bf_vars()
 {
 	bf_save_len = bf_math = 0;
-	bnstep=bnlength=intlength=rlength=padding=shiftfactor=decimals = 0;
-	bflength=rbflength=bfdecimals = 0;
+	bnstep = bnlength = intlength = rlength = padding = shiftfactor = decimals = 0;
+	bflength = rbflength = bfdecimals = 0;
 }
 
 /************************************************************************/
@@ -351,7 +351,7 @@ bn_t alloc_stack(size_t size)
 	long stack_addr;
 	if (bf_math == 0)
 	{
-		stopmsg(0, "alloc_stack called with bf_math==0");
+		stopmsg(0, "alloc_stack called with bf_math == 0");
 		return 0;
 	}
 	stack_addr = (long)((stack_ptr-bnroot) + size); /* +ENDVID, part of bnroot */

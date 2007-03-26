@@ -446,7 +446,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
 	int col;
-	for (col=colstart; col <= colstop; col++)
+	for (col = colstart; col <= colstop; col++)
 	{
 		putcolor(col,row,*pixels);
 		if (orbit_delay > 0)

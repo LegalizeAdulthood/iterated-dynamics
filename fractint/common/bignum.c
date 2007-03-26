@@ -87,12 +87,12 @@ value of rlength must be in the range: 2*bnlength <= rlength < bnlength.
 The amount by which rlength exceeds bnlength accounts for the extra bytes
 that must be multiplied so that the first bnlength bytes are correct.
 These extra bytes are refered to in the code as the "padding," that is:
-rlength=bnlength + padding.
+rlength = bnlength + padding.
 
 All three of the values, bnlength, rlength, and therefore padding, must be
 multiples of the size of memory blocks being used for arithmetic (2 on
 8086/286 and 4 on 386+).  Typically, the padding is 2*blocksize.  In the
-case where bnlength=blocksize, padding can only be blocksize to keep
+case where bnlength = blocksize, padding can only be blocksize to keep
 rlength from being too big.
 
 The product of two bignumbers, n1 and n2, will then be a result, r, which
@@ -546,7 +546,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 			orig_rlength,
 			orig_shiftfactor;
 
-	/* use Newton's recursive method for zeroing in on 1/n : r=r(2-rn) */
+	/* use Newton's recursive method for zeroing in on 1/n : r = r(2-rn) */
 
 	if (is_bn_neg(n))
 	{ /* will be a lot easier to deal with just positives */
@@ -614,15 +614,15 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 		n = orig_n + orig_bnlength - bnlength;
 		/* bntmp1 = orig_bntmp1 + orig_bnlength - bnlength; */
 
-		unsafe_mult_bn(bntmp1, r, n); /* bntmp1=rn */
+		unsafe_mult_bn(bntmp1, r, n); /* bntmp1 = rn */
 		inttobn(bntmp2, 1);  /* bntmp2 = 1.0 */
 		if (bnlength == orig_bnlength && cmp_bn(bntmp2, bntmp1 + shiftfactor) == 0) /* if not different */
 		{
 			break;  /* they must be the same */
 		}
 		inttobn(bntmp2, 2); /* bntmp2 = 2.0 */
-		sub_bn(bntmp3, bntmp2, bntmp1 + shiftfactor); /* bntmp3=2-rn */
-		unsafe_mult_bn(bntmp1, r, bntmp3); /* bntmp1=r(2-rn) */
+		sub_bn(bntmp3, bntmp2, bntmp1 + shiftfactor); /* bntmp3 = 2-rn */
+		unsafe_mult_bn(bntmp1, r, bntmp3); /* bntmp1 = r(2-rn) */
 		copy_bn(r, bntmp1 + shiftfactor); /* r = bntmp1 */
 	}
 
@@ -770,7 +770,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 			orig_rlength,
 			orig_shiftfactor;
 
-/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r + n/r) */
+/* use Newton's recursive method for zeroing in on sqrt(n): r = .5(r + n/r) */
 
 	if (is_bn_neg(n))
 	{ /* sqrt of a neg, return 0 */
@@ -829,7 +829,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 		unsafe_div_bn(bntmp4, bntmp5, bntmp6);
 		add_a_bn(r, bntmp4);
 		half_a_bn(r);
-		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp4))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp4))) < 8) /* if match or almost match */
 		{
 			if (comp < 4  /* perfect or near perfect match */
 				|| almost_match == 1) /* close enough for 2nd time */
@@ -902,7 +902,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 			orig_rlength,
 			orig_shiftfactor;
 
-/* use Newton's recursive method for zeroing in on ln(n): r=r + n*exp(-r)-1 */
+/* use Newton's recursive method for zeroing in on ln(n): r = r + n*exp(-r)-1 */
 
 	if (is_bn_neg(n) || is_bn_zero(n))
 	{ /* error, return largest neg value */
@@ -977,7 +977,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 		sub_a_bn(bntmp2 + shiftfactor, bntmp4);   /* n*exp(-r) - 1 */
 		sub_a_bn(r, bntmp2 + shiftfactor);        /* -r - (n*exp(-r) - 1) */
 
-		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp5))) < 8) /* if match or almost match */
 		{
 			if (comp < 4  /* perfect or near perfect match */
 				|| almost_match == 1) /* close enough for 2nd time */
@@ -1092,7 +1092,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 #endif
 
 /* use Taylor Series (very slow convergence) */
-	copy_bn(s, n); /* start with s=n */
+	copy_bn(s, n); /* start with s = n */
 	inttobn(c, 1); /* start with c = 1 */
 	copy_bn(bntmp1, n); /* the current x^n/n! */
 
@@ -1184,7 +1184,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 			orig_shiftfactor;
 	int large_arg;
 
-/* use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r)) */
+/* use Newton's recursive method for zeroing in on atan(n): r = r-cos(r)(sin(r)-n*cos(r)) */
 
 	if (is_bn_neg(n))
 	{
@@ -1268,7 +1268,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		putchar('\n');
 		bn_hexdump(r);
 #endif
-		if (bnlength == orig_bnlength && (comp=abs(cmp_bn(r, bntmp3))) < 8) /* if match or almost match */
+		if (bnlength == orig_bnlength && (comp = abs(cmp_bn(r, bntmp3))) < 8) /* if match or almost match */
 		{
 #ifdef CALCULATING_BIG_PI
 			printf("atan() loop comp=%i\n", comp);

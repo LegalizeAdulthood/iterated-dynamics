@@ -197,7 +197,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	param[0] = (double)degree; /* JCO 7/1/92 */
 	symmetry = (degree % 4 == 0) ? XYAXIS : XAXIS;
 
-	calctype=StandardFractal;
+	calctype = StandardFractal;
 #if !defined(XFRACT)
 	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
@@ -477,7 +477,7 @@ JuliafpSetup(void)
 	case LAMBDAEXP:
 		if (parm.y == 0.0)
 		{
-			symmetry=XAXIS;
+			symmetry = XAXIS;
 		}
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
@@ -499,7 +499,7 @@ JuliafpSetup(void)
 		}
 		if (trigndx[0] != SQR)
 		{
-			symmetry=NOSYM;
+			symmetry = NOSYM;
 		}
 	case QUATJULFP:
 		attractors = 0;   /* attractors broken since code checks r, i not j, k */

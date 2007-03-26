@@ -1275,7 +1275,7 @@ void (*StkCoTanh)(void) = dStkCoTanh;
 void dStkRecip(void)
 {
 	double mod;
-	mod =Arg1->d.x*Arg1->d.x + Arg1->d.y*Arg1->d.y;
+	mod = Arg1->d.x*Arg1->d.x + Arg1->d.y*Arg1->d.y;
 	ChkFloatDenom(mod);
 	Arg1->d.x =  Arg1->d.x/mod;
 	Arg1->d.y = -Arg1->d.y/mod;
@@ -2954,7 +2954,7 @@ int Formula(void)
 	LodPtr = InitLodPtr;
 	StoPtr = InitStoPtr;
 	OpPtr = InitOpPtr;
-	jump_index=InitJumpIndex;
+	jump_index = InitJumpIndex;
 	/* Set the random number, MCP 11-21-91 */
 	if (SetRandom || Randomized)
 	{
@@ -3353,7 +3353,7 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	}
 	while (!done)
 	{
-		switch (c=frmgetchar(openfile))
+		switch (c = frmgetchar(openfile))
 		{
 			case EOF: case '\032':
 				tok->token_str[i] = (char) 0;
@@ -3362,7 +3362,7 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 				return 0;
 			CASE_NUM:
 				tok->token_str[i++] = (char) c;
-				filepos=ftell(openfile);
+				filepos = ftell(openfile);
 				break;
 			case '.':
 				if (got_decimal_already || !getting_base)
@@ -3377,7 +3377,7 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 				{
 					tok->token_str[i++] = (char) c;
 					got_decimal_already = 1;
-					filepos=ftell(openfile);
+					filepos = ftell(openfile);
 				}
 				break;
 			default :
@@ -3386,7 +3386,7 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 					tok->token_str[i++] = (char) c;
 					getting_base = 0;
 					got_decimal_already = 0;
-					filepos=ftell(openfile);
+					filepos = ftell(openfile);
 					c = frmgetchar(openfile);
 					if (c == '-' || c == '+')
 					{
@@ -3568,7 +3568,7 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 	int var_name_too_long = 0;
 	long filepos;
 	long last_filepos = ftell(openfile);
-	while ((c=frmgetchar(openfile)) != EOF && c != '\032')
+	while ((c = frmgetchar(openfile)) != EOF && c != '\032')
 	{
 		filepos = ftell(openfile);
 		switch (c)
@@ -3717,7 +3717,7 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			filepos = ftell(openfile);
 			if (c == '<' || c == '>' || c == '=')
 			{
-				c=frmgetchar(openfile);
+				c = frmgetchar(openfile);
 				if (c == '=')
 				{
 					this_token->token_str[i++] = (char) c;
@@ -3729,7 +3729,7 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			}
 			else if (c == '!')
 			{
-				c=frmgetchar(openfile);
+				c = frmgetchar(openfile);
 				if (c == '=')
 				{
 					this_token->token_str[i++] = (char) c;
@@ -3745,7 +3745,7 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			}
 			else if (c == '|')
 			{
-				c=frmgetchar(openfile);
+				c = frmgetchar(openfile);
 				if (c == '|')
 				{
 					this_token->token_str[i++] = (char) c;
@@ -3757,7 +3757,7 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			}
 			else if (c == '&')
 			{
-				c=frmgetchar(openfile);
+				c = frmgetchar(openfile);
 				if (c == '&')
 				{
 					this_token->token_str[i++] = (char) c;
@@ -3841,7 +3841,7 @@ int frm_get_param_stuff(char *Name)
 	}
 	do
 	{
-		c=frmgetchar(entry_file);
+		c = frmgetchar(entry_file);
 	}
 	while (c != '{' && c != EOF && c != '\032');
 
@@ -4521,7 +4521,7 @@ void display_var_list()
 {
 	struct var_list_st *p;
 	stopmsg(0, "List of user defined variables:\n");
-	for (p = var_list; p; p=p->next_item)
+	for (p = var_list; p; p = p->next_item)
 	{
 		stopmsg(0, p->name);
 	}
@@ -4533,13 +4533,13 @@ void display_const_lists()
 	struct const_list_st *p;
 	char msgbuf[800];
 	stopmsg (0, "Complex constants are:");
-	for (p = complx_list; p; p=p->next_item)
+	for (p = complx_list; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
 		stopmsg(0, msgbuf);
 	}
 	stopmsg (0, "Real constants are:");
-	for (p = real_list; p; p=p->next_item)
+	for (p = real_list; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
 		stopmsg(0, msgbuf);
@@ -4561,7 +4561,7 @@ struct const_list_st  *const_list_alloc()
 void init_var_list()
 {
 	struct var_list_st *temp, *p;
-	for (p = var_list; p; p=temp)
+	for (p = var_list; p; p = temp)
 	{
 		temp = p->next_item;
 		free(p);
@@ -4573,13 +4573,13 @@ void init_var_list()
 void init_const_lists()
 {
 	struct const_list_st *temp, *p;
-	for (p = complx_list; p; p=temp)
+	for (p = complx_list; p; p = temp)
 	{
 		temp = p->next_item;
 		free(p);
 	}
 	complx_list = NULL;
-	for (p = real_list; p; p=temp)
+	for (p = real_list; p; p = temp)
 	{
 		temp = p->next_item;
 		free(p);
@@ -4650,15 +4650,15 @@ void count_lists()
 	complx_count = 0;
 	real_count = 0;
 
-	for (p = var_list; p; p=p->next_item)
+	for (p = var_list; p; p = p->next_item)
 	{
 		var_count++;
 	}
-	for (q = complx_list; q; q=q->next_item)
+	for (q = complx_list; q; q = q->next_item)
 	{
 		complx_count++;
 	}
-	for (q = real_list; q; q=q->next_item)
+	for (q = real_list; q; q = q->next_item)
 	{
 		real_count++;
 	}

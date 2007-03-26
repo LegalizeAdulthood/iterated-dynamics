@@ -1770,7 +1770,7 @@ static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsig
 	{
 		*S = 0;      /* Color is black! and Sat has no meaning */
 	}
-	if (*S == 0)    /* R=G=B => shade of grey and Hue has no meaning */
+	if (*S == 0)    /* R = G=B => shade of grey and Hue has no meaning */
 	{
 		*H = 0;
 		*V = *V << 8;
@@ -2471,7 +2471,7 @@ static int first_time(int linelen, VECTOR v)
 
 	zcoord = filecolors;
 
-	err=line3dmem();
+	err = line3dmem();
 	if (err != 0)
 	{
 		return err;

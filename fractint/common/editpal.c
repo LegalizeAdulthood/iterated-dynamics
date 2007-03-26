@@ -156,7 +156,7 @@ char undofile[] = "FRACTINT.$$2";  /* file where undo list is stored */
 
 #define NEWX(size)     malloc(size)
 #define NEWC(class_)     ((class_ *) malloc(sizeof(class_)))
-#define DELETE(block)  (free(block), block=NULL)  /* just for warning */
+#define DELETE(block)  (free(block), block = NULL)  /* just for warning */
 
 #ifdef XFRACT
 int editpal_cursor = 0;
@@ -567,7 +567,7 @@ static void hdline(int x, int y, int width)
 	int ctr;
 	BYTE *ptr;
 
-	for (ctr = 0, ptr=line_buff; ctr < width; ctr++, ptr++)
+	for (ctr = 0, ptr = line_buff; ctr < width; ctr++, ptr++)
 	{
 		*ptr = (BYTE)((ctr&2) ? bg_color : fg_color);
 	}
@@ -1467,11 +1467,11 @@ static int CEditor_Edit(CEditor *me)
 struct _RGBEditor
 {
 	int       x, y;            /* position */
-	int       curr;            /* 0=r, 1=g, 2=b */
+	int       curr;            /* 0 = r, 1 = g, 2 = b */
 	int       pal;             /* palette number */
 	BOOLEAN   done;
 	BOOLEAN   hidden;
-	CEditor  *color[3];        /* color editors 0=r, 1=g, 2=b */
+	CEditor  *color[3];        /* color editors 0 = r, 1 = g, 2 = b */
 #ifndef XFRACT
 	void    (*other_key)(int key, struct _RGBEditor *e, VOIDPTR info);
 	void    (*change)(struct _RGBEditor *e, VOIDPTR info);
@@ -2618,9 +2618,9 @@ static void PalTable__UpdateDAC(PalTable *me)
 
 			if (a > b)
 			{
-				int t=a;
-				a=b;
-				b=t;
+				int t = a;
+				a = b;
+				b = t;
 			}
 
 			memmove(g_dac_box[a], &me->pal[a], 3*(1 + (b-a)));
@@ -3178,7 +3178,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 	case 'F':
 	case 'f':    /* toggle freestyle palette edit mode */
-		me->freestyle= (BOOLEAN)((me->freestyle) ? FALSE :TRUE);
+		me->freestyle = (BOOLEAN)((me->freestyle) ? FALSE :TRUE);
 		PalTable__SetCurr(me, -1, 0);
 		if (!me->freestyle)   /* if turning off... */
 		{

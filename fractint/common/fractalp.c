@@ -2334,14 +2334,14 @@ int typehasparm(int type, int parm, char *buf)
 	char *ret = NULL;
 	if (0 <= parm && parm < 4)
 	{
-		ret=fractalspecific[type].param[parm];
+		ret = fractalspecific[type].param[parm];
 	}
 	else if (parm >= 4 && parm < MAXPARAMS)
 	{
-		extra=find_extra_param(type);
+		extra = find_extra_param(type);
 		if (extra > -1)
 		{
-			ret=moreparams[extra].param[parm-4];
+			ret = moreparams[extra].param[parm-4];
 		}
 	}
 	if (ret)

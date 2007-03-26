@@ -482,10 +482,10 @@ skip_UI:
 				/* guarantee that there are no blank comments above the last
 					non-blank par_comment */
 				int i, last;
-				for (last=-1, i = 0; i < 4; i++)
+				for (last = -1, i = 0; i < 4; i++)
 					if (*par_comment[i])
 					{
-						last=i;
+						last = i;
 					}
 				for (i = 0; i < last; i++)
 					if (*CommandComment[i] == '\0')
@@ -579,7 +579,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 	double Xmagfactor, Rotation, Skew;
 	char *sptr;
 	char buf[81];
-	bf_t bfXctr=NULL, bfYctr=NULL;
+	bf_t bfXctr = NULL, bfYctr = NULL;
 	int saved;
 	saved = save_stack();
 	if (bf_math)
@@ -2335,7 +2335,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
 	strcpy(gifout, "fractmig.gif");
 
-	temp= &olddacbox[0][0];                 /* a safe place for our temp data */
+	temp = &olddacbox[0][0];                 /* a safe place for our temp data */
 
 	gif87a_flag = 1;                        /* for now, force this */
 
@@ -2648,7 +2648,7 @@ void flip_image(int key)
 			}
 			for (j = 0; j < ydots; j++)
 			{
-				tempdot=getcolor(i, j);
+				tempdot = getcolor(i, j);
 				putcolor(i, j, getcolor(xdots-1-i, j));
 				putcolor(xdots-1-i, j, tempdot);
 			}
@@ -2680,7 +2680,7 @@ void flip_image(int key)
 			}
 			for (i = 0; i < xdots; i++)
 			{
-				tempdot=getcolor(i, j);
+				tempdot = getcolor(i, j);
 				putcolor(i, j, getcolor(i, ydots-1-j));
 				putcolor(i, ydots-1-j, tempdot);
 			}
@@ -2712,7 +2712,7 @@ void flip_image(int key)
 			}
 			for (j = 0; j < ydots; j++)
 			{
-				tempdot=getcolor(i, j);
+				tempdot = getcolor(i, j);
 				putcolor(i, j, getcolor(xdots-1-i, ydots-1-j));
 				putcolor(xdots-1-i, ydots-1-j, tempdot);
 			}
@@ -2845,7 +2845,7 @@ void expand_comments(char *target, char *source)
 {
 	int i, j, k, escape = 0;
 	char c, oldc, varname[MAXVNAME];
-	i=j=k = 0;
+	i = j = k = 0;
 	c = oldc = 0;
 	while (i < MAXCMT && j < MAXCMT && (c = *(source + i++)) != '\0')
 	{

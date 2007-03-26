@@ -181,7 +181,7 @@ start:
 	/* skip white space: */
 	do
 	{
-		out=fgetc(fpss);
+		out = fgetc(fpss);
 	}
 	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
@@ -195,7 +195,7 @@ start:
 		case ';':         /* comment from here to end of line, skip it */
 			do
 			{
-				out=fgetc(fpss);
+				out = fgetc(fpss);
 			}
 			while (out != '\n' && out != EOF);
 			goto start;
@@ -217,7 +217,7 @@ start:
 		{
 			buffer[i++] = (char)out;
 		}
-		out=fgetc(fpss);
+		out = fgetc(fpss);
 		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
 		{
 			break;
@@ -231,7 +231,7 @@ start:
 	out = -12345;
 	if (isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
 	{
-		out=atoi(buffer);
+		out = atoi(buffer);
 	}
 	else if (strcmp((char *)buffer, "MESSAGE") == 0)
 		{
@@ -248,7 +248,7 @@ start:
 				buf[40] = 0;
 				fgets(buf, 40, fpss);
 				len = (int) strlen(buf);
-				buf[len-1]=0; /* zap newline */
+				buf[len-1] = 0; /* zap newline */
 				message(secs, (char *)buf);
 			}
 			out = 0;
@@ -325,7 +325,7 @@ start:
 int
 startslideshow()
 {
-	fpss=fopen(autoname, "r");
+	fpss = fopen(autoname, "r");
 	if (fpss == NULL)
 	{
 		g_slides = SLIDES_OFF;
@@ -352,10 +352,10 @@ void recordshw(int key)
 	char mn[MAX_MNEMONIC];
 	float dt;
 	dt = (float)ticks;      /* save time of last call */
-	ticks=clock_ticks();  /* current time */
+	ticks = clock_ticks();  /* current time */
 	if (fpss == NULL)
 	{
-		fpss=fopen(autoname, "w");
+		fpss = fopen(autoname, "w");
 		if (fpss == NULL)
 		{
 			return;

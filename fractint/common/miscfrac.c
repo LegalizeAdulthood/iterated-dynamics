@@ -45,9 +45,9 @@ int test(void)
 		return 0;
 	}
 	numpasses = (stdcalcmode == '1') ? 0 : 1;
-	for (passes=startpass; passes <= numpasses ; passes++)
+	for (passes = startpass; passes <= numpasses ; passes++)
 	{
-		for (row = startrow; row <= iystop; row=row + 1 + numpasses)
+		for (row = startrow; row <= iystop; row = row + 1 + numpasses)
 		{
 			for (col = 0; col <= ixstop; col++)       /* look at each point on screen */
 			{
@@ -90,7 +90,7 @@ int test(void)
 
 static int iparmx;      /* iparmx = parm.x*8 */
 static int shiftvalue;  /* shift based on #colors */
-static int recur1=1;
+static int recur1 = 1;
 static int pcolors;
 static int recur_level = 0;
 U16 max_plasma;
@@ -206,12 +206,12 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 	static struct sub subx, suby;
 
 	/*
-	recur1=1;
+	recur1 = 1;
 	for (i = 1; i <= recur; i++)
 	{
 		recur1 = recur1*2;
 	}
-	recur1=320/recur1;
+	recur1 = 320/recur1;
 	*/
 	recur1 = (int)(320L >> recur);
 	suby.t = 2;
@@ -332,28 +332,28 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
 
 	x = (x1 + x2) >> 1;
 	y = (y1 + y2) >> 1;
-	v=getpix(x, y1);
+	v = getpix(x, y1);
 	if (v == 0)
 	{
-		v=adjust(x1, y1, x , y1, x2, y1);
+		v = adjust(x1, y1, x , y1, x2, y1);
 	}
-	i=v;
-	v=getpix(x2, y);
+	i = v;
+	v = getpix(x2, y);
 	if (v == 0)
 	{
-		v=adjust(x2, y1, x2, y , x2, y2);
-	}
-	i += v;
-	v=getpix(x, y2);
-	if (v == 0)
-	{
-		v=adjust(x1, y2, x , y2, x2, y2);
+		v = adjust(x2, y1, x2, y , x2, y2);
 	}
 	i += v;
-	v=getpix(x1, y);
+	v = getpix(x, y2);
 	if (v == 0)
 	{
-		v=adjust(x1, y1, x1, y , x1, y2);
+		v = adjust(x1, y2, x , y2, x2, y2);
+	}
+	i += v;
+	v = getpix(x1, y);
+	if (v == 0)
+	{
+		v = adjust(x1, y1, x1, y , x1, y2);
 	}
 	i += v;
 
@@ -376,7 +376,7 @@ int plasma()
 	U16 rnd[4];
 	int OldPotFlag, OldPot16bit;
 
-	OldPotFlag=OldPot16bit=plasma_check = 0;
+	OldPotFlag = OldPot16bit = plasma_check = 0;
 
 	if (colors < 4)
 	{
@@ -533,7 +533,7 @@ static void set_Plasma_palette()
 	if (mapdacbox || colorpreloaded) return;    /* map= specified */
 
 	dac[0].red  = 0 ;
-	dac[0].green= 0 ;
+	dac[0].green = 0 ;
 	dac[0].blue = 0 ;
 	for (i = 1; i <= 85; i++)
 	{
@@ -700,8 +700,8 @@ int diffusion()
 			break;
 		case 1: /* Release new point on the line ymin somewhere between xmin
 					and xmax */
-			y=ymin;
-			x=RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
+			y = ymin;
+			x = RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
 			break;
 		case 2: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
@@ -808,12 +808,12 @@ int diffusion()
 			if (!--colorcount) /* If the counter reaches zero then shift*/
 			{
 				currentcolor++;      /* Increase the current color and wrap */
-				currentcolor%=colors;  /* around skipping zero */
+				currentcolor %= colors;  /* around skipping zero */
 				if (!currentcolor)
 				{
 					currentcolor++;
 				}
-				colorcount=colorshift;  /* and reset the counter */
+				colorcount = colorshift;  /* and reset the counter */
 			}
 		}
 
@@ -1155,9 +1155,6 @@ int BifurcLambda() /* Used by lyanupov */
 
 /* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
 
-#define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out)=Arg1->l
-#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d
-
 int BifurcVerhulstTrig()
 {
 /*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
@@ -1323,7 +1320,7 @@ int popcorn()   /* subset of std engine */
 		get_resume(sizeof(start_row), &start_row, 0);
 		end_resume();
 	}
-	kbdcount=max_kbdcount;
+	kbdcount = max_kbdcount;
 	plot = noplot;
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
 	for (row = start_row; row <= iystop; row++)
@@ -1377,7 +1374,7 @@ int lyapunov ()
 	{
 		return -1;
 		}
-	overflow=FALSE;
+	overflow = FALSE;
 	if (param[1] == 1) Population = (1.0 + rand())/(2.0 + RAND_MAX);
 	else if (param[1] == 0)
 	{
@@ -1415,7 +1412,7 @@ int lyapunov ()
 		: lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 #else
-	color=lyapunov_cycles_in_c(filter_cycles, a, b);
+	color = lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 	if (inside > 0 && color == 0)
 	{
@@ -1463,10 +1460,10 @@ int lya_setup ()
 	long i;
 	int t;
 
-	filter_cycles=(long)param[2];
+	filter_cycles = (long)param[2];
 	if (filter_cycles == 0)
 	{
-		filter_cycles=maxit/2;
+		filter_cycles = maxit/2;
 	}
 	lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
 	lyaLength = 1;
@@ -1484,13 +1481,13 @@ int lya_setup ()
 	}
 	lyaRxy[lyaLength++] = 0;
 	if (save_release < 1732)              /* swap axes prior to 1732 */
-		for (t=lyaLength; t >= 0; t--)
+		for (t = lyaLength; t >= 0; t--)
 		{
 				lyaRxy[t] = !lyaRxy[t];
 		}
 	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
-		stdcalcmode='1';
+		stdcalcmode = '1';
 		if (inside == 1) inside = 0;
 		}
 	if (inside < 0)
@@ -1511,7 +1508,7 @@ int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
 	int color, count, lnadjust;
 	long i;
 	double lyap, total, temp;
-	/* e10=22026.4657948  e-10=0.0000453999297625 */
+	/* e10 = 22026.4657948  e-10 = 0.0000453999297625 */
 
 	total = 1.0;
 	lnadjust = 0;
@@ -1627,14 +1624,14 @@ void abort_cellular(int err, int t)
 			break;
 		case STRING2:
 			{
-			static char msg[]={"Make string of 0's through  's" };
+			static char msg[] = {"Make string of 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
 			stopmsg(0, msg);
 			}
 			break;
 		case TABLEK:
 			{
-			static char msg[]={"Make Rule with 0's through  's" };
+			static char msg[] = {"Make Rule with 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
 			stopmsg(0, msg);
 			}
@@ -1646,7 +1643,7 @@ void abort_cellular(int err, int t)
 			break;
 		case RULELENGTH:
 			{
-			static char msg[]={"Rule must be    digits long" };
+			static char msg[] = {"Rule must be    digits long" };
 			i = rule_digits / 10;
 			if (i == 0)
 			{
@@ -1721,8 +1718,8 @@ int cellular ()
 	}
 
 	r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
-	k = (U16)(kr / 10); /* Number of different states, k=3 has states 0, 1, 2 */
-	k_1 = (S16)(k - 1); /* Highest state value, k=3 has highest state value of 2 */
+	k = (U16)(kr / 10); /* Number of different states, k = 3 has states 0, 1, 2 */
+	k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
 	rule_digits = (S16)((r*2 + 1)*k_1 + 1); /* Number of digits in the rule */
 
 	if ((!rflag) && randparam == -1)
@@ -1857,7 +1854,7 @@ int cellular ()
 				cell_array[filled][col] = 0;
 			}
 			i = 0;
-			for (col=(ixstop-16)/2; col < (ixstop + 16)/2; col++)  /* insert initial */
+			for (col = (ixstop-16)/2; col < (ixstop + 16)/2; col++)  /* insert initial */
 			{
 				cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
 			}
@@ -1881,8 +1878,8 @@ int cellular ()
 				/* Use a random border */
 				for (i = 0; i <= (U16)r; i++)
 				{
-						cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-						cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+						cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
+						cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
 				}
 			}
 			else
@@ -1890,13 +1887,13 @@ int cellular ()
 				/* Use a zero border */
 				for (i = 0; i <= (U16)r; i++)
 				{
-					cell_array[notfilled][i]=0;
-					cell_array[notfilled][ixstop-i]=0;
+					cell_array[notfilled][i] = 0;
+					cell_array[notfilled][ixstop-i] = 0;
 				}
 			}
 
 			t = 0; /* do first cell */
-			for (twor=(U16)(r + r), i = 0; i <= twor; i++)
+			for (twor = (U16)(r + r), i = 0; i <= twor; i++)
 			{
 				t = (S16)(t + (S16)cell_array[filled][i]);
 			}
@@ -1909,7 +1906,7 @@ int cellular ()
 			cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 			/* use a rolling sum in t */
-			for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
+			for (col = r + 1; col < ixstop-r; col++)  /* now do the rest */
 			{
 				t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
 				if (t > rule_digits || t < 0)
@@ -1944,8 +1941,8 @@ contloop:
 			/* Use a random border */
 			for (i = 0; i <= (U16)r; i++)
 			{
-				cell_array[notfilled][i]=(BYTE)(rand()%(int)k);
-				cell_array[notfilled][ixstop-i]=(BYTE)(rand()%(int)k);
+				cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
+				cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
 			}
 		}
 		else
@@ -1953,13 +1950,13 @@ contloop:
 			/* Use a zero border */
 			for (i = 0; i <= (U16)r; i++)
 			{
-				cell_array[notfilled][i]=0;
-				cell_array[notfilled][ixstop-i]=0;
+				cell_array[notfilled][i] = 0;
+				cell_array[notfilled][ixstop-i] = 0;
 			}
 		}
 
 		t = 0; /* do first cell */
-		for (twor=(U16)(r + r), i = 0; i <= twor; i++)
+		for (twor = (U16)(r + r), i = 0; i <= twor; i++)
 		{
 			t = (S16)(t + (S16)cell_array[filled][i]);
 		}
@@ -1972,7 +1969,7 @@ contloop:
 		cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 		/* use a rolling sum in t */
-		for (col=r + 1; col < ixstop-r; col++)  /* now do the rest */
+		for (col = r + 1; col < ixstop-r; col++)  /* now do the rest */
 		{
 			t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
 			if (t > rule_digits || t < 0)
@@ -2026,7 +2023,7 @@ static void set_Cellular_palette()
 	if (mapdacbox && colorstate != 0) return;       /* map= specified */
 
 	dac[0].red  = 0 ;
-	dac[0].green= 0 ;
+	dac[0].green = 0 ;
 	dac[0].blue = 0 ;
 
 	dac[1].red    = Red.red;
@@ -2114,7 +2111,7 @@ struct froth_struct
 		} fl;
 	};
 
-struct froth_struct *fsp=NULL; /* froth_struct pointer */
+struct froth_struct *fsp = NULL; /* froth_struct pointer */
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_Froth_palette(void)
@@ -2320,7 +2317,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 		}
 
 		while (!found_attractor
-				&& ((tempsqrx=sqr(old.x)) + (tempsqry=sqr(old.y)) < rqlim)
+				&& ((tempsqrx = sqr(old.x)) + (tempsqry = sqr(old.y)) < rqlim)
 				&& (coloriter < maxit))
 		{
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
@@ -2419,7 +2416,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			lold.y = lypixel();
 		}
 
-		while (!found_attractor && ((lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y))) < llimit)
+		while (!found_attractor && ((lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y))) < llimit)
 				&& (lmagnitud >= 0) && (coloriter < maxit))
 		{
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
@@ -2429,7 +2426,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			lold.x = lnew.x;
 			if (fsp->repeat_mapping)
 			{
-				lmagnitud = (ltempsqrx=lsqr(lold.x)) + (ltempsqry=lsqr(lold.y));
+				lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
 				if ((lmagnitud > llimit) || (lmagnitud < 0))
 				{
 					break;
@@ -2616,8 +2613,8 @@ int froth_per_pixel(void)
 	{
 		old.x = dxpixel();
 		old.y = dypixel();
-		tempsqrx=sqr(old.x);
-		tempsqry=sqr(old.y);
+		tempsqrx = sqr(old.x);
+		tempsqry = sqr(old.y);
 	}
 	else  /* integer mode */
 	{

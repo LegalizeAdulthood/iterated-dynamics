@@ -964,7 +964,7 @@ disk_put_char_attr(Driver *drv, int char_attr)
 static int
 disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	/* allow modes of any size with 256 colors and dotmode=19
+	/* allow modes of any size with 256 colors and dotmode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode->colors == 256) &&
 		(mode->videomodeax == 0) &&

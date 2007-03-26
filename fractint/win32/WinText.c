@@ -82,7 +82,7 @@ int wintext_look_for_activity(int option);
 	An internal routine that handles buffered keystrokes and lets
 	Windows messaging (multitasking) take place.  Called with option=0,
 	it returns without waiting for the presence of a keystroke.  Called
-	with option !=0, it waits for a keystroke before returning.  Returns
+	with option != 0, it waits for a keystroke before returning.  Returns
 	1 if a keystroke is pending, 0 if none pending.  Called internally
 	(and automatically) by 'wintext_getkeypress()'.
 void wintext_addkeypress(unsigned int);
@@ -215,7 +215,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 	/* set up the font characteristics */
 	me->char_font = OEM_FIXED_FONT;
 	me->hFont = GetStockObject(me->char_font);
-	hDC=GetDC(hWndParent);
+	hDC = GetDC(hWndParent);
 	hOldFont = SelectObject(hDC, me->hFont);
 	GetTextMetrics(hDC, &TextMetric);
 	SelectObject(hDC, hOldFont);
@@ -569,7 +569,7 @@ void wintext_paintscreen(WinText *me,
 	if (ymin < 0) ymin = 0;
 	if (ymax >= me->char_ychars) ymax = me->char_ychars-1;
 
-	hDC=GetDC(me->hWndCopy);
+	hDC = GetDC(me->hWndCopy);
 	SelectObject(hDC, me->hFont);
 	SetBkMode(hDC, OPAQUE);
 	SetTextAlign(hDC, TA_LEFT | TA_TOP);

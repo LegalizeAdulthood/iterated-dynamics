@@ -366,7 +366,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 			orig_shiftfactor,
 			orig_rbflength;
 
-	/* use Newton's recursive method for zeroing in on 1/n : r=r(2-rn) */
+	/* use Newton's recursive method for zeroing in on 1/n : r = r(2-rn) */
 
 	if (is_bf_neg(n))
 	{ /* will be a lot easier to deal with just positives */
@@ -426,7 +426,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 		n = orig_n + orig_bflength - bflength;
 		/* bftmp1 = orig_bftmp1 + orig_bflength - bflength; */
 
-		unsafe_mult_bf(bftmp1, r, n); /* bftmp1=rn */
+		unsafe_mult_bf(bftmp1, r, n); /* bftmp1 = rn */
 		inttobf(bftmp2, 1); /* will be used as 1.0 */
 
 		/* There seems to very little difficulty getting bftmp1 to be EXACTLY 1 */
@@ -436,8 +436,8 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 		}
 
 		inttobf(bftmp2, 2); /* will be used as 2.0 */
-		unsafe_sub_a_bf(bftmp2, bftmp1); /* bftmp2=2-rn */
-		unsafe_mult_bf(bftmp1, r, bftmp2); /* bftmp1=r(2-rn) */
+		unsafe_sub_a_bf(bftmp2, bftmp1); /* bftmp2 = 2-rn */
+		unsafe_mult_bf(bftmp1, r, bftmp2); /* bftmp1 = r(2-rn) */
 		copy_bf(r, bftmp1); /* r = bftmp1 */
 	}
 
@@ -524,7 +524,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 			orig_shiftfactor,
 			orig_rbflength;
 
-/* use Newton's recursive method for zeroing in on sqrt(n): r=.5(r + n/r) */
+/* use Newton's recursive method for zeroing in on sqrt(n): r = .5(r + n/r) */
 
 	if (is_bf_neg(n))
 	{ /* sqrt of a neg, return 0 */
@@ -582,7 +582,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 		unsafe_div_bf(bftmp3, n, r);
 		unsafe_add_a_bf(r, bftmp3);
 		half_a_bf(r);
-		if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8) /* if match or almost match */
+		if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8) /* if match or almost match */
 		{
 			if (comp < 4  /* perfect or near perfect match */
 				|| almost_match == 1) /* close enough for 2nd time */
@@ -662,7 +662,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 			orig_shiftfactor,
 			orig_rbflength;
 
-/* use Newton's recursive method for zeroing in on ln(n): r=r + n*exp(-r)-1 */
+/* use Newton's recursive method for zeroing in on ln(n): r = r + n*exp(-r)-1 */
 
 	if (is_bf_neg(n) || is_bf_zero(n))
 	{ /* error, return largest neg value */
@@ -724,7 +724,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 		inttobf(bftmp4, 1);
 		unsafe_sub_a_bf(bftmp2, bftmp4);   /* n*exp(-r) - 1 */
 		unsafe_sub_a_bf(r, bftmp2);        /* -r - (n*exp(-r) - 1) */
-		if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp5))) < 8) /* if match or almost match */
+		if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp5))) < 8) /* if match or almost match */
 		{
 			if (comp < 4  /* perfect or near perfect match */
 				|| almost_match == 1) /* close enough for 2nd time */
@@ -849,8 +849,8 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 #endif
 
 /* use Taylor Series (very slow convergence) */
-	copy_bf(s, n); /* start with s=n */
-	inttobf(c, 1); /* start with c=1 */
+	copy_bf(s, n); /* start with s = n */
+	inttobf(c, 1); /* start with c = 1 */
 	copy_bf(bftmp1, n); /* the current x^n/n! */
 	do
 	{
@@ -950,7 +950,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	int large_arg;
 
 
-/* use Newton's recursive method for zeroing in on atan(n): r=r-cos(r)(sin(r)-n*cos(r)) */
+/* use Newton's recursive method for zeroing in on atan(n): r = r-cos(r)(sin(r)-n*cos(r)) */
 
 	if (is_bf_neg(n))
 	{
@@ -1036,7 +1036,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		putchar('\n');
 		bf_hexdump(r);
 #endif
-		if (bflength == orig_bflength && (comp=abs(cmp_bf(r, bftmp3))) < 8) /* if match or almost match */
+		if (bflength == orig_bflength && (comp = abs(cmp_bf(r, bftmp3))) < 8) /* if match or almost match */
 		{
 #if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
 			printf("atan() loop comp=%i\n", comp);
@@ -1503,7 +1503,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 	/* To get to this point, the signs must match */
 	/* so unsigned comparison is ok. */
 	/* two bytes at a time */
-	for (i=bflength-2; i >= 0; i -= 2)
+	for (i = bflength-2; i >= 0; i -= 2)
 	{
 		value1 = big_access16(n1 + i);
 		value2 = big_access16(n2 + i);
@@ -2367,7 +2367,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 	p = (S16)big_access16(power10);
 
 	remainder = 0;
-	for (src=dest = 1; src <= dec; dest++, src++)
+	for (src = dest = 1; src <= dec; dest++, src++)
 	{
 		value = 10*remainder + r[src];
 		r[dest] = (BYTE)(value / n);

@@ -997,7 +997,7 @@ static int compare(const VOIDPTR i, const VOIDPTR j)
 static void clear_line(int row, int start, int stop, int color) /* clear part of a line */
 {
 	int col;
-	for (col=start; col <= stop; col++)
+	for (col = start; col <= stop; col++)
 	{
 		driver_put_string(row, col, color, " ");
 	}
@@ -1976,7 +1976,7 @@ int find_extra_param(int type)
 {
 	int i, ret, curtyp;
 	ret = -1;
-	i= -1;
+	i = -1;
 
 	if (fractalspecific[type].flags&MORE)
 	{
@@ -2592,7 +2592,7 @@ static void load_entry_text(
 		/*move down to starting row*/
 	for (i = 0; i < startrow; i++)
 	{
-		while ((c=fgetc(entfile)) != '\n' && c != EOF && c != '\032')
+		while ((c = fgetc(entfile)) != '\n' && c != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -2850,7 +2850,7 @@ restart_1:
 		Targa_Overlay = 1;
 	}
 
-	k= -1;
+	k = -1;
 
 	prompts3d[++k] = "Preview Mode?";
 	uvalues[k].type = 'y';
@@ -3204,7 +3204,7 @@ static int get_light_params()
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival= haze;
+		uvalues[k].uval.ival = haze;
 
 		if (!Targa_Overlay)
 		{
@@ -3386,7 +3386,7 @@ static int get_funny_glasses_params()
 	k = -1;
 	prompts3d[++k] = "Interocular distance (as % of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival= g_eye_separation;
+	uvalues[k].uval.ival = g_eye_separation;
 
 	prompts3d[++k] = "Convergence adjust (positive = spread greater)";
 	uvalues[k].type = 'i';

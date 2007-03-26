@@ -861,7 +861,7 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 	int width, height;
 	gdi_get_max_screen(drv, &width, &height);
 
-	/* allow modes <= size of screen with 256 colors and dotmode=19
+	/* allow modes <= size of screen with 256 colors and dotmode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode->xdots <= width) &&
 		(mode->ydots <= height) &&
