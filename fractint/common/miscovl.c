@@ -2152,7 +2152,7 @@ static int check_modekey(int curkey, int choice)
 	i = entsptr[choice];
 	ret = 0;
 	if ((curkey == '-' || curkey == '+')
-		&& (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= 1084))
+		&& (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= FIK_SF1))
 	{
 		if (g_bad_config)
 		{
@@ -2162,7 +2162,7 @@ static int check_modekey(int curkey, int choice)
 		{
 			if (curkey == '-')  /* deassign key? */
 			{
-				if (g_video_table[i].keynum >= 1084)
+				if (g_video_table[i].keynum >= FIK_SF1)
 				{
 					g_video_table[i].keynum = 0;
 					modes_changed = 1;
@@ -2171,7 +2171,7 @@ static int check_modekey(int curkey, int choice)
 			else  /* assign key? */
 			{
 				j = getakeynohelp();
-				if (j >= 1084 && j <= 1113)
+				if (j >= FIK_SF1 && j <= FIK_ALT_F10)
 				{
 					for (k = 0; k < g_video_table_len; ++k)
 					{
