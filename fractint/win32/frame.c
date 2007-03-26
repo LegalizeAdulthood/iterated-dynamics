@@ -206,18 +206,15 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 		return;
 	}
 
-	if (-1 != g_frame.start_x && -1 != g_frame.start_y)
-	{
-		g_frame.delta_x += x - g_frame.start_x;
-		g_frame.delta_y += y - g_frame.start_y;
-	}
-	g_frame.start_x = x;
-	g_frame.start_y = y;
+	g_frame.delta_x = x - g_frame.start_x;
+	g_frame.delta_y = y - g_frame.start_y;
 
 	/* ignore small movements */
-	while ((abs(g_frame.delta_x) > (GraphSens + JitterMickeys))
+	if ((abs(g_frame.delta_x) > (GraphSens + JitterMickeys))
 			|| (abs(g_frame.delta_y) > (GraphSens + JitterMickeys)))
 	{
+		g_frame.start_x = x;
+		g_frame.start_y = y;
 		if (abs(g_frame.delta_x) > abs(g_frame.delta_y))
 		{
 			/* x-axis changes more */
