@@ -3372,7 +3372,7 @@ static int get_funny_glasses_params()
 	}
 	else if (g_glasses_type == STEREO_SUPERIMPOSE)
 	{
-		if (FILLTYPE == -1)
+		if (FILLTYPE == FILLTYPE_SURFACE_GRID)
 		{
 			strcpy(funnyglasses_map_name, "grid.map");
 		}

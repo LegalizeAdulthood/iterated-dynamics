@@ -174,8 +174,6 @@ int line3d(BYTE *pixels, unsigned linelen)
 	long fudge;
 
 	fudge = 1L << 16;
-
-
 	plot = (transparent[0] || transparent[1]) ? T_clipcolor : clipcolor;
 	normalplot = plot;
 
@@ -253,7 +251,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
 	lastdot = min(xdots - 1, (int) linelen - 1);
-	if (FILLTYPE >= 5)
+	if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE)
 	{
 		if (haze && Targa_Out)
 		{
@@ -272,10 +270,10 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 	tout = 0;
 	/* Insure last line is drawn in preview and filltypes <0  */
-	if ((RAY || preview || FILLTYPE < 0)
+	if ((RAY || preview || FILLTYPE < FILLTYPE_POINTS)
 		&& (currow != ydots - 1)
 		&& (currow % localpreviewfactor) /* Draw mod preview lines */
-		&& !(!RAY && (FILLTYPE > 4) && (currow == 1)))
+		&& !(!RAY && (FILLTYPE > FILLTYPE_FILL_BARS) && (currow == 1)))
 			/* Get init geometry in lightsource modes */
 	{
 		goto reallythebottom;     /* skip over most of the line3d calcs */
@@ -294,17 +292,17 @@ int line3d(BYTE *pixels, unsigned linelen)
 	/* PROCESS ROW LOOP BEGINS HERE */
 	while (col < (int) linelen)
 	{
-		if ((RAY || preview || FILLTYPE < 0)
+		if ((RAY || preview || FILLTYPE < FILLTYPE_POINTS)
 			&& (col != lastdot) /* if this is not the last col */
 			&&  (col % (int) (aspect*localpreviewfactor)) /* if not the 1st or mod factor col */
-			&& (!(!RAY && FILLTYPE > 4 && col == 1)))
+			&& (!(!RAY && FILLTYPE > FILLTYPE_FILL_BARS && col == 1)))
 		{
 			goto loopbottom;
 		}
 
 		f_cur.color = (float) (cur.color = Real_Color = pixels[col]);
 
-		if (RAY || preview || FILLTYPE < 0)
+		if (RAY || preview || FILLTYPE < FILLTYPE_POINTS)
 		{
 			next = (int) (col + aspect*localpreviewfactor);
 			if (next == col)
@@ -335,7 +333,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			sintheta = sinthetaarray[col];
 			costheta = costhetaarray[col];
 
-			if (sinphi < 0 && !(RAY || FILLTYPE < 0))
+			if (sinphi < 0 && !(RAY || FILLTYPE < FILLTYPE_POINTS))
 			{
 				cur = bad;
 				f_cur = f_bad;
@@ -371,7 +369,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* NOTE: fudge was pre-calculated above in r and R */
 				/* (almost) guarantee negative */
 				lv[2] = (long) (-R - r*costheta*sinphi);     /* z */
-				if ((lv[2] > zcutoff) && !FILLTYPE < 0)
+				if ((lv[2] > zcutoff) && !FILLTYPE < FILLTYPE_POINTS)
 				{
 					cur = bad;
 					f_cur = f_bad;
@@ -380,9 +378,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 				lv[0] = (long) (xcenter + sintheta*sclx*r);  /* x */
 				lv[1] = (long) (ycenter + costheta*cosphi*scly*r); /* y */
 
-				if ((FILLTYPE >= 5) || RAY)
+				if ((FILLTYPE >= FILLTYPE_LIGHT_BEFORE) || RAY)
 				{     /* calculate illumination normal before persp */
-
 					r0 = r / 65536L;
 					f_cur.x = (float) (xcenter0 + sintheta*sclx*r0);
 					f_cur.y = (float) (ycenter0 + costheta*cosphi*scly*r0);
@@ -420,7 +417,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 										+ sintheta*sclx*r + xxadjust));
 				cur.y = (int) (f_cur.y = (float) (ycenter
 										+ costheta*cosphi*scly*r + yyadjust));
-				if (FILLTYPE >= 5 || RAY)        /* mrr why do we do this for filltype > 5? */
+				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE || RAY)        /* mrr why do we do this for filltype > 5? */
 				{
 					f_cur.color = (float) (-r*costheta*sinphi*sclz);
 				}
@@ -434,7 +431,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			{
 				/* flag to save vector before perspective */
 				/* in longvmultpersp calculation */
-				lv0[0] = (FILLTYPE >= 5) ? 1 : 0;   
+				lv0[0] = (FILLTYPE >= FILLTYPE_LIGHT_BEFORE) ? 1 : 0;   
 
 				/* use 32-bit multiply math to snap this out */
 				lv[0] = col;
@@ -461,7 +458,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 				cur.x = (int) (((lv[0] + 32768L) >> 16) + xxadjust);
 				cur.y = (int) (((lv[1] + 32768L) >> 16) + yyadjust);
-				if (FILLTYPE >= 5 && !overflow)
+				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE && !overflow)
 				{
 					f_cur.x = (float) lv0[0];
 					f_cur.x /= 65536.0f;
@@ -482,7 +479,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 				mult_vec(v);     /* matrix*vector routine */
 
-				if (FILLTYPE > 4 || RAY)
+				if (FILLTYPE > FILLTYPE_FILL_BARS || RAY)
 				{
 					f_cur.x = (float) v[0];
 					f_cur.y = (float) v[1];
@@ -626,7 +623,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 		switch (FILLTYPE)
 		{
-		case -1:
+		case FILLTYPE_SURFACE_GRID:
 			if (col &&
 				old.x > bad_check &&
 				old.x < (xdots - bad_check))
@@ -644,11 +641,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 			}
 			break;
 
-		case 0:
-			(*plot) (cur.x, cur.y, cur.color);
+		case FILLTYPE_POINTS:
+			(*plot)(cur.x, cur.y, cur.color);
 			break;
 
-		case 1:                /* connect-a-dot */
+		case FILLTYPE_WIRE_FRAME:                /* connect-a-dot */
 			if ((old.x < xdots) && (col) &&
 				old.x > bad_check &&
 				old.y > bad_check)      /* Don't draw from old to cur on col 0 */
@@ -657,8 +654,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 			}
 			break;
 
-		case 2:                /* with interpolation */
-		case 3:                /* no interpolation */
+		case FILLTYPE_FILL_GOURAUD:                /* with interpolation */
+		case FILLTYPE_FILL_FLAT:                /* no interpolation */
 			/*************************************************************/
 			/* "triangle fill" - consider four points: current point,    */
 			/* previous point same row, point opposite current point in  */
@@ -689,7 +686,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			}
 			break;
 
-		case 4:                /* "solid fill" */
+		case FILLTYPE_FILL_BARS:                /* "solid fill" */
 			if (SPHERE)
 			{
 				if (persp)
@@ -743,8 +740,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 			driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 			break;
 
-		case 5:
-		case 6:
+		case FILLTYPE_LIGHT_BEFORE:
+		case FILLTYPE_LIGHT_AFTER:
 			/* light-source modulated fill */
 			if (currow && col)  /* skip first row and first column */
 			{
@@ -865,33 +862,33 @@ int line3d(BYTE *pixels, unsigned linelen)
 		}                      /* End of CASE statement for fill type  */
 
 loopbottom:
-			if (RAY || (FILLTYPE != 0 && FILLTYPE != 4))
-			{
-				/* for triangle and grid fill purposes */
-				oldlast = lastrow[col];
-				old = lastrow[col] = cur;
+		if (RAY || (FILLTYPE != FILLTYPE_POINTS && FILLTYPE != 4))
+		{
+			/* for triangle and grid fill purposes */
+			oldlast = lastrow[col];
+			old = lastrow[col] = cur;
 
-				/* for illumination model purposes */
-				f_old = f_lastrow[col] = f_cur;
-				if (currow && RAY && col >= lastdot)
-					/* if we're at the end of a row, close the object */
+			/* for illumination model purposes */
+			f_old = f_lastrow[col] = f_cur;
+			if (currow && RAY && col >= lastdot)
+				/* if we're at the end of a row, close the object */
+			{
+				end_object(tout);
+				tout = 0;
+				if (ferror(File_Ptr1))
 				{
-					end_object(tout);
-					tout = 0;
-					if (ferror(File_Ptr1))
-					{
-						fclose(File_Ptr1);
-						remove(light_name);
-						File_Error(ray_name, 2);
-						return -1;
-					}
+					fclose(File_Ptr1);
+					remove(light_name);
+					File_Error(ray_name, 2);
+					return -1;
 				}
 			}
-			col++;
-		}                         /* End of while statement for plotting line  */
+		}
+		col++;
+	}                         /* End of while statement for plotting line  */
 	RO++;
-reallythebottom:
 
+reallythebottom:
 	/* stuff that HAS to be done, even in preview mode, goes here */
 	if (SPHERE)
 	{
@@ -1068,7 +1065,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	}
 
 	/* transform the corners if necessary */
-	if (FILLTYPE == 6)
+	if (FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
 		for (i = 0; i < 4; i++)
 		{
@@ -1380,7 +1377,7 @@ static void _fastcall interpcolor(int x, int y, int color)
 			}
 		}
 
-		if (FILLTYPE >= 5)
+		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE)
 		{
 			if (Real_V && Targa_Out)
 			{
@@ -1413,7 +1410,10 @@ int _fastcall targa_color(int x, int y, int color)
 	unsigned long H, S, V;
 	BYTE RGB[3];
 
-	if (FILLTYPE == 2 || g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE || truecolor)
+	if (FILLTYPE == FILLTYPE_FILL_GOURAUD
+		|| g_glasses_type == STEREO_ALTERNATE
+		|| g_glasses_type == STEREO_SUPERIMPOSE
+		|| truecolor)
 	{
 		Real_Color = (BYTE)color;       /* So Targa gets interpolated color */
 	}
@@ -1441,7 +1441,9 @@ int _fastcall targa_color(int x, int y, int color)
 	R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
 
 	/* Modify original S and V components */
-	if (FILLTYPE > 4 && !(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+	if (FILLTYPE > FILLTYPE_FILL_BARS
+		&& !(g_glasses_type == STEREO_ALTERNATE
+			 || g_glasses_type == STEREO_SUPERIMPOSE))
 	{
 		/* Adjust for Ambient */
 		V = (V*(65535L - (unsigned) (color*IAmbient))) / 65535L;
@@ -2716,7 +2718,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* set fill plot function */
-	if (FILLTYPE != 3)
+	if (FILLTYPE != FILLTYPE_FILL_FLAT)
 	{
 		fillplot = interpcolor;
 	}
@@ -2738,12 +2740,12 @@ static int first_time(int linelen, VECTOR v)
 
 	/* Needed because sclz = -ROUGH/100 and light_direction is transformed in
 	* FILLTYPE 6 but not in 5. */
-	if (FILLTYPE == 5)
+	if (FILLTYPE == FILLTYPE_LIGHT_BEFORE)
 	{
 		direct[2] = light_direction[2] = -ZLIGHT;
 	}
 
-	if (FILLTYPE == 6)           /* transform light direction */
+	if (FILLTYPE == FILLTYPE_LIGHT_AFTER)           /* transform light direction */
 	{
 		/* Think of light direction  as a vector with tail at (0, 0, 0) and head
 		* at (light_direction). We apply the transformation to BOTH head and
@@ -2769,7 +2771,7 @@ static int first_time(int linelen, VECTOR v)
 		/* move light vector to be more clear with grey scale maps */
 		origin[0] = (3*xdots) / 16;
 		origin[1] = (3*ydots) / 4;
-		if (FILLTYPE == 6)
+		if (FILLTYPE == FILLTYPE_LIGHT_AFTER)
 		{
 			origin[1] = (11*ydots) / 16;
 		}
@@ -2866,7 +2868,10 @@ static int line3dmem(void)
 	minmax_x = (struct minmax *) NULL;
 
 	/* these fill types call putatriangle which uses minmax_x */
-	if (FILLTYPE == 2 || FILLTYPE == 3 || FILLTYPE == 5 || FILLTYPE == 6)
+	if (FILLTYPE == FILLTYPE_FILL_GOURAUD
+		|| FILLTYPE == FILLTYPE_FILL_FLAT
+		|| FILLTYPE == FILLTYPE_LIGHT_BEFORE
+		|| FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
 		/* end of arrays if we use extra segement */
 		check_extra += sizeof(struct minmax)*ydots;

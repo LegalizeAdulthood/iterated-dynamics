@@ -3468,7 +3468,7 @@ void set_3d_defaults()
 		THETA1    =  -90;
 		THETA2    =  90;
 		RADIUS    =  100;
-		FILLTYPE  = 2;
+		FILLTYPE  = FILLTYPE_FILL_GOURAUD;
 		XLIGHT    = 1;
 		YLIGHT    = 1;
 		ZLIGHT    = 1;
@@ -3480,7 +3480,7 @@ void set_3d_defaults()
 		ZROT      = 0;
 		XSCALE    = 90;
 		YSCALE    = 90;
-		FILLTYPE  = 0;
+		FILLTYPE  = FILLTYPE_POINTS;
 		XLIGHT    = 1;
 		YLIGHT    = -1;
 		ZLIGHT    = 1;
