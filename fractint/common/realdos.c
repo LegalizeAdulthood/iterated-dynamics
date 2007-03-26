@@ -27,9 +27,6 @@ static int menu_checkkey(int curkey, int choice);
 */
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
 int g_patch_level = 9;	/* patchlevel for DOS version */
-#ifdef XFRACT
-int xrelease = 304;
-#endif
 
 /* int stopmsg(flags, message) displays message and waits for a key:
 	message should be a max of 9 lines with \n's separating them;
@@ -262,8 +259,7 @@ void helptitle()
 	char msg[MSGLEN], buf[MSGLEN];
 	driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
-	sprintf(msg, "XFRACTINT  Version %d.%02d (FRACTINT Version %d.%02d)",
-			xrelease/100, xrelease%100, g_release/100, g_release%100);
+	strcpy(msg,"X");
 #else
 	*msg = 0;
 #endif
