@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* random_dir values */
+#define DIRECTION_LEFT		0
+#define DIRECTION_RIGHT		1
+#define DIRECTION_RANDOM	2
+
 /* juli3Dmode values */
 #define JULI3DMODE_MONOCULAR	0
 #define JULI3DMODE_LEFT_EYE		1

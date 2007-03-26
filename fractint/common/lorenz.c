@@ -520,7 +520,7 @@ int orbit3dfloatsetup()
 
 		/* find fixed points: guaranteed to be in the set */
 		Sqrt = ComplexSqrtFloat(1 - 4*Cx, -4*Cy);
-		switch ((int) major_method)
+		switch (major_method)
 		{
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
@@ -634,13 +634,13 @@ Minverse_julia_orbit()
 		}
 		switch (random_dir)
 		{
-		case 0:     /* left */
+		case DIRECTION_LEFT:
 			break;
-		case 1:     /* right */
+		case DIRECTION_RIGHT:
 			g_new.x = -g_new.x;
 			g_new.y = -g_new.y;
 			break;
-		case 2:     /* random direction */
+		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
 				g_new.x = -g_new.x;
@@ -741,13 +741,13 @@ Minverse_julia_orbit()
 		}
 		switch (random_dir)
 		{
-		case 0:     /* left */
+		case DIRECTION_LEFT:
 			break;
-		case 1:     /* right */
+		case DIRECTION_RIGHT:
 			g_new.x = -g_new.x;
 			g_new.y = -g_new.y;
 			break;
-		case 2:     /* random direction */
+		case DIRECTION_RANDOM:
 			g_new.x = leftright*g_new.x;
 			g_new.y = leftright*g_new.y;
 			break;
@@ -812,13 +812,13 @@ Linverse_julia_orbit()
 		}
 		switch (random_dir)
 		{
-		case 0:     /* left */
+		case DIRECTION_LEFT:
 			break;
-		case 1:     /* right */
+		case DIRECTION_RIGHT:
 			lnew.x = -lnew.x;
 			lnew.y = -lnew.y;
 			break;
-		case 2:     /* random direction */
+		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
 				lnew.x = -lnew.x;
