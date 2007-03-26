@@ -1147,7 +1147,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm(" brief=y");
 			}
 		}
-		if (FILLTYPE > 4)
+		if (FILLTYPE > FILLTYPE_FILL_BARS)
 		{
 			put_parm(" lightsource=%d/%d/%d", XLIGHT, YLIGHT, ZLIGHT);
 			if (LIGHTAVG)

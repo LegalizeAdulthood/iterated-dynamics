@@ -27,6 +27,16 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* FILLTYPE values */
+#define FILLTYPE_SURFACE_GRID	-1
+#define FILLTYPE_POINTS			0
+#define FILLTYPE_WIRE_FRAME		1
+#define FILLTYPE_FILL_GOURAUD	2
+#define FILLTYPE_FILL_FLAT		3
+#define FILLTYPE_FILL_BARS		4
+#define FILLTYPE_LIGHT_BEFORE	5
+#define FILLTYPE_LIGHT_AFTER	6
+
 /* orbitsave values */
 #define ORBITSAVE_NONE	0
 #define ORBITSAVE_RAW	1
@@ -782,7 +792,7 @@ is not in the data structure */
 #endif
 #define PI 3.14159265358979323846
 #define SPHERE    init3d[0]             /* sphere? 1 = yes, 0 = no  */
-#define ILLUMINE  (FILLTYPE>4)  /* illumination model       */
+#define ILLUMINE  (FILLTYPE > 4)  /* illumination model       */
 
 /* regular 3D */
 #define XROT      init3d[1]     /* rotate x-axis 60 degrees */
