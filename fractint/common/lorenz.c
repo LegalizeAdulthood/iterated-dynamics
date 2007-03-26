@@ -121,7 +121,7 @@ long   CxLong, CyLong;
 int connect = 1;    /* flag to connect points with a line */
 int euler = 0;      /* use implicit euler approximation for dynamic system */
 int waste = 100;    /* waste this many points before plotting */
-int projection = 2; /* projection plane - default is to plot x-y */
+static int projection = PROJECTION_XY; /* projection plane - default is to plot x-y */
 
 /******************************************************************/
 /*                 zoom box conversion functions                  */
@@ -266,7 +266,7 @@ int orbit3dlongsetup()
 	maxct = 0L;
 	connect = 1;
 	waste = 100;
-	projection = 2;
+	projection = PROJECTION_XY;
 	if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
 		fractype == INVERSEJULIA)
 	{
@@ -278,7 +278,7 @@ int orbit3dlongsetup()
 	}
 	if (fractype == LLORENZ)
 	{
-		projection = 1;
+		projection = PROJECTION_XZ;
 	}
 
 	initorbitlong[0] = fudge;  /* initial conditions */
@@ -405,7 +405,7 @@ int orbit3dfloatsetup()
 	maxct = 0L;
 	connect = 1;
 	waste = 100;
-	projection = 2;
+	projection = PROJECTION_XY;
 
 	if (fractype == FPHENON || fractype == FPPICKOVER || fractype == FPGINGERBREAD
 				|| fractype == KAMFP || fractype == KAM3DFP
@@ -420,7 +420,7 @@ int orbit3dfloatsetup()
 	}
 	if (fractype == FPLORENZ)
 	{
-		projection = 1; /* plot x and z */
+		projection = PROJECTION_XZ; /* plot x and z */
 	}
 
 	initorbitfp[0] = 1;  /* initial conditions */
@@ -1411,9 +1411,9 @@ int orbit2dfloat()
 	/* set up projection scheme */
 	switch (projection)
 	{
-	case 0: p0 = &z; p1 = &x; p2 = &y; break;
-	case 1: p0 = &x; p1 = &z; p2 = &y; break;
-	case 2: p0 = &x; p1 = &y; p2 = &z; break;
+	case PROJECTION_ZX: p0 = &z; p1 = &x; p2 = &y; break;
+	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
+	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
 	switch (soundflag & SOUNDFLAG_ORBITMASK)
 	{
@@ -1545,9 +1545,9 @@ int orbit2dlong()
 	/* set up projection scheme */
 	switch (projection)
 	{
-	case 0: p0 = &z; p1 = &x; p2 = &y; break;
-	case 1: p0 = &x; p1 = &z; p2 = &y; break;
-	case 2: p0 = &x; p1 = &y; p2 = &z; break;
+	case PROJECTION_ZX: p0 = &z; p1 = &x; p2 = &y; break;
+	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
+	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
 	switch (soundflag & SOUNDFLAG_ORBITMASK)
 	{

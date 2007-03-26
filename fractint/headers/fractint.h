@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* projection values */
+#define PROJECTION_ZX	0
+#define PROJECTION_XZ	1
+#define PROJECTION_XY	2
+
 /* random_dir values */
 #define DIRECTION_LEFT		0
 #define DIRECTION_RIGHT		1
