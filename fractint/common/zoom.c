@@ -361,8 +361,6 @@ void moveboxf(double dx, double dy)
 	}
 	col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
 	row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
-	}
-
 }
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
