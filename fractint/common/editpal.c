@@ -5,7 +5,7 @@
  *
  * Key to initials:
  *
- *    EAN - Ethan Nagel [70022,2552]
+ *    EAN - Ethan Nagel [70022, 2552]
  *
  *    JJB - Juan J. Buhler [jbuhler@gidef.edu.ar]
  *
@@ -223,14 +223,14 @@ static void setpal(int pal, int r, int g, int b)
 	g_dac_box[pal][0] = (BYTE)r;
 	g_dac_box[pal][1] = (BYTE)g;
 	g_dac_box[pal][2] = (BYTE)b;
-	spindac(0,1);
+	spindac(0, 1);
 }
 
 
 static void setpalrange(int first, int how_many, PALENTRY *pal)
 {
 	memmove(g_dac_box + first, pal, how_many*3);
-	spindac(0,1);
+	spindac(0, 1);
 }
 
 
@@ -424,15 +424,15 @@ va_dcl
 #ifndef USE_VARARGS
 	va_start(arg_list, format);
 #else
-	int x,y,fg,bg;
+	int x, y, fg, bg;
 	char *format;
 
 	va_start(arg_list);
-	x = va_arg(arg_list,int);
-	y = va_arg(arg_list,int);
-	fg = va_arg(arg_list,int);
-	bg = va_arg(arg_list,int);
-	format = va_arg(arg_list,char *);
+	x = va_arg(arg_list, int);
+	y = va_arg(arg_list, int);
+	fg = va_arg(arg_list, int);
+	bg = va_arg(arg_list, int);
+	format = va_arg(arg_list, char *);
 #endif
 	vsprintf(buff, format, arg_list);
 	va_end(arg_list);
@@ -467,11 +467,11 @@ static void mkpalrange(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int 
 		else
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) (p1->red   + pow(curr/(double)(num-1),gamma_val)*num*rm));
+				(int) (p1->red   + pow(curr/(double)(num-1), gamma_val)*num*rm));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) (p1->green + pow(curr/(double)(num-1),gamma_val)*num*gm));
+				(int) (p1->green + pow(curr/(double)(num-1), gamma_val)*num*gm));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) (p1->blue  + pow(curr/(double)(num-1),gamma_val)*num*bm));
+				(int) (p1->blue  + pow(curr/(double)(num-1), gamma_val)*num*bm));
 		}
 	}
 }
@@ -1057,7 +1057,7 @@ static void MoveBox__Move(MoveBox *me, int key)
 	}
 
 	xoff += me->x;
-	yoff += me->y;   /* (xoff,yoff) = new position */
+	yoff += me->y;   /* (xoff, yoff) = new position */
 
 	if (xoff < 0) xoff = 0;
 	if (yoff < 0) yoff = 0;
@@ -1221,8 +1221,8 @@ struct _CEditor
 
 #ifndef XFRACT
 	static CEditor *CEditor_Construct(int x, int y, char letter,
-										void (*other_key)(int,CEditor*,void*),
-										void (*change)(CEditor*,void*), VOIDPTR info);
+										void (*other_key)(int, CEditor*, void*),
+										void (*change)(CEditor*, void*), VOIDPTR info);
 	static void CEditor_Destroy   (CEditor *me);
 	static void CEditor_Draw      (CEditor *me);
 	static void CEditor_SetPos    (CEditor *me, int x, int y);
@@ -1252,7 +1252,7 @@ struct _CEditor
 
 #ifndef XFRACT
 static CEditor *CEditor_Construct(int x, int y, char letter,
-					void (*other_key)(int,CEditor*,VOIDPTR),
+					void (*other_key)(int, CEditor*, VOIDPTR),
 					void (*change)(CEditor*, VOIDPTR), VOIDPTR info)
 #else
 static CEditor *CEditor_Construct(int x, int y, char letter,
@@ -1493,8 +1493,8 @@ struct _RGBEditor
 
 #ifndef XFRACT
 	static RGBEditor *RGBEditor_Construct(int x, int y,
-							void (*other_key)(int,RGBEditor*,void*),
-							void (*change)(RGBEditor*,void*), VOIDPTR info);
+							void (*other_key)(int, RGBEditor*, void*),
+							void (*change)(RGBEditor*, void*), VOIDPTR info);
 #else
 	static RGBEditor *RGBEditor_Construct(int x, int y,
 							void (*other_key)(),
@@ -1521,8 +1521,8 @@ struct _RGBEditor
 
 
 #ifndef XFRACT
-static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int,RGBEditor*,void*),
-									void (*change)(RGBEditor*,void*), VOIDPTR info)
+static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(int, RGBEditor*, void*),
+									void (*change)(RGBEditor*, void*), VOIDPTR info)
 #else
 static RGBEditor *RGBEditor_Construct(int x, int y, void (*other_key)(),
 									void (*change)(), VOIDPTR info)
@@ -1816,7 +1816,7 @@ struct  _PalTable
 {
 	int           x, y;
 	int           csize;
-	int           active;   /* which RGBEditor is active (0,1) */
+	int           active;   /* which RGBEditor is active (0, 1) */
 	int           curr[2];
 	RGBEditor    *rgb[2];
 	MoveBox      *movebox;
@@ -1836,7 +1836,7 @@ struct  _PalTable
 
 
 	PALENTRY      fs_color;
-	int           top,bottom; /* top and bottom colours of freestyle band */
+	int           top, bottom; /* top and bottom colours of freestyle band */
 	int           bandwidth; /*size of freestyle colour band */
 	BOOLEAN       freestyle;
 };
@@ -1894,7 +1894,7 @@ static void PalTable__CalcTopBottom(PalTable *me)
 
 static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
 {
-	int r,b,a;
+	int r, b, a;
 
 	/* clip top and bottom values to stop them running off the end of the DAC */
 
@@ -2363,7 +2363,7 @@ static void PalTable__SaveRect(PalTable *me)
 		{
 			getrow(me->x, me->y + yoff, width, buff);
 			hline (me->x, me->y + yoff, width, bg_color);
-			memcpy(ptr,bufptr, width);
+			memcpy(ptr, bufptr, width);
 			ptr += width;
 		}
 		Cursor_Show();
@@ -2374,7 +2374,7 @@ static void PalTable__SaveRect(PalTable *me)
 
 		if (me->file == NULL)
 		{
-			me->file = dir_fopen(tempdir,scrnfile, "w + b");
+			me->file = dir_fopen(tempdir, scrnfile, "w + b");
 			if (me->file == NULL)
 			{
 				me->stored_at = NOWHERE;
@@ -2640,17 +2640,17 @@ static void PalTable__UpdateDAC(PalTable *me)
 	{
 		if (inverse)
 		{
-			memset(g_dac_box[fg_color], 0, 3);         /* g_dac_box[fg] = (0,0,0) */
-			memset(g_dac_box[bg_color], 48, 3);        /* g_dac_box[bg] = (48,48,48) */
+			memset(g_dac_box[fg_color], 0, 3);         /* g_dac_box[fg] = (0, 0, 0) */
+			memset(g_dac_box[bg_color], 48, 3);        /* g_dac_box[bg] = (48, 48, 48) */
 		}
 		else
 		{
-			memset(g_dac_box[bg_color], 0, 3);         /* g_dac_box[bg] = (0,0,0) */
-			memset(g_dac_box[fg_color], 48, 3);        /* g_dac_box[fg] = (48,48,48) */
+			memset(g_dac_box[bg_color], 0, 3);         /* g_dac_box[bg] = (0, 0, 0) */
+			memset(g_dac_box[fg_color], 48, 3);        /* g_dac_box[fg] = (48, 48, 48) */
 		}
 	}
 
-	spindac(0,1);
+	spindac(0, 1);
 }
 
 
@@ -2930,13 +2930,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 		{
 			int i;
 			char buf[20];
-			sprintf(buf,"%.3f",1./gamma_val);
+			sprintf(buf, "%.3f", 1./gamma_val);
 			driver_stack_screen();
-			i = field_prompt("Enter gamma value",NULL,buf,20,NULL);
+			i = field_prompt("Enter gamma value", NULL, buf, 20, NULL);
 			driver_unstack_screen();
 			if (i != -1)
 			{
-				sscanf(buf,"%f",&gamma_val);
+				sscanf(buf, "%f", &gamma_val);
 				if (gamma_val == 0)
 				{
 					gamma_val = 0.0000000001f;
@@ -3087,7 +3087,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 				Cursor_Hide();
 
 				PalTable__SaveUndoData(me, 0, 255);
-				memcpy(me->pal,me->save_pal[which],256*3);
+				memcpy(me->pal, me->save_pal[which], 256*3);
 				PalTable__UpdateDAC(me);
 
 				PalTable__SetCurr(me, -1, 0);
@@ -3114,7 +3114,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 			if (me->save_pal[which] != NULL)
 			{
-				memcpy(me->save_pal[which],me->pal,256*3);
+				memcpy(me->save_pal[which], me->pal, 256*3);
 			}
 			else
 			{
@@ -3356,7 +3356,7 @@ static PalTable *PalTable_Construct(void)
 	me->rgb[1] = RGBEditor_Construct(0, 0, PalTable__other_key,
 						PalTable__change, me);
 
-	me->movebox = MoveBox_Construct(0,0,0, PalTable_PALX + 1, PalTable_PALY + 1);
+	me->movebox = MoveBox_Construct(0, 0, 0, PalTable_PALX + 1, PalTable_PALY + 1);
 
 	me->active      = 0;
 	me->curr[0]     = 1;
@@ -3376,7 +3376,7 @@ static PalTable *PalTable_Construct(void)
 	me->top            = 255;
 	me->bottom         = 0 ;
 
-	me->undo_file    = dir_fopen(tempdir,undofile, "w+b");
+	me->undo_file    = dir_fopen(tempdir, undofile, "w+b");
 	me->curr_changed = FALSE;
 	me->num_redo     = 0;
 
@@ -3442,13 +3442,13 @@ static void PalTable_Destroy(PalTable *me)
 	if (me->file != NULL)
 		{
 		fclose(me->file);
-		dir_remove(tempdir,scrnfile);
+		dir_remove(tempdir, scrnfile);
 		}
 
 	if (me->undo_file != NULL)
 		{
 		fclose(me->undo_file);
-		dir_remove(tempdir,undofile);
+		dir_remove(tempdir, undofile);
 		}
 
 	if (me->memory != NULL)
@@ -3549,7 +3549,7 @@ void EditPalette(void)       /* called by fractint */
 
 	plot = putcolor;
 
-	line_buff = NEWX(max(sxdots,sydots));
+	line_buff = NEWX(max(sxdots, sydots));
 
 	lookatmouse = LOOK_MOUSE_ZOOM_BOX;
 	sxoffs = syoffs = 0;

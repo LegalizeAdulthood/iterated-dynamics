@@ -259,7 +259,7 @@ int get_toggles()
 	}
 	else
 	{
-		sprintf(uvalues[k].uval.sval,"%d", fillcolor);
+		sprintf(uvalues[k].uval.sval, "%d", fillcolor);
 	}
 	old_fillcolor = fillcolor;
 

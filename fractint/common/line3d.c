@@ -931,7 +931,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 	VECTOR S[2][4];              /* Holds the top an bottom points,
 								* S[0][]=bottom */
 
-	/* define corners of box fractal is in in x,y,z plane "b" stands for
+	/* define corners of box fractal is in in x, y, z plane "b" stands for
 	* "bottom" - these points are the corners of the screen in the x-y plane.
 	* The "t"'s stand for Top - they are the top of the cube where 255 color
 	* points hit. */
@@ -1337,7 +1337,7 @@ static void _fastcall T_clipcolor(int x, int y, int color)
 
 /************************************************************************/
 /* A substitute for plotcolor that interpolates the colors according    */
-/* to the x and y values of three points (p1,p2,p3) which are static in */
+/* to the x and y values of three points (p1, p2, p3) which are static in */
 /* this routine                                                         */
 /*                                                                      */
 /*      In Light source modes, color is light value, not actual color   */
@@ -2263,7 +2263,7 @@ static int _fastcall start_object(void)
 /*                                                                  */
 /*  This routine adds a bounding box for the triangles drawn        */
 /*  in the last block and completes the composite object created.   */
-/*  It uses the globals min and max x,y and z calculated in         */
+/*  It uses the globals min and max x, y and z calculated in         */
 /*  z calculated in Triangle_Bounds().                              */
 /*                                                                  */
 /********************************************************************/
@@ -2411,8 +2411,8 @@ static int first_time(int linelen, VECTOR v)
 	int i, j;
 	double v_length;
 	VECTOR origin, direct, tmp;
-	float theta, theta1, theta2; /* current,start,stop latitude */
-	float phi1, phi2;            /* current start,stop longitude */
+	float theta, theta1, theta2; /* current, start, stop latitude */
+	float phi1, phi2;            /* current start, stop longitude */
 	float deltatheta;            /* increment of latitude */
 	outln_cleanup = line3d_cleanup;
 
@@ -2539,10 +2539,10 @@ static int first_time(int linelen, VECTOR v)
 		zrot(zval, m);
 		zrot(zval, lightm);
 
-		/* Find values of translation that make all x,y,z negative */
+		/* Find values of translation that make all x, y, z negative */
 		/* m current matrix */
 		/* 0 means don't show box */
-		/* returns minimum and maximum values of x,y,z in fractal */
+		/* returns minimum and maximum values of x, y, z in fractal */
 		corners(m, 0, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
 	}
 
@@ -2640,16 +2640,16 @@ static int first_time(int linelen, VECTOR v)
 
 		deltatheta = (float) (theta2 - theta1) / (float) linelen;
 
-		/* initial sin,cos theta */
+		/* initial sin, cos theta */
 		sinthetaarray[0] = (float) sin((double) theta);
 		costhetaarray[0] = (float) cos((double) theta);
 		sinthetaarray[1] = (float) sin((double) (theta + deltatheta));
 		costhetaarray[1] = (float) cos((double) (theta + deltatheta));
 
-		/* sin,cos delta theta */
+		/* sin, cos delta theta */
 		twocosdeltatheta = (float) (2.0*cos((double) deltatheta));
 
-		/* build table of other sin,cos with trig identity */
+		/* build table of other sin, cos with trig identity */
 		for (i = 2; i < (int) linelen; i++)
 		{
 			sinthetaarray[i] = sinthetaarray[i - 1]*twocosdeltatheta -
@@ -2661,14 +2661,14 @@ static int first_time(int linelen, VECTOR v)
 		/* now phi - these calculated as we go - get started here */
 		deltaphi = (float) (phi2 - phi1) / (float) height;
 
-		/* initial sin,cos phi */
+		/* initial sin, cos phi */
 
 		sinphi = oldsinphi1 = (float) sin((double) phi1);
 		cosphi = oldcosphi1 = (float) cos((double) phi1);
 		oldsinphi2 = (float) sin((double) (phi1 + deltaphi));
 		oldcosphi2 = (float) cos((double) (phi1 + deltaphi));
 
-		/* sin,cos delta phi */
+		/* sin, cos delta phi */
 		twocosdeltaphi = (float) (2.0*cos((double) deltaphi));
 
 
@@ -2684,7 +2684,7 @@ static int first_time(int linelen, VECTOR v)
 		/* precalculate factor */
 		rXrscale = R*rscale;
 
-		sclz = sclx = scly = RADIUS / 100.0;      /* Need x,y,z for RAY */
+		sclz = sclx = scly = RADIUS / 100.0;      /* Need x, y, z for RAY */
 
 		/* adjust x scale factor for aspect */
 		sclx *= aspect;
@@ -2745,7 +2745,7 @@ static int first_time(int linelen, VECTOR v)
 
 	if (FILLTYPE == 6)           /* transform light direction */
 	{
-		/* Think of light direction  as a vector with tail at (0,0,0) and head
+		/* Think of light direction  as a vector with tail at (0, 0, 0) and head
 		* at (light_direction). We apply the transformation to BOTH head and
 		* tail and take the difference */
 

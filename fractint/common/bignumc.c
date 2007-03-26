@@ -398,7 +398,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 			sum >>= 16;             /* keep just the upper 2 bytes */
 			rp3 = rp2 + 2;          /* move over 2 bytes */
 			sum += big_access16(rp3);     /* add what was the upper two bytes */
-			big_set16(rp3 ,(U16)sum); /* save what was the upper two bytes */
+			big_set16(rp3, (U16)sum); /* save what was the upper two bytes */
 			sum >>= 16;             /* keep just the overflow */
 			for (k = 0; sum != 0 && k < carry_steps; k++)
 			{
@@ -902,10 +902,10 @@ LDBL bntofloat(bn_t n)
 	/* precision of LDBL, all you need is LDBL_MANT_DIG/8 + 1.        */
 	for (i = 0; i < (LDBL_MANT_DIG/8 + 1) && getbyte >= n; i++, getbyte--)
 	{
-		f += scale_256(*getbyte,-i);
+		f += scale_256(*getbyte, -i);
 	}
 
-	f = scale_256(f,expon);
+	f = scale_256(f, expon);
 
 	if (signflag)
 	{
@@ -970,11 +970,11 @@ bf_t floattobf1(bf_t r, LDBL f)
 {
 	char msg[80];
 #ifdef USE_LONG_DOUBLE
-	sprintf(msg,"%-.22Le", f);
+	sprintf(msg, "%-.22Le", f);
 #else
-	sprintf(msg,"%-.22le", f);
+	sprintf(msg, "%-.22le", f);
 #endif
-	strtobf(r,msg);
+	strtobf(r, msg);
 	return r;
 }
 
@@ -996,7 +996,7 @@ LDBL bftofloat(bf_t n)
 	intlength = il;
 
 	power = (S16)big_access16(n + bflength);
-	f = scale_256(f,power);
+	f = scale_256(f, power);
 
 	return f;
 }

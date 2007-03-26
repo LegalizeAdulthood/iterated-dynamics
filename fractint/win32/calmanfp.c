@@ -36,9 +36,9 @@ long calcmandfpasm_c(void)
 	int savedincr;
 	long tmpfsd;
 #if USE_NEW
-	double x,y,x2, y2, xy, Cx, Cy, savedmag;
+	double x, y, x2, y2, xy, Cx, Cy, savedmag;
 #else
-	double x,y,x2, y2, xy, Cx, Cy, savedx, savedy;
+	double x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 #endif
 
 	if (periodicitycheck == 0)
@@ -167,7 +167,7 @@ long calcmandfpasm_c(void)
 		/* no_periodicity_check_87 */
 		if (show_orbit != 0)
 		{
-			plot_orbit(x,y,-1);
+			plot_orbit(x, y, -1);
 		}
 		/* no_show_orbit_87 */
 	} /* while (--cx > 0) */
@@ -234,7 +234,7 @@ over_bailout_87:
 		}
 		else if (outside == ATAN)
 		{
-			coloriter = (long) fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
+			coloriter = (long) fabs(atan2(g_new.y, g_new.x)*atan_colors/PI);
 		}
 		/* check_color */
 		if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)

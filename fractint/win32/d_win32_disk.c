@@ -51,14 +51,14 @@ static t_linereader win32_line_reader;
 /*         char    name[26];       Adapter name (IBM EGA, etc)          */
 /*         char    comment[26];    Comments (UNTESTED, etc)             */
 /*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
+/*                                 2-10 = F2-10, 11-40 = S, C, A{F1-F10}  */
 /*         int     videomodeax;    begin with INT 10H, AX=(this)        */
 /*         int     videomodebx;                 ...and BX=(this)        */
 /*         int     videomodecx;                 ...and CX=(this)        */
 /*         int     videomodedx;                 ...and DX=(this)        */
 /*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
 /*         int     dotmode;        video access method used by asm code */
-/*                                      1 == BIOS 10H, AH=12,13 (SLOW)  */
+/*                                      1 == BIOS 10H, AH=12, 13 (SLOW)  */
 /*                                      2 == access like EGA/VGA        */
 /*                                      3 == access like MCGA           */
 /*                                      4 == Tseng-like  SuperVGA*256   */
@@ -632,7 +632,7 @@ disk_window(Driver *drv)
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
 
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
+; Unix: We ignore ax, bx, cx, dx.  dotmode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
 static void
@@ -675,7 +675,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 ;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
 ;    Furthur mucked up to handle graphics
 ;       video modes by Bert Tyler                 1-07-90
-;    Reworked for:  row,col update/inherit;
+;    Reworked for:  row, col update/inherit;
 ;       620x200x2 inverse video;  ptr to string;
 ;       fix to avoid scrolling when last posn chgd;
 ;       divider removed;  newline ctl chars;  PB  9-25-90

@@ -682,7 +682,7 @@ int encoder()
 
 oops:
 	fflush(g_outfile);
-	stopmsg(0,"Error Writing to disk (Disk full?)");
+	stopmsg(0, "Error Writing to disk (Disk full?)");
 	return 1;
 }
 
@@ -1078,7 +1078,7 @@ static int compress(int rowlimit)
 	}
 	hshift = 8 - hshift;                /* set hash code range bound */
 
-	memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
+	memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
 	hsize_reg = HSIZE;
 
 	output((int)ClearCode);
@@ -1279,7 +1279,7 @@ static void _fastcall output(int code)
  */
 static void _fastcall cl_block(void)             /* table clear for block compress */
 {
-		memset(htab,0xff,(unsigned)HSIZE*sizeof(long));
+		memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
 		free_ent = ClearCode + 2;
 		clear_flg = 1;
 		output((int)ClearCode);

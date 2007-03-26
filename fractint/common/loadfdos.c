@@ -38,12 +38,12 @@
 /* routines in this module      */
 
 #ifndef XFRACT
-static int    vidcompare(VOIDCONSTPTR ,VOIDCONSTPTR);
-static void   format_item(int,char *);
-static int    check_modekey(int,int);
-static void   format_vid_inf(int i,char *err,char *buf);
+static int    vidcompare(VOIDCONSTPTR , VOIDCONSTPTR);
+static void   format_item(int, char *);
+static int    check_modekey(int, int);
+static void   format_vid_inf(int i, char *err, char *buf);
 #endif
-static double vid_aspect(int tryxdots,int tryydots);
+static double vid_aspect(int tryxdots, int tryydots);
 
 struct vidinf
 {
@@ -63,9 +63,9 @@ struct vidinf
 #define VI_ASPECT    1  /* aspect ratio bad */
 
 #ifndef XFRACT
-static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
+static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
 {
-	struct vidinf CONST *ptr1,*ptr2;
+	struct vidinf CONST *ptr1, *ptr2;
 	ptr1 = (struct vidinf CONST *)p1;
 	ptr2 = (struct vidinf CONST *)p2;
 	if (ptr1->flags < ptr2->flags) return -1;
@@ -76,13 +76,13 @@ static int vidcompare(VOIDCONSTPTR p1,VOIDCONSTPTR p2)
 	return 1;
 }
 
-static void format_vid_inf(int i,char *err,char *buf)
+static void format_vid_inf(int i, char *err, char *buf)
 {
 	char kname[5];
-	memcpy((char *)&g_video_entry,(char *)&g_video_table[i],
+	memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
 				sizeof(g_video_entry));
-	vidmode_keyname(g_video_entry.keynum,kname);
-	sprintf(buf,"%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
+	vidmode_keyname(g_video_entry.keynum, kname);
+	sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
 			kname, g_video_entry.name, err,
 			g_video_entry.xdots, g_video_entry.ydots,
 			g_video_entry.colors, g_video_entry.comment);
@@ -90,7 +90,7 @@ static void format_vid_inf(int i,char *err,char *buf)
 }
 #endif
 
-static double vid_aspect(int tryxdots,int tryydots)
+static double vid_aspect(int tryxdots, int tryydots)
 {  /* calc resulting aspect ratio for specified dots in current mode */
 	return (double)tryydots / (double)tryxdots
 		*(double)g_video_entry.xdots / (double)g_video_entry.ydots
@@ -101,15 +101,15 @@ static double vid_aspect(int tryxdots,int tryydots)
 static struct vidinf *vidptr;
 #endif
 
-int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
+int get_video_mode(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 {
 	struct vidinf vid[MAXVIDEOMODES];
 	int i, j;
 	int gotrealmode;
-	double ftemp,ftemp2;
+	double ftemp, ftemp2;
 	unsigned tmpflags;
 
-	int tmpxdots,tmpydots;
+	int tmpxdots, tmpydots;
 	float tmpreduce;
 #ifndef XFRACT
 	char *nameptr;
@@ -490,26 +490,26 @@ int get_video_mode(struct fractal_info *info,struct ext_blk_3 *blk_3_info)
 }
 
 #ifndef XFRACT
-static void format_item(int choice,char *buf)
+static void format_item(int choice, char *buf)
 {
 	char errbuf[10];
 	unsigned tmpflags;
 	errbuf[0] = 0;
 	tmpflags = vidptr[choice].flags;
-	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT)) strcat(errbuf,"*");
-	if (tmpflags & VI_VSMALL) strcat(errbuf,"R");
-	if (tmpflags & VI_CSMALL) strcat(errbuf,"C");
-	if (tmpflags & VI_ASPECT) strcat(errbuf,"A");
-	if (tmpflags & VI_VBIG)   strcat(errbuf,"v");
-	if (tmpflags & VI_CBIG)   strcat(errbuf,"c");
-	format_vid_inf(vidptr[choice].entnum,errbuf,buf);
+	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT)) strcat(errbuf, "*");
+	if (tmpflags & VI_VSMALL) strcat(errbuf, "R");
+	if (tmpflags & VI_CSMALL) strcat(errbuf, "C");
+	if (tmpflags & VI_ASPECT) strcat(errbuf, "A");
+	if (tmpflags & VI_VBIG)   strcat(errbuf, "v");
+	if (tmpflags & VI_CBIG)   strcat(errbuf, "c");
+	format_vid_inf(vidptr[choice].entnum, errbuf, buf);
 }
 
-static int check_modekey(int curkey,int choice)
+static int check_modekey(int curkey, int choice)
 {
 	int i;
 	i = choice; /* avoid warning */
-	i = check_vidmode_key(0,curkey);
+	i = check_vidmode_key(0, curkey);
 	return (i >= 0) ? -100-i : 0;
 }
 #endif

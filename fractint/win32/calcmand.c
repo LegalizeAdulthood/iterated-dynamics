@@ -16,7 +16,7 @@
 
 #define FUDGE_FACTOR_BITS 29
 #define FUDGE_FACTOR ((1L << FUDGE_FACTOR_BITS)-1)
-#define FUDGE_MUL(x_,y_) MulDiv(x_, y_, FUDGE_FACTOR)
+#define FUDGE_MUL(x_, y_) MulDiv(x_, y_, FUDGE_FACTOR)
 
 #define KEYPRESSDELAY 32767
 #define ABS(x) ((x) < 0?-(x):(x))
