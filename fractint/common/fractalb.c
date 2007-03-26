@@ -593,30 +593,30 @@ int MandelbnSetup()
 	c_exp = (int)param[2];
 	switch (fractype)
 	{
-		case JULIAFP:
-			bftobn(bnparm.x, bfparms[0]);
-			bftobn(bnparm.y, bfparms[1]);
-			break;
-		case FPMANDELZPOWER:
-			init_big_pi();
-			if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
-			{
-				symmetry = XYAXIS_NOPARM;
-			}
-			if (param[3] != 0)
-			{
-				symmetry = NOSYM;
-			}
-			break;
-		case FPJULIAZPOWER:
-			init_big_pi();
-			bftobn(bnparm.x, bfparms[0]);
-			bftobn(bnparm.y, bfparms[1]);
-			if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
-			{
-				symmetry = NOSYM;
-			}
-			break;
+	case JULIAFP:
+		bftobn(bnparm.x, bfparms[0]);
+		bftobn(bnparm.y, bfparms[1]);
+		break;
+	case FPMANDELZPOWER:
+		init_big_pi();
+		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+		{
+			symmetry = XYAXIS_NOPARM;
+		}
+		if (param[3] != 0)
+		{
+			symmetry = NOSYM;
+		}
+		break;
+	case FPJULIAZPOWER:
+		init_big_pi();
+		bftobn(bnparm.x, bfparms[0]);
+		bftobn(bnparm.y, bfparms[1]);
+		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+		{
+			symmetry = NOSYM;
+		}
+		break;
 	}
 
 /* at the present time, parameters are kept in float, but want to keep
@@ -684,30 +684,30 @@ int MandelbfSetup()
 	c_exp = (int)param[2];
 	switch (fractype)
 	{
-		case JULIAFP:
-			copy_bf(bfparm.x, bfparms[0]);
-			copy_bf(bfparm.y, bfparms[1]);
-			break;
-		case FPMANDELZPOWER:
-			init_big_pi();
-			if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
-			{
-				symmetry = XYAXIS_NOPARM;
-			}
-			if (param[3] != 0)
-			{
-				symmetry = NOSYM;
-			}
-			break;
-		case FPJULIAZPOWER:
-			init_big_pi();
-			copy_bf(bfparm.x, bfparms[0]);
-			copy_bf(bfparm.y, bfparms[1]);
-			if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
-			{
-				symmetry = NOSYM;
-			}
-			break;
+	case JULIAFP:
+		copy_bf(bfparm.x, bfparms[0]);
+		copy_bf(bfparm.y, bfparms[1]);
+		break;
+	case FPMANDELZPOWER:
+		init_big_pi();
+		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+		{
+			symmetry = XYAXIS_NOPARM;
+		}
+		if (param[3] != 0)
+		{
+			symmetry = NOSYM;
+		}
+		break;
+	case FPJULIAZPOWER:
+		init_big_pi();
+		copy_bf(bfparm.x, bfparms[0]);
+		copy_bf(bfparm.y, bfparms[1]);
+		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+		{
+			symmetry = NOSYM;
+		}
+		break;
 	}
 
 	restore_stack(saved);

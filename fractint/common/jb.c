@@ -54,7 +54,7 @@ static long width, dist, depth, brratio;
 #ifndef XFRACT
 static long eyes;
 #endif
-int juli3Dmode = 0;
+int juli3Dmode = JULI3DMODE_MONOCULAR;
 
 int neworbittype = JULIA;
 
@@ -85,7 +85,7 @@ JulibrotSetup(void)
 	inch_per_xdotfp = widthfp / xdots;
 	inch_per_ydotfp = heightfp / ydots;
 	initzfp = originfp - (depthfp / 2);
-	RightEyefp.x = (juli3Dmode == 0) ? 0.0 : (eyesfp / 2);
+	RightEyefp.x = (juli3Dmode == JULI3DMODE_MONOCULAR) ? 0.0 : (eyesfp / 2);
 	LeftEyefp.x = -RightEyefp.x;
 	LeftEyefp.y = RightEyefp.y = 0;
 	LeftEyefp.zx = RightEyefp.zx = distfp;
@@ -131,7 +131,7 @@ JulibrotSetup(void)
 		inch_per_xdot = (long) ((widthfp / xdots)*fg16);
 		inch_per_ydot = (long) ((heightfp / ydots)*fg16);
 		initz = origin - (depth / 2);
-		RightEye.x = (juli3Dmode == 0) ? 0L : (eyes/2);
+		RightEye.x = (juli3Dmode == JULI3DMODE_MONOCULAR) ? 0L : (eyes/2);
 		LeftEye.x = -RightEye.x;
 		LeftEye.y = RightEye.y = 0l;
 		LeftEye.zx = RightEye.zx = dist;
@@ -213,14 +213,14 @@ zline(long x, long y)
 	my = mymin;
 	switch (juli3Dmode)
 	{
-	case 0:
-	case 1:
+	case JULI3DMODE_MONOCULAR:
+	case JULI3DMODE_LEFT_EYE:
 		Per = &LeftEye;
 		break;
-	case 2:
+	case JULI3DMODE_RIGHT_EYE:
 		Per = &RightEye;
 		break;
-	case 3:
+	case JULI3DMODE_RED_BLUE:
 		Per = ((row + col) & 1) ? &LeftEye : &RightEye;
 		break;
 	}
@@ -294,14 +294,14 @@ zlinefp(double x, double y)
 	myfp = myminfp;
 	switch (juli3Dmode)
 	{
-	case 0:
-	case 1:
+	case JULI3DMODE_MONOCULAR:
+	case JULI3DMODE_LEFT_EYE:
 		Perfp = &LeftEyefp;
 		break;
-	case 2:
+	case JULI3DMODE_RIGHT_EYE:
 		Perfp = &RightEyefp;
 		break;
-	case 3:
+	case JULI3DMODE_RED_BLUE:
 		Perfp = ((row + col) & 1) ? &LeftEyefp : &RightEyefp;
 		break;
 	}

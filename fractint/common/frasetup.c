@@ -361,15 +361,21 @@ MandelfpSetup(void)
 			symmetry = NOSYM;
 		}
 		if (trigndx[0] == 14) /* FLIP */
-		symmetry = NOSYM;
+		{
+			symmetry = NOSYM;
+		}
 		break;
 	case TIMSERRORFP:
 		if (trigndx[0] == 14) /* FLIP */
-		symmetry = NOSYM;
+		{
+			symmetry = NOSYM;
+		}
 		break;
 	case MARKSMANDELPWRFP:
 		if (trigndx[0] == 14) /* FLIP */
-		symmetry = NOSYM;
+		{
+			symmetry = NOSYM;
+		}
 		break;
 	default:
 		break;
@@ -1034,17 +1040,17 @@ JuliafnPlusZsqrdSetup(void)
 int
 SqrTrigSetup(void)
 {
-/*   static char SqrTrigSym[] = */
+	/*   static char SqrTrigSym[] = */
 	/* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
-/*           {PI_SYM, PI_SYM, XYAXIS, XYAXIS, XYAXIS, XAXIS, XAXIS}; */
-/*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
+	/*           {PI_SYM, PI_SYM, XYAXIS, XYAXIS, XYAXIS, XAXIS, XAXIS}; */
+	/*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
 	switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
 	{
 	case SIN:
 	case COS: /* cosxx */
 	case 9:   /* 'real' cos */
-	symmetry = PI_SYM;
-	/* default is for XAXIS symmetry */
+		symmetry = PI_SYM;
+		/* default is for XAXIS symmetry */
 	}
 	return curfractalspecific->isinteger ? JulialongSetup() : JuliafpSetup();
 }

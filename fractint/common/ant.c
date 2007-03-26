@@ -46,7 +46,7 @@ setwait(long *wait)
 	char msg[30];
 	int kbdchar;
 
-	for (; ;)
+	while (1)
 	{
 		sprintf(msg, "Delay %4ld", *wait);
 		while ((int)strlen(msg) < 15)

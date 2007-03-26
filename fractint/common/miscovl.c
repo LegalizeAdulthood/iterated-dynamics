@@ -629,7 +629,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				}
 				put_parm(" orbitname=%s", name);
 			}
-			if (juli3Dmode != 0)
+			if (juli3Dmode != JULI3DMODE_MONOCULAR)
 			{
 				put_parm(" 3dmode=%s", juli3Doptions[juli3Dmode]);
 			}
