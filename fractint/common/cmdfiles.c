@@ -1946,24 +1946,16 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "3dmode") == 0)         /* orbitname=? */
 	{
-		int i, j;
-		j = -1;
+		int i;
 		for (i = 0; i < 4; i++)
 		{
 			if (strcmp(value, juli3Doptions[i]) == 0)
 			{
-				j = i;
+				juli3Dmode = i;
+				return 1;
 			}
 		}
-		if (j < 0)
-		{
-			goto badarg;
-		}
-		else
-		{
-			juli3Dmode = j;
-		}
-		return 1;
+		goto badarg;
 	}
 
 	if (strcmp(variable, "julibrot3d") == 0)       /* julibrot3d=?,?,?,? */

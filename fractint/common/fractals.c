@@ -2951,20 +2951,20 @@ int mandelfp_per_pixel(void)
 		}
 	}
 	switch (fractype)
-		{
-		case MAGNET2M:
-				FloatPreCalcMagnet2();
-		case MAGNET1M:           /* Crit Val Zero both, but neither   */
-				old.x = old.y = 0.0; /* is of the form f(Z, C) = Z*g(Z) + C  */
-				break;
-		case MANDELLAMBDAFP:            /* Critical Value 0.5 + 0.0i  */
-				old.x = 0.5;
-				old.y = 0.0;
-				break;
-		default:
-				old = init;
-				break;
-		}
+	{
+	case MAGNET2M:
+		FloatPreCalcMagnet2();
+	case MAGNET1M:           /* Crit Val Zero both, but neither   */
+		old.x = old.y = 0.0; /* is of the form f(Z, C) = Z*g(Z) + C  */
+		break;
+	case MANDELLAMBDAFP:            /* Critical Value 0.5 + 0.0i  */
+		old.x = 0.5;
+		old.y = 0.0;
+		break;
+	default:
+		old = init;
+		break;
+	}
 
 	/* alter init value */
 	if (useinitorbit == 1)

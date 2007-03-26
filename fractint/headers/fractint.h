@@ -27,6 +27,12 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* juli3Dmode values */
+#define JULI3DMODE_MONOCULAR	0
+#define JULI3DMODE_LEFT_EYE		1
+#define JULI3DMODE_RIGHT_EYE	2
+#define JULI3DMODE_RED_BLUE		3
+
 /* g_which_image values */
 #define WHICHIMAGE_NONE 0
 #define WHICHIMAGE_RED	1
