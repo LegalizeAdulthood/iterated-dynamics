@@ -46,7 +46,7 @@ static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 	{
 		if (++cmd->angle == cmd->maxangle)
 		{
-				cmd->angle = 0;
+			cmd->angle = 0;
 		}
 	}
 	else
@@ -57,7 +57,7 @@ static void lsysf_doplus(struct lsys_turtlestatef *cmd)
 		}
 		else
 		{
-				cmd->angle = cmd->dmaxangle;
+			cmd->angle = cmd->dmaxangle;
 		}
 	}
 }
@@ -95,14 +95,14 @@ static void lsysf_dominus(struct lsys_turtlestatef *cmd)
 		}
 		else
 		{
-				cmd->angle = cmd->dmaxangle;
+			cmd->angle = cmd->dmaxangle;
 		}
 	}
 	else
 	{
 		if (++cmd->angle == cmd->maxangle)
 		{
-				cmd->angle = 0;
+			cmd->angle = 0;
 		}
 	}
 }
@@ -445,38 +445,12 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
 	{
 		return 0;
 	}
-	if (xmax == xmin)
-	{
-		horiz = 1.0e37f;
-	}
-	else
-	{
-		horiz = (float)((xdots-10)/(xmax-xmin));
-	}
-	if (ymax == ymin)
-	{
-		vert = 1.0e37f;
-	}
-	else
-	{
-		vert = (float)((ydots-6) /(ymax-ymin));
-	}
+	horiz = (xmax == xmin) ? 1.0e37f : (float)((xdots-10)/(xmax-xmin));
+	vert  = (ymax == ymin) ? 1.0e37f : (float)((ydots-6) /(ymax-ymin));
 	locsize = (vert < horiz) ? vert : horiz;
 
-	if (horiz == 1E37)
-	{
-		ts->xpos = xdots/2;
-	}
-	else
-/*    ts->xpos = -xmin*(locsize) + 5 + ((xdots-10)-(locsize)*(xmax-xmin))/2; */
-		ts->xpos = (xdots-locsize*(xmax + xmin))/2;
-	if (vert == 1E37)
-	{
-		ts->ypos = ydots/2;
-	}
-	else
-/*    ts->ypos = -ymin*(locsize) + 3 + ((ydots-6)-(locsize)*(ymax-ymin))/2; */
-		ts->ypos = (ydots-locsize*(ymax + ymin))/2;
+	ts->xpos = (horiz == 1.0e37f) ? xdots/2 : (xdots-locsize*(xmax + xmin))/2;
+	ts->ypos = (vert  == 1.0e37f) ? ydots/2 : (ydots-locsize*(ymax + ymin))/2;
 	ts->size = locsize;
 
 	return 1;

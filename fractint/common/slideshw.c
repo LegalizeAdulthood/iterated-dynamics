@@ -283,27 +283,27 @@ start:
 			out = i;
 	}
 	else if (strcmp("WAIT", (char *)buffer) == 0)
+	{
+		float fticks;
+		err = fscanf(fpss, "%f", &fticks); /* how many ticks to wait */
+		driver_set_keyboard_timeout((int) (fticks*1000.f));
+		fticks *= CLK_TCK;             /* convert from seconds to ticks */
+		if (err == 1)
 		{
-			float fticks;
-			err = fscanf(fpss, "%f", &fticks); /* how many ticks to wait */
-			driver_set_keyboard_timeout((int) (fticks*1000.f));
-			fticks *= CLK_TCK;             /* convert from seconds to ticks */
-			if (err == 1)
-			{
-				ticks = (long)fticks;
-				starttick = clock_ticks();  /* start timing */
-			}
-			else
-			{
-				slideshowerr("WAIT needs argument");
-			}
-			slowcount = out = 0;
+			ticks = (long)fticks;
+			starttick = clock_ticks();  /* start timing */
 		}
+		else
+		{
+			slideshowerr("WAIT needs argument");
+		}
+		slowcount = out = 0;
+	}
 	else if (strcmp("CALCWAIT", (char *)buffer) == 0) /* wait for calc to finish */
-		{
-			calcwait = 1;
-			slowcount = out = 0;
-		}
+	{
+		calcwait = 1;
+		slowcount = out = 0;
+	}
 	else
 	{
 		i = check_vidmode_keyname(buffer);

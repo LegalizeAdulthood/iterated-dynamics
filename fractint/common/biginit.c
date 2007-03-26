@@ -94,14 +94,7 @@ void calc_lengths(void)
 	{
 		bnlength = (bnlength / bnstep + 1)*bnstep;
 	}
-	if (bnlength == bnstep)
-	{
-		padding = bnlength;
-	}
-	else
-	{
-		padding = 2*bnstep;
-	}
+	padding = (bnlength == bnstep) ? bnlength : 2*bnstep;
 	rlength = bnlength + padding;
 
 	/* This shiftfactor assumes non-full multiplications will be performed.*/
@@ -142,14 +135,8 @@ static void init_bf_2(void)
 	else
 	{
 		i = find_alternate_math(fractype, BIGFLT);
-		if (i > -1)
-		{
-			bf_math = alternatemath[i].math;
-		}
-		else
-		{
-			bf_math = 1; /* maybe called from cmdfiles.c and fractype not set */
-		}
+		/* 1 => maybe called from cmdfiles.c and fractype not set */
+		bf_math = (i > -1) ? alternatemath[i].math : 1;
 	}
 	floatflag = 1;
 
@@ -409,14 +396,7 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
 {
-	if (bfdigits)
-	{
-		decimals=bfdigits;   /* blindly force */
-	}
-	else
-	{
-		decimals = dec;
-	}
+	decimals = bfdigits ? bfdigits : dec;
 	if (bailout > 10)    /* arbitrary value */
 	{
 		/* using 2 doesn't gain much and requires another test */

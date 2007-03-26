@@ -847,28 +847,21 @@ Linverse_julia_orbit()
 		* MIIM must skip points that are off the screen boundary,
 		* since it cannot read their color.
 		*/
-		if (RANDOM(2))
-		{
-			color =  1;
-		}
-		else
-		{
-			color = -1;
-		}
+		color = RANDOM(2) ? 1 : -1;
 		switch (major_method)
 		{
-			case breadth_first:
-				lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-				EnQueueLong(color*lnew.x, color*lnew.y);
-				break;
-			case depth_first:
-				lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-				PushLong(color*lnew.x, color*lnew.y);
-				break;
-			case random_run:
-				random_len--;
-			case random_walk:
-				break;
+		case breadth_first:
+			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			EnQueueLong(color*lnew.x, color*lnew.y);
+			break;
+		case depth_first:
+			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			PushLong(color*lnew.x, color*lnew.y);
+			break;
+		case random_run:
+			random_len--;
+		case random_walk:
+			break;
 		}
 		return 1;
 	}
@@ -1430,14 +1423,7 @@ int orbit2dfloat()
 	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 
-	if (inside > 0)
-	{
-		color = inside;
-	}
-	else
-	{
-		color = 2;
-	}
+	color = (inside > 0) ? inside : 2;
 
 	oldcol = oldrow = -1;
 	x = initorbitfp[0];
@@ -1445,14 +1431,7 @@ int orbit2dfloat()
 	z = initorbitfp[2];
 	coloriter = 0L;
 	count = ret = 0;
-	if (maxit > 0x1fffffL || maxct)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
 
 	if (resuming)
 	{
@@ -1578,14 +1557,7 @@ int orbit2dlong()
 	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 
-	if (inside > 0)
-	{
-		color = inside;
-	}
-	else
-	{
-		color = 2;
-	}
+	color = (inside > 0) ? inside : 2;
 	if (color >= colors)
 	{
 		color = 1;
@@ -1595,14 +1567,7 @@ int orbit2dlong()
 	y = initorbitlong[1];
 	z = initorbitlong[2];
 	count = ret = 0;
-	if (maxit > 0x1fffffL || maxct)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
 
 	if (resuming)
@@ -1725,14 +1690,7 @@ static int orbit3dlongcalc(void)
 	fp = open_orbitsave();
 
 	count = ret = 0;
-	if (maxit > 0x1fffffL || maxct)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
 	while (coloriter++ <= maxct) /* loop until keypress or maxit */
 	{
@@ -1852,14 +1810,7 @@ static int orbit3dfloatcalc(void)
 	fp = open_orbitsave();
 
 	ret = 0;
-	if (maxit > 0x1fffffL || maxct)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
 	count = coloriter = 0L;
 	while (coloriter++ <= maxct) /* loop until keypress or maxit */
 	{
@@ -2023,14 +1974,7 @@ int dynam2dfloat()
 	}
 
 	count = 0;
-	if (inside > 0)
-	{
-		color = inside;
-	}
-	else
-	{
-		color = 1;
-	}
+	color = (inside > 0) ? inside : 1;
 	if (color >= colors)
 	{
 		color = 1;
@@ -2213,13 +2157,11 @@ int plotorbits2dsetup(void)
 			return -1;
 		}
 	}
-	else
+	else if (setup_convert_to_screen(&o_cvt))
 	{
-		if (setup_convert_to_screen(&o_cvt))
-		{
-			return -1;
-		}
+		return -1;
 	}
+
 	/* set so truncation to int rounds to nearest */
 	o_cvt.e += 0.5;
 	o_cvt.f += 0.5;
@@ -2344,14 +2286,7 @@ int funny_glasses_call(int (*calc)(void))
 {
 	int status;
 	status = 0;
-	if (g_glasses_type)
-	{
-		g_which_image = 1;
-	}
-	else
-	{
-		g_which_image = 0;
-	}
+	g_which_image = g_glasses_type ? 1 : 0;
 	plot_setup();
 	plot = standardplot;
 	status = calc();
@@ -2437,14 +2372,8 @@ static int ifs3dfloat(void)
 	fp = open_orbitsave();
 
 	ret = 0;
-	if (maxit > 0x1fffffL)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024;
-	}
+	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024;
+
 	coloriter = 0L;
 	while (coloriter++ <= maxct) /* loop until keypress or maxit */
 	{
@@ -2498,7 +2427,9 @@ static int ifs3dfloat(void)
 					color = (k%colors) + 1;
 				}
 				else
-				color = getcolor(inf.col, inf.row) + 1;
+				{
+					color = getcolor(inf.col, inf.row) + 1;
+				}
 				if (color < colors) /* color sticks on last value */
 				{
 					(*plot)(inf.col, inf.row, color);
@@ -2594,14 +2525,7 @@ static int ifs2d(void)
 
 	x = y = 0;
 	ret = 0;
-	if (maxit > 0x1fffffL)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
 	while (coloriter++ <= maxct) /* loop until keypress or maxit */
 	{
@@ -2644,7 +2568,9 @@ static int ifs2d(void)
 				color = (k%colors) + 1;
 			}
 			else
-			color = getcolor(col, row) + 1;
+			{
+				color = getcolor(col, row) + 1;
+			}
 			if (color < colors) /* color sticks on last value */
 			{
 				(*plot)(col, row, color);
@@ -2704,14 +2630,7 @@ static int ifs3dlong(void)
 	fp = open_orbitsave();
 
 	ret = 0;
-	if (maxit > 0x1fffffL)
-	{
-		maxct = 0x7fffffffL;
-	}
-	else
-	{
-		maxct = maxit*1024L;
-	}
+	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
 	while (coloriter++ <= maxct) /* loop until keypress or maxit */
 	{
@@ -2772,7 +2691,9 @@ static int ifs3dlong(void)
 					color = (k%colors) + 1;
 				}
 				else
-				color = getcolor(inf.col, inf.row) + 1;
+				{
+					color = getcolor(inf.col, inf.row) + 1;
+				}
 				if (color < colors) /* color sticks on last value */
 				{
 					(*plot)(inf.col, inf.row, color);
@@ -2789,7 +2710,9 @@ static int ifs3dlong(void)
 						color = (k%colors) + 1;
 					}
 					else
-					color = getcolor(inf.col1, inf.row1) + 1;
+					{
+						color = getcolor(inf.col1, inf.row1) + 1;
+					}
 					if (color < colors) /* color sticks on last value */
 					{
 						(*plot)(inf.col1, inf.row1, color);
@@ -2824,28 +2747,14 @@ static void setupmatrix(MATRIX doublemat)
 int orbit3dfloat()
 {
 	display3d = -1;
-	if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
-	{
-		realtime = 1;
-	}
-	else
-	{
-		realtime = 0;
-	}
+	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit3dfloatcalc);
 }
 
 int orbit3dlong()
 {
 	display3d = -1;
-	if (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO)
-	{
-		realtime = 1;
-	}
-	else
-	{
-		realtime = 0;
-	}
+	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit3dlongcalc);
 }
 
@@ -3009,14 +2918,9 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 		+ xxadjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
-		if ((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
-		{
-			inf->col= inf->row = -2;
-		}
-		else
-		{
-			inf->col= inf->row = -1;
-		}
+		inf->col = inf->row =
+			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
+			? -2 : -1;
 	}
 	if (realtime)
 	{
@@ -3030,14 +2934,9 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 						+ xxadjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{
-			if ((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
-			{
-				inf->col1= inf->row1 = -2;
-			}
-			else
-			{
-				inf->col1= inf->row1 = -1;
-			}
+			inf->col1 = inf->row1 =
+				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
+				? -2 : -1;
 		}
 	}
 	return 1;
@@ -3132,14 +3031,9 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 				+ inf->cvt.e + xxadjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
-		if ((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
-		{
-			inf->col= inf->row = -2;
-		}
-		else
-		{
-			inf->col= inf->row = -1;
-		}
+		inf->col = inf->row =
+			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
+			? -2 : -1;
 	}
 	if (realtime)
 	{
@@ -3149,14 +3043,9 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 					+ inf->cvt.e + xxadjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{
-			if ((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
-			{
-				inf->col1= inf->row1 = -2;
-			}
-			else
-			{
-				inf->col1= inf->row1 = -1;
-			}
+			inf->col1 = inf->row1 =
+				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
+				? -2 : -1;
 		}
 	}
 	return 1;

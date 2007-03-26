@@ -114,14 +114,7 @@ struct MPC MPCpow(struct MPC x, int exp)
 	struct MPC z;
 	struct MPC zz;
 
-	if (exp & 1)
-	{
-		z = x;
-	}
-	else
-	{
-		z = MPCone;
-	}
+	z = (exp & 1) ? x : MPCone;
 	exp >>= 1;
 	while (exp)
 	{
@@ -239,14 +232,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 	}
 	else
 	{
-		if (t.x < -690)
-		{
-			e2x = 0;
-		}
-		else
-		{
-			e2x = exp(t.x);
-		}
+		e2x = (t.x < -690) ? 0 : exp(t.x);
 		FPUsincos(&t.y, &siny, &cosy);
 		z.x = e2x*cosy;
 		z.y = e2x*siny;
@@ -428,14 +414,7 @@ long lsqrt(long f)
 		y0 = multiply(c, y0, bitshift);
 	}
 	N /= 2;
-	if (N >= 0)
-	{
-		return y0 <<  N;                        /* correct for shift above */
-	}
-	else
-	{
-		return y0 >> -N;
-	}
+	return (N >= 0) ? (y0 << N) : (y0 >> -N); /* correct for shift above */
 }
 #endif
 LCMPLX ComplexSqrtLong(long x, long y)
@@ -642,14 +621,7 @@ long logtablecalc(long citer)
 		}
 		else if ((citer - lf) / log(citer - lf) <= mlf)
 		{
-			if (save_release < 2002)
-			{
-				ret = (long)(citer - lf + (lf?1:0));
-			}
-			else
-			{
-				ret = (long)(citer - lf);
-			}
+			ret = (save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
 		}
 		else
 		{
@@ -658,14 +630,7 @@ long logtablecalc(long citer)
 	}
 	else if (LogFlag == -1)  /* old log function */
 	{
-		if (citer == 0)
-		{
-			ret = 1;
-		}
-		else
-		{
-			ret = (long)(mlf*log(citer)) + 1;
-		}
+		ret = (citer == 0) ? 1 : (long)(mlf*log(citer)) + 1;
 	}
 	else if (LogFlag <= -2)  /* sqrt function */
 	{

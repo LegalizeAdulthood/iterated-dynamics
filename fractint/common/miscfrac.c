@@ -413,14 +413,7 @@ int plasma()
 		{
 			/* max_plasma = (U16)(1L << 16) -1; */
 			max_plasma = 0xFFFF;
-			if (outside >= 0)
-			{
-				plot    = (PLOT)putpotborder;
-			}
-			else
-			{
-				plot    = (PLOT)putpot;
-			}
+			plot = (outside >= 0) ? (PLOT)putpotborder : (PLOT)putpot;
 			getpix =  getpot;
 			OldPotFlag = potflag;
 			OldPot16bit = pot16bit;
@@ -429,27 +422,13 @@ int plasma()
 		{
 			max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
-			if (outside >= 0)
-			{
-				plot    = putcolorborder;
-			}
-			else
-			{
-				plot    = putcolor;
-			}
+			plot = (outside >= 0) ? putcolorborder : putcolor;
 			getpix  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		if (outside >= 0)
-		{
-			plot    = putcolorborder;
-		}
-		else
-		{
-			plot    = putcolor;
-		}
+		plot = (outside >= 0) ? putcolorborder : putcolor;
 		getpix  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
@@ -472,14 +451,7 @@ int plasma()
 		}
 		else
 		{
-			if (colors > 2)
-			{
-				shiftvalue = 24;
-			}
-			else
-			{
-				shiftvalue = 25;
-			}
+			shiftvalue = (colors > 2) ? 24 : 25;
 		}
 	}
 	if (max_plasma != 0)
@@ -538,15 +510,8 @@ int plasma()
 			i++;
 		}
 	}
-	if (!driver_key_pressed())
-	{
-		n = 0;
-	}
-	else
-	{
-		n = 1;
-	}
-	done:
+	n = !driver_key_pressed() ? 0 : 1;
+done:
 	if (max_plasma != 0)
 	{
 		potflag = OldPotFlag;
@@ -668,14 +633,7 @@ int diffusion()
 	}
 	if (mode == 2)
 	{
-		if (xdots > ydots)
-		{
-			radius = (float) (ydots - border);
-		}
-		else
-		{
-			radius = (float) (xdots - border);
-		}
+		radius = (xdots > ydots) ? (float) (ydots - border) : (float) (xdots - border);
 	}
 	if (resuming) /* restore worklist, if we can't the above will stay in place */
 	{
@@ -1111,14 +1069,9 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		if (errors) return;
 
 		/* assign population value to Y coordinate in pixels */
-		if (integerfractal)
-		{
-			pixel_row = iystop - (int)((lPopulation - linit.y) / dely); /* iystop */
-		}
-		else
-		{
-			pixel_row = iystop - (int)((Population - init.y) / delyy);
-		}
+		pixel_row = integerfractal
+			? (iystop - (int)((lPopulation - linit.y) / dely))
+			: (iystop - (int)((Population - init.y) / delyy));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
@@ -1430,38 +1383,36 @@ int lyapunov ()
 	{
 		if (fabs(Population) > BIG || Population == 0 || Population == 1)
 		{
-				Population = (1.0 + rand())/(2.0 + RAND_MAX);
+			Population = (1.0 + rand())/(2.0 + RAND_MAX);
 		}
-		}
-	else Population = param[1];
+	}
+	else
+	{
+		Population = param[1];
+	}
 	(*plot)(col, row, 1);
 	if (invert)
 	{
 		invertz2(&init);
 		a = init.y;
 		b = init.x;
-		}
+	}
 	else
 	{
 		a = dypixel();
 		b = dxpixel();
-		}
+	}
 #if !defined(XFRACT) && !defined(_WIN32)
 	/*  the assembler routines don't work for a & b outside the
 		ranges 0 < a < 4 and 0 < b < 4. So, fall back on the C
 		routines if part of the image sticks out.
 		*/
 #if WES
-		color=lyapunov_cycles(a, b);
+	color = lyapunov_cycles(a, b);
 #else
-	if (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
-	{
-		color=lyapunov_cycles(filter_cycles, Population, a, b);
-	}
-	else
-	{
-		color=lyapunov_cycles_in_c(filter_cycles, a, b);
-	}
+	color = (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
+		? lyapunov_cycles(filter_cycles, Population, a, b)
+		: lyapunov_cycles_in_c(filter_cycles, a, b);
 #endif
 #else
 	color=lyapunov_cycles_in_c(filter_cycles, a, b);
@@ -1614,14 +1565,9 @@ jumpout:
 	}
 	else
 	{
-		if (LogFlag)
-		{
-			lyap = -temp/((double) lyaLength*i);
-		}
-		else
-		{
-			lyap = 1 - exp(temp/((double) lyaLength*i));
-		}
+		lyap = LogFlag
+			? -temp/((double) lyaLength*i)
+			: 1 - exp(temp/((double) lyaLength*i));
 		color = 1 + (int)(lyap*(colors-1));
 	}
 	return color;
@@ -1897,41 +1843,33 @@ int cellular ()
 	}
 	else
 	{
-	if (rflag || randparam == 0 || randparam == -1)
-	{
-		for (col = 0; col <= ixstop; col++)
+		if (rflag || randparam == 0 || randparam == -1)
 		{
-			cell_array[filled][col] = (BYTE)(rand()%(int)k);
-		}
-	} /* end of if random */
-
-	else
-	{
-		for (col = 0; col <= ixstop; col++)  /* Clear from end to end */
+			for (col = 0; col <= ixstop; col++)
+			{
+				cell_array[filled][col] = (BYTE)(rand()%(int)k);
+			}
+		} /* end of if random */
+		else
 		{
-			cell_array[filled][col] = 0;
-		}
-		i = 0;
-		for (col=(ixstop-16)/2; col < (ixstop + 16)/2; col++)  /* insert initial */
-		{
-			cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
-		}
-	} /* end of if not random */
-	if (lnnmbr != 0)
-	{
-		lstscreenflag = 1;
-	}
-	else
-	{
-		lstscreenflag = 0;
-	}
-	put_line(start_row, 0, ixstop, cell_array[filled]);
+			for (col = 0; col <= ixstop; col++)  /* Clear from end to end */
+			{
+				cell_array[filled][col] = 0;
+			}
+			i = 0;
+			for (col=(ixstop-16)/2; col < (ixstop + 16)/2; col++)  /* insert initial */
+			{
+				cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
+			}
+		} /* end of if not random */
+		lstscreenflag = (lnnmbr != 0) ? 1 : 0;
+		put_line(start_row, 0, ixstop, cell_array[filled]);
 	}
 	start_row++;
 
-/* This section calculates the starting line when it is not zero */
-/* This section can't be resumed since no screen output is generated */
-/* calculates the (lnnmbr - 1) generation */
+	/* This section calculates the starting line when it is not zero */
+	/* This section can't be resumed since no screen output is generated */
+	/* calculates the (lnnmbr - 1) generation */
 	if (lstscreenflag)  /* line number != 0 & not resuming & not continuing */
 	{
 		U32 big_row;
@@ -2180,7 +2118,7 @@ struct froth_struct *fsp=NULL; /* froth_struct pointer */
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_Froth_palette(void)
-	{
+{
 	char *mapname;
 
 	if (colorstate != 0) /* 0 means g_dac_box matches default */
@@ -2188,37 +2126,23 @@ static void set_Froth_palette(void)
 		return;
 	}
 	if (colors >= 16)
-		{
+	{
 		if (colors >= 256)
-			{
-			if (fsp->attractors == 6)
-			{
-				mapname = "froth6.map";
-			}
-			else
-			{
-				mapname = "froth3.map";
-			}
-			}
+		{
+			mapname = (fsp->attractors == 6) ? "froth6.map" : "froth3.map";
+		}
 		else /* colors >= 16 */
-			{
-			if (fsp->attractors == 6)
-			{
-				mapname = "froth616.map";
-			}
-			else
-			{
-				mapname = "froth316.map";
-			}
-			}
+		{
+			mapname = (fsp->attractors == 6) ? "froth616.map" : "froth316.map";
+		}
 		if (ValidateLuts(mapname) != 0)
 		{
 			return;
 		}
 		colorstate = 0; /* treat map as default */
 		spindac(0, 1);
-		}
 	}
+}
 
 int froth_setup(void)
 	{
@@ -2436,14 +2360,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (old.x >= fsp->fl.f.top_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 1;
-					}
-					else
-					{
-						found_attractor = 2;
-					}
+					found_attractor = !fsp->repeat_mapping ? 1 : 2;
 				}
 			}
 			else if (fabs(FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
@@ -2459,25 +2376,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (old.x >= fsp->fl.f.right_x3)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 2;
-					}
-					else
-					{
-						found_attractor = 4;
-					}
+					found_attractor = !fsp->repeat_mapping ? 2 : 4;
 				}
 				else if (old.x <= fsp->fl.f.right_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 3;
-					}
-					else
-					{
-						found_attractor = 6;
-					}
+					found_attractor = !fsp->repeat_mapping ? 3 : 6;
 				}
 			}
 			else if (fabs(-FROTH_SLOPE*old.x - fsp->fl.f.a - old.y) < FROTH_CLOSE
@@ -2493,25 +2396,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (old.x >= fsp->fl.f.left_x3)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 3;
-					}
-					else
-					{
-						found_attractor = 5;
-					}
+					found_attractor = !fsp->repeat_mapping ? 3 : 5;
 				}
 				else if (old.x <= fsp->fl.f.left_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 2;
-					}
-					else
-					{
-						found_attractor = 3;
-					}
+					found_attractor = !fsp->repeat_mapping ? 2 : 3;
 				}
 			}
 		}
@@ -2574,14 +2463,7 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (lold.x >= fsp->fl.l.top_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 1;
-					}
-					else
-					{
-						found_attractor = 2;
-					}
+					found_attractor = !fsp->repeat_mapping ? 1 : 2;
 				}
 			}
 			else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE
@@ -2597,25 +2479,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (lold.x >= fsp->fl.l.right_x3)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 2;
-					}
-					else
-					{
-						found_attractor = 4;
-					}
+					found_attractor = !fsp->repeat_mapping ? 2 : 4;
 				}
 				else if (lold.x <= fsp->fl.l.right_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 3;
-					}
-					else
-					{
-						found_attractor = 6;
-					}
+					found_attractor = !fsp->repeat_mapping ? 3 : 6;
 				}
 			}
 			else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE)
@@ -2630,25 +2498,11 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 				}
 				else if (lold.x >= fsp->fl.l.left_x3)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 3;
-					}
-					else
-					{
-						found_attractor = 5;
-					}
+					found_attractor = !fsp->repeat_mapping ? 3 : 5;
 				}
 				else if (lold.x <= fsp->fl.l.left_x4)
 				{
-					if (!fsp->repeat_mapping)
-					{
-						found_attractor = 2;
-					}
-					else
-					{
-						found_attractor = 3;
-					}
+					found_attractor = !fsp->repeat_mapping ? 2 : 3;
 				}
 			}
 		}
@@ -2727,14 +2581,8 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			}
 			else /* 6 attractors */
 			{
-				if (lshade < 10486)      /* 0.16 */
-				{
-					coloriter = 1;
-				}
-				else
-				{
-					coloriter = 2;
-				}
+				/* 10486 <=> 0.16 */
+				coloriter = (lshade < 10486) ? 1 : 2;
 				coloriter += 2*(found_attractor-1);
 			}
 		}

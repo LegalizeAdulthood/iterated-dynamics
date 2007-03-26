@@ -243,24 +243,10 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	{
 		free_bf_vars();
 	}
-	if (bf_math)
-	{
-		floatflag = 1;
-	}
-	else
-	{
-		floatflag = usr_floatflag;
-	}
+	floatflag = bf_math ? 1 : usr_floatflag;
 	if (calc_status == CALCSTAT_RESUMABLE)  /* on resume, ensure floatflag correct */
 	{
-		if (curfractalspecific->isinteger)
-		{
-			floatflag = 0;
-		}
-		else
-		{
-			floatflag = 1;
-		}
+		floatflag = curfractalspecific->isinteger ? 0 : 1;
 	}
 	/* if floating pt only, set floatflag for TAB screen */
 	if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
@@ -311,15 +297,19 @@ init_restart:
 	if (floatflag)  /* ensure type matches floatflag */
 	{
 		if (curfractalspecific->isinteger != 0
-		&& curfractalspecific->tofloat != NOFRACTAL)
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
 			fractype = curfractalspecific->tofloat;
 		}
+	}
 	else
 	{
 		if (curfractalspecific->isinteger == 0
-		&& curfractalspecific->tofloat != NOFRACTAL)
+			&& curfractalspecific->tofloat != NOFRACTAL)
+		{
 			fractype = curfractalspecific->tofloat;
 		}
+	}
 	/* match Julibrot with integer mode of orbit */
 	if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
 	{
@@ -1196,14 +1186,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 static int _fastcall ratio_bad(double actual, double desired)
 {
 	double ftemp, tol;
-	if (integerfractal)
-	{
-		tol = math_tol[0];
-	}
-	else
-	{
-		tol = math_tol[1];
-	}
+	tol = math_tol[integerfractal ? 0 : 1];
 	if (tol <= 0.0)
 	{
 		return 1;

@@ -2568,14 +2568,7 @@ static int ParseStr(char *Str, int pass)
 		StkSinh = lStkSinh;
 		StkLT = lStkLT;
 		StkLTE = lStkLTE;
-		if (save_release > 1826)
-		{
-			StkMod = lStkMod;
-		}
-		else
-		{
-			StkMod = lStkModOld;
-		}
+		StkMod = (save_release > 1826) ? lStkMod : lStkModOld;
 		StkSqr = lStkSqr;
 		StkCos = lStkCos;
 		StkCosh = lStkCosh;
@@ -3030,14 +3023,7 @@ int form_per_pixel(void)
 	switch (MathType)
 	{
 	case D_MATH:
-		if ((row + col)&1)
-		{
-			v[9].a.d.x = 1.0;
-		}
-		else
-		{
-			v[9].a.d.x = 0.0;
-		}
+		v[9].a.d.x = ((row + col) & 1) ? 1.0 : 0.0;
 		v[9].a.d.y = 0.0;
 		break;
 
@@ -3095,6 +3081,7 @@ int form_per_pixel(void)
 			}
 		}
 		else
+		{
 			/* TW end of inversion support changes here 4/17/94 */
 			switch (MathType)
 			{
@@ -3113,6 +3100,7 @@ int form_per_pixel(void)
 				break;
 #endif
 			}
+		}
 	}
 
 	if (LastInitOp)
@@ -3143,14 +3131,7 @@ int form_per_pixel(void)
 #endif
 	}
 
-	if (overflow)
-	{
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
+	return overflow ? 0 : 1;
 }
 
 int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
@@ -3211,14 +3192,7 @@ int fill_jump_struct(void)
 					break;
 				case 2:
 					checkforelse = !checkforelse;
-					if (checkforelse)
-					{
-						JumpFunc = StkJump;
-					}
-					else
-					{
-						JumpFunc = StkJumpOnFalse;
-					}
+					JumpFunc = checkforelse ? StkJump : StkJumpOnFalse;
 					break;
 				case 3:
 					JumpFunc = StkJump;
@@ -3313,14 +3287,7 @@ void getfuncinfo(struct token_st *tok)
 		if (!strcmp(FnctList[i].s, tok->token_str))
 		{
 			tok->token_id = i;
-			if (i >= 11 && i <= 14)
-			{
-				tok->token_type = PARAM_FUNCTION;
-			}
-			else
-			{
-				tok->token_type = FUNCTION;
-			}
+			tok->token_type = (i >= 11 && i <= 14) ? PARAM_FUNCTION : FUNCTION;
 			return;
 		}
 	}
@@ -3751,10 +3718,10 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			if (c == '<' || c == '>' || c == '=')
 			{
 				c=frmgetchar(openfile);
-			if (c == '=')
-			{
+				if (c == '=')
+				{
 					this_token->token_str[i++] = (char) c;
-			}
+				}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3763,10 +3730,10 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			else if (c == '!')
 			{
 				c=frmgetchar(openfile);
-			if (c == '=')
-			{
+				if (c == '=')
+				{
 					this_token->token_str[i++] = (char) c;
-			}
+				}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3779,10 +3746,10 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			else if (c == '|')
 			{
 				c=frmgetchar(openfile);
-			if (c == '|')
-			{
+				if (c == '|')
+				{
 					this_token->token_str[i++] = (char) c;
-			}
+				}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);
@@ -3791,10 +3758,10 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 			else if (c == '&')
 			{
 				c=frmgetchar(openfile);
-			if (c == '&')
-			{
+				if (c == '&')
+				{
 					this_token->token_str[i++] = (char) c;
-			}
+				}
 				else
 				{
 					fseek(openfile, filepos, SEEK_SET);

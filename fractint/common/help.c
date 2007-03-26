@@ -143,14 +143,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 	size = width = 0;
 
-	if (start_margin >= 0)
-	{
-		tok = TOK_PARA;
-	}
-	else
-	{
-		tok = -1;
-	}
+	tok = (start_margin >= 0) ? TOK_PARA : -1;
 
 	while (1)
 	{
@@ -564,31 +557,23 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
 	}
 
 static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, int, int, int), int val)
-	{
+{
 	int t;
 
 	if (num_link > 1)
-		{
-		if (f == NULL)
-		{
-			t = val;
-		}
-		else
-		{
-			t = (*f)(link, num_link, *curr, val);
-		}
-
+	{
+		t = (f == NULL) ? val : (*f)(link, num_link, *curr, val);
 		if (t >= 0 && t != *curr)
-			{
+		{
 			color_link(&link[*curr], C_HELP_LINK);
 			*curr = t;
 			color_link(&link[*curr], C_HELP_CURLINK);
 			return 1;
-			}
 		}
+	}
 
 	return 0;
-	}
+}
 
 static int help_topic(HIST *curr, HIST *next, int flags)
 	{
@@ -644,9 +629,9 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 				page_table[page].margin, &num_link, link_table);
 
 			if (draw_page == 2)
-				{
+			{
 				assert(num_link <= 0 || (curr_link >= 0 && curr_link < num_link));
-				}
+			}
 			else if (draw_page == 3)
 			{
 				curr_link = num_link - 1;
@@ -686,10 +671,10 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 			case FIK_HOME:
 				if (page != 0)
-					{
+				{
 					page = 0;
 					draw_page = 1;
-					}
+				}
 				else
 				{
 					do_move_link(link_table, num_link, &curr_link, NULL, 0);
@@ -698,10 +683,10 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 			case FIK_END:
 				if (page != num_pages-1)
-					{
+				{
 					page = num_pages-1;
 					draw_page = 3;
-					}
+				}
 				else
 				{
 					do_move_link(link_table, num_link, &curr_link, NULL, num_link-1);
@@ -902,7 +887,7 @@ int help(int action)
 				action = ACTION_PREV2;
 			}
 			else
-				{
+			{
 				display_page("Unknown Help Topic", NULL, 0, 0, 1, 0, NULL, NULL);
 				action = -1;
 				while (action == -1)
@@ -1103,50 +1088,48 @@ static void printerc(PRINT_DOC_INFO *info, int c, int n)
 		{
 			++info->spaces;
 		}
-
 		else if (c == '\n' || c == '\f')
-			{
+		{
 			info->start_of_line = 1;
 			info->spaces = 0;   /* strip spaces before a new-line */
 			fputc(c, info->file);
-			}
-
+		}
 		else
-			{
+		{
 			if (info->start_of_line)
-				{
+			{
 				info->spaces += info->margin;
 				info->start_of_line = 0;
-				}
+			}
 
 			while (info->spaces > 0)
-				{
+			{
 				fputc(' ', info->file);
 				--info->spaces;
-				}
+			}
 
 			fputc(c, info->file);
-			}
 		}
 	}
+}
 
 static void printers(PRINT_DOC_INFO *info, char *s, int n)
-	{
+{
 	if (n > 0)
-		{
+	{
 		while (n-- > 0)
 		{
 			printerc(info, *s++, 1);
 		}
-		}
+	}
 	else
-		{
+	{
 		while (*s != '\0')
 		{
 			printerc(info, *s++, 1);
 		}
-		}
 	}
+}
 
 static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 {
@@ -1237,14 +1220,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			int  width = PAGE_WIDTH + PAGE_INDENT;
 			int  keep_going;
 
-			if (info->msg_func != NULL)
-			{
-				keep_going = (*info->msg_func)(pd->pnum, info->num_page);
-			}
-			else
-			{
-				keep_going = 1;
-			}
+			keep_going = (info->msg_func != NULL) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
 
 			info->margin = 0;
 

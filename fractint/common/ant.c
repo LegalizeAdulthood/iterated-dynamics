@@ -496,14 +496,7 @@ ant(void)
 	{                            /* if rule_len == 0 random rule */
 		for (i = 0; i < rule_len; i++)
 		{
-			if (rule[i] != '1')
-			{
-				rule[i] = (char) 0;
-			}
-			else
-			{
-				rule[i] = (char) 1;
-			}
+			rule[i] = (rule[i] != '1') ? (char) 0 : (char) 1;
 		}
 	}
 	else

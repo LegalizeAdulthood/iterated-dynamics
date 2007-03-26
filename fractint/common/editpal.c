@@ -1101,14 +1101,8 @@ static BOOLEAN MoveBox_Process(MoveBox *me)
 
 		if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
 		{
-			if (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
-			{
-				me->moved = TRUE;
-			}
-			else
-			{
-				me->moved = FALSE;
-			}
+			me->moved = (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
+				? TRUE : FALSE;
 			break;
 		}
 
@@ -1892,23 +1886,10 @@ struct  _PalTable
 
 static void PalTable__CalcTopBottom(PalTable *me)
 {
-	if (me->curr[me->active] < me->bandwidth)
-	{
-		me->bottom = 0;
-	}
-	else
-	{
-		me->bottom = (me->curr[me->active]) - me->bandwidth;
-	}
-
-	if (me->curr[me->active] > (255-me->bandwidth))
-	{
-		me->top = 255;
-	}
-	else
-	{
-		me->top = (me->curr[me->active]) + me->bandwidth;
-	}
+	me->bottom = (me->curr[me->active] < me->bandwidth)
+		? 0    : (me->curr[me->active]) - me->bandwidth;
+	me->top    = (me->curr[me->active] > (255-me->bandwidth))
+		? 255  : (me->curr[me->active]) + me->bandwidth;
 }
 
 static void PalTable__PutBand(PalTable *me, PALENTRY *pal)
@@ -2736,27 +2717,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 	case 'Y':    /* exclude range */
 	case 'y':
-		if (me->exclude == 2)
-		{
-			me->exclude = 0;
-		}
-		else
-		{
-			me->exclude = 2;
-		}
+		me->exclude = (me->exclude == 2) ? 0 : 2;
 		PalTable__UpdateDAC(me);
 		break;
 
 	case 'X':
 	case 'x':     /* exclude current entry */
-		if (me->exclude == 1)
-		{
-			me->exclude = 0;
-		}
-		else
-		{
-			me->exclude = 1;
-		}
+		me->exclude = (me->exclude == 1) ? 0 : 1;
 		PalTable__UpdateDAC(me);
 		break;
 
@@ -3222,7 +3189,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 	case FIK_CTL_DEL:  /* rt plus down */
 		if (me->bandwidth >0)
 		{
-			me->bandwidth  --;
+			me->bandwidth--;
 		}
 		else
 		{
@@ -3354,7 +3321,7 @@ static void PalTable__MkDefaultPalettes(PalTable *me)  /* creates default Fkey p
 
 
 static PalTable *PalTable_Construct(void)
-	{
+{
 	PalTable     *me = NEWC(PalTable);
 	int           csize;
 	int           ctr;
@@ -3364,21 +3331,25 @@ static PalTable *PalTable_Construct(void)
 	temp = (void *)malloc(FAR_RESERVE);
 
 	if (temp != NULL)
-		{
+	{
 		mem_block = (PALENTRY *)malloc(256L*3*8);
 
 		if (mem_block == NULL)
-			{
+		{
 			for (ctr = 0; ctr < 8; ctr++)
+			{
 				me->save_pal[ctr] = NULL;
 			}
+		}
 		else
-			{
+		{
 			for (ctr = 0; ctr < 8; ctr++)
+			{
 				me->save_pal[ctr] = mem_block + (256*ctr);
 			}
-		free(temp);
 		}
+		free(temp);
+	}
 
 	me->rgb[0] = RGBEditor_Construct(0, 0, PalTable__other_key,
 						PalTable__change, me);
@@ -3430,23 +3401,23 @@ static PalTable *PalTable_Construct(void)
 	PalTable__SetCSize(me, csize);
 
 	return me;
-	}
+}
 
 
 static void PalTable_SetHidden(PalTable *me, BOOLEAN hidden)
-	{
+{
 	me->hidden = hidden;
 	RGBEditor_SetHidden(me->rgb[0], hidden);
 	RGBEditor_SetHidden(me->rgb[1], hidden);
 	PalTable__UpdateDAC(me);
-	}
+}
 
 
 
 static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
-	{
+{
 	if (hidden)
-		{
+	{
 		PalTable__RestoreRect(me);
 		PalTable_SetHidden(me, TRUE);
 		reserve_colors = FALSE;
@@ -3454,9 +3425,9 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
 		{
 			PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
 		}
-		}
+	}
 	else
-		{
+	{
 		PalTable_SetHidden(me, FALSE);
 		reserve_colors = TRUE;
 		if (me->stored_at == NOWHERE)  /* do we need to save screen? */
@@ -3469,8 +3440,8 @@ static void PalTable_Hide(PalTable *me, RGBEditor *rgb, BOOLEAN hidden)
 			PalTable__SetCurr(me, me->active, PalTable__GetCursorColor(me));
 		}
 		RGBEditor_SetDone(rgb, TRUE);
-		}
 	}
+}
 
 
 static void PalTable_Destroy(PalTable *me)
@@ -3506,7 +3477,7 @@ static void PalTable_Destroy(PalTable *me)
 
 
 static void PalTable_Process(PalTable *me)
-	{
+{
 	int ctr;
 
 	getpalrange(0, colors, me->pal);
@@ -3524,30 +3495,30 @@ static void PalTable_Process(PalTable *me)
 	RGBEditor_SetRGB(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
 
 	if (!me->hidden)
-		{
+	{
 		MoveBox_SetPos(me->movebox, me->x, me->y);
 		MoveBox_SetCSize(me->movebox, me->csize);
 		if (!MoveBox_Process(me->movebox))
-			{
+		{
 			setpalrange(0, colors, me->pal);
 			return ;
-			}
+		}
 
 		PalTable__SetPos(me, MoveBox_X(me->movebox), MoveBox_Y(me->movebox));
 		PalTable__SetCSize(me, MoveBox_CSize(me->movebox));
 
 		if (MoveBox_ShouldHide(me->movebox))
-			{
+		{
 			PalTable_SetHidden(me, TRUE);
 			reserve_colors = FALSE;   /* <EAN> */
-			}
+		}
 		else
-			{
+		{
 			reserve_colors = TRUE;    /* <EAN> */
 			PalTable__SaveRect(me);
 			PalTable__Draw(me);
-			}
 		}
+	}
 
 	PalTable__SetCurr(me, me->active,          PalTable__GetCursorColor(me));
 	PalTable__SetCurr(me, (me->active == 1)?0:1, PalTable__GetCursorColor(me));
@@ -3563,7 +3534,7 @@ static void PalTable_Process(PalTable *me)
 	Cursor_Hide();
 	PalTable__RestoreRect(me);
 	setpalrange(0, colors, me->pal);
-	}
+}
 
 
 /*
@@ -3573,7 +3544,7 @@ static void PalTable_Process(PalTable *me)
 
 
 void EditPalette(void)       /* called by fractint */
-	{
+{
 	int       oldlookatmouse = lookatmouse;
 	int       oldsxoffs      = sxoffs;
 	int       oldsyoffs      = syoffs;
@@ -3606,4 +3577,4 @@ void EditPalette(void)       /* called by fractint */
 	sxoffs = oldsxoffs;
 	syoffs = oldsyoffs;
 	DELETE(line_buff);
-	}
+}

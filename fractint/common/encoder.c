@@ -791,14 +791,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	strcpy(save_info->info_id, INFO_ID);
 	save_info->version = FRACTAL_INFO_VERSION;
 
-	if (maxit <= SHRT_MAX)
-	{
-		save_info->iterationsold = (short) maxit;
-	}
-	else
-	{
-		save_info->iterationsold = (short) SHRT_MAX;
-	}
+	save_info->iterationsold = (maxit <= SHRT_MAX) ? (short) maxit : (short) SHRT_MAX;
 
 	save_info->fractal_type = (short) fractype;
 	save_info->xmin = xxmin;
@@ -832,14 +825,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->rflag = (short) rflag;
 	save_info->rseed = (short) rseed;
 	save_info->inside = (short) inside;
-	if (LogFlag <= SHRT_MAX)
-	{
-		save_info->logmapold = (short) LogFlag;
-	}
-	else
-	{
-		save_info->logmapold = (short) SHRT_MAX;
-	}
+	save_info->logmapold = (LogFlag <= SHRT_MAX) ? (short) LogFlag : (short) SHRT_MAX;
 	save_info->invert[0] = (float) inversion[0];
 	save_info->invert[1] = (float) inversion[1];
 	save_info->invert[2] = (float) inversion[2];
@@ -868,23 +854,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->y3rd = yy3rd;
 	save_info->calc_status = (short) calc_status;
 	save_info->stdcalcmode = (char) ((three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
-	if (distest <= 32000)
-	{
-		save_info->distestold = (short) distest;
-	}
-	else
-	{
-		save_info->distestold = 32000;
-	}
+	save_info->distestold = (distest <= 32000) ? (short) distest : 32000;
 	save_info->floatflag = floatflag;
-	if (bailout >= 4 && bailout <= 32000)
-	{
-		save_info->bailoutold = (short) bailout;
-	}
-	else
-	{
-		save_info->bailoutold = 0;
-	}
+	save_info->bailoutold = (bailout >= 4 && bailout <= 32000) ? (short) bailout : 0;
 
 	save_info->calctime = calctime;
 	save_info->trigndx[0] = trigndx[0];
@@ -900,14 +872,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->faspectratio = finalaspectratio;
 	save_info->system = (short) save_system;
 
-	if (check_back())
-	{
-		save_info->release = (short) min(save_release, g_release);
-	}
-	else
-	{
-		save_info->release = (short) g_release;
-	}
+	save_info->release = check_back() ? (short) min(save_release, g_release) : (short) g_release;
 
 	save_info->flag3d = (short) display3d;
 	save_info->ambient = (short) Ambient;
@@ -1124,14 +1089,8 @@ static int compress(int rowlimit)
 		{
 			for (xdot = 0; xdot < xdots; xdot++)
 			{
-				if (save16bit == 0 || ydot < ydots)
-				{
-					color = getcolor(xdot, ydot);
-				}
-				else
-				{
-					color = readdisk(xdot + sxoffs, ydot + syoffs);
-				}
+				color = (save16bit == 0 || ydot < ydots)
+					? getcolor(xdot, ydot) : readdisk(xdot + sxoffs, ydot + syoffs);
 				if (in_count == 0)
 				{
 					in_count = 1;
@@ -1293,14 +1252,7 @@ static void _fastcall output(int code)
 		else
 		{
 			n_bits++;
-			if (n_bits == maxbits)
-			{
-				maxcode = maxmaxcode;
-			}
-			else
-			{
-				maxcode = MAXCODE(n_bits);
-			}
+			maxcode = (n_bits == maxbits) ? maxmaxcode : MAXCODE(n_bits);
 		}
 	}
 

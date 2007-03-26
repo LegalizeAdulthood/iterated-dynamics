@@ -425,14 +425,7 @@ restorestart:
 		{
 			break;                      /* got it, exit */
 		}
-		if (browsing) /* break out of infinite loop, but lose your mind */
-		{
-			showfile = 1;
-		}
-		else
-		{
-			showfile = -1;                 /* retry */
-		}
+		showfile = browsing ? 1 : -1;
 	}
 
 	helpmode = HELPMENU;                 /* now use this help mode */
@@ -597,14 +590,7 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 'f')  /* floating pt toggle */
 				{
-					if (usr_floatflag == 0)
-					{
-						usr_floatflag = 1;
-					}
-					else
-					{
-						usr_floatflag = 0;
-					}
+					usr_floatflag = (usr_floatflag == 0) ? 1 : 0;
 					goto imagestart;
 				}
 				if (kbdchar == 'i')  /* set 3d fractal parms */

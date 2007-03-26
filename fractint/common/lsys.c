@@ -478,7 +478,7 @@ static void lsysi_doplus(struct lsys_turtlestatei *cmd)
 	{
 		if (++cmd->angle == cmd->maxangle)
 		{
-				cmd->angle = 0;
+			cmd->angle = 0;
 		}
 	}
 	else
@@ -489,7 +489,7 @@ static void lsysi_doplus(struct lsys_turtlestatei *cmd)
 		}
 		else
 		{
-				cmd->angle = cmd->dmaxangle;
+			cmd->angle = cmd->dmaxangle;
 		}
 	}
 }
@@ -527,14 +527,14 @@ static void lsysi_dominus(struct lsys_turtlestatei *cmd)
 		}
 		else
 		{
-				cmd->angle = cmd->dmaxangle;
+			cmd->angle = cmd->dmaxangle;
 		}
 	}
 	else
 	{
 		if (++cmd->angle == cmd->maxangle)
 		{
-				cmd->angle = 0;
+			cmd->angle = 0;
 		}
 	}
 }
@@ -545,16 +545,8 @@ extern void lsysi_dominus(struct lsys_turtlestatei *cmd);
 #if defined(XFRACT) || defined(_WIN32)
 static void lsysi_dominus_pow2(struct lsys_turtlestatei *cmd)
 {
-	if (cmd->reverse)
-	{
-		cmd->angle--;
-		cmd->angle &= cmd->dmaxangle;
-	}
-	else
-	{
-		cmd->angle++;
-		cmd->angle &= cmd->dmaxangle;
-	}
+	cmd->reverse ? cmd->angle-- : cmd->angle++;
+	cmd->angle &= cmd->dmaxangle;
 }
 #else
 extern void lsysi_dominus_pow2(struct lsys_turtlestatei *cmd);
@@ -847,38 +839,14 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 	{
 		return 0;
 	}
-	if (xmax == xmin)
-	{
-		horiz = 1.0e37f;
-	}
-	else
-	{
-		horiz = (float)((xdots-10)/(xmax-xmin));
-	}
-	if (ymax == ymin)
-	{
-		vert = 1.0e37f;
-	}
-	else
-	{
-		vert = (float)((ydots-6) /(ymax-ymin));
-	}
+	horiz = (xmax == xmin) ? 1.0e37f : (float)((xdots-10)/(xmax-xmin));
+	vert  = (ymax == ymin) ? 1.0e37f : (float)((ydots-6) /(ymax-ymin));
 	locsize = (vert < horiz) ? vert : horiz;
 
-	if (horiz == 1E37)
-	{
-		ts->xpos = FIXEDPT(xdots/2);
-	}
-	else
-/*    ts->xpos = FIXEDPT(-xmin*(locsize) + 5 + ((xdots-10)-(locsize)*(xmax-xmin))/2); */
-		ts->xpos = FIXEDPT((xdots-locsize*(xmax + xmin))/2);
-	if (vert == 1E37)
-	{
-		ts->ypos = FIXEDPT(ydots/2);
-	}
-	else
-/*    ts->ypos = FIXEDPT(-ymin*(locsize) + 3 + ((ydots-6)-(locsize)*(ymax-ymin))/2); */
-		ts->ypos = FIXEDPT((ydots-locsize*(ymax + ymin))/2);
+	ts->xpos = (horiz == 1e37) ?
+		FIXEDPT(xdots/2) : FIXEDPT((xdots-locsize*(xmax + xmin))/2);
+	ts->ypos = (vert == 1e37) ?
+		FIXEDPT(ydots/2) : FIXEDPT((ydots-locsize*(ymax + ymin))/2);
 	ts->size = FIXEDPT(locsize);
 
 	return 1;

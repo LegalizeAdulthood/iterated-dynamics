@@ -1363,14 +1363,7 @@ int fpfill_jump_struct(void)
 					break;
 				case 2:
 					checkforelse = !checkforelse;
-					if (checkforelse)
-					{
-						JumpFunc = fStkJump;
-					}
-					else
-					{
-						JumpFunc = fStkJumpOnFalse;
-					}
+					JumpFunc = checkforelse ? fStkJump : fStkJumpOnFalse;
 					break;
 				case 3:
 					JumpFunc = fStkJump;
@@ -1622,7 +1615,7 @@ skipfinalopt:  /* -------------- end of final optimizations ------------ */
 	/* now change the pointers  */
 	if (FormName[0] != 0 &&
 		(uses_jump == 0 || fpfill_jump_struct() == 0)) /* but only if parse succeeded  */
-		{
+	{
 		curfractalspecific->per_pixel = fform_per_pixel;
 		curfractalspecific->orbitcalc = fFormula;
 	}

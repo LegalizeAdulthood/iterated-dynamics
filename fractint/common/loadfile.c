@@ -603,7 +603,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 	else
 	{
-		evolving = FALSE;
+		evolving = EVOLVE_NONE;
 	}
 
 	if (blk_7_info.got_data == 1)
@@ -821,7 +821,7 @@ static int find_fractal_info(char *gif_file,struct fractal_info *info,
 							load_ext_blk(blk_2_info->resume_data, data_len);
 							blk_2_info->length = data_len;
 							blk_2_info->got_data = 1; /* got data */
-							}
+						}
 						break;
 					case 3: /* formula info */
 						skip_ext_blk(&block_len,&data_len); /* once to get lengths */
@@ -979,8 +979,8 @@ static void load_ext_blk(char *loadptr,int loadlen)
 			{
 				fgetc(fp); /* discard excess characters */
 			}
-			}
 		}
+	}
 }
 
 static void skip_ext_blk(int *block_len, int *data_len)
@@ -1174,7 +1174,7 @@ void backwards_v19(void)
 		}
 		else
 		{
-			param[2] += 1;
+			param[2]++;
 		}
 	}
 	if (fractype == MARKSJULIAFP && save_release < 1825)
@@ -1185,60 +1185,28 @@ void backwards_v19(void)
 		}
 		else
 		{
-			param[2] += 1;
+			param[2]++;
 		}
 	}
 	if ((fractype == FORMULA || fractype == FFORMULA) && save_release < 1824)
 	{
 		inversion[0] = inversion[1] = inversion[2] = invert = 0;
 	}
-	if (fix_bof())
-	{
-		no_mag_calc = 1; /* fractal has old bof60/61 problem with magnitude */
-	}
-	else
-	{
-		no_mag_calc = 0;
-	}
-	if (fix_period_bof())
-	{
-		use_old_period = 1; /* fractal uses old periodicity method */
-	}
-	else
-	{
-		use_old_period = 0;
-	}
-	if (save_release < 1827 && distest)
-	{
-		use_old_distest = 1; /* use old distest code */
-	}
-	else
-	{
-		use_old_distest = 0; /* use new distest code */
-	}
+	no_mag_calc = fix_bof() ? 1 : 0; /* fractal has old bof60/61 problem with magnitude */
+	use_old_period = fix_period_bof() ? 1 : 0; /* fractal uses old periodicity method */
+	use_old_distest = (save_release < 1827 && distest) ? 1 : 0; /* use old distest code */
 }
 
 void backwards_v20(void)
-{ /* Fractype == FP type is not seen from PAR file ????? */
-	if ((fractype == MANDELFP || fractype == JULIAFP ||
-		fractype == MANDEL || fractype == JULIA) &&
-		(outside <= REAL && outside >= SUM) && save_release <= 1960)
-	{
-		bad_outside = 1;
-	}
-	else
-	{
-		bad_outside = 0;
-	}
-	if ((fractype == FORMULA || fractype == FFORMULA) &&
-		(save_release < 1900 || debugflag == 94))
-	{
-		ldcheck = 1;
-	}
-	else
-	{
-		ldcheck = 0;
-	}
+{
+	/* Fractype == FP type is not seen from PAR file ????? */
+	bad_outside = ((fractype == MANDELFP || fractype == JULIAFP
+						|| fractype == MANDEL || fractype == JULIA)
+					&& (outside <= REAL && outside >= SUM) && save_release <= 1960)
+		? 1 : 0;
+	ldcheck = ((fractype == FORMULA || fractype == FFORMULA)
+				&& (save_release < 1900 || debugflag == 94))
+		? 1 : 0;
 	if (inside == EPSCROSS && save_release < 1961)
 	{
 		closeprox = 0.01;
@@ -1526,14 +1494,7 @@ rescan:  /* entry for changed browse parms */
 					lastime=thistime;
 					toggle = 1- toggle;
 				}
-				if (toggle)
-				{
-					drawindow(g_color_bright,&winlist);   /* flash current window */
-				}
-				else
-				{
-					drawindow(g_color_dark,&winlist);
-				}
+				drawindow(toggle ? g_color_bright : g_color_dark, &winlist);   /* flash current window */
 #ifdef XFRACT
 				blinks++;
 #endif
@@ -1557,12 +1518,18 @@ rescan:  /* entry for changed browse parms */
 					if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
 					{
 						index++;                     /* shift attention to next window */
-						if (index >= wincount) index = 0;
+						if (index >= wincount)
+						{
+							index = 0;
+						}
 					}
 					else
 					{
-						index -- ;
-						if (index < 0)  index = wincount -1 ;
+						index --;
+						if (index < 0)
+						{
+							index = wincount -1;
+						}
 					}
 					winlist = browse_windows[index];
 					memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
@@ -1573,7 +1540,7 @@ rescan:  /* entry for changed browse parms */
 #ifndef XFRACT
 				case FIK_CTL_INSERT:
 					color_of_box += key_count(FIK_CTL_INSERT);
-					for (i = 0 ; i < wincount ; i++)
+					for (i = 0; i < wincount; i++)
 					{
 						winlist = browse_windows[i];
 						drawindow(color_of_box,&winlist);
@@ -1584,7 +1551,7 @@ rescan:  /* entry for changed browse parms */
 
 				case FIK_CTL_DEL:
 					color_of_box -= key_count(FIK_CTL_DEL);
-					for (i = 0 ; i < wincount ; i++)
+					for (i = 0; i < wincount; i++)
 					{
 						winlist = browse_windows[i];
 						drawindow(color_of_box,&winlist);
@@ -2035,14 +2002,7 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 		cornercount ++;
 	}
 
-	if (cornercount >= 1)
-	{
-		return  TRUE;
-	}
-	else
-	{
-		return  FALSE;
-	}
+	return (cornercount >= 1) ? TRUE : FALSE;
 }
 
 static char paramsOK(struct fractal_info *info)
@@ -2083,7 +2043,9 @@ static char paramsOK(struct fractal_info *info)
 		tmpparm9 = 0.0;
 		tmpparm10 = 0.0;
 	}
-	if (fabs(info->creal - param[0]) < MINDIF &&
+	/* parameters are in range? */
+	return
+		(fabs(info->creal - param[0]) < MINDIF &&
 		fabs(info->cimag - param[1]) < MINDIF &&
 		fabs(tmpparm3 - param[2]) < MINDIF &&
 		fabs(tmpparm4 - param[3]) < MINDIF &&
@@ -2094,13 +2056,7 @@ static char paramsOK(struct fractal_info *info)
 		fabs(tmpparm9 - param[8]) < MINDIF &&
 		fabs(tmpparm10 - param[9]) < MINDIF &&
 		info->invert[0] - inversion[0] < MINDIF)
-	{
-		return 1; /* parameters are in range */
-	}
-	else
-	{
-		return 0;
-	}
+		? 1 : 0;
 }
 
 static char functionOK(struct fractal_info *info, int numfn)
@@ -2114,14 +2070,7 @@ static char functionOK(struct fractal_info *info, int numfn)
 			mzmatch++;
 		}
 	}
-	if (mzmatch > 0)
-	{
-		return 0;
-	}
-	else
-	{
-		return 1; /* they all match */
-	}
+	return (mzmatch > 0) ? 0 : 1;
 }
 
 static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
@@ -2133,14 +2082,7 @@ static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 		if (!stricmp(blk_3_info->form_name,FormName))
 		{
 			numfn = maxfn;
-			if (numfn > 0)
-			{
-				return functionOK(info, numfn);
-			}
-			else
-			{
-				return 1; /* match up formula names with no functions */
-			}
+			return (numfn > 0) ? functionOK(info, numfn) : 1;
 		}
 		else
 		{
@@ -2151,14 +2093,7 @@ static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 			info->fractal_type == curfractalspecific->tofloat)
 	{
 		numfn = (curfractalspecific->flags >> 6) & 7;
-		if (numfn > 0)
-		{
-			return functionOK(info, numfn);
-		}
-		else
-		{
-			return 1; /* match types with no functions */
-		}
+		return (numfn > 0) ? functionOK(info, numfn) : 1;
 	}
 	else
 	{

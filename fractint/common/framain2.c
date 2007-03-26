@@ -632,14 +632,9 @@ resumeloop:                             /* return here on failed overlays */
 				kbdchar = tolower(kbdchar);
 			}
 #endif
-			if (evolving)
-			{
-				mms_value = evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked);
-			}
-			else
-			{
-				mms_value = main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
-			}
+			mms_value = evolving ?
+				evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked)
+				: main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
 			if (quick_calc && (mms_value == IMAGESTART ||
 				mms_value == RESTORESTART ||
 				mms_value == RESTART))
@@ -2209,8 +2204,8 @@ static void note_zoom()
 			memcpy(savezoom, boxx, boxcount*2);
 			memcpy(savezoom + boxcount*2, boxy, boxcount*2);
 			memcpy(savezoom + boxcount*4, boxvalues, boxcount);
-			}
 		}
+	}
 }
 
 static void restore_zoom()
