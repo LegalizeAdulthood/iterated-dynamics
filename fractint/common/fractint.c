@@ -696,17 +696,17 @@ va_dcl
 	timer_start = clock_ticks();
 	switch (timertype)
 	{
-		case 0:
-			out = (*(int(*)(void))subrtn)();
-			break;
-		case 1:
-			i = va_arg(arg_marker, int);
-			out = (int)decoder((short)i); /* not indirect, safer with overlays */
-			break;
-		case 2:
-			out = encoder();            /* not indirect, safer with overlays */
-			break;
-		}
+	case 0:
+		out = (*(int(*)(void))subrtn)();
+		break;
+	case 1:
+		i = va_arg(arg_marker, int);
+		out = (int)decoder((short)i); /* not indirect, safer with overlays */
+		break;
+	case 2:
+		out = encoder();            /* not indirect, safer with overlays */
+		break;
+	}
 	/* next assumes CLK_TCK is 10^n, n >= 2 */
 	timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
 
@@ -717,13 +717,13 @@ va_dcl
 		timestring[24] = 0; /*clobber newline in time string */
 		switch (timertype)
 		{
-			case 1:
-				fprintf(fp, "decode ");
-				break;
-			case 2:
-				fprintf(fp, "encode ");
-				break;
-			}
+		case 1:
+			fprintf(fp, "decode ");
+			break;
+		case 2:
+			fprintf(fp, "encode ");
+			break;
+		}
 		fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
 			timestring,
 			curfractalspecific->name,

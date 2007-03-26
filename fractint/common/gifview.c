@@ -221,9 +221,8 @@ int gifview()
 			break;
 		case ',':
 			/*
-          * Start of an image object. Read the image description.
-          */
-
+			* Start of an image object. Read the image description.
+			*/
 			for (i = 0; i < 9; i++)
 			{
 				int tmp;

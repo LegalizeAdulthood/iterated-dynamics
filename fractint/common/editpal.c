@@ -3212,85 +3212,81 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 	case 'W':   /* convert to greyscale */
 	case 'w':
+		switch (me->exclude)
 		{
-			switch (me->exclude)
-			{
-			case 0:   /* normal mode.  convert all colors to grey scale */
-				PalTable__SaveUndoData(me, 0, 255);
-				palrangetogrey(me->pal, 0, 256);
-				break;
-
-			case 1:   /* 'x' mode. convert current color to grey scale.  */
-				PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
-				palrangetogrey(me->pal, me->curr[me->active], 1);
-				break;
-
-			case 2:  /* 'y' mode.  convert range between editors to grey. */
-				{
-					int a = me->curr[0],
-						b = me->curr[1];
-
-					if (a > b)
-					{
-						int t = a;
-						a = b;
-						b = t;
-					}
-
-					PalTable__SaveUndoData(me, a, b);
-					palrangetogrey(me->pal, a, 1 + (b-a));
-					break;
-				}
-			}
-
-			PalTable__UpdateDAC(me);
-			RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-			RGBEditor_Update(me->rgb[0]);
-			RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-			RGBEditor_Update(me->rgb[1]);
+		case 0:   /* normal mode.  convert all colors to grey scale */
+			PalTable__SaveUndoData(me, 0, 255);
+			palrangetogrey(me->pal, 0, 256);
 			break;
+
+		case 1:   /* 'x' mode. convert current color to grey scale.  */
+			PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
+			palrangetogrey(me->pal, me->curr[me->active], 1);
+			break;
+
+		case 2:  /* 'y' mode.  convert range between editors to grey. */
+			{
+				int a = me->curr[0],
+					b = me->curr[1];
+
+				if (a > b)
+				{
+					int t = a;
+					a = b;
+					b = t;
+				}
+
+				PalTable__SaveUndoData(me, a, b);
+				palrangetogrey(me->pal, a, 1 + (b-a));
+				break;
+			}
 		}
+
+		PalTable__UpdateDAC(me);
+		RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
+		RGBEditor_Update(me->rgb[0]);
+		RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
+		RGBEditor_Update(me->rgb[1]);
+		break;
 
 	case 'N':   /* convert to negative color */
 	case 'n':
+		switch (me->exclude)
 		{
-			switch (me->exclude)
-			{
-			case 0:      /* normal mode.  convert all colors to grey scale */
-				PalTable__SaveUndoData(me, 0, 255);
-				palrangetonegative(me->pal, 0, 256);
-				break;
-
-			case 1:      /* 'x' mode. convert current color to grey scale.  */
-				PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
-				palrangetonegative(me->pal, me->curr[me->active], 1);
-				break;
-
-			case 2:  /* 'y' mode.  convert range between editors to grey. */
-				{
-					int a = me->curr[0],
-					b = me->curr[1];
-
-					if (a > b)
-					{
-						int t = a;
-						a = b;
-						b = t;
-					}
-
-					PalTable__SaveUndoData(me, a, b);
-					palrangetonegative(me->pal, a, 1 + (b-a));
-					break;
-				}
-			}
-
-			PalTable__UpdateDAC(me);
-			RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-			RGBEditor_Update(me->rgb[0]);
-			RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-			RGBEditor_Update(me->rgb[1]);
+		case 0:      /* normal mode.  convert all colors to grey scale */
+			PalTable__SaveUndoData(me, 0, 255);
+			palrangetonegative(me->pal, 0, 256);
 			break;
+
+		case 1:      /* 'x' mode. convert current color to grey scale.  */
+			PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
+			palrangetonegative(me->pal, me->curr[me->active], 1);
+			break;
+
+		case 2:  /* 'y' mode.  convert range between editors to grey. */
+			{
+				int a = me->curr[0],
+				b = me->curr[1];
+
+				if (a > b)
+				{
+					int t = a;
+					a = b;
+					b = t;
+				}
+
+				PalTable__SaveUndoData(me, a, b);
+				palrangetonegative(me->pal, a, 1 + (b-a));
+				break;
+			}
 		}
+
+		PalTable__UpdateDAC(me);
+		RGBEditor_SetRGB(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
+		RGBEditor_Update(me->rgb[0]);
+		RGBEditor_SetRGB(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
+		RGBEditor_Update(me->rgb[1]);
+		break;
 
 	case 'U':     /* Undo */
 	case 'u':
@@ -3301,7 +3297,6 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 	case 'E':
 		PalTable__Redo(me);
 		break;
-
 	} /* switch */
 	PalTable__DrawStatus(me, FALSE);
 }

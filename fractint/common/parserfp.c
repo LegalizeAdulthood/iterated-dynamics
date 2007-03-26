@@ -1358,21 +1358,21 @@ int fpfill_jump_struct(void)
 		{
 			switch (jump_control[i].type)
 			{
-				case 1:
-					JumpFunc = fStkJumpOnFalse;
-					break;
-				case 2:
-					checkforelse = !checkforelse;
-					JumpFunc = checkforelse ? fStkJump : fStkJumpOnFalse;
-					break;
-				case 3:
-					JumpFunc = fStkJump;
-					break;
-				case 4:
-					JumpFunc = fStkJumpLabel;
-					break;
-				default:
-					break;
+			case 1:
+				JumpFunc = fStkJumpOnFalse;
+				break;
+			case 2:
+				checkforelse = !checkforelse;
+				JumpFunc = checkforelse ? fStkJump : fStkJumpOnFalse;
+				break;
+			case 3:
+				JumpFunc = fStkJump;
+				break;
+			case 4:
+				JumpFunc = fStkJumpLabel;
+				break;
+			default:
+				break;
 			}
 			find_new_func = 0;
 		}

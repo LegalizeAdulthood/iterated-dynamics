@@ -696,8 +696,8 @@ pass_option_restart:
 	if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
 	if (keep_scrn_coords == 0) set_orbit_corners = 0;
 
-	{ int tmp;
-	tmp = uvalues[++k].uval.ch.val;
+	{
+		int tmp = uvalues[++k].uval.ch.val;
 		switch (tmp)
 		{
 		default:

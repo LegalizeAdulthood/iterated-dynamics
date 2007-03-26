@@ -160,7 +160,7 @@ void param_history(int mode)
 
 void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
-int lclpy = gridsz - py - 1;
+	int lclpy = gridsz - py - 1;
 	switch (gene[i].mutate)
 	{
 	default:

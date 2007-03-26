@@ -983,16 +983,11 @@ top:
 
 	switch (calc_status)
 	{
-	case 0:  msgptr = "Parms chgd since generated";
-		break;
-	case 1:  msgptr = "Still being generated";
-		break;
-	case 2:  msgptr = "Interrupted, resumable";
-		break;
-	case 3:  msgptr = "Interrupted, non-resumable";
-		break;
-	case 4:  msgptr = "Image completed";
-		break;
+	case 0:  msgptr = "Parms chgd since generated"; break;
+	case 1:  msgptr = "Still being generated"; break;
+	case 2:  msgptr = "Interrupted, resumable"; break;
+	case 3:  msgptr = "Interrupted, non-resumable"; break;
+	case 4:  msgptr = "Image completed"; break;
 	default: msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
@@ -1602,33 +1597,33 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 	switch (itemtype)
 	{
-		case 1:
-			strcpy(parsearchname, "frm:");
-			strcat(parsearchname, itemname);
-			parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
-			strcpy(defaultextension, ".frm");
-			splitpath(searchfor.frm, drive, dir, NULL, NULL);
-			break;
-		case 2:
-			strcpy(parsearchname, "lsys:");
-			strcat(parsearchname, itemname);
-			parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
-			strcpy(defaultextension, ".l");
-			splitpath(searchfor.lsys, drive, dir, NULL, NULL);
-			break;
-		case 3:
-			strcpy(parsearchname, "ifs:");
-			strcat(parsearchname, itemname);
-			parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
-			strcpy(defaultextension, ".ifs");
-			splitpath(searchfor.ifs, drive, dir, NULL, NULL);
-			break;
-		default:
-			strcpy(parsearchname, itemname);
-			parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
-			strcpy(defaultextension, ".par");
-			splitpath(searchfor.par, drive, dir, NULL, NULL);
-			break;
+	case 1:
+		strcpy(parsearchname, "frm:");
+		strcat(parsearchname, itemname);
+		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		strcpy(defaultextension, ".frm");
+		splitpath(searchfor.frm, drive, dir, NULL, NULL);
+		break;
+	case 2:
+		strcpy(parsearchname, "lsys:");
+		strcat(parsearchname, itemname);
+		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		strcpy(defaultextension, ".l");
+		splitpath(searchfor.lsys, drive, dir, NULL, NULL);
+		break;
+	case 3:
+		strcpy(parsearchname, "ifs:");
+		strcat(parsearchname, itemname);
+		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		strcpy(defaultextension, ".ifs");
+		splitpath(searchfor.ifs, drive, dir, NULL, NULL);
+		break;
+	default:
+		strcpy(parsearchname, itemname);
+		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		strcpy(defaultextension, ".par");
+		splitpath(searchfor.par, drive, dir, NULL, NULL);
+		break;
 	}
 
 	if (!found)

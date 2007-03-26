@@ -1605,44 +1605,38 @@ void abort_cellular(int err, int t)
 	int i;
 	switch (err)
 	{
-		case BAD_T:
-			{
+	case BAD_T:
+		{
 			char msg[30];
 			sprintf(msg, "Bad t=%d, aborting\n", t);
 			stopmsg(0, msg);
-			}
-			break;
-		case BAD_MEM:
-			{
-			stopmsg(0, "Insufficient free memory for calculation");
-			}
-			break;
-		case STRING1:
-			{
-			stopmsg(0, "String can be a maximum of 16 digits");
-			}
-			break;
-		case STRING2:
-			{
+		}
+		break;
+	case BAD_MEM:
+		stopmsg(0, "Insufficient free memory for calculation");
+		break;
+	case STRING1:
+		stopmsg(0, "String can be a maximum of 16 digits");
+		break;
+	case STRING2:
+		{
 			static char msg[] = {"Make string of 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
 			stopmsg(0, msg);
-			}
-			break;
-		case TABLEK:
-			{
+		}
+		break;
+	case TABLEK:
+		{
 			static char msg[] = {"Make Rule with 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
 			stopmsg(0, msg);
-			}
-			break;
-		case TYPEKR:
-			{
-			stopmsg(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
-			}
-			break;
-		case RULELENGTH:
-			{
+		}
+		break;
+	case TYPEKR:
+		stopmsg(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
+		break;
+	case RULELENGTH:
+		{
 			static char msg[] = {"Rule must be    digits long" };
 			i = rule_digits / 10;
 			if (i == 0)
@@ -1655,15 +1649,13 @@ void abort_cellular(int err, int t)
 				msg[14] = (char)((rule_digits % 10) + 48);
 			}
 			stopmsg(0, msg);
-			}
-			break;
-		case INTERUPT:
-			{
-			stopmsg(0, "Interrupted, can't resume");
-			}
-			break;
-		case CELLULAR_DONE:
-			break;
+		}
+		break;
+	case INTERUPT:
+		stopmsg(0, "Interrupted, can't resume");
+		break;
+	case CELLULAR_DONE:
+		break;
 	}
 	if (cell_array[0] != NULL)
 	{

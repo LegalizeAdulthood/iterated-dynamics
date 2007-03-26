@@ -2225,33 +2225,33 @@ static void move_zoombox(int keynum)
 	{
 		switch (keynum)
 		{
-			case FIK_LEFT_ARROW:               /* cursor left */
-				--horizontal;
-				break;
-			case FIK_RIGHT_ARROW:              /* cursor right */
-				++horizontal;
-				break;
-			case FIK_UP_ARROW:                 /* cursor up */
-				--vertical;
-				break;
-			case FIK_DOWN_ARROW:               /* cursor down */
-				++vertical;
-				break;
-			case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
-				horizontal -= 8;
-				break;
-			case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
-				horizontal += 8;
-				break;
-			case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
-				vertical -= 8;
-				break;
-			case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
-				vertical += 8;
-				break;                      /* += 8 needed by VESA scrolling */
-			default:
-				getmore = 0;
-			}
+		case FIK_LEFT_ARROW:               /* cursor left */
+			--horizontal;
+			break;
+		case FIK_RIGHT_ARROW:              /* cursor right */
+			++horizontal;
+			break;
+		case FIK_UP_ARROW:                 /* cursor up */
+			--vertical;
+			break;
+		case FIK_DOWN_ARROW:               /* cursor down */
+			++vertical;
+			break;
+		case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
+			horizontal -= 8;
+			break;
+		case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
+			horizontal += 8;
+			break;
+		case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
+			vertical -= 8;
+			break;
+		case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
+			vertical += 8;
+			break;                      /* += 8 needed by VESA scrolling */
+		default:
+			getmore = 0;
+		}
 		if (getmore)
 		{
 			if (getmore == 2)              /* eat last key used */
@@ -2260,11 +2260,11 @@ static void move_zoombox(int keynum)
 			}
 			getmore = 2;
 			keynum = driver_key_pressed();         /* next pending key */
-			}
 		}
+	}
 	if (boxcount)
 	{
-/*
+		/*
 		if (horizontal != 0)
 		{
 			moveboxf((double)horizontal/dxsize, 0.0);
@@ -2273,7 +2273,7 @@ static void move_zoombox(int keynum)
 		{
 			moveboxf(0.0, (double)vertical/dysize);
 		}
-*/
+		*/
 		moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
 	}
 }

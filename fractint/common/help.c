@@ -546,15 +546,15 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 #endif
 
 static int find_link_key(LINK *link, int num_link, int curr_link, int key)
-	{
+{
 	link = NULL;   /* just for warning */
 	switch (key)
-		{
-		case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1 ;
-		case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1 ;
-		default:       assert(0);  return -1;
-		}
+	{
+	case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1 ;
+	case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1 ;
+	default:       assert(0);  return -1;
 	}
+}
 
 static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, int, int, int), int val)
 {
@@ -618,9 +618,9 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 	draw_page = 2;
 
 	do
-		{
+	{
 		if (draw_page)
-			{
+		{
 			help_seek(where + page_table[page].offset);
 			fread(buffer, sizeof(char), page_table[page].len, help_file);
 
@@ -647,133 +647,133 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 			}
 
 			draw_page = 0;
-			}
+		}
 
 		key = driver_get_key();
 
 		switch (key)
+		{
+		case FIK_PAGE_DOWN:
+			if (page < num_pages-1)
 			{
-			case FIK_PAGE_DOWN:
-				if (page < num_pages-1)
-					{
-					page++;
-					draw_page = 1;
-					}
-				break;
+				page++;
+				draw_page = 1;
+			}
+			break;
 
-			case FIK_PAGE_UP:
-				if (page > 0)
-					{
-					page--;
-					draw_page = 1;
-					}
-				break;
+		case FIK_PAGE_UP:
+			if (page > 0)
+			{
+				page--;
+				draw_page = 1;
+			}
+			break;
 
-			case FIK_HOME:
-				if (page != 0)
-				{
-					page = 0;
-					draw_page = 1;
-				}
-				else
-				{
-					do_move_link(link_table, num_link, &curr_link, NULL, 0);
-				}
-				break;
+		case FIK_HOME:
+			if (page != 0)
+			{
+				page = 0;
+				draw_page = 1;
+			}
+			else
+			{
+				do_move_link(link_table, num_link, &curr_link, NULL, 0);
+			}
+			break;
 
-			case FIK_END:
-				if (page != num_pages-1)
-				{
-					page = num_pages-1;
-					draw_page = 3;
-				}
-				else
-				{
-					do_move_link(link_table, num_link, &curr_link, NULL, num_link-1);
-				}
-				break;
+		case FIK_END:
+			if (page != num_pages-1)
+			{
+				page = num_pages-1;
+				draw_page = 3;
+			}
+			else
+			{
+				do_move_link(link_table, num_link, &curr_link, NULL, num_link-1);
+			}
+			break;
 
-			case FIK_TAB:
-				if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-					page < num_pages-1)
-				{
-					++page;
-					draw_page = 1;
-				}
-				break;
+		case FIK_TAB:
+			if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+				page < num_pages-1)
+			{
+				++page;
+				draw_page = 1;
+			}
+			break;
 
-			case FIK_SHF_TAB:
-				if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
-					page > 0)
-				{
-					--page;
-					draw_page = 3;
-				}
-				break;
+		case FIK_SHF_TAB:
+			if (!do_move_link(link_table, num_link, &curr_link, find_link_key, key) &&
+				page > 0)
+			{
+				--page;
+				draw_page = 3;
+			}
+			break;
 
-			case FIK_DOWN_ARROW:
-				if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
-					page < num_pages-1)
-				{
-					++page;
-					draw_page = 1;
-				}
-				break;
+		case FIK_DOWN_ARROW:
+			if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 0) &&
+				page < num_pages-1)
+			{
+				++page;
+				draw_page = 1;
+			}
+			break;
 
-			case FIK_UP_ARROW:
-				if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
-					page > 0)
-				{
-					--page;
-					draw_page = 3;
-				}
-				break;
+		case FIK_UP_ARROW:
+			if (!do_move_link(link_table, num_link, &curr_link, find_link_updown, 1) &&
+				page > 0)
+			{
+				--page;
+				draw_page = 3;
+			}
+			break;
 
-			case FIK_LEFT_ARROW:
-				do_move_link(link_table, num_link, &curr_link, find_link_leftright, 1);
-				break;
+		case FIK_LEFT_ARROW:
+			do_move_link(link_table, num_link, &curr_link, find_link_leftright, 1);
+			break;
 
-			case FIK_RIGHT_ARROW:
-				do_move_link(link_table, num_link, &curr_link, find_link_leftright, 0);
-				break;
+		case FIK_RIGHT_ARROW:
+			do_move_link(link_table, num_link, &curr_link, find_link_leftright, 0);
+			break;
 
-			case FIK_ESC:         /* exit help */
-				action = ACTION_QUIT;
-				break;
+		case FIK_ESC:         /* exit help */
+			action = ACTION_QUIT;
+			break;
 
-			case FIK_BACKSPACE:   /* prev topic */
-			case FIK_ALT_F1:
-				if (flags & F_HIST)
-				{
-					action = ACTION_PREV;
-				}
-				break;
+		case FIK_BACKSPACE:   /* prev topic */
+		case FIK_ALT_F1:
+			if (flags & F_HIST)
+			{
+				action = ACTION_PREV;
+			}
+			break;
 
-			case FIK_F1:    /* help index */
-				if (!(flags & F_INDEX))
-				{
-					action = ACTION_INDEX;
-				}
-				break;
+		case FIK_F1:    /* help index */
+			if (!(flags & F_INDEX))
+			{
+				action = ACTION_INDEX;
+			}
+			break;
 
-			case FIK_ENTER:
-			case FIK_ENTER_2:
-				if (num_link > 0)
-					{
-					next->topic_num = link_table[curr_link].topic_num;
-					next->topic_off = link_table[curr_link].topic_off;
-					action = ACTION_CALL;
-					}
-				break;
-			} /* switch */
-		}
+		case FIK_ENTER:
+		case FIK_ENTER_2:
+			if (num_link > 0)
+			{
+				next->topic_num = link_table[curr_link].topic_num;
+				next->topic_off = link_table[curr_link].topic_off;
+				action = ACTION_CALL;
+			}
+			break;
+		} /* switch */
+	}
 	while (action == -1);
 
 	curr->topic_off = page_table[page].offset;
 	curr->link      = curr_link;
 
 	return action;
-	}
+}
 
 int help(int action)
 {
@@ -836,7 +836,6 @@ int help(int action)
 			{
 				curr = hist[--curr_hist];
 			}
-
 			/* fall-through */
 
 		case ACTION_PREV:
@@ -1138,83 +1137,83 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 	BYTE ch;
 
 	switch (cmd)
+	{
+	case PD_GET_CONTENT:
+		if (++info->cnum >= info->num_contents)
 		{
-		case PD_GET_CONTENT:
-			if (++info->cnum >= info->num_contents)
-			{
-				return 0;
-			}
-
-			help_seek(info->content_pos);
-
-			fread(&t, sizeof(int), 1, help_file);      /* read flags */
-			info->content_pos += sizeof(int);
-			pd->new_page = (t & 1) ? 1 : 0;
-
-			fread(&ch, sizeof(char), 1, help_file);       /* read id len */
-
-			t = ch;
-			if (t >= 80)
-			{
-				tmp = ftell(help_file);
-			}
-			assert(t < 80);
-			fread(info->id, sizeof(char), t, help_file);  /* read the id */
-			info->content_pos += 1 + t;
-			info->id[t] = '\0';
-
-			fread(&ch, sizeof(char), 1, help_file);       /* read title len */
-			t = ch;
-			assert(t < 80);
-			fread(info->title, sizeof(char), t, help_file); /* read the title */
-			info->content_pos += 1 + t;
-			info->title[t] = '\0';
-
-			fread(&ch, sizeof(char), 1, help_file);       /* read num_topic */
-			t = ch;
-			assert(t < MAX_NUM_TOPIC_SEC);
-			fread(info->topic_num, sizeof(int), t, help_file);  /* read topic_num[] */
-			info->num_topic = t;
-			info->content_pos += 1 + t*sizeof(int);
-
-			info->tnum = -1;
-
-			pd->id = info->id;
-			pd->title = info->title;
-			return 1;
-
-		case PD_GET_TOPIC:
-			if (++info->tnum >= info->num_topic)
-			{
-				return 0;
-			}
-
-			t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
-
-			assert(t <= 0);
-
-			pd->curr = info->buffer;
-			pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
-			return 1;
-
-		case PD_GET_LINK_PAGE:
-			pd->i = getint(pd->s + sizeof(long));
-			return (pd->i == -1) ? 0 : 1 ;
-
-		case PD_RELEASE_TOPIC:
-			return 1;
-
-		default:
 			return 0;
 		}
+
+		help_seek(info->content_pos);
+
+		fread(&t, sizeof(int), 1, help_file);      /* read flags */
+		info->content_pos += sizeof(int);
+		pd->new_page = (t & 1) ? 1 : 0;
+
+		fread(&ch, sizeof(char), 1, help_file);       /* read id len */
+
+		t = ch;
+		if (t >= 80)
+		{
+			tmp = ftell(help_file);
+		}
+		assert(t < 80);
+		fread(info->id, sizeof(char), t, help_file);  /* read the id */
+		info->content_pos += 1 + t;
+		info->id[t] = '\0';
+
+		fread(&ch, sizeof(char), 1, help_file);       /* read title len */
+		t = ch;
+		assert(t < 80);
+		fread(info->title, sizeof(char), t, help_file); /* read the title */
+		info->content_pos += 1 + t;
+		info->title[t] = '\0';
+
+		fread(&ch, sizeof(char), 1, help_file);       /* read num_topic */
+		t = ch;
+		assert(t < MAX_NUM_TOPIC_SEC);
+		fread(info->topic_num, sizeof(int), t, help_file);  /* read topic_num[] */
+		info->num_topic = t;
+		info->content_pos += 1 + t*sizeof(int);
+
+		info->tnum = -1;
+
+		pd->id = info->id;
+		pd->title = info->title;
+		return 1;
+
+	case PD_GET_TOPIC:
+		if (++info->tnum >= info->num_topic)
+		{
+			return 0;
+		}
+
+		t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
+
+		assert(t <= 0);
+
+		pd->curr = info->buffer;
+		pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
+		return 1;
+
+	case PD_GET_LINK_PAGE:
+		pd->i = getint(pd->s + sizeof(long));
+		return (pd->i == -1) ? 0 : 1 ;
+
+	case PD_RELEASE_TOPIC:
+		return 1;
+
+	default:
+		return 0;
 	}
+}
 
 static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
-	{
+{
 	switch (cmd)
+	{
+	case PD_HEADING:
 		{
-		case PD_HEADING:
-			{
 			char line[81];
 			char buff[40];
 			int  width = PAGE_WIDTH + PAGE_INDENT;
@@ -1239,69 +1238,67 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			info->margin = PAGE_INDENT;
 
 			return keep_going ;
-			}
-
-		case PD_FOOTING:
-			info->margin = 0;
-			printerc(info, '\f', 1);
-			info->margin = PAGE_INDENT;
-			return 1;
-
-		case PD_PRINT:
-			printers(info, pd->s, pd->i);
-			return 1;
-
-		case PD_PRINTN:
-			printerc(info, *pd->s, pd->i);
-			return 1;
-
-		case PD_PRINT_SEC:
-			info->margin = TITLE_INDENT;
-			if (pd->id[0] != '\0')
-				{
-				printers(info, pd->id, 0);
-				printerc(info, ' ', 1);
-				}
-			printers(info, pd->title, 0);
-			printerc(info, '\n', 1);
-			info->margin = PAGE_INDENT;
-			return 1;
-
-		case PD_START_SECTION:
-		case PD_START_TOPIC:
-		case PD_SET_SECTION_PAGE:
-		case PD_SET_TOPIC_PAGE:
-		case PD_PERIODIC:
-			return 1;
-
-		default:
-			return 0;
 		}
+
+	case PD_FOOTING:
+		info->margin = 0;
+		printerc(info, '\f', 1);
+		info->margin = PAGE_INDENT;
+		return 1;
+
+	case PD_PRINT:
+		printers(info, pd->s, pd->i);
+		return 1;
+
+	case PD_PRINTN:
+		printerc(info, *pd->s, pd->i);
+		return 1;
+
+	case PD_PRINT_SEC:
+		info->margin = TITLE_INDENT;
+		if (pd->id[0] != '\0')
+		{
+			printers(info, pd->id, 0);
+			printerc(info, ' ', 1);
+		}
+		printers(info, pd->title, 0);
+		printerc(info, '\n', 1);
+		info->margin = PAGE_INDENT;
+		return 1;
+
+	case PD_START_SECTION:
+	case PD_START_TOPIC:
+	case PD_SET_SECTION_PAGE:
+	case PD_SET_TOPIC_PAGE:
+	case PD_PERIODIC:
+		return 1;
+
+	default:
+		return 0;
 	}
+}
 
 static int print_doc_msg_func(int pnum, int num_pages)
-	{
+{
 	char temp[10];
 	int  key;
 
 	if (pnum == -1)    /* successful completion */
-		{
+	{
 		driver_buzzer(BUZZER_COMPLETE);
 		putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
 		driver_get_key();
 		return 0;
-		}
-
-	if (pnum == -2)   /* aborted */
-		{
+	}
+	else if (pnum == -2)   /* aborted */
+	{
 		driver_buzzer(BUZZER_INTERRUPT);
 		putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
 		driver_get_key();
 		return 0;
-		}
-
-	if (pnum == 0)   /* initialization */
-		{
+	}
+	else if (pnum == 0)   /* initialization */
+	{
 		helptitle();
 		printinstr();
 		driver_set_attr(2, 0, C_HELP_BODY, 80*22);
@@ -1310,22 +1307,22 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 
 		driver_hide_text_cursor();
-		}
+	}
 
 	sprintf(temp, "%d%%", (int)((100.0 / num_pages)*pnum));
 	driver_put_string(7, 41, C_HELP_LINK, temp);
 
 	while (driver_key_pressed())
-		{
+	{
 		key = driver_get_key();
 		if (key == FIK_ESC)
 		{
 			return 0;    /* user abort */
 		}
-		}
+	}
 
 	return 1;   /* AOK -- continue */
-	}
+}
 
 int makedoc_msg_func(int pnum, int num_pages)
 {
@@ -1346,7 +1343,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 }
 
 void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg)
-	{
+{
 	PRINT_DOC_INFO info;
 	int            success   = 0;
 	FILE *temp_file = NULL;
@@ -1566,13 +1563,13 @@ int init_help(void)
 }
 
 void end_help(void)
-	{
+{
 	if (help_file != NULL)
-		{
+	{
 		fclose(help_file);
 		free(topic_offset);
 		free(label);
 		free(hist);
 		help_file = NULL;
-		}
 	}
+}
