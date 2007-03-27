@@ -1285,7 +1285,7 @@ PopcornFractal(void)
 	*/
 	if (plot == noplot)
 	{
-		plot_orbit(g_new.x, g_new.y, 1 + row%colors);
+		plot_orbit(g_new.x, g_new.y, 1 + row % colors);
 		old = g_new;
 	}
 	/* else */
@@ -3472,7 +3472,7 @@ int MandelbrotMix4Setup(void)
 			break;
 		}
 		/* in case our kludge failed, let the user fix it */
-		if (debugflag == 1012)
+		if (DEBUGFLAG_SWAP_SIGN == debugflag)
 		{
 			tmp.y = -tmp.y;
 		}

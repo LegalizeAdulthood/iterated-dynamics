@@ -264,7 +264,7 @@ int Init_Queue(unsigned long request)
 	}
 
 #if 0
-	if (xmmquery() && debugflag != 420)  /* use LARGEST extended mem */
+	if (xmmquery() && debugflag != DEBUGFLAG_USE_DISK)  /* use LARGEST extended mem */
 	{
 		largest = xmmlongest();
 		if (largest > request / 128)

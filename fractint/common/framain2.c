@@ -264,7 +264,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			if (filetype == 0)
 			{
-				if (debugflag == 2224)
+				if (2224 == debugflag)
 				{
 					char msg[MSGLEN];
 					sprintf(msg, "floatflag=%d", usr_floatflag);
@@ -602,7 +602,7 @@ resumeloop:                             /* return here on failed overlays */
 						driver_get_key();
 					}
 */
-					kbdchar = (debugflag == 50) ? 'r' : 's';
+					kbdchar = (DEBUGFLAG_COMPARE_RESTORED == debugflag) ? 'r' : 's';
 					if (initbatch == INIT_BATCH_NORMAL)
 					{
 						initbatch = INIT_BATCH_SAVE;
@@ -1358,7 +1358,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	}
 	if (kbdchar == 'r')
 	{
-		if (debugflag == 50)
+		if (DEBUGFLAG_COMPARE_RESTORED == debugflag)
 		{
 			comparegif = overlay3d = 1;
 			if (initbatch == INIT_BATCH_SAVE)

@@ -176,20 +176,23 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		there is free; demand a certain minimum or nogo at all */
 	freemem = FREEMEM;
 
-	for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size)
-	{
-		longtmp = ((int)cache_size < freemem) ?
-			(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
-		tempfar = malloc(longtmp);
-		if (tempfar != NULL)
-		{
-			free(tempfar);
-			break;
-		}
-	}
-	if (debugflag == 4200)
+	if (DEBUGFLAG_MIN_DISKVID_CACHE == debugflag)
 	{
 		cache_size = CACHEMIN;
+	}
+	else
+	{
+		for (cache_size = CACHEMAX; cache_size >= CACHEMIN; --cache_size)
+		{
+			longtmp = ((int)cache_size < freemem) ?
+				(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
+			tempfar = malloc(longtmp);
+			if (tempfar != NULL)
+			{
+				free(tempfar);
+				break;
+			}
+		}
 	}
 	longtmp = (long)cache_size << 10;
 	cache_start = (struct cache *)malloc(longtmp);

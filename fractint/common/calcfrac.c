@@ -1156,7 +1156,7 @@ static void perform_worklist()
 		switch (stdcalcmode)
 		{
 		case 's':
-			if (debugflag == 3444)
+			if (DEBUGFLAG_SOI_LONG_DOUBLE == debugflag)
 			{
 				soi_ldbl();
 			}
@@ -1850,9 +1850,9 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 					: (int)(((coloriter - 1) % g_and_color) + 1);
 			}
 		}
-		if (debugflag != 470)
+		if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
-			if (color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
+			if (color <= 0 && stdcalcmode == 'b')   /* fix BTM bug */
 			{
 				color = 1;
 			}
@@ -1914,7 +1914,7 @@ int calcmandfp(void)
 					: (int)(((coloriter - 1) % g_and_color) + 1);
 			}
 		}
-		if (debugflag != 470)
+		if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
 			if (color == 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 			{
@@ -2850,7 +2850,7 @@ plot_pixel:
 				: (int)(((coloriter - 1) % g_and_color) + 1);
 		}
 	}
-	if (debugflag != 470)
+	if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
 	{
 		if (color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 		{
@@ -3546,7 +3546,7 @@ static int solidguess(void)
 		|| ((plot == putcolor || plot == symplot2) && ixstop + 1 == xdots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
-	if (debugflag != 472)
+	if (debugflag != DEBUGFLAG_SOLID_GUESS_BR)
 	{
 		bottom_guess = right_guess = 0;  /* TIW march 1995 */
 	}

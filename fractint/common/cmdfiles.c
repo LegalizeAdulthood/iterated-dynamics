@@ -322,7 +322,7 @@ int cmdfiles(int argc, char **argv)
 
 	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
-	if (debugflag != 110)
+	if (debugflag != DEBUGFLAG_NO_FIRST_INIT)
 	{
 		first_init = 0;
 	}
@@ -413,7 +413,7 @@ static void initvars_restart()          /* <ins> key init */
 	viewxdots = viewydots = 0;
 	orbit_delay = 0;                     /* full speed orbits */
 	orbit_interval = 1;                  /* plot all orbits */
-	debugflag = 0;                       /* debugging flag(s) are off */
+	debugflag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
 	timerflag = 0;                       /* timer flags are off       */
 	strcpy(FormFileName, "fractint.frm"); /* default formula file      */
 	FormName[0] = 0;
@@ -949,7 +949,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		}
 	}
 
-	if (mode != CMDFILE_AT_AFTER_STARTUP || debugflag == 110)
+	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGFLAG_NO_FIRST_INIT == debugflag)
 	{
 		/* these commands are allowed only at startup */
 		if (strcmp(variable, "batch") == 0)     /* batch=?      */
@@ -2050,7 +2050,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		initcorners = 1;
 		/* good first approx, but dec could be too big */
 		dec = get_max_curarg_len(floatvalstr, totparms) + 1;
-		if ((dec > DBL_DIG + 1 || debugflag == 3200) && debugflag != 3400)
+		if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag) && debugflag != DEBUGFLAG_NO_INT_TO_FLOAT)
 		{
 			int old_bf_math;
 
@@ -2262,7 +2262,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 		dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
 
-		if ((dec <= DBL_DIG + 1 && debugflag != 3200) || debugflag == 3400)  /* rough estimate that double is OK */
+		if ((dec <= DBL_DIG + 1 && debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == debugflag)  /* rough estimate that double is OK */
 		{
 			Xctr = floatval[0];
 			Yctr = floatval[1];

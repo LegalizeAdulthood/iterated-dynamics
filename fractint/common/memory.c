@@ -106,7 +106,7 @@ static void WhichDiskError(int I_O)
 		"Read file error %d:  %s"
 	};
 	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
-	if (debugflag == 10000)
+	if (10000 == debugflag)
 	{
 		if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
 		{
@@ -141,11 +141,11 @@ static int check_for_mem(int stored_at, long howmuch)
 	BYTE *temp;
 	int use_this_type = NOWHERE;
 
-	if (debugflag == 420)
+	if (DEBUGFLAG_USE_DISK == debugflag)
 	{
 		stored_at = DISK;
 	}
-	if (debugflag == 422)
+	if (DEBUGFLAG_USE_MEMORY == debugflag)
 	{
 		stored_at = MEMORY;
 	}
@@ -382,7 +382,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		break;
 	} /* end of switch */
 
-	if (stored_at != use_this_type && debugflag == 10000)
+	if (stored_at != use_this_type && 10000 == debugflag)
 	{
 		char buf[MSGLEN];
 		sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
@@ -446,7 +446,7 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	success = FALSE;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (debugflag == 10000)
+	if (10000 == debugflag)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -494,7 +494,7 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && debugflag == 10000)
+	if (!success && 10000 == debugflag)
 	{
 		DisplayHandle(handle);
 	}
@@ -515,7 +515,7 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	success = FALSE;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (debugflag == 10000)
+	if (10000 == debugflag)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -565,7 +565,7 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && debugflag == 10000)
+	if (!success && 10000 == debugflag)
 	{
 		DisplayHandle(handle);
 	}
@@ -586,7 +586,7 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 	success = FALSE;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (debugflag == 10000)
+	if (10000 == debugflag)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -633,7 +633,7 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && debugflag == 10000)
+	if (!success && 10000 == debugflag)
 	{
 		DisplayHandle(handle);
 	}

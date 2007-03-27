@@ -3459,7 +3459,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
 	filepos = ftell(openfile);
-	if (debugflag == 96)
+	if (DEBUGFLAG_DISK_MESSAGES == debugflag)
 	{
 		debug_token = fopen("frmconst.txt", "at");
 	}
@@ -3862,7 +3862,7 @@ int frm_get_param_stuff(char *Name)
 		return 0;
 	}
 
-	if (debugflag == 96)
+	if (DEBUGFLAG_DISK_MESSAGES == debugflag)
 	{
 		debug_token = fopen("frmtokens.txt", "at");
 		if (debug_token != NULL)
@@ -4105,7 +4105,7 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		return NULL;
 	}
 
-	if (debugflag == 96)
+	if (DEBUGFLAG_DISK_MESSAGES == debugflag)
 	{
 		debug_fp = fopen("debugfrm.txt", "at");
 		if (debug_fp != NULL)
@@ -4260,9 +4260,11 @@ int fpFormulaSetup(void)
 		MathType = D_MATH;
 		/* CAE changed below for fp */
 		RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-		if (RunFormRes && fpu >= 387 && debugflag != 90 && (orbitsave & ORBITSAVE_SOUND) == 0
-				&& !Randomized)
+		if (RunFormRes && (fpu >= 387) && !(orbitsave & ORBITSAVE_SOUND) && !Randomized
+			&& (debugflag != DEBUGFLAG_NO_ASM_MANDEL))
+		{
 			return CvtStk(); /* run fast assembler code in parsera.asm */
+		}
 		return RunFormRes;
 	}
 	else
@@ -4274,9 +4276,11 @@ int fpFormulaSetup(void)
 	MathType = D_MATH;
 	RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
 #if 0
-	if (RunFormRes && fpu == -1 && debugflag != 90 && (orbitsave & ORBITSAVE_SOUND) == 0
-			&& !Randomized)
+	if (RunFormRes && (fpu == -1) && !(orbitsave & ORBITSAVE_SOUND) && !Randomized
+		&& (debugflag != DEBUGFLAG_NO_ASM_MANDEL))
+	{
 		return CvtStk(); /* run fast assembler code in parsera.asm */
+	}
 #endif
 	return RunFormRes;
 #endif

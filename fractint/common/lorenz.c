@@ -2878,7 +2878,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 	/* apply perspective if requested */
 	if (ZVIEWER)
 	{
-		if (debugflag == 22 || ZVIEWER < 100) /* use float for small persp */
+		if ((DEBUGFLAG_LORENZ_FLOAT == debugflag) || (ZVIEWER < 100)) /* use float for small persp */
 		{
 			/* use float perspective calc */
 			VECTOR tmpv;

@@ -271,24 +271,24 @@ int pstopmsg(int x, char *msg)
 
 #define stopmsg pstopmsg
 
-#define DBUGMSG(y) if (debugflag == 324 || debugflag == 322) stopmsg(0, (y))
+#define DBUGMSG(y) if (DEBUGFLAG_NO_HELP_F1_ESC == debugflag || DEBUGFLAG_SKIP_OPTIMIZER == debugflag) stopmsg(0, (y))
 #define DBUGMSG1(y, p) \
-		if (debugflag == 324 || debugflag == 322){ \
+		if (DEBUGFLAG_NO_HELP_F1_ESC == debugflag || DEBUGFLAG_SKIP_OPTIMIZER == debugflag){ \
 			sprintf(cDbgMsg, (y), (p)); \
 			stopmsg(0, cDbgMsg); \
 		}
 #define DBUGMSG2(y, p, q) \
-		if (debugflag == 324 || debugflag == 322){ \
+		if (DEBUGFLAG_NO_HELP_F1_ESC == debugflag || DEBUGFLAG_SKIP_OPTIMIZER == debugflag){ \
 			sprintf(cDbgMsg, (y), (p), (q)); \
 			stopmsg(0, cDbgMsg); \
 		}
 #define DBUGMSG3(y, p, q, r) \
-		if (debugflag == 324 || debugflag == 322){ \
+		if (DEBUGFLAG_NO_HELP_F1_ESC == debugflag || DEBUGFLAG_SKIP_OPTIMIZER == debugflag){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r)); \
 			stopmsg(0, cDbgMsg); \
 		}
 #define DBUGMSG4(y, p, q, r, s) \
-		if (debugflag == 324 || debugflag == 322){ \
+		if (DEBUGFLAG_NO_HELP_F1_ESC == debugflag || DEBUGFLAG_SKIP_OPTIMIZER == debugflag){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
 			stopmsg(0, cDbgMsg); \
 		}
@@ -551,7 +551,7 @@ awful_error:
 	{
 		OPPTR(cvtptrx) = (void  *)FP_OFF((Store[StoPtr++]));
 	}
-	else if (ffptr == fStkLod && debugflag == 322)
+	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == debugflag)
 	{
 		/* when disabling optimizer, set load pointer here  */
 		OPPTR(cvtptrx) = (void  *)FP_OFF((Load[LodPtr++]));
@@ -561,7 +561,7 @@ awful_error:
 		OPPTR(cvtptrx) = NO_OPERAND;
 	}
 
-	if (debugflag == 322)
+	if (DEBUGFLAG_SKIP_OPTIMIZER == debugflag)
 	{
 		goto SkipOptimizer;
 	} /* --------------------------  begin optimizer  --------------------- */
@@ -1512,7 +1512,7 @@ int CvtStk()  /* convert the array of ptrs  */
 					ntst = fStkClr2;  /* convert the last clear to a clr2  */
 					DBUGMSG("Last fn (CLR) --> (is really CLR2)");
 				}
-				if (ntst == fStkIdent && debugflag != 322)
+				if (ntst == fStkIdent && debugflag != DEBUGFLAG_SKIP_OPTIMIZER)
 				{
 					/* ident will be skipped here  */
 					/* this is really part of the optimizer  */
@@ -1540,7 +1540,7 @@ int CvtStk()  /* convert the array of ptrs  */
 		}
 	} /* end for  */
 
-	if (debugflag == 322)
+	if (DEBUGFLAG_SKIP_OPTIMIZER == debugflag)
 	{
 		goto skipfinalopt;
 	} /* ------------------------------ final optimizations ---------- */
