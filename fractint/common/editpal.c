@@ -2294,7 +2294,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
 {
 	char *temp;
 
-	if (debugflag == 420)
+	if (DEBUGFLAG_USE_DISK == debugflag)
 	{
 		me->stored_at = NOWHERE;
 		return FALSE;   /* can't do it */

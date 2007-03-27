@@ -796,7 +796,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			else
 			{
 #ifdef USE_LONG_DOUBLE
-				if (debugflag == 750)
+				if (DEBUGFLAG_MORE_DIGITS == debugflag)
 				{
 					put_parm(" params=%.17Lg", (long double)param[0]);
 				}
@@ -815,7 +815,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				else
 				{
 #ifdef USE_LONG_DOUBLE
-					if (debugflag == 750)
+					if (DEBUGFLAG_MORE_DIGITS == debugflag)
 					{
 						put_parm("/%.17Lg", (long double)param[j]);
 					}
@@ -1453,7 +1453,7 @@ docolors:
 				{
 					break;
 				}
-				if (debugflag == 920)  /* lossless compression */
+				if (DEBUGFLAG_COLORS_LOSSLESS == debugflag)  /* lossless compression */
 				{
 					continue;
 				}
@@ -1483,7 +1483,7 @@ docolors:
 						for (j = 0; j < 3; ++j)  /* check pattern of chg per color */
 						{
 							/* Sylvie Gallet's fix */
-							if (debugflag != 910 && scanc > (curc + 4) && scanc < maxcolor-5)
+							if (debugflag != DEBUGFLAG_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 							{
 								if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
 										- g_dac_box[scanc + 5][j]) >= 2)
@@ -1678,15 +1678,15 @@ static int getprec(double a, double b, double c)
 	if (temp == 0.0) temp = highv;
 	if (temp < diff) diff = temp;
 	digits = 7;
-	if (debugflag >= 700 && debugflag < 720)
+	if (debugflag >= DEBUGFLAG_SET_DIGITS_MIN && debugflag < DEBUGFLAG_SET_DIGITS_MAX)
 	{
-		digits =  debugflag - 700;
+		digits =  debugflag - DEBUGFLAG_SET_DIGITS_MIN;
 	}
 	while (diff < 1.0 && digits <= DBL_DIG + 1)
 	{
 		diff *= 10;
 		++digits;
-		}
+	}
 	return digits;
 }
 

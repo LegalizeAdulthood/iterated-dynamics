@@ -764,7 +764,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* normalize cross - and check if non-zero */
 				if (normalize_vector(cross))
 				{
-					if (debugflag)
+					if (debugflag != DEBUGFLAG_NONE)
 					{
 						stopmsg(0, "debug, cur.color=bad");
 					}
@@ -795,7 +795,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						if (normalize_vector(cross))
 						{
 							/* this shouldn't happen */
-							if (debugflag)
+							if (debugflag != DEBUGFLAG_NONE)
 							{
 								stopmsg(0, "debug, normal vector err2");
 								/* use next instead if you ever need details:
@@ -2386,12 +2386,12 @@ static void line3d_cleanup(void)
 	{                            /* Finish up targa files */
 		T_header_24 = 18;         /* Reset Targa header size */
 		enddisk();
-		if (!debugflag && (!T_Safe || error) && Targa_Overlay)
+		if ((DEBUGFLAG_NONE == debugflag) && (!T_Safe || error) && Targa_Overlay)
 		{
 			dir_remove(workdir, light_name);
 			rename(targa_temp, light_name);
 		}
-		if (!debugflag && Targa_Overlay)
+		if ((DEBUGFLAG_NONE == debugflag) && Targa_Overlay)
 		{
 			dir_remove(workdir, targa_temp);
 		}
@@ -2853,7 +2853,7 @@ static int line3dmem(void)
 	/* TODO: allocate real memory, not reuse shared segment */
 	lastrow = (struct point *) malloc(sizeof(struct point)*xdots);
 
-	check_extra = sizeof(*lastrow)*xdots;
+	check_extra = sizeof(struct point)*xdots;
 	if (SPHERE)
 	{
 		sinthetaarray = (float *) (lastrow + xdots);
@@ -2874,6 +2874,7 @@ static int line3dmem(void)
 	}
 	minmax_x = (struct minmax *) NULL;
 
+	/* TODO: clean up leftover extra segment business */
 	/* these fill types call putatriangle which uses minmax_x */
 	if (FILLTYPE == FILLTYPE_FILL_GOURAUD
 		|| FILLTYPE == FILLTYPE_FILL_FLAT
@@ -2885,7 +2886,7 @@ static int line3dmem(void)
 		if (check_extra > (1L << 16))     /* run out of extra segment? */
 		{
 			static struct minmax *got_mem = NULL;
-			if (debugflag == 2222)
+			if (2222 == debugflag)
 			{
 				stopmsg(0, "malloc minmax");
 			}
@@ -2911,7 +2912,8 @@ static int line3dmem(void)
 				: (struct minmax *) (f_lastrow + xdots);
 		}
 	}
-	if (debugflag == 2222 || check_extra > (1L << 16))
+	/* TODO: get rid of extra segment business */
+	if (2222 == debugflag || check_extra > (1L << 16))
 	{
 		char tmpmsg[70];
 		sprintf(tmpmsg, "used %ld of extra segment", check_extra);

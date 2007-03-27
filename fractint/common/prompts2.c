@@ -932,7 +932,7 @@ int get_cmd_string()
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
-		if (debugflag == 98)
+		if (98 == debugflag)
 		{
 			backwards_v18();
 			backwards_v19();

@@ -167,7 +167,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	xytemp = xdots + ydots;
 	if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768))
 		|| ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768))
-		|| debugflag == 3800)
+		|| DEBUGFLAG_NO_PIXEL_GRID == debugflag)
 	{
 		use_grid = 0;
 		floatflag = usr_floatflag = 1;
@@ -201,7 +201,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	if (bf_math)
 	{
 		gotprec = getprecbf(CURRENTREZ);
-		if ((gotprec <= DBL_DIG + 1 && debugflag != 3200) || math_tol[1] >= 1.0)
+		if ((gotprec <= DBL_DIG + 1 && debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT) || math_tol[1] >= 1.0)
 		{
 			bfcornerstofloat();
 			bf_math = 0;
@@ -211,28 +211,28 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 			init_bf_dec(gotprec);
 		}
 	}
-	else if ((fractype == MANDEL || fractype == MANDELFP) && debugflag == 3200)
+	else if ((fractype == MANDEL || fractype == MANDELFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = MANDELFP;
 		curfractalspecific = &fractalspecific[MANDELFP];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == JULIA || fractype == JULIAFP) && debugflag == 3200)
+	else if ((fractype == JULIA || fractype == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = JULIAFP;
 		curfractalspecific = &fractalspecific[JULIAFP];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && debugflag == 3200)
+	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = FPMANDELZPOWER;
 		curfractalspecific = &fractalspecific[FPMANDELZPOWER];
 		fractal_floattobf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && debugflag == 3200)
+	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = FPJULIAZPOWER;
 		curfractalspecific = &fractalspecific[FPJULIAZPOWER];
@@ -414,7 +414,7 @@ init_restart:
 		&& biomorph == -1                         /* and not biomorphing */
 		&& rqlim <= 4.0                           /* and bailout not too high */
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
-		&& debugflag != 1234                      /* and not debugging */
+		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& closeprox <= 2.0                       /* and closeprox not too large */
 		&& bailoutest == Mod)                     /* and bailout test = mod */
 			bitshift = FUDGEFACTOR;                  /* use the larger bitshift */
@@ -1196,11 +1196,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		return 0;
 	}
 	ftemp = 0;
-	if (desired != 0 && debugflag != 3400)
-	{
-		ftemp = actual / desired;
-	}
-	if (desired != 0 && debugflag != 3400)
+	if (desired != 0 && debugflag != DEBUGFLAG_NO_INT_TO_FLOAT)
 	{
 		ftemp = actual / desired;
 		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
@@ -1518,7 +1514,7 @@ static void sleepms_new(long ms)
 
 void sleepms(long ms)
 {
-	if (debugflag == 4020)
+	if (DEBUGFLAG_OLD_TIMER == debugflag)
 	{
 		sleepms_old(ms);
 	}
@@ -1536,7 +1532,7 @@ void sleepms(long ms)
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-	if (debugflag == 4020)
+	if (DEBUGFLAG_OLD_TIMER == debugflag)
 	{
 		sleepms_old(wait_time);
 	}
@@ -1656,7 +1652,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	}
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
-	if (debugflag == 4030)
+	if (DEBUGFLAG_OLD_ORBIT_SOUND == debugflag)
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{

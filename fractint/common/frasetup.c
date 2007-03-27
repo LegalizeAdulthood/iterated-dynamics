@@ -26,7 +26,7 @@ extern long calcmandfpasm_c(void);
 int
 MandelSetup(void)           /* Mandelbrot Routine */
 {
-	if (debugflag != 90
+	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
@@ -47,7 +47,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 int
 JuliaSetup(void)            /* Julia Routine */
 {
-	if (debugflag != 90
+	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
@@ -71,7 +71,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 {
 	int i;
 #if !defined(XFRACT)
-	if (debugflag != 1010)
+	if (debugflag != DEBUGFLAG_FORCE_FP_NEWTON)
 	{
 		if (fpu != 0)
 		{
@@ -258,7 +258,7 @@ MandelfpSetup(void)
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
 		*/
-		if (debugflag != 90
+		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 			&& !distest
 			&& decomp[0] == 0
 			&& biomorph == -1
@@ -318,7 +318,7 @@ MandelfpSetup(void)
 			symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2]) ?
+			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2]) ?
 			floatZpowerFractal : floatCmplxZpowerFractal;
 		break;
 	case MAGNET1M:
@@ -405,7 +405,7 @@ JuliafpSetup(void)
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
 		*/
-		if (debugflag != 90
+		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 				&& !distest
 				&& decomp[0] == 0
 				&& biomorph == -1
@@ -463,7 +463,7 @@ JuliafpSetup(void)
 			symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
 			? floatZpowerFractal : floatCmplxZpowerFractal;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
 		break;
@@ -537,7 +537,7 @@ JuliafpSetup(void)
 			{
 				curfractalspecific->orbitcalc = PopcornFractal_Old;
 			}
-			else if (default_functions && debugflag == 96)
+			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
 			{
 				curfractalspecific->orbitcalc = PopcornFractal;
 			}
@@ -588,7 +588,7 @@ MandellongSetup(void)
 	longparm = &linit;
 	if (fractype == LMANDELZPOWER)
 	{
-		if (param[3] == 0.0 && debugflag != 6000  && (double)c_exp == param[2])
+		if (param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
 		{
 			fractalspecific[fractype].orbitcalc = longZpowerFractal;
 		}
@@ -641,7 +641,7 @@ JulialongSetup(void)
 			symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != 6000 && (double)c_exp == param[2])
+			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
 			? longZpowerFractal : longCmplxZpowerFractal;
 		break;
 	case LAMBDA:
@@ -687,7 +687,7 @@ JulialongSetup(void)
 			{
 				curfractalspecific->orbitcalc = LPopcornFractal_Old;
 			}
-			else if (default_functions && debugflag == 96)
+			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
 			{
 				curfractalspecific->orbitcalc = LPopcornFractal;
 			}
@@ -710,7 +710,8 @@ TrigPlusSqrlongSetup(void)
 {
 	curfractalspecific->per_pixel =  julia_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (lparm2.x == fudge)        /* Scott variant */
 		{
@@ -729,7 +730,8 @@ TrigPlusSqrfpSetup(void)
 {
 	curfractalspecific->per_pixel =  juliafp_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusSqrfpFractal;
-	if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+	if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (parm2.x == 1.0)        /* Scott variant */
 		{
@@ -753,7 +755,8 @@ TrigPlusTriglongSetup(void)
 	}
 	curfractalspecific->per_pixel =  long_julia_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (lparm2.x == fudge)        /* Scott variant */
 		{
@@ -777,7 +780,8 @@ TrigPlusTrigfpSetup(void)
 	}
 	curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
-	if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+	if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (parm2.x == 1.0)        /* Scott variant */
 		{
@@ -944,7 +948,8 @@ ZXTrigPlusZSetup(void)
 	if (curfractalspecific->isinteger)
 	{
 		curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-		if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L && debugflag != 90)
+		if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (lparm2.x == fudge)     /* Scott variant */
 			{
@@ -960,7 +965,8 @@ ZXTrigPlusZSetup(void)
 	else
 	{
 		curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
-		if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0 && debugflag != 90)
+		if (parm.x == 1.0 && parm.y == 0.0 && parm2.y == 0.0
+			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (parm2.x == 1.0)     /* Scott variant */
 			{

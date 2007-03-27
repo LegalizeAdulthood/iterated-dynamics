@@ -474,7 +474,7 @@ int plasma()
 			rnd[n] = rand16();
 		}
 	}
-	if (debugflag == 3600)
+	if (DEBUGFLAG_PIN_CORNERS_ONE == debugflag)
 	{
 		for (n = 0; n < 4; n++)
 		{
@@ -1465,7 +1465,7 @@ int lya_setup ()
 	{
 		filter_cycles = maxit/2;
 	}
-	lyaSeedOK = param[1] > 0 && param[1] <= 1 && debugflag != 90;
+	lyaSeedOK = (param[1] > 0) && (param[1] <= 1) && (debugflag != DEBUGFLAG_NO_ASM_MANDEL);
 	lyaLength = 1;
 
 	i = (long)param[0];

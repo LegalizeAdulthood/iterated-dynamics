@@ -47,7 +47,7 @@ int stopmsg (int flags, char *msg)
 {
 	int ret, toprow, color, savelookatmouse;
 	static unsigned char batchmode = 0;
-	if (debugflag != 0 || initbatch >= INIT_BATCH_NORMAL)
+	if (debugflag != DEBUGFLAG_NONE || initbatch >= INIT_BATCH_NORMAL)
 	{
 		static FILE *fp = NULL;
 		if (fp == NULL && initbatch == INIT_BATCH_NONE)
@@ -108,7 +108,7 @@ int stopmsg (int flags, char *msg)
 	{
 		driver_get_key();
 	}
-	if (debugflag != 324)
+	if (debugflag != DEBUGFLAG_NO_HELP_F1_ESC)
 	{
 		if (getakeynohelp() == FIK_ESC)
 		{
@@ -282,7 +282,7 @@ void helptitle()
 	return;
 	/*NOTREACHED*/
 #else
-	if (debugflag == 3002) return;
+	if (3002 == debugflag) return;
 #define DEVELOPMENT
 #ifdef DEVELOPMENT
 	driver_put_string(0, 2, C_TITLE_DEV, "Development Version");

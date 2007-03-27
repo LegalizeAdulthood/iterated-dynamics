@@ -1813,7 +1813,7 @@ int _cdecl _matherr(struct exception *except)
 		static FILE *fp = NULL;
 		if (matherr_ct++ == 0)
 		{
-			if (debugflag == 4000 || debugflag == 3200)
+			if (4000 == debugflag || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 			{
 				stopmsg(0, "Math error, but we'll try to keep going");
 			}

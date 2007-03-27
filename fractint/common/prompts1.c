@@ -1281,7 +1281,7 @@ void set_default_parms()
 			param[i + 4] = moreparams[extra].paramvalue[i];
 		}
 	}
-	if (debugflag != 3200)
+	if (debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT)
 	{
 		bf_math = 0;
 	}
@@ -3473,7 +3473,7 @@ void setbailoutformula(enum bailouts test)
 	{
 	case Mod:
 	default:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpMODbailout;
 		}
@@ -3493,7 +3493,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfMODbailout;
 		break;
 	case Real:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpREALbailout;
 		}
@@ -3513,7 +3513,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfREALbailout;
 		break;
 	case Imag:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpIMAGbailout;
 		}
@@ -3533,7 +3533,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfIMAGbailout;
 		break;
 	case Or:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpORbailout;
 		}
@@ -3553,7 +3553,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfORbailout;
 		break;
 	case And:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpANDbailout;
 		}
@@ -3573,7 +3573,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfANDbailout;
 		break;
 	case Manh:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpMANHbailout;
 		}
@@ -3593,7 +3593,7 @@ void setbailoutformula(enum bailouts test)
 		bigfltbailout = (int (*)(void))bfMANHbailout;
 		break;
 	case Manr:
-		if (fpu >= 287 && debugflag != 72)     /* Fast 287 math */
+		if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)     /* Fast 287 math */
 		{
 			floatbailout = (int (*)(void))asmfpMANRbailout;
 		}
