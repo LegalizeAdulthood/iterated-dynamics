@@ -3063,7 +3063,7 @@ static FILE *open_orbitsave(void)
 	FILE *fp = NULL;
 	if (orbitsave & ORBITSAVE_RAW)
 	{
-		fp = fopen("orbits.raw", "w");
+		fp = fopen("orbits.raw.txt", "wt");
 		if (fp)
 		{
 			fprintf(fp, "pointlist x y z color\n");

@@ -570,7 +570,7 @@ void Jiim(int which)         /* called by fractint */
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
 	OKtoMIIM  = 0;
-	if (which == JIIM && debugflag != 300)
+	if (which == JIIM && !(debugflag == DEBUGFLAG_NO_MIIM_QUEUE))
 	{
 		OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
 	}

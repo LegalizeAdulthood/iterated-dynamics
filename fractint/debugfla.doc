@@ -23,6 +23,7 @@ timer.
 98		frasetup.c      Use real formula for popcorn in the old case.
 110		cmdfiles.c      turns off first-time initialization of variables
 200		fractint.c		time encoder
+300		jiim.c			don't use MIIM queue
 322		parserfp.c		disable optimizer (FPU >= 387 only)
 324		realdos.c       disables help ESC in screen messages    
 420		diskvid.c		don't use extended/expanded mem (force disk)
@@ -64,6 +65,9 @@ timer.
 9002-9100 fractint.c	reduce video_type to (debug-9000)/2 if init was higher
 10000	fractint.c		display cpu, fpu, and free memory at startup
 10000	fractint.c		? (try extra hard for minimal startup memory?)
+10000	memory.c		extra sanity checks and messages
 
 <> 0	line3d.c		show "normal vector" errors instead of just fixing
 <> 0	prompts.c		show info if fullscreen_prompt2 array invalid
+
+odd		cmdfiles.c		sets timer flag and subtracts 1 to even integer
