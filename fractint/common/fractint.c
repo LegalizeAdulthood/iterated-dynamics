@@ -307,11 +307,11 @@ restart:   /* insert key re-starts here */
 	driver_window();
 	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case colors= present */
 
-	if (8088 == debugflag)
+	if (DEBUGFLAG_CPU_8088 == debugflag)
 	{
 		cpu =  86; /* for testing purposes */
 	}
-	if (2870 == debugflag && fpu >= 287)
+	if (DEBUGFLAG_X_FPU_287 == debugflag && fpu >= 287)
 	{
 		fpu = 287; /* for testing purposes */
 		cpu = 286;
@@ -330,7 +330,7 @@ restart:   /* insert key re-starts here */
 		fpu = 0;
 	}
 
-	if (fpu >= 287 && debugflag != DEBUGFLAG_FPU_287)   /* Fast 287 math */
+	if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
 	{
 		setup287code();
 	}

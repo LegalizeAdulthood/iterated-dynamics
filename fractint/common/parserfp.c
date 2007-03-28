@@ -259,7 +259,7 @@ int pstopmsg(int x, char *msg)
 	static FILE *fp = NULL;
 	if (fp == NULL)
 	{
-		fp = fopen("fpdebug.txt", "w");
+		fp = fopen("fpdebug.txt", "wt");
 	}
 	if (fp)
 	{

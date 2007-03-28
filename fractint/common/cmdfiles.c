@@ -2738,7 +2738,7 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	{
 		debugflag = numval;
 		timerflag = debugflag & 1;                /* separate timer flag */
-		debugflag -= timerflag;
+		debugflag &= ~1;
 		return 0;
 	}
 

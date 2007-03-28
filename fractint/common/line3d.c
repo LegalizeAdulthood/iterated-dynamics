@@ -764,7 +764,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* normalize cross - and check if non-zero */
 				if (normalize_vector(cross))
 				{
-					if (debugflag != DEBUGFLAG_NONE)
+					if (debugflag)
 					{
 						stopmsg(0, "debug, cur.color=bad");
 					}
@@ -795,7 +795,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						if (normalize_vector(cross))
 						{
 							/* this shouldn't happen */
-							if (debugflag != DEBUGFLAG_NONE)
+							if (debugflag)
 							{
 								stopmsg(0, "debug, normal vector err2");
 								/* use next instead if you ever need details:
@@ -2386,12 +2386,12 @@ static void line3d_cleanup(void)
 	{                            /* Finish up targa files */
 		T_header_24 = 18;         /* Reset Targa header size */
 		enddisk();
-		if ((DEBUGFLAG_NONE == debugflag) && (!T_Safe || error) && Targa_Overlay)
+		if (!debugflag && (!T_Safe || error) && Targa_Overlay)
 		{
 			dir_remove(workdir, light_name);
 			rename(targa_temp, light_name);
 		}
-		if ((DEBUGFLAG_NONE == debugflag) && Targa_Overlay)
+		if (!debugflag && Targa_Overlay)
 		{
 			dir_remove(workdir, targa_temp);
 		}

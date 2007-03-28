@@ -231,7 +231,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != DEBUGFLAG_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -436,7 +436,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != 4010)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != DEBUGFLAG_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -1808,19 +1808,19 @@ int win_matherr(struct exception *except)
 int _cdecl _matherr(struct exception *except)
 #endif
 {
-	if (debugflag != 0)
+	if (debugflag)
 	{
 		static FILE *fp = NULL;
 		if (matherr_ct++ == 0)
 		{
-			if (4000 == debugflag || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+			if (DEBUGFLAG_SHOW_MATH_ERRORS == debugflag || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 			{
 				stopmsg(0, "Math error, but we'll try to keep going");
 			}
 		}
 		if (fp == NULL)
 		{
-			fp = fopen("matherr", "w");
+			fp = fopen("matherr.txt", "wt");
 		}
 		if (matherr_ct < 100)
 		{
