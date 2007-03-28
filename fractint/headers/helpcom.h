@@ -324,8 +324,14 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 		} /* switch */
 	}
 
-	if (size  != NULL)   *size  = _size;
-	if (width != NULL)   *width = _width;
+	if (size  != NULL)
+	{
+		*size  = _size;
+	}
+	if (width != NULL)
+	{
+		*width = _width;
+	}
 
 	return tok;
 }

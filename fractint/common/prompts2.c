@@ -422,7 +422,10 @@ int get_toggles()
 	}
 
 	usr_biomorph = uvalues[++k].uval.ival;
-	if (usr_biomorph >= colors) usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+	if (usr_biomorph >= colors)
+	{
+		usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+	}
 	if (usr_biomorph != old_biomorph)
 	{
 		j++;
@@ -446,7 +449,10 @@ int get_toggles()
 	{
 		fillcolor = -1;
 	}
-	if (fillcolor >= colors) fillcolor = (fillcolor % colors) + (fillcolor / colors);
+	if (fillcolor >= colors)
+	{
+		fillcolor = (fillcolor % colors) + (fillcolor / colors);
+	}
 	if (fillcolor != old_fillcolor)
 	{
 		j++;

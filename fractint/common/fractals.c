@@ -282,10 +282,16 @@ int  fpMANRbailout(void)
 	}
 
 #define LONGHTRIGBAILOUT()  \
-	if (labs(lold.x) >= llimit2) { return 1; }
+	if (labs(lold.x) >= llimit2) \
+	{ \
+		return 1; \
+	}
 
 #define TRIG16CHECK(X)  \
-		if (labs((X)) > l16triglim) { return 1; }
+	if (labs((X)) > l16triglim) \
+	{ \
+		return 1; \
+	}
 
 #define OLD_FLOATEXPBAILOUT()	\
 	if (fabs(old.y) >= 1.0e8)	\
