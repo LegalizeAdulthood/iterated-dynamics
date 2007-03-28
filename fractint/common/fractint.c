@@ -488,7 +488,10 @@ imagestart:                             /* calc/display a new image */
 			goodbye();
 		}
 		kbdchar = main_menu(0);
-		if (kbdchar == FIK_INSERT) goto restart;      /* restart pgm on Insert Key */
+		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
+		{
+			goto restart;
+		}
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 		{
 			kbdchar = select_video_mode(-1);

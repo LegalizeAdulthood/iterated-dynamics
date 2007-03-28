@@ -1425,7 +1425,10 @@ docolors:
 			int delta, diff1[4][3], diff2[4][3];
 			curc = force = 0;
 #ifdef XFRACT
-			if (fake_lut && !truemode) loaddac(); /* stupid kludge JCO 6/23/2001 */
+			if (fake_lut && !truemode) /* stupid kludge JCO 6/23/2001  */
+			{
+				loaddac();
+			}
 #endif
 			while (1)
 			{
@@ -1507,9 +1510,15 @@ docolors:
 								diff2[k][j] = delta;
 							}
 						}
-						if (j < 3) break; /* must've exited from inner loop above */
+						if (j < 3) /* must've exited from inner loop above  */
+						{
+							break;
+						}
 					}
-					if (k <= i) break;   /* must've exited from inner loop above */
+					if (k <= i) /* must've exited from inner loop above  */
+					{
+						break;
+					}
 					++scanc;
 				}
 				/* now scanc-1 is next color which must be written explicitly */

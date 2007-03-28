@@ -1516,7 +1516,10 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 			{
 				if (c == '\n')
 				{
-					if (k) break; /* blank line */
+					if (k) /* blank line  */
+					{
+						break;
+					}
 					if (++lines >= 16) break;
 					k = 1;
 				}

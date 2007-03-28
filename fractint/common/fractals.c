@@ -885,7 +885,10 @@ FloatTrigPlusExponentFractal(void)
 	/* another Scientific American biomorph type */
 	/* z(n + 1) = e**z(n) + trig(z(n)) + C */
 
-	if (fabs(old.x) >= 6.4e2) return 1; /* DOMAIN errors */
+	if (fabs(old.x) >= 6.4e2) /* DOMAIN errors  */
+	{
+		return 1;
+	}
 	tmpexp = exp(old.x);
 	FPUsincos  (&old.y, &siny, &cosy);
 	CMPLXtrig0(old, g_new);
@@ -3396,7 +3399,10 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 		oldtest = newtest;
 		testiter++;
 	}
-	if (testsize > rqlim) return floatbailout(); /* point not in target set */
+	if (testsize > rqlim) /* point not in target set  */
+	{
+		return floatbailout();
+	}
 	else /* make distinct level sets if point stayed in target set */
 	{
 		coloriter = ((3L*coloriter) % 255L) + 1L;

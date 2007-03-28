@@ -1790,9 +1790,15 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 			if (len) break;
 			return -1;
 			}
-		if (c == '\n') break;             /* linefeed is end of line */
-		if (c != '\r') buf[len++] = (char)c;    /* ignore c/r */
+		if (c == '\n') /* linefeed is end of line  */
+		{
+			break;
 		}
+		if (c != '\r') /* ignore c/r  */
+		{
+			buf[len++] = (char)c;
+		}
+	}
 	buf[len] = 0;
 	return len;
 }

@@ -228,7 +228,10 @@ int cmdfiles(int argc, char **argv)
 	char    *sptr;
 	FILE    *initfile;
 
-	if (first_init) initvars_run();      /* once per run initialization */
+	if (first_init) /* once per run initialization  */
+	{
+		initvars_run();
+	}
 	initvars_restart();                  /* <ins> key initialization */
 	initvars_fractal();                  /* image initialization */
 
