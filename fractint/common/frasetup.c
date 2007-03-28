@@ -1092,13 +1092,25 @@ FnXFnSetup(void)
 	/* defaults to XAXIS symmetry JCO 5/22/92 */
 	else  /* added to complete the symmetry JCO 5/22/92 */
 	{
-		if (trigndx[0] == LOG || trigndx[1] == LOG) symmetry = NOSYM;
+		if (trigndx[0] == LOG || trigndx[1] == LOG)
+		{
+			symmetry = NOSYM;
+		}
 		if (trigndx[0] == 9 || trigndx[1] == 9)  /* 'real' cos */
 		{
-			if (trigndx[0] == SIN || trigndx[1] == SIN) symmetry = PI_SYM;
-			if (trigndx[0] == COS || trigndx[1] == COS) symmetry = PI_SYM;
+			if (trigndx[0] == SIN || trigndx[1] == SIN)
+			{
+				symmetry = PI_SYM;
+			}
+			if (trigndx[0] == COS || trigndx[1] == COS)
+			{
+				symmetry = PI_SYM;
+			}
 		}
-		if (trigndx[0] == 9 && trigndx[1] == 9) symmetry = PI_SYM;
+		if (trigndx[0] == 9 && trigndx[1] == 9)
+		{
+			symmetry = PI_SYM;
+		}
 	}
 	return curfractalspecific->isinteger ? JulialongSetup() : JuliafpSetup();
 }
@@ -1268,7 +1280,10 @@ PhoenixSetup(void)
 	longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &parm;
 	degree = (int)parm2.x;
-	if (degree < 2 && degree > -3) degree = 0;
+	if (degree < 2 && degree > -3)
+	{
+		degree = 0;
+	}
 	param[2] = (double)degree;
 	if (degree == 0)
 	{
@@ -1297,7 +1312,10 @@ PhoenixCplxSetup(void)
 	longparm = &lparm;
 	floatparm = &parm;
 	degree = (int)param[4];
-	if (degree < 2 && degree > -3) degree = 0;
+	if (degree < 2 && degree > -3)
+	{
+		degree = 0;
+	}
 	param[4] = (double)degree;
 	if (degree == 0)
 	{
@@ -1333,7 +1351,10 @@ MandPhoenixSetup(void)
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &init;
 	degree = (int)parm2.x;
-	if (degree < 2 && degree > -3) degree = 0;
+	if (degree < 2 && degree > -3)
+	{
+		degree = 0;
+	}
 	param[2] = (double)degree;
 	if (degree == 0)
 	{
@@ -1362,7 +1383,10 @@ MandPhoenixCplxSetup(void)
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &init;
 	degree = (int)param[4];
-	if (degree < 2 && degree > -3) degree = 0;
+	if (degree < 2 && degree > -3)
+	{
+		degree = 0;
+	}
 	param[4] = (double)degree;
 	if (parm.y != 0 || parm2.y != 0)
 	{
@@ -1402,10 +1426,22 @@ StandardSetup(void)
 int
 VLSetup(void)
 {
-	if (param[0] < 0.0) param[0] = 0.0;
-	if (param[1] < 0.0) param[1] = 0.0;
-	if (param[0] > 1.0) param[0] = 1.0;
-	if (param[1] > 1.0) param[1] = 1.0;
+	if (param[0] < 0.0)
+	{
+		param[0] = 0.0;
+	}
+	if (param[1] < 0.0)
+	{
+		param[1] = 0.0;
+	}
+	if (param[0] > 1.0)
+	{
+		param[0] = 1.0;
+	}
+	if (param[1] > 1.0)
+	{
+		param[1] = 1.0;
+	}
 	floatparm = &parm;
 	return 1;
 }

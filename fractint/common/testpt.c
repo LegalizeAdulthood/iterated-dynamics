@@ -52,6 +52,9 @@ long maxit, int inside)
 		oldimag = newimag;
 		magnitude = newreal*newreal + newimag*newimag;
 	}
-	if (color >= maxit) color = inside;
+	if (color >= maxit)
+	{
+		color = inside;
+	}
 	return (int)color;
 }

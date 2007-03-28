@@ -1245,7 +1245,10 @@ int mandelcloudfloat(double *x, double *y, double *z)
 #endif
 	x2 = (*x)*(*x);
 	y2 = (*y)*(*y);
-	if (x2 + y2 > 2) return 1;
+	if (x2 + y2 > 2)
+	{
+		return 1;
+	}
 	newx = x2-y2 + a;
 	newy = 2*(*x)*(*y) + b;
 	*x = newx;

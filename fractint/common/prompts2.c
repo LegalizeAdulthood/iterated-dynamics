@@ -423,10 +423,16 @@ int get_toggles()
 
 	usr_biomorph = uvalues[++k].uval.ival;
 	if (usr_biomorph >= colors) usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
-	if (usr_biomorph != old_biomorph) j++;
+	if (usr_biomorph != old_biomorph)
+	{
+		j++;
+	}
 
 	decomp[0] = uvalues[++k].uval.ival;
-	if (decomp[0] != old_decomp) j++;
+	if (decomp[0] != old_decomp)
+	{
+		j++;
+	}
 
 	if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
 	{
@@ -436,13 +442,22 @@ int get_toggles()
 	{
 		fillcolor = atoi(uvalues[k].uval.sval);
 	}
-	if (fillcolor < 0) fillcolor = -1;
+	if (fillcolor < 0)
+	{
+		fillcolor = -1;
+	}
 	if (fillcolor >= colors) fillcolor = (fillcolor % colors) + (fillcolor / colors);
-	if (fillcolor != old_fillcolor) j++;
+	if (fillcolor != old_fillcolor)
+	{
+		j++;
+	}
 
 	++k;
 	closeprox = uvalues[k].uval.dval;
-	if (closeprox != old_closeprox) j++;
+	if (closeprox != old_closeprox)
+	{
+		j++;
+	}
 
 /* if (j >= 1) j = 1; need to know how many prompts changed for quick_calc JCO 6/23/2001 */
 
@@ -547,20 +562,32 @@ int get_toggles2()
 		}
 
 	potparam[0] = uvalues[++k].uval.ival;
-	if (potparam[0] != old_potparam[0]) j = 1;
+	if (potparam[0] != old_potparam[0])
+	{
+		j = 1;
+	}
 
 	potparam[1] = uvalues[++k].uval.dval;
-	if (potparam[0] != 0.0 && potparam[1] != old_potparam[1]) j = 1;
+	if (potparam[0] != 0.0 && potparam[1] != old_potparam[1])
+	{
+		j = 1;
+	}
 
 	potparam[2] = uvalues[++k].uval.ival;
-	if (potparam[0] != 0.0 && potparam[2] != old_potparam[2]) j = 1;
+	if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
+	{
+		j = 1;
+	}
 
 	if (uvalues[++k].uval.ch.val != pot16bit)
 	{
 		pot16bit = uvalues[k].uval.ch.val;
 		if (pot16bit)  /* turned it on */
 		{
-			if (potparam[0] != 0.0) j = 1;
+			if (potparam[0] != 0.0)
+			{
+				j = 1;
+			}
 			}
 		else /* turned it off */
 			if (!driver_diskp()) /* ditch the disk video */
@@ -574,10 +601,16 @@ int get_toggles2()
 	++k;
 /* usr_distest = (uvalues[k].uval.ival > 32000) ? 32000 : uvalues[k].uval.ival; */
 	usr_distest = uvalues[k].uval.Lval;
-	if (usr_distest != old_usr_distest) j = 1;
+	if (usr_distest != old_usr_distest)
+	{
+		j = 1;
+	}
 	++k;
 	distestwidth = uvalues[k].uval.ival;
-	if (usr_distest && distestwidth != old_distestwidth) j = 1;
+	if (usr_distest && distestwidth != old_distestwidth)
+	{
+		j = 1;
+	}
 
 	for (i = 0; i < 3; i++)
 	{
@@ -678,23 +711,50 @@ pass_option_restart:
 	j = 0;   /* return code */
 
 	usr_periodicitycheck = uvalues[++k].uval.ival;
-	if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
-	if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
-	if (usr_periodicitycheck != old_periodicity) j = 1;
+	if (usr_periodicitycheck > 255)
+	{
+		usr_periodicitycheck = 255;
+	}
+	if (usr_periodicitycheck < -255)
+	{
+		usr_periodicitycheck = -255;
+	}
+	if (usr_periodicitycheck != old_periodicity)
+	{
+		j = 1;
+	}
 
 
 	orbit_delay = uvalues[++k].uval.ival;
-	if (orbit_delay != old_orbit_delay) j = 1;
+	if (orbit_delay != old_orbit_delay)
+	{
+		j = 1;
+	}
 
 
 	orbit_interval = uvalues[++k].uval.ival;
-	if (orbit_interval > 255) orbit_interval = 255;
-	if (orbit_interval < 1) orbit_interval = 1;
-	if (orbit_interval != old_orbit_interval) j = 1;
+	if (orbit_interval > 255)
+	{
+		orbit_interval = 255;
+	}
+	if (orbit_interval < 1)
+	{
+		orbit_interval = 1;
+	}
+	if (orbit_interval != old_orbit_interval)
+	{
+		j = 1;
+	}
 
 	keep_scrn_coords = uvalues[++k].uval.ch.val;
-	if (keep_scrn_coords != old_keep_scrn_coords) j = 1;
-	if (keep_scrn_coords == 0) set_orbit_corners = 0;
+	if (keep_scrn_coords != old_keep_scrn_coords)
+	{
+		j = 1;
+	}
+	if (keep_scrn_coords == 0)
+	{
+		set_orbit_corners = 0;
+	}
 
 	{
 		int tmp = uvalues[++k].uval.ch.val;
@@ -712,7 +772,10 @@ pass_option_restart:
 			break;
 		}
 	}
-	if (drawmode != old_drawmode) j = 1;
+	if (drawmode != old_drawmode)
+	{
+		j = 1;
+	}
 
 	if (i == FIK_F2)
 	{
@@ -720,7 +783,10 @@ pass_option_restart:
 		{
 			ret = 1;
 		}
-		if (j) ret = 1;
+		if (j)
+		{
+			ret = 1;
+		}
 		goto pass_option_restart;
 	}
 
@@ -730,7 +796,10 @@ pass_option_restart:
 		{
 			ret = 1;
 		}
-		if (j) ret = 1;
+		if (j)
+		{
+			ret = 1;
+		}
 		goto pass_option_restart;
 	}
 
@@ -961,12 +1030,30 @@ int starfield(void)
 {
 	int c;
 	busy = 1;
-	if (starfield_values[0] <   1.0) starfield_values[0] =   1.0;
-	if (starfield_values[0] > 100.0) starfield_values[0] = 100.0;
-	if (starfield_values[1] <   1.0) starfield_values[1] =   1.0;
-	if (starfield_values[1] > 100.0) starfield_values[1] = 100.0;
-	if (starfield_values[2] <   1.0) starfield_values[2] =   1.0;
-	if (starfield_values[2] > 100.0) starfield_values[2] = 100.0;
+	if (starfield_values[0] <   1.0)
+	{
+		starfield_values[0] =   1.0;
+	}
+	if (starfield_values[0] > 100.0)
+	{
+		starfield_values[0] = 100.0;
+	}
+	if (starfield_values[1] <   1.0)
+	{
+		starfield_values[1] =   1.0;
+	}
+	if (starfield_values[1] > 100.0)
+	{
+		starfield_values[1] = 100.0;
+	}
+	if (starfield_values[2] <   1.0)
+	{
+		starfield_values[2] =   1.0;
+	}
+	if (starfield_values[2] > 100.0)
+	{
+		starfield_values[2] = 100.0;
+	}
 
 	Distribution = (int)(starfield_values[0]);
 	con  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
@@ -2521,11 +2608,20 @@ get_brws_restart:
 	doublecaution = uvalues[++k].uval.ch.val;
 
 	toosmall  = uvalues[++k].uval.dval;
-	if (toosmall < 0) toosmall = 0 ;
+	if (toosmall < 0)
+	{
+		toosmall = 0 ;
+	}
 
 	minbox = uvalues[++k].uval.ival;
-	if (minbox < 1) minbox = 1;
-	if (minbox > 10) minbox = 10;
+	if (minbox < 1)
+	{
+		minbox = 1;
+	}
+	if (minbox > 10)
+	{
+		minbox = 10;
+	}
 
 	strcpy(browsemask, uvalues[++k].uval.sval);
 

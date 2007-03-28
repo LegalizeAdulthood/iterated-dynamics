@@ -780,10 +780,22 @@ void Cursor_Move(int xoff, int yoff)
 	the_cursor->x += xoff;
 	the_cursor->y += yoff;
 
-	if (the_cursor->x < 0)       the_cursor->x = 0;
-	if (the_cursor->y < 0)       the_cursor->y = 0;
-	if (the_cursor->x >= sxdots) the_cursor->x = sxdots-1;
-	if (the_cursor->y >= sydots) the_cursor->y = sydots-1;
+	if (the_cursor->x < 0)
+	{
+		the_cursor->x = 0;
+	}
+	if (the_cursor->y < 0)
+	{
+		the_cursor->y = 0;
+	}
+	if (the_cursor->x >= sxdots)
+	{
+		the_cursor->x = sxdots-1;
+	}
+	if (the_cursor->y >= sydots)
+	{
+		the_cursor->y = sydots-1;
+	}
 
 	if (!the_cursor->hidden)
 	{
@@ -1059,8 +1071,14 @@ static void MoveBox__Move(MoveBox *me, int key)
 	xoff += me->x;
 	yoff += me->y;   /* (xoff, yoff) = new position */
 
-	if (xoff < 0) xoff = 0;
-	if (yoff < 0) yoff = 0;
+	if (xoff < 0)
+	{
+		xoff = 0;
+	}
+	if (yoff < 0)
+	{
+		yoff = 0;
+	}
 
 	if (xoff + me->base_width + me->csize*16 + 1 > sxdots)
 	{

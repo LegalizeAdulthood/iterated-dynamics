@@ -230,9 +230,13 @@ unsigned int chars_in_formula;
 #endif
 
 #define ChkFloatDenom(denom)\
-	if (fabs(denom) <= DBL_MIN) {\
-		if (save_release > 1920) overflow = 1; \
-		return; \
+	if (fabs(denom) <= DBL_MIN)		\
+	{								\
+		if (save_release > 1920)	\
+		{							\
+			overflow = 1;			\
+		}							\
+		return;						\
 	}
 
 #define LastSqr v[4].a
@@ -2956,7 +2960,10 @@ static int ParseStr(char *Str, int pass)
 
 int Formula(void)
 {
-	if (FormName[0] == 0 || overflow) return 1;
+	if (FormName[0] == 0 || overflow)
+	{
+		return 1;
+	}
 
 	LodPtr = InitLodPtr;
 	StoPtr = InitStoPtr;
@@ -3017,7 +3024,10 @@ int Formula(void)
 
 int form_per_pixel(void)
 {
-	if (FormName[0] == 0) return 1;
+	if (FormName[0] == 0)
+	{
+		return 1;
+	}
 	overflow = LodPtr = StoPtr = OpPtr = jump_index = 0;
 	Arg1 = &s[0];
 	Arg2 = Arg1;

@@ -57,7 +57,10 @@ static long iteration1(register DBLS cr, register DBLS ci,
 		oldimag = newimag;
 		magnitude = newreal*newreal + newimag*newimag;
 	}
-	if (color >= maxit) color = BASIN_COLOR;
+	if (color >= maxit)
+	{
+		color = BASIN_COLOR;
+	}
 	return (int)color;
 }
 #endif

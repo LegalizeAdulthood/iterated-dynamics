@@ -104,7 +104,10 @@ void showcornersbf(char *s)
 {
 	int dec = decimals;
 	char msg[100], msg1[100], msg3[600];
-	if (dec > 20) dec = 20;
+	if (dec > 20)
+	{
+		dec = 20;
+	}
 	bftostr(msg, dec, bfxmin);
 	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
 		msg, xxmin, decimals, bflength);

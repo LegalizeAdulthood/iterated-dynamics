@@ -812,13 +812,25 @@ static void _fastcall restart_window(int wknum)
 {
 	int yfrom, yto, xfrom, xto;
 	yfrom = worklist[wknum].yystart;
-	if (yfrom < 0) yfrom = 0;
+	if (yfrom < 0)
+	{
+		yfrom = 0;
+	}
 	xfrom = worklist[wknum].xxstart;
-	if (xfrom < 0) xfrom = 0;
+	if (xfrom < 0)
+	{
+		xfrom = 0;
+	}
 	yto = worklist[wknum].yystop;
-	if (yto >= ydots) yto = ydots - 1;
+	if (yto >= ydots)
+	{
+		yto = ydots - 1;
+	}
 	xto = worklist[wknum].xxstop;
-	if (xto >= xdots) xto = xdots - 1;
+	if (xto >= xdots)
+	{
+		xto = xdots - 1;
+	}
 	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
 	while (yfrom <= yto)
 		put_line(yfrom++, xfrom, xto, (BYTE *)dstack);
@@ -933,10 +945,22 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			}
 			wk->xxstop = j;
 		}
-		if (wk->yybegin < wk->yystart) wk->yybegin = wk->yystart;
-		if (wk->yybegin > wk->yystop)  wk->yybegin = wk->yystop;
-		if (wk->xxbegin < wk->xxstart) wk->xxbegin = wk->xxstart;
-		if (wk->xxbegin > wk->xxstop)  wk->xxbegin = wk->xxstop;
+		if (wk->yybegin < wk->yystart)
+		{
+			wk->yybegin = wk->yystart;
+		}
+		if (wk->yybegin > wk->yystop)
+		{
+			wk->yybegin = wk->yystop;
+		}
+		if (wk->xxbegin < wk->xxstart)
+		{
+			wk->xxbegin = wk->xxstart;
+		}
+		if (wk->xxbegin > wk->xxstop)
+		{
+			wk->xxbegin = wk->xxstop;
+		}
 	}
 	tidy_worklist(); /* combine where possible, re-sort */
 }

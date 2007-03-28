@@ -2395,7 +2395,10 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 							if ((lat.x + lat.y) < l_at_rad)
 							{
 								attracted = TRUE;
-								if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
+								if (finattract < 0)
+								{
+									coloriter = (coloriter%attrperiod[i]) + 1;
+								}
 								break;
 							}
 						}
@@ -2946,8 +2949,14 @@ static void decomposition(void)
 		if (decomp[0] == 2 && save_release >= 1827)
 		{
 			save_temp = temp;
-			if (temp == 2) save_temp = 3;
-			if (temp == 3) save_temp = 2;
+			if (temp == 2)
+			{
+				save_temp = 3;
+			}
+			else if (temp == 3)
+			{
+				save_temp = 2;
+			}
 		}
 
 		if (decomp[0] >= 8)
@@ -3045,8 +3054,14 @@ static void decomposition(void)
 		if (decomp[0] == 2 && save_release >= 1827)
 		{
 			save_temp = temp;
-			if (temp == 2) save_temp = 3;
-			if (temp == 3) save_temp = 2;
+			if (temp == 2)
+			{
+				save_temp = 3;
+			}
+			else if (temp == 3)
+			{
+				save_temp = 2;
+			}
 		}
 		if (decomp[0] >= 8)
 		{
@@ -3981,7 +3996,10 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		{
 			put_line(j, xxstart, ixstop, &dstack[xxstart + OLDMAXPIXELS]);
 		}
-		if (driver_key_pressed()) return -1;
+		if (driver_key_pressed())
+		{
+			return -1;
+		}
 	}
 	if (plot != putcolor)  /* symmetry, just vertical & origin the fast way */
 	{
@@ -4010,7 +4028,10 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			{
 				put_line(j, xxstart, ixstop, &dstack[xxstart + OLDMAXPIXELS]);
 			}
-			if (driver_key_pressed()) return -1;
+			if (driver_key_pressed())
+			{
+				return -1;
+			}
 		}
 	}
 	return 0;
@@ -4331,10 +4352,16 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	switch (sym)       /* symmetry switch */
 	{
 	case XAXIS_NOREAL:    /* X-axis Symmetry (no real param) */
-		if (!parmsnoreal) break;
+		if (!parmsnoreal)
+		{
+			break;
+		}
 		goto xsym;
 	case XAXIS_NOIMAG:    /* X-axis Symmetry (no imag param) */
-		if (!parmsnoimag) break;
+		if (!parmsnoimag)
+		{
+			break;
+		}
 		goto xsym;
 	case XAXIS_NOPARM:                        /* X-axis Symmetry  (no params)*/
 		if (!parmszero)
@@ -4737,8 +4764,14 @@ tess_split:
 				}
 				if (tp->y2 - mid > 1)  /* bottom part >= 1 column */
 				{
-					if (tp->lft == -1) tp->lft = -2;
-					if (tp->rgt == -1) tp->rgt = -2;
+					if (tp->lft == -1)
+					{
+						tp->lft = -2;
+					}
+					if (tp->rgt == -1)
+					{
+						tp->rgt = -2;
+					}
 					tp2 = tp;
 					if (mid - tp->y1 > 1)  /* top also >= 1 col, stack bottom */
 					{

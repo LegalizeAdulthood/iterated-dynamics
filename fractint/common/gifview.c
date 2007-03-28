@@ -271,7 +271,10 @@ int gifview()
 				}
 			}
 
-			if (pot16bit) width >>= 1;
+			if (pot16bit)
+			{
+				width >>= 1;
+			}
 
 			/* Skip local color palette */
 			if ((buffer[8] & 0x80) == 0x80)  /* local map? */

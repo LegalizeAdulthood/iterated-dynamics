@@ -1760,7 +1760,10 @@ static void drawindow(int colour, struct window *info)
 	{
 #ifndef XFRACT
 		cross_size = ydots / 45;
-		if (cross_size < 2) cross_size = 2;
+		if (cross_size < 2)
+		{
+			cross_size = 2;
+		}
 		itr.x = info->itl.x - cross_size;
 		itr.y = info->itl.y;
 		ibl.y = info->itl.y - cross_size;

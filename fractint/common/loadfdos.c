@@ -68,11 +68,26 @@ static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
 	struct vidinf CONST *ptr1, *ptr2;
 	ptr1 = (struct vidinf CONST *)p1;
 	ptr2 = (struct vidinf CONST *)p2;
-	if (ptr1->flags < ptr2->flags) return -1;
-	if (ptr1->flags > ptr2->flags) return 1;
-	if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum) return -1;
-	if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum) return 1;
-	if (ptr1->entnum < ptr2->entnum) return -1;
+	if (ptr1->flags < ptr2->flags)
+	{
+		return -1;
+	}
+	if (ptr1->flags > ptr2->flags)
+	{
+		return 1;
+	}
+	if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum)
+	{
+		return -1;
+	}
+	if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum)
+	{
+		return 1;
+	}
+	if (ptr1->entnum < ptr2->entnum)
+	{
+		return -1;
+	}
 	return 1;
 }
 
@@ -499,11 +514,26 @@ static void format_item(int choice, char *buf)
 	errbuf[0] = 0;
 	tmpflags = vidptr[choice].flags;
 	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT)) strcat(errbuf, "*");
-	if (tmpflags & VI_VSMALL) strcat(errbuf, "R");
-	if (tmpflags & VI_CSMALL) strcat(errbuf, "C");
-	if (tmpflags & VI_ASPECT) strcat(errbuf, "A");
-	if (tmpflags & VI_VBIG)   strcat(errbuf, "v");
-	if (tmpflags & VI_CBIG)   strcat(errbuf, "c");
+	if (tmpflags & VI_VSMALL)
+	{
+		strcat(errbuf, "R");
+	}
+	if (tmpflags & VI_CSMALL)
+	{
+		strcat(errbuf, "C");
+	}
+	if (tmpflags & VI_ASPECT)
+	{
+		strcat(errbuf, "A");
+	}
+	if (tmpflags & VI_VBIG)
+	{
+		strcat(errbuf, "v");
+	}
+	if (tmpflags & VI_CBIG)
+	{
+		strcat(errbuf, "c");
+	}
 	format_vid_inf(vidptr[choice].entnum, errbuf, buf);
 }
 
