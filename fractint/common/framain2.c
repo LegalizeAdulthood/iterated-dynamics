@@ -834,7 +834,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& !truecolor /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && fillcolor > -1) /* tesseral with fill doesn't work */
 		&& !(usr_stdcalcmode == 'o')
-		&& i == 1 /* nothing else changed */
+		&& i == CMDARG_FRACTAL_PARAM /* nothing else changed */
 		&& outside != ATAN)
 	{
 		quick_calc = 1;
@@ -886,7 +886,7 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	{
 		truecolor = 0; /* truecolor doesn't play well with the evolver */
 	}
-	if (i > 0)              /* time to redraw? */
+	if (i > CMDARG_OK)              /* time to redraw? */
 	{
 		param_history(0); /* save history */
 		*kbdmore = 0;
