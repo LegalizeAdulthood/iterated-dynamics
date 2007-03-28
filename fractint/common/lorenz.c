@@ -2390,7 +2390,10 @@ static int ifs3dfloat(void)
 		while (sum < r && ++k < numaffine*IFS3DPARM)
 		{
 			sum += ifs_defn[k*IFS3DPARM + 12];
-			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) break; /* for safety */
+			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
+			{
+				break;
+			}
 		}
 
 		/* calculate image of last point under selected iterated function */
@@ -2651,7 +2654,10 @@ static int ifs3dlong(void)
 		while (sum < r && ++k < numaffine*IFS3DPARM)
 		{
 			sum += localifs[k*IFS3DPARM + 12];
-			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) break; /* for safety */
+			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
+			{
+				break;
+			}
 		}
 
 		/* calculate image of last point under selected iterated function */

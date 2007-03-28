@@ -390,11 +390,20 @@ int plasma()
 	if (parm.x <= 0.0) iparmx = 0;
 	if (parm.x >= 100) iparmx = 800;
 	param[0] = (double)iparmx / 8.0;  /* let user know what was used */
-	if (param[1] < 0) param[1] = 0;  /* limit parameter values */
+	if (param[1] < 0) /* limit parameter values  */
+	{
+		param[1] = 0;
+	}
 	if (param[1] > 1) param[1] = 1;
-	if (param[2] < 0) param[2] = 0;  /* limit parameter values */
+	if (param[2] < 0) /* limit parameter values  */
+	{
+		param[2] = 0;
+	}
 	if (param[2] > 1) param[2] = 1;
-	if (param[3] < 0) param[3] = 0;  /* limit parameter values */
+	if (param[3] < 0) /* limit parameter values  */
+	{
+		param[3] = 0;
+	}
 	if (param[3] > 1) param[3] = 1;
 
 	if ((!rflag) && param[2] == 1)
@@ -530,7 +539,10 @@ static void set_Plasma_palette()
 	static Palettetype Blue   = { 0,  0, 63 };
 	int i;
 
-	if (mapdacbox || colorpreloaded) return;    /* map= specified */
+	if (mapdacbox || colorpreloaded) /* map= specified  */
+	{
+		return;
+	}
 
 	dac[0].red  = 0 ;
 	dac[0].green = 0 ;
@@ -1470,7 +1482,10 @@ int lya_setup ()
 
 	i = (long)param[0];
 #if !defined(XFRACT)
-	if (save_release < 1732) i &= 0x0FFFFL; /* make it a short to reproduce prior stuff*/
+	if (save_release < 1732) /* make it a short to reproduce prior stuff */
+	{
+		i &= 0x0FFFFL;
+	}
 #endif
 	lyaRxy[0] = 1;
 	for (t = 31; t >= 0; t--)
@@ -2019,7 +2034,10 @@ static void set_Cellular_palette()
 	static Palettetype Yellow = { 60, 58, 18 };
 	static Palettetype Brown  = { 42, 21, 0 };
 
-	if (mapdacbox && colorstate != 0) return;       /* map= specified */
+	if (mapdacbox && colorstate != 0) /* map= specified  */
+	{
+		return;
+	}
 
 	dac[0].red  = 0 ;
 	dac[0].green = 0 ;

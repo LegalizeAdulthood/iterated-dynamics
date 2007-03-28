@@ -314,11 +314,17 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 	int i, j, k;
 	i = 0;
 #ifdef XFRACT
-	if (width >= 80) width = 79; /* Some systems choke in column 80 */
+	if (width >= 80) /* Some systems choke in column 80  */
+	{
+		width = 79;
+	}
 #endif
 	while (msg[i]) ++i; /* strlen for a */
 	if (i == 0) return -1;
-	if (i >= width) i = width - 1; /* sanity check */
+	if (i >= width) /* sanity check  */
+	{
+		i = width - 1;
+	}
 	j = (width - i) / 2;
 	j -= (width + 10 - i) / 20; /* when wide a bit left of center looks better */
 	memset(buf, ' ', width);
@@ -1527,7 +1533,10 @@ int input_field(
 			display = 0;
 		}
 		curkey = driver_key_cursor(row + insert, col + offset);  /* get a keystroke */
-		if (curkey == 1047) curkey = 47; /* numeric slash */
+		if (curkey == 1047) /* numeric slash  */
+		{
+			curkey = 47;
+		}
 		switch (curkey)
 		{
 		case FIK_ENTER:
