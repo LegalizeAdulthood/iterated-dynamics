@@ -1083,7 +1083,10 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			{
 				return;
 			}
-			if (periodicitycheck && Bif_Periodic(counter)) break;
+			if (periodicitycheck && Bif_Periodic(counter))
+			{
+				break;
+			}
 		}
 		if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
 		{
@@ -1420,7 +1423,10 @@ int lyapunov ()
 		return -1;
 		}
 	overflow = FALSE;
-	if (param[1] == 1) Population = (1.0 + rand())/(2.0 + RAND_MAX);
+	if (param[1] == 1)
+	{
+		Population = (1.0 + rand())/(2.0 + RAND_MAX);
+	}
 	else if (param[1] == 0)
 	{
 		if (fabs(Population) > BIG || Population == 0 || Population == 1)

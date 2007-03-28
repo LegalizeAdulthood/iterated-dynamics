@@ -2420,7 +2420,10 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 							if ((at.x + at.y) < f_at_rad)
 							{
 								attracted = TRUE;
-								if (finattract < 0) coloriter = (coloriter%attrperiod[i]) + 1;
+								if (finattract < 0)
+								{
+									coloriter = (coloriter%attrperiod[i]) + 1;
+								}
 								break;
 							}
 						}
@@ -3733,7 +3736,16 @@ static int solidguess(void)
 	return 0;
 }
 
-#define calcadot(c, x, y) { col = x; row = y; c = (*calctype)(); if (c == -1) return -1; }
+#define calcadot(c, x, y) \
+	{ \
+		col = x; \
+		row = y; \
+		c = (*calctype)(); \
+		if (c == -1) \
+		{ \
+			return -1; \
+		} \
+	}
 
 static int _fastcall guessrow(int firstpass, int y, int blocksize)
 {
