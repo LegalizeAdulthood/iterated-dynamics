@@ -320,7 +320,10 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 	}
 #endif
 	while (msg[i]) ++i; /* strlen for a */
-	if (i == 0) return -1;
+	if (i == 0)
+	{
+		return -1;
+	}
 	if (i >= width) /* sanity check  */
 	{
 		i = width - 1;
@@ -1447,7 +1450,10 @@ static int menu_checkkey(int curkey, int choice)
 	testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
 #ifdef XFRACT
 	/* We use F2 for shift-@, annoyingly enough */
-	if (testkey == FIK_F2) return -testkey;
+	if (testkey == FIK_F2)
+	{
+		return -testkey;
+	}
 #endif
 	if (testkey == '2')
 	{
@@ -1546,11 +1552,17 @@ int input_field(
 		case FIK_ESC:
 			goto inpfld_end;
 		case FIK_RIGHT_ARROW:
-			if (offset < len-1) ++offset;
+			if (offset < len-1)
+			{
+				++offset;
+			}
 			started = 1;
 			break;
 		case FIK_LEFT_ARROW:
-			if (offset > 0) --offset;
+			if (offset > 0)
+			{
+				--offset;
+			}
 			started = 1;
 			break;
 		case FIK_HOME:

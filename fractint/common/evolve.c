@@ -1066,25 +1066,37 @@ void spiralmap(int count)
 		for (px = (mid - offset) + 1; px <mid + offset; px++)
 		{
 			i++;
-			if (i == count) return;
+			if (i == count)
+			{
+				return;
+			}
 		}
 		/* then do the right hand column */
 		for (; py < mid + offset; py++)
 		{
 			i++;
-			if (i == count) return;
+			if (i == count)
+			{
+				return;
+			}
 		}
 		/* then reverse along the bottom row */
 		for (; px > mid - offset; px--)
 		{
 			i++;
-			if (i == count) return;
+			if (i == count)
+			{
+				return;
+			}
 		}
 		/* then up the left to finish */
 		for (; py >= mid - offset; py--)
 		{
 			i++;
-			if (i == count) return;
+			if (i == count)
+			{
+				return;
+			}
 		}
 	}
 }

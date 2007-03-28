@@ -387,24 +387,39 @@ int plasma()
 		return -1;
 	}
 	iparmx = (int)(param[0]*8);
-	if (parm.x <= 0.0) iparmx = 0;
-	if (parm.x >= 100) iparmx = 800;
+	if (parm.x <= 0.0)
+	{
+		iparmx = 0;
+	}
+	if (parm.x >= 100)
+	{
+		iparmx = 800;
+	}
 	param[0] = (double)iparmx / 8.0;  /* let user know what was used */
 	if (param[1] < 0) /* limit parameter values  */
 	{
 		param[1] = 0;
 	}
-	if (param[1] > 1) param[1] = 1;
+	if (param[1] > 1)
+	{
+		param[1] = 1;
+	}
 	if (param[2] < 0) /* limit parameter values  */
 	{
 		param[2] = 0;
 	}
-	if (param[2] > 1) param[2] = 1;
+	if (param[2] > 1)
+	{
+		param[2] = 1;
+	}
 	if (param[3] < 0) /* limit parameter values  */
 	{
 		param[3] = 0;
 	}
-	if (param[3] > 1) param[3] = 1;
+	if (param[3] > 1)
+	{
+		param[3] = 1;
+	}
 
 	if ((!rflag) && param[2] == 1)
 	{
@@ -441,7 +456,10 @@ int plasma()
 		getpix  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
-	if (!rflag) ++rseed;
+	if (!rflag)
+	{
+		++rseed;
+	}
 
 	if (colors == 256)                   /* set the (256-color) palette */
 	{
@@ -1061,7 +1079,10 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 		{
 			errors = curfractalspecific->orbitcalc();
-			if (errors) return;
+			if (errors)
+			{
+				return;
+			}
 			if (periodicitycheck && Bif_Periodic(counter)) break;
 		}
 		if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
@@ -1069,16 +1090,25 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			for (counter = 0 ; counter < filter_cycles ; counter++)
 			{
 				errors = curfractalspecific->orbitcalc();
-				if (errors) return;
+				if (errors)
+				{
+					return;
+				}
 			}
 		}
 	}
 
-	if (periodicitycheck) Bif_Period_Init();
+	if (periodicitycheck)
+	{
+		Bif_Period_Init();
+	}
 	for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 	{
 		errors = curfractalspecific->orbitcalc();
-		if (errors) return;
+		if (errors)
+		{
+			return;
+		}
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = integerfractal
@@ -1124,7 +1154,10 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 {
 	if ((time & Bif_savedand) == 0)      /* time to save a new value */
 	{
-		if (integerfractal) lBif_savedpop = lPopulation;
+		if (integerfractal)
+		{
+			lBif_savedpop = lPopulation;
+		}
 		else                   Bif_savedpop =  Population;
 		if (--Bif_savedinc == 0)
 		{
@@ -1510,7 +1543,10 @@ int lya_setup ()
 	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
 		stdcalcmode = '1';
-		if (inside == 1) inside = 0;
+		if (inside == 1)
+		{
+			inside = 0;
+		}
 		}
 	if (inside < 0)
 	{
@@ -1767,7 +1803,10 @@ int cellular ()
 	}
 
 	srand(rseed);
-	if (!rflag) ++rseed;
+	if (!rflag)
+	{
+		++rseed;
+	}
 
 /* generate rule table from parameter 1 */
 #if !defined(XFRACT)

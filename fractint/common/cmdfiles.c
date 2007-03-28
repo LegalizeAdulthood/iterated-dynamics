@@ -754,7 +754,10 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 #endif
 			continue;                              /* skip tools section heading */
 		}
-		if (toolssection == 0) return 0;
+		if (toolssection == 0)
+		{
+			return 0;
+		}
 	}
 	return -1;
 }
@@ -2374,14 +2377,20 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "olddemmcolors") == 0)  /* olddemmcolors=?   */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		old_demm_colors = yesnoval[0];
 		return 0;
 	}
 
 	if (strcmp(variable, "askvideo") == 0)  /* askvideo=?   */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		askvideo = yesnoval[0];
 		return 0;
 	}
@@ -2393,7 +2402,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "float") == 0)  /* float=? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 #ifndef XFRACT
 		usr_floatflag = (char)yesnoval[0];
 #else
@@ -2404,7 +2416,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "fastrestore") == 0)  /* fastrestore=? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		fastrestore = (char)yesnoval[0];
 		return 0;
 	}
@@ -2438,7 +2453,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "bailout") == 0)  /* bailout=? */
 	{
-		if (floatval[0] < 1 || floatval[0] > 2100000000L) goto badarg;
+		if (floatval[0] < 1 || floatval[0] > 2100000000L)
+		{
+			goto badarg;
+		}
 		bailout = (long)floatval[0];
 		return 1;
 	}
@@ -2689,8 +2707,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			usr_periodicitycheck = numval;
 		}
-		if (usr_periodicitycheck > 255) usr_periodicitycheck = 255;
-		if (usr_periodicitycheck < -255) usr_periodicitycheck = -255;
+		if (usr_periodicitycheck > 255)
+		{
+			usr_periodicitycheck = 255;
+		}
+		if (usr_periodicitycheck < -255)
+		{
+			usr_periodicitycheck = -255;
+		}
 		return 1;
 	}
 
@@ -2817,7 +2841,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "decomp") == 0)
 	{
-		if (totparms != intparms || totparms < 1) goto badarg;
+		if (totparms != intparms || totparms < 1)
+		{
+			goto badarg;
+		}
 		decomp[0] = intval[0];
 		decomp[1] = 0;
 		if (totparms > 1) /* backward compatibility */
@@ -2829,7 +2856,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "distest") == 0)
 	{
-		if (totparms != intparms || totparms < 1) goto badarg;
+		if (totparms != intparms || totparms < 1)
+		{
+			goto badarg;
+		}
 		usr_distest = (long)floatval[0];
 		distestwidth = 71;
 		if (totparms > 1)
@@ -2860,7 +2890,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "formulaname") == 0)  /* formulaname=? */
 	{
-		if (valuelen > ITEMNAMELEN) goto badarg;
+		if (valuelen > ITEMNAMELEN)
+		{
+			goto badarg;
+		}
 		strcpy(FormName, value);
 		return 1;
 	}
@@ -2877,7 +2910,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "lname") == 0)
 	{
-		if (valuelen > ITEMNAMELEN) goto badarg;
+		if (valuelen > ITEMNAMELEN)
+		{
+			goto badarg;
+		}
 		strcpy(LName, value);
 		return 1;
 	}
@@ -2905,7 +2941,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 	if (strcmp(variable, "ifs") == 0
 		|| strcmp(variable, "ifs3d") == 0)  /* ifs3d for old time's sake */
 	{
-		if (valuelen > ITEMNAMELEN) goto badarg;
+		if (valuelen > ITEMNAMELEN)
+		{
+			goto badarg;
+		}
 		strcpy(IFSName, value);
 		reset_ifs_defn();
 		return 1;
@@ -2930,7 +2969,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "rotation") == 0)  /* rotation=?/?/? */
 	{
-		if (totparms != 3 || intparms != 3) goto badarg;
+		if (totparms != 3 || intparms != 3)
+		{
+			goto badarg;
+		}
 		XROT = intval[0];
 		YROT = intval[1];
 		ZROT = intval[2];
@@ -2939,14 +2981,20 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "perspective") == 0)  /* perspective=? */
 	{
-		if (numval == NONNUMERIC) goto badarg;
+		if (numval == NONNUMERIC)
+		{
+			goto badarg;
+		}
 		ZVIEWER = numval;
 		return 3;
 	}
 
 	if (strcmp(variable, "xyshift") == 0)  /* xyshift=?/?  */
 	{
-		if (totparms != 2 || intparms != 2) goto badarg;
+		if (totparms != 2 || intparms != 2)
+		{
+			goto badarg;
+		}
 		XSHIFT = intval[0];
 		YSHIFT = intval[1];
 		return 3;
@@ -2983,7 +3031,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "bright") == 0)  /* bright=? */
 	{
-		if (totparms != 2 || intparms != 2) goto badarg;
+		if (totparms != 2 || intparms != 2)
+		{
+			goto badarg;
+		}
 		red_bright  = intval[0];
 		blue_bright = intval[1];
 		return 3;
@@ -2991,7 +3042,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "xyadjust") == 0)  /* trans=? */
 	{
-		if (totparms != 2 || intparms != 2) goto badarg;
+		if (totparms != 2 || intparms != 2)
+		{
+			goto badarg;
+		}
 		xtrans = intval[0];
 		ytrans = intval[1];
 		return 3;
@@ -3015,17 +3069,26 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "sphere") == 0)  /* sphere=? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		SPHERE = yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "scalexyz") == 0)  /* scalexyz=?/?/? */
 	{
-		if (totparms < 2 || intparms != totparms) goto badarg;
+		if (totparms < 2 || intparms != totparms)
+		{
+			goto badarg;
+		}
 		XSCALE = intval[0];
 		YSCALE = intval[1];
-		if (totparms > 2) ROUGH = intval[2];
+		if (totparms > 2)
+		{
+			ROUGH = intval[2];
+		}
 		return 2;
 	}
 
@@ -3038,21 +3101,30 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "waterline") == 0)  /* waterline=?  */
 	{
-		if (numval < 0) goto badarg;
+		if (numval < 0)
+		{
+			goto badarg;
+		}
 		WATERLINE = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "filltype") == 0)  /* filltype=?   */
 	{
-		if (numval < -1 || numval > 6) goto badarg;
+		if (numval < -1 || numval > 6)
+		{
+			goto badarg;
+		}
 		FILLTYPE = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "lightsource") == 0)  /* lightsource=?/?/? */
 	{
-		if (totparms != 3 || intparms != 3) goto badarg;
+		if (totparms != 3 || intparms != 3)
+		{
+			goto badarg;
+		}
 		XLIGHT = intval[0];
 		YLIGHT = intval[1];
 		ZLIGHT = intval[2];
@@ -3061,14 +3133,20 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "smoothing") == 0)  /* smoothing=?  */
 	{
-		if (numval < 0) goto badarg;
+		if (numval < 0)
+		{
+			goto badarg;
+		}
 		LIGHTAVG = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "latitude") == 0)  /* latitude=?/? */
 	{
-		if (totparms != 2 || intparms != 2) goto badarg;
+		if (totparms != 2 || intparms != 2)
+		{
+			goto badarg;
+		}
 		THETA1 = intval[0];
 		THETA2 = intval[1];
 		return 2;
@@ -3076,7 +3154,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "longitude") == 0)  /* longitude=?/? */
 	{
-		if (totparms != 2 || intparms != 2) goto badarg;
+		if (totparms != 2 || intparms != 2)
+		{
+			goto badarg;
+		}
 		PHI1 = intval[0];
 		PHI2 = intval[1];
 		return 2;
@@ -3084,71 +3165,104 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "radius") == 0)  /* radius=? */
 	{
-		if (numval < 0) goto badarg;
+		if (numval < 0)
+		{
+			goto badarg;
+		}
 		RADIUS = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "transparent") == 0)  /* transparent? */
 	{
-		if (totparms != intparms || totparms < 1) goto badarg;
+		if (totparms != intparms || totparms < 1)
+		{
+			goto badarg;
+		}
 		transparent[1] = transparent[0] = intval[0];
-		if (totparms > 1) transparent[1] = intval[1];
+		if (totparms > 1)
+		{
+			transparent[1] = intval[1];
+		}
 		return 2;
 	}
 
 	if (strcmp(variable, "preview") == 0)  /* preview? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		preview = (char)yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "showbox") == 0)  /* showbox? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		showbox = (char)yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "coarse") == 0)  /* coarse=? */
 	{
-		if (numval < 3 || numval > 2000) goto badarg;
+		if (numval < 3 || numval > 2000)
+		{
+			goto badarg;
+		}
 		previewfactor = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "randomize") == 0)  /* RANDOMIZE=? */
 	{
-		if (numval < 0 || numval > 7) goto badarg;
+		if (numval < 0 || numval > 7)
+		{
+			goto badarg;
+		}
 		RANDOMIZE = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "ambient") == 0)  /* ambient=? */
 	{
-		if (numval < 0 || numval > 100) goto badarg;
+		if (numval < 0 || numval > 100)
+		{
+			goto badarg;
+		}
 		Ambient = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "haze") == 0)  /* haze=? */
 	{
-		if (numval < 0 || numval > 100) goto badarg;
+		if (numval < 0 || numval > 100)
+		{
+			goto badarg;
+		}
 		haze = numval;
 		return 2;
 	}
 
 	if (strcmp(variable, "fullcolor") == 0)  /* fullcolor=? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		Targa_Out = yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "truecolor") == 0)  /* truecolor=? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		truecolor = yesnoval[0];
 		return 3;
 	}
@@ -3177,28 +3291,40 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "usegrayscale") == 0)  /* usegrayscale? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		grayflag = (char)yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "monitorwidth") == 0)  /* monitorwidth=? */
 	{
-		if (totparms != 1 || floatparms != 1) goto badarg;
+		if (totparms != 1 || floatparms != 1)
+		{
+			goto badarg;
+		}
 		AutoStereo_width  = floatval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "targa_overlay") == 0)  /* Targa Overlay? */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		Targa_Overlay = yesnoval[0];
 		return 2;
 	}
 
 	if (strcmp(variable, "background") == 0)  /* background=?/? */
 	{
-		if (totparms != 3 || intparms != 3) goto badarg;
+		if (totparms != 3 || intparms != 3)
+		{
+			goto badarg;
+		}
 		for (i = 0; i < 3; i++)
 		{
 			if (intval[i] & ~0xff)
@@ -3247,7 +3373,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "release") == 0)  /* release */
 	{
-		if (numval < 0) goto badarg;
+		if (numval < 0)
+		{
+			goto badarg;
+		}
 
 		save_release = numval;
 		return 2;
@@ -3255,7 +3384,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "curdir") == 0)  /* curdir= */
 	{
-		if (yesnoval[0] < 0) goto badarg;
+		if (yesnoval[0] < 0)
+		{
+			goto badarg;
+		}
 		checkcurdir = yesnoval[0];
 		return 0;
 	}
@@ -3307,7 +3439,10 @@ static void parse_textcolors(char *value)
 		k = 0;
 		while (k < sizeof(txtcolor))
 		{
-			if (*value == 0) break;
+			if (*value == 0)
+			{
+				break;
+			}
 			if (*value != '/')
 			{
 				sscanf(value, "%x", &hexval);
@@ -3319,7 +3454,10 @@ static void parse_textcolors(char *value)
 				}
 				txtcolor[k] = (BYTE) (i*16 + j);
 				value = strchr(value, '/');
-				if (value == NULL) break;
+				if (value == NULL)
+				{
+					break;
+				}
 			}
 			++value;
 			++k;
@@ -3359,7 +3497,10 @@ static int parse_colors(char *value)
 		i = smooth = 0;
 		while (*value)
 		{
-			if (i >= 256) goto badcolor;
+			if (i >= 256)
+			{
+				goto badcolor;
+			}
 			if (*value == '<')
 			{
 				if (i == 0 || smooth
@@ -3411,7 +3552,10 @@ static int parse_colors(char *value)
 				++i;
 			}
 		}
-		if (smooth) goto badcolor;
+		if (smooth)
+		{
+			goto badcolor;
+		}
 		while (i < 256)   /* zap unset entries */
 		{
 			g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 40;
@@ -3651,14 +3795,20 @@ static int isabigfloat(char *str)
 	int numsign = 0;
 	while (*s != 0 && *s != '/' && *s != ' ')
 	{
-		if (*s == '-' || *s == '+') numsign++;
+		if (*s == '-' || *s == '+')
+		{
+			numsign++;
+		}
 		else if (*s == '.') numdot++;
 		else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G') nume++;
 		else if (!isdigit(*s))
 		{result = 0; break; }
 		s++;
 	}
-	if (numdot > 1 || numsign > 2 || nume > 1) result = 0;
+	if (numdot > 1 || numsign > 2 || nume > 1)
+	{
+		result = 0;
+	}
 	return result;
 }
 

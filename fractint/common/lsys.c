@@ -141,7 +141,10 @@ static int _fastcall readLSystemFile(char *str)
 	}
 	while ((c = fgetc(infile)) != '{')
 	{
-		if (c == EOF) return -1;
+		if (c == EOF)
+		{
+			return -1;
+		}
 	}
 	maxangle = 0;
 	for (linenum = 0; linenum < MAXRULES; ++linenum)
@@ -397,7 +400,10 @@ static void _fastcall free_rules_mem(void)
 	int i;
 	for (i = 0; i < MAXRULES; ++i)
 	{
-		if (ruleptrs[i]) free(ruleptrs[i]);
+		if (ruleptrs[i])
+		{
+			free(ruleptrs[i]);
+		}
 	}
 }
 
@@ -632,10 +638,22 @@ static void lsysi_dosizedm(struct lsys_turtlestatei *cmd)
 
 /* xpos += size*aspect*cos(realangle*PI/180); */
 /* ypos += size*sin(realangle*PI/180); */
-	if (cmd->xpos > cmd->xmax) cmd->xmax = cmd->xpos;
-	if (cmd->ypos > cmd->ymax) cmd->ymax = cmd->ypos;
-	if (cmd->xpos < cmd->xmin) cmd->xmin = cmd->xpos;
-	if (cmd->ypos < cmd->ymin) cmd->ymin = cmd->ypos;
+	if (cmd->xpos > cmd->xmax)
+	{
+		cmd->xmax = cmd->xpos;
+	}
+	if (cmd->ypos > cmd->ymax)
+	{
+		cmd->ymax = cmd->ypos;
+	}
+	if (cmd->xpos < cmd->xmin)
+	{
+		cmd->xmin = cmd->xpos;
+	}
+	if (cmd->ypos < cmd->ymin)
+	{
+		cmd->ymin = cmd->ypos;
+	}
 }
 
 static void lsysi_dosizegf(struct lsys_turtlestatei *cmd)
@@ -644,10 +662,22 @@ static void lsysi_dosizegf(struct lsys_turtlestatei *cmd)
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
-	if (cmd->xpos > cmd->xmax) cmd->xmax = cmd->xpos;
-	if (cmd->ypos > cmd->ymax) cmd->ymax = cmd->ypos;
-	if (cmd->xpos < cmd->xmin) cmd->xmin = cmd->xpos;
-	if (cmd->ypos < cmd->ymin) cmd->ymin = cmd->ypos;
+	if (cmd->xpos > cmd->xmax)
+	{
+		cmd->xmax = cmd->xpos;
+	}
+	if (cmd->ypos > cmd->ymax)
+	{
+		cmd->ymax = cmd->ypos;
+	}
+	if (cmd->xpos < cmd->xmin)
+	{
+		cmd->xmin = cmd->xpos;
+	}
+	if (cmd->ypos < cmd->ymin)
+	{
+		cmd->ymin = cmd->ypos;
+	}
 }
 
 static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)

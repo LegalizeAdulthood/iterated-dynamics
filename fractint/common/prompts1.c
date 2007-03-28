@@ -310,18 +310,30 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		j = (int) strlen(prompts[i]);
 		if (values[i].type == '*')
 		{
-			if (j > maxcomment)     maxcomment = j;
+			if (j > maxcomment)
+			{
+				maxcomment = j;
+			}
 		}
 		else
 		{
 			anyinput = 1;
-			if (j > maxpromptwidth) maxpromptwidth = j;
+			if (j > maxpromptwidth)
+			{
+				maxpromptwidth = j;
+			}
 			j = prompt_valuestring(buf, &values[i]);
-			if (j > maxfldwidth)    maxfldwidth = j;
+			if (j > maxfldwidth)
+			{
+				maxfldwidth = j;
+			}
 		}
 	}
 	boxwidth = maxpromptwidth + maxfldwidth + 2;
-	if (maxcomment > boxwidth) boxwidth = maxcomment;
+	if (maxcomment > boxwidth)
+	{
+		boxwidth = maxcomment;
+	}
 	if ((boxwidth += 4) > 80) boxwidth = 80;
 	boxcol = (80 - boxwidth) / 2;       /* center the box */
 	promptcol = boxcol + 2;
@@ -619,11 +631,26 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		else
 		{
 			j = 0;
-			if (curtype == 'i') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-			if (curtype == 'L') j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-			if (curtype == 'd') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
-			if (curtype == 'D') j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
-			if (curtype == 'f') j = INPUTFIELD_NUMERIC;
+			if (curtype == 'i')
+			{
+				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+			}
+			if (curtype == 'L')
+			{
+				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+			}
+			if (curtype == 'd')
+			{
+				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
+			}
+			if (curtype == 'D')
+			{
+				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
+			}
+			if (curtype == 'f')
+			{
+				j = INPUTFIELD_NUMERIC;
+			}
 			i = input_field(j, C_PROMPT_INPUT, buf, curlen,
 				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
 			switch (values[curchoice].type)
@@ -917,7 +944,10 @@ static int input_field_list(
 	{
 		if (strcmp(fld, list[initval]) == 0) break;
 	}
-	if (initval >= llen) initval = 0;
+	if (initval >= llen)
+	{
+		initval = 0;
+	}
 	curval = initval;
 	ret = -1;
 	while (1)
@@ -1080,7 +1110,10 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	/* setup context sensitive help */
 	oldhelpmode = helpmode;
 	helpmode = HELPFRACTALS;
-	if (t == IFS3D) t = IFS;
+	if (t == IFS3D)
+	{
+		t = IFS;
+	}
 	i = j = -1;
 	while (fractalspecific[++i].name)
 	{
@@ -1520,7 +1553,10 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 					{
 						break;
 					}
-					if (++lines >= 16) break;
+					if (++lines >= 16)
+					{
+						break;
+					}
 					k = 1;
 				}
 				else if (c < 16) /* a special help format control char */
@@ -3169,8 +3205,14 @@ restart_1:
 	transparent[1] = uvalues[k++].uval.ival;
 	}
 	RANDOMIZE  = uvalues[k++].uval.ival;
-	if (RANDOMIZE >= 7) RANDOMIZE = 7;
-	if (RANDOMIZE <= 0) RANDOMIZE = 0;
+	if (RANDOMIZE >= 7)
+	{
+		RANDOMIZE = 7;
+	}
+	if (RANDOMIZE <= 0)
+	{
+		RANDOMIZE = 0;
+	}
 
 	if ((Targa_Out || ILLUMINE || RAY))
 	{
@@ -3277,16 +3319,28 @@ static int get_light_params()
 		{
 			LIGHTAVG = uvalues[k++].uval.ival;
 			Ambient  = uvalues[k++].uval.ival;
-			if (Ambient >= 100) Ambient = 100;
-			if (Ambient <= 0) Ambient = 0;
+			if (Ambient >= 100)
+			{
+				Ambient = 100;
+			}
+			if (Ambient <= 0)
+			{
+				Ambient = 0;
+			}
 		}
 	}
 
 	if (Targa_Out && !RAY)
 	{
 		haze  =  uvalues[k++].uval.ival;
-		if (haze >= 100) haze = 100;
-		if (haze <= 0) haze = 0;
+		if (haze >= 100)
+		{
+			haze = 100;
+		}
+		if (haze <= 0)
+		{
+			haze = 0;
+		}
 		strcpy(light_name, uvalues[k++].uval.sval);
         /* In case light_name conflicts with an existing name it is checked
 						again in line3d */

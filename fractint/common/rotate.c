@@ -152,11 +152,17 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 		case FIK_UP_ARROW:                 /* UpArrow means speed up       */
 			g_dac_learn = 1;
-			if (++g_dac_count >= colors) --g_dac_count;
+			if (++g_dac_count >= colors)
+			{
+				--g_dac_count;
+			}
 			break;
 		case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
 			g_dac_learn = 1;
-			if (g_dac_count > 1) g_dac_count--;
+			if (g_dac_count > 1)
+			{
+				g_dac_count--;
+			}
 			break;
 		case '1':
 		case '2':
@@ -168,7 +174,10 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		case '8':
 		case '9':
 			step = kbdchar - '0';   /* change step-size */
-			if (step > rotate_size) step = rotate_size;
+			if (step > rotate_size)
+			{
+				step = rotate_size;
+			}
 			break;
 		case FIK_F1:                       /* FIK_F1 - FIK_F10:                    */
 		case FIK_F2:                       /* select a shading factor      */

@@ -1787,7 +1787,10 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 		c = getc(infile);
 		if (c == EOF || c == '\032')
 		{
-			if (len) break;
+			if (len)
+			{
+				break;
+			}
 			return -1;
 			}
 		if (c == '\n') /* linefeed is end of line  */

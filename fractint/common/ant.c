@@ -515,7 +515,10 @@ ant(void)
 	}
 
 	srand(rseed);
-	if (!rflag) ++rseed;
+	if (!rflag)
+	{
+		++rseed;
+	}
 
 	maxants = (int) param[2];
 	if (maxants < 1)             /* if maxants == 0 maxants random */
