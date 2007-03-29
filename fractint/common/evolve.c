@@ -4,6 +4,14 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#define VARYINT_NONE			0
+#define VARYINT_WITH_X			1
+#define VARYINT_WITH_Y			2
+#define VARYINT_WITH_X_PLUS_Y	3
+#define VARYINT_WITH_X_MINUS_Y	4
+#define VARYINT_RANDOM			5
+#define VARYINT_RANDOM_WEIGHTED	6
+
 /* px and py are coordinates in the parameter grid (small images on screen) */
 /* evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz) */
 int px, py, evolving, gridsz;
@@ -63,8 +71,8 @@ static PARAMHIST oldhistory = { 0 };
 
 void param_history(int mode);
 void varydbl(GENEBASE gene[], int randval, int i);
-int varyint(int randvalue, int limit, int mode);
-int wrapped_positive_varyint(int randvalue, int limit, int mode);
+static int varyint(int randvalue, int limit, int mode);
+static int wrapped_positive_varyint(int randvalue, int limit, int mode);
 void varyinside(GENEBASE gene[], int randval, int i);
 void varyoutside(GENEBASE gene[], int randval, int i);
 void varypwr2(GENEBASE gene[], int randval, int i);
@@ -164,24 +172,24 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 	switch (gene[i].mutate)
 	{
 	default:
-	case 0:
+	case VARYINT_NONE:
 		break;
-	case 1:
+	case VARYINT_WITH_X:
 		*(double *)gene[i].addr = px*dpx + opx; /*paramspace x coord*per view delta px + offset */
 		break;
-	case 2:
+	case VARYINT_WITH_Y:
 		*(double *)gene[i].addr = lclpy*dpy + opy; /*same for y */
 		break;
-	case   3:
+	case VARYINT_WITH_X_PLUS_Y:
 		*(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
 		break;
-	case 4:
+	case VARYINT_WITH_X_MINUS_Y:
 		*(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
 		break;
-	case 5:
+	case VARYINT_RANDOM:
 		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
 		break;
-	case 6:  /* weighted random mutation, further out = further change */
+	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = gridsz /2;
 			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
@@ -192,31 +200,31 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 return;
 }
 
-int varyint(int randvalue, int limit, int mode)
+static int varyint(int randvalue, int limit, int mode)
 {
 	int ret = 0;
 	int lclpy = gridsz - py - 1;
 	switch (mode)
 	{
 	default:
-	case 0:
+	case VARYINT_NONE:
 		break;
-	case 1: /* vary with x */
+	case VARYINT_WITH_X: /* vary with x */
 		ret = (odpx + px)%limit;
 		break;
-	case 2: /* vary with y */
+	case VARYINT_WITH_Y: /* vary with y */
 		ret = (odpy + lclpy)%limit;
 		break;
-	case 3: /* vary with x + y */
+	case VARYINT_WITH_X_PLUS_Y: /* vary with x + y */
 		ret = (odpx + px + odpy + lclpy)%limit;
 		break;
-	case 4: /* vary with x-y */
+	case VARYINT_WITH_X_MINUS_Y: /* vary with x-y */
 		ret = (odpx + px)-(odpy + lclpy)%limit;
 		break;
-	case 5: /* random mutation */
+	case VARYINT_RANDOM: /* random mutation */
 		ret = randvalue % limit;
 		break;
-	case 6:  /* weighted random mutation, further out = further change */
+	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = gridsz /2;
 			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
@@ -228,7 +236,7 @@ int varyint(int randvalue, int limit, int mode)
 	return ret;
 }
 
-int wrapped_positive_varyint(int randvalue, int limit, int mode)
+static int wrapped_positive_varyint(int randvalue, int limit, int mode)
 {
 	int i;
 	i = varyint(randvalue, limit, mode);
@@ -371,7 +379,7 @@ choose_vars_restart:
 	case FIK_F2: /* set all off */
 		for (num = MAXPARAMS; num < NUMGENES; num++)
 		{
-			g_genes[num].mutate = 0;
+			g_genes[num].mutate = VARYINT_NONE;
 		}
 		goto choose_vars_restart;
 	case FIK_F3: /* set all on..alternate x and y for field map */
@@ -527,7 +535,7 @@ choose_vars_restart:
 	case FIK_F2: /* set all off */
 		for (num = 0; num < MAXPARAMS; num++)
 		{
-			g_genes[num].mutate = 0;
+			g_genes[num].mutate = VARYINT_NONE;
 		}
 		goto choose_vars_restart;
 	case FIK_F3: /* set all on..alternate x and y for field map */
@@ -589,7 +597,7 @@ void set_mutation_level(int strength)
 
 	for (i = 0; i < NUMGENES; i++)
 	{
-		g_genes[i].mutate = (g_genes[i].level <= strength) ? 5 : 0; /* 5 = random mutation mode */
+		g_genes[i].mutate = (g_genes[i].level <= strength) ? VARYINT_RANDOM : VARYINT_NONE; /* 5 = random mutation mode */
 	}
 	return;
 }
@@ -945,7 +953,7 @@ int explore_check(void)
 
 	for (i = 0; i < NUMGENES && !(nonrandom); i++)
 	{
-		if ((g_genes[i].mutate > 0) && (g_genes[i].mutate < 5))
+		if ((g_genes[i].mutate > VARYINT_NONE) && (g_genes[i].mutate < VARYINT_RANDOM))
 		{
 			nonrandom = TRUE;
 		}
