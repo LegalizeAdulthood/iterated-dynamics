@@ -334,7 +334,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	{
 		boxwidth = maxcomment;
 	}
-	if ((boxwidth += 4) > 80) boxwidth = 80;
+	if ((boxwidth += 4) > 80)
+	{
+		boxwidth = 80;
+	}
 	boxcol = (80 - boxwidth) / 2;       /* center the box */
 	promptcol = boxcol + 2;
 	valuecol = boxcol + boxwidth - maxfldwidth - 2;
@@ -624,7 +627,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
 			for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
 			{
-				if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0) break;
+				if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0)
+				{
+					break;
+				}
 			}
 			values[curchoice].uval.ch.val = j;
 			}
@@ -942,7 +948,10 @@ static int input_field_list(
 	lookatmouse = LOOK_MOUSE_NONE;
 	for (initval = 0; initval < llen; ++initval)
 	{
-		if (strcmp(fld, list[initval]) == 0) break;
+		if (strcmp(fld, list[initval]) == 0)
+		{
+			break;
+		}
 	}
 	if (initval >= llen)
 	{

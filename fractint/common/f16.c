@@ -49,7 +49,10 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 	FILE *fp;
 
 	strcpy(filename, fname);
-	if (has_ext(filename) == NULL) strcat(filename, ".TGA");
+	if (has_ext(filename) == NULL)
+	{
+		strcat(filename, ".TGA");
+	}
 	fp = fopen(filename, READMODE);
 	if (fp == NULL)
 	{

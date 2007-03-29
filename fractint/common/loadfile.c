@@ -1597,7 +1597,10 @@ rescan:  /* entry for changed browse parms */
 				if (c == 'Y' && doublecaution)
 				{
 					texttempmsg("ARE YOU SURE???? (Y/N)");
-					if (driver_get_key() != 'Y') c = 'N';
+					if (driver_get_key() != 'Y')
+					{
+						c = 'N';
+					}
 				}
 				if (c == 'Y')
 				{

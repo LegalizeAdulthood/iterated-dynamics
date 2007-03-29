@@ -1168,7 +1168,10 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 		{
 			lBif_savedpop = lPopulation;
 		}
-		else                   Bif_savedpop =  Population;
+		else                   
+		{
+			Bif_savedpop =  Population;
+		}
 		if (--Bif_savedinc == 0)
 		{
 			Bif_savedand = (Bif_savedand << 1) + 1;

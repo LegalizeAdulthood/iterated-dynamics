@@ -1309,7 +1309,10 @@ void lStkRecip(void)
 	{
 		ChkLongDenom(mod);
 	}
-	else if (mod <= 0L) return;
+	else if (mod <= 0L)
+	{
+		return;
+	}
 	Arg1->l.x =  divide(Arg1->l.x, mod, bitshift);
 	Arg1->l.y = -divide(Arg1->l.y, mod, bitshift);
 }

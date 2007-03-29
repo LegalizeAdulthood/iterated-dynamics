@@ -513,7 +513,10 @@ static void format_item(int choice, char *buf)
 	unsigned tmpflags;
 	errbuf[0] = 0;
 	tmpflags = vidptr[choice].flags;
-	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT)) strcat(errbuf, "*");
+	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT))
+	{
+		strcat(errbuf, "*");
+	}
 	if (tmpflags & VI_VSMALL)
 	{
 		strcat(errbuf, "R");

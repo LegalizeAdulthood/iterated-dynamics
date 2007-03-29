@@ -1780,7 +1780,10 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 	int len, c;
 	/* similar to 'fgets', but file may be in either text or binary mode */
 	/* returns -1 at eof, length of string otherwise */
-	if (feof(infile)) return -1;
+	if (feof(infile))
+	{
+		return -1;
+	}
 	len = 0;
 	while (len < maxlen)
 	{

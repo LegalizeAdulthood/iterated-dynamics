@@ -649,7 +649,10 @@ static long _fastcall fudgetolong(double d)
 	{
 		d += 0.5;
 	}
-	else                  d -= 0.5;
+	else
+	{
+		d -= 0.5;
+	}
 	return (long)d;
 }
 

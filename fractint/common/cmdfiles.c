@@ -2458,7 +2458,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			forcesymmetry = NOSYM;
 		}
-		else return badarg(curarg);
+		else
+		{
+			return badarg(curarg);
+		}
 		return CMDARG_FRACTAL_PARAM;
 	}
 
@@ -2731,7 +2734,10 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 		{
 			Log_Auto_Calc = 1;                     /* force auto calc of logmap */
 		}
-		else return badarg(curarg);
+		else
+		{
+			return badarg(curarg);
+		}
 		return CMDARG_FRACTAL_PARAM;
 	}
 
@@ -3414,12 +3420,30 @@ static int parse_colors(char *value)
 			{
 				for (j = 0; j < 3; ++j)
 				{
-					if ((k = *(value++)) < '0')  goto badcolor;
-					else if (k <= '9')       k -= '0';
-					else if (k < 'A')            goto badcolor;
-					else if (k <= 'Z')       k -= ('A'-10);
-					else if (k < '_' || k > 'z') goto badcolor;
-					else                     k -= ('_'-36);
+					if ((k = *(value++)) < '0')
+					{
+						goto badcolor;
+					}
+					else if (k <= '9')
+					{
+						k -= '0';
+					}
+					else if (k < 'A')
+					{
+						goto badcolor;
+					}
+					else if (k <= 'Z')
+					{
+						k -= ('A'-10);
+					}
+					else if (k < '_' || k > 'z')
+					{
+						goto badcolor;
+					}
+					else
+					{
+						k -= ('_'-36);
+					}
 					g_dac_box[i][j] = (BYTE)k;
 					if (smooth)
 					{
@@ -3697,10 +3721,19 @@ static int isabigfloat(char *str)
 		{
 			numsign++;
 		}
-		else if (*s == '.') numdot++;
-		else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G') nume++;
+		else if (*s == '.')
+		{
+			numdot++;
+		}
+		else if (*s == 'e' || *s == 'E' || *s == 'g' || *s == 'G')
+		{
+			nume++;
+		}
 		else if (!isdigit(*s))
-		{result = 0; break; }
+		{
+			result = 0;
+			break;
+		}
 		s++;
 	}
 	if (numdot > 1 || numsign > 2 || nume > 1)

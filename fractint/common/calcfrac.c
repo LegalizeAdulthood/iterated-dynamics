@@ -3197,8 +3197,9 @@ static int _fastcall potential(double mag, long iterations)
 		{
 			pot = 0.0f;
 		}
-		else /* pot = log(mag) / pow(2.0, (double)pot); */
+		else
 		{
+			 /* pot = log(mag) / pow(2.0, (double)pot); */
 			if (l_pot < 120 && !floatflag) /* empirically determined limit of fShift */
 			{
 				f_mag = (float)mag;
