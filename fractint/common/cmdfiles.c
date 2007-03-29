@@ -111,7 +111,7 @@ char    dontreadcolor = 0;        /* flag for reading color from GIF */
 double  math_tol[2] = {.05, .05};  /* For math transition */
 int Targa_Out = 0;              /* 3D fullcolor flag */
 int truecolor = 0;              /* escape time truecolor flag */
-int truemode = 0;               /* truecolor coloring scheme */
+int truemode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
 char    colorfile[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
 int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
@@ -450,7 +450,7 @@ static void initvars_restart()          /* <ins> key init */
 	major_method = breadth_first;        /* default inverse julia methods */
 	minor_method = left_first;   /* default inverse julia methods */
 	truecolor = 0;              /* truecolor output flag */
-	truemode = 0;               /* set to default color scheme */
+	truemode = TRUEMODE_DEFAULT;               /* set to default color scheme */
 }
 
 static void initvars_fractal()          /* init vars affecting calculation */
@@ -3213,22 +3213,14 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "truemode") == 0)  /* truemode=? */
 	{
-		truemode = 0;                               /* use default if error */
+		truemode = TRUEMODE_DEFAULT;				/* use default if error */
 		if (charval[0] == 'd')
 		{
-			truemode = 0;                            /* use default color output */
+			truemode = TRUEMODE_DEFAULT;			/* use default color output */
 		}
 		if (charval[0] == 'i' || intval[0] == 1)
 		{
-			truemode = 1;                            /* use iterates output */
-		}
-		if (intval[0] == 2)
-		{
-			truemode = 2;
-		}
-		if (intval[0] == 3)
-		{
-			truemode = 3;
+			truemode = TRUEMODE_ITERATES;			/* use iterates output */
 		}
 		return CMDARG_FRACTAL_PARAM | CMDARG_3D_PARAM;
 	}

@@ -1426,21 +1426,16 @@ int _fastcall targa_color(int x, int y, int color)
 
 	switch (truemode)
 	{
-		case 0:
-		default:
-		{
-			RGB[0] = (BYTE)(g_dac_box[Real_Color][0] << 2); /* Move color space to */
-			RGB[1] = (BYTE)(g_dac_box[Real_Color][1] << 2); /* 256 color primaries */
-			RGB[2] = (BYTE)(g_dac_box[Real_Color][2] << 2); /* from 64 colors */
-			break;
-		}
-		case 1:
-		{
-			RGB[0] = (BYTE)((realcoloriter >> 16) & 0xff);  /* red   */
-			RGB[1] = (BYTE)((realcoloriter >> 8) & 0xff);  /* green */
-			RGB[2] = (BYTE)((realcoloriter) & 0xff);  /* blue  */
-			break;
-		}
+	case TRUEMODE_DEFAULT:
+		RGB[0] = (BYTE)(g_dac_box[Real_Color][0] << 2); /* Move color space to */
+		RGB[1] = (BYTE)(g_dac_box[Real_Color][1] << 2); /* 256 color primaries */
+		RGB[2] = (BYTE)(g_dac_box[Real_Color][2] << 2); /* from 64 colors */
+		break;
+	case TRUEMODE_ITERATES:
+		RGB[0] = (BYTE)((realcoloriter >> 16) & 0xff);  /* red   */
+		RGB[1] = (BYTE)((realcoloriter >> 8) & 0xff);  /* green */
+		RGB[2] = (BYTE)((realcoloriter) & 0xff);  /* blue  */
+		break;
 	}
 
 	/* Now lets convert it to HSV */
