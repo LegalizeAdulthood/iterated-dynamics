@@ -3373,7 +3373,8 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	}
 	while (!done)
 	{
-		switch (c = frmgetchar(openfile))
+		c = frmgetchar(openfile);
+		switch (c)
 		{
 		case EOF: case '\032':
 			tok->token_str[i] = (char) 0;
@@ -3476,7 +3477,8 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 
 	while (!done)
 	{
-		switch (c = frmgetchar(openfile))
+		c = frmgetchar(openfile);
+		switch (c)
 		{
 		CASE_NUM : case '.':
 			if (debug_token != NULL)
@@ -3593,89 +3595,89 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 		filepos = ftell(openfile);
 		switch (c)
 		{
-			CASE_ALPHA: CASE_NUM: case '_':
-				if (i < 79)
-				{
-					tok->token_str[i++] = (char) c;
-				}
-				else
-				{
-					tok->token_str[i] = (char) 0;
-				}
-				if (i == 33)
-				{
-					var_name_too_long = 1;
-				}
-				last_filepos = filepos;
-				break;
-			default:
-				if (c == '.')  /*illegal character in variable or func name*/
-				{
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id   = ILLEGAL_VARIABLE_NAME;
-					tok->token_str[i++] = '.';
-					tok->token_str[i] = (char) 0;
-					return 0;
-				}
-				else if (var_name_too_long)
-				{
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id   = TOKEN_TOO_LONG;
-					tok->token_str[i] = (char) 0;
-					fseek(openfile, last_filepos, SEEK_SET);
-					return 0;
-				}
+		CASE_ALPHA: CASE_NUM: case '_':
+			if (i < 79)
+			{
+				tok->token_str[i++] = (char) c;
+			}
+			else
+			{
+				tok->token_str[i] = (char) 0;
+			}
+			if (i == 33)
+			{
+				var_name_too_long = 1;
+			}
+			last_filepos = filepos;
+			break;
+		default:
+			if (c == '.')  /*illegal character in variable or func name*/
+			{
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id   = ILLEGAL_VARIABLE_NAME;
+				tok->token_str[i++] = '.';
+				tok->token_str[i] = (char) 0;
+				return 0;
+			}
+			else if (var_name_too_long)
+			{
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id   = TOKEN_TOO_LONG;
 				tok->token_str[i] = (char) 0;
 				fseek(openfile, last_filepos, SEEK_SET);
-				getfuncinfo(tok);
-				if (c == '(')  /*getfuncinfo() correctly filled structure*/
+				return 0;
+			}
+			tok->token_str[i] = (char) 0;
+			fseek(openfile, last_filepos, SEEK_SET);
+			getfuncinfo(tok);
+			if (c == '(')  /*getfuncinfo() correctly filled structure*/
+			{
+				if (tok->token_type == NOT_A_TOKEN)
 				{
-					if (tok->token_type == NOT_A_TOKEN)
-					{
-						return 0;
-					}
-					else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
-					{
-						tok->token_type = NOT_A_TOKEN;
-						tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
-						return 0;
-					}
-					else
-					{
-						return 1;
-					}
-				}
-				/*can't use function names as variables*/
-				else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
-				{
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id   = FUNC_USED_AS_VAR;
-					return 0;
-				}
-				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
-				{
-					tok->token_type = NOT_A_TOKEN;
-					tok->token_id   = JUMP_MISSING_BOOLEAN;
 					return 0;
 				}
 				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 				{
-					if (c == ',' || c == '\n' || c == ':')
-					{
-						return 1;
-					}
-					else
-					{
-						tok->token_type = NOT_A_TOKEN;
-						tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
-						return 0;
-					}
+					tok->token_type = NOT_A_TOKEN;
+					tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
+					return 0;
 				}
 				else
 				{
-					getvarinfo(tok);
 					return 1;
 				}
+			}
+			/*can't use function names as variables*/
+			else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
+			{
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id   = FUNC_USED_AS_VAR;
+				return 0;
+			}
+			else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
+			{
+				tok->token_type = NOT_A_TOKEN;
+				tok->token_id   = JUMP_MISSING_BOOLEAN;
+				return 0;
+			}
+			else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+			{
+				if (c == ',' || c == '\n' || c == ':')
+				{
+					return 1;
+				}
+				else
+				{
+					tok->token_type = NOT_A_TOKEN;
+					tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
+					return 0;
+				}
+			}
+			else
+			{
+				getvarinfo(tok);
+				return 1;
+			}
 		}
 	}
 	tok->token_str[0] = (char) 0;
@@ -3723,7 +3725,8 @@ int frmgettoken(FILE *openfile, struct token_st *this_token)
 	int i = 1;
 	long filepos;
 
-	switch (c = frmgetchar(openfile))
+	c = frmgetchar(openfile);
+	switch (c)
 	{
 	CASE_NUM: case '.':
 		this_token->token_str[0] = (char) c;
@@ -3959,7 +3962,8 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 	done = at_end_of_name = i = 0;
 	while (!done)
 	{
-		switch (c = getc(open_file))
+		c = getc(open_file);
+		switch (c)
 		{
 		case EOF: case '\032':
 			stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
@@ -4006,7 +4010,8 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		done = i = 0;
 		while (!done)
 		{
-			switch (c = getc(open_file))
+			c = getc(open_file);
+			switch (c)
 			{
 			case EOF: case '\032':
 				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
@@ -4055,7 +4060,8 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		done = 0;
 		while (!done)
 		{
-			switch (c = getc(open_file))
+			c = getc(open_file);
+			switch (c)
 			{
 			case EOF: case '\032':
 				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
