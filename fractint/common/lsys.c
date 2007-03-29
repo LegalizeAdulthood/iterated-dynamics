@@ -429,7 +429,10 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 		return -1;
 	}
 	*saveptr = tmpfar;
-	while (--i >= 0) *(tmpfar++) = *(rule++);
+	while (--i >= 0)
+	{
+		*(tmpfar++) = *(rule++);
+	}
 	return 0;
 }
 
@@ -452,8 +455,14 @@ static int _fastcall append_rule(char *rule, int index)
 
 	old = sav;
 	ruleptrs[index] = dst;
-	while (i-- > 0) *(dst++) = *(old++);
-	while (j-- > 0) *(dst++) = *(rule++);
+	while (i-- > 0)
+	{
+		*(dst++) = *(old++);
+	}
+	while (j-- > 0)
+	{
+		*(dst++) = *(rule++);
+	}
 	free(sav);
 	return 0;
 }

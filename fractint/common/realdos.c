@@ -319,7 +319,10 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 		width = 79;
 	}
 #endif
-	while (msg[i]) ++i; /* strlen for a */
+	while (msg[i])
+	{
+		++i; /* strlen for a */
+	}
 	if (i == 0)
 	{
 		return -1;
@@ -334,7 +337,10 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 	buf[width] = 0;
 	i = 0;
 	k = j;
-	while (msg[i]) buf[k++] = msg[i++]; /* strcpy for a */
+	while (msg[i])
+	{
+		buf[k++] = msg[i++]; /* strcpy for a */
+	}
 	driver_put_string(row, col, attr, buf);
 	return j;
 }
@@ -1890,7 +1896,9 @@ void load_fractint_config(void)
 		if (strchr(tempstring, '\n') == NULL)
 		{
 			/* finish reading the line */
-			while (fgetc(cfgfile) != '\n' && !feof(cfgfile));
+			while (fgetc(cfgfile) != '\n' && !feof(cfgfile))
+			{
+			}
 		}
 		++linenum;
 		if (tempstring[0] == ';')

@@ -96,8 +96,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				for (istep = 0; istep < step; istep++)
 				{
 					jstep = next + (istep*direction);
-					while (jstep < rotate_lo)  jstep += rotate_size;
-					while (jstep > rotate_max) jstep -= rotate_size;
+					while (jstep < rotate_lo)
+					{
+						jstep += rotate_size;
+					}
+					while (jstep > rotate_max)
+					{
+						jstep -= rotate_size;
+					}
 					if (++incr > fstep)  /* time to randomize */
 					{
 						incr = 1;

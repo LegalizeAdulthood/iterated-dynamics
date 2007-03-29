@@ -815,7 +815,10 @@ get_evol_restart:
 		param_history(0); /* save old history */
 	}
 
-	if (!evolving && (evolving == old_evolving)) i = 0;
+	if (!evolving && (evolving == old_evolving))
+	{
+		i = 0;
+	}
 
 	if (j == FIK_F6)
 	{
