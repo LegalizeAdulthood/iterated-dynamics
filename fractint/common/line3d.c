@@ -16,6 +16,12 @@
 #include "prototyp.h"
 #include "drivers.h"
 
+#define FILEERROR_NONE				0
+#define FILEERROR_OPEN				1
+#define FILEERROR_NO_SPACE			2
+#define FILEERROR_BAD_IMAGE_SIZE	3
+#define FILEERROR_BAD_FILE_TYPE		4
+
 struct point
 {
 	int x;
@@ -89,7 +95,7 @@ static FILE *File_Ptr1 = NULL;
 static unsigned int IAmbient;
 static int rand_factor;
 static int HAZE_MULT;
-static void File_Error(char *File_Name1, int ERROR);
+static void File_Error(char *filename, int code);
 static BYTE T24 = 24;
 static BYTE T32 = 32;
 static BYTE upr_lwr[4];
@@ -879,7 +885,7 @@ loopbottom:
 				{
 					fclose(File_Ptr1);
 					remove(light_name);
-					File_Error(ray_name, 2);
+					File_Error(ray_name, FILEERROR_NO_SPACE);
 					return -1;
 				}
 			}
@@ -1513,23 +1519,23 @@ and other files
 
 **************************************************************************/
 
-static void File_Error(char *File_Name1, int ERROR)
+static void File_Error(char *filename, int code)
 {
 	char msgbuf[200];
 
-	error = ERROR;
-	switch (ERROR)
+	error = code;
+	switch (code)
 	{
-	case 1:                      /* Can't Open */
-		sprintf(msgbuf, "OOPS, couldn't open  < %s >", File_Name1);
+	case FILEERROR_OPEN:                      /* Can't Open */
+		sprintf(msgbuf, "OOPS, couldn't open  < %s >", filename);
 		break;
-	case 2:                      /* Not enough room */
-		sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", File_Name1);
+	case FILEERROR_NO_SPACE:                      /* Not enough room */
+		sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", filename);
 		break;
-	case 3:                      /* Image wrong size */
+	case FILEERROR_BAD_IMAGE_SIZE:                      /* Image wrong size */
 		sprintf(msgbuf, "OOPS, image wrong size\n");
 		break;
-	case 4:                      /* Wrong file type */
+	case FILEERROR_BAD_FILE_TYPE:                      /* Wrong file type */
 		sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
 		break;
 	}
@@ -1563,7 +1569,7 @@ int startdisk1(char *File_Name2, FILE *Source, int overlay)
 	fps = dir_fopen(workdir, File_Name2, "w+b");
 	if (fps == NULL)
 	{
-		File_Error(File_Name2, 1);
+		File_Error(File_Name2, FILEERROR_OPEN);
 		return -1;              /* Oops, somethings wrong! */
 	}
 
@@ -1641,7 +1647,7 @@ int startdisk1(char *File_Name2, FILE *Source, int overlay)
 				fclose(Source);
 			}
 			dir_remove(workdir, File_Name2);
-			File_Error(File_Name2, 2);
+			File_Error(File_Name2, FILEERROR_NO_SPACE);
 			return -2;
 		}
 		if (driver_key_pressed())
@@ -1668,7 +1674,7 @@ int targa_validate(char *File_Name)
 	fp = dir_fopen(workdir, File_Name, "rb");
 	if (fp == NULL)
 	{
-		File_Error(File_Name, 1);
+		File_Error(File_Name, FILEERROR_OPEN);
 		return -1;              /* Oops, file does not exist */
 	}
 
@@ -1676,13 +1682,13 @@ int targa_validate(char *File_Name)
 
 	if (fgetc(fp))               /* Make sure this is an unmapped file */
 	{
-		File_Error(File_Name, 4);
+		File_Error(File_Name, FILEERROR_BAD_FILE_TYPE);
 		return -1;
 	}
 
 	if (fgetc(fp) != 2)          /* Make sure it is a type 2 file */
 	{
-		File_Error(File_Name, 4);
+		File_Error(File_Name, FILEERROR_BAD_FILE_TYPE);
 		return -1;
 	}
 
@@ -1702,22 +1708,15 @@ int targa_validate(char *File_Name)
 	{
 		if (fgetc(fp) != (int) upr_lwr[i])
 		{
-			File_Error(File_Name, 3);
+			File_Error(File_Name, FILEERROR_BAD_IMAGE_SIZE);
 			return -1;
 		}
 	}
 
-	if (fgetc(fp) != (int) T24)
+	if ((fgetc(fp) != (int) T24)			/* Is it a targa 24 file? */
+		|| (fgetc(fp) != (int) T32))		/* Is the origin at the upper left? */
 	{
-		error = 4;                /* Is it a targa 24 file? */
-	}
-	if (fgetc(fp) != (int) T32)
-	{
-		error = 4;                /* Is the origin at the upper left? */
-	}
-	if (error == 4)
-	{
-		File_Error(File_Name, 4);
+		File_Error(File_Name, FILEERROR_BAD_FILE_TYPE);
 		return -1;
 	}
 	rewind(fp);
@@ -2397,7 +2396,8 @@ static void line3d_cleanup(void)
 		}
 	}
 	usr_floatflag &= 1;          /* strip second bit */
-	error = T_Safe = 0;
+	error = FILEERROR_NONE;
+	T_Safe = 0;
 }
 
 static void set_upr_lwr(void)
@@ -2448,7 +2448,7 @@ static int first_time(int linelen, VECTOR v)
 	CO_MAX = CO = RO = 0;
 
 	set_upr_lwr();
-	error = 0;
+	error = FILEERROR_NONE;
 
 	if (g_which_image < WHICHIMAGE_BLUE)
 	{
