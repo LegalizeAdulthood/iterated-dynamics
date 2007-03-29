@@ -27,6 +27,10 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* truemode values */
+#define TRUEMODE_DEFAULT	0
+#define TRUEMODE_ITERATES	1
+
 /* timer type values */
 #define TIMER_ENGINE	0
 #define TIMER_DECODER	1
