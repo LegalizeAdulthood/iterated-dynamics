@@ -599,6 +599,10 @@ static void set_Plasma_palette()
 
 #define RANDOM(x)  (rand()%(x))
 
+#define DIFFUSION_CENTRAL	0
+#define DIFFUSION_LINE	1
+#define DIFFUSION_SQUARE	2
+
 int diffusion()
 {
 	int xmax, ymax, xmin, ymin;     /* Current maximum coordinates */
@@ -632,9 +636,9 @@ int diffusion()
 	colorcount = colorshift; /* Counts down from colorshift */
 	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
 
-	if (mode > 2)
+	if ((mode > DIFFUSION_SQUARE) || (mode < DIFFUSION_CENTRAL))
 	{
-		mode = 0;
+		mode = DIFFUSION_CENTRAL;
 	}
 
 	if (border <= 0)
@@ -648,27 +652,30 @@ int diffusion()
 		++rseed;
 	}
 
-	if (mode == 0)
+	switch (mode)
 	{
+	case DIFFUSION_CENTRAL:
 		xmax = xdots / 2 + border;  /* Initial box */
 		xmin = xdots / 2 - border;
 		ymax = ydots / 2 + border;
 		ymin = ydots / 2 - border;
-	}
-	if (mode == 1)
-	{
+		break;
+
+	case DIFFUSION_LINE:
 		xmax = xdots / 2 + border;  /* Initial box */
 		xmin = xdots / 2 - border;
 		ymin = ydots - border;
-	}
-	if (mode == 2)
-	{
+		break;
+
+	case DIFFUSION_SQUARE:
 		radius = (xdots > ydots) ? (float) (ydots - border) : (float) (xdots - border);
+		break;
 	}
+
 	if (resuming) /* restore worklist, if we can't the above will stay in place */
 	{
 		start_resume();
-		if (mode != 2)
+		if (mode != DIFFUSION_SQUARE)
 		{
 			get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
 				sizeof(ymin), &ymin, 0);
@@ -683,16 +690,16 @@ int diffusion()
 
 	switch (mode)
 	{
-	case 0: /* Single seed point in the center */
+	case DIFFUSION_CENTRAL: /* Single seed point in the center */
 		putcolor(xdots / 2, ydots / 2, currentcolor);
 		break;
-	case 1: /* Line along the bottom */
+	case DIFFUSION_LINE: /* Line along the bottom */
 		for (i = 0; i <= xdots; i++)
 		{
 			putcolor(i, ydots-1, currentcolor);
 		}
 		break;
-	case 2: /* Large square that fills the screen */
+	case DIFFUSION_SQUARE: /* Large square that fills the screen */
 		if (xdots > ydots)
 		{
 			for (i = 0; i < ydots; i++)
@@ -720,7 +727,7 @@ int diffusion()
 	{
 		switch (mode)
 		{
-		case 0: /* Release new point on a circle inside the box */
+		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
 			angle = 2*(double)rand()/(RAND_MAX/PI);
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*(xmax-xmin) + xdots);
@@ -728,12 +735,12 @@ int diffusion()
 			x = x >> 1; /* divide by 2 */
 			y = y >> 1;
 			break;
-		case 1: /* Release new point on the line ymin somewhere between xmin
+		case DIFFUSION_LINE: /* Release new point on the line ymin somewhere between xmin
 					and xmax */
 			y = ymin;
 			x = RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
 			break;
-		case 2: /* Release new point on a circle inside the box with radius
+		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
 			angle = 2*(double)rand()/(RAND_MAX/PI);
 			FPUsincos(&angle, &sine, &cosine);
@@ -758,7 +765,7 @@ int diffusion()
 				putcolor(x, y, 0);
 			}
 
-			if (mode == 0) /* Make sure point is inside the box */
+			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
 			{
 				if (x == xmax)
 				{
@@ -778,7 +785,7 @@ int diffusion()
 				}
 			}
 
-			if (mode == 1) /* Make sure point is on the screen below ymin, but
+			if (mode == DIFFUSION_LINE) /* Make sure point is on the screen below ymin, but
 							we need a 1 pixel margin because of the next random step.*/
 			{
 				if (x >= xdots-1)
@@ -805,7 +812,7 @@ int diffusion()
 				if (check_key())
 				{
 					alloc_resume(20, 1);
-					if (mode != 2)
+					if (mode != DIFFUSION_SQUARE)
 					{
 						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
 							sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
@@ -853,7 +860,7 @@ int diffusion()
 
 		switch (mode)
 		{
-		case 0:
+		case DIFFUSION_CENTRAL:
 			if (((x + border) > xmax) || ((x-border) < xmin)
 				|| ((y-border) < ymin) || ((y + border) > ymax))
 			{
@@ -868,7 +875,7 @@ int diffusion()
 				}
 			}
 			break;
-		case 1: /* Decrease ymin, but not past top of screen */
+		case DIFFUSION_LINE: /* Decrease ymin, but not past top of screen */
 			if (y-border < ymin)
 			{
 				ymin--;
@@ -878,7 +885,7 @@ int diffusion()
 				return 0;
 			}
 			break;
-		case 2: /* Decrease the radius where points are released to stay away
+		case DIFFUSION_SQUARE: /* Decrease the radius where points are released to stay away
 					from the fractal.  It might be decreased by 1 or 2 */
 			r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
 			if (r <= border*border)
