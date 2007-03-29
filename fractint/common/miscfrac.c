@@ -1354,7 +1354,7 @@ int BifurcMaySetup()
 	}
 	param[2] = (double)beta;
 
-	timer(0, curfractalspecific->calctype);
+	timer(TIMER_ENGINE, curfractalspecific->calctype);
 	return 0;
 }
 
@@ -2074,7 +2074,7 @@ int CellularSetup(void)
 	{
 		nxtscreenflag = 0; /* initialize flag */
 	}
-	timer(0, curfractalspecific->calctype);
+	timer(TIMER_ENGINE, curfractalspecific->calctype);
 	return 0;
 }
 

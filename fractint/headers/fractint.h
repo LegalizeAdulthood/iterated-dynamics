@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* timer type values */
+#define TIMER_ENGINE	0
+#define TIMER_DECODER	1
+#define TIMER_ENCODER	2
+
 /* debugflag values */
 #define DEBUGFLAG_NONE				0
 #define DEBUGFLAG_LORENZ_FLOAT		22

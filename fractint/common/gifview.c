@@ -313,7 +313,7 @@ int gifview()
 			{
 				width = min(width, DECODERLINE_WIDTH);
 			}
-			status = timer(1, NULL, width);
+			status = timer(TIMER_DECODER, NULL, width);
 			busy = 0;      /* for slideshow CALCWAIT */
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{

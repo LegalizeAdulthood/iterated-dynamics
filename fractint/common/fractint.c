@@ -658,9 +658,9 @@ int check_key()
 }
 
 /* timer function:
-	timer(0, (*fractal)())              fractal engine
-	timer(1, NULL, int width)            decoder
-	timer(2)                           encoder
+	timer(TIMER_ENGINE, (*fractal)())		fractal engine
+	timer(TIMER_DECODER, NULL, int width)	decoder
+	timer(TIMER_ENCODER)					encoder
 */
 #ifndef USE_VARARGS
 int timer(int timertype, int(*subrtn)(), ...)
@@ -699,14 +699,14 @@ va_dcl
 	timer_start = clock_ticks();
 	switch (timertype)
 	{
-	case 0:
+	case TIMER_ENGINE:
 		out = (*(int(*)(void))subrtn)();
 		break;
-	case 1:
+	case TIMER_DECODER:
 		i = va_arg(arg_marker, int);
 		out = (int)decoder((short)i); /* not indirect, safer with overlays */
 		break;
-	case 2:
+	case TIMER_ENCODER:
 		out = encoder();            /* not indirect, safer with overlays */
 		break;
 	}
@@ -720,10 +720,10 @@ va_dcl
 		timestring[24] = 0; /*clobber newline in time string */
 		switch (timertype)
 		{
-		case 1:
+		case TIMER_DECODER:
 			fprintf(fp, "decode ");
 			break;
-		case 2:
+		case TIMER_ENCODER:
 			fprintf(fp, "encode ");
 			break;
 		}

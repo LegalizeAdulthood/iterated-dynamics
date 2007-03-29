@@ -211,7 +211,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 int
 StandaloneSetup(void)
 {
-	timer(0, curfractalspecific->calctype);
+	timer(TIMER_ENGINE, curfractalspecific->calctype);
 	return 0;           /* effectively disable solid-guessing */
 }
 
