@@ -587,7 +587,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		(helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
-	while (values[curchoice].type == '*') ++curchoice;
+	while (values[curchoice].type == '*')
+	{
+		++curchoice;
+	}
 
 	while (!done)
 	{

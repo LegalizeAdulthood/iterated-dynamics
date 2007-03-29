@@ -3573,7 +3573,10 @@ static int solidguess(void)
 
 	i = maxblock = blocksize = ssg_blocksize();
 	totpasses = 1;
-	while ((i >>= 1) > 1) ++totpasses;
+	while ((i >>= 1) > 1)
+	{
+		++totpasses;
+	}
 
 	/* ensure window top and left are on required boundary, treat window
 			as larger than it really is if necessary (this is the reason symplot
