@@ -654,7 +654,7 @@ extern int startdisk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */
 #ifndef WINFRACT
-extern int get_video_mode(struct fractal_info *,struct ext_blk_3 *);
+extern int get_video_mode(struct fractal_info *,struct ext_blk_formula_info *);
 #endif
 /*  loadfile -- C file prototypes */
 

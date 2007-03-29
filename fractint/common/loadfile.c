@@ -13,15 +13,23 @@
 #include "targa_lc.h"
 #include "drivers.h"
 
+#define BLOCKTYPE_MAIN_INFO		1
+#define BLOCKTYPE_RESUME_INFO	2
+#define BLOCKTYPE_FORMULA_INFO	3
+#define BLOCKTYPE_RANGES_INFO	4
+#define BLOCKTYPE_MP_INFO		5
+#define BLOCKTYPE_EVOLVER_INFO	6
+#define BLOCKTYPE_ORBITS_INFO	7
+
 /* routines in this module      */
 
-static int  find_fractal_info(char *, struct fractal_info *,
-										struct ext_blk_2 *,
-										struct ext_blk_3 *,
-										struct ext_blk_4 *,
-										struct ext_blk_5 *,
-										struct ext_blk_6 *,
-										struct ext_blk_7 *);
+static int find_fractal_info(char *, struct fractal_info *,
+							struct ext_blk_resume_info *,
+							struct ext_blk_formula_info *,
+							struct ext_blk_ranges_info *,
+							struct ext_blk_mp_info *,
+							struct ext_blk_evolver_info *,
+							struct ext_blk_orbits_info *);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void backwardscompat(struct fractal_info *info);
@@ -42,12 +50,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	struct fractal_info read_info;
 	char oldfloatflag;
 	char msg[110];
-	struct ext_blk_2 blk_2_info;
-	struct ext_blk_3 blk_3_info;
-	struct ext_blk_4 blk_4_info;
-	struct ext_blk_5 blk_5_info;
-	struct ext_blk_6 blk_6_info;
-	struct ext_blk_7 blk_7_info;
+	struct ext_blk_resume_info resume_info_blk;
+	struct ext_blk_formula_info formula_info;
+	struct ext_blk_ranges_info ranges_info;
+	struct ext_blk_mp_info mp_info;
+	struct ext_blk_evolver_info evolver_info;
+	struct ext_blk_orbits_info orbits_info;
 
 	showfile = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
@@ -62,8 +70,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		strcat(readname, ".gif");
 	}
 
-	if (find_fractal_info(readname, &read_info, &blk_2_info, &blk_3_info,
-		&blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
+	if (find_fractal_info(readname, &read_info, &resume_info_blk, &formula_info,
+		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
 		/* didn't find a useable file */
 		sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
@@ -412,7 +420,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		oldfloatflag = floatflag;
 		display3d = loaded3d;      /* for <tab> display during next */
 		floatflag = usr_floatflag; /* ditto */
-		i = get_video_mode(&read_info, &blk_3_info);
+		i = get_video_mode(&read_info, &formula_info);
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
@@ -420,10 +428,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		floatflag = oldfloatflag;
 		if (i)
 		{
-			if (blk_2_info.got_data == 1)
+			if (resume_info_blk.got_data == 1)
 			{
-				free(blk_2_info.resume_data);
-				blk_2_info.length = 0;
+				free(resume_info_blk.resume_data);
+				resume_info_blk.length = 0;
 			}
 			g_init_mode = -1;
 			return -1;
@@ -448,13 +456,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	end_resume();
 
-	if (blk_2_info.got_data == 1)
+	if (resume_info_blk.got_data == 1)
 	{
-		resume_info = blk_2_info.resume_data;
-		resume_len = blk_2_info.length;
+		resume_info = resume_info_blk.resume_data;
+		resume_len = resume_info_blk.length;
 	}
 
-	if (blk_3_info.got_data == 1)
+	if (formula_info.got_data == 1)
 	{
 		char *nameptr;
 		switch (read_info.fractal_type)
@@ -470,17 +478,17 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 		default:
 			nameptr = FormName;
-			uses_p1 = blk_3_info.uses_p1;
-			uses_p2 = blk_3_info.uses_p2;
-			uses_p3 = blk_3_info.uses_p3;
-			uses_ismand = blk_3_info.uses_ismand;
-			ismand = blk_3_info.ismand;
-			uses_p4 = blk_3_info.uses_p4;
-			uses_p5 = blk_3_info.uses_p5;
+			uses_p1 = formula_info.uses_p1;
+			uses_p2 = formula_info.uses_p2;
+			uses_p3 = formula_info.uses_p3;
+			uses_ismand = formula_info.uses_ismand;
+			ismand = formula_info.ismand;
+			uses_p4 = formula_info.uses_p4;
+			uses_p5 = formula_info.uses_p5;
 			break;
 		}
-		blk_3_info.form_name[ITEMNAMELEN] = 0;
-		strcpy(nameptr, blk_3_info.form_name);
+		formula_info.form_name[ITEMNAMELEN] = 0;
+		strcpy(nameptr, formula_info.form_name);
 		/* perhaps in future add more here, check block_len for backward compatibility */
 	}
 
@@ -491,28 +499,28 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		rangeslen = 0;
 	}
 
-	if (blk_4_info.got_data == 1)
+	if (ranges_info.got_data == 1)
 	{
-		ranges = (int *) blk_4_info.range_data;
-		rangeslen = blk_4_info.length;
+		ranges = (int *) ranges_info.range_data;
+		rangeslen = ranges_info.length;
 #ifdef XFRACT
 		fix_ranges(ranges, rangeslen, 1);
 #endif
 	}
 
-	if (blk_5_info.got_data == 1)
+	if (mp_info.got_data == 1)
 	{
 		bf_math = 1;
 		init_bf_length(read_info.bflength);
-		memcpy((char *) bfxmin, blk_5_info.apm_data, blk_5_info.length);
-		free(blk_5_info.apm_data);
+		memcpy((char *) bfxmin, mp_info.apm_data, mp_info.length);
+		free(mp_info.apm_data);
 	}
 	else
 	{
 		bf_math = 0;
 	}
 
-	if (blk_6_info.got_data == 1)
+	if (evolver_info.got_data == 1)
 	{
 		struct evolution_info resume_e_info;
 		int i;
@@ -521,9 +529,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			/* Increasing NUMGENES moves ecount in the data structure */
 			/* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
-			blk_6_info.ecount = blk_6_info.mutate[NUMGENES - 4];
+			evolver_info.ecount = evolver_info.mutate[NUMGENES - 4];
 		}
-		if (blk_6_info.ecount != blk_6_info.gridsz*blk_6_info.gridsz
+		if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
 				&& calc_status != CALCSTAT_COMPLETED)
 		{
 			calc_status = CALCSTAT_RESUMABLE;
@@ -531,23 +539,23 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			{
 				evolve_handle = malloc(sizeof(resume_e_info));
 			}
-			resume_e_info.paramrangex  = blk_6_info.paramrangex;
-			resume_e_info.paramrangey  = blk_6_info.paramrangey;
-			resume_e_info.opx          = blk_6_info.opx;
-			resume_e_info.opy          = blk_6_info.opy;
-			resume_e_info.odpx         = blk_6_info.odpx;
-			resume_e_info.odpy         = blk_6_info.odpy;
-			resume_e_info.px           = blk_6_info.px;
-			resume_e_info.py           = blk_6_info.py;
-			resume_e_info.sxoffs       = blk_6_info.sxoffs;
-			resume_e_info.syoffs       = blk_6_info.syoffs;
-			resume_e_info.xdots        = blk_6_info.xdots;
-			resume_e_info.ydots        = blk_6_info.ydots;
-			resume_e_info.gridsz       = blk_6_info.gridsz;
-			resume_e_info.evolving     = blk_6_info.evolving;
-			resume_e_info.this_gen_rseed = blk_6_info.this_gen_rseed;
-			resume_e_info.fiddlefactor = blk_6_info.fiddlefactor;
-			resume_e_info.ecount       = blk_6_info.ecount;
+			resume_e_info.paramrangex  = evolver_info.paramrangex;
+			resume_e_info.paramrangey  = evolver_info.paramrangey;
+			resume_e_info.opx          = evolver_info.opx;
+			resume_e_info.opy          = evolver_info.opy;
+			resume_e_info.odpx         = evolver_info.odpx;
+			resume_e_info.odpy         = evolver_info.odpy;
+			resume_e_info.px           = evolver_info.px;
+			resume_e_info.py           = evolver_info.py;
+			resume_e_info.sxoffs       = evolver_info.sxoffs;
+			resume_e_info.syoffs       = evolver_info.syoffs;
+			resume_e_info.xdots        = evolver_info.xdots;
+			resume_e_info.ydots        = evolver_info.ydots;
+			resume_e_info.gridsz       = evolver_info.gridsz;
+			resume_e_info.evolving     = evolver_info.evolving;
+			resume_e_info.this_gen_rseed = evolver_info.this_gen_rseed;
+			resume_e_info.fiddlefactor = evolver_info.fiddlefactor;
+			resume_e_info.ecount       = evolver_info.ecount;
 			memcpy(evolve_handle, &resume_e_info, sizeof(resume_e_info));
 		}
 		else
@@ -559,36 +567,36 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			}
 			calc_status = CALCSTAT_COMPLETED;
 		}
-		paramrangex  = blk_6_info.paramrangex;
-		paramrangey  = blk_6_info.paramrangey;
-		opx = newopx = blk_6_info.opx;
-		opy = newopy = blk_6_info.opy;
-		odpx = newodpx = (char) blk_6_info.odpx;
-		odpy = newodpy = (char) blk_6_info.odpy;
-		px           = blk_6_info.px;
-		py           = blk_6_info.py;
-		sxoffs       = blk_6_info.sxoffs;
-		syoffs       = blk_6_info.syoffs;
-		xdots        = blk_6_info.xdots;
-		ydots        = blk_6_info.ydots;
-		gridsz       = blk_6_info.gridsz;
-		this_gen_rseed = blk_6_info.this_gen_rseed;
-		fiddlefactor   = blk_6_info.fiddlefactor;
-		evolving = viewwindow = (int) blk_6_info.evolving;
+		paramrangex  = evolver_info.paramrangex;
+		paramrangey  = evolver_info.paramrangey;
+		opx = newopx = evolver_info.opx;
+		opy = newopy = evolver_info.opy;
+		odpx = newodpx = (char) evolver_info.odpx;
+		odpy = newodpy = (char) evolver_info.odpy;
+		px           = evolver_info.px;
+		py           = evolver_info.py;
+		sxoffs       = evolver_info.sxoffs;
+		syoffs       = evolver_info.syoffs;
+		xdots        = evolver_info.xdots;
+		ydots        = evolver_info.ydots;
+		gridsz       = evolver_info.gridsz;
+		this_gen_rseed = evolver_info.this_gen_rseed;
+		fiddlefactor   = evolver_info.fiddlefactor;
+		evolving = viewwindow = (int) evolver_info.evolving;
 		dpx = paramrangex/(gridsz - 1);
 		dpy = paramrangey/(gridsz - 1);
 		if (read_info.version > 14)
 		{
 			for (i = 0; i < NUMGENES; i++)
 			{
-				g_genes[i].mutate = (int) blk_6_info.mutate[i];
+				g_genes[i].mutate = (int) evolver_info.mutate[i];
 			}
 		}
 		else
 		{
 			for (i = 0; i < 6; i++)
 			{
-				g_genes[i].mutate = (int) blk_6_info.mutate[i];
+				g_genes[i].mutate = (int) evolver_info.mutate[i];
 			}
 			for (i = 6; i < 10; i++)
 			{
@@ -596,7 +604,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			}
 			for (i = 10; i < NUMGENES; i++)
 			{
-				g_genes[i].mutate = (int) blk_6_info.mutate[i-4];
+				g_genes[i].mutate = (int) evolver_info.mutate[i-4];
 			}
 		}
 		param_history(0); /* store history */
@@ -606,16 +614,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		evolving = EVOLVE_NONE;
 	}
 
-	if (blk_7_info.got_data == 1)
+	if (orbits_info.got_data == 1)
 	{
-		oxmin       = blk_7_info.oxmin;
-		oxmax       = blk_7_info.oxmax;
-		oymin       = blk_7_info.oymin;
-		oymax       = blk_7_info.oymax;
-		ox3rd       = blk_7_info.ox3rd;
-		oy3rd       = blk_7_info.oy3rd;
-		keep_scrn_coords = blk_7_info.keep_scrn_coords;
-		drawmode    = blk_7_info.drawmode;
+		oxmin       = orbits_info.oxmin;
+		oxmax       = orbits_info.oxmax;
+		oymin       = orbits_info.oymin;
+		oymax       = orbits_info.oymax;
+		ox3rd       = orbits_info.ox3rd;
+		oy3rd       = orbits_info.oy3rd;
+		keep_scrn_coords = orbits_info.keep_scrn_coords;
+		drawmode    = orbits_info.drawmode;
 		if (keep_scrn_coords)
 		{
 			set_orbit_corners = 1;
@@ -627,12 +635,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 }
 
 static int find_fractal_info(char *gif_file, struct fractal_info *info,
-	struct ext_blk_2 *blk_2_info,
-	struct ext_blk_3 *blk_3_info,
-	struct ext_blk_4 *blk_4_info,
-	struct ext_blk_5 *blk_5_info,
-	struct ext_blk_6 *blk_6_info,
-	struct ext_blk_7 *blk_7_info)
+	struct ext_blk_resume_info *resume_info_blk,
+	struct ext_blk_formula_info *formula_info,
+	struct ext_blk_ranges_info *ranges_info,
+	struct ext_blk_mp_info *mp_info,
+	struct ext_blk_evolver_info *evolver_info,
+	struct ext_blk_orbits_info *orbits_info)
 {
 	BYTE gifstart[18];
 	char temp1[81];
@@ -644,12 +652,12 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	struct orbits_info oload_info;
 	int i, j, k = 0;
 
-	blk_2_info->got_data = 0; /* initialize to no data */
-	blk_3_info->got_data = 0; /* initialize to no data */
-	blk_4_info->got_data = 0; /* initialize to no data */
-	blk_5_info->got_data = 0; /* initialize to no data */
-	blk_6_info->got_data = 0; /* initialize to no data */
-	blk_7_info->got_data = 0; /* initialize to no data */
+	resume_info_blk->got_data = 0; /* initialize to no data */
+	formula_info->got_data = 0; /* initialize to no data */
+	ranges_info->got_data = 0; /* initialize to no data */
+	mp_info->got_data = 0; /* initialize to no data */
+	evolver_info->got_data = 0; /* initialize to no data */
+	orbits_info->got_data = 0; /* initialize to no data */
 
 	fp = fopen(gif_file, "rb");
 	if (fp == NULL)
@@ -796,7 +804,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 				block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
 				switch (block_type)
 				{
-				case 1: /* "fractint001", the main extension block */
+				case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension block */
 					if (scan_extend == 2)  /* we've been here before, done now */
 					{
 						scan_extend = 0;
@@ -810,73 +818,73 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					/* now we know total extension len, back up to first block */
 					fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
 					break;
-				case 2: /* resume info */
+				case BLOCKTYPE_RESUME_INFO: /* resume info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					blk_2_info->resume_data = malloc(data_len);
-					if (blk_2_info->resume_data == 0)
+					resume_info_blk->resume_data = malloc(data_len);
+					if (resume_info_blk->resume_data == 0)
 					{
 						info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
 					}
 					else
 					{
 						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk(blk_2_info->resume_data, data_len);
-						blk_2_info->length = data_len;
-						blk_2_info->got_data = 1; /* got data */
+						load_ext_blk(resume_info_blk->resume_data, data_len);
+						resume_info_blk->length = data_len;
+						resume_info_blk->got_data = 1; /* got data */
 					}
 					break;
-				case 3: /* formula info */
+				case BLOCKTYPE_FORMULA_INFO: /* formula info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					/* check data_len for backward compatibility */
 					fseek(fp, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&fload_info, data_len);
-					strcpy(blk_3_info->form_name, fload_info.form_name);
-					blk_3_info->length = data_len;
-					blk_3_info->got_data = 1; /* got data */
+					strcpy(formula_info->form_name, fload_info.form_name);
+					formula_info->length = data_len;
+					formula_info->got_data = 1; /* got data */
 					if (data_len < sizeof(fload_info))  /* must be old GIF */
 					{
-						blk_3_info->uses_p1 = 1;
-						blk_3_info->uses_p2 = 1;
-						blk_3_info->uses_p3 = 1;
-						blk_3_info->uses_ismand = 0;
-						blk_3_info->ismand = 1;
-						blk_3_info->uses_p4 = 0;
-						blk_3_info->uses_p5 = 0;
+						formula_info->uses_p1 = 1;
+						formula_info->uses_p2 = 1;
+						formula_info->uses_p3 = 1;
+						formula_info->uses_ismand = 0;
+						formula_info->ismand = 1;
+						formula_info->uses_p4 = 0;
+						formula_info->uses_p5 = 0;
 					}
 					else
 					{
-						blk_3_info->uses_p1 = fload_info.uses_p1;
-						blk_3_info->uses_p2 = fload_info.uses_p2;
-						blk_3_info->uses_p3 = fload_info.uses_p3;
-						blk_3_info->uses_ismand = fload_info.uses_ismand;
-						blk_3_info->ismand = fload_info.ismand;
-						blk_3_info->uses_p4 = fload_info.uses_p4;
-						blk_3_info->uses_p5 = fload_info.uses_p5;
+						formula_info->uses_p1 = fload_info.uses_p1;
+						formula_info->uses_p2 = fload_info.uses_p2;
+						formula_info->uses_p3 = fload_info.uses_p3;
+						formula_info->uses_ismand = fload_info.uses_ismand;
+						formula_info->ismand = fload_info.ismand;
+						formula_info->uses_p4 = fload_info.uses_p4;
+						formula_info->uses_p5 = fload_info.uses_p5;
 					}
 					break;
-				case 4: /* ranges info */
+				case BLOCKTYPE_RANGES_INFO: /* ranges info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					blk_4_info->range_data = (int *)malloc((long)data_len);
-					if (blk_4_info->range_data != NULL)
+					ranges_info->range_data = (int *)malloc((long)data_len);
+					if (ranges_info->range_data != NULL)
 					{
 						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk((char *)blk_4_info->range_data, data_len);
-						blk_4_info->length = data_len/2;
-						blk_4_info->got_data = 1; /* got data */
+						load_ext_blk((char *)ranges_info->range_data, data_len);
+						ranges_info->length = data_len/2;
+						ranges_info->got_data = 1; /* got data */
 					}
 					break;
-				case 5: /* extended precision parameters  */
+				case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					blk_5_info->apm_data = (char *)malloc((long)data_len);
-					if (blk_5_info->apm_data != NULL)
+					mp_info->apm_data = (char *)malloc((long)data_len);
+					if (mp_info->apm_data != NULL)
 					{
 						fseek(fp, (long) -block_len, SEEK_CUR);
-						load_ext_blk(blk_5_info->apm_data, data_len);
-						blk_5_info->length = data_len;
-						blk_5_info->got_data = 1; /* got data */
+						load_ext_blk(mp_info->apm_data, data_len);
+						mp_info->length = data_len;
+						mp_info->got_data = 1; /* got data */
 						}
 					break;
-				case 6: /* evolver params */
+				case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					fseek(fp, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&eload_info, data_len);
@@ -884,32 +892,32 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 #ifdef XFRACT
 					decode_evolver_info(&eload_info, 1);
 #endif
-					blk_6_info->length = data_len;
-					blk_6_info->got_data = 1; /* got data */
+					evolver_info->length = data_len;
+					evolver_info->got_data = 1; /* got data */
 
-					blk_6_info->paramrangex     = eload_info.paramrangex;
-					blk_6_info->paramrangey     = eload_info.paramrangey;
-					blk_6_info->opx             = eload_info.opx;
-					blk_6_info->opy             = eload_info.opy;
-					blk_6_info->odpx            = (char)eload_info.odpx;
-					blk_6_info->odpy            = (char)eload_info.odpy;
-					blk_6_info->px              = eload_info.px;
-					blk_6_info->py              = eload_info.py;
-					blk_6_info->sxoffs          = eload_info.sxoffs;
-					blk_6_info->syoffs          = eload_info.syoffs;
-					blk_6_info->xdots           = eload_info.xdots;
-					blk_6_info->ydots           = eload_info.ydots;
-					blk_6_info->gridsz          = eload_info.gridsz;
-					blk_6_info->evolving        = eload_info.evolving;
-					blk_6_info->this_gen_rseed  = eload_info.this_gen_rseed;
-					blk_6_info->fiddlefactor    = eload_info.fiddlefactor;
-					blk_6_info->ecount          = eload_info.ecount;
+					evolver_info->paramrangex     = eload_info.paramrangex;
+					evolver_info->paramrangey     = eload_info.paramrangey;
+					evolver_info->opx             = eload_info.opx;
+					evolver_info->opy             = eload_info.opy;
+					evolver_info->odpx            = (char)eload_info.odpx;
+					evolver_info->odpy            = (char)eload_info.odpy;
+					evolver_info->px              = eload_info.px;
+					evolver_info->py              = eload_info.py;
+					evolver_info->sxoffs          = eload_info.sxoffs;
+					evolver_info->syoffs          = eload_info.syoffs;
+					evolver_info->xdots           = eload_info.xdots;
+					evolver_info->ydots           = eload_info.ydots;
+					evolver_info->gridsz          = eload_info.gridsz;
+					evolver_info->evolving        = eload_info.evolving;
+					evolver_info->this_gen_rseed  = eload_info.this_gen_rseed;
+					evolver_info->fiddlefactor    = eload_info.fiddlefactor;
+					evolver_info->ecount          = eload_info.ecount;
 					for (i = 0; i < NUMGENES; i++)
 					{
-						blk_6_info->mutate[i]    = eload_info.mutate[i];
+						evolver_info->mutate[i]    = eload_info.mutate[i];
 					}
 					break;
-				case 7: /* orbits parameters  */
+				case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					fseek(fp, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&oload_info, data_len);
@@ -917,16 +925,16 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 #ifdef XFRACT
 					decode_orbits_info(&oload_info, 1);
 #endif
-					blk_7_info->length = data_len;
-					blk_7_info->got_data = 1; /* got data */
-					blk_7_info->oxmin           = oload_info.oxmin;
-					blk_7_info->oxmax           = oload_info.oxmax;
-					blk_7_info->oymin           = oload_info.oymin;
-					blk_7_info->oymax           = oload_info.oymax;
-					blk_7_info->ox3rd           = oload_info.ox3rd;
-					blk_7_info->oy3rd           = oload_info.oy3rd;
-					blk_7_info->keep_scrn_coords = oload_info.keep_scrn_coords;
-					blk_7_info->drawmode        = oload_info.drawmode;
+					orbits_info->length = data_len;
+					orbits_info->got_data = 1; /* got data */
+					orbits_info->oxmin           = oload_info.oxmin;
+					orbits_info->oxmax           = oload_info.oxmax;
+					orbits_info->oymin           = oload_info.oymin;
+					orbits_info->oymax           = oload_info.oymax;
+					orbits_info->ox3rd           = oload_info.ox3rd;
+					orbits_info->oy3rd           = oload_info.oy3rd;
+					orbits_info->keep_scrn_coords = oload_info.keep_scrn_coords;
+					orbits_info->drawmode        = oload_info.drawmode;
 					break;
 				default:
 					skip_ext_blk(&block_len, &data_len);
@@ -1300,10 +1308,10 @@ struct window  /* for fgetwindow on screen browser */
 /* prototypes */
 static void drawindow(int, struct window *);
 static char is_visible_window
-				(struct window *, struct fractal_info *, struct ext_blk_5 *);
+				(struct window *, struct fractal_info *, struct ext_blk_mp_info *);
 static void transform(struct dblcoords *);
 static char paramsOK(struct fractal_info *);
-static char typeOK(struct fractal_info *, struct ext_blk_3 *);
+static char typeOK(struct fractal_info *, struct ext_blk_formula_info *);
 static char functionOK(struct fractal_info *, int);
 static void check_history(char *, char *);
 static void bfsetup_convert_to_screen(void);
@@ -1326,12 +1334,12 @@ int fgetwindow(void)
 {
 	struct affine stack_cvt;
 	struct fractal_info read_info;
-	struct ext_blk_2 blk_2_info;
-	struct ext_blk_3 blk_3_info;
-	struct ext_blk_4 blk_4_info;
-	struct ext_blk_5 blk_5_info;
-	struct ext_blk_6 blk_6_info;
-	struct ext_blk_7 blk_7_info;
+	struct ext_blk_resume_info resume_info_blk;
+	struct ext_blk_formula_info formula_info;
+	struct ext_blk_ranges_info ranges_info;
+	struct ext_blk_mp_info mp_info;
+	struct ext_blk_evolver_info evolver_info;
+	struct ext_blk_orbits_info orbits_info;
 	time_t thistime, lastime;
 	char mesg[40], newname[60], oldname[60];
 	int c, i, index, done, wincount, toggle, color_of_box;
@@ -1422,13 +1430,13 @@ rescan:  /* entry for changed browse parms */
 		}
 		splitpath(DTA.filename, NULL, NULL, fname, ext);
 		makepath(tmpmask, drive, dir, fname, ext);
-		if (!find_fractal_info(tmpmask, &read_info, &blk_2_info, &blk_3_info,
-				&blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info)
-			&& (typeOK(&read_info, &blk_3_info) || !brwschecktype)
+		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
+				&ranges_info, &mp_info, &evolver_info, &orbits_info)
+			&& (typeOK(&read_info, &formula_info) || !brwschecktype)
 			&& (paramsOK(&read_info) || !brwscheckparms)
 			&& stricmp(browsename, DTA.filename)
-			&& blk_6_info.got_data != 1
-			&& is_visible_window(&winlist, &read_info, &blk_5_info))
+			&& evolver_info.got_data != 1
+			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
 			strcpy(winlist.name, DTA.filename);
 			drawindow(color_of_box, &winlist);
@@ -1442,17 +1450,17 @@ rescan:  /* entry for changed browse parms */
 			wincount++;
 		}
 
-		if (blk_2_info.got_data == 1) /* Clean up any memory allocated */
+		if (resume_info_blk.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(blk_2_info.resume_data);
+			free(resume_info_blk.resume_data);
 		}
-		if (blk_4_info.got_data == 1) /* Clean up any memory allocated */
+		if (ranges_info.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(blk_4_info.range_data);
+			free(ranges_info.range_data);
 		}
-		if (blk_5_info.got_data == 1) /* Clean up any memory allocated */
+		if (mp_info.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(blk_5_info.apm_data);
+			free(mp_info.apm_data);
 		}
 
 		done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
@@ -1785,7 +1793,7 @@ static void transform(struct dblcoords *point)
 }
 
 static char is_visible_window(struct window *list, struct fractal_info *info,
-	struct ext_blk_5 *blk_5_info)
+	struct ext_blk_mp_info *mp_info)
 {
 	struct dblcoords tl, tr, bl, br;
 	bf_t bt_x, bt_y;
@@ -1854,12 +1862,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 		bt_t5   = alloc_stack(two_di_len);
 		bt_t6   = alloc_stack(two_di_len);
 
-		memcpy((char *)bt_t1, blk_5_info->apm_data, (two_di_len));
-		memcpy((char *)bt_t2, blk_5_info->apm_data + two_di_len, (two_di_len));
-		memcpy((char *)bt_t3, blk_5_info->apm_data + 2*two_di_len, (two_di_len));
-		memcpy((char *)bt_t4, blk_5_info->apm_data + 3*two_di_len, (two_di_len));
-		memcpy((char *)bt_t5, blk_5_info->apm_data + 4*two_di_len, (two_di_len));
-		memcpy((char *)bt_t6, blk_5_info->apm_data + 5*two_di_len, (two_di_len));
+		memcpy((char *)bt_t1, mp_info->apm_data, (two_di_len));
+		memcpy((char *)bt_t2, mp_info->apm_data + two_di_len, (two_di_len));
+		memcpy((char *)bt_t3, mp_info->apm_data + 2*two_di_len, (two_di_len));
+		memcpy((char *)bt_t4, mp_info->apm_data + 3*two_di_len, (two_di_len));
+		memcpy((char *)bt_t5, mp_info->apm_data + 4*two_di_len, (two_di_len));
+		memcpy((char *)bt_t6, mp_info->apm_data + 5*two_di_len, (two_di_len));
 
 		convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
 		convert_bf(bt_xmax, bt_t2, two_len, two_di_len);
@@ -2078,13 +2086,13 @@ static char functionOK(struct fractal_info *info, int numfn)
 	return (mzmatch > 0) ? 0 : 1;
 }
 
-static char typeOK(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
+static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	int numfn;
 	if ((fractype == FORMULA || fractype == FFORMULA) &&
 		(info->fractal_type == FORMULA || info->fractal_type == FFORMULA))
 	{
-		if (!stricmp(blk_3_info->form_name, FormName))
+		if (!stricmp(formula_info->form_name, FormName))
 		{
 			numfn = maxfn;
 			return (numfn > 0) ? functionOK(info, numfn) : 1;

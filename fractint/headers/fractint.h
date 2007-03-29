@@ -1251,73 +1251,78 @@ typedef struct frm_jump_st {
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
-struct ext_blk_2 {
-   char got_data;
-   int length;
-   char *resume_data;
-   };
+struct ext_blk_resume_info
+{
+	char got_data;
+	int length;
+	char *resume_data;
+};
 
-struct ext_blk_3 {
-   char got_data;
-   int length;
-   char form_name[40];
-   short uses_p1;
-   short uses_p2;
-   short uses_p3;
-   short uses_ismand;
-   short ismand;
-   short uses_p4;
-   short uses_p5;
-   };
+struct ext_blk_formula_info
+{
+	char got_data;
+	int length;
+	char form_name[40];
+	short uses_p1;
+	short uses_p2;
+	short uses_p3;
+	short uses_ismand;
+	short ismand;
+	short uses_p4;
+	short uses_p5;
+};
 
-struct ext_blk_4 {
-   char got_data;
-   int length;
-   int *range_data;
-   };
+struct ext_blk_ranges_info
+{
+	char got_data;
+	int length;
+	int *range_data;
+};
 
-struct ext_blk_5 {
-   char got_data;
-   int length;
-   char *apm_data;
-   };
+struct ext_blk_mp_info {
+	char got_data;
+	int length;
+	char *apm_data;
+};
 
 /* parameter evolution stuff */
-struct ext_blk_6 {
-   char got_data;
-   int length;
-   short evolving;
-   short gridsz;
-   unsigned short this_gen_rseed;
-   double fiddlefactor;
-   double paramrangex;
-   double paramrangey;
-   double opx;
-   double opy;
-   short  odpx;
-   short  odpy;
-   short  px;
-   short  py;
-   short  sxoffs;
-   short  syoffs;
-   short  xdots;
-   short  ydots;
-   short  ecount;
-   short  mutate[NUMGENES];
-   };
+struct ext_blk_evolver_info
+{
+	char got_data;
+	int length;
+	short evolving;
+	short gridsz;
+	unsigned short this_gen_rseed;
+	double fiddlefactor;
+	double paramrangex;
+	double paramrangey;
+	double opx;
+	double opy;
+	short  odpx;
+	short  odpy;
+	short  px;
+	short  py;
+	short  sxoffs;
+	short  syoffs;
+	short  xdots;
+	short  ydots;
+	short  ecount;
+	short  mutate[NUMGENES];
+};
 
-struct ext_blk_7 {
-   char got_data;
-   int length;
-   double oxmin;
-   double oxmax;
-   double oymin;
-   double oymax;
-   double ox3rd;
-   double oy3rd;
-   short keep_scrn_coords;
-   char drawmode;
-   };
+struct ext_blk_orbits_info
+{
+	char got_data;
+	int length;
+	double oxmin;
+	double oxmax;
+	double oymin;
+	double oymax;
+	double ox3rd;
+	double oy3rd;
+	short keep_scrn_coords;
+	char drawmode;
+};
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif

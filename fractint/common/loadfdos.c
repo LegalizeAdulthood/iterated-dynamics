@@ -116,7 +116,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 static struct vidinf *vidptr;
 #endif
 
-int get_video_mode(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
+int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	struct vidinf vid[MAXVIDEOMODES];
 	int i, j;
@@ -259,7 +259,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_3 *blk_3_info)
 				(!strcmp(nameptr, "lsystem")) ||
 				(!strncmp(nameptr, "ifs", 3))) /* for ifs and ifs3d */
 			{
-				sprintf(temp1, "Type: %s -> %s", nameptr, blk_3_info->form_name);
+				sprintf(temp1, "Type: %s -> %s", nameptr, formula_info->form_name);
 			}
 			else
 			{
