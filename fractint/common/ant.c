@@ -420,7 +420,6 @@ void free_ant_storage(void)
 	}
 }
 
-/* N.B. use the common memory in extraseg - suffix not large enough*/
 int
 ant(void)
 {
@@ -530,16 +529,16 @@ ant(void)
 		param[2] = maxants = MAX_ANTS;
 	}
 	type = (int) param[3] - 1;
-	if (type < 0 || type > 1)
+	if (type < ANTTYPE_MOVE_COLOR || type > ANTTYPE_MOVE_RULE)
 	{
-		type = RANDOM(2);         /* if type == 0 choose a random type */
+		type = RANDOM(2);         /* if parma[3] == 0 choose a random type */
 	}
 	switch (type)
 	{
-	case 0:
+	case ANTTYPE_MOVE_COLOR:
 		TurkMite1(maxants, rule_len, rule, maxpts, wait);
 		break;
-	case 1:
+	case ANTTYPE_MOVE_RULE:
 		TurkMite2(maxants, rule_len, rule, maxpts, wait);
 		break;
 	}

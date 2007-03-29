@@ -480,7 +480,7 @@ void plot_setup()
 		}
 		break;
 
-	case 4: /* crosseyed mode */
+	case STEREO_PAIR: /* crosseyed mode */
 		if (sxdots < 2*xdots)
 		{
 			standardplot = (XROT == 0 && YROT == 0) ? plot3dcrosseyedA /* use hidden surface kludge */
