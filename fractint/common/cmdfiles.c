@@ -518,7 +518,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	orbit_delay = 0;                     /* full speed orbits */
 	orbit_interval = 1;                  /* plot all orbits */
 	keep_scrn_coords = 0;
-	drawmode = 'r';                      /* passes=orbits draw mode */
+	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
 	set_orbit_corners = 0;
 	oxmin = curfractalspecific->xmin;
 	oxmax = curfractalspecific->xmax;
@@ -2128,11 +2128,15 @@ int cmdarg(char *curarg, int mode) /* process a single argument */
 
 	if (strcmp(variable, "orbitdrawmode") == 0)     /* orbitdrawmode=? */
 	{
-		if (charval[0] != 'l' && charval[0] != 'r' && charval[0] != 'f')
+		switch (charval[0])
 		{
+		case 'l': g_orbit_draw_mode = ORBITDRAW_LINE;		break;
+		case 'r': g_orbit_draw_mode = ORBITDRAW_RECTANGLE;	break;
+		case 'f': g_orbit_draw_mode = ORBITDRAW_FUNCTION;	break;
+
+		default:
 			return badarg(curarg);
 		}
-		drawmode = charval[0];
 		return CMDARG_FRACTAL_PARAM;
 	}
 

@@ -665,7 +665,7 @@ int passes_options(void)
 
 	int old_periodicity, old_orbit_delay, old_orbit_interval;
 	int old_keep_scrn_coords;
-	char old_drawmode;
+	int old_drawmode;
 
 	ret = 0;
 
@@ -690,15 +690,14 @@ pass_option_restart:
 	uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
 
 	choices[++k] = "Orbit pass shape (rect,line)";
-/*   choices[++k] = "Orbit pass shape (rect,line,func)"; */
+	/* TODO: change to below when function mode works: */
+	/* choices[++k] = "Orbit pass shape (rect,line,func)"; */
 	uvalues[k].type = 'l';
 	uvalues[k].uval.ch.vlen = 5;
 	uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
 	uvalues[k].uval.ch.list = passcalcmodes;
-	uvalues[k].uval.ch.val = (drawmode == 'r') ? 0
-							: (drawmode == 'l') ? 1
-							:   /* function */    2;
-	old_drawmode = drawmode;
+	uvalues[k].uval.ch.val = g_orbit_draw_mode;
+	old_drawmode = g_orbit_draw_mode;
 
 	oldhelpmode = helpmode;
 	helpmode = HELPPOPTS;
@@ -762,23 +761,8 @@ pass_option_restart:
 		set_orbit_corners = 0;
 	}
 
-	{
-		int tmp = uvalues[++k].uval.ch.val;
-		switch (tmp)
-		{
-		default:
-		case 0:
-			drawmode = 'r';
-			break;
-		case 1:
-			drawmode = 'l';
-			break;
-		case 2:
-			drawmode = 'f';
-			break;
-		}
-	}
-	if (drawmode != old_drawmode)
+	g_orbit_draw_mode = uvalues[++k].uval.ch.val;
+	if (g_orbit_draw_mode != old_drawmode)
 	{
 		j = 1;
 	}
@@ -2107,7 +2091,7 @@ gc_loop:
 		values[i].type = 'd'; /* most values on this screen are type d */
 	}
 	cmag = usemag;
-	if (drawmode == 'l')
+	if (g_orbit_draw_mode == ORBITDRAW_LINE)
 	{
 		cmag = 0;
 	}
@@ -2136,7 +2120,7 @@ gc_loop:
 
 	else
 	{
-		if (drawmode == 'l')
+		if (g_orbit_draw_mode == ORBITDRAW_LINE)
 		{
 			prompts[++nump]= "Left End Point";
 			values[nump].type = '*';
@@ -2239,7 +2223,7 @@ gc_loop:
 
 	else
 	{
-		if (drawmode == 'l')
+		if (g_orbit_draw_mode == ORBITDRAW_LINE)
 		{
 			nump = 1;
 			xxmin = values[nump++].uval.dval;
@@ -2267,7 +2251,7 @@ gc_loop:
 		}
 	}
 
-	if (prompt_ret == FIK_F7 && drawmode != 'l')  /* toggle corners/center-mag mode */
+	if (prompt_ret == FIK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
 	{
 		if (usemag == 0)
 		{

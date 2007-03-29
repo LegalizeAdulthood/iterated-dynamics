@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_orbit_draw_mode values */
+#define ORBITDRAW_RECTANGLE	0
+#define ORBITDRAW_LINE		1
+#define ORBITDRAW_FUNCTION	2
+
 /* ant types */
 #define ANTTYPE_MOVE_COLOR	0
 #define ANTTYPE_MOVE_RULE	1

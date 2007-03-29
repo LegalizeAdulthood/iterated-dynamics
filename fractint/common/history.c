@@ -148,7 +148,7 @@ void _fastcall save_history_info(void)
 	current.ox3rd				= ox3rd;
 	current.oy3rd				= oy3rd;
 	current.keep_scrn_coords	= (short) keep_scrn_coords;
-	current.drawmode			= drawmode;
+	current.drawmode			= (char) g_orbit_draw_mode;
 	memcpy(current.dac, g_dac_box, 256*3);
 	switch (fractype)
 	{
@@ -349,7 +349,7 @@ void _fastcall restore_history_info(void)
 	{
 		set_orbit_corners = 1;
 	}
-	drawmode				= last.drawmode;
+	g_orbit_draw_mode		= (int) last.drawmode;
 	usr_floatflag			= (char) (curfractalspecific->isinteger ? 0 : 1);
 	memcpy(g_dac_box, last.dac, 256*3);
 	memcpy(olddacbox, last.dac, 256*3);
