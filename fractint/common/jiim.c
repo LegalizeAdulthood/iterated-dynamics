@@ -55,6 +55,15 @@
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
+#define SECRETMODE_RANDOM_WALK			0
+#define SECRETMODE_ONE_DIRECTION		1
+#define SECRETMODE_ONE_DIR_DRAW_OTHER	2
+#define SECRETMODE_NEGATIVE_MAX_COLOR	4
+#define SECRETMODE_POSITIVE_MAX_COLOR	5
+#define SECRETMODE_7					7
+#define SECRETMODE_ZIGZAG				8
+#define SECRETMODE_RANDOM_RUN			9
+
 int show_numbers = 0;              /* toggle for display of coords */
 static char *rect_buff = NULL;
 FILE *file;
@@ -195,7 +204,7 @@ long   ListFront, ListBack, ListSize;  /* head, tail, size of MIIM Queue */
 long   lsize, lmax;                    /* how many in queue (now, ever) */
 int    maxhits = 1;
 int    OKtoMIIM;
-int    SecretExperimentalMode;
+static int    SecretExperimentalMode;
 float  luckyx = 0, luckyy = 0;
 
 static void fillrect(int x, int y, int width, int height, int color)
@@ -1042,7 +1051,7 @@ void Jiim(int which)         /* called by fractint */
 
 				switch (SecretExperimentalMode)
 				{
-				case 0:                     /* unmodified random walk */
+				case SECRETMODE_RANDOM_WALK:                     /* unmodified random walk */
 				default:
 					if (rand() % 2)
 					{
@@ -1052,7 +1061,8 @@ void Jiim(int which)         /* called by fractint */
 					x = (int)(g_new.x*xfactor*zoom + xoff);
 					y = (int)(g_new.y*yfactor*zoom + yoff);
 					break;
-				case 1:                     /* always go one direction */
+
+				case SECRETMODE_ONE_DIRECTION:                     /* always go one direction */
 					if (SaveC.y < 0)
 					{
 						g_new.x = -g_new.x;
@@ -1061,7 +1071,7 @@ void Jiim(int which)         /* called by fractint */
 					x = (int)(g_new.x*xfactor*zoom + xoff);
 					y = (int)(g_new.y*yfactor*zoom + yoff);
 					break;
-				case 2:                     /* go one dir, draw the other */
+				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     /* go one dir, draw the other */
 					if (SaveC.y < 0)
 					{
 						g_new.x = -g_new.x;
@@ -1070,7 +1080,7 @@ void Jiim(int which)         /* called by fractint */
 					x = (int)(-g_new.x*xfactor*zoom + xoff);
 					y = (int)(-g_new.y*yfactor*zoom + yoff);
 					break;
-				case 4:                     /* go negative if max color */
+				case SECRETMODE_NEGATIVE_MAX_COLOR:                     /* go negative if max color */
 					x = (int)(g_new.x*xfactor*zoom + xoff);
 					y = (int)(g_new.y*yfactor*zoom + yoff);
 					if (c_getcolor(x, y) == colors - 1)
@@ -1081,7 +1091,7 @@ void Jiim(int which)         /* called by fractint */
 						y = (int)(g_new.y*yfactor*zoom + yoff);
 					}
 					break;
-				case 5:                     /* go positive if max color */
+				case SECRETMODE_POSITIVE_MAX_COLOR:                     /* go positive if max color */
 					g_new.x = -g_new.x;
 					g_new.y = -g_new.y;
 					x = (int)(g_new.x*xfactor*zoom + xoff);
@@ -1092,7 +1102,7 @@ void Jiim(int which)         /* called by fractint */
 						y = (int)(g_new.y*yfactor*zoom + yoff);
 					}
 					break;
-				case 7:
+				case SECRETMODE_7:
 					if (SaveC.y < 0)
 					{
 						g_new.x = -g_new.x;
@@ -1122,7 +1132,7 @@ void Jiim(int which)         /* called by fractint */
 					x = (int)(g_new.x*xfactor*zoom + xoff);
 					y = (int)(g_new.y*yfactor*zoom + yoff);
 					break;
-				case 8:                     /* go in long zig zags */
+				case SECRETMODE_ZIGZAG:                     /* go in long zig zags */
 					if (rancnt >= 300)
 					{
 						rancnt = -300;
@@ -1135,7 +1145,7 @@ void Jiim(int which)         /* called by fractint */
 					x = (int)(g_new.x*xfactor*zoom + xoff);
 					y = (int)(g_new.y*yfactor*zoom + yoff);
 					break;
-				case 9:                     /* "random run" */
+				case SECRETMODE_RANDOM_RUN:                     /* "random run" */
 					switch (randir)
 					{
 					case 0:             /* go random direction for a while */
