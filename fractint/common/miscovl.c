@@ -2681,7 +2681,7 @@ void flip_image(int key)
 	iyhalf = ydots / 2;
 	switch (key)
 	{
-	case 24:            /* control-X - reverse X-axis */
+	case FIK_CTL_X:            /* control-X - reverse X-axis */
 		for (i = 0; i < ixhalf; i++)
 		{
 			if (driver_key_pressed())
@@ -2713,7 +2713,7 @@ void flip_image(int key)
 			copy_bf(bfsy3rd, bfymin);        /* sy3rd = yymin; */
 		}
 		break;
-	case 25:            /* control-Y - reverse Y-aXis */
+	case FIK_CTL_Y:            /* control-Y - reverse Y-aXis */
 		for (j = 0; j < iyhalf; j++)
 		{
 			if (driver_key_pressed())
@@ -2745,7 +2745,7 @@ void flip_image(int key)
 			copy_bf(bfsy3rd, bfymax);        /* sy3rd = yymax; */
 		}
 		break;
-	case 26:            /* control-Z - reverse X and Y aXis */
+	case FIK_CTL_Z:            /* control-Z - reverse X and Y aXis */
 		for (i = 0; i < ixhalf; i++)
 		{
 			if (driver_key_pressed())
