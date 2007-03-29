@@ -1828,7 +1828,9 @@ Modes:
 
 */
 
-
+#define EXCLUDE_NONE	0
+#define EXCLUDE_CURRENT	1
+#define EXCLUDE_RANGE	2
 
 struct  _PalTable
 {
@@ -1839,7 +1841,7 @@ struct  _PalTable
 	RGBEditor    *rgb[2];
 	MoveBox      *movebox;
 	BOOLEAN       done;
-	BOOLEAN       exclude;
+	int exclude;
 	BOOLEAN       auto_select;
 	PALENTRY      pal[256];
 	FILE         *undo_file;
@@ -2133,7 +2135,7 @@ static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
 			char buff[80];
 			sprintf(buff, "%c%c%c%c",
 				me->auto_select ? 'A' : ' ',
-				(me->exclude == 1)  ? 'X' : (me->exclude == 2) ? 'Y' : ' ',
+				(me->exclude == EXCLUDE_CURRENT)  ? 'X' : (me->exclude == EXCLUDE_RANGE) ? 'Y' : ' ',
 				me->freestyle ? 'F' : ' ',
 				stripe_mode ? 'T' : ' ');
 			driver_display_string(x, y, fg_color, bg_color, buff);
@@ -2624,7 +2626,7 @@ static void PalTable__UpdateDAC(PalTable *me)
 	if (me->exclude)
 	{
 		memset(g_dac_box, 0, 256*3);
-		if (me->exclude == 1)
+		if (me->exclude == EXCLUDE_CURRENT)
 		{
 			int a = me->curr[me->active];
 			memmove(g_dac_box[a], &me->pal[a], 3);
@@ -2735,13 +2737,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 	case 'Y':    /* exclude range */
 	case 'y':
-		me->exclude = (me->exclude == 2) ? 0 : 2;
+		me->exclude = (me->exclude == EXCLUDE_RANGE) ? EXCLUDE_NONE : EXCLUDE_RANGE;
 		PalTable__UpdateDAC(me);
 		break;
 
 	case 'X':
 	case 'x':     /* exclude current entry */
-		me->exclude = (me->exclude == 1) ? 0 : 1;
+		me->exclude = (me->exclude == EXCLUDE_CURRENT) ? EXCLUDE_NONE : EXCLUDE_CURRENT;
 		PalTable__UpdateDAC(me);
 		break;
 
@@ -3232,17 +3234,17 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 	case 'w':
 		switch (me->exclude)
 		{
-		case 0:   /* normal mode.  convert all colors to grey scale */
+		case EXCLUDE_NONE:   /* normal mode.  convert all colors to grey scale */
 			PalTable__SaveUndoData(me, 0, 255);
 			palrangetogrey(me->pal, 0, 256);
 			break;
 
-		case 1:   /* 'x' mode. convert current color to grey scale.  */
+		case EXCLUDE_CURRENT:   /* 'x' mode. convert current color to grey scale.  */
 			PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
 			palrangetogrey(me->pal, me->curr[me->active], 1);
 			break;
 
-		case 2:  /* 'y' mode.  convert range between editors to grey. */
+		case EXCLUDE_RANGE:  /* 'y' mode.  convert range between editors to grey. */
 			{
 				int a = me->curr[0],
 					b = me->curr[1];
@@ -3271,17 +3273,17 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 	case 'n':
 		switch (me->exclude)
 		{
-		case 0:      /* normal mode.  convert all colors to grey scale */
+		case EXCLUDE_NONE:      /* normal mode.  convert all colors to grey scale */
 			PalTable__SaveUndoData(me, 0, 255);
 			palrangetonegative(me->pal, 0, 256);
 			break;
 
-		case 1:      /* 'x' mode. convert current color to grey scale.  */
+		case EXCLUDE_CURRENT:      /* 'x' mode. convert current color to grey scale.  */
 			PalTable__SaveUndoData(me, me->curr[me->active], me->curr[me->active]);
 			palrangetonegative(me->pal, me->curr[me->active], 1);
 			break;
 
-		case 2:  /* 'y' mode.  convert range between editors to grey. */
+		case EXCLUDE_RANGE:  /* 'y' mode.  convert range between editors to grey. */
 			{
 				int a = me->curr[0],
 				b = me->curr[1];
@@ -3375,7 +3377,7 @@ static PalTable *PalTable_Construct(void)
 	me->curr[0]     = 1;
 	me->curr[1]     = 1;
 	me->auto_select = TRUE;
-	me->exclude     = FALSE;
+	me->exclude     = EXCLUDE_NONE;
 	me->hidden      = FALSE;
 	me->stored_at   = NOWHERE;
 	me->file        = NULL;
