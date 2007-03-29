@@ -4408,10 +4408,10 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		ysym_split(yaxis_col, yaxis_between);
 		switch (worksym & 3)
 		{
-		case 1: /* just xaxis symmetry */
+		case XAXIS: /* just xaxis symmetry */
 			plot = basin ? symplot2basin : symplot2;
 			break;
-		case 2: /* just yaxis symmetry */
+		case YAXIS: /* just yaxis symmetry */
 			if (basin) /* got no routine for this case */
 			{
 				ixstop = xxstop; /* fix what split should not have done */
@@ -4422,7 +4422,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 				plot = symplot2Y;
 			}
 			break;
-		case 3: /* both axes */
+		case XYAXIS: /* both axes */
 			plot = basin ? symplot4basin : symplot4;
 		}
 		break;

@@ -27,6 +27,10 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* ant types */
+#define ANTTYPE_MOVE_COLOR	0
+#define ANTTYPE_MOVE_RULE	1
+
 /* truemode values */
 #define TRUEMODE_DEFAULT	0
 #define TRUEMODE_ITERATES	1
