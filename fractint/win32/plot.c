@@ -176,7 +176,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 	_ASSERTE(s_plot != NULL);
 	switch (message)
 	{
-	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint); break;
+	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint);					break;
 	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);			break;
 	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLeftButtonDown);	break;
 	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLeftButtonUp);		break;
