@@ -774,7 +774,7 @@ int calcfract(void)
 			closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
 			lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 			setsymmetry(symmetry, 0);
-			timer(0, calctype); /* non-standard fractal engine */
+			timer(TIMER_ENGINE, calctype); /* non-standard fractal engine */
 		}
 		if (check_key())
 		{
@@ -798,26 +798,26 @@ int calcfract(void)
 			{
 				stdcalcmode = 'g';
 				three_pass = 1;
-				timer(0, (int(*)())perform_worklist);
+				timer(TIMER_ENGINE, (int(*)())perform_worklist);
 				if (calc_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					stdcalcmode = (xdots >= 640) ? '2' : '1';
-					timer(0, (int(*)())perform_worklist);
+					timer(TIMER_ENGINE, (int(*)())perform_worklist);
 					three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
 				stdcalcmode = (xdots >= 640) ? '2' : '1';
-				timer(0, (int (*)()) perform_worklist);
+				timer(TIMER_ENGINE, (int (*)()) perform_worklist);
 			}
 			stdcalcmode = (char)oldcalcmode;
 		}
 		else /* main case, much nicer! */
 		{
 			three_pass = 0;
-			timer(0, (int(*)())perform_worklist);
+			timer(TIMER_ENGINE, (int(*)())perform_worklist);
 		}
 	}
 	calctime += timer_interval;

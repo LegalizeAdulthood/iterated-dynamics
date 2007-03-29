@@ -175,7 +175,7 @@ restart:
 	busy = 1;
 
 	/* invoke encoder() via timer */
-	interrupted = (debugflag == DEBUGFLAG_TIME_ENCODER) ? timer(2, NULL) : encoder();
+	interrupted = (debugflag == DEBUGFLAG_TIME_ENCODER) ? timer(TIMER_ENCODER, NULL) : encoder();
 
 	busy = 0;
 
