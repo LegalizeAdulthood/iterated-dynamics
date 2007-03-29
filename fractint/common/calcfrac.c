@@ -14,7 +14,7 @@ Additional fractal-specific modules are also invoked from CALCFRAC:
   PARSER.C      formula fractals
   and more
  -------------------------------------------------------------------- */
-
+#include <assert.h>
 #include <string.h>
 #include <limits.h>
 #include <time.h>
@@ -1506,7 +1506,7 @@ static void count_to_int (long unsigned C, int *r, int *l)
 }
 */
 
-char drawmode = 'r';
+int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 
 static int sticky_orbits(void)
 {
@@ -1519,10 +1519,9 @@ static int sticky_orbits(void)
 		return -1;
 	}
 
-	switch (drawmode)
+	switch (g_orbit_draw_mode)
 	{
-	case 'r':
-	default:
+	case ORBITDRAW_RECTANGLE:
 		/* draw a rectangle */
 		row = yybegin;
 		col = xxbegin;
@@ -1543,7 +1542,7 @@ static int sticky_orbits(void)
 			++row;
 		}
 		break;
-	case 'l':
+	case ORBITDRAW_LINE:
 		{
 			int dX, dY;                     /* vector components */
 			int final,                      /* final row or column number */
@@ -1681,7 +1680,7 @@ static int sticky_orbits(void)
 			}
 		} /* end case 'l' */
 		break;
-	case 'f':  /* this code does not yet work??? */
+	case ORBITDRAW_FUNCTION:  /* TODO: this code does not yet work??? */
 		{
 			double Xctr, Yctr;
 			LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
@@ -1714,6 +1713,8 @@ static int sticky_orbits(void)
 			}
 		}  /* end case 'f' */
 		break;
+	default:
+		assert(FALSE);
 	}  /* end switch */
 
 	return 0;

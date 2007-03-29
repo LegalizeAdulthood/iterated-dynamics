@@ -1,7 +1,7 @@
 /*
 		Overlayed odds and ends that don't fit anywhere else.
 */
-
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -1396,9 +1396,11 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (drawmode != 'r')
+		if (g_orbit_draw_mode != ORBITDRAW_RECTANGLE)
 		{
-			put_parm(" orbitdrawmode=%c", drawmode);
+			char args[3] = { 'r', 'l', 'f' };
+			assert(g_orbit_draw_mode >= 0 && g_orbit_draw_mode <= NUM_OF(args));
+			put_parm(" orbitdrawmode=%c", args[g_orbit_draw_mode]);
 		}
 
 		if (math_tol[0] != 0.05 || math_tol[1] != 0.05)

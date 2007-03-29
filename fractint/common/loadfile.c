@@ -623,7 +623,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		ox3rd       = orbits_info.ox3rd;
 		oy3rd       = orbits_info.oy3rd;
 		keep_scrn_coords = orbits_info.keep_scrn_coords;
-		drawmode    = orbits_info.drawmode;
+		g_orbit_draw_mode    = (int) orbits_info.drawmode;
 		if (keep_scrn_coords)
 		{
 			set_orbit_corners = 1;
