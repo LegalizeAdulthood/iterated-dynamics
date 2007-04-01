@@ -529,7 +529,7 @@ imagestart:                             /* calc/display a new image */
 			if (kbdchar == FIK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
 			{
 #endif
-				if ((get_commands() & CMDARG_3D_YES) == 0)
+				if ((get_commands() & COMMAND_3D_YES) == 0)
 				{
 					goto imagestart;
 				}

@@ -213,7 +213,7 @@ extern void set_3d_defaults(void);
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
 extern int init_msg(const char *, char *, int);
-extern int cmdarg(char *curarg, int mode);
+extern int process_command(char *curarg, int mode);
 extern int getpower10(LDBL x);
 extern void dopause(int);
 

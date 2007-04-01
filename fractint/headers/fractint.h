@@ -229,13 +229,13 @@ typedef BYTE BOOLEAN;
 #define CALCSTAT_NON_RESUMABLE	3
 #define CALCSTAT_COMPLETED		4
 
-/* cmdarg() return values */
-#define CMDARG_ERROR			-1
-#define CMDARG_OK				0
-#define CMDARG_FRACTAL_PARAM	1
-#define CMDARG_3D_PARAM			2
-#define CMDARG_3D_YES			4
-#define CMDARG_RESET			8
+/* process_command() return values */
+#define COMMAND_ERROR			-1
+#define COMMAND_OK				0
+#define COMMAND_FRACTAL_PARAM	1
+#define COMMAND_3D_PARAM			2
+#define COMMAND_3D_YES			4
+#define COMMAND_RESET			8
 
 #define CMDFILE_AT_CMDLINE 0
 #define CMDFILE_SSTOOLS_INI 1

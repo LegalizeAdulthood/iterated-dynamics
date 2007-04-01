@@ -837,7 +837,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& !truecolor /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && fillcolor > -1) /* tesseral with fill doesn't work */
 		&& !(usr_stdcalcmode == 'o')
-		&& i == CMDARG_FRACTAL_PARAM /* nothing else changed */
+		&& i == COMMAND_FRACTAL_PARAM /* nothing else changed */
 		&& outside != ATAN)
 	{
 		quick_calc = 1;
@@ -889,7 +889,7 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	{
 		truecolor = 0; /* truecolor doesn't play well with the evolver */
 	}
-	if (i > CMDARG_OK)              /* time to redraw? */
+	if (i > COMMAND_OK)              /* time to redraw? */
 	{
 		param_history(0); /* save history */
 		*kbdmore = 0;
@@ -906,7 +906,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	{                         /* video= was specified */
 		g_adapter = g_init_mode;
 		g_init_mode = -1;
-		i |= CMDARG_FRACTAL_PARAM;
+		i |= COMMAND_FRACTAL_PARAM;
 		savedac = 0;
 	}
 	else if (colorpreloaded)
@@ -914,17 +914,17 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		spindac(0, 1);
 		colorpreloaded = 0;
 	}
-	else if (i & CMDARG_RESET)         /* reset was specified */
+	else if (i & COMMAND_RESET)         /* reset was specified */
 	{
 		savedac = 0;
 	}
-	if (i & CMDARG_3D_YES)
+	if (i & COMMAND_3D_YES)
 	{                         /* 3d = was specified */
 		*kbdchar = '3';
 		driver_unstack_screen();
 		return TRUE;
 	}
-	if (i & CMDARG_FRACTAL_PARAM)
+	if (i & COMMAND_FRACTAL_PARAM)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
 		/* backwards_v18(); */  /* moved this to cmdfiles.c */
