@@ -108,7 +108,7 @@ GENEBASE g_genes[NUMGENES] =
 	{ &trigndx[1], varytrig,    0, "trig fn 2", 5 },
 	{ &trigndx[2], varytrig,    0, "trig fn 3", 5 },
 	{ &trigndx[3], varytrig,    0, "trig fn 4", 5 },
-	{ &bailoutest, varybotest,  0, "bailout test", 6 }
+	{ &g_bail_out_test, varybotest,  0, "bailout test", 6 }
 };
 
 void param_history(int mode)
@@ -136,7 +136,7 @@ void param_history(int mode)
 		oldhistory.trigndx1 = trigndx[1];
 		oldhistory.trigndx2 = trigndx[2];
 		oldhistory.trigndx3 = trigndx[3];
-		oldhistory.bailoutest = bailoutest;
+		oldhistory.bailoutest = g_bail_out_test;
 	}
 
 	if (mode == 1)  /* restore the old parameter history */
@@ -162,7 +162,7 @@ void param_history(int mode)
 		trigndx[1] = oldhistory.trigndx1;
 		trigndx[2] = oldhistory.trigndx2;
 		trigndx[3] = oldhistory.trigndx3;
-		bailoutest = oldhistory.bailoutest;
+		g_bail_out_test = oldhistory.bailoutest;
 	}
 }
 
@@ -270,7 +270,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 	{
 		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
 		/* move this next bit to varybot where it belongs */
-		setbailoutformula(bailoutest);
+		setbailoutformula(g_bail_out_test);
 	}
 	return;
 }
