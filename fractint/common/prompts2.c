@@ -990,7 +990,7 @@ int get_cmd_string()
 	helpmode = oldhelpmode;
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
-		i = cmdarg(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
+		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
 		if (DEBUGFLAG_REAL_POPCORN == debugflag)
 		{
 			backwards_v18();
