@@ -5081,7 +5081,7 @@ int frm_prescan(FILE *open_file)
 				switch (this_token.token_id)
 				{
 				case 1:  /* if */
-					else_has_been_used = else_has_been_used << 1;
+					else_has_been_used <<= 1;
 					waiting_for_endif++;
 					break;
 				case 2: /*ELSEIF*/
@@ -5125,10 +5125,10 @@ int frm_prescan(FILE *open_file)
 							errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
 						}
 					}
-					else_has_been_used = else_has_been_used | 1;
+					else_has_been_used |= 1;
 					break;
 				case 4: /*ENDIF*/
-					else_has_been_used = else_has_been_used >> 1;
+					else_has_been_used >>= 1;
 					waiting_for_endif--;
 					if (waiting_for_endif < 0)
 					{
