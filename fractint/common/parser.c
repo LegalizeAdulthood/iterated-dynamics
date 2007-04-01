@@ -4328,7 +4328,8 @@ void init_misc()
 	{
 		v = vv;
 	}
-	Arg1 = &argfirst; Arg2 = &argsecond; /* needed by all the ?Stk* functions */
+	Arg1 = &argfirst;
+	Arg2 = &argsecond; /* needed by all the ?Stk* functions */
 	fg = (double)(1L << bitshift);
 	fgLimit = (double)0x7fffffffL / fg;
 	ShiftBack = 32 - bitshift;
