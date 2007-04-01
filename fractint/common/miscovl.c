@@ -63,6 +63,13 @@ FILE *parmfile;
 #pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
 #endif
 
+static const char *truecolor_bits_text(int truecolorbits)
+{
+	static const char *bits_text[] = { "???", "32k", "64k", "16m", " 4g" };
+	int index = ((truecolorbits < 1) || (truecolorbits > 4)) ? 0 : truecolorbits;
+	return bits_text[index];
+}
+
 void make_batch_file()
 {
 #define MAXPROMPTS 18
@@ -649,7 +656,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" formulaname=%s", FormName);
 			if (uses_ismand)
 			{
-				put_parm(" ismand=%c", g_is_mand?'y':'n');
+				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
 			}
 		}
 		if (fractype == LSYSTEM)
@@ -1028,7 +1035,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (distest)
 		{
 			put_parm(" distest=%ld/%d/%d/%d", distest, distestwidth,
-							pseudox?pseudox:xdots, pseudoy?pseudoy:ydots);
+				pseudox ? pseudox : xdots, pseudoy ? pseudoy : ydots);
 		}
 		if (old_demm_colors)
 		{
@@ -2169,10 +2176,7 @@ void format_vid_table(int choice, char *buf)
 	else
 	{
 		sprintf(local_buf, "%s%3s",  /* 47 chars */
-			buf, (truecolorbits == 4)?" 4g":
-				(truecolorbits == 3)?"16m":
-				(truecolorbits == 2)?"64k":
-				(truecolorbits == 1)?"32k":"???");
+			buf, truecolor_bits_text(truecolorbits));
 	}
 	sprintf(buf, "%s %.12s %.12s",  /* 74 chars */
 		local_buf, g_video_entry.driver->name, g_video_entry.comment);
@@ -2311,11 +2315,9 @@ static void update_fractint_cfg()
 				sprintf(colorsbuf, "%3d", vident.colors);
 			}
 			else
-				sprintf(colorsbuf, "%3s",
-					(truecolorbits == 4)?" 4g":
-					(truecolorbits == 3)?"16m":
-					(truecolorbits == 2)?"64k":
-					(truecolorbits == 1)?"32k":"???");
+			{
+				strcat(colorsbuf, truecolor_bits_text(truecolorbits));
+			}
 			fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
 				kname,
 				buf,

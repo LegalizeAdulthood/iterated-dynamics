@@ -837,7 +837,7 @@ int diffusion()
 
 		/* If we're doing colorshifting then use currentcolor, otherwise
 			pick one at random */
-		putcolor(x, y, colorshift?currentcolor:RANDOM(colors-1) + 1);
+		putcolor(x, y, colorshift ? currentcolor : RANDOM(colors-1) + 1);
 
 		/* If we're doing colorshifting then check to see if we need to shift*/
 		if (colorshift)

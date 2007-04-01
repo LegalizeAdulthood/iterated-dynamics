@@ -479,7 +479,7 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (typehasparm(julibrot?neworbittype:fractype, i, NULL) == 0)
+		if (typehasparm(julibrot ? neworbittype : fractype, i, NULL) == 0)
 		{
 			if (fractype == FORMULA || fractype == FFORMULA)
 			{
