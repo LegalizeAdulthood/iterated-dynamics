@@ -2344,6 +2344,7 @@ static int sound_arg(const cmd_context *context)
 			}
 		} /* end for */
 	}    /* end context->totparms > 1 */
+#endif
 	return COMMAND_OK;
 }
 
@@ -2439,7 +2440,6 @@ static int scale_map_arg(const cmd_context *context)
 			scale_map[counter] = context->intval[counter];
 		}
 	}
-#endif
 	return COMMAND_OK;
 }
 
