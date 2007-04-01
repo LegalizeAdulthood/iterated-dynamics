@@ -2281,7 +2281,7 @@ static BOOLEAN PalTable__SetCurr(PalTable *me, int which, int curr)
 
 	if (me->curr[0] != me->curr[1])
 	{
-		PalTable__HlPal(me, me->curr[me->active == 0?1:0], -1);
+		PalTable__HlPal(me, me->curr[me->active == 0 ? 1 : 0], -1);
 	}
 	PalTable__HlPal(me, me->curr[me->active], fg_color);
 
@@ -3528,7 +3528,7 @@ static void PalTable_Process(PalTable *me)
 	}
 
 	PalTable__SetCurr(me, me->active,          PalTable__GetCursorColor(me));
-	PalTable__SetCurr(me, (me->active == 1)?0:1, PalTable__GetCursorColor(me));
+	PalTable__SetCurr(me, (me->active == 1) ? 0 : 1, PalTable__GetCursorColor(me));
 	Cursor_Show();
 	PalTable__MkDefaultPalettes(me);
 	me->done = FALSE;

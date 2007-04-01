@@ -375,10 +375,10 @@ static void display_page(char *title, char *text, unsigned text_len,
 	putstringcenter(1, 0, 80, C_HELP_HDG, title);
 	sprintf(temp, "%2d of %d", page + 1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
-	driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
+	driver_put_string(1, 79 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR, temp);
 #else
 	/* Some systems (Ultrix) mess up if you write to column 80 */
-	driver_put_string(1, 78-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
+	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR, temp);
 #endif
 
 	if (text != NULL)

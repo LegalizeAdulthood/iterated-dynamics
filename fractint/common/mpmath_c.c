@@ -451,7 +451,7 @@ _CMPLX ComplexSqrtFloat(double x, double y)
 	else
 	{
 		mag   = sqrt(sqrt(x*x + y*y));
-		theta = atan2(y, x) / 2;
+		theta = atan2(y, x)/2;
 		FPUsincos(&theta, &result.y, &result.x);
 		result.x *= mag;
 		result.y *= mag;
@@ -492,11 +492,11 @@ void SetupLogTable(void)
 			{
 				lf = MaxLTSize - 1;
 			}
-			mlf = (colors - (lf?2:1)) / log(MaxLTSize - lf);
+			mlf = (colors - (lf ? 2 : 1 ))/log(MaxLTSize - lf);
 		}
 		else if (LogFlag == -1)  /* old log function */
 		{
-			mlf = (colors - 1) / log(MaxLTSize);
+			mlf = (colors - 1)/log(MaxLTSize);
 		}
 		else if (LogFlag <= -2)  /* sqrt function */
 		{
@@ -505,7 +505,7 @@ void SetupLogTable(void)
 			{
 				lf = MaxLTSize - 1;
 			}
-			mlf = (colors - 2) / sqrt(MaxLTSize - lf);
+			mlf = (colors - 2)/sqrt(MaxLTSize - lf);
 		}
 	}
 
@@ -534,13 +534,13 @@ void SetupLogTable(void)
 		}
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fLog14(m, m);
-		Fg2Float((long)(colors-(lf?2:1)), 0, c);
+		Fg2Float((long)(colors - (lf ? 2 : 1)), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
 			LogTable[prev] = 1;
 		}
-		for (n = (lf?2:1); n < (unsigned int)colors; n++)
+		for (n = (lf ? 2 : 1); n < (unsigned int)colors; n++)
 		{
 			Fg2Float((long)n, 0, f);
 			fMul16(f, m, f);
@@ -619,7 +619,7 @@ long logtablecalc(long citer)
 		{
 			ret = 1;
 		}
-		else if ((citer - lf) / log(citer - lf) <= mlf)
+		else if ((citer - lf)/log(citer - lf) <= mlf)
 		{
 			ret = (save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
 		}

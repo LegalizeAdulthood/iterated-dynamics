@@ -3828,7 +3828,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 	yplusblock = y + blocksize;
 	prev11 = -1;
 	c24 = c12 = c13 = c22 = getcolor(ixstart, y);
-	c31 = c21 = getcolor(ixstart, (y > 0)?ylesshalf:0);
+	c31 = c21 = getcolor(ixstart, (y > 0) ? ylesshalf : 0);
 	if (yplusblock <= iystop)
 	{
 		c24 = getcolor(ixstart, yplusblock);
@@ -3883,7 +3883,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			{
 				c44 = getcolor(xplusblock, yplusblock);
 			}
-			c41 = getcolor(xplusblock, (y > 0)?ylesshalf:0);
+			c41 = getcolor(xplusblock, (y > 0) ? ylesshalf : 0);
 			c42 = getcolor(xplusblock, y);
 		}
 		else if (right_guess == 0)
@@ -3892,7 +3892,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		}
 		if (yplusblock > iystop)
 		{
-			c44 = (bottom_guess)?c42:-1;
+			c44 = bottom_guess ? c42 : -1;
 		}
 
 		/* guess or calc the remaining 3 quarters of current block */

@@ -640,7 +640,7 @@ scan:
 		zr = rq-iq + cr; \
 		rq = zr*zr; \
 		iq = zi*zi; \
-		esc = ((rq + iq) > 16.0)?1:0
+		esc = ((rq + iq) > 16.0) ? 1 : 0
 
 		/* iterate key values */
 		SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
@@ -775,72 +775,64 @@ scan:
 		/* now for all test points, check whether they exceed the
 		allowed tolerance. if so, subdivide */
 		l1 = GET_REAL(cr1, ci1);
-		l1 = (tzr1 == 0.0)?
-			(l1 == 0.0)?1.0:1000.0:
-			l1/tzr1;
+		l1 = (tzr1 == 0.0) ?
+			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr1;
 		if (FABS(1.0-l1) > twidth)
 		{
 			break;
 		}
 
 		l2 = GET_IMAG(cr1, ci1);
-		l2 = (tzi1 == 0.0)?
-			(l2 == 0.0)?1.0:1000.0:
-			l2/tzi1;
+		l2 = (tzi1 == 0.0) ?
+			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi1;
 		if (FABS(1.0-l2) > twidth)
 		{
 			break;
 		}
 
 		l1 = GET_REAL(cr2, ci1);
-		l1 = (tzr2 == 0.0)?
-			(l1 == 0.0)?1.0:1000.0:
-			l1/tzr2;
+		l1 = (tzr2 == 0.0) ?
+			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr2;
 		if (FABS(1.0-l1) > twidth)
 		{
 			break;
 		}
 
 		l2 = GET_IMAG(cr2, ci1);
-		l2 = (tzi2 == 0.0)?
-			(l2 == 0.0)?1.0:1000.0:
-			l2/tzi2;
+		l2 = (tzi2 == 0.0) ?
+			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi2;
 		if (FABS(1.0-l2) > twidth)
 		{
 			break;
 		}
 
 		l1 = GET_REAL(cr1, ci2);
-		l1 = (tzr3 == 0.0)?
-			(l1 == 0.0)?1.0:1000.0:
-			l1/tzr3;
+		l1 = (tzr3 == 0.0) ?
+			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr3;
 		if (FABS(1.0-l1) > twidth)
 		{
 			break;
 		}
 
 		l2 = GET_IMAG(cr1, ci2);
-		l2 = (tzi3 == 0.0)?
-			(l2 == 0.0)?1.0:1000.0:
-			l2/tzi3;
+		l2 = (tzi3 == 0.0) ?
+			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi3;
 		if (FABS(1.0-l2) > twidth)
 		{
 			break;
 		}
 
 		l1 = GET_REAL(cr2, ci2);
-		l1 = (tzr4 == 0.0)?
-			(l1 == 0.0)?1.0:1000.0:
-			l1/tzr4;
+		l1 = (tzr4 == 0.0) ?
+			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr4;
 		if (FABS(1.0-l1) > twidth)
 		{
 			break;
 		}
 
 		l2 = GET_IMAG(cr2, ci2);
-		l2 = (tzi4 == 0.0)?
-			(l2 == 0.0)?1.0:1000.0:
-			l2/tzi4;
+		l2 = (tzi4 == 0.0) ?
+			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi4;
 		if (FABS(1.0-l2) > twidth)
 		{
 			break;

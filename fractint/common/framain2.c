@@ -2292,7 +2292,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	if (row == 0)
 	{
 		errcount = 0;
-		cmp_fp = dir_fopen(workdir, "cmperr", (initbatch)?"a":"w");
+		cmp_fp = dir_fopen(workdir, "cmperr", initbatch ? "a" : "w");
 		outln_cleanup = cmp_line_cleanup;
 		}
 	if (pot16bit)  /* 16 bit info, ignore odd numbered rows */
