@@ -41,7 +41,7 @@ static int  _fastcall xsym_split(int, int);
 static int  _fastcall ysym_split(int, int);
 static void _fastcall puttruecolor_disk(int, int, int);
 static int diffusion_engine(void);
-static int sticky_orbits(void);
+static int draw_orbits(void);
 
 /**CJLT new function prototypes: */
 static int tesseral(void);
@@ -88,6 +88,7 @@ static char dif_lb[] =
 static long autologmap(void);
 
 /* variables exported from this file */
+int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX linitorbit;
 long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
 _CMPLX init, tmp, old, g_new, saved;
@@ -1178,7 +1179,7 @@ static void perform_worklist()
 			diffusion_scan();
 			break;
 		case 'o':
-			sticky_orbits();
+			draw_orbits();
 			break;
 		default:
 			OneOrTwoPass();
@@ -1242,42 +1243,48 @@ static int diffusion_scan(void)
 	return 0;
 }
 
-/* little macro that plots a filled square of color c, size s with
+/* little function that plots a filled square of color c, size s with
 	top left cornet at (x, y) with optimization from sym_fill_line */
-#define plot_block(x, y, s, c) \
-	memset(dstack, (c), (s)); \
-	for (ty = (y); ty < (y) + (s); ty++) \
-	{ \
-		sym_fill_line(ty, (x), (x) + (s)-1, dstack); \
+static void plot_block(int x, int y, int s, int c)
+{
+	int ty;
+	memset(dstack, c, s);
+	for (ty = y; ty < y + s; ty++)
+	{
+		sym_fill_line(ty, x, x + s - 1, dstack);
 	}
+}
 
-/* macro that does the same as above, but checks the limits in x and y */
-#define plot_block_lim(x, y, s, c) \
-	memset(dstack, (c), (s)); \
-	for (ty = (y); ty < min((y) + (s), iystop + 1); ty++) \
-	{ \
-		sym_fill_line(ty, (x), min((x) + (s)-1, ixstop), dstack); \
+/* function that does the same as above, but checks the limits in x and y */
+static void plot_block_lim(int x, int y, int s, int c)
+{
+	int ty;
+	memset(dstack, (c), (s));
+	for (ty = y; ty < min(y + s, iystop + 1); ty++)
+	{
+		sym_fill_line(ty, x, min(x + s - 1, ixstop), dstack);
 	}
+}
 
-/* macro: count_to_int(dif_counter, colo, rowo) */
-/* (inlined  function:) */
-#define count_to_int(C, x, y) \
-	tC = C; \
-	x = dif_la[tC&0xFF]; \
-	y = dif_lb[tC&0xFF]; \
-	tC >>= 8; \
-	x <<= 4; \
-	x += dif_la[tC&0xFF]; \
-	y <<= 4; y += dif_lb[tC&0xFF]; \
-	tC >>= 8; \
-	x <<= 4; \
-	x += dif_la[tC&0xFF]; \
-	y <<= 4; \
-	y += dif_lb[tC&0xFF]; \
-	tC >>= 8; \
-	x >>= dif_offset; \
-	y >>= dif_offset
-/* end of inlined function */
+/* function: count_to_int(dif_offset, dif_counter, colo, rowo) */
+static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
+{
+	*x = dif_la[C & 0xFF];
+	*y = dif_lb[C & 0xFF];
+	C >>= 8;
+	*x <<= 4;
+	*x += dif_la[C & 0xFF];
+	*y <<= 4;
+	*y += dif_lb[C & 0xFF];
+	C >>= 8;
+	*x <<= 4;
+	*x += dif_la[C & 0xFF];
+	*y <<= 4;
+	*y += dif_lb[C & 0xFF];
+	C >>= 8;
+	*x >>= dif_offset;
+	*y >>= dif_offset;
+}
 
 /* REMOVED: counter byte 3 */                                                          \
 /* (x) < <= 4; (x) += dif_la[tC&0(x)FF]; (y) < <= 4; (y) += dif_lb[tC&0(x)FF]; tC >>= 8;
@@ -1285,11 +1292,41 @@ static int diffusion_scan(void)
 	2048(x)2048 what means a counter of 24 bits or 3 bytes */
 
 /* Calculate the point */
-#define calculate \
-		reset_periodicity = 1;   \
-		if ((*calctype)() == -1) \
-			return -1;           \
-		reset_periodicity = 0
+static int diffusion_point(int row, int col)
+{
+	reset_periodicity = 1;
+	if ((*calctype)() == -1)
+	{
+		return TRUE;
+	}
+	reset_periodicity = 0;
+	(*plot)(col, row, color);
+	return FALSE;
+}
+
+static int diffusion_block(int row, int col, int sqsz)
+{
+	reset_periodicity = 1;
+	if ((*calctype)() == -1)
+	{
+		return TRUE;
+	}
+	reset_periodicity = 0;
+	plot_block(col, row, sqsz, color);
+	return FALSE;
+}
+
+static int diffusion_block_lim(int row, int col, int sqsz)
+{
+	reset_periodicity = 1;
+	if ((*calctype)() == -1)
+	{
+		return TRUE;
+	}
+	reset_periodicity = 0;
+	plot_block_lim(col, row, sqsz, color);
+	return FALSE;
+}
 
 static int diffusion_engine(void)
 {
@@ -1299,8 +1336,6 @@ static int diffusion_engine(void)
 	/* made this to complete the area that is not */
 	/* a square with sides like 2 ** n */
 	int rem_x, rem_y; /* what is left on the last tile to draw */
-	int ty;  /* temp for y */
-	long unsigned tC; /* temp for dif_counter */
 	int dif_offset; /* offset for adjusting looked-up values */
 	int sqsz;  /* size of the block being filled */
 	int colo, rowo; /* original col and row */
@@ -1331,7 +1366,7 @@ static int diffusion_engine(void)
 	{
 		while (dif_counter < (dif_limit >> 1))
 		{
-			count_to_int(dif_counter, colo, rowo);
+			count_to_int(dif_offset, dif_counter, &colo, &rowo);
 			i = 0;
 			col = ixstart + colo; /* get the right tiles */
 			do
@@ -1340,8 +1375,10 @@ static int diffusion_engine(void)
 				row = iystart + rowo;
 				do
 				{
-					calculate;
-					(*plot)(col, row, color);
+					if (diffusion_point(row, col))
+					{
+						return -1;
+					}
 					j++;
 					row += s;                  /* next tile */
 				}
@@ -1349,8 +1386,10 @@ static int diffusion_engine(void)
 				/* in the last y tile we may not need to plot the point */
 				if (rowo < rem_y)
 				{
-					calculate;
-					(*plot)(col, row, color);
+					if (diffusion_point(row, col))
+					{
+						return -1;
+					}
 				}
 				i++;
 				col += s;
@@ -1363,16 +1402,20 @@ static int diffusion_engine(void)
 				j = 0;
 				do
 				{
-					calculate;
-					(*plot)(col, row, color);
+					if (diffusion_point(row, col))
+					{
+						return -1;
+					}
 					j++;
 					row += s; /* next tile */
 				}
 				while (j < ny);
 				if (rowo < rem_y)
 				{
-					calculate;
-					(*plot)(col, row, color);
+					if (diffusion_point(row, col))
+					{
+						return -1;
+					}
 				}
 			}
 			dif_counter++;
@@ -1385,7 +1428,7 @@ static int diffusion_engine(void)
 		while (dif_counter < (dif_limit >> 1))
 		{
 			sqsz = 1 << ((int)(bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
-			count_to_int(dif_counter, colo, rowo);
+			count_to_int(dif_offset, dif_counter, &colo, &rowo);
 
 			i = 0;
 			do
@@ -1396,8 +1439,10 @@ static int diffusion_engine(void)
 					col = ixstart + colo + i*s; /* get the right tiles */
 					row = iystart + rowo + j*s;
 
-					calculate;
-					plot_block(col, row, sqsz, color);
+					if (diffusion_block(row, col, sqsz))
+					{
+						return -1;
+					}
 					j++;
 				}
 				while (j < ny);
@@ -1405,8 +1450,10 @@ static int diffusion_engine(void)
 				if (rowo < rem_y)
 				{
 					row = iystart + rowo + ny*s;
-					calculate;
-					plot_block_lim(col, row, sqsz, color);
+					if (diffusion_block(row, col, sqsz))
+					{
+						return -1;
+					}
 				}
 				i++;
 			}
@@ -1419,16 +1466,20 @@ static int diffusion_engine(void)
 				do
 				{
 					row = iystart + rowo + j*s; /* get the right tiles */
-					calculate;
-					plot_block_lim(col, row, sqsz, color);
+					if (diffusion_block_lim(row, col, sqsz))
+					{
+						return -1;
+					}
 					j++;
 				}
 				while (j < ny);
 				if (rowo < rem_y)
 				{
 					row = iystart + rowo + ny*s;
-					calculate;
-					plot_block_lim(col, row, sqsz, color);
+					if (diffusion_block_lim(row, col, sqsz))
+					{
+						return -1;
+					}
 				}
 			}
 
@@ -1438,7 +1489,7 @@ static int diffusion_engine(void)
 	/* from half dif_limit on we only plot 1x1 points :-) */
 	while (dif_counter < dif_limit)
 	{
-		count_to_int(dif_counter, colo, rowo);
+		count_to_int(dif_offset, dif_counter, &colo, &rowo);
 
 		i = 0;
 		do
@@ -1448,8 +1499,10 @@ static int diffusion_engine(void)
 			{
 				col = ixstart + colo + i*s; /* get the right tiles */
 				row = iystart + rowo + j*s;
-				calculate;
-				(*plot)(col, row, color);
+				if (diffusion_point(row, col))
+				{
+					return -1;
+				}
 				j++;
 			}
 			while (j < ny);
@@ -1457,8 +1510,10 @@ static int diffusion_engine(void)
 			if (rowo < rem_y)
 			{
 				row = iystart + rowo + ny*s;
-				calculate;
-				(*plot)(col, row, color);
+				if (diffusion_point(row, col))
+				{
+					return -1;
+				}
 			}
 			i++;
 		}
@@ -1471,44 +1526,228 @@ static int diffusion_engine(void)
 			do
 			{
 				row = iystart + rowo + j*s; /* get the right tiles */
-				calculate;
-				(*plot)(col, row, color);
+				if (diffusion_point(row, col))
+				{
+					return -1;
+				}
 				j++;
 			}
 			while (j < ny);
 			if (rowo < rem_y)
 			{
 				row = iystart + rowo + ny*s;
-				calculate;
-				(*plot)(col, row, color);
+				if (diffusion_point(row, col))
+				{
+					return -1;
+				}
 			}
 		}
 		dif_counter++;
 	}
+
 	return 0;
 }
 
-/* OLD function (less eficient than the lookup code above:
-static void count_to_int (long unsigned C, int *r, int *l)
+static int draw_rectangle_orbits()
 {
+	/* draw a rectangle */
+	row = yybegin;
+	col = xxbegin;
 
-	int i;
-
-	*r = *l = 0;
-
-	for (i = bits; i > 0; i -= 2)
+	while (row <= iystop)
 	{
-		*r < <= 1; *r += C % 2; C >>= 1;
-		*l < <= 1; *l += C % 2; C >>= 1;
+		currow = row;
+		while (col <= ixstop)
+		{
+			if (plotorbits2dfloat() == -1)
+			{
+				add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+				return -1; /* interrupted */
+			}
+			++col;
+		}
+		col = ixstart;
+		++row;
 	}
-	*l = (*l + *r)%(1 << (bits/2));  * a + b mod 2^k *
 
+	return 0;
 }
-*/
 
-int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
+static int draw_line_orbits(void)
+{
+	int dX, dY;                     /* vector components */
+	int final,                      /* final row or column number */
+		G,                  /* used to test for new row or column */
+		inc1,           /* G increment when row or column doesn't change */
+		inc2;               /* G increment when row or column changes */
+	char pos_slope;
 
-static int sticky_orbits(void)
+	dX = ixstop - ixstart;                   /* find vector components */
+	dY = iystop - iystart;
+	pos_slope = (char)(dX > 0);                   /* is slope positive? */
+	if (dY < 0)
+	{
+		pos_slope = (char)!pos_slope;
+	}
+	if (abs(dX) > abs(dY))                /* shallow line case */
+	{
+		if (dX > 0)         /* determine start point and last column */
+		{
+			col = xxbegin;
+			row = yybegin;
+			final = ixstop;
+		}
+		else
+		{
+			col = ixstop;
+			row = iystop;
+			final = xxbegin;
+		}
+		inc1 = 2*abs(dY);            /* determine increments and initial G */
+		G = inc1 - abs(dX);
+		inc2 = 2*(abs(dY) - abs(dX));
+		if (pos_slope)
+		{
+			while (col <= final)    /* step through columns checking for new row */
+			{
+				if (plotorbits2dfloat() == -1)
+				{
+					add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+					return -1; /* interrupted */
+				}
+				col++;
+				if (G >= 0)             /* it's time to change rows */
+				{
+					row++;      /* positive slope so increment through the rows */
+					G += inc2;
+				}
+				else                        /* stay at the same row */
+				{
+					G += inc1;
+				}
+			}
+		}
+		else
+		{
+			while (col <= final)    /* step through columns checking for new row */
+			{
+				if (plotorbits2dfloat() == -1)
+				{
+					add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+					return -1; /* interrupted */
+				}
+				col++;
+				if (G > 0)              /* it's time to change rows */
+				{
+					row--;      /* negative slope so decrement through the rows */
+					G += inc2;
+				}
+				else                        /* stay at the same row */
+				{
+					G += inc1;
+				}
+			}
+		}
+	}   /* if |dX| > |dY| */
+	else                            /* steep line case */
+	{
+		if (dY > 0)             /* determine start point and last row */
+		{
+			col = xxbegin;
+			row = yybegin;
+			final = iystop;
+		}
+		else
+		{
+			col = ixstop;
+			row = iystop;
+			final = yybegin;
+		}
+		inc1 = 2*abs(dX);            /* determine increments and initial G */
+		G = inc1 - abs(dY);
+		inc2 = 2*(abs(dX) - abs(dY));
+		if (pos_slope)
+		{
+			while (row <= final)    /* step through rows checking for new column */
+			{
+				if (plotorbits2dfloat() == -1)
+				{
+					add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+					return -1; /* interrupted */
+				}
+				row++;
+				if (G >= 0)                 /* it's time to change columns */
+				{
+					col++;  /* positive slope so increment through the columns */
+					G += inc2;
+				}
+				else                    /* stay at the same column */
+				{
+					G += inc1;
+				}
+			}
+		}
+		else
+		{
+			while (row <= final)    /* step through rows checking for new column */
+			{
+				if (plotorbits2dfloat() == -1)
+				{
+					add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
+					return -1; /* interrupted */
+				}
+				row++;
+				if (G > 0)                  /* it's time to change columns */
+				{
+					col--;  /* negative slope so decrement through the columns */
+					G += inc2;
+				}
+				else                    /* stay at the same column */
+				{
+					G += inc1;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+/* TODO: this code does not yet work??? */
+static int draw_function_orbits(void)
+{
+	double Xctr, Yctr;
+	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
+	double Xmagfactor, Rotation, Skew;
+	int angle;
+	double factor = PI / 180.0;
+	double theta;
+	double xfactor = xdots / 2.0;
+	double yfactor = ydots / 2.0;
+
+	angle = xxbegin;  /* save angle in x parameter */
+
+	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	if (Rotation <= 0)
+	{
+		Rotation += 360;
+	}
+
+	while (angle < Rotation)
+	{
+		theta = (double)angle*factor;
+		col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
+		row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
+		if (plotorbits2dfloat() == -1)
+		{
+			add_worklist(angle, 0, 0, 0, 0, 0, 0, worksym);
+			return -1; /* interrupted */
+		}
+		angle++;
+	}
+	return 0;
+}
+
+static int draw_orbits(void)
 {
 	got_status = GOT_STATUS_ORBITS; /* for <tab> screen */
 	totpasses = 1;
@@ -1521,201 +1760,13 @@ static int sticky_orbits(void)
 
 	switch (g_orbit_draw_mode)
 	{
-	case ORBITDRAW_RECTANGLE:
-		/* draw a rectangle */
-		row = yybegin;
-		col = xxbegin;
+	case ORBITDRAW_RECTANGLE:	return draw_rectangle_orbits();	break;
+	case ORBITDRAW_LINE:		return draw_line_orbits();		break;
+	case ORBITDRAW_FUNCTION:	return draw_function_orbits();	break;
 
-		while (row <= iystop)
-		{
-			currow = row;
-			while (col <= ixstop)
-			{
-				if (plotorbits2dfloat() == -1)
-				{
-					add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-					return -1; /* interrupted */
-				}
-				++col;
-			}
-			col = ixstart;
-			++row;
-		}
-		break;
-	case ORBITDRAW_LINE:
-		{
-			int dX, dY;                     /* vector components */
-			int final,                      /* final row or column number */
-				G,                  /* used to test for new row or column */
-				inc1,           /* G increment when row or column doesn't change */
-				inc2;               /* G increment when row or column changes */
-			char pos_slope;
-
-			dX = ixstop - ixstart;                   /* find vector components */
-			dY = iystop - iystart;
-			pos_slope = (char)(dX > 0);                   /* is slope positive? */
-			if (dY < 0)
-			{
-				pos_slope = (char)!pos_slope;
-			}
-			if (abs(dX) > abs(dY))                /* shallow line case */
-			{
-				if (dX > 0)         /* determine start point and last column */
-				{
-					col = xxbegin;
-					row = yybegin;
-					final = ixstop;
-				}
-				else
-				{
-					col = ixstop;
-					row = iystop;
-					final = xxbegin;
-				}
-				inc1 = 2*abs(dY);            /* determine increments and initial G */
-				G = inc1 - abs(dX);
-				inc2 = 2*(abs(dY) - abs(dX));
-				if (pos_slope)
-				{
-					while (col <= final)    /* step through columns checking for new row */
-					{
-						if (plotorbits2dfloat() == -1)
-						{
-							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-							return -1; /* interrupted */
-						}
-						col++;
-						if (G >= 0)             /* it's time to change rows */
-						{
-							row++;      /* positive slope so increment through the rows */
-							G += inc2;
-						}
-						else                        /* stay at the same row */
-						{
-							G += inc1;
-						}
-					}
-				}
-				else
-				{
-					while (col <= final)    /* step through columns checking for new row */
-					{
-						if (plotorbits2dfloat() == -1)
-						{
-							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-							return -1; /* interrupted */
-						}
-						col++;
-						if (G > 0)              /* it's time to change rows */
-						{
-							row--;      /* negative slope so decrement through the rows */
-							G += inc2;
-						}
-						else                        /* stay at the same row */
-						{
-							G += inc1;
-						}
-					}
-				}
-			}   /* if |dX| > |dY| */
-			else                            /* steep line case */
-			{
-				if (dY > 0)             /* determine start point and last row */
-				{
-					col = xxbegin;
-					row = yybegin;
-					final = iystop;
-				}
-				else
-				{
-					col = ixstop;
-					row = iystop;
-					final = yybegin;
-				}
-				inc1 = 2*abs(dX);            /* determine increments and initial G */
-				G = inc1 - abs(dY);
-				inc2 = 2*(abs(dX) - abs(dY));
-				if (pos_slope)
-				{
-					while (row <= final)    /* step through rows checking for new column */
-					{
-						if (plotorbits2dfloat() == -1)
-						{
-							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-							return -1; /* interrupted */
-						}
-						row++;
-						if (G >= 0)                 /* it's time to change columns */
-						{
-							col++;  /* positive slope so increment through the columns */
-							G += inc2;
-						}
-						else                    /* stay at the same column */
-						{
-							G += inc1;
-						}
-					}
-				}
-				else
-				{
-					while (row <= final)    /* step through rows checking for new column */
-					{
-						if (plotorbits2dfloat() == -1)
-						{
-							add_worklist(xxstart, xxstop, col, yystart, yystop, row, 0, worksym);
-							return -1; /* interrupted */
-						}
-						row++;
-						if (G > 0)                  /* it's time to change columns */
-						{
-							col--;  /* negative slope so decrement through the columns */
-							G += inc2;
-						}
-						else                    /* stay at the same column */
-						{
-							G += inc1;
-						}
-					}
-				}
-			}
-		} /* end case 'l' */
-		break;
-	case ORBITDRAW_FUNCTION:  /* TODO: this code does not yet work??? */
-		{
-			double Xctr, Yctr;
-			LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-			double Xmagfactor, Rotation, Skew;
-			int angle;
-			double factor = PI / 180.0;
-			double theta;
-			double xfactor = xdots / 2.0;
-			double yfactor = ydots / 2.0;
-
-			angle = xxbegin;  /* save angle in x parameter */
-
-			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-			if (Rotation <= 0)
-			{
-				Rotation += 360;
-			}
-
-			while (angle < Rotation)
-			{
-				theta = (double)angle*factor;
-				col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
-				row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
-				if (plotorbits2dfloat() == -1)
-				{
-					add_worklist(angle, 0, 0, 0, 0, 0, 0, worksym);
-					return -1; /* interrupted */
-				}
-				angle++;
-			}
-		}  /* end case 'f' */
-		break;
 	default:
 		assert(FALSE);
-	}  /* end switch */
+	}
 
 	return 0;
 }
