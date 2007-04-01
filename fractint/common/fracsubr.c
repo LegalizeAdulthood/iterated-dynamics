@@ -340,14 +340,10 @@ init_restart:
 
 	integerfractal = curfractalspecific->isinteger;
 
-/*   if (fractype == JULIBROT)
-		rqlim = 4;
-	else */ if (potflag && potparam[2] != 0.0)
+	if (potflag && potparam[2] != 0.0)
 	{
 		rqlim = potparam[2];
 	}
-/* else if (decomp[0] > 0 && decomp[1] > 0)
-		rqlim = (double)decomp[1]; */
 	else if (bailout) /* user input bailout */
 	{
 		rqlim = bailout;
