@@ -238,7 +238,7 @@ double fmodtest(void)
 		return result;
 	}
 
-	switch (bailoutest)
+	switch (g_bail_out_test)
 	{
 	case Mod:
 		result = (magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
@@ -4270,7 +4270,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		forcesymmetry = sym;  /* for backwards compatibility */
 	}
 	else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-			|| outside == ATAN || bailoutest == Manr || outside == FMOD)
+			|| outside == ATAN || g_bail_out_test == Manr || outside == FMOD)
 		return;
 	else if (inside == FMODI || outside == TDIS)
 	{

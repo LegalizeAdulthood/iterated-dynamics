@@ -419,7 +419,7 @@ init_restart:
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
 		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& closeprox <= 2.0                       /* and closeprox not too large */
-		&& bailoutest == Mod)                     /* and bailout test = mod */
+		&& g_bail_out_test == Mod)                     /* and bailout test = mod */
 			bitshift = FUDGEFACTOR;                  /* use the larger bitshift */
 		}
 

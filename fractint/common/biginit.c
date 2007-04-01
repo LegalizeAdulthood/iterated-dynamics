@@ -407,8 +407,8 @@ void init_bf_dec(int dec)
 		intlength = 2;
 	}
 	/* the bailout tests need greater dynamic range */
-	else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
-				bailoutest == Manr)
+	else if (g_bail_out_test == Real || g_bail_out_test == Imag || g_bail_out_test == And ||
+				g_bail_out_test == Manr)
 	{
 		intlength = 2;
 	}
@@ -439,8 +439,8 @@ void init_bf_length(int bnl)
 		intlength = 2;
 	}
 	/* the bailout tests need greater dynamic range */
-	else if (bailoutest == Real || bailoutest == Imag || bailoutest == And ||
-				bailoutest == Manr)
+	else if (g_bail_out_test == Real || g_bail_out_test == Imag || g_bail_out_test == And ||
+				g_bail_out_test == Manr)
 	{
 		intlength = 2;
 	}
