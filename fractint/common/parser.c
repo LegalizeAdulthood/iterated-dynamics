@@ -201,7 +201,7 @@ int real_count;
 
 void (**f)(void) = (void (**)(void))0; /* static CAE fp */
 
-short int ismand = 1;
+int g_is_mand = 1;
 
 unsigned int posp, vsp, LastOp;     /* CAE fp made non-static */
 static unsigned int n, NextOp, InitN;
@@ -2643,7 +2643,7 @@ static int ParseStr(char *Str, int pass)
 	v[11].a.d.y = (double)ydots;
 	v[12].a.d.x = (double)maxit;
 	v[12].a.d.y = 0;
-	v[13].a.d.x = (double)ismand;
+	v[13].a.d.x = (double)g_is_mand;
 	v[13].a.d.y = 0;
 	v[14].a.d.x = Xctr;
 	v[14].a.d.y = Yctr;
@@ -2708,7 +2708,7 @@ static int ParseStr(char *Str, int pass)
 		v[11].a.l.y = ydots; v[11].a.l.y <<= bitshift;
 		v[12].a.l.x = maxit; v[12].a.l.x <<= bitshift;
 		v[12].a.l.y = 0L;
-		v[13].a.l.x = ismand; v[13].a.l.x <<= bitshift;
+		v[13].a.l.x = g_is_mand; v[13].a.l.x <<= bitshift;
 		v[13].a.l.y = 0L;
 		v[14].a.l.x = (long)(v[14].a.d.x*fg);
 		v[14].a.l.y = (long)(v[14].a.d.y*fg);

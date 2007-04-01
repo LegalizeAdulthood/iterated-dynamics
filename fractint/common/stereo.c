@@ -29,8 +29,7 @@
 char stereomapname[FILE_MAX_DIR + 1] = {""};
 int AutoStereo_depth = 100;
 double AutoStereo_width = 10;
-char grayflag = 0;              /* flag to use gray value rather than color
-								* number */
+int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
 char calibrate = 1;             /* add calibration bars to image */
 char image_map = 0;
 
@@ -94,7 +93,7 @@ static int getdepth(int xd, int yd)
 {
 	int pal;
 	pal = getcolor(xd, yd);
-	if (grayflag)
+	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
 		pal = ((int) dac[pal][0]*77 +

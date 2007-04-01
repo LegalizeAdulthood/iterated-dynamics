@@ -130,8 +130,8 @@ char targa_temp[14] = "fractemp.tga";
 int P = 250; /* Perspective dist used when viewing light vector */
 BYTE back_color[3];
 char ray_name[FILE_MAX_PATH] = "fract001";
-char preview = 0;
-char showbox = 0;
+int g_preview = 0;
+int g_show_box = 0;
 int previewfactor = 20;
 int xadjust = 0;
 int yadjust = 0;
@@ -226,7 +226,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			return 0;
 		}
 	}
-	else if (grayflag)           /* convert color numbers to grayscale values */
+	else if (g_grayscale_depth)           /* convert color numbers to grayscale values */
 	{
 		for (col = 0; col < (int) linelen; col++)
 		{
@@ -276,7 +276,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 	tout = 0;
 	/* Insure last line is drawn in preview and filltypes <0  */
-	if ((RAY || preview || FILLTYPE < FILLTYPE_POINTS)
+	if ((RAY || g_preview || FILLTYPE < FILLTYPE_POINTS)
 		&& (currow != ydots - 1)
 		&& (currow % localpreviewfactor) /* Draw mod preview lines */
 		&& !(!RAY && (FILLTYPE > FILLTYPE_FILL_BARS) && (currow == 1)))
@@ -298,7 +298,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	/* PROCESS ROW LOOP BEGINS HERE */
 	while (col < (int) linelen)
 	{
-		if ((RAY || preview || FILLTYPE < FILLTYPE_POINTS)
+		if ((RAY || g_preview || FILLTYPE < FILLTYPE_POINTS)
 			&& (col != lastdot) /* if this is not the last col */
 			&&  (col % (int) (aspect*localpreviewfactor)) /* if not the 1st or mod factor col */
 			&& (!(!RAY && FILLTYPE > FILLTYPE_FILL_BARS && col == 1)))
@@ -308,7 +308,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 		f_cur.color = (float) (cur.color = Real_Color = pixels[col]);
 
-		if (RAY || preview || FILLTYPE < FILLTYPE_POINTS)
+		if (RAY || g_preview || FILLTYPE < FILLTYPE_POINTS)
 		{
 			next = (int) (col + aspect*localpreviewfactor);
 			if (next == col)
@@ -2766,7 +2766,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 	normalize_vector(light_direction);
 
-	if (preview && showbox)
+	if (g_preview && g_show_box)
 	{
 		normalize_vector(direct);
 

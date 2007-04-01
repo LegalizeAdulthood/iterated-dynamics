@@ -324,13 +324,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 9)
 	{ /* post-version 18.22 */
 		bailout     = read_info.bailout; /* use long bailout */
-		bailoutest = (enum bailouts) read_info.bailoutest;
+		g_bail_out_test = (enum bailouts) read_info.bailoutest;
 	}
 	else
 	{
-		bailoutest = Mod;
+		g_bail_out_test = Mod;
 	}
-	setbailoutformula(bailoutest);
+	setbailoutformula(g_bail_out_test);
 
 	if (read_info.version > 9)
 	{
@@ -482,7 +482,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			uses_p2 = formula_info.uses_p2;
 			uses_p3 = formula_info.uses_p3;
 			uses_ismand = formula_info.uses_ismand;
-			ismand = formula_info.ismand;
+			g_is_mand = formula_info.ismand;
 			uses_p4 = formula_info.uses_p4;
 			uses_p5 = formula_info.uses_p5;
 			break;
