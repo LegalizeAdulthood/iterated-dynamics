@@ -96,7 +96,7 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 }
 
 /* multiply a matrix by a scalar */
-void scale (double sx, double sy, double sz, MATRIX m)
+void scale(double sx, double sy, double sz, MATRIX m)
 {
 	MATRIX scale;
 	identity(scale);
@@ -107,7 +107,7 @@ void scale (double sx, double sy, double sz, MATRIX m)
 }
 
 /* rotate about X axis  */
-void xrot (double theta, MATRIX m)
+void xrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -122,7 +122,7 @@ void xrot (double theta, MATRIX m)
 }
 
 /* rotate about Y axis  */
-void yrot (double theta, MATRIX m)
+void yrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -137,7 +137,7 @@ void yrot (double theta, MATRIX m)
 }
 
 /* rotate about Z axis  */
-void zrot (double theta, MATRIX m)
+void zrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -152,7 +152,7 @@ void zrot (double theta, MATRIX m)
 }
 
 /* translate  */
-void trans (double tx, double ty, double tz, MATRIX m)
+void trans(double tx, double ty, double tz, MATRIX m)
 {
 	MATRIX trans;
 	identity(trans);
@@ -163,7 +163,7 @@ void trans (double tx, double ty, double tz, MATRIX m)
 }
 
 /* cross product  - useful because cross is perpendicular to v and w */
-int cross_product (VECTOR v, VECTOR w, VECTOR cross)
+int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 {
 	VECTOR tmp;
 	tmp[0] =  v[1]*w[2] - w[1]*v[2];
@@ -175,9 +175,9 @@ int cross_product (VECTOR v, VECTOR w, VECTOR cross)
 	return 0;
 }
 
-/* cross product integer arguments (not fudged) */
+/* cross product integer arguments(not fudged) */
 /*** pb, unused
-int icross_product (IVECTOR v, IVECTOR w, IVECTOR cross)
+int icross_product(IVECTOR v, IVECTOR w, IVECTOR cross)
 {
 	IVECTOR tmp;
 	tmp[0] =  v[1]*w[2] - w[1]*v[2];
