@@ -690,7 +690,7 @@ static void trigdetails(char *buf)
 }
 
 /* set array of trig function indices according to "function=" command */
-int set_trig_array(int k, char *name)
+int set_trig_array(int k, const char *name)
 {
 	char trigname[10];
 	int i;
