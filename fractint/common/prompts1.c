@@ -1750,7 +1750,7 @@ gfp_top:
 		(curfractalspecific->flags & BAILTEST))
 	{
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = (int)bailoutest;
+		paramvalues[promptnum].uval.ch.val  = (int)g_bail_out_test;
 		paramvalues[promptnum].uval.ch.llen = 7;
 		paramvalues[promptnum].uval.ch.vlen = 6;
 		paramvalues[promptnum].uval.ch.list = bailnameptr;
@@ -1866,7 +1866,7 @@ gfp_top:
 	{
 		choices[promptnum] = "ismand";
 		paramvalues[promptnum].type = 'y';
-		paramvalues[promptnum++].uval.ch.val = ismand?1:0;
+		paramvalues[promptnum++].uval.ch.val = g_is_mand?1:0;
 	}
 
 	if (caller                           /* <z> command ? */
@@ -1963,18 +1963,18 @@ gfp_top:
 	if (i != 0 && curfractalspecific->calctype == StandardFractal &&
 		(curfractalspecific->flags & BAILTEST))
 	{
-		if (paramvalues[promptnum].uval.ch.val != (int)bailoutest)
+		if (paramvalues[promptnum].uval.ch.val != (int)g_bail_out_test)
 		{
-			bailoutest = (enum bailouts)paramvalues[promptnum].uval.ch.val;
+			g_bail_out_test = (enum bailouts)paramvalues[promptnum].uval.ch.val;
 			ret = 1;
 		}
 		promptnum++;
 	}
 	else
 	{
-		bailoutest = Mod;
+		g_bail_out_test = Mod;
 	}
-	setbailoutformula(bailoutest);
+	setbailoutformula(g_bail_out_test);
 
 	if (i)
 	{
@@ -2022,9 +2022,9 @@ gfp_top:
 	}
 	if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
 	{
-		if (ismand != (short int)paramvalues[promptnum].uval.ch.val)
+		if (g_is_mand != (short int)paramvalues[promptnum].uval.ch.val)
 		{
-			ismand = (short int)paramvalues[promptnum].uval.ch.val;
+			g_is_mand = (short int)paramvalues[promptnum].uval.ch.val;
 			ret = 1;
 		}
 		++promptnum;
@@ -2923,11 +2923,11 @@ restart_1:
 
 	prompts3d[++k] = "Preview Mode?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = preview;
+	uvalues[k].uval.ch.val = g_preview;
 
 	prompts3d[++k] = "    Show Box?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = showbox;
+	uvalues[k].uval.ch.val = g_show_box;
 
 	prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
 	uvalues[k].type = 'i';
@@ -2966,7 +2966,7 @@ restart_1:
 
 	prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = grayflag;
+	uvalues[k].uval.ch.val = g_grayscale_depth;
 
 	oldhelpmode = helpmode;
 	helpmode = HELP3DMODE;
@@ -2980,14 +2980,10 @@ restart_1:
 
 	k = 0;
 
-	preview = (char)uvalues[k++].uval.ch.val;
-
-	showbox = (char)uvalues[k++].uval.ch.val;
-
+	g_preview = uvalues[k++].uval.ch.val;
+	g_show_box = uvalues[k++].uval.ch.val;
 	previewfactor  = uvalues[k++].uval.ival;
-
 	sphere = uvalues[k++].uval.ch.val;
-
 	g_glasses_type = uvalues[k++].uval.ival;
 	k++;
 
@@ -3003,7 +2999,7 @@ restart_1:
 	strcpy(ray_name, uvalues[k++].uval.sval);
 
 	Targa_Out = uvalues[k++].uval.ch.val;
-	grayflag  = (char)uvalues[k++].uval.ch.val;
+	g_grayscale_depth  = uvalues[k++].uval.ch.val;
 
 	/* check ranges */
 	if (previewfactor < 2)

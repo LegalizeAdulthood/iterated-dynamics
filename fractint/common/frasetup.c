@@ -30,7 +30,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 		&& !invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
-		&& useinitorbit != 1 && using_jiim == 0 && bailoutest == Mod
+		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
 		calctype = calcmand; /* the normal case - use CALCMAND */
@@ -51,7 +51,7 @@ JuliaSetup(void)            /* Julia Routine */
 		&& !invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
-		&& !finattract && using_jiim == 0 && bailoutest == Mod
+		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
 		calctype = calcmand; /* the normal case - use CALCMAND */
@@ -267,7 +267,7 @@ MandelfpSetup(void)
 			&& outside >= -6
 			&& useinitorbit != 1
 			&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-			&& using_jiim == 0 && bailoutest == Mod
+			&& using_jiim == 0 && g_bail_out_test == Mod
 			&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
 			calctype = calcmandfp; /* the normal case - use calcmandfp */
@@ -415,7 +415,7 @@ JuliafpSetup(void)
 				&& useinitorbit != 1
 				&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 				&& !finattract
-				&& using_jiim == 0 && bailoutest == Mod
+				&& using_jiim == 0 && g_bail_out_test == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
 			calctype = calcmandfp; /* the normal case - use calcmandfp */

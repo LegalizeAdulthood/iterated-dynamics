@@ -1057,17 +1057,17 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
-		if (ismand)
+		if (g_is_mand)
 		{
 			fractalspecific[fractype].tojulia = fractype;
 			fractalspecific[fractype].tomandel = NOFRACTAL;
-			ismand = 0;
+			g_is_mand = 0;
 		}
 		else
 		{
 			fractalspecific[fractype].tojulia = NOFRACTAL;
 			fractalspecific[fractype].tomandel = fractype;
-			ismand = 1;
+			g_is_mand = 1;
 		}
 	}
 

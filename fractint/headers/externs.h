@@ -31,7 +31,7 @@ extern int                   bad_code_count;
 extern int                   bad_outside;
 extern int                   bad_value;
 extern long                  bailout;
-extern enum bailouts         bailoutest;
+extern enum bailouts         g_bail_out_test;
 extern int                   basehertz;
 extern int                   basin;
 extern int                   bf_save_len;
@@ -196,7 +196,7 @@ extern int                   g_glasses_type;
 extern int                   g_good_mode;						/* video mode ok? */
 extern int                   g_got_real_dac;					/* loaddac worked, really got a dac */
 extern int                   got_status;
-extern char                  grayflag;
+extern int					g_grayscale_depth;
 extern char                  GreyFile[];
 extern int                   hasinverse;
 extern int                   haze;
@@ -221,8 +221,8 @@ extern char                 insufficient_ifs_mem[];
 extern int                   integerfractal;
 extern double                inversion[];
 extern int                   invert;
-extern int                   g_is_true_color;
-extern short                 ismand;
+extern int					g_is_true_color;
+extern int					g_is_mand;
 extern int                   ixstart;
 extern int                   ixstop;
 extern int                   iystart;
@@ -395,7 +395,7 @@ extern double                potparam[];
 #ifndef XFRACT
 extern U16                   prefix[];
 #endif
-extern char                  preview;
+extern int					g_preview;
 extern int                   previewfactor;
 extern int                   px;
 extern int                   py;
@@ -452,7 +452,7 @@ extern float                 screenaspect;
 extern char                  scrnfile[];
 extern struct SearchPath     searchfor;
 extern int                   set_orbit_corners;
-extern char                  showbox;
+extern int					g_show_box;
 extern int                   showdot;
 extern int                   showfile;
 extern int                   show_orbit;

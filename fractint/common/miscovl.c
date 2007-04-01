@@ -649,7 +649,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" formulaname=%s", FormName);
 			if (uses_ismand)
 			{
-				put_parm(" ismand=%c", ismand?'y':'n');
+				put_parm(" ismand=%c", g_is_mand?'y':'n');
 			}
 		}
 		if (fractype == LSYSTEM)
@@ -855,30 +855,30 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" bailout=%ld", bailout);
 		}
 
-		if (bailoutest != Mod)
+		if (g_bail_out_test != Mod)
 		{
 			put_parm(" bailoutest=");
-			if (bailoutest == Real)
+			if (g_bail_out_test == Real)
 			{
 				put_parm("real");
 			}
-			else if (bailoutest == Imag)
+			else if (g_bail_out_test == Imag)
 			{
 				put_parm("imag");
 			}
-			else if (bailoutest == Or)
+			else if (g_bail_out_test == Or)
 			{
 				put_parm("or");
 			}
-			else if (bailoutest == And)
+			else if (g_bail_out_test == And)
 			{
 				put_parm("and");
 			}
-			else if (bailoutest == Manh)
+			else if (g_bail_out_test == Manh)
 			{
 				put_parm("manh");
 			}
-			else if (bailoutest == Manr)
+			else if (g_bail_out_test == Manr)
 			{
 				put_parm("manr");
 			}
@@ -1139,10 +1139,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" transparent=%d/%d", transparent[0], transparent[1]);
 		}
-		if (preview)
+		if (g_preview)
 		{
 			put_parm(" preview=yes");
-			if (showbox)
+			if (g_show_box)
 			{
 				put_parm(" showbox=yes");
 			}
@@ -1172,7 +1172,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" fullcolor=y");
 		}
-		if (grayflag)
+		if (g_grayscale_depth)
 		{
 			put_parm(" usegrayscale=y");
 		}

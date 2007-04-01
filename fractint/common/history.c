@@ -132,11 +132,11 @@ void _fastcall save_history_info(void)
 	current.major_method		= (short) major_method;
 	current.minor_method		= (short) minor_method;
 	current.bailout				= bailout;
-	current.bailoutest			= (short) bailoutest;
+	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= maxit;
 	current.old_demm_colors		= (short) old_demm_colors;
 	current.logcalc				= (short) Log_Fly_Calc;
-	current.ismand				= (short) ismand;
+	current.ismand				= (short) g_is_mand;
 	current.closeprox			= closeprox;
 	current.nobof				= (short) nobof;
 	current.orbit_delay			= (short) orbit_delay;
@@ -323,7 +323,7 @@ void _fastcall restore_history_info(void)
 	major_method        	= (enum Major) last.major_method;
 	minor_method        	= (enum Minor) last.minor_method;
 	bailout             	= last.bailout;
-	bailoutest          	= (enum bailouts) last.bailoutest;
+	g_bail_out_test          	= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
 	old_demm_colors     	= last.old_demm_colors;
 	curfractalspecific  	= &fractalspecific[fractype];
@@ -333,7 +333,7 @@ void _fastcall restore_history_info(void)
 		invert = 3;
 	}
 	Log_Fly_Calc			= last.logcalc;
-	ismand					= last.ismand;
+	g_is_mand					= last.ismand;
 	closeprox				= last.closeprox;
 	nobof					= last.nobof;
 	orbit_delay				= last.orbit_delay;
