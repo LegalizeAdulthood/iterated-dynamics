@@ -759,7 +759,7 @@ static int _fastcall store_item_name(char *nameptr)
 		fsave_info.uses_p2 = (short) uses_p2;
 		fsave_info.uses_p3 = (short) uses_p3;
 		fsave_info.uses_ismand = (short) uses_ismand;
-		fsave_info.ismand = (short) ismand;
+		fsave_info.ismand = (short) g_is_mand;
 		fsave_info.uses_p4 = (short) uses_p4;
 		fsave_info.uses_p5 = (short) uses_p5;
 	}
@@ -901,7 +901,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->maxfn = maxfn;
 	save_info->inversejulia = (short) ((major_method << 8) + minor_method);      /* MVS */
 	save_info->bailout = bailout;
-	save_info->bailoutest = (short) bailoutest;
+	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = maxit;
 	save_info->bflength = (short) bnlength;
 	save_info->bf_math = (short) bf_math;
