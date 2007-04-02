@@ -231,8 +231,7 @@ short decoder(short linewidth)
 	clear = (short) (1 << size);
 	ending = (short) (clear + 1);
 	slot = newcodes = (short) (ending + 1);
-	navail_bytes = nbits_left = sizeofstring[slot] = xskip = yskip
-		= old_code = 0;
+	navail_bytes = nbits_left = sizeofstring[slot] = xskip = yskip = old_code = 0;
 	out_value = 0;
 	for (i = 0; i < slot; i++)
 	{
@@ -294,7 +293,8 @@ short decoder(short linewidth)
 				c = 0;
 			}
 
-			out_value = (BYTE) (old_code = c);
+			old_code = c;
+			out_value = (BYTE) old_code;
 
 			/* And let us not forget to put the char into the buffer... */
 			*sp++ = (BYTE) c;

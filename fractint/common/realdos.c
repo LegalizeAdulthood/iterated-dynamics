@@ -759,7 +759,8 @@ int fullscreen_choice(
 			for (i = 0; i + topleftchoice < numchoices && i < boxitems; ++i)
 			{
 				/* display the choices */
-				k = attributes[j = i + topleftchoice] & 3;
+				j = i + topleftchoice;
+				k = attributes[j] & 3;
 				if (k == 1)
 				{
 					k = C_PROMPT_LO;
@@ -866,10 +867,12 @@ int fullscreen_choice(
 		case FIK_ESC:
 			goto fs_choice_end;
 		case FIK_DOWN_ARROW:
-			rev_increment = -(increment = boxwidth);
+			increment = boxwidth;
+			rev_increment = -increment;
 			break;
 		case FIK_CTL_DOWN_ARROW:
-			rev_increment = -(increment = boxwidth);
+			increment = boxwidth;
+			rev_increment = -increment;
 			{
 				int newcurrent = current;
 				while ((newcurrent += boxwidth) != current)
@@ -890,10 +893,12 @@ int fullscreen_choice(
 			}
 			break;
 		case FIK_UP_ARROW:
-			increment = -(rev_increment = boxwidth);
+			rev_increment = boxwidth;
+			increment = -rev_increment;
 			break;
 		case FIK_CTL_UP_ARROW:
-			increment = -(rev_increment = boxwidth);
+			rev_increment = boxwidth;
+			increment = -rev_increment;
 			{
 				int newcurrent = current;
 				while ((newcurrent -= boxwidth) != current)
@@ -915,10 +920,12 @@ int fullscreen_choice(
 			}
 			break;
 		case FIK_RIGHT_ARROW:
-			increment = 1; rev_increment = -1;
+			increment = 1;
+			rev_increment = -1;
 			break;
-			case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to first file */
-			increment = 1; rev_increment = -1;
+		case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to first file */
+			increment = 1;
+			rev_increment = -1;
 			{
 				int newcurrent = current;
 				while (++newcurrent != current)
@@ -939,10 +946,12 @@ int fullscreen_choice(
 			}
 			break;
 		case FIK_LEFT_ARROW:
-			increment = -1; rev_increment = 1;
+			increment = -1;
+			rev_increment = 1;
 			break;
 		case FIK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to last file */
-			increment = -1; rev_increment = 1;
+			increment = -1;
+			rev_increment = 1;
 			{
 				int newcurrent = current;
 				while (--newcurrent != current)

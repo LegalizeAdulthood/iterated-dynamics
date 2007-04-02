@@ -3,6 +3,7 @@
 	for 3D, used by lorenz.c and line3d.c
 	By Tim Wegner and Marc Reinig.
 */
+#include <assert.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -466,43 +467,44 @@ void plot_setup()
 	switch (g_glasses_type)
 	{
 	case STEREO_ALTERNATE:
-		standardplot = plot3dalternate;
+		g_standard_plot = plot3dalternate;
 		break;
 
 	case STEREO_SUPERIMPOSE:
 		if (colors == 256)
 		{
-			standardplot = (fractype != IFS3D) ? plot3dsuperimpose256 : plotIFS3dsuperimpose256;
+			g_standard_plot = (fractype != IFS3D) ? plot3dsuperimpose256 : plotIFS3dsuperimpose256;
 		}
 		else
 		{
-			standardplot = plot3dsuperimpose16;
+			g_standard_plot = plot3dsuperimpose16;
 		}
 		break;
 
 	case STEREO_PAIR: /* crosseyed mode */
 		if (sxdots < 2*xdots)
 		{
-			standardplot = (XROT == 0 && YROT == 0) ? plot3dcrosseyedA /* use hidden surface kludge */
-				: plot3dcrosseyedB;
+			g_standard_plot = (XROT == 0 && YROT == 0) ? /* use hidden surface kludge */
+				plot3dcrosseyedA : plot3dcrosseyedB;
 		}
 		else if (XROT == 0 && YROT == 0)
 		{
-			standardplot = plot3dcrosseyedC; /* use hidden surface kludge */
+			g_standard_plot = plot3dcrosseyedC; /* use hidden surface kludge */
 		}
 		else
 		{
-			standardplot = putcolor;
+			g_standard_plot = putcolor;
 		}
 		break;
 
 	default:
-		standardplot = putcolor;
+		g_standard_plot = putcolor;
 		break;
 	}
+	assert(g_standard_plot);
 
-	xshift1 = xshift = (int)((XSHIFT*(double)xdots)/100);
-	yshift1 = yshift = (int)((YSHIFT*(double)ydots)/100);
+	xshift1 = g_x_shift = (int)((XSHIFT*(double)xdots)/100);
+	yshift1 = g_y_shift = (int)((YSHIFT*(double)ydots)/100);
 
 	if (g_glasses_type)
 	{
@@ -516,10 +518,10 @@ void plot_setup()
 		switch (g_which_image)
 		{
 		case WHICHIMAGE_RED:
-			xshift  += (int)((g_eye_separation* (double)xdots)/200);
-			xxadjust = (int)(((xtrans + xadjust)* (double)xdots)/100);
+			g_x_shift  += (int)((g_eye_separation* (double)xdots)/200);
+			g_xx_adjust = (int)(((xtrans + g_x_adjust)* (double)xdots)/100);
 			xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
-			xxadjust1 = (int)(((xtrans-xadjust)* (double)xdots)/100);
+			xxadjust1 = (int)(((xtrans-g_x_adjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
 			{
 				sxoffs = sxdots / 2 - xdots;
@@ -527,8 +529,8 @@ void plot_setup()
 			break;
 
 		case WHICHIMAGE_BLUE:
-			xshift  -= (int)((g_eye_separation* (double)xdots)/200);
-			xxadjust = (int)(((xtrans-xadjust)* (double)xdots)/100);
+			g_x_shift  -= (int)((g_eye_separation* (double)xdots)/200);
+			g_xx_adjust = (int)(((xtrans-g_x_adjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
 			{
 				sxoffs = sxdots / 2;
@@ -538,9 +540,9 @@ void plot_setup()
 	}
 	else
 	{
-		xxadjust = (int)((xtrans* (double)xdots)/100);
+		g_xx_adjust = (int)((xtrans* (double)xdots)/100);
 	}
-	yyadjust = (int)(-(ytrans* (double)ydots)/100);
+	g_yy_adjust = (int)(-(ytrans* (double)ydots)/100);
 
 	if (mapset)
 	{

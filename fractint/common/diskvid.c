@@ -200,7 +200,8 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	{
 		--longtmp; /* safety for next line */
 	}
-	cache_end = (cache_lru = cache_start) + longtmp / sizeof(*cache_start);
+	cache_lru = cache_start;
+	cache_end = cache_lru + longtmp/sizeof(*cache_start);
 	membuf = (BYTE *)malloc((long)BLOCKLEN);
 	if (cache_start == NULL || membuf == NULL)
 	{
@@ -425,7 +426,8 @@ void writedisk(int col, int row, int color)
 		{
 			return;
 		}
-		cur_row_base = (long) (cur_row = row)*rowsize;
+		cur_row = row;
+		cur_row_base = (long) cur_row*rowsize;
 	}
 	if (col >= rowsize)
 	{

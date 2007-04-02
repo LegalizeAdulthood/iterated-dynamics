@@ -139,7 +139,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			{
 				init3d[i] = read_info.init3d[i];
 			}
-			previewfactor   = read_info.previewfactor;
+			g_preview_factor   = read_info.previewfactor;
 			xtrans          = read_info.xtrans;
 			ytrans          = read_info.ytrans;
 			red_crop_left   = read_info.red_crop_left;
@@ -148,7 +148,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			blue_crop_right = read_info.blue_crop_right;
 			red_bright      = read_info.red_bright;
 			blue_bright     = read_info.blue_bright;
-			xadjust         = read_info.xadjust;
+			g_x_adjust         = read_info.xadjust;
 			g_eye_separation   = read_info.eyeseparation;
 			g_glasses_type     = read_info.glassestype;
 		}
@@ -172,10 +172,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		yy3rd       = read_info.y3rd;
 		calc_status = read_info.calc_status;
 		usr_stdcalcmode = read_info.stdcalcmode;
-		three_pass = 0;
+		g_three_pass = 0;
 		if (usr_stdcalcmode == 127)
 		{
-			three_pass = 1;
+			g_three_pass = 1;
 			usr_stdcalcmode = '3';
 		}
 		usr_distest     = read_info.distestold;
@@ -218,15 +218,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		if (!display3d && read_info.flag3d > 0)
 		{
 			loaded3d       = 1;
-			Ambient        = read_info.ambient;
-			RANDOMIZE      = read_info.randomize;
-			haze           = read_info.haze;
+			g_ambient        = read_info.ambient;
+			g_randomize      = read_info.randomize;
+			g_haze           = read_info.haze;
 			transparent[0] = read_info.transparent[0];
 			transparent[1] = read_info.transparent[1];
 		}
 	}
 
-	rotate_lo = 1; rotate_hi = 255;
+	rotate_lo = 1;
+	rotate_hi = 255;
 	distestwidth = 71;
 	if (read_info.version > 5)
 	{

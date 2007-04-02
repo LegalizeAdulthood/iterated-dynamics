@@ -246,8 +246,10 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 		altinc = to.x-fr.x;
 		altctr = altinc/2;
 		yincr = (to.y > fr.y)?1:-1;
-		line2.x = (line1.x = fr.x) + dx;
-		line2.y = (line1.y = fr.y) + dy;
+		line1.x = fr.x;
+		line1.y = fr.y;
+		line2.x = line1.x + dx;
+		line2.y = line1.y + dy;
 		while (--ctr >= 0)
 		{
 			line1.x += xincr;
@@ -278,8 +280,10 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 		altinc = to.y-fr.y;
 		altctr = altinc/2;
 		xincr = (to.x > fr.x) ? 1 : -1;
-		line2.x = (line1.x = fr.x) + dx;
-		line2.y = (line1.y = fr.y) + dy;
+		line1.x = fr.x;
+		line1.y = fr.y;
+		line2.x = line1.x + dx;
+		line2.y = line1.y + dy;
 		while (--ctr >= 0)
 		{
 			line1.y += yincr;
@@ -557,7 +561,8 @@ void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
 	plotmx2 = (yy3rd-yymax);
 	plotmy1 = (yymin-yy3rd);
 	plotmy2 = (xxmax-xx3rd);
-	savxxmin = xxmin; savyymax = yymax;
+	savxxmin = xxmin;
+	savyymax = yymax;
 	zmo_calc(sxmin-savxxmin, symax-savyymax, &xxmin, &yymax, ftemp);
 	zmo_calc(sxmax-savxxmin, symin-savyymax, &xxmax, &yymin, ftemp);
 	zmo_calc(sx3rd-savxxmin, sy3rd-savyymax, &xx3rd, &yy3rd, ftemp);
@@ -685,7 +690,7 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 	if (fromrow >= 0 && fromrow < ydots)
 	{
 		tocol = startcol = 0;
-		endcol = xdots-1;
+		endcol = xdots - 1;
 		if (col < 0)
 		{
 			tocol -= col;

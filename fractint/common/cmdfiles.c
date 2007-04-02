@@ -275,7 +275,8 @@ int cmdfiles(int argc, char **argv)
 					{
 						strcpy(readname, curarg);
 						extract_filename(browsename, readname);
-						curarg[0] = (char)(showfile = 0);
+						showfile = 0;
+						curarg[0] = 0;
 					}
 					fclose(initfile);
 				}
@@ -567,16 +568,16 @@ static void initvars_fractal()          /* init vars affecting calculation */
 
 static void initvars_3d()               /* init vars affecting 3d */
 {
-	RAY     = 0;
-	BRIEF   = 0;
+	g_raytrace_output = RAYTRACE_NONE;
+	g_raytrace_brief   = 0;
 	SPHERE = FALSE;
 	g_preview = 0;
 	g_show_box = 0;
-	xadjust = 0;
-	yadjust = 0;
+	g_x_adjust = 0;
+	g_y_adjust = 0;
 	g_eye_separation = 0;
 	g_glasses_type = STEREO_NONE;
-	previewfactor = 20;
+	g_preview_factor = 20;
 	red_crop_left   = 4;
 	red_crop_right  = 0;
 	blue_crop_left  = 0;
@@ -2140,7 +2141,8 @@ static int invert_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	invert = ((inversion[0] = context->floatval[0]) != 0.0) ? context->totparms : 0;
+	inversion[0] = context->floatval[0];
+	invert = (inversion[0] != 0.0) ? context->totparms : 0;
 	if (context->totparms == 3)
 	{
 		inversion[1] = context->floatval[1];
@@ -2779,7 +2781,7 @@ static int inter_ocular_arg(const cmd_context *context)
 
 static int converge_arg(const cmd_context *context)
 {
-	xadjust = context->numval;
+	g_x_adjust = context->numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2958,7 +2960,7 @@ static int coarse_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	previewfactor = context->numval;
+	g_preview_factor = context->numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2968,7 +2970,7 @@ static int randomize_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	RANDOMIZE = context->numval;
+	g_randomize = context->numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2978,7 +2980,7 @@ static int ambient_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	Ambient = context->numval;
+	g_ambient = context->numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2988,7 +2990,7 @@ static int haze_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	haze = context->numval;
+	g_haze = context->numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -3031,9 +3033,9 @@ static int background_arg(const cmd_context *context)
 			return badarg(context->curarg);
 		}
 	}
-	back_color[0] = (BYTE)context->intval[0];
-	back_color[1] = (BYTE)context->intval[1];
-	back_color[2] = (BYTE)context->intval[2];
+	g_back_color[0] = (BYTE)context->intval[0];
+	g_back_color[1] = (BYTE)context->intval[1];
+	g_back_color[2] = (BYTE)context->intval[2];
 	return COMMAND_3D_PARAM;
 }
 
@@ -3045,7 +3047,7 @@ static int light_name_arg(const cmd_context *context)
 	}
 	if (first_init || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		strcpy(light_name, context->value);
+		strcpy(g_light_name, context->value);
 	}
 	return COMMAND_OK;
 }
@@ -3056,7 +3058,7 @@ static int ray_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	RAY = context->numval;
+	g_raytrace_output = context->numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -3152,12 +3154,12 @@ static int use_grayscale_depth_arg(const cmd_context *context)
 
 static int targa_overlay_arg(const cmd_context *context)
 {
-	return flag_arg(context, &Targa_Overlay, COMMAND_3D_PARAM);
+	return flag_arg(context, &g_targa_overlay, COMMAND_3D_PARAM);
 }
 
 static int brief_arg(const cmd_context *context)
 {
-	return flag_arg(context, &BRIEF, COMMAND_3D_PARAM);
+	return flag_arg(context, &g_raytrace_brief, COMMAND_3D_PARAM);
 }
 
 static int screencoords_arg(const cmd_context *context)
@@ -3525,7 +3527,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "preview", 		preview_arg },
 			{ "showbox", 		showbox_arg },
 			{ "coarse", 		coarse_arg },			/* coarse=? */
-			{ "randomize", 		randomize_arg },		/* RANDOMIZE=? */
+			{ "randomize", 		randomize_arg },		/* randomize=? */
 			{ "ambient", 		ambient_arg },			/* ambient=? */
 			{ "haze", 			haze_arg },				/* haze=? */
 			{ "fullcolor", 		fullcolor_arg },
@@ -3536,7 +3538,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "targa_overlay", 	targa_overlay_arg },
 			{ "background", 	background_arg },		/* background=?/? */
 			{ "lightname", 		light_name_arg },		/* lightname=?   */
-			{ "ray", 			ray_arg },				/* RAY=? */
+			{ "ray", 			ray_arg },				/* ray=? */
 			{ "brief", 			brief_arg },
 			{ "release", 		release_arg },			/* release */
 			{ "curdir", 		cur_dir_arg },
@@ -3687,9 +3689,9 @@ static int parse_colors(char *value)
 					g_dac_box[i][j] = (BYTE)k;
 					if (smooth)
 					{
-						int start, spread, cnum;
-						start = i - (spread = smooth + 1);
-						cnum = 0;
+						int spread = smooth + 1;
+						int start = i - spread;
+						int cnum = 0;
 						if ((k - (int)g_dac_box[start][j]) == 0)
 						{
 							while (++cnum < spread)
@@ -3769,10 +3771,12 @@ void set_3d_defaults()
 	xtrans    = 0;
 	ytrans    = 0;
 	LIGHTAVG  = 0;
-	Ambient   = 20;
-	RANDOMIZE = 0;
-	haze      = 0;
-	back_color[0] = 51; back_color[1] = 153; back_color[2] = 200;
+	g_ambient   = 20;
+	g_randomize = 0;
+	g_haze      = 0;
+	g_back_color[0] = 51;
+	g_back_color[1] = 153;
+	g_back_color[2] = 200;
 	if (SPHERE)
 	{
 		PHI1      =  180;

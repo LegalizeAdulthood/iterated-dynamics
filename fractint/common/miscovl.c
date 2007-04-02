@@ -1153,12 +1153,12 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			{
 				put_parm(" showbox=yes");
 			}
-			put_parm(" coarse=%d", previewfactor);
+			put_parm(" coarse=%d", g_preview_factor);
 		}
-		if (RAY)
+		if (g_raytrace_output)
 		{
-			put_parm(" ray=%d", RAY);
-			if (BRIEF)
+			put_parm(" ray=%d", g_raytrace_output);
+			if (g_raytrace_brief)
 			{
 				put_parm(" brief=y");
 			}
@@ -1171,9 +1171,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm(" smoothing=%d", LIGHTAVG);
 			}
 		}
-		if (RANDOMIZE)
+		if (g_randomize)
 		{
-			put_parm(" randomize=%d", RANDOMIZE);
+			put_parm(" randomize=%d", g_randomize);
 		}
 		if (Targa_Out)
 		{
@@ -1183,17 +1183,17 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" usegrayscale=y");
 		}
-		if (Ambient)
+		if (g_ambient)
 		{
-			put_parm(" ambient=%d", Ambient);
+			put_parm(" ambient=%d", g_ambient);
 		}
-		if (haze)
+		if (g_haze)
 		{
-			put_parm(" haze=%d", haze);
+			put_parm(" haze=%d", g_haze);
 		}
-		if (back_color[0] != 51 || back_color[1] != 153 || back_color[2] != 200)
+		if (g_back_color[0] != 51 || g_back_color[1] != 153 || g_back_color[2] != 200)
 		{
-			put_parm(" background=%d/%d/%d", back_color[0], back_color[1], back_color[2]);
+			put_parm(" background=%d/%d/%d", g_back_color[0], g_back_color[1], g_back_color[2]);
 		}
 	}
 
@@ -1214,7 +1214,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" stereo=%d", g_glasses_type);
 			put_parm(" interocular=%d", g_eye_separation);
-			put_parm(" converge=%d", xadjust);
+			put_parm(" converge=%d", g_x_adjust);
 			put_parm(" crop=%d/%d/%d/%d",
 				red_crop_left, red_crop_right, blue_crop_left, blue_crop_right);
 			put_parm(" bright=%d/%d", red_bright, blue_bright);

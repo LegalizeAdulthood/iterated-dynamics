@@ -120,9 +120,9 @@ int gifview()
 	/* Get the screen description */
 	for (i = 0; i < 13; i++)
 	{
-		int tmp;
+		int tmp = get_byte();
 
-		buffer[i] = (BYTE)(tmp = get_byte());
+		buffer[i] = (BYTE) tmp;
 		if (tmp < 0)
 		{
 			close_file();
@@ -227,9 +227,9 @@ int gifview()
 			*/
 			for (i = 0; i < 9; i++)
 			{
-				int tmp;
+				int tmp = get_byte();
 
-				buffer[i] = (BYTE)(tmp = get_byte());
+				buffer[i] = (BYTE) tmp;
 				if (tmp < 0)
 				{
 					status = -1;

@@ -3,7 +3,7 @@
 	generators - IFS and LORENZ3D, along with code to generate
 	red/blue 3D images. Tim Wegner
 */
-
+#include <assert.h>
 #include <string.h>
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -246,8 +246,12 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 	{
 		return -1;
 	}
-	l_cvt->a = (long)(cvt.a*fudge); l_cvt->b = (long)(cvt.b*fudge); l_cvt->c = (long)(cvt.c*fudge);
-	l_cvt->d = (long)(cvt.d*fudge); l_cvt->e = (long)(cvt.e*fudge); l_cvt->f = (long)(cvt.f*fudge);
+	l_cvt->a = (long)(cvt.a*fudge);
+	l_cvt->b = (long)(cvt.b*fudge);
+	l_cvt->c = (long)(cvt.c*fudge);
+	l_cvt->d = (long)(cvt.d*fudge);
+	l_cvt->e = (long)(cvt.e*fudge);
+	l_cvt->f = (long)(cvt.f*fudge);
 
 	/* MCP 7-7-91 */
 	return 0;
@@ -302,7 +306,8 @@ int orbit3dlongsetup()
 		}
 		l_b =  (long)(param[1]*fudge);    /* stepsize */
 		l_c =  (long)(param[2]*fudge);    /* stop */
-		t = (int)(l_d =  (long)(param[3]));     /* points per orbit */
+		l_d =  (long) param[3];
+		t = (int) l_d;     /* points per orbit */
 
 		l_sinx = (long)(sin(a)*fudge);
 		l_cosx = (long)(cos(a)*fudge);
@@ -474,7 +479,8 @@ int orbit3dfloatsetup()
 		}
 		b =  param[1];    /* stepsize */
 		c =  param[2];    /* stop */
-		t = (int)(l_d =  (long)(param[3]));     /* points per orbit */
+		l_d =  (long) param[3];
+		t = (int) l_d;     /* points per orbit */
 		sinx = sin(a);
 		cosx = cos(a);
 		orbit = 0;
@@ -2290,7 +2296,8 @@ int funny_glasses_call(int (*calc)(void))
 	status = 0;
 	g_which_image = g_glasses_type ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
 	plot_setup();
-	plot = standardplot;
+	assert(g_standard_plot);
+	plot = g_standard_plot;
 	status = calc();
 	if (realtime && g_glasses_type < STEREO_PHOTO)
 	{
@@ -2318,7 +2325,8 @@ int funny_glasses_call(int (*calc)(void))
 			curfractalspecific->per_image(); /* reset for 2nd image */
 		}
 		plot_setup();
-		plot = standardplot;
+		assert(g_standard_plot);
+		plot = g_standard_plot;
 		/* is there a better way to clear the graphics screen ? */
 		status = calc();
 		if (status != 0)
@@ -2847,8 +2855,8 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
-			tmpy += ((double)yshift*(yymax-yymin))/(ydots);
+			tmpx += ((double)g_x_shift*(xxmax-xxmin))/(xdots);
+			tmpy += ((double)g_y_shift*(yymax-yymin))/(ydots);
 			tmpz = -((double)inf->maxvals[2]) / fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2865,7 +2873,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 			}
 			for (i = 0; i < 3; i++)
 			{
-				view[i] = (double)inf->iview[i] / fudge;
+				g_view[i] = (double)inf->iview[i] / fudge;
 			}
 
 			/* copy xform matrix to long for for fixed point math */
@@ -2927,11 +2935,11 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 	inf->row = (int)(((multiply(inf->cvt.c, inf->viewvect[0], bitshift) +
 			multiply(inf->cvt.d, inf->viewvect[1], bitshift) + inf->cvt.f)
 			>> bitshift)
-		+ yyadjust);
+		+ g_yy_adjust);
 	inf->col = (int)(((multiply(inf->cvt.a, inf->viewvect[0], bitshift) +
 			multiply(inf->cvt.b, inf->viewvect[1], bitshift) + inf->cvt.e)
 			>> bitshift)
-		+ xxadjust);
+		+ g_xx_adjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
 		inf->col = inf->row =
@@ -3002,18 +3010,18 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 		}
 		if (coloriter == waste) /* time to work it out */
 		{
-			view[0] = view[1] = 0; /* center on origin */
+			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme
 									negative part of image */
-			view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
+			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0;
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)xshift*(xxmax-xxmin))/(xdots);
-			tmpy += ((double)yshift*(yymax-yymin))/(ydots);
+			tmpx += ((double)g_x_shift*(xxmax-xxmin))/(xdots);
+			tmpy += ((double)g_y_shift*(yymax-yymin))/(ydots);
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -3042,9 +3050,9 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 		}
 	}
 	inf->row = (int)(inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
-				+ inf->cvt.f + yyadjust);
+				+ inf->cvt.f + g_yy_adjust);
 	inf->col = (int)(inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
-				+ inf->cvt.e + xxadjust);
+				+ inf->cvt.e + g_xx_adjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
 		inf->col = inf->row =

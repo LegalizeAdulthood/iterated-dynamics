@@ -622,7 +622,8 @@ void mStkSqr(void)
 	Arg1->m.y.Exp++;
 	Arg1->m.x = *MPsub(LastSqr.m.x, LastSqr.m.y);
 	LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
-	LastSqr.m.y.Mant = (long)(LastSqr.m.y.Exp = 0);
+	LastSqr.m.y.Exp = 0;
+	LastSqr.m.y.Mant = 0L;
 }
 
 void lStkSqr(void)
@@ -869,7 +870,8 @@ void dStkReal(void)
 #if !defined(XFRACT)
 void mStkReal(void)
 {
-	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+	Arg1->m.y.Exp = 0;
+	Arg1->m.y.Mant = 0L;
 }
 
 void lStkReal(void)
@@ -890,7 +892,8 @@ void dStkImag(void)
 void mStkImag(void)
 {
 	Arg1->m.x = Arg1->m.y;
-	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+	Arg1->m.y.Exp = 0;
+	Arg1->m.y.Mant = 0L;
 }
 
 void lStkImag(void)
@@ -1001,7 +1004,8 @@ void dStkMod(void)
 void mStkMod(void)
 {
 	Arg1->m.x = MPCmod(Arg1->m);
-	Arg1->m.y.Mant = (long)(Arg1->m.y.Exp = 0);
+	Arg1->m.y.Exp = 0;
+	Arg1->m.y.Mant = 0L;
 }
 
 void lStkMod(void)
@@ -1609,7 +1613,8 @@ void dStkLT(void)
 void mStkLT(void)
 {
 	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1637,7 +1642,8 @@ void dStkGT(void)
 void mStkGT(void)
 {
 	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1668,7 +1674,8 @@ void mStkLTE(void)
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
 	Arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1699,7 +1706,8 @@ void mStkGTE(void)
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
 	Arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1730,7 +1738,8 @@ void mStkEQ(void)
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
 	Arg2->m.x = *fg2MP((long)(comp == 0), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1761,7 +1770,8 @@ void mStkNE(void)
 
 	comp = MPcmp(Arg2->m.x, Arg1->m.x);
 	Arg2->m.x = *fg2MP((long)(comp != 0), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1789,7 +1799,8 @@ void dStkOR(void)
 void mStkOR(void)
 {
 	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -1817,7 +1828,8 @@ void dStkAND(void)
 void mStkAND(void)
 {
 	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
-	Arg2->m.y.Mant = (long)(Arg2->m.y.Exp = 0);
+	Arg2->m.y.Exp = 0;
+	Arg2->m.y.Mant = 0L;
 	Arg1--;
 	Arg2--;
 }
@@ -2034,13 +2046,13 @@ void StkJumpLabel(void)
 }
 
 
-unsigned SkipWhiteSpace(char *Str)
+unsigned SkipWhiteSpace(char *str)
 {
-	unsigned n, Done;
+	unsigned n, done;
 
-	for (Done = n = 0; !Done; n++)
+	for (done = n = 0; !done; n++)
 	{
-		switch (Str[n])
+		switch (str[n])
 		{
 		case ' ':
 		case '\t':
@@ -2048,7 +2060,7 @@ unsigned SkipWhiteSpace(char *Str)
 		case '\r':
 			break;
 		default:
-			Done = 1;
+			done = 1;
 		}
 	}
 	return n - 1;

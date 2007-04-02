@@ -229,7 +229,8 @@ int get_toggles()
 	uvalues[k].uval.ch.vlen = 4;
 	uvalues[k].uval.ch.llen = 5;
 	uvalues[k].uval.ch.list = soundmodes;
-	uvalues[k].uval.ch.val = (old_soundflag = soundflag) & SOUNDFLAG_ORBITMASK;
+	old_soundflag = soundflag;
+	uvalues[k].uval.ch.val = old_soundflag & SOUNDFLAG_ORBITMASK;
 
 	if (rangeslen == 0)
 	{
@@ -496,7 +497,8 @@ int get_toggles2()
 
 	choices[++k] = "Potential Max Color (0 means off)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = (int)(old_potparam[0] = potparam[0]);
+	old_potparam[0] = potparam[0];
+	uvalues[k].uval.ival = (int) old_potparam[0];
 
 	choices[++k] = "          Slope";
 	uvalues[k].type = 'd';
@@ -504,7 +506,8 @@ int get_toggles2()
 
 	choices[++k] = "          Bailout";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = (int)(old_potparam[2] = potparam[2]);
+	old_potparam[2] = potparam[2];
+	uvalues[k].uval.ival = (int) old_potparam[2];
 
 	choices[++k] = "          16 bit values";
 	uvalues[k].type = 'y';

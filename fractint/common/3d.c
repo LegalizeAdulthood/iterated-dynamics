@@ -239,7 +239,7 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 /* use with a function pointer in line3d.c */
 /* must coordinate calling conventions with */
 /* mult_vec in general.asm */
-void mult_vec(VECTOR s)
+void mult_vec(VECTOR s, MATRIX m)
 {
 	VECTOR tmp;
 	int i, j;
@@ -262,17 +262,17 @@ int
 perspective(VECTOR v)
 {
 	double denom;
-	denom = view[2] - v[2];
+	denom = g_view[2] - v[2];
 
 	if (denom >= 0.0)
 	{
-		v[0] = bad_value;   /* clipping will catch these values */
-		v[1] = bad_value;   /* so they won't plot values BEHIND viewer */
-		v[2] = bad_value;
+		v[0] = g_bad_value;   /* clipping will catch these values */
+		v[1] = g_bad_value;   /* so they won't plot values BEHIND viewer */
+		v[2] = g_bad_value;
 		return -1;
 	}
-	v[0] = (v[0]*view[2] - view[0]*v[2])/denom;
-	v[1] = (v[1]*view[2] - view[1]*v[2])/denom;
+	v[0] = (v[0]*g_view[2] - g_view[0]*v[2])/denom;
+	v[1] = (v[1]*g_view[2] - g_view[1]*v[2])/denom;
 
 	/* calculation of z if needed later */
 	/* v[2] =  v[2]/denom; */
@@ -325,8 +325,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
 		denom = lview[2] - tmp[2];
 		if (denom >= 0)           /* bail out if point is "behind" us */
 		{
-			t[0] = bad_value;
-			t[0] = t[0] << bitshift;
+			t[0] = g_bad_value << bitshift;
 			t[1] = t[0];
 			t[2] = t[0];
 			return -1;
@@ -366,7 +365,7 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 	denom = lview[2] - lv[2];
 	if (denom >= 0)              /* bail out if point is "behind" us */
 	{
-		lv[0] = bad_value;
+		lv[0] = g_bad_value;
 		lv[0] = lv[0] << bitshift;
 		lv[1] = lv[0];
 		lv[2] = lv[0];

@@ -126,12 +126,16 @@ _CMPLX  T_Cm1Cm2;     /* (floatparm - 1)*(floatparm - 2) */
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
 {
-	T_Cm1.x = floatparm->x - 1.0;   T_Cm1.y = floatparm->y;
-	T_Cm2.x = floatparm->x - 2.0;   T_Cm2.y = floatparm->y;
+	T_Cm1.x = floatparm->x - 1.0;
+	T_Cm1.y = floatparm->y;
+	T_Cm2.x = floatparm->x - 2.0;
+	T_Cm2.y = floatparm->y;
 	T_Cm1Cm2.x = (T_Cm1.x*T_Cm2.x) - (T_Cm1.y*T_Cm2.y);
 	T_Cm1Cm2.y = (T_Cm1.x*T_Cm2.y) + (T_Cm1.y*T_Cm2.x);
-	T_Cm1.x += T_Cm1.x + T_Cm1.x;   T_Cm1.y += T_Cm1.y + T_Cm1.y;
-	T_Cm2.x += T_Cm2.x + T_Cm2.x;   T_Cm2.y += T_Cm2.y + T_Cm2.y;
+	T_Cm1.x += T_Cm1.x + T_Cm1.x;
+	T_Cm1.y += T_Cm1.y + T_Cm1.y;
+	T_Cm2.x += T_Cm2.x + T_Cm2.x;
+	T_Cm2.y += T_Cm2.y + T_Cm2.y;
 }
 
 /* -------------------------------------------------------------------- */
@@ -414,7 +418,8 @@ void cpower(_CMPLX *base, int exp, _CMPLX *result)
 		return;
 	}
 
-	xt = base->x;   yt = base->y;
+	xt = base->x;
+	yt = base->y;
 
 	if (exp & 1)
 	{
@@ -461,7 +466,8 @@ lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 	}
 
 	overflow = 0;
-	lxt = base->x;   lyt = base->y;
+	lxt = base->x;
+	lyt = base->y;
 
 	if (exp & 1)
 	{
@@ -1940,7 +1946,7 @@ int
 LongPhoenixFractal(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
+	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	ltmp.x = multiply(lold.x, lold.y, bitshift);
 	lnew.x = ltempsqrx-ltempsqry + longparm->x + multiply(longparm->y, ltmp2.x, bitshift);
 	lnew.y = (ltmp.x + ltmp.x) + multiply(longparm->y, ltmp2.y, bitshift);
@@ -1954,7 +1960,7 @@ LongPhoenixFractal(void)
 int
 PhoenixFractal(void)
 {
-/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
+	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	tmp.x = old.x*old.y;
 	g_new.x = tempsqrx - tempsqry + floatparm->x + (floatparm->y*tmp2.x);
 	g_new.y = (tmp.x + tmp.x) + (floatparm->y*tmp2.y);
@@ -1966,7 +1972,7 @@ int
 LongPhoenixFractalcplx(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
+	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	ltmp.x = multiply(lold.x, lold.y, bitshift);
 	lnew.x = ltempsqrx-ltempsqry + longparm->x + multiply(lparm2.x, ltmp2.x, bitshift)-multiply(lparm2.y, ltmp2.y, bitshift);
 	lnew.y = (ltmp.x + ltmp.x) + longparm->y + multiply(lparm2.x, ltmp2.y, bitshift) + multiply(lparm2.y, ltmp2.x, bitshift);
@@ -1980,7 +1986,7 @@ LongPhoenixFractalcplx(void)
 int
 PhoenixFractalcplx(void)
 {
-/* z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n) */
+	/* z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n) */
 	tmp.x = old.x*old.y;
 	g_new.x = tempsqrx - tempsqry + floatparm->x + (parm2.x*tmp2.x) - (parm2.y*tmp2.y);
 	g_new.y = (tmp.x + tmp.x) + floatparm->y + (parm2.x*tmp2.y) + (parm2.y*tmp2.x);
@@ -1992,9 +1998,9 @@ int
 LongPhoenixPlusFractal(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
-int i;
-_LCMPLX loldplus, lnewminus;
+	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
+	int i;
+	_LCMPLX loldplus, lnewminus;
 	loldplus = lold;
 	ltmp = lold;
 	for (i = 1; i < degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -2036,9 +2042,9 @@ int
 LongPhoenixMinusFractal(void)
 {
 #if !defined(XFRACT)
-/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
-int i;
-_LCMPLX loldsqr, lnewminus;
+	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
+	int i;
+	_LCMPLX loldsqr, lnewminus;
 	LCMPLXmult(lold, lold, loldsqr);
 	ltmp = lold;
 	for (i = 1; i < degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -3472,7 +3478,9 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 	{
 		newtest.x = testsqr.x - testsqr.y + param[0];
 		newtest.y = 2.0*oldtest.x*oldtest.y + param[1];
-		testsize = (testsqr.x = sqr(newtest.x)) + (testsqr.y = sqr(newtest.y));
+		testsqr.x = sqr(newtest.x);
+		testsqr.y = sqr(newtest.y);
+		testsize = testsqr.x + testsqr.y;
 		oldtest = newtest;
 		testiter++;
 	}
@@ -3505,18 +3513,24 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 int MandelbrotMix4Setup(void)
 {
 	int sign_array = 0;
-	A.x = param[0];       A.y = 0.0;    /* a = real(p1),     */
-	B.x = param[1];       B.y = 0.0;    /* b = imag(p1),     */
-	D.x = param[2];       D.y = 0.0;    /* d = real(p2),     */
-	F.x = param[3];       F.y = 0.0;    /* f = imag(p2),     */
-	K.x = param[4] + 1.0;   K.y = 0.0;    /* k = real(p3) + 1,   */
-	L.x = param[5] + 100.0; L.y = 0.0;    /* l = imag(p3) + 100, */
-	CMPLXrecip(F, G);                /* g = 1/f,          */
-	CMPLXrecip(D, H);                /* h = 1/d,          */
-	CMPLXsub(F, B, tmp);              /* tmp = f-b       */
-	CMPLXrecip(tmp, J);              /* j = 1/(f-b)     */
+	A.x = param[0];
+	A.y = 0.0;						/* a = real(p1),     */
+	B.x = param[1];
+	B.y = 0.0;						/* b = imag(p1),     */
+	D.x = param[2];
+	D.y = 0.0;						/* d = real(p2),     */
+	F.x = param[3];
+	F.y = 0.0;						/* f = imag(p2),     */
+	K.x = param[4] + 1.0;
+	K.y = 0.0;						/* k = real(p3) + 1,   */
+	L.x = param[5] + 100.0;
+	L.y = 0.0;						/* l = imag(p3) + 100, */
+	CMPLXrecip(F, G);				/* g = 1/f,          */
+	CMPLXrecip(D, H);				/* h = 1/d,          */
+	CMPLXsub(F, B, tmp);			/* tmp = f-b       */
+	CMPLXrecip(tmp, J);				/* j = 1/(f-b)     */
 	CMPLXneg(A, tmp);
-	CMPLXmult(tmp, B, tmp);           /* z = (-a*b*g*h)^j, */
+	CMPLXmult(tmp, B, tmp);			/* z = (-a*b*g*h)^j, */
 	CMPLXmult(tmp, G, tmp);
 	CMPLXmult(tmp, H, tmp);
 

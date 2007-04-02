@@ -64,7 +64,8 @@ long iteration(register DBLS cr, register DBLS ci,
 
 	if (baxinxx)
 	{
-		sre = re; sim = im;
+		sre = re;
+		sim = im;
 		ren = re*re;
 		imn = im*im;
 		if (start != 0)

@@ -2388,10 +2388,15 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			old.y = dypixel();
 		}
 
-		while (!found_attractor
-				&& ((tempsqrx = sqr(old.x)) + (tempsqry = sqr(old.y)) < rqlim)
-				&& (coloriter < maxit))
+		while (!found_attractor)
 		{
+			tempsqrx = sqr(old.x);
+			tempsqry = sqr(old.y);
+			if ((tempsqrx + tempsqry < rqlim) && (coloriter < maxit))
+			{
+				break;
+			}
+
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
 			g_new.x = tempsqrx - tempsqry - old.x - fsp->fl.f.a*old.y;
@@ -2488,9 +2493,16 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			lold.y = lypixel();
 		}
 
-		while (!found_attractor && ((lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y))) < llimit)
-				&& (lmagnitud >= 0) && (coloriter < maxit))
+		while (!found_attractor)
 		{
+			ltempsqrx = lsqr(lold.x);
+			ltempsqry = lsqr(lold.y);
+			lmagnitud = ltempsqrx + ltempsqry;
+			if ((lmagnitud < llimit) && (lmagnitud >= 0) && (coloriter < maxit))
+			{
+				break;
+			}
+
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
 			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
@@ -2498,7 +2510,9 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 			lold.x = lnew.x;
 			if (fsp->repeat_mapping)
 			{
-				lmagnitud = (ltempsqrx = lsqr(lold.x)) + (ltempsqry = lsqr(lold.y));
+				ltempsqrx = lsqr(lold.x);
+				ltempsqry = lsqr(lold.y);
+				lmagnitud = ltempsqrx + ltempsqry;
 				if ((lmagnitud > llimit) || (lmagnitud < 0))
 				{
 					break;

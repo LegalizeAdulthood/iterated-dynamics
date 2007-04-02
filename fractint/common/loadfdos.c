@@ -345,7 +345,8 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 	if (gotrealmode == 0)  /* translate from temp table to permanent */
 	{
-		j = g_video_table[i = g_init_mode].keynum;
+		i = g_init_mode;
+		j = g_video_table[i].keynum;
 		if (j != 0)
 		{
 			for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)

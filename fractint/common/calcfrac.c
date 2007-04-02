@@ -3217,7 +3217,8 @@ static int _fastcall potential(double mag, long iterations)
 
 	if (iterations < maxit)
 	{
-		pot = (float)(l_pot = iterations + 2);
+		l_pot = iterations + 2;
+		pot = (float) l_pot;
 		if (l_pot <= 0 || mag <= 1.0)
 		{
 			pot = 0.0f;
@@ -3275,7 +3276,8 @@ static int _fastcall potential(double mag, long iterations)
 		pot = (float)potparam[0];
 	}
 
-	i_pot = (int)((l_pot = (long)(pot*256)) >> 8);
+	l_pot = (long) pot*256;
+	i_pot = (int) (l_pot >> 8);
 	if (i_pot >= colors)
 	{
 		i_pot = colors - 1;
@@ -3839,7 +3841,8 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			plotblock(0, x, y, c22);
 		}
 		/* setup variables */
-		xplusblock = (xplushalf = x + halfblock) + halfblock;
+		xplushalf = x + halfblock;
+		xplusblock = xplushalf + halfblock;
 		if (xplushalf > ixstop)
 		{
 			if (right_guess == 0)
@@ -4050,7 +4053,8 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			for (i = (ixstop + xxstart + 1)/2; --i >= xxstart; )
 			{
 				color = dstack[i];
-				dstack[i] = dstack[j = ixstop-(i-xxstart)];
+				j = ixstop-(i-xxstart);
+				dstack[i] = dstack[j];
 				dstack[j] = (BYTE)color;
 				j += OLDMAXPIXELS;
 				color = dstack[i + OLDMAXPIXELS];
