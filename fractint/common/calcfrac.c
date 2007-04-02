@@ -153,7 +153,7 @@ unsigned long dif_counter; 	/* the diffusion counter */
 unsigned long dif_limit; 	/* the diffusion counter */
 
 /* static vars for solidguess & its subroutines */
-char three_pass;
+int g_three_pass;
 static int maxblock, halfblock;
 static int guessplot;                   /* paint 1st pass row at a time?   */
 static int right_guess, bottom_guess;
@@ -214,8 +214,8 @@ static int showdotcolor;
 int atan_colors = 180;
 
 static int showdot_width = 0;
-#define SAVE    1
-#define RESTORE 2
+#define SHOWDOT_SAVE    1
+#define SHOWDOT_RESTORE 2
 
 #define JUST_A_POINT 0
 #define LOWER_RIGHT  1
@@ -378,7 +378,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	}
 }
 
-void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direction, int action)
+static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, int direction, int action)
 {
 	int j, ct;
 	ct = 0;
@@ -400,7 +400,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 	case LOWER_RIGHT:
 		for (j = starty; j <= stopy; startx++, j++)
 		{
-			if (action == SAVE)
+			if (action == SHOWDOT_SAVE)
 			{
 				get_line(j, startx, stopx, savedots + ct);
 				sym_fill_line(j, startx, stopx, fillbuff);
@@ -415,7 +415,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 	case UPPER_RIGHT:
 		for (j = starty; j >= stopy; startx++, j--)
 		{
-			if (action == SAVE)
+			if (action == SHOWDOT_SAVE)
 			{
 				get_line(j, startx, stopx, savedots + ct);
 				sym_fill_line(j, startx, stopx, fillbuff);
@@ -430,7 +430,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 	case LOWER_LEFT:
 		for (j = starty; j <= stopy; stopx--, j++)
 		{
-			if (action == SAVE)
+			if (action == SHOWDOT_SAVE)
 			{
 				get_line(j, startx, stopx, savedots + ct);
 				sym_fill_line(j, startx, stopx, fillbuff);
@@ -445,7 +445,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 	case UPPER_LEFT:
 		for (j = starty; j >= stopy; stopx--, j--)
 		{
-			if (action == SAVE)
+			if (action == SHOWDOT_SAVE)
 			{
 				get_line(j, startx, stopx, savedots + ct);
 				sym_fill_line(j, startx, stopx, fillbuff);
@@ -458,7 +458,7 @@ void showdotsaverestore(int startx, int stopx, int starty, int stopy, int direct
 		}
 		break;
 	}
-	if (action == SAVE)
+	if (action == SHOWDOT_SAVE)
 	{
 		(*plot)(col, row, showdotcolor);
 	}
@@ -508,13 +508,13 @@ int calctypeshowdot(void)
 			stopy  = row-1;
 		}
 	}
-	showdotsaverestore(startx, stopx, starty, stopy, direction, SAVE);
+	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_SAVE);
 	if (orbit_delay > 0)
 	{
 		sleepms(orbit_delay);
 	}
 	out = (*calctypetmp)();
-	showdotsaverestore(startx, stopx, starty, stopy, direction, RESTORE);
+	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
 	return out;
 }
 
@@ -535,8 +535,8 @@ int calcfract(void)
 	}
 	if (truecolor)
 	{
-		check_writefile(light_name, ".tga");
-		if (startdisk1(light_name, NULL, 0) == 0)
+		check_writefile(g_light_name, ".tga");
+		if (startdisk1(g_light_name, NULL, 0) == 0)
 		{
 			/* Have to force passes = 1 */
 			usr_stdcalcmode = stdcalcmode = '1';
@@ -795,17 +795,17 @@ int calcfract(void)
 		{
 			int oldcalcmode;
 			oldcalcmode = stdcalcmode;
-			if (!resuming || three_pass)
+			if (!resuming || g_three_pass)
 			{
 				stdcalcmode = 'g';
-				three_pass = 1;
+				g_three_pass = 1;
 				timer(TIMER_ENGINE, (int(*)())perform_worklist);
 				if (calc_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					stdcalcmode = (xdots >= 640) ? '2' : '1';
 					timer(TIMER_ENGINE, (int(*)())perform_worklist);
-					three_pass = 0;
+					g_three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
@@ -817,7 +817,7 @@ int calcfract(void)
 		}
 		else /* main case, much nicer! */
 		{
-			three_pass = 0;
+			g_three_pass = 0;
 			timer(TIMER_ENGINE, (int(*)())perform_worklist);
 		}
 	}
@@ -851,45 +851,19 @@ int calcfract(void)
 /* locate alternate math record */
 int find_alternate_math(int type, int math)
 {
-	int i, ret, curtype /* , curmath = 0 */;
-	/* unsigned umath; */
-	ret = -1;
+	int i;
 	if (math == 0)
 	{
-		return ret;
+		return -1;
 	}
-	i = -1;
-#if 0  /* for now at least, the only alternatemath is bignum and bigflt math */
-	umath = math;
-	umath <<= 14;  /* BF_MATH or DL_MATH */
-
-	/* this depends on last two bits of flags */
-	if (fractalspecific[type].flags & umath)
+	for (i = 0; i < g_alternate_math_len; i++)
 	{
-		do
+		if ((type == g_alternate_math[i].type) && g_alternate_math[i].math)
 		{
-			curtype = alternatemath[++i].type;
-			curmath = alternatemath[i].math;
-		}
-		while ((curtype != type || curmath != math) && curtype != -1);
-
-		if (curtype == type && curmath == math)
-		{
-			ret = i;
+			return i;
 		}
 	}
-#else
-	do
-	{
-		curtype = alternatemath[++i].type;
-	}
-	while (curtype != type && curtype != -1);
-	if (curtype == type && alternatemath[i].math)
-	{
-		ret = i;
-	}
-#endif
-	return ret;
+	return -1;
 }
 
 
@@ -908,9 +882,9 @@ static void perform_worklist()
 		sv_orbitcalc = curfractalspecific->orbitcalc;
 		sv_per_pixel = curfractalspecific->per_pixel;
 		sv_per_image = curfractalspecific->per_image;
-		curfractalspecific->orbitcalc = alternatemath[alt].orbitcalc;
-		curfractalspecific->per_pixel = alternatemath[alt].per_pixel;
-		curfractalspecific->per_image = alternatemath[alt].per_image;
+		curfractalspecific->orbitcalc = g_alternate_math[alt].orbitcalc;
+		curfractalspecific->per_pixel = g_alternate_math[alt].per_pixel;
+		curfractalspecific->per_image = g_alternate_math[alt].per_image;
 	}
 	else
 	{
@@ -3743,7 +3717,7 @@ static int solidguess(void)
 	{
 		memset(&tprefix[0][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
 	}
-	if (three_pass)
+	if (g_three_pass)
 	{
 		goto exit_solidguess;
 	}

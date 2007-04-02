@@ -130,13 +130,13 @@ static void init_bf_2(void)
 	i = find_alternate_math(fractype, BIGNUM);
 	if (i > -1)
 	{
-		bf_math = alternatemath[i].math;
+		bf_math = g_alternate_math[i].math;
 	}
 	else
 	{
 		i = find_alternate_math(fractype, BIGFLT);
 		/* 1 => maybe called from cmdfiles.c and fractype not set */
-		bf_math = (i > -1) ? alternatemath[i].math : 1;
+		bf_math = (i > -1) ? g_alternate_math[i].math : 1;
 	}
 	floatflag = 1;
 

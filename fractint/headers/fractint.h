@@ -27,6 +27,16 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_raytrace_output values */
+#define RAYTRACE_NONE		0
+#define RAYTRACE_POVRAY		1
+#define RAYTRACE_VIVID		2
+#define RAYTRACE_RAW		3
+#define RAYTRACE_MTV		4
+#define RAYTRACE_RAYSHADE	5
+#define RAYTRACE_ACROSPIN	6
+#define RAYTRACE_DXF		7
+
 /* g_orbit_draw_mode values */
 #define ORBITDRAW_RECTANGLE	0
 #define ORBITDRAW_LINE		1
@@ -733,31 +743,23 @@ struct fractalspecificstuff
                                            5 = PI (sin/cos) symmetry
                                            6 = NEWTON (power) symmetry
                                                                 */
-#ifdef XFRACT
-   int (*orbitcalc)();  /* function that calculates one orbit */
-#else
    int (*orbitcalc)(void);      /* function that calculates one orbit */
-#endif
    int (*per_pixel)(void);      /* once-per-pixel init */
    int (*per_image)(void);      /* once-per-image setup */
    int (*calctype)(void);       /* name of main fractal function */
    int orbit_bailout;           /* usual bailout value for orbit calc */
 };
 
-struct alternatemathstuff
+struct tag_alternate_math_info
 {
    int type;                    /* index in fractalname of the fractal */
    int math;                    /* kind of math used */
-#ifdef XFRACT
-   int (*orbitcalc)();  /* function that calculates one orbit */
-#else
    int (*orbitcalc)(void);      /* function that calculates one orbit */
-#endif
    int (*per_pixel)(void);      /* once-per-pixel init */
    int (*per_image)(void);      /* once-per-image setup */
 };
 
-typedef struct alternatemathstuff AlternateMath;
+typedef struct tag_alternate_math_info alternate_math;
 
 /* defines for symmetry */
 #define  NOSYM          0
