@@ -838,7 +838,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	{
 		save_info->init3d[i] = (short) init3d[i];
 	}
-	save_info->previewfactor = (short) previewfactor;
+	save_info->previewfactor = (short) g_preview_factor;
 	save_info->xtrans = (short) xtrans;
 	save_info->ytrans = (short) ytrans;
 	save_info->red_crop_left = (short) red_crop_left;
@@ -847,15 +847,15 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->blue_crop_right = (short) blue_crop_right;
 	save_info->red_bright = (short) red_bright;
 	save_info->blue_bright = (short) blue_bright;
-	save_info->xadjust = (short) xadjust;
-	save_info->yadjust = (short) yadjust;
+	save_info->xadjust = (short) g_x_adjust;
+	save_info->yadjust = (short) g_y_adjust;
 	save_info->eyeseparation = (short) g_eye_separation;
 	save_info->glassestype = (short) g_glasses_type;
 	save_info->outside = (short) outside;
 	save_info->x3rd = xx3rd;
 	save_info->y3rd = yy3rd;
 	save_info->calc_status = (short) calc_status;
-	save_info->stdcalcmode = (char) ((three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
+	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
 	save_info->distestold = (distest <= 32000) ? (short) distest : 32000;
 	save_info->floatflag = floatflag;
 	save_info->bailoutold = (bailout >= 4 && bailout <= 32000) ? (short) bailout : 0;
@@ -877,9 +877,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->release = check_back() ? (short) min(save_release, g_release) : (short) g_release;
 
 	save_info->flag3d = (short) display3d;
-	save_info->ambient = (short) Ambient;
-	save_info->randomize = (short) RANDOMIZE;
-	save_info->haze = (short) haze;
+	save_info->ambient = (short) g_ambient;
+	save_info->randomize = (short) g_randomize;
+	save_info->haze = (short) g_haze;
 	save_info->transparent[0] = (short) transparent[0];
 	save_info->transparent[1] = (short) transparent[1];
 	save_info->rotate_lo = (short) rotate_lo;
@@ -1247,7 +1247,8 @@ static void _fastcall output(int code)
 	{
 		if (clear_flg)
 		{
-			maxcode = MAXCODE (n_bits = startbits);
+			n_bits = startbits;
+			maxcode = MAXCODE(n_bits);
 			clear_flg = 0;
 
 		}

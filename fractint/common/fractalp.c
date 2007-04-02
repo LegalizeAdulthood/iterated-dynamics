@@ -125,28 +125,28 @@ MOREPARAMS moreparams[] =
 };
 
 /*
-	type math orbitcalc fnct per_pixel fnct per_image fnct
+	type  math orbitcalc fnct per_pixel fnct per_image fnct
 	|-----|----|--------------|--------------|--------------| */
-struct alternatemathstuff alternatemath[] =
+alternate_math g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-	{JULIAFP, 1, JuliabnFractal, juliabn_per_pixel,  MandelbnSetup},
-	{MANDELFP, 1, JuliabnFractal, mandelbn_per_pixel, MandelbnSetup},
+	{ JULIAFP,			BIGNUM, JuliabnFractal,			juliabn_per_pixel,  MandelbnSetup },
+	{ MANDELFP,			BIGNUM, JuliabnFractal,			mandelbn_per_pixel, MandelbnSetup },
 #else
-	{JULIAFP, 2, JuliabfFractal, juliabf_per_pixel,  MandelbfSetup},
-	{MANDELFP, 2, JuliabfFractal, mandelbf_per_pixel, MandelbfSetup},
+	{ JULIAFP,			BIGFLT, JuliabfFractal,			juliabf_per_pixel,  MandelbfSetup },
+	{ MANDELFP,			BIGFLT, JuliabfFractal,			mandelbf_per_pixel, MandelbfSetup },
 #endif
-/*
-NOTE: The default precision for bf_math=BIGNUM is not high enough
-		for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
-		of the usual BIGFLT (2), then set bfdigits on the command to
-		increase the precision.
-*/
-	{FPJULIAZPOWER, 2, JuliaZpowerbfFractal, juliabf_per_pixel, MandelbfSetup  },
-	{FPMANDELZPOWER, 2, JuliaZpowerbfFractal, mandelbf_per_pixel, MandelbfSetup},
-	{-1,            0, NULL,                NULL,               NULL         }
+	/*
+	NOTE: The default precision for bf_math=BIGNUM is not high enough
+			for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
+			of the usual BIGFLT (2), then set bfdigits on the command to
+			increase the precision.
+	*/
+	{ FPJULIAZPOWER,	BIGFLT, JuliaZpowerbfFractal,	juliabf_per_pixel,	MandelbfSetup },
+	{ FPMANDELZPOWER,	BIGFLT, JuliaZpowerbfFractal,	mandelbf_per_pixel, MandelbfSetup }
 };
+int g_alternate_math_len = NUM_OF(g_alternate_math);
 
 /* These are only needed for types with both integer and float variations */
 char t_barnsleyj1[]= "*barnsleyj1";

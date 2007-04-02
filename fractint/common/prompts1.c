@@ -853,7 +853,8 @@ int prompt_valuestring(char *buf, struct fullscreenvalues *val)
 		ret = 10;
 		break;
 	case '*':
-		*buf = (char)(ret = 0);
+		ret = 0;
+		*buf = 0;
 		break;
 	case 's':
 		strncpy(buf, val->uval.sval, 16);
@@ -1550,7 +1551,8 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		int c, lines;
 		read_help_topic(i, 0, 2000, tstack); /* need error handling here ?? */
 		tstack[2000-i] = 0;
-		i = j = lines = 0; k = 1;
+		i = j = lines = 0;
+		k = 1;
 		while ((c = tstack[i++]) != 0)
 		{
 			/* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
@@ -1768,7 +1770,8 @@ gfp_top:
 		{
 			choices[promptnum] = "Bailout value (0 means use default)";
 			paramvalues[promptnum].type = 'L';
-			paramvalues[promptnum++].uval.Lval = (oldbailout = bailout);
+			oldbailout = bailout;
+			paramvalues[promptnum++].uval.Lval = oldbailout;
 			paramvalues[promptnum].type = '*';
 			tmpptr = type_name;
 			if (usr_biomorph != -1)
@@ -2916,7 +2919,7 @@ int get_3d_params()     /* prompt for 3D parameters */
 restart_1:
 	if (Targa_Out && overlay3d)
 	{
-		Targa_Overlay = 1;
+		g_targa_overlay = 1;
 	}
 
 	k = -1;
@@ -2931,7 +2934,7 @@ restart_1:
 
 	prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = previewfactor;
+	uvalues[k].uval.ival = g_preview_factor;
 
 	prompts3d[++k] = "Spherical Projection?";
 	uvalues[k].type = 'y';
@@ -2946,19 +2949,19 @@ restart_1:
 
 	prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = RAY;
+	uvalues[k].uval.ival = g_raytrace_output;
 
 	prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
 	uvalues[k].type = '*';
 
 	prompts3d[++k] = "    Brief output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = BRIEF;
+	uvalues[k].uval.ch.val = g_raytrace_brief;
 
-	check_writefile(ray_name, ".ray");
+	check_writefile(g_ray_name, ".ray");
 	prompts3d[++k] = "    Output File Name";
 	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, ray_name);
+	strcpy(uvalues[k].uval.sval, g_ray_name);
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
@@ -2982,33 +2985,33 @@ restart_1:
 
 	g_preview = uvalues[k++].uval.ch.val;
 	g_show_box = uvalues[k++].uval.ch.val;
-	previewfactor  = uvalues[k++].uval.ival;
+	g_preview_factor  = uvalues[k++].uval.ival;
 	sphere = uvalues[k++].uval.ch.val;
 	g_glasses_type = uvalues[k++].uval.ival;
 	k++;
 
-	RAY = uvalues[k++].uval.ival;
+	g_raytrace_output = uvalues[k++].uval.ival;
 	k++;
-	if (RAY == 1)
+	if (g_raytrace_output == RAYTRACE_POVRAY)
 	{
 		stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
-	BRIEF = uvalues[k++].uval.ch.val;
+	g_raytrace_brief = uvalues[k++].uval.ch.val;
 
-	strcpy(ray_name, uvalues[k++].uval.sval);
+	strcpy(g_ray_name, uvalues[k++].uval.sval);
 
 	Targa_Out = uvalues[k++].uval.ch.val;
 	g_grayscale_depth  = uvalues[k++].uval.ch.val;
 
 	/* check ranges */
-	if (previewfactor < 2)
+	if (g_preview_factor < 2)
 	{
-		previewfactor = 2;
+		g_preview_factor = 2;
 	}
-	if (previewfactor > 2000)
+	if (g_preview_factor > 2000)
 	{
-		previewfactor = 2000;
+		g_preview_factor = 2000;
 	}
 
 	if (sphere && !SPHERE)
@@ -3035,16 +3038,16 @@ restart_1:
 		g_which_image = WHICHIMAGE_RED;
 	}
 
-	if (RAY < 0)
+	if (g_raytrace_output < RAYTRACE_NONE)
 	{
-		RAY = 0;
+		g_raytrace_output = RAYTRACE_NONE;
 	}
-	if (RAY > 7)
+	if (g_raytrace_output > RAYTRACE_DXF)
 	{
-		RAY = 7;
+		g_raytrace_output = RAYTRACE_DXF;
 	}
 
-	if (!RAY)
+	if (!g_raytrace_output)
 	{
 		k = 0;
 		choices[k++] = "make a surface grid";
@@ -3102,7 +3105,7 @@ restart_1:
 	else
 	{
 		k = -1;
-		if (!RAY)
+		if (!g_raytrace_output)
 		{
 			prompts3d[++k] = "X-axis rotation in degrees";
 			prompts3d[++k] = "Y-axis rotation in degrees";
@@ -3112,7 +3115,7 @@ restart_1:
 		prompts3d[++k] = "Y-axis scaling factor in pct";
 	}
 	k = -1;
-	if (!(RAY && !SPHERE))
+	if (!(g_raytrace_output && !SPHERE))
 	{
 		uvalues[++k].uval.ival   = XROT    ;
 		uvalues[k].type = 'i';
@@ -3135,7 +3138,7 @@ restart_1:
 	uvalues[k].type = 'i';
 	uvalues[k].uval.ival = WATERLINE ;
 
-	if (!RAY)
+	if (!g_raytrace_output)
 	{
 		prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
 		uvalues[k].type = 'i';
@@ -3168,7 +3171,7 @@ restart_1:
 
 	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = RANDOMIZE;
+	uvalues[k++].uval.ival = g_randomize;
 
 	if (SPHERE)
 	{
@@ -3192,7 +3195,7 @@ restart_1:
 	}
 
 	k = 0;
-	if (!(RAY && !SPHERE))
+	if (!(g_raytrace_output && !SPHERE))
 	{
 		XROT    = uvalues[k++].uval.ival;
 		YROT    = uvalues[k++].uval.ival;
@@ -3202,27 +3205,27 @@ restart_1:
 	YSCALE     = uvalues[k++].uval.ival;
 	ROUGH      = uvalues[k++].uval.ival;
 	WATERLINE  = uvalues[k++].uval.ival;
-	if (!RAY)
+	if (!g_raytrace_output)
 	{
 		ZVIEWER = uvalues[k++].uval.ival;
-	XSHIFT     = uvalues[k++].uval.ival;
-	YSHIFT     = uvalues[k++].uval.ival;
-	xtrans     = uvalues[k++].uval.ival;
-	ytrans     = uvalues[k++].uval.ival;
-	transparent[0] = uvalues[k++].uval.ival;
-	transparent[1] = uvalues[k++].uval.ival;
+		XSHIFT     = uvalues[k++].uval.ival;
+		YSHIFT     = uvalues[k++].uval.ival;
+		xtrans     = uvalues[k++].uval.ival;
+		ytrans     = uvalues[k++].uval.ival;
+		transparent[0] = uvalues[k++].uval.ival;
+		transparent[1] = uvalues[k++].uval.ival;
 	}
-	RANDOMIZE  = uvalues[k++].uval.ival;
-	if (RANDOMIZE >= 7)
+	g_randomize  = uvalues[k++].uval.ival;
+	if (g_randomize >= 7)
 	{
-		RANDOMIZE = 7;
+		g_randomize = 7;
 	}
-	if (RANDOMIZE <= 0)
+	if (g_randomize <= 0)
 	{
-		RANDOMIZE = 0;
+		g_randomize = 0;
 	}
 
-	if ((Targa_Out || ILLUMINE || RAY))
+	if ((Targa_Out || ILLUMINE || g_raytrace_output))
 	{
 		if (get_light_params())
 		{
@@ -3245,7 +3248,7 @@ static int get_light_params()
 
 	k = -1;
 
-	if (ILLUMINE || RAY)
+	if (ILLUMINE || g_raytrace_output)
 	{
 		prompts3d[++k] = "X value light vector";
 		uvalues[k].type = 'i';
@@ -3259,7 +3262,7 @@ static int get_light_params()
 		uvalues[k].type = 'i';
 		uvalues[k].uval.ival = ZLIGHT    ;
 
-		if (!RAY)
+		if (!g_raytrace_output)
 		{
 			prompts3d[++k] = "Light Source Smoothing Factor";
 			uvalues[k].type = 'i';
@@ -3267,42 +3270,42 @@ static int get_light_params()
 
 			prompts3d[++k] = "Ambient";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = Ambient;
+			uvalues[k].uval.ival = g_ambient;
 		}
 	}
 
-	if (Targa_Out && !RAY)
+	if (Targa_Out && !g_raytrace_output)
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = haze;
+		uvalues[k].uval.ival = g_haze;
 
-		if (!Targa_Overlay)
+		if (!g_targa_overlay)
 		{
-			check_writefile(light_name, ".tga");
+			check_writefile(g_light_name, ".tga");
 		}
 		prompts3d[++k] = "Targa File Name  (Assume .tga)";
 		uvalues[k].type = 's';
-		strcpy(uvalues[k].uval.sval, light_name);
+		strcpy(uvalues[k].uval.sval, g_light_name);
 
 		prompts3d[++k] = "Back Ground Color (0 - 255)";
 		uvalues[k].type = '*';
 
 		prompts3d[++k] = "   Red";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int)back_color[0];
+		uvalues[k].uval.ival = (int) g_back_color[0];
 
 		prompts3d[++k] = "   Green";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int)back_color[1];
+		uvalues[k].uval.ival = (int) g_back_color[1];
 
 		prompts3d[++k] = "   Blue";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int)back_color[2];
+		uvalues[k].uval.ival = (int) g_back_color[2];
 
 		prompts3d[++k] = "Overlay Targa File? (Y/N)";
 		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = Targa_Overlay;
+		uvalues[k].uval.ch.val = g_targa_overlay;
 
 	}
 
@@ -3323,40 +3326,40 @@ static int get_light_params()
 		XLIGHT   = uvalues[k++].uval.ival;
 		YLIGHT   = uvalues[k++].uval.ival;
 		ZLIGHT   = uvalues[k++].uval.ival;
-		if (!RAY)
+		if (!g_raytrace_output)
 		{
 			LIGHTAVG = uvalues[k++].uval.ival;
-			Ambient  = uvalues[k++].uval.ival;
-			if (Ambient >= 100)
+			g_ambient  = uvalues[k++].uval.ival;
+			if (g_ambient >= 100)
 			{
-				Ambient = 100;
+				g_ambient = 100;
 			}
-			if (Ambient <= 0)
+			if (g_ambient <= 0)
 			{
-				Ambient = 0;
+				g_ambient = 0;
 			}
 		}
 	}
 
-	if (Targa_Out && !RAY)
+	if (Targa_Out && !g_raytrace_output)
 	{
-		haze  =  uvalues[k++].uval.ival;
-		if (haze >= 100)
+		g_haze  =  uvalues[k++].uval.ival;
+		if (g_haze >= 100)
 		{
-			haze = 100;
+			g_haze = 100;
 		}
-		if (haze <= 0)
+		if (g_haze <= 0)
 		{
-			haze = 0;
+			g_haze = 0;
 		}
-		strcpy(light_name, uvalues[k++].uval.sval);
-        /* In case light_name conflicts with an existing name it is checked
+		strcpy(g_light_name, uvalues[k++].uval.sval);
+        /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;
-		back_color[0] = (char)(uvalues[k++].uval.ival % 255);
-		back_color[1] = (char)(uvalues[k++].uval.ival % 255);
-		back_color[2] = (char)(uvalues[k++].uval.ival % 255);
-		Targa_Overlay = uvalues[k].uval.ch.val;
+		g_back_color[0] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_back_color[1] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_back_color[2] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_targa_overlay = uvalues[k].uval.ch.val;
 	}
 	return 0;
 }
@@ -3440,12 +3443,12 @@ static int get_funny_glasses_params()
 		if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
 		{
 			g_eye_separation =  2;
-			xadjust       = -2;
+			g_x_adjust       = -2;
 		}
 		else
 		{
 			g_eye_separation =  3;
-			xadjust       =  0;
+			g_x_adjust       =  0;
 		}
 	}
 
@@ -3473,7 +3476,7 @@ static int get_funny_glasses_params()
 
 	prompts3d[++k] = "Convergence adjust (positive = spread greater)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = xadjust;
+	uvalues[k].uval.ival = g_x_adjust;
 
 	prompts3d[++k] = "Left  red image crop (% of screen)";
 	uvalues[k].type = 'i';
@@ -3517,7 +3520,7 @@ static int get_funny_glasses_params()
 
 	k = 0;
 	g_eye_separation   =  uvalues[k++].uval.ival;
-	xadjust         =  uvalues[k++].uval.ival;
+	g_x_adjust         =  uvalues[k++].uval.ival;
 	red_crop_left   =  uvalues[k++].uval.ival;
 	red_crop_right  =  uvalues[k++].uval.ival;
 	blue_crop_left  =  uvalues[k++].uval.ival;
