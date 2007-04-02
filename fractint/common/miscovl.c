@@ -1206,9 +1206,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		put_parm(" perspective=%d", ZVIEWER);
 		put_parm(" xyshift=%d/%d", XSHIFT, YSHIFT);
-		if (xtrans || ytrans)
+		if (g_x_trans || g_y_trans)
 		{
-			put_parm(" xyadjust=%d/%d", xtrans, ytrans);
+			put_parm(" xyadjust=%d/%d", g_x_trans, g_y_trans);
 		}
 		if (g_glasses_type)
 		{
@@ -1216,8 +1216,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" interocular=%d", g_eye_separation);
 			put_parm(" converge=%d", g_x_adjust);
 			put_parm(" crop=%d/%d/%d/%d",
-				red_crop_left, red_crop_right, blue_crop_left, blue_crop_right);
-			put_parm(" bright=%d/%d", red_bright, blue_bright);
+				g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
+			put_parm(" bright=%d/%d", g_red_bright, g_blue_bright);
 		}
 	}
 

@@ -2866,8 +2866,8 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
 
-				tmpx += ((double)xshift1*(xxmax-xxmin))/(xdots);
-				tmpy += ((double)yshift1*(yymax-yymin))/(ydots);
+				tmpx += ((double)g_x_shift1*(xxmax-xxmin))/(xdots);
+				tmpy += ((double)g_y_shift1*(yymax-yymin))/(ydots);
 				tmpz = -((double)inf->maxvals[2]) / fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
@@ -2951,11 +2951,11 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 		inf->row1 = (int)(((multiply(inf->cvt.c, inf->viewvect1[0], bitshift) +
 						multiply(inf->cvt.d, inf->viewvect1[1], bitshift) +
 						inf->cvt.f) >> bitshift)
-						+ yyadjust1);
+						+ g_yy_adjust1);
 		inf->col1 = (int)(((multiply(inf->cvt.a, inf->viewvect1[0], bitshift) +
 						multiply(inf->cvt.b, inf->viewvect1[1], bitshift) +
 						inf->cvt.e) >> bitshift)
-						+ xxadjust1);
+						+ g_xx_adjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{
 			inf->col1 = inf->row1 =
@@ -3031,8 +3031,8 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
-				tmpx += ((double)xshift1*(xxmax-xxmin))/(xdots);
-				tmpy += ((double)yshift1*(yymax-yymin))/(ydots);
+				tmpx += ((double)g_x_shift1*(xxmax-xxmin))/(xdots);
+				tmpy += ((double)g_y_shift1*(yymax-yymin))/(ydots);
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 				}
@@ -3062,9 +3062,9 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 	if (realtime)
 	{
 		inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
-					+ inf->cvt.f + yyadjust1);
+					+ inf->cvt.f + g_yy_adjust1);
 		inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
-					+ inf->cvt.e + xxadjust1);
+					+ inf->cvt.e + g_xx_adjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{
 			inf->col1 = inf->row1 =

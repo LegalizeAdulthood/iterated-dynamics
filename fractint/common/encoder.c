@@ -839,14 +839,14 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 		save_info->init3d[i] = (short) init3d[i];
 	}
 	save_info->previewfactor = (short) g_preview_factor;
-	save_info->xtrans = (short) xtrans;
-	save_info->ytrans = (short) ytrans;
-	save_info->red_crop_left = (short) red_crop_left;
-	save_info->red_crop_right = (short) red_crop_right;
-	save_info->blue_crop_left = (short) blue_crop_left;
-	save_info->blue_crop_right = (short) blue_crop_right;
-	save_info->red_bright = (short) red_bright;
-	save_info->blue_bright = (short) blue_bright;
+	save_info->xtrans = (short) g_x_trans;
+	save_info->ytrans = (short) g_y_trans;
+	save_info->red_crop_left = (short) g_red_crop_left;
+	save_info->red_crop_right = (short) g_red_crop_right;
+	save_info->blue_crop_left = (short) g_blue_crop_left;
+	save_info->blue_crop_right = (short) g_blue_crop_right;
+	save_info->red_bright = (short) g_red_bright;
+	save_info->blue_bright = (short) g_blue_bright;
 	save_info->xadjust = (short) g_x_adjust;
 	save_info->yadjust = (short) g_y_adjust;
 	save_info->eyeseparation = (short) g_eye_separation;
