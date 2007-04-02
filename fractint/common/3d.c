@@ -284,12 +284,12 @@ int
 longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
 					int bitshift)
 {
-/* s: source vector */
-/* m: transformation matrix */
-/* t0: after transformation, before persp */
-/* t: target vector */
-/* lview: perspective viewer coordinates */
-/* bitshift: fixed point conversion bitshift */
+	/* s: source vector */
+	/* m: transformation matrix */
+	/* t0: after transformation, before persp */
+	/* t: target vector */
+	/* lview: perspective viewer coordinates */
+	/* bitshift: fixed point conversion bitshift */
 	LVECTOR tmp;
 	int i, j, k;
 	overflow = 0;

@@ -578,12 +578,12 @@ static void initvars_3d()               /* init vars affecting 3d */
 	g_eye_separation = 0;
 	g_glasses_type = STEREO_NONE;
 	g_preview_factor = 20;
-	red_crop_left   = 4;
-	red_crop_right  = 0;
-	blue_crop_left  = 0;
-	blue_crop_right = 4;
-	red_bright     = 80;
-	blue_bright   = 100;
+	g_red_crop_left   = 4;
+	g_red_crop_right  = 0;
+	g_blue_crop_left  = 0;
+	g_blue_crop_right = 4;
+	g_red_bright     = 80;
+	g_blue_bright   = 100;
 	transparent[0] = transparent[1] = 0; /* no min/max transparency */
 	set_3d_defaults();
 }
@@ -2795,10 +2795,10 @@ static int crop_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	red_crop_left   = context->intval[0];
-	red_crop_right  = context->intval[1];
-	blue_crop_left  = context->intval[2];
-	blue_crop_right = context->intval[3];
+	g_red_crop_left   = context->intval[0];
+	g_red_crop_right  = context->intval[1];
+	g_blue_crop_left  = context->intval[2];
+	g_blue_crop_right = context->intval[3];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2808,8 +2808,8 @@ static int bright_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	red_bright  = context->intval[0];
-	blue_bright = context->intval[1];
+	g_red_bright  = context->intval[0];
+	g_blue_bright = context->intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2819,8 +2819,8 @@ static int xy_adjust_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	xtrans = context->intval[0];
-	ytrans = context->intval[1];
+	g_x_trans = context->intval[0];
+	g_y_trans = context->intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -3768,8 +3768,8 @@ void set_3d_defaults()
 	ZVIEWER   = 0;
 	XSHIFT    = 0;
 	YSHIFT    = 0;
-	xtrans    = 0;
-	ytrans    = 0;
+	g_x_trans    = 0;
+	g_y_trans    = 0;
 	LIGHTAVG  = 0;
 	g_ambient   = 20;
 	g_randomize = 0;

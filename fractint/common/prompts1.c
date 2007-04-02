@@ -3154,11 +3154,11 @@ restart_1:
 
 		prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = xtrans    ;
+		uvalues[k].uval.ival = g_x_trans    ;
 
 		prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = ytrans    ;
+		uvalues[k].uval.ival = g_y_trans    ;
 
 		prompts3d[++k] = "First transparent color";
 		uvalues[k].type = 'i';
@@ -3210,8 +3210,8 @@ restart_1:
 		ZVIEWER = uvalues[k++].uval.ival;
 		XSHIFT     = uvalues[k++].uval.ival;
 		YSHIFT     = uvalues[k++].uval.ival;
-		xtrans     = uvalues[k++].uval.ival;
-		ytrans     = uvalues[k++].uval.ival;
+		g_x_trans     = uvalues[k++].uval.ival;
+		g_y_trans     = uvalues[k++].uval.ival;
 		transparent[0] = uvalues[k++].uval.ival;
 		transparent[1] = uvalues[k++].uval.ival;
 	}
@@ -3480,27 +3480,27 @@ static int get_funny_glasses_params()
 
 	prompts3d[++k] = "Left  red image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = red_crop_left;
+	uvalues[k].uval.ival = g_red_crop_left;
 
 	prompts3d[++k] = "Right red image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = red_crop_right;
+	uvalues[k].uval.ival = g_red_crop_right;
 
 	prompts3d[++k] = "Left  blue image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = blue_crop_left;
+	uvalues[k].uval.ival = g_blue_crop_left;
 
 	prompts3d[++k] = "Right blue image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = blue_crop_right;
+	uvalues[k].uval.ival = g_blue_crop_right;
 
 	prompts3d[++k] = "Red brightness factor (%)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = red_bright;
+	uvalues[k].uval.ival = g_red_bright;
 
 	prompts3d[++k] = "Blue brightness factor (%)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = blue_bright;
+	uvalues[k].uval.ival = g_blue_bright;
 
 	if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 	{
@@ -3521,12 +3521,12 @@ static int get_funny_glasses_params()
 	k = 0;
 	g_eye_separation   =  uvalues[k++].uval.ival;
 	g_x_adjust         =  uvalues[k++].uval.ival;
-	red_crop_left   =  uvalues[k++].uval.ival;
-	red_crop_right  =  uvalues[k++].uval.ival;
-	blue_crop_left  =  uvalues[k++].uval.ival;
-	blue_crop_right =  uvalues[k++].uval.ival;
-	red_bright      =  uvalues[k++].uval.ival;
-	blue_bright     =  uvalues[k++].uval.ival;
+	g_red_crop_left   =  uvalues[k++].uval.ival;
+	g_red_crop_right  =  uvalues[k++].uval.ival;
+	g_blue_crop_left  =  uvalues[k++].uval.ival;
+	g_blue_crop_right =  uvalues[k++].uval.ival;
+	g_red_bright      =  uvalues[k++].uval.ival;
+	g_blue_bright     =  uvalues[k++].uval.ival;
 
 	if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 	{

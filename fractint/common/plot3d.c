@@ -16,26 +16,26 @@
 #define PAL_MAGENTA 3
 
 int g_which_image;
-int xxadjust1;
-int yyadjust1;
+int g_xx_adjust1;
+int g_yy_adjust1;
 int g_eye_separation = 0;
 int g_glasses_type = STEREO_NONE;
-int xshift1;
-int yshift1;
-int xtrans = 0;
-int ytrans = 0;
-int red_local_left;
-int red_local_right;
-int blue_local_left;
-int blue_local_right;
-int red_crop_left   = 4;
-int red_crop_right  = 0;
-int blue_crop_left  = 0;
-int blue_crop_right = 4;
-int red_bright      = 80;
-int blue_bright     = 100;
+int g_x_shift1;
+int g_y_shift1;
+int g_x_trans = 0;
+int g_y_trans = 0;
+int g_red_crop_left   = 4;
+int g_red_crop_right  = 0;
+int g_blue_crop_left  = 0;
+int g_blue_crop_right = 4;
+int g_red_bright      = 80;
+int g_blue_bright     = 100;
 
-BYTE T_RED;
+static int s_red_local_left;
+static int s_red_local_right;
+static int s_blue_local_left;
+static int s_blue_local_right;
+static BYTE s_targa_red;
 
 /* Bresenham's algorithm for drawing line */
 void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
@@ -182,7 +182,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	/* map to 4 colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
-		if (red_local_left < x && x < red_local_right)
+		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			putcolor(x, y, color|tmp);
 			if (Targa_Out)
@@ -193,7 +193,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	}
 	else if (g_which_image == WHICHIMAGE_BLUE)
 	{
-		if (blue_local_left < x && x < blue_local_right)
+		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<2;
 			putcolor(x, y, color|tmp);
@@ -220,7 +220,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 		{
 			color = PAL_MAGENTA;
 		}
-		if (red_local_left < x && x < red_local_right)
+		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			putcolor(x, y, color);
 			if (Targa_Out)
@@ -231,7 +231,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 	}
 	else if (g_which_image == 2) /* BLUE */
 	{
-		if (blue_local_left < x && x < blue_local_right)
+		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = PAL_BLUE;
 			if (tmp > 0 && tmp != color)
@@ -268,7 +268,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	/* map to 16 colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
-		if (red_local_left < x && x < red_local_right)
+		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			/* Overwrite prev Red don't mess w/blue */
 			putcolor(x, y, color|(tmp&240));
@@ -287,7 +287,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	}
 	else if (g_which_image == WHICHIMAGE_BLUE)
 	{
-		if (blue_local_left < x && x < blue_local_right)
+		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			/* Overwrite previous blue, don't mess with existing red */
 			color = color <<4;
@@ -300,8 +300,8 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-					targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+					targa_readdisk (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -330,7 +330,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 	/* map to 16 colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
-		if (red_local_left < x && x < red_local_right)
+		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			putcolor(x, y, color|tmp);
 			if (Targa_Out)
@@ -347,7 +347,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		}
 	}
 	else if (g_which_image == WHICHIMAGE_BLUE)
-		if (blue_local_left < x && x < blue_local_right)
+		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<4;
 			putcolor(x, y, color|tmp);
@@ -359,8 +359,8 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_readdisk (x + sxoffs, y + syoffs, &T_RED, (BYTE *)&tmp, (BYTE *)&tmp);
-					targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+					targa_readdisk (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -378,7 +378,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 	color = colors - color;
 	if ((g_which_image == WHICHIMAGE_RED) && !((x + y)&1)) /* - lower half palette */
 	{
-		if (red_local_left < x && x < red_local_right)
+		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			putcolor(x, y, color >> 1);
 			if (Targa_Out)
@@ -396,7 +396,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 	}
 	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y)&1)) /* - upper half palette */
 	{
-		if (blue_local_left < x && x < blue_local_right)
+		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			putcolor(x, y, (color >> 1) + (colors >> 1));
 			if (Targa_Out)
@@ -407,7 +407,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 				}
 				else
 				{
-					targa_writedisk (x + sxoffs, y + syoffs, T_RED, 0, t_c);
+					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -503,25 +503,25 @@ void plot_setup()
 	}
 	assert(g_standard_plot);
 
-	xshift1 = g_x_shift = (int)((XSHIFT*(double)xdots)/100);
-	yshift1 = g_y_shift = (int)((YSHIFT*(double)ydots)/100);
+	g_x_shift1 = g_x_shift = (int)((XSHIFT*(double)xdots)/100);
+	g_y_shift1 = g_y_shift = (int)((YSHIFT*(double)ydots)/100);
 
 	if (g_glasses_type)
 	{
-		red_local_left  =   (int) ((red_crop_left*(double) xdots)/100.0);
-		red_local_right =   (int) (((100 - red_crop_right)*(double) xdots)/100.0);
-		blue_local_left =   (int) ((blue_crop_left*(double) xdots)/100.0);
-		blue_local_right =  (int) (((100 - blue_crop_right)*(double) xdots)/100.0);
-		d_red_bright    =   (double) red_bright/100.0;
-		d_blue_bright   =   (double) blue_bright/100.0;
+		s_red_local_left  =   (int) ((g_red_crop_left*(double) xdots)/100.0);
+		s_red_local_right =   (int) (((100 - g_red_crop_right)*(double) xdots)/100.0);
+		s_blue_local_left =   (int) ((g_blue_crop_left*(double) xdots)/100.0);
+		s_blue_local_right =  (int) (((100 - g_blue_crop_right)*(double) xdots)/100.0);
+		d_red_bright    =   (double) g_red_bright/100.0;
+		d_blue_bright   =   (double) g_blue_bright/100.0;
 
 		switch (g_which_image)
 		{
 		case WHICHIMAGE_RED:
 			g_x_shift  += (int)((g_eye_separation* (double)xdots)/200);
-			g_xx_adjust = (int)(((xtrans + g_x_adjust)* (double)xdots)/100);
-			xshift1 -= (int)((g_eye_separation* (double)xdots)/200);
-			xxadjust1 = (int)(((xtrans-g_x_adjust)* (double)xdots)/100);
+			g_xx_adjust = (int)(((g_x_trans + g_x_adjust)* (double)xdots)/100);
+			g_x_shift1 -= (int)((g_eye_separation* (double)xdots)/200);
+			g_xx_adjust1 = (int)(((g_x_trans-g_x_adjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
 			{
 				sxoffs = sxdots / 2 - xdots;
@@ -530,7 +530,7 @@ void plot_setup()
 
 		case WHICHIMAGE_BLUE:
 			g_x_shift  -= (int)((g_eye_separation* (double)xdots)/200);
-			g_xx_adjust = (int)(((xtrans-g_x_adjust)* (double)xdots)/100);
+			g_xx_adjust = (int)(((g_x_trans-g_x_adjust)* (double)xdots)/100);
 			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
 			{
 				sxoffs = sxdots / 2;
@@ -540,9 +540,9 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int)((xtrans* (double)xdots)/100);
+		g_xx_adjust = (int)((g_x_trans* (double)xdots)/100);
 	}
-	g_yy_adjust = (int)(-(ytrans* (double)ydots)/100);
+	g_yy_adjust = (int)(-(g_y_trans* (double)ydots)/100);
 
 	if (mapset)
 	{
