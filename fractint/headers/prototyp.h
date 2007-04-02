@@ -150,7 +150,7 @@ extern void trans(double, double, double, MATRIX);
 extern int cross_product(VECTOR, VECTOR, VECTOR);
 extern int normalize_vector(VECTOR);
 extern int vmult(VECTOR, MATRIX, VECTOR);
-extern void mult_vec(VECTOR);
+extern void mult_vec(VECTOR, MATRIX);
 extern int perspective(VECTOR);
 extern int longvmultpersp(LVECTOR, LMATRIX, LVECTOR, LVECTOR, LVECTOR, int);
 extern int longpersp(LVECTOR, LVECTOR, int);
@@ -649,7 +649,6 @@ extern int    EnQueueFloat    (float,  float);
 
 extern int line3d(BYTE *, unsigned int);
 extern int _fastcall targa_color(int, int, int);
-extern int targa_validate(char *);
 extern int startdisk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */

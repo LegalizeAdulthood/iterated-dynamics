@@ -9,8 +9,9 @@
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int                   g_adapter;							/* index into g_video_table[] */
-extern AlternateMath         alternatemath[];					/* alternate math function pointers */
-extern int                   Ambient;							/* Ambient= parameter value */
+extern alternate_math		g_alternate_math[];					/* alternate math function pointers */
+extern int					g_alternate_math_len;				/* number of alternate math */
+extern int                   g_ambient;							/* ambient= parameter value */
 extern int                   g_and_color;						/* AND mask for iteration to get color index */
 extern struct MP             Ans;
 extern int                   Ap1deg;
@@ -25,11 +26,11 @@ extern char                  autoname[];
 extern char                  autoshowdot;
 extern int                   AutoStereo_depth;
 extern double                AutoStereo_width;
-extern BYTE                  back_color[];
+extern BYTE                  g_back_color[];
 extern int                   g_bad_config;
 extern int                   bad_code_count;
 extern int                   bad_outside;
-extern int                   bad_value;
+extern int                   g_bad_value;
 extern long                  bailout;
 extern enum bailouts         g_bail_out_test;
 extern int                   basehertz;
@@ -49,7 +50,6 @@ extern int                   boxcount;
 extern int                   boxvalues[];
 extern int                   boxx[];
 extern int                   boxy[];
-extern int                   BRIEF;
 extern char                  browsemask[];
 extern char                  browsename[];
 extern int                   browsing;
@@ -199,7 +199,7 @@ extern int                   got_status;
 extern int					g_grayscale_depth;
 extern char                  GreyFile[];
 extern int                   hasinverse;
-extern int                   haze;
+extern int                   g_haze;
 extern unsigned int          height;
 extern float                 heightfp;
 extern int                   helpmode;
@@ -244,7 +244,7 @@ extern long                  lclosenuff;
 extern _LCMPLX               lcoefficient;
 extern int                   ldcheck;
 extern char                  LFileName[];
-extern char                  light_name[];
+extern char                  g_light_name[];
 extern BYTE *                line_buff;
 extern _LCMPLX               linit;
 extern _LCMPLX               linitorbit;
@@ -279,7 +279,6 @@ extern long *            ly1;
 extern long (_fastcall *     lypixel)(void); /* set in FRACTALS.C */
 extern int                   lzw[2];
 extern long                  l_at_rad;
-extern MATRIX                m;
 extern double                magnitude;
 extern enum Major            major_method;
 extern BYTE *            mapdacbox;
@@ -396,7 +395,7 @@ extern double                potparam[];
 extern U16                   prefix[];
 #endif
 extern int					g_preview;
-extern int                   previewfactor;
+extern int                   g_preview_factor;
 extern int                   px;
 extern int                   py;
 extern int                   prmboxcount;
@@ -409,11 +408,12 @@ extern double                qci;
 extern double                qcj;
 extern double                qck;
 extern int                   quick_calc;
-extern int                   RANDOMIZE;
+extern int                   g_randomize;
 extern int *             ranges;
 extern int                   rangeslen;
-extern int                   RAY;
-extern char                  ray_name[];
+extern int					g_raytrace_brief;
+extern int					g_raytrace_output;
+extern char                  g_ray_name[];
 extern char                  readname[];
 extern long                  realcoloriter;
 extern char                  recordcolors;
@@ -466,7 +466,7 @@ extern int                   Slope;
 extern int                   soundflag;
 extern int                   sound_rollover;
 extern char                  speed_prompt[];
-extern void (_fastcall*      standardplot)(int,int,int);
+extern void (_fastcall *g_standard_plot)(int x, int y, int color);
 extern char                  start_showorbit;
 extern int                   started_resaves;
 extern _CMPLX                staticroots[];
@@ -491,7 +491,7 @@ extern char                  s_makepar[];
 extern int                   tabmode;
 extern int                   taborhelp;
 extern int                   Targa_Out;
-extern int                   Targa_Overlay;
+extern int                   g_targa_overlay;
 extern char                  temp1[];
 extern double                tempsqrx;
 extern double                tempsqry;
@@ -501,9 +501,9 @@ extern int                   g_text_col;						/* current column in text mode */
 extern int                   g_text_rbase;						/* g_text_row is relative to this */
 extern int                   g_text_row;						/* current row in text mode */
 extern unsigned int          this_gen_rseed;
-extern unsigned *        tga16;
-extern long *            tga32;
-extern char                  three_pass;
+extern unsigned *			tga16;
+extern long *				tga32;
+extern int					g_three_pass;
 extern double                threshold;
 extern int                   timedsave;
 extern int                   timerflag;
@@ -542,7 +542,7 @@ extern struct videoinfo      g_video_entry;
 extern VIDEOINFO             g_video_table[];
 extern int					 g_video_table_len;
 extern int                   g_video_type;						/* video adapter type */
-extern VECTOR                view;
+extern VECTOR                g_view;
 extern int                   viewcrop;
 extern float                 viewreduction;
 extern int                   viewwindow;
@@ -557,35 +557,34 @@ extern WORKLIST              worklist[MAXCALCWORK];
 extern int                   workpass;
 extern int                   worksym;
 extern long                  x3rd;
-extern int                   xadjust;
+extern int                   g_x_adjust;
 extern double                xcjul;
 extern int                   xdots;
 extern long                  xmax;
 extern long                  xmin;
 extern int                   xshift1;
-extern int                   xshift;
+extern int                   g_x_shift;
 extern int                   xtrans;
 extern double                xx3rd;
 extern int                   xxadjust1;
-extern int                   xxadjust;
+extern int                   g_xx_adjust;
 extern double                xxmax;
 extern double                xxmin;
 extern long                  XXOne;
 extern int                   xxstart;
 extern int                   xxstop;
 extern long                  y3rd;
-extern int                   yadjust;
+extern int                   g_y_adjust;
 extern double                ycjul;
 extern int                   ydots;
 extern long                  ymax;
 extern long                  ymin;
 extern int                   yshift1;
-extern int                   yshift;
+extern int                   g_y_shift;
 extern int                   ytrans;
 extern double                yy3rd;
 extern int                   yyadjust1;
-extern int                   yyadjust;
-extern int                   yyadjust;
+extern int                   g_yy_adjust;
 extern double                yymax;
 extern double                yymin;
 extern int                   yystart;
