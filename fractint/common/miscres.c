@@ -1151,7 +1151,7 @@ top:
 	if ((curfractalspecific->flags&INFCALC) && (coloriter != 0))
 	{
 		driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
-		sprintf(msg, " %ld of %ld", coloriter-2, maxct);
+		sprintf(msg, " %ld of %ld", coloriter-2, g_max_count);
 		driver_put_string(s_row, -1, C_GENERAL_HI, msg);
 	}
 
