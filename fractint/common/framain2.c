@@ -217,7 +217,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			dysize = ydots - 1;
 		}
 		/* assume we save next time (except jb) */
-		savedac = (savedac == 0) ? 2 : 1;
+		savedac = (savedac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
 		if (initbatch == INIT_BATCH_NONE)
 		{
 			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
@@ -760,7 +760,7 @@ static int handle_fractal_type(int *frommandel)
 	if (i >= 0)
 	{
 		driver_discard_screen();
-		savedac = 0;
+		savedac = SAVEDAC_NO;
 		save_release = g_release;
 		no_mag_calc = 0;
 		use_old_period = 0;
@@ -907,7 +907,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		g_adapter = g_init_mode;
 		g_init_mode = -1;
 		i |= COMMAND_FRACTAL_PARAM;
-		savedac = 0;
+		savedac = SAVEDAC_NO;
 	}
 	else if (colorpreloaded)
 	{                         /* colors= was specified */
@@ -916,7 +916,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	}
 	else if (i & COMMAND_RESET)         /* reset was specified */
 	{
-		savedac = 0;
+		savedac = SAVEDAC_NO;
 	}
 	if (i & COMMAND_3D_YES)
 	{                         /* 3d = was specified */
@@ -1489,7 +1489,7 @@ static int handle_video_mode(int kbdchar, int *kbdmore)
 		g_adapter = k;
 		if (g_video_table[g_adapter].colors != colors)
 		{
-			savedac = 0;
+			savedac = SAVEDAC_NO;
 		}
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;

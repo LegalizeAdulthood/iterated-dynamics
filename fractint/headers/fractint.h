@@ -27,6 +27,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* savedac values */
+#define SAVEDAC_NO		0
+#define SAVEDAC_YES		1
+#define SAVEDAC_NEXT	2
+
 /* g_raytrace_output values */
 #define RAYTRACE_NONE		0
 #define RAYTRACE_POVRAY		1
