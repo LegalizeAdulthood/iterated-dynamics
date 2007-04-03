@@ -287,7 +287,7 @@ extern char                  MAP_name[];
 extern int                   matherr_ct;
 extern double                math_tol[2];
 extern int                   maxcolor;
-extern long                  maxct;
+extern long                  g_max_count;
 extern char                  maxfn;
 extern long                  maxit;
 extern int                   maxlinelength;

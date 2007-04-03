@@ -37,7 +37,7 @@ struct l_affine
 	long d;
 	long f;
 };
-struct long3dvtinf /* data used by 3d view transform subroutine */
+struct threed_vt_inf /* data used by 3d view transform subroutine */
 {
 	long orbit[3];       /* interated function orbit value */
 	long iview[3];       /* perspective viewer's coordinates */
@@ -54,7 +54,7 @@ struct long3dvtinf /* data used by 3d view transform subroutine */
 	struct l_affine cvt;
 };
 
-struct float3dvtinf /* data used by 3d view transform subroutine */
+struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 {
 	double orbit[3];                /* interated function orbit value */
 	double viewvect[3];        /* orbit transformed for viewing */
@@ -68,60 +68,42 @@ struct float3dvtinf /* data used by 3d view transform subroutine */
 	struct affine cvt;
 };
 
-/* Routines in this module      */
-
-static int  ifs2d(void);
-static int  ifs3d(void);
-static int  ifs3dlong(void);
-static int  ifs3dfloat(void);
-static int  l_setup_convert_to_screen(struct l_affine *);
-static void setupmatrix(MATRIX);
-static int  long3dviewtransf(struct long3dvtinf *inf);
-static int  float3dviewtransf(struct float3dvtinf *inf);
-static FILE *open_orbitsave(void);
-static void _fastcall plothist(int x, int y, int color);
-static int realtime;
-
-S32 maxct;
-static int t;
-static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
-static long l_adt, l_bdt, l_cdt, l_xdt, l_ydt;
-static long initorbitlong[3];
-
-static double dx, dy, dz, dt, a, b, c, d;
-static double adt, bdt, cdt, xdt, ydt, zdt;
-static double initorbitfp[3];
-
-/*
- * The following declarations used for Inverse Julia.  MVS
- */
-
-static char NoQueue[] =
-	"Not enough memory: switching to random walk.\n";
-
-static int    mxhits;
+long g_max_count;
 int    run_length;
-/*
-enum   {breadth_first, depth_first, random_walk, random_run} major_method;
-enum   {left_first, right_first}                             minor_method;
-*/
 enum   Major major_method;
 enum   Minor minor_method;
 struct affine cvt;
 struct l_affine lcvt;
-
 double Cx, Cy;
 long   CxLong, CyLong;
-
-/*
- * end of Inverse Julia declarations;
- */
-
 /* these are potential user parameters */
 int connect = 1;    /* flag to connect points with a line */
 int euler = 0;      /* use implicit euler approximation for dynamic system */
 int waste = 100;    /* waste this many points before plotting */
+
+static int realtime;
+static int t;
+static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
+static long l_adt, l_bdt, l_cdt, l_xdt, l_ydt;
+static long initorbitlong[3];
+static double dx, dy, dz, dt, a, b, c, d;
+static double adt, bdt, cdt, xdt, ydt, zdt;
+static double initorbitfp[3];
+static char NoQueue[] = "Not enough memory: switching to random walk.\n";
+static int mxhits;
 static int projection = PROJECTION_XY; /* projection plane - default is to plot x-y */
+
+/* Routines in this module      */
+static int  ifs_2d(void);
+static int  ifs_3d(void);
+static int  ifs_3d_long(void);
+static int  ifs_3d_float(void);
+static int  l_setup_convert_to_screen(struct l_affine *);
+static void setup_matrix(MATRIX);
+static int  threed_view_trans(struct threed_vt_inf *inf);
+static int  threed_view_trans_fp(struct threed_vt_inf_fp *inf);
+static FILE *open_orbit_save(void);
+static void _fastcall plot_hist(int x, int y, int color);
 
 /******************************************************************/
 /*                 zoom box conversion functions                  */
@@ -265,9 +247,9 @@ static double orbit;
 static long   l_orbit;
 static long l_sinx, l_cosx;
 
-int orbit3dlongsetup()
+int orbit_3d_setup()
 {
-	maxct = 0L;
+	g_max_count = 0L;
 	connect = 1;
 	waste = 100;
 	projection = PROJECTION_XY;
@@ -298,7 +280,7 @@ int orbit3dlongsetup()
 	}
 	else if (fractype == KAM || fractype == KAM3D)
 	{
-		maxct = 1L;
+		g_max_count = 1L;
 		a   = param[0];           /* angle */
 		if (param[1] <= 0.0)
 		{
@@ -405,9 +387,9 @@ lrwalk:
 #define COSB   dx
 #define SINABC dy
 
-int orbit3dfloatsetup()
+int orbit_3d_setup_fp()
 {
-	maxct = 0L;
+	g_max_count = 0L;
 	connect = 1;
 	waste = 100;
 	projection = PROJECTION_XY;
@@ -471,7 +453,7 @@ int orbit3dfloatsetup()
 	}
 	else if (fractype == KAMFP || fractype == KAM3DFP)
 	{
-		maxct = 1L;
+		g_max_count = 1L;
 		a = param[0];           /* angle */
 		if (param[1] <= 0.0)
 		{
@@ -1413,7 +1395,7 @@ int orbit2dfloat()
 
 	soundvar = p0 = p1 = p2 = NULL;
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&cvt);
 
@@ -1439,7 +1421,7 @@ int orbit2dfloat()
 	z = initorbitfp[2];
 	coloriter = 0L;
 	count = ret = 0;
-	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 
 	if (resuming)
 	{
@@ -1452,7 +1434,7 @@ int orbit2dfloat()
 		end_resume();
 	}
 
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
 		{
@@ -1496,7 +1478,7 @@ int orbit2dfloat()
 			}
 			else
 			{
-				/* should this be using plothist()? */
+				/* should this be using plot_hist()? */
 				color = getcolor(col, row) + 1;
 				if (color < colors) /* color sticks on last value */
 				{
@@ -1546,7 +1528,7 @@ int orbit2dlong()
 
 	start = 1;
 	soundvar = p0 = p1 = p2 = NULL;
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&cvt);
@@ -1575,7 +1557,7 @@ int orbit2dlong()
 	y = initorbitlong[1];
 	z = initorbitlong[2];
 	count = ret = 0;
-	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
 
 	if (resuming)
@@ -1589,7 +1571,7 @@ int orbit2dlong()
 		end_resume();
 	}
 
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
 		{
@@ -1672,7 +1654,7 @@ static int orbit3dlongcalc(void)
 	unsigned long count;
 	int oldcol, oldrow;
 	int oldcol1, oldrow1;
-	struct long3dvtinf inf;
+	struct threed_vt_inf inf;
 	int color;
 	int ret;
 
@@ -1695,12 +1677,12 @@ static int orbit3dlongcalc(void)
 		notdiskmsg();
 	}
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	count = ret = 0;
-	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		/* calc goes here */
 		if (++count > 1000)
@@ -1723,7 +1705,7 @@ static int orbit3dlongcalc(void)
 		{
 			fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/fudge, (double)inf.orbit[1]/fudge, (double)inf.orbit[2]/fudge);
 		}
-		if (long3dviewtransf(&inf))
+		if (threed_view_trans(&inf))
 		{
 			/* plot if inside window */
 			if (inf.col >= 0)
@@ -1794,7 +1776,7 @@ static int orbit3dfloatcalc(void)
 	int oldcol1, oldrow1;
 	int color;
 	int ret;
-	struct float3dvtinf inf;
+	struct threed_vt_inf_fp inf;
 
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
@@ -1815,12 +1797,12 @@ static int orbit3dfloatcalc(void)
 		notdiskmsg();
 	}
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	ret = 0;
-	maxct = (maxit > 0x1fffffL || maxct) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 	count = coloriter = 0L;
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		/* calc goes here */
 		if (++count > 1000)
@@ -1844,7 +1826,7 @@ static int orbit3dfloatcalc(void)
 		{
 			fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
 		}
-		if (float3dviewtransf(&inf))
+		if (threed_view_trans_fp(&inf))
 		{
 			/* plot if inside window */
 			if (inf.col >= 0)
@@ -1934,7 +1916,7 @@ int dynam2dfloatsetup()
 	}
 	if (outside == SUM)
 	{
-		plot = plothist;
+		plot = plot_hist;
 	}
 	return 1;
 }
@@ -1960,7 +1942,7 @@ int dynam2dfloat()
 	int xstep, ystep; /* The starting position step number */
 	double xpixel, ypixel; /* Our pixel position on the screen */
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&cvt);
 
@@ -2183,7 +2165,7 @@ int plotorbits2dsetup(void)
 
 	if (outside == SUM)
 	{
-		plot = plothist;
+		plot = plot_hist;
 	}
 	return 1;
 }
@@ -2289,7 +2271,7 @@ int plotorbits2dfloat(void)
 }
 
 /* this function's only purpose is to manage funnyglasses related */
-/* stuff so the code is not duplicated for ifs3d() and lorenz3d() */
+/* stuff so the code is not duplicated for ifs_3d() and lorenz3d() */
 int funny_glasses_call(int (*calc)(void))
 {
 	int status;
@@ -2351,7 +2333,7 @@ done:
 }
 
 /* double version - mainly for testing */
-static int ifs3dfloat(void)
+static int ifs_3d_float(void)
 {
 	int color_method;
 	FILE *fp;
@@ -2362,7 +2344,7 @@ static int ifs3dfloat(void)
 	int k;
 	int ret;
 
-	struct float3dvtinf inf;
+	struct threed_vt_inf_fp inf;
 
 	float *ffptr;
 
@@ -2379,13 +2361,13 @@ static int ifs3dfloat(void)
 	inf.orbit[1] = 0;
 	inf.orbit[2] = 0;
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	ret = 0;
-	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024;
+	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024;
 
 	coloriter = 0L;
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2426,7 +2408,7 @@ static int ifs3dfloat(void)
 		{
 			fprintf(fp, "%g %g %g 15\n", newx, newy, newz);
 		}
-		if (float3dviewtransf(&inf))
+		if (threed_view_trans_fp(&inf))
 		{
 			/* plot if inside window */
 			if (inf.col >= 0)
@@ -2485,7 +2467,7 @@ static int ifs3dfloat(void)
 	return ret;
 }
 
-int ifs()                       /* front-end for ifs2d and ifs3d */
+int ifs()                       /* front-end for ifs_2d and ifs_3d */
 {
 	if (ifs_defn == NULL && ifsload() < 0)
 	{
@@ -2495,12 +2477,12 @@ int ifs()                       /* front-end for ifs2d and ifs3d */
 	{
 		notdiskmsg();
 	}
-	return (ifs_type == 0) ? ifs2d() : ifs3d();
+	return (ifs_type == 0) ? ifs_2d() : ifs_3d();
 }
 
 
 /* IFS logic shamelessly converted to integer math */
-static int ifs2d(void)
+static int ifs_2d(void)
 {
 	int color_method;
 	FILE *fp;
@@ -2536,13 +2518,13 @@ static int ifs2d(void)
 
 	tempr = fudge / 32767;        /* find the proper rand() fudge */
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	x = y = 0;
 	ret = 0;
-	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2604,7 +2586,7 @@ static int ifs2d(void)
 	return ret;
 }
 
-static int ifs3dlong(void)
+static int ifs_3d_long(void)
 {
 	int color_method;
 	FILE *fp;
@@ -2617,7 +2599,7 @@ static int ifs3dlong(void)
 
 	int i, j, k;
 
-	struct long3dvtinf inf;
+	struct threed_vt_inf inf;
 	srand(1);
 	color_method = (int)param[0];
 	localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
@@ -2644,12 +2626,12 @@ static int ifs3dlong(void)
 	inf.orbit[1] = 0;
 	inf.orbit[2] = 0;
 
-	fp = open_orbitsave();
+	fp = open_orbit_save();
 
 	ret = 0;
-	maxct = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
-	while (coloriter++ <= maxct) /* loop until keypress or maxit */
+	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2693,7 +2675,7 @@ static int ifs3dlong(void)
 			fprintf(fp, "%g %g %g 15\n", (double)newx/fudge, (double)newy/fudge, (double)newz/fudge);
 		}
 
-		if (long3dviewtransf(&inf))
+		if (threed_view_trans(&inf))
 		{
 			if ((long)abs(inf.row) + (long)abs(inf.col) > BAD_PIXEL) /* sanity check */
 			{
@@ -2749,7 +2731,7 @@ static int ifs3dlong(void)
 	return ret;
 }
 
-static void setupmatrix(MATRIX doublemat)
+static void setup_matrix(MATRIX doublemat)
 {
 	/* build transformation matrix */
 	identity (doublemat);
@@ -2778,17 +2760,17 @@ int orbit3dlong()
 	return funny_glasses_call(orbit3dlongcalc);
 }
 
-static int ifs3d(void)
+static int ifs_3d(void)
 {
 	display3d = -1;
 
 	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(floatflag ? ifs3dfloat : ifs3dlong); /* double, long version of ifs3d */
+	return funny_glasses_call(floatflag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
 }
 
 
 
-static int long3dviewtransf(struct long3dvtinf *inf)
+static int threed_view_trans(struct threed_vt_inf *inf)
 {
 	int i, j;
 	double tmpx, tmpy, tmpz;
@@ -2801,10 +2783,10 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 			inf->minvals[i] =  1L << 30;
 			inf->maxvals[i] = -inf->minvals[i];
 		}
-		setupmatrix(inf->doublemat);
+		setup_matrix(inf->doublemat);
 		if (realtime)
 		{
-			setupmatrix(inf->doublemat1);
+			setup_matrix(inf->doublemat1);
 		}
 		/* copy xform matrix to long for for fixed point math */
 		for (i = 0; i < 4; i++)
@@ -2966,7 +2948,7 @@ static int long3dviewtransf(struct long3dvtinf *inf)
 	return 1;
 }
 
-static int float3dviewtransf(struct float3dvtinf *inf)
+static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 {
 	int i;
 	double tmpx, tmpy, tmpz;
@@ -2979,10 +2961,10 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 			inf->minvals[i] =  100000.0; /* impossible value */
 			inf->maxvals[i] = -100000.0;
 		}
-		setupmatrix(inf->doublemat);
+		setup_matrix(inf->doublemat);
 		if (realtime)
 		{
-			setupmatrix(inf->doublemat1);
+			setup_matrix(inf->doublemat1);
 		}
 	}
 
@@ -3075,7 +3057,7 @@ static int float3dviewtransf(struct float3dvtinf *inf)
 	return 1;
 }
 
-static FILE *open_orbitsave(void)
+static FILE *open_orbit_save(void)
 {
 	FILE *fp = NULL;
 	if (orbitsave & ORBITSAVE_RAW)
@@ -3090,7 +3072,7 @@ static FILE *open_orbitsave(void)
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */
-static void _fastcall plothist(int x, int y, int color)
+static void _fastcall plot_hist(int x, int y, int color)
 {
 	color = getcolor(x, y) + 1;
 	if (color >= colors)

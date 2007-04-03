@@ -674,8 +674,8 @@ extern int SetColorPaletteName(char *);
 
 /*  lorenz -- C file prototypes */
 
-extern int orbit3dlongsetup(void);
-extern int orbit3dfloatsetup(void);
+extern int orbit_3d_setup(void);
+extern int orbit_3d_setup_fp(void);
 extern int lorenz3dlongorbit(long *, long *, long *);
 extern int lorenz3d1floatorbit(double *, double *, double *);
 extern int lorenz3dfloatorbit(double *, double *, double *);
