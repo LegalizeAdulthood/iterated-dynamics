@@ -32,16 +32,16 @@ struct Perspectivefp
 	double x, y, zx, zy;
 };
 
-struct Perspective LeftEye, RightEye, *Per;
-struct Perspectivefp LeftEyefp, RightEyefp, *Perfp;
+static struct Perspective LeftEye, RightEye, *Per;
+static struct Perspectivefp LeftEyefp, RightEyefp, *Perfp;
 
-_LCMPLX jbc;
-_CMPLX jbcfp;
+static _LCMPLX jbc;
+static _CMPLX jbcfp;
 
 #ifndef XFRACT
 static double fg, fg16;
 #endif
-int zdots = 128;
+int g_z_dots = 128;
 
 float originfp  = 8.0f;
 float heightfp  = 7.0f;
@@ -77,8 +77,8 @@ JulibrotSetup(void)
 
 	s_x_offset_fp = (xxmax + xxmin) / 2;     /* Calculate average */
 	s_y_offset_fp = (yymax + yymin) / 2;     /* Calculate average */
-	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / zdots;
-	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / zdots;
+	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
+	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
 	floatparm = &jbcfp;
 	s_x_per_inch_fp = (xxmin - xxmax) / widthfp;
 	s_y_per_inch_fp = (yymax - yymin) / heightfp;
@@ -122,8 +122,8 @@ JulibrotSetup(void)
 		dist = (long) (distfp*fg16);
 		eyes = (long) (eyesfp*fg16);
 		brratio = (long) (brratiofp*fg16);
-		s_dmx = (mxmax - s_m_x_min) / zdots;
-		s_dmy = (mymax - s_m_y_min) / zdots;
+		s_dmx = (mxmax - s_m_x_min) / g_z_dots;
+		s_dmy = (mymax - s_m_y_min) / g_z_dots;
 		longparm = &jbc;
 
 		s_x_per_inch = (long) ((xxmin - xxmax) / widthfp*fg);
@@ -174,7 +174,7 @@ jb_per_pixel(void)
 	s_jx += s_x_offset;
 	s_djx = divide(depth, dist, 16);
 	s_djx = multiply(s_djx, Per->x - s_x_pixel, 16) << (bitshift - 16);
-	s_djx = multiply(s_djx, s_x_per_inch, bitshift) / zdots;
+	s_djx = multiply(s_djx, s_x_per_inch, bitshift) / g_z_dots;
 
 	s_jy = multiply(Per->y - s_y_pixel, s_init_z, 16);
 	s_jy = divide(s_jy, dist, 16) - s_y_pixel;
@@ -182,7 +182,7 @@ jb_per_pixel(void)
 	s_jy += s_y_offset;
 	s_djy = divide(depth, dist, 16);
 	s_djy = multiply(s_djy, Per->y - s_y_pixel, 16) << (bitshift - 16);
-	s_djy = multiply(s_djy, s_y_per_inch, bitshift) / zdots;
+	s_djy = multiply(s_djy, s_y_per_inch, bitshift) / g_z_dots;
 
 	return 1;
 }
@@ -192,11 +192,11 @@ jbfp_per_pixel(void)
 {
 	s_jx_fp = ((Perfp->x - s_x_pixel_fp)*s_init_z_fp / distfp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
-	s_djx_fp = (depthfp / distfp)*(Perfp->x - s_x_pixel_fp)*s_x_per_inch_fp / zdots;
+	s_djx_fp = (depthfp / distfp)*(Perfp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
 
 	s_jy_fp = ((Perfp->y - s_y_pixel_fp)*s_init_z_fp / distfp - s_y_pixel_fp)*s_y_per_inch_fp;
 	s_jy_fp += s_y_offset_fp;
-	s_djy_fp = depthfp / distfp*(Perfp->y - s_y_pixel_fp)*s_y_per_inch_fp / zdots;
+	s_djy_fp = depthfp / distfp*(Perfp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
 
 	return 1;
 }
@@ -225,7 +225,7 @@ zline(long x, long y)
 		break;
 	}
 	jb_per_pixel();
-	for (zpixel = 0; zpixel < zdots; zpixel++)
+	for (zpixel = 0; zpixel < g_z_dots; zpixel++)
 	{
 		lold.x = s_jx;
 		lold.y = s_jy;
@@ -248,7 +248,7 @@ zline(long x, long y)
 		{
 			if (juli3Dmode == 3)
 			{
-				color = (int) (128l*zpixel / zdots);
+				color = (int) (128l*zpixel / g_z_dots);
 				if ((row + col) & 1)
 				{
 
@@ -270,7 +270,7 @@ zline(long x, long y)
 			}
 			else
 			{
-				color = (int) (254l*zpixel / zdots);
+				color = (int) (254l*zpixel / g_z_dots);
 				(*plot) (col, row, color + 1);
 			}
 			plotted = 1;
@@ -308,7 +308,7 @@ zlinefp(double x, double y)
 		break;
 	}
 	jbfp_per_pixel();
-	for (zpixel = 0; zpixel < zdots; zpixel++)
+	for (zpixel = 0; zpixel < g_z_dots; zpixel++)
 	{
 		/* Special initialization for Mandelbrot types */
 		if ((neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
@@ -363,7 +363,7 @@ zlinefp(double x, double y)
 		{
 			if (juli3Dmode == 3)
 			{
-				color = (int) (128l*zpixel / zdots);
+				color = (int) (128l*zpixel / g_z_dots);
 				if ((row + col) & 1)
 				{
 					(*plot) (col, row, 127 - color);
@@ -384,7 +384,7 @@ zlinefp(double x, double y)
 			}
 			else
 			{
-				color = (int) (254l*zpixel / zdots);
+				color = (int) (254l*zpixel / g_z_dots);
 				(*plot) (col, row, color + 1);
 			}
 			plotted = 1;
