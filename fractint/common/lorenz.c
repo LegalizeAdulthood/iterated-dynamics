@@ -17,7 +17,7 @@
 #define FORBIT(x, y, z) \
 	(*(int(*)(double*, double*, double*))curfractalspecific->orbitcalc)(x, y, z)
 
-#define RANDOM(x)  (rand()%(x))
+#define RANDOM(x)  (rand() % (x))
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
 to test the actual floating point orbit values, but this seems safe for now.
 A higher value cannot be used - to test, turn off math coprocessor and
@@ -70,39 +70,39 @@ struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 
 /* global data provided by this module */
 long g_max_count;
-enum   Major g_major_method;
-enum   Minor g_minor_method;
+enum Major g_major_method;
+enum Minor g_minor_method;
 int g_keep_screen_coords = 0;
 int g_set_orbit_corners = 0;
 long g_orbit_interval;
 double g_orbit_x_min, g_orbit_y_min, g_orbit_x_max, g_orbit_y_max, g_orbit_x_3rd, g_orbit_y_3rd;
 
 /* local data in this module */
-static struct affine o_cvt;
-static int o_color;
+static struct affine s_o_cvt;
+static int s_o_color;
 static struct affine s_cvt;
-static struct l_affine lcvt;
-static double Cx, Cy;
-static long   CxLong, CyLong;
-/* these are potential user parameters */
-static int connect = 1;    /* flag to connect points with a line */
-static int euler = 0;      /* use implicit euler approximation for dynamic system */
-static int waste = 100;    /* waste this many points before plotting */
+static struct l_affine s_lcvt;
+static double s_cx, s_cy;
+static long   s_x_long, s_y_long;
+/* s_connect, s_euler, s_waste are potential user parameters */
+static int s_connect = 1;    /* flag to connect points with a line */
+static int s_euler = 0;      /* use implicit euler approximation for dynamic system */
+static int s_waste = 100;    /* waste this many points before plotting */
 static int s_run_length;
-static int realtime;
-static int t;
-static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
-static long l_adt, l_bdt, l_cdt, l_xdt, l_ydt;
-static long initorbitlong[3];
-static double dx, dy, dz, dt, a, b, c, d;
-static double adt, bdt, cdt, xdt, ydt, zdt;
-static double initorbitfp[3];
-static char NoQueue[] = "Not enough memory: switching to random walk.\n";
-static int mxhits;
-static int projection = PROJECTION_XY; /* projection plane - default is to plot x-y */
-static double orbit;
-static long   l_orbit;
-static long l_sinx, l_cosx;
+static int s_real_time;
+static int s_t;
+static long s_l_dx, s_l_dy, s_l_dz, s_l_dt, s_l_a, s_l_b, s_l_c, s_l_d;
+static long s_l_adt, s_l_bdt, s_l_cdt, s_l_xdt, s_l_ydt;
+static long s_init_orbit_long[3];
+static double s_dx, s_dy, s_dz, s_dt, s_a, s_b, s_c, s_d;
+static double s_adt, s_bdt, s_cdt, s_xdt, s_ydt, s_zdt;
+static double s_init_orbit_fp[3];
+static char s_no_queue[] = "Not enough memory: switching to random walk.\n";
+static int s_max_hits;
+static int s_projection = PROJECTION_XY; /* projection plane - default is to plot x-y */
+static double s_orbit;
+static long s_l_orbit;
+static long s_l_sinx, s_l_cosx;
 
 /* local routines in this module */
 static int  ifs_2d(void);
@@ -257,89 +257,89 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 int orbit_3d_setup(void)
 {
 	g_max_count = 0L;
-	connect = 1;
-	waste = 100;
-	projection = PROJECTION_XY;
+	s_connect = 1;
+	s_waste = 100;
+	s_projection = PROJECTION_XY;
 	if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
 		fractype == INVERSEJULIA)
 	{
-		connect = 0;
+		s_connect = 0;
 	}
 	if (fractype == LROSSLER)
 	{
-		waste = 500;
+		s_waste = 500;
 	}
 	if (fractype == LLORENZ)
 	{
-		projection = PROJECTION_XZ;
+		s_projection = PROJECTION_XZ;
 	}
 
-	initorbitlong[0] = fudge;  /* initial conditions */
-	initorbitlong[1] = fudge;
-	initorbitlong[2] = fudge;
+	s_init_orbit_long[0] = fudge;  /* initial conditions */
+	s_init_orbit_long[1] = fudge;
+	s_init_orbit_long[2] = fudge;
 
 	if (fractype == LHENON)
 	{
-		l_a =  (long) (param[0]*fudge);
-		l_b =  (long) (param[1]*fudge);
-		l_c =  (long) (param[2]*fudge);
-		l_d =  (long) (param[3]*fudge);
+		s_l_a =  (long) (param[0]*fudge);
+		s_l_b =  (long) (param[1]*fudge);
+		s_l_c =  (long) (param[2]*fudge);
+		s_l_d =  (long) (param[3]*fudge);
 	}
 	else if (fractype == KAM || fractype == KAM3D)
 	{
 		g_max_count = 1L;
-		a   = param[0];           /* angle */
+		s_a   = param[0];           /* angle */
 		if (param[1] <= 0.0)
 		{
 			param[1] = .01;
 		}
-		l_b =  (long) (param[1]*fudge);    /* stepsize */
-		l_c =  (long) (param[2]*fudge);    /* stop */
-		l_d =  (long) param[3];
-		t = (int) l_d;     /* points per orbit */
+		s_l_b =  (long) (param[1]*fudge);    /* stepsize */
+		s_l_c =  (long) (param[2]*fudge);    /* stop */
+		s_l_d =  (long) param[3];
+		s_t = (int) s_l_d;     /* points per orbit */
 
-		l_sinx = (long) (sin(a)*fudge);
-		l_cosx = (long) (cos(a)*fudge);
-		l_orbit = 0;
-		initorbitlong[0] = initorbitlong[1] = initorbitlong[2] = 0;
+		s_l_sinx = (long) (sin(s_a)*fudge);
+		s_l_cosx = (long) (cos(s_a)*fudge);
+		s_l_orbit = 0;
+		s_init_orbit_long[0] = s_init_orbit_long[1] = s_init_orbit_long[2] = 0;
 	}
 	else if (fractype == INVERSEJULIA)
 	{
 		LCMPLX Sqrt;
 
-		CxLong = (long) (param[0]*fudge);
-		CyLong = (long) (param[1]*fudge);
+		s_x_long = (long) (param[0]*fudge);
+		s_y_long = (long) (param[1]*fudge);
 
-		mxhits    = (int) param[2];
+		s_max_hits    = (int) param[2];
 		s_run_length = (int) param[3];
-		if (mxhits <= 0)
+		if (s_max_hits <= 0)
 		{
-			mxhits = 1;
+			s_max_hits = 1;
 		}
-		else if (mxhits >= colors)
+		else if (s_max_hits >= colors)
 		{
-			mxhits = colors - 1;
+			s_max_hits = colors - 1;
 		}
-		param[2] = mxhits;
+		param[2] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 		/* Note: using bitshift of 21 for affine, 24 otherwise */
 
-		lcvt.a = (long) (s_cvt.a*(1L << 21));
-		lcvt.b = (long) (s_cvt.b*(1L << 21));
-		lcvt.c = (long) (s_cvt.c*(1L << 21));
-		lcvt.d = (long) (s_cvt.d*(1L << 21));
-		lcvt.e = (long) (s_cvt.e*(1L << 21));
-		lcvt.f = (long) (s_cvt.f*(1L << 21));
+		s_lcvt.a = (long) (s_cvt.a*(1L << 21));
+		s_lcvt.b = (long) (s_cvt.b*(1L << 21));
+		s_lcvt.c = (long) (s_cvt.c*(1L << 21));
+		s_lcvt.d = (long) (s_cvt.d*(1L << 21));
+		s_lcvt.e = (long) (s_cvt.e*(1L << 21));
+		s_lcvt.f = (long) (s_cvt.f*(1L << 21));
 
-		Sqrt = ComplexSqrtLong(fudge - 4*CxLong, -4*CyLong);
+		Sqrt = ComplexSqrtLong(fudge - 4*s_x_long, -4*s_y_long);
 
 		switch (g_major_method)
 		{
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
+				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto lrwalk;
 			}
@@ -349,7 +349,7 @@ int orbit_3d_setup(void)
 		case depth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
+				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto lrwalk;
 			}
@@ -367,160 +367,164 @@ int orbit_3d_setup(void)
 			break;
 		case random_walk:
 lrwalk:
-			lnew.x = initorbitlong[0] = fudge + Sqrt.x / 2;
-			lnew.y = initorbitlong[1] =         Sqrt.y / 2;
+			lnew.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			lnew.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		case random_run:
-			lnew.x = initorbitlong[0] = fudge + Sqrt.x / 2;
-			lnew.y = initorbitlong[1] =         Sqrt.y / 2;
+			lnew.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			lnew.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		}
 	}
 	else
 	{
-		l_dt = (long) (param[0]*fudge);
-		l_a =  (long) (param[1]*fudge);
-		l_b =  (long) (param[2]*fudge);
-		l_c =  (long) (param[3]*fudge);
+		s_l_dt = (long) (param[0]*fudge);
+		s_l_a =  (long) (param[1]*fudge);
+		s_l_b =  (long) (param[2]*fudge);
+		s_l_c =  (long) (param[3]*fudge);
 	}
 
 	/* precalculations for speed */
-	l_adt = multiply(l_a, l_dt, bitshift);
-	l_bdt = multiply(l_b, l_dt, bitshift);
-	l_cdt = multiply(l_c, l_dt, bitshift);
+	s_l_adt = multiply(s_l_a, s_l_dt, bitshift);
+	s_l_bdt = multiply(s_l_b, s_l_dt, bitshift);
+	s_l_cdt = multiply(s_l_c, s_l_dt, bitshift);
 	return 1;
 }
 
-#define COSB   dx
-#define SINABC dy
+#define COSB   s_dx
+#define SINABC s_dy
 
 int orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
-	connect = 1;
-	waste = 100;
-	projection = PROJECTION_XY;
+	s_connect = 1;
+	s_waste = 100;
+	s_projection = PROJECTION_XY;
 
 	if (fractype == FPHENON || fractype == FPPICKOVER || fractype == FPGINGERBREAD
 				|| fractype == KAMFP || fractype == KAM3DFP
 				|| fractype == FPHOPALONG || fractype == INVERSEJULIAFP)
-		connect = 0;
+	{
+		s_connect = 0;
+	}
 	if (fractype == FPLORENZ3D1 || fractype == FPLORENZ3D3 ||
 		fractype == FPLORENZ3D4)
-		waste = 750;
+	{
+		s_waste = 750;
+	}
 	if (fractype == FPROSSLER)
 	{
-		waste = 500;
+		s_waste = 500;
 	}
 	if (fractype == FPLORENZ)
 	{
-		projection = PROJECTION_XZ; /* plot x and z */
+		s_projection = PROJECTION_XZ; /* plot x and z */
 	}
 
-	initorbitfp[0] = 1;  /* initial conditions */
-	initorbitfp[1] = 1;
-	initorbitfp[2] = 1;
+	s_init_orbit_fp[0] = 1;  /* initial conditions */
+	s_init_orbit_fp[1] = 1;
+	s_init_orbit_fp[2] = 1;
 	if (fractype == FPGINGERBREAD)
 	{
-		initorbitfp[0] = param[0];        /* initial conditions */
-		initorbitfp[1] = param[1];
+		s_init_orbit_fp[0] = param[0];        /* initial conditions */
+		s_init_orbit_fp[1] = param[1];
 	}
 
 	if (fractype == ICON || fractype == ICON3D)        /* DMF */
 	{
-		initorbitfp[0] = 0.01;  /* initial conditions */
-		initorbitfp[1] = 0.003;
-		connect = 0;
-		waste = 2000;
+		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
+		s_init_orbit_fp[1] = 0.003;
+		s_connect = 0;
+		s_waste = 2000;
 	}
 
 	if (fractype == LATOO)        /* HB */
 	{
-		connect = 0;
+		s_connect = 0;
 	}
 
 	if (fractype == FPHENON || fractype == FPPICKOVER)
 	{
-		a =  param[0];
-		b =  param[1];
-		c =  param[2];
-		d =  param[3];
+		s_a =  param[0];
+		s_b =  param[1];
+		s_c =  param[2];
+		s_d =  param[3];
 	}
 	else if (fractype == ICON || fractype == ICON3D)        /* DMF */
 	{
-		initorbitfp[0] = 0.01;  /* initial conditions */
-		initorbitfp[1] = 0.003;
-		connect = 0;
-		waste = 2000;
+		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
+		s_init_orbit_fp[1] = 0.003;
+		s_connect = 0;
+		s_waste = 2000;
 		/* Initialize parameters */
-		a  =   param[0];
-		b  =   param[1];
-		c  =   param[2];
-		d  =   param[3];
+		s_a  =   param[0];
+		s_b  =   param[1];
+		s_c  =   param[2];
+		s_d  =   param[3];
 	}
 	else if (fractype == KAMFP || fractype == KAM3DFP)
 	{
 		g_max_count = 1L;
-		a = param[0];           /* angle */
+		s_a = param[0];           /* angle */
 		if (param[1] <= 0.0)
 		{
 			param[1] = .01;
 		}
-		b =  param[1];    /* stepsize */
-		c =  param[2];    /* stop */
-		l_d =  (long) param[3];
-		t = (int) l_d;     /* points per orbit */
-		sinx = sin(a);
-		cosx = cos(a);
-		orbit = 0;
-		initorbitfp[0] = initorbitfp[1] = initorbitfp[2] = 0;
+		s_b =  param[1];    /* stepsize */
+		s_c =  param[2];    /* stop */
+		s_l_d =  (long) param[3];
+		s_t = (int) s_l_d;     /* points per orbit */
+		sinx = sin(s_a);
+		cosx = cos(s_a);
+		s_orbit = 0;
+		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
 	}
 	else if (fractype == FPHOPALONG || fractype == FPMARTIN || fractype == CHIP
 		|| fractype == QUADRUPTWO || fractype == THREEPLY)
 	{
-		initorbitfp[0] = 0;  /* initial conditions */
-		initorbitfp[1] = 0;
-		initorbitfp[2] = 0;
-		connect = 0;
-		a =  param[0];
-		b =  param[1];
-		c =  param[2];
-		d =  param[3];
+		s_init_orbit_fp[0] = 0;  /* initial conditions */
+		s_init_orbit_fp[1] = 0;
+		s_init_orbit_fp[2] = 0;
+		s_connect = 0;
+		s_a =  param[0];
+		s_b =  param[1];
+		s_c =  param[2];
+		s_d =  param[3];
 		if (fractype == THREEPLY)
 		{
-			COSB   = cos(b);
-			SINABC = sin(a + b + c);
+			COSB   = cos(s_b);
+			SINABC = sin(s_a + s_b + s_c);
 		}
 	}
 	else if (fractype == INVERSEJULIAFP)
 	{
 		_CMPLX Sqrt;
 
-		Cx = param[0];
-		Cy = param[1];
+		s_cx = param[0];
+		s_cy = param[1];
 
-		mxhits    = (int) param[2];
+		s_max_hits    = (int) param[2];
 		s_run_length = (int) param[3];
-		if (mxhits <= 0)
+		if (s_max_hits <= 0)
 		{
-			mxhits = 1;
+			s_max_hits = 1;
 		}
-		else if (mxhits >= colors)
+		else if (s_max_hits >= colors)
 		{
-			mxhits = colors - 1;
+			s_max_hits = colors - 1;
 		}
-		param[2] = mxhits;
+		param[2] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 
 		/* find fixed points: guaranteed to be in the set */
-		Sqrt = ComplexSqrtFloat(1 - 4*Cx, -4*Cy);
+		Sqrt = ComplexSqrtFloat(1 - 4*s_cx, -4*s_cy);
 		switch (g_major_method)
 		{
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
+				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto rwalk;
 			}
@@ -530,7 +534,7 @@ int orbit_3d_setup_fp()
 		case depth_first:                      /* depth first (choose direction) */
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
+				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto rwalk;
 			}
@@ -548,29 +552,29 @@ int orbit_3d_setup_fp()
 			break;
 		case random_walk:
 rwalk:
-			g_new.x = initorbitfp[0] = 1 + Sqrt.x / 2;
-			g_new.y = initorbitfp[1] = Sqrt.y / 2;
+			g_new.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+			g_new.y = s_init_orbit_fp[1] = Sqrt.y / 2;
 			break;
 		case random_run:       /* random run, choose intervals */
 			g_major_method = random_run;
-			g_new.x = initorbitfp[0] = 1 + Sqrt.x / 2;
-			g_new.y = initorbitfp[1] = Sqrt.y / 2;
+			g_new.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+			g_new.y = s_init_orbit_fp[1] = Sqrt.y / 2;
 			break;
 		}
 	}
 	else
 	{
-		dt = param[0];
-		a =  param[1];
-		b =  param[2];
-		c =  param[3];
+		s_dt = param[0];
+		s_a =  param[1];
+		s_b =  param[2];
+		s_c =  param[3];
 
 	}
 
 	/* precalculations for speed */
-	adt = a*dt;
-	bdt = b*dt;
-	cdt = c*dt;
+	s_adt = s_a*s_dt;
+	s_bdt = s_b*s_dt;
+	s_cdt = s_c*s_dt;
 
 	return 1;
 }
@@ -611,7 +615,7 @@ Minverse_julia_orbit()
 		break;
 	case random_walk:
 #if 0
-		g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
+		g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
 		if (RANDOM(2))
 		{
 			g_new.x = -g_new.x;
@@ -621,7 +625,7 @@ Minverse_julia_orbit()
 		break;
 	case random_run:
 #if 0
-		g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
+		g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -657,7 +661,7 @@ Minverse_julia_orbit()
 	* Now find the next point(s), and flip a coin to choose one.
 	*/
 
-	g_new       = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
+	g_new       = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
 	leftright = (RANDOM(2)) ? 1 : -1;
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
@@ -682,26 +686,26 @@ Minverse_julia_orbit()
 
 	/*
 	* Read the pixel's color:
-	* For MIIM, if color >= mxhits, discard the point
+	* For MIIM, if color >= s_max_hits, discard the point
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
 	switch (g_major_method)
 	{
 	case breadth_first:
-		if (color < mxhits)
+		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			/* g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
+			/* g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy); */
 			EnQueueFloat((float)g_new.x, (float)g_new.y);
 			EnQueueFloat((float)-g_new.x, (float)-g_new.y);
 		}
 		break;
 	case depth_first:
-		if (color < mxhits)
+		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			/* g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
+			/* g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy); */
 			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
@@ -791,7 +795,7 @@ Linverse_julia_orbit()
 		lnew = PopLong();
 		break;
 	case random_walk:
-		lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+		lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 		if (RANDOM(2))
 		{
 			lnew.x = -lnew.x;
@@ -799,7 +803,7 @@ Linverse_julia_orbit()
 		}
 		break;
 	case random_run:
-		lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+		lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -827,13 +831,13 @@ Linverse_julia_orbit()
 	* Next, find its pixel position
 	*
 	* Note: had to use a bitshift of 21 for this operation because
-	* otherwise the values of lcvt were truncated.  Used bitshift
+	* otherwise the values of s_lcvt were truncated.  Used bitshift
 	* of 24 otherwise, for increased precision.
 	*/
-	newcol = (int) ((multiply(lcvt.a, lnew.x >> (bitshift - 21), 21) +
-			multiply(lcvt.b, lnew.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
-	newrow = (int) ((multiply(lcvt.c, lnew.x >> (bitshift - 21), 21) +
-			multiply(lcvt.d, lnew.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
+	newcol = (int) ((multiply(s_lcvt.a, lnew.x >> (bitshift - 21), 21) +
+			multiply(s_lcvt.b, lnew.y >> (bitshift - 21), 21) + s_lcvt.e) >> 21);
+	newrow = (int) ((multiply(s_lcvt.c, lnew.x >> (bitshift - 21), 21) +
+			multiply(s_lcvt.d, lnew.y >> (bitshift - 21), 21) + s_lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
 	{
@@ -845,11 +849,11 @@ Linverse_julia_orbit()
 		switch (g_major_method)
 		{
 		case breadth_first:
-			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			EnQueueLong(color*lnew.x, color*lnew.y);
 			break;
 		case depth_first:
-			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			PushLong(color*lnew.x, color*lnew.y);
 			break;
 		case random_run:
@@ -862,26 +866,26 @@ Linverse_julia_orbit()
 
 	/*
 	* Read the pixel's color:
-	* For MIIM, if color >= mxhits, discard the point
+	* For MIIM, if color >= s_max_hits, discard the point
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
 	switch (g_major_method)
 	{
 	case breadth_first:
-		if (color < mxhits)
+		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			EnQueueLong(lnew.x,  lnew.y);
 			EnQueueLong(-lnew.x, -lnew.y);
 		}
 		break;
 	case depth_first:
-		if (color < mxhits)
+		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
+			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
@@ -923,32 +927,32 @@ Linverse_julia_orbit()
 
 int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 {
-	l_xdt = multiply(*l_x, l_dt, bitshift);
-	l_ydt = multiply(*l_y, l_dt, bitshift);
-	l_dx  = -multiply(l_adt, *l_x, bitshift) + multiply(l_adt, *l_y, bitshift);
-	l_dy  =  multiply(l_bdt, *l_x, bitshift) -l_ydt -multiply(*l_z, l_xdt, bitshift);
-	l_dz  = -multiply(l_cdt, *l_z, bitshift) + multiply(*l_x, l_ydt, bitshift);
+	s_l_xdt = multiply(*l_x, s_l_dt, bitshift);
+	s_l_ydt = multiply(*l_y, s_l_dt, bitshift);
+	s_l_dx  = -multiply(s_l_adt, *l_x, bitshift) + multiply(s_l_adt, *l_y, bitshift);
+	s_l_dy  =  multiply(s_l_bdt, *l_x, bitshift) -s_l_ydt -multiply(*l_z, s_l_xdt, bitshift);
+	s_l_dz  = -multiply(s_l_cdt, *l_z, bitshift) + multiply(*l_x, s_l_ydt, bitshift);
 
-	*l_x += l_dx;
-	*l_y += l_dy;
-	*l_z += l_dz;
+	*l_x += s_l_dx;
+	*l_y += s_l_dy;
+	*l_z += s_l_dz;
 	return 0;
 }
 
 int lorenz_3d_orbit_fp(double *x, double *y, double *z)
 {
-	xdt = (*x)*dt;
-	ydt = (*y)*dt;
-	zdt = (*z)*dt;
+	s_xdt = (*x)*s_dt;
+	s_ydt = (*y)*s_dt;
+	s_zdt = (*z)*s_dt;
 
 	/* 2-lobe Lorenz (the original) */
-	dx  = -adt*(*x) + adt*(*y);
-	dy  =  bdt*(*x) - ydt - (*z)*xdt;
-	dz  = -cdt*(*z) + (*x)*ydt;
+	s_dx  = -s_adt*(*x) + s_adt*(*y);
+	s_dy  =  s_bdt*(*x) - s_ydt - (*z)*s_xdt;
+	s_dz  = -s_cdt*(*z) + (*x)*s_ydt;
 
-	*x += dx;
-	*y += dy;
-	*z += dz;
+	*x += s_dx;
+	*y += s_dy;
+	*z += s_dz;
 	return 0;
 }
 
@@ -956,20 +960,20 @@ int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 {
 	double norm;
 
-	xdt = (*x)*dt;
-	ydt = (*y)*dt;
-	zdt = (*z)*dt;
+	s_xdt = (*x)*s_dt;
+	s_ydt = (*y)*s_dt;
+	s_zdt = (*z)*s_dt;
 
 	/* 1-lobe Lorenz */
 	norm = sqrt((*x)*(*x) + (*y)*(*y));
-	dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
-	dy   = (bdt-adt)*(*x) - (adt + dt)*(*y) + (bdt + adt)*norm - xdt*(*z) -
-			norm*zdt;
-	dz   = (ydt/2) - cdt*(*z);
+	s_dx   = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
+	s_dy   = (s_bdt-s_adt)*(*x) - (s_adt + s_dt)*(*y) + (s_bdt + s_adt)*norm - s_xdt*(*z) -
+			norm*s_zdt;
+	s_dz   = (s_ydt/2) - s_cdt*(*z);
 
-	*x += dx;
-	*y += dy;
-	*z += dz;
+	*x += s_dx;
+	*y += s_dy;
+	*z += s_dz;
 	return 0;
 }
 
@@ -977,44 +981,44 @@ int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 {
 	double norm;
 
-	xdt = (*x)*dt;
-	ydt = (*y)*dt;
-	zdt = (*z)*dt;
+	s_xdt = (*x)*s_dt;
+	s_ydt = (*y)*s_dt;
+	s_zdt = (*z)*s_dt;
 
 	/* 3-lobe Lorenz */
 	norm = sqrt((*x)*(*x) + (*y)*(*y));
-	dx   = (-(adt + dt)*(*x) + (adt-bdt + zdt)*(*y)) / 3 +
-			((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
-			2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
-	dy   = ((bdt-adt-zdt)*(*x) - (adt + dt)*(*y)) / 3 +
-			(2*(adt-dt)*(*x)*(*y) +
-			(bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-	dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
+	s_dx   = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y)) / 3 +
+			((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
+			2*(s_bdt + s_adt-s_zdt)*(*x)*(*y))/(3*norm);
+	s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt + s_dt)*(*y)) / 3 +
+			(2*(s_adt-s_dt)*(*x)*(*y) +
+			(s_bdt + s_adt-s_zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
+	s_dz   = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
 
-	*x += dx;
-	*y += dy;
-	*z += dz;
+	*x += s_dx;
+	*y += s_dy;
+	*z += s_dz;
 	return 0;
 }
 
 int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 {
-	xdt = (*x)*dt;
-	ydt = (*y)*dt;
-	zdt = (*z)*dt;
+	s_xdt = (*x)*s_dt;
+	s_ydt = (*y)*s_dt;
+	s_zdt = (*z)*s_dt;
 
 	/* 4-lobe Lorenz */
-	dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
-			(adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
+	s_dx   = (-s_adt*(*x)*(*x)*(*x) + (2*s_adt + s_bdt-s_zdt)*(*x)*(*x)*(*y) +
+			(s_adt-2*s_dt)*(*x)*(*y)*(*y) + (s_zdt-s_bdt)*(*y)*(*y)*(*y)) /
 			(2*((*x)*(*x) + (*y)*(*y)));
-	dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
-			(-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
+	s_dy   = ((s_bdt-s_zdt)*(*x)*(*x)*(*x) + (s_adt-2*s_dt)*(*x)*(*x)*(*y) +
+			(-2*s_adt-s_bdt + s_zdt)*(*x)*(*y)*(*y) - s_adt*(*y)*(*y)*(*y)) /
 			(2*((*x)*(*x) + (*y)*(*y)));
-	dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
+	s_dz   = (2*s_xdt*(*x)*(*x)*(*y) - 2*s_xdt*(*y)*(*y)*(*y) - s_cdt*(*z));
 
-	*x += dx;
-	*y += dy;
-	*z += dz;
+	*x += s_dx;
+	*y += s_dy;
+	*z += s_dz;
 	return 0;
 }
 
@@ -1022,8 +1026,8 @@ int henon_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy;
 	*z = *x; /* for warning only */
-	newx  = 1 + *y - a*(*x)*(*x);
-	newy  = b*(*x);
+	newx  = 1 + *y - s_a*(*x)*(*x);
+	newy  = s_b*(*x);
 	*x = newx;
 	*y = newy;
 	return 0;
@@ -1034,9 +1038,9 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 	long newx, newy;
 	*l_z = *l_x; /* for warning only */
 	newx = multiply(*l_x, *l_x, bitshift);
-	newx = multiply(newx, l_a, bitshift);
+	newx = multiply(newx, s_l_a, bitshift);
 	newx  = fudge + *l_y - newx;
-	newy  = multiply(l_b, *l_x, bitshift);
+	newy  = multiply(s_l_b, *l_x, bitshift);
 	*l_x = newx;
 	*l_y = newy;
 	return 0;
@@ -1044,24 +1048,24 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 
 int rossler_orbit_fp(double *x, double *y, double *z)
 {
-	xdt = (*x)*dt;
-	ydt = (*y)*dt;
+	s_xdt = (*x)*s_dt;
+	s_ydt = (*y)*s_dt;
 
-	dx = -ydt - (*z)*dt;
-	dy = xdt + (*y)*adt;
-	dz = bdt + (*z)*xdt - (*z)*cdt;
+	s_dx = -s_ydt - (*z)*s_dt;
+	s_dy = s_xdt + (*y)*s_adt;
+	s_dz = s_bdt + (*z)*s_xdt - (*z)*s_cdt;
 
-	*x += dx;
-	*y += dy;
-	*z += dz;
+	*x += s_dx;
+	*y += s_dy;
+	*z += s_dz;
 	return 0;
 }
 
 int pickover_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy, newz;
-	newx = sin(a*(*y)) - (*z)*cos(b*(*x));
-	newy = (*z)*sin(c*(*x)) - cos(d*(*y));
+	newx = sin(s_a*(*y)) - (*z)*cos(s_b*(*x));
+	newy = (*z)*sin(s_c*(*x)) - cos(s_d*(*y));
 	newz = sin(*x);
 	*x = newx;
 	*y = newy;
@@ -1082,17 +1086,17 @@ int gingerbread_orbit_fp(double *x, double *y, double *z)
 
 int rossler_orbit(long *l_x, long *l_y, long *l_z)
 {
-	l_xdt = multiply(*l_x, l_dt, bitshift);
-	l_ydt = multiply(*l_y, l_dt, bitshift);
+	s_l_xdt = multiply(*l_x, s_l_dt, bitshift);
+	s_l_ydt = multiply(*l_y, s_l_dt, bitshift);
 
-	l_dx  = -l_ydt - multiply(*l_z, l_dt, bitshift);
-	l_dy  =  l_xdt + multiply(*l_y, l_adt, bitshift);
-	l_dz  =  l_bdt + multiply(*l_z, l_xdt, bitshift)
-						- multiply(*l_z, l_cdt, bitshift);
+	s_l_dx  = -s_l_ydt - multiply(*l_z, s_l_dt, bitshift);
+	s_l_dy  =  s_l_xdt + multiply(*l_y, s_l_adt, bitshift);
+	s_l_dz  =  s_l_bdt + multiply(*l_z, s_l_xdt, bitshift)
+						- multiply(*l_z, s_l_cdt, bitshift);
 
-	*l_x += l_dx;
-	*l_y += l_dy;
-	*l_z += l_dz;
+	*l_x += s_l_dx;
+	*l_y += s_l_dy;
+	*l_z += s_l_dz;
 
 	return 0;
 }
@@ -1106,13 +1110,13 @@ int rossler_orbit(long *l_x, long *l_y, long *l_z)
 int kam_torus_orbit_fp(double *r, double *s, double *z)
 {
 	double srr;
-	if (t++ >= l_d)
+	if (s_t++ >= s_l_d)
 	{
-		orbit += b;
-		(*r) = (*s) = orbit/3;
-		t = 0;
-		*z = orbit;
-		if (orbit > c)
+		s_orbit += s_b;
+		(*r) = (*s) = s_orbit/3;
+		s_t = 0;
+		*z = s_orbit;
+		if (s_orbit > s_c)
 		{
 			return 1;
 		}
@@ -1126,20 +1130,20 @@ int kam_torus_orbit_fp(double *r, double *s, double *z)
 int kam_torus_orbit(long *r, long *s, long *z)
 {
 	long srr;
-	if (t++ >= l_d)
+	if (s_t++ >= s_l_d)
 	{
-		l_orbit += l_b;
-		(*r) = (*s) = l_orbit/3;
-		t = 0;
-		*z = l_orbit;
-		if (l_orbit > l_c)
+		s_l_orbit += s_l_b;
+		(*r) = (*s) = s_l_orbit/3;
+		s_t = 0;
+		*z = s_l_orbit;
+		if (s_l_orbit > s_l_c)
 		{
 			return 1;
 		}
 	}
 	srr = (*s)-multiply((*r), (*r), bitshift);
-	(*s) = multiply((*r), l_sinx, bitshift) + multiply(srr, l_cosx, bitshift);
-	(*r) = multiply((*r), l_cosx, bitshift)-multiply(srr, l_sinx, bitshift);
+	(*s) = multiply((*r), s_l_sinx, bitshift) + multiply(srr, s_l_cosx, bitshift);
+	(*r) = multiply((*r), s_l_cosx, bitshift)-multiply(srr, s_l_sinx, bitshift);
 	return 0;
 }
 
@@ -1147,8 +1151,8 @@ int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*sqrt(fabs(b*(*x)-c));
-	*y = a - *x;
+	tmp = *y - sign(*x)*sqrt(fabs(s_b*(*x)-s_c));
+	*y = s_a - *x;
 	*x = tmp;
 	return 0;
 }
@@ -1173,8 +1177,8 @@ static int orbit_aux(double (*fn)(double x), double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*fn(log_fabs(b, c, *x))*atan_sqr_log_fabs(b, c, *x);
-	*y = a - *x;
+	tmp = *y - sign(*x)*fn(log_fabs(s_b, s_c, *x))*atan_sqr_log_fabs(s_b, s_c, *x);
+	*y = s_a - *x;
 	*x = tmp;
 	return 0;
 }
@@ -1196,8 +1200,8 @@ int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*(fabs(sin(*x)*COSB + c-(*x)*SINABC));
-	*y = a - *x;
+	tmp = *y - sign(*x)*(fabs(sin(*x)*COSB + s_c-(*x)*SINABC));
+	*y = s_a - *x;
 	*x = tmp;
 	return 0;
 }
@@ -1207,7 +1211,7 @@ int martin_2d_orbit_fp(double *x, double *y, double *z)
 	double tmp;
 	*z = *x;  /* for warning only */
 	tmp = *y - sin(*x);
-	*y = a - *x;
+	*y = s_a - *x;
 	*x = tmp;
 	return 0;
 }
@@ -1224,8 +1228,8 @@ int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 	{
 		return 1;
 	}
-	newx = x2-y2 + a;
-	newy = 2*(*x)*(*y) + b;
+	newx = x2-y2 + s_a;
+	newy = 2*(*x)*(*y) + s_b;
 	*x = newx;
 	*y = newy;
 	return 0;
@@ -1235,19 +1239,19 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 {
 	_CMPLX cp, tmp;
 	double newx, newy;
-	cp.x = b* *x;
+	cp.x = s_b* *x;
 	cp.y = 0;
 	CMPLXtrig0(cp, tmp);
-	newy = *y + dt*sin(*x + a*tmp.x);
-	if (euler)
+	newy = *y + s_dt*sin(*x + s_a*tmp.x);
+	if (s_euler)
 	{
 		*y = newy;
 	}
 
-	cp.x = b* *y;
+	cp.x = s_b* *y;
 	cp.y = 0;
 	CMPLXtrig0(cp, tmp);
-	newx = *x - dt*sin(*y + a*tmp.x);
+	newx = *x - s_dt*sin(*y + s_a*tmp.x);
 	*x = newx;
 	*y = newy;
 	return 0;
@@ -1387,7 +1391,7 @@ int orbit_2d_fp()
 	setup_convert_to_screen(&cvt);
 
 	/* set up projection scheme */
-	switch (projection)
+	switch (s_projection)
 	{
 	case PROJECTION_ZX: p0 = &z; p1 = &x; p2 = &y; break;
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
@@ -1403,9 +1407,9 @@ int orbit_2d_fp()
 	color = (inside > 0) ? inside : 2;
 
 	oldcol = oldrow = -1;
-	x = initorbitfp[0];
-	y = initorbitfp[1];
-	z = initorbitfp[2];
+	x = s_init_orbit_fp[0];
+	y = s_init_orbit_fp[1];
+	z = s_init_orbit_fp[2];
 	coloriter = 0L;
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
@@ -1415,8 +1419,8 @@ int orbit_2d_fp()
 		start_resume();
 		get_resume(sizeof(count), &count, sizeof(color), &color,
 			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-			sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
+			sizeof(s_orbit), &s_orbit, sizeof(coloriter), &coloriter,
 			0);
 		end_resume();
 	}
@@ -1429,8 +1433,8 @@ int orbit_2d_fp()
 			alloc_resume(100, 1);
 			put_resume(sizeof(count), &count, sizeof(color), &color,
 				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-				sizeof(orbit), &orbit, sizeof(coloriter), &coloriter,
+				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
+				sizeof(s_orbit), &s_orbit, sizeof(coloriter), &coloriter,
 				0);
 			ret = -1;
 			break;
@@ -1454,7 +1458,7 @@ int orbit_2d_fp()
 			}
 			if ((fractype != ICON) && (fractype != LATOO))
 			{
-				if (oldcol != -1 && connect)
+				if (oldcol != -1 && s_connect)
 				{
 					driver_draw_line(col, row, oldcol, oldrow, color % colors);
 				}
@@ -1521,7 +1525,7 @@ int orbit_2d()
 	l_setup_convert_to_screen(&cvt);
 
 	/* set up projection scheme */
-	switch (projection)
+	switch (s_projection)
 	{
 	case PROJECTION_ZX: p0 = &z; p1 = &x; p2 = &y; break;
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
@@ -1540,9 +1544,9 @@ int orbit_2d()
 		color = 1;
 	}
 	oldcol = oldrow = -1;
-	x = initorbitlong[0];
-	y = initorbitlong[1];
-	z = initorbitlong[2];
+	x = s_init_orbit_long[0];
+	y = s_init_orbit_long[1];
+	z = s_init_orbit_long[2];
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 	coloriter = 0L;
@@ -1552,8 +1556,8 @@ int orbit_2d()
 		start_resume();
 		get_resume(sizeof(count), &count, sizeof(color), &color,
 			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-			sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
+			sizeof(s_l_orbit), &s_l_orbit, sizeof(coloriter), &coloriter,
 			0);
 		end_resume();
 	}
@@ -1566,8 +1570,8 @@ int orbit_2d()
 			alloc_resume(100, 1);
 			put_resume(sizeof(count), &count, sizeof(color), &color,
 				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(t), &t,
-				sizeof(l_orbit), &l_orbit, sizeof(coloriter), &coloriter,
+				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
+				sizeof(s_l_orbit), &s_l_orbit, sizeof(coloriter), &coloriter,
 				0);
 			ret = -1;
 			break;
@@ -1597,13 +1601,13 @@ int orbit_2d()
 				yy = yy/fudge;
 				w_snd((int) (yy*100 + basehertz));
 			}
-			if (oldcol != -1 && connect)
+			if (oldcol != -1 && s_connect)
 			{
-				driver_draw_line(col, row, oldcol, oldrow, color%colors);
+				driver_draw_line(col, row, oldcol, oldrow, color % colors);
 			}
 			else if (!start)
 			{
-				(*plot)(col, row, color%colors);
+				(*plot)(col, row, color % colors);
 			}
 			oldcol = col;
 			oldrow = row;
@@ -1655,9 +1659,9 @@ static int orbit_3d_calc(void)
 		color = 1;
 	}
 
-	inf.orbit[0] = initorbitlong[0];
-	inf.orbit[1] = initorbitlong[1];
-	inf.orbit[2] = initorbitlong[2];
+	inf.orbit[0] = s_init_orbit_long[0];
+	inf.orbit[1] = s_init_orbit_long[1];
+	inf.orbit[2] = s_init_orbit_long[2];
 
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
@@ -1697,7 +1701,7 @@ static int orbit_3d_calc(void)
 			/* plot if inside window */
 			if (inf.col >= 0)
 			{
-				if (realtime)
+				if (s_real_time)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
@@ -1708,13 +1712,13 @@ static int orbit_3d_calc(void)
 					yy = yy/fudge;
 					w_snd((int) (yy*100 + basehertz));
 				}
-				if (oldcol != -1 && connect)
+				if (oldcol != -1 && s_connect)
 				{
-					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
+					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % colors);
 				}
 				else
 				{
-					(*plot)(inf.col, inf.row, color%colors);
+					(*plot)(inf.col, inf.row, color % colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1723,19 +1727,19 @@ static int orbit_3d_calc(void)
 			}
 			oldcol = inf.col;
 			oldrow = inf.row;
-			if (realtime)
+			if (s_real_time)
 			{
 				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
-					if (oldcol1 != -1 && connect)
+					if (oldcol1 != -1 && s_connect)
 					{
-						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%colors);
+						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % colors);
 					}
 					else
 					{
-						(*plot)(inf.col1, inf.row1, color%colors);
+						(*plot)(inf.col1, inf.row1, color % colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1775,9 +1779,9 @@ static int orbit_3d_calc_fp(void)
 	{
 		color = 1;
 	}
-	inf.orbit[0] = initorbitfp[0];
-	inf.orbit[1] = initorbitfp[1];
-	inf.orbit[2] = initorbitfp[2];
+	inf.orbit[0] = s_init_orbit_fp[0];
+	inf.orbit[1] = s_init_orbit_fp[1];
+	inf.orbit[2] = s_init_orbit_fp[2];
 
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
@@ -1818,7 +1822,7 @@ static int orbit_3d_calc_fp(void)
 			/* plot if inside window */
 			if (inf.col >= 0)
 			{
-				if (realtime)
+				if (s_real_time)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
@@ -1826,13 +1830,13 @@ static int orbit_3d_calc_fp(void)
 				{
 					w_snd((int) (inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
 				}
-				if (oldcol != -1 && connect)
+				if (oldcol != -1 && s_connect)
 				{
-					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color%colors);
+					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % colors);
 				}
 				else
 				{
-					(*plot)(inf.col, inf.row, color%colors);
+					(*plot)(inf.col, inf.row, color % colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1841,19 +1845,19 @@ static int orbit_3d_calc_fp(void)
 			}
 			oldcol = inf.col;
 			oldrow = inf.row;
-			if (realtime)
+			if (s_real_time)
 			{
 				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
-					if (oldcol1 != -1 && connect)
+					if (oldcol1 != -1 && s_connect)
 					{
-						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color%colors);
+						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % colors);
 					}
 					else
 					{
-						(*plot)(inf.col1, inf.row1, color%colors);
+						(*plot)(inf.col1, inf.row1, color % colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1874,31 +1878,31 @@ static int orbit_3d_calc_fp(void)
 
 int dynamic_2d_setup_fp()
 {
-	connect = 0;
-	euler = 0;
-	d = param[0]; /* number of intervals */
-	if (d < 0)
+	s_connect = 0;
+	s_euler = 0;
+	s_d = param[0]; /* number of intervals */
+	if (s_d < 0)
 	{
-		d = -d;
-		connect = 1;
+		s_d = -s_d;
+		s_connect = 1;
 	}
-	else if (d == 0)
+	else if (s_d == 0)
 	{
-		d = 1;
+		s_d = 1;
 	}
 	if (fractype == DYNAMICFP)
 	{
-		a = param[2]; /* parameter */
-		b = param[3]; /* parameter */
-		dt = param[1]; /* step size */
-		if (dt < 0)
+		s_a = param[2]; /* parameter */
+		s_b = param[3]; /* parameter */
+		s_dt = param[1]; /* step size */
+		if (s_dt < 0)
 		{
-			dt = -dt;
-			euler = 1;
+			s_dt = -s_dt;
+			s_euler = 1;
 		}
-		if (dt == 0)
+		if (s_dt == 0)
 		{
-			dt = 0.01;
+			s_dt = 0.01;
 		}
 	}
 	if (outside == SUM)
@@ -1987,11 +1991,11 @@ int dynamic_2d_fp()
 		}
 
 		xstep ++;
-		if (xstep >= d)
+		if (xstep >= s_d)
 		{
 			xstep = 0;
 			ystep ++;
-			if (ystep > d)
+			if (ystep > s_d)
 			{
 				driver_mute();
 				ret = -1;
@@ -1999,14 +2003,14 @@ int dynamic_2d_fp()
 			}
 		}
 
-		xpixel = dxsize*(xstep + .5)/d;
-		ypixel = dysize*(ystep + .5)/d;
+		xpixel = dxsize*(xstep + .5)/s_d;
+		ypixel = dysize*(ystep + .5)/s_d;
 		x = (double) ((xxmin + delxx*xpixel) + (delxx2*ypixel));
 		y = (double) ((yymax-delyy*ypixel) + (-delyy2*xpixel));
 		if (fractype == MANDELCLOUD)
 		{
-			a = x;
-			b = y;
+			s_a = x;
+			s_b = y;
 		}
 		oldcol = -1;
 
@@ -2036,13 +2040,13 @@ int dynamic_2d_fp()
 
 				if (count >= orbit_delay)
 				{
-					if (oldcol != -1 && connect)
+					if (oldcol != -1 && s_connect)
 					{
-						driver_draw_line(col, row, oldcol, oldrow, color%colors);
+						driver_draw_line(col, row, oldcol, oldrow, color % colors);
 					}
 					else if (count > 0 || fractype != MANDELCLOUD)
 					{
-						(*plot)(col, row, color%colors);
+						(*plot)(col, row, color % colors);
 					}
 				}
 				oldcol = col;
@@ -2122,26 +2126,26 @@ int plotorbits2dsetup(void)
 	/* setup affine screen coord conversion */
 	if (g_keep_screen_coords)
 	{
-		if (setup_orbits_to_screen(&o_cvt))
+		if (setup_orbits_to_screen(&s_o_cvt))
 		{
 			return -1;
 		}
 	}
-	else if (setup_convert_to_screen(&o_cvt))
+	else if (setup_convert_to_screen(&s_o_cvt))
 	{
 		return -1;
 	}
 
 	/* set so truncation to int rounds to nearest */
-	o_cvt.e += 0.5;
-	o_cvt.f += 0.5;
+	s_o_cvt.e += 0.5;
+	s_o_cvt.f += 0.5;
 
 	if (orbit_delay >= maxit) /* make sure we get an image */
 	{
 		orbit_delay = (int) (maxit - 1);
 	}
 
-	o_color = 1;
+	s_o_color = 1;
 
 	if (outside == SUM)
 	{
@@ -2161,13 +2165,13 @@ int plotorbits2dfloat(void)
 	{
 		driver_mute();
 		alloc_resume(100, 1);
-		put_resume(sizeof(o_color), &o_color, 0);
+		put_resume(sizeof(s_o_color), &s_o_color, 0);
 		return -1;
 	}
 
 #if 0
-	col = (int) (o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
-	row = (int) (o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
+	col = (int) (s_o_cvt.a*g_new.x + s_o_cvt.b*g_new.y + s_o_cvt.e);
+	row = (int) (s_o_cvt.c*g_new.x + s_o_cvt.d*g_new.y + s_o_cvt.f);
 	if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 	{
 		(*plot)(col, row, 1);
@@ -2191,20 +2195,20 @@ int plotorbits2dfloat(void)
 	if (resuming)
 	{
 		start_resume();
-		get_resume(sizeof(o_color), &o_color, 0);
+		get_resume(sizeof(s_o_color), &s_o_color, 0);
 		end_resume();
 	}
 
 	if (inside > 0)
 	{
-		o_color = inside;
+		s_o_color = inside;
 	}
 	else  /* inside <= 0 */
 	{
-		o_color++;
-		if (o_color >= colors) /* another color to switch to? */
+		s_o_color++;
+		if (s_o_color >= colors) /* another color to switch to? */
 		{
-			o_color = 1;    /* (don't use the background color) */
+			s_o_color = 1;    /* (don't use the background color) */
 		}
 	}
 
@@ -2223,8 +2227,8 @@ int plotorbits2dfloat(void)
 		}
 
 		/* else count >= orbit_delay and we want to plot it */
-		col = (int) (o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
-		row = (int) (o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
+		col = (int) (s_o_cvt.a*g_new.x + s_o_cvt.b*g_new.y + s_o_cvt.e);
+		row = (int) (s_o_cvt.c*g_new.x + s_o_cvt.d*g_new.y + s_o_cvt.f);
 #ifdef XFRACT
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 #else
@@ -2237,7 +2241,7 @@ int plotorbits2dfloat(void)
 				w_snd((int) (*soundvar*100 + basehertz));
 			}
 
-			(*plot)(col, row, o_color%colors);
+			(*plot)(col, row, s_o_color % colors);
 		}
 		else
 		{             /* off screen, don't continue unless periodicity=0 */
@@ -2261,9 +2265,9 @@ int funny_glasses_call(int (*calc)(void))
 	assert(g_standard_plot);
 	plot = g_standard_plot;
 	status = calc();
-	if (realtime && g_glasses_type < STEREO_PHOTO)
+	if (s_real_time && g_glasses_type < STEREO_PHOTO)
 	{
-		realtime = 0;
+		s_real_time = 0;
 		goto done;
 	}
 	if (g_glasses_type && status == 0 && display3d)
@@ -2393,13 +2397,13 @@ static int ifs_3d_float(void)
 			/* plot if inside window */
 			if (inf.col >= 0)
 			{
-				if (realtime)
+				if (s_real_time)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
 				if (color_method)
 				{
-					color = (k%colors) + 1;
+					color = (k % colors) + 1;
 				}
 				else
 				{
@@ -2414,7 +2418,7 @@ static int ifs_3d_float(void)
 			{
 				return ret;
 			}
-			if (realtime)
+			if (s_real_time)
 			{
 				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
@@ -2422,7 +2426,7 @@ static int ifs_3d_float(void)
 				{
 					if (color_method)
 					{
-						color = (k%colors) + 1;
+						color = (k % colors) + 1;
 					}
 					else
 					{
@@ -2542,7 +2546,7 @@ static int ifs_2d(void)
 			/* color is count of hits on this pixel */
 			if (color_method)
 			{
-				color = (k%colors) + 1;
+				color = (k % colors) + 1;
 			}
 			else
 			{
@@ -2664,13 +2668,13 @@ static int ifs_3d_long(void)
 			/* plot if inside window */
 			if (inf.col >= 0)
 			{
-				if (realtime)
+				if (s_real_time)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
 				if (color_method)
 				{
-					color = (k%colors) + 1;
+					color = (k % colors) + 1;
 				}
 				else
 				{
@@ -2681,7 +2685,7 @@ static int ifs_3d_long(void)
 					(*plot)(inf.col, inf.row, color);
 				}
 			}
-			if (realtime)
+			if (s_real_time)
 			{
 				g_which_image = WHICHIMAGE_BLUE;
 				/* plot if inside window */
@@ -2689,7 +2693,7 @@ static int ifs_3d_long(void)
 				{
 					if (color_method)
 					{
-						color = (k%colors) + 1;
+						color = (k % colors) + 1;
 					}
 					else
 					{
@@ -2729,14 +2733,14 @@ static void setup_matrix(MATRIX doublemat)
 int orbit_3d_fp()
 {
 	display3d = -1;
-	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit_3d_calc_fp);
 }
 
 int orbit_3d()
 {
 	display3d = -1;
-	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit_3d_calc);
 }
 
@@ -2744,7 +2748,7 @@ static int ifs_3d(void)
 {
 	display3d = -1;
 
-	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(floatflag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
 }
 
@@ -2762,7 +2766,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			inf->maxvals[i] = -inf->minvals[i];
 		}
 		setup_matrix(inf->doublemat);
-		if (realtime)
+		if (s_real_time)
 		{
 			setup_matrix(inf->doublemat1);
 		}
@@ -2772,7 +2776,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			for (j = 0; j < 4; j++)
 			{
 				inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
-				if (realtime)
+				if (s_real_time)
 				{
 					inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
 				}
@@ -2782,12 +2786,12 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 
 	/* 3D VIEWING TRANSFORM */
 	longvmult(inf->orbit, inf->longmat, inf->viewvect, bitshift);
-	if (realtime)
+	if (s_real_time)
 	{
 		longvmult(inf->orbit, inf->longmat1, inf->viewvect1, bitshift);
 	}
 
-	if (coloriter <= waste) /* waste this many points to find minz and maxz */
+	if (coloriter <= s_waste) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2802,7 +2806,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (coloriter == waste) /* time to work it out */
+		if (coloriter == s_waste) /* time to work it out */
 		{
 			inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
 
@@ -2820,7 +2824,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			tmpz = -((double)inf->maxvals[2]) / fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
-			if (realtime)
+			if (s_real_time)
 			{
 				/* center image on origin */
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
@@ -2842,7 +2846,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				for (j = 0; j < 4; j++)
 				{
 					inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
-					if (realtime)
+					if (s_real_time)
 					{
 						inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
 					}
@@ -2868,7 +2872,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			{
 				inf->viewvect[i] = (long) (tmpv[i]*fudge);
 			}
-			if (realtime)
+			if (s_real_time)
 			{
 				for (i = 0; i < 3; i++)
 				{
@@ -2884,7 +2888,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 		else
 		{
 			longpersp(inf->viewvect, inf->iview, bitshift);
-			if (realtime)
+			if (s_real_time)
 			{
 				longpersp(inf->viewvect1, inf->iview, bitshift);
 			}
@@ -2906,7 +2910,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
 			? -2 : -1;
 	}
-	if (realtime)
+	if (s_real_time)
 	{
 		inf->row1 = (int) (((multiply(inf->cvt.c, inf->viewvect1[0], bitshift) +
 						multiply(inf->cvt.d, inf->viewvect1[1], bitshift) +
@@ -2940,7 +2944,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			inf->maxvals[i] = -100000.0;
 		}
 		setup_matrix(inf->doublemat);
-		if (realtime)
+		if (s_real_time)
 		{
 			setup_matrix(inf->doublemat1);
 		}
@@ -2948,12 +2952,12 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 
 	/* 3D VIEWING TRANSFORM */
 	vmult(inf->orbit, inf->doublemat, inf->viewvect);
-	if (realtime)
+	if (s_real_time)
 	{
 		vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
 	}
 
-	if (coloriter <= waste) /* waste this many points to find minz and maxz */
+	if (coloriter <= s_waste) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2968,7 +2972,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (coloriter == waste) /* time to work it out */
+		if (coloriter == s_waste) /* time to work it out */
 		{
 			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme
@@ -2985,7 +2989,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
-			if (realtime)
+			if (s_real_time)
 			{
 				/* center image on origin */
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
@@ -3004,7 +3008,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 	if (ZVIEWER)
 	{
 		perspective(inf->viewvect);
-		if (realtime)
+		if (s_real_time)
 		{
 			perspective(inf->viewvect1);
 		}
@@ -3019,7 +3023,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
 			? -2 : -1;
 	}
-	if (realtime)
+	if (s_real_time)
 	{
 		inf->row1 = (int) (inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
 					+ inf->cvt.f + g_yy_adjust1);
