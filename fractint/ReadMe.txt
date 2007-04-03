@@ -99,7 +99,7 @@ TODO:
 2007.01.04.03.12
 	Fix file/directory browsing bugs.
 
-=-=-=-=-=-=
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 FRACTINT:
 Fractint 20.4 complete C and ASM source for
@@ -133,3 +133,107 @@ Otherwise, just run make from the source directory and it should compile.  
 Run ./xfractint to start it up.
 
 Jonathan
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Visual C++ 2005 Express Edition
+-------------------------------
+Here are instructions for building FractInt for Windows using the free
+Microsoft C++ express edition compiler.
+
+1. Download source code and tools
+2. Install source code and tools
+3. Configure tools
+4. Compile source
+5. Write tests for new feature
+6. Implement new feature until tests pass
+7. goto 5 until done :-)
+
+1. Download:
+
+	To make changes to FractInt, you'll want to download the source code,
+	and some development tools.  If you're reading this, its because you
+	already have Microsoft Visual C++ 2005 Express Edition, or its because
+	you don't have development tools and you need some free ones.
+
+	FractInt for Windows:
+		Download the FractInt for Windows source.  If you're reading this
+		file, chances are you're reading it from a source distribution, so
+		you already have the source code.  If not, go get it at
+		<http://www.fractint.org>.
+	
+	Microsoft Visual C++ 2005 Express Edition:
+		Download "Microsoft Visual C++ 2005 Express Edition" from
+		Microsoft's web site.  Google for the above quoted phrase, or
+		drill down from <http://msdn.microsoft.com>.
+			
+	Platform SDK:
+		Visual C++ is just an ISO C++ compiler; it does not include headers
+		or libraries for the Win32 API.  Those headers and libraries are in
+		the Platform SDK, which you can download for free from Microsoft.
+
+		The "Platform SDK", sometimes called the "Windows SDK", and
+		sometimes called other things depending on what Microsoft decides.
+		In reality it is an evolving SDK that contains documentation,
+		headers and libraries for the latest-and-greatest version of the
+		Win32 API.  The Win32 API tends to be updated with operating system
+		releases and often includes the operating system name in the title.
+		It might read "Windows Platform SDK Windows Server SP2 (Jun 2006)",
+		which is telling you which OS features are enabled on that SDK and
+		the date it was released.  You generally want the latest SDK since
+		you're using the 2005 version of C++.
+	
+2. Installation
+
+	a) Install Microsoft Visual C++ 2005 Express Edition
+	b) Install the Platform SDK and make note of the install location
+	c) Install the FractInt source and make note of the install location
+
+3. Configuration
+
+	a) Launch Visual C++
+	b) Register it (for free), to get rid of the eventual nag boxes
+	c) Configure Visual C++ directories:
+		Visual C++ 2005 Express Edition didn't ship with the Platform SDK,
+		so it doesn't know where to find the headers and libraries.  Select
+		Tools / Options... and browse to the Projects and Solutions / VC++
+		Directories category.  On the right, select the "Include files"
+		item in the combo box, click the new directory icon and browse to
+		the include files where you installed the Platform SDK.  Change
+		the combo box to "Library files" and do the same for the library
+		folder in the Platform SDK.  Change any other settings in the
+		dialog to suit your tastes and click OK to save the changes.
+
+4. Compilation
+
+	Launch Visual C++ and select File / Open / Project/Solution... and
+	browse to the fractint.2005.sln solution file where you installed the
+	FractInt for Windows source code.  The code should compile with no
+	warnings or errors.  If you got any errors, particularly on files in
+	the Win32 folder, then check your Platform SDK include and link
+	directory settings.
+
+5. Write tests for new feature
+
+	When you're ready to add new features to FractInt for Windows,
+	please consider a test-driven development methodology and write the
+	tests for the changes you're about to make before you make the changes.
+	I know that sounds silly, but its really what you do :-).  For more
+	information read any of these books:
+		"Test-Driven Development", Kent Beck
+			ISBN-10: 0321146530
+		"Working Effectively with Legacy Code", Michael Feathers
+			ISBN-10: 0131177052			
+		"Refactoring: Improving the Design of Existing Code", Martin Fowler
+			ISBN-10: 0201485672
+
+6. Implement feature until tests pass
+
+	See, you wrote the test first so that it would tell you when your
+	feature was done!  Once your tests pass, you'll know when you've done
+	everything you wanted to do.
+	
+7. Goto 5 until no more features :-)
+
+8. Submit changes back to the FractInt development team and enjoy your
+	new-found fame.
