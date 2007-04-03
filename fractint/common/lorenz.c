@@ -2150,8 +2150,8 @@ int plotorbits2dsetup(void)
 			return -1;
 		}
 		floatflag = usr_floatflag = 1; /* force floating point */
-		curfractalspecific = &fractalspecific[tofloat];
 		fractype = tofloat;
+		curfractalspecific = &fractalspecific[fractype];
 	}
 #endif
 
