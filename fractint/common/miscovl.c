@@ -625,7 +625,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (fractype == JULIBROT || fractype == JULIBROTFP)
 		{
 			put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
-				mxmaxfp, mxminfp, mymaxfp, myminfp);
+				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
 			/* these rarely change */
 			if (originfp != 8 || heightfp != 7 || widthfp != 10 || distfp != 24
 					|| depthfp != 8 || zdots != 128)
