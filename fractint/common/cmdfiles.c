@@ -547,7 +547,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	eyesfp = 2.5f;
 	depthfp = 8;
 	neworbittype = JULIA;
-	zdots = 128;
+	g_z_dots = 128;
 	initvars_3d();
 	basehertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
@@ -1759,7 +1759,7 @@ static int julibrot_3d_arg(const cmd_context *context)
 	}
 	if (context->totparms > 0)
 	{
-		zdots = (int)context->floatval[0];
+		g_z_dots = (int)context->floatval[0];
 	}
 	if (context->totparms > 1)
 	{

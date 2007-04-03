@@ -628,9 +628,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
 			/* these rarely change */
 			if (originfp != 8 || heightfp != 7 || widthfp != 10 || distfp != 24
-					|| depthfp != 8 || zdots != 128)
+					|| depthfp != 8 || g_z_dots != 128)
 				put_parm(" julibrot3d=%d/%g/%g/%g/%g/%g",
-					zdots, originfp, depthfp, heightfp, widthfp, distfp);
+					g_z_dots, originfp, depthfp, heightfp, widthfp, distfp);
 			if (eyesfp != 0)
 			{
 				put_parm(" julibroteyes=%g", eyesfp);

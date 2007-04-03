@@ -889,7 +889,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->mxminfp = g_m_x_min_fp;
 	save_info->mymaxfp = g_m_y_max_fp;
 	save_info->myminfp = g_m_y_min_fp;
-	save_info->zdots = (short) zdots;
+	save_info->zdots = (short) g_z_dots;
 	save_info->originfp = originfp;
 	save_info->depthfp = depthfp;
 	save_info->heightfp = heightfp;
