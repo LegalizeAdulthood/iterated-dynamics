@@ -254,14 +254,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_m_y_max_fp   =  read_info.mymaxfp        ;
 		g_m_y_min_fp   =  read_info.myminfp        ;
 		g_z_dots     =  read_info.zdots          ;
-		originfp  =  read_info.originfp       ;
-		depthfp   =  read_info.depthfp        ;
-		heightfp  =  read_info.heightfp       ;
-		widthfp   =  read_info.widthfp        ;
-		distfp    =  read_info.distfp         ;
-		eyesfp    =  read_info.eyesfp         ;
-		neworbittype = read_info.orbittype    ;
-		juli3Dmode   = read_info.juli3Dmode   ;
+		g_origin_fp  =  read_info.originfp       ;
+		g_depth_fp   =  read_info.depthfp        ;
+		g_height_fp  =  read_info.heightfp       ;
+		g_width_fp   =  read_info.widthfp        ;
+		g_dist_fp    =  read_info.distfp         ;
+		g_eyes_fp    =  read_info.eyesfp         ;
+		g_new_orbit_type = read_info.orbittype    ;
+		g_juli_3D_mode   = read_info.juli3Dmode   ;
 		maxfn    =   (char)read_info.maxfn          ;
 		major_method = (enum Major)read_info.inversejulia >> 8;
 		minor_method = (enum Minor)read_info.inversejulia & 255;
@@ -1258,7 +1258,7 @@ int check_back(void)
 		|| ((inside == ATANI || outside == ATAN) && save_release <= 2002)
 		|| (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002)
 		|| ((fractype == JULIBROT || fractype == JULIBROTFP)
-			&& (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
+			&& (g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
 			&& save_release <= 2002))
 	{
 		ret = 1;

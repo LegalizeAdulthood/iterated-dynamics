@@ -1349,7 +1349,7 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 		if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
 		{
 			fractals[numfractals] = i;
-			if (i == neworbittype || i == fractalspecific[neworbittype].tofloat)
+			if (i == g_new_orbit_type || i == fractalspecific[g_new_orbit_type].tofloat)
 			{
 				*last_val = numfractals;
 			}
@@ -1598,7 +1598,7 @@ gfp_top:
 	promptnum = 0;
 	if (julibrot)
 	{
-		i = select_fracttype(neworbittype);
+		i = select_fracttype(g_new_orbit_type);
 		if (i < 0)
 		{
 			if (ret == 0)
@@ -1610,9 +1610,9 @@ gfp_top:
 		}
 		else
 		{
-			neworbittype = i;
+			g_new_orbit_type = i;
 		}
-		jborbit = &fractalspecific[neworbittype];
+		jborbit = &fractalspecific[g_new_orbit_type];
 		juliorbitname = jborbit->name;
 	}
 
@@ -1666,14 +1666,14 @@ gfp_top:
 	{
 		curfractalspecific = jborbit;
 		firstparm = 2; /* in most case Julibrot does not need first two parms */
-		if (neworbittype == QUATJULFP     ||   /* all parameters needed */
-			neworbittype == HYPERCMPLXJFP)
+		if (g_new_orbit_type == QUATJULFP     ||   /* all parameters needed */
+			g_new_orbit_type == HYPERCMPLXJFP)
 		{
 			firstparm = 0;
 			lastparm = 4;
 		}
-		if (neworbittype == QUATFP        ||   /* no parameters needed */
-			neworbittype == HYPERCMPLXFP)
+		if (g_new_orbit_type == QUATFP        ||   /* no parameters needed */
+			g_new_orbit_type == HYPERCMPLXFP)
 		{
 			firstparm = 4;
 		}
@@ -1683,7 +1683,7 @@ gfp_top:
 	for (i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
-		if (!typehasparm(julibrot?neworbittype:fractype, i, parmprompt[j]))
+		if (!typehasparm(julibrot?g_new_orbit_type:fractype, i, parmprompt[j]))
 		{
 			if (curtype == FORMULA || curtype == FFORMULA)
 			{
@@ -1785,7 +1785,7 @@ gfp_top:
 	}
 	if (julibrot)
 	{
-		switch (neworbittype)
+		switch (g_new_orbit_type)
 		{
 		case QUATFP:
 		case HYPERCMPLXFP:
@@ -1827,28 +1827,28 @@ gfp_top:
 		choices[promptnum++] = "Number of z pixels";
 
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = juli3Dmode;
+		paramvalues[promptnum].uval.ch.val  = g_juli_3D_mode;
 		paramvalues[promptnum].uval.ch.llen = 4;
 		paramvalues[promptnum].uval.ch.vlen = 9;
 		paramvalues[promptnum].uval.ch.list = juli3Doptions;
 		choices[promptnum++] = "3D Mode";
 
-		paramvalues[promptnum].uval.dval = eyesfp;
+		paramvalues[promptnum].uval.dval = g_eyes_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Distance between eyes";
-		paramvalues[promptnum].uval.dval = originfp;
+		paramvalues[promptnum].uval.dval = g_origin_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Location of z origin";
-		paramvalues[promptnum].uval.dval = depthfp;
+		paramvalues[promptnum].uval.dval = g_depth_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Depth of z";
-		paramvalues[promptnum].uval.dval = heightfp;
+		paramvalues[promptnum].uval.dval = g_height_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Screen height";
-		paramvalues[promptnum].uval.dval = widthfp;
+		paramvalues[promptnum].uval.dval = g_width_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Screen width";
-		paramvalues[promptnum].uval.dval = distfp;
+		paramvalues[promptnum].uval.dval = g_dist_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Distance to Screen";
 	}
@@ -2015,13 +2015,13 @@ gfp_top:
 		g_m_x_min_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_y_min_fp    = paramvalues[promptnum++].uval.dval;
 		g_z_dots      = paramvalues[promptnum++].uval.ival;
-		juli3Dmode = paramvalues[promptnum++].uval.ch.val;
-		eyesfp     = (float)paramvalues[promptnum++].uval.dval;
-		originfp   = (float)paramvalues[promptnum++].uval.dval;
-		depthfp    = (float)paramvalues[promptnum++].uval.dval;
-		heightfp   = (float)paramvalues[promptnum++].uval.dval;
-		widthfp    = (float)paramvalues[promptnum++].uval.dval;
-		distfp     = (float)paramvalues[promptnum++].uval.dval;
+		g_juli_3D_mode = paramvalues[promptnum++].uval.ch.val;
+		g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
+		g_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
+		g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
+		g_height_fp   = (float)paramvalues[promptnum++].uval.dval;
+		g_width_fp    = (float)paramvalues[promptnum++].uval.dval;
+		g_dist_fp     = (float)paramvalues[promptnum++].uval.dval;
 		ret = 1;  /* force new calc since not resumable anyway */
 	}
 	if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
@@ -2102,7 +2102,7 @@ int check_orbit_name(char *orbitname)
 	{
 		if (strcmp(orbitname, nameptr[i]) == 0)
 		{
-			neworbittype = fractals[i];
+			g_new_orbit_type = fractals[i];
 			bad = 0;
 			break;
 		}

@@ -627,27 +627,27 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
 				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
 			/* these rarely change */
-			if (originfp != 8 || heightfp != 7 || widthfp != 10 || distfp != 24
-					|| depthfp != 8 || g_z_dots != 128)
+			if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_dist_fp != 24
+					|| g_depth_fp != 8 || g_z_dots != 128)
 				put_parm(" julibrot3d=%d/%g/%g/%g/%g/%g",
-					g_z_dots, originfp, depthfp, heightfp, widthfp, distfp);
-			if (eyesfp != 0)
+					g_z_dots, g_origin_fp, g_depth_fp, g_height_fp, g_width_fp, g_dist_fp);
+			if (g_eyes_fp != 0)
 			{
-				put_parm(" julibroteyes=%g", eyesfp);
+				put_parm(" julibroteyes=%g", g_eyes_fp);
 			}
-			if (neworbittype != JULIA)
+			if (g_new_orbit_type != JULIA)
 			{
 				char *name;
-				name = fractalspecific[neworbittype].name;
+				name = fractalspecific[g_new_orbit_type].name;
 				if (*name == '*')
 				{
 					name++;
 				}
 				put_parm(" orbitname=%s", name);
 			}
-			if (juli3Dmode != JULI3DMODE_MONOCULAR)
+			if (g_juli_3D_mode != JULI3DMODE_MONOCULAR)
 			{
-				put_parm(" 3dmode=%s", juli3Doptions[juli3Dmode]);
+				put_parm(" 3dmode=%s", juli3Doptions[g_juli_3D_mode]);
 			}
 		}
 		if (fractype == FORMULA || fractype == FFORMULA)
@@ -791,7 +791,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		for (i = (MAXPARAMS-1); i >= 0; --i)
 		{
 			if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
-					? neworbittype : fractype, i, NULL))
+					? g_new_orbit_type : fractype, i, NULL))
 			{
 				break;
 			}

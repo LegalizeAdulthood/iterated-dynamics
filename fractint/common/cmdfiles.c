@@ -540,13 +540,13 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_m_y_min_fp = -.25;
 	g_m_x_max_fp = -.83;
 	g_m_y_max_fp =  .25;
-	originfp = 8;
-	heightfp = 7;
-	widthfp = 10;
-	distfp = 24;
-	eyesfp = 2.5f;
-	depthfp = 8;
-	neworbittype = JULIA;
+	g_origin_fp = 8;
+	g_height_fp = 7;
+	g_width_fp = 10;
+	g_dist_fp = 24;
+	g_eyes_fp = 2.5f;
+	g_depth_fp = 8;
+	g_new_orbit_type = JULIA;
 	g_z_dots = 128;
 	initvars_3d();
 	basehertz = 440;                     /* basic hertz rate          */
@@ -1744,7 +1744,7 @@ static int threed_mode_arg(const cmd_context *context)
 	{
 		if (strcmp(context->value, juli3Doptions[i]) == 0)
 		{
-			juli3Dmode = i;
+			g_juli_3D_mode = i;
 			return COMMAND_FRACTAL_PARAM;
 		}
 	}
@@ -1763,23 +1763,23 @@ static int julibrot_3d_arg(const cmd_context *context)
 	}
 	if (context->totparms > 1)
 	{
-		originfp = (float)context->floatval[1];
+		g_origin_fp = (float)context->floatval[1];
 	}
 	if (context->totparms > 2)
 	{
-		depthfp = (float)context->floatval[2];
+		g_depth_fp = (float)context->floatval[2];
 	}
 	if (context->totparms > 3)
 	{
-		heightfp = (float)context->floatval[3];
+		g_height_fp = (float)context->floatval[3];
 	}
 	if (context->totparms > 4)
 	{
-		widthfp = (float)context->floatval[4];
+		g_width_fp = (float)context->floatval[4];
 	}
 	if (context->totparms > 5)
 	{
-		distfp = (float)context->floatval[5];
+		g_dist_fp = (float)context->floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1790,7 +1790,7 @@ static int julibrot_eyes_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	eyesfp =  (float)context->floatval[0];
+	g_eyes_fp =  (float)context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 

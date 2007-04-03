@@ -616,14 +616,14 @@ extern void intro(void);
 
 /*  jb -- C file prototypes */
 
-extern int JulibrotSetup(void);
+extern int julibrot_setup(void);
 extern int JulibrotfpSetup(void);
-extern int jb_per_pixel(void);
-extern int jbfp_per_pixel(void);
+extern int julibrot_per_pixel(void);
+extern int julibrot_per_pixel_fp(void);
 extern int zline(long, long);
 extern int zlinefp(double, double);
-extern int Std4dFractal(void);
-extern int Std4dfpFractal(void);
+extern int std_4d_fractal(void);
+extern int std_4d_fractal_fp(void);
 
 /*  jiim -- C file prototypes */
 
