@@ -135,23 +135,23 @@ int julibrot_setup(void)
 
 	if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
 	{
-		savedac = 0;
+		savedac = SAVEDAC_NO;
 		mapname = Glasses1Map;
 	}
 	else
 	{
 		mapname = GreyFile;
 	}
-	if (savedac != 1)
+	if (savedac != SAVEDAC_YES)
 	{
 		if (ValidateLuts(mapname) != 0)
 		{
 			return 0;
 		}
 		spindac(0, 1);               /* load it, but don't spin */
-		if (savedac == 2)
+		if (savedac == SAVEDAC_NEXT)
 		{
-			savedac = 1;
+			savedac = SAVEDAC_YES;
 		}
 	}
 	return r >= 0;

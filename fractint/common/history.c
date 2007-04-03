@@ -358,7 +358,7 @@ void _fastcall restore_history_info(void)
 		memcpy(mapdacbox, last.dac, 256*3);
 	}
 	spindac(0, 1);
-	savedac = (fractype == JULIBROT || fractype == JULIBROTFP) ? 0 : 1;
+	savedac = (fractype == JULIBROT || fractype == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
 	switch (fractype)
 	{
 	case FORMULA:

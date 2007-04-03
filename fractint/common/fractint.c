@@ -337,7 +337,7 @@ restart:   /* insert key re-starts here */
 	adapter_detect();                    /* check what video is really present */
 
 	driver_set_for_text();                      /* switch to text mode */
-	savedac = 0;                         /* don't save the VGA DAC */
+	savedac = SAVEDAC_NO;                         /* don't save the VGA DAC */
 
 #ifndef XFRACT
 	if (g_bad_config < 0)                   /* fractint.cfg bad, no msg yet */
@@ -446,7 +446,7 @@ restorestart:
 		goto resumeloop;                  /* ooh, this is ugly */
 	}
 
-	savedac = 0;                         /* don't save the VGA DAC */
+	savedac = SAVEDAC_NO;                         /* don't save the VGA DAC */
 
 imagestart:                             /* calc/display a new image */
 #if defined(_WIN32)
