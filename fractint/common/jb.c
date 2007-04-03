@@ -194,7 +194,7 @@ int julibrot_per_pixel_fp(void)
 
 static int s_plotted;
 
-static int zline(long x, long y)
+static int z_line(long x, long y)
 {
 	int n;
 	int z_pixel;
@@ -276,7 +276,7 @@ static int zline(long x, long y)
 	return 0;
 }
 
-static int zlinefp(double x, double y)
+static int z_line_fp(double x, double y)
 {
 	int n;
 	int z_pixel;
@@ -414,13 +414,13 @@ int std_4d_fractal(void)
 		{
 			col = xdot;
 			row = ydot;
-			if (zline(x, y) < 0)
+			if (z_line(x, y) < 0)
 			{
 				return -1;
 			}
 			col = xdots - col - 1;
 			row = ydots - row - 1;
-			if (zline(-x, -y) < 0)
+			if (z_line(-x, -y) < 0)
 			{
 				return -1;
 			}
@@ -462,13 +462,13 @@ int std_4d_fractal_fp(void)
 		{
 			col = xdot;
 			row = ydot;
-			if (zlinefp(x, y) < 0)
+			if (z_line_fp(x, y) < 0)
 			{
 				return -1;
 			}
 			col = xdots - col - 1;
 			row = ydots - row - 1;
-			if (zlinefp(-x, -y) < 0)
+			if (z_line_fp(-x, -y) < 0)
 			{
 				return -1;
 			}
