@@ -263,8 +263,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_new_orbit_type = read_info.orbittype    ;
 		g_juli_3D_mode   = read_info.juli3Dmode   ;
 		maxfn    =   (char)read_info.maxfn          ;
-		major_method = (enum Major)read_info.inversejulia >> 8;
-		minor_method = (enum Minor)read_info.inversejulia & 255;
+		g_major_method = (enum Major)read_info.inversejulia >> 8;
+		g_minor_method = (enum Minor)read_info.inversejulia & 255;
 		param[4] = read_info.dparm5;
 		param[5] = read_info.dparm6;
 		param[6] = read_info.dparm7;
@@ -378,10 +378,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	/* modified saved evolver structure JCO 12JUL01 */
 	Log_Auto_Calc = 0;  /* make sure it's turned off */
 
-	orbit_interval = 1;
+	g_orbit_interval = 1;
 	if (read_info.version > 15) /* post-version 20.3.2 */
 	{
-		orbit_interval = read_info.orbit_interval;
+		g_orbit_interval = read_info.orbit_interval;
 	}
 
 	orbit_delay = 0;
@@ -617,17 +617,17 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (orbits_info.got_data == 1)
 	{
-		oxmin       = orbits_info.oxmin;
-		oxmax       = orbits_info.oxmax;
-		oymin       = orbits_info.oymin;
-		oymax       = orbits_info.oymax;
-		ox3rd       = orbits_info.ox3rd;
-		oy3rd       = orbits_info.oy3rd;
-		keep_scrn_coords = orbits_info.keep_scrn_coords;
+		g_orbit_x_min       = orbits_info.oxmin;
+		g_orbit_x_max       = orbits_info.oxmax;
+		g_orbit_y_min       = orbits_info.oymin;
+		g_orbit_y_max       = orbits_info.oymax;
+		g_orbit_x_3rd       = orbits_info.ox3rd;
+		g_orbit_y_3rd       = orbits_info.oy3rd;
+		g_keep_screen_coords = orbits_info.keep_scrn_coords;
 		g_orbit_draw_mode    = (int) orbits_info.drawmode;
-		if (keep_scrn_coords)
+		if (g_keep_screen_coords)
 		{
-			set_orbit_corners = 1;
+			g_set_orbit_corners = 1;
 		}
 	}
 

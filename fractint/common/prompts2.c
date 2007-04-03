@@ -686,11 +686,11 @@ pass_option_restart:
 
 	choices[++k] = "Orbit interval (1 ... 255)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_orbit_interval = (int)orbit_interval;
+	uvalues[k].uval.ival = old_orbit_interval = (int)g_orbit_interval;
 
 	choices[++k] = "Maintain screen coordinates";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = old_keep_scrn_coords = keep_scrn_coords;
+	uvalues[k].uval.ch.val = old_keep_scrn_coords = g_keep_screen_coords;
 
 	choices[++k] = "Orbit pass shape (rect,line)";
 	/* TODO: change to below when function mode works: */
@@ -740,28 +740,28 @@ pass_option_restart:
 	}
 
 
-	orbit_interval = uvalues[++k].uval.ival;
-	if (orbit_interval > 255)
+	g_orbit_interval = uvalues[++k].uval.ival;
+	if (g_orbit_interval > 255)
 	{
-		orbit_interval = 255;
+		g_orbit_interval = 255;
 	}
-	if (orbit_interval < 1)
+	if (g_orbit_interval < 1)
 	{
-		orbit_interval = 1;
+		g_orbit_interval = 1;
 	}
-	if (orbit_interval != old_orbit_interval)
+	if (g_orbit_interval != old_orbit_interval)
 	{
 		j = 1;
 	}
 
-	keep_scrn_coords = uvalues[++k].uval.ch.val;
-	if (keep_scrn_coords != old_keep_scrn_coords)
+	g_keep_screen_coords = uvalues[++k].uval.ch.val;
+	if (g_keep_screen_coords != old_keep_scrn_coords)
 	{
 		j = 1;
 	}
-	if (keep_scrn_coords == 0)
+	if (g_keep_screen_coords == 0)
 	{
-		set_orbit_corners = 0;
+		g_set_orbit_corners = 0;
 	}
 
 	g_orbit_draw_mode = uvalues[++k].uval.ch.val;
@@ -2306,23 +2306,23 @@ static int get_screen_corners(void)
 	svyymax = yymax;
 	svyy3rd = yy3rd;
 
-	if (!set_orbit_corners && !keep_scrn_coords)
+	if (!g_set_orbit_corners && !g_keep_screen_coords)
 	{
-		oxmin = xxmin;
-		oxmax = xxmax;
-		ox3rd = xx3rd;
-		oymin = yymin;
-		oymax = yymax;
-		oy3rd = yy3rd;
+		g_orbit_x_min = xxmin;
+		g_orbit_x_max = xxmax;
+		g_orbit_x_3rd = xx3rd;
+		g_orbit_y_min = yymin;
+		g_orbit_y_max = yymax;
+		g_orbit_y_3rd = yy3rd;
 	}
 
-	oxxmin = oxmin; oxxmax = oxmax;
-	oyymin = oymin; oyymax = oymax;
-	oxx3rd = ox3rd; oyy3rd = oy3rd;
+	oxxmin = g_orbit_x_min; oxxmax = g_orbit_x_max;
+	oyymin = g_orbit_y_min; oyymax = g_orbit_y_max;
+	oxx3rd = g_orbit_x_3rd; oyy3rd = g_orbit_y_3rd;
 
-	xxmin = oxmin; xxmax = oxmax;
-	yymin = oymin; yymax = oymax;
-	xx3rd = ox3rd; yy3rd = oy3rd;
+	xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
+	yymin = g_orbit_y_min; yymax = g_orbit_y_max;
+	xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
 
 gsc_loop:
 	for (i = 0; i < 15; ++i)
@@ -2357,25 +2357,25 @@ gsc_loop:
 		prompts[++nump]= "Top-Left Corner";
 		values[nump].type = '*';
 		prompts[++nump] = xprompt;
-		values[nump].uval.dval = oxmin;
+		values[nump].uval.dval = g_orbit_x_min;
 		prompts[++nump] = yprompt;
-		values[nump].uval.dval = oymax;
+		values[nump].uval.dval = g_orbit_y_max;
 		prompts[++nump]= "Bottom-Right Corner";
 		values[nump].type = '*';
 		prompts[++nump] = xprompt;
-		values[nump].uval.dval = oxmax;
+		values[nump].uval.dval = g_orbit_x_max;
 		prompts[++nump] = yprompt;
-		values[nump].uval.dval = oymin;
-		if (oxmin == ox3rd && oymin == oy3rd)
+		values[nump].uval.dval = g_orbit_y_min;
+		if (g_orbit_x_min == g_orbit_x_3rd && g_orbit_y_min == g_orbit_y_3rd)
 		{
-			ox3rd = oy3rd = 0;
+			g_orbit_x_3rd = g_orbit_y_3rd = 0;
 		}
 		prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
 		values[nump].type = '*';
 		prompts[++nump] = xprompt;
-		values[nump].uval.dval = ox3rd;
+		values[nump].uval.dval = g_orbit_x_3rd;
 		prompts[++nump] = yprompt;
-		values[nump].uval.dval = oy3rd;
+		values[nump].uval.dval = g_orbit_y_3rd;
 		prompts[++nump]= "Press "FK_F7" to switch to \"center-mag\" mode";
 		values[nump].type = '*';
 	}
@@ -2391,9 +2391,9 @@ gsc_loop:
 	if (prompt_ret < 0)
 	{
 		usemag = ousemag;
-		oxmin = oxxmin; oxmax = oxxmax;
-		oymin = oyymin; oymax = oyymax;
-		ox3rd = oxx3rd; oy3rd = oyy3rd;
+		g_orbit_x_min = oxxmin; g_orbit_x_max = oxxmax;
+		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
+		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
 		xxmin = svxxmin; xxmax = svxxmax;
 		yymin = svyymin; yymax = svyymax;
@@ -2403,21 +2403,21 @@ gsc_loop:
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
-		ox3rd = oxmin = curfractalspecific->xmin;
-		oxmax         = curfractalspecific->xmax;
-		oy3rd = oymin = curfractalspecific->ymin;
-		oymax         = curfractalspecific->ymax;
-		xxmin = oxmin; xxmax = oxmax;
-		yymin = oymin; yymax = oymax;
-		xx3rd = ox3rd; yy3rd = oy3rd;
+		g_orbit_x_3rd = g_orbit_x_min = curfractalspecific->xmin;
+		g_orbit_x_max         = curfractalspecific->xmax;
+		g_orbit_y_3rd = g_orbit_y_min = curfractalspecific->ymin;
+		g_orbit_y_max         = curfractalspecific->ymax;
+		xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
+		yymin = g_orbit_y_min; yymax = g_orbit_y_max;
+		xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
 		if (viewcrop && finalaspectratio != screenaspect)
 		{
 			aspectratio_crop(screenaspect, finalaspectratio);
 		}
 
-		oxmin = xxmin; oxmax = xxmax;
-		oymin = yymin; oymax = yymax;
-		ox3rd = xxmin; oy3rd = yymin;
+		g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;
+		g_orbit_y_min = yymin; g_orbit_y_max = yymax;
+		g_orbit_x_3rd = xxmin; g_orbit_y_3rd = yymin;
 		goto gsc_loop;
 		}
 
@@ -2442,26 +2442,26 @@ gsc_loop:
 			}
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 			/* set screen corners */
-			oxmin = xxmin; oxmax = xxmax;
-			oymin = yymin; oymax = yymax;
-			ox3rd = xx3rd; oy3rd = yy3rd;
+			g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;
+			g_orbit_y_min = yymin; g_orbit_y_max = yymax;
+			g_orbit_x_3rd = xx3rd; g_orbit_y_3rd = yy3rd;
 		}
 	}
 	else
 	{
 		nump = 1;
-		oxmin = values[nump++].uval.dval;
-		oymax = values[nump++].uval.dval;
+		g_orbit_x_min = values[nump++].uval.dval;
+		g_orbit_y_max = values[nump++].uval.dval;
 		nump++;
-		oxmax = values[nump++].uval.dval;
-		oymin = values[nump++].uval.dval;
+		g_orbit_x_max = values[nump++].uval.dval;
+		g_orbit_y_min = values[nump++].uval.dval;
 		nump++;
-		ox3rd = values[nump++].uval.dval;
-		oy3rd = values[nump++].uval.dval;
-		if (ox3rd == 0 && oy3rd == 0)
+		g_orbit_x_3rd = values[nump++].uval.dval;
+		g_orbit_y_3rd = values[nump++].uval.dval;
+		if (g_orbit_x_3rd == 0 && g_orbit_y_3rd == 0)
 		{
-			ox3rd = oxmin;
-			oy3rd = oymin;
+			g_orbit_x_3rd = g_orbit_x_min;
+			g_orbit_y_3rd = g_orbit_y_min;
 		}
 	}
 
@@ -2477,13 +2477,13 @@ gsc_loop:
 		goto gsc_loop;
 		}
 
-	if (!cmpdbl(oxxmin, oxmin) && !cmpdbl(oxxmax, oxmax) && !cmpdbl(oyymin, oymin) &&
-		!cmpdbl(oyymax, oymax) && !cmpdbl(oxx3rd, ox3rd) && !cmpdbl(oyy3rd, oy3rd))
+	if (!cmpdbl(oxxmin, g_orbit_x_min) && !cmpdbl(oxxmax, g_orbit_x_max) && !cmpdbl(oyymin, g_orbit_y_min) &&
+		!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))
 	{
 		/* no change, restore values to avoid drift */
-		oxmin = oxxmin; oxmax = oxxmax;
-		oymin = oyymin; oymax = oyymax;
-		ox3rd = oxx3rd; oy3rd = oyy3rd;
+		g_orbit_x_min = oxxmin; g_orbit_x_max = oxxmax;
+		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
+		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
 		xxmin = svxxmin; xxmax = svxxmax;
 		yymin = svyymin; yymax = svyymax;
@@ -2492,8 +2492,8 @@ gsc_loop:
 	}
 	else
 	{
-		set_orbit_corners = 1;
-		keep_scrn_coords = 1;
+		g_set_orbit_corners = 1;
+		g_keep_screen_coords = 1;
 		/* restore corners */
 		xxmin = svxxmin; xxmax = svxxmax;
 		yymin = svyymin; yymax = svyymax;

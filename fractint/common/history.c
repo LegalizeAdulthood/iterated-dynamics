@@ -129,8 +129,8 @@ void _fastcall save_history_info(void)
 	current.orbittype			= (short) g_new_orbit_type;
 	current.juli3Dmode			= (short) g_juli_3D_mode;
 	current.maxfn				= maxfn;
-	current.major_method		= (short) major_method;
-	current.minor_method		= (short) minor_method;
+	current.major_method		= (short) g_major_method;
+	current.minor_method		= (short) g_minor_method;
 	current.bailout				= bailout;
 	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= maxit;
@@ -140,14 +140,14 @@ void _fastcall save_history_info(void)
 	current.closeprox			= closeprox;
 	current.nobof				= (short) nobof;
 	current.orbit_delay			= (short) orbit_delay;
-	current.orbit_interval		= orbit_interval;
-	current.oxmin				= oxmin;
-	current.oxmax				= oxmax;
-	current.oymin				= oymin;
-	current.oymax				= oymax;
-	current.ox3rd				= ox3rd;
-	current.oy3rd				= oy3rd;
-	current.keep_scrn_coords	= (short) keep_scrn_coords;
+	current.orbit_interval		= g_orbit_interval;
+	current.oxmin				= g_orbit_x_min;
+	current.oxmax				= g_orbit_x_max;
+	current.oymin				= g_orbit_y_min;
+	current.oymax				= g_orbit_y_max;
+	current.ox3rd				= g_orbit_x_3rd;
+	current.oy3rd				= g_orbit_y_3rd;
+	current.keep_scrn_coords	= (short) g_keep_screen_coords;
 	current.drawmode			= (char) g_orbit_draw_mode;
 	memcpy(current.dac, g_dac_box, 256*3);
 	switch (fractype)
@@ -320,8 +320,8 @@ void _fastcall restore_history_info(void)
 	g_new_orbit_type        	= last.orbittype;
 	g_juli_3D_mode          	= last.juli3Dmode;
 	maxfn               	= last.maxfn;
-	major_method        	= (enum Major) last.major_method;
-	minor_method        	= (enum Minor) last.minor_method;
+	g_major_method        	= (enum Major) last.major_method;
+	g_minor_method        	= (enum Minor) last.minor_method;
 	bailout             	= last.bailout;
 	g_bail_out_test          	= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
@@ -337,17 +337,17 @@ void _fastcall restore_history_info(void)
 	closeprox				= last.closeprox;
 	nobof					= last.nobof;
 	orbit_delay				= last.orbit_delay;
-	orbit_interval			= last.orbit_interval;
-	oxmin					= last.oxmin;
-	oxmax					= last.oxmax;
-	oymin					= last.oymin;
-	oymax					= last.oymax;
-	ox3rd					= last.ox3rd;
-	oy3rd					= last.oy3rd;
-	keep_scrn_coords		= last.keep_scrn_coords;
-	if (keep_scrn_coords)
+	g_orbit_interval			= last.orbit_interval;
+	g_orbit_x_min					= last.oxmin;
+	g_orbit_x_max					= last.oxmax;
+	g_orbit_y_min					= last.oymin;
+	g_orbit_y_max					= last.oymax;
+	g_orbit_x_3rd					= last.ox3rd;
+	g_orbit_y_3rd					= last.oy3rd;
+	g_keep_screen_coords		= last.keep_scrn_coords;
+	if (g_keep_screen_coords)
 	{
-		set_orbit_corners = 1;
+		g_set_orbit_corners = 1;
 	}
 	g_orbit_draw_mode		= (int) last.drawmode;
 	usr_floatflag			= (char) (curfractalspecific->isinteger ? 0 : 1);

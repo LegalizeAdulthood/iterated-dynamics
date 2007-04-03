@@ -637,13 +637,13 @@ int encoder()
 		{
 			struct orbits_info osave_info;
 			int i;
-			osave_info.oxmin     = oxmin;
-			osave_info.oxmax     = oxmax;
-			osave_info.oymin     = oymin;
-			osave_info.oymax     = oymax;
-			osave_info.ox3rd     = ox3rd;
-			osave_info.oy3rd     = oy3rd;
-			osave_info.keep_scrn_coords = (short)keep_scrn_coords;
+			osave_info.oxmin     = g_orbit_x_min;
+			osave_info.oxmax     = g_orbit_x_max;
+			osave_info.oymin     = g_orbit_y_min;
+			osave_info.oymax     = g_orbit_y_max;
+			osave_info.ox3rd     = g_orbit_x_3rd;
+			osave_info.oy3rd     = g_orbit_y_3rd;
+			osave_info.keep_scrn_coords = (short)g_keep_screen_coords;
 			osave_info.drawmode  = (char) g_orbit_draw_mode;
 			for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
 			{
@@ -899,7 +899,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->orbittype = (short) g_new_orbit_type;
 	save_info->juli3Dmode = (short) g_juli_3D_mode;
 	save_info->maxfn = maxfn;
-	save_info->inversejulia = (short) ((major_method << 8) + minor_method);      /* MVS */
+	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bailout = bailout;
 	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = maxit;
@@ -916,7 +916,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->quick_calc = (short) quick_calc;
 	save_info->closeprox = closeprox;
 	save_info->nobof = (short) nobof;
-	save_info->orbit_interval = orbit_interval;
+	save_info->orbit_interval = g_orbit_interval;
 	save_info->orbit_delay = (short) orbit_delay;
 	save_info->math_tol[0] = math_tol[0];
 	save_info->math_tol[1] = math_tol[1];
