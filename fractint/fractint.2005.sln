@@ -1,18 +1,40 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.2005.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.2005.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "win32\FractIntSetup.2005.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unused", "unused.2005.vcproj", "{110FB3C3-5D32-432C-B555-F22DD7283CA4}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F76C3FBF-C241-422E-BE11-CA6593C5FB2B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
