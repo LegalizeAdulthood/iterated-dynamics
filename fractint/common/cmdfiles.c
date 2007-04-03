@@ -470,7 +470,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 #endif
 	finattract = 0;                      /* disable finite attractor logic */
 	fractype = 0;                        /* initial type Set flag  */
-	curfractalspecific = &fractalspecific[0];
+	curfractalspecific = &fractalspecific[fractype];
 	initcorners = initparams = 0;
 	bailout = 0;                         /* no user-entered bailout */
 	nobof = 0;  /* use normal bof initialization to make bof images */
@@ -536,10 +536,10 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	bigfltbailout = (int (*)(void))bfMODbailout;
 
 	functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
-	mxminfp = -.83;
-	myminfp = -.25;
-	mxmaxfp = -.83;
-	mymaxfp =  .25;
+	g_m_x_min_fp = -.83;
+	g_m_y_min_fp = -.25;
+	g_m_x_max_fp = -.83;
+	g_m_y_max_fp =  .25;
 	originfp = 8;
 	heightfp = 7;
 	widthfp = 10;
@@ -1800,10 +1800,10 @@ static int julibrot_from_to_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	mxmaxfp = context->floatval[0];
-	mxminfp = context->floatval[1];
-	mymaxfp = context->floatval[2];
-	myminfp = context->floatval[3];
+	g_m_x_max_fp = context->floatval[0];
+	g_m_x_min_fp = context->floatval[1];
+	g_m_y_max_fp = context->floatval[2];
+	g_m_y_min_fp = context->floatval[3];
 	return COMMAND_FRACTAL_PARAM;
 }
 

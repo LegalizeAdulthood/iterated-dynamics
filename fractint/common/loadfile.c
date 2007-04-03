@@ -249,10 +249,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version > 8)
 	{
-		mxmaxfp   =  read_info.mxmaxfp        ;
-		mxminfp   =  read_info.mxminfp        ;
-		mymaxfp   =  read_info.mymaxfp        ;
-		myminfp   =  read_info.myminfp        ;
+		g_m_x_max_fp   =  read_info.mxmaxfp        ;
+		g_m_x_min_fp   =  read_info.mxminfp        ;
+		g_m_y_max_fp   =  read_info.mymaxfp        ;
+		g_m_y_min_fp   =  read_info.myminfp        ;
 		zdots     =  read_info.zdots          ;
 		originfp  =  read_info.originfp       ;
 		depthfp   =  read_info.depthfp        ;
@@ -443,7 +443,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		fractype = PLASMA;
-		curfractalspecific = &fractalspecific[PLASMA];
+		curfractalspecific = &fractalspecific[fractype];
 		param[0] = 0;
 		if (!initbatch)
 		{
