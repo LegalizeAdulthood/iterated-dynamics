@@ -667,7 +667,7 @@ static void trigdetails(char *buf)
 	char tmpbuf[20];
 	if (fractype == JULIBROT || fractype == JULIBROTFP)
 	{
-		numfn = (fractalspecific[neworbittype].flags >> 6) & 7;
+		numfn = (fractalspecific[g_new_orbit_type].flags >> 6) & 7;
 	}
 	else
 	{

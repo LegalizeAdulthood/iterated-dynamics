@@ -311,24 +311,24 @@ init_restart:
 		}
 	}
 	/* match Julibrot with integer mode of orbit */
-	if (fractype == JULIBROTFP && fractalspecific[neworbittype].isinteger)
+	if (fractype == JULIBROTFP && fractalspecific[g_new_orbit_type].isinteger)
 	{
-		int i = fractalspecific[neworbittype].tofloat;
+		int i = fractalspecific[g_new_orbit_type].tofloat;
 		if (i != NOFRACTAL)
 		{
-			neworbittype = i;
+			g_new_orbit_type = i;
 		}
 		else
 		{
 			fractype = JULIBROT;
 		}
 	}
-	else if (fractype == JULIBROT && fractalspecific[neworbittype].isinteger == 0)
+	else if (fractype == JULIBROT && fractalspecific[g_new_orbit_type].isinteger == 0)
 	{
-		int i = fractalspecific[neworbittype].tofloat;
+		int i = fractalspecific[g_new_orbit_type].tofloat;
 		if (i != NOFRACTAL)
 		{
-			neworbittype = i;
+			g_new_orbit_type = i;
 		}
 		else
 		{

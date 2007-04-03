@@ -115,7 +115,7 @@ typedef BYTE BOOLEAN;
 #define DIRECTION_RIGHT		1
 #define DIRECTION_RANDOM	2
 
-/* juli3Dmode values */
+/* g_juli_3D_mode values */
 #define JULI3DMODE_MONOCULAR	0
 #define JULI3DMODE_LEFT_EYE		1
 #define JULI3DMODE_RIGHT_EYE	2
@@ -806,19 +806,19 @@ enum Minor  {left_first, right_first};
 #define  NOGUESS        2    /* solid guessing not allowed          */
 #define  NOTRACE        4    /* boundary tracing not allowed        */
 #define  NOROTATE       8    /* zoombox rotate/stretch not allowed  */
-#define  NORESUME      16    /* can't interrupt and resume          */
-#define  INFCALC       32    /* this type calculates forever        */
-#define  TRIG1         64    /* number of trig functions in formula */
-#define  TRIG2        128
-#define  TRIG3        192
-#define  TRIG4        256
-#define  WINFRAC      512    /* supported in WinFrac                */
-#define  PARMS3D     1024    /* uses 3d parameters                  */
-#define  OKJB        2048    /* works with Julibrot                 */
-#define  MORE        4096    /* more than 4 parms                   */
-#define  BAILTEST    8192    /* can use different bailout tests     */
-#define  BF_MATH    16384    /* supports arbitrary precision        */
-#define  LD_MATH    32768    /* supports long double                */
+#define  NORESUME    0x10    /* can't interrupt and resume          */
+#define  INFCALC     0x20    /* this type calculates forever        */
+#define  TRIG1       0x40    /* number of trig functions in formula */
+#define  TRIG2       0x80
+#define  TRIG3       0xC0
+#define  TRIG4      0x100
+#define  WINFRAC    0x200    /* supported in WinFrac                */
+#define  PARMS3D    0x400    /* uses 3d parameters                  */
+#define  OKJB       0x800    /* works with Julibrot                 */
+#define  MORE      0x1000    /* more than 4 parms                   */
+#define  BAILTEST  0x2000    /* can use different bailout tests     */
+#define  BF_MATH   0x4000    /* supports arbitrary precision        */
+#define  LD_MATH   0x8000    /* supports long double                */
 
 
 /* more bitmasks for evolution mode flag */

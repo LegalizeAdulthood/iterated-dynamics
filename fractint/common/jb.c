@@ -10,6 +10,25 @@ double g_m_x_min_fp = -.83;
 double g_m_y_min_fp = -.25;
 double g_m_x_max_fp = -.83;
 double g_m_y_max_fp =  .25;
+int g_z_dots = 128;
+float g_origin_fp  = 8.0f;
+float g_height_fp  = 7.0f;
+float g_width_fp   = 10.0f;
+float g_dist_fp    = 24.0f;
+float g_eyes_fp    = 2.5f;
+float g_depth_fp   = 8.0f;
+int g_juli_3D_mode = JULI3DMODE_MONOCULAR;
+int g_new_orbit_type = JULIA;
+
+struct perspective
+{
+	long x, y, zx, zy;
+};
+
+struct perspective_fp
+{
+	double x, y, zx, zy;
+};
 
 static long s_m_x_min, s_m_y_min;
 static long s_x_per_inch, s_y_per_inch, s_inch_per_x_dot, s_inch_per_y_dot;
@@ -21,45 +40,19 @@ static long s_init_z, s_djx, s_djy, s_dmx, s_dmy;
 static double s_init_z_fp, s_djx_fp, s_djy_fp, s_dmx_fp, s_dmy_fp;
 static long s_jx, s_jy, s_mx, s_my, s_x_offset, s_y_offset;
 static double s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp, s_x_offset_fp, s_y_offset_fp;
-
-struct Perspective
-{
-	long x, y, zx, zy;
-};
-
-struct Perspectivefp
-{
-	double x, y, zx, zy;
-};
-
-static struct Perspective LeftEye, RightEye, *Per;
-static struct Perspectivefp LeftEyefp, RightEyefp, *Perfp;
-
-static _LCMPLX jbc;
-static _CMPLX jbcfp;
-
+static struct perspective s_left_eye, s_right_eye, *s_per;
+static struct perspective_fp s_left_eye_fp, s_right_eye_fp, *s_per_fp;
+static _LCMPLX s_jbc;
+static _CMPLX s_jbc_fp;
 #ifndef XFRACT
-static double fg, fg16;
+static double s_fg, s_fg16;
 #endif
-int g_z_dots = 128;
-
-float originfp  = 8.0f;
-float heightfp  = 7.0f;
-float widthfp   = 10.0f;
-float distfp    = 24.0f;
-float eyesfp    = 2.5f;
-float depthfp   = 8.0f;
-float brratiofp = 1.0f;
-static long width, dist, depth, brratio;
+static long s_width, s_dist, s_depth, s_br_ratio;
 #ifndef XFRACT
-static long eyes;
+static long s_eyes;
 #endif
-int juli3Dmode = JULI3DMODE_MONOCULAR;
 
-int neworbittype = JULIA;
-
-int
-JulibrotSetup(void)
+int julibrot_setup(void)
 {
 #ifndef XFRACT
 	long origin;
@@ -79,68 +72,68 @@ JulibrotSetup(void)
 	s_y_offset_fp = (yymax + yymin) / 2;     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
-	floatparm = &jbcfp;
-	s_x_per_inch_fp = (xxmin - xxmax) / widthfp;
-	s_y_per_inch_fp = (yymax - yymin) / heightfp;
-	s_inch_per_x_dot_fp = widthfp / xdots;
-	s_inch_per_y_dot_fp = heightfp / ydots;
-	s_init_z_fp = originfp - (depthfp / 2);
-	RightEyefp.x = (juli3Dmode == JULI3DMODE_MONOCULAR) ? 0.0 : (eyesfp / 2);
-	LeftEyefp.x = -RightEyefp.x;
-	LeftEyefp.y = RightEyefp.y = 0;
-	LeftEyefp.zx = RightEyefp.zx = distfp;
-	LeftEyefp.zy = RightEyefp.zy = distfp;
+	floatparm = &s_jbc_fp;
+	s_x_per_inch_fp = (xxmin - xxmax) / g_width_fp;
+	s_y_per_inch_fp = (yymax - yymin) / g_height_fp;
+	s_inch_per_x_dot_fp = g_width_fp / xdots;
+	s_inch_per_y_dot_fp = g_height_fp / ydots;
+	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
+	s_right_eye_fp.x = (g_juli_3D_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
+	s_left_eye_fp.x = -s_right_eye_fp.x;
+	s_left_eye_fp.y = s_right_eye_fp.y = 0;
+	s_left_eye_fp.zx = s_right_eye_fp.zx = g_dist_fp;
+	s_left_eye_fp.zy = s_right_eye_fp.zy = g_dist_fp;
 	s_b_base = 128;
 
 #ifndef XFRACT
 	if (fractalspecific[fractype].isinteger > 0)
 	{
 		long jxmin, jxmax, jymin, jymax, mxmax, mymax;
-		if (fractalspecific[neworbittype].isinteger == 0)
+		if (fractalspecific[g_new_orbit_type].isinteger == 0)
 		{
 			stopmsg(0, "Julibrot orbit type isinteger mismatch");
 		}
-		if (fractalspecific[neworbittype].isinteger > 1)
+		if (fractalspecific[g_new_orbit_type].isinteger > 1)
 		{
-			bitshift = fractalspecific[neworbittype].isinteger;
+			bitshift = fractalspecific[g_new_orbit_type].isinteger;
 		}
-		fg = (double) (1L << bitshift);
-		fg16 = (double) (1L << 16);
-		jxmin = (long) (xxmin*fg);
-		jxmax = (long) (xxmax*fg);
+		s_fg = (double) (1L << bitshift);
+		s_fg16 = (double) (1L << 16);
+		jxmin = (long) (xxmin*s_fg);
+		jxmax = (long) (xxmax*s_fg);
 		s_x_offset = (jxmax + jxmin) / 2;    /* Calculate average */
-		jymin = (long) (yymin*fg);
-		jymax = (long) (yymax*fg);
+		jymin = (long) (yymin*s_fg);
+		jymax = (long) (yymax*s_fg);
 		s_y_offset = (jymax + jymin) / 2;    /* Calculate average */
-		s_m_x_min = (long) (g_m_x_min_fp*fg);
-		mxmax = (long) (g_m_x_max_fp*fg);
-		s_m_y_min = (long) (g_m_y_min_fp*fg);
-		mymax = (long) (g_m_y_max_fp*fg);
-		origin = (long) (originfp*fg16);
-		depth = (long) (depthfp*fg16);
-		width = (long) (widthfp*fg16);
-		dist = (long) (distfp*fg16);
-		eyes = (long) (eyesfp*fg16);
-		brratio = (long) (brratiofp*fg16);
+		s_m_x_min = (long) (g_m_x_min_fp*s_fg);
+		mxmax = (long) (g_m_x_max_fp*s_fg);
+		s_m_y_min = (long) (g_m_y_min_fp*s_fg);
+		mymax = (long) (g_m_y_max_fp*s_fg);
+		origin = (long) (g_origin_fp*s_fg16);
+		s_depth = (long) (g_depth_fp*s_fg16);
+		s_width = (long) (g_width_fp*s_fg16);
+		s_dist = (long) (g_dist_fp*s_fg16);
+		s_eyes = (long) (g_eyes_fp*s_fg16);
+		s_br_ratio = (long) s_fg16;
 		s_dmx = (mxmax - s_m_x_min) / g_z_dots;
 		s_dmy = (mymax - s_m_y_min) / g_z_dots;
-		longparm = &jbc;
+		longparm = &s_jbc;
 
-		s_x_per_inch = (long) ((xxmin - xxmax) / widthfp*fg);
-		s_y_per_inch = (long) ((yymax - yymin) / heightfp*fg);
-		s_inch_per_x_dot = (long) ((widthfp / xdots)*fg16);
-		s_inch_per_y_dot = (long) ((heightfp / ydots)*fg16);
-		s_init_z = origin - (depth / 2);
-		RightEye.x = (juli3Dmode == JULI3DMODE_MONOCULAR) ? 0L : (eyes/2);
-		LeftEye.x = -RightEye.x;
-		LeftEye.y = RightEye.y = 0l;
-		LeftEye.zx = RightEye.zx = dist;
-		LeftEye.zy = RightEye.zy = dist;
-		s_b_base = (int) (128.0*brratiofp);
+		s_x_per_inch = (long) ((xxmin - xxmax) / g_width_fp*s_fg);
+		s_y_per_inch = (long) ((yymax - yymin) / g_height_fp*s_fg);
+		s_inch_per_x_dot = (long) ((g_width_fp / xdots)*s_fg16);
+		s_inch_per_y_dot = (long) ((g_height_fp / ydots)*s_fg16);
+		s_init_z = origin - (s_depth / 2);
+		s_right_eye.x = (g_juli_3D_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
+		s_left_eye.x = -s_right_eye.x;
+		s_left_eye.y = s_right_eye.y = 0l;
+		s_left_eye.zx = s_right_eye.zx = s_dist;
+		s_left_eye.zy = s_right_eye.zy = s_dist;
+		s_b_base = 128;
 	}
 #endif
 
-	if (juli3Dmode == 3)
+	if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
 	{
 		savedac = 0;
 		mapname = Glasses1Map;
@@ -165,72 +158,71 @@ JulibrotSetup(void)
 }
 
 
-int
-jb_per_pixel(void)
+int julibrot_per_pixel(void)
 {
-	s_jx = multiply(Per->x - s_x_pixel, s_init_z, 16);
-	s_jx = divide(s_jx, dist, 16) - s_x_pixel;
+	s_jx = multiply(s_per->x - s_x_pixel, s_init_z, 16);
+	s_jx = divide(s_jx, s_dist, 16) - s_x_pixel;
 	s_jx = multiply(s_jx << (bitshift - 16), s_x_per_inch, bitshift);
 	s_jx += s_x_offset;
-	s_djx = divide(depth, dist, 16);
-	s_djx = multiply(s_djx, Per->x - s_x_pixel, 16) << (bitshift - 16);
+	s_djx = divide(s_depth, s_dist, 16);
+	s_djx = multiply(s_djx, s_per->x - s_x_pixel, 16) << (bitshift - 16);
 	s_djx = multiply(s_djx, s_x_per_inch, bitshift) / g_z_dots;
 
-	s_jy = multiply(Per->y - s_y_pixel, s_init_z, 16);
-	s_jy = divide(s_jy, dist, 16) - s_y_pixel;
+	s_jy = multiply(s_per->y - s_y_pixel, s_init_z, 16);
+	s_jy = divide(s_jy, s_dist, 16) - s_y_pixel;
 	s_jy = multiply(s_jy << (bitshift - 16), s_y_per_inch, bitshift);
 	s_jy += s_y_offset;
-	s_djy = divide(depth, dist, 16);
-	s_djy = multiply(s_djy, Per->y - s_y_pixel, 16) << (bitshift - 16);
+	s_djy = divide(s_depth, s_dist, 16);
+	s_djy = multiply(s_djy, s_per->y - s_y_pixel, 16) << (bitshift - 16);
 	s_djy = multiply(s_djy, s_y_per_inch, bitshift) / g_z_dots;
 
 	return 1;
 }
 
-int
-jbfp_per_pixel(void)
+int julibrot_per_pixel_fp(void)
 {
-	s_jx_fp = ((Perfp->x - s_x_pixel_fp)*s_init_z_fp / distfp - s_x_pixel_fp)*s_x_per_inch_fp;
+	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_dist_fp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
-	s_djx_fp = (depthfp / distfp)*(Perfp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
+	s_djx_fp = (g_depth_fp / g_dist_fp)*(s_per_fp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
 
-	s_jy_fp = ((Perfp->y - s_y_pixel_fp)*s_init_z_fp / distfp - s_y_pixel_fp)*s_y_per_inch_fp;
+	s_jy_fp = ((s_per_fp->y - s_y_pixel_fp)*s_init_z_fp / g_dist_fp - s_y_pixel_fp)*s_y_per_inch_fp;
 	s_jy_fp += s_y_offset_fp;
-	s_djy_fp = depthfp / distfp*(Perfp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
+	s_djy_fp = g_depth_fp / g_dist_fp*(s_per_fp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
 
 	return 1;
 }
 
-static int zpixel, plotted;
-static long n;
+static int s_plotted;
 
-int
-zline(long x, long y)
+static int zline(long x, long y)
 {
+	int n;
+	int z_pixel;
+
 	s_x_pixel = x;
 	s_y_pixel = y;
 	s_mx = s_m_x_min;
 	s_my = s_m_y_min;
-	switch (juli3Dmode)
+	switch (g_juli_3D_mode)
 	{
 	case JULI3DMODE_MONOCULAR:
 	case JULI3DMODE_LEFT_EYE:
-		Per = &LeftEye;
+		s_per = &s_left_eye;
 		break;
 	case JULI3DMODE_RIGHT_EYE:
-		Per = &RightEye;
+		s_per = &s_right_eye;
 		break;
 	case JULI3DMODE_RED_BLUE:
-		Per = ((row + col) & 1) ? &LeftEye : &RightEye;
+		s_per = ((row + col) & 1) ? &s_left_eye : &s_right_eye;
 		break;
 	}
-	jb_per_pixel();
-	for (zpixel = 0; zpixel < g_z_dots; zpixel++)
+	julibrot_per_pixel();
+	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
 		lold.x = s_jx;
 		lold.y = s_jy;
-		jbc.x = s_mx;
-		jbc.y = s_my;
+		s_jbc.x = s_mx;
+		s_jbc.y = s_my;
 		if (driver_key_pressed())
 		{
 			return -1;
@@ -239,24 +231,24 @@ zline(long x, long y)
 		ltempsqry = multiply(lold.y, lold.y, bitshift);
 		for (n = 0; n < maxit; n++)
 		{
-			if (fractalspecific[neworbittype].orbitcalc())
+			if (fractalspecific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
 		}
 		if (n == maxit)
 		{
-			if (juli3Dmode == 3)
+			if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
 			{
-				color = (int) (128l*zpixel / g_z_dots);
+				color = (int) (128l*z_pixel / g_z_dots);
 				if ((row + col) & 1)
 				{
 
-					(*plot) (col, row, 127 - color);
+					(*plot)(col, row, 127 - color);
 				}
 				else
 				{
-					color = (int) (multiply((long) color << 16, brratio, 16) >> 16);
+					color = (int) (multiply((long) color << 16, s_br_ratio, 16) >> 16);
 					if (color < 1)
 					{
 						color = 1;
@@ -265,15 +257,15 @@ zline(long x, long y)
 					{
 						color = 127;
 					}
-					(*plot) (col, row, 127 + s_b_base - color);
+					(*plot)(col, row, 127 + s_b_base - color);
 				}
 			}
 			else
 			{
-				color = (int) (254l*zpixel / g_z_dots);
-				(*plot) (col, row, color + 1);
+				color = (int) (254l*z_pixel / g_z_dots);
+				(*plot)(col, row, color + 1);
 			}
-			plotted = 1;
+			s_plotted = 1;
 			break;
 		}
 		s_mx += s_dmx;
@@ -284,9 +276,10 @@ zline(long x, long y)
 	return 0;
 }
 
-int
-zlinefp(double x, double y)
+static int zlinefp(double x, double y)
 {
+	int n;
+	int z_pixel;
 #ifdef XFRACT
 	static int keychk = 0;
 #endif
@@ -294,30 +287,30 @@ zlinefp(double x, double y)
 	s_y_pixel_fp = y;
 	s_mx_fp = g_m_x_min_fp;
 	s_my_fp = g_m_y_min_fp;
-	switch (juli3Dmode)
+	switch (g_juli_3D_mode)
 	{
 	case JULI3DMODE_MONOCULAR:
 	case JULI3DMODE_LEFT_EYE:
-		Perfp = &LeftEyefp;
+		s_per_fp = &s_left_eye_fp;
 		break;
 	case JULI3DMODE_RIGHT_EYE:
-		Perfp = &RightEyefp;
+		s_per_fp = &s_right_eye_fp;
 		break;
 	case JULI3DMODE_RED_BLUE:
-		Perfp = ((row + col) & 1) ? &LeftEyefp : &RightEyefp;
+		s_per_fp = ((row + col) & 1) ? &s_left_eye_fp : &s_right_eye_fp;
 		break;
 	}
-	jbfp_per_pixel();
-	for (zpixel = 0; zpixel < g_z_dots; zpixel++)
+	julibrot_per_pixel_fp();
+	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
 		/* Special initialization for Mandelbrot types */
-		if ((neworbittype == QUATFP || neworbittype == HYPERCMPLXFP)
+		if ((g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
 			&& save_release > 2002)
 		{
 			old.x = 0.0;
 			old.y = 0.0;
-			jbcfp.x = 0.0;
-			jbcfp.y = 0.0;
+			s_jbc_fp.x = 0.0;
+			s_jbc_fp.y = 0.0;
 			qc = s_jx_fp;
 			qci = s_jy_fp;
 			qcj = s_mx_fp;
@@ -327,8 +320,8 @@ zlinefp(double x, double y)
 		{
 			old.x = s_jx_fp;
 			old.y = s_jy_fp;
-			jbcfp.x = s_mx_fp;
-			jbcfp.y = s_my_fp;
+			s_jbc_fp.x = s_mx_fp;
+			s_jbc_fp.y = s_my_fp;
 			qc = param[0];
 			qci = param[1];
 			qcj = param[2];
@@ -354,23 +347,22 @@ zlinefp(double x, double y)
 
 		for (n = 0; n < maxit; n++)
 		{
-			if (fractalspecific[neworbittype].orbitcalc())
+			if (fractalspecific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
 		}
 		if (n == maxit)
 		{
-			if (juli3Dmode == 3)
+			if (g_juli_3D_mode == 3)
 			{
-				color = (int) (128l*zpixel / g_z_dots);
+				color = (int) (128l*z_pixel / g_z_dots);
 				if ((row + col) & 1)
 				{
-					(*plot) (col, row, 127 - color);
+					(*plot)(col, row, 127 - color);
 				}
 				else
 				{
-					color = (int)(color*brratiofp);
 					if (color < 1)
 					{
 						color = 1;
@@ -379,15 +371,15 @@ zlinefp(double x, double y)
 					{
 						color = 127;
 					}
-					(*plot) (col, row, 127 + s_b_base - color);
+					(*plot)(col, row, 127 + s_b_base - color);
 				}
 			}
 			else
 			{
-				color = (int) (254l*zpixel / g_z_dots);
-				(*plot) (col, row, color + 1);
+				color = (int) (254l*z_pixel / g_z_dots);
+				(*plot)(col, row, color + 1);
 			}
-			plotted = 1;
+			s_plotted = 1;
 			break;
 		}
 		s_mx_fp += s_dmx_fp;
@@ -398,27 +390,26 @@ zlinefp(double x, double y)
 	return 0;
 }
 
-int
-Std4dFractal(void)
+int std_4d_fractal(void)
 {
 	long x, y;
 	int xdot, ydot;
 	c_exp = (int)param[2];
-	if (neworbittype == LJULIAZPOWER)
+	if (g_new_orbit_type == LJULIAZPOWER)
 	{
 		if (c_exp < 1)
 		{
 			c_exp = 1;
 		}
-		fractalspecific[neworbittype].orbitcalc =
+		fractalspecific[g_new_orbit_type].orbitcalc =
 			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
 			? longZpowerFractal : longCmplxZpowerFractal;
 	}
 
 	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
 	{
-		plotted = 0;
-		x = -(width >> 1);
+		s_plotted = 0;
+		x = -(s_width >> 1);
 		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot)
 		{
 			col = xdot;
@@ -434,11 +425,11 @@ Std4dFractal(void)
 				return -1;
 			}
 		}
-		if (plotted == 0)
+		if (s_plotted == 0)
 		{
 			if (y == 0)
 			{
-				plotted = -1;  /* no points first pass; don't give up */
+				s_plotted = -1;  /* no points first pass; don't give up */
 			}
 			else
 			{
@@ -448,16 +439,16 @@ Std4dFractal(void)
 	}
 	return 0;
 }
-int
-Std4dfpFractal(void)
+
+int std_4d_fractal_fp(void)
 {
 	double x, y;
 	int xdot, ydot;
 	c_exp = (int)param[2];
 
-	if (neworbittype == FPJULIAZPOWER)
+	if (g_new_orbit_type == FPJULIAZPOWER)
 	{
-		fractalspecific[neworbittype].orbitcalc =
+		fractalspecific[g_new_orbit_type].orbitcalc =
 			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
 			? floatZpowerFractal : floatCmplxZpowerFractal;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
@@ -465,8 +456,8 @@ Std4dfpFractal(void)
 
 	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
 	{
-		plotted = 0;
-		x = -widthfp / 2;
+		s_plotted = 0;
+		x = -g_width_fp / 2;
 		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot_fp)
 		{
 			col = xdot;
@@ -482,11 +473,11 @@ Std4dfpFractal(void)
 				return -1;
 			}
 		}
-		if (plotted == 0)
+		if (s_plotted == 0)
 		{
 			if (y == 0)
 			{
-				plotted = -1;  /* no points first pass; don't give up */
+				s_plotted = -1;  /* no points first pass; don't give up */
 			}
 			else
 			{
