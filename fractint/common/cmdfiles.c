@@ -413,7 +413,7 @@ static void initvars_restart()          /* <ins> key init */
 	finalaspectratio = screenaspect;
 	viewxdots = viewydots = 0;
 	orbit_delay = 0;                     /* full speed orbits */
-	orbit_interval = 1;                  /* plot all orbits */
+	g_orbit_interval = 1;                  /* plot all orbits */
 	debugflag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
 	timerflag = 0;                       /* timer flags are off       */
 	strcpy(FormFileName, "fractint.frm"); /* default formula file      */
@@ -442,8 +442,8 @@ static void initvars_restart()          /* <ins> key init */
 		mapdacbox = NULL;
 	}
 
-	major_method = breadth_first;        /* default inverse julia methods */
-	minor_method = left_first;   /* default inverse julia methods */
+	g_major_method = breadth_first;        /* default inverse julia methods */
+	g_minor_method = left_first;   /* default inverse julia methods */
 	truecolor = 0;              /* truecolor output flag */
 	truemode = TRUEMODE_DEFAULT;               /* set to default color scheme */
 }
@@ -511,16 +511,16 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	colorstate = colorpreloaded = 0;
 	rotate_lo = 1; rotate_hi = 255;      /* color cycling default range */
 	orbit_delay = 0;                     /* full speed orbits */
-	orbit_interval = 1;                  /* plot all orbits */
-	keep_scrn_coords = 0;
+	g_orbit_interval = 1;                  /* plot all orbits */
+	g_keep_screen_coords = 0;
 	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
-	set_orbit_corners = 0;
-	oxmin = curfractalspecific->xmin;
-	oxmax = curfractalspecific->xmax;
-	ox3rd = curfractalspecific->xmin;
-	oymin = curfractalspecific->ymin;
-	oymax = curfractalspecific->ymax;
-	oy3rd = curfractalspecific->ymin;
+	g_set_orbit_corners = 0;
+	g_orbit_x_min = curfractalspecific->xmin;
+	g_orbit_x_max = curfractalspecific->xmax;
+	g_orbit_x_3rd = curfractalspecific->xmin;
+	g_orbit_y_min = curfractalspecific->ymin;
+	g_orbit_y_max = curfractalspecific->ymax;
+	g_orbit_y_3rd = curfractalspecific->ymin;
 
 	math_tol[0] = 0.05;
 	math_tol[1] = 0.05;
@@ -1661,20 +1661,20 @@ static int miim_arg(const cmd_context *context)
 	}
 	if (context->charval[0] == 'b')
 	{
-		major_method = breadth_first;
+		g_major_method = breadth_first;
 	}
 	else if (context->charval[0] == 'd')
 	{
-		major_method = depth_first;
+		g_major_method = depth_first;
 	}
 	else if (context->charval[0] == 'w')
 	{
-		major_method = random_walk;
+		g_major_method = random_walk;
 	}
 #ifdef RANDOM_RUN
 	else if (context->charval[0] == 'r')
 	{
-		major_method = random_run;
+		g_major_method = random_run;
 	}
 #endif
 	else
@@ -1684,11 +1684,11 @@ static int miim_arg(const cmd_context *context)
 
 	if (context->charval[1] == 'l')
 	{
-		minor_method = left_first;
+		g_minor_method = left_first;
 	}
 	else if (context->charval[1] == 'r')
 	{
-		minor_method = right_first;
+		g_minor_method = right_first;
 	}
 	else
 	{
@@ -1934,24 +1934,24 @@ static int corners_arg(const cmd_context *context)
 
 static int orbit_corners_arg(const cmd_context *context)
 {
-	set_orbit_corners = 0;
+	g_set_orbit_corners = 0;
 	if (context->floatparms != context->totparms
 		|| (context->totparms != 0 && context->totparms != 4 && context->totparms != 6))
 	{
 		return badarg(context->curarg);
 	}
-	ox3rd = oxmin = context->floatval[0];
-	oxmax =         context->floatval[1];
-	oy3rd = oymin = context->floatval[2];
-	oymax =         context->floatval[3];
+	g_orbit_x_3rd = g_orbit_x_min = context->floatval[0];
+	g_orbit_x_max =         context->floatval[1];
+	g_orbit_y_3rd = g_orbit_y_min = context->floatval[2];
+	g_orbit_y_max =         context->floatval[3];
 
 	if (context->totparms == 6)
 	{
-		ox3rd =      context->floatval[4];
-		oy3rd =      context->floatval[5];
+		g_orbit_x_3rd =      context->floatval[4];
+		g_orbit_y_3rd =      context->floatval[5];
 	}
-	set_orbit_corners = 1;
-	keep_scrn_coords = 1;
+	g_set_orbit_corners = 1;
+	g_keep_screen_coords = 1;
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2547,14 +2547,14 @@ static int orbit_delay_arg(const cmd_context *context)
 
 static int orbit_interval_arg(const cmd_context *context)
 {
-	orbit_interval = context->numval;
-	if (orbit_interval < 1)
+	g_orbit_interval = context->numval;
+	if (g_orbit_interval < 1)
 	{
-		orbit_interval = 1;
+		g_orbit_interval = 1;
 	}
-	if (orbit_interval > 255)
+	if (g_orbit_interval > 255)
 	{
-		orbit_interval = 255;
+		g_orbit_interval = 255;
 	}
 	return COMMAND_OK;
 }
@@ -3164,7 +3164,7 @@ static int brief_arg(const cmd_context *context)
 
 static int screencoords_arg(const cmd_context *context)
 {
-	return flag_arg(context, &keep_scrn_coords, COMMAND_FRACTAL_PARAM);
+	return flag_arg(context, &g_keep_screen_coords, COMMAND_FRACTAL_PARAM);
 }
 
 static int olddemmcolors_arg(const cmd_context *context)

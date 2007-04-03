@@ -68,19 +68,27 @@ struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 	struct affine cvt;
 };
 
+/* global data provided by this module */
 long g_max_count;
-int    run_length;
-enum   Major major_method;
-enum   Minor minor_method;
-struct affine cvt;
-struct l_affine lcvt;
-double Cx, Cy;
-long   CxLong, CyLong;
-/* these are potential user parameters */
-int connect = 1;    /* flag to connect points with a line */
-int euler = 0;      /* use implicit euler approximation for dynamic system */
-int waste = 100;    /* waste this many points before plotting */
+enum   Major g_major_method;
+enum   Minor g_minor_method;
+int g_keep_screen_coords = 0;
+int g_set_orbit_corners = 0;
+long g_orbit_interval;
+double g_orbit_x_min, g_orbit_y_min, g_orbit_x_max, g_orbit_y_max, g_orbit_x_3rd, g_orbit_y_3rd;
 
+/* local data in this module */
+static struct affine o_cvt;
+static int o_color;
+static struct affine s_cvt;
+static struct l_affine lcvt;
+static double Cx, Cy;
+static long   CxLong, CyLong;
+/* these are potential user parameters */
+static int connect = 1;    /* flag to connect points with a line */
+static int euler = 0;      /* use implicit euler approximation for dynamic system */
+static int waste = 100;    /* waste this many points before plotting */
+static int s_run_length;
 static int realtime;
 static int t;
 static long l_dx, l_dy, l_dz, l_dt, l_a, l_b, l_c, l_d;
@@ -92,8 +100,11 @@ static double initorbitfp[3];
 static char NoQueue[] = "Not enough memory: switching to random walk.\n";
 static int mxhits;
 static int projection = PROJECTION_XY; /* projection plane - default is to plot x-y */
+static double orbit;
+static long   l_orbit;
+static long l_sinx, l_cosx;
 
-/* Routines in this module      */
+/* local routines in this module */
 static int  ifs_2d(void);
 static int  ifs_3d(void);
 static int  ifs_3d_long(void);
@@ -228,12 +239,12 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 	{
 		return -1;
 	}
-	l_cvt->a = (long)(cvt.a*fudge);
-	l_cvt->b = (long)(cvt.b*fudge);
-	l_cvt->c = (long)(cvt.c*fudge);
-	l_cvt->d = (long)(cvt.d*fudge);
-	l_cvt->e = (long)(cvt.e*fudge);
-	l_cvt->f = (long)(cvt.f*fudge);
+	l_cvt->a = (long) (cvt.a*fudge);
+	l_cvt->b = (long) (cvt.b*fudge);
+	l_cvt->c = (long) (cvt.c*fudge);
+	l_cvt->d = (long) (cvt.d*fudge);
+	l_cvt->e = (long) (cvt.e*fudge);
+	l_cvt->f = (long) (cvt.f*fudge);
 
 	/* MCP 7-7-91 */
 	return 0;
@@ -243,11 +254,7 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 /*   setup functions - put in fractalspecific[fractype].per_image */
 /******************************************************************/
 
-static double orbit;
-static long   l_orbit;
-static long l_sinx, l_cosx;
-
-int orbit_3d_setup()
+int orbit_3d_setup(void)
 {
 	g_max_count = 0L;
 	connect = 1;
@@ -273,10 +280,10 @@ int orbit_3d_setup()
 
 	if (fractype == LHENON)
 	{
-		l_a =  (long)(param[0]*fudge);
-		l_b =  (long)(param[1]*fudge);
-		l_c =  (long)(param[2]*fudge);
-		l_d =  (long)(param[3]*fudge);
+		l_a =  (long) (param[0]*fudge);
+		l_b =  (long) (param[1]*fudge);
+		l_c =  (long) (param[2]*fudge);
+		l_d =  (long) (param[3]*fudge);
 	}
 	else if (fractype == KAM || fractype == KAM3D)
 	{
@@ -286,13 +293,13 @@ int orbit_3d_setup()
 		{
 			param[1] = .01;
 		}
-		l_b =  (long)(param[1]*fudge);    /* stepsize */
-		l_c =  (long)(param[2]*fudge);    /* stop */
+		l_b =  (long) (param[1]*fudge);    /* stepsize */
+		l_c =  (long) (param[2]*fudge);    /* stop */
 		l_d =  (long) param[3];
 		t = (int) l_d;     /* points per orbit */
 
-		l_sinx = (long)(sin(a)*fudge);
-		l_cosx = (long)(cos(a)*fudge);
+		l_sinx = (long) (sin(a)*fudge);
+		l_cosx = (long) (cos(a)*fudge);
 		l_orbit = 0;
 		initorbitlong[0] = initorbitlong[1] = initorbitlong[2] = 0;
 	}
@@ -300,11 +307,11 @@ int orbit_3d_setup()
 	{
 		LCMPLX Sqrt;
 
-		CxLong = (long)(param[0]*fudge);
-		CyLong = (long)(param[1]*fudge);
+		CxLong = (long) (param[0]*fudge);
+		CyLong = (long) (param[1]*fudge);
 
 		mxhits    = (int) param[2];
-		run_length = (int) param[3];
+		s_run_length = (int) param[3];
 		if (mxhits <= 0)
 		{
 			mxhits = 1;
@@ -315,25 +322,25 @@ int orbit_3d_setup()
 		}
 		param[2] = mxhits;
 
-		setup_convert_to_screen(&cvt);
+		setup_convert_to_screen(&s_cvt);
 		/* Note: using bitshift of 21 for affine, 24 otherwise */
 
-		lcvt.a = (long)(cvt.a*(1L << 21));
-		lcvt.b = (long)(cvt.b*(1L << 21));
-		lcvt.c = (long)(cvt.c*(1L << 21));
-		lcvt.d = (long)(cvt.d*(1L << 21));
-		lcvt.e = (long)(cvt.e*(1L << 21));
-		lcvt.f = (long)(cvt.f*(1L << 21));
+		lcvt.a = (long) (s_cvt.a*(1L << 21));
+		lcvt.b = (long) (s_cvt.b*(1L << 21));
+		lcvt.c = (long) (s_cvt.c*(1L << 21));
+		lcvt.d = (long) (s_cvt.d*(1L << 21));
+		lcvt.e = (long) (s_cvt.e*(1L << 21));
+		lcvt.f = (long) (s_cvt.f*(1L << 21));
 
 		Sqrt = ComplexSqrtLong(fudge - 4*CxLong, -4*CyLong);
 
-		switch (major_method)
+		switch (g_major_method)
 		{
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-				major_method = random_walk;
+				g_major_method = random_walk;
 				goto lrwalk;
 			}
 			EnQueueLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
@@ -343,10 +350,10 @@ int orbit_3d_setup()
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-				major_method = random_walk;
+				g_major_method = random_walk;
 				goto lrwalk;
 			}
-			switch (minor_method)
+			switch (g_minor_method)
 			{
 				case left_first:
 					PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
@@ -371,10 +378,10 @@ lrwalk:
 	}
 	else
 	{
-		l_dt = (long)(param[0]*fudge);
-		l_a =  (long)(param[1]*fudge);
-		l_b =  (long)(param[2]*fudge);
-		l_c =  (long)(param[3]*fudge);
+		l_dt = (long) (param[0]*fudge);
+		l_a =  (long) (param[1]*fudge);
+		l_b =  (long) (param[2]*fudge);
+		l_c =  (long) (param[3]*fudge);
 	}
 
 	/* precalculations for speed */
@@ -493,7 +500,7 @@ int orbit_3d_setup_fp()
 		Cy = param[1];
 
 		mxhits    = (int) param[2];
-		run_length = (int) param[3];
+		s_run_length = (int) param[3];
 		if (mxhits <= 0)
 		{
 			mxhits = 1;
@@ -504,38 +511,38 @@ int orbit_3d_setup_fp()
 		}
 		param[2] = mxhits;
 
-		setup_convert_to_screen(&cvt);
+		setup_convert_to_screen(&s_cvt);
 
 		/* find fixed points: guaranteed to be in the set */
 		Sqrt = ComplexSqrtFloat(1 - 4*Cx, -4*Cy);
-		switch (major_method)
+		switch (g_major_method)
 		{
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-				major_method = random_walk;
+				g_major_method = random_walk;
 				goto rwalk;
 			}
-			EnQueueFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
-			EnQueueFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
+			EnQueueFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
+			EnQueueFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
 			break;
 		case depth_first:                      /* depth first (choose direction) */
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, NoQueue);
-				major_method = random_walk;
+				g_major_method = random_walk;
 				goto rwalk;
 			}
-			switch (minor_method)
+			switch (g_minor_method)
 			{
 			case left_first:
-				PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
-				PushFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
+				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
+				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
 				break;
 			case right_first:
-				PushFloat((float)((1 - Sqrt.x) / 2), (float)(-Sqrt.y / 2));
-				PushFloat((float)((1 + Sqrt.x) / 2), (float)(Sqrt.y / 2));
+				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
+				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
 				break;
 			}
 			break;
@@ -545,7 +552,7 @@ rwalk:
 			g_new.y = initorbitfp[1] = Sqrt.y / 2;
 			break;
 		case random_run:       /* random run, choose intervals */
-			major_method = random_run;
+			g_major_method = random_run;
 			g_new.x = initorbitfp[0] = 1 + Sqrt.x / 2;
 			g_new.y = initorbitfp[1] = Sqrt.y / 2;
 			break;
@@ -586,7 +593,7 @@ Minverse_julia_orbit()
 	/*
 	* First, compute new point
 	*/
-	switch (major_method)
+	switch (g_major_method)
 	{
 	case breadth_first:
 		if (QueueEmpty())
@@ -617,7 +624,7 @@ Minverse_julia_orbit()
 		g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy);
 		if (random_len == 0)
 		{
-			random_len = RANDOM(run_length);
+			random_len = RANDOM(s_run_length);
 			random_dir = RANDOM(3);
 		}
 		switch (random_dir)
@@ -643,8 +650,8 @@ Minverse_julia_orbit()
 	/*
 	* Next, find its pixel position
 	*/
-	newcol = (int)(cvt.a*g_new.x + cvt.b*g_new.y + cvt.e);
-	newrow = (int)(cvt.c*g_new.x + cvt.d*g_new.y + cvt.f);
+	newcol = (int) (s_cvt.a*g_new.x + s_cvt.b*g_new.y + s_cvt.e);
+	newrow = (int) (s_cvt.c*g_new.x + s_cvt.d*g_new.y + s_cvt.f);
 
 	/*
 	* Now find the next point(s), and flip a coin to choose one.
@@ -659,13 +666,13 @@ Minverse_julia_orbit()
 		* MIIM must skip points that are off the screen boundary,
 		* since it cannot read their color.
 		*/
-		switch (major_method)
+		switch (g_major_method)
 		{
 		case breadth_first:
-			EnQueueFloat((float)(leftright*g_new.x), (float)(leftright*g_new.y));
+			EnQueueFloat((float) (leftright*g_new.x), (float) (leftright*g_new.y));
 			return 1;
 		case depth_first:
-			PushFloat   ((float)(leftright*g_new.x), (float)(leftright*g_new.y));
+			PushFloat   ((float) (leftright*g_new.x), (float) (leftright*g_new.y));
 			return 1;
 		case random_run:
 		case random_walk:
@@ -679,7 +686,7 @@ Minverse_julia_orbit()
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
-	switch (major_method)
+	switch (g_major_method)
 	{
 	case breadth_first:
 		if (color < mxhits)
@@ -695,7 +702,7 @@ Minverse_julia_orbit()
 		{
 			putcolor(newcol, newrow, color + 1);
 			/* g_new = ComplexSqrtFloat(g_new.x - Cx, g_new.y - Cy); */
-			if (minor_method == left_first)
+			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
 				{
@@ -724,7 +731,7 @@ Minverse_julia_orbit()
 	case random_run:
 		if (random_len-- == 0)
 		{
-			random_len = RANDOM(run_length);
+			random_len = RANDOM(s_run_length);
 			random_dir = RANDOM(3);
 		}
 		switch (random_dir)
@@ -767,7 +774,7 @@ Linverse_julia_orbit()
 	/*
 	* First, compute new point
 	*/
-	switch (major_method)
+	switch (g_major_method)
 	{
 	case breadth_first:
 		if (QueueEmpty())
@@ -795,7 +802,7 @@ Linverse_julia_orbit()
 		lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
 		if (random_len == 0)
 		{
-			random_len = RANDOM(run_length);
+			random_len = RANDOM(s_run_length);
 			random_dir = RANDOM(3);
 		}
 		switch (random_dir)
@@ -823,9 +830,9 @@ Linverse_julia_orbit()
 	* otherwise the values of lcvt were truncated.  Used bitshift
 	* of 24 otherwise, for increased precision.
 	*/
-	newcol = (int)((multiply(lcvt.a, lnew.x >> (bitshift - 21), 21) +
+	newcol = (int) ((multiply(lcvt.a, lnew.x >> (bitshift - 21), 21) +
 			multiply(lcvt.b, lnew.y >> (bitshift - 21), 21) + lcvt.e) >> 21);
-	newrow = (int)((multiply(lcvt.c, lnew.x >> (bitshift - 21), 21) +
+	newrow = (int) ((multiply(lcvt.c, lnew.x >> (bitshift - 21), 21) +
 			multiply(lcvt.d, lnew.y >> (bitshift - 21), 21) + lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
@@ -835,7 +842,7 @@ Linverse_julia_orbit()
 		* since it cannot read their color.
 		*/
 		color = RANDOM(2) ? 1 : -1;
-		switch (major_method)
+		switch (g_major_method)
 		{
 		case breadth_first:
 			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
@@ -859,7 +866,7 @@ Linverse_julia_orbit()
 	*           else put the point's children onto the queue
 	*/
 	color  = getcolor(newcol, newrow);
-	switch (major_method)
+	switch (g_major_method)
 	{
 	case breadth_first:
 		if (color < mxhits)
@@ -875,7 +882,7 @@ Linverse_julia_orbit()
 		{
 			putcolor(newcol, newrow, color + 1);
 			lnew = ComplexSqrtLong(lnew.x - CxLong, lnew.y - CyLong);
-			if (minor_method == left_first)
+			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
 				{
@@ -914,214 +921,180 @@ Linverse_julia_orbit()
 	return 1;
 }
 
-#if 0
-int inverse_julia_orbit(double *x, double *y, double *z)
+int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 {
-	double r, xo, yo;
-	int waste;
-	if (*z >= 1.0) /* this assumes intial value is 1.0!!! */
-	{
-		waste = 20; /* skip these points at first */
-		*z = 0;
-	}
-	else
-	{
-		waste = 1;
-	}
-	while (waste--)
-	{
-		xo = *x - param[0];
-		yo = *y - param[1];
-		r  = sqrt(xo*xo + yo*yo);
-		*x  = sqrt((r + xo)/2);
-		if (yo < 0)
-		{
-			*x = - *x;
-		}
-		*y = sqrt((r - xo)/2);
-		if (RANDOM(10) > 4)
-		{
-						*x = -(*x);
-						*y = -(*y);
-		}
-	}
+	l_xdt = multiply(*l_x, l_dt, bitshift);
+	l_ydt = multiply(*l_y, l_dt, bitshift);
+	l_dx  = -multiply(l_adt, *l_x, bitshift) + multiply(l_adt, *l_y, bitshift);
+	l_dy  =  multiply(l_bdt, *l_x, bitshift) -l_ydt -multiply(*l_z, l_xdt, bitshift);
+	l_dz  = -multiply(l_cdt, *l_z, bitshift) + multiply(*l_x, l_ydt, bitshift);
+
+	*l_x += l_dx;
+	*l_y += l_dy;
+	*l_z += l_dz;
 	return 0;
 }
-#endif
 
-int lorenz3dlongorbit(long *l_x, long *l_y, long *l_z)
+int lorenz_3d_orbit_fp(double *x, double *y, double *z)
 {
-		l_xdt = multiply(*l_x, l_dt, bitshift);
-		l_ydt = multiply(*l_y, l_dt, bitshift);
-		l_dx  = -multiply(l_adt, *l_x, bitshift) + multiply(l_adt, *l_y, bitshift);
-		l_dy  =  multiply(l_bdt, *l_x, bitshift) -l_ydt -multiply(*l_z, l_xdt, bitshift);
-		l_dz  = -multiply(l_cdt, *l_z, bitshift) + multiply(*l_x, l_ydt, bitshift);
+	xdt = (*x)*dt;
+	ydt = (*y)*dt;
+	zdt = (*z)*dt;
 
-		*l_x += l_dx;
-		*l_y += l_dy;
-		*l_z += l_dz;
-		return 0;
+	/* 2-lobe Lorenz (the original) */
+	dx  = -adt*(*x) + adt*(*y);
+	dy  =  bdt*(*x) - ydt - (*z)*xdt;
+	dz  = -cdt*(*z) + (*x)*ydt;
+
+	*x += dx;
+	*y += dy;
+	*z += dz;
+	return 0;
 }
 
-int lorenz3d1floatorbit(double *x, double *y, double *z)
+int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 {
-		double norm;
+	double norm;
 
-		xdt = (*x)*dt;
-		ydt = (*y)*dt;
-		zdt = (*z)*dt;
+	xdt = (*x)*dt;
+	ydt = (*y)*dt;
+	zdt = (*z)*dt;
 
-		/* 1-lobe Lorenz */
-		norm = sqrt((*x)*(*x) + (*y)*(*y));
-		dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
-		dy   = (bdt-adt)*(*x) - (adt + dt)*(*y) + (bdt + adt)*norm - xdt*(*z) -
-				norm*zdt;
-		dz   = (ydt/2) - cdt*(*z);
+	/* 1-lobe Lorenz */
+	norm = sqrt((*x)*(*x) + (*y)*(*y));
+	dx   = (-adt-dt)*(*x) + (adt-bdt)*(*y) + (dt-adt)*norm + ydt*(*z);
+	dy   = (bdt-adt)*(*x) - (adt + dt)*(*y) + (bdt + adt)*norm - xdt*(*z) -
+			norm*zdt;
+	dz   = (ydt/2) - cdt*(*z);
 
-		*x += dx;
-		*y += dy;
-		*z += dz;
-		return 0;
+	*x += dx;
+	*y += dy;
+	*z += dz;
+	return 0;
 }
 
-int lorenz3dfloatorbit(double *x, double *y, double *z)
+int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 {
-		xdt = (*x)*dt;
-		ydt = (*y)*dt;
-		zdt = (*z)*dt;
+	double norm;
 
-		/* 2-lobe Lorenz (the original) */
-		dx  = -adt*(*x) + adt*(*y);
-		dy  =  bdt*(*x) - ydt - (*z)*xdt;
-		dz  = -cdt*(*z) + (*x)*ydt;
+	xdt = (*x)*dt;
+	ydt = (*y)*dt;
+	zdt = (*z)*dt;
 
-		*x += dx;
-		*y += dy;
-		*z += dz;
-		return 0;
+	/* 3-lobe Lorenz */
+	norm = sqrt((*x)*(*x) + (*y)*(*y));
+	dx   = (-(adt + dt)*(*x) + (adt-bdt + zdt)*(*y)) / 3 +
+			((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
+			2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
+	dy   = ((bdt-adt-zdt)*(*x) - (adt + dt)*(*y)) / 3 +
+			(2*(adt-dt)*(*x)*(*y) +
+			(bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
+	dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
+
+	*x += dx;
+	*y += dy;
+	*z += dz;
+	return 0;
 }
 
-int lorenz3d3floatorbit(double *x, double *y, double *z)
+int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 {
-		double norm;
+	xdt = (*x)*dt;
+	ydt = (*y)*dt;
+	zdt = (*z)*dt;
 
-		xdt = (*x)*dt;
-		ydt = (*y)*dt;
-		zdt = (*z)*dt;
+	/* 4-lobe Lorenz */
+	dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
+			(adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
+			(2*((*x)*(*x) + (*y)*(*y)));
+	dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
+			(-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
+			(2*((*x)*(*x) + (*y)*(*y)));
+	dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
 
-		/* 3-lobe Lorenz */
-		norm = sqrt((*x)*(*x) + (*y)*(*y));
-		dx   = (-(adt + dt)*(*x) + (adt-bdt + zdt)*(*y)) / 3 +
-				((dt-adt)*((*x)*(*x)-(*y)*(*y)) +
-				2*(bdt + adt-zdt)*(*x)*(*y))/(3*norm);
-		dy   = ((bdt-adt-zdt)*(*x) - (adt + dt)*(*y)) / 3 +
-				(2*(adt-dt)*(*x)*(*y) +
-				(bdt + adt-zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-		dz   = (3*xdt*(*x)*(*y)-ydt*(*y)*(*y))/2 - cdt*(*z);
-
-		*x += dx;
-		*y += dy;
-		*z += dz;
-		return 0;
+	*x += dx;
+	*y += dy;
+	*z += dz;
+	return 0;
 }
 
-int lorenz3d4floatorbit(double *x, double *y, double *z)
+int henon_orbit_fp(double *x, double *y, double *z)
 {
-		xdt = (*x)*dt;
-		ydt = (*y)*dt;
-		zdt = (*z)*dt;
-
-		/* 4-lobe Lorenz */
-		dx   = (-adt*(*x)*(*x)*(*x) + (2*adt + bdt-zdt)*(*x)*(*x)*(*y) +
-				(adt-2*dt)*(*x)*(*y)*(*y) + (zdt-bdt)*(*y)*(*y)*(*y)) /
-				(2*((*x)*(*x) + (*y)*(*y)));
-		dy   = ((bdt-zdt)*(*x)*(*x)*(*x) + (adt-2*dt)*(*x)*(*x)*(*y) +
-				(-2*adt-bdt + zdt)*(*x)*(*y)*(*y) - adt*(*y)*(*y)*(*y)) /
-				(2*((*x)*(*x) + (*y)*(*y)));
-		dz   = (2*xdt*(*x)*(*x)*(*y) - 2*xdt*(*y)*(*y)*(*y) - cdt*(*z));
-
-		*x += dx;
-		*y += dy;
-		*z += dz;
-		return 0;
+	double newx, newy;
+	*z = *x; /* for warning only */
+	newx  = 1 + *y - a*(*x)*(*x);
+	newy  = b*(*x);
+	*x = newx;
+	*y = newy;
+	return 0;
 }
 
-int henonfloatorbit(double *x, double *y, double *z)
+int henon_orbit(long *l_x, long *l_y, long *l_z)
 {
-		double newx, newy;
-		*z = *x; /* for warning only */
-		newx  = 1 + *y - a*(*x)*(*x);
-		newy  = b*(*x);
-		*x = newx;
-		*y = newy;
-		return 0;
+	long newx, newy;
+	*l_z = *l_x; /* for warning only */
+	newx = multiply(*l_x, *l_x, bitshift);
+	newx = multiply(newx, l_a, bitshift);
+	newx  = fudge + *l_y - newx;
+	newy  = multiply(l_b, *l_x, bitshift);
+	*l_x = newx;
+	*l_y = newy;
+	return 0;
 }
 
-int henonlongorbit(long *l_x, long *l_y, long *l_z)
+int rossler_orbit_fp(double *x, double *y, double *z)
 {
-		long newx, newy;
-		*l_z = *l_x; /* for warning only */
-		newx = multiply(*l_x, *l_x, bitshift);
-		newx = multiply(newx, l_a, bitshift);
-		newx  = fudge + *l_y - newx;
-		newy  = multiply(l_b, *l_x, bitshift);
-		*l_x = newx;
-		*l_y = newy;
-		return 0;
+	xdt = (*x)*dt;
+	ydt = (*y)*dt;
+
+	dx = -ydt - (*z)*dt;
+	dy = xdt + (*y)*adt;
+	dz = bdt + (*z)*xdt - (*z)*cdt;
+
+	*x += dx;
+	*y += dy;
+	*z += dz;
+	return 0;
 }
 
-int rosslerfloatorbit(double *x, double *y, double *z)
+int pickover_orbit_fp(double *x, double *y, double *z)
 {
-		xdt = (*x)*dt;
-		ydt = (*y)*dt;
-
-		dx = -ydt - (*z)*dt;
-		dy = xdt + (*y)*adt;
-		dz = bdt + (*z)*xdt - (*z)*cdt;
-
-		*x += dx;
-		*y += dy;
-		*z += dz;
-		return 0;
+	double newx, newy, newz;
+	newx = sin(a*(*y)) - (*z)*cos(b*(*x));
+	newy = (*z)*sin(c*(*x)) - cos(d*(*y));
+	newz = sin(*x);
+	*x = newx;
+	*y = newy;
+	*z = newz;
+	return 0;
 }
 
-int pickoverfloatorbit(double *x, double *y, double *z)
-{
-		double newx, newy, newz;
-		newx = sin(a*(*y)) - (*z)*cos(b*(*x));
-		newy = (*z)*sin(c*(*x)) - cos(d*(*y));
-		newz = sin(*x);
-		*x = newx;
-		*y = newy;
-		*z = newz;
-		return 0;
-}
 /* page 149 "Science of Fractal Images" */
-int gingerbreadfloatorbit(double *x, double *y, double *z)
+int gingerbread_orbit_fp(double *x, double *y, double *z)
 {
-		double newx;
-		*z = *x; /* for warning only */
-		newx = 1 - (*y) + fabs(*x);
-		*y = *x;
-		*x = newx;
-		return 0;
+	double newx;
+	*z = *x; /* for warning only */
+	newx = 1 - (*y) + fabs(*x);
+	*y = *x;
+	*x = newx;
+	return 0;
 }
 
-int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
+int rossler_orbit(long *l_x, long *l_y, long *l_z)
 {
-		l_xdt = multiply(*l_x, l_dt, bitshift);
-		l_ydt = multiply(*l_y, l_dt, bitshift);
+	l_xdt = multiply(*l_x, l_dt, bitshift);
+	l_ydt = multiply(*l_y, l_dt, bitshift);
 
-		l_dx  = -l_ydt - multiply(*l_z, l_dt, bitshift);
-		l_dy  =  l_xdt + multiply(*l_y, l_adt, bitshift);
-		l_dz  =  l_bdt + multiply(*l_z, l_xdt, bitshift)
-							- multiply(*l_z, l_cdt, bitshift);
+	l_dx  = -l_ydt - multiply(*l_z, l_dt, bitshift);
+	l_dy  =  l_xdt + multiply(*l_y, l_adt, bitshift);
+	l_dz  =  l_bdt + multiply(*l_z, l_xdt, bitshift)
+						- multiply(*l_z, l_cdt, bitshift);
 
-		*l_x += l_dx;
-		*l_y += l_dy;
-		*l_z += l_dz;
+	*l_x += l_dx;
+	*l_y += l_dy;
+	*l_z += l_dz;
 
-		return 0;
+	return 0;
 }
 
 /* OSTEP  = Orbit Step (and inner orbit value) */
@@ -1130,7 +1103,7 @@ int rosslerlongorbit(long *l_x, long *l_y, long *l_z)
 /* a      = Angle */
 
 
-int kamtorusfloatorbit(double *r, double *s, double *z)
+int kam_torus_orbit_fp(double *r, double *s, double *z)
 {
 	double srr;
 	if (t++ >= l_d)
@@ -1144,13 +1117,13 @@ int kamtorusfloatorbit(double *r, double *s, double *z)
 			return 1;
 		}
 	}
-	srr = (*s)-(*r)*(*r);
+	srr = (*s) - (*r)*(*r);
 	(*s) = (*r)*sinx + srr*cosx;
-	(*r) = (*r)*cosx-srr*sinx;
+	(*r) = (*r)*cosx - srr*sinx;
 	return 0;
 }
 
-int kamtoruslongorbit(long *r, long *s, long *z)
+int kam_torus_orbit(long *r, long *s, long *z)
 {
 	long srr;
 	if (t++ >= l_d)
@@ -1170,7 +1143,7 @@ int kamtoruslongorbit(long *r, long *s, long *z)
 	return 0;
 }
 
-int hopalong2dfloatorbit(double *x, double *y, double *z)
+int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
@@ -1180,32 +1153,46 @@ int hopalong2dfloatorbit(double *x, double *y, double *z)
 	return 0;
 }
 
-/* from Michael Peters and HOP */
-int chip2dfloatorbit(double *x, double *y, double *z)
+/* common subexpressions for chip_2d and quadrup_two_2d */
+static double log_fabs(double b, double c, double x)
+{
+	return log(fabs(b*x - c));
+}
+
+static double atan_sqr_log_fabs(double b, double c, double x)
+{
+	return atan(sqr(log(fabs(c*x - b))));
+}
+
+static double cos_sqr(double x)
+{
+	return cos(sqr(x));
+}
+
+static int orbit_aux(double (*fn)(double x), double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*cos(sqr(log(fabs(b*(*x)-c))))
-*atan(sqr(log(fabs(c*(*x)-b))));
+	tmp = *y - sign(*x)*fn(log_fabs(b, c, *x))*atan_sqr_log_fabs(b, c, *x);
 	*y = a - *x;
 	*x = tmp;
 	return 0;
 }
 
 /* from Michael Peters and HOP */
-int quadruptwo2dfloatorbit(double *x, double *y, double *z)
+int chip_2d_orbit_fp(double *x, double *y, double *z)
 {
-	double tmp;
-	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*sin(log(fabs(b*(*x)-c)))
-*atan(sqr(log(fabs(c*(*x)-b))));
-	*y = a - *x;
-	*x = tmp;
-	return 0;
+	return orbit_aux(cos_sqr, x, y, z);
 }
 
 /* from Michael Peters and HOP */
-int threeply2dfloatorbit(double *x, double *y, double *z)
+int quadrup_two_2d_orbit_fp(double *x, double *y, double *z)
+{
+	return orbit_aux(sin, x, y, z);
+}
+
+/* from Michael Peters and HOP */
+int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
@@ -1215,7 +1202,7 @@ int threeply2dfloatorbit(double *x, double *y, double *z)
 	return 0;
 }
 
-int martin2dfloatorbit(double *x, double *y, double *z)
+int martin_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x;  /* for warning only */
@@ -1225,7 +1212,7 @@ int martin2dfloatorbit(double *x, double *y, double *z)
 	return 0;
 }
 
-int mandelcloudfloat(double *x, double *y, double *z)
+int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy, x2, y2;
 #ifndef XFRACT
@@ -1244,7 +1231,7 @@ int mandelcloudfloat(double *x, double *y, double *z)
 	return 0;
 }
 
-int dynamfloat(double *x, double *y, double *z)
+int dynamic_orbit_fp(double *x, double *y, double *z)
 {
 	_CMPLX cp, tmp;
 	double newx, newy;
@@ -1275,7 +1262,7 @@ int dynamfloat(double *x, double *y, double *z)
 #define OMEGA   param[4]
 #define DEGREE  param[5]
 
-int iconfloatorbit(double *x, double *y, double *z)
+int icon_orbit_fp(double *x, double *y, double *z)
 {
 
 	double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
@@ -1316,7 +1303,7 @@ int iconfloatorbit(double *x, double *y, double *z)
 #define PAR_C   param[2]
 #define PAR_D   param[3]
 
-int latoofloatorbit(double *x, double *y, double *z)
+int latoo_orbit_fp(double *x, double *y, double *z)
 {
 
 	double xold, yold, tmp;
@@ -1381,7 +1368,7 @@ int inverse_julia_per_image()
 	return 0;
 }
 
-int orbit2dfloat()
+int orbit_2d_fp()
 {
 	FILE *fp;
 	double *soundvar;
@@ -1514,7 +1501,7 @@ int orbit2dfloat()
 	return ret;
 }
 
-int orbit2dlong()
+int orbit_2d()
 {
 	FILE *fp;
 	long *soundvar;
@@ -1594,8 +1581,8 @@ int orbit2dlong()
 			}
 		}
 
-		col = (int)((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
-		row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
+		col = (int) ((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
+		row = (int) ((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
 		if (overflow)
 		{
 			overflow = 0;
@@ -1608,7 +1595,7 @@ int orbit2dlong()
 				double yy;
 				yy = *soundvar;
 				yy = yy/fudge;
-				w_snd((int)(yy*100 + basehertz));
+				w_snd((int) (yy*100 + basehertz));
 			}
 			if (oldcol != -1 && connect)
 			{
@@ -1638,7 +1625,7 @@ int orbit2dlong()
 		}
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)*p0/fudge, (double)*p1/fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", (double) *p0/fudge, (double) *p1/fudge, 0.0);
 		}
 	}
 	if (fp)
@@ -1648,7 +1635,7 @@ int orbit2dlong()
 	return ret;
 }
 
-static int orbit3dlongcalc(void)
+static int orbit_3d_calc(void)
 {
 	FILE *fp;
 	unsigned long count;
@@ -1719,7 +1706,7 @@ static int orbit3dlongcalc(void)
 					double yy;
 					yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
 					yy = yy/fudge;
-					w_snd((int)(yy*100 + basehertz));
+					w_snd((int) (yy*100 + basehertz));
 				}
 				if (oldcol != -1 && connect)
 				{
@@ -1768,7 +1755,7 @@ static int orbit3dlongcalc(void)
 }
 
 
-static int orbit3dfloatcalc(void)
+static int orbit_3d_calc_fp(void)
 {
 	FILE *fp;
 	unsigned long count;
@@ -1837,7 +1824,7 @@ static int orbit3dfloatcalc(void)
 				}
 				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					w_snd((int)(inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
+					w_snd((int) (inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
 				}
 				if (oldcol != -1 && connect)
 				{
@@ -1885,7 +1872,7 @@ static int orbit3dfloatcalc(void)
 	return ret;
 }
 
-int dynam2dfloatsetup()
+int dynamic_2d_setup_fp()
 {
 	connect = 0;
 	euler = 0;
@@ -1928,7 +1915,7 @@ int dynam2dfloatsetup()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynam2dfloat()
+int dynamic_2d_fp()
 {
 	FILE *fp;
 	double *soundvar = NULL;
@@ -2014,8 +2001,8 @@ int dynam2dfloat()
 
 		xpixel = dxsize*(xstep + .5)/d;
 		ypixel = dysize*(ystep + .5)/d;
-		x = (double)((xxmin + delxx*xpixel) + (delxx2*ypixel));
-		y = (double)((yymax-delyy*ypixel) + (-delyy2*xpixel));
+		x = (double) ((xxmin + delxx*xpixel) + (delxx2*ypixel));
+		y = (double) ((yymax-delyy*ypixel) + (-delyy2*xpixel));
 		if (fractype == MANDELCLOUD)
 		{
 			a = x;
@@ -2038,13 +2025,13 @@ int dynam2dfloat()
 				}
 			}
 
-			col = (int)(cvt.a*x + cvt.b*y + cvt.e);
-			row = (int)(cvt.c*x + cvt.d*y + cvt.f);
+			col = (int) (cvt.a*x + cvt.b*y + cvt.e);
+			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 			if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 			{
 				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					w_snd((int)(*soundvar*100 + basehertz));
+					w_snd((int) (*soundvar*100 + basehertz));
 				}
 
 				if (count >= orbit_delay)
@@ -2087,36 +2074,29 @@ int dynam2dfloat()
 	return ret;
 }
 
-int keep_scrn_coords = 0;
-int set_orbit_corners = 0;
-long orbit_interval;
-double oxmin, oymin, oxmax, oymax, ox3rd, oy3rd;
-struct affine o_cvt;
-static int o_color;
-
 int setup_orbits_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
-	det = (ox3rd-oxmin)*(oymin-oymax) + (oymax-oy3rd)*(oxmax-oxmin);
+	det = (g_orbit_x_3rd-g_orbit_x_min)*(g_orbit_y_min-g_orbit_y_max) + (g_orbit_y_max-g_orbit_y_3rd)*(g_orbit_x_max-g_orbit_x_min);
 	if (det == 0)
 	{
 		return -1;
 	}
 	xd = dxsize/det;
-	scrn_cnvt->a =  xd*(oymax-oy3rd);
-	scrn_cnvt->b =  xd*(ox3rd-oxmin);
-	scrn_cnvt->e = -scrn_cnvt->a*oxmin - scrn_cnvt->b*oymax;
+	scrn_cnvt->a =  xd*(g_orbit_y_max-g_orbit_y_3rd);
+	scrn_cnvt->b =  xd*(g_orbit_x_3rd-g_orbit_x_min);
+	scrn_cnvt->e = -scrn_cnvt->a*g_orbit_x_min - scrn_cnvt->b*g_orbit_y_max;
 
-	det = (ox3rd-oxmax)*(oymin-oymax) + (oymin-oy3rd)*(oxmax-oxmin);
+	det = (g_orbit_x_3rd-g_orbit_x_max)*(g_orbit_y_min-g_orbit_y_max) + (g_orbit_y_min-g_orbit_y_3rd)*(g_orbit_x_max-g_orbit_x_min);
 	if (det == 0)
 	{
 		return -1;
 	}
 	yd = dysize/det;
-	scrn_cnvt->c =  yd*(oymin-oy3rd);
-	scrn_cnvt->d =  yd*(ox3rd-oxmax);
-	scrn_cnvt->f = -scrn_cnvt->c*oxmin - scrn_cnvt->d*oymax;
+	scrn_cnvt->c =  yd*(g_orbit_y_min-g_orbit_y_3rd);
+	scrn_cnvt->d =  yd*(g_orbit_x_3rd-g_orbit_x_max);
+	scrn_cnvt->f = -scrn_cnvt->c*g_orbit_x_min - scrn_cnvt->d*g_orbit_y_max;
 	return 0;
 }
 
@@ -2140,7 +2120,7 @@ int plotorbits2dsetup(void)
 	PER_IMAGE();
 
 	/* setup affine screen coord conversion */
-	if (keep_scrn_coords)
+	if (g_keep_screen_coords)
 	{
 		if (setup_orbits_to_screen(&o_cvt))
 		{
@@ -2158,7 +2138,7 @@ int plotorbits2dsetup(void)
 
 	if (orbit_delay >= maxit) /* make sure we get an image */
 	{
-		orbit_delay = (int)(maxit - 1);
+		orbit_delay = (int) (maxit - 1);
 	}
 
 	o_color = 1;
@@ -2186,8 +2166,8 @@ int plotorbits2dfloat(void)
 	}
 
 #if 0
-	col = (int)(o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
-	row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
+	col = (int) (o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
+	row = (int) (o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
 	if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 	{
 		(*plot)(col, row, 1);
@@ -2237,14 +2217,14 @@ int plotorbits2dfloat(void)
 			continue;  /* bailed out, don't plot */
 		}
 
-		if (count < orbit_delay || count%orbit_interval)
+		if (count < orbit_delay || count % g_orbit_interval)
 		{
 			continue;  /* don't plot it */
 		}
 
 		/* else count >= orbit_delay and we want to plot it */
-		col = (int)(o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
-		row = (int)(o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
+		col = (int) (o_cvt.a*g_new.x + o_cvt.b*g_new.y + o_cvt.e);
+		row = (int) (o_cvt.c*g_new.x + o_cvt.d*g_new.y + o_cvt.f);
 #ifdef XFRACT
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 #else
@@ -2254,7 +2234,7 @@ int plotorbits2dfloat(void)
 		{             /* plot if on the screen */
 			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
-				w_snd((int)(*soundvar*100 + basehertz));
+				w_snd((int) (*soundvar*100 + basehertz));
 			}
 
 			(*plot)(col, row, o_color%colors);
@@ -2351,7 +2331,7 @@ static int ifs_3d_float(void)
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
 	srand(1);
-	color_method = (int)param[0];
+	color_method = (int) param[0];
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
 		notdiskmsg();
@@ -2500,7 +2480,7 @@ static int ifs_2d(void)
 	l_setup_convert_to_screen(&cvt);
 
 	srand(1);
-	color_method = (int)param[0];
+	color_method = (int) param[0];
 	localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
 	if (localifs == NULL)
 	{
@@ -2512,7 +2492,7 @@ static int ifs_2d(void)
 	{
 		for (j = 0; j < IFSPARM; j++)
 		{
-			localifs[i*IFSPARM + j] = (long)(ifs_defn[i*IFSPARM + j]*fudge);
+			localifs[i*IFSPARM + j] = (long) (ifs_defn[i*IFSPARM + j]*fudge);
 		}
 	}
 
@@ -2555,8 +2535,8 @@ static int ifs_2d(void)
 		}
 
 		/* plot if inside window */
-		col = (int)((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
-		row = (int)((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
+		col = (int) ((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
+		row = (int) ((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
 			/* color is count of hits on this pixel */
@@ -2601,7 +2581,7 @@ static int ifs_3d_long(void)
 
 	struct threed_vt_inf inf;
 	srand(1);
-	color_method = (int)param[0];
+	color_method = (int) param[0];
 	localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
 	if (localifs == NULL)
 	{
@@ -2616,7 +2596,7 @@ static int ifs_3d_long(void)
 	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
-			localifs[i*IFS3DPARM + j] = (long)(ifs_defn[i*IFS3DPARM + j]*fudge);
+			localifs[i*IFS3DPARM + j] = (long) (ifs_defn[i*IFS3DPARM + j]*fudge);
 		}
 	}
 
@@ -2746,18 +2726,18 @@ static void setup_matrix(MATRIX doublemat)
 
 }
 
-int orbit3dfloat()
+int orbit_3d_fp()
 {
 	display3d = -1;
 	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(orbit3dfloatcalc);
+	return funny_glasses_call(orbit_3d_calc_fp);
 }
 
-int orbit3dlong()
+int orbit_3d()
 {
 	display3d = -1;
 	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(orbit3dlongcalc);
+	return funny_glasses_call(orbit_3d_calc);
 }
 
 static int ifs_3d(void)
@@ -2767,8 +2747,6 @@ static int ifs_3d(void)
 	realtime = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(floatflag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
 }
-
-
 
 static int threed_view_trans(struct threed_vt_inf *inf)
 {
@@ -2793,10 +2771,10 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 		{
 			for (j = 0; j < 4; j++)
 			{
-				inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
+				inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
 				if (realtime)
 				{
-					inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
+					inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
 				}
 			}
 		}
@@ -2830,7 +2808,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 
 			/* z value of user's eye - should be more negative than extreme
 								negative part of image */
-			inf->iview[2] = (long)((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
+			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
@@ -2863,10 +2841,10 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			{
 				for (j = 0; j < 4; j++)
 				{
-					inf->longmat[i][j] = (long)(inf->doublemat[i][j]*fudge);
+					inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
 					if (realtime)
 					{
-						inf->longmat1[i][j] = (long)(inf->doublemat1[i][j]*fudge);
+						inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
 					}
 				}
 			}
@@ -2888,7 +2866,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			perspective(tmpv);
 			for (i = 0; i < 3; i++)
 			{
-				inf->viewvect[i] = (long)(tmpv[i]*fudge);
+				inf->viewvect[i] = (long) (tmpv[i]*fudge);
 			}
 			if (realtime)
 			{
@@ -2899,7 +2877,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				perspective(tmpv);
 				for (i = 0; i < 3; i++)
 				{
-					inf->viewvect1[i] = (long)(tmpv[i]*fudge);
+					inf->viewvect1[i] = (long) (tmpv[i]*fudge);
 				}
 			}
 		}
@@ -2914,11 +2892,11 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	}
 
 	/* work out the screen positions */
-	inf->row = (int)(((multiply(inf->cvt.c, inf->viewvect[0], bitshift) +
+	inf->row = (int) (((multiply(inf->cvt.c, inf->viewvect[0], bitshift) +
 			multiply(inf->cvt.d, inf->viewvect[1], bitshift) + inf->cvt.f)
 			>> bitshift)
 		+ g_yy_adjust);
-	inf->col = (int)(((multiply(inf->cvt.a, inf->viewvect[0], bitshift) +
+	inf->col = (int) (((multiply(inf->cvt.a, inf->viewvect[0], bitshift) +
 			multiply(inf->cvt.b, inf->viewvect[1], bitshift) + inf->cvt.e)
 			>> bitshift)
 		+ g_xx_adjust);
@@ -2930,11 +2908,11 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	}
 	if (realtime)
 	{
-		inf->row1 = (int)(((multiply(inf->cvt.c, inf->viewvect1[0], bitshift) +
+		inf->row1 = (int) (((multiply(inf->cvt.c, inf->viewvect1[0], bitshift) +
 						multiply(inf->cvt.d, inf->viewvect1[1], bitshift) +
 						inf->cvt.f) >> bitshift)
 						+ g_yy_adjust1);
-		inf->col1 = (int)(((multiply(inf->cvt.a, inf->viewvect1[0], bitshift) +
+		inf->col1 = (int) (((multiply(inf->cvt.a, inf->viewvect1[0], bitshift) +
 						multiply(inf->cvt.b, inf->viewvect1[1], bitshift) +
 						inf->cvt.e) >> bitshift)
 						+ g_xx_adjust1);
@@ -3031,9 +3009,9 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			perspective(inf->viewvect1);
 		}
 	}
-	inf->row = (int)(inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
+	inf->row = (int) (inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
 				+ inf->cvt.f + g_yy_adjust);
-	inf->col = (int)(inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
+	inf->col = (int) (inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
 				+ inf->cvt.e + g_xx_adjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
@@ -3043,9 +3021,9 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 	}
 	if (realtime)
 	{
-		inf->row1 = (int)(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
+		inf->row1 = (int) (inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
 					+ inf->cvt.f + g_yy_adjust1);
-		inf->col1 = (int)(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
+		inf->col1 = (int) (inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
 					+ inf->cvt.e + g_xx_adjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{

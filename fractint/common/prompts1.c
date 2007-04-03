@@ -1864,14 +1864,14 @@ gfp_top:
 #else
 		paramvalues[promptnum].uval.ch.llen = 3; /* disable random run */
 #endif
-		paramvalues[promptnum++].uval.ch.val  = major_method;
+		paramvalues[promptnum++].uval.ch.val  = g_major_method;
 
 		choices[promptnum] = JIIMstr2;
 		paramvalues[promptnum].type = 'l';
 		paramvalues[promptnum].uval.ch.list = JIIMleftright;
 		paramvalues[promptnum].uval.ch.vlen = 5;
 		paramvalues[promptnum].uval.ch.llen = 2;
-		paramvalues[promptnum++].uval.ch.val  = minor_method;
+		paramvalues[promptnum++].uval.ch.val  = g_minor_method;
 	}
 
 	if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
@@ -2026,11 +2026,11 @@ gfp_top:
 	}
 	if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)
 	{
-		if (paramvalues[promptnum].uval.ch.val != major_method ||
-				paramvalues[promptnum + 1].uval.ch.val != minor_method)
+		if (paramvalues[promptnum].uval.ch.val != g_major_method ||
+				paramvalues[promptnum + 1].uval.ch.val != g_minor_method)
 			ret = 1;
-		major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
-		minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
+		g_major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
+		g_minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
 	}
 	if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
 	{

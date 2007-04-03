@@ -671,7 +671,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
 		{
-			put_parm(" miim=%s/%s", JIIMmethod[major_method], JIIMleftright[minor_method]);
+			put_parm(" miim=%s/%s", JIIMmethod[g_major_method], JIIMleftright[g_minor_method]);
 		}
 
 		showtrig(buf); /* this function is in miscres.c */
@@ -1371,9 +1371,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" orbitdelay=%d", orbit_delay);
 		}
 
-		if (orbit_interval != 1)
+		if (g_orbit_interval != 1)
 		{
-			put_parm(" orbitinterval=%d", orbit_interval);
+			put_parm(" orbitinterval=%d", g_orbit_interval);
 		}
 
 		if (start_showorbit > 0)
@@ -1381,25 +1381,25 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" showorbit=yes");
 		}
 
-		if (keep_scrn_coords)
+		if (g_keep_screen_coords)
 		{
 			put_parm(" screencoords=yes");
 		}
 
-		if (usr_stdcalcmode == 'o' && set_orbit_corners && keep_scrn_coords)
+		if (usr_stdcalcmode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
 		{
 			int xdigits, ydigits;
 			put_parm(" orbitcorners=");
-			xdigits = getprec(oxmin, oxmax, ox3rd);
-			ydigits = getprec(oymin, oymax, oy3rd);
-			put_float(0, oxmin, xdigits);
-			put_float(1, oxmax, xdigits);
-			put_float(1, oymin, ydigits);
-			put_float(1, oymax, ydigits);
-			if (ox3rd != oxmin || oy3rd != oymin)
+			xdigits = getprec(g_orbit_x_min, g_orbit_x_max, g_orbit_x_3rd);
+			ydigits = getprec(g_orbit_y_min, g_orbit_y_max, g_orbit_y_3rd);
+			put_float(0, g_orbit_x_min, xdigits);
+			put_float(1, g_orbit_x_max, xdigits);
+			put_float(1, g_orbit_y_min, ydigits);
+			put_float(1, g_orbit_y_max, ydigits);
+			if (g_orbit_x_3rd != g_orbit_x_min || g_orbit_y_3rd != g_orbit_y_min)
 			{
-				put_float(1, ox3rd, xdigits);
-				put_float(1, oy3rd, ydigits);
+				put_float(1, g_orbit_x_3rd, xdigits);
+				put_float(1, g_orbit_y_3rd, ydigits);
 			}
 		}
 
