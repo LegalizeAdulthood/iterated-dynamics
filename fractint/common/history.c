@@ -119,7 +119,7 @@ void _fastcall save_history_info(void)
 	current.mxminfp				= g_m_x_min_fp;
 	current.mymaxfp				= g_m_y_max_fp;
 	current.myminfp				= g_m_y_min_fp;
-	current.zdots				= (short) zdots;
+	current.zdots				= (short) g_z_dots;
 	current.originfp			= originfp;
 	current.depthfp				= depthfp;
 	current.heightfp			= heightfp;
@@ -310,7 +310,7 @@ void _fastcall restore_history_info(void)
 	g_m_x_min_fp             	= last.mxminfp;
 	g_m_y_max_fp             	= last.mymaxfp;
 	g_m_y_min_fp             	= last.myminfp;
-	zdots               	= last.zdots;
+	g_z_dots               	= last.zdots;
 	originfp            	= last.originfp;
 	depthfp             	= last.depthfp;
 	heightfp            	= last.heightfp;

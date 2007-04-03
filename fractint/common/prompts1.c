@@ -1822,7 +1822,7 @@ gfp_top:
 		paramvalues[promptnum].uval.dval = g_m_y_min_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v3;
-		paramvalues[promptnum].uval.ival = zdots;
+		paramvalues[promptnum].uval.ival = g_z_dots;
 		paramvalues[promptnum].type = 'i';
 		choices[promptnum++] = "Number of z pixels";
 
@@ -2014,7 +2014,7 @@ gfp_top:
 		g_m_y_max_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_x_min_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_y_min_fp    = paramvalues[promptnum++].uval.dval;
-		zdots      = paramvalues[promptnum++].uval.ival;
+		g_z_dots      = paramvalues[promptnum++].uval.ival;
 		juli3Dmode = paramvalues[promptnum++].uval.ch.val;
 		eyesfp     = (float)paramvalues[promptnum++].uval.dval;
 		originfp   = (float)paramvalues[promptnum++].uval.dval;
