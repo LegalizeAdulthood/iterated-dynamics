@@ -1789,28 +1789,37 @@ gfp_top:
 		{
 		case QUATFP:
 		case HYPERCMPLXFP:
-			v0 = "From cj (3rd dim)"; v1 = "From ck (4th dim)"; v2 = "To   cj (3rd dim)"; v3 = "To   ck (4th dim)";
+			v0 = "From cj (3rd dim)";
+			v1 = "From ck (4th dim)";
+			v2 = "To   cj (3rd dim)";
+			v3 = "To   ck (4th dim)";
 			break;
 		case QUATJULFP:
 		case HYPERCMPLXJFP:
-			v0 = "From zj (3rd dim)"; v1 = "From zk (4th dim)"; v2 = "To   zj (3rd dim)"; v3 = "To   zk (4th dim)";
+			v0 = "From zj (3rd dim)";
+			v1 = "From zk (4th dim)";
+			v2 = "To   zj (3rd dim)";
+			v3 = "To   zk (4th dim)";
 			break;
 		default:
-			v0 = "From cx (real part)"; v1 = "From cy (imaginary part)"; v2 = "To   cx (real part)"; v3 = "To   cy (imaginary part)";
+			v0 = "From cx (real part)";
+			v1 = "From cy (imaginary part)";
+			v2 = "To   cx (real part)";
+			v3 = "To   cy (imaginary part)";
 			break;
 		}
 
 		curfractalspecific = savespecific;
-		paramvalues[promptnum].uval.dval = mxmaxfp;
+		paramvalues[promptnum].uval.dval = g_m_x_max_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v0;
-		paramvalues[promptnum].uval.dval = mymaxfp;
+		paramvalues[promptnum].uval.dval = g_m_y_max_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v1;
-		paramvalues[promptnum].uval.dval = mxminfp;
+		paramvalues[promptnum].uval.dval = g_m_x_min_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v2;
-		paramvalues[promptnum].uval.dval = myminfp;
+		paramvalues[promptnum].uval.dval = g_m_y_min_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v3;
 		paramvalues[promptnum].uval.ival = zdots;
@@ -2001,10 +2010,10 @@ gfp_top:
 	}
 	if (julibrot)
 	{
-		mxmaxfp    = paramvalues[promptnum++].uval.dval;
-		mymaxfp    = paramvalues[promptnum++].uval.dval;
-		mxminfp    = paramvalues[promptnum++].uval.dval;
-		myminfp    = paramvalues[promptnum++].uval.dval;
+		g_m_x_max_fp    = paramvalues[promptnum++].uval.dval;
+		g_m_y_max_fp    = paramvalues[promptnum++].uval.dval;
+		g_m_x_min_fp    = paramvalues[promptnum++].uval.dval;
+		g_m_y_min_fp    = paramvalues[promptnum++].uval.dval;
 		zdots      = paramvalues[promptnum++].uval.ival;
 		juli3Dmode = paramvalues[promptnum++].uval.ch.val;
 		eyesfp     = (float)paramvalues[promptnum++].uval.dval;

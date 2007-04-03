@@ -6,10 +6,10 @@
 #include "drivers.h"
 
 /* these need to be accessed elsewhere for saving data */
-double mxminfp = -.83;
-double myminfp = -.25;
-double mxmaxfp = -.83;
-double mymaxfp =  .25;
+double g_m_x_min_fp = -.83;
+double g_m_y_min_fp = -.25;
+double g_m_x_max_fp = -.83;
+double g_m_y_max_fp =  .25;
 
 static long mxmin, mymin;
 static long x_per_inch, y_per_inch, inch_per_xdot, inch_per_ydot;
@@ -77,8 +77,8 @@ JulibrotSetup(void)
 
 	xoffsetfp = (xxmax + xxmin) / 2;     /* Calculate average */
 	yoffsetfp = (yymax + yymin) / 2;     /* Calculate average */
-	dmxfp = (mxmaxfp - mxminfp) / zdots;
-	dmyfp = (mymaxfp - myminfp) / zdots;
+	dmxfp = (g_m_x_max_fp - g_m_x_min_fp) / zdots;
+	dmyfp = (g_m_y_max_fp - g_m_y_min_fp) / zdots;
 	floatparm = &jbcfp;
 	x_per_inchfp = (xxmin - xxmax) / widthfp;
 	y_per_inchfp = (yymax - yymin) / heightfp;
@@ -112,10 +112,10 @@ JulibrotSetup(void)
 		jymin = (long) (yymin*fg);
 		jymax = (long) (yymax*fg);
 		yoffset = (jymax + jymin) / 2;    /* Calculate average */
-		mxmin = (long) (mxminfp*fg);
-		mxmax = (long) (mxmaxfp*fg);
-		mymin = (long) (myminfp*fg);
-		mymax = (long) (mymaxfp*fg);
+		mxmin = (long) (g_m_x_min_fp*fg);
+		mxmax = (long) (g_m_x_max_fp*fg);
+		mymin = (long) (g_m_y_min_fp*fg);
+		mymax = (long) (g_m_y_max_fp*fg);
 		origin = (long) (originfp*fg16);
 		depth = (long) (depthfp*fg16);
 		width = (long) (widthfp*fg16);
@@ -292,8 +292,8 @@ zlinefp(double x, double y)
 #endif
 	xpixelfp = x;
 	ypixelfp = y;
-	mxfp = mxminfp;
-	myfp = myminfp;
+	mxfp = g_m_x_min_fp;
+	myfp = g_m_y_min_fp;
 	switch (juli3Dmode)
 	{
 	case JULI3DMODE_MONOCULAR:
