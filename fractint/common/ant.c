@@ -40,8 +40,7 @@ static int *s_incy[DIRS];
 static int s_last_xdots = 0;
 static int s_last_ydots = 0;
 
-void
-setwait(long *wait)
+static void set_wait(long *wait)
 {
 	char msg[30];
 	int kbdchar;
@@ -49,7 +48,7 @@ setwait(long *wait)
 	while (1)
 	{
 		sprintf(msg, "Delay %4ld", *wait);
-		while ((int)strlen(msg) < 15)
+		while ((int) strlen(msg) < 15)
 		{
 			strcat(msg, " ");
 		}
@@ -88,8 +87,8 @@ setwait(long *wait)
 /* turkmite from scientific american july 1994 pag 91
  * Tweaked by Luciano Genero & Fulvio Cappelli
  */
-void
-TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+static void
+turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
 	int color, ix, iy, idir, pixel, i;
 	int kbdchar, step, antwrap;
@@ -185,7 +184,7 @@ TurkMite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 			case FIK_CTL_UP_ARROW:
 			case FIK_CTL_DOWN_ARROW:
 			case FIK_CTL_LEFT_ARROW:
-				setwait(&wait);
+				set_wait(&wait);
 				break;
 			default:
 				done = 1;
@@ -264,8 +263,8 @@ exit_ant:
 }
 
 /* this one ignore the color of the current cell is more like a white ant */
-void
-TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+static void
+turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 {
 	int color, ix, iy, idir, pixel, dir[MAX_ANTS + 1], i;
 	int kbdchar, step, antwrap;
@@ -347,7 +346,7 @@ TurkMite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 			case FIK_CTL_UP_ARROW:
 			case FIK_CTL_DOWN_ARROW:
 			case FIK_CTL_LEFT_ARROW:
-				setwait(&wait);
+				set_wait(&wait);
 				break;
 			default:
 				done = 1;
@@ -420,8 +419,7 @@ void free_ant_storage(void)
 	}
 }
 
-int
-ant(void)
+int ant(void)
 {
 	int maxants, type, i;
 	int oldhelpmode, rule_len;
@@ -536,10 +534,10 @@ ant(void)
 	switch (type)
 	{
 	case ANTTYPE_MOVE_COLOR:
-		TurkMite1(maxants, rule_len, rule, maxpts, wait);
+		turk_mite1(maxants, rule_len, rule, maxpts, wait);
 		break;
 	case ANTTYPE_MOVE_RULE:
-		TurkMite2(maxants, rule_len, rule, maxpts, wait);
+		turk_mite2(maxants, rule_len, rule, maxpts, wait);
 		break;
 	}
 	helpmode = oldhelpmode;
