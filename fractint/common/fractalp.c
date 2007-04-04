@@ -1468,7 +1468,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_LSYS, -3, NOZOOM | NORESUME | NOGUESS | NOTRACE | WINFRAC,
 		-1.0f, 1.0f, -1.0f, 1.0f,
 		1, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		NULL, NULL, StandaloneSetup, Lsystem,
+		NULL, NULL, StandaloneSetup, l_system,
 		NOBAILOUT
 	},
 

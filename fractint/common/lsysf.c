@@ -406,27 +406,23 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cmd
 				char saveang, saverev;
 				LDBL savesize, savex, savey, saverang;
 
-				lsys_donefpu(ts);
 				saveang = ts->angle;
 				saverev = ts->reverse;
 				savesize = ts->size;
 				saverang = ts->realangle;
 				savex = ts->xpos;
 				savey = ts->ypos;
-				lsys_prepfpu(ts);
 				command = findsize(command + 1, ts, rules, depth);
 				if (command == NULL)
 				{
 					return NULL;
 				}
-				lsys_donefpu(ts);
 				ts->angle = saveang;
 				ts->reverse = saverev;
 				ts->size = savesize;
 				ts->realangle = saverang;
 				ts->xpos = savex;
 				ts->ypos = savey;
-				lsys_prepfpu(ts);
 			}
 		}
 		command++;
@@ -456,9 +452,7 @@ lsysf_findscale(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct l
 	ts->counter = 0;
 	ts->realangle = 0;
 	ts->size = 1;
-	lsys_prepfpu(ts);
 	fsret = findsize(command, ts, rules, depth);
-	lsys_donefpu(ts);
 	thinking(0, NULL); /* erase thinking message if any */
 	xmin = ts->xmin;
 	xmax = ts->xmax;
@@ -546,7 +540,6 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 				char saveang, saverev, savecolor;
 				LDBL savesize, savex, savey, saverang;
 
-				lsys_donefpu(ts);
 				saveang = ts->angle;
 				saverev = ts->reverse;
 				savesize = ts->size;
@@ -554,11 +547,9 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 				savex = ts->xpos;
 				savey = ts->ypos;
 				savecolor = ts->curcolor;
-				lsys_prepfpu(ts);
 				command = drawLSysF(command + 1, ts, rules, depth);
 				if (command == NULL)
 					return NULL;
-				lsys_donefpu(ts);
 				ts->angle = saveang;
 				ts->reverse = saverev;
 				ts->size = savesize;
@@ -566,7 +557,6 @@ drawLSysF(struct lsys_cmd *command, struct lsys_turtlestatef *ts, struct lsys_cm
 				ts->xpos = savex;
 				ts->ypos = savey;
 				ts->curcolor = savecolor;
-				lsys_prepfpu(ts);
 			}
 		}
 		command++;
@@ -586,9 +576,9 @@ LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts)
 	int ptype;
 	double PI180 = PI / 180.0;
 
-	void (*plus)() = (ispow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
-	void (*minus)() = (ispow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
-	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+	void (*plus)() = (is_pow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
+	void (*minus)() = (is_pow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
+	void (*pipe)() = (is_pow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
 	void (*slash)() =  lsysf_doslash;
 	void (*bslash)() = lsysf_dobslash;
@@ -611,9 +601,9 @@ LSysFSizeTransform(char *s, struct lsys_turtlestatef *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
-		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
-		case '@': f = at;              ptype = 10;  ret[n].parm.nf = getnumber(&s);  break;
+		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
+		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
+		case '@': f = at;              ptype = 10;  ret[n].parm.nf = get_number(&s);  break;
 		case '|': f = pipe;            break;
 		case '!': f = lsysf_dobang;     break;
 		case 'd':
@@ -681,9 +671,9 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
 	int ptype;
 	LDBL PI180 = PI / 180.0;
 
-	void (*plus)() = (ispow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
-	void (*minus)() = (ispow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
-	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
+	void (*plus)() = (is_pow2(ts->maxangle)) ? lsysf_doplus_pow2 : lsysf_doplus;
+	void (*minus)() = (is_pow2(ts->maxangle)) ? lsysf_dominus_pow2 : lsysf_dominus;
+	void (*pipe)() = (is_pow2(ts->maxangle)) ? lsysf_dopipe_pow2 : lsysf_dopipe;
 
 	void (*slash)() =  lsysf_doslash;
 	void (*bslash)() = lsysf_dobslash;
@@ -706,18 +696,18 @@ LSysFDrawTransform(char *s, struct lsys_turtlestatef *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
-		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = getnumber(&s)*PI180;  break;
-		case '@': f = at;              ptype = 10;  ret[n].parm.nf = getnumber(&s);  break;
+		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
+		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
+		case '@': f = at;              ptype = 10;  ret[n].parm.nf = get_number(&s);  break;
 		case '|': f = pipe;            break;
 		case '!': f = lsysf_dobang;    break;
 		case 'd': f = lsysf_dodrawd;   break;
 		case 'm': f = lsysf_dodrawm;   break;
 		case 'g': f = drawg;           break;
 		case 'f': f = lsysf_dodrawf;   break;
-		case 'c': f = lsysf_dodrawc;   num = getnumber(&s);    break;
-		case '<': f = lsysf_dodrawlt;  num = getnumber(&s);    break;
-		case '>': f = lsysf_dodrawgt;  num = getnumber(&s);    break;
+		case 'c': f = lsysf_dodrawc;   num = get_number(&s);    break;
+		case '<': f = lsysf_dodrawlt;  num = get_number(&s);    break;
+		case '>': f = lsysf_dodrawgt;  num = get_number(&s);    break;
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:

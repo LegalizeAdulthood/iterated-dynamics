@@ -2165,7 +2165,7 @@ long get_file_entry(int type, char *title, char *fmask,
 			}
 			break;
 		case GETFILE_L_SYSTEM:
-			if (LLoad() == 0)
+			if (l_load() == 0)
 			{
 				return 0;
 			}
