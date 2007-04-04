@@ -758,7 +758,7 @@ int calcfract(void)
 		&& curfractalspecific->calctype != calcmand
 		&& curfractalspecific->calctype != calcmandfp
 		&& curfractalspecific->calctype != lyapunov
-		&& curfractalspecific->calctype != calcfroth)
+		&& curfractalspecific->calctype != froth_calc)
 	{
 		calctype = curfractalspecific->calctype; /* per_image can override */
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
@@ -833,7 +833,7 @@ int calcfract(void)
 		free_workarea();
 	}
 
-	if (curfractalspecific->calctype == calcfroth)
+	if (curfractalspecific->calctype == froth_calc)
 	{
 		froth_cleanup();
 	}

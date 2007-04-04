@@ -539,9 +539,9 @@ void Jiim(int which)         /* called by fractint */
 	int first_time = 1;
 	int old_debugflag = debugflag;
 
-	/* must use standard fractal or be calcfroth */
+	/* must use standard fractal or be froth_calc */
 	if (fractalspecific[fractype].calctype != StandardFractal
-			&& fractalspecific[fractype].calctype != calcfroth)
+			&& fractalspecific[fractype].calctype != froth_calc)
 	{
 		return;
 	}
@@ -1311,7 +1311,7 @@ finish:
 	show_numbers = 0;
 	driver_unget_key(kbdchar);
 
-	if (curfractalspecific->calctype == calcfroth)
+	if (curfractalspecific->calctype == froth_calc)
 	{
 		froth_cleanup();
 	}

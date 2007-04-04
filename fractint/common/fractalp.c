@@ -608,7 +608,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		1.9f, 3.0f, 0.0f, 1.34f,
 		0, NOFRACTAL, NOFRACTAL, LBIFURCATION, NOSYM,
-		BifurcVerhulstTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_verhulst_trig_fp, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1391,7 +1391,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		1.9f, 3.0f, 0.0f, 1.34f,
 		1, NOFRACTAL, NOFRACTAL, BIFURCATION, NOSYM,
-		LongBifurcVerhulstTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_verhulst_trig, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1402,7 +1402,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-2.0f, 4.0f, -1.0f, 2.0f,
 		1, NOFRACTAL, NOFRACTAL, BIFLAMBDA, NOSYM,
-		LongBifurcLambdaTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_lambda_trig, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1413,7 +1413,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-2.0f, 4.0f, -1.0f, 2.0f,
 		0, NOFRACTAL, NOFRACTAL, LBIFLAMBDA, NOSYM,
-		BifurcLambdaTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_lambda_trig_fp, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1424,7 +1424,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		0.275f, 1.45f, 0.0f, 2.0f,
 		0, NOFRACTAL, NOFRACTAL, LBIFADSINPI, NOSYM,
-		BifurcAddTrigPi, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_add_trig_pi_fp, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1435,7 +1435,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-2.5f, 2.5f, -3.5f, 3.5f,
 		0, NOFRACTAL, NOFRACTAL, LBIFEQSINPI, NOSYM,
-		BifurcSetTrigPi, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_set_trig_pi_fp, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1573,7 +1573,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-2.5f, 2.5f, -3.5f, 3.5f,
 		1, NOFRACTAL, NOFRACTAL, BIFEQSINPI, NOSYM,
-		LongBifurcSetTrigPi, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_set_trig_pi, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1584,7 +1584,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		0.275f, 1.45f, 0.0f, 2.0f,
 		1, NOFRACTAL, NOFRACTAL, BIFADSINPI, NOSYM,
-		LongBifurcAddTrigPi, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_add_trig_pi, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1595,7 +1595,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		0.7f, 2.0f, -1.1f, 1.1f,
 		0, NOFRACTAL, NOFRACTAL, LBIFSTEWART, NOSYM,
-		BifurcStewartTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_stewart_trig_fp, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1606,7 +1606,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		0.7f, 2.0f, -1.1f, 1.1f,
 		1, NOFRACTAL, NOFRACTAL, BIFSTEWART, NOSYM,
-		LongBifurcStewartTrig, NULL, StandaloneSetup, Bifurcation,
+		bifurcation_stewart_trig, NULL, StandaloneSetup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1650,7 +1650,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_LYAPUNOV, HT_LYAPUNOV, WINFRAC,
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		BifurcLambda, NULL, lya_setup, lyapunov,
+		bifurcation_lambda, NULL, lya_setup, lyapunov,
 		NOBAILOUT
 	},
 
@@ -1793,7 +1793,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-3.5f, -0.9f, -0.5f, 3.2f,
 		16, NOFRACTAL, NOFRACTAL, BIFMAY, NOSYM,
-		LongBifurcMay, NULL, BifurcMaySetup, Bifurcation,
+		bifurcation_may, NULL, bifurcation_may_setup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1804,7 +1804,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE | WINFRAC,
 		-3.5f, -0.9f, -0.5f, 3.2f,
 		0, NOFRACTAL, NOFRACTAL, LBIFMAY, NOSYM,
-		BifurcMay, NULL, BifurcMaySetup, Bifurcation,
+		bifurcation_may_fp, NULL, bifurcation_may_setup, bifurcation,
 		NOBAILOUT
 	},
 
@@ -1872,7 +1872,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_CELLULAR, HF_CELLULAR, NOGUESS | NOTRACE | NOZOOM | WINFRAC,
 		-1.0f, 1.0f, -1.0f, 1.0f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		NULL, NULL, CellularSetup, cellular,
+		NULL, NULL, cellular_setup, cellular,
 		NOBAILOUT
 	},
 
@@ -2023,7 +2023,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_FROTH, HF_FROTH, NOTRACE | WINFRAC,
 		-2.8f, 2.8f, -2.355f, 1.845f,
 		28, NOFRACTAL, NOFRACTAL, FROTHFP, NOSYM,
-		froth_per_orbit, froth_per_pixel, froth_setup, calcfroth,
+		froth_per_orbit, froth_per_pixel, froth_setup, froth_calc,
 		FROTHBAILOUT
 	},
 
@@ -2034,7 +2034,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_FROTH, HF_FROTH, NOTRACE | WINFRAC,
 		-2.8f, 2.8f, -2.355f, 1.845f,
 		0, NOFRACTAL, NOFRACTAL, FROTH, NOSYM,
-		froth_per_orbit, froth_per_pixel, froth_setup, calcfroth,
+		froth_per_orbit, froth_per_pixel, froth_setup, froth_calc,
 		FROTHBAILOUT
 	},
 
