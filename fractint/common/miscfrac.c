@@ -13,8 +13,39 @@ Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 #include "targa_lc.h"
 #include "drivers.h"
 
-/* routines in this module      */
+typedef void (_fastcall *PLOT)(int, int, int);
 
+/* global data */
+
+/* data local to this module */
+static int iparmx;      /* iparmx = parm.x*8 */
+static int shiftvalue;  /* shift based on #colors */
+static int recur1 = 1;
+static int pcolors;
+static int recur_level = 0;
+static int plasma_check;                        /* to limit kbd checking */
+static U16 (_fastcall *getpix)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
+static U16 max_plasma;
+static int *verhulst_array;
+static unsigned long filter_cycles;
+static unsigned int half_time_check;
+static long   lPopulation, lRate;
+static double Population;
+static double Rate;
+static int    mono, outside_x;
+static long   LPI;
+static  long    lBif_closenuf, lBif_savedpop;   /* poss future use  */
+static  double   Bif_closenuf,  Bif_savedpop;
+static  int      Bif_savedinc;
+static  long     Bif_savedand;
+static long beta;
+static int lyaLength, lyaSeedOK;
+static int lyaRxy[34];
+static BYTE *cell_array[2];
+static S16 r, k_1, rule_digits;
+static int lstscreenflag;
+
+/* routines local to this module */
 static void set_Plasma_palette(void);
 static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb);
 static void _fastcall subDivide(int x1, int y1, int x2, int y2);
@@ -23,10 +54,6 @@ static void verhulst(void);
 static void Bif_Period_Init(void);
 static int  _fastcall Bif_Periodic(long);
 static void set_Cellular_palette(void);
-
-U16  (_fastcall *getpix)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
-
-typedef void (_fastcall *PLOT)(int, int, int);
 
 /***************** standalone engine for "test" ********************/
 
@@ -88,15 +115,8 @@ int test(void)
 
 /***************** standalone engine for "plasma" ********************/
 
-static int iparmx;      /* iparmx = parm.x*8 */
-static int shiftvalue;  /* shift based on #colors */
-static int recur1 = 1;
-static int pcolors;
-static int recur_level = 0;
-U16 max_plasma;
-
 /* returns a random 16 bit value that is never 0 */
-U16 rand16(void)
+static U16 rand16(void)
 {
 	U16 value;
 	value = (U16)rand15();
@@ -109,7 +129,7 @@ U16 rand16(void)
 	return value;
 }
 
-void _fastcall putpot(int x, int y, U16 color)
+static void _fastcall putpot(int x, int y, U16 color)
 {
 	if (color < 1)
 	{
@@ -126,7 +146,7 @@ void _fastcall putpot(int x, int y, U16 color)
 }
 
 /* fixes border */
-void _fastcall putpotborder(int x, int y, U16 color)
+static void _fastcall putpotborder(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
@@ -136,7 +156,7 @@ void _fastcall putpotborder(int x, int y, U16 color)
 }
 
 /* fixes border */
-void _fastcall putcolorborder(int x, int y, int color)
+static void _fastcall putcolorborder(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
@@ -149,7 +169,7 @@ void _fastcall putcolorborder(int x, int y, int color)
 	putcolor(x, y, color);
 }
 
-U16 _fastcall getpot(int x, int y)
+static U16 _fastcall getpot(int x, int y)
 {
 	U16 color;
 
@@ -158,13 +178,11 @@ U16 _fastcall getpot(int x, int y)
 	return color;
 }
 
-static int plasma_check;                        /* to limit kbd checking */
-
 static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
 	S32 pseudorandom;
 	pseudorandom = ((S32)iparmx)*((rand15()-16383));
-/*   pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
+	/* pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
 	pseudorandom = pseudorandom*recur1;
 	pseudorandom = pseudorandom >> shiftvalue;
 	pseudorandom = (((S32)getpix(xa, ya) + (S32)getpix(xb, yb) + 1) >> 1) + pseudorandom;
@@ -942,14 +960,6 @@ int diffusion()
 
 #define SEED 0.66               /* starting value for population */
 
-static int *verhulst_array;
-unsigned long filter_cycles;
-static unsigned int half_time_check;
-static long   lPopulation, lRate;
-double Population,  Rate;
-static int    mono, outside_x;
-static long   LPI;
-
 int Bifurcation(void)
 {
 	unsigned long array_size;
@@ -1138,10 +1148,6 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		}
 	}
 }
-static  long    lBif_closenuf, lBif_savedpop;   /* poss future use  */
-static  double   Bif_closenuf,  Bif_savedpop;
-static  int      Bif_savedinc;
-static  long     Bif_savedand;
 
 static void Bif_Period_Init()
 {
@@ -1203,13 +1209,11 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 /* The following are Bifurcation "orbitcalc" routines...              */
 /*                                                                                                    */
 /**********************************************************************/
-#if defined(XFRACT) || defined(_WIN32)
 int BifurcLambda() /* Used by lyanupov */
 {
 	Population = Rate*Population*(1 - Population);
 	return fabs(Population) > BIG;
 }
-#endif
 
 /* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
 
@@ -1300,7 +1304,7 @@ int LongBifurcAddTrigPi()
 
 int BifurcLambdaTrig()
 {
-/*  Population = Rate*fn(Population)*(1 - fn(Population)) */
+	/* Population = Rate*fn(Population)*(1 - fn(Population)) */
 	tmp.x = Population;
 	tmp.y = 0;
 	CMPLXtrig0(tmp, tmp);
@@ -1323,10 +1327,9 @@ int LongBifurcLambdaTrig()
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2); \
 			lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
 
-long beta;
-
 int BifurcMay()
-{ /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
+{
+	/* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
 	tmp.x = 1.0 + Population;
 	tmp.x = pow(tmp.x, -beta); /* pow in math.h included with mpmath.h */
@@ -1412,8 +1415,6 @@ int popcorn()   /* subset of std engine */
 /***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
 /***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
-int lyaLength, lyaSeedOK;
-int lyaRxy[34];
 
 #define WES 1   /* define WES to be 0 to use Nick's lyapunov.obj */
 #if WES
@@ -1424,7 +1425,7 @@ int lyapunov_cycles(int, double, double, double);
 
 int lyapunov_cycles_in_c(long, double, double);
 
-int lyapunov ()
+int lyapunov(void)
 {
 	double a, b;
 
@@ -1488,7 +1489,7 @@ int lyapunov ()
 }
 
 
-int lya_setup ()
+int lya_setup(void)
 {
 	/* This routine sets up the sequence for forcing the Rate parameter
 		to vary between the two values.  It fills the array lyaRxy[] and
@@ -1669,12 +1670,7 @@ jumpout:
 
 #define CELLULAR_DONE 10
 
-static BYTE *cell_array[2];
-
-S16 r, k_1, rule_digits;
-int lstscreenflag;
-
-void abort_cellular(int err, int t)
+static void abort_cellular(int err, int t)
 {
 	int i;
 	switch (err)
@@ -1872,24 +1868,16 @@ int cellular ()
 
 
 	start_row = 0;
-#if !defined(XFRACT) && !defined(_WIN32)
-	/* two 4096 byte arrays, at present at most 2024 + 1 bytes should be */
-	/* needed in each array (max screen width + 1) */
-	cell_array[0] = (BYTE *)&dstack[0]; /* dstack is in general.asm */
-	cell_array[1] = (BYTE *)&boxy[0]; /* boxy is in general.asm */
-#else
 	cell_array[0] = (BYTE *)malloc(ixstop + 1);
 	cell_array[1] = (BYTE *)malloc(ixstop + 1);
-#endif
 	if (cell_array[0] == NULL || cell_array[1] == NULL)
 	{
 		abort_cellular(BAD_MEM, 0);
 		return -1;
 	}
 
-/* nxtscreenflag toggled by space bar in fractint.c, 1 for continuous */
-/* 0 to stop on next screen */
-
+	/* nxtscreenflag toggled by space bar in fractint.c, 1 for continuous */
+	/* 0 to stop on next screen */
 	filled = 0;
 	notfilled = (S16)(1-filled);
 	if (resuming && !nxtscreenflag && !lstscreenflag)
@@ -2339,19 +2327,19 @@ int froth_setup(void)
 		tmp_l.right_x4 = FROTH_D_TO_L(fsp->fl.f.right_x4);
 
 		fsp->fl.l = tmp_l;
-		}
-	return 1;
 	}
+	return 1;
+}
 
 void froth_cleanup(void)
-	{
+{
 	if (fsp != NULL)
 	{
 		free(fsp);
 	}
 	/* set to NULL as a flag that froth_cleanup() has been called */
 	fsp = NULL;
-	}
+}
 
 
 /* Froth Fractal type */
