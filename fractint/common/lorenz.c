@@ -587,8 +587,7 @@ rwalk:
 /* Integrated with Lorenz by Tim Wegner 7/20/92 */
 /* Add Modified Inverse Iteration Method, 11/92 by Michael Snyder  */
 
-int
-Minverse_julia_orbit()
+int Minverse_julia_orbit()
 {
 	static int   random_dir = 0, random_len = 0;
 	int    newrow, newcol;
@@ -768,8 +767,7 @@ Minverse_julia_orbit()
 	return 1;
 }
 
-int
-Linverse_julia_orbit()
+int Linverse_julia_orbit()
 {
 	static int   random_dir = 0, random_len = 0;
 	int    newrow, newcol;

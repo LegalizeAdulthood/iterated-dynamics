@@ -1,4 +1,3 @@
-
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
@@ -17,59 +16,47 @@ struct lsys_cmd
 	char ch;
 };
 
-static int _fastcall readLSystemFile(char *);
+#define sins ((long *) boxy)
+#define coss ((long *) boxy + 50) /* 50 after the start of sins */
+
+char maxangle;
+
+static char *ruleptrs[MAXRULES];
+static struct lsys_cmd *rules2[MAXRULES];
+static char loaded = 0;
+
+static int _fastcall read_l_system_file(char *);
 static void _fastcall free_rules_mem(void);
 static int _fastcall rule_present(char symbol);
 static int _fastcall save_rule(char *, char **);
 static int _fastcall append_rule(char *rule, int index);
-static void free_lcmds(void);
-static struct lsys_cmd *_fastcall findsize(struct lsys_cmd *, struct lsys_turtlestatei *, struct lsys_cmd **, int);
-static struct lsys_cmd *drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
-static int lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
-static struct lsys_cmd *LSysISizeTransform(char *s, struct lsys_turtlestatei *ts);
-static struct lsys_cmd *LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts);
-static void _fastcall lsysi_dosincos(void);
+static void free_l_cmds(void);
+static struct lsys_cmd *_fastcall find_size(struct lsys_cmd *, struct lsys_turtlestatei *, struct lsys_cmd **, int);
+static struct lsys_cmd *draw_lsysi(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
+static int lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth);
+static struct lsys_cmd *lsysi_size_transform(char *s, struct lsys_turtlestatei *ts);
+static struct lsys_cmd *lsysi_draw_transform(char *s, struct lsys_turtlestatei *ts);
+static void _fastcall lsysi_sin_cos(void);
+static void lsysi_slash(struct lsys_turtlestatei *cmd);
+static void lsysi_backslash(struct lsys_turtlestatei *cmd);
+static void lsysi_at(struct lsys_turtlestatei *cmd);
+static void lsysi_pipe(struct lsys_turtlestatei *cmd);
+static void lsysi_size_dm(struct lsys_turtlestatei *cmd);
+static void lsysi_size_gf(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_d(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_m(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_g(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_f(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_c(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_gt(struct lsys_turtlestatei *cmd);
+static void lsysi_draw_lt(struct lsys_turtlestatei *cmd);
 
-static void lsysi_doslash(struct lsys_turtlestatei *cmd);
-static void lsysi_dobslash(struct lsys_turtlestatei *cmd);
-static void lsysi_doat(struct lsys_turtlestatei *cmd);
-static void lsysi_dopipe(struct lsys_turtlestatei *cmd);
-static void lsysi_dosizedm(struct lsys_turtlestatei *cmd);
-static void lsysi_dosizegf(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawd(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawm(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawg(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawf(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawc(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawgt(struct lsys_turtlestatei *cmd);
-static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd);
-
-/* Some notes to Adrian from PB, made when I integrated with v15:
-	printfs changed to work with new user interface
-	bug at end of readLSystemFile, the line which said rulind = 0 fixed
-	to say *rulind = 0
-	the calloc was not worthwhile, it was just for a 54 byte area, cheaper
-	to keep it as a static;  but there was a static 201 char buffer I
-	changed to not be static
-	use of strdup was a nono, caused problems running out of space cause
-	the memory allocated each time was never freed; I've changed to
-	use memory and to free when done
-	*/
-
-#define sins ((long *)(boxy))
-#define coss (((long *)(boxy) + 50)) /* 50 after the start of sins */
-static char *ruleptrs[MAXRULES];
-static struct lsys_cmd *rules2[MAXRULES];
-char maxangle;
-static char loaded = 0;
-
-
-int _fastcall ispow2(int n)
+int _fastcall is_pow2(int n)
 {
 	return n == (n & -n);
 }
 
-LDBL _fastcall getnumber(char **str)
+LDBL _fastcall get_number(char **str)
 {
 	char numstr[30];
 	LDBL ret;
@@ -125,7 +112,7 @@ LDBL _fastcall getnumber(char **str)
 	return ret;
 }
 
-static int _fastcall readLSystemFile(char *str)
+static int _fastcall read_l_system_file(char *str)
 {
 	int c;
 	char **rulind;
@@ -269,14 +256,14 @@ static int _fastcall readLSystemFile(char *str)
 	return 0;
 }
 
-int Lsystem(void)
+int l_system(void)
 {
 	int order;
 	char **rulesc;
 	struct lsys_cmd **sc;
 	int stackoflow = 0;
 
-	if ((!loaded) && LLoad())
+	if ((!loaded) && l_load())
 	{
 		return -1;
 	}
@@ -303,20 +290,20 @@ int Lsystem(void)
 		sc = rules2;
 		for (rulesc = ruleptrs; *rulesc; rulesc++)
 		{
-				*sc++ = LSysISizeTransform(*rulesc, &ts);
+				*sc++ = lsysi_size_transform(*rulesc, &ts);
 		}
 		*sc = NULL;
 
-		lsysi_dosincos();
-		if (lsysi_findscale(rules2[0], &ts, &rules2[1], order))
+		lsysi_sin_cos();
+		if (lsysi_find_scale(rules2[0], &ts, &rules2[1], order))
 		{
 			ts.realangle = ts.angle = ts.reverse = 0;
 
-			free_lcmds();
+			free_l_cmds();
 			sc = rules2;
 			for (rulesc = ruleptrs; *rulesc; rulesc++)
 			{
-				*sc++ = LSysIDrawTransform(*rulesc, &ts);
+				*sc++ = lsysi_draw_transform(*rulesc, &ts);
 			}
 			*sc = NULL;
 
@@ -326,7 +313,7 @@ int Lsystem(void)
 			{
 				ts.curcolor = (char)(colors-1);
 			}
-			drawLSysI(rules2[0], &ts, &rules2[1], order);
+			draw_lsysi(rules2[0], &ts, &rules2[1], order);
 		}
 		stackoflow = ts.stackoflow;
 	}
@@ -357,7 +344,7 @@ int Lsystem(void)
 		{
 			ts.realangle = ts.angle = ts.reverse = 0;
 
-			free_lcmds();
+			free_l_cmds();
 			sc = rules2;
 			for (rulesc = ruleptrs; *rulesc; rulesc++)
 			{
@@ -371,21 +358,19 @@ int Lsystem(void)
 			{
 				ts.curcolor = (char)(colors-1);
 			}
-			lsys_prepfpu(&ts);
 			drawLSysF(rules2[0], &ts, &rules2[1], order);
-			lsys_donefpu(&ts);
 		}
 		overflow = 0;
 	}
 	free_rules_mem();
-	free_lcmds();
+	free_l_cmds();
 	loaded = 0;
 	return 0;
 }
 
-int LLoad(void)
+int l_load(void)
 {
-	if (readLSystemFile(LName))  /* error occurred */
+	if (read_l_system_file(LName))  /* error occurred */
 	{
 		free_rules_mem();
 		loaded = 0;
@@ -467,7 +452,7 @@ static int _fastcall append_rule(char *rule, int index)
 	return 0;
 }
 
-static void free_lcmds(void)
+static void free_l_cmds(void)
 {
 	struct lsys_cmd **sc = rules2;
 
@@ -477,20 +462,8 @@ static void free_lcmds(void)
 	}
 }
 
-#if defined(XFRACT) || defined(_WIN32)
-#define lsysi_doslash_386 lsysi_doslash
-#define lsysi_dobslash_386 lsysi_dobslash
-#define lsys_doat lsysi_doat
-#define lsys_dosizegf lsysi_dosizegf
-#define lsys_dodrawg lsysi_dodrawg
-void lsys_prepfpu(struct lsys_turtlestatef *x) { }
-void lsys_donefpu(struct lsys_turtlestatef *x) { }
-#endif
-
 /* integer specific routines */
-
-#if defined(XFRACT) || defined(_WIN32)
-static void lsysi_doplus(struct lsys_turtlestatei *cmd)
+static void lsysi_plus(struct lsys_turtlestatei *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -511,13 +484,9 @@ static void lsysi_doplus(struct lsys_turtlestatei *cmd)
 		}
 	}
 }
-#else
-extern void lsysi_doplus(struct lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
 /* This is the same as lsys_doplus, except maxangle is a power of 2. */
-static void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd)
+static void lsysi_plus_pow2(struct lsys_turtlestatei *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -530,12 +499,8 @@ static void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd)
 		cmd->angle &= cmd->dmaxangle;
 	}
 }
-#else
-extern void lsysi_doplus_pow2(struct lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
-static void lsysi_dominus(struct lsys_turtlestatei *cmd)
+static void lsysi_minus(struct lsys_turtlestatei *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -556,21 +521,14 @@ static void lsysi_dominus(struct lsys_turtlestatei *cmd)
 		}
 	}
 }
-#else
-extern void lsysi_dominus(struct lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
-static void lsysi_dominus_pow2(struct lsys_turtlestatei *cmd)
+static void lsysi_minus_pow2(struct lsys_turtlestatei *cmd)
 {
 	cmd->reverse ? cmd->angle-- : cmd->angle++;
 	cmd->angle &= cmd->dmaxangle;
 }
-#else
-extern void lsysi_dominus_pow2(struct lsys_turtlestatei *cmd);
-#endif
 
-static void lsysi_doslash(struct lsys_turtlestatei *cmd)
+static void lsysi_slash(struct lsys_turtlestatei *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -582,11 +540,7 @@ static void lsysi_doslash(struct lsys_turtlestatei *cmd)
 	}
 }
 
-#if !defined(XFRACT) && !defined(_WIN32)
-extern void lsysi_doslash_386(struct lsys_turtlestatei *cmd);
-#endif
-
-static void lsysi_dobslash(struct lsys_turtlestatei *cmd)
+static void lsysi_backslash(struct lsys_turtlestatei *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -598,41 +552,29 @@ static void lsysi_dobslash(struct lsys_turtlestatei *cmd)
 	}
 }
 
-#if !defined(XFRACT) && !defined(_WIN32)
-extern void lsysi_dobslash_386(struct lsys_turtlestatei *cmd);
-#endif
-
-static void lsysi_doat(struct lsys_turtlestatei *cmd)
+static void lsysi_at(struct lsys_turtlestatei *cmd)
 {
 	cmd->size = multiply(cmd->size, cmd->num, 19);
 }
 
-static void lsysi_dopipe(struct lsys_turtlestatei *cmd)
+static void lsysi_pipe(struct lsys_turtlestatei *cmd)
 {
 	cmd->angle = (char)(cmd->angle + (char)(cmd->maxangle / 2));
 	cmd->angle %= cmd->maxangle;
 }
 
-#if defined(XFRACT) || defined(_WIN32)
-static void lsysi_dopipe_pow2(struct lsys_turtlestatei *cmd)
+static void lsysi_pipe_pow2(struct lsys_turtlestatei *cmd)
 {
 	cmd->angle += cmd->maxangle >> 1;
 	cmd->angle &= cmd->dmaxangle;
 }
-#else
-extern void lsysi_dopipe_pow2(struct lsys_turtlestatei *cmd);
-#endif
 
-#if defined(XFRACT) || defined(_WIN32)
-static void lsysi_dobang(struct lsys_turtlestatei *cmd)
+static void lsysi_exclamation(struct lsys_turtlestatei *cmd)
 {
 	cmd->reverse = ! cmd->reverse;
 }
-#else
-extern void lsysi_dobang(struct lsys_turtlestatei *cmd);
-#endif
 
-static void lsysi_dosizedm(struct lsys_turtlestatei *cmd)
+static void lsysi_size_dm(struct lsys_turtlestatei *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
 	double s, c;
@@ -645,8 +587,8 @@ static void lsysi_dosizedm(struct lsys_turtlestatei *cmd)
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 
-/* xpos += size*aspect*cos(realangle*PI/180); */
-/* ypos += size*sin(realangle*PI/180); */
+	/* xpos += size*aspect*cos(realangle*PI/180); */
+	/* ypos += size*sin(realangle*PI/180); */
 	if (cmd->xpos > cmd->xmax)
 	{
 		cmd->xmax = cmd->xpos;
@@ -665,7 +607,7 @@ static void lsysi_dosizedm(struct lsys_turtlestatei *cmd)
 	}
 }
 
-static void lsysi_dosizegf(struct lsys_turtlestatei *cmd)
+static void lsysi_size_gf(struct lsys_turtlestatei *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
@@ -689,7 +631,7 @@ static void lsysi_dosizegf(struct lsys_turtlestatei *cmd)
 	}
 }
 
-static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_d(struct lsys_turtlestatei *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
 	double s, c;
@@ -709,7 +651,7 @@ static void lsysi_dodrawd(struct lsys_turtlestatei *cmd)
 	driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_dodrawm(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_m(struct lsys_turtlestatei *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
 	double s, c;
@@ -725,7 +667,7 @@ static void lsysi_dodrawm(struct lsys_turtlestatei *cmd)
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
 
-static void lsysi_dodrawg(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_g(struct lsys_turtlestatei *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
@@ -733,7 +675,7 @@ static void lsysi_dodrawg(struct lsys_turtlestatei *cmd)
 	/* ypos += size*sins[angle]; */
 }
 
-static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_f(struct lsys_turtlestatei *cmd)
 {
 	int lastx = (int) (cmd->xpos >> 19);
 	int lasty = (int) (cmd->ypos >> 19);
@@ -744,12 +686,12 @@ static void lsysi_dodrawf(struct lsys_turtlestatei *cmd)
 	driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_dodrawc(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_c(struct lsys_turtlestatei *cmd)
 {
 	cmd->curcolor = (char)(((int) cmd->num) % colors);
 }
 
-static void lsysi_dodrawgt(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_gt(struct lsys_turtlestatei *cmd)
 {
 	cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
 	cmd->curcolor %= colors;
@@ -759,7 +701,7 @@ static void lsysi_dodrawgt(struct lsys_turtlestatei *cmd)
 	}
 }
 
-static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd)
+static void lsysi_draw_lt(struct lsys_turtlestatei *cmd)
 {
 	cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
 	cmd->curcolor %= colors;
@@ -770,7 +712,7 @@ static void lsysi_dodrawlt(struct lsys_turtlestatei *cmd)
 }
 
 static struct lsys_cmd *_fastcall
-findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
+find_size(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
 	struct lsys_cmd **rulind;
 	int tran;
@@ -805,7 +747,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = 1;
-					if (findsize((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (find_size((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;
 					}
@@ -831,7 +773,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
 				saverang = ts->realangle;
 				savex = ts->xpos;
 				savey = ts->ypos;
-				command = findsize(command + 1, ts, rules, depth);
+				command = find_size(command + 1, ts, rules, depth);
 				if (command == NULL)
 				{
 					return NULL;
@@ -850,7 +792,7 @@ findsize(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd
 }
 
 static int
-lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
+lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
 	float horiz, vert;
 	double xmin, xmax, ymin, ymax;
@@ -871,7 +813,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 	ts->reverse =
 	ts->counter = 0;
 	ts->size = FIXEDPT(1L);
-	fsret = findsize(command, ts, rules, depth);
+	fsret = find_size(command, ts, rules, depth);
 	thinking(0, NULL); /* erase thinking message if any */
 	xmin = (double) ts->xmin / FIXEDMUL;
 	xmax = (double) ts->xmax / FIXEDMUL;
@@ -895,7 +837,7 @@ lsysi_findscale(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct l
 }
 
 static struct lsys_cmd *
-drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
+draw_lsysi(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cmd **rules, int depth)
 {
 	struct lsys_cmd **rulind;
 	int tran;
@@ -930,7 +872,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = 1;
-					if (drawLSysI((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (draw_lsysi((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;
 					}
@@ -957,7 +899,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 				savex = ts->xpos;
 				savey = ts->ypos;
 				savecolor = ts->curcolor;
-				command = drawLSysI(command + 1, ts, rules, depth);
+				command = draw_lsysi(command + 1, ts, rules, depth);
 				if (command == NULL)
 				{
 					return NULL;
@@ -977,7 +919,7 @@ drawLSysI(struct lsys_cmd *command, struct lsys_turtlestatei *ts, struct lsys_cm
 }
 
 static struct lsys_cmd *
-LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
+lsysi_size_transform(char *s, struct lsys_turtlestatei *ts)
 {
 	struct lsys_cmd *ret;
 	struct lsys_cmd *doub;
@@ -986,14 +928,14 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 	void (*f)();
 	long num;
 
-	void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-	void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+	void (*plus)() = (is_pow2(ts->maxangle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)() = (is_pow2(ts->maxangle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)() = (is_pow2(ts->maxangle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
-	void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
-	void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
-	void (*dogf)() =   (cpu >= 386) ? lsysi_dosizegf_386 : lsysi_dosizegf;
+	void (*slash)() =  lsysi_slash;
+	void (*bslash)() = lsysi_backslash;
+	void (*at)() =     lsysi_at;
+	void (*dogf)() =   lsysi_size_gf;
 
 	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
 	if (ret == NULL)
@@ -1010,13 +952,13 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           num = (long) (getnumber(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = (long) (getnumber(&s)*11930465L);    break;
-		case '@': f = at;              num = FIXEDPT(getnumber(&s));    break;
+		case '/': f = slash;           num = (long) (get_number(&s)*11930465L);    break;
+		case '\\': f = bslash;         num = (long) (get_number(&s)*11930465L);    break;
+		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
 		case '|': f = pipe;            break;
-		case '!': f = lsysi_dobang;     break;
+		case '!': f = lsysi_exclamation;     break;
 		case 'd':
-		case 'm': f = lsysi_dosizedm;   break;
+		case 'm': f = lsysi_size_dm;   break;
 		case 'g':
 		case 'f': f = dogf;       break;
 		case '[': num = 1;        break;
@@ -1065,7 +1007,7 @@ LSysISizeTransform(char *s, struct lsys_turtlestatei *ts)
 }
 
 static struct lsys_cmd *
-LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
+lsysi_draw_transform(char *s, struct lsys_turtlestatei *ts)
 {
 	struct lsys_cmd *ret;
 	struct lsys_cmd *doub;
@@ -1074,14 +1016,14 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 	void (*f)();
 	long num;
 
-	void (*plus)() = (ispow2(ts->maxangle)) ? lsysi_doplus_pow2 : lsysi_doplus;
-	void (*minus)() = (ispow2(ts->maxangle)) ? lsysi_dominus_pow2 : lsysi_dominus;
-	void (*pipe)() = (ispow2(ts->maxangle)) ? lsysi_dopipe_pow2 : lsysi_dopipe;
+	void (*plus)() = (is_pow2(ts->maxangle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)() = (is_pow2(ts->maxangle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)() = (is_pow2(ts->maxangle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)() =  (cpu >= 386) ? lsysi_doslash_386 : lsysi_doslash;
-	void (*bslash)() = (cpu >= 386) ? lsysi_dobslash_386 : lsysi_dobslash;
-	void (*at)() =     (cpu >= 386) ? lsysi_doat_386 : lsysi_doat;
-	void (*drawg)() =  (cpu >= 386) ? lsysi_dodrawg_386 : lsysi_dodrawg;
+	void (*slash)() =  lsysi_slash;
+	void (*bslash)() = lsysi_backslash;
+	void (*at)() =     lsysi_at;
+	void (*drawg)() =  lsysi_draw_g;
 
 	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
 	if (ret == NULL)
@@ -1098,18 +1040,18 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           num = (long) (getnumber(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = (long) (getnumber(&s)*11930465L);    break;
-		case '@': f = at;              num = FIXEDPT(getnumber(&s));    break;
+		case '/': f = slash;           num = (long) (get_number(&s)*11930465L);    break;
+		case '\\': f = bslash;         num = (long) (get_number(&s)*11930465L);    break;
+		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
 		case '|': f = pipe;            break;
-		case '!': f = lsysi_dobang;     break;
-		case 'd': f = lsysi_dodrawd;    break;
-		case 'm': f = lsysi_dodrawm;    break;
+		case '!': f = lsysi_exclamation;     break;
+		case 'd': f = lsysi_draw_d;    break;
+		case 'm': f = lsysi_draw_m;    break;
 		case 'g': f = drawg;           break;
-		case 'f': f = lsysi_dodrawf;    break;
-		case 'c': f = lsysi_dodrawc;    num = (long) getnumber(&s);    break;
-		case '<': f = lsysi_dodrawlt;   num = (long) getnumber(&s);    break;
-		case '>': f = lsysi_dodrawgt;   num = (long) getnumber(&s);    break;
+		case 'f': f = lsysi_draw_f;    break;
+		case 'c': f = lsysi_draw_c;    num = (long) get_number(&s);    break;
+		case '<': f = lsysi_draw_lt;   num = (long) get_number(&s);    break;
+		case '>': f = lsysi_draw_gt;   num = (long) get_number(&s);    break;
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:
@@ -1155,7 +1097,7 @@ LSysIDrawTransform(char *s, struct lsys_turtlestatei *ts)
 	return doub;
 }
 
-static void _fastcall lsysi_dosincos(void)
+static void _fastcall lsysi_sin_cos(void)
 {
 	double locaspect;
 	double TWOPI = 2.0*PI;

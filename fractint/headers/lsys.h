@@ -32,7 +32,8 @@
 #define MAXRULES 27 /* this limits rules to 25 */
 #define MAX_LSYS_LINE_LEN 255 /* this limits line length to 255 */
 
-struct lsys_turtlestatei {
+struct lsys_turtlestatei
+{
     char counter, angle, reverse, stackoflow;
     /* dmaxangle is maxangle - 1 */
     char maxangle, dmaxangle, curcolor, dummy;  /* dummy ensures longword alignment */
@@ -44,7 +45,8 @@ struct lsys_turtlestatei {
     long num;
 };
 
-struct lsys_turtlestatef {
+struct lsys_turtlestatef
+{
     char counter, angle, reverse, stackoflow;
     /* dmaxangle is maxangle - 1 */
     char maxangle, dmaxangle, curcolor, dummy;  /* dummy ensures longword alignment */
@@ -53,30 +55,14 @@ struct lsys_turtlestatef {
     LDBL xpos, ypos;
     LDBL xmin, ymin, xmax, ymax;
     LDBL aspect; /* aspect ratio of each pixel, ysize/xsize */
-    union {
+    union
+	{
         long n;
         LDBL nf;
     } parm;
 };
 
 extern char maxangle;
-
-/* routines in lsysa.asm */
-
-#if defined(XFRACT) || defined(_WIN32)
-#define lsysi_doat_386 lsys_doat
-#define lsysi_dosizegf_386 lsys_dosizegf
-#define lsysi_dodrawg_386 lsys_dodrawg
-#else
-extern void lsysi_doat_386(struct lsys_turtlestatei *cmd);
-extern void lsysi_dosizegf_386(struct lsys_turtlestatei *cmd);
-extern void lsysi_dodrawg_386(struct lsys_turtlestatei *cmd);
-#endif
-
-/* routines in lsysaf.asm */
-
-extern void lsys_prepfpu(struct lsys_turtlestatef *);
-extern void lsys_donefpu(struct lsys_turtlestatef *);
 
 /* routines in lsysf.c */
 

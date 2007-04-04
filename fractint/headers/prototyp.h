@@ -712,10 +712,10 @@ extern int plotorbits2dfloat(void);
 
 /*  lsys -- C file prototypes */
 
-extern LDBL  _fastcall getnumber(char **);
-extern int _fastcall ispow2(int);
-extern int Lsystem(void);
-extern int LLoad(void);
+extern LDBL  _fastcall get_number(char **);
+extern int _fastcall is_pow2(int);
+extern int l_system(void);
+extern int l_load(void);
 
 /*  miscfrac -- C file prototypes */
 
