@@ -19,16 +19,16 @@ typedef void (_fastcall *PLOT)(int, int, int);
 /* global data */
 
 /* data local to this module */
-static int iparmx;      /* iparmx = parm.x*8 */
-static int shiftvalue;  /* shift based on #colors */
-static int recur1 = 1;
-static int pcolors;
-static int recur_level = 0;
-static int plasma_check;                        /* to limit kbd checking */
-static U16 (_fastcall *getpix)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
-static U16 max_plasma;
-static int *verhulst_array;
-static unsigned long filter_cycles;
+static int s_iparm_x;      /* s_iparm_x = parm.x*8 */
+static int s_shift_value;  /* shift based on #colors */
+static int s_recur1 = 1;
+static int s_plasma_colors;
+static int s_recur_level = 0;
+static int s_plasma_check;                        /* to limit kbd checking */
+static U16 (_fastcall *s_get_pixels)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
+static U16 s_max_plasma;
+static int *s_verhulst_array;
+static unsigned long s_filter_cycles;
 static unsigned int half_time_check;
 static long   lPopulation, lRate;
 static double Population;
@@ -184,21 +184,21 @@ static U16 _fastcall get_potential(int x, int y)
 static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
 	S32 pseudorandom;
-	pseudorandom = ((S32)iparmx)*((rand15()-16383));
+	pseudorandom = ((S32)s_iparm_x)*((rand15()-16383));
 	/* pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
-	pseudorandom = pseudorandom*recur1;
-	pseudorandom = pseudorandom >> shiftvalue;
-	pseudorandom = (((S32)getpix(xa, ya) + (S32)getpix(xb, yb) + 1) >> 1) + pseudorandom;
-	if (max_plasma == 0)
+	pseudorandom = pseudorandom*s_recur1;
+	pseudorandom = pseudorandom >> s_shift_value;
+	pseudorandom = (((S32)s_get_pixels(xa, ya) + (S32)s_get_pixels(xb, yb) + 1) >> 1) + pseudorandom;
+	if (s_max_plasma == 0)
 	{
-		if (pseudorandom >= pcolors)
+		if (pseudorandom >= s_plasma_colors)
 		{
-			pseudorandom = pcolors-1;
+			pseudorandom = s_plasma_colors-1;
 		}
 	}
-	else if (pseudorandom >= (S32)max_plasma)
+	else if (pseudorandom >= (S32)s_max_plasma)
 	{
-		pseudorandom = max_plasma;
+		pseudorandom = s_max_plasma;
 	}
 	if (pseudorandom < 1)
 	{
@@ -227,14 +227,14 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 	static struct sub subx, suby;
 
 	/*
-	recur1 = 1;
+	s_recur1 = 1;
 	for (i = 1; i <= recur; i++)
 	{
-		recur1 = recur1*2;
+		s_recur1 = s_recur1*2;
 	}
-	recur1 = 320/recur1;
+	s_recur1 = 320/s_recur1;
 	*/
-	recur1 = (int)(320L >> recur);
+	s_recur1 = (int)(320L >> recur);
 	suby.t = 2;
 	ny   = suby.v[0] = y2;
 	ny1 = suby.v[2] = y1;
@@ -244,11 +244,11 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 	while (suby.t >= 1)
 	{
-		if ((++plasma_check & 0x0f) == 1)
+		if ((++s_plasma_check & 0x0f) == 1)
 		{
 			if (driver_key_pressed())
 			{
-				plasma_check--;
+				s_plasma_check--;
 				return 1;
 			}
 		}
@@ -289,27 +289,27 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 				subx.r[subx.t-2]) + 1);
 			}
 
-			i = getpix(nx, y);
+			i = s_get_pixels(nx, y);
 			if (i == 0)
 			{
 				i = adjust(nx, ny1, nx, y , nx, ny);
 			}
 			v = i;
-			i = getpix(x, ny);
+			i = s_get_pixels(x, ny);
 			if (i == 0)
 			{
 				i = adjust(nx1, ny, x , ny, nx, ny);
 			}
 			v += i;
-			if (getpix(x, y) == 0)
+			if (s_get_pixels(x, y) == 0)
 			{
-				i = getpix(x, ny1);
+				i = s_get_pixels(x, ny1);
 				if (i == 0)
 				{
 						i = adjust(nx1, ny1, x , ny1, nx, ny1);
 				}
 				v += i;
-				i = getpix(nx1, y);
+				i = s_get_pixels(nx1, y);
 				if (i == 0)
 				{
 						i = adjust(nx1, ny1, nx1, y , nx1, ny);
@@ -336,11 +336,11 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 {
 	int x, y;
 	S32 v, i;
-	if ((++plasma_check & 0x7f) == 1)
+	if ((++s_plasma_check & 0x7f) == 1)
 	{
 		if (driver_key_pressed())
 		{
-			plasma_check--;
+			s_plasma_check--;
 			return;
 		}
 	}
@@ -348,37 +348,37 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 	{
 		return;
 	}
-	recur_level++;
-	recur1 = (int)(320L >> recur_level);
+	s_recur_level++;
+	s_recur1 = (int)(320L >> s_recur_level);
 
 	x = (x1 + x2) >> 1;
 	y = (y1 + y2) >> 1;
-	v = getpix(x, y1);
+	v = s_get_pixels(x, y1);
 	if (v == 0)
 	{
 		v = adjust(x1, y1, x , y1, x2, y1);
 	}
 	i = v;
-	v = getpix(x2, y);
+	v = s_get_pixels(x2, y);
 	if (v == 0)
 	{
 		v = adjust(x2, y1, x2, y , x2, y2);
 	}
 	i += v;
-	v = getpix(x, y2);
+	v = s_get_pixels(x, y2);
 	if (v == 0)
 	{
 		v = adjust(x1, y2, x , y2, x2, y2);
 	}
 	i += v;
-	v = getpix(x1, y);
+	v = s_get_pixels(x1, y);
 	if (v == 0)
 	{
 		v = adjust(x1, y1, x1, y , x1, y2);
 	}
 	i += v;
 
-	if (getpix(x, y) == 0)
+	if (s_get_pixels(x, y) == 0)
 	{
 		plot(x, y, (U16)((i + 2) >> 2));
 	}
@@ -387,7 +387,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 	subdivide(x , y1, x2, y);
 	subdivide(x , y , x2, y2);
 	subdivide(x1, y , x , y2);
-	recur_level--;
+	s_recur_level--;
 }
 
 
@@ -397,7 +397,7 @@ int plasma(void)
 	U16 rnd[4];
 	int OldPotFlag, OldPot16bit;
 
-	OldPotFlag = OldPot16bit = plasma_check = 0;
+	OldPotFlag = OldPot16bit = s_plasma_check = 0;
 
 	if (colors < 4)
 	{
@@ -407,16 +407,16 @@ int plasma(void)
 		"640x350x16 mode]).");
 		return -1;
 	}
-	iparmx = (int)(param[0]*8);
+	s_iparm_x = (int)(param[0]*8);
 	if (parm.x <= 0.0)
 	{
-		iparmx = 0;
+		s_iparm_x = 0;
 	}
 	if (parm.x >= 100)
 	{
-		iparmx = 800;
+		s_iparm_x = 800;
 	}
-	param[0] = (double)iparmx / 8.0;  /* let user know what was used */
+	param[0] = (double)s_iparm_x / 8.0;  /* let user know what was used */
 	if (param[1] < 0) /* limit parameter values  */
 	{
 		param[1] = 0;
@@ -450,31 +450,31 @@ int plasma(void)
 	{
 		rseed = (int)param[2];
 	}
-	max_plasma = (U16)param[3];  /* max_plasma is used as a flag for potential */
+	s_max_plasma = (U16)param[3];  /* s_max_plasma is used as a flag for potential */
 
-	if (max_plasma != 0)
+	if (s_max_plasma != 0)
 	{
 		if (pot_startdisk() >= 0)
 		{
-			/* max_plasma = (U16)(1L << 16) -1; */
-			max_plasma = 0xFFFF;
+			/* s_max_plasma = (U16)(1L << 16) -1; */
+			s_max_plasma = 0xFFFF;
 			plot = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
-			getpix =  get_potential;
+			s_get_pixels =  get_potential;
 			OldPotFlag = potflag;
 			OldPot16bit = pot16bit;
 		}
 		else
 		{
-			max_plasma = 0;        /* can't do potential (startdisk failed) */
+			s_max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
 			plot = (outside >= 0) ? put_color_border : putcolor;
-			getpix  = (U16(_fastcall *)(int, int))getcolor;
+			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
 		plot = (outside >= 0) ? put_color_border : putcolor;
-		getpix  = (U16(_fastcall *)(int, int))getcolor;
+		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
 	if (!rflag)
@@ -489,30 +489,30 @@ int plasma(void)
 
 	if (colors > 16)
 	{
-		shiftvalue = 18;
+		s_shift_value = 18;
 	}
 	else
 	{
 		if (colors > 4)
 		{
-			shiftvalue = 22;
+			s_shift_value = 22;
 		}
 		else
 		{
-			shiftvalue = (colors > 2) ? 24 : 25;
+			s_shift_value = (colors > 2) ? 24 : 25;
 		}
 	}
-	if (max_plasma != 0)
+	if (s_max_plasma != 0)
 	{
-		shiftvalue = 10;
+		s_shift_value = 10;
 	}
 
-	if (max_plasma == 0)
+	if (s_max_plasma == 0)
 	{
-		pcolors = min(colors, max_colors);
+		s_plasma_colors = min(colors, max_colors);
 		for (n = 0; n < 4; n++)
 		{
-			rnd[n] = (U16)(1 + (((rand15()/pcolors)*(pcolors-1)) >> (shiftvalue-11)));
+			rnd[n] = (U16)(1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
 		}
 	}
 	else
@@ -535,14 +535,14 @@ int plasma(void)
 	plot(xdots-1, ydots-1,  rnd[2]);
 	plot(0, ydots-1,  rnd[3]);
 
-	recur_level = 0;
+	s_recur_level = 0;
 	if (param[1] == 0)
 	{
 		subdivide(0, 0, xdots-1, ydots-1);
 	}
 	else
 	{
-		recur1 = i = k = 1;
+		s_recur1 = i = k = 1;
 		while (new_subdivision(0, 0, xdots-1, ydots-1, i) == 0)
 		{
 			k = k*2;
@@ -560,13 +560,13 @@ int plasma(void)
 	}
 	n = !driver_key_pressed() ? 0 : 1;
 done:
-	if (max_plasma != 0)
+	if (s_max_plasma != 0)
 	{
 		potflag = OldPotFlag;
 		pot16bit = OldPot16bit;
 	}
 	plot    = putcolor;
-	getpix  = (U16(_fastcall *)(int, int))getcolor;
+	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	return n;
 }
 
@@ -828,7 +828,7 @@ int diffusion(void)
 			y += RANDOM(3) - 1;
 
 			/* Check keyboard */
-			if ((++plasma_check & 0x7f) == 1)
+			if ((++s_plasma_check & 0x7f) == 1)
 			{
 				if (check_key())
 				{
@@ -843,7 +843,7 @@ int diffusion(void)
 						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
 							sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
 					}
-					plasma_check--;
+					s_plasma_check--;
 					return 1;
 				}
 			}
@@ -975,8 +975,8 @@ int bifurcation(void)
 		end_resume();
 	}
 	array_size =  (iystop + 1)*sizeof(int); /* should be iystop + 1 */
-	verhulst_array = (int *) malloc(array_size);
-	if (verhulst_array == NULL)
+	s_verhulst_array = (int *) malloc(array_size);
+	if (s_verhulst_array == NULL)
 	{
 		stopmsg(0, "Insufficient free memory for calculation.");
 		return -1;
@@ -986,7 +986,7 @@ int bifurcation(void)
 
 	for (row = 0; row <= iystop; row++) /* should be iystop */
 	{
-		verhulst_array[row] = 0;
+		s_verhulst_array[row] = 0;
 	}
 
 	mono = 0;
@@ -1007,11 +1007,11 @@ int bifurcation(void)
 		}
 	}
 
-	filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
+	s_filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
 	half_time_check = FALSE;
-	if (periodicitycheck && (unsigned long)maxit < filter_cycles)
+	if (periodicitycheck && (unsigned long)maxit < s_filter_cycles)
 	{
-		filter_cycles = (filter_cycles - maxit + 1) / 2;
+		s_filter_cycles = (s_filter_cycles - maxit + 1) / 2;
 		half_time_check = TRUE;
 	}
 
@@ -1028,7 +1028,7 @@ int bifurcation(void)
 	{
 		if (driver_key_pressed())
 		{
-			free((char *)verhulst_array);
+			free((char *)s_verhulst_array);
 			alloc_resume(10, 1);
 			put_resume(sizeof(column), &column, 0);
 			return -1;
@@ -1047,7 +1047,7 @@ int bifurcation(void)
 		for (row = iystop; row >= 0; row--) /* should be iystop & >= 0 */
 		{
 			int color;
-			color = verhulst_array[row];
+			color = s_verhulst_array[row];
 			if (color && mono)
 			{
 				color = inside;
@@ -1060,12 +1060,12 @@ int bifurcation(void)
 			{
 				color = colors-1;
 			}
-			verhulst_array[row] = 0;
+			s_verhulst_array[row] = 0;
 			(*plot)(column, row, color); /* was row-1, but that's not right? */
 		}
 		column++;
 	}
-	free((char *)verhulst_array);
+	free((char *)s_verhulst_array);
 	return 0;
 }
 
@@ -1085,7 +1085,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 	errors = overflow = FALSE;
 
-	for (counter = 0 ; counter < filter_cycles ; counter++)
+	for (counter = 0 ; counter < s_filter_cycles ; counter++)
 	{
 		errors = curfractalspecific->orbitcalc();
 		if (errors)
@@ -1110,7 +1110,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		}
 		if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
 		{
-			for (counter = 0 ; counter < filter_cycles ; counter++)
+			for (counter = 0 ; counter < s_filter_cycles ; counter++)
 			{
 				errors = curfractalspecific->orbitcalc();
 				if (errors)
@@ -1141,12 +1141,12 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
 		{
-			verhulst_array[ pixel_row ] ++;
+			s_verhulst_array[pixel_row] ++;
 		}
 		if (periodicitycheck && bifurcation_periodic(counter))
 		{
 			if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
-				verhulst_array[ pixel_row ] --;
+				s_verhulst_array[pixel_row] --;
 			break;
 		}
 	}
@@ -1455,7 +1455,7 @@ int lyapunov(void)
 		a = dypixel();
 		b = dxpixel();
 	}
-	color = lyapunov_cycles(filter_cycles, a, b);
+	color = lyapunov_cycles(s_filter_cycles, a, b);
 	if (inside > 0 && color == 0)
 	{
 		color = inside;
@@ -1502,10 +1502,10 @@ int lya_setup(void)
 	long i;
 	int t;
 
-	filter_cycles = (long)param[2];
-	if (filter_cycles == 0)
+	s_filter_cycles = (long)param[2];
+	if (s_filter_cycles == 0)
 	{
-		filter_cycles = maxit/2;
+		s_filter_cycles = maxit/2;
 	}
 	lyaSeedOK = (param[1] > 0) && (param[1] <= 1) && (debugflag != DEBUGFLAG_NO_ASM_MANDEL);
 	lyaLength = 1;
