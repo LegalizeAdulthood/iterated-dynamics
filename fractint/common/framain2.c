@@ -1027,7 +1027,7 @@ static void handle_orbits(void)
 {
 	/* must use standard fractal and have a float variant */
 	if ((fractalspecific[fractype].calctype == StandardFractal
-			|| fractalspecific[fractype].calctype == calcfroth)
+			|| fractalspecific[fractype].calctype == froth_calc)
 		&& (fractalspecific[fractype].isinteger == FALSE
 			|| fractalspecific[fractype].tofloat != NOFRACTAL)
 		&& !bf_math /* for now no arbitrary precision support */

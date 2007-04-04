@@ -619,7 +619,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 		&& curfractalspecific->calctype != calcmand
 		&& curfractalspecific->calctype != calcmandfp
 		&& curfractalspecific->calctype != lyapunov
-		&& curfractalspecific->calctype != calcfroth)
+		&& curfractalspecific->calctype != froth_calc)
 	{
 		return 0; /* not a worklist-driven type */
 	}

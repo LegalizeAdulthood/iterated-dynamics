@@ -1,11 +1,12 @@
 /*
 
-Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
+	Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
 
 */
 
 #include <string.h>
 #include <limits.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -46,14 +47,16 @@ static S16 r, k_1, rule_digits;
 static int lstscreenflag;
 
 /* routines local to this module */
-static void set_Plasma_palette(void);
+static void set_plasma_palette(void);
 static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb);
-static void _fastcall subDivide(int x1, int y1, int x2, int y2);
-static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur);
+static void _fastcall subdivide(int x1, int y1, int x2, int y2);
+static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur);
 static void verhulst(void);
-static void Bif_Period_Init(void);
-static int  _fastcall Bif_Periodic(long);
-static void set_Cellular_palette(void);
+static void bifurcation_period_init(void);
+static int  _fastcall bifurcation_periodic(long);
+static void set_cellular_palette(void);
+static int lyapunov_cycles(long, double, double);
+
 
 /***************** standalone engine for "test" ********************/
 
@@ -129,7 +132,7 @@ static U16 rand16(void)
 	return value;
 }
 
-static void _fastcall putpot(int x, int y, U16 color)
+static void _fastcall put_potential(int x, int y, U16 color)
 {
 	if (color < 1)
 	{
@@ -146,17 +149,17 @@ static void _fastcall putpot(int x, int y, U16 color)
 }
 
 /* fixes border */
-static void _fastcall putpotborder(int x, int y, U16 color)
+static void _fastcall put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
 		color = (U16)outside;
 	}
-	putpot(x, y, color);
+	put_potential(x, y, color);
 }
 
 /* fixes border */
-static void _fastcall putcolorborder(int x, int y, int color)
+static void _fastcall put_color_border(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
@@ -169,7 +172,7 @@ static void _fastcall putcolorborder(int x, int y, int color)
 	putcolor(x, y, color);
 }
 
-static U16 _fastcall getpot(int x, int y)
+static U16 _fastcall get_potential(int x, int y)
 {
 	U16 color;
 
@@ -206,7 +209,7 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 }
 
 
-static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
+static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 {
 	int x, y;
 	int nx1;
@@ -329,7 +332,7 @@ static int _fastcall new_subD (int x1, int y1, int x2, int y2, int recur)
 	return 0;
 }
 
-static void _fastcall subDivide(int x1, int y1, int x2, int y2)
+static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 {
 	int x, y;
 	S32 v, i;
@@ -380,15 +383,15 @@ static void _fastcall subDivide(int x1, int y1, int x2, int y2)
 		plot(x, y, (U16)((i + 2) >> 2));
 	}
 
-	subDivide(x1, y1, x , y);
-	subDivide(x , y1, x2, y);
-	subDivide(x , y , x2, y2);
-	subDivide(x1, y , x , y2);
+	subdivide(x1, y1, x , y);
+	subdivide(x , y1, x2, y);
+	subdivide(x , y , x2, y2);
+	subdivide(x1, y , x , y2);
 	recur_level--;
 }
 
 
-int plasma()
+int plasma(void)
 {
 	int i, k, n;
 	U16 rnd[4];
@@ -455,8 +458,8 @@ int plasma()
 		{
 			/* max_plasma = (U16)(1L << 16) -1; */
 			max_plasma = 0xFFFF;
-			plot = (outside >= 0) ? (PLOT)putpotborder : (PLOT)putpot;
-			getpix =  getpot;
+			plot = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
+			getpix =  get_potential;
 			OldPotFlag = potflag;
 			OldPot16bit = pot16bit;
 		}
@@ -464,13 +467,13 @@ int plasma()
 		{
 			max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
-			plot = (outside >= 0) ? putcolorborder : putcolor;
+			plot = (outside >= 0) ? put_color_border : putcolor;
 			getpix  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		plot = (outside >= 0) ? putcolorborder : putcolor;
+		plot = (outside >= 0) ? put_color_border : putcolor;
 		getpix  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
@@ -481,7 +484,7 @@ int plasma()
 
 	if (colors == 256)                   /* set the (256-color) palette */
 	{
-		set_Plasma_palette();             /* skip this if < 256 colors */
+		set_plasma_palette();             /* skip this if < 256 colors */
 	}
 
 	if (colors > 16)
@@ -535,12 +538,12 @@ int plasma()
 	recur_level = 0;
 	if (param[1] == 0)
 	{
-		subDivide(0, 0, xdots-1, ydots-1);
+		subdivide(0, 0, xdots-1, ydots-1);
 	}
 	else
 	{
 		recur1 = i = k = 1;
-		while (new_subD(0, 0, xdots-1, ydots-1, i) == 0)
+		while (new_subdivision(0, 0, xdots-1, ydots-1, i) == 0)
 		{
 			k = k*2;
 			if (k  >(int)max(xdots-1, ydots-1))
@@ -568,7 +571,7 @@ done:
 }
 
 #define dac ((Palettetype *)g_dac_box)
-static void set_Plasma_palette()
+static void set_plasma_palette()
 {
 	static Palettetype Red    = { 63, 0, 0 };
 	static Palettetype Green  = { 0, 63, 0 };
@@ -621,7 +624,7 @@ static void set_Plasma_palette()
 #define DIFFUSION_LINE	1
 #define DIFFUSION_SQUARE	2
 
-int diffusion()
+int diffusion(void)
 {
 	int xmax, ymax, xmin, ymin;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
@@ -960,7 +963,7 @@ int diffusion()
 
 #define SEED 0.66               /* starting value for population */
 
-int Bifurcation(void)
+int bifurcation(void)
 {
 	unsigned long array_size;
 	int row, column;
@@ -1066,7 +1069,7 @@ int Bifurcation(void)
 	return 0;
 }
 
-static void verhulst()          /* P. F. Verhulst (1845) */
+static void verhulst(void)          /* P. F. Verhulst (1845) */
 {
 	unsigned int pixel_row, errors;
 	unsigned long counter;
@@ -1092,7 +1095,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	}
 	if (half_time_check) /* check for periodicity at half-time */
 	{
-		Bif_Period_Init();
+		bifurcation_period_init();
 		for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 		{
 			errors = curfractalspecific->orbitcalc();
@@ -1100,7 +1103,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			{
 				return;
 			}
-			if (periodicitycheck && Bif_Periodic(counter))
+			if (periodicitycheck && bifurcation_periodic(counter))
 			{
 				break;
 			}
@@ -1120,7 +1123,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 	if (periodicitycheck)
 	{
-		Bif_Period_Init();
+		bifurcation_period_init();
 	}
 	for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 	{
@@ -1140,7 +1143,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		{
 			verhulst_array[ pixel_row ] ++;
 		}
-		if (periodicitycheck && Bif_Periodic(counter))
+		if (periodicitycheck && bifurcation_periodic(counter))
 		{
 			if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
 				verhulst_array[ pixel_row ] --;
@@ -1149,7 +1152,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	}
 }
 
-static void Bif_Period_Init()
+static void bifurcation_period_init()
 {
 	Bif_savedinc = 1;
 	Bif_savedand = 1;
@@ -1165,7 +1168,7 @@ static void Bif_Period_Init()
 	}
 }
 
-static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodicity Check */
+static int _fastcall bifurcation_periodic(long time)  /* Bifurcation Population Periodicity Check */
 /* Returns : 1 if periodicity found, else 0 */
 {
 	if ((time & Bif_savedand) == 0)      /* time to save a new value */
@@ -1209,7 +1212,7 @@ static int _fastcall Bif_Periodic (long time)  /* Bifurcation Population Periodi
 /* The following are Bifurcation "orbitcalc" routines...              */
 /*                                                                                                    */
 /**********************************************************************/
-int BifurcLambda() /* Used by lyanupov */
+int bifurcation_lambda() /* Used by lyanupov */
 {
 	Population = Rate*Population*(1 - Population);
 	return fabs(Population) > BIG;
@@ -1217,7 +1220,7 @@ int BifurcLambda() /* Used by lyanupov */
 
 /* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
 
-int BifurcVerhulstTrig()
+int bifurcation_verhulst_trig_fp()
 {
 /*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
 	tmp.x = Population;
@@ -1227,7 +1230,7 @@ int BifurcVerhulstTrig()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcVerhulstTrig()
+int bifurcation_verhulst_trig()
 {
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
@@ -1239,7 +1242,7 @@ int LongBifurcVerhulstTrig()
 	return overflow;
 }
 
-int BifurcStewartTrig()
+int bifurcation_stewart_trig_fp()
 {
 /*  Population = (Rate*fn(Population)*fn(Population)) - 1.0 */
 	tmp.x = Population;
@@ -1249,7 +1252,7 @@ int BifurcStewartTrig()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcStewartTrig()
+int bifurcation_stewart_trig()
 {
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
@@ -1262,7 +1265,7 @@ int LongBifurcStewartTrig()
 	return overflow;
 }
 
-int BifurcSetTrigPi()
+int bifurcation_set_trig_pi_fp()
 {
 	tmp.x = Population*PI;
 	tmp.y = 0;
@@ -1271,7 +1274,7 @@ int BifurcSetTrigPi()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcSetTrigPi()
+int bifurcation_set_trig_pi()
 {
 #if !defined(XFRACT)
 	ltmp.x = multiply(lPopulation, LPI, bitshift);
@@ -1282,7 +1285,7 @@ int LongBifurcSetTrigPi()
 	return overflow;
 }
 
-int BifurcAddTrigPi()
+int bifurcation_add_trig_pi_fp()
 {
 	tmp.x = Population*PI;
 	tmp.y = 0;
@@ -1291,7 +1294,7 @@ int BifurcAddTrigPi()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcAddTrigPi()
+int bifurcation_add_trig_pi()
 {
 #if !defined(XFRACT)
 	ltmp.x = multiply(lPopulation, LPI, bitshift);
@@ -1302,7 +1305,7 @@ int LongBifurcAddTrigPi()
 	return overflow;
 }
 
-int BifurcLambdaTrig()
+int bifurcation_lambda_trig_fp()
 {
 	/* Population = Rate*fn(Population)*(1 - fn(Population)) */
 	tmp.x = Population;
@@ -1312,7 +1315,7 @@ int BifurcLambdaTrig()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcLambdaTrig()
+int bifurcation_lambda_trig()
 {
 #if !defined(XFRACT)
 	ltmp.x = lPopulation;
@@ -1327,7 +1330,7 @@ int LongBifurcLambdaTrig()
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2); \
 			lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
 
-int BifurcMay()
+int bifurcation_may_fp()
 {
 	/* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
@@ -1337,7 +1340,7 @@ int BifurcMay()
 	return fabs(Population) > BIG;
 }
 
-int LongBifurcMay()
+int bifurcation_may()
 {
 #if !defined(XFRACT)
 	ltmp.x = lPopulation + fudge;
@@ -1350,7 +1353,7 @@ int LongBifurcMay()
 	return overflow;
 }
 
-int BifurcMaySetup()
+int bifurcation_may_setup()
 {
 
 	beta = (long)param[2];
@@ -1416,15 +1419,6 @@ int popcorn()   /* subset of std engine */
 /***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
 
-#define WES 1   /* define WES to be 0 to use Nick's lyapunov.obj */
-#if WES
-int lyapunov_cycles(double, double);
-#else
-int lyapunov_cycles(int, double, double, double);
-#endif
-
-int lyapunov_cycles_in_c(long, double, double);
-
 int lyapunov(void)
 {
 	double a, b;
@@ -1461,21 +1455,7 @@ int lyapunov(void)
 		a = dypixel();
 		b = dxpixel();
 	}
-#if !defined(XFRACT) && !defined(_WIN32)
-	/*  the assembler routines don't work for a & b outside the
-		ranges 0 < a < 4 and 0 < b < 4. So, fall back on the C
-		routines if part of the image sticks out.
-		*/
-#if WES
-	color = lyapunov_cycles(a, b);
-#else
-	color = (lyaSeedOK && a > 0 && b > 0 && a <= 4 && b <= 4)
-		? lyapunov_cycles(filter_cycles, Population, a, b)
-		: lyapunov_cycles_in_c(filter_cycles, a, b);
-#endif
-#else
-	color = lyapunov_cycles_in_c(filter_cycles, a, b);
-#endif
+	color = lyapunov_cycles(filter_cycles, a, b);
 	if (inside > 0 && color == 0)
 	{
 		color = inside;
@@ -1578,7 +1558,7 @@ int lya_setup(void)
 	return 1;
 }
 
-int lyapunov_cycles_in_c(long filter_cycles, double a, double b)
+static int lyapunov_cycles(long filter_cycles, double a, double b)
 {
 	int color, count, lnadjust;
 	long i;
@@ -1737,7 +1717,7 @@ static void abort_cellular(int err, int t)
 	}
 }
 
-int cellular ()
+int cellular()
 {
 	S16 start_row;
 	S16 filled, notfilled;
@@ -1751,7 +1731,7 @@ int cellular ()
 	double n;
 	char buf[30];
 
-	set_Cellular_palette();
+	set_cellular_palette();
 
 	randparam = (S32)param[0];
 	lnnmbr = (U32)param[3];
@@ -2059,7 +2039,7 @@ contloop:
 	return 1;
 }
 
-int CellularSetup(void)
+int cellular_setup(void)
 {
 	if (!resuming)
 	{
@@ -2069,7 +2049,7 @@ int CellularSetup(void)
 	return 0;
 }
 
-static void set_Cellular_palette()
+static void set_cellular_palette()
 {
 	static Palettetype Red    = { 42, 0, 0 };
 	static Palettetype Green  = { 10, 35, 10 };
@@ -2174,7 +2154,7 @@ struct froth_struct
 struct froth_struct *fsp = NULL; /* froth_struct pointer */
 
 /* color maps which attempt to replicate the images of James Alexander. */
-static void set_Froth_palette(void)
+static void set_froth_palette(void)
 {
 	char *mapname;
 
@@ -2202,7 +2182,7 @@ static void set_Froth_palette(void)
 }
 
 int froth_setup(void)
-	{
+{
 	double sin_theta, cos_theta, x0, y0;
 
 	sin_theta = SQRT3/2; /* sin(2*PI/3) */
@@ -2214,14 +2194,14 @@ int froth_setup(void)
 		fsp = (struct froth_struct *)malloc(sizeof (struct froth_struct));
 	}
 	if (fsp == NULL)
-		{
+	{
 		stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
 		return 0;
-		}
+	}
 
 	/* for the all important backwards compatibility */
 	if (save_release <= 1821)   /* book version is 18.21 */
-		{
+	{
 		/* use old release parameters */
 
 		fsp->repeat_mapping = ((int)param[0] == 6 || (int)param[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
@@ -2249,9 +2229,9 @@ int froth_setup(void)
 		fsp->fl.f.right_x3 =  0.61508950585;  /* XMIDR  */
 		fsp->fl.f.right_x4 =  0.61508950585;  /* XMIDR  */
 
-		}
+	}
 	else /* use new code */
-		{
+	{
 		if (param[0] != 2)
 		{
 			param[0] = 1;
@@ -2288,8 +2268,7 @@ int froth_setup(void)
 		fsp->fl.f.right_x2 = fsp->fl.f.top_x2*cos_theta + y0*sin_theta;
 		fsp->fl.f.right_x3 = fsp->fl.f.top_x3*cos_theta + y0*sin_theta;
 		fsp->fl.f.right_x4 = fsp->fl.f.top_x4*cos_theta + y0*sin_theta;
-
-		}
+	}
 
 	/* if 2 attractors, use same shades as 3 attractors */
 	fsp->shades = (colors-1) / max(3, fsp->attractors);
@@ -2300,12 +2279,12 @@ int froth_setup(void)
 	{
 		rqlim = 7.0;
 	}
-	set_Froth_palette();
+	set_froth_palette();
 	/* make the best of the .map situation */
 	orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1) + 1 : colors-1;
 
 	if (integerfractal)
-		{
+	{
 		struct froth_long_struct tmp_l;
 
 		tmp_l.a        = FROTH_D_TO_L(fsp->fl.f.a);
@@ -2343,7 +2322,7 @@ void froth_cleanup(void)
 
 
 /* Froth Fractal type */
-int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
+int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 {
 	int found_attractor = 0;
 
@@ -2676,10 +2655,10 @@ int calcfroth(void)   /* per pixel 1/2/g, called with row & col set */
 }
 
 /*
-These last two froth functions are for the orbit-in-window feature.
-Normally, this feature requires StandardFractal, but since it is the
-attractor that makes the frothybasin type so unique, it is worth
-putting in as a stand-alone.
+	These last two froth functions are for the orbit-in-window feature.
+	Normally, this feature requires StandardFractal, but since it is the
+	attractor that makes the frothybasin type so unique, it is worth
+	putting in as a stand-alone.
 */
 int froth_per_pixel(void)
 {
