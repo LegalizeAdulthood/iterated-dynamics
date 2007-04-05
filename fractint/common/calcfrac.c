@@ -1,29 +1,107 @@
 /*
-CALCFRAC.C contains the high level ("engine") code for calculating the
-fractal images (well, SOMEBODY had to do it!).
-Original author Tim Wegner, but just about ALL the authors have contributed
-SOME code to this routine at one time or another, or contributed to one of
-the many massive restructurings.
-The following modules work very closely with CALCFRAC.C:
-  FRACTALS.C    the fractal-specific code for escape-time fractals.
-  FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
-  CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
-Additional fractal-specific modules are also invoked from CALCFRAC:
-  LORENZ.C      engine level and fractal specific code for attractors.
-  JB.C          julibrot logic
-  PARSER.C      formula fractals
-  and more
+	CALCFRAC.C contains the high level ("engine") code for calculating the
+	fractal images (well, SOMEBODY had to do it!).
+	Original author Tim Wegner, but just about ALL the authors have contributed
+	SOME code to this routine at one time or another, or contributed to one of
+	the many massive restructurings.
+	The following modules work very closely with CALCFRAC.C:
+	  FRACTALS.C    the fractal-specific code for escape-time fractals.
+	  FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
+	  CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
+	Additional fractal-specific modules are also invoked from CALCFRAC:
+	  LORENZ.C      engine level and fractal specific code for attractors.
+	  JB.C          julibrot logic
+	  PARSER.C      formula fractals
+	  and more
  -------------------------------------------------------------------- */
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
 #include <time.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
+
+#define SHOWDOT_SAVE    1
+#define SHOWDOT_RESTORE 2
+
+#define JUST_A_POINT 0
+#define LOWER_RIGHT  1
+#define UPPER_RIGHT  2
+#define LOWER_LEFT   3
+#define UPPER_LEFT   4
+
+#define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
+#define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
+#define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
+							/* maxxblk defn must match fracsubr.c */
+
+/* variables exported from this file */
+int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
+_LCMPLX linitorbit;
+long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
+_CMPLX init, tmp, old, g_new, saved;
+int color;
+long coloriter, oldcoloriter, realcoloriter;
+int row, col, passes;
+int invert;
+double f_radius, f_xcenter, f_ycenter; /* for inversion */
+void (_fastcall *putcolor)(int, int, int) = putcolor_a;
+void (_fastcall *plot)(int, int, int) = putcolor_a;
+double magnitude, rqlim, rqlim2, rqlim_save;
+int no_mag_calc = 0;
+int use_old_period = 0;
+int use_old_distest = 0;
+int old_demm_colors = 0;
+int (*calctype)(void);
+int (*calctypetmp)(void);
+int quick_calc = 0;
+double closeprox = 0.01;
+double closenuff;
+int pixelpi; /* value of pi in pixels */
+unsigned long lm;               /* magnitude limit (CALCMAND) */
+/* ORBIT variables */
+int     show_orbit;                     /* flag to turn on and off */
+int     orbit_ptr;                      /* pointer into save_orbit array */
+int save_orbit[1500];                    /* array to save orbit values */
+int     orbit_color = 15;                 /* XOR color */
+
+int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
+int     symmetry;          /* symmetry flag */
+int     reset_periodicity; /* nonzero if escape time pixel rtn to reset */
+int     kbdcount, max_kbdcount;    /* avoids checking keyboard too often */
+char *resume_info = NULL;                    /* resume info if allocated */
+int resuming;                           /* nonzero if resuming after interrupt */
+int num_worklist;                       /* resume worklist for standard engine */
+WORKLIST worklist[MAXCALCWORK];
+int xxstart, xxstop, xxbegin;             /* these are same as worklist, */
+int yystart, yystop, yybegin;             /* declared as separate items  */
+int workpass, worksym;                   /* for the sake of calcmand    */
+VOIDPTR typespecific_workarea = NULL;
+/* variables which must be visible for tab_display */
+int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
+			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
+              /* 6 for orbits */
+int curpass, totpasses;
+int currow, curcol;
+/* vars for diffusion scan */
+unsigned bits = 0; 		/* number of bits in the counter */
+unsigned long dif_counter; 	/* the diffusion counter */
+unsigned long dif_limit; 	/* the diffusion counter */
+int g_three_pass;
+int nxtscreenflag; /* for cellular next screen generation */
+int     attractors;                 /* number of finite attractors  */
+_CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
+_LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
+int    attrperiod[N_ATTR];          /* period of the finite attractor */
+/***** vars for new btm *****/
+enum direction {North, East, South, West};
+enum direction going_to;
+int trail_row, trail_col;
 
 /* routines in this module      */
 static void perform_worklist(void);
@@ -42,15 +120,11 @@ static int  _fastcall ysym_split(int, int);
 static void _fastcall puttruecolor_disk(int, int, int);
 static int diffusion_engine(void);
 static int draw_orbits(void);
-
-/**CJLT new function prototypes: */
 static int tesseral(void);
 static int _fastcall tesschkcol(int, int, int);
 static int _fastcall tesschkrow(int, int, int);
 static int _fastcall tesscol(int, int, int);
 static int _fastcall tessrow(int, int, int);
-
-/* new drawing method by HB */
 static int diffusion_scan(void);
 
 /* lookup tables to avoid too much bit fiddling : */
@@ -86,80 +160,14 @@ static char dif_lb[] =
 
 /* added for testing autologmap() */
 static long autologmap(void);
-
-/* variables exported from this file */
-int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-_LCMPLX linitorbit;
-long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
-_CMPLX init, tmp, old, g_new, saved;
-int color;
-long coloriter, oldcoloriter, realcoloriter;
-int row, col, passes;
-int invert;
-double f_radius, f_xcenter, f_ycenter; /* for inversion */
-void (_fastcall *putcolor)(int, int, int) = putcolor_a;
-void (_fastcall *plot)(int, int, int) = putcolor_a;
-
-double magnitude, rqlim, rqlim2, rqlim_save;
-int no_mag_calc = 0;
-int use_old_period = 0;
-int use_old_distest = 0;
-int old_demm_colors = 0;
-int (*calctype)(void);
-int (*calctypetmp)(void);
-int quick_calc = 0;
-double closeprox = 0.01;
-
-double closenuff;
-int pixelpi; /* value of pi in pixels */
-unsigned long lm;               /* magnitude limit (CALCMAND) */
-
-/* ORBIT variables */
-int     show_orbit;                     /* flag to turn on and off */
-int     orbit_ptr;                      /* pointer into save_orbit array */
-int save_orbit[1500];                    /* array to save orbit values */
-int     orbit_color = 15;                 /* XOR color */
-
-int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
-int     symmetry;          /* symmetry flag */
-int     reset_periodicity; /* nonzero if escape time pixel rtn to reset */
-int     kbdcount, max_kbdcount;    /* avoids checking keyboard too often */
-
-char *resume_info = NULL;                    /* resume info if allocated */
-int resuming;                           /* nonzero if resuming after interrupt */
-int num_worklist;                       /* resume worklist for standard engine */
-WORKLIST worklist[MAXCALCWORK];
-int xxstart, xxstop, xxbegin;             /* these are same as worklist, */
-int yystart, yystop, yybegin;             /* declared as separate items  */
-int workpass, worksym;                   /* for the sake of calcmand    */
-
-VOIDPTR typespecific_workarea = NULL;
-
 static double dem_delta, dem_width;     /* distance estimator variables */
 static double dem_toobig;
 static int dem_mandel;
-#define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
-
-/* variables which must be visible for tab_display */
-int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
-	      /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
-              /* 6 for orbits */
-int curpass, totpasses;
-int currow, curcol;
-
-/* static vars for diffusion scan */
-unsigned bits = 0; 		/* number of bits in the counter */
-unsigned long dif_counter; 	/* the diffusion counter */
-unsigned long dif_limit; 	/* the diffusion counter */
-
 /* static vars for solidguess & its subroutines */
-int g_three_pass;
 static int maxblock, halfblock;
 static int guessplot;                   /* paint 1st pass row at a time?   */
 static int right_guess, bottom_guess;
-#define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
-#define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
-							/* maxxblk defn must match fracsubr.c */
+
 /* next has a skip bit for each maxblock unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
 	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
@@ -177,17 +185,6 @@ unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
 #else
 #define tprefix   (*((TPREFIX)prefix))
 #endif
-
-int nxtscreenflag; /* for cellular next screen generation */
-int     attractors;                 /* number of finite attractors  */
-_CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
-_LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
-int    attrperiod[N_ATTR];          /* period of the finite attractor */
-
-/***** vars for new btm *****/
-enum direction {North, East, South, West};
-enum direction going_to;
-int trail_row, trail_col;
 
 #ifndef sqr
 #define sqr(x) ((x)*(x))
@@ -214,14 +211,6 @@ static int showdotcolor;
 int atan_colors = 180;
 
 static int showdot_width = 0;
-#define SHOWDOT_SAVE    1
-#define SHOWDOT_RESTORE 2
-
-#define JUST_A_POINT 0
-#define LOWER_RIGHT  1
-#define UPPER_RIGHT  2
-#define LOWER_LEFT   3
-#define UPPER_LEFT   4
 
 /* FMODTEST routine. */
 /* Makes the test condition for the FMOD coloring type
