@@ -29,7 +29,7 @@ static U16 (_fastcall *s_get_pixels)(int, int)  = (U16(_fastcall *)(int, int))ge
 static U16 s_max_plasma;
 static int *s_verhulst_array;
 static unsigned long s_filter_cycles;
-static unsigned int half_time_check;
+static unsigned int s_half_time_check;
 static long   lPopulation, lRate;
 static double Population;
 static double Rate;
@@ -1008,11 +1008,11 @@ int bifurcation(void)
 	}
 
 	s_filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
-	half_time_check = FALSE;
+	s_half_time_check = FALSE;
 	if (periodicitycheck && (unsigned long)maxit < s_filter_cycles)
 	{
 		s_filter_cycles = (s_filter_cycles - maxit + 1) / 2;
-		half_time_check = TRUE;
+		s_half_time_check = TRUE;
 	}
 
 	if (integerfractal)
@@ -1093,7 +1093,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 			return;
 		}
 	}
-	if (half_time_check) /* check for periodicity at half-time */
+	if (s_half_time_check) /* check for periodicity at half-time */
 	{
 		bifurcation_period_init();
 		for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
