@@ -183,10 +183,6 @@
 			Name="Main"
 			>
 			<File
-				RelativePath=".\debugfla.doc"
-				>
-			</File>
-			<File
 				RelativePath=".\demo.bat"
 				>
 			</File>
@@ -203,59 +199,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\fractint.def"
-				>
-			</File>
-			<File
-				RelativePath=".\fractint.mak"
-				>
-			</File>
-			<File
-				RelativePath=".\fractsrc.doc"
-				>
-			</File>
-			<File
-				RelativePath=".\hc.doc"
-				>
-			</File>
-			<File
-				RelativePath=".\macros_d"
-				>
-			</File>
-			<File
-				RelativePath=".\macros_w"
-				>
-			</File>
-			<File
-				RelativePath=".\makecln.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\makeclnw.bat"
-				>
-			</File>
-			<File
 				RelativePath=".\Makefile"
-				>
-			</File>
-			<File
-				RelativePath=".\makefrac.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\maketidw.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\maketidy.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\makewin.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\read.me"
 				>
 			</File>
 			<File
@@ -268,10 +212,6 @@
 			</File>
 			<File
 				RelativePath=".\tplus.dat"
-				>
-			</File>
-			<File
-				RelativePath=".\winfract.def"
 				>
 			</File>
 		</Filter>
@@ -1455,7 +1395,27 @@
 			>
 		</File>
 		<File
+			RelativePath=".\debugfla.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\fractsrc.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\hc.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\os_stuff.txt"
+			>
+		</File>
+		<File
 			RelativePath=".\ReadMe.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\Refactor.txt"
 			>
 		</File>
 		<File
