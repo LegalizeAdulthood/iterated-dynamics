@@ -31,7 +31,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calcmand; /* the normal case - use CALCMAND */
+		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
 	}
 	else
 	{
@@ -52,7 +52,7 @@ JuliaSetup(void)            /* Julia Routine */
 		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calcmand; /* the normal case - use CALCMAND */
+		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
 	}
 	else
 	{

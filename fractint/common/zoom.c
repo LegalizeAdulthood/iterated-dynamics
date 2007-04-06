@@ -616,7 +616,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 		return 0; /* not resumable, not complete */
 	}
 	if (curfractalspecific->calculate_type != StandardFractal
-		&& curfractalspecific->calculate_type != calcmand
+		&& curfractalspecific->calculate_type != calculate_mandelbrot
 		&& curfractalspecific->calculate_type != calcmandfp
 		&& curfractalspecific->calculate_type != lyapunov
 		&& curfractalspecific->calculate_type != froth_calc)
