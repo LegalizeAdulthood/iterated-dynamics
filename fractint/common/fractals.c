@@ -2662,12 +2662,14 @@ void invertz2(_CMPLX *z)
 {
 	z->x = dxpixel();
 	z->y = dypixel();
-	z->x -= f_xcenter; z->y -= f_ycenter;  /* Normalize values to center of circle */
+	z->x -= g_f_x_center; z->y -= g_f_y_center;  /* Normalize values to center of circle */
 
 	tempsqrx = sqr(z->x) + sqr(z->y);  /* Get old radius */
-	tempsqrx = (fabs(tempsqrx) > FLT_MIN) ? (f_radius / tempsqrx) : FLT_MAX;
-	z->x *= tempsqrx;      z->y *= tempsqrx;      /* Perform inversion */
-	z->x += f_xcenter; z->y += f_ycenter; /* Renormalize */
+	tempsqrx = (fabs(tempsqrx) > FLT_MIN) ? (g_f_radius / tempsqrx) : FLT_MAX;
+	z->x *= tempsqrx;
+	z->y *= tempsqrx;      /* Perform inversion */
+	z->x += g_f_x_center;
+	z->y += g_f_y_center; /* Renormalize */
 }
 
 int long_julia_per_pixel(void)

@@ -820,7 +820,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 /*
 ; ***Function put_line(int row, int startcol, int stopcol, unsigned char *pixels)
 
-;       This routine is a 'line' analog of 'putcolor()', and puts a segment
+;       This routine is a 'line' analog of 'g_put_color()', and puts a segment
 ;       of a line from the screen and stores it in pixels[] at one byte per
 ;       pixel
 ;       Called by the GIF decoder
@@ -956,7 +956,7 @@ void putcolor_a(int xdot, int ydot, int color)
 /*
 ; ***************Function out_line(pixels, linelen) *********************
 
-;       This routine is a 'line' analog of 'putcolor()', and sends an
+;       This routine is a 'line' analog of 'g_put_color()', and sends an
 ;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
 ;       Called by the GIF decoder
 */

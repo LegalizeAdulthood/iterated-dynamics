@@ -18,7 +18,7 @@
  *   10-22-90 EAN     Initial release.
  *
  *   10-23-90 EAN     "Discovered" get_line/put_line functions, integrated
- *                      them in (instead of only getcolor/putcolor). Much
+ *                      them in (instead of only getcolor/g_put_color). Much
  *                      faster!
  *                    Redesigned color editors (now at top of palette) and
  *                      re-assigned some keys.
@@ -330,7 +330,7 @@ void clip_putcolor(int x, int y, int color)
 		return ;
 	}
 
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }
 
 
@@ -619,11 +619,11 @@ static BOOLEAN is_in_box(int x, int y, int bx, int by, int bw, int bd)
 
 static void draw_diamond(int x, int y, int color)
 {
-	putcolor (x + 2, y + 0,    color);
+	g_put_color (x + 2, y + 0,    color);
 	hline    (x + 1, y + 1, 3, color);
 	hline    (x + 0, y + 2, 5, color);
 	hline    (x + 1, y + 3, 3, color);
-	putcolor (x + 2, y + 4,    color);
+	g_put_color (x + 2, y + 4,    color);
 }
 
 
@@ -3562,7 +3562,7 @@ void EditPalette(void)       /* called by fractint */
 		return; /* prevents crash when physical screen is too small */
 	}
 
-	plot = putcolor;
+	plot = g_put_color;
 
 	line_buff = NEWX(max(sxdots, sydots));
 

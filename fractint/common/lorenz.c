@@ -694,7 +694,7 @@ int Minverse_julia_orbit()
 	case breadth_first:
 		if (color < s_max_hits)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
 			EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
 			EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
@@ -703,7 +703,7 @@ int Minverse_julia_orbit()
 	case depth_first:
 		if (color < s_max_hits)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
 			if (g_minor_method == left_first)
 			{
@@ -752,13 +752,13 @@ int Minverse_julia_orbit()
 		}
 		if (color < colors-1)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 		}
 		break;
 	case random_walk:
 		if (color < colors-1)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 		}
 		g_new_z.x = leftright*g_new_z.x;
 		g_new_z.y = leftright*g_new_z.y;
@@ -873,7 +873,7 @@ int Linverse_julia_orbit()
 	case breadth_first:
 		if (color < s_max_hits)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			EnQueueLong(lnew.x,  lnew.y);
 			EnQueueLong(-lnew.x, -lnew.y);
@@ -882,7 +882,7 @@ int Linverse_julia_orbit()
 	case depth_first:
 		if (color < s_max_hits)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
 			if (g_minor_method == left_first)
 			{
@@ -916,7 +916,7 @@ int Linverse_julia_orbit()
 	case random_walk:
 		if (color < colors-1)
 		{
-			putcolor(newcol, newrow, color + 1);
+			g_put_color(newcol, newrow, color + 1);
 		}
 		break;
 	}
@@ -3059,5 +3059,5 @@ static void _fastcall plot_hist(int x, int y, int color)
 	{
 		color = 1;
 	}
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }

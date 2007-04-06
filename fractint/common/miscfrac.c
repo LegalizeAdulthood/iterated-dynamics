@@ -138,8 +138,8 @@ static void _fastcall put_potential(int x, int y, U16 color)
 	{
 		color = 1;
 	}
-	putcolor(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
-	/* we don't write this if driver_diskp() because the above putcolor
+	g_put_color(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
+	/* we don't write this if driver_diskp() because the above g_put_color
 			was already a "writedisk" in that case */
 	if (!driver_diskp())
 	{
@@ -169,7 +169,7 @@ static void _fastcall put_color_border(int x, int y, int color)
 	{
 		color = 1;
 	}
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }
 
 static U16 _fastcall get_potential(int x, int y)
@@ -467,13 +467,13 @@ int plasma(void)
 		{
 			s_max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
-			plot = (outside >= 0) ? put_color_border : putcolor;
+			plot = (outside >= 0) ? put_color_border : g_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		plot = (outside >= 0) ? put_color_border : putcolor;
+		plot = (outside >= 0) ? put_color_border : g_put_color;
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
@@ -565,7 +565,7 @@ done:
 		potflag = OldPotFlag;
 		pot16bit = OldPot16bit;
 	}
-	plot    = putcolor;
+	plot    = g_put_color;
 	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	return n;
 }
@@ -712,12 +712,12 @@ int diffusion(void)
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL: /* Single seed point in the center */
-		putcolor(xdots / 2, ydots / 2, currentcolor);
+		g_put_color(xdots / 2, ydots / 2, currentcolor);
 		break;
 	case DIFFUSION_LINE: /* Line along the bottom */
 		for (i = 0; i <= xdots; i++)
 		{
-			putcolor(i, ydots-1, currentcolor);
+			g_put_color(i, ydots-1, currentcolor);
 		}
 		break;
 	case DIFFUSION_SQUARE: /* Large square that fills the screen */
@@ -725,20 +725,20 @@ int diffusion(void)
 		{
 			for (i = 0; i < ydots; i++)
 			{
-				putcolor(xdots/2-ydots/2 , i , currentcolor);
-				putcolor(xdots/2 + ydots/2 , i , currentcolor);
-				putcolor(xdots/2-ydots/2 + i , 0 , currentcolor);
-				putcolor(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
+				g_put_color(xdots/2-ydots/2 , i , currentcolor);
+				g_put_color(xdots/2 + ydots/2 , i , currentcolor);
+				g_put_color(xdots/2-ydots/2 + i , 0 , currentcolor);
+				g_put_color(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
 			}
 		}
 		else
 		{
 			for (i = 0; i < xdots; i++)
 			{
-				putcolor(0 , ydots/2-xdots/2 + i , currentcolor);
-				putcolor(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
-				putcolor(i , ydots/2-xdots/2 , currentcolor);
-				putcolor(i , ydots/2 + xdots/2 , currentcolor);
+				g_put_color(0 , ydots/2-xdots/2 + i , currentcolor);
+				g_put_color(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
+				g_put_color(i , ydots/2-xdots/2 , currentcolor);
+				g_put_color(i , ydots/2 + xdots/2 , currentcolor);
 			}
 		}
 		break;
@@ -783,7 +783,7 @@ int diffusion(void)
 			/* Erase moving point */
 			if (show_orbit)
 			{
-				putcolor(x, y, 0);
+				g_put_color(x, y, 0);
 			}
 
 			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
@@ -851,14 +851,14 @@ int diffusion(void)
 			/* Show the moving point */
 			if (show_orbit)
 			{
-				putcolor(x, y, RANDOM(colors-1) + 1);
+				g_put_color(x, y, RANDOM(colors-1) + 1);
 			}
 
 		} /* End of loop, now fix the point */
 
 		/* If we're doing colorshifting then use currentcolor, otherwise
 			pick one at random */
-		putcolor(x, y, colorshift ? currentcolor : RANDOM(colors-1) + 1);
+		g_put_color(x, y, colorshift ? currentcolor : RANDOM(colors-1) + 1);
 
 		/* If we're doing colorshifting then check to see if we need to shift*/
 		if (colorshift)
