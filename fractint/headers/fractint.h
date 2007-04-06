@@ -753,7 +753,7 @@ struct fractalspecificstuff
    int (*orbitcalc)(void);      /* function that calculates one orbit */
    int (*per_pixel)(void);      /* once-per-pixel init */
    int (*per_image)(void);      /* once-per-image setup */
-   int (*calctype)(void);       /* name of main fractal function */
+   int (*calculate_type)(void);       /* name of main fractal function */
    int orbit_bailout;           /* usual bailout value for orbit calc */
 };
 

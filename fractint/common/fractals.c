@@ -29,7 +29,7 @@ The Fractal-specific routines are divided into three categories:
 4. The main fractal routine. Usually this will be StandardFractal(),
 	but if you have written a stand-alone fractal routine independent
 	of the StandardFractal mechanisms, your routine name goes here,
-	stored in fractalspecific[fractype].calctype.per_image.
+	stored in fractalspecific[fractype].calculate_type.per_image.
 
 Adding a new fractal type should be simply a matter of adding an item
 to the 'fractalspecific' structure, writing (or re-using one of the existing)

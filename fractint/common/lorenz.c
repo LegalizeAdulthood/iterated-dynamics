@@ -1344,7 +1344,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 #undef PAR_D
 
 /**********************************************************************/
-/*   Main fractal engines - put in fractalspecific[fractype].calctype */
+/*   Main fractal engines - put in fractalspecific[fractype].calculate_type */
 /**********************************************************************/
 
 int inverse_julia_per_image()

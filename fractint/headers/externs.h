@@ -57,7 +57,7 @@ extern char                  brwscheckparms;
 extern char                  brwschecktype;
 extern char                  busy;
 extern long                  calctime;
-extern int (*                calctype)(void);
+extern int (*                g_calculate_type)(void);
 extern int                   calc_status;
 extern char                  calibrate;
 extern int                   checkcurdir;

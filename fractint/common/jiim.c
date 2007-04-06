@@ -540,8 +540,8 @@ void Jiim(int which)         /* called by fractint */
 	int old_debugflag = debugflag;
 
 	/* must use standard fractal or be froth_calc */
-	if (fractalspecific[fractype].calctype != StandardFractal
-			&& fractalspecific[fractype].calctype != froth_calc)
+	if (fractalspecific[fractype].calculate_type != StandardFractal
+			&& fractalspecific[fractype].calculate_type != froth_calc)
 	{
 		return;
 	}
@@ -557,7 +557,7 @@ void Jiim(int which)         /* called by fractint */
 	}
 	oldsxoffs = sxoffs;
 	oldsyoffs = syoffs;
-	oldcalctype = calctype;
+	oldcalctype = g_calculate_type;
 	show_numbers = 0;
 	using_jiim = 1;
 	line_buff = malloc(max(sxdots, sydots));
@@ -1281,7 +1281,7 @@ finish:
 
 	lookatmouse = oldlookatmouse;
 	using_jiim = 0;
-	calctype = oldcalctype;
+	g_calculate_type = oldcalctype;
 	debugflag = old_debugflag; /* yo Chuck! */
 	helpmode = oldhelpmode;
 	if (kbdchar == 's' || kbdchar == 'S')
@@ -1311,7 +1311,7 @@ finish:
 	show_numbers = 0;
 	driver_unget_key(kbdchar);
 
-	if (curfractalspecific->calctype == froth_calc)
+	if (curfractalspecific->calculate_type == froth_calc)
 	{
 		froth_cleanup();
 	}

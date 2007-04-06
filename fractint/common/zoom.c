@@ -615,11 +615,11 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	{
 		return 0; /* not resumable, not complete */
 	}
-	if (curfractalspecific->calctype != StandardFractal
-		&& curfractalspecific->calctype != calcmand
-		&& curfractalspecific->calctype != calcmandfp
-		&& curfractalspecific->calctype != lyapunov
-		&& curfractalspecific->calctype != froth_calc)
+	if (curfractalspecific->calculate_type != StandardFractal
+		&& curfractalspecific->calculate_type != calcmand
+		&& curfractalspecific->calculate_type != calcmandfp
+		&& curfractalspecific->calculate_type != lyapunov
+		&& curfractalspecific->calculate_type != froth_calc)
 	{
 		return 0; /* not a worklist-driven type */
 	}
