@@ -45,7 +45,7 @@ long calcmandfpasm_c(void)
 	{
 		g_old_color_iter = 0;      /* don't check periodicity */
 	}
-	else if (reset_periodicity != 0)
+	else if (g_reset_periodicity != 0)
 	{
 		g_old_color_iter = maxit - 255;
 	}

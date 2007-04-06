@@ -238,7 +238,7 @@ calc_mand_assembly(void)
 		mov		edx, eax					; clear edx
 		cmp		periodicitycheck, eax		;	periodicity	checking disabled?
 		je		initoldcolor				;  yup,	set	oldcolor 0 to disable it
-		cmp		reset_periodicity, eax		;	periodicity	reset?
+		cmp		g_reset_periodicity, eax		;	periodicity	reset?
 		je		short initparms				; inherit oldcolor from	prior invocation
 		mov		eax, dword ptr maxit		; yup.  reset oldcolor to maxit-250
 		sub		eax, 250					;	(avoids	slowness at	high maxits)
