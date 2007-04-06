@@ -411,7 +411,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					param_history(1); /* restore old history */
 					fiddleparms(g_genes, ecount);
 					calcfracinit();
-					if (calcfract() == -1)
+					if (calculate_fractal() == -1)
 					{
 						goto done;
 					}
@@ -465,7 +465,7 @@ done:
 			/* end of evolution loop */
 			else
 			{
-				i = calcfract();       /* draw the fractal using "C" */
+				i = calculate_fractal();       /* draw the fractal using "C" */
 				if (i == 0)
 				{
 					driver_buzzer(BUZZER_COMPLETE); /* finished!! */

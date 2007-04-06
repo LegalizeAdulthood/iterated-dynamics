@@ -208,31 +208,22 @@ static enum direction s_going_to;
 static int s_trail_row;
 static int s_trail_col;
 static unsigned int s_t_prefix[2][maxyblk][maxxblk]; /* common temp */
-
-/* added for testing autologmap() */
-static long autologmap(void);
-
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
-#ifndef lsqr
-#define lsqr(x) (multiply((x), (x), bitshift))
-#endif
-
 static BYTE *s_save_dots = NULL;
 static BYTE *s_fill_buffer;
 static int s_save_dots_len;
 static int s_show_dot_color;
 static int s_show_dot_width = 0;
 
+/* added for testing autologmap() */
+static long autologmap(void);
+
 /* FMODTEST routine. */
 /* Makes the test condition for the FMOD coloring type
 	that of the current bailout method. 'or' and 'and'
 	methods are not used - in these cases a normal
-	modulus test is used                              */
-
-double fmodtest(void)
+	modulus test is used
+*/
+static double fmod_test(void)
 {
 	double result;
 	if (inside == FMODI && save_release <= 2000) /* for backwards compatibility */
@@ -467,7 +458,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	}
 }
 
-int calctypeshowdot(void)
+static int calculate_type_show_dot(void)
 {
 	int out, startx, starty, stopx, stopy, direction, width;
 	direction = JUST_A_POINT;
@@ -521,9 +512,9 @@ int calctypeshowdot(void)
 	return out;
 }
 
-/******* calcfract - the top level routine for generating an image *******/
+/******* calculate_fractal - the top level routine for generating an image *******/
 
-int calcfract(void)
+int calculate_fractal(void)
 {
 	matherr_ct = 0;
 	g_num_attractors = 0;          /* default to no known finite attractors  */
@@ -1116,7 +1107,7 @@ static void perform_worklist()
 			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
 #endif
 			g_calculate_type_temp = g_calculate_type;
-			g_calculate_type    = calctypeshowdot;
+			g_calculate_type    = calculate_type_show_dot;
 		}
 
 		/* some common initialization for escape-time pixel level routines */
@@ -2343,7 +2334,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					g_new_z.x = ((double)lnew.x) / fudge;
 					g_new_z.y = ((double)lnew.y) / fudge;
 				}
-				mag = fmodtest();
+				mag = fmod_test();
 				if (mag < g_proximity)
 				{
 					memvalue = mag;
@@ -2401,7 +2392,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					g_new_z.x = ((double)lnew.x) / fudge;
 					g_new_z.y = ((double)lnew.y) / fudge;
 				}
-				mag = fmodtest();
+				mag = fmod_test();
 				if (mag < g_proximity)
 				{
 					memvalue = mag;

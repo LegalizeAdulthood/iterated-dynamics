@@ -1233,7 +1233,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 
 	Engines which aren't resumable can simply ignore all this.
 
-	Before calling the (per_image, calctype) routines (engine), calcfract sets:
+	Before calling the (per_image, calctype) routines (engine), calculate_fractal sets:
 		"resuming" to 0 if new image, nonzero if resuming a partially done image
 		"calc_status" to CALCSTAT_IN_PROGRESS
 	If an engine is interrupted and wants to be able to resume it must:
