@@ -12,7 +12,7 @@
 
 extern int atan_colors;
 extern long firstsavedand;
-extern int nextsavedincr;
+extern int g_next_saved_incr;
 
 static int inside_color, periodicity_color;
 
@@ -143,7 +143,7 @@ long calcmandfpasm_c(void)
 				if (savedincr == 0)
 				{
 					savedand = (savedand << 1) + 1;
-					savedincr = nextsavedincr;
+					savedincr = g_next_saved_incr;
 				}
 			}
 			else
