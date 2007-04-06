@@ -8,11 +8,10 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "externs.h"
 #include "drivers.h"
 
 extern int atan_colors;
-extern long firstsavedand;
-extern int g_next_saved_incr;
 
 static int inside_color, periodicity_color;
 
@@ -50,7 +49,7 @@ long calcmandfpasm_c(void)
 		g_old_color_iter = maxit - 255;
 	}
 
-	tmpfsd = maxit - firstsavedand;
+	tmpfsd = maxit - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
 	{
 		g_old_color_iter = tmpfsd; /* but matches the code in StandardFractal() */
@@ -64,7 +63,7 @@ long calcmandfpasm_c(void)
 	savedy = 0;
 #endif
 	g_orbit_index = 0;
-	savedand = firstsavedand;
+	savedand = g_first_saved_and;
 	savedincr = 1;             /* start checking the very first time */
 	g_input_counter--;                /* Only check the keyboard sometimes */
 	if (g_input_counter < 0)

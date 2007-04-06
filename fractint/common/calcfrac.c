@@ -218,7 +218,7 @@ static long autologmap(void);
 #define lsqr(x) (multiply((x), (x), bitshift))
 #endif
 
-long firstsavedand;
+long g_first_saved_and;
 
 static BYTE *savedots = NULL;
 static BYTE *fillbuff;
@@ -583,7 +583,7 @@ int calcfract(void)
 	if (g_use_old_periodicity)
 	{
 		g_next_saved_incr = 1;
-		firstsavedand = 1;
+		g_first_saved_and = 1;
 	}
 	else
 	{
@@ -592,7 +592,7 @@ int calcfract(void)
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
 		}
-		firstsavedand = (long)((g_next_saved_incr*2) + 1);
+		g_first_saved_and = (long)((g_next_saved_incr*2) + 1);
 	}
 
 	LogTable = NULL;
@@ -2043,9 +2043,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		g_old_color_iter = MINSAVEDAND;
 	}
 #else
-	if (g_old_color_iter < firstsavedand) /* I like it! */
+	if (g_old_color_iter < g_first_saved_and) /* I like it! */
 	{
-		g_old_color_iter = firstsavedand;
+		g_old_color_iter = g_first_saved_and;
 	}
 #endif
 	/* really fractal specific, but we'll leave it here */
@@ -2128,7 +2128,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 #ifdef MINSAVEDAND
 		savedand = MINSAVEDAND;
 #else
-		savedand = firstsavedand;                /* begin checking every other cycle */
+		savedand = g_first_saved_and;                /* begin checking every other cycle */
 #endif
 	}
 	savedincr = 1;               /* start checking the very first time */

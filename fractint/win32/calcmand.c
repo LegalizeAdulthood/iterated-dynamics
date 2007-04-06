@@ -22,7 +22,6 @@
 #define ABS(x) ((x) < 0?-(x):(x))
 
 extern int atan_colors;
-extern long firstsavedand;
 
 static int inside_color;
 static int periodicity_color;
@@ -37,7 +36,6 @@ static int k = 0;
 static int savedand = 0;
 static int savedincr = 0;
 static int period = 0;
-static long firstsavedand = 0;
 
 long cdecl
 calcmandasm(void)
@@ -55,7 +53,7 @@ calc_mand_floating_point(void)
 	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
 	g_old_color_iter = (s_periodicity_check == 0) ? 0 : (maxit - 250);
-	tmpfsd = maxit - firstsavedand;
+	tmpfsd = maxit - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd)
 	{
 		g_old_color_iter = tmpfsd;
@@ -64,7 +62,7 @@ calc_mand_floating_point(void)
 	savedx = 0;
 	savedy = 0;
 	g_orbit_index = 0;
-	savedand = firstsavedand;
+	savedand = g_first_saved_and;
 	savedincr = 1;             /* start checking the very first time */
 	g_input_counter--;                /* Only check the keyboard sometimes */
 	if (g_input_counter < 0)
@@ -297,9 +295,9 @@ dojulia:									; Julia	Set	initialization
 
 doeither:									; common Mandelbrot, Julia set code
 		mov		period,	0					; claim periodicity of	1
-		mov		eax, dword ptr firstsavedand ; initial periodicity check
+		mov		eax, dword ptr g_first_saved_and ; initial periodicity check
 		mov		dword ptr savedand,	eax		; initial periodicity check
-		mov		eax, dword ptr firstsavedand + 4 ; initial periodicity check
+		mov		eax, dword ptr g_first_saved_and + 4 ; initial periodicity check
 		mov		dword ptr savedand + 4, eax	; initial periodicity check
 		mov		savedincr, 1				;	flag for incrementing periodicity
 		mov		dword ptr savedx + 4,	0ffffh	;	impossible value of	"old" x
