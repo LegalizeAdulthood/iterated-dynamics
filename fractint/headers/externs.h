@@ -20,7 +20,7 @@ extern int                   askvideo;
 extern float                 aspectdrift;
 extern int                   g_num_attractors;
 extern int                   attrperiod[];
-extern _CMPLX                attr[];
+extern _CMPLX                g_attractors[];
 extern int                   autobrowse;
 extern char                  autoname[];
 extern char                  autoshowdot;

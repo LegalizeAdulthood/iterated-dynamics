@@ -113,7 +113,7 @@ unsigned long g_diffusion_limit; 	/* the diffusion counter */
 int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
-_CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
+_CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
 int    attrperiod[N_ATTR];          /* period of the finite attractor */
 /***** vars for new btm *****/
@@ -2445,11 +2445,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				for (i = 0; i < g_num_attractors; i++)
 				{
-					at.x = g_new_z.x - attr[i].x;
+					at.x = g_new_z.x - g_attractors[i].x;
 					at.x = sqr(at.x);
 					if (at.x < f_at_rad)
 					{
-						at.y = g_new_z.y - attr[i].y;
+						at.y = g_new_z.y - g_attractors[i].y;
 						at.y = sqr(at.y);
 						if (at.y < f_at_rad)
 						{
