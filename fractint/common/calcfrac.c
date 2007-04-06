@@ -88,7 +88,7 @@ int g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
-int resuming;                           /* nonzero if resuming after interrupt */
+int g_resuming;                           /* nonzero if resuming after interrupt */
 int num_worklist;                       /* resume worklist for standard engine */
 WORKLIST worklist[MAXCALCWORK];
 int xxstart;
@@ -751,8 +751,8 @@ int calcfract(void)
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
 		g_init_orbit_l.y = (long)(initorbit.y*fudge);
 	}
-	resuming = (calc_status == CALCSTAT_RESUMABLE);
-	if (!resuming) /* free resume_info memory if any is hanging around */
+	g_resuming = (calc_status == CALCSTAT_RESUMABLE);
+	if (!g_resuming) /* free resume_info memory if any is hanging around */
 	{
 		end_resume();
 		if (resave_flag)
@@ -805,7 +805,7 @@ int calcfract(void)
 		{
 			int oldcalcmode;
 			oldcalcmode = stdcalcmode;
-			if (!resuming || g_three_pass)
+			if (!g_resuming || g_three_pass)
 			{
 				stdcalcmode = 'g';
 				g_three_pass = 1;
@@ -906,7 +906,7 @@ static void perform_worklist()
 		int tmpcalcmode = stdcalcmode;
 
 		stdcalcmode = '1'; /* force 1 pass */
-		if (resuming == 0)
+		if (g_resuming == 0)
 		{
 			if (pot_startdisk() < 0)
 			{
@@ -935,7 +935,7 @@ static void perform_worklist()
 	worklist[0].xxstop = xdots - 1;
 	worklist[0].yystop = ydots - 1;
 	worklist[0].pass = worklist[0].sym = 0;
-	if (resuming) /* restore worklist, if we can't the above will stay in place */
+	if (g_resuming) /* restore worklist, if we can't the above will stay in place */
 	{
 		int vsn;
 		vsn = start_resume();
@@ -1131,7 +1131,7 @@ static void perform_worklist()
 
 		setsymmetry(g_symmetry, 1);
 
-		if (!(resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
+		if (!(g_resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
 		{  /* calculate round screen edges to work out best start for logmap */
 			LogFlag = (autologmap()*(LogFlag / labs(LogFlag)));
 			SetupLogTable();
@@ -1809,7 +1809,7 @@ static int _fastcall StandardCalc(int passnum)
 		while (g_col <= g_x_stop)
 		{
 			/* on 2nd pass of two, skip even pts */
-			if (g_quick_calculate && !resuming)
+			if (g_quick_calculate && !g_resuming)
 			{
 				g_color = getcolor(g_col, g_row);
 				if (g_color != inside)
@@ -1824,7 +1824,7 @@ static int _fastcall StandardCalc(int passnum)
 				{
 					return -1; /* interrupted */
 				}
-				resuming = 0; /* reset so g_quick_calculate works */
+				g_resuming = 0; /* reset so g_quick_calculate works */
 				g_reset_periodicity = 0;
 				if (passnum == 1) /* first pass, copy pixel and bump col */
 				{
@@ -5051,7 +5051,7 @@ static long autologmap(void)   /*RB*/
 ack: /* bailout here if key is pressed */
 	if (mincolour == 2)
 	{
-		resuming = 1; /* insure autologmap not called again */
+		g_resuming = 1; /* insure autologmap not called again */
 	}
 	maxit = old_maxit;
 

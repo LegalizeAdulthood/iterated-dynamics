@@ -215,7 +215,7 @@ void _fastcall restore_history_info(void)
 
 	g_invert					= 0;
 	calc_status				= CALCSTAT_PARAMS_CHANGED;
-	resuming				= 0;
+	g_resuming				= 0;
 	fractype				= last.fractal_type;
 	xxmin               	= last.xmin;
 	xxmax               	= last.xmax;

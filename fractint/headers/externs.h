@@ -423,7 +423,7 @@ extern int                   resave_flag;
 extern int                   g_reset_periodicity;
 extern char *				 g_resume_info;
 extern int                   resume_len;
-extern int                   resuming;
+extern int                   g_resuming;
 extern int                   rflag;
 extern char                  rlebuf[];
 extern int                   rhombus_stack[];
