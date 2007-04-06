@@ -1901,7 +1901,7 @@ int calcmandfp(void)
 	{
 		if (potflag)
 		{
-			g_color_iter = potential(magnitude, g_real_color_iter);
+			g_color_iter = potential(g_magnitude, g_real_color_iter);
 		}
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
 				&& (g_real_color_iter < maxit || (inside < 0 && g_color_iter == maxit)))
@@ -2075,7 +2075,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			}
 			deriv.x = 1;
 			deriv.y = 0;
-			magnitude = 0;
+			g_magnitude = 0;
 		}
 	}
 	else
@@ -2197,14 +2197,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						dem_color = g_color_iter;
 						dem_new = g_new_z;
 					}
-					if (rqlim >= DEM_BAILOUT)
+					if (rqlim >= DEM_BAILOUT
+						|| g_magnitude >= (rqlim = DEM_BAILOUT)
+						|| g_magnitude == 0)
 					{
-						rqlim = DEM_BAILOUT;
-						if ((g_magnitude >= rqlim)
-							|| magnitude == 0)
-						{
-							break;
-						}
+						break;
 					}
 				}
 				else
@@ -2280,7 +2277,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						}
 						tempsqrx = g_new_z.x*g_new_z.x;
 						tempsqry = g_new_z.y*g_new_z.y;
-						magnitude = tempsqrx + tempsqry;
+						g_magnitude = tempsqrx + tempsqry;
 						g_old_z = g_new_z;
 					}
 					{
@@ -2342,16 +2339,16 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					{
 						g_magnitude_l = lsqr(lnew.x) + lsqr(lnew.y);
 					}
-					magnitude = g_magnitude_l;
-					magnitude = magnitude / fudge;
+					g_magnitude = g_magnitude_l;
+					g_magnitude = g_magnitude / fudge;
 				}
-				else if (magnitude == 0.0 || no_mag_calc == 0)
+				else if (g_magnitude == 0.0 || no_mag_calc == 0)
 				{
-					magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+					g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 				}
-				if (magnitude < min_orbit)
+				if (g_magnitude < min_orbit)
 				{
-					min_orbit = magnitude;
+					min_orbit = g_magnitude;
 					min_index = g_color_iter + 1;
 				}
 			}
@@ -2615,8 +2612,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			g_new_z.x = (double)bftofloat(bfnew.x);
 			g_new_z.y = (double)bftofloat(bfnew.y);
 		}
-		magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
-		g_color_iter = potential(magnitude, g_color_iter);
+		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+		g_color_iter = potential(g_magnitude, g_color_iter);
 		if (LogTable || Log_Calc)
 		{
 			g_color_iter = logtablecalc(g_color_iter);

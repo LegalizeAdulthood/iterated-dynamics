@@ -122,9 +122,9 @@ calc_mand_floating_point(void)
 		x2 = FUDGE_MUL(x, x);
 		y2 = FUDGE_MUL(y, y);
 		xy = FUDGE_MUL(x, y);
-		magnitude = x2 + y2;
+		g_magnitude = x2 + y2;
 
-		if (magnitude >= lm)
+		if (g_magnitude >= lm)
 		{
 			if (outside <= -2)
 			{

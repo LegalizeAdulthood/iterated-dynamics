@@ -121,9 +121,9 @@ long calcmandfpasm_c(void)
 		x2 = x*x;
 		y2 = y*y;
 		xy = x*y;
-		magnitude = x2 + y2;
+		g_magnitude = x2 + y2;
 
-		if (magnitude >= rqlim)
+		if (g_magnitude >= rqlim)
 		{
 			goto over_bailout_87;
 		}
@@ -134,7 +134,7 @@ long calcmandfpasm_c(void)
 			if (((maxit - cx) & savedand) == 0)
 			{
 #if USE_NEW
-				savedmag = magnitude;
+				savedmag = g_magnitude;
 #else
 				savedx = x;
 				savedy = y;
@@ -149,7 +149,7 @@ long calcmandfpasm_c(void)
 			else
 			{
 #if USE_NEW
-				if (ABS(magnitude-savedmag) < closenuff)
+				if (ABS(g_magnitude-savedmag) < closenuff)
 				{
 #else
 				if (ABS(savedx-x) < closenuff && ABS(savedy-y) < closenuff)
