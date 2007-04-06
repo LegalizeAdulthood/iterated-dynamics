@@ -540,7 +540,7 @@ void Jiim(int which)         /* called by fractint */
 	int old_debugflag = debugflag;
 
 	/* must use standard fractal or be froth_calc */
-	if (fractalspecific[fractype].calculate_type != StandardFractal
+	if (fractalspecific[fractype].calculate_type != standard_fractal
 			&& fractalspecific[fractype].calculate_type != froth_calc)
 	{
 		return;

@@ -832,7 +832,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	if (maxit > *old_maxit
 		&& inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
-		&& curfractalspecific->calculate_type == StandardFractal
+		&& curfractalspecific->calculate_type == standard_fractal
 		&& !LogFlag
 		&& !truecolor /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && fillcolor > -1) /* tesseral with fill doesn't work */
@@ -1026,7 +1026,7 @@ static void handle_3d_params(int *kbdmore)
 static void handle_orbits(void)
 {
 	/* must use standard fractal and have a float variant */
-	if ((fractalspecific[fractype].calculate_type == StandardFractal
+	if ((fractalspecific[fractype].calculate_type == standard_fractal
 			|| fractalspecific[fractype].calculate_type == froth_calc)
 		&& (fractalspecific[fractype].isinteger == FALSE
 			|| fractalspecific[fractype].tofloat != NOFRACTAL)

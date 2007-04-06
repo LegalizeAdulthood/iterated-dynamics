@@ -352,7 +352,7 @@ choose_vars_restart:
 		uvalues[k].uval.ch.val =  g_genes[num].mutate;
 	}
 
-	if (curfractalspecific->calculate_type == StandardFractal &&
+	if (curfractalspecific->calculate_type == standard_fractal &&
 		(curfractalspecific->flags & BAILTEST))
 	{
 		choices[++k] = g_genes[NUMGENES - 1].name;
@@ -412,7 +412,7 @@ choose_vars_restart:
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 	}
 
-	if (curfractalspecific->calculate_type == StandardFractal &&
+	if (curfractalspecific->calculate_type == standard_fractal &&
 		(curfractalspecific->flags & BAILTEST))
 	{
 		g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
