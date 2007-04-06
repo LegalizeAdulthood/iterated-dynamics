@@ -1203,7 +1203,7 @@ void backwards_v19(void)
 	{
 		inversion[0] = inversion[1] = inversion[2] = g_invert = 0;
 	}
-	no_mag_calc = fix_bof() ? 1 : 0; /* fractal has old bof60/61 problem with magnitude */
+	g_no_magnitude_calculation = fix_bof() ? TRUE : FALSE; /* fractal has old bof60/61 problem with magnitude */
 	use_old_period = fix_period_bof() ? 1 : 0; /* fractal uses old periodicity method */
 	use_old_distest = (save_release < 1827 && distest) ? 1 : 0; /* use old distest code */
 }

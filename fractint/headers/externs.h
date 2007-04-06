@@ -329,7 +329,7 @@ extern double                newopy;
 extern int                   g_new_orbit_type;
 extern int                   nextsavedincr;
 extern int                   no_sub_images;
-extern int                   no_mag_calc;
+extern int                   g_no_magnitude_calculation;
 extern int                   nobof;
 extern int                   numaffine;
 extern unsigned              numcolors;
