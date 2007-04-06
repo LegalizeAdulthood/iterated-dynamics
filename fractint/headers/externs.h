@@ -58,6 +58,7 @@ extern char                  brwscheckparms;
 extern char                  brwschecktype;
 extern char                  busy;
 extern long                  calctime;
+extern long (*				g_calculate_mandelbrot_asm_fp)(void);
 extern int (*                g_calculate_type)(void);
 extern int                   calc_status;
 extern char                  calibrate;

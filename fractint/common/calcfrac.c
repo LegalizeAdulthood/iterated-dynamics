@@ -134,6 +134,7 @@ BYTE g_stack[4096];              /* common temp, two put_line calls */
 int g_next_saved_incr;
 int g_first_saved_and;
 int g_atan_colors = 180;
+long (*g_calculate_mandelbrot_asm_fp)(void);
 
 /* routines in this module      */
 static void perform_work_list(void);
@@ -1887,8 +1888,6 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 	return g_color;
 }
 
-long (*calcmandfpasm)(void);
-
 /************************************************************************/
 /* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot() */
 /* can also handle invert, any g_rq_limit, potflag, zmag, epsilon cross,     */
@@ -1905,7 +1904,7 @@ int calcmandfp(void)
 		g_initial_z.x = dxpixel();
 		g_initial_z.y = dypixel();
 	}
-	if (calcmandfpasm() >= 0)
+	if (g_calculate_mandelbrot_asm_fp() >= 0)
 	{
 		if (potflag)
 		{
