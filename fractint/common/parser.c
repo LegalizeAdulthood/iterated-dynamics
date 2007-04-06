@@ -3019,11 +3019,11 @@ int Formula(void)
 	switch (MathType)
 	{
 	case D_MATH:
-		g_old_z = g_new = v[3].a.d;
+		g_old_z = g_new_z = v[3].a.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
 	case M_MATH:
-		g_old_z = g_new = MPC2cmplx(v[3].a.m);
+		g_old_z = g_new_z = MPC2cmplx(v[3].a.m);
 		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
 		lold = lnew = v[3].a.l;
