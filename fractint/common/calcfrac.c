@@ -44,7 +44,7 @@
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
 long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
-_CMPLX init, tmp, old, g_new, saved;
+_CMPLX g_initial_z, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
 int row, col, passes;
@@ -1891,12 +1891,12 @@ int calcmandfp(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
-		init.y = dypixel();
+		g_initial_z.x = dxpixel();
+		g_initial_z.y = dypixel();
 	}
 	if (calcmandfpasm() >= 0)
 	{
@@ -2061,7 +2061,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				clear_bf(bfsaved.y);
 			}
 		}
-		init.y = dypixel();
+		g_initial_z.y = dypixel();
 		if (distest)
 		{
 			if (use_old_distest)

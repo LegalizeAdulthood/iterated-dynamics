@@ -210,7 +210,7 @@ extern float *           ifs_defn;
 extern int                   ifs_type;
 extern char                  image_map;
 extern int                   init3d[20];
-extern _CMPLX                init;
+extern _CMPLX                g_initial_z;
 extern int                   initbatch;
 extern int                   initcyclelimit;
 extern int                   g_init_mode;

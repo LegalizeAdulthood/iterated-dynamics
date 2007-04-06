@@ -787,7 +787,7 @@ int mandelbf_per_pixel()
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
-			Mandelbrot iteration with init rather than 0 */
+			Mandelbrot iteration with g_initial_z rather than 0 */
 		floattobf(bfold.x, param[0]); /* initial pertubation of parameters set */
 		floattobf(bfold.y, param[1]);
 		coloriter = -1;

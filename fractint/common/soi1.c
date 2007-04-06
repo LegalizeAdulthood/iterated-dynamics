@@ -73,7 +73,7 @@ static long iteration(register DBLS cr, register DBLS ci,
 	old.y = im;
 	tempsqrx = sqr(old.x);
 	tempsqry = sqr(old.y);
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	floatparm->x = cr;
 	floatparm->y = ci;
 	while (ORBITCALC() == 0 && start < maxit)

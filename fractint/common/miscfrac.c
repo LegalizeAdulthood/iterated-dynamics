@@ -82,8 +82,8 @@ int test(void)
 			for (col = 0; col <= ixstop; col++)       /* look at each point on screen */
 			{
 				register int color;
-				init.x = dxpixel();
-				init.y = dypixel();
+				g_initial_z.x = dxpixel();
+				g_initial_z.y = dypixel();
 				if (driver_key_pressed())
 				{
 					testend();
@@ -91,7 +91,7 @@ int test(void)
 					put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
 					return -1;
 				}
-				color = testpt(init.x, init.y, parm.x, parm.y, maxit, inside);
+				color = testpt(g_initial_z.x, g_initial_z.y, parm.x, parm.y, maxit, inside);
 				if (color >= colors)  /* avoid trouble if color is 0 */
 				{
 					if (colors < 16)
@@ -1021,7 +1021,7 @@ int bifurcation(void)
 	}
 	else
 	{
-		init.y = (double)(yymax - iystop*delyy); /* bottom pixels */
+		g_initial_z.y = (double)(yymax - iystop*delyy); /* bottom pixels */
 	}
 
 	while (column <= ixstop)
@@ -1136,7 +1136,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = integerfractal
 			? (iystop - (int)((lPopulation - linit.y) / dely))
-			: (iystop - (int)((Population - init.y) / delyy));
+			: (iystop - (int)((Population - g_initial_z.y) / delyy));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
@@ -1446,9 +1446,9 @@ int lyapunov(void)
 	(*plot)(col, row, 1);
 	if (invert)
 	{
-		invertz2(&init);
-		a = init.y;
-		b = init.x;
+		invertz2(&g_initial_z);
+		a = g_initial_z.y;
+		b = g_initial_z.x;
 	}
 	else
 	{

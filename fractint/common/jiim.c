@@ -928,10 +928,10 @@ void Jiim(int which)         /* called by fractint */
 			}
 			iter = 1;
 			old.x = old.y = lold.x = lold.y = 0;
-			SaveC.x = init.x =  cr;
-			SaveC.y = init.y =  ci;
-			linit.x = (long)(init.x*fudge);
-			linit.y = (long)(init.y*fudge);
+			SaveC.x = g_initial_z.x =  cr;
+			SaveC.y = g_initial_z.y =  ci;
+			linit.x = (long)(g_initial_z.x*fudge);
+			linit.y = (long)(g_initial_z.y*fudge);
 
 			old_x = old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
@@ -1187,8 +1187,8 @@ void Jiim(int which)         /* called by fractint */
 					old.x = lold.x; old.x /= fudge;
 					old.y = lold.y; old.y /= fudge;
 				}
-				x = (int)((old.x - init.x)*xfactor*3*zoom + xoff);
-				y = (int)((old.y - init.y)*yfactor*3*zoom + yoff);
+				x = (int)((old.x - g_initial_z.x)*xfactor*3*zoom + xoff);
+				y = (int)((old.y - g_initial_z.y)*yfactor*3*zoom + yoff);
 				if ((*ORBITCALC)())
 				{
 					iter = maxit;
