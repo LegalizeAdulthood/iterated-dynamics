@@ -1307,7 +1307,7 @@ void goodbye(void)                  /* we done.  Bail out */
 		free(mapdacbox);
 		mapdacbox = NULL;
 	}
-	if (resume_info != NULL)
+	if (g_resume_info != NULL)
 	{
 		end_resume();
 	}

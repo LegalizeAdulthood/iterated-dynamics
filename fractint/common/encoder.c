@@ -516,11 +516,11 @@ int encoder()
 			save_info.calc_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
 		}
 		save_info.tot_extend_len = 0;
-		if (resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
+		if (g_resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
 		{
 			/* resume info block, 002 */
 			save_info.tot_extend_len += extend_blk_len(resume_len);
-			if (!put_extend_blk(2, resume_len, resume_info))
+			if (!put_extend_blk(2, resume_len, g_resume_info))
 			{
 				goto oops;
 			}
