@@ -64,7 +64,7 @@ int test(void)
 {
 	int startrow, startpass, numpasses;
 	startrow = startpass = 0;
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
@@ -693,7 +693,7 @@ int diffusion(void)
 		break;
 	}
 
-	if (resuming) /* restore worklist, if we can't the above will stay in place */
+	if (g_resuming) /* restore worklist, if we can't the above will stay in place */
 	{
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
@@ -968,7 +968,7 @@ int bifurcation(void)
 	unsigned long array_size;
 	int row, column;
 	column = 0;
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(column), &column, 0);
@@ -1378,7 +1378,7 @@ int popcorn()   /* subset of std engine */
 {
 	int start_row;
 	start_row = 0;
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(start_row), &start_row, 0);
@@ -1860,7 +1860,7 @@ int cellular()
 	/* 0 to stop on next screen */
 	filled = 0;
 	notfilled = (S16)(1-filled);
-	if (resuming && !nxtscreenflag && !lstscreenflag)
+	if (g_resuming && !nxtscreenflag && !lstscreenflag)
 	{
 		start_resume();
 		get_resume(sizeof(start_row), &start_row, 0);
@@ -2041,7 +2041,7 @@ contloop:
 
 int cellular_setup(void)
 {
-	if (!resuming)
+	if (!g_resuming)
 	{
 		nxtscreenflag = 0; /* initialize flag */
 	}

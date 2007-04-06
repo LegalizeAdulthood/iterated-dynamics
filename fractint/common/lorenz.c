@@ -1351,7 +1351,7 @@ int inverse_julia_per_image()
 {
 	int color = 0;
 
-	if (resuming)            /* can't resume */
+	if (g_resuming)            /* can't resume */
 	{
 		return -1;
 	}
@@ -1412,7 +1412,7 @@ int orbit_2d_fp()
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(count), &count, sizeof(color), &color,
@@ -1549,7 +1549,7 @@ int orbit_2d()
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 	g_color_iter = 0L;
 
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(count), &count, sizeof(color), &color,
@@ -1963,7 +1963,7 @@ int dynamic_2d_fp()
 	xstep = -1;
 	ystep = 0;
 
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(count), &count, sizeof(color), &color,
@@ -2190,7 +2190,7 @@ int plotorbits2dfloat(void)
 		soundvar = &z;
 	}
 
-	if (resuming)
+	if (g_resuming)
 	{
 		start_resume();
 		get_resume(sizeof(s_o_color), &s_o_color, 0);
