@@ -1283,11 +1283,11 @@ static int _fastcall ratio_bad(double actual, double desired)
 	transient memory needs by using these routines.
 
 	StandardFractal, calcmand, solidguess, and bound_trace_main are a related
-	set of engines for escape-time fractals.  They use a common worklist
+	set of engines for escape-time fractals.  They use a common g_work_list
 	structure for save/resume.  Fractals using these must specify calcmand
 	or StandardFractal as the engine in fractalspecificinfo.
 	Other engines don't get btm nor ssg, don't get off-axis symmetry nor
-	panning (the worklist stuff), and are on their own for save/resume.
+	panning (the g_work_list stuff), and are on their own for save/resume.
 
 	*/
 
@@ -1757,19 +1757,19 @@ int add_worklist(int xfrom, int xto, int xbegin,
 int yfrom, int yto, int ybegin,
 int pass, int sym)
 {
-	if (num_worklist >= MAXCALCWORK)
+	if (g_num_work_list >= MAXCALCWORK)
 	{
 		return -1;
 	}
-	worklist[num_worklist].xxstart = xfrom;
-	worklist[num_worklist].xxstop  = xto;
-	worklist[num_worklist].xxbegin = xbegin;
-	worklist[num_worklist].yystart = yfrom;
-	worklist[num_worklist].yystop  = yto;
-	worklist[num_worklist].yybegin = ybegin;
-	worklist[num_worklist].pass    = pass;
-	worklist[num_worklist].sym     = sym;
-	++num_worklist;
+	g_work_list[g_num_work_list].xxstart = xfrom;
+	g_work_list[g_num_work_list].xxstop  = xto;
+	g_work_list[g_num_work_list].xxbegin = xbegin;
+	g_work_list[g_num_work_list].yystart = yfrom;
+	g_work_list[g_num_work_list].yystop  = yto;
+	g_work_list[g_num_work_list].yybegin = ybegin;
+	g_work_list[g_num_work_list].pass    = pass;
+	g_work_list[g_num_work_list].sym     = sym;
+	++g_num_work_list;
 	tidy_worklist();
 	return 0;
 }
@@ -1777,46 +1777,46 @@ int pass, int sym)
 static int _fastcall combine_worklist(void) /* look for 2 entries which can freely merge */
 {
 	int i, j;
-	for (i = 0; i < num_worklist; ++i)
+	for (i = 0; i < g_num_work_list; ++i)
 	{
-		if (worklist[i].yystart == worklist[i].yybegin)
+		if (g_work_list[i].yystart == g_work_list[i].yybegin)
 		{
-			for (j = i + 1; j < num_worklist; ++j)
+			for (j = i + 1; j < g_num_work_list; ++j)
 			{
-				if (worklist[j].sym == worklist[i].sym
-					&& worklist[j].yystart == worklist[j].yybegin
-					&& worklist[j].xxstart == worklist[j].xxbegin
-					&& worklist[i].pass == worklist[j].pass)
+				if (g_work_list[j].sym == g_work_list[i].sym
+					&& g_work_list[j].yystart == g_work_list[j].yybegin
+					&& g_work_list[j].xxstart == g_work_list[j].xxbegin
+					&& g_work_list[i].pass == g_work_list[j].pass)
 				{
-					if (worklist[i].xxstart == worklist[j].xxstart
-						&& worklist[i].xxbegin == worklist[j].xxbegin
-						&& worklist[i].xxstop  == worklist[j].xxstop)
+					if (g_work_list[i].xxstart == g_work_list[j].xxstart
+						&& g_work_list[i].xxbegin == g_work_list[j].xxbegin
+						&& g_work_list[i].xxstop  == g_work_list[j].xxstop)
 					{
-						if (worklist[i].yystop + 1 == worklist[j].yystart)
+						if (g_work_list[i].yystop + 1 == g_work_list[j].yystart)
 						{
-							worklist[i].yystop = worklist[j].yystop;
+							g_work_list[i].yystop = g_work_list[j].yystop;
 							return j;
 						}
-						if (worklist[j].yystop + 1 == worklist[i].yystart)
+						if (g_work_list[j].yystop + 1 == g_work_list[i].yystart)
 						{
-							worklist[i].yystart = worklist[j].yystart;
-							worklist[i].yybegin = worklist[j].yybegin;
+							g_work_list[i].yystart = g_work_list[j].yystart;
+							g_work_list[i].yybegin = g_work_list[j].yybegin;
 							return j;
 						}
 					}
-					if (worklist[i].yystart == worklist[j].yystart
-						&& worklist[i].yybegin == worklist[j].yybegin
-						&& worklist[i].yystop  == worklist[j].yystop)
+					if (g_work_list[i].yystart == g_work_list[j].yystart
+						&& g_work_list[i].yybegin == g_work_list[j].yybegin
+						&& g_work_list[i].yystop  == g_work_list[j].yystop)
 					{
-						if (worklist[i].xxstop + 1 == worklist[j].xxstart)
+						if (g_work_list[i].xxstop + 1 == g_work_list[j].xxstart)
 						{
-							worklist[i].xxstop = worklist[j].xxstop;
+							g_work_list[i].xxstop = g_work_list[j].xxstop;
 							return j;
 						}
-						if (worklist[j].xxstop + 1 == worklist[i].xxstart)
+						if (g_work_list[j].xxstop + 1 == g_work_list[i].xxstart)
 						{
-							worklist[i].xxstart = worklist[j].xxstart;
-							worklist[i].xxbegin = worklist[j].xxbegin;
+							g_work_list[i].xxstart = g_work_list[j].xxstart;
+							g_work_list[i].xxbegin = g_work_list[j].xxbegin;
 							return j;
 						}
 					}
@@ -1833,25 +1833,25 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 	WORKLIST tempwork;
 	while ((i = combine_worklist()) != 0)
 	{ /* merged two, delete the gone one */
-		while (++i < num_worklist)
+		while (++i < g_num_work_list)
 		{
-			worklist[i-1] = worklist[i];
+			g_work_list[i-1] = g_work_list[i];
 		}
-		--num_worklist;
+		--g_num_work_list;
 	}
-	for (i = 0; i < num_worklist; ++i)
+	for (i = 0; i < g_num_work_list; ++i)
 	{
-		for (j = i + 1; j < num_worklist; ++j)
+		for (j = i + 1; j < g_num_work_list; ++j)
 		{
-			if (worklist[j].pass < worklist[i].pass
-				|| (worklist[j].pass == worklist[i].pass
-				&& (worklist[j].yystart < worklist[i].yystart
-				|| (worklist[j].yystart == worklist[i].yystart
-				&& worklist[j].xxstart <  worklist[i].xxstart))))
+			if (g_work_list[j].pass < g_work_list[i].pass
+				|| (g_work_list[j].pass == g_work_list[i].pass
+				&& (g_work_list[j].yystart < g_work_list[i].yystart
+				|| (g_work_list[j].yystart == g_work_list[i].yystart
+				&& g_work_list[j].xxstart <  g_work_list[i].xxstart))))
 			{ /* dumb sort, swap 2 entries to correct order */
-				tempwork = worklist[i];
-				worklist[i] = worklist[j];
-				worklist[j] = tempwork;
+				tempwork = g_work_list[i];
+				g_work_list[i] = g_work_list[j];
+				g_work_list[j] = tempwork;
 			}
 		}
 	}

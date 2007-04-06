@@ -89,11 +89,11 @@ int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
 int g_resuming;                           /* nonzero if resuming after interrupt */
-int num_worklist;                       /* resume worklist for standard engine */
-WORKLIST worklist[MAXCALCWORK];
+int g_num_work_list;                       /* resume g_work_list for standard engine */
+WORKLIST g_work_list[MAXCALCWORK];
 int xxstart;
 int xxstop;
-int xxbegin;             /* these are same as worklist, */
+int xxbegin;             /* these are same as g_work_list, */
 int yystart;
 int yystop;
 int yybegin;             /* declared as separate items  */
@@ -928,18 +928,18 @@ static void perform_worklist()
 		stdcalcmode = '1';
 	}
 
-	/* default setup a new worklist */
-	num_worklist = 1;
-	worklist[0].xxstart = worklist[0].xxbegin = 0;
-	worklist[0].yystart = worklist[0].yybegin = 0;
-	worklist[0].xxstop = xdots - 1;
-	worklist[0].yystop = ydots - 1;
-	worklist[0].pass = worklist[0].sym = 0;
-	if (g_resuming) /* restore worklist, if we can't the above will stay in place */
+	/* default setup a new g_work_list */
+	g_num_work_list = 1;
+	g_work_list[0].xxstart = g_work_list[0].xxbegin = 0;
+	g_work_list[0].yystart = g_work_list[0].yybegin = 0;
+	g_work_list[0].xxstop = xdots - 1;
+	g_work_list[0].yystop = ydots - 1;
+	g_work_list[0].pass = g_work_list[0].sym = 0;
+	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
 		int vsn;
 		vsn = start_resume();
-		get_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+		get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
 		end_resume();
 		if (vsn < 2)
 		{
@@ -1009,26 +1009,26 @@ static void perform_worklist()
 			fabs(ftemp)*fabs(ftemp2)*2 / sqrt(dem_delta);
 	}
 
-	while (num_worklist > 0)
+	while (g_num_work_list > 0)
 	{
 		/* per_image can override */
 		g_calculate_type = curfractalspecific->calculate_type;
 		g_symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
-		/* pull top entry off worklist */
-		ixstart = xxstart = worklist[0].xxstart;
-		g_x_stop  = xxstop  = worklist[0].xxstop;
-		xxbegin  = worklist[0].xxbegin;
-		iystart = yystart = worklist[0].yystart;
-		g_y_stop  = yystop  = worklist[0].yystop;
-		yybegin  = worklist[0].yybegin;
-		workpass = worklist[0].pass;
-		worksym  = worklist[0].sym;
-		--num_worklist;
-		for (i = 0; i < num_worklist; ++i)
+		/* pull top entry off g_work_list */
+		ixstart = xxstart = g_work_list[0].xxstart;
+		g_x_stop  = xxstop  = g_work_list[0].xxstop;
+		xxbegin  = g_work_list[0].xxbegin;
+		iystart = yystart = g_work_list[0].yystart;
+		g_y_stop  = yystop  = g_work_list[0].yystop;
+		yybegin  = g_work_list[0].yybegin;
+		workpass = g_work_list[0].pass;
+		worksym  = g_work_list[0].sym;
+		--g_num_work_list;
+		for (i = 0; i < g_num_work_list; ++i)
 		{
-			worklist[i] = worklist[i + 1];
+			g_work_list[i] = g_work_list[i + 1];
 		}
 
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
@@ -1182,10 +1182,10 @@ static void perform_worklist()
 		}
 	}
 
-	if (num_worklist > 0)
+	if (g_num_work_list > 0)
 	{  /* interrupted, resumable */
-		alloc_resume(sizeof(worklist) + 20, 2);
-		put_resume(sizeof(num_worklist), &num_worklist, sizeof(worklist), worklist, 0);
+		alloc_resume(sizeof(g_work_list) + 20, 2);
+		put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
 	}
 	else
 	{
@@ -1771,7 +1771,7 @@ static int OneOrTwoPass(void)
 			add_worklist(xxstart, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
 			return -1;
 		}
-		if (num_worklist > 0) /* worklist not empty, defer 2nd pass */
+		if (g_num_work_list > 0) /* g_work_list not empty, defer 2nd pass */
 		{
 			add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
 			return 0;
@@ -3678,7 +3678,7 @@ static int solidguess(void)
 			}
 		}
 
-		if (num_worklist) /* work list not empty, just do 1st pass */
+		if (g_num_work_list) /* work list not empty, just do 1st pass */
 		{
 			add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, 1, worksym);
 			goto exit_solidguess;
@@ -3765,7 +3765,7 @@ static int solidguess(void)
 			}
 		}
 		++workpass;
-		if (num_worklist /* work list not empty, do one pass at a time */
+		if (g_num_work_list /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
 			add_worklist(xxstart, xxstop, xxstart, yystart, yystop, yystart, workpass, worksym);
@@ -4173,7 +4173,7 @@ static int _fastcall xsym_split(int xaxis_row, int xaxis_between)
 		}
 		if (i > yystop) /* split into 2 pieces, bottom has the symmetry */
 		{
-			if (num_worklist >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4188,7 +4188,7 @@ static int _fastcall xsym_split(int xaxis_row, int xaxis_between)
 		}
 		if (i < yystop) /* split into 2 pieces, top has the symmetry */
 		{
-			if (num_worklist >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4227,7 +4227,7 @@ static int _fastcall ysym_split(int yaxis_col, int yaxis_between)
 		}
 		if (i > xxstop) /* split into 2 pieces, right has the symmetry */
 		{
-			if (num_worklist >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4242,7 +4242,7 @@ static int _fastcall ysym_split(int yaxis_col, int yaxis_between)
 		}
 		if (i < xxstop) /* split into 2 pieces, left has the symmetry */
 		{
-			if (num_worklist >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
