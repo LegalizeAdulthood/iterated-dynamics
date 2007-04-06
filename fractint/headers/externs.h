@@ -326,7 +326,7 @@ extern char                  newodpy;
 extern double                newopx;
 extern double                newopy;
 extern int                   g_new_orbit_type;
-extern int                   nextsavedincr;
+extern int                   g_next_saved_incr;
 extern int                   no_sub_images;
 extern int                   g_no_magnitude_calculation;
 extern int                   nobof;

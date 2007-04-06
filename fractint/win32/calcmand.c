@@ -190,7 +190,7 @@ calc_mand_floating_point(void)
 				if (savedincr == 0)
 				{
 					savedand = (savedand << 1) + 1;
-					savedincr = nextsavedincr;
+					savedincr = g_next_saved_incr;
 				}
 			}
 			else if (ABS(savedx-x) < g_close_enough_l && ABS(savedy-y) < g_close_enough_l)
@@ -455,7 +455,7 @@ chksv386_16:
 		jnz		short nonmax386_16			;  nope.
 		shl		savedand, 1					; well	then, let's	try	this one!
 		inc		savedand					;  (2**n +1)
-		mov		eax, nextsavedincr			;	and	reset the increment	flag
+		mov		eax, g_next_saved_incr			;	and	reset the increment	flag
 		mov		savedincr, eax				;	and	reset the increment	flag
 		jmp		short nonmax386_16
 
@@ -538,7 +538,7 @@ chksave1:
 		jnz		short nonmax1				;  nope.
 		shl		savedand, 1					; well	then, let's	try	this one!
 		inc		savedand					;  (2**n +1)
-		mov		eax, nextsavedincr			;	and	reset the increment	flag
+		mov		eax, g_next_saved_incr			;	and	reset the increment	flag
 		mov		savedincr, eax				;	and	reset the increment	flag
 		jmp		short nonmax1
 
@@ -795,7 +795,7 @@ checksave:
 		rcl		dword ptr savedand + 4, 1		;	well then, let's try this one!
 		add		dword ptr savedand,	1		;	 (2**n +1)
 		adc		dword ptr savedand + 4, 0		;	 (2**n +1)
-		mov		eax, nextsavedincr			;	and	reset the increment	flag
+		mov		eax, g_next_saved_incr			;	and	reset the increment	flag
 		mov		savedincr, eax				;	and	reset the increment	flag
 checkdone:
 		ret									; we done.

@@ -130,8 +130,8 @@ int s_periodicity_check;
 typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
 BYTE g_stack[4096];              /* common temp, two put_line calls */
-unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
-
+/* For periodicity testing, only in StandardFractal() */
+int g_next_saved_incr;
 
 /* routines in this module      */
 static void perform_worklist(void);
@@ -205,6 +205,7 @@ static int s_work_sym;                   /* for the sake of calcmand    */
 static enum direction s_going_to;
 static int s_trail_row;
 static int s_trail_col;
+static unsigned int s_t_prefix[2][maxyblk][maxxblk]; /* common temp */
 
 /* added for testing autologmap() */
 static long autologmap(void);
@@ -217,9 +218,6 @@ static long autologmap(void);
 #define lsqr(x) (multiply((x), (x), bitshift))
 #endif
 
-
-/* For periodicity testing, only in StandardFractal() */
-int nextsavedincr;
 long firstsavedand;
 
 static BYTE *savedots = NULL;
@@ -584,17 +582,17 @@ int calcfract(void)
 
 	if (g_use_old_periodicity)
 	{
-		nextsavedincr = 1;
+		g_next_saved_incr = 1;
 		firstsavedand = 1;
 	}
 	else
 	{
-		nextsavedincr = (int)log10(maxit); /* works better than log() */
-		if (nextsavedincr < 4)
+		g_next_saved_incr = (int)log10(maxit); /* works better than log() */
+		if (g_next_saved_incr < 4)
 		{
-			nextsavedincr = 4; /* maintains image with low iterations */
+			g_next_saved_incr = 4; /* maintains image with low iterations */
 		}
-		firstsavedand = (long)((nextsavedincr*2) + 1);
+		firstsavedand = (long)((g_next_saved_incr*2) + 1);
 	}
 
 	LogTable = NULL;
@@ -2504,7 +2502,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				if (--savedincr == 0)    /* time to lengthen the periodicity? */
 				{
 					savedand = (savedand << 1) + 1;       /* longer periodicity */
-					savedincr = nextsavedincr; /* restart counter */
+					savedincr = g_next_saved_incr; /* restart counter */
 				}
 			}
 			else                /* check against an old save */
@@ -3630,7 +3628,7 @@ static int solidguess(void)
 		if (s_iy_start <= g_yy_start) /* first time for this window, init it */
 		{
 			g_current_row = 0;
-			memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
+			memset(&s_t_prefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
 			g_reset_periodicity = 1;
 			g_row = s_iy_start;
 			for (g_col = s_ix_start; g_col <= g_x_stop; g_col += s_max_block)
@@ -3645,7 +3643,7 @@ static int solidguess(void)
 		}
 		else
 		{
-			memset(&tprefix[1][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
+			memset(&s_t_prefix[1][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
 		}
 		for (y = s_iy_start; y <= g_y_stop; y += blocksize)
 		{
@@ -3692,7 +3690,7 @@ static int solidguess(void)
 		{
 			for (y = 0; y <= ylim; ++y)
 			{
-				tprefix[1][y][xlim] = 0xffff;
+				s_t_prefix[1][y][xlim] = 0xffff;
 			}
 		}
 		if (!s_bottom_guess) /* no bottom edge guessing, zap border */
@@ -3702,14 +3700,14 @@ static int solidguess(void)
 			i = 1 << (i&15);
 			for (x = 0; x <= xlim; ++x)
 			{
-				tprefix[1][y][x] |= i;
+				s_t_prefix[1][y][x] |= i;
 			}
 		}
-		/* set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1] */
+		/* set each bit in s_t_prefix[0] to OR of it & surrounding 8 in s_t_prefix[1] */
 		for (y = 0; ++y < ylim; )
 		{
-			pfxp0 = (unsigned int *)&tprefix[0][y][0];
-			pfxp1 = (unsigned int *)&tprefix[1][y][0];
+			pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
+			pfxp1 = (unsigned int *)&s_t_prefix[1][y][0];
 			for (x = 0; ++x < xlim; )
 			{
 				++pfxp1;
@@ -3726,7 +3724,7 @@ static int solidguess(void)
 	}
 	else /* first pass already done */
 	{
-		memset(&tprefix[0][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
+		memset(&s_t_prefix[0][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
 	}
 	if (g_three_pass)
 	{
@@ -3805,7 +3803,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 
 	s_half_block = blocksize >> 1;
 	i = y/s_max_block;
-	pfxptr = (unsigned int *)&tprefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
+	pfxptr = (unsigned int *)&s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
 	pfxmask = 1 << (i&15);
 	ylesshalf = y-s_half_block;
 	ylessblock = y-blocksize; /* constants, for speed */
