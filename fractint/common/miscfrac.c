@@ -77,9 +77,9 @@ int test(void)
 	numpasses = (stdcalcmode == '1') ? 0 : 1;
 	for (g_passes = startpass; g_passes <= numpasses ; g_passes++)
 	{
-		for (g_row = startrow; g_row <= iystop; g_row = g_row + 1 + numpasses)
+		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
 		{
-			for (g_col = 0; g_col <= ixstop; g_col++)       /* look at each point on screen */
+			for (g_col = 0; g_col <= g_x_stop; g_col++)       /* look at each point on screen */
 			{
 				register int color;
 				g_initial_z.x = dxpixel();
@@ -974,7 +974,7 @@ int bifurcation(void)
 		get_resume(sizeof(column), &column, 0);
 		end_resume();
 	}
-	array_size =  (iystop + 1)*sizeof(int); /* should be iystop + 1 */
+	array_size =  (g_y_stop + 1)*sizeof(int); /* should be g_y_stop + 1 */
 	s_verhulst_array = (int *) malloc(array_size);
 	if (s_verhulst_array == NULL)
 	{
@@ -984,7 +984,7 @@ int bifurcation(void)
 
 	LPI = (long)(PI*fudge);
 
-	for (row = 0; row <= iystop; row++) /* should be iystop */
+	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
 	{
 		s_verhulst_array[row] = 0;
 	}
@@ -1017,14 +1017,14 @@ int bifurcation(void)
 
 	if (integerfractal)
 	{
-		linit.y = ymax - iystop*dely;            /* Y-value of    */
+		linit.y = ymax - g_y_stop*dely;            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(yymax - iystop*delyy); /* bottom pixels */
+		g_initial_z.y = (double)(yymax - g_y_stop*delyy); /* bottom pixels */
 	}
 
-	while (column <= ixstop)
+	while (column <= g_x_stop)
 	{
 		if (driver_key_pressed())
 		{
@@ -1044,7 +1044,7 @@ int bifurcation(void)
 		}
 		verhulst();        /* calculate array once per column */
 
-		for (row = iystop; row >= 0; row--) /* should be iystop & >= 0 */
+		for (row = g_y_stop; row >= 0; row--) /* should be g_y_stop & >= 0 */
 		{
 			int color;
 			color = s_verhulst_array[row];
@@ -1135,17 +1135,17 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = integerfractal
-			? (iystop - (int)((lPopulation - linit.y) / dely))
-			: (iystop - (int)((Population - g_initial_z.y) / delyy));
+			? (g_y_stop - (int)((lPopulation - linit.y) / dely))
+			: (g_y_stop - (int)((Population - g_initial_z.y) / delyy));
 
 		/* if it's visible on the screen, save it in the column array */
-		if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
+		if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
 		{
 			s_verhulst_array[pixel_row] ++;
 		}
 		if (periodicitycheck && bifurcation_periodic(counter))
 		{
-			if (pixel_row <= (unsigned int)iystop) /* JCO 6/6/92 */
+			if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
 				s_verhulst_array[pixel_row] --;
 			break;
 		}
@@ -1387,10 +1387,10 @@ int popcorn()   /* subset of std engine */
 	kbdcount = max_kbdcount;
 	g_plot_color = noplot;
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
-	for (g_row = start_row; g_row <= iystop; g_row++)
+	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		reset_periodicity = 1;
-		for (g_col = 0; g_col <= ixstop; g_col++)
+		for (g_col = 0; g_col <= g_x_stop; g_col++)
 		{
 			if (StandardFractal() == -1) /* interrupted */
 			{
@@ -1848,8 +1848,8 @@ int cellular()
 
 
 	start_row = 0;
-	cell_array[0] = (BYTE *)malloc(ixstop + 1);
-	cell_array[1] = (BYTE *)malloc(ixstop + 1);
+	cell_array[0] = (BYTE *)malloc(g_x_stop + 1);
+	cell_array[1] = (BYTE *)malloc(g_x_stop + 1);
 	if (cell_array[0] == NULL || cell_array[1] == NULL)
 	{
 		abort_cellular(BAD_MEM, 0);
@@ -1865,39 +1865,39 @@ int cellular()
 		start_resume();
 		get_resume(sizeof(start_row), &start_row, 0);
 		end_resume();
-		get_line(start_row, 0, ixstop, cell_array[filled]);
+		get_line(start_row, 0, g_x_stop, cell_array[filled]);
 	}
 	else if (nxtscreenflag && !lstscreenflag)
 	{
 		start_resume();
 		end_resume();
-		get_line(iystop, 0, ixstop, cell_array[filled]);
-		param[3] += iystop + 1;
+		get_line(g_y_stop, 0, g_x_stop, cell_array[filled]);
+		param[3] += g_y_stop + 1;
 		start_row = -1; /* after 1st iteration its = 0 */
 	}
 	else
 	{
 		if (rflag || randparam == 0 || randparam == -1)
 		{
-			for (g_col = 0; g_col <= ixstop; g_col++)
+			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
 				cell_array[filled][g_col] = (BYTE)(rand()%(int)k);
 			}
 		} /* end of if random */
 		else
 		{
-			for (g_col = 0; g_col <= ixstop; g_col++)  /* Clear from end to end */
+			for (g_col = 0; g_col <= g_x_stop; g_col++)  /* Clear from end to end */
 			{
 				cell_array[filled][g_col] = 0;
 			}
 			i = 0;
-			for (g_col = (ixstop-16)/2; g_col < (ixstop + 16)/2; g_col++)  /* insert initial */
+			for (g_col = (g_x_stop-16)/2; g_col < (g_x_stop + 16)/2; g_col++)  /* insert initial */
 			{
 				cell_array[filled][g_col] = (BYTE)init_string[i++];    /* string */
 			}
 		} /* end of if not random */
 		lstscreenflag = (lnnmbr != 0) ? 1 : 0;
-		put_line(start_row, 0, ixstop, cell_array[filled]);
+		put_line(start_row, 0, g_x_stop, cell_array[filled]);
 	}
 	start_row++;
 
@@ -1916,7 +1916,7 @@ int cellular()
 				for (i = 0; i <= (U16)r; i++)
 				{
 						cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-						cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
+						cell_array[notfilled][g_x_stop-i] = (BYTE)(rand()%(int)k);
 				}
 			}
 			else
@@ -1925,7 +1925,7 @@ int cellular()
 				for (i = 0; i <= (U16)r; i++)
 				{
 					cell_array[notfilled][i] = 0;
-					cell_array[notfilled][ixstop-i] = 0;
+					cell_array[notfilled][g_x_stop-i] = 0;
 				}
 			}
 
@@ -1943,7 +1943,7 @@ int cellular()
 			cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 			/* use a rolling sum in t */
-			for (g_col = r + 1; g_col < ixstop-r; g_col++)  /* now do the rest */
+			for (g_col = r + 1; g_col < g_x_stop-r; g_col++)  /* now do the rest */
 			{
 				t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
 				if (t > rule_digits || t < 0)
@@ -1971,7 +1971,7 @@ int cellular()
 
 /* This section does all the work */
 contloop:
-	for (g_row = start_row; g_row <= iystop; g_row++)
+	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		if (rflag || randparam == 0 || randparam == -1)
 		{
@@ -1979,7 +1979,7 @@ contloop:
 			for (i = 0; i <= (U16)r; i++)
 			{
 				cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-				cell_array[notfilled][ixstop-i] = (BYTE)(rand()%(int)k);
+				cell_array[notfilled][g_x_stop-i] = (BYTE)(rand()%(int)k);
 			}
 		}
 		else
@@ -1988,7 +1988,7 @@ contloop:
 			for (i = 0; i <= (U16)r; i++)
 			{
 				cell_array[notfilled][i] = 0;
-				cell_array[notfilled][ixstop-i] = 0;
+				cell_array[notfilled][g_x_stop-i] = 0;
 			}
 		}
 
@@ -2006,7 +2006,7 @@ contloop:
 		cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 		/* use a rolling sum in t */
-		for (g_col = r + 1; g_col < ixstop-r; g_col++)  /* now do the rest */
+		for (g_col = r + 1; g_col < g_x_stop-r; g_col++)  /* now do the rest */
 		{
 			t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
 			if (t > rule_digits || t < 0)
@@ -2020,7 +2020,7 @@ contloop:
 
 		filled = notfilled;
 		notfilled = (S16)(1-filled);
-		put_line(g_row, 0, ixstop, cell_array[filled]);
+		put_line(g_row, 0, g_x_stop, cell_array[filled]);
 		if (driver_key_pressed())
 		{
 			abort_cellular(CELLULAR_DONE, 0);
@@ -2031,7 +2031,7 @@ contloop:
 	}
 	if (nxtscreenflag)
 	{
-		param[3] += iystop + 1;
+		param[3] += g_y_stop + 1;
 		start_row = 0;
 		goto contloop;
 	}
