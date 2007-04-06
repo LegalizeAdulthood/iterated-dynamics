@@ -240,30 +240,30 @@ static int z_line(long x, long y)
 		{
 			if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
 			{
-				color = (int) (128l*z_pixel / g_z_dots);
+				g_color = (int) (128l*z_pixel / g_z_dots);
 				if ((row + col) & 1)
 				{
 
-					(*plot)(col, row, 127 - color);
+					(*plot)(col, row, 127 - g_color);
 				}
 				else
 				{
-					color = (int) (multiply((long) color << 16, s_br_ratio, 16) >> 16);
-					if (color < 1)
+					g_color = (int) (multiply((long) g_color << 16, s_br_ratio, 16) >> 16);
+					if (g_color < 1)
 					{
-						color = 1;
+						g_color = 1;
 					}
-					if (color > 127)
+					if (g_color > 127)
 					{
-						color = 127;
+						g_color = 127;
 					}
-					(*plot)(col, row, 127 + s_b_base - color);
+					(*plot)(col, row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
-				color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(col, row, color + 1);
+				g_color = (int) (254l*z_pixel / g_z_dots);
+				(*plot)(col, row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;
@@ -356,28 +356,28 @@ static int z_line_fp(double x, double y)
 		{
 			if (g_juli_3D_mode == 3)
 			{
-				color = (int) (128l*z_pixel / g_z_dots);
+				g_color = (int) (128l*z_pixel / g_z_dots);
 				if ((row + col) & 1)
 				{
-					(*plot)(col, row, 127 - color);
+					(*plot)(col, row, 127 - g_color);
 				}
 				else
 				{
-					if (color < 1)
+					if (g_color < 1)
 					{
-						color = 1;
+						g_color = 1;
 					}
-					if (color > 127)
+					if (g_color > 127)
 					{
-						color = 127;
+						g_color = 127;
 					}
-					(*plot)(col, row, 127 + s_b_base - color);
+					(*plot)(col, row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
-				color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(col, row, color + 1);
+				g_color = (int) (254l*z_pixel / g_z_dots);
+				(*plot)(col, row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;

@@ -98,7 +98,7 @@ int asmlMANHbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
+	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
@@ -111,7 +111,7 @@ int asmlMANRbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x + g_new.y);
+	magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
@@ -191,7 +191,7 @@ int asm386lMANHbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
+	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
@@ -204,7 +204,7 @@ int asm386lMANRbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new.x + g_new.y);
+	magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
@@ -243,16 +243,16 @@ asmfpMODbailout endp
 int asmfpMODbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
 	magnitude = tempsqrx + tempsqry;
-	if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new.x) > rqlim2 ||
-		fabs(g_new.y) > rqlim2 || overflow)
+	if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new_z.x) > rqlim2 ||
+		fabs(g_new_z.y) > rqlim2 || overflow)
 	{
 		overflow = 0;
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -286,14 +286,14 @@ asmfpREALbailout endp
 int asmfpREALbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
 	if (tempsqrx >= rqlim || overflow)
 	{
 		overflow = 0;
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -327,14 +327,14 @@ asmfpIMAGbailout endp
 int asmfpIMAGbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
 	if (tempsqry >= rqlim || overflow)
 	{
 		overflow = 0;
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -375,14 +375,14 @@ asmfpORbailout endp
 int asmfpORbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
 	if (tempsqrx >= rqlim || tempsqry >= rqlim || overflow)
 	{
 		overflow = 0;
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -425,14 +425,14 @@ asmfpANDbailout endp
 int asmfpANDbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
 	if ((tempsqrx >= rqlim && tempsqry >= rqlim) || overflow)
 	{
 		overflow = 0;
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -478,14 +478,14 @@ asmfpMANHbailout endp
 int asmfpMANHbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	magnitude = fabs(g_new.x) + fabs(g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
+	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
 
@@ -528,13 +528,13 @@ asmfpMANRbailout endp
 int asmfpMANRbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	magnitude = fabs(g_new.x + g_new.y);
+	tempsqrx = sqr(g_new_z.x);
+	tempsqry = sqr(g_new_z.y);
+	magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (magnitude*magnitude >= rqlim)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new_z;
 	return 0;
 }
