@@ -1856,18 +1856,18 @@ int cellular()
 		return -1;
 	}
 
-	/* nxtscreenflag toggled by space bar in fractint.c, 1 for continuous */
+	/* g_next_screen_flag toggled by space bar in fractint.c, 1 for continuous */
 	/* 0 to stop on next screen */
 	filled = 0;
 	notfilled = (S16)(1-filled);
-	if (g_resuming && !nxtscreenflag && !lstscreenflag)
+	if (g_resuming && !g_next_screen_flag && !lstscreenflag)
 	{
 		start_resume();
 		get_resume(sizeof(start_row), &start_row, 0);
 		end_resume();
 		get_line(start_row, 0, g_x_stop, cell_array[filled]);
 	}
-	else if (nxtscreenflag && !lstscreenflag)
+	else if (g_next_screen_flag && !lstscreenflag)
 	{
 		start_resume();
 		end_resume();
@@ -2029,7 +2029,7 @@ contloop:
 			return -1;
 		}
 	}
-	if (nxtscreenflag)
+	if (g_next_screen_flag)
 	{
 		param[3] += g_y_stop + 1;
 		start_row = 0;
@@ -2043,7 +2043,7 @@ int cellular_setup(void)
 {
 	if (!g_resuming)
 	{
-		nxtscreenflag = 0; /* initialize flag */
+		g_next_screen_flag = 0; /* initialize flag */
 	}
 	timer(TIMER_ENGINE, curfractalspecific->calculate_type);
 	return 0;

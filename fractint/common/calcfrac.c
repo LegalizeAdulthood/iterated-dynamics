@@ -108,10 +108,10 @@ int g_current_row;
 int g_current_col;
 /* vars for diffusion scan */
 unsigned g_bits = 0; 		/* number of bits in the counter */
-unsigned long dif_counter; 	/* the diffusion counter */
-unsigned long dif_limit; 	/* the diffusion counter */
+unsigned long g_diffusion_counter; 	/* the diffusion counter */
+unsigned long g_diffusion_limit; 	/* the diffusion counter */
 int g_three_pass;
-int nxtscreenflag; /* for cellular next screen generation */
+int g_next_screen_flag; /* for cellular next screen generation */
 int     attractors;                 /* number of finite attractors  */
 _CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
@@ -1213,13 +1213,13 @@ static int diffusion_scan(void)
 
 	g_bits = (unsigned) (min (log (g_y_stop-iystart + 1), log(g_x_stop-ixstart + 1) )/log2 );
 	g_bits <<= 1; /* double for two axes */
-	dif_limit = 1l << g_bits;
+	g_diffusion_limit = 1l << g_bits;
 
 	if (diffusion_engine() == -1)
 	{
 		add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
-			(int)(dif_counter >> 16),            /* high, */
-			(int)(dif_counter & 0xffff),         /* low order words */
+			(int)(g_diffusion_counter >> 16),            /* high, */
+			(int)(g_diffusion_counter & 0xffff),         /* low order words */
 			worksym);
 		return -1;
 	}
@@ -1250,7 +1250,7 @@ static void plot_block_lim(int x, int y, int s, int c)
 	}
 }
 
-/* function: count_to_int(dif_offset, dif_counter, colo, rowo) */
+/* function: count_to_int(dif_offset, g_diffusion_counter, colo, rowo) */
 static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 {
 	*x = dif_la[C & 0xFF];
@@ -1333,12 +1333,12 @@ static int diffusion_engine(void)
 
 	if (g_yy_begin == iystart && workpass == 0)  /* if restarting on pan: */
 	{
-		dif_counter = 0L;
+		g_diffusion_counter = 0L;
 	}
 	else
 	{
 		/* g_yy_begin and passes contain data for resuming the type: */
-		dif_counter = (((long) ((unsigned)g_yy_begin)) << 16) | ((unsigned)workpass);
+		g_diffusion_counter = (((long) ((unsigned)g_yy_begin)) << 16) | ((unsigned)workpass);
 	}
 
 	dif_offset = 12-(g_bits/2); /* offset to adjust coordinates */
@@ -1348,9 +1348,9 @@ static int diffusion_engine(void)
 	/* only the points (dithering only) :*/
 	if (fillcolor == 0 )
 	{
-		while (dif_counter < (dif_limit >> 1))
+		while (g_diffusion_counter < (g_diffusion_limit >> 1))
 		{
-			count_to_int(dif_offset, dif_counter, &colo, &rowo);
+			count_to_int(dif_offset, g_diffusion_counter, &colo, &rowo);
 			i = 0;
 			g_col = ixstart + colo; /* get the right tiles */
 			do
@@ -1402,17 +1402,17 @@ static int diffusion_engine(void)
 					}
 				}
 			}
-			dif_counter++;
+			g_diffusion_counter++;
 		}
 	}
 	else
 	{
 		/*********************************/
 		/* with progressive filling :    */
-		while (dif_counter < (dif_limit >> 1))
+		while (g_diffusion_counter < (g_diffusion_limit >> 1))
 		{
-			sqsz = 1 << ((int)(g_bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
-			count_to_int(dif_offset, dif_counter, &colo, &rowo);
+			sqsz = 1 << ((int)(g_bits-(int)(log(g_diffusion_counter + 0.5)/log2 )-1)/2 );
+			count_to_int(dif_offset, g_diffusion_counter, &colo, &rowo);
 
 			i = 0;
 			do
@@ -1467,13 +1467,13 @@ static int diffusion_engine(void)
 				}
 			}
 
-			dif_counter++;
+			g_diffusion_counter++;
 		}
 	}
-	/* from half dif_limit on we only plot 1x1 points :-) */
-	while (dif_counter < dif_limit)
+	/* from half g_diffusion_limit on we only plot 1x1 points :-) */
+	while (g_diffusion_counter < g_diffusion_limit)
 	{
-		count_to_int(dif_offset, dif_counter, &colo, &rowo);
+		count_to_int(dif_offset, g_diffusion_counter, &colo, &rowo);
 
 		i = 0;
 		do
@@ -1526,7 +1526,7 @@ static int diffusion_engine(void)
 				}
 			}
 		}
-		dif_counter++;
+		g_diffusion_counter++;
 	}
 
 	return 0;
