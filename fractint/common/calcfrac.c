@@ -107,7 +107,7 @@ int g_total_passes;
 int g_current_row;
 int g_current_col;
 /* vars for diffusion scan */
-unsigned bits = 0; 		/* number of bits in the counter */
+unsigned g_bits = 0; 		/* number of bits in the counter */
 unsigned long dif_counter; 	/* the diffusion counter */
 unsigned long dif_limit; 	/* the diffusion counter */
 int g_three_pass;
@@ -1211,9 +1211,9 @@ static int diffusion_scan(void)
 	/* fit any 32 bit architecture, the maxinum limit for this case would  */
 	/* be 65536x65536 (HB) */
 
-	bits = (unsigned) (min (log (g_y_stop-iystart + 1), log(g_x_stop-ixstart + 1) )/log2 );
-	bits <<= 1; /* double for two axes */
-	dif_limit = 1l << bits;
+	g_bits = (unsigned) (min (log (g_y_stop-iystart + 1), log(g_x_stop-ixstart + 1) )/log2 );
+	g_bits <<= 1; /* double for two axes */
+	dif_limit = 1l << g_bits;
 
 	if (diffusion_engine() == -1)
 	{
@@ -1323,7 +1323,7 @@ static int diffusion_engine(void)
 	int dif_offset; /* offset for adjusting looked-up values */
 	int sqsz;  /* size of the block being filled */
 	int colo, rowo; /* original col and row */
-	int s = 1 << (bits/2); /* size of the square */
+	int s = 1 << (g_bits/2); /* size of the square */
 
 	nx = (int) floor((g_x_stop-ixstart + 1)/s );
 	ny = (int) floor((g_y_stop-iystart + 1)/s );
@@ -1341,7 +1341,7 @@ static int diffusion_engine(void)
 		dif_counter = (((long) ((unsigned)g_yy_begin)) << 16) | ((unsigned)workpass);
 	}
 
-	dif_offset = 12-(bits/2); /* offset to adjust coordinates */
+	dif_offset = 12-(g_bits/2); /* offset to adjust coordinates */
 				/* (*) for 4 bytes use 16 for 3 use 12 etc. */
 
 	/*************************************/
@@ -1411,7 +1411,7 @@ static int diffusion_engine(void)
 		/* with progressive filling :    */
 		while (dif_counter < (dif_limit >> 1))
 		{
-			sqsz = 1 << ((int)(bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
+			sqsz = 1 << ((int)(g_bits-(int)(log(dif_counter + 0.5)/log2 )-1)/2 );
 			count_to_int(dif_offset, dif_counter, &colo, &rowo);
 
 			i = 0;
