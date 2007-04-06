@@ -43,7 +43,7 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
-long g_magnitude_l, g_limit_l, llimit2, lclosenuff, l16triglim;
+long g_magnitude_l, g_limit_l, g_limit2_l, lclosenuff, l16triglim;
 _CMPLX init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
@@ -724,7 +724,7 @@ int calcfract(void)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
-		llimit2 = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
+		g_limit2_l = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
 		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
@@ -2738,7 +2738,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	{
 		if (integerfractal)
 		{
-			if (labs(lnew.x) < llimit2 || labs(lnew.y) < llimit2)
+			if (labs(lnew.x) < g_limit2_l || labs(lnew.y) < g_limit2_l)
 			{
 				coloriter = biomorph;
 			}

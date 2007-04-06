@@ -250,7 +250,7 @@ extern _LCMPLX               linit;
 extern _LCMPLX               g_init_orbit_l;
 extern long                  linitx;
 extern long                  linity;
-extern long                  llimit2;
+extern long                  g_limit2_l;
 extern long                  g_limit_l;
 extern long                  g_magnitude_l;
 extern char                  LName[];
