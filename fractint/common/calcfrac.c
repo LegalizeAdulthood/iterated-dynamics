@@ -114,7 +114,7 @@ int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
 _CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
-_LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
+_LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    attrperiod[N_ATTR];          /* period of the finite attractor */
 /***** vars for new btm *****/
 enum direction {North, East, South, West};
@@ -2420,11 +2420,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				for (i = 0; i < g_num_attractors; i++)
 				{
-					lat.x = lnew.x - lattr[i].x;
+					lat.x = lnew.x - g_attractors_l[i].x;
 					lat.x = lsqr(lat.x);
 					if (lat.x < l_at_rad)
 					{
-						lat.y = lnew.y - lattr[i].y;
+						lat.y = lnew.y - g_attractors_l[i].y;
 						lat.y = lsqr(lat.y);
 						if (lat.y < l_at_rad)
 						{

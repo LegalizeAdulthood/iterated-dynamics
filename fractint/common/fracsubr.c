@@ -1925,7 +1925,7 @@ void get_julia_attractor (double real, double imag)
 					if (labs(lresult.x-lnew.x) < g_close_enough_l
 						&& labs(lresult.y-lnew.y) < g_close_enough_l)
 					{
-						lattr[g_num_attractors] = lnew;
+						g_attractors_l[g_num_attractors] = lnew;
 						attrperiod[g_num_attractors] = i + 1;
 						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
