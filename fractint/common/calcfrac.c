@@ -102,8 +102,8 @@ VOIDPTR g_type_specific_work_area = NULL;
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
               /* 6 for orbits */
-int curpass;
-int totpasses;
+int g_current_pass;
+int g_total_passes;
 int currow;
 int curcol;
 /* vars for diffusion scan */
@@ -1734,7 +1734,7 @@ static int draw_function_orbits(void)
 static int draw_orbits(void)
 {
 	g_got_status = GOT_STATUS_ORBITS; /* for <tab> screen */
-	totpasses = 1;
+	g_total_passes = 1;
 
 	if (plotorbits2dsetup() == -1)
 	{
@@ -1759,10 +1759,10 @@ static int OneOrTwoPass(void)
 {
 	int i;
 
-	totpasses = 1;
+	g_total_passes = 1;
 	if (stdcalcmode == '2')
 	{
-		totpasses = 2;
+		g_total_passes = 2;
 	}
 	if (stdcalcmode == '2' && workpass == 0) /* do 1st pass of two */
 	{
@@ -1798,7 +1798,7 @@ static int OneOrTwoPass(void)
 static int _fastcall StandardCalc(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
-	curpass = passnum;
+	g_current_pass = passnum;
 	g_row = g_yy_begin;
 	g_col = g_xx_begin;
 
@@ -3609,10 +3609,10 @@ static int solidguess(void)
 	}
 
 	i = maxblock = blocksize = ssg_blocksize();
-	totpasses = 1;
+	g_total_passes = 1;
 	while ((i >>= 1) > 1)
 	{
-		++totpasses;
+		++g_total_passes;
 	}
 
 	/* ensure window top and left are on required boundary, treat window
@@ -3627,7 +3627,7 @@ static int solidguess(void)
 	if (workpass == 0) /* otherwise first pass already done */
 	{
 		/* first pass, calc every blocksize**2 pixel, quarter result & paint it */
-		curpass = 1;
+		g_current_pass = 1;
 		if (iystart <= g_yy_start) /* first time for this window, init it */
 		{
 			currow = 0;
@@ -3750,7 +3750,7 @@ static int solidguess(void)
 				goto exit_solidguess;
 			}
 		}
-		curpass = workpass + 1;
+		g_current_pass = workpass + 1;
 		for (y = iystart; y <= g_y_stop; y += blocksize)
 		{
 			currow = y;
