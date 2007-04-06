@@ -98,8 +98,8 @@ int asmlMANHbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}
@@ -111,8 +111,8 @@ int asmlMANRbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new_z.x + g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x + g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}
@@ -191,8 +191,8 @@ int asm386lMANHbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}
@@ -204,8 +204,8 @@ int asm386lMANRbailout(void)
 {
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	magnitude = fabs(g_new_z.x + g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x + g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}
@@ -222,7 +222,7 @@ asmfpMODbailout proc near uses si di
 		fmul    st, st                   ; nx2 ny2
 		fst     tempsqrx
 		fadd
-		fst     magnitude
+		fst     g_magnitude
 		fcomp   rqlim                   ; stack is empty
 		fstsw   ax                      ; 287 and up only
 		sahf
@@ -245,8 +245,8 @@ int asmfpMODbailout(void)
 	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
-	magnitude = tempsqrx + tempsqry;
-	if (magnitude > rqlim || magnitude < 0.0 || fabs(g_new_z.x) > rqlim2 ||
+	g_magnitude = tempsqrx + tempsqry;
+	if (g_magnitude > rqlim || g_magnitude < 0.0 || fabs(g_new_z.x) > rqlim2 ||
 		fabs(g_new_z.y) > rqlim2 || overflow)
 	{
 		overflow = 0;
@@ -265,7 +265,7 @@ asmfpREALbailout proc near uses si di
 		fmul    st, st                   ; ny2 nx2
 		fst     tempsqry                ; ny2 nx2
 		fadd    st, st(1)                ; ny2 + nx2 nx2
-		fstp    magnitude               ; nx2
+		fstp    g_magnitude               ; nx2
 		fcomp   rqlim                   ; ** stack is empty
 		fstsw   ax                      ; ** 287 and up only
 		sahf
@@ -306,7 +306,7 @@ asmfpIMAGbailout proc near uses si di
 		fmul    st, st                   ; nx2 ny2
 		fst     tempsqrx                ; nx2 ny2
 		fadd    st, st(1)                ; nx2 + ny2 ny2
-		fstp    magnitude               ; ny2
+		fstp    g_magnitude               ; ny2
 		fcomp   rqlim                   ; ** stack is empty
 		fstsw   ax                      ; ** 287 and up only
 		sahf
@@ -348,7 +348,7 @@ asmfpORbailout proc near uses si di
 		fst     tempsqrx
 		fld     st(1)                   ; ny2 nx2 ny2
 		fadd    st, st(1)                ; ny2 + nx2 nx2 ny2
-		fstp    magnitude               ; nx2 ny2
+		fstp    g_magnitude               ; nx2 ny2
 		fcomp   rqlim                   ; ny2
 		fstsw   ax                      ; ** 287 and up only
 		sahf
@@ -396,7 +396,7 @@ asmfpANDbailout proc near uses si di
 		fst     tempsqrx
 		fld     st(1)                   ; ny2 nx2 ny2
 		fadd    st, st(1)                ; ny2 + nx2 nx2 ny2
-		fstp    magnitude               ; nx2 ny2
+		fstp    g_magnitude               ; nx2 ny2
 		fcomp   rqlim                   ; ny2
 		fstsw   ax                      ; ** 287 and up only
 		sahf
@@ -448,7 +448,7 @@ asmfpMANHbailout proc near uses si di
 		fst     tempsqrx
 		faddp   st(2), st                ; nx nx2 + ny2 ny
 		fxch    st(1)                   ; nx2 + ny2 nx ny
-		fstp    magnitude               ; nx ny
+		fstp    g_magnitude               ; nx ny
 		fabs
 		fxch
 		fabs
@@ -480,8 +480,8 @@ int asmfpMANHbailout(void)
 	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
-	magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}
@@ -501,7 +501,7 @@ asmfpMANRbailout proc near uses si di
 		fst     tempsqrx
 		faddp   st(2), st                ; nx nx2 + ny2 ny
 		fxch    st(1)                   ; nx2 + ny2 nx ny
-		fstp    magnitude               ; nx ny
+		fstp    g_magnitude               ; nx ny
 		fadd                            ; nx + ny
 		fmul    st, st                   ; square, don't need abs
 		fcomp   rqlim                   ; ** stack is empty
@@ -530,8 +530,8 @@ int asmfpMANRbailout(void)
 	/* TODO: verify this code is correct */
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
-	magnitude = fabs(g_new_z.x + g_new_z.y);
-	if (magnitude*magnitude >= rqlim)
+	g_magnitude = fabs(g_new_z.x + g_new_z.y);
+	if (g_magnitude*g_magnitude >= rqlim)
 	{
 		return 1;
 	}

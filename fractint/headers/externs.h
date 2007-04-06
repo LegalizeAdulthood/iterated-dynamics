@@ -278,7 +278,7 @@ extern long *            ly1;
 extern long (_fastcall *     lypixel)(void); /* set in FRACTALS.C */
 extern int                   lzw[2];
 extern long                  l_at_rad;
-extern double                magnitude;
+extern double                g_magnitude;
 extern enum Major            g_major_method;
 extern BYTE *            mapdacbox;
 extern int                   mapset;
