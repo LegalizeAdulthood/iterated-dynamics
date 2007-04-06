@@ -587,7 +587,7 @@ void Jiim(int which)         /* called by fractint */
 	maxhits = 1;
 	if (which == ORBIT)
 	{
-		plot = c_putcolor;                /* for line with clipping */
+		g_plot_color = c_putcolor;                /* for line with clipping */
 	}
 
 	if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
