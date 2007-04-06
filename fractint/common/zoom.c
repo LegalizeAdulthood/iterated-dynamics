@@ -746,12 +746,12 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	/* adjust existing g_work_list entries */
 	for (i = 0; i < g_num_work_list; ++i)
 	{
-		g_work_list[i].yystart -= row;
-		g_work_list[i].yystop  -= row;
-		g_work_list[i].yybegin -= row;
+		g_work_list[i].yy_start -= row;
+		g_work_list[i].yy_stop  -= row;
+		g_work_list[i].yy_begin -= row;
 		g_work_list[i].xx_start -= col;
-		g_work_list[i].xxstop  -= col;
-		g_work_list[i].xxbegin -= col;
+		g_work_list[i].xx_stop  -= col;
+		g_work_list[i].xx_begin -= col;
 	}
 	/* add g_work_list entries for the new edges */
 	listfull = i = 0;
@@ -816,7 +816,7 @@ static void _fastcall restart_window(int wknum)
 /* force a g_work_list entry to restart */
 {
 	int yfrom, yto, xfrom, xto;
-	yfrom = g_work_list[wknum].yystart;
+	yfrom = g_work_list[wknum].yy_start;
 	if (yfrom < 0)
 	{
 		yfrom = 0;
@@ -826,12 +826,12 @@ static void _fastcall restart_window(int wknum)
 	{
 		xfrom = 0;
 	}
-	yto = g_work_list[wknum].yystop;
+	yto = g_work_list[wknum].yy_stop;
 	if (yto >= ydots)
 	{
 		yto = ydots - 1;
 	}
-	xto = g_work_list[wknum].xxstop;
+	xto = g_work_list[wknum].xx_stop;
 	if (xto >= xdots)
 	{
 		xto = xdots - 1;
@@ -840,8 +840,8 @@ static void _fastcall restart_window(int wknum)
 	while (yfrom <= yto)
 		put_line(yfrom++, xfrom, xto, (BYTE *)dstack);
 	g_work_list[wknum].sym = g_work_list[wknum].pass = 0;
-	g_work_list[wknum].yybegin = g_work_list[wknum].yystart;
-	g_work_list[wknum].xxbegin = g_work_list[wknum].xx_start;
+	g_work_list[wknum].yy_begin = g_work_list[wknum].yy_start;
+	g_work_list[wknum].xx_begin = g_work_list[wknum].xx_start;
 }
 
 static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
@@ -850,8 +850,8 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 	for (i = 0; i < g_num_work_list; ++i)
 	{
 		wk = &g_work_list[i];
-		if (wk->yystart >= ydots || wk->yystop < 0
-			|| wk->xx_start >= xdots || wk->xxstop < 0)  /* offscreen, delete */
+		if (wk->yy_start >= ydots || wk->yy_stop < 0
+			|| wk->xx_start >= xdots || wk->xx_stop < 0)  /* offscreen, delete */
 		{
 			for (j = i + 1; j < g_num_work_list; ++j)
 			{
@@ -861,34 +861,34 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			--i;
 			continue;
 		}
-		if (wk->yystart < 0)  /* partly off top edge */
+		if (wk->yy_start < 0)  /* partly off top edge */
 		{
 			if ((wk->sym&1) == 0)  /* no sym, easy */
 			{
-				wk->yystart = 0;
-				wk->xxbegin = 0;
+				wk->yy_start = 0;
+				wk->xx_begin = 0;
 			}
 			else  /* xaxis symmetry */
 			{
-				if ((j = wk->yystop + wk->yystart) > 0
+				if ((j = wk->yy_stop + wk->yy_start) > 0
 						&& g_num_work_list < MAXCALCWORK)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
-					g_work_list[g_num_work_list].yystart = 0;
-					g_work_list[g_num_work_list++].yystop = j;
-					wk->yystart = j + 1;
+					g_work_list[g_num_work_list].yy_start = 0;
+					g_work_list[g_num_work_list++].yy_stop = j;
+					wk->yy_start = j + 1;
 				}
 				else
-					wk->yystart = 0;
+					wk->yy_start = 0;
 				restart_window(i); /* restart the no-longer sym part */
 			}
 		}
-		if (wk->yystop >= ydots)  /* partly off bottom edge */
+		if (wk->yy_stop >= ydots)  /* partly off bottom edge */
 		{
 			j = ydots-1;
 			if ((wk->sym&1) != 0)  /* uses xaxis symmetry */
 			{
-				k = wk->yystart + (wk->yystop - j);
+				k = wk->yy_start + (wk->yy_stop - j);
 				if (k < j)
 				{
 					if (g_num_work_list >= MAXCALCWORK) /* no room to split */
@@ -898,14 +898,14 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 					else  /* split it */
 					{
 						g_work_list[g_num_work_list] = g_work_list[i];
-						g_work_list[g_num_work_list].yystart = k;
-						g_work_list[g_num_work_list++].yystop = j;
+						g_work_list[g_num_work_list].yy_start = k;
+						g_work_list[g_num_work_list++].yy_stop = j;
 						j = k-1;
 					}
 				}
 				wk->sym &= -1 - 1;
 			}
-			wk->yystop = j;
+			wk->yy_stop = j;
 		}
 		if (wk->xx_start < 0)  /* partly off left edge */
 		{
@@ -913,12 +913,12 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 				wk->xx_start = 0;
 			else  /* yaxis symmetry */
 			{
-				if ((j = wk->xxstop + wk->xx_start) > 0
+				if ((j = wk->xx_stop + wk->xx_start) > 0
 					&& g_num_work_list < MAXCALCWORK)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
 					g_work_list[g_num_work_list].xx_start = 0;
-					g_work_list[g_num_work_list++].xxstop = j;
+					g_work_list[g_num_work_list++].xx_stop = j;
 					wk->xx_start = j + 1;
 				}
 				else
@@ -926,12 +926,12 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 				restart_window(i); /* restart the no-longer sym part */
 			}
 		}
-		if (wk->xxstop >= xdots)  /* partly off right edge */
+		if (wk->xx_stop >= xdots)  /* partly off right edge */
 		{
 			j = xdots-1;
 			if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
 			{
-				k = wk->xx_start + (wk->xxstop - j);
+				k = wk->xx_start + (wk->xx_stop - j);
 				if (k < j)
 				{
 					if (g_num_work_list >= MAXCALCWORK) /* no room to split */
@@ -942,29 +942,29 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 					{
 						g_work_list[g_num_work_list] = g_work_list[i];
 						g_work_list[g_num_work_list].xx_start = k;
-						g_work_list[g_num_work_list++].xxstop = j;
+						g_work_list[g_num_work_list++].xx_stop = j;
 						j = k-1;
 					}
 				}
 				wk->sym &= -1 - 2;
 			}
-			wk->xxstop = j;
+			wk->xx_stop = j;
 		}
-		if (wk->yybegin < wk->yystart)
+		if (wk->yy_begin < wk->yy_start)
 		{
-			wk->yybegin = wk->yystart;
+			wk->yy_begin = wk->yy_start;
 		}
-		if (wk->yybegin > wk->yystop)
+		if (wk->yy_begin > wk->yy_stop)
 		{
-			wk->yybegin = wk->yystop;
+			wk->yy_begin = wk->yy_stop;
 		}
-		if (wk->xxbegin < wk->xx_start)
+		if (wk->xx_begin < wk->xx_start)
 		{
-			wk->xxbegin = wk->xx_start;
+			wk->xx_begin = wk->xx_start;
 		}
-		if (wk->xxbegin > wk->xxstop)
+		if (wk->xx_begin > wk->xx_stop)
 		{
-			wk->xxbegin = wk->xxstop;
+			wk->xx_begin = wk->xx_stop;
 		}
 	}
 	tidy_worklist(); /* combine where possible, re-sort */

@@ -989,13 +989,13 @@ is not in the data structure */
 struct workliststuff    /* work list entry for std escape time engines */
 {
 	int xx_start;    /* screen window for this entry */
-	int xxstop;
-	int yystart;
-	int yystop;
-	int yybegin;    /* start row within window, for 2pass/ssg resume */
+	int xx_stop;
+	int yy_start;
+	int yy_stop;
+	int yy_begin;    /* start row within window, for 2pass/ssg resume */
 	int sym;        /* if symmetry in window, prevents bad combines */
 	int pass;       /* for 2pass and solid guessing */
-	int xxbegin;    /* start col within window, =0 except on resume */
+	int xx_begin;    /* start col within window, =0 except on resume */
 };
 
 typedef struct workliststuff        WORKLIST;
