@@ -92,14 +92,12 @@ int g_resuming;                           /* nonzero if resuming after interrupt
 int g_num_work_list;                       /* resume g_work_list for standard engine */
 WORKLIST g_work_list[MAXCALCWORK];
 int g_xx_start;
-int xxstop;
-int xxbegin;             /* these are same as g_work_list, */
-int yystart;
-int yystop;
-int yybegin;             /* declared as separate items  */
-int workpass;
-int worksym;                   /* for the sake of calcmand    */
-VOIDPTR typespecific_workarea = NULL;
+int g_xx_stop;
+int g_xx_begin;             /* these are same as g_work_list, */
+int g_yy_start;
+int g_yy_stop;
+int g_yy_begin;             /* declared as separate items  */
+VOIDPTR g_type_specific_work_area = NULL;
 /* variables which must be visible for tab_display */
 int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
@@ -193,6 +191,8 @@ static double g_rq_limit_save;
 static int s_pixel_pi; /* value of pi in pixels */
 static int ixstart;
 static int iystart;						/* start here */
+static int workpass;
+static int worksym;                   /* for the sake of calcmand    */
 
 /* next has a skip bit for each maxblock unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
@@ -304,7 +304,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
-		i = yystop-(row-yystart);
+		i = g_yy_stop-(row-g_yy_start);
 		if (i > g_y_stop && i < ydots)
 		{
 			put_line(i, left, right, str);
@@ -313,14 +313,14 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot2Y) /* Y-axis symmetry */
 	{
-		put_line(row, xxstop-(right-g_xx_start), xxstop-(left-g_xx_start), str);
+		put_line(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
 		g_input_counter -= length >> 3;
 	}
 	else if (g_plot_color == symplot2J)  /* Origin symmetry */
 	{
-		i = yystop-(row-yystart);
-		j = min(xxstop-(right-g_xx_start), xdots-1);
-		k = min(xxstop-(left -g_xx_start), xdots-1);
+		i = g_yy_stop-(row-g_yy_start);
+		j = min(g_xx_stop-(right-g_xx_start), xdots-1);
+		k = min(g_xx_stop-(left -g_xx_start), xdots-1);
 		if (i > g_y_stop && i < ydots && j <= k)
 		{
 			put_line(i, j, k, str);
@@ -329,9 +329,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot4) /* X-axis and Y-axis symmetry */
 	{
-		i = yystop-(row-yystart);
-		j = min(xxstop-(right-g_xx_start), xdots-1);
-		k = min(xxstop-(left -g_xx_start), xdots-1);
+		i = g_yy_stop-(row-g_yy_start);
+		j = min(g_xx_stop-(right-g_xx_start), xdots-1);
+		k = min(g_xx_stop-(left -g_xx_start), xdots-1);
 		if (i > g_y_stop && i < ydots)
 		{
 			put_line(i, left, right, str);
@@ -372,7 +372,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
-		i = yystop-(row-yystart);
+		i = g_yy_stop-(row-g_yy_start);
 		if (i > g_y_stop && i < ydots)
 		{
 			put_line(i, left, right, str);
@@ -773,9 +773,9 @@ int calcfract(void)
 		g_calculate_type = curfractalspecific->calculate_type; /* per_image can override */
 		g_symmetry = curfractalspecific->symmetry; /*   calculate_type & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
-		iystart = ixstart = yystart = g_xx_start = yybegin = xxbegin = 0;
-		g_y_stop = yystop = ydots -1;
-		g_x_stop = xxstop = xdots -1;
+		iystart = ixstart = g_yy_start = g_xx_start = g_yy_begin = g_xx_begin = 0;
+		g_y_stop = g_yy_stop = ydots -1;
+		g_x_stop = g_xx_stop = xdots -1;
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 		distest = 0; /* only standard escape time engine supports distest */
 		/* per_image routine is run here */
@@ -838,7 +838,7 @@ int calcfract(void)
 		free(LogTable);   /* free if not using extraseg */
 		LogTable = NULL;
 	}
-	if (typespecific_workarea)
+	if (g_type_specific_work_area)
 	{
 		free_workarea();
 	}
@@ -930,10 +930,10 @@ static void perform_worklist()
 
 	/* default setup a new g_work_list */
 	g_num_work_list = 1;
-	g_work_list[0].xx_start = g_work_list[0].xxbegin = 0;
-	g_work_list[0].yystart = g_work_list[0].yybegin = 0;
-	g_work_list[0].xxstop = xdots - 1;
-	g_work_list[0].yystop = ydots - 1;
+	g_work_list[0].xx_start = g_work_list[0].xx_begin = 0;
+	g_work_list[0].yy_start = g_work_list[0].yy_begin = 0;
+	g_work_list[0].xx_stop = xdots - 1;
+	g_work_list[0].yy_stop = ydots - 1;
 	g_work_list[0].pass = g_work_list[0].sym = 0;
 	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
@@ -943,7 +943,7 @@ static void perform_worklist()
 		end_resume();
 		if (vsn < 2)
 		{
-			xxbegin = 0;
+			g_xx_begin = 0;
 		}
 	}
 
@@ -1018,11 +1018,11 @@ static void perform_worklist()
 
 		/* pull top entry off g_work_list */
 		ixstart = g_xx_start = g_work_list[0].xx_start;
-		g_x_stop  = xxstop  = g_work_list[0].xxstop;
-		xxbegin  = g_work_list[0].xxbegin;
-		iystart = yystart = g_work_list[0].yystart;
-		g_y_stop  = yystop  = g_work_list[0].yystop;
-		yybegin  = g_work_list[0].yybegin;
+		g_x_stop  = g_xx_stop  = g_work_list[0].xx_stop;
+		g_xx_begin  = g_work_list[0].xx_begin;
+		iystart = g_yy_start = g_work_list[0].yy_start;
+		g_y_stop  = g_yy_stop  = g_work_list[0].yy_stop;
+		g_yy_begin  = g_work_list[0].yy_begin;
 		workpass = g_work_list[0].pass;
 		worksym  = g_work_list[0].sym;
 		--g_num_work_list;
@@ -1217,7 +1217,7 @@ static int diffusion_scan(void)
 
 	if (diffusion_engine() == -1)
 	{
-		add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop,
+		add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
 			(int)(dif_counter >> 16),            /* high, */
 			(int)(dif_counter & 0xffff),         /* low order words */
 			worksym);
@@ -1331,14 +1331,14 @@ static int diffusion_engine(void)
 	rem_x = (g_x_stop-ixstart + 1) - nx*s;
 	rem_y = (g_y_stop-iystart + 1) - ny*s;
 
-	if (yybegin == iystart && workpass == 0)  /* if restarting on pan: */
+	if (g_yy_begin == iystart && workpass == 0)  /* if restarting on pan: */
 	{
 		dif_counter = 0L;
 	}
 	else
 	{
-		/* yybegin and passes contain data for resuming the type: */
-		dif_counter = (((long) ((unsigned)yybegin)) << 16) | ((unsigned)workpass);
+		/* g_yy_begin and passes contain data for resuming the type: */
+		dif_counter = (((long) ((unsigned)g_yy_begin)) << 16) | ((unsigned)workpass);
 	}
 
 	dif_offset = 12-(bits/2); /* offset to adjust coordinates */
@@ -1535,8 +1535,8 @@ static int diffusion_engine(void)
 static int draw_rectangle_orbits()
 {
 	/* draw a rectangle */
-	g_row = yybegin;
-	g_col = xxbegin;
+	g_row = g_yy_begin;
+	g_col = g_xx_begin;
 
 	while (g_row <= g_y_stop)
 	{
@@ -1545,7 +1545,7 @@ static int draw_rectangle_orbits()
 		{
 			if (plotorbits2dfloat() == -1)
 			{
-				add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+				add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 				return -1; /* interrupted */
 			}
 			++g_col;
@@ -1577,15 +1577,15 @@ static int draw_line_orbits(void)
 	{
 		if (dX > 0)         /* determine start point and last column */
 		{
-			g_col = xxbegin;
-			g_row = yybegin;
+			g_col = g_xx_begin;
+			g_row = g_yy_begin;
 			final = g_x_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = xxbegin;
+			final = g_xx_begin;
 		}
 		inc1 = 2*abs(dY);            /* determine increments and initial G */
 		G = inc1 - abs(dX);
@@ -1596,7 +1596,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1617,7 +1617,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1637,15 +1637,15 @@ static int draw_line_orbits(void)
 	{
 		if (dY > 0)             /* determine start point and last row */
 		{
-			g_col = xxbegin;
-			g_row = yybegin;
+			g_col = g_xx_begin;
+			g_row = g_yy_begin;
 			final = g_y_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = yybegin;
+			final = g_yy_begin;
 		}
 		inc1 = 2*abs(dX);            /* determine increments and initial G */
 		G = inc1 - abs(dY);
@@ -1656,7 +1656,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1677,7 +1677,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1708,7 +1708,7 @@ static int draw_function_orbits(void)
 	double xfactor = xdots / 2.0;
 	double yfactor = ydots / 2.0;
 
-	angle = xxbegin;  /* save angle in x parameter */
+	angle = g_xx_begin;  /* save angle in x parameter */
 
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	if (Rotation <= 0)
@@ -1768,27 +1768,27 @@ static int OneOrTwoPass(void)
 	{
 		if (StandardCalc(1) == -1)
 		{
-			add_worklist(g_xx_start, xxstop, g_col, yystart, yystop, g_row, 0, worksym);
+			add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, worksym);
 			return -1;
 		}
 		if (g_num_work_list > 0) /* g_work_list not empty, defer 2nd pass */
 		{
-			add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, yystart, 1, worksym);
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, worksym);
 			return 0;
 		}
 		workpass = 1;
-		xxbegin = g_xx_start;
-		yybegin = yystart;
+		g_xx_begin = g_xx_start;
+		g_yy_begin = g_yy_start;
 	}
 	/* second or only pass */
 	if (StandardCalc(2) == -1)
 	{
-		i = yystop;
-		if (g_y_stop != yystop) /* must be due to symmetry */
+		i = g_yy_stop;
+		if (g_y_stop != g_yy_stop) /* must be due to symmetry */
 		{
 			i -= g_row - iystart;
 		}
-		add_worklist(g_xx_start, xxstop, g_col, g_row, i, g_row, workpass, worksym);
+		add_worklist(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, workpass, worksym);
 		return -1;
 	}
 
@@ -1799,8 +1799,8 @@ static int _fastcall StandardCalc(int passnum)
 {
 	got_status = GOT_STATUS_12PASS;
 	curpass = passnum;
-	g_row = yybegin;
-	g_col = xxbegin;
+	g_row = g_yy_begin;
+	g_col = g_xx_begin;
 
 	while (g_row <= g_y_stop)
 	{
@@ -3364,11 +3364,11 @@ int  bound_trace_main(void)
 				{
 					(*g_plot_color)(g_col, g_row, bkcolor);
 				}
-				if (g_y_stop != yystop)  /* DG */
+				if (g_y_stop != g_yy_stop)  /* DG */
 				{
-					g_y_stop = yystop - (currow - yystart); /* allow for sym */
+					g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
 				}
-				add_worklist(g_xx_start, xxstop, curcol, currow, g_y_stop, currow, 0, worksym);
+				add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
 				return -1;
 			}
 			g_reset_periodicity = 0; /* normal periodicity checking */
@@ -3408,11 +3408,11 @@ int  bound_trace_main(void)
 						{
 							(*g_plot_color)(g_col, g_row, bkcolor);
 						}
-						if (g_y_stop != yystop)  /* DG */
+						if (g_y_stop != g_yy_stop)  /* DG */
 						{
-							g_y_stop = yystop - (currow - yystart); /* allow for sym */
+							g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
 						}
-						add_worklist(g_xx_start, xxstop, curcol, currow, g_y_stop, currow, 0, worksym);
+						add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -3511,11 +3511,11 @@ int  bound_trace_main(void)
 							{
 								if (check_key())
 								{
-									if (g_y_stop != yystop)
+									if (g_y_stop != g_yy_stop)
 									{
-										g_y_stop = yystop - (currow - yystart); /* allow for sym */
+										g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
 									}
-									add_worklist(g_xx_start, xxstop, curcol, currow, g_y_stop, currow, 0, worksym);
+									add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;
@@ -3619,7 +3619,7 @@ static int solidguess(void)
 			as larger than it really is if necessary (this is the reason symplot
 			routines must check for > xdots/ydots before plotting sym points) */
 	ixstart &= -1 - (maxblock-1);
-	iystart = yybegin;
+	iystart = g_yy_begin;
 	iystart &= -1 - (maxblock-1);
 
 	got_status = GOT_STATUS_GUESSING;
@@ -3628,7 +3628,7 @@ static int solidguess(void)
 	{
 		/* first pass, calc every blocksize**2 pixel, quarter result & paint it */
 		curpass = 1;
-		if (iystart <= yystart) /* first time for this window, init it */
+		if (iystart <= g_yy_start) /* first time for this window, init it */
 		{
 			currow = 0;
 			memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
@@ -3638,7 +3638,7 @@ static int solidguess(void)
 			{ /* calc top row */
 				if ((*g_calculate_type)() == -1)
 				{
-					add_worklist(g_xx_start, xxstop, xxbegin, yystart, yystop, yybegin, 0, worksym);
+					add_worklist(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, worksym);
 					goto exit_solidguess;
 				}
 				g_reset_periodicity = 0;
@@ -3669,22 +3669,22 @@ static int solidguess(void)
 			g_reset_periodicity = 0;
 			if (i == -1 || guessrow(1, y, blocksize) != 0) /* interrupted? */
 			{
-				if (y < yystart)
+				if (y < g_yy_start)
 				{
-					y = yystart;
+					y = g_yy_start;
 				}
-				add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, y, 0, worksym);
+				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, worksym);
 				goto exit_solidguess;
 			}
 		}
 
 		if (g_num_work_list) /* work list not empty, just do 1st pass */
 		{
-			add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, yystart, 1, worksym);
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, worksym);
 			goto exit_solidguess;
 		}
 		++workpass;
-		iystart = yystart & (-1 - (maxblock-1));
+		iystart = g_yy_start & (-1 - (maxblock-1));
 
 		/* calculate skip flags for skippable blocks */
 		xlim = (g_x_stop + maxblock)/maxblock + 1;
@@ -3756,11 +3756,11 @@ static int solidguess(void)
 			currow = y;
 			if (guessrow(0, y, blocksize) != 0)
 			{
-				if (y < yystart)
+				if (y < g_yy_start)
 				{
-					y = yystart;
+					y = g_yy_start;
 				}
-				add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, y, workpass, worksym);
+				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, workpass, worksym);
 				goto exit_solidguess;
 			}
 		}
@@ -3768,10 +3768,10 @@ static int solidguess(void)
 		if (g_num_work_list /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
-			add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, yystart, workpass, worksym);
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, workpass, worksym);
 			goto exit_solidguess;
 		}
-		iystart = yystart & (-1 - (maxblock-1));
+		iystart = g_yy_start & (-1 - (maxblock-1));
 	}
 
 	exit_solidguess:
@@ -4074,12 +4074,12 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		}
 		for (i = 0; i < halfblock; ++i)
 		{
-			j = yystop-(y + i-yystart);
+			j = g_yy_stop-(y + i-g_yy_start);
 			if (j > g_y_stop && j < ydots)
 			{
 				put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start]);
 			}
-			j = yystop-(y + i + halfblock-yystart);
+			j = g_yy_stop-(y + i + halfblock-g_yy_start);
 			if (j > g_y_stop && j < ydots)
 			{
 				put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start + OLDMAXPIXELS]);
@@ -4157,43 +4157,43 @@ static int _fastcall xsym_split(int xaxis_row, int xaxis_between)
 	}
 	if ((worksym&1) != 0) /* already decided on sym */
 	{
-		g_y_stop = (yystart + yystop)/2;
+		g_y_stop = (g_yy_start + g_yy_stop)/2;
 	}
 	else /* new window, decide */
 	{
 		worksym |= 0x10;
-		if (xaxis_row <= yystart || xaxis_row >= yystop)
+		if (xaxis_row <= g_yy_start || xaxis_row >= g_yy_stop)
 		{
 			return 1; /* axis not in window */
 		}
-		i = xaxis_row + (xaxis_row - yystart);
+		i = xaxis_row + (xaxis_row - g_yy_start);
 		if (xaxis_between)
 		{
 			++i;
 		}
-		if (i > yystop) /* split into 2 pieces, bottom has the symmetry */
+		if (i > g_yy_stop) /* split into 2 pieces, bottom has the symmetry */
 		{
 			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
-			g_y_stop = xaxis_row - (yystop - xaxis_row);
+			g_y_stop = xaxis_row - (g_yy_stop - xaxis_row);
 			if (!xaxis_between)
 			{
 				--g_y_stop;
 			}
-			add_worklist(g_xx_start, xxstop, g_xx_start, g_y_stop + 1, yystop, g_y_stop + 1, workpass, 0);
-			yystop = g_y_stop;
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, workpass, 0);
+			g_yy_stop = g_y_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
-		if (i < yystop) /* split into 2 pieces, top has the symmetry */
+		if (i < g_yy_stop) /* split into 2 pieces, top has the symmetry */
 		{
 			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
-			add_worklist(g_xx_start, xxstop, g_xx_start, i + 1, yystop, i + 1, workpass, 0);
-			yystop = i;
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, workpass, 0);
+			g_yy_stop = i;
 		}
 		g_y_stop = xaxis_row;
 		worksym |= 1;
@@ -4211,12 +4211,12 @@ static int _fastcall ysym_split(int yaxis_col, int yaxis_between)
 	}
 	if ((worksym&2) != 0) /* already decided on sym */
 	{
-		g_x_stop = (g_xx_start + xxstop)/2;
+		g_x_stop = (g_xx_start + g_xx_stop)/2;
 	}
 	else /* new window, decide */
 	{
 		worksym |= 0x20;
-		if (yaxis_col <= g_xx_start || yaxis_col >= xxstop)
+		if (yaxis_col <= g_xx_start || yaxis_col >= g_xx_stop)
 		{
 			return 1; /* axis not in window */
 		}
@@ -4225,29 +4225,29 @@ static int _fastcall ysym_split(int yaxis_col, int yaxis_between)
 		{
 			++i;
 		}
-		if (i > xxstop) /* split into 2 pieces, right has the symmetry */
+		if (i > g_xx_stop) /* split into 2 pieces, right has the symmetry */
 		{
 			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
-			g_x_stop = yaxis_col - (xxstop - yaxis_col);
+			g_x_stop = yaxis_col - (g_xx_stop - yaxis_col);
 			if (!yaxis_between)
 			{
 				--g_x_stop;
 			}
-			add_worklist(g_x_stop + 1, xxstop, g_x_stop + 1, yystart, yystop, yystart, workpass, 0);
-			xxstop = g_x_stop;
+			add_worklist(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, workpass, 0);
+			g_xx_stop = g_x_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
-		if (i < xxstop) /* split into 2 pieces, left has the symmetry */
+		if (i < g_xx_stop) /* split into 2 pieces, left has the symmetry */
 		{
 			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
 			{
 				return 1;
 			}
-			add_worklist(i + 1, xxstop, i + 1, yystart, yystop, yystart, workpass, 0);
-			xxstop = i;
+			add_worklist(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, workpass, 0);
+			g_xx_stop = i;
 		}
 		g_x_stop = yaxis_col;
 		worksym |= 2;
@@ -4458,7 +4458,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		case YAXIS: /* just yaxis symmetry */
 			if (basin) /* got no routine for this case */
 			{
-				g_x_stop = xxstop; /* fix what split should not have done */
+				g_x_stop = g_xx_stop; /* fix what split should not have done */
 				g_symmetry = 1;
 			}
 			else
@@ -4481,11 +4481,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			&& ysym_split(yaxis_col, yaxis_between) == 0)
 		{
 			g_plot_color = symplot2J;
-			g_x_stop = xxstop; /* didn't want this changed */
+			g_x_stop = g_xx_stop; /* didn't want this changed */
 		}
 		else
 		{
-			g_y_stop = yystop; /* in case first split worked */
+			g_y_stop = g_yy_stop; /* in case first split worked */
 			g_symmetry = 1;
 			worksym = 0x30; /* let it recombine with others like it */
 		}
@@ -4524,7 +4524,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		else
 		{
-			g_y_stop = yystop; /* in case first split worked */
+			g_y_stop = g_yy_stop; /* in case first split worked */
 			worksym = 0x30;  /* don't mark pisym as ysym, just do it unmarked */
 		}
 		if (bf_math)
@@ -4539,13 +4539,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
-		if (g_x_stop > xxstop)
+		if (g_x_stop > g_xx_stop)
 		{
-			g_x_stop = xxstop;
+			g_x_stop = g_xx_stop;
 		}
 		if (g_plot_color == symPIplot4J)
 		{
-			i = (g_xx_start + xxstop)/2;
+			i = (g_xx_start + g_xx_stop)/2;
 			if (g_x_stop > i)
 			{
 				g_x_stop = i;
@@ -4593,7 +4593,7 @@ static int tesseral(void)
 		tp->rgt = tesscol(g_x_stop, iystart + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
-			add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop, yystart, 0, worksym);
+			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, worksym);
 			return -1;
 		}
 	}
@@ -4602,9 +4602,9 @@ static int tesseral(void)
 		int i, mid, curx, cury, xsize, ysize;
 		struct tess *tp2;
 		tp->top = tp->bot = tp->lft = tp->rgt = -2;
-		cury = yybegin & 0xfff;
+		cury = g_yy_begin & 0xfff;
 		ysize = 1;
-		i = (unsigned)yybegin >> 12;
+		i = (unsigned)g_yy_begin >> 12;
 		while (--i >= 0)
 		{
 			ysize <<= 1;
@@ -4752,7 +4752,7 @@ static int tesseral(void)
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
 						if (g_plot_color != g_put_color) /* symmetry */
 						{
-							j = yystop-(g_row-yystart);
+							j = g_yy_stop-(g_row-g_yy_start);
 							if (j > g_y_stop && j < ydots)
 							{
 								put_line(j, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
@@ -4863,7 +4863,7 @@ tess_end:
 			i <<= 1;
 			++ysize;
 		}
-		add_worklist(g_xx_start, xxstop, g_xx_start, yystart, yystop,
+		add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
 			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, worksym);
 		return -1;
 	}
@@ -5061,7 +5061,7 @@ ack: /* bailout here if key is pressed */
 /* Symmetry plot for period PI */
 void _fastcall symPIplot(int x, int y, int color)
 {
-	while (x <= xxstop)
+	while (x <= g_xx_stop)
 	{
 		g_put_color(x, y, color);
 		x += s_pixel_pi;
@@ -5071,11 +5071,11 @@ void _fastcall symPIplot(int x, int y, int color)
 void _fastcall symPIplot2J(int x, int y, int color)
 {
 	int i, j;
-	while (x <= xxstop)
+	while (x <= g_xx_stop)
 	{
 		g_put_color(x, y, color);
-		if ((i = yystop-(y-yystart)) > g_y_stop && i < ydots
-				&& (j = xxstop-(x-g_xx_start)) < xdots)
+		if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < ydots
+				&& (j = g_xx_stop-(x-g_xx_start)) < xdots)
 			g_put_color(j, i, color);
 		x += s_pixel_pi;
 	}
@@ -5084,15 +5084,15 @@ void _fastcall symPIplot2J(int x, int y, int color)
 void _fastcall symPIplot4J(int x, int y, int color)
 {
 	int i, j;
-	while (x <= (g_xx_start + xxstop)/2)
+	while (x <= (g_xx_start + g_xx_stop)/2)
 	{
-		j = xxstop-(x-g_xx_start);
+		j = g_xx_stop-(x-g_xx_start);
 		g_put_color(x , y , color);
 		if (j < xdots)
 		{
 			g_put_color(j , y , color);
 		}
-		i = yystop-(y-yystart);
+		i = g_yy_stop-(y-g_yy_start);
 		if (i > g_y_stop && i < ydots)
 		{
 			g_put_color(x , i , color);
@@ -5110,7 +5110,7 @@ void _fastcall symplot2(int x, int y, int color)
 {
 	int i;
 	g_put_color(x, y, color);
-	i = yystop-(y-yystart);
+	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
 		g_put_color(x, i, color);
@@ -5122,7 +5122,7 @@ void _fastcall symplot2Y(int x, int y, int color)
 {
 	int i;
 	g_put_color(x, y, color);
-	i = xxstop-(x-g_xx_start);
+	i = g_xx_stop-(x-g_xx_start);
 	if (i < xdots)
 	{
 		g_put_color(i, y, color);
@@ -5134,8 +5134,8 @@ void _fastcall symplot2J(int x, int y, int color)
 {
 	int i, j;
 	g_put_color(x, y, color);
-	if ((i = yystop-(y-yystart)) > g_y_stop && i < ydots
-		&& (j = xxstop-(x-g_xx_start)) < xdots)
+	if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < ydots
+		&& (j = g_xx_stop-(x-g_xx_start)) < xdots)
 	{
 		g_put_color(j, i, color);
 	}
@@ -5145,13 +5145,13 @@ void _fastcall symplot2J(int x, int y, int color)
 void _fastcall symplot4(int x, int y, int color)
 {
 	int i, j;
-	j = xxstop-(x-g_xx_start);
+	j = g_xx_stop-(x-g_xx_start);
 	g_put_color(x , y, color);
 	if (j < xdots)
 	{
 		g_put_color(j , y, color);
 	}
-	i = yystop-(y-yystart);
+	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
 		g_put_color(x , i, color);
@@ -5168,7 +5168,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 	int i, stripe;
 	g_put_color(x, y, color);
 	stripe = (basin == 2 && color > 8) ? 8 : 0;
-	i = yystop-(y-yystart);
+	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
@@ -5191,13 +5191,13 @@ void _fastcall symplot4basin(int x, int y, int color)
 	color -= stripe;               /* reconstruct unstriped color */
 	color1 = (color < degree/2 + 2) ?
 		(degree/2 + 2 - color) : (degree/2 + degree + 2 - color);
-	j = xxstop-(x-g_xx_start);
+	j = g_xx_stop-(x-g_xx_start);
 	g_put_color(x, y, color + stripe);
 	if (j < xdots)
 	{
 		g_put_color(j, y, color1 + stripe);
 	}
-	i = yystop-(y-yystart);
+	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
 		g_put_color(x, i, stripe + (degree + 1 - color)%degree + 1);
