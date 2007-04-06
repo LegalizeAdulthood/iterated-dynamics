@@ -265,9 +265,9 @@ void helptitle()
 #endif
 	sprintf(buf, "FRACTINT Version %d.%01d", g_release/100, (g_release%100)/10);
 	strcat(msg, buf);
-	if (g_release%10)
+	if (g_release % 10)
 	{
-		sprintf(buf, "%01d", g_release%10);
+		sprintf(buf, "%01d", g_release % 10);
 		strcat(msg, buf);
 		}
 	if (g_patch_level)

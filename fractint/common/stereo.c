@@ -313,7 +313,7 @@ int do_AutoStereo(void)
 			}
 			for (i = 0; i < xdots; i++)
 			{
-				buf[i] = (unsigned char)(rand()%colors);
+				buf[i] = (unsigned char)(rand() % colors);
 			}
 			outline_stereo(buf, xdots);
 		}

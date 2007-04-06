@@ -82,7 +82,7 @@ void intro(void)
 	driver_set_attr(toprow, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
 	i = botrow - toprow;
 	srand((unsigned int)clock_ticks());
-	j = rand()%(j-(botrow-toprow)); /* first to use */
+	j = rand() % (j-(botrow-toprow)); /* first to use */
 	i = j + botrow-toprow; /* last to use */
 	oldchar = credits[authors[i + 1]];
 	credits[authors[i + 1]] = 0;

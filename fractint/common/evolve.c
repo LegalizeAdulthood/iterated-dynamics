@@ -210,16 +210,16 @@ static int varyint(int randvalue, int limit, int mode)
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X: /* vary with x */
-		ret = (odpx + px)%limit;
+		ret = (odpx + px) % limit;
 		break;
 	case VARYINT_WITH_Y: /* vary with y */
-		ret = (odpy + lclpy)%limit;
+		ret = (odpy + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_PLUS_Y: /* vary with x + y */
-		ret = (odpx + px + odpy + lclpy)%limit;
+		ret = (odpx + px + odpy + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_MINUS_Y: /* vary with x-y */
-		ret = (odpx + px)-(odpy + lclpy)%limit;
+		ret = (odpx + px)-(odpy + lclpy) % limit;
 		break;
 	case VARYINT_RANDOM: /* random mutation */
 		ret = randvalue % limit;

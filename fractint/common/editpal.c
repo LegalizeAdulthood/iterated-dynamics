@@ -2151,7 +2151,7 @@ static void PalTable__DrawStatus(PalTable *me, BOOLEAN stripe_mode)
 
 static void PalTable__HlPal(PalTable *me, int pnum, int color)
 {
-	int x    = me->x + PalTable_PALX + (pnum%16)*me->csize,
+	int x    = me->x + PalTable_PALX + (pnum % 16)*me->csize,
 		y    = me->y + PalTable_PALY + (pnum/16)*me->csize,
 		size = me->csize;
 
@@ -2203,7 +2203,7 @@ static void PalTable__Draw(PalTable *me)
 
 	for (pal = 0; pal < 256; pal++)
 	{
-		xoff = PalTable_PALX + (pal%16)*me->csize;
+		xoff = PalTable_PALX + (pal % 16)*me->csize;
 		yoff = PalTable_PALY + (pal/16)*me->csize;
 
 		if (pal >= colors)
@@ -3571,7 +3571,7 @@ void EditPalette(void)       /* called by fractint */
 
 	reserve_colors = TRUE;
 	inverse = FALSE;
-	fg_color = (BYTE)(255%colors);
+	fg_color = (BYTE)(255 % colors);
 	bg_color = (BYTE)(fg_color-1);
 
 	Cursor_Construct();

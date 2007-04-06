@@ -771,7 +771,7 @@ void get_calculation_time(char *msg, long ctime)
 	if (ctime >= 0)
 	{
 		sprintf(msg, "%3ld:%02ld:%02ld.%02ld", ctime/360000L,
-			(ctime%360000L)/6000, (ctime%6000)/100, ctime%100);
+			(ctime % 360000L)/6000, (ctime % 6000)/100, ctime % 100);
 	}
 	else
 	{
@@ -1268,7 +1268,7 @@ top:
 			char p[50];
 			if (typehasparm(fractype, i, p))
 			{
-				if (k%4 == 0)
+				if (k % 4 == 0)
 				{
 					s_row++;
 					col = 9;
