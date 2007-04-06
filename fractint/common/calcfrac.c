@@ -40,6 +40,12 @@
 #define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
 							/* maxxblk defn must match fracsubr.c */
 
+/***** vars for new btm *****/
+enum direction
+{
+	North, East, South, West
+};
+
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l = { 0, 0 };
@@ -116,11 +122,6 @@ int     g_num_attractors;                 /* number of finite attractors  */
 _CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
-/***** vars for new btm *****/
-enum direction {North, East, South, West};
-enum direction going_to;
-int trail_row;
-int trail_col;
 
 /* routines in this module      */
 static void perform_worklist(void);
@@ -193,6 +194,9 @@ static int ixstart;
 static int iystart;						/* start here */
 static int workpass;
 static int worksym;                   /* for the sake of calcmand    */
+static enum direction going_to;
+static int trail_row;
+static int trail_col;
 
 /* next has a skip bit for each maxblock unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
@@ -1040,17 +1044,17 @@ static void perform_worklist()
 			switch (autoshowdot)
 			{
 			case 'd':
-				showdotcolor = g_color_dark%colors;
+				showdotcolor = g_color_dark % colors;
 				break;
 			case 'm':
-				showdotcolor = g_color_medium%colors;
+				showdotcolor = g_color_medium % colors;
 				break;
 			case 'b':
 			case 'a':
-				showdotcolor = g_color_bright%colors;
+				showdotcolor = g_color_bright % colors;
 				break;
 			default:
-				showdotcolor = showdot%colors;
+				showdotcolor = showdot % colors;
 				break;
 			}
 			if (sizedot <= 0)
@@ -2433,7 +2437,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 								attracted = TRUE;
 								if (finattract < 0)
 								{
-									g_color_iter = (g_color_iter%g_attractor_period[i]) + 1;
+									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
 								}
 								break;
 							}
@@ -2458,7 +2462,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 								attracted = TRUE;
 								if (finattract < 0)
 								{
-									g_color_iter = (g_color_iter%g_attractor_period[i]) + 1;
+									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
 								}
 								break;
 							}
@@ -4724,7 +4728,7 @@ static int tesseral(void)
 			{
 				if (fillcolor > 0)
 				{
-					tp->top = fillcolor %colors;
+					tp->top = fillcolor % colors;
 				}
 				if (guessplot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
 				{
@@ -5172,7 +5176,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 	if (i > g_y_stop && i < ydots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
-		color = (degree + 1-color)%degree + 1;  /* symmetrical color */
+		color = (degree + 1-color) % degree + 1;  /* symmetrical color */
 		color += stripe;                    /* add stripe */
 		g_put_color(x, i, color) ;
 	}
@@ -5200,10 +5204,10 @@ void _fastcall symplot4basin(int x, int y, int color)
 	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
-		g_put_color(x, i, stripe + (degree + 1 - color)%degree + 1);
+		g_put_color(x, i, stripe + (degree + 1 - color) % degree + 1);
 		if (j < xdots)
 		{
-			g_put_color(j, i, stripe + (degree + 1 - color1)%degree + 1);
+			g_put_color(j, i, stripe + (degree + 1 - color1) % degree + 1);
 		}
 	}
 }
