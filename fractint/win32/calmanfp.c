@@ -20,7 +20,7 @@ void calcmandfpasmstart(void)
 {
 	inside_color = (inside < 0) ? maxit : inside;
 	periodicity_color = (periodicitycheck < 0) ? 7 : inside_color;
-	oldcoloriter = 0;
+	g_old_color_iter = 0;
 }
 
 #define ABS(x) ((x) < 0?-(x):(x))
@@ -43,17 +43,17 @@ long calcmandfpasm_c(void)
 
 	if (periodicitycheck == 0)
 	{
-		oldcoloriter = 0;      /* don't check periodicity */
+		g_old_color_iter = 0;      /* don't check periodicity */
 	}
 	else if (reset_periodicity != 0)
 	{
-		oldcoloriter = maxit - 255;
+		g_old_color_iter = maxit - 255;
 	}
 
 	tmpfsd = maxit - firstsavedand;
-	if (oldcoloriter > tmpfsd) /* this defeats checking periodicity immediately */
+	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
 	{
-		oldcoloriter = tmpfsd; /* but matches the code in StandardFractal() */
+		g_old_color_iter = tmpfsd; /* but matches the code in StandardFractal() */
 	}
 
 	/* initparms */
@@ -129,7 +129,7 @@ long calcmandfpasm_c(void)
 		}
 
 		/* no_save_new_xy_87 */
-		if (cx < oldcoloriter)  /* check periodicity */
+		if (cx < g_old_color_iter)  /* check periodicity */
 		{
 			if (((maxit - cx) & savedand) == 0)
 			{
@@ -155,9 +155,9 @@ long calcmandfpasm_c(void)
 				if (ABS(savedx-x) < closenuff && ABS(savedy-y) < closenuff)
 				{
 #endif
-/*		    oldcoloriter = 65535;  */
-					oldcoloriter = maxit;
-					realcoloriter = maxit;
+/*		    g_old_color_iter = 65535;  */
+					g_old_color_iter = maxit;
+					g_real_color_iter = maxit;
 					kbdcount = kbdcount-(maxit-cx);
 					g_color_iter = periodicity_color;
 					goto pop_stack;
@@ -174,9 +174,9 @@ long calcmandfpasm_c(void)
 
 	/* reached maxit */
 	/* check periodicity immediately next time, remember we count down from maxit */
-	oldcoloriter = maxit;
+	g_old_color_iter = maxit;
 	kbdcount -= maxit;
-	realcoloriter = maxit;
+	g_real_color_iter = maxit;
 	g_color_iter = inside_color;
 
 pop_stack:
@@ -194,18 +194,18 @@ over_bailout_87:
 	}
 	if (cx-10 > 0)
 	{
-		oldcoloriter = cx-10;
+		g_old_color_iter = cx-10;
 	}
 	else
 	{
-		oldcoloriter = 0;
+		g_old_color_iter = 0;
 	}
-	g_color_iter = realcoloriter = maxit-cx;
+	g_color_iter = g_real_color_iter = maxit-cx;
 	if (g_color_iter == 0)
 	{
 		g_color_iter = 1;
 	}
-	kbdcount -= realcoloriter;
+	kbdcount -= g_real_color_iter;
 	if (outside == -1)
 	{
 	}
