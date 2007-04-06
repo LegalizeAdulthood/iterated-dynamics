@@ -283,7 +283,7 @@ init_restart:
 	if (potparam[0] != 0.0
 		&& colors >= 64
 		&& (curfractalspecific->calculate_type == StandardFractal
-			|| curfractalspecific->calculate_type == calcmand
+			|| curfractalspecific->calculate_type == calculate_mandelbrot
 			|| curfractalspecific->calculate_type == calcmandfp))
 	{
 		potflag = 1;
@@ -403,7 +403,7 @@ init_restart:
 			bitshift = 16;  /* to allow larger corners */
 		}
 	}
-/* We want this code if we're using the assembler calcmand */
+/* We want this code if we're using the assembler calculate_mandelbrot */
 	if (fractype == MANDEL || fractype == JULIA)  /* adust shift bits if.. */
 	{
 		if (potflag == 0                            /* not using potential */
@@ -1282,9 +1282,9 @@ static int _fastcall ratio_bad(double actual, double desired)
 	directly set g_resume_info, resume_len, calc_status to avoid doubling
 	transient memory needs by using these routines.
 
-	StandardFractal, calcmand, solidguess, and bound_trace_main are a related
+	StandardFractal, calculate_mandelbrot, solidguess, and bound_trace_main are a related
 	set of engines for escape-time fractals.  They use a common g_work_list
-	structure for save/resume.  Fractals using these must specify calcmand
+	structure for save/resume.  Fractals using these must specify calculate_mandelbrot
 	or StandardFractal as the engine in fractalspecificinfo.
 	Other engines don't get btm nor ssg, don't get off-axis symmetry nor
 	panning (the g_work_list stuff), and are on their own for save/resume.

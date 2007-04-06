@@ -172,7 +172,7 @@ void init_big_pi(void);
 /*  calcfrac -- C file prototypes */
 
 extern int calculate_fractal(void);
-extern int calcmand(void);
+extern int calculate_mandelbrot(void);
 extern int calcmandfp(void);
 extern int StandardFractal(void);
 extern int test(void);

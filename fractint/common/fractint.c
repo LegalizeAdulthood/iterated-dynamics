@@ -90,7 +90,7 @@ char *fract_dir1="", *fract_dir2="";
 		long    delx2, dely2;           /* screen pixel increments  */
 		LDBL    delxx, delyy;           /* screen pixel increments  */
 		LDBL    delxx2, delyy2;         /* screen pixel increments  */
-		long    delmin;                 /* for calcfrac/calcmand    */
+		long    delmin;                 /* for calcfrac/calculate_mandelbrot    */
 		double  ddelmin;                /* same as a double         */
 		double  param[MAXPARAMS];       /* parameters               */
 		double  potparam[3];            /* three potential parameters*/

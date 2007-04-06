@@ -136,9 +136,9 @@ int g_first_saved_and;
 int g_atan_colors = 180;
 
 /* routines in this module      */
-static void perform_worklist(void);
-static int  OneOrTwoPass(void);
-static int  _fastcall StandardCalc(int);
+static void perform_work_list(void);
+static int  one_or_two_pass(void);
+static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
 static void decomposition(void);
 static int  bound_trace_main(void);
@@ -203,7 +203,7 @@ static int s_pixel_pi; /* value of pi in pixels */
 static int s_ix_start;
 static int s_iy_start;						/* start here */
 static int s_work_pass;
-static int s_work_sym;                   /* for the sake of calcmand    */
+static int s_work_sym;                   /* for the sake of calculate_mandelbrot    */
 static enum direction s_going_to;
 static int s_trail_row;
 static int s_trail_col;
@@ -513,7 +513,6 @@ static int calculate_type_show_dot(void)
 }
 
 /******* calculate_fractal - the top level routine for generating an image *******/
-
 int calculate_fractal(void)
 {
 	matherr_ct = 0;
@@ -748,7 +747,7 @@ int calculate_fractal(void)
 	}
 
 	if (curfractalspecific->calculate_type != StandardFractal
-		&& curfractalspecific->calculate_type != calcmand
+		&& curfractalspecific->calculate_type != calculate_mandelbrot
 		&& curfractalspecific->calculate_type != calcmandfp
 		&& curfractalspecific->calculate_type != lyapunov
 		&& curfractalspecific->calculate_type != froth_calc)
@@ -792,26 +791,26 @@ int calculate_fractal(void)
 			{
 				stdcalcmode = 'g';
 				g_three_pass = 1;
-				timer(TIMER_ENGINE, (int(*)())perform_worklist);
+				timer(TIMER_ENGINE, (int(*)())perform_work_list);
 				if (calc_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					stdcalcmode = (xdots >= 640) ? '2' : '1';
-					timer(TIMER_ENGINE, (int(*)())perform_worklist);
+					timer(TIMER_ENGINE, (int(*)())perform_work_list);
 					g_three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
 				stdcalcmode = (xdots >= 640) ? '2' : '1';
-				timer(TIMER_ENGINE, (int (*)()) perform_worklist);
+				timer(TIMER_ENGINE, (int (*)()) perform_work_list);
 			}
 			stdcalcmode = (char)oldcalcmode;
 		}
 		else /* main case, much nicer! */
 		{
 			g_three_pass = 0;
-			timer(TIMER_ENGINE, (int(*)())perform_worklist);
+			timer(TIMER_ENGINE, (int(*)())perform_work_list);
 		}
 	}
 	calctime += timer_interval;
@@ -862,7 +861,7 @@ int find_alternate_math(int type, int math)
 
 /**************** general escape-time engine routines *********************/
 
-static void perform_worklist()
+static void perform_work_list()
 {
 	int (*sv_orbitcalc)(void) = NULL;  /* function that calculates one orbit */
 	int (*sv_per_pixel)(void) = NULL;  /* once-per-pixel init */
@@ -1152,7 +1151,7 @@ static void perform_worklist()
 			draw_orbits();
 			break;
 		default:
-			OneOrTwoPass();
+			one_or_two_pass();
 		}
 #ifdef SAVEDOTS_USES_MALLOC
 		if (s_save_dots != NULL)
@@ -1741,7 +1740,7 @@ static int draw_orbits(void)
 	return 0;
 }
 
-static int OneOrTwoPass(void)
+static int one_or_two_pass(void)
 {
 	int i;
 
@@ -1752,7 +1751,7 @@ static int OneOrTwoPass(void)
 	}
 	if (stdcalcmode == '2' && s_work_pass == 0) /* do 1st pass of two */
 	{
-		if (StandardCalc(1) == -1)
+		if (standard_calculate(1) == -1)
 		{
 			add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 			return -1;
@@ -1767,7 +1766,7 @@ static int OneOrTwoPass(void)
 		g_yy_begin = g_yy_start;
 	}
 	/* second or only pass */
-	if (StandardCalc(2) == -1)
+	if (standard_calculate(2) == -1)
 	{
 		i = g_yy_stop;
 		if (g_y_stop != g_yy_stop) /* must be due to symmetry */
@@ -1781,7 +1780,7 @@ static int OneOrTwoPass(void)
 	return 0;
 }
 
-static int _fastcall StandardCalc(int passnum)
+static int _fastcall standard_calculate(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
 	g_current_pass = passnum;
@@ -1806,7 +1805,7 @@ static int _fastcall StandardCalc(int passnum)
 			}
 			if (passnum == 1 || stdcalcmode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*g_calculate_type)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */
+				if ((*g_calculate_type)() == -1) /* StandardFractal(), calculate_mandelbrot() or calcmandfp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -1841,7 +1840,7 @@ static int _fastcall StandardCalc(int passnum)
 }
 
 
-int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col set */
+int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called with row & col set */
 {
 	/* setup values from array to avoid using es reg in calcmand.asm */
 	linitx = lxpixel();
@@ -1891,7 +1890,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 long (*calcmandfpasm)(void);
 
 /************************************************************************/
-/* added by Wes Loewer - sort of a floating point version of calcmand() */
+/* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot() */
 /* can also handle invert, any g_rq_limit, potflag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
@@ -2600,7 +2599,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		g_old_color_iter = g_color_iter + 10;    /* check when past this + 10 next time */
 		if (g_color_iter == 0)
 		{
-			g_color_iter = 1;         /* needed to make same as calcmand */
+			g_color_iter = 1;         /* needed to make same as calculate_mandelbrot */
 		}
 	}
 
