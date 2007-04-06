@@ -15,9 +15,7 @@
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
-#if defined(XFRACT) || defined(_WIN32)
 extern long calcmandfpasm_c(void);
-#endif
 
 /* -------------------------------------------------------------------- */
 /*              Setup (once per fractal image) routines                 */

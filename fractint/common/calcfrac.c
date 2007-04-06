@@ -182,12 +182,8 @@ static int right_guess, bottom_guess;
 typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
-#if defined(XFRACT) || defined(_WIN32)
 BYTE dstack[4096];              /* common temp, two put_line calls */
 unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
-#else
-#define tprefix   (*((TPREFIX)prefix))
-#endif
 
 #ifndef sqr
 #define sqr(x) ((x)*(x))

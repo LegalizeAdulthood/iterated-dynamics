@@ -533,8 +533,6 @@ z_to_the_z(_CMPLX *z, _CMPLX *out)
 #endif
 #endif
 
-#if defined(XFRACT) || defined(_WIN32) /* fractint uses the NewtonFractal2 code in newton.asm */
-
 int complex_div(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz);
 int complex_mult(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz);
 
@@ -618,7 +616,6 @@ complex_div(_CMPLX numerator, _CMPLX denominator, _CMPLX *pout)
 	pout->y = pout->y/mod;
 	return 0;
 }
-#endif /* newton code only used by xfractint */
 
 #if !defined(XFRACT)
 struct MP mproverd, mpd1overd, mpthreshold;
@@ -2660,8 +2657,6 @@ CirclelongFractal()
 /*              Initialization (once per pixel) routines                                                */
 /* -------------------------------------------------------------------- */
 
-#if defined(XFRACT) || defined(_WIN32)
-/* this code translated to asm - lives in newton.asm */
 /* transform points with reciprocal function */
 void invertz2(_CMPLX *z)
 {
@@ -2674,7 +2669,6 @@ void invertz2(_CMPLX *z)
 	z->x *= tempsqrx;      z->y *= tempsqrx;      /* Perform inversion */
 	z->x += f_xcenter; z->y += f_ycenter; /* Renormalize */
 }
-#endif
 
 int long_julia_per_pixel(void)
 {
