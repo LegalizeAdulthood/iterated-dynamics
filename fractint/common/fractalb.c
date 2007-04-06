@@ -606,11 +606,11 @@ int MandelbnSetup()
 		init_big_pi();
 		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
 		{
-			symmetry = XYAXIS_NOPARM;
+			g_symmetry = XYAXIS_NOPARM;
 		}
 		if (param[3] != 0)
 		{
-			symmetry = NOSYM;
+			g_symmetry = NOSYM;
 		}
 		break;
 	case FPJULIAZPOWER:
@@ -619,7 +619,7 @@ int MandelbnSetup()
 		bftobn(bnparm.y, bfparms[1]);
 		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
 		{
-			symmetry = NOSYM;
+			g_symmetry = NOSYM;
 		}
 		break;
 	}
@@ -697,11 +697,11 @@ int MandelbfSetup()
 		init_big_pi();
 		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
 		{
-			symmetry = XYAXIS_NOPARM;
+			g_symmetry = XYAXIS_NOPARM;
 		}
 		if (param[3] != 0)
 		{
-			symmetry = NOSYM;
+			g_symmetry = NOSYM;
 		}
 		break;
 	case FPJULIAZPOWER:
@@ -710,7 +710,7 @@ int MandelbfSetup()
 		copy_bf(bfparm.y, bfparms[1]);
 		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
 		{
-			symmetry = NOSYM;
+			g_symmetry = NOSYM;
 		}
 		break;
 	}

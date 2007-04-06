@@ -4016,7 +4016,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		return 0;
 	}
 		/* get symmetry */
-	symmetry = 0;
+	g_symmetry = 0;
 	if (c == '(')
 	{
 		char sym_buf[20];
@@ -4053,7 +4053,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		{
 			if (!stricmp(SymStr[i].s, sym_buf))
 			{
-				symmetry = SymStr[i].n;
+				g_symmetry = SymStr[i].n;
 				break;
 			}
 		}
@@ -4140,9 +4140,9 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		if (debug_fp != NULL)
 		{
 			fprintf(debug_fp, "%s\n", FormName);
-			if (symmetry != 0)
+			if (g_symmetry != 0)
 			{
-				fprintf(debug_fp, "%s\n", SymStr[symmetry].s);
+				fprintf(debug_fp, "%s\n", SymStr[g_symmetry].s);
 			}
 		}
 	}
