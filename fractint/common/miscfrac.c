@@ -618,7 +618,7 @@ static void set_plasma_palette()
 
 /***************** standalone engine for "diffusion" ********************/
 
-#define RANDOM(x)  (rand()%(x))
+#define RANDOM(x)  (rand() % (x))
 
 #define DIFFUSION_CENTRAL	0
 #define DIFFUSION_LINE	1
@@ -1817,11 +1817,11 @@ int cellular()
 #endif
 	if (n == 0)  /* calculate a random rule */
 	{
-		n = rand()%(int)k;
+		n = rand() % (int)k;
 		for (i = 1; i < (U16)rule_digits; i++)
 		{
 			n *= 10;
-			n += rand()%(int)k;
+			n += rand() % (int)k;
 		}
 		param[1] = n;
 	}
@@ -1881,7 +1881,7 @@ int cellular()
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
-				cell_array[filled][g_col] = (BYTE)(rand()%(int)k);
+				cell_array[filled][g_col] = (BYTE)(rand() % (int)k);
 			}
 		} /* end of if random */
 		else
@@ -1915,8 +1915,8 @@ int cellular()
 				/* Use a random border */
 				for (i = 0; i <= (U16)r; i++)
 				{
-						cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-						cell_array[notfilled][g_x_stop-i] = (BYTE)(rand()%(int)k);
+						cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
+						cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
 				}
 			}
 			else
@@ -1978,8 +1978,8 @@ contloop:
 			/* Use a random border */
 			for (i = 0; i <= (U16)r; i++)
 			{
-				cell_array[notfilled][i] = (BYTE)(rand()%(int)k);
-				cell_array[notfilled][g_x_stop-i] = (BYTE)(rand()%(int)k);
+				cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
+				cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
 			}
 		}
 		else
@@ -2340,7 +2340,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	g_color_iter = 0;
 	if (showdot > 0)
 	{
-		(*g_plot_color) (g_col, g_row, showdot%colors);
+		(*g_plot_color) (g_col, g_row, showdot % colors);
 	}
 	if (!integerfractal) /* fp mode */
 	{

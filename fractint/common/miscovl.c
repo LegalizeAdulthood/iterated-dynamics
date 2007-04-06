@@ -2325,7 +2325,7 @@ static void update_fractint_cfg()
 				vident.videomodebx,
 				vident.videomodecx,
 				vident.videomodedx,
-				vident.dotmode%1000, /* remove true-color flag, keep g_text_safe */
+				vident.dotmode % 1000, /* remove true-color flag, keep g_text_safe */
 				vident.xdots,
 				vident.ydots,
 				colorsbuf,

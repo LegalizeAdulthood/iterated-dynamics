@@ -1181,7 +1181,7 @@ void Jiim(int which)         /* called by fractint */
 		{
 			if (iter < maxit)
 			{
-				color = (int)iter%colors;
+				color = (int)iter % colors;
 				if (integerfractal)
 				{
 					g_old_z.x = lold.x; g_old_z.x /= fudge;

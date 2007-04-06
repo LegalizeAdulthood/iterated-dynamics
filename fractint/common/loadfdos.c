@@ -275,10 +275,10 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				strcat((char *)dstack, "WinFract ");
 			}
 			sprintf(temp1, "v%d.%01d", save_release/100, (save_release%100)/10);
-			if (save_release%100)
+			if (save_release % 100)
 			{
 				i = (int) strlen(temp1);
-				temp1[i] = (char)((save_release%10) + '0');
+				temp1[i] = (char)((save_release % 10) + '0');
 				temp1[i + 1] = 0;
 			}
 			if (save_system == 0 && save_release <= 1410)
