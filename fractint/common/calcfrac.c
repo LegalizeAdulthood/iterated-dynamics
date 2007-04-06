@@ -53,7 +53,7 @@ int g_invert;
 double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
-double g_magnitude, g_rq_limit, rqlim2, rqlim_save;
+double g_magnitude, g_rq_limit, g_rq_limit2, rqlim_save;
 int no_mag_calc = 0;
 int use_old_period = 0;
 int use_old_distest = 0;
@@ -711,7 +711,7 @@ int calcfract(void)
 
 	closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
 	rqlim_save = g_rq_limit;
-	rqlim2 = sqrt(g_rq_limit);
+	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
 		lparm.x = (long)(parm.x*fudge);    /* real portion of Lambda */
@@ -723,7 +723,7 @@ int calcfract(void)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
-		g_limit2_l = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
+		g_limit2_l = (long)(g_rq_limit2*fudge);    /* stop if magnitude exceeds this */
 		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
 		g_init_orbit_l.y = (long)(initorbit.y*fudge);
@@ -2741,7 +2741,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				g_color_iter = biomorph;
 			}
 		}
-		else if (fabs(g_new_z.x) < rqlim2 || fabs(g_new_z.y) < rqlim2)
+		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
 		{
 			g_color_iter = biomorph;
 		}

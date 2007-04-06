@@ -435,7 +435,7 @@ extern int                   rotate_lo;
 extern double                roverd;
 extern int                   g_row;
 extern int                   g_row_count;						/* row-counter for decoder and out_line */
-extern double                rqlim2;
+extern double                g_rq_limit2;
 extern double                g_rq_limit;
 extern int                   rseed;
 extern long                  savebase;
