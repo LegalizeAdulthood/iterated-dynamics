@@ -781,7 +781,7 @@ int diffusion(void)
 			(getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
 		{
 			/* Erase moving point */
-			if (show_orbit)
+			if (g_show_orbit)
 			{
 				g_put_color(x, y, 0);
 			}
@@ -849,7 +849,7 @@ int diffusion(void)
 			}
 
 			/* Show the moving point */
-			if (show_orbit)
+			if (g_show_orbit)
 			{
 				g_put_color(x, y, RANDOM(colors-1) + 1);
 			}
@@ -2336,7 +2336,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		return 0;
 	}
 
-	orbit_ptr = 0;
+	g_orbit_index = 0;
 	g_color_iter = 0;
 	if (showdot > 0)
 	{
@@ -2378,7 +2378,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			g_color_iter++;
 
-			if (show_orbit)
+			if (g_show_orbit)
 			{
 				if (driver_key_pressed())
 				{
@@ -2490,7 +2490,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			}
 			g_color_iter++;
 
-			if (show_orbit)
+			if (g_show_orbit)
 			{
 				if (driver_key_pressed())
 				{
@@ -2557,7 +2557,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			}
 		}
 	}
-	if (show_orbit)
+	if (g_show_orbit)
 	{
 		scrub_orbit();
 	}
