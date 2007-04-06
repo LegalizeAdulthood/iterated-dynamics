@@ -1312,7 +1312,7 @@ PopcornFractal_Old(void)
 	g_new_z.y = g_old_z.y - parm.x*sinx;
 	if (plot == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + row%colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row%colors);
 		g_old_z = g_new_z;
 	}
 	else
@@ -1355,7 +1355,7 @@ PopcornFractal(void)
 	*/
 	if (plot == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + row % colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
 		g_old_z = g_new_z;
 	}
 	/* else */
@@ -1398,7 +1398,7 @@ LPopcornFractal_Old(void)
 	lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
 	if (plot == noplot)
 	{
-		iplot_orbit(lnew.x, lnew.y, 1 + row%colors);
+		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;
 	}
 	else
@@ -1440,7 +1440,7 @@ LPopcornFractal(void)
 	lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
 	if (plot == noplot)
 	{
-		iplot_orbit(lnew.x, lnew.y, 1 + row%colors);
+		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;
 	}
 	/* else */
@@ -1487,7 +1487,7 @@ PopcornFractalFn(void)
 
 	if (plot == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + row%colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row%colors);
 		g_old_z = g_new_z;
 	}
 
@@ -1541,7 +1541,7 @@ LPopcornFractalFn(void)
 
 	if (plot == noplot)
 	{
-		iplot_orbit(lnew.x, lnew.y, 1 + row%colors);
+		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;
 	}
 	ltempsqrx = lsqr(lnew.x);
@@ -3650,49 +3650,49 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
 /* Real component, grid lookup version - requires dx0/dx1 arrays */
 static double _fastcall dxpixel_grid(void)
 {
-	return dx0[col] + dx1[row];
+	return dx0[g_col] + dx1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dxpixel_calc(void)
 {
-	return (double) (xxmin + col*delxx + row*delxx2);
+	return (double) (xxmin + g_col*delxx + g_row*delxx2);
 }
 
 /* Imaginary component, grid lookup version - requires dy0/dy1 arrays */
 static double _fastcall dypixel_grid(void)
 {
-	return dy0[row] + dy1[col];
+	return dy0[g_row] + dy1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dypixel_calc(void)
 {
-	return (double)(yymax - row*delyy - col*delyy2);
+	return (double)(yymax - g_row*delyy - g_col*delyy2);
 }
 
 /* Real component, grid lookup version - requires lx0/lx1 arrays */
 static long _fastcall lxpixel_grid(void)
 {
-	return lx0[col] + lx1[row];
+	return lx0[g_col] + lx1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
 static long _fastcall lxpixel_calc(void)
 {
-	return xmin + col*delx + row*delx2;
+	return xmin + g_col*delx + g_row*delx2;
 }
 
 /* Imaginary component, grid lookup version - requires ly0/ly1 arrays */
 static long _fastcall lypixel_grid(void)
 {
-	return ly0[row] + ly1[col];
+	return ly0[g_row] + ly1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
 static long _fastcall lypixel_calc(void)
 {
-	return ymax - row*dely - col*dely2;
+	return ymax - g_row*dely - g_col*dely2;
 }
 
 double (_fastcall *dxpixel)(void) = dxpixel_calc;

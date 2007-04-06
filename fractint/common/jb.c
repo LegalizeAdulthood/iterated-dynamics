@@ -213,7 +213,7 @@ static int z_line(long x, long y)
 		s_per = &s_right_eye;
 		break;
 	case JULI3DMODE_RED_BLUE:
-		s_per = ((row + col) & 1) ? &s_left_eye : &s_right_eye;
+		s_per = ((g_row + g_col) & 1) ? &s_left_eye : &s_right_eye;
 		break;
 	}
 	julibrot_per_pixel();
@@ -241,10 +241,10 @@ static int z_line(long x, long y)
 			if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
 			{
 				g_color = (int) (128l*z_pixel / g_z_dots);
-				if ((row + col) & 1)
+				if ((g_row + g_col) & 1)
 				{
 
-					(*plot)(col, row, 127 - g_color);
+					(*plot)(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -257,13 +257,13 @@ static int z_line(long x, long y)
 					{
 						g_color = 127;
 					}
-					(*plot)(col, row, 127 + s_b_base - g_color);
+					(*plot)(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(col, row, g_color + 1);
+				(*plot)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;
@@ -297,7 +297,7 @@ static int z_line_fp(double x, double y)
 		s_per_fp = &s_right_eye_fp;
 		break;
 	case JULI3DMODE_RED_BLUE:
-		s_per_fp = ((row + col) & 1) ? &s_left_eye_fp : &s_right_eye_fp;
+		s_per_fp = ((g_row + g_col) & 1) ? &s_left_eye_fp : &s_right_eye_fp;
 		break;
 	}
 	julibrot_per_pixel_fp();
@@ -357,9 +357,9 @@ static int z_line_fp(double x, double y)
 			if (g_juli_3D_mode == 3)
 			{
 				g_color = (int) (128l*z_pixel / g_z_dots);
-				if ((row + col) & 1)
+				if ((g_row + g_col) & 1)
 				{
-					(*plot)(col, row, 127 - g_color);
+					(*plot)(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -371,13 +371,13 @@ static int z_line_fp(double x, double y)
 					{
 						g_color = 127;
 					}
-					(*plot)(col, row, 127 + s_b_base - g_color);
+					(*plot)(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(col, row, g_color + 1);
+				(*plot)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;
@@ -412,14 +412,14 @@ int std_4d_fractal(void)
 		x = -(s_width >> 1);
 		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot)
 		{
-			col = xdot;
-			row = ydot;
+			g_col = xdot;
+			g_row = ydot;
 			if (z_line(x, y) < 0)
 			{
 				return -1;
 			}
-			col = xdots - col - 1;
-			row = ydots - row - 1;
+			g_col = xdots - g_col - 1;
+			g_row = ydots - g_row - 1;
 			if (z_line(-x, -y) < 0)
 			{
 				return -1;
@@ -460,14 +460,14 @@ int std_4d_fractal_fp(void)
 		x = -g_width_fp / 2;
 		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot_fp)
 		{
-			col = xdot;
-			row = ydot;
+			g_col = xdot;
+			g_row = ydot;
 			if (z_line_fp(x, y) < 0)
 			{
 				return -1;
 			}
-			col = xdots - col - 1;
-			row = ydots - row - 1;
+			g_col = xdots - g_col - 1;
+			g_row = ydots - g_row - 1;
 			if (z_line_fp(-x, -y) < 0)
 			{
 				return -1;

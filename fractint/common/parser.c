@@ -3049,20 +3049,20 @@ int form_per_pixel(void)
 	Arg2--;
 
 
-	v[10].a.d.x = (double)col;
-	v[10].a.d.y = (double)row;
+	v[10].a.d.x = (double)g_col;
+	v[10].a.d.y = (double)g_row;
 
 	switch (MathType)
 	{
 	case D_MATH:
-		v[9].a.d.x = ((row + col) & 1) ? 1.0 : 0.0;
+		v[9].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
 		v[9].a.d.y = 0.0;
 		break;
 
 
 #if !defined(XFRACT)
 	case M_MATH:
-		if ((row + col)&1)
+		if ((g_row + g_col)&1)
 		{
 			v[9].a.m = MPCone;
 		}
@@ -3074,10 +3074,10 @@ int form_per_pixel(void)
 		v[10].a.m = cmplx2MPC(v[10].a.d);
 		break;
 	case L_MATH:
-		v[9].a.l.x = (long) (((row + col)&1)*fg);
+		v[9].a.l.x = (long) (((g_row + g_col)&1)*fg);
 		v[9].a.l.y = 0L;
-		v[10].a.l.x = col;   v[10].a.l.x <<= bitshift;
-		v[10].a.l.y = row;   v[10].a.l.y <<= bitshift;
+		v[10].a.l.x = g_col;   v[10].a.l.x <<= bitshift;
+		v[10].a.l.y = g_row;   v[10].a.l.y <<= bitshift;
 		break;
 #endif
 	}
