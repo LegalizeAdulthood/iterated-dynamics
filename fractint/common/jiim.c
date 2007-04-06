@@ -990,14 +990,14 @@ void Jiim(int which)         /* called by fractint */
 						int i;
 
 						lsize  = lmax   = 0;
-						g_old_z.x  = g_new.x  = luckyx;
-						g_old_z.y  = g_new.y  = luckyy;
+						g_old_z.x  = g_new_z.x  = luckyx;
+						g_old_z.y  = g_new_z.y  = luckyy;
 						luckyx = luckyy = 0.0f;
 						for (i = 0; i < 199; i++)
 						{
 							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-							g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
-							EnQueueFloat((float)g_new.x,  (float)g_new.y);
+							g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
+							EnQueueFloat((float)g_new_z.x,  (float)g_new_z.y);
 							EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
 						}
 						maxhits++;
@@ -1015,9 +1015,9 @@ void Jiim(int which)         /* called by fractint */
 				if (color < maxhits)
 				{
 					c_putcolor(x, y, color + 1);
-					g_new = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-					EnQueueFloat((float)g_new.x,  (float)g_new.y);
-					EnQueueFloat((float)-g_new.x, (float)-g_new.y);
+					g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
+					EnQueueFloat((float)g_new_z.x,  (float)g_new_z.y);
+					EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
 				}
 			}
 			else
@@ -1041,13 +1041,13 @@ void Jiim(int which)         /* called by fractint */
 
 				/* r = sqrt(g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y); calculated above */
 				r = sqrt(r);
-				g_new.x = sqrt(fabs((r + g_old_z.x)/2));
+				g_new_z.x = sqrt(fabs((r + g_old_z.x)/2));
 				if (g_old_z.y < 0)
 				{
-					g_new.x = -g_new.x;
+					g_new_z.x = -g_new_z.x;
 				}
 
-				g_new.y = sqrt(fabs((r - g_old_z.x)/2));
+				g_new_z.y = sqrt(fabs((r - g_old_z.x)/2));
 
 				switch (SecretExperimentalMode)
 				{
@@ -1055,61 +1055,61 @@ void Jiim(int which)         /* called by fractint */
 				default:
 					if (rand() % 2)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 					}
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     /* always go one direction */
 					if (SaveC.y < 0)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 					}
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     /* go one dir, draw the other */
 					if (SaveC.y < 0)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 					}
-					x = (int)(-g_new.x*xfactor*zoom + xoff);
-					y = (int)(-g_new.y*yfactor*zoom + yoff);
+					x = (int)(-g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(-g_new_z.y*yfactor*zoom + yoff);
 					break;
 				case SECRETMODE_NEGATIVE_MAX_COLOR:                     /* go negative if max color */
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					if (c_getcolor(x, y) == colors - 1)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
-						x = (int)(g_new.x*xfactor*zoom + xoff);
-						y = (int)(g_new.y*yfactor*zoom + yoff);
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
+						x = (int)(g_new_z.x*xfactor*zoom + xoff);
+						y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     /* go positive if max color */
-					g_new.x = -g_new.x;
-					g_new.y = -g_new.y;
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					g_new_z.x = -g_new_z.x;
+					g_new_z.y = -g_new_z.y;
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					if (c_getcolor(x, y) == colors - 1)
 					{
-						x = (int)(g_new.x*xfactor*zoom + xoff);
-						y = (int)(g_new.y*yfactor*zoom + yoff);
+						x = (int)(g_new_z.x*xfactor*zoom + xoff);
+						y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					}
 					break;
 				case SECRETMODE_7:
 					if (SaveC.y < 0)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 					}
-					x = (int)(-g_new.x*xfactor*zoom + xoff);
-					y = (int)(-g_new.y*yfactor*zoom + yoff);
+					x = (int)(-g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(-g_new_z.y*yfactor*zoom + yoff);
 					if (iter > 10)
 					{
 						if (mode == 0)                        /* pixels  */
@@ -1129,8 +1129,8 @@ void Jiim(int which)         /* called by fractint */
 						old_x = x;
 						old_y = y;
 					}
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 				case SECRETMODE_ZIGZAG:                     /* go in long zig zags */
 					if (rancnt >= 300)
@@ -1139,11 +1139,11 @@ void Jiim(int which)         /* called by fractint */
 					}
 					if (rancnt < 0)
 					{
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 					}
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 				case SECRETMODE_RANDOM_RUN:                     /* "random run" */
 					switch (randir)
@@ -1151,8 +1151,8 @@ void Jiim(int which)         /* called by fractint */
 					case 0:             /* go random direction for a while */
 						if (rand() % 2)
 						{
-							g_new.x = -g_new.x;
-							g_new.y = -g_new.y;
+							g_new_z.x = -g_new_z.x;
+							g_new_z.y = -g_new_z.y;
 						}
 						if (++rancnt > 1024)
 						{
@@ -1161,8 +1161,8 @@ void Jiim(int which)         /* called by fractint */
 						}
 						break;
 					case 1:             /* now go negative dir for a while */
-						g_new.x = -g_new.x;
-						g_new.y = -g_new.y;
+						g_new_z.x = -g_new_z.x;
+						g_new_z.y = -g_new_z.y;
 						/* fall through */
 					case -1:            /* now go positive dir for a while */
 						if (++rancnt > 512)
@@ -1171,8 +1171,8 @@ void Jiim(int which)         /* called by fractint */
 						}
 						break;
 					}
-					x = (int)(g_new.x*xfactor*zoom + xoff);
-					y = (int)(g_new.y*yfactor*zoom + yoff);
+					x = (int)(g_new_z.x*xfactor*zoom + xoff);
+					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 				} /* end switch SecretMode (sorry about the indentation) */
 			} /* end if not MIIM */
@@ -1223,7 +1223,7 @@ void Jiim(int which)         /* called by fractint */
 			old_x = x;
 			old_y = y;
 		}
-		g_old_z = g_new;
+		g_old_z = g_new_z;
 		lold = lnew;
 	} /* end while (still) */
 

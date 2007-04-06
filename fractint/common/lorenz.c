@@ -552,13 +552,13 @@ int orbit_3d_setup_fp()
 			break;
 		case random_walk:
 rwalk:
-			g_new.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
-			g_new.y = s_init_orbit_fp[1] = Sqrt.y / 2;
+			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y / 2;
 			break;
 		case random_run:       /* random run, choose intervals */
 			g_major_method = random_run;
-			g_new.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
-			g_new.y = s_init_orbit_fp[1] = Sqrt.y / 2;
+			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
+			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y / 2;
 			break;
 		}
 	}
@@ -603,28 +603,28 @@ int Minverse_julia_orbit()
 		{
 			return -1;
 		}
-		g_new = DeQueueFloat();
+		g_new_z = DeQueueFloat();
 		break;
 	case depth_first:
 		if (QueueEmpty())
 		{
 			return -1;
 		}
-		g_new = PopFloat();
+		g_new_z = PopFloat();
 		break;
 	case random_walk:
 #if 0
-		g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
+		g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
 		if (RANDOM(2))
 		{
-			g_new.x = -g_new.x;
-			g_new.y = -g_new.y;
+			g_new_z.x = -g_new_z.x;
+			g_new_z.y = -g_new_z.y;
 		}
 #endif
 		break;
 	case random_run:
 #if 0
-		g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
+		g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -635,14 +635,14 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new.x = -g_new.x;
-			g_new.y = -g_new.y;
+			g_new_z.x = -g_new_z.x;
+			g_new_z.y = -g_new_z.y;
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				g_new.x = -g_new.x;
-				g_new.y = -g_new.y;
+				g_new_z.x = -g_new_z.x;
+				g_new_z.y = -g_new_z.y;
 			}
 			break;
 		}
@@ -653,14 +653,14 @@ int Minverse_julia_orbit()
 	/*
 	* Next, find its pixel position
 	*/
-	newcol = (int) (s_cvt.a*g_new.x + s_cvt.b*g_new.y + s_cvt.e);
-	newrow = (int) (s_cvt.c*g_new.x + s_cvt.d*g_new.y + s_cvt.f);
+	newcol = (int) (s_cvt.a*g_new_z.x + s_cvt.b*g_new_z.y + s_cvt.e);
+	newrow = (int) (s_cvt.c*g_new_z.x + s_cvt.d*g_new_z.y + s_cvt.f);
 
 	/*
 	* Now find the next point(s), and flip a coin to choose one.
 	*/
 
-	g_new       = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy);
+	g_new_z       = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
 	leftright = (RANDOM(2)) ? 1 : -1;
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
@@ -672,10 +672,10 @@ int Minverse_julia_orbit()
 		switch (g_major_method)
 		{
 		case breadth_first:
-			EnQueueFloat((float) (leftright*g_new.x), (float) (leftright*g_new.y));
+			EnQueueFloat((float) (leftright*g_new_z.x), (float) (leftright*g_new_z.y));
 			return 1;
 		case depth_first:
-			PushFloat   ((float) (leftright*g_new.x), (float) (leftright*g_new.y));
+			PushFloat   ((float) (leftright*g_new_z.x), (float) (leftright*g_new_z.y));
 			return 1;
 		case random_run:
 		case random_walk:
@@ -695,38 +695,38 @@ int Minverse_julia_orbit()
 		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			/* g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy); */
-			EnQueueFloat((float)g_new.x, (float)g_new.y);
-			EnQueueFloat((float)-g_new.x, (float)-g_new.y);
+			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
+			EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
+			EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
 		}
 		break;
 	case depth_first:
 		if (color < s_max_hits)
 		{
 			putcolor(newcol, newrow, color + 1);
-			/* g_new = ComplexSqrtFloat(g_new.x - s_cx, g_new.y - s_cy); */
+			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
 			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat((float)-g_new.x, (float)-g_new.y);
+					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
 				}
 				else
 				{
-					PushFloat((float)g_new.x, (float)g_new.y);
-					PushFloat((float)-g_new.x, (float)-g_new.y);
+					PushFloat((float)g_new_z.x, (float)g_new_z.y);
+					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
 				}
 			}
 			else
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat((float)g_new.x, (float)g_new.y);
+					PushFloat((float)g_new_z.x, (float)g_new_z.y);
 				}
 				else
 				{
-					PushFloat((float)-g_new.x, (float)-g_new.y);
-					PushFloat((float)g_new.x, (float)g_new.y);
+					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
+					PushFloat((float)g_new_z.x, (float)g_new_z.y);
 				}
 			}
 		}
@@ -742,12 +742,12 @@ int Minverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			g_new.x = -g_new.x;
-			g_new.y = -g_new.y;
+			g_new_z.x = -g_new_z.x;
+			g_new_z.y = -g_new_z.y;
 			break;
 		case DIRECTION_RANDOM:
-			g_new.x = leftright*g_new.x;
-			g_new.y = leftright*g_new.y;
+			g_new_z.x = leftright*g_new_z.x;
+			g_new_z.y = leftright*g_new_z.y;
 			break;
 		}
 		if (color < colors-1)
@@ -760,8 +760,8 @@ int Minverse_julia_orbit()
 		{
 			putcolor(newcol, newrow, color + 1);
 		}
-		g_new.x = leftright*g_new.x;
-		g_new.y = leftright*g_new.y;
+		g_new_z.x = leftright*g_new_z.x;
+		g_new_z.y = leftright*g_new_z.y;
 		break;
 	}
 	return 1;
@@ -1318,22 +1318,22 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 /*    *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B); */
 	g_old_z.x = yold*PAR_B;
 	g_old_z.y = 0;          /* old = (y*B) + 0i (in the complex)*/
-	CMPLXtrig0(g_old_z, g_new);
-	tmp = (double) g_new.x;
+	CMPLXtrig0(g_old_z, g_new_z);
+	tmp = (double) g_new_z.x;
 	g_old_z.x = xold*PAR_B;
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
-	CMPLXtrig1(g_old_z, g_new);
-	*x  = PAR_C*g_new.x + tmp;
+	CMPLXtrig1(g_old_z, g_new_z);
+	*x  = PAR_C*g_new_z.x + tmp;
 
 /*    *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); */
 	g_old_z.x = xold*PAR_A;
 	g_old_z.y = 0;          /* old = (y*A) + 0i (in the complex)*/
-	CMPLXtrig2(g_old_z, g_new);
-	tmp = (double) g_new.x;
+	CMPLXtrig2(g_old_z, g_new_z);
+	tmp = (double) g_new_z.x;
 	g_old_z.x = yold*PAR_A;
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
-	CMPLXtrig3(g_old_z, g_new);
-	*y  = PAR_D*g_new.x + tmp;
+	CMPLXtrig3(g_old_z, g_new_z);
+	*y  = PAR_D*g_new_z.x + tmp;
 
 	return 0;
 }
@@ -1364,7 +1364,7 @@ int inverse_julia_per_image()
 			return -1;
 		}
 		color = curfractalspecific->orbitcalc();
-		g_old_z = g_new;
+		g_old_z = g_new_z;
 	}
 	Free_Queue();
 	return 0;
@@ -2168,8 +2168,8 @@ int plotorbits2dfloat(void)
 	}
 
 #if 0
-	col = (int) (s_o_cvt.a*g_new.x + s_o_cvt.b*g_new.y + s_o_cvt.e);
-	row = (int) (s_o_cvt.c*g_new.x + s_o_cvt.d*g_new.y + s_o_cvt.f);
+	col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
+	row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 	if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 	{
 		(*plot)(col, row, 1);
@@ -2225,8 +2225,8 @@ int plotorbits2dfloat(void)
 		}
 
 		/* else count >= orbit_delay and we want to plot it */
-		col = (int) (s_o_cvt.a*g_new.x + s_o_cvt.b*g_new.y + s_o_cvt.e);
-		row = (int) (s_o_cvt.c*g_new.x + s_o_cvt.d*g_new.y + s_o_cvt.f);
+		col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
+		row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 #ifdef XFRACT
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 #else

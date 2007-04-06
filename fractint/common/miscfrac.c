@@ -2366,14 +2366,14 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			g_new.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+			g_new_z.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
 			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - fsp->fl.f.a*g_old_z.x;
-			g_old_z.x = g_new.x;
+			g_old_z.x = g_new_z.x;
 			if (fsp->repeat_mapping)
 			{
-				g_new.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+				g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
 				g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - fsp->fl.f.a*g_old_z.x;
-				g_old_z.x = g_new.x;
+				g_old_z.x = g_new_z.x;
 			}
 
 			coloriter++;
@@ -2683,22 +2683,22 @@ int froth_per_orbit(void)
 {
 	if (!integerfractal) /* fp mode */
 	{
-		g_new.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-		g_new.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
+		g_new_z.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
 		if (fsp->repeat_mapping)
 		{
-			g_old_z = g_new;
-			g_new.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-			g_new.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
+			g_old_z = g_new_z;
+			g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
 		}
 
-		tempsqrx = sqr(g_new.x);
-		tempsqry = sqr(g_new.y);
+		tempsqrx = sqr(g_new_z.x);
+		tempsqry = sqr(g_new_z.y);
 		if (tempsqrx + tempsqry >= rqlim)
 		{
 			return 1;
 		}
-		g_old_z = g_new;
+		g_old_z = g_new_z;
 	}
 	else  /* integer mode */
 	{
