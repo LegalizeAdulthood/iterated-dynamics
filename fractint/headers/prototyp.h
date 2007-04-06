@@ -32,10 +32,9 @@ extern long cdecl calcmandasm(void);
 /*  calmanfp -- assembler file prototypes */
 
 extern void cdecl calcmandfpasmstart(void);
-/* extern long  cdecl calcmandfpasm(void); */
+/* extern long  cdecl g_calculate_mandelbrot_asm_fp(void); */
 extern long  cdecl calcmandfpasm_287(void);
 extern long  cdecl calcmandfpasm_87(void);
-extern long (*calcmandfpasm)(void);
 
 /*  fpu087 -- assembler file prototypes */
 

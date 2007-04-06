@@ -273,30 +273,30 @@ MandelfpSetup(void)
 			if (cpu >= 386 && fpu >= 387)
 			{
 				calcmandfpasmstart_p5();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
 			else if (cpu == 286 && fpu >= 287)
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;
 			}
 			else
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_87;
 			}
 #else
 #ifdef NASM
 			if (fpu == -1)
 			{
 				calcmandfpasmstart_p5();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
 			else
 #endif
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_c;
 			}
 #endif
 		}
@@ -421,30 +421,30 @@ JuliafpSetup(void)
 			if (cpu >= 386 && fpu >= 387)
 			{
 				calcmandfpasmstart_p5();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
 			else if (cpu == 286 && fpu >= 287)
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_287;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;
 			}
 			else
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_87;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_87;
 			}
 #else
 #ifdef NASM
 			if (fpu == -1)
 			{
 				calcmandfpasmstart_p5();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_p5;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
 			else
 #endif
 			{
 				calcmandfpasmstart();
-				calcmandfpasm = (long (*)(void))calcmandfpasm_c;
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_c;
 			}
 #endif
 		}
