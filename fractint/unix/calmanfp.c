@@ -8,26 +8,30 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-
-extern int atan_colors;
-extern long firstsavedand;
-extern int nextsavedincr;
+#include "externs.h"
 
 static int inside_color, periodicity_color;
 
-void calcmandfpasmstart(void) {
-    if (inside<0) {
-	inside_color = maxit;
-    } else {
-	inside_color = inside;
+void calcmandfpasmstart(void)
+{
+    if (inside<0)
+    {
+		inside_color = maxit;
+    }
+    else
+    {
+		inside_color = inside;
     }
 
-    if (periodicitycheck < 0) {
-	periodicity_color = 7;
-    } else {
-	periodicity_color = inside_color;
+    if (g_periodicity_check < 0)
+    {
+		periodicity_color = 7;
     }
-    oldcoloriter = 0;
+    else
+    {
+		periodicity_color = inside_color;
+    }
+    g_old_color_iter = 0;
 }
 
 #define ABS(x) ((x)<0?-(x):(x))
@@ -36,7 +40,8 @@ void calcmandfpasmstart(void) {
    of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calcmandfpasm_c(void) {
+long calcmandfpasm_c(void)
+{
     long cx;
     long savedand;
     int savedincr;
@@ -47,15 +52,20 @@ long calcmandfpasm_c(void) {
     double x,y,x2, y2, xy, Cx, Cy, savedx, savedy;
 #endif
 
-    if (periodicitycheck==0) {
-	oldcoloriter = 0;      /* don't check periodicity */
-    } else if (reset_periodicity!=0) {
-	oldcoloriter = maxit - 255;
+    if (g_periodicity_check==0)
+    {
+		g_old_color_iter = 0;      /* don't check periodicity */
+    }
+	else if (g_reset_periodicity != 0)
+    {
+		g_old_color_iter = maxit - 255;
     }
 
-   tmpfsd = maxit - firstsavedand;
-   if (oldcoloriter > tmpfsd) /* this defeats checking periodicity immediately */
-      oldcoloriter = tmpfsd; /* but matches the code in StandardFractal() */
+	tmpfsd = maxit - g_first_saved_and;
+	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
+	{
+		g_old_color_iter = tmpfsd; /* but matches the code in StandardFractal() */
+	}
 
     /* initparms */
 #if USE_NEW
@@ -64,156 +74,194 @@ long calcmandfpasm_c(void) {
     savedx = 0;
     savedy = 0;
 #endif
-    orbit_ptr = 0;
-    savedand = firstsavedand;
+    g_orbit_index = 0;
+    savedand = g_first_saved_and;
     savedincr = 1;             /* start checking the very first time */
-    kbdcount--;                /* Only check the keyboard sometimes */
-    if (kbdcount<0) {
-	int key;
-	kbdcount = 1000;
-	key = keypressed();
-	if (key) {
-	    if (key=='o' || key=='O') {
-		getakey();
-		show_orbit = 1-show_orbit;
-	    } else {
-		coloriter = -1;
-		return -1;
-	    }
+    g_input_counter--;                /* Only check the keyboard sometimes */
+    if (g_input_counter<0)
+    {
+		int key;
+		g_input_counter = 1000;
+		key = keypressed();
+		if (key)
+		{
+			if (key=='o' || key=='O')
+			{
+				getakey();
+				g_show_orbit = 1-g_show_orbit;
+			}
+			else
+			{
+				g_color_iter = -1;
+				return -1;
+			}
+		}
 	}
-    }
 
     cx = maxit;
-    if (fractype != JULIAFP && fractype != JULIA) {
-	/* Mandelbrot_87 */
-	Cx = init.x;
-	Cy = init.y;
-	x = parm.x+Cx;
-	y = parm.y+Cy;
-    } else {
-	/* dojulia_87 */
-	Cx = parm.x;
-	Cy = parm.y;
-	x = init.x;
-	y = init.y;
-     x2 = x*x;
-     y2 = y*y;
-     xy = x*y;
-	x = x2-y2+Cx;
-	y = 2*xy+Cy;
+    if (fractype != JULIAFP && fractype != JULIA)
+    {
+		/* Mandelbrot_87 */
+		Cx = g_initial_z.x;
+		Cy = g_initial_z.y;
+		x = parm.x+Cx;
+		y = parm.y+Cy;
+    }
+	else
+    {
+		/* dojulia_87 */
+		Cx = parm.x;
+		Cy = parm.y;
+		x = g_initial_z.x;
+		y = g_initial_z.y;
+		 x2 = x*x;
+		 y2 = y*y;
+		 xy = x*y;
+		x = x2-y2+Cx;
+		y = 2*xy+Cy;
     }
     x2 = x*x;
     y2 = y*y;
     xy = x*y;
 
     /* top_of_cs_loop_87 */
-    while (--cx > 0) {
-	x = x2-y2+Cx;
-	y = 2*xy+Cy;
-	x2 = x*x;
-	y2 = y*y;
-	xy = x*y;
-	magnitude = x2+y2;
+    while (--cx > 0)
+    {
+		x = x2-y2+Cx;
+		y = 2*xy+Cy;
+		x2 = x*x;
+		y2 = y*y;
+		xy = x*y;
+		g_magnitude = x2+y2;
 
-        if (magnitude >= rqlim) {
+        if (g_magnitude >= g_rq_limit)
+        {
             goto over_bailout_87;
         }
 
-   /* no_save_new_xy_87 */
-	if (cx<oldcoloriter) {  /* check periodicity */
-	    if (((maxit - cx) & savedand)==0) {
+		/* no_save_new_xy_87 */
+		if (cx<g_old_color_iter)
+		{  /* check periodicity */
+			if (((maxit - cx) & savedand)==0)
+			{
 #if USE_NEW
-		savedmag = magnitude;
+				savedmag = g_magnitude;
 #else
-		savedx = x;
-		savedy = y;
+				savedx = x;
+				savedy = y;
 #endif
-		savedincr--;
-		if (savedincr==0) {
-		    savedand = (savedand<<1) + 1;
-		    savedincr = nextsavedincr;
+				savedincr--;
+				if (savedincr==0)
+				{
+					savedand = (savedand<<1) + 1;
+					savedincr = g_next_saved_incr;
                 }
-            } else {
+            }
+			else
+            {
 #if USE_NEW
-		if (ABS(magnitude-savedmag)<closenuff) {
+				if (ABS(g_magnitude-savedmag)<closenuff)
+				{
 #else
-		if (ABS(savedx-x)<closenuff && ABS(savedy-y)<closenuff) {
+				if (ABS(savedx-x)<g_close_enough && ABS(savedy-y)<g_close_enough)
+				{
 #endif
-/*		    oldcoloriter = 65535;  */
-		    oldcoloriter = maxit;
-		    realcoloriter = maxit;
-		    kbdcount = kbdcount-(maxit-cx);
-		    coloriter = periodicity_color;
-		    goto pop_stack;
+					g_old_color_iter = maxit;
+					g_real_color_iter = maxit;
+					g_input_counter = g_input_counter-(maxit-cx);
+					g_color_iter = periodicity_color;
+					goto pop_stack;
+				}
+			}
 		}
-	    }
-	}
-	/* no_periodicity_check_87 */
-	if (show_orbit != 0) {
-	    plot_orbit(x,y,-1);
-	}
-	/* no_show_orbit_87 */
-
-    } /* while (--cx > 0) */
+		/* no_periodicity_check_87 */
+		if (g_show_orbit != 0)
+		{
+			plot_orbit(x,y,-1);
+		}
+		/* no_show_orbit_87 */
+    }
+	/* while (--cx > 0) */
 
     /* reached maxit */
-/*    oldcoloriter = 65535;  */
-/* check periodicity immediately next time, remember we count down from maxit */
-    oldcoloriter = maxit;
-    kbdcount -= maxit;
-    realcoloriter = maxit;
+	/* check periodicity immediately next time, remember we count down from maxit */
+	g_old_color_iter = maxit;
+	g_input_counter -= maxit;
+    g_real_color_iter = maxit;
 
-    coloriter = inside_color;
+    g_color_iter = inside_color;
 
 pop_stack:
 
-    if (orbit_ptr) {
-	scrub_orbit();
+    if (g_orbit_index)
+    {
+		scrub_orbit();
     }
 
-    return coloriter;
+    return g_color_iter;
 
 over_bailout_87:
 
-	if (outside<=-2) {
-	    g_new.x = x;
-	    g_new.y = y;
+	if (outside<=-2)
+	{
+	    g_new_z.x = x;
+	    g_new_z.y = y;
 	}
-    if (cx-10>0) {
-	oldcoloriter = cx-10;
-    } else {
-	oldcoloriter = 0;
+    if (cx-10>0)
+    {
+		g_old_color_iter = cx-10;
     }
-    coloriter = realcoloriter = maxit-cx;
-/*    if (realcoloriter==0) realcoloriter = 1; */
-    if (coloriter==0) coloriter = 1;
-    kbdcount -= realcoloriter;
-    if (outside==-1) {
-    } else if (outside>-2) {
-	coloriter = outside;
-    } else {
-	/* special_outside */
-	if (outside==REAL) {
-	    coloriter += (long)g_new.x + 7;
-	} else if (outside==IMAG) {
-	    coloriter += (long)g_new.y + 7;
-	} else if (outside==MULT && g_new.y!=0.0) {
-          coloriter = (long)((double)coloriter * (g_new.x/g_new.y));
-	} else if (outside==SUM) {
-	    coloriter +=  (long)(g_new.x + g_new.y);
-	} else if (outside==ATAN) {
-            coloriter = (long)fabs(atan2(g_new.y,g_new.x)*atan_colors/PI);
+	else
+    {
+		g_old_color_iter = 0;
+    }
+    g_color_iter = g_real_color_iter = maxit-cx;
+/*    if (g_real_color_iter==0) g_real_color_iter = 1; */
+    if (g_color_iter==0) g_color_iter = 1;
+    g_input_counter -= g_real_color_iter;
+    if (outside==-1)
+    {
+    }
+	else if (outside>-2)
+    {
+		g_color_iter = outside;
+    }
+	else
+    {
+		/* special_outside */
+		if (outside==REAL)
+		{
+			g_color_iter += (long)g_new_z.x + 7;
+		}
+		else if (outside==IMAG)
+		{
+			g_color_iter += (long)g_new_z.y + 7;
+		}
+		else if (outside==MULT && g_new_z.y!=0.0)
+		{
+			  g_color_iter = (long)((double)g_color_iter * (g_new_z.x/g_new_z.y));
+		}
+		else if (outside==SUM)
+		{
+			g_color_iter +=  (long)(g_new_z.x + g_new_z.y);
+		}
+		else if (outside==ATAN)
+		{
+			g_color_iter = (long)fabs(atan2(g_new_z.y,g_new_z.x)*g_atan_colors/PI);
         }
-	/* check_color */
-      if ((coloriter <= 0 || coloriter > maxit) && outside!=FMOD)
-         {
-         if (save_release < 1961)
-             coloriter = 0;
-         else
-             coloriter = 1;
-         }
-    }
+		/* check_color */
+		if ((g_color_iter <= 0 || g_color_iter > maxit) && outside!=FMOD)
+        {
+			if (save_release < 1961)
+			{
+				g_color_iter = 0;
+			}
+			else
+			{
+				g_color_iter = 1;
+			}
+		}
+	}
 
     goto pop_stack;
-
 }
