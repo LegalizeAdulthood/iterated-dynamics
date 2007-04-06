@@ -1192,19 +1192,19 @@ MarksJuliafpSetup(void)
 	}
 	c_exp = (int)param[2];
 	floatparm = &parm;
-	old = *floatparm;
+	g_old_z = *floatparm;
 	if (c_exp > 3)
 	{
-		cpower(&old, c_exp-1, &coefficient);
+		cpower(&g_old_z, c_exp-1, &coefficient);
 	}
 	else if (c_exp == 3)
 	{
-		coefficient.x = sqr(old.x) - sqr(old.y);
-		coefficient.y = old.x*old.y*2;
+		coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
+		coefficient.y = g_old_z.x*g_old_z.y*2;
 	}
 	else if (c_exp == 2)
 	{
-		coefficient = old;
+		coefficient = g_old_z;
 	}
 	else if (c_exp < 2)
 	{

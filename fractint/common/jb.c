@@ -307,8 +307,8 @@ static int z_line_fp(double x, double y)
 		if ((g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
 			&& save_release > 2002)
 		{
-			old.x = 0.0;
-			old.y = 0.0;
+			g_old_z.x = 0.0;
+			g_old_z.y = 0.0;
 			s_jbc_fp.x = 0.0;
 			s_jbc_fp.y = 0.0;
 			qc = s_jx_fp;
@@ -318,8 +318,8 @@ static int z_line_fp(double x, double y)
 		}
 		else
 		{
-			old.x = s_jx_fp;
-			old.y = s_jy_fp;
+			g_old_z.x = s_jx_fp;
+			g_old_z.y = s_jy_fp;
 			s_jbc_fp.x = s_mx_fp;
 			s_jbc_fp.y = s_my_fp;
 			qc = param[0];
@@ -342,8 +342,8 @@ static int z_line_fp(double x, double y)
 			return -1;
 		}
 #endif
-		tempsqrx = sqr(old.x);
-		tempsqry = sqr(old.y);
+		tempsqrx = sqr(g_old_z.x);
+		tempsqry = sqr(g_old_z.y);
 
 		for (n = 0; n < maxit; n++)
 		{

@@ -147,19 +147,6 @@ int (*longbailout)(void);
 int (*bignumbailout)(void);
 int (*bigfltbailout)(void);
 
-#if 0
-int  fpMODbailout(void)
-{
-	magnitude = tempsqrx = sqr(g_new.x);
-	tempsqry = sqr(g_new.y);
-	if ((magnitude + tempsqry) >= rqlim)
-	{
-		return 1;
-	}
-	old = g_new;
-	return 0;
-}
-#endif
 int  fpMODbailout(void)
 {
 	tempsqrx = sqr(g_new.x);
@@ -169,7 +156,7 @@ int  fpMODbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -182,7 +169,7 @@ int  fpREALbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -195,7 +182,7 @@ int  fpIMAGbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -208,7 +195,7 @@ int  fpORbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -221,7 +208,7 @@ int  fpANDbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -236,7 +223,7 @@ int  fpMANHbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -251,12 +238,12 @@ int  fpMANRbailout(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
 #define FLOATTRIGBAILOUT()		\
-	if (fabs(old.y) >= rqlim2)	\
+	if (fabs(g_old_z.y) >= rqlim2)	\
 	{							\
 		return 1;				\
 	}
@@ -274,13 +261,13 @@ int  fpMANRbailout(void)
 	}
 
 #define FLOATXYTRIGBAILOUT()							\
-	if (fabs(old.x) >= rqlim2 || fabs(old.y) >= rqlim2)	\
+	if (fabs(g_old_z.x) >= rqlim2 || fabs(g_old_z.y) >= rqlim2)	\
 	{													\
 		return 1;										\
 	}
 
 #define FLOATHTRIGBAILOUT()		\
-	if (fabs(old.x) >= rqlim2)	\
+	if (fabs(g_old_z.x) >= rqlim2)	\
 	{							\
 		return 1;				\
 	}
@@ -298,21 +285,21 @@ int  fpMANRbailout(void)
 	}
 
 #define OLD_FLOATEXPBAILOUT()	\
-	if (fabs(old.y) >= 1.0e8)	\
+	if (fabs(g_old_z.y) >= 1.0e8)	\
 	{							\
 		return 1;				\
 	}							\
-	if (fabs(old.x) >= 6.4e2)	\
+	if (fabs(g_old_z.x) >= 6.4e2)	\
 	{							\
 		return 1;				\
 	}
 
 #define FLOATEXPBAILOUT()		\
-	if (fabs(old.y) >= 1.0e3)	\
+	if (fabs(g_old_z.y) >= 1.0e3)	\
 	{							\
 		return 1;				\
 	}							\
-	if (fabs(old.x) >= 8)		\
+	if (fabs(g_old_z.x) >= 8)		\
 	{							\
 		return 1;				\
 	}
@@ -351,11 +338,11 @@ int  fpMANRbailout(void)
 
 static int  Halleybailout(void)
 {
-	if (fabs(modulus(g_new)-modulus(old)) < parm2.x)
+	if (fabs(modulus(g_new)-modulus(g_old_z)) < parm2.x)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -563,8 +550,8 @@ int NewtonFractal2(void)
 	{
 		start = 0;
 	}
-	cpower(&old, degree-1, &g_temp_z);
-	complex_mult(g_temp_z, old, &g_new);
+	cpower(&g_old_z, degree-1, &g_temp_z);
+	complex_mult(g_temp_z, g_old_z, &g_new);
 
 	if (DIST1(g_new) < threshold)
 	{
@@ -580,7 +567,7 @@ int NewtonFractal2(void)
 			{
 				/* color in alternating shades with iteration according to
 					which root of 1 it converged to */
-				if (distance(roots[i], old) < threshold)
+				if (distance(roots[i], g_old_z) < threshold)
 				{
 					tmpcolor = (basin == 2) ?
 						(1 + (i&7) + ((coloriter&1) << 3)) : (1 + i);
@@ -603,8 +590,8 @@ int NewtonFractal2(void)
 	else
 	{
 		t2 = 1.0 / t2;
-		old.x = t2*(g_new.x*g_temp_z.x + g_new.y*g_temp_z.y);
-		old.y = t2*(g_new.y*g_temp_z.x - g_new.x*g_temp_z.y);
+		g_old_z.x = t2*(g_new.x*g_temp_z.x + g_new.y*g_temp_z.y);
+		g_old_z.y = t2*(g_new.y*g_temp_z.x - g_new.x*g_temp_z.y);
 	}
 	return 0;
 }
@@ -721,12 +708,12 @@ Barnsley1FPFractal(void)
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 
 	/* calculate intermediate products */
-	foldxinitx = old.x*floatparm->x;
-	foldyinity = old.y*floatparm->y;
-	foldxinity = old.x*floatparm->y;
-	foldyinitx = old.y*floatparm->x;
+	foldxinitx = g_old_z.x*floatparm->x;
+	foldyinity = g_old_z.y*floatparm->y;
+	foldxinity = g_old_z.x*floatparm->y;
+	foldyinitx = g_old_z.y*floatparm->x;
 	/* orbit calculation */
-	if (old.x >= 0)
+	if (g_old_z.x >= 0)
 	{
 		g_new.x = (foldxinitx - floatparm->x - foldyinity);
 		g_new.y = (foldyinitx - floatparm->y + foldxinity);
@@ -777,10 +764,10 @@ Barnsley2FPFractal(void)
 	Everywhere" by Michael Barnsley, p. 331, example 4.2 */
 
 	/* calculate intermediate products */
-	foldxinitx = old.x*floatparm->x;
-	foldyinity = old.y*floatparm->y;
-	foldxinity = old.x*floatparm->y;
-	foldyinitx = old.y*floatparm->x;
+	foldxinitx = g_old_z.x*floatparm->x;
+	foldyinity = g_old_z.y*floatparm->y;
+	foldxinity = g_old_z.x*floatparm->y;
+	foldyinitx = g_old_z.y*floatparm->x;
 
 	/* orbit calculation */
 	if (foldxinity + foldyinitx >= 0)
@@ -812,7 +799,7 @@ JuliafpFractal(void)
 	/* floating point version of classical Mandelbrot/Julia */
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 	g_new.x = tempsqrx - tempsqry + floatparm->x;
-	g_new.y = 2.0*old.x*old.y + floatparm->y;
+	g_new.y = 2.0*g_old_z.x*g_old_z.y + floatparm->y;
 	return floatbailout();
 }
 
@@ -822,9 +809,9 @@ LambdaFPFractal(void)
 	/* variation of classical Mandelbrot/Julia */
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 
-	tempsqrx = old.x - tempsqrx + tempsqry;
-	tempsqry = -(old.y*old.x);
-	tempsqry += tempsqry + old.y;
+	tempsqrx = g_old_z.x - tempsqrx + tempsqry;
+	tempsqry = -(g_old_z.y*g_old_z.x);
+	tempsqry += tempsqry + g_old_z.y;
 
 	g_new.x = floatparm->x*tempsqrx - floatparm->y*tempsqry;
 	g_new.y = floatparm->x*tempsqry + floatparm->y*tempsqrx;
@@ -880,13 +867,13 @@ SierpinskiFPFractal(void)
 	/* following code translated from basic - see "Fractals
 	Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */
 
-	g_new.x = old.x + old.x;
-	g_new.y = old.y + old.y;
-	if (old.y > .5)
+	g_new.x = g_old_z.x + g_old_z.x;
+	g_new.y = g_old_z.y + g_old_z.y;
+	if (g_old_z.y > .5)
 	{
 		g_new.y = g_new.y - 1;
 	}
-	else if (old.x > .5)
+	else if (g_old_z.x > .5)
 	{
 		g_new.x = g_new.x - 1;
 	}
@@ -907,20 +894,20 @@ LambdaexponentFractal(void)
 	{
 		OLD_FLOATEXPBAILOUT();
 	}
-	FPUsincos  (&old.y, &siny, &cosy);
+	FPUsincos  (&g_old_z.y, &siny, &cosy);
 
-	if (old.x >= rqlim && cosy >= 0.0)
+	if (g_old_z.x >= rqlim && cosy >= 0.0)
 	{
 		return 1;
 	}
-	tmpexp = exp(old.x);
+	tmpexp = exp(g_old_z.x);
 	g_temp_z.x = tmpexp*cosy;
 	g_temp_z.y = tmpexp*siny;
 
 	/*multiply by lamda */
 	g_new.x = floatparm->x*g_temp_z.x - floatparm->y*g_temp_z.y;
 	g_new.y = floatparm->y*g_temp_z.x + floatparm->x*g_temp_z.y;
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -959,13 +946,13 @@ FloatTrigPlusExponentFractal(void)
 	/* another Scientific American biomorph type */
 	/* z(n + 1) = e**z(n) + trig(z(n)) + C */
 
-	if (fabs(old.x) >= 6.4e2) /* DOMAIN errors  */
+	if (fabs(g_old_z.x) >= 6.4e2) /* DOMAIN errors  */
 	{
 		return 1;
 	}
-	tmpexp = exp(old.x);
-	FPUsincos  (&old.y, &siny, &cosy);
-	CMPLXtrig0(old, g_new);
+	tmpexp = exp(g_old_z.x);
+	FPUsincos  (&g_old_z.y, &siny, &cosy);
+	CMPLXtrig0(g_old_z, g_new);
 
 	/*new =   trig(old) + e**old + C  */
 	g_new.x += tmpexp*cosy + floatparm->x;
@@ -1022,7 +1009,7 @@ MarksLambdafpFractal(void)
 
 	/* Z1 = (C^(exp-1)*Z**2) + C */
 	g_temp_z.x = tempsqrx - tempsqry;
-	g_temp_z.y = old.x*old.y *2;
+	g_temp_z.y = g_old_z.x*g_old_z.y *2;
 
 	g_new.x = coefficient.x*g_temp_z.x - coefficient.y*g_temp_z.y + floatparm->x;
 	g_new.y = coefficient.x*g_temp_z.y + coefficient.y*g_temp_z.x + floatparm->y;
@@ -1060,14 +1047,14 @@ double XXOne;
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
 
-	XXOne = sqr(old.x) + sqr(old.y);
+	XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
 	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
 	{
 		return 1;
 	}
-	old.y = (2.0 - XXOne)* old.x;
-	old.x = (2.0 - XXOne)* old.y;
-	g_new = old;  /* TW added this line */
+	g_old_z.y = (2.0 - XXOne)* g_old_z.x;
+	g_old_z.x = (2.0 - XXOne)* g_old_z.y;
+	g_new = g_old_z;  /* TW added this line */
 	return 0;
 }
 
@@ -1104,7 +1091,7 @@ Mandel4fpFractal(void)
 {
 	/* first, compute (x + iy)**2 */
 	g_new.x  = tempsqrx - tempsqry;
-	g_new.y = old.x*old.y*2;
+	g_new.y = g_old_z.x*g_old_z.y*2;
 	if (floatbailout())
 	{
 		return 1;
@@ -1112,17 +1099,17 @@ Mandel4fpFractal(void)
 
 	/* then, compute ((x + iy)**2)**2 + lambda */
 	g_new.x  = tempsqrx - tempsqry + floatparm->x;
-	g_new.y =  old.x*old.y*2 + floatparm->y;
+	g_new.y =  g_old_z.x*g_old_z.y*2 + floatparm->y;
 	return floatbailout();
 }
 
 int
 floatZtozPluszpwrFractal(void)
 {
-	cpower(&old, (int)param[2], &g_new);
-	old = ComplexPower(old, old);
-	g_new.x = g_new.x + old.x +floatparm->x;
-	g_new.y = g_new.y + old.y +floatparm->y;
+	cpower(&g_old_z, (int)param[2], &g_new);
+	g_old_z = ComplexPower(g_old_z, g_old_z);
+	g_new.x = g_new.x + g_old_z.x +floatparm->x;
+	g_new.y = g_new.y + g_old_z.y +floatparm->y;
 	return floatbailout();
 }
 
@@ -1173,7 +1160,7 @@ longCmplxZpowerFractal(void)
 int
 floatZpowerFractal(void)
 {
-	cpower(&old, c_exp, &g_new);
+	cpower(&g_old_z, c_exp, &g_new);
 	g_new.x += floatparm->x;
 	g_new.y += floatparm->y;
 	return floatbailout();
@@ -1182,7 +1169,7 @@ floatZpowerFractal(void)
 int
 floatCmplxZpowerFractal(void)
 {
-	g_new = ComplexPower(old, parm2);
+	g_new = ComplexPower(g_old_z, parm2);
 	g_new.x += floatparm->x;
 	g_new.y += floatparm->y;
 	return floatbailout();
@@ -1231,25 +1218,25 @@ Barnsley3FPFractal(void)
 
 
 	/* calculate intermediate products */
-	foldxinitx  = old.x*old.x;
-	foldyinity  = old.y*old.y;
-	foldxinity  = old.x*old.y;
+	foldxinitx  = g_old_z.x*g_old_z.x;
+	foldyinity  = g_old_z.y*g_old_z.y;
+	foldxinity  = g_old_z.x*g_old_z.y;
 
 	/* orbit calculation */
-	if (old.x > 0)
+	if (g_old_z.x > 0)
 	{
 		g_new.x = foldxinitx - foldyinity - 1.0;
 		g_new.y = foldxinity*2;
 	}
 	else
 	{
-		g_new.x = foldxinitx - foldyinity -1.0 + floatparm->x*old.x;
+		g_new.x = foldxinitx - foldyinity -1.0 + floatparm->x*g_old_z.x;
 		g_new.y = foldxinity*2;
 
 		/* This term added by Tim Wegner to make dependent on the
 			imaginary part of the parameter. (Otherwise Mandelbrot
 			is uninteresting. */
-		g_new.y += floatparm->y*old.x;
+		g_new.y += floatparm->y*g_old_z.x;
 	}
 	return floatbailout();
 }
@@ -1277,9 +1264,9 @@ TrigPlusZsquaredfpFractal(void)
 	/* A Biomorph                          */
 	/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
 
-	CMPLXtrig0(old, g_new);
+	CMPLXtrig0(g_old_z, g_new);
 	g_new.x += tempsqrx - tempsqry + floatparm->x;
-	g_new.y += 2.0*old.x*old.y + floatparm->y;
+	g_new.y += 2.0*g_old_z.x*g_old_z.y + floatparm->y;
 	return floatbailout();
 }
 
@@ -1287,7 +1274,7 @@ int
 Richard8fpFractal(void)
 {
 	/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
-	CMPLXtrig0(old, g_new);
+	CMPLXtrig0(g_old_z, g_new);
 /*   CMPLXtrig1(*floatparm, g_temp_z); */
 	g_new.x += g_temp_z.x;
 	g_new.y += g_temp_z.y;
@@ -1312,21 +1299,21 @@ Richard8Fractal(void)
 int
 PopcornFractal_Old(void)
 {
-	g_temp_z = old;
+	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
 	g_temp_z.y *= 3.0;
 	FPUsincos(&g_temp_z.x, &sinx, &cosx);
 	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_temp_z.x = sinx/cosx + old.x;
-	g_temp_z.y = siny/cosy + old.y;
+	g_temp_z.x = sinx/cosx + g_old_z.x;
+	g_temp_z.y = siny/cosy + g_old_z.y;
 	FPUsincos(&g_temp_z.x, &sinx, &cosx);
 	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_new.x = old.x - parm.x*siny;
-	g_new.y = old.y - parm.x*sinx;
+	g_new.x = g_old_z.x - parm.x*siny;
+	g_new.y = g_old_z.y - parm.x*sinx;
 	if (plot == noplot)
 	{
 		plot_orbit(g_new.x, g_new.y, 1 + row%colors);
-		old = g_new;
+		g_old_z = g_new;
 	}
 	else
 	{
@@ -1344,32 +1331,32 @@ PopcornFractal_Old(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
 int
 PopcornFractal(void)
 {
-	g_temp_z = old;
+	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
 	g_temp_z.y *= 3.0;
 	FPUsincos(&g_temp_z.x, &sinx, &cosx);
 	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_temp_z.x = sinx/cosx + old.x;
-	g_temp_z.y = siny/cosy + old.y;
+	g_temp_z.x = sinx/cosx + g_old_z.x;
+	g_temp_z.y = siny/cosy + g_old_z.y;
 	FPUsincos(&g_temp_z.x, &sinx, &cosx);
 	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_new.x = old.x - parm.x*siny;
-	g_new.y = old.y - parm.x*sinx;
+	g_new.x = g_old_z.x - parm.x*siny;
+	g_new.y = g_old_z.y - parm.x*sinx;
 	/*
-	g_new.x = old.x - parm.x*sin(old.y + tan(3*old.y));
-	g_new.y = old.y - parm.x*sin(old.x + tan(3*old.x));
+	g_new.x = g_old_z.x - parm.x*sin(g_old_z.y + tan(3*g_old_z.y));
+	g_new.y = g_old_z.y - parm.x*sin(g_old_z.x + tan(3*g_old_z.x));
 	*/
 	if (plot == noplot)
 	{
 		plot_orbit(g_new.x, g_new.y, 1 + row % colors);
-		old = g_new;
+		g_old_z = g_new;
 	}
 	/* else */
 	/* FLOATBAILOUT(); */
@@ -1386,7 +1373,7 @@ PopcornFractal(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -1481,27 +1468,27 @@ PopcornFractalFn(void)
 	_CMPLX tmpy;
 
 	/* tmpx contains the generalized value of the old real "x" equation */
-	CMPLXtimesreal(parm2, old.y, g_temp_z);  /* tmp = (C*old.y)         */
+	CMPLXtimesreal(parm2, g_old_z.y, g_temp_z);  /* tmp = (C*old.y)         */
 	CMPLXtrig1(g_temp_z, tmpx);             /* tmpx = trig1(tmp)         */
-	tmpx.x += old.y;                  /* tmpx = old.y + trig1(tmp) */
+	tmpx.x += g_old_z.y;                  /* tmpx = old.y + trig1(tmp) */
 	CMPLXtrig0(tmpx, g_temp_z);             /* tmp = trig0(tmpx)         */
 	CMPLXmult(g_temp_z, parm, tmpx);         /* tmpx = tmp*h            */
 
 	/* tmpy contains the generalized value of the old real "y" equation */
-	CMPLXtimesreal(parm2, old.x, g_temp_z);  /* tmp = (C*old.x)         */
+	CMPLXtimesreal(parm2, g_old_z.x, g_temp_z);  /* tmp = (C*old.x)         */
 	CMPLXtrig3(g_temp_z, tmpy);             /* tmpy = trig3(tmp)         */
-	tmpy.x += old.x;                  /* tmpy = old.x + trig1(tmp) */
+	tmpy.x += g_old_z.x;                  /* tmpy = old.x + trig1(tmp) */
 	CMPLXtrig2(tmpy, g_temp_z);             /* tmp = trig2(tmpy)         */
 
 	CMPLXmult(g_temp_z, parm, tmpy);         /* tmpy = tmp*h            */
 
-	g_new.x = old.x - tmpx.x - tmpy.y;
-	g_new.y = old.y - tmpy.x - tmpx.y;
+	g_new.x = g_old_z.x - tmpx.x - tmpy.y;
+	g_new.y = g_old_z.y - tmpy.x - tmpx.y;
 
 	if (plot == noplot)
 	{
 		plot_orbit(g_new.x, g_new.y, 1 + row%colors);
-		old = g_new;
+		g_old_z = g_new;
 	}
 
 	tempsqrx = sqr(g_new.x);
@@ -1512,7 +1499,7 @@ PopcornFractalFn(void)
 	{
 		return 1;
 	}
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -1574,7 +1561,7 @@ LPopcornFractalFn(void)
 int MarksCplxMand(void)
 {
 	g_temp_z.x = tempsqrx - tempsqry;
-	g_temp_z.y = 2*old.x*old.y;
+	g_temp_z.y = 2*g_old_z.x*g_old_z.y;
 	FPUcplxmul(&g_temp_z, &coefficient, &g_new);
 	g_new.x += floatparm->x;
 	g_new.y += floatparm->y;
@@ -1585,7 +1572,7 @@ int SpiderfpFractal(void)
 {
 	/* Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } */
 	g_new.x = tempsqrx - tempsqry + g_temp_z.x;
-	g_new.y = 2*old.x*old.y + g_temp_z.y;
+	g_new.y = 2*g_old_z.x*g_old_z.y + g_temp_z.y;
 	g_temp_z.x = g_temp_z.x/2 + g_new.x;
 	g_temp_z.y = g_temp_z.y/2 + g_new.y;
 	return floatbailout();
@@ -1610,7 +1597,7 @@ int
 TetratefpFractal(void)
 {
 	/* Tetrate(XAXIS) { c = z=pixel: z = c^z, |z| <= (P1 + 3) } */
-	g_new = ComplexPower(*floatparm, old);
+	g_new = ComplexPower(*floatparm, g_old_z);
 	return floatbailout();
 }
 
@@ -1662,10 +1649,10 @@ int
 ZXTrigPlusZfpFractal(void)
 {
 	/* z = (p1*z*trig(z)) + p2*z */
-	CMPLXtrig0(old, g_temp_z);          /* tmp  = trig(old)             */
+	CMPLXtrig0(g_old_z, g_temp_z);          /* tmp  = trig(old)             */
 	CMPLXmult(parm, g_temp_z, g_temp_z);      /* tmp  = p1*trig(old)          */
-	CMPLXmult(old, g_temp_z, tmp2);      /* tmp2 = p1*old*trig(old)      */
-	CMPLXmult(parm2, old, g_temp_z);     /* tmp  = p2*old                */
+	CMPLXmult(g_old_z, g_temp_z, tmp2);      /* tmp2 = p1*old*trig(old)      */
+	CMPLXmult(parm2, g_old_z, g_temp_z);     /* tmp  = p2*old                */
 	CMPLXadd(tmp2, g_temp_z, g_new);       /* new  = p1*trig(old) + p2*old */
 	return floatbailout();
 }
@@ -1674,9 +1661,9 @@ int
 ScottZXTrigPlusZfpFractal(void)
 {
 	/* z = (z*trig(z)) + z */
-	CMPLXtrig0(old, g_temp_z);         /* tmp  = trig(old)       */
-	CMPLXmult(old, g_temp_z, g_new);       /* new  = old*trig(old)   */
-	CMPLXadd(g_new, old, g_new);        /* new  = trig(old) + old */
+	CMPLXtrig0(g_old_z, g_temp_z);         /* tmp  = trig(old)       */
+	CMPLXmult(g_old_z, g_temp_z, g_new);       /* new  = old*trig(old)   */
+	CMPLXadd(g_new, g_old_z, g_new);        /* new  = trig(old) + old */
 	return floatbailout();
 }
 
@@ -1684,9 +1671,9 @@ int
 SkinnerZXTrigSubZfpFractal(void)
 {
 	/* z = (z*trig(z))-z */
-	CMPLXtrig0(old, g_temp_z);         /* tmp  = trig(old)       */
-	CMPLXmult(old, g_temp_z, g_new);       /* new  = old*trig(old)   */
-	CMPLXsub(g_new, old, g_new);        /* new  = trig(old) - old */
+	CMPLXtrig0(g_old_z, g_temp_z);         /* tmp  = trig(old)       */
+	CMPLXmult(g_old_z, g_temp_z, g_new);       /* new  = old*trig(old)   */
+	CMPLXsub(g_new, g_old_z, g_new);        /* new  = trig(old) - old */
 	return floatbailout();
 }
 
@@ -1708,9 +1695,9 @@ int
 Sqr1overTrigfpFractal(void)
 {
 	/* z = sqr(1/trig(z)) */
-	CMPLXtrig0(old, old);
-	CMPLXrecip(old, old);
-	CMPLXsqr(old, g_new);
+	CMPLXtrig0(g_old_z, g_old_z);
+	CMPLXrecip(g_old_z, g_old_z);
+	CMPLXsqr(g_old_z, g_new);
 	return floatbailout();
 }
 
@@ -1734,11 +1721,11 @@ int
 TrigPlusTrigfpFractal(void)
 {
 	/* z = trig0(z)*p1 + trig1(z)*p2 */
-	CMPLXtrig0(old, g_temp_z);
+	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXmult(parm, g_temp_z, g_temp_z);
-	CMPLXtrig1(old, old);
-	CMPLXmult(parm2, old, old);
-	CMPLXadd(g_temp_z, old, g_new);
+	CMPLXtrig1(g_old_z, g_old_z);
+	CMPLXmult(parm2, g_old_z, g_old_z);
+	CMPLXadd(g_temp_z, g_old_z, g_new);
 	return floatbailout();
 }
 
@@ -1773,15 +1760,15 @@ LambdaTrigOrTrigfpFractal(void)
 {
 	/* z = trig0(z)*p1 if mod(old) < p2.x and
 			trig1(z)*p1 if mod(old) >= p2.x */
-	if (CMPLXmod(old) < parm2.x)
+	if (CMPLXmod(g_old_z) < parm2.x)
 	{
-		CMPLXtrig0(old, old);
-		FPUcplxmul(floatparm, &old, &g_new);
+		CMPLXtrig0(g_old_z, g_old_z);
+		FPUcplxmul(floatparm, &g_old_z, &g_new);
 	}
 	else
 	{
-		CMPLXtrig1(old, old);
-		FPUcplxmul(floatparm, &old, &g_new);
+		CMPLXtrig1(g_old_z, g_old_z);
+		FPUcplxmul(floatparm, &g_old_z, &g_new);
 	}
 	return floatbailout();
 }
@@ -1813,15 +1800,15 @@ JuliaTrigOrTrigfpFractal(void)
 {
 	/* z = trig0(z) + p1 if mod(old) < p2.x and
 			trig1(z) + p1 if mod(old) >= p2.x */
-	if (CMPLXmod(old) < parm2.x)
+	if (CMPLXmod(g_old_z) < parm2.x)
 	{
-		CMPLXtrig0(old, old);
-		CMPLXadd(*floatparm, old, g_new);
+		CMPLXtrig0(g_old_z, g_old_z);
+		CMPLXadd(*floatparm, g_old_z, g_new);
 	}
 	else
 	{
-		CMPLXtrig1(old, old);
-		CMPLXadd(*floatparm, old, g_new);
+		CMPLXtrig1(g_old_z, g_old_z);
+		CMPLXadd(*floatparm, g_old_z, g_new);
 	}
 	return floatbailout();
 }
@@ -1909,15 +1896,15 @@ HalleyFractal(void)
 	_CMPLX FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
 	_CMPLX relax;
 
-	XtoAlessOne = old;
+	XtoAlessOne = g_old_z;
 	for (ihal = 2; ihal < degree; ihal++)
 	{
-		FPUcplxmul(&old, &XtoAlessOne, &XtoAlessOne);
+		FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoAlessOne);
 	}
-	FPUcplxmul(&old, &XtoAlessOne, &XtoA);
-	FPUcplxmul(&old, &XtoA, &XtoAplusOne);
+	FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
+	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
-	CMPLXsub(XtoAplusOne, old, FX);        /* FX = X^(a + 1) - X  = F */
+	CMPLXsub(XtoAplusOne, g_old_z, FX);        /* FX = X^(a + 1) - X  = F */
 	F2prime.x = Ap1deg*XtoAlessOne.x; /* Ap1deg in setup */
 	F2prime.y = Ap1deg*XtoAlessOne.y;        /* F" */
 
@@ -1932,13 +1919,13 @@ HalleyFractal(void)
 	CMPLXsub(F1prime, Halnumer1, Halnumer2);          /*  F' - F"F/2F'  */
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
 	/* parm.y is relaxation coef. */
-	/* new.x = old.x - (parm.y*Halnumer2.x);
-	new.y = old.y - (parm.y*Halnumer2.y); */
+	/* new.x = g_old_z.x - (parm.y*Halnumer2.x);
+	new.y = g_old_z.y - (parm.y*Halnumer2.y); */
 	relax.x = parm.y;
 	relax.y = param[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
-	g_new.x = old.x - Halnumer2.x;
-	g_new.y = old.y - Halnumer2.y;
+	g_new.x = g_old_z.x - Halnumer2.x;
+	g_new.y = g_old_z.y - Halnumer2.y;
 	return Halleybailout();
 }
 
@@ -1961,10 +1948,10 @@ int
 PhoenixFractal(void)
 {
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
-	g_temp_z.x = old.x*old.y;
+	g_temp_z.x = g_old_z.x*g_old_z.y;
 	g_new.x = tempsqrx - tempsqry + floatparm->x + (floatparm->y*tmp2.x);
 	g_new.y = (g_temp_z.x + g_temp_z.x) + (floatparm->y*tmp2.y);
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -1987,10 +1974,10 @@ int
 PhoenixFractalcplx(void)
 {
 	/* z(n + 1) = z(n)^2 + p1 + p2*y(n),  y(n + 1) = z(n) */
-	g_temp_z.x = old.x*old.y;
+	g_temp_z.x = g_old_z.x*g_old_z.y;
 	g_new.x = tempsqrx - tempsqry + floatparm->x + (parm2.x*tmp2.x) - (parm2.y*tmp2.y);
 	g_new.y = (g_temp_z.x + g_temp_z.x) + floatparm->y + (parm2.x*tmp2.y) + (parm2.y*tmp2.x);
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -2024,17 +2011,17 @@ PhoenixPlusFractal(void)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
 	_CMPLX oldplus, newminus;
-	oldplus = old;
-	g_temp_z = old;
+	oldplus = g_old_z;
+	g_temp_z = g_old_z;
 	for (i = 1; i < degree; i++)  /* degree >= 2, degree = degree-1 in setup */
 	{
-		FPUcplxmul(&old, &g_temp_z, &g_temp_z); /* = old^(degree-1) */
+		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); /* = old^(degree-1) */
 	}
 	oldplus.x += floatparm->x;
 	FPUcplxmul(&g_temp_z, &oldplus, &newminus);
 	g_new.x = newminus.x + (floatparm->y*tmp2.x);
 	g_new.y = newminus.y + (floatparm->y*tmp2.y);
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -2068,17 +2055,17 @@ PhoenixMinusFractal(void)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
 	_CMPLX oldsqr, newminus;
-	FPUcplxmul(&old, &old, &oldsqr);
-	g_temp_z = old;
+	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
+	g_temp_z = g_old_z;
 	for (i = 1; i < degree; i++)  /* degree >= 3, degree = degree-2 in setup */
 	{
-		FPUcplxmul(&old, &g_temp_z, &g_temp_z); /* = old^(degree-2) */
+		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); /* = old^(degree-2) */
 	}
 	oldsqr.x += floatparm->x;
 	FPUcplxmul(&g_temp_z, &oldsqr, &newminus);
 	g_new.x = newminus.x + (floatparm->y*tmp2.x);
 	g_new.y = newminus.y + (floatparm->y*tmp2.y);
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -2114,11 +2101,11 @@ PhoenixCplxPlusFractal(void)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
 	_CMPLX oldplus, newminus;
-	oldplus = old;
-	g_temp_z = old;
+	oldplus = g_old_z;
+	g_temp_z = g_old_z;
 	for (i = 1; i < degree; i++)  /* degree >= 2, degree = degree-1 in setup */
 	{
-		FPUcplxmul(&old, &g_temp_z, &g_temp_z); /* = old^(degree-1) */
+		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); /* = old^(degree-1) */
 	}
 	oldplus.x += floatparm->x;
 	oldplus.y += floatparm->y;
@@ -2126,7 +2113,7 @@ PhoenixCplxPlusFractal(void)
 	FPUcplxmul(&parm2, &tmp2, &g_temp_z);
 	g_new.x = newminus.x + g_temp_z.x;
 	g_new.y = newminus.y + g_temp_z.y;
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -2162,11 +2149,11 @@ PhoenixCplxMinusFractal(void)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
 	_CMPLX oldsqr, newminus;
-	FPUcplxmul(&old, &old, &oldsqr);
-	g_temp_z = old;
+	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
+	g_temp_z = g_old_z;
 	for (i = 1; i < degree; i++)  /* degree >= 3, degree = degree-2 in setup */
 	{
-		FPUcplxmul(&old, &g_temp_z, &g_temp_z); /* = old^(degree-2) */
+		FPUcplxmul(&g_old_z, &g_temp_z, &g_temp_z); /* = old^(degree-2) */
 	}
 	oldsqr.x += floatparm->x;
 	oldsqr.y += floatparm->y;
@@ -2174,7 +2161,7 @@ PhoenixCplxMinusFractal(void)
 	FPUcplxmul(&parm2, &tmp2, &g_temp_z);
 	g_new.x = newminus.x + g_temp_z.x;
 	g_new.y = newminus.y + g_temp_z.y;
-	tmp2 = old; /* set tmp2 to Y value */
+	tmp2 = g_old_z; /* set tmp2 to Y value */
 	return floatbailout();
 }
 
@@ -2196,8 +2183,8 @@ int
 ScottTrigPlusTrigfpFractal(void)
 {
 	/* z = trig0(z) + trig1(z) */
-	CMPLXtrig0(old, g_temp_z);
-	CMPLXtrig1(old, tmp2);
+	CMPLXtrig0(g_old_z, g_temp_z);
+	CMPLXtrig1(g_old_z, tmp2);
 	CMPLXadd(g_temp_z, tmp2, g_new);
 	return floatbailout();
 }
@@ -2220,8 +2207,8 @@ int
 SkinnerTrigSubTrigfpFractal(void)
 {
 	/* z = trig0(z)-trig1(z) */
-	CMPLXtrig0(old, g_temp_z);
-	CMPLXtrig1(old, tmp2);
+	CMPLXtrig0(g_old_z, g_temp_z);
+	CMPLXtrig1(g_old_z, tmp2);
 	CMPLXsub(g_temp_z, tmp2, g_new);
 	return floatbailout();
 }
@@ -2230,9 +2217,9 @@ int
 TrigXTrigfpFractal(void)
 {
 	/* z = trig0(z)*trig1(z) */
-	CMPLXtrig0(old, g_temp_z);
-	CMPLXtrig1(old, old);
-	CMPLXmult(g_temp_z, old, g_new);
+	CMPLXtrig0(g_old_z, g_temp_z);
+	CMPLXtrig1(g_old_z, g_old_z);
+	CMPLXmult(g_temp_z, g_old_z, g_new);
 	return floatbailout();
 }
 
@@ -2242,10 +2229,10 @@ static int TryFloatFractal(int (*fpFractal)(void))
 {
 	overflow = 0;
 	/* lold had better not be changed! */
-	old.x = lold.x; old.x /= fudge;
-	old.y = lold.y; old.y /= fudge;
-	tempsqrx = sqr(old.x);
-	tempsqry = sqr(old.y);
+	g_old_z.x = lold.x; g_old_z.x /= fudge;
+	g_old_z.y = lold.y; g_old_z.y /= fudge;
+	tempsqrx = sqr(g_old_z.x);
+	tempsqry = sqr(g_old_z.y);
 	fpFractal();
 	if (save_release < 1900)  /* for backwards compatibility */
 	{
@@ -2305,7 +2292,7 @@ int
 TrigPlusSqrfpFractal(void) /* generalization of Scott and Skinner types */
 {
 	/* { z = pixel: z = (p1, p2)*trig(z) + (p3, p4)*sqr(z), |z|<BAILOUT } */
-	CMPLXtrig0(old, g_temp_z);     /* tmp = trig(old)                     */
+	CMPLXtrig0(g_old_z, g_temp_z);     /* tmp = trig(old)                     */
 	CMPLXmult(parm, g_temp_z, g_new); /* new = parm*trig(old)                */
 	CMPLXsqr_old(g_temp_z);        /* tmp = sqr(old)                      */
 	CMPLXmult(parm2, g_temp_z, tmp2); /* tmp = parm2*sqr(old)                */
@@ -2331,7 +2318,7 @@ int
 ScottTrigPlusSqrfpFractal(void) /* float version */
 {
 	/* { z = pixel: z = sin(z) + sqr(z), |z|<BAILOUT } */
-	CMPLXtrig0(old, g_new);       /* new = trig(old)          */
+	CMPLXtrig0(g_old_z, g_new);       /* new = trig(old)          */
 	CMPLXsqr_old(g_temp_z);          /* tmp = sqr(old)           */
 	CMPLXadd(g_new, g_temp_z, g_new);      /* new = trig(old) + sqr(old) */
 	return floatbailout();
@@ -2355,7 +2342,7 @@ int
 SkinnerTrigSubSqrfpFractal(void)
 {
 	/* { z = pixel: z = sin(z)-sqr(z), |z|<BAILOUT } */
-	CMPLXtrig0(old, g_new);       /* new = trig(old) */
+	CMPLXtrig0(g_old_z, g_new);       /* new = trig(old) */
 	CMPLXsqr_old(g_temp_z);          /* old = sqr(old)  */
 	CMPLXsub(g_new, g_temp_z, g_new);      /* new = trig(old)-sqr(old) */
 	return floatbailout();
@@ -2413,7 +2400,7 @@ int
 SqrTrigfpFractal(void)
 {
 	/* SZSB(XYAXIS) { z = pixel, TEST = (p1 + 3): z = sin(z)*sin(z), |z|<TEST} */
-	CMPLXtrig0(old, g_temp_z);
+	CMPLXtrig0(g_old_z, g_temp_z);
 	CMPLXsqr(g_temp_z, g_new);
 	return floatbailout();
 }
@@ -2425,11 +2412,11 @@ Magnet1Fractal(void)    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 	double div;
 
 	top.x = tempsqrx - tempsqry + floatparm->x - 1; /* top = Z**2 + C-1 */
-	top.y = old.x*old.y;
+	top.y = g_old_z.x*g_old_z.y;
 	top.y = top.y + top.y + floatparm->y;
 
-	bot.x = old.x + old.x + floatparm->x - 2;       /* bot = 2*Z + C-2  */
-	bot.y = old.y + old.y + floatparm->y;
+	bot.x = g_old_z.x + g_old_z.x + floatparm->x - 2;       /* bot = 2*Z + C-2  */
+	bot.y = g_old_z.y + g_old_z.y + floatparm->y;
 
 	div = bot.x*bot.x + bot.y*bot.y;                /* tmp = top/bot  */
 	if (div < FLT_MIN)
@@ -2454,19 +2441,19 @@ int Magnet2Fractal(void)
 	_CMPLX top, bot, tmp;
 	double div;
 
-	top.x = old.x*(tempsqrx-tempsqry-tempsqry-tempsqry + T_Cm1.x)
-			- old.y*T_Cm1.y + T_Cm1Cm2.x;
-	top.y = old.y*(tempsqrx + tempsqrx + tempsqrx-tempsqry + T_Cm1.x)
-			+ old.x*T_Cm1.y + T_Cm1Cm2.y;
+	top.x = g_old_z.x*(tempsqrx-tempsqry-tempsqry-tempsqry + T_Cm1.x)
+			- g_old_z.y*T_Cm1.y + T_Cm1Cm2.x;
+	top.y = g_old_z.y*(tempsqrx + tempsqrx + tempsqrx-tempsqry + T_Cm1.x)
+			+ g_old_z.x*T_Cm1.y + T_Cm1Cm2.y;
 
 	bot.x = tempsqrx - tempsqry;
 	bot.x = bot.x + bot.x + bot.x
-			+ old.x*T_Cm2.x - old.y*T_Cm2.y
+			+ g_old_z.x*T_Cm2.x - g_old_z.y*T_Cm2.y
 			+ T_Cm1Cm2.x + 1.0;
-	bot.y = old.x*old.y;
+	bot.y = g_old_z.x*g_old_z.y;
 	bot.y += bot.y;
 	bot.y = bot.y + bot.y + bot.y
-			+ old.x*T_Cm2.y + old.y*T_Cm2.x
+			+ g_old_z.x*T_Cm2.y + g_old_z.y*T_Cm2.x
 			+ T_Cm1Cm2.y;
 
 	div = bot.x*bot.x + bot.y*bot.y;                /* tmp = top/bot  */
@@ -2502,9 +2489,9 @@ int
 LambdaTrigfpFractal(void)
 {
 	FLOATXYTRIGBAILOUT();
-	CMPLXtrig0(old, g_temp_z);              /* tmp = trig(old)           */
+	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*floatparm, g_temp_z, g_new);   /* new = longparm*trig(old)  */
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -2527,9 +2514,9 @@ int
 LambdaTrigfpFractal1(void)
 {
 	FLOATTRIGBAILOUT(); /* sin, cos */
-	CMPLXtrig0(old, g_temp_z);              /* tmp = trig(old)           */
+	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*floatparm, g_temp_z, g_new);   /* new = longparm*trig(old)  */
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 }
 
@@ -2552,9 +2539,9 @@ LambdaTrigfpFractal2(void)
 {
 #if !defined(XFRACT)
 	FLOATHTRIGBAILOUT(); /* sinh, cosh */
-	CMPLXtrig0(old, g_temp_z);              /* tmp = trig(old)           */
+	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*floatparm, g_temp_z, g_new);   /* new = longparm*trig(old)  */
-	old = g_new;
+	g_old_z = g_new;
 	return 0;
 #else
 	return 0;
@@ -2581,8 +2568,8 @@ ManOWarfpFractal(void)
 	/* From Art Matrix via Lee Skinner */
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 	g_new.x = tempsqrx - tempsqry + g_temp_z.x + floatparm->x;
-	g_new.y = 2.0*old.x*old.y + g_temp_z.y + floatparm->y;
-	g_temp_z = old;
+	g_new.y = 2.0*g_old_z.x*g_old_z.y + g_temp_z.y + floatparm->y;
+	g_temp_z = g_old_z;
 	return floatbailout();
 }
 
@@ -2598,7 +2585,7 @@ ManOWarfpFractal(void)
 int
 MarksMandelPwrfpFractal(void)
 {
-	CMPLXtrig0(old, g_new);
+	CMPLXtrig0(g_old_z, g_new);
 	CMPLXmult(g_temp_z, g_new, g_new);
 	g_new.x += floatparm->x;
 	g_new.y += floatparm->y;
@@ -2627,7 +2614,7 @@ MarksMandelPwrFractal(void)
 int
 TimsErrorfpFractal(void)
 {
-	CMPLXtrig0(old, g_new);
+	CMPLXtrig0(g_old_z, g_new);
 	g_new.x = g_new.x*g_temp_z.x - g_new.y*g_temp_z.y;
 	g_new.y = g_new.x*g_temp_z.y - g_new.y*g_temp_z.x;
 	g_new.x += floatparm->x;
@@ -2700,18 +2687,18 @@ int long_julia_per_pixel(void)
 	if (invert)
 	{
 		/* invert */
-		invertz2(&old);
+		invertz2(&g_old_z);
 
 		/* watch out for overflow */
-		if (sqr(old.x) + sqr(old.y) >= 127)
+		if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
 		{
-			old.x = 8;  /* value to bail out in one iteration */
-			old.y = 8;
+			g_old_z.x = 8;  /* value to bail out in one iteration */
+			g_old_z.y = 8;
 		}
 
 		/* convert to fudged longs */
-		lold.x = (long)(old.x*fudge);
-		lold.y = (long)(old.y*fudge);
+		lold.x = (long)(g_old_z.x*fudge);
+		lold.y = (long)(g_old_z.y*fudge);
 	}
 	else
 	{
@@ -2782,26 +2769,26 @@ int julia_per_pixel(void)
 	if (invert)
 	{
 		/* invert */
-		invertz2(&old);
+		invertz2(&g_old_z);
 
 		/* watch out for overflow */
 		if (bitshift <= 24)
 		{
-			if (sqr(old.x) + sqr(old.y) >= 127)
+			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
 			{
-				old.x = 8;  /* value to bail out in one iteration */
-				old.y = 8;
+				g_old_z.x = 8;  /* value to bail out in one iteration */
+				g_old_z.y = 8;
 			}
 		}
-		else if (sqr(old.x) + sqr(old.y) >= 4.0)
+		else if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 4.0)
 		{
-			old.x = 2;  /* value to bail out in one iteration */
-			old.y = 2;
+			g_old_z.x = 2;  /* value to bail out in one iteration */
+			g_old_z.y = 2;
 		}
 
 		/* convert to fudged longs */
-		lold.x = (long)(old.x*fudge);
-		lold.y = (long)(old.y*fudge);
+		lold.x = (long)(g_old_z.x*fudge);
+		lold.y = (long)(g_old_z.y*fudge);
 	}
 	else
 	{
@@ -2980,26 +2967,26 @@ int marksmandelfp_per_pixel()
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
 
-	old.x += parm.x;      /* initial pertubation of parameters set */
-	old.y += parm.y;
+	g_old_z.x += parm.x;      /* initial pertubation of parameters set */
+	g_old_z.y += parm.y;
 
-	tempsqrx = sqr(old.x);
-	tempsqry = sqr(old.y);
+	tempsqrx = sqr(g_old_z.x);
+	tempsqry = sqr(g_old_z.y);
 
 	if (c_exp > 3)
 	{
-		cpower(&old, c_exp-1, &coefficient);
+		cpower(&g_old_z, c_exp-1, &coefficient);
 	}
 	else if (c_exp == 3)
 	{
 		coefficient.x = tempsqrx - tempsqry;
-		coefficient.y = old.x*old.y*2;
+		coefficient.y = g_old_z.x*g_old_z.y*2;
 	}
 	else if (c_exp == 2)
 	{
-		coefficient = old;
+		coefficient = g_old_z;
 	}
 	else if (c_exp < 2)
 	{
@@ -3014,9 +3001,9 @@ int
 marks_mandelpwrfp_per_pixel(void)
 {
 	mandelfp_per_pixel();
-	g_temp_z = old;
+	g_temp_z = g_old_z;
 	g_temp_z.x -= 1;
-	CMPLXpwr(old, g_temp_z, g_temp_z);
+	CMPLXpwr(g_old_z, g_temp_z, g_temp_z);
 	return 1;
 }
 
@@ -3042,43 +3029,43 @@ int mandelfp_per_pixel(void)
 	case MAGNET2M:
 		FloatPreCalcMagnet2();
 	case MAGNET1M:           /* Crit Val Zero both, but neither   */
-		old.x = old.y = 0.0; /* is of the form f(Z, C) = Z*g(Z) + C  */
+		g_old_z.x = g_old_z.y = 0.0; /* is of the form f(Z, C) = Z*g(Z) + C  */
 		break;
 	case MANDELLAMBDAFP:            /* Critical Value 0.5 + 0.0i  */
-		old.x = 0.5;
-		old.y = 0.0;
+		g_old_z.x = 0.5;
+		g_old_z.y = 0.0;
 		break;
 	default:
-		old = g_initial_z;
+		g_old_z = g_initial_z;
 		break;
 	}
 
 	/* alter g_initial_z value */
 	if (useinitorbit == 1)
 	{
-		old = initorbit;
+		g_old_z = initorbit;
 	}
 	else if (useinitorbit == 2)
 	{
-		old = g_initial_z;
+		g_old_z = g_initial_z;
 	}
 
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
-		old.x = parm.x; /* initial pertubation of parameters set */
-		old.y = parm.y;
+		g_old_z.x = parm.x; /* initial pertubation of parameters set */
+		g_old_z.y = parm.y;
 		coloriter = -1;
 	}
 	else
 	{
-		old.x += parm.x;
-		old.y += parm.y;
+		g_old_z.x += parm.x;
+		g_old_z.y += parm.y;
 	}
 	g_temp_z = g_initial_z; /* for spider */
-	tempsqrx = sqr(old.x);  /* precalculated value for regular Mandelbrot */
-	tempsqry = sqr(old.y);
+	tempsqrx = sqr(g_old_z.x);  /* precalculated value for regular Mandelbrot */
+	tempsqry = sqr(g_old_z.y);
 	return 1; /* 1st iteration has been done */
 }
 
@@ -3088,16 +3075,16 @@ int juliafp_per_pixel(void)
 	/* juliafp */
 	if (invert)
 	{
-		invertz2(&old);
+		invertz2(&g_old_z);
 	}
 	else
 	{
-		old.x = dxpixel();
-		old.y = dypixel();
+		g_old_z.x = dxpixel();
+		g_old_z.y = dypixel();
 	}
-	tempsqrx = sqr(old.x);  /* precalculated value for regular Julia */
-	tempsqry = sqr(old.y);
-	g_temp_z = old;
+	tempsqrx = sqr(g_old_z.x);  /* precalculated value for regular Julia */
+	tempsqry = sqr(g_old_z.y);
+	g_temp_z = g_old_z;
 	return 0;
 }
 
@@ -3108,15 +3095,15 @@ int MPCjulia_per_pixel(void)
 	/* juliafp */
 	if (invert)
 	{
-		invertz2(&old);
+		invertz2(&g_old_z);
 	}
 	else
 	{
-		old.x = dxpixel();
-		old.y = dypixel();
+		g_old_z.x = dxpixel();
+		g_old_z.y = dypixel();
 	}
-	mpcold.x = *pd2MP(old.x);
-	mpcold.y = *pd2MP(old.y);
+	mpcold.x = *pd2MP(g_old_z.x);
+	mpcold.y = *pd2MP(g_old_z.y);
 	return 0;
 #else
 	return 0;
@@ -3147,10 +3134,10 @@ int othermandelfp_per_pixel(void)
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
 
-	old.x += parm.x;      /* initial pertubation of parameters set */
-	old.y += parm.y;
+	g_old_z.x += parm.x;      /* initial pertubation of parameters set */
+	g_old_z.y += parm.y;
 
 	return 1; /* 1st iteration has been done */
 }
@@ -3196,7 +3183,7 @@ int Halley_per_pixel(void)
 		}
 	}
 
-	old = g_initial_z;
+	g_old_z = g_initial_z;
 
 	return 0; /* 1st iteration is not done */
 }
@@ -3205,12 +3192,12 @@ int otherjuliafp_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&old);
+		invertz2(&g_old_z);
 	}
 	else
 	{
-		old.x = dxpixel();
-		old.y = dypixel();
+		g_old_z.x = dxpixel();
+		g_old_z.y = dypixel();
 	}
 	return 0;
 }
@@ -3225,8 +3212,8 @@ int otherjuliafp_per_pixel(void)
 
 int quaternionjulfp_per_pixel(void)
 {
-	old.x = dxpixel();
-	old.y = dypixel();
+	g_old_z.x = dxpixel();
+	g_old_z.y = dypixel();
 	floatparm->x = param[4];
 	floatparm->y = param[5];
 	qc  = param[0];
@@ -3238,8 +3225,8 @@ int quaternionjulfp_per_pixel(void)
 
 int quaternionfp_per_pixel(void)
 {
-	old.x = 0;
-	old.y = 0;
+	g_old_z.x = 0;
+	g_old_z.y = 0;
 	floatparm->x = 0;
 	floatparm->y = 0;
 	qc  = dxpixel();
@@ -3263,10 +3250,10 @@ int MarksCplxMandperp(void)
 			g_initial_z.y = dypixel();
 		}
 	}
-	old.x = g_initial_z.x + parm.x; /* initial pertubation of parameters set */
-	old.y = g_initial_z.y + parm.y;
-	tempsqrx = sqr(old.x);  /* precalculated value */
-	tempsqry = sqr(old.y);
+	g_old_z.x = g_initial_z.x + parm.x; /* initial pertubation of parameters set */
+	g_old_z.y = g_initial_z.y + parm.y;
+	tempsqrx = sqr(g_old_z.x);  /* precalculated value */
+	tempsqry = sqr(g_old_z.y);
 	coefficient = ComplexPower(g_initial_z, pwr);
 	return 1;
 }
@@ -3277,18 +3264,18 @@ int long_phoenix_per_pixel(void)
 	if (invert)
 	{
 		/* invert */
-		invertz2(&old);
+		invertz2(&g_old_z);
 
 		/* watch out for overflow */
-		if (sqr(old.x) + sqr(old.y) >= 127)
+		if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
 		{
-			old.x = 8;  /* value to bail out in one iteration */
-			old.y = 8;
+			g_old_z.x = 8;  /* value to bail out in one iteration */
+			g_old_z.y = 8;
 		}
 
 		/* convert to fudged longs */
-		lold.x = (long)(old.x*fudge);
-		lold.y = (long)(old.y*fudge);
+		lold.x = (long)(g_old_z.x*fudge);
+		lold.y = (long)(g_old_z.y*fudge);
 	}
 	else
 	{
@@ -3309,15 +3296,15 @@ int phoenix_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&old);
+		invertz2(&g_old_z);
 	}
 	else
 	{
-		old.x = dxpixel();
-		old.y = dypixel();
+		g_old_z.x = dxpixel();
+		g_old_z.y = dypixel();
 	}
-	tempsqrx = sqr(old.x);  /* precalculated value */
-	tempsqry = sqr(old.y);
+	tempsqrx = sqr(g_old_z.x);  /* precalculated value */
+	tempsqry = sqr(g_old_z.y);
 	tmp2.x = 0; /* use tmp2 as the complex Y value */
 	tmp2.y = 0;
 	return 0;
@@ -3376,12 +3363,12 @@ int mandphoenix_per_pixel(void)
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
 
-	old.x += parm.x;      /* initial pertubation of parameters set */
-	old.y += parm.y;
-	tempsqrx = sqr(old.x);  /* precalculated value */
-	tempsqry = sqr(old.y);
+	g_old_z.x += parm.x;      /* initial pertubation of parameters set */
+	g_old_z.y += parm.y;
+	tempsqrx = sqr(g_old_z.x);  /* precalculated value */
+	tempsqry = sqr(g_old_z.y);
 	tmp2.x = 0;
 	tmp2.y = 0;
 	return 1; /* 1st iteration has been done */
@@ -3391,8 +3378,8 @@ int
 QuaternionFPFractal(void)
 {
 	double a0, a1, a2, a3, n0, n1, n2, n3;
-	a0 = old.x;
-	a1 = old.y;
+	a0 = g_old_z.x;
+	a1 = g_old_z.y;
 	a2 = floatparm->x;
 	a3 = floatparm->y;
 
@@ -3406,8 +3393,8 @@ QuaternionFPFractal(void)
 	{
 		return 1;
 	}
-	old.x = g_new.x = n0;
-	old.y = g_new.y = n1;
+	g_old_z.x = g_new.x = n0;
+	g_old_z.y = g_new.y = n1;
 	floatparm->x = n2;
 	floatparm->y = n3;
 	return 0;
@@ -3417,8 +3404,8 @@ int
 HyperComplexFPFractal(void)
 {
 	_HCMPLX hold, hnew;
-	hold.x = old.x;
-	hold.y = old.y;
+	hold.x = g_old_z.x;
+	hold.y = g_old_z.y;
 	hold.z = floatparm->x;
 	hold.t = floatparm->y;
 
@@ -3430,13 +3417,13 @@ HyperComplexFPFractal(void)
 	hnew.z += qcj;
 	hnew.t += qck;
 
-	old.x = g_new.x = hnew.x;
-	old.y = g_new.y = hnew.y;
+	g_old_z.x = g_new.x = hnew.x;
+	g_old_z.y = g_new.y = hnew.y;
 	floatparm->x = hnew.z;
 	floatparm->y = hnew.t;
 
 	/* Check bailout */
-	magnitude = sqr(old.x) + sqr(old.y) + sqr(floatparm->x) + sqr(floatparm->y);
+	magnitude = sqr(g_old_z.x) + sqr(g_old_z.y) + sqr(floatparm->x) + sqr(floatparm->y);
 	if (magnitude > rqlim)
 	{
 		return 1;
@@ -3450,14 +3437,14 @@ VLfpFractal(void) /* Beauty of Fractals pp. 125 - 127 */
 	double a, b, ab, half, u, w, xy;
 
 	half = param[0] / 2.0;
-	xy = old.x*old.y;
-	u = old.x - xy;
-	w = -old.y + xy;
-	a = old.x + param[1]*u;
-	b = old.y + param[1]*w;
+	xy = g_old_z.x*g_old_z.y;
+	u = g_old_z.x - xy;
+	w = -g_old_z.y + xy;
+	a = g_old_z.x + param[1]*u;
+	b = g_old_z.y + param[1]*w;
 	ab = a*b;
-	g_new.x = old.x + half*(u + (a - ab));
-	g_new.y = old.y + half*(w + (-b + ab));
+	g_new.x = g_old_z.x + half*(u + (a - ab));
+	g_new.y = g_old_z.y + half*(w + (-b + ab));
 	return floatbailout();
 }
 
@@ -3469,7 +3456,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 	long testiter = 0;
 
 	g_new.x = tempsqrx - tempsqry; /* standard Julia with C == (0.0, 0.0i) */
-	g_new.y = 2.0*old.x*old.y;
+	g_new.y = 2.0*g_old_z.x*g_old_z.y;
 	oldtest.x = g_new.x*15.0;    /* scale it */
 	oldtest.y = g_new.y*15.0;
 	testsqr.x = sqr(oldtest.x);  /* set up to test with user-specified ... */
@@ -3613,7 +3600,7 @@ int MandelbrotMix4fp_per_pixel(void)
 		g_initial_z.x = dxpixel();
 		g_initial_z.y = dypixel();
 	}
-	old = g_temp_z;
+	g_old_z = g_temp_z;
 	CMPLXtrig0(g_initial_z, C);        /* c = fn1(pixel): */
 	return 0; /* 1st iteration has been NOT been done */
 }
@@ -3623,8 +3610,8 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
 {
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
 	_CMPLX z_b, z_f;
-	CMPLXpwr(old, B, z_b);     /* (z^b)     */
-	CMPLXpwr(old, F, z_f);     /* (z^f)     */
+	CMPLXpwr(g_old_z, B, z_b);     /* (z^b)     */
+	CMPLXpwr(g_old_z, F, z_f);     /* (z^f)     */
 	g_new.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
 	g_new.y = K.x*A.x*z_b.y + K.x*D.x*z_f.y + C.y;
 	return floatbailout();

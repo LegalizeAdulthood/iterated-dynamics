@@ -69,10 +69,10 @@ static long iteration(register DBLS cr, register DBLS ci,
 	     	register DBLS re, register DBLS im,
 	     	long start)
 {
-	old.x = re;
-	old.y = im;
-	tempsqrx = sqr(old.x);
-	tempsqry = sqr(old.y);
+	g_old_z.x = re;
+	g_old_z.y = im;
+	tempsqrx = sqr(g_old_z.x);
+	tempsqry = sqr(g_old_z.y);
 	floatparm = &g_initial_z;
 	floatparm->x = cr;
 	floatparm->y = ci;
@@ -86,15 +86,6 @@ static long iteration(register DBLS cr, register DBLS ci,
 	}
 	return start;
 }
-#if 0
-JuliafpFractal()
-{
-	/* floating point version of classical Mandelbrot/Julia */
-	new.x = tempsqrx - tempsqry + floatparm->x;
-	new.y = 2.0*old.x*old.y + floatparm->y;
-	return floatbailout();
-}
-#endif
 
 static void puthline(int x1, int y1, int x2, int color)
 {

@@ -44,7 +44,7 @@
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
 long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
-_CMPLX g_initial_z, old, g_new, saved;
+_CMPLX g_initial_z, g_old_z, g_new, saved;
 _CMPLX g_temp_z;
 static _CMPLX tmp;
 int color;
@@ -2131,19 +2131,19 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	{
 		if (integerfractal)
 		{
-			old.x = ((double)lold.x) / fudge;
-			old.y = ((double)lold.y) / fudge;
+			g_old_z.x = ((double)lold.x) / fudge;
+			g_old_z.y = ((double)lold.y) / fudge;
 		}
 		else if (bf_math == BIGNUM)
 		{
-			old = cmplxbntofloat(&bnold);
+			g_old_z = cmplxbntofloat(&bnold);
 		}
 		else if (bf_math == BIGFLT)
 		{
-			old = cmplxbftofloat(&bfold);
+			g_old_z = cmplxbftofloat(&bfold);
 		}
-		lastz.x = old.x;
-		lastz.y = old.y;
+		lastz.x = g_old_z.x;
+		lastz.y = g_old_z.y;
 	}
 
 	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
@@ -2156,7 +2156,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	while (++coloriter < maxit)
 	{
 		/* calculation of one orbit goes here */
-		/* input in "old" -- output in "new" */
+		/* input in "g_old_z" -- output in "new" */
 		if (coloriter % check_freq == 0)
 		{
 			if (check_key())
@@ -2172,9 +2172,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			/* Original code by Phil Wilson, hacked around by PB */
 			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
 			ftemp = (dem_mandel) ?
-				2*(old.x*deriv.x - old.y*deriv.y) + 1
-				: 2*(old.x*deriv.x - old.y*deriv.y);
-			deriv.y = 2*(old.y*deriv.x + old.x*deriv.y);
+				2*(g_old_z.x*deriv.x - g_old_z.y*deriv.y) + 1
+				: 2*(g_old_z.x*deriv.x - g_old_z.y*deriv.y);
+			deriv.y = 2*(g_old_z.y*deriv.x + g_old_z.x*deriv.y);
 			deriv.x = ftemp;
 			if (use_old_distest)
 			{
@@ -2189,7 +2189,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					break;
 				}
 			/* if above exit taken, the later test vs dem_delta will place this
-				point on the boundary, because mag(old) < bailout just now */
+				point on the boundary, because mag(g_old_z) < bailout just now */
 
 			if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
 			{
@@ -2212,7 +2212,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					break;
 				}
 			}
-			old = g_new;
+			g_old_z = g_new;
 		}
 
 		/* the usual case */
@@ -2281,7 +2281,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						tempsqrx = g_new.x*g_new.x;
 						tempsqry = g_new.y*g_new.y;
 						magnitude = tempsqrx + tempsqry;
-						old = g_new;
+						g_old_z = g_new;
 					}
 					{
 						int tmpcolor;
