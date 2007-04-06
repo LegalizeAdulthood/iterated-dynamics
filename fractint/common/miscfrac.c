@@ -1455,17 +1455,17 @@ int lyapunov(void)
 		a = dypixel();
 		b = dxpixel();
 	}
-	color = lyapunov_cycles(s_filter_cycles, a, b);
-	if (inside > 0 && color == 0)
+	g_color = lyapunov_cycles(s_filter_cycles, a, b);
+	if (inside > 0 && g_color == 0)
 	{
-		color = inside;
+		g_color = inside;
 	}
-	else if (color >= colors)
+	else if (g_color >= colors)
 	{
-		color = colors-1;
+		g_color = colors-1;
 	}
-	(*plot)(col, row, color);
-	return color;
+	(*plot)(col, row, g_color);
+	return g_color;
 }
 
 
@@ -2647,11 +2647,11 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		coloriter = 0;
 	}
 
-	color = abs((int)(coloriter));
+	g_color = abs((int)(coloriter));
 
-	(*plot)(col, row, color);
+	(*plot)(col, row, g_color);
 
-	return color;
+	return g_color;
 }
 
 /*
