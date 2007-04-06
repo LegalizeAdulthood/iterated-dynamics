@@ -214,14 +214,14 @@ static void fillrect(int x, int y, int width, int height, int color)
 	{
 		return;
 	}
-	memset(dstack, color % colors, width);
+	memset(g_stack, color % colors, width);
 	while (height-- > 0)
 	{
 		if (driver_key_pressed()) /* we could do this less often when in fast modes */
 		{
 			return;
 		}
-		putrow(x, y++, width, (char *)dstack);
+		putrow(x, y++, width, (char *)g_stack);
 	}
 }
 
@@ -479,7 +479,7 @@ static void SaveRect(int x, int y, int width, int height)
 		for (yoff = 0; yoff < height; yoff++)
 		{
 			getrow(x, y + yoff, width, buff);
-			putrow(x, y + yoff, width, (char *) dstack);
+			putrow(x, y + yoff, width, (char *) g_stack);
 			buff += width;
 		}
 		Cursor_Show();

@@ -125,7 +125,7 @@ extern int                   dotmode;
 extern int                   doublecaution;
 extern double                dpx;
 extern double                dpy;
-extern BYTE                  dstack[];
+extern BYTE                  g_stack[];
 extern U16                   dv_handle;
 extern double *				 dx0;
 extern double *				 dx1;

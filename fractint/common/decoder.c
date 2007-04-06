@@ -19,11 +19,10 @@
  == 1) The original #includes were folded into the routine strictly to hold
  ==    down the number of files we were dealing with.
  ==
- == 2) The 'stack', 'suffix', 'prefix', and 'decoderline' arrays were
+ == 2) The 'g_stack', 'suffix', 'prefix', and 'decoderline' arrays were
  ==    changed from static and 'malloc()'ed to external only so that
  ==    the assembler program could use the same array space for several
- ==    independent chunks of code.  Also, 'stack' was renamed to 'dstack'
- ==    for TASM compatibility.
+ ==    independent chunks of code.
  ==
  == 3) The 'out_line()' external function has been changed to reference
  ==    '*outln()' for flexibility (in particular, 3D transformations)
@@ -240,7 +239,7 @@ short decoder(short linewidth)
 	* happen, but we'll try and decode it anyway...) */
 
 	/* Set up the stack pointer and decode buffer pointer */
-	sp = dstack;
+	sp = g_stack;
 	bufptr = decoderline;
 	bufcnt = linewidth;
 
@@ -396,7 +395,7 @@ short decoder(short linewidth)
 				}
 			}
 		}
-		while (sp > dstack)
+		while (sp > g_stack)
 		{
 			--sp;
 			if (--xskip < 0)

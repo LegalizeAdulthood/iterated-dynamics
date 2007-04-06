@@ -123,6 +123,15 @@ _CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 int s_periodicity_check;
+/* next has a skip bit for each s_max_block unit;
+	1st pass sets bit  [1]... off only if block's contents guessed;
+	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
+	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
+typedef int (*TPREFIX)[2][maxyblk][maxxblk];
+/* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
+BYTE g_stack[4096];              /* common temp, two put_line calls */
+unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
+
 
 /* routines in this module      */
 static void perform_worklist(void);
@@ -199,20 +208,6 @@ static int s_trail_col;
 
 /* added for testing autologmap() */
 static long autologmap(void);
-
-/* next has a skip bit for each s_max_block unit;
-	1st pass sets bit  [1]... off only if block's contents guessed;
-	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
-	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
-
-/* Original array */
-/* extern unsigned int prefix[2][maxyblk][maxxblk]; */
-
-typedef int (*TPREFIX)[2][maxyblk][maxxblk];
-
-/* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
-BYTE dstack[4096];              /* common temp, two put_line calls */
-unsigned int tprefix[2][maxyblk][maxxblk]; /* common temp */
 
 #ifndef sqr
 #define sqr(x) ((x)*(x))
@@ -1236,10 +1231,10 @@ static int diffusion_scan(void)
 static void plot_block(int x, int y, int s, int c)
 {
 	int ty;
-	memset(dstack, c, s);
+	memset(g_stack, c, s);
 	for (ty = y; ty < y + s; ty++)
 	{
-		sym_fill_line(ty, x, x + s - 1, dstack);
+		sym_fill_line(ty, x, x + s - 1, g_stack);
 	}
 }
 
@@ -1247,10 +1242,10 @@ static void plot_block(int x, int y, int s, int c)
 static void plot_block_lim(int x, int y, int s, int c)
 {
 	int ty;
-	memset(dstack, (c), (s));
+	memset(g_stack, (c), (s));
 	for (ty = y; ty < min(y + s, g_y_stop + 1); ty++)
 	{
-		sym_fill_line(ty, x, min(x + s - 1, g_x_stop), dstack);
+		sym_fill_line(ty, x, min(x + s - 1, g_x_stop), g_stack);
 	}
 }
 
@@ -3501,12 +3496,12 @@ int  bound_trace_main(void)
 								{ /* fill the line to the left */
 									length = right-left + 1;
 									if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
-									{ /* only reset dstack if necessary */
-										memset(dstack, fillcolor_used, length);
+									{ /* only reset g_stack if necessary */
+										memset(g_stack, fillcolor_used, length);
 										last_fillcolor_used = fillcolor_used;
 										max_putline_length = length;
 									}
-									sym_fill_line(g_row, left, right, dstack);
+									sym_fill_line(g_row, left, right, g_stack);
 								}
 							} /* end of fill line */
 
@@ -4048,12 +4043,12 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		j = y + i;
 		if (j <= g_y_stop)
 		{
-			put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start]);
+			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start]);
 		}
 		j = y + i + s_half_block;
 		if (j <= g_y_stop)
 		{
-			put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start + OLDMAXPIXELS]);
+			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLDMAXPIXELS]);
 		}
 		if (driver_key_pressed())
 		{
@@ -4066,14 +4061,14 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 		{
 			for (i = (g_x_stop + g_xx_start + 1)/2; --i >= g_xx_start; )
 			{
-				color = dstack[i];
+				color = g_stack[i];
 				j = g_x_stop-(i-g_xx_start);
-				dstack[i] = dstack[j];
-				dstack[j] = (BYTE)color;
+				g_stack[i] = g_stack[j];
+				g_stack[j] = (BYTE)color;
 				j += OLDMAXPIXELS;
-				color = dstack[i + OLDMAXPIXELS];
-				dstack[i + OLDMAXPIXELS] = dstack[j];
-				dstack[j] = (BYTE)color;
+				color = g_stack[i + OLDMAXPIXELS];
+				g_stack[i + OLDMAXPIXELS] = g_stack[j];
+				g_stack[j] = (BYTE)color;
 			}
 		}
 		for (i = 0; i < s_half_block; ++i)
@@ -4081,12 +4076,12 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			j = g_yy_stop-(y + i-g_yy_start);
 			if (j > g_y_stop && j < ydots)
 			{
-				put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start]);
+				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start]);
 			}
 			j = g_yy_stop-(y + i + s_half_block-g_yy_start);
 			if (j > g_y_stop && j < ydots)
 			{
-				put_line(j, g_xx_start, g_x_stop, &dstack[g_xx_start + OLDMAXPIXELS]);
+				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLDMAXPIXELS]);
 			}
 			if (driver_key_pressed())
 			{
@@ -4111,14 +4106,14 @@ static void _fastcall plotblock(int buildrow, int x, int y, int color)
 		{
 			for (i = x; i < xlim; ++i)
 			{
-				dstack[i] = (BYTE)color;
+				g_stack[i] = (BYTE)color;
 			}
 		}
 		else
 		{
 			for (i = x; i < xlim; ++i)
 			{
-				dstack[i + OLDMAXPIXELS] = (BYTE)color;
+				g_stack[i + OLDMAXPIXELS] = (BYTE)color;
 			}
 		}
 		if (x >= g_xx_start) /* when x reduced for alignment, paint those dots too */
@@ -4583,7 +4578,7 @@ static int tesseral(void)
 	struct tess *tp;
 
 	s_guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2);
-	tp = (struct tess *)&dstack[0];
+	tp = (struct tess *)&g_stack[0];
 	tp->x1 = s_ix_start;                              /* set up initial box */
 	tp->x2 = g_x_stop;
 	tp->y1 = s_iy_start;
@@ -4656,7 +4651,7 @@ static int tesseral(void)
 
 	g_got_status = GOT_STATUS_TESSERAL; /* for tab_display */
 
-	while (tp >= (struct tess *)&dstack[0])  /* do next box */
+	while (tp >= (struct tess *)&g_stack[0])  /* do next box */
 	{
 		g_current_col = tp->x1; /* for tab_display */
 		g_current_row = tp->y1;
@@ -4750,16 +4745,16 @@ static int tesseral(void)
 				}
 				else  /* use put_line for speed */
 				{
-					memset(&dstack[OLDMAXPIXELS], tp->top, j);
+					memset(&g_stack[OLDMAXPIXELS], tp->top, j);
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
-						put_line(g_row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLDMAXPIXELS]);
 						if (g_plot_color != g_put_color) /* symmetry */
 						{
 							j = g_yy_stop-(g_row-g_yy_start);
 							if (j > g_y_stop && j < ydots)
 							{
-								put_line(j, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
+								put_line(j, tp->x1 + 1, tp->x2-1, &g_stack[OLDMAXPIXELS]);
 							}
 						}
 						if (++i > 25)
@@ -4851,7 +4846,7 @@ tess_split:
 	}
 
 tess_end:
-	if (tp >= (struct tess *)&dstack[0])  /* didn't complete */
+	if (tp >= (struct tess *)&g_stack[0])  /* didn't complete */
 	{
 		int i, xsize, ysize;
 		xsize = ysize = 1;
