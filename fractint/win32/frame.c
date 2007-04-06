@@ -244,10 +244,7 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 			/* no buttons down */
 
 		}
-		if (frame_add_key_press(s_mouse_keys[key_index]))
-		{
-			return;
-		}
+		frame_add_key_press(s_mouse_keys[key_index]);
 	}
 }
 
