@@ -1384,7 +1384,7 @@ int popcorn()   /* subset of std engine */
 		get_resume(sizeof(start_row), &start_row, 0);
 		end_resume();
 	}
-	kbdcount = max_kbdcount;
+	g_input_counter = g_max_input_counter;
 	g_plot_color = noplot;
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
@@ -2563,14 +2563,14 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	}
 
 	g_real_color_iter = g_color_iter;
-	kbdcount -= abs((int)g_real_color_iter);
-	if (kbdcount <= 0)
+	g_input_counter -= abs((int)g_real_color_iter);
+	if (g_input_counter <= 0)
 	{
 		if (check_key())
 		{
 			return -1;
 		}
-		kbdcount = max_kbdcount;
+		g_input_counter = g_max_input_counter;
 	}
 
 	/* inside - Here's where non-palette based images would be nice.  Instead, */
