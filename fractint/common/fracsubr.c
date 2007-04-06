@@ -1866,12 +1866,12 @@ void get_julia_attractor (double real, double imag)
 	long savmaxit;
 	int i;
 
-	if (attractors == 0 && finattract == 0) /* not magnet & not requested */
+	if (g_num_attractors == 0 && finattract == 0) /* not magnet & not requested */
 	{
 		return;
 	}
 
-	if (attractors >= N_ATTR)     /* space for more attractors ?  */
+	if (g_num_attractors >= N_ATTR)     /* space for more attractors ?  */
 	{
 		return;                  /* Bad luck - no room left !    */
 	}
@@ -1925,9 +1925,9 @@ void get_julia_attractor (double real, double imag)
 					if (labs(lresult.x-lnew.x) < g_close_enough_l
 						&& labs(lresult.y-lnew.y) < g_close_enough_l)
 					{
-						lattr[attractors] = lnew;
-						attrperiod[attractors] = i + 1;
-						attractors++;   /* another attractor - coloured lakes ! */
+						lattr[g_num_attractors] = lnew;
+						attrperiod[g_num_attractors] = i + 1;
+						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1936,9 +1936,9 @@ void get_julia_attractor (double real, double imag)
 					if (fabs(result.x-g_new_z.x) < g_close_enough
 						&& fabs(result.y-g_new_z.y) < g_close_enough)
 					{
-						attr[attractors] = g_new_z;
-						attrperiod[attractors] = i + 1;
-						attractors++;   /* another attractor - coloured lakes ! */
+						attr[g_num_attractors] = g_new_z;
+						attrperiod[g_num_attractors] = i + 1;
+						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1949,7 +1949,7 @@ void get_julia_attractor (double real, double imag)
 			}
 		}
 	}
-	if (attractors == 0)
+	if (g_num_attractors == 0)
 	{
 		periodicitycheck = savper;
 	}

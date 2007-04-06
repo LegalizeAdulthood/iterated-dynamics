@@ -112,7 +112,7 @@ unsigned long g_diffusion_counter; 	/* the diffusion counter */
 unsigned long g_diffusion_limit; 	/* the diffusion counter */
 int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
-int     attractors;                 /* number of finite attractors  */
+int     g_num_attractors;                 /* number of finite attractors  */
 _CMPLX  attr[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX lattr[N_ATTR];      /* finite attractor vals (int)  */
 int    attrperiod[N_ATTR];          /* period of the finite attractor */
@@ -534,7 +534,7 @@ int calctypeshowdot(void)
 int calcfract(void)
 {
 	matherr_ct = 0;
-	attractors = 0;          /* default to no known finite attractors  */
+	g_num_attractors = 0;          /* default to no known finite attractors  */
 	display3d = 0;
 	basin = 0;
 	/* added yet another level of indirection to g_put_color!!! TW */
@@ -2414,11 +2414,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			}
 		}
 
-		if (attractors > 0)       /* finite attractor in the list   */
+		if (g_num_attractors > 0)       /* finite attractor in the list   */
 		{                         /* NOTE: Integer code is UNTESTED */
 			if (integerfractal)
 			{
-				for (i = 0; i < attractors; i++)
+				for (i = 0; i < g_num_attractors; i++)
 				{
 					lat.x = lnew.x - lattr[i].x;
 					lat.x = lsqr(lat.x);
@@ -2443,7 +2443,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			}
 			else
 			{
-				for (i = 0; i < attractors; i++)
+				for (i = 0; i < g_num_attractors; i++)
 				{
 					at.x = g_new_z.x - attr[i].x;
 					at.x = sqr(at.x);
