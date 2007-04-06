@@ -1677,7 +1677,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 		*(s_save_orbit + g_orbit_index++) = i;
 		*(s_save_orbit + g_orbit_index++) = j;
 		*(s_save_orbit + g_orbit_index++) = c = getcolor(i, j);
-		g_put_color(i, j, c^orbit_color);
+		g_put_color(i, j, c^g_orbit_color);
 	}
 	else
 	{
