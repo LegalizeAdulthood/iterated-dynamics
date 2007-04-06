@@ -53,8 +53,8 @@ int g_invert;
 double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
-double g_magnitude, g_rq_limit, g_rq_limit2, rqlim_save;
-int no_mag_calc = 0;
+double g_magnitude, g_rq_limit, g_rq_limit2;
+int g_no_magnitude_calculation = FALSE;
 int use_old_period = 0;
 int use_old_distest = 0;
 int old_demm_colors = 0;
@@ -128,8 +128,6 @@ static int _fastcall tesscol(int, int, int);
 static int _fastcall tessrow(int, int, int);
 static int diffusion_scan(void);
 
-static _CMPLX s_saved_z;
-
 /* lookup tables to avoid too much bit fiddling : */
 static char dif_la[] =
 {
@@ -170,6 +168,8 @@ static int dem_mandel;
 static int maxblock, halfblock;
 static int guessplot;                   /* paint 1st pass row at a time?   */
 static int right_guess, bottom_guess;
+static _CMPLX s_saved_z;
+static double g_rq_limit_save;
 
 /* next has a skip bit for each maxblock unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
@@ -222,7 +222,7 @@ double fmodtest(void)
 	double result;
 	if (inside == FMODI && save_release <= 2000) /* for backwards compatibility */
 	{
-		result = (g_magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || integerfractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		return result;
 	}
@@ -230,7 +230,7 @@ double fmodtest(void)
 	switch (g_bail_out_test)
 	{
 	case Mod:
-		result = (g_magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || integerfractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		break;
 	case Real:
@@ -710,7 +710,7 @@ int calcfract(void)
 	}
 
 	closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-	rqlim_save = g_rq_limit;
+	g_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
@@ -949,7 +949,7 @@ static void perform_worklist()
 		/* in case it's changed with <G> */
 		use_old_distest = (save_release < 1827) ? 1 : 0;
 
-		g_rq_limit = rqlim_save; /* just in case changed to DEM_BAILOUT earlier */
+		g_rq_limit = g_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
 		if (distest != 1 || colors == 2) /* not doing regular outside colors */
 		{
 			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
@@ -2065,7 +2065,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		{
 			if (use_old_distest)
 			{
-				g_rq_limit = rqlim_save;
+				g_rq_limit = g_rq_limit_save;
 				if (distest != 1 || colors == 2) /* not doing regular outside colors */
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
@@ -2335,14 +2335,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				if (integerfractal)
 				{
-					if (g_magnitude_l == 0 || no_mag_calc == 0)
+					if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
 					{
 						g_magnitude_l = lsqr(lnew.x) + lsqr(lnew.y);
 					}
 					g_magnitude = g_magnitude_l;
 					g_magnitude = g_magnitude / fudge;
 				}
-				else if (g_magnitude == 0.0 || no_mag_calc == 0)
+				else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 				{
 					g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 				}

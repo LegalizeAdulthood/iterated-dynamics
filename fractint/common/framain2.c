@@ -762,7 +762,7 @@ static int handle_fractal_type(int *frommandel)
 		driver_discard_screen();
 		savedac = SAVEDAC_NO;
 		save_release = g_release;
-		no_mag_calc = 0;
+		g_no_magnitude_calculation = FALSE;
 		use_old_period = 0;
 		bad_outside = 0;
 		ldcheck = 0;
