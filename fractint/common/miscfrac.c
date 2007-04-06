@@ -1389,7 +1389,7 @@ int popcorn()   /* subset of std engine */
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
-		reset_periodicity = 1;
+		g_reset_periodicity = 1;
 		for (g_col = 0; g_col <= g_x_stop; g_col++)
 		{
 			if (StandardFractal() == -1) /* interrupted */
@@ -1398,7 +1398,7 @@ int popcorn()   /* subset of std engine */
 				put_resume(sizeof(g_row), &g_row, 0);
 				return -1;
 			}
-			reset_periodicity = 0;
+			g_reset_periodicity = 0;
 		}
 	}
 	calc_status = CALCSTAT_COMPLETED;

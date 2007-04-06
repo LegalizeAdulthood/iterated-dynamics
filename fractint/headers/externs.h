@@ -420,7 +420,7 @@ extern int                   g_red_crop_left;
 extern int                   g_red_crop_right;
 extern int                   g_release;
 extern int                   resave_flag;
-extern int                   reset_periodicity;
+extern int                   g_reset_periodicity;
 extern char *				 resume_info;
 extern int                   resume_len;
 extern int                   resuming;
