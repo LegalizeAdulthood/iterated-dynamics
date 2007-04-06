@@ -21,7 +21,7 @@
 #define KEYPRESSDELAY 32767
 #define ABS(x) ((x) < 0?-(x):(x))
 
-extern int atan_colors;
+extern int g_atan_colors;
 
 static int inside_color;
 static int periodicity_color;
@@ -165,7 +165,7 @@ calc_mand_floating_point(void)
 				}
 				else if (outside == ATAN)
 				{
-					g_color_iter = (long) fabs(atan2(lnew.y, lnew.x)*atan_colors/PI);
+					g_color_iter = (long) fabs(atan2(lnew.y, lnew.x)*g_atan_colors/PI);
 				}
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
