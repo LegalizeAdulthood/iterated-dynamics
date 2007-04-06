@@ -149,10 +149,10 @@ long calcmandfpasm_c(void)
 			else
 			{
 #if USE_NEW
-				if (ABS(g_magnitude-savedmag) < closenuff)
+				if (ABS(g_magnitude-savedmag) < g_close_enough)
 				{
 #else
-				if (ABS(savedx-x) < closenuff && ABS(savedy-y) < closenuff)
+				if (ABS(savedx-x) < g_close_enough && ABS(savedy-y) < g_close_enough)
 				{
 #endif
 /*		    g_old_color_iter = 65535;  */

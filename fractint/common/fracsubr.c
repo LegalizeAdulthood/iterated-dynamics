@@ -1932,8 +1932,8 @@ void get_julia_attractor (double real, double imag)
 				}
 				else
 				{
-					if (fabs(result.x-g_new_z.x) < closenuff
-						&& fabs(result.y-g_new_z.y) < closenuff)
+					if (fabs(result.x-g_new_z.x) < g_close_enough
+						&& fabs(result.y-g_new_z.y) < g_close_enough)
 					{
 						attr[attractors] = g_new_z;
 						attrperiod[attractors] = i + 1;

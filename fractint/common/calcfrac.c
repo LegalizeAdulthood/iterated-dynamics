@@ -75,7 +75,7 @@ int (*g_calculate_type)(void) = NULL;
 int (*g_calculate_type_temp)(void);
 int g_quick_calculate = FALSE;
 double g_proximity = 0.01;
-double closenuff;
+double g_close_enough;
 int pixelpi; /* value of pi in pixels */
 unsigned long lm;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
@@ -734,7 +734,7 @@ int calcfract(void)
 		g_invert = 3; /* so values will not be changed if we come back */
 	}
 
-	closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+	g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
 	g_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
@@ -749,7 +749,7 @@ int calcfract(void)
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
 		g_limit2_l = (long)(g_rq_limit2*fudge);    /* stop if magnitude exceeds this */
-		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
+		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
 		g_init_orbit_l.y = (long)(initorbit.y*fudge);
 	}
@@ -784,8 +784,8 @@ int calcfract(void)
 		if (curfractalspecific->per_image())
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
-			closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-			g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
+			g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+			g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 			setsymmetry(symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
@@ -1127,8 +1127,8 @@ static void perform_worklist()
 		}
 
 		/* some common initialization for escape-time pixel level routines */
-		closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
+		g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
+		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 		kbdcount = max_kbdcount;
 
 		setsymmetry(symmetry, 1);
@@ -2544,9 +2544,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				}
 				else
 				{
-					if (fabs(s_saved_z.x - g_new_z.x) < closenuff)
+					if (fabs(s_saved_z.x - g_new_z.x) < g_close_enough)
 					{
-						if (fabs(s_saved_z.y - g_new_z.y) < closenuff)
+						if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
 						{
 							caught_a_cycle = 1;
 						}
@@ -2558,9 +2558,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						{
 							if (caught[i] == 0)
 							{
-								if (fabs(savedz[i].x - g_new_z.x) < closenuff)
+								if (fabs(savedz[i].x - g_new_z.x) < g_close_enough)
 								{
-									if (fabs(savedz[i].y - g_new_z.y) < closenuff)
+									if (fabs(savedz[i].y - g_new_z.y) < g_close_enough)
 									{
 										caught[i] = g_color_iter;
 									}
