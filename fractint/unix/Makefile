@@ -27,6 +27,9 @@ tidy:
 clean:
 	rm -f $(OBJS)
 
+depend:
+	makedepend $(CFLAGS)
+
 ifeq ($(AS),/usr/bin/nasm)
 calmanfx.o: calmanfx.asm
 	$(AS) $(AFLAGS) calmanfx.asm
@@ -39,27 +42,3 @@ copy: $(FILES)
 	mv $(FILES) backup
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
-d_x11.o: d_x11.c ${HFD}/drivers.h
-
-calcmand.o: calcmand.c ${HFD}/port.h
-
-calmanfp.o: calmanfp.c ${HFD}/port.h ${HFD}/fractype.h
-
-ifeq ($(AS),/usr/bin/nasm)
-calmanfx.o: calmanfx.asm xfract_a.inc
-endif
-
-diskvidu.o: diskvidu.c ${HFD}/port.h
-
-fpu087.o: fpu087.c ${HFD}/port.h
-
-fracsuba.o: fracsuba.c ${HFD}/port.h
-
-general.o: general.c ${HFD}/port.h
-
-unix.o: unix.c ${HFD}/port.h
-
-unixscr.o: unixscr.c ${HFD}/port.h ${HFD}/prototyp.h ${HFD}/helpdefs.h
-
-video.o: video.c ${HFD}/port.h ${HFD}/prototyp.h
