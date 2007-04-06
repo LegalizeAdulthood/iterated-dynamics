@@ -42,7 +42,7 @@
 
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-_LCMPLX linitorbit;
+_LCMPLX g_init_orbit_l;
 long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
 _CMPLX init, tmp, old, g_new, saved;
 int color;
@@ -727,8 +727,8 @@ int calcfract(void)
 		llimit2 = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
 		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
 		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
-		linitorbit.x = (long)(initorbit.x*fudge);
-		linitorbit.y = (long)(initorbit.y*fudge);
+		g_init_orbit_l.x = (long)(initorbit.x*fudge);
+		g_init_orbit_l.y = (long)(initorbit.y*fudge);
 	}
 	resuming = (calc_status == CALCSTAT_RESUMABLE);
 	if (!resuming) /* free resume_info memory if any is hanging around */
@@ -2084,7 +2084,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	{
 		if (useinitorbit == 1)
 		{
-			lsaved = linitorbit;
+			lsaved = g_init_orbit_l;
 		}
 		else
 		{
