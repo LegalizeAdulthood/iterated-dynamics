@@ -159,6 +159,8 @@ static int _fastcall tesseral_check_row(int, int, int);
 static int _fastcall tesseral_column(int, int, int);
 static int _fastcall tesseral_row(int, int, int);
 static int diffusion_scan(void);
+/* added for testing automatic_log_map() */
+static long automatic_log_map(void);
 
 /* lookup tables to avoid too much bit fiddling : */
 static char s_diffusion_la[] =
@@ -214,9 +216,6 @@ static BYTE *s_fill_buffer;
 static int s_save_dots_len;
 static int s_show_dot_color;
 static int s_show_dot_width = 0;
-
-/* added for testing autologmap() */
-static long autologmap(void);
 
 /* FMODTEST routine. */
 /* Makes the test condition for the FMOD coloring type
@@ -1119,7 +1118,7 @@ static void perform_work_list()
 
 		if (!(g_resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
 		{  /* calculate round screen edges to work out best start for logmap */
-			LogFlag = (autologmap()*(LogFlag / labs(LogFlag)));
+			LogFlag = (automatic_log_map()*(LogFlag / labs(LogFlag)));
 			SetupLogTable();
 		}
 
@@ -4926,10 +4925,10 @@ static int _fastcall tesseral_row(int x1, int x2, int y)
 	return rowcolor;
 }
 
-/* added for testing autologmap() */ /* CAE 9211 fixed missing comment */
+/* added for testing automatic_log_map() */ /* CAE 9211 fixed missing comment */
 /* insert at end of CALCFRAC.C */
 
-static long autologmap(void)   /*RB*/
+static long automatic_log_map(void)   /*RB*/
 {  /* calculate round screen edges to avoid wasted colours in logmap */
 	long mincolour;
 	int lag;
@@ -5034,7 +5033,7 @@ static long autologmap(void)   /*RB*/
 ack: /* bailout here if key is pressed */
 	if (mincolour == 2)
 	{
-		g_resuming = 1; /* insure autologmap not called again */
+		g_resuming = 1; /* insure automatic_log_map not called again */
 	}
 	maxit = old_maxit;
 
