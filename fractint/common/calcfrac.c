@@ -76,11 +76,10 @@ int (*g_calculate_type_temp)(void);
 int g_quick_calculate = FALSE;
 double g_proximity = 0.01;
 double g_close_enough;
-int pixelpi; /* value of pi in pixels */
-unsigned long lm;               /* magnitude limit (CALCMAND) */
+unsigned long g_magnitude_limit;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
-int     show_orbit;                     /* flag to turn on and off */
-int     orbit_ptr;                      /* pointer into save_orbit array */
+int     g_show_orbit;                     /* flag to turn on and off */
+int     g_orbit_index;                      /* pointer into save_orbit array */
 int save_orbit[1500];                    /* array to save orbit values */
 int     orbit_color = 15;                 /* XOR color */
 
@@ -195,6 +194,7 @@ static int guessplot;                   /* paint 1st pass row at a time?   */
 static int right_guess, bottom_guess;
 static _CMPLX s_saved_z;
 static double g_rq_limit_save;
+static int s_pixel_pi; /* value of pi in pixels */
 
 /* next has a skip bit for each maxblock unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
@@ -683,13 +683,13 @@ int calcfract(void)
 			SetupLogTable();
 		}
 	}
-	lm = 4L << bitshift;                 /* CALCMAND magnitude limit */
+	g_magnitude_limit = 4L << bitshift;                 /* CALCMAND magnitude limit */
 
 	atan_colors = (save_release > 2002) ? colors : 180;
 
 	/* ORBIT stuff */
-	show_orbit = start_showorbit;
-	orbit_ptr = 0;
+	g_show_orbit = start_showorbit;
+	g_orbit_index = 0;
 	orbit_color = 15;
 	if (colors < 16)
 	{
@@ -2116,7 +2116,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		}
 		linit.y = lypixel();
 	}
-	orbit_ptr = 0;
+	g_orbit_index = 0;
 	g_color_iter = 0;
 	if (fractype == JULIAFP || fractype == JULIA)
 	{
@@ -2171,7 +2171,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
 		? 16 : 2048;
 
-	if (show_orbit)
+	if (g_show_orbit)
 	{
 		snd_time_write();
 	}
@@ -2241,7 +2241,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		else if ((curfractalspecific->orbitcalc() && inside != STARTRAIL)
 				|| overflow)
 			break;
-		if (show_orbit)
+		if (g_show_orbit)
 		{
 			if (!integerfractal)
 			{
@@ -2601,7 +2601,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		}
 	}  /* end while (g_color_iter++ < maxit) */
 
-	if (show_orbit)
+	if (g_show_orbit)
 	{
 		scrub_orbit();
 	}
@@ -2826,7 +2826,7 @@ plot_inside: /* we're "inside" */
 			{
 				g_color_iter = maxit;
 			}
-			if (show_orbit)
+			if (g_show_orbit)
 			{
 				scrub_orbit();
 			}
@@ -4533,14 +4533,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			sub_bf(bft1, bfxmax, bfxmin);
 			abs_a_bf(bft1);
-			pixelpi = (int)((PI/(double)bftofloat(bft1)*xdots)); /* PI in pixels */
+			s_pixel_pi = (int)((PI/(double)bftofloat(bft1)*xdots)); /* PI in pixels */
 		}
 		else
 		{
-			pixelpi = (int)((PI/fabs(xxmax-xxmin))*xdots); /* PI in pixels */
+			s_pixel_pi = (int)((PI/fabs(xxmax-xxmin))*xdots); /* PI in pixels */
 		}
 
-		ixstop = xxstart + pixelpi-1;
+		ixstop = xxstart + s_pixel_pi-1;
 		if (ixstop > xxstop)
 		{
 			ixstop = xxstop;
@@ -5066,7 +5066,7 @@ void _fastcall symPIplot(int x, int y, int color)
 	while (x <= xxstop)
 	{
 		g_put_color(x, y, color);
-		x += pixelpi;
+		x += s_pixel_pi;
 	}
 }
 /* Symmetry plot for period PI plus Origin Symmetry */
@@ -5079,7 +5079,7 @@ void _fastcall symPIplot2J(int x, int y, int color)
 		if ((i = yystop-(y-yystart)) > iystop && i < ydots
 				&& (j = xxstop-(x-xxstart)) < xdots)
 			g_put_color(j, i, color);
-		x += pixelpi;
+		x += s_pixel_pi;
 	}
 }
 /* Symmetry plot for period PI plus Both Axis Symmetry */
@@ -5103,7 +5103,7 @@ void _fastcall symPIplot4J(int x, int y, int color)
 				g_put_color(j , i , color);
 			}
 		}
-		x += pixelpi;
+		x += s_pixel_pi;
 	}
 }
 

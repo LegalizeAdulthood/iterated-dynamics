@@ -63,7 +63,7 @@ long calcmandfpasm_c(void)
 	savedx = 0;
 	savedy = 0;
 #endif
-	orbit_ptr = 0;
+	g_orbit_index = 0;
 	savedand = firstsavedand;
 	savedincr = 1;             /* start checking the very first time */
 	kbdcount--;                /* Only check the keyboard sometimes */
@@ -77,7 +77,7 @@ long calcmandfpasm_c(void)
 			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
-				show_orbit = 1-show_orbit;
+				g_show_orbit = g_show_orbit ? FALSE : TRUE;
 			}
 			else
 			{
@@ -165,7 +165,7 @@ long calcmandfpasm_c(void)
 			}
 		}
 		/* no_periodicity_check_87 */
-		if (show_orbit != 0)
+		if (g_show_orbit)
 		{
 			plot_orbit(x, y, -1);
 		}
@@ -180,7 +180,7 @@ long calcmandfpasm_c(void)
 	g_color_iter = inside_color;
 
 pop_stack:
-	if (orbit_ptr)
+	if (g_orbit_index)
 	{
 		scrub_orbit();
 	}

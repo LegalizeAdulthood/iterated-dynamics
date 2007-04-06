@@ -1653,7 +1653,7 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 {
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
-	if (orbit_ptr >= 1500-3)
+	if (g_orbit_index >= 1500-3)
 	{
 		return;
 	}
@@ -1673,9 +1673,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	/* save orbit value */
 	if (color == -1)
 	{
-		*(save_orbit + orbit_ptr++) = i;
-		*(save_orbit + orbit_ptr++) = j;
-		*(save_orbit + orbit_ptr++) = c = getcolor(i, j);
+		*(save_orbit + g_orbit_index++) = i;
+		*(save_orbit + g_orbit_index++) = j;
+		*(save_orbit + g_orbit_index++) = c = getcolor(i, j);
 		g_put_color(i, j, c^orbit_color);
 	}
 	else
@@ -1740,11 +1740,11 @@ void scrub_orbit(void)
 	save_sxoffs = sxoffs;
 	save_syoffs = syoffs;
 	sxoffs = syoffs = 0;
-	while (orbit_ptr >= 3)
+	while (g_orbit_index >= 3)
 	{
-		c = *(save_orbit + --orbit_ptr);
-		j = *(save_orbit + --orbit_ptr);
-		i = *(save_orbit + --orbit_ptr);
+		c = *(save_orbit + --g_orbit_index);
+		j = *(save_orbit + --g_orbit_index);
+		i = *(save_orbit + --g_orbit_index);
 		g_put_color(i, j, c);
 	}
 	sxoffs = save_sxoffs;

@@ -21,7 +21,6 @@
 #define KEYPRESSDELAY 32767
 #define ABS(x) ((x) < 0?-(x):(x))
 
-extern unsigned long lm;
 extern int atan_colors;
 extern long firstsavedand;
 
@@ -64,7 +63,7 @@ calc_mand_floating_point(void)
 
 	savedx = 0;
 	savedy = 0;
-	orbit_ptr = 0;
+	g_orbit_index = 0;
 	savedand = firstsavedand;
 	savedincr = 1;             /* start checking the very first time */
 	kbdcount--;                /* Only check the keyboard sometimes */
@@ -78,7 +77,7 @@ calc_mand_floating_point(void)
 			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
-				show_orbit = 1-show_orbit;
+				g_show_orbit = g_show_orbit ? FALSE : TRUE;
 			}
 			else
 			{
@@ -124,7 +123,7 @@ calc_mand_floating_point(void)
 		xy = FUDGE_MUL(x, y);
 		g_magnitude = x2 + y2;
 
-		if (g_magnitude >= lm)
+		if (g_magnitude >= g_magnitude_limit)
 		{
 			if (outside <= -2)
 			{
@@ -205,7 +204,7 @@ calc_mand_floating_point(void)
 			}
 		}
 		/* no_periodicity_check_87 */
-		if (show_orbit != 0)
+		if (g_show_orbit)
 		{
 			plot_orbit(x, y, -1);
 		}
@@ -222,7 +221,7 @@ calc_mand_floating_point(void)
 	g_color_iter = inside_color;
 
 pop_stack:
-	if (orbit_ptr)
+	if (g_orbit_index)
 	{
 		scrub_orbit();
 	}
@@ -305,12 +304,12 @@ doeither:									; common Mandelbrot, Julia set code
 		mov		savedincr, 1				;	flag for incrementing periodicity
 		mov		dword ptr savedx + 4,	0ffffh	;	impossible value of	"old" x
 		mov		dword ptr savedy + 4,	0ffffh	;	impossible value of	"old" y
-		mov		orbit_ptr, 0				; clear orbits
+		mov		g_orbit_index, 0				; clear orbits
 
 		dec		kbdcount					; decrement	the	keyboard counter
 		jns		nokey						;  skip	keyboard test if still positive
 		mov		kbdcount, 10				; stuff in	a low kbd count
-		cmp		show_orbit,	0				; are we showing orbits?
+		cmp		g_show_orbit,	0				; are we showing orbits?
 		jne		quickkbd					;  yup.	 leave it that way.
 		cmp		orbit_delay, 0				; are we delaying orbits?
 		je		slowkbd						;  nope.  change it.
@@ -340,8 +339,8 @@ quickkbd:
 orbitkey:
 		call	 driver_get_key				; read the key for real
 		mov		eax, 1						;	reset orbittoggle =	1 -	orbittoggle
-		sub		eax, show_orbit				;	 ...
-		mov		show_orbit,	eax				;	 ...
+		sub		eax, g_show_orbit				;	 ...
+		mov		g_show_orbit,	eax				;	 ...
 		jmp		short nokey					; pretend no key was hit
 keyhit:	mov		eax, -1						;	return with	-1
 		mov		edx, eax
@@ -353,7 +352,7 @@ keyhit:	mov		eax, -1						;	return with	-1
 		ret									; bail out!
 
 nokey:
-		cmp		show_orbit,	0				; is orbiting on?
+		cmp		g_show_orbit,	0				; is orbiting on?
 		jne		no16bitcode					;  yup.	 slow down.
 		cmp		cpu, 386					; are we on a 386?
 		jae		short code386bit			;  YAY!! 386-class speed!
@@ -401,7 +400,7 @@ kloop386_16:   ; ecx=bitshift-16, ebp=overflow.mask
 
 		add		eax, edx					; compute (x*x +	y*y) / fudge
 
-		cmp		eax, dword ptr lm + 4			; while (xx + yy <	lm)
+		cmp		eax, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
 		jae		short end386_16				;  ...
 
 		imul	edi, esi					; compute (y *	x)
@@ -486,7 +485,7 @@ kloop:										; for (k = 0; k	<= maxit; k++)
 		sub		ebx, eax					;	for	the	next iteration
 
 		add		ecx, eax					; compute (x*x	+ y*y) / fudge
-		cmp		ecx, lm						; while (lr < lm)
+		cmp		ecx, g_magnitude_limit						; while (lr < g_magnitude_limit)
 		jae		short kloopend1				;  ...
 
 		mov		eax, edi					; compute (y *	x)
@@ -545,7 +544,7 @@ chksave1:
 
 kloopend32:
 
-		cmp		orbit_ptr, 0				; any orbits to clear?
+		cmp		g_orbit_index, 0				; any orbits to clear?
 		je		noorbit32					;  nope.
 		call	scrub_orbit					; clear	out	any	old	orbits
 noorbit32:
@@ -592,7 +591,7 @@ wedone32:									;
 
 
 kloopend:
-		cmp		orbit_ptr, 0				; any orbits to clear?
+		cmp		g_orbit_index, 0				; any orbits to clear?
 		je		noorbit2					;  nope.
 		call	scrub_orbit					; clear	out	any	old	orbits
 noorbit2:
@@ -693,7 +692,7 @@ not_end16bit3:
 		add		ecx, edx					; compute (x*x +	y*y) / fudge
 		jo		end16bit					; bail out if too high
 
-		cmp		ecx, dword ptr lm + 4			; while (xx + yy <	lm)
+		cmp		ecx, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
 		jae		end16bit					;  ...
 		sub		dword ptr k, 1				;	while (k < maxit)
 		sbb		dword ptr k + 4, 0
@@ -920,8 +919,8 @@ notneg2: shl	 eax, 1						; Multiply by	2 again	to give	fg31
 		mov		eax, ebp
 		ADC		eax, edx					;  ...
 		jno		nextxy						; overflow?
-											;NOTE: The original	code tests against lm
-											;here, but as lm=4<<29 this	is the same
+											;NOTE: The original	code tests against g_magnitude_limit
+											;here, but as g_magnitude_limit=4<<29 this	is the same
 											;as	testing	for	signed overflow
 done4:	add		sp,	4						; discard saved value of |x| fg 31
 done2:	add		sp,	4						; discard saved value of |y| fg 31
@@ -1011,7 +1010,7 @@ chkkey4:
 		jmp		done0						; ecx set, jump	to very	end
 notakey4:
 
-		cmp		show_orbit,	0				; orbiting	on?
+		cmp		g_show_orbit,	0				; orbiting	on?
 		jne		horbit						;  yep.
 		jmp		nextit						; go	around again
 
