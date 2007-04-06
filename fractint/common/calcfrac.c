@@ -142,22 +142,22 @@ static int  one_or_two_pass(void);
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
 static void decomposition(void);
-static int  bound_trace_main(void);
+static int  boundary_trace_main(void);
 static void step_col_row(void);
-static int  solidguess(void);
-static int  _fastcall guessrow(int, int, int);
-static void _fastcall plotblock(int, int, int, int);
+static int  solid_guess(void);
+static int  _fastcall guess_row(int, int, int);
+static void _fastcall plot_block(int, int, int, int);
 static void _fastcall setsymmetry(int, int);
-static int  _fastcall xsym_split(int, int);
-static int  _fastcall ysym_split(int, int);
-static void _fastcall puttruecolor_disk(int, int, int);
+static int  _fastcall x_symmetry_split(int, int);
+static int  _fastcall y_symmetry_split(int, int);
+static void _fastcall put_truecolor_disk(int, int, int);
 static int diffusion_engine(void);
 static int draw_orbits(void);
 static int tesseral(void);
-static int _fastcall tesschkcol(int, int, int);
-static int _fastcall tesschkrow(int, int, int);
-static int _fastcall tesscol(int, int, int);
-static int _fastcall tessrow(int, int, int);
+static int _fastcall tesseral_check_column(int, int, int);
+static int _fastcall tesseral_check_row(int, int, int);
+static int _fastcall tesseral_column(int, int, int);
+static int _fastcall tesseral_row(int, int, int);
 static int diffusion_scan(void);
 
 /* lookup tables to avoid too much bit fiddling : */
@@ -194,7 +194,7 @@ static char s_diffusion_lb[] =
 static double s_dem_delta, s_dem_width;     /* distance estimator variables */
 static double s_dem_too_big;
 static int s_dem_mandelbrot;
-/* static vars for solidguess & its subroutines */
+/* static vars for solid_guess & its subroutines */
 static int s_max_block, s_half_block;
 static int s_guess_plot;                   /* paint 1st pass row at a time?   */
 static int s_right_guess, s_bottom_guess;
@@ -534,7 +534,7 @@ int calculate_fractal(void)
 		{
 			/* Have to force passes = 1 */
 			usr_stdcalcmode = stdcalcmode = '1';
-			g_put_color = puttruecolor_disk;
+			g_put_color = put_truecolor_disk;
 		}
 		else
 		{
@@ -1140,10 +1140,10 @@ static void perform_work_list()
 			tesseral();
 			break;
 		case 'b':
-			bound_trace_main();
+			boundary_trace_main();
 			break;
 		case 'g':
-			solidguess();
+			solid_guess();
 			break;
 		case 'd':
 			diffusion_scan();
@@ -1215,7 +1215,7 @@ static int diffusion_scan(void)
 
 /* little function that plots a filled square of color c, size s with
 	top left cornet at (x, y) with optimization from sym_fill_line */
-static void plot_block(int x, int y, int s, int c)
+static void diffusion_plot_block(int x, int y, int s, int c)
 {
 	int ty;
 	memset(g_stack, c, s);
@@ -1282,7 +1282,7 @@ static int diffusion_block(int row, int col, int sqsz)
 		return TRUE;
 	}
 	g_reset_periodicity = 0;
-	plot_block(col, row, sqsz, g_color);
+	diffusion_plot_block(col, row, sqsz, g_color);
 	return FALSE;
 }
 
@@ -3308,8 +3308,7 @@ Guenther's code.  I've noted these places with the initials DG.
 #define advance_match()     coming_from = ((s_going_to = (s_going_to - 1) & 0x03) - 1) & 0x03
 #define advance_no_match()  s_going_to = (s_going_to + 1) & 0x03
 
-static
-int  bound_trace_main(void)
+static int boundary_trace_main(void)
 {
 	enum direction coming_from;
 	unsigned int match_found, continue_loop;
@@ -3566,7 +3565,7 @@ static void step_col_row()
 /************************ super solid guessing *****************************/
 
 /*
-	I, Timothy Wegner, invented this solidguessing idea and implemented it in
+	I, Timothy Wegner, invented this solid_guessing idea and implemented it in
 	more or less the overall framework you see here.  I am adding this note
 	now in a possibly vain attempt to secure my place in history, because
 	Pieter Branderhorst has totally rewritten this routine, incorporating
@@ -3574,7 +3573,7 @@ static void step_col_row()
 	faster, but is also more accurate. Harrumph!
 */
 
-static int solidguess(void)
+static int solid_guess(void)
 {
 	int i, x, y, xlim, ylim, blocksize;
 	unsigned int *pfxp0, *pfxp1;
@@ -3623,7 +3622,7 @@ static int solidguess(void)
 				if ((*g_calculate_type)() == -1)
 				{
 					add_worklist(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, s_work_sym);
-					goto exit_solidguess;
+					goto exit_solid_guess;
 				}
 				g_reset_periodicity = 0;
 			}
@@ -3651,21 +3650,21 @@ static int solidguess(void)
 				}
 			}
 			g_reset_periodicity = 0;
-			if (i == -1 || guessrow(1, y, blocksize) != 0) /* interrupted? */
+			if (i == -1 || guess_row(1, y, blocksize) != 0) /* interrupted? */
 			{
 				if (y < g_yy_start)
 				{
 					y = g_yy_start;
 				}
 				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, s_work_sym);
-				goto exit_solidguess;
+				goto exit_solid_guess;
 			}
 		}
 
 		if (g_num_work_list) /* work list not empty, just do 1st pass */
 		{
 			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
-			goto exit_solidguess;
+			goto exit_solid_guess;
 		}
 		++s_work_pass;
 		s_iy_start = g_yy_start & (-1 - (s_max_block-1));
@@ -3715,7 +3714,7 @@ static int solidguess(void)
 	}
 	if (g_three_pass)
 	{
-		goto exit_solidguess;
+		goto exit_solid_guess;
 	}
 
 	/* remaining pass(es), halve blocksize & quarter each blocksize**2 */
@@ -3731,21 +3730,21 @@ static int solidguess(void)
 		{
 			if (s_work_pass >= stoppass)
 			{
-				goto exit_solidguess;
+				goto exit_solid_guess;
 			}
 		}
 		g_current_pass = s_work_pass + 1;
 		for (y = s_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
-			if (guessrow(0, y, blocksize) != 0)
+			if (guess_row(0, y, blocksize) != 0)
 			{
 				if (y < g_yy_start)
 				{
 					y = g_yy_start;
 				}
 				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, s_work_pass, s_work_sym);
-				goto exit_solidguess;
+				goto exit_solid_guess;
 			}
 		}
 		++s_work_pass;
@@ -3753,12 +3752,12 @@ static int solidguess(void)
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
 			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, s_work_sym);
-			goto exit_solidguess;
+			goto exit_solid_guess;
 		}
 		s_iy_start = g_yy_start & (-1 - (s_max_block-1));
 	}
 
-	exit_solidguess:
+	exit_solid_guess:
 	return 0;
 }
 
@@ -3773,7 +3772,7 @@ static int solidguess(void)
 		} \
 	}
 
-static int _fastcall guessrow(int firstpass, int y, int blocksize)
+static int _fastcall guess_row(int firstpass, int y, int blocksize)
 {
 	int x, i, j, color;
 	int xplushalf, xplusblock;
@@ -3832,7 +3831,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 
 		if (firstpass)  /* 1st pass, paint topleft corner */
 		{
-			plotblock(0, x, y, c22);
+			plot_block(0, x, y, c22);
 		}
 		/* setup variables */
 		xplushalf = x + s_half_block;
@@ -3937,23 +3936,23 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 						(*g_plot_color)(xplushalf, yplushalf, c33);
 					}
 				}
-				plotblock(1, x, yplushalf, c23);
-				plotblock(0, xplushalf, y, c32);
-				plotblock(1, xplushalf, yplushalf, c33);
+				plot_block(1, x, yplushalf, c23);
+				plot_block(0, xplushalf, y, c32);
+				plot_block(1, xplushalf, yplushalf, c33);
 			}
 			else  /* repaint changed blocks */
 			{
 				if (c23 != c22)
 				{
-					plotblock(-1, x, yplushalf, c23);
+					plot_block(-1, x, yplushalf, c23);
 				}
 				if (c32 != c22)
 				{
-					plotblock(-1, xplushalf, y, c32);
+					plot_block(-1, xplushalf, y, c32);
 				}
 				if (c33 != c22)
 				{
-					plotblock(-1, xplushalf, yplushalf, c33);
+					plot_block(-1, xplushalf, yplushalf, c33);
 				}
 			}
 		}
@@ -3977,7 +3976,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			calcadot(c21, x, ylesshalf);
 			if (s_half_block > 1 && c21 != c22)
 			{
-				plotblock(-1, x, ylesshalf, c21);
+				plot_block(-1, x, ylesshalf, c21);
 			}
 		}
 		if (fix31)
@@ -3985,7 +3984,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			calcadot(c31, xplushalf, ylesshalf);
 			if (s_half_block > 1 && c31 != c22)
 			{
-				plotblock(-1, xplushalf, ylesshalf, c31);
+				plot_block(-1, xplushalf, ylesshalf, c31);
 			}
 		}
 		if (c23 != c22)
@@ -3995,7 +3994,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 				calcadot(c12, x-s_half_block, y);
 				if (s_half_block > 1 && c12 != c22)
 				{
-					plotblock(-1, x-s_half_block, y, c12);
+					plot_block(-1, x-s_half_block, y, c12);
 				}
 			}
 			if (guessed13)
@@ -4003,7 +4002,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 				calcadot(c13, x-s_half_block, yplushalf);
 				if (s_half_block > 1 && c13 != c22)
 				{
-					plotblock(-1, x-s_half_block, yplushalf, c13);
+					plot_block(-1, x-s_half_block, yplushalf, c13);
 				}
 			}
 		}
@@ -4077,7 +4076,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 	return 0;
 }
 
-static void _fastcall plotblock(int buildrow, int x, int y, int color)
+static void _fastcall plot_block(int buildrow, int x, int y, int color)
 {
 	int i, xlim, ylim;
 	xlim = x + s_half_block;
@@ -4132,7 +4131,7 @@ static void _fastcall plotblock(int buildrow, int x, int y, int color)
 
 /************************* symmetry plot setup ************************/
 
-static int _fastcall xsym_split(int xaxis_row, int xaxis_between)
+static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 {
 	int i;
 	if ((s_work_sym&0x11) == 0x10) /* already decided not sym */
@@ -4186,7 +4185,7 @@ static int _fastcall xsym_split(int xaxis_row, int xaxis_between)
 	return 0; /* tell set_symmetry its a go */
 }
 
-static int _fastcall ysym_split(int yaxis_col, int yaxis_between)
+static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 {
 	int i;
 	if ((s_work_sym&0x22) == 0x20) /* already decided not sym */
@@ -4410,7 +4409,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		xsym:
 	case XAXIS:                       /* X-axis Symmetry */
-		if (xsym_split(xaxis_row, xaxis_between) == 0)
+		if (x_symmetry_split(xaxis_row, xaxis_between) == 0)
 		{
 			g_plot_color = basin ? symplot2basin : symplot2;
 		}
@@ -4421,7 +4420,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			break;
 		}
 	case YAXIS:                       /* Y-axis Symmetry */
-		if (ysym_split(yaxis_col, yaxis_between) == 0)
+		if (y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			g_plot_color = symplot2Y;
 		}
@@ -4432,8 +4431,8 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			break;
 		}
 	case XYAXIS:                      /* X-axis AND Y-axis Symmetry */
-		xsym_split(xaxis_row, xaxis_between);
-		ysym_split(yaxis_col, yaxis_between);
+		x_symmetry_split(xaxis_row, xaxis_between);
+		y_symmetry_split(yaxis_col, yaxis_between);
 		switch (s_work_sym & 3)
 		{
 		case XAXIS: /* just xaxis symmetry */
@@ -4461,8 +4460,8 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 	case ORIGIN:                      /* Origin Symmetry */
 		originsym:
-		if (xsym_split(xaxis_row, xaxis_between) == 0
-			&& ysym_split(yaxis_col, yaxis_between) == 0)
+		if (x_symmetry_split(xaxis_row, xaxis_between) == 0
+			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			g_plot_color = symplot2J;
 			g_x_stop = g_xx_stop; /* didn't want this changed */
@@ -4500,8 +4499,8 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		g_plot_color = symPIplot;
 		g_symmetry = 0;
-		if (xsym_split(xaxis_row, xaxis_between) == 0
-				&& ysym_split(yaxis_col, yaxis_between) == 0)
+		if (x_symmetry_split(xaxis_row, xaxis_between) == 0
+				&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			/* both axes or origin*/
 			g_plot_color = (parm.y == 0.0) ? symPIplot4J : symPIplot2J; 
@@ -4571,10 +4570,10 @@ static int tesseral(void)
 
 	if (s_work_pass == 0)  /* not resuming */
 	{
-		tp->top = tessrow(s_ix_start, g_x_stop, s_iy_start);     /* Do top row */
-		tp->bot = tessrow(s_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
-		tp->lft = tesscol(s_ix_start, s_iy_start + 1, g_y_stop-1); /* Do left column */
-		tp->rgt = tesscol(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
+		tp->top = tesseral_row(s_ix_start, g_x_stop, s_iy_start);     /* Do top row */
+		tp->bot = tesseral_row(s_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
+		tp->lft = tesseral_column(s_ix_start, s_iy_start + 1, g_y_stop-1); /* Do left column */
+		tp->rgt = tesseral_column(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
 			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, s_work_sym);
@@ -4648,7 +4647,7 @@ static int tesseral(void)
 		/* for any edge whose color is unknown, set it */
 		if (tp->top == -2)
 		{
-			tp->top = tesschkrow(tp->x1, tp->x2, tp->y1);
+			tp->top = tesseral_check_row(tp->x1, tp->x2, tp->y1);
 		}
 		if (tp->top == -1)
 		{
@@ -4656,7 +4655,7 @@ static int tesseral(void)
 		}
 		if (tp->bot == -2)
 		{
-			tp->bot = tesschkrow(tp->x1, tp->x2, tp->y2);
+			tp->bot = tesseral_check_row(tp->x1, tp->x2, tp->y2);
 		}
 		if (tp->bot != tp->top)
 		{
@@ -4664,7 +4663,7 @@ static int tesseral(void)
 		}
 		if (tp->lft == -2)
 		{
-			tp->lft = tesschkcol(tp->x1, tp->y1, tp->y2);
+			tp->lft = tesseral_check_column(tp->x1, tp->y1, tp->y2);
 		}
 		if (tp->lft != tp->top)
 		{
@@ -4672,7 +4671,7 @@ static int tesseral(void)
 		}
 		if (tp->rgt == -2)
 		{
-			tp->rgt = tesschkcol(tp->x2, tp->y1, tp->y2);
+			tp->rgt = tesseral_check_column(tp->x2, tp->y1, tp->y2);
 		}
 		if (tp->rgt != tp->top)
 		{
@@ -4684,7 +4683,7 @@ static int tesseral(void)
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
 			{
 				mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
-				midcolor = tesscol(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
+				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
 				if (midcolor != tp->top)
 				{
 					goto tess_split;
@@ -4693,7 +4692,7 @@ static int tesseral(void)
 			else  /* divide across the middle */
 			{
 				mid = (tp->y1 + tp->y2) >> 1;           /* Find mid point */
-				midcolor = tessrow(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
+				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
 				if (midcolor != tp->top)
 				{
 					goto tess_split;
@@ -4764,7 +4763,7 @@ tess_split:
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
 			{
 				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
-				midcolor = tesscol(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
+				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
 				if (midcolor == -3)
 				{
 					goto tess_end;
@@ -4797,7 +4796,7 @@ tess_split:
 			else  /* divide across the middle */
 			{
 				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
-				midcolor = tessrow(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
+				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
 				if (midcolor == -3)
 				{
 					goto tess_end;
@@ -4854,7 +4853,7 @@ tess_end:
 	return 0;
 } /* tesseral */
 
-static int _fastcall tesschkcol(int x, int y1, int y2)
+static int _fastcall tesseral_check_column(int x, int y1, int y2)
 {
 	int i;
 	i = getcolor(x, ++y1);
@@ -4866,7 +4865,7 @@ static int _fastcall tesschkcol(int x, int y1, int y2)
 	return i;
 }
 
-static int _fastcall tesschkrow(int x1, int x2, int y)
+static int _fastcall tesseral_check_row(int x1, int x2, int y)
 {
 	int i;
 	i = getcolor(x1, y);
@@ -4881,7 +4880,7 @@ static int _fastcall tesschkrow(int x1, int x2, int y)
 	return i;
 }
 
-static int _fastcall tesscol(int x, int y1, int y2)
+static int _fastcall tesseral_column(int x, int y1, int y2)
 {
 	int colcolor, i;
 	g_col = x;
@@ -4904,7 +4903,7 @@ static int _fastcall tesscol(int x, int y1, int y2)
 	return colcolor;
 }
 
-static int _fastcall tessrow(int x1, int x2, int y)
+static int _fastcall tesseral_row(int x1, int x2, int y)
 {
 	int rowcolor, i;
 	g_row = y;
@@ -5192,7 +5191,7 @@ void _fastcall symplot4basin(int x, int y, int color)
 	}
 }
 
-static void _fastcall puttruecolor_disk(int x, int y, int color)
+static void _fastcall put_truecolor_disk(int x, int y, int color)
 {
 	putcolor_a(x, y, color);
 	targa_color(x, y, color);
