@@ -348,12 +348,12 @@ MandelfpSetup(void)
 		}
 		break;
 	case QUATFP:
-		floatparm = &tmp;
+		floatparm = &g_temp_z;
 		attractors = 0;
 		periodicitycheck = 0;
 		break;
 	case HYPERCMPLXFP:
-		floatparm = &tmp;
+		floatparm = &g_temp_z;
 		attractors = 0;
 		periodicitycheck = 0;
 		if (param[2] != 0)
@@ -1231,8 +1231,8 @@ SierpinskiFPSetup(void)
 {
 	/* sierpinski */
 	periodicitycheck = 0;                /* disable periodicity checks */
-	tmp.x = 1;
-	tmp.y = 0.5;
+	g_temp_z.x = 1;
+	g_temp_z.y = 0.5;
 	return 1;
 }
 

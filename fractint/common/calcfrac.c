@@ -44,7 +44,9 @@
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
 long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
-_CMPLX g_initial_z, tmp, old, g_new, saved;
+_CMPLX g_initial_z, old, g_new, saved;
+_CMPLX g_temp_z;
+static _CMPLX tmp;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
 int row, col, passes;
