@@ -281,9 +281,9 @@ init_restart:
 	potflag = 0;
 	if (potparam[0] != 0.0
 		&& colors >= 64
-		&& (curfractalspecific->calctype == StandardFractal
-			|| curfractalspecific->calctype == calcmand
-			|| curfractalspecific->calctype == calcmandfp))
+		&& (curfractalspecific->calculate_type == StandardFractal
+			|| curfractalspecific->calculate_type == calcmand
+			|| curfractalspecific->calculate_type == calcmandfp))
 	{
 		potflag = 1;
 		distest = usr_distest = 0;    /* can't do distest too */

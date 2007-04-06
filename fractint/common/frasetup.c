@@ -31,12 +31,12 @@ MandelSetup(void)           /* Mandelbrot Routine */
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
-		calctype = calcmand; /* the normal case - use CALCMAND */
+		g_calculate_type = calcmand; /* the normal case - use CALCMAND */
 	}
 	else
 	{
 		/* special case: use the main processing loop */
-		calctype = StandardFractal;
+		g_calculate_type = StandardFractal;
 		longparm = &linit;
 	}
 	return 1;
@@ -52,12 +52,12 @@ JuliaSetup(void)            /* Julia Routine */
 		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
-		calctype = calcmand; /* the normal case - use CALCMAND */
+		g_calculate_type = calcmand; /* the normal case - use CALCMAND */
 	}
 	else
 	{
 		/* special case: use the main processing loop */
-		calctype = StandardFractal;
+		g_calculate_type = StandardFractal;
 		longparm = &lparm;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 	}
@@ -195,7 +195,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	param[0] = (double)degree; /* JCO 7/1/92 */
 	symmetry = (degree % 4 == 0) ? XYAXIS : XAXIS;
 
-	calctype = StandardFractal;
+	g_calculate_type = StandardFractal;
 #if !defined(XFRACT)
 	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
@@ -209,7 +209,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 int
 StandaloneSetup(void)
 {
-	timer(TIMER_ENGINE, curfractalspecific->calctype);
+	timer(TIMER_ENGINE, curfractalspecific->calculate_type);
 	return 0;           /* effectively disable solid-guessing */
 }
 
@@ -268,7 +268,7 @@ MandelfpSetup(void)
 			&& using_jiim == 0 && g_bail_out_test == Mod
 			&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-			calctype = calcmandfp; /* the normal case - use calcmandfp */
+			g_calculate_type = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
 			if (cpu >= 386 && fpu >= 387)
 			{
@@ -303,7 +303,7 @@ MandelfpSetup(void)
 		else
 		{
 			/* special case: use the main processing loop */
-			calctype = StandardFractal;
+			g_calculate_type = StandardFractal;
 		}
 		break;
 	case FPMANDELZPOWER:
@@ -416,7 +416,7 @@ JuliafpSetup(void)
 				&& using_jiim == 0 && g_bail_out_test == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-			calctype = calcmandfp; /* the normal case - use calcmandfp */
+			g_calculate_type = calcmandfp; /* the normal case - use calcmandfp */
 #if !defined(XFRACT)
 			if (cpu >= 386 && fpu >= 387)
 			{
@@ -451,7 +451,7 @@ JuliafpSetup(void)
 		else
 		{
 			/* special case: use the main processing loop */
-			calctype = StandardFractal;
+			g_calculate_type = StandardFractal;
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
 		break;

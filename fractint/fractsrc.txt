@@ -319,7 +319,7 @@ MANDEL, and select floating point, you will get entry MANDELFP).  There are
 also pointers tojulia and tomandel, which allow you to switch between mandel
 and julia.  The four functions listed are curfractalspecific->orbitcalc,
 curfractalspecific->per_pixel, curfractalspecific->per_image, and
-curfractalspecific->calctype.
+curfractalspecific->calculate_type.
 
 main calls calcfracinit.
 calcfractint: this sets up curfractalspecific, which is the appropriate entry
@@ -328,7 +328,7 @@ calcfractint: this sets up curfractalspecific, which is the appropriate entry
 
 main calls calcfract, which calls timer, which calls perform_worklist
 perform_worklist calls curfractalspecific->per_image, which is eg.  MandelSetup
-MandelSetup: sets calctype to curfractalspecific->calctype, or for special
+MandelSetup: sets calctype to curfractalspecific->calculate_type, or for special
     cases (eg. decomposition) to StandardFractal
 
 perform_worklist calls solidguess (or whatever drawing system)

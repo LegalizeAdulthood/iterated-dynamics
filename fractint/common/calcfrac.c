@@ -42,24 +42,37 @@
 
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-_LCMPLX g_init_orbit_l;
-long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
-_CMPLX g_initial_z, g_old_z, g_new_z;
-_CMPLX g_temp_z;
-int g_color;
-long g_color_iter, g_old_color_iter, g_real_color_iter;
-int g_row, g_col, g_passes;
+_LCMPLX g_init_orbit_l = { 0, 0 };
+long g_magnitude_l = 0;
+long g_limit_l = 0;
+long g_limit2_l = 0;
+long g_close_enough_l = 0;
+_CMPLX g_initial_z = { 0, 0 };
+_CMPLX g_old_z = { 0, 0 };
+_CMPLX g_new_z = { 0, 0 };
+_CMPLX g_temp_z = { 0, 0 };
+int g_color = 0;
+long g_color_iter;
+long g_old_color_iter;
+long g_real_color_iter;
+int g_row;
+int g_col;
+int g_passes;
 int g_invert;
-double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
+double g_f_radius;
+double g_f_x_center;
+double g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
-double g_magnitude, g_rq_limit, g_rq_limit2;
+double g_magnitude;
+double g_rq_limit;
+double g_rq_limit2;
 int g_no_magnitude_calculation = FALSE;
 int g_use_old_periodicity = FALSE;
 int g_use_old_distance_test = FALSE;
 int g_old_demm_colors = FALSE;
-int (*calctype)(void);
-int (*calctypetmp)(void);
+int (*g_calculate_type)(void) = NULL;
+int (*g_calculate_type_temp)(void);
 int quick_calc = 0;
 double closeprox = 0.01;
 double closenuff;
@@ -71,24 +84,35 @@ int     orbit_ptr;                      /* pointer into save_orbit array */
 int save_orbit[1500];                    /* array to save orbit values */
 int     orbit_color = 15;                 /* XOR color */
 
-int     ixstart, ixstop, iystart, iystop;       /* start, stop here */
+int     ixstart;
+int ixstop;
+int iystart;
+int iystop;       /* start, stop here */
 int     symmetry;          /* symmetry flag */
 int     reset_periodicity; /* nonzero if escape time pixel rtn to reset */
-int     kbdcount, max_kbdcount;    /* avoids checking keyboard too often */
+int     kbdcount;
+int max_kbdcount;    /* avoids checking keyboard too often */
 char *resume_info = NULL;                    /* resume info if allocated */
 int resuming;                           /* nonzero if resuming after interrupt */
 int num_worklist;                       /* resume worklist for standard engine */
 WORKLIST worklist[MAXCALCWORK];
-int xxstart, xxstop, xxbegin;             /* these are same as worklist, */
-int yystart, yystop, yybegin;             /* declared as separate items  */
-int workpass, worksym;                   /* for the sake of calcmand    */
+int xxstart;
+int xxstop;
+int xxbegin;             /* these are same as worklist, */
+int yystart;
+int yystop;
+int yybegin;             /* declared as separate items  */
+int workpass;
+int worksym;                   /* for the sake of calcmand    */
 VOIDPTR typespecific_workarea = NULL;
 /* variables which must be visible for tab_display */
 int got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
               /* 6 for orbits */
-int curpass, totpasses;
-int currow, curcol;
+int curpass;
+int totpasses;
+int currow;
+int curcol;
 /* vars for diffusion scan */
 unsigned bits = 0; 		/* number of bits in the counter */
 unsigned long dif_counter; 	/* the diffusion counter */
@@ -102,7 +126,8 @@ int    attrperiod[N_ATTR];          /* period of the finite attractor */
 /***** vars for new btm *****/
 enum direction {North, East, South, West};
 enum direction going_to;
-int trail_row, trail_col;
+int trail_row;
+int trail_col;
 
 /* routines in this module      */
 static void perform_worklist(void);
@@ -501,7 +526,7 @@ int calctypeshowdot(void)
 	{
 		sleepms(orbit_delay);
 	}
-	out = (*calctypetmp)();
+	out = (*g_calculate_type_temp)();
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
 	return out;
 }
@@ -741,14 +766,14 @@ int calcfract(void)
 		calctime = 0;
 	}
 
-	if (curfractalspecific->calctype != StandardFractal
-		&& curfractalspecific->calctype != calcmand
-		&& curfractalspecific->calctype != calcmandfp
-		&& curfractalspecific->calctype != lyapunov
-		&& curfractalspecific->calctype != froth_calc)
+	if (curfractalspecific->calculate_type != StandardFractal
+		&& curfractalspecific->calculate_type != calcmand
+		&& curfractalspecific->calculate_type != calcmandfp
+		&& curfractalspecific->calculate_type != lyapunov
+		&& curfractalspecific->calculate_type != froth_calc)
 	{
-		calctype = curfractalspecific->calctype; /* per_image can override */
-		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
+		g_calculate_type = curfractalspecific->calculate_type; /* per_image can override */
+		symmetry = curfractalspecific->symmetry; /*   calculate_type & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 		iystart = ixstart = yystart = xxstart = yybegin = xxbegin = 0;
 		iystop = yystop = ydots -1;
@@ -762,7 +787,7 @@ int calcfract(void)
 			closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
 			g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
 			setsymmetry(symmetry, 0);
-			timer(TIMER_ENGINE, calctype); /* non-standard fractal engine */
+			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
 		if (check_key())
 		{
@@ -820,7 +845,7 @@ int calcfract(void)
 		free_workarea();
 	}
 
-	if (curfractalspecific->calctype == froth_calc)
+	if (curfractalspecific->calculate_type == froth_calc)
 	{
 		froth_cleanup();
 	}
@@ -900,7 +925,7 @@ static void perform_worklist()
 	{
 		stdcalcmode = '1';
 	}
-	if (stdcalcmode == 'o' && (curfractalspecific->calctype != StandardFractal))
+	if (stdcalcmode == 'o' && (curfractalspecific->calculate_type != StandardFractal))
 	{
 		stdcalcmode = '1';
 	}
@@ -989,7 +1014,7 @@ static void perform_worklist()
 	while (num_worklist > 0)
 	{
 		/* per_image can override */
-		calctype = curfractalspecific->calctype;
+		g_calculate_type = curfractalspecific->calculate_type;
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
@@ -1097,8 +1122,8 @@ static void perform_worklist()
 			fillbuff = savedots + savedotslen;
 			memset(fillbuff, showdotcolor, savedotslen);
 #endif
-			calctypetmp = calctype;
-			calctype    = calctypeshowdot;
+			g_calculate_type_temp = g_calculate_type;
+			g_calculate_type    = calctypeshowdot;
 		}
 
 		/* some common initialization for escape-time pixel level routines */
@@ -1256,7 +1281,7 @@ static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 static int diffusion_point(int row, int col)
 {
 	reset_periodicity = 1;
-	if ((*calctype)() == -1)
+	if ((*g_calculate_type)() == -1)
 	{
 		return TRUE;
 	}
@@ -1268,7 +1293,7 @@ static int diffusion_point(int row, int col)
 static int diffusion_block(int row, int col, int sqsz)
 {
 	reset_periodicity = 1;
-	if ((*calctype)() == -1)
+	if ((*g_calculate_type)() == -1)
 	{
 		return TRUE;
 	}
@@ -1280,7 +1305,7 @@ static int diffusion_block(int row, int col, int sqsz)
 static int diffusion_block_lim(int row, int col, int sqsz)
 {
 	reset_periodicity = 1;
-	if ((*calctype)() == -1)
+	if ((*g_calculate_type)() == -1)
 	{
 		return TRUE;
 	}
@@ -1797,7 +1822,7 @@ static int _fastcall StandardCalc(int passnum)
 			}
 			if (passnum == 1 || stdcalcmode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*calctype)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */
+				if ((*g_calculate_type)() == -1) /* StandardFractal(), calcmand() or calcmandfp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -3335,7 +3360,7 @@ int  bound_trace_main(void)
 			trail_color = g_color;
 			g_row = currow;
 			g_col = curcol;
-			if ((*calctype)() == -1) /* color, row, col are global */
+			if ((*g_calculate_type)() == -1) /* color, row, col are global */
 			{
 				if (showdot != bkcolor) /* remove showdot pixel */
 				{
@@ -3378,8 +3403,8 @@ int  bound_trace_main(void)
 				{
 					/* the order of operations in this next line is critical */
 					g_color = getcolor(g_col, g_row);
-					if (g_color == bkcolor && (*calctype)() == -1)
-								/* color, row, col are global for (*calctype)() */
+					if (g_color == bkcolor && (*g_calculate_type)() == -1)
+								/* color, row, col are global for (*g_calculate_type)() */
 					{
 						if (showdot != bkcolor) /* remove showdot pixel */
 						{
@@ -3613,7 +3638,7 @@ static int solidguess(void)
 			g_row = iystart;
 			for (g_col = ixstart; g_col <= ixstop; g_col += maxblock)
 			{ /* calc top row */
-				if ((*calctype)() == -1)
+				if ((*g_calculate_type)() == -1)
 				{
 					add_worklist(xxstart, xxstop, xxbegin, yystart, yystop, yybegin, 0, worksym);
 					goto exit_solidguess;
@@ -3635,7 +3660,7 @@ static int solidguess(void)
 				reset_periodicity = 1;
 				for (g_col = ixstart; g_col <= ixstop; g_col += maxblock)
 				{
-					i = (*calctype)();
+					i = (*g_calculate_type)();
 					if (i == -1)
 					{
 						break;
@@ -3759,7 +3784,7 @@ static int solidguess(void)
 	{ \
 		g_col = x; \
 		g_row = y; \
-		c = (*calctype)(); \
+		c = (*g_calculate_type)(); \
 		if (c == -1) \
 		{ \
 			return -1; \
@@ -4880,11 +4905,11 @@ static int _fastcall tesscol(int x, int y1, int y2)
 	g_col = x;
 	g_row = y1;
 	reset_periodicity = 1;
-	colcolor = (*calctype)();
+	colcolor = (*g_calculate_type)();
 	reset_periodicity = 0;
 	while (++g_row <= y2)  /* generate the column */
 	{
-		i = (*calctype)();
+		i = (*g_calculate_type)();
 		if (i < 0)
 		{
 			return -3;
@@ -4903,11 +4928,11 @@ static int _fastcall tessrow(int x1, int x2, int y)
 	g_row = y;
 	g_col = x1;
 	reset_periodicity = 1;
-	rowcolor = (*calctype)();
+	rowcolor = (*g_calculate_type)();
 	reset_periodicity = 0;
 	while (++g_col <= x2)  /* generate the row */
 	{
-		i = (*calctype)();
+		i = (*g_calculate_type)();
 		if (i < 0)
 		{
 			return -3;
@@ -4936,7 +4961,7 @@ static long autologmap(void)   /*RB*/
 	old_maxit = maxit;
 	for (g_col = 0; g_col < xstop; g_col++) /* top row */
 	{
-		g_color = (*calctype)();
+		g_color = (*g_calculate_type)();
 		if (g_color == -1)
 		{
 			goto ack; /* key pressed, bailout */
@@ -4959,7 +4984,7 @@ static long autologmap(void)   /*RB*/
 	g_col = xstop;
 	for (g_row = 0; g_row < ystop; g_row++) /* right  side */
 	{
-		g_color = (*calctype)();
+		g_color = (*g_calculate_type)();
 		if (g_color == -1)
 		{
 			goto ack; /* key pressed, bailout */
@@ -4982,7 +5007,7 @@ static long autologmap(void)   /*RB*/
 	g_col = 0;
 	for (g_row = 0; g_row < ystop; g_row++) /* left  side */
 	{
-		g_color = (*calctype)();
+		g_color = (*g_calculate_type)();
 		if (g_color == -1)
 		{
 			goto ack; /* key pressed, bailout */
@@ -5005,7 +5030,7 @@ static long autologmap(void)   /*RB*/
 	g_row = ystop;
 	for (g_col = 0; g_col < xstop; g_col++) /* bottom row */
 	{
-		g_color = (*calctype)();
+		g_color = (*g_calculate_type)();
 		if (g_color == -1)
 		{
 			goto ack; /* key pressed, bailout */
