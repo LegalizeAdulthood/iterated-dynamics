@@ -85,8 +85,8 @@ int g_x_stop;
 int g_y_stop;							/* stop here */
 int     g_symmetry;          /* symmetry flag */
 int     g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
-int     kbdcount;
-int max_kbdcount;    /* avoids checking keyboard too often */
+int     g_input_counter;
+int g_max_input_counter;    /* avoids checking keyboard too often */
 char *resume_info = NULL;                    /* resume info if allocated */
 int resuming;                           /* nonzero if resuming after interrupt */
 int num_worklist;                       /* resume worklist for standard engine */
@@ -300,7 +300,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	/* here's where all the symmetry goes */
 	if (g_plot_color == g_put_color)
 	{
-		kbdcount -= length >> 4; /* seems like a reasonable value */
+		g_input_counter -= length >> 4; /* seems like a reasonable value */
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
@@ -308,13 +308,13 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 		if (i > g_y_stop && i < ydots)
 		{
 			put_line(i, left, right, str);
-			kbdcount -= length >> 3;
+			g_input_counter -= length >> 3;
 		}
 	}
 	else if (g_plot_color == symplot2Y) /* Y-axis symmetry */
 	{
 		put_line(row, xxstop-(right-xxstart), xxstop-(left-xxstart), str);
-		kbdcount -= length >> 3;
+		g_input_counter -= length >> 3;
 	}
 	else if (g_plot_color == symplot2J)  /* Origin symmetry */
 	{
@@ -325,7 +325,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 		{
 			put_line(i, j, k, str);
 		}
-		kbdcount -= length >> 3;
+		g_input_counter -= length >> 3;
 	}
 	else if (g_plot_color == symplot4) /* X-axis and Y-axis symmetry */
 	{
@@ -344,7 +344,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 		{
 			put_line(row, j, k, str);
 		}
-		kbdcount -= length >> 2;
+		g_input_counter -= length >> 2;
 	}
 	else    /* cheap and easy way out */
 	{
@@ -352,7 +352,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 		{
 			(*g_plot_color)(i, row, str[i-left]);
 		}
-		kbdcount -= length >> 1;
+		g_input_counter -= length >> 1;
 	}
 }
 
@@ -368,7 +368,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	put_line(row, left, right, str);
 	if (g_plot_color == g_put_color)
 	{
-		kbdcount -= length >> 4; /* seems like a reasonable value */
+		g_input_counter -= length >> 4; /* seems like a reasonable value */
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
@@ -377,7 +377,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 		{
 			put_line(i, left, right, str);
 		}
-		kbdcount -= length >> 3;
+		g_input_counter -= length >> 3;
 	}
 	else
 	{
@@ -385,7 +385,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 		{
 			(*g_plot_color)(i, row, str[i-left]);
 		}
-		kbdcount -= length >> 1;
+		g_input_counter -= length >> 1;
 	}
 }
 
@@ -1127,7 +1127,7 @@ static void perform_worklist()
 		/* some common initialization for escape-time pixel level routines */
 		g_close_enough = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
 		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
-		kbdcount = max_kbdcount;
+		g_input_counter = g_max_input_counter;
 
 		setsymmetry(g_symmetry, 1);
 
@@ -2070,7 +2070,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		{
 			if (decimals > 200)
 			{
-				kbdcount = -1;
+				g_input_counter = -1;
 			}
 			if (bf_math == BIGNUM)
 			{
@@ -2902,14 +2902,14 @@ plot_pixel:
 	(*g_plot_color)(g_col, g_row, g_color);
 
 	maxit = savemaxit;
-	kbdcount -= abs((int)g_real_color_iter);
-	if (kbdcount <= 0)
+	g_input_counter -= abs((int)g_real_color_iter);
+	if (g_input_counter <= 0)
 	{
 		if (check_key())
 		{
 			return -1;
 		}
-		kbdcount = max_kbdcount;
+		g_input_counter = g_max_input_counter;
 	}
 	return g_color;
 }
@@ -3507,7 +3507,7 @@ int  bound_trace_main(void)
 							} /* end of fill line */
 
 #if 0 /* don't interupt with a check_key() during fill */
-							if (--kbdcount <= 0)
+							if (--g_input_counter <= 0)
 							{
 								if (check_key())
 								{
@@ -3518,7 +3518,7 @@ int  bound_trace_main(void)
 									add_worklist(xxstart, xxstop, curcol, currow, g_y_stop, currow, 0, worksym);
 									return -1;
 								}
-								kbdcount = max_kbdcount;
+								g_input_counter = g_max_input_counter;
 							}
 #endif
 						}

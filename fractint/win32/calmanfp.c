@@ -66,11 +66,11 @@ long calcmandfpasm_c(void)
 	g_orbit_index = 0;
 	savedand = firstsavedand;
 	savedincr = 1;             /* start checking the very first time */
-	kbdcount--;                /* Only check the keyboard sometimes */
-	if (kbdcount < 0)
+	g_input_counter--;                /* Only check the keyboard sometimes */
+	if (g_input_counter < 0)
 	{
 		int key;
-		kbdcount = 1000;
+		g_input_counter = 1000;
 		key = driver_key_pressed();
 		if (key)
 		{
@@ -158,7 +158,7 @@ long calcmandfpasm_c(void)
 /*		    g_old_color_iter = 65535;  */
 					g_old_color_iter = maxit;
 					g_real_color_iter = maxit;
-					kbdcount = kbdcount-(maxit-cx);
+					g_input_counter = g_input_counter-(maxit-cx);
 					g_color_iter = periodicity_color;
 					goto pop_stack;
 				}
@@ -175,7 +175,7 @@ long calcmandfpasm_c(void)
 	/* reached maxit */
 	/* check periodicity immediately next time, remember we count down from maxit */
 	g_old_color_iter = maxit;
-	kbdcount -= maxit;
+	g_input_counter -= maxit;
 	g_real_color_iter = maxit;
 	g_color_iter = inside_color;
 
@@ -205,7 +205,7 @@ over_bailout_87:
 	{
 		g_color_iter = 1;
 	}
-	kbdcount -= g_real_color_iter;
+	g_input_counter -= g_real_color_iter;
 	if (outside == -1)
 	{
 	}

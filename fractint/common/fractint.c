@@ -347,7 +347,7 @@ restart:   /* insert key re-starts here */
 #endif
 
 	max_colors = 256;                    /* the Windows version is lower */
-	max_kbdcount = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
+	g_max_input_counter = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
 
 	if (showfile && g_init_mode < 0)
 	{

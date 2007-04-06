@@ -66,11 +66,11 @@ calc_mand_floating_point(void)
 	g_orbit_index = 0;
 	savedand = firstsavedand;
 	savedincr = 1;             /* start checking the very first time */
-	kbdcount--;                /* Only check the keyboard sometimes */
-	if (kbdcount < 0)
+	g_input_counter--;                /* Only check the keyboard sometimes */
+	if (g_input_counter < 0)
 	{
 		int key;
-		kbdcount = 1000;
+		g_input_counter = 1000;
 		key = driver_key_pressed();
 		if (key)
 		{
@@ -138,7 +138,7 @@ calc_mand_floating_point(void)
 			{
 				g_color_iter = 1;
 			}
-			kbdcount -= g_real_color_iter;
+			g_input_counter -= g_real_color_iter;
 			if (outside == -1)
 			{
 			}
@@ -198,7 +198,7 @@ calc_mand_floating_point(void)
 				/* g_old_color_iter = 65535;  */
 				g_old_color_iter = maxit;
 				g_real_color_iter = maxit;
-				kbdcount = kbdcount - (maxit - cx);
+				g_input_counter = g_input_counter - (maxit - cx);
 				g_color_iter = periodicity_color;
 				goto pop_stack;
 			}
@@ -215,7 +215,7 @@ calc_mand_floating_point(void)
 	/* g_old_color_iter = 65535;  */
 	/* check periodicity immediately next time, remember we count down from maxit */
 	g_old_color_iter = maxit;
-	kbdcount -= maxit;
+	g_input_counter -= maxit;
 	g_real_color_iter = maxit;
 
 	g_color_iter = inside_color;
@@ -306,9 +306,9 @@ doeither:									; common Mandelbrot, Julia set code
 		mov		dword ptr savedy + 4,	0ffffh	;	impossible value of	"old" y
 		mov		g_orbit_index, 0				; clear orbits
 
-		dec		kbdcount					; decrement	the	keyboard counter
+		dec		g_input_counter					; decrement	the	keyboard counter
 		jns		nokey						;  skip	keyboard test if still positive
-		mov		kbdcount, 10				; stuff in	a low kbd count
+		mov		g_input_counter, 10				; stuff in	a low kbd count
 		cmp		g_show_orbit,	0				; are we showing orbits?
 		jne		quickkbd					;  yup.	 leave it that way.
 		cmp		orbit_delay, 0				; are we delaying orbits?
@@ -316,22 +316,22 @@ doeither:									; common Mandelbrot, Julia set code
 		cmp		showdot, 0					; are we showing the current pixel?
 		jge		quickkbd					;  yup.	 leave it that way.
 slowkbd:
-		mov		kbdcount, 5000				; else, stuff an appropriate count	val
+		mov		g_input_counter, 5000				; else, stuff an appropriate count	val
 		cmp		cpu, 386					; ("appropriate" to the CPU)
 		jae		short kbddiskadj			;  ...
 		cmp		dword ptr delmin + 4,	8		;	is 16-bit math good	enough?
 		ja		kbddiskadj					;  yes.	test less often
-		mov		kbdcount, 500				;	no.	 test more often
+		mov		g_input_counter, 500				;	no.	 test more often
 kbddiskadj:
 		cmp		dotmode, 11					; disk	video?
 		jne		quickkbd					;  no, leave as	is
-		shr		kbdcount, 1					; yes,	reduce count
-		shr		kbdcount, 1					; yes,	reduce count
+		shr		g_input_counter, 1					; yes,	reduce count
+		shr		g_input_counter, 1					; yes,	reduce count
 quickkbd:
 		call	driver_key_pressed			; has a	key	been pressed?
 		cmp		eax, 0						;	 ...
 		je		nokey						; nope.	 proceed
-		mov		kbdcount, 0					; make	sure it	goes negative again
+		mov		g_input_counter, 0					; make	sure it	goes negative again
 		cmp		eax, 'o'					;	orbit toggle hit?
 		je		orbitkey					;  yup.	 show orbits
 		cmp		eax, 'O'					;	orbit toggle hit?
@@ -554,7 +554,7 @@ noorbit32:
 		mov		g_old_color_iter, eax			; and save	it as the "old"	color
 		mov		eax, maxit					; compute color
 		sub		eax, k						;	(first,	re-compute "k")
-		sub		kbdcount, eax				;	adjust the keyboard	count (use eax only)
+		sub		g_input_counter, eax				;	adjust the keyboard	count (use eax only)
 		cmp		eax, 0						; convert any "outlier" region
 		jg		short coloradjust1_32		;  (where abs(x) > 2 or	abs(y) > 2)
 		mov		eax, 1						;	 to	look like we ran through
@@ -606,7 +606,7 @@ noorbit2:
 		mov		edx, dword ptr maxit + 4		; compute color
 		sub		eax, dword ptr k			;  (first, re-compute "k")
 		sbb		edx, dword ptr k + 4			;  (first, re-compute "k")
-		sub		kbdcount, eax				;	adjust the keyboard	count
+		sub		g_input_counter, eax				;	adjust the keyboard	count
 		cmp		edx, 0						;	convert	any	"outlier" region
 		js		short kludge_for_julia		;  k can be	> maxit!!!
 		ja		short coloradjust1			;  (where abs(x) > 2 or	abs(y) > 2)
