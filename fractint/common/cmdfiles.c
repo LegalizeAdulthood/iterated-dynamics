@@ -461,7 +461,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	usr_stdcalcmode = 'g';               /* initial solid-guessing */
 	stoppass = 0;                        /* initial guessing stoppass */
 	g_quick_calculate = FALSE;
-	closeprox = 0.01;
+	g_proximity = 0.01;
 	g_is_mand = 1;                          /* default formula mand/jul toggle */
 #ifndef XFRACT
 	usr_floatflag = 0;                   /* turn off the float flag */
@@ -1291,7 +1291,7 @@ static int inside_arg(const cmd_context *context)
 
 static int proximity_arg(const cmd_context *context)
 {
-	closeprox = context->floatval[0];
+	g_proximity = context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 

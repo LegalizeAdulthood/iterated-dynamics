@@ -481,14 +481,14 @@ struct fractal_info         /*  for saving data in GIF file     */
     short bf_math;
     short bflength;
     short yadjust;        /* yikes! we left this out ages ago! */
-    short g_old_demm_colors;
+    short old_demm_colors;
     long logmap;
     long distest;
     double dinvert[3];
     short logcalc;
     short stoppass;
     short quick_calculate;
-    double closeprox;
+    double proximity;
     short nobof;
     long orbit_interval;
     short orbit_delay;
@@ -592,7 +592,7 @@ struct history_info
     short logcalc;
     short stoppass;
     short ismand;
-    double closeprox;
+    double proximity;
     short nobof;
     double math_tol[2];
     short orbit_delay;

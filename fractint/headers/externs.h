@@ -64,7 +64,7 @@ extern int                   checkcurdir;
 extern int                   g_checked_vvs;
 extern long                  cimag;
 extern double                closenuff;
-extern double                closeprox;
+extern double                g_proximity;
 extern _CMPLX                coefficient;
 extern int                   g_col;
 extern int                   g_color;
