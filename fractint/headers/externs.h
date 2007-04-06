@@ -350,7 +350,7 @@ extern char                  odpy;
 extern double                opx;
 extern double                opy;
 extern int                   orbitsave;
-extern int                   orbit_color;
+extern int                   g_orbit_color;
 extern int                   orbit_delay;
 extern int					g_orbit_draw_mode;
 extern long                  g_orbit_interval;
