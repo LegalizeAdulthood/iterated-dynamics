@@ -341,25 +341,25 @@ init_restart:
 
 	if (potflag && potparam[2] != 0.0)
 	{
-		rqlim = potparam[2];
+		g_rq_limit = potparam[2];
 	}
 	else if (bailout) /* user input bailout */
 	{
-		rqlim = bailout;
+		g_rq_limit = bailout;
 	}
 	else if (biomorph != -1) /* biomorph benefits from larger bailout */
 	{
-		rqlim = 100;
+		g_rq_limit = 100;
 	}
 	else
 	{
-		rqlim = curfractalspecific->orbit_bailout;
+		g_rq_limit = curfractalspecific->orbit_bailout;
 	}
 	if (integerfractal) /* the bailout limit mustn't be too high here */
 	{
-		if (rqlim > 127.0)
+		if (g_rq_limit > 127.0)
 		{
-			rqlim = 127.0;
+			g_rq_limit = 127.0;
 		}
 	}
 
@@ -410,7 +410,7 @@ init_restart:
 		&& (param[1] > -2.0 && param[1] < 2.0)
 		&& !g_invert                                /* and not inverting */
 		&& biomorph == -1                         /* and not biomorphing */
-		&& rqlim <= 4.0                           /* and bailout not too high */
+		&& g_rq_limit <= 4.0                           /* and bailout not too high */
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
 		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& closeprox <= 2.0                       /* and closeprox not too large */

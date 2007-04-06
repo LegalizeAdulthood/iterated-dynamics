@@ -25,7 +25,7 @@ int
 MandelSetup(void)           /* Mandelbrot Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !g_invert && decomp[0] == 0 && rqlim == 4.0
+		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
@@ -46,7 +46,7 @@ int
 JuliaSetup(void)            /* Julia Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !g_invert && decomp[0] == 0 && rqlim == 4.0
+		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
 		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
@@ -251,7 +251,7 @@ MandelfpSetup(void)
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using StandardFractal().
-		calcmandfp() can currently handle invert, any rqlim, potflag
+		calcmandfp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
@@ -398,7 +398,7 @@ JuliafpSetup(void)
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using StandardFractal().
-		calcmandfp() can currently handle invert, any rqlim, potflag
+		calcmandfp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97

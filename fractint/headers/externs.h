@@ -436,7 +436,7 @@ extern double                roverd;
 extern int                   g_row;
 extern int                   g_row_count;						/* row-counter for decoder and out_line */
 extern double                rqlim2;
-extern double                rqlim;
+extern double                g_rq_limit;
 extern int                   rseed;
 extern long                  savebase;
 extern _CMPLX                SaveC;
