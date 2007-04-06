@@ -213,7 +213,7 @@ void _fastcall restore_history_info(void)
 #endif
 	last = history[historyptr];
 
-	invert					= 0;
+	g_invert					= 0;
 	calc_status				= CALCSTAT_PARAMS_CHANGED;
 	resuming				= 0;
 	fractype				= last.fractal_type;
@@ -330,7 +330,7 @@ void _fastcall restore_history_info(void)
 	potflag             	= (potparam[0] != 0.0);
 	if (inversion[0] != 0.0)
 	{
-		invert = 3;
+		g_invert = 3;
 	}
 	Log_Fly_Calc			= last.logcalc;
 	g_is_mand					= last.ismand;

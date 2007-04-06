@@ -637,7 +637,7 @@ int get_toggles2()
 			j = 1;
 		}
 	}
-	invert = (inversion[0] == 0.0) ? 0 : 3;
+	g_invert = (inversion[0] == 0.0) ? 0 : 3;
 	++k;
 
 	rotate_lo = uvalues[++k].uval.ival;

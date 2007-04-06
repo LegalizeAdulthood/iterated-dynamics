@@ -2684,7 +2684,7 @@ int long_julia_per_pixel(void)
 	/* barnsleyj1 */
 	/* barnsleyj2 */
 	/* sierpinski */
-	if (invert)
+	if (g_invert)
 	{
 		/* invert */
 		invertz2(&g_old_z);
@@ -2735,7 +2735,7 @@ int long_mandel_per_pixel(void)
 		linit.y = lypixel();
 	}
 
-	if (invert)
+	if (g_invert)
 	{
 		/* invert */
 		invertz2(&g_initial_z);
@@ -2766,7 +2766,7 @@ int julia_per_pixel(void)
 {
 	/* julia */
 
-	if (invert)
+	if (g_invert)
 	{
 		/* invert */
 		invertz2(&g_old_z);
@@ -2820,7 +2820,7 @@ int mandel_per_pixel(void)
 {
 	/* mandel */
 
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 
@@ -2895,7 +2895,7 @@ int marksmandel_per_pixel()
 {
 #if !defined(XFRACT)
 	/* marksmandel */
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 
@@ -2954,7 +2954,7 @@ int marksmandelfp_per_pixel()
 {
 	/* marksmandel */
 
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3012,7 +3012,7 @@ int mandelfp_per_pixel(void)
 	/* floating point mandelbrot */
 	/* mandelfp */
 
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3073,7 +3073,7 @@ int juliafp_per_pixel(void)
 {
 	/* floating point julia */
 	/* juliafp */
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_old_z);
 	}
@@ -3093,7 +3093,7 @@ int MPCjulia_per_pixel(void)
 #if !defined(XFRACT)
 	/* floating point julia */
 	/* juliafp */
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_old_z);
 	}
@@ -3121,7 +3121,7 @@ otherrichard8fp_per_pixel(void)
 
 int othermandelfp_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3146,7 +3146,7 @@ int MPCHalley_per_pixel(void)
 {
 #if !defined(XFRACT)
 	/* MPC halley */
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3170,7 +3170,7 @@ int MPCHalley_per_pixel(void)
 
 int Halley_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3190,7 +3190,7 @@ int Halley_per_pixel(void)
 
 int otherjuliafp_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_old_z);
 	}
@@ -3238,7 +3238,7 @@ int quaternionfp_per_pixel(void)
 
 int MarksCplxMandperp(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3261,7 +3261,7 @@ int MarksCplxMandperp(void)
 int long_phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
-	if (invert)
+	if (g_invert)
 	{
 		/* invert */
 		invertz2(&g_old_z);
@@ -3294,7 +3294,7 @@ int long_phoenix_per_pixel(void)
 
 int phoenix_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_old_z);
 	}
@@ -3318,7 +3318,7 @@ int long_mandphoenix_per_pixel(void)
 		linit.y = lypixel();
 	}
 
-	if (invert)
+	if (g_invert)
 	{
 		/* invert */
 		invertz2(&g_initial_z);
@@ -3350,7 +3350,7 @@ int long_mandphoenix_per_pixel(void)
 }
 int mandphoenix_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -3591,7 +3591,7 @@ int MandelbrotMix4Setup(void)
 
 int MandelbrotMix4fp_per_pixel(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}

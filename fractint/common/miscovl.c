@@ -1023,7 +1023,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm("/16bit");
 			}
 		}
-		if (invert)
+		if (g_invert)
 		{
 			put_parm(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
 				inversion[0], inversion[1], inversion[2]);

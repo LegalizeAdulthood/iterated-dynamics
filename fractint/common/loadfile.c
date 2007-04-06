@@ -95,7 +95,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	param[1]     = read_info.cimag;
 	save_release = 1100; /* unless we find out better later on */
 
-	invert = 0;
+	g_invert = 0;
 	if (read_info.version > 0)
 	{
 		param[2]      = read_info.parm3;
@@ -119,7 +119,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		inversion[2]  = read_info.invert[2];
 		if (inversion[0] != 0.0)
 		{
-			invert = 3;
+			g_invert = 3;
 		}
 		decomp[0]     = read_info.decomp[0];
 		decomp[1]     = read_info.decomp[1];
@@ -1201,7 +1201,7 @@ void backwards_v19(void)
 	}
 	if ((fractype == FORMULA || fractype == FFORMULA) && save_release < 1824)
 	{
-		inversion[0] = inversion[1] = inversion[2] = invert = 0;
+		inversion[0] = inversion[1] = inversion[2] = g_invert = 0;
 	}
 	no_mag_calc = fix_bof() ? 1 : 0; /* fractal has old bof60/61 problem with magnitude */
 	use_old_period = fix_period_bof() ? 1 : 0; /* fractal uses old periodicity method */
