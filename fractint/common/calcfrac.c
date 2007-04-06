@@ -53,7 +53,7 @@ int g_invert;
 double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
-double magnitude, rqlim, rqlim2, rqlim_save;
+double g_magnitude, rqlim, rqlim2, rqlim_save;
 int no_mag_calc = 0;
 int use_old_period = 0;
 int use_old_distest = 0;
@@ -222,16 +222,16 @@ double fmodtest(void)
 	double result;
 	if (inside == FMODI && save_release <= 2000) /* for backwards compatibility */
 	{
-		result = (magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
-			sqr(g_new_z.x) + sqr(g_new_z.y) : magnitude;
+		result = (g_magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		return result;
 	}
 
 	switch (g_bail_out_test)
 	{
 	case Mod:
-		result = (magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
-			sqr(g_new_z.x) + sqr(g_new_z.y) : magnitude;
+		result = (g_magnitude == 0.0 || no_mag_calc == 0 || integerfractal) ?
+			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		break;
 	case Real:
 		result = sqr(g_new_z.x);
@@ -2115,7 +2115,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 	if (inside <= BOF60 && inside >= BOF61)
 	{
-		magnitude = g_magnitude_l = 0;
+		g_magnitude = g_magnitude_l = 0;
 		min_orbit = 100000.0;
 	}
 	overflow = 0;                /* reset integer math overflow flag */
@@ -2197,11 +2197,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						dem_color = g_color_iter;
 						dem_new = g_new_z;
 					}
-					if (rqlim >= DEM_BAILOUT
-						|| magnitude >= (rqlim = DEM_BAILOUT)
-						|| magnitude == 0)
+					if (rqlim >= DEM_BAILOUT)
 					{
-						break;
+						rqlim = DEM_BAILOUT;
+						if ((g_magnitude >= rqlim)
+							|| magnitude == 0)
+						{
+							break;
+						}
 					}
 				}
 				else
