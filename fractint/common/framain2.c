@@ -1049,7 +1049,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	}
 	if (fractype == CELLULAR)
 	{
-		nxtscreenflag = !nxtscreenflag;
+		g_next_screen_flag = !g_next_screen_flag;
 		calc_status = CALCSTAT_RESUMABLE;
 		*kbdmore = 0;
 		return;
