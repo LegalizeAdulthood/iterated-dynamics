@@ -62,7 +62,7 @@ outlin16(BYTE *buffer, int linelen)
 	buf = (U16 *)buffer;
 	for (i = 0; i < linelen; i++)
 	{
-		putcolor(i, g_row_count, buf[i] >> 8);
+		g_put_color(i, g_row_count, buf[i] >> 8);
 	}
 	g_row_count++;
 	return 0;

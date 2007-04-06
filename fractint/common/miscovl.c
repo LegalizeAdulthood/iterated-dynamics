@@ -2695,8 +2695,8 @@ void flip_image(int key)
 			for (j = 0; j < ydots; j++)
 			{
 				tempdot = getcolor(i, j);
-				putcolor(i, j, getcolor(xdots-1-i, j));
-				putcolor(xdots-1-i, j, tempdot);
+				g_put_color(i, j, getcolor(xdots-1-i, j));
+				g_put_color(xdots-1-i, j, tempdot);
 			}
 		}
 		sxmin = xxmax + xxmin - xx3rd;
@@ -2727,8 +2727,8 @@ void flip_image(int key)
 			for (i = 0; i < xdots; i++)
 			{
 				tempdot = getcolor(i, j);
-				putcolor(i, j, getcolor(i, ydots-1-j));
-				putcolor(i, ydots-1-j, tempdot);
+				g_put_color(i, j, getcolor(i, ydots-1-j));
+				g_put_color(i, ydots-1-j, tempdot);
 			}
 		}
 		sxmin = xx3rd;
@@ -2759,8 +2759,8 @@ void flip_image(int key)
 			for (j = 0; j < ydots; j++)
 			{
 				tempdot = getcolor(i, j);
-				putcolor(i, j, getcolor(xdots-1-i, ydots-1-j));
-				putcolor(xdots-1-i, ydots-1-j, tempdot);
+				g_put_color(i, j, getcolor(xdots-1-i, ydots-1-j));
+				g_put_color(xdots-1-i, ydots-1-j, tempdot);
 			}
 		}
 		sxmin = xxmax;

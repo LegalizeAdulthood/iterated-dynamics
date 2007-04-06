@@ -1676,11 +1676,11 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 		*(save_orbit + orbit_ptr++) = i;
 		*(save_orbit + orbit_ptr++) = j;
 		*(save_orbit + orbit_ptr++) = c = getcolor(i, j);
-		putcolor(i, j, c^orbit_color);
+		g_put_color(i, j, c^orbit_color);
 	}
 	else
 	{
-		putcolor(i, j, color);
+		g_put_color(i, j, color);
 	}
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
@@ -1745,7 +1745,7 @@ void scrub_orbit(void)
 		c = *(save_orbit + --orbit_ptr);
 		j = *(save_orbit + --orbit_ptr);
 		i = *(save_orbit + --orbit_ptr);
-		putcolor(i, j, c);
+		g_put_color(i, j, c);
 	}
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;

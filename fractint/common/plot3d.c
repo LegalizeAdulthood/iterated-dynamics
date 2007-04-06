@@ -184,7 +184,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			putcolor(x, y, color|tmp);
+			g_put_color(x, y, color|tmp);
 			if (Targa_Out)
 			{
 				targa_color(x, y, color|tmp);
@@ -196,7 +196,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<2;
-			putcolor(x, y, color|tmp);
+			g_put_color(x, y, color|tmp);
 			if (Targa_Out)
 			{
 				targa_color(x, y, color|tmp);
@@ -222,7 +222,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 		}
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			putcolor(x, y, color);
+			g_put_color(x, y, color);
 			if (Targa_Out)
 			{
 				targa_color(x, y, color);
@@ -238,7 +238,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 			{
 				color = PAL_MAGENTA;
 			}
-			putcolor(x, y, color);
+			g_put_color(x, y, color);
 			if (Targa_Out)
 			{
 				targa_color(x, y, color);
@@ -271,7 +271,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			/* Overwrite prev Red don't mess w/blue */
-			putcolor(x, y, color|(tmp&240));
+			g_put_color(x, y, color|(tmp&240));
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -291,7 +291,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 		{
 			/* Overwrite previous blue, don't mess with existing red */
 			color = color <<4;
-			putcolor(x, y, color|(tmp&15));
+			g_put_color(x, y, color|(tmp&15));
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -332,7 +332,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			putcolor(x, y, color|tmp);
+			g_put_color(x, y, color|tmp);
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -350,7 +350,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<4;
-			putcolor(x, y, color|tmp);
+			g_put_color(x, y, color|tmp);
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -380,7 +380,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			putcolor(x, y, color >> 1);
+			g_put_color(x, y, color >> 1);
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -398,7 +398,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			putcolor(x, y, (color >> 1) + (colors >> 1));
+			g_put_color(x, y, (color >> 1) + (colors >> 1));
 			if (Targa_Out)
 			{
 				if (!ILLUMINE)
@@ -430,7 +430,7 @@ void _fastcall plot3dcrosseyedA(int x, int y, int color)
 			return;
 		}
 	}
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }
 
 void _fastcall plot3dcrosseyedB(int x, int y, int color)
@@ -441,7 +441,7 @@ void _fastcall plot3dcrosseyedB(int x, int y, int color)
 	{
 		x += xdots/2;
 	}
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }
 
 void _fastcall plot3dcrosseyedC(int x, int y, int color)
@@ -454,7 +454,7 @@ void _fastcall plot3dcrosseyedC(int x, int y, int color)
 			return;
 		}
 	}
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 }
 
 void plot_setup()
@@ -493,12 +493,12 @@ void plot_setup()
 		}
 		else
 		{
-			g_standard_plot = putcolor;
+			g_standard_plot = g_put_color;
 		}
 		break;
 
 	default:
-		g_standard_plot = putcolor;
+		g_standard_plot = g_put_color;
 		break;
 	}
 	assert(g_standard_plot);

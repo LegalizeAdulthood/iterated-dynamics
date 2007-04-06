@@ -60,18 +60,18 @@ void dispbox(void)
 		else
 			values[i] = (unsigned char)getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
 	}
-/* There is an interaction between getcolor and putcolor, so separate them */
+/* There is an interaction between getcolor and g_put_color, so separate them */
 	if (!(g_is_true_color && truemode)) /* don't need this for truecolor with truemode set */
 	{
 		for (i = 0; i < boxcount; i++)
 		{
 			if (colors == 2)
 			{
-				putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
+				g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
 			}
 			else
 			{
-				putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, boxc);
+				g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, boxc);
 			}
 		}
 	}
@@ -89,7 +89,7 @@ void clearbox(void)
 		unsigned char *values = (unsigned char *)boxvalues;
 		for (i = 0; i < boxcount; i++)
 		{
-			putcolor(boxx[i]-sxoffs, boxy[i]-syoffs, values[i]);
+			g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, values[i]);
 		}
 	}
 }

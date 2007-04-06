@@ -151,13 +151,13 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 		{
 			if (*bars)
 			{
-				putcolor(i + (int)(AVG), j , g_color_bright);
-				putcolor(i - (int)(AVG), j , g_color_bright);
+				g_put_color(i + (int)(AVG), j , g_color_bright);
+				g_put_color(i - (int)(AVG), j , g_color_bright);
 			}
 			else
 			{
-				putcolor(i + (int)(AVG), j, colour[ct++]);
-				putcolor(i - (int)(AVG), j, colour[ct++]);
+				g_put_color(i + (int)(AVG), j, colour[ct++]);
+				g_put_color(i - (int)(AVG), j, colour[ct++]);
 			}
 		}
 	}
@@ -216,7 +216,7 @@ int outline_stereo(BYTE *pixels, int linelen)
 	for (x = xdots - 1; x >= 0; x--)
 	{
 		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
-		putcolor(x, Y, colour[x]);
+		g_put_color(x, Y, colour[x]);
 	}
 	(Y)++;
 	return 0;

@@ -50,8 +50,8 @@ int g_color;
 long g_color_iter, g_old_color_iter, g_real_color_iter;
 int g_row, g_col, g_passes;
 int g_invert;
-double f_radius, f_xcenter, f_ycenter; /* for inversion */
-void (_fastcall *putcolor)(int, int, int) = putcolor_a;
+double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
+void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *plot)(int, int, int) = putcolor_a;
 double magnitude, rqlim, rqlim2, rqlim_save;
 int no_mag_calc = 0;
@@ -275,7 +275,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	length = right-left + 1;
 	put_line(row, left, right, str);
 	/* here's where all the symmetry goes */
-	if (plot == putcolor)
+	if (plot == g_put_color)
 	{
 		kbdcount -= length >> 4; /* seems like a reasonable value */
 	}
@@ -343,7 +343,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	int length, i;
 	length = right-left + 1;
 	put_line(row, left, right, str);
-	if (plot == putcolor)
+	if (plot == g_put_color)
 	{
 		kbdcount -= length >> 4; /* seems like a reasonable value */
 	}
@@ -514,8 +514,8 @@ int calcfract(void)
 	attractors = 0;          /* default to no known finite attractors  */
 	display3d = 0;
 	basin = 0;
-	/* added yet another level of indirection to putcolor!!! TW */
-	putcolor = putcolor_a;
+	/* added yet another level of indirection to g_put_color!!! TW */
+	g_put_color = putcolor_a;
 	if (g_is_true_color && truemode)
 	{
 		/* Have to force passes = 1 */
@@ -528,7 +528,7 @@ int calcfract(void)
 		{
 			/* Have to force passes = 1 */
 			usr_stdcalcmode = stdcalcmode = '1';
-			putcolor = puttruecolor_disk;
+			g_put_color = puttruecolor_disk;
 		}
 		else
 		{
@@ -673,25 +673,25 @@ int calcfract(void)
 
 	if (inversion[0] != 0.0)
 	{
-		f_radius    = inversion[0];
-		f_xcenter   = inversion[1];
-		f_ycenter   = inversion[2];
+		g_f_radius    = inversion[0];
+		g_f_x_center   = inversion[1];
+		g_f_y_center   = inversion[2];
 
 		if (inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
 			inversion[0] = min(fabs(xxmax - xxmin), fabs(yymax - yymin)) / 6.0;
 			fix_inversion(&inversion[0]);
-			f_radius = inversion[0];
+			g_f_radius = inversion[0];
 		}
 
 		if (g_invert < 2 || inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
 			inversion[1] = (xxmin + xxmax) / 2.0;
 			fix_inversion(&inversion[1]);
-			f_xcenter = inversion[1];
-			if (fabs(f_xcenter) < fabs(xxmax-xxmin) / 100)
+			g_f_x_center = inversion[1];
+			if (fabs(g_f_x_center) < fabs(xxmax-xxmin) / 100)
 			{
-				inversion[1] = f_xcenter = 0.0;
+				inversion[1] = g_f_x_center = 0.0;
 			}
 		}
 
@@ -699,10 +699,10 @@ int calcfract(void)
 		{
 			inversion[2] = (yymin + yymax) / 2.0;
 			fix_inversion(&inversion[2]);
-			f_ycenter = inversion[2];
-			if (fabs(f_ycenter) < fabs(yymax-yymin) / 100)
+			g_f_y_center = inversion[2];
+			if (fabs(g_f_y_center) < fabs(yymax-yymin) / 100)
 			{
-				inversion[2] = f_ycenter = 0.0;
+				inversion[2] = g_f_y_center = 0.0;
 			}
 		}
 
@@ -749,7 +749,7 @@ int calcfract(void)
 	{
 		calctype = curfractalspecific->calctype; /* per_image can override */
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
-		plot = putcolor; /* defaults when setsymmetry not called or does nothing */
+		plot = g_put_color; /* defaults when setsymmetry not called or does nothing */
 		iystart = ixstart = yystart = xxstart = yybegin = xxbegin = 0;
 		iystop = yystop = ydots -1;
 		ixstop = xxstop = xdots -1;
@@ -991,7 +991,7 @@ static void perform_worklist()
 		/* per_image can override */
 		calctype = curfractalspecific->calctype;
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
-		plot = putcolor; /* defaults when setsymmetry not called or does nothing */
+		plot = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
 		/* pull top entry off worklist */
 		ixstart = xxstart = worklist[0].xxstart;
@@ -3273,7 +3273,7 @@ static int _fastcall potential(double mag, long iterations)
 
 	if (pot16bit)
 	{
-		if (!driver_diskp()) /* if putcolor won't be doing it for us */
+		if (!driver_diskp()) /* if g_put_color won't be doing it for us */
 		{
 			writedisk(g_col + sxoffs, g_row + syoffs, i_pot);
 		}
@@ -3573,11 +3573,11 @@ static int solidguess(void)
 	unsigned int *pfxp0, *pfxp1;
 	unsigned int u;
 
-	guessplot = (plot != putcolor && plot != symplot2 && plot != symplot2J);
+	guessplot = (plot != g_put_color && plot != symplot2 && plot != symplot2J);
 	/* check if guessing at bottom & right edges is ok */
-	bottom_guess = (plot == symplot2 || (plot == putcolor && iystop + 1 == ydots));
+	bottom_guess = (plot == symplot2 || (plot == g_put_color && iystop + 1 == ydots));
 	right_guess  = (plot == symplot2J
-		|| ((plot == putcolor || plot == symplot2) && ixstop + 1 == xdots));
+		|| ((plot == g_put_color || plot == symplot2) && ixstop + 1 == xdots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (debugflag != DEBUGFLAG_SOLID_GUESS_BR)
@@ -4033,7 +4033,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			return -1;
 		}
 	}
-	if (plot != putcolor)  /* symmetry, just vertical & origin the fast way */
+	if (plot != g_put_color)  /* symmetry, just vertical & origin the fast way */
 	{
 		if (plot == symplot2J) /* origin sym, reverse lines */
 		{
@@ -4555,7 +4555,7 @@ static int tesseral(void)
 {
 	struct tess *tp;
 
-	guessplot = (plot != putcolor && plot != symplot2);
+	guessplot = (plot != g_put_color && plot != symplot2);
 	tp = (struct tess *)&dstack[0];
 	tp->x1 = ixstart;                              /* set up initial box */
 	tp->x2 = ixstop;
@@ -4727,7 +4727,7 @@ static int tesseral(void)
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
-						if (plot != putcolor) /* symmetry */
+						if (plot != g_put_color) /* symmetry */
 						{
 							j = yystop-(g_row-yystart);
 							if (j > iystop && j < ydots)
@@ -5040,7 +5040,7 @@ void _fastcall symPIplot(int x, int y, int color)
 {
 	while (x <= xxstop)
 	{
-		putcolor(x, y, color);
+		g_put_color(x, y, color);
 		x += pixelpi;
 	}
 }
@@ -5050,10 +5050,10 @@ void _fastcall symPIplot2J(int x, int y, int color)
 	int i, j;
 	while (x <= xxstop)
 	{
-		putcolor(x, y, color);
+		g_put_color(x, y, color);
 		if ((i = yystop-(y-yystart)) > iystop && i < ydots
 				&& (j = xxstop-(x-xxstart)) < xdots)
-			putcolor(j, i, color);
+			g_put_color(j, i, color);
 		x += pixelpi;
 	}
 }
@@ -5064,18 +5064,18 @@ void _fastcall symPIplot4J(int x, int y, int color)
 	while (x <= (xxstart + xxstop)/2)
 	{
 		j = xxstop-(x-xxstart);
-		putcolor(x , y , color);
+		g_put_color(x , y , color);
 		if (j < xdots)
 		{
-			putcolor(j , y , color);
+			g_put_color(j , y , color);
 		}
 		i = yystop-(y-yystart);
 		if (i > iystop && i < ydots)
 		{
-			putcolor(x , i , color);
+			g_put_color(x , i , color);
 			if (j < xdots)
 			{
-				putcolor(j , i , color);
+				g_put_color(j , i , color);
 			}
 		}
 		x += pixelpi;
@@ -5086,11 +5086,11 @@ void _fastcall symPIplot4J(int x, int y, int color)
 void _fastcall symplot2(int x, int y, int color)
 {
 	int i;
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 	i = yystop-(y-yystart);
 	if (i > iystop && i < ydots)
 	{
-		putcolor(x, i, color);
+		g_put_color(x, i, color);
 	}
 }
 
@@ -5098,11 +5098,11 @@ void _fastcall symplot2(int x, int y, int color)
 void _fastcall symplot2Y(int x, int y, int color)
 {
 	int i;
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 	i = xxstop-(x-xxstart);
 	if (i < xdots)
 	{
-		putcolor(i, y, color);
+		g_put_color(i, y, color);
 	}
 }
 
@@ -5110,11 +5110,11 @@ void _fastcall symplot2Y(int x, int y, int color)
 void _fastcall symplot2J(int x, int y, int color)
 {
 	int i, j;
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 	if ((i = yystop-(y-yystart)) > iystop && i < ydots
 		&& (j = xxstop-(x-xxstart)) < xdots)
 	{
-		putcolor(j, i, color);
+		g_put_color(j, i, color);
 	}
 }
 
@@ -5123,18 +5123,18 @@ void _fastcall symplot4(int x, int y, int color)
 {
 	int i, j;
 	j = xxstop-(x-xxstart);
-	putcolor(x , y, color);
+	g_put_color(x , y, color);
 	if (j < xdots)
 	{
-		putcolor(j , y, color);
+		g_put_color(j , y, color);
 	}
 	i = yystop-(y-yystart);
 	if (i > iystop && i < ydots)
 	{
-		putcolor(x , i, color);
+		g_put_color(x , i, color);
 		if (j < xdots)
 		{
-			putcolor(j , i, color);
+			g_put_color(j , i, color);
 		}
 	}
 }
@@ -5143,7 +5143,7 @@ void _fastcall symplot4(int x, int y, int color)
 void _fastcall symplot2basin(int x, int y, int color)
 {
 	int i, stripe;
-	putcolor(x, y, color);
+	g_put_color(x, y, color);
 	stripe = (basin == 2 && color > 8) ? 8 : 0;
 	i = yystop-(y-yystart);
 	if (i > iystop && i < ydots)
@@ -5151,7 +5151,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 		color -= stripe;                    /* reconstruct unstriped color */
 		color = (degree + 1-color)%degree + 1;  /* symmetrical color */
 		color += stripe;                    /* add stripe */
-		putcolor(x, i, color) ;
+		g_put_color(x, i, color) ;
 	}
 }
 
@@ -5169,18 +5169,18 @@ void _fastcall symplot4basin(int x, int y, int color)
 	color1 = (color < degree/2 + 2) ?
 		(degree/2 + 2 - color) : (degree/2 + degree + 2 - color);
 	j = xxstop-(x-xxstart);
-	putcolor(x, y, color + stripe);
+	g_put_color(x, y, color + stripe);
 	if (j < xdots)
 	{
-		putcolor(j, y, color1 + stripe);
+		g_put_color(j, y, color1 + stripe);
 	}
 	i = yystop-(y-yystart);
 	if (i > iystop && i < ydots)
 	{
-		putcolor(x, i, stripe + (degree + 1 - color)%degree + 1);
+		g_put_color(x, i, stripe + (degree + 1 - color)%degree + 1);
 		if (j < xdots)
 		{
-			putcolor(j, i, stripe + (degree + 1 - color1)%degree + 1);
+			g_put_color(j, i, stripe + (degree + 1 - color1)%degree + 1);
 		}
 	}
 }
