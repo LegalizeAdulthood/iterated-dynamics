@@ -2751,18 +2751,18 @@ int long_mandel_per_pixel(void)
 	if (invert)
 	{
 		/* invert */
-		invertz2(&init);
+		invertz2(&g_initial_z);
 
 		/* watch out for overflow */
-		if (sqr(init.x) + sqr(init.y) >= 127)
+		if (sqr(g_initial_z.x) + sqr(g_initial_z.y) >= 127)
 		{
-			init.x = 8;  /* value to bail out in one iteration */
-			init.y = 8;
+			g_initial_z.x = 8;  /* value to bail out in one iteration */
+			g_initial_z.y = 8;
 		}
 
 		/* convert to fudged longs */
-		linit.x = (long)(init.x*fudge);
-		linit.y = (long)(init.y*fudge);
+		linit.x = (long)(g_initial_z.x*fudge);
+		linit.y = (long)(g_initial_z.y*fudge);
 	}
 
 	lold = (useinitorbit == 1) ? g_init_orbit_l : linit;
@@ -2835,26 +2835,26 @@ int mandel_per_pixel(void)
 
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 
 		/* watch out for overflow */
 		if (bitshift <= 24)
 		{
-			if (sqr(init.x) + sqr(init.y) >= 127)
+			if (sqr(g_initial_z.x) + sqr(g_initial_z.y) >= 127)
 			{
-				init.x = 8;  /* value to bail out in one iteration */
-				init.y = 8;
+				g_initial_z.x = 8;  /* value to bail out in one iteration */
+				g_initial_z.y = 8;
 			}
 		}
-		else if (sqr(init.x) + sqr(init.y) >= 4)
+		else if (sqr(g_initial_z.x) + sqr(g_initial_z.y) >= 4)
 		{
-			init.x = 2;  /* value to bail out in one iteration */
-			init.y = 2;
+			g_initial_z.x = 2;  /* value to bail out in one iteration */
+			g_initial_z.y = 2;
 		}
 
 		/* convert to fudged longs */
-		linit.x = (long)(init.x*fudge);
-		linit.y = (long)(init.y*fudge);
+		linit.x = (long)(g_initial_z.x*fudge);
+		linit.y = (long)(g_initial_z.y*fudge);
 	}
 	else
 	{
@@ -2875,7 +2875,7 @@ int mandel_per_pixel(void)
 		break;
 	}
 
-	/* alter init value */
+	/* alter g_initial_z value */
 	if (useinitorbit == 1)
 	{
 		lold = g_init_orbit_l;
@@ -2888,7 +2888,7 @@ int mandel_per_pixel(void)
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
-			Mandelbrot iteration with init rather than 0 */
+			Mandelbrot iteration with g_initial_z rather than 0 */
 		lold.x = lparm.x; /* initial pertubation of parameters set */
 		lold.y = lparm.y;
 		coloriter = -1;
@@ -2910,18 +2910,18 @@ int marksmandel_per_pixel()
 	/* marksmandel */
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 
 		/* watch out for overflow */
-		if (sqr(init.x) + sqr(init.y) >= 127)
+		if (sqr(g_initial_z.x) + sqr(g_initial_z.y) >= 127)
 		{
-			init.x = 8;  /* value to bail out in one iteration */
-			init.y = 8;
+			g_initial_z.x = 8;  /* value to bail out in one iteration */
+			g_initial_z.y = 8;
 		}
 
 		/* convert to fudged longs */
-		linit.x = (long)(init.x*fudge);
-		linit.y = (long)(init.y*fudge);
+		linit.x = (long)(g_initial_z.x*fudge);
+		linit.y = (long)(g_initial_z.y*fudge);
 	}
 	else
 	{
@@ -2969,18 +2969,18 @@ int marksmandelfp_per_pixel()
 
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : init;
+	old = (useinitorbit == 1) ? initorbit : g_initial_z;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3027,14 +3027,14 @@ int mandelfp_per_pixel(void)
 
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 	switch (fractype)
@@ -3049,24 +3049,24 @@ int mandelfp_per_pixel(void)
 		old.y = 0.0;
 		break;
 	default:
-		old = init;
+		old = g_initial_z;
 		break;
 	}
 
-	/* alter init value */
+	/* alter g_initial_z value */
 	if (useinitorbit == 1)
 	{
 		old = initorbit;
 	}
 	else if (useinitorbit == 2)
 	{
-		old = init;
+		old = g_initial_z;
 	}
 
 	if ((inside == BOF60 || inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
-			Mandelbrot iteration with init rather than 0 */
+			Mandelbrot iteration with g_initial_z rather than 0 */
 		old.x = parm.x; /* initial pertubation of parameters set */
 		old.y = parm.y;
 		coloriter = -1;
@@ -3076,7 +3076,7 @@ int mandelfp_per_pixel(void)
 		old.x += parm.x;
 		old.y += parm.y;
 	}
-	tmp = init; /* for spider */
+	tmp = g_initial_z; /* for spider */
 	tempsqrx = sqr(old.x);  /* precalculated value for regular Mandelbrot */
 	tempsqry = sqr(old.y);
 	return 1; /* 1st iteration has been done */
@@ -3136,18 +3136,18 @@ int othermandelfp_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : init;
+	old = (useinitorbit == 1) ? initorbit : g_initial_z;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3161,19 +3161,19 @@ int MPCHalley_per_pixel(void)
 	/* MPC halley */
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 
-	mpcold.x = *pd2MP(init.x);
-	mpcold.y = *pd2MP(init.y);
+	mpcold.x = *pd2MP(g_initial_z.x);
+	mpcold.y = *pd2MP(g_initial_z.y);
 
 	return 0;
 #else
@@ -3185,18 +3185,18 @@ int Halley_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 
-	old = init;
+	old = g_initial_z;
 
 	return 0; /* 1st iteration is not done */
 }
@@ -3253,21 +3253,21 @@ int MarksCplxMandperp(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
-	old.x = init.x + parm.x; /* initial pertubation of parameters set */
-	old.y = init.y + parm.y;
+	old.x = g_initial_z.x + parm.x; /* initial pertubation of parameters set */
+	old.y = g_initial_z.y + parm.y;
 	tempsqrx = sqr(old.x);  /* precalculated value */
 	tempsqry = sqr(old.y);
-	coefficient = ComplexPower(init, pwr);
+	coefficient = ComplexPower(g_initial_z, pwr);
 	return 1;
 }
 
@@ -3334,18 +3334,18 @@ int long_mandphoenix_per_pixel(void)
 	if (invert)
 	{
 		/* invert */
-		invertz2(&init);
+		invertz2(&g_initial_z);
 
 		/* watch out for overflow */
-		if (sqr(init.x) + sqr(init.y) >= 127)
+		if (sqr(g_initial_z.x) + sqr(g_initial_z.y) >= 127)
 		{
-			init.x = 8;  /* value to bail out in one iteration */
-			init.y = 8;
+			g_initial_z.x = 8;  /* value to bail out in one iteration */
+			g_initial_z.y = 8;
 		}
 
 		/* convert to fudged longs */
-		linit.x = (long)(init.x*fudge);
-		linit.y = (long)(init.y*fudge);
+		linit.x = (long)(g_initial_z.x*fudge);
+		linit.y = (long)(g_initial_z.y*fudge);
 	}
 
 	lold = (useinitorbit == 1) ? g_init_orbit_l : linit;
@@ -3365,18 +3365,18 @@ int mandphoenix_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
+		g_initial_z.x = dxpixel();
 		if (save_release >= 2004)
 		{
-			init.y = dypixel();
+			g_initial_z.y = dypixel();
 		}
 	}
 
-	old = (useinitorbit == 1) ? initorbit : init;
+	old = (useinitorbit == 1) ? initorbit : g_initial_z;
 
 	old.x += parm.x;      /* initial pertubation of parameters set */
 	old.y += parm.y;
@@ -3606,15 +3606,15 @@ int MandelbrotMix4fp_per_pixel(void)
 {
 	if (invert)
 	{
-		invertz2(&init);
+		invertz2(&g_initial_z);
 	}
 	else
 	{
-		init.x = dxpixel();
-		init.y = dypixel();
+		g_initial_z.x = dxpixel();
+		g_initial_z.y = dypixel();
 	}
 	old = tmp;
-	CMPLXtrig0(init, C);        /* c = fn1(pixel): */
+	CMPLXtrig0(g_initial_z, C);        /* c = fn1(pixel): */
 	return 0; /* 1st iteration has been NOT been done */
 }
 

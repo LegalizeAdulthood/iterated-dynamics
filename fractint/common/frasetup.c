@@ -231,7 +231,7 @@ MandelfpSetup(void)
 	c_exp = (int)param[2];
 	pwr.x = param[2] - 1.0;
 	pwr.y = param[3];
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	switch (fractype)
 	{
 	case MARKSMANDELFP:
@@ -868,7 +868,7 @@ ManlamTrigOrTrigSetup(void)
 { /* psuedo */
 /* default symmetry is XAXIS */
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	if (trigndx[0] == SQR)
 	{
 		symmetry = NOSYM;
@@ -885,7 +885,7 @@ MandelTrigOrTrigSetup(void)
 {
 /* default symmetry is XAXIS_NOPARM */
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
 	{
 		symmetry = NOSYM;
@@ -1349,7 +1349,7 @@ int
 MandPhoenixSetup(void)
 {
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	degree = (int)parm2.x;
 	if (degree < 2 && degree > -3)
 	{
@@ -1381,7 +1381,7 @@ int
 MandPhoenixCplxSetup(void)
 {
 	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &init;
+	floatparm = &g_initial_z;
 	degree = (int)param[4];
 	if (degree < 2 && degree > -3)
 	{
