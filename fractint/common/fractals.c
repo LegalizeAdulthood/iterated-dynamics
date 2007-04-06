@@ -262,13 +262,13 @@ int  fpMANRbailout(void)
 	}
 
 #define LONGTRIGBAILOUT()			\
-	if (labs(lold.y) >= llimit2)	\
+	if (labs(lold.y) >= g_limit2_l)	\
 	{								\
 		return 1;					\
 	}
 
 #define LONGXYTRIGBAILOUT()									\
-	if (labs(lold.x) >= llimit2 || labs(lold.y) >= llimit2)	\
+	if (labs(lold.x) >= g_limit2_l || labs(lold.y) >= g_limit2_l)	\
 	{														\
 		return 1;											\
 	}
@@ -286,7 +286,7 @@ int  fpMANRbailout(void)
 	}
 
 #define LONGHTRIGBAILOUT()  \
-	if (labs(lold.x) >= llimit2) \
+	if (labs(lold.x) >= g_limit2_l) \
 	{ \
 		return 1; \
 	}
@@ -1422,8 +1422,8 @@ LPopcornFractal_Old(void)
 		ltempsqry = lsqr(lnew.y);
 	}
 	g_magnitude_l = ltempsqrx + ltempsqry;
-	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(lnew.x) > llimit2
-			|| labs(lnew.y) > llimit2)
+	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(lnew.x) > g_limit2_l
+			|| labs(lnew.y) > g_limit2_l)
 					return 1;
 	lold = lnew;
 	return 0;
@@ -1462,8 +1462,8 @@ LPopcornFractal(void)
 	ltempsqry = lsqr(lnew.y);
 	g_magnitude_l = ltempsqrx + ltempsqry;
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
-		|| labs(lnew.x) > llimit2
-			|| labs(lnew.y) > llimit2)
+		|| labs(lnew.x) > g_limit2_l
+			|| labs(lnew.y) > g_limit2_l)
 					return 1;
 	lold = lnew;
 	return 0;
@@ -1561,8 +1561,8 @@ LPopcornFractalFn(void)
 	ltempsqry = lsqr(lnew.y);
 	g_magnitude_l = ltempsqrx + ltempsqry;
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
-		|| labs(lnew.x) > llimit2
-		|| labs(lnew.y) > llimit2)
+		|| labs(lnew.x) > g_limit2_l
+		|| labs(lnew.y) > g_limit2_l)
 		return 1;
 	lold = lnew;
 	return 0;
