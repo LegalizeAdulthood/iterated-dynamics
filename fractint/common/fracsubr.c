@@ -284,7 +284,7 @@ init_restart:
 		&& colors >= 64
 		&& (curfractalspecific->calculate_type == StandardFractal
 			|| curfractalspecific->calculate_type == calculate_mandelbrot
-			|| curfractalspecific->calculate_type == calcmandfp))
+			|| curfractalspecific->calculate_type == calculate_mandelbrot_fp))
 	{
 		potflag = 1;
 		distest = usr_distest = 0;    /* can't do distest too */
