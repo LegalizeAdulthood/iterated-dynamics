@@ -466,7 +466,7 @@ int get_toggles()
 		j++;
 	}
 
-/* if (j >= 1) j = 1; need to know how many prompts changed for quick_calc JCO 6/23/2001 */
+	/* if (j >= 1) j = 1; need to know how many prompts changed for g_quick_calculate JCO 6/23/2001 */
 
 	return j;
 }

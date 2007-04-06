@@ -487,7 +487,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double dinvert[3];
     short logcalc;
     short stoppass;
-    short quick_calc;
+    short quick_calculate;
     double closeprox;
     short nobof;
     long orbit_interval;

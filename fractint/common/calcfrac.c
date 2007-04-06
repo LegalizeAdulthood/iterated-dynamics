@@ -73,7 +73,7 @@ int g_use_old_distance_test = FALSE;
 int g_old_demm_colors = FALSE;
 int (*g_calculate_type)(void) = NULL;
 int (*g_calculate_type_temp)(void);
-int quick_calc = 0;
+int g_quick_calculate = FALSE;
 double closeprox = 0.01;
 double closenuff;
 int pixelpi; /* value of pi in pixels */
@@ -1811,7 +1811,7 @@ static int _fastcall StandardCalc(int passnum)
 		while (g_col <= ixstop)
 		{
 			/* on 2nd pass of two, skip even pts */
-			if (quick_calc && !resuming)
+			if (g_quick_calculate && !resuming)
 			{
 				g_color = getcolor(g_col, g_row);
 				if (g_color != inside)
@@ -1826,7 +1826,7 @@ static int _fastcall StandardCalc(int passnum)
 				{
 					return -1; /* interrupted */
 				}
-				resuming = 0; /* reset so quick_calc works */
+				resuming = 0; /* reset so g_quick_calculate works */
 				reset_periodicity = 0;
 				if (passnum == 1) /* first pass, copy pixel and bump col */
 				{
