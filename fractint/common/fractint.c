@@ -67,7 +67,7 @@ char *fract_dir1="", *fract_dir2="";
 
 /*
 	the following variables are out here only so
-	that the calcfract() and assembler routines can get at them easily
+	that the calculate_fractal() and assembler routines can get at them easily
 */
 		int     dotmode;                /* video access method      */
 		int     textsafe2;              /* textsafe override from g_video_table */
