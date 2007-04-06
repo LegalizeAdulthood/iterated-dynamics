@@ -43,6 +43,7 @@ static int    resume_offset;            /* offset in resume info gets */
        int    taborhelp;    /* kludge for sound and tab or help key press */
 
 static int resume_info_len = 0;
+static int s_save_orbit[1500];                    /* array to save orbit values */
 
 #define FUDGEFACTOR     29      /* fudge all values up by 2**this */
 #define FUDGEFACTOR2    24      /* (or maybe this)                */
@@ -1673,9 +1674,9 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 	/* save orbit value */
 	if (color == -1)
 	{
-		*(save_orbit + g_orbit_index++) = i;
-		*(save_orbit + g_orbit_index++) = j;
-		*(save_orbit + g_orbit_index++) = c = getcolor(i, j);
+		*(s_save_orbit + g_orbit_index++) = i;
+		*(s_save_orbit + g_orbit_index++) = j;
+		*(s_save_orbit + g_orbit_index++) = c = getcolor(i, j);
 		g_put_color(i, j, c^orbit_color);
 	}
 	else
@@ -1742,9 +1743,9 @@ void scrub_orbit(void)
 	sxoffs = syoffs = 0;
 	while (g_orbit_index >= 3)
 	{
-		c = *(save_orbit + --g_orbit_index);
-		j = *(save_orbit + --g_orbit_index);
-		i = *(save_orbit + --g_orbit_index);
+		c = *(s_save_orbit + --g_orbit_index);
+		j = *(s_save_orbit + --g_orbit_index);
+		i = *(s_save_orbit + --g_orbit_index);
 		g_put_color(i, j, c);
 	}
 	sxoffs = save_sxoffs;
