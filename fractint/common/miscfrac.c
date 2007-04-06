@@ -693,7 +693,7 @@ int diffusion(void)
 		break;
 	}
 
-	if (g_resuming) /* restore worklist, if we can't the above will stay in place */
+	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
