@@ -988,14 +988,14 @@ is not in the data structure */
 
 struct workliststuff    /* work list entry for std escape time engines */
 {
-        int xxstart;    /* screen window for this entry */
-        int xxstop;
-        int yystart;
-        int yystop;
-        int yybegin;    /* start row within window, for 2pass/ssg resume */
-        int sym;        /* if symmetry in window, prevents bad combines */
-        int pass;       /* for 2pass and solid guessing */
-        int xxbegin;    /* start col within window, =0 except on resume */
+	int xx_start;    /* screen window for this entry */
+	int xxstop;
+	int yystart;
+	int yystop;
+	int yybegin;    /* start row within window, for 2pass/ssg resume */
+	int sym;        /* if symmetry in window, prevents bad combines */
+	int pass;       /* for 2pass and solid guessing */
+	int xxbegin;    /* start col within window, =0 except on resume */
 };
 
 typedef struct workliststuff        WORKLIST;
@@ -1004,12 +1004,12 @@ typedef struct workliststuff        WORKLIST;
 #define MAXCALCWORK 12
 
 struct coords {
-    int x, y;
-    };
+	int x, y;
+};
 
 struct dblcoords {
-    double x, y;
-    };
+	double x, y;
+};
 
 extern BYTE trigndx[];
 extern void (*ltrig0)(void), (*ltrig1)(void), (*ltrig2)(void), (*ltrig3)(void);

@@ -1761,7 +1761,7 @@ int pass, int sym)
 	{
 		return -1;
 	}
-	g_work_list[g_num_work_list].xxstart = xfrom;
+	g_work_list[g_num_work_list].xx_start = xfrom;
 	g_work_list[g_num_work_list].xxstop  = xto;
 	g_work_list[g_num_work_list].xxbegin = xbegin;
 	g_work_list[g_num_work_list].yystart = yfrom;
@@ -1785,10 +1785,10 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 			{
 				if (g_work_list[j].sym == g_work_list[i].sym
 					&& g_work_list[j].yystart == g_work_list[j].yybegin
-					&& g_work_list[j].xxstart == g_work_list[j].xxbegin
+					&& g_work_list[j].xx_start == g_work_list[j].xxbegin
 					&& g_work_list[i].pass == g_work_list[j].pass)
 				{
-					if (g_work_list[i].xxstart == g_work_list[j].xxstart
+					if (g_work_list[i].xx_start == g_work_list[j].xx_start
 						&& g_work_list[i].xxbegin == g_work_list[j].xxbegin
 						&& g_work_list[i].xxstop  == g_work_list[j].xxstop)
 					{
@@ -1808,14 +1808,14 @@ static int _fastcall combine_worklist(void) /* look for 2 entries which can free
 						&& g_work_list[i].yybegin == g_work_list[j].yybegin
 						&& g_work_list[i].yystop  == g_work_list[j].yystop)
 					{
-						if (g_work_list[i].xxstop + 1 == g_work_list[j].xxstart)
+						if (g_work_list[i].xxstop + 1 == g_work_list[j].xx_start)
 						{
 							g_work_list[i].xxstop = g_work_list[j].xxstop;
 							return j;
 						}
-						if (g_work_list[j].xxstop + 1 == g_work_list[i].xxstart)
+						if (g_work_list[j].xxstop + 1 == g_work_list[i].xx_start)
 						{
-							g_work_list[i].xxstart = g_work_list[j].xxstart;
+							g_work_list[i].xx_start = g_work_list[j].xx_start;
 							g_work_list[i].xxbegin = g_work_list[j].xxbegin;
 							return j;
 						}
@@ -1847,7 +1847,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 				|| (g_work_list[j].pass == g_work_list[i].pass
 				&& (g_work_list[j].yystart < g_work_list[i].yystart
 				|| (g_work_list[j].yystart == g_work_list[i].yystart
-				&& g_work_list[j].xxstart <  g_work_list[i].xxstart))))
+				&& g_work_list[j].xx_start <  g_work_list[i].xx_start))))
 			{ /* dumb sort, swap 2 entries to correct order */
 				tempwork = g_work_list[i];
 				g_work_list[i] = g_work_list[j];

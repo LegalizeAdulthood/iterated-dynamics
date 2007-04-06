@@ -568,7 +568,7 @@ extern int                   g_xx_adjust;
 extern double                xxmax;
 extern double                xxmin;
 extern long                  XXOne;
-extern int                   xxstart;
+extern int                   g_xx_start;
 extern int                   xxstop;
 extern long                  y3rd;
 extern int                   g_y_adjust;
