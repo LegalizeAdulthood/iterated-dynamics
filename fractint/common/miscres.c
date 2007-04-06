@@ -1299,7 +1299,7 @@ top:
 	sprintf(msg, "%ld (%ld)", g_color_iter, maxit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
-	sprintf(msg, "%f", rqlim);
+	sprintf(msg, "%f", g_rq_limit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
 	if (fractype == PLASMA || fractype == ANT || fractype == CELLULAR)

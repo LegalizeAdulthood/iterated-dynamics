@@ -53,7 +53,7 @@ int g_invert;
 double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
-double g_magnitude, rqlim, rqlim2, rqlim_save;
+double g_magnitude, g_rq_limit, rqlim2, rqlim_save;
 int no_mag_calc = 0;
 int use_old_period = 0;
 int use_old_distest = 0;
@@ -710,15 +710,15 @@ int calcfract(void)
 	}
 
 	closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-	rqlim_save = rqlim;
-	rqlim2 = sqrt(rqlim);
+	rqlim_save = g_rq_limit;
+	rqlim2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
 		lparm.x = (long)(parm.x*fudge);    /* real portion of Lambda */
 		lparm.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
 		lparm2.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
 		lparm2.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
-		g_limit_l = (long)(rqlim*fudge);      /* stop if magnitude exceeds this */
+		g_limit_l = (long)(g_rq_limit*fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
@@ -949,12 +949,12 @@ static void perform_worklist()
 		/* in case it's changed with <G> */
 		use_old_distest = (save_release < 1827) ? 1 : 0;
 
-		rqlim = rqlim_save; /* just in case changed to DEM_BAILOUT earlier */
+		g_rq_limit = rqlim_save; /* just in case changed to DEM_BAILOUT earlier */
 		if (distest != 1 || colors == 2) /* not doing regular outside colors */
 		{
-			if (rqlim < DEM_BAILOUT)         /* so go straight for dem bailout */
+			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
 			{
-				rqlim = DEM_BAILOUT;
+				g_rq_limit = DEM_BAILOUT;
 			}
 		}
 		/* must be mandel type, formula, or old PAR/GIF */
@@ -977,7 +977,7 @@ static void perform_worklist()
 		dem_delta *= (distestwidth > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
 		dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
 			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
-		ftemp = (rqlim < DEM_BAILOUT) ? DEM_BAILOUT : rqlim;
+		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
 		dem_toobig = use_old_distest ?
@@ -1883,7 +1883,7 @@ long (*calcmandfpasm)(void);
 
 /************************************************************************/
 /* added by Wes Loewer - sort of a floating point version of calcmand() */
-/* can also handle invert, any rqlim, potflag, zmag, epsilon cross,     */
+/* can also handle invert, any g_rq_limit, potflag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
 int calcmandfp(void)
@@ -2065,11 +2065,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		{
 			if (use_old_distest)
 			{
-				rqlim = rqlim_save;
+				g_rq_limit = rqlim_save;
 				if (distest != 1 || colors == 2) /* not doing regular outside colors */
-					if (rqlim < DEM_BAILOUT)   /* so go straight for dem bailout */
+					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
-						rqlim = DEM_BAILOUT;
+						g_rq_limit = DEM_BAILOUT;
 					}
 				dem_color = -1;
 			}
@@ -2197,8 +2197,8 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 						dem_color = g_color_iter;
 						dem_new = g_new_z;
 					}
-					if (rqlim >= DEM_BAILOUT
-						|| g_magnitude >= (rqlim = DEM_BAILOUT)
+					if (g_rq_limit >= DEM_BAILOUT
+						|| g_magnitude >= (g_rq_limit = DEM_BAILOUT)
 						|| g_magnitude == 0)
 					{
 						break;
@@ -3230,7 +3230,7 @@ static int _fastcall potential(double mag, long iterations)
 		/* meaning of parameters:
 				potparam[0] -- zero potential level - highest color -
 				potparam[1] -- slope multiplier -- higher is steeper
-				potparam[2] -- rqlim value if changeable (bailout for modulus) */
+				potparam[2] -- g_rq_limit value if changeable (bailout for modulus) */
 
 		if (pot > 0.0)
 		{

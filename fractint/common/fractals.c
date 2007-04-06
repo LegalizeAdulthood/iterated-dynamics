@@ -152,7 +152,7 @@ int  fpMODbailout(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (g_magnitude >= rqlim)
+	if (g_magnitude >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -165,7 +165,7 @@ int  fpREALbailout(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (tempsqrx >= rqlim)
+	if (tempsqrx >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -178,7 +178,7 @@ int  fpIMAGbailout(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (tempsqry >= rqlim)
+	if (tempsqry >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -191,7 +191,7 @@ int  fpORbailout(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (tempsqrx >= rqlim || tempsqry >= rqlim)
+	if (tempsqrx >= g_rq_limit || tempsqry >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -204,7 +204,7 @@ int  fpANDbailout(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (tempsqrx >= rqlim && tempsqry >= rqlim)
+	if (tempsqrx >= g_rq_limit && tempsqry >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -219,7 +219,7 @@ int  fpMANHbailout(void)
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
 	manhmag = fabs(g_new_z.x) + fabs(g_new_z.y);
-	if ((manhmag*manhmag) >= rqlim)
+	if ((manhmag*manhmag) >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -234,7 +234,7 @@ int  fpMANRbailout(void)
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
 	manrmag = g_new_z.x + g_new_z.y; /* don't need abs() since we square it next */
-	if ((manrmag*manrmag) >= rqlim)
+	if ((manrmag*manrmag) >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -893,7 +893,7 @@ LambdaexponentFractal(void)
 	}
 	FPUsincos  (&g_old_z.y, &siny, &cosy);
 
-	if (g_old_z.x >= rqlim && cosy >= 0.0)
+	if (g_old_z.x >= g_rq_limit && cosy >= 0.0)
 	{
 		return 1;
 	}
@@ -1324,7 +1324,7 @@ PopcornFractal_Old(void)
 	}
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (g_magnitude >= rqlim)
+	if (g_magnitude >= g_rq_limit)
 	{
 		return 1;
 	}
@@ -1366,7 +1366,7 @@ PopcornFractal(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (g_magnitude >= rqlim || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
+	if (g_magnitude >= g_rq_limit || fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
 	{
 		return 1;
 	}
@@ -1491,7 +1491,7 @@ PopcornFractalFn(void)
 	tempsqrx = sqr(g_new_z.x);
 	tempsqry = sqr(g_new_z.y);
 	g_magnitude = tempsqrx + tempsqry;
-	if (g_magnitude >= rqlim
+	if (g_magnitude >= g_rq_limit
 		|| fabs(g_new_z.x) > rqlim2 || fabs(g_new_z.y) > rqlim2)
 	{
 		return 1;
@@ -3385,7 +3385,7 @@ QuaternionFPFractal(void)
 	n3 = 2*a0*a3 + qck;
 	/* Check bailout */
 	g_magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
-	if (g_magnitude > rqlim)
+	if (g_magnitude > g_rq_limit)
 	{
 		return 1;
 	}
@@ -3420,7 +3420,7 @@ HyperComplexFPFractal(void)
 
 	/* Check bailout */
 	g_magnitude = sqr(g_old_z.x) + sqr(g_old_z.y) + sqr(floatparm->x) + sqr(floatparm->y);
-	if (g_magnitude > rqlim)
+	if (g_magnitude > g_rq_limit)
 	{
 		return 1;
 	}
@@ -3457,7 +3457,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 	oldtest.y = g_new_z.y*15.0;
 	testsqr.x = sqr(oldtest.x);  /* set up to test with user-specified ... */
 	testsqr.y = sqr(oldtest.y);  /*    ... Julia as the target set */
-	while (testsize <= rqlim && testiter < maxit) /* nested Julia loop */
+	while (testsize <= g_rq_limit && testiter < maxit) /* nested Julia loop */
 	{
 		newtest.x = testsqr.x - testsqr.y + param[0];
 		newtest.y = 2.0*oldtest.x*oldtest.y + param[1];
@@ -3467,7 +3467,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 		oldtest = newtest;
 		testiter++;
 	}
-	if (testsize > rqlim) /* point not in target set  */
+	if (testsize > g_rq_limit) /* point not in target set  */
 	{
 		return floatbailout();
 	}
@@ -3579,8 +3579,8 @@ int MandelbrotMix4Setup(void)
 
 	if (bailout == 0)
 	{
-		rqlim = L.x;
-		rqlim2 = rqlim*rqlim;
+		g_rq_limit = L.x;
+		rqlim2 = g_rq_limit*g_rq_limit;
 	}
 	return 1;
 }
