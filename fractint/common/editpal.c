@@ -3562,7 +3562,7 @@ void EditPalette(void)       /* called by fractint */
 		return; /* prevents crash when physical screen is too small */
 	}
 
-	plot = g_put_color;
+	g_plot_color = g_put_color;
 
 	line_buff = NEWX(max(sxdots, sydots));
 

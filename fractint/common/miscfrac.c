@@ -103,10 +103,10 @@ int test(void)
 						color = ((color-1) % g_and_color) + 1; /* skip color zero */
 					}
 				}
-				(*plot)(g_col, g_row, color);
+				(*g_plot_color)(g_col, g_row, color);
 				if (numpasses && (g_passes == 0))
 				{
-					(*plot)(g_col, g_row + 1, color);
+					(*g_plot_color)(g_col, g_row + 1, color);
 				}
 			}
 		}
@@ -204,7 +204,7 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 	{
 		pseudorandom = 1;
 	}
-	plot(x, y, (U16)pseudorandom);
+	g_plot_color(x, y, (U16)pseudorandom);
 	return (U16)pseudorandom;
 }
 
@@ -315,7 +315,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 						i = adjust(nx1, ny1, nx1, y , nx1, ny);
 				}
 				v += i;
-				plot(x, y, (U16)((v + 2) >> 2));
+				g_plot_color(x, y, (U16)((v + 2) >> 2));
 			}
 
 			if (subx.r[subx.t-1] == (BYTE)recur)
@@ -380,7 +380,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 
 	if (s_get_pixels(x, y) == 0)
 	{
-		plot(x, y, (U16)((i + 2) >> 2));
+		g_plot_color(x, y, (U16)((i + 2) >> 2));
 	}
 
 	subdivide(x1, y1, x , y);
@@ -458,7 +458,7 @@ int plasma(void)
 		{
 			/* s_max_plasma = (U16)(1L << 16) -1; */
 			s_max_plasma = 0xFFFF;
-			plot = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
+			g_plot_color = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
 			s_get_pixels =  get_potential;
 			OldPotFlag = potflag;
 			OldPot16bit = pot16bit;
@@ -467,13 +467,13 @@ int plasma(void)
 		{
 			s_max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
-			plot = (outside >= 0) ? put_color_border : g_put_color;
+			g_plot_color = (outside >= 0) ? put_color_border : g_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		plot = (outside >= 0) ? put_color_border : g_put_color;
+		g_plot_color = (outside >= 0) ? put_color_border : g_put_color;
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(rseed);
@@ -530,10 +530,10 @@ int plasma(void)
 		}
 	}
 
-	plot(0,      0,  rnd[0]);
-	plot(xdots-1,      0,  rnd[1]);
-	plot(xdots-1, ydots-1,  rnd[2]);
-	plot(0, ydots-1,  rnd[3]);
+	g_plot_color(0,      0,  rnd[0]);
+	g_plot_color(xdots-1,      0,  rnd[1]);
+	g_plot_color(xdots-1, ydots-1,  rnd[2]);
+	g_plot_color(0, ydots-1,  rnd[3]);
 
 	s_recur_level = 0;
 	if (param[1] == 0)
@@ -565,7 +565,7 @@ done:
 		potflag = OldPotFlag;
 		pot16bit = OldPot16bit;
 	}
-	plot    = g_put_color;
+	g_plot_color    = g_put_color;
 	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	return n;
 }
@@ -1061,7 +1061,7 @@ int bifurcation(void)
 				color = colors-1;
 			}
 			s_verhulst_array[row] = 0;
-			(*plot)(column, row, color); /* was row-1, but that's not right? */
+			(*g_plot_color)(column, row, color); /* was row-1, but that's not right? */
 		}
 		column++;
 	}
@@ -1385,7 +1385,7 @@ int popcorn()   /* subset of std engine */
 		end_resume();
 	}
 	kbdcount = max_kbdcount;
-	plot = noplot;
+	g_plot_color = noplot;
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= iystop; g_row++)
 	{
@@ -1443,7 +1443,7 @@ int lyapunov(void)
 	{
 		Population = param[1];
 	}
-	(*plot)(g_col, g_row, 1);
+	(*g_plot_color)(g_col, g_row, 1);
 	if (g_invert)
 	{
 		invertz2(&g_initial_z);
@@ -1464,7 +1464,7 @@ int lyapunov(void)
 	{
 		g_color = colors-1;
 	}
-	(*plot)(g_col, g_row, g_color);
+	(*g_plot_color)(g_col, g_row, g_color);
 	return g_color;
 }
 
@@ -2340,7 +2340,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	g_color_iter = 0;
 	if (showdot > 0)
 	{
-		(*plot) (g_col, g_row, showdot%colors);
+		(*g_plot_color) (g_col, g_row, showdot%colors);
 	}
 	if (!integerfractal) /* fp mode */
 	{
@@ -2649,7 +2649,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 	g_color = abs((int)(g_color_iter));
 
-	(*plot)(g_col, g_row, g_color);
+	(*g_plot_color)(g_col, g_row, g_color);
 
 	return g_color;
 }

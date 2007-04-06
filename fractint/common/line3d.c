@@ -176,8 +176,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 	static struct point s_old_last = { 0, 0, 0 }; /* old pixels */
 
 	fudge = 1L << 16;
-	plot = (transparent[0] || transparent[1]) ? transparent_clip_color : clip_color;
-	normal_plot = plot;
+	g_plot_color = (transparent[0] || transparent[1]) ? transparent_clip_color : clip_color;
+	normal_plot = g_plot_color;
 
 	currow = g_row_count;
 	/* use separate variable to allow for pot16bit files */
@@ -648,7 +648,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			break;
 
 		case FILLTYPE_POINTS:
-			(*plot)(cur.x, cur.y, cur.color);
+			(*g_plot_color)(cur.x, cur.y, cur.color);
 			break;
 
 		case FILLTYPE_WIRE_FRAME:                /* connect-a-dot */
@@ -866,7 +866,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				}
 				put_a_triangle(old, s_last_row[col], cur, cur.color);
 				assert(g_standard_plot);
-				plot = g_standard_plot;
+				g_plot_color = g_standard_plot;
 			}
 			break;
 		}                      /* End of CASE statement for fill type  */
@@ -1121,7 +1121,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 		{
 			if (abs(i) + abs(j) < 6)
 			{
-				plot((int) (S[1][2][0] + i), (int) (S[1][2][1] + j), 10);
+				g_plot_color((int) (S[1][2][0] + i), (int) (S[1][2][1] + j), 10);
 			}
 		}
 	}
@@ -1209,23 +1209,23 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 	/* fast way if single point or single line */
 	if (s_p1.y == s_p2.y && s_p1.x == s_p2.x)
 	{
-		plot = fill_plot;
+		g_plot_color = fill_plot;
 		if (s_p1.y == s_p3.y && s_p1.x == s_p3.x)
 		{
-			(*plot)(s_p1.x, s_p1.y, color);
+			(*g_plot_color)(s_p1.x, s_p1.y, color);
 		}
 		else
 		{
 			driver_draw_line(s_p1.x, s_p1.y, s_p3.x, s_p3.y, color);
 		}
-		plot = normal_plot;
+		g_plot_color = normal_plot;
 		return;
 	}
 	else if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
 	{
-		plot = fill_plot;
+		g_plot_color = fill_plot;
 		driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, color);
-		plot = normal_plot;
+		g_plot_color = normal_plot;
 		return;
 	}
 
@@ -1265,7 +1265,7 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 	}
 
 	/* set plot to "fake" plot function */
-	plot = put_minmax;
+	g_plot_color = put_minmax;
 
 	/* build table of extreme x's of triangle */
 	driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, 0);
@@ -1280,7 +1280,7 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 			(*fill_plot)(x, y, color);
 		}
 	}
-	plot = normal_plot;
+	g_plot_color = normal_plot;
 }
 
 static int _fastcall off_screen(struct point pt)

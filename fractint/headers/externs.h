@@ -380,7 +380,7 @@ extern int                   g_patch_level;
 extern int                   periodicitycheck;
 extern struct fls *      pfls;
 extern int                   pixelpi;
-extern void (_fastcall *     plot)(int,int,int);
+extern void (_fastcall *     g_plot_color)(int,int,int);
 extern double                plotmx1;
 extern double                plotmx2;
 extern double                plotmy1;

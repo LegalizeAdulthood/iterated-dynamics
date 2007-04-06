@@ -52,7 +52,7 @@ int g_row, g_col, g_passes;
 int g_invert;
 double g_f_radius, g_f_x_center, g_f_y_center; /* for inversion */
 void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
-void (_fastcall *plot)(int, int, int) = putcolor_a;
+void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
 double magnitude, rqlim, rqlim2, rqlim_save;
 int no_mag_calc = 0;
 int use_old_period = 0;
@@ -275,11 +275,11 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	length = right-left + 1;
 	put_line(row, left, right, str);
 	/* here's where all the symmetry goes */
-	if (plot == g_put_color)
+	if (g_plot_color == g_put_color)
 	{
 		kbdcount -= length >> 4; /* seems like a reasonable value */
 	}
-	else if (plot == symplot2) /* X-axis symmetry */
+	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
 		i = yystop-(row-yystart);
 		if (i > iystop && i < ydots)
@@ -288,12 +288,12 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 			kbdcount -= length >> 3;
 		}
 	}
-	else if (plot == symplot2Y) /* Y-axis symmetry */
+	else if (g_plot_color == symplot2Y) /* Y-axis symmetry */
 	{
 		put_line(row, xxstop-(right-xxstart), xxstop-(left-xxstart), str);
 		kbdcount -= length >> 3;
 	}
-	else if (plot == symplot2J)  /* Origin symmetry */
+	else if (g_plot_color == symplot2J)  /* Origin symmetry */
 	{
 		i = yystop-(row-yystart);
 		j = min(xxstop-(right-xxstart), xdots-1);
@@ -304,7 +304,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 		}
 		kbdcount -= length >> 3;
 	}
-	else if (plot == symplot4) /* X-axis and Y-axis symmetry */
+	else if (g_plot_color == symplot4) /* X-axis and Y-axis symmetry */
 	{
 		i = yystop-(row-yystart);
 		j = min(xxstop-(right-xxstart), xdots-1);
@@ -327,7 +327,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	{
 		for (i = left; i <= right; i++)  /* DG */
 		{
-			(*plot)(i, row, str[i-left]);
+			(*g_plot_color)(i, row, str[i-left]);
 		}
 		kbdcount -= length >> 1;
 	}
@@ -343,11 +343,11 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	int length, i;
 	length = right-left + 1;
 	put_line(row, left, right, str);
-	if (plot == g_put_color)
+	if (g_plot_color == g_put_color)
 	{
 		kbdcount -= length >> 4; /* seems like a reasonable value */
 	}
-	else if (plot == symplot2) /* X-axis symmetry */
+	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
 		i = yystop-(row-yystart);
 		if (i > iystop && i < ydots)
@@ -360,7 +360,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	{
 		for (i = left; i <= right; i++)  /* DG */
 		{
-			(*plot)(i, row, str[i-left]);
+			(*g_plot_color)(i, row, str[i-left]);
 		}
 		kbdcount -= length >> 1;
 	}
@@ -448,7 +448,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	}
 	if (action == SHOWDOT_SAVE)
 	{
-		(*plot)(g_col, g_row, showdotcolor);
+		(*g_plot_color)(g_col, g_row, showdotcolor);
 	}
 }
 
@@ -749,7 +749,7 @@ int calcfract(void)
 	{
 		calctype = curfractalspecific->calctype; /* per_image can override */
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
-		plot = g_put_color; /* defaults when setsymmetry not called or does nothing */
+		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 		iystart = ixstart = yystart = xxstart = yybegin = xxbegin = 0;
 		iystop = yystop = ydots -1;
 		ixstop = xxstop = xdots -1;
@@ -991,7 +991,7 @@ static void perform_worklist()
 		/* per_image can override */
 		calctype = curfractalspecific->calctype;
 		symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
-		plot = g_put_color; /* defaults when setsymmetry not called or does nothing */
+		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
 		/* pull top entry off worklist */
 		ixstart = xxstart = worklist[0].xxstart;
@@ -1261,7 +1261,7 @@ static int diffusion_point(int row, int col)
 		return TRUE;
 	}
 	reset_periodicity = 0;
-	(*plot)(col, row, g_color);
+	(*g_plot_color)(col, row, g_color);
 	return FALSE;
 }
 
@@ -1807,15 +1807,15 @@ static int _fastcall StandardCalc(int passnum)
 				{
 					if ((g_row&1) == 0 && g_row < iystop)
 					{
-						(*plot)(g_col, g_row + 1, g_color);
+						(*g_plot_color)(g_col, g_row + 1, g_color);
 						if ((g_col&1) == 0 && g_col < ixstop)
 						{
-							(*plot)(g_col + 1, g_row + 1, g_color);
+							(*g_plot_color)(g_col + 1, g_row + 1, g_color);
 						}
 					}
 					if ((g_col&1) == 0 && g_col < ixstop)
 					{
-						(*plot)(++g_col, g_row, g_color);
+						(*g_plot_color)(++g_col, g_row, g_color);
 					}
 				}
 			}
@@ -1870,7 +1870,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 				g_color = 1;
 			}
 		}
-		(*plot)(g_col, g_row, g_color);
+		(*g_plot_color)(g_col, g_row, g_color);
 	}
 	else
 	{
@@ -1934,7 +1934,7 @@ int calcmandfp(void)
 				g_color = 1;
 			}
 		}
-		(*plot)(g_col, g_row, g_color);
+		(*g_plot_color)(g_col, g_row, g_color);
 	}
 	else
 	{
@@ -2876,7 +2876,7 @@ plot_pixel:
 			g_color = 1;
 		}
 	}
-	(*plot)(g_col, g_row, g_color);
+	(*g_plot_color)(g_col, g_row, g_color);
 
 	maxit = savemaxit;
 	kbdcount -= abs((int)g_real_color_iter);
@@ -3339,7 +3339,7 @@ int  bound_trace_main(void)
 			{
 				if (showdot != bkcolor) /* remove showdot pixel */
 				{
-					(*plot)(g_col, g_row, bkcolor);
+					(*g_plot_color)(g_col, g_row, bkcolor);
 				}
 				if (iystop != yystop)  /* DG */
 				{
@@ -3383,7 +3383,7 @@ int  bound_trace_main(void)
 					{
 						if (showdot != bkcolor) /* remove showdot pixel */
 						{
-							(*plot)(g_col, g_row, bkcolor);
+							(*g_plot_color)(g_col, g_row, bkcolor);
 						}
 						if (iystop != yystop)  /* DG */
 						{
@@ -3468,7 +3468,7 @@ int  bound_trace_main(void)
 								left++; /* one pixel too far */
 								if (right == left) /* only one hole */
 								{
-									(*plot)(left, g_row, fillcolor_used);
+									(*g_plot_color)(left, g_row, fillcolor_used);
 								}
 								else
 								{ /* fill the line to the left */
@@ -3573,11 +3573,11 @@ static int solidguess(void)
 	unsigned int *pfxp0, *pfxp1;
 	unsigned int u;
 
-	guessplot = (plot != g_put_color && plot != symplot2 && plot != symplot2J);
+	guessplot = (g_plot_color != g_put_color && g_plot_color != symplot2 && g_plot_color != symplot2J);
 	/* check if guessing at bottom & right edges is ok */
-	bottom_guess = (plot == symplot2 || (plot == g_put_color && iystop + 1 == ydots));
-	right_guess  = (plot == symplot2J
-		|| ((plot == g_put_color || plot == symplot2) && ixstop + 1 == xdots));
+	bottom_guess = (g_plot_color == symplot2 || (g_plot_color == g_put_color && iystop + 1 == ydots));
+	right_guess  = (g_plot_color == symplot2J
+		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && ixstop + 1 == xdots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (debugflag != DEBUGFLAG_SOLID_GUESS_BR)
@@ -3813,7 +3813,7 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 				/*
 				if (halfblock == 1)
 				{
-					(*plot)(x + 1, y, 0); (*plot)(x, y + 1, 0); (*plot)(x + 1, y + 1, 0);
+					(*g_plot_color)(x + 1, y, 0); (*g_plot_color)(x, y + 1, 0); (*g_plot_color)(x + 1, y + 1, 0);
 				}
 				*/
 				x += maxblock;
@@ -3919,15 +3919,15 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 				{
 					if (guessed23 > 0)
 					{
-						(*plot)(x, yplushalf, c23);
+						(*g_plot_color)(x, yplushalf, c23);
 					}
 					if (guessed32 > 0)
 					{
-						(*plot)(xplushalf, y, c32);
+						(*g_plot_color)(xplushalf, y, c32);
 					}
 					if (guessed33 > 0)
 					{
-						(*plot)(xplushalf, yplushalf, c33);
+						(*g_plot_color)(xplushalf, yplushalf, c33);
 					}
 				}
 				plotblock(1, x, yplushalf, c23);
@@ -4033,9 +4033,9 @@ static int _fastcall guessrow(int firstpass, int y, int blocksize)
 			return -1;
 		}
 	}
-	if (plot != g_put_color)  /* symmetry, just vertical & origin the fast way */
+	if (g_plot_color != g_put_color)  /* symmetry, just vertical & origin the fast way */
 	{
-		if (plot == symplot2J) /* origin sym, reverse lines */
+		if (g_plot_color == symplot2J) /* origin sym, reverse lines */
 		{
 			for (i = (ixstop + xxstart + 1)/2; --i >= xxstart; )
 			{
@@ -4111,13 +4111,13 @@ static void _fastcall plotblock(int buildrow, int x, int y, int color)
 	}
 	for (i = x; ++i < xlim; )
 	{
-		(*plot)(i, y, color); /* skip 1st dot on 1st row */
+		(*g_plot_color)(i, y, color); /* skip 1st dot on 1st row */
 	}
 	while (++y < ylim)
 	{
 		for (i = x; i < xlim; ++i)
 		{
-			(*plot)(i, y, color);
+			(*g_plot_color)(i, y, color);
 		}
 	}
 }
@@ -4254,7 +4254,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	if (sym == NOPLOT && forcesymmetry == 999)
 	{
-		plot = noplot;
+		g_plot_color = noplot;
 		return;
 	}
 	/* NOTE: 16-bit potential disables symmetry */
@@ -4405,7 +4405,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case XAXIS:                       /* X-axis Symmetry */
 		if (xsym_split(xaxis_row, xaxis_between) == 0)
 		{
-			plot = basin ? symplot2basin : symplot2;
+			g_plot_color = basin ? symplot2basin : symplot2;
 		}
 		break;
 	case YAXIS_NOPARM:                        /* Y-axis Symmetry (No Parms)*/
@@ -4416,7 +4416,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case YAXIS:                       /* Y-axis Symmetry */
 		if (ysym_split(yaxis_col, yaxis_between) == 0)
 		{
-			plot = symplot2Y;
+			g_plot_color = symplot2Y;
 		}
 		break;
 	case XYAXIS_NOPARM:                       /* X-axis AND Y-axis Symmetry (no parms)*/
@@ -4430,7 +4430,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		switch (worksym & 3)
 		{
 		case XAXIS: /* just xaxis symmetry */
-			plot = basin ? symplot2basin : symplot2;
+			g_plot_color = basin ? symplot2basin : symplot2;
 			break;
 		case YAXIS: /* just yaxis symmetry */
 			if (basin) /* got no routine for this case */
@@ -4440,11 +4440,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			}
 			else
 			{
-				plot = symplot2Y;
+				g_plot_color = symplot2Y;
 			}
 			break;
 		case XYAXIS: /* both axes */
-			plot = basin ? symplot4basin : symplot4;
+			g_plot_color = basin ? symplot4basin : symplot4;
 		}
 		break;
 	case ORIGIN_NOPARM:                       /* Origin Symmetry (no parms)*/
@@ -4457,7 +4457,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		if (xsym_split(xaxis_row, xaxis_between) == 0
 			&& ysym_split(yaxis_col, yaxis_between) == 0)
 		{
-			plot = symplot2J;
+			g_plot_color = symplot2J;
 			ixstop = xxstop; /* didn't want this changed */
 		}
 		else
@@ -4491,13 +4491,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			goto originsym;
 		}
-		plot = symPIplot;
+		g_plot_color = symPIplot;
 		symmetry = 0;
 		if (xsym_split(xaxis_row, xaxis_between) == 0
 				&& ysym_split(yaxis_col, yaxis_between) == 0)
 		{
 			/* both axes or origin*/
-			plot = (parm.y == 0.0) ? symPIplot4J : symPIplot2J; 
+			g_plot_color = (parm.y == 0.0) ? symPIplot4J : symPIplot2J; 
 		}
 		else
 		{
@@ -4520,7 +4520,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			ixstop = xxstop;
 		}
-		if (plot == symPIplot4J)
+		if (g_plot_color == symPIplot4J)
 		{
 			i = (xxstart + xxstop)/2;
 			if (ixstop > i)
@@ -4555,7 +4555,7 @@ static int tesseral(void)
 {
 	struct tess *tp;
 
-	guessplot = (plot != g_put_color && plot != symplot2);
+	guessplot = (g_plot_color != g_put_color && g_plot_color != symplot2);
 	tp = (struct tess *)&dstack[0];
 	tp->x1 = ixstart;                              /* set up initial box */
 	tp->x2 = ixstop;
@@ -4709,7 +4709,7 @@ static int tesseral(void)
 					{
 						for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 						{
-							(*plot)(g_col, g_row, tp->top);
+							(*g_plot_color)(g_col, g_row, tp->top);
 							if (++i > 500)
 							{
 								if (check_key())
@@ -4727,7 +4727,7 @@ static int tesseral(void)
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &dstack[OLDMAXPIXELS]);
-						if (plot != g_put_color) /* symmetry */
+						if (g_plot_color != g_put_color) /* symmetry */
 						{
 							j = yystop-(g_row-yystart);
 							if (j > iystop && j < ydots)
@@ -4948,12 +4948,12 @@ static long autologmap(void)   /*RB*/
 		}
 		if (g_col >= 32)
 		{
-			(*plot)(g_col-32, g_row, 0);
+			(*g_plot_color)(g_col-32, g_row, 0);
 		}
 	}                                    /* these lines tidy up for BTM etc */
 	for (lag = 32; lag > 0; lag--)
 	{
-		(*plot)(g_col-lag, g_row, 0);
+		(*g_plot_color)(g_col-lag, g_row, 0);
 	}
 
 	g_col = xstop;
@@ -4971,12 +4971,12 @@ static long autologmap(void)   /*RB*/
 		}
 		if (g_row >= 32)
 		{
-			(*plot)(g_col, g_row-32, 0);
+			(*g_plot_color)(g_col, g_row-32, 0);
 		}
 	}
 	for (lag = 32; lag > 0; lag--)
 	{
-		(*plot)(g_col, g_row-lag, 0);
+		(*g_plot_color)(g_col, g_row-lag, 0);
 	}
 
 	g_col = 0;
@@ -4994,12 +4994,12 @@ static long autologmap(void)   /*RB*/
 		}
 		if (g_row >= 32)
 		{
-			(*plot)(g_col, g_row-32, 0);
+			(*g_plot_color)(g_col, g_row-32, 0);
 		}
 	}
 	for (lag = 32; lag > 0; lag--)
 	{
-		(*plot)(g_col, g_row-lag, 0);
+		(*g_plot_color)(g_col, g_row-lag, 0);
 	}
 
 	g_row = ystop;
@@ -5017,12 +5017,12 @@ static long autologmap(void)   /*RB*/
 		}
 		if (g_col >= 32)
 		{
-			(*plot)(g_col-32, g_row, 0);
+			(*g_plot_color)(g_col-32, g_row, 0);
 		}
 	}
 	for (lag = 32; lag > 0; lag--)
 	{
-		(*plot)(g_col-lag, g_row, 0);
+		(*g_plot_color)(g_col-lag, g_row, 0);
 	}
 
 ack: /* bailout here if key is pressed */

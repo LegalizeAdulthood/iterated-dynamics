@@ -1462,7 +1462,7 @@ int orbit_2d_fp()
 				}
 				else
 				{
-					(*plot)(col, row, color % colors);
+					(*g_plot_color)(col, row, color % colors);
 				}
 			}
 			else
@@ -1471,7 +1471,7 @@ int orbit_2d_fp()
 				color = getcolor(col, row) + 1;
 				if (color < colors) /* color sticks on last value */
 				{
-					(*plot)(col, row, color);
+					(*g_plot_color)(col, row, color);
 				}
 			}
 
@@ -1605,7 +1605,7 @@ int orbit_2d()
 			}
 			else if (!start)
 			{
-				(*plot)(col, row, color % colors);
+				(*g_plot_color)(col, row, color % colors);
 			}
 			oldcol = col;
 			oldrow = row;
@@ -1716,7 +1716,7 @@ static int orbit_3d_calc(void)
 				}
 				else
 				{
-					(*plot)(inf.col, inf.row, color % colors);
+					(*g_plot_color)(inf.col, inf.row, color % colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1737,7 +1737,7 @@ static int orbit_3d_calc(void)
 					}
 					else
 					{
-						(*plot)(inf.col1, inf.row1, color % colors);
+						(*g_plot_color)(inf.col1, inf.row1, color % colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1834,7 +1834,7 @@ static int orbit_3d_calc_fp(void)
 				}
 				else
 				{
-					(*plot)(inf.col, inf.row, color % colors);
+					(*g_plot_color)(inf.col, inf.row, color % colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1855,7 +1855,7 @@ static int orbit_3d_calc_fp(void)
 					}
 					else
 					{
-						(*plot)(inf.col1, inf.row1, color % colors);
+						(*g_plot_color)(inf.col1, inf.row1, color % colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1905,7 +1905,7 @@ int dynamic_2d_setup_fp()
 	}
 	if (outside == SUM)
 	{
-		plot = plot_hist;
+		g_plot_color = plot_hist;
 	}
 	return 1;
 }
@@ -2044,7 +2044,7 @@ int dynamic_2d_fp()
 					}
 					else if (count > 0 || fractype != MANDELCLOUD)
 					{
-						(*plot)(col, row, color % colors);
+						(*g_plot_color)(col, row, color % colors);
 					}
 				}
 				oldcol = col;
@@ -2147,7 +2147,7 @@ int plotorbits2dsetup(void)
 
 	if (outside == SUM)
 	{
-		plot = plot_hist;
+		g_plot_color = plot_hist;
 	}
 	return 1;
 }
@@ -2172,7 +2172,7 @@ int plotorbits2dfloat(void)
 	row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 	if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 	{
-		(*plot)(col, row, 1);
+		(*g_plot_color)(col, row, 1);
 	}
 	return 0;
 #endif
@@ -2239,7 +2239,7 @@ int plotorbits2dfloat(void)
 				w_snd((int) (*soundvar*100 + basehertz));
 			}
 
-			(*plot)(col, row, s_o_color % colors);
+			(*g_plot_color)(col, row, s_o_color % colors);
 		}
 		else
 		{             /* off screen, don't continue unless periodicity=0 */
@@ -2261,7 +2261,7 @@ int funny_glasses_call(int (*calc)(void))
 	g_which_image = g_glasses_type ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
 	plot_setup();
 	assert(g_standard_plot);
-	plot = g_standard_plot;
+	g_plot_color = g_standard_plot;
 	status = calc();
 	if (s_real_time && g_glasses_type < STEREO_PHOTO)
 	{
@@ -2290,7 +2290,7 @@ int funny_glasses_call(int (*calc)(void))
 		}
 		plot_setup();
 		assert(g_standard_plot);
-		plot = g_standard_plot;
+		g_plot_color = g_standard_plot;
 		/* is there a better way to clear the graphics screen ? */
 		status = calc();
 		if (status != 0)
@@ -2409,7 +2409,7 @@ static int ifs_3d_float(void)
 				}
 				if (color < colors) /* color sticks on last value */
 				{
-					(*plot)(inf.col, inf.row, color);
+					(*g_plot_color)(inf.col, inf.row, color);
 				}
 			}
 			else if (inf.col == -2)
@@ -2432,7 +2432,7 @@ static int ifs_3d_float(void)
 					}
 					if (color < colors) /* color sticks on last value */
 					{
-						(*plot)(inf.col1, inf.row1, color);
+						(*g_plot_color)(inf.col1, inf.row1, color);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -2552,7 +2552,7 @@ static int ifs_2d(void)
 			}
 			if (color < colors) /* color sticks on last value */
 			{
-				(*plot)(col, row, color);
+				(*g_plot_color)(col, row, color);
 			}
 		}
 		else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
@@ -2680,7 +2680,7 @@ static int ifs_3d_long(void)
 				}
 				if (color < colors) /* color sticks on last value */
 				{
-					(*plot)(inf.col, inf.row, color);
+					(*g_plot_color)(inf.col, inf.row, color);
 				}
 			}
 			if (s_real_time)
@@ -2699,7 +2699,7 @@ static int ifs_3d_long(void)
 					}
 					if (color < colors) /* color sticks on last value */
 					{
-						(*plot)(inf.col1, inf.row1, color);
+						(*g_plot_color)(inf.col1, inf.row1, color);
 					}
 				}
 			}

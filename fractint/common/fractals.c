@@ -1307,7 +1307,7 @@ PopcornFractal_Old(void)
 	FPUsincos(&g_temp_z.y, &siny, &cosy);
 	g_new_z.x = g_old_z.x - parm.x*siny;
 	g_new_z.y = g_old_z.y - parm.x*sinx;
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row%colors);
 		g_old_z = g_new_z;
@@ -1350,7 +1350,7 @@ PopcornFractal(void)
 	g_new_z.x = g_old_z.x - parm.x*sin(g_old_z.y + tan(3*g_old_z.y));
 	g_new_z.y = g_old_z.y - parm.x*sin(g_old_z.x + tan(3*g_old_z.x));
 	*/
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
 		g_old_z = g_new_z;
@@ -1393,7 +1393,7 @@ LPopcornFractal_Old(void)
 	SinCos086(ltmp.y, &lsiny, &lcosy);
 	lnew.x = lold.x - multiply(lparm.x, lsiny, bitshift);
 	lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;
@@ -1435,7 +1435,7 @@ LPopcornFractal(void)
 	SinCos086(ltmp.y, &lsiny, &lcosy);
 	lnew.x = lold.x - multiply(lparm.x, lsiny, bitshift);
 	lnew.y = lold.y - multiply(lparm.x, lsinx, bitshift);
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;
@@ -1482,7 +1482,7 @@ PopcornFractalFn(void)
 	g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
 	g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
 
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row%colors);
 		g_old_z = g_new_z;
@@ -1536,7 +1536,7 @@ LPopcornFractalFn(void)
 	lnew.x = lold.x - ltmpx.x - ltmpy.y;
 	lnew.y = lold.y - ltmpy.x - ltmpx.y;
 
-	if (plot == noplot)
+	if (g_plot_color == noplot)
 	{
 		iplot_orbit(lnew.x, lnew.y, 1 + g_row%colors);
 		lold = lnew;

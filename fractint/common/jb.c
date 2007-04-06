@@ -244,7 +244,7 @@ static int z_line(long x, long y)
 				if ((g_row + g_col) & 1)
 				{
 
-					(*plot)(g_col, g_row, 127 - g_color);
+					(*g_plot_color)(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -257,13 +257,13 @@ static int z_line(long x, long y)
 					{
 						g_color = 127;
 					}
-					(*plot)(g_col, g_row, 127 + s_b_base - g_color);
+					(*g_plot_color)(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(g_col, g_row, g_color + 1);
+				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;
@@ -359,7 +359,7 @@ static int z_line_fp(double x, double y)
 				g_color = (int) (128l*z_pixel / g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
-					(*plot)(g_col, g_row, 127 - g_color);
+					(*g_plot_color)(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -371,13 +371,13 @@ static int z_line_fp(double x, double y)
 					{
 						g_color = 127;
 					}
-					(*plot)(g_col, g_row, 127 + s_b_base - g_color);
+					(*g_plot_color)(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = (int) (254l*z_pixel / g_z_dots);
-				(*plot)(g_col, g_row, g_color + 1);
+				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
 			break;
