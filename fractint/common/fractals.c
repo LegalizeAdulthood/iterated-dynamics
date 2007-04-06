@@ -570,11 +570,11 @@ int NewtonFractal2(void)
 				if (distance(roots[i], g_old_z) < threshold)
 				{
 					tmpcolor = (basin == 2) ?
-						(1 + (i&7) + ((coloriter&1) << 3)) : (1 + i);
+						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
 					break;
 				}
 			}
-			coloriter = (tmpcolor == -1) ? maxcolor : tmpcolor;
+			g_color_iter = (tmpcolor == -1) ? maxcolor : tmpcolor;
 		}
 		return 1;
 	}
@@ -648,11 +648,11 @@ int MPCNewtonFractal(void)
 				if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
 				{
 					tmpcolor = (basin == 2) ?
-						(1 + (i&7) + ((coloriter&1) << 3)) : (1 + i);
+						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
 					break;
 				}
 			}
-			coloriter = (tmpcolor == -1) ? maxcolor : tmpcolor;
+			g_color_iter = (tmpcolor == -1) ? maxcolor : tmpcolor;
 		}
 		return 1;
 	}
@@ -2642,7 +2642,7 @@ CirclefpFractal(void)
 {
 	long i;
 	i = (long)(param[0]*(tempsqrx + tempsqry));
-	coloriter = i%colors;
+	g_color_iter = i%colors;
 	return 1;
 }
 /*
@@ -2651,7 +2651,7 @@ CirclelongFractal()
 	long i;
 	i = multiply(lparm.x, (ltempsqrx + ltempsqry), bitshift);
 	i = i >> bitshift;
-	coloriter = i%colors);
+	g_color_iter = i%colors);
 	return 1;
 }
 */
@@ -2878,7 +2878,7 @@ int mandel_per_pixel(void)
 			Mandelbrot iteration with g_initial_z rather than 0 */
 		lold.x = lparm.x; /* initial pertubation of parameters set */
 		lold.y = lparm.y;
-		coloriter = -1;
+		g_color_iter = -1;
 	}
 	else
 	{
@@ -3056,7 +3056,7 @@ int mandelfp_per_pixel(void)
 			Mandelbrot iteration with g_initial_z rather than 0 */
 		g_old_z.x = parm.x; /* initial pertubation of parameters set */
 		g_old_z.y = parm.y;
-		coloriter = -1;
+		g_color_iter = -1;
 	}
 	else
 	{
@@ -3477,7 +3477,7 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 	}
 	else /* make distinct level sets if point stayed in target set */
 	{
-		coloriter = ((3L*coloriter) % 255L) + 1L;
+		g_color_iter = ((3L*g_color_iter) % 255L) + 1L;
 		return 1;
 	}
 }

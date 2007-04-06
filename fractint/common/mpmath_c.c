@@ -743,22 +743,22 @@ int ComplexBasin(void)
 		FPUcplxlog(&g_old_z, &temp);
 		FPUcplxmul(&temp, &cdegree, &g_temp_z);
 		mod = g_temp_z.y/TwoPi;
-		coloriter = (long)mod;
-		if (fabs(mod - coloriter) > 0.5)
+		g_color_iter = (long)mod;
+		if (fabs(mod - g_color_iter) > 0.5)
 		{
 			if (mod < 0.0)
 			{
-				coloriter--;
+				g_color_iter--;
 			}
 			else
 			{
-				coloriter++;
+				g_color_iter++;
 			}
 		}
-		coloriter += 2;
-		if (coloriter < 0)
+		g_color_iter += 2;
+		if (g_color_iter < 0)
 		{
-			coloriter += 128;
+			g_color_iter += 128;
 		}
 		return 1;
 	}

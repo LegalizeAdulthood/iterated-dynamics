@@ -155,7 +155,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	int i, gotprec;
 	long xytemp;
 	double ftemp;
-	coloriter = oldcoloriter = 0L;
+	g_color_iter = oldcoloriter = 0L;
 	for (i = 0; i < 10; i++)
 	{
 		rhombus_stack[i] = 0;
@@ -1897,14 +1897,14 @@ void get_julia_attractor (double real, double imag)
 	{
 		maxit = 500;
 	}
-	coloriter = 0;
+	g_color_iter = 0;
 	overflow = 0;
-	while (++coloriter < maxit)
+	while (++g_color_iter < maxit)
 		if (curfractalspecific->orbitcalc() || overflow)
 		{
 			break;
 		}
-	if (coloriter >= maxit)      /* if orbit stays in the lake */
+	if (g_color_iter >= maxit)      /* if orbit stays in the lake */
 	{
 		if (integerfractal)   /* remember where it went to */
 		{

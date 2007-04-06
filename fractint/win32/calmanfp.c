@@ -81,7 +81,7 @@ long calcmandfpasm_c(void)
 			}
 			else
 			{
-				coloriter = -1;
+				g_color_iter = -1;
 				return -1;
 			}
 		}
@@ -159,7 +159,7 @@ long calcmandfpasm_c(void)
 					oldcoloriter = maxit;
 					realcoloriter = maxit;
 					kbdcount = kbdcount-(maxit-cx);
-					coloriter = periodicity_color;
+					g_color_iter = periodicity_color;
 					goto pop_stack;
 				}
 			}
@@ -177,14 +177,14 @@ long calcmandfpasm_c(void)
 	oldcoloriter = maxit;
 	kbdcount -= maxit;
 	realcoloriter = maxit;
-	coloriter = inside_color;
+	g_color_iter = inside_color;
 
 pop_stack:
 	if (orbit_ptr)
 	{
 		scrub_orbit();
 	}
-	return coloriter;
+	return g_color_iter;
 
 over_bailout_87:
 	if (outside <= -2)
@@ -200,10 +200,10 @@ over_bailout_87:
 	{
 		oldcoloriter = 0;
 	}
-	coloriter = realcoloriter = maxit-cx;
-	if (coloriter == 0)
+	g_color_iter = realcoloriter = maxit-cx;
+	if (g_color_iter == 0)
 	{
-		coloriter = 1;
+		g_color_iter = 1;
 	}
 	kbdcount -= realcoloriter;
 	if (outside == -1)
@@ -211,41 +211,41 @@ over_bailout_87:
 	}
 	else if (outside > -2)
 	{
-		coloriter = outside;
+		g_color_iter = outside;
 	}
 	else
 	{
 		/* special_outside */
 		if (outside == REAL)
 		{
-			coloriter += (long) g_new_z.x + 7;
+			g_color_iter += (long) g_new_z.x + 7;
 		}
 		else if (outside == IMAG)
 		{
-			coloriter += (long) g_new_z.y + 7;
+			g_color_iter += (long) g_new_z.y + 7;
 		}
 		else if (outside == MULT && g_new_z.y != 0.0)
 		{
-		coloriter = (long) ((double) coloriter*(g_new_z.x/g_new_z.y));
+		g_color_iter = (long) ((double) g_color_iter*(g_new_z.x/g_new_z.y));
 		}
 		else if (outside == SUM)
 		{
-			coloriter +=  (long) (g_new_z.x + g_new_z.y);
+			g_color_iter +=  (long) (g_new_z.x + g_new_z.y);
 		}
 		else if (outside == ATAN)
 		{
-			coloriter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
 		}
 		/* check_color */
-		if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
 		{
 			if (save_release < 1961)
 			{
-				coloriter = 0;
+				g_color_iter = 0;
 			}
 			else
 			{
-				coloriter = 1;
+				g_color_iter = 1;
 			}
 		}
 	}

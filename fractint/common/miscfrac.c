@@ -2337,7 +2337,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	}
 
 	orbit_ptr = 0;
-	coloriter = 0;
+	g_color_iter = 0;
 	if (showdot > 0)
 	{
 		(*plot) (col, row, showdot%colors);
@@ -2359,7 +2359,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		{
 			tempsqrx = sqr(g_old_z.x);
 			tempsqry = sqr(g_old_z.y);
-			if ((tempsqrx + tempsqry < rqlim) && (coloriter < maxit))
+			if ((tempsqrx + tempsqry < rqlim) && (g_color_iter < maxit))
 			{
 				break;
 			}
@@ -2376,7 +2376,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				g_old_z.x = g_new_z.x;
 			}
 
-			coloriter++;
+			g_color_iter++;
 
 			if (show_orbit)
 			{
@@ -2465,7 +2465,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			ltempsqrx = lsqr(lold.x);
 			ltempsqry = lsqr(lold.y);
 			g_magnitude_l = ltempsqrx + ltempsqry;
-			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (coloriter < maxit))
+			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < maxit))
 			{
 				break;
 			}
@@ -2488,7 +2488,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
 				lold.x = lnew.x;
 			}
-			coloriter++;
+			g_color_iter++;
 
 			if (show_orbit)
 			{
@@ -2562,7 +2562,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		scrub_orbit();
 	}
 
-	realcoloriter = coloriter;
+	realcoloriter = g_color_iter;
 	kbdcount -= abs((int)realcoloriter);
 	if (kbdcount <= 0)
 	{
@@ -2582,20 +2582,20 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		{
 			if (!fsp->altcolor)
 			{
-				if (coloriter > fsp->shades)
+				if (g_color_iter > fsp->shades)
 				{
-					coloriter = fsp->shades;
+					g_color_iter = fsp->shades;
 				}
 			}
 			else
 			{
-				coloriter = fsp->shades*coloriter / maxit;
+				g_color_iter = fsp->shades*g_color_iter / maxit;
 			}
-			if (coloriter == 0)
+			if (g_color_iter == 0)
 			{
-				coloriter = 1;
+				g_color_iter = 1;
 			}
-			coloriter += fsp->shades*(found_attractor-1);
+			g_color_iter += fsp->shades*(found_attractor-1);
 		}
 		else if (colors >= 16)
 		{ /* only alternate coloring scheme available for 16 colors */
@@ -2604,50 +2604,50 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			/* Trying to make a better 16 color distribution. */
 			/* Since their are only a few possiblities, just handle each case. */
 			/* This is a mostly guess work here. */
-			lshade = (coloriter << 16)/maxit;
+			lshade = (g_color_iter << 16)/maxit;
 			if (fsp->attractors != 6) /* either 2 or 3 attractors */
 			{
 				if (lshade < 2622)       /* 0.04 */
 				{
-					coloriter = 1;
+					g_color_iter = 1;
 				}
 				else if (lshade < 10486) /* 0.16 */
 				{
-					coloriter = 2;
+					g_color_iter = 2;
 				}
 				else if (lshade < 23593) /* 0.36 */
 				{
-					coloriter = 3;
+					g_color_iter = 3;
 				}
 				else if (lshade < 41943L) /* 0.64 */
 				{
-					coloriter = 4;
+					g_color_iter = 4;
 				}
 				else
 				{
-					coloriter = 5;
+					g_color_iter = 5;
 				}
-				coloriter += 5*(found_attractor-1);
+				g_color_iter += 5*(found_attractor-1);
 			}
 			else /* 6 attractors */
 			{
 				/* 10486 <=> 0.16 */
-				coloriter = (lshade < 10486) ? 1 : 2;
-				coloriter += 2*(found_attractor-1);
+				g_color_iter = (lshade < 10486) ? 1 : 2;
+				g_color_iter += 2*(found_attractor-1);
 			}
 		}
 		else /* use a color corresponding to the attractor */
 		{
-			coloriter = found_attractor;
+			g_color_iter = found_attractor;
 		}
-		oldcoloriter = coloriter;
+		oldcoloriter = g_color_iter;
 	}
 	else /* outside, or inside but didn't get sucked in by attractor. */
 	{
-		coloriter = 0;
+		g_color_iter = 0;
 	}
 
-	g_color = abs((int)(coloriter));
+	g_color = abs((int)(g_color_iter));
 
 	(*plot)(col, row, g_color);
 
