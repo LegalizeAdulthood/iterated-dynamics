@@ -27,7 +27,7 @@ int
 MandelSetup(void)           /* Mandelbrot Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !invert && decomp[0] == 0 && rqlim == 4.0
+		&& !g_invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
@@ -48,7 +48,7 @@ int
 JuliaSetup(void)            /* Julia Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !invert && decomp[0] == 0 && rqlim == 4.0
+		&& !g_invert && decomp[0] == 0 && rqlim == 4.0
 		&& bitshift == 29 && potflag == 0
 		&& biomorph == -1 && inside > -59 && outside >= -1
 		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod

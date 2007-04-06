@@ -408,7 +408,7 @@ init_restart:
 		if (potflag == 0                            /* not using potential */
 		&& (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
 		&& (param[1] > -2.0 && param[1] < 2.0)
-		&& !invert                                /* and not inverting */
+		&& !g_invert                                /* and not inverting */
 		&& biomorph == -1                         /* and not biomorphing */
 		&& rqlim <= 4.0                           /* and bailout not too high */
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
@@ -461,7 +461,7 @@ init_restart:
 	if (fractype != PLASMA && bf_math == 0
 		&& fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
 	{
-		if (integerfractal && !invert && use_grid)
+		if (integerfractal && !g_invert && use_grid)
 		{
 			if ((delx  == 0 && delxx  != 0.0)
 				|| (delx2 == 0 && delxx2 != 0.0)
@@ -506,7 +506,7 @@ expand_retry:
 			yymin = fudgetodouble(ymin);
 			yymax = fudgetodouble(ymax);
 			yy3rd = fudgetodouble(y3rd);
-		} /* end if (integerfractal && !invert && use_grid) */
+		} /* end if (integerfractal && !g_invert && use_grid) */
 		else
 		{
 			double dx0, dy0, dx1, dy1;

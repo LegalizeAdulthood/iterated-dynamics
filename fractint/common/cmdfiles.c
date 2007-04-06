@@ -485,7 +485,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 		inversion[i] = 0.0;  /* initial invert values */
 	}
 	initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
-	invert = 0;
+	g_invert = 0;
 	decomp[0] = decomp[1] = 0;
 	usr_distest = 0;
 	pseudox = 0;
@@ -2142,7 +2142,7 @@ static int invert_arg(const cmd_context *context)
 		return badarg(context->curarg);
 	}
 	inversion[0] = context->floatval[0];
-	invert = (inversion[0] != 0.0) ? context->totparms : 0;
+	g_invert = (inversion[0] != 0.0) ? context->totparms : 0;
 	if (context->totparms == 3)
 	{
 		inversion[1] = context->floatval[1];

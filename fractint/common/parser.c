@@ -3083,55 +3083,53 @@ int form_per_pixel(void)
 	}
 
 	/* TW started additions for inversion support here 4/17/94 */
+	if (g_invert)
 	{
-		if (invert)
+		invertz2(&g_old_z);
+		switch (MathType)
 		{
-			invertz2(&g_old_z);
-			switch (MathType)
-			{
-			case D_MATH:
-				v[0].a.d.x = g_old_z.x;
-				v[0].a.d.y = g_old_z.y;
-				break;
+		case D_MATH:
+			v[0].a.d.x = g_old_z.x;
+			v[0].a.d.y = g_old_z.y;
+			break;
 #if !defined(XFRACT)
-			case M_MATH:
-				v[0].a.m.x = *d2MP(g_old_z.x);
-				v[0].a.m.y = *d2MP(g_old_z.y);
-				break;
-			case L_MATH:
-				/* watch out for overflow */
-				if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
-				{
-					g_old_z.x = 8;  /* value to bail out in one iteration */
-					g_old_z.y = 8;
-				}
-				/* convert to fudged longs */
-				v[0].a.l.x = (long)(g_old_z.x*fg);
-				v[0].a.l.y = (long)(g_old_z.y*fg);
-				break;
-#endif
+		case M_MATH:
+			v[0].a.m.x = *d2MP(g_old_z.x);
+			v[0].a.m.y = *d2MP(g_old_z.y);
+			break;
+		case L_MATH:
+			/* watch out for overflow */
+			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
+			{
+				g_old_z.x = 8;  /* value to bail out in one iteration */
+				g_old_z.y = 8;
 			}
+			/* convert to fudged longs */
+			v[0].a.l.x = (long)(g_old_z.x*fg);
+			v[0].a.l.y = (long)(g_old_z.y*fg);
+			break;
+#endif
 		}
-		else
+	}
+	else
+	{
+		/* TW end of inversion support changes here 4/17/94 */
+		switch (MathType)
 		{
-			/* TW end of inversion support changes here 4/17/94 */
-			switch (MathType)
-			{
-			case D_MATH:
-				v[0].a.d.x = dxpixel();
-				v[0].a.d.y = dypixel();
-				break;
+		case D_MATH:
+			v[0].a.d.x = dxpixel();
+			v[0].a.d.y = dypixel();
+			break;
 #if !defined(XFRACT)
-			case M_MATH:
-				v[0].a.m.x = *d2MP(dxpixel());
-				v[0].a.m.y = *d2MP(dypixel());
-				break;
-			case L_MATH:
-				v[0].a.l.x = lxpixel();
-				v[0].a.l.y = lypixel();
-				break;
+		case M_MATH:
+			v[0].a.m.x = *d2MP(dxpixel());
+			v[0].a.m.y = *d2MP(dypixel());
+			break;
+		case L_MATH:
+			v[0].a.l.x = lxpixel();
+			v[0].a.l.y = lypixel();
+			break;
 #endif
-			}
 		}
 	}
 

@@ -49,7 +49,7 @@ _CMPLX g_temp_z;
 int g_color;
 long g_color_iter, g_old_color_iter, g_real_color_iter;
 int g_row, g_col, g_passes;
-int invert;
+int g_invert;
 double f_radius, f_xcenter, f_ycenter; /* for inversion */
 void (_fastcall *putcolor)(int, int, int) = putcolor_a;
 void (_fastcall *plot)(int, int, int) = putcolor_a;
@@ -688,7 +688,7 @@ int calcfract(void)
 			f_radius = inversion[0];
 		}
 
-		if (invert < 2 || inversion[1] == AUTOINVERT)  /* xcenter not already set */
+		if (g_invert < 2 || inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
 			inversion[1] = (xxmin + xxmax) / 2.0;
 			fix_inversion(&inversion[1]);
@@ -699,7 +699,7 @@ int calcfract(void)
 			}
 		}
 
-		if (invert < 3 || inversion[2] == AUTOINVERT)  /* ycenter not already set */
+		if (g_invert < 3 || inversion[2] == AUTOINVERT)  /* ycenter not already set */
 		{
 			inversion[2] = (yymin + yymax) / 2.0;
 			fix_inversion(&inversion[2]);
@@ -710,7 +710,7 @@ int calcfract(void)
 			}
 		}
 
-		invert = 3; /* so values will not be changed if we come back */
+		g_invert = 3; /* so values will not be changed if we come back */
 	}
 
 	closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
@@ -1892,7 +1892,7 @@ long (*calcmandfpasm)(void);
 /************************************************************************/
 int calcmandfp(void)
 {
-	if (invert)
+	if (g_invert)
 	{
 		invertz2(&g_initial_z);
 	}
@@ -4271,7 +4271,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			return;
 		}
 	}
-	if ((potflag && pot16bit) || (invert && inversion[2] != 0.0)
+	if ((potflag && pot16bit) || (g_invert && inversion[2] != 0.0)
 			|| decomp[0] != 0
 			|| xxmin != xx3rd || yymin != yy3rd)
 	{
@@ -4491,7 +4491,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 				break; /* no point in pi symmetry if values too close */
 			}
 		}
-		if (invert && forcesymmetry == 999)
+		if (g_invert && forcesymmetry == 999)
 		{
 			goto originsym;
 		}

@@ -220,7 +220,7 @@ extern int                   inside;
 extern char                 insufficient_ifs_mem[];
 extern int                   integerfractal;
 extern double                inversion[];
-extern int                   invert;
+extern int                   g_invert;
 extern int					g_is_true_color;
 extern int					g_is_mand;
 extern int                   ixstart;
