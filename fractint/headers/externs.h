@@ -69,7 +69,7 @@ extern _CMPLX                coefficient;
 extern int                   col;
 extern int                   g_color;
 extern char                  colorfile[];
-extern long                  coloriter;
+extern long                  g_color_iter;
 extern int                   colorpreloaded;
 extern int                   colors;
 extern int                   colorstate;

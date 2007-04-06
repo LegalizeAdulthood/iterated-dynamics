@@ -1408,7 +1408,7 @@ int orbit_2d_fp()
 	x = s_init_orbit_fp[0];
 	y = s_init_orbit_fp[1];
 	z = s_init_orbit_fp[2];
-	coloriter = 0L;
+	g_color_iter = 0L;
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
 
@@ -1418,12 +1418,12 @@ int orbit_2d_fp()
 		get_resume(sizeof(count), &count, sizeof(color), &color,
 			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
 			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-			sizeof(s_orbit), &s_orbit, sizeof(coloriter), &coloriter,
+			sizeof(s_orbit), &s_orbit, sizeof(g_color_iter), &g_color_iter,
 			0);
 		end_resume();
 	}
 
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
 		{
@@ -1432,7 +1432,7 @@ int orbit_2d_fp()
 			put_resume(sizeof(count), &count, sizeof(color), &color,
 				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
 				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-				sizeof(s_orbit), &s_orbit, sizeof(coloriter), &coloriter,
+				sizeof(s_orbit), &s_orbit, sizeof(g_color_iter), &g_color_iter,
 				0);
 			ret = -1;
 			break;
@@ -1547,7 +1547,7 @@ int orbit_2d()
 	z = s_init_orbit_long[2];
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
-	coloriter = 0L;
+	g_color_iter = 0L;
 
 	if (resuming)
 	{
@@ -1555,12 +1555,12 @@ int orbit_2d()
 		get_resume(sizeof(count), &count, sizeof(color), &color,
 			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
 			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-			sizeof(s_l_orbit), &s_l_orbit, sizeof(coloriter), &coloriter,
+			sizeof(s_l_orbit), &s_l_orbit, sizeof(g_color_iter), &g_color_iter,
 			0);
 		end_resume();
 	}
 
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
 		{
@@ -1569,7 +1569,7 @@ int orbit_2d()
 			put_resume(sizeof(count), &count, sizeof(color), &color,
 				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
 				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-				sizeof(s_l_orbit), &s_l_orbit, sizeof(coloriter), &coloriter,
+				sizeof(s_l_orbit), &s_l_orbit, sizeof(g_color_iter), &g_color_iter,
 				0);
 			ret = -1;
 			break;
@@ -1670,8 +1670,8 @@ static int orbit_3d_calc(void)
 
 	count = ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
-	coloriter = 0L;
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	g_color_iter = 0L;
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		/* calc goes here */
 		if (++count > 1000)
@@ -1790,8 +1790,8 @@ static int orbit_3d_calc_fp(void)
 
 	ret = 0;
 	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
-	count = coloriter = 0L;
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	count = g_color_iter = 0L;
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		/* calc goes here */
 		if (++count > 1000)
@@ -2348,8 +2348,8 @@ static int ifs_3d_float(void)
 	ret = 0;
 	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024;
 
-	coloriter = 0L;
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	g_color_iter = 0L;
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2505,8 +2505,8 @@ static int ifs_2d(void)
 	x = y = 0;
 	ret = 0;
 	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
-	coloriter = 0L;
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	g_color_iter = 0L;
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2612,8 +2612,8 @@ static int ifs_3d_long(void)
 
 	ret = 0;
 	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
-	coloriter = 0L;
-	while (coloriter++ <= g_max_count) /* loop until keypress or maxit */
+	g_color_iter = 0L;
+	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())  /* keypress bails out */
 		{
@@ -2756,7 +2756,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	double tmpx, tmpy, tmpz;
 	long tmp;
 
-	if (coloriter == 1)  /* initialize on first call */
+	if (g_color_iter == 1)  /* initialize on first call */
 	{
 		for (i = 0; i < 3; i++)
 		{
@@ -2789,7 +2789,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 		longvmult(inf->orbit, inf->longmat1, inf->viewvect1, bitshift);
 	}
 
-	if (coloriter <= s_waste) /* waste this many points to find minz and maxz */
+	if (g_color_iter <= s_waste) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2804,7 +2804,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (coloriter == s_waste) /* time to work it out */
+		if (g_color_iter == s_waste) /* time to work it out */
 		{
 			inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
 
@@ -2934,7 +2934,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 	double tmpx, tmpy, tmpz;
 	double tmp;
 
-	if (coloriter == 1)  /* initialize on first call */
+	if (g_color_iter == 1)  /* initialize on first call */
 	{
 		for (i = 0; i < 3; i++)
 		{
@@ -2955,7 +2955,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 		vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
 	}
 
-	if (coloriter <= s_waste) /* waste this many points to find minz and maxz */
+	if (g_color_iter <= s_waste) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2970,7 +2970,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (coloriter == s_waste) /* time to work it out */
+		if (g_color_iter == s_waste) /* time to work it out */
 		{
 			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme

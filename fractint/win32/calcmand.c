@@ -82,7 +82,7 @@ calc_mand_floating_point(void)
 			}
 			else
 			{
-				coloriter = -1;
+				g_color_iter = -1;
 				return -1;
 			}
 		}
@@ -133,11 +133,11 @@ calc_mand_floating_point(void)
 			}
 			oldcoloriter = (cx - 10 > 0) ? cx - 10 : 0;
 			realcoloriter = maxit - cx;
-			coloriter = realcoloriter;
+			g_color_iter = realcoloriter;
 
-			if (coloriter == 0)
+			if (g_color_iter == 0)
 			{
-				coloriter = 1;
+				g_color_iter = 1;
 			}
 			kbdcount -= realcoloriter;
 			if (outside == -1)
@@ -145,35 +145,35 @@ calc_mand_floating_point(void)
 			}
 			else if (outside > -2)
 			{
-				coloriter = outside;
+				g_color_iter = outside;
 			}
 			else
 			{
 				/* special_outside */
 				if (outside == REAL)
 				{
-					coloriter += lnew.x + 7;
+					g_color_iter += lnew.x + 7;
 				}
 				else if (outside == IMAG)
 				{
-					coloriter += lnew.y + 7;
+					g_color_iter += lnew.y + 7;
 				}
 				else if (outside == MULT && lnew.y != 0)
 				{
-					coloriter = FUDGE_MUL(coloriter, lnew.x) / lnew.y;
+					g_color_iter = FUDGE_MUL(g_color_iter, lnew.x) / lnew.y;
 				}
 				else if (outside == SUM)
 				{
-					coloriter += lnew.x + lnew.y;
+					g_color_iter += lnew.x + lnew.y;
 				}
 				else if (outside == ATAN)
 				{
-					coloriter = (long) fabs(atan2(lnew.y, lnew.x)*atan_colors/PI);
+					g_color_iter = (long) fabs(atan2(lnew.y, lnew.x)*atan_colors/PI);
 				}
 				/* check_color */
-				if ((coloriter <= 0 || coloriter > maxit) && outside != FMOD)
+				if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
 				{
-					coloriter = (save_release < 1961) ? 0 : 1;
+					g_color_iter = (save_release < 1961) ? 0 : 1;
 				}
 			}
 
@@ -200,7 +200,7 @@ calc_mand_floating_point(void)
 				oldcoloriter = maxit;
 				realcoloriter = maxit;
 				kbdcount = kbdcount - (maxit - cx);
-				coloriter = periodicity_color;
+				g_color_iter = periodicity_color;
 				goto pop_stack;
 			}
 		}
@@ -219,7 +219,7 @@ calc_mand_floating_point(void)
 	kbdcount -= maxit;
 	realcoloriter = maxit;
 
-	coloriter = inside_color;
+	g_color_iter = inside_color;
 
 pop_stack:
 	if (orbit_ptr)
@@ -227,7 +227,7 @@ pop_stack:
 		scrub_orbit();
 	}
 
-	return coloriter;
+	return g_color_iter;
 }
 
 static long cdecl
@@ -345,8 +345,8 @@ orbitkey:
 		jmp		short nokey					; pretend no key was hit
 keyhit:	mov		eax, -1						;	return with	-1
 		mov		edx, eax
-		mov		dword ptr coloriter, eax	; set coloriter to -1
-		mov		dword ptr coloriter + 4, edx
+		mov		dword ptr g_color_iter, eax	; set coloriter to -1
+		mov		dword ptr g_color_iter + 4, edx
 		pop		esi
 		pop		edi
 		pop		ebp
@@ -582,7 +582,7 @@ notmax32:
 		mov		eax, outside				; reset to	"outside" color
 
 wedone32:									;
-		mov		coloriter, eax				; save	the	color result
+		mov		g_color_iter, eax				; save	the	color result
 		shld	edx, eax, 16				;	put	result in eax, edx
 		shr		eax, 16
 		pop		esi
@@ -641,8 +641,8 @@ notmax:
 		sub		edx, edx
 
 wedone:										;
-		mov		dword ptr coloriter, eax	; save the color	result
-		mov		dword ptr coloriter + 4, edx	; save	the	color result
+		mov		dword ptr g_color_iter, eax	; save the color	result
+		mov		dword ptr g_color_iter + 4, edx	; save	the	color result
 		pop		esi
 		pop		edi
 		pop		ebp

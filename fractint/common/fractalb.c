@@ -744,7 +744,7 @@ int mandelbn_per_pixel()
 			Mandelbrot iteration with init rather than 0 */
 		floattobn(bnold.x, param[0]); /* initial pertubation of parameters set */
 		floattobn(bnold.y, param[1]);
-		coloriter = -1;
+		g_color_iter = -1;
 	}
 	else
 	{
@@ -790,7 +790,7 @@ int mandelbf_per_pixel()
 			Mandelbrot iteration with g_initial_z rather than 0 */
 		floattobf(bfold.x, param[0]); /* initial pertubation of parameters set */
 		floattobf(bfold.y, param[1]);
-		coloriter = -1;
+		g_color_iter = -1;
 	}
 	else
 	{
