@@ -162,6 +162,7 @@ extern float                 finalaspectratio;
 extern int                   finattract;
 extern int                   finishrow;
 extern int                   first_init;
+extern int					g_first_saved_and;
 extern char                  floatflag;
 extern double                floatmax;
 extern double                floatmin;
