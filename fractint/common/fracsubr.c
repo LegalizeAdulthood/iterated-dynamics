@@ -275,7 +275,7 @@ init_restart:
 		calc routine constraints;  usr_xxx is what the user last said is wanted,
 		xxx is what we actually do in the current situation */
 	stdcalcmode      = usr_stdcalcmode;
-	periodicitycheck = usr_periodicitycheck;
+	s_periodicity_check = usr_periodicitycheck;
 	distest          = usr_distest;
 	biomorph         = usr_biomorph;
 
@@ -1876,9 +1876,9 @@ void get_julia_attractor (double real, double imag)
 		return;                  /* Bad luck - no room left !    */
 	}
 
-	savper = periodicitycheck;
+	savper = s_periodicity_check;
 	savmaxit = maxit;
-	periodicitycheck = 0;
+	s_periodicity_check = 0;
 	g_old_z.x = real;                    /* prepare for f.p orbit calc */
 	g_old_z.y = imag;
 	tempsqrx = sqr(g_old_z.x);
@@ -1951,7 +1951,7 @@ void get_julia_attractor (double real, double imag)
 	}
 	if (g_num_attractors == 0)
 	{
-		periodicitycheck = savper;
+		s_periodicity_check = savper;
 	}
 	maxit = savmaxit;
 }

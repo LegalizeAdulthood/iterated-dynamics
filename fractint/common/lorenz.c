@@ -2214,7 +2214,7 @@ int plotorbits2dfloat(void)
 
 	for (count = 0; count < maxit; count++)
 	{
-		if (ORBITCALC() == 1 && periodicitycheck)
+		if (ORBITCALC() == 1 && s_periodicity_check)
 		{
 			continue;  /* bailed out, don't plot */
 		}
@@ -2243,7 +2243,7 @@ int plotorbits2dfloat(void)
 		}
 		else
 		{             /* off screen, don't continue unless periodicity=0 */
-			if (periodicitycheck)
+			if (s_periodicity_check)
 			{
 				return 0; /* skip to next pixel */
 			}

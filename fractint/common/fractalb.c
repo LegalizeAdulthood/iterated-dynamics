@@ -588,7 +588,7 @@ int MandelbnSetup()
 	}
 	{
 		int t;
-		t = abs(periodicitycheck);
+		t = abs(s_periodicity_check);
 		while (t--)
 		{
 			half_a_bn(bnclosenuff);
@@ -679,7 +679,7 @@ int MandelbfSetup()
 	}
 	{
 		int t;
-		t = abs(periodicitycheck);
+		t = abs(s_periodicity_check);
 		while (t--)
 		{
 			half_a_bf(bfclosenuff);
