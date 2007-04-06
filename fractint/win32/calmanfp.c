@@ -16,7 +16,7 @@ static int inside_color, periodicity_color;
 void calcmandfpasmstart(void)
 {
 	inside_color = (inside < 0) ? maxit : inside;
-	periodicity_color = (s_periodicity_check < 0) ? 7 : inside_color;
+	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
 	g_old_color_iter = 0;
 }
 
@@ -38,7 +38,7 @@ long calcmandfpasm_c(void)
 	double x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 #endif
 
-	if (s_periodicity_check == 0)
+	if (g_periodicity_check == 0)
 	{
 		g_old_color_iter = 0;      /* don't check periodicity */
 	}

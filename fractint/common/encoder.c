@@ -869,7 +869,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->initorbit[0] = initorbit.x;
 	save_info->initorbit[1] = initorbit.y;
 	save_info->useinitorbit = useinitorbit;
-	save_info->periodicity = (short) s_periodicity_check;
+	save_info->periodicity = (short) g_periodicity_check;
 	save_info->pot16bit = (short) disk16bit;
 	save_info->faspectratio = finalaspectratio;
 	save_info->system = (short) save_system;

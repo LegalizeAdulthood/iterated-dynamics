@@ -379,7 +379,7 @@ extern _CMPLX                parm2;
 extern _CMPLX                parm;
 extern int                   g_passes;
 extern int                   g_patch_level;
-extern int                   s_periodicity_check;
+extern int                   g_periodicity_check;
 extern struct fls *      pfls;
 extern int                   pixelpi;
 extern void (_fastcall *     g_plot_color)(int,int,int);

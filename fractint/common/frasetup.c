@@ -216,7 +216,7 @@ StandaloneSetup(void)
 int
 UnitySetup(void)
 {
-	s_periodicity_check = 0;
+	g_periodicity_check = 0;
 	FgOne = (1L << bitshift);
 	FgTwo = FgOne + FgOne;
 	return 1;
@@ -327,9 +327,9 @@ MandelfpSetup(void)
 		g_num_attractors = 1;
 		break;
 	case SPIDERFP:
-		if (s_periodicity_check == 1) /* if not user set */
+		if (g_periodicity_check == 1) /* if not user set */
 		{
-			s_periodicity_check = 4;
+			g_periodicity_check = 4;
 		}
 		break;
 	case MANDELEXP:
@@ -348,12 +348,12 @@ MandelfpSetup(void)
 	case QUATFP:
 		floatparm = &g_temp_z;
 		g_num_attractors = 0;
-		s_periodicity_check = 0;
+		g_periodicity_check = 0;
 		break;
 	case HYPERCMPLXFP:
 		floatparm = &g_temp_z;
 		g_num_attractors = 0;
-		s_periodicity_check = 0;
+		g_periodicity_check = 0;
 		if (param[2] != 0)
 		{
 			g_symmetry = NOSYM;
@@ -507,7 +507,7 @@ JuliafpSetup(void)
 		}
 	case QUATJULFP:
 		g_num_attractors = 0;   /* attractors broken since code checks r, i not j, k */
-		s_periodicity_check = 0;
+		g_periodicity_check = 0;
 		if (param[4] != 0.0 || param[5] != 0)
 		{
 			g_symmetry = NOSYM;
@@ -579,9 +579,9 @@ MandellongSetup(void)
 	{
 		g_symmetry = XAXIS_NOPARM;
 	}
-	if (fractype == SPIDER && s_periodicity_check == 1)
+	if (fractype == SPIDER && g_periodicity_check == 1)
 	{
-		s_periodicity_check = 4;
+		g_periodicity_check = 4;
 	}
 	longparm = &linit;
 	if (fractype == LMANDELZPOWER)
@@ -1217,7 +1217,7 @@ int
 SierpinskiSetup(void)
 {
 	/* sierpinski */
-	s_periodicity_check = 0;                /* disable periodicity checks */
+	g_periodicity_check = 0;                /* disable periodicity checks */
 	ltmp.x = 1;
 	ltmp.x = ltmp.x << bitshift; /* ltmp.x = 1 */
 	ltmp.y = ltmp.x >> 1;                        /* ltmp.y = .5 */
@@ -1228,7 +1228,7 @@ int
 SierpinskiFPSetup(void)
 {
 	/* sierpinski */
-	s_periodicity_check = 0;                /* disable periodicity checks */
+	g_periodicity_check = 0;                /* disable periodicity checks */
 	g_temp_z.x = 1;
 	g_temp_z.y = 0.5;
 	return 1;
@@ -1238,7 +1238,7 @@ int
 HalleySetup(void)
 {
 	/* Halley */
-	s_periodicity_check = 0;
+	g_periodicity_check = 0;
 
 	fractype = usr_floatflag ? HALLEY : MPHALLEY;
 
@@ -1416,7 +1416,7 @@ StandardSetup(void)
 {
 	if (fractype == UNITYFP)
 	{
-		s_periodicity_check = 0;
+		g_periodicity_check = 0;
 	}
 	return 1;
 }

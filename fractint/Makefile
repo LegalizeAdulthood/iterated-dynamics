@@ -232,6 +232,8 @@ $(UDIR)/unixscr.o $(UDIR)/video.o $(UDIR)/d_x11.o $(UDIR)/os_unix.o
 
 endif
 
+DEPFLAGS = -Y -I.$(HFD) $(DEFINES) -DBIG_ANSI_C -DLINUX
+
 HOBJS = $(DOSHELPDIR)/hc.o unix.o
 
 #Need to prevent lex from doing fractint.l -> fractint.c
@@ -260,6 +262,10 @@ clean:
 	rm -f $(HFD)/helpdefs.h
 	cd $(COMDIR) ; ${MAKE} clean
 	cd $(UDIR) ; ${MAKE} clean
+
+depend:
+	cd $(COMDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
+	cd $(UDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
 
 install: xfractint fractint.hlp
 	strip xfractint
@@ -328,6 +334,3 @@ copy: $(FILES)
 	mv $(FILES) backup
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-
-hc.o: $(DOSHELPDIR)/hc.c $(HFD)/helpcom.h $(HFD)/port.h
-

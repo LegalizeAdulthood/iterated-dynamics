@@ -1009,7 +1009,7 @@ int bifurcation(void)
 
 	s_filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
 	s_half_time_check = FALSE;
-	if (s_periodicity_check && (unsigned long)maxit < s_filter_cycles)
+	if (g_periodicity_check && (unsigned long)maxit < s_filter_cycles)
 	{
 		s_filter_cycles = (s_filter_cycles - maxit + 1) / 2;
 		s_half_time_check = TRUE;
@@ -1103,7 +1103,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 			{
 				return;
 			}
-			if (s_periodicity_check && bifurcation_periodic(counter))
+			if (g_periodicity_check && bifurcation_periodic(counter))
 			{
 				break;
 			}
@@ -1121,7 +1121,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		}
 	}
 
-	if (s_periodicity_check)
+	if (g_periodicity_check)
 	{
 		bifurcation_period_init();
 	}
@@ -1143,7 +1143,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		{
 			s_verhulst_array[pixel_row] ++;
 		}
-		if (s_periodicity_check && bifurcation_periodic(counter))
+		if (g_periodicity_check && bifurcation_periodic(counter))
 		{
 			if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
 				s_verhulst_array[pixel_row] --;
