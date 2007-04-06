@@ -179,11 +179,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 	g_plot_color = (transparent[0] || transparent[1]) ? transparent_clip_color : clip_color;
 	normal_plot = g_plot_color;
 
-	currow = g_row_count;
+	g_current_row = g_row_count;
 	/* use separate variable to allow for pot16bit files */
 	if (pot16bit)
 	{
-		currow >>= 1;
+		g_current_row >>= 1;
 	}
 
 	/************************************************************************/
@@ -259,7 +259,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	{
 		if (g_haze && Targa_Out)
 		{
-			s_haze_mult = (int) (g_haze*((float) ((long) (ydots - 1 - currow)*(long) (ydots - 1 - currow))
+			s_haze_mult = (int) (g_haze*((float) ((long) (ydots - 1 - g_current_row)*(long) (ydots - 1 - g_current_row))
 									/ (float) ((long) (ydots - 1)*(long) (ydots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
@@ -275,9 +275,9 @@ int line3d(BYTE *pixels, unsigned linelen)
 	tout = 0;
 	/* Insure last line is drawn in preview and filltypes <0  */
 	if ((g_raytrace_output || g_preview || FILLTYPE < FILLTYPE_POINTS)
-		&& (currow != ydots - 1)
-		&& (currow % s_local_preview_factor) /* Draw mod preview lines */
-		&& !(!g_raytrace_output && (FILLTYPE > FILLTYPE_FILL_BARS) && (currow == 1)))
+		&& (g_current_row != ydots - 1)
+		&& (g_current_row % s_local_preview_factor) /* Draw mod preview lines */
+		&& !(!g_raytrace_output && (FILLTYPE > FILLTYPE_FILL_BARS) && (g_current_row == 1)))
 			/* Get init geometry in lightsource modes */
 	{
 		goto reallythebottom;     /* skip over most of the line3d calcs */
@@ -285,11 +285,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 	if (driver_diskp())
 	{
 		char s[40];
-		sprintf(s, "mapping to 3d, reading line %d", currow);
+		sprintf(s, "mapping to 3d, reading line %d", g_current_row);
 		dvid_status(1, s);
 	}
 
-	if (!col && g_raytrace_output && currow != 0)
+	if (!col && g_raytrace_output && g_current_row != 0)
 	{
 		start_object();
 	}
@@ -442,7 +442,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* use 32-bit multiply math to snap this out */
 				lv[0] = col;
 				lv[0] = lv[0] << 16;
-				lv[1] = currow;
+				lv[1] = g_current_row;
 				lv[1] = lv[1] << 16;
 				if (filetype || pot16bit) /* don't truncate fractional part */
 				{
@@ -480,7 +480,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			{
 				/* slow float version for comparison */
 				v[0] = col;
-				v[1] = currow;
+				v[1] = g_current_row;
 				v[2] = f_cur.color;      /* Actually the z value */
 
 				mult_vec(v, s_m);     /* matrix*vector routine */
@@ -544,7 +544,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 		if (g_raytrace_output)
 		{
-			if (col && currow &&
+			if (col && g_current_row &&
 				old.x > BAD_CHECK &&
 				old.x < (xdots - BAD_CHECK) &&
 				s_last_row[col].x > BAD_CHECK &&
@@ -578,7 +578,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				s_num_tris++;
 			}
 
-			if (col < last_dot && currow &&
+			if (col < last_dot && g_current_row &&
 				s_last_row[col].x > BAD_CHECK &&
 				s_last_row[col].y > BAD_CHECK &&
 				s_last_row[col].x < (xdots - BAD_CHECK) &&
@@ -636,7 +636,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			{
 				driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 			}
-			if (currow &&
+			if (g_current_row &&
 				s_last_row[col].x > BAD_CHECK &&
 				s_last_row[col].y > BAD_CHECK &&
 				s_last_row[col].x < (xdots - BAD_CHECK) &&
@@ -674,11 +674,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 			/* /                       1  /                              */
 			/* oldrow/col ________ trow/col                              */
 			/*************************************************************/
-			if (currow && !col)
+			if (g_current_row && !col)
 			{
 				put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
 			}
-			if (currow && col)  /* skip first row and first column */
+			if (g_current_row && col)  /* skip first row and first column */
 			{
 				if (col == 1)
 				{
@@ -709,7 +709,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			else
 			{
 				lv[0] = col;
-				lv[1] = currow;
+				lv[1] = g_current_row;
 				lv[2] = 0;
 				/* apply fudge bit shift for integer math */
 				lv[0] = lv[0] << 16;
@@ -749,7 +749,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		case FILLTYPE_LIGHT_BEFORE:
 		case FILLTYPE_LIGHT_AFTER:
 			/* light-source modulated fill */
-			if (currow && col)  /* skip first row and first column */
+			if (g_current_row && col)  /* skip first row and first column */
 			{
 				if (f_cur.color < BAD_CHECK || f_old.color < BAD_CHECK ||
 					s_f_last_row[col].color < BAD_CHECK)
@@ -850,12 +850,12 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* algorithm, which needs previous point in same row to have  */
 				/* already been calculated (variable old)                 */
 				/* fix ragged left margin in preview */
-				if (col == 1 && currow > 1)
+				if (col == 1 && g_current_row > 1)
 				{
 					put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
 				}
 
-				if (col < 2 || currow < 2)       /* don't have valid colors yet */
+				if (col < 2 || g_current_row < 2)       /* don't have valid colors yet */
 				{
 					break;
 				}
@@ -880,7 +880,7 @@ loopbottom:
 
 			/* for illumination model purposes */
 			f_old = s_f_last_row[col] = f_cur;
-			if (currow && g_raytrace_output && col >= last_dot)
+			if (g_current_row && g_raytrace_output && col >= last_dot)
 				/* if we're at the end of a row, close the object */
 			{
 				end_object(tout);
@@ -903,7 +903,7 @@ reallythebottom:
 	if (SPHERE)
 	{
 		/* incremental sin/cos phi calc */
-		if (currow == 0)
+		if (g_current_row == 0)
 		{
 			s_sin_phi = s_old_sin_phi2;
 			s_cos_phi = s_old_cos_phi2;

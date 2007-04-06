@@ -72,11 +72,11 @@ int handle_timed_save(int ch)
 				{
 					if ((g_got_status != GOT_STATUS_12PASS) && (g_got_status != GOT_STATUS_GUESSING))
 					{
-						finishrow = currow;
+						finishrow = g_current_row;
 					}
 				}
 			}
-			else if (currow != finishrow)
+			else if (g_current_row != finishrow)
 			{
 				timedsave = TRUE;
 				return FIK_SAVE_TIME;
