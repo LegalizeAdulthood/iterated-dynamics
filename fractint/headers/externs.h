@@ -63,7 +63,7 @@ extern char                  calibrate;
 extern int                   checkcurdir;
 extern int                   g_checked_vvs;
 extern long                  cimag;
-extern double                closenuff;
+extern double                g_close_enough;
 extern double                g_proximity;
 extern _CMPLX                coefficient;
 extern int                   g_col;
