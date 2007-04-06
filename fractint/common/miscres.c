@@ -1069,7 +1069,7 @@ top:
 		switch (g_got_status)
 		{
 		case GOT_STATUS_12PASS:
-			sprintf(msg, "%d Pass Mode", totpasses);
+			sprintf(msg, "%d Pass Mode", g_total_passes);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			if (usr_stdcalcmode == '3')
 			{
@@ -1123,13 +1123,13 @@ top:
 			}
 			else
 			{
-				if (totpasses > 1)
+				if (g_total_passes > 1)
 				{
 					driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-					sprintf(msg, "%d", curpass);
+					sprintf(msg, "%d", g_current_pass);
 					driver_put_string(-1, -1, C_GENERAL_HI, msg);
 					driver_put_string(-1, -1, C_GENERAL_MED, " of ");
-					sprintf(msg, "%d", totpasses);
+					sprintf(msg, "%d", g_total_passes);
 					driver_put_string(-1, -1, C_GENERAL_HI, msg);
 					driver_put_string(-1, -1, C_GENERAL_MED, ", ");
 				}
