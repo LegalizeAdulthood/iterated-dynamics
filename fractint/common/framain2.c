@@ -1584,13 +1584,12 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 {
 	long old_maxit;
 
-	if (quick_calc && calc_status == CALCSTAT_COMPLETED)
+	if (quick_calc)
 	{
-		quick_calc = 0;
-		usr_stdcalcmode = old_stdcalcmode;
-	}
-	if (quick_calc && calc_status != CALCSTAT_COMPLETED)
-	{
+		if (CALCSTAT_COMPLETED == calc_status)
+		{
+			quick_calc = 0;
+		}
 		usr_stdcalcmode = old_stdcalcmode;
 	}
 	switch (*kbdchar)
