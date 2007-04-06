@@ -266,7 +266,7 @@ int get_toggles()
 
 	choices[++k] = "Proximity value for inside=epscross and fmod";
 	uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
-	uvalues[k].uval.dval = old_closeprox = closeprox;
+	uvalues[k].uval.dval = old_closeprox = g_proximity;
 
 	oldhelpmode = helpmode;
 	helpmode = HELPXOPTS;
@@ -460,8 +460,8 @@ int get_toggles()
 	}
 
 	++k;
-	closeprox = uvalues[k].uval.dval;
-	if (closeprox != old_closeprox)
+	g_proximity = uvalues[k].uval.dval;
+	if (g_proximity != old_closeprox)
 	{
 		j++;
 	}

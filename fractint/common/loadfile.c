@@ -338,7 +338,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		/* post-version 18.23 */
 		maxit = read_info.iterations; /* use long maxit */
 		/* post-version 18.27 */
-		g_old_demm_colors = read_info.g_old_demm_colors;
+		g_old_demm_colors = read_info.old_demm_colors;
 	}
 
 	if (read_info.version > 10) /* post-version 19.20 */
@@ -359,7 +359,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 12) /* post-version 19.60 */
 	{
 		g_quick_calculate   = read_info.quick_calculate;
-		closeprox    = read_info.closeprox;
+		g_proximity    = read_info.proximity;
 		if (fractype == FPPOPCORN || fractype == LPOPCORN ||
 			fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
 			fractype == LATOO)
@@ -1220,7 +1220,7 @@ void backwards_v20(void)
 		? 1 : 0;
 	if (inside == EPSCROSS && save_release < 1961)
 	{
-		closeprox = 0.01;
+		g_proximity = 0.01;
 	}
 	if (!functionpreloaded)
 	{

@@ -905,7 +905,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->iterations = maxit;
 	save_info->bflength = (short) bnlength;
 	save_info->bf_math = (short) bf_math;
-	save_info->g_old_demm_colors = (short) g_old_demm_colors;
+	save_info->old_demm_colors = (short) g_old_demm_colors;
 	save_info->logmap = LogFlag;
 	save_info->distest = distest;
 	save_info->dinvert[0] = inversion[0];
@@ -914,7 +914,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->logcalc = (short) Log_Fly_Calc;
 	save_info->stoppass = (short) stoppass;
 	save_info->quick_calculate = (short) g_quick_calculate;
-	save_info->closeprox = closeprox;
+	save_info->proximity = g_proximity;
 	save_info->nobof = (short) nobof;
 	save_info->orbit_interval = g_orbit_interval;
 	save_info->orbit_delay = (short) orbit_delay;

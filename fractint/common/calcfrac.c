@@ -74,7 +74,7 @@ int g_old_demm_colors = FALSE;
 int (*g_calculate_type)(void) = NULL;
 int (*g_calculate_type_temp)(void);
 int g_quick_calculate = FALSE;
-double closeprox = 0.01;
+double g_proximity = 0.01;
 double closenuff;
 int pixelpi; /* value of pi in pixels */
 unsigned long lm;               /* magnitude limit (CALCMAND) */
@@ -2007,7 +2007,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	double totaldist = 0.0;
 	_CMPLX lastz;
 
-	lcloseprox = (long)(closeprox*fudge);
+	lcloseprox = (long)(g_proximity*fudge);
 	savemaxit = maxit;
 #ifdef NUMSAVED
 	for (i = 0; i < NUMSAVED; i++)
@@ -2330,14 +2330,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				}
 				else
 				{
-					if (fabs(g_new_z.x) < fabs(closeprox))
+					if (fabs(g_new_z.x) < fabs(g_proximity))
 					{
-						hooper = (closeprox > 0? 1 : -1); /* close to y axis */
+						hooper = (g_proximity > 0? 1 : -1); /* close to y axis */
 						goto plot_inside;
 					}
-					else if (fabs(g_new_z.y) < fabs(closeprox))
+					else if (fabs(g_new_z.y) < fabs(g_proximity))
 					{
-						hooper = (closeprox > 0? 2 : -2); /* close to x axis */
+						hooper = (g_proximity > 0? 2 : -2); /* close to x axis */
 						goto plot_inside;
 					}
 				}
@@ -2351,7 +2351,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					g_new_z.y = ((double)lnew.y) / fudge;
 				}
 				mag = fmodtest();
-				if (mag < closeprox)
+				if (mag < g_proximity)
 				{
 					memvalue = mag;
 				}
@@ -2409,7 +2409,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 					g_new_z.y = ((double)lnew.y) / fudge;
 				}
 				mag = fmodtest();
-				if (mag < closeprox)
+				if (mag < g_proximity)
 				{
 					memvalue = mag;
 				}
@@ -2687,7 +2687,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		}
 		else if (outside == FMOD)
 		{
-			g_color_iter = (long)(memvalue*colors / closeprox);
+			g_color_iter = (long)(memvalue*colors / g_proximity);
 		}
 		else if (outside == TDIS)
 		{
@@ -2833,7 +2833,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (inside == FMODI)
 		{
-			g_color_iter = (long)(memvalue*colors / closeprox);
+			g_color_iter = (long)(memvalue*colors / g_proximity);
 		}
 		else if (inside == ATANI)          /* "atan" */
 		{

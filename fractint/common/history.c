@@ -137,7 +137,7 @@ void _fastcall save_history_info(void)
 	current.g_old_demm_colors		= (short) g_old_demm_colors;
 	current.logcalc				= (short) Log_Fly_Calc;
 	current.ismand				= (short) g_is_mand;
-	current.closeprox			= closeprox;
+	current.proximity			= g_proximity;
 	current.nobof				= (short) nobof;
 	current.orbit_delay			= (short) orbit_delay;
 	current.orbit_interval		= g_orbit_interval;
@@ -334,7 +334,7 @@ void _fastcall restore_history_info(void)
 	}
 	Log_Fly_Calc			= last.logcalc;
 	g_is_mand					= last.ismand;
-	closeprox				= last.closeprox;
+	g_proximity				= last.proximity;
 	nobof					= last.nobof;
 	orbit_delay				= last.orbit_delay;
 	g_orbit_interval			= last.orbit_interval;
