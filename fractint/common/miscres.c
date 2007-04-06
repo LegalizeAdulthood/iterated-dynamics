@@ -871,8 +871,13 @@ int tab_display_2(char *msg)
 		curfractalspecific->orbitcalc ==  BadFormula ? "bad formula" :
 		"", uses_ismand);
 /*
-	write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
-		ixstart, ixstop, iystart, iystop, bitshift);
+	{
+		char message[80] = { 0 };
+		extern void tile_message(char *message, int message_len);
+		tile_message(message, NUM_OF(message));
+		write_row(row++, message)
+	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d bitshift %d",
+		ixstart, g_x_stop, iystart, g_y_stop, bitshift);
 */
 	write_row(row++, "minstackavail %d g_limit2_l %ld use_grid %d",
 		minstackavail, g_limit2_l, use_grid);
