@@ -104,8 +104,8 @@ int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
               /* 6 for orbits */
 int g_current_pass;
 int g_total_passes;
-int currow;
-int curcol;
+int g_current_row;
+int g_current_col;
 /* vars for diffusion scan */
 unsigned bits = 0; 		/* number of bits in the counter */
 unsigned long dif_counter; 	/* the diffusion counter */
@@ -1540,7 +1540,7 @@ static int draw_rectangle_orbits()
 
 	while (g_row <= g_y_stop)
 	{
-		currow = g_row;
+		g_current_row = g_row;
 		while (g_col <= g_x_stop)
 		{
 			if (plotorbits2dfloat() == -1)
@@ -1804,7 +1804,7 @@ static int _fastcall StandardCalc(int passnum)
 
 	while (g_row <= g_y_stop)
 	{
-		currow = g_row;
+		g_current_row = g_row;
 		g_reset_periodicity = 1;
 		while (g_col <= g_x_stop)
 		{
@@ -3345,19 +3345,19 @@ int  bound_trace_main(void)
 
 	g_got_status = GOT_STATUS_BOUNDARY_TRACE;
 	max_putline_length = 0; /* reset max_putline_length */
-	for (currow = iystart; currow <= g_y_stop; currow++)
+	for (g_current_row = iystart; g_current_row <= g_y_stop; g_current_row++)
 	{
 		g_reset_periodicity = 1; /* reset for a new row */
 		g_color = bkcolor;
-		for (curcol = ixstart; curcol <= g_x_stop; curcol++)
+		for (g_current_col = ixstart; g_current_col <= g_x_stop; g_current_col++)
 		{
-			if (getcolor(curcol, currow) != bkcolor)
+			if (getcolor(g_current_col, g_current_row) != bkcolor)
 			{
 				continue;
 			}
 			trail_color = g_color;
-			g_row = currow;
-			g_col = curcol;
+			g_row = g_current_row;
+			g_col = g_current_col;
 			if ((*g_calculate_type)() == -1) /* color, row, col are global */
 			{
 				if (showdot != bkcolor) /* remove showdot pixel */
@@ -3366,9 +3366,9 @@ int  bound_trace_main(void)
 				}
 				if (g_y_stop != g_yy_stop)  /* DG */
 				{
-					g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
+					g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 				}
-				add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
+				add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, worksym);
 				return -1;
 			}
 			g_reset_periodicity = 0; /* normal periodicity checking */
@@ -3383,8 +3383,8 @@ int  bound_trace_main(void)
 			}
 
 			/* sweep clockwise to trace outline */
-			trail_row = currow;
-			trail_col = curcol;
+			trail_row = g_current_row;
+			trail_col = g_current_col;
 			trail_color = g_color;
 			fillcolor_used = fillcolor > 0 ? fillcolor : trail_color;
 			coming_from = West;
@@ -3394,7 +3394,7 @@ int  bound_trace_main(void)
 			do
 			{
 				step_col_row();
-				if (g_row >= currow
+				if (g_row >= g_current_row
 					&& g_col >= ixstart
 					&& g_col <= g_x_stop
 					&& g_row <= g_y_stop)
@@ -3410,9 +3410,9 @@ int  bound_trace_main(void)
 						}
 						if (g_y_stop != g_yy_stop)  /* DG */
 						{
-							g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
+							g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 						}
-						add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
+						add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, worksym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -3437,7 +3437,7 @@ int  bound_trace_main(void)
 					continue_loop = going_to != coming_from || match_found;
 				}
 			}
-			while (continue_loop && (g_col != curcol || g_row != currow));
+			while (continue_loop && (g_col != g_current_col || g_row != g_current_row));
 
 			if (match_found <= 3)  /* DG */
 			{
@@ -3451,8 +3451,8 @@ int  bound_trace_main(void)
 			Fill in region by looping around again, filling lines to the left
 			whenever going_to is South or West
 			*/
-			trail_row = currow;
-			trail_col = curcol;
+			trail_row = g_current_row;
+			trail_col = g_current_col;
 			coming_from = West;
 			going_to = East;
 			do
@@ -3461,7 +3461,7 @@ int  bound_trace_main(void)
 				do
 				{
 					step_col_row();
-					if (g_row >= currow
+					if (g_row >= g_current_row
 						&& g_col >= ixstart
 						&& g_col <= g_x_stop
 						&& g_row <= g_y_stop
@@ -3513,9 +3513,9 @@ int  bound_trace_main(void)
 								{
 									if (g_y_stop != g_yy_stop)
 									{
-										g_y_stop = g_yy_stop - (currow - g_yy_start); /* allow for sym */
+										g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 									}
-									add_worklist(g_xx_start, g_xx_stop, curcol, currow, g_y_stop, currow, 0, worksym);
+									add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, worksym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;
@@ -3542,7 +3542,7 @@ int  bound_trace_main(void)
 					advance_match();
 				}
 			}
-			while (trail_col != curcol || trail_row != currow);
+			while (trail_col != g_current_col || trail_row != g_current_row);
 			g_reset_periodicity = 1; /* reset after a trace/fill */
 			g_color = bkcolor;
 		}
@@ -3630,7 +3630,7 @@ static int solidguess(void)
 		g_current_pass = 1;
 		if (iystart <= g_yy_start) /* first time for this window, init it */
 		{
-			currow = 0;
+			g_current_row = 0;
 			memset(&tprefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
 			g_reset_periodicity = 1;
 			g_row = iystart;
@@ -3650,7 +3650,7 @@ static int solidguess(void)
 		}
 		for (y = iystart; y <= g_y_stop; y += blocksize)
 		{
-			currow = y;
+			g_current_row = y;
 			i = 0;
 			if (y + blocksize <= g_y_stop)
 			{ /* calc the row below */
@@ -3753,7 +3753,7 @@ static int solidguess(void)
 		g_current_pass = workpass + 1;
 		for (y = iystart; y <= g_y_stop; y += blocksize)
 		{
-			currow = y;
+			g_current_row = y;
 			if (guessrow(0, y, blocksize) != 0)
 			{
 				if (y < g_yy_start)
@@ -4654,8 +4654,8 @@ static int tesseral(void)
 
 	while (tp >= (struct tess *)&dstack[0])  /* do next box */
 	{
-		curcol = tp->x1; /* for tab_display */
-		currow = tp->y1;
+		g_current_col = tp->x1; /* for tab_display */
+		g_current_row = tp->y1;
 
 		if (tp->top == -1 || tp->bot == -1 || tp->lft == -1 || tp->rgt == -1)
 		{
