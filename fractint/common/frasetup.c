@@ -321,8 +321,8 @@ MandelfpSetup(void)
 		break;
 	case MAGNET1M:
 	case MAGNET2M:
-		attr[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
-		attr[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
+		g_attractors[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
+		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
 		attrperiod[0] = 1;
 		g_num_attractors = 1;
 		break;
@@ -468,8 +468,8 @@ JuliafpSetup(void)
 	case MAGNET2J:
 		FloatPreCalcMagnet2();
 	case MAGNET1J:
-		attr[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
-		attr[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
+		g_attractors[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
+		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
 		attrperiod[0] = 1;
 		g_num_attractors = 1;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
