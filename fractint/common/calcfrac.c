@@ -43,7 +43,7 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
-long g_magnitude_l, g_limit_l, g_limit2_l, lclosenuff, l16triglim;
+long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l, l16triglim;
 _CMPLX init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
@@ -725,7 +725,7 @@ int calcfract(void)
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
 		g_limit2_l = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
-		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
+		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
 		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
 		g_init_orbit_l.y = (long)(initorbit.y*fudge);
@@ -762,7 +762,7 @@ int calcfract(void)
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-			lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
+			g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
 			setsymmetry(symmetry, 0);
 			timer(TIMER_ENGINE, calctype); /* non-standard fractal engine */
 		}
@@ -1105,7 +1105,7 @@ static void perform_worklist()
 
 		/* some common initialization for escape-time pixel level routines */
 		closenuff = ddelmin*pow(2.0, -(double)(abs(periodicitycheck)));
-		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
+		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
 		kbdcount = max_kbdcount;
 
 		setsymmetry(symmetry, 1);
@@ -2491,9 +2491,9 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				if (integerfractal)     /* floating-pt periodicity chk */
 				{
-					if (labs(lsaved.x - lnew.x) < lclosenuff)
+					if (labs(lsaved.x - lnew.x) < g_close_enough_l)
 					{
-						if (labs(lsaved.y - lnew.y) < lclosenuff)
+						if (labs(lsaved.y - lnew.y) < g_close_enough_l)
 						{
 							caught_a_cycle = 1;
 						}

@@ -194,7 +194,7 @@ calc_mand_floating_point(void)
 					savedincr = nextsavedincr;
 				}
 			}
-			else if (ABS(savedx-x) < lclosenuff && ABS(savedy-y) < lclosenuff)
+			else if (ABS(savedx-x) < g_close_enough_l && ABS(savedy-y) < g_close_enough_l)
 			{
 				/* oldcoloriter = 65535;  */
 				oldcoloriter = maxit;
@@ -440,11 +440,11 @@ chkpd386_16:
 		jz		short chksv386_16			;  time	to save	a new "old"	value
 		mov		ebx, esi					; load up x
 		xor		ebx, dword ptr savedx + 4		; does X	match?
-		cmp		ebx, dword ptr lclosenuff + 4	;  truncate	to appropriate precision
+		cmp		ebx, dword ptr g_close_enough_l + 4	;  truncate	to appropriate precision
 		ja		short nonmax386_16			;  nope.  forget it.
 		mov		ebx, edi					; now test y
 		xor		ebx, dword ptr savedy + 4		; does Y	match?
-		cmp		ebx, dword ptr lclosenuff + 4	;  truncate	to appropriate precision
+		cmp		ebx, dword ptr g_close_enough_l + 4	;  truncate	to appropriate precision
 		ja		short nonmax386_16			;  nope.  forget it.
 		mov		period,	1					; note	that we	have found periodicity
 		mov		k, 0						; pretend maxit reached
@@ -522,11 +522,11 @@ chkperiod1:
 		jz		short chksave1
 		mov		eax, esi
 		xor		eax, savedx
-		cmp		eax, lclosenuff
+		cmp		eax, g_close_enough_l
 		ja		short nonmax1
 		mov		eax, edi
 		xor		eax, savedy
-		cmp		eax, lclosenuff
+		cmp		eax, g_close_enough_l
 		ja		short nonmax1
 		mov		period,	1					; note	that we	have found periodicity
 		mov		k, 0						; pretend maxit reached
@@ -764,19 +764,19 @@ checkperiod:								; periodicity check
 notimeyet:
 		mov		edx, dword ptr x + 4			; load up x
 		xor		edx, dword ptr savedx + 4
-		cmp		edx, dword ptr lclosenuff + 4
+		cmp		edx, dword ptr g_close_enough_l + 4
 		ja		checkdone
 		mov		eax, dword ptr x			; load up x
 		xor		eax, dword ptr savedx
-		cmp		eax, dword ptr lclosenuff
+		cmp		eax, dword ptr g_close_enough_l
 		ja		checkdone
 		mov		edx, dword ptr y + 4			; load up y
 		xor		edx, dword ptr savedy + 4
-		cmp		edx, dword ptr lclosenuff + 4
+		cmp		edx, dword ptr g_close_enough_l + 4
 		ja		checkdone
 		mov		eax, dword ptr y			; load up y
 		xor		eax, dword ptr savedy
-		cmp		eax, dword ptr lclosenuff
+		cmp		eax, dword ptr g_close_enough_l
 		ja		checkdone
 		mov		period,	1					; note	that we	have found periodicity
 		mov		dword ptr k, 1				;	pretend	maxit reached
