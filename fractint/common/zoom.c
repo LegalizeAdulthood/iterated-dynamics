@@ -617,7 +617,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	}
 	if (curfractalspecific->calculate_type != StandardFractal
 		&& curfractalspecific->calculate_type != calculate_mandelbrot
-		&& curfractalspecific->calculate_type != calcmandfp
+		&& curfractalspecific->calculate_type != calculate_mandelbrot_fp
 		&& curfractalspecific->calculate_type != lyapunov
 		&& curfractalspecific->calculate_type != froth_calc)
 	{

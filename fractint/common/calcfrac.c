@@ -749,7 +749,7 @@ int calculate_fractal(void)
 
 	if (curfractalspecific->calculate_type != StandardFractal
 		&& curfractalspecific->calculate_type != calculate_mandelbrot
-		&& curfractalspecific->calculate_type != calcmandfp
+		&& curfractalspecific->calculate_type != calculate_mandelbrot_fp
 		&& curfractalspecific->calculate_type != lyapunov
 		&& curfractalspecific->calculate_type != froth_calc)
 	{
@@ -1806,7 +1806,7 @@ static int _fastcall standard_calculate(int passnum)
 			}
 			if (passnum == 1 || stdcalcmode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*g_calculate_type)() == -1) /* StandardFractal(), calculate_mandelbrot() or calcmandfp() */
+				if ((*g_calculate_type)() == -1) /* StandardFractal(), calculate_mandelbrot() or calculate_mandelbrot_fp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -1893,7 +1893,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 /* can also handle invert, any g_rq_limit, potflag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
-int calcmandfp(void)
+int calculate_mandelbrot_fp(void)
 {
 	if (g_invert)
 	{

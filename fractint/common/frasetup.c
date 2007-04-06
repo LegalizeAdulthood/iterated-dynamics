@@ -251,7 +251,7 @@ MandelfpSetup(void)
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using StandardFractal().
-		calcmandfp() can currently handle invert, any g_rq_limit, potflag
+		calculate_mandelbrot_fp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
@@ -268,7 +268,7 @@ MandelfpSetup(void)
 			&& using_jiim == 0 && g_bail_out_test == Mod
 			&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-			g_calculate_type = calcmandfp; /* the normal case - use calcmandfp */
+			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)
 			if (cpu >= 386 && fpu >= 387)
 			{
@@ -398,7 +398,7 @@ JuliafpSetup(void)
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using StandardFractal().
-		calcmandfp() can currently handle invert, any g_rq_limit, potflag
+		calculate_mandelbrot_fp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
@@ -416,7 +416,7 @@ JuliafpSetup(void)
 				&& using_jiim == 0 && g_bail_out_test == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
-			g_calculate_type = calcmandfp; /* the normal case - use calcmandfp */
+			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)
 			if (cpu >= 386 && fpu >= 387)
 			{
