@@ -1279,7 +1279,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		end_resume();
 
 	Engines which allocate a large memory chunk of their own might
-	directly set resume_info, resume_len, calc_status to avoid doubling
+	directly set g_resume_info, resume_len, calc_status to avoid doubling
 	transient memory needs by using these routines.
 
 	StandardFractal, calcmand, solidguess, and bound_trace_main are a related
@@ -1304,7 +1304,7 @@ va_dcl
 	int len;
 #endif
 
-	if (resume_info == NULL)
+	if (g_resume_info == NULL)
 	{
 		return -1;
 	}
@@ -1320,7 +1320,7 @@ va_dcl
 #if defined(_WIN32)
 		_ASSERTE(resume_len + len <= resume_info_len);
 #endif
-		memcpy(&resume_info[resume_len], source_ptr, len);
+		memcpy(&g_resume_info[resume_len], source_ptr, len);
 		resume_len += len;
 		len = va_arg(arg_marker, int);
 	}
@@ -1333,8 +1333,8 @@ int alloc_resume(int alloclen, int version)
 	end_resume();
 
 	resume_info_len = alloclen*alloclen;
-	resume_info = malloc(resume_info_len);
-	if (resume_info == NULL)
+	g_resume_info = malloc(resume_info_len);
+	if (g_resume_info == NULL)
 	{
 		stopmsg(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
@@ -1361,7 +1361,7 @@ va_dcl
 	int len;
 #endif
 
-	if (resume_info == NULL)
+	if (g_resume_info == NULL)
 	{
 		return -1;
 	}
@@ -1377,7 +1377,7 @@ va_dcl
 #if defined(_WIN32)
 		_ASSERTE(resume_offset + len <= resume_info_len);
 #endif
-		memcpy(dest_ptr, &resume_info[resume_offset], len);
+		memcpy(dest_ptr, &g_resume_info[resume_offset], len);
 		resume_offset += len;
 		len = va_arg(arg_marker, int);
 	}
@@ -1388,7 +1388,7 @@ va_dcl
 int start_resume(void)
 {
 	int version;
-	if (resume_info == NULL)
+	if (g_resume_info == NULL)
 	{
 		return -1;
 	}
@@ -1399,10 +1399,10 @@ int start_resume(void)
 
 void end_resume(void)
 {
-	if (resume_info != NULL) /* free the prior area if there is one */
+	if (g_resume_info != NULL) /* free the prior area if there is one */
 	{
-		free(resume_info);
-		resume_info = NULL;
+		free(g_resume_info);
+		g_resume_info = NULL;
 		resume_info_len = 0;
 	}
 }

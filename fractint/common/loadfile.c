@@ -459,7 +459,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (resume_info_blk.got_data == 1)
 	{
-		resume_info = resume_info_blk.resume_data;
+		g_resume_info = resume_info_blk.resume_data;
 		resume_len = resume_info_blk.length;
 	}
 

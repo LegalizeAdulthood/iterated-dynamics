@@ -83,11 +83,11 @@ int g_orbit_index;                      /* pointer into g_save_orbit array */
 int g_orbit_color = 15;                 /* XOR color */
 int g_x_stop;
 int g_y_stop;							/* stop here */
-int     g_symmetry;          /* symmetry flag */
-int     g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
-int     g_input_counter;
+int g_symmetry;          /* symmetry flag */
+int g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
+int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
-char *resume_info = NULL;                    /* resume info if allocated */
+char *g_resume_info = NULL;                    /* resume info if allocated */
 int resuming;                           /* nonzero if resuming after interrupt */
 int num_worklist;                       /* resume worklist for standard engine */
 WORKLIST worklist[MAXCALCWORK];
