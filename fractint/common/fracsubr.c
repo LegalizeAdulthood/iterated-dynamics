@@ -1921,8 +1921,8 @@ void get_julia_attractor (double real, double imag)
 			{                        /* and doesn't move far, probably */
 				if (integerfractal)   /*   found a finite attractor    */
 				{
-					if (labs(lresult.x-lnew.x) < lclosenuff
-						&& labs(lresult.y-lnew.y) < lclosenuff)
+					if (labs(lresult.x-lnew.x) < g_close_enough_l
+						&& labs(lresult.y-lnew.y) < g_close_enough_l)
 					{
 						lattr[attractors] = lnew;
 						attrperiod[attractors] = i + 1;

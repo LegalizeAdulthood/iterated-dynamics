@@ -240,7 +240,7 @@ extern int                   LastInitOp;
 extern unsigned              LastOp;
 extern int                   lastorbittype;
 extern _LCMPLX               lattr[];
-extern long                  lclosenuff;
+extern long                  g_close_enough_l;
 extern _LCMPLX               lcoefficient;
 extern int                   ldcheck;
 extern char                  LFileName[];
