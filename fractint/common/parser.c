@@ -2466,7 +2466,7 @@ static int ParseStr(char *Str, int pass)
 	SetRandom = Randomized = 0;
 	uses_jump = 0;
 	jump_index = 0;
-	if (!typespecific_workarea)
+	if (!g_type_specific_work_area)
 	{
 		stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return 1;
@@ -4352,7 +4352,7 @@ void init_misc()
 
 /* PB 910417 here to end changed.
 		Allocate sub-arrays from one main malloc, using global variable
-		typespecific_workarea; calcfrac.c releases this area when calculation
+		g_type_specific_work_area; calcfrac.c releases this area when calculation
 		ends or is terminated.
 		Moved the "f" array to be allocated as part of this.
 		*/
@@ -4386,8 +4386,8 @@ static void parser_allocate(void)
 			+ sizeof(struct PEND_OP)*Max_Ops;
 		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
-		typespecific_workarea = malloc(f_size + Load_size + Store_size + v_size + p_size);
-		f = (void (**)(void)) typespecific_workarea;
+		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
+		f = (void (**)(void)) g_type_specific_work_area;
 		Store = (union Arg **) (f + Max_Ops);
 		Load = (union Arg **) (Store + MAX_STORES);
 		v = (struct ConstArg *) (Load + MAX_LOADS);
@@ -4409,11 +4409,11 @@ static void parser_allocate(void)
 
 void free_workarea()
 {
-	if (typespecific_workarea)
+	if (g_type_specific_work_area)
 	{
-		free(typespecific_workarea);
+		free(g_type_specific_work_area);
 	}
-	typespecific_workarea = NULL;
+	g_type_specific_work_area = NULL;
 	Store = (union Arg **) NULL;
 	Load = (union Arg **) NULL;
 	v = (struct ConstArg *) NULL;
