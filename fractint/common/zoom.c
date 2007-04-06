@@ -686,7 +686,7 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 /* move a row on the screen */
 {
 	int startcol, endcol, tocol;
-	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
+	memset(g_stack, 0, xdots); /* use g_stack as a temp for the row; clear it */
 	if (fromrow >= 0 && fromrow < ydots)
 	{
 		tocol = startcol = 0;
@@ -700,9 +700,9 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 		{
 			startcol += col;
 		}
-		get_line(fromrow, startcol, endcol, (BYTE *)&dstack[tocol]);
+		get_line(fromrow, startcol, endcol, (BYTE *)&g_stack[tocol]);
 	}
-	put_line(torow, 0, xdots-1, (BYTE *)dstack);
+	put_line(torow, 0, xdots-1, (BYTE *)g_stack);
 }
 
 int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_list & pan */
@@ -836,9 +836,9 @@ static void _fastcall restart_window(int wknum)
 	{
 		xto = xdots - 1;
 	}
-	memset(dstack, 0, xdots); /* use dstack as a temp for the row; clear it */
+	memset(g_stack, 0, xdots); /* use g_stack as a temp for the row; clear it */
 	while (yfrom <= yto)
-		put_line(yfrom++, xfrom, xto, (BYTE *)dstack);
+		put_line(yfrom++, xfrom, xto, (BYTE *)g_stack);
 	g_work_list[wknum].sym = g_work_list[wknum].pass = 0;
 	g_work_list[wknum].yy_begin = g_work_list[wknum].yy_start;
 	g_work_list[wknum].xx_begin = g_work_list[wknum].xx_start;

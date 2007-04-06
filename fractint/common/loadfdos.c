@@ -232,7 +232,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 		qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); /* sort modes */
 
-		attributes = (int *)&dstack[1000];
+		attributes = (int *)&g_stack[1000];
 		for (i = 0; i < g_video_table_len; ++i)
 		{
 			attributes[i] = 1;
@@ -266,13 +266,13 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				sprintf(temp1, "Type: %s", nameptr);
 			}
 		}
-		sprintf((char *)dstack, "File: %-44s  %d x %d x %d\n%-52s",
+		sprintf((char *)g_stack, "File: %-44s  %d x %d x %d\n%-52s",
 				readname, filexdots, fileydots, filecolors, temp1);
 		if (info->info_id[0] != 'G')
 		{
 			if (save_system)
 			{
-				strcat((char *)dstack, "WinFract ");
+				strcat((char *)g_stack, "WinFract ");
 			}
 			sprintf(temp1, "v%d.%01d", save_release/100, (save_release%100)/10);
 			if (save_release % 100)
@@ -285,27 +285,27 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			{
 				strcat(temp1, " or earlier");
 			}
-			strcat((char *)dstack, temp1);
+			strcat((char *)g_stack, temp1);
 		}
-		strcat((char *)dstack, "\n");
+		strcat((char *)g_stack, "\n");
 		if (info->info_id[0] != 'G' && save_system == 0)
 		{
 			if (g_init_mode < 0)
 			{
-				strcat((char *)dstack, "Saved in unknown video mode.");
+				strcat((char *)g_stack, "Saved in unknown video mode.");
 			}
 			else
 			{
 				format_vid_inf(g_init_mode, "", temp1);
-				strcat((char *)dstack, temp1);
+				strcat((char *)g_stack, temp1);
 			}
 		}
 		if (fileaspectratio != 0 && fileaspectratio != screenaspect)
 		{
-			strcat((char *)dstack,
+			strcat((char *)g_stack,
 				"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
 		}
-		strcat((char *)dstack, "\n");
+		strcat((char *)g_stack, "\n");
 		/* set up instructions */
 		strcpy(temp1, "Select a video mode.  Use the cursor keypad to move the pointer.\n"
 				"Press ENTER for selected mode, or use a video mode function key.\n"
@@ -318,7 +318,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 		oldhelpmode = helpmode;
 		helpmode = HELPLOADFILE;
-		i = fullscreen_choice(0, (char *) dstack,
+		i = fullscreen_choice(0, (char *) g_stack,
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			temp1, g_video_table_len, NULL, attributes,
 			1, 13, 78, 0, format_item, NULL, NULL, check_modekey);
