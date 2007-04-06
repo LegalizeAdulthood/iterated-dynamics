@@ -2464,8 +2464,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		{
 			ltempsqrx = lsqr(lold.x);
 			ltempsqry = lsqr(lold.y);
-			lmagnitud = ltempsqrx + ltempsqry;
-			if ((lmagnitud < llimit) && (lmagnitud >= 0) && (coloriter < maxit))
+			g_magnitude_l = ltempsqrx + ltempsqry;
+			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (coloriter < maxit))
 			{
 				break;
 			}
@@ -2479,8 +2479,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			{
 				ltempsqrx = lsqr(lold.x);
 				ltempsqry = lsqr(lold.y);
-				lmagnitud = ltempsqrx + ltempsqry;
-				if ((lmagnitud > llimit) || (lmagnitud < 0))
+				g_magnitude_l = ltempsqrx + ltempsqry;
+				if ((g_magnitude_l > g_limit_l) || (g_magnitude_l < 0))
 				{
 					break;
 				}
@@ -2708,7 +2708,7 @@ int froth_per_orbit(void)
 		{
 			ltempsqrx = lsqr(lnew.x);
 			ltempsqry = lsqr(lnew.y);
-			if (ltempsqrx + ltempsqry >= llimit)
+			if (ltempsqrx + ltempsqry >= g_limit_l)
 			{
 				return 1;
 			}
@@ -2718,7 +2718,7 @@ int froth_per_orbit(void)
 		}
 		ltempsqrx = lsqr(lnew.x);
 		ltempsqry = lsqr(lnew.y);
-		if (ltempsqrx + ltempsqry >= llimit)
+		if (ltempsqrx + ltempsqry >= g_limit_l)
 		{
 			return 1;
 		}

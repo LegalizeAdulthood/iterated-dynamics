@@ -247,7 +247,7 @@ extern char                  LFileName[];
 extern char                  g_light_name[];
 extern BYTE *                line_buff;
 extern _LCMPLX               linit;
-extern _LCMPLX               linitorbit;
+extern _LCMPLX               g_init_orbit_l;
 extern long                  linitx;
 extern long                  linity;
 extern long                  llimit2;

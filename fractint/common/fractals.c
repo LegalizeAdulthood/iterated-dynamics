@@ -2765,7 +2765,7 @@ int long_mandel_per_pixel(void)
 		linit.y = (long)(init.y*fudge);
 	}
 
-	lold = (useinitorbit == 1) ? linitorbit : linit;
+	lold = (useinitorbit == 1) ? g_init_orbit_l : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -2878,7 +2878,7 @@ int mandel_per_pixel(void)
 	/* alter init value */
 	if (useinitorbit == 1)
 	{
-		lold = linitorbit;
+		lold = g_init_orbit_l;
 	}
 	else if (useinitorbit == 2)
 	{
@@ -2932,7 +2932,7 @@ int marksmandel_per_pixel()
 		}
 	}
 
-	lold = (useinitorbit == 1) ? linitorbit : linit;
+	lold = (useinitorbit == 1) ? g_init_orbit_l : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
@@ -3348,7 +3348,7 @@ int long_mandphoenix_per_pixel(void)
 		linit.y = (long)(init.y*fudge);
 	}
 
-	lold = (useinitorbit == 1) ? linitorbit : linit;
+	lold = (useinitorbit == 1) ? g_init_orbit_l : linit;
 
 	lold.x += lparm.x;    /* initial pertubation of parameters set */
 	lold.y += lparm.y;
