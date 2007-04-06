@@ -11,8 +11,6 @@
 #include "externs.h"
 #include "drivers.h"
 
-extern int atan_colors;
-
 static int inside_color, periodicity_color;
 
 void calcmandfpasmstart(void)
@@ -233,7 +231,7 @@ over_bailout_87:
 		}
 		else if (outside == ATAN)
 		{
-			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*atan_colors/PI);
+			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
 		}
 		/* check_color */
 		if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
