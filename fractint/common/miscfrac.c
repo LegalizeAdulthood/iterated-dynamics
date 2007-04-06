@@ -1223,10 +1223,10 @@ int bifurcation_lambda() /* Used by lyanupov */
 int bifurcation_verhulst_trig_fp()
 {
 /*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
-	tmp.x = Population;
-	tmp.y = 0;
-	CMPLXtrig0(tmp, tmp);
-	Population += Rate*tmp.x*(1 - tmp.x);
+	g_temp_z.x = Population;
+	g_temp_z.y = 0;
+	CMPLXtrig0(g_temp_z, g_temp_z);
+	Population += Rate*g_temp_z.x*(1 - g_temp_z.x);
 	return fabs(Population) > BIG;
 }
 
@@ -1245,10 +1245,10 @@ int bifurcation_verhulst_trig()
 int bifurcation_stewart_trig_fp()
 {
 /*  Population = (Rate*fn(Population)*fn(Population)) - 1.0 */
-	tmp.x = Population;
-	tmp.y = 0;
-	CMPLXtrig0(tmp, tmp);
-	Population = (Rate*tmp.x*tmp.x) - 1.0;
+	g_temp_z.x = Population;
+	g_temp_z.y = 0;
+	CMPLXtrig0(g_temp_z, g_temp_z);
+	Population = (Rate*g_temp_z.x*g_temp_z.x) - 1.0;
 	return fabs(Population) > BIG;
 }
 
@@ -1267,10 +1267,10 @@ int bifurcation_stewart_trig()
 
 int bifurcation_set_trig_pi_fp()
 {
-	tmp.x = Population*PI;
-	tmp.y = 0;
-	CMPLXtrig0(tmp, tmp);
-	Population = Rate*tmp.x;
+	g_temp_z.x = Population*PI;
+	g_temp_z.y = 0;
+	CMPLXtrig0(g_temp_z, g_temp_z);
+	Population = Rate*g_temp_z.x;
 	return fabs(Population) > BIG;
 }
 
@@ -1287,10 +1287,10 @@ int bifurcation_set_trig_pi()
 
 int bifurcation_add_trig_pi_fp()
 {
-	tmp.x = Population*PI;
-	tmp.y = 0;
-	CMPLXtrig0(tmp, tmp);
-	Population += Rate*tmp.x;
+	g_temp_z.x = Population*PI;
+	g_temp_z.y = 0;
+	CMPLXtrig0(g_temp_z, g_temp_z);
+	Population += Rate*g_temp_z.x;
 	return fabs(Population) > BIG;
 }
 
@@ -1308,10 +1308,10 @@ int bifurcation_add_trig_pi()
 int bifurcation_lambda_trig_fp()
 {
 	/* Population = Rate*fn(Population)*(1 - fn(Population)) */
-	tmp.x = Population;
-	tmp.y = 0;
-	CMPLXtrig0(tmp, tmp);
-	Population = Rate*tmp.x*(1 - tmp.x);
+	g_temp_z.x = Population;
+	g_temp_z.y = 0;
+	CMPLXtrig0(g_temp_z, g_temp_z);
+	Population = Rate*g_temp_z.x*(1 - g_temp_z.x);
 	return fabs(Population) > BIG;
 }
 
@@ -1334,9 +1334,9 @@ int bifurcation_may_fp()
 {
 	/* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
-	tmp.x = 1.0 + Population;
-	tmp.x = pow(tmp.x, -beta); /* pow in math.h included with mpmath.h */
-	Population = (Rate*Population)*tmp.x;
+	g_temp_z.x = 1.0 + Population;
+	g_temp_z.x = pow(g_temp_z.x, -beta); /* pow in math.h included with mpmath.h */
+	Population = (Rate*Population)*g_temp_z.x;
 	return fabs(Population) > BIG;
 }
 
@@ -2346,8 +2346,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		if (invert)
 		{
-			invertz2(&tmp);
-			old = tmp;
+			invertz2(&g_temp_z);
+			old = g_temp_z;
 		}
 		else
 		{
@@ -2450,9 +2450,9 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		if (invert)
 		{
-			invertz2(&tmp);
-			lold.x = (long)(tmp.x*fudge);
-			lold.y = (long)(tmp.y*fudge);
+			invertz2(&g_temp_z);
+			lold.x = (long)(g_temp_z.x*fudge);
+			lold.y = (long)(g_temp_z.y*fudge);
 		}
 		else
 		{
