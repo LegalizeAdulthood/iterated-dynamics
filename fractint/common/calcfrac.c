@@ -79,8 +79,7 @@ double g_close_enough;
 unsigned long g_magnitude_limit;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
 int     g_show_orbit;                     /* flag to turn on and off */
-int     g_orbit_index;                      /* pointer into save_orbit array */
-int save_orbit[1500];                    /* array to save orbit values */
+int     g_orbit_index;                      /* pointer into g_save_orbit array */
 int     orbit_color = 15;                 /* XOR color */
 
 int     ixstart;
