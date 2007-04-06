@@ -36,7 +36,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 	else
 	{
 		/* special case: use the main processing loop */
-		g_calculate_type = StandardFractal;
+		g_calculate_type = standard_fractal;
 		longparm = &linit;
 	}
 	return 1;
@@ -57,7 +57,7 @@ JuliaSetup(void)            /* Julia Routine */
 	else
 	{
 		/* special case: use the main processing loop */
-		g_calculate_type = StandardFractal;
+		g_calculate_type = standard_fractal;
 		longparm = &lparm;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 	}
@@ -195,7 +195,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	param[0] = (double)degree; /* JCO 7/1/92 */
 	g_symmetry = (degree % 4 == 0) ? XYAXIS : XAXIS;
 
-	g_calculate_type = StandardFractal;
+	g_calculate_type = standard_fractal;
 #if !defined(XFRACT)
 	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
@@ -250,7 +250,7 @@ MandelfpSetup(void)
 	case MANDELFP:
 		/*
 		floating point code could probably be altered to handle many of
-		the situations that otherwise are using StandardFractal().
+		the situations that otherwise are using standard_fractal().
 		calculate_mandelbrot_fp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
@@ -303,7 +303,7 @@ MandelfpSetup(void)
 		else
 		{
 			/* special case: use the main processing loop */
-			g_calculate_type = StandardFractal;
+			g_calculate_type = standard_fractal;
 		}
 		break;
 	case FPMANDELZPOWER:
@@ -397,7 +397,7 @@ JuliafpSetup(void)
 	case JULIAFP:
 		/*
 		floating point code could probably be altered to handle many of
-		the situations that otherwise are using StandardFractal().
+		the situations that otherwise are using standard_fractal().
 		calculate_mandelbrot_fp() can currently handle invert, any g_rq_limit, potflag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
@@ -451,7 +451,7 @@ JuliafpSetup(void)
 		else
 		{
 			/* special case: use the main processing loop */
-			g_calculate_type = StandardFractal;
+			g_calculate_type = standard_fractal;
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
 		break;

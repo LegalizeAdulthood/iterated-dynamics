@@ -50,7 +50,7 @@ long calcmandfpasm_c(void)
 	tmpfsd = maxit - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
 	{
-		g_old_color_iter = tmpfsd; /* but matches the code in StandardFractal() */
+		g_old_color_iter = tmpfsd; /* but matches the code in standard_fractal() */
 	}
 
 	/* initparms */

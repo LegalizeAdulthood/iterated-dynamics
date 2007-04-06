@@ -1271,7 +1271,7 @@ static int fix_bof(void)
 	int ret = 0;
 	if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
 	{
-		if ((curfractalspecific->calculate_type == StandardFractal &&
+		if ((curfractalspecific->calculate_type == standard_fractal &&
 			(curfractalspecific->flags & BAILTEST) == 0) ||
 			(fractype == FORMULA || fractype == FFORMULA))
 		{

@@ -173,7 +173,7 @@ void init_big_pi(void);
 extern int calculate_fractal(void);
 extern int calculate_mandelbrot(void);
 extern int calculate_mandelbrot_fp(void);
-extern int StandardFractal(void);
+extern int standard_fractal(void);
 extern int test(void);
 extern int plasma(void);
 extern int diffusion(void);

@@ -130,7 +130,7 @@ int s_periodicity_check;
 typedef int (*TPREFIX)[2][maxyblk][maxxblk];
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
 BYTE g_stack[4096];              /* common temp, two put_line calls */
-/* For periodicity testing, only in StandardFractal() */
+/* For periodicity testing, only in standard_fractal() */
 int g_next_saved_incr;
 int g_first_saved_and;
 int g_atan_colors = 180;
@@ -747,7 +747,7 @@ int calculate_fractal(void)
 		calctime = 0;
 	}
 
-	if (curfractalspecific->calculate_type != StandardFractal
+	if (curfractalspecific->calculate_type != standard_fractal
 		&& curfractalspecific->calculate_type != calculate_mandelbrot
 		&& curfractalspecific->calculate_type != calculate_mandelbrot_fp
 		&& curfractalspecific->calculate_type != lyapunov
@@ -906,7 +906,7 @@ static void perform_work_list()
 	{
 		stdcalcmode = '1';
 	}
-	if (stdcalcmode == 'o' && (curfractalspecific->calculate_type != StandardFractal))
+	if (stdcalcmode == 'o' && (curfractalspecific->calculate_type != standard_fractal))
 	{
 		stdcalcmode = '1';
 	}
@@ -1806,7 +1806,7 @@ static int _fastcall standard_calculate(int passnum)
 			}
 			if (passnum == 1 || stdcalcmode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*g_calculate_type)() == -1) /* StandardFractal(), calculate_mandelbrot() or calculate_mandelbrot_fp() */
+				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot() or calculate_mandelbrot_fp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -1958,7 +1958,7 @@ int calculate_mandelbrot_fp(void)
 #if 0
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
-int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set */
+int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
 	_CMPLX savedz[NUMSAVED];

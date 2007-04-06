@@ -241,7 +241,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, JULIA, NOFRACTAL, MANDELFP, XAXIS_NOPARM,
-		JuliaFractal, mandel_per_pixel, MandelSetup, StandardFractal,
+		JuliaFractal, mandel_per_pixel, MandelSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -252,7 +252,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_JULIA, HF_JULIA, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDEL, JULIAFP, ORIGIN,
-		JuliaFractal, julia_per_pixel, JuliaSetup, StandardFractal,
+		JuliaFractal, julia_per_pixel, JuliaSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -263,7 +263,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPNEWTBASIN, NOSYM,
-		NewtonFractal2, otherjuliafp_per_pixel, NewtonSetup, StandardFractal,
+		NewtonFractal2, otherjuliafp_per_pixel, NewtonSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -274,7 +274,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_LAMBDA, HF_LAMBDA, WINFRAC | OKJB | BAILTEST,
 		-1.5f, 2.5f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDELLAMBDA, LAMBDAFP, NOSYM,
-		LambdaFractal, julia_per_pixel, JulialongSetup, StandardFractal,
+		LambdaFractal, julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -285,7 +285,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST | BF_MATH,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, JULIAFP, NOFRACTAL, MANDEL, XAXIS_NOPARM,
-		JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		JuliafpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -296,7 +296,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_NEWT, HF_NEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPNEWTON, XAXIS,
-		NewtonFractal2, otherjuliafp_per_pixel, NewtonSetup, StandardFractal,
+		NewtonFractal2, otherjuliafp_per_pixel, NewtonSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -307,7 +307,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_JULIA, HF_JULIA, WINFRAC | OKJB | BAILTEST | BF_MATH,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDELFP, JULIA, ORIGIN,
-		JuliafpFractal, juliafp_per_pixel,  JuliafpSetup, StandardFractal,
+		JuliafpFractal, juliafp_per_pixel,  JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -334,7 +334,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, LAMBDATRIGFP, NOFRACTAL, MANDELTRIG, XYAXIS_NOPARM,
 		LambdaTrigfpFractal, othermandelfp_per_pixel, MandelTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -345,7 +345,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_MANOWAR, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, MANOWARJFP, NOFRACTAL, MANOWAR, XAXIS_NOPARM,
-		ManOWarfpFractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		ManOWarfpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -356,7 +356,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_MANOWAR, WINFRAC | BAILTEST,
 		-2.5f,  1.5f, -1.5f, 1.5f,
 		1, MANOWARJ, NOFRACTAL, MANOWARFP, XAXIS_NOPARM,
-		ManOWarFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
+		ManOWarFractal, mandel_per_pixel, MandellongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -383,7 +383,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f/3.0f, 96.0f/45.0f, -0.9f, 1.7f,
 		1, NOFRACTAL, NOFRACTAL, SIERPINSKIFP, NOSYM,
 		SierpinskiFractal, long_julia_per_pixel, SierpinskiSetup,
-				StandardFractal,
+				standard_fractal,
 		127
 	},
 
@@ -395,7 +395,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, BARNSLEYJ1, NOFRACTAL, BARNSLEYM1FP, XYAXIS_NOPARM,
 		Barnsley1Fractal, long_mandel_per_pixel, MandellongSetup,
-				StandardFractal,
+				standard_fractal,
 		STDBAILOUT
 	},
 
@@ -406,7 +406,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BARNS, HF_BARNSJ1, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, BARNSLEYM1, BARNSLEYJ1FP, ORIGIN,
-		Barnsley1Fractal, long_julia_per_pixel, JulialongSetup, StandardFractal,
+		Barnsley1Fractal, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -418,7 +418,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, BARNSLEYJ2, NOFRACTAL, BARNSLEYM2FP, YAXIS_NOPARM,
 		Barnsley2Fractal, long_mandel_per_pixel, MandellongSetup,
-				StandardFractal,
+				standard_fractal,
 		STDBAILOUT
 	},
 
@@ -429,7 +429,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BARNS, HF_BARNSJ2, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, BARNSLEYM2, BARNSLEYJ2FP, ORIGIN,
-		Barnsley2Fractal, long_julia_per_pixel, JulialongSetup, StandardFractal,
+		Barnsley2Fractal, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -440,7 +440,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, NOFRACTAL, SQRTRIGFP, XAXIS,
-		SqrTrigFractal, long_julia_per_pixel, SqrTrigSetup, StandardFractal,
+		SqrTrigFractal, long_julia_per_pixel, SqrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -451,7 +451,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, SQRTRIG, XAXIS,
-		SqrTrigfpFractal, otherjuliafp_per_pixel, SqrTrigSetup, StandardFractal,
+		SqrTrigfpFractal, otherjuliafp_per_pixel, SqrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -463,7 +463,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, NOFRACTAL, TRIGPLUSTRIGFP, XAXIS,
 		TrigPlusTrigFractal, long_julia_per_pixel, TrigPlusTriglongSetup,
-				StandardFractal,
+				standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -474,7 +474,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MLAMBDA, HF_MLAMBDA, WINFRAC | BAILTEST,
 		-3.0f, 5.0f, -3.0f, 3.0f,
 		1, LAMBDA, NOFRACTAL, MANDELLAMBDAFP, XAXIS_NOPARM,
-		LambdaFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
+		LambdaFractal, mandel_per_pixel, MandellongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -486,7 +486,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, MARKSJULIA, NOFRACTAL, MARKSMANDELFP, NOSYM,
 		MarksLambdaFractal, marksmandel_per_pixel, MandellongSetup,
-				StandardFractal,
+				standard_fractal,
 		STDBAILOUT
 	},
 
@@ -497,7 +497,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MARKS, HF_MARKSJULIA, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MARKSMANDEL, MARKSJULIAFP, ORIGIN,
-		MarksLambdaFractal, julia_per_pixel, MarksJuliaSetup, StandardFractal,
+		MarksLambdaFractal, julia_per_pixel, MarksJuliaSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -508,7 +508,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_UNITY, HF_UNITY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, UNITYFP, XYAXIS,
-		UnityFractal, long_julia_per_pixel, UnitySetup, StandardFractal,
+		UnityFractal, long_julia_per_pixel, UnitySetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -519,7 +519,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDJUL4, HF_MANDEL4, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, JULIA4, NOFRACTAL, MANDEL4FP, XAXIS_NOPARM,
-		Mandel4Fractal, mandel_per_pixel, MandellongSetup, StandardFractal,
+		Mandel4Fractal, mandel_per_pixel, MandellongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -530,7 +530,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDJUL4, HF_JULIA4, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDEL4, JULIA4FP, ORIGIN,
-		Mandel4Fractal, julia_per_pixel, JulialongSetup, StandardFractal,
+		Mandel4Fractal, julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -564,7 +564,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, BARNSLEYJ3, NOFRACTAL, BARNSLEYM3FP, XAXIS_NOPARM,
 		Barnsley3Fractal, long_mandel_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -575,7 +575,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_BARNS, HF_BARNSJ3, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, BARNSLEYM3, BARNSLEYJ3FP, NOSYM,
-		Barnsley3Fractal, long_julia_per_pixel, JulialongSetup, StandardFractal,
+		Barnsley3Fractal, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -586,7 +586,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, NOFRACTAL, TRIGSQRFP, XYAXIS,
-		TrigZsqrdFractal, julia_per_pixel, JulialongSetup, StandardFractal,
+		TrigZsqrdFractal, julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -597,7 +597,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, TRIGSQR, XYAXIS,
-		TrigZsqrdfpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		TrigZsqrdfpFractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -620,7 +620,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, TRIGPLUSTRIG, XAXIS,
 		TrigPlusTrigfpFractal, otherjuliafp_per_pixel, TrigPlusTrigfpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -631,7 +631,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, NOFRACTAL, TRIGXTRIGFP, XAXIS,
-		TrigXTrigFractal, long_julia_per_pixel, FnXFnSetup, StandardFractal,
+		TrigXTrigFractal, long_julia_per_pixel, FnXFnSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -642,7 +642,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, TRIGXTRIG, XAXIS,
-		TrigXTrigfpFractal, otherjuliafp_per_pixel, FnXFnSetup, StandardFractal,
+		TrigXTrigfpFractal, otherjuliafp_per_pixel, FnXFnSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -654,7 +654,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, NOFRACTAL, SQR1OVERTRIGFP, NOSYM,
 		Sqr1overTrigFractal, long_julia_per_pixel, SqrTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -666,7 +666,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, SQR1OVERTRIG, NOSYM,
 		Sqr1overTrigfpFractal, otherjuliafp_per_pixel, SqrTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -677,7 +677,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_FNXZPLUSZ, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		1, NOFRACTAL, NOFRACTAL, ZXTRIGPLUSZFP, XAXIS,
-		ZXTrigPlusZFractal, julia_per_pixel, ZXTrigPlusZSetup, StandardFractal,
+		ZXTrigPlusZFractal, julia_per_pixel, ZXTrigPlusZSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -689,7 +689,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, ZXTRIGPLUSZ, XAXIS,
 		ZXTrigPlusZfpFractal, juliafp_per_pixel, ZXTrigPlusZSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -745,7 +745,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, MANDELTRIG, LAMBDATRIGFP, PI_SYM,
 		(VF) LambdaTrigFractal, long_julia_per_pixel, LambdaTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -757,7 +757,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		16, LJULTRIGPLUSZSQRD, NOFRACTAL, FPMANTRIGPLUSZSQRD, XAXIS_NOPARM,
 		TrigPlusZsquaredFractal, mandel_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -769,7 +769,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		16, NOFRACTAL, LMANTRIGPLUSZSQRD, FPJULTRIGPLUSZSQRD, NOSYM,
 		TrigPlusZsquaredFractal, julia_per_pixel, JuliafnPlusZsqrdSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -781,7 +781,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, FPJULTRIGPLUSZSQRD,   NOFRACTAL, LMANTRIGPLUSZSQRD, XAXIS_NOPARM,
 		TrigPlusZsquaredfpFractal, mandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -793,7 +793,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, FPMANTRIGPLUSZSQRD, LJULTRIGPLUSZSQRD, NOSYM,
 		TrigPlusZsquaredfpFractal, juliafp_per_pixel, JuliafnPlusZsqrdSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -805,7 +805,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDELTRIGFP, LAMBDATRIG, PI_SYM,
 		LambdaTrigfpFractal, otherjuliafp_per_pixel, LambdaTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -817,7 +817,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		16, LAMBDATRIG, NOFRACTAL, MANDELTRIGFP, XYAXIS_NOPARM,
 		LambdaTrigFractal, long_mandel_per_pixel, MandelTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -829,7 +829,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, LJULIAZPOWER, NOFRACTAL, FPMANDELZPOWER, XAXIS_NOIMAG,
 		longZpowerFractal, long_mandel_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -841,7 +841,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, LMANDELZPOWER, FPJULIAZPOWER, ORIGIN,
 		longZpowerFractal, long_julia_per_pixel, JulialongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -853,7 +853,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, FPJULIAZPOWER, NOFRACTAL, LMANDELZPOWER, XAXIS_NOIMAG,
 		floatZpowerFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -865,7 +865,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, FPMANDELZPOWER, LJULIAZPOWER, ORIGIN,
 		floatZpowerFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -877,7 +877,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, FPJULZTOZPLUSZPWR, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
 		floatZtozPluszpwrFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -889,7 +889,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, FPMANZTOZPLUSZPWR, NOFRACTAL, NOSYM,
 		floatZtozPluszpwrFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -901,7 +901,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		16, LJULTRIGPLUSEXP, NOFRACTAL, FPMANTRIGPLUSEXP, XAXIS_NOPARM,
 		LongTrigPlusExponentFractal, long_mandel_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -913,7 +913,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, LMANTRIGPLUSEXP, FPJULTRIGPLUSEXP, NOSYM,
 		LongTrigPlusExponentFractal, long_julia_per_pixel, JulialongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -925,7 +925,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, FPJULTRIGPLUSEXP, NOFRACTAL, LMANTRIGPLUSEXP, XAXIS_NOPARM,
 		FloatTrigPlusExponentFractal, othermandelfp_per_pixel, MandelfpSetup,
- 			StandardFractal,
+ 			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -937,7 +937,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANTRIGPLUSEXP, LJULTRIGPLUSEXP, NOSYM,
 		FloatTrigPlusExponentFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1003,7 +1003,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_NEWT, HF_NEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NEWTON, XAXIS,
-		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, StandardFractal,
+		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1014,7 +1014,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NEWTBASIN, NOSYM,
-		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, StandardFractal,
+		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1026,7 +1026,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
 		ComplexNewton, otherjuliafp_per_pixel, ComplexNewtonSetup,
-			StandardFractal,
+			standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1038,7 +1038,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
 		ComplexBasin, otherjuliafp_per_pixel, ComplexNewtonSetup,
-			StandardFractal,
+			standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1049,7 +1049,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MARKS, HF_CMPLXMARKSMAND, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, COMPLEXMARKSJUL, NOFRACTAL, NOFRACTAL, NOSYM,
-		MarksCplxMand, MarksCplxMandperp, MandelfpSetup, StandardFractal,
+		MarksCplxMand, MarksCplxMandperp, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1060,7 +1060,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MARKS, HF_CMPLXMARKSJUL, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, COMPLEXMARKSMAND, NOFRACTAL, NOSYM,
-		MarksCplxMand, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		MarksCplxMand, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1071,7 +1071,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_FORMULA, -2, WINFRAC | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, FFORMULA, SETUP_SYM,
-		Formula, form_per_pixel, intFormulaSetup, StandardFractal,
+		Formula, form_per_pixel, intFormulaSetup, standard_fractal,
 		0
 	},
 
@@ -1082,7 +1082,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_FORMULA, -2, WINFRAC | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, FORMULA, SETUP_SYM,
-		Formula, form_per_pixel, fpFormulaSetup, StandardFractal,
+		Formula, form_per_pixel, fpFormulaSetup, standard_fractal,
 		0
 	},
 
@@ -1094,7 +1094,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f/3.0f, 96.0f/45.0f, -0.9f, 1.7f,
 		0, NOFRACTAL, NOFRACTAL, SIERPINSKI, NOSYM,
 		SierpinskiFPFractal, otherjuliafp_per_pixel, SierpinskiFPSetup,
-			StandardFractal,
+			standard_fractal,
 		127
 	},
 
@@ -1105,7 +1105,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_LAMBDA, HF_LAMBDA, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDELLAMBDAFP, LAMBDA, NOSYM,
-		LambdaFPFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		LambdaFPFractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1117,7 +1117,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, BARNSLEYJ1FP, NOFRACTAL, BARNSLEYM1, XYAXIS_NOPARM,
 		Barnsley1FPFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1129,7 +1129,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM1FP, BARNSLEYJ1, ORIGIN,
 		Barnsley1FPFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1141,7 +1141,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, BARNSLEYJ2FP, NOFRACTAL, BARNSLEYM2, YAXIS_NOPARM,
 		Barnsley2FPFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1153,7 +1153,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM2FP, BARNSLEYJ2, ORIGIN,
 		Barnsley2FPFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1165,7 +1165,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, BARNSLEYJ3FP, NOFRACTAL, BARNSLEYM3, XAXIS_NOPARM,
 		Barnsley3FPFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1177,7 +1177,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM3FP, BARNSLEYJ3, NOSYM,
 		Barnsley3FPFractal, otherjuliafp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1188,7 +1188,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MLAMBDA, HF_MLAMBDA, WINFRAC | BAILTEST,
 		-3.0f, 5.0f, -3.0f, 3.0f,
 		0, LAMBDAFP, NOFRACTAL, MANDELLAMBDA, XAXIS_NOPARM,
-		LambdaFPFractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		LambdaFPFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1302,7 +1302,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_UNITY, HF_UNITY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, UNITY, XYAXIS,
-		UnityfpFractal, otherjuliafp_per_pixel, StandardSetup, StandardFractal,
+		UnityfpFractal, otherjuliafp_per_pixel, StandardSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1313,7 +1313,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_SPIDER, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, SPIDER, XAXIS_NOPARM,
-		SpiderfpFractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		SpiderfpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1324,7 +1324,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_SPIDER, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, SPIDERFP, XAXIS_NOPARM,
-		SpiderFractal, mandel_per_pixel, MandellongSetup, StandardFractal,
+		SpiderFractal, mandel_per_pixel, MandellongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1336,7 +1336,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, XAXIS_NOIMAG,
 		TetratefpFractal, othermandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1347,7 +1347,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MAGNET, HF_MAGM1, WINFRAC,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, MAGNET1J, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
-		Magnet1Fractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		Magnet1Fractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		100
 	},
 
@@ -1358,7 +1358,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MAGNET, HF_MAGJ1, WINFRAC,
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, NOFRACTAL, MAGNET1M, NOFRACTAL, XAXIS_NOIMAG,
-		Magnet1Fractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		Magnet1Fractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		100
 	},
 
@@ -1369,7 +1369,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MAGNET, HF_MAGM2, WINFRAC,
 		-1.5f, 3.7f, -1.95f, 1.95f,
 		0, MAGNET2J, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
-		Magnet2Fractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		Magnet2Fractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		100
 	},
 
@@ -1380,7 +1380,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MAGNET, HF_MAGJ2, WINFRAC,
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, NOFRACTAL, MAGNET2M, NOFRACTAL, XAXIS_NOIMAG,
-		Magnet2Fractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		Magnet2Fractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		100
 	},
 
@@ -1446,7 +1446,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		0, NOFRACTAL, NOFRACTAL, LPOPCORNJUL, NOSYM,
-		PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, StandardFractal,
+		PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1457,7 +1457,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		16, NOFRACTAL, NOFRACTAL, FPPOPCORNJUL, NOSYM,
-		LPopcornFractalFn, long_julia_per_pixel, JulialongSetup, StandardFractal,
+		LPopcornFractalFn, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1479,7 +1479,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_MANOWARJ, WINFRAC | OKJB | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANOWARFP, MANOWARJ, NOSYM,
-		ManOWarfpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		ManOWarfpFractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1490,7 +1490,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_SCOTSKIN, HF_MANOWARJ, WINFRAC | OKJB | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANOWAR, MANOWARJFP, NOSYM,
-		ManOWarFractal, julia_per_pixel, JulialongSetup, StandardFractal,
+		ManOWarFractal, julia_per_pixel, JulialongSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1502,7 +1502,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-3.6f, 3.6f, -2.7f, 2.7f,
 		0, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXLONG, NOSYM,
 		Richard8fpFractal, otherrichard8fp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1514,7 +1514,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-3.6f, 3.6f, -2.7f, 2.7f,
 		1, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXFP, NOSYM,
 		Richard8Fractal, long_richard8_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1526,7 +1526,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MARKSMANDELPWR, XAXIS_NOPARM,
 		MarksMandelPwrfpFractal, marks_mandelpwrfp_per_pixel, MandelfpSetup,
- 			StandardFractal,
+ 			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1538,7 +1538,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, MARKSMANDELPWRFP, XAXIS_NOPARM,
 		MarksMandelPwrFractal, marks_mandelpwr_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1550,7 +1550,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.9f, 4.3f, -2.7f, 2.7f,
 		0, NOFRACTAL, NOFRACTAL, TIMSERROR, XAXIS_NOPARM,
 		TimsErrorfpFractal, marks_mandelpwrfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1562,7 +1562,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.9f, 4.3f, -2.7f, 2.7f,
 		1, NOFRACTAL, NOFRACTAL, TIMSERRORFP, XAXIS_NOPARM,
 		TimsErrorFractal, marks_mandelpwr_per_pixel, MandellongSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1628,7 +1628,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_CIRCLE, HF_CIRCLE, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, XYAXIS,
-		CirclefpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		CirclefpFractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1698,7 +1698,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, LMANLAMFNFN, FPLAMBDAFNFN, ORIGIN,
 		LambdaTrigOrTrigFractal, long_julia_per_pixel, LambdaTrigOrTrigSetup,
- 			StandardFractal,
+ 			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1710,7 +1710,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANLAMFNFN, LLAMBDAFNFN, ORIGIN,
 		LambdaTrigOrTrigfpFractal, otherjuliafp_per_pixel,
-			LambdaTrigOrTrigSetup, StandardFractal,
+			LambdaTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1722,7 +1722,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, NOFRACTAL, LMANFNFN, FPJULFNFN, XAXIS,
 		JuliaTrigOrTrigFractal, long_julia_per_pixel, JuliaTrigOrTrigSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1734,7 +1734,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANFNFN, LJULFNFN, XAXIS,
 		JuliaTrigOrTrigfpFractal, otherjuliafp_per_pixel,
-			JuliaTrigOrTrigSetup, StandardFractal,
+			JuliaTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1746,7 +1746,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, LLAMBDAFNFN, NOFRACTAL, FPMANLAMFNFN, XAXIS_NOPARM,
 		LambdaTrigOrTrigFractal, long_mandel_per_pixel,
-			ManlamTrigOrTrigSetup, StandardFractal,
+			ManlamTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1758,7 +1758,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, FPLAMBDAFNFN, NOFRACTAL, LMANLAMFNFN, XAXIS_NOPARM,
 		LambdaTrigOrTrigfpFractal, othermandelfp_per_pixel,
-			ManlamTrigOrTrigSetup, StandardFractal,
+			ManlamTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1770,7 +1770,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		16, LJULFNFN, NOFRACTAL, FPMANFNFN, XAXIS_NOPARM,
 		JuliaTrigOrTrigFractal, long_mandel_per_pixel,
-			MandelTrigOrTrigSetup, StandardFractal,
+			MandelTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1782,7 +1782,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, FPJULFNFN, NOFRACTAL, LMANFNFN, XAXIS_NOPARM,
 		JuliaTrigOrTrigfpFractal, othermandelfp_per_pixel,
-			MandelTrigOrTrigSetup, StandardFractal,
+			MandelTrigOrTrigSetup, standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1815,7 +1815,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_HALLEY, HF_HALLEY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, HALLEY, XYAXIS,
-		MPCHalleyFractal, MPCHalley_per_pixel, HalleySetup, StandardFractal,
+		MPCHalleyFractal, MPCHalley_per_pixel, HalleySetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1826,7 +1826,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_HALLEY, HF_HALLEY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPHALLEY, XYAXIS,
-		HalleyFractal, Halley_per_pixel, HalleySetup, StandardFractal,
+		HalleyFractal, Halley_per_pixel, HalleySetup, standard_fractal,
 		NOBAILOUT
 	},
 
@@ -1849,7 +1849,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, QUATJULFP, NOFRACTAL, NOFRACTAL, XAXIS,
 		QuaternionFPFractal, quaternionfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1861,7 +1861,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, QUATFP, NOFRACTAL, ORIGIN,
 		QuaternionFPFractal, quaternionjulfp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -1953,7 +1953,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDPHOENIX, PHOENIXFP, XAXIS,
 		LongPhoenixFractal, long_phoenix_per_pixel, PhoenixSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1964,7 +1964,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_PHOENIX, HF_PHOENIX, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDPHOENIXFP, PHOENIX, XAXIS,
-		PhoenixFractal, phoenix_per_pixel, PhoenixSetup, StandardFractal,
+		PhoenixFractal, phoenix_per_pixel, PhoenixSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1976,7 +1976,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, PHOENIX, NOFRACTAL, MANDPHOENIXFP, NOSYM,
 		LongPhoenixFractal, long_mandphoenix_per_pixel, MandPhoenixSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -1988,7 +1988,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, PHOENIXFP, NOFRACTAL, MANDPHOENIX, NOSYM,
 		PhoenixFractal, mandphoenix_per_pixel, MandPhoenixSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2000,7 +2000,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, HYPERCMPLXJFP, NOFRACTAL, NOFRACTAL, XAXIS,
 		HyperComplexFPFractal, quaternionfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -2012,7 +2012,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, HYPERCMPLXFP, NOFRACTAL, ORIGIN,
 		HyperComplexFPFractal, quaternionjulfp_per_pixel, JuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		LTRIGBAILOUT
 	},
 
@@ -2045,7 +2045,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDJUL4, HF_MANDEL4, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, JULIA4FP, NOFRACTAL, MANDEL4, XAXIS_NOPARM,
-		Mandel4fpFractal, mandelfp_per_pixel, MandelfpSetup, StandardFractal,
+		Mandel4fpFractal, mandelfp_per_pixel, MandelfpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2056,7 +2056,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDJUL4, HF_JULIA4, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDEL4FP, JULIA4, ORIGIN,
-		Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup, StandardFractal,
+		Mandel4fpFractal, juliafp_per_pixel, JuliafpSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2068,7 +2068,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, MARKSJULIAFP, NOFRACTAL, MARKSMANDEL, NOSYM,
 		MarksLambdafpFractal, marksmandelfp_per_pixel, MandelfpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2080,7 +2080,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MARKSMANDELFP, MARKSJULIA, ORIGIN,
 		MarksLambdafpFractal, juliafp_per_pixel, MarksJuliafpSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2116,7 +2116,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDPHOENIXCPLX, PHOENIXFPCPLX, ORIGIN,
 		LongPhoenixFractalcplx, long_phoenix_per_pixel, PhoenixCplxSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2128,7 +2128,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDPHOENIXFPCPLX, PHOENIXCPLX, ORIGIN,
 		PhoenixFractalcplx, phoenix_per_pixel, PhoenixCplxSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2140,7 +2140,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, PHOENIXCPLX, NOFRACTAL, MANDPHOENIXFPCPLX, XAXIS,
 		LongPhoenixFractalcplx, long_mandphoenix_per_pixel,
-			MandPhoenixCplxSetup, StandardFractal,
+			MandPhoenixCplxSetup, standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2152,7 +2152,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, PHOENIXFPCPLX, NOFRACTAL, MANDPHOENIXCPLX, XAXIS,
 		PhoenixFractalcplx, mandphoenix_per_pixel, MandPhoenixCplxSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2211,7 +2211,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_VL, HF_VL, WINFRAC,
 		0.0f, 6.0f, 0.0f, 4.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		VLfpFractal, otherjuliafp_per_pixel, VLSetup, StandardFractal,
+		VLfpFractal, otherjuliafp_per_pixel, VLSetup, standard_fractal,
 		256
 	},
 
@@ -2223,7 +2223,7 @@ struct fractalspecificstuff fractalspecific[]=
 		-1.6f, 1.6f, -1.2f, 1.2f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, ORIGIN,
 		EscherfpFractal, juliafp_per_pixel, StandardSetup,
-			StandardFractal,
+			standard_fractal,
 		STDBAILOUT
 	},
 
@@ -2249,7 +2249,7 @@ struct fractalspecificstuff fractalspecific[]=
 		HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, WINFRAC | BAILTEST | TRIG1 | MORE,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
+		MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, standard_fractal,
 		STDBAILOUT
 	},
 #endif
