@@ -70,7 +70,7 @@ int handle_timed_save(int ch)
 			{
 				if (calc_status != CALCSTAT_IN_PROGRESS)
 				{
-					if ((got_status != GOT_STATUS_12PASS) && (got_status != GOT_STATUS_GUESSING))
+					if ((g_got_status != GOT_STATUS_12PASS) && (g_got_status != GOT_STATUS_GUESSING))
 					{
 						finishrow = currow;
 					}

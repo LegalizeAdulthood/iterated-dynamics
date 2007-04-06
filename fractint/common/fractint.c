@@ -461,7 +461,7 @@ imagestart:                             /* calc/display a new image */
 #ifdef XFRACT
 	usr_floatflag = 1;
 #endif
-	got_status = GOT_STATUS_NONE;                     /* for tab_display */
+	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
 	if (showfile)
 	{
