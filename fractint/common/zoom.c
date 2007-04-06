@@ -749,7 +749,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		g_work_list[i].yystart -= row;
 		g_work_list[i].yystop  -= row;
 		g_work_list[i].yybegin -= row;
-		g_work_list[i].xxstart -= col;
+		g_work_list[i].xx_start -= col;
 		g_work_list[i].xxstop  -= col;
 		g_work_list[i].xxbegin -= col;
 	}
@@ -821,7 +821,7 @@ static void _fastcall restart_window(int wknum)
 	{
 		yfrom = 0;
 	}
-	xfrom = g_work_list[wknum].xxstart;
+	xfrom = g_work_list[wknum].xx_start;
 	if (xfrom < 0)
 	{
 		xfrom = 0;
@@ -841,7 +841,7 @@ static void _fastcall restart_window(int wknum)
 		put_line(yfrom++, xfrom, xto, (BYTE *)dstack);
 	g_work_list[wknum].sym = g_work_list[wknum].pass = 0;
 	g_work_list[wknum].yybegin = g_work_list[wknum].yystart;
-	g_work_list[wknum].xxbegin = g_work_list[wknum].xxstart;
+	g_work_list[wknum].xxbegin = g_work_list[wknum].xx_start;
 }
 
 static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
@@ -851,7 +851,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 	{
 		wk = &g_work_list[i];
 		if (wk->yystart >= ydots || wk->yystop < 0
-			|| wk->xxstart >= xdots || wk->xxstop < 0)  /* offscreen, delete */
+			|| wk->xx_start >= xdots || wk->xxstop < 0)  /* offscreen, delete */
 		{
 			for (j = i + 1; j < g_num_work_list; ++j)
 			{
@@ -907,22 +907,22 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			}
 			wk->yystop = j;
 		}
-		if (wk->xxstart < 0)  /* partly off left edge */
+		if (wk->xx_start < 0)  /* partly off left edge */
 		{
 			if ((wk->sym&2) == 0) /* no sym, easy */
-				wk->xxstart = 0;
+				wk->xx_start = 0;
 			else  /* yaxis symmetry */
 			{
-				if ((j = wk->xxstop + wk->xxstart) > 0
+				if ((j = wk->xxstop + wk->xx_start) > 0
 					&& g_num_work_list < MAXCALCWORK)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
-					g_work_list[g_num_work_list].xxstart = 0;
+					g_work_list[g_num_work_list].xx_start = 0;
 					g_work_list[g_num_work_list++].xxstop = j;
-					wk->xxstart = j + 1;
+					wk->xx_start = j + 1;
 				}
 				else
-					wk->xxstart = 0;
+					wk->xx_start = 0;
 				restart_window(i); /* restart the no-longer sym part */
 			}
 		}
@@ -931,7 +931,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			j = xdots-1;
 			if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
 			{
-				k = wk->xxstart + (wk->xxstop - j);
+				k = wk->xx_start + (wk->xxstop - j);
 				if (k < j)
 				{
 					if (g_num_work_list >= MAXCALCWORK) /* no room to split */
@@ -941,7 +941,7 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 					else  /* split it */
 					{
 						g_work_list[g_num_work_list] = g_work_list[i];
-						g_work_list[g_num_work_list].xxstart = k;
+						g_work_list[g_num_work_list].xx_start = k;
 						g_work_list[g_num_work_list++].xxstop = j;
 						j = k-1;
 					}
@@ -958,9 +958,9 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 		{
 			wk->yybegin = wk->yystop;
 		}
-		if (wk->xxbegin < wk->xxstart)
+		if (wk->xxbegin < wk->xx_start)
 		{
-			wk->xxbegin = wk->xxstart;
+			wk->xxbegin = wk->xx_start;
 		}
 		if (wk->xxbegin > wk->xxstop)
 		{
