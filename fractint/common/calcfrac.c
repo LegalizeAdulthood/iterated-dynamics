@@ -47,7 +47,7 @@ long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
 _CMPLX g_initial_z, g_old_z, g_new_z;
 _CMPLX g_temp_z;
 int g_color;
-long g_color_iter, oldcoloriter, realcoloriter;
+long g_color_iter, g_old_color_iter, g_real_color_iter;
 int row, col, passes;
 int invert;
 double f_radius, f_xcenter, f_ycenter; /* for inversion */
@@ -1844,7 +1844,7 @@ int calcmand(void)              /* fast per pixel 1/2/b/g, called with row & col
 	if (calcmandasm() >= 0)
 	{
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-				&& (realcoloriter < maxit || (inside < 0 && g_color_iter == maxit)))
+				&& (g_real_color_iter < maxit || (inside < 0 && g_color_iter == maxit)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
@@ -1905,10 +1905,10 @@ int calcmandfp(void)
 	{
 		if (potflag)
 		{
-			g_color_iter = potential(magnitude, realcoloriter);
+			g_color_iter = potential(magnitude, g_real_color_iter);
 		}
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-				&& (realcoloriter < maxit || (inside < 0 && g_color_iter == maxit)))
+				&& (g_real_color_iter < maxit || (inside < 0 && g_color_iter == maxit)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
@@ -2009,27 +2009,27 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 	}
 	if (periodicitycheck == 0 || inside == ZMAG || inside == STARTRAIL)
 	{
-		oldcoloriter = 2147483647L;       /* don't check periodicity at all */
+		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
 	}
 	else if (inside == PERIOD)   /* for display-periodicity */
 	{
-		oldcoloriter = (maxit/5)*4;       /* don't check until nearly done */
+		g_old_color_iter = (maxit/5)*4;       /* don't check until nearly done */
 	}
 	else if (reset_periodicity)
 	{
-		oldcoloriter = 255;               /* don't check periodicity 1st 250 iterations */
+		g_old_color_iter = 255;               /* don't check periodicity 1st 250 iterations */
 	}
 
 	/* Jonathan - how about this idea ? skips first saved value which never works */
 #ifdef MINSAVEDAND
-	if (oldcoloriter < MINSAVEDAND)
+	if (g_old_color_iter < MINSAVEDAND)
 	{
-		oldcoloriter = MINSAVEDAND;
+		g_old_color_iter = MINSAVEDAND;
 	}
 #else
-	if (oldcoloriter < firstsavedand) /* I like it! */
+	if (g_old_color_iter < firstsavedand) /* I like it! */
 	{
-		oldcoloriter = firstsavedand;
+		g_old_color_iter = firstsavedand;
 	}
 #endif
 	/* really fractal specific, but we'll leave it here */
@@ -2453,7 +2453,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			}
 		}
 
-		if (g_color_iter > oldcoloriter) /* check periodicity */
+		if (g_color_iter > g_old_color_iter) /* check periodicity */
 		{
 			if ((g_color_iter & savedand) == 0)            /* time to save a new value */
 			{
@@ -2585,14 +2585,14 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		scrub_orbit();
 	}
 
-	realcoloriter = g_color_iter;           /* save this before we start adjusting it */
+	g_real_color_iter = g_color_iter;           /* save this before we start adjusting it */
 	if (g_color_iter >= maxit)
 	{
-		oldcoloriter = 0;         /* check periodicity immediately next time */
+		g_old_color_iter = 0;         /* check periodicity immediately next time */
 	}
 	else
 	{
-		oldcoloriter = g_color_iter + 10;    /* check when past this + 10 next time */
+		g_old_color_iter = g_color_iter + 10;    /* check when past this + 10 next time */
 		if (g_color_iter == 0)
 		{
 			g_color_iter = 1;         /* needed to make same as calcmand */
@@ -2883,7 +2883,7 @@ plot_pixel:
 	(*plot)(col, row, g_color);
 
 	maxit = savemaxit;
-	kbdcount -= abs((int)realcoloriter);
+	kbdcount -= abs((int)g_real_color_iter);
 	if (kbdcount <= 0)
 	{
 		if (check_key())
@@ -4945,9 +4945,9 @@ static long autologmap(void)   /*RB*/
 		{
 			goto ack; /* key pressed, bailout */
 		}
-		if (realcoloriter < mincolour)
+		if (g_real_color_iter < mincolour)
 		{
-			mincolour = realcoloriter;
+			mincolour = g_real_color_iter;
 			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (col >= 32)
@@ -4968,9 +4968,9 @@ static long autologmap(void)   /*RB*/
 		{
 			goto ack; /* key pressed, bailout */
 		}
-		if (realcoloriter < mincolour)
+		if (g_real_color_iter < mincolour)
 		{
-			mincolour = realcoloriter;
+			mincolour = g_real_color_iter;
 			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (row >= 32)
@@ -4991,9 +4991,9 @@ static long autologmap(void)   /*RB*/
 		{
 			goto ack; /* key pressed, bailout */
 		}
-		if (realcoloriter < mincolour)
+		if (g_real_color_iter < mincolour)
 		{
-			mincolour = realcoloriter;
+			mincolour = g_real_color_iter;
 			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (row >= 32)
@@ -5014,9 +5014,9 @@ static long autologmap(void)   /*RB*/
 		{
 			goto ack; /* key pressed, bailout */
 		}
-		if (realcoloriter < mincolour)
+		if (g_real_color_iter < mincolour)
 		{
-			mincolour = realcoloriter;
+			mincolour = g_real_color_iter;
 			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (col >= 32)

@@ -155,7 +155,7 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	int i, gotprec;
 	long xytemp;
 	double ftemp;
-	g_color_iter = oldcoloriter = 0L;
+	g_color_iter = g_old_color_iter = 0L;
 	for (i = 0; i < 10; i++)
 	{
 		rhombus_stack[i] = 0;

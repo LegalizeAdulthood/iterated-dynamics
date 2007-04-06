@@ -55,11 +55,11 @@ calc_mand_floating_point(void)
 	long tmpfsd;
 	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
-	oldcoloriter = (periodicitycheck == 0) ? 0 : (maxit - 250);
+	g_old_color_iter = (periodicitycheck == 0) ? 0 : (maxit - 250);
 	tmpfsd = maxit - firstsavedand;
-	if (oldcoloriter > tmpfsd)
+	if (g_old_color_iter > tmpfsd)
 	{
-		oldcoloriter = tmpfsd;
+		g_old_color_iter = tmpfsd;
 	}
 
 	savedx = 0;
@@ -131,15 +131,15 @@ calc_mand_floating_point(void)
 				lnew.x = x;
 				lnew.y = y;
 			}
-			oldcoloriter = (cx - 10 > 0) ? cx - 10 : 0;
-			realcoloriter = maxit - cx;
-			g_color_iter = realcoloriter;
+			g_old_color_iter = (cx - 10 > 0) ? cx - 10 : 0;
+			g_real_color_iter = maxit - cx;
+			g_color_iter = g_real_color_iter;
 
 			if (g_color_iter == 0)
 			{
 				g_color_iter = 1;
 			}
-			kbdcount -= realcoloriter;
+			kbdcount -= g_real_color_iter;
 			if (outside == -1)
 			{
 			}
@@ -181,7 +181,7 @@ calc_mand_floating_point(void)
 		}
 
 		/* no_save_new_xy_87 */
-		if (cx < oldcoloriter)   /* check periodicity */
+		if (cx < g_old_color_iter)   /* check periodicity */
 		{
 			if (((maxit - cx) & savedand) == 0)
 			{
@@ -196,9 +196,9 @@ calc_mand_floating_point(void)
 			}
 			else if (ABS(savedx-x) < g_close_enough_l && ABS(savedy-y) < g_close_enough_l)
 			{
-				/* oldcoloriter = 65535;  */
-				oldcoloriter = maxit;
-				realcoloriter = maxit;
+				/* g_old_color_iter = 65535;  */
+				g_old_color_iter = maxit;
+				g_real_color_iter = maxit;
 				kbdcount = kbdcount - (maxit - cx);
 				g_color_iter = periodicity_color;
 				goto pop_stack;
@@ -213,11 +213,11 @@ calc_mand_floating_point(void)
 	} /* while (--cx > 0) */
 
 	/* reached maxit */
-	/* oldcoloriter = 65535;  */
+	/* g_old_color_iter = 65535;  */
 	/* check periodicity immediately next time, remember we count down from maxit */
-	oldcoloriter = maxit;
+	g_old_color_iter = maxit;
 	kbdcount -= maxit;
-	realcoloriter = maxit;
+	g_real_color_iter = maxit;
 
 	g_color_iter = inside_color;
 
@@ -245,7 +245,7 @@ calc_mand_assembly(void)
 		sub		eax, 250					;	(avoids	slowness at	high maxits)
 
 initoldcolor:
-		mov		dword ptr oldcoloriter,	eax	; reset oldcoloriter
+		mov		dword ptr g_old_color_iter,	eax	; reset g_old_color_iter
 
 initparms:
 		mov		eax, dword ptr creal		; initialize	x == creal
@@ -414,7 +414,7 @@ kloop386_16:   ; ecx=bitshift-16, ebp=overflow.mask
 		movsx	esi, bx						; save	as x
 
 		mov		eax, k						; rearranged for speed
-		cmp		eax, oldcoloriter
+		cmp		eax, g_old_color_iter
 		jb		short chkpd386_16
 nonmax386_16:
 ; miraculously,	k is always	loaded into	eax	at this	point
@@ -500,7 +500,7 @@ kloop:										; for (k = 0; k	<= maxit; k++)
 		mov		esi, ebx					; save	this as	x
 
 		mov		eax, k						; rearranged for speed
-		cmp		eax, oldcoloriter
+		cmp		eax, g_old_color_iter
 		jb		short chkperiod1
 nonmax1:
 		mov		eax, k
@@ -552,7 +552,7 @@ noorbit32:
 
 		mov		eax, k						; set old color
 		sub		eax, 10						; minus 10, for safety
-		mov		oldcoloriter, eax			; and save	it as the "old"	color
+		mov		g_old_color_iter, eax			; and save	it as the "old"	color
 		mov		eax, maxit					; compute color
 		sub		eax, k						;	(first,	re-compute "k")
 		sub		kbdcount, eax				;	adjust the keyboard	count (use eax only)
@@ -560,10 +560,10 @@ noorbit32:
 		jg		short coloradjust1_32		;  (where abs(x) > 2 or	abs(y) > 2)
 		mov		eax, 1						;	 to	look like we ran through
 coloradjust1_32:							;	 at	least one loop.
-		mov		realcoloriter, eax			; result before adjustments
+		mov		g_real_color_iter, eax			; result before adjustments
 		cmp		eax, maxit					; did we max out on iterations?
 		jne		short notmax32				;	 nope.
-		mov		oldcoloriter, eax			; set "oldcolor"	to maximum
+		mov		g_old_color_iter, eax			; set "oldcolor"	to maximum
 		cmp		inside,	0					; is "inside" >= 0?
 		jl		wedone32					;  nope.  leave	it at "maxit"
 		sub		eax, eax
@@ -601,8 +601,8 @@ noorbit2:
 		mov		edx, dword ptr k + 4			; set old color
 		sub		eax, 10						;	minus 10, for safety
 		sbb		edx, 0
-		mov		dword ptr oldcoloriter,	eax	; and save it as	the	"old" color
-		mov		dword ptr oldcoloriter + 4, edx ; and save it as	the	"old" color
+		mov		dword ptr g_old_color_iter,	eax	; and save it as	the	"old" color
+		mov		dword ptr g_old_color_iter + 4, edx ; and save it as	the	"old" color
 		mov		eax, dword ptr maxit		; compute color
 		mov		edx, dword ptr maxit + 4		; compute color
 		sub		eax, dword ptr k			;  (first, re-compute "k")
@@ -617,14 +617,14 @@ kludge_for_julia:
 		mov		eax, 1						;	  to look like we ran through
 		sub		edx, edx
 coloradjust1:								;	 at	least one loop.
-		mov		dword ptr realcoloriter, eax	; result before adjustments
-		mov		dword ptr realcoloriter + 4, edx	; result before adjustments
+		mov		dword ptr g_real_color_iter, eax	; result before adjustments
+		mov		dword ptr g_real_color_iter + 4, edx	; result before adjustments
 		cmp		edx, dword ptr maxit + 4			; did we max out on iterations?
 		jne		short notmax					;  nope.
 		cmp		eax, dword ptr maxit			; did we max out on iterations?
 		jne		short notmax					;  nope.
-		mov		dword ptr oldcoloriter,	eax		; set "oldcolor" to maximum
-		mov		dword ptr oldcoloriter + 4, edx	; set "oldcolor" to maximum
+		mov		dword ptr g_old_color_iter,	eax		; set "oldcolor" to maximum
+		mov		dword ptr g_old_color_iter + 4, edx	; set "oldcolor" to maximum
 		cmp		inside,	0					; is "inside" >= 0?
 		jl		wedone						;  nope.  leave	it at "maxit"
 		mov		eax, inside					;	reset max-out color	to default
@@ -715,10 +715,10 @@ notdoneyet:
 		jo		end16bit					; bail out if too high
 		mov		esi, ebx					; save as x
 
-		mov		edx, dword ptr oldcoloriter + 4	; recall	the	old	color
+		mov		edx, dword ptr g_old_color_iter + 4	; recall	the	old	color
 		cmp		edx, dword ptr k + 4				; check it against this iter
 		jb		short nonmax3					;  nope.  bypass periodicity check.
-		mov		eax, dword ptr oldcoloriter		; recall	the	old	color
+		mov		eax, dword ptr g_old_color_iter		; recall	the	old	color
 		cmp		eax, dword ptr k				; check it against this iter
 		jb		short nonmax3					;  nope.  bypass periodicity check.
 		mov		dword ptr x + 4, esi				; save x	for	periodicity	check
@@ -988,10 +988,10 @@ signok:
 		jo		done1
 		mov		dword ptr y, eax			; save the new value	of y
 		mov		dword ptr y + 4, edx			;  ...
-		mov		edx, dword ptr oldcoloriter + 4 ; recall	the	old	color
+		mov		edx, dword ptr g_old_color_iter + 4 ; recall	the	old	color
 		cmp		edx, dword ptr k + 4			; check it against this iter
 		jb		short chkkey4				;  nope.  bypass periodicity check.
-		mov		eax, dword ptr oldcoloriter	; recall	the	old	color
+		mov		eax, dword ptr g_old_color_iter	; recall	the	old	color
 		cmp		eax, dword ptr k			; check it against this iter
 		jb		short chkkey4				;  nope.  bypass periodicity check.
 		call	checkperiod					; check	for	periodicity
