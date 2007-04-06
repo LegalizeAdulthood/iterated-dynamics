@@ -338,7 +338,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		/* post-version 18.23 */
 		maxit = read_info.iterations; /* use long maxit */
 		/* post-version 18.27 */
-		old_demm_colors = read_info.old_demm_colors;
+		g_old_demm_colors = read_info.g_old_demm_colors;
 	}
 
 	if (read_info.version > 10) /* post-version 19.20 */
@@ -1204,8 +1204,8 @@ void backwards_v19(void)
 		inversion[0] = inversion[1] = inversion[2] = g_invert = 0;
 	}
 	g_no_magnitude_calculation = fix_bof() ? TRUE : FALSE; /* fractal has old bof60/61 problem with magnitude */
-	use_old_period = fix_period_bof() ? 1 : 0; /* fractal uses old periodicity method */
-	use_old_distest = (save_release < 1827 && distest) ? 1 : 0; /* use old distest code */
+	g_use_old_periodicity = fix_period_bof() ? TRUE : FALSE; /* fractal uses old periodicity method */
+	g_use_old_distance_test = (save_release < 1827 && distest) ? TRUE : FALSE; /* use old distest code */
 }
 
 void backwards_v20(void)
@@ -1240,7 +1240,7 @@ int check_back(void)
 		|| fractype == FROTHFP
 		|| fix_bof()
 		|| fix_period_bof()
-		|| use_old_distest
+		|| g_use_old_distance_test
 		|| decomp[0] == 2
 		|| (fractype == FORMULA && save_release <= 1920)
 		|| (fractype == FFORMULA && save_release <= 1920)

@@ -1037,7 +1037,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" distest=%ld/%d/%d/%d", distest, distestwidth,
 				pseudox ? pseudox : xdots, pseudoy ? pseudoy : ydots);
 		}
-		if (old_demm_colors)
+		if (g_old_demm_colors)
 		{
 			put_parm(" olddemmcolors=y");
 		}

@@ -55,9 +55,9 @@ void (_fastcall *g_put_color)(int, int, int) = putcolor_a;
 void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
 double g_magnitude, g_rq_limit, g_rq_limit2;
 int g_no_magnitude_calculation = FALSE;
-int use_old_period = 0;
-int use_old_distest = 0;
-int old_demm_colors = 0;
+int g_use_old_periodicity = FALSE;
+int g_use_old_distance_test = FALSE;
+int g_old_demm_colors = FALSE;
 int (*calctype)(void);
 int (*calctypetmp)(void);
 int quick_calc = 0;
@@ -563,7 +563,7 @@ int calcfract(void)
 		LogFlag = 0;
 	}
 
-	if (use_old_period == 1)
+	if (g_use_old_periodicity)
 	{
 		nextsavedincr = 1;
 		firstsavedand = 1;
@@ -947,7 +947,7 @@ static void perform_worklist()
 		delyy2 = (yy3rd - yymin) / dxsize;
 
 		/* in case it's changed with <G> */
-		use_old_distest = (save_release < 1827) ? 1 : 0;
+		g_use_old_distance_test = (save_release < 1827) ? 1 : 0;
 
 		g_rq_limit = g_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
 		if (distest != 1 || colors == 2) /* not doing regular outside colors */
@@ -958,7 +958,7 @@ static void perform_worklist()
 			}
 		}
 		/* must be mandel type, formula, or old PAR/GIF */
-		dem_mandel = (curfractalspecific->tojulia != NOFRACTAL || use_old_distest
+		dem_mandel = (curfractalspecific->tojulia != NOFRACTAL || g_use_old_distance_test
 				|| fractype == FORMULA || fractype == FFORMULA) ?
 			1 : 0;
 
@@ -980,7 +980,7 @@ static void perform_worklist()
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
-		dem_toobig = use_old_distest ?
+		dem_toobig = g_use_old_distance_test ?
 			sqr(ftemp)*sqr(ftemp2)*4 / dem_delta
 			:
 			fabs(ftemp)*fabs(ftemp2)*2 / sqrt(dem_delta);
@@ -2063,7 +2063,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		g_initial_z.y = dypixel();
 		if (distest)
 		{
-			if (use_old_distest)
+			if (g_use_old_distance_test)
 			{
 				g_rq_limit = g_rq_limit_save;
 				if (distest != 1 || colors == 2) /* not doing regular outside colors */
@@ -2173,7 +2173,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 				: 2*(g_old_z.x*deriv.x - g_old_z.y*deriv.y);
 			deriv.y = 2*(g_old_z.y*deriv.x + g_old_z.x*deriv.y);
 			deriv.x = ftemp;
-			if (use_old_distest)
+			if (g_use_old_distance_test)
 			{
 				if (sqr(deriv.x) + sqr(deriv.y) > dem_toobig)
 				{
@@ -2190,7 +2190,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 			if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
 			{
-				if (use_old_distest)
+				if (g_use_old_distance_test)
 				{
 					if (dem_color < 0)
 					{
@@ -2705,11 +2705,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 		}
 		if (distest > 1)          /* pick color based on distance */
 		{
-			if (old_demm_colors) /* this one is needed for old color scheme */
+			if (g_old_demm_colors) /* this one is needed for old color scheme */
 			{
 				g_color_iter = (long)sqrt(sqrt(dist) / dem_width + 1);
 			}
-			else if (use_old_distest)
+			else if (g_use_old_distance_test)
 			{
 				g_color_iter = (long)sqrt(dist / dem_width + 1);
 			}
@@ -2720,7 +2720,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			g_color_iter &= LONG_MAX;  /* oops - color can be negative */
 			goto plot_pixel;       /* no further adjustments apply */
 		}
-		if (use_old_distest)
+		if (g_use_old_distance_test)
 		{
 			g_color_iter = dem_color;
 			g_new_z = dem_new;
