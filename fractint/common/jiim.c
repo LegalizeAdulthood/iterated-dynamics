@@ -927,7 +927,7 @@ void Jiim(int which)         /* called by fractint */
 				}
 			}
 			iter = 1;
-			old.x = old.y = lold.x = lold.y = 0;
+			g_old_z.x = g_old_z.y = lold.x = lold.y = 0;
 			SaveC.x = g_initial_z.x =  cr;
 			SaveC.y = g_initial_z.y =  ci;
 			linit.x = (long)(g_initial_z.x*fudge);
@@ -990,15 +990,15 @@ void Jiim(int which)         /* called by fractint */
 						int i;
 
 						lsize  = lmax   = 0;
-						old.x  = g_new.x  = luckyx;
-						old.y  = g_new.y  = luckyy;
+						g_old_z.x  = g_new.x  = luckyx;
+						g_old_z.y  = g_new.y  = luckyy;
 						luckyx = luckyy = 0.0f;
 						for (i = 0; i < 199; i++)
 						{
-							old = ComplexSqrtFloat(old.x - cr, old.y - ci);
+							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
 							g_new = ComplexSqrtFloat(g_new.x - cr, g_new.y - ci);
 							EnQueueFloat((float)g_new.x,  (float)g_new.y);
-							EnQueueFloat((float)-old.x, (float)-old.y);
+							EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
 						}
 						maxhits++;
 					}
@@ -1008,14 +1008,14 @@ void Jiim(int which)         /* called by fractint */
 					}
 				}
 
-				old = DeQueueFloat();
-				x = (int)(old.x*xfactor*zoom + xoff);
-				y = (int)(old.y*yfactor*zoom + yoff);
+				g_old_z = DeQueueFloat();
+				x = (int)(g_old_z.x*xfactor*zoom + xoff);
+				y = (int)(g_old_z.y*yfactor*zoom + yoff);
 				color = c_getcolor(x, y);
 				if (color < maxhits)
 				{
 					c_putcolor(x, y, color + 1);
-					g_new = ComplexSqrtFloat(old.x - cr, old.y - ci);
+					g_new = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
 					EnQueueFloat((float)g_new.x,  (float)g_new.y);
 					EnQueueFloat((float)-g_new.x, (float)-g_new.y);
 				}
@@ -1023,12 +1023,12 @@ void Jiim(int which)         /* called by fractint */
 			else
 			{
 				/* if not MIIM */
-				old.x -= cr;
-				old.y -= ci;
-				r = old.x*old.x + old.y*old.y;
+				g_old_z.x -= cr;
+				g_old_z.y -= ci;
+				r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
 				if (r > 10.0)
 				{
-					old.x = old.y = 0.0; /* avoids math error */
+					g_old_z.x = g_old_z.y = 0.0; /* avoids math error */
 					iter = 1;
 					r = 0;
 				}
@@ -1039,15 +1039,15 @@ void Jiim(int which)         /* called by fractint */
 					color = 1;
 				}
 
-				/* r = sqrt(old.x*old.x + old.y*old.y); calculated above */
+				/* r = sqrt(g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y); calculated above */
 				r = sqrt(r);
-				g_new.x = sqrt(fabs((r + old.x)/2));
-				if (old.y < 0)
+				g_new.x = sqrt(fabs((r + g_old_z.x)/2));
+				if (g_old_z.y < 0)
 				{
 					g_new.x = -g_new.x;
 				}
 
-				g_new.y = sqrt(fabs((r - old.x)/2));
+				g_new.y = sqrt(fabs((r - g_old_z.x)/2));
 
 				switch (SecretExperimentalMode)
 				{
@@ -1184,11 +1184,11 @@ void Jiim(int which)         /* called by fractint */
 				color = (int)iter%colors;
 				if (integerfractal)
 				{
-					old.x = lold.x; old.x /= fudge;
-					old.y = lold.y; old.y /= fudge;
+					g_old_z.x = lold.x; g_old_z.x /= fudge;
+					g_old_z.y = lold.y; g_old_z.y /= fudge;
 				}
-				x = (int)((old.x - g_initial_z.x)*xfactor*3*zoom + xoff);
-				y = (int)((old.y - g_initial_z.y)*yfactor*3*zoom + yoff);
+				x = (int)((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
+				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
 				if ((*ORBITCALC)())
 				{
 					iter = maxit;
@@ -1223,7 +1223,7 @@ void Jiim(int which)         /* called by fractint */
 			old_x = x;
 			old_y = y;
 		}
-		old = g_new;
+		g_old_z = g_new;
 		lold = lnew;
 	} /* end while (still) */
 

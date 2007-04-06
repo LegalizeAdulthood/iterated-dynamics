@@ -1316,23 +1316,23 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	yold = *y;
 
 /*    *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B); */
-	old.x = yold*PAR_B;
-	old.y = 0;          /* old = (y*B) + 0i (in the complex)*/
-	CMPLXtrig0(old, g_new);
+	g_old_z.x = yold*PAR_B;
+	g_old_z.y = 0;          /* old = (y*B) + 0i (in the complex)*/
+	CMPLXtrig0(g_old_z, g_new);
 	tmp = (double) g_new.x;
-	old.x = xold*PAR_B;
-	old.y = 0;          /* old = (x*B) + 0i */
-	CMPLXtrig1(old, g_new);
+	g_old_z.x = xold*PAR_B;
+	g_old_z.y = 0;          /* old = (x*B) + 0i */
+	CMPLXtrig1(g_old_z, g_new);
 	*x  = PAR_C*g_new.x + tmp;
 
 /*    *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); */
-	old.x = xold*PAR_A;
-	old.y = 0;          /* old = (y*A) + 0i (in the complex)*/
-	CMPLXtrig2(old, g_new);
+	g_old_z.x = xold*PAR_A;
+	g_old_z.y = 0;          /* old = (y*A) + 0i (in the complex)*/
+	CMPLXtrig2(g_old_z, g_new);
 	tmp = (double) g_new.x;
-	old.x = yold*PAR_A;
-	old.y = 0;          /* old = (x*B) + 0i */
-	CMPLXtrig3(old, g_new);
+	g_old_z.x = yold*PAR_A;
+	g_old_z.y = 0;          /* old = (x*B) + 0i */
+	CMPLXtrig3(g_old_z, g_new);
 	*y  = PAR_D*g_new.x + tmp;
 
 	return 0;
@@ -1364,7 +1364,7 @@ int inverse_julia_per_image()
 			return -1;
 		}
 		color = curfractalspecific->orbitcalc();
-		old = g_new;
+		g_old_z = g_new;
 	}
 	Free_Queue();
 	return 0;
