@@ -115,7 +115,7 @@ int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
 _CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
-int    attrperiod[N_ATTR];          /* period of the finite attractor */
+int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 /***** vars for new btm *****/
 enum direction {North, East, South, West};
 enum direction going_to;
@@ -2433,7 +2433,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 								attracted = TRUE;
 								if (finattract < 0)
 								{
-									g_color_iter = (g_color_iter%attrperiod[i]) + 1;
+									g_color_iter = (g_color_iter%g_attractor_period[i]) + 1;
 								}
 								break;
 							}
@@ -2458,7 +2458,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 								attracted = TRUE;
 								if (finattract < 0)
 								{
-									g_color_iter = (g_color_iter%attrperiod[i]) + 1;
+									g_color_iter = (g_color_iter%g_attractor_period[i]) + 1;
 								}
 								break;
 							}
