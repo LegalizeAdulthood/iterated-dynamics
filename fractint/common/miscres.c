@@ -1105,7 +1105,7 @@ top:
 		{
 			sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
 					(100.0*dif_counter)/dif_limit,
-					dif_counter, dif_limit, bits);
+					dif_counter, dif_limit, g_bits);
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
 			++s_row;
 		}

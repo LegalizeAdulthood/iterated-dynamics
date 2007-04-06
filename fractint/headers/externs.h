@@ -38,7 +38,7 @@ extern int                   basin;
 extern int                   bf_save_len;
 extern int                   bfdigits;
 extern int                   biomorph;
-extern unsigned int          bits;
+extern unsigned int          g_bits;
 extern int                   bitshift;
 extern int                   bitshiftless1;
 extern BYTE                  block[];
