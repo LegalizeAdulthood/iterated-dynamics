@@ -43,7 +43,7 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
-long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l, l16triglim;
+long g_magnitude_l, g_limit_l, g_limit2_l, g_close_enough_l;
 _CMPLX init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
@@ -726,7 +726,6 @@ int calcfract(void)
 		}
 		g_limit2_l = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
 		g_close_enough_l = (long)(closenuff*fudge); /* "close enough" value */
-		l16triglim = 8L << 16;         /* domain limit of fast trig functions */
 		g_init_orbit_l.x = (long)(initorbit.x*fudge);
 		g_init_orbit_l.y = (long)(initorbit.y*fudge);
 	}

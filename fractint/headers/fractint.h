@@ -25,6 +25,8 @@ typedef BYTE BOOLEAN;
 #define difftime(now,then) ((now)-(then))
 #endif
 
+#define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
+
 #define NUM_BOXES 4096
 
 /* savedac values */

@@ -292,7 +292,7 @@ int  fpMANRbailout(void)
 	}
 
 #define TRIG16CHECK(X)  \
-	if (labs((X)) > l16triglim) \
+	if (labs((X)) > TRIG_LIMIT_16) \
 	{ \
 		return 1; \
 	}
@@ -339,7 +339,7 @@ int  fpMANRbailout(void)
 #endif
 
 #define LTRIGARG(X)    \
-	if (labs((X)) > l16triglim)\
+	if (labs((X)) > TRIG_LIMIT_16)\
 	{\
 		double tmp; \
 		tmp = (X); \

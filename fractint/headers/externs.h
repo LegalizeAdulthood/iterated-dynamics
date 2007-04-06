@@ -235,7 +235,6 @@ extern int                   julibrot;
 extern int                   kbdcount;
 extern int                   g_keep_screen_coords;
 extern int                   keybuffer;
-extern long                  l16triglim;
 extern int                   LastInitOp;
 extern unsigned              LastOp;
 extern int                   lastorbittype;
