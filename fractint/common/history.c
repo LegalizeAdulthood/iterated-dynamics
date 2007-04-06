@@ -102,7 +102,7 @@ void _fastcall save_history_info(void)
 	current.initorbit[0]		= initorbit.x;
 	current.initorbit[1]		= initorbit.y;
 	current.useinitorbit		= useinitorbit;
-	current.periodicity			= (short) periodicitycheck;
+	current.periodicity			= (short) s_periodicity_check;
 	current.pot16bit			= (short) disk16bit;
 	current.release				= (short) g_release;
 	current.save_release		= (short) save_release;
@@ -292,7 +292,7 @@ void _fastcall restore_history_info(void)
 	initorbit.x         	= last.initorbit[0];
 	initorbit.y         	= last.initorbit[1];
 	useinitorbit        	= last.useinitorbit;
-	periodicitycheck    	= last.periodicity;
+	s_periodicity_check    	= last.periodicity;
 	usr_periodicitycheck	= last.periodicity;
 	disk16bit           	= last.pot16bit;
 	g_release           	= last.release;

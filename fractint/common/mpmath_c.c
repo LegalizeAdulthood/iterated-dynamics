@@ -668,7 +668,7 @@ _CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 int ComplexNewtonSetup(void)
 {
 	threshold = .001;
-	periodicitycheck = 0;
+	s_periodicity_check = 0;
 	if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
 		param[3] != 0.0)
 		{

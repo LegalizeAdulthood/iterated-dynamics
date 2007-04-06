@@ -1083,9 +1083,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (periodicitycheck != 1)
+		if (s_periodicity_check != 1)
 		{
-			put_parm(" periodicity=%d", periodicitycheck);
+			put_parm(" periodicity=%d", s_periodicity_check);
 		}
 
 		if (rflag)
