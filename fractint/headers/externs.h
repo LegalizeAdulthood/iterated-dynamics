@@ -18,7 +18,7 @@ extern int                   Ap1deg;
 extern int                   AplusOne;
 extern int                   askvideo;
 extern float                 aspectdrift;
-extern int                   attractors;
+extern int                   g_num_attractors;
 extern int                   attrperiod[];
 extern _CMPLX                attr[];
 extern int                   autobrowse;
