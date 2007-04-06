@@ -195,7 +195,7 @@ extern char                  Glasses1Map[];
 extern int                   g_glasses_type;
 extern int                   g_good_mode;						/* video mode ok? */
 extern int                   g_got_real_dac;					/* loaddac worked, really got a dac */
-extern int                   got_status;
+extern int                   g_got_status;
 extern int					g_grayscale_depth;
 extern char                  GreyFile[];
 extern int                   hasinverse;

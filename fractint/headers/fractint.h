@@ -167,7 +167,7 @@ typedef BYTE BOOLEAN;
 #define GETFILE_IFS			2
 #define GETFILE_PARAMETER	3
 
-/* got_status values */
+/* g_got_status values */
 #define GOT_STATUS_NONE -1
 #define GOT_STATUS_12PASS 0
 #define GOT_STATUS_GUESSING 1
