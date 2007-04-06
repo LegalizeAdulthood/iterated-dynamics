@@ -659,10 +659,10 @@ void Jiim(int which)         /* called by fractint */
 	setup_convert_to_screen(&cvt);
 
 	/* reuse last location if inside window */
-	col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
-	row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
-	if (col < 0 || col >= xdots ||
-		row < 0 || row >= ydots)
+	g_col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
+	g_row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
+	if (g_col < 0 || g_col >= xdots ||
+		g_row < 0 || g_row >= ydots)
 	{
 		cr = (xxmax + xxmin) / 2.0;
 		ci = (yymax + yymin) / 2.0;
@@ -675,13 +675,13 @@ void Jiim(int which)         /* called by fractint */
 
 	old_x = old_y = -1;
 
-	col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-	row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+	g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
+	g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
 	/* possible extraseg arrays have been trashed, so set up again */
 	integerfractal ? fill_lx_array() : fill_dx_array();
 
-	Cursor_SetPos(col, row);
+	Cursor_SetPos(g_col, g_row);
 	Cursor_Show();
 	color = g_color_bright;
 
@@ -809,8 +809,8 @@ void Jiim(int which)         /* called by fractint */
 				case 'P':
 					get_a_number(&cr, &ci);
 					exact = 1;
-					col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-					row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+					g_col = (int)(cvt.a*cr + cvt.b*ci + cvt.e + .5);
+					g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 					dcol = drow = 0;
 					break;
 				case 'h':   /* hide fractal toggle */
@@ -854,37 +854,37 @@ void Jiim(int which)         /* called by fractint */
 				{
 					exact = 0;
 				}
-				col += dcol;
-				row += drow;
+				g_col += dcol;
+				g_row += drow;
 #ifdef XFRACT
 				if (kbdchar == FIK_ENTER)
 				{
 					/* We want to use the position of the cursor */
 					exact = 0;
-					col = Cursor_GetX();
-					row = Cursor_GetY();
+					g_col = Cursor_GetX();
+					g_row = Cursor_GetY();
 				}
 #endif
 
 				/* keep cursor in logical screen */
-				if (col >= xdots)
+				if (g_col >= xdots)
 				{
-					col = xdots -1; exact = 0;
+					g_col = xdots -1; exact = 0;
 				}
-				if (row >= ydots)
+				if (g_row >= ydots)
 				{
-					row = ydots -1; exact = 0;
+					g_row = ydots -1; exact = 0;
 				}
-				if (col < 0)
+				if (g_col < 0)
 				{
-					col = 0; exact = 0;
+					g_col = 0; exact = 0;
 				}
-				if (row < 0)
+				if (g_row < 0)
 				{
-					row = 0; exact = 0;
+					g_row = 0; exact = 0;
 				}
 
-				Cursor_SetPos(col, row);
+				Cursor_SetPos(g_col, g_row);
 			}  /* end while (driver_key_pressed) */
 
 			if (exact == 0)
@@ -906,7 +906,7 @@ void Jiim(int which)         /* called by fractint */
 			if (show_numbers) /* write coordinates on screen */
 			{
 				char str[41];
-				sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(col, row));
+				sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
 				if (windows == 0)
 				{
 					/* show temp msg will clear self if new msg is a
@@ -955,7 +955,7 @@ void Jiim(int which)         /* called by fractint */
 				PER_PIXEL();
 			}
 			/* move window if bumped */
-			if (windows == 0 && col > xc && col < xc + xd && row > yc && row < yc + yd)
+			if (windows == 0 && g_col > xc && g_col < xc + xd && g_row > yc && g_row < yc + yd)
 			{
 				RestoreRect(xc, yc, xd, yd);
 				xc = (xc == xd*2) ? 2 : xd*2;

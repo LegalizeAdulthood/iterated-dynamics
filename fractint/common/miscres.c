@@ -839,7 +839,7 @@ int tab_display_2(char *msg)
 	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof fractalspecific array %d",
 		num_fractal_types*(int)sizeof(struct fractalspecificstuff));
-	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, col, row);
+	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, g_col, g_row);
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",
@@ -1132,7 +1132,7 @@ top:
 				sprintf(msg, "%d", currow);
 				driver_put_string(-1, -1, C_GENERAL_HI, msg);
 				driver_put_string(-1, -1, C_GENERAL_MED, " col ");
-				sprintf(msg, "%d", col);
+				sprintf(msg, "%d", g_col);
 				driver_put_string(-1, -1, C_GENERAL_HI, msg);
 			}
 			++s_row;
@@ -1185,7 +1185,7 @@ top:
 			{
 				truncate = 1;
 			}
-			truncaterow = row;
+			truncaterow = g_row;
 			driver_put_string(++s_row, 2, C_GENERAL_MED, "Ctr");
 			driver_put_string(s_row, 8, C_GENERAL_MED, "x");
 			bftostr(msg, dec, bfXctr);

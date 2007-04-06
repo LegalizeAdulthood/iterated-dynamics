@@ -75,11 +75,11 @@ int test(void)
 		return 0;
 	}
 	numpasses = (stdcalcmode == '1') ? 0 : 1;
-	for (passes = startpass; passes <= numpasses ; passes++)
+	for (g_passes = startpass; g_passes <= numpasses ; g_passes++)
 	{
-		for (row = startrow; row <= iystop; row = row + 1 + numpasses)
+		for (g_row = startrow; g_row <= iystop; g_row = g_row + 1 + numpasses)
 		{
-			for (col = 0; col <= ixstop; col++)       /* look at each point on screen */
+			for (g_col = 0; g_col <= ixstop; g_col++)       /* look at each point on screen */
 			{
 				register int color;
 				g_initial_z.x = dxpixel();
@@ -88,7 +88,7 @@ int test(void)
 				{
 					testend();
 					alloc_resume(20, 1);
-					put_resume(sizeof(row), &row, sizeof(passes), &passes, 0);
+					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
 					return -1;
 				}
 				color = testpt(g_initial_z.x, g_initial_z.y, parm.x, parm.y, maxit, inside);
@@ -103,14 +103,14 @@ int test(void)
 						color = ((color-1) % g_and_color) + 1; /* skip color zero */
 					}
 				}
-				(*plot)(col, row, color);
-				if (numpasses && (passes == 0))
+				(*plot)(g_col, g_row, color);
+				if (numpasses && (g_passes == 0))
 				{
-					(*plot)(col, row + 1, color);
+					(*plot)(g_col, g_row + 1, color);
 				}
 			}
 		}
-		startrow = passes + 1;
+		startrow = g_passes + 1;
 	}
 	testend();
 	return 0;
@@ -1387,15 +1387,15 @@ int popcorn()   /* subset of std engine */
 	kbdcount = max_kbdcount;
 	plot = noplot;
 	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
-	for (row = start_row; row <= iystop; row++)
+	for (g_row = start_row; g_row <= iystop; g_row++)
 	{
 		reset_periodicity = 1;
-		for (col = 0; col <= ixstop; col++)
+		for (g_col = 0; g_col <= ixstop; g_col++)
 		{
 			if (StandardFractal() == -1) /* interrupted */
 			{
 				alloc_resume(10, 1);
-				put_resume(sizeof(row), &row, 0);
+				put_resume(sizeof(g_row), &g_row, 0);
 				return -1;
 			}
 			reset_periodicity = 0;
@@ -1443,7 +1443,7 @@ int lyapunov(void)
 	{
 		Population = param[1];
 	}
-	(*plot)(col, row, 1);
+	(*plot)(g_col, g_row, 1);
 	if (invert)
 	{
 		invertz2(&g_initial_z);
@@ -1464,7 +1464,7 @@ int lyapunov(void)
 	{
 		g_color = colors-1;
 	}
-	(*plot)(col, row, g_color);
+	(*plot)(g_col, g_row, g_color);
 	return g_color;
 }
 
@@ -1879,21 +1879,21 @@ int cellular()
 	{
 		if (rflag || randparam == 0 || randparam == -1)
 		{
-			for (col = 0; col <= ixstop; col++)
+			for (g_col = 0; g_col <= ixstop; g_col++)
 			{
-				cell_array[filled][col] = (BYTE)(rand()%(int)k);
+				cell_array[filled][g_col] = (BYTE)(rand()%(int)k);
 			}
 		} /* end of if random */
 		else
 		{
-			for (col = 0; col <= ixstop; col++)  /* Clear from end to end */
+			for (g_col = 0; g_col <= ixstop; g_col++)  /* Clear from end to end */
 			{
-				cell_array[filled][col] = 0;
+				cell_array[filled][g_col] = 0;
 			}
 			i = 0;
-			for (col = (ixstop-16)/2; col < (ixstop + 16)/2; col++)  /* insert initial */
+			for (g_col = (ixstop-16)/2; g_col < (ixstop + 16)/2; g_col++)  /* insert initial */
 			{
-				cell_array[filled][col] = (BYTE)init_string[i++];    /* string */
+				cell_array[filled][g_col] = (BYTE)init_string[i++];    /* string */
 			}
 		} /* end of if not random */
 		lstscreenflag = (lnnmbr != 0) ? 1 : 0;
@@ -1943,16 +1943,16 @@ int cellular()
 			cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 			/* use a rolling sum in t */
-			for (col = r + 1; col < ixstop-r; col++)  /* now do the rest */
+			for (g_col = r + 1; g_col < ixstop-r; g_col++)  /* now do the rest */
 			{
-				t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
+				t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
 				if (t > rule_digits || t < 0)
 				{
 					thinking(0, NULL);
 					abort_cellular(BAD_T, t);
 					return -1;
 				}
-				cell_array[notfilled][col] = (BYTE)cell_table[t];
+				cell_array[notfilled][g_col] = (BYTE)cell_table[t];
 			}
 
 			filled = notfilled;
@@ -1971,7 +1971,7 @@ int cellular()
 
 /* This section does all the work */
 contloop:
-	for (row = start_row; row <= iystop; row++)
+	for (g_row = start_row; g_row <= iystop; g_row++)
 	{
 		if (rflag || randparam == 0 || randparam == -1)
 		{
@@ -2006,26 +2006,26 @@ contloop:
 		cell_array[notfilled][r] = (BYTE)cell_table[t];
 
 		/* use a rolling sum in t */
-		for (col = r + 1; col < ixstop-r; col++)  /* now do the rest */
+		for (g_col = r + 1; g_col < ixstop-r; g_col++)  /* now do the rest */
 		{
-			t = (S16)(t + cell_array[filled][col + r] - cell_array[filled][col-r-1]);
+			t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
 			if (t > rule_digits || t < 0)
 			{
 				thinking(0, NULL);
 				abort_cellular(BAD_T, t);
 				return -1;
 			}
-			cell_array[notfilled][col] = (BYTE)cell_table[t];
+			cell_array[notfilled][g_col] = (BYTE)cell_table[t];
 		}
 
 		filled = notfilled;
 		notfilled = (S16)(1-filled);
-		put_line(row, 0, ixstop, cell_array[filled]);
+		put_line(g_row, 0, ixstop, cell_array[filled]);
 		if (driver_key_pressed())
 		{
 			abort_cellular(CELLULAR_DONE, 0);
 			alloc_resume(10, 1);
-			put_resume(sizeof(row), &row, 0);
+			put_resume(sizeof(g_row), &g_row, 0);
 			return -1;
 		}
 	}
@@ -2340,7 +2340,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	g_color_iter = 0;
 	if (showdot > 0)
 	{
-		(*plot) (col, row, showdot%colors);
+		(*plot) (g_col, g_row, showdot%colors);
 	}
 	if (!integerfractal) /* fp mode */
 	{
@@ -2649,7 +2649,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 	g_color = abs((int)(g_color_iter));
 
-	(*plot)(col, row, g_color);
+	(*plot)(g_col, g_row, g_color);
 
 	return g_color;
 }
