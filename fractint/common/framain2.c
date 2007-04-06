@@ -763,7 +763,7 @@ static int handle_fractal_type(int *frommandel)
 		savedac = SAVEDAC_NO;
 		save_release = g_release;
 		g_no_magnitude_calculation = FALSE;
-		use_old_period = 0;
+		g_use_old_periodicity = FALSE;
 		bad_outside = 0;
 		ldcheck = 0;
 		set_current_params();

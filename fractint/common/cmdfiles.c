@@ -528,7 +528,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	display3d = 0;                       /* 3D display is off        */
 	overlay3d = 0;                       /* 3D overlay is off        */
 
-	old_demm_colors = 0;
+	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
 	floatbailout  = (int (*)(void))fpMODbailout;
 	longbailout   = (int (*)(void))asmlMODbailout;
@@ -3169,7 +3169,7 @@ static int screencoords_arg(const cmd_context *context)
 
 static int olddemmcolors_arg(const cmd_context *context)
 {
-	return flag_arg(context, &old_demm_colors, COMMAND_OK);
+	return flag_arg(context, &g_old_demm_colors, COMMAND_OK);
 }
 
 static int askvideo_arg(const cmd_context *context)

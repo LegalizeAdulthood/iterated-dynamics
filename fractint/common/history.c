@@ -134,7 +134,7 @@ void _fastcall save_history_info(void)
 	current.bailout				= bailout;
 	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= maxit;
-	current.old_demm_colors		= (short) old_demm_colors;
+	current.g_old_demm_colors		= (short) g_old_demm_colors;
 	current.logcalc				= (short) Log_Fly_Calc;
 	current.ismand				= (short) g_is_mand;
 	current.closeprox			= closeprox;
@@ -325,7 +325,7 @@ void _fastcall restore_history_info(void)
 	bailout             	= last.bailout;
 	g_bail_out_test          	= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
-	old_demm_colors     	= last.old_demm_colors;
+	g_old_demm_colors     	= last.g_old_demm_colors;
 	curfractalspecific  	= &fractalspecific[fractype];
 	potflag             	= (potparam[0] != 0.0);
 	if (inversion[0] != 0.0)

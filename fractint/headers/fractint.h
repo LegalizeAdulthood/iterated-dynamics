@@ -481,7 +481,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short bf_math;
     short bflength;
     short yadjust;        /* yikes! we left this out ages ago! */
-    short old_demm_colors;
+    short g_old_demm_colors;
     long logmap;
     long distest;
     double dinvert[3];
@@ -581,7 +581,7 @@ struct history_info
     short bf_math;
     short bflength;
     short yadjust;
-    short old_demm_colors;
+    short g_old_demm_colors;
     char filename[FILE_MAX_PATH];
     char itemname[ITEMNAMELEN+1];
     unsigned char dac[256][3];
