@@ -406,7 +406,7 @@ extern double                qc;
 extern double                qci;
 extern double                qcj;
 extern double                qck;
-extern int                   quick_calc;
+extern int                   g_quick_calculate;
 extern int                   g_randomize;
 extern int *             ranges;
 extern int                   rangeslen;

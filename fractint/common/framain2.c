@@ -634,14 +634,14 @@ resumeloop:                             /* return here on failed overlays */
 			mms_value = evolving ?
 				evolver_menu_switch(&kbdchar, &frommandel, kbdmore, stacked)
 				: main_menu_switch(&kbdchar, &frommandel, kbdmore, stacked, axmode);
-			if (quick_calc && (mms_value == IMAGESTART ||
+			if (g_quick_calculate && (mms_value == IMAGESTART ||
 				mms_value == RESTORESTART ||
 				mms_value == RESTART))
 			{
-				quick_calc = 0;
+				g_quick_calculate = FALSE;
 				usr_stdcalcmode = old_stdcalcmode;
 			}
-			if (quick_calc && calc_status != CALCSTAT_COMPLETED)
+			if (g_quick_calculate && calc_status != CALCSTAT_COMPLETED)
 			{
 				usr_stdcalcmode = '1';
 			}
@@ -840,7 +840,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& i == COMMAND_FRACTAL_PARAM /* nothing else changed */
 		&& outside != ATAN)
 	{
-		quick_calc = 1;
+		g_quick_calculate = TRUE;
 		old_stdcalcmode = usr_stdcalcmode;
 		usr_stdcalcmode = '1';
 		*kbdmore = 0;
@@ -849,7 +849,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	}
 	else if (i > 0)
 	{              /* time to redraw? */
-		quick_calc = 0;
+		g_quick_calculate = FALSE;
 		param_history(0); /* save history */
 		*kbdmore = 0;
 		calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -1584,11 +1584,11 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 {
 	long old_maxit;
 
-	if (quick_calc)
+	if (g_quick_calculate)
 	{
 		if (CALCSTAT_COMPLETED == calc_status)
 		{
-			quick_calc = 0;
+			g_quick_calculate = FALSE;
 		}
 		usr_stdcalcmode = old_stdcalcmode;
 	}
