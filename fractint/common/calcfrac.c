@@ -43,7 +43,7 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 _LCMPLX g_init_orbit_l;
-long lmagnitud, llimit, llimit2, lclosenuff, l16triglim;
+long g_magnitude_l, g_limit_l, llimit2, lclosenuff, l16triglim;
 _CMPLX init, tmp, old, g_new, saved;
 int color;
 long coloriter, oldcoloriter, realcoloriter;
@@ -719,10 +719,10 @@ int calcfract(void)
 		lparm.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
 		lparm2.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
 		lparm2.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
-		llimit = (long)(rqlim*fudge);      /* stop if magnitude exceeds this */
-		if (llimit <= 0)
+		g_limit_l = (long)(rqlim*fudge);      /* stop if magnitude exceeds this */
+		if (g_limit_l <= 0)
 		{
-			llimit = 0x7fffffffL; /* klooge for integer math */
+			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
 		llimit2 = (long)(rqlim2*fudge);    /* stop if magnitude exceeds this */
 		lclosenuff = (long)(closenuff*fudge); /* "close enough" value */
@@ -2117,7 +2117,7 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 
 	if (inside <= BOF60 && inside >= BOF61)
 	{
-		magnitude = lmagnitud = 0;
+		magnitude = g_magnitude_l = 0;
 		min_orbit = 100000.0;
 	}
 	overflow = 0;                /* reset integer math overflow flag */
@@ -2337,11 +2337,11 @@ int StandardFractal(void)       /* per pixel 1/2/b/g, called with row & col set 
 			{
 				if (integerfractal)
 				{
-					if (lmagnitud == 0 || no_mag_calc == 0)
+					if (g_magnitude_l == 0 || no_mag_calc == 0)
 					{
-						lmagnitud = lsqr(lnew.x) + lsqr(lnew.y);
+						g_magnitude_l = lsqr(lnew.x) + lsqr(lnew.y);
 					}
-					magnitude = lmagnitud;
+					magnitude = g_magnitude_l;
 					magnitude = magnitude / fudge;
 				}
 				else if (magnitude == 0.0 || no_mag_calc == 0)
@@ -2836,7 +2836,7 @@ plot_inside: /* we're "inside" */
 		else if (inside == ZMAG)
 		{
 			coloriter = integerfractal ?
-				(long)(((double)lmagnitud/fudge)*(maxit >> 1) + 1)
+				(long)(((double)g_magnitude_l/fudge)*(maxit >> 1) + 1)
 				: (long)((sqr(g_new.x) + sqr(g_new.y))*(maxit >> 1) + 1);
 		}
 		else /* inside == -1 */

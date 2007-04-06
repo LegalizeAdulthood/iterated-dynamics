@@ -933,7 +933,7 @@ LongLambdaexponentFractal(void)
 
 	SinCos086  (lold.y, &lsiny,  &lcosy);
 
-	if (lold.x >= llimit && lcosy >= 0L)
+	if (lold.x >= g_limit_l && lcosy >= 0L)
 	{
 		return 1;
 	}
@@ -1421,8 +1421,8 @@ LPopcornFractal_Old(void)
 		ltempsqrx = lsqr(lnew.x);
 		ltempsqry = lsqr(lnew.y);
 	}
-	lmagnitud = ltempsqrx + ltempsqry;
-	if (lmagnitud >= llimit || lmagnitud < 0 || labs(lnew.x) > llimit2
+	g_magnitude_l = ltempsqrx + ltempsqry;
+	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(lnew.x) > llimit2
 			|| labs(lnew.y) > llimit2)
 					return 1;
 	lold = lnew;
@@ -1460,8 +1460,8 @@ LPopcornFractal(void)
 	/* JCO: sqr's should always be done, else magnitude could be wrong */
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	lmagnitud = ltempsqrx + ltempsqry;
-	if (lmagnitud >= llimit || lmagnitud < 0
+	g_magnitude_l = ltempsqrx + ltempsqry;
+	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
 		|| labs(lnew.x) > llimit2
 			|| labs(lnew.y) > llimit2)
 					return 1;
@@ -1559,8 +1559,8 @@ LPopcornFractalFn(void)
 	}
 	ltempsqrx = lsqr(lnew.x);
 	ltempsqry = lsqr(lnew.y);
-	lmagnitud = ltempsqrx + ltempsqry;
-	if (lmagnitud >= llimit || lmagnitud < 0
+	g_magnitude_l = ltempsqrx + ltempsqry;
+	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
 		|| labs(lnew.x) > llimit2
 		|| labs(lnew.y) > llimit2)
 		return 1;
