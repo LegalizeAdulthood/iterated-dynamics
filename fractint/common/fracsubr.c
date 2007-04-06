@@ -1926,7 +1926,7 @@ void get_julia_attractor (double real, double imag)
 						&& labs(lresult.y-lnew.y) < g_close_enough_l)
 					{
 						g_attractors_l[g_num_attractors] = lnew;
-						attrperiod[g_num_attractors] = i + 1;
+						g_attractor_period[g_num_attractors] = i + 1;
 						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
@@ -1937,7 +1937,7 @@ void get_julia_attractor (double real, double imag)
 						&& fabs(result.y-g_new_z.y) < g_close_enough)
 					{
 						g_attractors[g_num_attractors] = g_new_z;
-						attrperiod[g_num_attractors] = i + 1;
+						g_attractor_period[g_num_attractors] = i + 1;
 						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
