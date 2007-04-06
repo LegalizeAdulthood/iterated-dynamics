@@ -122,7 +122,7 @@ int     g_num_attractors;                 /* number of finite attractors  */
 _CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 _LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
-int s_periodicity_check;
+int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
 	1st pass sets bit  [1]... off only if block's contents guessed;
 	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
@@ -714,7 +714,7 @@ int calculate_fractal(void)
 		g_invert = 3; /* so values will not be changed if we come back */
 	}
 
-	g_close_enough = ddelmin*pow(2.0, -(double)(abs(s_periodicity_check)));
+	g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
@@ -764,7 +764,7 @@ int calculate_fractal(void)
 		if (curfractalspecific->per_image())
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
-			g_close_enough = ddelmin*pow(2.0, -(double)(abs(s_periodicity_check)));
+			g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
 			g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 			setsymmetry(g_symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
@@ -1110,7 +1110,7 @@ static void perform_work_list()
 		}
 
 		/* some common initialization for escape-time pixel level routines */
-		g_close_enough = ddelmin*pow(2.0, -(double)(abs(s_periodicity_check)));
+		g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
 		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
@@ -2009,7 +2009,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			maxit = 16;
 		}
 	}
-	if (s_periodicity_check == 0 || inside == ZMAG || inside == STARTRAIL)
+	if (g_periodicity_check == 0 || inside == ZMAG || inside == STARTRAIL)
 	{
 		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
 	}
@@ -2764,7 +2764,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	goto plot_pixel;
 
 plot_inside: /* we're "inside" */
-	if (s_periodicity_check < 0 && caught_a_cycle)
+	if (g_periodicity_check < 0 && caught_a_cycle)
 	{
 		g_color_iter = 7;           /* show periodicity */
 	}

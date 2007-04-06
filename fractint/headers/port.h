@@ -121,40 +121,40 @@ extern long stackavail();
         typedef void          *VOIDPTR;
         typedef const void    *VOIDCONSTPTR;
 
-        #define CONST          const
-		#define PRINTER        "PRT:"
-        #define LOBYTEFIRST    1
-        #define SLASHC         '\\'
-        #define SLASH          "\\"
-        #define SLASHSLASH     "\\\\"
-        #define SLASHDOT       "\\."
-        #define DOTSLASH       ".\\"
-        #define DOTDOTSLASH    "..\\"
-        #define READMODE        "rb"    /* Correct DOS text-mode        */
-        #define WRITEMODE       "wb"    /* file open "feature".         */
+#		define CONST          const
+#		define PRINTER        "PRT:"
+#		define LOBYTEFIRST    1
+#		define SLASHC         '\\'
+#		define SLASH          "\\"
+#		define SLASHSLASH     "\\\\"
+#		define SLASHDOT       "\\."
+#		define DOTSLASH       ".\\"
+#		define DOTDOTSLASH    "..\\"
+#		define READMODE        "rb"    /* Correct DOS text-mode        */
+#		define WRITEMODE       "wb"    /* file open "feature".         */
 
-        #define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-        #define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-        #define rand15() rand()
+#		define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
+#		define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
+#		define rand15() rand()
 
-		#ifndef BYTE_ORDER
+#		ifndef BYTE_ORDER
 		/* change for little endians that don't have this defined elsewhere (endian.h) */
-		#ifdef LINUX
-		#define BYTE_ORDER LITTLE_ENDIAN
-		#else
-		#define BYTE_ORDER BIG_ENDIAN /* the usual case */
-		#endif
-		#endif
+#		ifdef LINUX
+#		define BYTE_ORDER LITTLE_ENDIAN
+#		else
+#		define BYTE_ORDER BIG_ENDIAN /* the usual case */
+#		endif
+#		endif
 
-		#ifndef USE_BIGNUM_C_CODE
-		#define USE_BIGNUM_C_CODE
-		#endif
-		#ifndef BIG_ANSI_C
-		#define BIG_ANSI_C
-		#endif
+#		ifndef USE_BIGNUM_C_CODE
+#		define USE_BIGNUM_C_CODE
+#		endif
+#		ifndef BIG_ANSI_C
+#		define BIG_ANSI_C
+#		endif
 
 		/* TODO: we should refactor this into something better instead of using unix.h */
-		#include "unix.h"
+#		include "unix.h"
 
 		/*================================== Win32 definitions */
 
@@ -186,21 +186,21 @@ extern long stackavail();
         typedef void          *VOIDPTR;
         typedef const void    *VOIDCONSTPTR;
 
-        #define CONST          const
-        #define PRINTER        "/dev/prn"
-        #define LOBYTEFIRST    1
-        #define SLASHC         '\\'
-        #define SLASH          "\\"
-        #define SLASHSLASH     "\\\\"
-        #define SLASHDOT       "\\."
-        #define DOTSLASH       ".\\"
-        #define DOTDOTSLASH    "..\\"
-        #define READMODE        "rb"    /* Correct DOS text-mode        */
-        #define WRITEMODE       "wb"    /* file open "feature".         */
+#		define CONST          const
+#		define PRINTER        "/dev/prn"
+#		define LOBYTEFIRST    1
+#		define SLASHC         '\\'
+#		define SLASH          "\\"
+#		define SLASHSLASH     "\\\\"
+#		define SLASHDOT       "\\."
+#		define DOTSLASH       ".\\"
+#		define DOTDOTSLASH    "..\\"
+#		define READMODE        "rb"    /* Correct DOS text-mode        */
+#		define WRITEMODE       "wb"    /* file open "feature".         */
 
-        #define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-        #define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-        #define rand15() rand()
+#		define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
+#		define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
+#		define rand15() rand()
 
 #else                   /* Have to nest because #elif is not portable */
 #  ifdef AMIGA            /* Lattice C 3.02 for Amiga */
@@ -216,24 +216,24 @@ extern long stackavail();
         typedef void          *VOIDPTR;
         typedef const void    *VOIDCONSTPTR;
 
-        #define PRINTER        "PRT:"
-        #define LOBYTEFIRST    0
-        #define SLASHC         '/'
-        #define SLASH          "/"
-        #define SLASHSLASH     "//"
-        #define SLASHDOT       "/."
-        #define DOTSLASH       "./"
-        #define DOTDOTSLASH    "../"
-        #define READMODE        "rb"
-        #define WRITEMODE       "wb"
+#		define PRINTER        "PRT:"
+#		define LOBYTEFIRST    0
+#		define SLASHC         '/'
+#		define SLASH          "/"
+#		define SLASHSLASH     "//"
+#		define SLASHDOT       "/."
+#		define DOTSLASH       "./"
+#		define DOTDOTSLASH    "../"
+#		define READMODE        "rb"
+#		define WRITEMODE       "wb"
 
-        #define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-        #define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
-        #define rand15() (rand()&0x7FFF)
+#		define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
+#		define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
+#		define rand15() (rand()&0x7FFF)
 
-		#define BYTE_ORDER BIG_ENDIAN
-		#define USE_BIGNUM_C_CODE
-		#define BIG_ANSI_C
+#		define BYTE_ORDER BIG_ENDIAN
+#		define USE_BIGNUM_C_CODE
+#		define BIG_ANSI_C
 #  else
 #    ifdef unix                     /* Unix machine */
         typedef unsigned char  U8;
@@ -245,45 +245,45 @@ extern long stackavail();
         typedef unsigned char  BYTE;
         typedef char           CHAR;
 
-		#ifndef __cdecl
-		#define __cdecl
-		#endif
+#		ifndef __cdecl
+#		define __cdecl
+#		endif
 
-		#ifdef __SVR4
+#		ifdef __SVR4
 		typedef void          *VOIDPTR;
 		typedef const void    *VOIDCONSTPTR;
-		#else
-		# ifdef BADVOID
+#		else
+#		 ifdef BADVOID
 		typedef char          *VOIDPTR;
 		typedef char          *VOIDCONSTPTR;
-		# else
+#		 else
 		typedef void          *VOIDPTR;
 		typedef const void    *VOIDCONSTPTR;
-		# endif
-		#endif
+#		 endif
+#		endif
 
-		#ifdef __SVR4
-		# include <fcntl.h>
+#		ifdef __SVR4
+#		 include <fcntl.h>
 		typedef void sigfunc(int);
-		#else
+#		else
 		typedef int sigfunc(int);
-		#endif
+#		endif
   
-		#ifndef BYTE_ORDER
+#		ifndef BYTE_ORDER
 		/* change for little endians that don't have this defined elsewhere (endian.h) */
-		#ifdef LINUX
-		#define BYTE_ORDER LITTLE_ENDIAN
-		#else
-		#define BYTE_ORDER BIG_ENDIAN /* the usual case */
-		#endif
-		#endif
+#		ifdef LINUX
+#		define BYTE_ORDER LITTLE_ENDIAN
+#		else
+#		define BYTE_ORDER BIG_ENDIAN /* the usual case */
+#		endif
+#		endif
 
-		#ifndef USE_BIGNUM_C_CODE
-		#define USE_BIGNUM_C_CODE
-		#endif
-		#ifndef BIG_ANSI_C
-		#define BIG_ANSI_C
-		#endif
+#		ifndef USE_BIGNUM_C_CODE
+#		define USE_BIGNUM_C_CODE
+#		endif
+#		ifndef BIG_ANSI_C
+#		define BIG_ANSI_C
+#		endif
 
 #       define CONST          const
 #       define PRINTER        "/dev/lp"

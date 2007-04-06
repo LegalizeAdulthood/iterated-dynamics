@@ -52,7 +52,7 @@ calc_mand_floating_point(void)
 	long tmpfsd;
 	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
-	g_old_color_iter = (s_periodicity_check == 0) ? 0 : (maxit - 250);
+	g_old_color_iter = (g_periodicity_check == 0) ? 0 : (maxit - 250);
 	tmpfsd = maxit - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd)
 	{
@@ -234,7 +234,7 @@ calc_mand_assembly(void)
 	{
 		sub		eax, eax					; clear eax
 		mov		edx, eax					; clear edx
-		cmp		s_periodicity_check, eax		;	periodicity	checking disabled?
+		cmp		g_periodicity_check, eax		;	periodicity	checking disabled?
 		je		initoldcolor				;  yup,	set	oldcolor 0 to disable it
 		cmp		g_reset_periodicity, eax		;	periodicity	reset?
 		je		short initparms				; inherit oldcolor from	prior invocation
@@ -565,7 +565,7 @@ coloradjust1_32:							;	 at	least one loop.
 		jl		wedone32					;  nope.  leave	it at "maxit"
 		sub		eax, eax
 		mov		eax, inside					;	reset max-out color	to default
-		cmp		s_periodicity_check, 0			; show	periodicity	matches?
+		cmp		g_periodicity_check, 0			; show	periodicity	matches?
 		jge		wedone32					;  nope.
 		cmp		period,	0
 		je		wedone32
@@ -626,7 +626,7 @@ coloradjust1:								;	 at	least one loop.
 		jl		wedone						;  nope.  leave	it at "maxit"
 		mov		eax, inside					;	reset max-out color	to default
 		sub		edx, edx
-		cmp		s_periodicity_check, 0			; show	periodicity	matches?
+		cmp		g_periodicity_check, 0			; show	periodicity	matches?
 		jge		wedone						;  nope.
 		mov		eax, 7						;	use	color 7	(default white)
 		jmp		short wedone
