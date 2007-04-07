@@ -195,7 +195,7 @@ pop_stack:
 
     if (g_orbit_index)
     {
-		scrub_orbit();
+		orbit_scrub();
     }
 
     return g_color_iter;
@@ -216,7 +216,6 @@ over_bailout_87:
 		g_old_color_iter = 0;
     }
     g_color_iter = g_real_color_iter = maxit-cx;
-/*    if (g_real_color_iter==0) g_real_color_iter = 1; */
     if (g_color_iter==0) g_color_iter = 1;
     g_input_counter -= g_real_color_iter;
     if (outside==-1)
