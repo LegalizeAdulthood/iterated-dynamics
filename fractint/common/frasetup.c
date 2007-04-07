@@ -538,7 +538,7 @@ JuliafpSetup(void)
 			}
 			else
 			{
-				curfractalspecific->orbitcalc = PopcornFractalFn;
+				curfractalspecific->orbitcalc = popcorn_fn_orbit_fp;
 			}
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
@@ -679,15 +679,15 @@ JulialongSetup(void)
 			}
 			if (save_release <= 1960)
 			{
-				curfractalspecific->orbitcalc = LPopcornFractal_Old;
+				curfractalspecific->orbitcalc = popcorn_old_orbit;
 			}
 			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
 			{
-				curfractalspecific->orbitcalc = LPopcornFractal;
+				curfractalspecific->orbitcalc = popcorn_orbit;
 			}
 			else
 			{
-				curfractalspecific->orbitcalc = LPopcornFractalFn;
+				curfractalspecific->orbitcalc = popcorn_fn_orbit;
 			}
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
