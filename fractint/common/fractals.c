@@ -71,8 +71,8 @@ double g_root_over_degree;
 double g_degree_minus_1_over_degree;
 double g_threshold;
 _CMPLX g_coefficient;
-_CMPLX  staticroots[16]; /* roots array for degree 16 or less */
-_CMPLX  *roots = staticroots;
+_CMPLX  g_static_roots[16]; /* roots array for degree 16 or less */
+_CMPLX  *g_roots = g_static_roots;
 struct MPC      *MPCroots;
 long FgHalf;
 _CMPLX pwr;
@@ -576,7 +576,7 @@ int NewtonFractal2(void)
 			{
 				/* color in alternating shades with iteration according to
 					which root of 1 it converged to */
-				if (distance(roots[i], g_old_z) < g_threshold)
+				if (distance(g_roots[i], g_old_z) < g_threshold)
 				{
 					tmpcolor = (g_basin == 2) ?
 						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
@@ -3492,17 +3492,17 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 /* re-use static roots variable
 	memory for mandelmix4 */
 
-#define A staticroots[ 0]
-#define B staticroots[ 1]
-#define C staticroots[ 2]
-#define D staticroots[ 3]
-#define F staticroots[ 4]
-#define G staticroots[ 5]
-#define H staticroots[ 6]
-#define J staticroots[ 7]
-#define K staticroots[ 8]
-#define L staticroots[ 9]
-#define Z staticroots[10]
+#define A g_static_roots[ 0]
+#define B g_static_roots[ 1]
+#define C g_static_roots[ 2]
+#define D g_static_roots[ 3]
+#define F g_static_roots[ 4]
+#define G g_static_roots[ 5]
+#define H g_static_roots[ 6]
+#define J g_static_roots[ 7]
+#define K g_static_roots[ 8]
+#define L g_static_roots[ 9]
+#define Z g_static_roots[10]
 
 int MandelbrotMix4Setup(void)
 {

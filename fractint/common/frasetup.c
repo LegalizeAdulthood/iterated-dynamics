@@ -131,10 +131,10 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 #endif
 
 	g_basin = 0;
-	if (roots != staticroots)
+	if (g_roots != g_static_roots)
 	{
-		free(roots);
-		roots = staticroots;
+		free(g_roots);
+		g_roots = g_static_roots;
 	}
 
 	if (fractype == NEWTBASIN)
@@ -142,23 +142,23 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 		g_basin = parm.y ? 2 : 1; /*stripes */
 		if (g_degree > 16)
 		{
-			roots = (_CMPLX *) malloc(g_degree*sizeof(_CMPLX));
-			if (roots == NULL)
+			g_roots = (_CMPLX *) malloc(g_degree*sizeof(_CMPLX));
+			if (g_roots == NULL)
 			{
-				roots = staticroots;
+				g_roots = g_static_roots;
 				g_degree = 16;
 			}
 		}
 		else
 		{
-			roots = staticroots;
+			g_roots = g_static_roots;
 		}
 
 		/* list of roots to discover where we converged for newtbasin */
 		for (i = 0; i < g_degree; i++)
 		{
-			roots[i].x = cos(i*twopi/(double)g_degree);
-			roots[i].y = sin(i*twopi/(double)g_degree);
+			g_roots[i].x = cos(i*twopi/(double)g_degree);
+			g_roots[i].y = sin(i*twopi/(double)g_degree);
 		}
 	}
 #if !defined(XFRACT)
@@ -171,13 +171,13 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 			MPCroots = (struct MPC *) malloc(g_degree*sizeof(struct MPC));
 			if (MPCroots == NULL)
 			{
-				MPCroots = (struct MPC *)staticroots;
+				MPCroots = (struct MPC *)g_static_roots;
 				g_degree = 16;
 			}
 		}
 		else
 		{
-			MPCroots = (struct MPC *)staticroots;
+			MPCroots = (struct MPC *)g_static_roots;
 		}
 
 		/* list of roots to discover where we converged for newtbasin */
