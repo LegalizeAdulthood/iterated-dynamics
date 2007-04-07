@@ -490,8 +490,8 @@ extern int                   taborhelp;
 extern int                   Targa_Out;
 extern int                   g_targa_overlay;
 extern char                  temp1[];
-extern double                tempsqrx;
-extern double                tempsqry;
+extern double                g_temp_sqr_x;
+extern double                g_temp_sqr_y;
 extern BYTE                  teststring[];
 extern int                   g_text_cbase;						/* g_text_col is relative to this */
 extern int                   g_text_col;						/* current column in text mode */

@@ -71,8 +71,8 @@ static long iteration(register DBLS cr, register DBLS ci,
 {
 	g_old_z.x = re;
 	g_old_z.y = im;
-	tempsqrx = sqr(g_old_z.x);
-	tempsqry = sqr(g_old_z.y);
+	g_temp_sqr_x = sqr(g_old_z.x);
+	g_temp_sqr_y = sqr(g_old_z.y);
 	g_float_parameter = &g_initial_z;
 	g_float_parameter->x = cr;
 	g_float_parameter->y = ci;
@@ -614,15 +614,15 @@ scan:
 
 
 #define SOI_ORBIT1(zr, rq, zi, iq, cr, ci, esc) \
-		tempsqrx = rq; \
-		tempsqry = iq; \
+		g_temp_sqr_x = rq; \
+		g_temp_sqr_y = iq; \
 		old.x = zr; \
 		old.y = zi; \
 		g_float_parameter->x = cr; \
 		g_float_parameter->y = ci; \
 		esc = ORBITCALC(); \
-		rq = tempsqrx; \
-		iq = tempsqry; \
+		rq = g_temp_sqr_x; \
+		iq = g_temp_sqr_y; \
 		zr = new.x; \
 		zi = new.y
 
