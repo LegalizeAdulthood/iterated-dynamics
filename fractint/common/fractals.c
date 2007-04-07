@@ -98,48 +98,47 @@ double g_quaternion_c = 0.0;
 double g_quaternion_ci = 0.0;
 double g_quaternion_cj = 0.0;
 double g_quaternion_ck = 0.0;
-/* temporary variables for trig use */
-long lcosx = 0;
-long lsinx = 0;
-long lcosy = 0;
-long lsiny = 0;
 /*
 **  details of finite attractors (required for Magnet Fractals)
 **  (can also be used in "coloring in" the lakes of Julia types)
 */
+
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-_CMPLX  T_Cm1;        /* 3*(g_float_parameter - 1)                */
-_CMPLX  T_Cm2;        /* 3*(g_float_parameter - 2)                */
-_CMPLX  T_Cm1Cm2;     /* (g_float_parameter - 1)*(g_float_parameter - 2) */
-
+static _CMPLX  s_3_c_minus_1 = { 0.0, 0.0 };		/* 3*(g_float_parameter - 1)                */
+static _CMPLX  s_3_c_minus_2 = { 0.0, 0.0 };        /* 3*(g_float_parameter - 2)                */
+static _CMPLX  s_c_minus_1_c_minus_2 = { 0.0, 0.0 }; /* (g_float_parameter - 1)*(g_float_parameter - 2) */
 static _CMPLX s_temp2 = { 0.0, 0.0 };
 static double s_cos_y = 0.0;
 static double s_sin_y = 0.0;
 static double s_temp_exp = 0.0;
-static double foldxinitx = 0.0;
-static double foldyinity = 0.0;
-static double foldxinity = 0.0;
-static double foldyinitx = 0.0;
-static long oldxinitx = 0;
-static long oldyinity = 0;
-static long oldxinity = 0;
-static long oldyinitx = 0;
-static long longtmp = 0;
+static double s_old_x_init_x_fp = 0.0;
+static double s_old_y_init_y_fp = 0.0;
+static double s_old_x_init_y_fp = 0.0;
+static double s_old_y_init_x_fp = 0.0;
+static long s_old_x_init_x = 0;
+static long s_old_y_init_y = 0;
+static long s_old_x_init_y = 0;
+static long s_old_y_init_x = 0;
+/* temporary variables for trig use */
+static long lcosx = 0;
+static long lsinx = 0;
+static long lcosy = 0;
+static long lsiny = 0;
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
 {
-	T_Cm1.x = g_float_parameter->x - 1.0;
-	T_Cm1.y = g_float_parameter->y;
-	T_Cm2.x = g_float_parameter->x - 2.0;
-	T_Cm2.y = g_float_parameter->y;
-	T_Cm1Cm2.x = (T_Cm1.x*T_Cm2.x) - (T_Cm1.y*T_Cm2.y);
-	T_Cm1Cm2.y = (T_Cm1.x*T_Cm2.y) + (T_Cm1.y*T_Cm2.x);
-	T_Cm1.x += T_Cm1.x + T_Cm1.x;
-	T_Cm1.y += T_Cm1.y + T_Cm1.y;
-	T_Cm2.x += T_Cm2.x + T_Cm2.x;
-	T_Cm2.y += T_Cm2.y + T_Cm2.y;
+	s_3_c_minus_1.x = g_float_parameter->x - 1.0;
+	s_3_c_minus_1.y = g_float_parameter->y;
+	s_3_c_minus_2.x = g_float_parameter->x - 2.0;
+	s_3_c_minus_2.y = g_float_parameter->y;
+	s_c_minus_1_c_minus_2.x = (s_3_c_minus_1.x*s_3_c_minus_2.x) - (s_3_c_minus_1.y*s_3_c_minus_2.y);
+	s_c_minus_1_c_minus_2.y = (s_3_c_minus_1.x*s_3_c_minus_2.y) + (s_3_c_minus_1.y*s_3_c_minus_2.x);
+	s_3_c_minus_1.x += s_3_c_minus_1.x + s_3_c_minus_1.x;
+	s_3_c_minus_1.y += s_3_c_minus_1.y + s_3_c_minus_1.y;
+	s_3_c_minus_2.x += s_3_c_minus_2.x + s_3_c_minus_2.x;
+	s_3_c_minus_2.y += s_3_c_minus_2.y + s_3_c_minus_2.y;
 }
 
 /* -------------------------------------------------------------------- */
@@ -680,20 +679,20 @@ Barnsley1Fractal(void)
 	Everywhere" by Michael Barnsley, p. 322 */
 
 	/* calculate intermediate products */
-	oldxinitx   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
-	oldyinity   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
-	oldxinity   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
-	oldyinitx   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
+	s_old_x_init_x   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
+	s_old_y_init_y   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
+	s_old_x_init_y   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
+	s_old_y_init_x   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
 	/* orbit calculation */
 	if (g_old_z_l.x >= 0)
 	{
-		g_new_z_l.x = (oldxinitx - g_long_parameter->x - oldyinity);
-		g_new_z_l.y = (oldyinitx - g_long_parameter->y + oldxinity);
+		g_new_z_l.x = (s_old_x_init_x - g_long_parameter->x - s_old_y_init_y);
+		g_new_z_l.y = (s_old_y_init_x - g_long_parameter->y + s_old_x_init_y);
 	}
 	else
 	{
-		g_new_z_l.x = (oldxinitx + g_long_parameter->x - oldyinity);
-		g_new_z_l.y = (oldyinitx + g_long_parameter->y + oldxinity);
+		g_new_z_l.x = (s_old_x_init_x + g_long_parameter->x - s_old_y_init_y);
+		g_new_z_l.y = (s_old_y_init_x + g_long_parameter->y + s_old_x_init_y);
 	}
 	return longbailout();
 #else
@@ -709,20 +708,20 @@ Barnsley1FPFractal(void)
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 
 	/* calculate intermediate products */
-	foldxinitx = g_old_z.x*g_float_parameter->x;
-	foldyinity = g_old_z.y*g_float_parameter->y;
-	foldxinity = g_old_z.x*g_float_parameter->y;
-	foldyinitx = g_old_z.y*g_float_parameter->x;
+	s_old_x_init_x_fp = g_old_z.x*g_float_parameter->x;
+	s_old_y_init_y_fp = g_old_z.y*g_float_parameter->y;
+	s_old_x_init_y_fp = g_old_z.x*g_float_parameter->y;
+	s_old_y_init_x_fp = g_old_z.y*g_float_parameter->x;
 	/* orbit calculation */
 	if (g_old_z.x >= 0)
 	{
-		g_new_z.x = (foldxinitx - g_float_parameter->x - foldyinity);
-		g_new_z.y = (foldyinitx - g_float_parameter->y + foldxinity);
+		g_new_z.x = (s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp);
+		g_new_z.y = (s_old_y_init_x_fp - g_float_parameter->y + s_old_x_init_y_fp);
 	}
 	else
 	{
-		g_new_z.x = (foldxinitx + g_float_parameter->x - foldyinity);
-		g_new_z.y = (foldyinitx + g_float_parameter->y + foldxinity);
+		g_new_z.x = (s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp);
+		g_new_z.y = (s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp);
 	}
 	return floatbailout();
 }
@@ -736,21 +735,21 @@ Barnsley2Fractal(void)
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 
 	/* calculate intermediate products */
-	oldxinitx   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
-	oldyinity   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
-	oldxinity   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
-	oldyinitx   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
+	s_old_x_init_x   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
+	s_old_y_init_y   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
+	s_old_x_init_y   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
+	s_old_y_init_x   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
 
 	/* orbit calculation */
-	if (oldxinity + oldyinitx >= 0)
+	if (s_old_x_init_y + s_old_y_init_x >= 0)
 	{
-		g_new_z_l.x = oldxinitx - g_long_parameter->x - oldyinity;
-		g_new_z_l.y = oldyinitx - g_long_parameter->y + oldxinity;
+		g_new_z_l.x = s_old_x_init_x - g_long_parameter->x - s_old_y_init_y;
+		g_new_z_l.y = s_old_y_init_x - g_long_parameter->y + s_old_x_init_y;
 	}
 	else
 	{
-		g_new_z_l.x = oldxinitx + g_long_parameter->x - oldyinity;
-		g_new_z_l.y = oldyinitx + g_long_parameter->y + oldxinity;
+		g_new_z_l.x = s_old_x_init_x + g_long_parameter->x - s_old_y_init_y;
+		g_new_z_l.y = s_old_y_init_x + g_long_parameter->y + s_old_x_init_y;
 	}
 	return longbailout();
 #else
@@ -765,21 +764,21 @@ Barnsley2FPFractal(void)
 	Everywhere" by Michael Barnsley, p. 331, example 4.2 */
 
 	/* calculate intermediate products */
-	foldxinitx = g_old_z.x*g_float_parameter->x;
-	foldyinity = g_old_z.y*g_float_parameter->y;
-	foldxinity = g_old_z.x*g_float_parameter->y;
-	foldyinitx = g_old_z.y*g_float_parameter->x;
+	s_old_x_init_x_fp = g_old_z.x*g_float_parameter->x;
+	s_old_y_init_y_fp = g_old_z.y*g_float_parameter->y;
+	s_old_x_init_y_fp = g_old_z.x*g_float_parameter->y;
+	s_old_y_init_x_fp = g_old_z.y*g_float_parameter->x;
 
 	/* orbit calculation */
-	if (foldxinity + foldyinitx >= 0)
+	if (s_old_x_init_y_fp + s_old_y_init_x_fp >= 0)
 	{
-		g_new_z.x = foldxinitx - g_float_parameter->x - foldyinity;
-		g_new_z.y = foldyinitx - g_float_parameter->y + foldxinity;
+		g_new_z.x = s_old_x_init_x_fp - g_float_parameter->x - s_old_y_init_y_fp;
+		g_new_z.y = s_old_y_init_x_fp - g_float_parameter->y + s_old_x_init_y_fp;
 	}
 	else
 	{
-		g_new_z.x = foldxinitx + g_float_parameter->x - foldyinity;
-		g_new_z.y = foldyinitx + g_float_parameter->y + foldxinity;
+		g_new_z.x = s_old_x_init_x_fp + g_float_parameter->x - s_old_y_init_y_fp;
+		g_new_z.y = s_old_y_init_x_fp + g_float_parameter->y + s_old_x_init_y_fp;
 	}
 	return floatbailout();
 }
@@ -916,6 +915,7 @@ int
 LongLambdaexponentFractal(void)
 {
 #if !defined(XFRACT)
+	long tmp;
 	/* found this in  "Science of Fractal Images" */
 	LONGEXPBAILOUT();
 
@@ -925,10 +925,10 @@ LongLambdaexponentFractal(void)
 	{
 		return 1;
 	}
-	longtmp = Exp086(g_old_z_l.x);
+	tmp = Exp086(g_old_z_l.x);
 
-	g_tmp_z_l.x = multiply(longtmp,      lcosy,   bitshift);
-	g_tmp_z_l.y = multiply(longtmp,      lsiny,   bitshift);
+	g_tmp_z_l.x = multiply(tmp,      lcosy,   bitshift);
+	g_tmp_z_l.y = multiply(tmp,      lsiny,   bitshift);
 
 	g_new_z_l.x  = multiply(g_long_parameter->x, g_tmp_z_l.x, bitshift)
 			- multiply(g_long_parameter->y, g_tmp_z_l.y, bitshift);
@@ -966,16 +966,17 @@ LongTrigPlusExponentFractal(void)
 {
 #if !defined(XFRACT)
 	/* calculate exp(z) */
+	long tmp;
 
 	/* domain check for fast transcendental functions */
 	TRIG16CHECK(g_old_z_l.x);
 	TRIG16CHECK(g_old_z_l.y);
 
-	longtmp = Exp086(g_old_z_l.x);
+	tmp = Exp086(g_old_z_l.x);
 	SinCos086  (g_old_z_l.y, &lsiny,  &lcosy);
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	g_new_z_l.x += multiply(longtmp,    lcosy,   bitshift) + g_long_parameter->x;
-	g_new_z_l.y += multiply(longtmp,    lsiny,   bitshift) + g_long_parameter->y;
+	g_new_z_l.x += multiply(tmp,    lcosy,   bitshift) + g_long_parameter->x;
+	g_new_z_l.y += multiply(tmp,    lsiny,   bitshift) + g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -1184,21 +1185,21 @@ Barnsley3Fractal(void)
 
 	/* calculate intermediate products */
 #if !defined(XFRACT)
-	oldxinitx   = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
-	oldyinity   = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
-	oldxinity   = multiply(g_old_z_l.x, g_old_z_l.y, bitshift);
+	s_old_x_init_x   = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
+	s_old_y_init_y   = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+	s_old_x_init_y   = multiply(g_old_z_l.x, g_old_z_l.y, bitshift);
 
 	/* orbit calculation */
 	if (g_old_z_l.x > 0)
 	{
-		g_new_z_l.x = oldxinitx   - oldyinity - fudge;
-		g_new_z_l.y = oldxinity << 1;
+		g_new_z_l.x = s_old_x_init_x   - s_old_y_init_y - fudge;
+		g_new_z_l.y = s_old_x_init_y << 1;
 	}
 	else
 	{
-		g_new_z_l.x = oldxinitx - oldyinity - fudge
+		g_new_z_l.x = s_old_x_init_x - s_old_y_init_y - fudge
 			+ multiply(g_long_parameter->x, g_old_z_l.x, bitshift);
-		g_new_z_l.y = oldxinity <<1;
+		g_new_z_l.y = s_old_x_init_y <<1;
 
 		/* This term added by Tim Wegner to make dependent on the
 			imaginary part of the parameter. (Otherwise Mandelbrot
@@ -1219,20 +1220,20 @@ Barnsley3FPFractal(void)
 
 
 	/* calculate intermediate products */
-	foldxinitx  = g_old_z.x*g_old_z.x;
-	foldyinity  = g_old_z.y*g_old_z.y;
-	foldxinity  = g_old_z.x*g_old_z.y;
+	s_old_x_init_x_fp  = g_old_z.x*g_old_z.x;
+	s_old_y_init_y_fp  = g_old_z.y*g_old_z.y;
+	s_old_x_init_y_fp  = g_old_z.x*g_old_z.y;
 
 	/* orbit calculation */
 	if (g_old_z.x > 0)
 	{
-		g_new_z.x = foldxinitx - foldyinity - 1.0;
-		g_new_z.y = foldxinity*2;
+		g_new_z.x = s_old_x_init_x_fp - s_old_y_init_y_fp - 1.0;
+		g_new_z.y = s_old_x_init_y_fp*2;
 	}
 	else
 	{
-		g_new_z.x = foldxinitx - foldyinity -1.0 + g_float_parameter->x*g_old_z.x;
-		g_new_z.y = foldxinity*2;
+		g_new_z.x = s_old_x_init_x_fp - s_old_y_init_y_fp -1.0 + g_float_parameter->x*g_old_z.x;
+		g_new_z.y = s_old_x_init_y_fp*2;
 
 		/* This term added by Tim Wegner to make dependent on the
 			imaginary part of the parameter. (Otherwise Mandelbrot
@@ -2443,20 +2444,20 @@ int Magnet2Fractal(void)
 	_CMPLX top, bot, tmp;
 	double div;
 
-	top.x = g_old_z.x*(g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + T_Cm1.x)
-			- g_old_z.y*T_Cm1.y + T_Cm1Cm2.x;
-	top.y = g_old_z.y*(g_temp_sqr_x + g_temp_sqr_x + g_temp_sqr_x-g_temp_sqr_y + T_Cm1.x)
-			+ g_old_z.x*T_Cm1.y + T_Cm1Cm2.y;
+	top.x = g_old_z.x*(g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_3_c_minus_1.x)
+			- g_old_z.y*s_3_c_minus_1.y + s_c_minus_1_c_minus_2.x;
+	top.y = g_old_z.y*(g_temp_sqr_x + g_temp_sqr_x + g_temp_sqr_x-g_temp_sqr_y + s_3_c_minus_1.x)
+			+ g_old_z.x*s_3_c_minus_1.y + s_c_minus_1_c_minus_2.y;
 
 	bot.x = g_temp_sqr_x - g_temp_sqr_y;
 	bot.x = bot.x + bot.x + bot.x
-			+ g_old_z.x*T_Cm2.x - g_old_z.y*T_Cm2.y
-			+ T_Cm1Cm2.x + 1.0;
+			+ g_old_z.x*s_3_c_minus_2.x - g_old_z.y*s_3_c_minus_2.y
+			+ s_c_minus_1_c_minus_2.x + 1.0;
 	bot.y = g_old_z.x*g_old_z.y;
 	bot.y += bot.y;
 	bot.y = bot.y + bot.y + bot.y
-			+ g_old_z.x*T_Cm2.y + g_old_z.y*T_Cm2.x
-			+ T_Cm1Cm2.y;
+			+ g_old_z.x*s_3_c_minus_2.y + g_old_z.y*s_3_c_minus_2.x
+			+ s_c_minus_1_c_minus_2.y;
 
 	div = bot.x*bot.x + bot.y*bot.y;                /* tmp = top/bot  */
 	if (div < FLT_MIN)
