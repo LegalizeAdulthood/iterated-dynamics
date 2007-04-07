@@ -255,7 +255,7 @@ void show_var_bf(char *s, bf_t n)
 
 #endif
 
-void bfcornerstofloat(void)
+void corners_bf_to_float(void)
 {
 	int i;
 	if (bf_math)
@@ -280,14 +280,10 @@ void bfcornerstofloat(void)
 /*    Bignumber Bailout Routines                                        */
 /* -------------------------------------------------------------------- */
 
-/* mandel_bntoint() can only be used for intlength of 1 */
-#define mandel_bntoint(n) (*(n + bnlength - 1)) /* assumes intlength of 1 */
-
 /* Note:                                             */
 /* No need to set magnitude                          */
 /* as color schemes that need it calculate it later. */
-
-int  bnMODbailout()
+int  bail_out_mod_bn()
 {
 	long longmagnitude;
 
@@ -305,7 +301,7 @@ int  bnMODbailout()
 	return 0;
 }
 
-int  bnREALbailout()
+int  bail_out_real_bn()
 {
 	long longtempsqrx;
 
@@ -322,7 +318,7 @@ int  bnREALbailout()
 }
 
 
-int  bnIMAGbailout()
+int  bail_out_imag_bn()
 {
 	long longtempsqry;
 
@@ -338,7 +334,7 @@ int  bnIMAGbailout()
 	return 0;
 }
 
-int  bnORbailout()
+int  bail_out_or_bn()
 {
 	long longtempsqrx, longtempsqry;
 
@@ -355,7 +351,7 @@ int  bnORbailout()
 	return 0;
 }
 
-int  bnANDbailout()
+int  bail_out_and_bn()
 {
 	long longtempsqrx, longtempsqry;
 
@@ -372,7 +368,7 @@ int  bnANDbailout()
 	return 0;
 }
 
-int  bnMANHbailout()
+int  bail_out_manhattan_bn()
 {
 	long longtempmag;
 
@@ -393,7 +389,7 @@ int  bnMANHbailout()
 	return 0;
 }
 
-int  bnMANRbailout()
+int  bail_out_manhattan_r_bn()
 {
 	long longtempmag;
 
@@ -412,7 +408,7 @@ int  bnMANRbailout()
 	return 0;
 }
 
-int  bfMODbailout()
+int  bail_out_mod_bf()
 {
 	long longmagnitude;
 
@@ -430,7 +426,7 @@ int  bfMODbailout()
 	return 0;
 }
 
-int  bfREALbailout()
+int  bail_out_real_bf()
 {
 	long longtempsqrx;
 
@@ -447,7 +443,7 @@ int  bfREALbailout()
 }
 
 
-int  bfIMAGbailout()
+int  bail_out_imag_bf()
 {
 	long longtempsqry;
 
@@ -463,7 +459,7 @@ int  bfIMAGbailout()
 	return 0;
 }
 
-int  bfORbailout()
+int  bail_out_or_bf()
 {
 	long longtempsqrx, longtempsqry;
 
@@ -480,7 +476,7 @@ int  bfORbailout()
 	return 0;
 }
 
-int  bfANDbailout()
+int  bail_out_and_bf()
 {
 	long longtempsqrx, longtempsqry;
 
@@ -497,7 +493,7 @@ int  bfANDbailout()
 	return 0;
 }
 
-int  bfMANHbailout()
+int  bail_out_manhattan_bf()
 {
 	long longtempmag;
 
@@ -518,7 +514,7 @@ int  bfMANHbailout()
 	return 0;
 }
 
-int  bfMANRbailout()
+int  bail_out_manhattan_r_bf()
 {
 	long longtempmag;
 
@@ -537,7 +533,7 @@ int  bfMANRbailout()
 	return 0;
 }
 
-int MandelbnSetup()
+int mandelbrot_setup_bn()
 {
 	/* this should be set up dynamically based on corners */
 	bn_t bntemp1, bntemp2;
@@ -624,7 +620,7 @@ int MandelbnSetup()
 		break;
 	}
 
-/* at the present time, parameters are kept in float, but want to keep
+	/* at the present time, parameters are kept in float, but want to keep
 		the arbitrary precision logic intact. The next two lines, if used,
 		would disguise and breaking of the arbitrary precision logic */
 	/*
@@ -635,7 +631,7 @@ int MandelbnSetup()
 	return 1;
 }
 
-int MandelbfSetup()
+int mandelbrot_setup_bf()
 {
 	/* this should be set up dynamically based on corners */
 	bf_t bftemp1, bftemp2;
@@ -719,7 +715,7 @@ int MandelbfSetup()
 	return 1;
 }
 
-int mandelbn_per_pixel()
+int mandelbrot_per_pixel_bn()
 {
 	/* parm.x = xxmin + col*delx + row*delx2 */
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
@@ -765,7 +761,7 @@ int mandelbn_per_pixel()
 	return 1;                  /* 1st iteration has been done */
 }
 
-int mandelbf_per_pixel()
+int mandelbrot_per_pixel_bf()
 {
 	/* parm.x = xxmin + col*delx + row*delx2 */
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
@@ -811,8 +807,7 @@ int mandelbf_per_pixel()
 	return 1;                  /* 1st iteration has been done */
 }
 
-int
-juliabn_per_pixel()
+int julia_per_pixel_bn(void)
 {
 	/* old.x = xxmin + col*delx + row*delx2 */
 	mult_bn_int(bnold.x, bnxdel, (U16)g_col);
@@ -839,8 +834,7 @@ juliabn_per_pixel()
 	return 1;                  /* 1st iteration has been done */
 }
 
-int
-juliabf_per_pixel()
+int julia_per_pixel_bf(void)
 {
 	/* old.x = xxmin + col*delx + row*delx2 */
 	mult_bf_int(bfold.x, bfxdel, (U16)g_col);
@@ -867,8 +861,7 @@ juliabf_per_pixel()
 	return 1;                  /* 1st iteration has been done */
 }
 
-int
-JuliabnFractal()
+int julia_orbit_bn()
 {
 	/* Don't forget, with bn_t numbers, after multiplying or squaring */
 	/* you must shift over by shiftfactor to get the bn number.          */
@@ -888,8 +881,7 @@ JuliabnFractal()
 	return bignumbailout();
 }
 
-int
-JuliabfFractal()
+int julia_orbit_bf()
 {
 	/* new.x = tmpsqrx - tmpsqry + parm.x;   */
 	sub_a_bf(bftmpsqrx, bftmpsqry);
@@ -902,8 +894,7 @@ JuliabfFractal()
 	return bigfltbailout();
 }
 
-int
-JuliaZpowerbnFractal()
+int julia_z_power_orbit_bn()
 {
 	_BNCMPLX parm2;
 	int saved; saved = save_stack();
@@ -913,15 +904,14 @@ JuliaZpowerbnFractal()
 
 	floattobn(parm2.x, param[2]);
 	floattobn(parm2.y, param[3]);
-	ComplexPower_bn(&bnnew, &bnold, &parm2);
+	complex_power_bn(&bnnew, &bnold, &parm2);
 	add_bn(bnnew.x, bnparm.x, bnnew.x + shiftfactor);
 	add_bn(bnnew.y, bnparm.y, bnnew.y + shiftfactor);
 	restore_stack(saved);
 	return bignumbailout();
 }
 
-int
-JuliaZpowerbfFractal()
+int julia_z_power_orbit_bf()
 {
 	_BFCMPLX parm2;
 	int saved; saved = save_stack();
@@ -945,7 +935,7 @@ the following is an example of how you can take advantage of the bn_t
 format to squeeze a little more precision out of the calculations.
 */
 int
-JuliabnFractal()
+julia_orbit_bn()
 {
 	int oldbnlength;
 	bn_t mod;
@@ -1007,7 +997,7 @@ JuliabnFractal()
 }
 #endif
 
-_CMPLX cmplxbntofloat(_BNCMPLX *s)
+_CMPLX complex_bn_to_float(_BNCMPLX *s)
 {
 	_CMPLX t;
 	t.x = (double)bntofloat(s->x);
@@ -1015,7 +1005,7 @@ _CMPLX cmplxbntofloat(_BNCMPLX *s)
 	return t;
 }
 
-_CMPLX cmplxbftofloat(_BFCMPLX *s)
+_CMPLX complex_bf_to_float(_BFCMPLX *s)
 {
 	_CMPLX t;
 	t.x = (double)bftofloat(s->x);
@@ -1023,7 +1013,7 @@ _CMPLX cmplxbftofloat(_BFCMPLX *s)
 	return t;
 }
 
-_BFCMPLX *cmplxlog_bf(_BFCMPLX *t, _BFCMPLX *s)
+_BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s)
 {
 	square_bf(t->x, s->x);
 	square_bf(t->y, s->y);
@@ -1069,7 +1059,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
 		return t;
 		}
 
-	cmplxlog_bf(t, xx);
+	complex_log_bf(t, xx);
 	cplxmul_bf(&tmp, t, yy);
 	exp_bf(e2x, tmp.x);
 	sincos_bf(siny, cosy, tmp.y);
@@ -1079,7 +1069,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
 	return t;
 }
 
-_BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
+_BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s)
 {
 	square_bn(t->x, s->x);
 	square_bn(t->y, s->y);
@@ -1090,7 +1080,7 @@ _BNCMPLX *cmplxlog_bn(_BNCMPLX *t, _BNCMPLX *s)
 	return t;
 }
 
-_BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
+_BNCMPLX *complex_multiply_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 {
 	bn_t tmp1;
 	int saved; saved = save_stack();
@@ -1106,8 +1096,8 @@ _BNCMPLX *cplxmul_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 	return t;
 }
 
-/* note: ComplexPower_bn() returns need to be +shiftfactor'ed */
-_BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
+/* note: complex_power_bn() returns need to be +shiftfactor'ed */
+_BNCMPLX *complex_power_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
 {
 	_BNCMPLX tmp;
 	bn_t e2x, siny, cosy;
@@ -1126,8 +1116,8 @@ _BNCMPLX *ComplexPower_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
 		return t;
 		}
 
-	cmplxlog_bn(t, xx);
-	cplxmul_bn(&tmp, t, yy);
+	complex_log_bn(t, xx);
+	complex_multiply_bn(&tmp, t, yy);
 	exp_bn(e2x, tmp.x);
 	sincos_bn(siny, cosy, tmp.y);
 	mult_bn(t->x, e2x, cosy);

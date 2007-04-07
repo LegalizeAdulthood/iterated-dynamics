@@ -3566,8 +3566,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlMODbailout;
 		}
-		bignumbailout = (int (*)(void))bnMODbailout;
-		bigfltbailout = (int (*)(void))bfMODbailout;
+		bignumbailout = (int (*)(void))bail_out_mod_bn;
+		bigfltbailout = (int (*)(void))bail_out_mod_bf;
 		break;
 	case Real:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3586,8 +3586,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlREALbailout;
 		}
-		bignumbailout = (int (*)(void))bnREALbailout;
-		bigfltbailout = (int (*)(void))bfREALbailout;
+		bignumbailout = (int (*)(void))bail_out_real_bn;
+		bigfltbailout = (int (*)(void))bail_out_real_bf;
 		break;
 	case Imag:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3606,8 +3606,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlIMAGbailout;
 		}
-		bignumbailout = (int (*)(void))bnIMAGbailout;
-		bigfltbailout = (int (*)(void))bfIMAGbailout;
+		bignumbailout = (int (*)(void))bail_out_imag_bn;
+		bigfltbailout = (int (*)(void))bail_out_imag_bf;
 		break;
 	case Or:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3626,8 +3626,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlORbailout;
 		}
-		bignumbailout = (int (*)(void))bnORbailout;
-		bigfltbailout = (int (*)(void))bfORbailout;
+		bignumbailout = (int (*)(void))bail_out_or_bn;
+		bigfltbailout = (int (*)(void))bail_out_or_bf;
 		break;
 	case And:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3646,8 +3646,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlANDbailout;
 		}
-		bignumbailout = (int (*)(void))bnANDbailout;
-		bigfltbailout = (int (*)(void))bfANDbailout;
+		bignumbailout = (int (*)(void))bail_out_and_bn;
+		bigfltbailout = (int (*)(void))bail_out_and_bf;
 		break;
 	case Manh:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3666,8 +3666,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlMANHbailout;
 		}
-		bignumbailout = (int (*)(void))bnMANHbailout;
-		bigfltbailout = (int (*)(void))bfMANHbailout;
+		bignumbailout = (int (*)(void))bail_out_manhattan_bn;
+		bigfltbailout = (int (*)(void))bail_out_manhattan_bf;
 		break;
 	case Manr:
 		if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
@@ -3686,8 +3686,8 @@ void setbailoutformula(enum bailouts test)
 		{
 			longbailout = (int (*)(void))asmlMANRbailout;
 		}
-		bignumbailout = (int (*)(void))bnMANRbailout;
-		bigfltbailout = (int (*)(void))bfMANRbailout;
+		bignumbailout = (int (*)(void))bail_out_manhattan_r_bn;
+		bigfltbailout = (int (*)(void))bail_out_manhattan_r_bf;
 		break;
 	}
 }
