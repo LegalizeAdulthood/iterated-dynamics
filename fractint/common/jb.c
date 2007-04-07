@@ -72,7 +72,7 @@ int julibrot_setup(void)
 	s_y_offset_fp = (yymax + yymin) / 2;     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
-	floatparm = &s_jbc_fp;
+	g_float_parameter = &s_jbc_fp;
 	s_x_per_inch_fp = (xxmin - xxmax) / g_width_fp;
 	s_y_per_inch_fp = (yymax - yymin) / g_height_fp;
 	s_inch_per_x_dot_fp = g_width_fp / xdots;

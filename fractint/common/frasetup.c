@@ -226,7 +226,7 @@ MandelfpSetup(void)
 	g_c_exp = (int)param[2];
 	g_power.x = param[2] - 1.0;
 	g_power.y = param[3];
-	floatparm = &g_initial_z;
+	g_float_parameter = &g_initial_z;
 	switch (fractype)
 	{
 	case MARKSMANDELFP:
@@ -343,12 +343,12 @@ MandelfpSetup(void)
 		}
 		break;
 	case QUATFP:
-		floatparm = &g_temp_z;
+		g_float_parameter = &g_temp_z;
 		g_num_attractors = 0;
 		g_periodicity_check = 0;
 		break;
 	case HYPERCMPLXFP:
-		floatparm = &g_temp_z;
+		g_float_parameter = &g_temp_z;
 		g_num_attractors = 0;
 		g_periodicity_check = 0;
 		if (param[2] != 0)
@@ -382,12 +382,12 @@ int
 JuliafpSetup(void)
 {
 	g_c_exp = (int)param[2];
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	if (fractype == COMPLEXMARKSJUL)
 	{
 		g_power.x = param[2] - 1.0;
 		g_power.y = param[3];
-		g_coefficient = ComplexPower(*floatparm, g_power);
+		g_coefficient = ComplexPower(*g_float_parameter, g_power);
 	}
 	switch (fractype)
 	{
@@ -826,7 +826,7 @@ LambdaTrigOrTrigSetup(void)
 {
 	/* default symmetry is ORIGIN  JCO 2/29/92 (changed from PI_SYM) */
 	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
 	{
 		g_symmetry = NOSYM; /* JCO 1/9/93 */
@@ -844,7 +844,7 @@ JuliaTrigOrTrigSetup(void)
 {
 	/* default symmetry is XAXIS */
 	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	if (g_parameter.y != 0.0)
 	{
 		g_symmetry = NOSYM;
@@ -862,7 +862,7 @@ ManlamTrigOrTrigSetup(void)
 { /* psuedo */
 	/* default symmetry is XAXIS */
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_initial_z;
+	g_float_parameter = &g_initial_z;
 	if (trigndx[0] == SQR)
 	{
 		g_symmetry = NOSYM;
@@ -879,7 +879,7 @@ MandelTrigOrTrigSetup(void)
 {
 /* default symmetry is XAXIS_NOPARM */
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_initial_z;
+	g_float_parameter = &g_initial_z;
 	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
 	{
 		g_symmetry = NOSYM;
@@ -1185,8 +1185,8 @@ MarksJuliafpSetup(void)
 		param[2] = 1;
 	}
 	g_c_exp = (int)param[2];
-	floatparm = &g_parameter;
-	g_old_z = *floatparm;
+	g_float_parameter = &g_parameter;
+	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
 	{
 		cpower(&g_old_z, g_c_exp-1, &g_coefficient);
@@ -1272,7 +1272,7 @@ int
 PhoenixSetup(void)
 {
 	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	g_degree = (int)g_parameter2.x;
 	if (g_degree < 2 && g_degree > -3)
 	{
@@ -1304,7 +1304,7 @@ int
 PhoenixCplxSetup(void)
 {
 	longparm = &g_parameter_l;
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	g_degree = (int)param[4];
 	if (g_degree < 2 && g_degree > -3)
 	{
@@ -1343,7 +1343,7 @@ int
 MandPhoenixSetup(void)
 {
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_initial_z;
+	g_float_parameter = &g_initial_z;
 	g_degree = (int)g_parameter2.x;
 	if (g_degree < 2 && g_degree > -3)
 	{
@@ -1375,7 +1375,7 @@ int
 MandPhoenixCplxSetup(void)
 {
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
-	floatparm = &g_initial_z;
+	g_float_parameter = &g_initial_z;
 	g_degree = (int)param[4];
 	if (g_degree < 2 && g_degree > -3)
 	{
@@ -1436,6 +1436,6 @@ VLSetup(void)
 	{
 		param[1] = 1.0;
 	}
-	floatparm = &g_parameter;
+	g_float_parameter = &g_parameter;
 	return 1;
 }
