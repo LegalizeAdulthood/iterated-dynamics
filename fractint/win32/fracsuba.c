@@ -3,7 +3,7 @@
 
 int FManOWarfpFractal(void)
 {
-	return ManOWarfpFractal();
+	return man_o_war_orbit_fp();
 }
 
 int FJuliafpFractal(void)
