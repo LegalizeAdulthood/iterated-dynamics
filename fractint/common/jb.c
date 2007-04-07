@@ -219,16 +219,16 @@ static int z_line(long x, long y)
 	julibrot_per_pixel();
 	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
-		lold.x = s_jx;
-		lold.y = s_jy;
+		g_old_z_l.x = s_jx;
+		g_old_z_l.y = s_jy;
 		s_jbc.x = s_mx;
 		s_jbc.y = s_my;
 		if (driver_key_pressed())
 		{
 			return -1;
 		}
-		ltempsqrx = multiply(lold.x, lold.x, bitshift);
-		ltempsqry = multiply(lold.y, lold.y, bitshift);
+		ltempsqrx = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
+		ltempsqry = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 		for (n = 0; n < maxit; n++)
 		{
 			if (fractalspecific[g_new_orbit_type].orbitcalc())

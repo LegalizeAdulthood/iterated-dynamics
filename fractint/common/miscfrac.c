@@ -1017,7 +1017,7 @@ int bifurcation(void)
 
 	if (integerfractal)
 	{
-		linit.y = ymax - g_y_stop*dely;            /* Y-value of    */
+		g_initial_z_l.y = ymax - g_y_stop*dely;            /* Y-value of    */
 	}
 	else
 	{
@@ -1135,7 +1135,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = integerfractal
-			? (g_y_stop - (int)((lPopulation - linit.y) / dely))
+			? (g_y_stop - (int)((lPopulation - g_initial_z_l.y) / dely))
 			: (g_y_stop - (int)((Population - g_initial_z.y) / delyy));
 
 		/* if it's visible on the screen, save it in the column array */
@@ -1233,11 +1233,11 @@ int bifurcation_verhulst_trig_fp()
 int bifurcation_verhulst_trig()
 {
 #if !defined(XFRACT)
-	ltmp.x = lPopulation;
-	ltmp.y = 0;
-	LCMPLXtrig0(ltmp, ltmp);
-	ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
-	lPopulation += multiply(lRate, ltmp.y, bitshift);
+	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.y = 0;
+	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
+	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, bitshift);
+	lPopulation += multiply(lRate, g_tmp_z_l.y, bitshift);
 #endif
 	return overflow;
 }
@@ -1255,10 +1255,10 @@ int bifurcation_stewart_trig_fp()
 int bifurcation_stewart_trig()
 {
 #if !defined(XFRACT)
-	ltmp.x = lPopulation;
-	ltmp.y = 0;
-	LCMPLXtrig0(ltmp, ltmp);
-	lPopulation = multiply(ltmp.x, ltmp.x, bitshift);
+	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.y = 0;
+	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
+	lPopulation = multiply(g_tmp_z_l.x, g_tmp_z_l.x, bitshift);
 	lPopulation = multiply(lPopulation, lRate,      bitshift);
 	lPopulation -= fudge;
 #endif
@@ -1277,10 +1277,10 @@ int bifurcation_set_trig_pi_fp()
 int bifurcation_set_trig_pi()
 {
 #if !defined(XFRACT)
-	ltmp.x = multiply(lPopulation, LPI, bitshift);
-	ltmp.y = 0;
-	LCMPLXtrig0(ltmp, ltmp);
-	lPopulation = multiply(lRate, ltmp.x, bitshift);
+	g_tmp_z_l.x = multiply(lPopulation, LPI, bitshift);
+	g_tmp_z_l.y = 0;
+	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
+	lPopulation = multiply(lRate, g_tmp_z_l.x, bitshift);
 #endif
 	return overflow;
 }
@@ -1297,10 +1297,10 @@ int bifurcation_add_trig_pi_fp()
 int bifurcation_add_trig_pi()
 {
 #if !defined(XFRACT)
-	ltmp.x = multiply(lPopulation, LPI, bitshift);
-	ltmp.y = 0;
-	LCMPLXtrig0(ltmp, ltmp);
-	lPopulation += multiply(lRate, ltmp.x, bitshift);
+	g_tmp_z_l.x = multiply(lPopulation, LPI, bitshift);
+	g_tmp_z_l.y = 0;
+	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
+	lPopulation += multiply(lRate, g_tmp_z_l.x, bitshift);
 #endif
 	return overflow;
 }
@@ -1318,11 +1318,11 @@ int bifurcation_lambda_trig_fp()
 int bifurcation_lambda_trig()
 {
 #if !defined(XFRACT)
-	ltmp.x = lPopulation;
-	ltmp.y = 0;
-	LCMPLXtrig0(ltmp, ltmp);
-	ltmp.y = ltmp.x - multiply(ltmp.x, ltmp.x, bitshift);
-	lPopulation = multiply(lRate, ltmp.y, bitshift);
+	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.y = 0;
+	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
+	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, bitshift);
+	lPopulation = multiply(lRate, g_tmp_z_l.y, bitshift);
 #endif
 	return overflow;
 }
@@ -1343,12 +1343,12 @@ int bifurcation_may_fp()
 int bifurcation_may()
 {
 #if !defined(XFRACT)
-	ltmp.x = lPopulation + fudge;
-	ltmp.y = 0;
-	lparm2.x = beta*fudge;
-	LCMPLXpwr(ltmp, lparm2, ltmp);
+	g_tmp_z_l.x = lPopulation + fudge;
+	g_tmp_z_l.y = 0;
+	g_parameter2_l.x = beta*fudge;
+	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
 	lPopulation = multiply(lRate, lPopulation, bitshift);
-	lPopulation = divide(lPopulation, ltmp.x, bitshift);
+	lPopulation = divide(lPopulation, g_tmp_z_l.x, bitshift);
 #endif
 	return overflow;
 }
@@ -2451,19 +2451,19 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		if (g_invert)
 		{
 			invertz2(&g_temp_z);
-			lold.x = (long)(g_temp_z.x*fudge);
-			lold.y = (long)(g_temp_z.y*fudge);
+			g_old_z_l.x = (long)(g_temp_z.x*fudge);
+			g_old_z_l.y = (long)(g_temp_z.y*fudge);
 		}
 		else
 		{
-			lold.x = lxpixel();
-			lold.y = lypixel();
+			g_old_z_l.x = lxpixel();
+			g_old_z_l.y = lypixel();
 		}
 
 		while (!found_attractor)
 		{
-			ltempsqrx = lsqr(lold.x);
-			ltempsqry = lsqr(lold.y);
+			ltempsqrx = lsqr(g_old_z_l.x);
+			ltempsqry = lsqr(g_old_z_l.y);
 			g_magnitude_l = ltempsqrx + ltempsqry;
 			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < maxit))
 			{
@@ -2472,21 +2472,21 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-			lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
-			lold.x = lnew.x;
+			g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+			g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
+			g_old_z_l.x = g_new_z_l.x;
 			if (fsp->repeat_mapping)
 			{
-				ltempsqrx = lsqr(lold.x);
-				ltempsqry = lsqr(lold.y);
+				ltempsqrx = lsqr(g_old_z_l.x);
+				ltempsqry = lsqr(g_old_z_l.y);
 				g_magnitude_l = ltempsqrx + ltempsqry;
 				if ((g_magnitude_l > g_limit_l) || (g_magnitude_l < 0))
 				{
 					break;
 				}
-				lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-				lold.y += (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
-				lold.x = lnew.x;
+				g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+				g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
+				g_old_z_l.x = g_new_z_l.x;
 			}
 			g_color_iter++;
 
@@ -2496,28 +2496,28 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 					break;
 				}
-				plot_orbit_i(lold.x, lold.y, -1);
+				plot_orbit_i(g_old_z_l.x, g_old_z_l.y, -1);
 			}
 
-			if (labs(fsp->fl.l.halfa-lold.y) < FROTH_LCLOSE
-				&& lold.x > fsp->fl.l.top_x1 && lold.x < fsp->fl.l.top_x2)
+			if (labs(fsp->fl.l.halfa-g_old_z_l.y) < FROTH_LCLOSE
+				&& g_old_z_l.x > fsp->fl.l.top_x1 && g_old_z_l.x < fsp->fl.l.top_x2)
 			{
 				if ((!fsp->repeat_mapping && fsp->attractors == 2)
 					|| (fsp->repeat_mapping && fsp->attractors == 3))
 				{
 					found_attractor = 1;
 				}
-				else if (lold.x <= fsp->fl.l.top_x3)
+				else if (g_old_z_l.x <= fsp->fl.l.top_x3)
 				{
 					found_attractor = 1;
 				}
-				else if (lold.x >= fsp->fl.l.top_x4)
+				else if (g_old_z_l.x >= fsp->fl.l.top_x4)
 				{
 					found_attractor = !fsp->repeat_mapping ? 1 : 2;
 				}
 			}
-			else if (labs(multiply(FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE
-						&& lold.x <= fsp->fl.l.right_x1 && lold.x >= fsp->fl.l.right_x2)
+			else if (labs(multiply(FROTH_LSLOPE, g_old_z_l.x, bitshift)-fsp->fl.l.a-g_old_z_l.y) < FROTH_LCLOSE
+						&& g_old_z_l.x <= fsp->fl.l.right_x1 && g_old_z_l.x >= fsp->fl.l.right_x2)
 			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
@@ -2527,16 +2527,16 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 					found_attractor = 3;
 				}
-				else if (lold.x >= fsp->fl.l.right_x3)
+				else if (g_old_z_l.x >= fsp->fl.l.right_x3)
 				{
 					found_attractor = !fsp->repeat_mapping ? 2 : 4;
 				}
-				else if (lold.x <= fsp->fl.l.right_x4)
+				else if (g_old_z_l.x <= fsp->fl.l.right_x4)
 				{
 					found_attractor = !fsp->repeat_mapping ? 3 : 6;
 				}
 			}
-			else if (labs(multiply(-FROTH_LSLOPE, lold.x, bitshift)-fsp->fl.l.a-lold.y) < FROTH_LCLOSE)
+			else if (labs(multiply(-FROTH_LSLOPE, g_old_z_l.x, bitshift)-fsp->fl.l.a-g_old_z_l.y) < FROTH_LCLOSE)
 			{
 				if (!fsp->repeat_mapping && fsp->attractors == 2)
 				{
@@ -2546,11 +2546,11 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 					found_attractor = 2;
 				}
-				else if (lold.x >= fsp->fl.l.left_x3)
+				else if (g_old_z_l.x >= fsp->fl.l.left_x3)
 				{
 					found_attractor = !fsp->repeat_mapping ? 3 : 5;
 				}
-				else if (lold.x <= fsp->fl.l.left_x4)
+				else if (g_old_z_l.x <= fsp->fl.l.left_x4)
 				{
 					found_attractor = !fsp->repeat_mapping ? 2 : 3;
 				}
@@ -2671,10 +2671,10 @@ int froth_per_pixel(void)
 	}
 	else  /* integer mode */
 	{
-		lold.x = lxpixel();
-		lold.y = lypixel();
-		ltempsqrx = multiply(lold.x, lold.x, bitshift);
-		ltempsqry = multiply(lold.y, lold.y, bitshift);
+		g_old_z_l.x = lxpixel();
+		g_old_z_l.y = lypixel();
+		ltempsqrx = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
+		ltempsqry = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 	}
 	return 0;
 }
@@ -2702,27 +2702,27 @@ int froth_per_orbit(void)
 	}
 	else  /* integer mode */
 	{
-		lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-		lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+		g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+		g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 		if (fsp->repeat_mapping)
 		{
-			ltempsqrx = lsqr(lnew.x);
-			ltempsqry = lsqr(lnew.y);
+			ltempsqrx = lsqr(g_new_z_l.x);
+			ltempsqry = lsqr(g_new_z_l.y);
 			if (ltempsqrx + ltempsqry >= g_limit_l)
 			{
 				return 1;
 			}
-			lold = lnew;
-			lnew.x = ltempsqrx - ltempsqry - lold.x - multiply(fsp->fl.l.a, lold.y, bitshift);
-			lnew.y = lold.y + (multiply(lold.x, lold.y, bitshift) << 1) - multiply(fsp->fl.l.a, lold.x, bitshift);
+			g_old_z_l = g_new_z_l;
+			g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+			g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 		}
-		ltempsqrx = lsqr(lnew.x);
-		ltempsqry = lsqr(lnew.y);
+		ltempsqrx = lsqr(g_new_z_l.x);
+		ltempsqry = lsqr(g_new_z_l.y);
 		if (ltempsqrx + ltempsqry >= g_limit_l)
 		{
 			return 1;
 		}
-		lold = lnew;
+		g_old_z_l = g_new_z_l;
 	}
 	return 0;
 }

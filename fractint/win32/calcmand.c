@@ -91,14 +91,14 @@ calc_mand_floating_point(void)
 		/* Mandelbrot_87 */
 		Cx = linitx;
 		Cy = linity;
-		x = lparm.x + Cx;
-		y = lparm.y + Cy;
+		x = g_parameter_l.x + Cx;
+		y = g_parameter_l.y + Cy;
 	}
 	else
 	{
 		/* dojulia_87 */
-		Cx = lparm.x;
-		Cy = lparm.y;
+		Cx = g_parameter_l.x;
+		Cy = g_parameter_l.y;
 		x = linitx;
 		y = linity;
 		x2 = FUDGE_MUL(x, x);
@@ -125,8 +125,8 @@ calc_mand_floating_point(void)
 		{
 			if (outside <= -2)
 			{
-				lnew.x = x;
-				lnew.y = y;
+				g_new_z_l.x = x;
+				g_new_z_l.y = y;
 			}
 			g_old_color_iter = (cx - 10 > 0) ? cx - 10 : 0;
 			g_real_color_iter = maxit - cx;
@@ -149,23 +149,23 @@ calc_mand_floating_point(void)
 				/* special_outside */
 				if (outside == REAL)
 				{
-					g_color_iter += lnew.x + 7;
+					g_color_iter += g_new_z_l.x + 7;
 				}
 				else if (outside == IMAG)
 				{
-					g_color_iter += lnew.y + 7;
+					g_color_iter += g_new_z_l.y + 7;
 				}
-				else if (outside == MULT && lnew.y != 0)
+				else if (outside == MULT && g_new_z_l.y != 0)
 				{
-					g_color_iter = FUDGE_MUL(g_color_iter, lnew.x) / lnew.y;
+					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x) / g_new_z_l.y;
 				}
 				else if (outside == SUM)
 				{
-					g_color_iter += lnew.x + lnew.y;
+					g_color_iter += g_new_z_l.x + g_new_z_l.y;
 				}
 				else if (outside == ATAN)
 				{
-					g_color_iter = (long) fabs(atan2(lnew.y, lnew.x)*g_atan_colors/PI);
+					g_color_iter = (long) fabs(atan2(g_new_z_l.y, g_new_z_l.x)*g_atan_colors/PI);
 				}
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)

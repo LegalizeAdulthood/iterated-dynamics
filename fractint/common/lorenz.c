@@ -367,12 +367,12 @@ int orbit_3d_setup(void)
 			break;
 		case random_walk:
 lrwalk:
-			lnew.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
-			lnew.y = s_init_orbit_long[1] =         Sqrt.y / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		case random_run:
-			lnew.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
-			lnew.y = s_init_orbit_long[1] =         Sqrt.y / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		}
 	}
@@ -783,25 +783,25 @@ int Linverse_julia_orbit()
 		{
 			return -1;
 		}
-		lnew = DeQueueLong();
+		g_new_z_l = DeQueueLong();
 		break;
 	case depth_first:
 		if (QueueEmpty())
 		{
 			return -1;
 		}
-		lnew = PopLong();
+		g_new_z_l = PopLong();
 		break;
 	case random_walk:
-		lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
+		g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
 		if (RANDOM(2))
 		{
-			lnew.x = -lnew.x;
-			lnew.y = -lnew.y;
+			g_new_z_l.x = -g_new_z_l.x;
+			g_new_z_l.y = -g_new_z_l.y;
 		}
 		break;
 	case random_run:
-		lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
+		g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
 		if (random_len == 0)
 		{
 			random_len = RANDOM(s_run_length);
@@ -812,14 +812,14 @@ int Linverse_julia_orbit()
 		case DIRECTION_LEFT:
 			break;
 		case DIRECTION_RIGHT:
-			lnew.x = -lnew.x;
-			lnew.y = -lnew.y;
+			g_new_z_l.x = -g_new_z_l.x;
+			g_new_z_l.y = -g_new_z_l.y;
 			break;
 		case DIRECTION_RANDOM:
 			if (RANDOM(2))
 			{
-				lnew.x = -lnew.x;
-				lnew.y = -lnew.y;
+				g_new_z_l.x = -g_new_z_l.x;
+				g_new_z_l.y = -g_new_z_l.y;
 			}
 			break;
 		}
@@ -832,10 +832,10 @@ int Linverse_julia_orbit()
 	* otherwise the values of s_lcvt were truncated.  Used bitshift
 	* of 24 otherwise, for increased precision.
 	*/
-	newcol = (int) ((multiply(s_lcvt.a, lnew.x >> (bitshift - 21), 21) +
-			multiply(s_lcvt.b, lnew.y >> (bitshift - 21), 21) + s_lcvt.e) >> 21);
-	newrow = (int) ((multiply(s_lcvt.c, lnew.x >> (bitshift - 21), 21) +
-			multiply(s_lcvt.d, lnew.y >> (bitshift - 21), 21) + s_lcvt.f) >> 21);
+	newcol = (int) ((multiply(s_lcvt.a, g_new_z_l.x >> (bitshift - 21), 21) +
+			multiply(s_lcvt.b, g_new_z_l.y >> (bitshift - 21), 21) + s_lcvt.e) >> 21);
+	newrow = (int) ((multiply(s_lcvt.c, g_new_z_l.x >> (bitshift - 21), 21) +
+			multiply(s_lcvt.d, g_new_z_l.y >> (bitshift - 21), 21) + s_lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
 	{
@@ -847,12 +847,12 @@ int Linverse_julia_orbit()
 		switch (g_major_method)
 		{
 		case breadth_first:
-			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
-			EnQueueLong(color*lnew.x, color*lnew.y);
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
+			EnQueueLong(color*g_new_z_l.x, color*g_new_z_l.y);
 			break;
 		case depth_first:
-			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
-			PushLong(color*lnew.x, color*lnew.y);
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
+			PushLong(color*g_new_z_l.x, color*g_new_z_l.y);
 			break;
 		case random_run:
 			random_len--;
@@ -874,38 +874,38 @@ int Linverse_julia_orbit()
 		if (color < s_max_hits)
 		{
 			g_put_color(newcol, newrow, color + 1);
-			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
-			EnQueueLong(lnew.x,  lnew.y);
-			EnQueueLong(-lnew.x, -lnew.y);
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
+			EnQueueLong(g_new_z_l.x,  g_new_z_l.y);
+			EnQueueLong(-g_new_z_l.x, -g_new_z_l.y);
 		}
 		break;
 	case depth_first:
 		if (color < s_max_hits)
 		{
 			g_put_color(newcol, newrow, color + 1);
-			lnew = ComplexSqrtLong(lnew.x - s_x_long, lnew.y - s_y_long);
+			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
 			if (g_minor_method == left_first)
 			{
 				if (QueueFullAlmost())
 				{
-					PushLong(-lnew.x, -lnew.y);
+					PushLong(-g_new_z_l.x, -g_new_z_l.y);
 				}
 				else
 				{
-					PushLong(lnew.x,  lnew.y);
-					PushLong(-lnew.x, -lnew.y);
+					PushLong(g_new_z_l.x,  g_new_z_l.y);
+					PushLong(-g_new_z_l.x, -g_new_z_l.y);
 				}
 			}
 			else
 			{
 				if (QueueFullAlmost())
 				{
-					PushLong(lnew.x,  lnew.y);
+					PushLong(g_new_z_l.x,  g_new_z_l.y);
 				}
 				else
 				{
-					PushLong(-lnew.x, -lnew.y);
-					PushLong(lnew.x,  lnew.y);
+					PushLong(-g_new_z_l.x, -g_new_z_l.y);
+					PushLong(g_new_z_l.x,  g_new_z_l.y);
 				}
 			}
 		}

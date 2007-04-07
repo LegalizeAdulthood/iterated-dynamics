@@ -927,11 +927,11 @@ void Jiim(int which)         /* called by fractint */
 				}
 			}
 			iter = 1;
-			g_old_z.x = g_old_z.y = lold.x = lold.y = 0;
+			g_old_z.x = g_old_z.y = g_old_z_l.x = g_old_z_l.y = 0;
 			SaveC.x = g_initial_z.x =  cr;
 			SaveC.y = g_initial_z.y =  ci;
-			linit.x = (long)(g_initial_z.x*fudge);
-			linit.y = (long)(g_initial_z.y*fudge);
+			g_initial_z_l.x = (long)(g_initial_z.x*fudge);
+			g_initial_z_l.y = (long)(g_initial_z.y*fudge);
 
 			old_x = old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
@@ -1184,8 +1184,8 @@ void Jiim(int which)         /* called by fractint */
 				color = (int)iter % colors;
 				if (integerfractal)
 				{
-					g_old_z.x = lold.x; g_old_z.x /= fudge;
-					g_old_z.y = lold.y; g_old_z.y /= fudge;
+					g_old_z.x = g_old_z_l.x; g_old_z.x /= fudge;
+					g_old_z.y = g_old_z_l.y; g_old_z.y /= fudge;
 				}
 				x = (int)((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
 				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
@@ -1224,7 +1224,7 @@ void Jiim(int which)         /* called by fractint */
 			old_y = y;
 		}
 		g_old_z = g_new_z;
-		lold = lnew;
+		g_old_z_l = g_new_z_l;
 	} /* end while (still) */
 
 finish:

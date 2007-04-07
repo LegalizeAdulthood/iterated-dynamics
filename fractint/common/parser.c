@@ -3026,7 +3026,7 @@ int Formula(void)
 		g_old_z = g_new_z = MPC2cmplx(v[3].a.m);
 		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
-		lold = lnew = v[3].a.l;
+		g_old_z_l = g_new_z_l = v[3].a.l;
 		if (overflow)
 		{
 			return 1;
@@ -3156,7 +3156,7 @@ int form_per_pixel(void)
 		g_old_z = MPC2cmplx(v[3].a.m);
 		break;
 	case L_MATH:
-		lold = v[3].a.l;
+		g_old_z_l = v[3].a.l;
 		break;
 #endif
 	}

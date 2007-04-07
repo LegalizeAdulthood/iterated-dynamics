@@ -719,10 +719,10 @@ int calculate_fractal(void)
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
-		lparm.x = (long)(parm.x*fudge);    /* real portion of Lambda */
-		lparm.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
-		lparm2.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
-		lparm2.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
+		g_parameter_l.x = (long)(parm.x*fudge);    /* real portion of Lambda */
+		g_parameter_l.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
+		g_parameter2_l.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
+		g_parameter2_l.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
 		g_limit_l = (long)(g_rq_limit*fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
@@ -2095,7 +2095,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			lsaved.x = 0;
 			lsaved.y = 0;
 		}
-		linit.y = lypixel();
+		g_initial_z_l.y = lypixel();
 	}
 	g_orbit_index = 0;
 	g_color_iter = 0;
@@ -2134,8 +2134,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)
 		{
-			g_old_z.x = ((double)lold.x) / fudge;
-			g_old_z.y = ((double)lold.y) / fudge;
+			g_old_z.x = ((double)g_old_z_l.x) / fudge;
+			g_old_z.y = ((double)g_old_z_l.y) / fudge;
 		}
 		else if (bf_math == BIGNUM)
 		{
@@ -2238,7 +2238,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			else
 			{
-				plot_orbit_i(lnew.x, lnew.y, -1);
+				plot_orbit_i(g_new_z_l.x, g_new_z_l.y, -1);
 			}
 		}
 		if (inside < -1)
@@ -2257,9 +2257,9 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				{
 					if (integerfractal)
 					{
-						g_new_z.x = lnew.x;
+						g_new_z.x = g_new_z_l.x;
 						g_new_z.x /= fudge;
-						g_new_z.y = lnew.y;
+						g_new_z.y = g_new_z_l.y;
 						g_new_z.y /= fudge;
 					}
 
@@ -2298,12 +2298,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				hooper = 0;
 				if (integerfractal)
 				{
-					if (labs(lnew.x) < labs(lcloseprox))
+					if (labs(g_new_z_l.x) < labs(lcloseprox))
 					{
 						hooper = (lcloseprox > 0? 1 : -1); /* close to y axis */
 						goto plot_inside;
 					}
-					else if (labs(lnew.y) < labs(lcloseprox))
+					else if (labs(g_new_z_l.y) < labs(lcloseprox))
 					{
 						hooper = (lcloseprox > 0 ? 2: -2); /* close to x axis */
 						goto plot_inside;
@@ -2328,8 +2328,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				double mag;
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)lnew.x) / fudge;
-					g_new_z.y = ((double)lnew.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2343,7 +2343,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				{
 					if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
 					{
-						g_magnitude_l = lsqr(lnew.x) + lsqr(lnew.y);
+						g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
 					}
 					g_magnitude = g_magnitude_l;
 					g_magnitude = g_magnitude / fudge;
@@ -2374,8 +2374,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)lnew.x) / fudge;
-					g_new_z.y = ((double)lnew.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / fudge;
 				}
 				totaldist += sqrt(sqr(lastz.x-g_new_z.x) + sqr(lastz.y-g_new_z.y));
 				lastz.x = g_new_z.x;
@@ -2386,8 +2386,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				double mag;
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)lnew.x) / fudge;
-					g_new_z.y = ((double)lnew.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2403,11 +2403,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				for (i = 0; i < g_num_attractors; i++)
 				{
-					lat.x = lnew.x - g_attractors_l[i].x;
+					lat.x = g_new_z_l.x - g_attractors_l[i].x;
 					lat.x = lsqr(lat.x);
 					if (lat.x < l_at_rad)
 					{
-						lat.y = lnew.y - g_attractors_l[i].y;
+						lat.y = g_new_z_l.y - g_attractors_l[i].y;
 						lat.y = lsqr(lat.y);
 						if (lat.y < l_at_rad)
 						{
@@ -2462,7 +2462,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				savedcoloriter = g_color_iter;
 				if (integerfractal)
 				{
-					lsaved = lnew; /* integer fractals */
+					lsaved = g_new_z_l; /* integer fractals */
 				}
 				else if (bf_math == BIGNUM)
 				{
@@ -2495,9 +2495,9 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				if (integerfractal)     /* floating-pt periodicity chk */
 				{
-					if (labs(lsaved.x - lnew.x) < g_close_enough_l)
+					if (labs(lsaved.x - g_new_z_l.x) < g_close_enough_l)
 					{
-						if (labs(lsaved.y - lnew.y) < g_close_enough_l)
+						if (labs(lsaved.y - g_new_z_l.y) < g_close_enough_l)
 						{
 							caught_a_cycle = 1;
 						}
@@ -2605,8 +2605,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)       /* adjust integer fractals */
 		{
-			g_new_z.x = ((double)lnew.x) / fudge;
-			g_new_z.y = ((double)lnew.y) / fudge;
+			g_new_z.x = ((double)g_new_z_l.x) / fudge;
+			g_new_z.y = ((double)g_new_z_l.y) / fudge;
 		}
 		else if (bf_math == BIGNUM)
 		{
@@ -2637,8 +2637,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)
 		{
-			g_new_z.x = ((double)lnew.x) / fudge;
-			g_new_z.y = ((double)lnew.y) / fudge;
+			g_new_z.x = ((double)g_new_z_l.x) / fudge;
+			g_new_z.y = ((double)g_new_z_l.y) / fudge;
 		}
 		else if (bf_math == 1)
 		{
@@ -2742,7 +2742,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)
 		{
-			if (labs(lnew.x) < g_limit2_l || labs(lnew.y) < g_limit2_l)
+			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
 			{
 				g_color_iter = biomorph;
 			}
@@ -2820,8 +2820,8 @@ plot_inside: /* we're "inside" */
 		{
 			if (integerfractal)
 			{
-				g_new_z.x = ((double)lnew.x) / fudge;
-				g_new_z.y = ((double)lnew.y) / fudge;
+				g_new_z.x = ((double)g_new_z_l.x) / fudge;
+				g_new_z.y = ((double)g_new_z_l.y) / fudge;
 				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
 			}
 			else
@@ -2957,16 +2957,16 @@ static void decomposition(void)
 			ltan2_8125 = (long)(tan2_8125*fudge);
 			ltan1_4063 = (long)(tan1_4063*fudge);
 		}
-		if (lnew.y < 0)
+		if (g_new_z_l.y < 0)
 		{
 			temp = 2;
-			lnew.y = -lnew.y;
+			g_new_z_l.y = -g_new_z_l.y;
 		}
 
-		if (lnew.x < 0)
+		if (g_new_z_l.x < 0)
 		{
 			++temp;
-			lnew.x = -lnew.x;
+			g_new_z_l.x = -g_new_z_l.x;
 		}
 		if (decomp[0] == 2 && save_release >= 1827)
 		{
@@ -2984,72 +2984,72 @@ static void decomposition(void)
 		if (decomp[0] >= 8)
 		{
 			temp <<= 1;
-			if (lnew.x < lnew.y)
+			if (g_new_z_l.x < g_new_z_l.y)
 			{
 				++temp;
-				lalt.x = lnew.x; /* just */
-				lnew.x = lnew.y; /* swap */
-				lnew.y = lalt.x; /* them */
+				lalt.x = g_new_z_l.x; /* just */
+				g_new_z_l.x = g_new_z_l.y; /* swap */
+				g_new_z_l.y = lalt.x; /* them */
 			}
 
 			if (decomp[0] >= 16)
 			{
 				temp <<= 1;
-				if (multiply(lnew.x, ltan22_5, bitshift) < lnew.y)
+				if (multiply(g_new_z_l.x, ltan22_5, bitshift) < g_new_z_l.y)
 				{
 					++temp;
-					lalt = lnew;
-					lnew.x = multiply(lalt.x, lcos45, bitshift) +
+					lalt = g_new_z_l;
+					g_new_z_l.x = multiply(lalt.x, lcos45, bitshift) +
 						multiply(lalt.y, lsin45, bitshift);
-					lnew.y = multiply(lalt.x, lsin45, bitshift) -
+					g_new_z_l.y = multiply(lalt.x, lsin45, bitshift) -
 						multiply(lalt.y, lcos45, bitshift);
 				}
 
 				if (decomp[0] >= 32)
 				{
 					temp <<= 1;
-					if (multiply(lnew.x, ltan11_25, bitshift) < lnew.y)
+					if (multiply(g_new_z_l.x, ltan11_25, bitshift) < g_new_z_l.y)
 					{
 						++temp;
-						lalt = lnew;
-						lnew.x = multiply(lalt.x, lcos22_5, bitshift) +
+						lalt = g_new_z_l;
+						g_new_z_l.x = multiply(lalt.x, lcos22_5, bitshift) +
 							multiply(lalt.y, lsin22_5, bitshift);
-						lnew.y = multiply(lalt.x, lsin22_5, bitshift) -
+						g_new_z_l.y = multiply(lalt.x, lsin22_5, bitshift) -
 							multiply(lalt.y, lcos22_5, bitshift);
 					}
 
 					if (decomp[0] >= 64)
 					{
 						temp <<= 1;
-						if (multiply(lnew.x, ltan5_625, bitshift) < lnew.y)
+						if (multiply(g_new_z_l.x, ltan5_625, bitshift) < g_new_z_l.y)
 						{
 							++temp;
-							lalt = lnew;
-							lnew.x = multiply(lalt.x, lcos11_25, bitshift) +
+							lalt = g_new_z_l;
+							g_new_z_l.x = multiply(lalt.x, lcos11_25, bitshift) +
 								multiply(lalt.y, lsin11_25, bitshift);
-							lnew.y = multiply(lalt.x, lsin11_25, bitshift) -
+							g_new_z_l.y = multiply(lalt.x, lsin11_25, bitshift) -
 								multiply(lalt.y, lcos11_25, bitshift);
 						}
 
 						if (decomp[0] >= 128)
 						{
 							temp <<= 1;
-							if (multiply(lnew.x, ltan2_8125, bitshift) < lnew.y)
+							if (multiply(g_new_z_l.x, ltan2_8125, bitshift) < g_new_z_l.y)
 							{
 								++temp;
-								lalt = lnew;
-								lnew.x = multiply(lalt.x, lcos5_625, bitshift) +
+								lalt = g_new_z_l;
+								g_new_z_l.x = multiply(lalt.x, lcos5_625, bitshift) +
 									multiply(lalt.y, lsin5_625, bitshift);
-								lnew.y = multiply(lalt.x, lsin5_625, bitshift) -
+								g_new_z_l.y = multiply(lalt.x, lsin5_625, bitshift) -
 									multiply(lalt.y, lcos5_625, bitshift);
 							}
 
 							if (decomp[0] == 256)
 							{
 								temp <<= 1;
-								if (multiply(lnew.x, ltan1_4063, bitshift) < lnew.y)
+								if (multiply(g_new_z_l.x, ltan1_4063, bitshift) < g_new_z_l.y)
 								{
-									if ((lnew.x*ltan1_4063 < lnew.y))
+									if ((g_new_z_l.x*ltan1_4063 < g_new_z_l.y))
 									{
 										++temp;
 									}
