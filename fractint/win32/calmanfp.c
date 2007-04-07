@@ -179,7 +179,7 @@ long calcmandfpasm_c(void)
 pop_stack:
 	if (g_orbit_index)
 	{
-		scrub_orbit();
+		orbit_scrub();
 	}
 	return g_color_iter;
 

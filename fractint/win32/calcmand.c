@@ -221,7 +221,7 @@ calc_mand_floating_point(void)
 pop_stack:
 	if (g_orbit_index)
 	{
-		scrub_orbit();
+		orbit_scrub();
 	}
 
 	return g_color_iter;
@@ -544,7 +544,7 @@ kloopend32:
 
 		cmp		g_orbit_index, 0				; any orbits to clear?
 		je		noorbit32					;  nope.
-		call	scrub_orbit					; clear	out	any	old	orbits
+		call	orbit_scrub					; clear	out	any	old	orbits
 noorbit32:
 
 		mov		eax, k						; set old color
@@ -591,7 +591,7 @@ wedone32:									;
 kloopend:
 		cmp		g_orbit_index, 0				; any orbits to clear?
 		je		noorbit2					;  nope.
-		call	scrub_orbit					; clear	out	any	old	orbits
+		call	orbit_scrub					; clear	out	any	old	orbits
 noorbit2:
 
 		mov		eax, dword ptr k			; set old color

@@ -36,9 +36,9 @@
 #define UPPER_LEFT   4
 
 #define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
-#define maxyblk 7    /* maxxblk*maxyblk*2 <= 4096, the size of "prefix" */
-#define maxxblk 202  /* each maxnblk is oversize by 2 for a "border" */
-							/* maxxblk defn must match fracsubr.c */
+#define MAX_Y_BLOCK 7    /* MAX_X_BLOCK*MAX_Y_BLOCK*2 <= 4096, the size of "prefix" */
+#define MAX_X_BLOCK 202  /* each maxnblk is oversize by 2 for a "border" */
+							/* MAX_X_BLOCK defn must match fracsubr.c */
 
 /***** vars for new btm *****/
 enum direction
@@ -127,7 +127,7 @@ int g_periodicity_check;
 	1st pass sets bit  [1]... off only if block's contents guessed;
 	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
 	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
-typedef int (*TPREFIX)[2][maxyblk][maxxblk];
+typedef int (*TPREFIX)[2][MAX_Y_BLOCK][MAX_X_BLOCK];
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
 BYTE g_stack[4096];              /* common temp, two put_line calls */
 /* For periodicity testing, only in standard_fractal() */
@@ -210,7 +210,7 @@ static int s_work_sym;                   /* for the sake of calculate_mandelbrot
 static enum direction s_going_to;
 static int s_trail_row;
 static int s_trail_col;
-static unsigned int s_t_prefix[2][maxyblk][maxxblk]; /* common temp */
+static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 static BYTE *s_save_dots = NULL;
 static BYTE *s_fill_buffer;
 static int s_save_dots_len;
@@ -1202,7 +1202,7 @@ static int diffusion_scan(void)
 
 	if (diffusion_engine() == -1)
 	{
-		add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
+		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
 			(int)(g_diffusion_counter >> 16),            /* high, */
 			(int)(g_diffusion_counter & 0xffff),         /* low order words */
 			s_work_sym);
@@ -1530,7 +1530,7 @@ static int draw_rectangle_orbits()
 		{
 			if (plotorbits2dfloat() == -1)
 			{
-				add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 				return -1; /* interrupted */
 			}
 			++g_col;
@@ -1581,7 +1581,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1602,7 +1602,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1641,7 +1641,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1662,7 +1662,7 @@ static int draw_line_orbits(void)
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1708,7 +1708,7 @@ static int draw_function_orbits(void)
 		g_row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
-			add_worklist(angle, 0, 0, 0, 0, 0, 0, s_work_sym);
+			work_list_add(angle, 0, 0, 0, 0, 0, 0, s_work_sym);
 			return -1; /* interrupted */
 		}
 		angle++;
@@ -1753,12 +1753,12 @@ static int one_or_two_pass(void)
 	{
 		if (standard_calculate(1) == -1)
 		{
-			add_worklist(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
 			return -1;
 		}
 		if (g_num_work_list > 0) /* g_work_list not empty, defer 2nd pass */
 		{
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
 			return 0;
 		}
 		s_work_pass = 1;
@@ -1773,7 +1773,7 @@ static int one_or_two_pass(void)
 		{
 			i -= g_row - s_iy_start;
 		}
-		add_worklist(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, s_work_pass, s_work_sym);
+		work_list_add(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, s_work_pass, s_work_sym);
 		return -1;
 	}
 
@@ -2584,7 +2584,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 	if (g_show_orbit)
 	{
-		scrub_orbit();
+		orbit_scrub();
 	}
 
 	g_real_color_iter = g_color_iter;           /* save this before we start adjusting it */
@@ -2809,7 +2809,7 @@ plot_inside: /* we're "inside" */
 			}
 			if (g_show_orbit)
 			{
-				scrub_orbit();
+				orbit_scrub();
 			}
 		}
 		else if (inside == FMODI)
@@ -3350,7 +3350,7 @@ static int boundary_trace_main(void)
 				{
 					g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 				}
-				add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
 				return -1;
 			}
 			g_reset_periodicity = 0; /* normal periodicity checking */
@@ -3394,7 +3394,7 @@ static int boundary_trace_main(void)
 						{
 							g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 						}
-						add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+						work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -3497,7 +3497,7 @@ static int boundary_trace_main(void)
 									{
 										g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 									}
-									add_worklist(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+									work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;
@@ -3590,7 +3590,7 @@ static int solid_guess(void)
 		s_bottom_guess = s_right_guess = FALSE;  /* TIW march 1995 */
 	}
 
-	i = s_max_block = blocksize = ssg_blocksize();
+	i = s_max_block = blocksize = solid_guess_block_size();
 	g_total_passes = 1;
 	while ((i >>= 1) > 1)
 	{
@@ -3613,14 +3613,14 @@ static int solid_guess(void)
 		if (s_iy_start <= g_yy_start) /* first time for this window, init it */
 		{
 			g_current_row = 0;
-			memset(&s_t_prefix[1][0][0], 0, maxxblk*maxyblk*2); /* noskip flags off */
+			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags off */
 			g_reset_periodicity = 1;
 			g_row = s_iy_start;
 			for (g_col = s_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 			{ /* calc top row */
 				if ((*g_calculate_type)() == -1)
 				{
-					add_worklist(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, s_work_sym);
 					goto exit_solid_guess;
 				}
 				g_reset_periodicity = 0;
@@ -3628,7 +3628,7 @@ static int solid_guess(void)
 		}
 		else
 		{
-			memset(&s_t_prefix[1][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
+			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
 		}
 		for (y = s_iy_start; y <= g_y_stop; y += blocksize)
 		{
@@ -3655,14 +3655,14 @@ static int solid_guess(void)
 				{
 					y = g_yy_start;
 				}
-				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, s_work_sym);
 				goto exit_solid_guess;
 			}
 		}
 
 		if (g_num_work_list) /* work list not empty, just do 1st pass */
 		{
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
 			goto exit_solid_guess;
 		}
 		++s_work_pass;
@@ -3698,18 +3698,18 @@ static int solid_guess(void)
 				++pfxp1;
 				u = *(pfxp1-1)|*pfxp1|*(pfxp1 + 1);
 				*(++pfxp0) = u | (u >> 1) | (u << 1)
-					| ((*(pfxp1-(maxxblk + 1))
-					| *(pfxp1-maxxblk)
-					| *(pfxp1-(maxxblk-1))) >> 15)
-					| ((*(pfxp1 + (maxxblk-1))
-					| *(pfxp1 + maxxblk)
-					| *(pfxp1 + (maxxblk + 1))) << 15);
+					| ((*(pfxp1-(MAX_X_BLOCK + 1))
+					| *(pfxp1-MAX_X_BLOCK)
+					| *(pfxp1-(MAX_X_BLOCK-1))) >> 15)
+					| ((*(pfxp1 + (MAX_X_BLOCK-1))
+					| *(pfxp1 + MAX_X_BLOCK)
+					| *(pfxp1 + (MAX_X_BLOCK + 1))) << 15);
 			}
 		}
 	}
 	else /* first pass already done */
 	{
-		memset(&s_t_prefix[0][0][0], -1, maxxblk*maxyblk*2); /* noskip flags on */
+		memset(&s_t_prefix[0][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
 	}
 	if (g_three_pass)
 	{
@@ -3742,7 +3742,7 @@ static int solid_guess(void)
 				{
 					y = g_yy_start;
 				}
-				add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, s_work_pass, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, s_work_pass, s_work_sym);
 				goto exit_solid_guess;
 			}
 		}
@@ -3750,7 +3750,7 @@ static int solid_guess(void)
 		if (g_num_work_list /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, s_work_sym);
 			goto exit_solid_guess;
 		}
 		s_iy_start = g_yy_start & (-1 - (s_max_block-1));
@@ -4164,7 +4164,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 			{
 				--g_y_stop;
 			}
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, s_work_pass, 0);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, s_work_pass, 0);
 			g_yy_stop = g_y_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -4174,7 +4174,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 			{
 				return 1;
 			}
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, s_work_pass, 0);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, s_work_pass, 0);
 			g_yy_stop = i;
 		}
 		g_y_stop = xaxis_row;
@@ -4218,7 +4218,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 			{
 				--g_x_stop;
 			}
-			add_worklist(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
+			work_list_add(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
 			g_xx_stop = g_x_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -4228,7 +4228,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 			{
 				return 1;
 			}
-			add_worklist(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
+			work_list_add(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
 			g_xx_stop = i;
 		}
 		g_x_stop = yaxis_col;
@@ -4575,7 +4575,7 @@ static int tesseral(void)
 		tp->rgt = tesseral_column(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
-			add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, s_work_sym);
 			return -1;
 		}
 	}
@@ -4845,7 +4845,7 @@ tess_end:
 			i <<= 1;
 			++ysize;
 		}
-		add_worklist(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
+		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
 			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, s_work_sym);
 		return -1;
 	}

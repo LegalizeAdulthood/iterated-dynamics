@@ -2559,7 +2559,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	}
 	if (g_show_orbit)
 	{
-		scrub_orbit();
+		orbit_scrub();
 	}
 
 	g_real_color_iter = g_color_iter;
