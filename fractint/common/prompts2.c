@@ -2196,7 +2196,7 @@ gc_loop:
 		}
 		if (bf_math != 0)
 		{
-			fractal_floattobf();
+			fractal_float_to_bf();
 		}
 		goto gc_loop;
 	}

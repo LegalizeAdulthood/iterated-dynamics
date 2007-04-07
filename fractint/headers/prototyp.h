@@ -320,7 +320,7 @@ extern void _fastcall symplot4(int, int, int);
 extern void _fastcall symplot2basin(int, int, int);
 extern void _fastcall symplot4basin(int, int, int);
 extern void _fastcall noplot(int, int, int);
-extern void fractal_floattobf(void);
+extern void fractal_float_to_bf(void);
 extern void adjust_cornerbf(void);
 extern void set_grid_pointers(void);
 extern void fill_dx_array(void);
