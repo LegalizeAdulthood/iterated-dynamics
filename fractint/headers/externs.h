@@ -307,7 +307,7 @@ extern more_parameters		g_more_parameters[];
 extern struct MP             mpAp1deg;
 extern struct MP             mpAplusOne;
 extern struct MPC            MPCone;
-extern struct MPC *          MPCroots;
+extern struct MPC *          g_roots_mpc;
 extern struct MPC            mpctmpparm;
 extern struct MP             mpd1overd;
 extern struct MP             mpone;
