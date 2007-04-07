@@ -1587,7 +1587,7 @@ void reset_clock(void)
 static FILE *snd_fp = NULL;
 
 /* open sound file */
-int snd_open(void)
+static int sound_open(void)
 {
 	static char soundname[] = {"sound001.txt"};
 	if ((orbitsave & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
@@ -1611,7 +1611,7 @@ void w_snd(int tone)
 {
 	if ((orbitsave & ORBITSAVE_SOUND) != 0)
 	{
-		if (snd_open())
+		if (sound_open())
 		{
 			fprintf(snd_fp, "%-d\n", tone);
 		}
@@ -1633,7 +1633,7 @@ void w_snd(int tone)
 
 void snd_time_write(void)
 {
-	if (snd_open())
+	if (sound_open())
 	{
 		fprintf(snd_fp, "time=%-ld\n", (long)clock()*1000/CLK_TCK);
 	}
