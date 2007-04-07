@@ -117,7 +117,7 @@ int julibrot_setup(void)
 		s_br_ratio = (long) s_fg16;
 		s_dmx = (mxmax - s_m_x_min) / g_z_dots;
 		s_dmy = (mymax - s_m_y_min) / g_z_dots;
-		longparm = &s_jbc;
+		g_long_parameter = &s_jbc;
 
 		s_x_per_inch = (long) ((xxmin - xxmax) / g_width_fp*s_fg);
 		s_y_per_inch = (long) ((yymax - yymin) / g_height_fp*s_fg);
