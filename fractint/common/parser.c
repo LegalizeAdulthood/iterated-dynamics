@@ -812,8 +812,8 @@ void mStkRound(void)
 void lStkRound(void)
 {
 	/* Add .5 then truncate */
-	Arg1->l.x += (1L << bitshiftless1);
-	Arg1->l.y += (1L << bitshiftless1);
+	Arg1->l.x += (1L << g_bit_shift_minus_1);
+	Arg1->l.y += (1L << g_bit_shift_minus_1);
 	lStkFloor();
 }
 #endif
@@ -4344,7 +4344,7 @@ void init_misc()
 	fgLimit = (double)0x7fffffffL / fg;
 	ShiftBack = 32 - bitshift;
 	Delta16 = bitshift - 16;
-	bitshiftless1 = bitshift-1;
+	g_bit_shift_minus_1 = bitshift-1;
 	uses_p1 = uses_p2 = uses_p3 = uses_jump = uses_ismand = 0;
 	uses_p4 = uses_p5 = 0;
 }

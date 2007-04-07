@@ -90,14 +90,14 @@ long calcmandfpasm_c(void)
 		/* Mandelbrot_87 */
 		Cx = g_initial_z.x;
 		Cy = g_initial_z.y;
-		x = parm.x + Cx;
-		y = parm.y + Cy;
+		x = g_parameter.x + Cx;
+		y = g_parameter.y + Cy;
 	}
 	else
 	{
 		/* dojulia_87 */
-		Cx = parm.x;
-		Cy = parm.y;
+		Cx = g_parameter.x;
+		Cy = g_parameter.y;
 		x = g_initial_z.x;
 		y = g_initial_z.y;
 		x2 = x*x;

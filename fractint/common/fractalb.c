@@ -591,7 +591,7 @@ int mandelbrot_setup_bn()
 		}
 	}
 
-	c_exp = (int)param[2];
+	g_c_exp = (int)param[2];
 	switch (fractype)
 	{
 	case JULIAFP:
@@ -600,7 +600,7 @@ int mandelbrot_setup_bn()
 		break;
 	case FPMANDELZPOWER:
 		init_big_pi();
-		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+		if ((double)g_c_exp == param[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = XYAXIS_NOPARM;
 		}
@@ -613,7 +613,7 @@ int mandelbrot_setup_bn()
 		init_big_pi();
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
-		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+		if ((g_c_exp & 1) || param[3] != 0.0 || (double)g_c_exp != param[2])
 		{
 			g_symmetry = NOSYM;
 		}
@@ -682,7 +682,7 @@ int mandelbrot_setup_bf()
 		}
 	}
 
-	c_exp = (int)param[2];
+	g_c_exp = (int)param[2];
 	switch (fractype)
 	{
 	case JULIAFP:
@@ -691,7 +691,7 @@ int mandelbrot_setup_bf()
 		break;
 	case FPMANDELZPOWER:
 		init_big_pi();
-		if ((double)c_exp == param[2] && (c_exp & 1)) /* odd exponents */
+		if ((double)g_c_exp == param[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = XYAXIS_NOPARM;
 		}
@@ -704,7 +704,7 @@ int mandelbrot_setup_bf()
 		init_big_pi();
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);
-		if ((c_exp & 1) || param[3] != 0.0 || (double)c_exp != param[2])
+		if ((g_c_exp & 1) || param[3] != 0.0 || (double)g_c_exp != param[2])
 		{
 			g_symmetry = NOSYM;
 		}
@@ -717,14 +717,14 @@ int mandelbrot_setup_bf()
 
 int mandelbrot_per_pixel_bn()
 {
-	/* parm.x = xxmin + col*delx + row*delx2 */
+	/* g_parameter.x = xxmin + col*delx + row*delx2 */
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnparm.x, bntmp);
 	add_a_bn(bnparm.x, bnxmin);
 
-	/* parm.y = yymax - row*dely - col*dely2; */
+	/* g_parameter.y = yymax - row*dely - col*dely2; */
 	/* note: in next four lines, bnold is just used as a temporary variable */
 	mult_bn_int(bnold.x, bnydel,  (U16)g_row);
 	mult_bn_int(bnold.y, bnydel2, (U16)g_col);
@@ -763,14 +763,14 @@ int mandelbrot_per_pixel_bn()
 
 int mandelbrot_per_pixel_bf()
 {
-	/* parm.x = xxmin + col*delx + row*delx2 */
+	/* g_parameter.x = xxmin + col*delx + row*delx2 */
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfparm.x, bftmp);
 	add_a_bf(bfparm.x, bfxmin);
 
-	/* parm.y = yymax - row*dely - col*dely2; */
+	/* g_parameter.y = yymax - row*dely - col*dely2; */
 	/* note: in next four lines, bfold is just used as a temporary variable */
 	mult_bf_int(bfold.x, bfydel,  (U16)g_row);
 	mult_bf_int(bfold.y, bfydel2, (U16)g_col);
@@ -869,11 +869,11 @@ int julia_orbit_bn()
 	/* bntmpsqrx and bntmpsqry were previously squared before getting to */
 	/* this function, so they must be shifted.                           */
 
-	/* new.x = tmpsqrx - tmpsqry + parm.x;   */
+	/* new.x = tmpsqrx - tmpsqry + g_parameter.x;   */
 	sub_a_bn(bntmpsqrx + shiftfactor, bntmpsqry + shiftfactor);
 	add_bn(bnnew.x, bntmpsqrx + shiftfactor, bnparm.x);
 
-	/* new.y = 2*bnold.x*bnold.y + parm.y; */
+	/* new.y = 2*bnold.x*bnold.y + g_parameter.y; */
 	mult_bn(bntmp, bnold.x, bnold.y); /* ok to use unsafe here */
 	double_a_bn(bntmp + shiftfactor);
 	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
@@ -883,11 +883,11 @@ int julia_orbit_bn()
 
 int julia_orbit_bf()
 {
-	/* new.x = tmpsqrx - tmpsqry + parm.x;   */
+	/* new.x = tmpsqrx - tmpsqry + g_parameter.x;   */
 	sub_a_bf(bftmpsqrx, bftmpsqry);
 	add_bf(bfnew.x, bftmpsqrx, bfparm.x);
 
-	/* new.y = 2*bfold.x*bfold.y + parm.y; */
+	/* new.y = 2*bfold.x*bfold.y + g_parameter.y; */
 	mult_bf(bftmp, bfold.x, bfold.y); /* ok to use unsafe here */
 	double_a_bf(bftmp);
 	add_bf(bfnew.y, bftmp, bfparm.y);
