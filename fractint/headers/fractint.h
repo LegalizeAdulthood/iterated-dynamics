@@ -711,14 +711,13 @@ extern  double   f_at_rad;      /* finite attractor radius  */
 #define IFSPARM    7     /* number of ifs parameters */
 #define IFS3DPARM 13     /* number of ifs 3D parameters */
 
-struct moreparams
+struct tag_more_parameters
 {
    int      type;                       /* index in fractalname of the fractal */
    char     *param[MAXPARAMS-4];    /* name of the parameters */
    double   paramvalue[MAXPARAMS-4];    /* default parameter values */
 };
-
-typedef struct moreparams MOREPARAMS;
+typedef struct tag_more_parameters more_parameters;
 
 struct fractalspecificstuff
 {
