@@ -289,7 +289,7 @@ extern int t16_getline(FILE *, int, U16 *);
 /*  fracsubr -- C file prototypes */
 
 extern void free_grid_pointers(void);
-extern void calcfracinit(void);
+extern void calculate_fractal_initialize(void);
 extern void adjust_corner(void);
 #ifndef USE_VARARGS
 extern int put_resume(int, ...);

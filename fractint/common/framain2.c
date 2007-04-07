@@ -306,7 +306,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		if (!evolving)
 		{
-			calcfracinit();
+			calculate_fractal_initialize();
 		}
 		driver_schedule_alarm(1);
 
@@ -410,7 +410,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					syoffs = tmpydots*py;
 					param_history(1); /* restore old history */
 					fiddleparms(g_genes, ecount);
-					calcfracinit();
+					calculate_fractal_initialize();
 					if (calculate_fractal() == -1)
 					{
 						goto done;

@@ -151,7 +151,7 @@ void fractal_float_to_bf(void)
 #endif
 #endif
 
-void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
+void calculate_fractal_initialize(void) /* initialize a *pile* of stuff for fractal calculation */
 {
 	int tries = 0;
 	int i, gotprec;
