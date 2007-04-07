@@ -58,6 +58,9 @@
 #define distance(z1, z2)	(sqr((z1).x-(z2).x) + sqr((z1).y-(z2).y))
 #define pMPsqr(z)			(*pMPmul((z), (z)))
 #define MPdistance(z1, z2)	(*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
+							/* Distance of complex z from unit circle */
+#define DIST1(z)			(((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
+#define LDIST1(z)			(lsqr((((z).x)-fudge)) + lsqr(((z).y)))
 
 _LCMPLX g_coefficient_l = { 0, 0 };
 _LCMPLX g_old_z_l = { 0, 0 };
@@ -443,14 +446,14 @@ void complex_power(_CMPLX *base, int exp, _CMPLX *result)
 /* long version */
 static long lxt, lyt, lt2;
 int
-lcpower(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
+complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int bitshift)
 {
 	static long maxarg;
 	maxarg = 64L << bitshift;
 
 	if (exp < 0)
 	{
-		overflow = lcpower(base, -exp, result, bitshift);
+		overflow = complex_power_l(base, -exp, result, bitshift);
 		LCMPLXrecip(*result, *result);
 		return overflow;
 	}
@@ -536,15 +539,14 @@ z_to_the_z(_CMPLX *z, _CMPLX *out)
 #endif
 #endif
 
-int complex_div(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz);
-int complex_mult(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz);
+static int complex_multiply(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
+{
+	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
+	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
+	return 0;
+}
 
-/* Distance of complex z from unit circle */
-#define DIST1(z) (((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
-#define LDIST1(z) (lsqr((((z).x)-fudge)) + lsqr(((z).y)))
-
-
-int NewtonFractal2(void)
+int newton2_orbit(void)
 {
 	static char start = 1;
 	if (start)
@@ -552,7 +554,7 @@ int NewtonFractal2(void)
 		start = 0;
 	}
 	complex_power(&g_old_z, g_degree-1, &g_temp_z);
-	complex_mult(g_temp_z, g_old_z, &g_new_z);
+	complex_multiply(g_temp_z, g_old_z, &g_new_z);
 
 	if (DIST1(g_new_z) < g_threshold)
 	{
@@ -594,29 +596,6 @@ int NewtonFractal2(void)
 		g_old_z.x = s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y);
 		g_old_z.y = s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y);
 	}
-	return 0;
-}
-
-int
-complex_mult(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
-{
-	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
-	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
-	return 0;
-}
-
-int
-complex_div(_CMPLX numerator, _CMPLX denominator, _CMPLX *pout)
-{
-	double mod = modulus(denominator);
-	if (mod < FLT_MIN)
-	{
-		return 1;
-	}
-	conjugate(&denominator);
-	complex_mult(numerator, denominator, pout);
-	pout->x = pout->x/mod;
-	pout->y = pout->y/mod;
 	return 0;
 }
 
@@ -784,7 +763,7 @@ Barnsley2FPFractal(void)
 }
 
 int
-JuliaFractal(void)
+julia_orbit(void)
 {
 	/* used for C prototype of fast integer math routines for classic
 		Mandelbrot and Julia */
@@ -1119,7 +1098,7 @@ int
 longZpowerFractal(void)
 {
 #if !defined(XFRACT)
-	if (lcpower(&g_old_z_l, g_c_exp, &g_new_z_l, bitshift))
+	if (complex_power_l(&g_old_z_l, g_c_exp, &g_new_z_l, bitshift))
 	{
 		g_new_z_l.x = g_new_z_l.y = 8L << bitshift;
 	}
@@ -2928,7 +2907,7 @@ int marksmandel_per_pixel()
 
 	if (g_c_exp > 3)
 	{
-		lcpower(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
+		complex_power_l(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
 	}
 	else if (g_c_exp == 3)
 	{
