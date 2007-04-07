@@ -133,7 +133,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	floatmin = FLT_MIN;
 	floatmax = FLT_MAX;
 
-	basin = 0;
+	g_basin = 0;
 	if (roots != staticroots)
 	{
 		free(roots);
@@ -142,7 +142,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 
 	if (fractype == NEWTBASIN)
 	{
-		basin = parm.y ? 2 : 1; /*stripes */
+		g_basin = parm.y ? 2 : 1; /*stripes */
 		if (g_degree > 16)
 		{
 			roots = (_CMPLX *) malloc(g_degree*sizeof(_CMPLX));
@@ -167,7 +167,7 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 #if !defined(XFRACT)
 	else if (fractype == MPNEWTBASIN)
 	{
-		basin = parm.y ? 2 : 1; /*stripes */
+		g_basin = parm.y ? 2 : 1; /*stripes */
 
 		if (g_degree > 16)
 		{

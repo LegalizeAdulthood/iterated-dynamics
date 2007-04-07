@@ -66,7 +66,7 @@ long g_temp_sqr_y_l;
 int g_max_color;
 int g_root;
 int g_degree;
-int basin;
+int g_basin;
 double floatmin;
 double floatmax;
 double roverd;
@@ -579,7 +579,7 @@ int NewtonFractal2(void)
 					which root of 1 it converged to */
 				if (distance(roots[i], g_old_z) < threshold)
 				{
-					tmpcolor = (basin == 2) ?
+					tmpcolor = (g_basin == 2) ?
 						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
 					break;
 				}
@@ -656,7 +656,7 @@ int MPCNewtonFractal(void)
 			{
 				if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
 				{
-					tmpcolor = (basin == 2) ?
+					tmpcolor = (g_basin == 2) ?
 						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
 					break;
 				}
