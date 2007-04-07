@@ -1333,7 +1333,7 @@ void set_default_parms()
 	}
 	else if (bf_math)
 	{
-		fractal_floattobf();
+		fractal_float_to_bf();
 	}
 }
 

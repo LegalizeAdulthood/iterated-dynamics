@@ -1363,7 +1363,7 @@ int fgetwindow(void)
 	if (!oldbf_math)
 	{
 		int oldcalc_status = calc_status; /* kludge because next sets it = 0 */
-		fractal_floattobf();
+		fractal_float_to_bf();
 		calc_status = oldcalc_status;
 	}
 	saved = save_stack();

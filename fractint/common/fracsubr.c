@@ -121,7 +121,7 @@ void fill_lx_array(void)
 	}
 }
 
-void fractal_floattobf(void)
+void fractal_float_to_bf(void)
 {
 	int i;
 	init_bf_dec(getprecdbl(CURRENTREZ));
@@ -218,28 +218,28 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 	{
 		fractype = MANDELFP;
 		curfractalspecific = &fractalspecific[fractype];
-		fractal_floattobf();
+		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == JULIA || fractype == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = JULIAFP;
 		curfractalspecific = &fractalspecific[fractype];
-		fractal_floattobf();
+		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = FPMANDELZPOWER;
 		curfractalspecific = &fractalspecific[fractype];
-		fractal_floattobf();
+		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
 	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
 	{
 		fractype = FPJULIAZPOWER;
 		curfractalspecific = &fractalspecific[fractype];
-		fractal_floattobf();
+		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
 	else
@@ -579,7 +579,7 @@ expand_retry:
 				{
 					if (curfractalspecific->flags & BF_MATH)
 					{
-						fractal_floattobf();
+						fractal_float_to_bf();
 						goto init_restart;
 					}
 					goto expand_retry;
