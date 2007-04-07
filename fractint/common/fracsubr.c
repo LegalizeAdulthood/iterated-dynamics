@@ -1607,7 +1607,7 @@ static int sound_open(void)
 
 /* This routine plays a tone in the speaker and optionally writes a file
 	if the orbitsave variable is turned on */
-void w_snd(int tone)
+void sound_tone(int tone)
 {
 	if ((orbitsave & ORBITSAVE_SOUND) != 0)
 	{
@@ -1687,11 +1687,11 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			w_snd((int)(i*1000/xdots + basehertz));
+			sound_tone((int)(i*1000/xdots + basehertz));
 		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
 		{
-			w_snd((int)(j*1000/ydots + basehertz));
+			sound_tone((int)(j*1000/ydots + basehertz));
 		}
 		else if (orbit_delay > 0)
 		{
@@ -1702,15 +1702,15 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			w_snd((int)(i + basehertz));
+			sound_tone((int)(i + basehertz));
 		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
 		{
-			w_snd((int)(j + basehertz));
+			sound_tone((int)(j + basehertz));
 		}
 		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
 		{
-			w_snd((int)(i + j + basehertz));
+			sound_tone((int)(i + j + basehertz));
 		}
 		else if (orbit_delay > 0)
 		{

@@ -453,7 +453,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 		{
 			sleep_ms(orbit_delay);
 		}
-		w_snd((int)((int)(*pixels++)*3000/colors + basehertz));
+		sound_tone((int)((int)(*pixels++)*3000/colors + basehertz));
 		if (driver_key_pressed())
 		{
 		driver_mute();
