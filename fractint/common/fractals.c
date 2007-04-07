@@ -67,7 +67,7 @@ int g_max_color;
 int g_root;
 int g_degree;
 int g_basin;
-double roverd;
+double g_r_over_d;
 double d1overd;
 double threshold;
 _CMPLX tmp2;
@@ -586,7 +586,7 @@ int NewtonFractal2(void)
 		}
 		return 1;
 	}
-	g_new_z.x = d1overd*g_new_z.x + roverd;
+	g_new_z.x = d1overd*g_new_z.x + g_r_over_d;
 	g_new_z.y *= d1overd;
 
 	/* Watch for divide underflow */
