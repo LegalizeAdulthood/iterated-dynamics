@@ -831,7 +831,7 @@ int calculate_fractal(void)
 	}
 	if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
 	{
-		close_snd();
+		sound_close();
 	}
 	if (truecolor)
 	{
@@ -2154,7 +2154,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 	if (g_show_orbit)
 	{
-		snd_time_write();
+		sound_write_time();
 	}
 	while (++g_color_iter < maxit)
 	{
@@ -2238,7 +2238,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			else
 			{
-				iplot_orbit(lnew.x, lnew.y, -1);
+				plot_orbit_i(lnew.x, lnew.y, -1);
 			}
 		}
 		if (inside < -1)
