@@ -518,7 +518,7 @@ int calculate_fractal(void)
 	matherr_ct = 0;
 	g_num_attractors = 0;          /* default to no known finite attractors  */
 	display3d = 0;
-	basin = 0;
+	g_basin = 0;
 	/* added yet another level of indirection to g_put_color!!! TW */
 	g_put_color = putcolor_a;
 	if (g_is_true_color && truemode)
@@ -4410,7 +4410,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case XAXIS:                       /* X-axis Symmetry */
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0)
 		{
-			g_plot_color = basin ? symplot2basin : symplot2;
+			g_plot_color = g_basin ? symplot2basin : symplot2;
 		}
 		break;
 	case YAXIS_NOPARM:                        /* Y-axis Symmetry (No Parms)*/
@@ -4435,10 +4435,10 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		switch (s_work_sym & 3)
 		{
 		case XAXIS: /* just xaxis symmetry */
-			g_plot_color = basin ? symplot2basin : symplot2;
+			g_plot_color = g_basin ? symplot2basin : symplot2;
 			break;
 		case YAXIS: /* just yaxis symmetry */
-			if (basin) /* got no routine for this case */
+			if (g_basin) /* got no routine for this case */
 			{
 				g_x_stop = g_xx_stop; /* fix what split should not have done */
 				g_symmetry = 1;
@@ -4449,7 +4449,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			}
 			break;
 		case XYAXIS: /* both axes */
-			g_plot_color = basin ? symplot4basin : symplot4;
+			g_plot_color = g_basin ? symplot4basin : symplot4;
 		}
 		break;
 	case ORIGIN_NOPARM:                       /* Origin Symmetry (no parms)*/
@@ -5149,7 +5149,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 {
 	int i, stripe;
 	g_put_color(x, y, color);
-	stripe = (basin == 2 && color > 8) ? 8 : 0;
+	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
 	i = g_yy_stop-(y-g_yy_start);
 	if (i > g_y_stop && i < ydots)
 	{
@@ -5169,7 +5169,7 @@ void _fastcall symplot4basin(int x, int y, int color)
 		symplot4(x, y, color);
 		return;
 	}
-	stripe = (basin == 2 && color > 8) ? 8 : 0;
+	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
 	color -= stripe;               /* reconstruct unstriped color */
 	color1 = (color < g_degree/2 + 2) ?
 		(g_degree/2 + 2 - color) : (g_degree/2 + g_degree + 2 - color);

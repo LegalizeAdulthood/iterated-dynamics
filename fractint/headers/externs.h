@@ -35,7 +35,7 @@ extern int                   g_bad_value;
 extern long                  bailout;
 extern enum bailouts         g_bail_out_test;
 extern int                   basehertz;
-extern int                   basin;
+extern int                   g_basin;
 extern int                   bf_save_len;
 extern int                   bfdigits;
 extern int                   biomorph;
