@@ -37,7 +37,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 	{
 		/* special case: use the main processing loop */
 		g_calculate_type = standard_fractal;
-		longparm = &linit;
+		longparm = &g_initial_z_l;
 	}
 	return 1;
 }
@@ -58,7 +58,7 @@ JuliaSetup(void)            /* Julia Routine */
 	{
 		/* special case: use the main processing loop */
 		g_calculate_type = standard_fractal;
-		longparm = &lparm;
+		longparm = &g_parameter_l;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 	}
 	return 1;
@@ -583,7 +583,7 @@ MandellongSetup(void)
 	{
 		g_periodicity_check = 4;
 	}
-	longparm = &linit;
+	longparm = &g_initial_z_l;
 	if (fractype == LMANDELZPOWER)
 	{
 		if (param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)c_exp == param[2])
@@ -630,7 +630,7 @@ int
 JulialongSetup(void)
 {
 	c_exp = (int)param[2];
-	longparm = &lparm;
+	longparm = &g_parameter_l;
 	switch (fractype)
 	{
 	case LJULIAZPOWER:
@@ -647,7 +647,7 @@ JulialongSetup(void)
 		get_julia_attractor (0.5, 0.0);   /* another attractor? */
 		break;
 	case LLAMBDAEXP:
-		if (lparm.y == 0)
+		if (g_parameter_l.y == 0)
 		{
 			g_symmetry = XAXIS;
 		}
@@ -708,14 +708,14 @@ TrigPlusSqrlongSetup(void)
 {
 	curfractalspecific->per_pixel =  julia_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusSqrFractal;
-	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
-		if (lparm2.x == fudge)        /* Scott variant */
+		if (g_parameter2_l.x == fudge)        /* Scott variant */
 		{
 			curfractalspecific->orbitcalc =  ScottTrigPlusSqrFractal;
 		}
-		else if (lparm2.x == -fudge)  /* Skinner variant */
+		else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
 		{
 			curfractalspecific->orbitcalc =  SkinnerTrigSubSqrFractal;
 		}
@@ -753,14 +753,14 @@ TrigPlusTriglongSetup(void)
 	}
 	curfractalspecific->per_pixel =  long_julia_per_pixel;
 	curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
-	if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
-		if (lparm2.x == fudge)        /* Scott variant */
+		if (g_parameter2_l.x == fudge)        /* Scott variant */
 		{
 			curfractalspecific->orbitcalc =  ScottTrigPlusTrigFractal;
 		}
-		else if (lparm2.x == -fudge)  /* Skinner variant */
+		else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
 		{
 			curfractalspecific->orbitcalc =  SkinnerTrigSubTrigFractal;
 		}
@@ -829,7 +829,7 @@ int
 LambdaTrigOrTrigSetup(void)
 {
 	/* default symmetry is ORIGIN  JCO 2/29/92 (changed from PI_SYM) */
-	longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &parm;
 	if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
 	{
@@ -847,7 +847,7 @@ int
 JuliaTrigOrTrigSetup(void)
 {
 	/* default symmetry is XAXIS */
-	longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &parm;
 	if (parm.y != 0.0)
 	{
@@ -865,7 +865,7 @@ int
 ManlamTrigOrTrigSetup(void)
 { /* psuedo */
 	/* default symmetry is XAXIS */
-	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
 	if (trigndx[0] == SQR)
 	{
@@ -882,7 +882,7 @@ int
 MandelTrigOrTrigSetup(void)
 {
 /* default symmetry is XAXIS_NOPARM */
-	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
 	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
 	{
@@ -946,14 +946,14 @@ ZXTrigPlusZSetup(void)
 	if (curfractalspecific->isinteger)
 	{
 		curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
-		if (lparm.x == fudge && lparm.y == 0L && lparm2.y == 0L
+		if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
-			if (lparm2.x == fudge)     /* Scott variant */
+			if (g_parameter2_l.x == fudge)     /* Scott variant */
 			{
 				curfractalspecific->orbitcalc =  ScottZXTrigPlusZFractal;
 			}
-			else if (lparm2.x == -fudge)  /* Skinner variant */
+			else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
 			{
 				curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
 			}
@@ -1156,25 +1156,25 @@ MarksJuliaSetup(void)
 		param[2] = 1;
 	}
 	c_exp = (int)param[2];
-	longparm = &lparm;
-	lold = *longparm;
+	longparm = &g_parameter_l;
+	g_old_z_l = *longparm;
 	if (c_exp > 3)
 	{
-		lcpower(&lold, c_exp-1, &lcoefficient, bitshift);
+		lcpower(&g_old_z_l, c_exp-1, &g_coefficient_l, bitshift);
 	}
 	else if (c_exp == 3)
 	{
-		lcoefficient.x = multiply(lold.x, lold.x, bitshift) - multiply(lold.y, lold.y, bitshift);
-		lcoefficient.y = multiply(lold.x, lold.y, bitshiftless1);
+		g_coefficient_l.x = multiply(g_old_z_l.x, g_old_z_l.x, bitshift) - multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+		g_coefficient_l.y = multiply(g_old_z_l.x, g_old_z_l.y, bitshiftless1);
 	}
 	else if (c_exp == 2)
 	{
-		lcoefficient = lold;
+		g_coefficient_l = g_old_z_l;
 	}
 	else if (c_exp < 2)
 	{
-		lcoefficient.x = 1L << bitshift;
-		lcoefficient.y = 0L;
+		g_coefficient_l.x = 1L << bitshift;
+		g_coefficient_l.y = 0L;
 	}
 	get_julia_attractor (0.0, 0.0);      /* an attractor? */
 #endif
@@ -1218,9 +1218,9 @@ SierpinskiSetup(void)
 {
 	/* sierpinski */
 	g_periodicity_check = 0;                /* disable periodicity checks */
-	ltmp.x = 1;
-	ltmp.x = ltmp.x << bitshift; /* ltmp.x = 1 */
-	ltmp.y = ltmp.x >> 1;                        /* ltmp.y = .5 */
+	g_tmp_z_l.x = 1;
+	g_tmp_z_l.x = g_tmp_z_l.x << bitshift; /* g_tmp_z_l.x = 1 */
+	g_tmp_z_l.y = g_tmp_z_l.x >> 1;                        /* g_tmp_z_l.y = .5 */
 	return 1;
 }
 
@@ -1275,7 +1275,7 @@ HalleySetup(void)
 int
 PhoenixSetup(void)
 {
-	longparm = &lparm; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &parm;
 	degree = (int)parm2.x;
 	if (degree < 2 && degree > -3)
@@ -1307,7 +1307,7 @@ PhoenixSetup(void)
 int
 PhoenixCplxSetup(void)
 {
-	longparm = &lparm;
+	longparm = &g_parameter_l;
 	floatparm = &parm;
 	degree = (int)param[4];
 	if (degree < 2 && degree > -3)
@@ -1346,7 +1346,7 @@ PhoenixCplxSetup(void)
 int
 MandPhoenixSetup(void)
 {
-	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
 	degree = (int)parm2.x;
 	if (degree < 2 && degree > -3)
@@ -1378,7 +1378,7 @@ MandPhoenixSetup(void)
 int
 MandPhoenixCplxSetup(void)
 {
-	longparm = &linit; /* added to consolidate code 10/1/92 JCO */
+	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
 	degree = (int)param[4];
 	if (degree < 2 && degree > -3)

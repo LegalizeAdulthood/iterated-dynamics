@@ -1885,13 +1885,13 @@ void get_julia_attractor(double real, double imag)
 	tempsqrx = sqr(g_old_z.x);
 	tempsqry = sqr(g_old_z.y);
 
-	lold.x = (long)real;     /* prepare for int orbit calc */
-	lold.y = (long)imag;
+	g_old_z_l.x = (long)real;     /* prepare for int orbit calc */
+	g_old_z_l.y = (long)imag;
 	ltempsqrx = (long)tempsqrx;
 	ltempsqry = (long)tempsqry;
 
-	lold.x = lold.x << bitshift;
-	lold.y = lold.y << bitshift;
+	g_old_z_l.x = g_old_z_l.x << bitshift;
+	g_old_z_l.y = g_old_z_l.y << bitshift;
 	ltempsqrx = ltempsqrx << bitshift;
 	ltempsqry = ltempsqry << bitshift;
 
@@ -1910,7 +1910,7 @@ void get_julia_attractor(double real, double imag)
 	{
 		if (integerfractal)   /* remember where it went to */
 		{
-			lresult = lnew;
+			lresult = g_new_z_l;
 		}
 		else
 		{
@@ -1923,10 +1923,10 @@ void get_julia_attractor(double real, double imag)
 			{                        /* and doesn't move far, probably */
 				if (integerfractal)   /*   found a finite attractor    */
 				{
-					if (labs(lresult.x-lnew.x) < g_close_enough_l
-						&& labs(lresult.y-lnew.y) < g_close_enough_l)
+					if (labs(lresult.x-g_new_z_l.x) < g_close_enough_l
+						&& labs(lresult.y-g_new_z_l.y) < g_close_enough_l)
 					{
-						g_attractors_l[g_num_attractors] = lnew;
+						g_attractors_l[g_num_attractors] = g_new_z_l;
 						g_attractor_period[g_num_attractors] = i + 1;
 						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
