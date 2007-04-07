@@ -32,6 +32,9 @@
 #define FUDGE_FACTOR     29
 #define FUDGE_FACTOR2    24
 
+#define MAX_Y_BLOCK 7    /* must match calcfrac.c */
+#define MAX_X_BLOCK 202  /* must match calcfrac.c */
+
 int g_resume_length = 0;				/* length of resume info */
 int g_use_grid = FALSE;
 
@@ -47,7 +50,7 @@ static void   _fastcall adjust_to_limits(double);
 static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
 static void   _fastcall plot_orbit_d(double, double, int);
-static int    _fastcall combine_work_list(void);
+static int    _fastcall work_list_combine(void);
 static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
 static int sound_open(void);
@@ -1732,7 +1735,7 @@ void plot_orbit(double real, double imag, int color)
 	plot_orbit_d(real-xxmin, imag-yymax, color);
 }
 
-void scrub_orbit(void)
+void orbit_scrub(void)
 {
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
@@ -1752,9 +1755,9 @@ void scrub_orbit(void)
 }
 
 
-int add_worklist(int xfrom, int xto, int xbegin,
-int yfrom, int yto, int ybegin,
-int pass, int sym)
+int work_list_add(int xfrom, int xto, int xbegin,
+	int yfrom, int yto, int ybegin,
+	int pass, int sym)
 {
 	if (g_num_work_list >= MAXCALCWORK)
 	{
@@ -1769,11 +1772,11 @@ int pass, int sym)
 	g_work_list[g_num_work_list].pass    = pass;
 	g_work_list[g_num_work_list].sym     = sym;
 	++g_num_work_list;
-	tidy_worklist();
+	work_list_tidy();
 	return 0;
 }
 
-static int _fastcall combine_work_list(void) /* look for 2 entries which can freely merge */
+static int _fastcall work_list_combine(void) /* look for 2 entries which can freely merge */
 {
 	int i, j;
 	for (i = 0; i < g_num_work_list; ++i)
@@ -1826,11 +1829,11 @@ static int _fastcall combine_work_list(void) /* look for 2 entries which can fre
 	return 0; /* nothing combined */
 }
 
-void tidy_worklist(void) /* combine mergeable entries, resort */
+void work_list_tidy(void) /* combine mergeable entries, resort */
 {
 	int i, j;
 	WORKLIST tempwork;
-	while ((i = combine_work_list()) != 0)
+	while ((i = work_list_combine()) != 0)
 	{ /* merged two, delete the gone one */
 		while (++i < g_num_work_list)
 		{
@@ -1856,8 +1859,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 	}
 }
 
-
-void get_julia_attractor (double real, double imag)
+void get_julia_attractor(double real, double imag)
 {
 	_LCMPLX lresult;
 	_CMPLX result;
@@ -1956,9 +1958,7 @@ void get_julia_attractor (double real, double imag)
 }
 
 
-#define maxyblk 7    /* must match calcfrac.c */
-#define maxxblk 202  /* must match calcfrac.c */
-int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
+int solid_guess_block_size(void) /* used by solidguessing and by zoom panning */
 {
 	int blocksize, i;
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */
@@ -1970,7 +1970,7 @@ int ssg_blocksize(void) /* used by solidguessing and by zoom panning */
 		i += i;
 	}
 	/* increase blocksize if prefix array not big enough */
-	while (blocksize*(maxxblk-2) < xdots || blocksize*(maxyblk-2)*16 < ydots)
+	while (blocksize*(MAX_X_BLOCK-2) < xdots || blocksize*(MAX_Y_BLOCK-2)*16 < ydots)
 	{
 		blocksize += blocksize;
 	}

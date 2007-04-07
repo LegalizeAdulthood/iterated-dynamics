@@ -674,7 +674,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 			i = g_work_list[j].pass;
 		}
 	}
-	j = ssg_blocksize(); /* worst-case alignment requirement */
+	j = solid_guess_block_size(); /* worst-case alignment requirement */
 	while (--i >= 0)
 	{
 		j = j >> 1; /* reduce requirement */
@@ -758,21 +758,21 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	j = ydots-1;
 	if (row < 0)
 	{
-		listfull |= add_worklist(0, xdots-1, 0, 0, -row-1, 0, 0, 0);
+		listfull |= work_list_add(0, xdots-1, 0, 0, -row-1, 0, 0, 0);
 		i = -row;
 	}
 	if (row > 0)
 	{
-		listfull |= add_worklist(0, xdots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
+		listfull |= work_list_add(0, xdots-1, 0, ydots-row, ydots-1, ydots-row, 0, 0);
 		j = ydots - row - 1;
 	}
 	if (col < 0)
 	{
-		listfull |= add_worklist(0, -col-1, 0, i, j, i, 0, 0);
+		listfull |= work_list_add(0, -col-1, 0, i, j, i, 0, 0);
 	}
 	if (col > 0)
 	{
-		listfull |= add_worklist(xdots-col, xdots-1, xdots-col, i, j, i, 0, 0);
+		listfull |= work_list_add(xdots-col, xdots-1, xdots-col, i, j, i, 0, 0);
 	}
 	if (listfull != 0)
 	{
@@ -967,5 +967,5 @@ static void fix_worklist(void) /* fix out of bounds and symmetry related stuff *
 			wk->xx_begin = wk->xx_stop;
 		}
 	}
-	tidy_worklist(); /* combine where possible, re-sort */
+	work_list_tidy(); /* combine where possible, re-sort */
 }

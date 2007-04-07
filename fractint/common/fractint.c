@@ -642,7 +642,7 @@ int check_key()
 	{
 		if (g_show_orbit)
 		{
-			scrub_orbit();
+			orbit_scrub();
 		}
 		if (key != 'o' && key != 'O')
 		{
