@@ -8,22 +8,22 @@ int FManOWarfpFractal(void)
 
 int FJuliafpFractal(void)
 {
-	return JuliafpFractal();
+	return julia_orbit_fp();
 }
 
 int FBarnsley1FPFractal(void)
 {
-	return Barnsley1FPFractal();
+	return barnsley1_orbit_fp();
 }
 
 int FBarnsley2FPFractal(void)
 {
-	return Barnsley2FPFractal();
+	return barnsley2_orbit_fp();
 }
 
 int FLambdaFPFractal(void)
 {
-	return LambdaFPFractal();
+	return lambda_orbit_fp();
 }
 
 

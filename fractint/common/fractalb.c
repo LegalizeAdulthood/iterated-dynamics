@@ -878,7 +878,7 @@ int julia_orbit_bn()
 	double_a_bn(bntmp + shiftfactor);
 	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
 
-	return bignumbailout();
+	return g_bail_out_bn();
 }
 
 int julia_orbit_bf()
@@ -891,7 +891,7 @@ int julia_orbit_bf()
 	mult_bf(bftmp, bfold.x, bfold.y); /* ok to use unsafe here */
 	double_a_bf(bftmp);
 	add_bf(bfnew.y, bftmp, bfparm.y);
-	return bigfltbailout();
+	return g_bail_out_bf();
 }
 
 int julia_z_power_orbit_bn()
@@ -908,7 +908,7 @@ int julia_z_power_orbit_bn()
 	add_bn(bnnew.x, bnparm.x, bnnew.x + shiftfactor);
 	add_bn(bnnew.y, bnparm.y, bnnew.y + shiftfactor);
 	restore_stack(saved);
-	return bignumbailout();
+	return g_bail_out_bn();
 }
 
 int julia_z_power_orbit_bf()
@@ -925,7 +925,7 @@ int julia_z_power_orbit_bf()
 	add_bf(bfnew.x, bfparm.x, bfnew.x);
 	add_bf(bfnew.y, bfparm.y, bfnew.y);
 	restore_stack(saved);
-	return bigfltbailout();
+	return g_bail_out_bf();
 }
 
 

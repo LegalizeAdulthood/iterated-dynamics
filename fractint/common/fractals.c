@@ -101,15 +101,12 @@ double g_quaternion_c = 0.0;
 double g_quaternion_ci = 0.0;
 double g_quaternion_cj = 0.0;
 double g_quaternion_ck = 0.0;
-/*
-**  details of finite attractors (required for Magnet Fractals)
-**  (can also be used in "coloring in" the lakes of Julia types)
-*/
-
 int (*g_bail_out_fp)(void);
 int (*g_bail_out_l)(void);
-int (*bignumbailout)(void);
-int (*bigfltbailout)(void);
+int (*g_bail_out_bn)(void);
+int (*g_bail_out_bf)(void);
+long g_one_fudge = 0;
+long g_two_fudge = 0;
 
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
@@ -678,8 +675,7 @@ int barnsley1_orbit(void)
 #endif
 }
 
-int
-Barnsley1FPFractal(void)
+int barnsley1_orbit_fp(void)
 {
 	/* Barnsley's Mandelbrot type M1 from "Fractals
 	Everywhere" by Michael Barnsley, p. 322 */
@@ -704,8 +700,7 @@ Barnsley1FPFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-Barnsley2Fractal(void)
+int barnsley2_orbit(void)
 {
 #if !defined(XFRACT)
 	/* An unnamed Mandelbrot/Julia function from "Fractals
@@ -735,8 +730,7 @@ Barnsley2Fractal(void)
 #endif
 }
 
-int
-Barnsley2FPFractal(void)
+int barnsley2_orbit_fp(void)
 {
 	/* An unnamed Mandelbrot/Julia function from "Fractals
 	Everywhere" by Michael Barnsley, p. 331, example 4.2 */
@@ -761,8 +755,7 @@ Barnsley2FPFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-julia_orbit(void)
+int julia_orbit(void)
 {
 	/* used for C prototype of fast integer math routines for classic
 		Mandelbrot and Julia */
@@ -771,8 +764,7 @@ julia_orbit(void)
 	return g_bail_out_l();
 }
 
-int
-JuliafpFractal(void)
+int julia_orbit_fp(void)
 {
 	/* floating point version of classical Mandelbrot/Julia */
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
@@ -781,8 +773,7 @@ JuliafpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-LambdaFPFractal(void)
+int lambda_orbit_fp(void)
 {
 	/* variation of classical Mandelbrot/Julia */
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
@@ -796,8 +787,7 @@ LambdaFPFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-LambdaFractal(void)
+int lambda_orbit(void)
 {
 #if !defined(XFRACT)
 	/* variation of classical Mandelbrot/Julia */
@@ -816,8 +806,7 @@ LambdaFractal(void)
 #endif
 }
 
-int
-SierpinskiFractal(void)
+int sierpinski_orbit(void)
 {
 #if !defined(XFRACT)
 	/* following code translated from basic - see "Fractals
@@ -839,8 +828,7 @@ SierpinskiFractal(void)
 #endif
 }
 
-int
-SierpinskiFPFractal(void)
+int sierpinski_orbit_fp(void)
 {
 	/* following code translated from basic - see "Fractals
 	Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */
@@ -860,8 +848,7 @@ SierpinskiFPFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-LambdaexponentFractal(void)
+int lambda_exponent_orbit_fp(void)
 {
 	/* found this in  "Science of Fractal Images" */
 	if (save_release > 2002)  /* need braces since these are macros */
@@ -889,8 +876,7 @@ LambdaexponentFractal(void)
 	return 0;
 }
 
-int
-LongLambdaexponentFractal(void)
+int lambda_exponent_orbit(void)
 {
 #if !defined(XFRACT)
 	long tmp;
@@ -919,8 +905,7 @@ LongLambdaexponentFractal(void)
 #endif
 }
 
-int
-FloatTrigPlusExponentFractal(void)
+int trig_plus_exponent_orbit_fp(void)
 {
 	/* another Scientific American biomorph type */
 	/* z(n + 1) = e**z(n) + trig(z(n)) + C */
@@ -939,8 +924,7 @@ FloatTrigPlusExponentFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-LongTrigPlusExponentFractal(void)
+int trig_plus_exponent_orbit(void)
 {
 #if !defined(XFRACT)
 	/* calculate exp(z) */
@@ -961,8 +945,7 @@ LongTrigPlusExponentFractal(void)
 #endif
 }
 
-int
-MarksLambdaFractal(void)
+int marks_lambda_orbit(void)
 {
 	/* Mark Peterson's variation of "lambda" function */
 
@@ -982,8 +965,7 @@ MarksLambdaFractal(void)
 #endif
 }
 
-int
-MarksLambdafpFractal(void)
+int marks_lambda_orbit_fp(void)
 {
 	/* Mark Peterson's variation of "lambda" function */
 
@@ -997,22 +979,18 @@ MarksLambdafpFractal(void)
 	return g_bail_out_fp();
 }
 
-
-long XXOne, FgOne, FgTwo;
-
-int
-UnityFractal(void)
+int UnityFractal(void)
 {
 #if !defined(XFRACT)
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
-	XXOne = multiply(g_old_z_l.x, g_old_z_l.x, bitshift) + multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
-	if ((XXOne > FgTwo) || (labs(XXOne - FgOne) < delmin))
+	long XXOne = multiply(g_old_z_l.x, g_old_z_l.x, bitshift) + multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+	if ((XXOne > g_two_fudge) || (labs(XXOne - g_one_fudge) < delmin))
 	{
 		return 1;
 	}
-	g_old_z_l.y = multiply(FgTwo - XXOne, g_old_z_l.x, bitshift);
-	g_old_z_l.x = multiply(FgTwo - XXOne, g_old_z_l.y, bitshift);
+	g_old_z_l.y = multiply(g_two_fudge - XXOne, g_old_z_l.x, bitshift);
+	g_old_z_l.x = multiply(g_two_fudge - XXOne, g_old_z_l.y, bitshift);
 	g_new_z_l = g_old_z_l;  /* TW added this line */
 	return 0;
 #else
