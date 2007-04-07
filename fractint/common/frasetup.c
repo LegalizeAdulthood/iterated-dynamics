@@ -214,8 +214,8 @@ int
 UnitySetup(void)
 {
 	g_periodicity_check = 0;
-	FgOne = (1L << bitshift);
-	FgTwo = FgOne + FgOne;
+	g_one_fudge = (1L << bitshift);
+	g_two_fudge = g_one_fudge + g_one_fudge;
 	return 1;
 }
 
@@ -1001,7 +1001,7 @@ LambdaTrigSetup(void)
 		break;
 	case EXP:
 		curfractalspecific->orbitcalc = 
-			isinteger ? LongLambdaexponentFractal : LambdaexponentFractal;
+			isinteger ? lambda_exponent_orbit : lambda_exponent_orbit_fp;
 		g_symmetry = NOSYM; /* JCO 1/9/93 */
 		break;
 	case LOG:
@@ -1131,7 +1131,7 @@ MandelTrigSetup(void)
 	case EXP:
 		g_symmetry = XAXIS_NOPARM;
 		curfractalspecific->orbitcalc = 
-			isinteger ? LongLambdaexponentFractal : LambdaexponentFractal;
+			isinteger ? lambda_exponent_orbit : lambda_exponent_orbit_fp;
 		break;
 	case LOG:
 		g_symmetry = XAXIS_NOPARM;

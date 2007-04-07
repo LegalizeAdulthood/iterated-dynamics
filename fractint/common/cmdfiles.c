@@ -532,8 +532,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_bail_out_test    = Mod;
 	g_bail_out_fp  = (int (*)(void))bail_out_mod_fp;
 	g_bail_out_l   = (int (*)(void))asmlMODbailout;
-	bignumbailout = (int (*)(void))bail_out_mod_bn;
-	bigfltbailout = (int (*)(void))bail_out_mod_bf;
+	g_bail_out_bn = (int (*)(void))bail_out_mod_bn;
+	g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
 
 	functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
 	g_m_x_min_fp = -.83;
