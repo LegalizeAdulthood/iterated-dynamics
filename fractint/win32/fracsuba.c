@@ -29,9 +29,9 @@ int FLambdaFPFractal(void)
 
 int asmlMODbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	g_magnitude_l = ltempsqrx + ltempsqry;
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_limit2_l
 		|| labs(g_new_z_l.y) > g_limit2_l || overflow)
 	{
@@ -44,9 +44,9 @@ int asmlMODbailout(void)
 
 int asmlREALbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqrx >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_x_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -57,9 +57,9 @@ int asmlREALbailout(void)
 
 int asmlIMAGbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqry >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_y_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -70,9 +70,9 @@ int asmlIMAGbailout(void)
 
 int asmlORbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqrx >= g_limit_l || ltempsqry >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_x_l >= g_limit_l || g_temp_sqr_y_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -83,9 +83,9 @@ int asmlORbailout(void)
 
 int asmlANDbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if ((ltempsqrx >= g_limit_l && ltempsqry >= g_limit_l) || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if ((g_temp_sqr_x_l >= g_limit_l && g_temp_sqr_y_l >= g_limit_l) || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -96,8 +96,8 @@ int asmlANDbailout(void)
 
 int asmlMANHbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
@@ -109,8 +109,8 @@ int asmlMANHbailout(void)
 
 int asmlMANRbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
@@ -122,9 +122,9 @@ int asmlMANRbailout(void)
 
 int asm386lMODbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	g_magnitude_l = ltempsqrx + ltempsqry;
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_limit2_l
 		|| labs(g_new_z_l.y) > g_limit2_l || overflow)
 	{
@@ -137,9 +137,9 @@ int asm386lMODbailout(void)
 
 int asm386lREALbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqrx >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_x_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -150,9 +150,9 @@ int asm386lREALbailout(void)
 
 int asm386lIMAGbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqry >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_y_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -163,9 +163,9 @@ int asm386lIMAGbailout(void)
 
 int asm386lORbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if (ltempsqrx >= g_limit_l || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if (g_temp_sqr_x_l >= g_limit_l || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -176,9 +176,9 @@ int asm386lORbailout(void)
 
 int asm386lANDbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
-	if ((ltempsqrx >= g_limit_l && ltempsqry >= g_limit_l) || overflow)
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+	if ((g_temp_sqr_x_l >= g_limit_l && g_temp_sqr_y_l >= g_limit_l) || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -189,8 +189,8 @@ int asm386lANDbailout(void)
 
 int asm386lMANHbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
@@ -202,8 +202,8 @@ int asm386lMANHbailout(void)
 
 int asm386lMANRbailout(void)
 {
-	ltempsqrx = lsqr(g_new_z_l.x);
-	ltempsqry = lsqr(g_new_z_l.y);
+	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{

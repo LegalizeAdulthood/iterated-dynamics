@@ -227,8 +227,8 @@ static int z_line(long x, long y)
 		{
 			return -1;
 		}
-		ltempsqrx = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
-		ltempsqry = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
+		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 		for (n = 0; n < maxit; n++)
 		{
 			if (fractalspecific[g_new_orbit_type].orbitcalc())

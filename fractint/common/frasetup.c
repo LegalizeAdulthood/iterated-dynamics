@@ -108,18 +108,18 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	curfractalspecific = &fractalspecific[fractype];
 #endif
 	/* set up table of roots of 1 along unit circle */
-	degree = (int)parm.x;
-	if (degree < 2)
+	g_degree = (int)parm.x;
+	if (g_degree < 2)
 	{
-		degree = 3;   /* defaults to 3, but 2 is possible */
+		g_degree = 3;   /* defaults to 3, but 2 is possible */
 	}
-	root = 1;
+	g_root = 1;
 
 	/* precalculated values */
-	roverd       = (double)root / (double)degree;
-	d1overd      = (double)(degree - 1) / (double)degree;
-	maxcolor     = 0;
-	threshold    = .3*PI/degree; /* less than half distance between roots */
+	roverd       = (double)g_root / (double)g_degree;
+	d1overd      = (double)(g_degree - 1) / (double)g_degree;
+	g_max_color     = 0;
+	threshold    = .3*PI/g_degree; /* less than half distance between roots */
 #if !defined(XFRACT)
 	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
@@ -143,13 +143,13 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	if (fractype == NEWTBASIN)
 	{
 		basin = parm.y ? 2 : 1; /*stripes */
-		if (degree > 16)
+		if (g_degree > 16)
 		{
-			roots = (_CMPLX *) malloc(degree*sizeof(_CMPLX));
+			roots = (_CMPLX *) malloc(g_degree*sizeof(_CMPLX));
 			if (roots == NULL)
 			{
 				roots = staticroots;
-				degree = 16;
+				g_degree = 16;
 			}
 		}
 		else
@@ -158,10 +158,10 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 		}
 
 		/* list of roots to discover where we converged for newtbasin */
-		for (i = 0; i < degree; i++)
+		for (i = 0; i < g_degree; i++)
 		{
-			roots[i].x = cos(i*twopi/(double)degree);
-			roots[i].y = sin(i*twopi/(double)degree);
+			roots[i].x = cos(i*twopi/(double)g_degree);
+			roots[i].y = sin(i*twopi/(double)g_degree);
 		}
 	}
 #if !defined(XFRACT)
@@ -169,13 +169,13 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	{
 		basin = parm.y ? 2 : 1; /*stripes */
 
-		if (degree > 16)
+		if (g_degree > 16)
 		{
-			MPCroots = (struct MPC *) malloc(degree*sizeof(struct MPC));
+			MPCroots = (struct MPC *) malloc(g_degree*sizeof(struct MPC));
 			if (MPCroots == NULL)
 			{
 				MPCroots = (struct MPC *)staticroots;
-				degree = 16;
+				g_degree = 16;
 			}
 		}
 		else
@@ -184,16 +184,16 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 		}
 
 		/* list of roots to discover where we converged for newtbasin */
-		for (i = 0; i < degree; i++)
+		for (i = 0; i < g_degree; i++)
 		{
-			MPCroots[i].x = *pd2MP(cos(i*twopi/(double)degree));
-			MPCroots[i].y = *pd2MP(sin(i*twopi/(double)degree));
+			MPCroots[i].x = *pd2MP(cos(i*twopi/(double)g_degree));
+			MPCroots[i].y = *pd2MP(sin(i*twopi/(double)g_degree));
 		}
 	}
 #endif
 
-	param[0] = (double)degree; /* JCO 7/1/92 */
-	g_symmetry = (degree % 4 == 0) ? XYAXIS : XAXIS;
+	param[0] = (double)g_degree; /* JCO 7/1/92 */
+	g_symmetry = (g_degree % 4 == 0) ? XYAXIS : XAXIS;
 
 	g_calculate_type = standard_fractal;
 #if !defined(XFRACT)
@@ -1244,16 +1244,16 @@ HalleySetup(void)
 
 	curfractalspecific = &fractalspecific[fractype];
 
-	degree = (int)parm.x;
-	if (degree < 2)
+	g_degree = (int)parm.x;
+	if (g_degree < 2)
 	{
-		degree = 2;
+		g_degree = 2;
 	}
-	param[0] = (double)degree;
+	param[0] = (double)g_degree;
 
 	/*  precalculated values */
-	AplusOne = degree + 1; /* a + 1 */
-	Ap1deg = AplusOne*degree;
+	AplusOne = g_degree + 1; /* a + 1 */
+	Ap1deg = AplusOne*g_degree;
 
 #if !defined(XFRACT)
 	if (fractype == MPHALLEY)
@@ -1268,7 +1268,7 @@ HalleySetup(void)
 	}
 #endif
 
-	g_symmetry = (degree % 2) ? XAXIS : XYAXIS;   /* odd, even */
+	g_symmetry = (g_degree % 2) ? XAXIS : XYAXIS;   /* odd, even */
 	return 1;
 }
 
@@ -1277,26 +1277,26 @@ PhoenixSetup(void)
 {
 	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &parm;
-	degree = (int)parm2.x;
-	if (degree < 2 && degree > -3)
+	g_degree = (int)parm2.x;
+	if (g_degree < 2 && g_degree > -3)
 	{
-		degree = 0;
+		g_degree = 0;
 	}
-	param[2] = (double)degree;
-	if (degree == 0)
+	param[2] = (double)g_degree;
+	if (g_degree == 0)
 	{
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixFractal : LongPhoenixFractal;
 	}
-	if (degree >= 2)
+	if (g_degree >= 2)
 	{
-		degree = degree - 1;
+		g_degree = g_degree - 1;
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixPlusFractal : LongPhoenixPlusFractal;
 	}
-	if (degree <= -3)
+	if (g_degree <= -3)
 	{
-		degree = abs(degree) - 2;
+		g_degree = abs(g_degree) - 2;
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixMinusFractal : LongPhoenixMinusFractal;
 	}
@@ -1309,13 +1309,13 @@ PhoenixCplxSetup(void)
 {
 	longparm = &g_parameter_l;
 	floatparm = &parm;
-	degree = (int)param[4];
-	if (degree < 2 && degree > -3)
+	g_degree = (int)param[4];
+	if (g_degree < 2 && g_degree > -3)
 	{
-		degree = 0;
+		g_degree = 0;
 	}
-	param[4] = (double)degree;
-	if (degree == 0)
+	param[4] = (double)g_degree;
+	if (g_degree == 0)
 	{
 		g_symmetry = (parm2.x != 0 || parm2.y != 0) ? NOSYM : ORIGIN;
 		if (parm.y == 0 && parm2.y == 0)
@@ -1325,16 +1325,16 @@ PhoenixCplxSetup(void)
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixFractalcplx : LongPhoenixFractalcplx;
 	}
-	if (degree >= 2)
+	if (g_degree >= 2)
 	{
-		degree = degree - 1;
+		g_degree = g_degree - 1;
 		g_symmetry = (parm.y == 0 && parm2.y == 0) ? XAXIS : NOSYM;
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixCplxPlusFractal : LongPhoenixCplxPlusFractal;
 	}
-	if (degree <= -3)
+	if (g_degree <= -3)
 	{
-		degree = abs(degree) - 2;
+		g_degree = abs(g_degree) - 2;
 		g_symmetry = (parm.y == 0 && parm2.y == 0) ? XAXIS : NOSYM;
 		curfractalspecific->orbitcalc = usr_floatflag ?
 			PhoenixCplxMinusFractal : LongPhoenixCplxMinusFractal;
@@ -1348,26 +1348,26 @@ MandPhoenixSetup(void)
 {
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
-	degree = (int)parm2.x;
-	if (degree < 2 && degree > -3)
+	g_degree = (int)parm2.x;
+	if (g_degree < 2 && g_degree > -3)
 	{
-		degree = 0;
+		g_degree = 0;
 	}
-	param[2] = (double)degree;
-	if (degree == 0)
+	param[2] = (double)g_degree;
+	if (g_degree == 0)
 	{
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixFractal : LongPhoenixFractal;
 	}
-	if (degree >= 2)
+	if (g_degree >= 2)
 	{
-		degree = degree - 1;
+		g_degree = g_degree - 1;
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixPlusFractal : LongPhoenixPlusFractal;
 	}
-	if (degree <= -3)
+	if (g_degree <= -3)
 	{
-		degree = abs(degree) - 2;
+		g_degree = abs(g_degree) - 2;
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixMinusFractal : LongPhoenixMinusFractal;
 	}
@@ -1380,30 +1380,30 @@ MandPhoenixCplxSetup(void)
 {
 	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	floatparm = &g_initial_z;
-	degree = (int)param[4];
-	if (degree < 2 && degree > -3)
+	g_degree = (int)param[4];
+	if (g_degree < 2 && g_degree > -3)
 	{
-		degree = 0;
+		g_degree = 0;
 	}
-	param[4] = (double)degree;
+	param[4] = (double)g_degree;
 	if (parm.y != 0 || parm2.y != 0)
 	{
 		g_symmetry = NOSYM;
 	}
-	if (degree == 0)
+	if (g_degree == 0)
 	{
 		curfractalspecific->orbitcalc = 
 			usr_floatflag ? PhoenixFractalcplx : LongPhoenixFractalcplx;
 	}
-	if (degree >= 2)
+	if (g_degree >= 2)
 	{
-		degree = degree - 1;
+		g_degree = g_degree - 1;
 		curfractalspecific->orbitcalc =
 			usr_floatflag ? PhoenixCplxPlusFractal : LongPhoenixCplxPlusFractal;
 	}
-	if (degree <= -3)
+	if (g_degree <= -3)
 	{
-		degree = abs(degree) - 2;
+		g_degree = abs(g_degree) - 2;
 		curfractalspecific->orbitcalc =
 			usr_floatflag ? PhoenixCplxMinusFractal : LongPhoenixCplxMinusFractal;
 	}

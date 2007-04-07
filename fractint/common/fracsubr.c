@@ -1887,13 +1887,13 @@ void get_julia_attractor(double real, double imag)
 
 	g_old_z_l.x = (long)real;     /* prepare for int orbit calc */
 	g_old_z_l.y = (long)imag;
-	ltempsqrx = (long)tempsqrx;
-	ltempsqry = (long)tempsqry;
+	g_temp_sqr_x_l = (long)tempsqrx;
+	g_temp_sqr_y_l = (long)tempsqry;
 
 	g_old_z_l.x = g_old_z_l.x << bitshift;
 	g_old_z_l.y = g_old_z_l.y << bitshift;
-	ltempsqrx = ltempsqrx << bitshift;
-	ltempsqry = ltempsqry << bitshift;
+	g_temp_sqr_x_l = g_temp_sqr_x_l << bitshift;
+	g_temp_sqr_y_l = g_temp_sqr_y_l << bitshift;
 
 	if (maxit < 500)         /* we're going to try at least this hard */
 	{
