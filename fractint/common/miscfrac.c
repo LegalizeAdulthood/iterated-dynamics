@@ -1386,7 +1386,7 @@ int popcorn()   /* subset of std engine */
 	}
 	g_input_counter = g_max_input_counter;
 	g_plot_color = noplot;
-	tempsqrx = ltempsqrx = 0; /* PB added this to cover weird BAILOUTs */
+	tempsqrx = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		g_reset_periodicity = 1;
@@ -2462,9 +2462,9 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 		while (!found_attractor)
 		{
-			ltempsqrx = lsqr(g_old_z_l.x);
-			ltempsqry = lsqr(g_old_z_l.y);
-			g_magnitude_l = ltempsqrx + ltempsqry;
+			g_temp_sqr_x_l = lsqr(g_old_z_l.x);
+			g_temp_sqr_y_l = lsqr(g_old_z_l.y);
+			g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < maxit))
 			{
 				break;
@@ -2472,19 +2472,19 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
 			g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 			g_old_z_l.x = g_new_z_l.x;
 			if (fsp->repeat_mapping)
 			{
-				ltempsqrx = lsqr(g_old_z_l.x);
-				ltempsqry = lsqr(g_old_z_l.y);
-				g_magnitude_l = ltempsqrx + ltempsqry;
+				g_temp_sqr_x_l = lsqr(g_old_z_l.x);
+				g_temp_sqr_y_l = lsqr(g_old_z_l.y);
+				g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
 				if ((g_magnitude_l > g_limit_l) || (g_magnitude_l < 0))
 				{
 					break;
 				}
-				g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+				g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
 				g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 				g_old_z_l.x = g_new_z_l.x;
 			}
@@ -2673,8 +2673,8 @@ int froth_per_pixel(void)
 	{
 		g_old_z_l.x = lxpixel();
 		g_old_z_l.y = lypixel();
-		ltempsqrx = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
-		ltempsqry = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
+		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 	}
 	return 0;
 }
@@ -2702,23 +2702,23 @@ int froth_per_orbit(void)
 	}
 	else  /* integer mode */
 	{
-		g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+		g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
 		g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 		if (fsp->repeat_mapping)
 		{
-			ltempsqrx = lsqr(g_new_z_l.x);
-			ltempsqry = lsqr(g_new_z_l.y);
-			if (ltempsqrx + ltempsqry >= g_limit_l)
+			g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+			g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+			if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_limit_l)
 			{
 				return 1;
 			}
 			g_old_z_l = g_new_z_l;
-			g_new_z_l.x = ltempsqrx - ltempsqry - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
+			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, bitshift);
 			g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, bitshift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, bitshift);
 		}
-		ltempsqrx = lsqr(g_new_z_l.x);
-		ltempsqry = lsqr(g_new_z_l.y);
-		if (ltempsqrx + ltempsqry >= g_limit_l)
+		g_temp_sqr_x_l = lsqr(g_new_z_l.x);
+		g_temp_sqr_y_l = lsqr(g_new_z_l.y);
+		if (g_temp_sqr_x_l + g_temp_sqr_y_l >= g_limit_l)
 		{
 			return 1;
 		}
