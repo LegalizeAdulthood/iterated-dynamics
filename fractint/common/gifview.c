@@ -451,7 +451,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 		g_put_color(col, row, *pixels);
 		if (orbit_delay > 0)
 		{
-			sleepms(orbit_delay);
+			sleep_ms(orbit_delay);
 		}
 		w_snd((int)((int)(*pixels++)*3000/colors + basehertz));
 		if (driver_key_pressed())

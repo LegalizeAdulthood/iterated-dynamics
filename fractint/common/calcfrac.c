@@ -505,7 +505,7 @@ static int calculate_type_show_dot(void)
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_SAVE);
 	if (orbit_delay > 0)
 	{
-		sleepms(orbit_delay);
+		sleep_ms(orbit_delay);
 	}
 	out = (*g_calculate_type_temp)();
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
