@@ -432,7 +432,7 @@ extern int                   g_root;
 extern _CMPLX *              roots;
 extern int                   rotate_hi;
 extern int                   rotate_lo;
-extern double                roverd;
+extern double                g_r_over_d;
 extern int                   g_row;
 extern int                   g_row_count;						/* row-counter for decoder and out_line */
 extern double                g_rq_limit2;
