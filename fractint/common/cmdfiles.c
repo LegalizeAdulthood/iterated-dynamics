@@ -981,7 +981,7 @@ static int make_par_arg(const cmd_context *context)
 	ydots = fileydots;
 	dxsize = xdots - 1;
 	dysize = ydots - 1;
-	calcfracinit();
+	calculate_fractal_initialize();
 	make_batch_file();
 #ifndef WINFRACT
 #if !defined(XFRACT)
