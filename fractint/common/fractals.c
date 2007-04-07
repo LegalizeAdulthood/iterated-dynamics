@@ -650,8 +650,7 @@ int newton_orbit_mpc(void)
 #endif
 }
 
-int
-Barnsley1Fractal(void)
+int barnsley1_orbit(void)
 {
 #if !defined(XFRACT)
 	/* Barnsley's Mandelbrot type M1 from "Fractals

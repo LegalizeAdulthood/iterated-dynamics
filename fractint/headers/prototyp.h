@@ -341,7 +341,7 @@ extern void complex_power(_CMPLX *, int, _CMPLX *);
 extern int complex_power_l(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
 extern int newton_orbit_mpc(void);
-extern int Barnsley1Fractal(void);
+extern int barnsley1_orbit(void);
 extern int Barnsley1FPFractal(void);
 extern int Barnsley2Fractal(void);
 extern int Barnsley2FPFractal(void);
