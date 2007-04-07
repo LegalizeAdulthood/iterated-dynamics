@@ -311,10 +311,10 @@ static int z_line_fp(double x, double y)
 			g_old_z.y = 0.0;
 			s_jbc_fp.x = 0.0;
 			s_jbc_fp.y = 0.0;
-			qc = s_jx_fp;
-			qci = s_jy_fp;
-			qcj = s_mx_fp;
-			qck = s_my_fp;
+			g_quaternion_c = s_jx_fp;
+			g_quaternion_ci = s_jy_fp;
+			g_quaternion_cj = s_mx_fp;
+			g_quaternion_ck = s_my_fp;
 		}
 		else
 		{
@@ -322,10 +322,10 @@ static int z_line_fp(double x, double y)
 			g_old_z.y = s_jy_fp;
 			s_jbc_fp.x = s_mx_fp;
 			s_jbc_fp.y = s_my_fp;
-			qc = param[0];
-			qci = param[1];
-			qcj = param[2];
-			qck = param[3];
+			g_quaternion_c = param[0];
+			g_quaternion_ci = param[1];
+			g_quaternion_cj = param[2];
+			g_quaternion_ck = param[3];
 		}
 #ifdef XFRACT
 		if (keychk++ > 500)
