@@ -1344,7 +1344,7 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	int numfractals, i;
 
 	numfractals = 0;
-	for (i = 0; i < num_fractal_types; i++)
+	for (i = 0; i < g_num_fractal_types; i++)
 	{
 		if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
 		{
@@ -1683,11 +1683,11 @@ gfp_top:
 	for (i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
-		if (!typehasparm(julibrot?g_new_orbit_type:fractype, i, parmprompt[j]))
+		if (!type_has_parameter(julibrot ? g_new_orbit_type : fractype, i, parmprompt[j]))
 		{
 			if (curtype == FORMULA || curtype == FFORMULA)
 			{
-				if (paramnotused(i))
+				if (parameter_not_used(i))
 				{
 					continue;
 				}
@@ -1941,7 +1941,7 @@ gfp_top:
 	{
 		if (curtype == FORMULA || curtype == FFORMULA)
 		{
-			if (paramnotused(i))
+			if (parameter_not_used(i))
 			{
 				continue;
 			}

@@ -143,81 +143,81 @@ alternate_math g_alternate_math[] =
 int g_alternate_math_len = NUM_OF(g_alternate_math);
 
 /* These are only needed for types with both integer and float variations */
-char t_barnsleyj1[]= "*barnsleyj1";
-char t_barnsleyj2[]= "*barnsleyj2";
-char t_barnsleyj3[]= "*barnsleyj3";
-char t_barnsleym1[]= "*barnsleym1";
-char t_barnsleym2[]= "*barnsleym2";
-char t_barnsleym3[]= "*barnsleym3";
-char t_bifplussinpi[]= "*bif+sinpi";
-char t_bifeqsinpi[]= "*bif=sinpi";
-char t_biflambda[]= "*biflambda";
-char t_bifmay[]= "*bifmay";
-char t_bifstewart[]= "*bifstewart";
-char t_bifurcation[]= "*bifurcation";
-char t_fn_z_plusfn_pix_[]= "*fn(z)+fn(pix)";
-char t_fn_zz_[]= "*fn(z*z)";
-char t_fnfn[]= "*fn*fn";
-char t_fnzplusz[]= "*fn*z+z";
-char t_fnplusfn[]= "*fn+fn";
-char t_formula[]= "*formula";
-char t_henon[]= "*henon";
-char t_ifs3d[]= "*ifs3d";
-char t_julfnplusexp[]= "*julfn+exp";
-char t_julfnpluszsqrd[]= "*julfn+zsqrd";
-char t_julia[]= "*julia";
-char t_julia_fnorfn_[]= "*julia(fn||fn)";
-char t_julia4[]= "*julia4";
-char t_julia_inverse[]= "*julia_inverse";
-char t_julibrot[]= "*julibrot";
-char t_julzpower[]= "*julzpower";
-char t_kamtorus[]= "*kamtorus";
-char t_kamtorus3d[]= "*kamtorus3d";
-char t_lambda[]= "*lambda";
-char t_lambda_fnorfn_[]= "*lambda(fn||fn)";
-char t_lambdafn[]= "*lambdafn";
-char t_lorenz[]= "*lorenz";
-char t_lorenz3d[]= "*lorenz3d";
-char t_mandel[]= "*mandel";
-char t_mandel_fnorfn_[]= "*mandel(fn||fn)";
-char t_mandel4[]= "*mandel4";
-char t_mandelfn[]= "*mandelfn";
-char t_mandellambda[]= "*mandellambda";
-char t_mandphoenix[]= "*mandphoenix";
-char t_mandphoenixcplx[]= "*mandphoenixclx";
-char t_manfnplusexp[]= "*manfn+exp";
-char t_manfnpluszsqrd[]= "*manfn+zsqrd";
-char t_manlam_fnorfn_[]= "*manlam(fn||fn)";
-char t_manowar[]= "*manowar";
-char t_manowarj[]= "*manowarj";
-char t_manzpower[]= "*manzpower";
-char t_marksjulia[]= "*marksjulia";
-char t_marksmandel[]= "*marksmandel";
-char t_marksmandelpwr[]= "*marksmandelpwr";
-char t_newtbasin[]= "*newtbasin";
-char t_newton[]= "*newton";
-char t_phoenix[]= "*phoenix";
-char t_phoenixcplx[]= "*phoenixcplx";
-char t_popcorn[]= "*popcorn";
-char t_popcornjul[]= "*popcornjul";
-char t_rossler3d[]= "*rossler3d";
-char t_sierpinski[]= "*sierpinski";
-char t_spider[]= "*spider";
-char t_sqr_1divfn_[]= "*sqr(1/fn)";
-char t_sqr_fn_[]= "*sqr(fn)";
-char t_tims_error[]= "*tim's_error";
-char t_unity[]= "*unity";
-char t_frothybasin[]= "*frothybasin";
-char t_halley[]= "*halley";
+static char s_barnsleyj1_name[] = "*barnsleyj1";
+static char s_barnsleyj2_name[] = "*barnsleyj2";
+static char s_barnsleyj3_name[] = "*barnsleyj3";
+static char s_barnsleym1_name[] = "*barnsleym1";
+static char s_barnsleym2_name[] = "*barnsleym2";
+static char s_barnsleym3_name[] = "*barnsleym3";
+static char s_bifplussinpi_name[] = "*bif+sinpi";
+static char s_bifeqsinpi_name[] = "*bif=sinpi";
+static char s_biflambda_name[] = "*biflambda";
+static char s_bifmay_name[] = "*bifmay";
+static char s_bifstewart_name[] = "*bifstewart";
+static char s_bifurcation_name[] = "*bifurcation";
+static char s_fn_z_plusfn_pix__name[] = "*fn(z)+fn(pix)";
+static char s_fn_zz__name[] = "*fn(z*z)";
+static char s_fnfn_name[] = "*fn*fn";
+static char s_fnzplusz_name[] = "*fn*z+z";
+static char s_fnplusfn_name[] = "*fn+fn";
+static char s_formula_name[] = "*formula";
+static char s_henon_name[] = "*henon";
+static char s_ifs3d_name[] = "*ifs3d";
+static char s_julfnplusexp_name[] = "*julfn+exp";
+static char s_julfnpluszsqrd_name[] = "*julfn+zsqrd";
+static char s_julia_name[] = "*julia";
+static char s_julia_fnorfn__name[] = "*julia(fn||fn)";
+static char s_julia4_name[] = "*julia4";
+static char s_julia_inverse_name[] = "*julia_inverse";
+static char s_julibrot_name[] = "*julibrot";
+static char s_julzpower_name[] = "*julzpower";
+static char s_kamtorus_name[] = "*kamtorus";
+static char s_kamtorus3d_name[] = "*kamtorus3d";
+static char s_lambda_name[] = "*lambda";
+static char s_lambda_fnorfn__name[] = "*lambda(fn||fn)";
+static char s_lambdafn_name[] = "*lambdafn";
+static char s_lorenz_name[] = "*lorenz";
+static char s_lorenz3d_name[] = "*lorenz3d";
+static char s_mandel_name[] = "*mandel";
+static char s_mandel_fnorfn__name[] = "*mandel(fn||fn)";
+static char s_mandel4_name[] = "*mandel4";
+static char s_mandelfn_name[] = "*mandelfn";
+static char s_mandellambda_name[] = "*mandellambda";
+static char s_mandphoenix_name[] = "*mandphoenix";
+static char s_mandphoenixcplx_name[] = "*mandphoenixclx";
+static char s_manfnplusexp_name[] = "*manfn+exp";
+static char s_manfnpluszsqrd_name[] = "*manfn+zsqrd";
+static char s_manlam_fnorfn__name[] = "*manlam(fn||fn)";
+static char s_manowar_name[] = "*manowar";
+static char s_manowarj_name[] = "*manowarj";
+static char s_manzpower_name[] = "*manzpower";
+static char s_marksjulia_name[] = "*marksjulia";
+static char s_marksmandel_name[] = "*marksmandel";
+static char s_marksmandelpwr_name[] = "*marksmandelpwr";
+static char s_newtbasin_name[] = "*newtbasin";
+static char s_newton_name[] = "*newton";
+static char s_phoenix_name[] = "*phoenix";
+static char s_phoenixcplx_name[] = "*phoenixcplx";
+static char s_popcorn_name[] = "*popcorn";
+static char s_popcornjul_name[] = "*popcornjul";
+static char s_rossler3d_name[] = "*rossler3d";
+static char s_sierpinski_name[] = "*sierpinski";
+static char s_spider_name[] = "*spider";
+static char s_sqr_1divfn__name[] = "*sqr(1/fn)";
+static char s_sqr_fn__name[] = "*sqr(fn)";
+static char s_tims_error_name[] = "*tim's_error";
+static char s_unity_name[] = "*unity";
+static char s_frothybasin_name[] = "*frothybasin";
+static char s_halley_name[] = "*halley";
 
 /* use next to cast orbitcalcs() that have arguments */
 #define VF int(*)(void)
 
-struct fractalspecificstuff fractalspecific[]=
+struct fractalspecificstuff fractalspecific[] =
 {
 	/*
 	{
-	fractal name,
+		fractal name,
 		{parameter text strings},
 		{parameter values},
 		helptext, helpformula, flags,
@@ -229,7 +229,7 @@ struct fractalspecificstuff fractalspecific[]=
 	*/
 
 	{
-	t_mandel + 1,
+	s_mandel_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST,
@@ -240,7 +240,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia + 1,
+	s_julia_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.3, 0.6, 0, 0},
 		HT_JULIA, HF_JULIA, WINFRAC | OKJB | BAILTEST,
@@ -251,7 +251,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_newtbasin,
+	s_newtbasin_name,
 		{s_newton_degree, "Enter non-zero value for stripes", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
@@ -262,7 +262,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambda + 1,
+	s_lambda_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.85, 0.6, 0, 0},
 		HT_LAMBDA, HF_LAMBDA, WINFRAC | OKJB | BAILTEST,
@@ -273,7 +273,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandel,
+	s_mandel_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST | BF_MATH,
@@ -284,7 +284,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_newton,
+	s_newton_name,
 		{s_newton_degree, "", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWT, HF_NEWT, WINFRAC,
@@ -295,7 +295,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia,
+	s_julia_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.3, 0.6, 0, 0},
 		HT_JULIA, HF_JULIA, WINFRAC | OKJB | BAILTEST | BF_MATH,
@@ -321,7 +321,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandelfn,
+	s_mandelfn_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDFN, HF_MANDFN, TRIG1 | WINFRAC,
@@ -333,7 +333,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manowar,
+	s_manowar_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWAR, WINFRAC | BAILTEST,
@@ -344,7 +344,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manowar + 1,
+	s_manowar_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWAR, WINFRAC | BAILTEST,
@@ -370,7 +370,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sierpinski + 1,
+	s_sierpinski_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SIER, HF_SIER, WINFRAC,
@@ -382,7 +382,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym1 + 1,
+	s_barnsleym1_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM1, WINFRAC | BAILTEST,
@@ -394,7 +394,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj1 + 1,
+	s_barnsleyj1_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ1, WINFRAC | OKJB | BAILTEST,
@@ -405,7 +405,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym2 + 1,
+	s_barnsleym2_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM2, WINFRAC | BAILTEST,
@@ -417,7 +417,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj2 + 1,
+	s_barnsleyj2_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ2, WINFRAC | OKJB | BAILTEST,
@@ -428,7 +428,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sqr_fn_ + 1,
+	s_sqr_fn__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | WINFRAC | BAILTEST,
@@ -439,7 +439,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sqr_fn_,
+	s_sqr_fn__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | WINFRAC | BAILTEST,
@@ -450,7 +450,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnplusfn + 1,
+	s_fnplusfn_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFN, TRIG2 | WINFRAC | BAILTEST,
@@ -462,7 +462,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandellambda + 1,
+	s_mandellambda_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MLAMBDA, HF_MLAMBDA, WINFRAC | BAILTEST,
@@ -473,7 +473,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksmandel + 1,
+	s_marksmandel_name + 1,
 		{s_real_z0, s_imag_z0, s_exponent, ""},
 		{0, 0, 1, 0},
 		HT_MARKS, HF_MARKSMAND, WINFRAC | BAILTEST,
@@ -485,7 +485,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksjulia + 1,
+	s_marksjulia_name + 1,
 		{s_parameter_real, s_parameter_imag, s_exponent, ""},
 		{0.1, 0.9, 1, 0},
 		HT_MARKS, HF_MARKSJULIA, WINFRAC | BAILTEST,
@@ -496,7 +496,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_unity + 1,
+	s_unity_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_UNITY, HF_UNITY, WINFRAC,
@@ -507,7 +507,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandel4 + 1,
+	s_mandel4_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDJUL4, HF_MANDEL4, WINFRAC | BAILTEST,
@@ -518,7 +518,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia4 + 1,
+	s_julia4_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 0.55, 0, 0},
 		HT_MANDJUL4, HF_JULIA4, WINFRAC | OKJB | BAILTEST,
@@ -540,7 +540,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_ifs3d,
+	s_ifs3d_name,
 		{s_color_method, "", "", ""},
 		{0, 0, 0, 0},
 		HT_IFS, -4, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D | INFCALC,
@@ -551,7 +551,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym3 + 1,
+	s_barnsleym3_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM3, WINFRAC | BAILTEST,
@@ -563,7 +563,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj3 + 1,
+	s_barnsleyj3_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.1, 0.36, 0, 0},
 		HT_BARNS, HF_BARNSJ3, WINFRAC | OKJB | BAILTEST,
@@ -574,7 +574,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fn_zz_ + 1,
+	s_fn_zz__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | WINFRAC | BAILTEST,
@@ -585,7 +585,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fn_zz_,
+	s_fn_zz__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | WINFRAC | BAILTEST,
@@ -596,7 +596,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifurcation,
+	s_bifurcation_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -607,7 +607,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnplusfn,
+	s_fnplusfn_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFN, TRIG2 | WINFRAC | BAILTEST,
@@ -619,7 +619,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnfn + 1,
+	s_fnfn_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | WINFRAC | BAILTEST,
@@ -630,7 +630,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnfn,
+	s_fnfn_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | WINFRAC | BAILTEST,
@@ -641,7 +641,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sqr_1divfn_ + 1,
+	s_sqr_1divfn__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQROVFN, TRIG1 | WINFRAC | BAILTEST,
@@ -653,7 +653,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sqr_1divfn_,
+	s_sqr_1divfn__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQROVFN, TRIG1 | WINFRAC | BAILTEST,
@@ -665,7 +665,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnzplusz + 1,
+	s_fnzplusz_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNXZPLUSZ, TRIG1 | WINFRAC | BAILTEST,
@@ -676,7 +676,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fnzplusz,
+	s_fnzplusz_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNXZPLUSZ, TRIG1 | WINFRAC | BAILTEST,
@@ -688,7 +688,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_kamtorus,
+	s_kamtorus_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | WINFRAC,
@@ -699,7 +699,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_kamtorus + 1,
+	s_kamtorus_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | WINFRAC,
@@ -710,7 +710,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_kamtorus3d,
+	s_kamtorus3d_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D,
@@ -721,7 +721,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_kamtorus3d + 1,
+	s_kamtorus3d_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D,
@@ -732,7 +732,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambdafn + 1,
+	s_lambdafn_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{1.0, 0.4, 0, 0},
 		HT_LAMBDAFN, HF_LAMBDAFN, TRIG1 | WINFRAC | OKJB,
@@ -744,7 +744,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manfnpluszsqrd + 1,
+	s_manfnpluszsqrd_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSZSQRD, TRIG1 | WINFRAC | BAILTEST,
@@ -756,7 +756,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julfnpluszsqrd + 1,
+	s_julfnpluszsqrd_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{-0.5, 0.5, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSZSQRD, TRIG1 | WINFRAC | OKJB | BAILTEST,
@@ -768,7 +768,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manfnpluszsqrd,
+	s_manfnpluszsqrd_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSZSQRD, TRIG1 | WINFRAC | BAILTEST,
@@ -780,7 +780,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julfnpluszsqrd,
+	s_julfnpluszsqrd_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{-0.5, 0.5, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSZSQRD, TRIG1 | WINFRAC | OKJB | BAILTEST,
@@ -792,7 +792,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambdafn,
+	s_lambdafn_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{1.0, 0.4, 0, 0},
 		HT_LAMBDAFN, HF_LAMBDAFN, TRIG1 | WINFRAC | OKJB,
@@ -804,7 +804,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandelfn + 1,
+	s_mandelfn_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDFN, HF_MANDFN, TRIG1 | WINFRAC,
@@ -816,7 +816,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manzpower + 1,
+	s_manzpower_name + 1,
 		{s_real_z0, s_imag_z0, s_exponent, s_exponent_imag},
 		{0, 0, 2, 0},
 		HT_PICKMJ, HF_MANZPOWER, WINFRAC | BAILTEST,
@@ -828,7 +828,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julzpower + 1,
+	s_julzpower_name + 1,
 		{s_parameter_real, s_parameter_imag, s_exponent, s_exponent_imag},
 		{0.3, 0.6, 2, 0},
 		HT_PICKMJ, HF_JULZPOWER, WINFRAC | OKJB | BAILTEST,
@@ -840,7 +840,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manzpower,
+	s_manzpower_name,
 		{s_real_z0, s_imag_z0, s_exponent, s_exponent_imag},
 		{0, 0, 2, 0},
 		HT_PICKMJ, HF_MANZPOWER, WINFRAC | BAILTEST | BF_MATH,
@@ -852,7 +852,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julzpower,
+	s_julzpower_name,
 		{s_parameter_real, s_parameter_imag, s_exponent, s_exponent_imag},
 		{0.3, 0.6, 2, 0},
 		HT_PICKMJ, HF_JULZPOWER, WINFRAC | OKJB | BAILTEST | BF_MATH,
@@ -888,7 +888,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manfnplusexp + 1,
+	s_manfnplusexp_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSEXP, TRIG1 | WINFRAC | BAILTEST,
@@ -900,7 +900,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julfnplusexp + 1,
+	s_julfnplusexp_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1 | WINFRAC | OKJB | BAILTEST,
@@ -912,7 +912,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manfnplusexp,
+	s_manfnplusexp_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSEXP, TRIG1 | WINFRAC | BAILTEST,
@@ -924,7 +924,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julfnplusexp,
+	s_julfnplusexp_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1 | WINFRAC | OKJB | BAILTEST,
@@ -936,7 +936,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_popcorn,
+	s_popcorn_name,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | WINFRAC | TRIG4,
@@ -947,7 +947,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_popcorn + 1,
+	s_popcorn_name + 1,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | WINFRAC | TRIG4,
@@ -958,7 +958,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lorenz,
+	s_lorenz_name,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | INFCALC | WINFRAC,
@@ -969,7 +969,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lorenz + 1,
+	s_lorenz_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | INFCALC | WINFRAC,
@@ -980,7 +980,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lorenz3d + 1,
+	s_lorenz3d_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D | INFCALC,
@@ -991,7 +991,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_newton + 1,
+	s_newton_name + 1,
 		{s_newton_degree, "", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWT, HF_NEWT, WINFRAC,
@@ -1002,7 +1002,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_newtbasin + 1,
+	s_newtbasin_name + 1,
 		{s_newton_degree, "Enter non-zero value for stripes", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
@@ -1059,7 +1059,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_formula + 1,
+	s_formula_name + 1,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0, 0, 0, 0},
 		HT_FORMULA, -2, WINFRAC | MORE,
@@ -1070,7 +1070,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_formula,
+	s_formula_name,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0, 0, 0, 0},
 		HT_FORMULA, -2, WINFRAC | MORE,
@@ -1081,7 +1081,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_sierpinski,
+	s_sierpinski_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SIER, HF_SIER, WINFRAC,
@@ -1093,7 +1093,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambda,
+	s_lambda_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.85, 0.6, 0, 0},
 		HT_LAMBDA, HF_LAMBDA, WINFRAC | OKJB | BAILTEST,
@@ -1104,7 +1104,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym1,
+	s_barnsleym1_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM1, WINFRAC | BAILTEST,
@@ -1116,7 +1116,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj1,
+	s_barnsleyj1_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ1, WINFRAC | OKJB | BAILTEST,
@@ -1128,7 +1128,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym2,
+	s_barnsleym2_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM2, WINFRAC | BAILTEST,
@@ -1140,7 +1140,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj2,
+	s_barnsleyj2_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ2, WINFRAC | OKJB | BAILTEST,
@@ -1152,7 +1152,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleym3,
+	s_barnsleym3_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM3, WINFRAC | BAILTEST,
@@ -1164,7 +1164,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_barnsleyj3,
+	s_barnsleyj3_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ3, WINFRAC | OKJB | BAILTEST,
@@ -1176,7 +1176,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandellambda,
+	s_mandellambda_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MLAMBDA, HF_MLAMBDA, WINFRAC | BAILTEST,
@@ -1187,7 +1187,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julibrot + 1,
+	s_julibrot_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME | WINFRAC,
@@ -1198,7 +1198,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lorenz3d,
+	s_lorenz3d_name,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D | INFCALC,
@@ -1209,7 +1209,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_rossler3d + 1,
+	s_rossler3d_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.04, .2, .2, 5.7},
 		HT_ROSS, HF_ROSS, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D | INFCALC,
@@ -1220,7 +1220,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_rossler3d,
+	s_rossler3d_name,
 		{s_time_step, "a", "b", "c"},
 		{.04, .2, .2, 5.7},
 		HT_ROSS, HF_ROSS, NOGUESS | NOTRACE | NORESUME | WINFRAC | PARMS3D | INFCALC,
@@ -1231,7 +1231,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_henon + 1,
+	s_henon_name + 1,
 		{"a", "b", "", ""},
 		{1.4, .3, 0, 0},
 		HT_HENON, HF_HENON, NOGUESS | NOTRACE | INFCALC | WINFRAC,
@@ -1242,7 +1242,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_henon,
+	s_henon_name,
 		{"a", "b", "", ""},
 		{1.4, .3, 0, 0},
 		HT_HENON, HF_HENON, NOGUESS | NOTRACE | INFCALC | WINFRAC,
@@ -1290,7 +1290,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_unity,
+	s_unity_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_UNITY, HF_UNITY, WINFRAC,
@@ -1301,7 +1301,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_spider,
+	s_spider_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SPIDER, WINFRAC | BAILTEST,
@@ -1312,7 +1312,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_spider + 1,
+	s_spider_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SPIDER, WINFRAC | BAILTEST,
@@ -1379,7 +1379,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifurcation + 1,
+	s_bifurcation_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1390,7 +1390,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_biflambda + 1,
+	s_biflambda_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1401,7 +1401,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_biflambda,
+	s_biflambda_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1412,7 +1412,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifplussinpi,
+	s_bifplussinpi_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1423,7 +1423,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifeqsinpi,
+	s_bifeqsinpi_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1434,7 +1434,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_popcornjul,
+	s_popcornjul_name,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
@@ -1445,7 +1445,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_popcornjul + 1,
+	s_popcornjul_name + 1,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.0, 0},
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
@@ -1467,7 +1467,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manowarj,
+	s_manowarj_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWARJ, WINFRAC | OKJB | BAILTEST,
@@ -1478,7 +1478,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manowarj + 1,
+	s_manowarj_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWARJ, WINFRAC | OKJB | BAILTEST,
@@ -1489,7 +1489,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fn_z_plusfn_pix_,
+	s_fn_z_plusfn_pix__name,
 		{s_real_z0, s_imag_z0, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{0, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | WINFRAC | BAILTEST,
@@ -1501,7 +1501,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_fn_z_plusfn_pix_ + 1,
+	s_fn_z_plusfn_pix__name + 1,
 		{s_real_z0, s_imag_z0, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{0, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | WINFRAC | BAILTEST,
@@ -1513,7 +1513,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksmandelpwr,
+	s_marksmandelpwr_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_MARKSMANDPWR, TRIG1 | WINFRAC | BAILTEST,
@@ -1525,7 +1525,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksmandelpwr + 1,
+	s_marksmandelpwr_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_MARKSMANDPWR, TRIG1 | WINFRAC | BAILTEST,
@@ -1537,7 +1537,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_tims_error,
+	s_tims_error_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_TIMSERR, WINFRAC | TRIG1 | BAILTEST,
@@ -1549,7 +1549,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_tims_error + 1,
+	s_tims_error_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_TIMSERR, WINFRAC | TRIG1 | BAILTEST,
@@ -1561,7 +1561,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifeqsinpi + 1,
+	s_bifeqsinpi_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1572,7 +1572,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifplussinpi + 1,
+	s_bifplussinpi_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1583,7 +1583,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifstewart,
+	s_bifstewart_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1594,7 +1594,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifstewart + 1,
+	s_bifstewart_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1685,7 +1685,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambda_fnorfn_ + 1,
+	s_lambda_fnorfn__name + 1,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{1, 0.1, 1, 0},
 		HT_FNORFN, HF_LAMBDAFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1697,7 +1697,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_lambda_fnorfn_,
+	s_lambda_fnorfn__name,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{1, 0.1, 1, 0},
 		HT_FNORFN, HF_LAMBDAFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1709,7 +1709,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia_fnorfn_ + 1,
+	s_julia_fnorfn__name + 1,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{0, 0, 8, 0},
 		HT_FNORFN, HF_JULIAFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1721,7 +1721,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia_fnorfn_,
+	s_julia_fnorfn__name,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{0, 0, 8, 0},
 		HT_FNORFN, HF_JULIAFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1733,7 +1733,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manlam_fnorfn_ + 1,
+	s_manlam_fnorfn__name + 1,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 10, 0},
 		HT_FNORFN, HF_MANLAMFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1745,7 +1745,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_manlam_fnorfn_,
+	s_manlam_fnorfn__name,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 10, 0},
 		HT_FNORFN, HF_MANLAMFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1757,7 +1757,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandel_fnorfn_ + 1,
+	s_mandel_fnorfn__name + 1,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 0.5, 0},
 		HT_FNORFN, HF_MANDELFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1769,7 +1769,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandel_fnorfn_,
+	s_mandel_fnorfn__name,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 0.5, 0},
 		HT_FNORFN, HF_MANDELFNFN, TRIG2 | WINFRAC | BAILTEST,
@@ -1781,7 +1781,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifmay + 1,
+	s_bifmay_name + 1,
 		{s_filter_cycles, s_seed_population, "Beta >= 2", ""},
 		{300.0, 0.9, 5, 0},
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1792,7 +1792,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_bifmay,
+	s_bifmay_name,
 		{s_filter_cycles, s_seed_population, "Beta >= 2", ""},
 		{300.0, 0.9, 5, 0},
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE | WINFRAC,
@@ -1803,7 +1803,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_halley + 1,
+	s_halley_name + 1,
 		{s_order, s_real_relaxation_coefficient, s_epsilon, s_imag_relaxation_coefficient},
 		{6, 1.0, 0.0001, 0},
 		HT_HALLEY, HF_HALLEY, WINFRAC,
@@ -1814,7 +1814,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_halley,
+	s_halley_name,
 		{s_order, s_real_relaxation_coefficient, s_epsilon, s_imag_relaxation_coefficient},
 		{6, 1.0, 0.0001, 0},
 		HT_HALLEY, HF_HALLEY, WINFRAC,
@@ -1876,7 +1876,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julibrot,
+	s_julibrot_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME | WINFRAC,
@@ -1888,7 +1888,7 @@ struct fractalspecificstuff fractalspecific[]=
 
 #ifdef RANDOM_RUN
 	{
-	t_julia_inverse + 1,
+	s_julia_inverse_name + 1,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, "Random Run Interval"},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
@@ -1899,7 +1899,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia_inverse,
+	s_julia_inverse_name,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, "Random Run Interval"},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
@@ -1910,7 +1910,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 #else
 	{
-	t_julia_inverse + 1,
+	s_julia_inverse_name + 1,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, ""},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
@@ -1921,7 +1921,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia_inverse,
+	s_julia_inverse_name,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, ""},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
@@ -1945,7 +1945,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_phoenix + 1,
+	s_phoenix_name + 1,
 		{s_p1_real, s_p2_real, s_degree_z, ""},
 		{0.56667, -0.5, 0, 0},
 		HT_PHOENIX, HF_PHOENIX, WINFRAC | BAILTEST,
@@ -1957,7 +1957,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_phoenix,
+	s_phoenix_name,
 		{s_p1_real, s_p2_real, s_degree_z, ""},
 		{0.56667, -0.5, 0, 0},
 		HT_PHOENIX, HF_PHOENIX, WINFRAC | BAILTEST,
@@ -1968,7 +1968,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandphoenix + 1,
+	s_mandphoenix_name + 1,
 		{s_real_z0, s_imag_z0, s_degree_z, ""},
 		{0.0, 0.0, 0, 0},
 		HT_PHOENIX, HF_MANDPHOENIX, WINFRAC | BAILTEST,
@@ -1980,7 +1980,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandphoenix,
+	s_mandphoenix_name,
 		{s_real_z0, s_imag_z0, s_degree_z, ""},
 		{0.0, 0.0, 0, 0},
 		HT_PHOENIX, HF_MANDPHOENIX, WINFRAC | BAILTEST,
@@ -2016,7 +2016,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_frothybasin + 1,
+	s_frothybasin_name + 1,
 		{s_frothy_mapping, s_frothy_shade, s_frothy_a_value, ""},
 		{1, 0, 1.028713768218725, 0},
 		HT_FROTH, HF_FROTH, NOTRACE | WINFRAC,
@@ -2027,7 +2027,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_frothybasin,
+	s_frothybasin_name,
 		{s_frothy_mapping, s_frothy_shade, s_frothy_a_value, ""},
 		{1, 0, 1.028713768218725, 0},
 		HT_FROTH, HF_FROTH, NOTRACE | WINFRAC,
@@ -2038,7 +2038,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandel4,
+	s_mandel4_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDJUL4, HF_MANDEL4, WINFRAC | BAILTEST,
@@ -2049,7 +2049,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_julia4,
+	s_julia4_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 0.55, 0, 0},
 		HT_MANDJUL4, HF_JULIA4, WINFRAC | OKJB | BAILTEST,
@@ -2060,7 +2060,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksmandel,
+	s_marksmandel_name,
 		{s_real_z0, s_imag_z0, s_exponent, ""},
 		{0, 0, 1, 0},
 		HT_MARKS, HF_MARKSMAND, WINFRAC | BAILTEST,
@@ -2072,7 +2072,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_marksjulia,
+	s_marksjulia_name,
 		{s_parameter_real, s_parameter_imag, s_exponent, ""},
 		{0.1, 0.9, 1, 0},
 		HT_MARKS, HF_MARKSJULIA, WINFRAC | BAILTEST,
@@ -2108,7 +2108,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_phoenixcplx + 1,
+	s_phoenixcplx_name + 1,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0.2, 0, 0.3, 0},
 		HT_PHOENIX, HF_PHOENIXCPLX, WINFRAC | MORE | BAILTEST,
@@ -2120,7 +2120,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_phoenixcplx,
+	s_phoenixcplx_name,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0.2, 0, 0.3, 0},
 		HT_PHOENIX, HF_PHOENIXCPLX, WINFRAC | MORE | BAILTEST,
@@ -2132,7 +2132,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandphoenixcplx + 1,
+	s_mandphoenixcplx_name + 1,
 		{s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
 		{0, 0, 0.5, 0},
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, WINFRAC | MORE | BAILTEST,
@@ -2144,7 +2144,7 @@ struct fractalspecificstuff fractalspecific[]=
 	},
 
 	{
-	t_mandphoenixcplx,
+	s_mandphoenixcplx_name,
 		{s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
 		{0, 0, 0.5, 0},
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, WINFRAC | MORE | BAILTEST,
@@ -2264,15 +2264,14 @@ struct fractalspecificstuff fractalspecific[]=
 	}
 };
 
-int num_fractal_types = (sizeof(fractalspecific)/
-		sizeof(struct fractalspecificstuff)) -1;
+int g_num_fractal_types = NUM_OF(fractalspecific)-1;
 
 /*
  *  Returns 1 if the formula parameter is not used in the current
  *  formula.  If the parameter is used, or not a formula fractal,
  *  a 0 is returned.  Note: this routine only works for formula types.
  */
-int paramnotused(int parm)
+int parameter_not_used(int parm)
 {
 	int ret = 0;
 
@@ -2327,7 +2326,7 @@ int paramnotused(int parm)
  *  Pass in NULL for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-int typehasparm(int type, int parm, char *buf)
+int type_has_parameter(int type, int parm, char *buf)
 {
 	int extra;
 	char *ret = NULL;
@@ -2353,7 +2352,7 @@ int typehasparm(int type, int parm, char *buf)
 
 	if (type == FORMULA || type == FFORMULA)
 	{
-		if (paramnotused(parm))
+		if (parameter_not_used(parm))
 		{
 			ret = NULL;
 		}

@@ -331,8 +331,8 @@ extern void sound_close(void);
 
 /*  fractalp -- C file prototypes */
 
-extern int typehasparm(int, int, char *);
-extern int paramnotused(int);
+extern int type_has_parameter(int, int, char *);
+extern int parameter_not_used(int);
 
 /*  fractals -- C file prototypes */
 

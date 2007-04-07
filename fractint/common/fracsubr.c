@@ -139,7 +139,7 @@ void fractal_float_to_bf(void)
 
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		if (typehasparm(fractype, i, NULL))
+		if (type_has_parameter(fractype, i, NULL))
 		{
 			floattobf(bfparms[i], param[i]);
 		}

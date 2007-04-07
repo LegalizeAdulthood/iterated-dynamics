@@ -838,7 +838,7 @@ int tab_display_2(char *msg)
 	show_str_var("lightname",   g_light_name,   &row, msg);
 	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof fractalspecific array %d",
-		num_fractal_types*(int)sizeof(struct fractalspecificstuff));
+		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
 	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, g_col, g_row);
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
@@ -928,7 +928,7 @@ int tab_display()       /* display the status of the current image */
 	{
 		for (i = 0; i < MAXPARAMS; i += 2)
 		{
-			if (!paramnotused(i))
+			if (!parameter_not_used(i))
 			{
 				hasformparam++;
 			}
@@ -1260,13 +1260,13 @@ top:
 		}
 	}
 
-	if (typehasparm(fractype, 0, msg) || hasformparam)
+	if (type_has_parameter(fractype, 0, msg) || hasformparam)
 	{
 		for (i = 0; i < MAXPARAMS; i++)
 		{
 			int col;
 			char p[50];
-			if (typehasparm(fractype, i, p))
+			if (type_has_parameter(fractype, i, p))
 			{
 				if (k % 4 == 0)
 				{

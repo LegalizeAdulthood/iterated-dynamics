@@ -269,7 +269,7 @@ void corners_bf_to_float(void)
 	}
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		if (typehasparm(fractype, i, NULL))
+		if (type_has_parameter(fractype, i, NULL))
 		{
 			param[i] = (double)bftofloat(bfparms[i]);
 		}
