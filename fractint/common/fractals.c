@@ -92,26 +92,17 @@ _LCMPLX *g_long_parameter = NULL; /* used here and in jb.c */
 double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;
-double g_temp_sqr_y;
-double foldxinitx;
-double foldyinity;
-double foldxinity;
-double foldyinitx;
-long oldxinitx;
-long oldyinity;
-long oldxinity;
-long oldyinitx;
-long longtmp;
+double g_temp_sqr_y = 0.0;
 /* These are for quaternions */
-double qc;
-double qci;
-double qcj;
-double qck;
+double g_quaternion_c = 0.0;
+double g_quaternion_ci = 0.0;
+double g_quaternion_cj = 0.0;
+double g_quaternion_ck = 0.0;
 /* temporary variables for trig use */
-long lcosx;
-long lsinx;
-long lcosy;
-long lsiny;
+long lcosx = 0;
+long lsinx = 0;
+long lcosy = 0;
+long lsiny = 0;
 /*
 **  details of finite attractors (required for Magnet Fractals)
 **  (can also be used in "coloring in" the lakes of Julia types)
@@ -124,9 +115,18 @@ _CMPLX  T_Cm2;        /* 3*(g_float_parameter - 2)                */
 _CMPLX  T_Cm1Cm2;     /* (g_float_parameter - 1)*(g_float_parameter - 2) */
 
 static _CMPLX s_temp2 = { 0.0, 0.0 };
-static double s_cos_y;
-static double s_sin_y;
+static double s_cos_y = 0.0;
+static double s_sin_y = 0.0;
 static double s_temp_exp = 0.0;
+static double foldxinitx = 0.0;
+static double foldyinity = 0.0;
+static double foldxinity = 0.0;
+static double foldyinitx = 0.0;
+static long oldxinitx = 0;
+static long oldyinity = 0;
+static long oldxinity = 0;
+static long oldyinitx = 0;
+static long longtmp = 0;
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -3217,10 +3217,10 @@ int quaternionjulfp_per_pixel(void)
 	g_old_z.y = dypixel();
 	g_float_parameter->x = param[4];
 	g_float_parameter->y = param[5];
-	qc  = param[0];
-	qci = param[1];
-	qcj = param[2];
-	qck = param[3];
+	g_quaternion_c  = param[0];
+	g_quaternion_ci = param[1];
+	g_quaternion_cj = param[2];
+	g_quaternion_ck = param[3];
 	return 0;
 }
 
@@ -3230,10 +3230,10 @@ int quaternionfp_per_pixel(void)
 	g_old_z.y = 0;
 	g_float_parameter->x = 0;
 	g_float_parameter->y = 0;
-	qc  = dxpixel();
-	qci = dypixel();
-	qcj = param[2];
-	qck = param[3];
+	g_quaternion_c  = dxpixel();
+	g_quaternion_ci = dypixel();
+	g_quaternion_cj = param[2];
+	g_quaternion_ck = param[3];
 	return 0;
 }
 
@@ -3384,10 +3384,10 @@ QuaternionFPFractal(void)
 	a2 = g_float_parameter->x;
 	a3 = g_float_parameter->y;
 
-	n0 = a0*a0-a1*a1-a2*a2-a3*a3 + qc;
-	n1 = 2*a0*a1 + qci;
-	n2 = 2*a0*a2 + qcj;
-	n3 = 2*a0*a3 + qck;
+	n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
+	n1 = 2*a0*a1 + g_quaternion_ci;
+	n2 = 2*a0*a2 + g_quaternion_cj;
+	n3 = 2*a0*a3 + g_quaternion_ck;
 	/* Check bailout */
 	g_magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
 	if (g_magnitude > g_rq_limit)
@@ -3413,10 +3413,10 @@ HyperComplexFPFractal(void)
 /*   HComplexSqr(&hold, &hnew); */
 	HComplexTrig0(&hold, &hnew);
 
-	hnew.x += qc;
-	hnew.y += qci;
-	hnew.z += qcj;
-	hnew.t += qck;
+	hnew.x += g_quaternion_c;
+	hnew.y += g_quaternion_ci;
+	hnew.z += g_quaternion_cj;
+	hnew.t += g_quaternion_ck;
 
 	g_old_z.x = g_new_z.x = hnew.x;
 	g_old_z.y = g_new_z.y = hnew.y;
