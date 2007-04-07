@@ -224,8 +224,8 @@ MandelfpSetup(void)
 {
 	bf_math = 0;
 	c_exp = (int)param[2];
-	pwr.x = param[2] - 1.0;
-	pwr.y = param[3];
+	g_power.x = param[2] - 1.0;
+	g_power.y = param[3];
 	floatparm = &g_initial_z;
 	switch (fractype)
 	{
@@ -385,9 +385,9 @@ JuliafpSetup(void)
 	floatparm = &parm;
 	if (fractype == COMPLEXMARKSJUL)
 	{
-		pwr.x = param[2] - 1.0;
-		pwr.y = param[3];
-		g_coefficient = ComplexPower(*floatparm, pwr);
+		g_power.x = param[2] - 1.0;
+		g_power.y = param[3];
+		g_coefficient = ComplexPower(*floatparm, g_power);
 	}
 	switch (fractype)
 	{
@@ -560,7 +560,6 @@ JuliafpSetup(void)
 int
 MandellongSetup(void)
 {
-	FgHalf = fudge >> 1;
 	c_exp = (int)param[2];
 	if (fractype == MARKSMANDEL && c_exp < 1)
 	{

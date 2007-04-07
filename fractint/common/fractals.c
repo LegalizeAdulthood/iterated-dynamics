@@ -74,8 +74,7 @@ _CMPLX g_coefficient = { 0.0, 0.0 };
 _CMPLX  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
 _CMPLX  *g_roots = g_static_roots;
 struct MPC *g_roots_mpc = NULL;
-long FgHalf;
-_CMPLX pwr;
+_CMPLX g_power;
 int     bitshiftless1;                  /* bit shift less 1 */
 
 static _CMPLX s_temp2;
@@ -2861,7 +2860,7 @@ int mandel_per_pixel(void)
 	switch (fractype)
 	{
 	case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
-		g_old_z_l.x = FgHalf;
+		g_old_z_l.x = fudge >> 1;
 		g_old_z_l.y = 0;
 		break;
 	default:
@@ -3261,7 +3260,7 @@ int MarksCplxMandperp(void)
 	g_old_z.y = g_initial_z.y + parm.y;
 	tempsqrx = sqr(g_old_z.x);  /* precalculated value */
 	tempsqry = sqr(g_old_z.y);
-	g_coefficient = ComplexPower(g_initial_z, pwr);
+	g_coefficient = ComplexPower(g_initial_z, g_power);
 	return 1;
 }
 
