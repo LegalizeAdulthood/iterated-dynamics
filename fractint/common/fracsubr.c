@@ -151,7 +151,8 @@ void fractal_float_to_bf(void)
 #endif
 #endif
 
-void calculate_fractal_initialize(void) /* initialize a *pile* of stuff for fractal calculation */
+/* initialize a *pile* of stuff for fractal calculation */
+void calculate_fractal_initialize(void)
 {
 	int tries = 0;
 	int i, gotprec;
@@ -666,7 +667,7 @@ static double _fastcall fudge_to_double(long l)
 	return d;
 }
 
-void adjust_cornerbf(void)
+void adjust_corner_bf(void)
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -1037,7 +1038,7 @@ static void _fastcall adjust_to_limits_bf(double expand)
 	/* yy3rd = cornery[2] - adjy; */
 	sub_bf(bfy3rd, bcornery[2], badjy);
 
-	adjust_cornerbf(); /* make 3rd corner exact if very near other co-ords */
+	adjust_corner_bf(); /* make 3rd corner exact if very near other co-ords */
 	restore_stack(saved);
 }
 
@@ -1431,7 +1432,7 @@ void end_resume(void)
 
 /* sleep N*a tenth of a millisecond */
 
-void sleepms_old(long ms)
+static void sleep_ms_old(long ms)
 {
 	static long scalems = 0L;
 	int savehelpmode, savetabmode;
@@ -1462,7 +1463,7 @@ void sleepms_old(long ms)
 				ftimex(&t1);
 			}
 			while (t2.time == t1.time && t2.millitm == t1.millitm);
-			sleepms_old(10L*SLEEPINIT); /* about 1/4 sec */
+			sleep_ms_old(10L*SLEEPINIT); /* about 1/4 sec */
 			ftimex(&t2);
 			if (driver_key_pressed())
 			{
@@ -1479,7 +1480,7 @@ void sleepms_old(long ms)
 			ftimex(&t1);
 		}
 		while (t2.time == t1.time && t2.millitm == t1.millitm);
-		sleepms_old(10L*SLEEPINIT);
+		sleep_ms_old(10L*SLEEPINIT);
 		ftimex(&t2);
 		i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		if (i < elapsed)
@@ -1518,7 +1519,7 @@ sleepexit:
 	helpmode = savehelpmode;
 }
 
-static void sleepms_new(long ms)
+static void sleep_ms_new(long ms)
 {
 	uclock_t next_time;
 	uclock_t now = usec_clock();
@@ -1532,15 +1533,15 @@ static void sleepms_new(long ms)
 	}
 }
 
-void sleepms(long ms)
+void sleep_ms(long ms)
 {
 	if (DEBUGFLAG_OLD_TIMER == debugflag)
 	{
-		sleepms_old(ms);
+		sleep_ms_old(ms);
 	}
 	else
 	{
-		sleepms_new(ms);
+		sleep_ms_new(ms);
 	}
 }
 
@@ -1554,7 +1555,7 @@ void wait_until(int index, uclock_t wait_time)
 {
 	if (DEBUGFLAG_OLD_TIMER == debugflag)
 	{
-		sleepms_old(wait_time);
+		sleep_ms_old(wait_time);
 	}
 	else
 	{
@@ -1717,7 +1718,7 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 		}
 	}
 
-	/* placing sleepms here delays each dot */
+	/* placing sleep_ms here delays each dot */
 }
 
 void iplot_orbit(long ix, long iy, int color)
