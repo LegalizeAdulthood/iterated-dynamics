@@ -997,7 +997,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWT, HF_NEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NEWTON, XAXIS,
-		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
+		newton_orbit_mpc, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
 		BAILOUT_NONE
 	},
 
@@ -1008,7 +1008,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NEWTBASIN, NOSYM,
-		MPCNewtonFractal, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
+		newton_orbit_mpc, MPCjulia_per_pixel, NewtonSetup, standard_fractal,
 		BAILOUT_NONE
 	},
 
