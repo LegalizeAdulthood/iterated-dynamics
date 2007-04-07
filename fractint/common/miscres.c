@@ -879,8 +879,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d bitshift %d",
 		ixstart, g_x_stop, iystart, g_y_stop, bitshift);
 */
-	write_row(row++, "minstackavail %d g_limit2_l %ld use_grid %d",
-		minstackavail, g_limit2_l, use_grid);
+	write_row(row++, "minstackavail %d g_limit2_l %ld g_use_grid %d",
+		minstackavail, g_limit2_l, g_use_grid);
 	putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 

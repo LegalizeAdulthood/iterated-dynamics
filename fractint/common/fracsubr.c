@@ -33,6 +33,7 @@
 #define FUDGE_FACTOR2    24
 
 int g_resume_length = 0;				/* length of resume info */
+int g_use_grid = FALSE;
 
 static int s_tab_or_help = 0;			/* kludge for sound and tab or help key press */
 static int s_resume_offset;				/* offset in resume info gets */
@@ -81,7 +82,7 @@ void set_grid_pointers()
 void fill_dx_array(void)
 {
 	int i;
-	if (use_grid)
+	if (g_use_grid)
 	{
 		dx0[0] = xxmin;              /* fill up the x, y grids */
 		dy0[0] = yymax;
@@ -103,7 +104,7 @@ void fill_lx_array(void)
 	int i;
 	/* note that lx1 & ly1 values can overflow into sign bit; since     */
 	/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-	if (use_grid)
+	if (g_use_grid)
 	{
 		lx0[0] = xmin;               /* fill up the x, y grids */
 		ly0[0] = ymax;
@@ -150,8 +151,6 @@ void fractal_float_to_bf(void)
 #endif
 #endif
 
-int use_grid;
-
 void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation */
 {
 	int tries = 0;
@@ -172,12 +171,12 @@ void calcfracinit(void) /* initialize a *pile* of stuff for fractal calculation 
 		|| ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768))
 		|| DEBUGFLAG_NO_PIXEL_GRID == debugflag)
 	{
-		use_grid = 0;
+		g_use_grid = FALSE;
 		floatflag = usr_floatflag = 1;
 	}
 	else
 	{
-		use_grid = 1;
+		g_use_grid = TRUE;
 	}
 
 	set_grid_pointers();
@@ -464,7 +463,7 @@ init_restart:
 	if (fractype != PLASMA && bf_math == 0
 		&& fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
 	{
-		if (integerfractal && !g_invert && use_grid)
+		if (integerfractal && !g_invert && g_use_grid)
 		{
 			if ((delx  == 0 && delxx  != 0.0)
 				|| (delx2 == 0 && delxx2 != 0.0)
@@ -509,7 +508,7 @@ expand_retry:
 			yymin = fudge_to_double(ymin);
 			yymax = fudge_to_double(ymax);
 			yy3rd = fudge_to_double(y3rd);
-		} /* end if (integerfractal && !g_invert && use_grid) */
+		} /* end if (integerfractal && !g_invert && g_use_grid) */
 		else
 		{
 			double dx0, dy0, dx1, dy1;

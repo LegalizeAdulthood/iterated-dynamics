@@ -540,7 +540,7 @@ int calculate_fractal(void)
 			truecolor = 0;
 		}
 	}
-	if (!use_grid)
+	if (!g_use_grid)
 	{
 		if (usr_stdcalcmode != 'o')
 		{

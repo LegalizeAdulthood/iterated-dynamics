@@ -4384,7 +4384,7 @@ static void parser_allocate(void)
 		p_size = sizeof(struct fls *)*Max_Ops;
 		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
 			+ sizeof(struct PEND_OP)*Max_Ops;
-		end_dx_array = use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
+		end_dx_array = g_use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
 		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)(void)) g_type_specific_work_area;

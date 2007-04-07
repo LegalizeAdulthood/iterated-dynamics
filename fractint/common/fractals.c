@@ -3698,7 +3698,7 @@ long   (_fastcall *lypixel)(void) = lypixel_calc;
 
 void set_pixel_calc_functions(void)
 {
-	if (use_grid)
+	if (g_use_grid)
 	{
 		dxpixel = dxpixel_grid;
 		dypixel = dypixel_grid;
