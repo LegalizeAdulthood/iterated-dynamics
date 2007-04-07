@@ -40,14 +40,14 @@ static int s_resume_info_length = 0;
 static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
 
 /* routines in this module      */
-static long   _fastcall fudgetolong(double d);
-static double _fastcall fudgetodouble(long l);
+static long   _fastcall fudge_to_long(double d);
+static double _fastcall fudge_to_double(long l);
 static void   _fastcall adjust_to_limits(double);
 static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
-static void   _fastcall plotdorbit(double, double, int);
-static int    _fastcall combine_worklist(void);
-static void   _fastcall adjust_to_limitsbf(double);
+static void   _fastcall plot_orbit_d(double, double, int);
+static int    _fastcall combine_work_list(void);
+static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
 
 void free_grid_pointers()
@@ -429,7 +429,7 @@ init_restart:
 	/* now setup arrays of real coordinates corresponding to each pixel */
 	if (bf_math)
 	{
-		adjust_to_limitsbf(1.0); /* make sure all corners in valid range */
+		adjust_to_limits_bf(1.0); /* make sure all corners in valid range */
 	}
 	else
 	{
@@ -441,20 +441,20 @@ init_restart:
 		fill_dx_array();
 	}
 
-	if (fractype != CELLULAR && fractype != ANT)  /* fudgetolong fails w >10 digits in double */
+	if (fractype != CELLULAR && fractype != ANT)  /* fudge_to_long fails w >10 digits in double */
 	{
-		creal = fudgetolong(param[0]); /* integer equivs for it all */
-		cimag = fudgetolong(param[1]);
-		xmin  = fudgetolong(xxmin);
-		xmax  = fudgetolong(xxmax);
-		x3rd  = fudgetolong(xx3rd);
-		ymin  = fudgetolong(yymin);
-		ymax  = fudgetolong(yymax);
-		y3rd  = fudgetolong(yy3rd);
-		delx  = fudgetolong((double)delxx);
-		dely  = fudgetolong((double)delyy);
-		delx2 = fudgetolong((double)delxx2);
-		dely2 = fudgetolong((double)delyy2);
+		creal = fudge_to_long(param[0]); /* integer equivs for it all */
+		cimag = fudge_to_long(param[1]);
+		xmin  = fudge_to_long(xxmin);
+		xmax  = fudge_to_long(xxmax);
+		x3rd  = fudge_to_long(xx3rd);
+		ymin  = fudge_to_long(yymin);
+		ymax  = fudge_to_long(yymax);
+		y3rd  = fudge_to_long(yy3rd);
+		delx  = fudge_to_long((double)delxx);
+		dely  = fudge_to_long((double)delyy);
+		delx2 = fudge_to_long((double)delxx2);
+		dely2 = fudge_to_long((double)delyy2);
 	}
 
 	/* skip this if plasma to avoid 3d problems */
@@ -503,12 +503,12 @@ expand_retry:
 			ymin = ly0[ydots-1] + ly1[xdots-1];
 			x3rd = xmin + lx1[ydots-1];
 			y3rd = ly0[ydots-1];
-			xxmin = fudgetodouble(xmin);
-			xxmax = fudgetodouble(xmax);
-			xx3rd = fudgetodouble(x3rd);
-			yymin = fudgetodouble(ymin);
-			yymax = fudgetodouble(ymax);
-			yy3rd = fudgetodouble(y3rd);
+			xxmin = fudge_to_double(xmin);
+			xxmax = fudge_to_double(xmax);
+			xx3rd = fudge_to_double(x3rd);
+			yymin = fudge_to_double(ymin);
+			yymax = fudge_to_double(ymax);
+			yy3rd = fudge_to_double(y3rd);
 		} /* end if (integerfractal && !g_invert && use_grid) */
 		else
 		{
@@ -617,7 +617,7 @@ expand_retry:
 	{
 		ddelmin = fabs((double)delyy2);
 	}
-	delmin = fudgetolong(ddelmin);
+	delmin = fudge_to_long(ddelmin);
 
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
@@ -641,7 +641,7 @@ expand_retry:
 #endif
 #endif
 
-static long _fastcall fudgetolong(double d)
+static long _fastcall fudge_to_long(double d)
 {
 	if ((d *= fudge) > 0)
 	{
@@ -654,7 +654,7 @@ static long _fastcall fudgetolong(double d)
 	return (long)d;
 }
 
-static double _fastcall fudgetodouble(long l)
+static double _fastcall fudge_to_double(long l)
 {
 	char buf[30];
 	double d;
@@ -798,7 +798,7 @@ void adjust_corner(void)
 
 }
 
-static void _fastcall adjust_to_limitsbf(double expand)
+static void _fastcall adjust_to_limits_bf(double expand)
 {
 	LDBL limit;
 	bf_t bcornerx[4], bcornery[4];
@@ -1648,7 +1648,7 @@ void close_snd(void)
 	snd_fp = NULL;
 }
 
-static void _fastcall plotdorbit(double dx, double dy, int color)
+static void _fastcall plot_orbit_d(double dx, double dy, int color)
 {
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
@@ -1723,12 +1723,12 @@ static void _fastcall plotdorbit(double dx, double dy, int color)
 
 void iplot_orbit(long ix, long iy, int color)
 {
-	plotdorbit((double)ix/fudge-xxmin, (double)iy/fudge-yymax, color);
+	plot_orbit_d((double)ix/fudge-xxmin, (double)iy/fudge-yymax, color);
 }
 
 void plot_orbit(double real, double imag, int color)
 {
-	plotdorbit(real-xxmin, imag-yymax, color);
+	plot_orbit_d(real-xxmin, imag-yymax, color);
 }
 
 void scrub_orbit(void)
@@ -1772,7 +1772,7 @@ int pass, int sym)
 	return 0;
 }
 
-static int _fastcall combine_worklist(void) /* look for 2 entries which can freely merge */
+static int _fastcall combine_work_list(void) /* look for 2 entries which can freely merge */
 {
 	int i, j;
 	for (i = 0; i < g_num_work_list; ++i)
@@ -1829,7 +1829,7 @@ void tidy_worklist(void) /* combine mergeable entries, resort */
 {
 	int i, j;
 	WORKLIST tempwork;
-	while ((i = combine_worklist()) != 0)
+	while ((i = combine_work_list()) != 0)
 	{ /* merged two, delete the gone one */
 		while (++i < g_num_work_list)
 		{
