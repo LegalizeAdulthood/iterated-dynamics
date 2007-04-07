@@ -2590,7 +2590,7 @@ int julia_per_pixel(void)
 #endif
 }
 
-int long_richard8_per_pixel(void)
+int richard8_per_pixel(void)
 {
 #if !defined(XFRACT)
 	long_mandel_per_pixel();
@@ -2681,11 +2681,10 @@ int julia_per_pixel_fp(void)
 	return 0;
 }
 
-int
-marks_mandelpwr_per_pixel(void)
+int marks_mandelpwr_per_pixel(void)
 {
 #if !defined(XFRACT)
-	mandel_per_pixel();
+	mandelbrot_per_pixel_fp();
 	g_tmp_z_l = g_old_z_l;
 	g_tmp_z_l.x -= fudge;
 	LCMPLXpwr(g_old_z_l, g_tmp_z_l, g_tmp_z_l);
@@ -2695,10 +2694,8 @@ marks_mandelpwr_per_pixel(void)
 #endif
 }
 
-int mandel_per_pixel(void)
+int mandelbrot_per_pixel_fp(void)
 {
-	/* mandel */
-
 	if (g_invert)
 	{
 		invert_z(&g_initial_z);
