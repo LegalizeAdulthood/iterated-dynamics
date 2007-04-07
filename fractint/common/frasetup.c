@@ -314,7 +314,7 @@ MandelfpSetup(void)
 		}
 		fractalspecific[fractype].orbitcalc = 
 			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2]) ?
-			floatZpowerFractal : floatCmplxZpowerFractal;
+			z_power_orbit_fp : complex_z_power_orbit_fp;
 		break;
 	case MAGNET1M:
 	case MAGNET2M:
@@ -459,7 +459,7 @@ JuliafpSetup(void)
 		}
 		fractalspecific[fractype].orbitcalc = 
 			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
-			? floatZpowerFractal : floatCmplxZpowerFractal;
+			? z_power_orbit_fp : complex_z_power_orbit_fp;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
 		break;
 	case MAGNET2J:
@@ -530,11 +530,11 @@ JuliafpSetup(void)
 			}
 			if (save_release <= 1960)
 			{
-				curfractalspecific->orbitcalc = PopcornFractal_Old;
+				curfractalspecific->orbitcalc = popcorn_old_orbit_fp;
 			}
 			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
 			{
-				curfractalspecific->orbitcalc = PopcornFractal;
+				curfractalspecific->orbitcalc = popcorn_orbit_fp;
 			}
 			else
 			{
@@ -584,11 +584,11 @@ MandellongSetup(void)
 	{
 		if (param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 		{
-			fractalspecific[fractype].orbitcalc = longZpowerFractal;
+			fractalspecific[fractype].orbitcalc = z_power_orbit;
 		}
 		else
 		{
-			fractalspecific[fractype].orbitcalc = longCmplxZpowerFractal;
+			fractalspecific[fractype].orbitcalc = complex_z_power_orbit;
 		}
 		if (param[3] != 0 || (double)g_c_exp != param[2])
 		{
@@ -636,7 +636,7 @@ JulialongSetup(void)
 		}
 		fractalspecific[fractype].orbitcalc = 
 			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
-			? longZpowerFractal : longCmplxZpowerFractal;
+			? z_power_orbit : complex_z_power_orbit;
 		break;
 	case LAMBDA:
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */

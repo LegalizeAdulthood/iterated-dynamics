@@ -979,7 +979,7 @@ int marks_lambda_orbit_fp(void)
 	return g_bail_out_fp();
 }
 
-int UnityFractal(void)
+int unity_orbit(void)
 {
 #if !defined(XFRACT)
 	/* brought to you by Mark Peterson - you won't find this in any fractal
@@ -998,14 +998,11 @@ int UnityFractal(void)
 #endif
 }
 
-int
-UnityfpFractal(void)
+int unity_orbit_fp(void)
 {
-double XXOne;
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
-
-	XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
+	double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
 	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
 	{
 		return 1;
@@ -1016,8 +1013,7 @@ double XXOne;
 	return 0;
 }
 
-int
-Mandel4Fractal(void)
+int mandel4_orbit(void)
 {
 	/* By writing this code, Bert has left behind the excuse "don't
 		know what a fractal is, just know how to make'em go fast".
@@ -1044,8 +1040,7 @@ Mandel4Fractal(void)
 #endif
 }
 
-int
-Mandel4fpFractal(void)
+int mandel4_orbit_fp(void)
 {
 	/* first, compute (x + iy)**2 */
 	g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;
@@ -1061,8 +1056,7 @@ Mandel4fpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-floatZtozPluszpwrFractal(void)
+int z_to_z_plus_z_orbit_fp(void)
 {
 	complex_power(&g_old_z, (int)param[2], &g_new_z);
 	g_old_z = ComplexPower(g_old_z, g_old_z);
@@ -1071,8 +1065,7 @@ floatZtozPluszpwrFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-longZpowerFractal(void)
+int z_power_orbit(void)
 {
 #if !defined(XFRACT)
 	if (complex_power_l(&g_old_z_l, g_c_exp, &g_new_z_l, bitshift))
@@ -1087,8 +1080,7 @@ longZpowerFractal(void)
 #endif
 }
 
-int
-longCmplxZpowerFractal(void)
+int complex_z_power_orbit(void)
 {
 #if !defined(XFRACT)
 	_CMPLX x, y;
@@ -1115,8 +1107,7 @@ longCmplxZpowerFractal(void)
 #endif
 }
 
-int
-floatZpowerFractal(void)
+int z_power_orbit_fp(void)
 {
 	complex_power(&g_old_z, g_c_exp, &g_new_z);
 	g_new_z.x += g_float_parameter->x;
@@ -1124,8 +1115,7 @@ floatZpowerFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-floatCmplxZpowerFractal(void)
+int complex_z_power_orbit_fp(void)
 {
 	g_new_z = ComplexPower(g_old_z, g_parameter2);
 	g_new_z.x += g_float_parameter->x;
@@ -1133,8 +1123,7 @@ floatCmplxZpowerFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-Barnsley3Fractal(void)
+int barnsley3_orbit(void)
 {
 	/* An unnamed Mandelbrot/Julia function from "Fractals
 	Everywhere" by Michael Barnsley, p. 292, example 4.1 */
@@ -1168,13 +1157,12 @@ Barnsley3Fractal(void)
 #endif
 }
 
-int
-Barnsley3FPFractal(void)
+/*
+	An unnamed Mandelbrot/Julia function from "Fractals
+	Everywhere" by Michael Barnsley, p. 292, example 4.1
+*/
+int barnsley3_orbit_fp(void)
 {
-	/* An unnamed Mandelbrot/Julia function from "Fractals
-	Everywhere" by Michael Barnsley, p. 292, example 4.1 */
-
-
 	/* calculate intermediate products */
 	s_old_x_init_x_fp  = g_old_z.x*g_old_z.x;
 	s_old_y_init_y_fp  = g_old_z.y*g_old_z.y;
@@ -1199,13 +1187,12 @@ Barnsley3FPFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-TrigPlusZsquaredFractal(void)
+/* From Scientific American, July 1989 */
+/* A Biomorph                          */
+/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
+int trig_plus_z_squared_orbit(void)
 {
 #if !defined(XFRACT)
-	/* From Scientific American, July 1989 */
-	/* A Biomorph                          */
-	/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x += g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y += multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
@@ -1215,37 +1202,33 @@ TrigPlusZsquaredFractal(void)
 #endif
 }
 
-int
-TrigPlusZsquaredfpFractal(void)
+/* From Scientific American, July 1989 */
+/* A Biomorph                          */
+/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
+int trig_plus_z_squared_orbit_fp(void)
 {
-	/* From Scientific American, July 1989 */
-	/* A Biomorph                          */
-	/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
-
 	CMPLXtrig0(g_old_z, g_new_z);
 	g_new_z.x += g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
 	g_new_z.y += 2.0*g_old_z.x*g_old_z.y + g_float_parameter->y;
 	return g_bail_out_fp();
 }
 
-int
-Richard8fpFractal(void)
+/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
+int richard8_orbit_fp(void)
 {
-	/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
 	CMPLXtrig0(g_old_z, g_new_z);
-/*   CMPLXtrig1(*g_float_parameter, g_temp_z); */
+	/* CMPLXtrig1(*g_float_parameter, g_temp_z); */
 	g_new_z.x += g_temp_z.x;
 	g_new_z.y += g_temp_z.y;
 	return g_bail_out_fp();
 }
 
-int
-Richard8Fractal(void)
+/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
+int richard8_orbit(void)
 {
 #if !defined(XFRACT)
-	/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-/*   LCMPLXtrig1(*g_long_parameter, g_tmp_z_l); */
+	/* LCMPLXtrig1(*g_long_parameter, g_tmp_z_l); */
 	g_new_z_l.x += g_tmp_z_l.x;
 	g_new_z_l.y += g_tmp_z_l.y;
 	return g_bail_out_l();
@@ -1254,8 +1237,7 @@ Richard8Fractal(void)
 #endif
 }
 
-int
-PopcornFractal_Old(void)
+int popcorn_old_orbit_fp(void)
 {
 	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
@@ -1293,8 +1275,7 @@ PopcornFractal_Old(void)
 	return 0;
 }
 
-int
-PopcornFractal(void)
+int popcorn_orbit_fp(void)
 {
 	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
