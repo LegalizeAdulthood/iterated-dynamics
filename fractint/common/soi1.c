@@ -73,9 +73,9 @@ static long iteration(register DBLS cr, register DBLS ci,
 	g_old_z.y = im;
 	tempsqrx = sqr(g_old_z.x);
 	tempsqry = sqr(g_old_z.y);
-	floatparm = &g_initial_z;
-	floatparm->x = cr;
-	floatparm->y = ci;
+	g_float_parameter = &g_initial_z;
+	g_float_parameter->x = cr;
+	g_float_parameter->y = ci;
 	while (ORBITCALC() == 0 && start < maxit)
 	{
 		start++;
@@ -618,8 +618,8 @@ scan:
 		tempsqry = iq; \
 		old.x = zr; \
 		old.y = zi; \
-		floatparm->x = cr; \
-		floatparm->y = ci; \
+		g_float_parameter->x = cr; \
+		g_float_parameter->y = ci; \
 		esc = ORBITCALC(); \
 		rq = tempsqrx; \
 		iq = tempsqry; \
