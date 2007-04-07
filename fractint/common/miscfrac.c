@@ -1386,7 +1386,7 @@ int popcorn()   /* subset of std engine */
 	}
 	g_input_counter = g_max_input_counter;
 	g_plot_color = noplot;
-	tempsqrx = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
+	g_temp_sqr_x = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		g_reset_periodicity = 1;
@@ -2357,16 +2357,16 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 		while (!found_attractor)
 		{
-			tempsqrx = sqr(g_old_z.x);
-			tempsqry = sqr(g_old_z.y);
-			if ((tempsqrx + tempsqry < g_rq_limit) && (g_color_iter < maxit))
+			g_temp_sqr_x = sqr(g_old_z.x);
+			g_temp_sqr_y = sqr(g_old_z.y);
+			if ((g_temp_sqr_x + g_temp_sqr_y < g_rq_limit) && (g_color_iter < maxit))
 			{
 				break;
 			}
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			g_new_z.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+			g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - fsp->fl.f.a*g_old_z.y;
 			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - fsp->fl.f.a*g_old_z.x;
 			g_old_z.x = g_new_z.x;
 			if (fsp->repeat_mapping)
@@ -2666,8 +2666,8 @@ int froth_per_pixel(void)
 	{
 		g_old_z.x = dxpixel();
 		g_old_z.y = dypixel();
-		tempsqrx = sqr(g_old_z.x);
-		tempsqry = sqr(g_old_z.y);
+		g_temp_sqr_x = sqr(g_old_z.x);
+		g_temp_sqr_y = sqr(g_old_z.y);
 	}
 	else  /* integer mode */
 	{
@@ -2683,7 +2683,7 @@ int froth_per_orbit(void)
 {
 	if (!integerfractal) /* fp mode */
 	{
-		g_new_z.x = tempsqrx - tempsqry - g_old_z.x - fsp->fl.f.a*g_old_z.y;
+		g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - fsp->fl.f.a*g_old_z.y;
 		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
 		if (fsp->repeat_mapping)
 		{
@@ -2692,9 +2692,9 @@ int froth_per_orbit(void)
 			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
 		}
 
-		tempsqrx = sqr(g_new_z.x);
-		tempsqry = sqr(g_new_z.y);
-		if (tempsqrx + tempsqry >= g_rq_limit)
+		g_temp_sqr_x = sqr(g_new_z.x);
+		g_temp_sqr_y = sqr(g_new_z.y);
+		if (g_temp_sqr_x + g_temp_sqr_y >= g_rq_limit)
 		{
 			return 1;
 		}

@@ -1882,13 +1882,13 @@ void get_julia_attractor(double real, double imag)
 	g_periodicity_check = 0;
 	g_old_z.x = real;                    /* prepare for f.p orbit calc */
 	g_old_z.y = imag;
-	tempsqrx = sqr(g_old_z.x);
-	tempsqry = sqr(g_old_z.y);
+	g_temp_sqr_x = sqr(g_old_z.x);
+	g_temp_sqr_y = sqr(g_old_z.y);
 
 	g_old_z_l.x = (long)real;     /* prepare for int orbit calc */
 	g_old_z_l.y = (long)imag;
-	g_temp_sqr_x_l = (long)tempsqrx;
-	g_temp_sqr_y_l = (long)tempsqry;
+	g_temp_sqr_x_l = (long)g_temp_sqr_x;
+	g_temp_sqr_y_l = (long)g_temp_sqr_y;
 
 	g_old_z_l.x = g_old_z_l.x << bitshift;
 	g_old_z_l.y = g_old_z_l.y << bitshift;

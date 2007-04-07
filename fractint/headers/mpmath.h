@@ -185,7 +185,7 @@ extern void (*dtrig3)(void);
    (out).y = ((arg).x+(arg).x) * (arg).y
 #define CMPLXsqr_old(out)       \
    (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
-   (out).x = tempsqrx - tempsqry
+   (out).x = g_temp_sqr_x - g_temp_sqr_y
 
 #define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
 #define CMPLXmult1(arg1, arg2, out)    Arg2->d = (arg1); Arg1->d = (arg2);\

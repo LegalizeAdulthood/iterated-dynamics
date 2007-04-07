@@ -2281,9 +2281,9 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 						{
 							g_new_z.y = -STARTRAILMAX;
 						}
-						tempsqrx = g_new_z.x*g_new_z.x;
-						tempsqry = g_new_z.y*g_new_z.y;
-						g_magnitude = tempsqrx + tempsqry;
+						g_temp_sqr_x = g_new_z.x*g_new_z.x;
+						g_temp_sqr_y = g_new_z.y*g_new_z.y;
+						g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
 						g_old_z = g_new_z;
 					}
 					{

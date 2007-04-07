@@ -342,8 +342,8 @@ static int z_line_fp(double x, double y)
 			return -1;
 		}
 #endif
-		tempsqrx = sqr(g_old_z.x);
-		tempsqry = sqr(g_old_z.y);
+		g_temp_sqr_x = sqr(g_old_z.x);
+		g_temp_sqr_y = sqr(g_old_z.y);
 
 		for (n = 0; n < maxit; n++)
 		{

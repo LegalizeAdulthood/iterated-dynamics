@@ -217,10 +217,10 @@ int asm386lMANRbailout(void)
 asmfpMODbailout proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new			; nx ny2
 		fmul    st, st                   ; nx2 ny2
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		fadd
 		fst     g_magnitude
 		fcomp   g_rq_limit                   ; stack is empty
@@ -243,9 +243,9 @@ asmfpMODbailout endp
 int asmfpMODbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
-	g_magnitude = tempsqrx + tempsqry;
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
+	g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
 	if (g_magnitude > g_rq_limit || g_magnitude < 0.0 || fabs(g_new_z.x) > g_rq_limit2 ||
 		fabs(g_new_z.y) > g_rq_limit2 || overflow)
 	{
@@ -260,10 +260,10 @@ int asmfpMODbailout(void)
 asmfpREALbailout proc near uses si di
 		fld     qword ptr new
 		fmul    st, st                   ; nx2
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		fld     qword ptr new + 8 ; ny nx2
 		fmul    st, st                   ; ny2 nx2
-		fst     tempsqry                ; ny2 nx2
+		fst     g_temp_sqr_y                ; ny2 nx2
 		fadd    st, st(1)                ; ny2 + nx2 nx2
 		fstp    g_magnitude               ; nx2
 		fcomp   g_rq_limit                   ; ** stack is empty
@@ -286,9 +286,9 @@ asmfpREALbailout endp
 int asmfpREALbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
-	if (tempsqrx >= g_rq_limit || overflow)
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
+	if (g_temp_sqr_x >= g_rq_limit || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -301,10 +301,10 @@ int asmfpREALbailout(void)
 asmfpIMAGbailout proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new   ; nx ny2
 		fmul    st, st                   ; nx2 ny2
-		fst     tempsqrx                ; nx2 ny2
+		fst     g_temp_sqr_x                ; nx2 ny2
 		fadd    st, st(1)                ; nx2 + ny2 ny2
 		fstp    g_magnitude               ; ny2
 		fcomp   g_rq_limit                   ; ** stack is empty
@@ -327,9 +327,9 @@ asmfpIMAGbailout endp
 int asmfpIMAGbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
-	if (tempsqry >= g_rq_limit || overflow)
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
+	if (g_temp_sqr_y >= g_rq_limit || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -342,10 +342,10 @@ int asmfpIMAGbailout(void)
 asmfpORbailout proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new   ; nx ny2
 		fmul    st, st                   ; nx2 ny2
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		fld     st(1)                   ; ny2 nx2 ny2
 		fadd    st, st(1)                ; ny2 + nx2 nx2 ny2
 		fstp    g_magnitude               ; nx2 ny2
@@ -375,9 +375,9 @@ asmfpORbailout endp
 int asmfpORbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
-	if (tempsqrx >= g_rq_limit || tempsqry >= g_rq_limit || overflow)
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
+	if (g_temp_sqr_x >= g_rq_limit || g_temp_sqr_y >= g_rq_limit || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -390,10 +390,10 @@ int asmfpORbailout(void)
 asmfpANDbailout proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new   ; nx ny2
 		fmul    st, st                   ; nx2 ny2
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		fld     st(1)                   ; ny2 nx2 ny2
 		fadd    st, st(1)                ; ny2 + nx2 nx2 ny2
 		fstp    g_magnitude               ; nx2 ny2
@@ -425,9 +425,9 @@ asmfpANDbailout endp
 int asmfpANDbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
-	if ((tempsqrx >= g_rq_limit && tempsqry >= g_rq_limit) || overflow)
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
+	if ((g_temp_sqr_x >= g_rq_limit && g_temp_sqr_y >= g_rq_limit) || overflow)
 	{
 		overflow = 0;
 		return 1;
@@ -441,11 +441,11 @@ asmfpMANHbailout proc near uses si di
 		fld     qword ptr new + 8
 		fld     st
 		fmul    st, st                   ; ny2 ny
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new   ; nx ny2 ny
 		fld     st
 		fmul    st, st                   ; nx2 nx ny2 ny
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		faddp   st(2), st                ; nx nx2 + ny2 ny
 		fxch    st(1)                   ; nx2 + ny2 nx ny
 		fstp    g_magnitude               ; nx ny
@@ -478,8 +478,8 @@ asmfpMANHbailout endp
 int asmfpMANHbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
 	g_magnitude = fabs(g_new_z.x) + fabs(g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
@@ -494,11 +494,11 @@ asmfpMANRbailout proc near uses si di
 		fld     qword ptr new + 8
 		fld     st
 		fmul    st, st                   ; ny2 ny
-		fst     tempsqry
+		fst     g_temp_sqr_y
 		fld     qword ptr new           ; nx ny2 ny
 		fld     st
 		fmul    st, st                   ; nx2 nx ny2 ny
-		fst     tempsqrx
+		fst     g_temp_sqr_x
 		faddp   st(2), st                ; nx nx2 + ny2 ny
 		fxch    st(1)                   ; nx2 + ny2 nx ny
 		fstp    g_magnitude               ; nx ny
@@ -528,8 +528,8 @@ asmfpMANRbailout endp
 int asmfpMANRbailout(void)
 {
 	/* TODO: verify this code is correct */
-	tempsqrx = sqr(g_new_z.x);
-	tempsqry = sqr(g_new_z.y);
+	g_temp_sqr_x = sqr(g_new_z.x);
+	g_temp_sqr_y = sqr(g_new_z.y);
 	g_magnitude = fabs(g_new_z.x + g_new_z.y);
 	if (g_magnitude*g_magnitude >= g_rq_limit)
 	{
