@@ -1,7 +1,8 @@
 /*
-FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
-FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
+	FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
+	FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 */
+#include <assert.h>
 #include <memory.h>
 
 #ifndef USE_VARARGS
@@ -15,7 +16,8 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #endif
 #include <sys/types.h>
 #include <time.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -26,8 +28,18 @@ FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
 #define timebx timeb
 #endif
 
-/* routines in this module      */
+/* fudge all values up by 2 << FUDGE_FACTOR{,2} */
+#define FUDGE_FACTOR     29
+#define FUDGE_FACTOR2    24
 
+int g_resume_length = 0;				/* length of resume info */
+
+static int s_tab_or_help = 0;			/* kludge for sound and tab or help key press */
+static int s_resume_offset;				/* offset in resume info gets */
+static int s_resume_info_length = 0;
+static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
+
+/* routines in this module      */
 static long   _fastcall fudgetolong(double d);
 static double _fastcall fudgetodouble(long l);
 static void   _fastcall adjust_to_limits(double);
@@ -35,18 +47,8 @@ static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
 static void   _fastcall plotdorbit(double, double, int);
 static int    _fastcall combine_worklist(void);
-
 static void   _fastcall adjust_to_limitsbf(double);
 static void   _fastcall smallest_add_bf(bf_t);
-       int    resume_len;               /* length of resume info */
-static int    resume_offset;            /* offset in resume info gets */
-       int    taborhelp;    /* kludge for sound and tab or help key press */
-
-static int resume_info_len = 0;
-static int s_save_orbit[1500];                    /* array to save orbit values */
-
-#define FUDGEFACTOR     29      /* fudge all values up by 2**this */
-#define FUDGEFACTOR2    24      /* (or maybe this)                */
 
 void free_grid_pointers()
 {
@@ -383,7 +385,7 @@ init_restart:
 	}
 
 	/* set up bitshift for integer math */
-	bitshift = FUDGEFACTOR2; /* by default, the smaller shift */
+	bitshift = FUDGE_FACTOR2; /* by default, the smaller shift */
 	if (integerfractal > 1)  /* use specific override from table */
 	{
 		bitshift = integerfractal;
@@ -416,7 +418,7 @@ init_restart:
 		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& g_proximity <= 2.0                       /* and g_proximity not too large */
 		&& g_bail_out_test == Mod)                     /* and bailout test = mod */
-			bitshift = FUDGEFACTOR;                  /* use the larger bitshift */
+			bitshift = FUDGE_FACTOR;                  /* use the larger bitshift */
 		}
 
 	fudge = 1L << bitshift;
@@ -1279,7 +1281,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		end_resume();
 
 	Engines which allocate a large memory chunk of their own might
-	directly set g_resume_info, resume_len, calc_status to avoid doubling
+	directly set g_resume_info, g_resume_length, calc_status to avoid doubling
 	transient memory needs by using these routines.
 
 	standard_fractal, calculate_mandelbrot, solidguess, and bound_trace_main are a related
@@ -1317,11 +1319,9 @@ va_dcl
 	while (len)
 	{
 		source_ptr = (BYTE *)va_arg(arg_marker, char *);
-#if defined(_WIN32)
-		_ASSERTE(resume_len + len <= resume_info_len);
-#endif
-		memcpy(&g_resume_info[resume_len], source_ptr, len);
-		resume_len += len;
+		assert(g_resume_length + len <= s_resume_info_length);
+		memcpy(&g_resume_info[g_resume_length], source_ptr, len);
+		g_resume_length += len;
 		len = va_arg(arg_marker, int);
 	}
 	va_end(arg_marker);
@@ -1332,17 +1332,17 @@ int alloc_resume(int alloclen, int version)
 { /* WARNING! if alloclen > 4096B, problems may occur with GIF save/restore */
 	end_resume();
 
-	resume_info_len = alloclen*alloclen;
-	g_resume_info = malloc(resume_info_len);
+	s_resume_info_length = alloclen*alloclen;
+	g_resume_info = malloc(s_resume_info_length);
 	if (g_resume_info == NULL)
 	{
 		stopmsg(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
 		calc_status = CALCSTAT_NON_RESUMABLE;
-		resume_info_len = 0;
+		s_resume_info_length = 0;
 		return -1;
 	}
-	resume_len = 0;
+	g_resume_length = 0;
 	put_resume(sizeof(version), &version, 0);
 	calc_status = CALCSTAT_RESUMABLE;
 	return 0;
@@ -1375,10 +1375,10 @@ va_dcl
 	{
 		dest_ptr = (BYTE *)va_arg(arg_marker, char *);
 #if defined(_WIN32)
-		_ASSERTE(resume_offset + len <= resume_info_len);
+		_ASSERTE(s_resume_offset + len <= s_resume_info_length);
 #endif
-		memcpy(dest_ptr, &g_resume_info[resume_offset], len);
-		resume_offset += len;
+		memcpy(dest_ptr, &g_resume_info[s_resume_offset], len);
+		s_resume_offset += len;
 		len = va_arg(arg_marker, int);
 	}
 	va_end(arg_marker);
@@ -1392,7 +1392,7 @@ int start_resume(void)
 	{
 		return -1;
 	}
-	resume_offset = 0;
+	s_resume_offset = 0;
 	get_resume(sizeof(version), &version, 0);
 	return version;
 }
@@ -1403,7 +1403,7 @@ void end_resume(void)
 	{
 		free(g_resume_info);
 		g_resume_info = NULL;
-		resume_info_len = 0;
+		s_resume_info_length = 0;
 	}
 }
 
@@ -1616,16 +1616,14 @@ void w_snd(int tone)
 			fprintf(snd_fp, "%-d\n", tone);
 		}
 	}
-	taborhelp = 0;
+	s_tab_or_help = 0;
 	if (!driver_key_pressed())  /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
 	{
-					/* must not then call soundoff(), else indexes out of synch */
-/*   if (20 < tone && tone < 15000)  better limits? */
-/*   if (10 < tone && tone < 5000)  better limits? */
+		/* must not then call soundoff(), else indexes out of synch */
 		if (driver_sound_on(tone))
 		{
 			wait_until(0, orbit_delay);
-			if (!taborhelp) /* kludge because wait_until() calls driver_key_pressed */
+			if (!s_tab_or_help) /* kludge because wait_until() calls driver_key_pressed */
 			{
 				driver_sound_off();
 			}
