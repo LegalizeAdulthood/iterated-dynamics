@@ -70,7 +70,7 @@ int g_basin;
 double g_root_over_degree;
 double g_degree_minus_1_over_degree;
 double g_threshold;
-_CMPLX coefficient;
+_CMPLX g_coefficient;
 _CMPLX  staticroots[16]; /* roots array for degree 16 or less */
 _CMPLX  *roots = staticroots;
 struct MPC      *MPCroots;
@@ -1019,8 +1019,8 @@ MarksLambdafpFractal(void)
 	g_temp_z.x = tempsqrx - tempsqry;
 	g_temp_z.y = g_old_z.x*g_old_z.y *2;
 
-	g_new_z.x = coefficient.x*g_temp_z.x - coefficient.y*g_temp_z.y + floatparm->x;
-	g_new_z.y = coefficient.x*g_temp_z.y + coefficient.y*g_temp_z.x + floatparm->y;
+	g_new_z.x = g_coefficient.x*g_temp_z.x - g_coefficient.y*g_temp_z.y + floatparm->x;
+	g_new_z.y = g_coefficient.x*g_temp_z.y + g_coefficient.y*g_temp_z.x + floatparm->y;
 
 	return floatbailout();
 }
@@ -1570,7 +1570,7 @@ int MarksCplxMand(void)
 {
 	g_temp_z.x = tempsqrx - tempsqry;
 	g_temp_z.y = 2*g_old_z.x*g_old_z.y;
-	FPUcplxmul(&g_temp_z, &coefficient, &g_new_z);
+	FPUcplxmul(&g_temp_z, &g_coefficient, &g_new_z);
 	g_new_z.x += floatparm->x;
 	g_new_z.y += floatparm->y;
 	return floatbailout();
@@ -2984,21 +2984,21 @@ int marksmandelfp_per_pixel()
 
 	if (c_exp > 3)
 	{
-		cpower(&g_old_z, c_exp-1, &coefficient);
+		cpower(&g_old_z, c_exp-1, &g_coefficient);
 	}
 	else if (c_exp == 3)
 	{
-		coefficient.x = tempsqrx - tempsqry;
-		coefficient.y = g_old_z.x*g_old_z.y*2;
+		g_coefficient.x = tempsqrx - tempsqry;
+		g_coefficient.y = g_old_z.x*g_old_z.y*2;
 	}
 	else if (c_exp == 2)
 	{
-		coefficient = g_old_z;
+		g_coefficient = g_old_z;
 	}
 	else if (c_exp < 2)
 	{
-		coefficient.x = 1.0;
-		coefficient.y = 0.0;
+		g_coefficient.x = 1.0;
+		g_coefficient.y = 0.0;
 	}
 
 	return 1; /* 1st iteration has been done */
@@ -3261,7 +3261,7 @@ int MarksCplxMandperp(void)
 	g_old_z.y = g_initial_z.y + parm.y;
 	tempsqrx = sqr(g_old_z.x);  /* precalculated value */
 	tempsqry = sqr(g_old_z.y);
-	coefficient = ComplexPower(g_initial_z, pwr);
+	g_coefficient = ComplexPower(g_initial_z, pwr);
 	return 1;
 }
 

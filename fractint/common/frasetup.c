@@ -387,7 +387,7 @@ JuliafpSetup(void)
 	{
 		pwr.x = param[2] - 1.0;
 		pwr.y = param[3];
-		coefficient = ComplexPower(*floatparm, pwr);
+		g_coefficient = ComplexPower(*floatparm, pwr);
 	}
 	switch (fractype)
 	{
@@ -1190,21 +1190,21 @@ MarksJuliafpSetup(void)
 	g_old_z = *floatparm;
 	if (c_exp > 3)
 	{
-		cpower(&g_old_z, c_exp-1, &coefficient);
+		cpower(&g_old_z, c_exp-1, &g_coefficient);
 	}
 	else if (c_exp == 3)
 	{
-		coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
-		coefficient.y = g_old_z.x*g_old_z.y*2;
+		g_coefficient.x = sqr(g_old_z.x) - sqr(g_old_z.y);
+		g_coefficient.y = g_old_z.x*g_old_z.y*2;
 	}
 	else if (c_exp == 2)
 	{
-		coefficient = g_old_z;
+		g_coefficient = g_old_z;
 	}
 	else if (c_exp < 2)
 	{
-		coefficient.x = 1.0;
-		coefficient.y = 0.0;
+		g_coefficient.x = 1.0;
+		g_coefficient.y = 0.0;
 	}
 	get_julia_attractor (0.0, 0.0);      /* an attractor? */
 	return 1;

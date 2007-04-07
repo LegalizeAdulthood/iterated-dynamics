@@ -67,7 +67,7 @@ extern int                   g_checked_vvs;
 extern long                  cimag;
 extern double                g_close_enough;
 extern double                g_proximity;
-extern _CMPLX                coefficient;
+extern _CMPLX                g_coefficient;
 extern int                   g_col;
 extern int                   g_color;
 extern char                  colorfile[];
