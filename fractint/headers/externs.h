@@ -336,7 +336,7 @@ extern int                   nobof;
 extern int                   numaffine;
 extern unsigned              numcolors;
 extern const int             numtrigfn;
-extern int                   num_fractal_types;
+extern int                   g_num_fractal_types;
 extern int                   g_num_work_list;
 extern int                   g_next_screen_flag;
 extern int                   Offset;

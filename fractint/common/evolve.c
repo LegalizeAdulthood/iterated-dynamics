@@ -479,11 +479,11 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (typehasparm(julibrot ? g_new_orbit_type : fractype, i, NULL) == 0)
+		if (type_has_parameter(julibrot ? g_new_orbit_type : fractype, i, NULL) == 0)
 		{
 			if (fractype == FORMULA || fractype == FFORMULA)
 			{
-				if (paramnotused(i))
+				if (parameter_not_used(i))
 				{
 					continue;
 				}
@@ -504,7 +504,7 @@ choose_vars_restart:
 	{
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			if (paramnotused(num))
+			if (parameter_not_used(num))
 			{
 				continue;
 			}
@@ -578,7 +578,7 @@ choose_vars_restart:
 	{
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			if (paramnotused(num))
+			if (parameter_not_used(num))
 			{
 				continue;
 			}

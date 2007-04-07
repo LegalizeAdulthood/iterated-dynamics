@@ -81,7 +81,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	maxit        = read_info.iterationsold;
 	fractype     = read_info.fractal_type;
-	if (fractype < 0 || fractype >= num_fractal_types)
+	if (fractype < 0 || fractype >= g_num_fractal_types)
 	{
 		sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname);
 		fractype = 0;

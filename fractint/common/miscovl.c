@@ -790,7 +790,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 		for (i = (MAXPARAMS-1); i >= 0; --i)
 		{
-			if (typehasparm((fractype == JULIBROT || fractype == JULIBROTFP)
+			if (type_has_parameter((fractype == JULIBROT || fractype == JULIBROTFP)
 					? g_new_orbit_type : fractype, i, NULL))
 			{
 				break;
