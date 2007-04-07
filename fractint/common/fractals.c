@@ -149,7 +149,7 @@ void magnet2_precalculate_fp(void) /* precalculation for Magnet2 (M & J) for spe
 /* -------------------------------------------------------------------- */
 /*              Bailout Routines Macros                                                                                                 */
 /* -------------------------------------------------------------------- */
-int  bail_out_mod_fp(void)
+int bail_out_mod_fp(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -162,7 +162,7 @@ int  bail_out_mod_fp(void)
 	return 0;
 }
 
-int  fpREALbailout(void)
+int bail_out_real_fp(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -175,7 +175,7 @@ int  fpREALbailout(void)
 	return 0;
 }
 
-int  fpIMAGbailout(void)
+int fpIMAGbailout(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -188,7 +188,7 @@ int  fpIMAGbailout(void)
 	return 0;
 }
 
-int  fpORbailout(void)
+int fpORbailout(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -201,7 +201,7 @@ int  fpORbailout(void)
 	return 0;
 }
 
-int  fpANDbailout(void)
+int fpANDbailout(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -214,7 +214,7 @@ int  fpANDbailout(void)
 	return 0;
 }
 
-int  fpMANHbailout(void)
+int fpMANHbailout(void)
 {
 	double manhmag;
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -229,7 +229,7 @@ int  fpMANHbailout(void)
 	return 0;
 }
 
-int  fpMANRbailout(void)
+int fpMANRbailout(void)
 {
 	double manrmag;
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -338,7 +338,7 @@ int  fpMANRbailout(void)
 		(X) = (long)tmp; \
 	}\
 
-static int  Halleybailout(void)
+static int Halleybailout(void)
 {
 	if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.x)
 	{
@@ -353,7 +353,7 @@ static int  Halleybailout(void)
 struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
 struct MP mptmpparm2x;
 
-static int  MPCHalleybailout(void)
+static int MPCHalleybailout(void)
 {
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));

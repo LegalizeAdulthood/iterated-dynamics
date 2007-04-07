@@ -3576,7 +3576,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_fp = (int (*)(void))fpREALbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_real_fp;
 		}
 		if (cpu >= 386 && debugflag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
