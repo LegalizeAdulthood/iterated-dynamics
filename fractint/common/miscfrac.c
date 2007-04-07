@@ -19,7 +19,7 @@ typedef void (_fastcall *PLOT)(int, int, int);
 /* global data */
 
 /* data local to this module */
-static int s_iparm_x;      /* s_iparm_x = parm.x*8 */
+static int s_iparm_x;      /* s_iparm_x = g_parameter.x*8 */
 static int s_shift_value;  /* shift based on #colors */
 static int s_recur1 = 1;
 static int s_plasma_colors;
@@ -91,7 +91,7 @@ int test(void)
 					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
 					return -1;
 				}
-				color = testpt(g_initial_z.x, g_initial_z.y, parm.x, parm.y, maxit, inside);
+				color = testpt(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, inside);
 				if (color >= colors)  /* avoid trouble if color is 0 */
 				{
 					if (colors < 16)
@@ -408,11 +408,11 @@ int plasma(void)
 		return -1;
 	}
 	s_iparm_x = (int)(param[0]*8);
-	if (parm.x <= 0.0)
+	if (g_parameter.x <= 0.0)
 	{
 		s_iparm_x = 0;
 	}
-	if (parm.x >= 100)
+	if (g_parameter.x >= 100)
 	{
 		s_iparm_x = 800;
 	}
@@ -1007,7 +1007,7 @@ int bifurcation(void)
 		}
 	}
 
-	s_filter_cycles = (parm.x <= 0) ? DEFAULTFILTER : (long)parm.x;
+	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULTFILTER : (long)g_parameter.x;
 	s_half_time_check = FALSE;
 	if (g_periodicity_check && (unsigned long)maxit < s_filter_cycles)
 	{
@@ -1076,11 +1076,11 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 	if (integerfractal)
 	{
-		lPopulation = (parm.y == 0) ? (long)(SEED*fudge) : (long)(parm.y*fudge);
+		lPopulation = (g_parameter.y == 0) ? (long)(SEED*fudge) : (long)(g_parameter.y*fudge);
 	}
 	else
 	{
-		Population = (parm.y == 0) ? SEED : parm.y;
+		Population = (g_parameter.y == 0) ? SEED : g_parameter.y;
 	}
 
 	errors = overflow = FALSE;

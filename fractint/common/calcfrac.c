@@ -557,10 +557,10 @@ int calculate_fractal(void)
 	{
 		distest = 0;
 	}
-	parm.x   = param[0];
-	parm.y   = param[1];
-	parm2.x  = param[2];
-	parm2.y  = param[3];
+	g_parameter.x   = param[0];
+	g_parameter.y   = param[1];
+	g_parameter2.x  = param[2];
+	g_parameter2.y  = param[3];
 
 	if (LogFlag && colors < 16)
 	{
@@ -719,10 +719,10 @@ int calculate_fractal(void)
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
-		g_parameter_l.x = (long)(parm.x*fudge);    /* real portion of Lambda */
-		g_parameter_l.y = (long)(parm.y*fudge);    /* imaginary portion of Lambda */
-		g_parameter2_l.x = (long)(parm2.x*fudge);  /* real portion of Lambda2 */
-		g_parameter2_l.y = (long)(parm2.y*fudge);  /* imaginary portion of Lambda2 */
+		g_parameter_l.x = (long)(g_parameter.x*fudge);    /* real portion of Lambda */
+		g_parameter_l.y = (long)(g_parameter.y*fudge);    /* imaginary portion of Lambda */
+		g_parameter2_l.x = (long)(g_parameter2.x*fudge);  /* real portion of Lambda2 */
+		g_parameter2_l.y = (long)(g_parameter2.y*fudge);  /* imaginary portion of Lambda2 */
 		g_limit_l = (long)(g_rq_limit*fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
@@ -4297,9 +4297,9 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		return;
 	}
-	parmszero = (parm.x == 0.0 && parm.y == 0.0 && useinitorbit != 1);
-	parmsnoreal = (parm.x == 0.0 && useinitorbit != 1);
-	parmsnoimag = (parm.y == 0.0 && useinitorbit != 1);
+	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && useinitorbit != 1);
+	parmsnoreal = (g_parameter.x == 0.0 && useinitorbit != 1);
+	parmsnoimag = (g_parameter.y == 0.0 && useinitorbit != 1);
 	switch (fractype)
 	{
 	case LMANLAMFNFN:      /* These need only P1 checked. */
@@ -4326,7 +4326,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 						&& param[7] == 0.0 && param[9] == 0.0);
 		break;
 	default:   /* Check P2 for the rest */
-		parmszero = (parmszero && parm2.x == 0.0 && parm2.y == 0.0);
+		parmszero = (parmszero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
 	}
 	xaxis_row = yaxis_col = -1;
 	if (bf_math)
@@ -4502,7 +4502,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 				&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			/* both axes or origin*/
-			g_plot_color = (parm.y == 0.0) ? symPIplot4J : symPIplot2J; 
+			g_plot_color = (g_parameter.y == 0.0) ? symPIplot4J : symPIplot2J; 
 		}
 		else
 		{
