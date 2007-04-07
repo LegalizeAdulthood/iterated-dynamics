@@ -53,27 +53,27 @@
 #include "fractype.h"
 #include "externs.h"
 
-_LCMPLX g_coefficient_l;
-_LCMPLX g_old_z_l;
-_LCMPLX g_new_z_l;
-_LCMPLX g_parameter_l;
-_LCMPLX g_initial_z_l;
-_LCMPLX g_tmp_z_l;
-_LCMPLX g_tmp_z2_l;
-_LCMPLX g_parameter2_l;
-long g_temp_sqr_x_l;
-long g_temp_sqr_y_l;
-int g_max_color;
-int g_root;
-int g_degree;
-int g_basin;
-double g_root_over_degree;
-double g_degree_minus_1_over_degree;
-double g_threshold;
-_CMPLX g_coefficient;
-_CMPLX  g_static_roots[16]; /* roots array for degree 16 or less */
+_LCMPLX g_coefficient_l = { 0, 0 };
+_LCMPLX g_old_z_l = { 0, 0 };
+_LCMPLX g_new_z_l = { 0, 0 };
+_LCMPLX g_parameter_l = { 0, 0 };
+_LCMPLX g_initial_z_l = { 0, 0 };
+_LCMPLX g_tmp_z_l = { 0, 0 };
+_LCMPLX g_tmp_z2_l = { 0, 0 };
+_LCMPLX g_parameter2_l = { 0, 0 };
+long g_temp_sqr_x_l = 0;
+long g_temp_sqr_y_l = 0;
+int g_max_color = 0;
+int g_root = 0;
+int g_degree = 0;
+int g_basin = 0;
+double g_root_over_degree = 0.0;
+double g_degree_minus_1_over_degree = 0.0;
+double g_threshold = 0.0;
+_CMPLX g_coefficient = { 0.0, 0.0 };
+_CMPLX  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
 _CMPLX  *g_roots = g_static_roots;
-struct MPC      *MPCroots;
+struct MPC *g_roots_mpc = NULL;
 long FgHalf;
 _CMPLX pwr;
 int     bitshiftless1;                  /* bit shift less 1 */
@@ -653,7 +653,7 @@ int MPCNewtonFractal(void)
 			tmpcolor = -1;
 			for (i = 0; i < g_degree; i++)
 			{
-				if (pMPcmp(MPdistance(MPCroots[i], mpcold), mpthreshold) < 0)
+				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), mpthreshold) < 0)
 				{
 					tmpcolor = (g_basin == 2) ?
 						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);

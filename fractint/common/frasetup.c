@@ -168,23 +168,23 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 
 		if (g_degree > 16)
 		{
-			MPCroots = (struct MPC *) malloc(g_degree*sizeof(struct MPC));
-			if (MPCroots == NULL)
+			g_roots_mpc = (struct MPC *) malloc(g_degree*sizeof(struct MPC));
+			if (g_roots_mpc == NULL)
 			{
-				MPCroots = (struct MPC *)g_static_roots;
+				g_roots_mpc = (struct MPC *)g_static_roots;
 				g_degree = 16;
 			}
 		}
 		else
 		{
-			MPCroots = (struct MPC *)g_static_roots;
+			g_roots_mpc = (struct MPC *)g_static_roots;
 		}
 
 		/* list of roots to discover where we converged for newtbasin */
 		for (i = 0; i < g_degree; i++)
 		{
-			MPCroots[i].x = *pd2MP(cos(i*twopi/(double)g_degree));
-			MPCroots[i].y = *pd2MP(sin(i*twopi/(double)g_degree));
+			g_roots_mpc[i].x = *pd2MP(cos(i*twopi/(double)g_degree));
+			g_roots_mpc[i].y = *pd2MP(sin(i*twopi/(double)g_degree));
 		}
 	}
 #endif
