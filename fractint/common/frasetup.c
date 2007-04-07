@@ -1189,7 +1189,7 @@ MarksJuliafpSetup(void)
 	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
 	{
-		cpower(&g_old_z, g_c_exp-1, &g_coefficient);
+		complex_power(&g_old_z, g_c_exp-1, &g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{

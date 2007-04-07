@@ -337,7 +337,7 @@ extern int parameter_not_used(int);
 /*  fractals -- C file prototypes */
 
 extern void magnet2_precalculate_fp(void);
-extern void cpower(_CMPLX *, int, _CMPLX *);
+extern void complex_power(_CMPLX *, int, _CMPLX *);
 extern int lcpower(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
 extern int MPCNewtonFractal(void);
@@ -471,10 +471,10 @@ extern int (*bigfltbailout)(void);
 extern int bail_out_mod_fp(void);
 extern int bail_out_real_fp(void);
 extern int bail_out_imag_fp(void);
-extern int fpORbailout(void);
-extern int fpANDbailout(void);
-extern int fpMANHbailout(void);
-extern int fpMANRbailout(void);
+extern int bail_out_or_fp(void);
+extern int bail_out_and_fp(void);
+extern int bail_out_manhattan_fp(void);
+extern int bail_out_manhattan_r_fp(void);
 extern int bail_out_mod_bn(void);
 extern int bail_out_real_bn(void);
 extern int bail_out_imag_bn(void);

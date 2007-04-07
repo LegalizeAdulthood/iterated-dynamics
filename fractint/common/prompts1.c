@@ -3616,7 +3616,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_fp = (int (*)(void))fpORbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_or_fp;
 		}
 		if (cpu >= 386 && debugflag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
@@ -3636,7 +3636,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_fp = (int (*)(void))fpANDbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_and_fp;
 		}
 		if (cpu >= 386 && debugflag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
@@ -3656,7 +3656,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_fp = (int (*)(void))fpMANHbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_manhattan_fp;
 		}
 		if (cpu >= 386 && debugflag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
@@ -3676,7 +3676,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_fp = (int (*)(void))fpMANRbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_manhattan_r_fp;
 		}
 		if (cpu >= 386 && debugflag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{

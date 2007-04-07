@@ -131,6 +131,9 @@ static long s_cos_x_l = 0;
 static long s_sin_x_l = 0;
 static long s_cos_y_l = 0;
 static long s_sin_y_l = 0;
+static double s_xt;
+static double s_yt;
+static double s_t2;
 
 void magnet2_precalculate_fp(void) /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -188,7 +191,7 @@ int bail_out_imag_fp(void)
 	return 0;
 }
 
-int fpORbailout(void)
+int bail_out_or_fp(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -201,7 +204,7 @@ int fpORbailout(void)
 	return 0;
 }
 
-int fpANDbailout(void)
+int bail_out_and_fp(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
@@ -214,7 +217,7 @@ int fpANDbailout(void)
 	return 0;
 }
 
-int fpMANHbailout(void)
+int bail_out_manhattan_fp(void)
 {
 	double manhmag;
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -229,7 +232,7 @@ int fpMANHbailout(void)
 	return 0;
 }
 
-int fpMANRbailout(void)
+int bail_out_manhattan_r_fp(void)
 {
 	double manrmag;
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -244,49 +247,49 @@ int fpMANRbailout(void)
 	return 0;
 }
 
-#define FLOATTRIGBAILOUT()		\
+#define BAIL_OUT_TRIG_FP()		\
 	if (fabs(g_old_z.y) >= g_rq_limit2)	\
 	{							\
 		return 1;				\
 	}
 
-#define LONGTRIGBAILOUT()			\
+#define BAIL_OUT_TRIG_LONG()			\
 	if (labs(g_old_z_l.y) >= g_limit2_l)	\
 	{								\
 		return 1;					\
 	}
 
-#define LONGXYTRIGBAILOUT()									\
+#define BAIL_OUT_TRIG_XY_LONG()									\
 	if (labs(g_old_z_l.x) >= g_limit2_l || labs(g_old_z_l.y) >= g_limit2_l)	\
 	{														\
 		return 1;											\
 	}
 
-#define FLOATXYTRIGBAILOUT()							\
+#define BAIL_OUT_TRIG_XY_FP()							\
 	if (fabs(g_old_z.x) >= g_rq_limit2 || fabs(g_old_z.y) >= g_rq_limit2)	\
 	{													\
 		return 1;										\
 	}
 
-#define FLOATHTRIGBAILOUT()		\
+#define BAIL_OUT_TRIG_H_FP()		\
 	if (fabs(g_old_z.x) >= g_rq_limit2)	\
 	{							\
 		return 1;				\
 	}
 
-#define LONGHTRIGBAILOUT()  \
+#define BAIL_OUT_TRIG_H_LONG()  \
 	if (labs(g_old_z_l.x) >= g_limit2_l) \
 	{ \
 		return 1; \
 	}
 
-#define TRIG16CHECK(X)  \
-	if (labs((X)) > TRIG_LIMIT_16) \
+#define BAIL_OUT_TRIG16(_x)  \
+	if (labs(_x) > TRIG_LIMIT_16) \
 	{ \
 		return 1; \
 	}
 
-#define OLD_FLOATEXPBAILOUT()	\
+#define BAIL_OUT_EXP_OLD_FP()	\
 	if (fabs(g_old_z.y) >= 1.0e8)	\
 	{							\
 		return 1;				\
@@ -296,7 +299,7 @@ int fpMANRbailout(void)
 		return 1;				\
 	}
 
-#define FLOATEXPBAILOUT()		\
+#define BAIL_OUT_EXP_FP()		\
 	if (fabs(g_old_z.y) >= 1.0e3)	\
 	{							\
 		return 1;				\
@@ -306,7 +309,7 @@ int fpMANRbailout(void)
 		return 1;				\
 	}
 
-#define LONGEXPBAILOUT()					\
+#define BAIL_OUT_EXP_LONG()					\
 	if (labs(g_old_z_l.y) >= (1000L << bitshift))\
 	{										\
 		return 1;							\
@@ -327,18 +330,17 @@ int fpMANRbailout(void)
 	*(pcoshx) = cosh(*(px));
 #endif
 
-#define LTRIGARG(X)    \
-	if (labs((X)) > TRIG_LIMIT_16)\
+#define TRIG_ARG_L(_x)    \
+	if (labs(_x) > TRIG_LIMIT_16)\
 	{\
-		double tmp; \
-		tmp = (X); \
+		double tmp = (_x); \
 		tmp /= fudge; \
 		tmp = fmod(tmp, g_two_pi); \
 		tmp *= fudge; \
-		(X) = (long)tmp; \
+		(_x) = (long) tmp; \
 	}\
 
-static int Halleybailout(void)
+static int bail_out_halley(void)
 {
 	if (fabs(modulus(g_new_z)-modulus(g_old_z)) < g_parameter2.x)
 	{
@@ -353,7 +355,7 @@ static int Halleybailout(void)
 struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
 struct MP mptmpparm2x;
 
-static int MPCHalleybailout(void)
+static int bail_out_halley_mpc(void)
 {
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
@@ -393,27 +395,26 @@ int asmfpMANRbailout(void) { return 0; }
 /* -------------------------------------------------------------------- */
 /*              Fractal (once per iteration) routines                   */
 /* -------------------------------------------------------------------- */
-static double xt, yt, t2;
 
 /* Raise complex number (base) to the (exp) power, storing the result
 ** in complex (result).
 */
-void cpower(_CMPLX *base, int exp, _CMPLX *result)
+void complex_power(_CMPLX *base, int exp, _CMPLX *result)
 {
 	if (exp < 0)
 	{
-		cpower(base, -exp, result);
+		complex_power(base, -exp, result);
 		CMPLXrecip(*result, *result);
 		return;
 	}
 
-	xt = base->x;
-	yt = base->y;
+	s_xt = base->x;
+	s_yt = base->y;
 
 	if (exp & 1)
 	{
-		result->x = xt;
-		result->y = yt;
+		result->x = s_xt;
+		result->y = s_yt;
 	}
 	else
 	{
@@ -424,15 +425,15 @@ void cpower(_CMPLX *base, int exp, _CMPLX *result)
 	exp >>= 1;
 	while (exp)
 	{
-		t2 = xt*xt - yt*yt;
-		yt = 2*xt*yt;
-		xt = t2;
+		s_t2 = s_xt*s_xt - s_yt*s_yt;
+		s_yt = 2*s_xt*s_yt;
+		s_xt = s_t2;
 
 		if (exp & 1)
 		{
-				t2 = xt*result->x - yt*result->y;
-				result->y = result->y*xt + yt*result->x;
-				result->x = t2;
+				s_t2 = s_xt*result->x - s_yt*result->y;
+				result->y = result->y*s_xt + s_yt*result->x;
+				result->x = s_t2;
 		}
 		exp >>= 1;
 	}
@@ -550,7 +551,7 @@ int NewtonFractal2(void)
 	{
 		start = 0;
 	}
-	cpower(&g_old_z, g_degree-1, &g_temp_z);
+	complex_power(&g_old_z, g_degree-1, &g_temp_z);
 	complex_mult(g_temp_z, g_old_z, &g_new_z);
 
 	if (DIST1(g_new_z) < g_threshold)
@@ -582,16 +583,16 @@ int NewtonFractal2(void)
 	g_new_z.y *= g_degree_minus_1_over_degree;
 
 	/* Watch for divide underflow */
-	t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
-	if (t2 < FLT_MIN)
+	s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
+	if (s_t2 < FLT_MIN)
 	{
 		return 1;
 	}
 	else
 	{
-		t2 = 1.0 / t2;
-		g_old_z.x = t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y);
-		g_old_z.y = t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y);
+		s_t2 = 1.0 / s_t2;
+		g_old_z.x = s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y);
+		g_old_z.y = s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y);
 	}
 	return 0;
 }
@@ -887,11 +888,11 @@ LambdaexponentFractal(void)
 	/* found this in  "Science of Fractal Images" */
 	if (save_release > 2002)  /* need braces since these are macros */
 	{
-		FLOATEXPBAILOUT();
+		BAIL_OUT_EXP_FP();
 	}
 	else
 	{
-		OLD_FLOATEXPBAILOUT();
+		BAIL_OUT_EXP_OLD_FP();
 	}
 	FPUsincos  (&g_old_z.y, &s_sin_y, &s_cos_y);
 
@@ -916,7 +917,7 @@ LongLambdaexponentFractal(void)
 #if !defined(XFRACT)
 	long tmp;
 	/* found this in  "Science of Fractal Images" */
-	LONGEXPBAILOUT();
+	BAIL_OUT_EXP_LONG();
 
 	SinCos086  (g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
 
@@ -968,8 +969,8 @@ LongTrigPlusExponentFractal(void)
 	long tmp;
 
 	/* domain check for fast transcendental functions */
-	TRIG16CHECK(g_old_z_l.x);
-	TRIG16CHECK(g_old_z_l.y);
+	BAIL_OUT_TRIG16(g_old_z_l.x);
+	BAIL_OUT_TRIG16(g_old_z_l.y);
 
 	tmp = Exp086(g_old_z_l.x);
 	SinCos086  (g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
@@ -1107,7 +1108,7 @@ Mandel4fpFractal(void)
 int
 floatZtozPluszpwrFractal(void)
 {
-	cpower(&g_old_z, (int)param[2], &g_new_z);
+	complex_power(&g_old_z, (int)param[2], &g_new_z);
 	g_old_z = ComplexPower(g_old_z, g_old_z);
 	g_new_z.x = g_new_z.x + g_old_z.x +g_float_parameter->x;
 	g_new_z.y = g_new_z.y + g_old_z.y +g_float_parameter->y;
@@ -1161,7 +1162,7 @@ longCmplxZpowerFractal(void)
 int
 floatZpowerFractal(void)
 {
-	cpower(&g_old_z, g_c_exp, &g_new_z);
+	complex_power(&g_old_z, g_c_exp, &g_new_z);
 	g_new_z.x += g_float_parameter->x;
 	g_new_z.y += g_float_parameter->y;
 	return g_bail_out_fp();
@@ -1385,14 +1386,14 @@ LPopcornFractal_Old(void)
 	g_tmp_z_l = g_old_z_l;
 	g_tmp_z_l.x *= 3L;
 	g_tmp_z_l.y *= 3L;
-	LTRIGARG(g_tmp_z_l.x);
-	LTRIGARG(g_tmp_z_l.y);
+	TRIG_ARG_L(g_tmp_z_l.x);
+	TRIG_ARG_L(g_tmp_z_l.y);
 	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_tmp_z_l.x = divide(s_sin_x_l, s_cos_x_l, bitshift) + g_old_z_l.x;
 	g_tmp_z_l.y = divide(s_sin_y_l, s_cos_y_l, bitshift) + g_old_z_l.y;
-	LTRIGARG(g_tmp_z_l.x);
-	LTRIGARG(g_tmp_z_l.y);
+	TRIG_ARG_L(g_tmp_z_l.x);
+	TRIG_ARG_L(g_tmp_z_l.y);
 	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.x = g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, bitshift);
@@ -1427,14 +1428,14 @@ LPopcornFractal(void)
 	g_tmp_z_l = g_old_z_l;
 	g_tmp_z_l.x *= 3L;
 	g_tmp_z_l.y *= 3L;
-	LTRIGARG(g_tmp_z_l.x);
-	LTRIGARG(g_tmp_z_l.y);
+	TRIG_ARG_L(g_tmp_z_l.x);
+	TRIG_ARG_L(g_tmp_z_l.y);
 	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_tmp_z_l.x = divide(s_sin_x_l, s_cos_x_l, bitshift) + g_old_z_l.x;
 	g_tmp_z_l.y = divide(s_sin_y_l, s_cos_y_l, bitshift) + g_old_z_l.y;
-	LTRIGARG(g_tmp_z_l.x);
-	LTRIGARG(g_tmp_z_l.y);
+	TRIG_ARG_L(g_tmp_z_l.x);
+	TRIG_ARG_L(g_tmp_z_l.y);
 	SinCos086(g_tmp_z_l.x, &s_sin_x_l, &s_cos_x_l);
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.x = g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, bitshift);
@@ -1880,7 +1881,7 @@ int MPCHalleyFractal(void)
 #endif
 	mpcnew = MPCsub(mpcold, mpctmp);
 	g_new_z    = MPC2cmplx(mpcnew);
-	return MPCHalleybailout() || MPOverflow;
+	return bail_out_halley_mpc() || MPOverflow;
 #else
 	return 0;
 #endif
@@ -1927,7 +1928,7 @@ HalleyFractal(void)
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.x = g_old_z.x - Halnumer2.x;
 	g_new_z.y = g_old_z.y - Halnumer2.y;
-	return Halleybailout();
+	return bail_out_halley();
 }
 
 int
@@ -2477,7 +2478,7 @@ int
 LambdaTrigFractal(void)
 {
 #if !defined(XFRACT)
-	LONGXYTRIGBAILOUT();
+	BAIL_OUT_TRIG_XY_LONG();
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2490,7 +2491,7 @@ LambdaTrigFractal(void)
 int
 LambdaTrigfpFractal(void)
 {
-	FLOATXYTRIGBAILOUT();
+	BAIL_OUT_TRIG_XY_FP();
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
@@ -2502,7 +2503,7 @@ int
 LambdaTrigFractal1(void)
 {
 #if !defined(XFRACT)
-	LONGTRIGBAILOUT(); /* sin, cos */
+	BAIL_OUT_TRIG_LONG(); /* sin, cos */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2515,7 +2516,7 @@ LambdaTrigFractal1(void)
 int
 LambdaTrigfpFractal1(void)
 {
-	FLOATTRIGBAILOUT(); /* sin, cos */
+	BAIL_OUT_TRIG_FP(); /* sin, cos */
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
@@ -2526,7 +2527,7 @@ int
 LambdaTrigFractal2(void)
 {
 #if !defined(XFRACT)
-	LONGHTRIGBAILOUT(); /* sinh, cosh */
+	BAIL_OUT_TRIG_H_LONG(); /* sinh, cosh */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2540,7 +2541,7 @@ int
 LambdaTrigfpFractal2(void)
 {
 #if !defined(XFRACT)
-	FLOATHTRIGBAILOUT(); /* sinh, cosh */
+	BAIL_OUT_TRIG_H_FP(); /* sinh, cosh */
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
@@ -2978,7 +2979,7 @@ int marksmandelfp_per_pixel()
 
 	if (g_c_exp > 3)
 	{
-		cpower(&g_old_z, g_c_exp-1, &g_coefficient);
+		complex_power(&g_old_z, g_c_exp-1, &g_coefficient);
 	}
 	else if (g_c_exp == 3)
 	{
