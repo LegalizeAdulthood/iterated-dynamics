@@ -1446,7 +1446,7 @@ int lyapunov(void)
 	(*g_plot_color)(g_col, g_row, 1);
 	if (g_invert)
 	{
-		invertz2(&g_initial_z);
+		invert_z(&g_initial_z);
 		a = g_initial_z.y;
 		b = g_initial_z.x;
 	}
@@ -2346,7 +2346,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		if (g_invert)
 		{
-			invertz2(&g_temp_z);
+			invert_z(&g_temp_z);
 			g_old_z = g_temp_z;
 		}
 		else
@@ -2450,7 +2450,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		if (g_invert)
 		{
-			invertz2(&g_temp_z);
+			invert_z(&g_temp_z);
 			g_old_z_l.x = (long)(g_temp_z.x*fudge);
 			g_old_z_l.y = (long)(g_temp_z.y*fudge);
 		}

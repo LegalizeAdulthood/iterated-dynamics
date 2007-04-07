@@ -1896,7 +1896,7 @@ int calculate_mandelbrot_fp(void)
 {
 	if (g_invert)
 	{
-		invertz2(&g_initial_z);
+		invert_z(&g_initial_z);
 	}
 	else
 	{

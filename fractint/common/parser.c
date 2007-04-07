@@ -3085,7 +3085,7 @@ int form_per_pixel(void)
 	/* TW started additions for inversion support here 4/17/94 */
 	if (g_invert)
 	{
-		invertz2(&g_old_z);
+		invert_z(&g_old_z);
 		switch (MathType)
 		{
 		case D_MATH:
