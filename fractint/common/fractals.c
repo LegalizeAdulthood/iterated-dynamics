@@ -83,23 +83,36 @@ struct MPC *g_roots_mpc = NULL;
 _CMPLX g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
 double g_two_pi = PI*2.0;
-int g_c_exp;
+int g_c_exp = 0;
 /* These are local but I don't want to pass them as parameters */
-_CMPLX g_parameter, g_parameter2;
-_CMPLX *g_float_parameter;
-_LCMPLX *g_long_parameter; /* used here and in jb.c */
-double sinx, cosx;
-double siny, cosy;
-double tmpexp;
-double tempsqrx, tempsqry;
-double foldxinitx, foldyinity, foldxinity, foldyinitx;
-long oldxinitx, oldyinity, oldxinity, oldyinitx;
+_CMPLX g_parameter = { 0, 0 };
+_CMPLX g_parameter2 = { 0, 0 };
+_CMPLX *g_float_parameter = NULL;
+_LCMPLX *g_long_parameter = NULL; /* used here and in jb.c */
+double g_cos_x = 0.0;
+double g_sin_x = 0.0;
+double tmpexp = 0.0;
+double tempsqrx = 0.0;
+double tempsqry;
+double foldxinitx;
+double foldyinity;
+double foldxinity;
+double foldyinitx;
+long oldxinitx;
+long oldyinity;
+long oldxinity;
+long oldyinitx;
 long longtmp;
 /* These are for quaternions */
-double qc, qci, qcj, qck;
+double qc;
+double qci;
+double qcj;
+double qck;
 /* temporary variables for trig use */
-long lcosx, lsinx;
-long lcosy, lsiny;
+long lcosx;
+long lsinx;
+long lcosy;
+long lsiny;
 /*
 **  details of finite attractors (required for Magnet Fractals)
 **  (can also be used in "coloring in" the lakes of Julia types)
@@ -112,7 +125,8 @@ _CMPLX  T_Cm2;        /* 3*(g_float_parameter - 2)                */
 _CMPLX  T_Cm1Cm2;     /* (g_float_parameter - 1)*(g_float_parameter - 2) */
 
 static _CMPLX s_temp2 = { 0.0, 0.0 };
-
+static double s_cos_y;
+static double s_sin_y;
 
 void FloatPreCalcMagnet2(void) /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -515,9 +529,9 @@ z_to_the_z(_CMPLX *z, _CMPLX *out)
 
 	tmpexp = exp(tmp2.x);
 
-	FPUsincos(&tmp2.y, &siny, &cosy);
-	out->x = tmpexp*cosy;
-	out->y = tmpexp*siny;
+	FPUsincos(&tmp2.y, &s_sin_y, &s_cos_y);
+	out->x = tmpexp*s_cos_y;
+	out->y = tmpexp*s_sin_y;
 	return errno_xxx;
 }
 #endif
@@ -881,15 +895,15 @@ LambdaexponentFractal(void)
 	{
 		OLD_FLOATEXPBAILOUT();
 	}
-	FPUsincos  (&g_old_z.y, &siny, &cosy);
+	FPUsincos  (&g_old_z.y, &s_sin_y, &s_cos_y);
 
-	if (g_old_z.x >= g_rq_limit && cosy >= 0.0)
+	if (g_old_z.x >= g_rq_limit && s_cos_y >= 0.0)
 	{
 		return 1;
 	}
 	tmpexp = exp(g_old_z.x);
-	g_temp_z.x = tmpexp*cosy;
-	g_temp_z.y = tmpexp*siny;
+	g_temp_z.x = tmpexp*s_cos_y;
+	g_temp_z.y = tmpexp*s_sin_y;
 
 	/*multiply by lamda */
 	g_new_z.x = g_float_parameter->x*g_temp_z.x - g_float_parameter->y*g_temp_z.y;
@@ -938,12 +952,12 @@ FloatTrigPlusExponentFractal(void)
 		return 1;
 	}
 	tmpexp = exp(g_old_z.x);
-	FPUsincos  (&g_old_z.y, &siny, &cosy);
+	FPUsincos  (&g_old_z.y, &s_sin_y, &s_cos_y);
 	CMPLXtrig0(g_old_z, g_new_z);
 
 	/*new =   trig(old) + e**old + C  */
-	g_new_z.x += tmpexp*cosy + g_float_parameter->x;
-	g_new_z.y += tmpexp*siny + g_float_parameter->y;
+	g_new_z.x += tmpexp*s_cos_y + g_float_parameter->x;
+	g_new_z.y += tmpexp*s_sin_y + g_float_parameter->y;
 	return floatbailout();
 }
 
@@ -1289,14 +1303,14 @@ PopcornFractal_Old(void)
 	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
 	g_temp_z.y *= 3.0;
-	FPUsincos(&g_temp_z.x, &sinx, &cosx);
-	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_temp_z.x = sinx/cosx + g_old_z.x;
-	g_temp_z.y = siny/cosy + g_old_z.y;
-	FPUsincos(&g_temp_z.x, &sinx, &cosx);
-	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_new_z.x = g_old_z.x - g_parameter.x*siny;
-	g_new_z.y = g_old_z.y - g_parameter.x*sinx;
+	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	g_temp_z.x = g_sin_x/g_cos_x + g_old_z.x;
+	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.y;
+	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	g_new_z.x = g_old_z.x - g_parameter.x*s_sin_y;
+	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
 	if (g_plot_color == noplot)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
@@ -1328,14 +1342,14 @@ PopcornFractal(void)
 	g_temp_z = g_old_z;
 	g_temp_z.x *= 3.0;
 	g_temp_z.y *= 3.0;
-	FPUsincos(&g_temp_z.x, &sinx, &cosx);
-	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_temp_z.x = sinx/cosx + g_old_z.x;
-	g_temp_z.y = siny/cosy + g_old_z.y;
-	FPUsincos(&g_temp_z.x, &sinx, &cosx);
-	FPUsincos(&g_temp_z.y, &siny, &cosy);
-	g_new_z.x = g_old_z.x - g_parameter.x*siny;
-	g_new_z.y = g_old_z.y - g_parameter.x*sinx;
+	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	g_temp_z.x = g_sin_x/g_cos_x + g_old_z.x;
+	g_temp_z.y = s_sin_y/s_cos_y + g_old_z.y;
+	FPUsincos(&g_temp_z.x, &g_sin_x, &g_cos_x);
+	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
+	g_new_z.x = g_old_z.x - g_parameter.x*s_sin_y;
+	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
 	/*
 	g_new_z.x = g_old_z.x - g_parameter.x*sin(g_old_z.y + tan(3*g_old_z.y));
 	g_new_z.y = g_old_z.y - g_parameter.x*sin(g_old_z.x + tan(3*g_old_z.x));

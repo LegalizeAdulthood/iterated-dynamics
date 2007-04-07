@@ -474,8 +474,8 @@ int orbit_3d_setup_fp()
 		s_c =  param[2];    /* stop */
 		s_l_d =  (long) param[3];
 		s_t = (int) s_l_d;     /* points per orbit */
-		sinx = sin(s_a);
-		cosx = cos(s_a);
+		g_sin_x = sin(s_a);
+		g_cos_x = cos(s_a);
 		s_orbit = 0;
 		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
 	}
@@ -1120,8 +1120,8 @@ int kam_torus_orbit_fp(double *r, double *s, double *z)
 		}
 	}
 	srr = (*s) - (*r)*(*r);
-	(*s) = (*r)*sinx + srr*cosx;
-	(*r) = (*r)*cosx - srr*sinx;
+	(*s) = (*r)*g_sin_x + srr*g_cos_x;
+	(*r) = (*r)*g_cos_x - srr*g_sin_x;
 	return 0;
 }
 
