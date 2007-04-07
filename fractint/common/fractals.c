@@ -605,7 +605,7 @@ struct MP mpt2;
 struct MP mpone;
 #endif
 
-int MPCNewtonFractal(void)
+int newton_orbit_mpc(void)
 {
 #if !defined(XFRACT)
 	MPOverflow = 0;

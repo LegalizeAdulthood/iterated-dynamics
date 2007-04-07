@@ -340,7 +340,7 @@ extern void magnet2_precalculate_fp(void);
 extern void complex_power(_CMPLX *, int, _CMPLX *);
 extern int complex_power_l(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
-extern int MPCNewtonFractal(void);
+extern int newton_orbit_mpc(void);
 extern int Barnsley1Fractal(void);
 extern int Barnsley1FPFractal(void);
 extern int Barnsley2Fractal(void);
