@@ -235,7 +235,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, JULIA, NOFRACTAL, MANDELFP, XAXIS_NOPARM,
-		julia_orbit, mandel_per_pixel, MandelSetup, standard_fractal,
+		julia_orbit, mandelbrot_per_pixel_fp, MandelSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -350,7 +350,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_MANOWAR, WINFRAC | BAILTEST,
 		-2.5f,  1.5f, -1.5f, 1.5f,
 		1, MANOWARJ, NOFRACTAL, MANOWARFP, XAXIS_NOPARM,
-		man_o_war_orbit, mandel_per_pixel, MandellongSetup, standard_fractal,
+		man_o_war_orbit, mandelbrot_per_pixel_fp, MandellongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -468,7 +468,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_MLAMBDA, HF_MLAMBDA, WINFRAC | BAILTEST,
 		-3.0f, 5.0f, -3.0f, 3.0f,
 		1, LAMBDA, NOFRACTAL, MANDELLAMBDAFP, XAXIS_NOPARM,
-		lambda_orbit, mandel_per_pixel, MandellongSetup, standard_fractal,
+		lambda_orbit, mandelbrot_per_pixel_fp, MandellongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -513,7 +513,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_MANDJUL4, HF_MANDEL4, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, JULIA4, NOFRACTAL, MANDEL4FP, XAXIS_NOPARM,
-		mandel4_orbit, mandel_per_pixel, MandellongSetup, standard_fractal,
+		mandel4_orbit, mandelbrot_per_pixel_fp, MandellongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -750,7 +750,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PICKMJ, HF_MANDFNPLUSZSQRD, TRIG1 | WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		16, LJULTRIGPLUSZSQRD, NOFRACTAL, FPMANTRIGPLUSZSQRD, XAXIS_NOPARM,
-		trig_plus_z_squared_orbit, mandel_per_pixel, MandellongSetup,
+		trig_plus_z_squared_orbit, mandelbrot_per_pixel_fp, MandellongSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -1318,7 +1318,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_SPIDER, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, SPIDERFP, XAXIS_NOPARM,
-		spider_orbit, mandel_per_pixel, MandellongSetup, standard_fractal,
+		spider_orbit, mandelbrot_per_pixel_fp, MandellongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -1507,7 +1507,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | WINFRAC | BAILTEST,
 		-3.6f, 3.6f, -2.7f, 2.7f,
 		1, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXFP, NOSYM,
-		richard8_orbit, long_richard8_per_pixel, MandellongSetup,
+		richard8_orbit, richard8_per_pixel, MandellongSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
