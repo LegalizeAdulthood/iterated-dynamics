@@ -388,7 +388,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_BARNS, HF_BARNSM1, WINFRAC | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, BARNSLEYJ1, NOFRACTAL, BARNSLEYM1FP, XYAXIS_NOPARM,
-		Barnsley1Fractal, long_mandel_per_pixel, MandellongSetup,
+		barnsley1_orbit, long_mandel_per_pixel, MandellongSetup,
 				standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -400,7 +400,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_BARNS, HF_BARNSJ1, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, BARNSLEYM1, BARNSLEYJ1FP, ORIGIN,
-		Barnsley1Fractal, long_julia_per_pixel, JulialongSetup, standard_fractal,
+		barnsley1_orbit, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
