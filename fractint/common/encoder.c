@@ -519,8 +519,8 @@ int encoder()
 		if (g_resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
 		{
 			/* resume info block, 002 */
-			save_info.tot_extend_len += extend_blk_len(resume_len);
-			if (!put_extend_blk(2, resume_len, g_resume_info))
+			save_info.tot_extend_len += extend_blk_len(g_resume_length);
+			if (!put_extend_blk(2, g_resume_length, g_resume_info))
 			{
 				goto oops;
 			}
