@@ -1156,7 +1156,7 @@ MarksJuliaSetup(void)
 	g_old_z_l = *g_long_parameter;
 	if (g_c_exp > 3)
 	{
-		lcpower(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
+		complex_power_l(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
 	}
 	else if (g_c_exp == 3)
 	{

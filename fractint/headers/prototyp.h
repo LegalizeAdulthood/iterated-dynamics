@@ -129,7 +129,7 @@ extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
 
 /*  newton -- assembler file prototypes */
 
-extern int cdecl    NewtonFractal2(void);
+extern int cdecl    newton2_orbit(void);
 extern void cdecl   invertz2(_CMPLX *);
 
 /*  tplus_a -- assembler file prototypes */
@@ -338,14 +338,14 @@ extern int parameter_not_used(int);
 
 extern void magnet2_precalculate_fp(void);
 extern void complex_power(_CMPLX *, int, _CMPLX *);
-extern int lcpower(_LCMPLX *, int, _LCMPLX *, int);
+extern int complex_power_l(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
 extern int MPCNewtonFractal(void);
 extern int Barnsley1Fractal(void);
 extern int Barnsley1FPFractal(void);
 extern int Barnsley2Fractal(void);
 extern int Barnsley2FPFractal(void);
-extern int JuliaFractal(void);
+extern int julia_orbit(void);
 extern int JuliafpFractal(void);
 extern int LambdaFPFractal(void);
 extern int LambdaFractal(void);

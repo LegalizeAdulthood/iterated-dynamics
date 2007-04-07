@@ -336,7 +336,7 @@ solidguess calls *calctype for each pixel; calctype is eg. StandardFractal
 
 StandardFractal calls curfractalspecific->per_pixel once, and then loops over
     each iteration calling curfractalspecific->orbitcalc.  These routines
-    are eg.  mandel_per_pixel and JuliaFractal.
+    are eg.  mandel_per_pixel and julia_orbit.
 
 
 
