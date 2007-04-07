@@ -1324,7 +1324,7 @@ void set_default_parms()
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
 		{
-			param[i + 4] = moreparams[extra].paramvalue[i];
+			param[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
 	}
 	if (debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT)
@@ -2057,7 +2057,7 @@ int find_extra_param(int type)
 	{
 		do
 		{
-			curtyp = moreparams[++i].type;
+			curtyp = g_more_parameters[++i].type;
 		}
 		while (curtyp != type && curtyp != -1);
 		if (curtyp == type)
@@ -2084,7 +2084,7 @@ void load_params(int fractype)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
 		{
-			param[i + 4] = moreparams[extra].paramvalue[i];
+			param[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
 	}
 }

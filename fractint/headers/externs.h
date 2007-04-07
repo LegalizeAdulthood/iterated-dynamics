@@ -305,7 +305,7 @@ extern enum Minor            g_minor_method;
 extern int                   minstack;
 extern int                   minstackavail;
 extern int                   g_mode_7_text;						/* for egamono and hgc */
-extern MOREPARAMS            moreparams[];
+extern more_parameters		g_more_parameters[];
 extern struct MP             mpAp1deg;
 extern struct MP             mpAplusOne;
 extern struct MPC            MPCone;
