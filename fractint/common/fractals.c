@@ -67,8 +67,6 @@ int g_max_color;
 int g_root;
 int g_degree;
 int g_basin;
-double floatmin;
-double floatmax;
 double roverd;
 double d1overd;
 double threshold;
