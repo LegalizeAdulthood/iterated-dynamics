@@ -530,8 +530,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 
 	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
-	floatbailout  = (int (*)(void))fpMODbailout;
-	longbailout   = (int (*)(void))asmlMODbailout;
+	g_bail_out_fp  = (int (*)(void))bail_out_mod_fp;
+	g_bail_out_l   = (int (*)(void))asmlMODbailout;
 	bignumbailout = (int (*)(void))bail_out_mod_bn;
 	bigfltbailout = (int (*)(void))bail_out_mod_bf;
 
