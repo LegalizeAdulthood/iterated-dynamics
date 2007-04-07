@@ -175,7 +175,7 @@ int bail_out_real_fp(void)
 	return 0;
 }
 
-int fpIMAGbailout(void)
+int bail_out_imag_fp(void)
 {
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);

@@ -470,7 +470,7 @@ extern int (*bignumbailout)(void);
 extern int (*bigfltbailout)(void);
 extern int bail_out_mod_fp(void);
 extern int bail_out_real_fp(void);
-extern int fpIMAGbailout(void);
+extern int bail_out_imag_fp(void);
 extern int fpORbailout(void);
 extern int fpANDbailout(void);
 extern int fpMANHbailout(void);
