@@ -166,8 +166,6 @@ extern int                   finishrow;
 extern int                   first_init;
 extern int					g_first_saved_and;
 extern char                  floatflag;
-extern double                floatmax;
-extern double                floatmin;
 extern _CMPLX *              floatparm;
 extern int                   fm_attack;
 extern int                   fm_decay;

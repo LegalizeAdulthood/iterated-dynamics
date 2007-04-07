@@ -130,9 +130,6 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	}
 #endif
 
-	floatmin = FLT_MIN;
-	floatmax = FLT_MAX;
-
 	g_basin = 0;
 	if (roots != staticroots)
 	{
