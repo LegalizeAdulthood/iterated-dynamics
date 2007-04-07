@@ -667,7 +667,7 @@ _CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
 int ComplexNewtonSetup(void)
 {
-	threshold = .001;
+	g_threshold = .001;
 	g_periodicity_check = 0;
 	if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
 		param[3] != 0.0)
@@ -698,7 +698,7 @@ int ComplexNewton(void)
 
 	g_temp_z.x = g_new_z.x - croot.x;
 	g_temp_z.y = g_new_z.y - croot.y;
-	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < threshold)
+	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
 	{
 		return 1;
 	}
@@ -734,7 +734,7 @@ int ComplexBasin(void)
 
 	g_temp_z.x = g_new_z.x - croot.x;
 	g_temp_z.y = g_new_z.y - croot.y;
-	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < threshold)
+	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
 	{
 		if (fabs(g_old_z.y) < .01)
 		{
