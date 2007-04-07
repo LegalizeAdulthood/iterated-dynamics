@@ -116,16 +116,16 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	g_root = 1;
 
 	/* precalculated values */
-	g_r_over_d       = (double)g_root / (double)g_degree;
-	d1overd      = (double)(g_degree - 1) / (double)g_degree;
+	g_root_over_degree       = (double)g_root / (double)g_degree;
+	g_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
 	g_max_color     = 0;
-	threshold    = .3*PI/g_degree; /* less than half distance between roots */
+	g_threshold    = .3*PI/g_degree; /* less than half distance between roots */
 #if !defined(XFRACT)
 	if (fractype == MPNEWTON || fractype == MPNEWTBASIN)
 	{
-		mproverd     = *pd2MP(g_r_over_d);
-		mpd1overd    = *pd2MP(d1overd);
-		mpthreshold  = *pd2MP(threshold);
+		mproverd     = *pd2MP(g_root_over_degree);
+		mpd1overd    = *pd2MP(g_degree_minus_1_over_degree);
+		mpthreshold  = *pd2MP(g_threshold);
 		mpone        = *pd2MP(1.0);
 	}
 #endif
