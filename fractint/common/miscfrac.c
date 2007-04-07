@@ -2496,7 +2496,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 					break;
 				}
-				iplot_orbit(lold.x, lold.y, -1);
+				plot_orbit_i(lold.x, lold.y, -1);
 			}
 
 			if (labs(fsp->fl.l.halfa-lold.y) < FROTH_LCLOSE

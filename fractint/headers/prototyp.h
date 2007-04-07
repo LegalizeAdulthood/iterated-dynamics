@@ -303,7 +303,7 @@ extern int start_resume(void);
 extern void end_resume(void);
 extern void sleep_ms(long);
 extern void reset_clock(void);
-extern void iplot_orbit(long, long, int);
+extern void plot_orbit_i(long, long, int);
 extern void plot_orbit(double, double, int);
 extern void scrub_orbit(void);
 extern int add_worklist(int, int, int, int, int, int, int, int);
@@ -325,10 +325,9 @@ extern void adjust_corner_bf(void);
 extern void set_grid_pointers(void);
 extern void fill_dx_array(void);
 extern void fill_lx_array(void);
-extern int snd_open(void);
 extern void sound_tone(int);
-extern void snd_time_write(void);
-extern void close_snd(void);
+extern void sound_write_time(void);
+extern void sound_close(void);
 
 /*  fractalp -- C file prototypes */
 

@@ -50,6 +50,7 @@ static void   _fastcall plot_orbit_d(double, double, int);
 static int    _fastcall combine_work_list(void);
 static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
+static int sound_open(void);
 
 void free_grid_pointers()
 {
@@ -1631,7 +1632,7 @@ void sound_tone(int tone)
 	}
 }
 
-void snd_time_write(void)
+void sound_write_time(void)
 {
 	if (sound_open())
 	{
@@ -1639,7 +1640,7 @@ void snd_time_write(void)
 	}
 }
 
-void close_snd(void)
+void sound_close(void)
 {
 	if (snd_fp)
 	{
@@ -1721,7 +1722,7 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	/* placing sleep_ms here delays each dot */
 }
 
-void iplot_orbit(long ix, long iy, int color)
+void plot_orbit_i(long ix, long iy, int color)
 {
 	plot_orbit_d((double)ix/fudge-xxmin, (double)iy/fudge-yymax, color);
 }
