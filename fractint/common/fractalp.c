@@ -131,20 +131,20 @@ alternate_math g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-	{ JULIAFP,			BIGNUM, JuliabnFractal,			juliabn_per_pixel,  MandelbnSetup },
-	{ MANDELFP,			BIGNUM, JuliabnFractal,			mandelbn_per_pixel, MandelbnSetup },
+	{ JULIAFP,			BIGNUM, julia_orbit_bn,			julia_per_pixel_bn,  mandelbrot_setup_bn },
+	{ MANDELFP,			BIGNUM, julia_orbit_bn,			mandelbrot_per_pixel_bn, mandelbrot_setup_bn },
 #else
-	{ JULIAFP,			BIGFLT, JuliabfFractal,			juliabf_per_pixel,  MandelbfSetup },
-	{ MANDELFP,			BIGFLT, JuliabfFractal,			mandelbf_per_pixel, MandelbfSetup },
+	{ JULIAFP,			BIGFLT, julia_orbit_bf,			julia_per_pixel_bf,  mandelbrot_setup_bf },
+	{ MANDELFP,			BIGFLT, julia_orbit_bf,			mandelbrot_per_pixel_bf, mandelbrot_setup_bf },
 #endif
 	/*
 	NOTE: The default precision for bf_math=BIGNUM is not high enough
-			for JuliaZpowerbnFractal.  If you want to test BIGNUM (1) instead
+			for julia_z_power_orbit_bn.  If you want to test BIGNUM (1) instead
 			of the usual BIGFLT (2), then set bfdigits on the command to
 			increase the precision.
 	*/
-	{ FPJULIAZPOWER,	BIGFLT, JuliaZpowerbfFractal,	juliabf_per_pixel,	MandelbfSetup },
-	{ FPMANDELZPOWER,	BIGFLT, JuliaZpowerbfFractal,	mandelbf_per_pixel, MandelbfSetup }
+	{ FPJULIAZPOWER,	BIGFLT, julia_z_power_orbit_bf,	julia_per_pixel_bf,	mandelbrot_setup_bf },
+	{ FPMANDELZPOWER,	BIGFLT, julia_z_power_orbit_bf,	mandelbrot_per_pixel_bf, mandelbrot_setup_bf }
 };
 int g_alternate_math_len = NUM_OF(g_alternate_math);
 

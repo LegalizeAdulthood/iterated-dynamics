@@ -210,7 +210,7 @@ void calculate_fractal_initialize(void)
 		gotprec = getprecbf(CURRENTREZ);
 		if ((gotprec <= DBL_DIG + 1 && debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT) || math_tol[1] >= 1.0)
 		{
-			bfcornerstofloat();
+			corners_bf_to_float();
 			bf_math = 0;
 		}
 		else

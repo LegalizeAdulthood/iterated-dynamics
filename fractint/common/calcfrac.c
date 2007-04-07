@@ -2139,11 +2139,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		else if (bf_math == BIGNUM)
 		{
-			g_old_z = cmplxbntofloat(&bnold);
+			g_old_z = complex_bn_to_float(&bnold);
 		}
 		else if (bf_math == BIGFLT)
 		{
-			g_old_z = cmplxbftofloat(&bfold);
+			g_old_z = complex_bf_to_float(&bfold);
 		}
 		lastz.x = g_old_z.x;
 		lastz.y = g_old_z.y;
@@ -2228,11 +2228,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				if (bf_math == BIGNUM)
 				{
-					g_new_z = cmplxbntofloat(&bnnew);
+					g_new_z = complex_bn_to_float(&bnnew);
 				}
 				else if (bf_math == BIGFLT)
 				{
-					g_new_z = cmplxbftofloat(&bfnew);
+					g_new_z = complex_bf_to_float(&bfnew);
 				}
 				plot_orbit(g_new_z.x, g_new_z.y, -1);
 			}
@@ -2245,11 +2245,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		{
 			if (bf_math == BIGNUM)
 			{
-				g_new_z = cmplxbntofloat(&bnnew);
+				g_new_z = complex_bn_to_float(&bnnew);
 			}
 			else if (bf_math == BIGFLT)
 			{
-				g_new_z = cmplxbftofloat(&bfnew);
+				g_new_z = complex_bf_to_float(&bfnew);
 			}
 			if (inside == STARTRAIL)
 			{
@@ -2364,11 +2364,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		{
 			if (bf_math == BIGNUM)
 			{
-				g_new_z = cmplxbntofloat(&bnnew);
+				g_new_z = complex_bn_to_float(&bnnew);
 			}
 			else if (bf_math == BIGFLT)
 			{
-				g_new_z = cmplxbftofloat(&bfnew);
+				g_new_z = complex_bf_to_float(&bfnew);
 			}
 			if (outside == TDIS)
 			{

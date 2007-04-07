@@ -532,8 +532,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_bail_out_test    = Mod;
 	floatbailout  = (int (*)(void))fpMODbailout;
 	longbailout   = (int (*)(void))asmlMODbailout;
-	bignumbailout = (int (*)(void))bnMODbailout;
-	bigfltbailout = (int (*)(void))bfMODbailout;
+	bignumbailout = (int (*)(void))bail_out_mod_bn;
+	bigfltbailout = (int (*)(void))bail_out_mod_bf;
 
 	functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
 	g_m_x_min_fp = -.83;
@@ -2119,7 +2119,7 @@ static int center_mag_arg(const cmd_context *context)
 		}
 		/* calculate bounds */
 		cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
-		bfcornerstofloat();
+		corners_bf_to_float();
 		restore_stack(saved);
 		return COMMAND_FRACTAL_PARAM;
 	}
