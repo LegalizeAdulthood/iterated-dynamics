@@ -67,32 +67,32 @@ extern void cdecl FPUcplxexp387(_CMPLX *, _CMPLX *);
 
 /*  fracsuba -- assembler file prototypes */
 
-extern int near asmlMODbailout(void);
-extern int near asmlREALbailout(void);
-extern int near asmlIMAGbailout(void);
-extern int near asmlORbailout(void);
-extern int near asmlANDbailout(void);
-extern int near asmlMANHbailout(void);
-extern int near asmlMANRbailout(void);
-extern int near asm386lMODbailout(void);
-extern int near asm386lREALbailout(void);
-extern int near asm386lIMAGbailout(void);
-extern int near asm386lORbailout(void);
-extern int near asm386lANDbailout(void);
-extern int near asm386lMANHbailout(void);
-extern int near asm386lMANRbailout(void);
+extern int asmlMODbailout(void);
+extern int asmlREALbailout(void);
+extern int asmlIMAGbailout(void);
+extern int asmlORbailout(void);
+extern int asmlANDbailout(void);
+extern int asmlMANHbailout(void);
+extern int asmlMANRbailout(void);
+extern int asm386lMODbailout(void);
+extern int asm386lREALbailout(void);
+extern int asm386lIMAGbailout(void);
+extern int asm386lORbailout(void);
+extern int asm386lANDbailout(void);
+extern int asm386lMANHbailout(void);
+extern int asm386lMANRbailout(void);
 extern int FManOWarfpFractal(void);
 extern int FJuliafpFractal(void);
 extern int FBarnsley1FPFractal(void);
 extern int FBarnsley2FPFractal(void);
 extern int FLambdaFPFractal(void);
-extern int near asmfpMODbailout(void);
-extern int near asmfpREALbailout(void);
-extern int near asmfpIMAGbailout(void);
-extern int near asmfpORbailout(void);
-extern int near asmfpANDbailout(void);
-extern int near asmfpMANHbailout(void);
-extern int near asmfpMANRbailout(void);
+extern int asmfpMODbailout(void);
+extern int asmfpREALbailout(void);
+extern int asmfpIMAGbailout(void);
+extern int asmfpORbailout(void);
+extern int asmfpANDbailout(void);
+extern int asmfpMANHbailout(void);
+extern int asmfpMANRbailout(void);
 
 /* history -- C file prototypes */
 
@@ -336,7 +336,7 @@ extern int parameter_not_used(int);
 
 /*  fractals -- C file prototypes */
 
-extern void FloatPreCalcMagnet2(void);
+extern void magnet2_precalculate_fp(void);
 extern void cpower(_CMPLX *, int, _CMPLX *);
 extern int lcpower(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
@@ -464,31 +464,31 @@ extern int mandphoenix_per_pixel(void);
 extern int HyperComplexFPFractal(void);
 extern int LongPhoenixFractalcplx(void);
 extern int PhoenixFractalcplx(void);
-extern int (near *floatbailout)(void);
-extern int (near *longbailout)(void);
-extern int (near *bignumbailout)(void);
-extern int (near *bigfltbailout)(void);
-extern int near fpMODbailout(void);
-extern int near fpREALbailout(void);
-extern int near fpIMAGbailout(void);
-extern int near fpORbailout(void);
-extern int near fpANDbailout(void);
-extern int near fpMANHbailout(void);
-extern int near fpMANRbailout(void);
-extern int near bail_out_mod_bn(void);
-extern int near bail_out_real_bn(void);
-extern int near bail_out_imag_bn(void);
-extern int near bail_out_or_bn(void);
-extern int near bail_out_and_bn(void);
-extern int near bail_out_manhattan_bn(void);
-extern int near bail_out_manhattan_r_bn(void);
-extern int near bail_out_mod_bf(void);
-extern int near bail_out_real_bf(void);
-extern int near bail_out_imag_bf(void);
-extern int near bail_out_or_bf(void);
-extern int near bail_out_and_bf(void);
-extern int near bail_out_manhattan_bf(void);
-extern int near bail_out_manhattan_r_bf(void);
+extern int (*g_bail_out_fp)(void);
+extern int (*g_bail_out_l)(void);
+extern int (*bignumbailout)(void);
+extern int (*bigfltbailout)(void);
+extern int bail_out_mod_fp(void);
+extern int fpREALbailout(void);
+extern int fpIMAGbailout(void);
+extern int fpORbailout(void);
+extern int fpANDbailout(void);
+extern int fpMANHbailout(void);
+extern int fpMANRbailout(void);
+extern int bail_out_mod_bn(void);
+extern int bail_out_real_bn(void);
+extern int bail_out_imag_bn(void);
+extern int bail_out_or_bn(void);
+extern int bail_out_and_bn(void);
+extern int bail_out_manhattan_bn(void);
+extern int bail_out_manhattan_r_bn(void);
+extern int bail_out_mod_bf(void);
+extern int bail_out_real_bf(void);
+extern int bail_out_imag_bf(void);
+extern int bail_out_or_bf(void);
+extern int bail_out_and_bf(void);
+extern int bail_out_manhattan_bf(void);
+extern int bail_out_manhattan_r_bf(void);
 extern int ant(void);
 extern void free_ant_storage(void);
 extern int LongPhoenixFractal(void);
@@ -798,8 +798,8 @@ extern double _cos(double);
 /*  parser -- C file prototypes */
 
 struct fls { /* function, load, store pointers  CAE fp */
-   void (near *function)(void);
-   union Arg near *operand;
+   void (*function)(void);
+   union Arg *operand;
 };
 
 extern unsigned int SkipWhiteSpace(char *);

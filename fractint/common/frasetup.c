@@ -463,7 +463,7 @@ JuliafpSetup(void)
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
 		break;
 	case MAGNET2J:
-		FloatPreCalcMagnet2();
+		magnet2_precalculate_fp();
 	case MAGNET1J:
 		g_attractors[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
 		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
