@@ -942,7 +942,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		0, NOFRACTAL, NOFRACTAL, LPOPCORN, NOPLOT,
-		PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, popcorn,
+		popcorn_fn_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup, popcorn,
 		BAILOUT_STANDARD
 	},
 
@@ -953,7 +953,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		16, NOFRACTAL, NOFRACTAL, FPPOPCORN, NOPLOT,
-		LPopcornFractalFn, long_julia_per_pixel, JulialongSetup, popcorn,
+		popcorn_fn_orbit, long_julia_per_pixel, JulialongSetup, popcorn,
 		BAILOUT_STANDARD
 	},
 
@@ -1440,7 +1440,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		0, NOFRACTAL, NOFRACTAL, LPOPCORNJUL, NOSYM,
-		PopcornFractalFn, otherjuliafp_per_pixel, JuliafpSetup, standard_fractal,
+		popcorn_fn_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -1451,7 +1451,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		16, NOFRACTAL, NOFRACTAL, FPPOPCORNJUL, NOSYM,
-		LPopcornFractalFn, long_julia_per_pixel, JulialongSetup, standard_fractal,
+		popcorn_fn_orbit, long_julia_per_pixel, JulialongSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 

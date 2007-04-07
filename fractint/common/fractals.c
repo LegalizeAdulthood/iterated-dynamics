@@ -1316,8 +1316,7 @@ int popcorn_orbit_fp(void)
 	return 0;
 }
 
-int
-LPopcornFractal_Old(void)
+int popcorn_old_orbit(void)
 {
 #if !defined(XFRACT)
 	g_tmp_z_l = g_old_z_l;
@@ -1358,8 +1357,7 @@ LPopcornFractal_Old(void)
 #endif
 }
 
-int
-LPopcornFractal(void)
+int popcorn_orbit(void)
 {
 #if !defined(XFRACT)
 	g_tmp_z_l = g_old_z_l;
@@ -1400,8 +1398,7 @@ LPopcornFractal(void)
 
 /* Popcorn generalization proposed by HB  */
 
-int
-PopcornFractalFn(void)
+int popcorn_fn_orbit_fp(void)
 {
 	_CMPLX tmpx;
 	_CMPLX tmpy;
@@ -1442,15 +1439,15 @@ PopcornFractalFn(void)
 	return 0;
 }
 
-#define FIX_OVERFLOW(arg) if (overflow)  \
+#define FIX_OVERFLOW(arg_) \
+	if (overflow)  \
 	{ \
-		(arg).x = fudge; \
-		(arg).y = 0; \
+		(arg_).x = fudge; \
+		(arg_).y = 0; \
 		overflow = 0; \
 	}
 
-int
-LPopcornFractalFn(void)
+int popcorn_fn_orbit(void)
 {
 #if !defined(XFRACT)
 	_LCMPLX ltmpx, ltmpy;
