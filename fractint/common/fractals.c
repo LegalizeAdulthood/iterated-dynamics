@@ -87,7 +87,7 @@ int g_c_exp;
 /* These are local but I don't want to pass them as parameters */
 _CMPLX g_parameter, g_parameter2;
 _CMPLX *g_float_parameter;
-_LCMPLX *longparm; /* used here and in jb.c */
+_LCMPLX *g_long_parameter; /* used here and in jb.c */
 double sinx, cosx;
 double siny, cosy;
 double tmpexp;
@@ -666,20 +666,20 @@ Barnsley1Fractal(void)
 	Everywhere" by Michael Barnsley, p. 322 */
 
 	/* calculate intermediate products */
-	oldxinitx   = multiply(g_old_z_l.x, longparm->x, bitshift);
-	oldyinity   = multiply(g_old_z_l.y, longparm->y, bitshift);
-	oldxinity   = multiply(g_old_z_l.x, longparm->y, bitshift);
-	oldyinitx   = multiply(g_old_z_l.y, longparm->x, bitshift);
+	oldxinitx   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
+	oldyinity   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
+	oldxinity   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
+	oldyinitx   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
 	/* orbit calculation */
 	if (g_old_z_l.x >= 0)
 	{
-		g_new_z_l.x = (oldxinitx - longparm->x - oldyinity);
-		g_new_z_l.y = (oldyinitx - longparm->y + oldxinity);
+		g_new_z_l.x = (oldxinitx - g_long_parameter->x - oldyinity);
+		g_new_z_l.y = (oldyinitx - g_long_parameter->y + oldxinity);
 	}
 	else
 	{
-		g_new_z_l.x = (oldxinitx + longparm->x - oldyinity);
-		g_new_z_l.y = (oldyinitx + longparm->y + oldxinity);
+		g_new_z_l.x = (oldxinitx + g_long_parameter->x - oldyinity);
+		g_new_z_l.y = (oldyinitx + g_long_parameter->y + oldxinity);
 	}
 	return longbailout();
 #else
@@ -722,21 +722,21 @@ Barnsley2Fractal(void)
 	/* note that fast >= 287 equiv in fracsuba.asm must be kept in step */
 
 	/* calculate intermediate products */
-	oldxinitx   = multiply(g_old_z_l.x, longparm->x, bitshift);
-	oldyinity   = multiply(g_old_z_l.y, longparm->y, bitshift);
-	oldxinity   = multiply(g_old_z_l.x, longparm->y, bitshift);
-	oldyinitx   = multiply(g_old_z_l.y, longparm->x, bitshift);
+	oldxinitx   = multiply(g_old_z_l.x, g_long_parameter->x, bitshift);
+	oldyinity   = multiply(g_old_z_l.y, g_long_parameter->y, bitshift);
+	oldxinity   = multiply(g_old_z_l.x, g_long_parameter->y, bitshift);
+	oldyinitx   = multiply(g_old_z_l.y, g_long_parameter->x, bitshift);
 
 	/* orbit calculation */
 	if (oldxinity + oldyinitx >= 0)
 	{
-		g_new_z_l.x = oldxinitx - longparm->x - oldyinity;
-		g_new_z_l.y = oldyinitx - longparm->y + oldxinity;
+		g_new_z_l.x = oldxinitx - g_long_parameter->x - oldyinity;
+		g_new_z_l.y = oldyinitx - g_long_parameter->y + oldxinity;
 	}
 	else
 	{
-		g_new_z_l.x = oldxinitx + longparm->x - oldyinity;
-		g_new_z_l.y = oldyinitx + longparm->y + oldxinity;
+		g_new_z_l.x = oldxinitx + g_long_parameter->x - oldyinity;
+		g_new_z_l.y = oldyinitx + g_long_parameter->y + oldxinity;
 	}
 	return longbailout();
 #else
@@ -775,8 +775,8 @@ JuliaFractal(void)
 {
 	/* used for C prototype of fast integer math routines for classic
 		Mandelbrot and Julia */
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + longparm->x;
-	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + longparm->y;
+	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
+	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
 	return longbailout();
 }
 
@@ -815,10 +815,10 @@ LambdaFractal(void)
 	g_temp_sqr_x_l = g_old_z_l.x - g_temp_sqr_x_l + g_temp_sqr_y_l;
 	g_temp_sqr_y_l = g_old_z_l.y - multiply(g_old_z_l.y, g_old_z_l.x, g_bit_shift_minus_1);
 	/* (in complex math) Z = Lambda*Z */
-	g_new_z_l.x = multiply(longparm->x, g_temp_sqr_x_l, bitshift)
-		- multiply(longparm->y, g_temp_sqr_y_l, bitshift);
-	g_new_z_l.y = multiply(longparm->x, g_temp_sqr_y_l, bitshift)
-		+ multiply(longparm->y, g_temp_sqr_x_l, bitshift);
+	g_new_z_l.x = multiply(g_long_parameter->x, g_temp_sqr_x_l, bitshift)
+		- multiply(g_long_parameter->y, g_temp_sqr_y_l, bitshift);
+	g_new_z_l.y = multiply(g_long_parameter->x, g_temp_sqr_y_l, bitshift)
+		+ multiply(g_long_parameter->y, g_temp_sqr_x_l, bitshift);
 	return longbailout();
 #else
 	return 0;
@@ -916,10 +916,10 @@ LongLambdaexponentFractal(void)
 	g_tmp_z_l.x = multiply(longtmp,      lcosy,   bitshift);
 	g_tmp_z_l.y = multiply(longtmp,      lsiny,   bitshift);
 
-	g_new_z_l.x  = multiply(longparm->x, g_tmp_z_l.x, bitshift)
-			- multiply(longparm->y, g_tmp_z_l.y, bitshift);
-	g_new_z_l.y  = multiply(longparm->x, g_tmp_z_l.y, bitshift)
-			+ multiply(longparm->y, g_tmp_z_l.x, bitshift);
+	g_new_z_l.x  = multiply(g_long_parameter->x, g_tmp_z_l.x, bitshift)
+			- multiply(g_long_parameter->y, g_tmp_z_l.y, bitshift);
+	g_new_z_l.y  = multiply(g_long_parameter->x, g_tmp_z_l.y, bitshift)
+			+ multiply(g_long_parameter->y, g_tmp_z_l.x, bitshift);
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -960,8 +960,8 @@ LongTrigPlusExponentFractal(void)
 	longtmp = Exp086(g_old_z_l.x);
 	SinCos086  (g_old_z_l.y, &lsiny,  &lcosy);
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	g_new_z_l.x += multiply(longtmp,    lcosy,   bitshift) + longparm->x;
-	g_new_z_l.y += multiply(longtmp,    lsiny,   bitshift) + longparm->y;
+	g_new_z_l.x += multiply(longtmp,    lcosy,   bitshift) + g_long_parameter->x;
+	g_new_z_l.y += multiply(longtmp,    lsiny,   bitshift) + g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -979,9 +979,9 @@ MarksLambdaFractal(void)
 	g_tmp_z_l.y = multiply(g_old_z_l.x , g_old_z_l.y , g_bit_shift_minus_1);
 
 	g_new_z_l.x = multiply(g_coefficient_l.x, g_tmp_z_l.x, bitshift)
-		- multiply(g_coefficient_l.y, g_tmp_z_l.y, bitshift) + longparm->x;
+		- multiply(g_coefficient_l.y, g_tmp_z_l.y, bitshift) + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_coefficient_l.x, g_tmp_z_l.y, bitshift)
-		+ multiply(g_coefficient_l.y, g_tmp_z_l.x, bitshift) + longparm->y;
+		+ multiply(g_coefficient_l.y, g_tmp_z_l.x, bitshift) + g_long_parameter->y;
 
 	return longbailout();
 #else
@@ -1065,8 +1065,8 @@ Mandel4Fractal(void)
 	}
 
 	/* then, compute ((x + iy)**2)**2 + lambda */
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + longparm->x;
-	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + longparm->y;
+	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
+	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -1108,8 +1108,8 @@ longZpowerFractal(void)
 	{
 		g_new_z_l.x = g_new_z_l.y = 8L << bitshift;
 	}
-	g_new_z_l.x += longparm->x;
-	g_new_z_l.y += longparm->y;
+	g_new_z_l.x += g_long_parameter->x;
+	g_new_z_l.y += g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -1136,8 +1136,8 @@ longCmplxZpowerFractal(void)
 	{
 		overflow = 1;
 	}
-	g_new_z_l.x += longparm->x;
-	g_new_z_l.y += longparm->y;
+	g_new_z_l.x += g_long_parameter->x;
+	g_new_z_l.y += g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -1183,13 +1183,13 @@ Barnsley3Fractal(void)
 	else
 	{
 		g_new_z_l.x = oldxinitx - oldyinity - fudge
-			+ multiply(longparm->x, g_old_z_l.x, bitshift);
+			+ multiply(g_long_parameter->x, g_old_z_l.x, bitshift);
 		g_new_z_l.y = oldxinity <<1;
 
 		/* This term added by Tim Wegner to make dependent on the
 			imaginary part of the parameter. (Otherwise Mandelbrot
 			is uninteresting. */
-		g_new_z_l.y += multiply(longparm->y, g_old_z_l.x, bitshift);
+		g_new_z_l.y += multiply(g_long_parameter->y, g_old_z_l.x, bitshift);
 	}
 	return longbailout();
 #else
@@ -1236,8 +1236,8 @@ TrigPlusZsquaredFractal(void)
 	/* A Biomorph                          */
 	/* z(n + 1) = trig(z(n)) + z(n)**2 + C       */
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-	g_new_z_l.x += g_temp_sqr_x_l - g_temp_sqr_y_l + longparm->x;
-	g_new_z_l.y += multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + longparm->y;
+	g_new_z_l.x += g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
+	g_new_z_l.y += multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -1274,7 +1274,7 @@ Richard8Fractal(void)
 #if !defined(XFRACT)
 	/*  Richard8 {c = z = pixel: z = sin(z) + sin(pixel), |z| <= 50} */
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
-/*   LCMPLXtrig1(*longparm, g_tmp_z_l); */
+/*   LCMPLXtrig1(*g_long_parameter, g_tmp_z_l); */
 	g_new_z_l.x += g_tmp_z_l.x;
 	g_new_z_l.y += g_tmp_z_l.y;
 	return longbailout();
@@ -1729,12 +1729,12 @@ LambdaTrigOrTrigFractal(void)
 	if ((LCMPLXmod(g_old_z_l)) < g_parameter2_l.x)
 	{
 		LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-		LCMPLXmult(*longparm, g_tmp_z_l, g_new_z_l);
+		LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
 	else
 	{
 		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
-		LCMPLXmult(*longparm, g_tmp_z_l, g_new_z_l);
+		LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
 	return longbailout();
 #else
@@ -1769,12 +1769,12 @@ JuliaTrigOrTrigFractal(void)
 	if (LCMPLXmod(g_old_z_l) < g_parameter2_l.x)
 	{
 		LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
-		LCMPLXadd(*longparm, g_tmp_z_l, g_new_z_l);
+		LCMPLXadd(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
 	else
 	{
 		LCMPLXtrig1(g_old_z_l, g_tmp_z_l);
-		LCMPLXadd(*longparm, g_tmp_z_l, g_new_z_l);
+		LCMPLXadd(*g_long_parameter, g_tmp_z_l, g_new_z_l);
 	}
 	return longbailout();
 #else
@@ -1922,8 +1922,8 @@ LongPhoenixFractal(void)
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	g_tmp_z_l.x = multiply(g_old_z_l.x, g_old_z_l.y, bitshift);
-	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + longparm->x + multiply(longparm->y, g_tmp_z2_l.x, bitshift);
-	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + multiply(longparm->y, g_tmp_z2_l.y, bitshift);
+	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_long_parameter->y, g_tmp_z2_l.x, bitshift);
+	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + multiply(g_long_parameter->y, g_tmp_z2_l.y, bitshift);
 	g_tmp_z2_l = g_old_z_l; /* set g_tmp_z2_l to Y value */
 	return longbailout();
 #else
@@ -1948,8 +1948,8 @@ LongPhoenixFractalcplx(void)
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	g_tmp_z_l.x = multiply(g_old_z_l.x, g_old_z_l.y, bitshift);
-	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + longparm->x + multiply(g_parameter2_l.x, g_tmp_z2_l.x, bitshift)-multiply(g_parameter2_l.y, g_tmp_z2_l.y, bitshift);
-	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + longparm->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, bitshift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, bitshift);
+	g_new_z_l.x = g_temp_sqr_x_l-g_temp_sqr_y_l + g_long_parameter->x + multiply(g_parameter2_l.x, g_tmp_z2_l.x, bitshift)-multiply(g_parameter2_l.y, g_tmp_z2_l.y, bitshift);
+	g_new_z_l.y = (g_tmp_z_l.x + g_tmp_z_l.x) + g_long_parameter->y + multiply(g_parameter2_l.x, g_tmp_z2_l.y, bitshift) + multiply(g_parameter2_l.y, g_tmp_z2_l.x, bitshift);
 	g_tmp_z2_l = g_old_z_l; /* set g_tmp_z2_l to Y value */
 	return longbailout();
 #else
@@ -1981,10 +1981,10 @@ LongPhoenixPlusFractal(void)
 	{
 		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); /* = old^(degree-1) */
 	}
-	loldplus.x += longparm->x;
+	loldplus.x += g_long_parameter->x;
 	LCMPLXmult(g_tmp_z_l, loldplus, lnewminus);
-	g_new_z_l.x = lnewminus.x + multiply(longparm->y, g_tmp_z2_l.x, bitshift);
-	g_new_z_l.y = lnewminus.y + multiply(longparm->y, g_tmp_z2_l.y, bitshift);
+	g_new_z_l.x = lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, bitshift);
+	g_new_z_l.y = lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, bitshift);
 	g_tmp_z2_l = g_old_z_l; /* set g_tmp_z2_l to Y value */
 	return longbailout();
 #else
@@ -2025,10 +2025,10 @@ LongPhoenixMinusFractal(void)
 	{
 		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); /* = old^(degree-2) */
 	}
-	loldsqr.x += longparm->x;
+	loldsqr.x += g_long_parameter->x;
 	LCMPLXmult(g_tmp_z_l, loldsqr, lnewminus);
-	g_new_z_l.x = lnewminus.x + multiply(longparm->y, g_tmp_z2_l.x, bitshift);
-	g_new_z_l.y = lnewminus.y + multiply(longparm->y, g_tmp_z2_l.y, bitshift);
+	g_new_z_l.x = lnewminus.x + multiply(g_long_parameter->y, g_tmp_z2_l.x, bitshift);
+	g_new_z_l.y = lnewminus.y + multiply(g_long_parameter->y, g_tmp_z2_l.y, bitshift);
 	g_tmp_z2_l = g_old_z_l; /* set g_tmp_z2_l to Y value */
 	return longbailout();
 #else
@@ -2069,8 +2069,8 @@ LongPhoenixCplxPlusFractal(void)
 	{
 		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); /* = old^(degree-1) */
 	}
-	loldplus.x += longparm->x;
-	loldplus.y += longparm->y;
+	loldplus.x += g_long_parameter->x;
+	loldplus.y += g_long_parameter->y;
 	LCMPLXmult(g_tmp_z_l, loldplus, lnewminus);
 	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_tmp_z_l);
 	g_new_z_l.x = lnewminus.x + g_tmp_z_l.x;
@@ -2117,8 +2117,8 @@ LongPhoenixCplxMinusFractal(void)
 	{
 		LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z_l); /* = old^(degree-2) */
 	}
-	loldsqr.x += longparm->x;
-	loldsqr.y += longparm->y;
+	loldsqr.x += g_long_parameter->x;
+	loldsqr.y += g_long_parameter->y;
 	LCMPLXmult(g_tmp_z_l, loldsqr, lnewminus);
 	LCMPLXmult(g_parameter2_l, g_tmp_z2_l, g_tmp_z_l);
 	g_new_z_l.x = lnewminus.x + g_tmp_z_l.x;
@@ -2464,7 +2464,7 @@ LambdaTrigFractal(void)
 #if !defined(XFRACT)
 	LONGXYTRIGBAILOUT();
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
-	LCMPLXmult(*longparm, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = longparm*trig(g_old_z_l)  */
+	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2477,7 +2477,7 @@ LambdaTrigfpFractal(void)
 {
 	FLOATXYTRIGBAILOUT();
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
-	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = longparm*trig(old)  */
+	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
 	return 0;
 }
@@ -2489,7 +2489,7 @@ LambdaTrigFractal1(void)
 #if !defined(XFRACT)
 	LONGTRIGBAILOUT(); /* sin, cos */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
-	LCMPLXmult(*longparm, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = longparm*trig(g_old_z_l)  */
+	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2502,7 +2502,7 @@ LambdaTrigfpFractal1(void)
 {
 	FLOATTRIGBAILOUT(); /* sin, cos */
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
-	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = longparm*trig(old)  */
+	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
 	return 0;
 }
@@ -2513,7 +2513,7 @@ LambdaTrigFractal2(void)
 #if !defined(XFRACT)
 	LONGHTRIGBAILOUT(); /* sinh, cosh */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
-	LCMPLXmult(*longparm, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = longparm*trig(g_old_z_l)  */
+	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -2527,7 +2527,7 @@ LambdaTrigfpFractal2(void)
 #if !defined(XFRACT)
 	FLOATHTRIGBAILOUT(); /* sinh, cosh */
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
-	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = longparm*trig(old)  */
+	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
 	return 0;
 #else
@@ -2540,8 +2540,8 @@ ManOWarFractal(void)
 {
 #if !defined(XFRACT)
 	/* From Art Matrix via Lee Skinner */
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + longparm->x;
-	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y + longparm->y;
+	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + g_long_parameter->x;
+	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y + g_long_parameter->y;
 	g_tmp_z_l = g_old_z_l;
 	return longbailout();
 #else
@@ -2585,8 +2585,8 @@ MarksMandelPwrFractal(void)
 #if !defined(XFRACT)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	LCMPLXmult(g_tmp_z_l, g_new_z_l, g_new_z_l);
-	g_new_z_l.x += longparm->x;
-	g_new_z_l.y += longparm->y;
+	g_new_z_l.x += g_long_parameter->x;
+	g_new_z_l.y += g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -2616,8 +2616,8 @@ TimsErrorFractal(void)
 	LCMPLXtrig0(g_old_z_l, g_new_z_l);
 	g_new_z_l.x = multiply(g_new_z_l.x, g_tmp_z_l.x, bitshift)-multiply(g_new_z_l.y, g_tmp_z_l.y, bitshift);
 	g_new_z_l.y = multiply(g_new_z_l.x, g_tmp_z_l.y, bitshift)-multiply(g_new_z_l.y, g_tmp_z_l.x, bitshift);
-	g_new_z_l.x += longparm->x;
-	g_new_z_l.y += longparm->y;
+	g_new_z_l.x += g_long_parameter->x;
+	g_new_z_l.y += g_long_parameter->y;
 	return longbailout();
 #else
 	return 0;
@@ -2701,7 +2701,7 @@ int long_richard8_per_pixel(void)
 {
 #if !defined(XFRACT)
 	long_mandel_per_pixel();
-	LCMPLXtrig1(*longparm, g_tmp_z_l);
+	LCMPLXtrig1(*g_long_parameter, g_tmp_z_l);
 	LCMPLXmult(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
 	return 1;
 #else

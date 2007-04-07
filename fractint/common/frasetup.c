@@ -37,7 +37,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 	{
 		/* special case: use the main processing loop */
 		g_calculate_type = standard_fractal;
-		longparm = &g_initial_z_l;
+		g_long_parameter = &g_initial_z_l;
 	}
 	return 1;
 }
@@ -58,7 +58,7 @@ JuliaSetup(void)            /* Julia Routine */
 	{
 		/* special case: use the main processing loop */
 		g_calculate_type = standard_fractal;
-		longparm = &g_parameter_l;
+		g_long_parameter = &g_parameter_l;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 	}
 	return 1;
@@ -579,7 +579,7 @@ MandellongSetup(void)
 	{
 		g_periodicity_check = 4;
 	}
-	longparm = &g_initial_z_l;
+	g_long_parameter = &g_initial_z_l;
 	if (fractype == LMANDELZPOWER)
 	{
 		if (param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
@@ -626,7 +626,7 @@ int
 JulialongSetup(void)
 {
 	g_c_exp = (int)param[2];
-	longparm = &g_parameter_l;
+	g_long_parameter = &g_parameter_l;
 	switch (fractype)
 	{
 	case LJULIAZPOWER:
@@ -825,7 +825,7 @@ int
 LambdaTrigOrTrigSetup(void)
 {
 	/* default symmetry is ORIGIN  JCO 2/29/92 (changed from PI_SYM) */
-	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
 	if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
 	{
@@ -843,7 +843,7 @@ int
 JuliaTrigOrTrigSetup(void)
 {
 	/* default symmetry is XAXIS */
-	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
 	if (g_parameter.y != 0.0)
 	{
@@ -861,7 +861,7 @@ int
 ManlamTrigOrTrigSetup(void)
 { /* psuedo */
 	/* default symmetry is XAXIS */
-	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
 	if (trigndx[0] == SQR)
 	{
@@ -878,7 +878,7 @@ int
 MandelTrigOrTrigSetup(void)
 {
 /* default symmetry is XAXIS_NOPARM */
-	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
 	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
 	{
@@ -1152,8 +1152,8 @@ MarksJuliaSetup(void)
 		param[2] = 1;
 	}
 	g_c_exp = (int)param[2];
-	longparm = &g_parameter_l;
-	g_old_z_l = *longparm;
+	g_long_parameter = &g_parameter_l;
+	g_old_z_l = *g_long_parameter;
 	if (g_c_exp > 3)
 	{
 		lcpower(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
@@ -1271,7 +1271,7 @@ HalleySetup(void)
 int
 PhoenixSetup(void)
 {
-	longparm = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
 	g_degree = (int)g_parameter2.x;
 	if (g_degree < 2 && g_degree > -3)
@@ -1303,7 +1303,7 @@ PhoenixSetup(void)
 int
 PhoenixCplxSetup(void)
 {
-	longparm = &g_parameter_l;
+	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
 	g_degree = (int)param[4];
 	if (g_degree < 2 && g_degree > -3)
@@ -1342,7 +1342,7 @@ PhoenixCplxSetup(void)
 int
 MandPhoenixSetup(void)
 {
-	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
 	g_degree = (int)g_parameter2.x;
 	if (g_degree < 2 && g_degree > -3)
@@ -1374,7 +1374,7 @@ MandPhoenixSetup(void)
 int
 MandPhoenixCplxSetup(void)
 {
-	longparm = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
+	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
 	g_degree = (int)param[4];
 	if (g_degree < 2 && g_degree > -3)

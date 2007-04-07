@@ -260,7 +260,7 @@ extern int                   Log_Fly_Calc;
 extern long                  LogFlag;
 extern BYTE *            LogTable;
 extern _LCMPLX               g_old_z_l;
-extern _LCMPLX *             longparm;
+extern _LCMPLX *             g_long_parameter;
 extern int                   lookatmouse;
 extern _LCMPLX               g_parameter2_l;
 extern _LCMPLX               g_parameter_l;
