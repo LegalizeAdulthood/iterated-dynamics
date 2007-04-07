@@ -107,6 +107,11 @@ int (*g_bail_out_bn)(void);
 int (*g_bail_out_bf)(void);
 long g_one_fudge = 0;
 long g_two_fudge = 0;
+int g_a_plus_1 = 0;
+int g_a_plus_1_degree = 0;
+struct MP g_a_plus_1_mp;
+struct MP g_a_plus_1_degree_mp;
+struct MPC g_temp_parameter_mpc;
 
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
@@ -1494,7 +1499,7 @@ int popcorn_fn_orbit(void)
 #endif
 }
 
-int MarksCplxMand(void)
+int marks_complex_mandelbrot_orbit(void)
 {
 	g_temp_z.x = g_temp_sqr_x - g_temp_sqr_y;
 	g_temp_z.y = 2*g_old_z.x*g_old_z.y;
@@ -1504,7 +1509,7 @@ int MarksCplxMand(void)
 	return g_bail_out_fp();
 }
 
-int SpiderfpFractal(void)
+int spider_orbit_fp(void)
 {
 	/* Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } */
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_temp_z.x;
@@ -1514,8 +1519,7 @@ int SpiderfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-SpiderFractal(void)
+int spider_orbit(void)
 {
 #if !defined(XFRACT)
 	/* Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } */
@@ -1529,16 +1533,14 @@ SpiderFractal(void)
 #endif
 }
 
-int
-TetratefpFractal(void)
+int tetrate_orbit_fp(void)
 {
 	/* Tetrate(XAXIS) { c = z=pixel: z = c^z, |z| <= (P1 + 3) } */
 	g_new_z = ComplexPower(*g_float_parameter, g_old_z);
 	return g_bail_out_fp();
 }
 
-int
-ZXTrigPlusZFractal(void)
+int z_trig_z_plus_z_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = (p1*z*trig(z)) + p2*z */
@@ -1553,8 +1555,7 @@ ZXTrigPlusZFractal(void)
 #endif
 }
 
-int
-ScottZXTrigPlusZFractal(void)
+int scott_z_trig_z_plus_z_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = (z*trig(z)) + z */
@@ -1567,8 +1568,7 @@ ScottZXTrigPlusZFractal(void)
 #endif
 }
 
-int
-SkinnerZXTrigSubZFractal(void)
+int skinner_z_trig_z_minus_z_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = (z*trig(z))-z */
@@ -1581,8 +1581,7 @@ SkinnerZXTrigSubZFractal(void)
 #endif
 }
 
-int
-ZXTrigPlusZfpFractal(void)
+int z_trig_z_plus_z_orbit_fp(void)
 {
 	/* z = (p1*z*trig(z)) + p2*z */
 	CMPLXtrig0(g_old_z, g_temp_z);          /* tmp  = trig(old)             */
@@ -1593,8 +1592,7 @@ ZXTrigPlusZfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-ScottZXTrigPlusZfpFractal(void)
+int scott_z_trig_z_plus_z_orbit_fp(void)
 {
 	/* z = (z*trig(z)) + z */
 	CMPLXtrig0(g_old_z, g_temp_z);         /* tmp  = trig(old)       */
@@ -1603,8 +1601,7 @@ ScottZXTrigPlusZfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-SkinnerZXTrigSubZfpFractal(void)
+int skinner_z_trig_z_minus_z_orbit_fp(void)
 {
 	/* z = (z*trig(z))-z */
 	CMPLXtrig0(g_old_z, g_temp_z);         /* tmp  = trig(old)       */
@@ -1613,8 +1610,7 @@ SkinnerZXTrigSubZfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-Sqr1overTrigFractal(void)
+int sqr_1_over_trig_z_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = sqr(1/trig(z)) */
@@ -1627,8 +1623,7 @@ Sqr1overTrigFractal(void)
 #endif
 }
 
-int
-Sqr1overTrigfpFractal(void)
+int sqr_1_over_trig_z_orbit_fp(void)
 {
 	/* z = sqr(1/trig(z)) */
 	CMPLXtrig0(g_old_z, g_old_z);
@@ -1637,8 +1632,7 @@ Sqr1overTrigfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-TrigPlusTrigFractal(void)
+int trig_plus_trig_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = trig(0, z)*p1 + trig1(z)*p2 */
@@ -1653,8 +1647,7 @@ TrigPlusTrigFractal(void)
 #endif
 }
 
-int
-TrigPlusTrigfpFractal(void)
+int trig_plus_trig_orbit_fp(void)
 {
 	/* z = trig0(z)*p1 + trig1(z)*p2 */
 	CMPLXtrig0(g_old_z, g_temp_z);
@@ -1669,8 +1662,7 @@ TrigPlusTrigfpFractal(void)
 	or alternate calculations.  The shift is made when the mod
 	reaches a given value.  JCO  5/6/92 */
 
-int
-LambdaTrigOrTrigFractal(void)
+int lambda_trig_or_trig_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = trig0(z)*p1 if mod(old) < p2.x and
@@ -1691,8 +1683,7 @@ LambdaTrigOrTrigFractal(void)
 #endif
 }
 
-int
-LambdaTrigOrTrigfpFractal(void)
+int lambda_trig_or_trig_orbit_fp(void)
 {
 	/* z = trig0(z)*p1 if mod(old) < p2.x and
 			trig1(z)*p1 if mod(old) >= p2.x */
@@ -1709,8 +1700,7 @@ LambdaTrigOrTrigfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-JuliaTrigOrTrigFractal(void)
+int julia_trig_or_trig_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z = trig0(z) + p1 if mod(old) < p2.x and
@@ -1731,8 +1721,7 @@ JuliaTrigOrTrigFractal(void)
 #endif
 }
 
-int
-JuliaTrigOrTrigfpFractal(void)
+int julia_trig_or_trig_orbit_fp(void)
 {
 	/* z = trig0(z) + p1 if mod(old) < p2.x and
 			trig1(z) + p1 if mod(old) >= p2.x */
@@ -1749,11 +1738,7 @@ JuliaTrigOrTrigfpFractal(void)
 	return g_bail_out_fp();
 }
 
-int AplusOne, Ap1deg;
-struct MP mpAplusOne, mpAp1deg;
-struct MPC mpctmpparm;
-
-int MPCHalleyFractal(void)
+int halley_orbit_mpc(void)
 {
 #if !defined(XFRACT)
 	/*  X(X^a - 1) = 0, Halley Map */
@@ -1783,11 +1768,11 @@ int MPCHalleyFractal(void)
 	mpcFX.x = *pMPsub(mpcXtoAplusOne.x, mpcold.x);
 	mpcFX.y = *pMPsub(mpcXtoAplusOne.y, mpcold.y); /* FX = X^(a + 1) - X  = F */
 
-	mpcF2prime.x = *pMPmul(mpAp1deg, mpcXtoAlessOne.x); /* mpAp1deg in setup */
-	mpcF2prime.y = *pMPmul(mpAp1deg, mpcXtoAlessOne.y);        /* F" */
+	mpcF2prime.x = *pMPmul(g_a_plus_1_degree_mp, mpcXtoAlessOne.x); /* g_a_plus_1_degree_mp in setup */
+	mpcF2prime.y = *pMPmul(g_a_plus_1_degree_mp, mpcXtoAlessOne.y);        /* F" */
 
-	mpcF1prime.x = *pMPsub(*pMPmul(mpAplusOne, mpcXtoA.x), mpone);
-	mpcF1prime.y = *pMPmul(mpAplusOne, mpcXtoA.y);                   /*  F'  */
+	mpcF1prime.x = *pMPsub(*pMPmul(g_a_plus_1_mp, mpcXtoA.x), mpone);
+	mpcF1prime.y = *pMPmul(g_a_plus_1_mp, mpcXtoA.y);                   /*  F'  */
 
 	mpctmp.x = *pMPsub(*pMPmul(mpcF2prime.x, mpcFX.x), *pMPmul(mpcF2prime.y, mpcFX.y));
 	mpctmp.y = *pMPadd(*pMPmul(mpcF2prime.x, mpcFX.y), *pMPmul(mpcF2prime.y, mpcFX.x));
@@ -1801,8 +1786,7 @@ int MPCHalleyFractal(void)
 	mpctmp.y = *pMPsub(mpcF1prime.y, mpcHalnumer1.y); /*  F' - F"F/2F'  */
 	mpcHalnumer2 = MPCdiv(mpcFX, mpctmp);
 
-	mpctmp   =  MPCmul(mpctmpparm, mpcHalnumer2);  /* mpctmpparm is */
-													/* relaxation coef. */
+	mpctmp   =  MPCmul(g_temp_parameter_mpc, mpcHalnumer2);  /* g_temp_parameter_mpc is relaxation coef. */
 #if 0
 	mpctmp.x = *pMPmul(mptmpparmy, mpcHalnumer2.x); /* mptmpparmy is */
 	mpctmp.y = *pMPmul(mptmpparmy, mpcHalnumer2.y); /* relaxation coef. */
@@ -1821,8 +1805,7 @@ int MPCHalleyFractal(void)
 #endif
 }
 
-int
-HalleyFractal(void)
+int halley_orbit_fp(void)
 {
 	/*  X(X^a - 1) = 0, Halley Map */
 	/*  a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  */
@@ -1841,11 +1824,11 @@ HalleyFractal(void)
 	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
 	CMPLXsub(XtoAplusOne, g_old_z, FX);        /* FX = X^(a + 1) - X  = F */
-	F2prime.x = Ap1deg*XtoAlessOne.x; /* Ap1deg in setup */
-	F2prime.y = Ap1deg*XtoAlessOne.y;        /* F" */
+	F2prime.x = g_a_plus_1_degree*XtoAlessOne.x; /* g_a_plus_1_degree in setup */
+	F2prime.y = g_a_plus_1_degree*XtoAlessOne.y;        /* F" */
 
-	F1prime.x = AplusOne*XtoA.x - 1.0;
-	F1prime.y = AplusOne*XtoA.y;                             /*  F'  */
+	F1prime.x = g_a_plus_1*XtoA.x - 1.0;
+	F1prime.y = g_a_plus_1*XtoA.y;                             /*  F'  */
 
 	FPUcplxmul(&F2prime, &FX, &Halnumer1);                  /*  F*F"  */
 	Haldenom.x = F1prime.x + F1prime.x;
@@ -1865,8 +1848,7 @@ HalleyFractal(void)
 	return bail_out_halley();
 }
 
-int
-LongPhoenixFractal(void)
+int phoenix_orbit(void)
 {
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
@@ -1880,8 +1862,7 @@ LongPhoenixFractal(void)
 #endif
 }
 
-int
-PhoenixFractal(void)
+int phoenix_orbit_fp(void)
 {
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */
 	g_temp_z.x = g_old_z.x*g_old_z.y;
@@ -1891,8 +1872,7 @@ PhoenixFractal(void)
 	return g_bail_out_fp();
 }
 
-int
-LongPhoenixFractalcplx(void)
+int LongPhoenixFractalcplx(void)
 {
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^2 + p + qy(n),  y(n + 1) = z(n) */

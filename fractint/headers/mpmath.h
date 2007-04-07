@@ -16,7 +16,8 @@
 
 
 #if !defined(XFRACT)
-struct MP {
+struct MP
+{
 	int Exp;
 	unsigned long Mant;
 };
@@ -26,8 +27,9 @@ struct MP {
 };
 #endif
 
-struct MPC {
-        struct MP x, y;
+struct MPC
+{
+	struct MP x, y;
 };
 
 extern int MPOverflow;

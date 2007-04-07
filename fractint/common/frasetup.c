@@ -748,7 +748,7 @@ TrigPlusTriglongSetup(void)
 		return TrigPlusSqrlongSetup();
 	}
 	curfractalspecific->per_pixel =  long_julia_per_pixel;
-	curfractalspecific->orbitcalc =  TrigPlusTrigFractal;
+	curfractalspecific->orbitcalc =  trig_plus_trig_orbit;
 	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
@@ -773,7 +773,7 @@ TrigPlusTrigfpSetup(void)
 		return TrigPlusSqrfpSetup();
 	}
 	curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
-	curfractalspecific->orbitcalc =  TrigPlusTrigfpFractal;
+	curfractalspecific->orbitcalc =  trig_plus_trig_orbit_fp;
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
@@ -941,34 +941,34 @@ ZXTrigPlusZSetup(void)
 	}
 	if (curfractalspecific->isinteger)
 	{
-		curfractalspecific->orbitcalc =  ZXTrigPlusZFractal;
+		curfractalspecific->orbitcalc =  z_trig_z_plus_z_orbit;
 		if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (g_parameter2_l.x == fudge)     /* Scott variant */
 			{
-				curfractalspecific->orbitcalc =  ScottZXTrigPlusZFractal;
+				curfractalspecific->orbitcalc =  scott_z_trig_z_plus_z_orbit;
 			}
 			else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
 			{
-				curfractalspecific->orbitcalc =  SkinnerZXTrigSubZFractal;
+				curfractalspecific->orbitcalc =  skinner_z_trig_z_minus_z_orbit;
 			}
 		}
 		return JulialongSetup();
 	}
 	else
 	{
-		curfractalspecific->orbitcalc =  ZXTrigPlusZfpFractal;
+		curfractalspecific->orbitcalc =  z_trig_z_plus_z_orbit_fp;
 		if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (g_parameter2.x == 1.0)     /* Scott variant */
 			{
-				curfractalspecific->orbitcalc =  ScottZXTrigPlusZfpFractal;
+				curfractalspecific->orbitcalc =  scott_z_trig_z_plus_z_orbit_fp;
 			}
 			else if (g_parameter2.x == -1.0)       /* Skinner variant */
 			{
-				curfractalspecific->orbitcalc =  SkinnerZXTrigSubZfpFractal;
+				curfractalspecific->orbitcalc =  skinner_z_trig_z_minus_z_orbit_fp;
 			}
 		}
 	}
@@ -1248,17 +1248,17 @@ HalleySetup(void)
 	param[0] = (double)g_degree;
 
 	/*  precalculated values */
-	AplusOne = g_degree + 1; /* a + 1 */
-	Ap1deg = AplusOne*g_degree;
+	g_a_plus_1 = g_degree + 1; /* a + 1 */
+	g_a_plus_1_degree = g_a_plus_1*g_degree;
 
 #if !defined(XFRACT)
 	if (fractype == MPHALLEY)
 	{
 		setMPfunctions();
-		mpAplusOne = *pd2MP((double)AplusOne);
-		mpAp1deg = *pd2MP((double)Ap1deg);
-		mpctmpparm.x = *pd2MP(g_parameter.y);
-		mpctmpparm.y = *pd2MP(g_parameter2.y);
+		g_a_plus_1_mp = *pd2MP((double)g_a_plus_1);
+		g_a_plus_1_degree_mp = *pd2MP((double)g_a_plus_1_degree);
+		g_temp_parameter_mpc.x = *pd2MP(g_parameter.y);
+		g_temp_parameter_mpc.y = *pd2MP(g_parameter2.y);
 		mptmpparm2x = *pd2MP(g_parameter2.x);
 		mpone        = *pd2MP(1.0);
 	}
@@ -1282,7 +1282,7 @@ PhoenixSetup(void)
 	if (g_degree == 0)
 	{
 		curfractalspecific->orbitcalc = 
-			usr_floatflag ? PhoenixFractal : LongPhoenixFractal;
+			usr_floatflag ? phoenix_orbit_fp : phoenix_orbit;
 	}
 	if (g_degree >= 2)
 	{
@@ -1353,7 +1353,7 @@ MandPhoenixSetup(void)
 	if (g_degree == 0)
 	{
 		curfractalspecific->orbitcalc = 
-			usr_floatflag ? PhoenixFractal : LongPhoenixFractal;
+			usr_floatflag ? phoenix_orbit_fp : phoenix_orbit;
 	}
 	if (g_degree >= 2)
 	{

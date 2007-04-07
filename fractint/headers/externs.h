@@ -14,8 +14,8 @@ extern int					g_alternate_math_len;				/* number of alternate math */
 extern int                   g_ambient;							/* ambient= parameter value */
 extern int                   g_and_color;						/* AND mask for iteration to get color index */
 extern struct MP             Ans;
-extern int                   Ap1deg;
-extern int                   AplusOne;
+extern int                   g_a_plus_1_degree;
+extern int                   g_a_plus_1;
 extern int                   askvideo;
 extern float                 aspectdrift;
 extern int                   g_num_attractors;
@@ -307,11 +307,11 @@ extern int                   minstack;
 extern int                   minstackavail;
 extern int                   g_mode_7_text;						/* for egamono and hgc */
 extern more_parameters		g_more_parameters[];
-extern struct MP             mpAp1deg;
-extern struct MP             mpAplusOne;
+extern struct MP             g_a_plus_1_degree_mp;
+extern struct MP             g_a_plus_1_mp;
 extern struct MPC            MPCone;
 extern struct MPC *          g_roots_mpc;
-extern struct MPC            mpctmpparm;
+extern struct MPC            g_temp_parameter_mpc;
 extern struct MP             mpd1overd;
 extern struct MP             mpone;
 extern int                   MPOverflow;
