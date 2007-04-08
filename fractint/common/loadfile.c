@@ -368,15 +368,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 	}
 
-	nobof = 0;
+	g_no_bof = FALSE;
 	if (read_info.version > 13) /* post-version 20.1.2 */
 	{
-		nobof = read_info.nobof;
+		g_no_bof = read_info.no_bof;
 	}
 
 	/* if (read_info.version > 14)  post-version 20.1.12 */
 	/* modified saved evolver structure JCO 12JUL01 */
-	Log_Auto_Calc = 0;  /* make sure it's turned off */
+	g_log_automatic_flag = FALSE;  /* make sure it's turned off */
 
 	g_orbit_interval = 1;
 	if (read_info.version > 15) /* post-version 20.3.2 */

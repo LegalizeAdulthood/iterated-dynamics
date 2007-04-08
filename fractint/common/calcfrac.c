@@ -1116,7 +1116,7 @@ static void perform_work_list()
 
 		setsymmetry(g_symmetry, 1);
 
-		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && Log_Auto_Calc)))
+		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && g_log_automatic_flag)))
 		{  /* calculate round screen edges to work out best start for logmap */
 			g_log_palette_flag = (automatic_log_map()*(g_log_palette_flag / labs(g_log_palette_flag)));
 			SetupLogTable();

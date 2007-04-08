@@ -1361,7 +1361,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 #endif
 
-		if (nobof > 0)
+		if (g_no_bof)
 		{
 			put_parm(" nobof=yes");
 		}

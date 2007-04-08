@@ -102,8 +102,8 @@ int		g_orbit_delay;                /* clock ticks delating orbit release */
 int     g_transparent[2];         /* transparency min/max values */
 long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
 int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
-int     Log_Auto_Calc = 0;  /* auto calculate logmap */
-int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images */
+int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
+int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
 int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
 int first_init = 1;               /* first time into cmdfiles? */
 struct fractalspecificstuff *curfractalspecific = NULL;
@@ -461,7 +461,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	curfractalspecific = &fractalspecific[fractype];
 	initcorners = initparams = 0;
 	g_bail_out = 0;                         /* no user-entered bailout */
-	nobof = 0;  /* use normal bof initialization to make bof images */
+	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
 	g_use_initial_orbit_z = 0;
 	for (i = 0; i < MAXPARAMS; i++)
 	{
@@ -2468,7 +2468,7 @@ static int periodicity_arg(const cmd_context *context)
 
 static int log_map_arg(const cmd_context *context)
 {
-	Log_Auto_Calc = 0;   /* turn this off if loading a PAR */
+	g_log_automatic_flag = FALSE;   /* turn this off if loading a PAR */
 	if (context->charval[0] == 'y')
 	{
 		g_log_palette_flag = LOGPALETTE_STANDARD;                           /* palette is logarithmic */
@@ -2491,7 +2491,7 @@ static int log_map_arg(const cmd_context *context)
 static int log_mode_arg(const cmd_context *context)
 {
 	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         /* turn off if error */
-	Log_Auto_Calc = 0;
+	g_log_automatic_flag = FALSE;
 	if (context->charval[0] == 'f')
 	{
 		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      /* calculate on the fly */
@@ -2502,7 +2502,7 @@ static int log_mode_arg(const cmd_context *context)
 	}
 	else if (context->charval[0] == 'a')
 	{
-		Log_Auto_Calc = 1;                     /* force auto calc of logmap */
+		g_log_automatic_flag = TRUE;                     /* force auto calc of logmap */
 	}
 	else
 	{
@@ -3101,7 +3101,7 @@ static int finite_attractor_arg(const cmd_context *context)
 
 static int no_bof_arg(const cmd_context *context)
 {
-	return flag_arg(context, &nobof, COMMAND_FRACTAL_PARAM);
+	return flag_arg(context, &g_no_bof, COMMAND_FRACTAL_PARAM);
 }
 
 static int is_mand_arg(const cmd_context *context)
