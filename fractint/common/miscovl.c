@@ -114,9 +114,9 @@ void make_batch_file()
 	maxcolor = colors;
 	strcpy(colorspec, "y");
 #ifndef XFRACT
-	if ((g_got_real_dac) || (g_is_true_color && !truemode))
+	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode))
 #else
-	if ((g_got_real_dac) || (g_is_true_color && !truemode) || fake_lut)
+	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode) || fake_lut)
 #endif
 	{
 		--maxcolor;
@@ -155,9 +155,9 @@ void make_batch_file()
 			}
 		}
 		else if (g_color_state == COLORSTATE_MAP)
-		{                         /* colors match colorfile */
+		{                         /* colors match g_color_file */
 			colorspec[0] = '@';
-			sptr = colorfile;
+			sptr = g_color_file;
 		}
 		else                      /* colors match no .map that we know of */
 		{
@@ -225,9 +225,9 @@ prompt_user:
 		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
-		if (g_got_real_dac || (g_is_true_color && !truemode))
+		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
 #else
-		if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
+		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || fake_lut)
 #endif
 		{
 			choices[promptnum] = "Record colors?";
@@ -284,9 +284,9 @@ prompt_user:
 			strncpy(CommandComment[i], inpcomment[i], MAXCMT);
 		}
 #ifndef XFRACT
-		if (g_got_real_dac || (g_is_true_color && !truemode))
+		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
 #else
-		if (g_got_real_dac || (g_is_true_color && !truemode) || fake_lut)
+		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || fake_lut)
 #endif
 		{
 			if (paramvalues[maxcolorindex].uval.ival > 0 &&
@@ -1175,7 +1175,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" randomize=%d", g_randomize);
 		}
-		if (Targa_Out)
+		if (g_targa_output)
 		{
 			put_parm(" fullcolor=y");
 		}
@@ -1437,7 +1437,7 @@ docolors:
 			int delta, diff1[4][3], diff2[4][3];
 			curc = force = 0;
 #ifdef XFRACT
-			if (fake_lut && !truemode) /* stupid kludge JCO 6/23/2001  */
+			if (fake_lut && !g_true_mode) /* stupid kludge JCO 6/23/2001  */
 			{
 				loaddac();
 			}

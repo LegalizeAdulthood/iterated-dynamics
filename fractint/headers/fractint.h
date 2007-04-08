@@ -62,7 +62,7 @@ typedef BYTE BOOLEAN;
 #define ANTTYPE_MOVE_COLOR	0
 #define ANTTYPE_MOVE_RULE	1
 
-/* truemode values */
+/* g_true_mode values */
 #define TRUEMODE_DEFAULT	0
 #define TRUEMODE_ITERATES	1
 

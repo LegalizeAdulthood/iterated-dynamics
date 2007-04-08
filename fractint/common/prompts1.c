@@ -2928,7 +2928,7 @@ int get_3d_params()     /* prompt for 3D parameters */
 	}
 #endif
 restart_1:
-	if (Targa_Out && g_overlay_3d)
+	if (g_targa_output && g_overlay_3d)
 	{
 		g_targa_overlay = 1;
 	}
@@ -2976,7 +2976,7 @@ restart_1:
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = Targa_Out;
+	uvalues[k].uval.ch.val = g_targa_output;
 
 	prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
 	uvalues[k].type = 'y';
@@ -3012,7 +3012,7 @@ restart_1:
 
 	strcpy(g_ray_name, uvalues[k++].uval.sval);
 
-	Targa_Out = uvalues[k++].uval.ch.val;
+	g_targa_output = uvalues[k++].uval.ch.val;
 	g_grayscale_depth  = uvalues[k++].uval.ch.val;
 
 	/* check ranges */
@@ -3236,7 +3236,7 @@ restart_1:
 		g_randomize = 0;
 	}
 
-	if ((Targa_Out || ILLUMINE || g_raytrace_output))
+	if ((g_targa_output || ILLUMINE || g_raytrace_output))
 	{
 		if (get_light_params())
 		{
@@ -3285,7 +3285,7 @@ static int get_light_params()
 		}
 	}
 
-	if (Targa_Out && !g_raytrace_output)
+	if (g_targa_output && !g_raytrace_output)
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
@@ -3352,7 +3352,7 @@ static int get_light_params()
 		}
 	}
 
-	if (Targa_Out && !g_raytrace_output)
+	if (g_targa_output && !g_raytrace_output)
 	{
 		g_haze  =  uvalues[k++].uval.ival;
 		if (g_haze >= 100)
