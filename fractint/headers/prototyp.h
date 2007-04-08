@@ -1104,9 +1104,9 @@ extern void ReopenTGA(void);
 
 /*  testpt -- C file prototypes */
 
-extern int teststart(void);
-extern void testend(void);
-extern int testpt(double, double, double, double, long, int);
+extern int test_start(void);
+extern void test_end(void);
+extern int test_per_pixel(double, double, double, double, long, int);
 
 /*  tgaview -- C file prototypes */
 
