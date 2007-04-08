@@ -125,7 +125,7 @@ handle_special_keys(int ch)
 			recordshw(ch);
 		}
 	}
-	if (DEBUGFLAG_EDIT_TEXT_COLORS == debugflag)
+	if (DEBUGFLAG_EDIT_TEXT_COLORS == g_debug_flag)
 	{
 		if ('~' == ch)
 		{

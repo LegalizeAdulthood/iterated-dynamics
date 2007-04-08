@@ -770,7 +770,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				/* normalize cross - and check if non-zero */
 				if (normalize_vector(g_cross))
 				{
-					if (debugflag)
+					if (g_debug_flag)
 					{
 						stopmsg(0, "debug, cur.color=bad");
 					}
@@ -804,7 +804,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 						if (normalize_vector(g_cross))
 						{
 							/* this shouldn't happen */
-							if (debugflag)
+							if (g_debug_flag)
 							{
 								stopmsg(0, "debug, normal vector err2");
 								/* use next instead if you ever need details:
@@ -2387,12 +2387,12 @@ static void line3d_cleanup(void)
 	{                            /* Finish up targa files */
 		s_targa_header_len = 18;         /* Reset Targa header size */
 		enddisk();
-		if (!debugflag && (!s_targa_safe || s_file_error) && g_targa_overlay)
+		if (!g_debug_flag && (!s_targa_safe || s_file_error) && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, g_light_name);
 			rename(s_targa_temp, g_light_name);
 		}
-		if (!debugflag && g_targa_overlay)
+		if (!g_debug_flag && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, s_targa_temp);
 		}
@@ -2888,7 +2888,7 @@ static int line_3d_mem(void)
 		if (check_extra > (1L << 16))     /* run out of extra segment? */
 		{
 			static struct minmax *got_mem = NULL;
-			if (2222 == debugflag)
+			if (2222 == g_debug_flag)
 			{
 				stopmsg(0, "malloc minmax");
 			}
@@ -2915,7 +2915,7 @@ static int line_3d_mem(void)
 		}
 	}
 	/* TODO: get rid of extra segment business */
-	if (2222 == debugflag || check_extra > (1L << 16))
+	if (2222 == g_debug_flag || check_extra > (1L << 16))
 	{
 		char tmpmsg[70];
 		sprintf(tmpmsg, "used %ld of extra segment", check_extra);

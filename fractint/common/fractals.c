@@ -3451,7 +3451,7 @@ int mandelbrot_mix4_setup(void)
 			break;
 		}
 		/* in case our kludge failed, let the user fix it */
-		if (DEBUGFLAG_SWAP_SIGN == debugflag)
+		if (DEBUGFLAG_SWAP_SIGN == g_debug_flag)
 		{
 			g_temp_z.y = -g_temp_z.y;
 		}

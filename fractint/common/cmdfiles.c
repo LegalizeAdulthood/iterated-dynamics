@@ -49,10 +49,10 @@ int     g_random_flag, g_random_seed;           /* Random number seeding flag an
 int     g_decomposition[2];              /* Decomposition coloring */
 long    g_distance_test;
 int     g_distance_test_width;
-char    fract_overwrite = 0;	/* 0 if file overwrite not allowed */
-int     soundflag;              /* sound control bitfield... see sound.c for useage*/
-int     basehertz;              /* sound=x/y/x hertz value */
-int     debugflag;              /* internal use only - you didn't see this */
+int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
+int     g_sound_flags;              /* sound control bitfield... see sound.c for useage*/
+int     g_base_hertz;              /* sound=x/y/x hertz value */
+int     g_debug_flag;              /* internal use only - you didn't see this */
 int     timerflag;              /* you didn't see this, either */
 int     cyclelimit;             /* color-rotator upper limit */
 int     inside;                 /* inside color: 1=blue     */
@@ -312,7 +312,7 @@ int cmdfiles(int argc, char **argv)
 
 	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
-	if (debugflag != DEBUGFLAG_NO_FIRST_INIT)
+	if (g_debug_flag != DEBUGFLAG_NO_FIRST_INIT)
 	{
 		first_init = 0;
 	}
@@ -390,8 +390,8 @@ static void initvars_restart()          /* <ins> key init */
 	g_gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
 	g_dither_flag = 0;                     /* no dithering */
 	g_ask_video = 1;                        /* turn on video-prompt flag */
-	fract_overwrite = 0;                 /* don't overwrite           */
-	soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
+	g_fractal_overwrite = FALSE;                 /* don't overwrite           */
+	g_sound_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
 	initbatch = INIT_BATCH_NONE;			/* not in batch mode         */
 	checkcurdir = 0;                     /* flag to check current dire for files */
 	initsavetime = 0;                    /* no auto-save              */
@@ -403,7 +403,7 @@ static void initvars_restart()          /* <ins> key init */
 	viewxdots = viewydots = 0;
 	orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
-	debugflag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
+	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
 	timerflag = 0;                       /* timer flags are off       */
 	strcpy(FormFileName, "fractint.frm"); /* default formula file      */
 	FormName[0] = 0;
@@ -538,7 +538,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_new_orbit_type = JULIA;
 	g_z_dots = 128;
 	initvars_3d();
-	basehertz = 440;                     /* basic hertz rate          */
+	g_base_hertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
 	fm_vol = 63;                         /* full volume on soundcard o/p */
 	hi_atten = 0;                        /* no attenuation of hi notes */
@@ -1166,7 +1166,7 @@ static int warn_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	fract_overwrite = (char) (context->yesnoval[0] ^ 1);
+	g_fractal_overwrite = context->yesnoval[0]^1;
 	return COMMAND_OK;
 }
 
@@ -1176,7 +1176,7 @@ static int overwrite_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	fract_overwrite = (char) context->yesnoval[0];
+	g_fractal_overwrite = context->yesnoval[0];
 	return COMMAND_OK;
 }
 
@@ -1821,7 +1821,7 @@ static int corners_arg(const cmd_context *context)
 	initcorners = 1;
 	/* good first approx, but dec could be too big */
 	dec = get_max_curarg_len((char **) context->floatvalstr, context->totparms) + 1;
-	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag) && debugflag != DEBUGFLAG_NO_INT_TO_FLOAT)
+	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag) && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
 	{
 		int old_bf_math;
 
@@ -2032,7 +2032,7 @@ static int center_mag_arg(const cmd_context *context)
 
 	dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
 
-	if ((dec <= DBL_DIG + 1 && debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == debugflag)  /* rough estimate that double is OK */
+	if ((dec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == g_debug_flag)  /* rough estimate that double is OK */
 	{
 		Xctr = context->floatval[0];
 		Yctr = context->floatval[1];
@@ -2259,13 +2259,13 @@ static int sound_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	soundflag = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
+	g_sound_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
 	if (context->totparms == 1)
 	{
-		soundflag = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
+		g_sound_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 	}
 
-	/* soundflag is used as a bitfield... bit 0, 1, 2 used for whether sound
+	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
 		is modified by an orbits x, y, or z component. and also to turn it on
 		or off (0==off, 1==beep (or yes), 2==x, 3 == y, 4 == z),
 		Bit 3 is used for flagging the PC speaker sound,
@@ -2276,23 +2276,23 @@ static int sound_arg(const cmd_context *context)
 
 	if (context->charval[0] == 'n' || context->charval[0] == 'o')
 	{
-		soundflag &= ~SOUNDFLAG_ORBITMASK;
+		g_sound_flags &= ~SOUNDFLAG_ORBITMASK;
 	}
 	else if ((strncmp(context->value, "ye", 2) == 0) || (context->charval[0] == 'b'))
 	{
-		soundflag |= SOUNDFLAG_BEEP;
+		g_sound_flags |= SOUNDFLAG_BEEP;
 	}
 	else if (context->charval[0] == 'x')
 	{
-		soundflag |= SOUNDFLAG_X;
+		g_sound_flags |= SOUNDFLAG_X;
 	}
 	else if (context->charval[0] == 'y' && strncmp(context->value, "ye", 2) != 0)
 	{
-		soundflag |= SOUNDFLAG_Y;
+		g_sound_flags |= SOUNDFLAG_Y;
 	}
 	else if (context->charval[0] == 'z')
 	{
-		soundflag |= SOUNDFLAG_Z;
+		g_sound_flags |= SOUNDFLAG_Z;
 	}
 	else
 	{
@@ -2302,7 +2302,7 @@ static int sound_arg(const cmd_context *context)
 	if (context->totparms > 1)
 	{
 		int i;
-		soundflag &= SOUNDFLAG_ORBITMASK; /* reset options */
+		g_sound_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
 		for (i = 1; i < context->totparms; i++)
 		{
 			/* this is for 2 or more options at the same time */
@@ -2310,24 +2310,24 @@ static int sound_arg(const cmd_context *context)
 			{
 				if (driver_init_fm())
 				{
-					soundflag |= SOUNDFLAG_OPL3_FM;
+					g_sound_flags |= SOUNDFLAG_OPL3_FM;
 				}
 				else
 				{
-					soundflag &= ~SOUNDFLAG_OPL3_FM;
+					g_sound_flags &= ~SOUNDFLAG_OPL3_FM;
 				}
 			}
 			else if (context->charval[i] == 'p')
 			{
-				soundflag |= SOUNDFLAG_SPEAKER;
+				g_sound_flags |= SOUNDFLAG_SPEAKER;
 			}
 			else if (context->charval[i] == 'm')
 			{
-				soundflag |= SOUNDFLAG_MIDI;
+				g_sound_flags |= SOUNDFLAG_MIDI;
 			}
 			else if (context->charval[i] == 'q')
 			{
-				soundflag |= SOUNDFLAG_QUANTIZED;
+				g_sound_flags |= SOUNDFLAG_QUANTIZED;
 			}
 			else
 			{
@@ -2341,7 +2341,7 @@ static int sound_arg(const cmd_context *context)
 
 static int hertz_arg(const cmd_context *context)
 {
-	basehertz = context->numval;
+	g_base_hertz = context->numval;
 	return COMMAND_OK;
 }
 
@@ -2515,9 +2515,9 @@ static int log_mode_arg(const cmd_context *context)
 
 static int debug_flag_arg(const cmd_context *context)
 {
-	debugflag = context->numval;
-	timerflag = debugflag & 1;                /* separate timer flag */
-	debugflag &= ~1;
+	g_debug_flag = context->numval;
+	timerflag = g_debug_flag & 1;                /* separate timer flag */
+	g_debug_flag &= ~1;
 	return COMMAND_OK;
 }
 
@@ -3352,7 +3352,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	context.mode = mode;
 	context.variable = variable;
 	/* these commands are allowed only at startup */
-	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGFLAG_NO_FIRST_INIT == debugflag)
+	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGFLAG_NO_FIRST_INIT == g_debug_flag)
 	{
 		command_processor processors[] =
 		{

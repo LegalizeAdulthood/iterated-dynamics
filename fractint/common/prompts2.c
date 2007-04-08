@@ -222,14 +222,14 @@ int get_toggles()
 
 	choices[++k] = "File Overwrite ('overwrite=')";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = fract_overwrite;
+	uvalues[k].uval.ch.val = g_fractal_overwrite;
 
 	choices[++k] = "Sound (off, beep, x, y, z)";
 	uvalues[k].type = 'l';
 	uvalues[k].uval.ch.vlen = 4;
 	uvalues[k].uval.ch.llen = 5;
 	uvalues[k].uval.ch.list = soundmodes;
-	old_soundflag = soundflag;
+	old_soundflag = g_sound_flags;
 	uvalues[k].uval.ch.val = old_soundflag & SOUNDFLAG_ORBITMASK;
 
 	if (rangeslen == 0)
@@ -407,10 +407,10 @@ int get_toggles()
 		resave_flag = RESAVE_NO;
 		started_resaves = FALSE; /* forget pending increment */
 	}
-	fract_overwrite = (char)uvalues[++k].uval.ch.val;
+	g_fractal_overwrite = uvalues[++k].uval.ch.val;
 
-	soundflag = ((soundflag >> 3) << 3) | (uvalues[++k].uval.ch.val);
-	if (soundflag != old_soundflag && ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+	g_sound_flags = ((g_sound_flags >> 3) << 3) | (uvalues[++k].uval.ch.val);
+	if (g_sound_flags != old_soundflag && ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
 	{
 		j++;
 	}
@@ -994,7 +994,7 @@ int get_cmd_string()
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
-		if (DEBUGFLAG_REAL_POPCORN == debugflag)
+		if (DEBUGFLAG_REAL_POPCORN == g_debug_flag)
 		{
 			backwards_v18();
 			backwards_v19();

@@ -174,7 +174,7 @@ void calculate_fractal_initialize(void)
 	xytemp = xdots + ydots;
 	if (((usr_floatflag == 0) && (xytemp*sizeof(long) > 32768))
 		|| ((usr_floatflag == 1) && (xytemp*sizeof(double) > 32768))
-		|| DEBUGFLAG_NO_PIXEL_GRID == debugflag)
+		|| DEBUGFLAG_NO_PIXEL_GRID == g_debug_flag)
 	{
 		g_use_grid = FALSE;
 		g_float_flag = usr_floatflag = TRUE;
@@ -208,7 +208,7 @@ void calculate_fractal_initialize(void)
 	if (bf_math)
 	{
 		gotprec = getprecbf(CURRENTREZ);
-		if ((gotprec <= DBL_DIG + 1 && debugflag != DEBUGFLAG_NO_BIG_TO_FLOAT) || math_tol[1] >= 1.0)
+		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || math_tol[1] >= 1.0)
 		{
 			corners_bf_to_float();
 			bf_math = 0;
@@ -218,28 +218,28 @@ void calculate_fractal_initialize(void)
 			init_bf_dec(gotprec);
 		}
 	}
-	else if ((fractype == MANDEL || fractype == MANDELFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+	else if ((fractype == MANDEL || fractype == MANDELFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
 		fractype = MANDELFP;
 		curfractalspecific = &fractalspecific[fractype];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == JULIA || fractype == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+	else if ((fractype == JULIA || fractype == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
 		fractype = JULIAFP;
 		curfractalspecific = &fractalspecific[fractype];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
 		fractype = FPMANDELZPOWER;
 		curfractalspecific = &fractalspecific[fractype];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
 		fractype = FPJULIAZPOWER;
 		curfractalspecific = &fractalspecific[fractype];
@@ -419,7 +419,7 @@ init_restart:
 		&& g_biomorph == -1                         /* and not biomorphing */
 		&& g_rq_limit <= 4.0                           /* and bailout not too high */
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
-		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
+		&& g_debug_flag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& g_proximity <= 2.0                       /* and g_proximity not too large */
 		&& g_bail_out_test == Mod)                     /* and bailout test = mod */
 			bitshift = FUDGE_FACTOR;                  /* use the larger bitshift */
@@ -1223,7 +1223,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		return 0;
 	}
 	ftemp = 0;
-	if (desired != 0 && debugflag != DEBUGFLAG_NO_INT_TO_FLOAT)
+	if (desired != 0 && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
 	{
 		ftemp = actual / desired;
 		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
@@ -1539,7 +1539,7 @@ static void sleep_ms_new(long ms)
 
 void sleep_ms(long ms)
 {
-	if (DEBUGFLAG_OLD_TIMER == debugflag)
+	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
 	{
 		sleep_ms_old(ms);
 	}
@@ -1557,7 +1557,7 @@ void sleep_ms(long ms)
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-	if (DEBUGFLAG_OLD_TIMER == debugflag)
+	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
 	{
 		sleep_ms_old(wait_time);
 	}
@@ -1687,15 +1687,15 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	}
 	sxoffs = save_sxoffs;
 	syoffs = save_syoffs;
-	if (DEBUGFLAG_OLD_ORBIT_SOUND == debugflag)
+	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
 	{
-		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+		if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			sound_tone((int)(i*1000/xdots + basehertz));
+			sound_tone((int)(i*1000/xdots + g_base_hertz));
 		}
-		else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
+		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
 		{
-			sound_tone((int)(j*1000/ydots + basehertz));
+			sound_tone((int)(j*1000/ydots + g_base_hertz));
 		}
 		else if (orbit_delay > 0)
 		{
@@ -1704,17 +1704,17 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	}
 	else
 	{
-		if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+		if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			sound_tone((int)(i + basehertz));
+			sound_tone((int)(i + g_base_hertz));
 		}
-		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
+		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
 		{
-			sound_tone((int)(j + basehertz));
+			sound_tone((int)(j + g_base_hertz));
 		}
-		else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
+		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
 		{
-			sound_tone((int)(i + j + basehertz));
+			sound_tone((int)(i + j + g_base_hertz));
 		}
 		else if (orbit_delay > 0)
 		{

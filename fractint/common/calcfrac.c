@@ -829,7 +829,7 @@ int calculate_fractal(void)
 	{
 		froth_cleanup();
 	}
-	if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
+	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
 	{
 		sound_close();
 	}
@@ -1126,7 +1126,7 @@ static void perform_work_list()
 		switch (stdcalcmode)
 		{
 		case 's':
-			if (DEBUGFLAG_SOI_LONG_DOUBLE == debugflag)
+			if (DEBUGFLAG_SOI_LONG_DOUBLE == g_debug_flag)
 			{
 				soi_long_double();
 			}
@@ -1871,7 +1871,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 					: (int)(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
-		if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
+		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
 			if (g_color <= 0 && stdcalcmode == 'b')   /* fix BTM bug */
 			{
@@ -1933,7 +1933,7 @@ int calculate_mandelbrot_fp(void)
 					: (int)(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
-		if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
+		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
 			if (g_color == 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 			{
@@ -2149,7 +2149,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		lastz.y = g_old_z.y;
 	}
 
-	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && orbit_delay > 0)
+	check_freq = (((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)
@@ -2875,7 +2875,7 @@ plot_pixel:
 				: (int)(((g_color_iter - 1) % g_and_color) + 1);
 		}
 	}
-	if (debugflag != DEBUGFLAG_BNDTRACE_NONZERO)
+	if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 	{
 		if (g_color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
 		{
@@ -3585,7 +3585,7 @@ static int solid_guess(void)
 		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && g_x_stop + 1 == xdots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
-	if (debugflag != DEBUGFLAG_SOLID_GUESS_BR)
+	if (g_debug_flag != DEBUGFLAG_SOLID_GUESS_BR)
 	{
 		s_bottom_guess = s_right_guess = FALSE;  /* TIW march 1995 */
 	}

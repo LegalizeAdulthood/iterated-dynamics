@@ -176,7 +176,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		there is free; demand a certain minimum or nogo at all */
 	freemem = FREEMEM;
 
-	if (DEBUGFLAG_MIN_DISKVID_CACHE == debugflag)
+	if (DEBUGFLAG_MIN_DISKVID_CACHE == g_debug_flag)
 	{
 		cache_size = CACHEMIN;
 	}

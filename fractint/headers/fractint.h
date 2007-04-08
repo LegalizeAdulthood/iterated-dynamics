@@ -66,7 +66,7 @@ typedef BYTE BOOLEAN;
 #define TIMER_DECODER	1
 #define TIMER_ENCODER	2
 
-/* debugflag values */
+/* g_debug_flag values */
 #define DEBUGFLAG_NONE				0
 #define DEBUGFLAG_LORENZ_FLOAT		22
 #define DEBUGFLAG_COMPARE_RESTORED	50
