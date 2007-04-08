@@ -1842,7 +1842,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_QUAT, HF_QUAT, WINFRAC | OKJB,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, QUATJULFP, NOFRACTAL, NOFRACTAL, XAXIS,
-		QuaternionFPFractal, quaternion_per_pixel_fp, MandelfpSetup,
+		quaternion_orbit_fp, quaternion_per_pixel_fp, MandelfpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -1854,7 +1854,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_QUAT, HF_QUATJ, WINFRAC | OKJB | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, QUATFP, NOFRACTAL, ORIGIN,
-		QuaternionFPFractal, quaternion_julia_per_pixel_fp, JuliafpSetup,
+		quaternion_orbit_fp, quaternion_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -1998,7 +1998,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_HYPERC, HF_HYPERC, WINFRAC | OKJB | TRIG1,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, HYPERCMPLXJFP, NOFRACTAL, NOFRACTAL, XAXIS,
-		HyperComplexFPFractal, quaternion_per_pixel_fp, MandelfpSetup,
+		hyper_complex_orbit_fp, quaternion_per_pixel_fp, MandelfpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -2010,7 +2010,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_HYPERC, HF_HYPERCJ, WINFRAC | OKJB | TRIG1 | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, HYPERCMPLXFP, NOFRACTAL, ORIGIN,
-		HyperComplexFPFractal, quaternion_julia_per_pixel_fp, JuliafpSetup,
+		hyper_complex_orbit_fp, quaternion_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},

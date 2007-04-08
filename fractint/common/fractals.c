@@ -3183,6 +3183,7 @@ int phoenix_per_pixel_fp(void)
 	s_temp2.y = 0;
 	return 0;
 }
+
 int mandelbrot_phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
@@ -3222,6 +3223,7 @@ int mandelbrot_phoenix_per_pixel(void)
 	return 0;
 #endif
 }
+
 int mandelbrot_phoenix_per_pixel_fp(void)
 {
 	if (g_invert)
@@ -3248,8 +3250,7 @@ int mandelbrot_phoenix_per_pixel_fp(void)
 	return 1; /* 1st iteration has been done */
 }
 
-int
-QuaternionFPFractal(void)
+int quaternion_orbit_fp(void)
 {
 	double a0, a1, a2, a3, n0, n1, n2, n3;
 	a0 = g_old_z.x;
@@ -3274,8 +3275,7 @@ QuaternionFPFractal(void)
 	return 0;
 }
 
-int
-HyperComplexFPFractal(void)
+int hyper_complex_orbit_fp(void)
 {
 	_HCMPLX hold, hnew;
 	hold.x = g_old_z.x;
@@ -3305,8 +3305,8 @@ HyperComplexFPFractal(void)
 	return 0;
 }
 
-int
-VLfpFractal(void) /* Beauty of Fractals pp. 125 - 127 */
+/* Beauty of Fractals pp. 125 - 127 */
+int VLfpFractal(void)
 {
 	double a, b, ab, half, u, w, xy;
 
@@ -3322,8 +3322,8 @@ VLfpFractal(void) /* Beauty of Fractals pp. 125 - 127 */
 	return g_bail_out_fp();
 }
 
-int
-EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
+/* Science of Fractal Images pp. 185, 187 */
+int EscherfpFractal(void)
 {
 	_CMPLX oldtest, newtest, testsqr;
 	double testsize = 0.0;
@@ -3358,7 +3358,6 @@ EscherfpFractal(void) /* Science of Fractal Images pp. 185, 187 */
 
 /* re-use static roots variable
 	memory for mandelmix4 */
-
 #define A g_static_roots[ 0]
 #define B g_static_roots[ 1]
 #define C g_static_roots[ 2]
