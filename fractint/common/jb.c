@@ -86,16 +86,16 @@ int julibrot_setup(void)
 	s_b_base = 128;
 
 #ifndef XFRACT
-	if (fractalspecific[fractype].isinteger > 0)
+	if (g_fractal_specific[fractype].isinteger > 0)
 	{
 		long jxmin, jxmax, jymin, jymax, mxmax, mymax;
-		if (fractalspecific[g_new_orbit_type].isinteger == 0)
+		if (g_fractal_specific[g_new_orbit_type].isinteger == 0)
 		{
 			stopmsg(0, "Julibrot orbit type isinteger mismatch");
 		}
-		if (fractalspecific[g_new_orbit_type].isinteger > 1)
+		if (g_fractal_specific[g_new_orbit_type].isinteger > 1)
 		{
-			bitshift = fractalspecific[g_new_orbit_type].isinteger;
+			bitshift = g_fractal_specific[g_new_orbit_type].isinteger;
 		}
 		s_fg = (double) (1L << bitshift);
 		s_fg16 = (double) (1L << 16);
@@ -231,7 +231,7 @@ static int z_line(long x, long y)
 		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 		for (n = 0; n < maxit; n++)
 		{
-			if (fractalspecific[g_new_orbit_type].orbitcalc())
+			if (g_fractal_specific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
@@ -347,7 +347,7 @@ static int z_line_fp(double x, double y)
 
 		for (n = 0; n < maxit; n++)
 		{
-			if (fractalspecific[g_new_orbit_type].orbitcalc())
+			if (g_fractal_specific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
@@ -401,7 +401,7 @@ int std_4d_fractal(void)
 		{
 			g_c_exp = 1;
 		}
-		fractalspecific[g_new_orbit_type].orbitcalc =
+		g_fractal_specific[g_new_orbit_type].orbitcalc =
 			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 			? z_power_orbit : complex_z_power_orbit;
 	}
@@ -448,7 +448,7 @@ int std_4d_fractal_fp(void)
 
 	if (g_new_orbit_type == FPJULIAZPOWER)
 	{
-		fractalspecific[g_new_orbit_type].orbitcalc =
+		g_fractal_specific[g_new_orbit_type].orbitcalc =
 			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */

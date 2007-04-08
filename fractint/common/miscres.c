@@ -667,14 +667,14 @@ static void trigdetails(char *buf)
 	char tmpbuf[20];
 	if (fractype == JULIBROT || fractype == JULIBROTFP)
 	{
-		numfn = (fractalspecific[g_new_orbit_type].flags >> 6) & 7;
+		numfn = (g_fractal_specific[g_new_orbit_type].flags >> 6) & 7;
 	}
 	else
 	{
-		numfn = (curfractalspecific->flags >> 6) & 7;
+		numfn = (g_current_fractal_specific->flags >> 6) & 7;
 	}
-	if (curfractalspecific == &fractalspecific[FORMULA] ||
-		curfractalspecific == &fractalspecific[FFORMULA])
+	if (g_current_fractal_specific == &g_fractal_specific[FORMULA] ||
+		g_current_fractal_specific == &g_fractal_specific[FFORMULA])
 		numfn = maxfn;
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
@@ -829,14 +829,14 @@ int tab_display_2(char *msg)
 	show_str_var("tempdir",     g_temp_dir,      &row, msg);
 	show_str_var("workdir",     g_work_dir,      &row, msg);
 	show_str_var("filename",    g_read_name,     &row, msg);
-	show_str_var("formulafile", FormFileName, &row, msg);
+	show_str_var("formulafile", g_formula_filename, &row, msg);
 	show_str_var("savename",    g_save_name,     &row, msg);
-	show_str_var("parmfile",    CommandFile,  &row, msg);
-	show_str_var("ifsfile",     IFSFileName,  &row, msg);
+	show_str_var("parmfile",    g_command_file,  &row, msg);
+	show_str_var("ifsfile",     g_ifs_filename,  &row, msg);
 	show_str_var("autokeyname", g_autokey_name,     &row, msg);
 	show_str_var("lightname",   g_light_name,   &row, msg);
 	show_str_var("map",         MAP_name,     &row, msg);
-	write_row(row++, "Sizeof fractalspecific array %d",
+	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
 	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, g_col, g_row);
 	if (fractype == FORMULA || fractype == FFORMULA)
@@ -864,10 +864,10 @@ int tab_display_2(char *msg)
 	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s uses_ismand %d",
 		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
-		curfractalspecific->orbitcalc == fFormula ? "fast parser" :
+		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
-		curfractalspecific->orbitcalc ==  Formula ? "slow parser" :
-		curfractalspecific->orbitcalc ==  BadFormula ? "bad formula" :
+		g_current_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
+		g_current_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
 		"", uses_ismand);
 /*
 	{
@@ -948,44 +948,44 @@ top:
 	else
 	{
 		driver_put_string(s_row, 16, C_GENERAL_HI,
-			curfractalspecific->name[0] == '*' ?
-				&curfractalspecific->name[1] : curfractalspecific->name);
+			g_current_fractal_specific->name[0] == '*' ?
+				&g_current_fractal_specific->name[1] : g_current_fractal_specific->name);
 		i = 0;
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, FormName);
-			i = (int) strlen(FormName) + 1;
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_name);
+			i = (int) strlen(g_formula_name) + 1;
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(FormFileName) >= 29)
+			if ((int) strlen(g_formula_filename) >= 29)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, FormFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_formula_filename);
 		}
 		trigdetails(msg);
 		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
 		if (fractype == LSYSTEM)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, LName);
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name);
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(LFileName) >= 28)
+			if ((int) strlen(g_l_system_filename) >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, LFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename);
 		}
 		if (fractype == IFS || fractype == IFS3D)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, IFSName);
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(IFSFileName) >= 28)
+			if ((int) strlen(g_ifs_filename) >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, IFSFileName);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_ifs_filename);
 		}
 	}
 
@@ -1050,7 +1050,7 @@ top:
 
 	if (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE)
 	{
-		if (curfractalspecific->flags&NORESUME)
+		if (g_current_fractal_specific->flags&NORESUME)
 		{
 			driver_put_string(s_row++, 2, C_GENERAL_HI,
 				"Note: can't resume this type after interrupts other than <tab> and <F1>");
@@ -1152,7 +1152,7 @@ top:
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
-	if ((curfractalspecific->flags&INFCALC) && (g_color_iter != 0))
+	if ((g_current_fractal_specific->flags&INFCALC) && (g_color_iter != 0))
 	{
 		driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
 		sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
@@ -1173,7 +1173,7 @@ top:
 				g_video_entry.name, g_video_entry.comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}
-	if (!(curfractalspecific->flags&NOZOOM))
+	if (!(g_current_fractal_specific->flags&NOZOOM))
 	{
 		adjust_corner(); /* make bottom left exact if very near exact */
 		if (bf_math)
@@ -1451,15 +1451,15 @@ int ifsload()                   /* read in IFS parameters */
 	char *bufptr;
 	int ret, rowsize;
 
-	if (ifs_defn)  /* release prior parms */
+	if (g_ifs_definition)  /* release prior parms */
 	{
-		free((char *)ifs_defn);
-		ifs_defn = NULL;
+		free((char *)g_ifs_definition);
+		g_ifs_definition = NULL;
 		}
 
-	ifs_type = 0;
+	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;
-	if (find_file_item(IFSFileName, IFSName, &ifsfile, 3) < 0)
+	if (find_file_item(g_ifs_filename, g_ifs_name, &ifsfile, 3) < 0)
 	{
 		return -1;
 	}
@@ -1477,7 +1477,7 @@ int ifsload()                   /* read in IFS parameters */
 	{
 		if (strncmp(bufptr, "(3d)", 4) == 0)
 		{
-			ifs_type = 1;
+			g_ifs_type = IFSTYPE_3D;
 			rowsize = IFS3DPARM;
 		}
 		++bufptr;
@@ -1536,7 +1536,7 @@ int ifsload()                   /* read in IFS parameters */
 	if (ret == 0)
 	{
 		numaffine = i/rowsize;
-		if ((ifs_defn = (float *)malloc(
+		if ((g_ifs_definition = (float *)malloc(
 								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL)
 		{
 			stopmsg(0, insufficient_ifs_mem);
@@ -1546,7 +1546,7 @@ int ifsload()                   /* read in IFS parameters */
 		{
 			for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 			{
-				ifs_defn[i] = ((float *)tstack)[i];
+				g_ifs_definition[i] = ((float *)tstack)[i];
 			}
 		}
 	}
@@ -1570,7 +1570,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 	splitpath(filename, drive, dir, fname, ext);
 	makepath(fullpath, "", "", fname, ext);
-	if (stricmp(filename, CommandFile))
+	if (stricmp(filename, g_command_file))
 	{
 		infile = fopen(filename, "rb");
 		if (infile != NULL)
@@ -1613,38 +1613,38 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".frm");
-		splitpath(searchfor.frm, drive, dir, NULL, NULL);
+		splitpath(g_search_for.frm, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_L_SYSTEM:
 		strcpy(parsearchname, "lsys:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".l");
-		splitpath(searchfor.lsys, drive, dir, NULL, NULL);
+		splitpath(g_search_for.lsys, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_IFS:
 		strcpy(parsearchname, "ifs:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".ifs");
-		splitpath(searchfor.ifs, drive, dir, NULL, NULL);
+		splitpath(g_search_for.ifs, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_PARAMETER:
 		strcpy(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".par");
-		splitpath(searchfor.par, drive, dir, NULL, NULL);
+		splitpath(g_search_for.par, drive, dir, NULL, NULL);
 		break;
 	}
 
 	if (!found)
 	{
-		infile = fopen(CommandFile, "rb");
+		infile = fopen(g_command_file, "rb");
 		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, parsearchname) == -1)
 			{
-				strcpy(filename, CommandFile);
+				strcpy(filename, g_command_file);
 				found = 1;
 			}
 			else

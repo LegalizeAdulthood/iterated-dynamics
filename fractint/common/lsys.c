@@ -122,7 +122,7 @@ static int _fastcall read_l_system_file(char *str)
 	FILE *infile;
 	char msgbuf[481]; /* enough for 6 full lines */
 
-	if (find_file_item(LFileName, str, &infile, ITEMTYPE_L_SYSTEM) < 0)
+	if (find_file_item(g_l_system_filename, str, &infile, ITEMTYPE_L_SYSTEM) < 0)
 	{
 		return -1;
 	}
@@ -370,7 +370,7 @@ int l_system(void)
 
 int l_load(void)
 {
-	if (read_l_system_file(LName))  /* error occurred */
+	if (read_l_system_file(g_l_system_name))  /* error occurred */
 	{
 		free_rules_mem();
 		loaded = 0;

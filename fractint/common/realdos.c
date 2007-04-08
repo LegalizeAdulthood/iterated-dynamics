@@ -64,7 +64,7 @@ int stopmsg (int flags, char *msg)
 		}
 		fclose(fp);
 	}
-	if (first_init)  /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)  /* & cmdfiles hasn't finished 1st try */
 	{
 		init_failure(msg);
 		goodbye();
@@ -174,7 +174,7 @@ int showtempmsg(char *msgparm)
 		dvid_status(0, msg);
 		return 0;
 	}
-	if (first_init)      /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)      /* & cmdfiles hasn't finished 1st try */
 	{
 		printf("%s\n", msg);
 		return 0;
@@ -1184,9 +1184,9 @@ top:
 
 	if (fullmenu)
 	{
-		if ((curfractalspecific->tojulia != NOFRACTAL
+		if ((g_current_fractal_specific->tojulia != NOFRACTAL
 			&& param[0] == 0.0 && param[1] == 0.0)
-			|| curfractalspecific->tomandel != NOFRACTAL)
+			|| g_current_fractal_specific->tomandel != NOFRACTAL)
 		{
 			nextleft += 2;
 			choicekey[nextleft] = FIK_SPACE;
@@ -1488,9 +1488,9 @@ static int menu_checkkey(int curkey, int choice)
 			return -testkey;
 		if (testkey == ' ')
 		{
-			if ((curfractalspecific->tojulia != NOFRACTAL
+			if ((g_current_fractal_specific->tojulia != NOFRACTAL
 					&& param[0] == 0.0 && param[1] == 0.0)
-				|| curfractalspecific->tomandel != NOFRACTAL)
+				|| g_current_fractal_specific->tomandel != NOFRACTAL)
 			{
 				return -testkey;
 			}

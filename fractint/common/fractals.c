@@ -12,7 +12,7 @@
 
 	1. Routines that are called once-per-orbit to calculate the orbit
 		value. These have names like "XxxxFractal", and their function
-		pointers are stored in fractalspecific[fractype].orbitcalc. EVERY
+		pointers are stored in g_fractal_specific[fractype].orbitcalc. EVERY
 		new fractal type needs one of these. Return 0 to continue iterations,
 		1 if we're done. Results for integer fractals are left in 'g_new_z_l.x' and
 		'g_new_z_l.y', for floating point fractals in 'new.x' and 'new.y'.
@@ -20,19 +20,19 @@
 	2. Routines that are called once per pixel to set various variables
 		prior to the orbit calculation. These have names like xxx_per_pixel
 		and are fairly generic - chances are one is right for your new type.
-		They are stored in fractalspecific[fractype].per_pixel.
+		They are stored in g_fractal_specific[fractype].per_pixel.
 
 	3. Routines that are called once per screen to set various variables.
 		These have names like XxxxSetup, and are stored in
-		fractalspecific[fractype].per_image.
+		g_fractal_specific[fractype].per_image.
 
 	4. The main fractal routine. Usually this will be standard_fractal(),
 		but if you have written a stand-alone fractal routine independent
 		of the standard_fractal mechanisms, your routine name goes here,
-		stored in fractalspecific[fractype].calculate_type.per_image.
+		stored in g_fractal_specific[fractype].calculate_type.per_image.
 
 	Adding a new fractal type should be simply a matter of adding an item
-	to the 'fractalspecific' structure, writing (or re-using one of the existing)
+	to the 'g_fractal_specific' structure, writing (or re-using one of the existing)
 	an appropriate setup, per_image, per_pixel, and orbit routines.
 
 	--------------------------------------------------------------------

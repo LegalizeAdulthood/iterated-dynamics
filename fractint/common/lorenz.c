@@ -13,9 +13,9 @@
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x, y, z) \
-	(*(int(*)(long *, long *, long *))curfractalspecific->orbitcalc)(x, y, z)
+	(*(int(*)(long *, long *, long *))g_current_fractal_specific->orbitcalc)(x, y, z)
 #define FORBIT(x, y, z) \
-	(*(int(*)(double*, double*, double*))curfractalspecific->orbitcalc)(x, y, z)
+	(*(int(*)(double*, double*, double*))g_current_fractal_specific->orbitcalc)(x, y, z)
 
 #define RANDOM(x)  (rand() % (x))
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
@@ -251,7 +251,7 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 }
 
 /******************************************************************/
-/*   setup functions - put in fractalspecific[fractype].per_image */
+/*   setup functions - put in g_fractal_specific[fractype].per_image */
 /******************************************************************/
 
 int orbit_3d_setup(void)
@@ -580,7 +580,7 @@ rwalk:
 }
 
 /******************************************************************/
-/*   orbit functions - put in fractalspecific[fractype].orbitcalc */
+/*   orbit functions - put in g_fractal_specific[fractype].orbitcalc */
 /******************************************************************/
 
 /* Julia sets by inverse iterations added by Juan J. Buhler 4/3/92 */
@@ -1344,7 +1344,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 #undef PAR_D
 
 /**********************************************************************/
-/*   Main fractal engines - put in fractalspecific[fractype].calculate_type */
+/*   Main fractal engines - put in g_fractal_specific[fractype].calculate_type */
 /**********************************************************************/
 
 int inverse_julia_per_image()
@@ -1363,7 +1363,7 @@ int inverse_julia_per_image()
 			Free_Queue();
 			return -1;
 		}
-		color = curfractalspecific->orbitcalc();
+		color = g_current_fractal_specific->orbitcalc();
 		g_old_z = g_new_z;
 	}
 	Free_Queue();
@@ -2106,16 +2106,16 @@ int plotorbits2dsetup(void)
 {
 
 #ifndef XFRACT
-	if (curfractalspecific->isinteger != 0)
+	if (g_current_fractal_specific->isinteger != 0)
 	{
-		int tofloat = curfractalspecific->tofloat;
+		int tofloat = g_current_fractal_specific->tofloat;
 		if (tofloat == NOFRACTAL)
 		{
 			return -1;
 		}
 		g_float_flag = usr_floatflag = TRUE; /* force floating point */
 		fractype = tofloat;
-		curfractalspecific = &fractalspecific[fractype];
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 	}
 #endif
 
@@ -2284,9 +2284,9 @@ int funny_glasses_call(int (*calc)(void))
 				driver_set_video_mode(&g_video_entry);
 		}
 		g_which_image = WHICHIMAGE_BLUE;
-		if (curfractalspecific->flags & INFCALC)
+		if (g_current_fractal_specific->flags & INFCALC)
 		{
-			curfractalspecific->per_image(); /* reset for 2nd image */
+			g_current_fractal_specific->per_image(); /* reset for 2nd image */
 		}
 		plot_setup();
 		assert(g_standard_plot);
@@ -2360,19 +2360,19 @@ static int ifs_3d_float(void)
 		r /= RAND_MAX;
 
 		/* pick which iterated function to execute, weighted by probability */
-		sum = ifs_defn[12]; /* [0][12] */
+		sum = g_ifs_definition[12]; /* [0][12] */
 		k = 0;
 		while (sum < r && ++k < numaffine*IFS3DPARM)
 		{
-			sum += ifs_defn[k*IFS3DPARM + 12];
-			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
+			sum += g_ifs_definition[k*IFS3DPARM + 12];
+			if (g_ifs_definition[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
 			{
 				break;
 			}
 		}
 
 		/* calculate image of last point under selected iterated function */
-		ffptr = ifs_defn + k*IFS3DPARM; /* point to first parm in row */
+		ffptr = g_ifs_definition + k*IFS3DPARM; /* point to first parm in row */
 		newx = *ffptr*inf.orbit[0] +
 				*(ffptr + 1)*inf.orbit[1] +
 				*(ffptr + 2)*inf.orbit[2] + *(ffptr + 9);
@@ -2451,7 +2451,7 @@ static int ifs_3d_float(void)
 
 int ifs()                       /* front-end for ifs_2d and ifs_3d */
 {
-	if (ifs_defn == NULL && ifsload() < 0)
+	if (g_ifs_definition == NULL && ifsload() < 0)
 	{
 		return -1;
 	}
@@ -2459,7 +2459,7 @@ int ifs()                       /* front-end for ifs_2d and ifs_3d */
 	{
 		notdiskmsg();
 	}
-	return (ifs_type == 0) ? ifs_2d() : ifs_3d();
+	return (g_ifs_type == IFSTYPE_2D) ? ifs_2d() : ifs_3d();
 }
 
 
@@ -2494,7 +2494,7 @@ static int ifs_2d(void)
 	{
 		for (j = 0; j < IFSPARM; j++)
 		{
-			localifs[i*IFSPARM + j] = (long) (ifs_defn[i*IFSPARM + j]*fudge);
+			localifs[i*IFSPARM + j] = (long) (g_ifs_definition[i*IFSPARM + j]*fudge);
 		}
 	}
 
@@ -2598,7 +2598,7 @@ static int ifs_3d_long(void)
 	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
-			localifs[i*IFS3DPARM + j] = (long) (ifs_defn[i*IFS3DPARM + j]*fudge);
+			localifs[i*IFS3DPARM + j] = (long) (g_ifs_definition[i*IFS3DPARM + j]*fudge);
 		}
 	}
 
@@ -2629,7 +2629,7 @@ static int ifs_3d_long(void)
 		while (sum < r && ++k < numaffine*IFS3DPARM)
 		{
 			sum += localifs[k*IFS3DPARM + 12];
-			if (ifs_defn[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
+			if (g_ifs_definition[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
 			{
 				break;
 			}

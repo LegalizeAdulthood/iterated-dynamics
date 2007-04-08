@@ -28,6 +28,10 @@ typedef BYTE BOOLEAN;
 #define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
 #define NUM_BOXES 4096
 
+/* g_ifs_type values */
+#define IFSTYPE_2D 0
+#define IFSTYPE_3D 1
+
 /* g_log_dynamic_calculate values */
 #define LOGDYNAMIC_NONE 0
 #define LOGDYNAMIC_DYNAMIC 1
@@ -825,7 +829,7 @@ enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };
 enum Major  {breadth_first, depth_first, random_walk, random_run};
 enum Minor  {left_first, right_first};
 
-/* bitmask defines for fractalspecific flags */
+/* bitmask defines for g_fractal_specific flags */
 #define  NOZOOM         1    /* zoombox not allowed at all          */
 #define  NOGUESS        2    /* solid guessing not allowed          */
 #define  NOTRACE        4    /* boundary tracing not allowed        */
@@ -854,8 +858,8 @@ enum Minor  {left_first, right_first};
 #define EVOLVE_PARM_BOX		128
 
 
-extern struct fractalspecificstuff fractalspecific[];
-extern struct fractalspecificstuff *curfractalspecific;
+extern struct fractalspecificstuff g_fractal_specific[];
+extern struct fractalspecificstuff *g_current_fractal_specific;
 
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
@@ -874,9 +878,9 @@ extern struct fractalspecificstuff *curfractalspecific;
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 
-#define PER_IMAGE   (fractalspecific[fractype].per_image)
-#define PER_PIXEL   (fractalspecific[fractype].per_pixel)
-#define ORBITCALC   (fractalspecific[fractype].orbitcalc)
+#define PER_IMAGE   (g_fractal_specific[fractype].per_image)
+#define PER_PIXEL   (g_fractal_specific[fractype].per_pixel)
+#define ORBITCALC   (g_fractal_specific[fractype].orbitcalc)
 
 typedef  _LCMPLX LCMPLX;
 

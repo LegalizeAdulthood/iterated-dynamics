@@ -1285,8 +1285,8 @@ int get_commands()              /* execute commands from file */
 	oldhelpmode = helpmode;
 	helpmode = HELPPARMFILE;
 	if ((point = get_file_entry(GETFILE_PARAMETER, "Parameter Set",
-								commandmask, CommandFile, CommandName)) >= 0
-		&& (parmfile = fopen(CommandFile, "rb")) != NULL)
+								commandmask, g_command_file, g_command_name)) >= 0
+		&& (parmfile = fopen(g_command_file, "rb")) != NULL)
 	{
 		fseek(parmfile, point, SEEK_SET);
 		ret = load_commands(parmfile);
@@ -1317,10 +1317,10 @@ void goodbye(void)                  /* we done.  Bail out */
 	}
 	ReleaseParamBox();
 	history_free();
-	if (ifs_defn != NULL)
+	if (g_ifs_definition != NULL)
 	{
-		free(ifs_defn);
-		ifs_defn = NULL;
+		free(g_ifs_definition);
+		g_ifs_definition = NULL;
 	}
 	free_grid_pointers();
 	free_ant_storage();
@@ -2187,10 +2187,10 @@ gc_loop:
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
-		xx3rd = xxmin = curfractalspecific->xmin;
-		xxmax         = curfractalspecific->xmax;
-		yy3rd = yymin = curfractalspecific->ymin;
-		yymax         = curfractalspecific->ymax;
+		xx3rd = xxmin = g_current_fractal_specific->xmin;
+		xxmax         = g_current_fractal_specific->xmax;
+		yy3rd = yymin = g_current_fractal_specific->ymin;
+		yymax         = g_current_fractal_specific->ymax;
 		if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
 		{
 			aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
@@ -2406,10 +2406,10 @@ gsc_loop:
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
-		g_orbit_x_3rd = g_orbit_x_min = curfractalspecific->xmin;
-		g_orbit_x_max         = curfractalspecific->xmax;
-		g_orbit_y_3rd = g_orbit_y_min = curfractalspecific->ymin;
-		g_orbit_y_max         = curfractalspecific->ymax;
+		g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->xmin;
+		g_orbit_x_max         = g_current_fractal_specific->xmax;
+		g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->ymin;
+		g_orbit_y_max         = g_current_fractal_specific->ymax;
 		xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
 		yymin = g_orbit_y_min; yymax = g_orbit_y_max;
 		xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;

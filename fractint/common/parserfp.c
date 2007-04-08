@@ -1405,7 +1405,7 @@ extern void (Img_Setup)(void);
 
 int CvtStk()  /* convert the array of ptrs  */
 {
-	extern char FormName[];
+	extern char g_formula_name[];
 	void (*ftst)(void);
 	void (*ntst)(void);
 	union Arg *testoperand;
@@ -1613,16 +1613,16 @@ skipfinalopt:  /* -------------- end of final optimizations ------------ */
 	LASTSQR.d.y = 0.0;  /* do this once per image  */
 
 	/* now change the pointers  */
-	if (FormName[0] != 0 &&
+	if (g_formula_name[0] != 0 &&
 		(uses_jump == 0 || fpfill_jump_struct() == 0)) /* but only if parse succeeded  */
 	{
-		curfractalspecific->per_pixel = fform_per_pixel;
-		curfractalspecific->orbitcalc = fFormula;
+		g_current_fractal_specific->per_pixel = fform_per_pixel;
+		g_current_fractal_specific->orbitcalc = fFormula;
 	}
 	else
 	{
-		curfractalspecific->per_pixel = BadFormula;
-		curfractalspecific->orbitcalc = BadFormula;
+		g_current_fractal_specific->per_pixel = BadFormula;
+		g_current_fractal_specific->orbitcalc = BadFormula;
 	}
 
 	Img_Setup();  /* call assembler setup code  */

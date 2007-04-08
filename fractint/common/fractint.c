@@ -729,7 +729,7 @@ va_dcl
 		}
 		fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
 			timestring,
-			curfractalspecific->name,
+			g_current_fractal_specific->name,
 			xdots,
 			ydots,
 			maxit);

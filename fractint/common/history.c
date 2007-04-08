@@ -154,17 +154,17 @@ void _fastcall history_save_info(void)
 	{
 	case FORMULA:
 	case FFORMULA:
-		strncpy(current.filename, FormFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, FormName, ITEMNAMELEN + 1);
+		strncpy(current.filename, g_formula_filename, FILE_MAX_PATH);
+		strncpy(current.itemname, g_formula_name, ITEMNAMELEN + 1);
 		break;
 	case IFS:
 	case IFS3D:
-		strncpy(current.filename, IFSFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, IFSName, ITEMNAMELEN + 1);
+		strncpy(current.filename, g_ifs_filename, FILE_MAX_PATH);
+		strncpy(current.itemname, g_ifs_name, ITEMNAMELEN + 1);
 		break;
 	case LSYSTEM:
-		strncpy(current.filename, LFileName, FILE_MAX_PATH);
-		strncpy(current.itemname, LName, ITEMNAMELEN + 1);
+		strncpy(current.filename, g_l_system_filename, FILE_MAX_PATH);
+		strncpy(current.itemname, g_l_system_name, ITEMNAMELEN + 1);
 		break;
 	default:
 		*(current.filename) = 0;
@@ -326,7 +326,7 @@ void _fastcall history_restore_info(void)
 	g_bail_out_test			= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
 	g_old_demm_colors     	= last.g_old_demm_colors;
-	curfractalspecific  	= &fractalspecific[fractype];
+	g_current_fractal_specific  	= &g_fractal_specific[fractype];
 	g_potential_flag		= (potparam[0] != 0.0);
 	if (g_inversion[0] != 0.0)
 	{
@@ -350,7 +350,7 @@ void _fastcall history_restore_info(void)
 		g_set_orbit_corners = 1;
 	}
 	g_orbit_draw_mode		= (int) last.drawmode;
-	usr_floatflag			= (char) (curfractalspecific->isinteger ? 0 : 1);
+	usr_floatflag			= (char) (g_current_fractal_specific->isinteger ? 0 : 1);
 	memcpy(g_dac_box, last.dac, 256*3);
 	memcpy(olddacbox, last.dac, 256*3);
 	if (g_map_dac_box)
@@ -363,17 +363,17 @@ void _fastcall history_restore_info(void)
 	{
 	case FORMULA:
 	case FFORMULA:
-		strncpy(FormFileName, last.filename, FILE_MAX_PATH);
-		strncpy(FormName, last.itemname, ITEMNAMELEN + 1);
+		strncpy(g_formula_filename, last.filename, FILE_MAX_PATH);
+		strncpy(g_formula_name, last.itemname, ITEMNAMELEN + 1);
 		break;
 	case IFS:
 	case IFS3D:
-		strncpy(IFSFileName, last.filename, FILE_MAX_PATH);
-		strncpy(IFSName, last.itemname, ITEMNAMELEN + 1);
+		strncpy(g_ifs_filename, last.filename, FILE_MAX_PATH);
+		strncpy(g_ifs_name, last.itemname, ITEMNAMELEN + 1);
 		break;
 	case LSYSTEM:
-		strncpy(LFileName, last.filename, FILE_MAX_PATH);
-		strncpy(LName, last.itemname, ITEMNAMELEN + 1);
+		strncpy(g_l_system_filename, last.filename, FILE_MAX_PATH);
+		strncpy(g_l_system_name, last.itemname, ITEMNAMELEN + 1);
 		break;
 	default:
 		break;
