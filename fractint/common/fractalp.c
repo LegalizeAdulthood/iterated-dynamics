@@ -1,10 +1,10 @@
 /*
-		This module consists only of the fractalspecific structure
+		This module consists only of the g_fractal_specific structure
 		and a *slew* of defines needed to get it to compile
 */
 #include <string.h>
 
-/* includes needed for fractalspecific */
+/* includes needed for g_fractal_specific */
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -12,7 +12,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
-/* functions defined elswhere needed for fractalspecific */
+/* functions defined elswhere needed for g_fractal_specific */
 /* moved to prototyp.h */
 
 /* parameter descriptions */
@@ -213,7 +213,7 @@ static char s_halley_name[] = "*halley";
 /* use next to cast orbitcalcs() that have arguments */
 #define VF int(*)(void)
 
-struct fractalspecificstuff fractalspecific[] =
+struct fractalspecificstuff g_fractal_specific[] =
 {
 	/*
 	{
@@ -2264,7 +2264,7 @@ struct fractalspecificstuff fractalspecific[] =
 	}
 };
 
-int g_num_fractal_types = NUM_OF(fractalspecific)-1;
+int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
 
 /*
  *  Returns 1 if the formula parameter is not used in the current
@@ -2332,7 +2332,7 @@ int type_has_parameter(int type, int parm, char *buf)
 	char *ret = NULL;
 	if (0 <= parm && parm < 4)
 	{
-		ret = fractalspecific[type].param[parm];
+		ret = g_fractal_specific[type].param[parm];
 	}
 	else if (parm >= 4 && parm < MAXPARAMS)
 	{

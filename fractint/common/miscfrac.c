@@ -942,10 +942,10 @@ int diffusion(void)
 /* and f.p renditions of bifurcations of r*sin(Pi*p), which    */
 /* spurred Mitchel Feigenbaum on to discover his Number).      */
 
-/* To add further types, extend the fractalspecific[] array in */
+/* To add further types, extend the g_fractal_specific[] array in */
 /* usual way, with Bifurcation as the engine, and the name of  */
 /* the routine that calculates the next bifurcation generation */
-/* as the "orbitcalc" routine in the fractalspecific[] entry.  */
+/* as the "orbitcalc" routine in the g_fractal_specific[] entry.  */
 
 /* Bifurcation "orbitcalc" routines get called once per screen */
 /* pixel column.  They should calculate the next generation    */
@@ -1087,7 +1087,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 	for (counter = 0 ; counter < s_filter_cycles ; counter++)
 	{
-		errors = curfractalspecific->orbitcalc();
+		errors = g_current_fractal_specific->orbitcalc();
 		if (errors)
 		{
 			return;
@@ -1098,7 +1098,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		bifurcation_period_init();
 		for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 		{
-			errors = curfractalspecific->orbitcalc();
+			errors = g_current_fractal_specific->orbitcalc();
 			if (errors)
 			{
 				return;
@@ -1112,7 +1112,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		{
 			for (counter = 0 ; counter < s_filter_cycles ; counter++)
 			{
-				errors = curfractalspecific->orbitcalc();
+				errors = g_current_fractal_specific->orbitcalc();
 				if (errors)
 				{
 					return;
@@ -1127,7 +1127,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 	}
 	for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
 	{
-		errors = curfractalspecific->orbitcalc();
+		errors = g_current_fractal_specific->orbitcalc();
 		if (errors)
 		{
 			return;
@@ -1363,7 +1363,7 @@ int bifurcation_may_setup()
 	}
 	param[2] = (double)beta;
 
-	timer(TIMER_ENGINE, curfractalspecific->calculate_type);
+	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
 	return 0;
 }
 
@@ -1572,7 +1572,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 		for (count = 0; count < lyaLength; count++)
 		{
 			Rate = lyaRxy[count] ? a : b;
-			if (curfractalspecific->orbitcalc())
+			if (g_current_fractal_specific->orbitcalc())
 			{
 				overflow = TRUE;
 				goto jumpout;
@@ -1584,7 +1584,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 		for (count = 0; count < lyaLength; count++)
 		{
 			Rate = lyaRxy[count] ? a : b;
-			if (curfractalspecific->orbitcalc())
+			if (g_current_fractal_specific->orbitcalc())
 			{
 				overflow = TRUE;
 				goto jumpout;
@@ -2045,7 +2045,7 @@ int cellular_setup(void)
 	{
 		g_next_screen_flag = 0; /* initialize flag */
 	}
-	timer(TIMER_ENGINE, curfractalspecific->calculate_type);
+	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
 	return 0;
 }
 

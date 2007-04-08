@@ -746,14 +746,14 @@ int calculate_fractal(void)
 		calctime = 0;
 	}
 
-	if (curfractalspecific->calculate_type != standard_fractal
-		&& curfractalspecific->calculate_type != calculate_mandelbrot
-		&& curfractalspecific->calculate_type != calculate_mandelbrot_fp
-		&& curfractalspecific->calculate_type != lyapunov
-		&& curfractalspecific->calculate_type != froth_calc)
+	if (g_current_fractal_specific->calculate_type != standard_fractal
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_fp
+		&& g_current_fractal_specific->calculate_type != lyapunov
+		&& g_current_fractal_specific->calculate_type != froth_calc)
 	{
-		g_calculate_type = curfractalspecific->calculate_type; /* per_image can override */
-		g_symmetry = curfractalspecific->symmetry; /*   calculate_type & symmetry  */
+		g_calculate_type = g_current_fractal_specific->calculate_type; /* per_image can override */
+		g_symmetry = g_current_fractal_specific->symmetry; /*   calculate_type & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 		s_iy_start = s_ix_start = g_yy_start = g_xx_start = g_yy_begin = g_xx_begin = 0;
 		g_y_stop = g_yy_stop = ydots -1;
@@ -761,7 +761,7 @@ int calculate_fractal(void)
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 		g_distance_test = 0; /* only standard escape time engine supports distest */
 		/* per_image routine is run here */
-		if (curfractalspecific->per_image())
+		if (g_current_fractal_specific->per_image())
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
@@ -825,7 +825,7 @@ int calculate_fractal(void)
 		free_workarea();
 	}
 
-	if (curfractalspecific->calculate_type == froth_calc)
+	if (g_current_fractal_specific->calculate_type == froth_calc)
 	{
 		froth_cleanup();
 	}
@@ -871,12 +871,12 @@ static void perform_work_list()
 	alt = find_alternate_math(fractype, bf_math);
 	if (alt > -1)
 	{
-		sv_orbitcalc = curfractalspecific->orbitcalc;
-		sv_per_pixel = curfractalspecific->per_pixel;
-		sv_per_image = curfractalspecific->per_image;
-		curfractalspecific->orbitcalc = g_alternate_math[alt].orbitcalc;
-		curfractalspecific->per_pixel = g_alternate_math[alt].per_pixel;
-		curfractalspecific->per_image = g_alternate_math[alt].per_image;
+		sv_orbitcalc = g_current_fractal_specific->orbitcalc;
+		sv_per_pixel = g_current_fractal_specific->per_pixel;
+		sv_per_image = g_current_fractal_specific->per_image;
+		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
+		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
+		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
 	}
 	else
 	{
@@ -897,15 +897,15 @@ static void perform_work_list()
 			}
 		}
 	}
-	if (stdcalcmode == 'b' && (curfractalspecific->flags & NOTRACE))
+	if (stdcalcmode == 'b' && (g_current_fractal_specific->flags & NOTRACE))
 	{
 		stdcalcmode = '1';
 	}
-	if (stdcalcmode == 'g' && (curfractalspecific->flags & NOGUESS))
+	if (stdcalcmode == 'g' && (g_current_fractal_specific->flags & NOGUESS))
 	{
 		stdcalcmode = '1';
 	}
-	if (stdcalcmode == 'o' && (curfractalspecific->calculate_type != standard_fractal))
+	if (stdcalcmode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
 	{
 		stdcalcmode = '1';
 	}
@@ -964,7 +964,7 @@ static void perform_work_list()
 		}
 		/* must be mandel type, formula, or old PAR/GIF */
 		s_dem_mandelbrot =
-			(curfractalspecific->tojulia != NOFRACTAL
+			(g_current_fractal_specific->tojulia != NOFRACTAL
 			|| g_use_old_distance_test
 			|| fractype == FORMULA
 			|| fractype == FFORMULA) ?
@@ -997,8 +997,8 @@ static void perform_work_list()
 	while (g_num_work_list > 0)
 	{
 		/* per_image can override */
-		g_calculate_type = curfractalspecific->calculate_type;
-		g_symmetry = curfractalspecific->symmetry; /*   calctype & symmetry  */
+		g_calculate_type = g_current_fractal_specific->calculate_type;
+		g_symmetry = g_current_fractal_specific->symmetry; /*   calctype & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
 		/* pull top entry off g_work_list */
@@ -1018,7 +1018,7 @@ static void perform_work_list()
 
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 
-		curfractalspecific->per_image();
+		g_current_fractal_specific->per_image();
 		if (g_show_dot >= 0)
 		{
 			find_special_colors();
@@ -1178,9 +1178,9 @@ static void perform_work_list()
 	}
 	if (sv_orbitcalc != NULL)
 	{
-		curfractalspecific->orbitcalc = sv_orbitcalc;
-		curfractalspecific->per_pixel = sv_per_pixel;
-		curfractalspecific->per_image = sv_per_image;
+		g_current_fractal_specific->orbitcalc = sv_orbitcalc;
+		g_current_fractal_specific->per_pixel = sv_per_pixel;
+		g_current_fractal_specific->per_image = sv_per_image;
 	}
 }
 
@@ -2126,7 +2126,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 	overflow = 0;                /* reset integer math overflow flag */
 
-	curfractalspecific->per_pixel(); /* initialize the calculations */
+	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 
 	attracted = FALSE;
 
@@ -2194,7 +2194,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			/* if above exit taken, the later test vs s_dem_delta will place this
 				point on the boundary, because mag(g_old_z) < bailout just now */
 
-			if (curfractalspecific->orbitcalc() || (overflow && g_save_release > 1826))
+			if (g_current_fractal_specific->orbitcalc() || (overflow && g_save_release > 1826))
 			{
 				if (g_use_old_distance_test)
 				{
@@ -2219,7 +2219,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 
 		/* the usual case */
-		else if ((curfractalspecific->orbitcalc() && g_inside != STARTRAIL)
+		else if ((g_current_fractal_specific->orbitcalc() && g_inside != STARTRAIL)
 				|| overflow)
 			break;
 		if (g_show_orbit)

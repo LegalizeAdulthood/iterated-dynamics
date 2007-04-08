@@ -323,7 +323,7 @@ int get_the_rest(void)
 	char *choices[20];
 	struct fullscreenvalues uvalues[20];
 
-	numtrig = (curfractalspecific->flags >> 6) & 7;
+	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		numtrig = maxfn;
@@ -352,8 +352,8 @@ choose_vars_restart:
 		uvalues[k].uval.ch.val =  g_genes[num].mutate;
 	}
 
-	if (curfractalspecific->calculate_type == standard_fractal &&
-		(curfractalspecific->flags & BAILTEST))
+	if (g_current_fractal_specific->calculate_type == standard_fractal &&
+		(g_current_fractal_specific->flags & BAILTEST))
 	{
 		choices[++k] = g_genes[NUMGENES - 1].name;
 		uvalues[k].type = 'l';
@@ -412,8 +412,8 @@ choose_vars_restart:
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 	}
 
-	if (curfractalspecific->calculate_type == standard_fractal &&
-		(curfractalspecific->flags & BAILTEST))
+	if (g_current_fractal_specific->calculate_type == standard_fractal &&
+		(g_current_fractal_specific->flags & BAILTEST))
 	{
 		g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
 	}
@@ -883,9 +883,9 @@ void ReleaseParamBox(void)
 
 void set_current_params(void)
 {
-	paramrangex = curfractalspecific->xmax - curfractalspecific->xmin;
+	paramrangex = g_current_fractal_specific->xmax - g_current_fractal_specific->xmin;
 	opx = newopx = - (paramrangex / 2);
-	paramrangey = curfractalspecific->ymax - curfractalspecific->ymin;
+	paramrangey = g_current_fractal_specific->ymax - g_current_fractal_specific->ymin;
 	opy = newopy = - (paramrangey / 2);
 	return;
 }

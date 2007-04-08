@@ -10,7 +10,7 @@
 #define SQR             6
 #define TAN            10
 
-/* These MUST match the corresponding fractalspecific record in fractals.c */
+/* These MUST match the corresponding g_fractal_specific record in fractals.c */
 #define NOFRACTAL               -1
 #define MANDEL                   0
 #define JULIA                    1

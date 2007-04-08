@@ -27,12 +27,12 @@ static void julman()
 	int i;
 	fp = dir_fopen(g_work_dir, "toggle.txt", "w");
 	i = -1;
-	while (fractalspecific[++i].name)
+	while (g_fractal_specific[++i].name)
 	{
-		if (fractalspecific[i].tojulia != NOFRACTAL && fractalspecific[i].name[0] != '*')
+		if (g_fractal_specific[i].tojulia != NOFRACTAL && g_fractal_specific[i].name[0] != '*')
 		{
-			fprintf(fp, "%s  %s\n", fractalspecific[i].name,
-				fractalspecific[fractalspecific[i].tojulia].name);
+			fprintf(fp, "%s  %s\n", g_fractal_specific[i].name,
+				g_fractal_specific[g_fractal_specific[i].tojulia].name);
 		}
 	}
 	fclose(fp);
@@ -192,7 +192,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					xdots = sxdots;
 					ydots = sydots;
 				}
-				if ((evolving & EVOLVE_FIELD_MAP) && (curfractalspecific->flags & INFCALC))
+				if ((evolving & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & INFCALC))
 				{
 					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
 					evolving = evolving -1;
@@ -300,7 +300,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 
 		zoomoff = TRUE;                      /* zooming is enabled */
-		if (driver_diskp() || (curfractalspecific->flags&NOZOOM) != 0)
+		if (driver_diskp() || (g_current_fractal_specific->flags&NOZOOM) != 0)
 		{
 			zoomoff = FALSE;                   /* for these cases disable zooming */
 		}
@@ -343,7 +343,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		else
 		{                            /* draw an image */
 			if (g_save_time != 0          /* autosave and resumable? */
-					&& (curfractalspecific->flags&NORESUME) == 0)
+					&& (g_current_fractal_specific->flags&NORESUME) == 0)
 			{
 				savebase = readticker(); /* calc's start time */
 				saveticks = g_save_time*60*1000; /* in milliseconds */
@@ -540,7 +540,7 @@ resumeloop:                             /* return here on failed overlays */
 					}
 					if (kbdchar == FIK_ESC || kbdchar == 'm' || kbdchar == 'M')
 					{
-						if (kbdchar == FIK_ESC && escape_exit != 0)
+						if (kbdchar == FIK_ESC && g_escape_exit_flag != 0)
 						{
 							/* don't ask, just get out */
 							goodbye();
@@ -832,7 +832,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	if (maxit > *old_maxit
 		&& g_inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
-		&& curfractalspecific->calculate_type == standard_fractal
+		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_flag
 		&& !g_true_color /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
@@ -968,7 +968,7 @@ static int handle_ant(void)
 	if (fractype != ANT)
 	{
 		fractype = ANT;
-		curfractalspecific = &fractalspecific[fractype];
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 		load_params(fractype);
 	}
 	if (!fromtext_flag)
@@ -1026,10 +1026,10 @@ static void handle_3d_params(int *kbdmore)
 static void handle_orbits(void)
 {
 	/* must use standard fractal and have a float variant */
-	if ((fractalspecific[fractype].calculate_type == standard_fractal
-			|| fractalspecific[fractype].calculate_type == froth_calc)
-		&& (fractalspecific[fractype].isinteger == FALSE
-			|| fractalspecific[fractype].tofloat != NOFRACTAL)
+	if ((g_fractal_specific[fractype].calculate_type == standard_fractal
+			|| g_fractal_specific[fractype].calculate_type == froth_calc)
+		&& (g_fractal_specific[fractype].isinteger == FALSE
+			|| g_fractal_specific[fractype].tofloat != NOFRACTAL)
 		&& !bf_math /* for now no arbitrary precision support */
 		&& !(g_is_true_color && g_true_mode))
 	{
@@ -1059,19 +1059,19 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	{
 		if (g_is_mand)
 		{
-			fractalspecific[fractype].tojulia = fractype;
-			fractalspecific[fractype].tomandel = NOFRACTAL;
+			g_fractal_specific[fractype].tojulia = fractype;
+			g_fractal_specific[fractype].tomandel = NOFRACTAL;
 			g_is_mand = 0;
 		}
 		else
 		{
-			fractalspecific[fractype].tojulia = NOFRACTAL;
-			fractalspecific[fractype].tomandel = fractype;
+			g_fractal_specific[fractype].tojulia = NOFRACTAL;
+			g_fractal_specific[fractype].tomandel = fractype;
 			g_is_mand = 1;
 		}
 	}
 
-	if (curfractalspecific->tojulia != NOFRACTAL
+	if (g_current_fractal_specific->tojulia != NOFRACTAL
 		&& param[0] == 0.0
 		&& param[1] == 0.0)
 	{
@@ -1087,8 +1087,8 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 			driver_unget_key(key);
 			return;
 		}
-		fractype = curfractalspecific->tojulia;
-		curfractalspecific = &fractalspecific[fractype];
+		fractype = g_current_fractal_specific->tojulia;
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 		if (xcjul == BIG || ycjul == BIG)
 		{
 			param[0] = (xxmax + xxmin) / 2;
@@ -1107,10 +1107,10 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		jxx3rd = sx3rd;
 		jyy3rd = sy3rd;
 		*frommandel = 1;
-		xxmin = curfractalspecific->xmin;
-		xxmax = curfractalspecific->xmax;
-		yymin = curfractalspecific->ymin;
-		yymax = curfractalspecific->ymax;
+		xxmin = g_current_fractal_specific->xmin;
+		xxmax = g_current_fractal_specific->xmax;
+		yymin = g_current_fractal_specific->ymin;
+		yymax = g_current_fractal_specific->ymax;
 		xx3rd = xxmin;
 		yy3rd = yymin;
 		if (usr_distest == 0
@@ -1128,11 +1128,11 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
 	}
-	else if (curfractalspecific->tomandel != NOFRACTAL)
+	else if (g_current_fractal_specific->tomandel != NOFRACTAL)
 	{
 		/* switch to corresponding Mandel set */
-		fractype = curfractalspecific->tomandel;
-		curfractalspecific = &fractalspecific[fractype];
+		fractype = g_current_fractal_specific->tomandel;
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 		if (*frommandel)
 		{
 			xxmin = jxxmin;
@@ -1144,10 +1144,10 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		}
 		else
 		{
-			xxmin = xx3rd = curfractalspecific->xmin;
-			xxmax = curfractalspecific->xmax;
-			yymin = yy3rd = curfractalspecific->ymin;
-			yymax = curfractalspecific->ymax;
+			xxmin = xx3rd = g_current_fractal_specific->xmin;
+			xxmax = g_current_fractal_specific->xmax;
+			yymin = yy3rd = g_current_fractal_specific->ymin;
+			yymax = g_current_fractal_specific->ymax;
 		}
 		SaveC.x = param[0];
 		SaveC.y = param[1];
@@ -1179,7 +1179,7 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 		{
 			fractype = (oldtype != -1) ? oldtype : JULIA;
 		}
-		curfractalspecific = &fractalspecific[fractype];
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 		zoomoff = TRUE;
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
@@ -1242,13 +1242,13 @@ static int handle_history(char *stacked, int kbdchar)
 		history_restore_info();
 		zoomoff = TRUE;
 		g_init_mode = g_adapter;
-		if (curfractalspecific->isinteger != 0
-			&& curfractalspecific->tofloat != NOFRACTAL)
+		if (g_current_fractal_specific->isinteger != 0
+			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
 			usr_floatflag = 0;
 		}
-		if (curfractalspecific->isinteger == 0
-			&& curfractalspecific->tofloat != NOFRACTAL)
+		if (g_current_fractal_specific->isinteger == 0
+			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
 			usr_floatflag = 1;
 		}
@@ -1434,7 +1434,7 @@ static void handle_zoom_skew(int negative)
 {
 	if (negative)
 	{
-		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+		if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_HOME);
 			zskew -= 0.02*i;
@@ -1446,7 +1446,7 @@ static void handle_zoom_skew(int negative)
 	}
 	else
 	{
-		if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+		if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_END);
 			zskew += 0.02*i;
@@ -1500,7 +1500,7 @@ static int handle_video_mode(int kbdchar, int *kbdmore)
 
 static void handle_z_rotate(int increase)
 {
-	if (boxcount && (curfractalspecific->flags & NOROTATE) == 0)
+	if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
 	{
 		if (increase)
 		{
@@ -1802,13 +1802,13 @@ static int handle_evolver_history(char *stacked, int *kbdchar)
 		history_restore_info();
 		zoomoff = TRUE;
 		g_init_mode = g_adapter;
-		if (curfractalspecific->isinteger != 0
-			&& curfractalspecific->tofloat != NOFRACTAL)
+		if (g_current_fractal_specific->isinteger != 0
+			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
 			usr_floatflag = 0;
 		}
-		if (curfractalspecific->isinteger == 0
-			&& curfractalspecific->tofloat != NOFRACTAL)
+		if (g_current_fractal_specific->isinteger == 0
+			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
 			usr_floatflag = 1;
 		}
@@ -2371,7 +2371,7 @@ void reset_zoom_corners()
 	Function setup287code is called by main() when a 287
 	or better fpu is detected.
 */
-#define ORBPTR(x) fractalspecific[x].orbitcalc
+#define ORBPTR(x) g_fractal_specific[x].orbitcalc
 void setup287code()
 {
 	ORBPTR(MANDELFP)       = ORBPTR(JULIAFP)      = FJuliafpFractal;

@@ -104,21 +104,21 @@ long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no *
 int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
 int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
 int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
-int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
-int first_init = 1;               /* first time into cmdfiles? */
-struct fractalspecificstuff *curfractalspecific = NULL;
-char FormFileName[FILE_MAX_PATH]; /* file to find (type=)formulas in */
-char FormName[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
-char LFileName[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
-char LName[ITEMNAMELEN + 1];       /* Name of L-System */
-char CommandFile[FILE_MAX_PATH]; /* file to find command sets in */
-char CommandName[ITEMNAMELEN + 1]; /* Name of Command set */
-char CommandComment[4][MAXCMT];    /* comments for command set */
-char IFSFileName[FILE_MAX_PATH]; /* file to find (type=)IFS in */
-char IFSName[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
-struct SearchPath searchfor;
-float *ifs_defn = NULL;     /* ifs parameters */
-int  ifs_type;                  /* 0 = 2d, 1 = 3d */
+int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
+int		g_command_initialize = TRUE;               /* first time into cmdfiles? */
+struct fractalspecificstuff *g_current_fractal_specific = NULL;
+char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
+char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
+char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
+char	g_l_system_name[ITEMNAMELEN + 1];       /* Name of L-System */
+char	g_command_file[FILE_MAX_PATH]; /* file to find command sets in */
+char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
+char	g_command_comment[4][MAXCMT];    /* comments for command set */
+char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
+char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
+struct SearchPath g_search_for;
+float	*g_ifs_definition = NULL;     /* ifs parameters */
+int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
 int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
 BYTE txtcolor[]=
 {
@@ -210,7 +210,7 @@ int cmdfiles(int argc, char **argv)
 	char    *sptr;
 	FILE    *initfile;
 
-	if (first_init) /* once per run initialization  */
+	if (g_command_initialize) /* once per run initialization  */
 	{
 		initvars_run();
 	}
@@ -280,12 +280,12 @@ int cmdfiles(int argc, char **argv)
 			if (sptr != NULL)  /* @filename/setname? */
 			{
 				*sptr = 0;
-				if (merge_pathnames(CommandFile, &curarg[1], 0) < 0)
+				if (merge_pathnames(g_command_file, &curarg[1], 0) < 0)
 				{
-					init_msg("", CommandFile, 0);
+					init_msg("", g_command_file, 0);
 				}
-				strcpy(CommandName, sptr + 1);
-				if (find_file_item(CommandFile, CommandName, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
+				strcpy(g_command_name, sptr + 1);
+				if (find_file_item(g_command_file, g_command_name, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
 				{
 					argerror(curarg);
 				}
@@ -303,7 +303,7 @@ int cmdfiles(int argc, char **argv)
 		}
 	}
 
-	if (first_init == 0)
+	if (!g_command_initialize)
 	{
 		g_init_mode = -1; /* don't set video when <ins> key used */
 		g_show_file = 1;  /* nor startup image file              */
@@ -313,7 +313,7 @@ int cmdfiles(int argc, char **argv)
 
 	if (g_debug_flag != DEBUGFLAG_NO_FIRST_INIT)
 	{
-		first_init = 0;
+		g_command_initialize = FALSE;
 	}
 	/*
 	{
@@ -327,10 +327,10 @@ int cmdfiles(int argc, char **argv)
 	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
 
 	/*set structure of search directories*/
-	strcpy(searchfor.par, CommandFile);
-	strcpy(searchfor.frm, FormFileName);
-	strcpy(searchfor.lsys, LFileName);
-	strcpy(searchfor.ifs, IFSFileName);
+	strcpy(g_search_for.par, g_command_file);
+	strcpy(g_search_for.frm, g_formula_filename);
+	strcpy(g_search_for.lsys, g_l_system_filename);
+	strcpy(g_search_for.ifs, g_ifs_filename);
 	return 0;
 }
 
@@ -404,18 +404,18 @@ static void initvars_restart()          /* <ins> key init */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
 	g_timer_flag = 0;                       /* timer flags are off       */
-	strcpy(FormFileName, "fractint.frm"); /* default formula file      */
-	FormName[0] = 0;
-	strcpy(LFileName, "fractint.l");
-	LName[0] = 0;
-	strcpy(CommandFile, "fractint.par");
-	CommandName[0] = 0;
+	strcpy(g_formula_filename, "fractint.frm"); /* default formula file      */
+	g_formula_name[0] = 0;
+	strcpy(g_l_system_filename, "fractint.l");
+	g_l_system_name[0] = 0;
+	strcpy(g_command_file, "fractint.par");
+	g_command_name[0] = 0;
 	for (i = 0; i < 4; i++)
 	{
-		CommandComment[i][0] = 0;
+		g_command_comment[i][0] = 0;
 	}
-	strcpy(IFSFileName, "fractint.ifs");
-	IFSName[0] = 0;
+	strcpy(g_ifs_filename, "fractint.ifs");
+	g_ifs_name[0] = 0;
 	reset_ifs_defn();
 	g_random_flag = 0;                           /* not a fixed srand() seed */
 	g_random_seed = init_rseed;
@@ -439,7 +439,7 @@ static void initvars_restart()          /* <ins> key init */
 static void initvars_fractal()          /* init vars affecting calculation */
 {
 	int i;
-	escape_exit = 0;                     /* don't disable the "are you sure?" screen */
+	g_escape_exit_flag = FALSE;                     /* don't disable the "are you sure?" screen */
 	usr_periodicitycheck = 1;            /* turn on periodicity    */
 	g_inside = 1;                          /* inside color = blue    */
 	g_fill_color = -1;                      /* no special fill color */
@@ -458,7 +458,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 #endif
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	fractype = 0;                        /* initial type Set flag  */
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 	initcorners = initparams = 0;
 	g_bail_out = 0;                         /* no user-entered bailout */
 	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
@@ -504,12 +504,12 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_keep_screen_coords = 0;
 	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
 	g_set_orbit_corners = 0;
-	g_orbit_x_min = curfractalspecific->xmin;
-	g_orbit_x_max = curfractalspecific->xmax;
-	g_orbit_x_3rd = curfractalspecific->xmin;
-	g_orbit_y_min = curfractalspecific->ymin;
-	g_orbit_y_max = curfractalspecific->ymax;
-	g_orbit_y_3rd = curfractalspecific->ymin;
+	g_orbit_x_min = g_current_fractal_specific->xmin;
+	g_orbit_x_max = g_current_fractal_specific->xmax;
+	g_orbit_x_3rd = g_current_fractal_specific->xmin;
+	g_orbit_y_min = g_current_fractal_specific->ymin;
+	g_orbit_y_max = g_current_fractal_specific->ymax;
+	g_orbit_y_3rd = g_current_fractal_specific->ymin;
 
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
@@ -579,10 +579,10 @@ static void initvars_3d()               /* init vars affecting 3d */
 
 static void reset_ifs_defn()
 {
-	if (ifs_defn)
+	if (g_ifs_definition)
 	{
-		free((char *)ifs_defn);
-		ifs_defn = NULL;
+		free((char *)g_ifs_definition);
+		g_ifs_definition = NULL;
 	}
 }
 
@@ -610,7 +610,7 @@ static int command_file(FILE *handle, int mode)
 		while (i != '{' && i != EOF);
 		for (i = 0; i < 4; i++)
 		{
-			CommandComment[i][0] = 0;
+			g_command_comment[i][0] = 0;
 		}
 	}
 	linebuf[0] = 0;
@@ -664,8 +664,8 @@ static int next_command(char *cmdbuf, int maxlen,
 			{
 				if (*lineptr == ';'
 					&& (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
-					&& (CommandComment[0][0] == 0 || CommandComment[1][0] == 0 ||
-						CommandComment[2][0] == 0 || CommandComment[3][0] == 0))
+					&& (g_command_comment[0][0] == 0 || g_command_comment[1][0] == 0 ||
+						g_command_comment[2][0] == 0 || g_command_comment[3][0] == 0))
 				{
 					/* save comment */
 					while (*(++lineptr)
@@ -680,9 +680,9 @@ static int next_command(char *cmdbuf, int maxlen,
 						}
 						for (i = 0; i < 4; i++)
 						{
-							if (CommandComment[i][0] == 0)
+							if (g_command_comment[i][0] == 0)
 							{
-								strcpy(CommandComment[i], lineptr);
+								strcpy(g_command_comment[i], lineptr);
 								break;
 							}
 						}
@@ -851,7 +851,7 @@ static int adapter_arg(const cmd_context *context)
 static int text_safe_arg(const cmd_context *context)
 {
 	/* textsafe no longer used, do validity checking, but gobble argument */
-	if (first_init)
+	if (g_command_initialize)
 	{
 		if (!((context->charval[0] == 'n')	/* no */
 				|| (context->charval[0] == 'y')	/* yes */
@@ -885,7 +885,7 @@ static int flag_arg(const cmd_context *context, int *flag, int result)
 
 static int exit_no_ask_arg(const cmd_context *context)
 {
-	return flag_arg(context, &escape_exit, COMMAND_FRACTAL_PARAM	| COMMAND_3D_PARAM);
+	return flag_arg(context, &g_escape_exit_flag, COMMAND_FRACTAL_PARAM	| COMMAND_3D_PARAM);
 }
 
 static int fpu_arg(const cmd_context *context)
@@ -925,10 +925,10 @@ static int make_par_arg(const cmd_context *context)
 		next = slash + 1;
 	}
 
-	strcpy(CommandFile, context->value);
-	if (strchr(CommandFile, '.') == NULL)
+	strcpy(g_command_file, context->value);
+	if (strchr(g_command_file, '.') == NULL)
 	{
-		strcat(CommandFile, ".par");
+		strcat(g_command_file, ".par");
 	}
 	if (strcmp(g_read_name, DOTSLASH) == 0)
 	{
@@ -938,11 +938,11 @@ static int make_par_arg(const cmd_context *context)
 	{
 		if (*g_read_name != 0)
 		{
-			extract_filename(CommandName, g_read_name);
+			extract_filename(g_command_name, g_read_name);
 		}
 		else if (*MAP_name != 0)
 		{
-			extract_filename(CommandName, MAP_name);
+			extract_filename(g_command_name, MAP_name);
 		}
 		else
 		{
@@ -951,8 +951,8 @@ static int make_par_arg(const cmd_context *context)
 	}
 	else
 	{
-		strncpy(CommandName, next, ITEMNAMELEN);
-		CommandName[ITEMNAMELEN] = 0;
+		strncpy(g_command_name, next, ITEMNAMELEN);
+		g_command_name[ITEMNAMELEN] = 0;
 	}
 	*s_makepar = 0; /* used as a flag for makepar case */
 	if (*g_read_name != 0)
@@ -981,12 +981,12 @@ static int make_par_arg(const cmd_context *context)
 	if (*g_read_name != 0)
 	{
 		printf("copying fractal info in GIF %s to PAR %s/%s\n",
-			g_read_name, CommandFile, CommandName);
+			g_read_name, g_command_file, g_command_name);
 	}
 	else if (*MAP_name != 0)
 	{
 		printf("copying color info in map %s to PAR %s/%s\n",
-			MAP_name, CommandFile, CommandName);
+			MAP_name, g_command_file, g_command_name);
 	}
 #endif
 #endif
@@ -1222,25 +1222,25 @@ static int type_arg(const cmd_context *context)
 	{
 		value[3] = 0;
 	}
-	for (k = 0; fractalspecific[k].name != NULL; k++)
+	for (k = 0; g_fractal_specific[k].name != NULL; k++)
 	{
-		if (strcmp(value, fractalspecific[k].name) == 0)
+		if (strcmp(value, g_fractal_specific[k].name) == 0)
 		{
 			break;
 		}
 	}
-	if (fractalspecific[k].name == NULL)
+	if (g_fractal_specific[k].name == NULL)
 	{
 		return badarg(context->curarg);
 	}
 	fractype = k;
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 	if (initcorners == 0)
 	{
-		xx3rd = xxmin = curfractalspecific->xmin;
-		xxmax         = curfractalspecific->xmax;
-		yy3rd = yymin = curfractalspecific->ymin;
-		yymax         = curfractalspecific->ymax;
+		xx3rd = xxmin = g_current_fractal_specific->xmin;
+		xxmax         = g_current_fractal_specific->xmax;
+		yy3rd = yymin = g_current_fractal_specific->ymin;
+		yymax         = g_current_fractal_specific->ymax;
 	}
 	if (initparams == 0)
 	{
@@ -1499,7 +1499,7 @@ static int save_name_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (first_init || context->mode == CMDFILE_AT_AFTER_STARTUP)
+	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
 		if (merge_pathnames(g_save_name, context->value, context->mode) < 0)
 		{
@@ -2634,7 +2634,7 @@ static int formula_file_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (merge_pathnames(FormFileName, context->value, context->mode) < 0)
+	if (merge_pathnames(g_formula_filename, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -2647,7 +2647,7 @@ static int formula_name_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	strcpy(FormName, context->value);
+	strcpy(g_formula_name, context->value);
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2657,7 +2657,7 @@ static int l_file_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (merge_pathnames(LFileName, context->value, context->mode) < 0)
+	if (merge_pathnames(g_l_system_filename, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -2670,7 +2670,7 @@ static int l_name_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	strcpy(LName, context->value);
+	strcpy(g_l_system_name, context->value);
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2681,7 +2681,7 @@ static int ifs_file_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	existdir = merge_pathnames(IFSFileName, context->value, context->mode);
+	existdir = merge_pathnames(g_ifs_filename, context->value, context->mode);
 	if (existdir == 0)
 	{
 		reset_ifs_defn();
@@ -2699,7 +2699,7 @@ static int ifs_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	strcpy(IFSName, context->value);
+	strcpy(g_ifs_name, context->value);
 	reset_ifs_defn();
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2710,7 +2710,7 @@ static int parm_file_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (merge_pathnames(CommandFile, context->value, context->mode) < 0)
+	if (merge_pathnames(g_command_file, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -3032,7 +3032,7 @@ static int light_name_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (first_init || context->mode == CMDFILE_AT_AFTER_STARTUP)
+	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
 		strcpy(g_light_name, context->value);
 	}
@@ -3734,7 +3734,7 @@ static void argerror(const char *badarg)      /* oops. couldn't decode this */
 	}
 	sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", badarg);
 
-	if (first_init)       /* this is 1st call to cmdfiles */
+	if (g_command_initialize)       /* this is 1st call to cmdfiles */
 	{
 		strcat(msg, "\n"
 			"\n"
@@ -3878,7 +3878,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 	{
 		sprintf(msg, "Can't find %s%s, please check %s", cmd, badfilename, modestr[mode]);
 	}
-	if (first_init)  /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)  /* & cmdfiles hasn't finished 1st try */
 	{
 		if (row == 1 && badfilename)
 		{

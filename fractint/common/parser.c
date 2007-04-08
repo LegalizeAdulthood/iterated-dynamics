@@ -2975,7 +2975,7 @@ static int ParseStr(char *Str, int pass)
 
 int Formula(void)
 {
-	if (FormName[0] == 0 || overflow)
+	if (g_formula_name[0] == 0 || overflow)
 	{
 		return 1;
 	}
@@ -3039,7 +3039,7 @@ int Formula(void)
 
 int form_per_pixel(void)
 {
-	if (FormName[0] == 0)
+	if (g_formula_name[0] == 0)
 	{
 		return 1;
 	}
@@ -3866,11 +3866,11 @@ int frm_get_param_stuff(char *Name)
 	uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
 	uses_p4 = uses_p5 = 0;
 
-	if (FormName[0] == 0)
+	if (g_formula_name[0] == 0)
 	{
 		return 0;  /*  and don't reset the pointers  */
 	}
-	if (find_file_item(FormFileName, Name, &entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
@@ -4139,7 +4139,7 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		debug_fp = fopen("debugfrm.txt", "at");
 		if (debug_fp != NULL)
 		{
-			fprintf(debug_fp, "%s\n", FormName);
+			fprintf(debug_fp, "%s\n", g_formula_name);
 			if (g_symmetry != 0)
 			{
 				fprintf(debug_fp, "%s\n", SymStr[g_symmetry].s);
@@ -4232,16 +4232,16 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 	/*  CAE changed fn 12 July 1993 to fix problem when formula not found  */
 
 	/*  first set the pointers so they point to a fn which always returns 1  */
-	curfractalspecific->per_pixel = BadFormula;
-	curfractalspecific->orbitcalc = BadFormula;
+	g_current_fractal_specific->per_pixel = BadFormula;
+	g_current_fractal_specific->orbitcalc = BadFormula;
 
-	if (FormName[0] == 0)
+	if (g_formula_name[0] == 0)
 	{
 		return 1;  /*  and don't reset the pointers  */
 	}
 
 	/* TW 5-31-94 add search for FRM files in directory */
-	if (find_file_item(FormFileName, Name, &entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 1;
@@ -4266,8 +4266,8 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 			}
 
 			/* all parses succeeded so set the pointers back to good functions*/
-			curfractalspecific->per_pixel = form_per_pixel;
-			curfractalspecific->orbitcalc = Formula;
+			g_current_fractal_specific->per_pixel = form_per_pixel;
+			g_current_fractal_specific->orbitcalc = Formula;
 			return 0;
 		}
 	}
@@ -4288,7 +4288,7 @@ int fpFormulaSetup(void)
 	{
 		MathType = D_MATH;
 		/* CAE changed below for fp */
-		RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+		RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
 		if (RunFormRes && (fpu >= 387) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 		{
@@ -4299,11 +4299,11 @@ int fpFormulaSetup(void)
 	else
 	{
 		MathType = M_MATH;
-		return !RunForm(FormName, 0);
+		return !RunForm(g_formula_name, 0);
 	}
 #else
 	MathType = D_MATH;
-	RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
+	RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
 #if 0
 	if (RunFormRes && (fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 		&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
@@ -4324,7 +4324,7 @@ int intFormulaSetup(void)
 	fg = (double)(1L << bitshift);
 	fgLimit = (double)0x7fffffffL / fg;
 	ShiftBack = 32 - bitshift;
-	return !RunForm(FormName, 0);
+	return !RunForm(g_formula_name, 0);
 #endif
 }
 

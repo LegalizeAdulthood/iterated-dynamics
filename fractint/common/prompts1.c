@@ -123,19 +123,19 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	{
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			find_file_item(FormFileName, FormName, &scroll_file, ITEMTYPE_FORMULA);
+			find_file_item(g_formula_filename, g_formula_name, &scroll_file, ITEMTYPE_FORMULA);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
 		else if (fractype == LSYSTEM)
 		{
-			find_file_item(LFileName, LName, &scroll_file, 2);
+			find_file_item(g_l_system_filename, g_l_system_name, &scroll_file, 2);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
 		else if (fractype == IFS || fractype == IFS3D)
 		{
-			find_file_item(IFSFileName, IFSName, &scroll_file, 3);
+			find_file_item(g_ifs_filename, g_ifs_name, &scroll_file, 3);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
@@ -1041,8 +1041,8 @@ inpfldl_end:
 /* compare for sort of type table */
 static int compare(const VOIDPTR i, const VOIDPTR j)
 {
-	return strcmp(fractalspecific[(int) *((BYTE *) i)].name,
-					fractalspecific[(int) *((BYTE *) j)].name);
+	return strcmp(g_fractal_specific[(int) *((BYTE *) i)].name,
+					g_fractal_specific[(int) *((BYTE *) j)].name);
 }
 
 /* --------------------------------------------------------------------- */
@@ -1087,7 +1087,7 @@ int get_fracttype()             /* prompt for and select fractal type */
 	{
 		fractype = oldfractype;
 	}
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 	return done;
 }
 
@@ -1128,20 +1128,20 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 		t = IFS;
 	}
 	i = j = -1;
-	while (fractalspecific[++i].name)
+	while (g_fractal_specific[++i].name)
 	{
 		if (julibrot)
 		{
-			if (!((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*'))
+			if (!((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*'))
 			{
 				continue;
 			}
 		}
-		if (fractalspecific[i].name[0] == '*')
+		if (g_fractal_specific[i].name[0] == '*')
 		{
 			continue;
 		}
-		strcpy(choices[++j]->name, fractalspecific[i].name);
+		strcpy(choices[++j]->name, g_fractal_specific[i].name);
 		choices[j]->name[14] = 0; /* safety */
 		choices[j]->num = i;      /* remember where the real item is */
 		}
@@ -1150,7 +1150,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	j = 0;
 	for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
 	{
-		if (choices[i]->num == t || choices[i]->num == fractalspecific[t].tofloat)
+		if (choices[i]->num == t || choices[i]->num == g_fractal_specific[t].tofloat)
 		{
 			j = i;
 		}
@@ -1164,17 +1164,17 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	if (done >= 0)
 	{
 		done = choices[done]->num;
-		if ((done == FORMULA || done == FFORMULA) && !strcmp(FormFileName, CommandFile))
+		if ((done == FORMULA || done == FFORMULA) && !strcmp(g_formula_filename, g_command_file))
 		{
-			strcpy(FormFileName, searchfor.frm);
+			strcpy(g_formula_filename, g_search_for.frm);
 		}
-		if (done == LSYSTEM && !strcmp(LFileName, CommandFile))
+		if (done == LSYSTEM && !strcmp(g_l_system_filename, g_command_file))
 		{
-			strcpy(LFileName, searchfor.lsys);
+			strcpy(g_l_system_filename, g_search_for.lsys);
 		}
-		if ((done == IFS || done == IFS3D) && !strcmp(IFSFileName, CommandFile))
+		if ((done == IFS || done == IFS3D) && !strcmp(g_ifs_filename, g_command_file))
 		{
-			strcpy(IFSFileName, searchfor.ifs);
+			strcpy(g_ifs_filename, g_search_for.ifs);
 		}
 	}
 
@@ -1189,7 +1189,7 @@ static int sel_fractype_help(int curkey, int choice)
 	if (curkey == FIK_F2)
 	{
 		oldhelpmode = helpmode;
-		helpmode = fractalspecific[(*(ft_choices + choice))->num].helptext;
+		helpmode = g_fractal_specific[(*(ft_choices + choice))->num].helptext;
 		help(0);
 		helpmode = oldhelpmode;
 		}
@@ -1207,12 +1207,12 @@ int select_type_params(/* prompt for new fractal type parameters */
 sel_type_restart:
 	ret = 0;
 	fractype = newfractype;
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 
 	if (fractype == LSYSTEM)
 	{
 		helpmode = HT_LSYS;
-		if (get_file_entry(GETFILE_L_SYSTEM, "L-System", lsysmask, LFileName, LName) < 0)
+		if (get_file_entry(GETFILE_L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
 		{
 			ret = 1;
 			goto sel_type_exit;
@@ -1221,7 +1221,7 @@ sel_type_restart:
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		helpmode = HT_FORMULA;
-		if (get_file_entry(GETFILE_FORMULA, "Formula", formmask, FormFileName, FormName) < 0)
+		if (get_file_entry(GETFILE_FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
 		{
 			ret = 1;
 			goto sel_type_exit;
@@ -1230,7 +1230,7 @@ sel_type_restart:
 	if (fractype == IFS || fractype == IFS3D)
 	{
 		helpmode = HT_IFS;
-		if (get_file_entry(GETFILE_IFS, "IFS", ifsmask, IFSFileName, IFSName) < 0)
+		if (get_file_entry(GETFILE_IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
 		{
 		ret = 1;
 		goto sel_type_exit;
@@ -1301,10 +1301,10 @@ sel_type_exit:
 void set_default_parms()
 {
 	int i, extra;
-	xxmin = curfractalspecific->xmin;
-	xxmax = curfractalspecific->xmax;
-	yymin = curfractalspecific->ymin;
-	yymax = curfractalspecific->ymax;
+	xxmin = g_current_fractal_specific->xmin;
+	xxmax = g_current_fractal_specific->xmax;
+	yymin = g_current_fractal_specific->ymin;
+	yymax = g_current_fractal_specific->ymax;
 	xx3rd = xxmin;
 	yy3rd = yymin;
 
@@ -1314,7 +1314,7 @@ void set_default_parms()
 	}
 	for (i = 0; i < 4; i++)
 	{
-		param[i] = curfractalspecific->paramvalue[i];
+		param[i] = g_current_fractal_specific->paramvalue[i];
 		if (fractype != CELLULAR && fractype != FROTH && fractype != FROTHFP &&
 				fractype != ANT)
 			roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
@@ -1346,14 +1346,14 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	numfractals = 0;
 	for (i = 0; i < g_num_fractal_types; i++)
 	{
-		if ((fractalspecific[i].flags & OKJB) && *fractalspecific[i].name != '*')
+		if ((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*')
 		{
 			fractals[numfractals] = i;
-			if (i == g_new_orbit_type || i == fractalspecific[g_new_orbit_type].tofloat)
+			if (i == g_new_orbit_type || i == g_fractal_specific[g_new_orbit_type].tofloat)
 			{
 				*last_val = numfractals;
 			}
-			nameptr[numfractals] = fractalspecific[i].name;
+			nameptr[numfractals] = g_fractal_specific[i].name;
 			numfractals++;
 			if (numfractals >= MAXFRACTALS)
 			{
@@ -1500,32 +1500,32 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		julibrot = 0;
 	}
 	curtype = fractype;
-	if (curfractalspecific->name[0] == '*'
-			&& (i = curfractalspecific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
-			&& fractalspecific[i].name[0] != '*')
+	if (g_current_fractal_specific->name[0] == '*'
+			&& (i = g_current_fractal_specific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
+			&& g_fractal_specific[i].name[0] != '*')
 		curtype = i;
-	curfractalspecific = &fractalspecific[curtype];
+	g_current_fractal_specific = &g_fractal_specific[curtype];
 	tstack[0] = 0;
-	i = curfractalspecific->helpformula;
+	i = g_current_fractal_specific->helpformula;
 	if (i < -1)
 	{
 		int itemtype = ITEMTYPE_PARAMETER;
 		if (i == -2)  /* special for formula */
 		{
-			filename = FormFileName;
-			entryname = FormName;
+			filename = g_formula_filename;
+			entryname = g_formula_name;
 			itemtype = ITEMTYPE_FORMULA;
 		}
 		else if (i == -3)   /* special for lsystem */
 		{
-			filename = LFileName;
-			entryname = LName;
+			filename = g_l_system_filename;
+			entryname = g_l_system_name;
 			itemtype = ITEMTYPE_L_SYSTEM;
 		}
 		else if (i == -4)   /* special for ifs */
 		{
-			filename = IFSFileName;
-			entryname = IFSName;
+			filename = g_ifs_filename;
+			entryname = g_ifs_name;
 			itemtype = ITEMTYPE_IFS;
 		}
 		else  /* this shouldn't happen */
@@ -1612,7 +1612,7 @@ gfp_top:
 		{
 			g_new_orbit_type = i;
 		}
-		jborbit = &fractalspecific[g_new_orbit_type];
+		jborbit = &g_fractal_specific[g_new_orbit_type];
 		juliorbitname = jborbit->name;
 	}
 
@@ -1661,10 +1661,10 @@ gfp_top:
 		}
 	}
 
-	savespecific = curfractalspecific;
+	savespecific = g_current_fractal_specific;
 	if (julibrot)
 	{
-		curfractalspecific = jborbit;
+		g_current_fractal_specific = jborbit;
 		firstparm = 2; /* in most case Julibrot does not need first two parms */
 		if (g_new_orbit_type == QUATJULFP     ||   /* all parameters needed */
 			g_new_orbit_type == HYPERCMPLXJFP)
@@ -1720,7 +1720,7 @@ gfp_top:
 		numparams = lastparm - firstparm;
 	}
 
-	numtrig = (curfractalspecific->flags >> 6) & 7;
+	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (curtype == FORMULA || curtype == FFORMULA)
 	{
 		numtrig = maxfn;
@@ -1740,16 +1740,16 @@ gfp_top:
 		paramvalues[promptnum].uval.ch.list = trignameptr;
 		choices[promptnum++] = (char *)trg[i];
 	}
-	type_name = curfractalspecific->name;
+	type_name = g_current_fractal_specific->name;
 	if (*type_name == '*')
 	{
 		++type_name;
 	}
 
-	i = curfractalspecific->orbit_bailout;
+	i = g_current_fractal_specific->orbit_bailout;
 
-	if (i != 0 && curfractalspecific->calculate_type == standard_fractal &&
-		(curfractalspecific->flags & BAILTEST))
+	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
+		(g_current_fractal_specific->flags & BAILTEST))
 	{
 		paramvalues[promptnum].type = 'l';
 		paramvalues[promptnum].uval.ch.val  = (int)g_bail_out_test;
@@ -1809,7 +1809,7 @@ gfp_top:
 			break;
 		}
 
-		curfractalspecific = savespecific;
+		g_current_fractal_specific = savespecific;
 		paramvalues[promptnum].uval.dval = g_m_x_max_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = v0;
@@ -1909,7 +1909,7 @@ gfp_top:
 	while (1)
 	{
 		oldhelpmode = helpmode;
-		helpmode = curfractalspecific->helptext;
+		helpmode = g_current_fractal_specific->helptext;
 		i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, tstack);
 		helpmode = oldhelpmode;
 		if (i < 0)
@@ -1966,14 +1966,14 @@ gfp_top:
 
 	if (julibrot)
 	{
-		savespecific = curfractalspecific;
-		curfractalspecific = jborbit;
+		savespecific = g_current_fractal_specific;
+		g_current_fractal_specific = jborbit;
 	}
 
-	i = curfractalspecific->orbit_bailout;
+	i = g_current_fractal_specific->orbit_bailout;
 
-	if (i != 0 && curfractalspecific->calculate_type == standard_fractal &&
-		(curfractalspecific->flags & BAILTEST))
+	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
+		(g_current_fractal_specific->flags & BAILTEST))
 	{
 		if (paramvalues[promptnum].uval.ch.val != (int)g_bail_out_test)
 		{
@@ -2043,7 +2043,7 @@ gfp_top:
 	}
 
 gfp_exit:
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 	return ret;
 }
 
@@ -2053,7 +2053,7 @@ int find_extra_param(int type)
 	ret = -1;
 	i = -1;
 
-	if (fractalspecific[type].flags&MORE)
+	if (g_fractal_specific[type].flags&MORE)
 	{
 		do
 		{
@@ -2073,7 +2073,7 @@ void load_params(int fractype)
 	int i, extra;
 	for (i = 0; i < 4; ++i)
 	{
-		param[i] = fractalspecific[fractype].paramvalue[i];
+		param[i] = g_fractal_specific[fractype].paramvalue[i];
 		if (fractype != CELLULAR && fractype != ANT)
 		{
 			roundfloatd(&param[i]); /* don't round cellular or ant */
@@ -2174,8 +2174,8 @@ long get_file_entry(int type, char *title, char *fmask,
 		case GETFILE_IFS:
 			if (ifsload() == 0)
 			{
-				fractype = (ifs_type == 0) ? IFS : IFS3D;
-				curfractalspecific = &fractalspecific[fractype];
+				fractype = (g_ifs_type == IFSTYPE_2D) ? IFS : IFS3D;
+				g_current_fractal_specific = &g_fractal_specific[fractype];
 				set_default_parms(); /* to correct them if 3d */
 				return 0;
 			}

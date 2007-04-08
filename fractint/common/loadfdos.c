@@ -247,7 +247,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		}
 		else
 		{
-			nameptr = curfractalspecific->name;
+			nameptr = g_current_fractal_specific->name;
 			if (*nameptr == '*')
 			{
 				++nameptr;

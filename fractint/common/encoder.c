@@ -529,15 +529,15 @@ int encoder()
 			version, so we need to use fractype.  JCO 06JAN01 */
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			save_info.tot_extend_len += store_item_name(FormName);
+			save_info.tot_extend_len += store_item_name(g_formula_name);
 		}
 		if (fractype == LSYSTEM)
 		{
-			save_info.tot_extend_len += store_item_name(LName);
+			save_info.tot_extend_len += store_item_name(g_l_system_name);
 		}
 		if (fractype == IFS || fractype == IFS3D)
 		{
-			save_info.tot_extend_len += store_item_name(IFSName);
+			save_info.tot_extend_len += store_item_name(g_ifs_name);
 		}
 		if (g_display_3d <= 0 && g_ranges_length)
 		{

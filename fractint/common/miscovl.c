@@ -180,15 +180,15 @@ void make_batch_file()
 			colorspec[13] = 0;
 		}
 	}
-	strcpy(inpcommandfile, CommandFile);
-	strcpy(inpcommandname, CommandName);
+	strcpy(inpcommandfile, g_command_file);
+	strcpy(inpcommandname, g_command_name);
 	for (i = 0; i < 4; i++)
 	{
-		expand_comments(CommandComment[i], par_comment[i]);
-		strcpy(inpcomment[i], CommandComment[i]);
+		expand_comments(g_command_comment[i], par_comment[i]);
+		strcpy(inpcomment[i], g_command_comment[i]);
 	}
 
-	if (CommandName[0] == 0)
+	if (g_command_name[0] == 0)
 	{
 		strcpy(inpcommandname, "test");
 	}
@@ -273,15 +273,15 @@ prompt_user:
 			colorsonly = 1;
 		}
 
-		strcpy(CommandFile, inpcommandfile);
-		if (has_ext(CommandFile) == NULL)
+		strcpy(g_command_file, inpcommandfile);
+		if (has_ext(g_command_file) == NULL)
 		{
-			strcat(CommandFile, ".par");   /* default extension .par */
+			strcat(g_command_file, ".par");   /* default extension .par */
 		}
-		strcpy(CommandName, inpcommandname);
+		strcpy(g_command_name, inpcommandname);
 		for (i = 0; i < 4; i++)
 		{
-			strncpy(CommandComment[i], inpcomment[i], MAXCMT);
+			strncpy(g_command_comment[i], inpcomment[i], MAXCMT);
 		}
 #ifndef XFRACT
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
@@ -357,14 +357,14 @@ skip_UI:
 			strcpy(colorspec, (filecolors > 0) ? "y" : "n");
 			maxcolor = (s_makepar[1] == 0) ? 256 : filecolors;
 		}
-		strcpy(outname, CommandFile);
+		strcpy(outname, g_command_file);
 		gotinfile = 0;
-		if (access(CommandFile, 0) == 0)
+		if (access(g_command_file, 0) == 0)
 		{                         /* file exists */
 			gotinfile = 1;
-			if (access(CommandFile, 6))
+			if (access(g_command_file, 6))
 			{
-				sprintf(buf, "Can't write %s", CommandFile);
+				sprintf(buf, "Can't write %s", g_command_file);
 				stopmsg(0, buf);
 				continue;
 			}
@@ -374,7 +374,7 @@ skip_UI:
 				outname[i] = 0;
 			}
 			strcat(outname, "fractint.tmp");
-			infile = fopen(CommandFile, "rt");
+			infile = fopen(g_command_file, "rt");
 #ifndef XFRACT
 			setvbuf(infile, tstack, _IOFBF, 4096); /* improves speed */
 #endif
@@ -397,10 +397,10 @@ skip_UI:
 			{
 				if (strchr(buf, '{')/* entry heading? */
 					&& sscanf(buf, " %40[^ \t({]", buf2)
-					&& stricmp(buf2, CommandName) == 0)
+					&& stricmp(buf2, g_command_name) == 0)
 				{                   /* entry with same name */
 					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-						CommandName, (*s_makepar == 0) ?
+						g_command_name, (*s_makepar == 0) ?
 						"... Replacing ..." : "Continue to replace it, Cancel to back out");
 					if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
 					{                /* cancel */
@@ -448,9 +448,9 @@ skip_UI:
 					char c;
 					char PCommandName[80];
 					w = 0;
-					while (w < (int)strlen(CommandName))
+					while (w < (int)strlen(g_command_name))
 					{
-						c = CommandName[w];
+						c = g_command_name[w];
 						if (isspace(c) || c == 0)
 						{
 							break;
@@ -479,12 +479,12 @@ skip_UI:
 						xx3rd = xxmin;
 						yy3rd = yymin;
 					}
-					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", CommandFile, PCommandName);
+					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
 					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
 				}
 				else
 				{
-					fprintf(parmfile, "%-19s{", CommandName);
+					fprintf(parmfile, "%-19s{", g_command_name);
 				}
 				{
 					/* guarantee that there are no blank comments above the last
@@ -499,15 +499,15 @@ skip_UI:
 					}
 					for (i = 0; i < last; i++)
 					{
-						if (*CommandComment[i] == '\0')
+						if (*g_command_comment[i] == '\0')
 						{
-							strcpy(CommandComment[i], ";");
+							strcpy(g_command_comment[i], ";");
 						}
 					}
 				}
-				if (CommandComment[0][0])
+				if (g_command_comment[0][0])
 				{
-					fprintf(parmfile, " ; %s", CommandComment[0]);
+					fprintf(parmfile, " ; %s", g_command_comment[0]);
 				}
 				fputc('\n', parmfile);
 				{
@@ -518,9 +518,9 @@ skip_UI:
 					buf[21] = ';';
 					for (k = 1; k < 4; k++)
 					{
-						if (CommandComment[k][0])
+						if (g_command_comment[k][0])
 						{
-							fprintf(parmfile, "%s%s\n", buf, CommandComment[k]);
+							fprintf(parmfile, "%s%s\n", buf, g_command_comment[k]);
 						}
 					}
 					if (g_patch_level != 0 && colorsonly == 0)
@@ -565,8 +565,8 @@ skip_UI:
 		fclose(parmfile);
 		if (gotinfile)
 		{                         /* replace the original file with the new */
-			unlink(CommandFile);   /* success assumed on these lines       */
-			rename(outname, CommandFile);  /* since we checked earlier with access */
+			unlink(g_command_file);   /* success assumed on these lines       */
+			rename(outname, g_command_file);  /* since we checked earlier with access */
 		}
 		break;
 	}
@@ -615,7 +615,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		put_parm(" reset=%d", check_back() ?
 			min(g_save_release, g_release) : g_release);
 
-		sptr = curfractalspecific->name;
+		sptr = g_current_fractal_specific->name;
 		if (*sptr == '*')
 		{
 			++sptr;
@@ -638,7 +638,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			if (g_new_orbit_type != JULIA)
 			{
 				char *name;
-				name = fractalspecific[g_new_orbit_type].name;
+				name = g_fractal_specific[g_new_orbit_type].name;
 				if (*name == '*')
 				{
 					name++;
@@ -652,8 +652,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		if (fractype == FORMULA || fractype == FFORMULA)
 		{
-			put_filename("formulafile", FormFileName);
-			put_parm(" formulaname=%s", FormName);
+			put_filename("formulafile", g_formula_filename);
+			put_parm(" formulaname=%s", g_formula_name);
 			if (uses_ismand)
 			{
 				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
@@ -661,13 +661,13 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		if (fractype == LSYSTEM)
 		{
-			put_filename("lfile", LFileName);
-			put_parm(" lname=%s", LName);
+			put_filename("lfile", g_l_system_filename);
+			put_parm(" lname=%s", g_l_system_name);
 		}
 		if (fractype == IFS || fractype == IFS3D)
 		{
-			put_filename("ifsfile", IFSFileName);
-			put_parm(" ifs=%s", IFSName);
+			put_filename("ifsfile", g_ifs_filename);
+			put_parm(" ifs=%s", g_ifs_name);
 		}
 		if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
 		{
@@ -2673,7 +2673,7 @@ void flip_image(int key)
 	int i, j, ixhalf, iyhalf, tempdot;
 
 	/* fractal must be rotate-able and be finished */
-	if ((curfractalspecific->flags&NOROTATE) != 0
+	if ((g_current_fractal_specific->flags&NOROTATE) != 0
 			|| calc_status == CALCSTAT_IN_PROGRESS
 			|| calc_status == CALCSTAT_RESUMABLE)
 		return;

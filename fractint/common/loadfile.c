@@ -86,7 +86,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
 		fractype = 0;
 	}
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 	xxmin        = read_info.xmin;
 	xxmax        = read_info.xmax;
 	yymin        = read_info.ymin;
@@ -132,7 +132,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_save_release  = 1200;
 		if (!g_display_3d
 			&& (read_info.version <= 4 || read_info.flag3d > 0
-				|| (curfractalspecific->flags & PARMS3D)))
+				|| (g_current_fractal_specific->flags & PARMS3D)))
 		{
 			int i;
 			for (i = 0; i < 16; i++)
@@ -280,7 +280,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_log_palette_flag = 2;
 		}
-		usr_floatflag = (char) (curfractalspecific->isinteger ? 0 : 1);
+		usr_floatflag = (char) (g_current_fractal_specific->isinteger ? 0 : 1);
 	}
 
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
@@ -443,7 +443,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		fractype = PLASMA;
-		curfractalspecific = &fractalspecific[fractype];
+		g_current_fractal_specific = &g_fractal_specific[fractype];
 		param[0] = 0;
 		if (!g_initialize_batch)
 		{
@@ -469,16 +469,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		switch (read_info.fractal_type)
 		{
 		case LSYSTEM:
-			nameptr = LName;
+			nameptr = g_l_system_name;
 			break;
 
 		case IFS:
 		case IFS3D:
-			nameptr = IFSName;
+			nameptr = g_ifs_name;
 			break;
 
 		default:
-			nameptr = FormName;
+			nameptr = g_formula_name;
 			uses_p1 = formula_info.uses_p1;
 			uses_p2 = formula_info.uses_p2;
 			uses_p3 = formula_info.uses_p3;
@@ -1105,7 +1105,7 @@ static void backwardscompat(struct fractal_info *info)
 		g_use_initial_orbit_z = 2;
 		break;
 	}
-	curfractalspecific = &fractalspecific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[fractype];
 }
 
 /* switch old bifurcation fractal types to new generalizations */
@@ -1271,8 +1271,8 @@ static int fix_bof(void)
 	int ret = 0;
 	if (g_inside <= BOF60 && g_inside >= BOF61 && g_save_release < 1826)
 	{
-		if ((curfractalspecific->calculate_type == standard_fractal &&
-			(curfractalspecific->flags & BAILTEST) == 0) ||
+		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
+			(g_current_fractal_specific->flags & BAILTEST) == 0) ||
 			(fractype == FORMULA || fractype == FFORMULA))
 		{
 			ret = 1;
@@ -2096,7 +2096,7 @@ static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formu
 	if ((fractype == FORMULA || fractype == FFORMULA) &&
 		(info->fractal_type == FORMULA || info->fractal_type == FFORMULA))
 	{
-		if (!stricmp(formula_info->form_name, FormName))
+		if (!stricmp(formula_info->form_name, g_formula_name))
 		{
 			numfn = maxfn;
 			return (numfn > 0) ? functionOK(info, numfn) : 1;
@@ -2107,9 +2107,9 @@ static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formu
 		}
 	}
 	else if (info->fractal_type == fractype ||
-			info->fractal_type == curfractalspecific->tofloat)
+			info->fractal_type == g_current_fractal_specific->tofloat)
 	{
-		numfn = (curfractalspecific->flags >> 6) & 7;
+		numfn = (g_current_fractal_specific->flags >> 6) & 7;
 		return (numfn > 0) ? functionOK(info, numfn) : 1;
 	}
 	else

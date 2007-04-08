@@ -615,11 +615,11 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	{
 		return 0; /* not resumable, not complete */
 	}
-	if (curfractalspecific->calculate_type != standard_fractal
-		&& curfractalspecific->calculate_type != calculate_mandelbrot
-		&& curfractalspecific->calculate_type != calculate_mandelbrot_fp
-		&& curfractalspecific->calculate_type != lyapunov
-		&& curfractalspecific->calculate_type != froth_calc)
+	if (g_current_fractal_specific->calculate_type != standard_fractal
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_fp
+		&& g_current_fractal_specific->calculate_type != lyapunov
+		&& g_current_fractal_specific->calculate_type != froth_calc)
 	{
 		return 0; /* not a g_work_list-driven type */
 	}
@@ -654,7 +654,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	{
 		return 1; /* btm, align on any pixel */
 	}
-	if (stdcalcmode != 'g' || (curfractalspecific->flags&NOGUESS))
+	if (stdcalcmode != 'g' || (g_current_fractal_specific->flags&NOGUESS))
 	{
 		if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
 		{
