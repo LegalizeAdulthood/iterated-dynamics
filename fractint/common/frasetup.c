@@ -24,7 +24,7 @@ extern long calcmandfpasm_c(void);
 
 int mandelbrot_setup(void)           /* Mandelbrot Routine */
 {
-	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
+	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && inside > -59 && outside >= -1
@@ -44,7 +44,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 
 int julia_setup(void)            /* Julia Routine */
 {
-	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
+	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && inside > -59 && outside >= -1
@@ -67,7 +67,7 @@ int newton_setup(void)           /* Newton/NewtBasin Routines */
 {
 	int i;
 #if !defined(XFRACT)
-	if (debugflag != DEBUGFLAG_FORCE_FP_NEWTON)
+	if (g_debug_flag != DEBUGFLAG_FORCE_FP_NEWTON)
 	{
 		if (fpu != 0)
 		{
@@ -247,7 +247,7 @@ int mandelbrot_setup_fp(void)
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
 		*/
-		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
+		if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_biomorph == -1
@@ -255,7 +255,7 @@ int mandelbrot_setup_fp(void)
 			/* uncomment this next line if more outside options are added */
 			&& outside >= -6
 			&& useinitorbit != 1
-			&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+			&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& using_jiim == 0 && g_bail_out_test == Mod
 			&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
@@ -307,7 +307,7 @@ int mandelbrot_setup_fp(void)
 			g_symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2]) ?
+			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2]) ?
 			z_power_orbit_fp : complex_z_power_orbit_fp;
 		break;
 	case MAGNET1M:
@@ -393,7 +393,7 @@ int julia_setup_fp(void)
 													Wes Loewer 11/03/91
 		Took out support for inside= options, for speed. 7/13/97
 		*/
-		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
+		if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 				&& !g_distance_test
 				&& g_decomposition[0] == 0
 				&& g_biomorph == -1
@@ -401,7 +401,7 @@ int julia_setup_fp(void)
 				/* uncomment this next line if more outside options are added */
 				&& outside >= -6
 				&& useinitorbit != 1
-				&& (soundflag & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+				&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 				&& !finattract
 				&& using_jiim == 0 && g_bail_out_test == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
@@ -451,7 +451,7 @@ int julia_setup_fp(void)
 			g_symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
+			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
 		get_julia_attractor (param[0], param[1]); /* another attractor? */
 		break;
@@ -525,7 +525,7 @@ int julia_setup_fp(void)
 			{
 				curfractalspecific->orbitcalc = popcorn_old_orbit_fp;
 			}
-			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
+			else if (default_functions && DEBUGFLAG_REAL_POPCORN == g_debug_flag)
 			{
 				curfractalspecific->orbitcalc = popcorn_orbit_fp;
 			}
@@ -574,7 +574,7 @@ int mandelbrot_setup_l(void)
 	g_long_parameter = &g_initial_z_l;
 	if (fractype == LMANDELZPOWER)
 	{
-		if (param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
+		if (param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 		{
 			fractalspecific[fractype].orbitcalc = z_power_orbit;
 		}
@@ -626,7 +626,7 @@ int julia_setup_l(void)
 			g_symmetry = NOSYM;
 		}
 		fractalspecific[fractype].orbitcalc = 
-			(param[3] == 0.0 && debugflag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
+			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
 			? z_power_orbit : complex_z_power_orbit;
 		break;
 	case LAMBDA:
@@ -672,7 +672,7 @@ int julia_setup_l(void)
 			{
 				curfractalspecific->orbitcalc = popcorn_old_orbit;
 			}
-			else if (default_functions && DEBUGFLAG_REAL_POPCORN == debugflag)
+			else if (default_functions && DEBUGFLAG_REAL_POPCORN == g_debug_flag)
 			{
 				curfractalspecific->orbitcalc = popcorn_orbit;
 			}
@@ -695,7 +695,7 @@ int trig_plus_sqr_setup_l(void)
 	curfractalspecific->per_pixel =  julia_per_pixel;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit;
 	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+		&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (g_parameter2_l.x == fudge)        /* Scott variant */
 		{
@@ -714,7 +714,7 @@ int trig_plus_sqr_setup_fp(void)
 	curfractalspecific->per_pixel =  julia_per_pixel_fp;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit_fp;
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+		&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (g_parameter2.x == 1.0)        /* Scott variant */
 		{
@@ -769,7 +769,7 @@ int trig_plus_trig_setup_l(void)
 	curfractalspecific->per_pixel =  julia_per_pixel_l;
 	curfractalspecific->orbitcalc =  trig_plus_trig_orbit;
 	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+		&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (g_parameter2_l.x == fudge)        /* Scott variant */
 		{
@@ -793,7 +793,7 @@ int trig_plus_trig_setup_fp(void)
 	curfractalspecific->per_pixel =  other_julia_per_pixel_fp;
 	curfractalspecific->orbitcalc =  trig_plus_trig_orbit_fp;
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+		&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 	{
 		if (g_parameter2.x == 1.0)        /* Scott variant */
 		{
@@ -924,7 +924,7 @@ int z_trig_plus_z_setup(void)
 	{
 		curfractalspecific->orbitcalc =  z_trig_z_plus_z_orbit;
 		if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
-			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+			&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (g_parameter2_l.x == fudge)     /* Scott variant */
 			{
@@ -941,7 +941,7 @@ int z_trig_plus_z_setup(void)
 	{
 		curfractalspecific->orbitcalc =  z_trig_z_plus_z_orbit_fp;
 		if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
-			&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+			&& g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL)
 		{
 			if (g_parameter2.x == 1.0)     /* Scott variant */
 			{

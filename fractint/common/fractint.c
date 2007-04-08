@@ -300,28 +300,28 @@ restart:   /* insert key re-starts here */
 
 	history_allocate();
 
-	if (DEBUGFLAG_ABORT_SAVENAME == debugflag && initbatch == INIT_BATCH_NORMAL)   /* abort if savename already exists */
+	if (DEBUGFLAG_ABORT_SAVENAME == g_debug_flag && initbatch == INIT_BATCH_NORMAL)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
 	driver_window();
 	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case colors= present */
 
-	if (DEBUGFLAG_CPU_8088 == debugflag)
+	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
 	{
 		cpu =  86; /* for testing purposes */
 	}
-	if (DEBUGFLAG_X_FPU_287 == debugflag && fpu >= 287)
+	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && fpu >= 287)
 	{
 		fpu = 287; /* for testing purposes */
 		cpu = 286;
 	}
-	if (DEBUGFLAG_FPU_87 == debugflag && fpu >=  87)
+	if (DEBUGFLAG_FPU_87 == g_debug_flag && fpu >=  87)
 	{
 		fpu =  87; /* for testing purposes */
 		cpu =  86;
 	}
-	if (DEBUGFLAG_NO_FPU == debugflag)
+	if (DEBUGFLAG_NO_FPU == g_debug_flag)
 	{
 		fpu =   0; /* for testing purposes */
 	}
@@ -330,7 +330,7 @@ restart:   /* insert key re-starts here */
 		fpu = 0;
 	}
 
-	if (fpu >= 287 && debugflag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
+	if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
 	{
 		setup287code();
 	}
@@ -690,7 +690,7 @@ va_dcl
 	do_bench = timerflag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
 	{
-		do_bench = (DEBUGFLAG_TIME_ENCODER == debugflag);
+		do_bench = (DEBUGFLAG_TIME_ENCODER == g_debug_flag);
 	}
 	if (do_bench)
 	{

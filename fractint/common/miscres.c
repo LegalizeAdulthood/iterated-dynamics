@@ -231,7 +231,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != DEBUGFLAG_PRE193_CENTERMAG)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_flag != DEBUGFLAG_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -436,7 +436,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && debugflag != DEBUGFLAG_PRE193_CENTERMAG)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_flag != DEBUGFLAG_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -621,11 +621,11 @@ nextname:
 		return 0;
 	}
 	/* file already exists */
-	if (fract_overwrite == 0)
+	if (!g_fractal_overwrite)
 	{
 		updatesavename(name);
 		goto nextname;
-		}
+	}
 	return 1;
 }
 
@@ -1824,12 +1824,12 @@ int win_matherr(struct exception *except)
 int _cdecl _matherr(struct exception *except)
 #endif
 {
-	if (debugflag)
+	if (g_debug_flag)
 	{
 		static FILE *fp = NULL;
 		if (matherr_ct++ == 0)
 		{
-			if (DEBUGFLAG_SHOW_MATH_ERRORS == debugflag || DEBUGFLAG_NO_BIG_TO_FLOAT == debugflag)
+			if (DEBUGFLAG_SHOW_MATH_ERRORS == g_debug_flag || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 			{
 				stopmsg(0, "Math error, but we'll try to keep going");
 			}

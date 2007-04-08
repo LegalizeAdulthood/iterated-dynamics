@@ -806,7 +806,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			else
 			{
 #ifdef USE_LONG_DOUBLE
-				if (DEBUGFLAG_MORE_DIGITS == debugflag)
+				if (DEBUGFLAG_MORE_DIGITS == g_debug_flag)
 				{
 					put_parm(" params=%.17Lg", (long double)param[0]);
 				}
@@ -825,7 +825,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				else
 				{
 #ifdef USE_LONG_DOUBLE
-					if (DEBUGFLAG_MORE_DIGITS == debugflag)
+					if (DEBUGFLAG_MORE_DIGITS == g_debug_flag)
 					{
 						put_parm("/%.17Lg", (long double)param[j]);
 					}
@@ -1237,49 +1237,49 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" cyclerange=%d/%d", rotate_lo, rotate_hi);
 		}
 
-		if (basehertz != 440)
+		if (g_base_hertz != 440)
 		{
-			put_parm(" hertz=%d", basehertz);
+			put_parm(" hertz=%d", g_base_hertz);
 		}
 
-		if (soundflag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+		if (g_sound_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
 		{
-			if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
 			{
 				put_parm(" sound=off");
 			}
-			else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
 			{
 				put_parm(" sound=beep");
 			}
-			else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 			{
 				put_parm(" sound=x");
 			}
-			else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 			{
 				put_parm(" sound=y");
 			}
-			else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 			{
 				put_parm(" sound=z");
 			}
 #ifndef XFRACT
-			if ((soundflag & SOUNDFLAG_ORBITMASK) && (soundflag & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) && (g_sound_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
 			{
-				if (soundflag & SOUNDFLAG_SPEAKER)
+				if (g_sound_flags & SOUNDFLAG_SPEAKER)
 				{
 					put_parm("/pc");
 				}
-				if (soundflag & SOUNDFLAG_OPL3_FM)
+				if (g_sound_flags & SOUNDFLAG_OPL3_FM)
 				{
 					put_parm("/fm");
 				}
-				if (soundflag & SOUNDFLAG_MIDI)
+				if (g_sound_flags & SOUNDFLAG_MIDI)
 				{
 					put_parm("/midi");
 				}
-				if (soundflag & SOUNDFLAG_QUANTIZED)
+				if (g_sound_flags & SOUNDFLAG_QUANTIZED)
 				{
 					put_parm("/quant");
 				}
@@ -1343,7 +1343,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" srelease=%d", fm_release);
 		}
 
-		if (soundflag & SOUNDFLAG_QUANTIZED)  /* quantize turned on */
+		if (g_sound_flags & SOUNDFLAG_QUANTIZED)  /* quantize turned on */
 		{
 			for (i = 0; i <= 11; i++)
 			{
@@ -1468,7 +1468,7 @@ docolors:
 				{
 					break;
 				}
-				if (DEBUGFLAG_COLORS_LOSSLESS == debugflag)  /* lossless compression */
+				if (DEBUGFLAG_COLORS_LOSSLESS == g_debug_flag)  /* lossless compression */
 				{
 					continue;
 				}
@@ -1498,7 +1498,7 @@ docolors:
 						for (j = 0; j < 3; ++j)  /* check pattern of chg per color */
 						{
 							/* Sylvie Gallet's fix */
-							if (debugflag != DEBUGFLAG_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
+							if (g_debug_flag != DEBUGFLAG_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 							{
 								if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
 										- g_dac_box[scanc + 5][j]) >= 2)
@@ -1717,9 +1717,9 @@ static int getprec(double a, double b, double c)
 		diff = temp;
 	}
 	digits = 7;
-	if (debugflag >= DEBUGFLAG_SET_DIGITS_MIN && debugflag < DEBUGFLAG_SET_DIGITS_MAX)
+	if (g_debug_flag >= DEBUGFLAG_SET_DIGITS_MIN && g_debug_flag < DEBUGFLAG_SET_DIGITS_MAX)
 	{
-		digits =  debugflag - DEBUGFLAG_SET_DIGITS_MIN;
+		digits =  g_debug_flag - DEBUGFLAG_SET_DIGITS_MIN;
 	}
 	while (diff < 1.0 && digits <= DBL_DIG + 1)
 	{
@@ -1924,9 +1924,9 @@ void edit_text_colors()
 	int	rowf, colf, rowt, colt;
 	int	i, j, k;
 
-	save_debugflag = debugflag;
+	save_debugflag = g_debug_flag;
 	save_lookatmouse = lookatmouse;
-	debugflag =	0;	 /*	don't get called recursively */
+	g_debug_flag =	0;	 /*	don't get called recursively */
 	lookatmouse	= LOOK_MOUSE_TEXT; /* text mouse sensitivity */
 	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
 
@@ -1954,7 +1954,7 @@ void edit_text_colors()
 		switch (i)
 		{
 		case FIK_ESC:
-			debugflag =	save_debugflag;
+			g_debug_flag =	save_debugflag;
 			lookatmouse	= save_lookatmouse;
 			driver_hide_text_cursor();
 			return;

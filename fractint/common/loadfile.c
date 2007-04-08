@@ -1216,7 +1216,7 @@ void backwards_v20(void)
 					&& (outside <= REAL && outside >= SUM) && save_release <= 1960)
 		? 1 : 0;
 	ldcheck = ((fractype == FORMULA || fractype == FFORMULA)
-				&& (save_release < 1900 || DEBUGFLAG_OLD_POWER == debugflag))
+				&& (save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
 		? 1 : 0;
 	if (inside == EPSCROSS && save_release < 1961)
 	{

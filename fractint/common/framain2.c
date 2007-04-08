@@ -254,7 +254,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				outln = pot_line;
 			}
-			else if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !evolving) /* regular gif/fra input file */
+			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !evolving) /* regular gif/fra input file */
 			{
 				outln = sound_line;      /* sound decoding */
 			}
@@ -264,7 +264,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			if (filetype == 0)
 			{
-				if (2224 == debugflag)
+				if (2224 == g_debug_flag)
 				{
 					char msg[MSGLEN];
 					sprintf(msg, "floatflag=%d", usr_floatflag);
@@ -605,7 +605,7 @@ resumeloop:                             /* return here on failed overlays */
 						driver_get_key();
 					}
 */
-					kbdchar = (DEBUGFLAG_COMPARE_RESTORED == debugflag) ? 'r' : 's';
+					kbdchar = (DEBUGFLAG_COMPARE_RESTORED == g_debug_flag) ? 'r' : 's';
 					if (initbatch == INIT_BATCH_NORMAL)
 					{
 						initbatch = INIT_BATCH_SAVE;
@@ -813,7 +813,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		if (i > 0)
 		{
 			g_start_show_orbit = 0;
-			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
+			g_sound_flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
 			Log_Auto_Calc = 0; /* turn it off */
 		}
 		break;
@@ -1361,7 +1361,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	}
 	if (kbdchar == 'r')
 	{
-		if (DEBUGFLAG_COMPARE_RESTORED == debugflag)
+		if (DEBUGFLAG_COMPARE_RESTORED == g_debug_flag)
 		{
 			comparegif = overlay3d = 1;
 			if (initbatch == INIT_BATCH_SAVE)

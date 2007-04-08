@@ -273,7 +273,7 @@ int Init_Queue(unsigned long request)
 	}
 
 #if 0
-	if (xmmquery() && debugflag != DEBUGFLAG_USE_DISK)  /* use LARGEST extended mem */
+	if (xmmquery() && g_debug_flag != DEBUGFLAG_USE_DISK)  /* use LARGEST extended mem */
 	{
 		largest = xmmlongest();
 		if (largest > request / 128)
@@ -537,7 +537,7 @@ void Jiim(int which)         /* called by fractint */
 	static int rancnt = 0;
 	int actively_computing = 1;
 	int first_time = 1;
-	int old_debugflag = debugflag;
+	int old_debugflag = g_debug_flag;
 
 	/* must use standard fractal or be froth_calc */
 	if (fractalspecific[fractype].calculate_type != standard_fractal
@@ -579,7 +579,7 @@ void Jiim(int which)         /* called by fractint */
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
 	OKtoMIIM  = 0;
-	if (which == JIIM && !(debugflag == DEBUGFLAG_NO_MIIM_QUEUE))
+	if (which == JIIM && !(g_debug_flag == DEBUGFLAG_NO_MIIM_QUEUE))
 	{
 		OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
 	}
@@ -1282,7 +1282,7 @@ finish:
 	lookatmouse = oldlookatmouse;
 	using_jiim = 0;
 	g_calculate_type = oldcalctype;
-	debugflag = old_debugflag; /* yo Chuck! */
+	g_debug_flag = old_debugflag; /* yo Chuck! */
 	helpmode = oldhelpmode;
 	if (kbdchar == 's' || kbdchar == 'S')
 	{

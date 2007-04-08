@@ -181,7 +181,7 @@ int         g_color_bright;       /* brightest color in palette       */
 int         g_color_dark;         /* darkest color in palette         */
 int         g_color_medium;       /* nearest to medbright gray color  */
 int         rotate_lo, rotate_hi;
-int         debugflag;
+int         g_debug_flag;
 #endif
 int using_jiim = 0;
 
@@ -2314,7 +2314,7 @@ static BOOLEAN PalTable__MemoryAlloc(PalTable *me, long size)
 {
 	char *temp;
 
-	if (DEBUGFLAG_USE_DISK == debugflag)
+	if (DEBUGFLAG_USE_DISK == g_debug_flag)
 	{
 		me->stored_at = NOWHERE;
 		return FALSE;   /* can't do it */

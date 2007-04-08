@@ -1395,7 +1395,7 @@ int orbit_2d_fp()
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (soundflag & SOUNDFLAG_ORBITMASK)
+	switch (g_sound_flags & SOUNDFLAG_ORBITMASK)
 	{
 	case SOUNDFLAG_X: soundvar = &x; break;
 	case SOUNDFLAG_Y: soundvar = &y; break;
@@ -1450,9 +1450,9 @@ int orbit_2d_fp()
 		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
-			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
-				sound_tone((int) (*soundvar*100 + basehertz));
+				sound_tone((int) (*soundvar*100 + g_base_hertz));
 			}
 			if ((fractype != ICON) && (fractype != LATOO))
 			{
@@ -1529,7 +1529,7 @@ int orbit_2d()
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (soundflag & SOUNDFLAG_ORBITMASK)
+	switch (g_sound_flags & SOUNDFLAG_ORBITMASK)
 	{
 	case SOUNDFLAG_X: soundvar = &x; break;
 	case SOUNDFLAG_Y: soundvar = &y; break;
@@ -1592,12 +1592,12 @@ int orbit_2d()
 		}
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
-			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
 				double yy;
 				yy = *soundvar;
 				yy = yy/fudge;
-				sound_tone((int) (yy*100 + basehertz));
+				sound_tone((int) (yy*100 + g_base_hertz));
 			}
 			if (oldcol != -1 && s_connect)
 			{
@@ -1703,12 +1703,12 @@ static int orbit_3d_calc(void)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
 					double yy;
-					yy = inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
+					yy = inf.viewvect[((g_sound_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
 					yy = yy/fudge;
-					sound_tone((int) (yy*100 + basehertz));
+					sound_tone((int) (yy*100 + g_base_hertz));
 				}
 				if (oldcol != -1 && s_connect)
 				{
@@ -1824,9 +1824,9 @@ static int orbit_3d_calc_fp(void)
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					sound_tone((int) (inf.viewvect[((soundflag & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + basehertz));
+					sound_tone((int) (inf.viewvect[((g_sound_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_base_hertz));
 				}
 				if (oldcol != -1 && s_connect)
 				{
@@ -1939,15 +1939,15 @@ int dynamic_2d_fp()
 	p1 = &y;
 
 
-	if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 	{
 		soundvar = &x;
 	}
-	else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 	{
 		soundvar = &y;
 	}
-	else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 	{
 		soundvar = &z;
 	}
@@ -2031,9 +2031,9 @@ int dynamic_2d_fp()
 			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 			if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 			{
-				if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					sound_tone((int) (*soundvar*100 + basehertz));
+					sound_tone((int) (*soundvar*100 + g_base_hertz));
 				}
 
 				if (count >= orbit_delay)
@@ -2177,15 +2177,15 @@ int plotorbits2dfloat(void)
 	return 0;
 #endif
 
-	if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 	{
 		soundvar = &x;
 	}
-	else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 	{
 		soundvar = &y;
 	}
-	else if ((soundflag & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 	{
 		soundvar = &z;
 	}
@@ -2234,9 +2234,9 @@ int plotorbits2dfloat(void)
 		if (col > 0 && col < xdots && row > 0 && row < ydots)
 #endif
 		{             /* plot if on the screen */
-			if ((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
-				sound_tone((int) (*soundvar*100 + basehertz));
+				sound_tone((int) (*soundvar*100 + g_base_hertz));
 			}
 
 			(*g_plot_color)(col, row, s_o_color % colors);
@@ -2857,7 +2857,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	/* apply perspective if requested */
 	if (ZVIEWER)
 	{
-		if ((DEBUGFLAG_LORENZ_FLOAT == debugflag) || (ZVIEWER < 100)) /* use float for small persp */
+		if ((DEBUGFLAG_LORENZ_FLOAT == g_debug_flag) || (ZVIEWER < 100)) /* use float for small persp */
 		{
 			/* use float perspective calc */
 			VECTOR tmpv;

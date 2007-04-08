@@ -47,7 +47,7 @@ int stopmsg (int flags, char *msg)
 {
 	int ret, toprow, color, savelookatmouse;
 	static unsigned char batchmode = 0;
-	if (debugflag || initbatch >= INIT_BATCH_NORMAL)
+	if (g_debug_flag || initbatch >= INIT_BATCH_NORMAL)
 	{
 		static FILE *fp = NULL;
 		if (fp == NULL && initbatch == INIT_BATCH_NONE)
@@ -108,7 +108,7 @@ int stopmsg (int flags, char *msg)
 	{
 		driver_get_key();
 	}
-	if (debugflag != DEBUGFLAG_NO_HELP_F1_ESC)
+	if (g_debug_flag != DEBUGFLAG_NO_HELP_F1_ESC)
 	{
 		if (getakeynohelp() == FIK_ESC)
 		{
@@ -282,7 +282,7 @@ void helptitle()
 	return;
 	/*NOTREACHED*/
 #else
-	if (DEBUGFLAG_NO_DEV_HEADING == debugflag)
+	if (DEBUGFLAG_NO_DEV_HEADING == g_debug_flag)
 	{
 		return;
 	}

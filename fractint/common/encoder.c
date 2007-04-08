@@ -114,7 +114,7 @@ restart:
 	}
 	else
 	{                                  /* file already exists */
-		if (fract_overwrite == 0)
+		if (!g_fractal_overwrite)
 		{
 			if (resave_flag == RESAVE_NO)
 			{
@@ -175,7 +175,7 @@ restart:
 	busy = 1;
 
 	/* invoke encoder() via timer */
-	interrupted = (debugflag == DEBUGFLAG_TIME_ENCODER) ? timer(TIMER_ENCODER, NULL) : encoder();
+	interrupted = (g_debug_flag == DEBUGFLAG_TIME_ENCODER) ? timer(TIMER_ENCODER, NULL) : encoder();
 
 	busy = 0;
 
