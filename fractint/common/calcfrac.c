@@ -226,7 +226,7 @@ static int s_show_dot_width = 0;
 static double fmod_test(void)
 {
 	double result;
-	if (g_inside == FMODI && save_release <= 2000) /* for backwards compatibility */
+	if (g_inside == FMODI && g_save_release <= 2000) /* for backwards compatibility */
 	{
 		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || integerfractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
@@ -588,30 +588,30 @@ int calculate_fractal(void)
 	Log_Calc = 0;
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
-	if (LogFlag && (((maxit > 32767) && (save_release > 1920))
+	if (LogFlag && (((maxit > 32767) && (g_save_release > 1920))
 		|| Log_Fly_Calc == 1))
 	{
 		Log_Calc = 1; /* calculate on the fly */
 		SetupLogTable();
 	}
-	else if (LogFlag && (((maxit > 32767) && (save_release <= 1920))
+	else if (LogFlag && (((maxit > 32767) && (g_save_release <= 1920))
 		|| Log_Fly_Calc == 2))
 	{
 		MaxLTSize = 32767;
 		Log_Calc = 0; /* use logtable */
 	}
-	else if (rangeslen && (maxit >= 32767))
+	else if (g_ranges_length && (maxit >= 32767))
 	{
 		MaxLTSize = 32766;
 	}
 
-	if ((LogFlag || rangeslen) && !Log_Calc)
+	if ((LogFlag || g_ranges_length) && !Log_Calc)
 	{
 		LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
 
 		if (LogTable == NULL)
 		{
-			if (rangeslen || Log_Fly_Calc == 2)
+			if (g_ranges_length || Log_Fly_Calc == 2)
 			{
 				stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
 			}
@@ -623,22 +623,22 @@ int calculate_fractal(void)
 				SetupLogTable();
 			}
 		}
-		else if (rangeslen)  /* Can't do ranges if MaxLTSize > 32767 */
+		else if (g_ranges_length)  /* Can't do ranges if MaxLTSize > 32767 */
 		{
 			int i, k, l, m, numval, flip, altern;
 			i = k = l = 0;
 			LogFlag = 0; /* ranges overrides logmap */
-			while (i < rangeslen)
+			while (i < g_ranges_length)
 			{
 				m = flip = 0;
 				altern = 32767;
-				numval = ranges[i++];
+				numval = g_ranges[i++];
 				if (numval < 0)
 				{
-					altern = ranges[i++];    /* sub-range iterations */
-					numval = ranges[i++];
+					altern = g_ranges[i++];    /* sub-range iterations */
+					numval = g_ranges[i++];
 				}
-				if (numval > (int)MaxLTSize || i >= rangeslen)
+				if (numval > (int)MaxLTSize || i >= g_ranges_length)
 				{
 					numval = (int)MaxLTSize;
 				}
@@ -665,7 +665,7 @@ int calculate_fractal(void)
 	}
 	g_magnitude_limit = 4L << bitshift;                 /* CALCMAND magnitude limit */
 
-	g_atan_colors = (save_release > 2002) ? colors : 180;
+	g_atan_colors = (g_save_release > 2002) ? colors : 180;
 
 	/* ORBIT stuff */
 	g_show_orbit = g_start_show_orbit;
@@ -676,38 +676,38 @@ int calculate_fractal(void)
 		g_orbit_color = 1;
 	}
 
-	if (inversion[0] != 0.0)
+	if (g_inversion[0] != 0.0)
 	{
-		g_f_radius    = inversion[0];
-		g_f_x_center   = inversion[1];
-		g_f_y_center   = inversion[2];
+		g_f_radius    = g_inversion[0];
+		g_f_x_center   = g_inversion[1];
+		g_f_y_center   = g_inversion[2];
 
-		if (inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
+		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			inversion[0] = min(fabs(xxmax - xxmin), fabs(yymax - yymin)) / 6.0;
-			fix_inversion(&inversion[0]);
-			g_f_radius = inversion[0];
+			g_inversion[0] = min(fabs(xxmax - xxmin), fabs(yymax - yymin)) / 6.0;
+			fix_inversion(&g_inversion[0]);
+			g_f_radius = g_inversion[0];
 		}
 
-		if (g_invert < 2 || inversion[1] == AUTOINVERT)  /* xcenter not already set */
+		if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
-			inversion[1] = (xxmin + xxmax) / 2.0;
-			fix_inversion(&inversion[1]);
-			g_f_x_center = inversion[1];
+			g_inversion[1] = (xxmin + xxmax) / 2.0;
+			fix_inversion(&g_inversion[1]);
+			g_f_x_center = g_inversion[1];
 			if (fabs(g_f_x_center) < fabs(xxmax-xxmin) / 100)
 			{
-				inversion[1] = g_f_x_center = 0.0;
+				g_inversion[1] = g_f_x_center = 0.0;
 			}
 		}
 
-		if (g_invert < 3 || inversion[2] == AUTOINVERT)  /* ycenter not already set */
+		if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  /* ycenter not already set */
 		{
-			inversion[2] = (yymin + yymax) / 2.0;
-			fix_inversion(&inversion[2]);
-			g_f_y_center = inversion[2];
+			g_inversion[2] = (yymin + yymax) / 2.0;
+			fix_inversion(&g_inversion[2]);
+			g_f_y_center = g_inversion[2];
 			if (fabs(g_f_y_center) < fabs(yymax-yymin) / 100)
 			{
-				inversion[2] = g_f_y_center = 0.0;
+				g_inversion[2] = g_f_y_center = 0.0;
 			}
 		}
 
@@ -952,7 +952,7 @@ static void perform_work_list()
 		delyy2 = (yy3rd - yymin) / dxsize;
 
 		/* in case it's changed with <G> */
-		g_use_old_distance_test = (save_release < 1827) ? 1 : 0;
+		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
 
 		g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
 		if (g_distance_test != 1 || colors == 2) /* not doing regular outside colors */
@@ -1853,7 +1853,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
 		{
-			if (save_release <= 1950)
+			if (g_save_release <= 1950)
 			{
 				if (colors < 16)
 				{
@@ -1915,7 +1915,7 @@ int calculate_mandelbrot_fp(void)
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
 		{
-			if (save_release <= 1950)
+			if (g_save_release <= 1950)
 			{
 				if (colors < 16)
 				{
@@ -2004,7 +2004,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		{
 			tantable[i] = 0.0;
 		}
-		if (save_release > 1824)
+		if (g_save_release > 1824)
 		{
 			maxit = 16;
 		}
@@ -2037,7 +2037,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	/* really fractal specific, but we'll leave it here */
 	if (!integerfractal)
 	{
-		if (useinitorbit == 1)
+		if (g_use_initial_orbit_z == 1)
 		{
 			s_saved_z = g_initial_orbit_z;
 		}
@@ -2086,7 +2086,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 	else
 	{
-		if (useinitorbit == 1)
+		if (g_use_initial_orbit_z == 1)
 		{
 			lsaved = g_init_orbit_l;
 		}
@@ -2186,7 +2186,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 					break;
 				}
 			}
-			else if (save_release > 1950)
+			else if (g_save_release > 1950)
 				if (max(fabs(deriv.x), fabs(deriv.y)) > s_dem_too_big)
 				{
 					break;
@@ -2194,7 +2194,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			/* if above exit taken, the later test vs s_dem_delta will place this
 				point on the boundary, because mag(g_old_z) < bailout just now */
 
-			if (curfractalspecific->orbitcalc() || (overflow && save_release > 1826))
+			if (curfractalspecific->orbitcalc() || (overflow && g_save_release > 1826))
 			{
 				if (g_use_old_distance_test)
 				{
@@ -2263,7 +2263,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 						g_new_z.y /= fudge;
 					}
 
-					if (save_release > 1824)
+					if (g_save_release > 1824)
 					{
 						if (g_new_z.x > STARTRAILMAX)
 						{
@@ -2678,7 +2678,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		/* eliminate negative colors & wrap arounds */
 		if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
 		{
-			g_color_iter = (save_release < 1961) ? 0 : 1;
+			g_color_iter = (g_save_release < 1961) ? 0 : 1;
 		}
 	}
 
@@ -2857,7 +2857,7 @@ plot_pixel:
 	g_color = abs((int)g_color_iter);
 	if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
 	{
-		if (save_release <= 1950)
+		if (g_save_release <= 1950)
 		{
 			if (colors < 16)
 			{
@@ -2968,7 +2968,7 @@ static void decomposition(void)
 			++temp;
 			g_new_z_l.x = -g_new_z_l.x;
 		}
-		if (g_decomposition[0] == 2 && save_release >= 1827)
+		if (g_decomposition[0] == 2 && g_save_release >= 1827)
 		{
 			save_temp = temp;
 			if (temp == 2)
@@ -3073,7 +3073,7 @@ static void decomposition(void)
 			++temp;
 			g_new_z.x = -g_new_z.x;
 		}
-		if (g_decomposition[0] == 2 && save_release >= 1827)
+		if (g_decomposition[0] == 2 && g_save_release >= 1827)
 		{
 			save_temp = temp;
 			if (temp == 2)
@@ -3161,7 +3161,7 @@ static void decomposition(void)
 		}
 		temp >>= 1;
 	}
-	if (g_decomposition[0] == 2 && save_release >= 1827)
+	if (g_decomposition[0] == 2 && g_save_release >= 1827)
 	{
 		g_color_iter = (save_temp & 2) ? 1 : 0;
 		if (colors == 2)
@@ -3169,7 +3169,7 @@ static void decomposition(void)
 			g_color_iter++;
 		}
 	}
-	else if (g_decomposition[0] == 2 && save_release < 1827)
+	else if (g_decomposition[0] == 2 && g_save_release < 1827)
 	{
 		g_color_iter &= 1;
 	}
@@ -4272,13 +4272,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			return;
 		}
 	}
-	if ((g_potential_flag && g_potential_16bit) || (g_invert && inversion[2] != 0.0)
+	if ((g_potential_flag && g_potential_16bit) || (g_invert && g_inversion[2] != 0.0)
 			|| g_decomposition[0] != 0
 			|| xxmin != xx3rd || yymin != yy3rd)
 	{
 		return;
 	}
-	if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && g_force_symmetry == FORCESYMMETRY_NONE)
+	if (sym != XAXIS && sym != XAXIS_NOPARM && g_inversion[1] != 0.0 && g_force_symmetry == FORCESYMMETRY_NONE)
 	{
 		return;
 	}
@@ -4297,9 +4297,9 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		return;
 	}
-	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && useinitorbit != 1);
-	parmsnoreal = (g_parameter.x == 0.0 && useinitorbit != 1);
-	parmsnoimag = (g_parameter.y == 0.0 && useinitorbit != 1);
+	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
+	parmsnoreal = (g_parameter.x == 0.0 && g_use_initial_orbit_z != 1);
+	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
 	switch (fractype)
 	{
 	case LMANLAMFNFN:      /* These need only P1 checked. */

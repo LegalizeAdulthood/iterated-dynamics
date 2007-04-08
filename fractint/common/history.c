@@ -52,9 +52,9 @@ void _fastcall history_save_info(void)
 	current.random_seed				= (short) g_random_seed;
 	current.inside				= (short) g_inside;
 	current.logmap				= LogFlag;
-	current.invert[0]			= inversion[0];
-	current.invert[1]			= inversion[1];
-	current.invert[2]			= inversion[2];
+	current.invert[0]			= g_inversion[0];
+	current.invert[1]			= g_inversion[1];
+	current.invert[2]			= g_inversion[2];
 	current.decomposition				= (short) g_decomposition[0]; ;
 	current.biomorph			= (short) g_biomorph;
 	current.symmetry			= (short) g_force_symmetry;
@@ -101,19 +101,19 @@ void _fastcall history_save_info(void)
 	current.finattract			= (short) g_finite_attractor;
 	current.initial_orbit_z[0]		= g_initial_orbit_z.x;
 	current.initial_orbit_z[1]		= g_initial_orbit_z.y;
-	current.useinitorbit		= useinitorbit;
+	current.use_initial_orbit_z		= g_use_initial_orbit_z;
 	current.periodicity			= (short) g_periodicity_check;
 	current.potential_16bit		= (short) disk16bit;
 	current.release				= (short) g_release;
-	current.save_release		= (short) save_release;
+	current.g_save_release		= (short) g_save_release;
 	current.flag3d				= (short) g_display_3d;
 	current.ambient				= (short) g_ambient;
 	current.randomize			= (short) g_randomize;
 	current.haze				= (short) g_haze;
 	current.transparent[0]		= (short) transparent[0];
 	current.transparent[1]		= (short) transparent[1];
-	current.rotate_lo			= (short) rotate_lo;
-	current.rotate_hi			= (short) rotate_hi;
+	current.rotate_lo			= (short) g_rotate_lo;
+	current.rotate_hi			= (short) g_rotate_hi;
 	current.distance_test_width		= (short) g_distance_test_width;
 	current.mxmaxfp				= g_m_x_max_fp;
 	current.mxminfp				= g_m_x_min_fp;
@@ -131,7 +131,7 @@ void _fastcall history_save_info(void)
 	current.maxfn				= maxfn;
 	current.major_method		= (short) g_major_method;
 	current.minor_method		= (short) g_minor_method;
-	current.bailout				= bailout;
+	current.bail_out				= g_bail_out;
 	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= maxit;
 	current.g_old_demm_colors		= (short) g_old_demm_colors;
@@ -213,7 +213,7 @@ void _fastcall history_restore_info(void)
 #endif
 	last = history[historyptr];
 
-	g_invert					= 0;
+	g_invert				= 0;
 	calc_status				= CALCSTAT_PARAMS_CHANGED;
 	g_resuming				= 0;
 	fractype				= last.fractal_type;
@@ -235,14 +235,14 @@ void _fastcall history_restore_info(void)
 	potparam[0]         	= last.potential[0];
 	potparam[1]         	= last.potential[1];
 	potparam[2]         	= last.potential[2];
-	g_random_flag               	= last.random_flag;
-	g_random_seed               	= last.random_seed;
+	g_random_flag			= last.random_flag;
+	g_random_seed			= last.random_seed;
 	g_inside              	= last.inside;
 	LogFlag             	= last.logmap;
-	inversion[0]        	= last.invert[0];
-	inversion[1]        	= last.invert[1];
-	inversion[2]        	= last.invert[2];
-	g_decomposition[0]           	= last.decomposition;
+	g_inversion[0]        	= last.invert[0];
+	g_inversion[1]        	= last.invert[1];
+	g_inversion[2]        	= last.invert[2];
+	g_decomposition[0]		= last.decomposition;
 	g_user_biomorph        	= last.biomorph;
 	g_biomorph            	= last.biomorph;
 	g_force_symmetry       	= last.symmetry;
@@ -282,34 +282,34 @@ void _fastcall history_restore_info(void)
 	stdcalcmode         	= last.stdcalcmode;
 	g_three_pass          	= (int) last.three_pass;
 	g_stop_pass            	= last.stop_pass;
-	g_distance_test             	= last.distance_test;
+	g_distance_test			= last.distance_test;
 	usr_distest         	= last.distance_test;
 	trigndx[0]          	= last.trigndx[0];
 	trigndx[1]          	= last.trigndx[1];
 	trigndx[2]          	= last.trigndx[2];
 	trigndx[3]          	= last.trigndx[3];
-	g_finite_attractor          	= last.finattract;
-	g_initial_orbit_z.x         	= last.initial_orbit_z[0];
-	g_initial_orbit_z.y         	= last.initial_orbit_z[1];
-	useinitorbit        	= last.useinitorbit;
+	g_finite_attractor		= last.finattract;
+	g_initial_orbit_z.x		= last.initial_orbit_z[0];
+	g_initial_orbit_z.y		= last.initial_orbit_z[1];
+	g_use_initial_orbit_z	= last.use_initial_orbit_z;
 	g_periodicity_check    	= last.periodicity;
 	usr_periodicitycheck	= last.periodicity;
 	disk16bit           	= last.potential_16bit;
 	g_release           	= last.release;
-	save_release        	= last.save_release;
+	g_save_release        	= last.g_save_release;
 	g_display_3d           	= last.flag3d;
 	g_ambient             	= last.ambient;
 	g_randomize           	= last.randomize;
 	g_haze                	= last.haze;
 	transparent[0]      	= last.transparent[0];
 	transparent[1]      	= last.transparent[1];
-	rotate_lo           	= last.rotate_lo;
-	rotate_hi           	= last.rotate_hi;
-	g_distance_test_width        	= last.distance_test_width;
-	g_m_x_max_fp             	= last.mxmaxfp;
-	g_m_x_min_fp             	= last.mxminfp;
-	g_m_y_max_fp             	= last.mymaxfp;
-	g_m_y_min_fp             	= last.myminfp;
+	g_rotate_lo           	= last.rotate_lo;
+	g_rotate_hi           	= last.rotate_hi;
+	g_distance_test_width	= last.distance_test_width;
+	g_m_x_max_fp			= last.mxmaxfp;
+	g_m_x_min_fp			= last.mxminfp;
+	g_m_y_max_fp			= last.mymaxfp;
+	g_m_y_min_fp			= last.myminfp;
 	g_z_dots               	= last.zdots;
 	g_origin_fp            	= last.originfp;
 	g_depth_fp             	= last.depthfp;
@@ -317,34 +317,34 @@ void _fastcall history_restore_info(void)
 	g_width_fp             	= last.widthfp;
 	g_dist_fp              	= last.distfp;
 	g_eyes_fp              	= last.eyesfp;
-	g_new_orbit_type        	= last.orbittype;
-	g_juli_3D_mode          	= last.juli3Dmode;
+	g_new_orbit_type        = last.orbittype;
+	g_juli_3D_mode			= last.juli3Dmode;
 	maxfn               	= last.maxfn;
 	g_major_method        	= (enum Major) last.major_method;
 	g_minor_method        	= (enum Minor) last.minor_method;
-	bailout             	= last.bailout;
-	g_bail_out_test          	= (enum bailouts) last.bailoutest;
+	g_bail_out             	= last.bail_out;
+	g_bail_out_test			= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
 	g_old_demm_colors     	= last.g_old_demm_colors;
 	curfractalspecific  	= &fractalspecific[fractype];
 	g_potential_flag		= (potparam[0] != 0.0);
-	if (inversion[0] != 0.0)
+	if (g_inversion[0] != 0.0)
 	{
 		g_invert = 3;
 	}
 	Log_Fly_Calc			= last.logcalc;
-	g_is_mand					= last.ismand;
+	g_is_mand				= last.ismand;
 	g_proximity				= last.proximity;
 	nobof					= last.nobof;
 	orbit_delay				= last.orbit_delay;
-	g_orbit_interval			= last.orbit_interval;
-	g_orbit_x_min					= last.oxmin;
-	g_orbit_x_max					= last.oxmax;
-	g_orbit_y_min					= last.oymin;
-	g_orbit_y_max					= last.oymax;
-	g_orbit_x_3rd					= last.ox3rd;
-	g_orbit_y_3rd					= last.oy3rd;
-	g_keep_screen_coords		= last.keep_scrn_coords;
+	g_orbit_interval		= last.orbit_interval;
+	g_orbit_x_min			= last.oxmin;
+	g_orbit_x_max			= last.oxmax;
+	g_orbit_y_min			= last.oymin;
+	g_orbit_y_max			= last.oymax;
+	g_orbit_x_3rd			= last.ox3rd;
+	g_orbit_y_3rd			= last.oy3rd;
+	g_keep_screen_coords	= last.keep_scrn_coords;
 	if (g_keep_screen_coords)
 	{
 		g_set_orbit_corners = 1;
@@ -353,9 +353,9 @@ void _fastcall history_restore_info(void)
 	usr_floatflag			= (char) (curfractalspecific->isinteger ? 0 : 1);
 	memcpy(g_dac_box, last.dac, 256*3);
 	memcpy(olddacbox, last.dac, 256*3);
-	if (mapdacbox)
+	if (g_map_dac_box)
 	{
-		memcpy(mapdacbox, last.dac, 256*3);
+		memcpy(g_map_dac_box, last.dac, 256*3);
 	}
 	spindac(0, 1);
 	savedac = (fractype == JULIBROT || fractype == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;

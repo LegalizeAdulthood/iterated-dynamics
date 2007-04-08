@@ -866,7 +866,7 @@ int sierpinski_orbit_fp(void)
 int lambda_exponent_orbit_fp(void)
 {
 	/* found this in  "Science of Fractal Images" */
-	if (save_release > 2002)  /* need braces since these are macros */
+	if (g_save_release > 2002)  /* need braces since these are macros */
 	{
 		BAIL_OUT_EXP_FP();
 	}
@@ -2147,7 +2147,7 @@ static int try_float_fractal(int (*fpFractal)(void))
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 	fpFractal();
-	if (save_release < 1900)  /* for backwards compatibility */
+	if (g_save_release < 1900)  /* for backwards compatibility */
 	{
 		g_new_z_l.x = (long)(g_new_z.x/fudge); /* this error has been here a long time */
 		g_new_z_l.y = (long)(g_new_z.y/fudge);
@@ -2270,7 +2270,7 @@ int trig_z_squared_orbit(void) /* this doesn't work very well */
 	long l16triglim_2 = 8L << 15;
 	LCMPLXsqr_old(g_tmp_z_l);
 	if ((labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2) &&
-		save_release > 1900)
+		g_save_release > 1900)
 	{
 		overflow = 1;
 	}
@@ -2619,7 +2619,7 @@ int mandelbrot_per_pixel_l(void)
 	/* barnsleym1 */
 	/* barnsleym2 */
 	g_initial_z_l.x = g_lx_pixel();
-	if (save_release >= 2004)
+	if (g_save_release >= 2004)
 	{
 		g_initial_z_l.y = g_ly_pixel();
 	}
@@ -2641,7 +2641,7 @@ int mandelbrot_per_pixel_l(void)
 		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
 	}
 
-	g_old_z_l = (useinitorbit == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -2732,7 +2732,7 @@ int mandelbrot_per_pixel(void)
 	else
 	{
 		g_initial_z_l.x = g_lx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z_l.y = g_ly_pixel();
 		}
@@ -2749,11 +2749,11 @@ int mandelbrot_per_pixel(void)
 	}
 
 	/* alter g_initial_z value */
-	if (useinitorbit == 1)
+	if (g_use_initial_orbit_z == 1)
 	{
 		g_old_z_l = g_init_orbit_l;
 	}
-	else if (useinitorbit == 2)
+	else if (g_use_initial_orbit_z == 2)
 	{
 		g_old_z_l = g_initial_z_l;
 	}
@@ -2799,13 +2799,13 @@ int marks_mandelbrot_per_pixel()
 	else
 	{
 		g_initial_z_l.x = g_lx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z_l.y = g_ly_pixel();
 		}
 	}
 
-	g_old_z_l = (useinitorbit == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -2847,13 +2847,13 @@ int marks_mandelbrot_per_pixel_fp()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -2904,7 +2904,7 @@ int mandelbrot_per_pixel_fp(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
@@ -2926,11 +2926,11 @@ int mandelbrot_per_pixel_fp(void)
 	}
 
 	/* alter g_initial_z value */
-	if (useinitorbit == 1)
+	if (g_use_initial_orbit_z == 1)
 	{
 		g_old_z = g_initial_orbit_z;
 	}
-	else if (useinitorbit == 2)
+	else if (g_use_initial_orbit_z == 2)
 	{
 		g_old_z = g_initial_z;
 	}
@@ -3012,13 +3012,13 @@ int other_mandelbrot_per_pixel_fp(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -3037,7 +3037,7 @@ int halley_per_pixel_mpc(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
@@ -3061,7 +3061,7 @@ int halley_per_pixel(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
@@ -3129,7 +3129,7 @@ int marks_complex_mandelbrot_per_pixel(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
@@ -3198,7 +3198,7 @@ int mandelbrot_phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
 	g_initial_z_l.x = g_lx_pixel();
-	if (save_release >= 2004)
+	if (g_save_release >= 2004)
 	{
 		g_initial_z_l.y = g_ly_pixel();
 	}
@@ -3220,7 +3220,7 @@ int mandelbrot_phoenix_per_pixel(void)
 		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
 	}
 
-	g_old_z_l = (useinitorbit == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -3243,13 +3243,13 @@ int mandelbrot_phoenix_per_pixel_fp(void)
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (save_release >= 2004)
+		if (g_save_release >= 2004)
 		{
 			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -3464,7 +3464,7 @@ int mandelbrot_mix4_setup(void)
 		g_temp_z.y = -g_temp_z.y;
 	}
 
-	if (bailout == 0)
+	if (g_bail_out == 0)
 	{
 		g_rq_limit = L.x;
 		g_rq_limit2 = g_rq_limit*g_rq_limit;

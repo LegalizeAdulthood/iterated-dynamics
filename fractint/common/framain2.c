@@ -94,7 +94,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			sxdots  = xdots;
 			sydots  = ydots;
 			sxoffs = syoffs = 0;
-			rotate_hi = (rotate_hi < colors) ? rotate_hi : colors - 1;
+			g_rotate_hi = (g_rotate_hi < colors) ? g_rotate_hi : colors - 1;
 
 			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
 
@@ -130,17 +130,17 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				g_video_entry.ydots = ydots;
 			}
 
-			if (savedac || colorpreloaded)
+			if (savedac || g_color_preloaded)
 			{
 				memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
 				spindac(0, 1);
-				colorpreloaded = 0;
+				g_color_preloaded = FALSE;
 			}
 			else
 			{	/* reset DAC to defaults, which setvideomode has done for us */
-				if (mapdacbox)
+				if (g_map_dac_box)
 				{	/* but there's a map=, so load that */
-					memcpy((char *)g_dac_box, mapdacbox, 768);
+					memcpy((char *)g_dac_box, g_map_dac_box, 768);
 					spindac(0, 1);
 				}
 				else if ((driver_diskp() && colors == 256) || !colors)
@@ -150,7 +150,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					ValidateLuts("default"); /* read the default palette file */
 #endif
 				}
-				colorstate = 0;
+				g_color_state = COLORSTATE_DEFAULT;
 				}
 			if (viewwindow)
 			{
@@ -761,7 +761,7 @@ static int handle_fractal_type(int *frommandel)
 	{
 		driver_discard_screen();
 		savedac = SAVEDAC_NO;
-		save_release = g_release;
+		g_save_release = g_release;
 		g_no_magnitude_calculation = FALSE;
 		g_use_old_periodicity = FALSE;
 		bad_outside = 0;
@@ -909,10 +909,10 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		i |= COMMAND_FRACTAL_PARAM;
 		savedac = SAVEDAC_NO;
 	}
-	else if (colorpreloaded)
+	else if (g_color_preloaded)
 	{                         /* colors= was specified */
 		spindac(0, 1);
-		colorpreloaded = 0;
+		g_color_preloaded = FALSE;
 	}
 	else if (i & COMMAND_RESET)         /* reset was specified */
 	{
@@ -1265,7 +1265,7 @@ static int handle_color_cycling(int kbdchar)
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
 	if (memcmp(olddacbox, g_dac_box, 256*3))
 	{
-		colorstate = 1;
+		g_color_state = COLORSTATE_UNKNOWN;
 		history_save_info();
 	}
 	return CONTINUE;
@@ -1298,7 +1298,7 @@ static int handle_color_editing(int *kbdmore)
 		helpmode = oldhelpmode;
 		if (memcmp(olddacbox, g_dac_box, 256*3))
 		{
-			colorstate = 1;
+			g_color_state = COLORSTATE_UNKNOWN;
 			history_save_info();
 		}
 	}

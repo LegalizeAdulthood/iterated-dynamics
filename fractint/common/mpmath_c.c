@@ -483,7 +483,7 @@ void SetupLogTable(void)
 	unsigned long prev, limit, sptop;
 	unsigned n;
 
-	if (save_release > 1920 || Log_Fly_Calc == 1)  /* set up on-the-fly variables */
+	if (g_save_release > 1920 || Log_Fly_Calc == 1)  /* set up on-the-fly variables */
 	{
 		if (LogFlag > 0)  /* new log function */
 		{
@@ -514,7 +514,7 @@ void SetupLogTable(void)
 		return; /* LogTable not defined, bail out now */
 	}
 
-	if (save_release > 1920 && !Log_Calc)
+	if (g_save_release > 1920 && !Log_Calc)
 	{
 		Log_Calc = 1;   /* turn it on */
 		for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
@@ -604,7 +604,7 @@ long logtablecalc(long citer)
 {
 	long ret = 0;
 
-	if (LogFlag == 0 && !rangeslen) /* Oops, how did we get here? */
+	if (LogFlag == 0 && !g_ranges_length) /* Oops, how did we get here? */
 	{
 		return citer;
 	}
@@ -621,7 +621,7 @@ long logtablecalc(long citer)
 		}
 		else if ((citer - lf)/log(citer - lf) <= mlf)
 		{
-			ret = (save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
+			ret = (g_save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
 		}
 		else
 		{

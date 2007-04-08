@@ -163,13 +163,13 @@ int gifview()
 				return -1;
 			}
 			if ((!g_display_3d || (g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE))
-				&& !dontreadcolor)
+				&& !g_dont_read_color)
 			{
 				g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
 			}
 		}
 	}
-	colorstate = 1; /* colors aren't default and not a known .map file */
+	g_color_state = COLORSTATE_UNKNOWN; /* colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
 	if (g_display_3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
@@ -192,7 +192,7 @@ int gifview()
 		sprintf(msg, "restoring %s", tmpname);
 		dvid_status(1, msg);
 	}
-	dontreadcolor = 0;
+	g_dont_read_color = FALSE;
 
 	/* Now display one or more GIF objects */
 	finished = 0;

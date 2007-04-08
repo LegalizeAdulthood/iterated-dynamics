@@ -146,15 +146,15 @@ void make_batch_file()
 		{
 			maxcolor = 256;
 		}
-		if (colorstate == 0)
+		if (g_color_state == COLORSTATE_DEFAULT)
 		{                         /* default colors */
-			if (mapdacbox)
+			if (g_map_dac_box)
 			{
 				colorspec[0] = '@';
 				sptr = MAP_name;
 			}
 		}
-		else if (colorstate == 2)
+		else if (g_color_state == COLORSTATE_MAP)
 		{                         /* colors match colorfile */
 			colorspec[0] = '@';
 			sptr = colorfile;
@@ -613,7 +613,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 	{
 		/****** fractal only parameters in this section *******/
 		put_parm(" reset=%d", check_back() ?
-			min(save_release, g_release) : g_release);
+			min(g_save_release, g_release) : g_release);
 
 		sptr = curfractalspecific->name;
 		if (*sptr == '*')
@@ -690,7 +690,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" passes=%c%c", usr_stdcalcmode, (char)g_stop_pass + '0');
 		}
 
-		if (usemag)
+		if (g_use_center_mag)
 		{
 			if (bf_math)
 			{
@@ -838,11 +838,11 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (useinitorbit == 2)
+		if (g_use_initial_orbit_z == 2)
 		{
 			put_parm(" initorbit=pixel");
 		}
-		else if (useinitorbit == 1)
+		else if (g_use_initial_orbit_z == 1)
 		{
 			put_parm(" initorbit=%.15g/%.15g", g_initial_orbit_z.x, g_initial_orbit_z.y);
 		}
@@ -857,9 +857,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" maxiter=%ld", maxit);
 		}
 
-		if (bailout && (!g_potential_flag || potparam[2] == 0.0))
+		if (g_bail_out && (!g_potential_flag || potparam[2] == 0.0))
 		{
-			put_parm(" bailout=%ld", bailout);
+			put_parm(" bailout=%ld", g_bail_out);
 		}
 
 		if (g_bail_out_test != Mod)
@@ -984,7 +984,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (LogFlag && !rangeslen)
+		if (LogFlag && !g_ranges_length)
 		{
 			put_parm(" logmap=");
 			if (LogFlag == -1)
@@ -1001,7 +1001,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (Log_Fly_Calc && LogFlag && !rangeslen)
+		if (Log_Fly_Calc && LogFlag && !g_ranges_length)
 		{
 			put_parm(" logmode=");
 			if (Log_Fly_Calc == 1)
@@ -1026,7 +1026,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (g_invert)
 		{
 			put_parm(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
-				inversion[0], inversion[1], inversion[2]);
+				g_inversion[0], g_inversion[1], g_inversion[2]);
 		}
 		if (g_decomposition[0])
 		{
@@ -1093,22 +1093,22 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" rseed=%d", g_random_seed);
 		}
 
-		if (rangeslen)
+		if (g_ranges_length)
 		{
 			put_parm(" ranges=");
 			i = 0;
-			while (i < rangeslen)
+			while (i < g_ranges_length)
 			{
 				if (i)
 				{
 					put_parm("/");
 				}
-				if (ranges[i] == -1)
+				if (g_ranges[i] == -1)
 				{
-					put_parm("-%d/", ranges[++i]);
+					put_parm("-%d/", g_ranges[++i]);
 					++i;
 				}
-				put_parm("%d", ranges[i++]);
+				put_parm("%d", g_ranges[i++]);
 			}
 		}
 	}
@@ -1232,9 +1232,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 	if (colorsonly == 0)
 	{
-		if (rotate_lo != 1 || rotate_hi != 255)
+		if (g_rotate_lo != 1 || g_rotate_hi != 255)
 		{
-			put_parm(" cyclerange=%d/%d", rotate_lo, rotate_hi);
+			put_parm(" cyclerange=%d/%d", g_rotate_lo, g_rotate_hi);
 		}
 
 		if (g_base_hertz != 440)
@@ -1410,9 +1410,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" orbitdrawmode=%c", args[g_orbit_draw_mode]);
 		}
 
-		if (math_tol[0] != 0.05 || math_tol[1] != 0.05)
+		if (g_math_tolerance[0] != 0.05 || g_math_tolerance[1] != 0.05)
 		{
-			put_parm(" mathtolerance=%g/%g", math_tol[0], math_tol[1]);
+			put_parm(" mathtolerance=%g/%g", g_math_tolerance[0], g_math_tolerance[1]);
 		}
 	}
 

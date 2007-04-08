@@ -101,9 +101,9 @@ GENEBASE g_genes[NUMGENES] =
 	{ &g_inside,     varyinside,  0, "inside color", 2 },
 	{ &g_outside,    varyoutside, 0, "outside color", 3 },
 	{ &g_decomposition[0],  varypwr2,    0, "decomposition", 4 },
-	{ &inversion[0], varyinv,    0, "invert radius", 7 },
-	{ &inversion[1], varyinv,    0, "invert center x", 7 },
-	{ &inversion[2], varyinv,    0, "invert center y", 7 },
+	{ &g_inversion[0], varyinv,    0, "invert radius", 7 },
+	{ &g_inversion[1], varyinv,    0, "invert center x", 7 },
+	{ &g_inversion[2], varyinv,    0, "invert center y", 7 },
 	{ &trigndx[0], varytrig,    0, "trig function 1", 5 },
 	{ &trigndx[1], varytrig,    0, "trig fn 2", 5 },
 	{ &trigndx[2], varytrig,    0, "trig fn 3", 5 },
@@ -129,9 +129,9 @@ void param_history(int mode)
 		oldhistory.inside = g_inside;
 		oldhistory.outside = g_outside;
 		oldhistory.decomp0 = g_decomposition[0];
-		oldhistory.invert0 = inversion[0];
-		oldhistory.invert1 = inversion[1];
-		oldhistory.invert2 = inversion[2];
+		oldhistory.invert0 = g_inversion[0];
+		oldhistory.invert1 = g_inversion[1];
+		oldhistory.invert2 = g_inversion[2];
 		oldhistory.trigndx0 = trigndx[0];
 		oldhistory.trigndx1 = trigndx[1];
 		oldhistory.trigndx2 = trigndx[2];
@@ -154,10 +154,10 @@ void param_history(int mode)
 		g_inside = oldhistory.inside;
 		g_outside = oldhistory.outside;
 		g_decomposition[0] = oldhistory.decomp0;
-		inversion[0] = oldhistory.invert0;
-		inversion[1] = oldhistory.invert1;
-		inversion[2] = oldhistory.invert2;
-		g_invert = (inversion[0] == 0.0) ? 0 : 3 ;
+		g_inversion[0] = oldhistory.invert0;
+		g_inversion[1] = oldhistory.invert1;
+		g_inversion[2] = oldhistory.invert2;
+		g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 		trigndx[0] = oldhistory.trigndx0;
 		trigndx[1] = oldhistory.trigndx1;
 		trigndx[2] = oldhistory.trigndx2;
@@ -305,7 +305,7 @@ void varyinv(GENEBASE gene[], int randval, int i)
 	{
 		varydbl(gene, randval, i);
 	}
-	g_invert = (inversion[0] == 0.0) ? 0 : 3 ;
+	g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
 
 /* --------------------------------------------------------------------- */

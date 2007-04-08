@@ -208,7 +208,7 @@ void calculate_fractal_initialize(void)
 	if (bf_math)
 	{
 		gotprec = getprecbf(CURRENTREZ);
-		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || math_tol[1] >= 1.0)
+		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
 			bf_math = 0;
@@ -350,9 +350,9 @@ init_restart:
 	{
 		g_rq_limit = potparam[2];
 	}
-	else if (bailout) /* user input bailout */
+	else if (g_bail_out) /* user input bailout */
 	{
-		g_rq_limit = bailout;
+		g_rq_limit = g_bail_out;
 	}
 	else if (g_biomorph != -1) /* biomorph benefits from larger bailout */
 	{
@@ -1057,7 +1057,7 @@ static void _fastcall adjust_to_limits(double expand)
 
 	if (integerfractal)
 	{
-		if (save_release > 1940) /* let user reproduce old GIF's and PAR's */
+		if (g_save_release > 1940) /* let user reproduce old GIF's and PAR's */
 		{
 			limit = 1023.99;
 		}
@@ -1213,7 +1213,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 static int _fastcall ratio_bad(double actual, double desired)
 {
 	double ftemp, tol;
-	tol = math_tol[integerfractal ? 0 : 1];
+	tol = g_math_tolerance[integerfractal ? 0 : 1];
 	if (tol <= 0.0)
 	{
 		return 1;

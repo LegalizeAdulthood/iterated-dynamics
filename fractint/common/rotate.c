@@ -69,13 +69,13 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		direction = 1;                    /* and set a rotate direction   */
 	}
 
-	rotate_max = (rotate_hi < colors) ? rotate_hi : colors-1;
-	rotate_size = rotate_max - rotate_lo + 1;
+	rotate_max = (g_rotate_hi < colors) ? g_rotate_hi : colors-1;
+	rotate_size = rotate_max - g_rotate_lo + 1;
 	last = rotate_max;                   /* last box that was filled     */
-	next = rotate_lo;                    /* next box to be filled        */
+	next = g_rotate_lo;                    /* next box to be filled        */
 	if (direction < 0)
 	{
-		last = rotate_lo;
+		last = g_rotate_lo;
 		next = rotate_max;
 	}
 
@@ -96,7 +96,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				for (istep = 0; istep < step; istep++)
 				{
 					jstep = next + (istep*direction);
-					while (jstep < rotate_lo)
+					while (jstep < g_rotate_lo)
 					{
 						jstep += rotate_size;
 					}
@@ -145,14 +145,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fkey = 0;
 			direction = 1;
 			last = rotate_max;
-			next = rotate_lo;
+			next = g_rotate_lo;
 			incr = 999;
 			break;
 		case '-':                      /* '-' means rotate backward    */
 		case FIK_LEFT_ARROW:               /* LeftArrow = rotate bkwd      */
 			fkey = 0;
 			direction = -1;
-			last = rotate_lo;
+			last = g_rotate_lo;
 			next = rotate_max;
 			incr = 999;
 			break;
@@ -302,7 +302,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			if (kbdchar == '>' || kbdchar == '.')
 			{
 				direction = -1;
-				last = rotate_lo;
+				last = g_rotate_lo;
 				next = rotate_max;
 				incr = 999;
 			}
@@ -310,7 +310,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			{
 				direction = 1;
 				last = rotate_max;
-				next = rotate_lo;
+				next = g_rotate_lo;
 				incr = 999;
 			}
 			fkey = 0;
@@ -523,7 +523,7 @@ void save_palette()
 						g_dac_box[i][2] << 2);
 			}
 			memcpy(olddacbox, g_dac_box, 256*3);
-			colorstate = 2;
+			g_color_state = COLORSTATE_MAP;
 			strcpy(colorfile, temp1);
 		}
 		fclose(dacfile);

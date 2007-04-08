@@ -539,14 +539,14 @@ int encoder()
 		{
 			save_info.tot_extend_len += store_item_name(IFSName);
 		}
-		if (g_display_3d <= 0 && rangeslen)
+		if (g_display_3d <= 0 && g_ranges_length)
 		{
 			/* ranges block, 004 */
-			save_info.tot_extend_len += extend_blk_len(rangeslen*2);
+			save_info.tot_extend_len += extend_blk_len(g_ranges_length*2);
 #ifdef XFRACT
-			fix_ranges(ranges, rangeslen, 0);
+			fix_ranges(g_ranges, g_ranges_length, 0);
 #endif
-			if (!put_extend_blk(4, rangeslen*2, (char *) ranges))
+			if (!put_extend_blk(4, g_ranges_length*2, (char *) g_ranges))
 			{
 				goto oops;
 			}
@@ -828,9 +828,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->random_seed = (short) g_random_seed;
 	save_info->inside = (short) g_inside;
 	save_info->logmapold = (LogFlag <= SHRT_MAX) ? (short) LogFlag : (short) SHRT_MAX;
-	save_info->invert[0] = (float) inversion[0];
-	save_info->invert[1] = (float) inversion[1];
-	save_info->invert[2] = (float) inversion[2];
+	save_info->invert[0] = (float) g_inversion[0];
+	save_info->invert[1] = (float) g_inversion[1];
+	save_info->invert[2] = (float) g_inversion[2];
 	save_info->decomposition[0] = (short) g_decomposition[0];
 	save_info->biomorph = (short) g_user_biomorph;
 	save_info->symmetry = (short) g_force_symmetry;
@@ -858,7 +858,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
 	save_info->float_flag = g_float_flag;
-	save_info->bailoutold = (bailout >= 4 && bailout <= 32000) ? (short) bailout : 0;
+	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
 	save_info->calctime = calctime;
 	save_info->trigndx[0] = trigndx[0];
@@ -868,13 +868,13 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->finattract = (short) g_finite_attractor;
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
-	save_info->useinitorbit = useinitorbit;
+	save_info->use_initial_orbit_z = g_use_initial_orbit_z;
 	save_info->periodicity = (short) g_periodicity_check;
 	save_info->potential_16bit = (short) disk16bit;
 	save_info->faspectratio = finalaspectratio;
 	save_info->system = (short) save_system;
 
-	save_info->release = check_back() ? (short) min(save_release, g_release) : (short) g_release;
+	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
 
 	save_info->flag3d = (short) g_display_3d;
 	save_info->ambient = (short) g_ambient;
@@ -882,8 +882,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->haze = (short) g_haze;
 	save_info->transparent[0] = (short) transparent[0];
 	save_info->transparent[1] = (short) transparent[1];
-	save_info->rotate_lo = (short) rotate_lo;
-	save_info->rotate_hi = (short) rotate_hi;
+	save_info->rotate_lo = (short) g_rotate_lo;
+	save_info->rotate_hi = (short) g_rotate_hi;
 	save_info->distance_test_width = (short) g_distance_test_width;
 	save_info->mxmaxfp = g_m_x_max_fp;
 	save_info->mxminfp = g_m_x_min_fp;
@@ -900,7 +900,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->juli3Dmode = (short) g_juli_3D_mode;
 	save_info->maxfn = maxfn;
 	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
-	save_info->bailout = bailout;
+	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = maxit;
 	save_info->bflength = (short) bnlength;
@@ -908,9 +908,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->old_demm_colors = (short) g_old_demm_colors;
 	save_info->logmap = LogFlag;
 	save_info->distance_test = g_distance_test;
-	save_info->dinvert[0] = inversion[0];
-	save_info->dinvert[1] = inversion[1];
-	save_info->dinvert[2] = inversion[2];
+	save_info->dinvert[0] = g_inversion[0];
+	save_info->dinvert[1] = g_inversion[1];
+	save_info->dinvert[2] = g_inversion[2];
 	save_info->logcalc = (short) Log_Fly_Calc;
 	save_info->stop_pass = (short) g_stop_pass;
 	save_info->quick_calculate = (short) g_quick_calculate;
@@ -918,8 +918,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->nobof = (short) nobof;
 	save_info->orbit_interval = g_orbit_interval;
 	save_info->orbit_delay = (short) orbit_delay;
-	save_info->math_tol[0] = math_tol[0];
-	save_info->math_tol[1] = math_tol[1];
+	save_info->math_tolerance[0] = g_math_tolerance[0];
+	save_info->math_tolerance[1] = g_math_tolerance[1];
 	for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
 	{
 		save_info->future[i] = 0;

@@ -170,7 +170,7 @@ calc_mand_floating_point(void)
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
 				{
-					g_color_iter = (save_release < 1961) ? 0 : 1;
+					g_color_iter = (g_save_release < 1961) ? 0 : 1;
 				}
 			}
 

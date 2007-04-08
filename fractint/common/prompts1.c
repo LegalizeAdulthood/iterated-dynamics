@@ -1289,7 +1289,7 @@ sel_type_restart:
 		if (newfractype != oldfractype)
 		{
 			g_invert = 0;
-			inversion[0] = inversion[1] = inversion[2] = 0;
+			g_inversion[0] = g_inversion[1] = g_inversion[2] = 0;
 		}
 	}
 
@@ -1490,7 +1490,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	int lastparm  = MAXPARAMS;
 	double oldparam[MAXPARAMS];
 	int fkeymask = 0x40;
-	oldbailout = bailout;
+	oldbailout = g_bail_out;
 	if (fractype == JULIBROT || fractype == JULIBROTFP)
 	{
 		julibrot = 1;
@@ -1770,7 +1770,7 @@ gfp_top:
 		{
 			choices[promptnum] = "Bailout value (0 means use default)";
 			paramvalues[promptnum].type = 'L';
-			oldbailout = bailout;
+			oldbailout = g_bail_out;
 			paramvalues[promptnum++].uval.Lval = oldbailout;
 			paramvalues[promptnum].type = '*';
 			tmpptr = type_name;
@@ -1996,12 +1996,12 @@ gfp_top:
 		}
 		else
 		{
-			bailout = paramvalues[promptnum++].uval.Lval;
-			if (bailout != 0 && (bailout < 1 || bailout > 2100000000L))
+			g_bail_out = paramvalues[promptnum++].uval.Lval;
+			if (g_bail_out != 0 && (g_bail_out < 1 || g_bail_out > 2100000000L))
 			{
-				bailout = oldbailout;
+				g_bail_out = oldbailout;
 			}
-			if (bailout != oldbailout)
+			if (g_bail_out != oldbailout)
 			{
 				ret = 1;
 			}
@@ -3384,7 +3384,7 @@ static int check_mapfile()
 	int i, oldhelpmode;
 	char temp1[256];
 
-	if (dontreadcolor)
+	if (g_dont_read_color)
 	{
 		return 0;
 	}
