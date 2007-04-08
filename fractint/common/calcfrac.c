@@ -503,9 +503,9 @@ static int calculate_type_show_dot(void)
 		}
 	}
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_SAVE);
-	if (orbit_delay > 0)
+	if (g_orbit_delay > 0)
 	{
-		sleep_ms(orbit_delay);
+		sleep_ms(g_orbit_delay);
 	}
 	out = (*g_calculate_type_temp)();
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
@@ -562,10 +562,10 @@ int calculate_fractal(void)
 	g_parameter2.x  = param[2];
 	g_parameter2.y  = param[3];
 
-	if (LogFlag && colors < 16)
+	if (g_log_palette_flag && colors < 16)
 	{
 		stopmsg(0, "Need at least 16 colors to use logmap");
-		LogFlag = 0;
+		g_log_palette_flag = LOGPALETTE_NONE;
 	}
 
 	if (g_use_old_periodicity)
@@ -588,13 +588,13 @@ int calculate_fractal(void)
 	Log_Calc = 0;
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
-	if (LogFlag && (((maxit > 32767) && (g_save_release > 1920))
+	if (g_log_palette_flag && (((maxit > 32767) && (g_save_release > 1920))
 		|| Log_Fly_Calc == 1))
 	{
 		Log_Calc = 1; /* calculate on the fly */
 		SetupLogTable();
 	}
-	else if (LogFlag && (((maxit > 32767) && (g_save_release <= 1920))
+	else if (g_log_palette_flag && (((maxit > 32767) && (g_save_release <= 1920))
 		|| Log_Fly_Calc == 2))
 	{
 		MaxLTSize = 32767;
@@ -605,7 +605,7 @@ int calculate_fractal(void)
 		MaxLTSize = 32766;
 	}
 
-	if ((LogFlag || g_ranges_length) && !Log_Calc)
+	if ((g_log_palette_flag || g_ranges_length) && !Log_Calc)
 	{
 		LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
 
@@ -627,7 +627,7 @@ int calculate_fractal(void)
 		{
 			int i, k, l, m, numval, flip, altern;
 			i = k = l = 0;
-			LogFlag = 0; /* ranges overrides logmap */
+			g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
 			while (i < g_ranges_length)
 			{
 				m = flip = 0;
@@ -1116,9 +1116,9 @@ static void perform_work_list()
 
 		setsymmetry(g_symmetry, 1);
 
-		if (!(g_resuming) && (labs(LogFlag) == 2 || (LogFlag && Log_Auto_Calc)))
+		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && Log_Auto_Calc)))
 		{  /* calculate round screen edges to work out best start for logmap */
-			LogFlag = (automatic_log_map()*(LogFlag / labs(LogFlag)));
+			g_log_palette_flag = (automatic_log_map()*(g_log_palette_flag / labs(g_log_palette_flag)));
 			SetupLogTable();
 		}
 
@@ -2149,7 +2149,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		lastz.y = g_old_z.y;
 	}
 
-	check_freq = (((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && orbit_delay > 0)
+	check_freq = (((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)

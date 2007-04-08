@@ -29,6 +29,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_log_palette_flag special values */
+#define LOGPALETTE_NONE 0
+#define LOGPALETTE_STANDARD 1
+#define LOGPALETTE_OLD -1
+
 /* g_color_state values */
 #define COLORSTATE_DEFAULT	0
 #define COLORSTATE_UNKNOWN	1
@@ -152,7 +157,7 @@ typedef BYTE BOOLEAN;
 #define FILLTYPE_LIGHT_BEFORE	5
 #define FILLTYPE_LIGHT_AFTER	6
 
-/* orbitsave values */
+/* g_orbit_save values */
 #define ORBITSAVE_NONE	0
 #define ORBITSAVE_RAW	1
 #define ORBITSAVE_SOUND 2

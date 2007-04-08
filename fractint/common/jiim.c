@@ -1289,7 +1289,7 @@ finish:
 		viewwindow = viewxdots = viewydots = 0;
 		viewreduction = 4.2f;
 		viewcrop = 1;
-		finalaspectratio = screenaspect;
+		finalaspectratio = g_screen_aspect_ratio;
 		xdots = sxdots;
 		ydots = sydots;
 		dxsize = xdots - 1;

@@ -374,7 +374,7 @@ int encoder()
 	if (viewwindow                               /* less than full screen?  */
 			&& (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
 	{
-		i = (int) (((double) sydots / (double) sxdots)*64.0 / screenaspect - 14.5);
+		i = (int) (((double) sydots / (double) sxdots)*64.0 / g_screen_aspect_ratio - 14.5);
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
@@ -827,7 +827,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->random_flag = (short) g_random_flag;
 	save_info->random_seed = (short) g_random_seed;
 	save_info->inside = (short) g_inside;
-	save_info->logmapold = (LogFlag <= SHRT_MAX) ? (short) LogFlag : (short) SHRT_MAX;
+	save_info->logmapold = (g_log_palette_flag <= SHRT_MAX) ? (short) g_log_palette_flag : (short) SHRT_MAX;
 	save_info->invert[0] = (float) g_inversion[0];
 	save_info->invert[1] = (float) g_inversion[1];
 	save_info->invert[2] = (float) g_inversion[2];
@@ -880,8 +880,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->ambient = (short) g_ambient;
 	save_info->randomize = (short) g_randomize;
 	save_info->haze = (short) g_haze;
-	save_info->transparent[0] = (short) transparent[0];
-	save_info->transparent[1] = (short) transparent[1];
+	save_info->transparent[0] = (short) g_transparent[0];
+	save_info->transparent[1] = (short) g_transparent[1];
 	save_info->rotate_lo = (short) g_rotate_lo;
 	save_info->rotate_hi = (short) g_rotate_hi;
 	save_info->distance_test_width = (short) g_distance_test_width;
@@ -906,7 +906,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bflength = (short) bnlength;
 	save_info->bf_math = (short) bf_math;
 	save_info->old_demm_colors = (short) g_old_demm_colors;
-	save_info->logmap = LogFlag;
+	save_info->logmap = g_log_palette_flag;
 	save_info->distance_test = g_distance_test;
 	save_info->dinvert[0] = g_inversion[0];
 	save_info->dinvert[1] = g_inversion[1];
@@ -917,7 +917,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->proximity = g_proximity;
 	save_info->nobof = (short) nobof;
 	save_info->orbit_interval = g_orbit_interval;
-	save_info->orbit_delay = (short) orbit_delay;
+	save_info->orbit_delay = (short) g_orbit_delay;
 	save_info->math_tolerance[0] = g_math_tolerance[0];
 	save_info->math_tolerance[1] = g_math_tolerance[1];
 	for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)

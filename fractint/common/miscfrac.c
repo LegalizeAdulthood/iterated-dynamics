@@ -1617,7 +1617,7 @@ jumpout:
 	}
 	else
 	{
-		lyap = LogFlag
+		lyap = g_log_palette_flag
 			? -temp/((double) lyaLength*i)
 			: 1 - exp(temp/((double) lyaLength*i));
 		color = 1 + (int)(lyap*(colors-1));

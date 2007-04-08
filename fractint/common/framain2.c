@@ -155,7 +155,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			if (viewwindow)
 			{
 				/* bypass for VESA virtual screen */
-				ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/screenaspect);
+				ftemp = finalaspectratio*(((double) sydots)/((double) sxdots)/g_screen_aspect_ratio);
 				xdots = viewxdots;
 				if (xdots != 0)
 				{	/* xdots specified */
@@ -165,7 +165,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 						ydots = (int)((double)xdots*ftemp + 0.5);
 					}
 				}
-				else if (finalaspectratio <= screenaspect)
+				else if (finalaspectratio <= g_screen_aspect_ratio)
 				{
 					xdots = (int)((double)sxdots / viewreduction + 0.5);
 					ydots = (int)((double)xdots*ftemp + 0.5);
@@ -833,7 +833,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& g_inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
 		&& curfractalspecific->calculate_type == standard_fractal
-		&& !LogFlag
+		&& !g_log_palette_flag
 		&& !g_true_color /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(usr_stdcalcmode == 'o')

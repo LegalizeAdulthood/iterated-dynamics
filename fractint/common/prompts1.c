@@ -1308,9 +1308,9 @@ void set_default_parms()
 	xx3rd = xxmin;
 	yy3rd = yymin;
 
-	if (viewcrop && finalaspectratio != screenaspect)
+	if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
 	{
-		aspectratio_crop(screenaspect, finalaspectratio);
+		aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
 	}
 	for (i = 0; i < 4; i++)
 	{
@@ -3173,11 +3173,11 @@ restart_1:
 
 		prompts3d[++k] = "First transparent color";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = transparent[0];
+		uvalues[k].uval.ival = g_transparent[0];
 
 		prompts3d[++k] = "Last transparent color";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = transparent[1];
+		uvalues[k].uval.ival = g_transparent[1];
 	}
 
 	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
@@ -3223,8 +3223,8 @@ restart_1:
 		YSHIFT     = uvalues[k++].uval.ival;
 		g_x_trans     = uvalues[k++].uval.ival;
 		g_y_trans     = uvalues[k++].uval.ival;
-		transparent[0] = uvalues[k++].uval.ival;
-		transparent[1] = uvalues[k++].uval.ival;
+		g_transparent[0] = uvalues[k++].uval.ival;
+		g_transparent[1] = uvalues[k++].uval.ival;
 	}
 	g_randomize  = uvalues[k++].uval.ival;
 	if (g_randomize >= 7)

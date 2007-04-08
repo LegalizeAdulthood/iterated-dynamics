@@ -51,7 +51,7 @@ void _fastcall history_save_info(void)
 	current.random_flag				= (short) g_random_flag;
 	current.random_seed				= (short) g_random_seed;
 	current.inside				= (short) g_inside;
-	current.logmap				= LogFlag;
+	current.logmap				= g_log_palette_flag;
 	current.invert[0]			= g_inversion[0];
 	current.invert[1]			= g_inversion[1];
 	current.invert[2]			= g_inversion[2];
@@ -110,8 +110,8 @@ void _fastcall history_save_info(void)
 	current.ambient				= (short) g_ambient;
 	current.randomize			= (short) g_randomize;
 	current.haze				= (short) g_haze;
-	current.transparent[0]		= (short) transparent[0];
-	current.transparent[1]		= (short) transparent[1];
+	current.transparent[0]		= (short) g_transparent[0];
+	current.transparent[1]		= (short) g_transparent[1];
 	current.rotate_lo			= (short) g_rotate_lo;
 	current.rotate_hi			= (short) g_rotate_hi;
 	current.distance_test_width		= (short) g_distance_test_width;
@@ -139,7 +139,7 @@ void _fastcall history_save_info(void)
 	current.ismand				= (short) g_is_mand;
 	current.proximity			= g_proximity;
 	current.nobof				= (short) nobof;
-	current.orbit_delay			= (short) orbit_delay;
+	current.orbit_delay			= (short) g_orbit_delay;
 	current.orbit_interval		= g_orbit_interval;
 	current.oxmin				= g_orbit_x_min;
 	current.oxmax				= g_orbit_x_max;
@@ -238,7 +238,7 @@ void _fastcall history_restore_info(void)
 	g_random_flag			= last.random_flag;
 	g_random_seed			= last.random_seed;
 	g_inside              	= last.inside;
-	LogFlag             	= last.logmap;
+	g_log_palette_flag             	= last.logmap;
 	g_inversion[0]        	= last.invert[0];
 	g_inversion[1]        	= last.invert[1];
 	g_inversion[2]        	= last.invert[2];
@@ -301,8 +301,8 @@ void _fastcall history_restore_info(void)
 	g_ambient             	= last.ambient;
 	g_randomize           	= last.randomize;
 	g_haze                	= last.haze;
-	transparent[0]      	= last.transparent[0];
-	transparent[1]      	= last.transparent[1];
+	g_transparent[0]      	= last.transparent[0];
+	g_transparent[1]      	= last.transparent[1];
 	g_rotate_lo           	= last.rotate_lo;
 	g_rotate_hi           	= last.rotate_hi;
 	g_distance_test_width	= last.distance_test_width;
@@ -336,7 +336,7 @@ void _fastcall history_restore_info(void)
 	g_is_mand				= last.ismand;
 	g_proximity				= last.proximity;
 	nobof					= last.nobof;
-	orbit_delay				= last.orbit_delay;
+	g_orbit_delay				= last.orbit_delay;
 	g_orbit_interval		= last.orbit_interval;
 	g_orbit_x_min			= last.oxmin;
 	g_orbit_x_max			= last.oxmax;

@@ -61,7 +61,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	g_init_mode = -1;               /* no viewing mode set yet */
 	oldfloatflag = usr_floatflag;
 	loaded3d = 0;
-	if (fastrestore)
+	if (g_fast_restore)
 	{
 		viewwindow = 0;
 	}
@@ -113,7 +113,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_random_flag         = read_info.random_flag;
 		g_random_seed         = read_info.random_seed;
 		g_inside        = read_info.inside;
-		LogFlag       = read_info.logmapold;
+		g_log_palette_flag       = read_info.logmapold;
 		g_inversion[0]  = read_info.invert[0];
 		g_inversion[1]  = read_info.invert[1];
 		g_inversion[2]  = read_info.invert[2];
@@ -205,7 +205,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		fileaspectratio = read_info.faspectratio;
 		if (fileaspectratio < 0.01)       /* fix files produced in early v14.1 */
 		{
-			fileaspectratio = screenaspect;
+			fileaspectratio = g_screen_aspect_ratio;
 		}
 		save_system  = read_info.system;
 		g_save_release = read_info.release; /* from fmt 5 on we know real number */
@@ -221,8 +221,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_ambient        = read_info.ambient;
 			g_randomize      = read_info.randomize;
 			g_haze           = read_info.haze;
-			transparent[0] = read_info.transparent[0];
-			transparent[1] = read_info.transparent[1];
+			g_transparent[0] = read_info.transparent[0];
+			g_transparent[1] = read_info.transparent[1];
 		}
 	}
 
@@ -276,18 +276,18 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
 	{
 		backwardscompat(&read_info); /* translate obsolete types */
-		if (LogFlag)
+		if (g_log_palette_flag)
 		{
-			LogFlag = 2;
+			g_log_palette_flag = 2;
 		}
 		usr_floatflag = (char) (curfractalspecific->isinteger ? 0 : 1);
 	}
 
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
 	{
-		if (LogFlag == 2) /* logmap = old changed again in format 5! */
+		if (g_log_palette_flag == 2) /* logmap = old changed again in format 5! */
 		{
-			LogFlag = -1;
+			g_log_palette_flag = LOGPALETTE_OLD;
 		}
 		if (g_decomposition[0] > 0 && g_decomposition[1] > 0)
 		{
@@ -298,7 +298,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		if (read_info.version == 6 || read_info.version == 7)
 		{
-			LogFlag = 0;
+			g_log_palette_flag = LOGPALETTE_NONE;
 		}
 	}
 	set_trig_pointers(-1);
@@ -319,7 +319,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (g_save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
 	{
 		set_if_old_bif(); /* translate bifurcation types */
-		functionpreloaded = 1;
+		g_function_preloaded = TRUE;
 	}
 
 	if (read_info.version > 9)
@@ -343,7 +343,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
-		LogFlag = read_info.logmap;
+		g_log_palette_flag = read_info.logmap;
 		usr_distest = read_info.distance_test;
 	}
 
@@ -364,7 +364,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
 			fractype == LATOO)
 		{
-				functionpreloaded = 1;
+			g_function_preloaded = TRUE;
 		}
 	}
 
@@ -384,12 +384,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_orbit_interval = read_info.orbit_interval;
 	}
 
-	orbit_delay = 0;
+	g_orbit_delay = 0;
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
 	if (read_info.version > 16) /* post-version 20.4.0 */
 	{
-		orbit_delay = read_info.orbit_delay;
+		g_orbit_delay = read_info.orbit_delay;
 		g_math_tolerance[0] = read_info.math_tolerance[0];
 		g_math_tolerance[1] = read_info.math_tolerance[1];
 	}
@@ -681,15 +681,15 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	{
 		fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
 						*(double)fileydots / (double)filexdots);
-		if (fileaspectratio > screenaspect-0.03
-			&& fileaspectratio < screenaspect + 0.03)
+		if (fileaspectratio > g_screen_aspect_ratio-0.03
+			&& fileaspectratio < g_screen_aspect_ratio + 0.03)
 		{
-			fileaspectratio = screenaspect;
+			fileaspectratio = g_screen_aspect_ratio;
 		}
 	}
 	else if (fileydots*4 == filexdots*3) /* assume the common square pixels */
 	{
-		fileaspectratio = screenaspect;
+		fileaspectratio = g_screen_aspect_ratio;
 	}
 
 	if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
@@ -944,7 +944,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		}
 
 		fclose(fp);
-		fileaspectratio = screenaspect; /* if not >= v15, this is correct */
+		fileaspectratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
 		return 0;
 	}
 
@@ -1111,7 +1111,7 @@ static void backwardscompat(struct fractal_info *info)
 /* switch old bifurcation fractal types to new generalizations */
 void set_if_old_bif(void)
 {
-	/* set functions if not set already, may need to check 'functionpreloaded'
+	/* set functions if not set already, may need to check 'g_function_preloaded'
 		before calling this routine.  JCO 7/5/92 */
 
 	switch (fractype)
@@ -1159,7 +1159,7 @@ void set_function_parm_defaults(void)
 
 void backwards_v18(void)
 {
-	if (!functionpreloaded)
+	if (!g_function_preloaded)
 	{
 		set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
 	}
@@ -1222,7 +1222,7 @@ void backwards_v20(void)
 	{
 		g_proximity = 0.01;
 	}
-	if (!functionpreloaded)
+	if (!g_function_preloaded)
 	{
 		set_function_parm_defaults();
 	}
@@ -1244,7 +1244,7 @@ int check_back(void)
 		|| g_decomposition[0] == 2
 		|| (fractype == FORMULA && g_save_release <= 1920)
 		|| (fractype == FFORMULA && g_save_release <= 1920)
-		|| (LogFlag != 0 && g_save_release <= 2001)
+		|| (g_log_palette_flag != 0 && g_save_release <= 2001)
 		|| (fractype == TRIGSQR && g_save_release < 1900)
 		|| (g_inside == STARTRAIL && g_save_release < 1825)
 		|| (maxit > 32767 && g_save_release <= 1950)
