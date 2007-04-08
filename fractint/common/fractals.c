@@ -3306,7 +3306,7 @@ int hyper_complex_orbit_fp(void)
 }
 
 /* Beauty of Fractals pp. 125 - 127 */
-int VLfpFractal(void)
+int volterra_lotka_orbit_fp(void)
 {
 	double a, b, ab, half, u, w, xy;
 
