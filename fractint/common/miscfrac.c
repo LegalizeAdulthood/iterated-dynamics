@@ -578,7 +578,7 @@ static void set_plasma_palette()
 	static Palettetype Blue   = { 0,  0, 63 };
 	int i;
 
-	if (mapdacbox || colorpreloaded) /* map= specified  */
+	if (g_map_dac_box || g_color_preloaded) /* map= specified  */
 	{
 		return;
 	}
@@ -1412,7 +1412,7 @@ int popcorn()   /* subset of std engine */
 /***    Fall '92 integration of Nicholas Wilt's ASM speedups            ***/
 /***    Jan 93' integration with calcfrac() yielding boundary tracing,  ***/
 /***    tesseral, and solid guessing, and inversion, inside=nnn         ***/
-/*** save_release behavior:                                             ***/
+/*** g_save_release behavior:                                             ***/
 /***    1730 & prior: ignores inside=, calcmode='1', (a, b)->(x, y)       ***/
 /***    1731: other calcmodes and inside=nnn                            ***/
 /***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
@@ -1512,7 +1512,7 @@ int lya_setup(void)
 
 	i = (long)param[0];
 #if !defined(XFRACT)
-	if (save_release < 1732) /* make it a short to reproduce prior stuff */
+	if (g_save_release < 1732) /* make it a short to reproduce prior stuff */
 	{
 		i &= 0x0FFFFL;
 	}
@@ -1530,14 +1530,14 @@ int lya_setup(void)
 		lyaRxy[lyaLength++] = (i & (1 << t)) != 0;
 	}
 	lyaRxy[lyaLength++] = 0;
-	if (save_release < 1732)              /* swap axes prior to 1732 */
+	if (g_save_release < 1732)              /* swap axes prior to 1732 */
 	{
 		for (t = lyaLength; t >= 0; t--)
 		{
 				lyaRxy[t] = !lyaRxy[t];
 		}
 	}
-	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
+	if (g_save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
 		stdcalcmode = '1';
 		if (g_inside == 1)
@@ -2057,7 +2057,7 @@ static void set_cellular_palette()
 	static Palettetype Yellow = { 60, 58, 18 };
 	static Palettetype Brown  = { 42, 21, 0 };
 
-	if (mapdacbox && colorstate != 0) /* map= specified  */
+	if (g_map_dac_box && g_color_state != COLORSTATE_DEFAULT) /* map= specified  */
 	{
 		return;
 	}
@@ -2158,7 +2158,7 @@ static void set_froth_palette(void)
 {
 	char *mapname;
 
-	if (colorstate != 0) /* 0 means g_dac_box matches default */
+	if (g_color_state != COLORSTATE_DEFAULT) /* 0 means g_dac_box matches default */
 	{
 		return;
 	}
@@ -2176,7 +2176,7 @@ static void set_froth_palette(void)
 		{
 			return;
 		}
-		colorstate = 0; /* treat map as default */
+		g_color_state = COLORSTATE_DEFAULT; /* treat map as default */
 		spindac(0, 1);
 	}
 }
@@ -2200,7 +2200,7 @@ int froth_setup(void)
 	}
 
 	/* for the all important backwards compatibility */
-	if (save_release <= 1821)   /* book version is 18.21 */
+	if (g_save_release <= 1821)   /* book version is 18.21 */
 	{
 		/* use old release parameters */
 

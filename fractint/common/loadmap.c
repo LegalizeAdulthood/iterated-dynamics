@@ -56,7 +56,7 @@ int ValidateLuts(char *fn)
 		dac[index].red = dac[index].blue = dac[index].green = 40;
 		++index;
 	}
-	colorstate = 2;
+	g_color_state = COLORSTATE_MAP;
 	strcpy(colorfile, fn);
 	return 0;
 }
@@ -70,16 +70,16 @@ int SetColorPaletteName(char * fn)
 	{
 		return 1;
 	}
-	if (mapdacbox == NULL)
+	if (g_map_dac_box == NULL)
 	{
-		mapdacbox = (char *) malloc(768L);
-		if (mapdacbox == NULL)
+		g_map_dac_box = (char *) malloc(768L);
+		if (g_map_dac_box == NULL)
 		{
 			stopmsg(0, "Insufficient memory for color map.");
 			return 1;
 		}
 	}
-	memcpy((char *) mapdacbox, (char *) g_dac_box, 768);
+	memcpy((char *) g_map_dac_box, (char *) g_dac_box, 768);
 	/* PB, 900829, removed atexit(RestoreMap) stuff, goodbye covers it */
 	return 0;
 }

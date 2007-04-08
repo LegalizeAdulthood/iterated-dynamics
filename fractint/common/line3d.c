@@ -257,7 +257,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	last_dot = min(xdots - 1, (int) linelen - 1);
 	if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE)
 	{
-		if (g_haze && Targa_Out)
+		if (g_haze && g_targa_output)
 		{
 			s_haze_mult = (int) (g_haze*((float) ((long) (ydots - 1 - g_current_row)*(long) (ydots - 1 - g_current_row))
 									/ (float) ((long) (ydots - 1)*(long) (ydots - 1))));
@@ -1306,7 +1306,7 @@ static void _fastcall clip_color(int x, int y, int color)
 		assert(g_standard_plot);
 		(*g_standard_plot)(x, y, color);
 
-		if (Targa_Out)
+		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
 			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
@@ -1333,7 +1333,7 @@ static void _fastcall transparent_clip_color(int x, int y, int color)
 	{
 		assert(g_standard_plot);
 		(*g_standard_plot)(x, y, color); /* I guess we can plot then  */
-		if (Targa_Out)
+		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
 			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
@@ -1380,7 +1380,7 @@ static void _fastcall interp_color(int x, int y, int color)
 		(transparent[1] == 0 || (int) s_real_color > transparent[1] ||
 			transparent[0] > (int) s_real_color))
 	{
-		if (Targa_Out)
+		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
 			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
@@ -1391,7 +1391,7 @@ static void _fastcall interp_color(int x, int y, int color)
 
 		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE)
 		{
-			if (s_real_v && Targa_Out)
+			if (s_real_v && g_targa_output)
 			{
 				color = D;
 			}
@@ -1426,12 +1426,12 @@ int _fastcall targa_color(int x, int y, int color)
 	if (FILLTYPE == FILLTYPE_FILL_GOURAUD
 		|| g_glasses_type == STEREO_ALTERNATE
 		|| g_glasses_type == STEREO_SUPERIMPOSE
-		|| truecolor)
+		|| g_true_color)
 	{
 		s_real_color = (BYTE)color;       /* So Targa gets interpolated color */
 	}
 
-	switch (truemode)
+	switch (g_true_mode)
 	{
 	case TRUEMODE_DEFAULT:
 		RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); /* Move color space to */
@@ -1590,7 +1590,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 		/* ID field size = 0, No color map, Targa type 2 file */
 		for (i = 0; i < 12; i++)
 		{
-			if (i == 0 && truecolor != 0)
+			if (i == 0 && g_true_color != 0)
 			{
 				set_upr_lwr();
 				fputc(4, fps); /* make room to write an extra number */
@@ -1615,7 +1615,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 		inc = 3;
 	}
 
-	if (truecolor) /* write maxit */
+	if (g_true_color) /* write maxit */
 	{
 		fputc((BYTE)(maxit       & 0xff), fps);
 		fputc((BYTE)((maxit >> 8) & 0xff), fps);
@@ -2383,7 +2383,7 @@ static void line3d_cleanup(void)
 		fclose(s_raytrace_file);
 		s_raytrace_file = NULL;
 	}
-	if (Targa_Out)
+	if (g_targa_output)
 	{                            /* Finish up targa files */
 		s_targa_header_len = 18;         /* Reset Targa header size */
 		enddisk();
@@ -2457,7 +2457,7 @@ static int first_time(int linelen, VECTOR v)
 		s_targa_safe = 0; /* Not safe yet to mess with the source image */
 	}
 
-	if (Targa_Out && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+	if (g_targa_output && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 		&& g_which_image == WHICHIMAGE_BLUE))
 	{
 		if (g_targa_overlay)

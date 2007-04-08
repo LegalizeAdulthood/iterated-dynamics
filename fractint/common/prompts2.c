@@ -232,7 +232,7 @@ int get_toggles()
 	old_soundflag = g_sound_flags;
 	uvalues[k].uval.ch.val = old_soundflag & SOUNDFLAG_ORBITMASK;
 
-	if (rangeslen == 0)
+	if (g_ranges_length == 0)
 	{
 		choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
 		uvalues[k].type = 'L';
@@ -528,14 +528,14 @@ int get_toggles2()
 	for (i = 0; i < 3; i++)
 	{
 		uvalues[++k].type = 's';
-		old_inversion[i] = inversion[i];
-		if (inversion[i] == AUTOINVERT)
+		old_inversion[i] = g_inversion[i];
+		if (g_inversion[i] == AUTOINVERT)
 		{
 			sprintf(uvalues[k].uval.sval, "auto");
 		}
 		else
 		{
-			sprintf(uvalues[k].uval.sval, "%-1.15lg", inversion[i]);
+			sprintf(uvalues[k].uval.sval, "%-1.15lg", g_inversion[i]);
 		}
 	}
 	choices[++k] = "  (use fixed radius & center when zooming)";
@@ -543,11 +543,11 @@ int get_toggles2()
 
 	choices[++k] = "Color cycling from color (0 ... 254)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_rotate_lo = rotate_lo;
+	uvalues[k].uval.ival = old_rotate_lo = g_rotate_lo;
 
 	choices[++k] = "              to   color (1 ... 255)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_rotate_hi = rotate_hi;
+	uvalues[k].uval.ival = old_rotate_hi = g_rotate_hi;
 
 	oldhelpmode = helpmode;
 	helpmode = HELPYOPTS;
@@ -625,27 +625,27 @@ int get_toggles2()
 	{
 		if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
 		{
-			inversion[i] = AUTOINVERT;
+			g_inversion[i] = AUTOINVERT;
 		}
 		else
 		{
-			inversion[i] = atof(uvalues[k].uval.sval);
+			g_inversion[i] = atof(uvalues[k].uval.sval);
 		}
-		if (old_inversion[i] != inversion[i]
-			&& (i == 0 || inversion[0] != 0.0))
+		if (old_inversion[i] != g_inversion[i]
+			&& (i == 0 || g_inversion[0] != 0.0))
 		{
 			j = 1;
 		}
 	}
-	g_invert = (inversion[0] == 0.0) ? 0 : 3;
+	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
 	++k;
 
-	rotate_lo = uvalues[++k].uval.ival;
-	rotate_hi = uvalues[++k].uval.ival;
-	if (rotate_lo < 0 || rotate_hi > 255 || rotate_lo > rotate_hi)
+	g_rotate_lo = uvalues[++k].uval.ival;
+	g_rotate_hi = uvalues[++k].uval.ival;
+	if (g_rotate_lo < 0 || g_rotate_hi > 255 || g_rotate_lo > g_rotate_hi)
 	{
-		rotate_lo = old_rotate_lo;
-		rotate_hi = old_rotate_hi;
+		g_rotate_lo = old_rotate_lo;
+		g_rotate_hi = old_rotate_hi;
 	}
 
 	return j;
@@ -1302,10 +1302,10 @@ void goodbye(void)                  /* we done.  Bail out */
 	char goodbyemessage[40] = "   Thank You for using "FRACTINT;
 	int ret;
 
-	if (mapdacbox)
+	if (g_map_dac_box)
 	{
-		free(mapdacbox);
-		mapdacbox = NULL;
+		free(g_map_dac_box);
+		g_map_dac_box = NULL;
 	}
 	if (g_resume_info != NULL)
 	{
@@ -2084,7 +2084,7 @@ int get_corners()
 	int oldhelpmode;
 
 	oldhelpmode = helpmode;
-	ousemag = usemag;
+	ousemag = g_use_center_mag;
 	oxxmin = xxmin; oxxmax = xxmax;
 	oyymin = yymin; oyymax = yymax;
 	oxx3rd = xx3rd; oyy3rd = yy3rd;
@@ -2094,7 +2094,7 @@ gc_loop:
 	{
 		values[i].type = 'd'; /* most values on this screen are type d */
 	}
-	cmag = usemag;
+	cmag = g_use_center_mag;
 	if (g_orbit_draw_mode == ORBITDRAW_LINE)
 	{
 		cmag = 0;
@@ -2178,7 +2178,7 @@ gc_loop:
 
 	if (prompt_ret < 0)
 	{
-		usemag = ousemag;
+		g_use_center_mag = ousemag;
 		xxmin = oxxmin; xxmax = oxxmax;
 		yymin = oyymin; yymax = oyymax;
 		xx3rd = oxx3rd; yy3rd = oyy3rd;
@@ -2257,15 +2257,17 @@ gc_loop:
 
 	if (prompt_ret == FIK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
 	{
-		if (usemag == 0)
+		if (!g_use_center_mag)
 		{
 			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-				usemag = 1;
+			g_use_center_mag = TRUE;
 		}
 		else
-			usemag = 0;
-		goto gc_loop;
+		{
+			g_use_center_mag = FALSE;
 		}
+		goto gc_loop;
+	}
 
 	if (!cmpdbl(oxxmin, xxmin) && !cmpdbl(oxxmax, xxmax) && !cmpdbl(oyymin, yymin) &&
 		!cmpdbl(oyymax, yymax) && !cmpdbl(oxx3rd, xx3rd) && !cmpdbl(oyy3rd, yy3rd))
@@ -2298,7 +2300,7 @@ static int get_screen_corners(void)
 	int oldhelpmode;
 
 	oldhelpmode = helpmode;
-	ousemag = usemag;
+	ousemag = g_use_center_mag;
 
 	svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
 	svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
@@ -2330,7 +2332,7 @@ gsc_loop:
 	{
 		values[i].type = 'd'; /* most values on this screen are type d */
 	}
-	cmag = usemag;
+	cmag = g_use_center_mag;
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
@@ -2391,7 +2393,7 @@ gsc_loop:
 
 	if (prompt_ret < 0)
 	{
-		usemag = ousemag;
+		g_use_center_mag = ousemag;
 		g_orbit_x_min = oxxmin; g_orbit_x_max = oxxmax;
 		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
 		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
@@ -2468,15 +2470,17 @@ gsc_loop:
 
 	if (prompt_ret == FIK_F7)  /* toggle corners/center-mag mode */
 	{
-		if (usemag == 0)
+		if (!g_use_center_mag)
 		{
 			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-				usemag = 1;
+			g_use_center_mag = TRUE;
 		}
 		else
-			usemag = 0;
-		goto gsc_loop;
+		{
+			g_use_center_mag = FALSE;
 		}
+		goto gsc_loop;
+	}
 
 	if (!cmpdbl(oxxmin, g_orbit_x_min) && !cmpdbl(oxxmax, g_orbit_x_max) && !cmpdbl(oyymin, g_orbit_y_min) &&
 		!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))

@@ -28,7 +28,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
-		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
+		&& g_use_initial_orbit_z != 1 && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
@@ -254,7 +254,7 @@ int mandelbrot_setup_fp(void)
 			&& (g_inside >= -1)
 			/* uncomment this next line if more outside options are added */
 			&& g_outside >= -6
-			&& useinitorbit != 1
+			&& g_use_initial_orbit_z != 1
 			&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& using_jiim == 0 && g_bail_out_test == Mod
 			&& (orbitsave & ORBITSAVE_SOUND) == 0)
@@ -400,7 +400,7 @@ int julia_setup_fp(void)
 				&& (g_inside >= -1)
 				/* uncomment this next line if more outside options are added */
 				&& g_outside >= -6
-				&& useinitorbit != 1
+				&& g_use_initial_orbit_z != 1
 				&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 				&& !g_finite_attractor
 				&& using_jiim == 0 && g_bail_out_test == Mod
@@ -521,7 +521,7 @@ int julia_setup_fp(void)
 					g_symmetry = ORIGIN;
 				}
 			}
-			if (save_release <= 1960)
+			if (g_save_release <= 1960)
 			{
 				curfractalspecific->orbitcalc = popcorn_old_orbit_fp;
 			}
@@ -668,7 +668,7 @@ int julia_setup_l(void)
 					g_symmetry = ORIGIN;
 				}
 			}
-			if (save_release <= 1960)
+			if (g_save_release <= 1960)
 			{
 				curfractalspecific->orbitcalc = popcorn_old_orbit;
 			}

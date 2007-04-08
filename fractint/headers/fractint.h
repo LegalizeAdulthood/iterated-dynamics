@@ -29,6 +29,11 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_color_state values */
+#define COLORSTATE_DEFAULT	0
+#define COLORSTATE_UNKNOWN	1
+#define COLORSTATE_MAP		2
+
 /* g_force_symmetry values */
 #define FORCESYMMETRY_NONE		999
 #define FORCESYMMETRY_SEARCH	1000
@@ -426,7 +431,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double x3rd;          /* 3rd corner */
     double y3rd;
     char stdcalcmode;     /* 1/2/g/b */
-    char useinitorbit;    /* init Mandelbrot orbit flag */
+    char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
     short calc_status;    /* resumable, finished, etc */
     long tot_extend_len;  /* total length of extension blocks in .gif file */
     short distestold;
@@ -479,7 +484,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double dparm9;
     double dparm10;
                         /* version 10 stuff, release 19 */
-    long bailout;
+    long bail_out;
     short bailoutest;
     long iterations;
     short bf_math;
@@ -496,7 +501,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short nobof;
     long orbit_interval;
     short orbit_delay;
-    double math_tol[2];
+    double math_tolerance[2];
     short future[7];     /* for stuff we haven't thought of yet */
 };
 #if defined(_WIN32)
@@ -546,7 +551,7 @@ struct history_info
     short periodicity;
     short potential_16bit;
     short release;
-    short save_release;
+    short g_save_release;
     short flag3d;
     short transparent[2];
     short ambient;
@@ -579,7 +584,7 @@ struct history_info
     double dparm8;
     double dparm9;
     double dparm10;
-    long bailout;
+    long bail_out;
     short bailoutest;
     long iterations;
     short bf_math;
@@ -592,13 +597,13 @@ struct history_info
     char  maxfn;
     char stdcalcmode;
     char three_pass;
-    char useinitorbit;
+    char use_initial_orbit_z;
     short logcalc;
     short stop_pass;
     short ismand;
     double proximity;
     short nobof;
-    double math_tol[2];
+    double math_tolerance[2];
     short orbit_delay;
     long orbit_interval;
     double oxmin;

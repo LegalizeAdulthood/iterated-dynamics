@@ -167,22 +167,6 @@ int editpal_cursor = 0;
  * Stuff from fractint
  */
 
-#if 0
-/* declarations moved to PRORTOTYPE.H - this left for docs */
-BYTE dacbox[256][3];            /* DAC spindac() will use           */
-int         sxdots;             /* width of physical screen         */
-int         sydots;             /* depth of physical screen         */
-int         sxoffs;             /* start of logical screen          */
-int         syoffs;             /* start of logical screen          */
-int         lookatmouse;        /* mouse mode for driver_get_key(), etc    */
-int         strlocn[];          /* 10K buffer to store classes in   */
-int         colors;             /* # colors avail.                  */
-int         g_color_bright;       /* brightest color in palette       */
-int         g_color_dark;         /* darkest color in palette         */
-int         g_color_medium;       /* nearest to medbright gray color  */
-int         rotate_lo, rotate_hi;
-int         g_debug_flag;
-#endif
 int using_jiim = 0;
 
 /*
@@ -2991,8 +2975,8 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 		{
 			int dir = (key == '.') ? 1 : -1;
 
-			PalTable__SaveUndoRotate(me, dir, rotate_lo, rotate_hi);
-			PalTable__Rotate(me, dir, rotate_lo, rotate_hi);
+			PalTable__SaveUndoRotate(me, dir, g_rotate_lo, g_rotate_hi);
+			PalTable__Rotate(me, dir, g_rotate_lo, g_rotate_hi);
 			break;
 		}
 
@@ -3020,7 +3004,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 				while (!driver_key_pressed())
 				{
 					tick = readticker();
-					PalTable__Rotate(me, dir, rotate_lo, rotate_hi);
+					PalTable__Rotate(me, dir, g_rotate_lo, g_rotate_hi);
 					diff += dir;
 					while (readticker() == tick)   /* wait until a tick passes */
 					{
@@ -3041,7 +3025,7 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 
 			if (diff != 0)
 			{
-				PalTable__SaveUndoRotate(me, diff, rotate_lo, rotate_hi);
+				PalTable__SaveUndoRotate(me, diff, g_rotate_lo, g_rotate_hi);
 			}
 
 			Cursor_Show();
@@ -3081,13 +3065,13 @@ static void PalTable__other_key(int key, RGBEditor *rgb, VOIDPTR info)
 	case 'o':
 		if (me->curr[0] > me->curr[1])
 		{
-			rotate_lo = me->curr[1];
-			rotate_hi = me->curr[0];
+			g_rotate_lo = me->curr[1];
+			g_rotate_hi = me->curr[0];
 		}
 		else
 		{
-			rotate_lo = me->curr[0];
-			rotate_hi = me->curr[1];
+			g_rotate_lo = me->curr[0];
+			g_rotate_hi = me->curr[1];
 		}
 		break;
 

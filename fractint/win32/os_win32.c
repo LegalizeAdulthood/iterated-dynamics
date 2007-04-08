@@ -461,9 +461,9 @@ void spindac(int dir, int inc)
 		return;
 	}
 
-	if ((dir != 0) && (rotate_lo < colors) && (rotate_lo < rotate_hi))
+	if ((dir != 0) && (g_rotate_lo < colors) && (g_rotate_lo < g_rotate_hi))
 	{
-		int top = (rotate_hi > colors) ? colors - 1 : rotate_hi;
+		int top = (g_rotate_hi > colors) ? colors - 1 : g_rotate_hi;
 		if (dir > 0)
 		{
 			int i;
@@ -472,10 +472,10 @@ void spindac(int dir, int inc)
 				int j;
 				BYTE tmp[3];
 
-				tmp[0] = g_dac_box[rotate_lo][0];
-				tmp[1] = g_dac_box[rotate_lo][1];
-				tmp[2] = g_dac_box[rotate_lo][2];
-				for (j = rotate_lo; j < top; j++)
+				tmp[0] = g_dac_box[g_rotate_lo][0];
+				tmp[1] = g_dac_box[g_rotate_lo][1];
+				tmp[2] = g_dac_box[g_rotate_lo][2];
+				for (j = g_rotate_lo; j < top; j++)
 				{
 					g_dac_box[j][0] = g_dac_box[j + 1][0];
 					g_dac_box[j][1] = g_dac_box[j + 1][1];
@@ -497,15 +497,15 @@ void spindac(int dir, int inc)
 				tmp[0] = g_dac_box[top][0];
 				tmp[1] = g_dac_box[top][1];
 				tmp[2] = g_dac_box[top][2];
-				for (j = top; j > rotate_lo; j--)
+				for (j = top; j > g_rotate_lo; j--)
 				{
 					g_dac_box[j][0] = g_dac_box[j-1][0];
 					g_dac_box[j][1] = g_dac_box[j-1][1];
 					g_dac_box[j][2] = g_dac_box[j-1][2];
 				}
-				g_dac_box[rotate_lo][0] = tmp[0];
-				g_dac_box[rotate_lo][1] = tmp[1];
-				g_dac_box[rotate_lo][2] = tmp[2];
+				g_dac_box[g_rotate_lo][0] = tmp[0];
+				g_dac_box[g_rotate_lo][1] = tmp[1];
+				g_dac_box[g_rotate_lo][2] = tmp[2];
 			}
 		}
 	}

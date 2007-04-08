@@ -185,7 +185,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			g_put_color(x, y, color|tmp);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				targa_color(x, y, color|tmp);
 			}
@@ -197,7 +197,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 		{
 			color = color <<2;
 			g_put_color(x, y, color|tmp);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				targa_color(x, y, color|tmp);
 			}
@@ -223,7 +223,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			g_put_color(x, y, color);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				targa_color(x, y, color);
 			}
@@ -239,7 +239,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 				color = PAL_MAGENTA;
 			}
 			g_put_color(x, y, color);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				targa_color(x, y, color);
 			}
@@ -272,7 +272,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 		{
 			/* Overwrite prev Red don't mess w/blue */
 			g_put_color(x, y, color|(tmp&240));
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
@@ -292,7 +292,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 			/* Overwrite previous blue, don't mess with existing red */
 			color = color <<4;
 			g_put_color(x, y, color|(tmp&15));
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
@@ -333,7 +333,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			g_put_color(x, y, color|tmp);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
@@ -351,7 +351,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		{
 			color = color <<4;
 			g_put_color(x, y, color|tmp);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
@@ -381,7 +381,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			g_put_color(x, y, color >> 1);
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
@@ -399,7 +399,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			g_put_color(x, y, (color >> 1) + (colors >> 1));
-			if (Targa_Out)
+			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{

@@ -372,7 +372,7 @@ restorestart:
 	_ASSERTE(_CrtCheckMemory());
 #endif
 
-	if (colorpreloaded)
+	if (g_color_preloaded)
 	{
 		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case colors= present */
 	}
@@ -476,7 +476,7 @@ imagestart:                             /* calc/display a new image */
 		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
 	}
 
-	g_cycle_limit = initcyclelimit;         /* default cycle limit   */
+	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
 	g_adapter = g_init_mode;                  /* set the video adapter up */
 	g_init_mode = -1;                       /* (once)                   */
 
@@ -547,7 +547,7 @@ imagestart:                             /* calc/display a new image */
 					{
 						g_display_3d = 1;
 					}
-					if (colorpreloaded)
+					if (g_color_preloaded)
 					{
 						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case colors= present */
 					}
