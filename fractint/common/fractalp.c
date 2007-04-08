@@ -2210,7 +2210,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_VL, HF_VL, WINFRAC,
 		0.0f, 6.0f, 0.0f, 4.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		VLfpFractal, other_julia_per_pixel_fp, VLSetup, standard_fractal,
+		volterra_lotka_orbit_fp, other_julia_per_pixel_fp, VLSetup, standard_fractal,
 		256
 	},
 

@@ -423,7 +423,7 @@ extern int marks_mandel_power_orbit(void);
 extern int tims_error_orbit_fp(void);
 extern int tims_error_orbit(void);
 extern int circle_orbit_fp(void);
-extern int VLfpFractal(void);
+extern int volterra_lotka_orbit_fp(void);
 extern int EscherfpFractal(void);
 extern int julia_per_pixel_l(void);
 extern int richard8_per_pixel(void);
