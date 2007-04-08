@@ -434,7 +434,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double initorbit[2];  /* init Mandelbrot orbit values */
     short periodicity;    /* periodicity checking */
                         /* version 5 stuff, release 15 */
-    short pot16bit;       /* save 16 bit continuous potential info */
+    short potential_16bit;       /* save 16 bit continuous potential info */
     float faspectratio;   /* finalaspectratio, y/x */
     short system;         /* 0 for dos, 1 for windows */
     short release;        /* release number, with 2 decimals implied */
@@ -540,7 +540,7 @@ struct history_info
     short finattract;
     double initorbit[2];
     short periodicity;
-    short pot16bit;
+    short potential_16bit;
     short release;
     short save_release;
     short flag3d;

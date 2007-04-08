@@ -103,7 +103,7 @@ void _fastcall history_save_info(void)
 	current.initorbit[1]		= initorbit.y;
 	current.useinitorbit		= useinitorbit;
 	current.periodicity			= (short) g_periodicity_check;
-	current.pot16bit			= (short) disk16bit;
+	current.potential_16bit		= (short) disk16bit;
 	current.release				= (short) g_release;
 	current.save_release		= (short) save_release;
 	current.flag3d				= (short) display3d;
@@ -294,7 +294,7 @@ void _fastcall history_restore_info(void)
 	useinitorbit        	= last.useinitorbit;
 	g_periodicity_check    	= last.periodicity;
 	usr_periodicitycheck	= last.periodicity;
-	disk16bit           	= last.pot16bit;
+	disk16bit           	= last.potential_16bit;
 	g_release           	= last.release;
 	save_release        	= last.save_release;
 	display3d           	= last.flag3d;
@@ -327,7 +327,7 @@ void _fastcall history_restore_info(void)
 	maxit               	= last.iterations;
 	g_old_demm_colors     	= last.g_old_demm_colors;
 	curfractalspecific  	= &fractalspecific[fractype];
-	potflag             	= (potparam[0] != 0.0);
+	g_potential_flag		= (potparam[0] != 0.0);
 	if (inversion[0] != 0.0)
 	{
 		g_invert = 3;

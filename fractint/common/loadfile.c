@@ -109,7 +109,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			colors = read_info.colors;
 		}
-		potflag       = (potparam[0] != 0.0);
+		g_potential_flag = (potparam[0] != 0.0);
 		rflag         = read_info.rflag;
 		rseed         = read_info.rseed;
 		inside        = read_info.inside;
@@ -193,12 +193,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		usr_periodicitycheck = read_info.periodicity;
 	}
 
-	pot16bit = 0;
+	g_potential_16bit = FALSE;
 	save_system = 0;
 	if (read_info.version > 4)
 	{
-		pot16bit     = read_info.pot16bit;
-		if (pot16bit)
+		g_potential_16bit     = read_info.potential_16bit;
+		if (g_potential_16bit)
 		{
 			filexdots >>= 1;
 		}
@@ -294,7 +294,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			bailout = decomp[1];
 		}
 	}
-	if (potflag) /* in version 15.x and 16.x logmap didn't work with pot */
+	if (g_potential_flag) /* in version 15.x and 16.x logmap didn't work with pot */
 	{
 		if (read_info.version == 6 || read_info.version == 7)
 		{

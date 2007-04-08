@@ -343,7 +343,7 @@ int encoder()
 	rowlimit = ydots;
 	if (save16bit)
 	{
-		/* pot16bit info is stored as: file:    double width rows, right side
+		/* g_potential_16bit info is stored as: file:    double width rows, right side
 		* of row is low 8 bits diskvid: ydots rows of colors followed by ydots
 		* rows of low 8 bits decoder: returns (row of color info then row of
 		* low 8 bits)*ydots */
@@ -870,7 +870,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->initorbit[1] = initorbit.y;
 	save_info->useinitorbit = useinitorbit;
 	save_info->periodicity = (short) g_periodicity_check;
-	save_info->pot16bit = (short) disk16bit;
+	save_info->potential_16bit = (short) disk16bit;
 	save_info->faspectratio = finalaspectratio;
 	save_info->system = (short) save_system;
 

@@ -267,7 +267,7 @@ int gifview()
 				}
 			}
 
-			if (pot16bit)
+			if (g_potential_16bit)
 			{
 				width >>= 1;
 			}

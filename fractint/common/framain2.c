@@ -238,13 +238,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{
 				outln = cmp_line;
 			}
-			else if (pot16bit)
+			else if (g_potential_16bit)
 			{            /* .pot format input file */
 				if (pot_startdisk() < 0)
 				{                           /* pot file failed?  */
 					showfile = 1;
-					potflag  = 0;
-					pot16bit = 0;
+					g_potential_flag  = FALSE;
+					g_potential_16bit = FALSE;
 					g_init_mode = -1;
 					calc_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
 					driver_set_for_text();
@@ -739,7 +739,7 @@ static int look(char *stacked)
 	case 's':
 		browsing = FALSE;
 		helpmode = oldhelpmode;
-		savetodisk(savename);
+		savetodisk(g_save_name);
 		break;
 
 	default:               /* or no files found, leave the state of browsing alone */
@@ -1312,7 +1312,7 @@ static int handle_save_to_disk(void)
 		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
 	note_zoom();
-	savetodisk(savename);
+	savetodisk(g_save_name);
 	restore_zoom();
 	return CONTINUE;
 }
@@ -1339,7 +1339,7 @@ static int handle_evolver_save_to_disk(void)
 	param_history(1); /* restore old history */
 	fiddleparms(g_genes, 0);
 	drawparmbox(1);
-	savetodisk(savename);
+	savetodisk(g_save_name);
 	px = oldpx;
 	py = oldpy;
 	param_history(1); /* restore old history */
@@ -1367,7 +1367,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 			if (initbatch == INIT_BATCH_SAVE)
 			{
 				driver_stack_screen();   /* save graphics image */
-				strcpy(g_read_name, savename);
+				strcpy(g_read_name, g_save_name);
 				showfile = 0;
 				return RESTORESTART;
 			}
@@ -1382,7 +1382,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	*stacked = overlay3d ? 0 : 1;
 	if (resave_flag)
 	{
-		updatesavename(savename);      /* do the pending increment */
+		updatesavename(g_save_name);      /* do the pending increment */
 		resave_flag = RESAVE_NO;
 		started_resaves = FALSE;
 	}
@@ -2294,7 +2294,7 @@ int cmp_line(BYTE *pixels, int linelen)
 		cmp_fp = dir_fopen(g_work_dir, "cmperr", initbatch ? "a" : "w");
 		outln_cleanup = cmp_line_cleanup;
 		}
-	if (pot16bit)  /* 16 bit info, ignore odd numbered rows */
+	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
 	{
 		if ((row & 1) != 0)
 		{
