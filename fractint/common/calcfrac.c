@@ -589,13 +589,13 @@ int calculate_fractal(void)
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
 	if (g_log_palette_flag && (((maxit > 32767) && (g_save_release > 1920))
-		|| Log_Fly_Calc == 1))
+		|| g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
 	{
 		Log_Calc = 1; /* calculate on the fly */
 		SetupLogTable();
 	}
 	else if (g_log_palette_flag && (((maxit > 32767) && (g_save_release <= 1920))
-		|| Log_Fly_Calc == 2))
+		|| g_log_dynamic_calculate == LOGDYNAMIC_TABLE))
 	{
 		MaxLTSize = 32767;
 		Log_Calc = 0; /* use logtable */
@@ -611,14 +611,14 @@ int calculate_fractal(void)
 
 		if (LogTable == NULL)
 		{
-			if (g_ranges_length || Log_Fly_Calc == 2)
+			if (g_ranges_length || g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
 				stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
 			}
 			else
 			{
 				stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
-				Log_Fly_Calc = 1;
+				g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;
 				Log_Calc = 1; /* calculate on the fly */
 				SetupLogTable();
 			}
