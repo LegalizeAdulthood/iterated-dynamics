@@ -3062,7 +3062,7 @@ int halley_per_pixel(void)
 	return 0; /* 1st iteration is not done */
 }
 
-int otherjuliafp_per_pixel(void)
+int other_julia_per_pixel_fp(void)
 {
 	if (g_invert)
 	{

@@ -257,7 +257,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWTBAS, HF_NEWTBAS, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPNEWTBASIN, NOSYM,
-		newton2_orbit, otherjuliafp_per_pixel, NewtonSetup, standard_fractal,
+		newton2_orbit, other_julia_per_pixel_fp, NewtonSetup, standard_fractal,
 		BAILOUT_NONE
 	},
 
@@ -290,7 +290,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWT, HF_NEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPNEWTON, XAXIS,
-		newton2_orbit, otherjuliafp_per_pixel, NewtonSetup, standard_fractal,
+		newton2_orbit, other_julia_per_pixel_fp, NewtonSetup, standard_fractal,
 		BAILOUT_NONE
 	},
 
@@ -445,7 +445,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, SQRTRIG, XAXIS,
-		sqr_trig_orbit_fp, otherjuliafp_per_pixel, SqrTrigSetup, standard_fractal,
+		sqr_trig_orbit_fp, other_julia_per_pixel_fp, SqrTrigSetup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
@@ -613,7 +613,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_FNPLUSFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, TRIGPLUSTRIG, XAXIS,
-		trig_plus_trig_orbit_fp, otherjuliafp_per_pixel, TrigPlusTrigfpSetup,
+		trig_plus_trig_orbit_fp, other_julia_per_pixel_fp, TrigPlusTrigfpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -636,7 +636,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, TRIGXTRIG, XAXIS,
-		trig_trig_orbit_fp, otherjuliafp_per_pixel, FnXFnSetup, standard_fractal,
+		trig_trig_orbit_fp, other_julia_per_pixel_fp, FnXFnSetup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
@@ -659,7 +659,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_SQROVFN, TRIG1 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, NOFRACTAL, SQR1OVERTRIG, NOSYM,
-		sqr_1_over_trig_z_orbit_fp, otherjuliafp_per_pixel, SqrTrigSetup,
+		sqr_1_over_trig_z_orbit_fp, other_julia_per_pixel_fp, SqrTrigSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -798,7 +798,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_LAMBDAFN, HF_LAMBDAFN, TRIG1 | WINFRAC | OKJB,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, MANDELTRIGFP, LAMBDATRIG, PI_SYM,
-		lambda_trig_orbit_fp, otherjuliafp_per_pixel, LambdaTrigSetup,
+		lambda_trig_orbit_fp, other_julia_per_pixel_fp, LambdaTrigSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -858,7 +858,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PICKMJ, HF_JULZPOWER, WINFRAC | OKJB | BAILTEST | BF_MATH,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, FPMANDELZPOWER, LJULIAZPOWER, ORIGIN,
-		z_power_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		z_power_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -882,7 +882,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PICKMJ, HF_JULZZPWR, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, FPMANZTOZPLUSZPWR, NOFRACTAL, NOSYM,
-		z_to_z_plus_z_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		z_to_z_plus_z_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -930,7 +930,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1 | WINFRAC | OKJB | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANTRIGPLUSEXP, LJULTRIGPLUSEXP, NOSYM,
-		trig_plus_exponent_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		trig_plus_exponent_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -942,7 +942,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		0, NOFRACTAL, NOFRACTAL, LPOPCORN, NOPLOT,
-		popcorn_fn_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup, popcorn,
+		popcorn_fn_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup, popcorn,
 		BAILOUT_STANDARD
 	},
 
@@ -1019,7 +1019,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		ComplexNewton, otherjuliafp_per_pixel, ComplexNewtonSetup,
+		ComplexNewton, other_julia_per_pixel_fp, ComplexNewtonSetup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
@@ -1031,7 +1031,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		ComplexBasin, otherjuliafp_per_pixel, ComplexNewtonSetup,
+		ComplexBasin, other_julia_per_pixel_fp, ComplexNewtonSetup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
@@ -1087,7 +1087,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SIER, HF_SIER, WINFRAC,
 		-4.0f/3.0f, 96.0f/45.0f, -0.9f, 1.7f,
 		0, NOFRACTAL, NOFRACTAL, SIERPINSKI, NOSYM,
-		sierpinski_orbit_fp, otherjuliafp_per_pixel, SierpinskiFPSetup,
+		sierpinski_orbit_fp, other_julia_per_pixel_fp, SierpinskiFPSetup,
 			standard_fractal,
 		127
 	},
@@ -1122,7 +1122,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_BARNS, HF_BARNSJ1, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM1FP, BARNSLEYJ1, ORIGIN,
-		barnsley1_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		barnsley1_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -1146,7 +1146,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_BARNS, HF_BARNSJ2, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM2FP, BARNSLEYJ2, ORIGIN,
-		barnsley2_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		barnsley2_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -1170,7 +1170,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_BARNS, HF_BARNSJ3, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, BARNSLEYM3FP, BARNSLEYJ3, NOSYM,
-		barnsley3_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup,
+		barnsley3_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -1296,7 +1296,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_UNITY, HF_UNITY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, UNITY, XYAXIS,
-		unity_orbit_fp, otherjuliafp_per_pixel, StandardSetup, standard_fractal,
+		unity_orbit_fp, other_julia_per_pixel_fp, StandardSetup, standard_fractal,
 		BAILOUT_NONE
 	},
 
@@ -1440,7 +1440,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_POPCORN, HF_POPCJUL, WINFRAC | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
 		0, NOFRACTAL, NOFRACTAL, LPOPCORNJUL, NOSYM,
-		popcorn_fn_orbit_fp, otherjuliafp_per_pixel, JuliafpSetup, standard_fractal,
+		popcorn_fn_orbit_fp, other_julia_per_pixel_fp, JuliafpSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -1703,7 +1703,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_FNORFN, HF_LAMBDAFNFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANLAMFNFN, LLAMBDAFNFN, ORIGIN,
-		lambda_trig_or_trig_orbit_fp, otherjuliafp_per_pixel,
+		lambda_trig_or_trig_orbit_fp, other_julia_per_pixel_fp,
 			LambdaTrigOrTrigSetup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -1727,7 +1727,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_FNORFN, HF_JULIAFNFN, TRIG2 | WINFRAC | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
 		0, NOFRACTAL, FPMANFNFN, LJULFNFN, XAXIS,
-		julia_trig_or_trig_orbit_fp, otherjuliafp_per_pixel,
+		julia_trig_or_trig_orbit_fp, other_julia_per_pixel_fp,
 			JuliaTrigOrTrigSetup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
@@ -2210,7 +2210,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_VL, HF_VL, WINFRAC,
 		0.0f, 6.0f, 0.0f, 4.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		VLfpFractal, otherjuliafp_per_pixel, VLSetup, standard_fractal,
+		VLfpFractal, other_julia_per_pixel_fp, VLSetup, standard_fractal,
 		256
 	},
 
