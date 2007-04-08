@@ -1974,7 +1974,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PHOENIX, HF_MANDPHOENIX, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, PHOENIX, NOFRACTAL, MANDPHOENIXFP, NOSYM,
-		phoenix_orbit, long_mandphoenix_per_pixel, MandPhoenixSetup,
+		phoenix_orbit, mandelbrot_phoenix_per_pixel, MandPhoenixSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -1986,7 +1986,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PHOENIX, HF_MANDPHOENIX, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, PHOENIXFP, NOFRACTAL, MANDPHOENIX, NOSYM,
-		phoenix_orbit_fp, mandphoenix_per_pixel, MandPhoenixSetup,
+		phoenix_orbit_fp, mandelbrot_phoenix_per_pixel_fp, MandPhoenixSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -2138,7 +2138,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, WINFRAC | MORE | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, PHOENIXCPLX, NOFRACTAL, MANDPHOENIXFPCPLX, XAXIS,
-		phoenix_complex_orbit, long_mandphoenix_per_pixel,
+		phoenix_complex_orbit, mandelbrot_phoenix_per_pixel,
 			MandPhoenixCplxSetup, standard_fractal,
 		BAILOUT_STANDARD
 	},
@@ -2150,7 +2150,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, WINFRAC | MORE | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, PHOENIXFPCPLX, NOFRACTAL, MANDPHOENIXCPLX, XAXIS,
-		phoenix_complex_orbit_fp, mandphoenix_per_pixel, MandPhoenixCplxSetup,
+		phoenix_complex_orbit_fp, mandelbrot_phoenix_per_pixel_fp, MandPhoenixCplxSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},

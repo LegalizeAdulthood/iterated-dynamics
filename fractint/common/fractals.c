@@ -3183,7 +3183,7 @@ int phoenix_per_pixel_fp(void)
 	s_temp2.y = 0;
 	return 0;
 }
-int long_mandphoenix_per_pixel(void)
+int mandelbrot_phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
 	g_initial_z_l.x = lxpixel();
@@ -3222,7 +3222,7 @@ int long_mandphoenix_per_pixel(void)
 	return 0;
 #endif
 }
-int mandphoenix_per_pixel(void)
+int mandelbrot_phoenix_per_pixel_fp(void)
 {
 	if (g_invert)
 	{
