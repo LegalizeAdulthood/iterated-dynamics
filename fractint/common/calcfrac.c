@@ -1843,8 +1843,8 @@ static int _fastcall standard_calculate(int passnum)
 int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called with row & col set */
 {
 	/* setup values from array to avoid using es reg in calcmand.asm */
-	linitx = lxpixel();
-	linity = lypixel();
+	linitx = g_lx_pixel();
+	linity = g_ly_pixel();
 	if (calcmandasm() >= 0)
 	{
 		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
@@ -1900,8 +1900,8 @@ int calculate_mandelbrot_fp(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
-		g_initial_z.y = dypixel();
+		g_initial_z.x = g_dx_pixel();
+		g_initial_z.y = g_dy_pixel();
 	}
 	if (g_calculate_mandelbrot_asm_fp() >= 0)
 	{
@@ -2066,7 +2066,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				clear_bf(bfsaved.y);
 			}
 		}
-		g_initial_z.y = dypixel();
+		g_initial_z.y = g_dy_pixel();
 		if (distest)
 		{
 			if (g_use_old_distance_test)
@@ -2095,7 +2095,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			lsaved.x = 0;
 			lsaved.y = 0;
 		}
-		g_initial_z_l.y = lypixel();
+		g_initial_z_l.y = g_ly_pixel();
 	}
 	g_orbit_index = 0;
 	g_color_iter = 0;

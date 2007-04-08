@@ -82,8 +82,8 @@ int test(void)
 			for (g_col = 0; g_col <= g_x_stop; g_col++)       /* look at each point on screen */
 			{
 				register int color;
-				g_initial_z.x = dxpixel();
-				g_initial_z.y = dypixel();
+				g_initial_z.x = g_dx_pixel();
+				g_initial_z.y = g_dy_pixel();
 				if (driver_key_pressed())
 				{
 					testend();
@@ -1452,8 +1452,8 @@ int lyapunov(void)
 	}
 	else
 	{
-		a = dypixel();
-		b = dxpixel();
+		a = g_dy_pixel();
+		b = g_dx_pixel();
 	}
 	g_color = lyapunov_cycles(s_filter_cycles, a, b);
 	if (inside > 0 && g_color == 0)
@@ -2351,8 +2351,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		}
 		else
 		{
-			g_old_z.x = dxpixel();
-			g_old_z.y = dypixel();
+			g_old_z.x = g_dx_pixel();
+			g_old_z.y = g_dy_pixel();
 		}
 
 		while (!found_attractor)
@@ -2456,8 +2456,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		}
 		else
 		{
-			g_old_z_l.x = lxpixel();
-			g_old_z_l.y = lypixel();
+			g_old_z_l.x = g_lx_pixel();
+			g_old_z_l.y = g_ly_pixel();
 		}
 
 		while (!found_attractor)
@@ -2664,15 +2664,15 @@ int froth_per_pixel(void)
 {
 	if (!integerfractal) /* fp mode */
 	{
-		g_old_z.x = dxpixel();
-		g_old_z.y = dypixel();
+		g_old_z.x = g_dx_pixel();
+		g_old_z.y = g_dy_pixel();
 		g_temp_sqr_x = sqr(g_old_z.x);
 		g_temp_sqr_y = sqr(g_old_z.y);
 	}
 	else  /* integer mode */
 	{
-		g_old_z_l.x = lxpixel();
-		g_old_z_l.y = lypixel();
+		g_old_z_l.x = g_lx_pixel();
+		g_old_z_l.y = g_ly_pixel();
 		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
 		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
 	}
