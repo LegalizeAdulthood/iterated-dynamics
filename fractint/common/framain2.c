@@ -326,7 +326,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			copy_bf(bfsx3rd, bfx3rd);
 			copy_bf(bfsy3rd, bfy3rd);
 		}
-		save_history_info();
+		history_save_info();
 
 		if (showfile == 0)
 		{               /* image has been loaded */
@@ -1239,7 +1239,7 @@ static int handle_history(char *stacked, int kbdchar)
 		{
 			history_forward();
 		}
-		restore_history_info();
+		history_restore_info();
 		zoomoff = TRUE;
 		g_init_mode = g_adapter;
 		if (curfractalspecific->isinteger != 0
@@ -1266,7 +1266,7 @@ static int handle_color_cycling(int kbdchar)
 	if (memcmp(olddacbox, g_dac_box, 256*3))
 	{
 		colorstate = 1;
-		save_history_info();
+		history_save_info();
 	}
 	return CONTINUE;
 }
@@ -1299,7 +1299,7 @@ static int handle_color_editing(int *kbdmore)
 		if (memcmp(olddacbox, g_dac_box, 256*3))
 		{
 			colorstate = 1;
-			save_history_info();
+			history_save_info();
 		}
 	}
 	return CONTINUE;
@@ -1799,7 +1799,7 @@ static int handle_evolver_history(char *stacked, int *kbdchar)
 		{
 			history_forward();
 		}
-		restore_history_info();
+		history_restore_info();
 		zoomoff = TRUE;
 		g_init_mode = g_adapter;
 		if (curfractalspecific->isinteger != 0

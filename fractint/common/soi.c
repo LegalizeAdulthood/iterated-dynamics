@@ -318,7 +318,7 @@ long iteration(register DBLS cr, register DBLS ci,
 	}
 }
 
-static void puthline(int x1, int y1, int x2, int color)
+static void put_horizontal_line(int x1, int y1, int x2, int color)
 {
 	int x;
 	for (x = x1; x <= x2; x++)
@@ -327,11 +327,11 @@ static void puthline(int x1, int y1, int x2, int color)
 	}
 }
 
-static void putbox(int x1, int y1, int x2, int y2, int color)
+static void put_box(int x1, int y1, int x2, int y2, int color)
 {
 	for (; y1 <= y2; y1++)
 	{
-		puthline(x1, y1, x2, color);
+		put_horizontal_line(x1, y1, x2, color);
 	}
 }
 
@@ -660,7 +660,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	}
 	if (iter > maxit)
 	{
-		putbox(x1, y1, x2, y2, 0);
+		put_box(x1, y1, x2, y2, 0);
 		status = 0;
 		goto rhombus_done;
 	}
@@ -734,7 +734,7 @@ scan:
 
 				if (savex < z)
 				{
-					puthline(savex, y, z, (int)(savecolor&255));
+					put_horizontal_line(savex, y, z, (int)(savecolor&255));
 				}
 				else
 				{
@@ -765,7 +765,7 @@ scan:
 
 			if (savex < z)
 			{
-				puthline(savex, y, z, (int)(savecolor&255));
+				put_horizontal_line(savex, y, z, (int)(savecolor&255));
 			}
 			else
 			{
@@ -917,7 +917,7 @@ scan:
 			of SOI, we seldomly get there */
 		if (iter > maxit)
 		{
-			putbox(x1, y1, x2, y2, 0);
+			put_box(x1, y1, x2, y2, 0);
 			status = 0;
 			goto rhombus_done;
 		}
@@ -1103,7 +1103,7 @@ rhombus_done:
 	return status;
 }
 
-void soi_ldbl(void)
+void soi_long_double(void)
 {
 	int status;
 	DBLS tolerance = 0.1;

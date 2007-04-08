@@ -96,8 +96,8 @@ extern int asmfpMANRbailout(void);
 
 /* history -- C file prototypes */
 
-void _fastcall restore_history_info(void);
-void _fastcall save_history_info(void);
+void _fastcall history_restore_info(void);
+void _fastcall history_save_info(void);
 void history_allocate(void);
 void history_free(void);
 void history_back(void);
@@ -1182,9 +1182,8 @@ extern int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 h
 extern int SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /*  soi -- C file prototypes */
-
-extern void soi (void);
-extern void soi_ldbl (void);
+extern void soi(void);
+extern void soi_long_double(void);
 
 /*
  *  uclock -- C file prototypes 
