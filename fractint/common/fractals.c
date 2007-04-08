@@ -3097,7 +3097,7 @@ int quaternion_julia_per_pixel_fp(void)
 	return 0;
 }
 
-int quaternionfp_per_pixel(void)
+int quaternion_per_pixel_fp(void)
 {
 	g_old_z.x = 0;
 	g_old_z.y = 0;
