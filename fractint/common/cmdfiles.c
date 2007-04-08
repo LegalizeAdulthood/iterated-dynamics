@@ -79,15 +79,15 @@ int     g_ranges_length = 0;          /* size of ranges array     */
 BYTE *g_map_dac_box = NULL;     /* map= (default colors)    */
 int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
 									/* 1, g_dac_box matches no known defined map   */
-									/* 2, g_dac_box matches the colorfile map      */
+									/* 2, g_dac_box matches the g_color_file map      */
 int     g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
 int     g_save_release;           /* release creating PAR file*/
 int		g_dont_read_color = FALSE;        /* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
-int Targa_Out = 0;              /* 3D fullcolor flag */
-int truecolor = 0;              /* escape time truecolor flag */
-int truemode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
-char    colorfile[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
+int g_targa_output = 0;              /* 3D fullcolor flag */
+int g_true_color = 0;              /* escape time truecolor flag */
+int g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
+char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
 int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
 float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
 float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
@@ -433,8 +433,8 @@ static void initvars_restart()          /* <ins> key init */
 
 	g_major_method = breadth_first;        /* default inverse julia methods */
 	g_minor_method = left_first;   /* default inverse julia methods */
-	truecolor = 0;              /* truecolor output flag */
-	truemode = TRUEMODE_DEFAULT;               /* set to default color scheme */
+	g_true_color = 0;              /* truecolor output flag */
+	g_true_mode = TRUEMODE_DEFAULT;               /* set to default color scheme */
 }
 
 static void initvars_fractal()          /* init vars affecting calculation */
@@ -2986,14 +2986,14 @@ static int haze_arg(const cmd_context *context)
 
 static int true_mode_arg(const cmd_context *context)
 {
-	truemode = TRUEMODE_DEFAULT;				/* use default if error */
+	g_true_mode = TRUEMODE_DEFAULT;				/* use default if error */
 	if (context->charval[0] == 'd')
 	{
-		truemode = TRUEMODE_DEFAULT;			/* use default color output */
+		g_true_mode = TRUEMODE_DEFAULT;			/* use default color output */
 	}
 	if (context->charval[0] == 'i' || context->intval[0] == 1)
 	{
-		truemode = TRUEMODE_ITERATES;			/* use iterates output */
+		g_true_mode = TRUEMODE_ITERATES;			/* use iterates output */
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -3129,12 +3129,12 @@ static int showbox_arg(const cmd_context *context)
 
 static int fullcolor_arg(const cmd_context *context)
 {
-	return flag_arg(context, &Targa_Out, COMMAND_3D_PARAM);
+	return flag_arg(context, &g_targa_output, COMMAND_3D_PARAM);
 }
 
 static int truecolor_arg(const cmd_context *context)
 {
-	return flag_arg(context, &truecolor, COMMAND_3D_PARAM | COMMAND_FRACTAL_PARAM);
+	return flag_arg(context, &g_true_color, COMMAND_3D_PARAM | COMMAND_FRACTAL_PARAM);
 }
 
 static int use_grayscale_depth_arg(const cmd_context *context)
@@ -3620,7 +3620,7 @@ static int parse_colors(char *value)
 		}
 		else
 		{
-			if (merge_pathnames(colorfile, &value[1], 3) < 0)
+			if (merge_pathnames(g_color_file, &value[1], 3) < 0)
 			{
 				init_msg("", &value[1], 3);
 			}

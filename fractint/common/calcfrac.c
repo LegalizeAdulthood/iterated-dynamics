@@ -521,12 +521,12 @@ int calculate_fractal(void)
 	g_basin = 0;
 	/* added yet another level of indirection to g_put_color!!! TW */
 	g_put_color = putcolor_a;
-	if (g_is_true_color && truemode)
+	if (g_is_true_color && g_true_mode)
 	{
 		/* Have to force passes = 1 */
 		usr_stdcalcmode = stdcalcmode = '1';
 	}
-	if (truecolor)
+	if (g_true_color)
 	{
 		check_writefile(g_light_name, ".tga");
 		if (startdisk1(g_light_name, NULL, 0) == 0)
@@ -537,7 +537,7 @@ int calculate_fractal(void)
 		}
 		else
 		{
-			truecolor = 0;
+			g_true_color = 0;
 		}
 	}
 	if (!g_use_grid)
@@ -833,7 +833,7 @@ int calculate_fractal(void)
 	{
 		sound_close();
 	}
-	if (truecolor)
+	if (g_true_color)
 	{
 		enddisk();
 	}

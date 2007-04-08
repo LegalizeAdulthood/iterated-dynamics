@@ -57,7 +57,7 @@ int ValidateLuts(char *fn)
 		++index;
 	}
 	g_color_state = COLORSTATE_MAP;
-	strcpy(colorfile, fn);
+	strcpy(g_color_file, fn);
 	return 0;
 }
 

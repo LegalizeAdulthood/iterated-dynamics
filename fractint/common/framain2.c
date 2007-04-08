@@ -825,16 +825,16 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		break;
 	}
 	driver_unstack_screen();
-	if (evolving && truecolor)
+	if (evolving && g_true_color)
 	{
-		truecolor = 0; /* truecolor doesn't play well with the evolver */
+		g_true_color = 0; /* truecolor doesn't play well with the evolver */
 	}
 	if (maxit > *old_maxit
 		&& g_inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
 		&& curfractalspecific->calculate_type == standard_fractal
 		&& !LogFlag
-		&& !truecolor /* recalc not yet implemented with truecolor */
+		&& !g_true_color /* recalc not yet implemented with truecolor */
 		&& !(usr_stdcalcmode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(usr_stdcalcmode == 'o')
 		&& i == COMMAND_FRACTAL_PARAM /* nothing else changed */
@@ -885,9 +885,9 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 		break;
 	}
 	driver_unstack_screen();
-	if (evolving && truecolor)
+	if (evolving && g_true_color)
 	{
-		truecolor = 0; /* truecolor doesn't play well with the evolver */
+		g_true_color = 0; /* truecolor doesn't play well with the evolver */
 	}
 	if (i > COMMAND_OK)              /* time to redraw? */
 	{
@@ -1031,7 +1031,7 @@ static void handle_orbits(void)
 		&& (fractalspecific[fractype].isinteger == FALSE
 			|| fractalspecific[fractype].tofloat != NOFRACTAL)
 		&& !bf_math /* for now no arbitrary precision support */
-		&& !(g_is_true_color && truemode))
+		&& !(g_is_true_color && g_true_mode))
 	{
 		clear_zoombox();
 		Jiim(ORBIT);
