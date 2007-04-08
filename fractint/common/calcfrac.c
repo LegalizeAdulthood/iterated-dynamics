@@ -2738,18 +2738,18 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		decomposition();
 	}
-	else if (biomorph != -1)
+	else if (g_biomorph != -1)
 	{
 		if (integerfractal)
 		{
 			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
 			{
-				g_color_iter = biomorph;
+				g_color_iter = g_biomorph;
 			}
 		}
 		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
 		{
-			g_color_iter = biomorph;
+			g_color_iter = g_biomorph;
 		}
 	}
 
@@ -4257,7 +4257,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		return;
 	}
-	if (sym == NOPLOT && forcesymmetry == 999)
+	if (sym == NOPLOT && g_force_symmetry == FORCESYMMETRY_NONE)
 	{
 		g_plot_color = noplot;
 		return;
@@ -4278,17 +4278,17 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		return;
 	}
-	if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && forcesymmetry == 999)
+	if (sym != XAXIS && sym != XAXIS_NOPARM && inversion[1] != 0.0 && g_force_symmetry == FORCESYMMETRY_NONE)
 	{
 		return;
 	}
-	if (forcesymmetry < 999)
+	if (g_force_symmetry < FORCESYMMETRY_NONE)
 	{
-		sym = forcesymmetry;
+		sym = g_force_symmetry;
 	}
-	else if (forcesymmetry == 1000)
+	else if (g_force_symmetry == FORCESYMMETRY_SEARCH)
 	{
-		forcesymmetry = sym;  /* for backwards compatibility */
+		g_force_symmetry = sym;  /* for backwards compatibility */
 	}
 	else if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
 			|| outside == ATAN || g_bail_out_test == Manr || outside == FMOD)
@@ -4492,7 +4492,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 				break; /* no point in pi symmetry if values too close */
 			}
 		}
-		if (g_invert && forcesymmetry == 999)
+		if (g_invert && g_force_symmetry == FORCESYMMETRY_NONE)
 		{
 			goto originsym;
 		}

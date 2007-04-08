@@ -57,7 +57,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	struct ext_blk_evolver_info evolver_info;
 	struct ext_blk_orbits_info orbits_info;
 
-	showfile = 1;                /* for any abort exit, pretend done */
+	g_show_file = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
 	oldfloatflag = usr_floatflag;
 	loaded3d = 0;
@@ -123,8 +123,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 		decomp[0]     = read_info.decomp[0];
 		decomp[1]     = read_info.decomp[1];
-		usr_biomorph  = read_info.biomorph;
-		forcesymmetry = read_info.symmetry;
+		g_user_biomorph  = read_info.biomorph;
+		g_force_symmetry = read_info.symmetry;
 	}
 
 	if (read_info.version > 1)
@@ -305,14 +305,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
 	{
-		/* forcesymmetry==1000 means we want to force symmetry but don't
+		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
 			know which symmetry yet, will find out in setsymmetry() */
 		if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
 			|| outside == ATAN)
 		{
-			if (forcesymmetry == 999)
+			if (g_force_symmetry == FORCESYMMETRY_NONE)
 			{
-				forcesymmetry = 1000;
+				g_force_symmetry = FORCESYMMETRY_SEARCH;
 			}
 		}
 	}
@@ -631,7 +631,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 	}
 
-	showfile = 0;                   /* trigger the file load */
+	g_show_file = 0;                   /* trigger the file load */
 	return 0;
 }
 

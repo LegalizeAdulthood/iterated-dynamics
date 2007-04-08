@@ -349,7 +349,7 @@ restart:   /* insert key re-starts here */
 	max_colors = 256;                    /* the Windows version is lower */
 	g_max_input_counter = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
 
-	if (showfile && g_init_mode < 0)
+	if (g_show_file && g_init_mode < 0)
 	{
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == FIK_ESC)
@@ -379,7 +379,7 @@ restorestart:
 
 	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
-	while (showfile <= 0)              /* image is to be loaded */
+	while (g_show_file <= 0)              /* image is to be loaded */
 	{
 		char *hdg;
 		tabmode = 0;
@@ -400,9 +400,9 @@ restorestart:
 				hdg = "Select File to Restore";
 				helpmode = HELPSAVEREST;
 			}
-			if (showfile < 0 && getafilename(hdg, g_gif_mask, g_read_name) < 0)
+			if (g_show_file < 0 && getafilename(hdg, g_gif_mask, g_read_name) < 0)
 			{
-				showfile = 1;               /* cancelled */
+				g_show_file = 1;               /* cancelled */
 				g_init_mode = -1;
 				break;
 			}
@@ -412,7 +412,7 @@ restorestart:
 		}
 
 		evolving = viewwindow = 0;
-		showfile = 0;
+		g_show_file = 1;
 		helpmode = -1;
 		tabmode = 1;
 		if (stacked)
@@ -425,7 +425,7 @@ restorestart:
 		{
 			break;                      /* got it, exit */
 		}
-		showfile = browsing ? 1 : -1;
+		g_show_file = browsing ? 1 : -1;
 	}
 
 	helpmode = HELPMENU;                 /* now use this help mode */
@@ -463,7 +463,7 @@ imagestart:                             /* calc/display a new image */
 #endif
 	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
-	if (showfile)
+	if (g_show_file)
 	{
 		if (calc_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
 		{
@@ -552,7 +552,7 @@ imagestart:                             /* calc/display a new image */
 						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case colors= present */
 					}
 					driver_set_for_text(); /* switch to text mode */
-					showfile = -1;
+					g_show_file = -1;
 					goto restorestart;
 				}
 				if (kbdchar == 't')  /* set fractal type */

@@ -1041,39 +1041,39 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" olddemmcolors=y");
 		}
-		if (usr_biomorph != -1)
+		if (g_user_biomorph != -1)
 		{
-			put_parm(" biomorph=%d", usr_biomorph);
+			put_parm(" biomorph=%d", g_user_biomorph);
 		}
 		if (finattract)
 		{
 			put_parm(" finattract=y");
 		}
 
-		if (forcesymmetry != 999)
+		if (g_force_symmetry != FORCESYMMETRY_NONE)
 		{
-			if (forcesymmetry == 1000 && ii == 1 && jj == 1)
+			if (g_force_symmetry == FORCESYMMETRY_SEARCH && ii == 1 && jj == 1)
 			{
 				stopmsg(0, "Regenerate before <b> to get correct symmetry");
 			}
 			put_parm(" symmetry=");
-			if (forcesymmetry == XAXIS)
+			if (g_force_symmetry == XAXIS)
 			{
 				put_parm("xaxis");
 			}
-			else if (forcesymmetry == YAXIS)
+			else if (g_force_symmetry == YAXIS)
 			{
 				put_parm("yaxis");
 			}
-			else if (forcesymmetry == XYAXIS)
+			else if (g_force_symmetry == XYAXIS)
 			{
 				put_parm("xyaxis");
 			}
-			else if (forcesymmetry == ORIGIN)
+			else if (g_force_symmetry == ORIGIN)
 			{
 				put_parm("origin");
 			}
-			else if (forcesymmetry == PI_SYM)
+			else if (g_force_symmetry == PI_SYM)
 			{
 				put_parm("pi");
 			}

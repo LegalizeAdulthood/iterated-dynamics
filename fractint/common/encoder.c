@@ -832,8 +832,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->invert[1] = (float) inversion[1];
 	save_info->invert[2] = (float) inversion[2];
 	save_info->decomp[0] = (short) decomp[0];
-	save_info->biomorph = (short) usr_biomorph;
-	save_info->symmetry = (short) forcesymmetry;
+	save_info->biomorph = (short) g_user_biomorph;
+	save_info->symmetry = (short) g_force_symmetry;
 	for (i = 0; i < 16; i++)
 	{
 		save_info->init3d[i] = (short) init3d[i];

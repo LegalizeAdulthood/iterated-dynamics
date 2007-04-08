@@ -56,8 +56,8 @@ void _fastcall history_save_info(void)
 	current.invert[1]			= inversion[1];
 	current.invert[2]			= inversion[2];
 	current.decomp				= (short) decomp[0]; ;
-	current.biomorph			= (short) biomorph;
-	current.symmetry			= (short) forcesymmetry;
+	current.biomorph			= (short) g_biomorph;
+	current.symmetry			= (short) g_force_symmetry;
 	current.init3d[0]			= (short) init3d[0];
 	current.init3d[1]			= (short) init3d[1];
 	current.init3d[2]			= (short) init3d[2];
@@ -243,9 +243,9 @@ void _fastcall history_restore_info(void)
 	inversion[1]        	= last.invert[1];
 	inversion[2]        	= last.invert[2];
 	decomp[0]           	= last.decomp;
-	usr_biomorph        	= last.biomorph;
-	biomorph            	= last.biomorph;
-	forcesymmetry       	= last.symmetry;
+	g_user_biomorph        	= last.biomorph;
+	g_biomorph            	= last.biomorph;
+	g_force_symmetry       	= last.symmetry;
 	init3d[0]           	= last.init3d[0];
 	init3d[1]           	= last.init3d[1];
 	init3d[2]           	= last.init3d[2];

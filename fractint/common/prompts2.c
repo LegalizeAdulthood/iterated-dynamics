@@ -246,7 +246,7 @@ int get_toggles()
 
 	choices[++k] = "Biomorph Color (-1 means OFF)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_biomorph = usr_biomorph;
+	uvalues[k].uval.ival = old_biomorph = g_user_biomorph;
 
 	choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
 	uvalues[k].type = 'i';
@@ -422,12 +422,12 @@ int get_toggles()
 		Log_Auto_Calc = 0;  /* turn it off, use the supplied value */
 	}
 
-	usr_biomorph = uvalues[++k].uval.ival;
-	if (usr_biomorph >= colors)
+	g_user_biomorph = uvalues[++k].uval.ival;
+	if (g_user_biomorph >= colors)
 	{
-		usr_biomorph = (usr_biomorph % colors) + (usr_biomorph / colors);
+		g_user_biomorph = (g_user_biomorph % colors) + (g_user_biomorph / colors);
 	}
-	if (usr_biomorph != old_biomorph)
+	if (g_user_biomorph != old_biomorph)
 	{
 		j++;
 	}
