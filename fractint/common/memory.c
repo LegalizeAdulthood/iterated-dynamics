@@ -344,11 +344,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
 		if (disktarga)
 		{
-			handletable[handle].Disk.file = dir_fopen(workdir, g_light_name, "a+b");
+			handletable[handle].Disk.file = dir_fopen(g_work_dir, g_light_name, "a+b");
 		}
 		else
 		{
-			handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "w+b");
+			handletable[handle].Disk.file = dir_fopen(g_temp_dir, memfile, "w+b");
 		}
 		rewind(handletable[handle].Disk.file);
 		if (fseek(handletable[handle].Disk.file, toallocate, SEEK_SET) != 0)
@@ -369,11 +369,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		fclose(handletable[handle].Disk.file); /* so clusters aren't lost if we crash while running */
 		if (disktarga)
 		{
-			handletable[handle].Disk.file = dir_fopen(workdir, g_light_name, "r+b");
+			handletable[handle].Disk.file = dir_fopen(g_work_dir, g_light_name, "r+b");
 		}
 		else
 		{
-			handletable[handle].Disk.file = dir_fopen(tempdir, memfile, "r+b"); /* reopen */
+			handletable[handle].Disk.file = dir_fopen(g_temp_dir, memfile, "r+b"); /* reopen */
 		}
 		rewind(handletable[handle].Disk.file);
 		handletable[handle].Disk.size = toallocate;
@@ -421,7 +421,7 @@ void MemoryRelease(U16 handle)
 		memfile[8] = (char)((handle % 100) / 10 + (int)'0');
 		memfile[7] = (char)((handle % 1000) / 100 + (int)'0');
 		fclose(handletable[handle].Disk.file);
-		dir_remove(tempdir, memfile);
+		dir_remove(g_temp_dir, memfile);
 		handletable[handle].Disk.file = NULL;
 		handletable[handle].Disk.size = 0;
 		handletable[handle].Disk.stored_at = NOWHERE;

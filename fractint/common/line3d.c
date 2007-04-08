@@ -1568,7 +1568,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 	FILE *fps;
 
 	/* Open File for both reading and writing */
-	fps = dir_fopen(workdir, file_name2, "w+b");
+	fps = dir_fopen(g_work_dir, file_name2, "w+b");
 	if (fps == NULL)
 	{
 		file_error(file_name2, FILEERROR_OPEN);
@@ -1648,7 +1648,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 			{
 				fclose(Source);
 			}
-			dir_remove(workdir, file_name2);
+			dir_remove(g_work_dir, file_name2);
 			file_error(file_name2, FILEERROR_NO_SPACE);
 			return -2;
 		}
@@ -1661,7 +1661,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 	if (targa_startdisk(fps, s_targa_header_len) != 0)
 	{
 		enddisk();
-		dir_remove(workdir, file_name2);
+		dir_remove(g_work_dir, file_name2);
 		return -4;
 	}
 	return 0;
@@ -1673,7 +1673,7 @@ static int targa_validate(char *file_name)
 	int i;
 
 	/* Attempt to open source file for reading */
-	fp = dir_fopen(workdir, file_name, "rb");
+	fp = dir_fopen(g_work_dir, file_name, "rb");
 	if (fp == NULL)
 	{
 		file_error(file_name, FILEERROR_OPEN);
@@ -2389,12 +2389,12 @@ static void line3d_cleanup(void)
 		enddisk();
 		if (!debugflag && (!s_targa_safe || s_file_error) && g_targa_overlay)
 		{
-			dir_remove(workdir, g_light_name);
+			dir_remove(g_work_dir, g_light_name);
 			rename(s_targa_temp, g_light_name);
 		}
 		if (!debugflag && g_targa_overlay)
 		{
-			dir_remove(workdir, s_targa_temp);
+			dir_remove(g_work_dir, s_targa_temp);
 		}
 	}
 	usr_floatflag &= 1;          /* strip second bit */

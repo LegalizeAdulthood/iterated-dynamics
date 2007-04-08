@@ -424,7 +424,7 @@ skip_UI:
 		if (xm > 1 || ym > 1)
 		{
 			have3rd = (xxmin != xx3rd || yymin != yy3rd) ? 1 : 0;
-			fpbat = dir_fopen(workdir, "makemig.bat", "w");
+			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
 				xm = ym = 0;
@@ -1126,7 +1126,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		if (loaded3d == 0)
 		{
-			put_filename("filename", readname);
+			put_filename("filename", g_read_name);
 		}
 		if (SPHERE)
 		{

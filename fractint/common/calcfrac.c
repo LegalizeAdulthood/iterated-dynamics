@@ -2559,7 +2559,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 					static char c;
 					if (fp == NULL)
 					{
-						fp = dir_fopen(workdir, "cycles.txt", "w");
+						fp = dir_fopen(g_work_dir, "cycles.txt", "w");
 					}
 #endif
 					cyclelen = g_color_iter-savedcoloriter;

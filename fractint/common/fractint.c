@@ -400,7 +400,7 @@ restorestart:
 				hdg = "Select File to Restore";
 				helpmode = HELPSAVEREST;
 			}
-			if (showfile < 0 && getafilename(hdg, gifmask, readname) < 0)
+			if (showfile < 0 && getafilename(hdg, g_gif_mask, g_read_name) < 0)
 			{
 				showfile = 1;               /* cancelled */
 				g_init_mode = -1;
@@ -694,7 +694,7 @@ va_dcl
 	}
 	if (do_bench)
 	{
-		fp = dir_fopen(workdir, "bench", "a");
+		fp = dir_fopen(g_work_dir, "bench", "a");
 	}
 	timer_start = clock_ticks();
 	switch (timertype)

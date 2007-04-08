@@ -268,7 +268,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			}
 		}
 		sprintf((char *)g_stack, "File: %-44s  %d x %d x %d\n%-52s",
-				readname, filexdots, fileydots, filecolors, temp1);
+				g_read_name, filexdots, fileydots, filecolors, temp1);
 		if (info->info_id[0] != 'G')
 		{
 			if (save_system)

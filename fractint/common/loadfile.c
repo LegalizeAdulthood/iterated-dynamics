@@ -65,16 +65,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		viewwindow = 0;
 	}
-	if (has_ext(readname) == NULL)
+	if (has_ext(g_read_name) == NULL)
 	{
-		strcat(readname, ".gif");
+		strcat(g_read_name, ".gif");
 	}
 
-	if (find_fractal_info(readname, &read_info, &resume_info_blk, &formula_info,
+	if (find_fractal_info(g_read_name, &read_info, &resume_info_blk, &formula_info,
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
 		/* didn't find a useable file */
-		sprintf(msg, "Sorry, %s isn't a file I can decode.", readname);
+		sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_name);
 		stopmsg(0, msg);
 		return -1;
 	}
@@ -83,7 +83,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	fractype     = read_info.fractal_type;
 	if (fractype < 0 || fractype >= g_num_fractal_types)
 	{
-		sprintf(msg, "Warning: %s has a bad fractal type; using 0", readname);
+		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
 		fractype = 0;
 	}
 	curfractalspecific = &fractalspecific[fractype];
@@ -1417,7 +1417,7 @@ rescan:  /* entry for changed browse parms */
 	toggle = 0;
 	wincount = 0;
 	no_sub_images = FALSE;
-	splitpath(readname, drive, dir, NULL, NULL);
+	splitpath(g_read_name, drive, dir, NULL, NULL);
 	splitpath(browsemask, NULL, NULL, fname, ext);
 	makepath(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
@@ -1605,7 +1605,7 @@ rescan:  /* entry for changed browse parms */
 				}
 				if (c == 'Y')
 				{
-					splitpath(readname, drive, dir, NULL, NULL);
+					splitpath(g_read_name, drive, dir, NULL, NULL);
 					splitpath(winlist.name, NULL, NULL, fname, ext);
 					makepath(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
@@ -1633,7 +1633,7 @@ rescan:  /* entry for changed browse parms */
 				driver_stack_screen();
 				newname[0] = 0;
 				strcpy(mesg, "Enter the new filename for ");
-				splitpath(readname, drive, dir, NULL, NULL);
+				splitpath(g_read_name, drive, dir, NULL, NULL);
 				splitpath(winlist.name, NULL, NULL, fname, ext);
 				makepath(tmpmask, drive, dir, fname, ext);
 				strcpy(newname, tmpmask);
