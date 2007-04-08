@@ -286,7 +286,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	{
 		char s[40];
 		sprintf(s, "mapping to 3d, reading line %d", g_current_row);
-		dvid_status(1, s);
+		disk_video_status(1, s);
 	}
 
 	if (!col && g_raytrace_output && g_current_row != 0)
@@ -1484,7 +1484,7 @@ int _fastcall targa_color(int x, int y, int color)
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
-	targa_writedisk(x + sxoffs, y + syoffs, RGB[0], RGB[1], RGB[2]);
+	disk_write_targa(x + sxoffs, y + syoffs, RGB[0], RGB[1], RGB[2]);
 
 	return (int) (255 - V);
 }
@@ -1658,9 +1658,9 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 		}
 	}
 
-	if (targa_startdisk(fps, s_targa_header_len) != 0)
+	if (disk_start_targa(fps, s_targa_header_len) != 0)
 	{
-		enddisk();
+		disk_end();
 		dir_remove(g_work_dir, file_name2);
 		return -4;
 	}
@@ -2386,7 +2386,7 @@ static void line3d_cleanup(void)
 	if (g_targa_output)
 	{                            /* Finish up targa files */
 		s_targa_header_len = 18;         /* Reset Targa header size */
-		enddisk();
+		disk_end();
 		if (!g_debug_flag && (!s_targa_safe || s_file_error) && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, g_light_name);

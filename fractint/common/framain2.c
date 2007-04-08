@@ -240,7 +240,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			else if (g_potential_16bit)
 			{            /* .pot format input file */
-				if (pot_startdisk() < 0)
+				if (disk_start_potential() < 0)
 				{                           /* pot file failed?  */
 					g_show_file = 1;
 					g_potential_flag  = FALSE;
@@ -475,7 +475,7 @@ done:
 			saveticks = 0;                 /* turn off autosave timer */
 			if (driver_diskp() && i == 0) /* disk-video */
 			{
-				dvid_status(0, "Image has been completed");
+				disk_video_status(0, "Image has been completed");
 			}
 		}
 #ifndef XFRACT

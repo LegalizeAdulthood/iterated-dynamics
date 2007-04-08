@@ -835,7 +835,7 @@ int calculate_fractal(void)
 	}
 	if (g_true_color)
 	{
-		enddisk();
+		disk_end();
 	}
 	return (calc_status == CALCSTAT_COMPLETED) ? 0 : -1;
 }
@@ -890,9 +890,9 @@ static void perform_work_list()
 		stdcalcmode = '1'; /* force 1 pass */
 		if (g_resuming == 0)
 		{
-			if (pot_startdisk() < 0)
+			if (disk_start_potential() < 0)
 			{
-				g_potential_16bit = FALSE;       /* startdisk failed or cancelled */
+				g_potential_16bit = FALSE;       /* disk_start failed or cancelled */
 				stdcalcmode = (char)tmpcalcmode;    /* maybe we can carry on??? */
 			}
 		}
@@ -3281,9 +3281,9 @@ static int _fastcall potential(double mag, long iterations)
 	{
 		if (!driver_diskp()) /* if g_put_color won't be doing it for us */
 		{
-			writedisk(g_col + sxoffs, g_row + syoffs, i_pot);
+			disk_write(g_col + sxoffs, g_row + syoffs, i_pot);
 		}
-		writedisk(g_col + sxoffs, g_row + sydots + syoffs, (int)l_pot);
+		disk_write(g_col + sxoffs, g_row + sydots + syoffs, (int)l_pot);
 	}
 
 	return i_pot;

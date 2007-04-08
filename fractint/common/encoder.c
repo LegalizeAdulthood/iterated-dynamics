@@ -161,7 +161,7 @@ restart:
 		extract_filename(tmpmsg, openfile);
 
 		sprintf(buf, "Saving %s", tmpmsg);
-		dvid_status(1, buf);
+		disk_video_status(1, buf);
 	}
 #ifdef XFRACT
 	else
@@ -234,7 +234,7 @@ restart:
 	}
 	else                         /* disk-video */
 	{
-		dvid_status(1, "");
+		disk_video_status(1, "");
 	}
 
 	if (interrupted)
@@ -1092,7 +1092,7 @@ static int compress(int rowlimit)
 			for (xdot = 0; xdot < xdots; xdot++)
 			{
 				color = (save16bit == 0 || ydot < ydots)
-					? getcolor(xdot, ydot) : readdisk(xdot + sxoffs, ydot + syoffs);
+					? getcolor(xdot, ydot) : disk_read(xdot + sxoffs, ydot + syoffs);
 				if (in_count == 0)
 				{
 					in_count = 1;

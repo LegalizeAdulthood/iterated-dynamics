@@ -316,9 +316,9 @@ disk_resize(Driver *drv)
 
 	if (g_disk_flag)
 	{
-		enddisk();
+		disk_end();
 	}
-	startdisk();
+	disk_start();
 
 	return !0;
 }

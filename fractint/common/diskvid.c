@@ -65,25 +65,25 @@ static void _fastcall  mem_putc(BYTE);
 static BYTE  mem_getc(void);
 static void _fastcall  mem_seek(long);
 
-int startdisk()
+int disk_start()
 {
 	s_header_length = s_disk_targa = 0;
-	return common_startdisk(sxdots, sydots, colors);
+	return disk_start_common(sxdots, sydots, colors);
 }
 
-int pot_startdisk()
+int disk_start_potential()
 {
 	int i;
 	if (driver_diskp())			/* ditch the original disk file */
 	{
-		enddisk();
+		disk_end();
 	}
 	else
 	{
 		showtempmsg("clearing 16bit pot work area");
 	}
 	s_header_length = s_disk_targa = 0;
-	i = common_startdisk(sxdots, sydots << 1, colors);
+	i = disk_start_common(sxdots, sydots << 1, colors);
 	cleartempmsg();
 	if (i == 0)
 	{
@@ -93,24 +93,24 @@ int pot_startdisk()
 	return i;
 }
 
-int targa_startdisk(FILE *targafp, int overhead)
+int disk_start_targa(FILE *targafp, int overhead)
 {
 	int i;
 	if (driver_diskp())	/* ditch the original file, make just the targa */
 	{
-		enddisk();      /* close the 'screen' */
+		disk_end();      /* close the 'screen' */
 		setnullvideo(); /* set readdot and writedot routines to do nothing */
 	}
 	s_header_length = overhead;
 	s_file = targafp;
 	s_disk_targa = 1;
-	i = common_startdisk(xdots*3, ydots, colors);
+	i = disk_start_common(xdots*3, ydots, colors);
 	s_high_offset = 100000000L; /* targa not necessarily init'd to zeros */
 
 	return i;
 }
 
-int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
+int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 {
 	int i, freemem;
 	long memorysize, offset;
@@ -121,7 +121,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 	BYTE *tempfar = NULL;
 	if (g_disk_flag)
 	{
-		enddisk();
+		disk_end();
 	}
 	if (driver_diskp()) /* otherwise, real screen also in use, don't hit it */
 	{
@@ -148,7 +148,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 		sprintf(buf, "Save name: %s", g_save_name);
 		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buf);
 		driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
-		dvid_status(0, "clearing the 'screen'");
+		disk_video_status(0, "clearing the 'screen'");
 	}
 	s_cur_offset = s_seek_offset = s_high_offset = -1;
 	s_cur_row    = -1;
@@ -288,7 +288,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 				/* esc to cancel, else continue */
 				if (stopmsg(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
 				{
-					enddisk();
+					disk_end();
 					g_good_mode = 0;
 					return -2;            /* -1 == failed, -2 == cancel   */
 				}
@@ -298,12 +298,12 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 
 	if (driver_diskp())
 	{
-		dvid_status(0, "");
+		disk_video_status(0, "");
 	}
 	return 0;
 }
 
-void enddisk()
+void disk_end()
 {
 	if (s_file != NULL)
 	{
@@ -339,7 +339,7 @@ void enddisk()
 	g_disk_flag = s_row_size = g_disk_16bit = 0;
 }
 
-int readdisk(int col, int row)
+int disk_read(int col, int row)
 {
 	int col_subscr;
 	long offset;
@@ -350,7 +350,7 @@ int readdisk(int col, int row)
 		{
 			sprintf(buf, " reading line %4d",
 					(row >= sydots) ? row-sydots : row); /* adjust when potfile */
-			dvid_status(0, buf);
+			disk_video_status(0, buf);
 		}
 		s_time_to_display = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
 	}
@@ -376,7 +376,7 @@ int readdisk(int col, int row)
 	return s_cur_cache->pixel[col_subscr];
 }
 
-int FromMemDisk(long offset, int size, void *dest)
+int disk_from_memory(long offset, int size, void *dest)
 {
 	int col_subscr = (int) (offset & (BLOCK_LEN - 1));
 	if (col_subscr + size > BLOCK_LEN)            /* access violates  a */
@@ -393,16 +393,16 @@ int FromMemDisk(long offset, int size, void *dest)
 }
 
 
-void targa_readdisk(unsigned int col, unsigned int row,
+void disk_read_targa(unsigned int col, unsigned int row,
 					BYTE *red, BYTE *green, BYTE *blue)
 {
 	col *= 3;
-	*blue  = (BYTE)readdisk(col, row);
-	*green = (BYTE)readdisk(++col, row);
-	*red   = (BYTE)readdisk(col + 1, row);
+	*blue  = (BYTE)disk_read(col, row);
+	*green = (BYTE)disk_read(++col, row);
+	*red   = (BYTE)disk_read(col + 1, row);
 }
 
-void writedisk(int col, int row, int color)
+void disk_write(int col, int row, int color)
 {
 	int col_subscr;
 	long offset;
@@ -413,7 +413,7 @@ void writedisk(int col, int row, int color)
 		{
 			sprintf(buf, " writing line %4d",
 					(row >= sydots) ? row-sydots : row); /* adjust when potfile */
-			dvid_status(0, buf);
+			disk_video_status(0, buf);
 		}
 		s_time_to_display = 1000;
 	}
@@ -443,7 +443,7 @@ void writedisk(int col, int row, int color)
 	}
 }
 
-int ToMemDisk(long offset, int size, void *src)
+int disk_to_memory(long offset, int size, void *src)
 {
 	int col_subscr =  (int)(offset & (BLOCK_LEN - 1));
 
@@ -462,12 +462,12 @@ int ToMemDisk(long offset, int size, void *src)
 	return 1;
 }
 
-void targa_writedisk(unsigned int col, unsigned int row,
+void disk_write_targa(unsigned int col, unsigned int row,
 					BYTE red, BYTE green, BYTE blue)
 {
-	writedisk(col *= 3, row, blue);
-	writedisk(++col, row, green);
-	writedisk(col + 1, row, red);
+	disk_write(col *= 3, row, blue);
+	disk_write(++col, row, green);
+	disk_write(col + 1, row, red);
 }
 
 static void _fastcall  find_load_cache(long offset) /* used by read/write */
@@ -716,7 +716,7 @@ static void _fastcall  mem_seek(long offset)        /* mem seek */
 	s_memory_buffer_ptr = s_memory_buffer + (offset & (BLOCK_LEN - 1));
 }
 
-static BYTE  mem_getc()                     /* memory get_char */
+static BYTE mem_getc()                     /* memory get_char */
 {
 	if (s_memory_buffer_ptr - s_memory_buffer >= BLOCK_LEN)
 	{
@@ -743,7 +743,7 @@ static void _fastcall mem_putc(BYTE c)     /* memory get_char */
 }
 
 
-void dvid_status(int line, char *msg)
+void disk_video_status(int line, char *msg)
 {
 	char buf[41];
 	int attrib;

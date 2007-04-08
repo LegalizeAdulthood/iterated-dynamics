@@ -280,7 +280,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
 				}
 			}
 		}
@@ -300,8 +300,8 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_readdisk (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_read_targa (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -341,7 +341,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
 				}
 			}
 		}
@@ -359,8 +359,8 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					targa_readdisk (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_read_targa (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -389,7 +389,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 				}
 				else
 				{
-					targa_writedisk (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
 				}
 			}
 		}
@@ -407,7 +407,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 				}
 				else
 				{
-					targa_writedisk (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
 				}
 			}
 		}

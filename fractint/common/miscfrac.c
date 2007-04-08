@@ -140,12 +140,12 @@ static void _fastcall put_potential(int x, int y, U16 color)
 	}
 	g_put_color(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
 	/* we don't write this if driver_diskp() because the above g_put_color
-			was already a "writedisk" in that case */
+			was already a "disk_write" in that case */
 	if (!driver_diskp())
 	{
-		writedisk(x + sxoffs, y + syoffs, color >> 8);    /* upper 8 bits */
+		disk_write(x + sxoffs, y + syoffs, color >> 8);    /* upper 8 bits */
 	}
-	writedisk(x + sxoffs, y + sydots + syoffs, color&255); /* lower 8 bits */
+	disk_write(x + sxoffs, y + sydots + syoffs, color&255); /* lower 8 bits */
 }
 
 /* fixes border */
@@ -176,8 +176,8 @@ static U16 _fastcall get_potential(int x, int y)
 {
 	U16 color;
 
-	color = (U16)readdisk(x + sxoffs, y + syoffs);
-	color = (U16)((color << 8) + (U16) readdisk(x + sxoffs, y + sydots + syoffs));
+	color = (U16)disk_read(x + sxoffs, y + syoffs);
+	color = (U16)((color << 8) + (U16) disk_read(x + sxoffs, y + sydots + syoffs));
 	return color;
 }
 
@@ -454,7 +454,7 @@ int plasma(void)
 
 	if (s_max_plasma != 0)
 	{
-		if (pot_startdisk() >= 0)
+		if (disk_start_potential() >= 0)
 		{
 			/* s_max_plasma = (U16)(1L << 16) -1; */
 			s_max_plasma = 0xFFFF;
@@ -465,7 +465,7 @@ int plasma(void)
 		}
 		else
 		{
-			s_max_plasma = 0;        /* can't do potential (startdisk failed) */
+			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
 			param[3]   = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
