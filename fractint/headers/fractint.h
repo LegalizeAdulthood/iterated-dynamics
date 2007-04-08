@@ -29,6 +29,10 @@ typedef BYTE BOOLEAN;
 
 #define NUM_BOXES 4096
 
+/* g_force_symmetry values */
+#define FORCESYMMETRY_NONE		999
+#define FORCESYMMETRY_SEARCH	1000
+
 /* savedac values */
 #define SAVEDAC_NO		0
 #define SAVEDAC_YES		1

@@ -283,7 +283,7 @@ init_restart:
 	stdcalcmode      = usr_stdcalcmode;
 	g_periodicity_check = usr_periodicitycheck;
 	distest          = usr_distest;
-	biomorph         = usr_biomorph;
+	g_biomorph         = g_user_biomorph;
 
 	g_potential_flag = FALSE;
 	if (potparam[0] != 0.0
@@ -354,7 +354,7 @@ init_restart:
 	{
 		g_rq_limit = bailout;
 	}
-	else if (biomorph != -1) /* biomorph benefits from larger bailout */
+	else if (g_biomorph != -1) /* biomorph benefits from larger bailout */
 	{
 		g_rq_limit = 100;
 	}
@@ -416,7 +416,7 @@ init_restart:
 		&& (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
 		&& (param[1] > -2.0 && param[1] < 2.0)
 		&& !g_invert                                /* and not inverting */
-		&& biomorph == -1                         /* and not biomorphing */
+		&& g_biomorph == -1                         /* and not biomorphing */
 		&& g_rq_limit <= 4.0                           /* and bailout not too high */
 		&& (outside > -2 || outside < -6)         /* and no funny outside stuff */
 		&& debugflag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */

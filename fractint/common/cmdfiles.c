@@ -40,11 +40,11 @@ int     g_potential_16bit;               /* store 16 bit continuous potential va
 int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
 int     g_dither_flag;            /* 1 if want to dither GIFs */
 int     g_ask_video;               /* flag for video prompting */
-char    g_float_flag;
-int     biomorph;               /* flag for biomorph */
-int     usr_biomorph;
-int     forcesymmetry;          /* force symmetry */
-int     showfile;               /* zero if file display pending */
+int		g_float_flag;
+int     g_biomorph;               /* flag for g_biomorph */
+int     g_user_biomorph;
+int     g_force_symmetry;          /* force symmetry */
+int     g_show_file;               /* zero if file display pending */
 int     rflag, rseed;           /* Random number seeding flag and value */
 int     decomp[2];              /* Decomposition coloring */
 long    distest;
@@ -264,7 +264,7 @@ int cmdfiles(int argc, char **argv)
 					{
 						strcpy(g_read_name, curarg);
 						extract_filename(browsename, g_read_name);
-						showfile = 0;
+						g_show_file = 0;
 						curarg[0] = 0;
 					}
 					fclose(initfile);
@@ -307,7 +307,7 @@ int cmdfiles(int argc, char **argv)
 	if (first_init == 0)
 	{
 		g_init_mode = -1; /* don't set video when <ins> key used */
-		showfile = 1;  /* nor startup image file              */
+		g_show_file = 1;  /* nor startup image file              */
 	}
 
 	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
@@ -316,16 +316,16 @@ int cmdfiles(int argc, char **argv)
 	{
 		first_init = 0;
 	}
-/*
-{
-				char msg[MSGLEN];
-				sprintf(msg, "cmdfiles colorpreloaded %d showfile %d savedac %d",
-				colorpreloaded, showfile, savedac);
-				stopmsg(0, msg);
-			}
-*/
+	/*
+	{
+		char msg[MSGLEN];
+		sprintf(msg, "cmdfiles colorpreloaded %d showfile %d savedac %d",
+		colorpreloaded, g_show_file, savedac);
+		stopmsg(0, msg);
+	}
+	*/
 	/* PAR reads a file and sets color */
-	dontreadcolor = (colorpreloaded && showfile == 0) ? 1 : 0;
+	dontreadcolor = (colorpreloaded && (g_show_file == 0)) ? 1 : 0;
 
 	/*set structure of search directories*/
 	strcpy(searchfor.par, CommandFile);
@@ -343,17 +343,17 @@ int load_commands(FILE *infile)
 	int ret;
 	initcorners = initparams = 0; /* reset flags for type= */
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
-/*
-			{
-				char msg[MSGLEN];
-				sprintf(msg, "load commands colorpreloaded %d showfile %d savedac %d",
-				colorpreloaded, showfile, savedac);
-				stopmsg(0, msg);
-			}
-*/
+	/*
+	{
+		char msg[MSGLEN];
+		sprintf(msg, "load commands colorpreloaded %d showfile %d savedac %d",
+		colorpreloaded, g_show_file, savedac);
+		stopmsg(0, msg);
+	}
+	*/
 
 	/* PAR reads a file and sets color */
-	dontreadcolor = (colorpreloaded && showfile == 0) ? 1 : 0;
+	dontreadcolor = (colorpreloaded && (g_show_file == 0)) ? 1 : 0;
 	return ret;
 }
 
@@ -421,7 +421,7 @@ static void initvars_restart()          /* <ins> key init */
 	rflag = 0;                           /* not a fixed srand() seed */
 	rseed = init_rseed;
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
-	showfile = 1;
+	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	initcyclelimit = 55;                   /* spin-DAC default speed limit */
 	mapset = 0;                          /* no map= name active */
@@ -444,7 +444,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	usr_periodicitycheck = 1;            /* turn on periodicity    */
 	inside = 1;                          /* inside color = blue    */
 	fillcolor = -1;                      /* no special fill color */
-	usr_biomorph = -1;                   /* turn off biomorph flag */
+	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
 	outside = -1;                        /* outside color = -1 (not used) */
 	maxit = 150;                         /* initial maxiter        */
 	usr_stdcalcmode = 'g';               /* initial solid-guessing */
@@ -480,7 +480,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_pseudo_x = 0;
 	g_pseudo_y = 0;
 	distestwidth = 71;
-	forcesymmetry = 999;                 /* symmetry not forced */
+	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
 	xx3rd = xxmin = -2.5; xxmax = 1.5;   /* initial corner values  */
 	yy3rd = yymin = -1.5; yymax = 1.5;   /* initial corner values  */
 	bf_math = 0;
@@ -1041,7 +1041,7 @@ static int filename_arg(const cmd_context *context)
 	existdir = merge_pathnames(g_read_name, context->value, context->mode);
 	if (existdir == 0)
 	{
-		showfile = 0;
+		g_show_file = 0;
 	}
 	else if (existdir < 0)
 	{
@@ -2184,7 +2184,7 @@ static int organize_formula_dir_arg(const cmd_context *context)
 
 static int biomorph_arg(const cmd_context *context)
 {
-	usr_biomorph = context->numval;
+	g_user_biomorph = context->numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2246,7 +2246,7 @@ static int symmetry_arg(const cmd_context *context)
 		{ "pi", PI_SYM },
 		{ "none", NOSYM }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &forcesymmetry))
+	if (named_value(args, NUM_OF(args), context->value, &g_force_symmetry))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}

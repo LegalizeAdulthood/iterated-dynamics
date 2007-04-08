@@ -81,7 +81,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		if (calc_status != CALCSTAT_RESUMABLE || showfile == 0)
+		if (calc_status != CALCSTAT_RESUMABLE || g_show_file == 0)
 		{
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
@@ -223,7 +223,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
 		}
 
-		if (showfile == 0)
+		if (g_show_file == 0)
 		{               /* loading an image */
 			outln_cleanup = NULL;          /* outln routine can set this */
 			if (display3d)                 /* set up 3D decoding */
@@ -242,7 +242,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{            /* .pot format input file */
 				if (pot_startdisk() < 0)
 				{                           /* pot file failed?  */
-					showfile = 1;
+					g_show_file = 1;
 					g_potential_flag  = FALSE;
 					g_potential_16bit = FALSE;
 					g_init_mode = -1;
@@ -328,9 +328,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		history_save_info();
 
-		if (showfile == 0)
+		if (g_show_file == 0)
 		{               /* image has been loaded */
-			showfile = 1;
+			g_show_file = 1;
 			if (initbatch == INIT_BATCH_NORMAL && calc_status == CALCSTAT_RESUMABLE)
 			{
 				initbatch = INIT_BATCH_FINISH_CALC; /* flag to finish calc before save */
@@ -674,7 +674,7 @@ static int look(char *stacked)
 	{
 	case FIK_ENTER:
 	case FIK_ENTER_2:
-		showfile = 0;       /* trigger load */
+		g_show_file = 0;       /* trigger load */
 		browsing = TRUE;    /* but don't ask for the file name as it's
 							* just been selected */
 		if (name_stack_ptr == 15)
@@ -720,7 +720,7 @@ static int look(char *stacked)
 			strcpy(browsename, file_name_stack[name_stack_ptr]);
 			merge_pathnames(g_read_name, browsename, 2);
 			browsing = TRUE;
-			showfile = 0;
+			g_show_file = 0;
 			if (g_ask_video)
 			{
 				driver_stack_screen(); /* save graphics image */
@@ -1114,7 +1114,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		xx3rd = xxmin;
 		yy3rd = yymin;
 		if (usr_distest == 0
-			&& usr_biomorph != -1
+			&& g_user_biomorph != -1
 			&& bitshift != 29)
 		{
 			xxmin *= 3.0;
@@ -1221,7 +1221,7 @@ static int handle_history(char *stacked, int kbdchar)
 		merge_pathnames(g_read_name, browsename, 2);
 		browsing = TRUE;
 		no_sub_images = FALSE;
-		showfile = 0;
+		g_show_file = 0;
 		if (g_ask_video)
 		{
 			driver_stack_screen();      /* save graphics image */
@@ -1368,7 +1368,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 			{
 				driver_stack_screen();   /* save graphics image */
 				strcpy(g_read_name, g_save_name);
-				showfile = 0;
+				g_show_file = 0;
 				return RESTORESTART;
 			}
 		}
@@ -1386,7 +1386,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 		resave_flag = RESAVE_NO;
 		started_resaves = FALSE;
 	}
-	showfile = -1;
+	g_show_file = -1;
 	return RESTORESTART;
 }
 
