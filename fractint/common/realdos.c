@@ -52,11 +52,11 @@ int stopmsg (int flags, char *msg)
 		static FILE *fp = NULL;
 		if (fp == NULL && initbatch == INIT_BATCH_NONE)
 		{
-			fp = dir_fopen(workdir, "stopmsg.txt", "w");
+			fp = dir_fopen(g_work_dir, "stopmsg.txt", "w");
 		}
 		else
 		{
-			fp = dir_fopen(workdir, "stopmsg.txt", "a");
+			fp = dir_fopen(g_work_dir, "stopmsg.txt", "a");
 		}
 		if (fp != NULL)
 		{

@@ -2394,7 +2394,7 @@ static void PalTable__SaveRect(PalTable *me)
 
 		if (me->file == NULL)
 		{
-			me->file = dir_fopen(tempdir, scrnfile, "w + b");
+			me->file = dir_fopen(g_temp_dir, scrnfile, "w + b");
 			if (me->file == NULL)
 			{
 				me->stored_at = NOWHERE;
@@ -3391,7 +3391,7 @@ static PalTable *PalTable_Construct(void)
 	me->top            = 255;
 	me->bottom         = 0 ;
 
-	me->undo_file    = dir_fopen(tempdir, undofile, "w+b");
+	me->undo_file    = dir_fopen(g_temp_dir, undofile, "w+b");
 	me->curr_changed = FALSE;
 	me->num_redo     = 0;
 
@@ -3457,13 +3457,13 @@ static void PalTable_Destroy(PalTable *me)
 	if (me->file != NULL)
 		{
 		fclose(me->file);
-		dir_remove(tempdir, scrnfile);
+		dir_remove(g_temp_dir, scrnfile);
 		}
 
 	if (me->undo_file != NULL)
 		{
 		fclose(me->undo_file);
-		dir_remove(tempdir, undofile);
+		dir_remove(g_temp_dir, undofile);
 		}
 
 	if (me->memory != NULL)

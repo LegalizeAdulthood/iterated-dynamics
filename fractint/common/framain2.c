@@ -25,7 +25,7 @@ static void julman()
 {
 	FILE *fp;
 	int i;
-	fp = dir_fopen(workdir, "toggle.txt", "w");
+	fp = dir_fopen(g_work_dir, "toggle.txt", "w");
 	i = -1;
 	while (fractalspecific[++i].name)
 	{
@@ -692,10 +692,10 @@ static int look(char *stacked)
 		strcpy(file_name_stack[name_stack_ptr], browsename);
 		/*
 		splitpath(browsename, NULL, NULL, fname, ext);
-		splitpath(readname, drive, dir, NULL, NULL);
-		makepath(readname, drive, dir, fname, ext);
+		splitpath(g_read_name, drive, dir, NULL, NULL);
+		makepath(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(readname, browsename, 2);
+		merge_pathnames(g_read_name, browsename, 2);
 		if (askvideo)
 		{
 				driver_stack_screen();   /* save graphics image */
@@ -718,7 +718,7 @@ static int look(char *stacked)
 				break;
 			}
 			strcpy(browsename, file_name_stack[name_stack_ptr]);
-			merge_pathnames(readname, browsename, 2);
+			merge_pathnames(g_read_name, browsename, 2);
 			browsing = TRUE;
 			showfile = 0;
 			if (askvideo)
@@ -1215,10 +1215,10 @@ static int handle_history(char *stacked, int kbdchar)
 		strcpy(browsename, file_name_stack[name_stack_ptr]);
 		/*
 		splitpath(browsename, NULL, NULL, fname, ext);
-		splitpath(readname, drive, dir, NULL, NULL);
-		makepath(readname, drive, dir, fname, ext);
+		splitpath(g_read_name, drive, dir, NULL, NULL);
+		makepath(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(readname, browsename, 2);
+		merge_pathnames(g_read_name, browsename, 2);
 		browsing = TRUE;
 		no_sub_images = FALSE;
 		showfile = 0;
@@ -1367,7 +1367,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 			if (initbatch == INIT_BATCH_SAVE)
 			{
 				driver_stack_screen();   /* save graphics image */
-				strcpy(readname, savename);
+				strcpy(g_read_name, savename);
 				showfile = 0;
 				return RESTORESTART;
 			}
@@ -2291,7 +2291,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	if (row == 0)
 	{
 		errcount = 0;
-		cmp_fp = dir_fopen(workdir, "cmperr", initbatch ? "a" : "w");
+		cmp_fp = dir_fopen(g_work_dir, "cmperr", initbatch ? "a" : "w");
 		outln_cleanup = cmp_line_cleanup;
 		}
 	if (pot16bit)  /* 16 bit info, ignore odd numbered rows */
@@ -2336,7 +2336,7 @@ static void cmp_line_cleanup(void)
 		timestring = ctime(&ltime);
 		timestring[24] = 0; /*clobber newline in time string */
 		fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-							timestring, readname, errcount);
+							timestring, g_read_name, errcount);
 		}
 	fclose(cmp_fp);
 }

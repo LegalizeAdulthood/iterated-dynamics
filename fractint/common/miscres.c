@@ -826,10 +826,10 @@ int tab_display_2(char *msg)
 		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
 	}
 	row++;
-	show_str_var("tempdir",     tempdir,      &row, msg);
-	show_str_var("workdir",     workdir,      &row, msg);
+	show_str_var("tempdir",     g_temp_dir,      &row, msg);
+	show_str_var("workdir",     g_work_dir,      &row, msg);
 //	show_str_var("printfile",   PrintName,    &row, msg);
-	show_str_var("filename",    readname,     &row, msg);
+	show_str_var("filename",    g_read_name,     &row, msg);
 	show_str_var("formulafile", FormFileName, &row, msg);
 	show_str_var("savename",    savename,     &row, msg);
 	show_str_var("parmfile",    CommandFile,  &row, msg);
@@ -1713,9 +1713,9 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		cleartempmsg();
 	}
 
-	if (!found && orgfrmsearch && itemtype == 1)
+	if (!found && g_organize_formula_search && itemtype == 1)
 	{
-		splitpath(orgfrmdir, drive, dir, NULL, NULL);
+		splitpath(g_organize_formula_dir, drive, dir, NULL, NULL);
 		fname[0] = '_';
 		fname[1] = (char) 0;
 		if (isalpha(itemname[0]))

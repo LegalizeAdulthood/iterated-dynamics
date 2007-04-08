@@ -1306,7 +1306,7 @@ finish:
 	{
 		fclose(file);
 		file = NULL;
-		dir_remove(tempdir, scrnfile);
+		dir_remove(g_temp_dir, scrnfile);
 	}
 	show_numbers = 0;
 	driver_unget_key(kbdchar);

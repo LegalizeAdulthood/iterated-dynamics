@@ -92,7 +92,7 @@ int gifview()
 	colcount = g_row_count = 0;
 
 	/* Open the file */
-	strcpy(temp1, (outln == outline_stereo) ? stereomapname : readname);
+	strcpy(temp1, (outln == outline_stereo) ? stereomapname : g_read_name);
 	if (has_ext(temp1) == NULL)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
@@ -103,7 +103,7 @@ int gifview()
 		}
 		else
 		{
-			strcpy(temp1, (outln == outline_stereo) ? stereomapname : readname);
+			strcpy(temp1, (outln == outline_stereo) ? stereomapname : g_read_name);
 			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}

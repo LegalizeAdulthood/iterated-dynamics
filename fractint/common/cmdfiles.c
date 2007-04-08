@@ -28,11 +28,11 @@ int     g_size_dot;                /* size of dot crawling cursor */
 char    g_record_colors;           /* default PAR color-writing method */
 char    g_auto_show_dot = 0;          /* dark, medium, bright */
 char    g_start_show_orbit = 0;      /* show orbits on at start of fractal */
-char    readname[FILE_MAX_PATH]; /* name of fractal input file */
-char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
-char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
-char    orgfrmdir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
-char    gifmask[FILE_MAX_PATH] = {""};
+char    g_read_name[FILE_MAX_PATH]; /* name of fractal input file */
+char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
+char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
+char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
+char    g_gif_mask[FILE_MAX_PATH] = {""};
 char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; /* Name for print-to-file */
 char    savename[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
 char    autoname[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
@@ -96,7 +96,7 @@ float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
 int fastrestore = 0;          /* 1 - reset viewwindows prior to a restore
 								and do not display warnings when video
 								mode changes during restore */
-int orgfrmsearch = 0;            /* 1 - user has specified a directory for
+int g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
 									Orgform formula compilation files */
 int     orbitsave = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
 int orbit_delay;                /* clock ticks delating orbit release */
@@ -263,8 +263,8 @@ int cmdfiles(int argc, char **argv)
 						&& tempstring[3] >= '8' && tempstring[3] <= '9'
 						&& tempstring[4] >= '0' && tempstring[4] <= '9')
 					{
-						strcpy(readname, curarg);
-						extract_filename(browsename, readname);
+						strcpy(g_read_name, curarg);
+						extract_filename(browsename, g_read_name);
 						showfile = 0;
 						curarg[0] = 0;
 					}
@@ -373,13 +373,13 @@ static void initvars_run()              /* once per run init */
 	{
 		if (isadirectory(p) != 0)
 		{
-			strcpy(tempdir, p);
-			fix_dirname(tempdir);
+			strcpy(g_temp_dir, p);
+			fix_dirname(g_temp_dir);
 		}
 	}
 	else
 	{
-		*tempdir = 0;
+		*g_temp_dir = 0;
 	}
 }
 
@@ -421,7 +421,7 @@ static void initvars_restart()          /* <ins> key init */
 	reset_ifs_defn();
 	rflag = 0;                           /* not a fixed srand() seed */
 	rseed = init_rseed;
-	strcpy(readname, DOTSLASH);           /* initially current directory */
+	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
 	showfile = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	initcyclelimit = 55;                   /* spin-DAC default speed limit */
@@ -931,15 +931,15 @@ static int make_par_arg(const cmd_context *context)
 	{
 		strcat(CommandFile, ".par");
 	}
-	if (strcmp(readname, DOTSLASH) == 0)
+	if (strcmp(g_read_name, DOTSLASH) == 0)
 	{
-		*readname = 0;
+		*g_read_name = 0;
 	}
 	if (next == NULL)
 	{
-		if (*readname != 0)
+		if (*g_read_name != 0)
 		{
-			extract_filename(CommandName, readname);
+			extract_filename(CommandName, g_read_name);
 		}
 		else if (*MAP_name != 0)
 		{
@@ -956,7 +956,7 @@ static int make_par_arg(const cmd_context *context)
 		CommandName[ITEMNAMELEN] = 0;
 	}
 	*s_makepar = 0; /* used as a flag for makepar case */
-	if (*readname != 0)
+	if (*g_read_name != 0)
 	{
 		if (read_overlay() != 0)
 		{
@@ -979,10 +979,10 @@ static int make_par_arg(const cmd_context *context)
 	ABORT(0, "Don't call standard I/O without a console on Windows");
 	_ASSERTE(0 && "Don't call standard I/O without a console on Windows");
 #else
-	if (*readname != 0)
+	if (*g_read_name != 0)
 	{
 		printf("copying fractal info in GIF %s to PAR %s/%s\n",
-			readname, CommandFile, CommandName);
+			g_read_name, CommandFile, CommandName);
 	}
 	else if (*MAP_name != 0)
 	{
@@ -1025,9 +1025,9 @@ static int filename_arg(const cmd_context *context)
 		{
 			return badarg(context->curarg);
 		}
-		gifmask[0] = '*';
-		gifmask[1] = 0;
-		strcat(gifmask, context->value);
+		g_gif_mask[0] = '*';
+		g_gif_mask[1] = 0;
+		strcat(g_gif_mask, context->value);
 		return COMMAND_OK;
 	}
 	if (context->valuelen > (FILE_MAX_PATH-1))
@@ -1039,7 +1039,7 @@ static int filename_arg(const cmd_context *context)
 		return badarg(context->curarg);
 	}
 
-	existdir = merge_pathnames(readname, context->value, context->mode);
+	existdir = merge_pathnames(g_read_name, context->value, context->mode);
 	if (existdir == 0)
 	{
 		showfile = 0;
@@ -1050,7 +1050,7 @@ static int filename_arg(const cmd_context *context)
 	}
 	else
 	{
-		extract_filename(browsename, readname);
+		extract_filename(browsename, g_read_name);
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -1560,8 +1560,8 @@ static int temp_dir_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	strcpy(tempdir, context->value);
-	fix_dirname(tempdir);
+	strcpy(g_temp_dir, context->value);
+	fix_dirname(g_temp_dir);
 	return COMMAND_OK;
 }
 
@@ -1575,8 +1575,8 @@ static int work_dir_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	strcpy(workdir, context->value);
-	fix_dirname(workdir);
+	strcpy(g_work_dir, context->value);
+	fix_dirname(g_work_dir);
 	return COMMAND_OK;
 }
 
@@ -2170,16 +2170,16 @@ static int fast_restore_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int org_frm_dir_arg(const cmd_context *context)
+static int organize_formula_dir_arg(const cmd_context *context)
 {
 	if ((context->valuelen > (FILE_MAX_DIR-1))
 		|| (isadirectory(context->value) == 0))
 	{
 		return badarg(context->curarg);
 	}
-	orgfrmsearch = 1;
-	strcpy(orgfrmdir, context->value);
-	fix_dirname(orgfrmdir);
+	g_organize_formula_search = TRUE;
+	strcpy(g_organize_formula_dir, context->value);
+	fix_dirname(g_organize_formula_dir);
 	return COMMAND_OK;
 }
 
@@ -3445,7 +3445,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "ramvideo", 		ignore_arg },			/* ramvideo=?   */
 			{ "float", 			float_arg },			/* float=? */
 			{ "fastrestore", 	fast_restore_arg },		/* fastrestore=? */
-			{ "orgfrmdir", 		org_frm_dir_arg },		/* orgfrmdir=? */
+			{ "orgfrmdir", 		organize_formula_dir_arg },		/* orgfrmdir=? */
 			{ "biomorph", 		biomorph_arg },			/* biomorph=? */
 			{ "orbitsave", 		orbit_save_arg },		/* orbitsave=? */
 			{ "bailout", 		bail_out_arg },			/* bailout=? */
