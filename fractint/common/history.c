@@ -138,7 +138,7 @@ void _fastcall history_save_info(void)
 	current.logcalc				= (short) g_log_dynamic_calculate;
 	current.ismand				= (short) g_is_mand;
 	current.proximity			= g_proximity;
-	current.nobof				= (short) nobof;
+	current.no_bof				= (short) g_no_bof;
 	current.orbit_delay			= (short) g_orbit_delay;
 	current.orbit_interval		= g_orbit_interval;
 	current.oxmin				= g_orbit_x_min;
@@ -335,7 +335,7 @@ void _fastcall history_restore_info(void)
 	g_log_dynamic_calculate			= last.logcalc;
 	g_is_mand				= last.ismand;
 	g_proximity				= last.proximity;
-	nobof					= last.nobof;
+	g_no_bof					= last.no_bof;
 	g_orbit_delay				= last.orbit_delay;
 	g_orbit_interval		= last.orbit_interval;
 	g_orbit_x_min			= last.oxmin;

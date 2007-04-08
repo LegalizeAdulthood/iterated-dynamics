@@ -507,7 +507,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short stop_pass;
     short quick_calculate;
     double proximity;
-    short nobof;
+    short no_bof;
     long orbit_interval;
     short orbit_delay;
     double math_tolerance[2];
@@ -611,7 +611,7 @@ struct history_info
     short stop_pass;
     short ismand;
     double proximity;
-    short nobof;
+    short no_bof;
     double math_tolerance[2];
     short orbit_delay;
     long orbit_interval;

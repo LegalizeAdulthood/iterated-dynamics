@@ -915,7 +915,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->stop_pass = (short) g_stop_pass;
 	save_info->quick_calculate = (short) g_quick_calculate;
 	save_info->proximity = g_proximity;
-	save_info->nobof = (short) nobof;
+	save_info->no_bof = (short) g_no_bof;
 	save_info->orbit_interval = g_orbit_interval;
 	save_info->orbit_delay = (short) g_orbit_delay;
 	save_info->math_tolerance[0] = g_math_tolerance[0];
