@@ -1820,7 +1820,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_HALLEY, HF_HALLEY, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, MPHALLEY, XYAXIS,
-		halley_orbit_fp, Halley_per_pixel, HalleySetup, standard_fractal,
+		halley_orbit_fp, halley_per_pixel, HalleySetup, standard_fractal,
 		BAILOUT_NONE
 	},
 

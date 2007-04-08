@@ -3042,7 +3042,7 @@ int halley_per_pixel_mpc(void)
 #endif
 }
 
-int Halley_per_pixel(void)
+int halley_per_pixel(void)
 {
 	if (g_invert)
 	{
