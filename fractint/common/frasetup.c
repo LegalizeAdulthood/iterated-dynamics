@@ -702,7 +702,7 @@ JulialongSetup(void)
 int
 TrigPlusSqrlongSetup(void)
 {
-	curfractalspecific->per_pixel =  julia_per_pixel_fp;
+	curfractalspecific->per_pixel =  julia_per_pixel;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit;
 	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
@@ -722,7 +722,7 @@ TrigPlusSqrlongSetup(void)
 int
 TrigPlusSqrfpSetup(void)
 {
-	curfractalspecific->per_pixel =  juliafp_per_pixel;
+	curfractalspecific->per_pixel =  julia_per_pixel_fp;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit_fp;
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
@@ -747,7 +747,7 @@ TrigPlusTriglongSetup(void)
 	{
 		return TrigPlusSqrlongSetup();
 	}
-	curfractalspecific->per_pixel =  julia_per_pixel;
+	curfractalspecific->per_pixel =  julia_per_pixel_l;
 	curfractalspecific->orbitcalc =  trig_plus_trig_orbit;
 	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
