@@ -235,7 +235,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_MANDEL, HF_MANDEL, WINFRAC | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		1, JULIA, NOFRACTAL, MANDELFP, XAXIS_NOPARM,
-		julia_orbit, mandelbrot_per_pixel, MandelSetup, standard_fractal,
+		julia_orbit, mandelbrot_per_pixel, mandelbrot_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -246,7 +246,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_JULIA, HF_JULIA, WINFRAC | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, MANDEL, JULIAFP, ORIGIN,
-		julia_orbit, julia_per_pixel, JuliaSetup, standard_fractal,
+		julia_orbit, julia_per_pixel, julia_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
