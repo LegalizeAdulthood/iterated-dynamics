@@ -206,15 +206,15 @@ extern int find_alternate_math(int, int);
 
 /*  cmdfiles -- C file prototypes */
 
-extern int cmdfiles(int, char **);
+extern int command_files(int, char **);
 extern int load_commands(FILE *);
 extern void set_3d_defaults(void);
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
 extern int init_msg(const char *, char *, int);
 extern int process_command(char *curarg, int mode);
-extern int getpower10(LDBL x);
-extern void dopause(int);
+extern int get_power_10(LDBL x);
+extern void pause_error(int);
 
 /*  decoder -- C file prototypes */
 

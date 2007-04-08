@@ -927,8 +927,6 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	if (i & COMMAND_FRACTAL_PARAM)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
-		/* backwards_v18(); */  /* moved this to cmdfiles.c */
-		/* backwards_v19(); */
 		*kbdmore = 0;
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 	}

@@ -105,7 +105,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		potparam[0]   = read_info.potential[0];
 		potparam[1]   = read_info.potential[1];
 		potparam[2]   = read_info.potential[2];
-		if (*s_makepar == '\0')
+		if (*g_make_par == '\0')
 		{
 			colors = read_info.colors;
 		}
@@ -692,7 +692,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		fileaspectratio = g_screen_aspect_ratio;
 	}
 
-	if (*s_makepar == 0 && (gifstart[10] & 0x80) != 0)
+	if (*g_make_par == 0 && (gifstart[10] & 0x80) != 0)
 	{
 		for (i = 0; i < filecolors; i++)
 		{

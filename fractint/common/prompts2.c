@@ -1330,7 +1330,7 @@ void goodbye(void)                  /* we done.  Bail out */
 #ifdef WINFRACT
 	return;
 #endif
-	if (*s_makepar != 0)
+	if (*g_make_par != 0)
 	{
 		driver_set_for_text();
 	}
@@ -1338,7 +1338,7 @@ void goodbye(void)                  /* we done.  Bail out */
 	UnixDone();
 	printf("\n\n\n%s\n", goodbyemessage); /* printf takes pointer */
 #endif
-	if (*s_makepar != 0)
+	if (*g_make_par != 0)
 	{
 		driver_move_cursor(6, 0);
 		discardgraphics(); /* if any emm/xmm tied up there, release it */
