@@ -416,11 +416,11 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 
 #if 1
 	/* what we go through under DOS to deal with memory! We re-use
-		the sizeofstring array (8k). The first 660 bytes is for
+		the g_size_of_string array (8k). The first 660 bytes is for
 		static variables, then we make our own "stack" with copies
 		for each recursive call of rhombus() for the rest.
 		*/
-	mem_int    = (int *)sizeofstring;
+	mem_int    = (int *)g_size_of_string;
 	mem_static = (DBLS *)(mem_int + 13);
 	mem = mem_static+ 66 + 50*rhombus_depth;
 #endif

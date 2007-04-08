@@ -35,7 +35,7 @@ tgaview()
 	for (i = 0; i < (int)height; ++i)
 	{
 		t16_getline(fptarga, width, (U16 *)boxx);
-		if ((*outln)((void *)boxx, width))
+		if ((*g_out_line)((void *)boxx, width))
 		{
 			fclose(fptarga);
 			fptarga = NULL;

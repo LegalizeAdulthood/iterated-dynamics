@@ -56,7 +56,7 @@ struct PEND_OP
 
 #if !defined(XFRACT) && !defined(_WIN32)
 /* reuse an array in the decoder */
-JUMP_CONTROL_ST *jump_control = (JUMP_CONTROL_ST *) sizeofstring;
+JUMP_CONTROL_ST *jump_control = (JUMP_CONTROL_ST *) g_size_of_string;
 #else
 JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 #endif

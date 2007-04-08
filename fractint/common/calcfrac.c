@@ -1100,7 +1100,7 @@ static void perform_work_list()
 			{
 				s_show_dot_width--;
 			}
-			s_save_dots = (BYTE *)decoderline;
+			s_save_dots = (BYTE *)g_decoder_line;
 			s_save_dots_len /= 2;
 			s_fill_buffer = s_save_dots + s_save_dots_len;
 			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);

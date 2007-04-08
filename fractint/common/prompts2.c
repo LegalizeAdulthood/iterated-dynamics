@@ -597,18 +597,21 @@ int get_toggles2()
 			{
 				j = 1;
 			}
-			}
+		}
 		else /* turned it off */
+		{
 			if (!driver_diskp()) /* ditch the disk video */
 			{
 				enddisk();
 			}
 			else /* keep disk video, but ditch the fraction part at end */
-				disk16bit = 0;
+			{
+				g_disk_16bit = 0;
+			}
 		}
+	}
 
 	++k;
-/* usr_distest = (uvalues[k].uval.ival > 32000) ? 32000 : uvalues[k].uval.ival; */
 	usr_distest = uvalues[k].uval.Lval;
 	if (usr_distest != old_usr_distest)
 	{
