@@ -62,6 +62,11 @@
 #define DIST1(z)			(((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
 #define LDIST1(z)			(lsqr((((z).x)-fudge)) + lsqr(((z).y)))
 
+static double _fastcall dx_pixel_calc(void);
+static double _fastcall dy_pixel_calc(void);
+static long _fastcall lx_pixel_calc(void);
+static long _fastcall ly_pixel_calc(void);
+
 _LCMPLX g_coefficient_l = { 0, 0 };
 _LCMPLX g_old_z_l = { 0, 0 };
 _LCMPLX g_new_z_l = { 0, 0 };
@@ -112,6 +117,11 @@ int g_a_plus_1_degree = 0;
 struct MP g_a_plus_1_mp;
 struct MP g_a_plus_1_degree_mp;
 struct MPC g_temp_parameter_mpc;
+double (_fastcall *g_dx_pixel)(void) = dx_pixel_calc;
+double (_fastcall *g_dy_pixel)(void) = dy_pixel_calc;
+long   (_fastcall *g_lx_pixel)(void) = lx_pixel_calc;
+long   (_fastcall *g_ly_pixel)(void) = ly_pixel_calc;
+
 
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
@@ -2543,8 +2553,8 @@ int circle_orbit(void)
 /* transform points with reciprocal function */
 void invert_z(_CMPLX *z)
 {
-	z->x = dxpixel();
-	z->y = dypixel();
+	z->x = g_dx_pixel();
+	z->y = g_dy_pixel();
 	z->x -= g_f_x_center; z->y -= g_f_y_center;  /* Normalize values to center of circle */
 
 	g_temp_sqr_x = sqr(z->x) + sqr(z->y);  /* Get old radius */
@@ -2581,8 +2591,8 @@ int julia_per_pixel_l(void)
 	}
 	else
 	{
-		g_old_z_l.x = lxpixel();
-		g_old_z_l.y = lypixel();
+		g_old_z_l.x = g_lx_pixel();
+		g_old_z_l.y = g_ly_pixel();
 	}
 	return 0;
 #else
@@ -2608,10 +2618,10 @@ int mandelbrot_per_pixel_l(void)
 	/* integer mandel types */
 	/* barnsleym1 */
 	/* barnsleym2 */
-	g_initial_z_l.x = lxpixel();
+	g_initial_z_l.x = g_lx_pixel();
 	if (save_release >= 2004)
 	{
-		g_initial_z_l.y = lypixel();
+		g_initial_z_l.y = g_ly_pixel();
 	}
 
 	if (g_invert)
@@ -2671,8 +2681,8 @@ int julia_per_pixel(void)
 	}
 	else
 	{
-		g_old_z_l.x = lxpixel();
-		g_old_z_l.y = lypixel();
+		g_old_z_l.x = g_lx_pixel();
+		g_old_z_l.y = g_ly_pixel();
 	}
 
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
@@ -2721,10 +2731,10 @@ int mandelbrot_per_pixel(void)
 	}
 	else
 	{
-		g_initial_z_l.x = lxpixel();
+		g_initial_z_l.x = g_lx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z_l.y = lypixel();
+			g_initial_z_l.y = g_ly_pixel();
 		}
 	}
 	switch (fractype)
@@ -2788,10 +2798,10 @@ int marks_mandelbrot_per_pixel()
 	}
 	else
 	{
-		g_initial_z_l.x = lxpixel();
+		g_initial_z_l.x = g_lx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z_l.y = lypixel();
+			g_initial_z_l.y = g_ly_pixel();
 		}
 	}
 
@@ -2836,10 +2846,10 @@ int marks_mandelbrot_per_pixel_fp()
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
@@ -2893,10 +2903,10 @@ int mandelbrot_per_pixel_fp(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 	switch (fractype)
@@ -2954,8 +2964,8 @@ int julia_per_pixel_fp(void)
 	}
 	else
 	{
-		g_old_z.x = dxpixel();
-		g_old_z.y = dypixel();
+		g_old_z.x = g_dx_pixel();
+		g_old_z.y = g_dy_pixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  /* precalculated value for regular Julia */
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -2974,8 +2984,8 @@ int julia_per_pixel_mpc(void)
 	}
 	else
 	{
-		g_old_z.x = dxpixel();
-		g_old_z.y = dypixel();
+		g_old_z.x = g_dx_pixel();
+		g_old_z.y = g_dy_pixel();
 	}
 	mpcold.x = *pd2MP(g_old_z.x);
 	mpcold.y = *pd2MP(g_old_z.y);
@@ -3001,10 +3011,10 @@ int other_mandelbrot_per_pixel_fp(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
@@ -3026,10 +3036,10 @@ int halley_per_pixel_mpc(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
@@ -3050,10 +3060,10 @@ int halley_per_pixel(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
@@ -3070,8 +3080,8 @@ int other_julia_per_pixel_fp(void)
 	}
 	else
 	{
-		g_old_z.x = dxpixel();
-		g_old_z.y = dypixel();
+		g_old_z.x = g_dx_pixel();
+		g_old_z.y = g_dy_pixel();
 	}
 	return 0;
 }
@@ -3086,8 +3096,8 @@ int other_julia_per_pixel_fp(void)
 
 int quaternion_julia_per_pixel_fp(void)
 {
-	g_old_z.x = dxpixel();
-	g_old_z.y = dypixel();
+	g_old_z.x = g_dx_pixel();
+	g_old_z.y = g_dy_pixel();
 	g_float_parameter->x = param[4];
 	g_float_parameter->y = param[5];
 	g_quaternion_c  = param[0];
@@ -3103,8 +3113,8 @@ int quaternion_per_pixel_fp(void)
 	g_old_z.y = 0;
 	g_float_parameter->x = 0;
 	g_float_parameter->y = 0;
-	g_quaternion_c  = dxpixel();
-	g_quaternion_ci = dypixel();
+	g_quaternion_c  = g_dx_pixel();
+	g_quaternion_ci = g_dy_pixel();
 	g_quaternion_cj = param[2];
 	g_quaternion_ck = param[3];
 	return 0;
@@ -3118,10 +3128,10 @@ int marks_complex_mandelbrot_per_pixel(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 	g_old_z.x = g_initial_z.x + g_parameter.x; /* initial pertubation of parameters set */
@@ -3153,8 +3163,8 @@ int phoenix_per_pixel(void)
 	}
 	else
 	{
-		g_old_z_l.x = lxpixel();
-		g_old_z_l.y = lypixel();
+		g_old_z_l.x = g_lx_pixel();
+		g_old_z_l.y = g_ly_pixel();
 	}
 	g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
 	g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
@@ -3174,8 +3184,8 @@ int phoenix_per_pixel_fp(void)
 	}
 	else
 	{
-		g_old_z.x = dxpixel();
-		g_old_z.y = dypixel();
+		g_old_z.x = g_dx_pixel();
+		g_old_z.y = g_dy_pixel();
 	}
 	g_temp_sqr_x = sqr(g_old_z.x);  /* precalculated value */
 	g_temp_sqr_y = sqr(g_old_z.y);
@@ -3187,10 +3197,10 @@ int phoenix_per_pixel_fp(void)
 int mandelbrot_phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
-	g_initial_z_l.x = lxpixel();
+	g_initial_z_l.x = g_lx_pixel();
 	if (save_release >= 2004)
 	{
-		g_initial_z_l.y = lypixel();
+		g_initial_z_l.y = g_ly_pixel();
 	}
 
 	if (g_invert)
@@ -3232,10 +3242,10 @@ int mandelbrot_phoenix_per_pixel_fp(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
+		g_initial_z.x = g_dx_pixel();
 		if (save_release >= 2004)
 		{
-			g_initial_z.y = dypixel();
+			g_initial_z.y = g_dy_pixel();
 		}
 	}
 
@@ -3370,7 +3380,7 @@ int escher_orbit_fp(void)
 #define L g_static_roots[ 9]
 #define Z g_static_roots[10]
 
-int MandelbrotMix4Setup(void)
+int mandelbrot_mix4_setup(void)
 {
 	int sign_array = 0;
 	A.x = param[0];
@@ -3462,7 +3472,7 @@ int MandelbrotMix4Setup(void)
 	return 1;
 }
 
-int MandelbrotMix4fp_per_pixel(void)
+int mandelbrot_mix4_per_pixel_fp(void)
 {
 	if (g_invert)
 	{
@@ -3470,16 +3480,15 @@ int MandelbrotMix4fp_per_pixel(void)
 	}
 	else
 	{
-		g_initial_z.x = dxpixel();
-		g_initial_z.y = dypixel();
+		g_initial_z.x = g_dx_pixel();
+		g_initial_z.y = g_dy_pixel();
 	}
 	g_old_z = g_temp_z;
 	CMPLXtrig0(g_initial_z, C);        /* c = fn1(pixel): */
 	return 0; /* 1st iteration has been NOT been done */
 }
 
-int
-MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
+int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
 {
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
 	_CMPLX z_b, z_f;
@@ -3521,72 +3530,67 @@ MandelbrotMix4fpFractal(void) /* from formula by Jim Muth */
  */
 
 /* Real component, grid lookup version - requires dx0/dx1 arrays */
-static double _fastcall dxpixel_grid(void)
+static double _fastcall dx_pixel_grid(void)
 {
 	return dx0[g_col] + dx1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
-static double _fastcall dxpixel_calc(void)
+static double _fastcall dx_pixel_calc(void)
 {
 	return (double) (xxmin + g_col*delxx + g_row*delxx2);
 }
 
 /* Imaginary component, grid lookup version - requires dy0/dy1 arrays */
-static double _fastcall dypixel_grid(void)
+static double _fastcall dy_pixel_grid(void)
 {
 	return dy0[g_row] + dy1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static double _fastcall dypixel_calc(void)
+static double _fastcall dy_pixel_calc(void)
 {
 	return (double)(yymax - g_row*delyy - g_col*delyy2);
 }
 
 /* Real component, grid lookup version - requires lx0/lx1 arrays */
-static long _fastcall lxpixel_grid(void)
+static long _fastcall lx_pixel_grid(void)
 {
 	return lx0[g_col] + lx1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
-static long _fastcall lxpixel_calc(void)
+static long _fastcall lx_pixel_calc(void)
 {
 	return xmin + g_col*delx + g_row*delx2;
 }
 
 /* Imaginary component, grid lookup version - requires ly0/ly1 arrays */
-static long _fastcall lypixel_grid(void)
+static long _fastcall ly_pixel_grid(void)
 {
 	return ly0[g_row] + ly1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static long _fastcall lypixel_calc(void)
+static long _fastcall ly_pixel_calc(void)
 {
 	return ymax - g_row*dely - g_col*dely2;
 }
-
-double (_fastcall *dxpixel)(void) = dxpixel_calc;
-double (_fastcall *dypixel)(void) = dypixel_calc;
-long   (_fastcall *lxpixel)(void) = lxpixel_calc;
-long   (_fastcall *lypixel)(void) = lypixel_calc;
 
 void set_pixel_calc_functions(void)
 {
 	if (g_use_grid)
 	{
-		dxpixel = dxpixel_grid;
-		dypixel = dypixel_grid;
-		lxpixel = lxpixel_grid;
-		lypixel = lypixel_grid;
+		g_dx_pixel = dx_pixel_grid;
+		g_dy_pixel = dy_pixel_grid;
+		g_lx_pixel = lx_pixel_grid;
+		g_ly_pixel = ly_pixel_grid;
 	}
 	else
 	{
-		dxpixel = dxpixel_calc;
-		dypixel = dypixel_calc;
-		lxpixel = lxpixel_calc;
-		lypixel = lypixel_calc;
+		g_dx_pixel = dx_pixel_calc;
+		g_dy_pixel = dy_pixel_calc;
+		g_lx_pixel = lx_pixel_calc;
+		g_ly_pixel = ly_pixel_calc;
 	}
 }

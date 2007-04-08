@@ -2248,7 +2248,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, WINFRAC | BAILTEST | TRIG1 | MORE,
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, standard_fractal,
+		mandelbrot_mix4_orbit_fp, mandelbrot_mix4_per_pixel_fp, mandelbrot_mix4_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 #endif

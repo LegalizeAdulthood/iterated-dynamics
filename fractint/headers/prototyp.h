@@ -504,9 +504,9 @@ extern int phoenix_per_pixel_fp(void);
 extern int mandelbrot_phoenix_per_pixel(void);
 extern int mandelbrot_phoenix_per_pixel_fp(void);
 extern void set_pixel_calc_functions(void);
-extern int MandelbrotMix4fp_per_pixel(void);
-extern int MandelbrotMix4fpFractal(void);
-extern int MandelbrotMix4Setup(void);
+extern int mandelbrot_mix4_per_pixel_fp(void);
+extern int mandelbrot_mix4_orbit_fp(void);
+extern int mandelbrot_mix4_setup(void);
 
 /*  fractint -- C file prototypes */
 

@@ -135,11 +135,11 @@ extern BYTE                  g_stack[];
 extern U16                   dv_handle;
 extern double *				 dx0;
 extern double *				 dx1;
-extern double (_fastcall *   dxpixel)(void); /* set in FRACTALS.C */
+extern double (_fastcall *   g_dx_pixel)(void); /* set in FRACTALS.C */
 extern double                dxsize;
 extern double *				 dy0;
 extern double *				 dy1;
-extern double (_fastcall *   dypixel)(void); /* set in FRACTALS.C */
+extern double (_fastcall *   g_dy_pixel)(void); /* set in FRACTALS.C */
 extern double                dysize;
 //extern int                   EPSFileType;
 extern int                   escape_exit;
@@ -274,10 +274,10 @@ extern long                  g_temp_sqr_y_l;
 extern _LCMPLX               g_tmp_z_l;
 extern long *            lx0;
 extern long *            lx1;
-extern long (_fastcall *     lxpixel)(void); /* set in FRACTALS.C */
+extern long (_fastcall *     g_lx_pixel)(void); /* set in FRACTALS.C */
 extern long *            ly0;
 extern long *            ly1;
-extern long (_fastcall *     lypixel)(void); /* set in FRACTALS.C */
+extern long (_fastcall *     g_ly_pixel)(void); /* set in FRACTALS.C */
 extern int                   lzw[2];
 extern long                  l_at_rad;
 extern double                g_magnitude;

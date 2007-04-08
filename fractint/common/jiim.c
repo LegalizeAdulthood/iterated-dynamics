@@ -891,15 +891,15 @@ void Jiim(int which)         /* called by fractint */
 			{
 				if (integerfractal)
 				{
-					cr = lxpixel();
-					ci = lypixel();
+					cr = g_lx_pixel();
+					ci = g_ly_pixel();
 					cr /= (1L << bitshift);
 					ci /= (1L << bitshift);
 				}
 				else
 				{
-					cr = dxpixel();
-					ci = dypixel();
+					cr = g_dx_pixel();
+					ci = g_dy_pixel();
 				}
 			}
 			actively_computing = 1;
