@@ -889,8 +889,8 @@ void set_normal_dot(void)
 
 void set_disk_dot(void)
 {
-	dotwrite = writedisk;
-	dotread = readdisk;
+	dotwrite = disk_write;
+	dotread = disk_read;
 }
 
 void set_normal_line(void)

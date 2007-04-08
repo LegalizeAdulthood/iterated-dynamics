@@ -285,7 +285,7 @@ int Init_Queue(unsigned long request)
 
 	for (ListSize = request; ListSize > 1024; ListSize /= 2)
 	{
-		switch (common_startdisk(ListSize*8, 1, 256))
+		switch (disk_start_common(ListSize*8, 1, 256))
 		{
 		case 0:                        /* success */
 			ListFront = ListBack = 0;
@@ -307,7 +307,7 @@ int Init_Queue(unsigned long request)
 void
 Free_Queue()
 {
-	enddisk();
+	disk_end();
 	ListFront = ListBack = ListSize = lsize = lmax = 0;
 }
 
@@ -316,8 +316,8 @@ PushLong(long x, long y)
 {
 	if (((ListFront + 1) % ListSize) != ListBack)
 	{
-		if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
-			ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+		if (disk_to_memory(8*ListFront, sizeof(x), &x) &&
+			disk_to_memory(8*ListFront +sizeof(x), sizeof(y), &y))
 		{
 			ListFront = (ListFront + 1) % ListSize;
 			if (++lsize > lmax)
@@ -337,8 +337,8 @@ PushFloat(float x, float y)
 {
 	if (((ListFront + 1) % ListSize) != ListBack)
 	{
-		if (ToMemDisk(8*ListFront, sizeof(x), &x) &&
-			ToMemDisk(8*ListFront +sizeof(x), sizeof(y), &y))
+		if (disk_to_memory(8*ListFront, sizeof(x), &x) &&
+			disk_to_memory(8*ListFront +sizeof(x), sizeof(y), &y))
 		{
 			ListFront = (ListFront + 1) % ListSize;
 			if (++lsize > lmax)
@@ -366,8 +366,8 @@ PopFloat()
 		{
 			ListFront = ListSize - 1;
 		}
-		if (FromMemDisk(8*ListFront, sizeof(popx), &popx) &&
-			FromMemDisk(8*ListFront +sizeof(popx), sizeof(popy), &popy))
+		if (disk_from_memory(8*ListFront, sizeof(popx), &popx) &&
+			disk_from_memory(8*ListFront +sizeof(popx), sizeof(popy), &popy))
 		{
 			pop.x = popx;
 			pop.y = popy;
@@ -392,8 +392,8 @@ PopLong()
 		{
 			ListFront = ListSize - 1;
 		}
-		if (FromMemDisk(8*ListFront, sizeof(pop.x), &pop.x) &&
-			FromMemDisk(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
+		if (disk_from_memory(8*ListFront, sizeof(pop.x), &pop.x) &&
+			disk_from_memory(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
 		{
 			--lsize;
 		}
@@ -424,8 +424,8 @@ DeQueueFloat()
 
 	if (ListBack != ListFront)
 	{
-		if (FromMemDisk(8*ListBack, sizeof(outx), &outx) &&
-			FromMemDisk(8*ListBack +sizeof(outx), sizeof(outy), &outy))
+		if (disk_from_memory(8*ListBack, sizeof(outx), &outx) &&
+			disk_from_memory(8*ListBack +sizeof(outx), sizeof(outy), &outy))
 		{
 			ListBack = (ListBack + 1) % ListSize;
 			out.x = outx;
@@ -448,8 +448,8 @@ DeQueueLong()
 
 	if (ListBack != ListFront)
 	{
-		if (FromMemDisk(8*ListBack, sizeof(out.x), &out.x) &&
-			FromMemDisk(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
+		if (disk_from_memory(8*ListBack, sizeof(out.x), &out.x) &&
+			disk_from_memory(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
 		{
 			ListBack = (ListBack + 1) % ListSize;
 			lsize--;

@@ -602,7 +602,7 @@ int get_toggles2()
 		{
 			if (!driver_diskp()) /* ditch the disk video */
 			{
-				enddisk();
+				disk_end();
 			}
 			else /* keep disk video, but ditch the fraction part at end */
 			{
@@ -1327,7 +1327,7 @@ void goodbye(void)                  /* we done.  Bail out */
 	}
 	free_grid_pointers();
 	free_ant_storage();
-	enddisk();
+	disk_end();
 	discardgraphics();
 	ExitCheck();
 #ifdef WINFRACT

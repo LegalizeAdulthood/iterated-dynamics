@@ -171,7 +171,7 @@ int showtempmsg(char *msgparm)
 	msg[40] = 0; /* ensure max message len of 40 chars */
 	if (driver_diskp())  /* disk video, screen in text mode, easy */
 	{
-		dvid_status(0, msg);
+		disk_video_status(0, msg);
 		return 0;
 	}
 	if (g_command_initialize)      /* & command_files hasn't finished 1st try */
@@ -224,7 +224,7 @@ void cleartempmsg()
 	int save_sxoffs, save_syoffs;
 	if (driver_diskp()) /* disk video, easy */
 	{
-		dvid_status(0, "");
+		disk_video_status(0, "");
 	}
 	else if (temptextsave != NULL)
 	{

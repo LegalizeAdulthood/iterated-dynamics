@@ -190,7 +190,7 @@ int gifview()
 		splitpath(temp1, NULL, NULL, fname, ext);
 		makepath(tmpname, NULL, NULL, fname, ext);
 		sprintf(msg, "restoring %s", tmpname);
-		dvid_status(1, msg);
+		disk_video_status(1, msg);
 	}
 	g_dont_read_color = FALSE;
 
@@ -340,8 +340,8 @@ int gifview()
 	close_file();
 	if (driver_diskp())  /* disk-video */
 	{
-		dvid_status(0, "Restore completed");
-		dvid_status(1, "");
+		disk_video_status(0, "Restore completed");
+		disk_video_status(1, "");
 	}
 
 	if (ditherbuf != NULL)  /* we're done, free dither memory */
@@ -509,7 +509,7 @@ int pot_line(BYTE *pixels, int linelen)
 {
 	int row, col, saverowcount;
 	if (g_row_count == 0)
-		if (pot_startdisk() < 0)
+		if (disk_start_potential() < 0)
 		{
 			return -1;
 		}
@@ -525,7 +525,7 @@ int pot_line(BYTE *pixels, int linelen)
 	}
 	for (col = 0; col < xdots; ++col)
 	{
-		writedisk(col + sxoffs, row + syoffs, *(pixels + col));
+		disk_write(col + sxoffs, row + syoffs, *(pixels + col));
 	}
 	g_row_count = saverowcount + 1;
 	return 0;

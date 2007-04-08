@@ -424,13 +424,13 @@ static void pauserotate()               /* pause-the-rotate routine */
 		spindac(0, 1);                     /* show white border */
 		if (driver_diskp())
 		{
-			dvid_status(100, " Paused in \"color cycling\" mode ");
+			disk_video_status(100, " Paused in \"color cycling\" mode ");
 		}
 		driver_wait_key_pressed(0);                /* wait for any key */
 
 		if (driver_diskp())
 		{
-			dvid_status(0, "");
+			disk_video_status(0, "");
 		}
 		g_dac_box[0][0] = olddac0;
 		g_dac_box[0][1] = olddac1;

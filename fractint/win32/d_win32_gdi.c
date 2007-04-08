@@ -659,7 +659,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 
 	if (g_disk_flag)
 	{
-		enddisk();
+		disk_end();
 	}
 
 	set_normal_dot();
