@@ -2555,7 +2555,7 @@ void invert_z(_CMPLX *z)
 	z->y += g_f_y_center; /* Renormalize */
 }
 
-int julia_per_pixel(void)
+int julia_per_pixel_l(void)
 {
 #if !defined(XFRACT)
 	/* integer julia types */
@@ -2641,7 +2641,7 @@ int mandelbrot_per_pixel_l(void)
 #endif
 }
 
-int julia_per_pixel_fp(void)
+int julia_per_pixel(void)
 {
 	/* julia */
 
@@ -2944,7 +2944,7 @@ int mandelbrot_per_pixel_fp(void)
 	return 1; /* 1st iteration has been done */
 }
 
-int juliafp_per_pixel(void)
+int julia_per_pixel_fp(void)
 {
 	/* floating point julia */
 	/* juliafp */
