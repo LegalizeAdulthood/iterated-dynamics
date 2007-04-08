@@ -446,7 +446,7 @@ extern int lambda_trig_or_trig_orbit_fp(void);
 extern int julia_trig_or_trig_orbit(void);
 extern int julia_trig_or_trig_orbit_fp(void);
 extern int halley_orbit_fp(void);
-extern int Halley_per_pixel(void);
+extern int halley_per_pixel(void);
 extern int halley_orbit_mpc(void);
 extern int halley_per_pixel_mpc(void);
 extern int dynamic_orbit_fp(double *, double *, double*);
