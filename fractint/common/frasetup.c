@@ -772,7 +772,7 @@ TrigPlusTrigfpSetup(void)
 	{
 		return TrigPlusSqrfpSetup();
 	}
-	curfractalspecific->per_pixel =  otherjuliafp_per_pixel;
+	curfractalspecific->per_pixel =  other_julia_per_pixel_fp;
 	curfractalspecific->orbitcalc =  trig_plus_trig_orbit_fp;
 	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
 		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)

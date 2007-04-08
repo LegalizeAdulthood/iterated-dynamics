@@ -2985,16 +2985,15 @@ int julia_per_pixel_mpc(void)
 #endif
 }
 
-int
-otherrichard8fp_per_pixel(void)
+int otherrichard8fp_per_pixel(void)
 {
-	othermandelfp_per_pixel();
+	other_mandelbrot_per_pixel_fp();
 	CMPLXtrig1(*g_float_parameter, g_temp_z);
 	CMPLXmult(g_temp_z, g_parameter2, g_temp_z);
 	return 1;
 }
 
-int othermandelfp_per_pixel(void)
+int other_mandelbrot_per_pixel_fp(void)
 {
 	if (g_invert)
 	{
