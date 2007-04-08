@@ -439,7 +439,7 @@ extern int julia_per_pixel_fp(void);
 extern int julia_per_pixel_mpc(void);
 extern int other_richard8_per_pixel_fp(void);
 extern int other_mandelbrot_per_pixel_fp(void);
-extern int otherjuliafp_per_pixel(void);
+extern int other_julia_per_pixel_fp(void);
 extern int MarksCplxMandperp(void);
 extern int lambda_trig_or_trig_orbit(void);
 extern int lambda_trig_or_trig_orbit_fp(void);
