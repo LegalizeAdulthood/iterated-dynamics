@@ -545,9 +545,9 @@ extern void setup287code(void);
 /*  frasetup -- C file prototypes */
 
 extern int VLSetup(void);
-extern int MandelSetup(void);
+extern int mandelbrot_setup(void);
 extern int MandelfpSetup(void);
-extern int JuliaSetup(void);
+extern int julia_setup(void);
 extern int NewtonSetup(void);
 extern int StandaloneSetup(void);
 extern int UnitySetup(void);

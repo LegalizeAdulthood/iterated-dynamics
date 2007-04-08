@@ -5,7 +5,8 @@
 #include <malloc.h>
 #endif
 #endif
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -21,8 +22,7 @@ extern long calcmandfpasm_c(void);
 /*              Setup (once per fractal image) routines                 */
 /* -------------------------------------------------------------------- */
 
-int
-MandelSetup(void)           /* Mandelbrot Routine */
+int mandelbrot_setup(void)           /* Mandelbrot Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
@@ -42,8 +42,7 @@ MandelSetup(void)           /* Mandelbrot Routine */
 	return 1;
 }
 
-int
-JuliaSetup(void)            /* Julia Routine */
+int julia_setup(void)            /* Julia Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
