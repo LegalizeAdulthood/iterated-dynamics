@@ -209,7 +209,7 @@ typedef BYTE BOOLEAN;
 #define LOOK_MOUSE_TEXT		2
 #define LOOK_MOUSE_ZOOM_BOX	3
 
-/* dopause() values */
+/* pause_error() values */
 #define PAUSE_ERROR_NO_BATCH 0
 #define PAUSE_ERROR_ANY 1
 #define PAUSE_ERROR_GOODBYE 2
@@ -1184,42 +1184,41 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define INVERSE 0x8000 /* when 640x200x2 text or mode 7, inverse */
 #define BRIGHT  0x4000 /* when mode 7, bright */
 /* and their use: */
-extern BYTE txtcolor[];
-#define C_TITLE           txtcolor[0]+BRIGHT
-#define C_TITLE_DEV       txtcolor[1]
-#define C_HELP_HDG        txtcolor[2]+BRIGHT
-#define C_HELP_BODY       txtcolor[3]
-#define C_HELP_INSTR      txtcolor[4]
-#define C_HELP_LINK       txtcolor[5]+BRIGHT
-#define C_HELP_CURLINK    txtcolor[6]+INVERSE
-#define C_PROMPT_BKGRD    txtcolor[7]
-#define C_PROMPT_TEXT     txtcolor[8]
-#define C_PROMPT_LO       txtcolor[9]
-#define C_PROMPT_MED      txtcolor[10]
+#define C_TITLE           g_text_colors[0]+BRIGHT
+#define C_TITLE_DEV       g_text_colors[1]
+#define C_HELP_HDG        g_text_colors[2]+BRIGHT
+#define C_HELP_BODY       g_text_colors[3]
+#define C_HELP_INSTR      g_text_colors[4]
+#define C_HELP_LINK       g_text_colors[5]+BRIGHT
+#define C_HELP_CURLINK    g_text_colors[6]+INVERSE
+#define C_PROMPT_BKGRD    g_text_colors[7]
+#define C_PROMPT_TEXT     g_text_colors[8]
+#define C_PROMPT_LO       g_text_colors[9]
+#define C_PROMPT_MED      g_text_colors[10]
 #ifndef XFRACT
-#define C_PROMPT_HI       txtcolor[11]+BRIGHT
+#define C_PROMPT_HI       g_text_colors[11]+BRIGHT
 #else
-#define C_PROMPT_HI       txtcolor[11]
+#define C_PROMPT_HI       g_text_colors[11]
 #endif
-#define C_PROMPT_INPUT    txtcolor[12]+INVERSE
-#define C_PROMPT_CHOOSE   txtcolor[13]+INVERSE
-#define C_CHOICE_CURRENT  txtcolor[14]+INVERSE
-#define C_CHOICE_SP_INSTR txtcolor[15]
-#define C_CHOICE_SP_KEYIN txtcolor[16]+BRIGHT
-#define C_GENERAL_HI      txtcolor[17]+BRIGHT
-#define C_GENERAL_MED     txtcolor[18]
-#define C_GENERAL_LO      txtcolor[19]
-#define C_GENERAL_INPUT   txtcolor[20]+INVERSE
-#define C_DVID_BKGRD      txtcolor[21]
-#define C_DVID_HI         txtcolor[22]+BRIGHT
-#define C_DVID_LO         txtcolor[23]
-#define C_STOP_ERR        txtcolor[24]+BRIGHT
-#define C_STOP_INFO       txtcolor[25]+BRIGHT
-#define C_TITLE_LOW       txtcolor[26]
-#define C_AUTHDIV1        txtcolor[27]+INVERSE
-#define C_AUTHDIV2        txtcolor[28]+INVERSE
-#define C_PRIMARY         txtcolor[29]
-#define C_CONTRIB         txtcolor[30]
+#define C_PROMPT_INPUT    g_text_colors[12]+INVERSE
+#define C_PROMPT_CHOOSE   g_text_colors[13]+INVERSE
+#define C_CHOICE_CURRENT  g_text_colors[14]+INVERSE
+#define C_CHOICE_SP_INSTR g_text_colors[15]
+#define C_CHOICE_SP_KEYIN g_text_colors[16]+BRIGHT
+#define C_GENERAL_HI      g_text_colors[17]+BRIGHT
+#define C_GENERAL_MED     g_text_colors[18]
+#define C_GENERAL_LO      g_text_colors[19]
+#define C_GENERAL_INPUT   g_text_colors[20]+INVERSE
+#define C_DVID_BKGRD      g_text_colors[21]
+#define C_DVID_HI         g_text_colors[22]+BRIGHT
+#define C_DVID_LO         g_text_colors[23]
+#define C_STOP_ERR        g_text_colors[24]+BRIGHT
+#define C_STOP_INFO       g_text_colors[25]+BRIGHT
+#define C_TITLE_LOW       g_text_colors[26]
+#define C_AUTHDIV1        g_text_colors[27]+INVERSE
+#define C_AUTHDIV2        g_text_colors[28]+INVERSE
+#define C_PRIMARY         g_text_colors[29]
+#define C_CONTRIB         g_text_colors[30]
 
 /* structure for xmmmoveextended parameter */
 struct XMM_Move

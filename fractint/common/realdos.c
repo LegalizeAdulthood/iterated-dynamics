@@ -64,7 +64,7 @@ int stopmsg (int flags, char *msg)
 		}
 		fclose(fp);
 	}
-	if (g_command_initialize)  /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
 		init_failure(msg);
 		goodbye();
@@ -174,7 +174,7 @@ int showtempmsg(char *msgparm)
 		dvid_status(0, msg);
 		return 0;
 	}
-	if (g_command_initialize)      /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)      /* & command_files hasn't finished 1st try */
 	{
 		printf("%s\n", msg);
 		return 0;

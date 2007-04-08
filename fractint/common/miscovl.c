@@ -102,7 +102,7 @@ void make_batch_file()
 	char *sptr = NULL, *sptr2;
 	int oldhelpmode;
 
-	if (s_makepar[1] == 0) /* makepar map case */
+	if (g_make_par[1] == 0) /* makepar map case */
 	{
 		colorsonly = 1;
 	}
@@ -196,7 +196,7 @@ void make_batch_file()
 	pxdots = xdots;
 	pydots = ydots;
 	xm = ym = 1;
-	if (*s_makepar == 0)
+	if (*g_make_par == 0)
 	{
 		goto skip_UI;
 	}
@@ -267,7 +267,7 @@ prompt_user:
 			break;
 		}
 
-		if (*colorspec == 'o' || s_makepar[1] == 0)
+		if (*colorspec == 'o' || g_make_par[1] == 0)
 		{
 			strcpy(colorspec, "y");
 			colorsonly = 1;
@@ -352,10 +352,10 @@ prompt_user:
 			}
 		}
 skip_UI:
-		if (*s_makepar == 0)
+		if (*g_make_par == 0)
 		{
 			strcpy(colorspec, (filecolors > 0) ? "y" : "n");
-			maxcolor = (s_makepar[1] == 0) ? 256 : filecolors;
+			maxcolor = (g_make_par[1] == 0) ? 256 : filecolors;
 		}
 		strcpy(outname, g_command_file);
 		gotinfile = 0;
@@ -400,7 +400,7 @@ skip_UI:
 					&& stricmp(buf2, g_command_name) == 0)
 				{                   /* entry with same name */
 					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-						g_command_name, (*s_makepar == 0) ?
+						g_command_name, (*g_make_par == 0) ?
 						"... Replacing ..." : "Continue to replace it, Cancel to back out");
 					if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
 					{                /* cancel */
@@ -1684,7 +1684,7 @@ int getprecbf_mag()
 		return -1;
 	}
 
-	dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
+	dec = get_power_10(Magnification) + 4; /* 4 digits of padding sounds good */
 	return dec;
 }
 

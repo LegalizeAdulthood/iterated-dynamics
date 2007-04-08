@@ -105,7 +105,7 @@ int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-
 int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
 int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
 int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
-int		g_command_initialize = TRUE;               /* first time into cmdfiles? */
+int		g_command_initialize = TRUE;               /* first time into command_files? */
 struct fractalspecificstuff *g_current_fractal_specific = NULL;
 char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
@@ -119,8 +119,8 @@ char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
 struct SearchPath g_search_for;
 float	*g_ifs_definition = NULL;     /* ifs parameters */
 int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
-int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
-BYTE txtcolor[]=
+int		g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
+BYTE	g_text_colors[]=
 {
 		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
 		BLUE*16 + L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
@@ -154,39 +154,39 @@ BYTE txtcolor[]=
 		BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
 		BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
 	};
-char s_makepar[] =          "makepar";
-int lzw[2];
+char	g_make_par[] =          "makepar";
 
 int  process_command(char *, int);
 
-static int init_rseed;
-static char initcorners, initparams;
+static int s_init_random_seed;
+static int s_init_corners;
+static int s_initial_parameters;
 
 static int  command_file(FILE *, int);
 static int  next_command(char *, int, FILE *, char *, int *, int);
 static int  next_line(FILE *, char *, int);
-static void argerror(const char *);
-static void initvars_run(void);
-static void initvars_restart(void);
-static void initvars_fractal(void);
-static void initvars_3d(void);
-static void reset_ifs_defn(void);
-static void parse_textcolors(char *value);
+static void arg_error(const char *);
+static void initialize_variables_once(void);
+static void initialize_variables_restart(void);
+static void initialize_variables_fractal(void);
+static void initialize_variables_3d(void);
+static void reset_ifs_definition(void);
+static void parse_text_colors(char *value);
 static int  parse_colors(char *value);
 static int  get_bf(bf_t, char *);
-static int isabigfloat(char *str);
+static int is_a_big_float(char *str);
 
 /*
-		cmdfiles(argc, argv) process the command-line arguments
+		command_files(argc, argv) process the command-line arguments
 				it also processes the 'sstools.ini' file and any
 				indirect files ('fractint @myfile')
 */
 
 /* This probably ought to go somewhere else, but it's used here.        */
-/* getpower10(x) returns the magnitude of x.  This rounds               */
+/* get_power_10(x) returns the magnitude of x.  This rounds               */
 /* a little so 9.95 rounds to 10, but we're using a binary base anyway, */
 /* so there's nothing magic about changing to the next power of 10.     */
-int getpower10(LDBL x)
+int get_power_10(LDBL x)
 {
 	char string[11]; /* space for "+x.xe-xxxx" */
 	int p;
@@ -202,7 +202,7 @@ int getpower10(LDBL x)
 
 
 
-int cmdfiles(int argc, char **argv)
+int command_files(int argc, char **argv)
 {
 	int     i;
 	char    curarg[141];
@@ -212,10 +212,10 @@ int cmdfiles(int argc, char **argv)
 
 	if (g_command_initialize) /* once per run initialization  */
 	{
-		initvars_run();
+		initialize_variables_once();
 	}
-	initvars_restart();                  /* <ins> key initialization */
-	initvars_fractal();                  /* image initialization */
+	initialize_variables_restart();                  /* <ins> key initialization */
+	initialize_variables_fractal();                  /* image initialization */
 
 	strcpy(curarg, "sstools.ini");
 	findpath(curarg, tempstring); /* look for SSTOOLS.INI */
@@ -287,7 +287,7 @@ int cmdfiles(int argc, char **argv)
 				strcpy(g_command_name, sptr + 1);
 				if (find_file_item(g_command_file, g_command_name, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
 				{
-					argerror(curarg);
+					arg_error(curarg);
 				}
 				command_file(initfile, CMDFILE_AT_CMDLINE_SETNAME);
 			}
@@ -296,7 +296,7 @@ int cmdfiles(int argc, char **argv)
 				initfile = fopen(&curarg[1], "r");
 				if (initfile == NULL)
 				{
-					argerror(curarg);
+					arg_error(curarg);
 				}
 				command_file(initfile, CMDFILE_AT_CMDLINE);
 			}
@@ -318,7 +318,7 @@ int cmdfiles(int argc, char **argv)
 	/*
 	{
 		char msg[MSGLEN];
-		sprintf(msg, "cmdfiles colorpreloaded %d showfile %d savedac %d",
+		sprintf(msg, "command_files colorpreloaded %d showfile %d savedac %d",
 		g_color_preloaded, g_show_file, savedac);
 		stopmsg(0, msg);
 	}
@@ -340,7 +340,7 @@ int load_commands(FILE *infile)
 	/* when called, file is open in binary mode, positioned at the */
 	/* '(' or '{' following the desired parameter set's name       */
 	int ret;
-	initcorners = initparams = 0; /* reset flags for type= */
+	s_init_corners = s_initial_parameters = 0; /* reset flags for type= */
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 	/*
 	{
@@ -357,10 +357,10 @@ int load_commands(FILE *infile)
 }
 
 
-static void initvars_run()              /* once per run init */
+static void initialize_variables_once()              /* once per run init */
 {
 	char *p;
-	init_rseed = (int)time(NULL);
+	s_init_random_seed = (int)time(NULL);
 	init_comments();
 	p = getenv("TMP");
 	if (p == NULL)
@@ -381,7 +381,7 @@ static void initvars_run()              /* once per run init */
 	}
 }
 
-static void initvars_restart()          /* <ins> key init */
+static void initialize_variables_restart()          /* <ins> key init */
 {
 	int i;
 	g_record_colors = 'a';                  /* don't use mapfiles in PARs */
@@ -416,9 +416,9 @@ static void initvars_restart()          /* <ins> key init */
 	}
 	strcpy(g_ifs_filename, "fractint.ifs");
 	g_ifs_name[0] = 0;
-	reset_ifs_defn();
+	reset_ifs_definition();
 	g_random_flag = 0;                           /* not a fixed srand() seed */
-	g_random_seed = init_rseed;
+	g_random_seed = s_init_random_seed;
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
 	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
@@ -436,7 +436,7 @@ static void initvars_restart()          /* <ins> key init */
 	g_true_mode = TRUEMODE_DEFAULT;               /* set to default color scheme */
 }
 
-static void initvars_fractal()          /* init vars affecting calculation */
+static void initialize_variables_fractal()          /* init vars affecting calculation */
 {
 	int i;
 	g_escape_exit_flag = FALSE;                     /* don't disable the "are you sure?" screen */
@@ -459,7 +459,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	fractype = 0;                        /* initial type Set flag  */
 	g_current_fractal_specific = &g_fractal_specific[fractype];
-	initcorners = initparams = 0;
+	s_init_corners = s_initial_parameters = 0;
 	g_bail_out = 0;                         /* no user-entered bailout */
 	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
 	g_use_initial_orbit_z = 0;
@@ -537,7 +537,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_depth_fp = 8;
 	g_new_orbit_type = JULIA;
 	g_z_dots = 128;
-	initvars_3d();
+	initialize_variables_3d();
 	g_base_hertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
 	fm_vol = 63;                         /* full volume on soundcard o/p */
@@ -555,7 +555,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 #endif
 }
 
-static void initvars_3d()               /* init vars affecting 3d */
+static void initialize_variables_3d()               /* init vars affecting 3d */
 {
 	g_raytrace_output = RAYTRACE_NONE;
 	g_raytrace_brief   = 0;
@@ -577,7 +577,7 @@ static void initvars_3d()               /* init vars affecting 3d */
 	set_3d_defaults();
 }
 
-static void reset_ifs_defn()
+static void reset_ifs_definition()
 {
 	if (g_ifs_definition)
 	{
@@ -700,7 +700,7 @@ static int next_command(char *cmdbuf, int maxlen,
 		{
 			if (next_line(handle, linebuf, mode) != 0)
 			{
-				argerror(cmdbuf);           /* missing continuation */
+				arg_error(cmdbuf);           /* missing continuation */
 				return -1;
 			}
 			lineptr = linebuf;
@@ -713,7 +713,7 @@ static int next_command(char *cmdbuf, int maxlen,
 		cmdbuf[cmdlen] = *(lineptr++);    /* copy character to command buffer */
 		if (++cmdlen >= maxlen)  /* command too long? */
 		{
-			argerror(cmdbuf);
+			arg_error(cmdbuf);
 			return -1;
 		}
 	}
@@ -749,9 +749,9 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 	return -1;
 }
 
-static int badarg(const char *curarg)
+static int bad_arg(const char *curarg)
 {
-	argerror(curarg);
+	arg_error(curarg);
 	return COMMAND_ERROR;
 }
 
@@ -800,7 +800,7 @@ static int batch_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 #ifdef XFRACT
 	g_init_mode = context->yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
@@ -813,11 +813,11 @@ static int max_history_arg(const cmd_context *context)
 {
 	if (context->numval == NON_NUMERIC)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	else if (context->numval < 0 /* || context->numval > 1000 */)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	else
 	{
@@ -842,7 +842,7 @@ static int adapter_arg(const cmd_context *context)
 	if (named_value(args, NUM_OF(args), context->value, &adapter))
 	{
 		assert(adapter == -1);
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
@@ -858,7 +858,7 @@ static int text_safe_arg(const cmd_context *context)
 				|| (context->charval[0] == 'b')	/* bios */
 				|| (context->charval[0] == 's'))) /* save */
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 	}
 	return COMMAND_OK;
@@ -868,7 +868,7 @@ static int gobble_flag_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_OK;
 }
@@ -877,7 +877,7 @@ static int flag_arg(const cmd_context *context, int *flag, int result)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	*flag = context->yesnoval[0];
 	return result;
@@ -899,7 +899,7 @@ static int fpu_arg(const cmd_context *context)
 #endif
 		return COMMAND_OK;
 	}
-	return badarg(context->curarg);
+	return bad_arg(context->curarg);
 }
 
 static int make_doc_arg(const cmd_context *context)
@@ -916,7 +916,7 @@ static int make_par_arg(const cmd_context *context)
 	char *slash, *next = NULL;
 	if (context->totparms < 1 || context->totparms > 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	slash = strchr(context->value, '/');
 	if (slash != NULL)
@@ -946,7 +946,7 @@ static int make_par_arg(const cmd_context *context)
 		}
 		else
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 	}
 	else
@@ -954,7 +954,7 @@ static int make_par_arg(const cmd_context *context)
 		strncpy(g_command_name, next, ITEMNAMELEN);
 		g_command_name[ITEMNAMELEN] = 0;
 	}
-	*s_makepar = 0; /* used as a flag for makepar case */
+	*g_make_par = 0; /* used as a flag for makepar case */
 	if (*g_read_name != 0)
 	{
 		if (read_overlay() != 0)
@@ -964,7 +964,7 @@ static int make_par_arg(const cmd_context *context)
 	}
 	else if (*MAP_name != 0)
 	{
-		s_makepar[1] = 0; /* second char is flag for map */
+		g_make_par[1] = 0; /* second char is flag for map */
 	}
 	xdots = filexdots;
 	ydots = fileydots;
@@ -997,7 +997,7 @@ static int make_par_arg(const cmd_context *context)
 
 static int reset_arg(const cmd_context *context)
 {
-	initvars_fractal();
+	initialize_variables_fractal();
 
 	/* PAR release unknown unless specified */
 	if (context->numval >= 0)
@@ -1006,7 +1006,7 @@ static int reset_arg(const cmd_context *context)
 	}
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (g_save_release == 0)
 	{
@@ -1022,7 +1022,7 @@ static int filename_arg(const cmd_context *context)
 	{
 		if (context->valuelen > 4)
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 		g_gif_mask[0] = '*';
 		g_gif_mask[1] = 0;
@@ -1031,11 +1031,11 @@ static int filename_arg(const cmd_context *context)
 	}
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (context->mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == 0) /* can't do this in @ command */
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 
 	existdir = merge_pathnames(g_read_name, context->value, context->mode);
@@ -1061,7 +1061,7 @@ static int video_arg(const cmd_context *context)
 
 	if (k == 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_init_mode = -1;
 	for (i = 0; i < MAXVIDEOMODES; ++i)
@@ -1074,7 +1074,7 @@ static int video_arg(const cmd_context *context)
 	}
 	if (g_init_mode == -1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -1084,7 +1084,7 @@ static int map_arg(const cmd_context *context)
 	int existdir;
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	existdir = merge_pathnames(MAP_name, context->value, context->mode);
 	if (existdir > 0)
@@ -1104,7 +1104,7 @@ static int colors_arg(const cmd_context *context)
 {
 	if (parse_colors(context->value) < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_OK;
 }
@@ -1113,7 +1113,7 @@ static int record_colors_arg(const cmd_context *context)
 {
 	if (*context->value != 'y' && *context->value != 'c' && *context->value != 'a')
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_record_colors = *context->value;
 	return COMMAND_OK;
@@ -1123,7 +1123,7 @@ static int max_line_length_arg(const cmd_context *context)
 {
 	if (context->numval < MINMAXLINELENGTH || context->numval > MAXMAXLINELENGTH)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	maxlinelength = context->numval;
 	return COMMAND_OK;
@@ -1146,7 +1146,7 @@ static int max_color_res_arg(const cmd_context *context)
 	{
 		return COMMAND_OK;
 	}
-	return badarg(context->curarg);
+	return bad_arg(context->curarg);
 }
 
 /* pixelzoom no longer used, validate value and gobble argument */
@@ -1154,7 +1154,7 @@ static int pixel_zoom_arg(const cmd_context *context)
 {
 	if (context->numval >= 5)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_OK;
 }
@@ -1164,7 +1164,7 @@ static int warn_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_fractal_overwrite = context->yesnoval[0]^1;
 	return COMMAND_OK;
@@ -1174,7 +1174,7 @@ static int overwrite_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_fractal_overwrite = context->yesnoval[0];
 	return COMMAND_OK;
@@ -1194,7 +1194,7 @@ static int auto_key_arg(const cmd_context *context)
 		{ "play", SLIDES_PLAY }
 	};
 	return named_value(args, NUM_OF(args), context->value, &g_slides)
-		? COMMAND_OK : badarg(context->curarg);
+		? COMMAND_OK : bad_arg(context->curarg);
 }
 
 static int auto_key_name_arg(const cmd_context *context)
@@ -1231,18 +1231,18 @@ static int type_arg(const cmd_context *context)
 	}
 	if (g_fractal_specific[k].name == NULL)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	fractype = k;
 	g_current_fractal_specific = &g_fractal_specific[fractype];
-	if (initcorners == 0)
+	if (s_init_corners == 0)
 	{
 		xx3rd = xxmin = g_current_fractal_specific->xmin;
 		xxmax         = g_current_fractal_specific->xmax;
 		yy3rd = yymin = g_current_fractal_specific->ymin;
 		yymax         = g_current_fractal_specific->ymax;
 	}
-	if (initparams == 0)
+	if (s_initial_parameters == 0)
 	{
 		load_params(fractype);
 	}
@@ -1269,7 +1269,7 @@ static int inside_arg(const cmd_context *context)
 	}
 	if (context->numval == NON_NUMERIC)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	else
 	{
@@ -1292,7 +1292,7 @@ static int fill_color_arg(const cmd_context *context)
 	}
 	else if (context->numval == NON_NUMERIC)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	else
 	{
@@ -1310,7 +1310,7 @@ static int function_arg(const cmd_context *context)
 	{
 		if (set_trig_array(k++, value))
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 		value = strchr(value, '/');
 		if (value == NULL)
@@ -1342,7 +1342,7 @@ static int outside_arg(const cmd_context *context)
 	}
 	if ((context->numval == NON_NUMERIC) || (context->numval < TDIS || context->numval > 255))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_outside = context->numval;
 	return COMMAND_FRACTAL_PARAM;
@@ -1352,7 +1352,7 @@ static int bf_digits_arg(const cmd_context *context)
 {
 	if ((context->numval == NON_NUMERIC) || (context->numval < 0 || context->numval > 2000))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_bf_digits = context->numval;
 	return COMMAND_FRACTAL_PARAM;
@@ -1362,7 +1362,7 @@ static int max_iter_arg(const cmd_context *context)
 {
 	if (context->floatval[0] < 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	maxit = (long) context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
@@ -1375,7 +1375,7 @@ static int passes_arg(const cmd_context *context)
 		&& context->charval[0] != 't' && context->charval[0] != 's'
 		&& context->charval[0] != 'd' && context->charval[0] != 'o')
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	usr_stdcalcmode = context->charval[0];
 	if (context->charval[0] == 'g')
@@ -1393,7 +1393,7 @@ static int cycle_limit_arg(const cmd_context *context)
 {
 	if (context->numval <= 1 || context->numval > 256)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_initial_cycle_limit = context->numval;
 	return COMMAND_OK;
@@ -1404,7 +1404,7 @@ static int make_mig_arg(const cmd_context *context)
 	int xmult, ymult;
 	if (context->totparms < 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	xmult = context->intval[0];
 	ymult = context->intval[1];
@@ -1438,7 +1438,7 @@ static int cycle_range_arg(const cmd_context *context)
 	if (context->totparms != context->intparms
 		|| lo < 0 || hi > 255 || lo > hi)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_rotate_lo = lo;
 	g_rotate_hi = hi;
@@ -1452,7 +1452,7 @@ static int ranges_arg(const cmd_context *context)
 
 	if (context->totparms != context->intparms)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	entries = prev = i = 0;
 	g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
@@ -1463,7 +1463,7 @@ static int ranges_arg(const cmd_context *context)
 			j = -j;
 			if (j < 1 || j >= 16384 || i >= context->totparms)
 			{
-				return badarg(context->curarg);
+				return bad_arg(context->curarg);
 			}
 			tmpranges[entries++] = -1; /* {-1,width,limit} for striping */
 			tmpranges[entries++] = j;
@@ -1471,13 +1471,13 @@ static int ranges_arg(const cmd_context *context)
 		}
 		if (j < prev)
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 		tmpranges[entries++] = prev = j;
 	}
 	if (prev == 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_ranges = (int *)malloc(sizeof(int)*entries);
 	if (g_ranges == NULL)
@@ -1497,7 +1497,7 @@ static int save_name_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
@@ -1509,24 +1509,11 @@ static int save_name_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int tweak_lzw_arg(const cmd_context *context)
-{
-	if (context->totparms >= 1)
-	{
-		lzw[0] = context->intval[0];
-	}
-	if (context->totparms >= 2)
-	{
-		lzw[1] = context->intval[1];
-	}
-	return COMMAND_OK;
-}
-
 static int min_stack_arg(const cmd_context *context)
 {
 	if (context->totparms != 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	minstack = context->intval[0];
 	return COMMAND_OK;
@@ -1553,11 +1540,11 @@ static int temp_dir_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_DIR-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (isadirectory(context->value) == 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	strcpy(g_temp_dir, context->value);
 	fix_dirname(g_temp_dir);
@@ -1568,25 +1555,20 @@ static int work_dir_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_DIR-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (isadirectory(context->value) == 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	strcpy(g_work_dir, context->value);
 	fix_dirname(g_work_dir);
 	return COMMAND_OK;
 }
 
-static int exit_mode_arg(const cmd_context *context)
-{
-	return COMMAND_OK;
-}
-
 static int text_colors_arg(const cmd_context *context)
 {
-	parse_textcolors(context->value);
+	parse_text_colors(context->value);
 	return COMMAND_OK;
 }
 
@@ -1610,7 +1592,7 @@ static int potential_arg(const cmd_context *context)
 	{
 		if (strcmp(value, "16bit"))
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 		g_potential_16bit = TRUE;
 	}
@@ -1623,9 +1605,9 @@ static int params_arg(const cmd_context *context)
 
 	if (context->totparms != context->floatparms || context->totparms > MAXPARAMS)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
-	initparams = 1;
+	s_initial_parameters = 1;
 	for (k = 0; k < MAXPARAMS; ++k)
 	{
 		param[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
@@ -1644,7 +1626,7 @@ static int miim_arg(const cmd_context *context)
 {
 	if (context->totparms > 6)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (context->charval[0] == 'b')
 	{
@@ -1666,7 +1648,7 @@ static int miim_arg(const cmd_context *context)
 #endif
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 
 	if (context->charval[1] == 'l')
@@ -1679,7 +1661,7 @@ static int miim_arg(const cmd_context *context)
 	}
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 
 	/* keep this next part in for backwards compatibility with old PARs ??? */
@@ -1706,7 +1688,7 @@ static int init_orbit_arg(const cmd_context *context)
 	{
 		if (context->totparms != 2 || context->floatparms != 2)
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 		g_initial_orbit_z.x = context->floatval[0];
 		g_initial_orbit_z.y = context->floatval[1];
@@ -1719,7 +1701,7 @@ static int orbit_name_arg(const cmd_context *context)
 {
 	if (check_orbit_name(context->value))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1735,14 +1717,14 @@ static int threed_mode_arg(const cmd_context *context)
 			return COMMAND_FRACTAL_PARAM;
 		}
 	}
-	return badarg(context->curarg);
+	return bad_arg(context->curarg);
 }
 
 static int julibrot_3d_arg(const cmd_context *context)
 {
 	if (context->floatparms != context->totparms)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (context->totparms > 0)
 	{
@@ -1775,7 +1757,7 @@ static int julibrot_eyes_arg(const cmd_context *context)
 {
 	if (context->floatparms != context->totparms || context->totparms != 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_eyes_fp =  (float)context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
@@ -1785,7 +1767,7 @@ static int julibrot_from_to_arg(const cmd_context *context)
 {
 	if (context->floatparms != context->totparms || context->totparms != 4)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_m_x_max_fp = context->floatval[0];
 	g_m_x_min_fp = context->floatval[1];
@@ -1809,14 +1791,14 @@ static int corners_arg(const cmd_context *context)
 	if (context->floatparms != context->totparms
 		|| (context->totparms != 0 && context->totparms != 4 && context->totparms != 6))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_use_center_mag = FALSE;
 	if (context->totparms == 0)
 	{
 		return COMMAND_OK; /* turns corners mode on */
 	}
-	initcorners = 1;
+	s_init_corners = 1;
 	/* good first approx, but dec could be too big */
 	dec = get_max_curarg_len((char **) context->floatvalstr, context->totparms) + 1;
 	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag) && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
@@ -1866,7 +1848,7 @@ static int corners_arg(const cmd_context *context)
 		dec = getprecbf_mag();
 		if (dec < 0)
 		{
-			return badarg(context->curarg);     /* ie: Magnification is +-1.#INF */
+			return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
 		}
 
 		if (dec > decimals)  /* get corners again if need more precision */
@@ -1925,7 +1907,7 @@ static int orbit_corners_arg(const cmd_context *context)
 	if (context->floatparms != context->totparms
 		|| (context->totparms != 0 && context->totparms != 4 && context->totparms != 6))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_orbit_x_3rd = g_orbit_x_min = context->floatval[0];
 	g_orbit_x_max =         context->floatval[1];
@@ -1951,7 +1933,7 @@ static int orbit_draw_mode_arg(const cmd_context *context)
 	case 'f': g_orbit_draw_mode = ORBITDRAW_FUNCTION;	break;
 
 	default:
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1960,7 +1942,7 @@ static int view_windows_arg(const cmd_context *context)
 {
 	if (context->totparms > 5 || context->floatparms-context->intparms > 2 || context->intparms > 4)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	viewwindow = 1;
 	viewreduction = 4.2f;  /* reset default values */
@@ -2002,7 +1984,7 @@ static int center_mag_arg(const cmd_context *context)
 		|| (context->totparms != 0 && context->totparms < 3)
 		|| (context->totparms >= 3 && context->floatval[2] == 0.0))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (fractype == CELLULAR)
 	{
@@ -2013,7 +1995,7 @@ static int center_mag_arg(const cmd_context *context)
 	{
 		return COMMAND_OK; /* turns center-mag mode on */
 	}
-	initcorners = 1;
+	s_init_corners = 1;
 	/* dec = get_max_curarg_len(floatvalstr, context->totparms); */
 #ifdef USE_LONG_DOUBLE
 	sscanf(context->floatvalstr[2], "%Lf", &Magnification);
@@ -2025,10 +2007,10 @@ static int center_mag_arg(const cmd_context *context)
 	/* be used in case compiler's LDBL_MAX is not big enough    */
 	if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
 	{
-		return badarg(context->curarg);     /* ie: Magnification is +-1.#INF */
+		return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
 	}
 
-	dec = getpower10(Magnification) + 4; /* 4 digits of padding sounds good */
+	dec = get_power_10(Magnification) + 4; /* 4 digits of padding sounds good */
 
 	if ((dec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == g_debug_flag)  /* rough estimate that double is OK */
 	{
@@ -2062,7 +2044,7 @@ static int center_mag_arg(const cmd_context *context)
 	{
 		int old_bf_math;
 		int saved;
-		initcorners = 1;
+		s_init_corners = 1;
 		old_bf_math = bf_math;
 		if (!bf_math || dec > decimals)
 		{
@@ -2116,7 +2098,7 @@ static int aspect_drift_arg(const cmd_context *context)
 {
 	if (context->floatparms != 1 || context->floatval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_aspect_drift = (float)context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
@@ -2126,7 +2108,7 @@ static int invert_arg(const cmd_context *context)
 {
 	if (context->totparms != context->floatparms || (context->totparms != 1 && context->totparms != 3))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_inversion[0] = context->floatval[0];
 	g_invert = (g_inversion[0] != 0.0) ? context->totparms : 0;
@@ -2147,7 +2129,7 @@ static int float_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 #ifndef XFRACT
 	usr_floatflag = (char)context->yesnoval[0];
@@ -2161,7 +2143,7 @@ static int fast_restore_arg(const cmd_context *context)
 {
 	if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_fast_restore = (char)context->yesnoval[0];
 	return COMMAND_OK;
@@ -2172,7 +2154,7 @@ static int organize_formula_dir_arg(const cmd_context *context)
 	if ((context->valuelen > (FILE_MAX_DIR-1))
 		|| (isadirectory(context->value) == 0))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_organize_formula_search = TRUE;
 	strcpy(g_organize_formula_dir, context->value);
@@ -2194,7 +2176,7 @@ static int orbit_save_arg(const cmd_context *context)
 	}
 	else if (context->yesnoval[0] < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_orbit_save |= context->yesnoval[0];
 	return COMMAND_FRACTAL_PARAM;
@@ -2204,7 +2186,7 @@ static int bail_out_arg(const cmd_context *context)
 {
 	if (context->floatval[0] < 1 || context->floatval[0] > 2100000000L)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_bail_out = (long)context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
@@ -2230,7 +2212,7 @@ static int bail_out_test_arg(const cmd_context *context)
 		return COMMAND_FRACTAL_PARAM;
 	}
 
-	return badarg(context->curarg);
+	return bad_arg(context->curarg);
 }
 
 static int symmetry_arg(const cmd_context *context)
@@ -2248,14 +2230,14 @@ static int symmetry_arg(const cmd_context *context)
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	return badarg(context->curarg);
+	return bad_arg(context->curarg);
 }
 
 static int sound_arg(const cmd_context *context)
 {
 	if (context->totparms > 5)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_sound_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
 	if (context->totparms == 1)
@@ -2294,7 +2276,7 @@ static int sound_arg(const cmd_context *context)
 	}
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 #if !defined(XFRACT)
 	if (context->totparms > 1)
@@ -2329,7 +2311,7 @@ static int sound_arg(const cmd_context *context)
 			}
 			else
 			{
-				return badarg(context->curarg);
+				return bad_arg(context->curarg);
 			}
 		} /* end for */
 	}    /* end context->totparms > 1 */
@@ -2369,7 +2351,7 @@ static int attenuate_arg(const cmd_context *context)
 	}
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_OK;
 }
@@ -2378,7 +2360,7 @@ static int polyphony_arg(const cmd_context *context)
 {
 	if (context->numval > 9)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	polyphony = abs(context->numval-1);
 	return COMMAND_OK;
@@ -2419,7 +2401,7 @@ static int scale_map_arg(const cmd_context *context)
 	int counter;
 	if (context->totparms != context->intparms)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	for (counter = 0; counter <= 11; counter++)
 	{
@@ -2449,7 +2431,7 @@ static int periodicity_arg(const cmd_context *context)
 	}
 	else if (context->numval == NON_NUMERIC)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	else if (context->numval != 0)
 	{
@@ -2506,7 +2488,7 @@ static int log_mode_arg(const cmd_context *context)
 	}
 	else
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2560,7 +2542,7 @@ static int show_dot_arg(const cmd_context *context)
 			}
 			else
 			{
-				return badarg(context->curarg);
+				return bad_arg(context->curarg);
 			}
 		}
 		else
@@ -2593,7 +2575,7 @@ static int decomposition_arg(const cmd_context *context)
 {
 	if (context->totparms != context->intparms || context->totparms < 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_decomposition[0] = context->intval[0];
 	g_decomposition[1] = 0;
@@ -2608,7 +2590,7 @@ static int distance_test_arg(const cmd_context *context)
 {
 	if (context->totparms != context->intparms || context->totparms < 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	usr_distest = (long)context->floatval[0];
 	g_distance_test_width = 71;
@@ -2632,7 +2614,7 @@ static int formula_file_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (merge_pathnames(g_formula_filename, context->value, context->mode) < 0)
 	{
@@ -2645,7 +2627,7 @@ static int formula_name_arg(const cmd_context *context)
 {
 	if (context->valuelen > ITEMNAMELEN)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	strcpy(g_formula_name, context->value);
 	return COMMAND_FRACTAL_PARAM;
@@ -2655,7 +2637,7 @@ static int l_file_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (merge_pathnames(g_l_system_filename, context->value, context->mode) < 0)
 	{
@@ -2668,7 +2650,7 @@ static int l_name_arg(const cmd_context *context)
 {
 	if (context->valuelen > ITEMNAMELEN)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	strcpy(g_l_system_name, context->value);
 	return COMMAND_FRACTAL_PARAM;
@@ -2679,12 +2661,12 @@ static int ifs_file_arg(const cmd_context *context)
 	int existdir;
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	existdir = merge_pathnames(g_ifs_filename, context->value, context->mode);
 	if (existdir == 0)
 	{
-		reset_ifs_defn();
+		reset_ifs_definition();
 	}
 	else if (existdir < 0)
 	{
@@ -2697,10 +2679,10 @@ static int ifs_arg(const cmd_context *context)
 {
 	if (context->valuelen > ITEMNAMELEN)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	strcpy(g_ifs_name, context->value);
-	reset_ifs_defn();
+	reset_ifs_definition();
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2708,7 +2690,7 @@ static int parm_file_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (merge_pathnames(g_command_file, context->value, context->mode) < 0)
 	{
@@ -2721,7 +2703,7 @@ static int stereo_arg(const cmd_context *context)
 {
 	if ((context->numval < 0) || (context->numval > 4))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_glasses_type = context->numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
@@ -2731,7 +2713,7 @@ static int rotation_arg(const cmd_context *context)
 {
 	if (context->totparms != 3 || context->intparms != 3)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	XROT = context->intval[0];
 	YROT = context->intval[1];
@@ -2743,7 +2725,7 @@ static int perspective_arg(const cmd_context *context)
 {
 	if (context->numval == NON_NUMERIC)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	ZVIEWER = context->numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
@@ -2753,7 +2735,7 @@ static int xy_shift_arg(const cmd_context *context)
 {
 	if (context->totparms != 2 || context->intparms != 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	XSHIFT = context->intval[0];
 	YSHIFT = context->intval[1];
@@ -2780,7 +2762,7 @@ static int crop_arg(const cmd_context *context)
 		|| context->intval[2] < 0 || context->intval[2] > 100
 		|| context->intval[3] < 0 || context->intval[3] > 100)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_red_crop_left   = context->intval[0];
 	g_red_crop_right  = context->intval[1];
@@ -2793,7 +2775,7 @@ static int bright_arg(const cmd_context *context)
 {
 	if (context->totparms != 2 || context->intparms != 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_red_bright  = context->intval[0];
 	g_blue_bright = context->intval[1];
@@ -2804,7 +2786,7 @@ static int xy_adjust_arg(const cmd_context *context)
 {
 	if (context->totparms != 2 || context->intparms != 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_x_trans = context->intval[0];
 	g_y_trans = context->intval[1];
@@ -2824,10 +2806,10 @@ static int threed_arg(const cmd_context *context)
 	}
 	else if (yesno < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_display_3d = yesno;
-	initvars_3d();
+	initialize_variables_3d();
 	return (g_display_3d) ? 6 : 2;
 }
 
@@ -2835,7 +2817,7 @@ static int scale_xyz_arg(const cmd_context *context)
 {
 	if (context->totparms < 2 || context->intparms != context->totparms)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	XSCALE = context->intval[0];
 	YSCALE = context->intval[1];
@@ -2857,7 +2839,7 @@ static int water_line_arg(const cmd_context *context)
 {
 	if (context->numval < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	WATERLINE = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2867,7 +2849,7 @@ static int fill_type_arg(const cmd_context *context)
 {
 	if (context->numval < -1 || context->numval > 6)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	FILLTYPE = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2877,7 +2859,7 @@ static int light_source_arg(const cmd_context *context)
 {
 	if (context->totparms != 3 || context->intparms != 3)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	XLIGHT = context->intval[0];
 	YLIGHT = context->intval[1];
@@ -2889,7 +2871,7 @@ static int smoothing_arg(const cmd_context *context)
 {
 	if (context->numval < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	LIGHTAVG = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2899,7 +2881,7 @@ static int latitude_arg(const cmd_context *context)
 {
 	if (context->totparms != 2 || context->intparms != 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	THETA1 = context->intval[0];
 	THETA2 = context->intval[1];
@@ -2910,7 +2892,7 @@ static int longitude_arg(const cmd_context *context)
 {
 	if (context->totparms != 2 || context->intparms != 2)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	PHI1 = context->intval[0];
 	PHI2 = context->intval[1];
@@ -2921,7 +2903,7 @@ static int radius_arg(const cmd_context *context)
 {
 	if (context->numval < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	RADIUS = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2931,7 +2913,7 @@ static int transparent_arg(const cmd_context *context)
 {
 	if (context->totparms != context->intparms || context->totparms < 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_transparent[1] = g_transparent[0] = context->intval[0];
 	if (context->totparms > 1)
@@ -2945,7 +2927,7 @@ static int coarse_arg(const cmd_context *context)
 {
 	if (context->numval < 3 || context->numval > 2000)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_preview_factor = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2955,7 +2937,7 @@ static int randomize_arg(const cmd_context *context)
 {
 	if (context->numval < 0 || context->numval > 7)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_randomize = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2965,7 +2947,7 @@ static int ambient_arg(const cmd_context *context)
 {
 	if (context->numval < 0 || context->numval > 100)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_ambient = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2975,7 +2957,7 @@ static int haze_arg(const cmd_context *context)
 {
 	if (context->numval < 0 || context->numval > 100)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_haze = context->numval;
 	return COMMAND_3D_PARAM;
@@ -2999,7 +2981,7 @@ static int monitor_width_arg(const cmd_context *context)
 {
 	if (context->totparms != 1 || context->floatparms != 1)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	AutoStereo_width  = context->floatval[0];
 	return COMMAND_3D_PARAM;
@@ -3011,13 +2993,13 @@ static int background_arg(const cmd_context *context)
 
 	if (context->totparms != 3 || context->intparms != 3)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	for (i = 0; i < 3; i++)
 	{
 		if (context->intval[i] & ~0xff)
 		{
-			return badarg(context->curarg);
+			return bad_arg(context->curarg);
 		}
 	}
 	g_back_color[0] = (BYTE)context->intval[0];
@@ -3030,7 +3012,7 @@ static int light_name_arg(const cmd_context *context)
 {
 	if (context->valuelen > (FILE_MAX_PATH-1))
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
@@ -3043,7 +3025,7 @@ static int ray_arg(const cmd_context *context)
 {
 	if (context->numval < 0 || context->numval > 6)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 	g_raytrace_output = context->numval;
 	return COMMAND_3D_PARAM;
@@ -3053,7 +3035,7 @@ static int release_arg(const cmd_context *context)
 {
 	if (context->numval < 0)
 	{
-		return badarg(context->curarg);
+		return bad_arg(context->curarg);
 	}
 
 	g_save_release = context->numval;
@@ -3225,7 +3207,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	}
 	if (j > 20)
 	{
-		return badarg(context.curarg);             /* keyword too long */
+		return bad_arg(context.curarg);             /* keyword too long */
 	}
 	strncpy(variable, curarg, j);          /* get the variable name  */
 	variable[j] = 0;                     /* truncate variable name */
@@ -3329,7 +3311,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		else if (((int) strlen(argptr) > 513)  /* very long command */
 					|| (context.totparms > 0 && context.floatval[context.totparms-1] == FLT_MAX
 						&& context.totparms < 6)
-					|| isabigfloat(argptr))
+					|| is_a_big_float(argptr))
 		{
 			++context.floatparms;
 			context.floatval[context.totparms] = FLT_MAX;
@@ -3413,7 +3395,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "cyclerange",		cycle_range_arg },
 			{ "ranges",			ranges_arg },
 			{ "savename", 		save_name_arg },		/* savename=? */
-			{ "tweaklzw", 		tweak_lzw_arg },		/* tweaklzw=? */
+			{ "tweaklzw", 		ignore_arg },			/* tweaklzw=? */
 			{ "minstack", 		min_stack_arg },		/* minstack=? */
 			{ "mathtolerance", 	math_tolerance_arg },	/* mathtolerance=? */
 			{ "tempdir", 		temp_dir_arg },			/* tempdir=? */
@@ -3538,7 +3520,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		}
 	}
 
-	return badarg(context.curarg);
+	return bad_arg(context.curarg);
 }
 
 #ifdef _MSC_VER
@@ -3547,30 +3529,30 @@ int process_command(char *curarg, int mode) /* process a single argument */
 #endif
 #endif
 
-static void parse_textcolors(char *value)
+static void parse_text_colors(char *value)
 {
 	int i, j, k, hexval;
 	if (strcmp(value, "mono") == 0)
 	{
-		for (k = 0; k < sizeof(txtcolor); ++k)
+		for (k = 0; k < sizeof(g_text_colors); ++k)
 		{
-			txtcolor[k] = BLACK*16 + WHITE;
+			g_text_colors[k] = BLACK*16 + WHITE;
 		}
 	/* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
 							= C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16 + BLACK; */
-		txtcolor[6] = txtcolor[12] = txtcolor[13] = txtcolor[14] = txtcolor[20]
-						= txtcolor[27] = txtcolor[28] = WHITE*16 + BLACK;
+		g_text_colors[6] = g_text_colors[12] = g_text_colors[13] = g_text_colors[14] = g_text_colors[20]
+						= g_text_colors[27] = g_text_colors[28] = WHITE*16 + BLACK;
 		/* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
 					= C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
 					= C_STOP_INFO = BLACK*16 + L_WHITE; */
-		txtcolor[0] = txtcolor[2] = txtcolor[5] = txtcolor[11] = txtcolor[16]
-						= txtcolor[17] = txtcolor[22] = txtcolor[24]
-						= txtcolor[25] = BLACK*16 + L_WHITE;
+		g_text_colors[0] = g_text_colors[2] = g_text_colors[5] = g_text_colors[11] = g_text_colors[16]
+						= g_text_colors[17] = g_text_colors[22] = g_text_colors[24]
+						= g_text_colors[25] = BLACK*16 + L_WHITE;
 	}
 	else
 	{
 		k = 0;
-		while (k < sizeof(txtcolor))
+		while (k < sizeof(g_text_colors))
 		{
 			if (*value == 0)
 			{
@@ -3585,7 +3567,7 @@ static void parse_textcolors(char *value)
 				{
 					j = 15;
 				}
-				txtcolor[k] = (BYTE) (i*16 + j);
+				g_text_colors[k] = (BYTE) (i*16 + j);
 				value = strchr(value, '/');
 				if (value == NULL)
 				{
@@ -3722,19 +3704,19 @@ badcolor:
 	return -1;
 }
 
-static void argerror(const char *badarg)      /* oops. couldn't decode this */
+static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 {
 	char msg[300];
 	char spillover[71];
-	if ((int) strlen(badarg) > 70)
+	if ((int) strlen(bad_arg) > 70)
 	{
-		strncpy(spillover, badarg, 70);
+		strncpy(spillover, bad_arg, 70);
 		spillover[70] = 0;
-		badarg = spillover;
+		bad_arg = spillover;
 	}
-	sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", badarg);
+	sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", bad_arg);
 
-	if (g_command_initialize)       /* this is 1st call to cmdfiles */
+	if (g_command_initialize)       /* this is 1st call to command_files */
 	{
 		strcat(msg, "\n"
 			"\n"
@@ -3847,7 +3829,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        1 sstools.ini                    */
 /*        2 <@> command after startup      */
 /*        3 command line @filename/setname */
-/* this is like stopmsg() but can be used in cmdfiles()      */
+/* this is like stopmsg() but can be used in command_files()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
 int init_msg(const char *cmdstr, char *badfilename, int mode)
 {
@@ -3878,7 +3860,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 	{
 		sprintf(msg, "Can't find %s%s, please check %s", cmd, badfilename, modestr[mode]);
 	}
-	if (g_command_initialize)  /* & cmdfiles hasn't finished 1st try */
+	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
 		if (row == 1 && badfilename)
 		{
@@ -3893,7 +3875,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 		{
 			driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
 			driver_move_cursor(row + 1, 0);
-			dopause(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
+			pause_error(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
 		}
 	}
 	else if (badfilename)
@@ -3904,7 +3886,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 }
 
 /* defer pause until after parsing so we know if in batch mode */
-void dopause(int action)
+void pause_error(int action)
 {
 	static int needpause = PAUSE_ERROR_NO_BATCH;
 	switch (action)
@@ -3940,7 +3922,7 @@ void dopause(int action)
 	Crude function to detect a floating point number. Intended for
 	use with arbitrary precision.
 */
-static int isabigfloat(char *str)
+static int is_a_big_float(char *str)
 {
 	/* [+|-]numbers][.]numbers[+|-][e|g]numbers */
 	int result = 1;
@@ -3975,4 +3957,3 @@ static int isabigfloat(char *str)
 	}
 	return result;
 }
-

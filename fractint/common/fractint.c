@@ -294,8 +294,8 @@ restart:   /* insert key re-starts here */
 	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
 	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
-	cmdfiles(argc, argv);         /* process the command-line */
-	dopause(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
+	command_files(argc, argv);         /* process the command-line */
+	pause_error(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
 	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
 	history_allocate();

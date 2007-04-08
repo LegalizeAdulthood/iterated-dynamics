@@ -148,7 +148,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	}
 
 	/* exit in makepar mode if no exact match of video mode in file */
-	if (*s_makepar == '\0' && g_init_mode == -1)
+	if (*g_make_par == '\0' && g_init_mode == -1)
 	{
 		return 0;
 	}
@@ -225,7 +225,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 #ifndef XFRACT
 	gotrealmode = 0;
-	if ((g_init_mode < 0 || (g_ask_video && !g_initialize_batch)) && *s_makepar != '\0')
+	if ((g_init_mode < 0 || (g_ask_video && !g_initialize_batch)) && *g_make_par != '\0')
 	{
 		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not
@@ -498,7 +498,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			viewreduction = tmpreduce; /* ok, this works */
 		}
 	}
-	if (*s_makepar && !g_fast_restore && !g_initialize_batch &&
+	if (*g_make_par && !g_fast_restore && !g_initialize_batch &&
 			(fabs(finalaspectratio - g_screen_aspect_ratio) > .00001 || viewxdots != 0))
 	{
 		stopmsg(STOPMSG_NO_BUZZER,

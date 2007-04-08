@@ -275,7 +275,6 @@ extern long					(_fastcall *g_lx_pixel)(void); /* set in FRACTALS.C */
 extern long					*ly0;
 extern long					*ly1;
 extern long					(_fastcall *g_ly_pixel)(void); /* set in FRACTALS.C */
-extern int					lzw[2];
 extern long					l_at_rad;
 extern double				g_magnitude;
 extern unsigned long		g_magnitude_limit;
@@ -485,7 +484,7 @@ extern double				symax;
 extern double				symin;
 extern int					g_symmetry;
 extern int					syoffs;
-extern char					s_makepar[];
+extern char					g_make_par[];
 extern int					tabmode;
 extern int					taborhelp;
 extern int					g_targa_output;
@@ -495,6 +494,7 @@ extern double				g_temp_sqr_y;
 extern BYTE					teststring[];
 extern int					g_text_cbase;						/* g_text_col is relative to this */
 extern int					g_text_col;						/* current column in text mode */
+extern BYTE					g_text_colors[];
 extern int					g_text_rbase;						/* g_text_row is relative to this */
 extern int					g_text_row;						/* current row in text mode */
 extern unsigned int			this_gen_rseed;
