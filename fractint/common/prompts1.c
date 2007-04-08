@@ -2133,9 +2133,10 @@ long get_file_entry(int type, char *title, char *fmask,
 			newfile = 0;
 			if (firsttry)
 			{
-				sprintf(temp1, "Can't find %s", filename);
-				stopmsg(0, temp1);
-				}
+				char message[256];
+				sprintf(message, "Can't find %s", filename);
+				stopmsg(0, message);
+			}
 			sprintf(buf, "Select %s File", title);
 			if (getafilename(buf, fmask, filename) < 0)
 			{
@@ -2143,7 +2144,7 @@ long get_file_entry(int type, char *title, char *fmask,
 			}
 
 			firsttry = 1; /* if around open loop again it is an error */
-			}
+		}
 		setvbuf(gfe_file, tstack, _IOFBF, 4096); /* improves speed when file is big */
 		newfile = 0;
 		entry_pointer = gfe_choose_entry(type, title, filename, entryname);
@@ -2151,7 +2152,7 @@ long get_file_entry(int type, char *title, char *fmask,
 		{
 			newfile = 1; /* go to file list, */
 			continue;    /* back to getafilename */
-			}
+		}
 		if (entry_pointer == -1)
 		{
 			return -1;
@@ -2385,6 +2386,7 @@ static long gfe_choose_entry(int type, char *title, char *filename, char *entryn
 	void (*formatitem)(int, char *);
 	int boxwidth, boxdepth, colwidth;
 	char instr[80];
+	char temp1[256];
 
 	static int dosort = 1;
 
@@ -3380,6 +3382,8 @@ static int check_mapfile()
 {
 	int askflag = 0;
 	int i, oldhelpmode;
+	char temp1[256];
+
 	if (dontreadcolor)
 	{
 		return 0;

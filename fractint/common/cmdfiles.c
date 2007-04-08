@@ -23,12 +23,11 @@ int     g_stop_pass = 0;             /* stop at this guessing pass early */
 int     g_pseudo_x = 0;              /* xdots to use for video independence */
 int     g_pseudo_y = 0;              /* ydots to use for video independence */
 int     g_bf_digits = 0;             /* digits to use (force) for bf_math */
-int     showdot = -1;             /* color to show crawling graphics cursor */
-int     sizedot;                /* size of dot crawling cursor */
-char    recordcolors;           /* default PAR color-writing method */
-char    autoshowdot = 0;          /* dark, medium, bright */
-char    start_showorbit = 0;      /* show orbits on at start of fractal */
-char    temp1[256];             /* temporary strings        */
+int     g_show_dot = -1;             /* color to show crawling graphics cursor */
+int     g_size_dot;                /* size of dot crawling cursor */
+char    g_record_colors;           /* default PAR color-writing method */
+char    g_auto_show_dot = 0;          /* dark, medium, bright */
+char    g_start_show_orbit = 0;      /* show orbits on at start of fractal */
 char    readname[FILE_MAX_PATH]; /* name of fractal input file */
 char    tempdir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    workdir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
@@ -387,7 +386,7 @@ static void initvars_run()              /* once per run init */
 static void initvars_restart()          /* <ins> key init */
 {
 	int i;
-	recordcolors = 'a';                  /* don't use mapfiles in PARs */
+	g_record_colors = 'a';                  /* don't use mapfiles in PARs */
 	save_release = g_release;            /* this release number */
 	gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
 	dither_flag = 0;                     /* no dithering */
@@ -1117,7 +1116,7 @@ static int record_colors_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	recordcolors = *context->value;
+	g_record_colors = *context->value;
 	return COMMAND_OK;
 }
 
@@ -2552,15 +2551,15 @@ static int orbit_interval_arg(const cmd_context *context)
 
 static int show_dot_arg(const cmd_context *context)
 {
-	showdot = 15;
+	g_show_dot = 15;
 	if (context->totparms > 0)
 	{
-		autoshowdot = (char)0;
+		g_auto_show_dot = (char)0;
 		if (isalpha(context->charval[0]))
 		{
 			if (strchr("abdm", (int)context->charval[0]) != NULL)
 			{
-				autoshowdot = context->charval[0];
+				g_auto_show_dot = context->charval[0];
 			}
 			else
 			{
@@ -2569,19 +2568,19 @@ static int show_dot_arg(const cmd_context *context)
 		}
 		else
 		{
-			showdot = context->numval;
-			if (showdot < 0)
+			g_show_dot = context->numval;
+			if (g_show_dot < 0)
 			{
-				showdot = -1;
+				g_show_dot = -1;
 			}
 		}
 		if (context->totparms > 1 && context->intparms > 0)
 		{
-			sizedot = context->intval[1];
+			g_size_dot = context->intval[1];
 		}
-		if (sizedot < 0)
+		if (g_size_dot < 0)
 		{
-			sizedot = 0;
+			g_size_dot = 0;
 		}
 	}
 	return COMMAND_OK;
@@ -2589,7 +2588,7 @@ static int show_dot_arg(const cmd_context *context)
 
 static int show_orbit_arg(const cmd_context *context)
 {
-	start_showorbit = (char)context->yesnoval[0];
+	g_start_show_orbit = (char)context->yesnoval[0];
 	return COMMAND_OK;
 }
 

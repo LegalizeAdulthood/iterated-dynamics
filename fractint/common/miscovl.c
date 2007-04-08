@@ -1376,7 +1376,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" orbitinterval=%d", g_orbit_interval);
 		}
 
-		if (start_showorbit > 0)
+		if (g_start_show_orbit > 0)
 		{
 			put_parm(" showorbit=yes");
 		}
@@ -1418,7 +1418,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 	if (*colorinf != 'n')
 	{
-		if (recordcolors == 'c' && *colorinf == '@')
+		if (g_record_colors == 'c' && *colorinf == '@')
 		{
 			put_parm_line();
 			put_parm("; colors=");
@@ -1427,7 +1427,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 docolors:
 		put_parm(" colors=");
-		if (recordcolors != 'c' && recordcolors != 'y' && *colorinf == '@')
+		if (g_record_colors != 'c' && g_record_colors != 'y' && *colorinf == '@')
 		{
 			put_parm(colorinf);
 		}

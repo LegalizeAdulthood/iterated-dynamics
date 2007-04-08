@@ -227,6 +227,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	gotrealmode = 0;
 	if ((g_init_mode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0')
 	{
+		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not
 			in makepar mode, talk to user */
 

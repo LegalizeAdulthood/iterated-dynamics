@@ -489,10 +489,11 @@ void save_palette()
 	char palname[FILE_MAX_PATH];
 	FILE *dacfile;
 	int i, oldhelpmode;
+	char temp1[256] = { 0 };
+
 	strcpy(palname, MAP_name);
 	oldhelpmode = helpmode;
 	driver_stack_screen();
-	temp1[0] = 0;
 	helpmode = HELPCOLORMAP;
 	i = field_prompt("Name of map file to write", NULL, temp1, 60, NULL);
 	driver_unstack_screen();

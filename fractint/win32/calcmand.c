@@ -311,7 +311,7 @@ doeither:									; common Mandelbrot, Julia set code
 		jne		quickkbd					;  yup.	 leave it that way.
 		cmp		orbit_delay, 0				; are we delaying orbits?
 		je		slowkbd						;  nope.  change it.
-		cmp		showdot, 0					; are we showing the current pixel?
+		cmp		g_show_dot, 0					; are we showing the current pixel?
 		jge		quickkbd					;  yup.	 leave it that way.
 slowkbd:
 		mov		g_input_counter, 5000				; else, stuff an appropriate count	val

@@ -2338,9 +2338,9 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 	g_orbit_index = 0;
 	g_color_iter = 0;
-	if (showdot > 0)
+	if (g_show_dot > 0)
 	{
-		(*g_plot_color) (g_col, g_row, showdot % colors);
+		(*g_plot_color) (g_col, g_row, g_show_dot % colors);
 	}
 	if (!integerfractal) /* fp mode */
 	{
