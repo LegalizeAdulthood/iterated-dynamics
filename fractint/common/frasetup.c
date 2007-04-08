@@ -807,8 +807,7 @@ int trig_plus_trig_setup_fp(void)
 	return julia_setup_fp();
 }
 
-int
-LambdaTrigOrTrigSetup(void)
+int lambda_trig_or_trig_setup(void)
 {
 	/* default symmetry is ORIGIN  JCO 2/29/92 (changed from PI_SYM) */
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
@@ -825,8 +824,7 @@ LambdaTrigOrTrigSetup(void)
 	return 1;
 }
 
-int
-JuliaTrigOrTrigSetup(void)
+int julia_trig_or_trig_setup(void)
 {
 	/* default symmetry is XAXIS */
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
@@ -843,8 +841,7 @@ JuliaTrigOrTrigSetup(void)
 	return 1;
 }
 
-int
-ManlamTrigOrTrigSetup(void)
+int mandelbrot_lambda_trig_or_trig_setup(void)
 { /* psuedo */
 	/* default symmetry is XAXIS */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
@@ -860,10 +857,9 @@ ManlamTrigOrTrigSetup(void)
 	return 1;
 }
 
-int
-MandelTrigOrTrigSetup(void)
+int mandelbrot_trig_or_trig_setup(void)
 {
-/* default symmetry is XAXIS_NOPARM */
+	/* default symmetry is XAXIS_NOPARM */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
 	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
@@ -874,8 +870,7 @@ MandelTrigOrTrigSetup(void)
 }
 
 
-int
-ZXTrigPlusZSetup(void)
+int z_trig_plus_z_setup(void)
 {
 	/*   static char ZXTrigPlusZSym1[] = */
 	/* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
@@ -961,8 +956,7 @@ ZXTrigPlusZSetup(void)
 	return julia_setup_fp();
 }
 
-int
-LambdaTrigSetup(void)
+int lambda_trig_setup(void)
 {
 	int isinteger = curfractalspecific->isinteger;
 	curfractalspecific->orbitcalc =  (isinteger != 0)
@@ -1001,8 +995,7 @@ LambdaTrigSetup(void)
 	return isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int
-JuliafnPlusZsqrdSetup(void)
+int julia_fn_plus_z_squared_setup(void)
 {
 	/*   static char fnpluszsqrd[] = */
 	/* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
@@ -1023,8 +1016,7 @@ JuliafnPlusZsqrdSetup(void)
 	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int
-SqrTrigSetup(void)
+int sqr_trig_setup(void)
 {
 	/*   static char SqrTrigSym[] = */
 	/* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
@@ -1041,8 +1033,7 @@ SqrTrigSetup(void)
 	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int
-FnXFnSetup(void)
+int fn_fn_setup(void)
 {
 	static char fnxfn[7][7] =
 	{/* fn2 ->sin     cos    sinh    cosh  exp    log    sqr */
@@ -1095,8 +1086,7 @@ FnXFnSetup(void)
 	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int
-MandelTrigSetup(void)
+int mandelbrot_trig_setup(void)
 {
 	int isinteger = curfractalspecific->isinteger;
 	curfractalspecific->orbitcalc = 
@@ -1129,8 +1119,7 @@ MandelTrigSetup(void)
 	return isinteger ? mandelbrot_setup_l() : mandelbrot_setup_fp();
 }
 
-int
-MarksJuliaSetup(void)
+int marks_julia_setup(void)
 {
 #if !defined(XFRACT)
 	if (param[2] < 1)
@@ -1163,8 +1152,7 @@ MarksJuliaSetup(void)
 	return 1;
 }
 
-int
-MarksJuliafpSetup(void)
+int marks_julia_setup_fp(void)
 {
 	if (param[2] < 1)
 	{
@@ -1195,8 +1183,7 @@ MarksJuliafpSetup(void)
 	return 1;
 }
 
-int
-SierpinskiSetup(void)
+int sierpinski_setup(void)
 {
 	/* sierpinski */
 	g_periodicity_check = 0;                /* disable periodicity checks */
@@ -1206,8 +1193,7 @@ SierpinskiSetup(void)
 	return 1;
 }
 
-int
-SierpinskiFPSetup(void)
+int sierpinski_setup_fp(void)
 {
 	/* sierpinski */
 	g_periodicity_check = 0;                /* disable periodicity checks */
@@ -1216,8 +1202,7 @@ SierpinskiFPSetup(void)
 	return 1;
 }
 
-int
-HalleySetup(void)
+int halley_setup(void)
 {
 	/* Halley */
 	g_periodicity_check = 0;
@@ -1254,8 +1239,7 @@ HalleySetup(void)
 	return 1;
 }
 
-int
-PhoenixSetup(void)
+int phoenix_setup(void)
 {
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
@@ -1286,8 +1270,7 @@ PhoenixSetup(void)
 	return 1;
 }
 
-int
-PhoenixCplxSetup(void)
+int phoenix_complex_setup(void)
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
@@ -1325,8 +1308,7 @@ PhoenixCplxSetup(void)
 	return 1;
 }
 
-int
-MandPhoenixSetup(void)
+int mandelbrot_phoenix_setup(void)
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
@@ -1357,8 +1339,7 @@ MandPhoenixSetup(void)
 	return 1;
 }
 
-int
-MandPhoenixCplxSetup(void)
+int mandelbrot_phoenix_complex_setup(void)
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
@@ -1393,8 +1374,7 @@ MandPhoenixCplxSetup(void)
 	return 1;
 }
 
-int
-StandardSetup(void)
+int standard_setup(void)
 {
 	if (fractype == UNITYFP)
 	{
@@ -1403,8 +1383,7 @@ StandardSetup(void)
 	return 1;
 }
 
-int
-VLSetup(void)
+int volterra_lotka_setup(void)
 {
 	if (param[0] < 0.0)
 	{

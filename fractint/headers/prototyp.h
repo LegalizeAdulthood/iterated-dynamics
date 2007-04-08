@@ -544,7 +544,7 @@ extern void setup287code(void);
 
 /*  frasetup -- C file prototypes */
 
-extern int VLSetup(void);
+extern int volterra_lotka_setup(void);
 extern int mandelbrot_setup(void);
 extern int mandelbrot_setup_fp(void);
 extern int julia_setup(void);
@@ -558,27 +558,27 @@ extern int trig_plus_sqr_setup_l(void);
 extern int trig_plus_sqr_setup_fp(void);
 extern int trig_plus_trig_setup_l(void);
 extern int trig_plus_trig_setup_fp(void);
-extern int ZXTrigPlusZSetup(void);
-extern int LambdaTrigSetup(void);
-extern int JuliafnPlusZsqrdSetup(void);
-extern int SqrTrigSetup(void);
-extern int FnXFnSetup(void);
-extern int MandelTrigSetup(void);
-extern int MarksJuliaSetup(void);
-extern int MarksJuliafpSetup(void);
-extern int SierpinskiSetup(void);
-extern int SierpinskiFPSetup(void);
-extern int StandardSetup(void);
-extern int LambdaTrigOrTrigSetup(void);
-extern int JuliaTrigOrTrigSetup(void);
-extern int ManlamTrigOrTrigSetup(void);
-extern int MandelTrigOrTrigSetup(void);
-extern int HalleySetup(void);
+extern int z_trig_plus_z_setup(void);
+extern int lambda_trig_setup(void);
+extern int julia_fn_plus_z_squared_setup(void);
+extern int sqr_trig_setup(void);
+extern int fn_fn_setup(void);
+extern int mandelbrot_trig_setup(void);
+extern int marks_julia_setup(void);
+extern int marks_julia_setup_fp(void);
+extern int sierpinski_setup(void);
+extern int sierpinski_setup_fp(void);
+extern int standard_setup(void);
+extern int lambda_trig_or_trig_setup(void);
+extern int julia_trig_or_trig_setup(void);
+extern int mandelbrot_lambda_trig_or_trig_setup(void);
+extern int mandelbrot_trig_or_trig_setup(void);
+extern int halley_setup(void);
 extern int dynamic_2d_setup_fp(void);
-extern int PhoenixSetup(void);
-extern int MandPhoenixSetup(void);
-extern int PhoenixCplxSetup(void);
-extern int MandPhoenixCplxSetup(void);
+extern int phoenix_setup(void);
+extern int mandelbrot_phoenix_setup(void);
+extern int phoenix_complex_setup(void);
+extern int mandelbrot_phoenix_complex_setup(void);
 
 /*  gifview -- C file prototypes */
 
