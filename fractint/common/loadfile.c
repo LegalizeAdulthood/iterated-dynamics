@@ -112,7 +112,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_potential_flag = (potparam[0] != 0.0);
 		g_random_flag         = read_info.random_flag;
 		g_random_seed         = read_info.random_seed;
-		inside        = read_info.inside;
+		g_inside        = read_info.inside;
 		LogFlag       = read_info.logmapold;
 		inversion[0]  = read_info.invert[0];
 		inversion[1]  = read_info.invert[1];
@@ -130,14 +130,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 1)
 	{
 		save_release  = 1200;
-		if (!display3d
+		if (!g_display_3d
 			&& (read_info.version <= 4 || read_info.flag3d > 0
 				|| (curfractalspecific->flags & PARMS3D)))
 		{
 			int i;
 			for (i = 0; i < 16; i++)
 			{
-				init3d[i] = read_info.init3d[i];
+				g_init_3d[i] = read_info.init_3d[i];
 			}
 			g_preview_factor   = read_info.previewfactor;
 			g_x_trans          = read_info.xtrans;
@@ -157,7 +157,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 2)
 	{
 		save_release = 1300;
-		outside      = read_info.outside;
+		g_outside      = read_info.outside;
 	}
 
 	calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
@@ -186,9 +186,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		trigndx[1]  = read_info.trigndx[1];
 		trigndx[2]  = read_info.trigndx[2];
 		trigndx[3]  = read_info.trigndx[3];
-		finattract  = read_info.finattract;
-		initorbit.x = read_info.initorbit[0];
-		initorbit.y = read_info.initorbit[1];
+		g_finite_attractor  = read_info.finattract;
+		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
+		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
 		useinitorbit = read_info.useinitorbit;
 		usr_periodicitycheck = read_info.periodicity;
 	}
@@ -215,7 +215,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			save_release = 1410;
 			save_system = 0;
 		}
-		if (!display3d && read_info.flag3d > 0)
+		if (!g_display_3d && read_info.flag3d > 0)
 		{
 			loaded3d       = 1;
 			g_ambient        = read_info.ambient;
@@ -244,7 +244,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version > 7)
 	{
-		fillcolor         = read_info.fillcolor;
+		g_fill_color         = read_info.fill_color;
 	}
 
 	if (read_info.version > 8)
@@ -307,8 +307,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
 			know which symmetry yet, will find out in setsymmetry() */
-		if (outside == REAL || outside == IMAG || outside == MULT || outside == SUM
-			|| outside == ATAN)
+		if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
+			|| g_outside == ATAN)
 		{
 			if (g_force_symmetry == FORCESYMMETRY_NONE)
 			{
@@ -398,12 +398,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	backwards_v19();
 	backwards_v20();
 
-	if (display3d)                   /* PB - a klooge till the meaning of */
+	if (g_display_3d)                   /* PB - a klooge till the meaning of */
 	{
 		usr_floatflag = oldfloatflag; /*  g_float_flag in line3d is clarified */
 	}
 
-	if (overlay3d)
+	if (g_overlay_3d)
 	{
 		g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
 		if (filexdots > xdots || fileydots > ydots)
@@ -417,15 +417,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		int olddisplay3d, i;
 		char oldfloatflag;
-		olddisplay3d = display3d;
+		olddisplay3d = g_display_3d;
 		oldfloatflag = g_float_flag;
-		display3d = loaded3d;      /* for <tab> display during next */
+		g_display_3d = loaded3d;      /* for <tab> display during next */
 		g_float_flag = usr_floatflag; /* ditto */
 		i = get_video_mode(&read_info, &formula_info);
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
-		display3d = olddisplay3d;
+		g_display_3d = olddisplay3d;
 		g_float_flag = oldfloatflag;
 		if (i)
 		{
@@ -439,13 +439,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 	}
 
-	if (display3d)
+	if (g_display_3d)
 	{
 		calc_status = CALCSTAT_PARAMS_CHANGED;
 		fractype = PLASMA;
 		curfractalspecific = &fractalspecific[fractype];
 		param[0] = 0;
-		if (!initbatch)
+		if (!g_initialize_batch)
 		{
 			if (get_3d_params() < 0)
 			{
@@ -1213,12 +1213,12 @@ void backwards_v20(void)
 	/* Fractype == FP type is not seen from PAR file ????? */
 	bad_outside = ((fractype == MANDELFP || fractype == JULIAFP
 						|| fractype == MANDEL || fractype == JULIA)
-					&& (outside <= REAL && outside >= SUM) && save_release <= 1960)
+					&& (g_outside <= REAL && g_outside >= SUM) && save_release <= 1960)
 		? 1 : 0;
 	ldcheck = ((fractype == FORMULA || fractype == FFORMULA)
 				&& (save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
 		? 1 : 0;
-	if (inside == EPSCROSS && save_release < 1961)
+	if (g_inside == EPSCROSS && save_release < 1961)
 	{
 		g_proximity = 0.01;
 	}
@@ -1246,16 +1246,16 @@ int check_back(void)
 		|| (fractype == FFORMULA && save_release <= 1920)
 		|| (LogFlag != 0 && save_release <= 2001)
 		|| (fractype == TRIGSQR && save_release < 1900)
-		|| (inside == STARTRAIL && save_release < 1825)
+		|| (g_inside == STARTRAIL && save_release < 1825)
 		|| (maxit > 32767 && save_release <= 1950)
 		|| (g_distance_test && save_release <= 1950)
-		|| ((outside <= REAL && outside >= ATAN) && save_release <= 1960)
+		|| ((g_outside <= REAL && g_outside >= ATAN) && save_release <= 1960)
 		|| (fractype == FPPOPCORN && save_release <= 1960)
 		|| (fractype == LPOPCORN && save_release <= 1960)
 		|| (fractype == FPPOPCORNJUL && save_release <= 1960)
 		|| (fractype == LPOPCORNJUL && save_release <= 1960)
-		|| (inside == FMODI && save_release <= 2000)
-		|| ((inside == ATANI || outside == ATAN) && save_release <= 2002)
+		|| (g_inside == FMODI && save_release <= 2000)
+		|| ((g_inside == ATANI || g_outside == ATAN) && save_release <= 2002)
 		|| (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002)
 		|| ((fractype == JULIBROT || fractype == JULIBROTFP)
 			&& (g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
@@ -1269,7 +1269,7 @@ int check_back(void)
 static int fix_bof(void)
 {
 	int ret = 0;
-	if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
+	if (g_inside <= BOF60 && g_inside >= BOF61 && save_release < 1826)
 	{
 		if ((curfractalspecific->calculate_type == standard_fractal &&
 			(curfractalspecific->flags & BAILTEST) == 0) ||
@@ -1284,7 +1284,7 @@ static int fix_bof(void)
 static int fix_period_bof(void)
 {
 	int ret = 0;
-	if (inside <= BOF60 && inside >= BOF61 && save_release < 1826)
+	if (g_inside <= BOF60 && g_inside >= BOF61 && save_release < 1826)
 	{
 		ret = 1;
 	}

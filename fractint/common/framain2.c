@@ -98,10 +98,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
 
-			if (overlay3d && !initbatch)
+			if (g_overlay_3d && !g_initialize_batch)
 			{
 				driver_unstack_screen();            /* restore old graphics image */
-				overlay3d = 0;
+				g_overlay_3d = 0;
 			}
 			else
 			{
@@ -218,7 +218,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		/* assume we save next time (except jb) */
 		savedac = (savedac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
-		if (initbatch == INIT_BATCH_NONE)
+		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
 		}
@@ -226,7 +226,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		if (g_show_file == 0)
 		{               /* loading an image */
 			outln_cleanup = NULL;          /* outln routine can set this */
-			if (display3d)                 /* set up 3D decoding */
+			if (g_display_3d)                 /* set up 3D decoding */
 			{
 				outln = call_line3d;
 			}
@@ -331,22 +331,22 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		if (g_show_file == 0)
 		{               /* image has been loaded */
 			g_show_file = 1;
-			if (initbatch == INIT_BATCH_NORMAL && calc_status == CALCSTAT_RESUMABLE)
+			if (g_initialize_batch == INITBATCH_NORMAL && calc_status == CALCSTAT_RESUMABLE)
 			{
-				initbatch = INIT_BATCH_FINISH_CALC; /* flag to finish calc before save */
+				g_initialize_batch = INITBATCH_FINISH_CALC; /* flag to finish calc before save */
 			}
 			if (loaded3d)      /* 'r' of image created with '3' */
 			{
-				display3d = 1;  /* so set flag for 'b' command */
+				g_display_3d = 1;  /* so set flag for 'b' command */
 			}
 		}
 		else
 		{                            /* draw an image */
-			if (initsavetime != 0          /* autosave and resumable? */
+			if (g_save_time != 0          /* autosave and resumable? */
 					&& (curfractalspecific->flags&NORESUME) == 0)
 			{
 				savebase = readticker(); /* calc's start time */
-				saveticks = initsavetime*60*1000; /* in milliseconds */
+				saveticks = g_save_time*60*1000; /* in milliseconds */
 				finishrow = -1;
 				}
 			browsing = FALSE;      /* regenerate image, turn off browsing */
@@ -491,10 +491,10 @@ done:
 
 		if (fractype == PLASMA && cpu > 88)
 		{
-			cyclelimit = 256;              /* plasma clouds need quick spins */
+			g_cycle_limit = 256;              /* plasma clouds need quick spins */
 			g_dac_count = 256;
 			g_dac_learn = 1;
-			}
+		}
 
 resumeloop:                             /* return here on failed overlays */
 #if defined(_WIN32)
@@ -520,7 +520,7 @@ resumeloop:                             /* return here on failed overlays */
 					kbdchar = FIK_ENTER;
 				}
 			}
-			else if (initbatch == INIT_BATCH_NONE)      /* not batch mode */
+			else if (g_initialize_batch == INITBATCH_NONE)      /* not batch mode */
 			{
 				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
 				if (calc_status == CALCSTAT_RESUMABLE && zwidth == 0 && !driver_key_pressed())
@@ -584,20 +584,20 @@ resumeloop:                             /* return here on failed overlays */
 			}
 			else          /* batch mode, fake next keystroke */
 			{
-				/* initbatch == -1  flag to finish calc before save */
-				/* initbatch == 0   not in batch mode */
-				/* initbatch == 1   normal batch mode */
-				/* initbatch == 2   was 1, now do a save */
-				/* initbatch == 3   bailout with errorlevel == 2, error occurred, no save */
-				/* initbatch == 4   bailout with errorlevel == 1, interrupted, try to save */
-				/* initbatch == 5   was 4, now do a save */
+				/* g_initialize_batch == -1  flag to finish calc before save */
+				/* g_initialize_batch == 0   not in batch mode */
+				/* g_initialize_batch == 1   normal batch mode */
+				/* g_initialize_batch == 2   was 1, now do a save */
+				/* g_initialize_batch == 3   bailout with errorlevel == 2, error occurred, no save */
+				/* g_initialize_batch == 4   bailout with errorlevel == 1, interrupted, try to save */
+				/* g_initialize_batch == 5   was 4, now do a save */
 
-				if (initbatch == INIT_BATCH_FINISH_CALC)       /* finish calc */
+				if (g_initialize_batch == INITBATCH_FINISH_CALC)       /* finish calc */
 				{
 					kbdchar = FIK_ENTER;
-					initbatch = INIT_BATCH_NORMAL;
+					g_initialize_batch = INITBATCH_NORMAL;
 				}
-				else if (initbatch == INIT_BATCH_NORMAL || initbatch == INIT_BATCH_BAILOUT_INTERRUPTED) /* save-to-disk */
+				else if (g_initialize_batch == INITBATCH_NORMAL || g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED) /* save-to-disk */
 				{
 /*
 					while (driver_key_pressed())
@@ -606,20 +606,20 @@ resumeloop:                             /* return here on failed overlays */
 					}
 */
 					kbdchar = (DEBUGFLAG_COMPARE_RESTORED == g_debug_flag) ? 'r' : 's';
-					if (initbatch == INIT_BATCH_NORMAL)
+					if (g_initialize_batch == INITBATCH_NORMAL)
 					{
-						initbatch = INIT_BATCH_SAVE;
+						g_initialize_batch = INITBATCH_SAVE;
 					}
-					if (initbatch == INIT_BATCH_BAILOUT_INTERRUPTED)
+					if (g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED)
 					{
-						initbatch = INIT_BATCH_BAILOUT_SAVE;
+						g_initialize_batch = INITBATCH_BAILOUT_SAVE;
 					}
 				}
 				else
 				{
 					if (calc_status != CALCSTAT_COMPLETED)
 					{
-						initbatch = INIT_BATCH_BAILOUT_ERROR; /* bailout with error */
+						g_initialize_batch = INITBATCH_BAILOUT_ERROR; /* bailout with error */
 					}
 					goodbye();               /* done, exit */
 				}
@@ -830,15 +830,15 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		truecolor = 0; /* truecolor doesn't play well with the evolver */
 	}
 	if (maxit > *old_maxit
-		&& inside >= 0
+		&& g_inside >= 0
 		&& calc_status == CALCSTAT_COMPLETED
 		&& curfractalspecific->calculate_type == standard_fractal
 		&& !LogFlag
 		&& !truecolor /* recalc not yet implemented with truecolor */
-		&& !(usr_stdcalcmode == 't' && fillcolor > -1) /* tesseral with fill doesn't work */
+		&& !(usr_stdcalcmode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(usr_stdcalcmode == 'o')
 		&& i == COMMAND_FRACTAL_PARAM /* nothing else changed */
-		&& outside != ATAN)
+		&& g_outside != ATAN)
 	{
 		g_quick_calculate = TRUE;
 		old_stdcalcmode = usr_stdcalcmode;
@@ -1273,7 +1273,7 @@ static int handle_color_cycling(int kbdchar)
 
 static int handle_color_editing(int *kbdmore)
 {
-	if (g_is_true_color && !initbatch) /* don't enter palette editor */
+	if (g_is_true_color && !g_initialize_batch) /* don't enter palette editor */
 	{
 		if (load_palette() >= 0)
 		{
@@ -1363,8 +1363,8 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	{
 		if (DEBUGFLAG_COMPARE_RESTORED == g_debug_flag)
 		{
-			comparegif = overlay3d = 1;
-			if (initbatch == INIT_BATCH_SAVE)
+			comparegif = g_overlay_3d = 1;
+			if (g_initialize_batch == INITBATCH_SAVE)
 			{
 				driver_stack_screen();   /* save graphics image */
 				strcpy(g_read_name, g_save_name);
@@ -1374,12 +1374,12 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 		}
 		else
 		{
-			comparegif = overlay3d = 0;
+			comparegif = g_overlay_3d = 0;
 		}
-		display3d = 0;
+		g_display_3d = 0;
 	}
 	driver_stack_screen();            /* save graphics image */
-	*stacked = overlay3d ? 0 : 1;
+	*stacked = g_overlay_3d ? 0 : 1;
 	if (resave_flag)
 	{
 		updatesavename(g_save_name);      /* do the pending increment */
@@ -1685,12 +1685,12 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 	case FIK_F3:                     /* 3D overlay                   */
 #endif
 		clear_zoombox();
-		overlay3d = 1;
+		g_overlay_3d = 1;
 		/* fall through */
 
 do_3d_transform:
 	case '3':                    /* restore-from (3d)            */
-		display3d = overlay3d ? 2 : 1; /* for <b> command               */
+		g_display_3d = g_overlay_3d ? 2 : 1; /* for <b> command               */
 		/* fall through */
 
 	case 'r':                    /* restore-from                 */
@@ -2291,7 +2291,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	if (row == 0)
 	{
 		errcount = 0;
-		cmp_fp = dir_fopen(g_work_dir, "cmperr", initbatch ? "a" : "w");
+		cmp_fp = dir_fopen(g_work_dir, "cmperr", g_initialize_batch ? "a" : "w");
 		outln_cleanup = cmp_line_cleanup;
 		}
 	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
@@ -2316,7 +2316,7 @@ int cmp_line(BYTE *pixels, int linelen)
 				g_put_color(col, row, 1);
 			}
 			++errcount;
-			if (initbatch == INIT_BATCH_NONE)
+			if (g_initialize_batch == INITBATCH_NONE)
 			{
 				fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
 					errcount, col, row, oldcolor, pixels[col]);
@@ -2330,7 +2330,7 @@ static void cmp_line_cleanup(void)
 {
 	char *timestring;
 	time_t ltime;
-	if (initbatch)
+	if (g_initialize_batch)
 	{
 		time(&ltime);
 		timestring = ctime(&ltime);

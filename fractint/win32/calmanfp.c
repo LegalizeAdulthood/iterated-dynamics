@@ -15,7 +15,7 @@ static int inside_color, periodicity_color;
 
 void calcmandfpasmstart(void)
 {
-	inside_color = (inside < 0) ? maxit : inside;
+	inside_color = (g_inside < 0) ? maxit : g_inside;
 	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
 	g_old_color_iter = 0;
 }
@@ -184,7 +184,7 @@ pop_stack:
 	return g_color_iter;
 
 over_bailout_87:
-	if (outside <= -2)
+	if (g_outside <= -2)
 	{
 		g_new_z.x = x;
 		g_new_z.y = y;
@@ -203,38 +203,38 @@ over_bailout_87:
 		g_color_iter = 1;
 	}
 	g_input_counter -= g_real_color_iter;
-	if (outside == -1)
+	if (g_outside == -1)
 	{
 	}
-	else if (outside > -2)
+	else if (g_outside > -2)
 	{
-		g_color_iter = outside;
+		g_color_iter = g_outside;
 	}
 	else
 	{
 		/* special_outside */
-		if (outside == REAL)
+		if (g_outside == REAL)
 		{
 			g_color_iter += (long) g_new_z.x + 7;
 		}
-		else if (outside == IMAG)
+		else if (g_outside == IMAG)
 		{
 			g_color_iter += (long) g_new_z.y + 7;
 		}
-		else if (outside == MULT && g_new_z.y != 0.0)
+		else if (g_outside == MULT && g_new_z.y != 0.0)
 		{
 		g_color_iter = (long) ((double) g_color_iter*(g_new_z.x/g_new_z.y));
 		}
-		else if (outside == SUM)
+		else if (g_outside == SUM)
 		{
 			g_color_iter +=  (long) (g_new_z.x + g_new_z.y);
 		}
-		else if (outside == ATAN)
+		else if (g_outside == ATAN)
 		{
 			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
 		}
 		/* check_color */
-		if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
 		{
 			if (save_release < 1961)
 			{

@@ -2758,7 +2758,7 @@ int mandelbrot_per_pixel(void)
 		g_old_z_l = g_initial_z_l;
 	}
 
-	if ((inside == BOF60 || inside == BOF61) && !nobof)
+	if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
@@ -2853,7 +2853,7 @@ int marks_mandelbrot_per_pixel_fp()
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -2928,14 +2928,14 @@ int mandelbrot_per_pixel_fp(void)
 	/* alter g_initial_z value */
 	if (useinitorbit == 1)
 	{
-		g_old_z = initorbit;
+		g_old_z = g_initial_orbit_z;
 	}
 	else if (useinitorbit == 2)
 	{
 		g_old_z = g_initial_z;
 	}
 
-	if ((inside == BOF60 || inside == BOF61) && !nobof)
+	if ((g_inside == BOF60 || g_inside == BOF61) && !nobof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
@@ -3018,7 +3018,7 @@ int other_mandelbrot_per_pixel_fp(void)
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -3249,7 +3249,7 @@ int mandelbrot_phoenix_per_pixel_fp(void)
 		}
 	}
 
-	g_old_z = (useinitorbit == 1) ? initorbit : g_initial_z;
+	g_old_z = (useinitorbit == 1) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;

@@ -123,7 +123,7 @@ calc_mand_floating_point(void)
 
 		if (g_magnitude >= g_magnitude_limit)
 		{
-			if (outside <= -2)
+			if (g_outside <= -2)
 			{
 				g_new_z_l.x = x;
 				g_new_z_l.y = y;
@@ -137,38 +137,38 @@ calc_mand_floating_point(void)
 				g_color_iter = 1;
 			}
 			g_input_counter -= g_real_color_iter;
-			if (outside == -1)
+			if (g_outside == -1)
 			{
 			}
-			else if (outside > -2)
+			else if (g_outside > -2)
 			{
-				g_color_iter = outside;
+				g_color_iter = g_outside;
 			}
 			else
 			{
 				/* special_outside */
-				if (outside == REAL)
+				if (g_outside == REAL)
 				{
 					g_color_iter += g_new_z_l.x + 7;
 				}
-				else if (outside == IMAG)
+				else if (g_outside == IMAG)
 				{
 					g_color_iter += g_new_z_l.y + 7;
 				}
-				else if (outside == MULT && g_new_z_l.y != 0)
+				else if (g_outside == MULT && g_new_z_l.y != 0)
 				{
 					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x) / g_new_z_l.y;
 				}
-				else if (outside == SUM)
+				else if (g_outside == SUM)
 				{
 					g_color_iter += g_new_z_l.x + g_new_z_l.y;
 				}
-				else if (outside == ATAN)
+				else if (g_outside == ATAN)
 				{
 					g_color_iter = (long) fabs(atan2(g_new_z_l.y, g_new_z_l.x)*g_atan_colors/PI);
 				}
 				/* check_color */
-				if ((g_color_iter <= 0 || g_color_iter > maxit) && outside != FMOD)
+				if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
 				{
 					g_color_iter = (save_release < 1961) ? 0 : 1;
 				}
@@ -561,10 +561,10 @@ coloradjust1_32:							;	 at	least one loop.
 		cmp		eax, maxit					; did we max out on iterations?
 		jne		short notmax32				;	 nope.
 		mov		g_old_color_iter, eax			; set "oldcolor"	to maximum
-		cmp		inside,	0					; is "inside" >= 0?
+		cmp		g_inside,	0					; is "inside" >= 0?
 		jl		wedone32					;  nope.  leave	it at "maxit"
 		sub		eax, eax
-		mov		eax, inside					;	reset max-out color	to default
+		mov		eax, g_inside					;	reset max-out color	to default
 		cmp		g_periodicity_check, 0			; show	periodicity	matches?
 		jge		wedone32					;  nope.
 		cmp		period,	0
@@ -573,10 +573,10 @@ coloradjust1_32:							;	 at	least one loop.
 		jmp		short wedone32
 
 notmax32:
-		cmp		outside, 0					; is "outside"	>= 0?
+		cmp		g_outside, 0					; is "outside"	>= 0?
 		jl		wedone32					;	nope. leave	as realcolor
 		sub		eax, eax
-		mov		eax, outside				; reset to	"outside" color
+		mov		eax, g_outside				; reset to	"outside" color
 
 wedone32:									;
 		mov		g_color_iter, eax				; save	the	color result
@@ -622,9 +622,9 @@ coloradjust1:								;	 at	least one loop.
 		jne		short notmax					;  nope.
 		mov		dword ptr g_old_color_iter,	eax		; set "oldcolor" to maximum
 		mov		dword ptr g_old_color_iter + 4, edx	; set "oldcolor" to maximum
-		cmp		inside,	0					; is "inside" >= 0?
+		cmp		g_inside,	0					; is "inside" >= 0?
 		jl		wedone						;  nope.  leave	it at "maxit"
-		mov		eax, inside					;	reset max-out color	to default
+		mov		eax, g_inside					;	reset max-out color	to default
 		sub		edx, edx
 		cmp		g_periodicity_check, 0			; show	periodicity	matches?
 		jge		wedone						;  nope.
@@ -632,9 +632,9 @@ coloradjust1:								;	 at	least one loop.
 		jmp		short wedone
 
 notmax:
-		cmp		outside, 0					; is "outside"	>= 0?
+		cmp		g_outside, 0					; is "outside"	>= 0?
 		jl		wedone						;	nope. leave	as realcolor
-		mov		eax, outside				; reset to	"outside" color
+		mov		eax, g_outside				; reset to	"outside" color
 		sub		edx, edx
 
 wedone:										;

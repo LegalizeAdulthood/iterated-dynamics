@@ -162,7 +162,7 @@ int gifview()
 				close_file();
 				return -1;
 			}
-			if ((!display3d || (g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE))
+			if ((!g_display_3d || (g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE))
 				&& !dontreadcolor)
 			{
 				g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
@@ -172,7 +172,7 @@ int gifview()
 	colorstate = 1; /* colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
-	if (display3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
+	if (g_display_3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
 	{
 		ValidateLuts(MAP_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */

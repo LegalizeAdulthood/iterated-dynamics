@@ -122,13 +122,13 @@ void make_batch_file()
 		--maxcolor;
 		/* if (maxit < maxcolor)  remove 2 lines */
 		/* maxcolor = maxit;   so that whole palette is always saved */
-		if (inside > 0 && inside > maxcolor)
+		if (g_inside > 0 && g_inside > maxcolor)
 		{
-			maxcolor = inside;
+			maxcolor = g_inside;
 		}
-		if (outside > 0 && outside > maxcolor)
+		if (g_outside > 0 && g_outside > maxcolor)
 		{
-			maxcolor = outside;
+			maxcolor = g_outside;
 		}
 		if (g_distance_test < 0 && -g_distance_test > maxcolor)
 		{
@@ -609,7 +609,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 	{
 		goto docolors;
 	}
-	if (display3d <= 0)  /* a fractal was generated */
+	if (g_display_3d <= 0)  /* a fractal was generated */
 	{
 		/****** fractal only parameters in this section *******/
 		put_parm(" reset=%d", check_back() ?
@@ -844,7 +844,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		else if (useinitorbit == 1)
 		{
-			put_parm(" initorbit=%.15g/%.15g", initorbit.x, initorbit.y);
+			put_parm(" initorbit=%.15g/%.15g", g_initial_orbit_z.x, g_initial_orbit_z.y);
 		}
 
 		if (g_float_flag)
@@ -894,93 +894,93 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm("mod"); /* default, just in case */
 			}
 		}
-		if (fillcolor != -1)
+		if (g_fill_color != -1)
 		{
-			put_parm(" fillcolor=%d", fillcolor);
+			put_parm(" fillcolor=%d", g_fill_color);
 		}
-		if (inside != 1)
+		if (g_inside != 1)
 		{
 			put_parm(" inside=");
-			if (inside == -1)
+			if (g_inside == -1)
 			{
 				put_parm("maxiter");
 			}
-			else if (inside == ZMAG)
+			else if (g_inside == ZMAG)
 			{
 				put_parm("zmag");
 			}
-			else if (inside == BOF60)
+			else if (g_inside == BOF60)
 			{
 				put_parm("bof60");
 			}
-			else if (inside == BOF61)
+			else if (g_inside == BOF61)
 			{
 				put_parm("bof61");
 			}
-			else if (inside == EPSCROSS)
+			else if (g_inside == EPSCROSS)
 			{
 				put_parm("epsiloncross");
 			}
-			else if (inside == STARTRAIL)
+			else if (g_inside == STARTRAIL)
 			{
 				put_parm("startrail");
 			}
-			else if (inside == PERIOD)
+			else if (g_inside == PERIOD)
 			{
 				put_parm("period");
 			}
-			else if (inside == FMODI)
+			else if (g_inside == FMODI)
 			{
 				put_parm("fmod");
 			}
-			else if (inside == ATANI)
+			else if (g_inside == ATANI)
 			{
 				put_parm("atan");
 			}
 			else
 			{
-				put_parm("%d", inside);
+				put_parm("%d", g_inside);
 			}
 		}
-		if (g_proximity != 0.01 && (inside == EPSCROSS || inside == FMODI
-			|| outside == FMOD))
+		if (g_proximity != 0.01 && (g_inside == EPSCROSS || g_inside == FMODI
+			|| g_outside == FMOD))
 		{
 			put_parm(" proximity=%.15g", g_proximity);
 		}
-		if (outside != -1)
+		if (g_outside != -1)
 		{
 			put_parm(" outside=");
-			if (outside == REAL)
+			if (g_outside == REAL)
 			{
 				put_parm("real");
 			}
-			else if (outside == IMAG)
+			else if (g_outside == IMAG)
 			{
 				put_parm("imag");
 			}
-			else if (outside == MULT)
+			else if (g_outside == MULT)
 			{
 				put_parm("mult");
 			}
-			else if (outside == SUM)
+			else if (g_outside == SUM)
 			{
 				put_parm("summ");
 			}
-			else if (outside == ATAN)
+			else if (g_outside == ATAN)
 			{
 				put_parm("atan");
 			}
-			else if (outside == FMOD)
+			else if (g_outside == FMOD)
 			{
 				put_parm("fmod");
 			}
-			else if (outside == TDIS)
+			else if (g_outside == TDIS)
 			{
 				put_parm("tdis");
 			}
 			else
 			{
-				put_parm("%d", outside);
+				put_parm("%d", g_outside);
 			}
 		}
 
@@ -1045,7 +1045,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" biomorph=%d", g_user_biomorph);
 		}
-		if (finattract)
+		if (g_finite_attractor)
 		{
 			put_parm(" finattract=y");
 		}
@@ -1113,10 +1113,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 	}
 
-	if (display3d >= 1)
+	if (g_display_3d >= 1)
 	{
 		/***** 3d transform only parameters in this section *****/
-		if (display3d == 2)
+		if (g_display_3d == 2)
 		{
 			put_parm(" 3d=overlay");
 		}
@@ -1197,10 +1197,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 	}
 
-	if (display3d)  /* universal 3d */
+	if (g_display_3d)  /* universal 3d */
 	{
 		/***** common (fractal & transform) 3d parameters in this section *****/
-		if (!SPHERE || display3d < 0)
+		if (!SPHERE || g_display_3d < 0)
 		{
 			put_parm(" rotation=%d/%d/%d", XROT, YROT, ZROT);
 		}

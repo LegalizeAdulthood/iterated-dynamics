@@ -225,7 +225,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 #ifndef XFRACT
 	gotrealmode = 0;
-	if ((g_init_mode < 0 || (g_ask_video && !initbatch)) && *s_makepar != '\0')
+	if ((g_init_mode < 0 || (g_ask_video && !g_initialize_batch)) && *s_makepar != '\0')
 	{
 		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not
@@ -252,7 +252,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			{
 				++nameptr;
 			}
-			if (display3d)
+			if (g_display_3d)
 			{
 				nameptr = "3D Transform";
 			}
@@ -498,7 +498,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			viewreduction = tmpreduce; /* ok, this works */
 		}
 	}
-	if (*s_makepar && !fastrestore && !initbatch &&
+	if (*s_makepar && !fastrestore && !g_initialize_batch &&
 			(fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
 	{
 		stopmsg(STOPMSG_NO_BUZZER,

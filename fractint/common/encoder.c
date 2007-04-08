@@ -240,23 +240,23 @@ restart:
 	if (interrupted)
 	{
 		texttempmsg(" *interrupted* save ");
-		if (initbatch >= INIT_BATCH_NORMAL)
+		if (g_initialize_batch >= INITBATCH_NORMAL)
 		{
-			initbatch = INIT_BATCH_BAILOUT_ERROR;         /* if batch mode, set error level */
+			g_initialize_batch = INITBATCH_BAILOUT_ERROR;         /* if batch mode, set error level */
 		}
 		return -1;
 	}
 	if (timedsave == 0)
 	{
 		driver_buzzer(BUZZER_COMPLETE);
-		if (initbatch == INIT_BATCH_NONE)
+		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			extract_filename(tmpfile, openfile);
 			sprintf(tmpmsg, " File saved as %s ", tmpfile);
 			texttempmsg(tmpmsg);
 		}
 	}
-	if (initsavetime < 0)
+	if (g_save_time < 0)
 	{
 		goodbye();
 	}
@@ -292,7 +292,7 @@ int encoder()
 	BYTE bitsperpixel, x;
 	struct fractal_info save_info;
 
-	if (initbatch)               /* flush any impending keystrokes */
+	if (g_initialize_batch)               /* flush any impending keystrokes */
 	{
 		while (driver_key_pressed())
 		{
@@ -539,7 +539,7 @@ int encoder()
 		{
 			save_info.tot_extend_len += store_item_name(IFSName);
 		}
-		if (display3d <= 0 && rangeslen)
+		if (g_display_3d <= 0 && rangeslen)
 		{
 			/* ranges block, 004 */
 			save_info.tot_extend_len += extend_blk_len(rangeslen*2);
@@ -820,13 +820,13 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->dparm8 = param[7];
 	save_info->dparm9 = param[8];
 	save_info->dparm10 = param[9];
-	save_info->fillcolor = (short) fillcolor;
+	save_info->fill_color = (short) g_fill_color;
 	save_info->potential[0] = (float) potparam[0];
 	save_info->potential[1] = (float) potparam[1];
 	save_info->potential[2] = (float) potparam[2];
 	save_info->random_flag = (short) g_random_flag;
 	save_info->random_seed = (short) g_random_seed;
-	save_info->inside = (short) inside;
+	save_info->inside = (short) g_inside;
 	save_info->logmapold = (LogFlag <= SHRT_MAX) ? (short) LogFlag : (short) SHRT_MAX;
 	save_info->invert[0] = (float) inversion[0];
 	save_info->invert[1] = (float) inversion[1];
@@ -836,7 +836,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->symmetry = (short) g_force_symmetry;
 	for (i = 0; i < 16; i++)
 	{
-		save_info->init3d[i] = (short) init3d[i];
+		save_info->init_3d[i] = (short) g_init_3d[i];
 	}
 	save_info->previewfactor = (short) g_preview_factor;
 	save_info->xtrans = (short) g_x_trans;
@@ -851,7 +851,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->yadjust = (short) g_y_adjust;
 	save_info->eyeseparation = (short) g_eye_separation;
 	save_info->glassestype = (short) g_glasses_type;
-	save_info->outside = (short) outside;
+	save_info->outside = (short) g_outside;
 	save_info->x3rd = xx3rd;
 	save_info->y3rd = yy3rd;
 	save_info->calc_status = (short) calc_status;
@@ -865,9 +865,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->trigndx[1] = trigndx[1];
 	save_info->trigndx[2] = trigndx[2];
 	save_info->trigndx[3] = trigndx[3];
-	save_info->finattract = (short) finattract;
-	save_info->initorbit[0] = initorbit.x;
-	save_info->initorbit[1] = initorbit.y;
+	save_info->finattract = (short) g_finite_attractor;
+	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
+	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
 	save_info->useinitorbit = useinitorbit;
 	save_info->periodicity = (short) g_periodicity_check;
 	save_info->potential_16bit = (short) disk16bit;
@@ -876,7 +876,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 
 	save_info->release = check_back() ? (short) min(save_release, g_release) : (short) g_release;
 
-	save_info->flag3d = (short) display3d;
+	save_info->flag3d = (short) g_display_3d;
 	save_info->ambient = (short) g_ambient;
 	save_info->randomize = (short) g_randomize;
 	save_info->haze = (short) g_haze;

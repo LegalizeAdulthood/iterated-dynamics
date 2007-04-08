@@ -300,7 +300,7 @@ restart:   /* insert key re-starts here */
 
 	history_allocate();
 
-	if (DEBUGFLAG_ABORT_SAVENAME == g_debug_flag && initbatch == INIT_BATCH_NORMAL)   /* abort if savename already exists */
+	if (DEBUGFLAG_ABORT_SAVENAME == g_debug_flag && g_initialize_batch == INITBATCH_NORMAL)   /* abort if savename already exists */
 	{
 		check_samename();
 	}
@@ -385,12 +385,12 @@ restorestart:
 		tabmode = 0;
 		if (!browsing)     /*RB*/
 		{
-			if (overlay3d)
+			if (g_overlay_3d)
 			{
 				hdg = "Select File for 3D Overlay";
 				helpmode = HELP3DOVLY;
 			}
-			else if (display3d)
+			else if (g_display_3d)
 			{
 				hdg = "Select File for 3D Transform";
 				helpmode = HELP3D;
@@ -432,12 +432,12 @@ restorestart:
 	tabmode = 1;
 	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
-	if (((overlay3d && !initbatch) || stacked) && g_init_mode < 0)        /* overlay command failed */
+	if (((g_overlay_3d && !g_initialize_batch) || stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
 		driver_unstack_screen();                  /* restore the graphics screen */
 		stacked = 0;
-		overlay3d = 0;                    /* forget overlays */
-		display3d = 0;                    /* forget 3D */
+		g_overlay_3d = 0;                    /* forget overlays */
+		g_display_3d = 0;                    /* forget 3D */
 		if (calc_status == CALCSTAT_NON_RESUMABLE)
 		{
 			calc_status = CALCSTAT_PARAMS_CHANGED;
@@ -471,20 +471,20 @@ imagestart:                             /* calc/display a new image */
 		}
 	}
 
-	if (initbatch == INIT_BATCH_NONE)
+	if (g_initialize_batch == INITBATCH_NONE)
 	{
 		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
 	}
 
-	cyclelimit = initcyclelimit;         /* default cycle limit   */
+	g_cycle_limit = initcyclelimit;         /* default cycle limit   */
 	g_adapter = g_init_mode;                  /* set the video adapter up */
 	g_init_mode = -1;                       /* (once)                   */
 
 	while (g_adapter < 0)                /* cycle through instructions */
 	{
-		if (initbatch)                          /* batch, nothing to do */
+		if (g_initialize_batch)                          /* batch, nothing to do */
 		{
-			initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
+			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
 			goodbye();
 		}
 		kbdchar = main_menu(0);
@@ -542,10 +542,10 @@ imagestart:                             /* calc/display a new image */
 				if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
 				{
 #endif
-					display3d = 0;
+					g_display_3d = 0;
 					if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 					{
-						display3d = 1;
+						g_display_3d = 1;
 					}
 					if (colorpreloaded)
 					{
@@ -687,7 +687,7 @@ va_dcl
 	subrtn = (int (*)())va_arg(arg_marker, int *);
 #endif
 
-	do_bench = timerflag; /* record time? */
+	do_bench = g_timer_flag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
 	{
 		do_bench = (DEBUGFLAG_TIME_ENCODER == g_debug_flag);

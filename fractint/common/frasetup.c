@@ -27,7 +27,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && inside > -59 && outside >= -1
+		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
@@ -47,8 +47,8 @@ int julia_setup(void)            /* Julia Routine */
 	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && inside > -59 && outside >= -1
-		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
+		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
+		&& !g_finite_attractor && using_jiim == 0 && g_bail_out_test == Mod
 		&& (orbitsave & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
@@ -251,9 +251,9 @@ int mandelbrot_setup_fp(void)
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_biomorph == -1
-			&& (inside >= -1)
+			&& (g_inside >= -1)
 			/* uncomment this next line if more outside options are added */
-			&& outside >= -6
+			&& g_outside >= -6
 			&& useinitorbit != 1
 			&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& using_jiim == 0 && g_bail_out_test == Mod
@@ -397,12 +397,12 @@ int julia_setup_fp(void)
 				&& !g_distance_test
 				&& g_decomposition[0] == 0
 				&& g_biomorph == -1
-				&& (inside >= -1)
+				&& (g_inside >= -1)
 				/* uncomment this next line if more outside options are added */
-				&& outside >= -6
+				&& g_outside >= -6
 				&& useinitorbit != 1
 				&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-				&& !finattract
+				&& !g_finite_attractor
 				&& using_jiim == 0 && g_bail_out_test == Mod
 				&& (orbitsave & ORBITSAVE_SOUND) == 0)
 		{
@@ -537,9 +537,9 @@ int julia_setup_fp(void)
 		}
 		break;
 	case FPCIRCLE:
-		if (inside == STARTRAIL) /* FPCIRCLE locks up when used with STARTRAIL */
+		if (g_inside == STARTRAIL) /* FPCIRCLE locks up when used with STARTRAIL */
 		{
-			inside = 0; /* arbitrarily set inside = NUMB */
+			g_inside = 0; /* arbitrarily set inside = NUMB */
 		}
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;

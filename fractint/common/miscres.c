@@ -42,7 +42,7 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 	splitpath(filename , NULL, NULL, fname, ext);
 	makepath(temp_path, ""   , "" , fname, ext);
 
-	if (checkcurdir != 0 && access(temp_path, 0) == 0)   /* file exists */
+	if (g_check_current_dir != 0 && access(temp_path, 0) == 0)   /* file exists */
 	{
 		strcpy(fullpathname, temp_path);
 		return;
@@ -941,7 +941,7 @@ top:
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
 	s_row = 2;
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
-	if (display3d > 0)
+	if (g_display_3d > 0)
 	{
 		driver_put_string(s_row, 16, C_GENERAL_HI, "3D Transform");
 	}
@@ -999,7 +999,7 @@ top:
 	default:						msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-	if (initbatch && calc_status != CALCSTAT_PARAMS_CHANGED)
+	if (g_initialize_batch && calc_status != CALCSTAT_PARAMS_CHANGED)
 	{
 		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
@@ -1013,7 +1013,7 @@ top:
 	++s_row;
 
 	i = j = 0;
-	if (display3d > 0)
+	if (g_display_3d > 0)
 	{
 		if (usr_floatflag)
 		{
@@ -1371,7 +1371,7 @@ static void area(void)
 	int x, y;
 	char buf[160];
 	long cnt = 0;
-	if (inside < 0)
+	if (g_inside < 0)
 	{
 		stopmsg(0, "Need solid inside to compute area");
 		return;
@@ -1380,13 +1380,13 @@ static void area(void)
 	{
 		for (x = 0; x < xdots; x++)
 		{
-			if (getcolor(x, y) == inside)
+			if (getcolor(x, y) == g_inside)
 			{
 				cnt++;
 			}
 		}
 	}
-	if (inside > 0 && outside < 0 && maxit > inside)
+	if (g_inside > 0 && g_outside < 0 && maxit > g_inside)
 	{
 		msg = "Warning: inside may not be unique\n";
 	}
@@ -1586,7 +1586,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 			}
 		}
 
-		if (!found && checkcurdir)
+		if (!found && g_check_current_dir)
 		{
 			makepath(fullpath, "", DOTSLASH, fname, ext);
 			infile = fopen(fullpath, "rb");
