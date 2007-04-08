@@ -101,8 +101,7 @@ int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output 
 int		g_orbit_delay;                /* clock ticks delating orbit release */
 int     g_transparent[2];         /* transparency min/max values */
 long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
-BYTE exitmode = 3;      /* video mode on exit */
-int     Log_Fly_Calc = 0;   /* calculate logmap on-the-fly */
+int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;  /* auto calculate logmap */
 int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images */
 int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
@@ -1582,8 +1581,6 @@ static int work_dir_arg(const cmd_context *context)
 
 static int exit_mode_arg(const cmd_context *context)
 {
-	sscanf(context->value, "%x", &context->numval);
-	exitmode = (BYTE)context->numval;
 	return COMMAND_OK;
 }
 
@@ -2493,15 +2490,15 @@ static int log_map_arg(const cmd_context *context)
 
 static int log_mode_arg(const cmd_context *context)
 {
-	Log_Fly_Calc = 0;                         /* turn off if error */
+	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         /* turn off if error */
 	Log_Auto_Calc = 0;
 	if (context->charval[0] == 'f')
 	{
-		Log_Fly_Calc = 1;                      /* calculate on the fly */
+		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      /* calculate on the fly */
 	}
 	else if (context->charval[0] == 't')
 	{
-		Log_Fly_Calc = 2;                      /* force use of LogTable */
+		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      /* force use of LogTable */
 	}
 	else if (context->charval[0] == 'a')
 	{
@@ -3421,7 +3418,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "mathtolerance", 	math_tolerance_arg },	/* mathtolerance=? */
 			{ "tempdir", 		temp_dir_arg },			/* tempdir=? */
 			{ "workdir", 		work_dir_arg },			/* workdir=? */
-			{ "exitmode", 		exit_mode_arg },		/* exitmode=? */
+			{ "exitmode", 		ignore_arg },			/* exitmode=? */
 			{ "textcolors", 	text_colors_arg },
 			{ "potential", 		potential_arg },		/* potential=? */
 			{ "params", 		params_arg },			/* params=?,? */

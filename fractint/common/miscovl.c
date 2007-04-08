@@ -1001,14 +1001,14 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (Log_Fly_Calc && g_log_palette_flag && !g_ranges_length)
+		if (g_log_dynamic_calculate && g_log_palette_flag && !g_ranges_length)
 		{
 			put_parm(" logmode=");
-			if (Log_Fly_Calc == 1)
+			if (g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)
 			{
 				put_parm("fly");
 			}
-			else if (Log_Fly_Calc == 2)
+			else if (g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
 				put_parm("table");
 			}

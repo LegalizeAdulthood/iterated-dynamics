@@ -814,7 +814,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		{
 			g_start_show_orbit = 0;
 			g_sound_flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
-			Log_Auto_Calc = 0; /* turn it off */
+			g_log_automatic_flag = FALSE; /* turn it off */
 		}
 		break;
 

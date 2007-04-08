@@ -911,7 +911,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->dinvert[0] = g_inversion[0];
 	save_info->dinvert[1] = g_inversion[1];
 	save_info->dinvert[2] = g_inversion[2];
-	save_info->logcalc = (short) Log_Fly_Calc;
+	save_info->logcalc = (short) g_log_dynamic_calculate;
 	save_info->stop_pass = (short) g_stop_pass;
 	save_info->quick_calculate = (short) g_quick_calculate;
 	save_info->proximity = g_proximity;

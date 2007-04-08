@@ -419,7 +419,7 @@ int get_toggles()
 	if (g_log_palette_flag != old_logflag)
 	{
 		j++;
-		Log_Auto_Calc = 0;  /* turn it off, use the supplied value */
+		g_log_automatic_flag = FALSE;  /* turn it off, use the supplied value */
 	}
 
 	g_user_biomorph = uvalues[++k].uval.ival;

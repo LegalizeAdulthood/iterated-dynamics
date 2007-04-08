@@ -135,7 +135,7 @@ void _fastcall history_save_info(void)
 	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= maxit;
 	current.g_old_demm_colors		= (short) g_old_demm_colors;
-	current.logcalc				= (short) Log_Fly_Calc;
+	current.logcalc				= (short) g_log_dynamic_calculate;
 	current.ismand				= (short) g_is_mand;
 	current.proximity			= g_proximity;
 	current.nobof				= (short) nobof;
@@ -332,7 +332,7 @@ void _fastcall history_restore_info(void)
 	{
 		g_invert = 3;
 	}
-	Log_Fly_Calc			= last.logcalc;
+	g_log_dynamic_calculate			= last.logcalc;
 	g_is_mand				= last.ismand;
 	g_proximity				= last.proximity;
 	nobof					= last.nobof;

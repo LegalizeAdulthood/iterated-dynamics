@@ -26,8 +26,12 @@ typedef BYTE BOOLEAN;
 #endif
 
 #define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
-
 #define NUM_BOXES 4096
+
+/* g_log_dynamic_calculate values */
+#define LOGDYNAMIC_NONE 0
+#define LOGDYNAMIC_DYNAMIC 1
+#define LOGDYNAMIC_TABLE 2
 
 /* g_log_palette_flag special values */
 #define LOGPALETTE_NONE 0

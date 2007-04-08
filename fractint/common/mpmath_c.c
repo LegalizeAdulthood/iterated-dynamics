@@ -483,7 +483,7 @@ void SetupLogTable(void)
 	unsigned long prev, limit, sptop;
 	unsigned n;
 
-	if (g_save_release > 1920 || Log_Fly_Calc == 1)  /* set up on-the-fly variables */
+	if (g_save_release > 1920 || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  /* set up on-the-fly variables */
 	{
 		if (g_log_palette_flag > LOGPALETTE_NONE)  /* new log function */
 		{

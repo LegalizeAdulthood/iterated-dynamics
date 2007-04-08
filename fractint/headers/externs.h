@@ -143,7 +143,6 @@ extern double				(_fastcall *g_dy_pixel)(void); /* set in FRACTALS.C */
 extern double				dysize;
 extern int					escape_exit;
 extern char					g_exe_path[];
-extern BYTE					exitmode;
 extern int					evolving;
 extern void *				evolve_handle;
 extern int					g_eye_separation;
@@ -259,7 +258,7 @@ extern int					loaded3d;
 extern int					LodPtr;
 extern int					Log_Auto_Calc;
 extern int					Log_Calc;
-extern int					Log_Fly_Calc;
+extern int					g_log_dynamic_calculate;
 extern long					g_log_palette_flag;
 extern BYTE					*LogTable;
 extern _LCMPLX				g_old_z_l;
