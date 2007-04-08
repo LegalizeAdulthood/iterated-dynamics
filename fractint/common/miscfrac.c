@@ -442,13 +442,13 @@ int plasma(void)
 		param[3] = 1;
 	}
 
-	if ((!rflag) && param[2] == 1)
+	if ((!g_random_flag) && param[2] == 1)
 	{
-		--rseed;
+		--g_random_seed;
 	}
 	if (param[2] != 0 && param[2] != 1)
 	{
-		rseed = (int)param[2];
+		g_random_seed = (int)param[2];
 	}
 	s_max_plasma = (U16)param[3];  /* s_max_plasma is used as a flag for potential */
 
@@ -476,10 +476,10 @@ int plasma(void)
 		g_plot_color = (outside >= 0) ? put_color_border : g_put_color;
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
-	srand(rseed);
-	if (!rflag)
+	srand(g_random_seed);
+	if (!g_random_flag)
 	{
-		++rseed;
+		++g_random_seed;
 	}
 
 	if (colors == 256)                   /* set the (256-color) palette */
@@ -667,10 +667,10 @@ int diffusion(void)
 		border = 10;
 	}
 
-	srand(rseed);
-	if (!rflag)
+	srand(g_random_seed);
+	if (!g_random_flag)
 	{
-		++rseed;
+		++g_random_seed;
 	}
 
 	switch (mode)
@@ -1764,9 +1764,9 @@ int cellular()
 	k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
 	rule_digits = (S16)((r*2 + 1)*k_1 + 1); /* Number of digits in the rule */
 
-	if ((!rflag) && randparam == -1)
+	if ((!g_random_flag) && randparam == -1)
 	{
-		--rseed;
+		--g_random_seed;
 	}
 	if (randparam != 0 && randparam != -1)
 	{
@@ -1794,10 +1794,10 @@ int cellular()
 		}
 	}
 
-	srand(rseed);
-	if (!rflag)
+	srand(g_random_seed);
+	if (!g_random_flag)
 	{
-		++rseed;
+		++g_random_seed;
 	}
 
 /* generate rule table from parameter 1 */
@@ -1877,7 +1877,7 @@ int cellular()
 	}
 	else
 	{
-		if (rflag || randparam == 0 || randparam == -1)
+		if (g_random_flag || randparam == 0 || randparam == -1)
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
@@ -1910,7 +1910,7 @@ int cellular()
 		for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
 		{
 			thinking(1, "Cellular thinking (higher start row takes longer)");
-			if (rflag || randparam == 0 || randparam == -1)
+			if (g_random_flag || randparam == 0 || randparam == -1)
 			{
 				/* Use a random border */
 				for (i = 0; i <= (U16)r; i++)
@@ -1973,7 +1973,7 @@ int cellular()
 contloop:
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
-		if (rflag || randparam == 0 || randparam == -1)
+		if (g_random_flag || randparam == 0 || randparam == -1)
 		{
 			/* Use a random border */
 			for (i = 0; i <= (U16)r; i++)

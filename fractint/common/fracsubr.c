@@ -282,7 +282,7 @@ init_restart:
 		xxx is what we actually do in the current situation */
 	stdcalcmode      = usr_stdcalcmode;
 	g_periodicity_check = usr_periodicitycheck;
-	distest          = usr_distest;
+	g_distance_test          = usr_distest;
 	g_biomorph         = g_user_biomorph;
 
 	g_potential_flag = FALSE;
@@ -293,10 +293,10 @@ init_restart:
 			|| curfractalspecific->calculate_type == calculate_mandelbrot_fp))
 	{
 		g_potential_flag = TRUE;
-		distest = usr_distest = 0;    /* can't do distest too */
+		g_distance_test = usr_distest = 0;    /* can't do distest too */
 	}
 
-	if (distest)
+	if (g_distance_test)
 	{
 		g_float_flag = TRUE;  /* force floating point for dist est */
 	}

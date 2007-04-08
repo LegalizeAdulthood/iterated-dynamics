@@ -502,19 +502,19 @@ int ant(void)
 	}
 
 	/* set random seed for reproducibility */
-	if ((!rflag) && param[5] == 1)
+	if ((!g_random_flag) && param[5] == 1)
 	{
-		--rseed;
+		--g_random_seed;
 	}
 	if (param[5] != 0 && param[5] != 1)
 	{
-		rseed = (int)param[5];
+		g_random_seed = (int)param[5];
 	}
 
-	srand(rseed);
-	if (!rflag)
+	srand(g_random_seed);
+	if (!g_random_flag)
 	{
-		++rseed;
+		++g_random_seed;
 	}
 
 	maxants = (int) param[2];

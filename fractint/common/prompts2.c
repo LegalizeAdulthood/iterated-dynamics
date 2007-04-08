@@ -250,7 +250,7 @@ int get_toggles()
 
 	choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_decomp = decomp[0];
+	uvalues[k].uval.ival = old_decomp = g_decomposition[0];
 
 	choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
 	uvalues[k].type = 's';
@@ -432,8 +432,8 @@ int get_toggles()
 		j++;
 	}
 
-	decomp[0] = uvalues[++k].uval.ival;
-	if (decomp[0] != old_decomp)
+	g_decomposition[0] = uvalues[++k].uval.ival;
+	if (g_decomposition[0] != old_decomp)
 	{
 		j++;
 	}
@@ -519,7 +519,7 @@ int get_toggles2()
 
 	choices[++k] = "          width factor:";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_distestwidth = distestwidth;
+	uvalues[k].uval.ival = old_distestwidth = g_distance_test_width;
 
 	choices[++k] = "Inversion radius or \"auto\" (0 means off)";
 	choices[++k] = "          center X coordinate or \"auto\"";
@@ -615,8 +615,8 @@ int get_toggles2()
 		j = 1;
 	}
 	++k;
-	distestwidth = uvalues[k].uval.ival;
-	if (usr_distest && distestwidth != old_distestwidth)
+	g_distance_test_width = uvalues[k].uval.ival;
+	if (usr_distest && g_distance_test_width != old_distestwidth)
 	{
 		j = 1;
 	}

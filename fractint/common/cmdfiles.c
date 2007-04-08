@@ -45,10 +45,10 @@ int     g_biomorph;               /* flag for g_biomorph */
 int     g_user_biomorph;
 int     g_force_symmetry;          /* force symmetry */
 int     g_show_file;               /* zero if file display pending */
-int     rflag, rseed;           /* Random number seeding flag and value */
-int     decomp[2];              /* Decomposition coloring */
-long    distest;
-int     distestwidth;
+int     g_random_flag, g_random_seed;           /* Random number seeding flag and value */
+int     g_decomposition[2];              /* Decomposition coloring */
+long    g_distance_test;
+int     g_distance_test_width;
 char    fract_overwrite = 0;	/* 0 if file overwrite not allowed */
 int     soundflag;              /* sound control bitfield... see sound.c for useage*/
 int     basehertz;              /* sound=x/y/x hertz value */
@@ -418,8 +418,8 @@ static void initvars_restart()          /* <ins> key init */
 	strcpy(IFSFileName, "fractint.ifs");
 	IFSName[0] = 0;
 	reset_ifs_defn();
-	rflag = 0;                           /* not a fixed srand() seed */
-	rseed = init_rseed;
+	g_random_flag = 0;                           /* not a fixed srand() seed */
+	g_random_seed = init_rseed;
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
 	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
@@ -475,11 +475,11 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	}
 	initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
 	g_invert = 0;
-	decomp[0] = decomp[1] = 0;
+	g_decomposition[0] = g_decomposition[1] = 0;
 	usr_distest = 0;
 	g_pseudo_x = 0;
 	g_pseudo_y = 0;
-	distestwidth = 71;
+	g_distance_test_width = 71;
 	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
 	xx3rd = xxmin = -2.5; xxmax = 1.5;   /* initial corner values  */
 	yy3rd = yymin = -1.5; yymax = 1.5;   /* initial corner values  */
@@ -2521,10 +2521,10 @@ static int debug_flag_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int r_seed_arg(const cmd_context *context)
+static int random_seed_arg(const cmd_context *context)
 {
-	rseed = context->numval;
-	rflag = 1;
+	g_random_seed = context->numval;
+	g_random_flag = 1;
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2591,32 +2591,32 @@ static int show_orbit_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int decomp_arg(const cmd_context *context)
+static int decomposition_arg(const cmd_context *context)
 {
 	if (context->totparms != context->intparms || context->totparms < 1)
 	{
 		return badarg(context->curarg);
 	}
-	decomp[0] = context->intval[0];
-	decomp[1] = 0;
+	g_decomposition[0] = context->intval[0];
+	g_decomposition[1] = 0;
 	if (context->totparms > 1) /* backward compatibility */
 	{
-		bailout = decomp[1] = context->intval[1];
+		bailout = g_decomposition[1] = context->intval[1];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int dis_test_arg(const cmd_context *context)
+static int distance_test_arg(const cmd_context *context)
 {
 	if (context->totparms != context->intparms || context->totparms < 1)
 	{
 		return badarg(context->curarg);
 	}
 	usr_distest = (long)context->floatval[0];
-	distestwidth = 71;
+	g_distance_test_width = 71;
 	if (context->totparms > 1)
 	{
-		distestwidth = context->intval[1];
+		g_distance_test_width = context->intval[1];
 	}
 	if (context->totparms > 3 && context->intval[2] > 0 && context->intval[3] > 0)
 	{
@@ -3477,13 +3477,13 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "logmode", 		log_mode_arg },			/* logmode=? */
 			{ "debugflag", 		debug_flag_arg },
 			{ "debug", 			debug_flag_arg },		/* internal use only */
-			{ "rseed", 			r_seed_arg },
+			{ "rseed", 			random_seed_arg },
 			{ "orbitdelay", 	orbit_delay_arg },
 			{ "orbitinterval", 	orbit_interval_arg },
 			{ "showdot", 		show_dot_arg },
 			{ "showorbit", 		show_orbit_arg },		/* showorbit=yes|no */
-			{ "decomp", 		decomp_arg },
-			{ "distest", 		dis_test_arg },
+			{ "decomp", 		decomposition_arg },
+			{ "distest", 		distance_test_arg },
 			{ "formulafile", 	formula_file_arg },		/* formulafile=? */
 			{ "formulaname", 	formula_name_arg },		/* formulaname=? */
 			{ "lfile", 			l_file_arg },			/* lfile=? */

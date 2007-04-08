@@ -398,13 +398,13 @@ struct fractal_info         /*  for saving data in GIF file     */
     float parm3;
     float parm4;
     float potential[3];
-    short rseed;
-    short rflag;
+    short random_seed;
+    short random_flag;
     short biomorph;
     short inside;
     short logmapold;
     float invert[3];
-    short decomp[2];
+    short decomposition[2];
     short symmetry;
                         /* version 2 stuff */
     short init3d[16];
@@ -450,7 +450,7 @@ struct fractal_info         /*  for saving data in GIF file     */
                         /* version 6 stuff, release 15.x */
     short rotate_lo;
     short rotate_hi;
-    short distestwidth;
+    short distance_test_width;
                         /* version 7 stuff, release 16 */
     double dparm3;
     double dparm4;
@@ -487,7 +487,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short yadjust;        /* yikes! we left this out ages ago! */
     short old_demm_colors;
     long logmap;
-    long distest;
+    long distance_test;
     double dinvert[3];
     short logcalc;
     short stop_pass;
@@ -514,13 +514,13 @@ struct history_info
     double creal;
     double cimag;
     double potential[3];
-    short rseed;
-    short rflag;
+    short random_seed;
+    short random_flag;
     short biomorph;
     short inside;
     long logmap;
     double invert[3];
-    short decomp;
+    short decomposition;
     short symmetry;
     short init3d[16];
     short previewfactor;
@@ -538,7 +538,7 @@ struct history_info
     short outside;
     double x3rd;
     double y3rd;
-    long distest;
+    long distance_test;
     short bailoutold;
     BYTE trigndx[4];
     short finattract;
@@ -554,7 +554,7 @@ struct history_info
     short randomize;
     short rotate_lo;
     short rotate_hi;
-    short distestwidth;
+    short distance_test_width;
     double dparm3;
     double dparm4;
     short fillcolor;

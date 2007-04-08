@@ -130,13 +130,13 @@ void make_batch_file()
 		{
 			maxcolor = outside;
 		}
-		if (distest < 0 && -distest > maxcolor)
+		if (g_distance_test < 0 && -g_distance_test > maxcolor)
 		{
-			maxcolor = (int) -distest;
+			maxcolor = (int) -g_distance_test;
 		}
-		if (decomp[0] > maxcolor)
+		if (g_decomposition[0] > maxcolor)
 		{
-			maxcolor = decomp[0] - 1;
+			maxcolor = g_decomposition[0] - 1;
 		}
 		if (g_potential_flag && potparam[0] >= maxcolor)
 		{
@@ -1028,13 +1028,13 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
 				inversion[0], inversion[1], inversion[2]);
 		}
-		if (decomp[0])
+		if (g_decomposition[0])
 		{
-			put_parm(" decomp=%d", decomp[0]);
+			put_parm(" decomp=%d", g_decomposition[0]);
 		}
-		if (distest)
+		if (g_distance_test)
 		{
-			put_parm(" distest=%ld/%d/%d/%d", distest, distestwidth,
+			put_parm(" distest=%ld/%d/%d/%d", g_distance_test, g_distance_test_width,
 				g_pseudo_x ? g_pseudo_x : xdots, g_pseudo_y ? g_pseudo_y : ydots);
 		}
 		if (g_old_demm_colors)
@@ -1088,9 +1088,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" periodicity=%d", g_periodicity_check);
 		}
 
-		if (rflag)
+		if (g_random_flag)
 		{
-			put_parm(" rseed=%d", rseed);
+			put_parm(" rseed=%d", g_random_seed);
 		}
 
 		if (rangeslen)

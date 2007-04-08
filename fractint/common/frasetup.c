@@ -25,7 +25,7 @@ extern long calcmandfpasm_c(void);
 int mandelbrot_setup(void)           /* Mandelbrot Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
+		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && inside > -59 && outside >= -1
 		&& useinitorbit != 1 && using_jiim == 0 && g_bail_out_test == Mod
@@ -45,7 +45,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 int julia_setup(void)            /* Julia Routine */
 {
 	if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-		&& !g_invert && decomp[0] == 0 && g_rq_limit == 4.0
+		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && inside > -59 && outside >= -1
 		&& !finattract && using_jiim == 0 && g_bail_out_test == Mod
@@ -248,8 +248,8 @@ int mandelbrot_setup_fp(void)
 		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-			&& !distest
-			&& decomp[0] == 0
+			&& !g_distance_test
+			&& g_decomposition[0] == 0
 			&& g_biomorph == -1
 			&& (inside >= -1)
 			/* uncomment this next line if more outside options are added */
@@ -394,8 +394,8 @@ int julia_setup_fp(void)
 		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (debugflag != DEBUGFLAG_NO_ASM_MANDEL
-				&& !distest
-				&& decomp[0] == 0
+				&& !g_distance_test
+				&& g_decomposition[0] == 0
 				&& g_biomorph == -1
 				&& (inside >= -1)
 				/* uncomment this next line if more outside options are added */
