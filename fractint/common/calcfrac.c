@@ -933,11 +933,11 @@ static void perform_work_list()
 	{
 		double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, dysize;
 		double aspect;
-		if (pseudox && pseudoy)
+		if (g_pseudo_x && g_pseudo_y)
 		{
-			aspect = (double)pseudoy/(double)pseudox;
-			dxsize = pseudox-1;
-			dysize = pseudoy-1;
+			aspect = (double)g_pseudo_y/(double)g_pseudo_x;
+			dxsize = g_pseudo_x-1;
+			dysize = g_pseudo_y-1;
 		}
 		else
 		{
@@ -3725,9 +3725,9 @@ static int solid_guess(void)
 	g_reset_periodicity = 0;
 	while ((blocksize = blocksize >> 1) >= 2)
 	{
-		if (stoppass > 0)
+		if (g_stop_pass > 0)
 		{
-			if (s_work_pass >= stoppass)
+			if (s_work_pass >= g_stop_pass)
 			{
 				goto exit_solid_guess;
 			}

@@ -685,9 +685,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" passes=%c", usr_stdcalcmode);
 		}
 
-		if (stoppass != 0)
+		if (g_stop_pass != 0)
 		{
-			put_parm(" passes=%c%c", usr_stdcalcmode, (char)stoppass + '0');
+			put_parm(" passes=%c%c", usr_stdcalcmode, (char)g_stop_pass + '0');
 		}
 
 		if (usemag)
@@ -1035,7 +1035,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (distest)
 		{
 			put_parm(" distest=%ld/%d/%d/%d", distest, distestwidth,
-				pseudox ? pseudox : xdots, pseudoy ? pseudoy : ydots);
+				g_pseudo_x ? g_pseudo_x : xdots, g_pseudo_y ? g_pseudo_y : ydots);
 		}
 		if (g_old_demm_colors)
 		{

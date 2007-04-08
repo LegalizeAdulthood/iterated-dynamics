@@ -353,7 +353,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		inversion[1] = read_info.dinvert[1];
 		inversion[2] = read_info.dinvert[2];
 		Log_Fly_Calc = read_info.logcalc;
-		stoppass     = read_info.stoppass;
+		g_stop_pass     = read_info.stop_pass;
 	}
 
 	if (read_info.version > 12) /* post-version 19.60 */

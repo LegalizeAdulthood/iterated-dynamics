@@ -486,7 +486,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     long distest;
     double dinvert[3];
     short logcalc;
-    short stoppass;
+    short stop_pass;
     short quick_calculate;
     double proximity;
     short nobof;
@@ -590,7 +590,7 @@ struct history_info
     char three_pass;
     char useinitorbit;
     short logcalc;
-    short stoppass;
+    short stop_pass;
     short ismand;
     double proximity;
     short nobof;

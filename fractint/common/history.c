@@ -92,7 +92,7 @@ void _fastcall history_save_info(void)
 	current.y3rd				= yy3rd;
 	current.stdcalcmode			= usr_stdcalcmode;
 	current.three_pass			= (char) g_three_pass;
-	current.stoppass			= (short) stoppass;
+	current.stop_pass			= (short) g_stop_pass;
 	current.distest				= distest;
 	current.trigndx[0]			= trigndx[0];
 	current.trigndx[1]			= trigndx[1];
@@ -281,7 +281,7 @@ void _fastcall history_restore_info(void)
 	usr_stdcalcmode     	= last.stdcalcmode;
 	stdcalcmode         	= last.stdcalcmode;
 	g_three_pass          	= (int) last.three_pass;
-	stoppass            	= last.stoppass;
+	g_stop_pass            	= last.stop_pass;
 	distest             	= last.distest;
 	usr_distest         	= last.distest;
 	trigndx[0]          	= last.trigndx[0];
