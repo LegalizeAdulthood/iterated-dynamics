@@ -1128,7 +1128,7 @@ static void perform_work_list()
 		case 's':
 			if (DEBUGFLAG_SOI_LONG_DOUBLE == debugflag)
 			{
-				soi_ldbl();
+				soi_long_double();
 			}
 			else
 			{

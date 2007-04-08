@@ -14,7 +14,7 @@ static int historyptr = -1;			/* user pointer into history tbl  */
 static int saveptr = 0;				/* save ptr into history tbl      */
 static int historyflag;				/* are we backing off in history? */
 
-void _fastcall save_history_info(void)
+void _fastcall history_save_info(void)
 {
 	HISTORY current = { 0 };
 	HISTORY last;
@@ -201,7 +201,7 @@ void _fastcall save_history_info(void)
 	}
 }
 
-void _fastcall restore_history_info(void)
+void _fastcall history_restore_info(void)
 {
 	HISTORY last;
 	if (maxhistory <= 0 || bf_math || history == 0)
