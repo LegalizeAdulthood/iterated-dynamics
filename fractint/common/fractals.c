@@ -3084,7 +3084,7 @@ int other_julia_per_pixel_fp(void)
 #define Q1 0
 #endif
 
-int quaternionjulfp_per_pixel(void)
+int quaternion_julia_per_pixel_fp(void)
 {
 	g_old_z.x = dxpixel();
 	g_old_z.y = dypixel();
