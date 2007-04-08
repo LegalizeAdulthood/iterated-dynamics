@@ -63,8 +63,7 @@ int julia_setup(void)            /* Julia Routine */
 	return 1;
 }
 
-int
-NewtonSetup(void)           /* Newton/NewtBasin Routines */
+int newton_setup(void)           /* Newton/NewtBasin Routines */
 {
 	int i;
 #if !defined(XFRACT)
@@ -201,16 +200,13 @@ NewtonSetup(void)           /* Newton/NewtBasin Routines */
 	return 1;
 }
 
-
-int
-StandaloneSetup(void)
+int stand_alone_setup(void)
 {
 	timer(TIMER_ENGINE, curfractalspecific->calculate_type);
 	return 0;           /* effectively disable solid-guessing */
 }
 
-int
-UnitySetup(void)
+int unity_setup(void)
 {
 	g_periodicity_check = 0;
 	g_one_fudge = (1L << bitshift);
@@ -218,8 +214,7 @@ UnitySetup(void)
 	return 1;
 }
 
-int
-MandelfpSetup(void)
+int mandelbrot_setup_fp(void)
 {
 	bf_math = 0;
 	g_c_exp = (int)param[2];
@@ -377,8 +372,7 @@ MandelfpSetup(void)
 	return 1;
 }
 
-int
-JuliafpSetup(void)
+int julia_setup_fp(void)
 {
 	g_c_exp = (int)param[2];
 	g_float_parameter = &g_parameter;
@@ -556,8 +550,7 @@ JuliafpSetup(void)
 	return 1;
 }
 
-int
-MandellongSetup(void)
+int mandelbrot_setup_l(void)
 {
 	g_c_exp = (int)param[2];
 	if (fractype == MARKSMANDEL && g_c_exp < 1)
@@ -594,8 +587,8 @@ MandellongSetup(void)
 			g_symmetry = NOSYM;
 		}
 	}
-/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
-/*     JCO 2/29/92 */
+	/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
+	/*     JCO 2/29/92 */
 	if ((fractype == LMANTRIGPLUSEXP) || (fractype == LMANTRIGPLUSZSQRD))
 	{
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
@@ -621,8 +614,7 @@ MandellongSetup(void)
 	return 1;
 }
 
-int
-JulialongSetup(void)
+int julia_setup_l(void)
 {
 	g_c_exp = (int)param[2];
 	g_long_parameter = &g_parameter_l;
@@ -698,8 +690,7 @@ JulialongSetup(void)
 	return 1;
 }
 
-int
-TrigPlusSqrlongSetup(void)
+int trig_plus_sqr_setup_l(void)
 {
 	curfractalspecific->per_pixel =  julia_per_pixel;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit;
@@ -715,11 +706,10 @@ TrigPlusSqrlongSetup(void)
 			curfractalspecific->orbitcalc =  skinner_trig_sub_sqr_orbit;
 		}
 	}
-	return JulialongSetup();
+	return julia_setup_l();
 }
 
-int
-TrigPlusSqrfpSetup(void)
+int trig_plus_sqr_setup_fp(void)
 {
 	curfractalspecific->per_pixel =  julia_per_pixel_fp;
 	curfractalspecific->orbitcalc =  trig_plus_sqr_orbit_fp;
@@ -735,61 +725,10 @@ TrigPlusSqrfpSetup(void)
 			curfractalspecific->orbitcalc =  skinner_trig_sub_sqr_orbit_fp;
 		}
 	}
-	return JuliafpSetup();
+	return julia_setup_fp();
 }
 
-int
-TrigPlusTriglongSetup(void)
-{
-	FnPlusFnSym();
-	if (trigndx[1] == SQR)
-	{
-		return TrigPlusSqrlongSetup();
-	}
-	curfractalspecific->per_pixel =  julia_per_pixel_l;
-	curfractalspecific->orbitcalc =  trig_plus_trig_orbit;
-	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
-	{
-		if (g_parameter2_l.x == fudge)        /* Scott variant */
-		{
-			curfractalspecific->orbitcalc =  scott_trig_plus_trig_orbit;
-		}
-		else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
-		{
-			curfractalspecific->orbitcalc =  skinner_trig_sub_trig_orbit;
-		}
-	}
-	return JulialongSetup();
-}
-
-int
-TrigPlusTrigfpSetup(void)
-{
-	FnPlusFnSym();
-	if (trigndx[1] == SQR)
-	{
-		return TrigPlusSqrfpSetup();
-	}
-	curfractalspecific->per_pixel =  other_julia_per_pixel_fp;
-	curfractalspecific->orbitcalc =  trig_plus_trig_orbit_fp;
-	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
-		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
-	{
-		if (g_parameter2.x == 1.0)        /* Scott variant */
-		{
-			curfractalspecific->orbitcalc =  scott_trig_plus_trig_orbit_fp;
-		}
-		else if (g_parameter2.x == -1.0)  /* Skinner variant */
-		{
-			curfractalspecific->orbitcalc =  skinner_trig_sub_trig_orbit_fp;
-		}
-	}
-	return JuliafpSetup();
-}
-
-int
-FnPlusFnSym(void) /* set symmetry matrix for fn + fn type */
+static int fn_plus_fn_symmetry(void) /* set symmetry matrix for fn + fn type */
 {
 	static char fnplusfn[7][7] =
 	{/* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
@@ -818,6 +757,54 @@ FnPlusFnSym(void) /* set symmetry matrix for fn + fn type */
 		g_symmetry = NOSYM;
 	}
 	return 0;
+}
+
+int trig_plus_trig_setup_l(void)
+{
+	fn_plus_fn_symmetry();
+	if (trigndx[1] == SQR)
+	{
+		return trig_plus_sqr_setup_l();
+	}
+	curfractalspecific->per_pixel =  julia_per_pixel_l;
+	curfractalspecific->orbitcalc =  trig_plus_trig_orbit;
+	if (g_parameter_l.x == fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+	{
+		if (g_parameter2_l.x == fudge)        /* Scott variant */
+		{
+			curfractalspecific->orbitcalc =  scott_trig_plus_trig_orbit;
+		}
+		else if (g_parameter2_l.x == -fudge)  /* Skinner variant */
+		{
+			curfractalspecific->orbitcalc =  skinner_trig_sub_trig_orbit;
+		}
+	}
+	return julia_setup_l();
+}
+
+int trig_plus_trig_setup_fp(void)
+{
+	fn_plus_fn_symmetry();
+	if (trigndx[1] == SQR)
+	{
+		return trig_plus_sqr_setup_fp();
+	}
+	curfractalspecific->per_pixel =  other_julia_per_pixel_fp;
+	curfractalspecific->orbitcalc =  trig_plus_trig_orbit_fp;
+	if (g_parameter.x == 1.0 && g_parameter.y == 0.0 && g_parameter2.y == 0.0
+		&& debugflag != DEBUGFLAG_NO_ASM_MANDEL)
+	{
+		if (g_parameter2.x == 1.0)        /* Scott variant */
+		{
+			curfractalspecific->orbitcalc =  scott_trig_plus_trig_orbit_fp;
+		}
+		else if (g_parameter2.x == -1.0)  /* Skinner variant */
+		{
+			curfractalspecific->orbitcalc =  skinner_trig_sub_trig_orbit_fp;
+		}
+	}
+	return julia_setup_fp();
 }
 
 int
@@ -953,7 +940,7 @@ ZXTrigPlusZSetup(void)
 				curfractalspecific->orbitcalc =  skinner_z_trig_z_minus_z_orbit;
 			}
 		}
-		return JulialongSetup();
+		return julia_setup_l();
 	}
 	else
 	{
@@ -971,7 +958,7 @@ ZXTrigPlusZSetup(void)
 			}
 		}
 	}
-	return JuliafpSetup();
+	return julia_setup_fp();
 }
 
 int
@@ -1011,7 +998,7 @@ LambdaTrigSetup(void)
 		break;
 	}
 	get_julia_attractor (0.0, 0.0);      /* an attractor? */
-	return isinteger ? JulialongSetup() : JuliafpSetup();
+	return isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
 int
@@ -1033,7 +1020,7 @@ JuliafnPlusZsqrdSetup(void)
 		g_symmetry = ORIGIN;
 		/* default is for NOSYM symmetry */
 	}
-	return curfractalspecific->isinteger ? JulialongSetup() : JuliafpSetup();
+	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
 int
@@ -1051,7 +1038,7 @@ SqrTrigSetup(void)
 		g_symmetry = PI_SYM;
 		/* default is for XAXIS symmetry */
 	}
-	return curfractalspecific->isinteger ? JulialongSetup() : JuliafpSetup();
+	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
 int
@@ -1105,7 +1092,7 @@ FnXFnSetup(void)
 			g_symmetry = PI_SYM;
 		}
 	}
-	return curfractalspecific->isinteger ? JulialongSetup() : JuliafpSetup();
+	return curfractalspecific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
 int
@@ -1139,7 +1126,7 @@ MandelTrigSetup(void)
 		g_symmetry = XYAXIS_NOPARM;
 		break;
 	}
-	return isinteger ? MandellongSetup() : MandelfpSetup();
+	return isinteger ? mandelbrot_setup_l() : mandelbrot_setup_fp();
 }
 
 int
