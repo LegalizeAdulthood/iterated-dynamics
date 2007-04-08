@@ -2963,7 +2963,7 @@ int julia_per_pixel_fp(void)
 	return 0;
 }
 
-int MPCjulia_per_pixel(void)
+int julia_per_pixel_mpc(void)
 {
 #if !defined(XFRACT)
 	/* floating point julia */
