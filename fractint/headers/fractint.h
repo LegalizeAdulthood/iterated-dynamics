@@ -196,14 +196,14 @@ typedef BYTE BOOLEAN;
 #define PAUSE_ERROR_ANY 1
 #define PAUSE_ERROR_GOODBYE 2
 
-/* initbatch values */
-#define INIT_BATCH_FINISH_CALC -1
-#define INIT_BATCH_NONE 0
-#define INIT_BATCH_NORMAL 1
-#define INIT_BATCH_SAVE 2
-#define INIT_BATCH_BAILOUT_ERROR 3
-#define INIT_BATCH_BAILOUT_INTERRUPTED 4
-#define INIT_BATCH_BAILOUT_SAVE 5
+/* g_initialize_batch values */
+#define INITBATCH_FINISH_CALC -1
+#define INITBATCH_NONE 0
+#define INITBATCH_NORMAL 1
+#define INITBATCH_SAVE 2
+#define INITBATCH_BAILOUT_ERROR 3
+#define INITBATCH_BAILOUT_INTERRUPTED 4
+#define INITBATCH_BAILOUT_SAVE 5
 
 /* driver_buzzer() codes */
 #define BUZZER_COMPLETE 0
@@ -407,7 +407,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short decomposition[2];
     short symmetry;
                         /* version 2 stuff */
-    short init3d[16];
+    short init_3d[16];
     short previewfactor;
     short xtrans;
     short ytrans;
@@ -435,7 +435,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     long calctime;
     BYTE trigndx[4];      /* which trig functions selected */
     short finattract;
-    double initorbit[2];  /* init Mandelbrot orbit values */
+    double initial_orbit_z[2];  /* init Mandelbrot orbit values */
     short periodicity;    /* periodicity checking */
                         /* version 5 stuff, release 15 */
     short potential_16bit;       /* save 16 bit continuous potential info */
@@ -455,7 +455,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     double dparm3;
     double dparm4;
                         /* version 8 stuff, release 17 */
-    short fillcolor;
+    short fill_color;
                         /* version 9 stuff, release 18 */
     double mxmaxfp;
     double mxminfp;
@@ -522,7 +522,7 @@ struct history_info
     double invert[3];
     short decomposition;
     short symmetry;
-    short init3d[16];
+    short init_3d[16];
     short previewfactor;
     short xtrans;
     short ytrans;
@@ -542,7 +542,7 @@ struct history_info
     short bailoutold;
     BYTE trigndx[4];
     short finattract;
-    double initorbit[2];
+    double initial_orbit_z[2];
     short periodicity;
     short potential_16bit;
     short release;
@@ -557,7 +557,7 @@ struct history_info
     short distance_test_width;
     double dparm3;
     double dparm4;
-    short fillcolor;
+    short fill_color;
     double mxmaxfp;
     double mxminfp;
     double mymaxfp;
@@ -895,34 +895,34 @@ is not in the data structure */
 #undef PI
 #endif
 #define PI 3.14159265358979323846
-#define SPHERE    init3d[0]             /* sphere? 1 = yes, 0 = no  */
+#define SPHERE    g_init_3d[0]             /* sphere? 1 = yes, 0 = no  */
 #define ILLUMINE  (FILLTYPE > 4)  /* illumination model       */
 
 /* regular 3D */
-#define XROT      init3d[1]     /* rotate x-axis 60 degrees */
-#define YROT      init3d[2]     /* rotate y-axis 90 degrees */
-#define ZROT      init3d[3]     /* rotate x-axis  0 degrees */
-#define XSCALE    init3d[4]     /* scale x-axis, 90 percent */
-#define YSCALE    init3d[5]     /* scale y-axis, 90 percent */
+#define XROT      g_init_3d[1]     /* rotate x-axis 60 degrees */
+#define YROT      g_init_3d[2]     /* rotate y-axis 90 degrees */
+#define ZROT      g_init_3d[3]     /* rotate x-axis  0 degrees */
+#define XSCALE    g_init_3d[4]     /* scale x-axis, 90 percent */
+#define YSCALE    g_init_3d[5]     /* scale y-axis, 90 percent */
 
 /* sphere 3D */
-#define PHI1      init3d[1]     /* longitude start, 180     */
-#define PHI2      init3d[2]     /* longitude end ,   0      */
-#define THETA1    init3d[3]         /* latitude start,-90 degrees */
-#define THETA2    init3d[4]         /* latitude stop,  90 degrees */
-#define RADIUS    init3d[5]     /* should be user input */
+#define PHI1      g_init_3d[1]     /* longitude start, 180     */
+#define PHI2      g_init_3d[2]     /* longitude end ,   0      */
+#define THETA1    g_init_3d[3]         /* latitude start,-90 degrees */
+#define THETA2    g_init_3d[4]         /* latitude stop,  90 degrees */
+#define RADIUS    g_init_3d[5]     /* should be user input */
 
 /* common parameters */
-#define ROUGH     init3d[6]     /* scale z-axis, 30 percent */
-#define WATERLINE init3d[7]     /* water level              */
-#define FILLTYPE  init3d[8]     /* fill type                */
-#define ZVIEWER   init3d[9]     /* perspective view point   */
-#define XSHIFT    init3d[10]    /* x shift */
-#define YSHIFT    init3d[11]    /* y shift */
-#define XLIGHT    init3d[12]    /* x light vector coordinate */
-#define YLIGHT    init3d[13]    /* y light vector coordinate */
-#define ZLIGHT    init3d[14]    /* z light vector coordinate */
-#define LIGHTAVG  init3d[15]    /* number of points to average */
+#define ROUGH     g_init_3d[6]     /* scale z-axis, 30 percent */
+#define WATERLINE g_init_3d[7]     /* water level              */
+#define FILLTYPE  g_init_3d[8]     /* fill type                */
+#define ZVIEWER   g_init_3d[9]     /* perspective view point   */
+#define XSHIFT    g_init_3d[10]    /* x shift */
+#define YSHIFT    g_init_3d[11]    /* y shift */
+#define XLIGHT    g_init_3d[12]    /* x light vector coordinate */
+#define YLIGHT    g_init_3d[13]    /* y light vector coordinate */
+#define ZLIGHT    g_init_3d[14]    /* z light vector coordinate */
+#define LIGHTAVG  g_init_3d[15]    /* number of points to average */
 
 #ifndef TRUE
 #define TRUE 1

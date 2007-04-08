@@ -148,9 +148,9 @@ int get_toggles()
 
 	choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
 	uvalues[k].type = 'i';
-	if (inside >= 0)
+	if (g_inside >= 0)
 	{
-		uvalues[k].uval.ival = inside;
+		uvalues[k].uval.ival = g_inside;
 	}
 	else
 	{
@@ -162,33 +162,33 @@ int get_toggles()
 	uvalues[k].uval.ch.vlen = 12;
 	uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
 	uvalues[k].uval.ch.list = insidemodes;
-	if (inside >= 0)  /* numb */
+	if (g_inside >= 0)  /* numb */
 		uvalues[k].uval.ch.val = 0;
-	else if (inside == -1)  /* maxiter */
+	else if (g_inside == -1)  /* maxiter */
 		uvalues[k].uval.ch.val = 1;
-	else if (inside == ZMAG)
+	else if (g_inside == ZMAG)
 		uvalues[k].uval.ch.val = 2;
-	else if (inside == BOF60)
+	else if (g_inside == BOF60)
 		uvalues[k].uval.ch.val = 3;
-	else if (inside == BOF61)
+	else if (g_inside == BOF61)
 		uvalues[k].uval.ch.val = 4;
-	else if (inside == EPSCROSS)
+	else if (g_inside == EPSCROSS)
 		uvalues[k].uval.ch.val = 5;
-	else if (inside == STARTRAIL)
+	else if (g_inside == STARTRAIL)
 		uvalues[k].uval.ch.val = 6;
-	else if (inside == PERIOD)
+	else if (g_inside == PERIOD)
 		uvalues[k].uval.ch.val = 7;
-	else if (inside == ATANI)
+	else if (g_inside == ATANI)
 		uvalues[k].uval.ch.val = 8;
-	else if (inside == FMODI)
+	else if (g_inside == FMODI)
 		uvalues[k].uval.ch.val = 9;
-	old_inside = inside;
+	old_inside = g_inside;
 
 	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
 	uvalues[k].type = 'i';
-	if (outside >= 0)
+	if (g_outside >= 0)
 	{
-		uvalues[k].uval.ival = outside;
+		uvalues[k].uval.ival = g_outside;
 	}
 	else
 	{
@@ -200,11 +200,11 @@ int get_toggles()
 	uvalues[k].uval.ch.vlen = 4;
 	uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
 	uvalues[k].uval.ch.list = outsidemodes;
-	if (outside >= 0)  /* numb */
+	if (g_outside >= 0)  /* numb */
 		uvalues[k].uval.ch.val = 0;
 	else
-		uvalues[k].uval.ch.val = -outside;
-	old_outside = outside;
+		uvalues[k].uval.ch.val = -g_outside;
+	old_outside = g_outside;
 
 	choices[++k] = "Savename (.GIF implied)";
 	uvalues[k].type = 's';
@@ -254,15 +254,15 @@ int get_toggles()
 
 	choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
 	uvalues[k].type = 's';
-	if (fillcolor < 0)
+	if (g_fill_color < 0)
 	{
 		strcpy(uvalues[k].uval.sval, "normal");
 	}
 	else
 	{
-		sprintf(uvalues[k].uval.sval, "%d", fillcolor);
+		sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
 	}
-	old_fillcolor = fillcolor;
+	old_fillcolor = g_fill_color;
 
 	choices[++k] = "Proximity value for inside=epscross and fmod";
 	uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
@@ -326,14 +326,14 @@ int get_toggles()
 		j++;
 	}
 
-	inside = uvalues[++k].uval.ival;
-	if (inside < 0)
+	g_inside = uvalues[++k].uval.ival;
+	if (g_inside < 0)
 	{
-		inside = -inside;
+		g_inside = -g_inside;
 	}
-	if (inside >= colors)
+	if (g_inside >= colors)
 	{
-		inside = (inside % colors) + (inside / colors);
+		g_inside = (g_inside % colors) + (g_inside / colors);
 	}
 
 	{
@@ -344,48 +344,48 @@ int get_toggles()
 			switch (tmp)
 			{
 			case 1:
-				inside = -1;  /* maxiter */
+				g_inside = -1;  /* maxiter */
 				break;
 			case 2:
-				inside = ZMAG;
+				g_inside = ZMAG;
 				break;
 			case 3:
-				inside = BOF60;
+				g_inside = BOF60;
 				break;
 			case 4:
-				inside = BOF61;
+				g_inside = BOF61;
 				break;
 			case 5:
-				inside = EPSCROSS;
+				g_inside = EPSCROSS;
 				break;
 			case 6:
-				inside = STARTRAIL;
+				g_inside = STARTRAIL;
 				break;
 			case 7:
-				inside = PERIOD;
+				g_inside = PERIOD;
 				break;
 			case 8:
-				inside = ATANI;
+				g_inside = ATANI;
 				break;
 			case 9:
-				inside = FMODI;
+				g_inside = FMODI;
 				break;
 			}
 		}
 	}
-	if (inside != old_inside)
+	if (g_inside != old_inside)
 	{
 		j++;
 	}
 
-	outside = uvalues[++k].uval.ival;
-	if (outside < 0)
+	g_outside = uvalues[++k].uval.ival;
+	if (g_outside < 0)
 	{
-		outside = -outside;
+		g_outside = -g_outside;
 	}
-	if (outside >= colors)
+	if (g_outside >= colors)
 	{
-		outside = (outside % colors) + (outside / colors);
+		g_outside = (g_outside % colors) + (g_outside / colors);
 	}
 
 	{
@@ -393,10 +393,10 @@ int get_toggles()
 		tmp = uvalues[++k].uval.ch.val;
 		if (tmp > 0)
 		{
-			outside = -tmp;
+			g_outside = -tmp;
 		}
 	}
-	if (outside != old_outside)
+	if (g_outside != old_outside)
 	{
 		j++;
 	}
@@ -440,21 +440,21 @@ int get_toggles()
 
 	if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
 	{
-		fillcolor = -1;
+		g_fill_color = -1;
 	}
 	else
 	{
-		fillcolor = atoi(uvalues[k].uval.sval);
+		g_fill_color = atoi(uvalues[k].uval.sval);
 	}
-	if (fillcolor < 0)
+	if (g_fill_color < 0)
 	{
-		fillcolor = -1;
+		g_fill_color = -1;
 	}
-	if (fillcolor >= colors)
+	if (g_fill_color >= colors)
 	{
-		fillcolor = (fillcolor % colors) + (fillcolor / colors);
+		g_fill_color = (g_fill_color % colors) + (g_fill_color / colors);
 	}
-	if (fillcolor != old_fillcolor)
+	if (g_fill_color != old_fillcolor)
 	{
 		j++;
 	}
@@ -493,7 +493,7 @@ int get_toggles2()
 
 	choices[++k] = "Look for finite attractor (0=no,>0=yes,<0=phase)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ch.val = finattract;
+	uvalues[k].uval.ch.val = g_finite_attractor;
 
 	choices[++k] = "Potential Max Color (0 means off)";
 	uvalues[k].type = 'i';
@@ -564,11 +564,11 @@ int get_toggles2()
 	k = -1;
 	j = 0;   /* return code */
 
-	if (uvalues[++k].uval.ch.val != finattract)
+	if (uvalues[++k].uval.ch.val != g_finite_attractor)
 	{
-		finattract = uvalues[k].uval.ch.val;
+		g_finite_attractor = uvalues[k].uval.ch.val;
 		j = 1;
-		}
+	}
 
 	potparam[0] = uvalues[++k].uval.ival;
 	if (potparam[0] != old_potparam[0])
@@ -1070,7 +1070,7 @@ int starfield(void)
 				return 1;
 				}
 			c = getcolor(g_col, g_row);
-			if (c == inside)
+			if (c == g_inside)
 			{
 				c = colors-1;
 			}
@@ -1346,11 +1346,11 @@ void goodbye(void)                  /* we done.  Bail out */
 	stopslideshow();
 	end_help();
 	ret = 0;
-	if (initbatch == INIT_BATCH_BAILOUT_ERROR) /* exit with error code for batch file */
+	if (g_initialize_batch == INITBATCH_BAILOUT_ERROR) /* exit with error code for batch file */
 	{
 		ret = 2;
 	}
-	else if (initbatch == INIT_BATCH_BAILOUT_INTERRUPTED)
+	else if (g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED)
 	{
 		ret = 1;
 	}

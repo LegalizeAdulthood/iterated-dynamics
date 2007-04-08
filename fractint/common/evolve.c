@@ -98,8 +98,8 @@ GENEBASE g_genes[NUMGENES] =
 	{ &param[7],   varydbl,     0, "Param 4 imag", 1 },
 	{ &param[8],   varydbl,     0, "Param 5 real", 1 },
 	{ &param[9],   varydbl,     0, "Param 5 imag", 1 },
-	{ &inside,     varyinside,  0, "inside color", 2 },
-	{ &outside,    varyoutside, 0, "outside color", 3 },
+	{ &g_inside,     varyinside,  0, "inside color", 2 },
+	{ &g_outside,    varyoutside, 0, "outside color", 3 },
 	{ &g_decomposition[0],  varypwr2,    0, "decomposition", 4 },
 	{ &inversion[0], varyinv,    0, "invert radius", 7 },
 	{ &inversion[1], varyinv,    0, "invert center x", 7 },
@@ -126,8 +126,8 @@ void param_history(int mode)
 		oldhistory.param7 = param[7];
 		oldhistory.param8 = param[8];
 		oldhistory.param9 = param[9];
-		oldhistory.inside = inside;
-		oldhistory.outside = outside;
+		oldhistory.inside = g_inside;
+		oldhistory.outside = g_outside;
 		oldhistory.decomp0 = g_decomposition[0];
 		oldhistory.invert0 = inversion[0];
 		oldhistory.invert1 = inversion[1];
@@ -151,8 +151,8 @@ void param_history(int mode)
 		param[7] = oldhistory.param7;
 		param[8] = oldhistory.param8;
 		param[9] = oldhistory.param9;
-		inside = oldhistory.inside;
-		outside = oldhistory.outside;
+		g_inside = oldhistory.inside;
+		g_outside = oldhistory.outside;
 		g_decomposition[0] = oldhistory.decomp0;
 		inversion[0] = oldhistory.invert0;
 		inversion[1] = oldhistory.invert1;

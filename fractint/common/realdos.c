@@ -47,10 +47,10 @@ int stopmsg (int flags, char *msg)
 {
 	int ret, toprow, color, savelookatmouse;
 	static unsigned char batchmode = 0;
-	if (g_debug_flag || initbatch >= INIT_BATCH_NORMAL)
+	if (g_debug_flag || g_initialize_batch >= INITBATCH_NORMAL)
 	{
 		static FILE *fp = NULL;
-		if (fp == NULL && initbatch == INIT_BATCH_NONE)
+		if (fp == NULL && g_initialize_batch == INITBATCH_NONE)
 		{
 			fp = dir_fopen(g_work_dir, "stopmsg.txt", "w");
 		}
@@ -69,9 +69,9 @@ int stopmsg (int flags, char *msg)
 		init_failure(msg);
 		goodbye();
 	}
-	if (initbatch >= INIT_BATCH_NORMAL || batchmode)  /* in batch mode */
+	if (g_initialize_batch >= INITBATCH_NORMAL || batchmode)  /* in batch mode */
 	{
-		initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
+		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
 		batchmode = 1; /* fixes *second* stopmsg in batch mode bug */
 		return -1;
 		}

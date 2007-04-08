@@ -1402,7 +1402,7 @@ int orbit_2d_fp()
 	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 
-	color = (inside > 0) ? inside : 2;
+	color = (g_inside > 0) ? g_inside : 2;
 
 	oldcol = oldrow = -1;
 	x = s_init_orbit_fp[0];
@@ -1536,7 +1536,7 @@ int orbit_2d()
 	case SOUNDFLAG_Z: soundvar = &z; break;
 	}
 
-	color = (inside > 0) ? inside : 2;
+	color = (g_inside > 0) ? g_inside : 2;
 	if (color >= colors)
 	{
 		color = 1;
@@ -1903,7 +1903,7 @@ int dynamic_2d_setup_fp()
 			s_dt = 0.01;
 		}
 	}
-	if (outside == SUM)
+	if (g_outside == SUM)
 	{
 		g_plot_color = plot_hist;
 	}
@@ -1953,7 +1953,7 @@ int dynamic_2d_fp()
 	}
 
 	count = 0;
-	color = (inside > 0) ? inside : 1;
+	color = (g_inside > 0) ? g_inside : 1;
 	if (color >= colors)
 	{
 		color = 1;
@@ -2145,7 +2145,7 @@ int plotorbits2dsetup(void)
 
 	s_o_color = 1;
 
-	if (outside == SUM)
+	if (g_outside == SUM)
 	{
 		g_plot_color = plot_hist;
 	}
@@ -2197,9 +2197,9 @@ int plotorbits2dfloat(void)
 		end_resume();
 	}
 
-	if (inside > 0)
+	if (g_inside > 0)
 	{
-		s_o_color = inside;
+		s_o_color = g_inside;
 	}
 	else  /* inside <= 0 */
 	{
@@ -2268,7 +2268,7 @@ int funny_glasses_call(int (*calc)(void))
 		s_real_time = 0;
 		goto done;
 	}
-	if (g_glasses_type && status == 0 && display3d)
+	if (g_glasses_type && status == 0 && g_display_3d)
 	{
 		if (g_glasses_type == STEREO_PHOTO)   /* photographer's mode */
 		{
@@ -2730,21 +2730,21 @@ static void setup_matrix(MATRIX doublemat)
 
 int orbit_3d_fp()
 {
-	display3d = -1;
+	g_display_3d = -1;
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit_3d_calc_fp);
 }
 
 int orbit_3d()
 {
-	display3d = -1;
+	g_display_3d = -1;
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit_3d_calc);
 }
 
 static int ifs_3d(void)
 {
-	display3d = -1;
+	g_display_3d = -1;
 
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(g_float_flag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */

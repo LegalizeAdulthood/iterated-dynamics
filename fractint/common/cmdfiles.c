@@ -53,20 +53,20 @@ int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
 int     g_sound_flags;              /* sound control bitfield... see sound.c for useage*/
 int     g_base_hertz;              /* sound=x/y/x hertz value */
 int     g_debug_flag;              /* internal use only - you didn't see this */
-int     timerflag;              /* you didn't see this, either */
-int     cyclelimit;             /* color-rotator upper limit */
-int     inside;                 /* inside color: 1=blue     */
-int     fillcolor;              /* fillcolor: -1=normal     */
-int     outside;                /* outside color    */
-int     finattract;             /* finite attractor logic */
-int     display3d;              /* 3D display flag: 0 = OFF */
-int     overlay3d;              /* 3D overlay flag: 0 = OFF */
-int     init3d[20];             /* '3d=nn/nn/nn/...' values */
-int     checkcurdir;            /* flag to check current dir for files */
-int     initbatch = 0;			/* 1 if batch run (no kbd)  */
-int     initsavetime;           /* autosave minutes         */
-_CMPLX  initorbit;              /* initial orbitvalue */
-char    useinitorbit;           /* flag for initorbit */
+int     g_timer_flag;              /* you didn't see this, either */
+int     g_cycle_limit;             /* color-rotator upper limit */
+int     g_inside;                 /* inside color: 1=blue     */
+int     g_fill_color;              /* fillcolor: -1=normal     */
+int     g_outside;                /* outside color    */
+int     g_finite_attractor;             /* finite attractor logic */
+int     g_display_3d;              /* 3D display flag: 0 = OFF */
+int     g_overlay_3d;              /* 3D overlay flag: 0 = OFF */
+int     g_init_3d[20];             /* '3d=nn/nn/nn/...' values */
+int     g_check_current_dir;            /* flag to check current dir for files */
+int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
+int     g_save_time;           /* autosave minutes         */
+_CMPLX  g_initial_orbit_z;              /* initial orbitvalue */
+char    useinitorbit;           /* flag for g_initial_orbit_z */
 int     g_init_mode;               /* initial video mode       */
 int     initcyclelimit;         /* initial cycle limit      */
 BYTE    usemag;                 /* use center-mag corners   */
@@ -392,9 +392,9 @@ static void initvars_restart()          /* <ins> key init */
 	g_ask_video = 1;                        /* turn on video-prompt flag */
 	g_fractal_overwrite = FALSE;                 /* don't overwrite           */
 	g_sound_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
-	initbatch = INIT_BATCH_NONE;			/* not in batch mode         */
-	checkcurdir = 0;                     /* flag to check current dire for files */
-	initsavetime = 0;                    /* no auto-save              */
+	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
+	g_check_current_dir = 0;                     /* flag to check current dire for files */
+	g_save_time = 0;                    /* no auto-save              */
 	g_init_mode = -1;                       /* no initial video mode     */
 	viewwindow = 0;                      /* no view window            */
 	viewreduction = 4.2f;
@@ -404,7 +404,7 @@ static void initvars_restart()          /* <ins> key init */
 	orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
-	timerflag = 0;                       /* timer flags are off       */
+	g_timer_flag = 0;                       /* timer flags are off       */
 	strcpy(FormFileName, "fractint.frm"); /* default formula file      */
 	FormName[0] = 0;
 	strcpy(LFileName, "fractint.l");
@@ -442,10 +442,10 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	int i;
 	escape_exit = 0;                     /* don't disable the "are you sure?" screen */
 	usr_periodicitycheck = 1;            /* turn on periodicity    */
-	inside = 1;                          /* inside color = blue    */
-	fillcolor = -1;                      /* no special fill color */
+	g_inside = 1;                          /* inside color = blue    */
+	g_fill_color = -1;                      /* no special fill color */
 	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
-	outside = -1;                        /* outside color = -1 (not used) */
+	g_outside = -1;                        /* outside color = -1 (not used) */
 	maxit = 150;                         /* initial maxiter        */
 	usr_stdcalcmode = 'g';               /* initial solid-guessing */
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
@@ -457,7 +457,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 #else
 	usr_floatflag = 1;                   /* turn on the float flag */
 #endif
-	finattract = 0;                      /* disable finite attractor logic */
+	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	fractype = 0;                        /* initial type Set flag  */
 	curfractalspecific = &fractalspecific[fractype];
 	initcorners = initparams = 0;
@@ -473,7 +473,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 		potparam[i]  = 0.0; /* initial potential values */
 		inversion[i] = 0.0;  /* initial invert values */
 	}
-	initorbit.x = initorbit.y = 0.0;     /* initial orbit values */
+	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;     /* initial orbit values */
 	g_invert = 0;
 	g_decomposition[0] = g_decomposition[1] = 0;
 	usr_distest = 0;
@@ -514,8 +514,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	math_tol[0] = 0.05;
 	math_tol[1] = 0.05;
 
-	display3d = 0;                       /* 3D display is off        */
-	overlay3d = 0;                       /* 3D overlay is off        */
+	g_display_3d = 0;                       /* 3D display is off        */
+	g_overlay_3d = 0;                       /* 3D overlay is off        */
 
 	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
@@ -805,7 +805,7 @@ static int batch_arg(const cmd_context *context)
 #ifdef XFRACT
 	g_init_mode = context->yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
 #endif
-	initbatch = context->yesnoval[0];
+	g_initialize_batch = context->yesnoval[0];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -1033,7 +1033,7 @@ static int filename_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	if (context->mode == CMDFILE_AT_AFTER_STARTUP && display3d == 0) /* can't do this in @ command */
+	if (context->mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == 0) /* can't do this in @ command */
 	{
 		return badarg(context->curarg);
 	}
@@ -1182,7 +1182,7 @@ static int overwrite_arg(const cmd_context *context)
 
 static int save_time_arg(const cmd_context *context)
 {
-	initsavetime = context->numval;
+	g_save_time = context->numval;
 	return COMMAND_OK;
 }
 
@@ -1263,7 +1263,7 @@ static int inside_arg(const cmd_context *context)
 		{ "atan", ATANI },
 		{ "maxiter", -1 }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &inside))
+	if (named_value(args, NUM_OF(args), context->value, &g_inside))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
@@ -1273,7 +1273,7 @@ static int inside_arg(const cmd_context *context)
 	}
 	else
 	{
-		inside = context->numval;
+		g_inside = context->numval;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1288,7 +1288,7 @@ static int fill_color_arg(const cmd_context *context)
 {
 	if (strcmp(context->value, "normal") == 0)
 	{
-		fillcolor = -1;
+		g_fill_color = -1;
 	}
 	else if (context->numval == NON_NUMERIC)
 	{
@@ -1296,7 +1296,7 @@ static int fill_color_arg(const cmd_context *context)
 	}
 	else
 	{
-		fillcolor = context->numval;
+		g_fill_color = context->numval;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1336,7 +1336,7 @@ static int outside_arg(const cmd_context *context)
 		{ "fmod", FMOD },
 		{ "tdis", TDIS }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &outside))
+	if (named_value(args, NUM_OF(args), context->value, &g_outside))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
@@ -1344,7 +1344,7 @@ static int outside_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	outside = context->numval;
+	g_outside = context->numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -1710,8 +1710,8 @@ static int init_orbit_arg(const cmd_context *context)
 		{
 			return badarg(context->curarg);
 		}
-		initorbit.x = context->floatval[0];
-		initorbit.y = context->floatval[1];
+		g_initial_orbit_z.x = context->floatval[0];
+		g_initial_orbit_z.y = context->floatval[1];
 		useinitorbit = 1;
 	}
 	return COMMAND_FRACTAL_PARAM;
@@ -2516,7 +2516,7 @@ static int log_mode_arg(const cmd_context *context)
 static int debug_flag_arg(const cmd_context *context)
 {
 	g_debug_flag = context->numval;
-	timerflag = g_debug_flag & 1;                /* separate timer flag */
+	g_timer_flag = g_debug_flag & 1;                /* separate timer flag */
 	g_debug_flag &= ~1;
 	return COMMAND_OK;
 }
@@ -2821,16 +2821,16 @@ static int threed_arg(const cmd_context *context)
 		yesno = 1;
 		if (calc_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
 		{
-			overlay3d = 1;
+			g_overlay_3d = 1;
 		}
 	}
 	else if (yesno < 0)
 	{
 		return badarg(context->curarg);
 	}
-	display3d = yesno;
+	g_display_3d = yesno;
 	initvars_3d();
-	return (display3d) ? 6 : 2;
+	return (g_display_3d) ? 6 : 2;
 }
 
 static int scale_xyz_arg(const cmd_context *context)
@@ -3096,9 +3096,9 @@ static int dither_arg(const cmd_context *context)
 	return flag_arg(context, &g_dither_flag, COMMAND_OK);
 }
 
-static int fin_attract_arg(const cmd_context *context)
+static int finite_attractor_arg(const cmd_context *context)
 {
-	return flag_arg(context, &finattract, COMMAND_FRACTAL_PARAM);
+	return flag_arg(context, &g_finite_attractor, COMMAND_FRACTAL_PARAM);
 }
 
 static int no_bof_arg(const cmd_context *context)
@@ -3168,7 +3168,7 @@ static int ask_video_arg(const cmd_context *context)
 
 static int cur_dir_arg(const cmd_context *context)
 {
-	return flag_arg(context, &checkcurdir, COMMAND_OK);
+	return flag_arg(context, &g_check_current_dir, COMMAND_OK);
 }
 
 /*
@@ -3401,7 +3401,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "inside",			inside_arg },			/* inside=? */
 			{ "proximity",		proximity_arg },		/* proximity=? */
 			{ "fillcolor",		fill_color_arg },		/* fillcolor */
-			{ "finattract",		fin_attract_arg },
+			{ "finattract",		finite_attractor_arg },
 			{ "nobof",			no_bof_arg },
 			{ "function",		function_arg },			/* function=?,? */
 			{ "outside",		outside_arg },			/* outside=? */
@@ -3613,7 +3613,7 @@ static int parse_colors(char *value)
 		{
 			goto badcolor;
 		}
-		if (display3d)
+		if (g_display_3d)
 		{
 			mapset = 1;
 		}
@@ -3743,9 +3743,9 @@ static void argerror(const char *badarg)      /* oops. couldn't decode this */
 			" argument list with descriptions)");
 	}
 	stopmsg(0, msg);
-	if (initbatch)
+	if (g_initialize_batch)
 	{
-		initbatch = INIT_BATCH_BAILOUT_INTERRUPTED;
+		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
 		goodbye();
 	}
 }
@@ -3858,13 +3858,13 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 	char cmd[80];
 	static int row = 1;
 
-	if (initbatch == INIT_BATCH_NORMAL)  /* in batch mode */
+	if (g_initialize_batch == INITBATCH_NORMAL)  /* in batch mode */
 	{
 		if (badfilename)
 		{
 			/* uncomment next if wish to cause abort in batch mode for
 			errors in CMDFILES.C such as parsing SSTOOLS.INI */
-			/* initbatch = INIT_BATCH_BAILOUT_INTERRUPTED; */ /* used to set errorlevel */
+			/* g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; */ /* used to set errorlevel */
 			return -1;
 		}
 	}
@@ -3911,7 +3911,7 @@ void dopause(int action)
 	switch (action)
 	{
 	case PAUSE_ERROR_NO_BATCH:
-		if (initbatch == INIT_BATCH_NONE)
+		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			if (needpause == PAUSE_ERROR_ANY)
 			{

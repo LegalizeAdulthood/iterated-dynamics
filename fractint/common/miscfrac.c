@@ -91,7 +91,7 @@ int test(void)
 					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
 					return -1;
 				}
-				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, inside);
+				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, g_inside);
 				if (color >= colors)  /* avoid trouble if color is 0 */
 				{
 					if (colors < 16)
@@ -153,7 +153,7 @@ static void _fastcall put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
-		color = (U16)outside;
+		color = (U16)g_outside;
 	}
 	put_potential(x, y, color);
 }
@@ -163,7 +163,7 @@ static void _fastcall put_color_border(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
 	{
-		color = outside;
+		color = g_outside;
 	}
 	if (color < 1)
 	{
@@ -458,7 +458,7 @@ int plasma(void)
 		{
 			/* s_max_plasma = (U16)(1L << 16) -1; */
 			s_max_plasma = 0xFFFF;
-			g_plot_color = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
+			g_plot_color = (g_outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
 			s_get_pixels =  get_potential;
 			OldPotFlag = g_potential_flag;
 			OldPot16bit = g_potential_16bit;
@@ -467,13 +467,13 @@ int plasma(void)
 		{
 			s_max_plasma = 0;        /* can't do potential (startdisk failed) */
 			param[3]   = 0;
-			g_plot_color = (outside >= 0) ? put_color_border : g_put_color;
+			g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		g_plot_color = (outside >= 0) ? put_color_border : g_put_color;
+		g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(g_random_seed);
@@ -996,10 +996,10 @@ int bifurcation(void)
 	}
 	if (mono)
 	{
-		if (inside)
+		if (g_inside)
 		{
 			outside_x = 0;
-			inside = 1;
+			g_inside = 1;
 		}
 		else
 		{
@@ -1050,7 +1050,7 @@ int bifurcation(void)
 			color = s_verhulst_array[row];
 			if (color && mono)
 			{
-				color = inside;
+				color = g_inside;
 			}
 			else if ((!color) && mono)
 			{
@@ -1456,9 +1456,9 @@ int lyapunov(void)
 		b = g_dx_pixel();
 	}
 	g_color = lyapunov_cycles(s_filter_cycles, a, b);
-	if (inside > 0 && g_color == 0)
+	if (g_inside > 0 && g_color == 0)
 	{
-		g_color = inside;
+		g_color = g_inside;
 	}
 	else if (g_color >= colors)
 	{
@@ -1540,15 +1540,15 @@ int lya_setup(void)
 	if (save_release < 1731)  /* ignore inside=, stdcalcmode */
 	{
 		stdcalcmode = '1';
-		if (inside == 1)
+		if (g_inside == 1)
 		{
-			inside = 0;
+			g_inside = 0;
 		}
 		}
-	if (inside < 0)
+	if (g_inside < 0)
 	{
 		stopmsg(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
-		inside = 1;
+		g_inside = 1;
 		}
 	if (usr_stdcalcmode == 'o')  /* Oops, lyapunov type */
 	{
