@@ -454,7 +454,7 @@ extern int mandel_cloud_orbit_fp(double *, double *, double*);
 extern int dynamic_2d_fp(void);
 extern int QuaternionFPFractal(void);
 extern int quaternionfp_per_pixel(void);
-extern int quaternionjulfp_per_pixel(void);
+extern int quaternion_julia_per_pixel_fp(void);
 extern int phoenix_orbit(void);
 extern int phoenix_orbit_fp(void);
 extern int long_phoenix_per_pixel(void);
