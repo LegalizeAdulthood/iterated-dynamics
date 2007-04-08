@@ -690,7 +690,7 @@ void adjust_corner_bf(void)
 	/* use bftemp, bftemp2 as bfXctr, bfYctr */
 	cvtcentermagbf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	ftemp = fabs(Xmagfactor);
-	if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1 + aspectdrift))
+	if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
 		{
 		Xmagfactor = sign(Xmagfactor);
 		cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
@@ -763,7 +763,7 @@ void adjust_corner(void)
 		/* While we're at it, let's adjust the Xmagfactor as well */
 		cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		ftemp = fabs(Xmagfactor);
-		if (ftemp != 1 && ftemp >= (1-aspectdrift) && ftemp <= (1 + aspectdrift))
+		if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
 		{
 			Xmagfactor = sign(Xmagfactor);
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -1594,7 +1594,7 @@ static FILE *snd_fp = NULL;
 static int sound_open(void)
 {
 	static char soundname[] = {"sound001.txt"};
-	if ((orbitsave & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
+	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
 	{
 		snd_fp = fopen(soundname, "w");
 		if (snd_fp == NULL)
@@ -1609,11 +1609,13 @@ static int sound_open(void)
 	return snd_fp != NULL;
 }
 
-/* This routine plays a tone in the speaker and optionally writes a file
-	if the orbitsave variable is turned on */
+/*
+	This routine plays a tone in the speaker and optionally writes a file
+	if the g_orbit_save variable is turned on
+*/
 void sound_tone(int tone)
 {
-	if ((orbitsave & ORBITSAVE_SOUND) != 0)
+	if ((g_orbit_save & ORBITSAVE_SOUND) != 0)
 	{
 		if (sound_open())
 		{
@@ -1626,7 +1628,7 @@ void sound_tone(int tone)
 		/* must not then call soundoff(), else indexes out of synch */
 		if (driver_sound_on(tone))
 		{
-			wait_until(0, orbit_delay);
+			wait_until(0, g_orbit_delay);
 			if (!s_tab_or_help) /* kludge because wait_until() calls driver_key_pressed */
 			{
 				driver_sound_off();
@@ -1697,9 +1699,9 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 		{
 			sound_tone((int)(j*1000/ydots + g_base_hertz));
 		}
-		else if (orbit_delay > 0)
+		else if (g_orbit_delay > 0)
 		{
-			wait_until(0, orbit_delay);
+			wait_until(0, g_orbit_delay);
 		}
 	}
 	else
@@ -1716,9 +1718,9 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 		{
 			sound_tone((int)(i + j + g_base_hertz));
 		}
-		else if (orbit_delay > 0)
+		else if (g_orbit_delay > 0)
 		{
-			wait_until(0, orbit_delay);
+			wait_until(0, g_orbit_delay);
 		}
 	}
 

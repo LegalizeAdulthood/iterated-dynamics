@@ -393,9 +393,9 @@ static void _fastcall chgboxf(double dwidth, double ddepth)
 void resizebox(int steps)
 {
 	double deltax, deltay;
-	if (zdepth*screenaspect > zwidth)  /* box larger on y axis */
+	if (zdepth*g_screen_aspect_ratio > zwidth)  /* box larger on y axis */
 	{
-		deltay = steps*0.036 / screenaspect;
+		deltay = steps*0.036 / g_screen_aspect_ratio;
 		deltax = zwidth*deltay / zdepth;
 	}
 	else  /* box larger on x axis */

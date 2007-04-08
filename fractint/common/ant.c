@@ -486,7 +486,7 @@ int ant(void)
 	helpmode = ANTCOMMANDS;
 	maxpts = (long) param[1];
 	maxpts = labs(maxpts);
-	wait = abs(orbit_delay);
+	wait = abs(g_orbit_delay);
 	sprintf(rule, "%.17g", param[0]);
 	rule_len = (int) strlen(rule);
 	if (rule_len > 1)

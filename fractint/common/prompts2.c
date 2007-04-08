@@ -242,7 +242,7 @@ int get_toggles()
 		choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
 		uvalues[k].type = '*';
 		}
-	uvalues[k].uval.Lval = old_logflag = LogFlag;
+	uvalues[k].uval.Lval = old_logflag = g_log_palette_flag;
 
 	choices[++k] = "Biomorph Color (-1 means OFF)";
 	uvalues[k].type = 'i';
@@ -415,8 +415,8 @@ int get_toggles()
 		j++;
 	}
 
-	LogFlag = uvalues[++k].uval.Lval;
-	if (LogFlag != old_logflag)
+	g_log_palette_flag = uvalues[++k].uval.Lval;
+	if (g_log_palette_flag != old_logflag)
 	{
 		j++;
 		Log_Auto_Calc = 0;  /* turn it off, use the supplied value */
@@ -682,7 +682,7 @@ pass_option_restart:
 
 	choices[++k] = "Orbit delay (0 = none)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_orbit_delay = orbit_delay;
+	uvalues[k].uval.ival = old_orbit_delay = g_orbit_delay;
 
 	choices[++k] = "Orbit interval (1 ... 255)";
 	uvalues[k].type = 'i';
@@ -733,8 +733,8 @@ pass_option_restart:
 	}
 
 
-	orbit_delay = uvalues[++k].uval.ival;
-	if (orbit_delay != old_orbit_delay)
+	g_orbit_delay = uvalues[++k].uval.ival;
+	if (g_orbit_delay != old_orbit_delay)
 	{
 		j = 1;
 	}
@@ -899,7 +899,7 @@ get_view_restart:
 		viewwindow = viewxdots = viewydots = 0;
 		viewreduction = 4.2f;
 		viewcrop = 1;
-		finalaspectratio = screenaspect;
+		finalaspectratio = g_screen_aspect_ratio;
 		sxdots = old_sxdots;
 		sydots = old_sydots;
 		goto get_view_restart;
@@ -2191,9 +2191,9 @@ gc_loop:
 		xxmax         = curfractalspecific->xmax;
 		yy3rd = yymin = curfractalspecific->ymin;
 		yymax         = curfractalspecific->ymax;
-		if (viewcrop && finalaspectratio != screenaspect)
+		if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(screenaspect, finalaspectratio);
+			aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
 		}
 		if (bf_math != 0)
 		{
@@ -2413,9 +2413,9 @@ gsc_loop:
 		xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
 		yymin = g_orbit_y_min; yymax = g_orbit_y_max;
 		xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
-		if (viewcrop && finalaspectratio != screenaspect)
+		if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(screenaspect, finalaspectratio);
+			aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
 		}
 
 		g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;

@@ -74,9 +74,9 @@ long    g_bail_out;                /* user input bailout value */
 enum bailouts g_bail_out_test;       /* test used for determining bailout */
 double  g_inversion[3];           /* radius, xcenter, ycenter */
 int     g_rotate_lo, g_rotate_hi;    /* cycling color range      */
-int *g_ranges;                /* iter->color ranges mapping */
+int		*g_ranges;                /* iter->color ranges mapping */
 int     g_ranges_length = 0;          /* size of ranges array     */
-BYTE *g_map_dac_box = NULL;     /* map= (default colors)    */
+BYTE	*g_map_dac_box = NULL;     /* map= (default colors)    */
 int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
 									/* 1, g_dac_box matches no known defined map   */
 									/* 2, g_dac_box matches the g_color_file map      */
@@ -84,23 +84,23 @@ int     g_color_preloaded;         /* if g_dac_box preloaded for next mode selec
 int     g_save_release;           /* release creating PAR file*/
 int		g_dont_read_color = FALSE;        /* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
-int g_targa_output = 0;              /* 3D fullcolor flag */
-int g_true_color = 0;              /* escape time truecolor flag */
-int g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
+int		g_targa_output = 0;              /* 3D fullcolor flag */
+int		g_true_color = 0;              /* escape time truecolor flag */
+int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
 char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
-int functionpreloaded; /* if function loaded for new bifs, JCO 7/5/92 */
-float   screenaspect = DEFAULTASPECT;   /* aspect ratio of the screen */
-float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
-								/* still forced to screenaspect  */
-int fastrestore = 0;          /* 1 - reset viewwindows prior to a restore
+int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
+float   g_screen_aspect_ratio = DEFAULTASPECT;   /* aspect ratio of the screen */
+float   g_aspect_drift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
+								/* still forced to g_screen_aspect_ratio  */
+int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
 								and do not display warnings when video
 								mode changes during restore */
-int g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
+int		g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
 									Orgform formula compilation files */
-int     orbitsave = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
-int orbit_delay;                /* clock ticks delating orbit release */
-int     transparent[2];         /* transparency min/max values */
-long    LogFlag;                /* Logarithmic palette flag: 0 = no */
+int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
+int		g_orbit_delay;                /* clock ticks delating orbit release */
+int     g_transparent[2];         /* transparency min/max values */
+long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
 BYTE exitmode = 3;      /* video mode on exit */
 int     Log_Fly_Calc = 0;   /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;  /* auto calculate logmap */
@@ -399,9 +399,9 @@ static void initvars_restart()          /* <ins> key init */
 	viewwindow = 0;                      /* no view window            */
 	viewreduction = 4.2f;
 	viewcrop = 1;
-	finalaspectratio = screenaspect;
+	finalaspectratio = g_screen_aspect_ratio;
 	viewxdots = viewydots = 0;
-	orbit_delay = 0;                     /* full speed orbits */
+	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
 	g_timer_flag = 0;                       /* timer flags are off       */
@@ -485,7 +485,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	yy3rd = yymin = -1.5; yymax = 1.5;   /* initial corner values  */
 	bf_math = 0;
 	g_potential_16bit = g_potential_flag = FALSE;
-	LogFlag = 0;                         /* no logarithmic palette */
+	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */
 	set_trig_array(0, "sin");             /* trigfn defaults */
 	set_trig_array(1, "sqr");
 	set_trig_array(2, "sinh");
@@ -500,7 +500,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_color_state = COLORSTATE_DEFAULT;
 	g_color_preloaded = FALSE;
 	g_rotate_lo = 1; g_rotate_hi = 255;      /* color cycling default range */
-	orbit_delay = 0;                     /* full speed orbits */
+	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_keep_screen_coords = 0;
 	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
@@ -525,7 +525,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_bail_out_bn = (int (*)(void))bail_out_mod_bn;
 	g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
 
-	functionpreloaded = 0; /* for old bifs  JCO 7/5/92 */
+	g_function_preloaded = FALSE; /* for old bifs  JCO 7/5/92 */
 	g_m_x_min_fp = -.83;
 	g_m_y_min_fp = -.25;
 	g_m_x_max_fp = -.83;
@@ -574,7 +574,7 @@ static void initvars_3d()               /* init vars affecting 3d */
 	g_blue_crop_right = 4;
 	g_red_bright     = 80;
 	g_blue_bright   = 100;
-	transparent[0] = transparent[1] = 0; /* no min/max transparency */
+	g_transparent[0] = g_transparent[1] = 0; /* no min/max transparency */
 	set_3d_defaults();
 }
 
@@ -1320,7 +1320,7 @@ static int function_arg(const cmd_context *context)
 		}
 		++value;
 	}
-	functionpreloaded = 1; /* for old bifs  JCO 7/5/92 */
+	g_function_preloaded = TRUE; /* for old bifs  JCO 7/5/92 */
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -1456,7 +1456,7 @@ static int ranges_arg(const cmd_context *context)
 		return badarg(context->curarg);
 	}
 	entries = prev = i = 0;
-	LogFlag = 0; /* ranges overrides logmap */
+	g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
 	while (i < context->totparms)
 	{
 		if ((j = context->intval[i++]) < 0) /* striping */
@@ -1967,7 +1967,7 @@ static int view_windows_arg(const cmd_context *context)
 	}
 	viewwindow = 1;
 	viewreduction = 4.2f;  /* reset default values */
-	finalaspectratio = screenaspect;
+	finalaspectratio = g_screen_aspect_ratio;
 	viewcrop = 1; /* yes */
 	viewxdots = viewydots = 0;
 
@@ -2121,7 +2121,7 @@ static int aspect_drift_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	aspectdrift = (float)context->floatval[0];
+	g_aspect_drift = (float)context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2166,7 +2166,7 @@ static int fast_restore_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	fastrestore = (char)context->yesnoval[0];
+	g_fast_restore = (char)context->yesnoval[0];
 	return COMMAND_OK;
 }
 
@@ -2193,13 +2193,13 @@ static int orbit_save_arg(const cmd_context *context)
 {
 	if (context->charval[0] == 's')
 	{
-		orbitsave |= ORBITSAVE_SOUND;
+		g_orbit_save |= ORBITSAVE_SOUND;
 	}
 	else if (context->yesnoval[0] < 0)
 	{
 		return badarg(context->curarg);
 	}
-	orbitsave |= context->yesnoval[0];
+	g_orbit_save |= context->yesnoval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -2474,19 +2474,19 @@ static int log_map_arg(const cmd_context *context)
 	Log_Auto_Calc = 0;   /* turn this off if loading a PAR */
 	if (context->charval[0] == 'y')
 	{
-		LogFlag = 1;                           /* palette is logarithmic */
+		g_log_palette_flag = LOGPALETTE_STANDARD;                           /* palette is logarithmic */
 	}
 	else if (context->charval[0] == 'n')
 	{
-		LogFlag = 0;
+		g_log_palette_flag = LOGPALETTE_NONE;
 	}
 	else if (context->charval[0] == 'o')
 	{
-		LogFlag = -1;                          /* old log palette */
+		g_log_palette_flag = LOGPALETTE_OLD;                          /* old log palette */
 	}
 	else
 	{
-		LogFlag = (long)context->floatval[0];
+		g_log_palette_flag = (long)context->floatval[0];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2531,7 +2531,7 @@ static int random_seed_arg(const cmd_context *context)
 
 static int orbit_delay_arg(const cmd_context *context)
 {
-	orbit_delay = context->numval;
+	g_orbit_delay = context->numval;
 	return COMMAND_OK;
 }
 
@@ -2936,10 +2936,10 @@ static int transparent_arg(const cmd_context *context)
 	{
 		return badarg(context->curarg);
 	}
-	transparent[1] = transparent[0] = context->intval[0];
+	g_transparent[1] = g_transparent[0] = context->intval[0];
 	if (context->totparms > 1)
 	{
-		transparent[1] = context->intval[1];
+		g_transparent[1] = context->intval[1];
 	}
 	return COMMAND_3D_PARAM;
 }

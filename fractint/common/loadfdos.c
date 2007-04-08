@@ -109,7 +109,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 {  /* calc resulting aspect ratio for specified dots in current mode */
 	return (double)tryydots / (double)tryxdots
 		*(double)g_video_entry.xdots / (double)g_video_entry.ydots
-		*screenaspect;
+		*g_screen_aspect_ratio;
 	}
 
 #ifndef XFRACT
@@ -218,7 +218,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		vid[i].flags  = tmpflags;
 	}
 
-	if (fastrestore  && !g_ask_video)
+	if (g_fast_restore  && !g_ask_video)
 	{
 		g_init_mode = g_adapter;
 	}
@@ -301,7 +301,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				strcat((char *)g_stack, temp1);
 			}
 		}
-		if (fileaspectratio != 0 && fileaspectratio != screenaspect)
+		if (fileaspectratio != 0 && fileaspectratio != g_screen_aspect_ratio)
 		{
 			strcat((char *)g_stack,
 				"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
@@ -457,10 +457,10 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	{
 		finalaspectratio = (float)vid_aspect(filexdots, fileydots);
 	}
-	if (finalaspectratio >= screenaspect-0.02
-		&& finalaspectratio <= screenaspect + 0.02)
+	if (finalaspectratio >= g_screen_aspect_ratio-0.02
+		&& finalaspectratio <= g_screen_aspect_ratio + 0.02)
 	{
-		finalaspectratio = screenaspect;
+		finalaspectratio = g_screen_aspect_ratio;
 	}
 	i = (int)(finalaspectratio*1000.0 + 0.5);
 	finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
@@ -473,8 +473,8 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		viewwindow = 1;
 		ftemp = finalaspectratio*
 			(double)g_video_entry.ydots / (double)g_video_entry.xdots
-				/ screenaspect;
-		if (finalaspectratio <= screenaspect)
+				/ g_screen_aspect_ratio;
+		if (finalaspectratio <= g_screen_aspect_ratio)
 		{
 			i = (int)((double)g_video_entry.xdots / (double)filexdots*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
@@ -498,8 +498,8 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			viewreduction = tmpreduce; /* ok, this works */
 		}
 	}
-	if (*s_makepar && !fastrestore && !g_initialize_batch &&
-			(fabs(finalaspectratio - screenaspect) > .00001 || viewxdots != 0))
+	if (*s_makepar && !g_fast_restore && !g_initialize_batch &&
+			(fabs(finalaspectratio - g_screen_aspect_ratio) > .00001 || viewxdots != 0))
 	{
 		stopmsg(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"

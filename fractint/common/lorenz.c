@@ -2036,7 +2036,7 @@ int dynamic_2d_fp()
 					sound_tone((int) (*soundvar*100 + g_base_hertz));
 				}
 
-				if (count >= orbit_delay)
+				if (count >= g_orbit_delay)
 				{
 					if (oldcol != -1 && s_connect)
 					{
@@ -2138,9 +2138,9 @@ int plotorbits2dsetup(void)
 	s_o_cvt.e += 0.5;
 	s_o_cvt.f += 0.5;
 
-	if (orbit_delay >= maxit) /* make sure we get an image */
+	if (g_orbit_delay >= maxit) /* make sure we get an image */
 	{
-		orbit_delay = (int) (maxit - 1);
+		g_orbit_delay = (int) (maxit - 1);
 	}
 
 	s_o_color = 1;
@@ -2219,12 +2219,12 @@ int plotorbits2dfloat(void)
 			continue;  /* bailed out, don't plot */
 		}
 
-		if (count < orbit_delay || count % g_orbit_interval)
+		if (count < g_orbit_delay || count % g_orbit_interval)
 		{
 			continue;  /* don't plot it */
 		}
 
-		/* else count >= orbit_delay and we want to plot it */
+		/* else count >= g_orbit_delay and we want to plot it */
 		col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
 		row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 #ifdef XFRACT
@@ -3040,7 +3040,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 static FILE *open_orbit_save(void)
 {
 	FILE *fp = NULL;
-	if (orbitsave & ORBITSAVE_RAW)
+	if (g_orbit_save & ORBITSAVE_RAW)
 	{
 		fp = fopen("orbits.raw.txt", "wt");
 		if (fp)

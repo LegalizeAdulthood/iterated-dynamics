@@ -309,7 +309,7 @@ doeither:									; common Mandelbrot, Julia set code
 		mov		g_input_counter, 10				; stuff in	a low kbd count
 		cmp		g_show_orbit,	0				; are we showing orbits?
 		jne		quickkbd					;  yup.	 leave it that way.
-		cmp		orbit_delay, 0				; are we delaying orbits?
+		cmp		g_orbit_delay, 0				; are we delaying orbits?
 		je		slowkbd						;  nope.  change it.
 		cmp		g_show_dot, 0					; are we showing the current pixel?
 		jge		quickkbd					;  yup.	 leave it that way.

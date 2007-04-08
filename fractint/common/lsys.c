@@ -800,7 +800,7 @@ lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct 
 	double locaspect;
 	struct lsys_cmd *fsret;
 
-	locaspect = screenaspect*xdots/ydots;
+	locaspect = g_screen_aspect_ratio*xdots/ydots;
 	ts->aspect = FIXEDPT(locaspect);
 	ts->xpos =
 	ts->ypos =
@@ -1106,7 +1106,7 @@ static void _fastcall lsysi_sin_cos(void)
 	double s, c;
 	int i;
 
-	locaspect = screenaspect*xdots/ydots;
+	locaspect = g_screen_aspect_ratio*xdots/ydots;
 	twopimax = TWOPI / g_max_angle;
 	for (i = 0; i < g_max_angle; i++)
 	{

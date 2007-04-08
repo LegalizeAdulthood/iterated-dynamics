@@ -361,7 +361,7 @@ restart:   /* insert key re-starts here */
 
 	browsing = FALSE;
 
-	if (!functionpreloaded)
+	if (!g_function_preloaded)
 	{
 		set_if_old_bif();
 	}

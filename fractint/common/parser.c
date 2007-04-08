@@ -4289,7 +4289,7 @@ int fpFormulaSetup(void)
 		MathType = D_MATH;
 		/* CAE changed below for fp */
 		RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
-		if (RunFormRes && (fpu >= 387) && !(orbitsave & ORBITSAVE_SOUND) && !Randomized
+		if (RunFormRes && (fpu >= 387) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 		{
 			return CvtStk(); /* run fast assembler code in parsera.asm */
@@ -4305,7 +4305,7 @@ int fpFormulaSetup(void)
 	MathType = D_MATH;
 	RunFormRes = !RunForm(FormName, 0); /* RunForm() returns 1 for failure */
 #if 0
-	if (RunFormRes && (fpu == -1) && !(orbitsave & ORBITSAVE_SOUND) && !Randomized
+	if (RunFormRes && (fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 		&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 	{
 		return CvtStk(); /* run fast assembler code in parsera.asm */

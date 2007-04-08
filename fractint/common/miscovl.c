@@ -984,24 +984,24 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		if (LogFlag && !g_ranges_length)
+		if (g_log_palette_flag && !g_ranges_length)
 		{
 			put_parm(" logmap=");
-			if (LogFlag == -1)
+			if (g_log_palette_flag == LOGPALETTE_OLD)
 			{
 				put_parm("old");
 			}
-			else if (LogFlag == 1)
+			else if (g_log_palette_flag == LOGPALETTE_STANDARD)
 			{
 				put_parm("yes");
 			}
 			else
 			{
-				put_parm("%ld", LogFlag);
+				put_parm("%ld", g_log_palette_flag);
 			}
 		}
 
-		if (Log_Fly_Calc && LogFlag && !g_ranges_length)
+		if (Log_Fly_Calc && g_log_palette_flag && !g_ranges_length)
 		{
 			put_parm(" logmode=");
 			if (Log_Fly_Calc == 1)
@@ -1142,9 +1142,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" filltype=%d", FILLTYPE);
 		}
-		if (transparent[0] || transparent[1])
+		if (g_transparent[0] || g_transparent[1])
 		{
-			put_parm(" transparent=%d/%d", transparent[0], transparent[1]);
+			put_parm(" transparent=%d/%d", g_transparent[0], g_transparent[1]);
 		}
 		if (g_preview)
 		{
@@ -1366,9 +1366,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" nobof=yes");
 		}
 
-		if (orbit_delay > 0)
+		if (g_orbit_delay > 0)
 		{
-			put_parm(" orbitdelay=%d", orbit_delay);
+			put_parm(" orbitdelay=%d", g_orbit_delay);
 		}
 
 		if (g_orbit_interval != 1)

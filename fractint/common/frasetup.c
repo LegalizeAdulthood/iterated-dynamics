@@ -29,7 +29,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
 		&& g_use_initial_orbit_z != 1 && using_jiim == 0 && g_bail_out_test == Mod
-		&& (orbitsave & ORBITSAVE_SOUND) == 0)
+		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
 	}
@@ -49,7 +49,7 @@ int julia_setup(void)            /* Julia Routine */
 		&& bitshift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
 		&& !g_finite_attractor && using_jiim == 0 && g_bail_out_test == Mod
-		&& (orbitsave & ORBITSAVE_SOUND) == 0)
+		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
 	}
@@ -257,7 +257,7 @@ int mandelbrot_setup_fp(void)
 			&& g_use_initial_orbit_z != 1
 			&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& using_jiim == 0 && g_bail_out_test == Mod
-			&& (orbitsave & ORBITSAVE_SOUND) == 0)
+			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)
@@ -404,7 +404,7 @@ int julia_setup_fp(void)
 				&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 				&& !g_finite_attractor
 				&& using_jiim == 0 && g_bail_out_test == Mod
-				&& (orbitsave & ORBITSAVE_SOUND) == 0)
+				&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)

@@ -176,7 +176,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	static struct point s_old_last = { 0, 0, 0 }; /* old pixels */
 
 	fudge = 1L << 16;
-	g_plot_color = (transparent[0] || transparent[1]) ? transparent_clip_color : clip_color;
+	g_plot_color = (g_transparent[0] || g_transparent[1]) ? transparent_clip_color : clip_color;
 	normal_plot = g_plot_color;
 
 	g_current_row = g_row_count;
@@ -1329,7 +1329,7 @@ static void _fastcall transparent_clip_color(int x, int y, int color)
 		0 <= y && y < ydots &&   /* Yes?  */
 		0 <= color && color < colors &&  /* Colors in valid range?  */
 		/* Lets make sure its not a transparent color  */
-		(transparent[0] > color || color > transparent[1]))
+		(g_transparent[0] > color || color > g_transparent[1]))
 	{
 		assert(g_standard_plot);
 		(*g_standard_plot)(x, y, color); /* I guess we can plot then  */
@@ -1377,8 +1377,8 @@ static void _fastcall interp_color(int x, int y, int color)
 	if (0 <= x && x < xdots &&
 		0 <= y && y < ydots &&
 		0 <= color && color < colors &&
-		(transparent[1] == 0 || (int) s_real_color > transparent[1] ||
-			transparent[0] > (int) s_real_color))
+		(g_transparent[1] == 0 || (int) s_real_color > g_transparent[1] ||
+			g_transparent[0] > (int) s_real_color))
 	{
 		if (g_targa_output)
 		{
@@ -2733,7 +2733,7 @@ static int first_time(int linelen, VECTOR v)
 		fill_plot = clip_color;
 
 		/* If transparent colors are set */
-		if (transparent[0] || transparent[1])
+		if (g_transparent[0] || g_transparent[1])
 		{
 			fill_plot = transparent_clip_color; /* Use the transparent plot function  */
 		}
