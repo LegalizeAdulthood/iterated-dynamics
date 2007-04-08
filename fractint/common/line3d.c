@@ -180,8 +180,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 	normal_plot = g_plot_color;
 
 	g_current_row = g_row_count;
-	/* use separate variable to allow for pot16bit files */
-	if (pot16bit)
+	/* use separate variable to allow for g_potential_16bit files */
+	if (g_potential_16bit)
 	{
 		g_current_row >>= 1;
 	}
@@ -217,7 +217,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	f_old = s_f_bad;
 
 	/* copies pixels buffer to float type fraction buffer for fill purposes */
-	if (pot16bit)
+	if (g_potential_16bit)
 	{
 		if (set_pixel_buff(pixels, s_fraction, linelen))
 		{
@@ -329,7 +329,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			cur.color = s_real_color = (BYTE)WATERLINE;
 			f_cur.color = (float) cur.color; /* "lake" */
 		}
-		else if (pot16bit)
+		else if (g_potential_16bit)
 		{
 			f_cur.color += ((float) s_fraction[col])/(float) (1 << 8);
 		}
@@ -444,7 +444,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				lv[0] = lv[0] << 16;
 				lv[1] = g_current_row;
 				lv[1] = lv[1] << 16;
-				if (filetype || pot16bit) /* don't truncate fractional part */
+				if (filetype || g_potential_16bit) /* don't truncate fractional part */
 				{
 					lv[2] = (long) (f_cur.color*65536.0);
 				}
@@ -2869,7 +2869,7 @@ static int line_3d_mem(void)
 		s_f_last_row = (struct f_point *) (s_last_row + xdots);
 	}
 	check_extra += sizeof(*s_f_last_row)*(xdots);
-	if (pot16bit)
+	if (g_potential_16bit)
 	{
 		s_fraction = (BYTE *) (s_f_last_row + xdots);
 		check_extra += sizeof(*s_fraction)*xdots;
@@ -2909,7 +2909,7 @@ static int line_3d_mem(void)
 		}
 		else /* ok to use extra segment */
 		{
-			s_minmax_x = pot16bit ?
+			s_minmax_x = g_potential_16bit ?
 				(struct minmax *) (s_fraction + xdots)
 				: (struct minmax *) (s_f_last_row + xdots);
 		}

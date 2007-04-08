@@ -739,7 +739,7 @@ int calculate_fractal(void)
 		end_resume();
 		if (resave_flag)
 		{
-			updatesavename(savename); /* do the pending increment */
+			updatesavename(g_save_name); /* do the pending increment */
 			resave_flag = RESAVE_NO;
 			started_resaves = FALSE;
 		}
@@ -883,7 +883,7 @@ static void perform_work_list()
 		bf_math = 0;
 	}
 
-	if (potflag && pot16bit)
+	if (g_potential_flag && g_potential_16bit)
 	{
 		int tmpcalcmode = stdcalcmode;
 
@@ -892,7 +892,7 @@ static void perform_work_list()
 		{
 			if (pot_startdisk() < 0)
 			{
-				pot16bit = 0;       /* startdisk failed or cancelled */
+				g_potential_16bit = FALSE;       /* startdisk failed or cancelled */
 				stdcalcmode = (char)tmpcalcmode;    /* maybe we can carry on??? */
 			}
 		}
@@ -1889,7 +1889,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 
 /************************************************************************/
 /* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot() */
-/* can also handle invert, any g_rq_limit, potflag, zmag, epsilon cross,     */
+/* can also handle invert, any g_rq_limit, g_potential_flag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
 int calculate_mandelbrot_fp(void)
@@ -1905,7 +1905,7 @@ int calculate_mandelbrot_fp(void)
 	}
 	if (g_calculate_mandelbrot_asm_fp() >= 0)
 	{
-		if (potflag)
+		if (g_potential_flag)
 		{
 			g_color_iter = potential(g_magnitude, g_real_color_iter);
 		}
@@ -2601,7 +2601,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 	}
 
-	if (potflag)
+	if (g_potential_flag)
 	{
 		if (integerfractal)       /* adjust integer fractals */
 		{
@@ -3277,7 +3277,7 @@ static int _fastcall potential(double mag, long iterations)
 		l_pot = 255;
 	}
 
-	if (pot16bit)
+	if (g_potential_16bit)
 	{
 		if (!driver_diskp()) /* if g_put_color won't be doing it for us */
 		{
@@ -4272,7 +4272,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			return;
 		}
 	}
-	if ((potflag && pot16bit) || (g_invert && inversion[2] != 0.0)
+	if ((g_potential_flag && g_potential_16bit) || (g_invert && inversion[2] != 0.0)
 			|| decomp[0] != 0
 			|| xxmin != xx3rd || yymin != yy3rd)
 	{

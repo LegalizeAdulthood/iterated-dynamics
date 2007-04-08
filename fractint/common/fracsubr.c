@@ -285,14 +285,14 @@ init_restart:
 	distest          = usr_distest;
 	biomorph         = usr_biomorph;
 
-	potflag = 0;
+	g_potential_flag = FALSE;
 	if (potparam[0] != 0.0
 		&& colors >= 64
 		&& (curfractalspecific->calculate_type == standard_fractal
 			|| curfractalspecific->calculate_type == calculate_mandelbrot
 			|| curfractalspecific->calculate_type == calculate_mandelbrot_fp))
 	{
-		potflag = 1;
+		g_potential_flag = TRUE;
 		distest = usr_distest = 0;    /* can't do distest too */
 	}
 
@@ -346,7 +346,7 @@ init_restart:
 	curfractalspecific = &fractalspecific[fractype];
 	integerfractal = curfractalspecific->isinteger;
 
-	if (potflag && potparam[2] != 0.0)
+	if (g_potential_flag && potparam[2] != 0.0)
 	{
 		g_rq_limit = potparam[2];
 	}
@@ -412,7 +412,7 @@ init_restart:
 /* We want this code if we're using the assembler calculate_mandelbrot */
 	if (fractype == MANDEL || fractype == JULIA)  /* adust shift bits if.. */
 	{
-		if (potflag == 0                            /* not using potential */
+		if (!g_potential_flag                            /* not using potential */
 		&& (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
 		&& (param[1] > -2.0 && param[1] < 2.0)
 		&& !g_invert                                /* and not inverting */

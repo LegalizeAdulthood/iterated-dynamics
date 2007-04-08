@@ -33,11 +33,10 @@ char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
 char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
 char    g_gif_mask[FILE_MAX_PATH] = {""};
-char    PrintName[FILE_MAX_PATH] = {"fract001.prn"}; /* Name for print-to-file */
-char    savename[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
-char    autoname[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
-int     potflag = 0;              /* continuous potential enabled? */
-int     pot16bit;               /* store 16 bit continuous potential values */
+char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
+char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
+int     g_potential_flag = FALSE;              /* continuous potential enabled? */
+int     g_potential_16bit;               /* store 16 bit continuous potential values */
 int     gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
 int     dither_flag;            /* 1 if want to dither GIFs */
 int     askvideo;               /* flag for video prompting */
@@ -485,7 +484,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	xx3rd = xxmin = -2.5; xxmax = 1.5;   /* initial corner values  */
 	yy3rd = yymin = -1.5; yymax = 1.5;   /* initial corner values  */
 	bf_math = 0;
-	pot16bit = potflag = 0;
+	g_potential_16bit = g_potential_flag = FALSE;
 	LogFlag = 0;                         /* no logarithmic palette */
 	set_trig_array(0, "sin");             /* trigfn defaults */
 	set_trig_array(1, "sqr");
@@ -1200,7 +1199,7 @@ static int auto_key_arg(const cmd_context *context)
 
 static int auto_key_name_arg(const cmd_context *context)
 {
-	if (merge_pathnames(autoname, context->value, context->mode) < 0)
+	if (merge_pathnames(g_autokey_name, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -1502,7 +1501,7 @@ static int save_name_arg(const cmd_context *context)
 	}
 	if (first_init || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		if (merge_pathnames(savename, context->value, context->mode) < 0)
+		if (merge_pathnames(g_save_name, context->value, context->mode) < 0)
 		{
 			init_msg(context->variable, context->value, context->mode);
 		}
@@ -1608,14 +1607,14 @@ static int potential_arg(const cmd_context *context)
 		}
 		++value;
 	}
-	pot16bit = 0;
+	g_potential_16bit = FALSE;
 	if (k < 99)
 	{
 		if (strcmp(value, "16bit"))
 		{
 			return badarg(context->curarg);
 		}
-		pot16bit = 1;
+		g_potential_16bit = TRUE;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }

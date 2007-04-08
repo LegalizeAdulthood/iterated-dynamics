@@ -828,13 +828,12 @@ int tab_display_2(char *msg)
 	row++;
 	show_str_var("tempdir",     g_temp_dir,      &row, msg);
 	show_str_var("workdir",     g_work_dir,      &row, msg);
-//	show_str_var("printfile",   PrintName,    &row, msg);
 	show_str_var("filename",    g_read_name,     &row, msg);
 	show_str_var("formulafile", FormFileName, &row, msg);
-	show_str_var("savename",    savename,     &row, msg);
+	show_str_var("savename",    g_save_name,     &row, msg);
 	show_str_var("parmfile",    CommandFile,  &row, msg);
 	show_str_var("ifsfile",     IFSFileName,  &row, msg);
-	show_str_var("autokeyname", autoname,     &row, msg);
+	show_str_var("autokeyname", g_autokey_name,     &row, msg);
 	show_str_var("lightname",   g_light_name,   &row, msg);
 	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof fractalspecific array %d",
@@ -1059,7 +1058,7 @@ top:
 	}
 	s_row += addrow;
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
-	driver_put_string(s_row, -1, C_GENERAL_HI, savename);
+	driver_put_string(s_row, -1, C_GENERAL_HI, g_save_name);
 
 	++s_row;
 

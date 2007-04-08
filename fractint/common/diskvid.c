@@ -53,7 +53,7 @@ static unsigned int hash_ptr[HASHSIZE] = { 0 };
 static int pixelshift;
 static int headerlength;
 static int rowsize = 0;   /* doubles as a disk video not ok flag */
-static int colsize;       /* sydots, *2 when pot16bit */
+static int colsize;       /* sydots, *2 when g_potential_16bit */
 
 static BYTE *membuf;
 static U16 dv_handle = 0;
@@ -148,7 +148,7 @@ int _fastcall common_startdisk(long newrowsize, long newcolsize, int colors)
 			sprintf(buf, "%d", colors);
 			driver_put_string(-1, -1, C_DVID_LO, buf);
 		}
-		sprintf(buf, "Save name: %s", savename);
+		sprintf(buf, "Save name: %s", g_save_name);
 		driver_put_string(BOXROW + 8, BOXCOL + 4, C_DVID_LO, buf);
 		driver_put_string(BOXROW + 10, BOXCOL + 4, C_DVID_LO, "Status:");
 		dvid_status(0, "clearing the 'screen'");

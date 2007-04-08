@@ -460,8 +460,8 @@ int plasma(void)
 			s_max_plasma = 0xFFFF;
 			g_plot_color = (outside >= 0) ? (PLOT) put_potential_border : (PLOT) put_potential;
 			s_get_pixels =  get_potential;
-			OldPotFlag = potflag;
-			OldPot16bit = pot16bit;
+			OldPotFlag = g_potential_flag;
+			OldPot16bit = g_potential_16bit;
 		}
 		else
 		{
@@ -562,8 +562,8 @@ int plasma(void)
 done:
 	if (s_max_plasma != 0)
 	{
-		potflag = OldPotFlag;
-		pot16bit = OldPot16bit;
+		g_potential_flag = OldPotFlag;
+		g_potential_16bit = OldPot16bit;
 	}
 	g_plot_color    = g_put_color;
 	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
