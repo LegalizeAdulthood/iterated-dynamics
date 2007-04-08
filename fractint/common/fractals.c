@@ -3110,7 +3110,7 @@ int quaternion_per_pixel_fp(void)
 	return 0;
 }
 
-int MarksCplxMandperp(void)
+int marks_complex_mandelbrot_per_pixel(void)
 {
 	if (g_invert)
 	{
@@ -3132,7 +3132,7 @@ int MarksCplxMandperp(void)
 	return 1;
 }
 
-int long_phoenix_per_pixel(void)
+int phoenix_per_pixel(void)
 {
 #if !defined(XFRACT)
 	if (g_invert)
@@ -3166,7 +3166,7 @@ int long_phoenix_per_pixel(void)
 #endif
 }
 
-int phoenix_per_pixel(void)
+int phoenix_per_pixel_fp(void)
 {
 	if (g_invert)
 	{
