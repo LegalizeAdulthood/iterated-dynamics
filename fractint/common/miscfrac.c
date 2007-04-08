@@ -70,7 +70,7 @@ int test(void)
 		get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
 		end_resume();
 	}
-	if (teststart()) /* assume it was stand-alone, doesn't want passes logic */
+	if (test_start()) /* assume it was stand-alone, doesn't want passes logic */
 	{
 		return 0;
 	}
@@ -86,12 +86,12 @@ int test(void)
 				g_initial_z.y = g_dy_pixel();
 				if (driver_key_pressed())
 				{
-					testend();
+					test_end();
 					alloc_resume(20, 1);
 					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
 					return -1;
 				}
-				color = testpt(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, inside);
+				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, inside);
 				if (color >= colors)  /* avoid trouble if color is 0 */
 				{
 					if (colors < 16)
@@ -112,7 +112,7 @@ int test(void)
 		}
 		startrow = g_passes + 1;
 	}
-	testend();
+	test_end();
 	return 0;
 }
 
