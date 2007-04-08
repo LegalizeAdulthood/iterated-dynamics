@@ -3016,7 +3016,7 @@ int other_mandelbrot_per_pixel_fp(void)
 	return 1; /* 1st iteration has been done */
 }
 
-int MPCHalley_per_pixel(void)
+int halley_per_pixel_mpc(void)
 {
 #if !defined(XFRACT)
 	/* MPC halley */
