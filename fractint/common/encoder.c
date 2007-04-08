@@ -81,7 +81,7 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 
 restart:
 	save16bit = disk16bit;
-	if (gif87a_flag)             /* not storing non-standard fractal info */
+	if (g_gif87a_flag)             /* not storing non-standard fractal info */
 	{
 		save16bit = 0;
 	}
@@ -327,7 +327,7 @@ int encoder()
 	}
 #endif
 
-	if (gif87a_flag == 1)
+	if (g_gif87a_flag == 1)
 	{
 		if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
 		{
@@ -388,7 +388,7 @@ int encoder()
 	{
 		i = 255;
 	}
-	if (gif87a_flag)
+	if (g_gif87a_flag)
 	{
 		i = 0;                    /* for some decoders which can't handle aspect */
 	}
@@ -508,7 +508,7 @@ int encoder()
 		goto oops;
 	}
 
-	if (gif87a_flag == 0)
+	if (g_gif87a_flag == 0)
 	{                            /* store non-standard fractal info */
 		/* loadfile.c has notes about extension block structure */
 		if (interrupted)
@@ -857,7 +857,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->calc_status = (short) calc_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
 	save_info->distestold = (distest <= 32000) ? (short) distest : 32000;
-	save_info->floatflag = floatflag;
+	save_info->float_flag = g_float_flag;
 	save_info->bailoutold = (bailout >= 4 && bailout <= 32000) ? (short) bailout : 0;
 
 	save_info->calctime = calctime;

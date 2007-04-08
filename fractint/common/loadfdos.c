@@ -218,14 +218,14 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		vid[i].flags  = tmpflags;
 	}
 
-	if (fastrestore  && !askvideo)
+	if (fastrestore  && !g_ask_video)
 	{
 		g_init_mode = g_adapter;
 	}
 
 #ifndef XFRACT
 	gotrealmode = 0;
-	if ((g_init_mode < 0 || (askvideo && !initbatch)) && *s_makepar != '\0')
+	if ((g_init_mode < 0 || (g_ask_video && !initbatch)) && *s_makepar != '\0')
 	{
 		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not

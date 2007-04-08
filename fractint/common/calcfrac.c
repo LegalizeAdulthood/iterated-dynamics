@@ -3197,7 +3197,7 @@ static void decomposition(void)
 /*                                                                */
 /*                     -- Change history --                       */
 /*                                                                */
-/* 09/12/89   - added floatflag support and fixed float underflow */
+/* 09/12/89   - added g_float_flag support and fixed float underflow */
 /*                                                                */
 /******************************************************************/
 
@@ -3219,7 +3219,7 @@ static int _fastcall potential(double mag, long iterations)
 		else
 		{
 			 /* pot = log(mag) / pow(2.0, (double)pot); */
-			if (l_pot < 120 && !floatflag) /* empirically determined limit of fShift */
+			if (l_pot < 120 && !g_float_flag) /* empirically determined limit of fShift */
 			{
 				f_mag = (float)mag;
 				fLog14(f_mag, f_tmp); /* this SHOULD be non-negative */
@@ -3240,7 +3240,7 @@ static int _fastcall potential(double mag, long iterations)
 
 		if (pot > 0.0)
 		{
-			if (floatflag)
+			if (g_float_flag)
 			{
 				pot = (float)sqrt((double)pot);
 			}

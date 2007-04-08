@@ -111,12 +111,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				{
 					if (driver_diskp())
 					{
-						askvideo = TRUE;
+						g_ask_video = TRUE;
 					}
 					else
 					{
 						stopmsg(0, "That video mode is not available with your adapter.");
-						askvideo = TRUE;
+						g_ask_video = TRUE;
 					}
 					g_init_mode = -1;
 					driver_set_for_text(); /* switch to text mode */
@@ -696,7 +696,7 @@ static int look(char *stacked)
 		makepath(g_read_name, drive, dir, fname, ext);
 		*/
 		merge_pathnames(g_read_name, browsename, 2);
-		if (askvideo)
+		if (g_ask_video)
 		{
 				driver_stack_screen();   /* save graphics image */
 				*stacked = 1;
@@ -721,7 +721,7 @@ static int look(char *stacked)
 			merge_pathnames(g_read_name, browsename, 2);
 			browsing = TRUE;
 			showfile = 0;
-			if (askvideo)
+			if (g_ask_video)
 			{
 				driver_stack_screen(); /* save graphics image */
 				*stacked = 1;
@@ -1222,7 +1222,7 @@ static int handle_history(char *stacked, int kbdchar)
 		browsing = TRUE;
 		no_sub_images = FALSE;
 		showfile = 0;
-		if (askvideo)
+		if (g_ask_video)
 		{
 			driver_stack_screen();      /* save graphics image */
 			*stacked = 1;

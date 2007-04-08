@@ -426,7 +426,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short calc_status;    /* resumable, finished, etc */
     long tot_extend_len;  /* total length of extension blocks in .gif file */
     short distestold;
-    short floatflag;
+    short float_flag;
     short bailoutold;
     long calctime;
     BYTE trigndx[4];      /* which trig functions selected */

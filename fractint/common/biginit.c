@@ -138,7 +138,7 @@ static void init_bf_2(void)
 		/* 1 => maybe called from cmdfiles.c and fractype not set */
 		bf_math = (i > -1) ? g_alternate_math[i].math : 1;
 	}
-	floatflag = 1;
+	g_float_flag = TRUE;
 
 	/* Now split up the memory among the pointers */
 	/* internal pointers */

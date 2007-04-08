@@ -37,10 +37,10 @@ char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this nam
 char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
 int     g_potential_flag = FALSE;              /* continuous potential enabled? */
 int     g_potential_16bit;               /* store 16 bit continuous potential values */
-int     gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
-int     dither_flag;            /* 1 if want to dither GIFs */
-int     askvideo;               /* flag for video prompting */
-char    floatflag;
+int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
+int     g_dither_flag;            /* 1 if want to dither GIFs */
+int     g_ask_video;               /* flag for video prompting */
+char    g_float_flag;
 int     biomorph;               /* flag for biomorph */
 int     usr_biomorph;
 int     forcesymmetry;          /* force symmetry */
@@ -387,9 +387,9 @@ static void initvars_restart()          /* <ins> key init */
 	int i;
 	g_record_colors = 'a';                  /* don't use mapfiles in PARs */
 	save_release = g_release;            /* this release number */
-	gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
-	dither_flag = 0;                     /* no dithering */
-	askvideo = 1;                        /* turn on video-prompt flag */
+	g_gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
+	g_dither_flag = 0;                     /* no dithering */
+	g_ask_video = 1;                        /* turn on video-prompt flag */
 	fract_overwrite = 0;                 /* don't overwrite           */
 	soundflag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
 	initbatch = INIT_BATCH_NONE;			/* not in batch mode         */
@@ -3088,12 +3088,12 @@ static int named_processor(const command_processor *processors,
 
 static int gif87a_arg(const cmd_context *context)
 {
-	return flag_arg(context, &gif87a_flag, COMMAND_OK);
+	return flag_arg(context, &g_gif87a_flag, COMMAND_OK);
 }
 
 static int dither_arg(const cmd_context *context)
 {
-	return flag_arg(context, &dither_flag, COMMAND_OK);
+	return flag_arg(context, &g_dither_flag, COMMAND_OK);
 }
 
 static int fin_attract_arg(const cmd_context *context)
@@ -3161,9 +3161,9 @@ static int olddemmcolors_arg(const cmd_context *context)
 	return flag_arg(context, &g_old_demm_colors, COMMAND_OK);
 }
 
-static int askvideo_arg(const cmd_context *context)
+static int ask_video_arg(const cmd_context *context)
 {
-	return flag_arg(context, &askvideo, COMMAND_OK);
+	return flag_arg(context, &g_ask_video, COMMAND_OK);
 }
 
 static int cur_dir_arg(const cmd_context *context)
@@ -3440,7 +3440,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "aspectdrift", 	aspect_drift_arg },		/* aspectdrift=? */
 			{ "invert", 		invert_arg },			/* invert=?,?,? */
 			{ "olddemmcolors", 	olddemmcolors_arg },
-			{ "askvideo", 		askvideo_arg },
+			{ "askvideo", 		ask_video_arg },
 			{ "ramvideo", 		ignore_arg },			/* ramvideo=?   */
 			{ "float", 			float_arg },			/* float=? */
 			{ "fastrestore", 	fast_restore_arg },		/* fastrestore=? */

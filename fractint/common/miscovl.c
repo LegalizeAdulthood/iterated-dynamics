@@ -847,7 +847,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" initorbit=%.15g/%.15g", initorbit.x, initorbit.y);
 		}
 
-		if (floatflag)
+		if (g_float_flag)
 		{
 			put_parm(" float=y");
 		}
@@ -2383,7 +2383,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
 	temp = &olddacbox[0][0];                 /* a safe place for our temp data */
 
-	gif87a_flag = 1;                        /* for now, force this */
+	g_gif87a_flag = 1;                        /* for now, force this */
 
 	/* process each input image, one at a time */
 	for (ystep = 0; ystep < ymult; ystep++)
@@ -2428,7 +2428,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 				ytot = yres*ymult;
 				memcpy(&temp[6], &xtot, 2);
 				memcpy(&temp[8], &ytot, 2);
-				if (gif87a_flag)
+				if (g_gif87a_flag)
 				{
 					temp[3] = '8';
 					temp[4] = '7';
@@ -2554,7 +2554,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					{
 						inputerrorflag = 9;
 					}
-					if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+					if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
 					{
 						if (fwrite(temp, 2, 1, out) != 1)
 						{
@@ -2571,7 +2571,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							inputerrorflag = 10;
 						}
-						if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+						if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
 						{
 							if (fwrite(temp, 1, 1, out) != 1)
 							{
@@ -2587,7 +2587,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							inputerrorflag = 11;
 						}
-						if ((!gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+						if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
 						{
 							if (fwrite(temp, i, 1, out) != 1)
 							{
