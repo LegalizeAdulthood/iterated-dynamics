@@ -555,7 +555,7 @@ int calculate_fractal(void)
 	/* currently used only by bifurcation */
 	if (integerfractal)
 	{
-		distest = 0;
+		g_distance_test = 0;
 	}
 	g_parameter.x   = param[0];
 	g_parameter.y   = param[1];
@@ -759,7 +759,7 @@ int calculate_fractal(void)
 		g_y_stop = g_yy_stop = ydots -1;
 		g_x_stop = g_xx_stop = xdots -1;
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
-		distest = 0; /* only standard escape time engine supports distest */
+		g_distance_test = 0; /* only standard escape time engine supports distest */
 		/* per_image routine is run here */
 		if (curfractalspecific->per_image())
 		{ /* not a stand-alone */
@@ -929,7 +929,7 @@ static void perform_work_list()
 		}
 	}
 
-	if (distest) /* setup stuff for distance estimator */
+	if (g_distance_test) /* setup stuff for distance estimator */
 	{
 		double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, dysize;
 		double aspect;
@@ -955,7 +955,7 @@ static void perform_work_list()
 		g_use_old_distance_test = (save_release < 1827) ? 1 : 0;
 
 		g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
-		if (distest != 1 || colors == 2) /* not doing regular outside colors */
+		if (g_distance_test != 1 || colors == 2) /* not doing regular outside colors */
 		{
 			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
 			{
@@ -976,15 +976,15 @@ static void perform_work_list()
 		{
 			s_dem_delta = ftemp;
 		}
-		if (distestwidth == 0)
+		if (g_distance_test_width == 0)
 		{
-			distestwidth = 1;
+			g_distance_test_width = 1;
 		}
-		ftemp = distestwidth;
+		ftemp = g_distance_test_width;
 		/* multiply by thickness desired */
-		s_dem_delta *= (distestwidth > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
+		s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
 		s_dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
-			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / distest;
+			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / g_distance_test;
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
@@ -2067,12 +2067,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 		}
 		g_initial_z.y = g_dy_pixel();
-		if (distest)
+		if (g_distance_test)
 		{
 			if (g_use_old_distance_test)
 			{
 				g_rq_limit = s_rq_limit_save;
-				if (distest != 1 || colors == 2) /* not doing regular outside colors */
+				if (g_distance_test != 1 || colors == 2) /* not doing regular outside colors */
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
 						g_rq_limit = DEM_BAILOUT;
@@ -2168,7 +2168,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 		}
 
-		if (distest)
+		if (g_distance_test)
 		{
 			double ftemp;
 			/* Distance estimator for points near Mandelbrot set */
@@ -2682,7 +2682,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 	}
 
-	if (distest)
+	if (g_distance_test)
 	{
 		double dist, temp;
 		dist = sqr(g_new_z.x) + sqr(g_new_z.y);
@@ -2697,11 +2697,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{
-			if (distest > 0)
+			if (g_distance_test > 0)
 			{
 				goto plot_inside;   /* show it as an inside point */
 			}
-			g_color_iter = -distest;       /* show boundary as specified color */
+			g_color_iter = -g_distance_test;       /* show boundary as specified color */
 			goto plot_pixel;       /* no further adjustments apply */
 		}
 		if (colors == 2)
@@ -2709,7 +2709,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			g_color_iter = !inside;   /* the only useful distest 2 color use */
 			goto plot_pixel;       /* no further adjustments apply */
 		}
-		if (distest > 1)          /* pick color based on distance */
+		if (g_distance_test > 1)          /* pick color based on distance */
 		{
 			if (g_old_demm_colors) /* this one is needed for old color scheme */
 			{
@@ -2734,7 +2734,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		/* use pixel's "regular" color */
 	}
 
-	if (decomp[0] > 0)
+	if (g_decomposition[0] > 0)
 	{
 		decomposition();
 	}
@@ -2968,7 +2968,7 @@ static void decomposition(void)
 			++temp;
 			g_new_z_l.x = -g_new_z_l.x;
 		}
-		if (decomp[0] == 2 && save_release >= 1827)
+		if (g_decomposition[0] == 2 && save_release >= 1827)
 		{
 			save_temp = temp;
 			if (temp == 2)
@@ -2981,7 +2981,7 @@ static void decomposition(void)
 			}
 		}
 
-		if (decomp[0] >= 8)
+		if (g_decomposition[0] >= 8)
 		{
 			temp <<= 1;
 			if (g_new_z_l.x < g_new_z_l.y)
@@ -2992,7 +2992,7 @@ static void decomposition(void)
 				g_new_z_l.y = lalt.x; /* them */
 			}
 
-			if (decomp[0] >= 16)
+			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
 				if (multiply(g_new_z_l.x, ltan22_5, bitshift) < g_new_z_l.y)
@@ -3005,7 +3005,7 @@ static void decomposition(void)
 						multiply(lalt.y, lcos45, bitshift);
 				}
 
-				if (decomp[0] >= 32)
+				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
 					if (multiply(g_new_z_l.x, ltan11_25, bitshift) < g_new_z_l.y)
@@ -3018,7 +3018,7 @@ static void decomposition(void)
 							multiply(lalt.y, lcos22_5, bitshift);
 					}
 
-					if (decomp[0] >= 64)
+					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
 						if (multiply(g_new_z_l.x, ltan5_625, bitshift) < g_new_z_l.y)
@@ -3031,7 +3031,7 @@ static void decomposition(void)
 								multiply(lalt.y, lcos11_25, bitshift);
 						}
 
-						if (decomp[0] >= 128)
+						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
 							if (multiply(g_new_z_l.x, ltan2_8125, bitshift) < g_new_z_l.y)
@@ -3044,7 +3044,7 @@ static void decomposition(void)
 									multiply(lalt.y, lcos5_625, bitshift);
 							}
 
-							if (decomp[0] == 256)
+							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
 								if (multiply(g_new_z_l.x, ltan1_4063, bitshift) < g_new_z_l.y)
@@ -3073,7 +3073,7 @@ static void decomposition(void)
 			++temp;
 			g_new_z.x = -g_new_z.x;
 		}
-		if (decomp[0] == 2 && save_release >= 1827)
+		if (g_decomposition[0] == 2 && save_release >= 1827)
 		{
 			save_temp = temp;
 			if (temp == 2)
@@ -3085,7 +3085,7 @@ static void decomposition(void)
 				save_temp = 2;
 			}
 		}
-		if (decomp[0] >= 8)
+		if (g_decomposition[0] >= 8)
 		{
 			temp <<= 1;
 			if (g_new_z.x < g_new_z.y)
@@ -3095,7 +3095,7 @@ static void decomposition(void)
 				g_new_z.x = g_new_z.y; /* swap */
 				g_new_z.y = alt.x; /* them */
 			}
-			if (decomp[0] >= 16)
+			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
 				if (g_new_z.x*tan22_5 < g_new_z.y)
@@ -3106,7 +3106,7 @@ static void decomposition(void)
 					g_new_z.y = alt.x*sin45 - alt.y*cos45;
 				}
 
-				if (decomp[0] >= 32)
+				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
 					if (g_new_z.x*tan11_25 < g_new_z.y)
@@ -3117,7 +3117,7 @@ static void decomposition(void)
 						g_new_z.y = alt.x*sin22_5 - alt.y*cos22_5;
 					}
 
-					if (decomp[0] >= 64)
+					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
 						if (g_new_z.x*tan5_625 < g_new_z.y)
@@ -3128,7 +3128,7 @@ static void decomposition(void)
 							g_new_z.y = alt.x*sin11_25 - alt.y*cos11_25;
 						}
 
-						if (decomp[0] >= 128)
+						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
 							if (g_new_z.x*tan2_8125 < g_new_z.y)
@@ -3139,7 +3139,7 @@ static void decomposition(void)
 								g_new_z.y = alt.x*sin5_625 - alt.y*cos5_625;
 							}
 
-							if (decomp[0] == 256)
+							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
 								if ((g_new_z.x*tan1_4063 < g_new_z.y))
@@ -3161,7 +3161,7 @@ static void decomposition(void)
 		}
 		temp >>= 1;
 	}
-	if (decomp[0] == 2 && save_release >= 1827)
+	if (g_decomposition[0] == 2 && save_release >= 1827)
 	{
 		g_color_iter = (save_temp & 2) ? 1 : 0;
 		if (colors == 2)
@@ -3169,11 +3169,11 @@ static void decomposition(void)
 			g_color_iter++;
 		}
 	}
-	else if (decomp[0] == 2 && save_release < 1827)
+	else if (g_decomposition[0] == 2 && save_release < 1827)
 	{
 		g_color_iter &= 1;
 	}
-	if (colors > decomp[0])
+	if (colors > g_decomposition[0])
 	{
 		g_color_iter++;
 	}
@@ -4273,7 +4273,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 	}
 	if ((g_potential_flag && g_potential_16bit) || (g_invert && inversion[2] != 0.0)
-			|| decomp[0] != 0
+			|| g_decomposition[0] != 0
 			|| xxmin != xx3rd || yymin != yy3rd)
 	{
 		return;

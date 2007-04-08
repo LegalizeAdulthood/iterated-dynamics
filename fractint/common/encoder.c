@@ -824,14 +824,14 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->potential[0] = (float) potparam[0];
 	save_info->potential[1] = (float) potparam[1];
 	save_info->potential[2] = (float) potparam[2];
-	save_info->rflag = (short) rflag;
-	save_info->rseed = (short) rseed;
+	save_info->random_flag = (short) g_random_flag;
+	save_info->random_seed = (short) g_random_seed;
 	save_info->inside = (short) inside;
 	save_info->logmapold = (LogFlag <= SHRT_MAX) ? (short) LogFlag : (short) SHRT_MAX;
 	save_info->invert[0] = (float) inversion[0];
 	save_info->invert[1] = (float) inversion[1];
 	save_info->invert[2] = (float) inversion[2];
-	save_info->decomp[0] = (short) decomp[0];
+	save_info->decomposition[0] = (short) g_decomposition[0];
 	save_info->biomorph = (short) g_user_biomorph;
 	save_info->symmetry = (short) g_force_symmetry;
 	for (i = 0; i < 16; i++)
@@ -856,7 +856,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->y3rd = yy3rd;
 	save_info->calc_status = (short) calc_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
-	save_info->distestold = (distest <= 32000) ? (short) distest : 32000;
+	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
 	save_info->float_flag = g_float_flag;
 	save_info->bailoutold = (bailout >= 4 && bailout <= 32000) ? (short) bailout : 0;
 
@@ -884,7 +884,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->transparent[1] = (short) transparent[1];
 	save_info->rotate_lo = (short) rotate_lo;
 	save_info->rotate_hi = (short) rotate_hi;
-	save_info->distestwidth = (short) distestwidth;
+	save_info->distance_test_width = (short) g_distance_test_width;
 	save_info->mxmaxfp = g_m_x_max_fp;
 	save_info->mxminfp = g_m_x_min_fp;
 	save_info->mymaxfp = g_m_y_max_fp;
@@ -907,7 +907,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bf_math = (short) bf_math;
 	save_info->old_demm_colors = (short) g_old_demm_colors;
 	save_info->logmap = LogFlag;
-	save_info->distest = distest;
+	save_info->distance_test = g_distance_test;
 	save_info->dinvert[0] = inversion[0];
 	save_info->dinvert[1] = inversion[1];
 	save_info->dinvert[2] = inversion[2];

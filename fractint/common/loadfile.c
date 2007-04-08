@@ -110,8 +110,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			colors = read_info.colors;
 		}
 		g_potential_flag = (potparam[0] != 0.0);
-		rflag         = read_info.rflag;
-		rseed         = read_info.rseed;
+		g_random_flag         = read_info.random_flag;
+		g_random_seed         = read_info.random_seed;
 		inside        = read_info.inside;
 		LogFlag       = read_info.logmapold;
 		inversion[0]  = read_info.invert[0];
@@ -121,8 +121,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_invert = 3;
 		}
-		decomp[0]     = read_info.decomp[0];
-		decomp[1]     = read_info.decomp[1];
+		g_decomposition[0]     = read_info.decomposition[0];
+		g_decomposition[1]     = read_info.decomposition[1];
 		g_user_biomorph  = read_info.biomorph;
 		g_force_symmetry = read_info.symmetry;
 	}
@@ -228,12 +228,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	rotate_lo = 1;
 	rotate_hi = 255;
-	distestwidth = 71;
+	g_distance_test_width = 71;
 	if (read_info.version > 5)
 	{
 		rotate_lo         = read_info.rotate_lo;
 		rotate_hi         = read_info.rotate_hi;
-		distestwidth      = read_info.distestwidth;
+		g_distance_test_width      = read_info.distance_test_width;
 	}
 
 	if (read_info.version > 6)
@@ -289,9 +289,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			LogFlag = -1;
 		}
-		if (decomp[0] > 0 && decomp[1] > 0)
+		if (g_decomposition[0] > 0 && g_decomposition[1] > 0)
 		{
-			bailout = decomp[1];
+			bailout = g_decomposition[1];
 		}
 	}
 	if (g_potential_flag) /* in version 15.x and 16.x logmap didn't work with pot */
@@ -344,7 +344,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
 		LogFlag = read_info.logmap;
-		usr_distest = read_info.distest;
+		usr_distest = read_info.distance_test;
 	}
 
 	if (read_info.version > 11) /* post-version 19.20, inversion fix */
@@ -1205,7 +1205,7 @@ void backwards_v19(void)
 	}
 	g_no_magnitude_calculation = fix_bof() ? TRUE : FALSE; /* fractal has old bof60/61 problem with magnitude */
 	g_use_old_periodicity = fix_period_bof() ? TRUE : FALSE; /* fractal uses old periodicity method */
-	g_use_old_distance_test = (save_release < 1827 && distest) ? TRUE : FALSE; /* use old distest code */
+	g_use_old_distance_test = (save_release < 1827 && g_distance_test) ? TRUE : FALSE; /* use old distest code */
 }
 
 void backwards_v20(void)
@@ -1241,14 +1241,14 @@ int check_back(void)
 		|| fix_bof()
 		|| fix_period_bof()
 		|| g_use_old_distance_test
-		|| decomp[0] == 2
+		|| g_decomposition[0] == 2
 		|| (fractype == FORMULA && save_release <= 1920)
 		|| (fractype == FFORMULA && save_release <= 1920)
 		|| (LogFlag != 0 && save_release <= 2001)
 		|| (fractype == TRIGSQR && save_release < 1900)
 		|| (inside == STARTRAIL && save_release < 1825)
 		|| (maxit > 32767 && save_release <= 1950)
-		|| (distest && save_release <= 1950)
+		|| (g_distance_test && save_release <= 1950)
 		|| ((outside <= REAL && outside >= ATAN) && save_release <= 1960)
 		|| (fractype == FPPOPCORN && save_release <= 1960)
 		|| (fractype == LPOPCORN && save_release <= 1960)
