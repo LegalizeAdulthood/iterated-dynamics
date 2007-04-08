@@ -3323,7 +3323,7 @@ int volterra_lotka_orbit_fp(void)
 }
 
 /* Science of Fractal Images pp. 185, 187 */
-int EscherfpFractal(void)
+int escher_orbit_fp(void)
 {
 	_CMPLX oldtest, newtest, testsqr;
 	double testsize = 0.0;

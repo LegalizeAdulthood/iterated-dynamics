@@ -424,7 +424,7 @@ extern int tims_error_orbit_fp(void);
 extern int tims_error_orbit(void);
 extern int circle_orbit_fp(void);
 extern int volterra_lotka_orbit_fp(void);
-extern int EscherfpFractal(void);
+extern int escher_orbit_fp(void);
 extern int julia_per_pixel_l(void);
 extern int richard8_per_pixel(void);
 extern int mandelbrot_per_pixel_l(void);

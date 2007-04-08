@@ -2221,7 +2221,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_ESCHER, HF_ESCHER, WINFRAC,
 		-1.6f, 1.6f, -1.2f, 1.2f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, ORIGIN,
-		EscherfpFractal, julia_per_pixel_fp, StandardSetup,
+		escher_orbit_fp, julia_per_pixel_fp, StandardSetup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
