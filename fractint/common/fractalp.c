@@ -1495,7 +1495,7 @@ struct fractalspecificstuff fractalspecific[] =
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | WINFRAC | BAILTEST,
 		-3.6f, 3.6f, -2.7f, 2.7f,
 		0, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXLONG, NOSYM,
-		richard8_orbit_fp, otherrichard8fp_per_pixel, MandelfpSetup,
+		richard8_orbit_fp, other_richard8_per_pixel_fp, MandelfpSetup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},

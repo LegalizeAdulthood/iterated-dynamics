@@ -437,7 +437,7 @@ extern int marks_mandelbrot_power_per_pixel_fp(void);
 extern int mandelbrot_per_pixel_fp(void);
 extern int julia_per_pixel_fp(void);
 extern int julia_per_pixel_mpc(void);
-extern int otherrichard8fp_per_pixel(void);
+extern int other_richard8_per_pixel_fp(void);
 extern int other_mandelbrot_per_pixel_fp(void);
 extern int otherjuliafp_per_pixel(void);
 extern int MarksCplxMandperp(void);

@@ -2985,7 +2985,7 @@ int julia_per_pixel_mpc(void)
 #endif
 }
 
-int otherrichard8fp_per_pixel(void)
+int other_richard8_per_pixel_fp(void)
 {
 	other_mandelbrot_per_pixel_fp();
 	CMPLXtrig1(*g_float_parameter, g_temp_z);
