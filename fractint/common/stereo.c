@@ -235,7 +235,7 @@ int do_AutoStereo(void)
 	int i, j, done;
 	int bars, ct, kbdchar, barwidth;
 	time_t ltime;
-	unsigned char *buf = (unsigned char *)decoderline;
+	unsigned char *buf = (unsigned char *)g_decoder_line;
 	/* following two lines re-use existing arrays in Fractint */
 	int *same = _alloca(sizeof(int)*xdots);
 	int *colour = _alloca(sizeof(int)*xdots);
@@ -292,7 +292,7 @@ int do_AutoStereo(void)
 	Y = 0;
 	if (image_map)
 	{
-		outln = outline_stereo;
+		g_out_line = outline_stereo;
 		while ((Y) < ydots)
 		{
 			if (gifview())

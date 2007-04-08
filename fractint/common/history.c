@@ -103,7 +103,7 @@ void _fastcall history_save_info(void)
 	current.initial_orbit_z[1]		= g_initial_orbit_z.y;
 	current.use_initial_orbit_z		= g_use_initial_orbit_z;
 	current.periodicity			= (short) g_periodicity_check;
-	current.potential_16bit		= (short) disk16bit;
+	current.potential_16bit		= (short) g_disk_16bit;
 	current.release				= (short) g_release;
 	current.g_save_release		= (short) g_save_release;
 	current.flag3d				= (short) g_display_3d;
@@ -294,7 +294,7 @@ void _fastcall history_restore_info(void)
 	g_use_initial_orbit_z	= last.use_initial_orbit_z;
 	g_periodicity_check    	= last.periodicity;
 	usr_periodicitycheck	= last.periodicity;
-	disk16bit           	= last.potential_16bit;
+	g_disk_16bit           	= last.potential_16bit;
 	g_release           	= last.release;
 	g_save_release        	= last.g_save_release;
 	g_display_3d           	= last.flag3d;

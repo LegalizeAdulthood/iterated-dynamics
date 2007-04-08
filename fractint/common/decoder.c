@@ -19,15 +19,15 @@
  == 1) The original #includes were folded into the routine strictly to hold
  ==    down the number of files we were dealing with.
  ==
- == 2) The 'g_stack', 'suffix', 'prefix', and 'decoderline' arrays were
+ == 2) The 'g_stack', 'suffix', 'prefix', and 'g_decoder_line' arrays were
  ==    changed from static and 'malloc()'ed to external only so that
  ==    the assembler program could use the same array space for several
  ==    independent chunks of code.
  ==
  == 3) The 'out_line()' external function has been changed to reference
- ==    '*outln()' for flexibility (in particular, 3D transformations)
+ ==    '*g_out_line()' for flexibility (in particular, 3D transformations)
  ==
- == 4) A call to 'driver_key_pressed()' has been added after the 'outln()' calls
+ == 4) A call to 'driver_key_pressed()' has been added after the 'g_out_line()' calls
  ==    to check for the presenc of a key-press as a bail-out signal
  ==
  == (Bert Tyler and Timothy Wegner)
@@ -62,7 +62,7 @@ static short get_next_code(void);
  * occurs in an odd place in the GIF file...  In any case, linelen will be
  * equal to the number of pixels passed...
  */
-int (*outln) (BYTE *, int) = out_line;
+int (*g_out_line) (BYTE *, int) = out_line;
 
 /***** Local Static Variables *******************************************/
 /* Various error codes used by decoder
@@ -120,42 +120,6 @@ static short code_mask[13] =
  * All external declarations now in PROTOTYPE.H
  */
 
-
-/*
-I removed the LOCAL identifiers in the arrays below and replaced them
-with 'extern's so as to declare (and re-use) the space elsewhere.
-The arrays are actually declared in the assembler source.
-                                                Bert Tyler
-*/
-
-#if 0
-/* declarations moved to PROTOTYPE.H - these left for documentation */
-BYTE dstack[MAX_CODES + 1];     /* Stack for storing pixels */
-BYTE suffix[MAX_CODES + 1];     /* Suffix table */
-unsigned short prefix[MAX_CODES + 1];   /* Prefix linked list */
-BYTE decoderline[2];            /* decoded line goes here */
-#endif
-
-/* avoid using fixed near arrays by enabling next */
-#if 0
-BYTE dstack1[MAX_CODES + 1];     /* Stack for storing pixels */
-#define dstack dstack1
-#endif
-
-#if 0 /* remove this when suffix no longer used in diskvid.c */
-BYTE suffix1[MAX_CODES + 1];     /* Suffix table */
-#define suffix suffix1
-#endif
-
-#if 0
-unsigned short prefix1[MAX_CODES + 1];   /* Prefix linked list */
-#define prefix prefix1
-#endif
-
-/* for the time being, use a pointer to a buffer in the gifview stack */
-extern BYTE *decoderline1;
-#define decoderline decoderline1
-
 /* The reason we have these separated like this instead of using
  * a structure like the original Wilhite code did, is because this
  * stuff generally produces significantly faster code when compiled...
@@ -185,8 +149,7 @@ extern BYTE *decoderline1;
  *
  */
 
-/* moved sizeofstring here for possible re-use elsewhere */
-short sizeofstring[MAX_CODES + 1];  /* size of string list */
+short g_size_of_string[MAX_CODES + 1];  /* size of string list */
 
 short decoder(short linewidth)
 {
@@ -228,11 +191,11 @@ short decoder(short linewidth)
 	clear = (short) (1 << size);
 	ending = (short) (clear + 1);
 	slot = newcodes = (short) (ending + 1);
-	navail_bytes = nbits_left = sizeofstring[slot] = xskip = yskip = old_code = 0;
+	navail_bytes = nbits_left = g_size_of_string[slot] = xskip = yskip = old_code = 0;
 	out_value = 0;
 	for (i = 0; i < slot; i++)
 	{
-		sizeofstring[i] = 0;
+		g_size_of_string[i] = 0;
 	}
 
 	/* Initialize in case they forgot to put in a clear code. (This shouldn't
@@ -240,7 +203,7 @@ short decoder(short linewidth)
 
 	/* Set up the stack pointer and decode buffer pointer */
 	sp = g_stack;
-	bufptr = decoderline;
+	bufptr = g_decoder_line;
 	bufcnt = linewidth;
 
 	/* This is the main loop.  For each code we get we pass through the linked
@@ -263,7 +226,7 @@ short decoder(short linewidth)
 		{
 			curr_size = (short) (size + 1);
 			slot = newcodes;
-			sizeofstring[slot] = 0;
+			g_size_of_string[slot] = 0;
 			top_slot = (short) (1 << curr_size);
 
 			/* Continue reading codes until we get a non-clear code (Another
@@ -327,7 +290,7 @@ short decoder(short linewidth)
 			fastloop = NOPE;
 			while (code >= newcodes)
 			{
-				j = i = sizeofstring[code];
+				j = i = g_size_of_string[code];
 				if (i > 0 && bufcnt - i > 0 && skipxdots == 0)
 				{
 					fastloop = YUP;
@@ -345,7 +308,7 @@ short decoder(short linewidth)
 					{
 						if (--yskip < 0)
 						{
-							ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
+							ret = (short) ((*g_out_line) (g_decoder_line, (int) (bufptr - g_decoder_line)));
 							if (ret < 0)
 							{
 								return ret;
@@ -356,7 +319,7 @@ short decoder(short linewidth)
 						{
 							return -1;
 						}
-						bufptr = decoderline;
+						bufptr = g_decoder_line;
 						bufcnt = linewidth;
 						xskip = 0;
 					}
@@ -381,7 +344,7 @@ short decoder(short linewidth)
 
 			if (slot < top_slot)
 			{
-				sizeofstring[slot] = (short) (sizeofstring[old_code] + 1);
+				g_size_of_string[slot] = (short) (g_size_of_string[old_code] + 1);
 				suffix[slot] = out_value = (BYTE) code;
 				prefix[slot++] = old_code;
 				old_code = c;
@@ -407,7 +370,7 @@ short decoder(short linewidth)
 			{
 				if (--yskip < 0)
 				{
-					ret = (short) ((*outln) (decoderline, (int) (bufptr - decoderline)));
+					ret = (short) ((*g_out_line) (g_decoder_line, (int) (bufptr - g_decoder_line)));
 					if (ret < 0)
 					{
 						return ret;
@@ -418,7 +381,7 @@ short decoder(short linewidth)
 				{
 					return -1;
 				}
-				bufptr = decoderline;
+				bufptr = g_decoder_line;
 				bufcnt = linewidth;
 				xskip = 0;
 			}

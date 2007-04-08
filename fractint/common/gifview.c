@@ -56,7 +56,7 @@ int get_bytes(BYTE *where, int how_many)
  * The skipxdots and skipydots logic assumes that the buffer holds one line.
  */
 
-BYTE decoderline[MAXPIXELS + 1]; /* write-line routines use this */
+BYTE g_decoder_line[MAXPIXELS + 1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAXPIXELS
 
 BYTE *decoderline1;
@@ -92,7 +92,7 @@ int gifview()
 	colcount = g_row_count = 0;
 
 	/* Open the file */
-	strcpy(temp1, (outln == outline_stereo) ? stereomapname : g_read_name);
+	strcpy(temp1, (g_out_line == outline_stereo) ? stereomapname : g_read_name);
 	if (has_ext(temp1) == NULL)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
@@ -103,7 +103,7 @@ int gifview()
 		}
 		else
 		{
-			strcpy(temp1, (outln == outline_stereo) ? stereomapname : g_read_name);
+			strcpy(temp1, (g_out_line == outline_stereo) ? stereomapname : g_read_name);
 			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}
@@ -147,9 +147,9 @@ int gifview()
 	}
 	numcolors = 1 << planes;
 
-	if (g_dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
+	if (g_dither_flag && numcolors > 2 && colors == 2 && g_out_line == out_line)
 	{
-			outln = out_line_dither;
+			g_out_line = out_line_dither;
 	}
 
 	for (i = 0; i < (int)numcolors; i++)
@@ -254,16 +254,16 @@ int gifview()
 			{
 				gifview_image_left /= (skipxdots + 1);
 			}
-			if (outln == out_line)
+			if (g_out_line == out_line)
 			{
 				/* what about continuous potential???? */
 				if (width != gifview_image_twidth || top != 0)
 				{   /* we're using normal decoding and we have a MIG */
-					outln = out_line_migs;
+					g_out_line = out_line_migs;
 				}
 				else if (width > DECODERLINE_WIDTH && skipxdots == 0)
 				{
-					outln = out_line_too_wide;
+					g_out_line = out_line_too_wide;
 				}
 			}
 

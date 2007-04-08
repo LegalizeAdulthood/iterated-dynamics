@@ -225,18 +225,18 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		if (g_show_file == 0)
 		{               /* loading an image */
-			outln_cleanup = NULL;          /* outln routine can set this */
+			outln_cleanup = NULL;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
 			{
-				outln = call_line3d;
+				g_out_line = call_line3d;
 			}
 			else if (filetype >= 1)         /* old .tga format input file */
 			{
-				outln = outlin16;
+				g_out_line = outlin16;
 			}
 			else if (comparegif)            /* debug 50 */
 			{
-				outln = cmp_line;
+				g_out_line = cmp_line;
 			}
 			else if (g_potential_16bit)
 			{            /* .pot format input file */
@@ -252,15 +252,15 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					/* goto imagestart; */
 					return IMAGESTART;
 				}
-				outln = pot_line;
+				g_out_line = pot_line;
 			}
 			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !evolving) /* regular gif/fra input file */
 			{
-				outln = sound_line;      /* sound decoding */
+				g_out_line = sound_line;      /* sound decoding */
 			}
 			else
 			{
-				outln = out_line;        /* regular decoding */
+				g_out_line = out_line;        /* regular decoding */
 			}
 			if (filetype == 0)
 			{
