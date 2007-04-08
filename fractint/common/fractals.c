@@ -2593,7 +2593,7 @@ int julia_per_pixel(void)
 int richard8_per_pixel(void)
 {
 #if !defined(XFRACT)
-	long_mandel_per_pixel();
+	mandelbrot_per_pixel_l();
 	LCMPLXtrig1(*g_long_parameter, g_tmp_z_l);
 	LCMPLXmult(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
 	return 1;
@@ -2602,7 +2602,7 @@ int richard8_per_pixel(void)
 #endif
 }
 
-int long_mandel_per_pixel(void)
+int mandelbrot_per_pixel_l(void)
 {
 #if !defined(XFRACT)
 	/* integer mandel types */
@@ -2681,10 +2681,10 @@ int julia_per_pixel_fp(void)
 	return 0;
 }
 
-int marks_mandelpwr_per_pixel(void)
+int marks_mandelbrot_power_per_pixel(void)
 {
 #if !defined(XFRACT)
-	mandelbrot_per_pixel_fp();
+	mandelbrot_per_pixel();
 	g_tmp_z_l = g_old_z_l;
 	g_tmp_z_l.x -= fudge;
 	LCMPLXpwr(g_old_z_l, g_tmp_z_l, g_tmp_z_l);
@@ -2694,7 +2694,7 @@ int marks_mandelpwr_per_pixel(void)
 #endif
 }
 
-int mandelbrot_per_pixel_fp(void)
+int mandelbrot_per_pixel(void)
 {
 	if (g_invert)
 	{
@@ -2767,7 +2767,7 @@ int mandelbrot_per_pixel_fp(void)
 	return 1; /* 1st iteration has been done */
 }
 
-int marksmandel_per_pixel()
+int marks_mandelbrot_per_pixel()
 {
 #if !defined(XFRACT)
 	/* marksmandel */
@@ -2826,7 +2826,7 @@ int marksmandel_per_pixel()
 	return 1; /* 1st iteration has been done */
 }
 
-int marksmandelfp_per_pixel()
+int marks_mandelbrot_per_pixel_fp()
 {
 	/* marksmandel */
 
@@ -2873,17 +2873,16 @@ int marksmandelfp_per_pixel()
 	return 1; /* 1st iteration has been done */
 }
 
-int
-marks_mandelpwrfp_per_pixel(void)
+int marks_mandelbrot_power_per_pixel_fp(void)
 {
-	mandelfp_per_pixel();
+	mandelbrot_per_pixel_fp();
 	g_temp_z = g_old_z;
 	g_temp_z.x -= 1;
 	CMPLXpwr(g_old_z, g_temp_z, g_temp_z);
 	return 1;
 }
 
-int mandelfp_per_pixel(void)
+int mandelbrot_per_pixel_fp(void)
 {
 	/* floating point mandelbrot */
 	/* mandelfp */
