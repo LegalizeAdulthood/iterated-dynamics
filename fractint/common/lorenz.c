@@ -2113,7 +2113,7 @@ int plotorbits2dsetup(void)
 		{
 			return -1;
 		}
-		floatflag = usr_floatflag = 1; /* force floating point */
+		g_float_flag = usr_floatflag = TRUE; /* force floating point */
 		fractype = tofloat;
 		curfractalspecific = &fractalspecific[fractype];
 	}
@@ -2747,7 +2747,7 @@ static int ifs_3d(void)
 	display3d = -1;
 
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(floatflag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
+	return funny_glasses_call(g_float_flag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
 }
 
 static int threed_view_trans(struct threed_vt_inf *inf)

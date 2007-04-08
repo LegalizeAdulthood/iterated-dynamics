@@ -179,7 +179,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			usr_stdcalcmode = '3';
 		}
 		usr_distest     = read_info.distestold;
-		usr_floatflag   = (char)read_info.floatflag;
+		usr_floatflag   = (char)read_info.float_flag;
 		bailout     = read_info.bailoutold;
 		calctime    = read_info.calctime;
 		trigndx[0]  = read_info.trigndx[0];
@@ -400,7 +400,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (display3d)                   /* PB - a klooge till the meaning of */
 	{
-		usr_floatflag = oldfloatflag; /*  floatflag in line3d is clarified */
+		usr_floatflag = oldfloatflag; /*  g_float_flag in line3d is clarified */
 	}
 
 	if (overlay3d)
@@ -418,15 +418,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		int olddisplay3d, i;
 		char oldfloatflag;
 		olddisplay3d = display3d;
-		oldfloatflag = floatflag;
+		oldfloatflag = g_float_flag;
 		display3d = loaded3d;      /* for <tab> display during next */
-		floatflag = usr_floatflag; /* ditto */
+		g_float_flag = usr_floatflag; /* ditto */
 		i = get_video_mode(&read_info, &formula_info);
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
 		display3d = olddisplay3d;
-		floatflag = oldfloatflag;
+		g_float_flag = oldfloatflag;
 		if (i)
 		{
 			if (resume_info_blk.got_data == 1)
@@ -1729,7 +1729,7 @@ rescan:  /* entry for changed browse parms */
 		free_bf_vars();
 	}
 	bf_math = oldbf_math;
-	floatflag = usr_floatflag;
+	g_float_flag = usr_floatflag;
 
 	return c;
 }

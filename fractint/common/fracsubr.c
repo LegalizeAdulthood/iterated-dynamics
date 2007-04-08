@@ -177,7 +177,7 @@ void calculate_fractal_initialize(void)
 		|| DEBUGFLAG_NO_PIXEL_GRID == debugflag)
 	{
 		g_use_grid = FALSE;
-		floatflag = usr_floatflag = 1;
+		g_float_flag = usr_floatflag = TRUE;
 	}
 	else
 	{
@@ -250,21 +250,21 @@ void calculate_fractal_initialize(void)
 	{
 		free_bf_vars();
 	}
-	floatflag = bf_math ? 1 : usr_floatflag;
-	if (calc_status == CALCSTAT_RESUMABLE)  /* on resume, ensure floatflag correct */
+	g_float_flag = bf_math ? TRUE : usr_floatflag;
+	if (calc_status == CALCSTAT_RESUMABLE)  /* on resume, ensure g_float_flag correct */
 	{
-		floatflag = curfractalspecific->isinteger ? 0 : 1;
+		g_float_flag = curfractalspecific->isinteger ? FALSE : TRUE;
 	}
-	/* if floating pt only, set floatflag for TAB screen */
+	/* if floating pt only, set g_float_flag for TAB screen */
 	if (!curfractalspecific->isinteger && curfractalspecific->tofloat == NOFRACTAL)
 	{
-		floatflag = 1;
+		g_float_flag = TRUE;
 	}
 	if (usr_stdcalcmode == 's')
 	{
 		if (fractype == MANDEL || fractype == MANDELFP)
 		{
-			floatflag = 1;
+			g_float_flag = TRUE;
 		}
 		else
 		{
@@ -298,10 +298,10 @@ init_restart:
 
 	if (distest)
 	{
-		floatflag = 1;  /* force floating point for dist est */
+		g_float_flag = TRUE;  /* force floating point for dist est */
 	}
 
-	if (floatflag)  /* ensure type matches floatflag */
+	if (g_float_flag)  /* ensure type matches g_float_flag */
 	{
 		if (curfractalspecific->isinteger != 0
 			&& curfractalspecific->tofloat != NOFRACTAL)
@@ -489,7 +489,7 @@ expand_retry:
 				if (integerfractal          /* integer fractal type? */
 					&& curfractalspecific->tofloat != NOFRACTAL)
 				{
-					floatflag = 1;           /* switch to floating pt */
+					g_float_flag = TRUE;           /* switch to floating pt */
 				}
 				else
 				{

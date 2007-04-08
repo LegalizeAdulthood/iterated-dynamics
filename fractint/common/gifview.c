@@ -147,7 +147,7 @@ int gifview()
 	}
 	numcolors = 1 << planes;
 
-	if (dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
+	if (g_dither_flag && numcolors > 2 && colors == 2 && outln == out_line)
 	{
 			outln = out_line_dither;
 	}
