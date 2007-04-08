@@ -123,20 +123,20 @@ int get_toggles()
 	uvalues[k].uval.ch.val = (usr_stdcalcmode == '1') ? 0
 						: (usr_stdcalcmode == '2') ? 1
 						: (usr_stdcalcmode == '3') ? 2
-						: (usr_stdcalcmode == 'g' && stoppass == 0) ? 3
-						: (usr_stdcalcmode == 'g' && stoppass == 1) ? 4
-						: (usr_stdcalcmode == 'g' && stoppass == 2) ? 5
-						: (usr_stdcalcmode == 'g' && stoppass == 3) ? 6
-						: (usr_stdcalcmode == 'g' && stoppass == 4) ? 7
-						: (usr_stdcalcmode == 'g' && stoppass == 5) ? 8
-						: (usr_stdcalcmode == 'g' && stoppass == 6) ? 9
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 0) ? 3
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 1) ? 4
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 2) ? 5
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 3) ? 6
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 4) ? 7
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 5) ? 8
+						: (usr_stdcalcmode == 'g' && g_stop_pass == 6) ? 9
 						: (usr_stdcalcmode == 'b') ? 10
 						: (usr_stdcalcmode == 's') ? 11
 						: (usr_stdcalcmode == 't') ? 12
 						: (usr_stdcalcmode == 'd') ? 13
 						:        /* "o"rbits */      14;
 	old_usr_stdcalcmode = usr_stdcalcmode;
-	old_stoppass = stoppass;
+	old_stoppass = g_stop_pass;
 #ifndef XFRACT
 	choices[++k] = "Floating Point Algorithm";
 	uvalues[k].type = 'y';
@@ -282,11 +282,11 @@ int get_toggles()
 	j = 0;   /* return code */
 
 	usr_stdcalcmode = calcmodes[uvalues[++k].uval.ch.val][0];
-	stoppass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
+	g_stop_pass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
-	if (stoppass < 0 || stoppass > 6 || usr_stdcalcmode != 'g')
+	if (g_stop_pass < 0 || g_stop_pass > 6 || usr_stdcalcmode != 'g')
 	{
-		stoppass = 0;
+		g_stop_pass = 0;
 	}
 
 	if (usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops, lyapunov type */
@@ -299,7 +299,7 @@ int get_toggles()
 	{
 		j++;
 	}
-	if (old_stoppass != stoppass)
+	if (old_stoppass != g_stop_pass)
 	{
 		j++;
 	}

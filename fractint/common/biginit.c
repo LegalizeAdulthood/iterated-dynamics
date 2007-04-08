@@ -396,7 +396,7 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
 {
-	decimals = bfdigits ? bfdigits : dec;
+	decimals = g_bf_digits ? g_bf_digits : dec;
 	if (bailout > 10)    /* arbitrary value */
 	{
 		/* using 2 doesn't gain much and requires another test */

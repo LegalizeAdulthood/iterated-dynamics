@@ -16,30 +16,13 @@
 #include "drivers.h"
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
-
-#define NONNUMERIC -32767
-
-static int  cmdfile(FILE *, int);
-static int  next_command(char *, int, FILE *, char *, int *, int);
-static int  next_line(FILE *, char *, int);
-int  process_command(char *, int);
-static void argerror(const char *);
-static void initvars_run(void);
-static void initvars_restart(void);
-static void initvars_fractal(void);
-static void initvars_3d(void);
-static void reset_ifs_defn(void);
-static void parse_textcolors(char *value);
-static int  parse_colors(char *value);
-//static int  parse_printer(char *value);
-static int  get_bf(bf_t, char *);
-static int isabigfloat(char *str);
+#define NON_NUMERIC -32767
 
 /* variables defined by the command line/files processor */
-int     stoppass = 0;             /* stop at this guessing pass early */
-int     pseudox = 0;              /* xdots to use for video independence */
-int     pseudoy = 0;              /* ydots to use for video independence */
-int     bfdigits = 0;             /* digits to use (force) for bf_math */
+int     g_stop_pass = 0;             /* stop at this guessing pass early */
+int     g_pseudo_x = 0;              /* xdots to use for video independence */
+int     g_pseudo_y = 0;              /* ydots to use for video independence */
+int     g_bf_digits = 0;             /* digits to use (force) for bf_math */
 int     showdot = -1;             /* color to show crawling graphics cursor */
 int     sizedot;                /* size of dot crawling cursor */
 char    recordcolors;           /* default PAR color-writing method */
@@ -114,27 +97,19 @@ float   aspectdrift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
 int fastrestore = 0;          /* 1 - reset viewwindows prior to a restore
 								and do not display warnings when video
 								mode changes during restore */
-
 int orgfrmsearch = 0;            /* 1 - user has specified a directory for
 									Orgform formula compilation files */
-
 int     orbitsave = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
 int orbit_delay;                /* clock ticks delating orbit release */
 int     transparent[2];         /* transparency min/max values */
 long    LogFlag;                /* Logarithmic palette flag: 0 = no */
-
 BYTE exitmode = 3;      /* video mode on exit */
-
 int     Log_Fly_Calc = 0;   /* calculate logmap on-the-fly */
 int     Log_Auto_Calc = 0;  /* auto calculate logmap */
 int     nobof = 0; /* Flag to make inside=bof options not duplicate bof images */
-
 int        escape_exit;         /* set to 1 to avoid the "are you sure?" screen */
 int first_init = 1;               /* first time into cmdfiles? */
-static int init_rseed;
-static char initcorners, initparams;
 struct fractalspecificstuff *curfractalspecific = NULL;
-
 char FormFileName[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char FormName[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
 char LFileName[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
@@ -148,7 +123,6 @@ struct SearchPath searchfor;
 float *ifs_defn = NULL;     /* ifs parameters */
 int  ifs_type;                  /* 0 = 2d, 1 = 3d */
 int  g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
-
 BYTE txtcolor[]=
 {
 		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
@@ -183,10 +157,27 @@ BYTE txtcolor[]=
 		BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
 		BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
 	};
-
 char s_makepar[] =          "makepar";
-
 int lzw[2];
+
+int  process_command(char *, int);
+
+static int init_rseed;
+static char initcorners, initparams;
+
+static int  command_file(FILE *, int);
+static int  next_command(char *, int, FILE *, char *, int *, int);
+static int  next_line(FILE *, char *, int);
+static void argerror(const char *);
+static void initvars_run(void);
+static void initvars_restart(void);
+static void initvars_fractal(void);
+static void initvars_3d(void);
+static void reset_ifs_defn(void);
+static void parse_textcolors(char *value);
+static int  parse_colors(char *value);
+static int  get_bf(bf_t, char *);
+static int isabigfloat(char *str);
 
 /*
 		cmdfiles(argc, argv) process the command-line arguments
@@ -236,7 +227,7 @@ int cmdfiles(int argc, char **argv)
 		initfile = fopen(tempstring, "r");
 		if (initfile != NULL)
 		{
-			cmdfile(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
+			command_file(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 		}
 	}
 
@@ -301,7 +292,7 @@ int cmdfiles(int argc, char **argv)
 				{
 					argerror(curarg);
 				}
-				cmdfile(initfile, CMDFILE_AT_CMDLINE_SETNAME);
+				command_file(initfile, CMDFILE_AT_CMDLINE_SETNAME);
 			}
 			else  /* @filename */
 			{
@@ -310,7 +301,7 @@ int cmdfiles(int argc, char **argv)
 				{
 					argerror(curarg);
 				}
-				cmdfile(initfile, CMDFILE_AT_CMDLINE);
+				command_file(initfile, CMDFILE_AT_CMDLINE);
 			}
 		}
 	}
@@ -353,7 +344,7 @@ int load_commands(FILE *infile)
 	/* '(' or '{' following the desired parameter set's name       */
 	int ret;
 	initcorners = initparams = 0; /* reset flags for type= */
-	ret = cmdfile(infile, CMDFILE_AT_AFTER_STARTUP);
+	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 /*
 			{
 				char msg[MSGLEN];
@@ -459,7 +450,7 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	outside = -1;                        /* outside color = -1 (not used) */
 	maxit = 150;                         /* initial maxiter        */
 	usr_stdcalcmode = 'g';               /* initial solid-guessing */
-	stoppass = 0;                        /* initial guessing stoppass */
+	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = FALSE;
 	g_proximity = 0.01;
 	g_is_mand = 1;                          /* default formula mand/jul toggle */
@@ -488,8 +479,8 @@ static void initvars_fractal()          /* init vars affecting calculation */
 	g_invert = 0;
 	decomp[0] = decomp[1] = 0;
 	usr_distest = 0;
-	pseudox = 0;
-	pseudoy = 0;
+	g_pseudo_x = 0;
+	g_pseudo_y = 0;
 	distestwidth = 71;
 	forcesymmetry = 999;                 /* symmetry not forced */
 	xx3rd = xxmin = -2.5; xxmax = 1.5;   /* initial corner values  */
@@ -598,13 +589,13 @@ static void reset_ifs_defn()
 }
 
 
-static int cmdfile(FILE *handle, int mode)
+static int command_file(FILE *handle, int mode)
 	/* mode = 0 command line @filename         */
 	/*        1 sstools.ini                    */
 	/*        2 <@> command after startup      */
 	/*        3 command line @filename/setname */
 {
-	/* note that cmdfile could be open as text OR as binary */
+	/* note that command_file could be open as text OR as binary */
 	/* binary is used in @ command processing for reasonable speed note/point */
 	int i;
 	int lineoffset = 0;
@@ -822,7 +813,7 @@ static int batch_arg(const cmd_context *context)
 
 static int max_history_arg(const cmd_context *context)
 {
-	if (context->numval == NONNUMERIC)
+	if (context->numval == NON_NUMERIC)
 	{
 		return badarg(context->curarg);
 	}
@@ -1278,7 +1269,7 @@ static int inside_arg(const cmd_context *context)
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	if (context->numval == NONNUMERIC)
+	if (context->numval == NON_NUMERIC)
 	{
 		return badarg(context->curarg);
 	}
@@ -1301,7 +1292,7 @@ static int fill_color_arg(const cmd_context *context)
 	{
 		fillcolor = -1;
 	}
-	else if (context->numval == NONNUMERIC)
+	else if (context->numval == NON_NUMERIC)
 	{
 		return badarg(context->curarg);
 	}
@@ -1351,7 +1342,7 @@ static int outside_arg(const cmd_context *context)
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	if ((context->numval == NONNUMERIC) || (context->numval < TDIS || context->numval > 255))
+	if ((context->numval == NON_NUMERIC) || (context->numval < TDIS || context->numval > 255))
 	{
 		return badarg(context->curarg);
 	}
@@ -1361,11 +1352,11 @@ static int outside_arg(const cmd_context *context)
 
 static int bf_digits_arg(const cmd_context *context)
 {
-	if ((context->numval == NONNUMERIC) || (context->numval < 0 || context->numval > 2000))
+	if ((context->numval == NON_NUMERIC) || (context->numval < 0 || context->numval > 2000))
 	{
 		return badarg(context->curarg);
 	}
-	bfdigits = context->numval;
+	g_bf_digits = context->numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -1391,10 +1382,10 @@ static int passes_arg(const cmd_context *context)
 	usr_stdcalcmode = context->charval[0];
 	if (context->charval[0] == 'g')
 	{
-		stoppass = ((int)context->value[1] - (int)'0');
-		if (stoppass < 0 || stoppass > 6)
+		g_stop_pass = ((int)context->value[1] - (int)'0');
+		if (g_stop_pass < 0 || g_stop_pass > 6)
 		{
-			stoppass = 0;
+			g_stop_pass = 0;
 		}
 	}
 	return COMMAND_FRACTAL_PARAM;
@@ -2460,7 +2451,7 @@ static int periodicity_arg(const cmd_context *context)
 	{
 		usr_periodicitycheck = -1;
 	}
-	else if (context->numval == NONNUMERIC)
+	else if (context->numval == NON_NUMERIC)
 	{
 		return badarg(context->curarg);
 	}
@@ -2631,12 +2622,12 @@ static int dis_test_arg(const cmd_context *context)
 	}
 	if (context->totparms > 3 && context->intval[2] > 0 && context->intval[3] > 0)
 	{
-		pseudox = context->intval[2];
-		pseudoy = context->intval[3];
+		g_pseudo_x = context->intval[2];
+		g_pseudo_y = context->intval[3];
 	}
 	else
 	{
-		pseudox = pseudoy = 0;
+		g_pseudo_x = g_pseudo_y = 0;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2754,7 +2745,7 @@ static int rotation_arg(const cmd_context *context)
 
 static int perspective_arg(const cmd_context *context)
 {
-	if (context->numval == NONNUMERIC)
+	if (context->numval == NON_NUMERIC)
 	{
 		return badarg(context->curarg);
 	}
@@ -3269,7 +3260,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		}
 		if (context.totparms == 0)
 		{
-			context.numval = NONNUMERIC;
+			context.numval = NON_NUMERIC;
 		}
 		i = -1;
 		if (context.totparms < 16)
