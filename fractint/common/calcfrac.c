@@ -268,7 +268,7 @@ static double fmod_test(void)
 
 /*
 	The sym_fill_line() routine was pulled out of the boundary tracing
-	code for re-use with showdot. It's purpose is to fill a line with a
+	code for re-use with g_show_dot. It's purpose is to fill a line with a
 	solid color. This assumes that BYTE *str is already filled
 	with the color. The routine does write the line using symmetry
 	in all cases, however the symmetry logic assumes that the line
@@ -469,7 +469,7 @@ static int calculate_type_show_dot(void)
 	{
 		if (g_col + width <= g_x_stop && g_row + width <= g_y_stop)
 		{
-			/* preferred showdot shape */
+			/* preferred g_show_dot shape */
 			direction = UPPER_LEFT;
 			startx = g_col;
 			stopx  = g_col + width;
@@ -668,7 +668,7 @@ int calculate_fractal(void)
 	g_atan_colors = (save_release > 2002) ? colors : 180;
 
 	/* ORBIT stuff */
-	g_show_orbit = start_showorbit;
+	g_show_orbit = g_start_show_orbit;
 	g_orbit_index = 0;
 	g_orbit_color = 15;
 	if (colors < 16)
@@ -1019,10 +1019,10 @@ static void perform_work_list()
 		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 
 		curfractalspecific->per_image();
-		if (showdot >= 0)
+		if (g_show_dot >= 0)
 		{
 			find_special_colors();
-			switch (autoshowdot)
+			switch (g_auto_show_dot)
 			{
 			case 'd':
 				s_show_dot_color = g_color_dark % colors;
@@ -1035,17 +1035,17 @@ static void perform_work_list()
 				s_show_dot_color = g_color_bright % colors;
 				break;
 			default:
-				s_show_dot_color = showdot % colors;
+				s_show_dot_color = g_show_dot % colors;
 				break;
 			}
-			if (sizedot <= 0)
+			if (g_size_dot <= 0)
 			{
 				s_show_dot_width = -1;
 			}
 			else
 			{
 				double dshowdot_width;
-				dshowdot_width = (double)sizedot*xdots/1024.0;
+				dshowdot_width = (double)g_size_dot*xdots/1024.0;
 				/*
 					Arbitrary sanity limit, however s_show_dot_width will
 					overflow if dshowdot width gets near 256.
@@ -2149,7 +2149,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		lastz.y = g_old_z.y;
 	}
 
-	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || showdot >= 0) && orbit_delay > 0)
+	check_freq = (((soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)
@@ -3342,7 +3342,7 @@ static int boundary_trace_main(void)
 			g_col = g_current_col;
 			if ((*g_calculate_type)() == -1) /* color, row, col are global */
 			{
-				if (showdot != bkcolor) /* remove showdot pixel */
+				if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
 				{
 					(*g_plot_color)(g_col, g_row, bkcolor);
 				}
@@ -3386,7 +3386,7 @@ static int boundary_trace_main(void)
 					if (g_color == bkcolor && (*g_calculate_type)() == -1)
 								/* color, row, col are global for (*g_calculate_type)() */
 					{
-						if (showdot != bkcolor) /* remove showdot pixel */
+						if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
 						{
 							(*g_plot_color)(g_col, g_row, bkcolor);
 						}

@@ -290,8 +290,8 @@ restart:   /* insert key re-starts here */
 	fiddle_reduction = 1.0;
 	this_gen_rseed = (unsigned int)clock_ticks();
 	srand(this_gen_rseed);
-	start_showorbit = 0;
-	showdot = -1; /* turn off showdot if entered with <g> command */
+	g_start_show_orbit = 0;
+	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
 	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
 	cmdfiles(argc, argv);         /* process the command-line */

@@ -1450,6 +1450,7 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
+	char temp1[256];
 
 	static int numtemplates = 1;
 	static int dosort = 1;

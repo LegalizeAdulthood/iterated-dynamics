@@ -812,7 +812,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		i = get_evolve_Parms();
 		if (i > 0)
 		{
-			start_showorbit = 0;
+			g_start_show_orbit = 0;
 			soundflag &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
 			Log_Auto_Calc = 0; /* turn it off */
 		}
