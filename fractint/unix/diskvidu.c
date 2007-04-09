@@ -20,11 +20,11 @@
 
 #define TIMETODISPLAY 10000
 
-int disk16bit=0;	   /* storing 16 bit values for continuous potential */
+int g_disk_16bit=0;	   /* storing 16 bit values for continuous potential */
 
 static int timetodisplay;
 static FILE *fp = NULL;
-int disktarga;
+int g_disk_targa;
 
 static int headerlength;
 static unsigned int rowsize = 0;   /* doubles as a disk video not ok flag */
@@ -32,59 +32,59 @@ static unsigned int colsize;	   /* sydots, *2 when pot16bit */
 
 static BYTE *dataPtr = NULL;
 
-int startdisk(),pot_startdisk();
-void enddisk();
-int targa_startdisk(FILE *, int);
-void targa_readdisk (unsigned int, unsigned int,
+int disk_start(),disk_start_potential();
+void disk_end();
+int disk_start_targa(FILE *, int);
+void disk_read_targa(unsigned int, unsigned int,
 		     BYTE *, BYTE *, BYTE *);
-void targa_writedisk(unsigned int, unsigned int,
+void disk_write_targa(unsigned int, unsigned int,
 		     BYTE, BYTE, BYTE);
-void dvid_status(int,char *);
+void disk_video_status(int,char *);
 
 int made_dsktemp = 0;
 
-int startdisk()
+int disk_start()
 {
-   headerlength = disktarga = 0;
-   return (common_startdisk(sxdots,sydots,colors));
+   headerlength = g_disk_targa = 0;
+   return (disk_start_common(g_screen_width,g_screen_height,g_colors));
    }
 
-int pot_startdisk()
+int disk_start_potential()
 {
    int i;
-   if (dotmode == 11) /* ditch the original disk file */
-      enddisk();
+   if (g_dot_mode == 11) /* ditch the original disk file */
+      disk_end();
    else
       showtempmsg("clearing 16bit pot work area");
-   headerlength = disktarga = 0;
-   i = common_startdisk(sxdots,sydots<<1,colors);
+   headerlength = g_disk_targa = 0;
+   i = disk_start_common(g_screen_width,g_screen_height<<1,g_colors);
    cleartempmsg();
-   disk16bit = 1;
+   g_disk_16bit = 1;
    return (i);
    }
 
-int targa_startdisk(FILE *targafp,int overhead)
+int disk_start_targa(FILE *targafp,int overhead)
 {
    int i;
-   if (dotmode == 11) { /* ditch the original disk file, make just the targa */
-      enddisk();      /* close the 'screen' */
+   if (g_dot_mode == 11) { /* ditch the original disk file, make just the targa */
+      disk_end();      /* close the 'screen' */
       setnullvideo(); /* set readdot and writedot routines to do nothing */
       }
    headerlength = overhead;
    fp = targafp;
-   disktarga = 1;
-   i = common_startdisk(sxdots*3,sydots,colors);
+   g_disk_targa = 1;
+   i = disk_start_common(g_screen_width*3,g_screen_height,g_colors);
    return (i);
 }
 
-int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
+int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 {
    int i;
    long memorysize;
 
    if (g_disk_flag)
-      enddisk();
-   if (dotmode == 11) { /* otherwise, real screen also in use, don't hit it */
+      disk_end();
+   if (g_dot_mode == 11) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
       helptitle();
       setattr(1,0,C_DVID_BKGRD,24*80);	/* init rest to background */
@@ -92,9 +92,9 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
 	 setattr(BOXROW+i,BOXCOL,C_DVID_LO,BOXWIDTH);  /* init box */
       putstring(BOXROW+2,BOXCOL+4,C_DVID_HI,"'Disk-Video' mode");
       putstring(BOXROW+4,BOXCOL+4,C_DVID_LO,"Screen resolution: ");
-      sprintf(buf,"%d x %d",sxdots,sydots);
+      sprintf(buf,"%d x %d",g_screen_width,g_screen_height);
       putstring(-1,-1,C_DVID_LO,buf);
-      if (disktarga)
+      if (g_disk_targa)
 	 putstring(-1,-1,C_DVID_LO,"  24 bit Targa");
       else {
 	 putstring(-1,-1,C_DVID_LO,"  Colors: ");
@@ -102,7 +102,7 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
 	 putstring(-1,-1,C_DVID_LO,buf);
 	 }
       putstring(BOXROW+8,BOXCOL+4,C_DVID_LO,"Status:");
-      dvid_status(0,"clearing the 'screen'");
+      disk_video_status(0,"clearing the 'screen'");
       }
    timetodisplay = TIMETODISPLAY;  /* time-to-display-status counter */
 
@@ -119,25 +119,25 @@ int _fastcall  common_startdisk(long newrowsize, long newcolsize, int colors)
   bzero(dataPtr,memorysize);
 
 /* common_okend: */
-   if (dotmode == 11)
-      dvid_status(0,"");
+   if (g_dot_mode == 11)
+      disk_video_status(0,"");
    return(0);
 }
 
-void enddisk()
+void disk_end()
 {
-   g_disk_flag = rowsize = disk16bit = 0;
+   g_disk_flag = rowsize = g_disk_16bit = 0;
    fp	       = NULL;
 }
 
-int readdisk(int col, int row)
+int disk_read(int col, int row)
 {
    char buf[41];
    if (--timetodisplay < 0) {  /* time to display status? */
-      if (dotmode == 11) {
+      if (g_dot_mode == 11) {
 	 sprintf(buf," reading line %4d",
-		(row >= sydots) ? row-sydots : row); /* adjust when potfile */
-	 dvid_status(0,buf);
+		(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
+	 disk_video_status(0,buf);
 	 }
       timetodisplay = TIMETODISPLAY;
       }
@@ -147,29 +147,29 @@ int readdisk(int col, int row)
    return dataPtr[row*rowsize+col];
 }
 
-int FromMemDisk(long offset, int size, void *dest)
+int disk_from_memory(long offset, int size, void *dest)
 {
    memcpy(dest, (void *) (dataPtr+offset), size);
    return 1;
 }
 
-void targa_readdisk(unsigned int col, unsigned int row,
+void disk_read_targa(unsigned int col, unsigned int row,
 		    BYTE *red, BYTE *green, BYTE *blue)
 {
    col *= 3;
-   *blue  = readdisk(col,row);
-   *green = readdisk(++col,row);
-   *red   = readdisk(col+1,row);
+   *blue  = disk_read(col,row);
+   *green = disk_read(++col,row);
+   *red   = disk_read(col+1,row);
 }
 
-void writedisk(int col, int row, int color)
+void disk_write(int col, int row, int color)
 {
    char buf[41];
    if (--timetodisplay < 0) {  /* time to display status? */
-      if (dotmode == 11) {
+      if (g_dot_mode == 11) {
 	 sprintf(buf," writing line %4d",
-		(row >= sydots) ? row-sydots : row); /* adjust when potfile */
-	 dvid_status(0,buf);
+		(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
+	 disk_video_status(0,buf);
 	 }
       timetodisplay = TIMETODISPLAY;
       }
@@ -179,21 +179,21 @@ void writedisk(int col, int row, int color)
    dataPtr[row*rowsize+col] = color;
 }
 
-int ToMemDisk(long offset, int size, void *src)
+int disk_to_memory(long offset, int size, void *src)
 {
     memcpy((void *) (dataPtr+offset), src, size);
     return 1;
 }
 
-void targa_writedisk(unsigned int col, unsigned int row,
+void disk_write_targa(unsigned int col, unsigned int row,
 		    BYTE red, BYTE green, BYTE blue)
 {
-   writedisk(col*=3,row,blue);
-   writedisk(++col, row,green);
-   writedisk(col+1, row,red);
+   disk_write(col*=3,row,blue);
+   disk_write(++col, row,green);
+   disk_write(col+1, row,red);
 }
 
-void dvid_status(int line,char *msg)
+void disk_video_status(int line,char *msg)
 {
    char buf[41];
    int attrib;

@@ -19,15 +19,11 @@
 
 #include "port.h"
 #include "prototyp.h"
-int overflow = 0;
+int g_overflow = 0;
 
 int boxx[2304], boxy[1024];
 int boxvalues[512];
-char tstack[4096];
 BYTE g_dac_box[256][3];
-BYTE olddacbox[256][3];
-
-extern int tabmode;
 
 int DivideOverflow = 0;
 int cpu=0;		/* cpu type: 86, 186, 286, or 386 */
@@ -35,8 +31,8 @@ int fpu=0;		/* fpu type: 0, 87, 287, 387 */
 
 /* ********************** Mouse Support Variables ************************** */
 
-int lookatmouse=LOOK_MOUSE_NONE;	/* see notes at mouseread routine */
-int finishrow=0;	/* save when this row is finished */
+int g_look_at_mouse = LOOK_MOUSE_NONE;	/* see notes at mouseread routine */
+int g_finish_row=0;	/* save when this row is finished */
 
 int inside_help = 0;
 
@@ -49,7 +45,7 @@ void
 initasmvars(void)
 {
     if (cpu!=0) return;
-    overflow = 0;
+    g_overflow = 0;
 
     /* set cpu type */
     cpu = 1;
@@ -60,7 +56,7 @@ initasmvars(void)
 
 void fpe_handler(int signum)
 {
-    overflow = 1;
+    g_overflow = 1;
 }
 
 /*
@@ -88,7 +84,7 @@ int n;
     register long l;
     l = ((float)x)* ((float)y)/(float)(1<<n);
     if (l==0x7fffffff) {
-	overflow = 1;
+	g_overflow = 1;
     }
     return l;
 }
@@ -139,13 +135,13 @@ keypressed(void) {
     ch = getkeynowait();
     if (!ch) return 0;
     keybuffer = ch;
-    if (ch==FIK_F1 && helpmode) {
+    if (ch==FIK_F1 && g_help_mode) {
 	keybuffer = 0;
 	inside_help = 1;
 	help(0);
 	inside_help = 0;
 	return 0;
-    } else if (ch==FIK_TAB && tabmode) {
+    } else if (ch==FIK_TAB && g_tab_mode) {
 	keybuffer = 0;
 	tab_display();
 	return 0;
@@ -264,7 +260,7 @@ void
 buzzer(buzzertype)
 int buzzertype;
 {
-    if ((soundflag & 7) != 0) {
+    if ((g_sound_flags & 7) != 0) {
         printf("\007");
         fflush(stdout);
     }
@@ -387,132 +383,132 @@ decode_fractal_info(info,dir)
     }
     bufPtr += 8;
     getInt(&info->iterationsold,&bufPtr,dir);
-    getInt(&info->fractal_type,&bufPtr,dir);
-    getDouble(&info->xmin,&bufPtr,dir);
-    getDouble(&info->xmax,&bufPtr,dir);
-    getDouble(&info->ymin,&bufPtr,dir);
-    getDouble(&info->ymax,&bufPtr,dir);
-    getDouble(&info->creal,&bufPtr,dir);
-    getDouble(&info->cimag,&bufPtr,dir);
-    getInt(&info->videomodeax,&bufPtr,dir);
-    getInt(&info->videomodebx,&bufPtr,dir);
-    getInt(&info->videomodecx,&bufPtr,dir);
-    getInt(&info->videomodedx,&bufPtr,dir);
-    getInt(&info->dotmode,&bufPtr,dir);
-    getInt(&info->xdots,&bufPtr,dir);
-    getInt(&info->ydots,&bufPtr,dir);
-    getInt(&info->colors,&bufPtr,dir);
-    getInt(&info->version,&bufPtr,dir);
-    getFloat(&info->parm3,&bufPtr,dir);
-    getFloat(&info->parm4,&bufPtr,dir);
-    getFloat(&info->potential[0],&bufPtr,dir);
-    getFloat(&info->potential[1],&bufPtr,dir);
-    getFloat(&info->potential[2],&bufPtr,dir);
-    getInt(&info->rseed,&bufPtr,dir);
-    getInt(&info->rflag,&bufPtr,dir);
-    getInt(&info->biomorph,&bufPtr,dir);
-    getInt(&info->inside,&bufPtr,dir);
-    getInt(&info->logmap,&bufPtr,dir);
-    getFloat(&info->invert[0],&bufPtr,dir);
-    getFloat(&info->invert[1],&bufPtr,dir);
-    getFloat(&info->invert[2],&bufPtr,dir);
-    getInt(&info->decomp[0],&bufPtr,dir);
-    getInt(&info->decomp[1],&bufPtr,dir);
-    getInt(&info->symmetry,&bufPtr,dir);
+    getInt(&info->fractal_type, &bufPtr, dir);
+    getDouble(&info->x_min, &bufPtr, dir);
+    getDouble(&info->x_max, &bufPtr, dir);
+    getDouble(&info->y_min, &bufPtr, dir);
+    getDouble(&info->y_max, &bufPtr, dir);
+    getDouble(&info->c_real, &bufPtr, dir);
+    getDouble(&info->c_imag, &bufPtr, dir);
+    getInt(&info->videomodeax, &bufPtr, dir);
+    getInt(&info->videomodebx, &bufPtr, dir);
+    getInt(&info->videomodecx, &bufPtr, dir);
+    getInt(&info->videomodedx, &bufPtr, dir);
+    getInt(&info->dotmode, &bufPtr, dir);
+    getInt(&info->x_dots, &bufPtr, dir);
+    getInt(&info->y_dots, &bufPtr, dir);
+    getInt(&info->colors, &bufPtr, dir);
+    getInt(&info->version, &bufPtr, dir);
+    getFloat(&info->parm3, &bufPtr, dir);
+    getFloat(&info->parm4, &bufPtr, dir);
+    getFloat(&info->potential[0], &bufPtr, dir);
+    getFloat(&info->potential[1], &bufPtr, dir);
+    getFloat(&info->potential[2], &bufPtr, dir);
+    getInt(&info->random_seed, &bufPtr, dir);
+    getInt(&info->random_flag, &bufPtr, dir);
+    getInt(&info->biomorph, &bufPtr, dir);
+    getInt(&info->inside, &bufPtr, dir);
+    getInt(&info->logmap, &bufPtr, dir);
+    getFloat(&info->invert[0], &bufPtr, dir);
+    getFloat(&info->invert[1], &bufPtr, dir);
+    getFloat(&info->invert[2], &bufPtr, dir);
+    getInt(&info->decomposition[0], &bufPtr, dir);
+    getInt(&info->decomposition[1], &bufPtr, dir);
+    getInt(&info->symmetry, &bufPtr, dir);
     for (i=0;i<16;i++) {
-	getInt(&info->init3d[i],&bufPtr,dir);
+	getInt(&info->init_3d[i], &bufPtr, dir);
     }
-    getInt(&info->previewfactor,&bufPtr,dir);
-    getInt(&info->xtrans,&bufPtr,dir);
-    getInt(&info->ytrans,&bufPtr,dir);
-    getInt(&info->red_crop_left,&bufPtr,dir);
-    getInt(&info->red_crop_right,&bufPtr,dir);
-    getInt(&info->blue_crop_left,&bufPtr,dir);
-    getInt(&info->blue_crop_right,&bufPtr,dir);
-    getInt(&info->red_bright,&bufPtr,dir);
-    getInt(&info->blue_bright,&bufPtr,dir);
-    getInt(&info->xadjust,&bufPtr,dir);
-    getInt(&info->eyeseparation,&bufPtr,dir);
-    getInt(&info->glassestype,&bufPtr,dir);
-    getInt(&info->outside,&bufPtr,dir);
-    getDouble(&info->x3rd,&bufPtr,dir);
-    getDouble(&info->y3rd,&bufPtr,dir);
-    getChar(&info->stdcalcmode,&bufPtr,dir);
-    getChar(&info->useinitorbit,&bufPtr,dir);
-    getInt(&info->calc_status,&bufPtr,dir);
-    getLong(&info->tot_extend_len,&bufPtr,dir);
-    getInt(&info->distest,&bufPtr,dir);
-    getInt(&info->floatflag,&bufPtr,dir);
-    getInt(&info->bailoutold,&bufPtr,dir);
-    getLong(&info->calctime,&bufPtr,dir);
+    getInt(&info->previewfactor, &bufPtr, dir);
+    getInt(&info->xtrans, &bufPtr, dir);
+    getInt(&info->ytrans, &bufPtr, dir);
+    getInt(&info->red_crop_left, &bufPtr, dir);
+    getInt(&info->red_crop_right, &bufPtr, dir);
+    getInt(&info->blue_crop_left, &bufPtr, dir);
+    getInt(&info->blue_crop_right, &bufPtr, dir);
+    getInt(&info->red_bright, &bufPtr, dir);
+    getInt(&info->blue_bright, &bufPtr, dir);
+    getInt(&info->xadjust, &bufPtr, dir);
+    getInt(&info->eyeseparation, &bufPtr, dir);
+    getInt(&info->glassestype, &bufPtr, dir);
+    getInt(&info->outside, &bufPtr, dir);
+    getDouble(&info->x_3rd, &bufPtr, dir);
+    getDouble(&info->y_3rd, &bufPtr, dir);
+    getChar(&info->stdcalcmode, &bufPtr, dir);
+    getChar(&info->use_initial_orbit_z, &bufPtr, dir);
+    getInt(&info->calculation_status, &bufPtr, dir);
+    getLong(&info->tot_extend_len, &bufPtr, dir);
+    getInt(&info->distance_test, &bufPtr, dir);
+    getInt(&info->float_flag, &bufPtr, dir);
+    getInt(&info->bailoutold, &bufPtr, dir);
+    getLong(&info->calculation_time, &bufPtr, dir);
     for (i=0;i<4;i++) {
-	getChar(&info->trigndx[i],&bufPtr,dir);
+	getChar(&info->trig_index[i], &bufPtr, dir);
     }
-    getInt(&info->finattract,&bufPtr,dir);
-    getDouble(&info->initorbit[0],&bufPtr,dir);
-    getDouble(&info->initorbit[1],&bufPtr,dir);
-    getInt(&info->periodicity,&bufPtr,dir);
-    getInt(&info->pot16bit,&bufPtr,dir);
-    getFloat(&info->faspectratio,&bufPtr,dir);
-    getInt(&info->system,&bufPtr,dir);
-    getInt(&info->release,&bufPtr,dir);
-    getInt(&info->flag3d,&bufPtr,dir);
-    getInt(&info->transparent[0],&bufPtr,dir);
-    getInt(&info->transparent[1],&bufPtr,dir);
-    getInt(&info->ambient,&bufPtr,dir);
-    getInt(&info->haze,&bufPtr,dir);
-    getInt(&info->randomize,&bufPtr,dir);
-    getInt(&info->rotate_lo,&bufPtr,dir);
-    getInt(&info->rotate_hi,&bufPtr,dir);
-    getInt(&info->distestwidth,&bufPtr,dir);
-    getDouble(&info->dparm3,&bufPtr,dir);
-    getDouble(&info->dparm4,&bufPtr,dir);
-    getInt(&info->fillcolor,&bufPtr,dir);
-    getDouble(&info->mxmaxfp,&bufPtr,dir);
-    getDouble(&info->mxminfp,&bufPtr,dir);
-    getDouble(&info->mymaxfp,&bufPtr,dir);
-    getDouble(&info->myminfp,&bufPtr,dir);
-    getInt(&info->zdots,&bufPtr,dir);
-    getFloat(&info->originfp,&bufPtr,dir);
-    getFloat(&info->depthfp,&bufPtr,dir);
-    getFloat(&info->heightfp,&bufPtr,dir);
-    getFloat(&info->widthfp,&bufPtr,dir);
-    getFloat(&info->distfp,&bufPtr,dir);
-    getFloat(&info->eyesfp,&bufPtr,dir);
-    getInt(&info->orbittype,&bufPtr,dir);
-    getInt(&info->juli3Dmode,&bufPtr,dir);
-    getInt(&info->maxfn,&bufPtr,dir);
-    getInt(&info->inversejulia,&bufPtr,dir);
-    getDouble(&info->dparm5,&bufPtr,dir);
-    getDouble(&info->dparm6,&bufPtr,dir);
-    getDouble(&info->dparm7,&bufPtr,dir);
-    getDouble(&info->dparm8,&bufPtr,dir);
-    getDouble(&info->dparm9,&bufPtr,dir);
-    getDouble(&info->dparm10,&bufPtr,dir);
-    getLong(&info->bailout,&bufPtr,dir);  
-    getInt(&info->bailoutest,&bufPtr,dir);
-    getLong(&info->iterations,&bufPtr,dir);
-    getInt(&info->bf_math,&bufPtr,dir);
-    getInt(&info->bflength,&bufPtr,dir);
-    getInt(&info->yadjust,&bufPtr,dir); 
-    getInt(&info->old_demm_colors,&bufPtr,dir);
-    getLong(&info->logmap,&bufPtr,dir);
-    getLong(&info->distest,&bufPtr,dir);
-    getDouble(&info->dinvert[0],&bufPtr,dir);
-    getDouble(&info->dinvert[1],&bufPtr,dir);
-    getDouble(&info->dinvert[2],&bufPtr,dir);
-    getInt(&info->logcalc,&bufPtr,dir);
-    getInt(&info->stoppass,&bufPtr,dir);
-    getInt(&info->quick_calc,&bufPtr,dir);
-    getDouble(&info->closeprox,&bufPtr,dir);
-    getInt(&info->nobof,&bufPtr,dir);
-    getLong(&info->orbit_interval,&bufPtr,dir);
-    getInt(&info->orbit_delay,&bufPtr,dir);
-    getDouble(&info->math_tol[0],&bufPtr,dir);
-    getDouble(&info->math_tol[1],&bufPtr,dir);
+    getInt(&info->finattract, &bufPtr, dir);
+    getDouble(&info->initial_orbit_z[0], &bufPtr, dir);
+    getDouble(&info->initial_orbit_z[1], &bufPtr, dir);
+    getInt(&info->periodicity, &bufPtr, dir);
+    getInt(&info->potential_16bit, &bufPtr, dir);
+    getFloat(&info->faspectratio, &bufPtr, dir);
+    getInt(&info->system, &bufPtr, dir);
+    getInt(&info->release, &bufPtr, dir);
+    getInt(&info->flag3d, &bufPtr, dir);
+    getInt(&info->transparent[0], &bufPtr, dir);
+    getInt(&info->transparent[1], &bufPtr, dir);
+    getInt(&info->ambient, &bufPtr, dir);
+    getInt(&info->haze, &bufPtr, dir);
+    getInt(&info->randomize, &bufPtr, dir);
+    getInt(&info->rotate_lo, &bufPtr, dir);
+    getInt(&info->rotate_hi, &bufPtr, dir);
+    getInt(&info->distance_test_width, &bufPtr, dir);
+    getDouble(&info->dparm3, &bufPtr, dir);
+    getDouble(&info->dparm4, &bufPtr, dir);
+    getInt(&info->fill_color, &bufPtr, dir);
+    getDouble(&info->mxmaxfp, &bufPtr, dir);
+    getDouble(&info->mxminfp, &bufPtr, dir);
+    getDouble(&info->mymaxfp, &bufPtr, dir);
+    getDouble(&info->myminfp, &bufPtr, dir);
+    getInt(&info->zdots, &bufPtr, dir);
+    getFloat(&info->originfp, &bufPtr, dir);
+    getFloat(&info->depthfp, &bufPtr, dir);
+    getFloat(&info->heightfp, &bufPtr, dir);
+    getFloat(&info->widthfp, &bufPtr, dir);
+    getFloat(&info->screen_distance_fp, &bufPtr, dir);
+    getFloat(&info->eyesfp, &bufPtr, dir);
+    getInt(&info->orbittype, &bufPtr, dir);
+    getInt(&info->juli3Dmode, &bufPtr, dir);
+    getInt(&info->max_fn, &bufPtr, dir);
+    getInt(&info->inversejulia, &bufPtr, dir);
+    getDouble(&info->dparm5, &bufPtr, dir);
+    getDouble(&info->dparm6, &bufPtr, dir);
+    getDouble(&info->dparm7, &bufPtr, dir);
+    getDouble(&info->dparm8, &bufPtr, dir);
+    getDouble(&info->dparm9, &bufPtr, dir);
+    getDouble(&info->dparm10, &bufPtr, dir);
+    getLong(&info->bail_out, &bufPtr, dir);  
+    getInt(&info->bailoutest, &bufPtr, dir);
+    getLong(&info->iterations, &bufPtr, dir);
+    getInt(&info->bf_math, &bufPtr, dir);
+    getInt(&info->bflength, &bufPtr, dir);
+    getInt(&info->yadjust, &bufPtr, dir); 
+    getInt(&info->old_demm_colors, &bufPtr, dir);
+    getLong(&info->logmap, &bufPtr, dir);
+    getLong(&info->distance_test, &bufPtr, dir);
+    getDouble(&info->dinvert[0], &bufPtr, dir);
+    getDouble(&info->dinvert[1], &bufPtr, dir);
+    getDouble(&info->dinvert[2], &bufPtr, dir);
+    getInt(&info->logcalc, &bufPtr, dir);
+    getInt(&info->stop_pass, &bufPtr, dir);
+    getInt(&info->quick_calculate, &bufPtr, dir);
+    getDouble(&info->proximity, &bufPtr, dir);
+    getInt(&info->no_bof, &bufPtr, dir);
+    getLong(&info->orbit_interval, &bufPtr, dir);
+    getInt(&info->orbit_delay, &bufPtr, dir);
+    getDouble(&info->math_tolerance[0], &bufPtr, dir);
+    getDouble(&info->math_tolerance[1], &bufPtr, dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
-        getInt(&info->future[i],&bufPtr,dir);
+        getInt(&info->future[i], &bufPtr, dir);
     }   
     if (bufPtr-buf != FRACTAL_INFO_SIZE) {
 	printf("Warning: loadfile miscount on fractal_info structure.\n");
@@ -520,7 +516,7 @@ decode_fractal_info(info,dir)
 		bufPtr-buf, FRACTAL_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,FRACTAL_INFO_SIZE);
+	bcopy((char *)buf, (char *)info, FRACTAL_INFO_SIZE);
     }
 
     free(buf);
@@ -530,7 +526,7 @@ decode_fractal_info(info,dir)
  * This routine gets a char out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getChar(dst,src,dir)
+static void getChar(dst, src, dir)
     unsigned char *dst;
     unsigned char **src;
     int dir;
@@ -547,7 +543,7 @@ static void getChar(dst,src,dir)
  * This routine gets an int out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getInt(dst,src,dir)
+static void getInt(dst, src, dir)
     short *dst;
     unsigned char **src;
     int dir;
@@ -565,7 +561,7 @@ static void getInt(dst,src,dir)
  * This routine gets a long out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getLong(dst,src,dir)
+static void getLong(dst, src, dir)
     long *dst;
     unsigned char **src;
     int dir;
@@ -606,7 +602,7 @@ static void getLong(dst,src,dir)
  * buffer;
  * It updates the buffer pointer accordingly.
  */
-static void getDouble(dst,src,dir)
+static void getDouble(dst, src, dir)
     double *dst;
     unsigned char **src;
     int dir;
@@ -631,7 +627,7 @@ static void getDouble(dst,src,dir)
       f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
     (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
 #endif
-	    f *= pow(2.,(double)e);
+	    f *= pow(2., (double)e);
 	    if ((*src)[7]&0x80) {
 		f = -f;
 	    }
@@ -639,7 +635,7 @@ static void getDouble(dst,src,dir)
 	}
     } else {
 	if (*dst==0) {
-	    bzero((char *)(*src),8);
+	    bzero((char *)(*src), 8);
 	} else {
 	    int s=0;
 	    f = *dst;
@@ -648,7 +644,7 @@ static void getDouble(dst,src,dir)
 		f = -f;
 	    }
 	    e = log(f)/log(2.);
-	    f = f/pow(2.,(double)e) - 1;
+	    f = f/pow(2., (double)e) - 1;
 	    if (f<0) {
 		e--;
 		f = (f+1)*2-1;
@@ -681,7 +677,7 @@ static void getDouble(dst,src,dir)
  * This routine gets a float out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void getFloat(dst,src,dir)
+static void getFloat(dst, src, dir)
     float *dst;
     unsigned char **src;
     int dir;
@@ -703,7 +699,7 @@ static void getFloat(dst,src,dir)
       e = ((((*src)[3]&0x7f)<<1) | (((*src)[2]&0x80)>>7)) - 127;
       f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
 #endif
-	    f *= pow(2.,(double)e);
+	    f *= pow(2., (double)e);
 	    if ((*src)[3]&0x80) {
 		f = -f;
 	    }
@@ -711,7 +707,7 @@ static void getFloat(dst,src,dir)
 	}
     } else {
 	if (*dst==0) {
-	    bzero((char *)(*src),4);
+	    bzero((char *)(*src), 4);
 	} else {
 	    int s=0;
 	    f = *dst;
@@ -720,7 +716,7 @@ static void getFloat(dst,src,dir)
 		f = -f;
 	    }
 	    e = log(f)/log(2.);
-	    f = f/pow(2.,(double)e) - 1;
+	    f = f/pow(2., (double)e) - 1;
 	    if (f<0) {
 		e--;
 		f = (f+1)*2-1;
@@ -745,7 +741,7 @@ static void getFloat(dst,src,dir)
  * Fix up the ranges data.
  */
 void
-fix_ranges(ranges,num,dir)
+fix_ranges(ranges, num, dir)
     int *ranges, num;
     int dir;
 {
@@ -763,13 +759,13 @@ fix_ranges(ranges,num,dir)
 	bcopy((char *)ranges, (char *)buf, num*sizeof(int));
     }
     for (i=0;i<num;i++) {
-	getInt(&ranges[i],&bufPtr,dir);
+	getInt(&ranges[i], &bufPtr, dir);
     }
     free((char *)buf);
 }
 
 void
-decode_evolver_info(info,dir)
+decode_evolver_info(info, dir)
     struct evolution_info *info;
     int dir;
 {
@@ -780,36 +776,36 @@ decode_evolver_info(info,dir)
     if (dir==1) {
 	buf = (unsigned char *)malloc(EVOLVER_INFO_SIZE);
 	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,EVOLVER_INFO_SIZE);
+	bcopy((char *)info, (char *)buf, EVOLVER_INFO_SIZE);
     }  else {
 	buf = (unsigned char *)malloc(sizeof(struct evolution_info));
 	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,sizeof(struct evolution_info));
+	bcopy((char *)info, (char *)buf, sizeof(struct evolution_info));
     }
 
-    getInt(&info->evolving,&bufPtr,dir);
-    getInt(&info->gridsz,&bufPtr,dir);
-    getInt(&info->this_gen_rseed,&bufPtr,dir);
-    getDouble(&info->fiddlefactor,&bufPtr,dir);
-    getDouble(&info->paramrangex,&bufPtr,dir);
-    getDouble(&info->paramrangey,&bufPtr,dir);
-    getDouble(&info->opx,&bufPtr,dir);
-    getDouble(&info->opy,&bufPtr,dir);
-    getInt(&info->odpx,&bufPtr,dir);
-    getInt(&info->odpy,&bufPtr,dir);
-    getInt(&info->px,&bufPtr,dir);
-    getInt(&info->py,&bufPtr,dir);
-    getInt(&info->sxoffs,&bufPtr,dir);
-    getInt(&info->syoffs,&bufPtr,dir);
-    getInt(&info->xdots,&bufPtr,dir);
-    getInt(&info->ydots,&bufPtr,dir);
+    getInt(&info->evolving, &bufPtr, dir);
+    getInt(&info->gridsz, &bufPtr, dir);
+    getInt(&info->this_generation_random_seed, &bufPtr, dir);
+    getDouble(&info->fiddle_factor, &bufPtr, dir);
+    getDouble(&info->parameter_range_x, &bufPtr, dir);
+    getDouble(&info->parameter_range_y, &bufPtr, dir);
+    getDouble(&info->opx, &bufPtr, dir);
+    getDouble(&info->opy, &bufPtr, dir);
+    getInt(&info->odpx, &bufPtr, dir);
+    getInt(&info->odpy, &bufPtr, dir);
+    getInt(&info->px, &bufPtr, dir);
+    getInt(&info->py, &bufPtr, dir);
+    getInt(&info->sxoffs, &bufPtr, dir);
+    getInt(&info->syoffs, &bufPtr, dir);
+    getInt(&info->x_dots, &bufPtr, dir);
+    getInt(&info->y_dots, &bufPtr, dir);
     for (i=0;i<NUMGENES;i++) {
-        getInt(&info->mutate[i],&bufPtr,dir);
+        getInt(&info->mutate[i], &bufPtr, dir);
     }
-    getInt(&info->ecount,&bufPtr,dir);
+    getInt(&info->ecount, &bufPtr, dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
-        getInt(&info->future[i],&bufPtr,dir);
+        getInt(&info->future[i], &bufPtr, dir);
     }   
     if (bufPtr-buf != EVOLVER_INFO_SIZE) {
 	printf("Warning: loadfile miscount on evolution_info structure.\n");
@@ -817,14 +813,14 @@ decode_evolver_info(info,dir)
 		bufPtr-buf, EVOLVER_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,EVOLVER_INFO_SIZE);
+	bcopy((char *)buf, (char *)info, EVOLVER_INFO_SIZE);
     }
 
     free(buf);
 }
 
 void
-decode_orbits_info(info,dir)
+decode_orbits_info(info, dir)
     struct orbits_info *info;
     int dir;
 {
@@ -835,25 +831,25 @@ decode_orbits_info(info,dir)
     if (dir==1) {
 	buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
 	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,ORBITS_INFO_SIZE);
+	bcopy((char *)info, (char *)buf, ORBITS_INFO_SIZE);
     }  else {
 	buf = (unsigned char *)malloc(sizeof(struct orbits_info));
 	bufPtr = buf;
-	bcopy((char *)info,(char *)buf,sizeof(struct orbits_info));
+	bcopy((char *)info, (char *)buf, sizeof(struct orbits_info));
     }
 
-    getDouble(&info->oxmin,&bufPtr,dir);
-    getDouble(&info->oxmax,&bufPtr,dir);
-    getDouble(&info->oymin,&bufPtr,dir);
-    getDouble(&info->oymax,&bufPtr,dir);
-    getDouble(&info->ox3rd,&bufPtr,dir);
-    getDouble(&info->oy3rd,&bufPtr,dir);
-    getInt(&info->keep_scrn_coords,&bufPtr,dir);
-    getChar(&info->drawmode,&bufPtr,dir);
-    getChar(&info->dummy,&bufPtr,dir);
+    getDouble(&info->oxmin, &bufPtr, dir);
+    getDouble(&info->oxmax, &bufPtr, dir);
+    getDouble(&info->oymin, &bufPtr, dir);
+    getDouble(&info->oymax, &bufPtr, dir);
+    getDouble(&info->ox3rd, &bufPtr, dir);
+    getDouble(&info->oy3rd, &bufPtr, dir);
+    getInt(&info->keep_scrn_coords, &bufPtr, dir);
+    getChar(&info->drawmode, &bufPtr, dir);
+    getChar(&info->dummy, &bufPtr, dir);
 
     for (i=0;i<(sizeof(info->future)/sizeof(short));i++) {
-        getInt(&info->future[i],&bufPtr,dir);
+        getInt(&info->future[i], &bufPtr, dir);
     }   
     if (bufPtr-buf != ORBITS_INFO_SIZE) {
 	printf("Warning: loadfile miscount on orbits_info structure.\n");
@@ -861,7 +857,7 @@ decode_orbits_info(info,dir)
 		bufPtr-buf, ORBITS_INFO_SIZE);
     } 
     if (dir==0) {
-	bcopy((char *)buf,(char *)info,ORBITS_INFO_SIZE);
+	bcopy((char *)buf, (char *)info, ORBITS_INFO_SIZE);
     }
 
     free(buf);

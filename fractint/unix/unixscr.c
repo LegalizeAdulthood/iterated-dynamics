@@ -43,6 +43,7 @@
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
+#include "externs.h"
 
 #ifdef LINUX
 #ifndef FNDELAY
@@ -66,18 +67,7 @@
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int) iocount)
 
 /* external variables (set in the FRACTINT.CFG file, but findable here */
-
-extern	int	dotmode;		/* video access method (= 19)	   */
-extern	int	sxdots, sydots; 	/* total # of dots on the screen   */
-extern	int	sxoffs, syoffs; 	/* offset of drawing area          */
-extern	int	colors; 		/* maximum colors available	   */
-extern	int	initmode;
-extern	int	g_adapter;
-extern	int	g_got_real_dac;
 extern	int	inside_help;
-extern  float	finalaspectratio;
-extern  float	screenaspect;
-extern	int	lookatmouse;
 
 extern VIDEOINFO x11_video_table[];
 
@@ -86,10 +76,6 @@ extern VIDEOINFO x11_video_table[];
 extern unsigned char dacbox[256][3];
 
 extern void drawbox();
-
-extern int g_text_type;
-extern int helpmode;
-extern int rotate_hi;
 
 extern void fpe_handler();
 
@@ -286,12 +272,7 @@ UnixInit()
 
 	if (standout())
 	{
-		g_text_type = 1;
 		standend();
-	}
-	else
-	{
-		g_text_type = 1;
 	}
 
 	initdacbox();
@@ -452,7 +433,7 @@ select_visual(void)
 	{
 	case StaticGray:
 	case StaticColor:
-		colors = 1 << Xdepth;
+		g_colors = 1 << Xdepth;
 		g_got_real_dac = 0;
 		fake_lut = 0;
 		g_is_true_color = 0;
@@ -460,7 +441,7 @@ select_visual(void)
 
 	case GrayScale:
 	case PseudoColor:
-		colors = 1 << Xdepth;
+		g_colors = 1 << Xdepth;
 		g_got_real_dac = 1;
 		fake_lut = 0;
 		g_is_true_color = 0;
@@ -468,7 +449,7 @@ select_visual(void)
 
 	case TrueColor:
 	case DirectColor:
-		colors = 256;
+		g_colors = 256;
 		g_got_real_dac = 0;
 		fake_lut = 1;
 		g_is_true_color = 0;
@@ -479,8 +460,8 @@ select_visual(void)
 		assert(1);
 		break;
 	}
-	if (colors > 256)
-		colors = 256;
+	if (g_colors > 256)
+		g_colors = 256;
 }
 
 /*
@@ -531,15 +512,15 @@ initUnixWindow()
 		fake_lut = 0;
 		g_is_true_color = 0;
 		g_got_real_dac = 1;
-		colors = 256;
-		for (i = 0; i < colors; i++)
+		g_colors = 256;
+		for (i = 0; i < g_colors; i++)
 		{
 			pixtab[i] = i;
 			ipixtab[i] = i;
 		}
 		if (fixcolors > 0)
 		{
-			colors = fixcolors;
+			g_colors = fixcolors;
 		}
 		if (Xgeometry)
 		{
@@ -548,8 +529,8 @@ initUnixWindow()
 		}
 		Xwinwidth &= -4;
 		Xwinheight &= -4;
-		sxdots = Xwinwidth;
-		sydots = Xwinheight;
+		g_screen_width = Xwinwidth;
+		g_screen_height = Xwinheight;
 	}
 	else
 	{  /* Use X window */
@@ -603,7 +584,7 @@ initUnixWindow()
 		select_visual();
 		if (fixcolors > 0)
 		{
-			colors = fixcolors;
+			g_colors = fixcolors;
 		}
 
 		if (fullscreen || onroot)
@@ -611,8 +592,8 @@ initUnixWindow()
 			Xwinwidth = DisplayWidth(Xdp, Xdscreen);
 			Xwinheight = DisplayHeight(Xdp, Xdscreen);
 		}
-		sxdots = Xwinwidth;
-		sydots = Xwinheight;
+		g_screen_width = Xwinwidth;
+		g_screen_height = Xwinheight;
 
 		Xwatt.background_pixel = BlackPixelOfScreen(Xsc);
 		Xwatt.bit_gravity = StaticGravity;
@@ -644,8 +625,8 @@ initUnixWindow()
 			XStoreName(Xdp, Xw, Fractint);
 			Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
 		}
-		colors = xcmapstuff();
-		if (rotate_hi == 255) rotate_hi = colors-1;
+		g_colors = xcmapstuff();
+		if (g_rotate_hi == 255) g_rotate_hi = g_colors-1;
 
 		XSetWMNormalHints(Xdp, Xw, size_hints);
 
@@ -661,9 +642,9 @@ initUnixWindow()
 
 	writevideopalette();
 
-	x11_video_table[0].xdots = sxdots;
-	x11_video_table[0].ydots = sydots;
-	x11_video_table[0].colors = colors;
+	x11_video_table[0].x_dots = g_screen_width;
+	x11_video_table[0].y_dots = g_screen_height;
+	x11_video_table[0].colors = g_colors;
 	x11_video_table[0].dotmode = (unixDisk) ? 11 : 19;
 }
 /*
@@ -739,7 +720,7 @@ clearXwindow()
 		/*
 		* Initialize image to pixtab[0].
 		*/
-		if (colors == 2)
+		if (g_colors == 2)
 		{
 			for (i = 0; i < Ximage->bytes_per_line; i++)
 			{
@@ -897,29 +878,29 @@ resizeWindow()
 
 	if (oldx != width || oldy != height)
 	{
-		sxdots = width & -4;
-		sydots = height & -4;
-		x11_video_table[0].xdots = sxdots;
-		x11_video_table[0].ydots = sydots;
-		oldx = sxdots;
-		oldy = sydots;
-		Xwinwidth = sxdots;
-		Xwinheight = sydots;
-		screenaspect = sydots/(float) sxdots;
-		finalaspectratio = screenaspect;
+		g_screen_width = width & -4;
+		g_screen_height = height & -4;
+		x11_video_table[0].x_dots = g_screen_width;
+		x11_video_table[0].y_dots = g_screen_height;
+		oldx = g_screen_width;
+		oldy = g_screen_height;
+		Xwinwidth = g_screen_width;
+		Xwinheight = g_screen_height;
+		g_screen_aspect_ratio = g_screen_height/(float) g_screen_width;
+		g_final_aspect_ratio = g_screen_aspect_ratio;
 		Xpad = 8;  /* default, unless changed below */
 		if (Xdepth == 1)
-			Xmwidth = 1 + sxdots/8;
+			Xmwidth = 1 + g_screen_width/8;
 		else if (Xdepth <= 8)
-			Xmwidth = sxdots;
+			Xmwidth = g_screen_width;
 		else if (Xdepth <= 16)
 		{  /* 15 or 16 bpp */
-			Xmwidth = 2*sxdots;
+			Xmwidth = 2*g_screen_width;
 			Xpad = 16;
 		}
 		else
 		{  /* 24 or 32 bpp */
-			Xmwidth = 4*sxdots;
+			Xmwidth = 4*g_screen_width;
 			Xpad = 32;
 		}
 		if (pixbuf != NULL)
@@ -929,8 +910,8 @@ resizeWindow()
 		pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
 		if (Ximage != NULL)
 			XDestroyImage(Ximage);
-		Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, NULL, sxdots,
-			sydots, Xpad, Xmwidth);
+		Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, NULL, g_screen_width,
+			g_screen_height, Xpad, Xmwidth);
 		if (Ximage == NULL)
 		{
 			fprintf(stderr, "XCreateImage failed\n");
@@ -977,7 +958,7 @@ xcmapstuff()
 	{
 		privatecolor = 0;
 	}
-	for (i = 0; i < colors; i++)
+	for (i = 0; i < g_colors; i++)
 	{
 		pixtab[i] = i;
 		ipixtab[i] = 999;
@@ -1003,13 +984,13 @@ xcmapstuff()
 		for (powr = Xdepth; powr >= 1; powr--)
 		{
 			ncells = 1 << powr;
-			if (ncells > colors)
+			if (ncells > g_colors)
 				continue;
 			if (XAllocColorCells(Xdp, Xcmap, False, NULL, 0, pixtab,
 				(unsigned int) ncells))
 			{
-				colors = ncells;
-				fprintf(stderr, "%d colors\n", colors);
+				g_colors = ncells;
+				fprintf(stderr, "%d colors\n", g_colors);
 				usepixtab = 1;
 				break;
 			}
@@ -1020,7 +1001,7 @@ xcmapstuff()
 			g_got_real_dac = 0;
 		}
 	}
-	for (i = 0; i < colors; i++)
+	for (i = 0; i < g_colors; i++)
 	{
 		ipixtab[pixtab[i]] = i;
 	}
@@ -1044,14 +1025,14 @@ xcmapstuff()
 		ipixtab[0] = 0;
 	}
 
-	if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(Xsc) != 0)
+	if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
 	{
 		pixtab[0] = ipixtab[0] = 1;
 		pixtab[1] = ipixtab[1] = 0;
 		usepixtab = 1;
 	}
 
-	return colors;
+	return g_colors;
 }
 /*
 *----------------------------------------------------------------------
@@ -1102,7 +1083,7 @@ BYTE *pixels;
 	{
 		XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
 	}
-	if (fastmode == 1 && helpmode != HELPXHAIR)
+	if (fastmode == 1 && g_help_mode != HELPXHAIR)
 	{
 		if (!alarmon)
 		{
@@ -1172,11 +1153,11 @@ void writevideo(x, y, color)
 int x, y, color;
 {
 #ifdef DEBUG /* Debugging checks */
-	if (color >= colors || color < 0)
+	if (color >= g_colors || color < 0)
 	{
-		fprintf(stderr, "Color %d too big %d\n", color, colors);
+		fprintf(stderr, "Color %d too big %d\n", color, g_colors);
 	}
-	if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+	if (x >= g_screen_width || x < 0 || y >= g_screen_height || y < 0)
 	{
 		fprintf(stderr, "Bad coord %d %d\n", x, y);
 	}
@@ -1187,7 +1168,7 @@ int x, y, color;
 		xlastcolor = color;
 	}
 	XPutPixel(Ximage, x, y, FAKE_LUT(pixtab[color]));
-	if (fastmode == 1 && helpmode != HELPXHAIR)
+	if (fastmode == 1 && g_help_mode != HELPXHAIR)
 	{
 		if (!alarmon)
 		{
@@ -1222,7 +1203,7 @@ int x, y, color;
 int readvideo(int x, int y)
 {
 #ifdef DEBUG /* Debugging checks */
-	if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+	if (x >= g_screen_width || x < 0 || y >= g_screen_height || y < 0)
 	{
 		fprintf(stderr, "Bad coord %d %d\n", x, y);
 	}
@@ -1231,7 +1212,7 @@ int readvideo(int x, int y)
 	{
 		int i;
 		XPixel pixel = XGetPixel(Ximage, x, y);
-		for (i = 0; i < colors; i++)
+		for (i = 0; i < g_colors; i++)
 			if (cmap_pixtab[i] == pixel)
 				return i;
 		return 0;
@@ -1261,8 +1242,8 @@ int readvideopalette()
 {
 
 	int i;
-	if (g_got_real_dac == 0 && g_is_true_color && truemode) return -1;
-	for (i = 0; i < colors; i++)
+	if (g_got_real_dac == 0 && g_is_true_color && g_true_mode) return -1;
+	for (i = 0; i < g_colors; i++)
 	{
 		g_dac_box[i][0] = cols[i].red/1024;
 		g_dac_box[i][1] = cols[i].green/1024;
@@ -1299,7 +1280,7 @@ int writevideopalette()
 			static unsigned char last_dac[256][3];
 			static int last_dac_inited = False;
 
-			for (i = 0; i < colors; i++)
+			for (i = 0; i < g_colors; i++)
 			{
 				if (!last_dac_inited ||
 					last_dac[i][0] != g_dac_box[i][0] ||
@@ -1344,7 +1325,7 @@ int writevideopalette()
 	else
 	{
 		/* g_got_real_dac => grayscale or pseudocolor displays */
-		for (i = 0; i < colors; i++)
+		for (i = 0; i < g_colors; i++)
 		{
 			cols[i].pixel = pixtab[i];
 			cols[i].flags = DoRed | DoGreen | DoBlue;
@@ -1354,7 +1335,7 @@ int writevideopalette()
 		}
 		if (!unixDisk)
 		{
-			XStoreColors(Xdp, Xcmap, cols, colors);
+			XStoreColors(Xdp, Xcmap, cols, g_colors);
 			XFlush(Xdp);
 
 			/* None of these changed the colors without redrawing the fractal
@@ -1918,8 +1899,8 @@ handleesc()
 #endif
 }
 
-extern int editpal_cursor;
-extern void Cursor_SetPos();
+extern int g_edit_pal_cursor;
+extern void cursor_set_position();
 
 int XZoomWaiting = 0;
 
@@ -2107,7 +2088,7 @@ static void OnKeyPress(XKeyEvent *xkey, int *ctl_mode, int *shift_mode)
 
 static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *lastx, int *lasty)
 {
-	if (editpal_cursor && !inside_help)
+	if (g_edit_pal_cursor && !inside_help)
 	{
 		while (XCheckWindowEvent(Xdp, Xw, PointerMotionMask, xevent))
 		{
@@ -2132,7 +2113,7 @@ static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *las
 			*bnum = 0;
 		}
 
-		if (lookatmouse == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
+		if (g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
 		{
 			*dx += (xevent->xmotion.x-*lastx)/MSCALE;
 			*dy += (xevent->xmotion.y-*lasty)/MSCALE;
@@ -2141,7 +2122,7 @@ static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *las
 		}
 		else
 		{
-			Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
+			cursor_set_position(xevent->xmotion.x, xevent->xmotion.y);
 			xbufkey = FIK_ENTER;
 		}
 	}
@@ -2153,7 +2134,7 @@ static void OnButtonPress(XEvent *xevent,
 {
 	int done = 0;
 	int banding = 0;
-	if (lookatmouse == LOOK_MOUSE_ZOOM_BOX || zoomoff == FALSE)
+	if (g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX || g_zoom_off == FALSE)
 	{
 		*lastx = xevent->xbutton.x;
 		*lasty = xevent->xbutton.y;
@@ -2178,16 +2159,16 @@ static void OnButtonPress(XEvent *xevent,
 			}
 			*bandx1 = xevent->xmotion.x;
 			*bandy1 = xevent->xmotion.y;
-			if (ABS(*bandx1-*bandx0)*finalaspectratio >
+			if (ABS(*bandx1-*bandx0)*g_final_aspect_ratio >
 				ABS(*bandy1-*bandy0))
 			{
 				*bandy1 = SIGN(*bandy1-*bandy0)*ABS(*bandx1-*bandx0)*
-					finalaspectratio + *bandy0;
+					g_final_aspect_ratio + *bandy0;
 			}
 			else
 			{
 				*bandx1 = SIGN(*bandx1-*bandx0)*ABS(*bandy1-*bandy0)/
-					finalaspectratio + *bandx0;
+					g_final_aspect_ratio + *bandx0;
 			}
 			if (!banding)
 			{
@@ -2198,7 +2179,7 @@ static void OnButtonPress(XEvent *xevent,
 					ABS(*bandy1-*bandy0) > 10)
 				{
 					banding = 1;
-					XSetForeground(Xdp, Xgc, colors-1);
+					XSetForeground(Xdp, Xgc, g_colors-1);
 					XSetFunction(Xdp, Xgc, GXxor);
 				}
 			}
@@ -2230,12 +2211,12 @@ static void OnButtonPress(XEvent *xevent,
 	{
 		*bandy1 = *bandy0+1;
 	}
-	zrotate = 0;
-	zskew = 0;
-	zbx = (MIN(*bandx0, *bandx1)-sxoffs)/dxsize;
-	zby = (MIN(*bandy0, *bandy1)-syoffs)/dysize;
-	zwidth = ABS(*bandx1-*bandx0)/dxsize;
-	zdepth = zwidth;
+	g_z_rotate = 0;
+	g_z_skew = 0;
+	g_zbx = (MIN(*bandx0, *bandx1)-g_sx_offset)/g_dx_size;
+	g_zby = (MIN(*bandy0, *bandy1)-g_sy_offset)/g_dy_size;
+	g_z_width = ABS(*bandx1-*bandx0)/g_dx_size;
+	g_z_depth = g_z_width;
 	if (!inside_help)
 	{
 		xbufkey = FIK_ENTER;
@@ -2278,15 +2259,15 @@ static void OnExpose(XExposeEvent *xexpose)
 		y = xexpose->y;
 		w = xexpose->width;
 		h = xexpose->height;
-		if (x+w > sxdots)
+		if (x+w > g_screen_width)
 		{
-			w = sxdots-x;
+			w = g_screen_width-x;
 		}
-		if (y+h > sydots)
+		if (y+h > g_screen_height)
 		{
-			h = sydots-y;
+			h = g_screen_height-y;
 		}
-		if (x < sxdots && y < sydots && w > 0 && h > 0)
+		if (x < g_screen_width && y < g_screen_height && w > 0 && h > 0)
 		{
 			XPutImage(Xdp, Xw, Xgc, Ximage,
 				xexpose->x, xexpose->y, xexpose->x, xexpose->y,
@@ -2363,7 +2344,7 @@ xhandleevents()
 		}  /* End switch */
 	}  /* End while */
 
-	if (!xbufkey && editpal_cursor && !inside_help && lookatmouse == LOOK_MOUSE_ZOOM_BOX &&
+	if (!xbufkey && g_edit_pal_cursor && !inside_help && g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX &&
 		(dx != 0 || dy != 0))
 	{
 		if (ABS(dx) > ABS(dy))
@@ -2790,10 +2771,10 @@ redrawscreen()
 {
 	if (alarmon)
 	{
-		XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0, sxdots, sydots);
+		XPutImage(Xdp, Xw, Xgc, Ximage, 0, 0, 0, 0, g_screen_width, g_screen_height);
 		if (onroot)
 		{
-			XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0, sxdots, sydots);
+			XPutImage(Xdp, Xpixmap, Xgc, Ximage, 0, 0, 0, 0, g_screen_width, g_screen_height);
 		}
 		alarmon = 0;
 	}
