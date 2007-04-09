@@ -124,7 +124,7 @@ void _fastcall history_save_info(void)
 	current.depthfp				= g_depth_fp;
 	current.heightfp			= g_height_fp;
 	current.widthfp				= g_width_fp;
-	current.distfp				= g_dist_fp;
+	current.screen_distance_fp				= g_screen_distance_fp;
 	current.eyesfp				= g_eyes_fp;
 	current.orbittype			= (short) g_new_orbit_type;
 	current.juli3Dmode			= (short) g_juli_3D_mode;
@@ -315,7 +315,7 @@ void _fastcall history_restore_info(void)
 	g_depth_fp             	= last.depthfp;
 	g_height_fp            	= last.heightfp;
 	g_width_fp             	= last.widthfp;
-	g_dist_fp              	= last.distfp;
+	g_screen_distance_fp              	= last.screen_distance_fp;
 	g_eyes_fp              	= last.eyesfp;
 	g_new_orbit_type        = last.orbittype;
 	g_juli_3D_mode			= last.juli3Dmode;

@@ -1017,11 +1017,11 @@ int bifurcation(void)
 
 	if (integerfractal)
 	{
-		g_initial_z_l.y = ymax - g_y_stop*dely;            /* Y-value of    */
+		g_initial_z_l.y = ymax - g_y_stop*g_delta_y;            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(yymax - g_y_stop*delyy); /* bottom pixels */
+		g_initial_z.y = (double)(yymax - g_y_stop*g_delta_y_fp); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1036,11 +1036,11 @@ int bifurcation(void)
 
 		if (integerfractal)
 		{
-			lRate = xmin + column*delx;
+			lRate = xmin + column*g_delta_x;
 		}
 		else
 		{
-			Rate = (double)(xxmin + column*delxx);
+			Rate = (double)(xxmin + column*g_delta_x_fp);
 		}
 		verhulst();        /* calculate array once per column */
 
@@ -1135,8 +1135,8 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = integerfractal
-			? (g_y_stop - (int)((lPopulation - g_initial_z_l.y) / dely))
-			: (g_y_stop - (int)((Population - g_initial_z.y) / delyy));
+			? (g_y_stop - (int)((lPopulation - g_initial_z_l.y) / g_delta_y))
+			: (g_y_stop - (int)((Population - g_initial_z.y) / g_delta_y_fp));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
@@ -1159,12 +1159,12 @@ static void bifurcation_period_init()
 	if (integerfractal)
 	{
 		lBif_savedpop = -1;
-		lBif_closenuf = dely / 8;
+		lBif_closenuf = g_delta_y / 8;
 	}
 	else
 	{
 		Bif_savedpop = -1.0;
-		Bif_closenuf = (double)delyy / 8.0;
+		Bif_closenuf = (double) g_delta_y_fp / 8.0;
 	}
 }
 

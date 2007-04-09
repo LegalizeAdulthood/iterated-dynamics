@@ -532,7 +532,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_origin_fp = 8;
 	g_height_fp = 7;
 	g_width_fp = 10;
-	g_dist_fp = 24;
+	g_screen_distance_fp = 24.0f;
 	g_eyes_fp = 2.5f;
 	g_depth_fp = 8;
 	g_new_orbit_type = JULIA;
@@ -968,8 +968,8 @@ static int make_par_arg(const cmd_context *context)
 	}
 	xdots = filexdots;
 	ydots = fileydots;
-	dxsize = xdots - 1;
-	dysize = ydots - 1;
+	g_dx_size = xdots - 1;
+	g_dy_size = ydots - 1;
 	calculate_fractal_initialize();
 	make_batch_file();
 #ifndef WINFRACT
@@ -1748,7 +1748,7 @@ static int julibrot_3d_arg(const cmd_context *context)
 	}
 	if (context->totparms > 5)
 	{
-		g_dist_fp = (float)context->floatval[5];
+		g_screen_distance_fp = (float)context->floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1806,7 +1806,7 @@ static int corners_arg(const cmd_context *context)
 		int old_bf_math;
 
 		old_bf_math = bf_math;
-		if (!bf_math || dec > decimals)
+		if (!bf_math || dec > g_decimals)
 		{
 			init_bf_dec(dec);
 		}
@@ -1851,7 +1851,7 @@ static int corners_arg(const cmd_context *context)
 			return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
 		}
 
-		if (dec > decimals)  /* get corners again if need more precision */
+		if (dec > g_decimals)  /* get corners again if need more precision */
 		{
 			int k;
 
@@ -2046,7 +2046,7 @@ static int center_mag_arg(const cmd_context *context)
 		int saved;
 		s_init_corners = 1;
 		old_bf_math = bf_math;
-		if (!bf_math || dec > decimals)
+		if (!bf_math || dec > g_decimals)
 		{
 			init_bf_dec(dec);
 		}

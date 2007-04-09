@@ -1011,7 +1011,7 @@ int get_cmd_string()
 
 /* --------------------------------------------------------------------- */
 
-int Distribution = 30, Offset = 0, Slope = 25;
+int g_gaussian_distribution = 30, Offset = 0, Slope = 25;
 long g_gaussian_constant;
 
 
@@ -1051,7 +1051,7 @@ int starfield(void)
 		starfield_values[2] = 100.0;
 	}
 
-	Distribution = (int)(starfield_values[0]);
+	g_gaussian_distribution = (int)(starfield_values[0]);
 	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	Slope = (int)(starfield_values[2]);
 
@@ -2527,7 +2527,7 @@ int get_browse_params()
 	old_autobrowse     = g_auto_browse;
 	old_brwschecktype  = g_browse_check_type;
 	old_brwscheckparms = g_browse_check_parameters;
-	old_doublecaution  = doublecaution;
+	old_doublecaution  = g_double_caution;
 	old_minbox         = minbox;
 	old_toosmall       = toosmall;
 	strcpy(old_browsemask, g_browse_mask);
@@ -2554,7 +2554,7 @@ get_brws_restart:
 
 	choices[++k] = "Confirm file deletes (y/n)";
 	uvalues[k].type='y';
-	uvalues[k].uval.ch.val = doublecaution;
+	uvalues[k].uval.ch.val = g_double_caution;
 
 	choices[++k] = "Smallest window to display (size in pixels)";
 	uvalues[k].type = 'f';
@@ -2589,7 +2589,7 @@ get_brws_restart:
 		g_ask_video = TRUE;
 		g_browse_check_parameters = TRUE;
 		g_browse_check_type  = TRUE;
-		doublecaution  = TRUE;
+		g_double_caution  = TRUE;
 		minbox = 3;
 		strcpy(g_browse_mask, "*.gif");
 		goto get_brws_restart;
@@ -2606,7 +2606,7 @@ get_brws_restart:
 
 	g_browse_check_parameters = (char)uvalues[++k].uval.ch.val;
 
-	doublecaution = uvalues[++k].uval.ch.val;
+	g_double_caution = uvalues[++k].uval.ch.val;
 
 	toosmall  = uvalues[++k].uval.dval;
 	if (toosmall < 0)
@@ -2630,11 +2630,13 @@ get_brws_restart:
 	if (g_auto_browse != old_autobrowse ||
 			g_browse_check_type != old_brwschecktype ||
 			g_browse_check_parameters != old_brwscheckparms ||
-			doublecaution != old_doublecaution ||
+			g_double_caution != old_doublecaution ||
 			toosmall != old_toosmall ||
 			minbox != old_minbox ||
 			!stricmp(g_browse_mask, old_browsemask))
+	{
 		i = -3;
+	}
 
 	if (evolving)  /* can't browse */
 	{

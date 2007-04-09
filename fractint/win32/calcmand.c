@@ -317,11 +317,11 @@ slowkbd:
 		mov		g_input_counter, 5000				; else, stuff an appropriate count	val
 		cmp		g_cpu, 386					; ("appropriate" to the CPU)
 		jae		short kbddiskadj			;  ...
-		cmp		dword ptr delmin + 4,	8		;	is 16-bit math good	enough?
+		cmp		dword ptr g_delta_min + 4,	8		;	is 16-bit math good	enough?
 		ja		kbddiskadj					;  yes.	test less often
 		mov		g_input_counter, 500				;	no.	 test more often
 kbddiskadj:
-		cmp		dotmode, 11					; disk	video?
+		cmp		g_dot_mode, 11					; disk	video?
 		jne		quickkbd					;  no, leave as	is
 		shr		g_input_counter, 1					; yes,	reduce count
 		shr		g_input_counter, 1					; yes,	reduce count
@@ -354,7 +354,7 @@ nokey:
 		jne		no16bitcode					;  yup.	 slow down.
 		cmp		g_cpu, 386					; are we on a 386?
 		jae		short code386bit			;  YAY!! 386-class speed!
-		cmp		dword ptr delmin + 4,	8		;	OK,	we're desperate.  16 bits OK?
+		cmp		dword ptr g_delta_min + 4,	8		;	OK,	we're desperate.  16 bits OK?
 		ja		yes16bitcode				;  YAY!	 16-bit	speed!
 no16bitcode:
 		call	code32bit					; BOO!! nap time.  Full 32 bit math
@@ -368,7 +368,7 @@ yes16bitcode:
 		jmp		kloopend					;  bypass the 386-specific code.
 
 code386bit:
-		cmp		delmin + 4, 8					; is 16-bit	math good enough?
+		cmp		g_delta_min + 4, 8					; is 16-bit	math good enough?
 		jbe		code386_32					; nope,	go do 32 bit stuff
 
 		; 16 bit on	386, now we	are	really gonna move

@@ -1000,7 +1000,7 @@ int unity_orbit(void)
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
 	long XXOne = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	if ((XXOne > g_two_fudge) || (labs(XXOne - g_one_fudge) < delmin))
+	if ((XXOne > g_two_fudge) || (labs(XXOne - g_one_fudge) < g_delta_min))
 	{
 		return 1;
 	}
@@ -1018,7 +1018,7 @@ int unity_orbit_fp(void)
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
 	double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
-	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < ddelmin))
+	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < g_delta_min_fp))
 	{
 		return 1;
 	}
@@ -3514,7 +3514,7 @@ int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
  * coordinates of the point in the complex plane corresponding to
  * the screen coordinates (col, row) at the current zoom corners
  * settings. The functions come in two flavors. One looks up the pixel
- * values using the precalculated grid arrays dx0, dx1, dy0, and dy1,
+ * values using the precalculated grid arrays g_delta_x0, g_delta_x1, g_delta_y0, and g_delta_y1,
  * which has a speed advantage but is limited to MAXPIXELS image
  * dimensions. The other calculates the complex coordinates at a
  * cost of two additions and two multiplications for each component,
@@ -3529,28 +3529,28 @@ int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
  * be maintained.
  */
 
-/* Real component, grid lookup version - requires dx0/dx1 arrays */
+/* Real component, grid lookup version - requires g_delta_x0/g_delta_x1 arrays */
 static double _fastcall dx_pixel_grid(void)
 {
-	return dx0[g_col] + dx1[g_row];
+	return g_delta_x0[g_col] + g_delta_x1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dx_pixel_calc(void)
 {
-	return (double) (xxmin + g_col*delxx + g_row*delxx2);
+	return (double) (xxmin + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
 }
 
-/* Imaginary component, grid lookup version - requires dy0/dy1 arrays */
+/* Imaginary component, grid lookup version - requires g_delta_y0/g_delta_y1 arrays */
 static double _fastcall dy_pixel_grid(void)
 {
-	return dy0[g_row] + dy1[g_col];
+	return g_delta_y0[g_row] + g_delta_y1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dy_pixel_calc(void)
 {
-	return (double)(yymax - g_row*delyy - g_col*delyy2);
+	return (double)(yymax - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
 }
 
 /* Real component, grid lookup version - requires lx0/lx1 arrays */
@@ -3562,7 +3562,7 @@ static long _fastcall lx_pixel_grid(void)
 /* Real component, calculation version - does not require arrays */
 static long _fastcall lx_pixel_calc(void)
 {
-	return xmin + g_col*delx + g_row*delx2;
+	return xmin + g_col*g_delta_x + g_row*g_delta_x2;
 }
 
 /* Imaginary component, grid lookup version - requires ly0/ly1 arrays */
@@ -3574,7 +3574,7 @@ static long _fastcall ly_pixel_grid(void)
 /* Imaginary component, calculation version - does not require arrays */
 static long _fastcall ly_pixel_calc(void)
 {
-	return ymax - g_row*dely - g_col*dely2;
+	return ymax - g_row*g_delta_y - g_col*g_delta_y2;
 }
 
 void set_pixel_calc_functions(void)

@@ -336,7 +336,7 @@ int strlen_needed()
 		length = 10; /* max 2147483647 */
 		break;
 	}
-	length += decimals;  /* decimal part */
+	length += g_decimals;  /* decimal part */
 	length += 2;         /* decimal point and sign */
 	length += 4;         /* null and a little extra for safety */
 	return length;
@@ -358,7 +358,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 
 	if (dec == 0)
 	{
-		dec = decimals;
+		dec = g_decimals;
 	}
 	onesbyte = r + bnlength - intlength;
 

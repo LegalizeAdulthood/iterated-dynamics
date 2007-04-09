@@ -22,14 +22,14 @@ unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
-double opx, opy, newopx, newopy, paramrangex, paramrangey, dpx, dpy, fiddlefactor;
+double opx, opy, newopx, newopy, paramrangex, paramrangey, g_delta_parameter_image_x, g_delta_parameter_image_y, fiddlefactor;
 double fiddle_reduction;
 double parmzoom;
 char odpx, odpy, newodpx, newodpy;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
-/* variation factors, opx, opy, paramrangex/y dpx, dpy.. used in field mapping
-	for smooth variation across screen. opx = offset param x, dpx = delta param
+/* variation factors, opx, opy, paramrangex/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
+	for smooth variation across screen. opx = offset param x, g_delta_parameter_image_x = delta param
 	per image, paramrangex = variation across grid of param ...likewise for py */
 /* fiddlefactor is amount of random mutation used in random modes ,
 	fiddle_reduction is used to decrease fiddlefactor from one generation to the
@@ -175,16 +175,16 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X:
-		*(double *)gene[i].addr = px*dpx + opx; /*paramspace x coord*per view delta px + offset */
+		*(double *)gene[i].addr = px*g_delta_parameter_image_x + opx; /*paramspace x coord*per view delta px + offset */
 		break;
 	case VARYINT_WITH_Y:
-		*(double *)gene[i].addr = lclpy*dpy + opy; /*same for y */
+		*(double *)gene[i].addr = lclpy*g_delta_parameter_image_y + opy; /*same for y */
 		break;
 	case VARYINT_WITH_X_PLUS_Y:
-		*(double *)gene[i].addr = px*dpx + opx +(lclpy*dpy) + opy; /*and x + y */
+		*(double *)gene[i].addr = px*g_delta_parameter_image_x + opx +(lclpy*g_delta_parameter_image_y) + opy; /*and x + y */
 		break;
 	case VARYINT_WITH_X_MINUS_Y:
-		*(double *)gene[i].addr = (px*dpx + opx)-(lclpy*dpy + opy); /*and x-y*/
+		*(double *)gene[i].addr = (px*g_delta_parameter_image_x + opx)-(lclpy*g_delta_parameter_image_y + opy); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
 		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
@@ -1002,10 +1002,10 @@ void drawparmbox(int mode)
 
 	g_box_count = 0;
 	/*draw larger box to show parm zooming range */
-	tl.x = bl.x = ((px -(int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs-1;
-	tl.y = tr.y = ((py -(int)parmzoom)*(int)(dysize + 1 + grout))-syoffs-1;
-	br.x = tr.x = ((px +1 + (int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs;
-	br.y = bl.y = ((py +1 + (int)parmzoom)*(int)(dysize + 1 + grout))-syoffs;
+	tl.x = bl.x = ((px -(int)parmzoom)*(int)(g_dx_size + 1 + grout))-sxoffs-1;
+	tl.y = tr.y = ((py -(int)parmzoom)*(int)(g_dy_size + 1 + grout))-syoffs-1;
+	br.x = tr.x = ((px +1 + (int)parmzoom)*(int)(g_dx_size + 1 + grout))-sxoffs;
+	br.y = bl.y = ((py +1 + (int)parmzoom)*(int)(g_dy_size + 1 + grout))-syoffs;
 #ifndef XFRACT
 	addbox(br); addbox(tr); addbox(bl); addbox(tl);
 	drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
@@ -1046,10 +1046,10 @@ void set_evolve_ranges(void)
 {
 	int lclpy = gridsz - py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
-	paramrangex = dpx*(parmzoom*2.0);
-	paramrangey = dpy*(parmzoom*2.0);
-	newopx = opx + (((double)px-parmzoom)*dpx);
-	newopy = opy + (((double)lclpy-parmzoom)*dpy);
+	paramrangex = g_delta_parameter_image_x*(parmzoom*2.0);
+	paramrangey = g_delta_parameter_image_y*(parmzoom*2.0);
+	newopx = opx + (((double)px-parmzoom)*g_delta_parameter_image_x);
+	newopy = opy + (((double)lclpy-parmzoom)*g_delta_parameter_image_y);
 
 	newodpx = (char)(odpx + (px-gridsz/2));
 	newodpy = (char)(odpy + (lclpy-gridsz/2));

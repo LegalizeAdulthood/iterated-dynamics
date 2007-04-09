@@ -57,7 +57,7 @@ static t_linereader win32_line_reader;
 /*         int     videomodecx;                 ...and CX=(this)        */
 /*         int     videomodedx;                 ...and DX=(this)        */
 /*                                 NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-/*         int     dotmode;        video access method used by asm code */
+/*         int     dot_mode;        video access method used by asm code */
 /*                                      1 == BIOS 10H, AH=12, 13 (SLOW)  */
 /*                                      2 == access like EGA/VGA        */
 /*                                      3 == access like MCGA           */
@@ -632,7 +632,7 @@ disk_window(Driver *drv)
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
 
-; Unix: We ignore ax, bx, cx, dx.  dotmode is the "mode" field in the video
+; Unix: We ignore ax, bx, cx, dx.  g_dot_mode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
 static void
@@ -647,7 +647,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
-	if (dotmode != 0)
+	if (g_dot_mode != 0)
 	{
 		g_and_color = g_colors-1;
 		g_box_count = 0;
@@ -964,7 +964,7 @@ disk_put_char_attr(Driver *drv, int char_attr)
 static int
 disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	/* allow modes of any size with 256 g_colors and dotmode = 19
+	/* allow modes of any size with 256 g_colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode->g_colors == 256) &&
 		(mode->videomodeax == 0) &&

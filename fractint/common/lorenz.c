@@ -213,7 +213,7 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 	{
 		return -1;
 	}
-	xd = dxsize/det;
+	xd = g_dx_size/det;
 	scrn_cnvt->a =  xd*(yymax-yy3rd);
 	scrn_cnvt->b =  xd*(xx3rd-xxmin);
 	scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*yymax;
@@ -223,7 +223,7 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 	{
 		return -1;
 	}
-	yd = dysize/det;
+	yd = g_dy_size/det;
 	scrn_cnvt->c =  yd*(yymin-yy3rd);
 	scrn_cnvt->d =  yd*(xx3rd-xxmax);
 	scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
@@ -2001,10 +2001,10 @@ int dynamic_2d_fp()
 			}
 		}
 
-		xpixel = dxsize*(xstep + .5)/s_d;
-		ypixel = dysize*(ystep + .5)/s_d;
-		x = (double) ((xxmin + delxx*xpixel) + (delxx2*ypixel));
-		y = (double) ((yymax-delyy*ypixel) + (-delyy2*xpixel));
+		xpixel = g_dx_size*(xstep + .5)/s_d;
+		ypixel = g_dy_size*(ystep + .5)/s_d;
+		x = (double) ((xxmin + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
+		y = (double) ((yymax-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
 		if (fractype == MANDELCLOUD)
 		{
 			s_a = x;
@@ -2085,7 +2085,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 	{
 		return -1;
 	}
-	xd = dxsize/det;
+	xd = g_dx_size/det;
 	scrn_cnvt->a =  xd*(g_orbit_y_max-g_orbit_y_3rd);
 	scrn_cnvt->b =  xd*(g_orbit_x_3rd-g_orbit_x_min);
 	scrn_cnvt->e = -scrn_cnvt->a*g_orbit_x_min - scrn_cnvt->b*g_orbit_y_max;
@@ -2095,7 +2095,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 	{
 		return -1;
 	}
-	yd = dysize/det;
+	yd = g_dy_size/det;
 	scrn_cnvt->c =  yd*(g_orbit_y_min-g_orbit_y_3rd);
 	scrn_cnvt->d =  yd*(g_orbit_x_3rd-g_orbit_x_max);
 	scrn_cnvt->f = -scrn_cnvt->c*g_orbit_x_min - scrn_cnvt->d*g_orbit_y_max;

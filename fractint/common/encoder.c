@@ -894,7 +894,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->depthfp = g_depth_fp;
 	save_info->heightfp = g_height_fp;
 	save_info->widthfp = g_width_fp;
-	save_info->distfp = g_dist_fp;
+	save_info->screen_distance_fp = g_screen_distance_fp;
 	save_info->eyesfp = g_eyes_fp;
 	save_info->orbittype = (short) g_new_orbit_type;
 	save_info->juli3Dmode = (short) g_juli_3D_mode;
