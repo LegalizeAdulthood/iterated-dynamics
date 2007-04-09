@@ -91,7 +91,7 @@ int test(void)
 					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
 					return -1;
 				}
-				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, g_inside);
+				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_inside);
 				if (color >= g_colors)  /* avoid trouble if color is 0 */
 				{
 					if (g_colors < 16)
@@ -509,7 +509,7 @@ int plasma(void)
 
 	if (s_max_plasma == 0)
 	{
-		s_plasma_colors = min(g_colors, max_colors);
+		s_plasma_colors = min(g_colors, g_max_colors);
 		for (n = 0; n < 4; n++)
 		{
 			rnd[n] = (U16)(1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
@@ -1009,13 +1009,13 @@ int bifurcation(void)
 
 	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULTFILTER : (long)g_parameter.x;
 	s_half_time_check = FALSE;
-	if (g_periodicity_check && (unsigned long)maxit < s_filter_cycles)
+	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
 	{
-		s_filter_cycles = (s_filter_cycles - maxit + 1) / 2;
+		s_filter_cycles = (s_filter_cycles - g_max_iteration + 1) / 2;
 		s_half_time_check = TRUE;
 	}
 
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		g_initial_z_l.y = ymax - g_y_stop*g_delta_y;            /* Y-value of    */
 	}
@@ -1034,7 +1034,7 @@ int bifurcation(void)
 			return -1;
 		}
 
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			lRate = xmin + column*g_delta_x;
 		}
@@ -1074,7 +1074,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 	unsigned int pixel_row, errors;
 	unsigned long counter;
 
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		lPopulation = (g_parameter.y == 0) ? (long)(SEED*g_fudge) : (long)(g_parameter.y*g_fudge);
 	}
@@ -1096,7 +1096,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 	if (s_half_time_check) /* check for periodicity at half-time */
 	{
 		bifurcation_period_init();
-		for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
+		for (counter = 0 ; counter < (unsigned long)g_max_iteration ; counter++)
 		{
 			errors = g_current_fractal_specific->orbitcalc();
 			if (errors)
@@ -1108,7 +1108,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 				break;
 			}
 		}
-		if (counter >= (unsigned long)maxit)   /* if not periodic, go the distance */
+		if (counter >= (unsigned long)g_max_iteration)   /* if not periodic, go the distance */
 		{
 			for (counter = 0 ; counter < s_filter_cycles ; counter++)
 			{
@@ -1125,7 +1125,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 	{
 		bifurcation_period_init();
 	}
-	for (counter = 0 ; counter < (unsigned long)maxit ; counter++)
+	for (counter = 0 ; counter < (unsigned long)g_max_iteration ; counter++)
 	{
 		errors = g_current_fractal_specific->orbitcalc();
 		if (errors)
@@ -1134,7 +1134,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		}
 
 		/* assign population value to Y coordinate in pixels */
-		pixel_row = integerfractal
+		pixel_row = g_integer_fractal
 			? (g_y_stop - (int)((lPopulation - g_initial_z_l.y) / g_delta_y))
 			: (g_y_stop - (int)((Population - g_initial_z.y) / g_delta_y_fp));
 
@@ -1156,7 +1156,7 @@ static void bifurcation_period_init()
 {
 	Bif_savedinc = 1;
 	Bif_savedand = 1;
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		lBif_savedpop = -1;
 		lBif_closenuf = g_delta_y / 8;
@@ -1173,7 +1173,7 @@ static int _fastcall bifurcation_periodic(long time)  /* Bifurcation Population 
 {
 	if ((time & Bif_savedand) == 0)      /* time to save a new value */
 	{
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			lBif_savedpop = lPopulation;
 		}
@@ -1189,7 +1189,7 @@ static int _fastcall bifurcation_periodic(long time)  /* Bifurcation Population 
 	}
 	else                         /* check against an old save */
 	{
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
 			{
@@ -1505,7 +1505,7 @@ int lya_setup(void)
 	s_filter_cycles = (long)param[2];
 	if (s_filter_cycles == 0)
 	{
-		s_filter_cycles = maxit/2;
+		s_filter_cycles = g_max_iteration/2;
 	}
 	lyaSeedOK = (param[1] > 0) && (param[1] <= 1) && (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL);
 	lyaLength = 1;
@@ -1579,7 +1579,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 			}
 		}
 	}
-	for (i = 0; i < maxit/2; i++)
+	for (i = 0; i < g_max_iteration/2; i++)
 	{
 		for (count = 0; count < lyaLength; count++)
 		{
@@ -2283,7 +2283,7 @@ int froth_setup(void)
 	/* make the best of the .map situation */
 	g_orbit_color = fsp->attractors != 6 && g_colors >= 16 ? (fsp->shades << 1) + 1 : g_colors-1;
 
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		struct froth_long_struct tmp_l;
 
@@ -2342,7 +2342,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		(*g_plot_color) (g_col, g_row, g_show_dot % g_colors);
 	}
-	if (!integerfractal) /* fp mode */
+	if (!g_integer_fractal) /* fp mode */
 	{
 		if (g_invert)
 		{
@@ -2359,7 +2359,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		{
 			g_temp_sqr_x = sqr(g_old_z.x);
 			g_temp_sqr_y = sqr(g_old_z.y);
-			if ((g_temp_sqr_x + g_temp_sqr_y < g_rq_limit) && (g_color_iter < maxit))
+			if ((g_temp_sqr_x + g_temp_sqr_y < g_rq_limit) && (g_color_iter < g_max_iteration))
 			{
 				break;
 			}
@@ -2465,7 +2465,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			g_temp_sqr_x_l = lsqr(g_old_z_l.x);
 			g_temp_sqr_y_l = lsqr(g_old_z_l.y);
 			g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < maxit))
+			if ((g_magnitude_l < g_limit_l) && (g_magnitude_l >= 0) && (g_color_iter < g_max_iteration))
 			{
 				break;
 			}
@@ -2589,7 +2589,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			}
 			else
 			{
-				g_color_iter = fsp->shades*g_color_iter / maxit;
+				g_color_iter = fsp->shades*g_color_iter / g_max_iteration;
 			}
 			if (g_color_iter == 0)
 			{
@@ -2604,7 +2604,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			/* Trying to make a better 16 color distribution. */
 			/* Since their are only a few possiblities, just handle each case. */
 			/* This is a mostly guess work here. */
-			lshade = (g_color_iter << 16)/maxit;
+			lshade = (g_color_iter << 16)/g_max_iteration;
 			if (fsp->attractors != 6) /* either 2 or 3 attractors */
 			{
 				if (lshade < 2622)       /* 0.04 */
@@ -2662,7 +2662,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 */
 int froth_per_pixel(void)
 {
-	if (!integerfractal) /* fp mode */
+	if (!g_integer_fractal) /* fp mode */
 	{
 		g_old_z.x = g_dx_pixel();
 		g_old_z.y = g_dy_pixel();
@@ -2681,7 +2681,7 @@ int froth_per_pixel(void)
 
 int froth_per_orbit(void)
 {
-	if (!integerfractal) /* fp mode */
+	if (!g_integer_fractal) /* fp mode */
 	{
 		g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - fsp->fl.f.a*g_old_z.y;
 		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;

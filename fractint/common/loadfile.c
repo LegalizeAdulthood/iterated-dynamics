@@ -37,13 +37,13 @@ static int fix_bof(void);
 static int fix_period_bof(void);
 
 int g_file_type;
-int loaded3d;
+int g_loaded_3d;
 static FILE *fp;
 int g_file_y_dots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
 short skipxdots, skipydots;      /* for decoder, when reducing image */
 int g_bad_outside = 0;
-int ldcheck = 0;
+int g_use_old_complex_power = FALSE;
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
@@ -60,7 +60,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	g_show_file = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
 	oldfloatflag = usr_floatflag;
-	loaded3d = 0;
+	g_loaded_3d = 0;
 	if (g_fast_restore)
 	{
 		viewwindow = 0;
@@ -79,7 +79,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		return -1;
 	}
 
-	maxit        = read_info.iterationsold;
+	g_max_iteration        = read_info.iterationsold;
 	g_fractal_type     = read_info.fractal_type;
 	if (g_fractal_type < 0 || g_fractal_type >= g_num_fractal_types)
 	{
@@ -217,7 +217,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
-			loaded3d       = 1;
+			g_loaded_3d       = 1;
 			g_ambient        = read_info.ambient;
 			g_randomize      = read_info.randomize;
 			g_haze           = read_info.haze;
@@ -261,8 +261,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_screen_distance_fp    =  read_info.screen_distance_fp         ;
 		g_eyes_fp    =  read_info.eyesfp         ;
 		g_new_orbit_type = read_info.orbittype    ;
-		g_juli_3D_mode   = read_info.juli3Dmode   ;
-		maxfn    =   (char)read_info.maxfn          ;
+		g_juli_3d_mode   = read_info.juli3Dmode   ;
+		g_max_fn    =   (char)read_info.g_max_fn          ;
 		g_major_method = (enum Major)read_info.inversejulia >> 8;
 		g_minor_method = (enum Minor)read_info.inversejulia & 255;
 		param[4] = read_info.dparm5;
@@ -336,7 +336,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 9)
 	{
 		/* post-version 18.23 */
-		maxit = read_info.iterations; /* use long maxit */
+		g_max_iteration = read_info.iterations; /* use long maxit */
 		/* post-version 18.27 */
 		g_old_demm_colors = read_info.old_demm_colors;
 	}
@@ -419,7 +419,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		char oldfloatflag;
 		olddisplay3d = g_display_3d;
 		oldfloatflag = g_float_flag;
-		g_display_3d = loaded3d;      /* for <tab> display during next */
+		g_display_3d = g_loaded_3d;      /* for <tab> display during next */
 		g_float_flag = usr_floatflag; /* ditto */
 		i = get_video_mode(&read_info, &formula_info);
 #if defined(_WIN32)
@@ -1215,7 +1215,7 @@ void backwards_v20(void)
 						|| g_fractal_type == MANDEL || g_fractal_type == JULIA)
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960)
 		? 1 : 0;
-	ldcheck = ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	g_use_old_complex_power = ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
 		? 1 : 0;
 	if (g_inside == EPSCROSS && g_save_release < 1961)
@@ -1247,7 +1247,7 @@ int check_back(void)
 		|| (g_log_palette_flag != 0 && g_save_release <= 2001)
 		|| (g_fractal_type == TRIGSQR && g_save_release < 1900)
 		|| (g_inside == STARTRAIL && g_save_release < 1825)
-		|| (maxit > 32767 && g_save_release <= 1950)
+		|| (g_max_iteration > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
 		|| ((g_outside <= REAL && g_outside >= ATAN) && g_save_release <= 1960)
 		|| (g_fractal_type == FPPOPCORN && g_save_release <= 1960)
@@ -1744,7 +1744,7 @@ static void drawindow(int colour, struct window *info)
 
 	g_box_color = colour;
 	g_box_count = 0;
-	if (info->win_size >= minbox)
+	if (info->win_size >= g_cross_hair_box_size)
 	{
 		/* big enough on screen to show up as a box so draw it */
 		/* corner pixels */
@@ -2098,7 +2098,7 @@ static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formu
 	{
 		if (!stricmp(formula_info->form_name, g_formula_name))
 		{
-			numfn = maxfn;
+			numfn = g_max_fn;
 			return (numfn > 0) ? functionOK(info, numfn) : 1;
 		}
 		else

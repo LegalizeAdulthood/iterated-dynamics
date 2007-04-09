@@ -1617,10 +1617,10 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 
 	if (g_true_color) /* write maxit */
 	{
-		fputc((BYTE)(maxit       & 0xff), fps);
-		fputc((BYTE)((maxit >> 8) & 0xff), fps);
-		fputc((BYTE)((maxit >> 16) & 0xff), fps);
-		fputc((BYTE)((maxit >> 24) & 0xff), fps);
+		fputc((BYTE)(g_max_iteration       & 0xff), fps);
+		fputc((BYTE)((g_max_iteration >> 8) & 0xff), fps);
+		fputc((BYTE)((g_max_iteration >> 16) & 0xff), fps);
+		fputc((BYTE)((g_max_iteration >> 24) & 0xff), fps);
 	}
 
 	/* Finished with the header, now lets work on the display area  */
@@ -2668,7 +2668,7 @@ static int first_time(int linelen, VECTOR v)
 		/* now phi - these calculated as we go - get started here */
 		{
 			/* increment of latitude, longitude */
-			float delta_phi = (float) (phi2 - phi1)/(float) height;
+			float delta_phi = (float) (phi2 - phi1)/(float) g_height;
 
 			/* initial sin, cos phi */
 			s_sin_phi = s_old_sin_phi1 = (float) sin((double) phi1);

@@ -51,8 +51,8 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		return;
 	}
 
-	oldhelpmode = helpmode;              /* save the old help mode       */
-	helpmode = HELPCYCLING;              /* new help mode                */
+	oldhelpmode = g_help_mode;              /* save the old help mode       */
+	g_help_mode = HELPCYCLING;              /* new help mode                */
 
 	paused = 0;                          /* not paused                   */
 	fkey = 0;                            /* no random coloring           */
@@ -399,7 +399,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		}
 	}
 
-	helpmode = oldhelpmode;              /* return to previous help mode */
+	g_help_mode = oldhelpmode;              /* return to previous help mode */
 }
 
 static void pauserotate()               /* pause-the-rotate routine */
@@ -491,10 +491,10 @@ void save_palette()
 	int i, oldhelpmode;
 	char temp1[256] = { 0 };
 
-	strcpy(palname, MAP_name);
-	oldhelpmode = helpmode;
+	strcpy(palname, g_map_name);
+	oldhelpmode = g_help_mode;
 	driver_stack_screen();
-	helpmode = HELPCOLORMAP;
+	g_help_mode = HELPCOLORMAP;
 	i = field_prompt("Name of map file to write", NULL, temp1, 60, NULL);
 	driver_unstack_screen();
 	if (i != -1 && temp1[0])
@@ -528,7 +528,7 @@ void save_palette()
 		}
 		fclose(dacfile);
 	}
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 }
 
 
@@ -536,10 +536,10 @@ int load_palette(void)
 {
 	int i, oldhelpmode;
 	char filename[FILE_MAX_PATH];
-	oldhelpmode = helpmode;
-	strcpy(filename, MAP_name);
+	oldhelpmode = g_help_mode;
+	strcpy(filename, g_map_name);
 	driver_stack_screen();
-	helpmode = HELPCOLORMAP;
+	g_help_mode = HELPCOLORMAP;
 	i = getafilename("Select a MAP File", mapmask, filename);
 	driver_unstack_screen();
 	if (i >= 0)
@@ -548,8 +548,8 @@ int load_palette(void)
 		{
 			memcpy(olddacbox, g_dac_box, 256*3);
 		}
-		merge_pathnames(MAP_name, filename, 0);
+		merge_pathnames(g_map_name, filename, 0);
 	}
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	return i;
 }

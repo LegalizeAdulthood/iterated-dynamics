@@ -37,10 +37,10 @@
 
 int rhombus_stack[10];
 int rhombus_depth;
-int max_rhombus_depth;
-int minstackavail;
-/* int minstack = 1700; */ /* need this much stack to recurse */
-int minstack = 2200; /* and this much stack to not crash when <tab> is pressed */
+int g_max_rhombus_depth;
+int g_minimum_stack_available;
+/* int g_minimum_stack = 1700; */ /* need this much stack to recurse */
+int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pressed */
 static DBLS twidth;
 static DBLS equal;
 static char baxinxx = FALSE;
@@ -70,14 +70,14 @@ long iteration(register DBLS cr, register DBLS ci,
 		imn = im*im;
 		if (start != 0)
 		{
-			offset = maxit-start + 7;
+			offset = g_max_iteration-start + 7;
 			iter = offset >> 3;
 			offset &= 7;
 			offset = (8-offset);
 		}
 		else
 		{
-			iter = maxit >> 3;
+			iter = g_max_iteration >> 3;
 		}
 		k = n = 8;
 
@@ -192,14 +192,14 @@ long iteration(register DBLS cr, register DBLS ci,
 		imn = im*im;
 		if (start != 0)
 		{
-			offset = maxit-start + 7;
+			offset = g_max_iteration-start + 7;
 			iter = offset >> 3;
 			offset &= 7;
 			offset = (8-offset);
 		}
 		else
 		{
-			iter = maxit >> 3;
+			iter = g_max_iteration >> 3;
 		}
 
 		do
@@ -314,7 +314,7 @@ long iteration(register DBLS cr, register DBLS ci,
 		d = mag;
 #endif
 		FREXP(d, &exponent);
-		return maxit + offset - (((iter - 1) << 3) + (long) adjust[exponent >> 3]);
+		return g_max_iteration + offset - (((iter - 1) << 3) + (long) adjust[exponent >> 3]);
 	}
 }
 
@@ -644,13 +644,13 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #endif
 
 	avail = stackavail();
-	if (avail < minstackavail)
+	if (avail < g_minimum_stack_available)
 	{
-		minstackavail = avail;
+		g_minimum_stack_available = avail;
 	}
-	if (rhombus_depth > max_rhombus_depth)
+	if (rhombus_depth > g_max_rhombus_depth)
 	{
-		max_rhombus_depth = rhombus_depth;
+		g_max_rhombus_depth = rhombus_depth;
 	}
 	rhombus_stack[rhombus_depth] = avail;
 
@@ -659,14 +659,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 		status = 1;
 		goto rhombus_done;
 	}
-	if (iter > maxit)
+	if (iter > g_max_iteration)
 	{
 		put_box(x1, y1, x2, y2, 0);
 		status = 0;
 		goto rhombus_done;
 	}
 
-	if ((y2-y1 <= SCAN) || (avail < minstack))
+	if ((y2-y1 <= SCAN) || (avail < g_minimum_stack))
 	{
 		/* finish up the image by scanning the rectangle */
 scan:
@@ -916,7 +916,7 @@ scan:
 		/* if maximum number of iterations is reached, the whole rectangle
 			can be assumed part of M. This is of course best case behavior
 			of SOI, we seldomly get there */
-		if (iter > maxit)
+		if (iter > g_max_iteration)
 		{
 			put_box(x1, y1, x2, y2, 0);
 			status = 0;
@@ -1110,9 +1110,9 @@ void soi_long_double(void)
 	DBLS tolerance = 0.1;
 	DBLS stepx, stepy;
 	DBLS xxminl, xxmaxl, yyminl, yymaxl;
-	minstackavail = 30000;
+	g_minimum_stack_available = 30000;
 	rhombus_depth = -1;
-	max_rhombus_depth = 0;
+	g_max_rhombus_depth = 0;
 	if (bf_math)
 	{
 		xxminl = bftofloat(bfxmin);

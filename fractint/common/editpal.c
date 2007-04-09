@@ -3412,7 +3412,7 @@ static void pal_table_process(pal_table *me)
 
 void palette_edit(void)       /* called by fractint */
 {
-	int       oldlookatmouse = lookatmouse;
+	int       oldlookatmouse = g_look_at_mouse;
 	int       oldsxoffs      = sxoffs;
 	int       oldsyoffs      = syoffs;
 	pal_table *pt;
@@ -3426,7 +3426,7 @@ void palette_edit(void)       /* called by fractint */
 
 	g_line_buffer = malloc(max(sxdots, sydots));
 
-	lookatmouse = LOOK_MOUSE_ZOOM_BOX;
+	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
 	sxoffs = syoffs = 0;
 
 	s_reserve_colors = TRUE;
@@ -3440,7 +3440,7 @@ void palette_edit(void)       /* called by fractint */
 	pal_table_destroy(pt);
 	cursor_destroy();
 
-	lookatmouse = oldlookatmouse;
+	g_look_at_mouse = oldlookatmouse;
 	sxoffs = oldsxoffs;
 	syoffs = oldsyoffs;
 	DELETE(g_line_buffer);

@@ -317,13 +317,13 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		}
 		strcat(temp1, "ESCAPE to back out.");
 
-		oldhelpmode = helpmode;
-		helpmode = HELPLOADFILE;
+		oldhelpmode = g_help_mode;
+		g_help_mode = HELPLOADFILE;
 		i = fullscreen_choice(0, (char *) g_stack,
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			temp1, g_video_table_len, NULL, attributes,
 			1, 13, 78, 0, format_item, NULL, NULL, check_modekey);
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		if (i == -1)
 		{
 			return -1;

@@ -787,13 +787,13 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	int i;
 	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
 	{
-		maxfn = 0;
+		g_max_fn = 0;
 	}
 	/* set save parameters in save structure */
 	strcpy(save_info->info_id, INFO_ID);
 	save_info->version = FRACTAL_INFO_VERSION;
 
-	save_info->iterationsold = (maxit <= SHRT_MAX) ? (short) maxit : (short) SHRT_MAX;
+	save_info->iterationsold = (g_max_iteration <= SHRT_MAX) ? (short) g_max_iteration : (short) SHRT_MAX;
 
 	save_info->fractal_type = (short) g_fractal_type;
 	save_info->xmin = xxmin;
@@ -897,12 +897,12 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->screen_distance_fp = g_screen_distance_fp;
 	save_info->eyesfp = g_eyes_fp;
 	save_info->orbittype = (short) g_new_orbit_type;
-	save_info->juli3Dmode = (short) g_juli_3D_mode;
-	save_info->maxfn = maxfn;
+	save_info->juli3Dmode = (short) g_juli_3d_mode;
+	save_info->g_max_fn = g_max_fn;
 	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
-	save_info->iterations = maxit;
+	save_info->iterations = g_max_iteration;
 	save_info->bflength = (short) bnlength;
 	save_info->bf_math = (short) bf_math;
 	save_info->old_demm_colors = (short) g_old_demm_colors;

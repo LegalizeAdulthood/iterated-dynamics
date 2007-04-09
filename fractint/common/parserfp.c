@@ -123,10 +123,10 @@ struct fls *pfls = (struct fls *)0;
 extern union Arg *Arg1, *Arg2;
 extern double _1_, _2_;
 extern union Arg s[20], **Store, **Load;
-extern int StoPtr, LodPtr, OpPtr;
-extern unsigned int vsp, LastOp;
+extern int StoPtr, g_lod_ptr, OpPtr;
+extern unsigned int vsp, g_last_op;
 extern struct ConstArg *v;
-extern int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;
+extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
 extern void (* *f)(void);
 extern JUMP_CONTROL_ST *jump_control;
 extern int uses_jump, jump_index;
@@ -554,7 +554,7 @@ awful_error:
 	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
 	{
 		/* when disabling optimizer, set load pointer here  */
-		OPPTR(cvtptrx) = (void  *)FP_OFF((Load[LodPtr++]));
+		OPPTR(cvtptrx) = (void  *)FP_OFF((Load[g_lod_ptr++]));
 	}
 	else  /* the optimizer will set the pointer for load fn.  */
 	{
@@ -579,7 +579,7 @@ awful_error:
 	if (ffptr == fStkLod)  /* about to add Lod to the array  */
 	{
 
-		if (prevfptr == fStkLod && Load[LodPtr-1] == Load[LodPtr])
+		if (prevfptr == fStkLod && Load[g_lod_ptr-1] == Load[g_lod_ptr])
 		{
 			/* previous non-adjust operator was Lod of same operand  */
 			/* ? lodx ? (*lodx)  */
@@ -607,7 +607,7 @@ awful_error:
 			ffptr = fStkLodDup;
 		}
 		else if (prevfptr == fStkSto2
-				&& Store[StoPtr-1] == Load[LodPtr])
+				&& Store[StoPtr-1] == Load[g_lod_ptr])
 				{
 			/* store, load of same value  */
 			/* only one operand on stack here when prev oper is Sto2  */
@@ -619,7 +619,7 @@ awful_error:
 		/*  use the rounded value that was stored here, while the next  */
 		/*  operator uses the more accurate internal value.  */
 		else if (prevfptr == fStkStoClr2
-					&& Store[StoPtr-1] == Load[LodPtr])
+					&& Store[StoPtr-1] == Load[g_lod_ptr])
 					{
 			/* store, clear, load same value found  */
 			/* only one operand was on stack so this is safe  */
@@ -629,7 +629,7 @@ awful_error:
 		}
 		else
 		{
-			testload = Load[LodPtr];
+			testload = Load[g_lod_ptr];
 			if (testload == &LASTSQR && lastsqrreal)
 			{
 				/* -- LastSqr is a real.  CAE 31OCT93  */
@@ -643,7 +643,7 @@ awful_error:
 			}
 		}
 		/* set the operand ptr here  */
-		OPPTR(cvtptrx) = (void  *)FP_OFF((Load[LodPtr++]));
+		OPPTR(cvtptrx) = (void  *)FP_OFF((Load[g_lod_ptr++]));
 	}
 	/* ******************************************************************** */
 	else if (ffptr == fStkAdd)
@@ -839,7 +839,7 @@ awful_error:
 			}
 
 			if (FNPTR(cvtptrx-1) == fStkLodRealC
-					&& Load[LodPtr-2]->d.x == _2_)
+					&& Load[g_lod_ptr-2]->d.x == _2_)
 					{
 				/* -- Convert '2*a' into 'a + a'.                CAE 31OCT93  */
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -925,7 +925,7 @@ awful_error:
 
 			/**********************  begin extension  ***  CAE 31OCT93  ****/
 			if (prevfptr == fStkLodRealC  /* use prevfptr here  */
-					&& Load[LodPtr-1]->d.x == _2_)
+					&& Load[g_lod_ptr-1]->d.x == _2_)
 					{
 				if (FNPTR(cvtptrx) == fStkPush2)
 				{
@@ -1003,7 +1003,7 @@ awful_error:
 	else if (ffptr == fStkDiv)
 	{
 
-		if (prevfptr == fStkLodRealC && vsp < Max_Args - 1)
+		if (prevfptr == fStkLodRealC && vsp < g_formula_max_args - 1)
 		{
 			/* have found a divide by a real constant  */
 			/*  and there is space to create a new one  */
@@ -1019,7 +1019,7 @@ awful_error:
 			}
 			v[vsp].s = (void  *)0;  /* this constant has no name  */
 			v[vsp].len = 0;
-			v[vsp].a.d.x = _1_ / Load[LodPtr-1]->d.x;
+			v[vsp].a.d.x = _1_ / Load[g_lod_ptr-1]->d.x;
 			v[vsp].a.d.y = 0.0;
 			{
 				void *p = &v[vsp++].a;
@@ -1182,7 +1182,7 @@ awful_error:
 
 		if (prevfptr == fStkLodRealC)
 		{
-			dTemp = Load[LodPtr-1]->d.x;
+			dTemp = Load[g_lod_ptr-1]->d.x;
 			if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
 			{
 				/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr  CAE 06NOV93  */
@@ -1352,7 +1352,7 @@ int fpfill_jump_struct(void)
 	int find_new_func = 1;
 	JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-	for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++)
+	for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
 	{
 		if (find_new_func)
 		{
@@ -1418,12 +1418,12 @@ int CvtStk()  /* convert the array of ptrs  */
 	lastsqrused = 0;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
-	for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++)
+	for (OpPtr = g_lod_ptr = StoPtr = 0; OpPtr < (int)g_last_op; OpPtr++)
 	{
 		ftst = f[OpPtr];
 		if (ftst == StkLod)
 		{
-			if (Load[LodPtr++] == &LASTSQR)
+			if (Load[g_lod_ptr++] == &LASTSQR)
 			{
 				lastsqrused = 1;
 			}
@@ -1487,17 +1487,17 @@ int CvtStk()  /* convert the array of ptrs  */
 		}
 	}
 
-	if (f[LastOp-1] != StkClr)
+	if (f[g_last_op-1] != StkClr)
 	{
 		DBUGMSG("Missing clr added at end");
 		/* should be safe to modify this  */
-		f[LastOp++] = StkClr;
+		f[g_last_op++] = StkClr;
 	}
 
 	prevfptr = (void (*)(void))0;
 	cvtptrx = realstkcnt = stkcnt = 0;
 
-	for (OpPtr = LodPtr = StoPtr = 0; OpPtr < (int)LastOp; OpPtr++)
+	for (OpPtr = g_lod_ptr = StoPtr = 0; OpPtr < (int)g_last_op; OpPtr++)
 	{
 		ftst = f[OpPtr];
 		fnfound = 0;
@@ -1507,7 +1507,7 @@ int CvtStk()  /* convert the array of ptrs  */
 			{
 				fnfound = 1;
 				ntst = pfe->outfn;
-				if (ntst == fStkClr1 && OpPtr == (int)(LastOp-1))
+				if (ntst == fStkClr1 && OpPtr == (int)(g_last_op-1))
 				{
 					ntst = fStkClr2;  /* convert the last clear to a clr2  */
 					DBUGMSG("Last fn (CLR) --> (is really CLR2)");
@@ -1609,7 +1609,7 @@ int CvtStk()  /* convert the array of ptrs  */
 
 skipfinalopt:  /* -------------- end of final optimizations ------------ */
 
-	LastOp = cvtptrx;  /* save the new operator count  */
+	g_last_op = cvtptrx;  /* save the new operator count  */
 	LASTSQR.d.y = 0.0;  /* do this once per image  */
 
 	/* now change the pointers  */

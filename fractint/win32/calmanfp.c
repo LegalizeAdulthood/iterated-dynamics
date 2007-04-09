@@ -15,7 +15,7 @@ static int inside_color, periodicity_color;
 
 void calcmandfpasmstart(void)
 {
-	inside_color = (g_inside < 0) ? maxit : g_inside;
+	inside_color = (g_inside < 0) ? g_max_iteration : g_inside;
 	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
 	g_old_color_iter = 0;
 }
@@ -44,10 +44,10 @@ long calcmandfpasm_c(void)
 	}
 	else if (g_reset_periodicity != 0)
 	{
-		g_old_color_iter = maxit - 255;
+		g_old_color_iter = g_max_iteration - 255;
 	}
 
-	tmpfsd = maxit - g_first_saved_and;
+	tmpfsd = g_max_iteration - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
 	{
 		g_old_color_iter = tmpfsd; /* but matches the code in standard_fractal() */
@@ -84,7 +84,7 @@ long calcmandfpasm_c(void)
 		}
 	}
 
-	cx = maxit;
+	cx = g_max_iteration;
 	if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
@@ -128,7 +128,7 @@ long calcmandfpasm_c(void)
 		/* no_save_new_xy_87 */
 		if (cx < g_old_color_iter)  /* check periodicity */
 		{
-			if (((maxit - cx) & savedand) == 0)
+			if (((g_max_iteration - cx) & savedand) == 0)
 			{
 #if USE_NEW
 				savedmag = g_magnitude;
@@ -153,9 +153,9 @@ long calcmandfpasm_c(void)
 				{
 #endif
 /*		    g_old_color_iter = 65535;  */
-					g_old_color_iter = maxit;
-					g_real_color_iter = maxit;
-					g_input_counter = g_input_counter-(maxit-cx);
+					g_old_color_iter = g_max_iteration;
+					g_real_color_iter = g_max_iteration;
+					g_input_counter = g_input_counter-(g_max_iteration-cx);
 					g_color_iter = periodicity_color;
 					goto pop_stack;
 				}
@@ -171,9 +171,9 @@ long calcmandfpasm_c(void)
 
 	/* reached maxit */
 	/* check periodicity immediately next time, remember we count down from maxit */
-	g_old_color_iter = maxit;
-	g_input_counter -= maxit;
-	g_real_color_iter = maxit;
+	g_old_color_iter = g_max_iteration;
+	g_input_counter -= g_max_iteration;
+	g_real_color_iter = g_max_iteration;
 	g_color_iter = inside_color;
 
 pop_stack:
@@ -197,7 +197,7 @@ over_bailout_87:
 	{
 		g_old_color_iter = 0;
 	}
-	g_color_iter = g_real_color_iter = maxit-cx;
+	g_color_iter = g_real_color_iter = g_max_iteration-cx;
 	if (g_color_iter == 0)
 	{
 		g_color_iter = 1;
@@ -234,7 +234,7 @@ over_bailout_87:
 			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
 		}
 		/* check_color */
-		if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
 		{
 			if (g_save_release < 1961)
 			{

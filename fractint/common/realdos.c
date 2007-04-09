@@ -76,8 +76,8 @@ int stopmsg (int flags, char *msg)
 		return -1;
 		}
 	ret = 0;
-	savelookatmouse = lookatmouse;
-	lookatmouse = -FIK_ENTER;
+	savelookatmouse = g_look_at_mouse;
+	g_look_at_mouse = -FIK_ENTER;
 	if ((flags & STOPMSG_NO_STACK))
 	{
 		blankrows(toprow = 12, 10, 7);
@@ -123,7 +123,7 @@ int stopmsg (int flags, char *msg)
 	{
 		driver_unstack_screen();
 	}
-	lookatmouse = savelookatmouse;
+	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -503,8 +503,8 @@ int fullscreen_choice(
 	int scrunch;  /* scrunch up a line */
 
 	scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-	savelookatmouse = lookatmouse;
-	lookatmouse = LOOK_MOUSE_NONE;
+	savelookatmouse = g_look_at_mouse;
+	g_look_at_mouse = LOOK_MOUSE_NONE;
 	ret = -1;
 	/* preset current to passed string */
 	if (speedstring && (i = (int) strlen(speedstring)) > 0)
@@ -1089,7 +1089,7 @@ int fullscreen_choice(
 	}
 
 fs_choice_end:
-	lookatmouse = savelookatmouse;
+	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -1391,7 +1391,7 @@ top:
 	i = driver_key_pressed() ? driver_get_key() : 0;
 	if (menu_checkkey(i, 0) == 0)
 	{
-		helpmode = HELPMAIN;         /* switch help modes */
+		g_help_mode = HELPMAIN;         /* switch help modes */
 		nextleft += 2;
 		if (nextleft < nextright)
 		{
@@ -1414,7 +1414,7 @@ top:
 			i = choicekey[i];
 			if (-10 == i)
 			{
-				helpmode = HELPZOOM;
+				g_help_mode = HELPZOOM;
 				help(0);
 				i = 0;
 			}
@@ -1535,8 +1535,8 @@ int input_field(
 	int insert, started, offset, curkey, display;
 	int i, j;
 	int ret, savelookatmouse;
-	savelookatmouse = lookatmouse;
-	lookatmouse = LOOK_MOUSE_NONE;
+	savelookatmouse = g_look_at_mouse;
+	g_look_at_mouse = LOOK_MOUSE_NONE;
 	ret = -1;
 	strcpy(savefld, fld);
 	insert = started = offset = 0;
@@ -1710,7 +1710,7 @@ int input_field(
 	}
 
 inpfld_end:
-	lookatmouse = savelookatmouse;
+	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 

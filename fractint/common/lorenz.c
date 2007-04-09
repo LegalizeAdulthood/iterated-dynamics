@@ -1410,7 +1410,7 @@ int orbit_2d_fp()
 	z = s_init_orbit_fp[2];
 	g_color_iter = 0L;
 	count = ret = 0;
-	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 
 	if (g_resuming)
 	{
@@ -1546,7 +1546,7 @@ int orbit_2d()
 	y = s_init_orbit_long[1];
 	z = s_init_orbit_long[2];
 	count = ret = 0;
-	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 
 	if (g_resuming)
@@ -1669,7 +1669,7 @@ static int orbit_3d_calc(void)
 	fp = open_orbit_save();
 
 	count = ret = 0;
-	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
@@ -1789,7 +1789,7 @@ static int orbit_3d_calc_fp(void)
 	fp = open_orbit_save();
 
 	ret = 0;
-	g_max_count = (maxit > 0x1fffffL || g_max_count) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 	count = g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
@@ -2017,7 +2017,7 @@ int dynamic_2d_fp()
 			color = 1;    /* (don't use the background color) */
 		}
 
-		for (count = 0; count < maxit; count++)
+		for (count = 0; count < g_max_iteration; count++)
 		{
 			if (count % 2048L == 0)
 			{
@@ -2138,9 +2138,9 @@ int plotorbits2dsetup(void)
 	s_o_cvt.e += 0.5;
 	s_o_cvt.f += 0.5;
 
-	if (g_orbit_delay >= maxit) /* make sure we get an image */
+	if (g_orbit_delay >= g_max_iteration) /* make sure we get an image */
 	{
-		g_orbit_delay = (int) (maxit - 1);
+		g_orbit_delay = (int) (g_max_iteration - 1);
 	}
 
 	s_o_color = 1;
@@ -2212,7 +2212,7 @@ int plotorbits2dfloat(void)
 
 	PER_PIXEL(); /* initialize the calculations */
 
-	for (count = 0; count < maxit; count++)
+	for (count = 0; count < g_max_iteration; count++)
 	{
 		if (ORBITCALC() == 1 && g_periodicity_check)
 		{
@@ -2346,7 +2346,7 @@ static int ifs_3d_float(void)
 	fp = open_orbit_save();
 
 	ret = 0;
-	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024;
+	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024;
 
 	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
@@ -2486,7 +2486,7 @@ static int ifs_2d(void)
 	localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
 	if (localifs == NULL)
 	{
-		stopmsg(0, insufficient_ifs_mem);
+		stopmsg(0, g_insufficient_ifs_memory);
 		return -1;
 	}
 
@@ -2504,7 +2504,7 @@ static int ifs_2d(void)
 
 	x = y = 0;
 	ret = 0;
-	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
@@ -2587,7 +2587,7 @@ static int ifs_3d_long(void)
 	localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
 	if (localifs == NULL)
 	{
-		stopmsg(0, insufficient_ifs_mem);
+		stopmsg(0, g_insufficient_ifs_memory);
 		return -1;
 	}
 
@@ -2611,7 +2611,7 @@ static int ifs_3d_long(void)
 	fp = open_orbit_save();
 
 	ret = 0;
-	g_max_count = (maxit > 0x1fffffL) ? 0x7fffffffL : maxit*1024L;
+	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{

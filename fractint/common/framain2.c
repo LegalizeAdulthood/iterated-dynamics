@@ -220,7 +220,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		savedac = (savedac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
-			lookatmouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
+			g_look_at_mouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
 		}
 
 		if (g_show_file == 0)
@@ -335,7 +335,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{
 				g_initialize_batch = INITBATCH_FINISH_CALC; /* flag to finish calc before save */
 			}
-			if (loaded3d)      /* 'r' of image created with '3' */
+			if (g_loaded_3d)      /* 'r' of image created with '3' */
 			{
 				g_display_3d = 1;  /* so set flag for 'b' command */
 			}
@@ -526,7 +526,7 @@ resumeloop:                             /* return here on failed overlays */
 			}
 			else if (g_initialize_batch == INITBATCH_NONE)      /* not batch mode */
 			{
-				lookatmouse = (zwidth == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
+				g_look_at_mouse = (zwidth == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
 				if (g_calculation_status == CALCSTAT_RESUMABLE && zwidth == 0 && !driver_key_pressed())
 				{
 					kbdchar = FIK_ENTER ;  /* no visible reason to stop, continue */
@@ -672,8 +672,8 @@ resumeloop:                             /* return here on failed overlays */
 static int look(char *stacked)
 {
 	int oldhelpmode;
-	oldhelpmode = helpmode;
-	helpmode = HELPBROWSE;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPBROWSE;
 	switch (fgetwindow())
 	{
 	case FIK_ENTER:
@@ -737,12 +737,12 @@ static int look(char *stacked)
 	case 'l':              /* turn it off */
 	case 'L':
 		g_browsing = FALSE;
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		break;
 
 	case 's':
 		g_browsing = FALSE;
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		savetodisk(g_save_name);
 		break;
 
@@ -757,7 +757,7 @@ static int handle_fractal_type(int *frommandel)
 {
 	int i;
 
-	julibrot = 0;
+	g_julibrot = FALSE;
 	clear_zoombox();
 	driver_stack_screen();
 	i = get_fracttype();
@@ -769,7 +769,7 @@ static int handle_fractal_type(int *frommandel)
 		g_no_magnitude_calculation = FALSE;
 		g_use_old_periodicity = FALSE;
 		g_bad_outside = 0;
-		ldcheck = 0;
+		g_use_old_complex_power = TRUE;
 		set_current_params();
 		odpx = odpy = newodpx = newodpy = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
@@ -793,7 +793,7 @@ static int handle_fractal_type(int *frommandel)
 static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 {
 	int i;
-	*old_maxit = maxit;
+	*old_maxit = g_max_iteration;
 	clear_zoombox();
 	if (g_from_text_flag == 1)
 	{
@@ -833,7 +833,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	{
 		g_true_color = 0; /* truecolor doesn't play well with the evolver */
 	}
-	if (maxit > *old_maxit
+	if (g_max_iteration > *old_maxit
 		&& g_inside >= 0
 		&& g_calculation_status == CALCSTAT_COMPLETED
 		&& g_current_fractal_specific->calculate_type == standard_fractal
@@ -1079,7 +1079,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	{
 		/* switch to corresponding Julia set */
 		int key;
-		hasinverse = (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
+		g_has_inverse = (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
 			&& (bf_math == 0) ? TRUE : FALSE;
 		clear_zoombox();
 		Jiim(JIIM);
@@ -1231,7 +1231,7 @@ static int handle_history(char *stacked, int kbdchar)
 		}
 		return RESTORESTART;
 	}
-	else if (maxhistory > 0 && bf_math == 0)
+	else if (g_max_history > 0 && bf_math == 0)
 	{
 		if (kbdchar == '\\' || kbdchar == 'h')
 		{
@@ -1293,11 +1293,11 @@ static int handle_color_editing(int *kbdmore)
 		&& g_colors >= 16
 		&& !driver_diskp())
 	{
-		int oldhelpmode = helpmode;
+		int oldhelpmode = g_help_mode;
 		memcpy(olddacbox, g_dac_box, 256*3);
-		helpmode = HELPXHAIR;
+		g_help_mode = HELPXHAIR;
 		palette_edit();
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		if (memcmp(olddacbox, g_dac_box, 256*3))
 		{
 			g_color_state = COLORSTATE_UNKNOWN;
@@ -1793,7 +1793,7 @@ static void handle_evolver_exit(int *kbdmore)
 
 static int handle_evolver_history(char *stacked, int *kbdchar)
 {
-	if (maxhistory > 0 && bf_math == 0)
+	if (g_max_history > 0 && bf_math == 0)
 	{
 		if (*kbdchar == '\\' || *kbdchar == 'h')
 		{

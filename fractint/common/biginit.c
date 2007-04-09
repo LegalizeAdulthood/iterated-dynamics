@@ -110,7 +110,7 @@ void calc_lengths(void)
 /* intended only to be called from init_bf_dec() or init_bf_length().   */
 /* initialize bignumber global variables                                */
 
-long maxptr = 0;
+long g_bn_max_stack = 0;
 long startstack = 0;
 long maxstack = 0;
 int g_bf_save_len = 0;
@@ -362,9 +362,9 @@ bn_t alloc_stack(size_t size)
 		goodbye();
 	}
 	/* keep track of max ptr */
-	if (stack_addr > maxptr)
+	if (stack_addr > g_bn_max_stack)
 	{
-		maxptr = stack_addr;
+		g_bn_max_stack = stack_addr;
 	}
 	stack_ptr += size;   /* increment stack pointer */
 	return stack_ptr - size;

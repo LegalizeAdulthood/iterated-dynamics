@@ -228,7 +228,7 @@ static double fmod_test(void)
 	double result;
 	if (g_inside == FMODI && g_save_release <= 2000) /* for backwards compatibility */
 	{
-		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || integerfractal) ?
+		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		return result;
 	}
@@ -236,7 +236,7 @@ static double fmod_test(void)
 	switch (g_bail_out_test)
 	{
 	case Mod:
-		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || integerfractal) ?
+		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		break;
 	case Real:
@@ -515,7 +515,7 @@ static int calculate_type_show_dot(void)
 /******* calculate_fractal - the top level routine for generating an image *******/
 int calculate_fractal(void)
 {
-	matherr_ct = 0;
+	g_math_error_count = 0;
 	g_num_attractors = 0;          /* default to no known finite attractors  */
 	g_display_3d = 0;
 	g_basin = 0;
@@ -553,7 +553,7 @@ int calculate_fractal(void)
 
 	/* following delta values useful only for types with rotation disabled */
 	/* currently used only by bifurcation */
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		g_distance_test = 0;
 	}
@@ -575,7 +575,7 @@ int calculate_fractal(void)
 	}
 	else
 	{
-		g_next_saved_incr = (int)log10(maxit); /* works better than log() */
+		g_next_saved_incr = (int)log10(g_max_iteration); /* works better than log() */
 		if (g_next_saved_incr < 4)
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
@@ -583,33 +583,33 @@ int calculate_fractal(void)
 		g_first_saved_and = (long)((g_next_saved_incr*2) + 1);
 	}
 
-	LogTable = NULL;
-	MaxLTSize = maxit;
-	Log_Calc = 0;
+	g_log_table = NULL;
+	g_max_log_table_size = g_max_iteration;
+	g_log_calculation = 0;
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
-	if (g_log_palette_flag && (((maxit > 32767) && (g_save_release > 1920))
+	if (g_log_palette_flag && (((g_max_iteration > 32767) && (g_save_release > 1920))
 		|| g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
 	{
-		Log_Calc = 1; /* calculate on the fly */
+		g_log_calculation = 1; /* calculate on the fly */
 		SetupLogTable();
 	}
-	else if (g_log_palette_flag && (((maxit > 32767) && (g_save_release <= 1920))
+	else if (g_log_palette_flag && (((g_max_iteration > 32767) && (g_save_release <= 1920))
 		|| g_log_dynamic_calculate == LOGDYNAMIC_TABLE))
 	{
-		MaxLTSize = 32767;
-		Log_Calc = 0; /* use logtable */
+		g_max_log_table_size = 32767;
+		g_log_calculation = 0; /* use logtable */
 	}
-	else if (g_ranges_length && (maxit >= 32767))
+	else if (g_ranges_length && (g_max_iteration >= 32767))
 	{
-		MaxLTSize = 32766;
+		g_max_log_table_size = 32766;
 	}
 
-	if ((g_log_palette_flag || g_ranges_length) && !Log_Calc)
+	if ((g_log_palette_flag || g_ranges_length) && !g_log_calculation)
 	{
-		LogTable = (BYTE *)malloc((long)MaxLTSize + 1);
+		g_log_table = (BYTE *)malloc((long)g_max_log_table_size + 1);
 
-		if (LogTable == NULL)
+		if (g_log_table == NULL)
 		{
 			if (g_ranges_length || g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
@@ -619,11 +619,11 @@ int calculate_fractal(void)
 			{
 				stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
 				g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;
-				Log_Calc = 1; /* calculate on the fly */
+				g_log_calculation = 1; /* calculate on the fly */
 				SetupLogTable();
 			}
 		}
-		else if (g_ranges_length)  /* Can't do ranges if MaxLTSize > 32767 */
+		else if (g_ranges_length)  /* Can't do ranges if g_max_log_table_size > 32767 */
 		{
 			int i, k, l, m, numval, flip, altern;
 			i = k = l = 0;
@@ -638,13 +638,13 @@ int calculate_fractal(void)
 					altern = g_ranges[i++];    /* sub-range iterations */
 					numval = g_ranges[i++];
 				}
-				if (numval > (int)MaxLTSize || i >= g_ranges_length)
+				if (numval > (int)g_max_log_table_size || i >= g_ranges_length)
 				{
-					numval = (int)MaxLTSize;
+					numval = (int)g_max_log_table_size;
 				}
 				while (l <= numval)
 				{
-					LogTable[l++] = (BYTE)(k + flip);
+					g_log_table[l++] = (BYTE)(k + flip);
 					if (++m >= altern)
 					{
 						flip ^= 1;            /* Alternate g_colors */
@@ -717,7 +717,7 @@ int calculate_fractal(void)
 	g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
-	if (integerfractal)          /* for integer routines (lambda) */
+	if (g_integer_fractal)          /* for integer routines (lambda) */
 	{
 		g_parameter_l.x = (long)(g_parameter.x*g_fudge);    /* real portion of Lambda */
 		g_parameter_l.y = (long)(g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
@@ -815,10 +815,10 @@ int calculate_fractal(void)
 	}
 	g_calculation_time += timer_interval;
 
-	if (LogTable && !Log_Calc)
+	if (g_log_table && !g_log_calculation)
 	{
-		free(LogTable);   /* free if not using extraseg */
-		LogTable = NULL;
+		free(g_log_table);   /* free if not using extraseg */
+		g_log_table = NULL;
 	}
 	if (g_type_specific_work_area)
 	{
@@ -1843,12 +1843,12 @@ static int _fastcall standard_calculate(int passnum)
 int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called with row & col set */
 {
 	/* setup values from array to avoid using es reg in calcmand.asm */
-	linitx = g_lx_pixel();
-	linity = g_ly_pixel();
+	g_initial_x_l = g_lx_pixel();
+	g_initial_y_l = g_ly_pixel();
 	if (calcmandasm() >= 0)
 	{
-		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-				&& (g_real_color_iter < maxit || (g_inside < 0 && g_color_iter == maxit)))
+		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
+				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
@@ -1909,8 +1909,8 @@ int calculate_mandelbrot_fp(void)
 		{
 			g_color_iter = potential(g_magnitude, g_real_color_iter);
 		}
-		if ((LogTable || Log_Calc) /* map color, but not if maxit & adjusted for inside, etc */
-				&& (g_real_color_iter < maxit || (g_inside < 0 && g_color_iter == maxit)))
+		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
+				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
@@ -1989,7 +1989,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	_CMPLX lastz;
 
 	lcloseprox = (long)(g_proximity*g_fudge);
-	savemaxit = maxit;
+	savemaxit = g_max_iteration;
 #ifdef NUMSAVED
 	for (i = 0; i < NUMSAVED; i++)
 	{
@@ -2006,7 +2006,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		if (g_save_release > 1824)
 		{
-			maxit = 16;
+			g_max_iteration = 16;
 		}
 	}
 	if (g_periodicity_check == 0 || g_inside == ZMAG || g_inside == STARTRAIL)
@@ -2015,7 +2015,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 	else if (g_inside == PERIOD)   /* for display-periodicity */
 	{
-		g_old_color_iter = (maxit/5)*4;       /* don't check until nearly done */
+		g_old_color_iter = (g_max_iteration/5)*4;       /* don't check until nearly done */
 	}
 	else if (g_reset_periodicity)
 	{
@@ -2035,7 +2035,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 #endif
 	/* really fractal specific, but we'll leave it here */
-	if (!integerfractal)
+	if (!g_integer_fractal)
 	{
 		if (g_use_initial_orbit_z == 1)
 		{
@@ -2132,7 +2132,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 	if (g_outside == TDIS)
 	{
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			g_old_z.x = ((double)g_old_z_l.x) / g_fudge;
 			g_old_z.y = ((double)g_old_z_l.y) / g_fudge;
@@ -2156,7 +2156,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		sound_write_time();
 	}
-	while (++g_color_iter < maxit)
+	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
 		/* input in "g_old_z" -- output in "new" */
@@ -2224,7 +2224,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			break;
 		if (g_show_orbit)
 		{
-			if (!integerfractal)
+			if (!g_integer_fractal)
 			{
 				if (bf_math == BIGNUM)
 				{
@@ -2255,7 +2255,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				if (0 < g_color_iter && g_color_iter < 16)
 				{
-					if (integerfractal)
+					if (g_integer_fractal)
 					{
 						g_new_z.x = g_new_z_l.x;
 						g_new_z.x /= g_fudge;
@@ -2296,7 +2296,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			else if (g_inside == EPSCROSS)
 			{
 				hooper = 0;
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					if (labs(g_new_z_l.x) < labs(lcloseprox))
 					{
@@ -2326,7 +2326,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			else if (g_inside == FMODI)
 			{
 				double mag;
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2339,7 +2339,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			else if (g_inside <= BOF60 && g_inside >= BOF61)
 			{
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
 					{
@@ -2372,7 +2372,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			if (g_outside == TDIS)
 			{
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2384,7 +2384,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			else if (g_outside == FMOD)
 			{
 				double mag;
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2399,19 +2399,19 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 		if (g_num_attractors > 0)       /* finite attractor in the list   */
 		{                         /* NOTE: Integer code is UNTESTED */
-			if (integerfractal)
+			if (g_integer_fractal)
 			{
 				for (i = 0; i < g_num_attractors; i++)
 				{
 					lat.x = g_new_z_l.x - g_attractors_l[i].x;
 					lat.x = lsqr(lat.x);
-					if (lat.x < l_at_rad)
+					if (lat.x < g_attractor_radius_l)
 					{
 						lat.y = g_new_z_l.y - g_attractors_l[i].y;
 						lat.y = lsqr(lat.y);
-						if (lat.y < l_at_rad)
+						if (lat.y < g_attractor_radius_l)
 						{
-							if ((lat.x + lat.y) < l_at_rad)
+							if ((lat.x + lat.y) < g_attractor_radius_l)
 							{
 								attracted = TRUE;
 								if (g_finite_attractor < 0)
@@ -2430,13 +2430,13 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				{
 					at.x = g_new_z.x - g_attractors[i].x;
 					at.x = sqr(at.x);
-					if (at.x < g_f_at_rad)
+					if (at.x < g_attractor_radius_fp)
 					{
 						at.y = g_new_z.y - g_attractors[i].y;
 						at.y = sqr(at.y);
-						if (at.y < g_f_at_rad)
+						if (at.y < g_attractor_radius_fp)
 						{
-							if ((at.x + at.y) < g_f_at_rad)
+							if ((at.x + at.y) < g_attractor_radius_fp)
 							{
 								attracted = TRUE;
 								if (g_finite_attractor < 0)
@@ -2460,7 +2460,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			if ((g_color_iter & savedand) == 0)            /* time to save a new value */
 			{
 				savedcoloriter = g_color_iter;
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					lsaved = g_new_z_l; /* integer fractals */
 				}
@@ -2493,7 +2493,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			else                /* check against an old save */
 			{
-				if (integerfractal)     /* floating-pt periodicity chk */
+				if (g_integer_fractal)     /* floating-pt periodicity chk */
 				{
 					if (labs(lsaved.x - g_new_z_l.x) < g_close_enough_l)
 					{
@@ -2576,11 +2576,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 					}
 					fflush(fp);
 #endif
-					g_color_iter = maxit - 1;
+					g_color_iter = g_max_iteration - 1;
 				}
 			}
 		}
-	}  /* end while (g_color_iter++ < maxit) */
+	}  /* end while (g_color_iter++ < g_max_iteration) */
 
 	if (g_show_orbit)
 	{
@@ -2588,7 +2588,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 
 	g_real_color_iter = g_color_iter;           /* save this before we start adjusting it */
-	if (g_color_iter >= maxit)
+	if (g_color_iter >= g_max_iteration)
 	{
 		g_old_color_iter = 0;         /* check periodicity immediately next time */
 	}
@@ -2603,7 +2603,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 	if (g_potential_flag)
 	{
-		if (integerfractal)       /* adjust integer fractals */
+		if (g_integer_fractal)       /* adjust integer fractals */
 		{
 			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2620,14 +2620,14 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 		g_color_iter = potential(g_magnitude, g_color_iter);
-		if (LogTable || Log_Calc)
+		if (g_log_table || g_log_calculation)
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
 		goto plot_pixel;          /* skip any other adjustments */
 	}
 
-	if (g_color_iter >= maxit)              /* an "inside" point */
+	if (g_color_iter >= g_max_iteration)              /* an "inside" point */
 	{
 		goto plot_inside;         /* distest, decomp, biomorph don't apply */
 	}
@@ -2635,7 +2635,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 	if (g_outside < -1)  /* these options by Richard Hughes modified by TW */
 	{
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2676,7 +2676,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 
 		/* eliminate negative g_colors & wrap arounds */
-		if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
 		{
 			g_color_iter = (g_save_release < 1961) ? 0 : 1;
 		}
@@ -2740,7 +2740,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 	else if (g_biomorph != -1)
 	{
-		if (integerfractal)
+		if (g_integer_fractal)
 		{
 			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
 			{
@@ -2757,7 +2757,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		g_color_iter = g_outside;
 	}
-	else if (LogTable || Log_Calc)
+	else if (g_log_table || g_log_calculation)
 	{
 		g_color_iter = logtablecalc(g_color_iter);
 	}
@@ -2791,7 +2791,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == PERIOD)
 		{
-			g_color_iter = (cyclelen > 0) ? cyclelen : maxit;
+			g_color_iter = (cyclelen > 0) ? cyclelen : g_max_iteration;
 		}
 		else if (g_inside == EPSCROSS)
 		{
@@ -2805,7 +2805,7 @@ plot_inside: /* we're "inside" */
 			}
 			else if (hooper == 0)
 			{
-				g_color_iter = maxit;
+				g_color_iter = g_max_iteration;
 			}
 			if (g_show_orbit)
 			{
@@ -2818,7 +2818,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == ATANI)          /* "atan" */
 		{
-			if (integerfractal)
+			if (g_integer_fractal)
 			{
 				g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 				g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
@@ -2839,15 +2839,15 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == ZMAG)
 		{
-			g_color_iter = integerfractal ?
-				(long)(((double)g_magnitude_l/g_fudge)*(maxit >> 1) + 1)
-				: (long)((sqr(g_new_z.x) + sqr(g_new_z.y))*(maxit >> 1) + 1);
+			g_color_iter = g_integer_fractal ?
+				(long)(((double)g_magnitude_l/g_fudge)*(g_max_iteration >> 1) + 1)
+				: (long)((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration >> 1) + 1);
 		}
 		else /* inside == -1 */
 		{
-			g_color_iter = maxit;
+			g_color_iter = g_max_iteration;
 		}
-		if (LogTable || Log_Calc)
+		if (g_log_table || g_log_calculation)
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
@@ -2884,7 +2884,7 @@ plot_pixel:
 	}
 	(*g_plot_color)(g_col, g_row, g_color);
 
-	maxit = savemaxit;
+	g_max_iteration = savemaxit;
 	g_input_counter -= abs((int)g_real_color_iter);
 	if (g_input_counter <= 0)
 	{
@@ -2938,7 +2938,7 @@ static void decomposition(void)
 	_LCMPLX lalt;
 	_CMPLX alt;
 	g_color_iter = 0;
-	if (integerfractal) /* the only case */
+	if (g_integer_fractal) /* the only case */
 	{
 		if (reset_fudge != g_fudge)
 		{
@@ -3208,7 +3208,7 @@ static int _fastcall potential(double mag, long iterations)
 	int i_pot;
 	long l_pot;
 
-	if (iterations < maxit)
+	if (iterations < g_max_iteration)
 	{
 		l_pot = iterations + 2;
 		pot = (float) l_pot;
@@ -4938,7 +4938,7 @@ static long automatic_log_map(void)   /*RB*/
 	mincolour = LONG_MAX;
 	g_row = 0;
 	g_reset_periodicity = 0;
-	old_maxit = maxit;
+	old_maxit = g_max_iteration;
 	for (g_col = 0; g_col < xstop; g_col++) /* top row */
 	{
 		g_color = (*g_calculate_type)();
@@ -4949,7 +4949,7 @@ static long automatic_log_map(void)   /*RB*/
 		if (g_real_color_iter < mincolour)
 		{
 			mincolour = g_real_color_iter;
-			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (g_col >= 32)
 		{
@@ -4972,7 +4972,7 @@ static long automatic_log_map(void)   /*RB*/
 		if (g_real_color_iter < mincolour)
 		{
 			mincolour = g_real_color_iter;
-			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (g_row >= 32)
 		{
@@ -4995,7 +4995,7 @@ static long automatic_log_map(void)   /*RB*/
 		if (g_real_color_iter < mincolour)
 		{
 			mincolour = g_real_color_iter;
-			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (g_row >= 32)
 		{
@@ -5018,7 +5018,7 @@ static long automatic_log_map(void)   /*RB*/
 		if (g_real_color_iter < mincolour)
 		{
 			mincolour = g_real_color_iter;
-			maxit = max(2, mincolour); /*speedup for when edges overlap lakes */
+			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (g_col >= 32)
 		{
@@ -5035,7 +5035,7 @@ ack: /* bailout here if key is pressed */
 	{
 		g_resuming = 1; /* insure automatic_log_map not called again */
 	}
-	maxit = old_maxit;
+	g_max_iteration = old_maxit;
 
 	return mincolour;
 }

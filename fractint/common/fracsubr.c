@@ -57,29 +57,29 @@ static int sound_open(void);
 
 void free_grid_pointers()
 {
-	if (g_delta_x0)
+	if (g_x0)
 	{
-		free(g_delta_x0);
-		g_delta_x0 = NULL;
+		free(g_x0);
+		g_x0 = NULL;
 	}
-	if (lx0)
+	if (g_x0_l)
 	{
-		free(lx0);
-		lx0 = NULL;
+		free(g_x0_l);
+		g_x0_l = NULL;
 	}
 }
 
 void set_grid_pointers()
 {
 	free_grid_pointers();
-	g_delta_x0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
-	g_delta_y1 = g_delta_x0 + xdots;
-	g_delta_y0 = g_delta_y1 + xdots;
-	g_delta_x1 = g_delta_y0 + ydots;
-	lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
-	ly1 = lx0 + xdots;
-	ly0 = ly1 + xdots;
-	lx1 = ly0 + ydots;
+	g_x0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
+	g_y1 = g_x0 + xdots;
+	g_y0 = g_y1 + xdots;
+	g_x1 = g_y0 + ydots;
+	g_x0_l = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
+	g_y1_l = g_x0_l + xdots;
+	g_y0_l = g_y1_l + xdots;
+	g_x1_l = g_y0_l + ydots;
 	set_pixel_calc_functions();
 }
 
@@ -88,40 +88,40 @@ void fill_dx_array(void)
 	int i;
 	if (g_use_grid)
 	{
-		g_delta_x0[0] = xxmin;              /* fill up the x, y grids */
-		g_delta_y0[0] = yymax;
-		g_delta_x1[0] = g_delta_y1[0] = 0;
+		g_x0[0] = xxmin;              /* fill up the x, y grids */
+		g_y0[0] = yymax;
+		g_x1[0] = g_y1[0] = 0;
 		for (i = 1; i < xdots; i++)
 		{
-			g_delta_x0[i] = (double)(g_delta_x0[0] + i*g_delta_x_fp);
-			g_delta_y1[i] = (double)(g_delta_y1[0] - i*g_delta_y2_fp);
+			g_x0[i] = (double)(g_x0[0] + i*g_delta_x_fp);
+			g_y1[i] = (double)(g_y1[0] - i*g_delta_y2_fp);
 		}
 		for (i = 1; i < ydots; i++)
 		{
-			g_delta_y0[i] = (double)(g_delta_y0[0] - i*g_delta_y_fp);
-			g_delta_x1[i] = (double)(g_delta_x1[0] + i*g_delta_x2_fp);
+			g_y0[i] = (double)(g_y0[0] - i*g_delta_y_fp);
+			g_x1[i] = (double)(g_x1[0] + i*g_delta_x2_fp);
 		}
 	}
 }
 void fill_lx_array(void)
 {
 	int i;
-	/* note that lx1 & ly1 values can overflow into sign bit; since     */
-	/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
+	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
+	/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
 	if (g_use_grid)
 	{
-		lx0[0] = xmin;               /* fill up the x, y grids */
-		ly0[0] = ymax;
-		lx1[0] = ly1[0] = 0;
+		g_x0_l[0] = xmin;               /* fill up the x, y grids */
+		g_y0_l[0] = ymax;
+		g_x1_l[0] = g_y1_l[0] = 0;
 		for (i = 1; i < xdots; i++)
 		{
-			lx0[i] = lx0[i-1] + g_delta_x;
-			ly1[i] = ly1[i-1] - g_delta_y2;
+			g_x0_l[i] = g_x0_l[i-1] + g_delta_x;
+			g_y1_l[i] = g_y1_l[i-1] - g_delta_y2;
 		}
 		for (i = 1; i < ydots; i++)
 		{
-			ly0[i] = ly0[i-1] - g_delta_y;
-			lx1[i] = lx1[i-1] + g_delta_x2;
+			g_y0_l[i] = g_y0_l[i-1] - g_delta_y;
+			g_x1_l[i] = g_x1_l[i-1] + g_delta_x2;
 		}
 	}
 }
@@ -344,7 +344,7 @@ init_restart:
 	}
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	integerfractal = g_current_fractal_specific->isinteger;
+	g_integer_fractal = g_current_fractal_specific->isinteger;
 
 	if (g_potential_flag && potparam[2] != 0.0)
 	{
@@ -362,7 +362,7 @@ init_restart:
 	{
 		g_rq_limit = g_current_fractal_specific->orbit_bailout;
 	}
-	if (integerfractal) /* the bailout limit mustn't be too high here */
+	if (g_integer_fractal) /* the bailout limit mustn't be too high here */
 	{
 		if (g_rq_limit > 127.0)
 		{
@@ -390,11 +390,11 @@ init_restart:
 
 	/* set up g_bit_shift for integer math */
 	g_bit_shift = FUDGE_FACTOR2; /* by default, the smaller shift */
-	if (integerfractal > 1)  /* use specific override from table */
+	if (g_integer_fractal > 1)  /* use specific override from table */
 	{
-		g_bit_shift = integerfractal;
+		g_bit_shift = g_integer_fractal;
 	}
-	if (integerfractal == 0)  /* float? */
+	if (g_integer_fractal == 0)  /* float? */
 	{
 		i = g_current_fractal_specific->tofloat;
 		if (i != NOFRACTAL) /* -> int? */
@@ -427,8 +427,8 @@ init_restart:
 
 	g_fudge = 1L << g_bit_shift;
 
-	l_at_rad = g_fudge/32768L;
-	g_f_at_rad = 1.0/32768L;
+	g_attractor_radius_l = g_fudge/32768L;
+	g_attractor_radius_fp = 1.0/32768L;
 
 	/* now setup arrays of real coordinates corresponding to each pixel */
 	if (bf_math)
@@ -462,13 +462,13 @@ init_restart:
 	}
 
 	/* skip this if plasma to avoid 3d problems */
-	/* skip if bf_math to avoid extraseg conflict with g_delta_x0 arrays */
+	/* skip if bf_math to avoid extraseg conflict with g_x0 arrays */
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
 	if (g_fractal_type != PLASMA && bf_math == 0
 		&& g_fractal_type != IFS && g_fractal_type != IFS3D && g_fractal_type != LSYSTEM)
 	{
-		if (integerfractal && !g_invert && g_use_grid)
+		if (g_integer_fractal && !g_invert && g_use_grid)
 		{
 			if ((g_delta_x  == 0 && g_delta_x_fp  != 0.0)
 				|| (g_delta_x2 == 0 && g_delta_x2_fp != 0.0)
@@ -480,13 +480,13 @@ init_restart:
 
 			fill_lx_array();   /* fill up the x, y grids */
 			/* past max res?  check corners within 10% of expected */
-			if (ratio_bad((double)lx0[xdots-1]-xmin, (double)xmax-x3rd)
-				|| ratio_bad((double)ly0[ydots-1]-ymax, (double)y3rd-ymax)
-				|| ratio_bad((double)lx1[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
-				|| ratio_bad((double)ly1[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
+			if (ratio_bad((double)g_x0_l[xdots-1]-xmin, (double)xmax-x3rd)
+				|| ratio_bad((double)g_y0_l[ydots-1]-ymax, (double)y3rd-ymax)
+				|| ratio_bad((double)g_x1_l[(ydots >> 1)-1], ((double)x3rd-xmin)/2)
+				|| ratio_bad((double)g_y1_l[(xdots >> 1)-1], ((double)ymin-y3rd)/2))
 			{
 expand_retry:
-				if (integerfractal          /* integer fractal type? */
+				if (g_integer_fractal          /* integer fractal type? */
 					&& g_current_fractal_specific->tofloat != NOFRACTAL)
 				{
 					g_float_flag = TRUE;           /* switch to floating pt */
@@ -503,21 +503,21 @@ expand_retry:
 			} /* end if ratio bad */
 
 			/* re-set corners to match reality */
-			xmax = lx0[xdots-1] + lx1[ydots-1];
-			ymin = ly0[ydots-1] + ly1[xdots-1];
-			x3rd = xmin + lx1[ydots-1];
-			y3rd = ly0[ydots-1];
+			xmax = g_x0_l[xdots-1] + g_x1_l[ydots-1];
+			ymin = g_y0_l[ydots-1] + g_y1_l[xdots-1];
+			x3rd = xmin + g_x1_l[ydots-1];
+			y3rd = g_y0_l[ydots-1];
 			xxmin = fudge_to_double(xmin);
 			xxmax = fudge_to_double(xmax);
 			xx3rd = fudge_to_double(x3rd);
 			yymin = fudge_to_double(ymin);
 			yymax = fudge_to_double(ymax);
 			yy3rd = fudge_to_double(y3rd);
-		} /* end if (integerfractal && !g_invert && g_use_grid) */
+		} /* end if (g_integer_fractal && !g_invert && g_use_grid) */
 		else
 		{
 			double dx0, dy0, dx1, dy1;
-			/* set up dx0 and dy0 analogs of lx0 and ly0 */
+			/* set up dx0 and dy0 analogs of g_x0_l and g_y0_l */
 			/* put fractal parameters in doubles */
 			dx0 = xxmin;                /* fill up the x, y grids */
 			dy0 = yymax;
@@ -758,7 +758,7 @@ void adjust_corner(void)
 	double Xctr, Yctr, Xmagfactor, Rotation, Skew;
 	LDBL Magnification;
 
-	if (!integerfractal)
+	if (!g_integer_fractal)
 	{
 		/* While we're at it, let's adjust the Xmagfactor as well */
 		cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -1055,7 +1055,7 @@ static void _fastcall adjust_to_limits(double expand)
 
 	limit = 32767.99;
 
-	if (integerfractal)
+	if (g_integer_fractal)
 	{
 		if (g_save_release > 1940) /* let user reproduce old GIF's and PAR's */
 		{
@@ -1213,7 +1213,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 static int _fastcall ratio_bad(double actual, double desired)
 {
 	double ftemp, tol;
-	tol = g_math_tolerance[integerfractal ? 0 : 1];
+	tol = g_math_tolerance[g_integer_fractal ? 0 : 1];
 	if (tol <= 0.0)
 	{
 		return 1;
@@ -1417,12 +1417,12 @@ void end_resume(void)
 		Xs == xxmax-xx3rd               Ys == yy3rd-yymax
 		W  == xdots-1                   D  == ydots-1
 	We know that:
-		realx == lx0[col] + lx1[row]
-		realy == ly0[row] + ly1[col]
-		lx0[col] == (col/width)*Xs + xxmin
-		lx1[row] == row*g_delta_x_fp
-		ly0[row] == (row/D)*Ys + yymax
-		ly1[col] == col*(-g_delta_y_fp)
+		realx == g_x0_l[col] + g_x1_l[row]
+		realy == g_y0_l[row] + g_y1_l[col]
+		g_x0_l[col] == (col/width)*Xs + xxmin
+		g_x1_l[row] == row*g_delta_x_fp
+		g_y0_l[row] == (row/D)*Ys + yymax
+		g_y1_l[col] == col*(-g_delta_y_fp)
 	so:
 		realx == (col/W)*Xs + xxmin + row*g_delta_x_fp
 		realy == (row/D)*Ys + yymax + col*(-g_delta_y_fp)
@@ -1443,9 +1443,9 @@ static void sleep_ms_old(long ms)
 	struct timebx t1, t2;
 #define SLEEPINIT 250 /* milliseconds for calibration */
 	savetabmode  = tabmode;
-	savehelpmode = helpmode;
+	savehelpmode = g_help_mode;
 	tabmode  = 0;
-	helpmode = -1;
+	g_help_mode = -1;
 	if (scalems == 0L) /* g_calibrate */
 	{
 		/* selects a value of scalems that makes the units
@@ -1520,7 +1520,7 @@ static void sleep_ms_old(long ms)
 	}
 sleepexit:
 	tabmode  = savetabmode;
-	helpmode = savehelpmode;
+	g_help_mode = savehelpmode;
 }
 
 static void sleep_ms_new(long ms)
@@ -1880,7 +1880,7 @@ void get_julia_attractor(double real, double imag)
 	}
 
 	savper = g_periodicity_check;
-	savmaxit = maxit;
+	savmaxit = g_max_iteration;
 	g_periodicity_check = 0;
 	g_old_z.x = real;                    /* prepare for f.p orbit calc */
 	g_old_z.y = imag;
@@ -1897,20 +1897,20 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_x_l = g_temp_sqr_x_l << g_bit_shift;
 	g_temp_sqr_y_l = g_temp_sqr_y_l << g_bit_shift;
 
-	if (maxit < 500)         /* we're going to try at least this hard */
+	if (g_max_iteration < 500)         /* we're going to try at least this hard */
 	{
-		maxit = 500;
+		g_max_iteration = 500;
 	}
 	g_color_iter = 0;
 	overflow = 0;
-	while (++g_color_iter < maxit)
+	while (++g_color_iter < g_max_iteration)
 		if (g_current_fractal_specific->orbitcalc() || overflow)
 		{
 			break;
 		}
-	if (g_color_iter >= maxit)      /* if orbit stays in the lake */
+	if (g_color_iter >= g_max_iteration)      /* if orbit stays in the lake */
 	{
-		if (integerfractal)   /* remember where it went to */
+		if (g_integer_fractal)   /* remember where it went to */
 		{
 			lresult = g_new_z_l;
 		}
@@ -1923,7 +1923,7 @@ void get_julia_attractor(double real, double imag)
 			overflow = 0;
 			if (!g_current_fractal_specific->orbitcalc() && !overflow) /* if it stays in the lake */
 			{                        /* and doesn't move far, probably */
-				if (integerfractal)   /*   found a finite attractor    */
+				if (g_integer_fractal)   /*   found a finite attractor    */
 				{
 					if (labs(lresult.x-g_new_z_l.x) < g_close_enough_l
 						&& labs(lresult.y-g_new_z_l.y) < g_close_enough_l)
@@ -1956,7 +1956,7 @@ void get_julia_attractor(double real, double imag)
 	{
 		g_periodicity_check = savper;
 	}
-	maxit = savmaxit;
+	g_max_iteration = savmaxit;
 }
 
 

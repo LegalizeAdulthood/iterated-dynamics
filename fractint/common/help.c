@@ -787,7 +787,7 @@ int help(int action)
 	int       flags;
 	HIST      next;
 
-	if (helpmode == -1)   /* is help disabled? */
+	if (g_help_mode == -1)   /* is help disabled? */
 	{
 		return 0;
 	}
@@ -808,23 +808,23 @@ int help(int action)
 		return 0;
 	}
 
-	oldlookatmouse = lookatmouse;
-	lookatmouse = LOOK_MOUSE_NONE;
+	oldlookatmouse = g_look_at_mouse;
+	g_look_at_mouse = LOOK_MOUSE_NONE;
 	timer_start -= clock_ticks();
 	driver_stack_screen();
 
-	if (helpmode >= 0)
+	if (g_help_mode >= 0)
 	{
-		next.topic_num = label[helpmode].topic_num;
-		next.topic_off = label[helpmode].topic_off;
+		next.topic_num = label[g_help_mode].topic_num;
+		next.topic_off = label[g_help_mode].topic_off;
 	}
 	else
 	{
-		next.topic_num = helpmode;
+		next.topic_num = g_help_mode;
 		next.topic_off = 0;
 	}
 
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 
 	if (curr_hist <= 0)
 	{
@@ -928,8 +928,8 @@ int help(int action)
 	free(page_table);
 
 	driver_unstack_screen();
-	lookatmouse = oldlookatmouse;
-	helpmode = oldhelpmode;
+	g_look_at_mouse = oldlookatmouse;
+	g_help_mode = oldhelpmode;
 	timer_start += clock_ticks();
 
 	return 0;

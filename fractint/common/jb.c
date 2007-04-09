@@ -17,7 +17,7 @@ float g_width_fp   = 10.0f;
 float g_screen_distance_fp    = 24.0f;
 float g_eyes_fp    = 2.5f;
 float g_depth_fp   = 8.0f;
-int g_juli_3D_mode = JULI3DMODE_MONOCULAR;
+int g_juli_3d_mode = JULI3DMODE_MONOCULAR;
 int g_new_orbit_type = JULIA;
 
 struct perspective
@@ -78,7 +78,7 @@ int julibrot_setup(void)
 	s_inch_per_x_dot_fp = g_width_fp / xdots;
 	s_inch_per_y_dot_fp = g_height_fp / ydots;
 	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
-	s_right_eye_fp.x = (g_juli_3D_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
+	s_right_eye_fp.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
 	s_left_eye_fp.x = -s_right_eye_fp.x;
 	s_left_eye_fp.y = s_right_eye_fp.y = 0;
 	s_left_eye_fp.zx = s_right_eye_fp.zx = g_screen_distance_fp;
@@ -124,7 +124,7 @@ int julibrot_setup(void)
 		s_inch_per_x_dot = (long) ((g_width_fp / xdots)*s_fg16);
 		s_inch_per_y_dot = (long) ((g_height_fp / ydots)*s_fg16);
 		s_init_z = origin - (s_depth / 2);
-		s_right_eye.x = (g_juli_3D_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
+		s_right_eye.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
 		s_left_eye.x = -s_right_eye.x;
 		s_left_eye.y = s_right_eye.y = 0l;
 		s_left_eye.zx = s_right_eye.zx = s_dist;
@@ -133,14 +133,14 @@ int julibrot_setup(void)
 	}
 #endif
 
-	if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
+	if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 	{
 		savedac = SAVEDAC_NO;
-		mapname = Glasses1Map;
+		mapname = g_glasses1_map;
 	}
 	else
 	{
-		mapname = GreyFile;
+		mapname = g_grey_file;
 	}
 	if (savedac != SAVEDAC_YES)
 	{
@@ -203,7 +203,7 @@ static int z_line(long x, long y)
 	s_y_pixel = y;
 	s_mx = s_m_x_min;
 	s_my = s_m_y_min;
-	switch (g_juli_3D_mode)
+	switch (g_juli_3d_mode)
 	{
 	case JULI3DMODE_MONOCULAR:
 	case JULI3DMODE_LEFT_EYE:
@@ -229,16 +229,16 @@ static int z_line(long x, long y)
 		}
 		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
 		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-		for (n = 0; n < maxit; n++)
+		for (n = 0; n < g_max_iteration; n++)
 		{
 			if (g_fractal_specific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
 		}
-		if (n == maxit)
+		if (n == g_max_iteration)
 		{
-			if (g_juli_3D_mode == JULI3DMODE_RED_BLUE)
+			if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 			{
 				g_color = (int) (128l*z_pixel / g_z_dots);
 				if ((g_row + g_col) & 1)
@@ -287,7 +287,7 @@ static int z_line_fp(double x, double y)
 	s_y_pixel_fp = y;
 	s_mx_fp = g_m_x_min_fp;
 	s_my_fp = g_m_y_min_fp;
-	switch (g_juli_3D_mode)
+	switch (g_juli_3d_mode)
 	{
 	case JULI3DMODE_MONOCULAR:
 	case JULI3DMODE_LEFT_EYE:
@@ -345,16 +345,16 @@ static int z_line_fp(double x, double y)
 		g_temp_sqr_x = sqr(g_old_z.x);
 		g_temp_sqr_y = sqr(g_old_z.y);
 
-		for (n = 0; n < maxit; n++)
+		for (n = 0; n < g_max_iteration; n++)
 		{
 			if (g_fractal_specific[g_new_orbit_type].orbitcalc())
 			{
 				break;
 			}
 		}
-		if (n == maxit)
+		if (n == g_max_iteration)
 		{
-			if (g_juli_3D_mode == 3)
+			if (g_juli_3d_mode == 3)
 			{
 				g_color = (int) (128l*z_pixel / g_z_dots);
 				if ((g_row + g_col) & 1)

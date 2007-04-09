@@ -29,9 +29,9 @@
 
 extern int rhombus_stack[10];
 extern int rhombus_depth;
-extern int max_rhombus_depth;
-extern int minstackavail;
-extern int minstack; /* need this much stack to recurse */
+extern int g_max_rhombus_depth;
+extern int g_minimum_stack_available;
+extern int g_minimum_stack; /* need this much stack to recurse */
 static DBLS twidth;
 static DBLS equal;
 
@@ -46,7 +46,7 @@ static long iteration1(register DBLS cr, register DBLS ci,
 	color = start;
 	oldreal = re;
 	oldimag = im;
-	while ((magnitude < 16.0) && (color < maxit))
+	while ((magnitude < 16.0) && (color < g_max_iteration))
 	{
 		newreal = oldreal*oldreal - oldimag*oldimag + cr;
 		newimag = 2*oldreal*oldimag + ci;
@@ -55,7 +55,7 @@ static long iteration1(register DBLS cr, register DBLS ci,
 		oldimag = newimag;
 		magnitude = newreal*newreal + newimag*newimag;
 	}
-	if (color >= maxit)
+	if (color >= g_max_iteration)
 	{
 		color = BASIN_COLOR;
 	}
@@ -74,11 +74,11 @@ static long iteration(register DBLS cr, register DBLS ci,
 	g_float_parameter = &g_initial_z;
 	g_float_parameter->x = cr;
 	g_float_parameter->y = ci;
-	while (ORBITCALC() == 0 && start < maxit)
+	while (ORBITCALC() == 0 && start < g_max_iteration)
 	{
 		start++;
 	}
-	if (start >= maxit)
+	if (start >= g_max_iteration)
 	{
 		start = BASIN_COLOR;
 	}
@@ -426,13 +426,13 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 #endif
 
 	avail = stackavail();
-	if (avail < minstackavail)
+	if (avail < g_minimum_stack_available)
 	{
-		minstackavail = avail;
+		g_minimum_stack_available = avail;
 	}
-	if (rhombus_depth > max_rhombus_depth)
+	if (rhombus_depth > g_max_rhombus_depth)
 	{
-		max_rhombus_depth = rhombus_depth;
+		g_max_rhombus_depth = rhombus_depth;
 	}
 	rhombus_stack[rhombus_depth] = avail;
 
@@ -441,14 +441,14 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 		status = 1;
 		goto rhombus_done;
 	}
-	if (iter > maxit)
+	if (iter > g_max_iteration)
 	{
 		put_box(x1, y1, x2, y2, 0);
 		status = 0;
 		goto rhombus_done;
 	}
 
-	if ((y2-y1 <= SCAN) || (avail < minstack))
+	if ((y2-y1 <= SCAN) || (avail < g_minimum_stack))
 	{
 		/* finish up the image by scanning the rectangle */
 scan:
@@ -754,7 +754,7 @@ scan:
 		/* if maximum number of iterations is reached, the whole rectangle
 		can be assumed part of M. This is of course best case behavior
 		of SOI, we seldomly get there */
-		if (iter > maxit)
+		if (iter > g_max_iteration)
 		{
 			put_box(x1, y1, x2, y2, 0);
 			status = 0;
@@ -949,9 +949,9 @@ void soi(void)
 	DBLS tolerance = 0.1;
 	DBLS stepx, stepy;
 	DBLS xxminl, xxmaxl, yyminl, yymaxl;
-	minstackavail = 30000;
+	g_minimum_stack_available = 30000;
 	rhombus_depth = -1;
-	max_rhombus_depth = 0;
+	g_max_rhombus_depth = 0;
 	if (bf_math)
 	{
 		xxminl = (DBLS)bftofloat(bfxmin);

@@ -144,7 +144,7 @@ int get_toggles()
 #endif
 	choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
 	uvalues[k].type = 'L';
-	uvalues[k].uval.Lval = old_maxit = maxit;
+	uvalues[k].uval.Lval = old_maxit = g_max_iteration;
 
 	choices[++k] = "Inside Color (0-# of g_colors, if Inside=numb)";
 	uvalues[k].type = 'i';
@@ -268,10 +268,10 @@ int get_toggles()
 	uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
 	uvalues[k].uval.dval = old_closeprox = g_proximity;
 
-	oldhelpmode = helpmode;
-	helpmode = HELPXOPTS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPXOPTS;
 	i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		return -1;
@@ -311,17 +311,17 @@ int get_toggles()
 	}
 #endif
 	++k;
-	maxit = uvalues[k].uval.Lval;
-	if (maxit < 0)
+	g_max_iteration = uvalues[k].uval.Lval;
+	if (g_max_iteration < 0)
 	{
-		maxit = old_maxit;
+		g_max_iteration = old_maxit;
 	}
-	if (maxit < 2)
+	if (g_max_iteration < 2)
 	{
-		maxit = 2;
+		g_max_iteration = 2;
 	}
 
-	if (maxit != old_maxit)
+	if (g_max_iteration != old_maxit)
 	{
 		j++;
 	}
@@ -549,12 +549,12 @@ int get_toggles2()
 	uvalues[k].type = 'i';
 	uvalues[k].uval.ival = old_rotate_hi = g_rotate_hi;
 
-	oldhelpmode = helpmode;
-	helpmode = HELPYOPTS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPYOPTS;
 	i = fullscreen_prompt("Extended Options\n"
 		"(not all combinations make sense)",
 		k + 1, choices, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		return -1;
@@ -705,13 +705,13 @@ pass_option_restart:
 	uvalues[k].uval.ch.val = g_orbit_draw_mode;
 	old_drawmode = g_orbit_draw_mode;
 
-	oldhelpmode = helpmode;
-	helpmode = HELPPOPTS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPPOPTS;
 	i = fullscreen_prompt("Passes Options\n"
 		"(not all combinations make sense)\n"
 		"(Press "FK_F2" for corner parameters)\n"
 		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		return -1;
@@ -888,10 +888,10 @@ get_view_restart:
 		uvalues[k].type = '*';
 	}
 
-	oldhelpmode = helpmode;     /* this prevents HELP from activating */
-	helpmode = HELPVIEW;
+	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
+	g_help_mode = HELPVIEW;
 	i = fullscreen_prompt("View Window Options", k + 1, choices, uvalues, 16, NULL);
-	helpmode = oldhelpmode;     /* re-enable HELP */
+	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
 		return -1;
@@ -990,10 +990,10 @@ int get_cmd_string()
 	int i;
 	static char cmdbuf[61];
 
-	oldhelpmode = helpmode;
-	helpmode = HELPCOMMANDS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPCOMMANDS;
 	i = field_prompt("Enter command string to use.", NULL, cmdbuf, 60, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -1020,7 +1020,7 @@ double starfield_values[4] =
 	30.0, 100.0, 5.0, 0.0
 };
 
-char GreyFile[] = "altern.map";
+char g_grey_file[] = "altern.map";
 
 int starfield(void)
 {
@@ -1055,7 +1055,7 @@ int starfield(void)
 	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	Slope = (int)(starfield_values[2]);
 
-	if (ValidateLuts(GreyFile) != 0)
+	if (ValidateLuts(g_grey_file) != 0)
 	{
 		stopmsg(0, "Unable to load ALTERN.MAP");
 		g_busy = 0;
@@ -1108,10 +1108,10 @@ int get_starfield_params(void)
 		uvalues[i].type = 'f';
 	}
 	driver_stack_screen();
-	oldhelpmode = helpmode;
-	helpmode = HELPSTARFLD;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPSTARFLD;
 	i = fullscreen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	driver_unstack_screen();
 	if (i < 0)
 	{
@@ -1167,11 +1167,11 @@ int get_rds_params(void)
 		uvalues[k].uval.ch.llen = 3;
 		uvalues[k++].uval.ch.val  = g_calibrate;
 
-		uvalues[k].uval.ch.val = image_map;
+		uvalues[k].uval.ch.val = g_image_map;
 		uvalues[k++].type = 'y';
 
 
-		if (*stereomapname != 0 && image_map)
+		if (*stereomapname != 0 && g_image_map)
 		{
 			char *p;
 			uvalues[k].uval.ch.val = reuse;
@@ -1200,10 +1200,10 @@ int get_rds_params(void)
 		}
 		else
 			*stereomapname = 0;
-		oldhelpmode = helpmode;
-		helpmode = HELPRDS;
+		oldhelpmode = g_help_mode;
+		g_help_mode = HELPRDS;
 		i = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
 			ret = -1;
@@ -1216,8 +1216,8 @@ int get_rds_params(void)
 			g_auto_stereo_width = uvalues[k++].uval.dval;
 			g_grayscale_depth = uvalues[k++].uval.ch.val;
 			g_calibrate        = (char)uvalues[k++].uval.ch.val;
-			image_map        = (char)uvalues[k++].uval.ch.val;
-			if (*stereomapname && image_map)
+			g_image_map        = (char)uvalues[k++].uval.ch.val;
+			if (*stereomapname && g_image_map)
 			{
 				reuse         = (char)uvalues[k++].uval.ch.val;
 			}
@@ -1225,7 +1225,7 @@ int get_rds_params(void)
 			{
 				reuse = 0;
 			}
-			if (image_map && !reuse)
+			if (g_image_map && !reuse)
 			{
 				if (getafilename("Select an Imagemap File", masks[1], stereomapname))
 				{
@@ -1285,8 +1285,8 @@ int get_commands()              /* execute commands from file */
 	long point;
 	int oldhelpmode;
 	ret = 0;
-	oldhelpmode = helpmode;
-	helpmode = HELPPARMFILE;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPPARMFILE;
 	if ((point = get_file_entry(GETFILE_PARAMETER, "Parameter Set",
 								commandmask, g_command_file, g_command_name)) >= 0
 		&& (parmfile = fopen(g_command_file, "rb")) != NULL)
@@ -1294,7 +1294,7 @@ int get_commands()              /* execute commands from file */
 		fseek(parmfile, point, SEEK_SET);
 		ret = load_commands(parmfile);
 	}
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	return ret;
 }
 
@@ -2086,7 +2086,7 @@ int get_corners()
 	double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 	int oldhelpmode;
 
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 	oxxmin = xxmin; oxxmax = xxmax;
 	oyymin = yymin; oyymax = yymax;
@@ -2174,10 +2174,10 @@ gc_loop:
 	prompts[++nump]= "Press "FK_F4" to reset to type default values";
 	values[nump].type = '*';
 
-	oldhelpmode = helpmode;
-	helpmode = HELPCOORDS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPCOORDS;
 	prompt_ret = fullscreen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 
 	if (prompt_ret < 0)
 	{
@@ -2302,7 +2302,7 @@ static int get_screen_corners(void)
 	double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
 	int oldhelpmode;
 
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 
 	svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
@@ -2389,10 +2389,10 @@ gsc_loop:
 	prompts[++nump]= "Press "FK_F4" to reset to type default values";
 	values[nump].type = '*';
 
-	oldhelpmode = helpmode;
-	helpmode = HELPSCRNCOORDS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPSCRNCOORDS;
 	prompt_ret = fullscreen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 
 	if (prompt_ret < 0)
 	{
@@ -2528,7 +2528,7 @@ int get_browse_params()
 	old_brwschecktype  = g_browse_check_type;
 	old_brwscheckparms = g_browse_check_parameters;
 	old_doublecaution  = g_double_caution;
-	old_minbox         = minbox;
+	old_minbox         = g_cross_hair_box_size;
 	old_toosmall       = toosmall;
 	strcpy(old_browsemask, g_browse_mask);
 
@@ -2562,7 +2562,7 @@ get_brws_restart:
 
 	choices[++k] = "Smallest box size shown before crosshairs used (pix)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = minbox;
+	uvalues[k].uval.ival = g_cross_hair_box_size;
 	choices[++k] = "Browse search filename mask ";
 	uvalues[k].type = 's';
 	strcpy(uvalues[k].uval.sval, g_browse_mask);
@@ -2573,10 +2573,10 @@ get_brws_restart:
 	choices[++k] = "Press "FK_F4" to reset browse parameters to defaults.";
 	uvalues[k].type = '*';
 
-	oldhelpmode = helpmode;     /* this prevents HELP from activating */
-	helpmode = HELPBRWSPARMS;
+	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
+	g_help_mode = HELPBRWSPARMS;
 	i = fullscreen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
-	helpmode = oldhelpmode;     /* re-enable HELP */
+	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
 		return 0;
@@ -2590,7 +2590,7 @@ get_brws_restart:
 		g_browse_check_parameters = TRUE;
 		g_browse_check_type  = TRUE;
 		g_double_caution  = TRUE;
-		minbox = 3;
+		g_cross_hair_box_size = 3;
 		strcpy(g_browse_mask, "*.gif");
 		goto get_brws_restart;
 		}
@@ -2614,14 +2614,14 @@ get_brws_restart:
 		toosmall = 0 ;
 	}
 
-	minbox = uvalues[++k].uval.ival;
-	if (minbox < 1)
+	g_cross_hair_box_size = uvalues[++k].uval.ival;
+	if (g_cross_hair_box_size < 1)
 	{
-		minbox = 1;
+		g_cross_hair_box_size = 1;
 	}
-	if (minbox > 10)
+	if (g_cross_hair_box_size > 10)
 	{
-		minbox = 10;
+		g_cross_hair_box_size = 10;
 	}
 
 	strcpy(g_browse_mask, uvalues[++k].uval.sval);
@@ -2632,7 +2632,7 @@ get_brws_restart:
 			g_browse_check_parameters != old_brwscheckparms ||
 			g_double_caution != old_doublecaution ||
 			toosmall != old_toosmall ||
-			minbox != old_minbox ||
+			g_cross_hair_box_size != old_minbox ||
 			!stricmp(g_browse_mask, old_browsemask))
 	{
 		i = -3;

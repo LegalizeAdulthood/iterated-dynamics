@@ -625,8 +625,8 @@ int newton_orbit_mpc(void)
 
 	mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
 	mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
-	mpctmp1.x = *pMPsub(mpcnew.x, MPCone.x);
-	mpctmp1.y = *pMPsub(mpcnew.y, MPCone.y);
+	mpctmp1.x = *pMPsub(mpcnew.x, g_one_mpc.x);
+	mpctmp1.y = *pMPsub(mpcnew.y, g_one_mpc.y);
 	if (pMPcmp(MPCmod(mpctmp1), mpthreshold)< 0)
 	{
 		if (g_fractal_type == MPNEWTBASIN)
@@ -3345,7 +3345,7 @@ int escher_orbit_fp(void)
 	oldtest.y = g_new_z.y*15.0;
 	testsqr.x = sqr(oldtest.x);  /* set up to test with user-specified ... */
 	testsqr.y = sqr(oldtest.y);  /*    ... Julia as the target set */
-	while (testsize <= g_rq_limit && testiter < maxit) /* nested Julia loop */
+	while (testsize <= g_rq_limit && testiter < g_max_iteration) /* nested Julia loop */
 	{
 		newtest.x = testsqr.x - testsqr.y + param[0];
 		newtest.y = 2.0*oldtest.x*oldtest.y + param[1];
@@ -3514,7 +3514,7 @@ int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
  * coordinates of the point in the complex plane corresponding to
  * the screen coordinates (col, row) at the current zoom corners
  * settings. The functions come in two flavors. One looks up the pixel
- * values using the precalculated grid arrays g_delta_x0, g_delta_x1, g_delta_y0, and g_delta_y1,
+ * values using the precalculated grid arrays g_x0, g_x1, g_y0, and g_y1,
  * which has a speed advantage but is limited to MAXPIXELS image
  * dimensions. The other calculates the complex coordinates at a
  * cost of two additions and two multiplications for each component,
@@ -3529,10 +3529,10 @@ int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
  * be maintained.
  */
 
-/* Real component, grid lookup version - requires g_delta_x0/g_delta_x1 arrays */
+/* Real component, grid lookup version - requires g_x0/g_x1 arrays */
 static double _fastcall dx_pixel_grid(void)
 {
-	return g_delta_x0[g_col] + g_delta_x1[g_row];
+	return g_x0[g_col] + g_x1[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
@@ -3541,10 +3541,10 @@ static double _fastcall dx_pixel_calc(void)
 	return (double) (xxmin + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
 }
 
-/* Imaginary component, grid lookup version - requires g_delta_y0/g_delta_y1 arrays */
+/* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
 static double _fastcall dy_pixel_grid(void)
 {
-	return g_delta_y0[g_row] + g_delta_y1[g_col];
+	return g_y0[g_row] + g_y1[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */
@@ -3553,10 +3553,10 @@ static double _fastcall dy_pixel_calc(void)
 	return (double)(yymax - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
 }
 
-/* Real component, grid lookup version - requires lx0/lx1 arrays */
+/* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */
 static long _fastcall lx_pixel_grid(void)
 {
-	return lx0[g_col] + lx1[g_row];
+	return g_x0_l[g_col] + g_x1_l[g_row];
 }
 
 /* Real component, calculation version - does not require arrays */
@@ -3565,10 +3565,10 @@ static long _fastcall lx_pixel_calc(void)
 	return xmin + g_col*g_delta_x + g_row*g_delta_x2;
 }
 
-/* Imaginary component, grid lookup version - requires ly0/ly1 arrays */
+/* Imaginary component, grid lookup version - requires g_y0_l/g_y1_l arrays */
 static long _fastcall ly_pixel_grid(void)
 {
-	return ly0[g_row] + ly1[g_col];
+	return g_y0_l[g_row] + g_y1_l[g_col];
 }
 
 /* Imaginary component, calculation version - does not require arrays */

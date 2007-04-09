@@ -19,7 +19,7 @@ int ValidateLuts(char *fn)
 	char    temp[FILE_MAX_PATH + 1];
 	char    temp_fn[FILE_MAX_PATH];
 
-	strcpy(temp, MAP_name);
+	strcpy(temp, g_map_name);
 	strcpy(temp_fn, fn);
 #ifdef XFRACT
 	merge_pathnames(temp, temp_fn, 3);

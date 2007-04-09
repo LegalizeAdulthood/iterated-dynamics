@@ -31,7 +31,7 @@ int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
 char g_calibrate = 1;             /* add calibration bars to image */
-char image_map = 0;
+char g_image_map = 0;
 
 /* this structure permits variables to be temporarily static and visible
 	to routines in this file without permanently hogging memory */
@@ -247,8 +247,8 @@ int do_AutoStereo(void)
 	time(&ltime);
 	srand((unsigned int)ltime);
 
-	oldhelpmode = helpmode;
-	helpmode = RDSKEYS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = RDSKEYS;
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
 
@@ -290,7 +290,7 @@ int do_AutoStereo(void)
 	Y2 = YCEN + BARHEIGHT/2;
 
 	Y = 0;
-	if (image_map)
+	if (g_image_map)
 	{
 		g_out_line = outline_stereo;
 		while ((Y) < ydots)
@@ -366,7 +366,7 @@ int do_AutoStereo(void)
 	}
 
 exit_stereo:
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	driver_restore_graphics();
 	memcpy(g_dac_box, savedacbox, 256*3);
 	spindac(0, 1);
