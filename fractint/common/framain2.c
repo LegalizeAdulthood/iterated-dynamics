@@ -53,9 +53,9 @@ static  void move_zoombox(int keynum);
 static  void cmp_line_cleanup(void);
 
 void *g_evolve_handle = NULL;
-char old_stdcalcmode;
+char g_standard_calculation_mode_old;
 static char *savezoom;
-void (*outln_cleanup)(void);
+void (*g_out_line_cleanup)(void);
 
 int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 {
@@ -89,14 +89,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			g_dot_mode = g_video_entry.dotmode;     /* assembler dot read/write */
 			xdots   = g_video_entry.xdots;       /* # dots across the screen */
 			ydots   = g_video_entry.ydots;       /* # dots down the screen   */
-			g_colors  = g_video_entry.g_colors;      /* # g_colors available */
+			g_colors  = g_video_entry.colors;      /* # g_colors available */
 			g_dot_mode  %= 100;
-			sxdots  = xdots;
-			sydots  = ydots;
-			sxoffs = syoffs = 0;
+			g_screen_width  = xdots;
+			g_screen_height  = ydots;
+			g_sx_offset = g_sy_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
-			memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
+			memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
 
 			if (g_overlay_3d && !g_initialize_batch)
 			{
@@ -124,15 +124,15 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					return RESTORESTART;
 				}
 
-				xdots = sxdots;
-				ydots = sydots;
+				xdots = g_screen_width;
+				ydots = g_screen_height;
 				g_video_entry.xdots = xdots;
 				g_video_entry.ydots = ydots;
 			}
 
-			if (savedac || g_color_preloaded)
+			if (g_save_dac || g_color_preloaded)
 			{
-				memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
+				memcpy(g_dac_box, g_old_dac_box, 256*3); /* restore the DAC */
 				spindac(0, 1);
 				g_color_preloaded = FALSE;
 			}
@@ -155,7 +155,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			if (viewwindow)
 			{
 				/* bypass for VESA virtual screen */
-				ftemp = g_final_aspect_ratio*(((double) sydots)/((double) sxdots)/g_screen_aspect_ratio);
+				ftemp = g_final_aspect_ratio*(((double) g_screen_height)/((double) g_screen_width)/g_screen_aspect_ratio);
 				xdots = viewxdots;
 				if (xdots != 0)
 				{	/* xdots specified */
@@ -167,20 +167,20 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				else if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 				{
-					xdots = (int)((double)sxdots / viewreduction + 0.5);
+					xdots = (int)((double)g_screen_width / viewreduction + 0.5);
 					ydots = (int)((double)xdots*ftemp + 0.5);
 				}
 				else
 				{
-					ydots = (int)((double)sydots / viewreduction + 0.5);
+					ydots = (int)((double)g_screen_height / viewreduction + 0.5);
 					xdots = (int)((double)ydots / ftemp + 0.5);
 				}
-				if (xdots > sxdots || ydots > sydots)
+				if (xdots > g_screen_width || ydots > g_screen_height)
 				{
 					stopmsg(0, "View window too large; using full screen.");
 					viewwindow = 0;
-					xdots = viewxdots = sxdots;
-					ydots = viewydots = sydots;
+					xdots = viewxdots = g_screen_width;
+					ydots = viewydots = g_screen_height;
 				}
 				else if (((xdots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (ydots <= 1)) /* work with the sound feature */
@@ -189,35 +189,35 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					/* but no check if in evolve mode to allow lots of small views*/
 					stopmsg(0, "View window too small; using full screen.");
 					viewwindow = 0;
-					xdots = sxdots;
-					ydots = sydots;
+					xdots = g_screen_width;
+					ydots = g_screen_height;
 				}
 				if ((g_evolving & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & INFCALC))
 				{
 					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
 					g_evolving &= ~EVOLVE_FIELD_MAP;
 					viewwindow = FALSE;
-					xdots = sxdots;
-					ydots = sydots;
+					xdots = g_screen_width;
+					ydots = g_screen_height;
 				}
 				if (g_evolving & EVOLVE_FIELD_MAP)
 				{
-					xdots = (sxdots / g_grid_size)-!((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+					xdots = (g_screen_width / g_grid_size)-!((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					xdots = xdots - (xdots % 4); /* trim to multiple of 4 for SSG */
-					ydots = (sydots / g_grid_size)-!((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+					ydots = (g_screen_height / g_grid_size)-!((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					ydots = ydots - (ydots % 4);
 				}
 				else
 				{
-					sxoffs = (sxdots - xdots) / 2;
-					syoffs = (sydots - ydots) / 3;
+					g_sx_offset = (g_screen_width - xdots) / 2;
+					g_sy_offset = (g_screen_height - ydots) / 3;
 				}
 			}
 			g_dx_size = xdots - 1;            /* convert just once now */
 			g_dy_size = ydots - 1;
 		}
 		/* assume we save next time (except jb) */
-		savedac = (savedac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
+		g_save_dac = (g_save_dac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			g_look_at_mouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
@@ -225,7 +225,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 
 		if (g_show_file == 0)
 		{               /* loading an image */
-			outln_cleanup = NULL;          /* g_out_line routine can set this */
+			g_out_line_cleanup = NULL;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
 			{
 				g_out_line = call_line3d;
@@ -276,9 +276,9 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{
 				i = funny_glasses_call(tgaview);
 			}
-			if (outln_cleanup)              /* cleanup routine defined? */
+			if (g_out_line_cleanup)              /* cleanup routine defined? */
 			{
-				(*outln_cleanup)();
+				(*g_out_line_cleanup)();
 			}
 			if (i == 0)
 			{
@@ -310,12 +310,12 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 		}
 		driver_schedule_alarm(1);
 
-		sxmin = xxmin; /* save 3 corners for zoom.c ref points */
-		sxmax = xxmax;
-		sx3rd = xx3rd;
-		symin = yymin;
-		symax = yymax;
-		sy3rd = yy3rd;
+		g_sx_min = xxmin; /* save 3 corners for zoom.c ref points */
+		g_sx_max = xxmax;
+		g_sx_3rd = xx3rd;
+		g_sy_min = yymin;
+		g_sy_max = yymax;
+		g_sy_3rd = yy3rd;
 
 		if (bf_math)
 		{
@@ -345,13 +345,13 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			if (g_save_time != 0          /* autosave and resumable? */
 					&& (g_current_fractal_specific->flags&NORESUME) == 0)
 			{
-				savebase = readticker(); /* calc's start time */
-				saveticks = g_save_time*60*1000; /* in milliseconds */
+				g_save_base = readticker(); /* calc's start time */
+				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
 				g_finish_row = -1;
 				}
 			g_browsing = FALSE;      /* regenerate image, turn off g_browsing */
 			/*rb*/
-			name_stack_ptr = -1;   /* reset pointer */
+			g_name_stack_ptr = -1;   /* reset pointer */
 			g_browse_name[0] = '\0';  /* null */
 			if (viewwindow && (g_evolving & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
 			{
@@ -362,21 +362,21 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				if ((g_evolve_handle != NULL) && (g_calculation_status == CALCSTAT_RESUMABLE))
 				{
 					memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
-					paramrangex  = resume_e_info.paramrangex;
-					paramrangey  = resume_e_info.paramrangey;
-					opx = newopx = resume_e_info.opx;
-					opy = newopy = resume_e_info.opy;
-					odpx = newodpx = (char)resume_e_info.odpx;
-					odpy = newodpy = (char)resume_e_info.odpy;
+					g_parameter_range_x  = resume_e_info.parameter_range_x;
+					g_parameter_range_y  = resume_e_info.parameter_range_y;
+					g_parameter_offset_x = g_new_parameter_offset_x = resume_e_info.opx;
+					g_parameter_offset_y = g_new_parameter_offset_y = resume_e_info.opy;
+					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char)resume_e_info.odpx;
+					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char)resume_e_info.odpy;
 					px           = resume_e_info.px;
 					py           = resume_e_info.py;
-					sxoffs       = resume_e_info.sxoffs;
-					syoffs       = resume_e_info.syoffs;
+					g_sx_offset       = resume_e_info.sxoffs;
+					g_sy_offset       = resume_e_info.syoffs;
 					xdots        = resume_e_info.xdots;
 					ydots        = resume_e_info.ydots;
 					g_grid_size       = resume_e_info.gridsz;
 					this_gen_rseed = resume_e_info.this_gen_rseed;
-					g_fiddle_factor   = resume_e_info.g_fiddle_factor;
+					g_fiddle_factor   = resume_e_info.fiddle_factor;
 					g_evolving     = resume_e_info.evolving;
 					if (g_evolving)
 					{
@@ -396,13 +396,15 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					param_history(0); /* save old history */
 					ecount = 0;
 					g_fiddle_factor = g_fiddle_factor*g_fiddle_reduction;
-					opx = newopx; opy = newopy;
-					odpx = newodpx; odpy = newodpy; /*odpx used for discrete parms like
-														inside, outside, trigfn etc */
+					g_parameter_offset_x = g_new_parameter_offset_x;
+					g_parameter_offset_y = g_new_parameter_offset_y;
+					/* odpx used for discrete parms like inside, outside, trigfn etc */
+					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
+					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y; 
 				}
-				prmboxcount = 0;
-				g_delta_parameter_image_x = paramrangex/(g_grid_size-1);
-				g_delta_parameter_image_y = paramrangey/(g_grid_size-1);
+				g_parameter_box_count = 0;
+				g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size-1);
+				g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size-1);
 				grout  = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 				tmpxdots = xdots + grout;
 				tmpydots = ydots + grout;
@@ -410,8 +412,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				while (ecount < gridsqr)
 				{
 					spiralmap(ecount); /* sets px & py */
-					sxoffs = tmpxdots*px;
-					syoffs = tmpydots*py;
+					g_sx_offset = tmpxdots*px;
+					g_sy_offset = tmpydots*py;
 					param_history(1); /* restore old history */
 					fiddleparms(g_genes, ecount);
 					calculate_fractal_initialize();
@@ -437,28 +439,28 @@ done:
 					{
 						g_evolve_handle = malloc(sizeof(resume_e_info));
 					}
-					resume_e_info.paramrangex     = paramrangex;
-					resume_e_info.paramrangey     = paramrangey;
-					resume_e_info.opx             = opx;
-					resume_e_info.opy             = opy;
-					resume_e_info.odpx            = (short) odpx;
-					resume_e_info.odpy            = (short) odpy;
+					resume_e_info.parameter_range_x     = g_parameter_range_x;
+					resume_e_info.parameter_range_y     = g_parameter_range_y;
+					resume_e_info.opx             = g_parameter_offset_x;
+					resume_e_info.opy             = g_parameter_offset_y;
+					resume_e_info.odpx            = (short) g_discrete_parameter_offset_x;
+					resume_e_info.odpy            = (short) g_discrete_parameter_offset_y;
 					resume_e_info.px              = (short) px;
 					resume_e_info.py              = (short) py;
-					resume_e_info.sxoffs          = (short) sxoffs;
-					resume_e_info.syoffs          = (short) syoffs;
+					resume_e_info.sxoffs          = (short) g_sx_offset;
+					resume_e_info.syoffs          = (short) g_sy_offset;
 					resume_e_info.xdots           = (short) xdots;
 					resume_e_info.ydots           = (short) ydots;
 					resume_e_info.gridsz          = (short) g_grid_size;
 					resume_e_info.this_gen_rseed  = (short) this_gen_rseed;
-					resume_e_info.g_fiddle_factor = g_fiddle_factor;
+					resume_e_info.fiddle_factor = g_fiddle_factor;
 					resume_e_info.evolving        = (short) g_evolving;
 					resume_e_info.ecount          = (short) ecount;
 					memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
 				}
-				sxoffs = syoffs = 0;
-				xdots = sxdots;
-				ydots = sydots; /* otherwise save only saves a sub image and boxes get clipped */
+				g_sx_offset = g_sy_offset = 0;
+				xdots = g_screen_width;
+				ydots = g_screen_height; /* otherwise save only saves a sub image and boxes get clipped */
 
 				/* set up for 1st selected image, this reuses px and py */
 				px = py = g_grid_size/2;
@@ -476,7 +478,7 @@ done:
 				}
 			}
 
-			saveticks = 0;                 /* turn off autosave timer */
+			g_save_ticks = 0;                 /* turn off autosave timer */
 			if (driver_diskp() && i == 0) /* disk-video */
 			{
 				disk_video_status(0, "Image has been completed");
@@ -514,13 +516,13 @@ resumeloop:                             /* return here on failed overlays */
 				{       /* woke up for timed save */
 					driver_get_key();     /* eat the dummy char */
 					kbdchar = 's'; /* do the save */
-					resave_flag = RESAVE_YES;
+					g_resave_flag = RESAVE_YES;
 					timedsave = 2;
 				}
 				else
 				{                      /* save done, resume */
 					timedsave = 0;
-					resave_flag = RESAVE_DONE;
+					g_resave_flag = RESAVE_DONE;
 					kbdchar = FIK_ENTER;
 				}
 			}
@@ -533,7 +535,7 @@ resumeloop:                             /* return here on failed overlays */
 				}
 				else      /* wait for a real keystroke */
 				{
-					if (g_auto_browse && !no_sub_images)
+					if (g_auto_browse && !g_no_sub_images)
 					{
 						kbdchar = 'l';
 					}
@@ -643,7 +645,7 @@ resumeloop:                             /* return here on failed overlays */
 				mms_value == RESTART))
 			{
 				g_quick_calculate = FALSE;
-				usr_stdcalcmode = old_stdcalcmode;
+				usr_stdcalcmode = g_standard_calculation_mode_old;
 			}
 			if (g_quick_calculate && g_calculation_status != CALCSTAT_COMPLETED)
 			{
@@ -681,7 +683,7 @@ static int look(char *stacked)
 		g_show_file = 0;       /* trigger load */
 		g_browsing = TRUE;    /* but don't ask for the file name as it's
 							* just been selected */
-		if (name_stack_ptr == 15)
+		if (g_name_stack_ptr == 15)
 		{					/* about to run off the end of the file
 							* history stack so shift it all back one to
 							* make room, lose the 1st one */
@@ -690,10 +692,10 @@ static int look(char *stacked)
 			{
 				strcpy(g_file_name_stack[tmp - 1], g_file_name_stack[tmp]);
 			}
-			name_stack_ptr = 14;
+			g_name_stack_ptr = 14;
 		}
-		name_stack_ptr++;
-		strcpy(g_file_name_stack[name_stack_ptr], g_browse_name);
+		g_name_stack_ptr++;
+		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
 		/*
 		splitpath(g_browse_name, NULL, NULL, fname, ext);
 		splitpath(g_read_name, drive, dir, NULL, NULL);
@@ -708,20 +710,20 @@ static int look(char *stacked)
 		return 1;       /* hop off and do it!! */
 
 	case '\\':
-		if (name_stack_ptr >= 1)
+		if (g_name_stack_ptr >= 1)
 		{
 			/* go back one file if somewhere to go (ie. g_browsing) */
-			name_stack_ptr--;
-			while (g_file_name_stack[name_stack_ptr][0] == '\0'
-					&& name_stack_ptr >= 0)
+			g_name_stack_ptr--;
+			while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
+					&& g_name_stack_ptr >= 0)
 			{
-				name_stack_ptr--;
+				g_name_stack_ptr--;
 			}
-			if (name_stack_ptr < 0) /* oops, must have deleted first one */
+			if (g_name_stack_ptr < 0) /* oops, must have deleted first one */
 			{
 				break;
 			}
-			strcpy(g_browse_name, g_file_name_stack[name_stack_ptr]);
+			strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
 			merge_pathnames(g_read_name, g_browse_name, 2);
 			g_browsing = TRUE;
 			g_show_file = 0;
@@ -764,14 +766,14 @@ static int handle_fractal_type(int *frommandel)
 	if (i >= 0)
 	{
 		driver_discard_screen();
-		savedac = SAVEDAC_NO;
+		g_save_dac = SAVEDAC_NO;
 		g_save_release = g_release;
 		g_no_magnitude_calculation = FALSE;
 		g_use_old_periodicity = FALSE;
 		g_bad_outside = 0;
 		g_use_old_complex_power = TRUE;
 		set_current_params();
-		odpx = odpy = newodpx = newodpy = 0;
+		g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_x = g_new_discrete_parameter_offset_y = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
 		g_set_orbit_corners = 0;
 		param_history(0); /* save history */
@@ -845,7 +847,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& g_outside != ATAN)
 	{
 		g_quick_calculate = TRUE;
-		old_stdcalcmode = usr_stdcalcmode;
+		g_standard_calculation_mode_old = usr_stdcalcmode;
 		usr_stdcalcmode = '1';
 		*kbdmore = 0;
 		g_calculation_status = CALCSTAT_RESUMABLE;
@@ -911,7 +913,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		g_adapter = g_init_mode;
 		g_init_mode = -1;
 		i |= COMMAND_FRACTAL_PARAM;
-		savedac = SAVEDAC_NO;
+		g_save_dac = SAVEDAC_NO;
 	}
 	else if (g_color_preloaded)
 	{                         /* g_colors= was specified */
@@ -920,7 +922,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	}
 	else if (i & COMMAND_RESET)         /* reset was specified */
 	{
-		savedac = SAVEDAC_NO;
+		g_save_dac = SAVEDAC_NO;
 	}
 	if (i & COMMAND_3D_YES)
 	{                         /* 3d = was specified */
@@ -948,7 +950,7 @@ static int handle_toggle_float(void)
 	{
 		usr_floatflag = 1;
 	}
-	else if (stdcalcmode != 'o') /* don't go there */
+	else if (g_standard_calculation_mode != 'o') /* don't go there */
 	{
 		usr_floatflag = 0;
 	}
@@ -965,7 +967,7 @@ static int handle_ant(void)
 	oldtype = g_fractal_type;
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		oldparm[i] = param[i];
+		oldparm[i] = g_parameters[i];
 	}
 	if (g_fractal_type != ANT)
 	{
@@ -994,7 +996,7 @@ static int handle_ant(void)
 	g_fractal_type = oldtype;
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		param[i] = oldparm[i];
+		g_parameters[i] = oldparm[i];
 	}
 	return (err >= 0) ? CONTINUE : 0;
 }
@@ -1074,8 +1076,8 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	}
 
 	if (g_current_fractal_specific->tojulia != NOFRACTAL
-		&& param[0] == 0.0
-		&& param[1] == 0.0)
+		&& g_parameters[0] == 0.0
+		&& g_parameters[1] == 0.0)
 	{
 		/* switch to corresponding Julia set */
 		int key;
@@ -1093,21 +1095,21 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (xcjul == BIG || ycjul == BIG)
 		{
-			param[0] = (xxmax + xxmin) / 2;
-			param[1] = (yymax + yymin) / 2;
+			g_parameters[0] = (xxmax + xxmin) / 2;
+			g_parameters[1] = (yymax + yymin) / 2;
 		}
 		else
 		{
-			param[0] = xcjul;
-			param[1] = ycjul;
+			g_parameters[0] = xcjul;
+			g_parameters[1] = ycjul;
 			xcjul = ycjul = BIG;
 		}
-		jxxmin = sxmin;
-		jxxmax = sxmax;
-		jyymax = symax;
-		jyymin = symin;
-		jxx3rd = sx3rd;
-		jyy3rd = sy3rd;
+		jxxmin = g_sx_min;
+		jxxmax = g_sx_max;
+		jyymax = g_sy_max;
+		jyymin = g_sy_min;
+		jxx3rd = g_sx_3rd;
+		jyy3rd = g_sy_3rd;
 		*frommandel = 1;
 		xxmin = g_current_fractal_specific->xmin;
 		xxmax = g_current_fractal_specific->xmax;
@@ -1151,10 +1153,10 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 			yymin = yy3rd = g_current_fractal_specific->ymin;
 			yymax = g_current_fractal_specific->ymax;
 		}
-		SaveC.x = param[0];
-		SaveC.y = param[1];
-		param[0] = 0;
-		param[1] = 0;
+		g_save_c.x = g_parameters[0];
+		g_save_c.y = g_parameters[1];
+		g_parameters[0] = 0;
+		g_parameters[1] = 0;
 		zoomoff = TRUE;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
@@ -1201,20 +1203,20 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 
 static int handle_history(char *stacked, int kbdchar)
 {
-	if (name_stack_ptr >= 1)
+	if (g_name_stack_ptr >= 1)
 	{
 		/* go back one file if somewhere to go (ie. g_browsing) */
-		name_stack_ptr--;
-		while (g_file_name_stack[name_stack_ptr][0] == '\0'
-			&& name_stack_ptr >= 0)
+		g_name_stack_ptr--;
+		while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
+			&& g_name_stack_ptr >= 0)
 		{
-			name_stack_ptr--;
+			g_name_stack_ptr--;
 		}
-		if (name_stack_ptr < 0) /* oops, must have deleted first one */
+		if (g_name_stack_ptr < 0) /* oops, must have deleted first one */
 		{
 			return 0;
 		}
-		strcpy(g_browse_name, g_file_name_stack[name_stack_ptr]);
+		strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
 		/*
 		splitpath(g_browse_name, NULL, NULL, fname, ext);
 		splitpath(g_read_name, drive, dir, NULL, NULL);
@@ -1222,7 +1224,7 @@ static int handle_history(char *stacked, int kbdchar)
 		*/
 		merge_pathnames(g_read_name, g_browse_name, 2);
 		g_browsing = TRUE;
-		no_sub_images = FALSE;
+		g_no_sub_images = FALSE;
 		g_show_file = 0;
 		if (g_ask_video)
 		{
@@ -1263,9 +1265,9 @@ static int handle_history(char *stacked, int kbdchar)
 static int handle_color_cycling(int kbdchar)
 {
 	clear_zoombox();
-	memcpy(olddacbox, g_dac_box, 256*3);
+	memcpy(g_old_dac_box, g_dac_box, 256*3);
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-	if (memcmp(olddacbox, g_dac_box, 256*3))
+	if (memcmp(g_old_dac_box, g_dac_box, 256*3))
 	{
 		g_color_state = COLORSTATE_UNKNOWN;
 		history_save_info();
@@ -1294,11 +1296,11 @@ static int handle_color_editing(int *kbdmore)
 		&& !driver_diskp())
 	{
 		int oldhelpmode = g_help_mode;
-		memcpy(olddacbox, g_dac_box, 256*3);
+		memcpy(g_old_dac_box, g_dac_box, 256*3);
 		g_help_mode = HELPXHAIR;
 		palette_edit();
 		g_help_mode = oldhelpmode;
-		if (memcmp(olddacbox, g_dac_box, 256*3))
+		if (memcmp(g_old_dac_box, g_dac_box, 256*3))
 		{
 			g_color_state = COLORSTATE_UNKNOWN;
 			history_save_info();
@@ -1328,15 +1330,15 @@ static int handle_evolver_save_to_disk(void)
 		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
 
-	oldsxoffs = sxoffs;
-	oldsyoffs = syoffs;
+	oldsxoffs = g_sx_offset;
+	oldsyoffs = g_sy_offset;
 	oldxdots = xdots;
 	oldydots = ydots;
 	oldpx = px;
 	oldpy = py;
-	sxoffs = syoffs = 0;
-	xdots = sxdots;
-	ydots = sydots; /* for full screen save and pointer move stuff */
+	g_sx_offset = g_sy_offset = 0;
+	xdots = g_screen_width;
+	ydots = g_screen_height; /* for full screen save and pointer move stuff */
 	px = py = g_grid_size / 2;
 	param_history(1); /* restore old history */
 	fiddleparms(g_genes, 0);
@@ -1346,8 +1348,8 @@ static int handle_evolver_save_to_disk(void)
 	py = oldpy;
 	param_history(1); /* restore old history */
 	fiddleparms(g_genes, unspiralmap());
-	sxoffs = oldsxoffs;
-	syoffs = oldsyoffs;
+	g_sx_offset = oldsxoffs;
+	g_sy_offset = oldsyoffs;
 	xdots = oldxdots;
 	ydots = oldydots;
 	return CONTINUE;
@@ -1382,11 +1384,11 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	}
 	driver_stack_screen();            /* save graphics image */
 	*stacked = g_overlay_3d ? 0 : 1;
-	if (resave_flag)
+	if (g_resave_flag)
 	{
 		updatesavename(g_save_name);      /* do the pending increment */
-		resave_flag = RESAVE_NO;
-		started_resaves = FALSE;
+		g_resave_flag = RESAVE_NO;
+		g_started_resaves = FALSE;
 	}
 	g_show_file = -1;
 	return RESTORESTART;
@@ -1490,9 +1492,9 @@ static int handle_video_mode(int kbdchar, int *kbdmore)
 	if (k >= 0)
 	{
 		g_adapter = k;
-		if (g_video_table[g_adapter].g_colors != g_colors)
+		if (g_video_table[g_adapter].colors != g_colors)
 		{
-			savedac = SAVEDAC_NO;
+			g_save_dac = SAVEDAC_NO;
 		}
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
@@ -1593,7 +1595,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 		{
 			g_quick_calculate = FALSE;
 		}
-		usr_stdcalcmode = old_stdcalcmode;
+		usr_stdcalcmode = g_standard_calculation_mode_old;
 	}
 	switch (*kbdchar)
 	{
@@ -1863,8 +1865,8 @@ static void handle_evolver_move_selection(int *kbdchar)
 				py = 0;
 			}
 			grout = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			sxoffs = px*(int)(g_dx_size + 1 + grout);
-			syoffs = py*(int)(g_dy_size + 1 + grout);
+			g_sx_offset = px*(int)(g_dx_size + 1 + grout);
+			g_sy_offset = py*(int)(g_dy_size + 1 + grout);
 
 			param_history(1); /* restore old history */
 			fiddleparms(g_genes, unspiralmap()); /* change all parameters */
@@ -1882,24 +1884,24 @@ static void handle_evolver_move_selection(int *kbdchar)
 
 static void handle_evolver_param_zoom(int zoom_out)
 {
-	if (prmboxcount)
+	if (g_parameter_box_count)
 	{
 		if (zoom_out)
 		{
-			parmzoom -= 1.0;
-			if (parmzoom < 1.0)
+			g_parameter_zoom -= 1.0;
+			if (g_parameter_zoom < 1.0)
 			{
-				parmzoom = 1.0;
+				g_parameter_zoom = 1.0;
 			}
 			drawparmbox(0);
 			set_evolve_ranges();
 		}
 		else
 		{
-			parmzoom += 1.0;
-			if (parmzoom > (double) g_grid_size/2.0)
+			g_parameter_zoom += 1.0;
+			if (g_parameter_zoom > (double) g_grid_size/2.0)
 			{
-				parmzoom = (double) g_grid_size/2.0;
+				g_parameter_zoom = (double) g_grid_size/2.0;
 			}
 			drawparmbox(0);
 			set_evolve_ranges();
@@ -1925,8 +1927,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in viewwindow mode) */
 					int grout = !((g_evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
-					sxoffs = px*(int) (g_dx_size + 1 + grout);
-					syoffs = py*(int) (g_dy_size + 1 + grout);
+					g_sx_offset = px*(int) (g_dx_size + 1 + grout);
+					g_sy_offset = py*(int) (g_dy_size + 1 + grout);
 					SetupParamBox();
 					drawparmbox(0);
 				}
@@ -1964,21 +1966,21 @@ static void handle_evolver_mutation(int halve, int *kbdmore)
 	if (halve)
 	{
 		g_fiddle_factor /= 2;
-		paramrangex /= 2;
-		newopx = opx + paramrangex / 2;
-		paramrangey /= 2;
-		newopy = opy + paramrangey / 2;
+		g_parameter_range_x /= 2;
+		g_new_parameter_offset_x = g_parameter_offset_x + g_parameter_range_x / 2;
+		g_parameter_range_y /= 2;
+		g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
 	}
 	else
 	{
 		double centerx, centery;
 		g_fiddle_factor *= 2;
-		centerx = opx + paramrangex / 2;
-		paramrangex *= 2;
-		newopx = centerx - paramrangex / 2;
-		centery = opy + paramrangey / 2;
-		paramrangey *= 2;
-		newopy = centery - paramrangey / 2;
+		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
+		g_parameter_range_x *= 2;
+		g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
+		centery = g_parameter_offset_y + g_parameter_range_y / 2;
+		g_parameter_range_y *= 2;
+		g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
 	}
 	*kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
@@ -1997,7 +1999,7 @@ static void handle_evolver_grid_size(int decrement, int *kbdmore)
 	}
 	else
 	{
-		if (g_grid_size < sxdots/(MINPIXELS << 1))
+		if (g_grid_size < g_screen_width/(MINPIXELS << 1))
 		{
 			g_grid_size += 2;
 			*kbdmore = 0;
@@ -2287,7 +2289,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	{
 		errcount = 0;
 		cmp_fp = dir_fopen(g_work_dir, "cmperr", g_initialize_batch ? "a" : "w");
-		outln_cleanup = cmp_line_cleanup;
+		g_out_line_cleanup = cmp_line_cleanup;
 		}
 	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
 	{
@@ -2345,12 +2347,12 @@ void clear_zoombox()
 
 void reset_zoom_corners()
 {
-	xxmin = sxmin;
-	xxmax = sxmax;
-	xx3rd = sx3rd;
-	yymax = symax;
-	yymin = symin;
-	yy3rd = sy3rd;
+	xxmin = g_sx_min;
+	xxmax = g_sx_max;
+	xx3rd = g_sx_3rd;
+	yymax = g_sy_max;
+	yymin = g_sy_min;
+	yy3rd = g_sy_3rd;
 	if (bf_math)
 	{
 		copy_bf(bfxmin, bfsxmin);

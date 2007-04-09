@@ -280,22 +280,22 @@ int orbit_3d_setup(void)
 
 	if (g_fractal_type == LHENON)
 	{
-		s_l_a =  (long) (param[0]*g_fudge);
-		s_l_b =  (long) (param[1]*g_fudge);
-		s_l_c =  (long) (param[2]*g_fudge);
-		s_l_d =  (long) (param[3]*g_fudge);
+		s_l_a =  (long) (g_parameters[0]*g_fudge);
+		s_l_b =  (long) (g_parameters[1]*g_fudge);
+		s_l_c =  (long) (g_parameters[2]*g_fudge);
+		s_l_d =  (long) (g_parameters[3]*g_fudge);
 	}
 	else if (g_fractal_type == KAM || g_fractal_type == KAM3D)
 	{
 		g_max_count = 1L;
-		s_a   = param[0];           /* angle */
-		if (param[1] <= 0.0)
+		s_a   = g_parameters[0];           /* angle */
+		if (g_parameters[1] <= 0.0)
 		{
-			param[1] = .01;
+			g_parameters[1] = .01;
 		}
-		s_l_b =  (long) (param[1]*g_fudge);    /* stepsize */
-		s_l_c =  (long) (param[2]*g_fudge);    /* stop */
-		s_l_d =  (long) param[3];
+		s_l_b =  (long) (g_parameters[1]*g_fudge);    /* stepsize */
+		s_l_c =  (long) (g_parameters[2]*g_fudge);    /* stop */
+		s_l_d =  (long) g_parameters[3];
 		s_t = (int) s_l_d;     /* points per orbit */
 
 		s_l_sinx = (long) (sin(s_a)*g_fudge);
@@ -307,11 +307,11 @@ int orbit_3d_setup(void)
 	{
 		LCMPLX Sqrt;
 
-		s_x_long = (long) (param[0]*g_fudge);
-		s_y_long = (long) (param[1]*g_fudge);
+		s_x_long = (long) (g_parameters[0]*g_fudge);
+		s_y_long = (long) (g_parameters[1]*g_fudge);
 
-		s_max_hits    = (int) param[2];
-		s_run_length = (int) param[3];
+		s_max_hits    = (int) g_parameters[2];
+		s_run_length = (int) g_parameters[3];
 		if (s_max_hits <= 0)
 		{
 			s_max_hits = 1;
@@ -320,7 +320,7 @@ int orbit_3d_setup(void)
 		{
 			s_max_hits = g_colors - 1;
 		}
-		param[2] = s_max_hits;
+		g_parameters[2] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 		/* Note: using g_bit_shift of 21 for affine, 24 otherwise */
@@ -378,10 +378,10 @@ lrwalk:
 	}
 	else
 	{
-		s_l_dt = (long) (param[0]*g_fudge);
-		s_l_a =  (long) (param[1]*g_fudge);
-		s_l_b =  (long) (param[2]*g_fudge);
-		s_l_c =  (long) (param[3]*g_fudge);
+		s_l_dt = (long) (g_parameters[0]*g_fudge);
+		s_l_a =  (long) (g_parameters[1]*g_fudge);
+		s_l_b =  (long) (g_parameters[2]*g_fudge);
+		s_l_c =  (long) (g_parameters[3]*g_fudge);
 	}
 
 	/* precalculations for speed */
@@ -426,8 +426,8 @@ int orbit_3d_setup_fp()
 	s_init_orbit_fp[2] = 1;
 	if (g_fractal_type == FPGINGERBREAD)
 	{
-		s_init_orbit_fp[0] = param[0];        /* initial conditions */
-		s_init_orbit_fp[1] = param[1];
+		s_init_orbit_fp[0] = g_parameters[0];        /* initial conditions */
+		s_init_orbit_fp[1] = g_parameters[1];
 	}
 
 	if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
@@ -445,10 +445,10 @@ int orbit_3d_setup_fp()
 
 	if (g_fractal_type == FPHENON || g_fractal_type == FPPICKOVER)
 	{
-		s_a =  param[0];
-		s_b =  param[1];
-		s_c =  param[2];
-		s_d =  param[3];
+		s_a =  g_parameters[0];
+		s_b =  g_parameters[1];
+		s_c =  g_parameters[2];
+		s_d =  g_parameters[3];
 	}
 	else if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
 	{
@@ -457,22 +457,22 @@ int orbit_3d_setup_fp()
 		s_connect = 0;
 		s_waste = 2000;
 		/* Initialize parameters */
-		s_a  =   param[0];
-		s_b  =   param[1];
-		s_c  =   param[2];
-		s_d  =   param[3];
+		s_a  =   g_parameters[0];
+		s_b  =   g_parameters[1];
+		s_c  =   g_parameters[2];
+		s_d  =   g_parameters[3];
 	}
 	else if (g_fractal_type == KAMFP || g_fractal_type == KAM3DFP)
 	{
 		g_max_count = 1L;
-		s_a = param[0];           /* angle */
-		if (param[1] <= 0.0)
+		s_a = g_parameters[0];           /* angle */
+		if (g_parameters[1] <= 0.0)
 		{
-			param[1] = .01;
+			g_parameters[1] = .01;
 		}
-		s_b =  param[1];    /* stepsize */
-		s_c =  param[2];    /* stop */
-		s_l_d =  (long) param[3];
+		s_b =  g_parameters[1];    /* stepsize */
+		s_c =  g_parameters[2];    /* stop */
+		s_l_d =  (long) g_parameters[3];
 		s_t = (int) s_l_d;     /* points per orbit */
 		g_sin_x = sin(s_a);
 		g_cos_x = cos(s_a);
@@ -486,10 +486,10 @@ int orbit_3d_setup_fp()
 		s_init_orbit_fp[1] = 0;
 		s_init_orbit_fp[2] = 0;
 		s_connect = 0;
-		s_a =  param[0];
-		s_b =  param[1];
-		s_c =  param[2];
-		s_d =  param[3];
+		s_a =  g_parameters[0];
+		s_b =  g_parameters[1];
+		s_c =  g_parameters[2];
+		s_d =  g_parameters[3];
 		if (g_fractal_type == THREEPLY)
 		{
 			COSB   = cos(s_b);
@@ -500,11 +500,11 @@ int orbit_3d_setup_fp()
 	{
 		_CMPLX Sqrt;
 
-		s_cx = param[0];
-		s_cy = param[1];
+		s_cx = g_parameters[0];
+		s_cy = g_parameters[1];
 
-		s_max_hits    = (int) param[2];
-		s_run_length = (int) param[3];
+		s_max_hits    = (int) g_parameters[2];
+		s_run_length = (int) g_parameters[3];
 		if (s_max_hits <= 0)
 		{
 			s_max_hits = 1;
@@ -513,7 +513,7 @@ int orbit_3d_setup_fp()
 		{
 			s_max_hits = g_colors - 1;
 		}
-		param[2] = s_max_hits;
+		g_parameters[2] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
 
@@ -564,10 +564,10 @@ rwalk:
 	}
 	else
 	{
-		s_dt = param[0];
-		s_a =  param[1];
-		s_b =  param[2];
-		s_c =  param[3];
+		s_dt = g_parameters[0];
+		s_a =  g_parameters[1];
+		s_b =  g_parameters[2];
+		s_c =  g_parameters[3];
 
 	}
 
@@ -1257,12 +1257,12 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 
 /* dmf */
 #undef  LAMBDA
-#define LAMBDA  param[0]
-#define ALPHA   param[1]
-#define BETA    param[2]
-#define GAMMA   param[3]
-#define OMEGA   param[4]
-#define DEGREE  param[5]
+#define LAMBDA  g_parameters[0]
+#define ALPHA   g_parameters[1]
+#define BETA    g_parameters[2]
+#define GAMMA   g_parameters[3]
+#define OMEGA   g_parameters[4]
+#define DEGREE  g_parameters[5]
 
 int icon_orbit_fp(double *x, double *y, double *z)
 {
@@ -1300,10 +1300,10 @@ int icon_orbit_fp(double *x, double *y, double *z)
 #endif
 
 /* hb */
-#define PAR_A   param[0]
-#define PAR_B   param[1]
-#define PAR_C   param[2]
-#define PAR_D   param[3]
+#define PAR_A   g_parameters[0]
+#define PAR_B   g_parameters[1]
+#define PAR_C   g_parameters[2]
+#define PAR_D   g_parameters[3]
 
 int latoo_orbit_fp(double *x, double *y, double *z)
 {
@@ -1585,9 +1585,9 @@ int orbit_2d()
 
 		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
 		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
-		if (overflow)
+		if (g_overflow)
 		{
-			overflow = 0;
+			g_overflow = 0;
 			return ret;
 		}
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
@@ -1878,7 +1878,7 @@ int dynamic_2d_setup_fp()
 {
 	s_connect = 0;
 	s_euler = 0;
-	s_d = param[0]; /* number of intervals */
+	s_d = g_parameters[0]; /* number of intervals */
 	if (s_d < 0)
 	{
 		s_d = -s_d;
@@ -1890,9 +1890,9 @@ int dynamic_2d_setup_fp()
 	}
 	if (g_fractal_type == DYNAMICFP)
 	{
-		s_a = param[2]; /* parameter */
-		s_b = param[3]; /* parameter */
-		s_dt = param[1]; /* step size */
+		s_a = g_parameters[2]; /* parameter */
+		s_b = g_parameters[3]; /* parameter */
+		s_dt = g_parameters[1]; /* step size */
 		if (s_dt < 0)
 		{
 			s_dt = -s_dt;
@@ -2303,12 +2303,12 @@ int funny_glasses_call(int (*calc)(void))
 		}
 	}
 done:
-	if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+	if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*xdots)
 	{
 		/* turn off view windows so will save properly */
-		sxoffs = syoffs = 0;
-		xdots = sxdots;
-		ydots = sydots;
+		g_sx_offset = g_sy_offset = 0;
+		xdots = g_screen_width;
+		ydots = g_screen_height;
 		viewwindow = 0;
 	}
 	return status;
@@ -2333,7 +2333,7 @@ static int ifs_3d_float(void)
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
 	srand(1);
-	color_method = (int) param[0];
+	color_method = (int) g_parameters[0];
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
 		notdiskmsg();
@@ -2362,7 +2362,7 @@ static int ifs_3d_float(void)
 		/* pick which iterated function to execute, weighted by probability */
 		sum = g_ifs_definition[12]; /* [0][12] */
 		k = 0;
-		while (sum < r && ++k < numaffine*IFS3DPARM)
+		while (sum < r && ++k < g_num_affine*IFS3DPARM)
 		{
 			sum += g_ifs_definition[k*IFS3DPARM + 12];
 			if (g_ifs_definition[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */
@@ -2482,15 +2482,15 @@ static int ifs_2d(void)
 	l_setup_convert_to_screen(&cvt);
 
 	srand(1);
-	color_method = (int) param[0];
-	localifs = (long *) malloc(numaffine*IFSPARM*sizeof(long));
+	color_method = (int) g_parameters[0];
+	localifs = (long *) malloc(g_num_affine*IFSPARM*sizeof(long));
 	if (localifs == NULL)
 	{
 		stopmsg(0, g_insufficient_ifs_memory);
 		return -1;
 	}
 
-	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+	for (i = 0; i < g_num_affine; i++)    /* fill in the local IFS array */
 	{
 		for (j = 0; j < IFSPARM; j++)
 		{
@@ -2519,7 +2519,7 @@ static int ifs_2d(void)
 		/* pick which iterated function to execute, weighted by probability */
 		sum = localifs[6];  /* [0][6] */
 		k = 0;
-		while (sum < r && k < numaffine-1) /* fixed bug of error if sum < 1 */
+		while (sum < r && k < g_num_affine-1) /* fixed bug of error if sum < 1 */
 		{
 			sum += localifs[++k*IFSPARM + 6];
 		}
@@ -2583,8 +2583,8 @@ static int ifs_3d_long(void)
 
 	struct threed_vt_inf inf;
 	srand(1);
-	color_method = (int) param[0];
-	localifs = (long *) malloc(numaffine*IFS3DPARM*sizeof(long));
+	color_method = (int) g_parameters[0];
+	localifs = (long *) malloc(g_num_affine*IFS3DPARM*sizeof(long));
 	if (localifs == NULL)
 	{
 		stopmsg(0, g_insufficient_ifs_memory);
@@ -2594,7 +2594,7 @@ static int ifs_3d_long(void)
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&inf.cvt);
 
-	for (i = 0; i < numaffine; i++)    /* fill in the local IFS array */
+	for (i = 0; i < g_num_affine; i++)    /* fill in the local IFS array */
 	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
@@ -2626,7 +2626,7 @@ static int ifs_3d_long(void)
 		/* pick which iterated function to execute, weighted by probability */
 		sum = localifs[12];  /* [0][12] */
 		k = 0;
-		while (sum < r && ++k < numaffine*IFS3DPARM)
+		while (sum < r && ++k < g_num_affine*IFS3DPARM)
 		{
 			sum += localifs[k*IFS3DPARM + 12];
 			if (g_ifs_definition[(k + 1)*IFS3DPARM + 12] == 0) /* for safety  */

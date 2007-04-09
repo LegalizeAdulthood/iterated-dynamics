@@ -2332,14 +2332,14 @@ int type_has_parameter(int type, int parm, char *buf)
 	char *ret = NULL;
 	if (0 <= parm && parm < 4)
 	{
-		ret = g_fractal_specific[type].param[parm];
+		ret = g_fractal_specific[type].parameters[parm];
 	}
 	else if (parm >= 4 && parm < MAXPARAMS)
 	{
 		extra = find_extra_param(type);
 		if (extra > -1)
 		{
-			ret = g_more_parameters[extra].param[parm-4];
+			ret = g_more_parameters[extra].parameters[parm-4];
 		}
 	}
 	if (ret)

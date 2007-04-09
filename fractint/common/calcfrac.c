@@ -524,7 +524,7 @@ int calculate_fractal(void)
 	if (g_is_true_color && g_true_mode)
 	{
 		/* Have to force passes = 1 */
-		usr_stdcalcmode = stdcalcmode = '1';
+		usr_stdcalcmode = g_standard_calculation_mode = '1';
 	}
 	if (g_true_color)
 	{
@@ -532,7 +532,7 @@ int calculate_fractal(void)
 		if (startdisk1(g_light_name, NULL, 0) == 0)
 		{
 			/* Have to force passes = 1 */
-			usr_stdcalcmode = stdcalcmode = '1';
+			usr_stdcalcmode = g_standard_calculation_mode = '1';
 			g_put_color = put_truecolor_disk;
 		}
 		else
@@ -544,7 +544,7 @@ int calculate_fractal(void)
 	{
 		if (usr_stdcalcmode != 'o')
 		{
-			usr_stdcalcmode = stdcalcmode = '1';
+			usr_stdcalcmode = g_standard_calculation_mode = '1';
 		}
 	}
 
@@ -557,10 +557,10 @@ int calculate_fractal(void)
 	{
 		g_distance_test = 0;
 	}
-	g_parameter.x   = param[0];
-	g_parameter.y   = param[1];
-	g_parameter2.x  = param[2];
-	g_parameter2.y  = param[3];
+	g_parameter.x   = g_parameters[0];
+	g_parameter.y   = g_parameters[1];
+	g_parameter2.x  = g_parameters[2];
+	g_parameter2.y  = g_parameters[3];
 
 	if (g_log_palette_flag && g_colors < 16)
 	{
@@ -737,11 +737,11 @@ int calculate_fractal(void)
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
 	{
 		end_resume();
-		if (resave_flag)
+		if (g_resave_flag)
 		{
 			updatesavename(g_save_name); /* do the pending increment */
-			resave_flag = RESAVE_NO;
-			started_resaves = FALSE;
+			g_resave_flag = RESAVE_NO;
+			g_started_resaves = FALSE;
 		}
 		g_calculation_time = 0;
 	}
@@ -783,29 +783,29 @@ int calculate_fractal(void)
 	}
 	else /* standard escape-time engine */
 	{
-		if (stdcalcmode == '3')  /* convoluted 'g' + '2' hybrid */
+		if (g_standard_calculation_mode == '3')  /* convoluted 'g' + '2' hybrid */
 		{
 			int oldcalcmode;
-			oldcalcmode = stdcalcmode;
+			oldcalcmode = g_standard_calculation_mode;
 			if (!g_resuming || g_three_pass)
 			{
-				stdcalcmode = 'g';
+				g_standard_calculation_mode = 'g';
 				g_three_pass = 1;
 				timer(TIMER_ENGINE, (int(*)())perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
-					stdcalcmode = (xdots >= 640) ? '2' : '1';
+					g_standard_calculation_mode = (xdots >= 640) ? '2' : '1';
 					timer(TIMER_ENGINE, (int(*)())perform_work_list);
 					g_three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
-				stdcalcmode = (xdots >= 640) ? '2' : '1';
+				g_standard_calculation_mode = (xdots >= 640) ? '2' : '1';
 				timer(TIMER_ENGINE, (int (*)()) perform_work_list);
 			}
-			stdcalcmode = (char)oldcalcmode;
+			g_standard_calculation_mode = (char)oldcalcmode;
 		}
 		else /* main case, much nicer! */
 		{
@@ -885,29 +885,29 @@ static void perform_work_list()
 
 	if (g_potential_flag && g_potential_16bit)
 	{
-		int tmpcalcmode = stdcalcmode;
+		int tmpcalcmode = g_standard_calculation_mode;
 
-		stdcalcmode = '1'; /* force 1 pass */
+		g_standard_calculation_mode = '1'; /* force 1 pass */
 		if (g_resuming == 0)
 		{
 			if (disk_start_potential() < 0)
 			{
 				g_potential_16bit = FALSE;       /* disk_start failed or cancelled */
-				stdcalcmode = (char)tmpcalcmode;    /* maybe we can carry on??? */
+				g_standard_calculation_mode = (char)tmpcalcmode;    /* maybe we can carry on??? */
 			}
 		}
 	}
-	if (stdcalcmode == 'b' && (g_current_fractal_specific->flags & NOTRACE))
+	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & NOTRACE))
 	{
-		stdcalcmode = '1';
+		g_standard_calculation_mode = '1';
 	}
-	if (stdcalcmode == 'g' && (g_current_fractal_specific->flags & NOGUESS))
+	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & NOGUESS))
 	{
-		stdcalcmode = '1';
+		g_standard_calculation_mode = '1';
 	}
-	if (stdcalcmode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
+	if (g_standard_calculation_mode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
 	{
-		stdcalcmode = '1';
+		g_standard_calculation_mode = '1';
 	}
 
 	/* default setup a new g_work_list */
@@ -1123,7 +1123,7 @@ static void perform_work_list()
 		}
 
 		/* call the appropriate escape-time engine */
-		switch (stdcalcmode)
+		switch (g_standard_calculation_mode)
 		{
 		case 's':
 			if (DEBUGFLAG_SOI_LONG_DOUBLE == g_debug_flag)
@@ -1723,7 +1723,7 @@ static int draw_orbits(void)
 
 	if (plotorbits2dsetup() == -1)
 	{
-		stdcalcmode = 'g';
+		g_standard_calculation_mode = 'g';
 		return -1;
 	}
 
@@ -1745,11 +1745,11 @@ static int one_or_two_pass(void)
 	int i;
 
 	g_total_passes = 1;
-	if (stdcalcmode == '2')
+	if (g_standard_calculation_mode == '2')
 	{
 		g_total_passes = 2;
 	}
-	if (stdcalcmode == '2' && s_work_pass == 0) /* do 1st pass of two */
+	if (g_standard_calculation_mode == '2' && s_work_pass == 0) /* do 1st pass of two */
 	{
 		if (standard_calculate(1) == -1)
 		{
@@ -1803,7 +1803,7 @@ static int _fastcall standard_calculate(int passnum)
 					continue;
 				}
 			}
-			if (passnum == 1 || stdcalcmode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
+			if (passnum == 1 || g_standard_calculation_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
 				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot() or calculate_mandelbrot_fp() */
 				{
@@ -1873,7 +1873,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 		}
 		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
-			if (g_color <= 0 && stdcalcmode == 'b')   /* fix BTM bug */
+			if (g_color <= 0 && g_standard_calculation_mode == 'b')   /* fix BTM bug */
 			{
 				g_color = 1;
 			}
@@ -1935,7 +1935,7 @@ int calculate_mandelbrot_fp(void)
 		}
 		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 		{
-			if (g_color == 0 && stdcalcmode == 'b' )   /* fix BTM bug */
+			if (g_color == 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
 			{
 				g_color = 1;
 			}
@@ -2124,7 +2124,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		g_magnitude = g_magnitude_l = 0;
 		min_orbit = 100000.0;
 	}
-	overflow = 0;                /* reset integer math overflow flag */
+	g_overflow = 0;                /* reset integer math overflow flag */
 
 	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 
@@ -2194,7 +2194,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			/* if above exit taken, the later test vs s_dem_delta will place this
 				point on the boundary, because mag(g_old_z) < bailout just now */
 
-			if (g_current_fractal_specific->orbitcalc() || (overflow && g_save_release > 1826))
+			if (g_current_fractal_specific->orbitcalc() || (g_overflow && g_save_release > 1826))
 			{
 				if (g_use_old_distance_test)
 				{
@@ -2220,7 +2220,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 		/* the usual case */
 		else if ((g_current_fractal_specific->orbitcalc() && g_inside != STARTRAIL)
-				|| overflow)
+				|| g_overflow)
 			break;
 		if (g_show_orbit)
 		{
@@ -2686,7 +2686,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		double dist, temp;
 		dist = sqr(g_new_z.x) + sqr(g_new_z.y);
-		if (dist == 0 || overflow)
+		if (dist == 0 || g_overflow)
 		{
 			dist = 0;
 		}
@@ -2877,7 +2877,7 @@ plot_pixel:
 	}
 	if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
 	{
-		if (g_color <= 0 && stdcalcmode == 'b' )   /* fix BTM bug */
+		if (g_color <= 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
 		{
 			g_color = 1;
 		}
@@ -3234,9 +3234,9 @@ static int _fastcall potential(double mag, long iterations)
 		}
 		/* following transformation strictly for aesthetic reasons */
 		/* meaning of parameters:
-				potparam[0] -- zero potential level - highest color -
-				potparam[1] -- slope multiplier -- higher is steeper
-				potparam[2] -- g_rq_limit value if changeable (bailout for modulus) */
+				g_potential_parameter[0] -- zero potential level - highest color -
+				g_potential_parameter[1] -- slope multiplier -- higher is steeper
+				g_potential_parameter[2] -- g_rq_limit value if changeable (bailout for modulus) */
 
 		if (pot > 0.0)
 		{
@@ -3249,11 +3249,11 @@ static int _fastcall potential(double mag, long iterations)
 				fSqrt14(pot, f_tmp);
 				pot = f_tmp;
 			}
-			pot = (float)(potparam[0] - pot*potparam[1] - 1.0);
+			pot = (float)(g_potential_parameter[0] - pot*g_potential_parameter[1] - 1.0);
 		}
 		else
 		{
-			pot = (float)(potparam[0] - 1.0);
+			pot = (float)(g_potential_parameter[0] - 1.0);
 		}
 		if (pot < 1.0)
 		{
@@ -3266,7 +3266,7 @@ static int _fastcall potential(double mag, long iterations)
 	}
 	else /* inside < 0 implies inside = maxit, so use 1st pot param instead */
 	{
-		pot = (float)potparam[0];
+		pot = (float)g_potential_parameter[0];
 	}
 
 	l_pot = (long) pot*256;
@@ -3281,9 +3281,9 @@ static int _fastcall potential(double mag, long iterations)
 	{
 		if (!driver_diskp()) /* if g_put_color won't be doing it for us */
 		{
-			disk_write(g_col + sxoffs, g_row + syoffs, i_pot);
+			disk_write(g_col + g_sx_offset, g_row + g_sy_offset, i_pot);
 		}
-		disk_write(g_col + sxoffs, g_row + sydots + syoffs, (int)l_pot);
+		disk_write(g_col + g_sx_offset, g_row + g_screen_height + g_sy_offset, (int)l_pot);
 	}
 
 	return i_pot;
@@ -4253,7 +4253,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	bf_t bft1;
 	int saved = 0;
 	g_symmetry = 1;
-	if (stdcalcmode == 's' || stdcalcmode == 'o')
+	if (g_standard_calculation_mode == 's' || g_standard_calculation_mode == 'o')
 	{
 		return;
 	}
@@ -4316,14 +4316,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		break;
 	case FORMULA:  /* Check P2, P3, P4 and P5 */
 	case FFORMULA:
-		parmszero = (parmszero && param[2] == 0.0 && param[3] == 0.0
-						&& param[4] == 0.0 && param[5] == 0.0
-						&& param[6] == 0.0 && param[7] == 0.0
-						&& param[8] == 0.0 && param[9] == 0.0);
-		parmsnoreal = (parmsnoreal && param[2] == 0.0 && param[4] == 0.0
-						&& param[6] == 0.0 && param[8] == 0.0);
-		parmsnoimag = (parmsnoimag && param[3] == 0.0 && param[5] == 0.0
-						&& param[7] == 0.0 && param[9] == 0.0);
+		parmszero = (parmszero && g_parameters[2] == 0.0 && g_parameters[3] == 0.0
+						&& g_parameters[4] == 0.0 && g_parameters[5] == 0.0
+						&& g_parameters[6] == 0.0 && g_parameters[7] == 0.0
+						&& g_parameters[8] == 0.0 && g_parameters[9] == 0.0);
+		parmsnoreal = (parmsnoreal && g_parameters[2] == 0.0 && g_parameters[4] == 0.0
+						&& g_parameters[6] == 0.0 && g_parameters[8] == 0.0);
+		parmsnoimag = (parmsnoimag && g_parameters[3] == 0.0 && g_parameters[5] == 0.0
+						&& g_parameters[7] == 0.0 && g_parameters[9] == 0.0);
 		break;
 	default:   /* Check P2 for the rest */
 		parmszero = (parmszero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);

@@ -26,7 +26,7 @@
 #include "drivers.h"
 #include "helpdefs.h"
 
-char stereomapname[FILE_MAX_DIR + 1] = {""};
+char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
@@ -56,7 +56,7 @@ static struct static_vars
 	int y1;
 	int y2;
 	int ycen;
-	BYTE *savedac;
+	BYTE *save_dac;
 } *pv;
 
 #define AVG         (pv->avg)
@@ -87,7 +87,7 @@ static struct static_vars
 */
 
 typedef BYTE (*DACBOX)[256][3];
-#define dac   (*((DACBOX)(pv->savedac)))
+#define dac   (*((DACBOX)(pv->save_dac)))
 
 static int getdepth(int xd, int yd)
 {
@@ -241,7 +241,7 @@ int do_AutoStereo(void)
 	int *colour = _alloca(sizeof(int)*xdots);
 
 	pv = &v;   /* set static vars to stack structure */
-	pv->savedac = savedacbox;
+	pv->save_dac = savedacbox;
 
 	/* Use the current time to randomize the random number sequence. */
 	time(&ltime);

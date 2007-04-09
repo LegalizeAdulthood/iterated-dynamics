@@ -19,7 +19,7 @@
  == 1) The original #includes were folded into the routine strictly to hold
  ==    down the number of files we were dealing with.
  ==
- == 2) The 'g_stack', 'suffix', 'prefix', and 'g_decoder_line' arrays were
+ == 2) The 'g_stack', 'g_suffix', 'prefix', and 'g_decoder_line' arrays were
  ==    changed from static and 'malloc()'ed to external only so that
  ==    the assembler program could use the same array space for several
  ==    independent chunks of code.
@@ -114,8 +114,8 @@ static short code_mask[13] =
  * corrupt in some way...
  *
  * whups, here are more globals, added by PB:
- * extern short skipxdots;  0 to get every dot, 1 for every 2nd, 2 every 3rd, ...
- * extern short skipydots;
+ * extern short g_skip_x_dots;  0 to get every dot, 1 for every 2nd, 2 every 3rd, ...
+ * extern short g_skip_y_dots;
  *
  * All external declarations now in PROTOTYPE.H
  */
@@ -291,13 +291,13 @@ short decoder(short linewidth)
 			while (code >= newcodes)
 			{
 				j = i = g_size_of_string[code];
-				if (i > 0 && bufcnt - i > 0 && skipxdots == 0)
+				if (i > 0 && bufcnt - i > 0 && g_skip_x_dots == 0)
 				{
 					fastloop = YUP;
 
 					do
 					{
-						*(bufptr + j) = suffix[code];
+						*(bufptr + j) = g_suffix[code];
 						code = prefix[code];
 					}
 					while (--j > 0);
@@ -313,7 +313,7 @@ short decoder(short linewidth)
 							{
 								return ret;
 							}
-							yskip = skipydots;
+							yskip = g_skip_y_dots;
 						}
 						if (driver_key_pressed())
 						{
@@ -326,15 +326,15 @@ short decoder(short linewidth)
 				}
 				else
 				{
-					*sp++ = suffix[code];
+					*sp++ = g_suffix[code];
 					code = prefix[code];
 				}
 			}
 
 			/* Push the last character on the stack, and set up the new prefix
-			* and suffix, and if the required slot number is greater than that
+			* and g_suffix, and if the required slot number is greater than that
 			* allowed by the current bit size, increase the bit size.  (NOTE -
-			* If we are all full, we *don't* save the new suffix and prefix...
+			* If we are all full, we *don't* save the new g_suffix and prefix...
 			* I'm not certain if this is correct... it might be more proper to
 			* overwrite the last code... */
 			if (fastloop == NOPE)
@@ -345,7 +345,7 @@ short decoder(short linewidth)
 			if (slot < top_slot)
 			{
 				g_size_of_string[slot] = (short) (g_size_of_string[old_code] + 1);
-				suffix[slot] = out_value = (BYTE) code;
+				g_suffix[slot] = out_value = (BYTE) code;
 				prefix[slot++] = old_code;
 				old_code = c;
 			}
@@ -363,7 +363,7 @@ short decoder(short linewidth)
 			--sp;
 			if (--xskip < 0)
 			{
-				xskip = skipxdots;
+				xskip = g_skip_x_dots;
 				*bufptr++ = *sp;
 			}
 			if (--bufcnt == 0)     /* finished an input row? */
@@ -375,7 +375,7 @@ short decoder(short linewidth)
 					{
 						return ret;
 					}
-					yskip = skipydots;
+					yskip = g_skip_y_dots;
 				}
 				if (driver_key_pressed())
 				{

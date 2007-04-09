@@ -280,7 +280,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -300,8 +300,8 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					disk_read_targa (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_read_targa (x + g_sx_offset, y + g_sy_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -341,7 +341,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -359,8 +359,8 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 				}
 				else
 				{
-					disk_read_targa (x + sxoffs, y + syoffs, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_read_targa (x + g_sx_offset, y + g_sy_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -389,7 +389,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + sxoffs, y + syoffs, t_c, 0, 0);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -407,7 +407,7 @@ void _fastcall plot3dalternate(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + sxoffs, y + syoffs, s_targa_red, 0, t_c);
+					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -482,7 +482,7 @@ void plot_setup()
 		break;
 
 	case STEREO_PAIR: /* crosseyed mode */
-		if (sxdots < 2*xdots)
+		if (g_screen_width < 2*xdots)
 		{
 			g_standard_plot = (XROT == 0 && YROT == 0) ? /* use hidden surface kludge */
 				plot3dcrosseyedA : plot3dcrosseyedB;
@@ -522,18 +522,18 @@ void plot_setup()
 			g_xx_adjust = (int)(((g_x_trans + g_x_adjust)* (double)xdots)/100);
 			g_x_shift1 -= (int)((g_eye_separation* (double)xdots)/200);
 			g_xx_adjust1 = (int)(((g_x_trans-g_x_adjust)* (double)xdots)/100);
-			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*xdots)
 			{
-				sxoffs = sxdots / 2 - xdots;
+				g_sx_offset = g_screen_width / 2 - xdots;
 			}
 			break;
 
 		case WHICHIMAGE_BLUE:
 			g_x_shift  -= (int)((g_eye_separation* (double)xdots)/200);
 			g_xx_adjust = (int)(((g_x_trans-g_x_adjust)* (double)xdots)/100);
-			if (g_glasses_type == STEREO_PAIR && sxdots >= 2*xdots)
+			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*xdots)
 			{
-				sxoffs = sxdots / 2;
+				g_sx_offset = g_screen_width / 2;
 			}
 			break;
 		}

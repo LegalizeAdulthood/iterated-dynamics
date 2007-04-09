@@ -22,22 +22,22 @@ unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
-double opx, opy, newopx, newopy, paramrangex, paramrangey, g_delta_parameter_image_x, g_delta_parameter_image_y, g_fiddle_factor;
+double g_parameter_offset_x, g_parameter_offset_y, g_new_parameter_offset_x, g_new_parameter_offset_y, g_parameter_range_x, g_parameter_range_y, g_delta_parameter_image_x, g_delta_parameter_image_y, g_fiddle_factor;
 double g_fiddle_reduction;
-double parmzoom;
-char odpx, odpy, newodpx, newodpy;
+double g_parameter_zoom;
+char g_discrete_parameter_offset_x, g_discrete_parameter_offset_y, g_new_discrete_parameter_offset_x, g_new_discrete_parameter_offset_y;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
-/* variation factors, opx, opy, paramrangex/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
-	for smooth variation across screen. opx = offset param x, g_delta_parameter_image_x = delta param
-	per image, paramrangex = variation across grid of param ...likewise for py */
+/* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
+	for smooth variation across screen. g_parameter_offset_x = offset param x, g_delta_parameter_image_x = delta param
+	per image, g_parameter_range_x = variation across grid of param ...likewise for py */
 /* g_fiddle_factor is amount of random mutation used in random modes ,
 	g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
 	next to eventually produce a stable population */
 
 static int *prmbox = NULL;
 static int *imgbox = NULL;
-int prmboxcount = 0;
+int g_parameter_box_count = 0;
 static int imgboxcount;
 
 struct phistory_info      /* for saving evolution data of center image */
@@ -88,16 +88,16 @@ void ReleaseParamBox(void);
 
 GENEBASE g_genes[NUMGENES] =
 {
-	{ &param[0],   varydbl,     5, "Param 1 real", 1 },
-	{ &param[1],   varydbl,     5, "Param 1 imag", 1 },
-	{ &param[2],   varydbl,     0, "Param 2 real", 1 },
-	{ &param[3],   varydbl,     0, "Param 2 imag", 1 },
-	{ &param[4],   varydbl,     0, "Param 3 real", 1 },
-	{ &param[5],   varydbl,     0, "Param 3 imag", 1 },
-	{ &param[6],   varydbl,     0, "Param 4 real", 1 },
-	{ &param[7],   varydbl,     0, "Param 4 imag", 1 },
-	{ &param[8],   varydbl,     0, "Param 5 real", 1 },
-	{ &param[9],   varydbl,     0, "Param 5 imag", 1 },
+	{ &g_parameters[0],   varydbl,     5, "Param 1 real", 1 },
+	{ &g_parameters[1],   varydbl,     5, "Param 1 imag", 1 },
+	{ &g_parameters[2],   varydbl,     0, "Param 2 real", 1 },
+	{ &g_parameters[3],   varydbl,     0, "Param 2 imag", 1 },
+	{ &g_parameters[4],   varydbl,     0, "Param 3 real", 1 },
+	{ &g_parameters[5],   varydbl,     0, "Param 3 imag", 1 },
+	{ &g_parameters[6],   varydbl,     0, "Param 4 real", 1 },
+	{ &g_parameters[7],   varydbl,     0, "Param 4 imag", 1 },
+	{ &g_parameters[8],   varydbl,     0, "Param 5 real", 1 },
+	{ &g_parameters[9],   varydbl,     0, "Param 5 imag", 1 },
 	{ &g_inside,     varyinside,  0, "inside color", 2 },
 	{ &g_outside,    varyoutside, 0, "outside color", 3 },
 	{ &g_decomposition[0],  varypwr2,    0, "decomposition", 4 },
@@ -116,16 +116,16 @@ void param_history(int mode)
      mode = 1 for restore old history */
 	if (mode == 0)  /* save the old parameter history */
 	{
-		oldhistory.param0 = param[0];
-		oldhistory.param1 = param[1];
-		oldhistory.param2 = param[2];
-		oldhistory.param3 = param[3];
-		oldhistory.param4 = param[4];
-		oldhistory.param5 = param[5];
-		oldhistory.param6 = param[6];
-		oldhistory.param7 = param[7];
-		oldhistory.param8 = param[8];
-		oldhistory.param9 = param[9];
+		oldhistory.param0 = g_parameters[0];
+		oldhistory.param1 = g_parameters[1];
+		oldhistory.param2 = g_parameters[2];
+		oldhistory.param3 = g_parameters[3];
+		oldhistory.param4 = g_parameters[4];
+		oldhistory.param5 = g_parameters[5];
+		oldhistory.param6 = g_parameters[6];
+		oldhistory.param7 = g_parameters[7];
+		oldhistory.param8 = g_parameters[8];
+		oldhistory.param9 = g_parameters[9];
 		oldhistory.inside = g_inside;
 		oldhistory.outside = g_outside;
 		oldhistory.decomp0 = g_decomposition[0];
@@ -141,16 +141,16 @@ void param_history(int mode)
 
 	if (mode == 1)  /* restore the old parameter history */
 	{
-		param[0] = oldhistory.param0;
-		param[1] = oldhistory.param1;
-		param[2] = oldhistory.param2;
-		param[3] = oldhistory.param3;
-		param[4] = oldhistory.param4;
-		param[5] = oldhistory.param5;
-		param[6] = oldhistory.param6;
-		param[7] = oldhistory.param7;
-		param[8] = oldhistory.param8;
-		param[9] = oldhistory.param9;
+		g_parameters[0] = oldhistory.param0;
+		g_parameters[1] = oldhistory.param1;
+		g_parameters[2] = oldhistory.param2;
+		g_parameters[3] = oldhistory.param3;
+		g_parameters[4] = oldhistory.param4;
+		g_parameters[5] = oldhistory.param5;
+		g_parameters[6] = oldhistory.param6;
+		g_parameters[7] = oldhistory.param7;
+		g_parameters[8] = oldhistory.param8;
+		g_parameters[9] = oldhistory.param9;
 		g_inside = oldhistory.inside;
 		g_outside = oldhistory.outside;
 		g_decomposition[0] = oldhistory.decomp0;
@@ -175,16 +175,16 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X:
-		*(double *)gene[i].addr = px*g_delta_parameter_image_x + opx; /*paramspace x coord*per view delta px + offset */
+		*(double *)gene[i].addr = px*g_delta_parameter_image_x + g_parameter_offset_x; /*paramspace x coord*per view delta px + offset */
 		break;
 	case VARYINT_WITH_Y:
-		*(double *)gene[i].addr = lclpy*g_delta_parameter_image_y + opy; /*same for y */
+		*(double *)gene[i].addr = lclpy*g_delta_parameter_image_y + g_parameter_offset_y; /*same for y */
 		break;
 	case VARYINT_WITH_X_PLUS_Y:
-		*(double *)gene[i].addr = px*g_delta_parameter_image_x + opx +(lclpy*g_delta_parameter_image_y) + opy; /*and x + y */
+		*(double *)gene[i].addr = px*g_delta_parameter_image_x + g_parameter_offset_x +(lclpy*g_delta_parameter_image_y) + g_parameter_offset_y; /*and x + y */
 		break;
 	case VARYINT_WITH_X_MINUS_Y:
-		*(double *)gene[i].addr = (px*g_delta_parameter_image_x + opx)-(lclpy*g_delta_parameter_image_y + opy); /*and x-y*/
+		*(double *)gene[i].addr = (px*g_delta_parameter_image_x + g_parameter_offset_x)-(lclpy*g_delta_parameter_image_y + g_parameter_offset_y); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
 		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
@@ -210,16 +210,16 @@ static int varyint(int randvalue, int limit, int mode)
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X: /* vary with x */
-		ret = (odpx + px) % limit;
+		ret = (g_discrete_parameter_offset_x + px) % limit;
 		break;
 	case VARYINT_WITH_Y: /* vary with y */
-		ret = (odpy + lclpy) % limit;
+		ret = (g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_PLUS_Y: /* vary with x + y */
-		ret = (odpx + px + odpy + lclpy) % limit;
+		ret = (g_discrete_parameter_offset_x + px + g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_MINUS_Y: /* vary with x-y */
-		ret = (odpx + px)-(odpy + lclpy) % limit;
+		ret = (g_discrete_parameter_offset_x + px)-(g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_RANDOM: /* random mutation */
 		ret = randvalue % limit;
@@ -292,9 +292,9 @@ void varytrig(GENEBASE gene[], int randval, int i)
 		/* Changed following to BYTE since trigfn is an array of BYTEs and if one */
 		/* of the functions isn't varied, it's value was being zeroed by the high */
 		/* BYTE of the preceeding function.  JCO  2 MAY 2001 */
-		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_varyint(randval, numtrigfn, gene[i].mutate);
+		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_varyint(randval, g_num_trig_fn, gene[i].mutate);
 	}
-	/* replaced '30' with numtrigfn, set in prompts1.c */
+	/* replaced '30' with g_num_trig_fn, set in prompts1.c */
 	set_trig_pointers(5); /*set all trig ptrs up*/
 	return;
 }
@@ -615,10 +615,10 @@ int get_evolve_Parms(void)
 	/* fill up the previous values arrays */
 	old_evolving      = g_evolving;
 	old_gridsz        = g_grid_size;
-	old_paramrangex   = paramrangex;
-	old_paramrangey   = paramrangey;
-	old_opx           = opx;
-	old_opy           = opy;
+	old_paramrangex   = g_parameter_range_x;
+	old_paramrangey   = g_parameter_range_y;
+	old_opx           = g_parameter_offset_x;
+	old_opy           = g_parameter_offset_y;
 	old_fiddlefactor  = g_fiddle_factor;
 
 get_evol_restart:
@@ -627,9 +627,9 @@ get_evol_restart:
 	{
 		/* adjust field param to make some sense when changing from random modes*/
 		/* maybe should adjust for aspect ratio here? */
-		paramrangex = paramrangey = g_fiddle_factor*2;
-		opx = param[0] - g_fiddle_factor;
-		opy = param[1] - g_fiddle_factor;
+		g_parameter_range_x = g_parameter_range_y = g_fiddle_factor*2;
+		g_parameter_offset_x = g_parameters[0] - g_fiddle_factor;
+		g_parameter_offset_y = g_parameters[1] - g_fiddle_factor;
 		/* set middle image to last selected and edges to +- g_fiddle_factor */
 	}
 
@@ -652,19 +652,19 @@ get_evol_restart:
 
 		choices[++k]= "x parameter range (across screen)";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = paramrangex;
+		uvalues[k].uval.dval = g_parameter_range_x;
 
 		choices[++k]= "x parameter offset (left hand edge)";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = opx;
+		uvalues[k].uval.dval = g_parameter_offset_x;
 
 		choices[++k]= "y parameter range (up screen)";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = paramrangey;
+		uvalues[k].uval.dval = g_parameter_range_y;
 
 		choices[++k]= "y parameter offset (lower edge)";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = opy;
+		uvalues[k].uval.dval = g_parameter_offset_y;
 	}
 
 	choices[++k]= "Max random mutation";
@@ -702,10 +702,10 @@ get_evol_restart:
 		/* in case this point has been reached after calling sub menu with F6 */
 		g_evolving      = old_evolving;
 		g_grid_size        = old_gridsz;
-		paramrangex   = old_paramrangex;
-		paramrangey   = old_paramrangey;
-		opx           = old_opx;
-		opy           = old_opy;
+		g_parameter_range_x   = old_paramrangex;
+		g_parameter_range_y   = old_paramrangey;
+		g_parameter_offset_x           = old_opx;
+		g_parameter_offset_y           = old_opy;
 		g_fiddle_factor  = old_fiddlefactor;
 
 		return -1;
@@ -720,22 +720,22 @@ get_evol_restart:
 	}
 	if (i == FIK_F2)
 	{
-		paramrangex = paramrangex / 2;
-		opx = newopx = opx + paramrangex / 2;
-		paramrangey = paramrangey / 2;
-		opy = newopy = opy + paramrangey / 2;
+		g_parameter_range_x = g_parameter_range_x / 2;
+		g_parameter_offset_x = g_new_parameter_offset_y = g_parameter_offset_x + g_parameter_range_x / 2;
+		g_parameter_range_y = g_parameter_range_y / 2;
+		g_parameter_offset_y = g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
 		g_fiddle_factor = g_fiddle_factor / 2;
 		goto get_evol_restart;
 	}
 	if (i == FIK_F3)
 	{
 		double centerx, centery;
-		centerx = opx + paramrangex / 2;
-		paramrangex = paramrangex*2;
-		opx = newopx = centerx - paramrangex / 2;
-		centery = opy + paramrangey / 2;
-		paramrangey = paramrangey*2;
-		opy = newopy = centery - paramrangey / 2;
+		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
+		g_parameter_range_x = g_parameter_range_x*2;
+		g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
+		centery = g_parameter_offset_y + g_parameter_range_y / 2;
+		g_parameter_range_y = g_parameter_range_y*2;
+		g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
 		g_fiddle_factor = g_fiddle_factor*2;
 		goto get_evol_restart;
 	}
@@ -754,8 +754,8 @@ get_evol_restart:
 	}
 
 	g_grid_size = uvalues[++k].uval.ival;
-	tmp = sxdots / (MINPIXELS << 1);
-	/* (sxdots / 20), max # of subimages @ 20 pixels per subimage */
+	tmp = g_screen_width / (MINPIXELS << 1);
+	/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
 	/* MAXGRIDSZ == 1024 / 20 == 51 */
 	if (g_grid_size > MAXGRIDSZ)
 	{
@@ -777,10 +777,10 @@ get_evol_restart:
 		{
 			g_evolving += tmp;
 		}
-		paramrangex = uvalues[++k].uval.dval;
-		newopx = opx = uvalues[++k].uval.dval;
-		paramrangey = uvalues[++k].uval.dval;
-		newopy = opy = uvalues[++k].uval.dval;
+		g_parameter_range_x = uvalues[++k].uval.dval;
+		g_new_parameter_offset_x = g_parameter_offset_x = uvalues[++k].uval.dval;
+		g_parameter_range_y = uvalues[++k].uval.dval;
+		g_new_parameter_offset_y = g_parameter_offset_y = uvalues[++k].uval.dval;
 	}
 
 	g_fiddle_factor = uvalues[++k].uval.dval;
@@ -792,8 +792,8 @@ get_evol_restart:
 		g_evolving |= EVOLVE_NO_GROUT;
 	}
 
-	viewxdots = (sxdots / g_grid_size)-2;
-	viewydots = (sydots / g_grid_size)-2;
+	viewxdots = (g_screen_width / g_grid_size)-2;
+	viewydots = (g_screen_height / g_grid_size)-2;
 	if (!viewwindow)
 	{
 		viewxdots = viewydots = 0;
@@ -802,9 +802,9 @@ get_evol_restart:
 	i = 0;
 
 	if (g_evolving != old_evolving
-		|| (g_grid_size != old_gridsz) ||(paramrangex != old_paramrangex)
-		|| (opx != old_opx) || (paramrangey != old_paramrangey)
-		|| (opy != old_opy)  || (g_fiddle_factor != old_fiddlefactor)
+		|| (g_grid_size != old_gridsz) ||(g_parameter_range_x != old_paramrangex)
+		|| (g_parameter_offset_x != old_opx) || (g_parameter_range_y != old_paramrangey)
+		|| (g_parameter_offset_y != old_opy)  || (g_fiddle_factor != old_fiddlefactor)
 		|| (old_variations > 0))
 	{
 		i = 1;
@@ -839,8 +839,8 @@ get_evol_restart:
 void SetupParamBox(void)
 {
 	int vidsize;
-	prmboxcount = 0;
-	parmzoom = ((double)g_grid_size-1.0)/2.0;
+	g_parameter_box_count = 0;
+	g_parameter_zoom = ((double)g_grid_size-1.0)/2.0;
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (xdots + ydots)*4*sizeof(int);
 	vidsize += xdots + ydots + 2;
@@ -853,7 +853,7 @@ void SetupParamBox(void)
 		texttempmsg("Sorry...can't allocate mem for parmbox");
 		g_evolving = EVOLVE_NONE;
 	}
-	prmboxcount = 0;
+	g_parameter_box_count = 0;
 
 	/* vidsize = (vidsize / g_grid_size) + 3 ; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
@@ -883,10 +883,10 @@ void ReleaseParamBox(void)
 
 void set_current_params(void)
 {
-	paramrangex = g_current_fractal_specific->xmax - g_current_fractal_specific->xmin;
-	opx = newopx = - (paramrangex / 2);
-	paramrangey = g_current_fractal_specific->ymax - g_current_fractal_specific->ymin;
-	opy = newopy = - (paramrangey / 2);
+	g_parameter_range_x = g_current_fractal_specific->xmax - g_current_fractal_specific->xmin;
+	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
+	g_parameter_range_y = g_current_fractal_specific->ymax - g_current_fractal_specific->ymin;
+	g_parameter_offset_y = g_new_parameter_offset_y = - (g_parameter_range_y / 2);
 	return;
 }
 
@@ -949,7 +949,7 @@ static void set_random(int ecount)
 int explore_check(void)
 {
 	/* checks through gene array to see if any of the parameters are set to */
-	/* one of the non random variation modes. Used to see if parmzoom box is */
+	/* one of the non random variation modes. Used to see if g_parameter_zoom box is */
 	/* needed */
 	int nonrandom = FALSE;
 	int i;
@@ -984,9 +984,9 @@ void drawparmbox(int mode)
 		memcpy(&imgbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 		clearbox(); /* to avoid probs when one box overlaps the other */
 	}
-	if (prmboxcount != 0)   /* clear last parmbox */
+	if (g_parameter_box_count != 0)   /* clear last parmbox */
 	{
-		g_box_count = prmboxcount;
+		g_box_count = g_parameter_box_count;
 		memcpy(&g_box_x[0], &prmbox[0], g_box_count*sizeof(g_box_x[0]));
 		memcpy(&g_box_y[0], &prmbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
 		memcpy(&g_box_values[0], &prmbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
@@ -996,29 +996,29 @@ void drawparmbox(int mode)
 	if (mode == 1)
 	{
 		g_box_count = imgboxcount;
-		prmboxcount = 0;
+		g_parameter_box_count = 0;
 		return;
 	}
 
 	g_box_count = 0;
 	/*draw larger box to show parm zooming range */
-	tl.x = bl.x = ((px -(int)parmzoom)*(int)(g_dx_size + 1 + grout))-sxoffs-1;
-	tl.y = tr.y = ((py -(int)parmzoom)*(int)(g_dy_size + 1 + grout))-syoffs-1;
-	br.x = tr.x = ((px +1 + (int)parmzoom)*(int)(g_dx_size + 1 + grout))-sxoffs;
-	br.y = bl.y = ((py +1 + (int)parmzoom)*(int)(g_dy_size + 1 + grout))-syoffs;
+	tl.x = bl.x = ((px -(int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset-1;
+	tl.y = tr.y = ((py -(int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset-1;
+	br.x = tr.x = ((px +1 + (int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset;
+	br.y = bl.y = ((py +1 + (int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT
 	addbox(br); addbox(tr); addbox(bl); addbox(tl);
 	drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
 	drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
-	g_box_x[0] = tl.x + sxoffs;
-	g_box_y[0] = tl.y + syoffs;
-	g_box_x[1] = tr.x + sxoffs;
-	g_box_y[1] = tr.y + syoffs;
-	g_box_x[2] = br.x + sxoffs;
-	g_box_y[2] = br.y + syoffs;
-	g_box_x[3] = bl.x + sxoffs;
-	g_box_y[3] = bl.y + syoffs;
+	g_box_x[0] = tl.x + g_sx_offset;
+	g_box_y[0] = tl.y + g_sy_offset;
+	g_box_x[1] = tr.x + g_sx_offset;
+	g_box_y[1] = tr.y + g_sy_offset;
+	g_box_x[2] = br.x + g_sx_offset;
+	g_box_y[2] = br.y + g_sy_offset;
+	g_box_x[3] = bl.x + g_sx_offset;
+	g_box_y[3] = bl.y + g_sy_offset;
 	g_box_count = 8;
 #endif
 	if (g_box_count)
@@ -1029,7 +1029,7 @@ void drawparmbox(int mode)
 		memcpy(&prmbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
 		memcpy(&prmbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 	}
-	prmboxcount = g_box_count;
+	g_parameter_box_count = g_box_count;
 	g_box_count = imgboxcount;
 	if (imgboxcount)
 	{
@@ -1046,13 +1046,13 @@ void set_evolve_ranges(void)
 {
 	int lclpy = g_grid_size - py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
-	paramrangex = g_delta_parameter_image_x*(parmzoom*2.0);
-	paramrangey = g_delta_parameter_image_y*(parmzoom*2.0);
-	newopx = opx + (((double)px-parmzoom)*g_delta_parameter_image_x);
-	newopy = opy + (((double)lclpy-parmzoom)*g_delta_parameter_image_y);
+	g_parameter_range_x = g_delta_parameter_image_x*(g_parameter_zoom*2.0);
+	g_parameter_range_y = g_delta_parameter_image_y*(g_parameter_zoom*2.0);
+	g_new_parameter_offset_x = g_parameter_offset_x + (((double)px-g_parameter_zoom)*g_delta_parameter_image_x);
+	g_new_parameter_offset_y = g_parameter_offset_y + (((double)lclpy-g_parameter_zoom)*g_delta_parameter_image_y);
 
-	newodpx = (char)(odpx + (px-g_grid_size/2));
-	newodpy = (char)(odpy + (lclpy-g_grid_size/2));
+	g_new_discrete_parameter_offset_x = (char)(g_discrete_parameter_offset_x + (px-g_grid_size/2));
+	g_new_discrete_parameter_offset_y = (char)(g_discrete_parameter_offset_y + (lclpy-g_grid_size/2));
 	return;
 }
 

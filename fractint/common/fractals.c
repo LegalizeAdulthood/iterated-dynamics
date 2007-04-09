@@ -368,13 +368,13 @@ static int bail_out_halley(void)
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 struct MPC mpcold, mpcnew, mpctmp, mpctmp1;
-struct MP mptmpparm2x;
+struct MP g_parameter2_x_mp;
 
 static int bail_out_halley_mpc(void)
 {
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
-	if (pMPcmp(mptmpbailout, mptmpparm2x) < 0)
+	if (pMPcmp(mptmpbailout, g_parameter2_x_mp) < 0)
 	{
 		return 1;
 	}
@@ -465,12 +465,12 @@ complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int g_bit_shift)
 
 	if (exp < 0)
 	{
-		overflow = complex_power_l(base, -exp, result, g_bit_shift);
+		g_overflow = complex_power_l(base, -exp, result, g_bit_shift);
 		LCMPLXrecip(*result, *result);
-		return overflow;
+		return g_overflow;
 	}
 
-	overflow = 0;
+	g_overflow = 0;
 	lxt = base->x;
 	lyt = base->y;
 
@@ -494,9 +494,9 @@ complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int g_bit_shift)
 		*/
 		lt2 = multiply(lxt, lxt, g_bit_shift) - multiply(lyt, lyt, g_bit_shift);
 		lyt = multiply(lxt, lyt, g_bit_shift_minus_1);
-		if (overflow)
+		if (g_overflow)
 		{
-			return overflow;
+			return g_overflow;
 		}
 		lxt = lt2;
 
@@ -510,9 +510,9 @@ complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int g_bit_shift)
 	}
 	if (result->x == 0 && result->y == 0)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
-	return overflow;
+	return g_overflow;
 }
 #if 0
 int
@@ -612,22 +612,21 @@ int newton2_orbit(void)
 }
 
 #if !defined(XFRACT)
-struct MP mproverd, mpd1overd, mpthreshold;
-struct MP mpt2;
-struct MP mpone;
+struct MP g_root_over_degree_mp, g_degree_minus_1_over_degree_mp, g_threshold_mp;
+struct MP g_one_mp;
 #endif
 
 int newton_orbit_mpc(void)
 {
 #if !defined(XFRACT)
-	MPOverflow = 0;
+	g_overflow_mp = 0;
 	mpctmp   = MPCpow(mpcold, g_degree-1);
 
 	mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
 	mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
 	mpctmp1.x = *pMPsub(mpcnew.x, g_one_mpc.x);
 	mpctmp1.y = *pMPsub(mpcnew.y, g_one_mpc.y);
-	if (pMPcmp(MPCmod(mpctmp1), mpthreshold)< 0)
+	if (pMPcmp(MPCmod(mpctmp1), g_threshold_mp)< 0)
 	{
 		if (g_fractal_type == MPNEWTBASIN)
 		{
@@ -636,7 +635,7 @@ int newton_orbit_mpc(void)
 			tmpcolor = -1;
 			for (i = 0; i < g_degree; i++)
 			{
-				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), mpthreshold) < 0)
+				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
 				{
 					tmpcolor = (g_basin == 2) ?
 						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
@@ -648,15 +647,18 @@ int newton_orbit_mpc(void)
 		return 1;
 	}
 
-	mpcnew.x = *pMPadd(*pMPmul(mpd1overd, mpcnew.x), mproverd);
-	mpcnew.y = *pMPmul(mpcnew.y, mpd1overd);
-	mpt2 = MPCmod(mpctmp);
-	mpt2 = *pMPdiv(mpone, mpt2);
-	mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-	mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+	{
+		struct MP mpt2;
+		mpcnew.x = *pMPadd(*pMPmul(g_degree_minus_1_over_degree_mp, mpcnew.x), g_root_over_degree_mp);
+		mpcnew.y = *pMPmul(mpcnew.y, g_degree_minus_1_over_degree_mp);
+		mpt2 = MPCmod(mpctmp);
+		mpt2 = *pMPdiv(g_one_mp, mpt2);
+		mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
+		mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+	}
 	g_new_z.x = *pMP2d(mpcold.x);
 	g_new_z.y = *pMP2d(mpcold.y);
-	return MPOverflow;
+	return g_overflow_mp;
 #else
 	return 0;
 #endif
@@ -1073,7 +1075,7 @@ int mandel4_orbit_fp(void)
 
 int z_to_z_plus_z_orbit_fp(void)
 {
-	complex_power(&g_old_z, (int)param[2], &g_new_z);
+	complex_power(&g_old_z, (int)g_parameters[2], &g_new_z);
 	g_old_z = ComplexPower(g_old_z, g_old_z);
 	g_new_z.x = g_new_z.x + g_old_z.x +g_float_parameter->x;
 	g_new_z.y = g_new_z.y + g_old_z.y +g_float_parameter->y;
@@ -1112,7 +1114,7 @@ int complex_z_power_orbit(void)
 	}
 	else
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
@@ -1455,11 +1457,11 @@ int popcorn_fn_orbit_fp(void)
 }
 
 #define FIX_OVERFLOW(arg_) \
-	if (overflow)  \
+	if (g_overflow)  \
 	{ \
 		(arg_).x = g_fudge; \
 		(arg_).y = 0; \
-		overflow = 0; \
+		g_overflow = 0; \
 	}
 
 int popcorn_fn_orbit(void)
@@ -1467,7 +1469,7 @@ int popcorn_fn_orbit(void)
 #if !defined(XFRACT)
 	_LCMPLX ltmpx, ltmpy;
 
-	overflow = 0;
+	g_overflow = 0;
 
 	/* ltmpx contains the generalized value of the old real "x" equation */
 	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_tmp_z_l); /* tmp = (C*old.y)         */
@@ -1760,7 +1762,7 @@ int halley_orbit_mpc(void)
 	struct MPC mpcFX, mpcF1prime, mpcF2prime, mpcHalnumer1;
 	struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
 
-	MPOverflow = 0;
+	g_overflow_mp = 0;
 	mpcXtoAlessOne.x = mpcold.x;
 	mpcXtoAlessOne.y = mpcold.y;
 	for (ihal = 2; ihal < g_degree; ihal++)
@@ -1781,7 +1783,7 @@ int halley_orbit_mpc(void)
 	mpcF2prime.x = *pMPmul(g_a_plus_1_degree_mp, mpcXtoAlessOne.x); /* g_a_plus_1_degree_mp in setup */
 	mpcF2prime.y = *pMPmul(g_a_plus_1_degree_mp, mpcXtoAlessOne.y);        /* F" */
 
-	mpcF1prime.x = *pMPsub(*pMPmul(g_a_plus_1_mp, mpcXtoA.x), mpone);
+	mpcF1prime.x = *pMPsub(*pMPmul(g_a_plus_1_mp, mpcXtoA.x), g_one_mp);
 	mpcF1prime.y = *pMPmul(g_a_plus_1_mp, mpcXtoA.y);                   /*  F'  */
 
 	mpctmp.x = *pMPsub(*pMPmul(mpcF2prime.x, mpcFX.x), *pMPmul(mpcF2prime.y, mpcFX.y));
@@ -1809,7 +1811,7 @@ int halley_orbit_mpc(void)
 #endif
 	mpcnew = MPCsub(mpcold, mpctmp);
 	g_new_z    = MPC2cmplx(mpcnew);
-	return bail_out_halley_mpc() || MPOverflow;
+	return bail_out_halley_mpc() || g_overflow_mp;
 #else
 	return 0;
 #endif
@@ -1851,7 +1853,7 @@ int halley_orbit_fp(void)
 	/* new.x = g_old_z.x - (g_parameter.y*Halnumer2.x);
 	new.y = g_old_z.y - (g_parameter.y*Halnumer2.y); */
 	relax.x = g_parameter.y;
-	relax.y = param[3];
+	relax.y = g_parameters[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.x = g_old_z.x - Halnumer2.x;
 	g_new_z.y = g_old_z.y - Halnumer2.y;
@@ -2140,7 +2142,7 @@ int trig_trig_orbit_fp(void)
 /* call float version of fractal if integer math overflow */
 static int try_float_fractal(int (*fpFractal)(void))
 {
-	overflow = 0;
+	g_overflow = 0;
 	/* g_old_z_l had better not be changed! */
 	g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
 	g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
@@ -2169,7 +2171,7 @@ int trig_trig_orbit(void)
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
 	LCMPLXmult(g_tmp_z_l, g_tmp_z2_l, g_new_z_l);
-	if (overflow)
+	if (g_overflow)
 	{
 		try_float_fractal(trig_trig_orbit_fp);
 	}
@@ -2272,13 +2274,13 @@ int trig_z_squared_orbit(void) /* this doesn't work very well */
 	if ((labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2) &&
 		g_save_release > 1900)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	else
 	{
 		LCMPLXtrig0(g_tmp_z_l, g_new_z_l);
 	}
-	if (overflow)
+	if (g_overflow)
 	{
 		try_float_fractal(trig_z_squared_orbit_fp);
 	}
@@ -2530,7 +2532,7 @@ int tims_error_orbit(void)
 int circle_orbit_fp(void)
 {
 	long i;
-	i = (long)(param[0]*(g_temp_sqr_x + g_temp_sqr_y));
+	i = (long)(g_parameters[0]*(g_temp_sqr_x + g_temp_sqr_y));
 	g_color_iter = i % g_colors;
 	return 1;
 }
@@ -3098,12 +3100,12 @@ int quaternion_julia_per_pixel_fp(void)
 {
 	g_old_z.x = g_dx_pixel();
 	g_old_z.y = g_dy_pixel();
-	g_float_parameter->x = param[4];
-	g_float_parameter->y = param[5];
-	g_quaternion_c  = param[0];
-	g_quaternion_ci = param[1];
-	g_quaternion_cj = param[2];
-	g_quaternion_ck = param[3];
+	g_float_parameter->x = g_parameters[4];
+	g_float_parameter->y = g_parameters[5];
+	g_quaternion_c  = g_parameters[0];
+	g_quaternion_ci = g_parameters[1];
+	g_quaternion_cj = g_parameters[2];
+	g_quaternion_ck = g_parameters[3];
 	return 0;
 }
 
@@ -3115,8 +3117,8 @@ int quaternion_per_pixel_fp(void)
 	g_float_parameter->y = 0;
 	g_quaternion_c  = g_dx_pixel();
 	g_quaternion_ci = g_dy_pixel();
-	g_quaternion_cj = param[2];
-	g_quaternion_ck = param[3];
+	g_quaternion_cj = g_parameters[2];
+	g_quaternion_ck = g_parameters[3];
 	return 0;
 }
 
@@ -3320,12 +3322,12 @@ int volterra_lotka_orbit_fp(void)
 {
 	double a, b, ab, half, u, w, xy;
 
-	half = param[0] / 2.0;
+	half = g_parameters[0] / 2.0;
 	xy = g_old_z.x*g_old_z.y;
 	u = g_old_z.x - xy;
 	w = -g_old_z.y + xy;
-	a = g_old_z.x + param[1]*u;
-	b = g_old_z.y + param[1]*w;
+	a = g_old_z.x + g_parameters[1]*u;
+	b = g_old_z.y + g_parameters[1]*w;
 	ab = a*b;
 	g_new_z.x = g_old_z.x + half*(u + (a - ab));
 	g_new_z.y = g_old_z.y + half*(w + (-b + ab));
@@ -3347,8 +3349,8 @@ int escher_orbit_fp(void)
 	testsqr.y = sqr(oldtest.y);  /*    ... Julia as the target set */
 	while (testsize <= g_rq_limit && testiter < g_max_iteration) /* nested Julia loop */
 	{
-		newtest.x = testsqr.x - testsqr.y + param[0];
-		newtest.y = 2.0*oldtest.x*oldtest.y + param[1];
+		newtest.x = testsqr.x - testsqr.y + g_parameters[0];
+		newtest.y = 2.0*oldtest.x*oldtest.y + g_parameters[1];
 		testsqr.x = sqr(newtest.x);
 		testsqr.y = sqr(newtest.y);
 		testsize = testsqr.x + testsqr.y;
@@ -3383,17 +3385,17 @@ int escher_orbit_fp(void)
 int mandelbrot_mix4_setup(void)
 {
 	int sign_array = 0;
-	A.x = param[0];
+	A.x = g_parameters[0];
 	A.y = 0.0;						/* a = real(p1),     */
-	B.x = param[1];
+	B.x = g_parameters[1];
 	B.y = 0.0;						/* b = imag(p1),     */
-	D.x = param[2];
+	D.x = g_parameters[2];
 	D.y = 0.0;						/* d = real(p2),     */
-	F.x = param[3];
+	F.x = g_parameters[3];
 	F.y = 0.0;						/* f = imag(p2),     */
-	K.x = param[4] + 1.0;
+	K.x = g_parameters[4] + 1.0;
 	K.y = 0.0;						/* k = real(p3) + 1,   */
-	L.x = param[5] + 100.0;
+	L.x = g_parameters[5] + 100.0;
 	L.y = 0.0;						/* l = imag(p3) + 100, */
 	CMPLXrecip(F, G);				/* g = 1/f,          */
 	CMPLXrecip(D, H);				/* h = 1/d,          */
@@ -3459,7 +3461,7 @@ int mandelbrot_mix4_setup(void)
 
 	CMPLXpwr(g_temp_z, J, g_temp_z);   /* note: z is old */
 	/* in case our kludge failed, let the user fix it */
-	if (param[6] < 0.0)
+	if (g_parameters[6] < 0.0)
 	{
 		g_temp_z.y = -g_temp_z.y;
 	}

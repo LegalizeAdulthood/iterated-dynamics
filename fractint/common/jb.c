@@ -135,23 +135,23 @@ int julibrot_setup(void)
 
 	if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 	{
-		savedac = SAVEDAC_NO;
+		g_save_dac = SAVEDAC_NO;
 		mapname = g_glasses1_map;
 	}
 	else
 	{
 		mapname = g_grey_file;
 	}
-	if (savedac != SAVEDAC_YES)
+	if (g_save_dac != SAVEDAC_YES)
 	{
 		if (ValidateLuts(mapname) != 0)
 		{
 			return 0;
 		}
 		spindac(0, 1);               /* load it, but don't spin */
-		if (savedac == SAVEDAC_NEXT)
+		if (g_save_dac == SAVEDAC_NEXT)
 		{
-			savedac = SAVEDAC_YES;
+			g_save_dac = SAVEDAC_YES;
 		}
 	}
 	return r >= 0;
@@ -322,10 +322,10 @@ static int z_line_fp(double x, double y)
 			g_old_z.y = s_jy_fp;
 			s_jbc_fp.x = s_mx_fp;
 			s_jbc_fp.y = s_my_fp;
-			g_quaternion_c = param[0];
-			g_quaternion_ci = param[1];
-			g_quaternion_cj = param[2];
-			g_quaternion_ck = param[3];
+			g_quaternion_c = g_parameters[0];
+			g_quaternion_ci = g_parameters[1];
+			g_quaternion_cj = g_parameters[2];
+			g_quaternion_ck = g_parameters[3];
 		}
 #ifdef XFRACT
 		if (keychk++ > 500)
@@ -394,7 +394,7 @@ int std_4d_fractal(void)
 {
 	long x, y;
 	int xdot, ydot;
-	g_c_exp = (int)param[2];
+	g_c_exp = (int)g_parameters[2];
 	if (g_new_orbit_type == LJULIAZPOWER)
 	{
 		if (g_c_exp < 1)
@@ -402,7 +402,7 @@ int std_4d_fractal(void)
 			g_c_exp = 1;
 		}
 		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
+			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit : complex_z_power_orbit;
 	}
 
@@ -444,14 +444,14 @@ int std_4d_fractal_fp(void)
 {
 	double x, y;
 	int xdot, ydot;
-	g_c_exp = (int)param[2];
+	g_c_exp = (int)g_parameters[2];
 
 	if (g_new_orbit_type == FPJULIAZPOWER)
 	{
 		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(param[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == param[2])
+			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
-		get_julia_attractor (param[0], param[1]); /* another attractor? */
+		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
 	}
 
 	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)

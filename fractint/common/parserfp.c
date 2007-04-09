@@ -113,7 +113,7 @@
 #include "prototyp.h"
 
 /* global data  */
-struct fls *pfls = (struct fls *)0;
+struct fls *g_function_load_store_pointers = (struct fls *)0;
 
 #if !defined(XFRACT)
 
@@ -123,7 +123,7 @@ struct fls *pfls = (struct fls *)0;
 extern union Arg *Arg1, *Arg2;
 extern double _1_, _2_;
 extern union Arg s[20], **Store, **Load;
-extern int StoPtr, g_lod_ptr, OpPtr;
+extern int g_store_ptr, g_lod_ptr, OpPtr;
 extern unsigned int vsp, g_last_op;
 extern struct ConstArg *v;
 extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
@@ -241,8 +241,8 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define REMOVE_PUSH --cvtptrx, stkcnt += 2
 
 #define CLEAR_STK 127
-#define FNPTR(x) pfls[(x)].function  /* function pointer */
-#define OPPTR(x) pfls[(x)].operand   /* operand pointer */
+#define FNPTR(x) g_function_load_store_pointers[(x)].function  /* function pointer */
+#define OPPTR(x) g_function_load_store_pointers[(x)].operand   /* operand pointer */
 #define NO_OPERAND (union Arg  *)0
 #define NO_FUNCTION (void (*)(void))0
 #define LASTSQR v[4].a
@@ -384,7 +384,7 @@ static unsigned char
 	p5const;      /* ...and p5?  */
 
 static unsigned int
-	cvtptrx;      /* subscript of next free entry in pfls  */
+	cvtptrx;      /* subscript of next free entry in g_function_load_store_pointers  */
 
 static void (*prevfptr)(void);  /* previous function pointer  */
 
@@ -549,7 +549,7 @@ awful_error:
 	/* set the operand pointer here for store function  */
 	if (ffptr == fStkSto)
 	{
-		OPPTR(cvtptrx) = (void  *)FP_OFF((Store[StoPtr++]));
+		OPPTR(cvtptrx) = (void  *)FP_OFF((Store[g_store_ptr++]));
 	}
 	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
 	{
@@ -607,7 +607,7 @@ awful_error:
 			ffptr = fStkLodDup;
 		}
 		else if (prevfptr == fStkSto2
-				&& Store[StoPtr-1] == Load[g_lod_ptr])
+				&& Store[g_store_ptr-1] == Load[g_lod_ptr])
 				{
 			/* store, load of same value  */
 			/* only one operand on stack here when prev oper is Sto2  */
@@ -619,7 +619,7 @@ awful_error:
 		/*  use the rounded value that was stored here, while the next  */
 		/*  operator uses the more accurate internal value.  */
 		else if (prevfptr == fStkStoClr2
-					&& Store[StoPtr-1] == Load[g_lod_ptr])
+					&& Store[g_store_ptr-1] == Load[g_lod_ptr])
 					{
 			/* store, clear, load same value found  */
 			/* only one operand was on stack so this is safe  */
@@ -1376,7 +1376,7 @@ int fpfill_jump_struct(void)
 			}
 			find_new_func = 0;
 		}
-		if (pfls[OpPtr].function == JumpFunc)
+		if (g_function_load_store_pointers[OpPtr].function == JumpFunc)
 		{
 			jump_data[i].JumpOpPtr = OpPtr*4;
 			i++;
@@ -1418,7 +1418,7 @@ int CvtStk()  /* convert the array of ptrs  */
 	lastsqrused = 0;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
-	for (OpPtr = g_lod_ptr = StoPtr = 0; OpPtr < (int)g_last_op; OpPtr++)
+	for (OpPtr = g_lod_ptr = g_store_ptr = 0; OpPtr < (int)g_last_op; OpPtr++)
 	{
 		ftst = f[OpPtr];
 		if (ftst == StkLod)
@@ -1430,7 +1430,7 @@ int CvtStk()  /* convert the array of ptrs  */
 		}
 		else if (ftst == StkSto)
 		{
-			testoperand = Store[StoPtr++];
+			testoperand = Store[g_store_ptr++];
 			if (testoperand == &PARM1)
 			{
 				p1const = 0;
@@ -1497,7 +1497,7 @@ int CvtStk()  /* convert the array of ptrs  */
 	prevfptr = (void (*)(void))0;
 	cvtptrx = realstkcnt = stkcnt = 0;
 
-	for (OpPtr = g_lod_ptr = StoPtr = 0; OpPtr < (int)g_last_op; OpPtr++)
+	for (OpPtr = g_lod_ptr = g_store_ptr = 0; OpPtr < (int)g_last_op; OpPtr++)
 	{
 		ftst = f[OpPtr];
 		fnfound = 0;

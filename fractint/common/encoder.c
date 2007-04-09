@@ -14,7 +14,7 @@
 #include "drivers.h"
 
 static int compress(int rowlimit);
-static int _fastcall shftwrite(BYTE *color, int numcolors);
+static int _fastcall shftwrite(BYTE *color, int g_num_colors);
 static int _fastcall extend_blk_len(int datalen);
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data);
 static int _fastcall store_item_name(char *);
@@ -39,7 +39,7 @@ There are two large arrays:
 	long htab[HSIZE]              (5003*4 = 20012 bytes)
 	unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
 
-At the moment these arrays reuse extraseg and strlocn, respectively.
+At the moment these arrays reuse extraseg and g_string_location, respectively.
 
 */
 
@@ -100,7 +100,7 @@ restart:
 		strcpy(openfiletype, period);
 		*period = 0;
 	}
-	if (resave_flag != RESAVE_YES)
+	if (g_resave_flag != RESAVE_YES)
 	{
 		updatesavename(filename); /* for next time */
 	}
@@ -116,11 +116,11 @@ restart:
 	{                                  /* file already exists */
 		if (!g_fractal_overwrite)
 		{
-			if (resave_flag == RESAVE_NO)
+			if (g_resave_flag == RESAVE_NO)
 			{
 				goto restart;
 			}
-			if (started_resaves == FALSE)
+			if (g_started_resaves == FALSE)
 			{                      /* first save of a savetime set */
 				updatesavename(filename);
 				goto restart;
@@ -141,10 +141,10 @@ restart:
 		strcat(tmpfile, "fractint.tmp");
 	}
 
-	started_resaves = (resave_flag == RESAVE_YES) ? TRUE : FALSE;
-	if (resave_flag == RESAVE_DONE)        /* final save of savetime set? */
+	g_started_resaves = (g_resave_flag == RESAVE_YES) ? TRUE : FALSE;
+	if (g_resave_flag == RESAVE_DONE)        /* final save of savetime set? */
 	{
-		resave_flag = RESAVE_NO;
+		g_resave_flag = RESAVE_NO;
 	}
 
 	g_outfile = fopen(tmpfile, "wb");
@@ -374,7 +374,7 @@ int encoder()
 	if (viewwindow                               /* less than full screen?  */
 			&& (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
 	{
-		i = (int) (((double) sydots / (double) sxdots)*64.0 / g_screen_aspect_ratio - 14.5);
+		i = (int) (((double) g_screen_height / (double) g_screen_width)*64.0 / g_screen_aspect_ratio - 14.5);
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
@@ -513,10 +513,10 @@ int encoder()
 		/* loadfile.c has notes about extension g_block structure */
 		if (interrupted)
 		{
-			save_info.g_calculation_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
+			save_info.calculation_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
 		}
 		save_info.tot_extend_len = 0;
-		if (g_resume_info != NULL && save_info.g_calculation_status == CALCSTAT_RESUMABLE)
+		if (g_resume_info != NULL && save_info.calculation_status == CALCSTAT_RESUMABLE)
 		{
 			/* resume info g_block, 002 */
 			save_info.tot_extend_len += extend_blk_len(g_resume_length);
@@ -571,29 +571,29 @@ int encoder()
 			struct evolution_info resume_e_info;
 			if (g_evolve_handle == NULL || g_calculation_status == CALCSTAT_COMPLETED)
 			{
-				esave_info.paramrangex     = paramrangex;
-				esave_info.paramrangey     = paramrangey;
-				esave_info.opx             = opx;
-				esave_info.opy             = opy;
-				esave_info.odpx            = (short)odpx;
-				esave_info.odpy            = (short)odpy;
+				esave_info.parameter_range_x     = g_parameter_range_x;
+				esave_info.parameter_range_y     = g_parameter_range_y;
+				esave_info.opx             = g_parameter_offset_x;
+				esave_info.opy             = g_parameter_offset_y;
+				esave_info.odpx            = (short)g_discrete_parameter_offset_x;
+				esave_info.odpy            = (short)g_discrete_parameter_offset_y;
 				esave_info.px              = (short)px;
 				esave_info.py              = (short)py;
-				esave_info.sxoffs          = (short)sxoffs;
-				esave_info.syoffs          = (short)syoffs;
+				esave_info.sxoffs          = (short)g_sx_offset;
+				esave_info.syoffs          = (short)g_sy_offset;
 				esave_info.xdots           = (short)xdots;
 				esave_info.ydots           = (short)ydots;
 				esave_info.gridsz          = (short)g_grid_size;
 				esave_info.evolving        = (short) g_evolving;
 				esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
-				esave_info.g_fiddle_factor    = g_fiddle_factor;
+				esave_info.fiddle_factor    = g_fiddle_factor;
 				esave_info.ecount          = (short) (g_grid_size*g_grid_size); /* flag for done */
 			}
 			else  /* we will need the resuming information */
 			{
 				memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
-				esave_info.paramrangex     = resume_e_info.paramrangex;
-				esave_info.paramrangey     = resume_e_info.paramrangey;
+				esave_info.parameter_range_x     = resume_e_info.parameter_range_x;
+				esave_info.parameter_range_y     = resume_e_info.parameter_range_y;
 				esave_info.opx             = resume_e_info.opx;
 				esave_info.opy             = resume_e_info.opy;
 				esave_info.odpx            = (short)resume_e_info.odpx;
@@ -607,7 +607,7 @@ int encoder()
 				esave_info.gridsz          = (short)resume_e_info.gridsz;
 				esave_info.evolving        = (short) resume_e_info.evolving;
 				esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
-				esave_info.g_fiddle_factor    = resume_e_info.g_fiddle_factor;
+				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
 				esave_info.ecount          = resume_e_info.ecount;
 			}
 			for (i = 0; i < NUMGENES; i++)
@@ -633,7 +633,7 @@ int encoder()
 		}
 
 		/* Extended parameters g_block 007 */
-		if (stdcalcmode == 'o')
+		if (g_standard_calculation_mode == 'o')
 		{
 			struct orbits_info osave_info;
 			int i;
@@ -688,11 +688,11 @@ oops:
 
 /* TODO: should we be doing this?  We need to store full g_colors, not the VGA truncated business. */
 /* shift IBM g_colors to GIF */
-static int _fastcall shftwrite(BYTE *color, int numcolors)
+static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 {
 	BYTE thiscolor;
 	int i, j;
-	for (i = 0; i < numcolors; i++)
+	for (i = 0; i < g_num_colors; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
@@ -800,8 +800,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->xmax = xxmax;
 	save_info->ymin = yymin;
 	save_info->ymax = yymax;
-	save_info->g_c_real = param[0];
-	save_info->g_c_imag = param[1];
+	save_info->c_real = g_parameters[0];
+	save_info->c_imag = g_parameters[1];
 	save_info->videomodeax = (short) g_video_entry.videomodeax;
 	save_info->videomodebx = (short) g_video_entry.videomodebx;
 	save_info->videomodecx = (short) g_video_entry.videomodecx;
@@ -809,21 +809,21 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->dotmode = (short) (g_video_entry.dotmode % 100);
 	save_info->xdots = (short) g_video_entry.xdots;
 	save_info->ydots = (short) g_video_entry.ydots;
-	save_info->g_colors = (short) g_video_entry.g_colors;
+	save_info->colors = (short) g_video_entry.colors;
 	save_info->parm3 = 0;        /* pre version == 7 fields */
 	save_info->parm4 = 0;
-	save_info->dparm3 = param[2];
-	save_info->dparm4 = param[3];
-	save_info->dparm5 = param[4];
-	save_info->dparm6 = param[5];
-	save_info->dparm7 = param[6];
-	save_info->dparm8 = param[7];
-	save_info->dparm9 = param[8];
-	save_info->dparm10 = param[9];
+	save_info->dparm3 = g_parameters[2];
+	save_info->dparm4 = g_parameters[3];
+	save_info->dparm5 = g_parameters[4];
+	save_info->dparm6 = g_parameters[5];
+	save_info->dparm7 = g_parameters[6];
+	save_info->dparm8 = g_parameters[7];
+	save_info->dparm9 = g_parameters[8];
+	save_info->dparm10 = g_parameters[9];
 	save_info->fill_color = (short) g_fill_color;
-	save_info->potential[0] = (float) potparam[0];
-	save_info->potential[1] = (float) potparam[1];
-	save_info->potential[2] = (float) potparam[2];
+	save_info->potential[0] = (float) g_potential_parameter[0];
+	save_info->potential[1] = (float) g_potential_parameter[1];
+	save_info->potential[2] = (float) g_potential_parameter[2];
 	save_info->random_flag = (short) g_random_flag;
 	save_info->random_seed = (short) g_random_seed;
 	save_info->inside = (short) g_inside;
@@ -854,13 +854,13 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->outside = (short) g_outside;
 	save_info->x3rd = xx3rd;
 	save_info->y3rd = yy3rd;
-	save_info->g_calculation_status = (short) g_calculation_status;
-	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
+	save_info->calculation_status = (short) g_calculation_status;
+	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ? 127 : g_standard_calculation_mode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
 	save_info->float_flag = g_float_flag;
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
-	save_info->g_calculation_time = g_calculation_time;
+	save_info->calculation_time = g_calculation_time;
 	save_info->trigndx[0] = trigndx[0];
 	save_info->trigndx[1] = trigndx[1];
 	save_info->trigndx[2] = trigndx[2];
@@ -872,7 +872,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->periodicity = (short) g_periodicity_check;
 	save_info->potential_16bit = (short) g_disk_16bit;
 	save_info->faspectratio = g_final_aspect_ratio;
-	save_info->system = (short) save_system;
+	save_info->system = (short) g_save_system;
 
 	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
 
@@ -898,7 +898,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->eyesfp = g_eyes_fp;
 	save_info->orbittype = (short) g_new_orbit_type;
 	save_info->juli3Dmode = (short) g_juli_3d_mode;
-	save_info->g_max_fn = g_max_fn;
+	save_info->max_fn = g_max_fn;
 	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
@@ -969,12 +969,12 @@ static int maxmaxcode = (int)1 << BITSF; /* should NEVER generate this code */
 # define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
 
 #ifdef XFRACT
-unsigned int strlocn[10240];
+unsigned int g_string_location[10240];
 BYTE g_block[4096];
 #endif
 
 static long htab[HSIZE];
-static unsigned short *codetab = (unsigned short *)strlocn;
+static unsigned short *codetab = (unsigned short *)g_string_location;
 
 /*
  * To save much memory, we overlay the table used by compress() with those
@@ -1092,7 +1092,7 @@ static int compress(int rowlimit)
 			for (xdot = 0; xdot < xdots; xdot++)
 			{
 				color = (save16bit == 0 || ydot < ydots)
-					? getcolor(xdot, ydot) : disk_read(xdot + sxoffs, ydot + syoffs);
+					? getcolor(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
 				if (in_count == 0)
 				{
 					in_count = 1;

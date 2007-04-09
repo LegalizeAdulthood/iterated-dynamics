@@ -74,7 +74,7 @@ int test(void)
 	{
 		return 0;
 	}
-	numpasses = (stdcalcmode == '1') ? 0 : 1;
+	numpasses = (g_standard_calculation_mode == '1') ? 0 : 1;
 	for (g_passes = startpass; g_passes <= numpasses ; g_passes++)
 	{
 		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
@@ -143,9 +143,9 @@ static void _fastcall put_potential(int x, int y, U16 color)
 			was already a "disk_write" in that case */
 	if (!driver_diskp())
 	{
-		disk_write(x + sxoffs, y + syoffs, color >> 8);    /* upper 8 bits */
+		disk_write(x + g_sx_offset, y + g_sy_offset, color >> 8);    /* upper 8 bits */
 	}
-	disk_write(x + sxoffs, y + sydots + syoffs, color&255); /* lower 8 bits */
+	disk_write(x + g_sx_offset, y + g_screen_height + g_sy_offset, color&255); /* lower 8 bits */
 }
 
 /* fixes border */
@@ -176,8 +176,8 @@ static U16 _fastcall get_potential(int x, int y)
 {
 	U16 color;
 
-	color = (U16)disk_read(x + sxoffs, y + syoffs);
-	color = (U16)((color << 8) + (U16) disk_read(x + sxoffs, y + sydots + syoffs));
+	color = (U16)disk_read(x + g_sx_offset, y + g_sy_offset);
+	color = (U16)((color << 8) + (U16) disk_read(x + g_sx_offset, y + g_screen_height + g_sy_offset));
 	return color;
 }
 
@@ -407,7 +407,7 @@ int plasma(void)
 		"640x350x16 mode]).");
 		return -1;
 	}
-	s_iparm_x = (int)(param[0]*8);
+	s_iparm_x = (int)(g_parameters[0]*8);
 	if (g_parameter.x <= 0.0)
 	{
 		s_iparm_x = 0;
@@ -416,41 +416,41 @@ int plasma(void)
 	{
 		s_iparm_x = 800;
 	}
-	param[0] = (double)s_iparm_x / 8.0;  /* let user know what was used */
-	if (param[1] < 0) /* limit parameter values  */
+	g_parameters[0] = (double)s_iparm_x / 8.0;  /* let user know what was used */
+	if (g_parameters[1] < 0) /* limit parameter values  */
 	{
-		param[1] = 0;
+		g_parameters[1] = 0;
 	}
-	if (param[1] > 1)
+	if (g_parameters[1] > 1)
 	{
-		param[1] = 1;
+		g_parameters[1] = 1;
 	}
-	if (param[2] < 0) /* limit parameter values  */
+	if (g_parameters[2] < 0) /* limit parameter values  */
 	{
-		param[2] = 0;
+		g_parameters[2] = 0;
 	}
-	if (param[2] > 1)
+	if (g_parameters[2] > 1)
 	{
-		param[2] = 1;
+		g_parameters[2] = 1;
 	}
-	if (param[3] < 0) /* limit parameter values  */
+	if (g_parameters[3] < 0) /* limit parameter values  */
 	{
-		param[3] = 0;
+		g_parameters[3] = 0;
 	}
-	if (param[3] > 1)
+	if (g_parameters[3] > 1)
 	{
-		param[3] = 1;
+		g_parameters[3] = 1;
 	}
 
-	if ((!g_random_flag) && param[2] == 1)
+	if ((!g_random_flag) && g_parameters[2] == 1)
 	{
 		--g_random_seed;
 	}
-	if (param[2] != 0 && param[2] != 1)
+	if (g_parameters[2] != 0 && g_parameters[2] != 1)
 	{
-		g_random_seed = (int)param[2];
+		g_random_seed = (int)g_parameters[2];
 	}
-	s_max_plasma = (U16)param[3];  /* s_max_plasma is used as a flag for potential */
+	s_max_plasma = (U16)g_parameters[3];  /* s_max_plasma is used as a flag for potential */
 
 	if (s_max_plasma != 0)
 	{
@@ -466,7 +466,7 @@ int plasma(void)
 		else
 		{
 			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
-			param[3]   = 0;
+			g_parameters[3]   = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
@@ -536,7 +536,7 @@ int plasma(void)
 	g_plot_color(0, ydots-1,  rnd[3]);
 
 	s_recur_level = 0;
-	if (param[1] == 0)
+	if (g_parameters[1] == 0)
 	{
 		subdivide(0, 0, xdots-1, ydots-1);
 	}
@@ -650,9 +650,9 @@ int diffusion(void)
 	g_bit_shift = 16;
 	g_fudge = 1L << 16;
 
-	border = (int)param[0];
-	mode = (int)param[1];
-	colorshift = (int)param[2];
+	border = (int)g_parameters[0];
+	mode = (int)g_parameters[1];
+	colorshift = (int)g_parameters[2];
 
 	colorcount = colorshift; /* Counts down from colorshift */
 	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
@@ -1083,7 +1083,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 		Population = (g_parameter.y == 0) ? SEED : g_parameter.y;
 	}
 
-	errors = overflow = FALSE;
+	errors = g_overflow = FALSE;
 
 	for (counter = 0 ; counter < s_filter_cycles ; counter++)
 	{
@@ -1239,7 +1239,7 @@ int bifurcation_verhulst_trig()
 	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
 	lPopulation += multiply(lRate, g_tmp_z_l.y, g_bit_shift);
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 int bifurcation_stewart_trig_fp()
@@ -1262,7 +1262,7 @@ int bifurcation_stewart_trig()
 	lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
 	lPopulation -= g_fudge;
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 int bifurcation_set_trig_pi_fp()
@@ -1282,7 +1282,7 @@ int bifurcation_set_trig_pi()
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	lPopulation = multiply(lRate, g_tmp_z_l.x, g_bit_shift);
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 int bifurcation_add_trig_pi_fp()
@@ -1302,7 +1302,7 @@ int bifurcation_add_trig_pi()
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	lPopulation += multiply(lRate, g_tmp_z_l.x, g_bit_shift);
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 int bifurcation_lambda_trig_fp()
@@ -1324,7 +1324,7 @@ int bifurcation_lambda_trig()
 	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
 	lPopulation = multiply(lRate, g_tmp_z_l.y, g_bit_shift);
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 #define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2); \
@@ -1350,18 +1350,18 @@ int bifurcation_may()
 	lPopulation = multiply(lRate, lPopulation, g_bit_shift);
 	lPopulation = divide(lPopulation, g_tmp_z_l.x, g_bit_shift);
 #endif
-	return overflow;
+	return g_overflow;
 }
 
 int bifurcation_may_setup()
 {
 
-	beta = (long)param[2];
+	beta = (long)g_parameters[2];
 	if (beta < 2)
 	{
 		beta = 2;
 	}
-	param[2] = (double)beta;
+	g_parameters[2] = (double)beta;
 
 	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
 	return 0;
@@ -1427,12 +1427,12 @@ int lyapunov(void)
 	{
 		return -1;
 		}
-	overflow = FALSE;
-	if (param[1] == 1)
+	g_overflow = FALSE;
+	if (g_parameters[1] == 1)
 	{
 		Population = (1.0 + rand())/(2.0 + RAND_MAX);
 	}
-	else if (param[1] == 0)
+	else if (g_parameters[1] == 0)
 	{
 		if (fabs(Population) > BIG || Population == 0 || Population == 1)
 		{
@@ -1441,7 +1441,7 @@ int lyapunov(void)
 	}
 	else
 	{
-		Population = param[1];
+		Population = g_parameters[1];
 	}
 	(*g_plot_color)(g_col, g_row, 1);
 	if (g_invert)
@@ -1502,15 +1502,15 @@ int lya_setup(void)
 	long i;
 	int t;
 
-	s_filter_cycles = (long)param[2];
+	s_filter_cycles = (long)g_parameters[2];
 	if (s_filter_cycles == 0)
 	{
 		s_filter_cycles = g_max_iteration/2;
 	}
-	lyaSeedOK = (param[1] > 0) && (param[1] <= 1) && (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL);
+	lyaSeedOK = (g_parameters[1] > 0) && (g_parameters[1] <= 1) && (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL);
 	lyaLength = 1;
 
-	i = (long)param[0];
+	i = (long)g_parameters[0];
 #if !defined(XFRACT)
 	if (g_save_release < 1732) /* make it a short to reproduce prior stuff */
 	{
@@ -1537,9 +1537,9 @@ int lya_setup(void)
 				lyaRxy[t] = !lyaRxy[t];
 		}
 	}
-	if (g_save_release < 1731)  /* ignore inside=, stdcalcmode */
+	if (g_save_release < 1731)  /* ignore inside=, g_standard_calculation_mode */
 	{
-		stdcalcmode = '1';
+		g_standard_calculation_mode = '1';
 		if (g_inside == 1)
 		{
 			g_inside = 0;
@@ -1553,7 +1553,7 @@ int lya_setup(void)
 	if (usr_stdcalcmode == 'o')  /* Oops, lyapunov type */
 	{
 		usr_stdcalcmode = '1';  /* doesn't use new & breaks orbits */
-		stdcalcmode = '1';
+		g_standard_calculation_mode = '1';
 		}
 	return 1;
 }
@@ -1574,7 +1574,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 			Rate = lyaRxy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
-				overflow = TRUE;
+				g_overflow = TRUE;
 				goto jumpout;
 			}
 		}
@@ -1586,14 +1586,14 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 			Rate = lyaRxy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
-				overflow = TRUE;
+				g_overflow = TRUE;
 				goto jumpout;
 			}
 			temp = fabs(Rate-2.0*Rate*Population);
 			total *= temp;
 			if (total == 0)
 			{
-				overflow = TRUE;
+				g_overflow = TRUE;
 				goto jumpout;
 			}
 		}
@@ -1611,7 +1611,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 
 jumpout:
 	temp = log(total) + lnadjust;
-	if (overflow || total <= 0 || temp > 0)
+	if (g_overflow || total <= 0 || temp > 0)
 	{
 		color = 0;
 	}
@@ -1733,9 +1733,9 @@ int cellular()
 
 	set_cellular_palette();
 
-	randparam = (S32)param[0];
-	lnnmbr = (U32)param[3];
-	kr = (U16)param[2];
+	randparam = (S32)g_parameters[0];
+	lnnmbr = (U32)g_parameters[3];
+	kr = (U16)g_parameters[2];
 	switch (kr)
 	{
 	case 21:
@@ -1770,7 +1770,7 @@ int cellular()
 	}
 	if (randparam != 0 && randparam != -1)
 	{
-		n = param[0];
+		n = g_parameters[0];
 		sprintf(buf, "%.16g", n); /* # of digits in initial string */
 		t = (S16)strlen(buf);
 		if (t > 16 || t <= 0)
@@ -1802,17 +1802,17 @@ int cellular()
 
 /* generate rule table from parameter 1 */
 #if !defined(XFRACT)
-	n = param[1];
+	n = g_parameters[1];
 #else
 	/* gcc can't manage to convert a big double to an unsigned long properly. */
-	if (param[1] > 0x7fffffff)
+	if (g_parameters[1] > 0x7fffffff)
 	{
-		n = (param[1]-0x7fffffff);
+		n = (g_parameters[1]-0x7fffffff);
 		n += 0x7fffffff;
 	}
 	else
 	{
-		n = param[1];
+		n = g_parameters[1];
 	}
 #endif
 	if (n == 0)  /* calculate a random rule */
@@ -1823,7 +1823,7 @@ int cellular()
 			n *= 10;
 			n += rand() % (int)k;
 		}
-		param[1] = n;
+		g_parameters[1] = n;
 	}
 	sprintf(buf, "%.*g", rule_digits , n);
 	t = (S16)strlen(buf);
@@ -1872,7 +1872,7 @@ int cellular()
 		start_resume();
 		end_resume();
 		get_line(g_y_stop, 0, g_x_stop, cell_array[filled]);
-		param[3] += g_y_stop + 1;
+		g_parameters[3] += g_y_stop + 1;
 		start_row = -1; /* after 1st iteration its = 0 */
 	}
 	else
@@ -2031,7 +2031,7 @@ contloop:
 	}
 	if (g_next_screen_flag)
 	{
-		param[3] += g_y_stop + 1;
+		g_parameters[3] += g_y_stop + 1;
 		start_row = 0;
 		goto contloop;
 	}
@@ -2204,9 +2204,9 @@ int froth_setup(void)
 	{
 		/* use old release parameters */
 
-		fsp->repeat_mapping = ((int)param[0] == 6 || (int)param[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
-		fsp->altcolor = (int)param[1];
-		param[2] = 0; /* throw away any value used prior to 18.20 */
+		fsp->repeat_mapping = ((int)g_parameters[0] == 6 || (int)g_parameters[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
+		fsp->altcolor = (int)g_parameters[1];
+		g_parameters[2] = 0; /* throw away any value used prior to 18.20 */
 
 		fsp->attractors = !fsp->repeat_mapping ? 3 : 6;
 
@@ -2232,17 +2232,17 @@ int froth_setup(void)
 	}
 	else /* use new code */
 	{
-		if (param[0] != 2)
+		if (g_parameters[0] != 2)
 		{
-			param[0] = 1;
+			g_parameters[0] = 1;
 		}
-		fsp->repeat_mapping = (int)param[0] == 2;
-		if (param[1] != 0)
+		fsp->repeat_mapping = (int)g_parameters[0] == 2;
+		if (g_parameters[1] != 0)
 		{
-			param[1] = 1;
+			g_parameters[1] = 1;
 		}
-		fsp->altcolor = (int)param[1];
-		fsp->fl.f.a = param[2];
+		fsp->altcolor = (int)g_parameters[1];
+		fsp->fl.f.a = g_parameters[2];
 
 		fsp->attractors = fabs(fsp->fl.f.a) <= FROTH_CRITICAL_A ? (!fsp->repeat_mapping ? 3 : 6)
 																: (!fsp->repeat_mapping ? 2 : 3);

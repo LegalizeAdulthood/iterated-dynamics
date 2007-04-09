@@ -29,7 +29,7 @@ The four routines are:
 
  writevideo(int x, int y, int color)  write a pixel using color number
                  'color' at screen coordinates x, y (where 0, 0 is the
-                 top left corner, and sxdots, 0 is the top right corner)
+                 top left corner, and g_screen_width, 0 is the top right corner)
 
  int readvideo(int x, int y)  return the color number of pixel x, y
                  using the same coordinate logic as 'writevideo()'
@@ -62,7 +62,7 @@ in assembler.
 
 #if 0
 	int  g_dot_mode;                /* video access method (= 19)      */
-	int  sxdots, sydots;         /* total # of dots on the screen   */
+	int  g_screen_width, g_screen_height;         /* total # of dots on the screen   */
 	int  g_colors;                 /* maximum g_colors available        */
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */

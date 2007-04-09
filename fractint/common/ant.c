@@ -95,7 +95,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
 	int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
 	long count;
-	antwrap = ((param[4] == 0) ? 0 : 1);
+	antwrap = ((g_parameters[4] == 0) ? 0 : 1);
 	step = (int) wait;
 	if (step == 1)
 	{
@@ -272,7 +272,7 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	int rule[MAX_ANTS + 1], rule_mask;
 	long count;
 
-	antwrap = ((param[4] == 0) ? 0 : 1);
+	antwrap = ((g_parameters[4] == 0) ? 0 : 1);
 
 	step = (int) wait;
 	if (step == 1)
@@ -484,10 +484,10 @@ int ant(void)
 									* top */
 	oldhelpmode = g_help_mode;
 	g_help_mode = ANTCOMMANDS;
-	maxpts = (long) param[1];
+	maxpts = (long) g_parameters[1];
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
-	sprintf(rule, "%.17g", param[0]);
+	sprintf(rule, "%.17g", g_parameters[0]);
 	rule_len = (int) strlen(rule);
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */
@@ -502,13 +502,13 @@ int ant(void)
 	}
 
 	/* set random seed for reproducibility */
-	if ((!g_random_flag) && param[5] == 1)
+	if ((!g_random_flag) && g_parameters[5] == 1)
 	{
 		--g_random_seed;
 	}
-	if (param[5] != 0 && param[5] != 1)
+	if (g_parameters[5] != 0 && g_parameters[5] != 1)
 	{
-		g_random_seed = (int)param[5];
+		g_random_seed = (int)g_parameters[5];
 	}
 
 	srand(g_random_seed);
@@ -517,16 +517,16 @@ int ant(void)
 		++g_random_seed;
 	}
 
-	maxants = (int) param[2];
+	maxants = (int) g_parameters[2];
 	if (maxants < 1)             /* if maxants == 0 maxants random */
 	{
 		maxants = 2 + RANDOM(MAX_ANTS - 2);
 	}
 	else if (maxants > MAX_ANTS)
 	{
-		param[2] = maxants = MAX_ANTS;
+		g_parameters[2] = maxants = MAX_ANTS;
 	}
-	type = (int) param[3] - 1;
+	type = (int) g_parameters[3] - 1;
 	if (type < ANTTYPE_MOVE_COLOR || type > ANTTYPE_MOVE_RULE)
 	{
 		type = RANDOM(2);         /* if parma[3] == 0 choose a random type */

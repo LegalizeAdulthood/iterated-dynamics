@@ -356,7 +356,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			more = 0;                   /* time to bail out */
 			break;
 		case FIK_HOME:                     /* restore palette */
-			memcpy(g_dac_box, olddacbox, 256*3);
+			memcpy(g_dac_box, g_old_dac_box, 256*3);
 			pauserotate();              /* pause */
 			break;
 		default:                       /* maybe a new palette */
@@ -522,7 +522,7 @@ void save_palette()
 						g_dac_box[i][1] << 2,
 						g_dac_box[i][2] << 2);
 			}
-			memcpy(olddacbox, g_dac_box, 256*3);
+			memcpy(g_old_dac_box, g_dac_box, 256*3);
 			g_color_state = COLORSTATE_MAP;
 			strcpy(g_color_file, temp1);
 		}
@@ -546,7 +546,7 @@ int load_palette(void)
 	{
 		if (ValidateLuts(filename) == 0)
 		{
-			memcpy(olddacbox, g_dac_box, 256*3);
+			memcpy(g_old_dac_box, g_dac_box, 256*3);
 		}
 		merge_pathnames(g_map_name, filename, 0);
 	}

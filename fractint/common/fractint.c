@@ -72,8 +72,8 @@ char *g_fract_dir1="", *g_fract_dir2="";
 int     g_dot_mode;                /* video access method      */
 int     textsafe2;              /* textsafe override from g_video_table */
 int     g_ok_to_print;              /* 0 if printf() won't work */
-int     sxdots, sydots;          /* # of dots on the physical screen    */
-int     sxoffs, syoffs;          /* physical top left of logical screen */
+int     g_screen_width, g_screen_height;          /* # of dots on the physical screen    */
+int     g_sx_offset, g_sy_offset;          /* physical top left of logical screen */
 int     xdots, ydots;           /* # of dots on the logical screen     */
 double  g_dx_size;
 double	g_dy_size;         /* xdots-1, ydots-1         */
@@ -85,7 +85,7 @@ double  zbx, zby;                /* topleft of zoombox       */
 double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
 
 int     g_fractal_type;               /* if == 0, use Mandelbrot  */
-char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
+char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
 long    g_c_real;
 long	g_c_imag;           /* real, imag'ry parts of C */
 long    g_delta_x;
@@ -98,8 +98,8 @@ LDBL    g_delta_x2_fp;
 LDBL	g_delta_y2_fp;         /* screen pixel increments  */
 long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
 double  g_delta_min_fp;                /* same as a double         */
-double  param[MAXPARAMS];       /* parameters               */
-double  potparam[3];            /* three potential parameters*/
+double  g_parameters[MAXPARAMS];       /* parameters               */
+double  g_potential_parameter[3];            /* three potential parameters*/
 long    g_fudge;                  /* 2**fudgefactor           */
 long    g_attractor_radius_l;               /* finite attractor radius  */
 double  g_attractor_radius_fp;               /* finite attractor radius  */
@@ -134,9 +134,9 @@ int g_max_history = 10;
 /* variables defined by the command line/files processor */
 int     g_compare_gif = 0;                   /* compare two gif files flag */
 int     timedsave = 0;                    /* when doing a timed save */
-int     resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
-int     started_resaves = FALSE;              /* but incr on first resave */
-int     save_system;                    /* from and for save files */
+int     g_resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
+int     g_started_resaves = FALSE;              /* but incr on first resave */
+int     g_save_system;                    /* from and for save files */
 int     tabmode = 1;                    /* tab display enabled */
 
 /* for historical reasons (before rotation):         */
@@ -145,8 +145,8 @@ int     tabmode = 1;                    /* tab display enabled */
 /*    bottom right corner of screen is (xxmax, yymin) */
 double  xxmin, xxmax, yymin, yymax, xx3rd, yy3rd; /* selected screen corners  */
 long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
-double  sxmin, sxmax, symin, symax, sx3rd, sy3rd; /* displayed screen corners */
-double  plotmx1, plotmx2, plotmy1, plotmy2;     /* real->screen multipliers */
+double  g_sx_min, g_sx_max, g_sy_min, g_sy_max, g_sx_3rd, g_sy_3rd; /* displayed screen corners */
+double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     /* real->screen multipliers */
 
 int g_calculation_status = CALCSTAT_NO_FRACTAL;
 					  /* -1 no fractal                   */
@@ -159,17 +159,17 @@ long g_calculation_time;
 
 int g_max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
-int        savedac;                     /* save-the-Video DAC flag      */
+int        g_save_dac;                     /* save-the-Video DAC flag      */
 int g_browsing;                 /* browse mode flag */
 char g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
-int name_stack_ptr ;
+int g_name_stack_ptr ;
 double toosmall;
 int  g_cross_hair_box_size;
-int no_sub_images;
+int g_no_sub_images;
 int g_auto_browse, g_double_caution;
 char g_browse_check_parameters, g_browse_check_type;
 char g_browse_mask[FILE_MAX_FNAME];
-int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
+int g_scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
 
 
 #define RESTART           1
@@ -200,7 +200,7 @@ static void my_floating_point_err(int sig)
 {
 	if (sig != 0)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 }
 
@@ -278,19 +278,19 @@ restart:   /* insert key re-starts here */
 	g_browse_check_type  = TRUE;
 	g_browse_check_parameters = TRUE;
 	g_double_caution  = TRUE;
-	no_sub_images = FALSE;
+	g_no_sub_images = FALSE;
 	toosmall = 6;
 	g_cross_hair_box_size   = 3;
 	strcpy(g_browse_mask, "*.gif");
 	strcpy(g_browse_name, "            ");
-	name_stack_ptr = -1; /* init loaded files stack */
+	g_name_stack_ptr = -1; /* init loaded files stack */
 
 	g_evolving = FALSE;
-	paramrangex = 4;
-	opx = newopx = -2.0;
-	paramrangey = 3;
-	opy = newopy = -1.5;
-	odpx = odpy = 0;
+	g_parameter_range_x = 4;
+	g_parameter_offset_x = g_new_parameter_offset_x = -2.0;
+	g_parameter_range_y = 3;
+	g_parameter_offset_y = g_new_parameter_offset_y = -1.5;
+	g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = 0;
 	g_grid_size = 9;
 	g_fiddle_factor = 1;
 	g_fiddle_reduction = 1.0;
@@ -311,7 +311,7 @@ restart:   /* insert key re-starts here */
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case g_colors= present */
+	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case g_colors= present */
 
 	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
 	{
@@ -343,7 +343,7 @@ restart:   /* insert key re-starts here */
 	adapter_detect();                    /* check what video is really present */
 
 	driver_set_for_text();                      /* switch to text mode */
-	savedac = SAVEDAC_NO;                         /* don't save the VGA DAC */
+	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
 
 #ifndef XFRACT
 	if (g_bad_config < 0)                   /* fractint.cfg bad, no msg yet */
@@ -380,7 +380,7 @@ restorestart:
 
 	if (g_color_preloaded)
 	{
-		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case g_colors= present */
+		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case g_colors= present */
 	}
 
 	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
@@ -413,8 +413,8 @@ restorestart:
 				break;
 			}
 
-			name_stack_ptr = 0; /* 'r' reads first filename for g_browsing */
-			strcpy(g_file_name_stack[name_stack_ptr], g_browse_name);
+			g_name_stack_ptr = 0; /* 'r' reads first filename for g_browsing */
+			strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
 		}
 
 		g_evolving = EVOLVE_NONE;
@@ -453,7 +453,7 @@ restorestart:
 		goto resumeloop;                  /* ooh, this is ugly */
 	}
 
-	savedac = SAVEDAC_NO;                         /* don't save the VGA DAC */
+	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
 
 imagestart:                             /* calc/display a new image */
 #if defined(_WIN32)
@@ -556,7 +556,7 @@ imagestart:                             /* calc/display a new image */
 					}
 					if (g_color_preloaded)
 					{
-						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case g_colors= present */
+						memcpy(g_old_dac_box, g_dac_box, 256*3);     /* save in case g_colors= present */
 					}
 					driver_set_for_text(); /* switch to text mode */
 					g_show_file = -1;

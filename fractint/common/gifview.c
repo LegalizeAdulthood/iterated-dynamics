@@ -23,7 +23,7 @@ static void close_file(void);
 
 static FILE *fpin = NULL;       /* FILE pointer           */
 unsigned int g_height;
-unsigned numcolors;
+unsigned g_num_colors;
 int g_bad_code_count = 0;         /* needed by decoder module */
 
 static int out_line_dither(BYTE *, int);
@@ -53,7 +53,7 @@ int get_bytes(BYTE *where, int how_many)
  * screen at once. The requirement to have a whole line buffered at once
  * has now been relaxed in order to support larger images. The one exception
  * to this is in the case where the image is being decoded to a smaller size.
- * The skipxdots and skipydots logic assumes that the buffer holds one line.
+ * The g_skip_x_dots and g_skip_y_dots logic assumes that the buffer holds one line.
  */
 
 BYTE g_decoder_line[MAXPIXELS + 1]; /* write-line routines use this */
@@ -92,7 +92,7 @@ int gifview()
 	colcount = g_row_count = 0;
 
 	/* Open the file */
-	strcpy(temp1, (g_out_line == outline_stereo) ? stereomapname : g_read_name);
+	strcpy(temp1, (g_out_line == outline_stereo) ? g_stereo_map_name : g_read_name);
 	if (has_ext(temp1) == NULL)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
@@ -103,7 +103,7 @@ int gifview()
 		}
 		else
 		{
-			strcpy(temp1, (g_out_line == outline_stereo) ? stereomapname : g_read_name);
+			strcpy(temp1, (g_out_line == outline_stereo) ? g_stereo_map_name : g_read_name);
 			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}
@@ -145,14 +145,14 @@ int gifview()
 		close_file();
 		return -1;
 	}
-	numcolors = 1 << planes;
+	g_num_colors = 1 << planes;
 
-	if (g_dither_flag && numcolors > 2 && g_colors == 2 && g_out_line == out_line)
+	if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && g_out_line == out_line)
 	{
 			g_out_line = out_line_dither;
 	}
 
-	for (i = 0; i < (int)numcolors; i++)
+	for (i = 0; i < (int)g_num_colors; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
@@ -245,14 +245,14 @@ int gifview()
 
 			/* adjustments for handling MIGs */
 			gifview_image_top  = top;
-			if (skipxdots > 0)
+			if (g_skip_x_dots > 0)
 			{
-				gifview_image_top /= (skipydots + 1);
+				gifview_image_top /= (g_skip_y_dots + 1);
 			}
 			gifview_image_left = left;
-			if (skipydots > 0)
+			if (g_skip_y_dots > 0)
 			{
-				gifview_image_left /= (skipxdots + 1);
+				gifview_image_left /= (g_skip_x_dots + 1);
 			}
 			if (g_out_line == out_line)
 			{
@@ -261,7 +261,7 @@ int gifview()
 				{   /* we're using normal decoding and we have a MIG */
 					g_out_line = out_line_migs;
 				}
-				else if (width > DECODERLINE_WIDTH && skipxdots == 0)
+				else if (width > DECODERLINE_WIDTH && g_skip_x_dots == 0)
 				{
 					g_out_line = out_line_too_wide;
 				}
@@ -275,11 +275,11 @@ int gifview()
 			/* Skip local color palette */
 			if ((buffer[8] & 0x80) == 0x80)  /* local map? */
 			{
-				int numcolors;    /* make this local */
+				int g_num_colors;    /* make this local */
 				planes = (buffer[8] & 0x0F) + 1;
-				numcolors = 1 << planes;
+				g_num_colors = 1 << planes;
 				/* skip local map */
-				for (i = 0; i < numcolors; i++)
+				for (i = 0; i < g_num_colors; i++)
 				{
 					for (j = 0; j < 3; j++)
 					{
@@ -305,7 +305,7 @@ int gifview()
 			* Call decoder(width) via timer.
 			* Width is limited to DECODERLINE_WIDTH.
 			*/
-			if (skipxdots == 0)
+			if (g_skip_x_dots == 0)
 			{
 				width = min(width, DECODERLINE_WIDTH);
 			}
@@ -525,7 +525,7 @@ int pot_line(BYTE *pixels, int linelen)
 	}
 	for (col = 0; col < xdots; ++col)
 	{
-		disk_write(col + sxoffs, row + syoffs, *(pixels + col));
+		disk_write(col + g_sx_offset, row + g_sy_offset, *(pixels + col));
 	}
 	g_row_count = saverowcount + 1;
 	return 0;

@@ -51,7 +51,7 @@ static unsigned int s_hash_ptr[HASH_SIZE] = { 0 };
 static int s_pixel_shift;
 static int s_header_length;
 static int s_row_size = 0;   /* doubles as a disk video not ok flag */
-static int s_col_size;       /* sydots, *2 when g_potential_16bit */
+static int s_col_size;       /* g_screen_height, *2 when g_potential_16bit */
 static BYTE *s_memory_buffer;
 static U16 s_disk_video_handle = 0;
 static long s_memory_offset = 0;
@@ -68,7 +68,7 @@ static void _fastcall  mem_seek(long);
 int disk_start()
 {
 	s_header_length = s_disk_targa = 0;
-	return disk_start_common(sxdots, sydots, g_colors);
+	return disk_start_common(g_screen_width, g_screen_height, g_colors);
 }
 
 int disk_start_potential()
@@ -83,7 +83,7 @@ int disk_start_potential()
 		showtempmsg("clearing 16bit pot work area");
 	}
 	s_header_length = s_disk_targa = 0;
-	i = disk_start_common(sxdots, sydots << 1, g_colors);
+	i = disk_start_common(g_screen_width, g_screen_height << 1, g_colors);
 	cleartempmsg();
 	if (i == 0)
 	{
@@ -133,7 +133,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);  /* init box */
 		}
 		driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
-		sprintf(buf, "Screen resolution: %d x %d", sxdots, sydots);
+		sprintf(buf, "Screen resolution: %d x %d", g_screen_width, g_screen_height);
 		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, buf);
 		if (s_disk_targa)
 		{
@@ -349,7 +349,7 @@ int disk_read(int col, int row)
 		if (driver_diskp())
 		{
 			sprintf(buf, " reading line %4d",
-					(row >= sydots) ? row-sydots : row); /* adjust when potfile */
+					(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
 			disk_video_status(0, buf);
 		}
 		s_time_to_display = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
@@ -412,7 +412,7 @@ void disk_write(int col, int row, int color)
 		if (driver_diskp())
 		{
 			sprintf(buf, " writing line %4d",
-					(row >= sydots) ? row-sydots : row); /* adjust when potfile */
+					(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
 			disk_video_status(0, buf);
 		}
 		s_time_to_display = 1000;

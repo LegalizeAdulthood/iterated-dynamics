@@ -193,7 +193,7 @@ union Arg *Arg1, *Arg2;
 /* CAE fp  made some of the following non-static for PARSERA.ASM */
 /* Some of these variables should be renamed for safety */
 union Arg s[20], **Store, **Load;     /* static CAE fp */
-int StoPtr, g_lod_ptr, OpPtr;      /* static CAE fp */
+int g_store_ptr, g_lod_ptr, OpPtr;      /* static CAE fp */
 int var_count;
 int complx_count;
 int real_count;
@@ -203,7 +203,7 @@ void (**f)(void) = (void (**)(void))0; /* static CAE fp */
 
 int g_is_mand = 1;
 
-unsigned int posp, vsp, g_last_op;     /* CAE fp made non-static */
+unsigned int g_posp, vsp, g_last_op;     /* CAE fp made non-static */
 static unsigned int n, NextOp, InitN;
 static int paren, ExpectingArg;
 struct ConstArg *v = (struct ConstArg *)0;      /* was static CAE fp */
@@ -221,8 +221,8 @@ unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)\
-	if ((denom == 0 || overflow) && g_save_release > 1920) {\
-		overflow = 1; \
+	if ((denom == 0 || g_overflow) && g_save_release > 1920) {\
+		g_overflow = 1; \
 		return; \
 	}\
 	else if (denom == 0)\
@@ -234,7 +234,7 @@ unsigned int chars_in_formula;
 	{								\
 		if (g_save_release > 1920)	\
 		{							\
-			overflow = 1;			\
+			g_overflow = 1;			\
 		}							\
 		return;						\
 	}
@@ -373,7 +373,7 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	}
 	else
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 }
 #else  /* use Macro form for (?) greater speed */
@@ -396,7 +396,7 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 		Arg1->l.y = (long)(Arg1->d.y*fg); \
 	}\
 	else\
-		overflow = 1; \
+		g_overflow = 1; \
 }
 
 
@@ -1017,7 +1017,7 @@ void lStkMod(void)
 	multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
 	if (Arg1->l.x < 0)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	Arg1->l.y = 0L;
 }
@@ -1028,7 +1028,7 @@ void lStkModOld(void)
 	multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
 	if (Arg1->l.x < 0)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	Arg1->l.y = 0L;
 }
@@ -1038,7 +1038,7 @@ void (*StkMod)(void) = dStkMod;
 
 void StkSto(void)
 {
-	*Store[StoPtr++] = *Arg1;
+	*Store[g_store_ptr++] = *Arg1;
 }
 
 void (*PtrStkSto)(void) = StkSto;
@@ -1296,7 +1296,7 @@ void mStkRecip(void)
 	mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
 	if (mod.Mant == 0L)
 	{
-		overflow = 1;
+		g_overflow = 1;
 		return;
 	}
 	Arg1->m.x = *MPdiv(Arg1->m.x, mod);
@@ -1935,7 +1935,7 @@ void lStkPwr(void)
 	}
 	else
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	Arg1--;
 	Arg2--;
@@ -1956,7 +1956,7 @@ void StkJump(void)
 {
 	OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
 	g_lod_ptr = jump_control[jump_index].ptrs.JumpLodPtr;
-	StoPtr = jump_control[jump_index].ptrs.JumpStoPtr;
+	g_store_ptr = jump_control[jump_index].ptrs.JumpStoPtr;
 	jump_index = jump_control[jump_index].DestJumpIndex;
 }
 
@@ -2165,9 +2165,9 @@ struct ConstArg *isconst(char *Str, int Len)
 		|| (Str[0] == '-' && (isdigit(Str[1]) || Str[1] == '.'))
 		|| Str[0] == '.')
 	{
-		if (o[posp-1].f == StkNeg)
+		if (o[g_posp-1].f == StkNeg)
 		{
-			posp--;
+			g_posp--;
 			Str = Str - 1;
 			InitN--;
 			v[vsp].len++;
@@ -2401,7 +2401,7 @@ void (*isfunct(char *Str, int Len))(void)
 void RecSortPrec(void)
 {
 	int ThisOp = NextOp++;
-	while (o[ThisOp].p > o[NextOp].p && NextOp < posp)
+	while (o[ThisOp].p > o[NextOp].p && NextOp < g_posp)
 	{
 		RecSortPrec();
 	}
@@ -2667,55 +2667,55 @@ static int ParseStr(char *Str, int pass)
 	switch (MathType)
 	{
 	case D_MATH:
-		v[1].a.d.x = param[0];
-		v[1].a.d.y = param[1];
-		v[2].a.d.x = param[2];
-		v[2].a.d.y = param[3];
+		v[1].a.d.x = g_parameters[0];
+		v[1].a.d.y = g_parameters[1];
+		v[2].a.d.x = g_parameters[2];
+		v[2].a.d.y = g_parameters[3];
 		v[5].a.d.x = const_pi;
 		v[5].a.d.y = 0.0;
 		v[6].a.d.x = const_e;
 		v[6].a.d.y = 0.0;
-		v[8].a.d.x = param[4];
-		v[8].a.d.y = param[5];
-		v[17].a.d.x = param[6];
-		v[17].a.d.y = param[7];
-		v[18].a.d.x = param[8];
-		v[18].a.d.y = param[9];
+		v[8].a.d.x = g_parameters[4];
+		v[8].a.d.y = g_parameters[5];
+		v[17].a.d.x = g_parameters[6];
+		v[17].a.d.y = g_parameters[7];
+		v[18].a.d.x = g_parameters[8];
+		v[18].a.d.y = g_parameters[9];
 		break;
 #if !defined(XFRACT)
 	case M_MATH:
-		v[1].a.m.x = *d2MP(param[0]);
-		v[1].a.m.y = *d2MP(param[1]);
-		v[2].a.m.x = *d2MP(param[2]);
-		v[2].a.m.y = *d2MP(param[3]);
+		v[1].a.m.x = *d2MP(g_parameters[0]);
+		v[1].a.m.y = *d2MP(g_parameters[1]);
+		v[2].a.m.x = *d2MP(g_parameters[2]);
+		v[2].a.m.y = *d2MP(g_parameters[3]);
 		v[5].a.m.x = *d2MP(const_pi);
 		v[5].a.m.y = *d2MP(0.0);
 		v[6].a.m.x = *d2MP(const_e);
 		v[6].a.m.y = *d2MP(0.0);
-		v[8].a.m.x = *d2MP(param[4]);
-		v[8].a.m.y = *d2MP(param[5]);
+		v[8].a.m.x = *d2MP(g_parameters[4]);
+		v[8].a.m.y = *d2MP(g_parameters[5]);
 		v[11].a.m  = cmplx2MPC(v[11].a.d);
 		v[12].a.m  = cmplx2MPC(v[12].a.d);
 		v[13].a.m  = cmplx2MPC(v[13].a.d);
 		v[14].a.m  = cmplx2MPC(v[14].a.d);
 		v[15].a.m  = cmplx2MPC(v[15].a.d);
 		v[16].a.m  = cmplx2MPC(v[16].a.d);
-		v[17].a.m.x = *d2MP(param[6]);
-		v[17].a.m.y = *d2MP(param[7]);
-		v[18].a.m.x = *d2MP(param[8]);
-		v[18].a.m.y = *d2MP(param[9]);
+		v[17].a.m.x = *d2MP(g_parameters[6]);
+		v[17].a.m.y = *d2MP(g_parameters[7]);
+		v[18].a.m.x = *d2MP(g_parameters[8]);
+		v[18].a.m.y = *d2MP(g_parameters[9]);
 		break;
 	case L_MATH:
-		v[1].a.l.x = (long)(param[0]*fg);
-		v[1].a.l.y = (long)(param[1]*fg);
-		v[2].a.l.x = (long)(param[2]*fg);
-		v[2].a.l.y = (long)(param[3]*fg);
+		v[1].a.l.x = (long)(g_parameters[0]*fg);
+		v[1].a.l.y = (long)(g_parameters[1]*fg);
+		v[2].a.l.x = (long)(g_parameters[2]*fg);
+		v[2].a.l.y = (long)(g_parameters[3]*fg);
 		v[5].a.l.x = (long)(const_pi*fg);
 		v[5].a.l.y = 0L;
 		v[6].a.l.x = (long)(const_e*fg);
 		v[6].a.l.y = 0L;
-		v[8].a.l.x = (long)(param[4]*fg);
-		v[8].a.l.y = (long)(param[5]*fg);
+		v[8].a.l.x = (long)(g_parameters[4]*fg);
+		v[8].a.l.y = (long)(g_parameters[5]*fg);
 		v[11].a.l.x = xdots; v[11].a.l.x <<= g_bit_shift;
 		v[11].a.l.y = ydots; v[11].a.l.y <<= g_bit_shift;
 		v[12].a.l.x = g_max_iteration; v[12].a.l.x <<= g_bit_shift;
@@ -2728,15 +2728,15 @@ static int ParseStr(char *Str, int pass)
 		v[15].a.l.y = (long)(v[15].a.d.y*fg);
 		v[16].a.l.x = (long)(v[16].a.d.x*fg);
 		v[16].a.l.y = (long)(v[16].a.d.y*fg);
-		v[17].a.l.x = (long)(param[6]*fg);
-		v[17].a.l.y = (long)(param[7]*fg);
-		v[18].a.l.x = (long)(param[8]*fg);
-		v[18].a.l.y = (long)(param[9]*fg);
+		v[17].a.l.x = (long)(g_parameters[6]*fg);
+		v[17].a.l.y = (long)(g_parameters[7]*fg);
+		v[18].a.l.x = (long)(g_parameters[8]*fg);
+		v[18].a.l.y = (long)(g_parameters[9]*fg);
 		break;
 #endif
 	}
 
-	g_last_init_op = paren = OpPtr = g_lod_ptr = StoPtr = posp = 0;
+	g_last_init_op = paren = OpPtr = g_lod_ptr = g_store_ptr = g_posp = 0;
 	ExpectingArg = 1;
 	for (n = 0; Str[n]; n++)
 	{
@@ -2763,8 +2763,8 @@ static int ParseStr(char *Str, int pass)
 			{
 				ExpectingArg = 1;
 				n++;
-				o[posp].f = StkOR;
-				o[posp++].p = 7 - (paren + Equals)*15;
+				o[g_posp].f = StkOR;
+				o[g_posp++].p = 7 - (paren + Equals)*15;
 			}
 			else if (ModFlag == paren-1)
 			{
@@ -2774,8 +2774,8 @@ static int ParseStr(char *Str, int pass)
 			else
 			{
 				Mod[mdstk++] = ModFlag;
-				o[posp].f = StkMod;
-				o[posp++].p = 2 - (paren + Equals)*15;
+				o[g_posp].f = StkMod;
+				o[g_posp++].p = 2 - (paren + Equals)*15;
 				ModFlag = paren++;
 			}
 			break;
@@ -2784,106 +2784,106 @@ static int ParseStr(char *Str, int pass)
 			if (!ExpectingArg)
 			{
 				ExpectingArg = 1;
-				o[posp].f = (void(*)(void))0;
-				o[posp++].p = 15;
-				o[posp].f = StkClr;
-				o[posp++].p = -30000;
+				o[g_posp].f = (void(*)(void))0;
+				o[g_posp++].p = 15;
+				o[g_posp].f = StkClr;
+				o[g_posp++].p = -30000;
 				Equals = paren = 0;
 			}
 			break;
 		case ':':
 			ExpectingArg = 1;
-			o[posp].f = (void(*)(void))0;
-			o[posp++].p = 15;
-			o[posp].f = EndInit;
-			o[posp++].p = -30000;
+			o[g_posp].f = (void(*)(void))0;
+			o[g_posp++].p = 15;
+			o[g_posp].f = EndInit;
+			o[g_posp++].p = -30000;
 			Equals = paren = 0;
 			g_last_init_op = 10000;
 			break;
 		case '+':
 			ExpectingArg = 1;
-			o[posp].f = StkAdd;
-			o[posp++].p = 4 - (paren + Equals)*15;
+			o[g_posp].f = StkAdd;
+			o[g_posp++].p = 4 - (paren + Equals)*15;
 			break;
 		case '-':
 			if (ExpectingArg)
 			{
-				o[posp].f = StkNeg;
-				o[posp++].p = 2 - (paren + Equals)*15;
+				o[g_posp].f = StkNeg;
+				o[g_posp++].p = 2 - (paren + Equals)*15;
 			}
 			else
 			{
-				o[posp].f = StkSub;
-				o[posp++].p = 4 - (paren + Equals)*15;
+				o[g_posp].f = StkSub;
+				o[g_posp++].p = 4 - (paren + Equals)*15;
 				ExpectingArg = 1;
 			}
 			break;
 		case '&':
 			ExpectingArg = 1;
 			n++;
-			o[posp].f = StkAND;
-			o[posp++].p = 7 - (paren + Equals)*15;
+			o[g_posp].f = StkAND;
+			o[g_posp++].p = 7 - (paren + Equals)*15;
 			break;
 		case '!':
 			ExpectingArg = 1;
 			n++;
-			o[posp].f = StkNE;
-			o[posp++].p = 6 - (paren + Equals)*15;
+			o[g_posp].f = StkNE;
+			o[g_posp++].p = 6 - (paren + Equals)*15;
 			break;
 		case '<':
 			ExpectingArg = 1;
 			if (Str[n + 1] == '=')
 			{
 				n++;
-				o[posp].f = StkLTE;
+				o[g_posp].f = StkLTE;
 			}
 			else
 			{
-				o[posp].f = StkLT;
+				o[g_posp].f = StkLT;
 			}
-			o[posp++].p = 6 - (paren + Equals)*15;
+			o[g_posp++].p = 6 - (paren + Equals)*15;
 			break;
 		case '>':
 			ExpectingArg = 1;
 			if (Str[n + 1] == '=')
 			{
 				n++;
-				o[posp].f = StkGTE;
+				o[g_posp].f = StkGTE;
 			}
 			else
 			{
-				o[posp].f = StkGT;
+				o[g_posp].f = StkGT;
 			}
-			o[posp++].p = 6 - (paren + Equals)*15;
+			o[g_posp++].p = 6 - (paren + Equals)*15;
 			break;
 		case '*':
 			ExpectingArg = 1;
-			o[posp].f = StkMul;
-			o[posp++].p = 3 - (paren + Equals)*15;
+			o[g_posp].f = StkMul;
+			o[g_posp++].p = 3 - (paren + Equals)*15;
 			break;
 		case '/':
 			ExpectingArg = 1;
-			o[posp].f = StkDiv;
-			o[posp++].p = 3 - (paren + Equals)*15;
+			o[g_posp].f = StkDiv;
+			o[g_posp++].p = 3 - (paren + Equals)*15;
 			break;
 		case '^':
 			ExpectingArg = 1;
-			o[posp].f = StkPwr;
-			o[posp++].p = 2 - (paren + Equals)*15;
+			o[g_posp].f = StkPwr;
+			o[g_posp++].p = 2 - (paren + Equals)*15;
 			break;
 		case '=':
 			ExpectingArg = 1;
 			if (Str[n + 1] == '=')
 			{
 				n++;
-				o[posp].f = StkEQ;
-				o[posp++].p = 6 - (paren + Equals)*15;
+				o[g_posp].f = StkEQ;
+				o[g_posp++].p = 6 - (paren + Equals)*15;
 			}
 			else
 			{
-				o[posp-1].f = StkSto;
-				o[posp-1].p = 5 - (paren + Equals)*15;
-				Store[StoPtr++] = Load[--g_lod_ptr];
+				o[g_posp-1].f = StkSto;
+				o[g_posp-1].p = 5 - (paren + Equals)*15;
+				Store[g_store_ptr++] = Load[--g_lod_ptr];
 				Equals++;
 			}
 			break;
@@ -2903,31 +2903,31 @@ static int ParseStr(char *Str, int pass)
 				case 1:                      /* if */
 					ExpectingArg = 1;
 					jump_control[jump_index++].type = 1;
-					o[posp].f = StkJumpOnFalse;
-					o[posp++].p = 1;
+					o[g_posp].f = StkJumpOnFalse;
+					o[g_posp++].p = 1;
 					break;
 				case 2:                     /* elseif */
 					ExpectingArg = 1;
 					jump_control[jump_index++].type = 2;
 					jump_control[jump_index++].type = 2;
-					o[posp].f = StkJump;
-					o[posp++].p = 1;
-					o[posp].f = (void(*)(void))0;
-					o[posp++].p = 15;
-					o[posp].f = StkClr;
-					o[posp++].p = -30000;
-					o[posp].f = StkJumpOnFalse;
-					o[posp++].p = 1;
+					o[g_posp].f = StkJump;
+					o[g_posp++].p = 1;
+					o[g_posp].f = (void(*)(void))0;
+					o[g_posp++].p = 15;
+					o[g_posp].f = StkClr;
+					o[g_posp++].p = -30000;
+					o[g_posp].f = StkJumpOnFalse;
+					o[g_posp++].p = 1;
 					break;
 				case 3:                     /* else */
 					jump_control[jump_index++].type = 3;
-					o[posp].f = StkJump;
-					o[posp++].p = 1;
+					o[g_posp].f = StkJump;
+					o[g_posp++].p = 1;
 					break;
 				case 4: /* endif */
 					jump_control[jump_index++].type = 4;
-					o[posp].f = StkJumpLabel;
-					o[posp++].p = 1;
+					o[g_posp].f = StkJumpLabel;
+					o[g_posp++].p = 1;
 					break;
 				default:
 					break;
@@ -2935,29 +2935,29 @@ static int ParseStr(char *Str, int pass)
 			}
 			else
 			{
-				o[posp].f = isfunct(&Str[InitN], Len);
-				if (o[posp].f != NotAFnct)
+				o[g_posp].f = isfunct(&Str[InitN], Len);
+				if (o[g_posp].f != NotAFnct)
 				{
-					o[posp++].p = 1 - (paren + Equals)*15;
+					o[g_posp++].p = 1 - (paren + Equals)*15;
 					ExpectingArg = 1;
 				}
 				else
 				{
 					c = isconst(&Str[InitN], Len);
 					Load[g_lod_ptr++] = &(c->a);
-					o[posp].f = StkLod;
-					o[posp++].p = 1 - (paren + Equals)*15;
+					o[g_posp].f = StkLod;
+					o[g_posp++].p = 1 - (paren + Equals)*15;
 					n = InitN + c->len - 1;
 				}
 			}
 			break;
 		}
 	}
-	o[posp].f = (void(*)(void))0;
-	o[posp++].p = 16;
+	o[g_posp].f = (void(*)(void))0;
+	o[g_posp++].p = 16;
 	NextOp = 0;
-	g_last_op = posp;
-	while (NextOp < posp)
+	g_last_op = g_posp;
+	while (NextOp < g_posp)
 	{
 		if (o[NextOp].f)
 		{
@@ -2975,13 +2975,13 @@ static int ParseStr(char *Str, int pass)
 
 int Formula(void)
 {
-	if (g_formula_name[0] == 0 || overflow)
+	if (g_formula_name[0] == 0 || g_overflow)
 	{
 		return 1;
 	}
 
 	g_lod_ptr = InitLodPtr;
-	StoPtr = InitStoPtr;
+	g_store_ptr = InitStoPtr;
 	OpPtr = InitOpPtr;
 	jump_index = InitJumpIndex;
 	/* Set the random number, MCP 11-21-91 */
@@ -3027,7 +3027,7 @@ int Formula(void)
 		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
 		g_old_z_l = g_new_z_l = v[3].a.l;
-		if (overflow)
+		if (g_overflow)
 		{
 			return 1;
 		}
@@ -3043,7 +3043,7 @@ int form_per_pixel(void)
 	{
 		return 1;
 	}
-	overflow = g_lod_ptr = StoPtr = OpPtr = jump_index = 0;
+	g_overflow = g_lod_ptr = g_store_ptr = OpPtr = jump_index = 0;
 	Arg1 = &s[0];
 	Arg2 = Arg1;
 	Arg2--;
@@ -3143,7 +3143,7 @@ int form_per_pixel(void)
 		OpPtr++;
 	}
 	InitLodPtr = g_lod_ptr;
-	InitStoPtr = StoPtr;
+	InitStoPtr = g_store_ptr;
 	InitOpPtr = OpPtr;
 	/* Set old variable for orbits TIW 12-18-93 */
 	switch (MathType)
@@ -3161,7 +3161,7 @@ int form_per_pixel(void)
 #endif
 	}
 
-	return overflow ? 0 : 1;
+	return g_overflow ? 0 : 1;
 }
 
 int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
@@ -4361,7 +4361,7 @@ long total_formula_mem;
 static void parser_allocate(void)
 {
 	/* CAE fp changed below for v18 */
-	/* Note that XFRACT will waste about 6k here for pfls */
+	/* Note that XFRACT will waste about 6k here for g_function_load_store_pointers */
 	/* Somewhat more memory is now allocated than in v17 here */
 	/* however Store and Load were reduced in size to help make up for it */
 	long f_size, Store_size, Load_size, v_size, p_size;
@@ -4391,7 +4391,7 @@ static void parser_allocate(void)
 		Store = (union Arg **) (f + g_formula_max_ops);
 		Load = (union Arg **) (Store + MAX_STORES);
 		v = (struct ConstArg *) (Load + MAX_LOADS);
-		pfls = (struct fls *) (v + g_formula_max_args);
+		g_function_load_store_pointers = (struct fls *) (v + g_formula_max_args);
 
 		if (pass == 0)
 		{
@@ -4399,7 +4399,7 @@ static void parser_allocate(void)
 			if (is_bad_form == 0)
 			{
 				/* per Chuck Ebbert, g_fudge these up a little */
-				g_formula_max_ops = posp + 4;
+				g_formula_max_ops = g_posp + 4;
 				g_formula_max_args = vsp + 4;
 			}
 		}
@@ -4418,7 +4418,7 @@ void free_workarea()
 	Load = (union Arg **) NULL;
 	v = (struct ConstArg *) NULL;
 	f = (void (**)(void)) NULL;      /* CAE fp */
-	pfls = (struct fls *) NULL;   /* CAE fp */
+	g_function_load_store_pointers = (struct fls *) NULL;   /* CAE fp */
 	total_formula_mem = 0;
 }
 
