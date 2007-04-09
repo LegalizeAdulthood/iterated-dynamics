@@ -1292,8 +1292,8 @@ finish:
 		finalaspectratio = g_screen_aspect_ratio;
 		xdots = sxdots;
 		ydots = sydots;
-		dxsize = xdots - 1;
-		dysize = ydots - 1;
+		g_dx_size = xdots - 1;
+		g_dy_size = ydots - 1;
 		sxoffs = 0;
 		syoffs = 0;
 		freetempmsg();

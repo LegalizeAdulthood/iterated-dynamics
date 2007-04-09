@@ -397,7 +397,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
-	if (dotmode != 0)
+	if (g_dot_mode != 0)
 	{
 		g_and_color = g_colors-1;
 		g_box_count = 0;

@@ -152,8 +152,8 @@ void drawbox(int drawit)
 	ftemp1 = zbx + dx + fxadj;
 	ftemp2 = zby + dy/finalaspectratio;
 
-	tl.x   = (int)(ftemp1*(dxsize + PIXELROUND)); /* screen co-ords */
-	tl.y   = (int)(ftemp2*(dysize + PIXELROUND));
+	tl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
+	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
 	yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
@@ -165,8 +165,8 @@ void drawbox(int drawit)
 	/* calc co-ords of bottom right */
 	ftemp1 = zbx + zwidth - dx - fxadj;
 	ftemp2 = zby - dy/finalaspectratio + zdepth;
-	br.x   = (int)(ftemp1*(dxsize + PIXELROUND));
-	br.y   = (int)(ftemp2*(dysize + PIXELROUND));
+	br.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
+	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
 	yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
@@ -181,8 +181,8 @@ void drawbox(int drawit)
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
 	ftemp1 = zbx + dx - fxadj;
 	ftemp2 = zby + dy/finalaspectratio + zdepth;
-	bl.x   = (int)(ftemp1*(dxsize + PIXELROUND));
-	bl.y   = (int)(ftemp2*(dysize + PIXELROUND));
+	bl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
+	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
 	yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
@@ -193,8 +193,8 @@ void drawbox(int drawit)
 	}
 	ftemp1 = zbx + zwidth - dx + fxadj;
 	ftemp2 = zby - dy/finalaspectratio;
-	tr.x   = (int)(ftemp1*(dxsize + PIXELROUND));
-	tr.y   = (int)(ftemp2*(dysize + PIXELROUND));
+	tr.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
+	tr.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 
 	if (g_box_count != 0)  /* remove the old box from display */
 	{
@@ -331,14 +331,14 @@ void moveboxf(double dx, double dy)
 			zbx = 1.0 - zwidth/2;
 		}
 		if (align != 0
-			&& ((col = (int)(zbx*(dxsize + PIXELROUND))) & (align-1)) != 0)
+			&& ((col = (int)(zbx*(g_dx_size + PIXELROUND))) & (align-1)) != 0)
 		{
 			if (dx > 0)
 			{
 				col += align;
 			}
 			col -= col & (align-1); /* adjust col to pass alignment */
-			zbx = (double)col/dxsize;
+			zbx = (double)col/g_dx_size;
 		}
 	}
 	if (dy != 0.0)
@@ -353,18 +353,18 @@ void moveboxf(double dx, double dy)
 			zby = 1.0 - zdepth/2;
 		}
 		if (align != 0
-			&& ((row = (int)(zby*(dysize + PIXELROUND))) & (align-1)) != 0)
+			&& ((row = (int)(zby*(g_dy_size + PIXELROUND))) & (align-1)) != 0)
 		{
 			if (dy > 0)
 			{
 				row += align;
 			}
 			row -= row & (align-1);
-			zby = (double)row/dysize;
+			zby = (double)row/g_dy_size;
 		}
 	}
-	col = (int)((zbx + zwidth/2)*(dxsize + PIXELROUND)) + sxoffs;
-	row = (int)((zby + zdepth/2)*(dysize + PIXELROUND)) + syoffs;
+	col = (int)((zbx + zwidth/2)*(g_dx_size + PIXELROUND)) + sxoffs;
+	row = (int)((zby + zdepth/2)*(g_dy_size + PIXELROUND)) + syoffs;
 }
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
@@ -408,7 +408,7 @@ void resizebox(int steps)
 
 void chgboxi(int dw, int dd)
 {   /* change size by pixels */
-	chgboxf((double)dw/dxsize, (double)dd/dysize );
+	chgboxf((double)dw/g_dx_size, (double)dd/g_dy_size );
 	}
 #ifdef C6
 #pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
@@ -724,8 +724,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		clearbox();
 		return 0; /* box is full screen, leave g_calculation_status as is */
 	}
-	col = (int)(zbx*(dxsize + PIXELROUND)); /* calc dest col, row of topleft pixel */
-	row = (int)(zby*(dysize + PIXELROUND));
+	col = (int)(zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
+	row = (int)(zby*(g_dy_size + PIXELROUND));
 	if (do_zoomout)  /* invert row and col */
 	{
 		row = -row;

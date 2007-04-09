@@ -1848,7 +1848,7 @@ gfp_top:
 		paramvalues[promptnum].uval.dval = g_width_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Screen width";
-		paramvalues[promptnum].uval.dval = g_dist_fp;
+		paramvalues[promptnum].uval.dval = g_screen_distance_fp;
 		paramvalues[promptnum].type = 'f';
 		choices[promptnum++] = "Distance to Screen";
 	}
@@ -2021,7 +2021,7 @@ gfp_top:
 		g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
 		g_height_fp   = (float)paramvalues[promptnum++].uval.dval;
 		g_width_fp    = (float)paramvalues[promptnum++].uval.dval;
-		g_dist_fp     = (float)paramvalues[promptnum++].uval.dval;
+		g_screen_distance_fp     = (float)paramvalues[promptnum++].uval.dval;
 		ret = 1;  /* force new calc since not resumable anyway */
 	}
 	if (curtype == INVERSEJULIA || curtype == INVERSEJULIAFP)

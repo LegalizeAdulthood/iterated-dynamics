@@ -42,10 +42,10 @@ void showcornersdbl(char *s)
 		"xxmin= %.20f xxmax= %.20f\n"
 		"yymin= %.20f yymax= %.20f\n"
 		"xx3rd= %.20f yy3rd= %.20f\n"
-		"delxx= %.20Lf delyy= %.20Lf\n"
-		"delx2= %.20Lf dely2= %.20Lf",
+		"delxx= %.20Lf delta_y_fp= %.20Lf\n"
+		"g_delta_x2= %.20Lf g_delta_y2= %.20Lf",
 		s, xxmin, xxmax, yymin, yymax, xx3rd, yy3rd,
-		delxx, delyy, delxx2, delyy2);
+		delxx, delta_y_fp, g_delta_x2_fp, g_delta_y2_fp);
 	if (stopmsg(0, msg) == -1)
 	{
 		goodbye();
@@ -89,10 +89,10 @@ void showbfglobals(char *s)
 	char msg[300];
 	sprintf(msg, "%s\n"
 		"bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n"
-		"shiftfactor=%d decimals=%d bflength=%d rbflength=%d \n"
+		"shiftfactor=%d g_decimals=%d bflength=%d rbflength=%d \n"
 		"bfdecimals=%d ",
 		s, bnstep, bnlength, intlength, rlength, padding,
-		shiftfactor, decimals, bflength, rbflength,
+		shiftfactor, g_decimals, bflength, rbflength,
 		bfdecimals);
 	if (stopmsg(0, msg) == -1)
 	{
@@ -102,15 +102,15 @@ void showbfglobals(char *s)
 
 void showcornersbf(char *s)
 {
-	int dec = decimals;
+	int dec = g_decimals;
 	char msg[100], msg1[100], msg3[600];
 	if (dec > 20)
 	{
 		dec = 20;
 	}
 	bftostr(msg, dec, bfxmin);
-	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f decimals %d bflength %d\n\n",
-		msg, xxmin, decimals, bflength);
+	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f g_decimals %d bflength %d\n\n",
+		msg, xxmin, g_decimals, bflength);
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
@@ -717,14 +717,14 @@ int mandelbrot_setup_bf()
 
 int mandelbrot_per_pixel_bn()
 {
-	/* g_parameter.x = xxmin + col*delx + row*delx2 */
+	/* g_parameter.x = xxmin + col*delx + row*g_delta_x2 */
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnparm.x, bntmp);
 	add_a_bn(bnparm.x, bnxmin);
 
-	/* g_parameter.y = yymax - row*dely - col*dely2; */
+	/* g_parameter.y = yymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bnold is just used as a temporary variable */
 	mult_bn_int(bnold.x, bnydel,  (U16)g_row);
 	mult_bn_int(bnold.y, bnydel2, (U16)g_col);
@@ -763,14 +763,14 @@ int mandelbrot_per_pixel_bn()
 
 int mandelbrot_per_pixel_bf()
 {
-	/* g_parameter.x = xxmin + col*delx + row*delx2 */
+	/* g_parameter.x = xxmin + col*delx + row*g_delta_x2 */
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfparm.x, bftmp);
 	add_a_bf(bfparm.x, bfxmin);
 
-	/* g_parameter.y = yymax - row*dely - col*dely2; */
+	/* g_parameter.y = yymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bfold is just used as a temporary variable */
 	mult_bf_int(bfold.x, bfydel,  (U16)g_row);
 	mult_bf_int(bfold.y, bfydel2, (U16)g_col);
@@ -809,14 +809,14 @@ int mandelbrot_per_pixel_bf()
 
 int julia_per_pixel_bn(void)
 {
-	/* old.x = xxmin + col*delx + row*delx2 */
+	/* old.x = xxmin + col*delx + row*g_delta_x2 */
 	mult_bn_int(bnold.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnold.x, bntmp);
 	add_a_bn(bnold.x, bnxmin);
 
-	/* old.y = yymax - row*dely - col*dely2; */
+	/* old.y = yymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bnnew is just used as a temporary variable */
 	mult_bn_int(bnnew.x, bnydel,  (U16)g_row);
 	mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
@@ -836,14 +836,14 @@ int julia_per_pixel_bn(void)
 
 int julia_per_pixel_bf(void)
 {
-	/* old.x = xxmin + col*delx + row*delx2 */
+	/* old.x = xxmin + col*delx + row*g_delta_x2 */
 	mult_bf_int(bfold.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfold.x, bftmp);
 	add_a_bf(bfold.x, bfxmin);
 
-	/* old.y = yymax - row*dely - col*dely2; */
+	/* old.y = yymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bfnew is just used as a temporary variable */
 	mult_bf_int(bfnew.x, bfydel,  (U16)g_row);
 	mult_bf_int(bfnew.y, bfydel2, (U16)g_col);

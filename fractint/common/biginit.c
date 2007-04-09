@@ -26,7 +26,7 @@ is in the allocations of memory for the big numbers.
 #ifdef BIG_BASED
 _segment bignum_seg;
 #endif
-int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, decimals = 0;
+int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, g_decimals = 0;
 int bflength = 0, rbflength = 0, bfdecimals = 0;
 
 /* used internally by bignum.c routines */
@@ -225,7 +225,7 @@ static void init_bf_2(void)
 	if (ptr + NUMVARS*(bflength + 2) > maxstack)
 	{
 		char msg[80];
-		sprintf(msg, "Requested precision of %d too high, aborting", decimals);
+		sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
 		stopmsg(0, msg);
 		goodbye();
 	}
@@ -338,7 +338,7 @@ static int restore_bf_vars(void)
 void free_bf_vars()
 {
 	g_bf_save_len = bf_math = 0;
-	bnstep = bnlength = intlength = rlength = padding = shiftfactor = decimals = 0;
+	bnstep = bnlength = intlength = rlength = padding = shiftfactor = g_decimals = 0;
 	bflength = rbflength = bfdecimals = 0;
 }
 
@@ -396,7 +396,7 @@ void restore_stack(int old_offset)
 
 void init_bf_dec(int dec)
 {
-	decimals = g_bf_digits ? g_bf_digits : dec;
+	g_decimals = g_bf_digits ? g_bf_digits : dec;
 	if (g_bail_out > 10)    /* arbitrary value */
 	{
 		/* using 2 doesn't gain much and requires another test */
@@ -417,7 +417,7 @@ void init_bf_dec(int dec)
 		intlength = 1;
 	}
 	/* conservative estimate */
-	bnlength = intlength + (int)(decimals/LOG10_256) + 1; /* round up */
+	bnlength = intlength + (int)(g_decimals/LOG10_256) + 1; /* round up */
 	init_bf_2();
 }
 
@@ -449,7 +449,7 @@ void init_bf_length(int bnl)
 		intlength = 1;
 	}
 	/* conservative estimate */
-	decimals = (int)((bnlength-intlength)*LOG10_256);
+	g_decimals = (int)((bnlength-intlength)*LOG10_256);
 	init_bf_2();
 }
 

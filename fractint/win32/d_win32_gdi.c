@@ -643,7 +643,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
-	if (dotmode != 0)
+	if (g_dot_mode != 0)
 	{
 		g_and_color = g_colors-1;
 		g_box_count = 0;
@@ -861,7 +861,7 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 	int width, height;
 	gdi_get_max_screen(drv, &width, &height);
 
-	/* allow modes <= size of screen with 256 g_colors and dotmode = 19
+	/* allow modes <= size of screen with 256 g_colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode->xdots <= width) &&
 		(mode->ydots <= height) &&

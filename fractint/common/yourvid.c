@@ -61,7 +61,7 @@ in assembler.
 /* these are declared in PROTOTYPE.H */
 
 #if 0
-	int  dotmode;                /* video access method (= 19)      */
+	int  g_dot_mode;                /* video access method (= 19)      */
 	int  sxdots, sydots;         /* total # of dots on the screen   */
 	int  g_colors;                 /* maximum g_colors available        */
 

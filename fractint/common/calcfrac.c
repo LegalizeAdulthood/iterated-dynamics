@@ -714,7 +714,7 @@ int calculate_fractal(void)
 		g_invert = 3; /* so values will not be changed if we come back */
 	}
 
-	g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+	g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
@@ -764,7 +764,7 @@ int calculate_fractal(void)
 		if (g_current_fractal_specific->per_image())
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
-			g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 			g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 			setsymmetry(g_symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
@@ -931,7 +931,7 @@ static void perform_work_list()
 
 	if (g_distance_test) /* setup stuff for distance estimator */
 	{
-		double ftemp, ftemp2, delxx, delyy2, delyy, delxx2, dxsize, dysize;
+		double ftemp, ftemp2, delta_x_fp, delta_y2_fp, delta_y_fp, delta_x2_fp, dxsize, dysize;
 		double aspect;
 		if (g_pseudo_x && g_pseudo_y)
 		{
@@ -946,10 +946,10 @@ static void perform_work_list()
 			dysize = ydots-1;
 		}
 
-		delxx  = (xxmax - xx3rd) / dxsize; /* calculate stepsizes */
-		delyy  = (yymax - yy3rd) / dysize;
-		delxx2 = (xx3rd - xxmin) / dysize;
-		delyy2 = (yy3rd - yymin) / dxsize;
+		delta_x_fp  = (xxmax - xx3rd) / dxsize; /* calculate stepsizes */
+		delta_y_fp  = (yymax - yy3rd) / dysize;
+		delta_x2_fp = (xx3rd - xxmin) / dysize;
+		delta_y2_fp = (yy3rd - yymin) / dxsize;
 
 		/* in case it's changed with <G> */
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
@@ -970,8 +970,8 @@ static void perform_work_list()
 			|| fractype == FFORMULA) ?
 				TRUE : FALSE;
 
-		s_dem_delta = sqr(delxx) + sqr(delyy2);
-		ftemp = sqr(delyy) + sqr(delxx2);
+		s_dem_delta = sqr(g_delta_x_fp) + sqr(delta_y2_fp);
+		ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
 		if (ftemp > s_dem_delta)
 		{
 			s_dem_delta = ftemp;
@@ -1110,7 +1110,7 @@ static void perform_work_list()
 		}
 
 		/* some common initialization for escape-time pixel level routines */
-		g_close_enough = ddelmin*pow(2.0, -(double)(abs(g_periodicity_check)));
+		g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
@@ -2051,7 +2051,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 #endif
 		if (bf_math)
 		{
-			if (decimals > 200)
+			if (g_decimals > 200)
 			{
 				g_input_counter = -1;
 			}

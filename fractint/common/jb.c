@@ -14,7 +14,7 @@ int g_z_dots = 128;
 float g_origin_fp  = 8.0f;
 float g_height_fp  = 7.0f;
 float g_width_fp   = 10.0f;
-float g_dist_fp    = 24.0f;
+float g_screen_distance_fp    = 24.0f;
 float g_eyes_fp    = 2.5f;
 float g_depth_fp   = 8.0f;
 int g_juli_3D_mode = JULI3DMODE_MONOCULAR;
@@ -81,8 +81,8 @@ int julibrot_setup(void)
 	s_right_eye_fp.x = (g_juli_3D_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
 	s_left_eye_fp.x = -s_right_eye_fp.x;
 	s_left_eye_fp.y = s_right_eye_fp.y = 0;
-	s_left_eye_fp.zx = s_right_eye_fp.zx = g_dist_fp;
-	s_left_eye_fp.zy = s_right_eye_fp.zy = g_dist_fp;
+	s_left_eye_fp.zx = s_right_eye_fp.zx = g_screen_distance_fp;
+	s_left_eye_fp.zy = s_right_eye_fp.zy = g_screen_distance_fp;
 	s_b_base = 128;
 
 #ifndef XFRACT
@@ -112,7 +112,7 @@ int julibrot_setup(void)
 		origin = (long) (g_origin_fp*s_fg16);
 		s_depth = (long) (g_depth_fp*s_fg16);
 		s_width = (long) (g_width_fp*s_fg16);
-		s_dist = (long) (g_dist_fp*s_fg16);
+		s_dist = (long) (g_screen_distance_fp*s_fg16);
 		s_eyes = (long) (g_eyes_fp*s_fg16);
 		s_br_ratio = (long) s_fg16;
 		s_dmx = (mxmax - s_m_x_min) / g_z_dots;
@@ -181,13 +181,13 @@ int julibrot_per_pixel(void)
 
 int julibrot_per_pixel_fp(void)
 {
-	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_dist_fp - s_x_pixel_fp)*s_x_per_inch_fp;
+	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
-	s_djx_fp = (g_depth_fp / g_dist_fp)*(s_per_fp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
+	s_djx_fp = (g_depth_fp / g_screen_distance_fp)*(s_per_fp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
 
-	s_jy_fp = ((s_per_fp->y - s_y_pixel_fp)*s_init_z_fp / g_dist_fp - s_y_pixel_fp)*s_y_per_inch_fp;
+	s_jy_fp = ((s_per_fp->y - s_y_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_y_pixel_fp)*s_y_per_inch_fp;
 	s_jy_fp += s_y_offset_fp;
-	s_djy_fp = g_depth_fp / g_dist_fp*(s_per_fp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
+	s_djy_fp = g_depth_fp / g_screen_distance_fp*(s_per_fp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
 
 	return 1;
 }

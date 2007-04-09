@@ -86,11 +86,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
 			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
-			dotmode = g_video_entry.dotmode;     /* assembler dot read/write */
+			g_dot_mode = g_video_entry.dotmode;     /* assembler dot read/write */
 			xdots   = g_video_entry.xdots;       /* # dots across the screen */
 			ydots   = g_video_entry.ydots;       /* # dots down the screen   */
 			g_colors  = g_video_entry.g_colors;      /* # g_colors available */
-			dotmode  %= 100;
+			g_dot_mode  %= 100;
 			sxdots  = xdots;
 			sydots  = ydots;
 			sxoffs = syoffs = 0;
@@ -213,8 +213,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					syoffs = (sydots - ydots) / 3;
 				}
 			}
-			dxsize = xdots - 1;            /* convert just once now */
-			dysize = ydots - 1;
+			g_dx_size = xdots - 1;            /* convert just once now */
+			g_dy_size = ydots - 1;
 		}
 		/* assume we save next time (except jb) */
 		savedac = (savedac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
@@ -397,8 +397,8 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 														inside, outside, trigfn etc */
 				}
 				prmboxcount = 0;
-				dpx = paramrangex/(gridsz-1);
-				dpy = paramrangey/(gridsz-1);
+				g_delta_parameter_image_x = paramrangex/(gridsz-1);
+				g_delta_parameter_image_y = paramrangey/(gridsz-1);
 				grout  = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 				tmpxdots = xdots + grout;
 				tmpydots = ydots + grout;
@@ -1305,7 +1305,7 @@ static int handle_color_editing(int *kbdmore)
 
 static int handle_save_to_disk(void)
 {
-	if (driver_diskp() && disktarga == 1)
+	if (driver_diskp() && g_disk_targa)
 	{
 		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
@@ -1319,7 +1319,7 @@ static int handle_evolver_save_to_disk(void)
 {
 	int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
 
-	if (driver_diskp() && disktarga == 1)
+	if (driver_diskp() && g_disk_targa)
 	{
 		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
@@ -1857,8 +1857,8 @@ static void handle_evolver_move_selection(int *kbdchar)
 				py = 0;
 			}
 			grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			sxoffs = px*(int)(dxsize + 1 + grout);
-			syoffs = py*(int)(dysize + 1 + grout);
+			sxoffs = px*(int)(g_dx_size + 1 + grout);
+			syoffs = py*(int)(g_dy_size + 1 + grout);
 
 			param_history(1); /* restore old history */
 			fiddleparms(g_genes, unspiralmap()); /* change all parameters */
@@ -1919,8 +1919,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in viewwindow mode) */
 					int grout = !((evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
-					sxoffs = px*(int) (dxsize + 1 + grout);
-					syoffs = py*(int) (dysize + 1 + grout);
+					sxoffs = px*(int) (g_dx_size + 1 + grout);
+					syoffs = py*(int) (g_dy_size + 1 + grout);
 					SetupParamBox();
 					drawparmbox(0);
 				}
@@ -2264,17 +2264,7 @@ static void move_zoombox(int keynum)
 	}
 	if (g_box_count)
 	{
-		/*
-		if (horizontal != 0)
-		{
-			moveboxf((double)horizontal/dxsize, 0.0);
-		}
-		if (vertical != 0)
-		{
-			moveboxf(0.0, (double)vertical/dysize);
-		}
-		*/
-		moveboxf((double)horizontal/dxsize, (double)vertical/dysize);
+		moveboxf((double)horizontal/g_dx_size, (double)vertical/g_dy_size);
 	}
 }
 

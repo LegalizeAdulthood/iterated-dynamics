@@ -57,10 +57,10 @@ static int sound_open(void);
 
 void free_grid_pointers()
 {
-	if (dx0)
+	if (g_delta_x0)
 	{
-		free(dx0);
-		dx0 = NULL;
+		free(g_delta_x0);
+		g_delta_x0 = NULL;
 	}
 	if (lx0)
 	{
@@ -72,10 +72,10 @@ void free_grid_pointers()
 void set_grid_pointers()
 {
 	free_grid_pointers();
-	dx0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
-	dy1 = dx0 + xdots;
-	dy0 = dy1 + xdots;
-	dx1 = dy0 + ydots;
+	g_delta_x0 = (double *) malloc(sizeof(double)*(2*xdots + 2*ydots));
+	g_delta_y1 = g_delta_x0 + xdots;
+	g_delta_y0 = g_delta_y1 + xdots;
+	g_delta_x1 = g_delta_y0 + ydots;
 	lx0 = (long *) malloc(sizeof(long)*(2*xdots + 2*ydots));
 	ly1 = lx0 + xdots;
 	ly0 = ly1 + xdots;
@@ -88,18 +88,18 @@ void fill_dx_array(void)
 	int i;
 	if (g_use_grid)
 	{
-		dx0[0] = xxmin;              /* fill up the x, y grids */
-		dy0[0] = yymax;
-		dx1[0] = dy1[0] = 0;
+		g_delta_x0[0] = xxmin;              /* fill up the x, y grids */
+		g_delta_y0[0] = yymax;
+		g_delta_x1[0] = g_delta_y1[0] = 0;
 		for (i = 1; i < xdots; i++)
 		{
-			dx0[i] = (double)(dx0[0] + i*delxx);
-			dy1[i] = (double)(dy1[0] - i*delyy2);
+			g_delta_x0[i] = (double)(g_delta_x0[0] + i*g_delta_x_fp);
+			g_delta_y1[i] = (double)(g_delta_y1[0] - i*g_delta_y2_fp);
 		}
 		for (i = 1; i < ydots; i++)
 		{
-			dy0[i] = (double)(dy0[0] - i*delyy);
-			dx1[i] = (double)(dx1[0] + i*delxx2);
+			g_delta_y0[i] = (double)(g_delta_y0[0] - i*g_delta_y_fp);
+			g_delta_x1[i] = (double)(g_delta_x1[0] + i*g_delta_x2_fp);
 		}
 	}
 }
@@ -115,13 +115,13 @@ void fill_lx_array(void)
 		lx1[0] = ly1[0] = 0;
 		for (i = 1; i < xdots; i++)
 		{
-			lx0[i] = lx0[i-1] + delx;
-			ly1[i] = ly1[i-1] - dely2;
+			lx0[i] = lx0[i-1] + g_delta_x;
+			ly1[i] = ly1[i-1] - g_delta_y2;
 		}
 		for (i = 1; i < ydots; i++)
 		{
-			ly0[i] = ly0[i-1] - dely;
-			lx1[i] = lx1[i-1] + delx2;
+			ly0[i] = ly0[i-1] - g_delta_y;
+			lx1[i] = lx1[i-1] + g_delta_x2;
 		}
 	}
 }
@@ -438,10 +438,10 @@ init_restart:
 	else
 	{
 		adjust_to_limits(1.0); /* make sure all corners in valid range */
-		delxx  = (LDBL)(xxmax - xx3rd) / (LDBL)dxsize; /* calculate stepsizes */
-		delyy  = (LDBL)(yymax - yy3rd) / (LDBL)dysize;
-		delxx2 = (LDBL)(xx3rd - xxmin) / (LDBL)dysize;
-		delyy2 = (LDBL)(yy3rd - yymin) / (LDBL)dxsize;
+		g_delta_x_fp  = (LDBL)(xxmax - xx3rd) / (LDBL)g_dx_size; /* calculate stepsizes */
+		g_delta_y_fp  = (LDBL)(yymax - yy3rd) / (LDBL)g_dy_size;
+		g_delta_x2_fp = (LDBL)(xx3rd - xxmin) / (LDBL)g_dy_size;
+		g_delta_y2_fp = (LDBL)(yy3rd - yymin) / (LDBL)g_dx_size;
 		fill_dx_array();
 	}
 
@@ -455,14 +455,14 @@ init_restart:
 		ymin  = fudge_to_long(yymin);
 		ymax  = fudge_to_long(yymax);
 		y3rd  = fudge_to_long(yy3rd);
-		delx  = fudge_to_long((double)delxx);
-		dely  = fudge_to_long((double)delyy);
-		delx2 = fudge_to_long((double)delxx2);
-		dely2 = fudge_to_long((double)delyy2);
+		g_delta_x  = fudge_to_long((double)g_delta_x_fp);
+		g_delta_y  = fudge_to_long((double)g_delta_y_fp);
+		g_delta_x2 = fudge_to_long((double)g_delta_x2_fp);
+		g_delta_y2 = fudge_to_long((double)g_delta_y2_fp);
 	}
 
 	/* skip this if plasma to avoid 3d problems */
-	/* skip if bf_math to avoid extraseg conflict with dx0 arrays */
+	/* skip if bf_math to avoid extraseg conflict with g_delta_x0 arrays */
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
 	if (fractype != PLASMA && bf_math == 0
@@ -470,10 +470,10 @@ init_restart:
 	{
 		if (integerfractal && !g_invert && g_use_grid)
 		{
-			if ((delx  == 0 && delxx  != 0.0)
-				|| (delx2 == 0 && delxx2 != 0.0)
-				|| (dely  == 0 && delyy  != 0.0)
-				|| (dely2 == 0 && delyy2 != 0.0))
+			if ((g_delta_x  == 0 && g_delta_x_fp  != 0.0)
+				|| (g_delta_x2 == 0 && g_delta_x2_fp != 0.0)
+				|| (g_delta_y  == 0 && g_delta_y_fp  != 0.0)
+				|| (g_delta_y2 == 0 && g_delta_y2_fp != 0.0))
 			{
 				goto expand_retry;
 			}
@@ -527,13 +527,13 @@ expand_retry:
 				the limit of resolution */
 			for (i = 1; i < xdots; i++)
 			{
-				dx0 = (double)(dx0 + (double)delxx);
-				dy1 = (double)(dy1 - (double)delyy2);
+				dx0 = (double)(dx0 + (double)g_delta_x_fp);
+				dy1 = (double)(dy1 - (double)g_delta_y2_fp);
 			}
 			for (i = 1; i < ydots; i++)
 			{
-				dy0 = (double)(dy0 - (double)delyy);
-				dx1 = (double)(dx1 + (double)delxx2);
+				dy0 = (double)(dy0 - (double)g_delta_y_fp);
+				dx1 = (double)(dx1 + (double)g_delta_x2_fp);
 			}
 			if (bf_math == 0) /* redundant test, leave for now */
 			{
@@ -595,43 +595,43 @@ expand_retry:
 			fill_dx_array();       /* fill up the x, y grids */
 
 			/* re-set corners to match reality */
-			xxmax = (double)(xxmin + (xdots-1)*delxx + (ydots-1)*delxx2);
-			yymin = (double)(yymax - (ydots-1)*delyy - (xdots-1)*delyy2);
-			xx3rd = (double)(xxmin + (ydots-1)*delxx2);
-			yy3rd = (double)(yymax - (ydots-1)*delyy);
+			xxmax = (double)(xxmin + (xdots-1)*g_delta_x_fp + (ydots-1)*g_delta_x2_fp);
+			yymin = (double)(yymax - (ydots-1)*g_delta_y_fp - (xdots-1)*g_delta_y2_fp);
+			xx3rd = (double)(xxmin + (ydots-1)*g_delta_x2_fp);
+			yy3rd = (double)(yymax - (ydots-1)*g_delta_y_fp);
 
 		} /* end else */
 	} /* end if not plasma */
 
 	/* for periodicity close-enough, and for unity: */
-	/*     min(max(delx, delx2), max(dely, dely2)      */
-	ddelmin = fabs((double)delxx);
-	if (fabs((double)delxx2) > ddelmin)
+	/*     min(max(g_delta_x, g_delta_x2), max(g_delta_y, g_delta_y2)      */
+	g_delta_min_fp = fabs((double)g_delta_x_fp);
+	if (fabs((double)g_delta_x2_fp) > g_delta_min_fp)
 	{
-		ddelmin = fabs((double)delxx2);
+		g_delta_min_fp = fabs((double)g_delta_x2_fp);
 	}
-	if (fabs((double)delyy) > fabs((double)delyy2))
+	if (fabs((double)g_delta_y_fp) > fabs((double)g_delta_y2_fp))
 	{
-		if (fabs((double)delyy) < ddelmin)
+		if (fabs((double)g_delta_y_fp) < g_delta_min_fp)
 		{
-			ddelmin = fabs((double)delyy);
+			g_delta_min_fp = fabs((double)g_delta_y_fp);
 		}
 	}
-	else if (fabs((double)delyy2) < ddelmin)
+	else if (fabs((double)g_delta_y2_fp) < g_delta_min_fp)
 	{
-		ddelmin = fabs((double)delyy2);
+		g_delta_min_fp = fabs((double)g_delta_y2_fp);
 	}
-	delmin = fudge_to_long(ddelmin);
+	g_delta_min = fudge_to_long(g_delta_min_fp);
 
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
-	ftemp = (double)(-delyy2*delxx2*dxsize*dysize - (xxmax - xx3rd)*(yy3rd - yymax));
+	ftemp = (double)(-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (xxmax - xx3rd)*(yy3rd - yymax));
 	if (ftemp != 0)
 	{
-		plotmx1 = (double)(delxx2*dxsize*dysize / ftemp);
-		plotmx2 = (yy3rd-yymax)*dxsize / ftemp;
-		plotmy1 = (double)(-delyy2*dxsize*dysize/ftemp);
-		plotmy2 = (xxmax-xx3rd)*dysize / ftemp;
+		plotmx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
+		plotmx2 = (yy3rd-yymax)*g_dx_size / ftemp;
+		plotmy1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
+		plotmy2 = (xxmax-xx3rd)*g_dy_size / ftemp;
 	}
 	if (bf_math == 0)
 	{
@@ -1420,18 +1420,18 @@ void end_resume(void)
 		realx == lx0[col] + lx1[row]
 		realy == ly0[row] + ly1[col]
 		lx0[col] == (col/width)*Xs + xxmin
-		lx1[row] == row*delxx
+		lx1[row] == row*g_delta_x_fp
 		ly0[row] == (row/D)*Ys + yymax
-		ly1[col] == col*(-delyy)
+		ly1[col] == col*(-g_delta_y_fp)
 	so:
-		realx == (col/W)*Xs + xxmin + row*delxx
-		realy == (row/D)*Ys + yymax + col*(-delyy)
+		realx == (col/W)*Xs + xxmin + row*g_delta_x_fp
+		realy == (row/D)*Ys + yymax + col*(-g_delta_y_fp)
 	and therefore:
 		row == (realx-xxmin - (col/W)*Xs) / Xv    (1)
 		col == (realy-yymax - (row/D)*Ys) / Yv    (2)
 	substitute (2) into (1) and solve for row:
-		row == ((realx-xxmin)*(-delyy2)*W*D - (realy-yymax)*Xs*D)
-						/ ((-delyy2)*W*delxx2*D-Ys*Xs)
+		row == ((realx-xxmin)*(-g_delta_y2_fp)*W*D - (realy-yymax)*Xs*D)
+						/ ((-g_delta_y2_fp)*W*g_delta_x2_fp*D-Ys*Xs)
 */
 
 /* sleep N*a tenth of a millisecond */

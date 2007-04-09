@@ -859,7 +859,7 @@ int tab_display_2(char *msg)
 /*
 	write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
 */
-	write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, dotmode,
+	write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, g_dot_mode,
 		g_driver->name, g_driver->description);
 	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s uses_ismand %d",
 		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
@@ -1040,7 +1040,7 @@ top:
 	}
 	else
 	{
-		sprintf(msg, "(%-d decimals)", decimals /*getprecbf(CURRENTREZ)*/);
+		sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
 		driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
@@ -1179,13 +1179,13 @@ top:
 		if (bf_math)
 		{
 			int truncate, truncaterow;
-			dec = min(320, decimals);
+			dec = min(320, g_decimals);
 			adjust_corner_bf(); /* make bottom left exact if very near exact */
 			cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			/* find alignment information */
 			msg[0] = 0;
 			truncate = 0;
-			if (dec < decimals)
+			if (dec < g_decimals)
 			{
 				truncate = 1;
 			}

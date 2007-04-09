@@ -149,7 +149,7 @@ int strlen_needed_bf()
 
 	/* first space for integer part */
 	length = 1;
-	length += decimals;  /* decimal part */
+	length += g_decimals;  /* decimal part */
 	length += 2;         /* decimal point and sign */
 	length += 2;         /* e and sign */
 	length += 4;         /* exponent */
@@ -2234,7 +2234,7 @@ bf10_t unsafe_bftobf10(bf10_t r, int dec, bf_t n)
 
 	if (dec == 0)
 	{
-		dec = decimals;
+		dec = g_decimals;
 	}
 	dec++;  /* one extra byte for rounding */
 	power10 = r + dec + 1;
@@ -2425,7 +2425,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 
 	if (dec == 0)
 	{
-		dec = decimals;
+		dec = g_decimals;
 	}
 	dec++;  /* one extra byte for rounding */
 	power10 = n + dec + 1;
@@ -2481,7 +2481,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
 
 	if (dec == 0)
 	{
-		dec = decimals;
+		dec = g_decimals;
 	}
 	dec++;  /* one extra byte for rounding */
 	power10 = n + dec + 1;

@@ -69,61 +69,67 @@ char *fract_dir1="", *fract_dir2="";
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
 */
-		int     dotmode;                /* video access method      */
-		int     textsafe2;              /* textsafe override from g_video_table */
-		int     g_ok_to_print;              /* 0 if printf() won't work */
-		int     sxdots, sydots;          /* # of dots on the physical screen    */
-		int     sxoffs, syoffs;          /* physical top left of logical screen */
-		int     xdots, ydots;           /* # of dots on the logical screen     */
-		double  dxsize, dysize;         /* xdots-1, ydots-1         */
-		int     g_colors = 256;           /* maximum g_colors available */
-		long    maxit;                  /* try this many iterations */
-		int     g_box_count;               /* 0 if no zoom-box yet     */
-		int     zrotate;                /* zoombox rotation         */
-		double  zbx, zby;                /* topleft of zoombox       */
-		double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
+int     g_dot_mode;                /* video access method      */
+int     textsafe2;              /* textsafe override from g_video_table */
+int     g_ok_to_print;              /* 0 if printf() won't work */
+int     sxdots, sydots;          /* # of dots on the physical screen    */
+int     sxoffs, syoffs;          /* physical top left of logical screen */
+int     xdots, ydots;           /* # of dots on the logical screen     */
+double  g_dx_size;
+double	g_dy_size;         /* xdots-1, ydots-1         */
+int     g_colors = 256;           /* maximum g_colors available */
+long    maxit;                  /* try this many iterations */
+int     g_box_count;               /* 0 if no zoom-box yet     */
+int     zrotate;                /* zoombox rotation         */
+double  zbx, zby;                /* topleft of zoombox       */
+double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
 
-		int     fractype;               /* if == 0, use Mandelbrot  */
-		char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
-		long    g_c_real, g_c_imag;           /* real, imag'ry parts of C */
-		long    delx, dely;             /* screen pixel increments  */
-		long    delx2, dely2;           /* screen pixel increments  */
-		LDBL    delxx, delyy;           /* screen pixel increments  */
-		LDBL    delxx2, delyy2;         /* screen pixel increments  */
-		long    delmin;                 /* for calcfrac/calculate_mandelbrot    */
-		double  ddelmin;                /* same as a double         */
-		double  param[MAXPARAMS];       /* parameters               */
-		double  potparam[3];            /* three potential parameters*/
-		long    fudge;                  /* 2**fudgefactor           */
-		long    l_at_rad;               /* finite attractor radius  */
-		double  f_at_rad;               /* finite attractor radius  */
-		int     g_bit_shift;               /* fudgefactor              */
+int     fractype;               /* if == 0, use Mandelbrot  */
+char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
+long    g_c_real;
+long	g_c_imag;           /* real, imag'ry parts of C */
+long    g_delta_x;
+long	g_delta_y;             /* screen pixel increments  */
+long    g_delta_x2;
+long	g_delta_y2;           /* screen pixel increments  */
+LDBL    g_delta_x_fp;
+LDBL	g_delta_y_fp;           /* screen pixel increments  */
+LDBL    g_delta_x2_fp;
+LDBL	g_delta_y2_fp;         /* screen pixel increments  */
+long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
+double  g_delta_min_fp;                /* same as a double         */
+double  param[MAXPARAMS];       /* parameters               */
+double  potparam[3];            /* three potential parameters*/
+long    fudge;                  /* 2**fudgefactor           */
+long    l_at_rad;               /* finite attractor radius  */
+double  f_at_rad;               /* finite attractor radius  */
+int     g_bit_shift;               /* fudgefactor              */
 
-		int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-		int hasinverse = 0;
-		/* note that integer grid is set when integerfractal && !invert;    */
-		/* otherwise the floating point grid is set; never both at once     */
-		long    *lx0, *ly0;     /* x, y grid                */
-		long    *lx1, *ly1;     /* adjustment for rotate    */
-		/* note that lx1 & ly1 values can overflow into sign bit; since     */
-		/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-		double *dx0, *dy0;      /* floating pt equivs */
-		double *dx1, *dy1;
-		int     integerfractal;         /* TRUE if fractal uses integer math */
+int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
+int hasinverse = 0;
+/* note that integer grid is set when integerfractal && !invert;    */
+/* otherwise the floating point grid is set; never both at once     */
+long    *lx0, *ly0;     /* x, y grid                */
+long    *lx1, *ly1;     /* adjustment for rotate    */
+/* note that lx1 & ly1 values can overflow into sign bit; since     */
+/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
+double *g_delta_x0, *g_delta_y0;      /* floating pt equivs */
+double *g_delta_x1, *g_delta_y1;
+int     integerfractal;         /* TRUE if fractal uses integer math */
 
-		/* usr_xxx is what the user wants, vs what we may be forced to do */
-		char    usr_stdcalcmode;
-		int     usr_periodicitycheck;
-		long    usr_distest;
-		char    usr_floatflag;
+/* usr_xxx is what the user wants, vs what we may be forced to do */
+char    usr_stdcalcmode;
+int     usr_periodicitycheck;
+long    usr_distest;
+char    usr_floatflag;
 
-		int     viewwindow;             /* 0 for full screen, 1 for window */
-		float   viewreduction;          /* window auto-sizing */
-		int     viewcrop;               /* nonzero to crop default coords */
-		float   finalaspectratio;       /* for view shape and rotation */
-		int     viewxdots, viewydots;    /* explicit view sizing */
+int     viewwindow;             /* 0 for full screen, 1 for window */
+float   viewreduction;          /* window auto-sizing */
+int     viewcrop;               /* nonzero to crop default coords */
+float   finalaspectratio;       /* for view shape and rotation */
+int     viewxdots, viewydots;    /* explicit view sizing */
 
-		int maxhistory = 10;
+int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
 int     g_compare_gif = 0;                   /* compare two gif files flag */
@@ -160,7 +166,7 @@ int name_stack_ptr ;
 double toosmall;
 int  minbox;
 int no_sub_images;
-int g_auto_browse, doublecaution;
+int g_auto_browse, g_double_caution;
 char g_browse_check_parameters, g_browse_check_type;
 char g_browse_mask[FILE_MAX_FNAME];
 int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
@@ -172,22 +178,22 @@ int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for map
 #define CONTINUE          4
 
 void check_samename(void)
+{
+	char drive[FILE_MAX_DRIVE];
+	char dir[FILE_MAX_DIR];
+	char fname[FILE_MAX_FNAME];
+	char ext[FILE_MAX_EXT];
+	char path[FILE_MAX_PATH];
+	splitpath(g_save_name, drive, dir, fname, ext);
+	if (strcmp(fname, "fract001"))
 	{
-		char drive[FILE_MAX_DRIVE];
-		char dir[FILE_MAX_DIR];
-		char fname[FILE_MAX_FNAME];
-		char ext[FILE_MAX_EXT];
-		char path[FILE_MAX_PATH];
-		splitpath(g_save_name, drive, dir, fname, ext);
-		if (strcmp(fname, "fract001"))
+		makepath(path, drive, dir, fname, "gif");
+		if (access(path, 0) == 0)
 		{
-			makepath(path, drive, dir, fname, "gif");
-			if (access(path, 0) == 0)
-			{
-				exit(0);
-			}
+			exit(0);
 		}
 	}
+}
 
 /* Do nothing if math error */
 static void my_floating_point_err(int sig)
@@ -271,7 +277,7 @@ restart:   /* insert key re-starts here */
 	g_auto_browse     = FALSE;
 	g_browse_check_type  = TRUE;
 	g_browse_check_parameters = TRUE;
-	doublecaution  = TRUE;
+	g_double_caution  = TRUE;
 	no_sub_images = FALSE;
 	toosmall = 6;
 	minbox   = 3;

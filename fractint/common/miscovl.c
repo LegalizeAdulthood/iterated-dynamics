@@ -627,10 +627,10 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
 				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
 			/* these rarely change */
-			if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_dist_fp != 24
+			if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_screen_distance_fp != 24
 					|| g_depth_fp != 8 || g_z_dots != 128)
 				put_parm(" julibrot3d=%d/%g/%g/%g/%g/%g",
-					g_z_dots, g_origin_fp, g_depth_fp, g_height_fp, g_width_fp, g_dist_fp);
+					g_z_dots, g_origin_fp, g_depth_fp, g_height_fp, g_width_fp, g_screen_distance_fp);
 			if (g_eyes_fp != 0)
 			{
 				put_parm(" julibroteyes=%g", g_eyes_fp);
@@ -706,7 +706,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 				put_parm(" center-mag=");
 				/* convert 1000 fudged long to double, 1000/1<<24 = 6e-5 */
-				put_parm(ddelmin > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
+				put_parm(g_delta_min_fp > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
 			}
 #ifdef USE_LONG_DOUBLE
 			put_parm("/%.7Lg", Magnification); /* precision of magnification not critical, but magnitude is */
@@ -1905,7 +1905,7 @@ static void put_bf(int slash, bf_t r, int prec)
 {
 	char *buf; /* "/-1.xxxxxxE-1234" */
 	char *bptr;
-	/* buf = malloc(decimals + 11); */
+	/* buf = malloc(g_decimals + 11); */
 	buf = s_wbdata.buf + 5000;  /* end of use suffix buffer, 5000 bytes safe */
 	bptr = buf;
 	if (slash)

@@ -258,7 +258,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_depth_fp   =  read_info.depthfp        ;
 		g_height_fp  =  read_info.heightfp       ;
 		g_width_fp   =  read_info.widthfp        ;
-		g_dist_fp    =  read_info.distfp         ;
+		g_screen_distance_fp    =  read_info.screen_distance_fp         ;
 		g_eyes_fp    =  read_info.eyesfp         ;
 		g_new_orbit_type = read_info.orbittype    ;
 		g_juli_3D_mode   = read_info.juli3Dmode   ;
@@ -584,8 +584,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		this_gen_rseed = evolver_info.this_gen_rseed;
 		fiddlefactor   = evolver_info.fiddlefactor;
 		evolving = viewwindow = (int) evolver_info.evolving;
-		dpx = paramrangex/(gridsz - 1);
-		dpy = paramrangey/(gridsz - 1);
+		g_delta_parameter_image_x = paramrangex/(gridsz - 1);
+		g_delta_parameter_image_y = paramrangey/(gridsz - 1);
 		if (read_info.version > 14)
 		{
 			for (i = 0; i < NUMGENES; i++)
@@ -1595,7 +1595,7 @@ rescan:  /* entry for changed browse parms */
 				driver_wait_key_pressed(0);
 				cleartempmsg();
 				c = driver_get_key();
-				if (c == 'Y' && doublecaution)
+				if (c == 'Y' && g_double_caution)
 				{
 					texttempmsg("ARE YOU SURE???? (Y/N)");
 					if (driver_get_key() != 'Y')
@@ -2172,8 +2172,8 @@ static void bfsetup_convert_to_screen(void)
 	/* det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-	/* xd = dxsize/det */
-	floattobf(bt_tmp1, dxsize);
+	/* xd = g_dx_size/det */
+	floattobf(bt_tmp1, g_dx_size);
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
 	/* a =  xd*(yymax-yy3rd) */
@@ -2206,8 +2206,8 @@ static void bfsetup_convert_to_screen(void)
 	/* det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
-	/* yd = dysize/det */
-	floattobf(bt_tmp2, dysize);
+	/* yd = g_dy_size/det */
+	floattobf(bt_tmp2, g_dy_size);
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
 	/* c =  yd*(yymin-yy3rd) */
