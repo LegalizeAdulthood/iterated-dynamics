@@ -26,7 +26,7 @@ int mandelbrot_setup(void)           /* Mandelbrot Routine */
 {
 	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
-		&& bitshift == 29 && !g_potential_flag
+		&& g_bit_shift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
 		&& g_use_initial_orbit_z != 1 && g_using_jiim == 0 && g_bail_out_test == Mod
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
@@ -46,7 +46,7 @@ int julia_setup(void)            /* Julia Routine */
 {
 	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
-		&& bitshift == 29 && !g_potential_flag
+		&& g_bit_shift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
 		&& !g_finite_attractor && g_using_jiim == 0 && g_bail_out_test == Mod
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
@@ -209,7 +209,7 @@ int stand_alone_setup(void)
 int unity_setup(void)
 {
 	g_periodicity_check = 0;
-	g_one_fudge = (1L << bitshift);
+	g_one_fudge = (1L << g_bit_shift);
 	g_two_fudge = g_one_fudge + g_one_fudge;
 	return 1;
 }
@@ -1131,11 +1131,11 @@ int marks_julia_setup(void)
 	g_old_z_l = *g_long_parameter;
 	if (g_c_exp > 3)
 	{
-		complex_power_l(&g_old_z_l, g_c_exp-1, &g_coefficient_l, bitshift);
+		complex_power_l(&g_old_z_l, g_c_exp-1, &g_coefficient_l, g_bit_shift);
 	}
 	else if (g_c_exp == 3)
 	{
-		g_coefficient_l.x = multiply(g_old_z_l.x, g_old_z_l.x, bitshift) - multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+		g_coefficient_l.x = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) - multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
 		g_coefficient_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);
 	}
 	else if (g_c_exp == 2)
@@ -1144,7 +1144,7 @@ int marks_julia_setup(void)
 	}
 	else if (g_c_exp < 2)
 	{
-		g_coefficient_l.x = 1L << bitshift;
+		g_coefficient_l.x = 1L << g_bit_shift;
 		g_coefficient_l.y = 0L;
 	}
 	get_julia_attractor (0.0, 0.0);      /* an attractor? */
@@ -1188,7 +1188,7 @@ int sierpinski_setup(void)
 	/* sierpinski */
 	g_periodicity_check = 0;                /* disable periodicity checks */
 	g_tmp_z_l.x = 1;
-	g_tmp_z_l.x = g_tmp_z_l.x << bitshift; /* g_tmp_z_l.x = 1 */
+	g_tmp_z_l.x = g_tmp_z_l.x << g_bit_shift; /* g_tmp_z_l.x = 1 */
 	g_tmp_z_l.y = g_tmp_z_l.x >> 1;                        /* g_tmp_z_l.y = .5 */
 	return 1;
 }

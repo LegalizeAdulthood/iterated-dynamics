@@ -65,7 +65,7 @@ struct tagDriver
 	/* draw string in graphics mode */	void (*display_string)(Driver *drv, int x, int y, int fg, int bg, const char *text);
 	/* save graphics */					void (*save_graphics)(Driver *drv);
 	/* restore graphics */				void (*restore_graphics)(Driver *drv);
-	/* poll or block for a key */		int (*get_key)(Driver *drv);
+	/* poll or g_block for a key */		int (*get_key)(Driver *drv);
 										int (*key_cursor)(Driver *drv, int row, int col);
 										int (*key_pressed)(Driver *drv);
 										int (*wait_key_pressed)(Driver *drv, int timeout);

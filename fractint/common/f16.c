@@ -37,8 +37,8 @@ static int state, count, bufp;
 /**************************************
 **
 ** Open previously saved Targa16 type 10 file filling in hs, vs, and
-** csize with values in the header.  If *csize is not zero, the block
-** pointed to by cp is filled with the comment block.  The caller
+** csize with values in the header.  If *csize is not zero, the g_block
+** pointed to by cp is filled with the comment g_block.  The caller
 ** _must_ allocate 256 bytes for this purpose before calling.
 */
 

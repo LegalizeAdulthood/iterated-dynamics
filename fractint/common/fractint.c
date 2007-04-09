@@ -78,7 +78,7 @@ char *fract_dir1="", *fract_dir2="";
 		double  dxsize, dysize;         /* xdots-1, ydots-1         */
 		int     colors = 256;           /* maximum colors available */
 		long    maxit;                  /* try this many iterations */
-		int     boxcount;               /* 0 if no zoom-box yet     */
+		int     g_box_count;               /* 0 if no zoom-box yet     */
 		int     zrotate;                /* zoombox rotation         */
 		double  zbx, zby;                /* topleft of zoombox       */
 		double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
@@ -97,7 +97,7 @@ char *fract_dir1="", *fract_dir2="";
 		long    fudge;                  /* 2**fudgefactor           */
 		long    l_at_rad;               /* finite attractor radius  */
 		double  f_at_rad;               /* finite attractor radius  */
-		int     bitshift;               /* fudgefactor              */
+		int     g_bit_shift;               /* fudgefactor              */
 
 		int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
 		int hasinverse = 0;
@@ -154,15 +154,15 @@ long calctime;
 int max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
 int        savedac;                     /* save-the-Video DAC flag      */
-int browsing;                 /* browse mode flag */
-char file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while browsing */
+int g_browsing;                 /* browse mode flag */
+char file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
 int name_stack_ptr ;
 double toosmall;
 int  minbox;
 int no_sub_images;
-int autobrowse, doublecaution;
-char brwscheckparms, brwschecktype;
-char browsemask[FILE_MAX_FNAME];
+int g_auto_browse, doublecaution;
+char g_browse_check_parameters, g_browse_check_type;
+char g_browse_mask[FILE_MAX_FNAME];
 int scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
 
 
@@ -268,15 +268,15 @@ restart:   /* insert key re-starts here */
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
-	autobrowse     = FALSE;
-	brwschecktype  = TRUE;
-	brwscheckparms = TRUE;
+	g_auto_browse     = FALSE;
+	g_browse_check_type  = TRUE;
+	g_browse_check_parameters = TRUE;
 	doublecaution  = TRUE;
 	no_sub_images = FALSE;
 	toosmall = 6;
 	minbox   = 3;
-	strcpy(browsemask, "*.gif");
-	strcpy(browsename, "            ");
+	strcpy(g_browse_mask, "*.gif");
+	strcpy(g_browse_name, "            ");
 	name_stack_ptr = -1; /* init loaded files stack */
 
 	evolving = FALSE;
@@ -359,7 +359,7 @@ restart:   /* insert key re-starts here */
 		}
 	}
 
-	browsing = FALSE;
+	g_browsing = FALSE;
 
 	if (!g_function_preloaded)
 	{
@@ -383,7 +383,7 @@ restorestart:
 	{
 		char *hdg;
 		tabmode = 0;
-		if (!browsing)     /*RB*/
+		if (!g_browsing)     /*RB*/
 		{
 			if (g_overlay_3d)
 			{
@@ -407,8 +407,8 @@ restorestart:
 				break;
 			}
 
-			name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			strcpy(file_name_stack[name_stack_ptr], browsename);
+			name_stack_ptr = 0; /* 'r' reads first filename for g_browsing */
+			strcpy(file_name_stack[name_stack_ptr], g_browse_name);
 		}
 
 		evolving = viewwindow = 0;
@@ -425,7 +425,7 @@ restorestart:
 		{
 			break;                      /* got it, exit */
 		}
-		g_show_file = browsing ? 1 : -1;
+		g_show_file = g_browsing ? 1 : -1;
 	}
 
 	helpmode = HELPMENU;                 /* now use this help mode */

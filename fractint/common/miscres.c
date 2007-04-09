@@ -875,8 +875,8 @@ int tab_display_2(char *msg)
 		extern void tile_message(char *message, int message_len);
 		tile_message(message, NUM_OF(message));
 		write_row(row++, message)
-	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d bitshift %d",
-		ixstart, g_x_stop, iystart, g_y_stop, bitshift);
+	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
+		ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 */
 	write_row(row++, "minstackavail %d g_limit2_l %ld g_use_grid %d",
 		minstackavail, g_limit2_l, g_use_grid);
@@ -1111,7 +1111,7 @@ top:
 		else
 		if (g_got_status != GOT_STATUS_3D)
 		{
-			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
+			sprintf(msg, "Working on g_block (y, x) [%d, %d]...[%d, %d], ",
 					g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
 			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  /* btm or tesseral */

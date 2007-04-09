@@ -893,8 +893,8 @@ void Jiim(int which)         /* called by fractint */
 				{
 					cr = g_lx_pixel();
 					ci = g_ly_pixel();
-					cr /= (1L << bitshift);
-					ci /= (1L << bitshift);
+					cr /= (1L << g_bit_shift);
+					ci /= (1L << g_bit_shift);
 				}
 				else
 				{

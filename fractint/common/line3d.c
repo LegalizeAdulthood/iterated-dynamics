@@ -2270,7 +2270,7 @@ static int _fastcall start_object(void)
 /********************************************************************/
 /*                                                                  */
 /*  This routine adds a bounding box for the triangles drawn        */
-/*  in the last block and completes the composite object created.   */
+/*  in the last g_block and completes the composite object created.   */
 /*  It uses the globals min and max x, y and z calculated in         */
 /*  z calculated in Triangle_Bounds().                              */
 /*                                                                  */

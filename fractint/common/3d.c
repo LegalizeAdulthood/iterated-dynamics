@@ -282,14 +282,14 @@ perspective(VECTOR v)
 /* long version of vmult and perspective combined for speed */
 int
 longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
-					int bitshift)
+					int g_bit_shift)
 {
 	/* s: source vector */
 	/* m: transformation matrix */
 	/* t0: after transformation, before persp */
 	/* t: target vector */
 	/* lview: perspective viewer coordinates */
-	/* bitshift: fixed point conversion bitshift */
+	/* g_bit_shift: fixed point conversion g_bit_shift */
 	LVECTOR tmp;
 	int i, j, k;
 	overflow = 0;
@@ -304,7 +304,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
 		tmp[j] = 0;
 		for (i = 0; i < RMAX-1; i++)
 		{
-			tmp[j] += multiply(s[i], m[i][j], bitshift);
+			tmp[j] += multiply(s[i], m[i][j], g_bit_shift);
 		}
 		/* vector is really four dimensional with last component always 1 */
 		tmp[j] += m[3][j];
@@ -325,22 +325,22 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
 		denom = lview[2] - tmp[2];
 		if (denom >= 0)           /* bail out if point is "behind" us */
 		{
-			t[0] = g_bad_value << bitshift;
+			t[0] = g_bad_value << g_bit_shift;
 			t[1] = t[0];
 			t[2] = t[0];
 			return -1;
 		}
 
 		/* doing math in this order helps prevent overflow */
-		tmpview[0] = divide(lview[0], denom, bitshift);
-		tmpview[1] = divide(lview[1], denom, bitshift);
-		tmpview[2] = divide(lview[2], denom, bitshift);
+		tmpview[0] = divide(lview[0], denom, g_bit_shift);
+		tmpview[1] = divide(lview[1], denom, g_bit_shift);
+		tmpview[2] = divide(lview[2], denom, g_bit_shift);
 
-		tmp[0] = multiply(tmp[0], tmpview[2], bitshift) -
-					multiply(tmpview[0], tmp[2], bitshift);
+		tmp[0] = multiply(tmp[0], tmpview[2], g_bit_shift) -
+					multiply(tmpview[0], tmp[2], g_bit_shift);
 
-		tmp[1] = multiply(tmp[1], tmpview[2], bitshift) -
-					multiply(tmpview[1], tmp[2], bitshift);
+		tmp[1] = multiply(tmp[1], tmpview[2], g_bit_shift) -
+					multiply(tmpview[1], tmp[2], g_bit_shift);
 
 		/* z coordinate if needed           */
 		/* tmp[2] = divide(lview[2], denom);  */
@@ -357,7 +357,7 @@ longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview,
 /* Long version of perspective. Because of use of fixed point math, there
 	is danger of overflow and underflow */
 int
-longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
+longpersp(LVECTOR lv, LVECTOR lview, int g_bit_shift)
 {
 	LVECTOR tmpview;
 	long denom;
@@ -366,29 +366,29 @@ longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
 	if (denom >= 0)              /* bail out if point is "behind" us */
 	{
 		lv[0] = g_bad_value;
-		lv[0] = lv[0] << bitshift;
+		lv[0] = lv[0] << g_bit_shift;
 		lv[1] = lv[0];
 		lv[2] = lv[0];
 		return -1;
 	}
 
 	/* doing math in this order helps prevent overflow */
-	tmpview[0] = divide(lview[0], denom, bitshift);
-	tmpview[1] = divide(lview[1], denom, bitshift);
-	tmpview[2] = divide(lview[2], denom, bitshift);
+	tmpview[0] = divide(lview[0], denom, g_bit_shift);
+	tmpview[1] = divide(lview[1], denom, g_bit_shift);
+	tmpview[2] = divide(lview[2], denom, g_bit_shift);
 
-	lv[0] = multiply(lv[0], tmpview[2], bitshift) -
-			multiply(tmpview[0], lv[2], bitshift);
+	lv[0] = multiply(lv[0], tmpview[2], g_bit_shift) -
+			multiply(tmpview[0], lv[2], g_bit_shift);
 
-	lv[1] = multiply(lv[1], tmpview[2], bitshift) -
-			multiply(tmpview[1], lv[2], bitshift);
+	lv[1] = multiply(lv[1], tmpview[2], g_bit_shift) -
+			multiply(tmpview[1], lv[2], g_bit_shift);
 
 	/* z coordinate if needed           */
 	/* lv[2] = divide(lview[2], denom);  */
 	return overflow;
 }
 
-int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
+int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int g_bit_shift)
 {
 	LVECTOR tmp;
 	int i, j, k;
@@ -400,7 +400,7 @@ int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
 		tmp[j] = 0;
 		for (i = 0; i < RMAX-1; i++)
 		{
-			tmp[j] += multiply(s[i], m[i][j], bitshift);
+			tmp[j] += multiply(s[i], m[i][j], g_bit_shift);
 		}
 		/* vector is really four dimensional with last component always 1 */
 		tmp[j] += m[3][j];

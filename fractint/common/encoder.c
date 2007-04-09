@@ -172,12 +172,12 @@ restart:
 	}
 #endif
 
-	busy = 1;
+	g_busy = 1;
 
 	/* invoke encoder() via timer */
 	interrupted = (g_debug_flag == DEBUGFLAG_TIME_ENCODER) ? timer(TIMER_ENCODER, NULL) : encoder();
 
-	busy = 0;
+	g_busy = 0;
 
 	fclose(g_outfile);
 
@@ -510,7 +510,7 @@ int encoder()
 
 	if (g_gif87a_flag == 0)
 	{                            /* store non-standard fractal info */
-		/* loadfile.c has notes about extension block structure */
+		/* loadfile.c has notes about extension g_block structure */
 		if (interrupted)
 		{
 			save_info.calc_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
@@ -518,7 +518,7 @@ int encoder()
 		save_info.tot_extend_len = 0;
 		if (g_resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
 		{
-			/* resume info block, 002 */
+			/* resume info g_block, 002 */
 			save_info.tot_extend_len += extend_blk_len(g_resume_length);
 			if (!put_extend_blk(2, g_resume_length, g_resume_info))
 			{
@@ -541,7 +541,7 @@ int encoder()
 		}
 		if (g_display_3d <= 0 && g_ranges_length)
 		{
-			/* ranges block, 004 */
+			/* ranges g_block, 004 */
 			save_info.tot_extend_len += extend_blk_len(g_ranges_length*2);
 #ifdef XFRACT
 			fix_ranges(g_ranges, g_ranges_length, 0);
@@ -551,7 +551,7 @@ int encoder()
 				goto oops;
 			}
 		}
-		/* Extended parameters block 005 */
+		/* Extended parameters g_block 005 */
 		if (bf_math)
 		{
 			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
@@ -563,7 +563,7 @@ int encoder()
 			}
 		}
 
-		/* Extended parameters block 006 */
+		/* Extended parameters g_block 006 */
 		if (evolving & EVOLVE_FIELD_MAP)
 		{
 			struct evolution_info esave_info;
@@ -624,7 +624,7 @@ int encoder()
 #ifdef XFRACT
 			decode_evolver_info(&esave_info, 0);
 #endif
-			/* evolution info block, 006 */
+			/* evolution info g_block, 006 */
 			save_info.tot_extend_len += extend_blk_len(sizeof(esave_info));
 			if (!put_extend_blk(6, sizeof(esave_info), (char *) &esave_info))
 			{
@@ -632,7 +632,7 @@ int encoder()
 			}
 		}
 
-		/* Extended parameters block 007 */
+		/* Extended parameters g_block 007 */
 		if (stdcalcmode == 'o')
 		{
 			struct orbits_info osave_info;
@@ -654,7 +654,7 @@ int encoder()
 #ifdef XFRACT
 			decode_orbits_info(&osave_info, 0);
 #endif
-			/* orbits info block, 007 */
+			/* orbits info g_block, 007 */
 			save_info.tot_extend_len += extend_blk_len(sizeof(osave_info));
 			if (!put_extend_blk(7, sizeof(osave_info), (char *) &osave_info))
 			{
@@ -662,7 +662,7 @@ int encoder()
 			}
 		}
 
-		/* main and last block, 001 */
+		/* main and last g_block, 001 */
 		save_info.tot_extend_len += extend_blk_len(FRACTAL_INFO_SIZE);
 #ifdef XFRACT
 		decode_fractal_info(&save_info, 0);
@@ -711,7 +711,7 @@ static int _fastcall shftwrite(BYTE *color, int numcolors)
 static int _fastcall extend_blk_len(int datalen)
 {
 	return datalen + (datalen + 254) / 255 + 15;
-	/* data   +     1.per.block   + 14 for id + 1 for null at end  */
+	/* data   +     1.per.g_block   + 14 for id + 1 for null at end  */
 }
 
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data)
@@ -777,7 +777,7 @@ static int _fastcall store_item_name(char *nameptr)
 	{
 		fsave_info.future[i] = 0;
 	}
-	/* formula/lsys/ifs info block, 003 */
+	/* formula/lsys/ifs info g_block, 003 */
 	put_extend_blk(3, sizeof(fsave_info), (char *) &fsave_info);
 	return extend_blk_len(sizeof(fsave_info));
 }
@@ -970,7 +970,7 @@ static int maxmaxcode = (int)1 << BITSF; /* should NEVER generate this code */
 
 #ifdef XFRACT
 unsigned int strlocn[10240];
-BYTE block[4096];
+BYTE g_block[4096];
 #endif
 
 static long htab[HSIZE];
@@ -992,7 +992,7 @@ static unsigned short *codetab = (unsigned short *)strlocn;
 static int free_ent;                  /* first unused entry */
 
 /*
- * block compression parameters -- after all codes are used up,
+ * g_block compression parameters -- after all codes are used up,
  * and compression rate changes, start over.
  */
 static int clear_flg = 0;
@@ -1004,7 +1004,7 @@ static int clear_flg = 0;
  * prefix code / next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
- * to a faster exclusive-or manipulation.  Also do block compression with
+ * to a faster exclusive-or manipulation.  Also do g_block compression with
  * an adaptive reset, whereby the code table is cleared when the compression
  * ratio decreases, but after the table fills.  The variable-length output
  * codes are re-sized at this point, and a special CLEAR code is generated
@@ -1280,7 +1280,7 @@ static void _fastcall output(int code)
 /*
  * Clear out the hash table
  */
-static void _fastcall cl_block(void)             /* table clear for block compress */
+static void _fastcall cl_block(void)             /* table clear for g_block compress */
 {
 		memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
 		free_ent = ClearCode + 2;

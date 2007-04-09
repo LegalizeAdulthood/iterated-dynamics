@@ -841,7 +841,7 @@ void SetupParamBox(void)
 	int vidsize;
 	prmboxcount = 0;
 	parmzoom = ((double)gridsz-1.0)/2.0;
-	/* need to allocate 2 int arrays for boxx and boxy plus 1 byte array for values */
+	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (xdots + ydots)*4*sizeof(int);
 	vidsize += xdots + ydots + 2;
 	if (!prmbox)
@@ -975,32 +975,32 @@ void drawparmbox(int mode)
 		return; /* don't draw if not asked to! */
 	}
 	grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-	imgboxcount = boxcount;
-	if (boxcount)
+	imgboxcount = g_box_count;
+	if (g_box_count)
 	{
 		/* stash normal zoombox pixels */
-		memcpy(&imgbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
-		memcpy(&imgbox[boxcount], &boxy[0], boxcount*sizeof(boxy[0]));
-		memcpy(&imgbox[boxcount*2], &boxvalues[0], boxcount*sizeof(boxvalues[0]));
+		memcpy(&imgbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&imgbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&imgbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 		clearbox(); /* to avoid probs when one box overlaps the other */
 	}
 	if (prmboxcount != 0)   /* clear last parmbox */
 	{
-		boxcount = prmboxcount;
-		memcpy(&boxx[0], &prmbox[0], boxcount*sizeof(boxx[0]));
-		memcpy(&boxy[0], &prmbox[boxcount], boxcount*sizeof(boxy[0]));
-		memcpy(&boxvalues[0], &prmbox[boxcount*2], boxcount*sizeof(boxvalues[0]));
+		g_box_count = prmboxcount;
+		memcpy(&g_box_x[0], &prmbox[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], &prmbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], &prmbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
 		clearbox();
 	}
 
 	if (mode == 1)
 	{
-		boxcount = imgboxcount;
+		g_box_count = imgboxcount;
 		prmboxcount = 0;
 		return;
 	}
 
-	boxcount = 0;
+	g_box_count = 0;
 	/*draw larger box to show parm zooming range */
 	tl.x = bl.x = ((px -(int)parmzoom)*(int)(dxsize + 1 + grout))-sxoffs-1;
 	tl.y = tr.y = ((py -(int)parmzoom)*(int)(dysize + 1 + grout))-syoffs-1;
@@ -1011,32 +1011,32 @@ void drawparmbox(int mode)
 	drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
 	drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
-	boxx[0] = tl.x + sxoffs;
-	boxy[0] = tl.y + syoffs;
-	boxx[1] = tr.x + sxoffs;
-	boxy[1] = tr.y + syoffs;
-	boxx[2] = br.x + sxoffs;
-	boxy[2] = br.y + syoffs;
-	boxx[3] = bl.x + sxoffs;
-	boxy[3] = bl.y + syoffs;
-	boxcount = 8;
+	g_box_x[0] = tl.x + sxoffs;
+	g_box_y[0] = tl.y + syoffs;
+	g_box_x[1] = tr.x + sxoffs;
+	g_box_y[1] = tr.y + syoffs;
+	g_box_x[2] = br.x + sxoffs;
+	g_box_y[2] = br.y + syoffs;
+	g_box_x[3] = bl.x + sxoffs;
+	g_box_y[3] = bl.y + syoffs;
+	g_box_count = 8;
 #endif
-	if (boxcount)
+	if (g_box_count)
 	{
 		dispbox();
 		/* stash pixel values for later */
-		memcpy(&prmbox[0], &boxx[0], boxcount*sizeof(boxx[0]));
-		memcpy(&prmbox[boxcount], &boxy[0], boxcount*sizeof(boxy[0]));
-		memcpy(&prmbox[boxcount*2], &boxvalues[0], boxcount*sizeof(boxvalues[0]));
+		memcpy(&prmbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&prmbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&prmbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 	}
-	prmboxcount = boxcount;
-	boxcount = imgboxcount;
+	prmboxcount = g_box_count;
+	g_box_count = imgboxcount;
 	if (imgboxcount)
 	{
 		/* and move back old values so that everything can proceed as normal */
-		memcpy(&boxx[0], &imgbox[0], boxcount*sizeof(boxx[0]));
-		memcpy(&boxy[0], &imgbox[boxcount], boxcount*sizeof(boxy[0]));
-		memcpy(&boxvalues[0], &imgbox[boxcount*2], boxcount*sizeof(boxvalues[0]));
+		memcpy(&g_box_x[0], &imgbox[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], &imgbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], &imgbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
 		dispbox();
 	}
 	return;

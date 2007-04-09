@@ -66,7 +66,7 @@ void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
 void wintext_cursor(int xpos, int ypos, int cursor_type);
 	Sets the cursor to character position (xpos, ypos) and switches to
 	a cursor type specified by 'cursor_type': 0 = none, 1 = underline,
-	2 = block cursor.  A cursor type of -1 means use whatever cursor
+	2 = g_block cursor.  A cursor type of -1 means use whatever cursor
 	type (0, 1, or 2) was already active.
 
 unsigned int wintext_getkeypress(int option);

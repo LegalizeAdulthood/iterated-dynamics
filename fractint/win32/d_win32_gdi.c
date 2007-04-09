@@ -646,7 +646,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	if (dotmode != 0)
 	{
 		g_and_color = colors-1;
-		boxcount = 0;
+		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
 		g_got_real_dac = TRUE;			/* we are "VGA" */

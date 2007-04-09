@@ -153,8 +153,8 @@ extern void (*dtrig3)(void);
     (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
 
 #define LCMPLXtimesreal(arg, real, out)   \
-    ((out).x = multiply((arg).x, (real), bitshift), \
-     (out).y = multiply((arg).y, (real), bitshift))
+    ((out).x = multiply((arg).x, (real), g_bit_shift), \
+     (out).y = multiply((arg).y, (real), g_bit_shift))
 
 #define LCMPLXrecip(arg, out)							\
 	{													\
@@ -166,8 +166,8 @@ extern void (*dtrig3)(void);
 		}												\
 		else											\
 		{												\
-			(out).x = divide((arg).x, denom, bitshift);	\
-			(out).y = -divide((arg).y, denom, bitshift);\
+			(out).x = divide((arg).x, denom, g_bit_shift);	\
+			(out).y = -divide((arg).y, denom, g_bit_shift);\
 		}												\
 	}
 

@@ -42,7 +42,7 @@ static FILE *fp;
 int fileydots, filexdots, filecolors;
 float fileaspectratio;
 short skipxdots, skipydots;      /* for decoder, when reducing image */
-int bad_outside = 0;
+int g_bad_outside = 0;
 int ldcheck = 0;
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
@@ -713,18 +713,18 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	}
 
 	/* Format of .gif extension blocks is:
-			1 byte    '!', extension block identifier
-			1 byte    extension block number, 255
+			1 byte    '!', extension g_block identifier
+			1 byte    extension g_block number, 255
 			1 byte    length of id, 11
 			11 bytes   alpha id, "fractintnnn" with fractint, nnn is secondary id
 		n * {
-			1 byte    length of block info in bytes
-			x bytes   block info
+			1 byte    length of g_block info in bytes
+			x bytes   g_block info
 			}
 			1 byte    0, extension terminator
 		To scan extension blocks, we first look in file at length of fractal_info
-		(the main extension block) from end of file, looking for a literal known
-		to be at start of our block info.  Then we scan forward a bit, in case
+		(the main extension g_block) from end of file, looking for a literal known
+		to be at start of our g_block info.  Then we scan forward a bit, in case
 		the file is from an earlier fractint vsn with shorter fractal_info.
 		If fractal_info is found and is from vsn >= 14, it includes the total length
 		of all extension blocks; we then scan them all first to last to load
@@ -787,7 +787,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 
 		if (info->version >= 4)
 		{
-			/* first reload main extension block, reasons:
+			/* first reload main extension g_block, reasons:
 			might be over 255 chars, and thus earlier load might be bad
 			find exact endpoint, so scan back to start of ext blks works
 			*/
@@ -805,7 +805,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 				block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
 				switch (block_type)
 				{
-				case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension block */
+				case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension g_block */
 					if (scan_extend == 2)  /* we've been here before, done now */
 					{
 						scan_extend = 0;
@@ -816,7 +816,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					decode_fractal_info(info, 1);
 #endif
 					scan_extend = 2;
-					/* now we know total extension len, back up to first block */
+					/* now we know total extension len, back up to first g_block */
 					fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
 					break;
 				case BLOCKTYPE_RESUME_INFO: /* resume info */
@@ -1211,7 +1211,7 @@ void backwards_v19(void)
 void backwards_v20(void)
 {
 	/* Fractype == FP type is not seen from PAR file ????? */
-	bad_outside = ((fractype == MANDELFP || fractype == JULIAFP
+	g_bad_outside = ((fractype == MANDELFP || fractype == JULIAFP
 						|| fractype == MANDEL || fractype == JULIA)
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960)
 		? 1 : 0;
@@ -1303,7 +1303,7 @@ struct window  /* for fgetwindow on screen browser */
 	struct coords ibr;
 	double win_size;   /* box size for drawindow() */
 	char name[FILE_MAX_FNAME];     /* for filename */
-	int boxcount;      /* bytes of saved screen info */
+	int g_box_count;      /* bytes of saved screen info */
 };
 
 /* prototypes */
@@ -1318,7 +1318,7 @@ static void check_history(char *, char *);
 static void bfsetup_convert_to_screen(void);
 static void bftransform(bf_t, bf_t, struct dblcoords *);
 
-char browsename[FILE_MAX_FNAME]; /* name for browse file */
+char g_browse_name[FILE_MAX_FNAME]; /* name for browse file */
 struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
 static int *boxx_storage = NULL;
 static int *boxy_storage = NULL;
@@ -1379,8 +1379,8 @@ int fgetwindow(void)
 	{
 		vid_too_big = 2;
 	}
-	/* 4096 based on 4096B in boxx... max 1/4 pixels plotted, and need words */
-	/* 4096 = 10240/2.5 based on size of boxx + boxy + boxvalues */
+	/* 4096 based on 4096B in g_box_x... max 1/4 pixels plotted, and need words */
+	/* 4096 = 10240/2.5 based on size of g_box_x + g_box_y + g_box_values */
 #ifdef XFRACT
 	vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
@@ -1418,7 +1418,7 @@ rescan:  /* entry for changed browse parms */
 	wincount = 0;
 	no_sub_images = FALSE;
 	splitpath(g_read_name, drive, dir, NULL, NULL);
-	splitpath(browsemask, NULL, NULL, fname, ext);
+	splitpath(g_browse_mask, NULL, NULL, fname, ext);
 	makepath(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
 								/* draw all visible windows */
@@ -1433,21 +1433,21 @@ rescan:  /* entry for changed browse parms */
 		makepath(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 				&ranges_info, &mp_info, &evolver_info, &orbits_info)
-			&& (typeOK(&read_info, &formula_info) || !brwschecktype)
-			&& (paramsOK(&read_info) || !brwscheckparms)
-			&& stricmp(browsename, DTA.filename)
+			&& (typeOK(&read_info, &formula_info) || !g_browse_check_type)
+			&& (paramsOK(&read_info) || !g_browse_check_parameters)
+			&& stricmp(g_browse_name, DTA.filename)
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
 			strcpy(winlist.name, DTA.filename);
 			drawindow(color_of_box, &winlist);
-			boxcount <<= 1; /*boxcount*2;*/ /* double for byte count */
-			winlist.boxcount = boxcount;
+			g_box_count <<= 1; /*g_box_count*2;*/ /* double for byte count */
+			winlist.g_box_count = g_box_count;
 			browse_windows[wincount] = winlist;
 
-			memcpy(&boxx_storage[wincount*vidlength], boxx, vidlength*sizeof(int));
-			memcpy(&boxy_storage[wincount*vidlength], boxy, vidlength*sizeof(int));
-			memcpy(&boxvalues_storage[wincount*vidlength/2], boxvalues, vidlength/2*sizeof(int));
+			memcpy(&boxx_storage[wincount*vidlength], g_box_x, vidlength*sizeof(int));
+			memcpy(&boxy_storage[wincount*vidlength], g_box_y, vidlength*sizeof(int));
+			memcpy(&boxvalues_storage[wincount*vidlength/2], g_box_values, vidlength/2*sizeof(int));
 			wincount++;
 		}
 
@@ -1485,9 +1485,9 @@ rescan:  /* entry for changed browse parms */
 		driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
 		index = 0; done = 0;
 		winlist = browse_windows[index];
-		memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-		memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-		memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+		memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+		memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+		memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
 		showtempmsg(winlist.name);
 		while (!done)  /* on exit done = 1 for quick exit,
 						done = 2 for erase boxes and  exit
@@ -1543,9 +1543,9 @@ rescan:  /* entry for changed browse parms */
 					}
 				}
 				winlist = browse_windows[index];
-				memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
 				showtempmsg(winlist.name);
 				break;
 #ifndef XFRACT
@@ -1573,7 +1573,7 @@ rescan:  /* entry for changed browse parms */
 #endif
 			case FIK_ENTER:
 			case FIK_ENTER_2:   /* this file please */
-				strcpy(browsename, winlist.name);
+				strcpy(g_browse_name, winlist.name);
 				done = 1;
 				break;
 
@@ -1584,7 +1584,7 @@ rescan:  /* entry for changed browse parms */
 				/* Need all boxes turned on, turn last one back on. */
 				drawindow(g_color_bright, &winlist);
 #endif
-				autobrowse = FALSE;
+				g_auto_browse = FALSE;
 				done = 2;
 				break;
 
@@ -1671,7 +1671,7 @@ rescan:  /* entry for changed browse parms */
 				break;
 
 			case 's': /* save image with boxes */
-				autobrowse = FALSE;
+				g_auto_browse = FALSE;
 				drawindow(color_of_box, &winlist); /* current window white */
 				done = 4;
 				break;
@@ -1692,12 +1692,12 @@ rescan:  /* entry for changed browse parms */
 			for (index = wincount-1; index >= 0; index--) /* don't need index, reuse it */
 			{
 				winlist = browse_windows[index];
-				boxcount = winlist.boxcount;
-				memcpy(boxx, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(boxy, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(boxvalues, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
-				boxcount >>= 1;
-				if (boxcount > 0)
+				g_box_count = winlist.g_box_count;
+				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
+				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+				g_box_count >>= 1;
+				if (g_box_count > 0)
 				{
 #ifdef XFRACT
 					/* Turn all boxes off */
@@ -1742,8 +1742,8 @@ static void drawindow(int colour, struct window *info)
 	struct coords ibl, itr;
 #endif
 
-	boxcolor = colour;
-	boxcount = 0;
+	g_box_color = colour;
+	g_box_count = 0;
 	if (info->win_size >= minbox)
 	{
 		/* big enough on screen to show up as a box so draw it */
@@ -1756,15 +1756,15 @@ static void drawindow(int colour, struct window *info)
 		drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); /* top & bottom lines */
 		drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); /* left & right lines */
 #else
-		boxx[0] = info->itl.x + sxoffs;
-		boxy[0] = info->itl.y + syoffs;
-		boxx[1] = info->itr.x + sxoffs;
-		boxy[1] = info->itr.y + syoffs;
-		boxx[2] = info->ibr.x + sxoffs;
-		boxy[2] = info->ibr.y + syoffs;
-		boxx[3] = info->ibl.x + sxoffs;
-		boxy[3] = info->ibl.y + syoffs;
-		boxcount = 4;
+		g_box_x[0] = info->itl.x + sxoffs;
+		g_box_y[0] = info->itl.y + syoffs;
+		g_box_x[1] = info->itr.x + sxoffs;
+		g_box_y[1] = info->itr.y + syoffs;
+		g_box_x[2] = info->ibr.x + sxoffs;
+		g_box_y[2] = info->ibr.y + syoffs;
+		g_box_x[3] = info->ibl.x + sxoffs;
+		g_box_y[3] = info->ibl.y + syoffs;
+		g_box_count = 4;
 #endif
 		dispbox();
 	}
