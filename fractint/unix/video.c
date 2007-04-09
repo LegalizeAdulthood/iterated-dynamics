@@ -2,13 +2,15 @@
 #include <string.h>
 #include "port.h"
 #include "prototyp.h"
+#include "externs.h"
+
 /*
  * This file contains Unix versions of the routines in video.asm
  * Copyright 1992 Ken Shirriff
  */
 
 extern unsigned char *xgetfont (void);
-extern int startdisk (void);
+extern int disk_start(void);
 extern int waitkeypressed (int);
 
 WINDOW *curwin;
@@ -147,7 +149,7 @@ putprompt (void)
 void
 setvideotext (void)
 {
-  dotmode = 0;
+  g_dot_mode = 0;
   setvideomode (3, 0, 0, 0);
 }
 
@@ -168,7 +170,7 @@ loaddac (void)
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
 
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
+; Unix: We ignore ax,bx,cx,dx.  g_dot_mode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
 void
@@ -177,7 +179,7 @@ setvideomode (ax, bx, cx, dx)
 {
   if (g_disk_flag)
     {
-      enddisk ();
+      disk_end();
     }
   if (videoflag)
     {
@@ -185,7 +187,7 @@ setvideomode (ax, bx, cx, dx)
       videoflag = 0;
     }
   g_good_mode = 1;
-  switch (dotmode)
+  switch (g_dot_mode)
     {
     case 0:			/* text */
       clear ();
@@ -195,9 +197,9 @@ setvideomode (ax, bx, cx, dx)
       wrefresh (curwin);
       break;
     case 11:
-      startdisk ();
-      dotwrite = writedisk;
-      dotread = readdisk;
+      disk_start();
+      dotwrite = disk_write;
+      dotread = disk_read;
       lineread = normalineread;
       linewrite = normaline;
       break;
@@ -212,17 +214,17 @@ setvideomode (ax, bx, cx, dx)
       setforgraphics ();
       break;
     default:
-      printf ("Bad mode %d\n", dotmode);
+      printf ("Bad mode %d\n", g_dot_mode);
       exit (-1);
     }
-  if (dotmode != 0)
+  if (g_dot_mode != 0)
     {
       loaddac ();
-      g_and_color = colors - 1;
-      boxcount = 0;
+      g_and_color = g_colors - 1;
+      g_box_count = 0;
     }
-  g_vesa_x_res = sxdots;
-  g_vesa_y_res = sydots;
+  g_vesa_x_res = g_screen_width;
+  g_vesa_y_res = g_screen_height;
 }
 
 
@@ -236,9 +238,9 @@ getcolor (xdot, ydot)
      int xdot, ydot;
 {
   int x1, y1;
-  x1 = xdot + sxoffs;
-  y1 = ydot + syoffs;
-  if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+  x1 = xdot + g_sx_offset;
+  y1 = ydot + g_sy_offset;
+  if (x1 < 0 || y1 < 0 || x1 >= g_screen_width || y1 >= g_screen_height)
     return 0;
   return dotread (x1, y1);
 }
@@ -252,7 +254,7 @@ void
 putcolor_a (xdot, ydot, color)
      int xdot, ydot, color;
 {
-  dotwrite (xdot + sxoffs, ydot + syoffs, color & g_and_color);
+  dotwrite (xdot + g_sx_offset, ydot + g_sy_offset, color & g_and_color);
 }
 
 /*
@@ -428,15 +430,15 @@ spindac (dir, inc)
   unsigned char tmp[3];
   unsigned char *dacbot;
   int len;
-  if (colors < 16)
+  if (g_colors < 16)
     return;
-  if (g_is_true_color && truemode)
+  if (g_is_true_color && g_true_mode)
     return;
-  if (dir != 0 && rotate_lo < colors && rotate_lo < rotate_hi)
+  if (dir != 0 && g_rotate_lo < g_colors && g_rotate_lo < g_rotate_hi)
     {
-      top = rotate_hi > colors ? colors - 1 : rotate_hi;
-      dacbot = (unsigned char *) g_dac_box + 3 * rotate_lo;
-      len = (top - rotate_lo) * 3 * sizeof (unsigned char);
+      top = g_rotate_hi > g_colors ? g_colors - 1 : g_rotate_hi;
+      dacbot = (unsigned char *) g_dac_box + 3 * g_rotate_lo;
+      len = (top - g_rotate_lo) * 3 * sizeof (unsigned char);
       if (dir > 0)
 	{
 	  for (i = 0; i < inc; i++)
@@ -457,7 +459,7 @@ spindac (dir, inc)
 	}
     }
   writevideopalette ();
-  delay (colors - g_dac_count - 1);
+  delay (g_colors - g_dac_count - 1);
 }
 
 /*
@@ -512,22 +514,22 @@ findfont (fontparm)
 */
 
 /*
- * The IBM method is that boxx[],boxy[] is a set of locations, and boxvalues
+ * The IBM method is that g_box_x[],g_box_y[] is a set of locations, and boxvalues
  * is the values in these locations.
  * Instead of using this box save/restore technique, we'll put the corners
- * in boxx[0],boxy[0],1,2,3 and then use xor.
+ * in g_box_x[0],g_box_y[0],1,2,3 and then use xor.
  */
 
 void
 dispbox (void)
 {
-  if (boxcount)
+  if (g_box_count)
     {
       setlinemode (1);
-      drawline (boxx[0], boxy[0], boxx[1], boxy[1]);
-      drawline (boxx[1], boxy[1], boxx[2], boxy[2]);
-      drawline (boxx[2], boxy[2], boxx[3], boxy[3]);
-      drawline (boxx[3], boxy[3], boxx[0], boxy[0]);
+      drawline (g_box_x[0], g_box_y[0], g_box_x[1], g_box_y[1]);
+      drawline (g_box_x[1], g_box_y[1], g_box_x[2], g_box_y[2]);
+      drawline (g_box_x[2], g_box_y[2], g_box_x[3], g_box_y[3]);
+      drawline (g_box_x[3], g_box_y[3], g_box_x[0], g_box_y[0]);
       setlinemode (0);
       xsync ();
     }
@@ -577,7 +579,7 @@ adapter_detect (void)
     return;
   done_detect = 1;
   textsafe = 2;
-  if (colors == 2)
+  if (g_colors == 2)
     {
       video_type = 100;
     }
@@ -639,7 +641,7 @@ find_special_colors (void)
   g_color_medium = 7;
   g_color_bright = 15;
 
-  if (colors == 2)
+  if (g_colors == 2)
     {
       g_color_medium = 1;
       g_color_bright = 1;
@@ -649,7 +651,7 @@ find_special_colors (void)
   if (!(g_got_real_dac || fake_lut))
     return;
 
-  for (i = 0; i < colors; i++)
+  for (i = 0; i < g_colors; i++)
     {
       brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
       if (brt > maxb)
@@ -722,9 +724,9 @@ get_line (row, startcol, stopcol, pixels)
      int row, startcol, stopcol;
      BYTE *pixels;
 {
-  if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+  if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset >= g_screen_height)
     return;
-  lineread (row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+  lineread (row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -741,9 +743,9 @@ put_line (row, startcol, stopcol, pixels)
      int row, startcol, stopcol;
      BYTE *pixels;
 {
-  if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+  if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset > g_screen_height)
     return;
-  linewrite (row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+  linewrite (row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -758,9 +760,9 @@ out_line (pixels, linelen)
      BYTE *pixels;
      int linelen;
 {
-  if (g_row_count + syoffs >= sydots)
+  if (g_row_count + g_sy_offset >= g_screen_height)
     return 0;
-  linewrite (g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+  linewrite (g_row_count + g_sy_offset, g_sx_offset, linelen + g_sx_offset - 1, pixels);
   g_row_count++;
   return 0;
 }

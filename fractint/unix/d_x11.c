@@ -157,8 +157,8 @@ static const int mousefkey[4][4] /* [button][dir] */ =
 #define DEFY 480
 #define DEFXY "640x480+0+0"
 
-extern int editpal_cursor;
-extern void Cursor_SetPos();
+extern int g_edit_pal_cursor;
+extern void cursor_set_position();
 
 #define SENS 1
 #define ABS(x) ((x) > 0 ? (x) : -(x))
@@ -435,21 +435,21 @@ select_visual(DriverX11 *di)
 	{
 	case StaticGray:
 	case StaticColor:
-		colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+		g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
 		g_got_real_dac = 0;
 		di->fake_lut = 0;
 		break;
 
 	case GrayScale:
 	case PseudoColor:
-		colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
+		g_colors = (di->Xdepth <= 8) ? di->Xvi->map_entries : 256;
 		g_got_real_dac = 1;
 		di->fake_lut = 0;
 		break;
 
 	case TrueColor:
 	case DirectColor:
-		colors = 256;
+		g_colors = 256;
 		g_got_real_dac = 0;
 		di->fake_lut = 1;
 		break;
@@ -459,9 +459,9 @@ select_visual(DriverX11 *di)
 		assert(1);
 		break;
 	}
-	if (colors > 256)
+	if (g_colors > 256)
 	{
-		colors = 256;
+		g_colors = 256;
 	}
 }
 
@@ -500,7 +500,7 @@ clearXwindow(DriverX11 *di)
 		/*
 		 * Initialize image to di->pixtab[0].
 		 */
-		if (colors == 2)
+		if (g_colors == 2)
 		{
 			for (i = 0; i < di->Ximage->bytes_per_line; i++)
 			{
@@ -563,7 +563,7 @@ xcmapstuff(DriverX11 *di)
 	{
 		di->privatecolor = 0;
 	}
-	for (i = 0; i < colors; i++)
+	for (i = 0; i < g_colors; i++)
 	{
 		di->pixtab[i] = i;
 		di->ipixtab[i] = 999;
@@ -593,14 +593,14 @@ xcmapstuff(DriverX11 *di)
 		for (powr = di->Xdepth; powr >= 1; powr--)
 		{
 			ncells = 1 << powr;
-			if (ncells > colors)
+			if (ncells > g_colors)
 			{
 				continue;
 			}
 			if (XAllocColorCells(di->Xdp, di->Xcmap, False, NULL, 0,
 				di->pixtab, (unsigned int) ncells))
 			{
-				colors = ncells;
+				g_colors = ncells;
 				di->usepixtab = 1;
 				break;
 			}
@@ -611,7 +611,7 @@ xcmapstuff(DriverX11 *di)
 			g_got_real_dac = 0;
 		}
 	}
-	for (i = 0; i < colors; i++)
+	for (i = 0; i < g_colors; i++)
 	{
 		di->ipixtab[di->pixtab[i]] = i;
 	}
@@ -635,14 +635,14 @@ xcmapstuff(DriverX11 *di)
 		di->ipixtab[0] = 0;
 	}
 
-	if (!g_got_real_dac && colors == 2 && BlackPixelOfScreen(di->Xsc) != 0)
+	if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(di->Xsc) != 0)
 	{
 		di->pixtab[0] = di->ipixtab[0] = 1;
 		di->pixtab[1] = di->ipixtab[1] = 0;
 		di->usepixtab = 1;
 	}
 
-	return colors;
+	return g_colors;
 }
 
 static int
@@ -1157,15 +1157,15 @@ ev_expose(DriverX11 *di, XExposeEvent *xevent)
 		y = xevent->y;
 		w = xevent->width;
 		h = xevent->height;
-		if (x+w > sxdots)
+		if (x+w > g_screen_width)
 		{
-			w = sxdots-x;
+			w = g_screen_width-x;
 		}
-		if (y+h > sydots)
+		if (y+h > g_screen_height)
 		{
-			h = sydots-y;
+			h = g_screen_height-y;
 		}
-		if (x < sxdots && y < sydots && w > 0 && h > 0)
+		if (x < g_screen_width && y < g_screen_height && w > 0 && h > 0)
 		{
 			XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, x, y, x, y,
 		xevent->width, xevent->height);
@@ -1180,7 +1180,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 	int banding = 0;
 	int bandx0, bandy0, bandx1, bandy1;
 
-	if (lookatmouse == 3 || zoomoff == 0)
+	if (g_look_at_mouse == 3 || g_zoom_off == 0)
 	{
 		di->last_x = xevent->xbutton.x;
 		di->last_y = xevent->xbutton.y;
@@ -1207,15 +1207,15 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 			}
 			bandx1 = xevent->xmotion.x;
 			bandy1 = xevent->xmotion.y;
-			if (ABS(bandx1-bandx0)*finalaspectratio > ABS(bandy1-bandy0))
+			if (ABS(bandx1-bandx0)*g_final_aspect_ratio > ABS(bandy1-bandy0))
 			{
 				bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-					finalaspectratio + bandy0;
+					g_final_aspect_ratio + bandy0;
 			}
 			else
 			{
 				bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-					finalaspectratio + bandx0;
+					g_final_aspect_ratio + bandx0;
 			}
 
 			if (!banding)
@@ -1226,7 +1226,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 				if (ABS(bandx1-bandx0) > 10 || ABS(bandy1-bandy0) > 10)
 				{
 					banding = 1;
-					XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
+					XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
 					XSetFunction(di->Xdp, di->Xgc, GXxor);
 				}
 			}
@@ -1261,12 +1261,12 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 	{
 		bandy1 = bandy0+1;
 	}
-	zrotate = 0;
-	zskew = 0;
-	zbx = (MIN(bandx0, bandx1)-sxoffs)/dxsize;
-	zby = (MIN(bandy0, bandy1)-syoffs)/dysize;
-	zwidth = ABS(bandx1-bandx0)/dxsize;
-	zdepth = zwidth;
+	g_z_rotate = 0;
+	g_z_skew = 0;
+	g_zbx = (MIN(bandx0, bandx1)-g_sx_offset)/g_dx_size;
+	g_zby = (MIN(bandy0, bandy1)-g_sy_offset)/g_dy_size;
+	g_z_width = ABS(bandx1-bandx0)/g_dx_size;
+	g_z_depth = g_z_width;
 	if (!inside_help)
 	{
 		di->xbufkey = FIK_ENTER;
@@ -1283,7 +1283,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 static void
 ev_motion_notify(DriverX11 *di, XEvent *xevent)
 {
-	if (editpal_cursor && !inside_help)
+	if (g_edit_pal_cursor && !inside_help)
 	{
 		while (XCheckWindowEvent(di->Xdp, di->Xw, PointerMotionMask, xevent))
 		{
@@ -1308,7 +1308,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
 			di->button_num = 0;
 		}
 
-		if (lookatmouse == 3 && di->button_num != 0)
+		if (g_look_at_mouse == 3 && di->button_num != 0)
 		{
 			di->dx += (xevent->xmotion.x-di->last_x)/MOUSE_SCALE;
 			di->dy += (xevent->xmotion.y-di->last_y)/MOUSE_SCALE;
@@ -1317,7 +1317,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
 		}
 		else
 		{
-			Cursor_SetPos(xevent->xmotion.x, xevent->xmotion.y);
+			cursor_set_position(xevent->xmotion.x, xevent->xmotion.y);
 			di->xbufkey = FIK_ENTER;
 		}
 	}
@@ -1377,8 +1377,8 @@ handle_events(DriverX11 *di)
 		}
 	}
 
-	if (!di->xbufkey && editpal_cursor && !inside_help
-		&& lookatmouse == 3 && (di->dx != 0 || di->dy != 0))
+	if (!di->xbufkey && g_edit_pal_cursor && !inside_help
+		&& g_look_at_mouse == 3 && (di->dx != 0 || di->dy != 0))
 	{
 		if (ABS(di->dx) > ABS(di->dy))
 		{
@@ -1896,7 +1896,7 @@ x11_window(Driver *drv)
 	select_visual(di);
 	if (di->fixcolors > 0)
 	{
-		colors = di->fixcolors;
+		g_colors = di->fixcolors;
 	}
 
 	if (di->fullscreen || di->onroot)
@@ -1904,8 +1904,8 @@ x11_window(Driver *drv)
 		di->Xwinwidth = DisplayWidth(di->Xdp, di->Xdscreen);
 		di->Xwinheight = DisplayHeight(di->Xdp, di->Xdscreen);
 	}
-	sxdots = di->Xwinwidth;
-	sydots = di->Xwinheight;
+	g_screen_width = di->Xwinwidth;
+	g_screen_height = di->Xwinheight;
 
 	Xwatt.background_pixel = BlackPixelOfScreen(di->Xsc);
 	Xwatt.bit_gravity = StaticGravity;
@@ -1940,8 +1940,8 @@ x11_window(Driver *drv)
 		XStoreName(di->Xdp, di->Xw, "xfractint");
 		di->Xgc = XCreateGC(di->Xdp, di->Xw, 0, &Xgcvals);
 	}
-	colors = xcmapstuff(di);
-	if (rotate_hi == 255) rotate_hi = colors-1;
+	g_colors = xcmapstuff(di);
+	if (g_rotate_hi == 255) g_rotate_hi = g_colors-1;
 	{
 		unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
 		if (! di->onroot)
@@ -1965,9 +1965,9 @@ x11_window(Driver *drv)
 	x11_flush(drv);
 	x11_write_palette(drv);
 
-	x11_video_table[0].xdots = sxdots;
-	x11_video_table[0].ydots = sydots;
-	x11_video_table[0].colors = colors;
+	x11_video_table[0].x_dots = g_screen_width;
+	x11_video_table[0].y_dots = g_screen_height;
+	x11_video_table[0].colors = g_colors;
 	x11_video_table[0].dotmode = 19;
 }
 
@@ -2002,17 +2002,17 @@ x11_resize(Driver *drv)
 
 	if (oldx != width || oldy != height)
 	{
-		sxdots = width;
-		sydots = height;
-		x11_video_table[0].xdots = sxdots;
-		x11_video_table[0].ydots = sydots;
-		oldx = sxdots;
-		oldy = sydots;
-		di->Xwinwidth = sxdots;
-		di->Xwinheight = sydots;
-		screenaspect = sydots/(float) sxdots;
-		finalaspectratio = screenaspect;
-		Xmwidth = (di->Xdepth > 1) ? sxdots: (1 + sxdots/8);
+		g_screen_width = width;
+		g_screen_height = height;
+		x11_video_table[0].x_dots = g_screen_width;
+		x11_video_table[0].y_dots = g_screen_height;
+		oldx = g_screen_width;
+		oldy = g_screen_height;
+		di->Xwinwidth = g_screen_width;
+		di->Xwinheight = g_screen_height;
+		g_screen_aspect_ratio = g_screen_height/(float) g_screen_width;
+		g_final_aspect_ratio = g_screen_aspect_ratio;
+		Xmwidth = (di->Xdepth > 1) ? g_screen_width: (1 + g_screen_width/8);
 		if (di->pixbuf != NULL)
 		{
 			free(di->pixbuf);
@@ -2023,8 +2023,8 @@ x11_resize(Driver *drv)
 			free(di->Ximage->data);
 			XDestroyImage(di->Ximage);
 		}
-		di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, NULL, sxdots, 
-			sydots, di->Xdepth, 0);
+		di->Ximage = XCreateImage(di->Xdp, di->Xvi, di->Xdepth, ZPixmap, 0, NULL, g_screen_width, 
+			g_screen_height, di->Xdepth, 0);
 		if (di->Ximage == NULL)
 		{
 			printf("XCreateImage failed\n");
@@ -2070,11 +2070,11 @@ x11_redraw(Driver *drv)
 	if (di->alarmon)
 	{
 		XPutImage(di->Xdp, di->Xw, di->Xgc, di->Ximage, 0, 0, 0, 0,
-			sxdots, sydots);
+			g_screen_width, g_screen_height);
 		if (di->onroot)
 		{
 			XPutImage(di->Xdp, di->Xpixmap, di->Xgc, di->Ximage, 0, 0, 0, 0,
-				sxdots, sydots);
+				g_screen_width, g_screen_height);
 		}
 		di->alarmon = 0;
 	}
@@ -2125,7 +2125,7 @@ x11_read_palette(Driver *drv)
  *	None.
  *
  * Side effects:
- *	Changes the displayed colors.
+ *	Changes the displayed g_colors.
  *
  *----------------------------------------------------------------------
  */
@@ -2194,7 +2194,7 @@ x11_write_palette(Driver *drv)
 			di->cols[i].green = g_dac_box[i][1]*1024;
 			di->cols[i].blue = g_dac_box[i][2]*1024;
 		}
-		XStoreColors(di->Xdp, di->Xcmap, di->cols, colors);
+		XStoreColors(di->Xdp, di->Xcmap, di->cols, g_colors);
 		XFlush(di->Xdp);
 	}
 
@@ -2259,11 +2259,11 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 {
 	DIX11(drv);
 #ifdef DEBUG /* Debugging checks */
-	if (color >= colors || color < 0)
+	if (color >= g_colors || color < 0)
 	{
-		printf("Color %d too big %d\n", color, colors);
+		printf("Color %d too big %d\n", color, g_colors);
 	}
-	if (x >= sxdots || x < 0 || y >= sydots || y < 0)
+	if (x >= g_screen_width || x < 0 || y >= g_screen_height || y < 0)
 	{
 		printf("Bad coord %d %d\n", x, y);
 	}
@@ -2274,7 +2274,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
 		di->xlastcolor = color;
 	}
 	XPutPixel(di->Ximage, x, y, FAKE_LUT(di, di->pixtab[color]));
-	if (di->fastmode == 1 && helpmode != HELPXHAIR)
+	if (di->fastmode == 1 && g_help_mode != HELPXHAIR)
 	{
 		if (!di->alarmon)
 		{
@@ -2363,7 +2363,7 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 	{
 		XPutPixel(di->Ximage, x+i, y, FAKE_LUT(di, pixline[i]));
 	}
-	if (di->fastmode == 1 && helpmode != HELPXHAIR)
+	if (di->fastmode == 1 && g_help_mode != HELPXHAIR)
 	{
 		if (!di->alarmon)
 		{
@@ -2424,7 +2424,7 @@ x11_set_line_mode(Driver *drv, int mode)
 	}
 	else
 	{
-		XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, colors-1));
+		XSetForeground(di->Xdp, di->Xgc, FAKE_LUT(di, g_colors-1));
 		di->xlastcolor = -1;
 		XSetFunction(di->Xdp, di->Xgc, GXxor);
 		di->xlastfcn = GXxor;
@@ -2630,7 +2630,7 @@ x11_shell(Driver *drv)
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
 
-; Unix: We ignore ax,bx,cx,dx.  dotmode is the "mode" field in the video
+; Unix: We ignore ax,bx,cx,dx.  g_dot_mode is the "mode" field in the video
 ; table.  We use mode 19 for the X window.
 */
 static void
@@ -2638,11 +2638,11 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	if (g_disk_flag)
 	{
-		enddisk();
+		disk_end();
 	}
 	x11_end_video(drv);
 	g_good_mode = 1;
-	switch (dotmode)
+	switch (g_dot_mode)
 	{
 	case 0:				/* text */
 #if 0
@@ -2660,14 +2660,14 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		break;
 
 	default:
-		printf("Bad mode %d\n", dotmode);
+		printf("Bad mode %d\n", g_dot_mode);
 		exit(-1);
 	} 
-	if (dotmode !=0)
+	if (g_dot_mode !=0)
 	{
 		x11_read_palette(drv);
-		g_and_color = colors-1;
-		boxcount =0;
+		g_and_color = g_colors-1;
+		g_box_count =0;
 	}
 }
 

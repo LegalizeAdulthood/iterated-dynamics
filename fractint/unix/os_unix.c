@@ -13,25 +13,24 @@ struct MP Ans = { 0 };
 int g_and_color;
 BYTE block[4096] = { 0 };
 int g_checked_vvs = 0;
-int cpu, fpu;                        /* cpu, fpu flags */
+int g_cpu, g_fpu;                        /* cpu, fpu flags */
 unsigned char g_dac_box[256][3];
-int disktarga = 0;
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
-int fm_attack = 0;
-int fm_decay = 0;
-int fm_release = 0;
-int fm_sustain = 0;
-int fm_vol = 0;
-int fm_wavetype = 0;
-int hi_atten = 0;
-long linitx = 0;
-long linity = 0;
-BYTE olddacbox[256][3];
-int polyphony = 0;
-char rlebuf[258] = { 0 };
-long savebase = 0;				/* base clock ticks */ 
-long saveticks = 0;				/* save after this many ticks */ 
+int g_fm_attack = 0;
+int g_fm_decay = 0;
+int g_fm_release = 0;
+int g_fm_sustain = 0;
+int g_fm_volume = 0;
+int g_fm_wave_type = 0;
+int g_note_attenuation = 0;
+long g_initial_x_l = 0;
+long g_initial_y_l = 0;
+BYTE g_old_dac_box[256][3];
+int g_polyphony = 0;
+char g_rle_buffer[258] = { 0 };
+long g_save_base = 0;				/* base clock ticks */ 
+long g_save_ticks = 0;				/* save after this many ticks */ 
 unsigned int strlocn[10*1024] = { 0 };
 char supervga_list[] =
 {
@@ -75,7 +74,7 @@ char supervga_list[] =
 	0, 0								//        dw      0
 };
 int g_svga_type = 0;
-char tstack[4096] = { 0 };
+char g_text_stack[4096] = { 0 };
 
 /* g_video_table
  *
