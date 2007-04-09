@@ -52,7 +52,7 @@ int wintext_textoff();
 void wintext_putstring(int xpos, int ypos, int attrib, const char *string);
 	Sends a character string to the screen starting at (xpos, ypos)
 	using the (CGA-style and, yes, it should be a 'char') specified attribute.
-void wintext_paintscreen(int xmin, int xmax, int ymin, int ymax);
+void wintext_paintscreen(int g_x_min, int g_x_max, int g_y_min, int g_y_max);
 	Repaints the rectangular portion of the text screen specified by
 	the four parameters, which are in character co-ordinates.  This
 	routine is called automatically by 'wintext_putstring()' as well as
@@ -401,14 +401,14 @@ static void wintext_OnPaint(HWND window)
 	HDC hDC = BeginPaint(window, &ps);
 
 	/* the routine below handles *all* window updates */
-	int xmin = ps.rcPaint.left/g_me->char_width;
-	int xmax = (ps.rcPaint.right + g_me->char_width - 1)/g_me->char_width;
-	int ymin = ps.rcPaint.top/g_me->char_height;
-	int ymax = (ps.rcPaint.bottom + g_me->char_height - 1)/g_me->char_height;
+	int g_x_min = ps.rcPaint.left/g_me->char_width;
+	int g_x_max = (ps.rcPaint.right + g_me->char_width - 1)/g_me->char_width;
+	int g_y_min = ps.rcPaint.top/g_me->char_height;
+	int g_y_max = (ps.rcPaint.bottom + g_me->char_height - 1)/g_me->char_height;
 
 	ODS("wintext_OnPaint");
 
-	wintext_paintscreen(g_me, xmin, xmax, ymin, ymax);
+	wintext_paintscreen(g_me, g_x_min, g_x_max, g_y_min, g_y_max);
 	EndPaint(window, &ps);
 }
 
@@ -540,10 +540,10 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 */
 
 void wintext_paintscreen(WinText *me,
-	int xmin,       /* update this rectangular section */
-	int xmax,       /* of the 'screen'                 */
-	int ymin,
-	int ymax)
+	int g_x_min,       /* update this rectangular section */
+	int g_x_max,       /* of the 'screen'                 */
+	int g_y_min,
+	int g_y_max)
 {
 	int i, j, k;
 	int istart, jstart, length, foreground, background;
@@ -576,21 +576,21 @@ void wintext_paintscreen(WinText *me,
 		}
 	}
 
-	if (xmin < 0)
+	if (g_x_min < 0)
 	{
-		xmin = 0;
+		g_x_min = 0;
 	}
-	if (xmax >= me->char_xchars)
+	if (g_x_max >= me->char_xchars)
 	{
-		xmax = me->char_xchars-1;
+		g_x_max = me->char_xchars-1;
 	}
-	if (ymin < 0)
+	if (g_y_min < 0)
 	{
-		ymin = 0;
+		g_y_min = 0;
 	}
-	if (ymax >= me->char_ychars)
+	if (g_y_max >= me->char_ychars)
 	{
-		ymax = me->char_ychars-1;
+		g_y_max = me->char_ychars-1;
 	}
 
 	hDC = GetDC(me->hWndCopy);
@@ -611,21 +611,21 @@ void wintext_paintscreen(WinText *me,
 	'strings' of screen locations with common foreground
 	and background g_colors
 	*/
-	for (j = ymin; j <= ymax; j++)
+	for (j = g_y_min; j <= g_y_max; j++)
 	{
 		length = 0;
 		oldbk = 99;
 		oldfg = 99;
-		for (i = xmin; i <= xmax + 1; i++)
+		for (i = g_x_min; i <= g_x_max + 1; i++)
 		{
 			k = -1;
-			if (i <= xmax)
+			if (i <= g_x_max)
 			{
 				k = me->attrs[j][i];
 			}
 			foreground = (k & 15);
 			background = (k >> 4);
-			if (i > xmax || foreground != (int)oldfg || background != (int)oldbk)
+			if (i > g_x_max || foreground != (int)oldfg || background != (int)oldbk)
 			{
 				if (length > 0)
 				{
@@ -709,24 +709,24 @@ void wintext_cursor(WinText *me, int xpos, int ypos, int cursor_type)
 void wintext_set_attr(WinText *me, int row, int col, int attr, int count)
 {
 	int i;
-	int xmin, xmax, ymin, ymax;
-	xmin = xmax = col;
-	ymin = ymax = row;
+	int g_x_min, g_x_max, g_y_min, g_y_max;
+	g_x_min = g_x_max = col;
+	g_y_min = g_y_max = row;
 	for (i = 0; i < count; i++)
 	{
 		me->attrs[row][col + i] = (unsigned char) (attr & 0xFF);
 	}
-	if (xmin + count >= WINTEXT_MAX_COL)
+	if (g_x_min + count >= WINTEXT_MAX_COL)
 	{
-		xmin = 0;
-		xmax = WINTEXT_MAX_COL-1;
-		ymax = (count + WINTEXT_MAX_COL - 1)/WINTEXT_MAX_COL;
+		g_x_min = 0;
+		g_x_max = WINTEXT_MAX_COL-1;
+		g_y_max = (count + WINTEXT_MAX_COL - 1)/WINTEXT_MAX_COL;
 	}
 	else
 	{
-		xmax = xmin + count;
+		g_x_max = g_x_min + count;
 	}
-	invalidate(me, xmin, ymin, xmax, ymax);
+	invalidate(me, g_x_min, g_y_min, g_x_max, g_y_max);
 }
 
 void wintext_clear(WinText *me)

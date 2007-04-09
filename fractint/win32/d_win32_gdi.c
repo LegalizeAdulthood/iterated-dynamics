@@ -67,8 +67,8 @@ struct tagGDIDriver
 /*                                      14 = Tandy 1000                 */
 /*                                      15 = TRIDENT  SuperVGA*256      */
 /*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     xdots;          number of dots across the screen     */
-/*         int     ydots;          number of dots down the screen       */
+/*         int     g_x_dots;          number of dots across the screen     */
+/*         int     g_y_dots;          number of dots down the screen       */
 /*         int     g_colors;         number of g_colors available           */
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
@@ -152,12 +152,12 @@ handle_special_keys(int ch)
 		inside_help = 0;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && tabmode)
+	else if (FIK_TAB == ch && g_tab_mode)
 	{
-		int old_tab = tabmode;
-		tabmode = 0;
+		int old_tab = g_tab_mode;
+		g_tab_mode = 0;
 		tab_display();
-		tabmode = old_tab;
+		g_tab_mode = old_tab;
 		ch = 0;
 	}
 
@@ -188,14 +188,14 @@ max_size(GDIDriver *di, int *width, int *height, BOOL *center_x, BOOL *center_y)
 {
 	*width = di->base.wintext.max_width;
 	*height = di->base.wintext.max_height;
-	if (g_video_table[g_adapter].xdots > *width)
+	if (g_video_table[g_adapter].x_dots > *width)
 	{
-		*width = g_video_table[g_adapter].xdots;
+		*width = g_video_table[g_adapter].x_dots;
 		*center_x = FALSE;
 	}
-	if (g_video_table[g_adapter].ydots > *height)
+	if (g_video_table[g_adapter].y_dots > *height)
 	{
-		*height = g_video_table[g_adapter].ydots;
+		*height = g_video_table[g_adapter].y_dots;
 		*center_y = FALSE;
 	}
 }
@@ -261,7 +261,7 @@ gdi_terminate(Driver *drv)
 }
 
 static void
-gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
+gdi_get_max_screen(Driver *drv, int *g_x_max, int *g_y_max)
 {
 	RECT desktop;
 	GetClientRect(GetDesktopWindow(), &desktop);
@@ -269,13 +269,13 @@ gdi_get_max_screen(Driver *drv, int *xmax, int *ymax)
 	desktop.bottom -= GetSystemMetrics(SM_CYFRAME)*2
 		+ GetSystemMetrics(SM_CYCAPTION) - 1;
 
-	if (xmax != NULL)
+	if (g_x_max != NULL)
 	{
-		*xmax = desktop.right;
+		*g_x_max = desktop.right;
 	}
-	if (ymax != NULL)
+	if (g_y_max != NULL)
 	{
-		*ymax = desktop.bottom;
+		*g_y_max = desktop.bottom;
 	}
 }
 
@@ -335,8 +335,8 @@ gdi_init(Driver *drv, int *argc, char **argv)
 
 		for (m = 0; m < NUM_OF(modes); m++)
 		{
-			if ((modes[m].xdots <= width) &&
-				(modes[m].ydots <= height))
+			if ((modes[m].x_dots <= width) &&
+				(modes[m].y_dots <= height))
 			{
 				add_video_mode(drv, &modes[m]);
 			}
@@ -359,8 +359,8 @@ gdi_resize(Driver *drv)
 	BOOL center_graphics_x, center_graphics_y;
 
 	max_size(di, &width, &height, &center_graphics_x, &center_graphics_y);
-	if ((g_video_table[g_adapter].xdots == di->plot.width)
-		&& (g_video_table[g_adapter].ydots == di->plot.height)
+	if ((g_video_table[g_adapter].x_dots == di->plot.width)
+		&& (g_video_table[g_adapter].y_dots == di->plot.height)
 		&& (width == g_frame.width)
 		&& (height == g_frame.height))
 	{
@@ -639,7 +639,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	DI(di);
 
 	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = g_screen_width;
+	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
@@ -863,8 +863,8 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 
 	/* allow modes <= size of screen with 256 g_colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
-	return (mode->xdots <= width) &&
-		(mode->ydots <= height) &&
+	return (mode->x_dots <= width) &&
+		(mode->y_dots <= height) &&
 		(mode->colors == 256) &&
 		(mode->videomodeax == 0) &&
 		(mode->videomodebx == 0) &&

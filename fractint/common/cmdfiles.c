@@ -20,8 +20,8 @@
 
 /* variables defined by the command line/files processor */
 int     g_stop_pass = 0;             /* stop at this guessing pass early */
-int     g_pseudo_x = 0;              /* xdots to use for video independence */
-int     g_pseudo_y = 0;              /* ydots to use for video independence */
+int     g_pseudo_x = 0;              /* g_x_dots to use for video independence */
+int     g_pseudo_y = 0;              /* g_y_dots to use for video independence */
 int     g_bf_digits = 0;             /* digits to use (force) for bf_math */
 int     g_show_dot = -1;             /* color to show crawling graphics cursor */
 int     g_size_dot;                /* size of dot crawling cursor */
@@ -116,7 +116,7 @@ char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
 char	g_command_comment[4][MAXCMT];    /* comments for command set */
 char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
 char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
-struct SearchPath g_search_for;
+struct search_path g_search_for;
 float	*g_ifs_definition = NULL;     /* ifs parameters */
 int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
 int		g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
@@ -395,11 +395,11 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_check_current_dir = 0;                     /* flag to check current dire for files */
 	g_save_time = 0;                    /* no auto-save              */
 	g_init_mode = -1;                       /* no initial video mode     */
-	viewwindow = 0;                      /* no view window            */
-	viewreduction = 4.2f;
-	viewcrop = 1;
+	g_view_window = 0;                      /* no view window            */
+	g_view_reduction = 4.2f;
+	g_view_crop = 1;
 	g_final_aspect_ratio = g_screen_aspect_ratio;
-	viewxdots = viewydots = 0;
+	g_view_x_dots = g_view_y_dots = 0;
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
@@ -440,21 +440,21 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 {
 	int i;
 	g_escape_exit_flag = FALSE;                     /* don't disable the "are you sure?" screen */
-	usr_periodicitycheck = 1;            /* turn on periodicity    */
+	g_user_periodicity_check = 1;            /* turn on periodicity    */
 	g_inside = 1;                          /* inside color = blue    */
 	g_fill_color = -1;                      /* no special fill color */
 	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
 	g_outside = -1;                        /* outside color = -1 (not used) */
 	g_max_iteration = 150;                         /* initial maxiter        */
-	usr_stdcalcmode = 'g';               /* initial solid-guessing */
+	g_user_standard_calculation_mode = 'g';               /* initial solid-guessing */
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = FALSE;
 	g_proximity = 0.01;
 	g_is_mand = 1;                          /* default formula mand/jul toggle */
 #ifndef XFRACT
-	usr_floatflag = 0;                   /* turn off the float flag */
+	g_user_float_flag = 0;                   /* turn off the float flag */
 #else
-	usr_floatflag = 1;                   /* turn on the float flag */
+	g_user_float_flag = 1;                   /* turn on the float flag */
 #endif
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	g_fractal_type = 0;                        /* initial type Set flag  */
@@ -475,13 +475,13 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;     /* initial orbit values */
 	g_invert = 0;
 	g_decomposition[0] = g_decomposition[1] = 0;
-	usr_distest = 0;
+	g_user_distance_test = 0;
 	g_pseudo_x = 0;
 	g_pseudo_y = 0;
 	g_distance_test_width = 71;
 	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
-	xx3rd = xxmin = -2.5; xxmax = 1.5;   /* initial corner values  */
-	yy3rd = yymin = -1.5; yymax = 1.5;   /* initial corner values  */
+	g_xx_3rd = g_xx_min = -2.5; g_xx_max = 1.5;   /* initial corner values  */
+	g_yy_3rd = g_yy_min = -1.5; g_yy_max = 1.5;   /* initial corner values  */
 	bf_math = 0;
 	g_potential_16bit = g_potential_flag = FALSE;
 	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */
@@ -504,12 +504,12 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_keep_screen_coords = 0;
 	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
 	g_set_orbit_corners = 0;
-	g_orbit_x_min = g_current_fractal_specific->xmin;
-	g_orbit_x_max = g_current_fractal_specific->xmax;
-	g_orbit_x_3rd = g_current_fractal_specific->xmin;
-	g_orbit_y_min = g_current_fractal_specific->ymin;
-	g_orbit_y_max = g_current_fractal_specific->ymax;
-	g_orbit_y_3rd = g_current_fractal_specific->ymin;
+	g_orbit_x_min = g_current_fractal_specific->x_min;
+	g_orbit_x_max = g_current_fractal_specific->x_max;
+	g_orbit_x_3rd = g_current_fractal_specific->x_min;
+	g_orbit_y_min = g_current_fractal_specific->y_min;
+	g_orbit_y_max = g_current_fractal_specific->y_max;
+	g_orbit_y_3rd = g_current_fractal_specific->y_min;
 
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
@@ -966,10 +966,10 @@ static int make_par_arg(const cmd_context *context)
 	{
 		g_make_par[1] = 0; /* second char is flag for map */
 	}
-	xdots = g_file_x_dots;
-	ydots = g_file_y_dots;
-	g_dx_size = xdots - 1;
-	g_dy_size = ydots - 1;
+	g_x_dots = g_file_x_dots;
+	g_y_dots = g_file_y_dots;
+	g_dx_size = g_x_dots - 1;
+	g_dy_size = g_y_dots - 1;
 	calculate_fractal_initialize();
 	make_batch_file();
 #ifndef WINFRACT
@@ -1237,10 +1237,10 @@ static int type_arg(const cmd_context *context)
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	if (s_init_corners == 0)
 	{
-		xx3rd = xxmin = g_current_fractal_specific->xmin;
-		xxmax         = g_current_fractal_specific->xmax;
-		yy3rd = yymin = g_current_fractal_specific->ymin;
-		yymax         = g_current_fractal_specific->ymax;
+		g_xx_3rd = g_xx_min = g_current_fractal_specific->x_min;
+		g_xx_max         = g_current_fractal_specific->x_max;
+		g_yy_3rd = g_yy_min = g_current_fractal_specific->y_min;
+		g_yy_max         = g_current_fractal_specific->y_max;
 	}
 	if (s_initial_parameters == 0)
 	{
@@ -1377,7 +1377,7 @@ static int passes_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	usr_stdcalcmode = context->charval[0];
+	g_user_standard_calculation_mode = context->charval[0];
 	if (context->charval[0] == 'g')
 	{
 		g_stop_pass = ((int)context->value[1] - (int)'0');
@@ -1819,26 +1819,26 @@ static int corners_arg(const cmd_context *context)
 			}
 		}
 
-		/* xx3rd = xxmin = floatval[0]; */
+		/* g_xx_3rd = g_xx_min = floatval[0]; */
 		get_bf(bfxmin, context->floatvalstr[0]);
 		get_bf(bfx3rd, context->floatvalstr[0]);
 
-		/* xxmax = floatval[1]; */
+		/* g_xx_max = floatval[1]; */
 		get_bf(bfxmax, context->floatvalstr[1]);
 
-		/* yy3rd = yymin = floatval[2]; */
+		/* g_yy_3rd = g_yy_min = floatval[2]; */
 		get_bf(bfymin, context->floatvalstr[2]);
 		get_bf(bfy3rd, context->floatvalstr[2]);
 
-		/* yymax = floatval[3]; */
+		/* g_yy_max = floatval[3]; */
 		get_bf(bfymax, context->floatvalstr[3]);
 
 		if (context->totparms == 6)
 		{
-			/* xx3rd = floatval[4]; */
+			/* g_xx_3rd = floatval[4]; */
 			get_bf(bfx3rd, context->floatvalstr[4]);
 
-			/* yy3rd = floatval[5]; */
+			/* g_yy_3rd = floatval[5]; */
 			get_bf(bfy3rd, context->floatvalstr[5]);
 		}
 
@@ -1864,39 +1864,39 @@ static int corners_arg(const cmd_context *context)
 				floattobf(bfparms[k], g_parameters[k]);
 			}
 
-			/* xx3rd = xxmin = floatval[0]; */
+			/* g_xx_3rd = g_xx_min = floatval[0]; */
 			get_bf(bfxmin, context->floatvalstr[0]);
 			get_bf(bfx3rd, context->floatvalstr[0]);
 
-			/* xxmax = floatval[1]; */
+			/* g_xx_max = floatval[1]; */
 			get_bf(bfxmax, context->floatvalstr[1]);
 
-			/* yy3rd = yymin = floatval[2]; */
+			/* g_yy_3rd = g_yy_min = floatval[2]; */
 			get_bf(bfymin, context->floatvalstr[2]);
 			get_bf(bfy3rd, context->floatvalstr[2]);
 
-			/* yymax = floatval[3]; */
+			/* g_yy_max = floatval[3]; */
 			get_bf(bfymax, context->floatvalstr[3]);
 
 			if (context->totparms == 6)
 			{
-				/* xx3rd = floatval[4]; */
+				/* g_xx_3rd = floatval[4]; */
 				get_bf(bfx3rd, context->floatvalstr[4]);
 
-				/* yy3rd = floatval[5]; */
+				/* g_yy_3rd = floatval[5]; */
 				get_bf(bfy3rd, context->floatvalstr[5]);
 			}
 		}
 	}
-	xx3rd = xxmin = context->floatval[0];
-	xxmax =         context->floatval[1];
-	yy3rd = yymin = context->floatval[2];
-	yymax =         context->floatval[3];
+	g_xx_3rd = g_xx_min = context->floatval[0];
+	g_xx_max =         context->floatval[1];
+	g_yy_3rd = g_yy_min = context->floatval[2];
+	g_yy_max =         context->floatval[3];
 
 	if (context->totparms == 6)
 	{
-		xx3rd =      context->floatval[4];
-		yy3rd =      context->floatval[5];
+		g_xx_3rd =      context->floatval[4];
+		g_yy_3rd =      context->floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1944,15 +1944,15 @@ static int view_windows_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	viewwindow = 1;
-	viewreduction = 4.2f;  /* reset default values */
+	g_view_window = 1;
+	g_view_reduction = 4.2f;  /* reset default values */
 	g_final_aspect_ratio = g_screen_aspect_ratio;
-	viewcrop = 1; /* yes */
-	viewxdots = viewydots = 0;
+	g_view_crop = 1; /* yes */
+	g_view_x_dots = g_view_y_dots = 0;
 
 	if ((context->totparms > 0) && (context->floatval[0] > 0.001))
 	{
-		viewreduction = (float)context->floatval[0];
+		g_view_reduction = (float)context->floatval[0];
 	}
 	if ((context->totparms > 1) && (context->floatval[1] > 0.001))
 	{
@@ -1960,15 +1960,15 @@ static int view_windows_arg(const cmd_context *context)
 	}
 	if ((context->totparms > 2) && (context->yesnoval[2] == 0))
 	{
-		viewcrop = context->yesnoval[2];
+		g_view_crop = context->yesnoval[2];
 	}
 	if ((context->totparms > 3) && (context->intval[3] > 0))
 	{
-		viewxdots = context->intval[3];
+		g_view_x_dots = context->intval[3];
 	}
 	if ((context->totparms == 5) && (context->intval[4] > 0))
 	{
-		viewydots = context->intval[4];
+		g_view_y_dots = context->intval[4];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2132,9 +2132,9 @@ static int float_arg(const cmd_context *context)
 		return bad_arg(context->curarg);
 	}
 #ifndef XFRACT
-	usr_floatflag = (char)context->yesnoval[0];
+	g_user_float_flag = (char)context->yesnoval[0];
 #else
-	usr_floatflag = 1; /* must use floating point */
+	g_user_float_flag = 1; /* must use floating point */
 #endif
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -2416,18 +2416,18 @@ static int scale_map_arg(const cmd_context *context)
 
 static int periodicity_arg(const cmd_context *context)
 {
-	usr_periodicitycheck = 1;
+	g_user_periodicity_check = 1;
 	if ((context->charval[0] == 'n') || (context->numval == 0))
 	{
-		usr_periodicitycheck = 0;
+		g_user_periodicity_check = 0;
 	}
 	else if (context->charval[0] == 'y')
 	{
-		usr_periodicitycheck = 1;
+		g_user_periodicity_check = 1;
 	}
 	else if (context->charval[0] == 's')   /* 's' for 'show' */
 	{
-		usr_periodicitycheck = -1;
+		g_user_periodicity_check = -1;
 	}
 	else if (context->numval == NON_NUMERIC)
 	{
@@ -2435,15 +2435,15 @@ static int periodicity_arg(const cmd_context *context)
 	}
 	else if (context->numval != 0)
 	{
-		usr_periodicitycheck = context->numval;
+		g_user_periodicity_check = context->numval;
 	}
-	if (usr_periodicitycheck > 255)
+	if (g_user_periodicity_check > 255)
 	{
-		usr_periodicitycheck = 255;
+		g_user_periodicity_check = 255;
 	}
-	if (usr_periodicitycheck < -255)
+	if (g_user_periodicity_check < -255)
 	{
-		usr_periodicitycheck = -255;
+		g_user_periodicity_check = -255;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2592,7 +2592,7 @@ static int distance_test_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	usr_distest = (long)context->floatval[0];
+	g_user_distance_test = (long)context->floatval[0];
 	g_distance_test_width = 71;
 	if (context->totparms > 1)
 	{

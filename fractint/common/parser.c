@@ -203,7 +203,7 @@ void (**f)(void) = (void (**)(void))0; /* static CAE fp */
 
 int g_is_mand = 1;
 
-unsigned int g_posp, vsp, g_last_op;     /* CAE fp made non-static */
+unsigned int g_posp, g_parser_vsp, g_last_op;     /* CAE fp made non-static */
 static unsigned int n, NextOp, InitN;
 static int paren, ExpectingArg;
 struct ConstArg *v = (struct ConstArg *)0;      /* was static CAE fp */
@@ -215,8 +215,8 @@ static int ShiftBack;     /* TIW 06-18-90 */
 static int SetRandom;     /* MCP 11-21-91 */
 static int Randomized;
 static unsigned long RandNum;
-short uses_p1, uses_p2, uses_p3, uses_p4, uses_p5, uses_jump;
-short uses_ismand;
+short g_uses_p1, g_uses_p2, g_uses_p3, g_uses_p4, g_uses_p5, uses_jump;
+short g_uses_is_mand;
 unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
@@ -2093,7 +2093,7 @@ struct ConstArg *isconst(char *Str, int Len)
 	_CMPLX z;
 	unsigned n, j;
 	/* next line enforces variable vs constant naming convention */
-	for (n = 0; n < vsp; n++)
+	for (n = 0; n < g_parser_vsp; n++)
 	{
 		if (v[n].len == Len)
 		{
@@ -2101,11 +2101,11 @@ struct ConstArg *isconst(char *Str, int Len)
 			{
 				if (n == 1)        /* The formula uses 'p1'. */
 				{
-					uses_p1 = 1;
+					g_uses_p1 = 1;
 				}
 				if (n == 2)        /* The formula uses 'p2'. */
 				{
-					uses_p2 = 1;
+					g_uses_p2 = 1;
 				}
 				if (n == 7)        /* The formula uses 'rand'. */
 				{
@@ -2113,19 +2113,19 @@ struct ConstArg *isconst(char *Str, int Len)
 				}
 				if (n == 8)        /* The formula uses 'p3'. */
 				{
-					uses_p3 = 1;
+					g_uses_p3 = 1;
 				}
 				if (n == 13)        /* The formula uses 'ismand'. */
 				{
-					uses_ismand = 1;
+					g_uses_is_mand = 1;
 				}
 				if (n == 17)        /* The formula uses 'p4'. */
 				{
-					uses_p4 = 1;
+					g_uses_p4 = 1;
 				}
 				if (n == 18)        /* The formula uses 'p5'. */
 				{
-					uses_p5 = 1;
+					g_uses_p5 = 1;
 				}
 #if !defined(XFRACT)
 				if (n == 10 || n == 11 || n == 12)
@@ -2143,20 +2143,20 @@ struct ConstArg *isconst(char *Str, int Len)
 			}
 		}
 	}
-	v[vsp].s = Str;
-	v[vsp].len = Len;
-	v[vsp].a.d.x = v[vsp].a.d.y = 0.0;
+	v[g_parser_vsp].s = Str;
+	v[g_parser_vsp].len = Len;
+	v[g_parser_vsp].a.d.x = v[g_parser_vsp].a.d.y = 0.0;
 
 #if !defined(XFRACT)
-	/* v[vsp].a should already be zeroed out */
+	/* v[g_parser_vsp].a should already be zeroed out */
 	switch (MathType)
 	{
 	case M_MATH:
-		v[vsp].a.m.x.Mant = v[vsp].a.m.x.Exp = 0;
-		v[vsp].a.m.y.Mant = v[vsp].a.m.y.Exp = 0;
+		v[g_parser_vsp].a.m.x.Mant = v[g_parser_vsp].a.m.x.Exp = 0;
+		v[g_parser_vsp].a.m.y.Mant = v[g_parser_vsp].a.m.y.Exp = 0;
 		break;
 	case L_MATH:
-		v[vsp].a.l.x = v[vsp].a.l.y = 0;
+		v[g_parser_vsp].a.l.x = v[g_parser_vsp].a.l.y = 0;
 		break;
 	}
 #endif
@@ -2170,7 +2170,7 @@ struct ConstArg *isconst(char *Str, int Len)
 			g_posp--;
 			Str = Str - 1;
 			InitN--;
-			v[vsp].len++;
+			v[g_parser_vsp].len++;
 		}
 		for (n = 1; isdigit(Str[n]) || Str[n] == '.'; n++)
 		{
@@ -2186,7 +2186,7 @@ struct ConstArg *isconst(char *Str, int Len)
 				for (; isdigit(Str[j]) || Str[j] == '.' || Str[j] == '-'; j++)
 				{
 				}
-				v[vsp].len = j;
+				v[g_parser_vsp].len = j;
 			}
 			else
 			{
@@ -2201,21 +2201,21 @@ struct ConstArg *isconst(char *Str, int Len)
 		switch (MathType)
 		{
 		case D_MATH:
-			v[vsp].a.d = z;
+			v[g_parser_vsp].a.d = z;
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			v[vsp].a.m = cmplx2MPC(z);
+			v[g_parser_vsp].a.m = cmplx2MPC(z);
 			break;
 		case L_MATH:
-			v[vsp].a.l.x = (long)(z.x*fg);
-			v[vsp].a.l.y = (long)(z.y*fg);
+			v[g_parser_vsp].a.l.x = (long)(z.x*fg);
+			v[g_parser_vsp].a.l.y = (long)(z.y*fg);
 			break;
 #endif
 		}
-		v[vsp].s = Str;
+		v[g_parser_vsp].s = Str;
 	}
-	return &v[vsp++];
+	return &v[g_parser_vsp++];
 }
 
 
@@ -2642,17 +2642,17 @@ static int ParseStr(char *Str, int pass)
 #endif
 	}
 	g_max_fn = 0;   /* TIW 03-30-91 */
-	for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++)
+	for (g_parser_vsp = 0; g_parser_vsp < sizeof(Constants) / sizeof(char*); g_parser_vsp++)
 	{
-		v[vsp].s = Constants[vsp];
-		v[vsp].len = (int) strlen(Constants[vsp]);
+		v[g_parser_vsp].s = Constants[g_parser_vsp];
+		v[g_parser_vsp].len = (int) strlen(Constants[g_parser_vsp]);
 	}
 	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	const_pi = atan(1.0)*4;
 	const_e  = exp(1.0);
 	v[7].a.d.x = v[7].a.d.y = 0.0;
-	v[11].a.d.x = (double)xdots;
-	v[11].a.d.y = (double)ydots;
+	v[11].a.d.x = (double)g_x_dots;
+	v[11].a.d.y = (double)g_y_dots;
 	v[12].a.d.x = (double)g_max_iteration;
 	v[12].a.d.y = 0;
 	v[13].a.d.x = (double)g_is_mand;
@@ -2716,8 +2716,8 @@ static int ParseStr(char *Str, int pass)
 		v[6].a.l.y = 0L;
 		v[8].a.l.x = (long)(g_parameters[4]*fg);
 		v[8].a.l.y = (long)(g_parameters[5]*fg);
-		v[11].a.l.x = xdots; v[11].a.l.x <<= g_bit_shift;
-		v[11].a.l.y = ydots; v[11].a.l.y <<= g_bit_shift;
+		v[11].a.l.x = g_x_dots; v[11].a.l.x <<= g_bit_shift;
+		v[11].a.l.y = g_y_dots; v[11].a.l.y <<= g_bit_shift;
 		v[12].a.l.x = g_max_iteration; v[12].a.l.x <<= g_bit_shift;
 		v[12].a.l.y = 0L;
 		v[13].a.l.x = g_is_mand; v[13].a.l.x <<= g_bit_shift;
@@ -3863,8 +3863,8 @@ int frm_get_param_stuff(char *Name)
 	int c;
 	struct token_st current_token;
 	FILE *entry_file = NULL;
-	uses_p1 = uses_p2 = uses_p3 = uses_ismand = g_max_fn = 0;
-	uses_p4 = uses_p5 = 0;
+	g_uses_p1 = g_uses_p2 = g_uses_p3 = g_uses_is_mand = g_max_fn = 0;
+	g_uses_p4 = g_uses_p5 = 0;
 
 	if (g_formula_name[0] == 0)
 	{
@@ -3915,27 +3915,27 @@ int frm_get_param_stuff(char *Name)
 		case PARAM_VARIABLE:
 			if (current_token.token_id == 1)
 			{
-				uses_p1 = 1;
+				g_uses_p1 = 1;
 			}
 			else if (current_token.token_id == 2)
 			{
-				uses_p2 = 1;
+				g_uses_p2 = 1;
 			}
 			else if (current_token.token_id == 8)
 			{
-				uses_p3 = 1;
+				g_uses_p3 = 1;
 			}
 			else if (current_token.token_id == 13)
 			{
-				uses_ismand = 1;
+				g_uses_is_mand = 1;
 			}
 			else if (current_token.token_id == 17)
 			{
-				uses_p4 = 1;
+				g_uses_p4 = 1;
 			}
 			else if (current_token.token_id == 18)
 			{
-				uses_p5 = 1;
+				g_uses_p5 = 1;
 			}
 			break;
 		case PARAM_FUNCTION:
@@ -3953,8 +3953,8 @@ int frm_get_param_stuff(char *Name)
 	}
 	if (current_token.token_type != END_OF_FORMULA)
 	{
-		uses_p1 = uses_p2 = uses_p3 = uses_ismand = g_max_fn = 0;
-		uses_p4 = uses_p5 = 0;
+		g_uses_p1 = g_uses_p2 = g_uses_p3 = g_uses_is_mand = g_max_fn = 0;
+		g_uses_p4 = g_uses_p5 = 0;
 		return 0;
 	}
 	return 1;
@@ -4345,8 +4345,8 @@ void init_misc()
 	ShiftBack = 32 - g_bit_shift;
 	Delta16 = g_bit_shift - 16;
 	g_bit_shift_minus_1 = g_bit_shift-1;
-	uses_p1 = uses_p2 = uses_p3 = uses_jump = uses_ismand = 0;
-	uses_p4 = uses_p5 = 0;
+	g_uses_p1 = g_uses_p2 = g_uses_p3 = uses_jump = g_uses_is_mand = 0;
+	g_uses_p4 = g_uses_p5 = 0;
 }
 
 
@@ -4357,7 +4357,7 @@ void init_misc()
 		Moved the "f" array to be allocated as part of this.
 		*/
 
-long total_formula_mem;
+long g_total_formula_mem;
 static void parser_allocate(void)
 {
 	/* CAE fp changed below for v18 */
@@ -4382,9 +4382,9 @@ static void parser_allocate(void)
 		Load_size = sizeof(union Arg *)*MAX_LOADS;
 		v_size = sizeof(struct ConstArg)*g_formula_max_args;
 		p_size = sizeof(struct fls *)*g_formula_max_ops;
-		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
+		g_total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
 			+ sizeof(struct PEND_OP)*g_formula_max_ops;
-		end_dx_array = g_use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
+		end_dx_array = g_use_grid ? 2*(g_x_dots + g_y_dots)*sizeof(double) : 0;
 
 		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)(void)) g_type_specific_work_area;
@@ -4400,11 +4400,11 @@ static void parser_allocate(void)
 			{
 				/* per Chuck Ebbert, g_fudge these up a little */
 				g_formula_max_ops = g_posp + 4;
-				g_formula_max_args = vsp + 4;
+				g_formula_max_args = g_parser_vsp + 4;
 			}
 		}
 	}
-	uses_p1 = uses_p2 = uses_p3 = uses_p4 = uses_p5 = 0;
+	g_uses_p1 = g_uses_p2 = g_uses_p3 = g_uses_p4 = g_uses_p5 = 0;
 }
 
 void free_workarea()
@@ -4419,7 +4419,7 @@ void free_workarea()
 	v = (struct ConstArg *) NULL;
 	f = (void (**)(void)) NULL;      /* CAE fp */
 	g_function_load_store_pointers = (struct fls *) NULL;   /* CAE fp */
-	total_formula_mem = 0;
+	g_total_formula_mem = 0;
 }
 
 

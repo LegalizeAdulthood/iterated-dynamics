@@ -1301,14 +1301,14 @@ sel_type_exit:
 void set_default_parms()
 {
 	int i, extra;
-	xxmin = g_current_fractal_specific->xmin;
-	xxmax = g_current_fractal_specific->xmax;
-	yymin = g_current_fractal_specific->ymin;
-	yymax = g_current_fractal_specific->ymax;
-	xx3rd = xxmin;
-	yy3rd = yymin;
+	g_xx_min = g_current_fractal_specific->x_min;
+	g_xx_max = g_current_fractal_specific->x_max;
+	g_yy_min = g_current_fractal_specific->y_min;
+	g_yy_max = g_current_fractal_specific->y_max;
+	g_xx_3rd = g_xx_min;
+	g_yy_3rd = g_yy_min;
 
-	if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
+	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 	{
 		aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 	}
@@ -1505,7 +1505,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 			&& g_fractal_specific[i].name[0] != '*')
 		curtype = i;
 	g_current_fractal_specific = &g_fractal_specific[curtype];
-	tstack[0] = 0;
+	g_text_stack[0] = 0;
 	i = g_current_fractal_specific->helpformula;
 	if (i < -1)
 	{
@@ -1538,7 +1538,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		}
 		if (find_file_item(filename, entryname, &entryfile, itemtype) == 0)
 		{
-			load_entry_text(entryfile, tstack, 17, 0, 0);
+			load_entry_text(entryfile, g_text_stack, 17, 0, 0);
 			fclose(entryfile);
 			if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 			{
@@ -1549,11 +1549,11 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	else if (i >= 0)
 	{
 		int c, lines;
-		read_help_topic(i, 0, 2000, tstack); /* need error handling here ?? */
-		tstack[2000-i] = 0;
+		read_help_topic(i, 0, 2000, g_text_stack); /* need error handling here ?? */
+		g_text_stack[2000-i] = 0;
 		i = j = lines = 0;
 		k = 1;
-		while ((c = tstack[i++]) != 0)
+		while ((c = g_text_stack[i++]) != 0)
 		{
 			/* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
 			if (k && c == ' ' && ++k <= 5)
@@ -1585,13 +1585,13 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 					}
 					k = 0;
 				}
-				tstack[j++] = (char)c;
+				g_text_stack[j++] = (char)c;
 			}
 		}
-		while (--j >= 0 && tstack[j] == '\n')
+		while (--j >= 0 && g_text_stack[j] == '\n')
 		{
 		}
-		tstack[j + 1] = 0;
+		g_text_stack[j + 1] = 0;
 	}
 
 gfp_top:
@@ -1618,46 +1618,46 @@ gfp_top:
 
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		if (uses_p1)  /* set first parameter */
+		if (g_uses_p1)  /* set first parameter */
 		{
 			firstparm = 0;
 		}
-		else if (uses_p2)
+		else if (g_uses_p2)
 		{
 			firstparm = 2;
 		}
-		else if (uses_p3)
+		else if (g_uses_p3)
 		{
 			firstparm = 4;
 		}
-		else if (uses_p4)
+		else if (g_uses_p4)
 		{
 			firstparm = 6;
 		}
 		else
 		{
-			firstparm = 8; /* uses_p5 or no parameter */
+			firstparm = 8; /* g_uses_p5 or no parameter */
 		}
 
-		if (uses_p5)  /* set last parameter */
+		if (g_uses_p5)  /* set last parameter */
 		{
 			lastparm = 10;
 		}
-		else if (uses_p4)
+		else if (g_uses_p4)
 		{
 			lastparm = 8;
 		}
-		else if (uses_p3)
+		else if (g_uses_p3)
 		{
 			lastparm = 6;
 		}
-		else if (uses_p2)
+		else if (g_uses_p2)
 		{
 			lastparm = 4;
 		}
 		else
 		{
-			lastparm = 2; /* uses_p1 or no parameter */
+			lastparm = 2; /* g_uses_p1 or no parameter */
 		}
 	}
 
@@ -1734,7 +1734,7 @@ gfp_top:
 	for (i = 0; i < numtrig; i++)
 	{
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = trigndx[i];
+		paramvalues[promptnum].uval.ch.val  = g_trig_index[i];
 		paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
 		paramvalues[promptnum].uval.ch.vlen = 6;
 		paramvalues[promptnum].uval.ch.list = trignameptr;
@@ -1874,7 +1874,7 @@ gfp_top:
 		paramvalues[promptnum++].uval.ch.val  = g_minor_method;
 	}
 
-	if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
+	if ((curtype == FORMULA || curtype == FFORMULA) && g_uses_is_mand)
 	{
 		choices[promptnum] = "ismand";
 		paramvalues[promptnum].type = 'y';
@@ -1910,7 +1910,7 @@ gfp_top:
 	{
 		oldhelpmode = g_help_mode;
 		g_help_mode = g_current_fractal_specific->helptext;
-		i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, tstack);
+		i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, g_text_stack);
 		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
@@ -1956,7 +1956,7 @@ gfp_top:
 
 	for (i = 0; i < numtrig; i++)
 	{
-		if (paramvalues[promptnum].uval.ch.val != (int)trigndx[i])
+		if (paramvalues[promptnum].uval.ch.val != (int)g_trig_index[i])
 		{
 			set_trig_array(i, trigfn[paramvalues[promptnum].uval.ch.val].name);
 			ret = 1;
@@ -2032,7 +2032,7 @@ gfp_top:
 		g_major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
 		g_minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
 	}
-	if ((curtype == FORMULA || curtype == FFORMULA) && uses_ismand)
+	if ((curtype == FORMULA || curtype == FFORMULA) && g_uses_is_mand)
 	{
 		if (g_is_mand != (short int)paramvalues[promptnum].uval.ch.val)
 		{
@@ -2145,7 +2145,7 @@ long get_file_entry(int type, char *title, char *fmask,
 
 			firsttry = 1; /* if around open loop again it is an error */
 		}
-		setvbuf(gfe_file, tstack, _IOFBF, 4096); /* improves speed when file is big */
+		setvbuf(gfe_file, g_text_stack, _IOFBF, 4096); /* improves speed when file is big */
 		newfile = 0;
 		entry_pointer = gfe_choose_entry(type, title, filename, entryname);
 		if (entry_pointer == -2)

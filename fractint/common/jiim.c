@@ -71,8 +71,8 @@ int windows = 0;               /* windows management system */
 
 int xc, yc;                       /* corners of the window */
 int xd, yd;                       /* dots in the window    */
-double xcjul = BIG;
-double ycjul = BIG;
+double g_julia_c_x = BIG;
+double g_julia_c_y = BIG;
 
 /* circle routines from Dr. Dobbs June 1990 */
 int xbase, ybase;
@@ -108,7 +108,7 @@ void _fastcall c_putcolor(int x, int y, int color)
 		return;
 	}
 	if (windows == 2) /* avoid overwriting fractal */
-		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
 			return;
 		}
@@ -128,7 +128,7 @@ int  c_getcolor(int x, int y)
 		return 1000;
 	}
 	if (windows == 2) /* avoid overreading fractal */
-		if (0 <= x && x < xdots && 0 <= y && y < ydots)
+		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
 			return 1000;
 		}
@@ -561,7 +561,7 @@ void Jiim(int which)         /* called by fractint */
 	show_numbers = 0;
 	g_using_jiim = 1;
 	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
-	aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
+	aspect = ((double)g_x_dots*3)/((double)g_y_dots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
 	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
@@ -594,17 +594,17 @@ void Jiim(int which)         /* called by fractint */
 	{
 		savehasinverse = g_has_inverse;
 		g_has_inverse = 1;
-		SaveRect(0, 0, xdots, ydots);
+		SaveRect(0, 0, g_x_dots, g_y_dots);
 		g_sx_offset = 0;
 		g_sy_offset = 0;
-		RestoreRect(0, 0, xdots, ydots);
+		RestoreRect(0, 0, g_x_dots, g_y_dots);
 		g_has_inverse = savehasinverse;
 	}
 
-	if (xdots == g_screen_width || ydots == g_screen_height ||
-		g_screen_width-xdots < g_screen_width/3 ||
-		g_screen_height-ydots < g_screen_height/3 ||
-		xdots >= MAXRECT)
+	if (g_x_dots == g_screen_width || g_y_dots == g_screen_height ||
+		g_screen_width-g_x_dots < g_screen_width/3 ||
+		g_screen_height-g_y_dots < g_screen_height/3 ||
+		g_x_dots >= MAXRECT)
 	{
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 			the physical screen */
@@ -616,14 +616,14 @@ void Jiim(int which)         /* called by fractint */
 		xoff = xd*5 / 2;
 		yoff = yd*5 / 2;
 	}
-	else if (xdots > g_screen_width/3 && ydots > g_screen_height/3)
+	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
 	{
 		/* Julia/orbit and fractal don't overlap */
 		windows = 1;
-		xd = g_screen_width-xdots;
-		yd = g_screen_height-ydots;
-		xc = xdots;
-		yc = ydots;
+		xd = g_screen_width-g_x_dots;
+		yd = g_screen_height-g_y_dots;
+		xc = g_x_dots;
+		yc = g_y_dots;
 		xoff = xc + xd/2;
 		yoff = yc + yd/2;
 	}
@@ -648,8 +648,8 @@ void Jiim(int which)         /* called by fractint */
 	}
 	else if (windows == 2)  /* leave the fractal */
 	{
-		fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-		fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+		fillrect(g_x_dots, yc, xd-g_x_dots, yd, g_color_dark);
+		fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots, g_color_dark);
 	}
 	else  /* blank whole window */
 	{
@@ -661,11 +661,11 @@ void Jiim(int which)         /* called by fractint */
 	/* reuse last location if inside window */
 	g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
 	g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
-	if (g_col < 0 || g_col >= xdots ||
-		g_row < 0 || g_row >= ydots)
+	if (g_col < 0 || g_col >= g_x_dots ||
+		g_row < 0 || g_row >= g_y_dots)
 	{
-		cr = (xxmax + xxmin) / 2.0;
-		ci = (yymax + yymin) / 2.0;
+		cr = (g_xx_max + g_xx_min) / 2.0;
+		ci = (g_yy_max + g_yy_min) / 2.0;
 	}
 	else
 	{
@@ -707,8 +707,8 @@ void Jiim(int which)         /* called by fractint */
 				kbdchar = driver_get_key();
 
 				dcol = drow = 0;
-				xcjul = BIG;
-				ycjul = BIG;
+				g_julia_c_x = BIG;
+				g_julia_c_y = BIG;
 				switch (kbdchar)
 				{
 				case 1143:    /* ctrl - keypad 5 */
@@ -783,8 +783,8 @@ void Jiim(int which)         /* called by fractint */
 					zoom *= 1.15f;
 					break;
 				case FIK_SPACE:
-					xcjul = cr;
-					ycjul = ci;
+					g_julia_c_x = cr;
+					g_julia_c_y = ci;
 					goto finish;
 					/* break; */
 				case 'c':   /* circle toggle */
@@ -821,7 +821,7 @@ void Jiim(int which)         /* called by fractint */
 					}
 					else if (windows == 3 && xd == g_screen_width)
 					{
-						RestoreRect(0, 0, xdots, ydots);
+						RestoreRect(0, 0, g_x_dots, g_y_dots);
 						windows = 2;
 					}
 					break;
@@ -867,13 +867,13 @@ void Jiim(int which)         /* called by fractint */
 #endif
 
 				/* keep cursor in logical screen */
-				if (g_col >= xdots)
+				if (g_col >= g_x_dots)
 				{
-					g_col = xdots -1; exact = 0;
+					g_col = g_x_dots -1; exact = 0;
 				}
-				if (g_row >= ydots)
+				if (g_row >= g_y_dots)
 				{
-					g_row = ydots -1; exact = 0;
+					g_row = g_y_dots -1; exact = 0;
 				}
 				if (g_col < 0)
 				{
@@ -964,8 +964,8 @@ void Jiim(int which)         /* called by fractint */
 			}
 			if (windows == 2)
 			{
-				fillrect(xdots, yc, xd-xdots, yd-show_numbers, g_color_dark);
-				fillrect(xc   , ydots, xdots, yd-ydots-show_numbers, g_color_dark);
+				fillrect(g_x_dots, yc, xd-g_x_dots, yd-show_numbers, g_color_dark);
+				fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots-show_numbers, g_color_dark);
 			}
 			else
 			{
@@ -1241,8 +1241,8 @@ finish:
 		{
 			if (windows == 2)
 			{
-				fillrect(xdots, yc, xd-xdots, yd, g_color_dark);
-				fillrect(xc   , ydots, xdots, yd-ydots, g_color_dark);
+				fillrect(g_x_dots, yc, xd-g_x_dots, yd, g_color_dark);
+				fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots, g_color_dark);
 			}
 			else
 			{
@@ -1250,16 +1250,16 @@ finish:
 			}
 			if (windows == 3 && xd == g_screen_width) /* unhide */
 			{
-				RestoreRect(0, 0, xdots, ydots);
+				RestoreRect(0, 0, g_x_dots, g_y_dots);
 				windows = 2;
 			}
 			cursor_hide();
 			savehasinverse = g_has_inverse;
 			g_has_inverse = 1;
-			SaveRect(0, 0, xdots, ydots);
+			SaveRect(0, 0, g_x_dots, g_y_dots);
 			g_sx_offset = oldsxoffs;
 			g_sy_offset = oldsyoffs;
-			RestoreRect(0, 0, xdots, ydots);
+			RestoreRect(0, 0, g_x_dots, g_y_dots);
 			g_has_inverse = savehasinverse;
 		}
 	}
@@ -1286,14 +1286,14 @@ finish:
 	g_help_mode = oldhelpmode;
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
-		viewwindow = viewxdots = viewydots = 0;
-		viewreduction = 4.2f;
-		viewcrop = 1;
+		g_view_window = g_view_x_dots = g_view_y_dots = 0;
+		g_view_reduction = 4.2f;
+		g_view_crop = 1;
 		g_final_aspect_ratio = g_screen_aspect_ratio;
-		xdots = g_screen_width;
-		ydots = g_screen_height;
-		g_dx_size = xdots - 1;
-		g_dy_size = ydots - 1;
+		g_x_dots = g_screen_width;
+		g_y_dots = g_screen_height;
+		g_dx_size = g_x_dots - 1;
+		g_dy_size = g_y_dots - 1;
 		g_sx_offset = 0;
 		g_sy_offset = 0;
 		freetempmsg();

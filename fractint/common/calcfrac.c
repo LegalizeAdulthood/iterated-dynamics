@@ -288,7 +288,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
 		i = g_yy_stop-(row-g_yy_start);
-		if (i > g_y_stop && i < ydots)
+		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
 			g_input_counter -= length >> 3;
@@ -302,9 +302,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == symplot2J)  /* Origin symmetry */
 	{
 		i = g_yy_stop-(row-g_yy_start);
-		j = min(g_xx_stop-(right-g_xx_start), xdots-1);
-		k = min(g_xx_stop-(left -g_xx_start), xdots-1);
-		if (i > g_y_stop && i < ydots && j <= k)
+		j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
+		k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		if (i > g_y_stop && i < g_y_dots && j <= k)
 		{
 			put_line(i, j, k, str);
 		}
@@ -313,9 +313,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == symplot4) /* X-axis and Y-axis symmetry */
 	{
 		i = g_yy_stop-(row-g_yy_start);
-		j = min(g_xx_stop-(right-g_xx_start), xdots-1);
-		k = min(g_xx_stop-(left -g_xx_start), xdots-1);
-		if (i > g_y_stop && i < ydots)
+		j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
+		k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
 			if (j <= k)
@@ -356,7 +356,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
 		i = g_yy_stop-(row-g_yy_start);
-		if (i > g_y_stop && i < ydots)
+		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
 		}
@@ -524,7 +524,7 @@ int calculate_fractal(void)
 	if (g_is_true_color && g_true_mode)
 	{
 		/* Have to force passes = 1 */
-		usr_stdcalcmode = g_standard_calculation_mode = '1';
+		g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
 	}
 	if (g_true_color)
 	{
@@ -532,7 +532,7 @@ int calculate_fractal(void)
 		if (startdisk1(g_light_name, NULL, 0) == 0)
 		{
 			/* Have to force passes = 1 */
-			usr_stdcalcmode = g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
 			g_put_color = put_truecolor_disk;
 		}
 		else
@@ -542,9 +542,9 @@ int calculate_fractal(void)
 	}
 	if (!g_use_grid)
 	{
-		if (usr_stdcalcmode != 'o')
+		if (g_user_standard_calculation_mode != 'o')
 		{
-			usr_stdcalcmode = g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
 		}
 	}
 
@@ -684,17 +684,17 @@ int calculate_fractal(void)
 
 		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			g_inversion[0] = min(fabs(xxmax - xxmin), fabs(yymax - yymin)) / 6.0;
+			g_inversion[0] = min(fabs(g_xx_max - g_xx_min), fabs(g_yy_max - g_yy_min)) / 6.0;
 			fix_inversion(&g_inversion[0]);
 			g_f_radius = g_inversion[0];
 		}
 
 		if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
-			g_inversion[1] = (xxmin + xxmax) / 2.0;
+			g_inversion[1] = (g_xx_min + g_xx_max) / 2.0;
 			fix_inversion(&g_inversion[1]);
 			g_f_x_center = g_inversion[1];
-			if (fabs(g_f_x_center) < fabs(xxmax-xxmin) / 100)
+			if (fabs(g_f_x_center) < fabs(g_xx_max-g_xx_min) / 100)
 			{
 				g_inversion[1] = g_f_x_center = 0.0;
 			}
@@ -702,10 +702,10 @@ int calculate_fractal(void)
 
 		if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  /* ycenter not already set */
 		{
-			g_inversion[2] = (yymin + yymax) / 2.0;
+			g_inversion[2] = (g_yy_min + g_yy_max) / 2.0;
 			fix_inversion(&g_inversion[2]);
 			g_f_y_center = g_inversion[2];
-			if (fabs(g_f_y_center) < fabs(yymax-yymin) / 100)
+			if (fabs(g_f_y_center) < fabs(g_yy_max-g_yy_min) / 100)
 			{
 				g_inversion[2] = g_f_y_center = 0.0;
 			}
@@ -756,8 +756,8 @@ int calculate_fractal(void)
 		g_symmetry = g_current_fractal_specific->symmetry; /*   calculate_type & symmetry  */
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 		s_iy_start = s_ix_start = g_yy_start = g_xx_start = g_yy_begin = g_xx_begin = 0;
-		g_y_stop = g_yy_stop = ydots -1;
-		g_x_stop = g_xx_stop = xdots -1;
+		g_y_stop = g_yy_stop = g_y_dots -1;
+		g_x_stop = g_xx_stop = g_x_dots -1;
 		g_calculation_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 		g_distance_test = 0; /* only standard escape time engine supports distest */
 		/* per_image routine is run here */
@@ -795,14 +795,14 @@ int calculate_fractal(void)
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
-					g_standard_calculation_mode = (xdots >= 640) ? '2' : '1';
+					g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
 					timer(TIMER_ENGINE, (int(*)())perform_work_list);
 					g_three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
-				g_standard_calculation_mode = (xdots >= 640) ? '2' : '1';
+				g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
 				timer(TIMER_ENGINE, (int (*)()) perform_work_list);
 			}
 			g_standard_calculation_mode = (char)oldcalcmode;
@@ -813,7 +813,7 @@ int calculate_fractal(void)
 			timer(TIMER_ENGINE, (int(*)())perform_work_list);
 		}
 	}
-	g_calculation_time += timer_interval;
+	g_calculation_time += g_timer_interval;
 
 	if (g_log_table && !g_log_calculation)
 	{
@@ -914,8 +914,8 @@ static void perform_work_list()
 	g_num_work_list = 1;
 	g_work_list[0].xx_start = g_work_list[0].xx_begin = 0;
 	g_work_list[0].yy_start = g_work_list[0].yy_begin = 0;
-	g_work_list[0].xx_stop = xdots - 1;
-	g_work_list[0].yy_stop = ydots - 1;
+	g_work_list[0].xx_stop = g_x_dots - 1;
+	g_work_list[0].yy_stop = g_y_dots - 1;
 	g_work_list[0].pass = g_work_list[0].sym = 0;
 	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
@@ -941,15 +941,15 @@ static void perform_work_list()
 		}
 		else
 		{
-			aspect = (double)ydots/(double)xdots;
-			dxsize = xdots-1;
-			dysize = ydots-1;
+			aspect = (double)g_y_dots/(double)g_x_dots;
+			dxsize = g_x_dots-1;
+			dysize = g_y_dots-1;
 		}
 
-		delta_x_fp  = (xxmax - xx3rd) / dxsize; /* calculate stepsizes */
-		delta_y_fp  = (yymax - yy3rd) / dysize;
-		delta_x2_fp = (xx3rd - xxmin) / dysize;
-		delta_y2_fp = (yy3rd - yymin) / dxsize;
+		delta_x_fp  = (g_xx_max - g_xx_3rd) / dxsize; /* calculate stepsizes */
+		delta_y_fp  = (g_yy_max - g_yy_3rd) / dysize;
+		delta_x2_fp = (g_xx_3rd - g_xx_min) / dysize;
+		delta_y2_fp = (g_yy_3rd - g_yy_min) / dxsize;
 
 		/* in case it's changed with <G> */
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
@@ -983,8 +983,8 @@ static void perform_work_list()
 		ftemp = g_distance_test_width;
 		/* multiply by thickness desired */
 		s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
-		s_dem_width = (sqrt(sqr(xxmax-xxmin) + sqr(xx3rd-xxmin) )*aspect
-			+ sqrt(sqr(yymax-yymin) + sqr(yy3rd-yymin) ) ) / g_distance_test;
+		s_dem_width = (sqrt(sqr(g_xx_max-g_xx_min) + sqr(g_xx_3rd-g_xx_min) )*aspect
+			+ sqrt(sqr(g_yy_max-g_yy_min) + sqr(g_yy_3rd-g_yy_min) ) ) / g_distance_test;
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
@@ -1045,7 +1045,7 @@ static void perform_work_list()
 			else
 			{
 				double dshowdot_width;
-				dshowdot_width = (double)g_size_dot*xdots/1024.0;
+				dshowdot_width = (double)g_size_dot*g_x_dots/1024.0;
 				/*
 					Arbitrary sanity limit, however s_show_dot_width will
 					overflow if dshowdot width gets near 256.
@@ -1690,8 +1690,8 @@ static int draw_function_orbits(void)
 	int angle;
 	double factor = PI / 180.0;
 	double theta;
-	double xfactor = xdots / 2.0;
-	double yfactor = ydots / 2.0;
+	double xfactor = g_x_dots / 2.0;
+	double yfactor = g_y_dots / 2.0;
 
 	angle = g_xx_begin;  /* save angle in x parameter */
 
@@ -3580,9 +3580,9 @@ static int solid_guess(void)
 
 	s_guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2 && g_plot_color != symplot2J);
 	/* check if guessing at bottom & right edges is ok */
-	s_bottom_guess = (g_plot_color == symplot2 || (g_plot_color == g_put_color && g_y_stop + 1 == ydots));
+	s_bottom_guess = (g_plot_color == symplot2 || (g_plot_color == g_put_color && g_y_stop + 1 == g_y_dots));
 	s_right_guess  = (g_plot_color == symplot2J
-		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && g_x_stop + 1 == xdots));
+		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && g_x_stop + 1 == g_x_dots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (g_debug_flag != DEBUGFLAG_SOLID_GUESS_BR)
@@ -3599,7 +3599,7 @@ static int solid_guess(void)
 
 	/* ensure window top and left are on required boundary, treat window
 			as larger than it really is if necessary (this is the reason symplot
-			routines must check for > xdots/ydots before plotting sym points) */
+			routines must check for > g_x_dots/g_y_dots before plotting sym points) */
 	s_ix_start &= -1 - (s_max_block-1);
 	s_iy_start = g_yy_begin;
 	s_iy_start &= -1 - (s_max_block-1);
@@ -3874,7 +3874,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				c23 = c33 = -1;
 			}
 			guessed23 = guessed33 = -1;
-			guessed13 = 0; /* fix for ydots not divisible by four bug TW 2/16/97 */
+			guessed13 = 0; /* fix for g_y_dots not divisible by four bug TW 2/16/97 */
 		}
 		if (xplushalf > g_x_stop)
 		{
@@ -4057,12 +4057,12 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		for (i = 0; i < s_half_block; ++i)
 		{
 			j = g_yy_stop-(y + i-g_yy_start);
-			if (j > g_y_stop && j < ydots)
+			if (j > g_y_stop && j < g_y_dots)
 			{
 				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start]);
 			}
 			j = g_yy_stop-(y + i + s_half_block-g_yy_start);
-			if (j > g_y_stop && j < ydots)
+			if (j > g_y_stop && j < g_y_dots)
 			{
 				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLDMAXPIXELS]);
 			}
@@ -4274,7 +4274,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	if ((g_potential_flag && g_potential_16bit) || (g_invert && g_inversion[2] != 0.0)
 			|| g_decomposition[0] != 0
-			|| xxmin != xx3rd || yymin != yy3rd)
+			|| g_xx_min != g_xx_3rd || g_yy_min != g_yy_3rd)
 	{
 		return;
 	}
@@ -4338,14 +4338,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	else
 	{
-		xaxis_on_screen = (sign(yymin) != sign(yymax));
-		yaxis_on_screen = (sign(xxmin) != sign(xxmax));
+		xaxis_on_screen = (sign(g_yy_min) != sign(g_yy_max));
+		yaxis_on_screen = (sign(g_xx_min) != sign(g_xx_max));
 	}
 	if (xaxis_on_screen) /* axis is on screen */
 	{
 		if (bf_math)
 		{
-			/* ftemp = -yymax / (yymin-yymax); */
+			/* ftemp = -g_yy_max / (g_yy_min-g_yy_max); */
 			sub_bf(bft1, bfymin, bfymax);
 			div_bf(bft1, bfymax, bft1);
 			neg_a_bf(bft1);
@@ -4353,13 +4353,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		else
 		{
-			ftemp = -yymax / (yymin-yymax);
+			ftemp = -g_yy_max / (g_yy_min-g_yy_max);
 		}
-		ftemp *= (ydots-1);
+		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
 		xaxis_row = (int)ftemp;
 		xaxis_between = (ftemp - xaxis_row >= 0.5);
-		if (uselist == 0 && (!xaxis_between || (xaxis_row + 1)*2 != ydots))
+		if (uselist == 0 && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
 		{
 			xaxis_row = -1; /* can't split screen, so dead center or not at all */
 		}
@@ -4368,7 +4368,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		if (bf_math)
 		{
-			/* ftemp = -xxmin / (xxmax-xxmin); */
+			/* ftemp = -g_xx_min / (g_xx_max-g_xx_min); */
 			sub_bf(bft1, bfxmax, bfxmin);
 			div_bf(bft1, bfxmin, bft1);
 			neg_a_bf(bft1);
@@ -4376,13 +4376,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		else
 		{
-			ftemp = -xxmin / (xxmax-xxmin);
+			ftemp = -g_xx_min / (g_xx_max-g_xx_min);
 		}
-		ftemp *= (xdots-1);
+		ftemp *= (g_x_dots-1);
 		ftemp += 0.25;
 		yaxis_col = (int)ftemp;
 		yaxis_between = (ftemp - yaxis_col >= 0.5);
-		if (uselist == 0 && (!yaxis_between || (yaxis_col + 1)*2 != xdots))
+		if (uselist == 0 && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
 		{
 			yaxis_col = -1; /* can't split screen, so dead center or not at all */
 		}
@@ -4487,7 +4487,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		else
 		{
-			if (fabs(xxmax - xxmin) < PI/4)
+			if (fabs(g_xx_max - g_xx_min) < PI/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
@@ -4513,11 +4513,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			sub_bf(bft1, bfxmax, bfxmin);
 			abs_a_bf(bft1);
-			s_pixel_pi = (int)((PI/(double)bftofloat(bft1)*xdots)); /* PI in pixels */
+			s_pixel_pi = (int)((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int)((PI/fabs(xxmax-xxmin))*xdots); /* PI in pixels */
+			s_pixel_pi = (int)((PI/fabs(g_xx_max-g_xx_min))*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
@@ -4735,7 +4735,7 @@ static int tesseral(void)
 						if (g_plot_color != g_put_color) /* symmetry */
 						{
 							j = g_yy_stop-(g_row-g_yy_start);
-							if (j > g_y_stop && j < ydots)
+							if (j > g_y_stop && j < g_y_dots)
 							{
 								put_line(j, tp->x1 + 1, tp->x2-1, &g_stack[OLDMAXPIXELS]);
 							}
@@ -4932,8 +4932,8 @@ static long automatic_log_map(void)   /*RB*/
 {  /* calculate round screen edges to avoid wasted colours in logmap */
 	long mincolour;
 	int lag;
-	int xstop = xdots - 1; /* don't use symetry */
-	int ystop = ydots - 1; /* don't use symetry */
+	int xstop = g_x_dots - 1; /* don't use symetry */
+	int ystop = g_y_dots - 1; /* don't use symetry */
 	long old_maxit;
 	mincolour = LONG_MAX;
 	g_row = 0;
@@ -5056,8 +5056,8 @@ void _fastcall symPIplot2J(int x, int y, int color)
 	while (x <= g_xx_stop)
 	{
 		g_put_color(x, y, color);
-		if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < ydots
-				&& (j = g_xx_stop-(x-g_xx_start)) < xdots)
+		if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < g_y_dots
+				&& (j = g_xx_stop-(x-g_xx_start)) < g_x_dots)
 			g_put_color(j, i, color);
 		x += s_pixel_pi;
 	}
@@ -5070,15 +5070,15 @@ void _fastcall symPIplot4J(int x, int y, int color)
 	{
 		j = g_xx_stop-(x-g_xx_start);
 		g_put_color(x , y , color);
-		if (j < xdots)
+		if (j < g_x_dots)
 		{
 			g_put_color(j , y , color);
 		}
 		i = g_yy_stop-(y-g_yy_start);
-		if (i > g_y_stop && i < ydots)
+		if (i > g_y_stop && i < g_y_dots)
 		{
 			g_put_color(x , i , color);
-			if (j < xdots)
+			if (j < g_x_dots)
 			{
 				g_put_color(j , i , color);
 			}
@@ -5093,7 +5093,7 @@ void _fastcall symplot2(int x, int y, int color)
 	int i;
 	g_put_color(x, y, color);
 	i = g_yy_stop-(y-g_yy_start);
-	if (i > g_y_stop && i < ydots)
+	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_put_color(x, i, color);
 	}
@@ -5105,7 +5105,7 @@ void _fastcall symplot2Y(int x, int y, int color)
 	int i;
 	g_put_color(x, y, color);
 	i = g_xx_stop-(x-g_xx_start);
-	if (i < xdots)
+	if (i < g_x_dots)
 	{
 		g_put_color(i, y, color);
 	}
@@ -5116,8 +5116,8 @@ void _fastcall symplot2J(int x, int y, int color)
 {
 	int i, j;
 	g_put_color(x, y, color);
-	if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < ydots
-		&& (j = g_xx_stop-(x-g_xx_start)) < xdots)
+	if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < g_y_dots
+		&& (j = g_xx_stop-(x-g_xx_start)) < g_x_dots)
 	{
 		g_put_color(j, i, color);
 	}
@@ -5129,15 +5129,15 @@ void _fastcall symplot4(int x, int y, int color)
 	int i, j;
 	j = g_xx_stop-(x-g_xx_start);
 	g_put_color(x , y, color);
-	if (j < xdots)
+	if (j < g_x_dots)
 	{
 		g_put_color(j , y, color);
 	}
 	i = g_yy_stop-(y-g_yy_start);
-	if (i > g_y_stop && i < ydots)
+	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_put_color(x , i, color);
-		if (j < xdots)
+		if (j < g_x_dots)
 		{
 			g_put_color(j , i, color);
 		}
@@ -5151,7 +5151,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 	g_put_color(x, y, color);
 	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
 	i = g_yy_stop-(y-g_yy_start);
-	if (i > g_y_stop && i < ydots)
+	if (i > g_y_stop && i < g_y_dots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
 		color = (g_degree + 1-color) % g_degree + 1;  /* symmetrical color */
@@ -5175,15 +5175,15 @@ void _fastcall symplot4basin(int x, int y, int color)
 		(g_degree/2 + 2 - color) : (g_degree/2 + g_degree + 2 - color);
 	j = g_xx_stop-(x-g_xx_start);
 	g_put_color(x, y, color + stripe);
-	if (j < xdots)
+	if (j < g_x_dots)
 	{
 		g_put_color(j, y, color1 + stripe);
 	}
 	i = g_yy_stop-(y-g_yy_start);
-	if (i > g_y_stop && i < ydots)
+	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_put_color(x, i, stripe + (g_degree + 1 - color) % g_degree + 1);
-		if (j < xdots)
+		if (j < g_x_dots)
 		{
 			g_put_color(j, i, stripe + (g_degree + 1 - color1) % g_degree + 1);
 		}

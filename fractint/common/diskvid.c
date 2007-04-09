@@ -104,7 +104,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 	s_header_length = overhead;
 	s_file = targafp;
 	s_disk_targa = 1;
-	i = disk_start_common(xdots*3, ydots, g_colors);
+	i = disk_start_common(g_x_dots*3, g_y_dots, g_colors);
 	s_high_offset = 100000000L; /* targa not necessarily init'd to zeros */
 
 	return i;

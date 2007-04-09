@@ -113,7 +113,7 @@ static int get_min_max(void)
 	int xd, yd, ldepth;
 	MINC = g_colors;
 	MAXC = 0;
-	for (yd = 0; yd < ydots; yd++)
+	for (yd = 0; yd < g_y_dots; yd++)
 	{
 		if (driver_key_pressed())
 		{
@@ -123,7 +123,7 @@ static int get_min_max(void)
 		{
 			showtempmsg("Getting min and max");
 		}
-		for (xd = 0; xd < xdots; xd++)
+		for (xd = 0; xd < g_x_dots; xd++)
 		{
 			ldepth = getdepth(xd, yd);
 			if (ldepth < MINC)
@@ -167,18 +167,18 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 int outline_stereo(BYTE *pixels, int linelen)
 {
 	int i, j, x, s;
-	int *same = _alloca(sizeof(int)*xdots);
-	int *colour = _alloca(sizeof(int)*xdots);
-	if ((Y) >= ydots)
+	int *same = _alloca(sizeof(int)*g_x_dots);
+	int *colour = _alloca(sizeof(int)*g_x_dots);
+	if ((Y) >= g_y_dots)
 	{
 		return 1;
 	}
 
-	for (x = 0; x < xdots; ++x)
+	for (x = 0; x < g_x_dots; ++x)
 	{
 		same[x] = x;
 	}
-	for (x = 0; x < xdots; ++x)
+	for (x = 0; x < g_x_dots; ++x)
 	{
 		SEP = REVERSE
 			? (GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC))
@@ -193,11 +193,11 @@ int outline_stereo(BYTE *pixels, int linelen)
 		}
 		i = x - (SEP + (SEP & Y & 1)) / 2;
 		j = i + SEP;
-		if (0 <= i && j < xdots)
+		if (0 <= i && j < g_x_dots)
 		{
 			/* there are cases where next never terminates so we timeout */
 			int ct = 0;
-			for (s = same[i]; s != i && s != j && ct++ < xdots; s = same[i])
+			for (s = same[i]; s != i && s != j && ct++ < g_x_dots; s = same[i])
 			{
 				if (s > j)
 				{
@@ -213,7 +213,7 @@ int outline_stereo(BYTE *pixels, int linelen)
 			same[i] = j;
 		}
 	}
-	for (x = xdots - 1; x >= 0; x--)
+	for (x = g_x_dots - 1; x >= 0; x--)
 	{
 		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
 		g_put_color(x, Y, colour[x]);
@@ -237,8 +237,8 @@ int do_AutoStereo(void)
 	time_t ltime;
 	unsigned char *buf = (unsigned char *)g_decoder_line;
 	/* following two lines re-use existing arrays in Fractint */
-	int *same = _alloca(sizeof(int)*xdots);
-	int *colour = _alloca(sizeof(int)*xdots);
+	int *same = _alloca(sizeof(int)*g_x_dots);
+	int *colour = _alloca(sizeof(int)*g_x_dots);
 
 	pv = &v;   /* set static vars to stack structure */
 	pv->save_dac = savedacbox;
@@ -252,7 +252,7 @@ int do_AutoStereo(void)
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
 
-	if (xdots > OLDMAXPIXELS)
+	if (g_x_dots > OLDMAXPIXELS)
 	{
 		stopmsg(0, "Stereo not allowed with resolution > 2048 pixels wide");
 		driver_buzzer(BUZZER_INTERRUPT);
@@ -266,9 +266,9 @@ int do_AutoStereo(void)
 	{
 		WIDTH = 1;
 	}
-	GROUND = xdots / 8;
+	GROUND = g_x_dots / 8;
 	REVERSE = (g_auto_stereo_depth < 0) ? 1 : 0;
-	DEPTH = ((long) xdots*(long) g_auto_stereo_depth) / 4000L;
+	DEPTH = ((long) g_x_dots*(long) g_auto_stereo_depth) / 4000L;
 	DEPTH = labs(DEPTH) + 1;
 	if (get_min_max())
 	{
@@ -278,14 +278,14 @@ int do_AutoStereo(void)
 	}
 	MAXCC = MAXC - MINC + 1;
 	AVG = AVGCT = 0L;
-	barwidth  = 1 + xdots / 200;
-	BARHEIGHT = 1 + ydots / 20;
-	XCEN = xdots/2;
-	YCEN = (g_calibrate > 1) ? BARHEIGHT/2 : ydots/2;
+	barwidth  = 1 + g_x_dots / 200;
+	BARHEIGHT = 1 + g_y_dots / 20;
+	XCEN = g_x_dots/2;
+	YCEN = (g_calibrate > 1) ? BARHEIGHT/2 : g_y_dots/2;
 
 	/* box to average for calibration bars */
-	X1 = XCEN - xdots/16;
-	X2 = XCEN + xdots/16;
+	X1 = XCEN - g_x_dots/16;
+	X2 = XCEN + g_x_dots/16;
 	Y1 = YCEN - BARHEIGHT/2;
 	Y2 = YCEN + BARHEIGHT/2;
 
@@ -293,7 +293,7 @@ int do_AutoStereo(void)
 	if (g_image_map)
 	{
 		g_out_line = outline_stereo;
-		while ((Y) < ydots)
+		while ((Y) < g_y_dots)
 		{
 			if (gifview())
 			{
@@ -304,18 +304,18 @@ int do_AutoStereo(void)
 	}
 	else
 	{
-		while (Y < ydots)
+		while (Y < g_y_dots)
 		{
 			if (driver_key_pressed())
 			{
 				ret = 1;
 				goto exit_stereo;
 			}
-			for (i = 0; i < xdots; i++)
+			for (i = 0; i < g_x_dots; i++)
 			{
 				buf[i] = (unsigned char)(rand() % g_colors);
 			}
-			outline_stereo(buf, xdots);
+			outline_stereo(buf, g_x_dots);
 		}
 	}
 

@@ -40,7 +40,7 @@ struct lsys_turtle_state
     long size;
     long realangle;
     long xpos, ypos; /* xpos and ypos are long, not fixed point */
-    long xmin, ymin, xmax, ymax; /* as are these */
+    long x_min, y_min, x_max, y_max; /* as are these */
     long aspect; /* aspect ratio of each pixel, ysize/xsize */
     long num;
 };
@@ -53,7 +53,7 @@ struct lsys_turtle_state_fp
     LDBL size;
     LDBL realangle;
     LDBL xpos, ypos;
-    LDBL xmin, ymin, xmax, ymax;
+    LDBL x_min, y_min, x_max, y_max;
     LDBL aspect; /* aspect ratio of each pixel, ysize/xsize */
     union
 	{

@@ -160,21 +160,21 @@ static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;
 
-	if (cmd->xpos > cmd->xmax)
+	if (cmd->xpos > cmd->x_max)
 	{
-		cmd->xmax = cmd->xpos;
+		cmd->x_max = cmd->xpos;
 	}
-	if (cmd->ypos > cmd->ymax)
+	if (cmd->ypos > cmd->y_max)
 	{
-		cmd->ymax = cmd->ypos;
+		cmd->y_max = cmd->ypos;
 	}
-	if (cmd->xpos < cmd->xmin)
+	if (cmd->xpos < cmd->x_min)
 	{
-		cmd->xmin = cmd->xpos;
+		cmd->x_min = cmd->xpos;
 	}
-	if (cmd->ypos < cmd->ymin)
+	if (cmd->ypos < cmd->y_min)
 	{
-		cmd->ymin = cmd->ypos;
+		cmd->y_min = cmd->ypos;
 	}
 }
 
@@ -183,21 +183,21 @@ static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
 	cmd->xpos += cmd->size*coss_f[(int)cmd->angle];
 	cmd->ypos += cmd->size*sins_f[(int)cmd->angle];
 
-	if (cmd->xpos > cmd->xmax)
+	if (cmd->xpos > cmd->x_max)
 	{
-		cmd->xmax = cmd->xpos;
+		cmd->x_max = cmd->xpos;
 	}
-	if (cmd->ypos > cmd->ymax)
+	if (cmd->ypos > cmd->y_max)
 	{
-		cmd->ymax = cmd->ypos;
+		cmd->y_max = cmd->ypos;
 	}
-	if (cmd->xpos < cmd->xmin)
+	if (cmd->xpos < cmd->x_min)
 	{
-		cmd->xmin = cmd->xpos;
+		cmd->x_min = cmd->xpos;
 	}
-	if (cmd->ypos < cmd->ymin)
+	if (cmd->ypos < cmd->y_min)
 	{
-		cmd->ymin = cmd->ypos;
+		cmd->y_min = cmd->ypos;
 	}
 }
 
@@ -364,19 +364,19 @@ int _fastcall
 lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	float horiz, vert;
-	LDBL xmin, xmax, ymin, ymax;
+	LDBL g_x_min, g_x_max, g_y_min, g_y_max;
 	LDBL locsize;
 	LDBL locaspect;
 	struct lsys_cmd *fsret;
 
-	locaspect = g_screen_aspect_ratio*xdots/ydots;
+	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	ts->aspect = locaspect;
 	ts->xpos =
 	ts->ypos =
-	ts->xmin =
-	ts->xmax =
-	ts->ymax =
-	ts->ymin = 0;
+	ts->x_min =
+	ts->x_max =
+	ts->y_max =
+	ts->y_min = 0;
 	ts->angle =
 	ts->reverse =
 	ts->counter = 0;
@@ -384,20 +384,20 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	ts->size = 1;
 	fsret = find_size(command, ts, rules, depth);
 	thinking(0, NULL); /* erase thinking message if any */
-	xmin = ts->xmin;
-	xmax = ts->xmax;
-	ymin = ts->ymin;
-	ymax = ts->ymax;
+	g_x_min = ts->x_min;
+	g_x_max = ts->x_max;
+	g_y_min = ts->y_min;
+	g_y_max = ts->y_max;
 	if (fsret == NULL)
 	{
 		return 0;
 	}
-	horiz = (xmax == xmin) ? 1.0e37f : (float)((xdots-10)/(xmax-xmin));
-	vert  = (ymax == ymin) ? 1.0e37f : (float)((ydots-6) /(ymax-ymin));
+	horiz = (g_x_max == g_x_min) ? 1.0e37f : (float)((g_x_dots-10)/(g_x_max-g_x_min));
+	vert  = (g_y_max == g_y_min) ? 1.0e37f : (float)((g_y_dots-6) /(g_y_max-g_y_min));
 	locsize = (vert < horiz) ? vert : horiz;
 
-	ts->xpos = (horiz == 1.0e37f) ? xdots/2 : (xdots-locsize*(xmax + xmin))/2;
-	ts->ypos = (vert  == 1.0e37f) ? ydots/2 : (ydots-locsize*(ymax + ymin))/2;
+	ts->xpos = (horiz == 1.0e37f) ? g_x_dots/2 : (g_x_dots-locsize*(g_x_max + g_x_min))/2;
+	ts->ypos = (vert  == 1.0e37f) ? g_y_dots/2 : (g_y_dots-locsize*(g_y_max + g_y_min))/2;
 	ts->size = locsize;
 
 	return 1;
@@ -694,7 +694,7 @@ void _fastcall lsysf_sin_cos(void)
 	LDBL twopimaxi;
 	int i;
 
-	locaspect = g_screen_aspect_ratio*xdots/ydots;
+	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	twopimax = TWOPI / g_max_angle;
 	for (i = 0; i < g_max_angle; i++)
 	{

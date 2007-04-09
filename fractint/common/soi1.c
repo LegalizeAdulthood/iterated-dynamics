@@ -961,18 +961,18 @@ void soi(void)
 	}
 	else
 	{
-		xxminl = xxmin;
-		yyminl = yymin;
-		xxmaxl = xxmax;
-		yymaxl = yymax;
+		xxminl = g_xx_min;
+		yyminl = g_yy_min;
+		xxmaxl = g_xx_max;
+		yymaxl = g_yy_max;
 	}
-	twidth = tolerance/(xdots-1);
-	stepx = (xxmaxl - xxminl) / xdots;
-	stepy = (yyminl - yymaxl) / ydots;
+	twidth = tolerance/(g_x_dots-1);
+	stepx = (xxmaxl - xxminl) / g_x_dots;
+	stepy = (yyminl - yymaxl) / g_y_dots;
 	equal = (stepx < stepy ? stepx : stepy);
 
 	RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
-			0, xdots, 0, ydots,
+			0, g_x_dots, 0, g_y_dots,
 			xxminl, yymaxl,
 			xxmaxl, yymaxl,
 			xxminl, yyminl,

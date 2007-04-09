@@ -126,14 +126,14 @@ static void _fastcall plot_hist(int x, int y, int color);
 	to rectangular screen. We know this map must map parallelogram corners to
 	screen corners, so we have following equations:
 
-		a*xxmin + b*yymax + e == 0        (upper left)
-		c*xxmin + d*yymax + f == 0
+		a*g_xx_min + b*g_yy_max + e == 0        (upper left)
+		c*g_xx_min + d*g_yy_max + f == 0
 
-		a*xx3rd + b*yy3rd + e == 0        (lower left)
-		c*xx3rd + d*yy3rd + f == ydots-1
+		a*g_xx_3rd + b*g_yy_3rd + e == 0        (lower left)
+		c*g_xx_3rd + d*g_yy_3rd + f == g_y_dots-1
 
-		a*xxmax + b*yymin + e == xdots-1  (lower right)
-		c*xxmax + d*yymin + f == ydots-1
+		a*g_xx_max + b*g_yy_min + e == g_x_dots-1  (lower right)
+		c*g_xx_max + d*g_yy_min + f == g_y_dots-1
 
 		First we must solve for a, b, c, d, e, f - (which we do once per image),
 		then we just apply the transformation to each orbit value.
@@ -158,11 +158,11 @@ static void _fastcall plot_hist(int x, int y, int color);
   the unknowns e and f have the same coefficient: 1.
 
   First set of 3 equations:
-     a*xxmin + b*yymax + e == 0
-     a*xx3rd + b*yy3rd + e == 0
-     a*xxmax + b*yymin + e == xdots-1
-  To make things easy to read, I just replace xxmin, xxmax, xx3rd by x1,
-  x2, x3 (ditto for yy...) and xdots-1 by xd.
+     a*g_xx_min + b*g_yy_max + e == 0
+     a*g_xx_3rd + b*g_yy_3rd + e == 0
+     a*g_xx_max + b*g_yy_min + e == g_x_dots-1
+  To make things easy to read, I just replace g_xx_min, g_xx_max, g_xx_3rd by x1,
+  x2, x3 (ditto for yy...) and g_x_dots-1 by xd.
 
      a*x1 + b*y2 + e == 0    (1)
      a*x3 + b*y3 + e == 0    (2)
@@ -183,9 +183,9 @@ static void _fastcall plot_hist(int x, int y, int color);
 
 The same technique can be applied to the second set of equations:
 
-	c*xxmin + d*yymax + f == 0
-	c*xx3rd + d*yy3rd + f == ydots-1
-	c*xxmax + d*yymin + f == ydots-1
+	c*g_xx_min + d*g_yy_max + f == 0
+	c*g_xx_3rd + d*g_yy_3rd + f == g_y_dots-1
+	c*g_xx_max + d*g_yy_min + f == g_y_dots-1
 
 	c*x1 + d*y2 + f == 0    (1)
 	c*x3 + d*y3 + f == yd   (2)
@@ -208,25 +208,25 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
-	det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin);
+	det = (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) + (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min);
 	if (det == 0)
 	{
 		return -1;
 	}
 	xd = g_dx_size/det;
-	scrn_cnvt->a =  xd*(yymax-yy3rd);
-	scrn_cnvt->b =  xd*(xx3rd-xxmin);
-	scrn_cnvt->e = -scrn_cnvt->a*xxmin - scrn_cnvt->b*yymax;
+	scrn_cnvt->a =  xd*(g_yy_max-g_yy_3rd);
+	scrn_cnvt->b =  xd*(g_xx_3rd-g_xx_min);
+	scrn_cnvt->e = -scrn_cnvt->a*g_xx_min - scrn_cnvt->b*g_yy_max;
 
-	det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin);
+	det = (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) + (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min);
 	if (det == 0)
 	{
 		return -1;
 	}
 	yd = g_dy_size/det;
-	scrn_cnvt->c =  yd*(yymin-yy3rd);
-	scrn_cnvt->d =  yd*(xx3rd-xxmax);
-	scrn_cnvt->f = -scrn_cnvt->c*xxmin - scrn_cnvt->d*yymax;
+	scrn_cnvt->c =  yd*(g_yy_min-g_yy_3rd);
+	scrn_cnvt->d =  yd*(g_xx_3rd-g_xx_max);
+	scrn_cnvt->f = -scrn_cnvt->c*g_xx_min - scrn_cnvt->d*g_yy_max;
 	return 0;
 }
 
@@ -663,7 +663,7 @@ int Minverse_julia_orbit()
 	g_new_z       = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
 	leftright = (RANDOM(2)) ? 1 : -1;
 
-	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
+	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
 	{
 		/*
 		* MIIM must skip points that are off the screen boundary,
@@ -837,7 +837,7 @@ int Linverse_julia_orbit()
 	newrow = (int) ((multiply(s_lcvt.c, g_new_z_l.x >> (g_bit_shift - 21), 21) +
 			multiply(s_lcvt.d, g_new_z_l.y >> (g_bit_shift - 21), 21) + s_lcvt.f) >> 21);
 
-	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
+	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
 	{
 		/*
 		* MIIM must skip points that are off the screen boundary,
@@ -1448,7 +1448,7 @@ int orbit_2d_fp()
 
 		col = (int) (cvt.a*x + cvt.b*y + cvt.e);
 		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
-		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
@@ -1590,7 +1590,7 @@ int orbit_2d()
 			g_overflow = 0;
 			return ret;
 		}
-		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
@@ -2003,8 +2003,8 @@ int dynamic_2d_fp()
 
 		xpixel = g_dx_size*(xstep + .5)/s_d;
 		ypixel = g_dy_size*(ystep + .5)/s_d;
-		x = (double) ((xxmin + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
-		y = (double) ((yymax-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
+		x = (double) ((g_xx_min + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
+		y = (double) ((g_yy_max-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
 		if (g_fractal_type == MANDELCLOUD)
 		{
 			s_a = x;
@@ -2029,7 +2029,7 @@ int dynamic_2d_fp()
 
 			col = (int) (cvt.a*x + cvt.b*y + cvt.e);
 			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
-			if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+			if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 			{
 				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
@@ -2113,7 +2113,7 @@ int plotorbits2dsetup(void)
 		{
 			return -1;
 		}
-		g_float_flag = usr_floatflag = TRUE; /* force floating point */
+		g_float_flag = g_user_float_flag = TRUE; /* force floating point */
 		g_fractal_type = tofloat;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
@@ -2170,7 +2170,7 @@ int plotorbits2dfloat(void)
 #if 0
 	col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
 	row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
-	if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+	if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 	{
 		(*g_plot_color)(col, row, 1);
 	}
@@ -2228,10 +2228,10 @@ int plotorbits2dfloat(void)
 		col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
 		row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 #ifdef XFRACT
-		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 #else
 		/* don't know why the next line is necessary, the one above should work */
-		if (col > 0 && col < xdots && row > 0 && row < ydots)
+		if (col > 0 && col < g_x_dots && row > 0 && row < g_y_dots)
 #endif
 		{             /* plot if on the screen */
 			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
@@ -2303,13 +2303,13 @@ int funny_glasses_call(int (*calc)(void))
 		}
 	}
 done:
-	if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*xdots)
+	if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 	{
 		/* turn off view windows so will save properly */
 		g_sx_offset = g_sy_offset = 0;
-		xdots = g_screen_width;
-		ydots = g_screen_height;
-		viewwindow = 0;
+		g_x_dots = g_screen_width;
+		g_y_dots = g_screen_height;
+		g_view_window = 0;
 	}
 	return status;
 }
@@ -2539,7 +2539,7 @@ static int ifs_2d(void)
 		/* plot if inside window */
 		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
 		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
-		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
+		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			/* color is count of hits on this pixel */
 			if (color_method)
@@ -2817,8 +2817,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(xxmax-xxmin))/(xdots);
-			tmpy += ((double)g_y_shift*(yymax-yymin))/(ydots);
+			tmpx += ((double)g_x_shift*(g_xx_max-g_xx_min))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_yy_max-g_yy_min))/(g_y_dots);
 			tmpz = -((double)inf->maxvals[2]) / g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2828,8 +2828,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
-				tmpx += ((double)g_x_shift1*(xxmax-xxmin))/(xdots);
-				tmpy += ((double)g_y_shift1*(yymax-yymin))/(ydots);
+				tmpx += ((double)g_x_shift1*(g_xx_max-g_xx_min))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_yy_max-g_yy_min))/(g_y_dots);
 				tmpz = -((double)inf->maxvals[2]) / g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
@@ -2902,7 +2902,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			multiply(inf->cvt.b, inf->viewvect[1], g_bit_shift) + inf->cvt.e)
 			>> g_bit_shift)
 		+ g_xx_adjust);
-	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
+	if (inf->col < 0 || inf->col >= g_x_dots || inf->row < 0 || inf->row >= g_y_dots)
 	{
 		inf->col = inf->row =
 			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
@@ -2918,7 +2918,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 						multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
 						inf->cvt.e) >> g_bit_shift)
 						+ g_xx_adjust1);
-		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
+		if (inf->col1 < 0 || inf->col1 >= g_x_dots || inf->row1 < 0 || inf->row1 >= g_y_dots)
 		{
 			inf->col1 = inf->row1 =
 				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
@@ -2982,8 +2982,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(xxmax-xxmin))/(xdots);
-			tmpy += ((double)g_y_shift*(yymax-yymin))/(ydots);
+			tmpx += ((double)g_x_shift*(g_xx_max-g_xx_min))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_yy_max-g_yy_min))/(g_y_dots);
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2993,8 +2993,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
-				tmpx += ((double)g_x_shift1*(xxmax-xxmin))/(xdots);
-				tmpy += ((double)g_y_shift1*(yymax-yymin))/(ydots);
+				tmpx += ((double)g_x_shift1*(g_xx_max-g_xx_min))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_yy_max-g_yy_min))/(g_y_dots);
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 				}
@@ -3015,7 +3015,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				+ inf->cvt.f + g_yy_adjust);
 	inf->col = (int) (inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
 				+ inf->cvt.e + g_xx_adjust);
-	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
+	if (inf->col < 0 || inf->col >= g_x_dots || inf->row < 0 || inf->row >= g_y_dots)
 	{
 		inf->col = inf->row =
 			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
@@ -3027,7 +3027,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 					+ inf->cvt.f + g_yy_adjust1);
 		inf->col1 = (int) (inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
 					+ inf->cvt.e + g_xx_adjust1);
-		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
+		if (inf->col1 < 0 || inf->col1 >= g_x_dots || inf->row1 < 0 || inf->row1 >= g_y_dots)
 		{
 			inf->col1 = inf->row1 =
 				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)

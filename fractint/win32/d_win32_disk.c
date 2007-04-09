@@ -74,8 +74,8 @@ static t_linereader win32_line_reader;
 /*                                      14 = Tandy 1000                 */
 /*                                      15 = TRIDENT  SuperVGA*256      */
 /*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     xdots;          number of dots across the screen     */
-/*         int     ydots;          number of dots down the screen       */
+/*         int     g_x_dots;          number of dots across the screen     */
+/*         int     g_y_dots;          number of dots down the screen       */
 /*         int     g_colors;         number of g_colors available           */
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
@@ -192,12 +192,12 @@ handle_help_tab(int ch)
 		inside_help = 0;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && tabmode)
+	else if (FIK_TAB == ch && g_tab_mode)
 	{
-		int old_tab = tabmode;
-		tabmode = 0;
+		int old_tab = g_tab_mode;
+		g_tab_mode = 0;
 		tab_display();
-		tabmode = old_tab;
+		g_tab_mode = old_tab;
 		ch = 0;
 	}
 
@@ -308,8 +308,8 @@ disk_resize(Driver *drv)
 	DI(di);
 
 	frame_resize(di->base.wintext.max_width, di->base.wintext.max_height);
-	if ((g_video_table[g_adapter].xdots == di->width)
-		&& (g_video_table[g_adapter].ydots == di->height))
+	if ((g_video_table[g_adapter].x_dots == di->width)
+		&& (g_video_table[g_adapter].y_dots == di->height))
 	{
 		return 0;
 	}
@@ -643,7 +643,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	DI(di);
 
 	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = g_screen_width;
+	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
@@ -1018,15 +1018,15 @@ static void disk_restore_graphics(Driver *drv)
 {
 }
 
-static void disk_get_max_screen(Driver *drv, int *xmax, int *ymax)
+static void disk_get_max_screen(Driver *drv, int *g_x_max, int *g_y_max)
 {
-	if (xmax != NULL)
+	if (g_x_max != NULL)
 	{
-		*xmax = -1;
+		*g_x_max = -1;
 	}
-	if (ymax != NULL)
+	if (g_y_max != NULL)
 	{
-		*ymax = -1;
+		*g_y_max = -1;
 	}
 }
 

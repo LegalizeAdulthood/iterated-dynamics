@@ -26,8 +26,8 @@
 #define RANDOM(n)       ((int)((long)((long)rand()*(long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */
 #define MAX_ANTS        256
-#define XO              (xdots/2)
-#define YO              (ydots/2)
+#define XO              (g_x_dots/2)
+#define YO              (g_y_dots/2)
 #define DIRS            4
 #define INNER_LOOP      100
 
@@ -152,8 +152,8 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		else
 		{
 			dir[color] = RANDOM(DIRS);
-			x[color] = RANDOM(xdots);
-			y[color] = RANDOM(ydots);
+			x[color] = RANDOM(g_x_dots);
+			y[color] = RANDOM(g_y_dots);
 		}
 	}
 	maxpts = maxpts / (long) INNER_LOOP;
@@ -217,8 +217,8 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					idir &= 3;
 					if (antwrap == 0)
 					{
-						if ((idir == 0 && iy == ydots - 1) ||
-							(idir == 1 && ix == xdots - 1) ||
+						if ((idir == 0 && iy == g_y_dots - 1) ||
+							(idir == 1 && ix == g_x_dots - 1) ||
 							(idir == 2 && iy == 0) ||
 							(idir == 3 && ix == 0))
 						{
@@ -243,8 +243,8 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					idir &= 3;
 					if (antwrap == 0)
 					{
-						if ((idir == 0 && iy == ydots - 1) ||
-							(idir == 1 && ix == xdots - 1) ||
+						if ((idir == 0 && iy == g_y_dots - 1) ||
+							(idir == 1 && ix == g_x_dots - 1) ||
 							(idir == 2 && iy == 0) ||
 							(idir == 3 && ix == 0))
 						{
@@ -292,8 +292,8 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 			* x[0], y[0], dir[0] */
 			dir[color] = RANDOM(DIRS);
 			rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
-			x[color] = RANDOM(xdots);
-			y[color] = RANDOM(ydots);
+			x[color] = RANDOM(g_x_dots);
+			y[color] = RANDOM(g_y_dots);
 		}
 	}
 	else
@@ -391,8 +391,8 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 				idir &= 3;
 				if (antwrap == 0)
 				{
-					if ((idir == 0 && iy == ydots - 1) ||
-						(idir == 1 && ix == xdots - 1) ||
+					if ((idir == 0 && iy == g_y_dots - 1) ||
+						(idir == 1 && ix == g_x_dots - 1) ||
 						(idir == 2 && iy == 0) ||
 						(idir == 3 && ix == 0))
 					{
@@ -426,61 +426,61 @@ int ant(void)
 	long maxpts, wait;
 	char rule[MAX_ANTS];
 
-	if (xdots != s_last_xdots || ydots != s_last_ydots)
+	if (g_x_dots != s_last_xdots || g_y_dots != s_last_ydots)
 	{
-		int *storage = (int *) malloc((xdots + 2)*sizeof(int)*DIRS + (ydots + 2)*sizeof(int)*DIRS);
-		int *y_storage = storage + (xdots + 2)*DIRS;
+		int *storage = (int *) malloc((g_x_dots + 2)*sizeof(int)*DIRS + (g_y_dots + 2)*sizeof(int)*DIRS);
+		int *y_storage = storage + (g_x_dots + 2)*DIRS;
 
-		s_last_xdots = xdots;
-		s_last_ydots = ydots;
+		s_last_xdots = g_x_dots;
+		s_last_ydots = g_y_dots;
 
 		free_ant_storage();	/* free old memory */
 		for (i = 0; i < DIRS; i++)
 		{
 			s_incx[i] = storage;
-			storage += xdots + 2;
+			storage += g_x_dots + 2;
 			s_incy[i] = y_storage;
-			y_storage += ydots + 2;
+			y_storage += g_y_dots + 2;
 		}
 	}
 
 	/* In this vectors put all the possible point that the ants can visit.
 	* Wrap them from a side to the other insted of simply end calculation
 	*/
-	for (i = 0; i < xdots; i++)
+	for (i = 0; i < g_x_dots; i++)
 	{
 		s_incx[0][i] = i;
 		s_incx[2][i] = i;
 	}
 
-	for (i = 0; i < xdots; i++)
+	for (i = 0; i < g_x_dots; i++)
 	{
 		s_incx[3][i] = i + 1;
 	}
-	s_incx[3][xdots-1] = 0; /* wrap from right of the screen to left */
+	s_incx[3][g_x_dots-1] = 0; /* wrap from right of the screen to left */
 
-	for (i = 1; i < xdots; i++)
+	for (i = 1; i < g_x_dots; i++)
 	{
 		s_incx[1][i] = i - 1;
 	}
-	s_incx[1][0] = xdots-1; /* wrap from left of the screen to right */
+	s_incx[1][0] = g_x_dots-1; /* wrap from left of the screen to right */
 
-	for (i = 0; i < ydots; i++)
+	for (i = 0; i < g_y_dots; i++)
 	{
 		s_incy[1][i] = i;
 		s_incy[3][i] = i;
 	}
-	for (i = 0; i < ydots; i++)
+	for (i = 0; i < g_y_dots; i++)
 	{
 		s_incy[0][i] = i + 1;
 	}
-	s_incy[0][ydots - 1] = 0;      /* wrap from the top of the screen to the
+	s_incy[0][g_y_dots - 1] = 0;      /* wrap from the top of the screen to the
 									* bottom */
-	for (i = 1; i < ydots; i++)
+	for (i = 1; i < g_y_dots; i++)
 	{
 		s_incy[2][i] = i - 1;
 	}
-	s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
+	s_incy[2][0] = g_y_dots - 1;      /* wrap from the bottom of the screen to the
 									* top */
 	oldhelpmode = g_help_mode;
 	g_help_mode = ANTCOMMANDS;
