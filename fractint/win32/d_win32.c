@@ -68,7 +68,7 @@ int handle_timed_save(int ch)
 		{
 			if (1 == finishrow)
 			{
-				if (calc_status != CALCSTAT_IN_PROGRESS)
+				if (g_calculation_status != CALCSTAT_IN_PROGRESS)
 				{
 					if ((g_got_status != GOT_STATUS_12PASS) && (g_got_status != GOT_STATUS_GUESSING))
 					{
@@ -399,7 +399,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_good_mode = 1;
 	if (dotmode != 0)
 	{
-		g_and_color = colors-1;
+		g_and_color = g_colors-1;
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;

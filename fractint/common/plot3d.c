@@ -163,13 +163,13 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 }   /* draw_line */
 
 #if 0
-/* use this for continuous colors later */
+/* use this for continuous g_colors later */
 void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 {
 	int tmp;
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
-		color = colors - color; /*  Reverses color order */
+		color = g_colors - color; /*  Reverses color order */
 		color = color / 4;
 		if (color == 0)
 		{
@@ -179,7 +179,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	color = 3;
 	tmp = getcolor(x, y);
 
-	/* map to 4 colors */
+	/* map to 4 g_colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -257,15 +257,15 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
-		color = colors - color; /*  Reverses color order */
+		color = g_colors - color; /*  Reverses color order */
 		color = (max_colors == 236) ?
-			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color / 21) /*  Maps g_colors 1-255 to 13 even ranges */
 			: 
-			(1 + color / 18); /*  Maps colors 1-255 to 15 even ranges */
+			(1 + color / 18); /*  Maps g_colors 1-255 to 15 even ranges */
 	}
 
 	tmp = getcolor(x, y);
-	/* map to 16 colors */
+	/* map to 16 g_colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -317,17 +317,17 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
-		/* my mind is fried - lower indices = darker colors is EASIER! */
-		color = colors - color; /*  Reverses color order */
+		/* my mind is fried - lower indices = darker g_colors is EASIER! */
+		color = g_colors - color; /*  Reverses color order */
 		color = (max_colors == 236) ?
-			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color / 21) /*  Maps g_colors 1-255 to 13 even ranges */
 			:
-			(1 + color / 18); /*  Looks weird but maps colors 1-255 to 15
+			(1 + color / 18); /*  Looks weird but maps g_colors 1-255 to 15
 								relatively even ranges */
 	}
 
 	tmp = getcolor(x, y);
-	/* map to 16 colors */
+	/* map to 16 g_colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -372,10 +372,10 @@ void _fastcall plot3dalternate(int x, int y, int color)
 
 	t_c = (BYTE)(255-color);
 	/* lorez high color red/blue 3D plot function */
-	/* if which image = 1, compresses color to lower 128 colors */
+	/* if which image = 1, compresses color to lower 128 g_colors */
 
-	/* my mind is STILL fried - lower indices = darker colors is EASIER! */
-	color = colors - color;
+	/* my mind is STILL fried - lower indices = darker g_colors is EASIER! */
+	color = g_colors - color;
 	if ((g_which_image == WHICHIMAGE_RED) && !((x + y)&1)) /* - lower half palette */
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -398,12 +398,12 @@ void _fastcall plot3dalternate(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			g_put_color(x, y, (color >> 1) + (colors >> 1));
+			g_put_color(x, y, (color >> 1) + (g_colors >> 1));
 			if (g_targa_output)
 			{
 				if (!ILLUMINE)
 				{
-					targa_color(x, y, (color >> 1) + (colors >> 1));
+					targa_color(x, y, (color >> 1) + (g_colors >> 1));
 				}
 				else
 				{
@@ -471,7 +471,7 @@ void plot_setup()
 		break;
 
 	case STEREO_SUPERIMPOSE:
-		if (colors == 256)
+		if (g_colors == 256)
 		{
 			g_standard_plot = (fractype != IFS3D) ? plot3dsuperimpose256 : plotIFS3dsuperimpose256;
 		}
@@ -549,7 +549,7 @@ void plot_setup()
 		ValidateLuts(MAP_name); /* read the palette file */
 		if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 		{
-			if (g_glasses_type == STEREO_SUPERIMPOSE && colors < 256)
+			if (g_glasses_type == STEREO_SUPERIMPOSE && g_colors < 256)
 			{
 				g_dac_box[PAL_RED  ][0] = 63;
 				g_dac_box[PAL_RED  ][1] =  0;

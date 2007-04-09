@@ -146,7 +146,7 @@ int get_toggles()
 	uvalues[k].type = 'L';
 	uvalues[k].uval.Lval = old_maxit = maxit;
 
-	choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
+	choices[++k] = "Inside Color (0-# of g_colors, if Inside=numb)";
 	uvalues[k].type = 'i';
 	if (g_inside >= 0)
 	{
@@ -184,7 +184,7 @@ int get_toggles()
 		uvalues[k].uval.ch.val = 9;
 	old_inside = g_inside;
 
-	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
+	choices[++k] = "Outside Color (0-# of g_colors, if Outside=numb)";
 	uvalues[k].type = 'i';
 	if (g_outside >= 0)
 	{
@@ -331,9 +331,9 @@ int get_toggles()
 	{
 		g_inside = -g_inside;
 	}
-	if (g_inside >= colors)
+	if (g_inside >= g_colors)
 	{
-		g_inside = (g_inside % colors) + (g_inside / colors);
+		g_inside = (g_inside % g_colors) + (g_inside / g_colors);
 	}
 
 	{
@@ -383,9 +383,9 @@ int get_toggles()
 	{
 		g_outside = -g_outside;
 	}
-	if (g_outside >= colors)
+	if (g_outside >= g_colors)
 	{
-		g_outside = (g_outside % colors) + (g_outside / colors);
+		g_outside = (g_outside % g_colors) + (g_outside / g_colors);
 	}
 
 	{
@@ -423,9 +423,9 @@ int get_toggles()
 	}
 
 	g_user_biomorph = uvalues[++k].uval.ival;
-	if (g_user_biomorph >= colors)
+	if (g_user_biomorph >= g_colors)
 	{
-		g_user_biomorph = (g_user_biomorph % colors) + (g_user_biomorph / colors);
+		g_user_biomorph = (g_user_biomorph % g_colors) + (g_user_biomorph / g_colors);
 	}
 	if (g_user_biomorph != old_biomorph)
 	{
@@ -450,9 +450,9 @@ int get_toggles()
 	{
 		g_fill_color = -1;
 	}
-	if (g_fill_color >= colors)
+	if (g_fill_color >= g_colors)
 	{
-		g_fill_color = (g_fill_color % colors) + (g_fill_color / colors);
+		g_fill_color = (g_fill_color % g_colors) + (g_fill_color / g_colors);
 	}
 	if (g_fill_color != old_fillcolor)
 	{
@@ -1012,7 +1012,7 @@ int get_cmd_string()
 /* --------------------------------------------------------------------- */
 
 int Distribution = 30, Offset = 0, Slope = 25;
-long con;
+long g_gaussian_constant;
 
 
 double starfield_values[4] =
@@ -1052,7 +1052,7 @@ int starfield(void)
 	}
 
 	Distribution = (int)(starfield_values[0]);
-	con  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
+	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	Slope = (int)(starfield_values[2]);
 
 	if (ValidateLuts(GreyFile) != 0)
@@ -1075,9 +1075,9 @@ int starfield(void)
 			c = getcolor(g_col, g_row);
 			if (c == g_inside)
 			{
-				c = colors-1;
+				c = g_colors-1;
 			}
-			g_put_color(g_col, g_row, GausianNumber(c, colors));
+			g_put_color(g_col, g_row, GausianNumber(c, g_colors));
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);
@@ -1097,7 +1097,7 @@ int get_starfield_params(void)
 		"Ratio of Dim stars to Bright"
 	};
 
-	if (colors < 255)
+	if (g_colors < 255)
 	{
 		stopmsg(0, "starfield requires 256 color mode");
 		return -1;
@@ -1165,7 +1165,7 @@ int get_rds_params(void)
 		uvalues[k].uval.ch.list = stereobars;
 		uvalues[k].uval.ch.vlen = 6;
 		uvalues[k].uval.ch.llen = 3;
-		uvalues[k++].uval.ch.val  = calibrate;
+		uvalues[k++].uval.ch.val  = g_calibrate;
 
 		uvalues[k].uval.ch.val = image_map;
 		uvalues[k++].type = 'y';
@@ -1215,7 +1215,7 @@ int get_rds_params(void)
 			g_auto_stereo_depth = uvalues[k++].uval.ival;
 			g_auto_stereo_width = uvalues[k++].uval.dval;
 			g_grayscale_depth = uvalues[k++].uval.ch.val;
-			calibrate        = (char)uvalues[k++].uval.ch.val;
+			g_calibrate        = (char)uvalues[k++].uval.ch.val;
 			image_map        = (char)uvalues[k++].uval.ch.val;
 			if (*stereomapname && image_map)
 			{

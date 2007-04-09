@@ -180,7 +180,7 @@ double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 
 void setMPfunctions(void)
 {
-	if (cpu >= 386)
+	if (g_cpu >= 386)
 	{
 		pMPmul = MPmul386;
 		pMPdiv = MPdiv386;
@@ -492,11 +492,11 @@ void SetupLogTable(void)
 			{
 				lf = MaxLTSize - 1;
 			}
-			mlf = (colors - (lf ? 2 : 1 ))/log(MaxLTSize - lf);
+			mlf = (g_colors - (lf ? 2 : 1 ))/log(MaxLTSize - lf);
 		}
 		else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
 		{
-			mlf = (colors - 1)/log(MaxLTSize);
+			mlf = (g_colors - 1)/log(MaxLTSize);
 		}
 		else if (g_log_palette_flag <= -2)  /* sqrt function */
 		{
@@ -505,7 +505,7 @@ void SetupLogTable(void)
 			{
 				lf = MaxLTSize - 1;
 			}
-			mlf = (colors - 2)/sqrt(MaxLTSize - lf);
+			mlf = (g_colors - 2)/sqrt(MaxLTSize - lf);
 		}
 	}
 
@@ -534,19 +534,19 @@ void SetupLogTable(void)
 		}
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fLog14(m, m);
-		Fg2Float((long)(colors - (lf ? 2 : 1)), 0, c);
+		Fg2Float((long)(g_colors - (lf ? 2 : 1)), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
 			LogTable[prev] = 1;
 		}
-		for (n = (lf ? 2 : 1); n < (unsigned int)colors; n++)
+		for (n = (lf ? 2 : 1); n < (unsigned int)g_colors; n++)
 		{
 			Fg2Float((long)n, 0, f);
 			fMul16(f, m, f);
 			fExp14(f, l);
 			limit = (unsigned long)Float2Fg(l, 0) + lf;
-			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
 			{
 				limit = MaxLTSize;
 			}
@@ -565,19 +565,19 @@ void SetupLogTable(void)
 		}
 		Fg2Float((long)(MaxLTSize-lf), 0, m);
 		fSqrt14(m, m);
-		Fg2Float((long)(colors-2), 0, c);
+		Fg2Float((long)(g_colors-2), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
 			LogTable[prev] = 1;
 		}
-		for (n = 2; n < (unsigned int)colors; n++)
+		for (n = 2; n < (unsigned int)g_colors; n++)
 		{
 			Fg2Float((long)n, 0, f);
 			fMul16(f, m, f);
 			fMul16(f, f, l);
 			limit = (unsigned long)(Float2Fg(l, 0) + lf);
-			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(colors-1))
+			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
 			{
 				limit = MaxLTSize;
 			}
@@ -590,7 +590,7 @@ void SetupLogTable(void)
 	LogTable[0] = 0;
 	if (g_log_palette_flag != LOGPALETTE_OLD)
 	{
-		for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused colors */
+		for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused g_colors */
 		{
 			if (LogTable[sptop] > LogTable[sptop-1])
 			{
@@ -794,7 +794,7 @@ int GausianNumber(int Probability, int Range)
 	long Accum = 0, p;
 
 	p = divide((long)Probability << 16, (long)Range << 16, 16);
-	p = multiply(p, con, 16);
+	p = multiply(p, g_gaussian_constant, 16);
 	p = multiply((long)Distribution << 16, p, 16);
 	if (!(rand15() % (Distribution - (int)(p >> 16) + 1)))
 	{
@@ -2047,22 +2047,22 @@ struct MP *MPmul386(struct MP x, struct MP y)
 */
 struct MP *d2MP(double x)
 {
-	return ((cpu >= 386) ? d2MP386 : d2MP086)(x);
+	return ((g_cpu >= 386) ? d2MP386 : d2MP086)(x);
 }
 
 struct MP *MPmul(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPmul386 : MPmul086)(x, y);
+	return ((g_cpu >= 386) ? MPmul386 : MPmul086)(x, y);
 }
 
 struct MP *MPdiv(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPdiv386 : MPdiv086)(x, y);
+	return ((g_cpu >= 386) ? MPdiv386 : MPdiv086)(x, y);
 }
 
 int MPcmp(struct MP x, struct MP y)
 {
-	return ((cpu >= 386) ? MPcmp386 : MPcmp086)(x, y);
+	return ((g_cpu >= 386) ? MPcmp386 : MPcmp086)(x, y);
 }
 
 /*
@@ -2154,6 +2154,6 @@ struct MP *fg2MP386(long x, int fg)
 
 struct MP *fg2MP(long x, int fg)
 {
-	return ((cpu >= 386) ? fg2MP386 : fg2MP086)(x, fg);
+	return ((g_cpu >= 386) ? fg2MP386 : fg2MP086)(x, fg);
 }
 #endif

@@ -34,8 +34,8 @@ void _fastcall history_save_info(void)
 	current.xmax				= xxmax;
 	current.ymin				= yymin;
 	current.ymax				= yymax;
-	current.creal				= param[0];
-	current.cimag				= param[1];
+	current.g_c_real				= param[0];
+	current.g_c_imag				= param[1];
 	current.dparm3				= param[2];
 	current.dparm4				= param[3];
 	current.dparm5				= param[4];
@@ -214,15 +214,15 @@ void _fastcall history_restore_info(void)
 	last = history[historyptr];
 
 	g_invert				= 0;
-	calc_status				= CALCSTAT_PARAMS_CHANGED;
+	g_calculation_status				= CALCSTAT_PARAMS_CHANGED;
 	g_resuming				= 0;
 	fractype				= last.fractal_type;
 	xxmin               	= last.xmin;
 	xxmax               	= last.xmax;
 	yymin               	= last.ymin;
 	yymax               	= last.ymax;
-	param[0]            	= last.creal;
-	param[1]            	= last.cimag;
+	param[0]            	= last.g_c_real;
+	param[1]            	= last.g_c_imag;
 	param[2]            	= last.dparm3;
 	param[3]            	= last.dparm4;
 	param[4]            	= last.dparm5;

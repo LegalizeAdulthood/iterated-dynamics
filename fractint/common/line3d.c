@@ -526,9 +526,9 @@ int line3d(BYTE *pixels, unsigned linelen)
 					rnd = -rnd;   /* Make +/- n-bit number */
 				}
 
-				if ((int) (cur.color) + rnd >= colors)
+				if ((int) (cur.color) + rnd >= g_colors)
 				{
-					cur.color = colors - 2;
+					cur.color = g_colors - 2;
 				}
 				else if ((int) (cur.color) + rnd <= WATERLINE)
 				{
@@ -819,8 +819,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 								* s_f_last_row[col-1].y, s_f_last_row[col-1].color);
 								* stopmsg(0, msg); */
 							}
-							f_cur.color = (float) colors;
-							cur.color = colors;
+							f_cur.color = (float) g_colors;
+							cur.color = g_colors;
 						}
 					}
 					cross_avg[0] = tmpcross[0];
@@ -830,20 +830,20 @@ int line3d(BYTE *pixels, unsigned linelen)
 					/* dot product of unit vectors is cos of angle between */
 					/* we will use this value to shade surface */
 
-					cur.color = (int) (1 + (colors - 2) *
+					cur.color = (int) (1 + (g_colors - 2) *
 						(1.0 - dot_product(g_cross, s_light_direction)));
 				}
-				/* if colors out of range, set them to min or max color index
-				* but avoid background index. This makes colors "opaque" so
+				/* if g_colors out of range, set them to min or max color index
+				* but avoid background index. This makes g_colors "opaque" so
 				* SOMETHING plots. These conditions shouldn't happen but just
 				* in case                                        */
-				if (cur.color < 1)       /* prevent transparent colors */
+				if (cur.color < 1)       /* prevent transparent g_colors */
 				{
 					cur.color = 1; /* avoid background */
 				}
-				if (cur.color > colors - 1)
+				if (cur.color > g_colors - 1)
 				{
-					cur.color = colors - 1;
+					cur.color = g_colors - 1;
 				}
 
 				/* why "col < 2"? So we have sufficient geometry for the fill */
@@ -855,7 +855,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
 				}
 
-				if (col < 2 || g_current_row < 2)       /* don't have valid colors yet */
+				if (col < 2 || g_current_row < 2)       /* don't have valid g_colors yet */
 				{
 					break;
 				}
@@ -1327,7 +1327,7 @@ static void _fastcall transparent_clip_color(int x, int y, int color)
 {
 	if (0 <= x && x < xdots &&   /* is the point on screen?  */
 		0 <= y && y < ydots &&   /* Yes?  */
-		0 <= color && color < colors &&  /* Colors in valid range?  */
+		0 <= color && color < g_colors &&  /* Colors in valid range?  */
 		/* Lets make sure its not a transparent color  */
 		(g_transparent[0] > color || color > g_transparent[1]))
 	{
@@ -1345,7 +1345,7 @@ static void _fastcall transparent_clip_color(int x, int y, int color)
 }
 
 /************************************************************************/
-/* A substitute for plotcolor that interpolates the colors according    */
+/* A substitute for plotcolor that interpolates the g_colors according    */
 /* to the x and y values of three points (s_p1, s_p2, s_p3) which are static in */
 /* this routine                                                         */
 /*                                                                      */
@@ -1367,7 +1367,7 @@ static void _fastcall interp_color(int x, int y, int color)
 
 	D = (d1 + d2 + d3) << 1;
 	if (D)
-	{  /* calculate a weighted average of colors long casts prevent integer
+	{  /* calculate a weighted average of g_colors long casts prevent integer
 			overflow. This can evaluate to zero */
 		color = (int) (((long) (d2 + d3)*(long) s_p1.color +
 				(long) (d1 + d3)*(long) s_p2.color +
@@ -1376,7 +1376,7 @@ static void _fastcall interp_color(int x, int y, int color)
 
 	if (0 <= x && x < xdots &&
 		0 <= y && y < ydots &&
-		0 <= color && color < colors &&
+		0 <= color && color < g_colors &&
 		(g_transparent[1] == 0 || (int) s_real_color > g_transparent[1] ||
 			g_transparent[0] > (int) s_real_color))
 	{
@@ -1436,7 +1436,7 @@ int _fastcall targa_color(int x, int y, int color)
 	case TRUEMODE_DEFAULT:
 		RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); /* Move color space to */
 		RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
-		RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); /* from 64 colors */
+		RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); /* from 64 g_colors */
 		break;
 	case TRUEMODE_ITERATES:
 		RGB[0] = (BYTE)((g_real_color_iter >> 16) & 0xff);  /* red   */
@@ -1459,7 +1459,7 @@ int _fastcall targa_color(int x, int y, int color)
 
 	if (g_haze)
 	{
-		/* Haze lowers sat of colors */
+		/* Haze lowers sat of g_colors */
 		S = (unsigned long) (S*s_haze_mult)/100;
 		if (V >= 32640)           /* Haze reduces contrast */
 		{
@@ -2031,8 +2031,8 @@ static int _fastcall raytrace_header(void)
 /*  of its verticies and sets the light parameters to arbitrary     */
 /*  values.                                                         */
 /*                                                                  */
-/*  Note: numcolors (number of colors in the source                 */
-/*  file) is used instead of colors (number of colors avail. with   */
+/*  Note: numcolors (number of g_colors in the source                 */
+/*  file) is used instead of g_colors (number of g_colors avail. with   */
 /*  display) so you can generate ray trace files with your LCD      */
 /*  or monochrome display                                           */
 /*                                                                  */
@@ -2055,7 +2055,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 	pt_t[2][1] = (2*pt3.y/ydots - 1);
 	pt_t[2][2] = -2*pt3.color/numcolors - 1;
 
-	/* Color of triangle is average of colors of its verticies */
+	/* Color of triangle is average of g_colors of its verticies */
 	if (!g_raytrace_brief)
 	{
 		for (i = 0; i <= 2; i++)
@@ -2417,7 +2417,7 @@ static int first_time(int linelen, VECTOR v)
 	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
 	float twocosdeltatheta;
 	double xval, yval, zval;     /* rotation values */
-	/* corners of transformed xdotx by ydots x colors box */
+	/* corners of transformed xdotx by ydots x g_colors box */
 	double xmin, ymin, zmin, xmax, ymax, zmax;
 	int i, j;
 	double v_length;
@@ -2427,9 +2427,9 @@ static int first_time(int linelen, VECTOR v)
 	float deltatheta;            /* increment of latitude */
 	outln_cleanup = line3d_cleanup;
 
-	calctime = s_even_odd_row = 0;
+	g_calculation_time = s_even_odd_row = 0;
 	/* mark as in-progress, and enable <tab> timer display */
-	calc_status = CALCSTAT_IN_PROGRESS;
+	g_calculation_status = CALCSTAT_IN_PROGRESS;
 
 	s_ambient = (unsigned int) (255*(float) (100 - g_ambient)/100.0);
 	if (s_ambient < 1)
@@ -2732,7 +2732,7 @@ static int first_time(int linelen, VECTOR v)
 	{
 		fill_plot = clip_color;
 
-		/* If transparent colors are set */
+		/* If transparent g_colors are set */
 		if (g_transparent[0] || g_transparent[1])
 		{
 			fill_plot = transparent_clip_color; /* Use the transparent plot function  */

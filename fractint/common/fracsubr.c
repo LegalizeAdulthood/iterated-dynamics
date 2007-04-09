@@ -144,7 +144,7 @@ void fractal_float_to_bf(void)
 			floattobf(bfparms[i], param[i]);
 		}
 	}
-	calc_status = CALCSTAT_PARAMS_CHANGED;
+	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
 
@@ -251,7 +251,7 @@ void calculate_fractal_initialize(void)
 		free_bf_vars();
 	}
 	g_float_flag = bf_math ? TRUE : usr_floatflag;
-	if (calc_status == CALCSTAT_RESUMABLE)  /* on resume, ensure g_float_flag correct */
+	if (g_calculation_status == CALCSTAT_RESUMABLE)  /* on resume, ensure g_float_flag correct */
 	{
 		g_float_flag = g_current_fractal_specific->isinteger ? FALSE : TRUE;
 	}
@@ -287,7 +287,7 @@ init_restart:
 
 	g_potential_flag = FALSE;
 	if (potparam[0] != 0.0
-		&& colors >= 64
+		&& g_colors >= 64
 		&& (g_current_fractal_specific->calculate_type == standard_fractal
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot_fp))
@@ -447,8 +447,8 @@ init_restart:
 
 	if (fractype != CELLULAR && fractype != ANT)  /* fudge_to_long fails w >10 digits in double */
 	{
-		creal = fudge_to_long(param[0]); /* integer equivs for it all */
-		cimag = fudge_to_long(param[1]);
+		g_c_real = fudge_to_long(param[0]); /* integer equivs for it all */
+		g_c_imag = fudge_to_long(param[1]);
 		xmin  = fudge_to_long(xxmin);
 		xmax  = fudge_to_long(xxmax);
 		x3rd  = fudge_to_long(xx3rd);
@@ -495,9 +495,9 @@ expand_retry:
 				{
 					adjust_to_limits(2.0);   /* double the size */
 				}
-				if (calc_status == CALCSTAT_RESUMABLE)       /* due to restore of an old file? */
+				if (g_calculation_status == CALCSTAT_RESUMABLE)       /* due to restore of an old file? */
 				{
-					calc_status = CALCSTAT_PARAMS_CHANGED;         /*   whatever, it isn't resumable */
+					g_calculation_status = CALCSTAT_PARAMS_CHANGED;         /*   whatever, it isn't resumable */
 				}
 				goto init_restart;
 			} /* end if ratio bad */
@@ -1022,11 +1022,11 @@ static void _fastcall adjust_to_limits_bf(double expand)
 		}
 	}
 
-	/* if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
-		calc_status = CALCSTAT_PARAMS_CHANGED; */
-	if (calc_status == CALCSTAT_RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
+	/* if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED; */
+	if (g_calculation_status == CALCSTAT_RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (zwidth == 1.0))
 	{
-		calc_status = CALCSTAT_PARAMS_CHANGED;
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 
 	/* xxmin = cornerx[0] - adjx; */
@@ -1181,9 +1181,9 @@ static void _fastcall adjust_to_limits(double expand)
 			adjy = ftemp;
 		}
 	}
-	if (calc_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
+	if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (zwidth == 1.0))
 	{
-		calc_status = CALCSTAT_PARAMS_CHANGED;
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 	xxmin = cornerx[0] - adjx;
 	xxmax = cornerx[1] - adjx;
@@ -1241,10 +1241,10 @@ static int _fastcall ratio_bad(double actual, double desired)
 
 	Before calling the (per_image, calctype) routines (engine), calculate_fractal sets:
 		"resuming" to 0 if new image, nonzero if resuming a partially done image
-		"calc_status" to CALCSTAT_IN_PROGRESS
+		"g_calculation_status" to CALCSTAT_IN_PROGRESS
 	If an engine is interrupted and wants to be able to resume it must:
 		store whatever status info it needs to be able to resume later
-		set calc_status to CALCSTAT_RESUMABLE and return
+		set g_calculation_status to CALCSTAT_RESUMABLE and return
 	If subsequently called with resuming!=0, the engine must restore status
 	info and continue from where it left off.
 
@@ -1258,7 +1258,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 			undersize is not checked and probably causes serious misbehaviour.
 			Version is an arbitrary number so that subsequent revisions of the
 			engine can be made backward compatible.
-			Alloc_resume sets calc_status to CALCSTAT_RESUMABLE if it succeeds;
+			Alloc_resume sets g_calculation_status to CALCSTAT_RESUMABLE if it succeeds;
 			to CALCSTAT_NON_RESUMABLE if it cannot allocate memory
 			(and issues warning to user).
 		put_resume({bytes, &argument, } ... 0)
@@ -1285,7 +1285,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		end_resume();
 
 	Engines which allocate a large memory chunk of their own might
-	directly set g_resume_info, g_resume_length, calc_status to avoid doubling
+	directly set g_resume_info, g_resume_length, g_calculation_status to avoid doubling
 	transient memory needs by using these routines.
 
 	standard_fractal, calculate_mandelbrot, solidguess, and bound_trace_main are a related
@@ -1342,13 +1342,13 @@ int alloc_resume(int alloclen, int version)
 	{
 		stopmsg(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
-		calc_status = CALCSTAT_NON_RESUMABLE;
+		g_calculation_status = CALCSTAT_NON_RESUMABLE;
 		s_resume_info_length = 0;
 		return -1;
 	}
 	g_resume_length = 0;
 	put_resume(sizeof(version), &version, 0);
-	calc_status = CALCSTAT_RESUMABLE;
+	g_calculation_status = CALCSTAT_RESUMABLE;
 	return 0;
 }
 
@@ -1446,7 +1446,7 @@ static void sleep_ms_old(long ms)
 	savehelpmode = helpmode;
 	tabmode  = 0;
 	helpmode = -1;
-	if (scalems == 0L) /* calibrate */
+	if (scalems == 0L) /* g_calibrate */
 	{
 		/* selects a value of scalems that makes the units
 			10000 per sec independent of CPU speed */
@@ -1456,7 +1456,7 @@ static void sleep_ms_old(long ms)
 		{
 			goto sleepexit;
 		}
-		/* calibrate, assume slow computer first */
+		/* g_calibrate, assume slow computer first */
 		showtempmsg("Calibrating timer");
 		do
 		{

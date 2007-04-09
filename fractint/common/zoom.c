@@ -46,7 +46,7 @@ int g_box_color;
 void dispbox(void)
 {
 	int i;
-	int boxc = (colors-1)&g_box_color;
+	int boxc = (g_colors-1)&g_box_color;
 	unsigned char *values = (unsigned char *)g_box_values;
 	int rgb[3];
 	for (i = 0; i < g_box_count; i++)
@@ -65,7 +65,7 @@ void dispbox(void)
 	{
 		for (i = 0; i < g_box_count; i++)
 		{
-			if (colors == 2)
+			if (g_colors == 2)
 			{
 				g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - values[i]));
 			}
@@ -611,7 +611,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
 
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 {   int i, j;
-	if ((calc_status != CALCSTAT_RESUMABLE && calc_status != CALCSTAT_COMPLETED) || evolving)
+	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || evolving)
 	{
 		return 0; /* not resumable, not complete */
 	}
@@ -642,7 +642,7 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 
 	/* can pan if we get this far */
 
-	if (calc_status == CALCSTAT_COMPLETED)
+	if (g_calculation_status == CALCSTAT_COMPLETED)
 	{
 		return 1; /* image completed, align on any pixel */
 	}
@@ -710,19 +710,19 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	int i, j, row, col, y, alignmask, listfull;
 	if (zwidth == 0.0)
 	{
-		return 0; /* no zoombox, leave calc_status as is */
+		return 0; /* no zoombox, leave g_calculation_status as is */
 	}
 	/* got a zoombox */
 	alignmask = check_pan()-1;
 	if (alignmask < 0 || evolving)
 	{
-		calc_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
 		return 0;
 	}
 	if (zbx == 0.0 && zby == 0.0)
 	{
 		clearbox();
-		return 0; /* box is full screen, leave calc_status as is */
+		return 0; /* box is full screen, leave g_calculation_status as is */
 	}
 	col = (int)(zbx*(dxsize + PIXELROUND)); /* calc dest col, row of topleft pixel */
 	row = (int)(zby*(dysize + PIXELROUND));
@@ -733,12 +733,12 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	if ((row&alignmask) != 0 || (col&alignmask) != 0)
 	{
-		calc_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
 		return 0;
 	}
 	/* pan */
 	g_num_work_list = 0;
-	if (calc_status == CALCSTAT_RESUMABLE)
+	if (g_calculation_status == CALCSTAT_RESUMABLE)
 	{
 		start_resume();
 		get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
@@ -785,12 +785,12 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		}
 		else
 		{
-			calc_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
+			g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
 		}
 		return 0;
 	}
 	/* now we're committed */
-	calc_status = CALCSTAT_RESUMABLE;
+	g_calculation_status = CALCSTAT_RESUMABLE;
 	clearbox();
 	if (row > 0) /* move image up */
 	{

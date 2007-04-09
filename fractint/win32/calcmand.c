@@ -245,10 +245,10 @@ initoldcolor:
 		mov		dword ptr g_old_color_iter,	eax	; reset g_old_color_iter
 
 initparms:
-		mov		eax, dword ptr creal		; initialize	x == creal
+		mov		eax, dword ptr g_c_real		; initialize	x == g_c_real
 		mov		dword ptr x, eax			;  ...
 
-		mov		eax, dword ptr cimag		; initialize	y == cimag
+		mov		eax, dword ptr g_c_imag		; initialize	y == g_c_imag
 		mov		dword ptr y, eax			;  ...
 
 		mov		eax, dword ptr maxit		; setup k = maxit
@@ -315,7 +315,7 @@ doeither:									; common Mandelbrot, Julia set code
 		jge		quickkbd					;  yup.	 leave it that way.
 slowkbd:
 		mov		g_input_counter, 5000				; else, stuff an appropriate count	val
-		cmp		cpu, 386					; ("appropriate" to the CPU)
+		cmp		g_cpu, 386					; ("appropriate" to the CPU)
 		jae		short kbddiskadj			;  ...
 		cmp		dword ptr delmin + 4,	8		;	is 16-bit math good	enough?
 		ja		kbddiskadj					;  yes.	test less often
@@ -352,7 +352,7 @@ keyhit:	mov		eax, -1						;	return with	-1
 nokey:
 		cmp		g_show_orbit,	0				; is orbiting on?
 		jne		no16bitcode					;  yup.	 slow down.
-		cmp		cpu, 386					; are we on a 386?
+		cmp		g_cpu, 386					; are we on a 386?
 		jae		short code386bit			;  YAY!! 386-class speed!
 		cmp		dword ptr delmin + 4,	8		;	OK,	we're desperate.  16 bits OK?
 		ja		yes16bitcode				;  YAY!	 16-bit	speed!

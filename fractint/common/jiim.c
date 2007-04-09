@@ -214,7 +214,7 @@ static void fillrect(int x, int y, int width, int height, int color)
 	{
 		return;
 	}
-	memset(g_stack, color % colors, width);
+	memset(g_stack, color % g_colors, width);
 	while (height-- > 0)
 	{
 		if (driver_key_pressed()) /* we could do this less often when in fast modes */
@@ -984,7 +984,7 @@ void Jiim(int which)         /* called by fractint */
 			{
 				if (QueueEmpty())
 				{
-					if (maxhits < colors - 1 && maxhits < 5 &&
+					if (maxhits < g_colors - 1 && maxhits < 5 &&
 						(luckyx != 0.0 || luckyy != 0.0))
 					{
 						int i;
@@ -1033,7 +1033,7 @@ void Jiim(int which)         /* called by fractint */
 					r = 0;
 				}
 				iter++;
-				color = ((count++) >> 5) % colors; /* chg color every 32 pts */
+				color = ((count++) >> 5) % g_colors; /* chg color every 32 pts */
 				if (color == 0)
 				{
 					color = 1;
@@ -1083,7 +1083,7 @@ void Jiim(int which)         /* called by fractint */
 				case SECRETMODE_NEGATIVE_MAX_COLOR:                     /* go negative if max color */
 					x = (int)(g_new_z.x*xfactor*zoom + xoff);
 					y = (int)(g_new_z.y*yfactor*zoom + yoff);
-					if (c_getcolor(x, y) == colors - 1)
+					if (c_getcolor(x, y) == g_colors - 1)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
@@ -1096,7 +1096,7 @@ void Jiim(int which)         /* called by fractint */
 					g_new_z.y = -g_new_z.y;
 					x = (int)(g_new_z.x*xfactor*zoom + xoff);
 					y = (int)(g_new_z.y*yfactor*zoom + yoff);
-					if (c_getcolor(x, y) == colors - 1)
+					if (c_getcolor(x, y) == g_colors - 1)
 					{
 						x = (int)(g_new_z.x*xfactor*zoom + xoff);
 						y = (int)(g_new_z.y*yfactor*zoom + yoff);
@@ -1181,7 +1181,7 @@ void Jiim(int which)         /* called by fractint */
 		{
 			if (iter < maxit)
 			{
-				color = (int)iter % colors;
+				color = (int)iter % g_colors;
 				if (integerfractal)
 				{
 					g_old_z.x = g_old_z_l.x; g_old_z.x /= fudge;

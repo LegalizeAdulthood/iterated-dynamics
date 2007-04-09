@@ -117,7 +117,7 @@ int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
-int cpu, fpu;                        /* cpu, fpu flags */
+int g_cpu, fpu;                        /* g_cpu, fpu flags */
 unsigned char g_dac_box[256][3] = { 0 };
 int g_dac_learn = 0;
 int dacnorm = 0;
@@ -281,7 +281,7 @@ long multiply(long x, long y, int n)
 /*
 ; *************** Function find_special_colors ********************
 
-;       Find the darkest and brightest colors in palette, and a medium
+;       Find the darkest and brightest g_colors in palette, and a medium
 ;       color which is reasonably bright and reasonably grey.
 */
 void
@@ -298,7 +298,7 @@ find_special_colors(void)
 	g_color_medium = 7;
 	g_color_bright = 15;
 
-	if (colors == 2)
+	if (g_colors == 2)
 	{
 		g_color_medium = 1;
 		g_color_bright = 1;
@@ -310,7 +310,7 @@ find_special_colors(void)
 		return;
 	}
 
-	for (i = 0; i < colors; i++)
+	for (i = 0; i < g_colors; i++)
 	{
 		brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
 		if (brt > maxb)
@@ -452,7 +452,7 @@ long readticker(void)
 */
 void spindac(int dir, int inc)
 {
-	if (colors < 16)
+	if (g_colors < 16)
 	{
 		return;
 	}
@@ -461,9 +461,9 @@ void spindac(int dir, int inc)
 		return;
 	}
 
-	if ((dir != 0) && (g_rotate_lo < colors) && (g_rotate_lo < g_rotate_hi))
+	if ((dir != 0) && (g_rotate_lo < g_colors) && (g_rotate_lo < g_rotate_hi))
 	{
-		int top = (g_rotate_hi > colors) ? colors - 1 : g_rotate_hi;
+		int top = (g_rotate_hi > g_colors) ? g_colors - 1 : g_rotate_hi;
 		if (dir > 0)
 		{
 			int i;
@@ -510,7 +510,7 @@ void spindac(int dir, int inc)
 		}
 	}
 	driver_write_palette();
-	driver_delay(colors - g_dac_count - 1);
+	driver_delay(g_colors - g_dac_count - 1);
 }
 
 /*
@@ -561,14 +561,14 @@ void home(void)
 */
 void initasmvars(void)
 {
-	if (cpu != 0)
+	if (g_cpu != 0)
 	{
 		return;
 	}
 	overflow = 0;
 
-	/* set cpu type */
-	cpu = 486;
+	/* set g_cpu type */
+	g_cpu = 486;
 
 	/* set fpu type */
 	fpu = 487;

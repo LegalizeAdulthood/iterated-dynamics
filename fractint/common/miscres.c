@@ -838,7 +838,7 @@ int tab_display_2(char *msg)
 	show_str_var("map",         MAP_name,     &row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
-	write_row(row++, "calc_status %d pixel [%d, %d]", calc_status, g_col, g_row);
+	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (fractype == FORMULA || fractype == FFORMULA)
 	{
 		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",
@@ -908,13 +908,13 @@ int tab_display()       /* display the status of the current image */
 	int k;
 	int hasformparam = 0;
 
-	if (calc_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
+	if (g_calculation_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
 	{
 		return 0;                /* (no TAB on the credits screen) */
 	}
-	if (calc_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
+	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
 	{
-		calctime += (clock_ticks() - timer_start) / (CLK_TCK/100);
+		g_calculation_time += (clock_ticks() - timer_start) / (CLK_TCK/100);
 	}
 	driver_stack_screen();
 	if (bf_math)
@@ -989,7 +989,7 @@ top:
 		}
 	}
 
-	switch (calc_status)
+	switch (g_calculation_status)
 	{
 	case CALCSTAT_PARAMS_CHANGED:	msgptr = "Parms chgd since generated"; break;
 	case CALCSTAT_IN_PROGRESS:		msgptr = "Still being generated"; break;
@@ -999,7 +999,7 @@ top:
 	default:						msgptr = "";
 	}
 	driver_put_string(s_row, 45, C_GENERAL_HI, msgptr);
-	if (g_initialize_batch && calc_status != CALCSTAT_PARAMS_CHANGED)
+	if (g_initialize_batch && g_calculation_status != CALCSTAT_PARAMS_CHANGED)
 	{
 		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
@@ -1048,7 +1048,7 @@ top:
 
 	s_row += i;
 
-	if (calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE)
+	if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE)
 	{
 		if (g_current_fractal_specific->flags&NORESUME)
 		{
@@ -1063,7 +1063,7 @@ top:
 	++s_row;
 
 	if ((g_got_status >= GOT_STATUS_12PASS) &&
-		(calc_status == CALCSTAT_IN_PROGRESS || calc_status == CALCSTAT_RESUMABLE))
+		(g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE))
 	{
 		switch (g_got_status)
 		{
@@ -1143,12 +1143,12 @@ top:
 		}
 	}
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
-	get_calculation_time(msg, calctime);
+	get_calculation_time(msg, g_calculation_time);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((g_got_status == GOT_STATUS_DIFFUSION) && (calc_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
+	if ((g_got_status == GOT_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-		get_calculation_time(msg, (long)(calctime*((g_diffusion_limit*1.0)/g_diffusion_counter)));
+		get_calculation_time(msg, (long)(g_calculation_time*((g_diffusion_limit*1.0)/g_diffusion_counter)));
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
@@ -1169,7 +1169,7 @@ top:
 	if (g_video_entry.xdots && bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
-				g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
+				g_video_entry.xdots, g_video_entry.ydots, g_video_entry.g_colors,
 				g_video_entry.name, g_video_entry.comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}

@@ -261,12 +261,12 @@ int mandelbrot_setup_fp(void)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)
-			if (cpu >= 386 && fpu >= 387)
+			if (g_cpu >= 386 && fpu >= 387)
 			{
 				calcmandfpasmstart_p5();
 				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
-			else if (cpu == 286 && fpu >= 287)
+			else if (g_cpu == 286 && fpu >= 287)
 			{
 				calcmandfpasmstart();
 				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;
@@ -408,12 +408,12 @@ int julia_setup_fp(void)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 #if !defined(XFRACT)
-			if (cpu >= 386 && fpu >= 387)
+			if (g_cpu >= 386 && fpu >= 387)
 			{
 				calcmandfpasmstart_p5();
 				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
 			}
-			else if (cpu == 286 && fpu >= 287)
+			else if (g_cpu == 286 && fpu >= 287)
 			{
 				calcmandfpasmstart();
 				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;

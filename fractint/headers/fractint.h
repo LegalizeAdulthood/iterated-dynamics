@@ -260,7 +260,7 @@ typedef BYTE BOOLEAN;
 #define CHOICE_CRUNCH		16
 #define CHOICE_NOT_SORTED	32
 
-/* calc_status values */
+/* g_calculation_status values */
 #define CALCSTAT_NO_FRACTAL		-1
 #define CALCSTAT_PARAMS_CHANGED	0
 #define CALCSTAT_IN_PROGRESS	1
@@ -365,7 +365,7 @@ struct videoinfo {              /* All we need to know about a Video Adapter */
                                 /*      16 = Chips&Tech SuperVGA*256    */
         int     xdots;          /* number of dots across the screen     */
         int     ydots;          /* number of dots down the screen       */
-        int     colors;         /* number of colors available           */
+        int     g_colors;         /* number of g_colors available           */
 		Driver *driver;
         };
 
@@ -402,8 +402,8 @@ struct fractal_info         /*  for saving data in GIF file     */
     double xmax;
     double ymin;
     double ymax;
-    double creal;
-    double cimag;
+    double g_c_real;
+    double g_c_imag;
     short videomodeax;
     short videomodebx;
     short videomodecx;
@@ -411,7 +411,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short dotmode;
     short xdots;
     short ydots;
-    short colors;
+    short g_colors;
     short version;          /* used to be 'future[0]' */
     float parm3;
     float parm4;
@@ -445,12 +445,12 @@ struct fractal_info         /*  for saving data in GIF file     */
     double y3rd;
     char stdcalcmode;     /* 1/2/g/b */
     char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
-    short calc_status;    /* resumable, finished, etc */
+    short g_calculation_status;    /* resumable, finished, etc */
     long tot_extend_len;  /* total length of extension blocks in .gif file */
     short distestold;
     short float_flag;
     short bailoutold;
-    long calctime;
+    long g_calculation_time;
     BYTE trigndx[4];      /* which trig functions selected */
     short finattract;
     double initial_orbit_z[2];  /* init Mandelbrot orbit values */
@@ -529,8 +529,8 @@ struct history_info
     double xmax;
     double ymin;
     double ymax;
-    double creal;
-    double cimag;
+    double g_c_real;
+    double g_c_imag;
     double potential[3];
     short random_seed;
     short random_flag;
@@ -1163,7 +1163,7 @@ extern  void   (_fastcall *plot)(int, int, int);
 /* not really a key, but a special trigger */
 #define FIK_SAVE_TIME		9999
 
-/* text colors */
+/* text g_colors */
 #define BLACK      0
 #define BLUE       1
 #define GREEN      2

@@ -30,7 +30,7 @@ char stereomapname[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
-char calibrate = 1;             /* add calibration bars to image */
+char g_calibrate = 1;             /* add calibration bars to image */
 char image_map = 0;
 
 /* this structure permits variables to be temporarily static and visible
@@ -111,7 +111,7 @@ static int getdepth(int xd, int yd)
 static int get_min_max(void)
 {
 	int xd, yd, ldepth;
-	MINC = colors;
+	MINC = g_colors;
 	MAXC = 0;
 	for (yd = 0; yd < ydots; yd++)
 	{
@@ -250,7 +250,7 @@ int do_AutoStereo(void)
 	oldhelpmode = helpmode;
 	helpmode = RDSKEYS;
 	driver_save_graphics();                      /* save graphics image */
-	memcpy(savedacbox, g_dac_box, 256*3);  /* save colors */
+	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
 
 	if (xdots > OLDMAXPIXELS)
 	{
@@ -281,7 +281,7 @@ int do_AutoStereo(void)
 	barwidth  = 1 + xdots / 200;
 	BARHEIGHT = 1 + ydots / 20;
 	XCEN = xdots/2;
-	YCEN = (calibrate > 1) ? BARHEIGHT/2 : ydots/2;
+	YCEN = (g_calibrate > 1) ? BARHEIGHT/2 : ydots/2;
 
 	/* box to average for calibration bars */
 	X1 = XCEN - xdots/16;
@@ -313,7 +313,7 @@ int do_AutoStereo(void)
 			}
 			for (i = 0; i < xdots; i++)
 			{
-				buf[i] = (unsigned char)(rand() % colors);
+				buf[i] = (unsigned char)(rand() % g_colors);
 			}
 			outline_stereo(buf, xdots);
 		}
@@ -331,7 +331,7 @@ int do_AutoStereo(void)
 			colour[ct++] = getcolor(i - (int)(AVG), j);
 		}
 	}
-	bars = calibrate ? 1 : 0;
+	bars = g_calibrate ? 1 : 0;
 	toggle_bars(&bars, barwidth, colour);
 	done = 0;
 	while (done == 0)

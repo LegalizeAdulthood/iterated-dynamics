@@ -68,7 +68,7 @@ static void _fastcall  mem_seek(long);
 int disk_start()
 {
 	s_header_length = s_disk_targa = 0;
-	return disk_start_common(sxdots, sydots, colors);
+	return disk_start_common(sxdots, sydots, g_colors);
 }
 
 int disk_start_potential()
@@ -83,7 +83,7 @@ int disk_start_potential()
 		showtempmsg("clearing 16bit pot work area");
 	}
 	s_header_length = s_disk_targa = 0;
-	i = disk_start_common(sxdots, sydots << 1, colors);
+	i = disk_start_common(sxdots, sydots << 1, g_colors);
 	cleartempmsg();
 	if (i == 0)
 	{
@@ -104,13 +104,13 @@ int disk_start_targa(FILE *targafp, int overhead)
 	s_header_length = overhead;
 	s_file = targafp;
 	s_disk_targa = 1;
-	i = disk_start_common(xdots*3, ydots, colors);
+	i = disk_start_common(xdots*3, ydots, g_colors);
 	s_high_offset = 100000000L; /* targa not necessarily init'd to zeros */
 
 	return i;
 }
 
-int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
+int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 {
 	int i, freemem;
 	long memorysize, offset;
@@ -142,7 +142,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 		else
 		{
 			driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-			sprintf(buf, "%d", colors);
+			sprintf(buf, "%d", g_colors);
 			driver_put_string(-1, -1, C_DVID_LO, buf);
 		}
 		sprintf(buf, "Save name: %s", g_save_name);
@@ -160,7 +160,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 	{
 		s_pixel_shift = 3;
 		i = 2;
-		while (i < colors)
+		while (i < g_colors)
 		{
 			i *= i;
 			--s_pixel_shift;

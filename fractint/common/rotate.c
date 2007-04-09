@@ -45,7 +45,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 #else
 	if (!(g_got_real_dac || fake_lut)        /* ??? no DAC to rotate! */
 #endif
-		|| colors < 16)  /* strange things happen in 2x modes */
+		|| g_colors < 16)  /* strange things happen in 2x modes */
 	{
 		driver_buzzer(BUZZER_ERROR);
 		return;
@@ -69,7 +69,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		direction = 1;                    /* and set a rotate direction   */
 	}
 
-	rotate_max = (g_rotate_hi < colors) ? g_rotate_hi : colors-1;
+	rotate_max = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors-1;
 	rotate_size = rotate_max - g_rotate_lo + 1;
 	last = rotate_max;                   /* last box that was filled     */
 	next = g_rotate_lo;                    /* next box to be filled        */
@@ -158,7 +158,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 		case FIK_UP_ARROW:                 /* UpArrow means speed up       */
 			g_dac_learn = 1;
-			if (++g_dac_count >= colors)
+			if (++g_dac_count >= g_colors)
 			{
 				--g_dac_count;
 			}
@@ -225,7 +225,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fstep = 1;
 			incr = 999;
 			break;
-		case FIK_ENTER:                    /* enter key: randomize all colors */
+		case FIK_ENTER:                    /* enter key: randomize all g_colors */
 		case FIK_ENTER_2:                  /* also the Numeric-Keypad Enter */
 			fkey = rand15()/3277 + 1;
 			fstep = 1;
@@ -320,7 +320,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				pauserotate();           /* pause */
 			}
 			break;
-		case 'd':                      /* load colors from "default.map" */
+		case 'd':                      /* load g_colors from "default.map" */
 		case 'D':
 			if (ValidateLuts("default") != 0)
 			{
@@ -329,7 +329,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fkey = 0;                   /* disable random generation */
 			pauserotate();              /* update palette and pause */
 			break;
-		case 'a':                      /* load colors from "altern.map" */
+		case 'a':                      /* load g_colors from "altern.map" */
 		case 'A':
 			if (ValidateLuts("altern") != 0)
 			{
@@ -338,7 +338,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fkey = 0;                   /* disable random generation */
 			pauserotate();              /* update palette and pause */
 			break;
-		case 'l':                      /* load colors from a specified map */
+		case 'l':                      /* load g_colors from a specified map */
 #ifndef XFRACT /* L is used for FIK_RIGHT_ARROW in Unix keyboard mapping */
 		case 'L':
 #endif
@@ -512,7 +512,7 @@ void save_palette()
 		else
 		{
 #ifndef XFRACT
-			for (i = 0; i < colors; i++)
+			for (i = 0; i < g_colors; i++)
 #else
 			for (i = 0; i < 256; i++)
 #endif

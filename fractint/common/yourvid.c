@@ -63,7 +63,7 @@ in assembler.
 #if 0
 	int  dotmode;                /* video access method (= 19)      */
 	int  sxdots, sydots;         /* total # of dots on the screen   */
-	int  colors;                 /* maximum colors available        */
+	int  g_colors;                 /* maximum g_colors available        */
 
 /* the video-palette array (named after the VGA adapter's video-DAC) */
 

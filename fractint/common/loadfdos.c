@@ -18,7 +18,7 @@
 	In WinFract, at least initially, get_video_mode can do just the
 	following:
 		set overall image x & y dimensions (sxdots and sydots) to filexdots
-		and fileydots (note that filecolors is the number of colors in the
+		and fileydots (note that filecolors is the number of g_colors in the
 		gif, not sure if that is of any use...)
 		if current window smaller than new sxdots and sydots, use scroll bars,
 		if larger perhaps reduce the window size? whatever
@@ -58,8 +58,8 @@ struct vidinf
 #define VI_SBIG     64  /* screen bigger than file's screen */
 #define VI_VSMALL   32  /* screen smaller than file's view */
 #define VI_VBIG     16  /* screen bigger than file's view */
-#define VI_CSMALL    8  /* mode has too few colors */
-#define VI_CBIG      4  /* mode has excess colors */
+#define VI_CSMALL    8  /* mode has too few g_colors */
+#define VI_CBIG      4  /* mode has excess g_colors */
 #define VI_ASPECT    1  /* aspect ratio bad */
 
 #ifndef XFRACT
@@ -100,7 +100,7 @@ static void format_vid_inf(int i, char *err, char *buf)
 	sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
 			kname, g_video_entry.name, err,
 			g_video_entry.xdots, g_video_entry.ydots,
-			g_video_entry.colors, g_video_entry.comment);
+			g_video_entry.g_colors, g_video_entry.comment);
 	g_video_entry.xdots = 0; /* so tab_display knows to display nothing */
 }
 #endif
@@ -140,7 +140,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	{
 		vident = &g_video_table[i];
 		if (info->xdots == vident->xdots && info->ydots == vident->ydots
-			&& filecolors == vident->colors)
+			&& filecolors == vident->g_colors)
 		{
 			g_init_mode = i;
 			break;
@@ -159,7 +159,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		{
 			vident = &g_video_table[i];
 			if (info->xdots == vident->xdots && info->ydots == vident->ydots
-				&& filecolors == vident->colors)
+				&& filecolors == vident->g_colors)
 			{
 				g_init_mode = i;
 				break;
@@ -193,11 +193,11 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		{
 			tmpflags |= VI_VBIG;
 		}
-		if (filecolors > g_video_entry.colors)
+		if (filecolors > g_video_entry.g_colors)
 		{
 			tmpflags |= VI_CSMALL;
 		}
-		if (filecolors < g_video_entry.colors)
+		if (filecolors < g_video_entry.g_colors)
 		{
 			tmpflags |= VI_CBIG;
 		}
@@ -377,9 +377,9 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
 	{
 		/* pull image into a view window */
-		if (calc_status != CALCSTAT_COMPLETED) /* if not complete */
+		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
 		{
-			calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
+			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		if (viewxdots)
 		{
@@ -395,9 +395,9 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
 	{
 		/* set up to load only every nth pixel to make image fit */
-		if (calc_status != CALCSTAT_COMPLETED) /* if not complete */
+		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
 		{
-			calc_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
+			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		skipxdots = skipydots = 1;
 		while (skipxdots*g_video_entry.xdots < filexdots)

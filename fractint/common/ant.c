@@ -110,7 +110,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		/* random rule */
 		for (color = 0; color < MAX_ANTS; color++)
 		{
-			/* init the rules and colors for the
+			/* init the rules and g_colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = 1 - (RANDOM(2)*2);
 			next_col[color] = color + 1;
@@ -123,7 +123,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		/* user defined rule */
 		for (color = 0; color < rule_len; color++)
 		{
-			/* init the rules and colors for the
+			/* init the rules and g_colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = (ru[color]*2) - 1;
 			next_col[color] = color + 1;
@@ -131,7 +131,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		/* repeats to last color */
 		for (color = rule_len; color < MAX_ANTS; color++)
 		{
-			/* init the rules and colors for the
+			/* init the rules and g_colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = rule[color % rule_len];
 			next_col[color] = color + 1;

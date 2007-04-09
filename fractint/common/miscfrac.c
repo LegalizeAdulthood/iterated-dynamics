@@ -20,7 +20,7 @@ typedef void (_fastcall *PLOT)(int, int, int);
 
 /* data local to this module */
 static int s_iparm_x;      /* s_iparm_x = g_parameter.x*8 */
-static int s_shift_value;  /* shift based on #colors */
+static int s_shift_value;  /* shift based on #g_colors */
 static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
@@ -92,9 +92,9 @@ int test(void)
 					return -1;
 				}
 				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, maxit, g_inside);
-				if (color >= colors)  /* avoid trouble if color is 0 */
+				if (color >= g_colors)  /* avoid trouble if color is 0 */
 				{
-					if (colors < 16)
+					if (g_colors < 16)
 					{
 						color &= g_and_color;
 					}
@@ -399,7 +399,7 @@ int plasma(void)
 
 	OldPotFlag = OldPot16bit = s_plasma_check = 0;
 
-	if (colors < 4)
+	if (g_colors < 4)
 	{
 		stopmsg(0,
 		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
@@ -482,24 +482,24 @@ int plasma(void)
 		++g_random_seed;
 	}
 
-	if (colors == 256)                   /* set the (256-color) palette */
+	if (g_colors == 256)                   /* set the (256-color) palette */
 	{
-		set_plasma_palette();             /* skip this if < 256 colors */
+		set_plasma_palette();             /* skip this if < 256 g_colors */
 	}
 
-	if (colors > 16)
+	if (g_colors > 16)
 	{
 		s_shift_value = 18;
 	}
 	else
 	{
-		if (colors > 4)
+		if (g_colors > 4)
 		{
 			s_shift_value = 22;
 		}
 		else
 		{
-			s_shift_value = (colors > 2) ? 24 : 25;
+			s_shift_value = (g_colors > 2) ? 24 : 25;
 		}
 	}
 	if (s_max_plasma != 0)
@@ -509,7 +509,7 @@ int plasma(void)
 
 	if (s_max_plasma == 0)
 	{
-		s_plasma_colors = min(colors, max_colors);
+		s_plasma_colors = min(g_colors, max_colors);
 		for (n = 0; n < 4; n++)
 		{
 			rnd[n] = (U16)(1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
@@ -631,7 +631,7 @@ int diffusion(void)
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
 					/*                             1 = falling particles */
 					/*                             2 = square cavity     */
-	int colorshift; /* If zero, select colors at random, otherwise shift */
+	int colorshift; /* If zero, select g_colors at random, otherwise shift */
 					/* the color every colorshift points */
 
 	int colorcount, currentcolor;
@@ -851,14 +851,14 @@ int diffusion(void)
 			/* Show the moving point */
 			if (g_show_orbit)
 			{
-				g_put_color(x, y, RANDOM(colors-1) + 1);
+				g_put_color(x, y, RANDOM(g_colors-1) + 1);
 			}
 
 		} /* End of loop, now fix the point */
 
 		/* If we're doing colorshifting then use currentcolor, otherwise
 			pick one at random */
-		g_put_color(x, y, colorshift ? currentcolor : RANDOM(colors-1) + 1);
+		g_put_color(x, y, colorshift ? currentcolor : RANDOM(g_colors-1) + 1);
 
 		/* If we're doing colorshifting then check to see if we need to shift*/
 		if (colorshift)
@@ -866,7 +866,7 @@ int diffusion(void)
 			if (!--colorcount) /* If the counter reaches zero then shift*/
 			{
 				currentcolor++;      /* Increase the current color and wrap */
-				currentcolor %= colors;  /* around skipping zero */
+				currentcolor %= g_colors;  /* around skipping zero */
 				if (!currentcolor)
 				{
 					currentcolor++;
@@ -990,7 +990,7 @@ int bifurcation(void)
 	}
 
 	mono = 0;
-	if (colors == 2)
+	if (g_colors == 2)
 	{
 		mono = 1;
 	}
@@ -1056,9 +1056,9 @@ int bifurcation(void)
 			{
 				color = outside_x;
 			}
-			else if (color >= colors)
+			else if (color >= g_colors)
 			{
-				color = colors-1;
+				color = g_colors-1;
 			}
 			s_verhulst_array[row] = 0;
 			(*g_plot_color)(column, row, color); /* was row-1, but that's not right? */
@@ -1401,7 +1401,7 @@ int popcorn()   /* subset of std engine */
 			g_reset_periodicity = 0;
 		}
 	}
-	calc_status = CALCSTAT_COMPLETED;
+	g_calculation_status = CALCSTAT_COMPLETED;
 	return 0;
 }
 
@@ -1460,9 +1460,9 @@ int lyapunov(void)
 	{
 		g_color = g_inside;
 	}
-	else if (g_color >= colors)
+	else if (g_color >= g_colors)
 	{
-		g_color = colors-1;
+		g_color = g_colors-1;
 	}
 	(*g_plot_color)(g_col, g_row, g_color);
 	return g_color;
@@ -1620,7 +1620,7 @@ jumpout:
 		lyap = g_log_palette_flag
 			? -temp/((double) lyaLength*i)
 			: 1 - exp(temp/((double) lyaLength*i));
-		color = 1 + (int)(lyap*(colors-1));
+		color = 1 + (int)(lyap*(g_colors-1));
 	}
 	return color;
 }
@@ -1632,7 +1632,7 @@ jumpout:
 	Original or'd the neighborhood, changed to sum the neighborhood
 	Changed prompts and error messages
 	Added CA types
-	Set the palette to some standard? CA colors
+	Set the palette to some standard? CA g_colors
 	Changed *cell_array to near and used dstack so put_line and get_line
 		could be used all the time
 	Made space bar generate next screen
@@ -2162,13 +2162,13 @@ static void set_froth_palette(void)
 	{
 		return;
 	}
-	if (colors >= 16)
+	if (g_colors >= 16)
 	{
-		if (colors >= 256)
+		if (g_colors >= 256)
 		{
 			mapname = (fsp->attractors == 6) ? "froth6.map" : "froth3.map";
 		}
-		else /* colors >= 16 */
+		else /* g_colors >= 16 */
 		{
 			mapname = (fsp->attractors == 6) ? "froth616.map" : "froth316.map";
 		}
@@ -2271,7 +2271,7 @@ int froth_setup(void)
 	}
 
 	/* if 2 attractors, use same shades as 3 attractors */
-	fsp->shades = (colors-1) / max(3, fsp->attractors);
+	fsp->shades = (g_colors-1) / max(3, fsp->attractors);
 
 	/* g_rq_limit needs to be at least sq(1 + sqrt(1 + sq(a))), */
 	/* which is never bigger than 6.93..., so we'll call it 7.0 */
@@ -2281,7 +2281,7 @@ int froth_setup(void)
 	}
 	set_froth_palette();
 	/* make the best of the .map situation */
-	g_orbit_color = fsp->attractors != 6 && colors >= 16 ? (fsp->shades << 1) + 1 : colors-1;
+	g_orbit_color = fsp->attractors != 6 && g_colors >= 16 ? (fsp->shades << 1) + 1 : g_colors-1;
 
 	if (integerfractal)
 	{
@@ -2340,7 +2340,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	g_color_iter = 0;
 	if (g_show_dot > 0)
 	{
-		(*g_plot_color) (g_col, g_row, g_show_dot % colors);
+		(*g_plot_color) (g_col, g_row, g_show_dot % g_colors);
 	}
 	if (!integerfractal) /* fp mode */
 	{
@@ -2574,11 +2574,11 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	}
 
 	/* inside - Here's where non-palette based images would be nice.  Instead, */
-	/* we'll use blocks of (colors-1)/3 or (colors-1)/6 and use special froth  */
+	/* we'll use blocks of (g_colors-1)/3 or (g_colors-1)/6 and use special froth  */
 	/* color maps in attempt to replicate the images of James Alexander.       */
 	if (found_attractor)
 	{
-		if (colors >= 256)
+		if (g_colors >= 256)
 		{
 			if (!fsp->altcolor)
 			{
@@ -2597,8 +2597,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			}
 			g_color_iter += fsp->shades*(found_attractor-1);
 		}
-		else if (colors >= 16)
-		{ /* only alternate coloring scheme available for 16 colors */
+		else if (g_colors >= 16)
+		{ /* only alternate coloring scheme available for 16 g_colors */
 			long lshade;
 
 			/* Trying to make a better 16 color distribution. */

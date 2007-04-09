@@ -42,28 +42,28 @@
  *                    Change 'c' to 'd' and 's' to '=' for below.
  *                    Add 'l' to load palette from .map, 's' to store .map.
  *                    Add 'c' to invoke color cycling.
- *                    Change cursor to use whatever colors it can from
+ *                    Change cursor to use whatever g_colors it can from
  *                    the palette (not fixed 0 and 255).
- *                    Restore colors 0 and 255 to real values whenever
+ *                    Restore g_colors 0 and 255 to real values whenever
  *                    palette is not on display.
- *                    Rotate 255 colors instead of 254.
+ *                    Rotate 255 g_colors instead of 254.
  *                    Reduce cursor blink rate.
  *
  *   11-15-90 EAN     Minor "bug" fixes.  Continuous rotation now at a fixed
  *                      rate - once every timer tick (18.2 sec);  Blanks out
  *                      color samples when rotating; Editors no longer rotate
- *                      with the colors in color rotation mode;  Eliminated
+ *                      with the g_colors in color rotation mode;  Eliminated
  *                      (Z)oom mode; other minor fixes.
  *
  *   01-05-91 PB      Add 'w' function to convert to greyscale.
  *
  *   01-16-91 PB      Change rotate function to use new cyclerange stuff.
  *
- *   01-29-91 EAN     Made all colors editable.  The two reserved colors are
+ *   01-29-91 EAN     Made all g_colors editable.  The two reserved g_colors are
  *                       X'ed out.  They can be edited but the color is not
  *                       visible.  (There is an X over the sample instead.)
- *                    Changed default reserved colors to 254 & 255.
- *                    Added 'v' command to set the reserved colors to those
+ *                    Changed default reserved g_colors to 254 & 255.
+ *                    Added 'v' command to set the reserved g_colors to those
  *                       under the editors.
  *                    Added 'o' command to set the rotate range to between
  *                      the two editors.
@@ -73,9 +73,9 @@
  *                        range between editors in 'y' mode or entire palette
  *                        if in "normal" mode.
  *
- *   02-08-91 EAN     Improved 16 color support.  In 16 color mode, colors
+ *   02-08-91 EAN     Improved 16 color support.  In 16 color mode, g_colors
  *                      16-255 have a dot over them and are editable but not
- *                      visible (like the two reserved colors).
+ *                      visible (like the two reserved g_colors).
  *
  *   09-08-91 SWT     Added 'n' command to make a negative color palette:
  *                      will convert only current color if in 'x' mode or
@@ -380,7 +380,7 @@ va_dcl
 
 
 /*
- * create smooth shades between two colors
+ * create smooth shades between two g_colors
  */
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
@@ -454,7 +454,7 @@ static void swap_columns_br(PALENTRY pal[], int num)
 }
 
 /*
- * convert a range of colors to grey scale
+ * convert a range of g_colors to grey scale
  */
 static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 {
@@ -470,7 +470,7 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 }
 
 /*
- * convert a range of colors to their s_inverse
+ * convert a range of g_colors to their s_inverse
  */
 static void pal_range_to_negative(PALENTRY pal[], int first, int how_many)
 {
@@ -1526,7 +1526,7 @@ static void rgb_editor_change(color_editor *ceditor, VOIDPTR info) /* private */
 	rgb_editor *me = (rgb_editor *)info;
 
 	ceditor = NULL; /* just for warning */
-	if (me->pal < colors && !is_reserved(me->pal))
+	if (me->pal < g_colors && !is_reserved(me->pal))
 	{
 		set_pal(me->pal, color_editor_get_value(me->color[0]),
 			color_editor_get_value(me->color[1]), color_editor_get_value(me->color[2]));
@@ -1571,7 +1571,7 @@ static void rgb_editor_update(rgb_editor *me)
 
 	cursor_hide();
 
-	if (me->pal >= colors)
+	if (me->pal >= g_colors)
 	{
 		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 		draw_diamond(x1 + (RGB_EDITOR_BOX_WIDTH-5)/2, y1 + (RGB_EDITOR_BOX_DEPTH-5)/2, s_fg_color);
@@ -1985,7 +1985,7 @@ static void pal_table_draw_status(pal_table *me, BOOLEAN stripe_mode)
 		int x = me->x + 2 + RGB_EDITOR_WIDTH,
 			y = me->y + PALTABLE_PALY - 10;
 		color = pal_table_get_cursor_color(me);
-		if (color < 0 || color >= colors) /* hmm, the border returns -1 */
+		if (color < 0 || color >= g_colors) /* hmm, the border returns -1 */
 		{
 			color = 0;
 		}
@@ -2066,7 +2066,7 @@ static void pal_table_draw(pal_table *me)
 		xoff = PALTABLE_PALX + (pal % 16)*me->csize;
 		yoff = PALTABLE_PALY + (pal/16)*me->csize;
 
-		if (pal >= colors)
+		if (pal >= g_colors)
 		{
 			fill_rectangle(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, s_bg_color);
 			draw_diamond(me->x + xoff + me->csize/2 - 1, me->y + yoff + me->csize/2 - 1, s_fg_color);
@@ -2508,7 +2508,7 @@ static void pal_table_update_dac(pal_table *me)
 	}
 	else
 	{
-		memmove(g_dac_box[0], me->pal, 3*colors);
+		memmove(g_dac_box[0], me->pal, 3*g_colors);
 
 		if (me->freestyle)
 		{
@@ -2908,15 +2908,15 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			break;
 		}
 
-	case 'I':     /* invert the fg & bg colors */
+	case 'I':     /* invert the fg & bg g_colors */
 	case 'i':
 		s_inverse = (BOOLEAN)!s_inverse;
 		pal_table_update_dac(me);
 		break;
 
 	case 'V':
-	case 'v':  /* set the reserved colors to the editor colors */
-		if (me->curr[0] >= colors || me->curr[1] >= colors ||
+	case 'v':  /* set the reserved g_colors to the editor g_colors */
+		if (me->curr[0] >= g_colors || me->curr[1] >= g_colors ||
 			me->curr[0] == me->curr[1])
 		{
 			driver_buzzer(BUZZER_ERROR);
@@ -3008,7 +3008,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		pal_table_save_undo_data(me, 0, 255);
 		load_palette();
 #ifndef XFRACT
-		get_pal_range(0, colors, me->pal);
+		get_pal_range(0, g_colors, me->pal);
 #else
 		get_pal_range(0, 256, me->pal);
 #endif
@@ -3022,7 +3022,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'S':     /* save a .map palette */
 	case 's':
 #ifndef XFRACT
-		set_pal_range(0, colors, me->pal);
+		set_pal_range(0, g_colors, me->pal);
 #else
 		set_pal_range(0, 256, me->pal);
 #endif
@@ -3042,9 +3042,9 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			{
 				pal_table_hide(me, rgb, TRUE);
 			}
-			set_pal_range(0, colors, me->pal);
+			set_pal_range(0, g_colors, me->pal);
 			rotate(0);
-			get_pal_range(0, colors, me->pal);
+			get_pal_range(0, g_colors, me->pal);
 			pal_table_update_dac(me);
 			if (!oldhidden)
 			{
@@ -3094,7 +3094,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'w':
 		switch (me->exclude)
 		{
-		case EXCLUDE_NONE:   /* normal mode.  convert all colors to grey scale */
+		case EXCLUDE_NONE:   /* normal mode.  convert all g_colors to grey scale */
 			pal_table_save_undo_data(me, 0, 255);
 			pal_range_to_grey(me->pal, 0, 256);
 			break;
@@ -3133,7 +3133,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'n':
 		switch (me->exclude)
 		{
-		case EXCLUDE_NONE:      /* normal mode.  convert all colors to grey scale */
+		case EXCLUDE_NONE:      /* normal mode.  convert all g_colors to grey scale */
 			pal_table_save_undo_data(me, 0, 255);
 			pal_range_to_negative(me->pal, 0, 256);
 			break;
@@ -3347,7 +3347,7 @@ static void pal_table_process(pal_table *me)
 {
 	int ctr;
 
-	get_pal_range(0, colors, me->pal);
+	get_pal_range(0, g_colors, me->pal);
 
 	/* Make sure all palette entries are 0-63 */
 
@@ -3367,7 +3367,7 @@ static void pal_table_process(pal_table *me)
 		move_box_set_csize(me->movebox, me->csize);
 		if (!move_box_process(me->movebox))
 		{
-			set_pal_range(0, colors, me->pal);
+			set_pal_range(0, g_colors, me->pal);
 			return ;
 		}
 
@@ -3400,7 +3400,7 @@ static void pal_table_process(pal_table *me)
 
 	cursor_hide();
 	pal_table_restore_rect(me);
-	set_pal_range(0, colors, me->pal);
+	set_pal_range(0, g_colors, me->pal);
 }
 
 
@@ -3431,7 +3431,7 @@ void palette_edit(void)       /* called by fractint */
 
 	s_reserve_colors = TRUE;
 	s_inverse = FALSE;
-	s_fg_color = (BYTE)(255 % colors);
+	s_fg_color = (BYTE)(255 % g_colors);
 	s_bg_color = (BYTE)(s_fg_color-1);
 
 	cursor_new();

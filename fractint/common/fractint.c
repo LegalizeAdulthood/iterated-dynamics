@@ -76,7 +76,7 @@ char *fract_dir1="", *fract_dir2="";
 		int     sxoffs, syoffs;          /* physical top left of logical screen */
 		int     xdots, ydots;           /* # of dots on the logical screen     */
 		double  dxsize, dysize;         /* xdots-1, ydots-1         */
-		int     colors = 256;           /* maximum colors available */
+		int     g_colors = 256;           /* maximum g_colors available */
 		long    maxit;                  /* try this many iterations */
 		int     g_box_count;               /* 0 if no zoom-box yet     */
 		int     zrotate;                /* zoombox rotation         */
@@ -85,7 +85,7 @@ char *fract_dir1="", *fract_dir2="";
 
 		int     fractype;               /* if == 0, use Mandelbrot  */
 		char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
-		long    creal, cimag;           /* real, imag'ry parts of C */
+		long    g_c_real, g_c_imag;           /* real, imag'ry parts of C */
 		long    delx, dely;             /* screen pixel increments  */
 		long    delx2, dely2;           /* screen pixel increments  */
 		LDBL    delxx, delyy;           /* screen pixel increments  */
@@ -126,7 +126,7 @@ char *fract_dir1="", *fract_dir2="";
 		int maxhistory = 10;
 
 /* variables defined by the command line/files processor */
-int     comparegif = 0;                   /* compare two gif files flag */
+int     g_compare_gif = 0;                   /* compare two gif files flag */
 int     timedsave = 0;                    /* when doing a timed save */
 int     resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
 int     started_resaves = FALSE;              /* but incr on first resave */
@@ -142,14 +142,14 @@ long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
 double  sxmin, sxmax, symin, symax, sx3rd, sy3rd; /* displayed screen corners */
 double  plotmx1, plotmx2, plotmy1, plotmy2;     /* real->screen multipliers */
 
-int calc_status = CALCSTAT_NO_FRACTAL;
+int g_calculation_status = CALCSTAT_NO_FRACTAL;
 					  /* -1 no fractal                   */
                       /*  0 parms changed, recalc reqd   */
                       /*  1 actively calculating         */
                       /*  2 interrupted, resumable       */
                       /*  3 interrupted, not resumable   */
                       /*  4 completed                    */
-long calctime;
+long g_calculation_time;
 
 int max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
@@ -292,7 +292,7 @@ restart:   /* insert key re-starts here */
 	srand(this_gen_rseed);
 	g_start_show_orbit = 0;
 	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
-	calc_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
+	g_calculation_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
 	command_files(argc, argv);         /* process the command-line */
 	pause_error(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
@@ -305,21 +305,21 @@ restart:   /* insert key re-starts here */
 		check_samename();
 	}
 	driver_window();
-	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case colors= present */
+	memcpy(olddacbox, g_dac_box, 256*3);      /* save in case g_colors= present */
 
 	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
 	{
-		cpu =  86; /* for testing purposes */
+		g_cpu =  86; /* for testing purposes */
 	}
 	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && fpu >= 287)
 	{
 		fpu = 287; /* for testing purposes */
-		cpu = 286;
+		g_cpu = 286;
 	}
 	if (DEBUGFLAG_FPU_87 == g_debug_flag && fpu >=  87)
 	{
 		fpu =  87; /* for testing purposes */
-		cpu =  86;
+		g_cpu =  86;
 	}
 	if (DEBUGFLAG_NO_FPU == g_debug_flag)
 	{
@@ -347,7 +347,7 @@ restart:   /* insert key re-starts here */
 #endif
 
 	max_colors = 256;                    /* the Windows version is lower */
-	g_max_input_counter = (cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
+	g_max_input_counter = (g_cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
 
 	if (g_show_file && g_init_mode < 0)
 	{
@@ -374,7 +374,7 @@ restorestart:
 
 	if (g_color_preloaded)
 	{
-		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case colors= present */
+		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case g_colors= present */
 	}
 
 	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
@@ -438,9 +438,9 @@ restorestart:
 		stacked = 0;
 		g_overlay_3d = 0;                    /* forget overlays */
 		g_display_3d = 0;                    /* forget 3D */
-		if (calc_status == CALCSTAT_NON_RESUMABLE)
+		if (g_calculation_status == CALCSTAT_NON_RESUMABLE)
 		{
-			calc_status = CALCSTAT_PARAMS_CHANGED;
+			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
 		resumeflag = 1;
 		goto resumeloop;                  /* ooh, this is ugly */
@@ -465,9 +465,9 @@ imagestart:                             /* calc/display a new image */
 
 	if (g_show_file)
 	{
-		if (calc_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
+		if (g_calculation_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
 		{
-			calc_status = CALCSTAT_PARAMS_CHANGED;
+			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
 	}
 
@@ -549,7 +549,7 @@ imagestart:                             /* calc/display a new image */
 					}
 					if (g_color_preloaded)
 					{
-						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case colors= present */
+						memcpy(olddacbox, g_dac_box, 256*3);     /* save in case g_colors= present */
 					}
 					driver_set_for_text(); /* switch to text mode */
 					g_show_file = -1;
