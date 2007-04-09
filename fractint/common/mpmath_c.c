@@ -669,13 +669,13 @@ int ComplexNewtonSetup(void)
 {
 	g_threshold = .001;
 	g_periodicity_check = 0;
-	if (param[0] != 0.0 || param[1] != 0.0 || param[2] != 0.0 ||
-		param[3] != 0.0)
+	if (g_parameters[0] != 0.0 || g_parameters[1] != 0.0 || g_parameters[2] != 0.0 ||
+		g_parameters[3] != 0.0)
 		{
-		croot.x = param[2];
-		croot.y = param[3];
-		cdegree.x = param[0];
-		cdegree.y = param[1];
+		croot.x = g_parameters[2];
+		croot.y = g_parameters[3];
+		cdegree.x = g_parameters[0];
+		cdegree.y = g_parameters[1];
 		FPUcplxlog(&croot, &BaseLog);
 		TwoPi = asin(1.0)*4;
 	}
@@ -709,7 +709,7 @@ int ComplexNewton(void)
 
 	FPUcplxmul(&temp, &cdegree, &cd1);
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
-	if (overflow)
+	if (g_overflow)
 	{
 		return 1;
 	}
@@ -769,7 +769,7 @@ int ComplexBasin(void)
 
 	FPUcplxmul(&temp, &cdegree, &cd1);
 	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
-	if (overflow)
+	if (g_overflow)
 	{
 		return 1;
 	}
@@ -798,20 +798,20 @@ int GausianNumber(int Probability, int Range)
 	p = multiply((long)g_gaussian_distribution << 16, p, 16);
 	if (!(rand15() % (g_gaussian_distribution - (int)(p >> 16) + 1)))
 	{
-		for (n = 0; n < Slope; n++)
+		for (n = 0; n < g_gaussian_slope; n++)
 		{
 			Accum += rand15();
 		}
-		Accum /= Slope;
+		Accum /= g_gaussian_slope;
 		r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
 		r = r - Range;
 		if (r < 0)
 		{
 			r = -r;
 		}
-		return Range - r + Offset;
+		return Range - r + g_gaussian_offset;
 	}
-	return Offset;
+	return g_gaussian_offset;
 }
 
 #endif
@@ -827,7 +827,7 @@ MP2d086     PROC     uses si di, xExp:WORD, xMant:DWORD
 	jz    InRangeOfDouble
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 	xor   ax, ax
 	xor   dx, dx
 	xor   bx, bx
@@ -1025,7 +1025,7 @@ ShiftCarry:
 	jmp   StoreAns
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   si, si
@@ -1214,7 +1214,7 @@ MPdiv086    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
 	jno   NoOverflow
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   ax, ax
@@ -1324,7 +1324,7 @@ Overflow:
 	or    word ptr [yMant + 2], 0
 	jz    ZeroAns
 
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   ax, ax
@@ -1422,7 +1422,7 @@ struct MP *MPmul086(struct MP x, struct MP y)
 		or    word ptr [y.Mant + 2], 0
 		jz    ZeroAns
 
-		mov   MPOverflow, 1
+		mov   g_overflow_mp, 1
 
 	ZeroAns:
 		xor   ax, ax
@@ -1552,7 +1552,7 @@ MP2d386     PROC     uses si di, xExp:WORD, xMant:DWORD
 	jz    InRangeOfDouble
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 	xor   eax, eax
 	xor   edx, edx
 	jmp   StoreAns
@@ -1652,7 +1652,7 @@ ShiftCarry:
 	jmp   StoreAns
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   si, si
@@ -1784,7 +1784,7 @@ SameMag:
 	jno   StoreAns
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   si, si
@@ -1930,7 +1930,7 @@ MPdiv386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
 	jno   NoOverflow
 
 Overflow:
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   eax, eax
@@ -1999,7 +1999,7 @@ Overflow:
 	or    WORD PTR [yMant + 2], 0
 	jz    ZeroAns
 
-	mov   MPOverflow, 1
+	mov   g_overflow_mp, 1
 
 ZeroAns:
 	xor   edx, edx

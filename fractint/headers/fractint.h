@@ -57,7 +57,7 @@ typedef BYTE BOOLEAN;
 #define FORCESYMMETRY_NONE		999
 #define FORCESYMMETRY_SEARCH	1000
 
-/* savedac values */
+/* g_save_dac values */
 #define SAVEDAC_NO		0
 #define SAVEDAC_YES		1
 #define SAVEDAC_NEXT	2
@@ -205,7 +205,7 @@ typedef BYTE BOOLEAN;
 #define GOT_STATUS_DIFFUSION 5
 #define GOT_STATUS_ORBITS 6
 
-/* resave_flag values */
+/* g_resave_flag values */
 #define RESAVE_NO 0
 #define RESAVE_YES 1
 #define RESAVE_DONE 2
@@ -342,38 +342,39 @@ names. So for now humor us and let's keep the names short.
 
 typedef struct tagDriver Driver;
 
-struct videoinfo {              /* All we need to know about a Video Adapter */
-        char    name[26];       /* Adapter name (IBM EGA, etc)          */
-        char    comment[26];    /* Comments (UNTESTED, etc)             */
-        int     keynum;         /* key number used to invoked this mode */
-                                /* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-        int     videomodeax;    /* begin with INT 10H, AX=(this)        */
-        int     videomodebx;    /*              ...and BX=(this)        */
-        int     videomodecx;    /*              ...and CX=(this)        */
-        int     videomodedx;    /*              ...and DX=(this)        */
-                                /* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-        int     dotmode;        /* video access method used by asm code */
-                                /*      1 == BIOS 10H, AH=12,13 (SLOW)  */
-                                /*      2 == access like EGA/VGA        */
-                                /*      3 == access like MCGA           */
-                                /*      4 == Tseng-like  SuperVGA*256   */
-                                /*      5 == P'dise-like SuperVGA*256   */
-                                /*      6 == Vega-like   SuperVGA*256   */
-                                /*      7 == "Tweaked" IBM-VGA ...*256  */
-                                /*      8 == "Tweaked" SuperVGA ...*256 */
-                                /*      9 == Targa Format               */
-                                /*      10 = Hercules                   */
-                                /*      11 = "disk video" (no screen)   */
-                                /*      12 = 8514/A                     */
-                                /*      13 = CGA 320x200x4, 640x200x2   */
-                                /*      14 = Tandy 1000                 */
-                                /*      15 = TRIDENT  SuperVGA*256      */
-                                /*      16 = Chips&Tech SuperVGA*256    */
-        int     xdots;          /* number of dots across the screen     */
-        int     ydots;          /* number of dots down the screen       */
-        int     g_colors;         /* number of g_colors available           */
-		Driver *driver;
-        };
+struct videoinfo
+{              /* All we need to know about a Video Adapter */
+    char    name[26];       /* Adapter name (IBM EGA, etc)          */
+    char    comment[26];    /* Comments (UNTESTED, etc)             */
+    int     keynum;         /* key number used to invoked this mode */
+                            /* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
+    int     videomodeax;    /* begin with INT 10H, AX=(this)        */
+    int     videomodebx;    /*              ...and BX=(this)        */
+    int     videomodecx;    /*              ...and CX=(this)        */
+    int     videomodedx;    /*              ...and DX=(this)        */
+                            /* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
+    int     dotmode;        /* video access method used by asm code */
+                            /*      1 == BIOS 10H, AH=12,13 (SLOW)  */
+                            /*      2 == access like EGA/VGA        */
+                            /*      3 == access like MCGA           */
+                            /*      4 == Tseng-like  SuperVGA*256   */
+                            /*      5 == P'dise-like SuperVGA*256   */
+                            /*      6 == Vega-like   SuperVGA*256   */
+                            /*      7 == "Tweaked" IBM-VGA ...*256  */
+                            /*      8 == "Tweaked" SuperVGA ...*256 */
+                            /*      9 == Targa Format               */
+                            /*      10 = Hercules                   */
+                            /*      11 = "disk video" (no screen)   */
+                            /*      12 = 8514/A                     */
+                            /*      13 = CGA 320x200x4, 640x200x2   */
+                            /*      14 = Tandy 1000                 */
+                            /*      15 = TRIDENT  SuperVGA*256      */
+                            /*      16 = Chips&Tech SuperVGA*256    */
+    int     xdots;          /* number of dots across the screen     */
+    int     ydots;          /* number of dots down the screen       */
+    int     colors;         /* number of g_colors available           */
+	Driver *driver;
+};
 
 typedef struct videoinfo VIDEOINFO;
 #define INFO_ID         "Fractal"
@@ -408,8 +409,8 @@ struct fractal_info         /*  for saving data in GIF file     */
     double xmax;
     double ymin;
     double ymax;
-    double g_c_real;
-    double g_c_imag;
+    double c_real;
+    double c_imag;
     short videomodeax;
     short videomodebx;
     short videomodecx;
@@ -417,7 +418,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short dotmode;
     short xdots;
     short ydots;
-    short g_colors;
+    short colors;
     short version;          /* used to be 'future[0]' */
     float parm3;
     float parm4;
@@ -451,12 +452,12 @@ struct fractal_info         /*  for saving data in GIF file     */
     double y3rd;
     char stdcalcmode;     /* 1/2/g/b */
     char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
-    short g_calculation_status;    /* resumable, finished, etc */
+    short calculation_status;    /* resumable, finished, etc */
     long tot_extend_len;  /* total length of extension blocks in .gif file */
     short distestold;
     short float_flag;
     short bailoutold;
-    long g_calculation_time;
+    long calculation_time;
     BYTE trigndx[4];      /* which trig functions selected */
     short finattract;
     double initial_orbit_z[2];  /* init Mandelbrot orbit values */
@@ -494,7 +495,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     float eyesfp;
     short orbittype;
     short juli3Dmode;
-    short g_max_fn;
+    short max_fn;
     short inversejulia;
     double dparm5;
     double dparm6;
@@ -535,8 +536,8 @@ struct history_info
     double xmax;
     double ymin;
     double ymax;
-    double g_c_real;
-    double g_c_imag;
+    double c_real;
+    double c_imag;
     double potential[3];
     short random_seed;
     short random_flag;
@@ -570,7 +571,7 @@ struct history_info
     short periodicity;
     short potential_16bit;
     short release;
-    short g_save_release;
+    short save_release;
     short flag3d;
     short transparent[2];
     short ambient;
@@ -609,11 +610,11 @@ struct history_info
     short bf_math;
     short bflength;
     short yadjust;
-    short g_old_demm_colors;
+    short old_demm_colors;
     char filename[FILE_MAX_PATH];
     char itemname[ITEMNAMELEN+1];
     unsigned char dac[256][3];
-    char  g_max_fn;
+    char  max_fn;
     char stdcalcmode;
     char three_pass;
     char use_initial_orbit_z;
@@ -678,9 +679,9 @@ struct evolution_info      /* for saving evolution data in a GIF file */
    short evolving;
    short gridsz;
    unsigned short this_gen_rseed;
-   double g_fiddle_factor;
-   double paramrangex;
-   double paramrangey;
+   double fiddle_factor;
+   double parameter_range_x;
+   double parameter_range_y;
    double opx;
    double opy;
    short odpx;
@@ -742,7 +743,7 @@ extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
 struct tag_more_parameters
 {
    int      type;                       /* index in fractalname of the fractal */
-   char     *param[MAXPARAMS-4];    /* name of the parameters */
+   char     *parameters[MAXPARAMS-4];    /* name of the parameters */
    double   paramvalue[MAXPARAMS-4];    /* default parameter values */
 };
 typedef struct tag_more_parameters more_parameters;
@@ -751,7 +752,7 @@ struct fractalspecificstuff
 {
    char  *name;                         /* name of the fractal */
                                         /* (leading "*" supresses name display) */
-   char  *param[4];                 /* name of the parameters */
+   char  *parameters[4];                 /* name of the parameters */
    double paramvalue[4];                /* default parameter values */
    int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
    int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
@@ -1346,9 +1347,9 @@ struct ext_blk_evolver_info
 	short evolving;
 	short gridsz;
 	unsigned short this_gen_rseed;
-	double g_fiddle_factor;
-	double paramrangex;
-	double paramrangey;
+	double fiddle_factor;
+	double parameter_range_x;
+	double parameter_range_y;
 	double opx;
 	double opy;
 	short  odpx;

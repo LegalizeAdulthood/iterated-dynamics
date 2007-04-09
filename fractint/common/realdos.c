@@ -180,8 +180,8 @@ int showtempmsg(char *msgparm)
 		return 0;
 	}
 
-	xrepeat = (sxdots >= 640) ? 2 : 1;
-	yrepeat = (sydots >= 300) ? 2 : 1;
+	xrepeat = (g_screen_width >= 640) ? 2 : 1;
+	yrepeat = (g_screen_height >= 300) ? 2 : 1;
 	textxdots = (int) strlen(msg)*xrepeat*8;
 	textydots = yrepeat*8;
 
@@ -194,9 +194,9 @@ int showtempmsg(char *msgparm)
 		}
 	}
 	size = (long) textxdots*textydots;
-	save_sxoffs = sxoffs;
-	save_syoffs = syoffs;
-	sxoffs = syoffs = 0;
+	save_sxoffs = g_sx_offset;
+	save_syoffs = g_sy_offset;
+	g_sx_offset = g_sy_offset = 0;
 	if (temptextsave == NULL) /* only save screen first time called */
 	{
 		temptextsave = malloc(textxdots*textydots);
@@ -212,8 +212,8 @@ int showtempmsg(char *msgparm)
 
 	find_special_colors(); /* get g_color_dark & g_color_medium set */
 	driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
-	sxoffs = save_sxoffs;
-	syoffs = save_syoffs;
+	g_sx_offset = save_sxoffs;
+	g_sy_offset = save_syoffs;
 
 	return 0;
 }
@@ -228,9 +228,9 @@ void cleartempmsg()
 	}
 	else if (temptextsave != NULL)
 	{
-		save_sxoffs = sxoffs;
-		save_syoffs = syoffs;
-		sxoffs = syoffs = 0;
+		save_sxoffs = g_sx_offset;
+		save_syoffs = g_sy_offset;
+		g_sx_offset = g_sy_offset = 0;
 		for (i = 0; i < textydots; ++i)
 		{
 			put_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
@@ -240,8 +240,8 @@ void cleartempmsg()
 			free(temptextsave);
 			temptextsave = NULL;
 		}
-		sxoffs = save_sxoffs;
-		syoffs = save_syoffs;
+		g_sx_offset = save_sxoffs;
+		g_sy_offset = save_syoffs;
 	}
 }
 
@@ -347,7 +347,7 @@ int putstringcenter(int row, int col, int width, int attr, char *msg)
 
 /* ------------------------------------------------------------------------ */
 
-char speed_prompt[]="Speed key string";
+char g_speed_prompt[]="Speed key string";
 
 /* For file list purposes only, it's a directory name if first
 	char is a dot or last char is a slash */
@@ -382,8 +382,8 @@ void show_speedstring(int speedrow,
 		}
 		else
 		{
-			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, speed_prompt);
-			j = sizeof(speed_prompt)-1;
+			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt);
+			j = sizeof(g_speed_prompt)-1;
 		}
 		strcpy(buf, speedstring);
 		i = (int) strlen(buf);
@@ -1185,7 +1185,7 @@ top:
 	if (fullmenu)
 	{
 		if ((g_current_fractal_specific->tojulia != NOFRACTAL
-			&& param[0] == 0.0 && param[1] == 0.0)
+			&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
 			|| g_current_fractal_specific->tomandel != NOFRACTAL)
 		{
 			nextleft += 2;
@@ -1489,7 +1489,7 @@ static int menu_checkkey(int curkey, int choice)
 		if (testkey == ' ')
 		{
 			if ((g_current_fractal_specific->tojulia != NOFRACTAL
-					&& param[0] == 0.0 && param[1] == 0.0)
+					&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
 				|| g_current_fractal_specific->tomandel != NOFRACTAL)
 			{
 				return -testkey;
@@ -1848,7 +1848,7 @@ int swaplength;
 #define SWAPBLKLEN 4096 /* must be a power of 2 */
 U16 memhandle = 0;
 
-BYTE suffix[10000];
+BYTE g_suffix[10000];
 
 void discardgraphics() /* release expanded/extended memory if any in use */
 {
@@ -1999,7 +1999,7 @@ void load_fractint_config(void)
 		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
 		vident.xdots       = (short)xdots;
 		vident.ydots       = (short)ydots;
-		vident.g_colors      = g_colors;
+		vident.colors      = g_colors;
 
 		/* if valid, add to supported modes */
 		vident.driver = driver_find_by_name(fields[10]);
@@ -2013,7 +2013,7 @@ void load_fractint_config(void)
 				for (m = 0; m < g_video_table_len; m++)
 				{
 					VIDEOINFO *mode = &g_video_table[m];
-					if ((mode->driver == vident.driver) && (mode->g_colors == vident.g_colors) &&
+					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
 						(mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
 						(mode->dotmode == vident.dotmode))
 					{

@@ -24,7 +24,7 @@
  *                      re-assigned some keys.
  *                    Added (A)uto option.
  *                    Fixed memory allocation problem.  Now uses shared
- *                      FRACTINT data area (strlocn).  Uses 6 bytes DS.
+ *                      FRACTINT data area (g_string_location).  Uses 6 bytes DS.
  *
  *   10-27-90 EAN     Added save to memory option - will save screen image to
  *                      memory, if enough mem avail.  (disk otherwise).
@@ -221,7 +221,7 @@ static void rotate_pal(PALENTRY *pal, int dir, int lo, int hi)
 
 static void clip_put_line(int row, int start, int stop, BYTE *pixels)
 	{
-	if (row < 0 || row >= sydots || start > sxdots || stop < 0)
+	if (row < 0 || row >= g_screen_height || start > g_screen_width || stop < 0)
 	{
 		return ;
 	}
@@ -232,9 +232,9 @@ static void clip_put_line(int row, int start, int stop, BYTE *pixels)
 		start = 0;
 	}
 
-	if (stop >= sxdots)
+	if (stop >= g_screen_width)
 	{
-		stop = sxdots - 1;
+		stop = g_screen_width - 1;
 	}
 
 	if (start > stop)
@@ -247,7 +247,7 @@ static void clip_put_line(int row, int start, int stop, BYTE *pixels)
 
 static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 {
-	if (row < 0 || row >= sydots || start > sxdots || stop < 0)
+	if (row < 0 || row >= g_screen_height || start > g_screen_width || stop < 0)
 	{
 		return ;
 	}
@@ -258,9 +258,9 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 		start = 0;
 	}
 
-	if (stop >= sxdots)
+	if (stop >= g_screen_width)
 	{
-		stop = sxdots - 1;
+		stop = g_screen_width - 1;
 	}
 
 	if (start > stop)
@@ -273,7 +273,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 
 static void clip_put_color(int x, int y, int color)
 {
-	if (x < 0 || y < 0 || x >= sxdots || y >= sydots)
+	if (x < 0 || y < 0 || x >= g_screen_width || y >= g_screen_height)
 	{
 		return ;
 	}
@@ -283,7 +283,7 @@ static void clip_put_color(int x, int y, int color)
 
 static int clip_get_color(int x, int y)
 {
-	if (x < 0 || y < 0 || x >= sxdots || y >= sydots)
+	if (x < 0 || y < 0 || x >= g_screen_width || y >= g_screen_height)
 	{
 		return 0;
 	}
@@ -589,8 +589,8 @@ BOOLEAN cursor_new(void)
 
 	s_the_cursor = NEWC(cursor);
 
-	s_the_cursor->x          = sxdots/2;
-	s_the_cursor->y          = sydots/2;
+	s_the_cursor->x          = g_screen_width/2;
+	s_the_cursor->y          = g_screen_height/2;
 	s_the_cursor->hidden     = 1;
 	s_the_cursor->blink      = FALSE;
 	s_the_cursor->last_blink = 0;
@@ -675,13 +675,13 @@ void cursor_move(int xoff, int yoff)
 	{
 		s_the_cursor->y = 0;
 	}
-	if (s_the_cursor->x >= sxdots)
+	if (s_the_cursor->x >= g_screen_width)
 	{
-		s_the_cursor->x = sxdots-1;
+		s_the_cursor->x = g_screen_width-1;
 	}
-	if (s_the_cursor->y >= sydots)
+	if (s_the_cursor->y >= g_screen_height)
 	{
-		s_the_cursor->y = sydots-1;
+		s_the_cursor->y = g_screen_height-1;
 	}
 
 	if (!s_the_cursor->hidden)
@@ -808,10 +808,10 @@ static move_box *move_box_new(int x, int y, int csize, int base_width, int base_
 	me->base_depth  = base_depth;
 	me->moved       = FALSE;
 	me->should_hide = FALSE;
-	me->t           = malloc(sxdots);
-	me->b           = malloc(sxdots);
-	me->l           = malloc(sydots);
-	me->r           = malloc(sydots);
+	me->t           = malloc(g_screen_width);
+	me->b           = malloc(g_screen_width);
+	me->l           = malloc(g_screen_height);
+	me->r           = malloc(g_screen_height);
 
 	return me;
 }
@@ -955,14 +955,14 @@ static void move_box_move(move_box *me, int key)
 		yoff = 0;
 	}
 
-	if (xoff + me->base_width + me->csize*16 + 1 > sxdots)
+	if (xoff + me->base_width + me->csize*16 + 1 > g_screen_width)
 	{
-		xoff = sxdots - (me->base_width + me->csize*16 + 1);
+		xoff = g_screen_width - (me->base_width + me->csize*16 + 1);
 	}
 
-	if (yoff + me->base_depth + me->csize*16 + 1 > sydots)
+	if (yoff + me->base_depth + me->csize*16 + 1 > g_screen_height)
 	{
-		yoff = sydots - (me->base_depth + me->csize*16 + 1);
+		yoff = g_screen_height - (me->base_depth + me->csize*16 + 1);
 	}
 
 	if (xoff != me->x || yoff != me->y)
@@ -1035,18 +1035,18 @@ static BOOLEAN move_box_process(move_box *me)
 
 		case FIK_PAGE_DOWN:   /* grow */
 			{
-				int max_width = min(sxdots, MAX_WIDTH);
+				int max_width = min(g_screen_width, MAX_WIDTH);
 
-				if (me->base_depth + (me->csize + CSIZE_INC)*16 + 1 < sydots  &&
+				if (me->base_depth + (me->csize + CSIZE_INC)*16 + 1 < g_screen_height  &&
 					me->base_width + (me->csize + CSIZE_INC)*16 + 1 < max_width)
 				{
 					move_box_erase(me);
 					me->x -= (CSIZE_INC*16) / 2;
 					me->y -= (CSIZE_INC*16) / 2;
 					me->csize += CSIZE_INC;
-					if (me->y + me->base_depth + me->csize*16 + 1 > sydots)
+					if (me->y + me->base_depth + me->csize*16 + 1 > g_screen_height)
 					{
-						me->y = sydots - (me->base_depth + me->csize*16 + 1);
+						me->y = g_screen_height - (me->base_depth + me->csize*16 + 1);
 					}
 					if (me->x + me->base_width + me->csize*16 + 1 > max_width)
 					{
@@ -3259,7 +3259,7 @@ static pal_table *pal_table_new(void)
 	rgb_editor_set_rgb(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
 
 	pal_table_set_position(me, 0, 0);
-	csize = ((sydots-(PALTABLE_PALY + 1 + 1)) / 2) / 16;
+	csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1)) / 2) / 16;
 
 	if (csize < CSIZE_MIN)
 	{
@@ -3413,21 +3413,21 @@ static void pal_table_process(pal_table *me)
 void palette_edit(void)       /* called by fractint */
 {
 	int       oldlookatmouse = g_look_at_mouse;
-	int       oldsxoffs      = sxoffs;
-	int       oldsyoffs      = syoffs;
+	int       oldsxoffs      = g_sx_offset;
+	int       oldsyoffs      = g_sy_offset;
 	pal_table *pt;
 
-	if (sxdots < 133 || sydots < 174)
+	if (g_screen_width < 133 || g_screen_height < 174)
 	{
 		return; /* prevents crash when physical screen is too small */
 	}
 
 	g_plot_color = g_put_color;
 
-	g_line_buffer = malloc(max(sxdots, sydots));
+	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
 
 	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
-	sxoffs = syoffs = 0;
+	g_sx_offset = g_sy_offset = 0;
 
 	s_reserve_colors = TRUE;
 	s_inverse = FALSE;
@@ -3441,7 +3441,7 @@ void palette_edit(void)       /* called by fractint */
 	cursor_destroy();
 
 	g_look_at_mouse = oldlookatmouse;
-	sxoffs = oldsxoffs;
-	syoffs = oldsyoffs;
+	g_sx_offset = oldsxoffs;
+	g_sy_offset = oldsyoffs;
 	DELETE(g_line_buffer);
 }

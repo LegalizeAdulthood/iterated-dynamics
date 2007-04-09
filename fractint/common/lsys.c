@@ -268,16 +268,16 @@ int l_system(void)
 		return -1;
 	}
 
-	overflow = 0;                /* reset integer math overflow flag */
+	g_overflow = 0;                /* reset integer math overflow flag */
 
-	order = (int)param[0];
+	order = (int)g_parameters[0];
 	if (order <= 0)
 	{
 		order = 0;
 	}
 	if (usr_floatflag)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	else
 	{
@@ -322,11 +322,11 @@ int l_system(void)
 	{
 		stopmsg(0, "insufficient memory, try a lower order");
 	}
-	else if (overflow)
+	else if (g_overflow)
 	{
 		struct lsys_turtle_state_fp ts;
 
-		overflow = 0;
+		g_overflow = 0;
 
 		ts.stackoflow = 0;
 		ts.max_angle = g_max_angle;
@@ -360,7 +360,7 @@ int l_system(void)
 			}
 			draw_lsysf(rules2[0], &ts, &rules2[1], order);
 		}
-		overflow = 0;
+		g_overflow = 0;
 	}
 	free_rules_mem();
 	free_l_cmds();
@@ -717,7 +717,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cm
 	struct lsys_cmd **rulind;
 	int tran;
 
-	if (overflow)     /* integer math routines overflowed */
+	if (g_overflow)     /* integer math routines overflowed */
 	{
 		return NULL;
 	}
@@ -842,7 +842,7 @@ draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_c
 	struct lsys_cmd **rulind;
 	int tran;
 
-	if (overflow)     /* integer math routines overflowed */
+	if (g_overflow)     /* integer math routines overflowed */
 	{
 		return NULL;
 	}

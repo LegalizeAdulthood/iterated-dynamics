@@ -190,7 +190,7 @@ int fFormula(void)
 	; Changed to FAR, FRAME/UNFRAME added by CAE 09OCT93
 _Img_Setup         proc far
 	FRAME        <si, di>
-	les          si, _pfls            ; es:si = &pfls[0]
+	les          si, _pfls            ; es:si = &g_function_load_store_pointers[0]
 
 	mov          di, _LastOp          ; load index of lastop
 

@@ -45,8 +45,8 @@ int mouse_y = 0;
 
 /* timed save variables, handled by readmouse: */
 static int savechktime = 0;				/* time of last autosave check */
-long savebase = 0;						/* base clock ticks */
-long saveticks = 0;						/* save after this many ticks */
+long g_save_base = 0;						/* base clock ticks */
+long g_save_ticks = 0;						/* save after this many ticks */
 int g_finish_row = 0;						/* save when this row is finished */
 
 int handle_timed_save(int ch)
@@ -60,11 +60,11 @@ int handle_timed_save(int ch)
 
 	/* now check for automatic/periodic saving... */
 	ticker = readticker();
-	if (saveticks && (ticker != savechktime))
+	if (g_save_ticks && (ticker != savechktime))
 	{
 		savechktime = ticker;
-		ticker -= savebase;
-		if (ticker > saveticks)
+		ticker -= g_save_base;
+		if (ticker > g_save_ticks)
 		{
 			if (1 == g_finish_row)
 			{
@@ -393,7 +393,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	DI(di);
 
 	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = sxdots;
+	g_vxdots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;

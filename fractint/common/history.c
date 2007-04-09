@@ -34,20 +34,20 @@ void _fastcall history_save_info(void)
 	current.xmax				= xxmax;
 	current.ymin				= yymin;
 	current.ymax				= yymax;
-	current.g_c_real				= param[0];
-	current.g_c_imag				= param[1];
-	current.dparm3				= param[2];
-	current.dparm4				= param[3];
-	current.dparm5				= param[4];
-	current.dparm6				= param[5];
-	current.dparm7				= param[6];
-	current.dparm8				= param[7];
-	current.dparm9				= param[8];
-	current.dparm10				= param[9];
+	current.c_real				= g_parameters[0];
+	current.c_imag				= g_parameters[1];
+	current.dparm3				= g_parameters[2];
+	current.dparm4				= g_parameters[3];
+	current.dparm5				= g_parameters[4];
+	current.dparm6				= g_parameters[5];
+	current.dparm7				= g_parameters[6];
+	current.dparm8				= g_parameters[7];
+	current.dparm9				= g_parameters[8];
+	current.dparm10				= g_parameters[9];
 	current.fill_color			= (short) g_fill_color;
-	current.potential[0]		= potparam[0];
-	current.potential[1]		= potparam[1];
-	current.potential[2]		= potparam[2];
+	current.potential[0]		= g_potential_parameter[0];
+	current.potential[1]		= g_potential_parameter[1];
+	current.potential[2]		= g_potential_parameter[2];
 	current.random_flag				= (short) g_random_flag;
 	current.random_seed				= (short) g_random_seed;
 	current.inside				= (short) g_inside;
@@ -105,7 +105,7 @@ void _fastcall history_save_info(void)
 	current.periodicity			= (short) g_periodicity_check;
 	current.potential_16bit		= (short) g_disk_16bit;
 	current.release				= (short) g_release;
-	current.g_save_release		= (short) g_save_release;
+	current.save_release		= (short) g_save_release;
 	current.flag3d				= (short) g_display_3d;
 	current.ambient				= (short) g_ambient;
 	current.randomize			= (short) g_randomize;
@@ -128,13 +128,13 @@ void _fastcall history_save_info(void)
 	current.eyesfp				= g_eyes_fp;
 	current.orbittype			= (short) g_new_orbit_type;
 	current.juli3Dmode			= (short) g_juli_3d_mode;
-	current.g_max_fn				= g_max_fn;
+	current.max_fn				= g_max_fn;
 	current.major_method		= (short) g_major_method;
 	current.minor_method		= (short) g_minor_method;
 	current.bail_out				= g_bail_out;
 	current.bailoutest			= (short) g_bail_out_test;
 	current.iterations			= g_max_iteration;
-	current.g_old_demm_colors		= (short) g_old_demm_colors;
+	current.old_demm_colors		= (short) g_old_demm_colors;
 	current.logcalc				= (short) g_log_dynamic_calculate;
 	current.ismand				= (short) g_is_mand;
 	current.proximity			= g_proximity;
@@ -221,20 +221,20 @@ void _fastcall history_restore_info(void)
 	xxmax               	= last.xmax;
 	yymin               	= last.ymin;
 	yymax               	= last.ymax;
-	param[0]            	= last.g_c_real;
-	param[1]            	= last.g_c_imag;
-	param[2]            	= last.dparm3;
-	param[3]            	= last.dparm4;
-	param[4]            	= last.dparm5;
-	param[5]            	= last.dparm6;
-	param[6]            	= last.dparm7;
-	param[7]            	= last.dparm8;
-	param[8]            	= last.dparm9;
-	param[9]            	= last.dparm10;
+	g_parameters[0]            	= last.c_real;
+	g_parameters[1]            	= last.c_imag;
+	g_parameters[2]            	= last.dparm3;
+	g_parameters[3]            	= last.dparm4;
+	g_parameters[4]            	= last.dparm5;
+	g_parameters[5]            	= last.dparm6;
+	g_parameters[6]            	= last.dparm7;
+	g_parameters[7]            	= last.dparm8;
+	g_parameters[8]            	= last.dparm9;
+	g_parameters[9]            	= last.dparm10;
 	g_fill_color           	= last.fill_color;
-	potparam[0]         	= last.potential[0];
-	potparam[1]         	= last.potential[1];
-	potparam[2]         	= last.potential[2];
+	g_potential_parameter[0]         	= last.potential[0];
+	g_potential_parameter[1]         	= last.potential[1];
+	g_potential_parameter[2]         	= last.potential[2];
 	g_random_flag			= last.random_flag;
 	g_random_seed			= last.random_seed;
 	g_inside              	= last.inside;
@@ -279,7 +279,7 @@ void _fastcall history_restore_info(void)
 	xx3rd               	= last.x3rd;
 	yy3rd               	= last.y3rd;
 	usr_stdcalcmode     	= last.stdcalcmode;
-	stdcalcmode         	= last.stdcalcmode;
+	g_standard_calculation_mode         	= last.stdcalcmode;
 	g_three_pass          	= (int) last.three_pass;
 	g_stop_pass            	= last.stop_pass;
 	g_distance_test			= last.distance_test;
@@ -296,7 +296,7 @@ void _fastcall history_restore_info(void)
 	usr_periodicitycheck	= last.periodicity;
 	g_disk_16bit           	= last.potential_16bit;
 	g_release           	= last.release;
-	g_save_release        	= last.g_save_release;
+	g_save_release        	= last.save_release;
 	g_display_3d           	= last.flag3d;
 	g_ambient             	= last.ambient;
 	g_randomize           	= last.randomize;
@@ -319,15 +319,15 @@ void _fastcall history_restore_info(void)
 	g_eyes_fp              	= last.eyesfp;
 	g_new_orbit_type        = last.orbittype;
 	g_juli_3d_mode			= last.juli3Dmode;
-	g_max_fn               	= last.g_max_fn;
+	g_max_fn               	= last.max_fn;
 	g_major_method        	= (enum Major) last.major_method;
 	g_minor_method        	= (enum Minor) last.minor_method;
 	g_bail_out             	= last.bail_out;
 	g_bail_out_test			= (enum bailouts) last.bailoutest;
 	g_max_iteration               	= last.iterations;
-	g_old_demm_colors     	= last.g_old_demm_colors;
+	g_old_demm_colors     	= last.old_demm_colors;
 	g_current_fractal_specific  	= &g_fractal_specific[g_fractal_type];
-	g_potential_flag		= (potparam[0] != 0.0);
+	g_potential_flag		= (g_potential_parameter[0] != 0.0);
 	if (g_inversion[0] != 0.0)
 	{
 		g_invert = 3;
@@ -352,13 +352,13 @@ void _fastcall history_restore_info(void)
 	g_orbit_draw_mode		= (int) last.drawmode;
 	usr_floatflag			= (char) (g_current_fractal_specific->isinteger ? 0 : 1);
 	memcpy(g_dac_box, last.dac, 256*3);
-	memcpy(olddacbox, last.dac, 256*3);
+	memcpy(g_old_dac_box, last.dac, 256*3);
 	if (g_map_dac_box)
 	{
 		memcpy(g_map_dac_box, last.dac, 256*3);
 	}
 	spindac(0, 1);
-	savedac = (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
+	g_save_dac = (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
 	switch (g_fractal_type)
 	{
 	case FORMULA:

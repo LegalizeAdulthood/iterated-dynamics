@@ -32,7 +32,7 @@ struct MPC
 	struct MP x, y;
 };
 
-extern int MPOverflow;
+extern int g_overflow_mp;
 extern int DivideOverflow;
 
 /* Mark Peterson's expanded floating point operators.  Automatically uses
@@ -162,7 +162,7 @@ extern void (*dtrig3)(void);
 		denom = lsqr((arg).x) + lsqr((arg).y);			\
 		if (denom == 0L)								\
 		{												\
-			overflow = 1;								\
+			g_overflow = 1;								\
 		}												\
 		else											\
 		{												\

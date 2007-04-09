@@ -141,7 +141,7 @@ void fractal_float_to_bf(void)
 	{
 		if (type_has_parameter(g_fractal_type, i, NULL))
 		{
-			floattobf(bfparms[i], param[i]);
+			floattobf(bfparms[i], g_parameters[i]);
 		}
 	}
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
@@ -165,7 +165,7 @@ void calculate_fractal_initialize(void)
 	g_color_iter = g_old_color_iter = 0L;
 	for (i = 0; i < 10; i++)
 	{
-		rhombus_stack[i] = 0;
+		g_rhombus_stack[i] = 0;
 	}
 
   /* set up grid array compactly leaving space at end */
@@ -280,13 +280,13 @@ init_restart:
 	/* the following variables may be forced to a different setting due to
 		calc routine constraints;  usr_xxx is what the user last said is wanted,
 		xxx is what we actually do in the current situation */
-	stdcalcmode      = usr_stdcalcmode;
+	g_standard_calculation_mode      = usr_stdcalcmode;
 	g_periodicity_check = usr_periodicitycheck;
 	g_distance_test          = usr_distest;
 	g_biomorph         = g_user_biomorph;
 
 	g_potential_flag = FALSE;
-	if (potparam[0] != 0.0
+	if (g_potential_parameter[0] != 0.0
 		&& g_colors >= 64
 		&& (g_current_fractal_specific->calculate_type == standard_fractal
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot
@@ -346,9 +346,9 @@ init_restart:
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	g_integer_fractal = g_current_fractal_specific->isinteger;
 
-	if (g_potential_flag && potparam[2] != 0.0)
+	if (g_potential_flag && g_potential_parameter[2] != 0.0)
 	{
-		g_rq_limit = potparam[2];
+		g_rq_limit = g_potential_parameter[2];
 	}
 	else if (g_bail_out) /* user input bailout */
 	{
@@ -413,8 +413,8 @@ init_restart:
 	if (g_fractal_type == MANDEL || g_fractal_type == JULIA)  /* adust shift bits if.. */
 	{
 		if (!g_potential_flag                            /* not using potential */
-		&& (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
-		&& (param[1] > -2.0 && param[1] < 2.0)
+		&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  /* parameters not too large */
+		&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
 		&& !g_invert                                /* and not inverting */
 		&& g_biomorph == -1                         /* and not biomorphing */
 		&& g_rq_limit <= 4.0                           /* and bailout not too high */
@@ -447,8 +447,8 @@ init_restart:
 
 	if (g_fractal_type != CELLULAR && g_fractal_type != ANT)  /* fudge_to_long fails w >10 digits in double */
 	{
-		g_c_real = fudge_to_long(param[0]); /* integer equivs for it all */
-		g_c_imag = fudge_to_long(param[1]);
+		g_c_real = fudge_to_long(g_parameters[0]); /* integer equivs for it all */
+		g_c_imag = fudge_to_long(g_parameters[1]);
 		xmin  = fudge_to_long(xxmin);
 		xmax  = fudge_to_long(xxmax);
 		x3rd  = fudge_to_long(xx3rd);
@@ -628,10 +628,10 @@ expand_retry:
 	ftemp = (double)(-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (xxmax - xx3rd)*(yy3rd - yymax));
 	if (ftemp != 0)
 	{
-		plotmx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
-		plotmx2 = (yy3rd-yymax)*g_dx_size / ftemp;
-		plotmy1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
-		plotmy2 = (xxmax-xx3rd)*g_dy_size / ftemp;
+		g_plot_mx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
+		g_plot_mx2 = (yy3rd-yymax)*g_dx_size / ftemp;
+		g_plot_my1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
+		g_plot_my2 = (xxmax-xx3rd)*g_dy_size / ftemp;
 	}
 	if (bf_math == 0)
 	{
@@ -1662,19 +1662,19 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		return;
 	}
-	i = (int)(dy*plotmx1 - dx*plotmx2); i += sxoffs;
-	if (i < 0 || i >= sxdots)
+	i = (int)(dy*g_plot_mx1 - dx*g_plot_mx2); i += g_sx_offset;
+	if (i < 0 || i >= g_screen_width)
 	{
 		return;
 	}
-	j = (int)(dx*plotmy1 - dy*plotmy2); j += syoffs;
-	if (j < 0 || j >= sydots)
+	j = (int)(dx*g_plot_my1 - dy*g_plot_my2); j += g_sy_offset;
+	if (j < 0 || j >= g_screen_height)
 	{
 		return;
 	}
-	save_sxoffs = sxoffs;
-	save_syoffs = syoffs;
-	sxoffs = syoffs = 0;
+	save_sxoffs = g_sx_offset;
+	save_syoffs = g_sy_offset;
+	g_sx_offset = g_sy_offset = 0;
 	/* save orbit value */
 	if (color == -1)
 	{
@@ -1687,8 +1687,8 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		g_put_color(i, j, color);
 	}
-	sxoffs = save_sxoffs;
-	syoffs = save_syoffs;
+	g_sx_offset = save_sxoffs;
+	g_sy_offset = save_syoffs;
 	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
 	{
 		if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
@@ -1742,9 +1742,9 @@ void orbit_scrub(void)
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
 	driver_mute();
-	save_sxoffs = sxoffs;
-	save_syoffs = syoffs;
-	sxoffs = syoffs = 0;
+	save_sxoffs = g_sx_offset;
+	save_syoffs = g_sy_offset;
+	g_sx_offset = g_sy_offset = 0;
 	while (g_orbit_index >= 3)
 	{
 		c = *(s_save_orbit + --g_orbit_index);
@@ -1752,8 +1752,8 @@ void orbit_scrub(void)
 		i = *(s_save_orbit + --g_orbit_index);
 		g_put_color(i, j, c);
 	}
-	sxoffs = save_sxoffs;
-	syoffs = save_syoffs;
+	g_sx_offset = save_sxoffs;
+	g_sy_offset = save_syoffs;
 }
 
 
@@ -1902,9 +1902,9 @@ void get_julia_attractor(double real, double imag)
 		g_max_iteration = 500;
 	}
 	g_color_iter = 0;
-	overflow = 0;
+	g_overflow = 0;
 	while (++g_color_iter < g_max_iteration)
-		if (g_current_fractal_specific->orbitcalc() || overflow)
+		if (g_current_fractal_specific->orbitcalc() || g_overflow)
 		{
 			break;
 		}
@@ -1920,8 +1920,8 @@ void get_julia_attractor(double real, double imag)
 		}
 		for (i = 0; i < 10; i++)
 		{
-			overflow = 0;
-			if (!g_current_fractal_specific->orbitcalc() && !overflow) /* if it stays in the lake */
+			g_overflow = 0;
+			if (!g_current_fractal_specific->orbitcalc() && !g_overflow) /* if it stays in the lake */
 			{                        /* and doesn't move far, probably */
 				if (g_integer_fractal)   /*   found a finite attractor    */
 				{

@@ -103,7 +103,7 @@ void _fastcall c_putcolor(int x, int y, int color)
 	{
 		return ;
 	}
-	if (y >= sydots - show_numbers) /* avoid overwriting coords */
+	if (y >= g_screen_height - show_numbers) /* avoid overwriting coords */
 	{
 		return;
 	}
@@ -123,7 +123,7 @@ int  c_getcolor(int x, int y)
 	{
 		return 1000;
 	}
-	if (y >= sydots - show_numbers) /* avoid overreading coords */
+	if (y >= g_screen_height - show_numbers) /* avoid overreading coords */
 	{
 		return 1000;
 	}
@@ -510,7 +510,7 @@ static void RestoreRect(int x, int y, int width, int height)
  * interface to FRACTINT
  */
 
-_CMPLX SaveC = {-3000.0, -3000.0};
+_CMPLX g_save_c = {-3000.0, -3000.0};
 
 void Jiim(int which)         /* called by fractint */
 {
@@ -555,12 +555,12 @@ void Jiim(int which)         /* called by fractint */
 		g_help_mode = HELP_ORBITS;
 		g_has_inverse = 1;
 	}
-	oldsxoffs = sxoffs;
-	oldsyoffs = syoffs;
+	oldsxoffs = g_sx_offset;
+	oldsyoffs = g_sy_offset;
 	oldcalctype = g_calculate_type;
 	show_numbers = 0;
 	g_using_jiim = 1;
-	g_line_buffer = malloc(max(sxdots, sydots));
+	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
 	aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
@@ -590,38 +590,38 @@ void Jiim(int which)         /* called by fractint */
 		g_plot_color = c_putcolor;                /* for line with clipping */
 	}
 
-	if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
+	if (g_sx_offset != 0 || g_sy_offset != 0) /* we're in view windows */
 	{
 		savehasinverse = g_has_inverse;
 		g_has_inverse = 1;
 		SaveRect(0, 0, xdots, ydots);
-		sxoffs = 0;
-		syoffs = 0;
+		g_sx_offset = 0;
+		g_sy_offset = 0;
 		RestoreRect(0, 0, xdots, ydots);
 		g_has_inverse = savehasinverse;
 	}
 
-	if (xdots == sxdots || ydots == sydots ||
-		sxdots-xdots < sxdots/3 ||
-		sydots-ydots < sydots/3 ||
+	if (xdots == g_screen_width || ydots == g_screen_height ||
+		g_screen_width-xdots < g_screen_width/3 ||
+		g_screen_height-ydots < g_screen_height/3 ||
 		xdots >= MAXRECT)
 	{
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 			the physical screen */
 		windows = 0; /* full screen or large view window */
-		xd = sxdots / 3;
-		yd = sydots / 3;
+		xd = g_screen_width / 3;
+		yd = g_screen_height / 3;
 		xc = xd*2;
 		yc = yd*2;
 		xoff = xd*5 / 2;
 		yoff = yd*5 / 2;
 	}
-	else if (xdots > sxdots/3 && ydots > sydots/3)
+	else if (xdots > g_screen_width/3 && ydots > g_screen_height/3)
 	{
 		/* Julia/orbit and fractal don't overlap */
 		windows = 1;
-		xd = sxdots-xdots;
-		yd = sydots-ydots;
+		xd = g_screen_width-xdots;
+		yd = g_screen_height-ydots;
 		xc = xdots;
 		yc = ydots;
 		xoff = xc + xd/2;
@@ -631,8 +631,8 @@ void Jiim(int which)         /* called by fractint */
 	{
 		/* Julia/orbit takes whole screen */
 		windows = 2;
-		xd = sxdots;
-		yd = sydots;
+		xd = g_screen_width;
+		yd = g_screen_height;
 		xc = 0;
 		yc = 0;
 		xoff = xd/2;
@@ -659,8 +659,8 @@ void Jiim(int which)         /* called by fractint */
 	setup_convert_to_screen(&cvt);
 
 	/* reuse last location if inside window */
-	g_col = (int)(cvt.a*SaveC.x + cvt.b*SaveC.y + cvt.e + .5);
-	g_row = (int)(cvt.c*SaveC.x + cvt.d*SaveC.y + cvt.f + .5);
+	g_col = (int)(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
+	g_row = (int)(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
 	if (g_col < 0 || g_col >= xdots ||
 		g_row < 0 || g_row >= ydots)
 	{
@@ -669,8 +669,8 @@ void Jiim(int which)         /* called by fractint */
 	}
 	else
 	{
-		cr = SaveC.x;
-		ci = SaveC.y;
+		cr = g_save_c.x;
+		ci = g_save_c.y;
 	}
 
 	old_x = old_y = -1;
@@ -819,7 +819,7 @@ void Jiim(int which)         /* called by fractint */
 					{
 						windows = 3;
 					}
-					else if (windows == 3 && xd == sxdots)
+					else if (windows == 3 && xd == g_screen_width)
 					{
 						RestoreRect(0, 0, xdots, ydots);
 						windows = 2;
@@ -923,13 +923,13 @@ void Jiim(int which)         /* called by fractint */
 				}
 				else
 				{
-					driver_display_string(5, sydots-show_numbers, WHITE, BLACK, str);
+					driver_display_string(5, g_screen_height-show_numbers, WHITE, BLACK, str);
 				}
 			}
 			iter = 1;
 			g_old_z.x = g_old_z.y = g_old_z_l.x = g_old_z_l.y = 0;
-			SaveC.x = g_initial_z.x =  cr;
-			SaveC.y = g_initial_z.y =  ci;
+			g_save_c.x = g_initial_z.x =  cr;
+			g_save_c.y = g_initial_z.y =  ci;
 			g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
 			g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 
@@ -1063,7 +1063,7 @@ void Jiim(int which)         /* called by fractint */
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     /* always go one direction */
-					if (SaveC.y < 0)
+					if (g_save_c.y < 0)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
@@ -1072,7 +1072,7 @@ void Jiim(int which)         /* called by fractint */
 					y = (int)(g_new_z.y*yfactor*zoom + yoff);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     /* go one dir, draw the other */
-					if (SaveC.y < 0)
+					if (g_save_c.y < 0)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
@@ -1103,7 +1103,7 @@ void Jiim(int which)         /* called by fractint */
 					}
 					break;
 				case SECRETMODE_7:
-					if (SaveC.y < 0)
+					if (g_save_c.y < 0)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
@@ -1248,7 +1248,7 @@ finish:
 			{
 				fillrect(xc, yc, xd, yd, g_color_dark);
 			}
-			if (windows == 3 && xd == sxdots) /* unhide */
+			if (windows == 3 && xd == g_screen_width) /* unhide */
 			{
 				RestoreRect(0, 0, xdots, ydots);
 				windows = 2;
@@ -1257,8 +1257,8 @@ finish:
 			savehasinverse = g_has_inverse;
 			g_has_inverse = 1;
 			SaveRect(0, 0, xdots, ydots);
-			sxoffs = oldsxoffs;
-			syoffs = oldsyoffs;
+			g_sx_offset = oldsxoffs;
+			g_sy_offset = oldsyoffs;
 			RestoreRect(0, 0, xdots, ydots);
 			g_has_inverse = savehasinverse;
 		}
@@ -1290,12 +1290,12 @@ finish:
 		viewreduction = 4.2f;
 		viewcrop = 1;
 		g_final_aspect_ratio = g_screen_aspect_ratio;
-		xdots = sxdots;
-		ydots = sydots;
+		xdots = g_screen_width;
+		ydots = g_screen_height;
 		g_dx_size = xdots - 1;
 		g_dy_size = ydots - 1;
-		sxoffs = 0;
-		syoffs = 0;
+		g_sx_offset = 0;
+		g_sy_offset = 0;
 		freetempmsg();
 	}
 	else

@@ -271,7 +271,7 @@ void corners_bf_to_float(void)
 	{
 		if (type_has_parameter(g_fractal_type, i, NULL))
 		{
-			param[i] = (double)bftofloat(bfparms[i]);
+			g_parameters[i] = (double)bftofloat(bfparms[i]);
 		}
 	}
 }
@@ -591,7 +591,7 @@ int mandelbrot_setup_bn()
 		}
 	}
 
-	g_c_exp = (int)param[2];
+	g_c_exp = (int)g_parameters[2];
 	switch (g_fractal_type)
 	{
 	case JULIAFP:
@@ -600,11 +600,11 @@ int mandelbrot_setup_bn()
 		break;
 	case FPMANDELZPOWER:
 		init_big_pi();
-		if ((double)g_c_exp == param[2] && (g_c_exp & 1)) /* odd exponents */
+		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = XYAXIS_NOPARM;
 		}
-		if (param[3] != 0)
+		if (g_parameters[3] != 0)
 		{
 			g_symmetry = NOSYM;
 		}
@@ -613,7 +613,7 @@ int mandelbrot_setup_bn()
 		init_big_pi();
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || param[3] != 0.0 || (double)g_c_exp != param[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
 		{
 			g_symmetry = NOSYM;
 		}
@@ -624,8 +624,8 @@ int mandelbrot_setup_bn()
 		the arbitrary precision logic intact. The next two lines, if used,
 		would disguise and breaking of the arbitrary precision logic */
 	/*
-	floattobn(bnparm.x, param[0]);
-	floattobn(bnparm.y, param[1]);
+	floattobn(bnparm.x, g_parameters[0]);
+	floattobn(bnparm.y, g_parameters[1]);
 	*/
 	restore_stack(saved);
 	return 1;
@@ -682,7 +682,7 @@ int mandelbrot_setup_bf()
 		}
 	}
 
-	g_c_exp = (int)param[2];
+	g_c_exp = (int)g_parameters[2];
 	switch (g_fractal_type)
 	{
 	case JULIAFP:
@@ -691,11 +691,11 @@ int mandelbrot_setup_bf()
 		break;
 	case FPMANDELZPOWER:
 		init_big_pi();
-		if ((double)g_c_exp == param[2] && (g_c_exp & 1)) /* odd exponents */
+		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = XYAXIS_NOPARM;
 		}
-		if (param[3] != 0)
+		if (g_parameters[3] != 0)
 		{
 			g_symmetry = NOSYM;
 		}
@@ -704,7 +704,7 @@ int mandelbrot_setup_bf()
 		init_big_pi();
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || param[3] != 0.0 || (double)g_c_exp != param[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
 		{
 			g_symmetry = NOSYM;
 		}
@@ -738,14 +738,14 @@ int mandelbrot_per_pixel_bn()
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with init rather than 0 */
-		floattobn(bnold.x, param[0]); /* initial pertubation of parameters set */
-		floattobn(bnold.y, param[1]);
+		floattobn(bnold.x, g_parameters[0]); /* initial pertubation of parameters set */
+		floattobn(bnold.y, g_parameters[1]);
 		g_color_iter = -1;
 	}
 	else
 	{
-		floattobn(bnnew.x, param[0]);
-		floattobn(bnnew.y, param[1]);
+		floattobn(bnnew.x, g_parameters[0]);
+		floattobn(bnnew.y, g_parameters[1]);
 		add_a_bn(bnold.x, bnnew.x);
 		add_a_bn(bnold.y, bnnew.y);
 	}
@@ -784,14 +784,14 @@ int mandelbrot_per_pixel_bf()
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
-		floattobf(bfold.x, param[0]); /* initial pertubation of parameters set */
-		floattobf(bfold.y, param[1]);
+		floattobf(bfold.x, g_parameters[0]); /* initial pertubation of parameters set */
+		floattobf(bfold.y, g_parameters[1]);
 		g_color_iter = -1;
 	}
 	else
 	{
-		floattobf(bfnew.x, param[0]);
-		floattobf(bfnew.y, param[1]);
+		floattobf(bfnew.x, g_parameters[0]);
+		floattobf(bfnew.y, g_parameters[1]);
 		add_a_bf(bfold.x, bfnew.x);
 		add_a_bf(bfold.y, bfnew.y);
 	}
@@ -902,8 +902,8 @@ int julia_z_power_orbit_bn()
 	parm2.x = alloc_stack(bnlength);
 	parm2.y = alloc_stack(bnlength);
 
-	floattobn(parm2.x, param[2]);
-	floattobn(parm2.y, param[3]);
+	floattobn(parm2.x, g_parameters[2]);
+	floattobn(parm2.y, g_parameters[3]);
 	complex_power_bn(&bnnew, &bnold, &parm2);
 	add_bn(bnnew.x, bnparm.x, bnnew.x + shiftfactor);
 	add_bn(bnnew.y, bnparm.y, bnnew.y + shiftfactor);
@@ -919,8 +919,8 @@ int julia_z_power_orbit_bf()
 	parm2.x = alloc_stack(bflength + 2);
 	parm2.y = alloc_stack(bflength + 2);
 
-	floattobf(parm2.x, param[2]);
-	floattobf(parm2.y, param[3]);
+	floattobf(parm2.x, g_parameters[2]);
+	floattobf(parm2.y, g_parameters[3]);
 	ComplexPower_bf(&bfnew, &bfold, &parm2);
 	add_bf(bfnew.x, bfparm.x, bfnew.x);
 	add_bf(bfnew.y, bfparm.y, bfnew.y);

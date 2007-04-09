@@ -643,7 +643,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	DI(di);
 
 	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = sxdots;
+	g_vxdots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;
@@ -966,7 +966,7 @@ disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
 	/* allow modes of any size with 256 g_colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
-	return (mode->g_colors == 256) &&
+	return (mode->colors == 256) &&
 		(mode->videomodeax == 0) &&
 		(mode->videomodebx == 0) &&
 		(mode->videomodecx == 0) &&

@@ -30,7 +30,7 @@
 #include "targa_lc.h"
 
 #ifdef XFRACT
-char rlebuf[258];    /* RLE-state variables */
+char g_rle_buffer[258];    /* RLE-state variables */
 #endif
 static int state, count, bufp;
 
@@ -91,16 +91,16 @@ int t16_getline(FILE *fp, int hs, U16 *data)
 			{
 				state = 1;
 				count -= 127;
-				fread(rlebuf, 2, 1, fp);
+				fread(g_rle_buffer, 2, 1, fp);
 			}
 			else
 			{
 				state = 2;
 				++count;
-				fread(rlebuf, 2, count, fp);
+				fread(g_rle_buffer, 2, count, fp);
 			}
 		}
-		GET16(rlebuf[bufp], data[i]);
+		GET16(g_rle_buffer[bufp], data[i]);
 		if (--count == 0)
 		{
 			state = 0;

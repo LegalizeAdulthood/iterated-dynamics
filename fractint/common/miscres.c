@@ -708,7 +708,7 @@ int set_trig_array(int k, const char *name)
 
 	strlwr(trigname);
 
-	for (i = 0; i < numtrigfn; i++)
+	for (i = 0; i < g_num_trig_fn; i++)
 	{
 		if (strcmp(trigname, trigfn[i].name) == 0)
 		{
@@ -843,23 +843,23 @@ int tab_display_2(char *msg)
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		write_row(row++, "total_formula_mem %ld g_formula_max_ops (posp) %u g_formula_max_args (vsp) %u",
-			total_formula_mem, posp, vsp);
+		write_row(row++, "total_formula_mem %ld g_formula_max_ops (g_posp) %u g_formula_max_args (vsp) %u",
+			total_formula_mem, g_posp, vsp);
 		write_row(row++, "   Store ptr %d Loadptr %d g_formula_max_ops var %u g_formula_max_args var %u g_last_init_op %d",
-			StoPtr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
+			g_store_ptr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
 	}
-	else if (rhombus_stack[0])
+	else if (g_rhombus_stack[0])
 	{
 		write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
 			g_max_rhombus_depth + 1,
-			rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
-			rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
-			rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
-			rhombus_stack[9]);
+			g_rhombus_stack[0], g_rhombus_stack[1], g_rhombus_stack[2],
+			g_rhombus_stack[3], g_rhombus_stack[4], g_rhombus_stack[5],
+			g_rhombus_stack[6], g_rhombus_stack[7], g_rhombus_stack[8],
+			g_rhombus_stack[9]);
 	}
 
 /*
-	write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
+	write_row(row++, "xdots %d ydots %d g_screen_width %d g_screen_height %d", xdots, ydots, g_screen_width, g_screen_height);
 */
 	write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, g_dot_mode,
 		g_driver->name, g_driver->description);
@@ -1171,7 +1171,7 @@ top:
 	if (g_video_entry.xdots && bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
-				g_video_entry.xdots, g_video_entry.ydots, g_video_entry.g_colors,
+				g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
 				g_video_entry.name, g_video_entry.comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}
@@ -1286,15 +1286,15 @@ top:
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
 				if (*p == '+')
 				{
-					sprintf(msg, "%-12d", (int)param[i]);
+					sprintf(msg, "%-12d", (int)g_parameters[i]);
 				}
 				else if (*p == '#')
 				{
-					sprintf(msg, "%-12lu", (U32)param[i]);
+					sprintf(msg, "%-12lu", (U32)g_parameters[i]);
 				}
 				else
 				{
-					sprintf(msg, "%-12.9f", param[i]);
+					sprintf(msg, "%-12.9f", g_parameters[i]);
 				}
 				driver_put_string(-1, -1, C_GENERAL_HI, msg);
 				k++;
@@ -1444,7 +1444,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 }
 
 char g_insufficient_ifs_memory[] = {"Insufficient memory for IFS"};
-int numaffine;
+int g_num_affine;
 int ifsload()                   /* read in IFS parameters */
 {
 	int i;
@@ -1537,7 +1537,7 @@ int ifsload()                   /* read in IFS parameters */
 
 	if (ret == 0)
 	{
-		numaffine = i/rowsize;
+		g_num_affine = i/rowsize;
 		if ((g_ifs_definition = (float *)malloc(
 								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL)
 		{

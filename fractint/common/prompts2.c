@@ -404,8 +404,8 @@ int get_toggles()
 	strcpy(savenameptr, uvalues[++k].uval.sval);
 	if (strcmp(g_save_name, prevsavename))
 	{
-		resave_flag = RESAVE_NO;
-		started_resaves = FALSE; /* forget pending increment */
+		g_resave_flag = RESAVE_NO;
+		g_started_resaves = FALSE; /* forget pending increment */
 	}
 	g_fractal_overwrite = uvalues[++k].uval.ch.val;
 
@@ -497,16 +497,16 @@ int get_toggles2()
 
 	choices[++k] = "Potential Max Color (0 means off)";
 	uvalues[k].type = 'i';
-	old_potparam[0] = potparam[0];
+	old_potparam[0] = g_potential_parameter[0];
 	uvalues[k].uval.ival = (int) old_potparam[0];
 
 	choices[++k] = "          Slope";
 	uvalues[k].type = 'd';
-	uvalues[k].uval.dval = old_potparam[1] = potparam[1];
+	uvalues[k].uval.dval = old_potparam[1] = g_potential_parameter[1];
 
 	choices[++k] = "          Bailout";
 	uvalues[k].type = 'i';
-	old_potparam[2] = potparam[2];
+	old_potparam[2] = g_potential_parameter[2];
 	uvalues[k].uval.ival = (int) old_potparam[2];
 
 	choices[++k] = "          16 bit values";
@@ -570,20 +570,20 @@ int get_toggles2()
 		j = 1;
 	}
 
-	potparam[0] = uvalues[++k].uval.ival;
-	if (potparam[0] != old_potparam[0])
+	g_potential_parameter[0] = uvalues[++k].uval.ival;
+	if (g_potential_parameter[0] != old_potparam[0])
 	{
 		j = 1;
 	}
 
-	potparam[1] = uvalues[++k].uval.dval;
-	if (potparam[0] != 0.0 && potparam[1] != old_potparam[1])
+	g_potential_parameter[1] = uvalues[++k].uval.dval;
+	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[1] != old_potparam[1])
 	{
 		j = 1;
 	}
 
-	potparam[2] = uvalues[++k].uval.ival;
-	if (potparam[0] != 0.0 && potparam[2] != old_potparam[2])
+	g_potential_parameter[2] = uvalues[++k].uval.ival;
+	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != old_potparam[2])
 	{
 		j = 1;
 	}
@@ -593,7 +593,7 @@ int get_toggles2()
 		g_potential_16bit = uvalues[k].uval.ch.val;
 		if (g_potential_16bit)  /* turned it on */
 		{
-			if (potparam[0] != 0.0)
+			if (g_potential_parameter[0] != 0.0)
 			{
 				j = 1;
 			}
@@ -835,8 +835,8 @@ int get_view_params()
 	old_aspectratio   = g_final_aspect_ratio;
 	old_viewxdots     = viewxdots;
 	old_viewydots     = viewydots;
-	old_sxdots        = sxdots;
-	old_sydots        = sydots;
+	old_sxdots        = g_screen_width;
+	old_sydots        = g_screen_height;
 
 get_view_restart:
 	/* fill up the previous values arrays */
@@ -872,11 +872,11 @@ get_view_restart:
 	{
 		choices[++k] = "Disk Video x pixels";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = sxdots;
+		uvalues[k].uval.ival = g_screen_width;
 
 		choices[++k] = "           y pixels";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = sydots;
+		uvalues[k].uval.ival = g_screen_height;
 	}
 
 	choices[++k] = "";
@@ -903,8 +903,8 @@ get_view_restart:
 		viewreduction = 4.2f;
 		viewcrop = 1;
 		g_final_aspect_ratio = g_screen_aspect_ratio;
-		sxdots = old_sxdots;
-		sydots = old_sydots;
+		g_screen_width = old_sxdots;
+		g_screen_height = old_sydots;
 		goto get_view_restart;
 	}
 
@@ -922,23 +922,23 @@ get_view_restart:
 	}
 	else
 	{
-		sxdots = uvalues[++k].uval.ival;
-		sydots = uvalues[++k].uval.ival;
-		if ((xmax != -1) && (sxdots > xmax))
+		g_screen_width = uvalues[++k].uval.ival;
+		g_screen_height = uvalues[++k].uval.ival;
+		if ((xmax != -1) && (g_screen_width > xmax))
 		{
-			sxdots = (int) xmax;
+			g_screen_width = (int) xmax;
 		}
-		if (sxdots < 2)
+		if (g_screen_width < 2)
 		{
-			sxdots = 2;
+			g_screen_width = 2;
 		}
-		if ((ymax != -1) && (sydots > ymax))
+		if ((ymax != -1) && (g_screen_height > ymax))
 		{
-			sydots = ymax;
+			g_screen_height = ymax;
 		}
-		if (sydots < 2)
+		if (g_screen_height < 2)
 		{
-			sydots = 2;
+			g_screen_height = 2;
 		}
 	}
 	++k;
@@ -961,14 +961,14 @@ get_view_restart:
 	}
 	else
 	{
-		g_video_entry.xdots = sxdots;
-		g_video_entry.ydots = sydots;
-		g_final_aspect_ratio = ((float) sydots)/((float) sxdots);
+		g_video_entry.xdots = g_screen_width;
+		g_video_entry.ydots = g_screen_height;
+		g_final_aspect_ratio = ((float) g_screen_height)/((float) g_screen_width);
 		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
 	}
 
 	return (viewwindow != old_viewwindow
-		|| sxdots != old_sxdots || sydots != old_sydots
+		|| g_screen_width != old_sxdots || g_screen_height != old_sydots
 		|| (viewwindow
 			&& (viewreduction != old_viewreduction
 				|| g_final_aspect_ratio != old_aspectratio
@@ -1011,7 +1011,7 @@ int get_cmd_string()
 
 /* --------------------------------------------------------------------- */
 
-int g_gaussian_distribution = 30, Offset = 0, Slope = 25;
+int g_gaussian_distribution = 30, g_gaussian_offset = 0, g_gaussian_slope = 25;
 long g_gaussian_constant;
 
 
@@ -1053,7 +1053,7 @@ int starfield(void)
 
 	g_gaussian_distribution = (int)(starfield_values[0]);
 	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
-	Slope = (int)(starfield_values[2]);
+	g_gaussian_slope = (int)(starfield_values[2]);
 
 	if (ValidateLuts(g_grey_file) != 0)
 	{
@@ -1171,7 +1171,7 @@ int get_rds_params(void)
 		uvalues[k++].type = 'y';
 
 
-		if (*stereomapname != 0 && g_image_map)
+		if (*g_stereo_map_name != 0 && g_image_map)
 		{
 			char *p;
 			uvalues[k].uval.ch.val = reuse;
@@ -1182,11 +1182,11 @@ int get_rds_params(void)
 			{
 				rds6[i] = ' ';
 			}
-			p = strrchr(stereomapname, SLASHC);
+			p = strrchr(g_stereo_map_name, SLASHC);
 			if (p == NULL ||
-				(int) strlen(stereomapname) < sizeof(rds6)-2)
+				(int) strlen(g_stereo_map_name) < sizeof(rds6)-2)
 			{
-				p = strlwr(stereomapname);
+				p = strlwr(g_stereo_map_name);
 			}
 			else
 			{
@@ -1199,7 +1199,7 @@ int get_rds_params(void)
 			strcat(rds6, "]");
 		}
 		else
-			*stereomapname = 0;
+			*g_stereo_map_name = 0;
 		oldhelpmode = g_help_mode;
 		g_help_mode = HELPRDS;
 		i = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
@@ -1217,7 +1217,7 @@ int get_rds_params(void)
 			g_grayscale_depth = uvalues[k++].uval.ch.val;
 			g_calibrate        = (char)uvalues[k++].uval.ch.val;
 			g_image_map        = (char)uvalues[k++].uval.ch.val;
-			if (*stereomapname && g_image_map)
+			if (*g_stereo_map_name && g_image_map)
 			{
 				reuse         = (char)uvalues[k++].uval.ch.val;
 			}
@@ -1227,7 +1227,7 @@ int get_rds_params(void)
 			}
 			if (g_image_map && !reuse)
 			{
-				if (getafilename("Select an Imagemap File", masks[1], stereomapname))
+				if (getafilename("Select an Imagemap File", masks[1], g_stereo_map_name))
 				{
 					continue;
 				}
@@ -1458,7 +1458,7 @@ int getafilename(char *hdg, char *file_template, char *flname)
 	static int numtemplates = 1;
 	static int dosort = 1;
 
-	rds = (stereomapname == flname) ? 1 : 0;
+	rds = (g_stereo_map_name == flname) ? 1 : 0;
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
 		attributes[i] = 1;
@@ -1783,7 +1783,7 @@ static int filename_speedstr(int row, int col, int vid,
 	else
 	{
 		speedstate = MATCHING;
-		prompt = speed_prompt;
+		prompt = g_speed_prompt;
 	}
 	driver_put_string(row, col, vid, prompt);
 	return (int) strlen(prompt);

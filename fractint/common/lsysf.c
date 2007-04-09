@@ -276,7 +276,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 	struct lsys_cmd **rulind;
 	int tran;
 
-	if (overflow)     /* integer math routines overflowed */
+	if (g_overflow)     /* integer math routines overflowed */
 	{
 		return NULL;
 	}
@@ -409,7 +409,7 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 	struct lsys_cmd **rulind;
 	int tran;
 
-	if (overflow)     /* integer math routines overflowed */
+	if (g_overflow)     /* integer math routines overflowed */
 	{
 		return NULL;
 	}

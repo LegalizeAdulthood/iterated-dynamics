@@ -53,12 +53,12 @@ void dispbox(void)
 	{
 		if (g_is_true_color && g_true_mode)
 		{
-			driver_get_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], NULL);
-			driver_put_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs,
+			driver_get_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, &rgb[0], &rgb[1], &rgb[2], NULL);
+			driver_put_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset,
 				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
 		else
-			values[i] = (unsigned char)getcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs);
+			values[i] = (unsigned char)getcolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset);
 	}
 /* There is an interaction between getcolor and g_put_color, so separate them */
 	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
@@ -67,11 +67,11 @@ void dispbox(void)
 		{
 			if (g_colors == 2)
 			{
-				g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - values[i]));
+				g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, (1 - values[i]));
 			}
 			else
 			{
-				g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
+				g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
 			}
 		}
 	}
@@ -89,7 +89,7 @@ void clearbox(void)
 		unsigned char *values = (unsigned char *)g_box_values;
 		for (i = 0; i < g_box_count; i++)
 		{
-			g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, values[i]);
+			g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, values[i]);
 		}
 	}
 }
@@ -126,10 +126,10 @@ void drawbox(int drawit)
 	rotsin = sin(ftemp1);
 
 	/* do some calcs just once here to reduce fp work a bit */
-	fxwidth = sxmax-sx3rd;
-	fxskew  = sx3rd-sxmin;
-	fydepth = sy3rd-symax;
-	fyskew  = symin-sy3rd;
+	fxwidth = g_sx_max-g_sx_3rd;
+	fxskew  = g_sx_3rd-g_sx_min;
+	fydepth = g_sy_3rd-g_sy_max;
+	fyskew  = g_sy_min-g_sy_3rd;
 	fxadj   = zwidth*zskew;
 
 	if (bf_math)
@@ -154,8 +154,8 @@ void drawbox(int drawit)
 
 	tl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
 	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	xxmin  = sxmin + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
-	yymax  = symax + ftemp2*fydepth + ftemp1*fyskew;
+	xxmin  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
+	yymax  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
 		calc_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
@@ -167,8 +167,8 @@ void drawbox(int drawit)
 	ftemp2 = zby - dy/g_final_aspect_ratio + zdepth;
 	br.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
-	yymin  = symax + ftemp2*fydepth + ftemp1*fyskew;
+	xxmax  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
+	yymin  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
 		calc_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
@@ -183,8 +183,8 @@ void drawbox(int drawit)
 	ftemp2 = zby + dy/g_final_aspect_ratio + zdepth;
 	bl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
-	yy3rd  = symax + ftemp2*fydepth + ftemp1*fyskew;
+	xx3rd  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
+	yy3rd  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
 		calc_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
@@ -211,14 +211,14 @@ void drawbox(int drawit)
 		drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y); /* top & bottom lines */
 		drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y); /* left & right lines */
 #else
-		g_box_x[0] = tl.x + sxoffs;
-		g_box_y[0] = tl.y + syoffs;
-		g_box_x[1] = tr.x + sxoffs;
-		g_box_y[1] = tr.y + syoffs;
-		g_box_x[2] = br.x + sxoffs;
-		g_box_y[2] = br.y + syoffs;
-		g_box_x[3] = bl.x + sxoffs;
-		g_box_y[3] = bl.y + syoffs;
+		g_box_x[0] = tl.x + g_sx_offset;
+		g_box_y[0] = tl.y + g_sy_offset;
+		g_box_x[1] = tr.x + g_sx_offset;
+		g_box_y[1] = tr.y + g_sy_offset;
+		g_box_x[2] = br.x + g_sx_offset;
+		g_box_y[2] = br.y + g_sy_offset;
+		g_box_x[3] = bl.x + g_sx_offset;
+		g_box_y[3] = bl.y + g_sy_offset;
 		g_box_count = 1;
 #endif
 		dispbox();
@@ -240,7 +240,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 			fr = to;
 			to = tmpp;
 		}
-		xincr = (to.x-fr.x)*4/sxdots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
+		xincr = (to.x-fr.x)*4/g_screen_width + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
 		ctr = (to.x-fr.x-1)/xincr;
 		altdec = abs(to.y-fr.y)*xincr;
 		altinc = to.x-fr.x;
@@ -274,7 +274,7 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 			fr = to;
 			to = tmpp;
 		}
-		yincr = (to.y-fr.y)*4/sydots + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
+		yincr = (to.y-fr.y)*4/g_screen_height + 1; /* do every 1st, 2nd, 3rd, or 4th dot */
 		ctr = (to.y-fr.y-1)/yincr;
 		altdec = abs(to.x-fr.x)*yincr;
 		altinc = to.y-fr.y;
@@ -306,10 +306,10 @@ void _fastcall addbox(struct coords point)
 #if defined(_WIN32)
 	_ASSERTE(g_box_count < NUM_BOXES);
 #endif
-	point.x += sxoffs;
-	point.y += syoffs;
-	if (point.x >= 0 && point.x < sxdots &&
-		point.y >= 0 && point.y < sydots)
+	point.x += g_sx_offset;
+	point.y += g_sy_offset;
+	if (point.x >= 0 && point.x < g_screen_width &&
+		point.y >= 0 && point.y < g_screen_height)
 		{
 		g_box_x[g_box_count] = point.x;
 		g_box_y[g_box_count] = point.y;
@@ -363,8 +363,8 @@ void moveboxf(double dx, double dy)
 			zby = (double)row/g_dy_size;
 		}
 	}
-	col = (int)((zbx + zwidth/2)*(g_dx_size + PIXELROUND)) + sxoffs;
-	row = (int)((zby + zdepth/2)*(g_dy_size + PIXELROUND)) + syoffs;
+	col = (int)((zbx + zwidth/2)*(g_dx_size + PIXELROUND)) + g_sx_offset;
+	row = (int)((zby + zdepth/2)*(g_dy_size + PIXELROUND)) + g_sy_offset;
 }
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
@@ -436,18 +436,18 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
 
-	/* tempx = dy*plotmx1 - dx*plotmx2; */
+	/* tempx = dy*g_plot_mx1 - dx*g_plot_mx2; */
 	mult_bf(btmp1, bfdy, bfplotmx1);
 	mult_bf(btmp2, bfdx, bfplotmx2);
 	sub_bf(btempx, btmp1, btmp2);
 
-	/* tempy = dx*plotmy1 - dy*plotmy2; */
+	/* tempy = dx*g_plot_my1 - dy*g_plot_my2; */
 	mult_bf(btmp1, bfdx, bfplotmy1);
 	mult_bf(btmp2, bfdy, bfplotmy2);
 	sub_bf(btempy, btmp1, btmp2);
 
 	/* calc new corner by extending from current screen corners */
-	/* *newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp; */
+	/* *newx = g_sx_min + tempx*(g_sx_max-g_sx_3rd)/ftemp + tempy*(g_sx_3rd-g_sx_min)/ftemp; */
 	sub_bf(btmp1, bfsxmax, bfsx3rd);
 	mult_bf(btmp2, btempx, btmp1);
 	/* show_three_bf("fact1", btempx, "fact2", btmp1, "prod ", btmp2, 70); */
@@ -459,7 +459,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	add_bf(bfnewx, bfsxmin, btmp2a);
 	add_a_bf(bfnewx, btmp4a);
 
-	/* *newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp; */
+	/* *newy = g_sy_max + tempy*(g_sy_3rd-g_sy_max)/ftemp + tempx*(g_sy_min-g_sy_3rd)/ftemp; */
 	sub_bf(btmp1, bfsy3rd, bfsymax);
 	mult_bf(btmp2, btempy, btmp1);
 	div_bf(btmp2a, btmp2, bfftemp);
@@ -476,18 +476,18 @@ static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy,
 	double tempx, tempy;
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
-	tempx = dy*plotmx1 - dx*plotmx2;
-	tempy = dx*plotmy1 - dy*plotmy2;
+	tempx = dy*g_plot_mx1 - dx*g_plot_mx2;
+	tempy = dx*g_plot_my1 - dy*g_plot_my2;
 
 	/* calc new corner by extending from current screen corners */
-	*newx = sxmin + tempx*(sxmax-sx3rd)/ftemp + tempy*(sx3rd-sxmin)/ftemp;
-	*newy = symax + tempy*(sy3rd-symax)/ftemp + tempx*(symin-sy3rd)/ftemp;
+	*newx = g_sx_min + tempx*(g_sx_max-g_sx_3rd)/ftemp + tempy*(g_sx_3rd-g_sx_min)/ftemp;
+	*newy = g_sy_max + tempy*(g_sy_3rd-g_sy_max)/ftemp + tempx*(g_sy_min-g_sy_3rd)/ftemp;
 }
 
 void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 {
 	/* (xxmin, yymax), etc, are already set to zoombox corners;
-	(sxmin, symax), etc, are still the screen's corners;
+	(g_sx_min, g_sy_max), etc, are still the screen's corners;
 	use the same logic as plot_orbit stuff to first calculate current screen
 	corners relative to the zoombox, as if the zoombox were a square with
 	upper left (0, 0) and width/depth 1; ie calc the current screen corners
@@ -520,13 +520,13 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 	mult_bf(tmp5, tmp1, tmp2);
 	mult_bf(tmp6, tmp3, tmp4);
 	sub_bf(bfftemp, tmp5, tmp6);
-	/* plotmx1 = (xx3rd-xxmin); */ ; /* reuse the plotxxx vars is safe */
+	/* g_plot_mx1 = (xx3rd-xxmin); */ ; /* reuse the plotxxx vars is safe */
 	copy_bf(bfplotmx1, tmp2);
-	/* plotmx2 = (yy3rd-yymax); */
+	/* g_plot_mx2 = (yy3rd-yymax); */
 	copy_bf(bfplotmx2, tmp4);
-	/* plotmy1 = (yymin-yy3rd); */
+	/* g_plot_my1 = (yymin-yy3rd); */
 	copy_bf(bfplotmy1, tmp1);
-	/* plotmy2 = (xxmax-xx3rd); */;
+	/* g_plot_my2 = (xxmax-xx3rd); */;
 	copy_bf(bfplotmy2, tmp3);
 
 	/* savxxmin = xxmin; savyymax = yymax; */
@@ -547,7 +547,7 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
 {
 	/* (xxmin, yymax), etc, are already set to zoombox corners;
-		(sxmin, symax), etc, are still the screen's corners;
+		(g_sx_min, g_sy_max), etc, are still the screen's corners;
 		use the same logic as plot_orbit stuff to first calculate current screen
 		corners relative to the zoombox, as if the zoombox were a square with
 		upper left (0, 0) and width/depth 1; ie calc the current screen corners
@@ -557,15 +557,15 @@ void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
 		*/
 	double savxxmin, savyymax, ftemp;
 	ftemp = (yymin-yy3rd)*(xx3rd-xxmin) - (xxmax-xx3rd)*(yy3rd-yymax);
-	plotmx1 = (xx3rd-xxmin); /* reuse the plotxxx vars is safe */
-	plotmx2 = (yy3rd-yymax);
-	plotmy1 = (yymin-yy3rd);
-	plotmy2 = (xxmax-xx3rd);
+	g_plot_mx1 = (xx3rd-xxmin); /* reuse the plotxxx vars is safe */
+	g_plot_mx2 = (yy3rd-yymax);
+	g_plot_my1 = (yymin-yy3rd);
+	g_plot_my2 = (xxmax-xx3rd);
 	savxxmin = xxmin;
 	savyymax = yymax;
-	zmo_calc(sxmin-savxxmin, symax-savyymax, &xxmin, &yymax, ftemp);
-	zmo_calc(sxmax-savxxmin, symin-savyymax, &xxmax, &yymin, ftemp);
-	zmo_calc(sx3rd-savxxmin, sy3rd-savyymax, &xx3rd, &yy3rd, ftemp);
+	zmo_calc(g_sx_min-savxxmin, g_sy_max-savyymax, &xxmin, &yymax, ftemp);
+	zmo_calc(g_sx_max-savxxmin, g_sy_min-savyymax, &xxmax, &yymin, ftemp);
+	zmo_calc(g_sx_3rd-savxxmin, g_sy_3rd-savyymax, &xx3rd, &yy3rd, ftemp);
 }
 
 void zoomout(void) /* for ctl-enter, calc corners for zooming out */
@@ -627,15 +627,15 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	{
 		return 0; /* not a full size unrotated unskewed zoombox */
 	}
-	if (stdcalcmode == 't')
+	if (g_standard_calculation_mode == 't')
 	{
 		return 0; /* tesselate, can't do it */
 	}
-	if (stdcalcmode == 'd')
+	if (g_standard_calculation_mode == 'd')
 	{
 		return 0; /* diffusion scan: can't do it either */
 	}
-	if (stdcalcmode == 'o')
+	if (g_standard_calculation_mode == 'o')
 	{
 		return 0; /* orbits, can't do it */
 	}
@@ -650,13 +650,13 @@ static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 	{
 		return 1; /* 1 pass forced so align on any pixel */
 	}
-	if (stdcalcmode == 'b')
+	if (g_standard_calculation_mode == 'b')
 	{
 		return 1; /* btm, align on any pixel */
 	}
-	if (stdcalcmode != 'g' || (g_current_fractal_specific->flags&NOGUESS))
+	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->flags&NOGUESS))
 	{
-		if (stdcalcmode == '2' || stdcalcmode == '3') /* align on even pixel for 2pass */
+		if (g_standard_calculation_mode == '2' || g_standard_calculation_mode == '3') /* align on even pixel for 2pass */
 		{
 			return 2;
 		}

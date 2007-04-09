@@ -108,7 +108,7 @@ typedef enum
 } fractint_event;
 
 /* Global variables (yuck!) */
-int MPOverflow = 0;
+int g_overflow_mp = 0;
 struct MP g_ans = { 0 };
 int g_and_color;
 BYTE g_block[4096] = { 0 };
@@ -138,12 +138,12 @@ int g_note_attenuation = ATTENUATE_NONE;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;
-BYTE olddacbox[256][3] = { 0 };
-int overflow = 0;
-int polyphony = 0;
-char rlebuf[258] = { 0 };
+BYTE g_old_dac_box[256][3] = { 0 };
+int g_overflow = 0;
+int g_polyphony = 0;
+char g_rle_buffer[258] = { 0 };
 int g_row_count = 0;
-unsigned int strlocn[10*1024] = { 0 };
+unsigned int g_string_location[10*1024] = { 0 };
 int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
@@ -241,7 +241,7 @@ long stackavail()
 /*
 ;
 ;       32-bit integer divide routine with an 'n'-bit shift.
-;       Overflow condition returns 0x7fffh with overflow = 1;
+;       Overflow condition returns 0x7fffh with g_overflow = 1;
 ;
 ;       z = divide(x, y, n);       z = x / y;
 */
@@ -253,7 +253,7 @@ long divide(long x, long y, int n)
 /*
 ;
 ;       32-bit integer multiply routine with an 'n'-bit shift.
-;       Overflow condition returns 0x7fffh with overflow = 1;
+;       Overflow condition returns 0x7fffh with g_overflow = 1;
 ;
 ;       long x, y, z, multiply();
 ;       int n;
@@ -273,7 +273,7 @@ long multiply(long x, long y, int n)
 	l = (long) (((float) x)*((float) y)/(float) (1 << n));
 	if (l == 0x7fffffff)
 	{
-		overflow = 1;
+		g_overflow = 1;
 	}
 	return l;
 }
@@ -565,7 +565,7 @@ void initasmvars(void)
 	{
 		return;
 	}
-	overflow = 0;
+	g_overflow = 0;
 
 	/* set g_cpu type */
 	g_cpu = 486;
@@ -809,12 +809,12 @@ ods(const char *file, unsigned int line, const char *format, ...)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-	if (startcol + sxoffs >= sxdots || row + syoffs >= sydots)
+	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset >= g_screen_height)
 	{
 		return;
 	}
 	_ASSERTE(lineread);
-	(*lineread)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+	(*lineread)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -828,12 +828,12 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 
 void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-	if (startcol + sxoffs >= sxdots || row + syoffs > sydots)
+	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset > g_screen_height)
 	{
 		return;
 	}
 	_ASSERTE(linewrite);
-	(*linewrite)(row + syoffs, startcol + sxoffs, stopcol + sxoffs, pixels);
+	(*linewrite)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -926,11 +926,11 @@ void setnullvideo(void)
 int getcolor(int xdot, int ydot)
 {
 	int x1, y1;
-	x1 = xdot + sxoffs;
-	y1 = ydot + syoffs;
-	_ASSERTE(x1 >= 0 && x1 <= sxdots);
-	_ASSERTE(y1 >= 0 && y1 <= sydots);
-	if (x1 < 0 || y1 < 0 || x1 >= sxdots || y1 >= sydots)
+	x1 = xdot + g_sx_offset;
+	y1 = ydot + g_sy_offset;
+	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
+	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
+	if (x1 < 0 || y1 < 0 || x1 >= g_screen_width || y1 >= g_screen_height)
 	{
 		return 0;
 	}
@@ -945,10 +945,10 @@ int getcolor(int xdot, int ydot)
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
-	int x1 = xdot + sxoffs;
-	int y1 = ydot + syoffs;
-	_ASSERTE(x1 >= 0 && x1 <= sxdots);
-	_ASSERTE(y1 >= 0 && y1 <= sydots);
+	int x1 = xdot + g_sx_offset;
+	int y1 = ydot + g_sy_offset;
+	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
+	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
 	_ASSERTE(dotwrite);
 	(*dotwrite)(x1, y1, color & g_and_color);
 }
@@ -963,12 +963,12 @@ void putcolor_a(int xdot, int ydot, int color)
 int out_line(BYTE *pixels, int linelen)
 {
 	_ASSERTE(_CrtCheckMemory());
-	if (g_row_count + syoffs >= sydots)
+	if (g_row_count + g_sy_offset >= g_screen_height)
 	{
 		return 0;
 	}
 	_ASSERTE(linewrite);
-	(*linewrite)(g_row_count + syoffs, sxoffs, linelen + sxoffs - 1, pixels);
+	(*linewrite)(g_row_count + g_sy_offset, g_sx_offset, linelen + g_sx_offset - 1, pixels);
 	g_row_count++;
 	return 0;
 }

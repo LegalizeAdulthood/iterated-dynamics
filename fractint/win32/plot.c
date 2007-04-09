@@ -65,7 +65,7 @@ plot_set_dirty_region(Plot *me, int xmin, int ymin, int xmax, int ymax)
 
 /* init_pixels
  *
- * Resize the pixel array to sxdots by sydots and initialize it to zero.
+ * Resize the pixel array to g_screen_width by g_screen_height and initialize it to zero.
  * Any existing pixel array is freed.
  */
 static void
@@ -81,8 +81,8 @@ init_pixels(Plot *me)
 		free(me->saved_pixels);
 		me->saved_pixels = NULL;
 	}
-	me->width = sxdots;
-	me->height = sydots;
+	me->width = g_screen_width;
+	me->height = g_screen_height;
 	me->row_len = me->width*sizeof(me->pixels[0]);
 	me->row_len = ((me->row_len + 3)/4)*4;
 	me->pixels_len = me->row_len*me->height;
@@ -398,7 +398,7 @@ int plot_resize(Plot *me)
 {
 	BOOL status;
 
-	if ((sxdots == me->width) && (sydots == me->height))
+	if ((g_screen_width == me->width) && (g_screen_height == me->height))
 	{
 		return 0;
 	}

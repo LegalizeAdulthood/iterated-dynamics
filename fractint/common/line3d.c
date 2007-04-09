@@ -402,7 +402,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					cur.x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
 					cur.y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
 				}
-				if (usr_floatflag || overflow || g_raytrace_output)
+				if (usr_floatflag || g_overflow || g_raytrace_output)
 				{
 					v[0] = lv[0];
 					v[1] = lv[1];
@@ -464,7 +464,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 				cur.x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
 				cur.y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
-				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE && !overflow)
+				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE && !g_overflow)
 				{
 					f_cur.x = (float) lv0[0];
 					f_cur.x /= 65536.0f;
@@ -475,7 +475,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				}
 			}
 
-			if (usr_floatflag || overflow || g_raytrace_output)
+			if (usr_floatflag || g_overflow || g_raytrace_output)
 				/* do in float if integer math overflowed or doing Ray trace */
 			{
 				/* slow float version for comparison */
@@ -495,7 +495,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					{
 						f_cur.x = f_cur.x*(2.0f/xdots) - 1.0f;
 						f_cur.y = f_cur.y*(2.0f/ydots) - 1.0f;
-						f_cur.color = -f_cur.color*(2.0f/numcolors) - 1.0f;
+						f_cur.color = -f_cur.color*(2.0f/g_num_colors) - 1.0f;
 					}
 				}
 
@@ -1484,7 +1484,7 @@ int _fastcall targa_color(int x, int y, int color)
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
-	disk_write_targa(x + sxoffs, y + syoffs, RGB[0], RGB[1], RGB[2]);
+	disk_write_targa(x + g_sx_offset, y + g_sy_offset, RGB[0], RGB[1], RGB[2]);
 
 	return (int) (255 - V);
 }
@@ -2031,7 +2031,7 @@ static int _fastcall raytrace_header(void)
 /*  of its verticies and sets the light parameters to arbitrary     */
 /*  values.                                                         */
 /*                                                                  */
-/*  Note: numcolors (number of g_colors in the source                 */
+/*  Note: g_num_colors (number of g_colors in the source                 */
 /*  file) is used instead of g_colors (number of g_colors avail. with   */
 /*  display) so you can generate ray trace files with your LCD      */
 /*  or monochrome display                                           */
@@ -2047,13 +2047,13 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 	/* Normalize each vertex to screen size and adjust coordinate system */
 	pt_t[0][0] = 2*pt1.x/xdots - 1;
 	pt_t[0][1] = (2*pt1.y/ydots - 1);
-	pt_t[0][2] = -2*pt1.color/numcolors - 1;
+	pt_t[0][2] = -2*pt1.color/g_num_colors - 1;
 	pt_t[1][0] = 2*pt2.x/xdots - 1;
 	pt_t[1][1] = (2*pt2.y/ydots - 1);
-	pt_t[1][2] = -2*pt2.color/numcolors - 1;
+	pt_t[1][2] = -2*pt2.color/g_num_colors - 1;
 	pt_t[2][0] = 2*pt3.x/xdots - 1;
 	pt_t[2][1] = (2*pt3.y/ydots - 1);
-	pt_t[2][2] = -2*pt3.color/numcolors - 1;
+	pt_t[2][2] = -2*pt3.color/g_num_colors - 1;
 
 	/* Color of triangle is average of g_colors of its verticies */
 	if (!g_raytrace_brief)
@@ -2425,7 +2425,7 @@ static int first_time(int linelen, VECTOR v)
 	float theta, theta1, theta2; /* current, start, stop latitude */
 	float phi1, phi2;            /* current start, stop longitude */
 	float deltatheta;            /* increment of latitude */
-	outln_cleanup = line3d_cleanup;
+	g_out_line_cleanup = line3d_cleanup;
 
 	g_calculation_time = s_even_odd_row = 0;
 	/* mark as in-progress, and enable <tab> timer display */

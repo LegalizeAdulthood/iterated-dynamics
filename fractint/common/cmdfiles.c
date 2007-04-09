@@ -318,8 +318,8 @@ int command_files(int argc, char **argv)
 	/*
 	{
 		char msg[MSGLEN];
-		sprintf(msg, "command_files colorpreloaded %d showfile %d savedac %d",
-		g_color_preloaded, g_show_file, savedac);
+		sprintf(msg, "command_files colorpreloaded %d showfile %d g_save_dac %d",
+		g_color_preloaded, g_show_file, g_save_dac);
 		stopmsg(0, msg);
 	}
 	*/
@@ -345,8 +345,8 @@ int load_commands(FILE *infile)
 	/*
 	{
 		char msg[MSGLEN];
-		sprintf(msg, "load commands colorpreloaded %d showfile %d savedac %d",
-		g_color_preloaded, g_show_file, savedac);
+		sprintf(msg, "load commands colorpreloaded %d showfile %d g_save_dac %d",
+		g_color_preloaded, g_show_file, g_save_dac);
 		stopmsg(0, msg);
 	}
 	*/
@@ -465,11 +465,11 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_use_initial_orbit_z = 0;
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		param[i] = 0.0;     /* initial parameter values */
+		g_parameters[i] = 0.0;     /* initial parameter values */
 	}
 	for (i = 0; i < 3; i++)
 	{
-		potparam[i]  = 0.0; /* initial potential values */
+		g_potential_parameter[i]  = 0.0; /* initial potential values */
 		g_inversion[i] = 0.0;  /* initial invert values */
 	}
 	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;     /* initial orbit values */
@@ -547,10 +547,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_fm_sustain = 13;                      /* fairly high sustain level   */
 	g_fm_release = 5;                      /* short release   */
 	g_fm_wave_type = 0;                     /* sin wave */
-	polyphony = 0;                       /* no polyphony    */
+	g_polyphony = 0;                       /* no g_polyphony    */
 	for (i = 0; i <= 11; i++)
 	{
-		scale_map[i] = i + 1;    /* straight mapping of notes in octave */
+		g_scale_map[i] = i + 1;    /* straight mapping of notes in octave */
 	}
 #endif
 }
@@ -1578,7 +1578,7 @@ static int potential_arg(const cmd_context *context)
 	char *value = context->value;
 	while (k < 3 && *value)
 	{
-		potparam[k] = (k == 1) ? atof(value) : atoi(value);
+		g_potential_parameter[k] = (k == 1) ? atof(value) : atoi(value);
 		k++;
 		value = strchr(value, '/');
 		if (value == NULL)
@@ -1610,13 +1610,13 @@ static int params_arg(const cmd_context *context)
 	s_initial_parameters = 1;
 	for (k = 0; k < MAXPARAMS; ++k)
 	{
-		param[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
+		g_parameters[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
 	}
 	if (bf_math)
 	{
 		for (k = 0; k < MAXPARAMS; k++)
 		{
-			floattobf(bfparms[k], param[k]);
+			floattobf(bfparms[k], g_parameters[k]);
 		}
 	}
 	return COMMAND_FRACTAL_PARAM;
@@ -1671,7 +1671,7 @@ static int miim_arg(const cmd_context *context)
 		int k;
 		for (k = 2; k < 6; ++k)
 		{
-			param[k-2] = (k < context->totparms) ? context->floatval[k] : 0.0;
+			g_parameters[k-2] = (k < context->totparms) ? context->floatval[k] : 0.0;
 		}
 	}
 
@@ -1815,7 +1815,7 @@ static int corners_arg(const cmd_context *context)
 			int k;
 			for (k = 0; k < MAXPARAMS; k++)
 			{
-				floattobf(bfparms[k], param[k]);
+				floattobf(bfparms[k], g_parameters[k]);
 			}
 		}
 
@@ -1861,7 +1861,7 @@ static int corners_arg(const cmd_context *context)
 			decimal setting */
 			for (k = 0; k < MAXPARAMS; k++)
 			{
-				floattobf(bfparms[k], param[k]);
+				floattobf(bfparms[k], g_parameters[k]);
 			}
 
 			/* xx3rd = xxmin = floatval[0]; */
@@ -2055,7 +2055,7 @@ static int center_mag_arg(const cmd_context *context)
 			int k;
 			for (k = 0; k < MAXPARAMS; k++)
 			{
-				floattobf(bfparms[k], param[k]);
+				floattobf(bfparms[k], g_parameters[k]);
 			}
 		}
 		g_use_center_mag = TRUE;
@@ -2362,7 +2362,7 @@ static int polyphony_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	polyphony = abs(context->numval-1);
+	g_polyphony = abs(context->numval-1);
 	return COMMAND_OK;
 }
 
@@ -2408,7 +2408,7 @@ static int scale_map_arg(const cmd_context *context)
 		if ((context->totparms > counter) && (context->intval[counter] > 0)
 			&& (context->intval[counter] < 13))
 		{
-			scale_map[counter] = context->intval[counter];
+			g_scale_map[counter] = context->intval[counter];
 		}
 	}
 	return COMMAND_OK;
@@ -3445,7 +3445,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "hertz", 			hertz_arg },			/* Hertz=? */
 			{ "volume", 		volume_arg },			/* Volume =? */
 			{ "attenuate", 		attenuate_arg },
-			{ "polyphony", 		polyphony_arg },
+			{ "g_polyphony", 		polyphony_arg },
 			{ "wavetype", 		wave_type_arg },		/* wavetype = ? */
 			{ "attack", 		attack_arg },			/* attack = ? */
 			{ "decay", 			decay_arg },			/* decay = ? */
@@ -3697,7 +3697,7 @@ static int parse_colors(char *value)
 		g_color_state = COLORSTATE_UNKNOWN;
 	}
 	g_color_preloaded = TRUE;
-	memcpy(olddacbox, g_dac_box, 256*3);
+	memcpy(g_old_dac_box, g_dac_box, 256*3);
 	return 0;
 
 badcolor:

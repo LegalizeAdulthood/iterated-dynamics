@@ -1314,17 +1314,17 @@ void set_default_parms()
 	}
 	for (i = 0; i < 4; i++)
 	{
-		param[i] = g_current_fractal_specific->paramvalue[i];
+		g_parameters[i] = g_current_fractal_specific->paramvalue[i];
 		if (g_fractal_type != CELLULAR && g_fractal_type != FROTH && g_fractal_type != FROTHFP &&
 				g_fractal_type != ANT)
-			roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
+			roundfloatd(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
 	}
 	extra = find_extra_param(g_fractal_type);
 	if (extra > -1)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
 		{
-			param[i + 4] = g_more_parameters[extra].paramvalue[i];
+			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
 	}
 	if (g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT)
@@ -1451,7 +1451,7 @@ struct trig_funct_lst trigfn[] =
 
 #define NUMTRIGFN  sizeof(trigfn)/sizeof(struct trig_funct_lst)
 
-const int numtrigfn = NUMTRIGFN;
+const int g_num_trig_fn = NUMTRIGFN;
 
 /* --------------------------------------------------------------------- */
 int get_fract_params(int caller)        /* prompt for type-specific parms */
@@ -1707,7 +1707,7 @@ gfp_top:
 		{
 			choices[promptnum]++;
 		}
-		sprintf(tmpbuf, "%.17g", param[i]);
+		sprintf(tmpbuf, "%.17g", g_parameters[i]);
 		paramvalues[promptnum].uval.dval = atof(tmpbuf);
 		oldparam[i] = paramvalues[promptnum++].uval.dval;
 	}
@@ -1761,7 +1761,7 @@ gfp_top:
 
 	if (i)
 	{
-		if (potparam[0] != 0.0 && potparam[2] != 0.0)
+		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
 		{
 			paramvalues[promptnum].type = '*';
 			choices[promptnum++] = "Bailout: continuous potential (Y screen) value in use";
@@ -1948,7 +1948,7 @@ gfp_top:
 		}
 		if (oldparam[i] != paramvalues[promptnum].uval.dval)
 		{
-			param[i] = paramvalues[promptnum].uval.dval;
+			g_parameters[i] = paramvalues[promptnum].uval.dval;
 			ret = 1;
 		}
 		++promptnum;
@@ -1990,7 +1990,7 @@ gfp_top:
 
 	if (i)
 	{
-		if (potparam[0] != 0.0 && potparam[2] != 0.0)
+		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
 		{
 			promptnum++;
 		}
@@ -2073,10 +2073,10 @@ void load_params(int g_fractal_type)
 	int i, extra;
 	for (i = 0; i < 4; ++i)
 	{
-		param[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
+		g_parameters[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
 		if (g_fractal_type != CELLULAR && g_fractal_type != ANT)
 		{
-			roundfloatd(&param[i]); /* don't round cellular or ant */
+			roundfloatd(&g_parameters[i]); /* don't round cellular or ant */
 		}
 	}
 	extra = find_extra_param(g_fractal_type);
@@ -2084,7 +2084,7 @@ void load_params(int g_fractal_type)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
 		{
-			param[i + 4] = g_more_parameters[extra].paramvalue[i];
+			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
 	}
 }
@@ -3422,9 +3422,9 @@ static int check_mapfile()
 				break;
 			}
 		}
-		memcpy(olddacbox, g_dac_box, 256*3); /* save the DAC */
+		memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
 		i = ValidateLuts(temp1);
-		memcpy(g_dac_box, olddacbox, 256*3); /* restore the DAC */
+		memcpy(g_dac_box, g_old_dac_box, 256*3); /* restore the DAC */
 		if (i != 0)  /* Oops, somethings wrong */
 		{
 			askflag = 1;

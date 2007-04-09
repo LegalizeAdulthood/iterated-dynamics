@@ -41,7 +41,7 @@ int g_loaded_3d;
 static FILE *fp;
 int g_file_y_dots, g_file_x_dots, g_file_colors;
 float g_file_aspect_ratio;
-short skipxdots, skipydots;      /* for decoder, when reducing image */
+short g_skip_x_dots, g_skip_y_dots;      /* for decoder, when reducing image */
 int g_bad_outside = 0;
 int g_use_old_complex_power = FALSE;
 
@@ -91,25 +91,25 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	xxmax        = read_info.xmax;
 	yymin        = read_info.ymin;
 	yymax        = read_info.ymax;
-	param[0]     = read_info.g_c_real;
-	param[1]     = read_info.g_c_imag;
+	g_parameters[0]     = read_info.c_real;
+	g_parameters[1]     = read_info.c_imag;
 	g_save_release = 1100; /* unless we find out better later on */
 
 	g_invert = 0;
 	if (read_info.version > 0)
 	{
-		param[2]      = read_info.parm3;
-		roundfloatd(&param[2]);
-		param[3]      = read_info.parm4;
-		roundfloatd(&param[3]);
-		potparam[0]   = read_info.potential[0];
-		potparam[1]   = read_info.potential[1];
-		potparam[2]   = read_info.potential[2];
+		g_parameters[2]      = read_info.parm3;
+		roundfloatd(&g_parameters[2]);
+		g_parameters[3]      = read_info.parm4;
+		roundfloatd(&g_parameters[3]);
+		g_potential_parameter[0]   = read_info.potential[0];
+		g_potential_parameter[1]   = read_info.potential[1];
+		g_potential_parameter[2]   = read_info.potential[2];
 		if (*g_make_par == '\0')
 		{
-			g_colors = read_info.g_colors;
+			g_colors = read_info.colors;
 		}
-		g_potential_flag = (potparam[0] != 0.0);
+		g_potential_flag = (g_potential_parameter[0] != 0.0);
 		g_random_flag         = read_info.random_flag;
 		g_random_seed         = read_info.random_seed;
 		g_inside        = read_info.inside;
@@ -170,7 +170,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_save_release = 1400;
 		xx3rd       = read_info.x3rd;
 		yy3rd       = read_info.y3rd;
-		g_calculation_status = read_info.g_calculation_status;
+		g_calculation_status = read_info.calculation_status;
 		usr_stdcalcmode = read_info.stdcalcmode;
 		g_three_pass = 0;
 		if (usr_stdcalcmode == 127)
@@ -181,7 +181,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		usr_distest     = read_info.distestold;
 		usr_floatflag   = (char)read_info.float_flag;
 		g_bail_out     = read_info.bailoutold;
-		g_calculation_time    = read_info.g_calculation_time;
+		g_calculation_time    = read_info.calculation_time;
 		trigndx[0]  = read_info.trigndx[0];
 		trigndx[1]  = read_info.trigndx[1];
 		trigndx[2]  = read_info.trigndx[2];
@@ -194,7 +194,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	g_potential_16bit = FALSE;
-	save_system = 0;
+	g_save_system = 0;
 	if (read_info.version > 4)
 	{
 		g_potential_16bit     = read_info.potential_16bit;
@@ -207,13 +207,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
-		save_system  = read_info.system;
+		g_save_system  = read_info.system;
 		g_save_release = read_info.release; /* from fmt 5 on we know real number */
 		if (read_info.version == 5        /* except a few early fmt 5 cases: */
 			&& (g_save_release <= 0 || g_save_release >= 4000))
 		{
 			g_save_release = 1410;
-			save_system = 0;
+			g_save_system = 0;
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
@@ -238,8 +238,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version > 6)
 	{
-		param[2]          = read_info.dparm3;
-		param[3]          = read_info.dparm4;
+		g_parameters[2]          = read_info.dparm3;
+		g_parameters[3]          = read_info.dparm4;
 	}
 
 	if (read_info.version > 7)
@@ -262,15 +262,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_eyes_fp    =  read_info.eyesfp         ;
 		g_new_orbit_type = read_info.orbittype    ;
 		g_juli_3d_mode   = read_info.juli3Dmode   ;
-		g_max_fn    =   (char)read_info.g_max_fn          ;
+		g_max_fn    =   (char)read_info.max_fn          ;
 		g_major_method = (enum Major)read_info.inversejulia >> 8;
 		g_minor_method = (enum Minor)read_info.inversejulia & 255;
-		param[4] = read_info.dparm5;
-		param[5] = read_info.dparm6;
-		param[6] = read_info.dparm7;
-		param[7] = read_info.dparm8;
-		param[8] = read_info.dparm9;
-		param[9] = read_info.dparm10;
+		g_parameters[4] = read_info.dparm5;
+		g_parameters[5] = read_info.dparm6;
+		g_parameters[6] = read_info.dparm7;
+		g_parameters[7] = read_info.dparm8;
+		g_parameters[8] = read_info.dparm9;
+		g_parameters[9] = read_info.dparm10;
 	}
 
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
@@ -444,7 +444,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		g_fractal_type = PLASMA;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		param[0] = 0;
+		g_parameters[0] = 0;
 		if (!g_initialize_batch)
 		{
 			if (get_3d_params() < 0)
@@ -540,8 +540,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			{
 				g_evolve_handle = malloc(sizeof(resume_e_info));
 			}
-			resume_e_info.paramrangex  = evolver_info.paramrangex;
-			resume_e_info.paramrangey  = evolver_info.paramrangey;
+			resume_e_info.parameter_range_x  = evolver_info.parameter_range_x;
+			resume_e_info.parameter_range_y  = evolver_info.parameter_range_y;
 			resume_e_info.opx          = evolver_info.opx;
 			resume_e_info.opy          = evolver_info.opy;
 			resume_e_info.odpx         = evolver_info.odpx;
@@ -555,7 +555,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			resume_e_info.gridsz       = evolver_info.gridsz;
 			resume_e_info.evolving     = evolver_info.evolving;
 			resume_e_info.this_gen_rseed = evolver_info.this_gen_rseed;
-			resume_e_info.g_fiddle_factor = evolver_info.g_fiddle_factor;
+			resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
 			resume_e_info.ecount       = evolver_info.ecount;
 			memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
 		}
@@ -568,24 +568,24 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			}
 			g_calculation_status = CALCSTAT_COMPLETED;
 		}
-		paramrangex  = evolver_info.paramrangex;
-		paramrangey  = evolver_info.paramrangey;
-		opx = newopx = evolver_info.opx;
-		opy = newopy = evolver_info.opy;
-		odpx = newodpx = (char) evolver_info.odpx;
-		odpy = newodpy = (char) evolver_info.odpy;
+		g_parameter_range_x  = evolver_info.parameter_range_x;
+		g_parameter_range_y  = evolver_info.parameter_range_y;
+		g_parameter_offset_x = g_new_parameter_offset_x = evolver_info.opx;
+		g_parameter_offset_y = g_new_parameter_offset_y = evolver_info.opy;
+		g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char) evolver_info.odpx;
+		g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char) evolver_info.odpy;
 		px           = evolver_info.px;
 		py           = evolver_info.py;
-		sxoffs       = evolver_info.sxoffs;
-		syoffs       = evolver_info.syoffs;
+		g_sx_offset       = evolver_info.sxoffs;
+		g_sy_offset       = evolver_info.syoffs;
 		xdots        = evolver_info.xdots;
 		ydots        = evolver_info.ydots;
 		g_grid_size       = evolver_info.gridsz;
 		this_gen_rseed = evolver_info.this_gen_rseed;
-		g_fiddle_factor   = evolver_info.g_fiddle_factor;
+		g_fiddle_factor   = evolver_info.fiddle_factor;
 		g_evolving = viewwindow = (int) evolver_info.evolving;
-		g_delta_parameter_image_x = paramrangex/(g_grid_size - 1);
-		g_delta_parameter_image_y = paramrangey/(g_grid_size - 1);
+		g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
+		g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 		if (read_info.version > 14)
 		{
 			for (i = 0; i < NUMGENES; i++)
@@ -824,7 +824,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					resume_info_blk->resume_data = malloc(data_len);
 					if (resume_info_blk->resume_data == 0)
 					{
-						info->g_calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+						info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
 					}
 					else
 					{
@@ -896,8 +896,8 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					evolver_info->length = data_len;
 					evolver_info->got_data = 1; /* got data */
 
-					evolver_info->paramrangex     = eload_info.paramrangex;
-					evolver_info->paramrangey     = eload_info.paramrangey;
+					evolver_info->parameter_range_x     = eload_info.parameter_range_x;
+					evolver_info->parameter_range_y     = eload_info.parameter_range_y;
 					evolver_info->opx             = eload_info.opx;
 					evolver_info->opy             = eload_info.opy;
 					evolver_info->odpx            = (char)eload_info.odpx;
@@ -911,7 +911,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					evolver_info->gridsz          = eload_info.gridsz;
 					evolver_info->evolving        = eload_info.evolving;
 					evolver_info->this_gen_rseed  = eload_info.this_gen_rseed;
-					evolver_info->g_fiddle_factor    = eload_info.g_fiddle_factor;
+					evolver_info->fiddle_factor    = eload_info.fiddle_factor;
 					evolver_info->ecount          = eload_info.ecount;
 					for (i = 0; i < NUMGENES; i++)
 					{
@@ -958,8 +958,8 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->ymax = 1;
 	info->x3rd = -1;
 	info->y3rd = -1;
-	info->g_c_real = 0;
-	info->g_c_imag = 0;
+	info->c_real = 0;
+	info->c_imag = 0;
 	info->videomodeax = 255;
 	info->videomodebx = 255;
 	info->videomodecx = 255;
@@ -967,7 +967,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->dotmode = 0;
 	info->xdots = (short)g_file_x_dots;
 	info->ydots = (short)g_file_y_dots;
-	info->g_colors = (short)g_file_colors;
+	info->colors = (short)g_file_colors;
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */
@@ -1179,24 +1179,24 @@ void backwards_v19(void)
 {
 	if (g_fractal_type == MARKSJULIA && g_save_release < 1825)
 	{
-		if (param[2] == 0)
+		if (g_parameters[2] == 0)
 		{
-			param[2] = 2;
+			g_parameters[2] = 2;
 		}
 		else
 		{
-			param[2]++;
+			g_parameters[2]++;
 		}
 	}
 	if (g_fractal_type == MARKSJULIAFP && g_save_release < 1825)
 	{
-		if (param[2] == 0)
+		if (g_parameters[2] == 0)
 		{
-			param[2] = 2;
+			g_parameters[2] = 2;
 		}
 		else
 		{
-			param[2]++;
+			g_parameters[2]++;
 		}
 	}
 	if ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA) && g_save_release < 1824)
@@ -1303,7 +1303,7 @@ struct window  /* for fgetwindow on screen browser */
 	struct coords ibr;
 	double win_size;   /* box size for drawindow() */
 	char name[FILE_MAX_FNAME];     /* for filename */
-	int g_box_count;      /* bytes of saved screen info */
+	int box_count;      /* bytes of saved screen info */
 };
 
 /* prototypes */
@@ -1374,7 +1374,7 @@ int fgetwindow(void)
 	bt_e = alloc_stack(rbflength + 2);
 	bt_f = alloc_stack(rbflength + 2);
 
-	vidlength = sxdots + sydots;
+	vidlength = g_screen_width + g_screen_height;
 	if (vidlength > 4096)
 	{
 		vid_too_big = 2;
@@ -1416,7 +1416,7 @@ rescan:  /* entry for changed browse parms */
 	time(&lastime);
 	toggle = 0;
 	wincount = 0;
-	no_sub_images = FALSE;
+	g_no_sub_images = FALSE;
 	splitpath(g_read_name, drive, dir, NULL, NULL);
 	splitpath(g_browse_mask, NULL, NULL, fname, ext);
 	makepath(tmpmask, drive, dir, fname, ext);
@@ -1442,7 +1442,7 @@ rescan:  /* entry for changed browse parms */
 			strcpy(winlist.name, DTA.filename);
 			drawindow(color_of_box, &winlist);
 			g_box_count <<= 1; /*g_box_count*2;*/ /* double for byte count */
-			winlist.g_box_count = g_box_count;
+			winlist.box_count = g_box_count;
 			browse_windows[wincount] = winlist;
 
 			memcpy(&boxx_storage[wincount*vidlength], g_box_x, vidlength*sizeof(int));
@@ -1692,7 +1692,7 @@ rescan:  /* entry for changed browse parms */
 			for (index = wincount-1; index >= 0; index--) /* don't need index, reuse it */
 			{
 				winlist = browse_windows[index];
-				g_box_count = winlist.g_box_count;
+				g_box_count = winlist.box_count;
 				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
 				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
@@ -1717,7 +1717,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
 		texttempmsg("Sorry.. I can't find anything");
-		no_sub_images = TRUE;
+		g_no_sub_images = TRUE;
 	}
 
 	free(boxx_storage);
@@ -1756,14 +1756,14 @@ static void drawindow(int colour, struct window *info)
 		drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); /* top & bottom lines */
 		drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); /* left & right lines */
 #else
-		g_box_x[0] = info->itl.x + sxoffs;
-		g_box_y[0] = info->itl.y + syoffs;
-		g_box_x[1] = info->itr.x + sxoffs;
-		g_box_y[1] = info->itr.y + syoffs;
-		g_box_x[2] = info->ibr.x + sxoffs;
-		g_box_y[2] = info->ibr.y + syoffs;
-		g_box_x[3] = info->ibl.x + sxoffs;
-		g_box_y[3] = info->ibl.y + syoffs;
+		g_box_x[0] = info->itl.x + g_sx_offset;
+		g_box_y[0] = info->itl.y + g_sy_offset;
+		g_box_x[1] = info->itr.x + g_sx_offset;
+		g_box_y[1] = info->itr.y + g_sy_offset;
+		g_box_x[2] = info->ibr.x + g_sx_offset;
+		g_box_y[2] = info->ibr.y + g_sy_offset;
+		g_box_x[3] = info->ibl.x + g_sx_offset;
+		g_box_y[3] = info->ibl.y + g_sy_offset;
 		g_box_count = 4;
 #endif
 		dispbox();
@@ -1812,7 +1812,7 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 		orig_shiftfactor,
 		orig_rbflength;
 	double toobig, tmp_sqrt;
-	toobig = sqrt(sqr((double)sxdots) + sqr((double)sydots))*1.5;
+	toobig = sqrt(sqr((double)g_screen_width) + sqr((double)g_screen_height))*1.5;
 	/* arbitrary value... stops browser zooming out too far */
 	cornercount = 0;
 	cant_see = 0;
@@ -2002,19 +2002,19 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 
 	/* now see how many corners are on the screen, accept if one or more */
-	if (tl.x >= -sxoffs && tl.x <= (sxdots-sxoffs) && tl.y >= (0-syoffs) && tl.y <= (sydots-syoffs))
+	if (tl.x >= -g_sx_offset && tl.x <= (g_screen_width-g_sx_offset) && tl.y >= (0-g_sy_offset) && tl.y <= (g_screen_height-g_sy_offset))
 	{
 		cornercount ++;
 	}
-	if (bl.x >= -sxoffs && bl.x <= (sxdots-sxoffs) && bl.y >= (0-syoffs) && bl.y <= (sydots-syoffs))
+	if (bl.x >= -g_sx_offset && bl.x <= (g_screen_width-g_sx_offset) && bl.y >= (0-g_sy_offset) && bl.y <= (g_screen_height-g_sy_offset))
 	{
 		cornercount ++;
 	}
-	if (tr.x >= -sxoffs && tr.x <= (sxdots-sxoffs) && tr.y >= (0-syoffs) && tr.y <= (sydots-syoffs))
+	if (tr.x >= -g_sx_offset && tr.x <= (g_screen_width-g_sx_offset) && tr.y >= (0-g_sy_offset) && tr.y <= (g_screen_height-g_sy_offset))
 	{
 		cornercount ++;
 	}
-	if (br.x >= -sxoffs && br.x <= (sxdots-sxoffs) && br.y >= (0-syoffs) && br.y <= (sydots-syoffs))
+	if (br.x >= -g_sx_offset && br.x <= (g_screen_width-g_sx_offset) && br.y >= (0-g_sy_offset) && br.y <= (g_screen_height-g_sy_offset))
 	{
 		cornercount ++;
 	}
@@ -2062,16 +2062,16 @@ static char paramsOK(struct fractal_info *info)
 	}
 	/* parameters are in range? */
 	return
-		(fabs(info->g_c_real - param[0]) < MINDIF &&
-		fabs(info->g_c_imag - param[1]) < MINDIF &&
-		fabs(tmpparm3 - param[2]) < MINDIF &&
-		fabs(tmpparm4 - param[3]) < MINDIF &&
-		fabs(tmpparm5 - param[4]) < MINDIF &&
-		fabs(tmpparm6 - param[5]) < MINDIF &&
-		fabs(tmpparm7 - param[6]) < MINDIF &&
-		fabs(tmpparm8 - param[7]) < MINDIF &&
-		fabs(tmpparm9 - param[8]) < MINDIF &&
-		fabs(tmpparm10 - param[9]) < MINDIF &&
+		(fabs(info->c_real - g_parameters[0]) < MINDIF &&
+		fabs(info->c_imag - g_parameters[1]) < MINDIF &&
+		fabs(tmpparm3 - g_parameters[2]) < MINDIF &&
+		fabs(tmpparm4 - g_parameters[3]) < MINDIF &&
+		fabs(tmpparm5 - g_parameters[4]) < MINDIF &&
+		fabs(tmpparm6 - g_parameters[5]) < MINDIF &&
+		fabs(tmpparm7 - g_parameters[6]) < MINDIF &&
+		fabs(tmpparm8 - g_parameters[7]) < MINDIF &&
+		fabs(tmpparm9 - g_parameters[8]) < MINDIF &&
+		fabs(tmpparm10 - g_parameters[9]) < MINDIF &&
 		info->invert[0] - g_inversion[0] < MINDIF)
 		? 1 : 0;
 }
@@ -2126,10 +2126,10 @@ int i;
 /*  file for the browser and holds a maximum of 16 images.  The history */
 /*  file needs to be adjusted if the rename or delete functions of the */
 /*  browser are used. */
-/* name_stack_ptr is also maintained in framain2.c.  It is the index into */
+/* g_name_stack_ptr is also maintained in framain2.c.  It is the index into */
 /*  g_file_name_stack[]. */
 
-	for (i = 0; i < name_stack_ptr; i++)
+	for (i = 0; i < g_name_stack_ptr; i++)
 	{
 		if (stricmp(g_file_name_stack[i], oldname) == 0) /* we have a match */
 		{
