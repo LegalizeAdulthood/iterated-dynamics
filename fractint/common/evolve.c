@@ -13,8 +13,8 @@
 #define VARYINT_RANDOM_WEIGHTED	6
 
 /* px and py are coordinates in the parameter grid (small images on screen) */
-/* evolving = flag, gridsz = dimensions of image grid (gridsz x gridsz) */
-int px, py, evolving, gridsz;
+/* g_evolving = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
+int px, py, g_evolving, g_grid_size;
 #define MAXGRIDSZ 51  /* This is arbitrary, = 1024/20 */
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
@@ -22,8 +22,8 @@ unsigned int this_gen_rseed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
-double opx, opy, newopx, newopy, paramrangex, paramrangey, g_delta_parameter_image_x, g_delta_parameter_image_y, fiddlefactor;
-double fiddle_reduction;
+double opx, opy, newopx, newopy, paramrangex, paramrangey, g_delta_parameter_image_x, g_delta_parameter_image_y, g_fiddle_factor;
+double g_fiddle_reduction;
 double parmzoom;
 char odpx, odpy, newodpx, newodpy;
 /* offset for discrete parameters x and y..*/
@@ -31,8 +31,8 @@ char odpx, odpy, newodpx, newodpy;
 /* variation factors, opx, opy, paramrangex/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
 	for smooth variation across screen. opx = offset param x, g_delta_parameter_image_x = delta param
 	per image, paramrangex = variation across grid of param ...likewise for py */
-/* fiddlefactor is amount of random mutation used in random modes ,
-	fiddle_reduction is used to decrease fiddlefactor from one generation to the
+/* g_fiddle_factor is amount of random mutation used in random modes ,
+	g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
 	next to eventually produce a stable population */
 
 static int *prmbox = NULL;
@@ -168,7 +168,7 @@ void param_history(int mode)
 
 void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
-	int lclpy = gridsz - py - 1;
+	int lclpy = g_grid_size - py - 1;
 	switch (gene[i].mutate)
 	{
 	default:
@@ -187,13 +187,13 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 		*(double *)gene[i].addr = (px*g_delta_parameter_image_x + opx)-(lclpy*g_delta_parameter_image_y + opy); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
-		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor;
+		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
 		break;
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
-			int mid = gridsz /2;
+			int mid = g_grid_size /2;
 			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius;
+			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
 		}
 		break;
 	}
@@ -203,7 +203,7 @@ return;
 static int varyint(int randvalue, int limit, int mode)
 {
 	int ret = 0;
-	int lclpy = gridsz - py - 1;
+	int lclpy = g_grid_size - py - 1;
 	switch (mode)
 	{
 	default:
@@ -226,9 +226,9 @@ static int varyint(int randvalue, int limit, int mode)
 		break;
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
-			int mid = gridsz /2;
+			int mid = g_grid_size /2;
 			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
-			ret = (int)((((randvalue / RAND_MAX)*2*fiddlefactor) - fiddlefactor)*radius);
+			ret = (int)((((randvalue / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
 			ret %= limit;
 		}
 		break;
@@ -324,7 +324,7 @@ int get_the_rest(void)
 	struct fullscreenvalues uvalues[20];
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		numtrig = maxfn;
 	}
@@ -431,7 +431,7 @@ int get_variations(void)
 	int lastparm  = MAXPARAMS;
 	int chngd = -1;
 
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		if (uses_p1)  /* set first parameter */
 		{
@@ -479,9 +479,9 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (type_has_parameter(julibrot ? g_new_orbit_type : fractype, i, NULL) == 0)
+		if (type_has_parameter(julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
 		{
-			if (fractype == FORMULA || fractype == FFORMULA)
+			if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 			{
 				if (parameter_not_used(i))
 				{
@@ -493,7 +493,7 @@ int get_variations(void)
 		numparams++;
 	}
 
-	if (fractype != FORMULA && fractype != FFORMULA)
+	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
 	{
 		lastparm = numparams;
 	}
@@ -502,7 +502,7 @@ choose_vars_restart:
 	k = -1;
 	for (num = firstparm; num < lastparm; num++)
 	{
-		if (fractype == FORMULA || fractype == FFORMULA)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			if (parameter_not_used(num))
 			{
@@ -576,7 +576,7 @@ choose_vars_restart:
 	k = -1;
 	for (num = firstparm; num < lastparm; num++)
 	{
-		if (fractype == FORMULA || fractype == FFORMULA)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			if (parameter_not_used(num))
 			{
@@ -613,42 +613,42 @@ int get_evolve_Parms(void)
 	double old_paramrangex, old_paramrangey, old_opx, old_opy, old_fiddlefactor;
 
 	/* fill up the previous values arrays */
-	old_evolving      = evolving;
-	old_gridsz        = gridsz;
+	old_evolving      = g_evolving;
+	old_gridsz        = g_grid_size;
 	old_paramrangex   = paramrangex;
 	old_paramrangey   = paramrangey;
 	old_opx           = opx;
 	old_opy           = opy;
-	old_fiddlefactor  = fiddlefactor;
+	old_fiddlefactor  = g_fiddle_factor;
 
 get_evol_restart:
 
-	if ((evolving & EVOLVE_RAND_WALK) || (evolving & EVOLVE_RAND_PARAM))
+	if ((g_evolving & EVOLVE_RAND_WALK) || (g_evolving & EVOLVE_RAND_PARAM))
 	{
 		/* adjust field param to make some sense when changing from random modes*/
 		/* maybe should adjust for aspect ratio here? */
-		paramrangex = paramrangey = fiddlefactor*2;
-		opx = param[0] - fiddlefactor;
-		opy = param[1] - fiddlefactor;
-		/* set middle image to last selected and edges to +- fiddlefactor */
+		paramrangex = paramrangey = g_fiddle_factor*2;
+		opx = param[0] - g_fiddle_factor;
+		opy = param[1] - g_fiddle_factor;
+		/* set middle image to last selected and edges to +- g_fiddle_factor */
 	}
 
 	k = -1;
 
 	choices[++k]= "Evolution mode? (no for full screen)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = evolving & EVOLVE_FIELD_MAP;
+	uvalues[k].uval.ch.val = g_evolving & EVOLVE_FIELD_MAP;
 
 	choices[++k]= "Image grid size (odd numbers only)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = gridsz;
+	uvalues[k].uval.ival = g_grid_size;
 
 	if (explore_check())  /* test to see if any parms are set to linear */
 	{
 		/* variation 'explore mode' */
 		choices[++k]= "Show parameter zoom box?";
 		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = ((evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
+		uvalues[k].uval.ch.val = ((g_evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
 
 		choices[++k]= "x parameter range (across screen)";
 		uvalues[k].type = 'f';
@@ -669,15 +669,15 @@ get_evol_restart:
 
 	choices[++k]= "Max random mutation";
 	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = fiddlefactor;
+	uvalues[k].uval.dval = g_fiddle_factor;
 
 	choices[++k]= "Mutation reduction factor (between generations)";
 	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = fiddle_reduction;
+	uvalues[k].uval.dval = g_fiddle_reduction;
 
 	choices[++k]= "Grouting? ";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = !((evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
+	uvalues[k].uval.ch.val = !((g_evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
 
 	choices[++k]= "";
 	uvalues[k].type = '*';
@@ -700,13 +700,13 @@ get_evol_restart:
 	if (i < 0)
 	{
 		/* in case this point has been reached after calling sub menu with F6 */
-		evolving      = old_evolving;
-		gridsz        = old_gridsz;
+		g_evolving      = old_evolving;
+		g_grid_size        = old_gridsz;
 		paramrangex   = old_paramrangex;
 		paramrangey   = old_paramrangey;
 		opx           = old_opx;
 		opy           = old_opy;
-		fiddlefactor  = old_fiddlefactor;
+		g_fiddle_factor  = old_fiddlefactor;
 
 		return -1;
 	}
@@ -714,8 +714,8 @@ get_evol_restart:
 	if (i == FIK_F4)
 	{
 		set_current_params();
-		fiddlefactor = 1;
-		fiddle_reduction = 1.0;
+		g_fiddle_factor = 1;
+		g_fiddle_reduction = 1.0;
 		goto get_evol_restart;
 	}
 	if (i == FIK_F2)
@@ -724,7 +724,7 @@ get_evol_restart:
 		opx = newopx = opx + paramrangex / 2;
 		paramrangey = paramrangey / 2;
 		opy = newopy = opy + paramrangey / 2;
-		fiddlefactor = fiddlefactor / 2;
+		g_fiddle_factor = g_fiddle_factor / 2;
 		goto get_evol_restart;
 	}
 	if (i == FIK_F3)
@@ -736,7 +736,7 @@ get_evol_restart:
 		centery = opy + paramrangey / 2;
 		paramrangey = paramrangey*2;
 		opy = newopy = centery - paramrangey / 2;
-		fiddlefactor = fiddlefactor*2;
+		g_fiddle_factor = g_fiddle_factor*2;
 		goto get_evol_restart;
 	}
 
@@ -746,36 +746,36 @@ get_evol_restart:
 
 	k = -1;
 
-	viewwindow = evolving = uvalues[++k].uval.ch.val;
+	viewwindow = g_evolving = uvalues[++k].uval.ch.val;
 
-	if (!evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
+	if (!g_evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
 	{
-		return 1;              /* the following code can set evolving even if it's off */
+		return 1;              /* the following code can set g_evolving even if it's off */
 	}
 
-	gridsz = uvalues[++k].uval.ival;
+	g_grid_size = uvalues[++k].uval.ival;
 	tmp = sxdots / (MINPIXELS << 1);
 	/* (sxdots / 20), max # of subimages @ 20 pixels per subimage */
 	/* MAXGRIDSZ == 1024 / 20 == 51 */
-	if (gridsz > MAXGRIDSZ)
+	if (g_grid_size > MAXGRIDSZ)
 	{
-		gridsz = MAXGRIDSZ;
+		g_grid_size = MAXGRIDSZ;
 	}
-	if (gridsz > tmp)
+	if (g_grid_size > tmp)
 	{
-		gridsz = tmp;
+		g_grid_size = tmp;
 	}
-	if (gridsz < 3)
+	if (g_grid_size < 3)
 	{
-		gridsz = 3;
+		g_grid_size = 3;
 	}
-	gridsz |= 1; /* make sure gridsz is odd */
+	g_grid_size |= 1; /* make sure g_grid_size is odd */
 	if (explore_check())
 	{
 		tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
-		if (evolving)
+		if (g_evolving)
 		{
-			evolving += tmp;
+			g_evolving += tmp;
 		}
 		paramrangex = uvalues[++k].uval.dval;
 		newopx = opx = uvalues[++k].uval.dval;
@@ -783,17 +783,17 @@ get_evol_restart:
 		newopy = opy = uvalues[++k].uval.dval;
 	}
 
-	fiddlefactor = uvalues[++k].uval.dval;
+	g_fiddle_factor = uvalues[++k].uval.dval;
 
-	fiddle_reduction = uvalues[++k].uval.dval;
+	g_fiddle_reduction = uvalues[++k].uval.dval;
 
 	if (!(uvalues[++k].uval.ch.val))
 	{
-		evolving = evolving + EVOLVE_NO_GROUT;
+		g_evolving |= EVOLVE_NO_GROUT;
 	}
 
-	viewxdots = (sxdots / gridsz)-2;
-	viewydots = (sydots / gridsz)-2;
+	viewxdots = (sxdots / g_grid_size)-2;
+	viewydots = (sydots / g_grid_size)-2;
 	if (!viewwindow)
 	{
 		viewxdots = viewydots = 0;
@@ -801,21 +801,21 @@ get_evol_restart:
 
 	i = 0;
 
-	if (evolving != old_evolving
-		|| (gridsz != old_gridsz) ||(paramrangex != old_paramrangex)
+	if (g_evolving != old_evolving
+		|| (g_grid_size != old_gridsz) ||(paramrangex != old_paramrangex)
 		|| (opx != old_opx) || (paramrangey != old_paramrangey)
-		|| (opy != old_opy)  || (fiddlefactor != old_fiddlefactor)
+		|| (opy != old_opy)  || (g_fiddle_factor != old_fiddlefactor)
 		|| (old_variations > 0))
 	{
 		i = 1;
 	}
 
-	if (evolving && !old_evolving)
+	if (g_evolving && !old_evolving)
 	{
 		param_history(0); /* save old history */
 	}
 
-	if (!evolving && (evolving == old_evolving))
+	if (!g_evolving && (g_evolving == old_evolving))
 	{
 		i = 0;
 	}
@@ -827,10 +827,10 @@ get_evol_restart:
 		if (old_variations > 0)
 		{
 			viewwindow = 1;
-			evolving |= 1;   /* leave other settings alone */
+			g_evolving |= EVOLVE_FIELD_MAP;   /* leave other settings alone */
 		}
-		fiddlefactor = 1;
-		fiddle_reduction = 1.0;
+		g_fiddle_factor = 1;
+		g_fiddle_reduction = 1.0;
 		goto get_evol_restart;
 	}
 	return i;
@@ -840,7 +840,7 @@ void SetupParamBox(void)
 {
 	int vidsize;
 	prmboxcount = 0;
-	parmzoom = ((double)gridsz-1.0)/2.0;
+	parmzoom = ((double)g_grid_size-1.0)/2.0;
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (xdots + ydots)*4*sizeof(int);
 	vidsize += xdots + ydots + 2;
@@ -851,11 +851,11 @@ void SetupParamBox(void)
 	if (!prmbox)
 	{
 		texttempmsg("Sorry...can't allocate mem for parmbox");
-		evolving = 0;
+		g_evolving = EVOLVE_NONE;
 	}
 	prmboxcount = 0;
 
-	/* vidsize = (vidsize / gridsz) + 3 ; */ /* allocate less mem for smaller box */
+	/* vidsize = (vidsize / g_grid_size) + 3 ; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
 	if (!imgbox)
 	{
@@ -915,7 +915,7 @@ void fiddleparms(GENEBASE gene[], int ecount)
 	the variables referenced in the gene array and call the functions required
 	to vary them, aren't pointers marvellous! */
 
-	if ((px == gridsz / 2) && (py == gridsz / 2)) /* return if middle image */
+	if ((px == g_grid_size / 2) && (py == g_grid_size / 2)) /* return if middle image */
 	{
 		return;
 	}
@@ -970,11 +970,11 @@ void drawparmbox(int mode)
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
 	struct coords tl, tr, bl, br;
 	int grout;
-	if (!(evolving & EVOLVE_PARM_BOX))
+	if (!(g_evolving & EVOLVE_PARM_BOX))
 	{
 		return; /* don't draw if not asked to! */
 	}
-	grout = !((evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+	grout = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 	imgboxcount = g_box_count;
 	if (g_box_count)
 	{
@@ -1044,15 +1044,15 @@ void drawparmbox(int mode)
 
 void set_evolve_ranges(void)
 {
-	int lclpy = gridsz - py - 1;
+	int lclpy = g_grid_size - py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
 	paramrangex = g_delta_parameter_image_x*(parmzoom*2.0);
 	paramrangey = g_delta_parameter_image_y*(parmzoom*2.0);
 	newopx = opx + (((double)px-parmzoom)*g_delta_parameter_image_x);
 	newopy = opy + (((double)lclpy-parmzoom)*g_delta_parameter_image_y);
 
-	newodpx = (char)(odpx + (px-gridsz/2));
-	newodpy = (char)(odpy + (lclpy-gridsz/2));
+	newodpx = (char)(odpx + (px-g_grid_size/2));
+	newodpy = (char)(odpy + (lclpy-g_grid_size/2));
 	return;
 }
 
@@ -1064,7 +1064,7 @@ void spiralmap(int count)
 
 	int i, mid, offset;
 	i = 0;
-	mid = gridsz / 2;
+	mid = g_grid_size / 2;
 	if (count == 0)  /* start in the middle */
 	{
 		px = py = mid;
@@ -1120,19 +1120,19 @@ int unspiralmap(void)
 	int mid;
 	static int oldgridsz = 0;
 
-	mid = gridsz / 2;
-	if ((px == mid && py == mid) || (oldgridsz != gridsz))
+	mid = g_grid_size / 2;
+	if ((px == mid && py == mid) || (oldgridsz != g_grid_size))
 	{
 		int i, gridsqr;
 		/* set up array and return */
-		gridsqr = gridsz*gridsz;
+		gridsqr = g_grid_size*g_grid_size;
 		ecountbox[px][py] = 0;  /* we know the first one, do the rest */
 		for (i = 1; i < gridsqr; i++)
 		{
 			spiralmap(i);
 			ecountbox[px][py] = i;
 		}
-		oldgridsz = gridsz;
+		oldgridsz = g_grid_size;
 		px = py = mid;
 		return 0;
 	}

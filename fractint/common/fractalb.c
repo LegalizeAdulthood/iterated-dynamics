@@ -269,7 +269,7 @@ void corners_bf_to_float(void)
 	}
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		if (type_has_parameter(fractype, i, NULL))
+		if (type_has_parameter(g_fractal_type, i, NULL))
 		{
 			param[i] = (double)bftofloat(bfparms[i]);
 		}
@@ -592,7 +592,7 @@ int mandelbrot_setup_bn()
 	}
 
 	g_c_exp = (int)param[2];
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case JULIAFP:
 		bftobn(bnparm.x, bfparms[0]);
@@ -683,7 +683,7 @@ int mandelbrot_setup_bf()
 	}
 
 	g_c_exp = (int)param[2];
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case JULIAFP:
 		copy_bf(bfparm.x, bfparms[0]);

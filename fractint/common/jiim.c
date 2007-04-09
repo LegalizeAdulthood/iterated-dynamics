@@ -540,8 +540,8 @@ void Jiim(int which)         /* called by fractint */
 	int old_debugflag = g_debug_flag;
 
 	/* must use standard fractal or be froth_calc */
-	if (g_fractal_specific[fractype].calculate_type != standard_fractal
-			&& g_fractal_specific[fractype].calculate_type != froth_calc)
+	if (g_fractal_specific[g_fractal_type].calculate_type != standard_fractal
+			&& g_fractal_specific[g_fractal_type].calculate_type != froth_calc)
 	{
 		return;
 	}
@@ -930,8 +930,8 @@ void Jiim(int which)         /* called by fractint */
 			g_old_z.x = g_old_z.y = g_old_z_l.x = g_old_z_l.y = 0;
 			SaveC.x = g_initial_z.x =  cr;
 			SaveC.y = g_initial_z.y =  ci;
-			g_initial_z_l.x = (long)(g_initial_z.x*fudge);
-			g_initial_z_l.y = (long)(g_initial_z.y*fudge);
+			g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
+			g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 
 			old_x = old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
@@ -1184,8 +1184,8 @@ void Jiim(int which)         /* called by fractint */
 				color = (int)iter % g_colors;
 				if (integerfractal)
 				{
-					g_old_z.x = g_old_z_l.x; g_old_z.x /= fudge;
-					g_old_z.y = g_old_z_l.y; g_old_z.y /= fudge;
+					g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
+					g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
 				}
 				x = (int)((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
 				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
@@ -1289,7 +1289,7 @@ finish:
 		viewwindow = viewxdots = viewydots = 0;
 		viewreduction = 4.2f;
 		viewcrop = 1;
-		finalaspectratio = g_screen_aspect_ratio;
+		g_final_aspect_ratio = g_screen_aspect_ratio;
 		xdots = sxdots;
 		ydots = sydots;
 		g_dx_size = xdots - 1;

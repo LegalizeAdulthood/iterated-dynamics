@@ -378,7 +378,7 @@ int encoder()
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
-		i = (int) ((((double) ydots / (double) xdots) / finalaspectratio)*64 - 14.5);
+		i = (int) ((((double) ydots / (double) xdots) / g_final_aspect_ratio)*64 - 14.5);
 	}
 	if (i < 1)
 	{
@@ -526,16 +526,16 @@ int encoder()
 			}
 		}
 		/* save_info.fractal_type gets modified in setup_save_info() in float only
-			version, so we need to use fractype.  JCO 06JAN01 */
-		if (fractype == FORMULA || fractype == FFORMULA)
+			version, so we need to use g_fractal_type.  JCO 06JAN01 */
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			save_info.tot_extend_len += store_item_name(g_formula_name);
 		}
-		if (fractype == LSYSTEM)
+		if (g_fractal_type == LSYSTEM)
 		{
 			save_info.tot_extend_len += store_item_name(g_l_system_name);
 		}
-		if (fractype == IFS || fractype == IFS3D)
+		if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 		{
 			save_info.tot_extend_len += store_item_name(g_ifs_name);
 		}
@@ -564,12 +564,12 @@ int encoder()
 		}
 
 		/* Extended parameters g_block 006 */
-		if (evolving & EVOLVE_FIELD_MAP)
+		if (g_evolving & EVOLVE_FIELD_MAP)
 		{
 			struct evolution_info esave_info;
 			int i;
 			struct evolution_info resume_e_info;
-			if (evolve_handle == NULL || g_calculation_status == CALCSTAT_COMPLETED)
+			if (g_evolve_handle == NULL || g_calculation_status == CALCSTAT_COMPLETED)
 			{
 				esave_info.paramrangex     = paramrangex;
 				esave_info.paramrangey     = paramrangey;
@@ -583,15 +583,15 @@ int encoder()
 				esave_info.syoffs          = (short)syoffs;
 				esave_info.xdots           = (short)xdots;
 				esave_info.ydots           = (short)ydots;
-				esave_info.gridsz          = (short)gridsz;
-				esave_info.evolving        = (short) evolving;
+				esave_info.gridsz          = (short)g_grid_size;
+				esave_info.evolving        = (short) g_evolving;
 				esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
-				esave_info.fiddlefactor    = fiddlefactor;
-				esave_info.ecount          = (short) (gridsz*gridsz); /* flag for done */
+				esave_info.g_fiddle_factor    = g_fiddle_factor;
+				esave_info.ecount          = (short) (g_grid_size*g_grid_size); /* flag for done */
 			}
 			else  /* we will need the resuming information */
 			{
-				memcpy(&resume_e_info, evolve_handle, sizeof(resume_e_info));
+				memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
 				esave_info.paramrangex     = resume_e_info.paramrangex;
 				esave_info.paramrangey     = resume_e_info.paramrangey;
 				esave_info.opx             = resume_e_info.opx;
@@ -607,7 +607,7 @@ int encoder()
 				esave_info.gridsz          = (short)resume_e_info.gridsz;
 				esave_info.evolving        = (short) resume_e_info.evolving;
 				esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
-				esave_info.fiddlefactor    = resume_e_info.fiddlefactor;
+				esave_info.g_fiddle_factor    = resume_e_info.g_fiddle_factor;
 				esave_info.ecount          = resume_e_info.ecount;
 			}
 			for (i = 0; i < NUMGENES; i++)
@@ -753,7 +753,7 @@ static int _fastcall store_item_name(char *nameptr)
 		fsave_info.form_name[i] = 0;      /* initialize string */
 	}
 	strcpy(fsave_info.form_name, nameptr);
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		fsave_info.uses_p1 = (short) uses_p1;
 		fsave_info.uses_p2 = (short) uses_p2;
@@ -785,7 +785,7 @@ static int _fastcall store_item_name(char *nameptr)
 static void _fastcall setup_save_info(struct fractal_info *save_info)
 {
 	int i;
-	if (fractype != FORMULA && fractype != FFORMULA)
+	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
 	{
 		maxfn = 0;
 	}
@@ -795,7 +795,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 
 	save_info->iterationsold = (maxit <= SHRT_MAX) ? (short) maxit : (short) SHRT_MAX;
 
-	save_info->fractal_type = (short) fractype;
+	save_info->fractal_type = (short) g_fractal_type;
 	save_info->xmin = xxmin;
 	save_info->xmax = xxmax;
 	save_info->ymin = yymin;
@@ -871,7 +871,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->use_initial_orbit_z = g_use_initial_orbit_z;
 	save_info->periodicity = (short) g_periodicity_check;
 	save_info->potential_16bit = (short) g_disk_16bit;
-	save_info->faspectratio = finalaspectratio;
+	save_info->faspectratio = g_final_aspect_ratio;
 	save_info->system = (short) save_system;
 
 	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;

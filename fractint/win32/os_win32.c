@@ -117,7 +117,7 @@ int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
-int g_cpu, fpu;                        /* g_cpu, fpu flags */
+int g_cpu, g_fpu;                        /* g_cpu, g_fpu flags */
 unsigned char g_dac_box[256][3] = { 0 };
 int g_dac_learn = 0;
 int dacnorm = 0;
@@ -126,12 +126,12 @@ int g_disk_flag = 0;
 int g_disk_targa = FALSE;
 int DivideOverflow = 0;
 int fake_lut = 0;
-int fm_attack = 0;
-int fm_decay = 0;
-int fm_release = 0;
-int fm_sustain = 0;
-int fm_vol = 0;
-int fm_wavetype = 0;
+int g_fm_attack = 0;
+int g_fm_decay = 0;
+int g_fm_release = 0;
+int g_fm_sustain = 0;
+int g_fm_volume = 0;
+int g_fm_wave_type = 0;
 int g_good_mode = 0;
 int g_got_real_dac = 0;
 int hi_atten = 0;
@@ -570,8 +570,8 @@ void initasmvars(void)
 	/* set g_cpu type */
 	g_cpu = 486;
 
-	/* set fpu type */
-	fpu = 487;
+	/* set g_fpu type */
+	g_fpu = 487;
 }
 
 int isadirectory(char *s)

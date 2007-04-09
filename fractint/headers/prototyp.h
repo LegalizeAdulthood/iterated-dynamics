@@ -9,6 +9,8 @@
 #include "helpcom.h"
 #include "externs.h"
 
+extern int get_corners(void);
+
 /* maintain the common prototypes in this file
  * split the dos/win/unix prototypes into separate files.
  */
@@ -1003,7 +1005,7 @@ extern int get_3d_params(void);
 extern int prompt_valuestring(char *buf, struct fullscreenvalues *val);
 extern void setbailoutformula(enum bailouts);
 extern int find_extra_param(int);
-extern void load_params(int fractype);
+extern void load_params(int g_fractal_type);
 extern int check_orbit_name(char *);
 struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname);

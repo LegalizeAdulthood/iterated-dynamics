@@ -47,7 +47,7 @@ int mouse_y = 0;
 static int savechktime = 0;				/* time of last autosave check */
 long savebase = 0;						/* base clock ticks */
 long saveticks = 0;						/* save after this many ticks */
-int finishrow = 0;						/* save when this row is finished */
+int g_finish_row = 0;						/* save when this row is finished */
 
 int handle_timed_save(int ch)
 {
@@ -66,17 +66,17 @@ int handle_timed_save(int ch)
 		ticker -= savebase;
 		if (ticker > saveticks)
 		{
-			if (1 == finishrow)
+			if (1 == g_finish_row)
 			{
 				if (g_calculation_status != CALCSTAT_IN_PROGRESS)
 				{
 					if ((g_got_status != GOT_STATUS_12PASS) && (g_got_status != GOT_STATUS_GUESSING))
 					{
-						finishrow = g_current_row;
+						g_finish_row = g_current_row;
 					}
 				}
 			}
-			else if (g_current_row != finishrow)
+			else if (g_current_row != g_finish_row)
 			{
 				timedsave = TRUE;
 				return FIK_SAVE_TIME;

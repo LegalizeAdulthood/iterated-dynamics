@@ -121,19 +121,19 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		*/
 	if (extrainfo && *extrainfo)
 	{
-		if (fractype == FORMULA || fractype == FFORMULA)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			find_file_item(g_formula_filename, g_formula_name, &scroll_file, ITEMTYPE_FORMULA);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
-		else if (fractype == LSYSTEM)
+		else if (g_fractal_type == LSYSTEM)
 		{
 			find_file_item(g_l_system_filename, g_l_system_name, &scroll_file, 2);
 			in_scrolling_mode = 1;
 			scroll_file_start = ftell(scroll_file);
 		}
-		else if (fractype == IFS || fractype == IFS3D)
+		else if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 		{
 			find_file_item(g_ifs_filename, g_ifs_name, &scroll_file, 3);
 			in_scrolling_mode = 1;
@@ -1064,15 +1064,15 @@ int get_fracttype()             /* prompt for and select fractal type */
 {
 	int done, i, oldfractype, t;
 	done = -1;
-	oldfractype = fractype;
+	oldfractype = g_fractal_type;
 	while (1)
 	{
-		t = select_fracttype(fractype);
+		t = select_fracttype(g_fractal_type);
 		if (t < 0)
 		{
 			break;
 		}
-		i = select_type_params(t, fractype);
+		i = select_type_params(t, g_fractal_type);
 		if (i == 0)  /* ok, all done */
 		{
 			done = 0;
@@ -1085,9 +1085,9 @@ int get_fracttype()             /* prompt for and select fractal type */
 		}
 	if (done < 0)
 	{
-		fractype = oldfractype;
+		g_fractal_type = oldfractype;
 	}
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	return done;
 }
 
@@ -1206,10 +1206,10 @@ int select_type_params(/* prompt for new fractal type parameters */
 	oldhelpmode = helpmode;
 sel_type_restart:
 	ret = 0;
-	fractype = newfractype;
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_fractal_type = newfractype;
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
-	if (fractype == LSYSTEM)
+	if (g_fractal_type == LSYSTEM)
 	{
 		helpmode = HT_LSYS;
 		if (get_file_entry(GETFILE_L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
@@ -1218,7 +1218,7 @@ sel_type_restart:
 			goto sel_type_exit;
 			}
 		}
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		helpmode = HT_FORMULA;
 		if (get_file_entry(GETFILE_FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
@@ -1227,7 +1227,7 @@ sel_type_restart:
 			goto sel_type_exit;
 			}
 		}
-	if (fractype == IFS || fractype == IFS3D)
+	if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 	{
 		helpmode = HT_IFS;
 		if (get_file_entry(GETFILE_IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
@@ -1238,19 +1238,19 @@ sel_type_restart:
 		}
 
 /* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
-	if (((fractype == BIFURCATION) || (fractype == LBIFURCATION)) &&
+	if (((g_fractal_type == BIFURCATION) || (g_fractal_type == LBIFURCATION)) &&
 			!((oldfractype == BIFURCATION) || (oldfractype == LBIFURCATION)))
 		set_trig_array(0, "ident");
-	if (((fractype == BIFSTEWART) || (fractype == LBIFSTEWART)) &&
+	if (((g_fractal_type == BIFSTEWART) || (g_fractal_type == LBIFSTEWART)) &&
 			!((oldfractype == BIFSTEWART) || (oldfractype == LBIFSTEWART)))
 		set_trig_array(0, "ident");
-	if (((fractype == BIFLAMBDA) || (fractype == LBIFLAMBDA)) &&
+	if (((g_fractal_type == BIFLAMBDA) || (g_fractal_type == LBIFLAMBDA)) &&
 			!((oldfractype == BIFLAMBDA) || (oldfractype == LBIFLAMBDA)))
 		set_trig_array(0, "ident");
-	if (((fractype == BIFEQSINPI) || (fractype == LBIFEQSINPI)) &&
+	if (((g_fractal_type == BIFEQSINPI) || (g_fractal_type == LBIFEQSINPI)) &&
 			!((oldfractype == BIFEQSINPI) || (oldfractype == LBIFEQSINPI)))
 		set_trig_array(0, "sin");
-	if (((fractype == BIFADSINPI) || (fractype == LBIFADSINPI)) &&
+	if (((g_fractal_type == BIFADSINPI) || (g_fractal_type == LBIFADSINPI)) &&
 			!((oldfractype == BIFADSINPI) || (oldfractype == LBIFADSINPI)))
 		set_trig_array(0, "sin");
 
@@ -1258,14 +1258,14 @@ sel_type_restart:
 	* Next assumes that user going between popcorn and popcornjul
 	* might not want to change function variables
 	*/
-	if (((fractype    == FPPOPCORN) || (fractype    == LPOPCORN) ||
-			(fractype    == FPPOPCORNJUL) || (fractype    == LPOPCORNJUL)) &&
+	if (((g_fractal_type    == FPPOPCORN) || (g_fractal_type    == LPOPCORN) ||
+			(g_fractal_type    == FPPOPCORNJUL) || (g_fractal_type    == LPOPCORNJUL)) &&
 			!((oldfractype == FPPOPCORN) || (oldfractype == LPOPCORN) ||
 			(oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
 		set_function_parm_defaults();
 
 	/* set LATOO function defaults */
-	if (fractype == LATOO && oldfractype != LATOO)
+	if (g_fractal_type == LATOO && oldfractype != LATOO)
 	{
 		set_function_parm_defaults();
 	}
@@ -1273,9 +1273,9 @@ sel_type_restart:
 
 	if (get_fract_params(0) < 0)
 	{
-		if (fractype == FORMULA || fractype == FFORMULA ||
-				fractype == IFS || fractype == IFS3D ||
-				fractype == LSYSTEM)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA ||
+				g_fractal_type == IFS || g_fractal_type == IFS3D ||
+				g_fractal_type == LSYSTEM)
 		{
 			goto sel_type_restart;
 		}
@@ -1308,18 +1308,18 @@ void set_default_parms()
 	xx3rd = xxmin;
 	yy3rd = yymin;
 
-	if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
+	if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
 	{
-		aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
+		aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 	}
 	for (i = 0; i < 4; i++)
 	{
 		param[i] = g_current_fractal_specific->paramvalue[i];
-		if (fractype != CELLULAR && fractype != FROTH && fractype != FROTHFP &&
-				fractype != ANT)
+		if (g_fractal_type != CELLULAR && g_fractal_type != FROTH && g_fractal_type != FROTHFP &&
+				g_fractal_type != ANT)
 			roundfloatd(&param[i]); /* don't round cellular, frothybasin or ant */
 	}
-	extra = find_extra_param(fractype);
+	extra = find_extra_param(g_fractal_type);
 	if (extra > -1)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
@@ -1491,7 +1491,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	double oldparam[MAXPARAMS];
 	int fkeymask = 0x40;
 	oldbailout = g_bail_out;
-	if (fractype == JULIBROT || fractype == JULIBROTFP)
+	if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 	{
 		julibrot = 1;
 	}
@@ -1499,7 +1499,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	{
 		julibrot = 0;
 	}
-	curtype = fractype;
+	curtype = g_fractal_type;
 	if (g_current_fractal_specific->name[0] == '*'
 			&& (i = g_current_fractal_specific->tofloat) != NOFRACTAL  /* FIXED BUG HERE!! */
 			&& g_fractal_specific[i].name[0] != '*')
@@ -1540,7 +1540,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 		{
 			load_entry_text(entryfile, tstack, 17, 0, 0);
 			fclose(entryfile);
-			if (fractype == FORMULA || fractype == FFORMULA)
+			if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 			{
 				frm_get_param_stuff(entryname); /* no error check, should be okay, from above */
 			}
@@ -1616,7 +1616,7 @@ gfp_top:
 		juliorbitname = jborbit->name;
 	}
 
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		if (uses_p1)  /* set first parameter */
 		{
@@ -1683,7 +1683,7 @@ gfp_top:
 	for (i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
-		if (!type_has_parameter(julibrot ? g_new_orbit_type : fractype, i, parmprompt[j]))
+		if (!type_has_parameter(julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
 		{
 			if (curtype == FORMULA || curtype == FFORMULA)
 			{
@@ -2043,7 +2043,7 @@ gfp_top:
 	}
 
 gfp_exit:
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	return ret;
 }
 
@@ -2068,18 +2068,18 @@ int find_extra_param(int type)
 	return ret;
 }
 
-void load_params(int fractype)
+void load_params(int g_fractal_type)
 {
 	int i, extra;
 	for (i = 0; i < 4; ++i)
 	{
-		param[i] = g_fractal_specific[fractype].paramvalue[i];
-		if (fractype != CELLULAR && fractype != ANT)
+		param[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
+		if (g_fractal_type != CELLULAR && g_fractal_type != ANT)
 		{
 			roundfloatd(&param[i]); /* don't round cellular or ant */
 		}
 	}
-	extra = find_extra_param(fractype);
+	extra = find_extra_param(g_fractal_type);
 	if (extra > -1)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
@@ -2174,8 +2174,8 @@ long get_file_entry(int type, char *title, char *fmask,
 		case GETFILE_IFS:
 			if (ifsload() == 0)
 			{
-				fractype = (g_ifs_type == IFSTYPE_2D) ? IFS : IFS3D;
-				g_current_fractal_specific = &g_fractal_specific[fractype];
+				g_fractal_type = (g_ifs_type == IFSTYPE_2D) ? IFS : IFS3D;
+				g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 				set_default_parms(); /* to correct them if 3d */
 				return 0;
 			}
@@ -3453,7 +3453,7 @@ static int get_funny_glasses_params()
 	}
 	if (g_eye_separation == 0)
 	{
-		if (fractype == IFS3D || fractype == LLORENZ3D || fractype == FPLORENZ3D)
+		if (g_fractal_type == IFS3D || g_fractal_type == LLORENZ3D || g_fractal_type == FPLORENZ3D)
 		{
 			g_eye_separation =  2;
 			g_x_adjust       = -2;
@@ -3554,7 +3554,7 @@ void setbailoutformula(enum bailouts test)
 	{
 	case Mod:
 	default:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpMODbailout;
 		}
@@ -3574,7 +3574,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
 		break;
 	case Real:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpREALbailout;
 		}
@@ -3594,7 +3594,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_real_bf;
 		break;
 	case Imag:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpIMAGbailout;
 		}
@@ -3614,7 +3614,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_imag_bf;
 		break;
 	case Or:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpORbailout;
 		}
@@ -3634,7 +3634,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_or_bf;
 		break;
 	case And:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpANDbailout;
 		}
@@ -3654,7 +3654,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_and_bf;
 		break;
 	case Manh:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpMANHbailout;
 		}
@@ -3674,7 +3674,7 @@ void setbailoutformula(enum bailouts test)
 		g_bail_out_bf = (int (*)(void))bail_out_manhattan_bf;
 		break;
 	case Manr:
-		if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
+		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
 			g_bail_out_fp = (int (*)(void))asmfpMANRbailout;
 		}

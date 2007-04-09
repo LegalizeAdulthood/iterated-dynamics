@@ -86,7 +86,7 @@ int julibrot_setup(void)
 	s_b_base = 128;
 
 #ifndef XFRACT
-	if (g_fractal_specific[fractype].isinteger > 0)
+	if (g_fractal_specific[g_fractal_type].isinteger > 0)
 	{
 		long jxmin, jxmax, jymin, jymax, mxmax, mymax;
 		if (g_fractal_specific[g_new_orbit_type].isinteger == 0)

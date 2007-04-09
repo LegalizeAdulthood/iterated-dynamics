@@ -398,7 +398,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	viewwindow = 0;                      /* no view window            */
 	viewreduction = 4.2f;
 	viewcrop = 1;
-	finalaspectratio = g_screen_aspect_ratio;
+	g_final_aspect_ratio = g_screen_aspect_ratio;
 	viewxdots = viewydots = 0;
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
@@ -457,8 +457,8 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	usr_floatflag = 1;                   /* turn on the float flag */
 #endif
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
-	fractype = 0;                        /* initial type Set flag  */
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_fractal_type = 0;                        /* initial type Set flag  */
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	s_init_corners = s_initial_parameters = 0;
 	g_bail_out = 0;                         /* no user-entered bailout */
 	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
@@ -540,13 +540,13 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	initialize_variables_3d();
 	g_base_hertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
-	fm_vol = 63;                         /* full volume on soundcard o/p */
+	g_fm_volume = 63;                         /* full volume on soundcard o/p */
 	hi_atten = 0;                        /* no attenuation of hi notes */
-	fm_attack = 5;                       /* fast attack     */
-	fm_decay = 10;                        /* long decay      */
-	fm_sustain = 13;                      /* fairly high sustain level   */
-	fm_release = 5;                      /* short release   */
-	fm_wavetype = 0;                     /* sin wave */
+	g_fm_attack = 5;                       /* fast attack     */
+	g_fm_decay = 10;                        /* long decay      */
+	g_fm_sustain = 13;                      /* fairly high sustain level   */
+	g_fm_release = 5;                      /* short release   */
+	g_fm_wave_type = 0;                     /* sin wave */
 	polyphony = 0;                       /* no polyphony    */
 	for (i = 0; i <= 11; i++)
 	{
@@ -893,9 +893,9 @@ static int fpu_arg(const cmd_context *context)
 	if (strcmp(context->value, "387") == 0)
 	{
 #ifndef XFRACT
-		fpu = 387;
+		g_fpu = 387;
 #else
-		fpu = -1;
+		g_fpu = -1;
 #endif
 		return COMMAND_OK;
 	}
@@ -966,8 +966,8 @@ static int make_par_arg(const cmd_context *context)
 	{
 		g_make_par[1] = 0; /* second char is flag for map */
 	}
-	xdots = filexdots;
-	ydots = fileydots;
+	xdots = g_file_x_dots;
+	ydots = g_file_y_dots;
 	g_dx_size = xdots - 1;
 	g_dy_size = ydots - 1;
 	calculate_fractal_initialize();
@@ -1233,8 +1233,8 @@ static int type_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	fractype = k;
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_fractal_type = k;
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	if (s_init_corners == 0)
 	{
 		xx3rd = xxmin = g_current_fractal_specific->xmin;
@@ -1244,7 +1244,7 @@ static int type_arg(const cmd_context *context)
 	}
 	if (s_initial_parameters == 0)
 	{
-		load_params(fractype);
+		load_params(g_fractal_type);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1779,7 +1779,7 @@ static int julibrot_from_to_arg(const cmd_context *context)
 static int corners_arg(const cmd_context *context)
 {
 	int dec;
-	if (fractype == CELLULAR)
+	if (g_fractal_type == CELLULAR)
 	{
 		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
 	}
@@ -1946,7 +1946,7 @@ static int view_windows_arg(const cmd_context *context)
 	}
 	viewwindow = 1;
 	viewreduction = 4.2f;  /* reset default values */
-	finalaspectratio = g_screen_aspect_ratio;
+	g_final_aspect_ratio = g_screen_aspect_ratio;
 	viewcrop = 1; /* yes */
 	viewxdots = viewydots = 0;
 
@@ -1956,7 +1956,7 @@ static int view_windows_arg(const cmd_context *context)
 	}
 	if ((context->totparms > 1) && (context->floatval[1] > 0.001))
 	{
-		finalaspectratio = (float)context->floatval[1];
+		g_final_aspect_ratio = (float)context->floatval[1];
 	}
 	if ((context->totparms > 2) && (context->yesnoval[2] == 0))
 	{
@@ -1986,7 +1986,7 @@ static int center_mag_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (fractype == CELLULAR)
+	if (g_fractal_type == CELLULAR)
 	{
 		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
 	}
@@ -2327,7 +2327,7 @@ static int hertz_arg(const cmd_context *context)
 
 static int volume_arg(const cmd_context *context)
 {
-	fm_vol = context->numval & 0x3F; /* 63 */
+	g_fm_volume = context->numval & 0x3F; /* 63 */
 	return COMMAND_OK;
 }
 
@@ -2368,31 +2368,31 @@ static int polyphony_arg(const cmd_context *context)
 
 static int wave_type_arg(const cmd_context *context)
 {
-	fm_wavetype = context->numval & 0x0F;
+	g_fm_wave_type = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int attack_arg(const cmd_context *context)
 {
-	fm_attack = context->numval & 0x0F;
+	g_fm_attack = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int decay_arg(const cmd_context *context)
 {
-	fm_decay = context->numval & 0x0F;
+	g_fm_decay = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int sustain_arg(const cmd_context *context)
 {
-	fm_sustain = context->numval & 0x0F;
+	g_fm_sustain = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int sustain_release_arg(const cmd_context *context)
 {
-	fm_release = context->numval & 0x0F;
+	g_fm_release = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
@@ -3343,7 +3343,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "textsafe",	text_safe_arg },
 			{ "vesadetect", gobble_flag_arg },
 			{ "biospalette", gobble_flag_arg },
-			{ "fpu",		fpu_arg },
+			{ "g_fpu",		fpu_arg },
 			{ "exitnoask",	exit_no_ask_arg },
 			{ "makedoc",	make_doc_arg },
 			{ "makepar",	make_par_arg }

@@ -226,7 +226,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 	FPUcplxlog(&xx, &cLog);
 	FPUcplxmul(&cLog, &yy, &t);
 
-	if (fpu >= 387)
+	if (g_fpu >= 387)
 	{
 		FPUcplxexp387(&t, &z);
 	}
@@ -386,9 +386,9 @@ long lsqrt(long f)
 
 	if (a == 0)                                   /* one-time compute consts */
 	{
-		a = (long)(fudge*.41731);
-		b = (long)(fudge*.59016);
-		c = (long)(fudge*.7071067811);
+		a = (long)(g_fudge*.41731);
+		b = (long)(g_fudge*.59016);
+		c = (long)(g_fudge*.7071067811);
 	}
 
 	N  = 0;
@@ -424,13 +424,13 @@ LCMPLX ComplexSqrtLong(long x, long y)
 	LCMPLX    result;
 
 #ifndef LONGSQRT
-	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/fudge +
-						((double) multiply(y, y, g_bit_shift))/ fudge));
-	maglong   = (long)(mag*fudge);
+	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge +
+						((double) multiply(y, y, g_bit_shift))/ g_fudge));
+	maglong   = (long)(mag*g_fudge);
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
 #endif
-	theta     = atan2((double) y/fudge, (double) x/fudge)/2;
+	theta     = atan2((double) y/g_fudge, (double) x/g_fudge)/2;
 	thetalong = (long)(theta*SinCosFudge);
 	SinCos086(thetalong, &result.y, &result.x);
 	result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);

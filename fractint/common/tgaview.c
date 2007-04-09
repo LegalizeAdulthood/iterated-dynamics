@@ -53,7 +53,7 @@ tgaview()
 	return 0;
 }
 
-/* Outline function for 16 bit data with 8 bit fudge */
+/* Outline function for 16 bit data with 8 bit g_fudge */
 int
 outlin16(BYTE *buffer, int linelen)
 {
