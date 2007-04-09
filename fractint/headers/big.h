@@ -139,7 +139,7 @@ extern int g_cpu;
 extern int bf_math;
 
 extern int bnstep, intlength;
-extern int bnlength, rlength,   padding,   decimals,   shiftfactor;
+extern int bnlength, rlength,   padding,   g_decimals,   shiftfactor;
 extern int bflength, rbflength, bfpadding, bfdecimals;
 
 extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;  /* rlength */
