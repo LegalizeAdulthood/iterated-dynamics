@@ -331,7 +331,7 @@ int mandelbrot_setup_fp(void)
 	case FPMANTRIGPLUSEXP:
 	case FPMANTRIGPLUSZSQRD:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
-		if ((trigndx[0] == LOG) || (trigndx[0] == 14)) /* LOG or FLIP */
+		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -349,19 +349,19 @@ int mandelbrot_setup_fp(void)
 		{
 			g_symmetry = NOSYM;
 		}
-		if (trigndx[0] == 14) /* FLIP */
+		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 		break;
 	case TIMSERRORFP:
-		if (trigndx[0] == 14) /* FLIP */
+		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 		break;
 	case MARKSMANDELPWRFP:
-		if (trigndx[0] == 14) /* FLIP */
+		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -480,7 +480,7 @@ int julia_setup_fp(void)
 	case FPJULTRIGPLUSEXP:
 	case FPJULTRIGPLUSZSQRD:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
-		if ((trigndx[0] == LOG) || (trigndx[0] == 14)) /* LOG or FLIP */
+		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -491,7 +491,7 @@ int julia_setup_fp(void)
 		{
 			g_symmetry = NOSYM;
 		}
-		if (trigndx[0] != SQR)
+		if (g_trig_index[0] != SQR)
 		{
 			g_symmetry = NOSYM;
 		}
@@ -507,10 +507,10 @@ int julia_setup_fp(void)
 	case FPPOPCORNJUL:
 		{
 			int default_functions = 0;
-			if (trigndx[0] == SIN &&
-				trigndx[1] == TAN &&
-				trigndx[2] == SIN &&
-				trigndx[3] == TAN &&
+			if (g_trig_index[0] == SIN &&
+				g_trig_index[1] == TAN &&
+				g_trig_index[2] == SIN &&
+				g_trig_index[3] == TAN &&
 				fabs(g_parameter2.x - 3.0) < .0001 &&
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
@@ -592,21 +592,21 @@ int mandelbrot_setup_l(void)
 	if ((g_fractal_type == LMANTRIGPLUSEXP) || (g_fractal_type == LMANTRIGPLUSZSQRD))
 	{
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
-		if ((trigndx[0] == LOG) || (trigndx[0] == 14)) /* LOG or FLIP */
+		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 	}
 	if (g_fractal_type == TIMSERROR)
 	{
-		if (trigndx[0] == 14) /* FLIP */
+		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 	}
 	if (g_fractal_type == MARKSMANDELPWR)
 	{
-		if (trigndx[0] == 14) /* FLIP */
+		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -644,7 +644,7 @@ int julia_setup_l(void)
 	case LJULTRIGPLUSEXP:
 	case LJULTRIGPLUSZSQRD:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
-		if ((trigndx[0] == LOG) || (trigndx[0] == 14)) /* LOG or FLIP */
+		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -654,10 +654,10 @@ int julia_setup_l(void)
 	case LPOPCORNJUL:
 		{
 			int default_functions = 0;
-			if (trigndx[0] == SIN &&
-				trigndx[1] == TAN &&
-				trigndx[2] == SIN &&
-				trigndx[3] == TAN &&
+			if (g_trig_index[0] == SIN &&
+				g_trig_index[1] == TAN &&
+				g_trig_index[2] == SIN &&
+				g_trig_index[3] == TAN &&
 				fabs(g_parameter2.x - 3.0) < .0001 &&
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
@@ -743,11 +743,11 @@ static int fn_plus_fn_symmetry(void) /* set symmetry matrix for fn + fn type */
 	};
 	if (g_parameter.y == 0.0 && g_parameter2.y == 0.0)
 	{
-		if (trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/6/92*/
+		if (g_trig_index[0] < 7 && g_trig_index[1] < 7)  /* bounds of array JCO 5/6/92*/
 		{
-			g_symmetry = fnplusfn[trigndx[0]][trigndx[1]];  /* JCO 5/6/92 */
+			g_symmetry = fnplusfn[g_trig_index[0]][g_trig_index[1]];  /* JCO 5/6/92 */
 		}
-		if (trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
+		if (g_trig_index[0] == 14 || g_trig_index[1] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
@@ -762,7 +762,7 @@ static int fn_plus_fn_symmetry(void) /* set symmetry matrix for fn + fn type */
 int trig_plus_trig_setup_l(void)
 {
 	fn_plus_fn_symmetry();
-	if (trigndx[1] == SQR)
+	if (g_trig_index[1] == SQR)
 	{
 		return trig_plus_sqr_setup_l();
 	}
@@ -786,7 +786,7 @@ int trig_plus_trig_setup_l(void)
 int trig_plus_trig_setup_fp(void)
 {
 	fn_plus_fn_symmetry();
-	if (trigndx[1] == SQR)
+	if (g_trig_index[1] == SQR)
 	{
 		return trig_plus_sqr_setup_fp();
 	}
@@ -812,11 +812,11 @@ int lambda_trig_or_trig_setup(void)
 	/* default symmetry is ORIGIN  JCO 2/29/92 (changed from PI_SYM) */
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
-	if ((trigndx[0] == EXP) || (trigndx[1] == EXP))
+	if ((g_trig_index[0] == EXP) || (g_trig_index[1] == EXP))
 	{
 		g_symmetry = NOSYM; /* JCO 1/9/93 */
 	}
-	if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
+	if ((g_trig_index[0] == LOG) || (g_trig_index[1] == LOG))
 	{
 		g_symmetry = XAXIS;
 	}
@@ -833,7 +833,7 @@ int julia_trig_or_trig_setup(void)
 	{
 		g_symmetry = NOSYM;
 	}
-	if (trigndx[0] == 14 || trigndx[1] == 14) /* FLIP */
+	if (g_trig_index[0] == 14 || g_trig_index[1] == 14) /* FLIP */
 	{
 		g_symmetry = NOSYM;
 	}
@@ -846,11 +846,11 @@ int mandelbrot_lambda_trig_or_trig_setup(void)
 	/* default symmetry is XAXIS */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	if (trigndx[0] == SQR)
+	if (g_trig_index[0] == SQR)
 	{
 		g_symmetry = NOSYM;
 	}
-	if ((trigndx[0] == LOG) || (trigndx[1] == LOG))
+	if ((g_trig_index[0] == LOG) || (g_trig_index[1] == LOG))
 	{
 		g_symmetry = NOSYM;
 	}
@@ -862,7 +862,7 @@ int mandelbrot_trig_or_trig_setup(void)
 	/* default symmetry is XAXIS_NOPARM */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	if ((trigndx[0] == 14) || (trigndx[1] == 14)) /* FLIP  JCO 5/28/92 */
+	if ((g_trig_index[0] == 14) || (g_trig_index[1] == 14)) /* FLIP  JCO 5/28/92 */
 	{
 		g_symmetry = NOSYM;
 	}
@@ -881,8 +881,8 @@ int z_trig_plus_z_setup(void)
 
 	if (g_parameters[1] == 0.0 && g_parameters[3] == 0.0)
 	{
-		/*      symmetry = ZXTrigPlusZSym1[trigndx[0]]; */
-		switch (trigndx[0])
+		/*      symmetry = ZXTrigPlusZSym1[g_trig_index[0]]; */
+		switch (g_trig_index[0])
 		{
 		case COS:   /* changed to two case statments and made any added */
 		case COSH:  /* functions default to XAXIS symmetry. JCO 5/25/92 */
@@ -903,8 +903,8 @@ int z_trig_plus_z_setup(void)
 	}
 	else
 	{
-		/*      symmetry = ZXTrigPlusZSym2[trigndx[0]]; */
-		switch (trigndx[0])
+		/*      symmetry = ZXTrigPlusZSym2[g_trig_index[0]]; */
+		switch (g_trig_index[0])
 		{
 		case COS:
 		case COSH:
@@ -961,7 +961,7 @@ int lambda_trig_setup(void)
 	int isinteger = g_current_fractal_specific->isinteger;
 	g_current_fractal_specific->orbitcalc =  (isinteger != 0)
 		? lambda_trig_orbit : lambda_trig_orbit_fp;
-	switch (trigndx[0])
+	switch (g_trig_index[0])
 	{
 	case SIN:
 	case COS:
@@ -1001,8 +1001,8 @@ int julia_fn_plus_z_squared_setup(void)
 	/* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
 	/* sin    {NOSYM, ORIGIN, NOSYM, ORIGIN, ORIGIN, NOSYM, NOSYM}; */
 
-	/*   symmetry = fnpluszsqrd[trigndx[0]];   JCO  5/8/92 */
-	switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
+	/*   symmetry = fnpluszsqrd[g_trig_index[0]];   JCO  5/8/92 */
+	switch (g_trig_index[0]) /* fix sqr symmetry & add additional functions */
 	{
 	case COS: /* cosxx */
 	case COSH:
@@ -1021,8 +1021,8 @@ int sqr_trig_setup(void)
 	/*   static char SqrTrigSym[] = */
 	/* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
 	/*           {PI_SYM, PI_SYM, XYAXIS, XYAXIS, XYAXIS, XAXIS, XAXIS}; */
-	/*   symmetry = SqrTrigSym[trigndx[0]];      JCO  5/9/92 */
-	switch (trigndx[0]) /* fix sqr symmetry & add additional functions */
+	/*   symmetry = SqrTrigSym[g_trig_index[0]];      JCO  5/9/92 */
+	switch (g_trig_index[0]) /* fix sqr symmetry & add additional functions */
 	{
 	case SIN:
 	case COS: /* cosxx */
@@ -1047,38 +1047,38 @@ int fn_fn_setup(void)
 	/* sqr */ {XYAXIS, XYAXIS, XYAXIS, XYAXIS, XYAXIS, NOSYM, XYAXIS},
 	};
 	/*
-	if (trigndx[0] == EXP || trigndx[0] == LOG || trigndx[1] == EXP || trigndx[1] == LOG)
+	if (g_trig_index[0] == EXP || g_trig_index[0] == LOG || g_trig_index[1] == EXP || g_trig_index[1] == LOG)
 		g_symmetry = XAXIS;
-	else if ((trigndx[0] == SIN && trigndx[1] == SIN) || (trigndx[0] == COS && trigndx[1] == COS))
+	else if ((g_trig_index[0] == SIN && g_trig_index[1] == SIN) || (g_trig_index[0] == COS && g_trig_index[1] == COS))
 		g_symmetry = PI_SYM;
-	else if ((trigndx[0] == SIN && trigndx[1] == COS) || (trigndx[0] == COS && trigndx[1] == SIN))
+	else if ((g_trig_index[0] == SIN && g_trig_index[1] == COS) || (g_trig_index[0] == COS && g_trig_index[1] == SIN))
 		g_symmetry = YAXIS;
 	else
 		g_symmetry = XYAXIS;
 	*/
-	if (trigndx[0] < 7 && trigndx[1] < 7)  /* bounds of array JCO 5/22/92*/
+	if (g_trig_index[0] < 7 && g_trig_index[1] < 7)  /* bounds of array JCO 5/22/92*/
 	{
-		g_symmetry = fnxfn[trigndx[0]][trigndx[1]];  /* JCO 5/22/92 */
+		g_symmetry = fnxfn[g_trig_index[0]][g_trig_index[1]];  /* JCO 5/22/92 */
 	}
 	/* defaults to XAXIS symmetry JCO 5/22/92 */
 	else  /* added to complete the symmetry JCO 5/22/92 */
 	{
-		if (trigndx[0] == LOG || trigndx[1] == LOG)
+		if (g_trig_index[0] == LOG || g_trig_index[1] == LOG)
 		{
 			g_symmetry = NOSYM;
 		}
-		if (trigndx[0] == 9 || trigndx[1] == 9)  /* 'real' cos */
+		if (g_trig_index[0] == 9 || g_trig_index[1] == 9)  /* 'real' cos */
 		{
-			if (trigndx[0] == SIN || trigndx[1] == SIN)
+			if (g_trig_index[0] == SIN || g_trig_index[1] == SIN)
 			{
 				g_symmetry = PI_SYM;
 			}
-			if (trigndx[0] == COS || trigndx[1] == COS)
+			if (g_trig_index[0] == COS || g_trig_index[1] == COS)
 			{
 				g_symmetry = PI_SYM;
 			}
 		}
-		if (trigndx[0] == 9 && trigndx[1] == 9)
+		if (g_trig_index[0] == 9 && g_trig_index[1] == 9)
 		{
 			g_symmetry = PI_SYM;
 		}
@@ -1092,7 +1092,7 @@ int mandelbrot_trig_setup(void)
 	g_current_fractal_specific->orbitcalc = 
 		isinteger ? lambda_trig_orbit : lambda_trig_orbit_fp;
 	g_symmetry = XYAXIS_NOPARM;
-	switch (trigndx[0])
+	switch (g_trig_index[0])
 	{
 	case SIN:
 	case COS:
@@ -1207,7 +1207,7 @@ int halley_setup(void)
 	/* Halley */
 	g_periodicity_check = 0;
 
-	g_fractal_type = usr_floatflag ? HALLEY : MPHALLEY;
+	g_fractal_type = g_user_float_flag ? HALLEY : MPHALLEY;
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
@@ -1252,19 +1252,19 @@ int phoenix_setup(void)
 	if (g_degree == 0)
 	{
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_orbit_fp : phoenix_orbit;
+			g_user_float_flag ? phoenix_orbit_fp : phoenix_orbit;
 	}
 	if (g_degree >= 2)
 	{
 		g_degree = g_degree - 1;
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
+			g_user_float_flag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
 	}
 	if (g_degree <= -3)
 	{
 		g_degree = abs(g_degree) - 2;
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
+			g_user_float_flag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
 	}
 
 	return 1;
@@ -1288,20 +1288,20 @@ int phoenix_complex_setup(void)
 			g_symmetry = XAXIS;
 		}
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_complex_orbit_fp : phoenix_complex_orbit;
+			g_user_float_flag ? phoenix_complex_orbit_fp : phoenix_complex_orbit;
 	}
 	if (g_degree >= 2)
 	{
 		g_degree = g_degree - 1;
 		g_symmetry = (g_parameter.y == 0 && g_parameter2.y == 0) ? XAXIS : NOSYM;
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
+			g_user_float_flag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
 	}
 	if (g_degree <= -3)
 	{
 		g_degree = abs(g_degree) - 2;
 		g_symmetry = (g_parameter.y == 0 && g_parameter2.y == 0) ? XAXIS : NOSYM;
-		g_current_fractal_specific->orbitcalc = usr_floatflag ?
+		g_current_fractal_specific->orbitcalc = g_user_float_flag ?
 			phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
 	}
 
@@ -1321,19 +1321,19 @@ int mandelbrot_phoenix_setup(void)
 	if (g_degree == 0)
 	{
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_orbit_fp : phoenix_orbit;
+			g_user_float_flag ? phoenix_orbit_fp : phoenix_orbit;
 	}
 	if (g_degree >= 2)
 	{
 		g_degree = g_degree - 1;
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
+			g_user_float_flag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
 	}
 	if (g_degree <= -3)
 	{
 		g_degree = abs(g_degree) - 2;
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
+			g_user_float_flag ? phoenix_minus_orbit_fp : phoenix_minus_orbit;
 	}
 
 	return 1;
@@ -1356,19 +1356,19 @@ int mandelbrot_phoenix_complex_setup(void)
 	if (g_degree == 0)
 	{
 		g_current_fractal_specific->orbitcalc = 
-			usr_floatflag ? phoenix_complex_orbit_fp : phoenix_complex_orbit;
+			g_user_float_flag ? phoenix_complex_orbit_fp : phoenix_complex_orbit;
 	}
 	if (g_degree >= 2)
 	{
 		g_degree = g_degree - 1;
 		g_current_fractal_specific->orbitcalc =
-			usr_floatflag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
+			g_user_float_flag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
 	}
 	if (g_degree <= -3)
 	{
 		g_degree = abs(g_degree) - 2;
 		g_current_fractal_specific->orbitcalc =
-			usr_floatflag ? phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
+			g_user_float_flag ? phoenix_complex_minus_orbit_fp : phoenix_complex_minus_orbit;
 	}
 
 	return 1;

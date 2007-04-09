@@ -23,7 +23,7 @@ void rgbmap(long maxiter, long iter,
 
 main()
 {
-	int xdots, ydots, i, j, err;
+	int g_x_dots, g_y_dots, i, j, err;
 	long iter, maxiter;
 	char red, green, blue;
 	FILE *fpin, *fpout;
@@ -44,22 +44,22 @@ main()
 	}
 
 	fread(buf1,    12, 1, fpin);    /* read 12 bytes */
-	fread(&xdots,   2, 1, fpin);    /* read xdots */
-	fread(&ydots,   2, 1, fpin);    /* read ydots */
+	fread(&g_x_dots,   2, 1, fpin);    /* read g_x_dots */
+	fread(&g_y_dots,   2, 1, fpin);    /* read g_y_dots */
 	fread(buf2,     2, 1, fpin);    /* read 2 bytes */
 	fread(&maxiter, 4, 1, fpin);    /* read 4 bytes */
 	buf1[0] = 0; /* were not writing maxiter */
 	fwrite(buf1,   12, 1, fpout);   /* write 12 bytes */
-	fwrite(&xdots,  2, 1, fpout);   /* write xdots */
-	fwrite(&ydots,  2, 1, fpout);   /* write ydots */
+	fwrite(&g_x_dots,  2, 1, fpout);   /* write g_x_dots */
+	fwrite(&g_y_dots,  2, 1, fpout);   /* write g_y_dots */
 	fwrite(buf2,    2, 1, fpout);   /* write 2 bytes */
 
-	printf("xdots %d ydots %d maxiter %ld\n", xdots, ydots, maxiter);
+	printf("g_x_dots %d g_y_dots %d maxiter %ld\n", g_x_dots, g_y_dots, maxiter);
 
-	for (j = 0; j < ydots; j++)
+	for (j = 0; j < g_y_dots; j++)
 	{
 //      printf("row %2d maxi %6ld   \r", j, maxi);
-		for (i = 0; i < xdots; i++)
+		for (i = 0; i < g_x_dots; i++)
 		{
 			iter = 0;
 			err = fread(&iter, 3, 1, fpin);

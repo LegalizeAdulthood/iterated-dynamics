@@ -123,10 +123,9 @@ struct fls *g_function_load_store_pointers = (struct fls *)0;
 extern union Arg *Arg1, *Arg2;
 extern double _1_, _2_;
 extern union Arg s[20], **Store, **Load;
-extern int g_store_ptr, g_lod_ptr, OpPtr;
-extern unsigned int vsp, g_last_op;
+extern int OpPtr;
 extern struct ConstArg *v;
-extern int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;
+extern int InitLodPtr, InitStoPtr, InitOpPtr;
 extern void (* *f)(void);
 extern JUMP_CONTROL_ST *jump_control;
 extern int uses_jump, jump_index;
@@ -1003,7 +1002,7 @@ awful_error:
 	else if (ffptr == fStkDiv)
 	{
 
-		if (prevfptr == fStkLodRealC && vsp < g_formula_max_args - 1)
+		if (prevfptr == fStkLodRealC && g_parser_vsp < g_formula_max_args - 1)
 		{
 			/* have found a divide by a real constant  */
 			/*  and there is space to create a new one  */
@@ -1017,12 +1016,12 @@ awful_error:
 			{
 				DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
 			}
-			v[vsp].s = (void  *)0;  /* this constant has no name  */
-			v[vsp].len = 0;
-			v[vsp].a.d.x = _1_ / Load[g_lod_ptr-1]->d.x;
-			v[vsp].a.d.y = 0.0;
+			v[g_parser_vsp].s = (void  *)0;  /* this constant has no name  */
+			v[g_parser_vsp].len = 0;
+			v[g_parser_vsp].a.d.x = _1_ / Load[g_lod_ptr-1]->d.x;
+			v[g_parser_vsp].a.d.y = 0.0;
 			{
-				void *p = &v[vsp++].a;
+				void *p = &v[g_parser_vsp++].a;
 				OPPTR(cvtptrx) = (void  *)FP_OFF(p);  /* isn't C fun!  */
 			}
 			ffptr = fStkLodRealMul;

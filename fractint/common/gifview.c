@@ -313,7 +313,7 @@ int gifview()
 			g_busy = 0;      /* for slideshow CALCWAIT */
 			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
-				g_calculation_time = timer_interval; /* note how long it took */
+				g_calculation_time = g_timer_interval; /* note how long it took */
 				if (driver_key_pressed() != 0)
 				{
 					g_calculation_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
@@ -416,7 +416,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 static int out_line_too_wide(BYTE *pixels, int linelen)
 {
 	/* int twidth = gifview_image_twidth; */
-	int twidth = xdots;
+	int twidth = g_x_dots;
 	int extra;
 	while (linelen > 0)
 	{
@@ -466,7 +466,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 int sound_line(BYTE *pixels, int linelen)
 {
 	/* int twidth = gifview_image_twidth; */
-	int twidth = xdots;
+	int twidth = g_x_dots;
 	int extra;
 	int ret = 0;
 	while (linelen > 0)
@@ -517,13 +517,13 @@ int pot_line(BYTE *pixels, int linelen)
 	row = (g_row_count >>= 1);
 	if ((saverowcount & 1) != 0) /* odd line */
 	{
-		row += ydots;
+		row += g_y_dots;
 	}
 	else if (!driver_diskp()) /* even line - display the line too */
 	{
 		out_line(pixels, linelen);
 	}
-	for (col = 0; col < xdots; ++col)
+	for (col = 0; col < g_x_dots; ++col)
 	{
 		disk_write(col + g_sx_offset, row + g_sy_offset, *(pixels + col));
 	}

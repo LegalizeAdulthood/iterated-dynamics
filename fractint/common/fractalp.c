@@ -221,7 +221,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		{parameter text strings},
 		{parameter values},
 		helptext, helpformula, flags,
-		xmin, xmax, ymin, ymax,
+		g_x_min, g_x_max, g_y_min, g_y_max,
 		int, tojulia, tomandel, tofloat, symmetry,
 		orbit fnct, per_pixel fnct, per_image fnct, calctype fcnt,
 		bailout
@@ -2284,31 +2284,31 @@ int parameter_not_used(int parm)
 	switch (parm/2)
 	{
 	case 0:
-		if (!uses_p1)
+		if (!g_uses_p1)
 		{
 			ret = 1;
 		}
 		break;
 	case 1:
-		if (!uses_p2)
+		if (!g_uses_p2)
 		{
 			ret = 1;
 		}
 		break;
 	case 2:
-		if (!uses_p3)
+		if (!g_uses_p3)
 		{
 			ret = 1;
 		}
 		break;
 	case 3:
-		if (!uses_p4)
+		if (!g_uses_p4)
 		{
 			ret = 1;
 		}
 		break;
 	case 4:
-		if (!uses_p5)
+		if (!g_uses_p5)
 		{
 			ret = 1;
 		}

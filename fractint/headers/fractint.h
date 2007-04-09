@@ -370,8 +370,8 @@ struct videoinfo
                             /*      14 = Tandy 1000                 */
                             /*      15 = TRIDENT  SuperVGA*256      */
                             /*      16 = Chips&Tech SuperVGA*256    */
-    int     xdots;          /* number of dots across the screen     */
-    int     ydots;          /* number of dots down the screen       */
+    int     x_dots;          /* number of dots across the screen     */
+    int     y_dots;          /* number of dots down the screen       */
     int     colors;         /* number of g_colors available           */
 	Driver *driver;
 };
@@ -405,10 +405,10 @@ struct fractal_info         /*  for saving data in GIF file     */
     char  info_id[8];       /* Unique identifier for info g_block */
     short iterationsold;    /* Pre version 18.24 */
     short fractal_type;     /* 0=Mandelbrot 1=Julia 2= ... */
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
+    double x_min;
+    double x_max;
+    double y_min;
+    double y_max;
     double c_real;
     double c_imag;
     short videomodeax;
@@ -416,8 +416,8 @@ struct fractal_info         /*  for saving data in GIF file     */
     short videomodecx;
     short videomodedx;
     short dotmode;
-    short xdots;
-    short ydots;
+    short x_dots;
+    short y_dots;
     short colors;
     short version;          /* used to be 'future[0]' */
     float parm3;
@@ -448,8 +448,8 @@ struct fractal_info         /*  for saving data in GIF file     */
                         /* version 3 stuff, release 13 */
     short outside;
                         /* version 4 stuff, release 14 */
-    double x3rd;          /* 3rd corner */
-    double y3rd;
+    double x_3rd;          /* 3rd corner */
+    double y_3rd;
     char stdcalcmode;     /* 1/2/g/b */
     char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
     short calculation_status;    /* resumable, finished, etc */
@@ -458,7 +458,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short float_flag;
     short bailoutold;
     long calculation_time;
-    BYTE trigndx[4];      /* which trig functions selected */
+    BYTE trig_index[4];      /* which trig functions selected */
     short finattract;
     double initial_orbit_z[2];  /* init Mandelbrot orbit values */
     short periodicity;    /* periodicity checking */
@@ -532,10 +532,10 @@ struct fractal_info         /*  for saving data in GIF file     */
 struct history_info
 {
     short fractal_type;
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
+    double x_min;
+    double x_max;
+    double y_min;
+    double y_max;
     double c_real;
     double c_imag;
     double potential[3];
@@ -561,11 +561,11 @@ struct history_info
     short eyeseparation;
     short glassestype;
     short outside;
-    double x3rd;
-    double y3rd;
+    double x_3rd;
+    double y_3rd;
     long distance_test;
     short bailoutold;
-    BYTE trigndx[4];
+    BYTE trig_index[4];
     short finattract;
     double initial_orbit_z[2];
     short periodicity;
@@ -644,7 +644,7 @@ struct formula_info         /*  for saving formula data in GIF file     */
     short uses_p1;
     short uses_p2;
     short uses_p3;
-    short uses_ismand;
+    short uses_is_mand;
     short ismand;
     short uses_p4;
     short uses_p5;
@@ -678,7 +678,7 @@ struct evolution_info      /* for saving evolution data in a GIF file */
 {
    short evolving;
    short gridsz;
-   unsigned short this_gen_rseed;
+   unsigned short this_generation_random_seed;
    double fiddle_factor;
    double parameter_range_x;
    double parameter_range_y;
@@ -690,8 +690,8 @@ struct evolution_info      /* for saving evolution data in a GIF file */
    short py;
    short sxoffs;
    short syoffs;
-   short xdots;
-   short ydots;
+   short x_dots;
+   short y_dots;
    short mutate[NUMGENES];
    short ecount; /* count of how many images have been calc'ed so far */
    short future[68 - NUMGENES];      /* total of 200 bytes */
@@ -757,10 +757,10 @@ struct fractalspecificstuff
    int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
    int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
    unsigned flags;                      /* constraints, bits defined below */
-   float xmin;                          /* default XMIN corner */
-   float xmax;                          /* default XMAX corner */
-   float ymin;                          /* default YMIN corner */
-   float ymax;                          /* default YMAX corner */
+   float x_min;                          /* default XMIN corner */
+   float x_max;                          /* default XMAX corner */
+   float y_min;                          /* default YMIN corner */
+   float y_max;                          /* default YMAX corner */
    int   isinteger;                     /* 1 if g_integer_fractal, 0 otherwise */
    int   tojulia;                       /* mandel-to-julia switch */
    int   tomandel;                      /* julia-to-mandel switch */
@@ -1039,7 +1039,7 @@ struct dblcoords {
 	double x, y;
 };
 
-extern BYTE trigndx[];
+extern BYTE g_trig_index[];
 extern void (*ltrig0)(void), (*ltrig1)(void), (*ltrig2)(void), (*ltrig3)(void);
 extern void (*dtrig0)(void), (*dtrig1)(void), (*dtrig2)(void), (*dtrig3)(void);
 
@@ -1320,7 +1320,7 @@ struct ext_blk_formula_info
 	short uses_p1;
 	short uses_p2;
 	short uses_p3;
-	short uses_ismand;
+	short uses_is_mand;
 	short ismand;
 	short uses_p4;
 	short uses_p5;
@@ -1346,7 +1346,7 @@ struct ext_blk_evolver_info
 	int length;
 	short evolving;
 	short gridsz;
-	unsigned short this_gen_rseed;
+	unsigned short this_generation_random_seed;
 	double fiddle_factor;
 	double parameter_range_x;
 	double parameter_range_y;
@@ -1358,8 +1358,8 @@ struct ext_blk_evolver_info
 	short  py;
 	short  sxoffs;
 	short  syoffs;
-	short  xdots;
-	short  ydots;
+	short  x_dots;
+	short  y_dots;
 	short  ecount;
 	short  mutate[NUMGENES];
 };
@@ -1381,7 +1381,7 @@ struct ext_blk_orbits_info
 #pragma pack(pop)
 #endif
 
-struct SearchPath {
+struct search_path {
    char par[FILE_MAX_PATH];
    char frm[FILE_MAX_PATH];
    char ifs[FILE_MAX_PATH];

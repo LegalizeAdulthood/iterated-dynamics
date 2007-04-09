@@ -148,7 +148,7 @@ int g_text_cbase = 0;
 int g_text_col = 0;
 int g_text_rbase = 0;
 int g_text_row = 0;
-char tstack[4096] = { 0 };
+char g_text_stack[4096] = { 0 };
 /* g_video_table
  *
  *  |--Adapter/Mode-Name------|-------Comments-----------|
@@ -156,7 +156,7 @@ char tstack[4096] = { 0 };
  *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
  */
 VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
-int g_vxdots = 0;
+int g_vx_dots = 0;
 
 /* Global functions
  *
@@ -957,7 +957,7 @@ void putcolor_a(int xdot, int ydot, int color)
 ; ***************Function out_line(pixels, linelen) *********************
 
 ;       This routine is a 'line' analog of 'g_put_color()', and sends an
-;       entire line of pixels to the screen (0 <= xdot < xdots) at a clip
+;       entire line of pixels to the screen (0 <= xdot < g_x_dots) at a clip
 ;       Called by the GIF decoder
 */
 int out_line(BYTE *pixels, int linelen)

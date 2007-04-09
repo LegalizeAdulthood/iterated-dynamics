@@ -61,7 +61,7 @@
 struct videoinfo g_video_entry;
 int g_help_mode;
 
-long timer_start, timer_interval;        /* timer(...) start & total */
+long g_timer_start, g_timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
 char *g_fract_dir1="", *g_fract_dir2="";
 
@@ -74,15 +74,15 @@ int     textsafe2;              /* textsafe override from g_video_table */
 int     g_ok_to_print;              /* 0 if printf() won't work */
 int     g_screen_width, g_screen_height;          /* # of dots on the physical screen    */
 int     g_sx_offset, g_sy_offset;          /* physical top left of logical screen */
-int     xdots, ydots;           /* # of dots on the logical screen     */
+int     g_x_dots, g_y_dots;           /* # of dots on the logical screen     */
 double  g_dx_size;
-double	g_dy_size;         /* xdots-1, ydots-1         */
+double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
 int     g_colors = 256;           /* maximum g_colors available */
 long    g_max_iteration;                  /* try this many iterations */
 int     g_box_count;               /* 0 if no zoom-box yet     */
-int     zrotate;                /* zoombox rotation         */
-double  zbx, zby;                /* topleft of zoombox       */
-double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
+int     g_z_rotate;                /* zoombox rotation         */
+double  g_zbx, g_zby;                /* topleft of zoombox       */
+double  g_z_width, g_z_depth, g_z_skew;    /* zoombox size & shape     */
 
 int     g_fractal_type;               /* if == 0, use Mandelbrot  */
 char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
@@ -118,33 +118,33 @@ double *g_x1, *g_y1;
 int     g_integer_fractal;         /* TRUE if fractal uses integer math */
 
 /* usr_xxx is what the user wants, vs what we may be forced to do */
-char    usr_stdcalcmode;
-int     usr_periodicitycheck;
-long    usr_distest;
-char    usr_floatflag;
+char    g_user_standard_calculation_mode;
+int     g_user_periodicity_check;
+long    g_user_distance_test;
+char    g_user_float_flag;
 
-int     viewwindow;             /* 0 for full screen, 1 for window */
-float   viewreduction;          /* window auto-sizing */
-int     viewcrop;               /* nonzero to crop default coords */
+int     g_view_window;             /* 0 for full screen, 1 for window */
+float   g_view_reduction;          /* window auto-sizing */
+int     g_view_crop;               /* nonzero to crop default coords */
 float   g_final_aspect_ratio;       /* for view shape and rotation */
-int     viewxdots, viewydots;    /* explicit view sizing */
+int     g_view_x_dots, g_view_y_dots;    /* explicit view sizing */
 
 int g_max_history = 10;
 
 /* variables defined by the command line/files processor */
 int     g_compare_gif = 0;                   /* compare two gif files flag */
-int     timedsave = 0;                    /* when doing a timed save */
+int     g_timed_save = 0;                    /* when doing a timed save */
 int     g_resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
 int     g_started_resaves = FALSE;              /* but incr on first resave */
 int     g_save_system;                    /* from and for save files */
-int     tabmode = 1;                    /* tab display enabled */
+int     g_tab_mode = 1;                    /* tab display enabled */
 
 /* for historical reasons (before rotation):         */
-/*    top    left  corner of screen is (xxmin, yymax) */
-/*    bottom left  corner of screen is (xx3rd, yy3rd) */
-/*    bottom right corner of screen is (xxmax, yymin) */
-double  xxmin, xxmax, yymin, yymax, xx3rd, yy3rd; /* selected screen corners  */
-long    xmin, xmax, ymin, ymax, x3rd, y3rd;  /* integer equivs           */
+/*    top    left  corner of screen is (g_xx_min, g_yy_max) */
+/*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
+/*    bottom right corner of screen is (g_xx_max, g_yy_min) */
+double  g_xx_min, g_xx_max, g_yy_min, g_yy_max, g_xx_3rd, g_yy_3rd; /* selected screen corners  */
+long    g_x_min, g_x_max, g_y_min, g_y_max, g_x_3rd, g_y_3rd;  /* integer equivs           */
 double  g_sx_min, g_sx_max, g_sy_min, g_sy_max, g_sx_3rd, g_sy_3rd; /* displayed screen corners */
 double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     /* real->screen multipliers */
 
@@ -158,12 +158,12 @@ int g_calculation_status = CALCSTAT_NO_FRACTAL;
 long g_calculation_time;
 
 int g_max_colors;                         /* maximum palette size */
-int        zoomoff;                     /* = 0 when zoom is disabled    */
+int        g_zoom_off;                     /* = 0 when zoom is disabled    */
 int        g_save_dac;                     /* save-the-Video DAC flag      */
 int g_browsing;                 /* browse mode flag */
 char g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
 int g_name_stack_ptr ;
-double toosmall;
+double g_too_small;
 int  g_cross_hair_box_size;
 int g_no_sub_images;
 int g_auto_browse, g_double_caution;
@@ -279,7 +279,7 @@ restart:   /* insert key re-starts here */
 	g_browse_check_parameters = TRUE;
 	g_double_caution  = TRUE;
 	g_no_sub_images = FALSE;
-	toosmall = 6;
+	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
 	strcpy(g_browse_mask, "*.gif");
 	strcpy(g_browse_name, "            ");
@@ -294,8 +294,8 @@ restart:   /* insert key re-starts here */
 	g_grid_size = 9;
 	g_fiddle_factor = 1;
 	g_fiddle_reduction = 1.0;
-	this_gen_rseed = (unsigned int)clock_ticks();
-	srand(this_gen_rseed);
+	g_this_generation_random_seed = (unsigned int)clock_ticks();
+	srand(g_this_generation_random_seed);
 	g_start_show_orbit = 0;
 	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
 	g_calculation_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
@@ -388,7 +388,7 @@ restorestart:
 	while (g_show_file <= 0)              /* image is to be loaded */
 	{
 		char *hdg;
-		tabmode = 0;
+		g_tab_mode = 0;
 		if (!g_browsing)     /*RB*/
 		{
 			if (g_overlay_3d)
@@ -418,10 +418,10 @@ restorestart:
 		}
 
 		g_evolving = EVOLVE_NONE;
-		viewwindow = 0;
+		g_view_window = 0;
 		g_show_file = 1;
 		g_help_mode = -1;
-		tabmode = 1;
+		g_tab_mode = 1;
 		if (stacked)
 		{
 			driver_discard_screen();
@@ -436,7 +436,7 @@ restorestart:
 	}
 
 	g_help_mode = HELPMENU;                 /* now use this help mode */
-	tabmode = 1;
+	g_tab_mode = 1;
 	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
 	if (((g_overlay_3d && !g_initialize_batch) || stacked) && g_init_mode < 0)        /* overlay command failed */
@@ -466,7 +466,7 @@ imagestart:                             /* calc/display a new image */
 		stacked = 0;
 	}
 #ifdef XFRACT
-	usr_floatflag = 1;
+	g_user_float_flag = 1;
 #endif
 	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
@@ -600,7 +600,7 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 'f')  /* floating pt toggle */
 				{
-					usr_floatflag = (usr_floatflag == 0) ? 1 : 0;
+					g_user_float_flag = (g_user_float_flag == 0) ? 1 : 0;
 					goto imagestart;
 				}
 				if (kbdchar == 'i')  /* set 3d fractal parms */
@@ -616,7 +616,7 @@ imagestart:                             /* calc/display a new image */
 		/* buzzer(2); */                          /* unrecognized key */
 			}
 
-	zoomoff = TRUE;                 /* zooming is enabled */
+	g_zoom_off = TRUE;                 /* zooming is enabled */
 	g_help_mode = HELPMAIN;         /* now use this help mode */
 	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
@@ -703,7 +703,7 @@ va_dcl
 	{
 		fp = dir_fopen(g_work_dir, "bench", "a");
 	}
-	timer_start = clock_ticks();
+	g_timer_start = clock_ticks();
 	switch (timertype)
 	{
 	case TIMER_ENGINE:
@@ -718,7 +718,7 @@ va_dcl
 		break;
 	}
 	/* next assumes CLK_TCK is 10^n, n >= 2 */
-	timer_interval = (clock_ticks() - timer_start) / (CLK_TCK/100);
+	g_timer_interval = (clock_ticks() - g_timer_start) / (CLK_TCK/100);
 
 	if (do_bench)
 	{
@@ -737,10 +737,10 @@ va_dcl
 		fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
 			timestring,
 			g_current_fractal_specific->name,
-			xdots,
-			ydots,
+			g_x_dots,
+			g_y_dots,
 			g_max_iteration);
-		fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
+		fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
 		if (fp != NULL)
 		{
 			fclose(fp);

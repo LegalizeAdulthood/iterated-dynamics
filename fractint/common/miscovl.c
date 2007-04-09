@@ -193,8 +193,8 @@ void make_batch_file()
 		strcpy(inpcommandname, "test");
 	}
 	/* TW added these  - and Bert moved them */
-	pxdots = xdots;
-	pydots = ydots;
+	pxdots = g_x_dots;
+	pydots = g_y_dots;
 	xm = ym = 1;
 	if (*g_make_par == 0)
 	{
@@ -323,8 +323,8 @@ prompt_user:
 				if (i >= 0)
 				{
 					/* get the resolution of this video mode */
-					pxdots = g_video_table[i].xdots;
-					pydots = g_video_table[i].ydots;
+					pxdots = g_video_table[i].x_dots;
+					pydots = g_video_table[i].y_dots;
 				}
 			}
 			if (pxdots == 0 && (xm > 1 || ym > 1))
@@ -376,7 +376,7 @@ skip_UI:
 			strcat(outname, "fractint.tmp");
 			infile = fopen(g_command_file, "rt");
 #ifndef XFRACT
-			setvbuf(infile, tstack, _IOFBF, 4096); /* improves speed */
+			setvbuf(infile, g_text_stack, _IOFBF, 4096); /* improves speed */
 #endif
 		}
 		parmfile = fopen(outname, "wt");
@@ -423,20 +423,20 @@ skip_UI:
 /***** start here*/
 		if (xm > 1 || ym > 1)
 		{
-			have3rd = (xxmin != xx3rd || yymin != yy3rd) ? 1 : 0;
+			have3rd = (g_xx_min != g_xx_3rd || g_yy_min != g_yy_3rd) ? 1 : 0;
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
 				xm = ym = 0;
 			}
-			pdelx  = (xxmax - xx3rd) / (xm*pxdots - 1);   /* calculate stepsizes */
-			pdely  = (yymax - yy3rd) / (ym*pydots - 1);
-			pdelx2 = (xx3rd - xxmin) / (ym*pydots - 1);
-			pdely2 = (yy3rd - yymin) / (xm*pxdots - 1);
+			pdelx  = (g_xx_max - g_xx_3rd) / (xm*pxdots - 1);   /* calculate stepsizes */
+			pdely  = (g_yy_max - g_yy_3rd) / (ym*pydots - 1);
+			pdelx2 = (g_xx_3rd - g_xx_min) / (ym*pydots - 1);
+			pdely2 = (g_yy_3rd - g_yy_min) / (xm*pxdots - 1);
 
 			/* save corners */
-			pxxmin = xxmin;
-			pyymax = yymax;
+			pxxmin = g_xx_min;
+			pyymax = g_yy_max;
 		}
 		for (i = 0; i < (int)xm; i++)  /* columns */
 		{
@@ -465,19 +465,19 @@ skip_UI:
 						strcat(PCommandName, buf);
 					}
 					fprintf(parmfile, "%-19s{", PCommandName);
-					xxmin = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-					xxmax = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
-					yymin = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
-					yymax = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
+					g_xx_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
+					g_xx_max = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
+					g_yy_min = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
+					g_yy_max = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
 					if (have3rd)
 					{
-						xx3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
-						yy3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
+						g_xx_3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
+						g_yy_3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
 					}
 					else
 					{
-						xx3rd = xxmin;
-						yy3rd = yymin;
+						g_xx_3rd = g_xx_min;
+						g_yy_3rd = g_yy_min;
 					}
 					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
 					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
@@ -654,7 +654,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_filename("formulafile", g_formula_filename);
 			put_parm(" formulaname=%s", g_formula_name);
-			if (uses_ismand)
+			if (g_uses_is_mand)
 			{
 				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
 			}
@@ -680,14 +680,14 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(buf);
 		}
 
-		if (usr_stdcalcmode != 'g')
+		if (g_user_standard_calculation_mode != 'g')
 		{
-			put_parm(" passes=%c", usr_stdcalcmode);
+			put_parm(" passes=%c", g_user_standard_calculation_mode);
 		}
 
 		if (g_stop_pass != 0)
 		{
-			put_parm(" passes=%c%c", usr_stdcalcmode, (char)g_stop_pass + '0');
+			put_parm(" passes=%c%c", g_user_standard_calculation_mode, (char)g_stop_pass + '0');
 		}
 
 		if (g_use_center_mag)
@@ -774,16 +774,16 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			else
 			{
 				int xdigits, ydigits;
-				xdigits = getprec(xxmin, xxmax, xx3rd);
-				ydigits = getprec(yymin, yymax, yy3rd);
-				put_float(0, xxmin, xdigits);
-				put_float(1, xxmax, xdigits);
-				put_float(1, yymin, ydigits);
-				put_float(1, yymax, ydigits);
-				if (xx3rd != xxmin || yy3rd != yymin)
+				xdigits = getprec(g_xx_min, g_xx_max, g_xx_3rd);
+				ydigits = getprec(g_yy_min, g_yy_max, g_yy_3rd);
+				put_float(0, g_xx_min, xdigits);
+				put_float(1, g_xx_max, xdigits);
+				put_float(1, g_yy_min, ydigits);
+				put_float(1, g_yy_max, ydigits);
+				if (g_xx_3rd != g_xx_min || g_yy_3rd != g_yy_min)
 				{
-					put_float(1, xx3rd, xdigits);
-					put_float(1, yy3rd, ydigits);
+					put_float(1, g_xx_3rd, xdigits);
+					put_float(1, g_yy_3rd, ydigits);
 				}
 			}
 		}
@@ -1035,7 +1035,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (g_distance_test)
 		{
 			put_parm(" distest=%ld/%d/%d/%d", g_distance_test, g_distance_test_width,
-				g_pseudo_x ? g_pseudo_x : xdots, g_pseudo_y ? g_pseudo_y : ydots);
+				g_pseudo_x ? g_pseudo_x : g_x_dots, g_pseudo_y ? g_pseudo_y : g_y_dots);
 		}
 		if (g_old_demm_colors)
 		{
@@ -1223,11 +1223,11 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 	/***** universal parameters in this section *****/
 
-	if (viewwindow == 1)
+	if (g_view_window == 1)
 	{
-		put_parm(" viewwindows=%g/%g", viewreduction, g_final_aspect_ratio);
-		put_parm(viewcrop ? "/yes" : "/no");
-		put_parm("/%d/%d", viewxdots, viewydots);
+		put_parm(" viewwindows=%g/%g", g_view_reduction, g_final_aspect_ratio);
+		put_parm(g_view_crop ? "/yes" : "/no");
+		put_parm("/%d/%d", g_view_x_dots, g_view_y_dots);
 	}
 
 	if (colorsonly == 0)
@@ -1379,7 +1379,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" screencoords=yes");
 		}
 
-		if (usr_stdcalcmode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
+		if (g_user_standard_calculation_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
 		{
 			int xdigits, ydigits;
 			put_parm(" orbitcorners=");
@@ -1740,26 +1740,26 @@ int getprecbf(int rezflag)
 	bfyydel   = alloc_stack(bflength + 2);
 	bfyydel2  = alloc_stack(bflength + 2);
 	floattobf(one, 1.0);
-	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS - 1) : (xdots - 1);
+	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS - 1) : (g_x_dots - 1);
 
-	/* bfxxdel = (bfxmax - bfx3rd)/(xdots-1) */
+	/* bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
 	sub_bf(bfxxdel, bfxmax, bfx3rd);
 	div_a_bf_int(bfxxdel, (U16)rez);
 
-	/* bfyydel2 = (bfy3rd - bfymin)/(xdots-1) */
+	/* bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
 	sub_bf(bfyydel2, bfy3rd, bfymin);
 	div_a_bf_int(bfyydel2, (U16)rez);
 
 	if (rezflag == CURRENTREZ)
 	{
-		rez = ydots-1;
+		rez = g_y_dots-1;
 	}
 
-	/* bfyydel = (bfymax - bfy3rd)/(ydots-1) */
+	/* bfyydel = (bfymax - bfy3rd)/(g_y_dots-1) */
 	sub_bf(bfyydel, bfymax, bfy3rd);
 	div_a_bf_int(bfyydel, (U16)rez);
 
-	/* bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1) */
+	/* bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
 	sub_bf(bfxxdel2, bfx3rd, bfxmin);
 	div_a_bf_int(bfxxdel2, (U16)rez);
 
@@ -1799,18 +1799,18 @@ int getprecdbl(int rezflag)
 	int digits;
 	LDBL rez;
 
-	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS -1) : (xdots-1);
+	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS -1) : (g_x_dots-1);
 
-	xdel =  ((LDBL)xxmax - (LDBL)xx3rd)/rez;
-	ydel2 = ((LDBL)yy3rd - (LDBL)yymin)/rez;
+	xdel =  ((LDBL)g_xx_max - (LDBL)g_xx_3rd)/rez;
+	ydel2 = ((LDBL)g_yy_3rd - (LDBL)g_yy_min)/rez;
 
 	if (rezflag == CURRENTREZ)
 	{
-		rez = ydots-1;
+		rez = g_y_dots-1;
 	}
 
-	ydel = ((LDBL)yymax - (LDBL)yy3rd)/rez;
-	xdel2 = ((LDBL)xx3rd - (LDBL)xxmin)/rez;
+	ydel = ((LDBL)g_yy_max - (LDBL)g_yy_3rd)/rez;
+	xdel2 = ((LDBL)g_xx_3rd - (LDBL)g_xx_min)/rez;
 
 	del1 = fabsl(xdel) + fabsl(xdel2);
 	del2 = fabsl(ydel) + fabsl(ydel2);
@@ -2087,17 +2087,17 @@ int select_video_mode(int curmode)
 		i = 0;
 	}
 
-	oldtabmode = tabmode;
+	oldtabmode = g_tab_mode;
 	oldhelpmode = g_help_mode;
 	modes_changed = 0;
-	tabmode = 0;
+	g_tab_mode = 0;
 	g_help_mode = HELPVIDSEL;
 	i = fullscreen_choice(CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
 		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
-	tabmode = oldtabmode;
+	g_tab_mode = oldtabmode;
 	g_help_mode = oldhelpmode;
 	if (i == -1)
 	{
@@ -2159,7 +2159,7 @@ void format_vid_table(int choice, char *buf)
 		sizeof(g_video_entry));
 	vidmode_keyname(g_video_entry.keynum, kname);
 	sprintf(buf, "%-5s %-25s %5d %5d ",  /* 44 chars */
-		kname, g_video_entry.name, g_video_entry.xdots, g_video_entry.ydots);
+		kname, g_video_entry.name, g_video_entry.x_dots, g_video_entry.y_dots);
 	truecolorbits = g_video_entry.dotmode/1000;
 	if (truecolorbits == 0)
 	{
@@ -2319,8 +2319,8 @@ static void update_fractint_cfg()
 				vident.videomodecx,
 				vident.videomodedx,
 				vident.dotmode % 1000, /* remove true-color flag, keep g_text_safe */
-				vident.xdots,
-				vident.ydots,
+				vident.x_dots,
+				vident.y_dots,
 				colorsbuf,
 				vident.comment);
 			if (++nextmode >= g_video_table_len)
@@ -2674,8 +2674,8 @@ void flip_image(int key)
 	{
 		clear_zoombox(); /* clear, don't copy, the zoombox */
 	}
-	ixhalf = xdots / 2;
-	iyhalf = ydots / 2;
+	ixhalf = g_x_dots / 2;
+	iyhalf = g_y_dots / 2;
 	switch (key)
 	{
 	case FIK_CTL_X:            /* control-X - reverse X-axis */
@@ -2685,29 +2685,29 @@ void flip_image(int key)
 			{
 				break;
 			}
-			for (j = 0; j < ydots; j++)
+			for (j = 0; j < g_y_dots; j++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(xdots-1-i, j));
-				g_put_color(xdots-1-i, j, tempdot);
+				g_put_color(i, j, getcolor(g_x_dots-1-i, j));
+				g_put_color(g_x_dots-1-i, j, tempdot);
 			}
 		}
-		g_sx_min = xxmax + xxmin - xx3rd;
-		g_sy_max = yymax + yymin - yy3rd;
-		g_sx_max = xx3rd;
-		g_sy_min = yy3rd;
-		g_sx_3rd = xxmax;
-		g_sy_3rd = yymin;
+		g_sx_min = g_xx_max + g_xx_min - g_xx_3rd;
+		g_sy_max = g_yy_max + g_yy_min - g_yy_3rd;
+		g_sx_max = g_xx_3rd;
+		g_sy_min = g_yy_3rd;
+		g_sx_3rd = g_xx_max;
+		g_sy_3rd = g_yy_min;
 		if (bf_math)
 		{
-			add_bf(bfsxmin, bfxmax, bfxmin); /* g_sx_min = xxmax + xxmin - xx3rd; */
+			add_bf(bfsxmin, bfxmax, bfxmin); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
 			sub_a_bf(bfsxmin, bfx3rd);
-			add_bf(bfsymax, bfymax, bfymin); /* g_sy_max = yymax + yymin - yy3rd; */
+			add_bf(bfsymax, bfymax, bfymin); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
 			sub_a_bf(bfsymax, bfy3rd);
-			copy_bf(bfsxmax, bfx3rd);        /* g_sx_max = xx3rd; */
-			copy_bf(bfsymin, bfy3rd);        /* g_sy_min = yy3rd; */
-			copy_bf(bfsx3rd, bfxmax);        /* g_sx_3rd = xxmax; */
-			copy_bf(bfsy3rd, bfymin);        /* g_sy_3rd = yymin; */
+			copy_bf(bfsxmax, bfx3rd);        /* g_sx_max = g_xx_3rd; */
+			copy_bf(bfsymin, bfy3rd);        /* g_sy_min = g_yy_3rd; */
+			copy_bf(bfsx3rd, bfxmax);        /* g_sx_3rd = g_xx_max; */
+			copy_bf(bfsy3rd, bfymin);        /* g_sy_3rd = g_yy_min; */
 		}
 		break;
 	case FIK_CTL_Y:            /* control-Y - reverse Y-aXis */
@@ -2717,29 +2717,29 @@ void flip_image(int key)
 			{
 				break;
 			}
-			for (i = 0; i < xdots; i++)
+			for (i = 0; i < g_x_dots; i++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(i, ydots-1-j));
-				g_put_color(i, ydots-1-j, tempdot);
+				g_put_color(i, j, getcolor(i, g_y_dots-1-j));
+				g_put_color(i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = xx3rd;
-		g_sy_max = yy3rd;
-		g_sx_max = xxmax + xxmin - xx3rd;
-		g_sy_min = yymax + yymin - yy3rd;
-		g_sx_3rd = xxmin;
-		g_sy_3rd = yymax;
+		g_sx_min = g_xx_3rd;
+		g_sy_max = g_yy_3rd;
+		g_sx_max = g_xx_max + g_xx_min - g_xx_3rd;
+		g_sy_min = g_yy_max + g_yy_min - g_yy_3rd;
+		g_sx_3rd = g_xx_min;
+		g_sy_3rd = g_yy_max;
 		if (bf_math)
 		{
-			copy_bf(bfsxmin, bfx3rd);        /* g_sx_min = xx3rd; */
-			copy_bf(bfsymax, bfy3rd);        /* g_sy_max = yy3rd; */
-			add_bf(bfsxmax, bfxmax, bfxmin); /* g_sx_max = xxmax + xxmin - xx3rd; */
+			copy_bf(bfsxmin, bfx3rd);        /* g_sx_min = g_xx_3rd; */
+			copy_bf(bfsymax, bfy3rd);        /* g_sy_max = g_yy_3rd; */
+			add_bf(bfsxmax, bfxmax, bfxmin); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
 			sub_a_bf(bfsxmax, bfx3rd);
-			add_bf(bfsymin, bfymax, bfymin); /* g_sy_min = yymax + yymin - yy3rd; */
+			add_bf(bfsymin, bfymax, bfymin); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
 			sub_a_bf(bfsymin, bfy3rd);
-			copy_bf(bfsx3rd, bfxmin);        /* g_sx_3rd = xxmin; */
-			copy_bf(bfsy3rd, bfymax);        /* g_sy_3rd = yymax; */
+			copy_bf(bfsx3rd, bfxmin);        /* g_sx_3rd = g_xx_min; */
+			copy_bf(bfsy3rd, bfymax);        /* g_sy_3rd = g_yy_max; */
 		}
 		break;
 	case FIK_CTL_Z:            /* control-Z - reverse X and Y aXis */
@@ -2749,28 +2749,28 @@ void flip_image(int key)
 			{
 				break;
 			}
-			for (j = 0; j < ydots; j++)
+			for (j = 0; j < g_y_dots; j++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(xdots-1-i, ydots-1-j));
-				g_put_color(xdots-1-i, ydots-1-j, tempdot);
+				g_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
+				g_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = xxmax;
-		g_sy_max = yymin;
-		g_sx_max = xxmin;
-		g_sy_min = yymax;
-		g_sx_3rd = xxmax + xxmin - xx3rd;
-		g_sy_3rd = yymax + yymin - yy3rd;
+		g_sx_min = g_xx_max;
+		g_sy_max = g_yy_min;
+		g_sx_max = g_xx_min;
+		g_sy_min = g_yy_max;
+		g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd;
+		g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd;
 		if (bf_math)
 		{
-			copy_bf(bfsxmin, bfxmax);        /* g_sx_min = xxmax; */
-			copy_bf(bfsymax, bfymin);        /* g_sy_max = yymin; */
-			copy_bf(bfsxmax, bfxmin);        /* g_sx_max = xxmin; */
-			copy_bf(bfsymin, bfymax);        /* g_sy_min = yymax; */
-			add_bf(bfsx3rd, bfxmax, bfxmin); /* g_sx_3rd = xxmax + xxmin - xx3rd; */
+			copy_bf(bfsxmin, bfxmax);        /* g_sx_min = g_xx_max; */
+			copy_bf(bfsymax, bfymin);        /* g_sy_max = g_yy_min; */
+			copy_bf(bfsxmax, bfxmin);        /* g_sx_max = g_xx_min; */
+			copy_bf(bfsymin, bfymax);        /* g_sy_min = g_yy_max; */
+			add_bf(bfsx3rd, bfxmax, bfxmin); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
 			sub_a_bf(bfsx3rd, bfx3rd);
-			add_bf(bfsy3rd, bfymax, bfymin); /* g_sy_3rd = yymax + yymin - yy3rd; */
+			add_bf(bfsy3rd, bfymax, bfymin); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
 			sub_a_bf(bfsy3rd, bfy3rd);
 		}
 		break;
@@ -2848,14 +2848,14 @@ static char *expand_var(char *var, char *buf)
 		sprintf(buf, "%d", g_patch_level);
 		out = buf;
 	}
-	else if (strcmp(var, "xdots") == 0)   /* 2 to 4 chars */
+	else if (strcmp(var, "g_x_dots") == 0)   /* 2 to 4 chars */
 	{
-		sprintf(buf, "%d", xdots);
+		sprintf(buf, "%d", g_x_dots);
 		out = buf;
 	}
-	else if (strcmp(var, "ydots") == 0)   /* 2 to 4 chars */
+	else if (strcmp(var, "g_y_dots") == 0)   /* 2 to 4 chars */
 	{
-		sprintf(buf, "%d", ydots);
+		sprintf(buf, "%d", g_y_dots);
 		out = buf;
 	}
 	else if (strcmp(var, "vidkey") == 0)   /* 2 to 3 chars */

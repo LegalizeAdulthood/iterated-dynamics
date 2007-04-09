@@ -1001,13 +1001,13 @@ int unity_orbit(void)
 #if !defined(XFRACT)
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
-	long XXOne = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	if ((XXOne > g_two_fudge) || (labs(XXOne - g_one_fudge) < g_delta_min))
+	long g_xx_one = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	if ((g_xx_one > g_two_fudge) || (labs(g_xx_one - g_one_fudge) < g_delta_min))
 	{
 		return 1;
 	}
-	g_old_z_l.y = multiply(g_two_fudge - XXOne, g_old_z_l.x, g_bit_shift);
-	g_old_z_l.x = multiply(g_two_fudge - XXOne, g_old_z_l.y, g_bit_shift);
+	g_old_z_l.y = multiply(g_two_fudge - g_xx_one, g_old_z_l.x, g_bit_shift);
+	g_old_z_l.x = multiply(g_two_fudge - g_xx_one, g_old_z_l.y, g_bit_shift);
 	g_new_z_l = g_old_z_l;  /* TW added this line */
 	return 0;
 #else
@@ -1019,13 +1019,13 @@ int unity_orbit_fp(void)
 {
 	/* brought to you by Mark Peterson - you won't find this in any fractal
 		books unless they saw it here first - Mark invented it! */
-	double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
-	if ((XXOne > 2.0) || (fabs(XXOne - 1.0) < g_delta_min_fp))
+	double g_xx_one = sqr(g_old_z.x) + sqr(g_old_z.y);
+	if ((g_xx_one > 2.0) || (fabs(g_xx_one - 1.0) < g_delta_min_fp))
 	{
 		return 1;
 	}
-	g_old_z.y = (2.0 - XXOne)* g_old_z.x;
-	g_old_z.x = (2.0 - XXOne)* g_old_z.y;
+	g_old_z.y = (2.0 - g_xx_one)* g_old_z.x;
+	g_old_z.x = (2.0 - g_xx_one)* g_old_z.y;
 	g_new_z = g_old_z;  /* TW added this line */
 	return 0;
 }
@@ -3540,7 +3540,7 @@ static double _fastcall dx_pixel_grid(void)
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dx_pixel_calc(void)
 {
-	return (double) (xxmin + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
+	return (double) (g_xx_min + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
 }
 
 /* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
@@ -3552,7 +3552,7 @@ static double _fastcall dy_pixel_grid(void)
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dy_pixel_calc(void)
 {
-	return (double)(yymax - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
+	return (double)(g_yy_max - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
 }
 
 /* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */
@@ -3564,7 +3564,7 @@ static long _fastcall lx_pixel_grid(void)
 /* Real component, calculation version - does not require arrays */
 static long _fastcall lx_pixel_calc(void)
 {
-	return xmin + g_col*g_delta_x + g_row*g_delta_x2;
+	return g_x_min + g_col*g_delta_x + g_row*g_delta_x2;
 }
 
 /* Imaginary component, grid lookup version - requires g_y0_l/g_y1_l arrays */
@@ -3576,7 +3576,7 @@ static long _fastcall ly_pixel_grid(void)
 /* Imaginary component, calculation version - does not require arrays */
 static long _fastcall ly_pixel_calc(void)
 {
-	return ymax - g_row*g_delta_y - g_col*g_delta_y2;
+	return g_y_max - g_row*g_delta_y - g_col*g_delta_y2;
 }
 
 void set_pixel_calc_functions(void)

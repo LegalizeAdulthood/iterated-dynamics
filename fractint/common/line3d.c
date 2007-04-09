@@ -199,7 +199,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		{
 			return err;
 		}
-		if (xdots > OLDMAXPIXELS)
+		if (g_x_dots > OLDMAXPIXELS)
 		{
 			return -1;
 		}
@@ -207,8 +207,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 		cross_avg[0] = 0;
 		cross_avg[1] = 0;
 		cross_avg[2] = 0;
-		s_x_center = xdots/2 + g_x_shift;
-		s_y_center = ydots/2 - g_y_shift;
+		s_x_center = g_x_dots/2 + g_x_shift;
+		s_y_center = g_y_dots/2 - g_y_shift;
 		xcenter0 = (int) s_x_center;
 		ycenter0 = (int) s_y_center;
 	}
@@ -254,28 +254,28 @@ int line3d(BYTE *pixels, unsigned linelen)
 	/* copying code here, and to avoid a HUGE "if-then" construct. Besides,  */
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
-	last_dot = min(xdots - 1, (int) linelen - 1);
+	last_dot = min(g_x_dots - 1, (int) linelen - 1);
 	if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE)
 	{
 		if (g_haze && g_targa_output)
 		{
-			s_haze_mult = (int) (g_haze*((float) ((long) (ydots - 1 - g_current_row)*(long) (ydots - 1 - g_current_row))
-									/ (float) ((long) (ydots - 1)*(long) (ydots - 1))));
+			s_haze_mult = (int) (g_haze*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
+									/ (float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
 	}
 
-	if (g_preview_factor >= ydots || g_preview_factor > last_dot)
+	if (g_preview_factor >= g_y_dots || g_preview_factor > last_dot)
 	{
-		g_preview_factor = min(ydots - 1, last_dot);
+		g_preview_factor = min(g_y_dots - 1, last_dot);
 	}
 
-	s_local_preview_factor = ydots/g_preview_factor;
+	s_local_preview_factor = g_y_dots/g_preview_factor;
 
 	tout = 0;
 	/* Insure last line is drawn in preview and filltypes <0  */
 	if ((g_raytrace_output || g_preview || FILLTYPE < FILLTYPE_POINTS)
-		&& (g_current_row != ydots - 1)
+		&& (g_current_row != g_y_dots - 1)
 		&& (g_current_row % s_local_preview_factor) /* Draw mod preview lines */
 		&& !(!g_raytrace_output && (FILLTYPE > FILLTYPE_FILL_BARS) && (g_current_row == 1)))
 			/* Get init geometry in lightsource modes */
@@ -351,10 +351,10 @@ int line3d(BYTE *pixels, unsigned linelen)
 			/* r = 1.0 + ((double)cur.color/(double)s_z_coord)*s_r_scale;       */
 			/* else                                                     */
 			/* r = 1.0-s_r_scale + ((double)cur.color/(double)s_z_coord)*s_r_scale;*/
-			/* s_radius = (double)ydots/2;                                     */
+			/* s_radius = (double)g_y_dots/2;                                     */
 			/* r = r*s_radius;                                                 */
-			/* cur.x = xdots/2 + s_scale_x*r*sin_theta*s_aspect + xup ;         */
-			/* cur.y = ydots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup ;         */
+			/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup ;         */
+			/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup ;         */
 			/************************************************************/
 
 			if (s_r_scale < 0.0)
@@ -391,7 +391,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					f_cur.y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
 					f_cur.color = (float) (-r0*cos_theta*s_sin_phi);
 				}
-				if (!(usr_floatflag || g_raytrace_output))
+				if (!(g_user_float_flag || g_raytrace_output))
 				{
 					if (longpersp(lv, s_lview, 16) == -1)
 					{
@@ -402,7 +402,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					cur.x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
 					cur.y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
 				}
-				if (usr_floatflag || g_overflow || g_raytrace_output)
+				if (g_user_float_flag || g_overflow || g_raytrace_output)
 				{
 					v[0] = lv[0];
 					v[1] = lv[1];
@@ -433,7 +433,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		else
 			/* non-sphere 3D */
 		{
-			if (!usr_floatflag && !g_raytrace_output)
+			if (!g_user_float_flag && !g_raytrace_output)
 			{
 				/* flag to save vector before perspective */
 				/* in longvmultpersp calculation */
@@ -475,7 +475,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				}
 			}
 
-			if (usr_floatflag || g_overflow || g_raytrace_output)
+			if (g_user_float_flag || g_overflow || g_raytrace_output)
 				/* do in float if integer math overflowed or doing Ray trace */
 			{
 				/* slow float version for comparison */
@@ -493,8 +493,8 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 					if (g_raytrace_output == RAYTRACE_ACROSPIN)
 					{
-						f_cur.x = f_cur.x*(2.0f/xdots) - 1.0f;
-						f_cur.y = f_cur.y*(2.0f/ydots) - 1.0f;
+						f_cur.x = f_cur.x*(2.0f/g_x_dots) - 1.0f;
+						f_cur.y = f_cur.y*(2.0f/g_y_dots) - 1.0f;
 						f_cur.color = -f_cur.color*(2.0f/g_num_colors) - 1.0f;
 					}
 				}
@@ -546,11 +546,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 		{
 			if (col && g_current_row &&
 				old.x > BAD_CHECK &&
-				old.x < (xdots - BAD_CHECK) &&
+				old.x < (g_x_dots - BAD_CHECK) &&
 				s_last_row[col].x > BAD_CHECK &&
 				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (xdots - BAD_CHECK) &&
-				s_last_row[col].y < (ydots - BAD_CHECK))
+				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+				s_last_row[col].y < (g_y_dots - BAD_CHECK))
 			{
 				/* Get rid of all the triangles in the plane at the base of
 				* the object */
@@ -581,12 +581,12 @@ int line3d(BYTE *pixels, unsigned linelen)
 			if (col < last_dot && g_current_row &&
 				s_last_row[col].x > BAD_CHECK &&
 				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (xdots - BAD_CHECK) &&
-				s_last_row[col].y < (ydots - BAD_CHECK) &&
+				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+				s_last_row[col].y < (g_y_dots - BAD_CHECK) &&
 				s_last_row[next].x > BAD_CHECK &&
 				s_last_row[next].y > BAD_CHECK &&
-				s_last_row[next].x < (xdots - BAD_CHECK) &&
-				s_last_row[next].y < (ydots - BAD_CHECK))
+				s_last_row[next].x < (g_x_dots - BAD_CHECK) &&
+				s_last_row[next].y < (g_y_dots - BAD_CHECK))
 			{
 				/* Get rid of all the triangles in the plane at the base of
 				* the object */
@@ -632,15 +632,15 @@ int line3d(BYTE *pixels, unsigned linelen)
 		case FILLTYPE_SURFACE_GRID:
 			if (col &&
 				old.x > BAD_CHECK &&
-				old.x < (xdots - BAD_CHECK))
+				old.x < (g_x_dots - BAD_CHECK))
 			{
 				driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 			}
 			if (g_current_row &&
 				s_last_row[col].x > BAD_CHECK &&
 				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (xdots - BAD_CHECK) &&
-				s_last_row[col].y < (ydots - BAD_CHECK))
+				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+				s_last_row[col].y < (g_y_dots - BAD_CHECK))
 			{
 				driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x,
 					cur.y, cur.color);
@@ -652,7 +652,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			break;
 
 		case FILLTYPE_WIRE_FRAME:                /* connect-a-dot */
-			if ((old.x < xdots) && (col) &&
+			if ((old.x < g_x_dots) && (col) &&
 				old.x > BAD_CHECK &&
 				old.y > BAD_CHECK)      /* Don't draw from old to cur on col 0 */
 			{
@@ -731,17 +731,17 @@ int line3d(BYTE *pixels, unsigned linelen)
 			{
 				old.x = 0;
 			}
-			else if (old.x >= xdots)
+			else if (old.x >= g_x_dots)
 			{
-				old.x = xdots - 1;
+				old.x = g_x_dots - 1;
 			}
 			if (old.y < 0)
 			{
 				old.y = 0;
 			}
-			else if (old.y >= ydots)
+			else if (old.y >= g_y_dots)
 			{
-				old.y = ydots - 1;
+				old.y = g_y_dots - 1;
 			}
 			driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
 			break;
@@ -954,8 +954,8 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 		}
 	}
 
-	S[0][1][0] = S[0][2][0] = S[1][1][0] = S[1][2][0] = xdots - 1;
-	S[0][2][1] = S[0][3][1] = S[1][2][1] = S[1][3][1] = ydots - 1;
+	S[0][1][0] = S[0][2][0] = S[1][1][0] = S[1][2][0] = g_x_dots - 1;
+	S[0][2][1] = S[0][3][1] = S[1][2][1] = S[1][3][1] = g_y_dots - 1;
 	S[1][0][2] = S[1][1][2] = S[1][2][2] = S[1][3][2] = s_z_coord - 1;
 
 	for (i = 0; i < 4; ++i)
@@ -1171,7 +1171,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 static void _fastcall put_minmax(int x, int y, int color)
 {
 	color = 0; /* to supress warning only */
-	if (y >= 0 && y < ydots)
+	if (y >= 0 && y < g_y_dots)
 	{
 		if (x < s_minmax_x[y].minx)
 		{
@@ -1253,9 +1253,9 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 	{
 		miny = 0;
 	}
-	if (maxy >= ydots)
+	if (maxy >= g_y_dots)
 	{
-		maxy = ydots - 1;
+		maxy = g_y_dots - 1;
 	}
 
 	for (y = miny; y <= maxy; y++)
@@ -1285,7 +1285,7 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 
 static int _fastcall off_screen(struct point pt)
 {
-	if ((pt.x >= 0) && (pt.x < xdots) && (pt.y >= 0) && (pt.y < ydots))
+	if ((pt.x >= 0) && (pt.x < g_x_dots) && (pt.y >= 0) && (pt.y < g_y_dots))
 	{
 		return 0;      /* point is ok */
 	}
@@ -1299,8 +1299,8 @@ static int _fastcall off_screen(struct point pt)
 
 static void _fastcall clip_color(int x, int y, int color)
 {
-	if (0 <= x && x < xdots &&
-		0 <= y && y < ydots &&
+	if (0 <= x && x < g_x_dots &&
+		0 <= y && y < g_y_dots &&
 		0 <= color && color < g_file_colors)
 	{
 		assert(g_standard_plot);
@@ -1325,8 +1325,8 @@ static void _fastcall clip_color(int x, int y, int color)
 
 static void _fastcall transparent_clip_color(int x, int y, int color)
 {
-	if (0 <= x && x < xdots &&   /* is the point on screen?  */
-		0 <= y && y < ydots &&   /* Yes?  */
+	if (0 <= x && x < g_x_dots &&   /* is the point on screen?  */
+		0 <= y && y < g_y_dots &&   /* Yes?  */
 		0 <= color && color < g_colors &&  /* Colors in valid range?  */
 		/* Lets make sure its not a transparent color  */
 		(g_transparent[0] > color || color > g_transparent[1]))
@@ -1374,8 +1374,8 @@ static void _fastcall interp_color(int x, int y, int color)
 				(long) (d1 + d2)*(long) s_p3.color)/D);
 	}
 
-	if (0 <= x && x < xdots &&
-		0 <= y && y < ydots &&
+	if (0 <= x && x < g_x_dots &&
+		0 <= y && y < g_y_dots &&
 		0 <= color && color < g_colors &&
 		(g_transparent[1] == 0 || (int) s_real_color > g_transparent[1] ||
 			g_transparent[0] > (int) s_real_color))
@@ -1624,7 +1624,7 @@ int startdisk1(char *file_name2, FILE *Source, int overlay)
 	}
 
 	/* Finished with the header, now lets work on the display area  */
-	for (i = 0; i < ydots; i++)  /* "clear the screen" (write to the disk) */
+	for (i = 0; i < g_y_dots; i++)  /* "clear the screen" (write to the disk) */
 	{
 		for (j = 0; j < s_line_length; j = j + inc)
 		{
@@ -2045,14 +2045,14 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 	float pt_t[3][3];
 
 	/* Normalize each vertex to screen size and adjust coordinate system */
-	pt_t[0][0] = 2*pt1.x/xdots - 1;
-	pt_t[0][1] = (2*pt1.y/ydots - 1);
+	pt_t[0][0] = 2*pt1.x/g_x_dots - 1;
+	pt_t[0][1] = (2*pt1.y/g_y_dots - 1);
 	pt_t[0][2] = -2*pt1.color/g_num_colors - 1;
-	pt_t[1][0] = 2*pt2.x/xdots - 1;
-	pt_t[1][1] = (2*pt2.y/ydots - 1);
+	pt_t[1][0] = 2*pt2.x/g_x_dots - 1;
+	pt_t[1][1] = (2*pt2.y/g_y_dots - 1);
 	pt_t[1][2] = -2*pt2.color/g_num_colors - 1;
-	pt_t[2][0] = 2*pt3.x/xdots - 1;
-	pt_t[2][1] = (2*pt3.y/ydots - 1);
+	pt_t[2][0] = 2*pt3.x/g_x_dots - 1;
+	pt_t[2][1] = (2*pt3.y/g_y_dots - 1);
 	pt_t[2][2] = -2*pt3.color/g_num_colors - 1;
 
 	/* Color of triangle is average of g_colors of its verticies */
@@ -2397,18 +2397,18 @@ static void line3d_cleanup(void)
 			dir_remove(g_work_dir, s_targa_temp);
 		}
 	}
-	usr_floatflag &= 1;          /* strip second bit */
+	g_user_float_flag &= 1;          /* strip second bit */
 	s_file_error = FILEERROR_NONE;
 	s_targa_safe = 0;
 }
 
 static void set_upr_lwr(void)
 {
-	s_targa_size[0] = (BYTE)(xdots & 0xff);
-	s_targa_size[1] = (BYTE)(xdots >> 8);
-	s_targa_size[2] = (BYTE)(ydots & 0xff);
-	s_targa_size[3] = (BYTE)(ydots >> 8);
-	s_line_length = 3*xdots;    /* line length @ 3 bytes per pixel  */
+	s_targa_size[0] = (BYTE)(g_x_dots & 0xff);
+	s_targa_size[1] = (BYTE)(g_x_dots >> 8);
+	s_targa_size[2] = (BYTE)(g_y_dots & 0xff);
+	s_targa_size[3] = (BYTE)(g_y_dots >> 8);
+	s_line_length = 3*g_x_dots;    /* line length @ 3 bytes per pixel  */
 }
 
 static int first_time(int linelen, VECTOR v)
@@ -2417,8 +2417,8 @@ static int first_time(int linelen, VECTOR v)
 	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
 	float twocosdeltatheta;
 	double xval, yval, zval;     /* rotation values */
-	/* corners of transformed xdotx by ydots x g_colors box */
-	double xmin, ymin, zmin, xmax, ymax, zmax;
+	/* corners of transformed xdotx by g_y_dots x g_colors box */
+	double g_x_min, g_y_min, zmin, g_x_max, g_y_max, zmax;
 	int i, j;
 	double v_length;
 	VECTOR origin, direct, tmp;
@@ -2503,7 +2503,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* aspect ratio calculation - assume screen is 4 x 3 */
-	s_aspect = (double) xdots *.75/(double) ydots;
+	s_aspect = (double) g_x_dots *.75/(double) g_y_dots;
 
 	if (SPHERE == FALSE)         /* skip this slow stuff in sphere case */
 	{
@@ -2524,8 +2524,8 @@ static int first_time(int linelen, VECTOR v)
 
 		/* translate so origin is in center of box, so that when we rotate */
 		/* it, we do so through the center */
-		trans((double) xdots/-2.0, (double) ydots/-2.0, (double) s_z_coord/-2.0, s_m);
-		trans((double) xdots/-2.0, (double) ydots/-2.0, (double) s_z_coord/-2.0, lightm);
+		trans((double) g_x_dots/-2.0, (double) g_y_dots/-2.0, (double) s_z_coord/-2.0, s_m);
+		trans((double) g_x_dots/-2.0, (double) g_y_dots/-2.0, (double) s_z_coord/-2.0, lightm);
 
 		/* apply scale factors */
 		scale(s_scale_x, s_scale_y, s_scale_z, s_m);
@@ -2552,7 +2552,7 @@ static int first_time(int linelen, VECTOR v)
 		/* m current matrix */
 		/* 0 means don't show box */
 		/* returns minimum and maximum values of x, y, z in fractal */
-		corners(s_m, 0, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+		corners(s_m, 0, &g_x_min, &g_y_min, &zmin, &g_x_max, &g_y_max, &zmax);
 	}
 
 	/* perspective 3D vector - s_lview[2] == 0 means no perspective */
@@ -2564,19 +2564,19 @@ static int first_time(int linelen, VECTOR v)
 		s_persp = 1;
 		if (ZVIEWER < 80)         /* force float */
 		{
-			usr_floatflag |= 2;    /* turn on second bit */
+			g_user_float_flag |= 2;    /* turn on second bit */
 		}
 	}
 
 	/* set up view vector, and put viewer in center of screen */
-	s_lview[0] = xdots >> 1;
-	s_lview[1] = ydots >> 1;
+	s_lview[0] = g_x_dots >> 1;
+	s_lview[1] = g_y_dots >> 1;
 
 	/* z value of user's eye - should be more negative than extreme negative
 	* part of image */
 	if (SPHERE)                  /* sphere case */
 	{
-		s_lview[2] = -(long) ((double) ydots*(double) ZVIEWER/100.0);
+		s_lview[2] = -(long) ((double) g_y_dots*(double) ZVIEWER/100.0);
 	}
 	else                         /* non-sphere case */
 	{
@@ -2594,10 +2594,10 @@ static int first_time(int linelen, VECTOR v)
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
-		trans(((double) xdots - xmax - xmin)/2, ((double) ydots - ymax - ymin)/2, -zmax, s_m);
+		trans(((double) g_x_dots - g_x_max - g_x_min)/2, ((double) g_y_dots - g_y_max - g_y_min)/2, -zmax, s_m);
 
 		/* Keep the box centered and on screen regardless of shifts */
-		trans(((double) xdots - xmax - xmin)/2, ((double) ydots - ymax - ymin)/2, -zmax, lightm);
+		trans(((double) g_x_dots - g_x_max - g_x_min)/2, ((double) g_y_dots - g_y_max - g_y_min)/2, -zmax, lightm);
 
 		trans((double) (g_x_shift), (double) (-g_y_shift), 0.0, s_m);
 
@@ -2687,7 +2687,7 @@ static int first_time(int linelen, VECTOR v)
 		}
 
 		/* radius of planet */
-		s_radius = (double) (ydots)/2;
+		s_radius = (double) (g_y_dots)/2;
 
 		/* precalculate factor */
 		s_r_scale_r = s_radius*s_r_scale;
@@ -2714,8 +2714,8 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
 			* from being written */
-			zview = -(long) ((double) ydots*(double) ZVIEWER/100.0);
-			radius = (double) (ydots)/2;
+			zview = -(long) ((double) g_y_dots*(double) ZVIEWER/100.0);
+			radius = (double) (g_y_dots)/2;
 			angle = atan(-radius/(zview + radius));
 			s_z_cutoff = -radius - sin(angle)*radius;
 			s_z_cutoff *= 1.1;        /* for safety */
@@ -2775,16 +2775,16 @@ static int first_time(int linelen, VECTOR v)
 		normalize_vector(direct);
 
 		/* move light vector to be more clear with grey scale maps */
-		origin[0] = (3*xdots)/16;
-		origin[1] = (3*ydots)/4;
+		origin[0] = (3*g_x_dots)/16;
+		origin[1] = (3*g_y_dots)/4;
 		if (FILLTYPE == FILLTYPE_LIGHT_AFTER)
 		{
-			origin[1] = (11*ydots)/16;
+			origin[1] = (11*g_y_dots)/16;
 		}
 
 		origin[2] = 0.0;
 
-		v_length = min(xdots, ydots)/2;
+		v_length = min(g_x_dots, g_y_dots)/2;
 		if (s_persp && ZVIEWER <= PERSPECTIVE_DISTANCE)
 		{
 			v_length *= (long) (PERSPECTIVE_DISTANCE + 600)/((long) (ZVIEWER + 600)*2);
@@ -2809,10 +2809,10 @@ static int first_time(int linelen, VECTOR v)
 		* transform them if necessary. */
 		draw_light_box(origin, direct, lightm);
 		/* draw box around original field of view to help visualize effect of
-		* rotations 1 means show box - xmin etc. do nothing here */
+		* rotations 1 means show box - g_x_min etc. do nothing here */
 		if (!SPHERE)
 		{
-			corners(s_m, 1, &xmin, &ymin, &zmin, &xmax, &ymax, &zmax);
+			corners(s_m, 1, &g_x_min, &g_y_min, &zmin, &g_x_max, &g_y_max, &zmax);
 		}
 	}
 
@@ -2853,26 +2853,26 @@ static int line_3d_mem(void)
 		the purpose of filling in gaps with triangle procedure */
 	/* first 8k of extraseg now used in decoder TW 3/95 */
 	/* TODO: allocate real memory, not reuse shared segment */
-	s_last_row = (struct point *) malloc(sizeof(struct point)*xdots);
+	s_last_row = (struct point *) malloc(sizeof(struct point)*g_x_dots);
 
-	check_extra = sizeof(struct point)*xdots;
+	check_extra = sizeof(struct point)*g_x_dots;
 	if (SPHERE)
 	{
-		s_sin_theta_array = (float *) (s_last_row + xdots);
-		check_extra += sizeof(*s_sin_theta_array)*xdots;
-		s_cos_theta_array = (float *) (s_sin_theta_array + xdots);
-		check_extra += sizeof(*s_cos_theta_array)*xdots;
-		s_f_last_row = (struct f_point *) (s_cos_theta_array + xdots);
+		s_sin_theta_array = (float *) (s_last_row + g_x_dots);
+		check_extra += sizeof(*s_sin_theta_array)*g_x_dots;
+		s_cos_theta_array = (float *) (s_sin_theta_array + g_x_dots);
+		check_extra += sizeof(*s_cos_theta_array)*g_x_dots;
+		s_f_last_row = (struct f_point *) (s_cos_theta_array + g_x_dots);
 	}
 	else
 	{
-		s_f_last_row = (struct f_point *) (s_last_row + xdots);
+		s_f_last_row = (struct f_point *) (s_last_row + g_x_dots);
 	}
-	check_extra += sizeof(*s_f_last_row)*(xdots);
+	check_extra += sizeof(*s_f_last_row)*(g_x_dots);
 	if (g_potential_16bit)
 	{
-		s_fraction = (BYTE *) (s_f_last_row + xdots);
-		check_extra += sizeof(*s_fraction)*xdots;
+		s_fraction = (BYTE *) (s_f_last_row + g_x_dots);
+		check_extra += sizeof(*s_fraction)*g_x_dots;
 	}
 	s_minmax_x = (struct minmax *) NULL;
 
@@ -2884,7 +2884,7 @@ static int line_3d_mem(void)
 		|| FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
 		/* end of arrays if we use extra segement */
-		check_extra += sizeof(struct minmax)*ydots;
+		check_extra += sizeof(struct minmax)*g_y_dots;
 		if (check_extra > (1L << 16))     /* run out of extra segment? */
 		{
 			static struct minmax *got_mem = NULL;
@@ -2893,7 +2893,7 @@ static int line_3d_mem(void)
 				stopmsg(0, "malloc minmax");
 			}
 			/* not using extra segment so decrement check_extra */
-			check_extra -= sizeof(struct minmax)*ydots;
+			check_extra -= sizeof(struct minmax)*g_y_dots;
 			if (got_mem == NULL)
 			{
 				got_mem = (struct minmax *) (malloc(OLDMAXPIXELS*sizeof(struct minmax)));
@@ -2910,8 +2910,8 @@ static int line_3d_mem(void)
 		else /* ok to use extra segment */
 		{
 			s_minmax_x = g_potential_16bit ?
-				(struct minmax *) (s_fraction + xdots)
-				: (struct minmax *) (s_f_last_row + xdots);
+				(struct minmax *) (s_fraction + g_x_dots)
+				: (struct minmax *) (s_f_last_row + g_x_dots);
 		}
 	}
 	/* TODO: get rid of extra segment business */

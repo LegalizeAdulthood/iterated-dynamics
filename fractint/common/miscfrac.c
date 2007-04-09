@@ -151,7 +151,7 @@ static void _fastcall put_potential(int x, int y, U16 color)
 /* fixes border */
 static void _fastcall put_potential_border(int x, int y, U16 color)
 {
-	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
 		color = (U16)g_outside;
 	}
@@ -161,7 +161,7 @@ static void _fastcall put_potential_border(int x, int y, U16 color)
 /* fixes border */
 static void _fastcall put_color_border(int x, int y, int color)
 {
-	if ((x == 0) || (y == 0) || (x == xdots-1) || (y == ydots-1))
+	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
 		color = g_outside;
 	}
@@ -531,22 +531,22 @@ int plasma(void)
 	}
 
 	g_plot_color(0,      0,  rnd[0]);
-	g_plot_color(xdots-1,      0,  rnd[1]);
-	g_plot_color(xdots-1, ydots-1,  rnd[2]);
-	g_plot_color(0, ydots-1,  rnd[3]);
+	g_plot_color(g_x_dots-1,      0,  rnd[1]);
+	g_plot_color(g_x_dots-1, g_y_dots-1,  rnd[2]);
+	g_plot_color(0, g_y_dots-1,  rnd[3]);
 
 	s_recur_level = 0;
 	if (g_parameters[1] == 0)
 	{
-		subdivide(0, 0, xdots-1, ydots-1);
+		subdivide(0, 0, g_x_dots-1, g_y_dots-1);
 	}
 	else
 	{
 		s_recur1 = i = k = 1;
-		while (new_subdivision(0, 0, xdots-1, ydots-1, i) == 0)
+		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
 			k = k*2;
-			if (k  >(int)max(xdots-1, ydots-1))
+			if (k  >(int)max(g_x_dots-1, g_y_dots-1))
 			{
 				break;
 			}
@@ -626,7 +626,7 @@ static void set_plasma_palette()
 
 int diffusion(void)
 {
-	int xmax, ymax, xmin, ymin;     /* Current maximum coordinates */
+	int g_x_max, g_y_max, g_x_min, g_y_min;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
 					/*                             1 = falling particles */
@@ -676,20 +676,20 @@ int diffusion(void)
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL:
-		xmax = xdots / 2 + border;  /* Initial box */
-		xmin = xdots / 2 - border;
-		ymax = ydots / 2 + border;
-		ymin = ydots / 2 - border;
+		g_x_max = g_x_dots / 2 + border;  /* Initial box */
+		g_x_min = g_x_dots / 2 - border;
+		g_y_max = g_y_dots / 2 + border;
+		g_y_min = g_y_dots / 2 - border;
 		break;
 
 	case DIFFUSION_LINE:
-		xmax = xdots / 2 + border;  /* Initial box */
-		xmin = xdots / 2 - border;
-		ymin = ydots - border;
+		g_x_max = g_x_dots / 2 + border;  /* Initial box */
+		g_x_min = g_x_dots / 2 - border;
+		g_y_min = g_y_dots - border;
 		break;
 
 	case DIFFUSION_SQUARE:
-		radius = (xdots > ydots) ? (float) (ydots - border) : (float) (xdots - border);
+		radius = (g_x_dots > g_y_dots) ? (float) (g_y_dots - border) : (float) (g_x_dots - border);
 		break;
 	}
 
@@ -698,12 +698,12 @@ int diffusion(void)
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
 		{
-			get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
-				sizeof(ymin), &ymin, 0);
+			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min, sizeof(g_y_max), &g_y_max,
+				sizeof(g_y_min), &g_y_min, 0);
 		}
 		else
 		{
-			get_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin, sizeof(ymax), &ymax,
+			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min, sizeof(g_y_max), &g_y_max,
 				sizeof(radius), &radius, 0);
 		}
 		end_resume();
@@ -712,33 +712,33 @@ int diffusion(void)
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL: /* Single seed point in the center */
-		g_put_color(xdots / 2, ydots / 2, currentcolor);
+		g_put_color(g_x_dots / 2, g_y_dots / 2, currentcolor);
 		break;
 	case DIFFUSION_LINE: /* Line along the bottom */
-		for (i = 0; i <= xdots; i++)
+		for (i = 0; i <= g_x_dots; i++)
 		{
-			g_put_color(i, ydots-1, currentcolor);
+			g_put_color(i, g_y_dots-1, currentcolor);
 		}
 		break;
 	case DIFFUSION_SQUARE: /* Large square that fills the screen */
-		if (xdots > ydots)
+		if (g_x_dots > g_y_dots)
 		{
-			for (i = 0; i < ydots; i++)
+			for (i = 0; i < g_y_dots; i++)
 			{
-				g_put_color(xdots/2-ydots/2 , i , currentcolor);
-				g_put_color(xdots/2 + ydots/2 , i , currentcolor);
-				g_put_color(xdots/2-ydots/2 + i , 0 , currentcolor);
-				g_put_color(xdots/2-ydots/2 + i , ydots-1 , currentcolor);
+				g_put_color(g_x_dots/2-g_y_dots/2 , i , currentcolor);
+				g_put_color(g_x_dots/2 + g_y_dots/2 , i , currentcolor);
+				g_put_color(g_x_dots/2-g_y_dots/2 + i , 0 , currentcolor);
+				g_put_color(g_x_dots/2-g_y_dots/2 + i , g_y_dots-1 , currentcolor);
 			}
 		}
 		else
 		{
-			for (i = 0; i < xdots; i++)
+			for (i = 0; i < g_x_dots; i++)
 			{
-				g_put_color(0 , ydots/2-xdots/2 + i , currentcolor);
-				g_put_color(xdots-1 , ydots/2-xdots/2 + i , currentcolor);
-				g_put_color(i , ydots/2-xdots/2 , currentcolor);
-				g_put_color(i , ydots/2 + xdots/2 , currentcolor);
+				g_put_color(0 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
+				g_put_color(g_x_dots-1 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
+				g_put_color(i , g_y_dots/2-g_x_dots/2 , currentcolor);
+				g_put_color(i , g_y_dots/2 + g_x_dots/2 , currentcolor);
 			}
 		}
 		break;
@@ -751,22 +751,22 @@ int diffusion(void)
 		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
 			angle = 2*(double)rand()/(RAND_MAX/PI);
 			FPUsincos(&angle, &sine, &cosine);
-			x = (int)(cosine*(xmax-xmin) + xdots);
-			y = (int)(sine  *(ymax-ymin) + ydots);
+			x = (int)(cosine*(g_x_max-g_x_min) + g_x_dots);
+			y = (int)(sine  *(g_y_max-g_y_min) + g_y_dots);
 			x = x >> 1; /* divide by 2 */
 			y = y >> 1;
 			break;
-		case DIFFUSION_LINE: /* Release new point on the line ymin somewhere between xmin
-					and xmax */
-			y = ymin;
-			x = RANDOM(xmax-xmin) + (xdots-xmax + xmin)/2;
+		case DIFFUSION_LINE: /* Release new point on the line g_y_min somewhere between g_x_min
+					and g_x_max */
+			y = g_y_min;
+			x = RANDOM(g_x_max-g_x_min) + (g_x_dots-g_x_max + g_x_min)/2;
 			break;
 		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
 			angle = 2*(double)rand()/(RAND_MAX/PI);
 			FPUsincos(&angle, &sine, &cosine);
-			x = (int)(cosine*radius + xdots);
-			y = (int)(sine  *radius + ydots);
+			x = (int)(cosine*radius + g_x_dots);
+			y = (int)(sine  *radius + g_y_dots);
 			x = x >> 1;
 			y = y >> 1;
 			break;
@@ -788,28 +788,28 @@ int diffusion(void)
 
 			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
 			{
-				if (x == xmax)
+				if (x == g_x_max)
 				{
 					x--;
 				}
-				else if (x == xmin)
+				else if (x == g_x_min)
 				{
 					x++;
 				}
-				if (y == ymax)
+				if (y == g_y_max)
 				{
 					y--;
 				}
-				else if (y == ymin)
+				else if (y == g_y_min)
 				{
 					y++;
 				}
 			}
 
-			if (mode == DIFFUSION_LINE) /* Make sure point is on the screen below ymin, but
+			if (mode == DIFFUSION_LINE) /* Make sure point is on the screen below g_y_min, but
 							we need a 1 pixel margin because of the next random step.*/
 			{
-				if (x >= xdots-1)
+				if (x >= g_x_dots-1)
 				{
 					x--;
 				}
@@ -817,7 +817,7 @@ int diffusion(void)
 				{
 					x++;
 				}
-				if (y < ymin)
+				if (y < g_y_min)
 				{
 					y++;
 				}
@@ -835,13 +835,13 @@ int diffusion(void)
 					alloc_resume(20, 1);
 					if (mode != DIFFUSION_SQUARE)
 					{
-						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-							sizeof(ymax), &ymax, sizeof(ymin), &ymin, 0);
+						put_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
+							sizeof(g_y_max), &g_y_max, sizeof(g_y_min), &g_y_min, 0);
 					}
 					else
 					{
-						put_resume(sizeof(xmax), &xmax, sizeof(xmin), &xmin,
-							sizeof(ymax), &ymax, sizeof(radius), &radius, 0);
+						put_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
+							sizeof(g_y_max), &g_y_max, sizeof(radius), &radius, 0);
 					}
 					s_plasma_check--;
 					return 1;
@@ -882,33 +882,33 @@ int diffusion(void)
 		switch (mode)
 		{
 		case DIFFUSION_CENTRAL:
-			if (((x + border) > xmax) || ((x-border) < xmin)
-				|| ((y-border) < ymin) || ((y + border) > ymax))
+			if (((x + border) > g_x_max) || ((x-border) < g_x_min)
+				|| ((y-border) < g_y_min) || ((y + border) > g_y_max))
 			{
 				/* Increase box size, but not past the edge of the screen */
-				ymin--;
-				ymax++;
-				xmin--;
-				xmax++;
-				if ((ymin == 0) || (xmin == 0))
+				g_y_min--;
+				g_y_max++;
+				g_x_min--;
+				g_x_max++;
+				if ((g_y_min == 0) || (g_x_min == 0))
 				{
 					return 0;
 				}
 			}
 			break;
-		case DIFFUSION_LINE: /* Decrease ymin, but not past top of screen */
-			if (y-border < ymin)
+		case DIFFUSION_LINE: /* Decrease g_y_min, but not past top of screen */
+			if (y-border < g_y_min)
 			{
-				ymin--;
+				g_y_min--;
 			}
-			if (ymin == 0)
+			if (g_y_min == 0)
 			{
 				return 0;
 			}
 			break;
 		case DIFFUSION_SQUARE: /* Decrease the radius where points are released to stay away
 					from the fractal.  It might be decreased by 1 or 2 */
-			r = sqr((float)x-xdots/2) + sqr((float)y-ydots/2);
+			r = sqr((float)x-g_x_dots/2) + sqr((float)y-g_y_dots/2);
 			if (r <= border*border)
 			{
 				return 0;
@@ -1017,11 +1017,11 @@ int bifurcation(void)
 
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = ymax - g_y_stop*g_delta_y;            /* Y-value of    */
+		g_initial_z_l.y = g_y_max - g_y_stop*g_delta_y;            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(yymax - g_y_stop*g_delta_y_fp); /* bottom pixels */
+		g_initial_z.y = (double)(g_yy_max - g_y_stop*g_delta_y_fp); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1036,11 +1036,11 @@ int bifurcation(void)
 
 		if (g_integer_fractal)
 		{
-			lRate = xmin + column*g_delta_x;
+			lRate = g_x_min + column*g_delta_x;
 		}
 		else
 		{
-			Rate = (double)(xxmin + column*g_delta_x_fp);
+			Rate = (double)(g_xx_min + column*g_delta_x_fp);
 		}
 		verhulst();        /* calculate array once per column */
 
@@ -1550,9 +1550,9 @@ int lya_setup(void)
 		stopmsg(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
 		}
-	if (usr_stdcalcmode == 'o')  /* Oops, lyapunov type */
+	if (g_user_standard_calculation_mode == 'o')  /* Oops, lyapunov type */
 	{
-		usr_stdcalcmode = '1';  /* doesn't use new & breaks orbits */
+		g_user_standard_calculation_mode = '1';  /* doesn't use new & breaks orbits */
 		g_standard_calculation_mode = '1';
 		}
 	return 1;

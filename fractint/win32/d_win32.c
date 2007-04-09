@@ -78,7 +78,7 @@ int handle_timed_save(int ch)
 			}
 			else if (g_current_row != g_finish_row)
 			{
-				timedsave = TRUE;
+				g_timed_save = TRUE;
 				return FIK_SAVE_TIME;
 			}
 		}
@@ -141,12 +141,12 @@ handle_special_keys(int ch)
 		inside_help = 0;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && tabmode)
+	else if (FIK_TAB == ch && g_tab_mode)
 	{
-		int old_tab = tabmode;
-		tabmode = 0;
+		int old_tab = g_tab_mode;
+		g_tab_mode = 0;
 		tab_display();
-		tabmode = old_tab;
+		g_tab_mode = old_tab;
 		ch = 0;
 	}
 
@@ -393,7 +393,7 @@ win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	DI(di);
 
 	/* initially, set the virtual line to be the scan line length */
-	g_vxdots = g_screen_width;
+	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = FALSE;
 	g_good_mode = 1;

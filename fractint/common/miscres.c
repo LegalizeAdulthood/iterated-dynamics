@@ -188,12 +188,12 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 	double tmpx1, tmpx2, tmpy1, tmpy2, tmpa; /* temporary x, y, angle */
 
 	/* simple normal case first */
-	if (xx3rd == xxmin && yy3rd == yymin)
+	if (g_xx_3rd == g_xx_min && g_yy_3rd == g_yy_min)
 	{ /* no rotation or skewing, but stretching is allowed */
-		Width  = xxmax - xxmin;
-		Height = yymax - yymin;
-		*Xctr = (xxmin + xxmax)/2.0;
-		*Yctr = (yymin + yymax)/2.0;
+		Width  = g_xx_max - g_xx_min;
+		Height = g_yy_max - g_yy_min;
+		*Xctr = (g_xx_min + g_xx_max)/2.0;
+		*Yctr = (g_yy_min + g_yy_max)/2.0;
 		*Magnification  = 2.0/Height;
 		*Xmagfactor =  Height / (DEFAULTASPECT*Width);
 		*Rotation = 0.0;
@@ -202,27 +202,27 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 	else
 	{
 		/* set up triangle ABC, having sides abc */
-		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
-		tmpx1 = xxmax - xxmin;
-		tmpy1 = yymax - yymin;
+		/* side a = bottom, b = left, c = diagonal not containing (g_x_3rd, g_y_3rd) */
+		tmpx1 = g_xx_max - g_xx_min;
+		tmpy1 = g_yy_max - g_yy_min;
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-		tmpx1 = xxmax - xx3rd;
-		tmpy1 = yymin - yy3rd;
+		tmpx1 = g_xx_max - g_xx_3rd;
+		tmpy1 = g_yy_min - g_yy_3rd;
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrt(a2);
 		*Rotation = -rad_to_deg(atan2(tmpy1, tmpx1)); /* negative for image rotation */
 
-		tmpx2 = xxmin - xx3rd;
-		tmpy2 = yymax - yy3rd;
+		tmpx2 = g_xx_min - g_xx_3rd;
+		tmpy2 = g_yy_max - g_yy_3rd;
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrt(b2);
 
 		tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
 		*Skew = 90.0 - rad_to_deg(tmpa);
 
-		*Xctr = (xxmin + xxmax)*0.5;
-		*Yctr = (yymin + yymax)*0.5;
+		*Xctr = (g_xx_min + g_xx_max)*0.5;
+		*Yctr = (g_yy_min + g_yy_max)*0.5;
 
 		Height = b*sin(tmpa);
 
@@ -248,29 +248,29 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 	{
 		double txmin, txmax, tx3rd, tymin, tymax, ty3rd;
 		double error;
-		txmin = xxmin;
-		txmax = xxmax;
-		tx3rd = xx3rd;
-		tymin = yymin;
-		tymax = yymax;
-		ty3rd = yy3rd;
+		txmin = g_xx_min;
+		txmax = g_xx_max;
+		tx3rd = g_xx_3rd;
+		tymin = g_yy_min;
+		tymax = g_yy_max;
+		ty3rd = g_yy_3rd;
 		cvtcorners(*Xctr, *Yctr, *Magnification, *Xmagfactor, *Rotation, *Skew);
-		error = sqr(txmin - xxmin) +
-			sqr(txmax - xxmax) +
-			sqr(tx3rd - xx3rd) +
-			sqr(tymin - yymin) +
-			sqr(tymax - yymax) +
-			sqr(ty3rd - yy3rd);
+		error = sqr(txmin - g_xx_min) +
+			sqr(txmax - g_xx_max) +
+			sqr(tx3rd - g_xx_3rd) +
+			sqr(tymin - g_yy_min) +
+			sqr(tymax - g_yy_max) +
+			sqr(ty3rd - g_yy_3rd);
 		if (error > .001)
 		{
 			showcornersdbl("cvtcentermag problem");
 		}
-		xxmin = txmin;
-		xxmax = txmax;
-		xx3rd = tx3rd;
-		yymin = tymin;
-		yymax = tymax;
-		yy3rd = ty3rd;
+		g_xx_min = txmin;
+		g_xx_max = txmax;
+		g_xx_3rd = tx3rd;
+		g_yy_min = tymin;
+		g_yy_max = tymax;
+		g_yy_3rd = ty3rd;
 	}
 #endif
 	return;
@@ -294,20 +294,20 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
-		xx3rd = xxmin = Xctr - w;
-		xxmax = Xctr + w;
-		yy3rd = yymin = Yctr - h;
-		yymax = Yctr + h;
+		g_xx_3rd = g_xx_min = Xctr - w;
+		g_xx_max = Xctr + w;
+		g_yy_3rd = g_yy_min = Yctr - h;
+		g_yy_max = Yctr + h;
 		return;
 		}
 
 	/* in unrotated, untranslated coordinate system */
 	tanskew = tan(deg_to_rad(Skew));
-	xxmin = -w + h*tanskew;
-	xxmax =  w - h*tanskew;
-	xx3rd = -w - h*tanskew;
-	yymax = h;
-	yy3rd = yymin = -h;
+	g_xx_min = -w + h*tanskew;
+	g_xx_max =  w - h*tanskew;
+	g_xx_3rd = -w - h*tanskew;
+	g_yy_max = h;
+	g_yy_3rd = g_yy_min = -h;
 
 	/* rotate coord system and then translate it */
 	Rotation = deg_to_rad(Rotation);
@@ -315,22 +315,22 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 	cosrot = cos(Rotation);
 
 	/* top left */
-	x = xxmin*cosrot + yymax*sinrot;
-	y = -xxmin*sinrot + yymax*cosrot;
-	xxmin = x + Xctr;
-	yymax = y + Yctr;
+	x = g_xx_min*cosrot + g_yy_max*sinrot;
+	y = -g_xx_min*sinrot + g_yy_max*cosrot;
+	g_xx_min = x + Xctr;
+	g_yy_max = y + Yctr;
 
 	/* bottom right */
-	x = xxmax*cosrot + yymin*sinrot;
-	y = -xxmax*sinrot + yymin*cosrot;
-	xxmax = x + Xctr;
-	yymin = y + Yctr;
+	x = g_xx_max*cosrot + g_yy_min*sinrot;
+	y = -g_xx_max*sinrot + g_yy_min*cosrot;
+	g_xx_max = x + Xctr;
+	g_yy_min = y + Yctr;
 
 	/* bottom left */
-	x = xx3rd*cosrot + yy3rd*sinrot;
-	y = -xx3rd*sinrot + yy3rd*cosrot;
-	xx3rd = x + Xctr;
-	yy3rd = y + Yctr;
+	x = g_xx_3rd*cosrot + g_yy_3rd*sinrot;
+	y = -g_xx_3rd*sinrot + g_yy_3rd*cosrot;
+	g_xx_3rd = x + Xctr;
+	g_yy_3rd = y + Yctr;
 
 	return;
 }
@@ -352,21 +352,21 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 	saved = save_stack();
 
 	/* simple normal case first */
-	/* if (xx3rd == xxmin && yy3rd == yymin) */
+	/* if (g_xx_3rd == g_xx_min && g_yy_3rd == g_yy_min) */
 	if (!cmp_bf(bfx3rd, bfxmin) && !cmp_bf(bfy3rd, bfymin))
 	{ /* no rotation or skewing, but stretching is allowed */
 		bfWidth  = alloc_stack(bflength + 2);
 		bfHeight = alloc_stack(bflength + 2);
-		/* Width  = xxmax - xxmin; */
+		/* Width  = g_xx_max - g_xx_min; */
 		sub_bf(bfWidth, bfxmax, bfxmin);
 		Width  = bftofloat(bfWidth);
-		/* Height = yymax - yymin; */
+		/* Height = g_yy_max - g_yy_min; */
 		sub_bf(bfHeight, bfymax, bfymin);
 		Height = bftofloat(bfHeight);
-		/* *Xctr = (xxmin + xxmax)/2; */
+		/* *Xctr = (g_xx_min + g_xx_max)/2; */
 		add_bf(Xctr, bfxmin, bfxmax);
 		half_a_bf(Xctr);
-		/* *Yctr = (yymin + yymax)/2; */
+		/* *Yctr = (g_yy_min + g_yy_max)/2; */
 		add_bf(Yctr, bfymin, bfymax);
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
@@ -380,22 +380,22 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		bftmpy = alloc_stack(bflength + 2);
 
 		/* set up triangle ABC, having sides abc */
-		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
+		/* side a = bottom, b = left, c = diagonal not containing (g_x_3rd, g_y_3rd) */
 		/* IMPORTANT: convert from bf AFTER subtracting */
 
-		/* tmpx = xxmax - xxmin; */
+		/* tmpx = g_xx_max - g_xx_min; */
 		sub_bf(bftmpx, bfxmax, bfxmin);
 		tmpx1 = bftofloat(bftmpx);
-		/* tmpy = yymax - yymin; */
+		/* tmpy = g_yy_max - g_yy_min; */
 		sub_bf(bftmpy, bfymax, bfymin);
 		tmpy1 = bftofloat(bftmpy);
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-		/* tmpx = xxmax - xx3rd; */
+		/* tmpx = g_xx_max - g_xx_3rd; */
 		sub_bf(bftmpx, bfxmax, bfx3rd);
 		tmpx1 = bftofloat(bftmpx);
 
-		/* tmpy = yymin - yy3rd; */
+		/* tmpy = g_yy_min - g_yy_3rd; */
 		sub_bf(bftmpy, bfymin, bfy3rd);
 		tmpy1 = bftofloat(bftmpy);
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
@@ -410,10 +410,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		}
 		*Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
 
-		/* tmpx = xxmin - xx3rd; */
+		/* tmpx = g_xx_min - g_xx_3rd; */
 		sub_bf(bftmpx, bfxmin, bfx3rd);
 		tmpx2 = bftofloat(bftmpx);
-		/* tmpy = yymax - yy3rd; */
+		/* tmpy = g_yy_max - g_yy_3rd; */
 		sub_bf(bftmpy, bfymax, bfy3rd);
 		tmpy2 = bftofloat(bftmpy);
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
@@ -423,10 +423,10 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 		*Skew = 90 - rad_to_deg(tmpa);
 
 		/* these are the only two variables that must use big precision */
-		/* *Xctr = (xxmin + xxmax)/2; */
+		/* *Xctr = (g_xx_min + g_xx_max)/2; */
 		add_bf(Xctr, bfxmin, bfxmax);
 		half_a_bf(Xctr);
-		/* *Yctr = (yymin + yymax)/2; */
+		/* *Yctr = (g_yy_min + g_yy_max)/2; */
 		add_bf(Yctr, bfymin, bfymax);
 		half_a_bf(Yctr);
 
@@ -458,7 +458,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 {
 	LDBL x, y;
 	LDBL h, w; /* half height, width */
-	LDBL xmin, ymin, xmax, ymax, x3rd, y3rd;
+	LDBL g_x_min, g_y_min, g_x_max, g_y_max, g_x_3rd, g_y_3rd;
 	double tanskew, sinrot, cosrot;
 	bf_t bfh, bfw;
 	bf_t bftmp;
@@ -480,15 +480,15 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
-		/* xx3rd = xxmin = Xctr - w; */
+		/* g_xx_3rd = g_xx_min = Xctr - w; */
 		sub_bf(bfxmin, Xctr, bfw);
 		copy_bf(bfx3rd, bfxmin);
-		/* xxmax = Xctr + w; */
+		/* g_xx_max = Xctr + w; */
 		add_bf(bfxmax, Xctr, bfw);
-		/* yy3rd = yymin = Yctr - h; */
+		/* g_yy_3rd = g_yy_min = Yctr - h; */
 		sub_bf(bfymin, Yctr, bfh);
 		copy_bf(bfy3rd, bfymin);
-		/* yymax = Yctr + h; */
+		/* g_yy_max = Yctr + h; */
 		add_bf(bfymax, Yctr, bfh);
 		restore_stack(saved);
 		return;
@@ -497,11 +497,11 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	bftmp = alloc_stack(bflength + 2);
 	/* in unrotated, untranslated coordinate system */
 	tanskew = tan(deg_to_rad(Skew));
-	xmin = -w + h*tanskew;
-	xmax =  w - h*tanskew;
-	x3rd = -w - h*tanskew;
-	ymax = h;
-	y3rd = ymin = -h;
+	g_x_min = -w + h*tanskew;
+	g_x_max =  w - h*tanskew;
+	g_x_3rd = -w - h*tanskew;
+	g_y_max = h;
+	g_y_3rd = g_y_min = -h;
 
 	/* rotate coord system and then translate it */
 	Rotation = deg_to_rad(Rotation);
@@ -509,32 +509,32 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 	cosrot = cos(Rotation);
 
 	/* top left */
-	x =  xmin*cosrot + ymax*sinrot;
-	y = -xmin*sinrot + ymax*cosrot;
-	/* xxmin = x + Xctr; */
+	x =  g_x_min*cosrot + g_y_max*sinrot;
+	y = -g_x_min*sinrot + g_y_max*cosrot;
+	/* g_xx_min = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfxmin, bftmp, Xctr);
-	/* yymax = y + Yctr; */
+	/* g_yy_max = y + Yctr; */
 	floattobf(bftmp, y);
 	add_bf(bfymax, bftmp, Yctr);
 
 	/* bottom right */
-	x =  xmax*cosrot + ymin*sinrot;
-	y = -xmax*sinrot + ymin*cosrot;
-	/* xxmax = x + Xctr; */
+	x =  g_x_max*cosrot + g_y_min*sinrot;
+	y = -g_x_max*sinrot + g_y_min*cosrot;
+	/* g_xx_max = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfxmax, bftmp, Xctr);
-	/* yymin = y + Yctr; */
+	/* g_yy_min = y + Yctr; */
 	floattobf(bftmp, y);
 	add_bf(bfymin, bftmp, Yctr);
 
 	/* bottom left */
-	x =  x3rd*cosrot + y3rd*sinrot;
-	y = -x3rd*sinrot + y3rd*cosrot;
-	/* xx3rd = x + Xctr; */
+	x =  g_x_3rd*cosrot + g_y_3rd*sinrot;
+	y = -g_x_3rd*sinrot + g_y_3rd*cosrot;
+	/* g_xx_3rd = x + Xctr; */
 	floattobf(bftmp, x);
 	add_bf(bfx3rd, bftmp, Xctr);
-	/* yy3rd = y + Yctr; */
+	/* g_yy_3rd = y + Yctr; */
 	floattobf(bftmp, y);
 	add_bf(bfy3rd, bftmp, Yctr);
 
@@ -632,7 +632,7 @@ nextname:
 /* ('check_key()' was moved to FRACTINT.C for MSC7-overlay speed purposes) */
 /* ('timer()'     was moved to FRACTINT.C for MSC7-overlay speed purposes) */
 
-BYTE trigndx[] = {SIN, SQR, SINH, COSH};
+BYTE g_trig_index[] = {SIN, SQR, SINH, COSH};
 #if !defined(XFRACT)
 void (*ltrig0)(void) = lStkSin;
 void (*ltrig1)(void) = lStkSqr;
@@ -681,11 +681,11 @@ static void trigdetails(char *buf)
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
 	{
-		strcpy(buf, trigfn[trigndx[0]].name);
+		strcpy(buf, trigfn[g_trig_index[0]].name);
 		i = 0;
 		while (++i < numfn)
 		{
-			sprintf(tmpbuf, "/%s", trigfn[trigndx[i]].name);
+			sprintf(tmpbuf, "/%s", trigfn[g_trig_index[i]].name);
 			strcat(buf, tmpbuf);
 			}
 		}
@@ -712,7 +712,7 @@ int set_trig_array(int k, const char *name)
 	{
 		if (strcmp(trigname, trigfn[i].name) == 0)
 		{
-			trigndx[k] = (BYTE)i;
+			g_trig_index[k] = (BYTE)i;
 			set_trig_pointers(k);
 			break;
 		}
@@ -727,31 +727,31 @@ void set_trig_pointers(int which)
 	{
 	case 0:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig0 = trigfn[trigndx[0]].lfunct;
-		mtrig0 = trigfn[trigndx[0]].mfunct;
+		ltrig0 = trigfn[g_trig_index[0]].lfunct;
+		mtrig0 = trigfn[g_trig_index[0]].mfunct;
 #endif
-		dtrig0 = trigfn[trigndx[0]].dfunct;
+		dtrig0 = trigfn[g_trig_index[0]].dfunct;
 		break;
 	case 1:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig1 = trigfn[trigndx[1]].lfunct;
-		mtrig1 = trigfn[trigndx[1]].mfunct;
+		ltrig1 = trigfn[g_trig_index[1]].lfunct;
+		mtrig1 = trigfn[g_trig_index[1]].mfunct;
 #endif
-		dtrig1 = trigfn[trigndx[1]].dfunct;
+		dtrig1 = trigfn[g_trig_index[1]].dfunct;
 		break;
 	case 2:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig2 = trigfn[trigndx[2]].lfunct;
-		mtrig2 = trigfn[trigndx[2]].mfunct;
+		ltrig2 = trigfn[g_trig_index[2]].lfunct;
+		mtrig2 = trigfn[g_trig_index[2]].mfunct;
 #endif
-		dtrig2 = trigfn[trigndx[2]].dfunct;
+		dtrig2 = trigfn[g_trig_index[2]].dfunct;
 		break;
 	case 3:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig3 = trigfn[trigndx[3]].lfunct;
-		mtrig3 = trigfn[trigndx[3]].mfunct;
+		ltrig3 = trigfn[g_trig_index[3]].lfunct;
+		mtrig3 = trigfn[g_trig_index[3]].mfunct;
 #endif
-		dtrig3 = trigfn[trigndx[3]].dfunct;
+		dtrig3 = trigfn[g_trig_index[3]].dfunct;
 		break;
 	default: /* do 'em all */
 		for (i = 0; i < 4; i++)
@@ -843,8 +843,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		write_row(row++, "total_formula_mem %ld g_formula_max_ops (g_posp) %u g_formula_max_args (vsp) %u",
-			total_formula_mem, g_posp, vsp);
+		write_row(row++, "g_total_formula_mem %ld g_formula_max_ops (g_posp) %u g_formula_max_args (g_parser_vsp) %u",
+			g_total_formula_mem, g_posp, g_parser_vsp);
 		write_row(row++, "   Store ptr %d Loadptr %d g_formula_max_ops var %u g_formula_max_args var %u g_last_init_op %d",
 			g_store_ptr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
 	}
@@ -859,18 +859,18 @@ int tab_display_2(char *msg)
 	}
 
 /*
-	write_row(row++, "xdots %d ydots %d g_screen_width %d g_screen_height %d", xdots, ydots, g_screen_width, g_screen_height);
+	write_row(row++, "g_x_dots %d g_y_dots %d g_screen_width %d g_screen_height %d", g_x_dots, g_y_dots, g_screen_width, g_screen_height);
 */
-	write_row(row++, "%dx%d dm=%d %s (%s)", xdots, ydots, g_dot_mode,
+	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
 		g_driver->name, g_driver->description);
-	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s uses_ismand %d",
+	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s g_uses_is_mand %d",
 		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
 		g_current_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
 		g_current_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
-		"", uses_ismand);
+		"", g_uses_is_mand);
 /*
 	{
 		char message[80] = { 0 };
@@ -916,7 +916,7 @@ int tab_display()       /* display the status of the current image */
 	}
 	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
 	{
-		g_calculation_time += (clock_ticks() - timer_start) / (CLK_TCK/100);
+		g_calculation_time += (clock_ticks() - g_timer_start) / (CLK_TCK/100);
 	}
 	driver_stack_screen();
 	if (bf_math)
@@ -1017,14 +1017,14 @@ top:
 	i = j = 0;
 	if (g_display_3d > 0)
 	{
-		if (usr_floatflag)
+		if (g_user_float_flag)
 		{
 			j = 1;
 		}
 	}
 	else if (g_float_flag)
 	{
-		j = (usr_floatflag) ? 1 : 2;
+		j = (g_user_float_flag) ? 1 : 2;
 	}
 
 	if (bf_math == 0)
@@ -1072,14 +1072,14 @@ top:
 		case GOT_STATUS_12PASS:
 			sprintf(msg, "%d Pass Mode", g_total_passes);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
-			if (usr_stdcalcmode == '3')
+			if (g_user_standard_calculation_mode == '3')
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
 		case GOT_STATUS_GUESSING:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
-			if (usr_stdcalcmode == '3')
+			if (g_user_standard_calculation_mode == '3')
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
@@ -1168,10 +1168,10 @@ top:
 	}
 	_snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
 	driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
-	if (g_video_entry.xdots && bf_math == 0)
+	if (g_video_entry.x_dots && bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
-				g_video_entry.xdots, g_video_entry.ydots, g_video_entry.colors,
+				g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
 				g_video_entry.name, g_video_entry.comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}
@@ -1226,16 +1226,16 @@ top:
 		{
 			driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
 			driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
-			sprintf(msg, "%20.16f  %20.16f", xxmin, yymax);
+			sprintf(msg, "%20.16f  %20.16f", g_xx_min, g_yy_max);
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
-			sprintf(msg, "%20.16f  %20.16f", xxmax, yymin);
+			sprintf(msg, "%20.16f  %20.16f", g_xx_max, g_yy_min);
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
-			if (xxmin != xx3rd || yymin != yy3rd)
+			if (g_xx_min != g_xx_3rd || g_yy_min != g_yy_3rd)
 			{
 				driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
-				sprintf(msg, "%20.16f  %20.16f", xx3rd, yy3rd);
+				sprintf(msg, "%20.16f  %20.16f", g_xx_3rd, g_yy_3rd);
 				driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			}
 			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -1358,7 +1358,7 @@ top:
 		}
 	}
 	driver_unstack_screen();
-	timer_start = clock_ticks(); /* tab display was "time out" */
+	g_timer_start = clock_ticks(); /* tab display was "time out" */
 	if (bf_math)
 	{
 		restore_stack(saved);
@@ -1378,9 +1378,9 @@ static void area(void)
 		stopmsg(0, "Need solid inside to compute area");
 		return;
 	}
-	for (y = 0; y < ydots; y++)
+	for (y = 0; y < g_y_dots; y++)
 	{
-		for (x = 0; x < xdots; x++)
+		for (x = 0; x < g_x_dots; x++)
 		{
 			if (getcolor(x, y) == g_inside)
 			{
@@ -1397,8 +1397,8 @@ static void area(void)
 		msg = "";
 	}
 	sprintf(buf, "%s%ld inside pixels of %ld%s%f",
-			msg, cnt, (long)xdots*(long)ydots, ".  Total area ",
-			cnt/((float)xdots*(float)ydots)*(xxmax-xxmin)*(yymax-yymin));
+			msg, cnt, (long)g_x_dots*(long)g_y_dots, ".  Total area ",
+			cnt/((float)g_x_dots*(float)g_y_dots)*(g_xx_max-g_xx_min)*(g_yy_max-g_yy_min));
 	stopmsg(STOPMSG_NO_BUZZER, buf);
 }
 
@@ -1487,13 +1487,13 @@ int ifsload()                   /* read in IFS parameters */
 
 	for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 	{
-		((float *)tstack)[i] = 0;
+		((float *)g_text_stack)[i] = 0;
 	}
 	i = ret = 0;
 	bufptr = get_ifs_token(buf, ifsfile);
 	while (bufptr != NULL)
 	{
-		if (sscanf(bufptr, " %f ", &((float *)tstack)[i]) != 1)
+		if (sscanf(bufptr, " %f ", &((float *)g_text_stack)[i]) != 1)
 		{
 			break ;
 		}
@@ -1548,7 +1548,7 @@ int ifsload()                   /* read in IFS parameters */
 		{
 			for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 			{
-				g_ifs_definition[i] = ((float *)tstack)[i];
+				g_ifs_definition[i] = ((float *)g_text_stack)[i];
 			}
 		}
 	}

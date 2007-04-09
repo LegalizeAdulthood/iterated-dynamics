@@ -23,41 +23,41 @@ static Plot *s_plot = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
 
 static void
-plot_set_dirty_region(Plot *me, int xmin, int ymin, int xmax, int ymax)
+plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_max, int g_y_max)
 {
 	RECT *r = &me->dirty_region;
 
-	_ASSERTE(xmin < xmax);
-	_ASSERTE(ymin < ymax);
+	_ASSERTE(g_x_min < g_x_max);
+	_ASSERTE(g_y_min < g_y_max);
 	_ASSERTE((r->left <= r->right) && (r->top <= r->bottom));
 	if (r->left < 0)
 	{
-		r->left = xmin;
-		r->right = xmax;
-		r->top = ymin;
-		r->bottom = ymax;
+		r->left = g_x_min;
+		r->right = g_x_max;
+		r->top = g_y_min;
+		r->bottom = g_y_max;
 		me->dirty = TRUE;
 	}
 	else
 	{
-		if (xmin < r->left)
+		if (g_x_min < r->left)
 		{
-			r->left = xmin;
+			r->left = g_x_min;
 			me->dirty = TRUE;
 		}
-		if (xmax > r->right)
+		if (g_x_max > r->right)
 		{
-			r->right = xmax;
+			r->right = g_x_max;
 			me->dirty = TRUE;
 		}
-		if (ymin < r->top)
+		if (g_y_min < r->top)
 		{
-			r->top = ymin;
+			r->top = g_y_min;
 			me->dirty = TRUE;
 		}
-		if (ymax > r->bottom)
+		if (g_y_max > r->bottom)
 		{
-			r->bottom = ymax;
+			r->bottom = g_y_max;
 			me->dirty = TRUE;
 		}
 	}

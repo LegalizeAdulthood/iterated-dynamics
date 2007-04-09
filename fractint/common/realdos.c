@@ -1121,11 +1121,11 @@ int main_menu(int fullmenu)
 	int nextleft, nextright;
 	int oldtabmode;
 	int showjuliatoggle;
-	oldtabmode = tabmode;
+	oldtabmode = g_tab_mode;
 
 top:
 	menutype = fullmenu;
-	tabmode = 0;
+	g_tab_mode = 0;
 	showjuliatoggle = 0;
 	for (i = 0; i < 44; ++i)
 	{
@@ -1454,7 +1454,7 @@ top:
 	{
 		i = 0;                 /* don't trigger new calc */
 	}
-	tabmode = oldtabmode;
+	g_tab_mode = oldtabmode;
 	return i;
 }
 
@@ -1884,7 +1884,7 @@ void load_fractint_config(void)
 	FILE *cfgfile;
 	VIDEOINFO vident;
 	int linenum;
-	long xdots, ydots;
+	long g_x_dots, g_y_dots;
 	int i, j, keynum, ax, bx, cx, dx, dotmode, g_colors;
 	char *fields[11];
 	int textsafe2;
@@ -1943,8 +1943,8 @@ void load_fractint_config(void)
 		sscanf(fields[3], "%x", &cx);
 		sscanf(fields[4], "%x", &dx);
 		dotmode     = atoi(fields[5]);
-		xdots       = atol(fields[6]);
-		ydots       = atol(fields[7]);
+		g_x_dots       = atol(fields[6]);
+		g_y_dots       = atol(fields[7]);
 		g_colors      = atoi(fields[8]);
 		if (g_colors == 4 && strchr(strlwr(fields[8]), 'g'))
 		{
@@ -1977,8 +1977,8 @@ void load_fractint_config(void)
 				keynum < 0 ||
 				dotmode < 0 || dotmode > 30 ||
 				textsafe2 < 0 || textsafe2 > 4 ||
-				xdots < MINPIXELS || xdots > MAXPIXELS ||
-				ydots < MINPIXELS || ydots > MAXPIXELS ||
+				g_x_dots < MINPIXELS || g_x_dots > MAXPIXELS ||
+				g_y_dots < MINPIXELS || g_y_dots > MAXPIXELS ||
 				(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
 				g_colors != 256)
 			)
@@ -1997,8 +1997,8 @@ void load_fractint_config(void)
 		vident.videomodecx = cx;
 		vident.videomodedx = dx;
 		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
-		vident.xdots       = (short)xdots;
-		vident.ydots       = (short)ydots;
+		vident.x_dots       = (short)g_x_dots;
+		vident.y_dots       = (short)g_y_dots;
 		vident.colors      = g_colors;
 
 		/* if valid, add to supported modes */
@@ -2014,7 +2014,7 @@ void load_fractint_config(void)
 				{
 					VIDEOINFO *mode = &g_video_table[m];
 					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
-						(mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
+						(mode->x_dots == vident.x_dots) && (mode->y_dots == vident.y_dots) &&
 						(mode->dotmode == vident.dotmode))
 					{
 						if (0 == mode->keynum)

@@ -224,11 +224,11 @@ restart:
 					outcolor2 = 0;
 				}
 			}
-			for (i = 0; 250*i < xdots; i++)
+			for (i = 0; 250*i < g_x_dots; i++)
 			{  /* clear vert status bars */
 				g_put_color(i, j, getcolor(i, j) ^ outcolor1);
-				g_put_color(xdots - 1 - i, j,
-					getcolor(xdots - 1 - i, j) ^ outcolor2);
+				g_put_color(g_x_dots - 1 - i, j,
+					getcolor(g_x_dots - 1 - i, j) ^ outcolor2);
 			}
 		}
 	}
@@ -246,7 +246,7 @@ restart:
 		}
 		return -1;
 	}
-	if (timedsave == 0)
+	if (g_timed_save == 0)
 	{
 		driver_buzzer(BUZZER_COMPLETE);
 		if (g_initialize_batch == INITBATCH_NONE)
@@ -339,14 +339,14 @@ int encoder()
 		goto oops;             /* new GIF Signature */
 	}
 
-	width = xdots;
-	rowlimit = ydots;
+	width = g_x_dots;
+	rowlimit = g_y_dots;
 	if (save16bit)
 	{
 		/* g_potential_16bit info is stored as: file:    double width rows, right side
-		* of row is low 8 bits diskvid: ydots rows of g_colors followed by ydots
+		* of row is low 8 bits diskvid: g_y_dots rows of g_colors followed by g_y_dots
 		* rows of low 8 bits decoder: returns (row of color info then row of
-		* low 8 bits)*ydots */
+		* low 8 bits)*g_y_dots */
 		rowlimit <<= 1;
 		width <<= 1;
 	}
@@ -354,7 +354,7 @@ int encoder()
 	{
 		goto oops;                /* screen descriptor */
 	}
-	if (write2(&ydots, 2, 1, g_outfile) != 1)
+	if (write2(&g_y_dots, 2, 1, g_outfile) != 1)
 	{
 		goto oops;
 	}
@@ -371,14 +371,14 @@ int encoder()
 	i = 0;
 
 	/* TODO: pixel aspect ratio should be 1:1? */
-	if (viewwindow                               /* less than full screen?  */
-			&& (viewxdots == 0 || viewydots == 0))   /* and we picked the dots? */
+	if (g_view_window                               /* less than full screen?  */
+			&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
 	{
 		i = (int) (((double) g_screen_height / (double) g_screen_width)*64.0 / g_screen_aspect_ratio - 14.5);
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
-		i = (int) ((((double) ydots / (double) xdots) / g_final_aspect_ratio)*64 - 14.5);
+		i = (int) ((((double) g_y_dots / (double) g_x_dots) / g_final_aspect_ratio)*64 - 14.5);
 	}
 	if (i < 1)
 	{
@@ -480,7 +480,7 @@ int encoder()
 	{
 		goto oops;
 	}
-	if (write2(&ydots, 2, 1, g_outfile) != 1)
+	if (write2(&g_y_dots, 2, 1, g_outfile) != 1)
 	{
 		goto oops;
 	}
@@ -581,11 +581,11 @@ int encoder()
 				esave_info.py              = (short)py;
 				esave_info.sxoffs          = (short)g_sx_offset;
 				esave_info.syoffs          = (short)g_sy_offset;
-				esave_info.xdots           = (short)xdots;
-				esave_info.ydots           = (short)ydots;
+				esave_info.x_dots           = (short)g_x_dots;
+				esave_info.y_dots           = (short)g_y_dots;
 				esave_info.gridsz          = (short)g_grid_size;
 				esave_info.evolving        = (short) g_evolving;
-				esave_info.this_gen_rseed  = (unsigned short)this_gen_rseed;
+				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor    = g_fiddle_factor;
 				esave_info.ecount          = (short) (g_grid_size*g_grid_size); /* flag for done */
 			}
@@ -602,11 +602,11 @@ int encoder()
 				esave_info.py              = (short)resume_e_info.py;
 				esave_info.sxoffs          = (short)resume_e_info.sxoffs;
 				esave_info.syoffs          = (short)resume_e_info.syoffs;
-				esave_info.xdots           = (short)resume_e_info.xdots;
-				esave_info.ydots           = (short)resume_e_info.ydots;
+				esave_info.x_dots           = (short)resume_e_info.x_dots;
+				esave_info.y_dots           = (short)resume_e_info.y_dots;
 				esave_info.gridsz          = (short)resume_e_info.gridsz;
 				esave_info.evolving        = (short) resume_e_info.evolving;
-				esave_info.this_gen_rseed  = (unsigned short)resume_e_info.this_gen_rseed;
+				esave_info.this_generation_random_seed  = (unsigned short)resume_e_info.this_generation_random_seed;
 				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
 				esave_info.ecount          = resume_e_info.ecount;
 			}
@@ -711,7 +711,7 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 static int _fastcall extend_blk_len(int datalen)
 {
 	return datalen + (datalen + 254) / 255 + 15;
-	/* data   +     1.per.g_block   + 14 for id + 1 for null at end  */
+	/* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data)
@@ -755,20 +755,20 @@ static int _fastcall store_item_name(char *nameptr)
 	strcpy(fsave_info.form_name, nameptr);
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		fsave_info.uses_p1 = (short) uses_p1;
-		fsave_info.uses_p2 = (short) uses_p2;
-		fsave_info.uses_p3 = (short) uses_p3;
-		fsave_info.uses_ismand = (short) uses_ismand;
+		fsave_info.uses_p1 = (short) g_uses_p1;
+		fsave_info.uses_p2 = (short) g_uses_p2;
+		fsave_info.uses_p3 = (short) g_uses_p3;
+		fsave_info.uses_is_mand = (short) g_uses_is_mand;
 		fsave_info.ismand = (short) g_is_mand;
-		fsave_info.uses_p4 = (short) uses_p4;
-		fsave_info.uses_p5 = (short) uses_p5;
+		fsave_info.uses_p4 = (short) g_uses_p4;
+		fsave_info.uses_p5 = (short) g_uses_p5;
 	}
 	else
 	{
 		fsave_info.uses_p1 = 0;
 		fsave_info.uses_p2 = 0;
 		fsave_info.uses_p3 = 0;
-		fsave_info.uses_ismand = 0;
+		fsave_info.uses_is_mand = 0;
 		fsave_info.ismand = 0;
 		fsave_info.uses_p4 = 0;
 		fsave_info.uses_p5 = 0;
@@ -796,10 +796,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->iterationsold = (g_max_iteration <= SHRT_MAX) ? (short) g_max_iteration : (short) SHRT_MAX;
 
 	save_info->fractal_type = (short) g_fractal_type;
-	save_info->xmin = xxmin;
-	save_info->xmax = xxmax;
-	save_info->ymin = yymin;
-	save_info->ymax = yymax;
+	save_info->x_min = g_xx_min;
+	save_info->x_max = g_xx_max;
+	save_info->y_min = g_yy_min;
+	save_info->y_max = g_yy_max;
 	save_info->c_real = g_parameters[0];
 	save_info->c_imag = g_parameters[1];
 	save_info->videomodeax = (short) g_video_entry.videomodeax;
@@ -807,8 +807,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->videomodecx = (short) g_video_entry.videomodecx;
 	save_info->videomodedx = (short) g_video_entry.videomodedx;
 	save_info->dotmode = (short) (g_video_entry.dotmode % 100);
-	save_info->xdots = (short) g_video_entry.xdots;
-	save_info->ydots = (short) g_video_entry.ydots;
+	save_info->x_dots = (short) g_video_entry.x_dots;
+	save_info->y_dots = (short) g_video_entry.y_dots;
 	save_info->colors = (short) g_video_entry.colors;
 	save_info->parm3 = 0;        /* pre version == 7 fields */
 	save_info->parm4 = 0;
@@ -852,8 +852,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->eyeseparation = (short) g_eye_separation;
 	save_info->glassestype = (short) g_glasses_type;
 	save_info->outside = (short) g_outside;
-	save_info->x3rd = xx3rd;
-	save_info->y3rd = yy3rd;
+	save_info->x_3rd = g_xx_3rd;
+	save_info->y_3rd = g_yy_3rd;
 	save_info->calculation_status = (short) g_calculation_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ? 127 : g_standard_calculation_mode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
@@ -861,10 +861,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
 	save_info->calculation_time = g_calculation_time;
-	save_info->trigndx[0] = trigndx[0];
-	save_info->trigndx[1] = trigndx[1];
-	save_info->trigndx[2] = trigndx[2];
-	save_info->trigndx[3] = trigndx[3];
+	save_info->trig_index[0] = g_trig_index[0];
+	save_info->trig_index[1] = g_trig_index[1];
+	save_info->trig_index[2] = g_trig_index[2];
+	save_info->trig_index[3] = g_trig_index[3];
 	save_info->finattract = (short) g_finite_attractor;
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
@@ -1085,13 +1085,13 @@ static int compress(int rowlimit)
 
 	output((int)ClearCode);
 
-	for (rownum = 0; rownum < ydots; rownum++)
+	for (rownum = 0; rownum < g_y_dots; rownum++)
 	{                            /* scan through the dots */
-		for (ydot = rownum; ydot < rowlimit; ydot += ydots)
+		for (ydot = rownum; ydot < rowlimit; ydot += g_y_dots)
 		{
-			for (xdot = 0; xdot < xdots; xdot++)
+			for (xdot = 0; xdot < g_x_dots; xdot++)
 			{
-				color = (save16bit == 0 || ydot < ydots)
+				color = (save16bit == 0 || ydot < g_y_dots)
 					? getcolor(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
 				if (in_count == 0)
 				{
@@ -1160,12 +1160,12 @@ nomatch:
 						outcolor2 = 0;
 					}
 				}
-				for (i = 0; 250*i < xdots; i++)
+				for (i = 0; 250*i < g_x_dots; i++)
 				{  /* display vert status bars */
 					/* (this is NOT GIF-related)  */
 					g_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
-					g_put_color(xdots - 1 - i, ydot,
-						getcolor(xdots - 1 - i, ydot) ^ outcolor2);
+					g_put_color(g_x_dots - 1 - i, ydot,
+						getcolor(g_x_dots - 1 - i, ydot) ^ outcolor2);
 				}
 				last_colorbar = ydot;
 			} /* end if !driver_diskp() */
@@ -1173,7 +1173,7 @@ nomatch:
 			if (tempkey && (tempkey != (int)'s'))  /* keyboard hit - bail out */
 			{
 				interrupted = 1;
-				rownum = ydots;
+				rownum = g_y_dots;
 				break;
 			}
 			if (tempkey == (int)'s')

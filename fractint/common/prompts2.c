@@ -120,27 +120,27 @@ int get_toggles()
 	uvalues[k].uval.ch.vlen = 3;
 	uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
 	uvalues[k].uval.ch.list = calcmodes;
-	uvalues[k].uval.ch.val = (usr_stdcalcmode == '1') ? 0
-						: (usr_stdcalcmode == '2') ? 1
-						: (usr_stdcalcmode == '3') ? 2
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 0) ? 3
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 1) ? 4
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 2) ? 5
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 3) ? 6
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 4) ? 7
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 5) ? 8
-						: (usr_stdcalcmode == 'g' && g_stop_pass == 6) ? 9
-						: (usr_stdcalcmode == 'b') ? 10
-						: (usr_stdcalcmode == 's') ? 11
-						: (usr_stdcalcmode == 't') ? 12
-						: (usr_stdcalcmode == 'd') ? 13
+	uvalues[k].uval.ch.val = (g_user_standard_calculation_mode == '1') ? 0
+						: (g_user_standard_calculation_mode == '2') ? 1
+						: (g_user_standard_calculation_mode == '3') ? 2
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 0) ? 3
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 1) ? 4
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 2) ? 5
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 3) ? 6
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 4) ? 7
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 5) ? 8
+						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 6) ? 9
+						: (g_user_standard_calculation_mode == 'b') ? 10
+						: (g_user_standard_calculation_mode == 's') ? 11
+						: (g_user_standard_calculation_mode == 't') ? 12
+						: (g_user_standard_calculation_mode == 'd') ? 13
 						:        /* "o"rbits */      14;
-	old_usr_stdcalcmode = usr_stdcalcmode;
+	old_usr_stdcalcmode = g_user_standard_calculation_mode;
 	old_stoppass = g_stop_pass;
 #ifndef XFRACT
 	choices[++k] = "Floating Point Algorithm";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = usr_floatflag;
+	uvalues[k].uval.ch.val = g_user_float_flag;
 #endif
 	choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
 	uvalues[k].type = 'L';
@@ -281,21 +281,21 @@ int get_toggles()
 	k = -1;
 	j = 0;   /* return code */
 
-	usr_stdcalcmode = calcmodes[uvalues[++k].uval.ch.val][0];
+	g_user_standard_calculation_mode = calcmodes[uvalues[++k].uval.ch.val][0];
 	g_stop_pass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
 
-	if (g_stop_pass < 0 || g_stop_pass > 6 || usr_stdcalcmode != 'g')
+	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != 'g')
 	{
 		g_stop_pass = 0;
 	}
 
-	if (usr_stdcalcmode == 'o' && g_fractal_type == LYAPUNOV) /* Oops, lyapunov type */
+	if (g_user_standard_calculation_mode == 'o' && g_fractal_type == LYAPUNOV) /* Oops, lyapunov type */
 										/* doesn't use 'new' & breaks orbits */
 	{
-		usr_stdcalcmode = old_usr_stdcalcmode;
+		g_user_standard_calculation_mode = old_usr_stdcalcmode;
 	}
 
-	if (old_usr_stdcalcmode != usr_stdcalcmode)
+	if (old_usr_stdcalcmode != g_user_standard_calculation_mode)
 	{
 		j++;
 	}
@@ -304,9 +304,9 @@ int get_toggles()
 		j++;
 	}
 #ifndef XFRACT
-	if (uvalues[++k].uval.ch.val != usr_floatflag)
+	if (uvalues[++k].uval.ch.val != g_user_float_flag)
 	{
-		usr_floatflag = (char)uvalues[k].uval.ch.val;
+		g_user_float_flag = (char)uvalues[k].uval.ch.val;
 		j++;
 	}
 #endif
@@ -515,7 +515,7 @@ int get_toggles2()
 
 	choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
 	uvalues[k].type = 'L';
-	uvalues[k].uval.Lval = old_usr_distest = usr_distest;
+	uvalues[k].uval.Lval = old_usr_distest = g_user_distance_test;
 
 	choices[++k] = "          width factor:";
 	uvalues[k].type = 'i';
@@ -612,14 +612,14 @@ int get_toggles2()
 	}
 
 	++k;
-	usr_distest = uvalues[k].uval.Lval;
-	if (usr_distest != old_usr_distest)
+	g_user_distance_test = uvalues[k].uval.Lval;
+	if (g_user_distance_test != old_usr_distest)
 	{
 		j = 1;
 	}
 	++k;
 	g_distance_test_width = uvalues[k].uval.ival;
-	if (usr_distest && g_distance_test_width != old_distestwidth)
+	if (g_user_distance_test && g_distance_test_width != old_distestwidth)
 	{
 		j = 1;
 	}
@@ -681,7 +681,7 @@ pass_option_restart:
 
 	choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_periodicity = usr_periodicitycheck;
+	uvalues[k].uval.ival = old_periodicity = g_user_periodicity_check;
 
 	choices[++k] = "Orbit delay (0 = none)";
 	uvalues[k].type = 'i';
@@ -721,16 +721,16 @@ pass_option_restart:
 	k = -1;
 	j = 0;   /* return code */
 
-	usr_periodicitycheck = uvalues[++k].uval.ival;
-	if (usr_periodicitycheck > 255)
+	g_user_periodicity_check = uvalues[++k].uval.ival;
+	if (g_user_periodicity_check > 255)
 	{
-		usr_periodicitycheck = 255;
+		g_user_periodicity_check = 255;
 	}
-	if (usr_periodicitycheck < -255)
+	if (g_user_periodicity_check < -255)
 	{
-		usr_periodicitycheck = -255;
+		g_user_periodicity_check = -255;
 	}
-	if (usr_periodicitycheck != old_periodicity)
+	if (g_user_periodicity_check != old_periodicity)
 	{
 		j = 1;
 	}
@@ -803,10 +803,10 @@ pass_option_restart:
 }
 
 
-/* for videomodes added new options "virtual x/y" that change "sx/ydots" */
-/* for diskmode changed "viewx/ydots" to "virtual x/y" that do as above  */
-/* (since for diskmode they were updated by x/ydots that should be the   */
-/* same as sx/ydots for that mode)                                       */
+/* for videomodes added new options "virtual x/y" that change "sx/g_y_dots" */
+/* for diskmode changed "viewx/g_y_dots" to "virtual x/y" that do as above  */
+/* (since for diskmode they were updated by x/g_y_dots that should be the   */
+/* same as sx/g_y_dots for that mode)                                       */
 /* g_video_table and g_video_entry are now updated even for non-disk modes     */
 
 /* --------------------------------------------------------------------- */
@@ -826,15 +826,15 @@ int get_view_params()
 	int i, k;
 	float old_viewreduction, old_aspectratio;
 	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
-	int xmax, ymax;
+	int g_x_max, g_y_max;
 
-	driver_get_max_screen(&xmax, &ymax);
+	driver_get_max_screen(&g_x_max, &g_y_max);
 
-	old_viewwindow    = viewwindow;
-	old_viewreduction = viewreduction;
+	old_viewwindow    = g_view_window;
+	old_viewreduction = g_view_reduction;
 	old_aspectratio   = g_final_aspect_ratio;
-	old_viewxdots     = viewxdots;
-	old_viewydots     = viewydots;
+	old_viewxdots     = g_view_x_dots;
+	old_viewydots     = g_view_y_dots;
 	old_sxdots        = g_screen_width;
 	old_sydots        = g_screen_height;
 
@@ -846,11 +846,11 @@ get_view_restart:
 	{
 		choices[++k] = "Preview display? (no for full screen)";
 		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = viewwindow;
+		uvalues[k].uval.ch.val = g_view_window;
 
 		choices[++k] = "Auto window size reduction factor";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = viewreduction;
+		uvalues[k].uval.dval = g_view_reduction;
 
 		choices[++k] = "Final media overall aspect ratio, y/x";
 		uvalues[k].type = 'f';
@@ -858,15 +858,15 @@ get_view_restart:
 
 		choices[++k] = "Crop starting coordinates to new aspect ratio?";
 		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = viewcrop;
+		uvalues[k].uval.ch.val = g_view_crop;
 
 		choices[++k] = "Explicit size x pixels (0 for auto size)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = viewxdots;
+		uvalues[k].uval.ival = g_view_x_dots;
 
 		choices[++k] = "              y pixels (0 to base on aspect ratio)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = viewydots;
+		uvalues[k].uval.ival = g_view_y_dots;
 	}
 	else
 	{
@@ -899,9 +899,9 @@ get_view_restart:
 
 	if (i == FIK_F4 && !driver_diskp())
 	{
-		viewwindow = viewxdots = viewydots = 0;
-		viewreduction = 4.2f;
-		viewcrop = 1;
+		g_view_window = g_view_x_dots = g_view_y_dots = 0;
+		g_view_reduction = 4.2f;
+		g_view_crop = 1;
 		g_final_aspect_ratio = g_screen_aspect_ratio;
 		g_screen_width = old_sxdots;
 		g_screen_height = old_sydots;
@@ -913,28 +913,28 @@ get_view_restart:
 
 	if (!driver_diskp())
 	{
-		viewwindow = uvalues[++k].uval.ch.val;
-		viewreduction = (float) uvalues[++k].uval.dval;
+		g_view_window = uvalues[++k].uval.ch.val;
+		g_view_reduction = (float) uvalues[++k].uval.dval;
 		g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
-		viewcrop = uvalues[++k].uval.ch.val;
-		viewxdots = uvalues[++k].uval.ival;
-		viewydots = uvalues[++k].uval.ival;
+		g_view_crop = uvalues[++k].uval.ch.val;
+		g_view_x_dots = uvalues[++k].uval.ival;
+		g_view_y_dots = uvalues[++k].uval.ival;
 	}
 	else
 	{
 		g_screen_width = uvalues[++k].uval.ival;
 		g_screen_height = uvalues[++k].uval.ival;
-		if ((xmax != -1) && (g_screen_width > xmax))
+		if ((g_x_max != -1) && (g_screen_width > g_x_max))
 		{
-			g_screen_width = (int) xmax;
+			g_screen_width = (int) g_x_max;
 		}
 		if (g_screen_width < 2)
 		{
 			g_screen_width = 2;
 		}
-		if ((ymax != -1) && (g_screen_height > ymax))
+		if ((g_y_max != -1) && (g_screen_height > g_y_max))
 		{
-			g_screen_height = ymax;
+			g_screen_height = g_y_max;
 		}
 		if (g_screen_height < 2)
 		{
@@ -945,35 +945,35 @@ get_view_restart:
 
 	if (!driver_diskp())
 	{
-		if (viewxdots != 0 && viewydots != 0 && viewwindow && g_final_aspect_ratio == 0.0)
+		if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
 		{
-			g_final_aspect_ratio = ((float) viewydots)/((float) viewxdots);
+			g_final_aspect_ratio = ((float) g_view_y_dots)/((float) g_view_x_dots);
 		}
-		else if (g_final_aspect_ratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+		else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
 		{
 			g_final_aspect_ratio = old_aspectratio;
 		}
 
-		if (g_final_aspect_ratio != old_aspectratio && viewcrop)
+		if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
 		{
 			aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
 		}
 	}
 	else
 	{
-		g_video_entry.xdots = g_screen_width;
-		g_video_entry.ydots = g_screen_height;
+		g_video_entry.x_dots = g_screen_width;
+		g_video_entry.y_dots = g_screen_height;
 		g_final_aspect_ratio = ((float) g_screen_height)/((float) g_screen_width);
 		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
 	}
 
-	return (viewwindow != old_viewwindow
+	return (g_view_window != old_viewwindow
 		|| g_screen_width != old_sxdots || g_screen_height != old_sydots
-		|| (viewwindow
-			&& (viewreduction != old_viewreduction
+		|| (g_view_window
+			&& (g_view_reduction != old_viewreduction
 				|| g_final_aspect_ratio != old_aspectratio
-				|| viewxdots != old_viewxdots
-				|| (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;
+				|| g_view_x_dots != old_viewxdots
+				|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
 }
 
 /*
@@ -1062,9 +1062,9 @@ int starfield(void)
 		return -1;
 		}
 	spindac(0, 1);                 /* load it, but don't spin */
-	for (g_row = 0; g_row < ydots; g_row++)
+	for (g_row = 0; g_row < g_y_dots; g_row++)
 	{
-		for (g_col = 0; g_col < xdots; g_col++)
+		for (g_col = 0; g_col < g_x_dots; g_col++)
 		{
 			if (driver_key_pressed())
 			{
@@ -2088,9 +2088,9 @@ int get_corners()
 
 	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
-	oxxmin = xxmin; oxxmax = xxmax;
-	oyymin = yymin; oyymax = yymax;
-	oxx3rd = xx3rd; oyy3rd = yy3rd;
+	oxxmin = g_xx_min; oxxmax = g_xx_max;
+	oyymin = g_yy_min; oyymax = g_yy_max;
+	oxx3rd = g_xx_3rd; oyy3rd = g_yy_3rd;
 
 gc_loop:
 	for (i = 0; i < 15; ++i)
@@ -2132,40 +2132,40 @@ gc_loop:
 			prompts[++nump]= "Left End Point";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
-			values[nump].uval.dval = xxmin;
+			values[nump].uval.dval = g_xx_min;
 			prompts[++nump] = yprompt;
-			values[nump].uval.dval = yymax;
+			values[nump].uval.dval = g_yy_max;
 			prompts[++nump]= "Right End Point";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
-			values[nump].uval.dval = xxmax;
+			values[nump].uval.dval = g_xx_max;
 			prompts[++nump] = yprompt;
-			values[nump].uval.dval = yymin;
+			values[nump].uval.dval = g_yy_min;
 		}
 		else
 		{
 			prompts[++nump]= "Top-Left Corner";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
-			values[nump].uval.dval = xxmin;
+			values[nump].uval.dval = g_xx_min;
 			prompts[++nump] = yprompt;
-			values[nump].uval.dval = yymax;
+			values[nump].uval.dval = g_yy_max;
 			prompts[++nump]= "Bottom-Right Corner";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
-			values[nump].uval.dval = xxmax;
+			values[nump].uval.dval = g_xx_max;
 			prompts[++nump] = yprompt;
-			values[nump].uval.dval = yymin;
-			if (xxmin == xx3rd && yymin == yy3rd)
+			values[nump].uval.dval = g_yy_min;
+			if (g_xx_min == g_xx_3rd && g_yy_min == g_yy_3rd)
 			{
-				xx3rd = yy3rd = 0;
+				g_xx_3rd = g_yy_3rd = 0;
 			}
 			prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
 			values[nump].type = '*';
 			prompts[++nump] = xprompt;
-			values[nump].uval.dval = xx3rd;
+			values[nump].uval.dval = g_xx_3rd;
 			prompts[++nump] = yprompt;
-			values[nump].uval.dval = yy3rd;
+			values[nump].uval.dval = g_yy_3rd;
 			prompts[++nump]= "Press "FK_F7" to switch to \"center-mag\" mode";
 			values[nump].type = '*';
 		}
@@ -2182,19 +2182,19 @@ gc_loop:
 	if (prompt_ret < 0)
 	{
 		g_use_center_mag = ousemag;
-		xxmin = oxxmin; xxmax = oxxmax;
-		yymin = oyymin; yymax = oyymax;
-		xx3rd = oxx3rd; yy3rd = oyy3rd;
+		g_xx_min = oxxmin; g_xx_max = oxxmax;
+		g_yy_min = oyymin; g_yy_max = oyymax;
+		g_xx_3rd = oxx3rd; g_yy_3rd = oyy3rd;
 		return -1;
 	}
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
-		xx3rd = xxmin = g_current_fractal_specific->xmin;
-		xxmax         = g_current_fractal_specific->xmax;
-		yy3rd = yymin = g_current_fractal_specific->ymin;
-		yymax         = g_current_fractal_specific->ymax;
-		if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
+		g_xx_3rd = g_xx_min = g_current_fractal_specific->x_min;
+		g_xx_max         = g_current_fractal_specific->x_max;
+		g_yy_3rd = g_yy_min = g_current_fractal_specific->y_min;
+		g_yy_max         = g_current_fractal_specific->y_max;
+		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
 			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
@@ -2233,27 +2233,27 @@ gc_loop:
 		if (g_orbit_draw_mode == ORBITDRAW_LINE)
 		{
 			nump = 1;
-			xxmin = values[nump++].uval.dval;
-			yymax = values[nump++].uval.dval;
+			g_xx_min = values[nump++].uval.dval;
+			g_yy_max = values[nump++].uval.dval;
 			nump++;
-			xxmax = values[nump++].uval.dval;
-			yymin = values[nump++].uval.dval;
+			g_xx_max = values[nump++].uval.dval;
+			g_yy_min = values[nump++].uval.dval;
 		}
 		else
 		{
 			nump = 1;
-			xxmin = values[nump++].uval.dval;
-			yymax = values[nump++].uval.dval;
+			g_xx_min = values[nump++].uval.dval;
+			g_yy_max = values[nump++].uval.dval;
 			nump++;
-			xxmax = values[nump++].uval.dval;
-			yymin = values[nump++].uval.dval;
+			g_xx_max = values[nump++].uval.dval;
+			g_yy_min = values[nump++].uval.dval;
 			nump++;
-			xx3rd = values[nump++].uval.dval;
-			yy3rd = values[nump++].uval.dval;
-			if (xx3rd == 0 && yy3rd == 0)
+			g_xx_3rd = values[nump++].uval.dval;
+			g_yy_3rd = values[nump++].uval.dval;
+			if (g_xx_3rd == 0 && g_yy_3rd == 0)
 			{
-				xx3rd = xxmin;
-				yy3rd = yymin;
+				g_xx_3rd = g_xx_min;
+				g_yy_3rd = g_yy_min;
 			}
 		}
 	}
@@ -2272,13 +2272,13 @@ gc_loop:
 		goto gc_loop;
 	}
 
-	if (!cmpdbl(oxxmin, xxmin) && !cmpdbl(oxxmax, xxmax) && !cmpdbl(oyymin, yymin) &&
-		!cmpdbl(oyymax, yymax) && !cmpdbl(oxx3rd, xx3rd) && !cmpdbl(oyy3rd, yy3rd))
+	if (!cmpdbl(oxxmin, g_xx_min) && !cmpdbl(oxxmax, g_xx_max) && !cmpdbl(oyymin, g_yy_min) &&
+		!cmpdbl(oyymax, g_yy_max) && !cmpdbl(oxx3rd, g_xx_3rd) && !cmpdbl(oyy3rd, g_yy_3rd))
 	{
 		/* no change, restore values to avoid drift */
-		xxmin = oxxmin; xxmax = oxxmax;
-		yymin = oyymin; yymax = oyymax;
-		xx3rd = oxx3rd; yy3rd = oyy3rd;
+		g_xx_min = oxxmin; g_xx_max = oxxmax;
+		g_yy_min = oyymin; g_yy_max = oyymax;
+		g_xx_3rd = oxx3rd; g_yy_3rd = oyy3rd;
 		return 0;
 	}
 	else
@@ -2305,30 +2305,30 @@ static int get_screen_corners(void)
 	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 
-	svxxmin = xxmin;  /* save these for later since cvtcorners modifies them */
-	svxxmax = xxmax;  /* and we need to set them for cvtcentermag to work */
-	svxx3rd = xx3rd;
-	svyymin = yymin;
-	svyymax = yymax;
-	svyy3rd = yy3rd;
+	svxxmin = g_xx_min;  /* save these for later since cvtcorners modifies them */
+	svxxmax = g_xx_max;  /* and we need to set them for cvtcentermag to work */
+	svxx3rd = g_xx_3rd;
+	svyymin = g_yy_min;
+	svyymax = g_yy_max;
+	svyy3rd = g_yy_3rd;
 
 	if (!g_set_orbit_corners && !g_keep_screen_coords)
 	{
-		g_orbit_x_min = xxmin;
-		g_orbit_x_max = xxmax;
-		g_orbit_x_3rd = xx3rd;
-		g_orbit_y_min = yymin;
-		g_orbit_y_max = yymax;
-		g_orbit_y_3rd = yy3rd;
+		g_orbit_x_min = g_xx_min;
+		g_orbit_x_max = g_xx_max;
+		g_orbit_x_3rd = g_xx_3rd;
+		g_orbit_y_min = g_yy_min;
+		g_orbit_y_max = g_yy_max;
+		g_orbit_y_3rd = g_yy_3rd;
 	}
 
 	oxxmin = g_orbit_x_min; oxxmax = g_orbit_x_max;
 	oyymin = g_orbit_y_min; oyymax = g_orbit_y_max;
 	oxx3rd = g_orbit_x_3rd; oyy3rd = g_orbit_y_3rd;
 
-	xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
-	yymin = g_orbit_y_min; yymax = g_orbit_y_max;
-	xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
+	g_xx_min = g_orbit_x_min; g_xx_max = g_orbit_x_max;
+	g_yy_min = g_orbit_y_min; g_yy_max = g_orbit_y_max;
+	g_xx_3rd = g_orbit_x_3rd; g_yy_3rd = g_orbit_y_3rd;
 
 gsc_loop:
 	for (i = 0; i < 15; ++i)
@@ -2401,29 +2401,29 @@ gsc_loop:
 		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
 		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
-		xxmin = svxxmin; xxmax = svxxmax;
-		yymin = svyymin; yymax = svyymax;
-		xx3rd = svxx3rd; yy3rd = svyy3rd;
+		g_xx_min = svxxmin; g_xx_max = svxxmax;
+		g_yy_min = svyymin; g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
 		return -1;
 		}
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
-		g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->xmin;
-		g_orbit_x_max         = g_current_fractal_specific->xmax;
-		g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->ymin;
-		g_orbit_y_max         = g_current_fractal_specific->ymax;
-		xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
-		yymin = g_orbit_y_min; yymax = g_orbit_y_max;
-		xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
-		if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
+		g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->x_min;
+		g_orbit_x_max         = g_current_fractal_specific->x_max;
+		g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->y_min;
+		g_orbit_y_max         = g_current_fractal_specific->y_max;
+		g_xx_min = g_orbit_x_min; g_xx_max = g_orbit_x_max;
+		g_yy_min = g_orbit_y_min; g_yy_max = g_orbit_y_max;
+		g_xx_3rd = g_orbit_x_3rd; g_yy_3rd = g_orbit_y_3rd;
+		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
 			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 
-		g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;
-		g_orbit_y_min = yymin; g_orbit_y_max = yymax;
-		g_orbit_x_3rd = xxmin; g_orbit_y_3rd = yymin;
+		g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
+		g_orbit_y_min = g_yy_min; g_orbit_y_max = g_yy_max;
+		g_orbit_x_3rd = g_xx_min; g_orbit_y_3rd = g_yy_min;
 		goto gsc_loop;
 		}
 
@@ -2448,9 +2448,9 @@ gsc_loop:
 			}
 			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 			/* set screen corners */
-			g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;
-			g_orbit_y_min = yymin; g_orbit_y_max = yymax;
-			g_orbit_x_3rd = xx3rd; g_orbit_y_3rd = yy3rd;
+			g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
+			g_orbit_y_min = g_yy_min; g_orbit_y_max = g_yy_max;
+			g_orbit_x_3rd = g_xx_3rd; g_orbit_y_3rd = g_yy_3rd;
 		}
 	}
 	else
@@ -2493,9 +2493,9 @@ gsc_loop:
 		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
 		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
-		xxmin = svxxmin; xxmax = svxxmax;
-		yymin = svyymin; yymax = svyymax;
-		xx3rd = svxx3rd; yy3rd = svyy3rd;
+		g_xx_min = svxxmin; g_xx_max = svxxmax;
+		g_yy_min = svyymin; g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
 		return 0;
 	}
 	else
@@ -2503,9 +2503,9 @@ gsc_loop:
 		g_set_orbit_corners = 1;
 		g_keep_screen_coords = 1;
 		/* restore corners */
-		xxmin = svxxmin; xxmax = svxxmax;
-		yymin = svyymin; yymax = svyymax;
-		xx3rd = svxx3rd; yy3rd = svyy3rd;
+		g_xx_min = svxxmin; g_xx_max = svxxmax;
+		g_yy_min = svyymin; g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
 		return 1;
 	}
 }
@@ -2529,7 +2529,7 @@ int get_browse_params()
 	old_brwscheckparms = g_browse_check_parameters;
 	old_doublecaution  = g_double_caution;
 	old_minbox         = g_cross_hair_box_size;
-	old_toosmall       = toosmall;
+	old_toosmall       = g_too_small;
 	strcpy(old_browsemask, g_browse_mask);
 
 get_brws_restart:
@@ -2558,7 +2558,7 @@ get_brws_restart:
 
 	choices[++k] = "Smallest window to display (size in pixels)";
 	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = toosmall;
+	uvalues[k].uval.dval = g_too_small;
 
 	choices[++k] = "Smallest box size shown before crosshairs used (pix)";
 	uvalues[k].type = 'i';
@@ -2584,7 +2584,7 @@ get_brws_restart:
 
 	if (i == FIK_F4)
 	{
-		toosmall = 6;
+		g_too_small = 6;
 		g_auto_browse = FALSE;
 		g_ask_video = TRUE;
 		g_browse_check_parameters = TRUE;
@@ -2608,10 +2608,10 @@ get_brws_restart:
 
 	g_double_caution = uvalues[++k].uval.ch.val;
 
-	toosmall  = uvalues[++k].uval.dval;
-	if (toosmall < 0)
+	g_too_small  = uvalues[++k].uval.dval;
+	if (g_too_small < 0)
 	{
-		toosmall = 0 ;
+		g_too_small = 0 ;
 	}
 
 	g_cross_hair_box_size = uvalues[++k].uval.ival;
@@ -2631,7 +2631,7 @@ get_brws_restart:
 			g_browse_check_type != old_brwschecktype ||
 			g_browse_check_parameters != old_brwscheckparms ||
 			g_double_caution != old_doublecaution ||
-			toosmall != old_toosmall ||
+			g_too_small != old_toosmall ||
 			g_cross_hair_box_size != old_minbox ||
 			!stricmp(g_browse_mask, old_browsemask))
 	{

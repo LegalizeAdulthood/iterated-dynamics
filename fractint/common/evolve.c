@@ -18,7 +18,7 @@ int px, py, g_evolving, g_grid_size;
 #define MAXGRIDSZ 51  /* This is arbitrary, = 1024/20 */
 static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
 
-unsigned int this_gen_rseed;
+unsigned int g_this_generation_random_seed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
@@ -104,10 +104,10 @@ GENEBASE g_genes[NUMGENES] =
 	{ &g_inversion[0], varyinv,    0, "invert radius", 7 },
 	{ &g_inversion[1], varyinv,    0, "invert center x", 7 },
 	{ &g_inversion[2], varyinv,    0, "invert center y", 7 },
-	{ &trigndx[0], varytrig,    0, "trig function 1", 5 },
-	{ &trigndx[1], varytrig,    0, "trig fn 2", 5 },
-	{ &trigndx[2], varytrig,    0, "trig fn 3", 5 },
-	{ &trigndx[3], varytrig,    0, "trig fn 4", 5 },
+	{ &g_trig_index[0], varytrig,    0, "trig function 1", 5 },
+	{ &g_trig_index[1], varytrig,    0, "trig fn 2", 5 },
+	{ &g_trig_index[2], varytrig,    0, "trig fn 3", 5 },
+	{ &g_trig_index[3], varytrig,    0, "trig fn 4", 5 },
 	{ &g_bail_out_test, varybotest,  0, "bailout test", 6 }
 };
 
@@ -132,10 +132,10 @@ void param_history(int mode)
 		oldhistory.invert0 = g_inversion[0];
 		oldhistory.invert1 = g_inversion[1];
 		oldhistory.invert2 = g_inversion[2];
-		oldhistory.trigndx0 = trigndx[0];
-		oldhistory.trigndx1 = trigndx[1];
-		oldhistory.trigndx2 = trigndx[2];
-		oldhistory.trigndx3 = trigndx[3];
+		oldhistory.trigndx0 = g_trig_index[0];
+		oldhistory.trigndx1 = g_trig_index[1];
+		oldhistory.trigndx2 = g_trig_index[2];
+		oldhistory.trigndx3 = g_trig_index[3];
 		oldhistory.bailoutest = g_bail_out_test;
 	}
 
@@ -158,10 +158,10 @@ void param_history(int mode)
 		g_inversion[1] = oldhistory.invert1;
 		g_inversion[2] = oldhistory.invert2;
 		g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
-		trigndx[0] = oldhistory.trigndx0;
-		trigndx[1] = oldhistory.trigndx1;
-		trigndx[2] = oldhistory.trigndx2;
-		trigndx[3] = oldhistory.trigndx3;
+		g_trig_index[0] = oldhistory.trigndx0;
+		g_trig_index[1] = oldhistory.trigndx1;
+		g_trig_index[2] = oldhistory.trigndx2;
+		g_trig_index[3] = oldhistory.trigndx3;
 		g_bail_out_test = oldhistory.bailoutest;
 	}
 }
@@ -433,46 +433,46 @@ int get_variations(void)
 
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		if (uses_p1)  /* set first parameter */
+		if (g_uses_p1)  /* set first parameter */
 		{
 			firstparm = 0;
 		}
-		else if (uses_p2)
+		else if (g_uses_p2)
 		{
 			firstparm = 2;
 		}
-		else if (uses_p3)
+		else if (g_uses_p3)
 		{
 			firstparm = 4;
 		}
-		else if (uses_p4)
+		else if (g_uses_p4)
 		{
 			firstparm = 6;
 		}
 		else
 		{
-			firstparm = 8; /* uses_p5 or no parameter */
+			firstparm = 8; /* g_uses_p5 or no parameter */
 		}
 
-		if (uses_p5) /* set last parameter */
+		if (g_uses_p5) /* set last parameter */
 		{
 			lastparm = 10;
 		}
-		else if (uses_p4)
+		else if (g_uses_p4)
 		{
 			lastparm = 8;
 		}
-		else if (uses_p3)
+		else if (g_uses_p3)
 		{
 			lastparm = 6;
 		}
-		else if (uses_p2)
+		else if (g_uses_p2)
 		{
 			lastparm = 4;
 		}
 		else
 		{
-			lastparm = 2; /* uses_p1 or no parameter */
+			lastparm = 2; /* g_uses_p1 or no parameter */
 		}
 	}
 
@@ -746,7 +746,7 @@ get_evol_restart:
 
 	k = -1;
 
-	viewwindow = g_evolving = uvalues[++k].uval.ch.val;
+	g_view_window = g_evolving = uvalues[++k].uval.ch.val;
 
 	if (!g_evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
 	{
@@ -792,11 +792,11 @@ get_evol_restart:
 		g_evolving |= EVOLVE_NO_GROUT;
 	}
 
-	viewxdots = (g_screen_width / g_grid_size)-2;
-	viewydots = (g_screen_height / g_grid_size)-2;
-	if (!viewwindow)
+	g_view_x_dots = (g_screen_width / g_grid_size)-2;
+	g_view_y_dots = (g_screen_height / g_grid_size)-2;
+	if (!g_view_window)
 	{
-		viewxdots = viewydots = 0;
+		g_view_x_dots = g_view_y_dots = 0;
 	}
 
 	i = 0;
@@ -826,7 +826,7 @@ get_evol_restart:
 		set_current_params();
 		if (old_variations > 0)
 		{
-			viewwindow = 1;
+			g_view_window = 1;
 			g_evolving |= EVOLVE_FIELD_MAP;   /* leave other settings alone */
 		}
 		g_fiddle_factor = 1;
@@ -842,8 +842,8 @@ void SetupParamBox(void)
 	g_parameter_box_count = 0;
 	g_parameter_zoom = ((double)g_grid_size-1.0)/2.0;
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
-	vidsize = (xdots + ydots)*4*sizeof(int);
-	vidsize += xdots + ydots + 2;
+	vidsize = (g_x_dots + g_y_dots)*4*sizeof(int);
+	vidsize += g_x_dots + g_y_dots + 2;
 	if (!prmbox)
 	{
 		prmbox = (int *) malloc(vidsize);
@@ -883,9 +883,9 @@ void ReleaseParamBox(void)
 
 void set_current_params(void)
 {
-	g_parameter_range_x = g_current_fractal_specific->xmax - g_current_fractal_specific->xmin;
+	g_parameter_range_x = g_current_fractal_specific->x_max - g_current_fractal_specific->x_min;
 	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
-	g_parameter_range_y = g_current_fractal_specific->ymax - g_current_fractal_specific->ymin;
+	g_parameter_range_y = g_current_fractal_specific->y_max - g_current_fractal_specific->y_min;
 	g_parameter_offset_y = g_new_parameter_offset_y = - (g_parameter_range_y / 2);
 	return;
 }
@@ -936,7 +936,7 @@ static void set_random(int ecount)
 	/* Now called by fiddleparms(). */
 	int index, i;
 
-	srand(this_gen_rseed);
+	srand(g_this_generation_random_seed);
 	for (index = 0; index < ecount; index++)
 	{
 		for (i = 0; i < NUMGENES; i++)

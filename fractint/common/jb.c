@@ -68,15 +68,15 @@ int julibrot_setup(void)
 	}
 #endif
 
-	s_x_offset_fp = (xxmax + xxmin) / 2;     /* Calculate average */
-	s_y_offset_fp = (yymax + yymin) / 2;     /* Calculate average */
+	s_x_offset_fp = (g_xx_max + g_xx_min) / 2;     /* Calculate average */
+	s_y_offset_fp = (g_yy_max + g_yy_min) / 2;     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
 	g_float_parameter = &s_jbc_fp;
-	s_x_per_inch_fp = (xxmin - xxmax) / g_width_fp;
-	s_y_per_inch_fp = (yymax - yymin) / g_height_fp;
-	s_inch_per_x_dot_fp = g_width_fp / xdots;
-	s_inch_per_y_dot_fp = g_height_fp / ydots;
+	s_x_per_inch_fp = (g_xx_min - g_xx_max) / g_width_fp;
+	s_y_per_inch_fp = (g_yy_max - g_yy_min) / g_height_fp;
+	s_inch_per_x_dot_fp = g_width_fp / g_x_dots;
+	s_inch_per_y_dot_fp = g_height_fp / g_y_dots;
 	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
 	s_right_eye_fp.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
 	s_left_eye_fp.x = -s_right_eye_fp.x;
@@ -99,11 +99,11 @@ int julibrot_setup(void)
 		}
 		s_fg = (double) (1L << g_bit_shift);
 		s_fg16 = (double) (1L << 16);
-		jxmin = (long) (xxmin*s_fg);
-		jxmax = (long) (xxmax*s_fg);
+		jxmin = (long) (g_xx_min*s_fg);
+		jxmax = (long) (g_xx_max*s_fg);
 		s_x_offset = (jxmax + jxmin) / 2;    /* Calculate average */
-		jymin = (long) (yymin*s_fg);
-		jymax = (long) (yymax*s_fg);
+		jymin = (long) (g_yy_min*s_fg);
+		jymax = (long) (g_yy_max*s_fg);
 		s_y_offset = (jymax + jymin) / 2;    /* Calculate average */
 		s_m_x_min = (long) (g_m_x_min_fp*s_fg);
 		mxmax = (long) (g_m_x_max_fp*s_fg);
@@ -119,10 +119,10 @@ int julibrot_setup(void)
 		s_dmy = (mymax - s_m_y_min) / g_z_dots;
 		g_long_parameter = &s_jbc;
 
-		s_x_per_inch = (long) ((xxmin - xxmax) / g_width_fp*s_fg);
-		s_y_per_inch = (long) ((yymax - yymin) / g_height_fp*s_fg);
-		s_inch_per_x_dot = (long) ((g_width_fp / xdots)*s_fg16);
-		s_inch_per_y_dot = (long) ((g_height_fp / ydots)*s_fg16);
+		s_x_per_inch = (long) ((g_xx_min - g_xx_max) / g_width_fp*s_fg);
+		s_y_per_inch = (long) ((g_yy_max - g_yy_min) / g_height_fp*s_fg);
+		s_inch_per_x_dot = (long) ((g_width_fp / g_x_dots)*s_fg16);
+		s_inch_per_y_dot = (long) ((g_height_fp / g_y_dots)*s_fg16);
 		s_init_z = origin - (s_depth / 2);
 		s_right_eye.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
 		s_left_eye.x = -s_right_eye.x;
@@ -406,11 +406,11 @@ int std_4d_fractal(void)
 			? z_power_orbit : complex_z_power_orbit;
 	}
 
-	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
+	for (y = 0, ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
 	{
 		s_plotted = 0;
 		x = -(s_width >> 1);
-		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot)
+		for (xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot)
 		{
 			g_col = xdot;
 			g_row = ydot;
@@ -418,8 +418,8 @@ int std_4d_fractal(void)
 			{
 				return -1;
 			}
-			g_col = xdots - g_col - 1;
-			g_row = ydots - g_row - 1;
+			g_col = g_x_dots - g_col - 1;
+			g_row = g_y_dots - g_row - 1;
 			if (z_line(-x, -y) < 0)
 			{
 				return -1;
@@ -454,11 +454,11 @@ int std_4d_fractal_fp(void)
 		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
 	}
 
-	for (y = 0, ydot = (ydots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
+	for (y = 0, ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
 	{
 		s_plotted = 0;
 		x = -g_width_fp / 2;
-		for (xdot = 0; xdot < xdots; xdot++, x += s_inch_per_x_dot_fp)
+		for (xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot_fp)
 		{
 			g_col = xdot;
 			g_row = ydot;
@@ -466,8 +466,8 @@ int std_4d_fractal_fp(void)
 			{
 				return -1;
 			}
-			g_col = xdots - g_col - 1;
-			g_row = ydots - g_row - 1;
+			g_col = g_x_dots - g_col - 1;
+			g_row = g_y_dots - g_row - 1;
 			if (z_line_fp(-x, -y) < 0)
 			{
 				return -1;

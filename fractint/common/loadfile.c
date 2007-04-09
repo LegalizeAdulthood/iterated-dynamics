@@ -59,11 +59,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	g_show_file = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
-	oldfloatflag = usr_floatflag;
+	oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)
 	{
-		viewwindow = 0;
+		g_view_window = 0;
 	}
 	if (has_ext(g_read_name) == NULL)
 	{
@@ -87,10 +87,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_fractal_type = 0;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	xxmin        = read_info.xmin;
-	xxmax        = read_info.xmax;
-	yymin        = read_info.ymin;
-	yymax        = read_info.ymax;
+	g_xx_min        = read_info.x_min;
+	g_xx_max        = read_info.x_max;
+	g_yy_min        = read_info.y_min;
+	g_yy_max        = read_info.y_max;
 	g_parameters[0]     = read_info.c_real;
 	g_parameters[1]     = read_info.c_imag;
 	g_save_release = 1100; /* unless we find out better later on */
@@ -161,36 +161,36 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
-	xx3rd = xxmin;
-	yy3rd = yymin;
-	usr_distest = 0;
+	g_xx_3rd = g_xx_min;
+	g_yy_3rd = g_yy_min;
+	g_user_distance_test = 0;
 	g_calculation_time = 0;
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
-		xx3rd       = read_info.x3rd;
-		yy3rd       = read_info.y3rd;
+		g_xx_3rd       = read_info.x_3rd;
+		g_yy_3rd       = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
-		usr_stdcalcmode = read_info.stdcalcmode;
+		g_user_standard_calculation_mode = read_info.stdcalcmode;
 		g_three_pass = 0;
-		if (usr_stdcalcmode == 127)
+		if (g_user_standard_calculation_mode == 127)
 		{
 			g_three_pass = 1;
-			usr_stdcalcmode = '3';
+			g_user_standard_calculation_mode = '3';
 		}
-		usr_distest     = read_info.distestold;
-		usr_floatflag   = (char)read_info.float_flag;
+		g_user_distance_test     = read_info.distestold;
+		g_user_float_flag   = (char)read_info.float_flag;
 		g_bail_out     = read_info.bailoutold;
 		g_calculation_time    = read_info.calculation_time;
-		trigndx[0]  = read_info.trigndx[0];
-		trigndx[1]  = read_info.trigndx[1];
-		trigndx[2]  = read_info.trigndx[2];
-		trigndx[3]  = read_info.trigndx[3];
+		g_trig_index[0]  = read_info.trig_index[0];
+		g_trig_index[1]  = read_info.trig_index[1];
+		g_trig_index[2]  = read_info.trig_index[2];
+		g_trig_index[3]  = read_info.trig_index[3];
 		g_finite_attractor  = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
 		g_use_initial_orbit_z = read_info.use_initial_orbit_z;
-		usr_periodicitycheck = read_info.periodicity;
+		g_user_periodicity_check = read_info.periodicity;
 	}
 
 	g_potential_16bit = FALSE;
@@ -280,7 +280,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_log_palette_flag = 2;
 		}
-		usr_floatflag = (char) (g_current_fractal_specific->isinteger ? 0 : 1);
+		g_user_float_flag = (char) (g_current_fractal_specific->isinteger ? 0 : 1);
 	}
 
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
@@ -344,7 +344,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
 		g_log_palette_flag = read_info.logmap;
-		usr_distest = read_info.distance_test;
+		g_user_distance_test = read_info.distance_test;
 	}
 
 	if (read_info.version > 11) /* post-version 19.20, inversion fix */
@@ -400,13 +400,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (g_display_3d)                   /* PB - a klooge till the meaning of */
 	{
-		usr_floatflag = oldfloatflag; /*  g_float_flag in line3d is clarified */
+		g_user_float_flag = oldfloatflag; /*  g_float_flag in line3d is clarified */
 	}
 
 	if (g_overlay_3d)
 	{
 		g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
-		if (g_file_x_dots > xdots || g_file_y_dots > ydots)
+		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
 			stopmsg(0, "Can't overlay with a larger image");
 			g_init_mode = -1;
@@ -420,7 +420,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		olddisplay3d = g_display_3d;
 		oldfloatflag = g_float_flag;
 		g_display_3d = g_loaded_3d;      /* for <tab> display during next */
-		g_float_flag = usr_floatflag; /* ditto */
+		g_float_flag = g_user_float_flag; /* ditto */
 		i = get_video_mode(&read_info, &formula_info);
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
@@ -479,13 +479,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 		default:
 			nameptr = g_formula_name;
-			uses_p1 = formula_info.uses_p1;
-			uses_p2 = formula_info.uses_p2;
-			uses_p3 = formula_info.uses_p3;
-			uses_ismand = formula_info.uses_ismand;
+			g_uses_p1 = formula_info.uses_p1;
+			g_uses_p2 = formula_info.uses_p2;
+			g_uses_p3 = formula_info.uses_p3;
+			g_uses_is_mand = formula_info.uses_is_mand;
 			g_is_mand = formula_info.ismand;
-			uses_p4 = formula_info.uses_p4;
-			uses_p5 = formula_info.uses_p5;
+			g_uses_p4 = formula_info.uses_p4;
+			g_uses_p5 = formula_info.uses_p5;
 			break;
 		}
 		formula_info.form_name[ITEMNAMELEN] = 0;
@@ -550,11 +550,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			resume_e_info.py           = evolver_info.py;
 			resume_e_info.sxoffs       = evolver_info.sxoffs;
 			resume_e_info.syoffs       = evolver_info.syoffs;
-			resume_e_info.xdots        = evolver_info.xdots;
-			resume_e_info.ydots        = evolver_info.ydots;
+			resume_e_info.x_dots        = evolver_info.x_dots;
+			resume_e_info.y_dots        = evolver_info.y_dots;
 			resume_e_info.gridsz       = evolver_info.gridsz;
 			resume_e_info.evolving     = evolver_info.evolving;
-			resume_e_info.this_gen_rseed = evolver_info.this_gen_rseed;
+			resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
 			resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
 			resume_e_info.ecount       = evolver_info.ecount;
 			memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
@@ -578,12 +578,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		py           = evolver_info.py;
 		g_sx_offset       = evolver_info.sxoffs;
 		g_sy_offset       = evolver_info.syoffs;
-		xdots        = evolver_info.xdots;
-		ydots        = evolver_info.ydots;
+		g_x_dots        = evolver_info.x_dots;
+		g_y_dots        = evolver_info.y_dots;
 		g_grid_size       = evolver_info.gridsz;
-		this_gen_rseed = evolver_info.this_gen_rseed;
+		g_this_generation_random_seed = evolver_info.this_generation_random_seed;
 		g_fiddle_factor   = evolver_info.fiddle_factor;
-		g_evolving = viewwindow = (int) evolver_info.evolving;
+		g_evolving = g_view_window = (int) evolver_info.evolving;
 		g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
 		g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 		if (read_info.version > 14)
@@ -847,7 +847,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 						formula_info->uses_p1 = 1;
 						formula_info->uses_p2 = 1;
 						formula_info->uses_p3 = 1;
-						formula_info->uses_ismand = 0;
+						formula_info->uses_is_mand = 0;
 						formula_info->ismand = 1;
 						formula_info->uses_p4 = 0;
 						formula_info->uses_p5 = 0;
@@ -857,7 +857,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 						formula_info->uses_p1 = fload_info.uses_p1;
 						formula_info->uses_p2 = fload_info.uses_p2;
 						formula_info->uses_p3 = fload_info.uses_p3;
-						formula_info->uses_ismand = fload_info.uses_ismand;
+						formula_info->uses_is_mand = fload_info.uses_is_mand;
 						formula_info->ismand = fload_info.ismand;
 						formula_info->uses_p4 = fload_info.uses_p4;
 						formula_info->uses_p5 = fload_info.uses_p5;
@@ -906,11 +906,11 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					evolver_info->py              = eload_info.py;
 					evolver_info->sxoffs          = eload_info.sxoffs;
 					evolver_info->syoffs          = eload_info.syoffs;
-					evolver_info->xdots           = eload_info.xdots;
-					evolver_info->ydots           = eload_info.ydots;
+					evolver_info->x_dots           = eload_info.x_dots;
+					evolver_info->y_dots           = eload_info.y_dots;
 					evolver_info->gridsz          = eload_info.gridsz;
 					evolver_info->evolving        = eload_info.evolving;
-					evolver_info->this_gen_rseed  = eload_info.this_gen_rseed;
+					evolver_info->this_generation_random_seed  = eload_info.this_generation_random_seed;
 					evolver_info->fiddle_factor    = eload_info.fiddle_factor;
 					evolver_info->ecount          = eload_info.ecount;
 					for (i = 0; i < NUMGENES; i++)
@@ -952,12 +952,12 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->iterations = 150;
 	info->iterationsold = 150;
 	info->fractal_type = PLASMA;
-	info->xmin = -1;
-	info->xmax = 1;
-	info->ymin = -1;
-	info->ymax = 1;
-	info->x3rd = -1;
-	info->y3rd = -1;
+	info->x_min = -1;
+	info->x_max = 1;
+	info->y_min = -1;
+	info->y_max = 1;
+	info->x_3rd = -1;
+	info->y_3rd = -1;
 	info->c_real = 0;
 	info->c_imag = 0;
 	info->videomodeax = 255;
@@ -965,8 +965,8 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->videomodecx = 255;
 	info->videomodedx = 255;
 	info->dotmode = 0;
-	info->xdots = (short)g_file_x_dots;
-	info->ydots = (short)g_file_y_dots;
+	info->x_dots = (short)g_file_x_dots;
+	info->y_dots = (short)g_file_y_dots;
 	info->colors = (short)g_file_colors;
 	info->version = 0; /* this forces lots more init at calling end too */
 
@@ -1015,91 +1015,91 @@ static void backwardscompat(struct fractal_info *info)
 	{
 	case LAMBDASINE:
 		g_fractal_type = LAMBDATRIGFP;
-		trigndx[0] = SIN;
+		g_trig_index[0] = SIN;
 		break;
 	case LAMBDACOS    :
 		g_fractal_type = LAMBDATRIGFP;
-		trigndx[0] = COS;
+		g_trig_index[0] = COS;
 		break;
 	case LAMBDAEXP    :
 		g_fractal_type = LAMBDATRIGFP;
-		trigndx[0] = EXP;
+		g_trig_index[0] = EXP;
 		break;
 	case MANDELSINE   :
 		g_fractal_type = MANDELTRIGFP;
-		trigndx[0] = SIN;
+		g_trig_index[0] = SIN;
 		break;
 	case MANDELCOS    :
 		g_fractal_type = MANDELTRIGFP;
-		trigndx[0] = COS;
+		g_trig_index[0] = COS;
 		break;
 	case MANDELEXP    :
 		g_fractal_type = MANDELTRIGFP;
-		trigndx[0] = EXP;
+		g_trig_index[0] = EXP;
 		break;
 	case MANDELSINH   :
 		g_fractal_type = MANDELTRIGFP;
-		trigndx[0] = SINH;
+		g_trig_index[0] = SINH;
 		break;
 	case LAMBDASINH   :
 		g_fractal_type = LAMBDATRIGFP;
-		trigndx[0] = SINH;
+		g_trig_index[0] = SINH;
 		break;
 	case MANDELCOSH   :
 		g_fractal_type = MANDELTRIGFP;
-		trigndx[0] = COSH;
+		g_trig_index[0] = COSH;
 		break;
 	case LAMBDACOSH   :
 		g_fractal_type = LAMBDATRIGFP;
-		trigndx[0] = COSH;
+		g_trig_index[0] = COSH;
 		break;
 	case LMANDELSINE  :
 		g_fractal_type = MANDELTRIG;
-		trigndx[0] = SIN;
+		g_trig_index[0] = SIN;
 		break;
 	case LLAMBDASINE  :
 		g_fractal_type = LAMBDATRIG;
-		trigndx[0] = SIN;
+		g_trig_index[0] = SIN;
 		break;
 	case LMANDELCOS   :
 		g_fractal_type = MANDELTRIG;
-		trigndx[0] = COS;
+		g_trig_index[0] = COS;
 		break;
 	case LLAMBDACOS   :
 		g_fractal_type = LAMBDATRIG;
-		trigndx[0] = COS;
+		g_trig_index[0] = COS;
 		break;
 	case LMANDELSINH  :
 		g_fractal_type = MANDELTRIG;
-		trigndx[0] = SINH;
+		g_trig_index[0] = SINH;
 		break;
 	case LLAMBDASINH  :
 		g_fractal_type = LAMBDATRIG;
-		trigndx[0] = SINH;
+		g_trig_index[0] = SINH;
 		break;
 	case LMANDELCOSH  :
 		g_fractal_type = MANDELTRIG;
-		trigndx[0] = COSH;
+		g_trig_index[0] = COSH;
 		break;
 	case LLAMBDACOSH  :
 		g_fractal_type = LAMBDATRIG;
-		trigndx[0] = COSH;
+		g_trig_index[0] = COSH;
 		break;
 	case LMANDELEXP   :
 		g_fractal_type = MANDELTRIG;
-		trigndx[0] = EXP;
+		g_trig_index[0] = EXP;
 		break;
 	case LLAMBDAEXP   :
 		g_fractal_type = LAMBDATRIG;
-		trigndx[0] = EXP;
+		g_trig_index[0] = EXP;
 		break;
 	case DEMM         :
 		g_fractal_type = MANDELFP;
-		usr_distest = (info->ydots - 1)*2;
+		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
 	case DEMJ         :
 		g_fractal_type = JULIAFP;
-		usr_distest = (info->ydots - 1)*2;
+		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
 	case MANDELLAMBDA :
 		g_use_initial_orbit_z = 2;
@@ -1163,12 +1163,12 @@ void backwards_v18(void)
 	{
 		set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
 	}
-	if (g_fractal_type == MANDELTRIG && usr_floatflag == 1
+	if (g_fractal_type == MANDELTRIG && g_user_float_flag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
 	}
-	if (g_fractal_type == LAMBDATRIG && usr_floatflag == 1
+	if (g_fractal_type == LAMBDATRIG && g_user_float_flag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
@@ -1256,7 +1256,7 @@ int check_back(void)
 		|| (g_fractal_type == LPOPCORNJUL && g_save_release <= 1960)
 		|| (g_inside == FMODI && g_save_release <= 2000)
 		|| ((g_inside == ATANI || g_outside == ATAN) && g_save_release <= 2002)
-		|| (g_fractal_type == LAMBDATRIGFP && trigndx[0] == EXP && g_save_release <= 2002)
+		|| (g_fractal_type == LAMBDATRIGFP && g_trig_index[0] == EXP && g_save_release <= 2002)
 		|| ((g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 			&& (g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
 			&& g_save_release <= 2002))
@@ -1729,7 +1729,7 @@ rescan:  /* entry for changed browse parms */
 		free_bf_vars();
 	}
 	bf_math = oldbf_math;
-	g_float_flag = usr_floatflag;
+	g_float_flag = g_user_float_flag;
 
 	return c;
 }
@@ -1771,7 +1771,7 @@ static void drawindow(int colour, struct window *info)
 	else  /* draw crosshairs */
 	{
 #ifndef XFRACT
-		cross_size = ydots / 45;
+		cross_size = g_y_dots / 45;
 		if (cross_size < 2)
 		{
 			cross_size = 2;
@@ -1887,8 +1887,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	{
 		if (!info->bf_math)
 		{
-			floattobf(bt_x, info->xmin);
-			floattobf(bt_y, info->ymax);
+			floattobf(bt_x, info->x_min);
+			floattobf(bt_y, info->y_max);
 		}
 		else
 		{
@@ -1899,8 +1899,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		tl.x = info->xmin;
-		tl.y = info->ymax;
+		tl.x = info->x_min;
+		tl.y = info->y_max;
 		transform(&tl);
 	}
 	list->itl.x = (int)(tl.x + 0.5);
@@ -1909,8 +1909,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	{
 		if (!info->bf_math)
 		{
-			floattobf(bt_x, (info->xmax)-(info->x3rd-info->xmin));
-			floattobf(bt_y, (info->ymax) + (info->ymin-info->y3rd));
+			floattobf(bt_x, (info->x_max)-(info->x_3rd-info->x_min));
+			floattobf(bt_y, (info->y_max) + (info->y_min-info->y_3rd));
 		}
 		else
 		{
@@ -1923,8 +1923,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		tr.x = (info->xmax)-(info->x3rd-info->xmin);
-		tr.y = (info->ymax) + (info->ymin-info->y3rd);
+		tr.x = (info->x_max)-(info->x_3rd-info->x_min);
+		tr.y = (info->y_max) + (info->y_min-info->y_3rd);
 		transform(&tr);
 	}
 	list->itr.x = (int)(tr.x + 0.5);
@@ -1933,8 +1933,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	{
 		if (!info->bf_math)
 		{
-			floattobf(bt_x, info->x3rd);
-			floattobf(bt_y, info->y3rd);
+			floattobf(bt_x, info->x_3rd);
+			floattobf(bt_y, info->y_3rd);
 		}
 		else
 		{
@@ -1945,8 +1945,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		bl.x = info->x3rd;
-		bl.y = info->y3rd;
+		bl.x = info->x_3rd;
+		bl.y = info->y_3rd;
 		transform(&bl);
 	}
 	list->ibl.x = (int)(bl.x + 0.5);
@@ -1955,8 +1955,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	{
 		if (!info->bf_math)
 		{
-			floattobf(bt_x, info->xmax);
-			floattobf(bt_y, info->ymin);
+			floattobf(bt_x, info->x_max);
+			floattobf(bt_y, info->y_min);
 		}
 		else
 		{
@@ -1967,8 +1967,8 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	}
 	else
 	{
-		br.x = info->xmax;
-		br.y = info->ymin;
+		br.x = info->x_max;
+		br.y = info->y_min;
 		transform(&br);
 	}
 	list->ibr.x = (int)(br.x + 0.5);
@@ -1976,7 +1976,7 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 
 	tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
-	if (tmp_sqrt < toosmall)
+	if (tmp_sqrt < g_too_small)
 	{
 		cant_see = 1;
 	}
@@ -2082,7 +2082,7 @@ static char functionOK(struct fractal_info *info, int numfn)
 	mzmatch = 0;
 	for (i = 0; i < numfn; i++)
 	{
-		if (info->trigndx[i] != trigndx[i])
+		if (info->trig_index[i] != g_trig_index[i])
 		{
 			mzmatch++;
 		}
@@ -2155,70 +2155,70 @@ static void bfsetup_convert_to_screen(void)
 	bt_tmp1 = alloc_stack(rbflength + 2);
 	bt_tmp2 = alloc_stack(rbflength + 2);
 
-	/* xx3rd-xxmin */
+	/* g_xx_3rd-g_xx_min */
 	sub_bf(bt_inter1, bfx3rd, bfxmin);
-	/* yymin-yymax */
+	/* g_yy_min-g_yy_max */
 	sub_bf(bt_inter2, bfymin, bfymax);
-	/* (xx3rd-xxmin)*(yymin-yymax) */
+	/* (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	/* yymax-yy3rd */
+	/* g_yy_max-g_yy_3rd */
 	sub_bf(bt_inter1, bfymax, bfy3rd);
-	/* xxmax-xxmin */
+	/* g_xx_max-g_xx_min */
 	sub_bf(bt_inter2, bfxmax, bfxmin);
-	/* (yymax-yy3rd)*(xxmax-xxmin) */
+	/* (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	/* det = (xx3rd-xxmin)*(yymin-yymax) + (yymax-yy3rd)*(xxmax-xxmin) */
+	/* det = (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) + (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
 	/* xd = g_dx_size/det */
 	floattobf(bt_tmp1, g_dx_size);
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
-	/* a =  xd*(yymax-yy3rd) */
+	/* a =  xd*(g_yy_max-g_yy_3rd) */
 	sub_bf(bt_inter1, bfymax, bfy3rd);
 	mult_bf(bt_a, bt_xd, bt_inter1);
 
-	/* b =  xd*(xx3rd-xxmin) */
+	/* b =  xd*(g_xx_3rd-g_xx_min) */
 	sub_bf(bt_inter1, bfx3rd, bfxmin);
 	mult_bf(bt_b, bt_xd, bt_inter1);
 
-	/* e = -(a*xxmin + b*yymax) */
+	/* e = -(a*g_xx_min + b*g_yy_max) */
 	mult_bf(bt_tmp1, bt_a, bfxmin);
 	mult_bf(bt_tmp2, bt_b, bfymax);
 	neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
-	/* xx3rd-xxmax */
+	/* g_xx_3rd-g_xx_max */
 	sub_bf(bt_inter1, bfx3rd, bfxmax);
-	/* yymin-yymax */
+	/* g_yy_min-g_yy_max */
 	sub_bf(bt_inter2, bfymin, bfymax);
-	/* (xx3rd-xxmax)*(yymin-yymax) */
+	/* (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	/* yymin-yy3rd */
+	/* g_yy_min-g_yy_3rd */
 	sub_bf(bt_inter1, bfymin, bfy3rd);
-	/* xxmax-xxmin */
+	/* g_xx_max-g_xx_min */
 	sub_bf(bt_inter2, bfxmax, bfxmin);
-	/* (yymin-yy3rd)*(xxmax-xxmin) */
+	/* (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	/* det = (xx3rd-xxmax)*(yymin-yymax) + (yymin-yy3rd)*(xxmax-xxmin) */
+	/* det = (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) + (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
 	/* yd = g_dy_size/det */
 	floattobf(bt_tmp2, g_dy_size);
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
-	/* c =  yd*(yymin-yy3rd) */
+	/* c =  yd*(g_yy_min-g_yy_3rd) */
 	sub_bf(bt_inter1, bfymin, bfy3rd);
 	mult_bf(bt_c, bt_yd, bt_inter1);
 
-	/* d =  yd*(xx3rd-xxmax) */
+	/* d =  yd*(g_xx_3rd-g_xx_max) */
 	sub_bf(bt_inter1, bfx3rd, bfxmax);
 	mult_bf(bt_d, bt_yd, bt_inter1);
 
-	/* f = -(c*xxmin + d*yymax) */
+	/* f = -(c*g_xx_min + d*g_yy_max) */
 	mult_bf(bt_tmp1, bt_c, bfxmin);
 	mult_bf(bt_tmp2, bt_d, bfymax);
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
