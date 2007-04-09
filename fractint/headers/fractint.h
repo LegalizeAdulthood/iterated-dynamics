@@ -484,7 +484,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     float depthfp;
     float heightfp;
     float widthfp;
-    float distfp;
+    float screen_distance_fp;
     float eyesfp;
     short orbittype;
     short juli3Dmode;
@@ -585,7 +585,7 @@ struct history_info
     float depthfp;
     float heightfp;
     float widthfp;
-    float distfp;
+    float screen_distance_fp;
     float eyesfp;
     short orbittype;
     short juli3Dmode;
