@@ -1292,7 +1292,7 @@ static int handle_color_editing(int *kbdmore)
 		int oldhelpmode = helpmode;
 		memcpy(olddacbox, g_dac_box, 256*3);
 		helpmode = HELPXHAIR;
-		EditPalette();
+		palette_edit();
 		helpmode = oldhelpmode;
 		if (memcmp(olddacbox, g_dac_box, 256*3))
 		{

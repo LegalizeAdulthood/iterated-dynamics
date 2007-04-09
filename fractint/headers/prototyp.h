@@ -237,26 +237,24 @@ extern int disk_to_memory(long, int, void *);
 
 /*  editpal -- C file prototypes */
 
-extern void EditPalette(void);
-void putrow(int x, int y, int width, char *buff);
-void getrow(int x, int y, int width, char *buff);
+extern void palette_edit(void);
+void put_row(int x, int y, int width, char *buff);
+void get_row(int x, int y, int width, char *buff);
 /* void hline(int x, int y, int width, int color); */
-int Cursor_WaitKey(void);
-void Cursor_CheckBlink(void);
+int cursor_wait_key(void);
+void cursor_check_blink(void);
 #ifdef XFRACT
-void Cursor_StartMouseTracking(void);
-void Cursor_EndMouseTracking(void);
+void cursor_start_mouse_tracking(void);
+void cursor_end_mouse_tracking(void);
 #endif
-void clip_putcolor(int x, int y, int color);
-int clip_getcolor(int x, int y);
-BOOLEAN Cursor_Construct (void);
-void Cursor_Destroy (void);
-void Cursor_SetPos (int x, int y);
-void Cursor_Move (int xoff, int yoff);
-int Cursor_GetX (void);
-int Cursor_GetY (void);
-void Cursor_Hide (void);
-void Cursor_Show (void);
+BOOLEAN cursor_new (void);
+void cursor_destroy (void);
+void cursor_set_position (int x, int y);
+void cursor_move (int xoff, int yoff);
+int cursor_get_x (void);
+int cursor_get_y (void);
+void cursor_hide (void);
+void cursor_show (void);
 extern void displayc(int, int, int, int, int);
 
 /*  encoder -- C file prototypes */

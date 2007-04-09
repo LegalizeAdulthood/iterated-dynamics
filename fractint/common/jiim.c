@@ -221,7 +221,7 @@ static void fillrect(int x, int y, int width, int height, int color)
 		{
 			return;
 		}
-		putrow(x, y++, width, (char *)g_stack);
+		put_row(x, y++, width, (char *)g_stack);
 	}
 }
 
@@ -475,14 +475,14 @@ static void SaveRect(int x, int y, int width, int height)
 		char *buff = rect_buff;
 		int yoff;
 
-		Cursor_Hide();
+		cursor_hide();
 		for (yoff = 0; yoff < height; yoff++)
 		{
-			getrow(x, y + yoff, width, buff);
-			putrow(x, y + yoff, width, (char *) g_stack);
+			get_row(x, y + yoff, width, buff);
+			put_row(x, y + yoff, width, (char *) g_stack);
 			buff += width;
 		}
-		Cursor_Show();
+		cursor_show();
 	}
 }
 
@@ -497,13 +497,13 @@ static void RestoreRect(int x, int y, int width, int height)
 		return;
 	}
 
-	Cursor_Hide();
+	cursor_hide();
 	for (yoff = 0; yoff < height; yoff++)
 	{
-		putrow(x, y + yoff, width, buff);
+		put_row(x, y + yoff, width, buff);
 		buff += width;
 	}
-	Cursor_Show();
+	cursor_show();
 }
 
 /*
@@ -559,8 +559,8 @@ void Jiim(int which)         /* called by fractint */
 	oldsyoffs = syoffs;
 	oldcalctype = g_calculate_type;
 	show_numbers = 0;
-	using_jiim = 1;
-	line_buff = malloc(max(sxdots, sydots));
+	g_using_jiim = 1;
+	g_line_buffer = malloc(max(sxdots, sydots));
 	aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
@@ -575,7 +575,7 @@ void Jiim(int which)         /* called by fractint */
 		color = g_color_bright;
 	}
 
-	Cursor_Construct();
+	cursor_new();
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
 	OKtoMIIM  = 0;
@@ -681,8 +681,8 @@ void Jiim(int which)         /* called by fractint */
 	/* possible extraseg arrays have been trashed, so set up again */
 	integerfractal ? fill_lx_array() : fill_dx_array();
 
-	Cursor_SetPos(g_col, g_row);
-	Cursor_Show();
+	cursor_set_position(g_col, g_row);
+	cursor_show();
 	color = g_color_bright;
 
 	iter = 1;
@@ -690,20 +690,20 @@ void Jiim(int which)         /* called by fractint */
 	zoom = 1;
 
 #ifdef XFRACT
-	Cursor_StartMouseTracking();
+	cursor_start_mouse_tracking();
 #endif
 
 	while (still)
 	{
 		int dcol, drow;
 
-		actively_computing ? Cursor_CheckBlink() : Cursor_WaitKey();
+		actively_computing ? cursor_check_blink() : cursor_wait_key();
 		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
 		{
 			first_time = 0;
 			while (driver_key_pressed())
 			{
-				Cursor_WaitKey();
+				cursor_wait_key();
 				kbdchar = driver_get_key();
 
 				dcol = drow = 0;
@@ -800,9 +800,9 @@ void Jiim(int which)         /* called by fractint */
 					show_numbers = 8 - show_numbers;
 					if (windows == 0 && show_numbers == 0)
 					{
-						Cursor_Hide();
+						cursor_hide();
 						cleartempmsg();
-						Cursor_Show();
+						cursor_show();
 					}
 					break;
 				case 'p':
@@ -861,8 +861,8 @@ void Jiim(int which)         /* called by fractint */
 				{
 					/* We want to use the position of the cursor */
 					exact = 0;
-					g_col = Cursor_GetX();
-					g_row = Cursor_GetY();
+					g_col = cursor_get_x();
+					g_row = cursor_get_y();
 				}
 #endif
 
@@ -884,7 +884,7 @@ void Jiim(int which)         /* called by fractint */
 					g_row = 0; exact = 0;
 				}
 
-				Cursor_SetPos(g_col, g_row);
+				cursor_set_position(g_col, g_row);
 			}  /* end while (driver_key_pressed) */
 
 			if (exact == 0)
@@ -916,10 +916,10 @@ void Jiim(int which)         /* called by fractint */
 						strcat(str, " ");
 					}
 					str[40] = 0;
-					Cursor_Hide();
+					cursor_hide();
 					actively_computing = 1;
 					showtempmsg(str);
-					Cursor_Show();
+					cursor_show();
 				}
 				else
 				{
@@ -1232,7 +1232,7 @@ finish:
 
 	if (kbdchar != 's' && kbdchar != 'S')
 	{
-		Cursor_Hide();
+		cursor_hide();
 		if (windows == 0)
 		{
 			RestoreRect(xc, yc, xd, yd);
@@ -1253,7 +1253,7 @@ finish:
 				RestoreRect(0, 0, xdots, ydots);
 				windows = 2;
 			}
-			Cursor_Hide();
+			cursor_hide();
 			savehasinverse = hasinverse;
 			hasinverse = 1;
 			SaveRect(0, 0, xdots, ydots);
@@ -1263,14 +1263,14 @@ finish:
 			hasinverse = savehasinverse;
 		}
 	}
-	Cursor_Destroy();
+	cursor_destroy();
 #ifdef XFRACT
-	Cursor_EndMouseTracking();
+	cursor_end_mouse_tracking();
 #endif
-	if (line_buff)
+	if (g_line_buffer)
 	{
-		free(line_buff);
-		line_buff = NULL;
+		free(g_line_buffer);
+		g_line_buffer = NULL;
 	}
 
 	if (rect_buff)
@@ -1280,7 +1280,7 @@ finish:
 	}
 
 	lookatmouse = oldlookatmouse;
-	using_jiim = 0;
+	g_using_jiim = 0;
 	g_calculate_type = oldcalctype;
 	g_debug_flag = old_debugflag; /* yo Chuck! */
 	helpmode = oldhelpmode;
@@ -1306,7 +1306,7 @@ finish:
 	{
 		fclose(file);
 		file = NULL;
-		dir_remove(g_temp_dir, scrnfile);
+		dir_remove(g_temp_dir, g_screen_file);
 	}
 	show_numbers = 0;
 	driver_unget_key(kbdchar);
