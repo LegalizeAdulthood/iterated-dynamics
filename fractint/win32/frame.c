@@ -201,7 +201,7 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	int key_index;
 
 	/* if we're mouse snooping and there's a button down, then record delta movement */
-	if (LOOK_MOUSE_NONE == lookatmouse)
+	if (LOOK_MOUSE_NONE == g_look_at_mouse)
 	{
 		return;
 	}
@@ -251,7 +251,7 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 static void frame_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_LEFT] = TRUE;
-	if (doubleClick && (LOOK_MOUSE_NONE != lookatmouse))
+	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
 	{
 		frame_add_key_press(FIK_ENTER);
 	}
@@ -265,7 +265,7 @@ static void frame_OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 static void frame_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	g_frame.button_down[BUTTON_RIGHT] = TRUE;
-	if (doubleClick && (LOOK_MOUSE_NONE != lookatmouse))
+	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
 	{
 		frame_add_key_press(FIK_CTL_ENTER);
 	}
@@ -390,9 +390,9 @@ int frame_get_key_press(int wait_for_key)
 {
 	int i;
 
-	if (lookatmouse != g_frame.look_mouse)
+	if (g_look_at_mouse != g_frame.look_mouse)
 	{
-		g_frame.look_mouse = lookatmouse;
+		g_frame.look_mouse = g_look_at_mouse;
 		g_frame.delta_x = 0;
 		g_frame.delta_y = 0;
 		g_frame.start_x = -1;

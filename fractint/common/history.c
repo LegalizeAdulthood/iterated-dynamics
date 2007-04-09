@@ -19,12 +19,12 @@ void _fastcall history_save_info(void)
 	HISTORY current = { 0 };
 	HISTORY last;
 
-	if (maxhistory <= 0 || bf_math || !history)
+	if (g_max_history <= 0 || bf_math || !history)
 	{
 		return;
 	}
 #if defined(_WIN32)
-	_ASSERTE(saveptr >= 0 && saveptr < maxhistory);
+	_ASSERTE(saveptr >= 0 && saveptr < g_max_history);
 #endif
 	last = history[saveptr];
 
@@ -127,13 +127,13 @@ void _fastcall history_save_info(void)
 	current.screen_distance_fp				= g_screen_distance_fp;
 	current.eyesfp				= g_eyes_fp;
 	current.orbittype			= (short) g_new_orbit_type;
-	current.juli3Dmode			= (short) g_juli_3D_mode;
-	current.maxfn				= maxfn;
+	current.juli3Dmode			= (short) g_juli_3d_mode;
+	current.g_max_fn				= g_max_fn;
 	current.major_method		= (short) g_major_method;
 	current.minor_method		= (short) g_minor_method;
 	current.bail_out				= g_bail_out;
 	current.bailoutest			= (short) g_bail_out_test;
-	current.iterations			= maxit;
+	current.iterations			= g_max_iteration;
 	current.g_old_demm_colors		= (short) g_old_demm_colors;
 	current.logcalc				= (short) g_log_dynamic_calculate;
 	current.ismand				= (short) g_is_mand;
@@ -174,7 +174,7 @@ void _fastcall history_save_info(void)
 	if (historyptr == -1)        /* initialize the history file */
 	{
 		int i;
-		for (i = 0; i < maxhistory; i++)
+		for (i = 0; i < g_max_history; i++)
 		{
 			history[i] = current;
 		}
@@ -186,16 +186,16 @@ void _fastcall history_save_info(void)
 	}
 	else if (memcmp(&current, &last, sizeof(HISTORY)))
 	{
-		if (++saveptr >= maxhistory)  /* back to beginning of circular buffer */
+		if (++saveptr >= g_max_history)  /* back to beginning of circular buffer */
 		{
 			saveptr = 0;
 		}
-		if (++historyptr >= maxhistory)  /* move user pointer in parallel */
+		if (++historyptr >= g_max_history)  /* move user pointer in parallel */
 		{
 			historyptr = 0;
 		}
 #if defined(_WIN32)
-		_ASSERTE(saveptr >= 0 && saveptr < maxhistory);
+		_ASSERTE(saveptr >= 0 && saveptr < g_max_history);
 #endif
 		history[saveptr] = current;
 	}
@@ -204,12 +204,12 @@ void _fastcall history_save_info(void)
 void _fastcall history_restore_info(void)
 {
 	HISTORY last;
-	if (maxhistory <= 0 || bf_math || history == 0)
+	if (g_max_history <= 0 || bf_math || history == 0)
 	{
 		return;
 	}
 #if defined(_WIN32)
-	_ASSERTE(historyptr >= 0 && historyptr < maxhistory);
+	_ASSERTE(historyptr >= 0 && historyptr < g_max_history);
 #endif
 	last = history[historyptr];
 
@@ -318,13 +318,13 @@ void _fastcall history_restore_info(void)
 	g_screen_distance_fp              	= last.screen_distance_fp;
 	g_eyes_fp              	= last.eyesfp;
 	g_new_orbit_type        = last.orbittype;
-	g_juli_3D_mode			= last.juli3Dmode;
-	maxfn               	= last.maxfn;
+	g_juli_3d_mode			= last.juli3Dmode;
+	g_max_fn               	= last.g_max_fn;
 	g_major_method        	= (enum Major) last.major_method;
 	g_minor_method        	= (enum Minor) last.minor_method;
 	g_bail_out             	= last.bail_out;
 	g_bail_out_test			= (enum bailouts) last.bailoutest;
-	maxit               	= last.iterations;
+	g_max_iteration               	= last.iterations;
 	g_old_demm_colors     	= last.g_old_demm_colors;
 	g_current_fractal_specific  	= &g_fractal_specific[g_fractal_type];
 	g_potential_flag		= (potparam[0] != 0.0);
@@ -382,14 +382,14 @@ void _fastcall history_restore_info(void)
 
 void history_allocate(void)
 {
-	while (maxhistory > 0) /* decrease history if necessary */
+	while (g_max_history > 0) /* decrease history if necessary */
 	{
-		history = (HISTORY *) malloc(sizeof(HISTORY)*maxhistory);
+		history = (HISTORY *) malloc(sizeof(HISTORY)*g_max_history);
 		if (history)
 		{
 			break;
 		}
-		maxhistory--;
+		g_max_history--;
 	}
 }
 
@@ -406,7 +406,7 @@ void history_back(void)
 	--historyptr;
 	if (historyptr <= 0)
 	{
-		historyptr = maxhistory - 1;
+		historyptr = g_max_history - 1;
 	}
 	historyflag = 1;
 }
@@ -414,7 +414,7 @@ void history_back(void)
 void history_forward(void)
 {
 	++historyptr;
-	if (historyptr >= maxhistory)
+	if (historyptr >= g_max_history)
 	{
 		historyptr = 0;
 	}

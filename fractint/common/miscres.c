@@ -675,7 +675,9 @@ static void trigdetails(char *buf)
 	}
 	if (g_current_fractal_specific == &g_fractal_specific[FORMULA] ||
 		g_current_fractal_specific == &g_fractal_specific[FFORMULA])
-		numfn = maxfn;
+	{
+		numfn = g_max_fn;
+	}
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
 	{
@@ -807,7 +809,7 @@ write_row(int row, const char *format, ...)
 
 int tab_display_2(char *msg)
 {
-	extern long maxptr, maxstack, startstack;
+	extern long g_bn_max_stack, maxstack, startstack;
 	int row, key = 0;
 
 	helptitle();
@@ -817,10 +819,10 @@ int tab_display_2(char *msg)
 	putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
 	write_row(++row, "Version %d patch %d", g_release, g_patch_level);
-	write_row(++row, "%ld of %ld bignum memory used", maxptr, maxstack);
+	write_row(++row, "%ld of %ld bignum memory used", g_bn_max_stack, maxstack);
 	write_row(++row, "   %ld used for bignum globals", startstack);
 	write_row(++row, "   %ld stack used == %ld variables of length %d",
-			maxptr-startstack, (long)((maxptr-startstack)/(rbflength + 2)), rbflength + 2);
+			g_bn_max_stack-startstack, (long)((g_bn_max_stack-startstack)/(rbflength + 2)), rbflength + 2);
 	if (bf_math)
 	{
 		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
@@ -835,21 +837,21 @@ int tab_display_2(char *msg)
 	show_str_var("ifsfile",     g_ifs_filename,  &row, msg);
 	show_str_var("autokeyname", g_autokey_name,     &row, msg);
 	show_str_var("lightname",   g_light_name,   &row, msg);
-	show_str_var("map",         MAP_name,     &row, msg);
+	show_str_var("map",         g_map_name,     &row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",
+		write_row(row++, "total_formula_mem %ld g_formula_max_ops (posp) %u g_formula_max_args (vsp) %u",
 			total_formula_mem, posp, vsp);
-		write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
-			StoPtr, LodPtr, Max_Ops, Max_Args, LastInitOp);
+		write_row(row++, "   Store ptr %d Loadptr %d g_formula_max_ops var %u g_formula_max_args var %u g_last_init_op %d",
+			StoPtr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
 	}
 	else if (rhombus_stack[0])
 	{
 		write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-			max_rhombus_depth + 1,
+			g_max_rhombus_depth + 1,
 			rhombus_stack[0], rhombus_stack[1], rhombus_stack[2],
 			rhombus_stack[3], rhombus_stack[4], rhombus_stack[5],
 			rhombus_stack[6], rhombus_stack[7], rhombus_stack[8],
@@ -878,8 +880,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
 		ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 */
-	write_row(row++, "minstackavail %d g_limit2_l %ld g_use_grid %d",
-		minstackavail, g_limit2_l, g_use_grid);
+	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %d",
+		g_minimum_stack_available, g_limit2_l, g_use_grid);
 	putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
@@ -1004,7 +1006,7 @@ top:
 		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
 
-	if (helpmode == HELPCYCLING)
+	if (g_help_mode == HELPCYCLING)
 	{
 		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
@@ -1300,7 +1302,7 @@ top:
 		}
 	}
 	driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
-	sprintf(msg, "%ld (%ld)", g_color_iter, maxit);
+	sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iteration);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
 	sprintf(msg, "%f", g_rq_limit);
@@ -1386,7 +1388,7 @@ static void area(void)
 			}
 		}
 	}
-	if (g_inside > 0 && g_outside < 0 && maxit > g_inside)
+	if (g_inside > 0 && g_outside < 0 && g_max_iteration > g_inside)
 	{
 		msg = "Warning: inside may not be unique\n";
 	}
@@ -1441,7 +1443,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 	}
 }
 
-char insufficient_ifs_mem[] = {"Insufficient memory for IFS"};
+char g_insufficient_ifs_memory[] = {"Insufficient memory for IFS"};
 int numaffine;
 int ifsload()                   /* read in IFS parameters */
 {
@@ -1539,7 +1541,7 @@ int ifsload()                   /* read in IFS parameters */
 		if ((g_ifs_definition = (float *)malloc(
 								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL)
 		{
-			stopmsg(0, insufficient_ifs_mem);
+			stopmsg(0, g_insufficient_ifs_memory);
 			ret = -1;
 		}
 		else
@@ -1813,7 +1815,7 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 	return len;
 }
 
-int matherr_ct = 0;
+int g_math_error_count = 0;
 
 #if !defined(_WIN32)
 #ifndef XFRACT
@@ -1827,7 +1829,7 @@ int _cdecl _matherr(struct exception *except)
 	if (g_debug_flag)
 	{
 		static FILE *fp = NULL;
-		if (matherr_ct++ == 0)
+		if (g_math_error_count++ == 0)
 		{
 			if (DEBUGFLAG_SHOW_MATH_ERRORS == g_debug_flag || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 			{
@@ -1838,15 +1840,15 @@ int _cdecl _matherr(struct exception *except)
 		{
 			fp = fopen("matherr.txt", "wt");
 		}
-		if (matherr_ct < 100)
+		if (g_math_error_count < 100)
 		{
 			fprintf(fp, "err #%d:  %d\nname: %s\narg:  %e\n",
-					matherr_ct, except->type, except->name, except->arg1);
+					g_math_error_count, except->type, except->name, except->arg1);
 			fflush(fp);
 		}
 		else
 		{
-			matherr_ct = 100;
+			g_math_error_count = 100;
 		}
 	}
 	if (except->type == DOMAIN)

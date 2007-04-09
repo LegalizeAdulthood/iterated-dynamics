@@ -25,14 +25,14 @@ tgaview()
 	unsigned int width;
 	struct fractal_info info;
 
-	fptarga = t16_open(g_read_name, (int *)&width, (int *)&height, &cs, (U8 *)&info);
+	fptarga = t16_open(g_read_name, (int *)&width, (int *)&g_height, &cs, (U8 *)&info);
 	if (fptarga == NULL)
 	{
 		return -1;
 	}
 
 	g_row_count = 0;
-	for (i = 0; i < (int)height; ++i)
+	for (i = 0; i < (int)g_height; ++i)
 	{
 		t16_getline(fptarga, width, (U16 *)g_box_x);
 		if ((*g_out_line)((void *)g_box_x, width))

@@ -28,6 +28,12 @@ typedef BYTE BOOLEAN;
 #define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
 #define NUM_BOXES 4096
 
+/* g_note_attenuation values */
+#define ATTENUATE_NONE		0
+#define ATTENUATE_LOW		1
+#define ATTENUATE_MIDDLE	2
+#define ATTENUATE_HIGH		3
+
 /* g_ifs_type values */
 #define IFSTYPE_2D 0
 #define IFSTYPE_3D 1
@@ -144,7 +150,7 @@ typedef BYTE BOOLEAN;
 #define DIRECTION_RIGHT		1
 #define DIRECTION_RANDOM	2
 
-/* g_juli_3D_mode values */
+/* g_juli_3d_mode values */
 #define JULI3DMODE_MONOCULAR	0
 #define JULI3DMODE_LEFT_EYE		1
 #define JULI3DMODE_RIGHT_EYE	2
@@ -204,7 +210,7 @@ typedef BYTE BOOLEAN;
 #define RESAVE_YES 1
 #define RESAVE_DONE 2
 
-/* lookatmouse values */
+/* g_look_at_mouse values */
 #define LOOK_MOUSE_NONE		0
 #define LOOK_MOUSE_TEXT		2
 #define LOOK_MOUSE_ZOOM_BOX	3
@@ -322,8 +328,8 @@ names. So for now humor us and let's keep the names short.
 #define FILE_MAX_FNAME  64       /* max length of filename       */
 #define FILE_MAX_EXT    64       /* max length of extension      */
 
-#define MAXMAXLINELENGTH  128   /* upper limit for maxlinelength for PARs */
-#define MINMAXLINELENGTH  40    /* lower limit for maxlinelength for PARs */
+#define MAXMAXLINELENGTH  128   /* upper limit for g_max_line_length for PARs */
+#define MINMAXLINELENGTH  40    /* lower limit for g_max_line_length for PARs */
 
 #define MSGLEN 80               /* handy buffer size for messages */
 #define MAXCMT 57               /* length of par comments       */
@@ -488,7 +494,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     float eyesfp;
     short orbittype;
     short juli3Dmode;
-    short maxfn;
+    short g_max_fn;
     short inversejulia;
     double dparm5;
     double dparm6;
@@ -607,7 +613,7 @@ struct history_info
     char filename[FILE_MAX_PATH];
     char itemname[ITEMNAMELEN+1];
     unsigned char dac[256][3];
-    char  maxfn;
+    char  g_max_fn;
     char stdcalcmode;
     char three_pass;
     char use_initial_orbit_z;
@@ -726,8 +732,8 @@ struct orbits_info      /* for saving orbits data in a GIF file */
 
 #define N_ATTR 8                        /* max number of attractors     */
 
-extern  long     l_at_rad;      /* finite attractor radius  */
-extern  double   g_f_at_rad;      /* finite attractor radius  */
+extern  long     g_attractor_radius_l;      /* finite attractor radius  */
+extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
 
 #define NUMIFS    64     /* number of ifs functions in ifs array */
 #define IFSPARM    7     /* number of ifs parameters */
@@ -754,7 +760,7 @@ struct fractalspecificstuff
    float xmax;                          /* default XMAX corner */
    float ymin;                          /* default YMIN corner */
    float ymax;                          /* default YMAX corner */
-   int   isinteger;                     /* 1 if integerfractal, 0 otherwise */
+   int   isinteger;                     /* 1 if g_integer_fractal, 0 otherwise */
    int   tojulia;                       /* mandel-to-julia switch */
    int   tomandel;                      /* julia-to-mandel switch */
    int   tofloat;                       /* integer-to-floating switch */

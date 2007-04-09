@@ -22,7 +22,7 @@ static void close_file(void);
 #define MAXCOLORS       256
 
 static FILE *fpin = NULL;       /* FILE pointer           */
-unsigned int height;
+unsigned int g_height;
 unsigned numcolors;
 int g_bad_code_count = 0;         /* needed by decoder module */
 
@@ -136,7 +136,7 @@ int gifview()
 	}
 
 	width  = buffer[6] | (buffer[7] << 8);
-	height = buffer[8] | (buffer[9] << 8);
+	g_height = buffer[8] | (buffer[9] << 8);
 	planes = (buffer[10] & 0x0F) + 1;
 	gifview_image_twidth = width;
 
@@ -172,9 +172,9 @@ int gifview()
 	g_color_state = COLORSTATE_UNKNOWN; /* g_colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
-	if (g_display_3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
+	if (g_display_3d && g_map_set && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
 	{
-		ValidateLuts(MAP_name);  /* read the palette file */
+		ValidateLuts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */
 	}
 	if (g_dac_box[0][0] != 255)
@@ -241,7 +241,7 @@ int gifview()
 			left   = buffer[0] | (buffer[1] << 8);
 			top    = buffer[2] | (buffer[3] << 8);
 			width  = buffer[4] | (buffer[5] << 8);
-			height = buffer[6] | (buffer[7] << 8);
+			g_height = buffer[6] | (buffer[7] << 8);
 
 			/* adjustments for handling MIGs */
 			gifview_image_top  = top;

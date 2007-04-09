@@ -60,10 +60,10 @@ static char funnyglasses_map_name[16];
 char ifsmask[13]     = {"*.ifs"};
 char formmask[13]    = {"*.frm"};
 char lsysmask[13]    = {"*.l"};
-char Glasses1Map[] = "glasses1.map";
-char MAP_name[FILE_MAX_DIR] = "";
-int  mapset = 0;
-int julibrot;   /* flag for julibrot */
+char g_glasses1_map[] = "glasses1.map";
+char g_map_name[FILE_MAX_DIR] = "";
+int  g_map_set = FALSE;
+int g_julibrot;   /* flag for julibrot */
 
 /* --------------------------------------------------------------------- */
 
@@ -109,8 +109,8 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
 	char blanks[78];               /* used to clear text box                */
 
-	savelookatmouse = lookatmouse;
-	lookatmouse = LOOK_MOUSE_NONE;
+	savelookatmouse = g_look_at_mouse;
+	g_look_at_mouse = LOOK_MOUSE_NONE;
 	promptfkeys = fkeymask;
 	memset(blanks, ' ', 77);   /* initialize string of blanks */
 	blanks[77] = (char) 0;
@@ -465,7 +465,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
 		"No changeable parameters;");
 		putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
-		(helpmode > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
+		(g_help_mode > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
 		while (1)
@@ -584,7 +584,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
 	}
 	putstringcenter(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
-		(helpmode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
+		(g_help_mode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
 	while (values[curchoice].type == '*')
@@ -802,7 +802,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 fullscreen_exit:
 	driver_hide_text_cursor();
-	lookatmouse = savelookatmouse;
+	g_look_at_mouse = savelookatmouse;
 	if (scroll_file)
 	{
 		fclose(scroll_file);
@@ -948,8 +948,8 @@ static int input_field_list(
 	int curkey;
 	int i, j;
 	int ret, savelookatmouse;
-	savelookatmouse = lookatmouse;
-	lookatmouse = LOOK_MOUSE_NONE;
+	savelookatmouse = g_look_at_mouse;
+	g_look_at_mouse = LOOK_MOUSE_NONE;
 	for (initval = 0; initval < llen; ++initval)
 	{
 		if (strcmp(fld, list[initval]) == 0)
@@ -1028,7 +1028,7 @@ static int input_field_list(
 
 inpfldl_end:
 	strcpy(fld, list[curval]);
-	lookatmouse = savelookatmouse;
+	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -1121,8 +1121,8 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	ft_choices = &choices[0];
 
 	/* setup context sensitive help */
-	oldhelpmode = helpmode;
-	helpmode = HELPFRACTALS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPFRACTALS;
 	if (t == IFS3D)
 	{
 		t = IFS;
@@ -1130,7 +1130,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	i = j = -1;
 	while (g_fractal_specific[++i].name)
 	{
-		if (julibrot)
+		if (g_julibrot)
 		{
 			if (!((g_fractal_specific[i].flags & OKJB) && *g_fractal_specific[i].name != '*'))
 			{
@@ -1158,7 +1158,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 
 	tname[0] = 0;
 	done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
-		julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
+		g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
 		NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
 		(char **)choices, attributes, 0, 0, 0, j, NULL, tname, NULL, sel_fractype_help);
 	if (done >= 0)
@@ -1179,7 +1179,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	}
 
 
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	return done;
 }
 
@@ -1188,10 +1188,10 @@ static int sel_fractype_help(int curkey, int choice)
 	int oldhelpmode;
 	if (curkey == FIK_F2)
 	{
-		oldhelpmode = helpmode;
-		helpmode = g_fractal_specific[(*(ft_choices + choice))->num].helptext;
+		oldhelpmode = g_help_mode;
+		g_help_mode = g_fractal_specific[(*(ft_choices + choice))->num].helptext;
 		help(0);
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		}
 	return 0;
 }
@@ -1203,7 +1203,7 @@ int select_type_params(/* prompt for new fractal type parameters */
 {
 	int ret, oldhelpmode;
 
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 sel_type_restart:
 	ret = 0;
 	g_fractal_type = newfractype;
@@ -1211,7 +1211,7 @@ sel_type_restart:
 
 	if (g_fractal_type == LSYSTEM)
 	{
-		helpmode = HT_LSYS;
+		g_help_mode = HT_LSYS;
 		if (get_file_entry(GETFILE_L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
 		{
 			ret = 1;
@@ -1220,7 +1220,7 @@ sel_type_restart:
 		}
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		helpmode = HT_FORMULA;
+		g_help_mode = HT_FORMULA;
 		if (get_file_entry(GETFILE_FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
 		{
 			ret = 1;
@@ -1229,7 +1229,7 @@ sel_type_restart:
 		}
 	if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 	{
-		helpmode = HT_IFS;
+		g_help_mode = HT_IFS;
 		if (get_file_entry(GETFILE_IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
 		{
 		ret = 1;
@@ -1294,7 +1294,7 @@ sel_type_restart:
 	}
 
 sel_type_exit:
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	return ret;
 }
 
@@ -1364,18 +1364,18 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	return numfractals;
 }
 
-char *juli3Doptions[] = {"monocular", "lefteye", "righteye", "red-blue"};
+char *g_juli_3d_options[] = {"monocular", "lefteye", "righteye", "red-blue"};
 
 /* JIIM */
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
-char *JIIMmethod[] = {"breadth", "depth", "walk", "run"};
+char *g_jiim_method[] = {"breadth", "depth", "walk", "run"};
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-char *JIIMmethod[] = {"breadth", "depth", "walk"};
+char *g_jiim_method[] = {"breadth", "depth", "walk"};
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-char *JIIMleftright[] = {"left", "right"};
+char *g_jiim_left_right[] = {"left", "right"};
 
 /* moved from miscres.c so sizeof structure can be accessed here */
 struct trig_funct_lst trigfn[] =
@@ -1493,11 +1493,11 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 	oldbailout = g_bail_out;
 	if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 	{
-		julibrot = 1;
+		g_julibrot = TRUE;
 	}
 	else
 	{
-		julibrot = 0;
+		g_julibrot = FALSE;
 	}
 	curtype = g_fractal_type;
 	if (g_current_fractal_specific->name[0] == '*'
@@ -1596,7 +1596,7 @@ int get_fract_params(int caller)        /* prompt for type-specific parms */
 
 gfp_top:
 	promptnum = 0;
-	if (julibrot)
+	if (g_julibrot)
 	{
 		i = select_fracttype(g_new_orbit_type);
 		if (i < 0)
@@ -1605,7 +1605,7 @@ gfp_top:
 			{
 				ret = -1;
 			}
-			julibrot = 0;
+			g_julibrot = FALSE;
 			goto gfp_exit;
 		}
 		else
@@ -1662,7 +1662,7 @@ gfp_top:
 	}
 
 	savespecific = g_current_fractal_specific;
-	if (julibrot)
+	if (g_julibrot)
 	{
 		g_current_fractal_specific = jborbit;
 		firstparm = 2; /* in most case Julibrot does not need first two parms */
@@ -1683,7 +1683,7 @@ gfp_top:
 	for (i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
-		if (!type_has_parameter(julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
+		if (!type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
 		{
 			if (curtype == FORMULA || curtype == FFORMULA)
 			{
@@ -1723,7 +1723,7 @@ gfp_top:
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (curtype == FORMULA || curtype == FFORMULA)
 	{
-		numtrig = maxfn;
+		numtrig = g_max_fn;
 	}
 
 	i = NUMTRIGFN;
@@ -1783,7 +1783,7 @@ gfp_top:
 			choices[promptnum++] = bailoutmsg;
 		}
 	}
-	if (julibrot)
+	if (g_julibrot)
 	{
 		switch (g_new_orbit_type)
 		{
@@ -1827,10 +1827,10 @@ gfp_top:
 		choices[promptnum++] = "Number of z pixels";
 
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = g_juli_3D_mode;
+		paramvalues[promptnum].uval.ch.val  = g_juli_3d_mode;
 		paramvalues[promptnum].uval.ch.llen = 4;
 		paramvalues[promptnum].uval.ch.vlen = 9;
-		paramvalues[promptnum].uval.ch.list = juli3Doptions;
+		paramvalues[promptnum].uval.ch.list = g_juli_3d_options;
 		choices[promptnum++] = "3D Mode";
 
 		paramvalues[promptnum].uval.dval = g_eyes_fp;
@@ -1857,7 +1857,7 @@ gfp_top:
 	{
 		choices[promptnum] = JIIMstr1;
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.list = JIIMmethod;
+		paramvalues[promptnum].uval.ch.list = g_jiim_method;
 		paramvalues[promptnum].uval.ch.vlen = 7;
 #ifdef RANDOM_RUN
 		paramvalues[promptnum].uval.ch.llen = 4;
@@ -1868,7 +1868,7 @@ gfp_top:
 
 		choices[promptnum] = JIIMstr2;
 		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.list = JIIMleftright;
+		paramvalues[promptnum].uval.ch.list = g_jiim_left_right;
 		paramvalues[promptnum].uval.ch.vlen = 5;
 		paramvalues[promptnum].uval.ch.llen = 2;
 		paramvalues[promptnum++].uval.ch.val  = g_minor_method;
@@ -1888,7 +1888,7 @@ gfp_top:
 		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
 		goto gfp_exit;
 	}
-	if (julibrot)
+	if (g_julibrot)
 	{
 		sprintf(msg, "Julibrot Parameters (orbit= %s)", juliorbitname);
 	}
@@ -1908,13 +1908,13 @@ gfp_top:
 	scroll_column_status = 0;
 	while (1)
 	{
-		oldhelpmode = helpmode;
-		helpmode = g_current_fractal_specific->helptext;
+		oldhelpmode = g_help_mode;
+		g_help_mode = g_current_fractal_specific->helptext;
 		i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, tstack);
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
-			if (julibrot)
+			if (g_julibrot)
 			{
 				goto gfp_top;
 			}
@@ -1964,7 +1964,7 @@ gfp_top:
 		++promptnum;
 	}
 
-	if (julibrot)
+	if (g_julibrot)
 	{
 		savespecific = g_current_fractal_specific;
 		g_current_fractal_specific = jborbit;
@@ -2008,14 +2008,14 @@ gfp_top:
 			promptnum++;
 		}
 	}
-	if (julibrot)
+	if (g_julibrot)
 	{
 		g_m_x_max_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_y_max_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_x_min_fp    = paramvalues[promptnum++].uval.dval;
 		g_m_y_min_fp    = paramvalues[promptnum++].uval.dval;
 		g_z_dots      = paramvalues[promptnum++].uval.ival;
-		g_juli_3D_mode = paramvalues[promptnum++].uval.ch.val;
+		g_juli_3d_mode = paramvalues[promptnum++].uval.ch.val;
 		g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
 		g_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
 		g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
@@ -2869,10 +2869,10 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_glasses_type;
 
-	oldhelpmode = helpmode;
-	helpmode = HELP3DFRACT;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELP3DFRACT;
 	i = fullscreen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		ret = -1;
@@ -2982,11 +2982,11 @@ restart_1:
 	uvalues[k].type = 'y';
 	uvalues[k].uval.ch.val = g_grayscale_depth;
 
-	oldhelpmode = helpmode;
-	helpmode = HELP3DMODE;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELP3DMODE;
 
 	k = fullscreen_prompt("3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
 		return -1;
@@ -3080,10 +3080,10 @@ restart_1:
 		{
 			attributes[i] = 1;
 		}
-		helpmode = HELP3DFILL;
+		g_help_mode = HELP3DFILL;
 		i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
 										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
-		helpmode = oldhelpmode;
+		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
 			goto restart_1;
@@ -3197,9 +3197,9 @@ restart_1:
 			"Pre-rotation Z axis is coming at you out of the screen!";
 	}
 
-	helpmode = HELP3DPARMS;
+	g_help_mode = HELP3DPARMS;
 	k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
 		goto restart_1;
@@ -3322,10 +3322,10 @@ static int get_light_params()
 
 	prompts3d[++k] = "";
 
-	oldhelpmode = helpmode;
-	helpmode = HELP3DLIGHT;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELP3DLIGHT;
 	k = fullscreen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
 		return -1;
@@ -3389,9 +3389,9 @@ static int check_mapfile()
 		return 0;
 	}
 	strcpy(temp1, "*");
-	if (mapset)
+	if (g_map_set)
 	{
-		strcpy(temp1, MAP_name);
+		strcpy(temp1, g_map_name);
 	}
 	if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
 	{
@@ -3406,19 +3406,19 @@ static int check_mapfile()
 	{
 		if (askflag)
 		{
-			oldhelpmode = helpmode;
-			helpmode = -1;
+			oldhelpmode = g_help_mode;
+			g_help_mode = -1;
 			i = field_prompt("Enter name of .MAP file to use,\n"
 				"or '*' to use palette from the image to be loaded.",
 				NULL, temp1, 60, NULL);
-			helpmode = oldhelpmode;
+			g_help_mode = oldhelpmode;
 			if (i < 0)
 			{
 				return -1;
 			}
 			if (temp1[0] == '*')
 			{
-				mapset = 0;
+				g_map_set = FALSE;
 				break;
 			}
 		}
@@ -3429,11 +3429,11 @@ static int check_mapfile()
 		{
 			askflag = 1;
 			continue;
-			}
-		mapset = 1;
-		merge_pathnames(MAP_name, temp1, 0);
-		break;
 		}
+		g_map_set = TRUE;
+		merge_pathnames(g_map_name, temp1, 0);
+		break;
+	}
 	return 0;
 }
 
@@ -3467,7 +3467,7 @@ static int get_funny_glasses_params()
 
 	if (g_glasses_type == STEREO_ALTERNATE)
 	{
-		strcpy(funnyglasses_map_name, Glasses1Map);
+		strcpy(funnyglasses_map_name, g_glasses1_map);
 	}
 	else if (g_glasses_type == STEREO_SUPERIMPOSE)
 	{
@@ -3477,7 +3477,7 @@ static int get_funny_glasses_params()
 		}
 		else
 		{
-			strcpy(funnyglasses_map_name, Glasses1Map);
+			strcpy(funnyglasses_map_name, g_glasses1_map);
 			funnyglasses_map_name[7] = '2';
 		}
 	}
@@ -3522,10 +3522,10 @@ static int get_funny_glasses_params()
 		strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
 	}
 
-	oldhelpmode = helpmode;
-	helpmode = HELP3DGLASSES;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELP3DGLASSES;
 	k = fullscreen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
 		return -1;

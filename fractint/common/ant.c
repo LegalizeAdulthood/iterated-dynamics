@@ -482,8 +482,8 @@ int ant(void)
 	}
 	s_incy[2][0] = ydots - 1;      /* wrap from the bottom of the screen to the
 									* top */
-	oldhelpmode = helpmode;
-	helpmode = ANTCOMMANDS;
+	oldhelpmode = g_help_mode;
+	g_help_mode = ANTCOMMANDS;
 	maxpts = (long) param[1];
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
@@ -540,6 +540,6 @@ int ant(void)
 		turk_mite2(maxants, rule_len, rule, maxpts, wait);
 		break;
 	}
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	return 0;
 }

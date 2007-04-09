@@ -38,9 +38,9 @@ void intro(void)
 	int       oldhelpmode;
 
 	timer_start -= clock_ticks();                /* "time out" during help */
-	oldlookatmouse = lookatmouse;
-	oldhelpmode = helpmode;
-	lookatmouse = LOOK_MOUSE_NONE;                     /* de-activate full mouse checking */
+	oldlookatmouse = g_look_at_mouse;
+	oldhelpmode = g_help_mode;
+	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* de-activate full mouse checking */
 
 	i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
 	screen_text[i++] = '\0';
@@ -90,7 +90,7 @@ void intro(void)
 	credits[authors[i + 1]] = oldchar;
 	delaymax = 10;
 	driver_hide_text_cursor();
-	helpmode = HELPMENU;
+	g_help_mode = HELPMENU;
 	while (! driver_key_pressed())
 	{
 #ifdef XFRACT
@@ -127,7 +127,7 @@ void intro(void)
 		driver_hide_text_cursor(); /* turn it off */
 	}
 
-	lookatmouse = oldlookatmouse;                /* restore the mouse-checking */
-	helpmode = oldhelpmode;
+	g_look_at_mouse = oldlookatmouse;                /* restore the mouse-checking */
+	g_help_mode = oldhelpmode;
 	return;
 }

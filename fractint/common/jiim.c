@@ -34,7 +34,7 @@
  *                           of Dan Farmer's ideas like circles and lines
  *                           connecting orbits points.
  *        12-18-93      TIW  Removed use of float only for orbits, fixed a
- *                           helpmode bug.
+ *                           g_help_mode bug.
  *
  */
 
@@ -210,7 +210,7 @@ float  luckyx = 0, luckyy = 0;
 static void fillrect(int x, int y, int width, int height, int color)
 {
 	/* fast version of fillrect */
-	if (hasinverse == 0)
+	if (g_has_inverse == 0)
 	{
 		return;
 	}
@@ -465,7 +465,7 @@ DeQueueLong()
 
 static void SaveRect(int x, int y, int width, int height)
 {
-	if (hasinverse == 0)
+	if (g_has_inverse == 0)
 	{
 		return;
 	}
@@ -492,7 +492,7 @@ static void RestoreRect(int x, int y, int width, int height)
 	char *buff = rect_buff;
 	int  yoff;
 
-	if (hasinverse == 0)
+	if (g_has_inverse == 0)
 	{
 		return;
 	}
@@ -519,7 +519,7 @@ void Jiim(int which)         /* called by fractint */
 	int oldhelpmode;
 	int count = 0;            /* coloring julia */
 	static int mode = 0;      /* point, circle, ... */
-	int oldlookatmouse = lookatmouse;
+	int oldlookatmouse = g_look_at_mouse;
 	double cr, ci, r;
 	int xfactor, yfactor;             /* aspect ratio          */
 	int xoff, yoff;                   /* center of the window  */
@@ -545,15 +545,15 @@ void Jiim(int which)         /* called by fractint */
 	{
 		return;
 	}
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 	if (which == JIIM)
 	{
-		helpmode = HELP_JIIM;
+		g_help_mode = HELP_JIIM;
 	}
 	else
 	{
-		helpmode = HELP_ORBITS;
-		hasinverse = 1;
+		g_help_mode = HELP_ORBITS;
+		g_has_inverse = 1;
 	}
 	oldsxoffs = sxoffs;
 	oldsyoffs = syoffs;
@@ -564,7 +564,7 @@ void Jiim(int which)         /* called by fractint */
 	aspect = ((double)xdots*3)/((double)ydots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
-	lookatmouse = LOOK_MOUSE_ZOOM_BOX;
+	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
 
 	if (which == ORBIT)
 	{
@@ -592,13 +592,13 @@ void Jiim(int which)         /* called by fractint */
 
 	if (sxoffs != 0 || syoffs != 0) /* we're in view windows */
 	{
-		savehasinverse = hasinverse;
-		hasinverse = 1;
+		savehasinverse = g_has_inverse;
+		g_has_inverse = 1;
 		SaveRect(0, 0, xdots, ydots);
 		sxoffs = 0;
 		syoffs = 0;
 		RestoreRect(0, 0, xdots, ydots);
-		hasinverse = savehasinverse;
+		g_has_inverse = savehasinverse;
 	}
 
 	if (xdots == sxdots || ydots == sydots ||
@@ -679,7 +679,7 @@ void Jiim(int which)         /* called by fractint */
 	g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
 	/* possible extraseg arrays have been trashed, so set up again */
-	integerfractal ? fill_lx_array() : fill_dx_array();
+	g_integer_fractal ? fill_lx_array() : fill_dx_array();
 
 	cursor_set_position(g_col, g_row);
 	cursor_show();
@@ -889,7 +889,7 @@ void Jiim(int which)         /* called by fractint */
 
 			if (exact == 0)
 			{
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					cr = g_lx_pixel();
 					ci = g_ly_pixel();
@@ -975,7 +975,7 @@ void Jiim(int which)         /* called by fractint */
 
 		if (which == JIIM)
 		{
-			if (hasinverse == 0)
+			if (g_has_inverse == 0)
 			{
 				continue;
 			}
@@ -1179,10 +1179,10 @@ void Jiim(int which)         /* called by fractint */
 		}
 		else /* orbits */
 		{
-			if (iter < maxit)
+			if (iter < g_max_iteration)
 			{
 				color = (int)iter % g_colors;
-				if (integerfractal)
+				if (g_integer_fractal)
 				{
 					g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
 					g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
@@ -1191,7 +1191,7 @@ void Jiim(int which)         /* called by fractint */
 				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
 				if ((*ORBITCALC)())
 				{
-					iter = maxit;
+					iter = g_max_iteration;
 				}
 				else
 				{
@@ -1254,13 +1254,13 @@ finish:
 				windows = 2;
 			}
 			cursor_hide();
-			savehasinverse = hasinverse;
-			hasinverse = 1;
+			savehasinverse = g_has_inverse;
+			g_has_inverse = 1;
 			SaveRect(0, 0, xdots, ydots);
 			sxoffs = oldsxoffs;
 			syoffs = oldsyoffs;
 			RestoreRect(0, 0, xdots, ydots);
-			hasinverse = savehasinverse;
+			g_has_inverse = savehasinverse;
 		}
 	}
 	cursor_destroy();
@@ -1279,11 +1279,11 @@ finish:
 		rect_buff = NULL;
 	}
 
-	lookatmouse = oldlookatmouse;
+	g_look_at_mouse = oldlookatmouse;
 	g_using_jiim = 0;
 	g_calculate_type = oldcalctype;
 	g_debug_flag = old_debugflag; /* yo Chuck! */
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
 		viewwindow = viewxdots = viewydots = 0;

@@ -423,7 +423,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;                   /* spin-DAC default speed limit */
-	mapset = 0;                          /* no map= name active */
+	g_map_set = FALSE;                          /* no map= name active */
 	if (g_map_dac_box)
 	{
 		free(g_map_dac_box);
@@ -445,7 +445,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_fill_color = -1;                      /* no special fill color */
 	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
 	g_outside = -1;                        /* outside color = -1 (not used) */
-	maxit = 150;                         /* initial maxiter        */
+	g_max_iteration = 150;                         /* initial maxiter        */
 	usr_stdcalcmode = 'g';               /* initial solid-guessing */
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = FALSE;
@@ -541,7 +541,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_base_hertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
 	g_fm_volume = 63;                         /* full volume on soundcard o/p */
-	hi_atten = 0;                        /* no attenuation of hi notes */
+	g_note_attenuation = ATTENUATE_NONE;                        /* no attenuation of hi notes */
 	g_fm_attack = 5;                       /* fast attack     */
 	g_fm_decay = 10;                        /* long decay      */
 	g_fm_sustain = 13;                      /* fairly high sustain level   */
@@ -821,7 +821,7 @@ static int max_history_arg(const cmd_context *context)
 	}
 	else
 	{
-		maxhistory = context->numval;
+		g_max_history = context->numval;
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -940,9 +940,9 @@ static int make_par_arg(const cmd_context *context)
 		{
 			extract_filename(g_command_name, g_read_name);
 		}
-		else if (*MAP_name != 0)
+		else if (*g_map_name != 0)
 		{
-			extract_filename(g_command_name, MAP_name);
+			extract_filename(g_command_name, g_map_name);
 		}
 		else
 		{
@@ -962,7 +962,7 @@ static int make_par_arg(const cmd_context *context)
 			goodbye();
 		}
 	}
-	else if (*MAP_name != 0)
+	else if (*g_map_name != 0)
 	{
 		g_make_par[1] = 0; /* second char is flag for map */
 	}
@@ -983,10 +983,10 @@ static int make_par_arg(const cmd_context *context)
 		printf("copying fractal info in GIF %s to PAR %s/%s\n",
 			g_read_name, g_command_file, g_command_name);
 	}
-	else if (*MAP_name != 0)
+	else if (*g_map_name != 0)
 	{
 		printf("copying color info in map %s to PAR %s/%s\n",
-			MAP_name, g_command_file, g_command_name);
+			g_map_name, g_command_file, g_command_name);
 	}
 #endif
 #endif
@@ -1086,7 +1086,7 @@ static int map_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	existdir = merge_pathnames(MAP_name, context->value, context->mode);
+	existdir = merge_pathnames(g_map_name, context->value, context->mode);
 	if (existdir > 0)
 	{
 		return COMMAND_OK;    /* got a directory */
@@ -1096,7 +1096,7 @@ static int map_arg(const cmd_context *context)
 		init_msg(context->variable, context->value, context->mode);
 		return COMMAND_OK;
 	}
-	SetColorPaletteName(MAP_name);
+	SetColorPaletteName(g_map_name);
 	return COMMAND_OK;
 }
 
@@ -1125,7 +1125,7 @@ static int max_line_length_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	maxlinelength = context->numval;
+	g_max_line_length = context->numval;
 	return COMMAND_OK;
 }
 
@@ -1364,7 +1364,7 @@ static int max_iter_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	maxit = (long) context->floatval[0];
+	g_max_iteration = (long) context->floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
@@ -1515,7 +1515,7 @@ static int min_stack_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	minstack = context->intval[0];
+	g_minimum_stack = context->intval[0];
 	return COMMAND_OK;
 }
 
@@ -1711,9 +1711,9 @@ static int threed_mode_arg(const cmd_context *context)
 	int i;
 	for (i = 0; i < 4; i++)
 	{
-		if (strcmp(context->value, juli3Doptions[i]) == 0)
+		if (strcmp(context->value, g_juli_3d_options[i]) == 0)
 		{
-			g_juli_3D_mode = i;
+			g_juli_3d_mode = i;
 			return COMMAND_FRACTAL_PARAM;
 		}
 	}
@@ -2335,19 +2335,19 @@ static int attenuate_arg(const cmd_context *context)
 {
 	if (context->charval[0] == 'n')
 	{
-		hi_atten = 0;
+		g_note_attenuation = ATTENUATE_NONE;
 	}
 	else if (context->charval[0] == 'l')
 	{
-		hi_atten = 1;
+		g_note_attenuation = ATTENUATE_LOW;
 	}
 	else if (context->charval[0] == 'm')
 	{
-		hi_atten = 2;
+		g_note_attenuation = ATTENUATE_MIDDLE;
 	}
 	else if (context->charval[0] == 'h')
 	{
-		hi_atten = 3;
+		g_note_attenuation = ATTENUATE_HIGH;
 	}
 	else
 	{
@@ -2480,7 +2480,7 @@ static int log_mode_arg(const cmd_context *context)
 	}
 	else if (context->charval[0] == 't')
 	{
-		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      /* force use of LogTable */
+		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      /* force use of g_log_table */
 	}
 	else if (context->charval[0] == 'a')
 	{
@@ -3337,7 +3337,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		command_processor processors[] =
 		{
 			{ "batch",		batch_arg },
-			{ "maxhistory", max_history_arg },
+			{ "g_max_history", max_history_arg },
 			{ "adapter",	adapter_arg },
 			{ "afi",		ignore_arg }, /* 8514 API no longer used; silently gobble any argument */
 			{ "textsafe",	text_safe_arg },
@@ -3364,7 +3364,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
  			{ "map",			map_arg },				/* map=, set default g_colors */
 			{ "g_colors",			colors_arg },			/* g_colors=, set current g_colors */
 			{ "recordcolors",	record_colors_arg },	/* recordcolors= */
-			{ "maxlinelength",	max_line_length_arg },	/* maxlinelength= */
+			{ "g_max_line_length",	max_line_length_arg },	/* g_max_line_length= */
 			{ "comment",		parse_arg },			/* comment= */
 			{ "tplus",			gobble_flag_arg },		/* tplus no longer used */
 			{ "noninterlaced",	gobble_flag_arg },		/* noninterlaced no longer used */
@@ -3396,7 +3396,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "ranges",			ranges_arg },
 			{ "savename", 		save_name_arg },		/* savename=? */
 			{ "tweaklzw", 		ignore_arg },			/* tweaklzw=? */
-			{ "minstack", 		min_stack_arg },		/* minstack=? */
+			{ "g_minimum_stack", 		min_stack_arg },		/* g_minimum_stack=? */
 			{ "mathtolerance", 	math_tolerance_arg },	/* mathtolerance=? */
 			{ "tempdir", 		temp_dir_arg },			/* tempdir=? */
 			{ "workdir", 		work_dir_arg },			/* workdir=? */
@@ -3585,17 +3585,17 @@ static int parse_colors(char *value)
 	int i, j, k;
 	if (*value == '@')
 	{
-		if (merge_pathnames(MAP_name, &value[1], 3) < 0)
+		if (merge_pathnames(g_map_name, &value[1], 3) < 0)
 		{
 			init_msg("", &value[1], 3);
 		}
-		if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(MAP_name) != 0)
+		if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name) != 0)
 		{
 			goto badcolor;
 		}
 		if (g_display_3d)
 		{
-			mapset = 1;
+			g_map_set = TRUE;
 		}
 		else
 		{

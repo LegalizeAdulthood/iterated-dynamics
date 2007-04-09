@@ -52,8 +52,8 @@ calc_mand_floating_point(void)
 	long tmpfsd;
 	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
 
-	g_old_color_iter = (g_periodicity_check == 0) ? 0 : (maxit - 250);
-	tmpfsd = maxit - g_first_saved_and;
+	g_old_color_iter = (g_periodicity_check == 0) ? 0 : (g_max_iteration - 250);
+	tmpfsd = g_max_iteration - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd)
 	{
 		g_old_color_iter = tmpfsd;
@@ -85,12 +85,12 @@ calc_mand_floating_point(void)
 		}
 	}
 
-	cx = maxit;
+	cx = g_max_iteration;
 	if (g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
-		Cx = linitx;
-		Cy = linity;
+		Cx = g_initial_x_l;
+		Cy = g_initial_y_l;
 		x = g_parameter_l.x + Cx;
 		y = g_parameter_l.y + Cy;
 	}
@@ -99,8 +99,8 @@ calc_mand_floating_point(void)
 		/* dojulia_87 */
 		Cx = g_parameter_l.x;
 		Cy = g_parameter_l.y;
-		x = linitx;
-		y = linity;
+		x = g_initial_x_l;
+		y = g_initial_y_l;
 		x2 = FUDGE_MUL(x, x);
 		y2 = FUDGE_MUL(y, y);
 		xy = FUDGE_MUL(x, y);
@@ -129,7 +129,7 @@ calc_mand_floating_point(void)
 				g_new_z_l.y = y;
 			}
 			g_old_color_iter = (cx - 10 > 0) ? cx - 10 : 0;
-			g_real_color_iter = maxit - cx;
+			g_real_color_iter = g_max_iteration - cx;
 			g_color_iter = g_real_color_iter;
 
 			if (g_color_iter == 0)
@@ -168,7 +168,7 @@ calc_mand_floating_point(void)
 					g_color_iter = (long) fabs(atan2(g_new_z_l.y, g_new_z_l.x)*g_atan_colors/PI);
 				}
 				/* check_color */
-				if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
+				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
 				{
 					g_color_iter = (g_save_release < 1961) ? 0 : 1;
 				}
@@ -180,7 +180,7 @@ calc_mand_floating_point(void)
 		/* no_save_new_xy_87 */
 		if (cx < g_old_color_iter)   /* check periodicity */
 		{
-			if (((maxit - cx) & savedand) == 0)
+			if (((g_max_iteration - cx) & savedand) == 0)
 			{
 				savedx = x;
 				savedy = y;
@@ -194,9 +194,9 @@ calc_mand_floating_point(void)
 			else if (ABS(savedx-x) < g_close_enough_l && ABS(savedy-y) < g_close_enough_l)
 			{
 				/* g_old_color_iter = 65535;  */
-				g_old_color_iter = maxit;
-				g_real_color_iter = maxit;
-				g_input_counter = g_input_counter - (maxit - cx);
+				g_old_color_iter = g_max_iteration;
+				g_real_color_iter = g_max_iteration;
+				g_input_counter = g_input_counter - (g_max_iteration - cx);
 				g_color_iter = periodicity_color;
 				goto pop_stack;
 			}
@@ -212,9 +212,9 @@ calc_mand_floating_point(void)
 	/* reached maxit */
 	/* g_old_color_iter = 65535;  */
 	/* check periodicity immediately next time, remember we count down from maxit */
-	g_old_color_iter = maxit;
-	g_input_counter -= maxit;
-	g_real_color_iter = maxit;
+	g_old_color_iter = g_max_iteration;
+	g_input_counter -= g_max_iteration;
+	g_real_color_iter = g_max_iteration;
 
 	g_color_iter = inside_color;
 
@@ -238,7 +238,7 @@ calc_mand_assembly(void)
 		je		initoldcolor				;  yup,	set	oldcolor 0 to disable it
 		cmp		g_reset_periodicity, eax		;	periodicity	reset?
 		je		short initparms				; inherit oldcolor from	prior invocation
-		mov		eax, dword ptr maxit		; yup.  reset oldcolor to maxit-250
+		mov		eax, dword ptr g_max_iteration		; yup.  reset oldcolor to maxit-250
 		sub		eax, 250					;	(avoids	slowness at	high maxits)
 
 initoldcolor:
@@ -251,8 +251,8 @@ initparms:
 		mov		eax, dword ptr g_c_imag		; initialize	y == g_c_imag
 		mov		dword ptr y, eax			;  ...
 
-		mov		eax, dword ptr maxit		; setup k = maxit
-		mov		edx, dword ptr maxit + 4
+		mov		eax, dword ptr g_max_iteration		; setup k = maxit
+		mov		edx, dword ptr g_max_iteration + 4
 		add		eax, 1						;	(+ 1)
 		adc		edx, 0
 		mov		dword ptr k, eax			;  (decrementing	to 0 is	faster)
@@ -263,35 +263,35 @@ initparms:
 
 		sub		dword ptr k, 1				;	we know	the	first iteration	passed
 		sbb		dword ptr k + 4, 0			;	we know	the	first iteration	passed
-		mov		edx, dword ptr linitx + 4		; add x += linitx
-		mov		eax, dword ptr linitx		;  ...
+		mov		edx, dword ptr g_initial_x_l + 4		; add x += g_initial_x_l
+		mov		eax, dword ptr g_initial_x_l		;  ...
 		add		dword ptr x, eax			;  ...
 		adc		dword ptr x + 4, edx			;  ...
-		mov		edx, dword ptr linity + 4		; add y += linity
-		mov		eax, dword ptr linity		;  ...
+		mov		edx, dword ptr g_initial_y_l + 4		; add y += g_initial_y_l
+		mov		eax, dword ptr g_initial_y_l		;  ...
 		add		dword ptr y, eax			;  ...
 		adc		dword ptr y + 4, edx			;  ...
 		jmp		short doeither				; branch around	the	julia switch
 
 dojulia:									; Julia	Set	initialization
 											; "g_fudge" Mandelbrot start-up values
-		mov		eax, dword ptr x			; switch	x with linitx
+		mov		eax, dword ptr x			; switch	x with g_initial_x_l
 		mov		edx, dword ptr x + 4			;  ...
-		mov		ebx, dword ptr linitx		;  ...
-		mov		ecx, dword ptr linitx + 4		;  ...
+		mov		ebx, dword ptr g_initial_x_l		;  ...
+		mov		ecx, dword ptr g_initial_x_l + 4		;  ...
 		mov		dword ptr x, ebx			;  ...
 		mov		dword ptr x + 4, ecx			;  ...
-		mov		dword ptr linitx, eax		;  ...
-		mov		dword ptr linitx + 4,	edx		;  ...
+		mov		dword ptr g_initial_x_l, eax		;  ...
+		mov		dword ptr g_initial_x_l + 4,	edx		;  ...
 
-		mov		eax, dword ptr y			; switch	y with linity
+		mov		eax, dword ptr y			; switch	y with g_initial_y_l
 		mov		edx, dword ptr y + 4			;  ...
-		mov		ebx, dword ptr linity		;  ...
-		mov		ecx, dword ptr linity + 4		;  ...
+		mov		ebx, dword ptr g_initial_y_l		;  ...
+		mov		ecx, dword ptr g_initial_y_l + 4		;  ...
 		mov		dword ptr y, ebx			;  ...
 		mov		dword ptr y + 4, ecx			;  ...
-		mov		dword ptr linity, eax		;  ...
-		mov		dword ptr linity + 4,	edx		;  ...
+		mov		dword ptr g_initial_y_l, eax		;  ...
+		mov		dword ptr g_initial_y_l + 4,	edx		;  ...
 
 doeither:									; common Mandelbrot, Julia set code
 		mov		period,	0					; claim periodicity of	1
@@ -404,10 +404,10 @@ kloop386_16:   ; ecx=g_bit_shift-16, ebp=overflow.mask
 		imul	edi, esi					; compute (y *	x)
 		shl		edi, 1						; ( * 2 / g_fudge)
 		sar		edi, cl
-		add		edi, dword ptr linity + 4		; (2*y*x) / g_fudge + linity
+		add		edi, dword ptr g_initial_y_l + 4		; (2*y*x) / g_fudge + g_initial_y_l
 		movsx	edi, edi					;	save as	y
 
-		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/g_fudge	+ linitx
+		add		ebx, dword ptr g_initial_x_l + 4		; (from above) (x*x - y*y)/g_fudge	+ g_initial_x_l
 		movsx	esi, bx						; save	as x
 
 		mov		eax, k						; rearranged for speed
@@ -489,11 +489,11 @@ kloop:										; for (k = 0; k	<= maxit; k++)
 		mov		eax, edi					; compute (y *	x)
 		imul	esi							;  ...
 		shrd	eax, edx, FUDGE_FACTOR_BITS-1		;	 ( * 2 / g_fudge)
-		add		eax, linity					;	(above)	+ linity
+		add		eax, g_initial_y_l					;	(above)	+ g_initial_y_l
 		mov		edi, eax					;	save this as y
 
 ;		(from the earlier code)				; compute (x*x - y*y) /	g_fudge
-		add		ebx, linitx					;		 + linitx
+		add		ebx, g_initial_x_l					;		 + g_initial_x_l
 		mov		esi, ebx					; save	this as	x
 
 		mov		eax, k						; rearranged for speed
@@ -550,7 +550,7 @@ noorbit32:
 		mov		eax, k						; set old color
 		sub		eax, 10						; minus 10, for safety
 		mov		g_old_color_iter, eax			; and save	it as the "old"	color
-		mov		eax, maxit					; compute color
+		mov		eax, g_max_iteration					; compute color
 		sub		eax, k						;	(first,	re-compute "k")
 		sub		g_input_counter, eax				;	adjust the keyboard	count (use eax only)
 		cmp		eax, 0						; convert any "outlier" region
@@ -558,7 +558,7 @@ noorbit32:
 		mov		eax, 1						;	 to	look like we ran through
 coloradjust1_32:							;	 at	least one loop.
 		mov		g_real_color_iter, eax			; result before adjustments
-		cmp		eax, maxit					; did we max out on iterations?
+		cmp		eax, g_max_iteration					; did we max out on iterations?
 		jne		short notmax32				;	 nope.
 		mov		g_old_color_iter, eax			; set "oldcolor"	to maximum
 		cmp		g_inside,	0					; is "inside" >= 0?
@@ -600,8 +600,8 @@ noorbit2:
 		sbb		edx, 0
 		mov		dword ptr g_old_color_iter,	eax	; and save it as	the	"old" color
 		mov		dword ptr g_old_color_iter + 4, edx ; and save it as	the	"old" color
-		mov		eax, dword ptr maxit		; compute color
-		mov		edx, dword ptr maxit + 4		; compute color
+		mov		eax, dword ptr g_max_iteration		; compute color
+		mov		edx, dword ptr g_max_iteration + 4		; compute color
 		sub		eax, dword ptr k			;  (first, re-compute "k")
 		sbb		edx, dword ptr k + 4			;  (first, re-compute "k")
 		sub		g_input_counter, eax				;	adjust the keyboard	count
@@ -616,9 +616,9 @@ kludge_for_julia:
 coloradjust1:								;	 at	least one loop.
 		mov		dword ptr g_real_color_iter, eax	; result before adjustments
 		mov		dword ptr g_real_color_iter + 4, edx	; result before adjustments
-		cmp		edx, dword ptr maxit + 4			; did we max out on iterations?
+		cmp		edx, dword ptr g_max_iteration + 4			; did we max out on iterations?
 		jne		short notmax					;  nope.
-		cmp		eax, dword ptr maxit			; did we max out on iterations?
+		cmp		eax, dword ptr g_max_iteration			; did we max out on iterations?
 		jne		short notmax					;  nope.
 		mov		dword ptr g_old_color_iter,	eax		; set "oldcolor" to maximum
 		mov		dword ptr g_old_color_iter + 4, edx	; set "oldcolor" to maximum
@@ -704,11 +704,11 @@ notdoneyet:
 		rcl		edx, 1						;	 ...
 		shl		eax, 1						;	 shift two bits
 		rcl		edx, 1						;	 cannot	overflow as	|x| <= 2,	|y| <= 2
-		add		edx, dword ptr linity + 4		; (2*y*x) / g_fudge + linity
+		add		edx, dword ptr g_initial_y_l + 4		; (2*y*x) / g_fudge + g_initial_y_l
 		jo		end16bit					; bail out if too high
 		mov		edi, edx					; save as y
 
-		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/g_fudge	+ linitx
+		add		ebx, dword ptr g_initial_x_l + 4		; (from above) (x*x - y*y)/g_fudge	+ g_initial_x_l
 		jo		end16bit					; bail out if too high
 		mov		esi, ebx					; save as x
 
@@ -937,8 +937,8 @@ nextxy:	sub		dword ptr k, 1				;	while (k < maxit)
 tryagain:
 		sub		ecx, esi					; subtract y*y from x*x
 		sbb		edx, ebp					;  ...
-		add		ecx, dword ptr linitx		; add "A"
-		adc		edx, dword ptr linitx + 4		;  ...
+		add		ecx, dword ptr g_initial_x_l		; add "A"
+		adc		edx, dword ptr g_initial_x_l + 4		;  ...
 		jo		done4						;CJLT-Must detect overflow here
 											; but increment	loop count first
 		mov		dword ptr x, ecx			; store new x = x*x-y*y + a
@@ -980,8 +980,8 @@ tryagain:
 		adc		edx, 0						;	 ...
 		xor		bl,	bl						; Clear	negswt
 signok:
-		add		eax, dword ptr linity
-		adc		edx, dword ptr linity + 4		; edx, eax =	2(X*Y) + B
+		add		eax, dword ptr g_initial_y_l
+		adc		edx, dword ptr g_initial_y_l + 4		; edx, eax =	2(X*Y) + B
 		jo		done1
 		mov		dword ptr y, eax			; save the new value	of y
 		mov		dword ptr y + 4, edx			;  ...

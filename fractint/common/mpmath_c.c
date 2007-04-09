@@ -104,7 +104,7 @@ struct MPC MPCsub(struct MPC x, struct MPC y)
 	return z;
 }
 
-struct MPC MPCone = {
+struct MPC g_one_mpc = {
 	{0x3fff, 0x80000000l},
     {0, 0l}
 };
@@ -114,7 +114,7 @@ struct MPC MPCpow(struct MPC x, int exp)
 	struct MPC z;
 	struct MPC zz;
 
-	z = (exp & 1) ? x : MPCone;
+	z = (exp & 1) ? x : g_one_mpc;
 	exp >>= 1;
 	while (exp)
 	{
@@ -214,7 +214,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 
 	/* fixes power bug - if any complaints, backwards compatibility hook
 		goes here TIW 3/95 */
-	if (ldcheck == 0)
+	if (!g_use_old_complex_power)
 	{
 		if (xx.x == 0 && xx.y == 0)
 		{
@@ -464,9 +464,9 @@ _CMPLX ComplexSqrtFloat(double x, double y)
 
 #ifndef TESTING_MATH
 
-BYTE *LogTable = (BYTE *)0;
-long MaxLTSize;
-int  Log_Calc = 0;
+BYTE *g_log_table = (BYTE *)0;
+long g_max_log_table_size;
+int  g_log_calculation = 0;
 static double mlf;
 static unsigned long lf;
 
@@ -488,57 +488,57 @@ void SetupLogTable(void)
 		if (g_log_palette_flag > LOGPALETTE_NONE)  /* new log function */
 		{
 			lf = (g_log_palette_flag > LOGPALETTE_STANDARD) ? g_log_palette_flag : 0;
-			if (lf >= (unsigned long)MaxLTSize)
+			if (lf >= (unsigned long)g_max_log_table_size)
 			{
-				lf = MaxLTSize - 1;
+				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - (lf ? 2 : 1 ))/log(MaxLTSize - lf);
+			mlf = (g_colors - (lf ? 2 : 1 ))/log(g_max_log_table_size - lf);
 		}
 		else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
 		{
-			mlf = (g_colors - 1)/log(MaxLTSize);
+			mlf = (g_colors - 1)/log(g_max_log_table_size);
 		}
 		else if (g_log_palette_flag <= -2)  /* sqrt function */
 		{
 			lf = -g_log_palette_flag;
-			if (lf >= (unsigned long)MaxLTSize)
+			if (lf >= (unsigned long)g_max_log_table_size)
 			{
-				lf = MaxLTSize - 1;
+				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - 2)/sqrt(MaxLTSize - lf);
+			mlf = (g_colors - 2)/sqrt(g_max_log_table_size - lf);
 		}
 	}
 
-	if (Log_Calc)
+	if (g_log_calculation)
 	{
-		return; /* LogTable not defined, bail out now */
+		return; /* g_log_table not defined, bail out now */
 	}
 
-	if (g_save_release > 1920 && !Log_Calc)
+	if (g_save_release > 1920 && !g_log_calculation)
 	{
-		Log_Calc = 1;   /* turn it on */
-		for (prev = 0; prev <= (unsigned long)MaxLTSize; prev++)
+		g_log_calculation = 1;   /* turn it on */
+		for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 		{
-			LogTable[prev] = (BYTE)logtablecalc((long)prev);
+			g_log_table[prev] = (BYTE)logtablecalc((long)prev);
 		}
-		Log_Calc = 0;   /* turn it off, again */
+		g_log_calculation = 0;   /* turn it off, again */
 		return;
 	}
 
 	if (g_log_palette_flag > -2)
 	{
 		lf = (g_log_palette_flag > LOGPALETTE_STANDARD) ? g_log_palette_flag : 0;
-		if (lf >= (unsigned long)MaxLTSize)
+		if (lf >= (unsigned long)g_max_log_table_size)
 		{
-			lf = MaxLTSize - 1;
+			lf = g_max_log_table_size - 1;
 		}
-		Fg2Float((long)(MaxLTSize-lf), 0, m);
+		Fg2Float((long)(g_max_log_table_size-lf), 0, m);
 		fLog14(m, m);
 		Fg2Float((long)(g_colors - (lf ? 2 : 1)), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
-			LogTable[prev] = 1;
+			g_log_table[prev] = 1;
 		}
 		for (n = (lf ? 2 : 1); n < (unsigned int)g_colors; n++)
 		{
@@ -546,30 +546,30 @@ void SetupLogTable(void)
 			fMul16(f, m, f);
 			fExp14(f, l);
 			limit = (unsigned long)Float2Fg(l, 0) + lf;
-			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
+			if (limit > (unsigned long)g_max_log_table_size || n == (unsigned int)(g_colors-1))
 			{
-				limit = MaxLTSize;
+				limit = g_max_log_table_size;
 			}
 			while (prev <= limit)
 			{
-				LogTable[prev++] = (BYTE)n;
+				g_log_table[prev++] = (BYTE)n;
 			}
 		}
 	}
 	else
 	{
 		lf = -g_log_palette_flag;
-		if (lf >= (unsigned long)MaxLTSize)
+		if (lf >= (unsigned long)g_max_log_table_size)
 		{
-			lf = MaxLTSize - 1;
+			lf = g_max_log_table_size - 1;
 		}
-		Fg2Float((long)(MaxLTSize-lf), 0, m);
+		Fg2Float((long)(g_max_log_table_size-lf), 0, m);
 		fSqrt14(m, m);
 		Fg2Float((long)(g_colors-2), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
-			LogTable[prev] = 1;
+			g_log_table[prev] = 1;
 		}
 		for (n = 2; n < (unsigned int)g_colors; n++)
 		{
@@ -577,24 +577,24 @@ void SetupLogTable(void)
 			fMul16(f, m, f);
 			fMul16(f, f, l);
 			limit = (unsigned long)(Float2Fg(l, 0) + lf);
-			if (limit > (unsigned long)MaxLTSize || n == (unsigned int)(g_colors-1))
+			if (limit > (unsigned long)g_max_log_table_size || n == (unsigned int)(g_colors-1))
 			{
-				limit = MaxLTSize;
+				limit = g_max_log_table_size;
 			}
 			while (prev <= limit)
 			{
-				LogTable[prev++] = (BYTE)n;
+				g_log_table[prev++] = (BYTE)n;
 			}
 		}
 	}
-	LogTable[0] = 0;
+	g_log_table[0] = 0;
 	if (g_log_palette_flag != LOGPALETTE_OLD)
 	{
-		for (sptop = 1; sptop < (unsigned long)MaxLTSize; sptop++) /* spread top to incl unused g_colors */
+		for (sptop = 1; sptop < (unsigned long)g_max_log_table_size; sptop++) /* spread top to incl unused g_colors */
 		{
-			if (LogTable[sptop] > LogTable[sptop-1])
+			if (g_log_table[sptop] > g_log_table[sptop-1])
 			{
-				LogTable[sptop] = (BYTE)(LogTable[sptop-1] + 1);
+				g_log_table[sptop] = (BYTE)(g_log_table[sptop-1] + 1);
 			}
 		}
 	}
@@ -608,9 +608,9 @@ long logtablecalc(long citer)
 	{
 		return citer;
 	}
-	if (LogTable && !Log_Calc)
+	if (g_log_table && !g_log_calculation)
 	{
-		return LogTable[(long)min(citer, MaxLTSize)];
+		return g_log_table[(long)min(citer, g_max_log_table_size)];
 	}
 
 	if (g_log_palette_flag > LOGPALETTE_NONE)  /* new log function */

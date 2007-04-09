@@ -326,7 +326,7 @@ int get_the_rest(void)
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		numtrig = maxfn;
+		numtrig = g_max_fn;
 	}
 
 choose_vars_restart:
@@ -479,7 +479,7 @@ int get_variations(void)
 	numparams = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
-		if (type_has_parameter(julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
+		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
 		{
 			if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 			{
@@ -693,10 +693,10 @@ get_evol_restart:
 
 	choices[++k]= "Press F6 to control which parameters are varied";
 	uvalues[k].type = '*';
-	oldhelpmode = helpmode;     /* this prevents HELP from activating */
-	helpmode = HELPEVOL;
+	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
+	g_help_mode = HELPEVOL;
 	i = fullscreen_prompt("Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
-	helpmode = oldhelpmode;     /* re-enable HELP */
+	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
 		/* in case this point has been reached after calling sub menu with F6 */

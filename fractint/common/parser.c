@@ -43,8 +43,8 @@ enum MATH_TYPE MathType = D_MATH;
 #define MAX_ARGS 100
 #define MAX_BOXX 8192  /* max size of g_box_x array */
 
-unsigned Max_Ops  = MAX_OPS;
-unsigned Max_Args = MAX_ARGS;
+unsigned g_formula_max_ops  = MAX_OPS;
+unsigned g_formula_max_args = MAX_ARGS;
 
 unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
 
@@ -160,10 +160,10 @@ struct token_st
 
 /* CAE fp added MAX_STORES and LOADS */
 /* MAX_STORES must be even to make Unix alignment work */
-/* TW made dependent on Max_Ops */
+/* TW made dependent on g_formula_max_ops */
 
-#define MAX_STORES ((Max_Ops/4)*2)  /* at most only half the ops can be stores */
-#define MAX_LOADS ((unsigned)(Max_Ops*.8))  /* and 80% can be loads */
+#define MAX_STORES ((g_formula_max_ops/4)*2)  /* at most only half the ops can be stores */
+#define MAX_LOADS ((unsigned)(g_formula_max_ops*.8))  /* and 80% can be loads */
 /* PB 901103 made some of the following static for safety */
 
 static struct PEND_OP o[2300];
@@ -193,7 +193,7 @@ union Arg *Arg1, *Arg2;
 /* CAE fp  made some of the following non-static for PARSERA.ASM */
 /* Some of these variables should be renamed for safety */
 union Arg s[20], **Store, **Load;     /* static CAE fp */
-int StoPtr, LodPtr, OpPtr;      /* static CAE fp */
+int StoPtr, g_lod_ptr, OpPtr;      /* static CAE fp */
 int var_count;
 int complx_count;
 int real_count;
@@ -203,11 +203,11 @@ void (**f)(void) = (void (**)(void))0; /* static CAE fp */
 
 int g_is_mand = 1;
 
-unsigned int posp, vsp, LastOp;     /* CAE fp made non-static */
+unsigned int posp, vsp, g_last_op;     /* CAE fp made non-static */
 static unsigned int n, NextOp, InitN;
 static int paren, ExpectingArg;
 struct ConstArg *v = (struct ConstArg *)0;      /* was static CAE fp */
-int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;      /* was static CAE fp */
+int InitLodPtr, InitStoPtr, InitOpPtr, g_last_init_op;      /* was static CAE fp */
 static int Delta16;
 double g_fudge_limit;           /* TIW 05-04-91 */
 static double fg;
@@ -513,30 +513,30 @@ void dStkLodDup()
 {
 	Arg1 += 2;
 	Arg2 += 2;
-	*Arg2 = *Arg1 = *Load[LodPtr];
-	LodPtr += 2;
+	*Arg2 = *Arg1 = *Load[g_lod_ptr];
+	g_lod_ptr += 2;
 }
 
 void dStkLodSqr()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.y = Load[LodPtr]->d.x*Load[LodPtr]->d.y*2.0;
-	Arg1->d.x = (Load[LodPtr]->d.x*Load[LodPtr]->d.x) - (Load[LodPtr]->d.y*Load[LodPtr]->d.y);
-	LodPtr++;
+	Arg1->d.y = Load[g_lod_ptr]->d.x*Load[g_lod_ptr]->d.y*2.0;
+	Arg1->d.x = (Load[g_lod_ptr]->d.x*Load[g_lod_ptr]->d.x) - (Load[g_lod_ptr]->d.y*Load[g_lod_ptr]->d.y);
+	g_lod_ptr++;
 }
 
 void dStkLodSqr2()
 {
 	Arg1++;
 	Arg2++;
-	LastSqr.d.x = Load[LodPtr]->d.x*Load[LodPtr]->d.x;
-	LastSqr.d.y = Load[LodPtr]->d.y*Load[LodPtr]->d.y;
-	Arg1->d.y = Load[LodPtr]->d.x*Load[LodPtr]->d.y*2.0;
+	LastSqr.d.x = Load[g_lod_ptr]->d.x*Load[g_lod_ptr]->d.x;
+	LastSqr.d.y = Load[g_lod_ptr]->d.y*Load[g_lod_ptr]->d.y;
+	Arg1->d.y = Load[g_lod_ptr]->d.x*Load[g_lod_ptr]->d.y*2.0;
 	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
 	LastSqr.d.x += LastSqr.d.y;
 	LastSqr.d.y = 0;
-	LodPtr++;
+	g_lod_ptr++;
 }
 
 void dStkStoDup()
@@ -550,9 +550,9 @@ void dStkLodDbl()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.x = Load[LodPtr]->d.x*2.0;
-	Arg1->d.y = Load[LodPtr]->d.y*2.0;
-	LodPtr++;
+	Arg1->d.x = Load[g_lod_ptr]->d.x*2.0;
+	Arg1->d.y = Load[g_lod_ptr]->d.y*2.0;
+	g_lod_ptr++;
 }
 
 void dStkStoDbl()
@@ -849,7 +849,7 @@ void dStkOne(void)
 #if !defined(XFRACT)
 void mStkOne(void)
 {
-	Arg1->m = MPCone;
+	Arg1->m = g_one_mpc;
 }
 
 void lStkOne(void)
@@ -1047,7 +1047,7 @@ void StkLod(void)
 {
 	Arg1++;
 	Arg2++;
-	*Arg1 = *Load[LodPtr++];
+	*Arg1 = *Load[g_lod_ptr++];
 }
 
 void StkClr(void)
@@ -1946,7 +1946,7 @@ void (*StkPwr)(void) = dStkPwr;
 
 void EndInit(void)
 {
-	LastInitOp = OpPtr;
+	g_last_init_op = OpPtr;
 	InitJumpIndex = jump_index;
 }
 
@@ -1955,7 +1955,7 @@ void (*PtrEndInit)(void) = EndInit;
 void StkJump(void)
 {
 	OpPtr =  jump_control[jump_index].ptrs.JumpOpPtr;
-	LodPtr = jump_control[jump_index].ptrs.JumpLodPtr;
+	g_lod_ptr = jump_control[jump_index].ptrs.JumpLodPtr;
 	StoPtr = jump_control[jump_index].ptrs.JumpStoPtr;
 	jump_index = jump_control[jump_index].DestJumpIndex;
 }
@@ -2268,7 +2268,7 @@ int isjump(char *Str, int Len)
 }
 
 
-char maxfn = 0;
+char g_max_fn = 0;
 /* TIW 03-30-91 STOP */
 
 struct FNCT_LIST FnctList[] =  /* TIW 03-31-91 added far */
@@ -2384,9 +2384,9 @@ void (*isfunct(char *Str, int Len))(void)
 					functnum = whichfn(Str, Len);
 					if (functnum != 0)    /* TIW 04-22-91 */
 					{
-						if (functnum > maxfn)                  /* TIW 04-22-91 */
+						if (functnum > g_max_fn)                  /* TIW 04-22-91 */
 						{
-							maxfn = (char)functnum;                  /* TIW 04-22-91 */
+							g_max_fn = (char)functnum;                  /* TIW 04-22-91 */
 						}
 					}
 					return *FnctList[n].ptr;
@@ -2641,7 +2641,7 @@ static int ParseStr(char *Str, int pass)
 		break;
 #endif
 	}
-	maxfn = 0;   /* TIW 03-30-91 */
+	g_max_fn = 0;   /* TIW 03-30-91 */
 	for (vsp = 0; vsp < sizeof(Constants) / sizeof(char*); vsp++)
 	{
 		v[vsp].s = Constants[vsp];
@@ -2653,7 +2653,7 @@ static int ParseStr(char *Str, int pass)
 	v[7].a.d.x = v[7].a.d.y = 0.0;
 	v[11].a.d.x = (double)xdots;
 	v[11].a.d.y = (double)ydots;
-	v[12].a.d.x = (double)maxit;
+	v[12].a.d.x = (double)g_max_iteration;
 	v[12].a.d.y = 0;
 	v[13].a.d.x = (double)g_is_mand;
 	v[13].a.d.y = 0;
@@ -2718,7 +2718,7 @@ static int ParseStr(char *Str, int pass)
 		v[8].a.l.y = (long)(param[5]*fg);
 		v[11].a.l.x = xdots; v[11].a.l.x <<= g_bit_shift;
 		v[11].a.l.y = ydots; v[11].a.l.y <<= g_bit_shift;
-		v[12].a.l.x = maxit; v[12].a.l.x <<= g_bit_shift;
+		v[12].a.l.x = g_max_iteration; v[12].a.l.x <<= g_bit_shift;
 		v[12].a.l.y = 0L;
 		v[13].a.l.x = g_is_mand; v[13].a.l.x <<= g_bit_shift;
 		v[13].a.l.y = 0L;
@@ -2736,7 +2736,7 @@ static int ParseStr(char *Str, int pass)
 #endif
 	}
 
-	LastInitOp = paren = OpPtr = LodPtr = StoPtr = posp = 0;
+	g_last_init_op = paren = OpPtr = g_lod_ptr = StoPtr = posp = 0;
 	ExpectingArg = 1;
 	for (n = 0; Str[n]; n++)
 	{
@@ -2798,7 +2798,7 @@ static int ParseStr(char *Str, int pass)
 			o[posp].f = EndInit;
 			o[posp++].p = -30000;
 			Equals = paren = 0;
-			LastInitOp = 10000;
+			g_last_init_op = 10000;
 			break;
 		case '+':
 			ExpectingArg = 1;
@@ -2883,7 +2883,7 @@ static int ParseStr(char *Str, int pass)
 			{
 				o[posp-1].f = StkSto;
 				o[posp-1].p = 5 - (paren + Equals)*15;
-				Store[StoPtr++] = Load[--LodPtr];
+				Store[StoPtr++] = Load[--g_lod_ptr];
 				Equals++;
 			}
 			break;
@@ -2944,7 +2944,7 @@ static int ParseStr(char *Str, int pass)
 				else
 				{
 					c = isconst(&Str[InitN], Len);
-					Load[LodPtr++] = &(c->a);
+					Load[g_lod_ptr++] = &(c->a);
 					o[posp].f = StkLod;
 					o[posp++].p = 1 - (paren + Equals)*15;
 					n = InitN + c->len - 1;
@@ -2956,7 +2956,7 @@ static int ParseStr(char *Str, int pass)
 	o[posp].f = (void(*)(void))0;
 	o[posp++].p = 16;
 	NextOp = 0;
-	LastOp = posp;
+	g_last_op = posp;
 	while (NextOp < posp)
 	{
 		if (o[NextOp].f)
@@ -2966,7 +2966,7 @@ static int ParseStr(char *Str, int pass)
 		else
 		{
 			NextOp++;
-			LastOp--;
+			g_last_op--;
 		}
 	}
 	return 0;
@@ -2980,7 +2980,7 @@ int Formula(void)
 		return 1;
 	}
 
-	LodPtr = InitLodPtr;
+	g_lod_ptr = InitLodPtr;
 	StoPtr = InitStoPtr;
 	OpPtr = InitOpPtr;
 	jump_index = InitJumpIndex;
@@ -3004,7 +3004,7 @@ int Formula(void)
 
 	Arg1 = &s[0];
 	Arg2 = Arg1-1;
-	while (OpPtr < (int)LastOp)
+	while (OpPtr < (int)g_last_op)
 	{
 		f[OpPtr]();
 		OpPtr++;
@@ -3043,7 +3043,7 @@ int form_per_pixel(void)
 	{
 		return 1;
 	}
-	overflow = LodPtr = StoPtr = OpPtr = jump_index = 0;
+	overflow = g_lod_ptr = StoPtr = OpPtr = jump_index = 0;
 	Arg1 = &s[0];
 	Arg2 = Arg1;
 	Arg2--;
@@ -3064,7 +3064,7 @@ int form_per_pixel(void)
 	case M_MATH:
 		if ((g_row + g_col)&1)
 		{
-			v[9].a.m = MPCone;
+			v[9].a.m = g_one_mpc;
 		}
 		else
 		{
@@ -3133,16 +3133,16 @@ int form_per_pixel(void)
 		}
 	}
 
-	if (LastInitOp)
+	if (g_last_init_op)
 	{
-		LastInitOp = LastOp;
+		g_last_init_op = g_last_op;
 	}
-	while (OpPtr < LastInitOp)
+	while (OpPtr < g_last_init_op)
 	{
 		f[OpPtr]();
 		OpPtr++;
 	}
-	InitLodPtr = LodPtr;
+	InitLodPtr = g_lod_ptr;
 	InitStoPtr = StoPtr;
 	InitOpPtr = OpPtr;
 	/* Set old variable for orbits TIW 12-18-93 */
@@ -3211,7 +3211,7 @@ int fill_jump_struct(void)
 
 	JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-	for (OpPtr = 0; OpPtr < (int) LastOp; OpPtr++)
+	for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
 	{
 		if (find_new_func)
 		{
@@ -3863,7 +3863,7 @@ int frm_get_param_stuff(char *Name)
 	int c;
 	struct token_st current_token;
 	FILE *entry_file = NULL;
-	uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
+	uses_p1 = uses_p2 = uses_p3 = uses_ismand = g_max_fn = 0;
 	uses_p4 = uses_p5 = 0;
 
 	if (g_formula_name[0] == 0)
@@ -3939,9 +3939,9 @@ int frm_get_param_stuff(char *Name)
 			}
 			break;
 		case PARAM_FUNCTION:
-			if ((current_token.token_id - 10) > maxfn)
+			if ((current_token.token_id - 10) > g_max_fn)
 			{
-				maxfn = (char) (current_token.token_id - 10);
+				g_max_fn = (char) (current_token.token_id - 10);
 			}
 			break;
 		}
@@ -3953,7 +3953,7 @@ int frm_get_param_stuff(char *Name)
 	}
 	if (current_token.token_type != END_OF_FORMULA)
 	{
-		uses_p1 = uses_p2 = uses_p3 = uses_ismand = maxfn = 0;
+		uses_p1 = uses_p2 = uses_p3 = uses_ismand = g_max_fn = 0;
 		uses_p4 = uses_p5 = 0;
 		return 0;
 	}
@@ -4368,30 +4368,30 @@ static void parser_allocate(void)
 	int pass, is_bad_form = 0;
 	long end_dx_array;
 	/* TW Jan 1 1996 Made two passes to determine actual values of
-		Max_Ops and Max_Args. */
+		g_formula_max_ops and g_formula_max_args. */
 	for (pass = 0; pass < 2; pass++)
 	{
 		free_workarea();
 		if (pass == 0)
 		{
-			Max_Ops = 2300; /* this value uses up about 64K memory */
-			Max_Args = (unsigned) (Max_Ops/2.5);
+			g_formula_max_ops = 2300; /* this value uses up about 64K memory */
+			g_formula_max_args = (unsigned) (g_formula_max_ops/2.5);
 		}
-		f_size = sizeof(void (**)(void))*Max_Ops;
+		f_size = sizeof(void (**)(void))*g_formula_max_ops;
 		Store_size = sizeof(union Arg *)*MAX_STORES;
 		Load_size = sizeof(union Arg *)*MAX_LOADS;
-		v_size = sizeof(struct ConstArg)*Max_Args;
-		p_size = sizeof(struct fls *)*Max_Ops;
+		v_size = sizeof(struct ConstArg)*g_formula_max_args;
+		p_size = sizeof(struct fls *)*g_formula_max_ops;
 		total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
-			+ sizeof(struct PEND_OP)*Max_Ops;
+			+ sizeof(struct PEND_OP)*g_formula_max_ops;
 		end_dx_array = g_use_grid ? 2*(xdots + ydots)*sizeof(double) : 0;
 
 		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)(void)) g_type_specific_work_area;
-		Store = (union Arg **) (f + Max_Ops);
+		Store = (union Arg **) (f + g_formula_max_ops);
 		Load = (union Arg **) (Store + MAX_STORES);
 		v = (struct ConstArg *) (Load + MAX_LOADS);
-		pfls = (struct fls *) (v + Max_Args);
+		pfls = (struct fls *) (v + g_formula_max_args);
 
 		if (pass == 0)
 		{
@@ -4399,8 +4399,8 @@ static void parser_allocate(void)
 			if (is_bad_form == 0)
 			{
 				/* per Chuck Ebbert, g_fudge these up a little */
-				Max_Ops = posp + 4;
-				Max_Args = vsp + 4;
+				g_formula_max_ops = posp + 4;
+				g_formula_max_args = vsp + 4;
 			}
 		}
 	}

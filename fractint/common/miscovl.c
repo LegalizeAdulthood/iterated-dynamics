@@ -108,8 +108,8 @@ void make_batch_file()
 	}
 
 	driver_stack_screen();
-	oldhelpmode = helpmode;
-	helpmode = HELPPARMFILE;
+	oldhelpmode = g_help_mode;
+	g_help_mode = HELPPARMFILE;
 
 	maxcolor = g_colors;
 	strcpy(colorspec, "y");
@@ -120,8 +120,8 @@ void make_batch_file()
 #endif
 	{
 		--maxcolor;
-		/* if (maxit < maxcolor)  remove 2 lines */
-		/* maxcolor = maxit;   so that whole palette is always saved */
+		/* if (g_max_iteration < maxcolor)  remove 2 lines */
+		/* maxcolor = g_max_iteration;   so that whole palette is always saved */
 		if (g_inside > 0 && g_inside > maxcolor)
 		{
 			maxcolor = g_inside;
@@ -151,7 +151,7 @@ void make_batch_file()
 			if (g_map_dac_box)
 			{
 				colorspec[0] = '@';
-				sptr = MAP_name;
+				sptr = g_map_name;
 			}
 		}
 		else if (g_color_state == COLORSTATE_MAP)
@@ -244,7 +244,7 @@ prompt_user:
 		}
 		choices[promptnum] = "Maximum line length";
 		paramvalues[promptnum].type = 'i';
-		paramvalues[promptnum++].uval.ival = maxlinelength;
+		paramvalues[promptnum++].uval.ival = g_max_line_length;
 		choices[promptnum] = "";
 		paramvalues[promptnum++].type = '*';
 		choices[promptnum] = "    **** The following is for generating images in pieces ****";
@@ -299,10 +299,10 @@ prompt_user:
 		{
 			int newmaxlinelength;
 			newmaxlinelength = paramvalues[promptnum-3].uval.ival;
-			if (maxlinelength != newmaxlinelength &&
+			if (g_max_line_length != newmaxlinelength &&
 					newmaxlinelength >= MINMAXLINELENGTH &&
 					newmaxlinelength <= MAXMAXLINELENGTH)
-				maxlinelength = newmaxlinelength;
+				g_max_line_length = newmaxlinelength;
 		}
 		xm = paramvalues[promptnum++].uval.ival;
 
@@ -570,7 +570,7 @@ skip_UI:
 		}
 		break;
 	}
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	driver_unstack_screen();
 }
 
@@ -645,9 +645,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				}
 				put_parm(" orbitname=%s", name);
 			}
-			if (g_juli_3D_mode != JULI3DMODE_MONOCULAR)
+			if (g_juli_3d_mode != JULI3DMODE_MONOCULAR)
 			{
-				put_parm(" 3dmode=%s", juli3Doptions[g_juli_3D_mode]);
+				put_parm(" 3dmode=%s", g_juli_3d_options[g_juli_3d_mode]);
 			}
 		}
 		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
@@ -671,7 +671,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		if (g_fractal_type == INVERSEJULIA || g_fractal_type == INVERSEJULIAFP)
 		{
-			put_parm(" miim=%s/%s", JIIMmethod[g_major_method], JIIMleftright[g_minor_method]);
+			put_parm(" miim=%s/%s", g_jiim_method[g_major_method], g_jiim_left_right[g_minor_method]);
 		}
 
 		showtrig(buf); /* this function is in miscres.c */
@@ -852,9 +852,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" float=y");
 		}
 
-		if (maxit != 150)
+		if (g_max_iteration != 150)
 		{
-			put_parm(" maxiter=%ld", maxit);
+			put_parm(" maxiter=%ld", g_max_iteration);
 		}
 
 		if (g_bail_out && (!g_potential_flag || potparam[2] == 0.0))
@@ -1124,7 +1124,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			put_parm(" 3d=yes");
 		}
-		if (loaded3d == 0)
+		if (g_loaded_3d == 0)
 		{
 			put_filename("filename", g_read_name);
 		}
@@ -1293,24 +1293,17 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" volume=%d", g_fm_volume);
 		}
 
-		if (hi_atten != 0)
+		switch (g_note_attenuation)
 		{
-			if (hi_atten == 1)
-			{
-				put_parm(" attenuate=low");
-			}
-			else if (hi_atten == 2)
-			{
-				put_parm(" attenuate=mid");
-			}
-			else if (hi_atten == 3)
-			{
-				put_parm(" attenuate=high");
-			}
-			else   /* just in case */
-			{
-				put_parm(" attenuate=none");
-			}
+		case ATTENUATE_LOW:
+			put_parm(" attenuate=low");
+			break;
+		case ATTENUATE_MIDDLE:
+			put_parm(" attenuate=mid");
+			break;
+		case ATTENUATE_HIGH:
+			put_parm(" attenuate=high");
+			break;
 		}
 
 		if (polyphony != 0)
@@ -1622,8 +1615,8 @@ va_dcl
 	}
 }
 
-int maxlinelength = 72;
-#define MAXLINELEN  maxlinelength
+int g_max_line_length = 72;
+#define MAXLINELEN  g_max_line_length
 #define NICELINELEN (MAXLINELEN-4)
 
 static void put_parm_line()
@@ -1925,9 +1918,9 @@ void edit_text_colors()
 	int	i, j, k;
 
 	save_debugflag = g_debug_flag;
-	save_lookatmouse = lookatmouse;
+	save_lookatmouse = g_look_at_mouse;
 	g_debug_flag =	0;	 /*	don't get called recursively */
-	lookatmouse	= LOOK_MOUSE_TEXT; /* text mouse sensitivity */
+	g_look_at_mouse	= LOOK_MOUSE_TEXT; /* text mouse sensitivity */
 	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
 
 	while (1)
@@ -1955,7 +1948,7 @@ void edit_text_colors()
 		{
 		case FIK_ESC:
 			g_debug_flag =	save_debugflag;
-			lookatmouse	= save_lookatmouse;
+			g_look_at_mouse	= save_lookatmouse;
 			driver_hide_text_cursor();
 			return;
 		case '/':
@@ -2095,17 +2088,17 @@ int select_video_mode(int curmode)
 	}
 
 	oldtabmode = tabmode;
-	oldhelpmode = helpmode;
+	oldhelpmode = g_help_mode;
 	modes_changed = 0;
 	tabmode = 0;
-	helpmode = HELPVIDSEL;
+	g_help_mode = HELPVIDSEL;
 	i = fullscreen_choice(CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
 		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
 	tabmode = oldtabmode;
-	helpmode = oldhelpmode;
+	g_help_mode = oldhelpmode;
 	if (i == -1)
 	{
 		/* update fractint.cfg for new key assignments */

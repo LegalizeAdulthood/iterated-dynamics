@@ -258,7 +258,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
 		color = g_colors - color; /*  Reverses color order */
-		color = (max_colors == 236) ?
+		color = (g_max_colors == 236) ?
 			(1 + color / 21) /*  Maps g_colors 1-255 to 13 even ranges */
 			: 
 			(1 + color / 18); /*  Maps g_colors 1-255 to 15 even ranges */
@@ -319,7 +319,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 	{
 		/* my mind is fried - lower indices = darker g_colors is EASIER! */
 		color = g_colors - color; /*  Reverses color order */
-		color = (max_colors == 236) ?
+		color = (g_max_colors == 236) ?
 			(1 + color / 21) /*  Maps g_colors 1-255 to 13 even ranges */
 			:
 			(1 + color / 18); /*  Looks weird but maps g_colors 1-255 to 15
@@ -544,9 +544,9 @@ void plot_setup()
 	}
 	g_yy_adjust = (int)(-(g_y_trans* (double)ydots)/100);
 
-	if (mapset)
+	if (g_map_set)
 	{
-		ValidateLuts(MAP_name); /* read the palette file */
+		ValidateLuts(g_map_name); /* read the palette file */
 		if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 		{
 			if (g_glasses_type == STEREO_SUPERIMPOSE && g_colors < 256)

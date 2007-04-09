@@ -5,8 +5,8 @@ the complex plane; parm1, and parm2 are paramaters to be entered with the
 "params=" option (if needed). The function should return the color associated
 with initreal and initimag.  FRACTINT will repeatedly call your function with
 the values of initreal and initimag ranging over the rectangle defined by the
-"corners=" option. Assuming your formula is iterative, "maxit" is the maximum
-iteration. If "maxit" is hit, color "inside" should be returned.
+"corners=" option. Assuming your formula is iterative, "g_max_iteration" is the maximum
+iteration. If "g_max_iteration" is hit, color "inside" should be returned.
 
 Note that this routine could be sped up using external variables/arrays
 rather than the current parameter-passing scheme.  The goal, however was
@@ -35,7 +35,7 @@ void test_end()       /* this routine is called just after the fractal ends */
 /* (note: possibly using the dual-pass / solid-guessing options */
 
 int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
-	long maxit, int inside)
+	long g_max_iteration, int inside)
 {
 	double oldreal, oldimag, newreal, newimag, magnitude;
 	long color;
@@ -43,7 +43,7 @@ int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 	oldimag = parm2;
 	magnitude = 0.0;
 	color = 0;
-	while ((magnitude < 4.0) && (color < maxit))
+	while ((magnitude < 4.0) && (color < g_max_iteration))
 	{
 		newreal = oldreal*oldreal - oldimag*oldimag + initreal;
 		newimag = 2*oldreal*oldimag + initimag;
@@ -52,7 +52,7 @@ int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 		oldimag = newimag;
 		magnitude = newreal*newreal + newimag*newimag;
 	}
-	if (color >= maxit)
+	if (color >= g_max_iteration)
 	{
 		color = inside;
 	}

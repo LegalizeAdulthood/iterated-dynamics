@@ -59,7 +59,7 @@
 #include "drivers.h"
 
 struct videoinfo g_video_entry;
-int helpmode;
+int g_help_mode;
 
 long timer_start, timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
@@ -78,7 +78,7 @@ int     xdots, ydots;           /* # of dots on the logical screen     */
 double  g_dx_size;
 double	g_dy_size;         /* xdots-1, ydots-1         */
 int     g_colors = 256;           /* maximum g_colors available */
-long    maxit;                  /* try this many iterations */
+long    g_max_iteration;                  /* try this many iterations */
 int     g_box_count;               /* 0 if no zoom-box yet     */
 int     zrotate;                /* zoombox rotation         */
 double  zbx, zby;                /* topleft of zoombox       */
@@ -101,21 +101,21 @@ double  g_delta_min_fp;                /* same as a double         */
 double  param[MAXPARAMS];       /* parameters               */
 double  potparam[3];            /* three potential parameters*/
 long    g_fudge;                  /* 2**fudgefactor           */
-long    l_at_rad;               /* finite attractor radius  */
-double  g_f_at_rad;               /* finite attractor radius  */
+long    g_attractor_radius_l;               /* finite attractor radius  */
+double  g_attractor_radius_fp;               /* finite attractor radius  */
 int     g_bit_shift;               /* fudgefactor              */
 
 int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-int hasinverse = 0;
-/* note that integer grid is set when integerfractal && !invert;    */
+int g_has_inverse = 0;
+/* note that integer grid is set when g_integer_fractal && !invert;    */
 /* otherwise the floating point grid is set; never both at once     */
-long    *lx0, *ly0;     /* x, y grid                */
-long    *lx1, *ly1;     /* adjustment for rotate    */
-/* note that lx1 & ly1 values can overflow into sign bit; since     */
-/* they're used only to add to lx0/ly0, 2s comp straightens it out  */
-double *g_delta_x0, *g_delta_y0;      /* floating pt equivs */
-double *g_delta_x1, *g_delta_y1;
-int     integerfractal;         /* TRUE if fractal uses integer math */
+long    *g_x0_l, *g_y0_l;     /* x, y grid                */
+long    *g_x1_l, *g_y1_l;     /* adjustment for rotate    */
+/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
+/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
+double *g_x0, *g_y0;      /* floating pt equivs */
+double *g_x1, *g_y1;
+int     g_integer_fractal;         /* TRUE if fractal uses integer math */
 
 /* usr_xxx is what the user wants, vs what we may be forced to do */
 char    usr_stdcalcmode;
@@ -129,7 +129,7 @@ int     viewcrop;               /* nonzero to crop default coords */
 float   g_final_aspect_ratio;       /* for view shape and rotation */
 int     viewxdots, viewydots;    /* explicit view sizing */
 
-int maxhistory = 10;
+int g_max_history = 10;
 
 /* variables defined by the command line/files processor */
 int     g_compare_gif = 0;                   /* compare two gif files flag */
@@ -157,14 +157,14 @@ int g_calculation_status = CALCSTAT_NO_FRACTAL;
                       /*  4 completed                    */
 long g_calculation_time;
 
-int max_colors;                         /* maximum palette size */
+int g_max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
 int        savedac;                     /* save-the-Video DAC flag      */
 int g_browsing;                 /* browse mode flag */
 char g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
 int name_stack_ptr ;
 double toosmall;
-int  minbox;
+int  g_cross_hair_box_size;
 int no_sub_images;
 int g_auto_browse, g_double_caution;
 char g_browse_check_parameters, g_browse_check_type;
@@ -280,7 +280,7 @@ restart:   /* insert key re-starts here */
 	g_double_caution  = TRUE;
 	no_sub_images = FALSE;
 	toosmall = 6;
-	minbox   = 3;
+	g_cross_hair_box_size   = 3;
 	strcpy(g_browse_mask, "*.gif");
 	strcpy(g_browse_name, "            ");
 	name_stack_ptr = -1; /* init loaded files stack */
@@ -352,7 +352,7 @@ restart:   /* insert key re-starts here */
 	}
 #endif
 
-	max_colors = 256;                    /* the Windows version is lower */
+	g_max_colors = 256;                    /* the Windows version is lower */
 	g_max_input_counter = (g_cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
 
 	if (g_show_file && g_init_mode < 0)
@@ -383,7 +383,7 @@ restorestart:
 		memcpy(g_dac_box, olddacbox, 256*3);   /* restore in case g_colors= present */
 	}
 
-	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
+	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
 	while (g_show_file <= 0)              /* image is to be loaded */
 	{
@@ -394,17 +394,17 @@ restorestart:
 			if (g_overlay_3d)
 			{
 				hdg = "Select File for 3D Overlay";
-				helpmode = HELP3DOVLY;
+				g_help_mode = HELP3DOVLY;
 			}
 			else if (g_display_3d)
 			{
 				hdg = "Select File for 3D Transform";
-				helpmode = HELP3D;
+				g_help_mode = HELP3D;
 			}
 			else
 			{
 				hdg = "Select File to Restore";
-				helpmode = HELPSAVEREST;
+				g_help_mode = HELPSAVEREST;
 			}
 			if (g_show_file < 0 && getafilename(hdg, g_gif_mask, g_read_name) < 0)
 			{
@@ -420,7 +420,7 @@ restorestart:
 		g_evolving = EVOLVE_NONE;
 		viewwindow = 0;
 		g_show_file = 1;
-		helpmode = -1;
+		g_help_mode = -1;
 		tabmode = 1;
 		if (stacked)
 		{
@@ -435,9 +435,9 @@ restorestart:
 		g_show_file = g_browsing ? 1 : -1;
 	}
 
-	helpmode = HELPMENU;                 /* now use this help mode */
+	g_help_mode = HELPMENU;                 /* now use this help mode */
 	tabmode = 1;
-	lookatmouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
+	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
 	if (((g_overlay_3d && !g_initialize_batch) || stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
@@ -480,7 +480,7 @@ imagestart:                             /* calc/display a new image */
 
 	if (g_initialize_batch == INITBATCH_NONE)
 	{
-		lookatmouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
+		g_look_at_mouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
@@ -564,7 +564,7 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 't')  /* set fractal type */
 				{
-					julibrot = 0;
+					g_julibrot = FALSE;
 					get_fracttype();
 					goto imagestart;
 				}
@@ -617,7 +617,7 @@ imagestart:                             /* calc/display a new image */
 			}
 
 	zoomoff = TRUE;                 /* zooming is enabled */
-	helpmode = HELPMAIN;         /* now use this help mode */
+	g_help_mode = HELPMAIN;         /* now use this help mode */
 	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
 resumeloop:
@@ -739,7 +739,7 @@ va_dcl
 			g_current_fractal_specific->name,
 			xdots,
 			ydots,
-			maxit);
+			g_max_iteration);
 		fprintf(fp, " time= %ld.%02ld secs\n", timer_interval/100, timer_interval%100);
 		if (fp != NULL)
 		{
