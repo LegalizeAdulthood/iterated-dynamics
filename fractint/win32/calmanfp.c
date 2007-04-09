@@ -85,7 +85,7 @@ long calcmandfpasm_c(void)
 	}
 
 	cx = maxit;
-	if (fractype != JULIAFP && fractype != JULIA)
+	if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
 		Cx = g_initial_z.x;

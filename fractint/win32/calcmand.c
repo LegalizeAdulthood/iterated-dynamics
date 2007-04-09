@@ -86,7 +86,7 @@ calc_mand_floating_point(void)
 	}
 
 	cx = maxit;
-	if (fractype != JULIA)
+	if (g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
 		Cx = linitx;
@@ -258,7 +258,7 @@ initparms:
 		mov		dword ptr k, eax			;  (decrementing	to 0 is	faster)
 		mov		dword ptr k + 4, edx
 
-		cmp		fractype, 1					; julia or	mandelbrot set?
+		cmp		g_fractal_type, 1					; julia or	mandelbrot set?
 		je		short dojulia				; julia	set	- go there
 
 		sub		dword ptr k, 1				;	we know	the	first iteration	passed
@@ -274,7 +274,7 @@ initparms:
 		jmp		short doeither				; branch around	the	julia switch
 
 dojulia:									; Julia	Set	initialization
-											; "fudge" Mandelbrot start-up values
+											; "g_fudge" Mandelbrot start-up values
 		mov		eax, dword ptr x			; switch	x with linitx
 		mov		edx, dword ptr x + 4			;  ...
 		mov		ebx, dword ptr linitx		;  ...
@@ -393,21 +393,21 @@ kloop386_16:   ; ecx=g_bit_shift-16, ebp=overflow.mask
 		jnz		short end386_16				;  (oops.  We done.)
 		shr		edx, cl						; get result down to 16 bits
 
-		mov		eax, ebx					; compute (x*x -	y*y) / fudge
+		mov		eax, ebx					; compute (x*x -	y*y) / g_fudge
 		sub		ebx, edx					;  for the next iteration
 
-		add		eax, edx					; compute (x*x +	y*y) / fudge
+		add		eax, edx					; compute (x*x +	y*y) / g_fudge
 
 		cmp		eax, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
 		jae		short end386_16				;  ...
 
 		imul	edi, esi					; compute (y *	x)
-		shl		edi, 1						; ( * 2 / fudge)
+		shl		edi, 1						; ( * 2 / g_fudge)
 		sar		edi, cl
-		add		edi, dword ptr linity + 4		; (2*y*x) / fudge + linity
+		add		edi, dword ptr linity + 4		; (2*y*x) / g_fudge + linity
 		movsx	edi, edi					;	save as	y
 
-		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/fudge	+ linitx
+		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/g_fudge	+ linitx
 		movsx	esi, bx						; save	as x
 
 		mov		eax, k						; rearranged for speed
@@ -468,31 +468,31 @@ kloop:										; for (k = 0; k	<= maxit; k++)
 
 		mov		eax, esi					; compute (x *	x)
 		imul	esi							;  ...
-		shrd	eax, edx, FUDGE_FACTOR_BITS		;	( /	fudge)
+		shrd	eax, edx, FUDGE_FACTOR_BITS		;	( /	g_fudge)
 		shr		edx, FUDGE_FACTOR_BITS-1			; (complete 64-bit	shift and check
 		jne		short kloopend1				; bail out if too high
 		mov		ebx, eax					; save	this for below
 
 		mov		eax, edi					; compute (y *	y)
 		imul	edi							;  ...
-		shrd	eax, edx, FUDGE_FACTOR_BITS		;	( /	fudge)
+		shrd	eax, edx, FUDGE_FACTOR_BITS		;	( /	g_fudge)
 		shr		edx, FUDGE_FACTOR_BITS-1			; (complete 64-bit	shift and check
 		jne		short kloopend1				; bail out if too high
 
-		mov		ecx, ebx					; compute (x*x	- y*y) / fudge
+		mov		ecx, ebx					; compute (x*x	- y*y) / g_fudge
 		sub		ebx, eax					;	for	the	next iteration
 
-		add		ecx, eax					; compute (x*x	+ y*y) / fudge
+		add		ecx, eax					; compute (x*x	+ y*y) / g_fudge
 		cmp		ecx, g_magnitude_limit						; while (lr < g_magnitude_limit)
 		jae		short kloopend1				;  ...
 
 		mov		eax, edi					; compute (y *	x)
 		imul	esi							;  ...
-		shrd	eax, edx, FUDGE_FACTOR_BITS-1		;	 ( * 2 / fudge)
+		shrd	eax, edx, FUDGE_FACTOR_BITS-1		;	 ( * 2 / g_fudge)
 		add		eax, linity					;	(above)	+ linity
 		mov		edi, eax					;	save this as y
 
-;		(from the earlier code)				; compute (x*x - y*y) /	fudge
+;		(from the earlier code)				; compute (x*x - y*y) /	g_fudge
 		add		ebx, linitx					;		 + linitx
 		mov		esi, ebx					; save	this as	x
 
@@ -684,10 +684,10 @@ not_end16bit3:
 		rcl		edx, 1						;	 ...
 		jo		end16bit					;  (oops.  overflow)
 
-		mov		ecx, ebx					; compute (x*x -	y*y) / fudge
+		mov		ecx, ebx					; compute (x*x -	y*y) / g_fudge
 		sub		ebx, edx					;  for the next iteration
 
-		add		ecx, edx					; compute (x*x +	y*y) / fudge
+		add		ecx, edx					; compute (x*x +	y*y) / g_fudge
 		jo		end16bit					; bail out if too high
 
 		cmp		ecx, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
@@ -704,11 +704,11 @@ notdoneyet:
 		rcl		edx, 1						;	 ...
 		shl		eax, 1						;	 shift two bits
 		rcl		edx, 1						;	 cannot	overflow as	|x| <= 2,	|y| <= 2
-		add		edx, dword ptr linity + 4		; (2*y*x) / fudge + linity
+		add		edx, dword ptr linity + 4		; (2*y*x) / g_fudge + linity
 		jo		end16bit					; bail out if too high
 		mov		edi, edx					; save as y
 
-		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/fudge	+ linitx
+		add		ebx, dword ptr linitx + 4		; (from above) (x*x - y*y)/g_fudge	+ linitx
 		jo		end16bit					; bail out if too high
 		mov		esi, ebx					; save as x
 

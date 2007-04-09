@@ -665,7 +665,7 @@ static void trigdetails(char *buf)
 {
 	int i, numfn;
 	char tmpbuf[20];
-	if (fractype == JULIBROT || fractype == JULIBROTFP)
+	if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 	{
 		numfn = (g_fractal_specific[g_new_orbit_type].flags >> 6) & 7;
 	}
@@ -839,7 +839,7 @@ int tab_display_2(char *msg)
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		write_row(row++, "total_formula_mem %ld Max_Ops (posp) %u Max_Args (vsp) %u",
 			total_formula_mem, posp, vsp);
@@ -923,7 +923,7 @@ int tab_display()       /* display the status of the current image */
 		bfXctr = alloc_stack(bflength + 2);
 		bfYctr = alloc_stack(bflength + 2);
 	}
-	if (fractype == FORMULA || fractype == FFORMULA)
+	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
 		for (i = 0; i < MAXPARAMS; i += 2)
 		{
@@ -951,7 +951,7 @@ top:
 			g_current_fractal_specific->name[0] == '*' ?
 				&g_current_fractal_specific->name[1] : g_current_fractal_specific->name);
 		i = 0;
-		if (fractype == FORMULA || fractype == FFORMULA)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_name);
@@ -965,7 +965,7 @@ top:
 		}
 		trigdetails(msg);
 		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
-		if (fractype == LSYSTEM)
+		if (g_fractal_type == LSYSTEM)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name);
@@ -976,7 +976,7 @@ top:
 			}
 			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename);
 		}
-		if (fractype == IFS || fractype == IFS3D)
+		if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
@@ -1086,7 +1086,7 @@ top:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
 			break;
 		case GOT_STATUS_3D:
-			sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, fileydots);
+			sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			break;
 		case GOT_STATUS_TESSERAL:
@@ -1259,13 +1259,13 @@ top:
 		}
 	}
 
-	if (type_has_parameter(fractype, 0, msg) || hasformparam)
+	if (type_has_parameter(g_fractal_type, 0, msg) || hasformparam)
 	{
 		for (i = 0; i < MAXPARAMS; i++)
 		{
 			int col;
 			char p[50];
-			if (type_has_parameter(fractype, i, p))
+			if (type_has_parameter(g_fractal_type, i, p))
 			{
 				if (k % 4 == 0)
 				{
@@ -1306,7 +1306,7 @@ top:
 	sprintf(msg, "%f", g_rq_limit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
-	if (fractype == PLASMA || fractype == ANT || fractype == CELLULAR)
+	if (g_fractal_type == PLASMA || g_fractal_type == ANT || g_fractal_type == CELLULAR)
 	{
 		driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
 		sprintf(msg, "%d", g_random_seed);

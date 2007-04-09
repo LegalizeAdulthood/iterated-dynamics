@@ -36,11 +36,11 @@ static void backwardscompat(struct fractal_info *info);
 static int fix_bof(void);
 static int fix_period_bof(void);
 
-int filetype;
+int g_file_type;
 int loaded3d;
 static FILE *fp;
-int fileydots, filexdots, filecolors;
-float fileaspectratio;
+int g_file_y_dots, g_file_x_dots, g_file_colors;
+float g_file_aspect_ratio;
 short skipxdots, skipydots;      /* for decoder, when reducing image */
 int g_bad_outside = 0;
 int ldcheck = 0;
@@ -80,13 +80,13 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	maxit        = read_info.iterationsold;
-	fractype     = read_info.fractal_type;
-	if (fractype < 0 || fractype >= g_num_fractal_types)
+	g_fractal_type     = read_info.fractal_type;
+	if (g_fractal_type < 0 || g_fractal_type >= g_num_fractal_types)
 	{
 		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
-		fractype = 0;
+		g_fractal_type = 0;
 	}
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	xxmin        = read_info.xmin;
 	xxmax        = read_info.xmax;
 	yymin        = read_info.ymin;
@@ -200,12 +200,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_potential_16bit     = read_info.potential_16bit;
 		if (g_potential_16bit)
 		{
-			filexdots >>= 1;
+			g_file_x_dots >>= 1;
 		}
-		fileaspectratio = read_info.faspectratio;
-		if (fileaspectratio < 0.01)       /* fix files produced in early v14.1 */
+		g_file_aspect_ratio = read_info.faspectratio;
+		if (g_file_aspect_ratio < 0.01)       /* fix files produced in early v14.1 */
 		{
-			fileaspectratio = g_screen_aspect_ratio;
+			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
 		save_system  = read_info.system;
 		g_save_release = read_info.release; /* from fmt 5 on we know real number */
@@ -360,9 +360,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_quick_calculate   = read_info.quick_calculate;
 		g_proximity    = read_info.proximity;
-		if (fractype == FPPOPCORN || fractype == LPOPCORN ||
-			fractype == FPPOPCORNJUL || fractype == LPOPCORNJUL ||
-			fractype == LATOO)
+		if (g_fractal_type == FPPOPCORN || g_fractal_type == LPOPCORN ||
+			g_fractal_type == FPPOPCORNJUL || g_fractal_type == LPOPCORNJUL ||
+			g_fractal_type == LATOO)
 		{
 			g_function_preloaded = TRUE;
 		}
@@ -406,7 +406,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (g_overlay_3d)
 	{
 		g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
-		if (filexdots > xdots || fileydots > ydots)
+		if (g_file_x_dots > xdots || g_file_y_dots > ydots)
 		{
 			stopmsg(0, "Can't overlay with a larger image");
 			g_init_mode = -1;
@@ -442,8 +442,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (g_display_3d)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		fractype = PLASMA;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = PLASMA;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		param[0] = 0;
 		if (!g_initialize_batch)
 		{
@@ -536,9 +536,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 				&& g_calculation_status != CALCSTAT_COMPLETED)
 		{
 			g_calculation_status = CALCSTAT_RESUMABLE;
-			if (evolve_handle == NULL)
+			if (g_evolve_handle == NULL)
 			{
-				evolve_handle = malloc(sizeof(resume_e_info));
+				g_evolve_handle = malloc(sizeof(resume_e_info));
 			}
 			resume_e_info.paramrangex  = evolver_info.paramrangex;
 			resume_e_info.paramrangey  = evolver_info.paramrangey;
@@ -555,16 +555,16 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			resume_e_info.gridsz       = evolver_info.gridsz;
 			resume_e_info.evolving     = evolver_info.evolving;
 			resume_e_info.this_gen_rseed = evolver_info.this_gen_rseed;
-			resume_e_info.fiddlefactor = evolver_info.fiddlefactor;
+			resume_e_info.g_fiddle_factor = evolver_info.g_fiddle_factor;
 			resume_e_info.ecount       = evolver_info.ecount;
-			memcpy(evolve_handle, &resume_e_info, sizeof(resume_e_info));
+			memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
 		}
 		else
 		{
-			if (evolve_handle != NULL)  /* Image completed, release it. */
+			if (g_evolve_handle != NULL)  /* Image completed, release it. */
 			{
-				free(evolve_handle);
-				evolve_handle = NULL;
+				free(g_evolve_handle);
+				g_evolve_handle = NULL;
 			}
 			g_calculation_status = CALCSTAT_COMPLETED;
 		}
@@ -580,12 +580,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		syoffs       = evolver_info.syoffs;
 		xdots        = evolver_info.xdots;
 		ydots        = evolver_info.ydots;
-		gridsz       = evolver_info.gridsz;
+		g_grid_size       = evolver_info.gridsz;
 		this_gen_rseed = evolver_info.this_gen_rseed;
-		fiddlefactor   = evolver_info.fiddlefactor;
-		evolving = viewwindow = (int) evolver_info.evolving;
-		g_delta_parameter_image_x = paramrangex/(gridsz - 1);
-		g_delta_parameter_image_y = paramrangey/(gridsz - 1);
+		g_fiddle_factor   = evolver_info.g_fiddle_factor;
+		g_evolving = viewwindow = (int) evolver_info.evolving;
+		g_delta_parameter_image_x = paramrangex/(g_grid_size - 1);
+		g_delta_parameter_image_y = paramrangey/(g_grid_size - 1);
 		if (read_info.version > 14)
 		{
 			for (i = 0; i < NUMGENES; i++)
@@ -612,7 +612,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 	else
 	{
-		evolving = EVOLVE_NONE;
+		g_evolving = EVOLVE_NONE;
 	}
 
 	if (orbits_info.got_data == 1)
@@ -672,29 +672,29 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		return -1;
 	}
 
-	filetype = 0; /* GIF */
-	GET16(gifstart[6], filexdots);
-	GET16(gifstart[8], fileydots);
-	filecolors = 2 << (gifstart[10] & 7);
-	fileaspectratio = 0; /* unknown */
+	g_file_type = 0; /* GIF */
+	GET16(gifstart[6], g_file_x_dots);
+	GET16(gifstart[8], g_file_y_dots);
+	g_file_colors = 2 << (gifstart[10] & 7);
+	g_file_aspect_ratio = 0; /* unknown */
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
-		fileaspectratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
-						*(double)fileydots / (double)filexdots);
-		if (fileaspectratio > g_screen_aspect_ratio-0.03
-			&& fileaspectratio < g_screen_aspect_ratio + 0.03)
+		g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
+						*(double)g_file_y_dots / (double)g_file_x_dots);
+		if (g_file_aspect_ratio > g_screen_aspect_ratio-0.03
+			&& g_file_aspect_ratio < g_screen_aspect_ratio + 0.03)
 		{
-			fileaspectratio = g_screen_aspect_ratio;
+			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
 	}
-	else if (fileydots*4 == filexdots*3) /* assume the common square pixels */
+	else if (g_file_y_dots*4 == g_file_x_dots*3) /* assume the common square pixels */
 	{
-		fileaspectratio = g_screen_aspect_ratio;
+		g_file_aspect_ratio = g_screen_aspect_ratio;
 	}
 
 	if (*g_make_par == 0 && (gifstart[10] & 0x80) != 0)
 	{
-		for (i = 0; i < filecolors; i++)
+		for (i = 0; i < g_file_colors; i++)
 		{
 			for (j = 0; j < 3; j++)
 			{
@@ -911,7 +911,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					evolver_info->gridsz          = eload_info.gridsz;
 					evolver_info->evolving        = eload_info.evolving;
 					evolver_info->this_gen_rseed  = eload_info.this_gen_rseed;
-					evolver_info->fiddlefactor    = eload_info.fiddlefactor;
+					evolver_info->g_fiddle_factor    = eload_info.g_fiddle_factor;
 					evolver_info->ecount          = eload_info.ecount;
 					for (i = 0; i < NUMGENES; i++)
 					{
@@ -944,7 +944,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		}
 
 		fclose(fp);
-		fileaspectratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
+		g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
 		return 0;
 	}
 
@@ -965,9 +965,9 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->videomodecx = 255;
 	info->videomodedx = 255;
 	info->dotmode = 0;
-	info->xdots = (short)filexdots;
-	info->ydots = (short)fileydots;
-	info->g_colors = (short)filecolors;
+	info->xdots = (short)g_file_x_dots;
+	info->ydots = (short)g_file_y_dots;
+	info->g_colors = (short)g_file_colors;
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */
@@ -1011,101 +1011,101 @@ static void skip_ext_blk(int *block_len, int *data_len)
 /* switch obsolete fractal types to new generalizations */
 static void backwardscompat(struct fractal_info *info)
 {
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case LAMBDASINE:
-		fractype = LAMBDATRIGFP;
+		g_fractal_type = LAMBDATRIGFP;
 		trigndx[0] = SIN;
 		break;
 	case LAMBDACOS    :
-		fractype = LAMBDATRIGFP;
+		g_fractal_type = LAMBDATRIGFP;
 		trigndx[0] = COS;
 		break;
 	case LAMBDAEXP    :
-		fractype = LAMBDATRIGFP;
+		g_fractal_type = LAMBDATRIGFP;
 		trigndx[0] = EXP;
 		break;
 	case MANDELSINE   :
-		fractype = MANDELTRIGFP;
+		g_fractal_type = MANDELTRIGFP;
 		trigndx[0] = SIN;
 		break;
 	case MANDELCOS    :
-		fractype = MANDELTRIGFP;
+		g_fractal_type = MANDELTRIGFP;
 		trigndx[0] = COS;
 		break;
 	case MANDELEXP    :
-		fractype = MANDELTRIGFP;
+		g_fractal_type = MANDELTRIGFP;
 		trigndx[0] = EXP;
 		break;
 	case MANDELSINH   :
-		fractype = MANDELTRIGFP;
+		g_fractal_type = MANDELTRIGFP;
 		trigndx[0] = SINH;
 		break;
 	case LAMBDASINH   :
-		fractype = LAMBDATRIGFP;
+		g_fractal_type = LAMBDATRIGFP;
 		trigndx[0] = SINH;
 		break;
 	case MANDELCOSH   :
-		fractype = MANDELTRIGFP;
+		g_fractal_type = MANDELTRIGFP;
 		trigndx[0] = COSH;
 		break;
 	case LAMBDACOSH   :
-		fractype = LAMBDATRIGFP;
+		g_fractal_type = LAMBDATRIGFP;
 		trigndx[0] = COSH;
 		break;
 	case LMANDELSINE  :
-		fractype = MANDELTRIG;
+		g_fractal_type = MANDELTRIG;
 		trigndx[0] = SIN;
 		break;
 	case LLAMBDASINE  :
-		fractype = LAMBDATRIG;
+		g_fractal_type = LAMBDATRIG;
 		trigndx[0] = SIN;
 		break;
 	case LMANDELCOS   :
-		fractype = MANDELTRIG;
+		g_fractal_type = MANDELTRIG;
 		trigndx[0] = COS;
 		break;
 	case LLAMBDACOS   :
-		fractype = LAMBDATRIG;
+		g_fractal_type = LAMBDATRIG;
 		trigndx[0] = COS;
 		break;
 	case LMANDELSINH  :
-		fractype = MANDELTRIG;
+		g_fractal_type = MANDELTRIG;
 		trigndx[0] = SINH;
 		break;
 	case LLAMBDASINH  :
-		fractype = LAMBDATRIG;
+		g_fractal_type = LAMBDATRIG;
 		trigndx[0] = SINH;
 		break;
 	case LMANDELCOSH  :
-		fractype = MANDELTRIG;
+		g_fractal_type = MANDELTRIG;
 		trigndx[0] = COSH;
 		break;
 	case LLAMBDACOSH  :
-		fractype = LAMBDATRIG;
+		g_fractal_type = LAMBDATRIG;
 		trigndx[0] = COSH;
 		break;
 	case LMANDELEXP   :
-		fractype = MANDELTRIG;
+		g_fractal_type = MANDELTRIG;
 		trigndx[0] = EXP;
 		break;
 	case LLAMBDAEXP   :
-		fractype = LAMBDATRIG;
+		g_fractal_type = LAMBDATRIG;
 		trigndx[0] = EXP;
 		break;
 	case DEMM         :
-		fractype = MANDELFP;
+		g_fractal_type = MANDELFP;
 		usr_distest = (info->ydots - 1)*2;
 		break;
 	case DEMJ         :
-		fractype = JULIAFP;
+		g_fractal_type = JULIAFP;
 		usr_distest = (info->ydots - 1)*2;
 		break;
 	case MANDELLAMBDA :
 		g_use_initial_orbit_z = 2;
 		break;
 	}
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 }
 
 /* switch old bifurcation fractal types to new generalizations */
@@ -1114,7 +1114,7 @@ void set_if_old_bif(void)
 	/* set functions if not set already, may need to check 'g_function_preloaded'
 		before calling this routine.  JCO 7/5/92 */
 
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case BIFURCATION:
 	case LBIFURCATION:
@@ -1137,7 +1137,7 @@ void set_if_old_bif(void)
 /* miscellaneous function variable defaults */
 void set_function_parm_defaults(void)
 {
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case FPPOPCORN:
 	case LPOPCORN:
@@ -1163,12 +1163,12 @@ void backwards_v18(void)
 	{
 		set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
 	}
-	if (fractype == MANDELTRIG && usr_floatflag == 1
+	if (g_fractal_type == MANDELTRIG && usr_floatflag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
 	}
-	if (fractype == LAMBDATRIG && usr_floatflag == 1
+	if (g_fractal_type == LAMBDATRIG && usr_floatflag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
@@ -1177,7 +1177,7 @@ void backwards_v18(void)
 
 void backwards_v19(void)
 {
-	if (fractype == MARKSJULIA && g_save_release < 1825)
+	if (g_fractal_type == MARKSJULIA && g_save_release < 1825)
 	{
 		if (param[2] == 0)
 		{
@@ -1188,7 +1188,7 @@ void backwards_v19(void)
 			param[2]++;
 		}
 	}
-	if (fractype == MARKSJULIAFP && g_save_release < 1825)
+	if (g_fractal_type == MARKSJULIAFP && g_save_release < 1825)
 	{
 		if (param[2] == 0)
 		{
@@ -1199,7 +1199,7 @@ void backwards_v19(void)
 			param[2]++;
 		}
 	}
-	if ((fractype == FORMULA || fractype == FFORMULA) && g_save_release < 1824)
+	if ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA) && g_save_release < 1824)
 	{
 		g_inversion[0] = g_inversion[1] = g_inversion[2] = g_invert = 0;
 	}
@@ -1211,11 +1211,11 @@ void backwards_v19(void)
 void backwards_v20(void)
 {
 	/* Fractype == FP type is not seen from PAR file ????? */
-	g_bad_outside = ((fractype == MANDELFP || fractype == JULIAFP
-						|| fractype == MANDEL || fractype == JULIA)
+	g_bad_outside = ((g_fractal_type == MANDELFP || g_fractal_type == JULIAFP
+						|| g_fractal_type == MANDEL || g_fractal_type == JULIA)
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960)
 		? 1 : 0;
-	ldcheck = ((fractype == FORMULA || fractype == FFORMULA)
+	ldcheck = ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
 		? 1 : 0;
 	if (g_inside == EPSCROSS && g_save_release < 1961)
@@ -1235,29 +1235,29 @@ int check_back(void)
 		compatibility in this routine
 	*/
 	int ret = 0;
-	if (fractype == LYAPUNOV
-		|| fractype == FROTH
-		|| fractype == FROTHFP
+	if (g_fractal_type == LYAPUNOV
+		|| g_fractal_type == FROTH
+		|| g_fractal_type == FROTHFP
 		|| fix_bof()
 		|| fix_period_bof()
 		|| g_use_old_distance_test
 		|| g_decomposition[0] == 2
-		|| (fractype == FORMULA && g_save_release <= 1920)
-		|| (fractype == FFORMULA && g_save_release <= 1920)
+		|| (g_fractal_type == FORMULA && g_save_release <= 1920)
+		|| (g_fractal_type == FFORMULA && g_save_release <= 1920)
 		|| (g_log_palette_flag != 0 && g_save_release <= 2001)
-		|| (fractype == TRIGSQR && g_save_release < 1900)
+		|| (g_fractal_type == TRIGSQR && g_save_release < 1900)
 		|| (g_inside == STARTRAIL && g_save_release < 1825)
 		|| (maxit > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
 		|| ((g_outside <= REAL && g_outside >= ATAN) && g_save_release <= 1960)
-		|| (fractype == FPPOPCORN && g_save_release <= 1960)
-		|| (fractype == LPOPCORN && g_save_release <= 1960)
-		|| (fractype == FPPOPCORNJUL && g_save_release <= 1960)
-		|| (fractype == LPOPCORNJUL && g_save_release <= 1960)
+		|| (g_fractal_type == FPPOPCORN && g_save_release <= 1960)
+		|| (g_fractal_type == LPOPCORN && g_save_release <= 1960)
+		|| (g_fractal_type == FPPOPCORNJUL && g_save_release <= 1960)
+		|| (g_fractal_type == LPOPCORNJUL && g_save_release <= 1960)
 		|| (g_inside == FMODI && g_save_release <= 2000)
 		|| ((g_inside == ATANI || g_outside == ATAN) && g_save_release <= 2002)
-		|| (fractype == LAMBDATRIGFP && trigndx[0] == EXP && g_save_release <= 2002)
-		|| ((fractype == JULIBROT || fractype == JULIBROTFP)
+		|| (g_fractal_type == LAMBDATRIGFP && trigndx[0] == EXP && g_save_release <= 2002)
+		|| ((g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 			&& (g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
 			&& g_save_release <= 2002))
 	{
@@ -1273,7 +1273,7 @@ static int fix_bof(void)
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & BAILTEST) == 0) ||
-			(fractype == FORMULA || fractype == FFORMULA))
+			(g_fractal_type == FORMULA || g_fractal_type == FFORMULA))
 		{
 			ret = 1;
 		}
@@ -2093,7 +2093,7 @@ static char functionOK(struct fractal_info *info, int numfn)
 static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	int numfn;
-	if ((fractype == FORMULA || fractype == FFORMULA) &&
+	if ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA) &&
 		(info->fractal_type == FORMULA || info->fractal_type == FFORMULA))
 	{
 		if (!stricmp(formula_info->form_name, g_formula_name))
@@ -2106,7 +2106,7 @@ static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formu
 			return 0; /* two formulas but names don't match */
 		}
 	}
-	else if (info->fractal_type == fractype ||
+	else if (info->fractal_type == g_fractal_type ||
 			info->fractal_type == g_current_fractal_specific->tofloat)
 	{
 		numfn = (g_current_fractal_specific->flags >> 6) & 7;
@@ -2122,18 +2122,18 @@ static void check_history (char *oldname, char *newname)
 {
 int i;
 
-/* file_name_stack[] is maintained in framain2.c.  It is the history */
+/* g_file_name_stack[] is maintained in framain2.c.  It is the history */
 /*  file for the browser and holds a maximum of 16 images.  The history */
 /*  file needs to be adjusted if the rename or delete functions of the */
 /*  browser are used. */
 /* name_stack_ptr is also maintained in framain2.c.  It is the index into */
-/*  file_name_stack[]. */
+/*  g_file_name_stack[]. */
 
 	for (i = 0; i < name_stack_ptr; i++)
 	{
-		if (stricmp(file_name_stack[i], oldname) == 0) /* we have a match */
+		if (stricmp(g_file_name_stack[i], oldname) == 0) /* we have a match */
 		{
-			strcpy(file_name_stack[i], newname);    /* insert the new name */
+			strcpy(g_file_name_stack[i], newname);    /* insert the new name */
 		}
 	}
 }

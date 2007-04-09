@@ -12,7 +12,7 @@
 
 	1. Routines that are called once-per-orbit to calculate the orbit
 		value. These have names like "XxxxFractal", and their function
-		pointers are stored in g_fractal_specific[fractype].orbitcalc. EVERY
+		pointers are stored in g_fractal_specific[g_fractal_type].orbitcalc. EVERY
 		new fractal type needs one of these. Return 0 to continue iterations,
 		1 if we're done. Results for integer fractals are left in 'g_new_z_l.x' and
 		'g_new_z_l.y', for floating point fractals in 'new.x' and 'new.y'.
@@ -20,16 +20,16 @@
 	2. Routines that are called once per pixel to set various variables
 		prior to the orbit calculation. These have names like xxx_per_pixel
 		and are fairly generic - chances are one is right for your new type.
-		They are stored in g_fractal_specific[fractype].per_pixel.
+		They are stored in g_fractal_specific[g_fractal_type].per_pixel.
 
 	3. Routines that are called once per screen to set various variables.
 		These have names like XxxxSetup, and are stored in
-		g_fractal_specific[fractype].per_image.
+		g_fractal_specific[g_fractal_type].per_image.
 
 	4. The main fractal routine. Usually this will be standard_fractal(),
 		but if you have written a stand-alone fractal routine independent
 		of the standard_fractal mechanisms, your routine name goes here,
-		stored in g_fractal_specific[fractype].calculate_type.per_image.
+		stored in g_fractal_specific[g_fractal_type].calculate_type.per_image.
 
 	Adding a new fractal type should be simply a matter of adding an item
 	to the 'g_fractal_specific' structure, writing (or re-using one of the existing)
@@ -60,7 +60,7 @@
 #define MPdistance(z1, z2)	(*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
 							/* Distance of complex z from unit circle */
 #define DIST1(z)			(((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
-#define LDIST1(z)			(lsqr((((z).x)-fudge)) + lsqr(((z).y)))
+#define LDIST1(z)			(lsqr((((z).x)-g_fudge)) + lsqr(((z).y)))
 
 static double _fastcall dx_pixel_calc(void);
 static double _fastcall dy_pixel_calc(void);
@@ -349,9 +349,9 @@ int bail_out_manhattan_r_fp(void)
 	if (labs(_x) > TRIG_LIMIT_16)\
 	{\
 		double tmp = (_x); \
-		tmp /= fudge; \
+		tmp /= g_fudge; \
 		tmp = fmod(tmp, g_two_pi); \
-		tmp *= fudge; \
+		tmp *= g_fudge; \
 		(_x) = (long) tmp; \
 	}\
 
@@ -570,7 +570,7 @@ int newton2_orbit(void)
 
 	if (DIST1(g_new_z) < g_threshold)
 	{
-		if (fractype == NEWTBASIN || fractype == MPNEWTBASIN)
+		if (g_fractal_type == NEWTBASIN || g_fractal_type == MPNEWTBASIN)
 		{
 			long tmpcolor;
 			int i;
@@ -629,7 +629,7 @@ int newton_orbit_mpc(void)
 	mpctmp1.y = *pMPsub(mpcnew.y, MPCone.y);
 	if (pMPcmp(MPCmod(mpctmp1), mpthreshold)< 0)
 	{
-		if (fractype == MPNEWTBASIN)
+		if (g_fractal_type == MPNEWTBASIN)
 		{
 			long tmpcolor;
 			int i;
@@ -1100,15 +1100,15 @@ int complex_z_power_orbit(void)
 #if !defined(XFRACT)
 	_CMPLX x, y;
 
-	x.x = (double)g_old_z_l.x / fudge;
-	x.y = (double)g_old_z_l.y / fudge;
-	y.x = (double)g_parameter2_l.x / fudge;
-	y.y = (double)g_parameter2_l.y / fudge;
+	x.x = (double)g_old_z_l.x / g_fudge;
+	x.y = (double)g_old_z_l.y / g_fudge;
+	y.x = (double)g_parameter2_l.x / g_fudge;
+	y.y = (double)g_parameter2_l.y / g_fudge;
 	x = ComplexPower(x, y);
-	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
+	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
-		g_new_z_l.x = (long)(x.x*fudge);
-		g_new_z_l.y = (long)(x.y*fudge);
+		g_new_z_l.x = (long)(x.x*g_fudge);
+		g_new_z_l.y = (long)(x.y*g_fudge);
 	}
 	else
 	{
@@ -1152,12 +1152,12 @@ int barnsley3_orbit(void)
 	/* orbit calculation */
 	if (g_old_z_l.x > 0)
 	{
-		g_new_z_l.x = s_old_x_init_x   - s_old_y_init_y - fudge;
+		g_new_z_l.x = s_old_x_init_x   - s_old_y_init_y - g_fudge;
 		g_new_z_l.y = s_old_x_init_y << 1;
 	}
 	else
 	{
-		g_new_z_l.x = s_old_x_init_x - s_old_y_init_y - fudge
+		g_new_z_l.x = s_old_x_init_x - s_old_y_init_y - g_fudge
 			+ multiply(g_long_parameter->x, g_old_z_l.x, g_bit_shift);
 		g_new_z_l.y = s_old_x_init_y <<1;
 
@@ -1457,7 +1457,7 @@ int popcorn_fn_orbit_fp(void)
 #define FIX_OVERFLOW(arg_) \
 	if (overflow)  \
 	{ \
-		(arg_).x = fudge; \
+		(arg_).x = g_fudge; \
 		(arg_).y = 0; \
 		overflow = 0; \
 	}
@@ -2142,20 +2142,20 @@ static int try_float_fractal(int (*fpFractal)(void))
 {
 	overflow = 0;
 	/* g_old_z_l had better not be changed! */
-	g_old_z.x = g_old_z_l.x; g_old_z.x /= fudge;
-	g_old_z.y = g_old_z_l.y; g_old_z.y /= fudge;
+	g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
+	g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 	fpFractal();
 	if (g_save_release < 1900)  /* for backwards compatibility */
 	{
-		g_new_z_l.x = (long)(g_new_z.x/fudge); /* this error has been here a long time */
-		g_new_z_l.y = (long)(g_new_z.y/fudge);
+		g_new_z_l.x = (long)(g_new_z.x/g_fudge); /* this error has been here a long time */
+		g_new_z_l.y = (long)(g_new_z.y/g_fudge);
 	}
 	else
 	{
-		g_new_z_l.x = (long)(g_new_z.x*fudge);
-		g_new_z_l.y = (long)(g_new_z.y*fudge);
+		g_new_z_l.x = (long)(g_new_z.x*g_fudge);
+		g_new_z_l.y = (long)(g_new_z.y*g_fudge);
 	}
 	return 0;
 }
@@ -2586,8 +2586,8 @@ int julia_per_pixel_l(void)
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*fudge);
-		g_old_z_l.y = (long)(g_old_z.y*fudge);
+		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
+		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -2637,8 +2637,8 @@ int mandelbrot_per_pixel_l(void)
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
+		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 
 	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
@@ -2676,8 +2676,8 @@ int julia_per_pixel(void)
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*fudge);
-		g_old_z_l.y = (long)(g_old_z.y*fudge);
+		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
+		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -2696,7 +2696,7 @@ int marks_mandelbrot_power_per_pixel(void)
 #if !defined(XFRACT)
 	mandelbrot_per_pixel();
 	g_tmp_z_l = g_old_z_l;
-	g_tmp_z_l.x -= fudge;
+	g_tmp_z_l.x -= g_fudge;
 	LCMPLXpwr(g_old_z_l, g_tmp_z_l, g_tmp_z_l);
 	return 1;
 #else
@@ -2726,8 +2726,8 @@ int mandelbrot_per_pixel(void)
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
+		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 	else
 	{
@@ -2737,10 +2737,10 @@ int mandelbrot_per_pixel(void)
 			g_initial_z_l.y = g_ly_pixel();
 		}
 	}
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
-		g_old_z_l.x = fudge >> 1;
+		g_old_z_l.x = g_fudge >> 1;
 		g_old_z_l.y = 0;
 		break;
 	default:
@@ -2793,8 +2793,8 @@ int marks_mandelbrot_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
+		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 	else
 	{
@@ -2909,7 +2909,7 @@ int mandelbrot_per_pixel_fp(void)
 			g_initial_z.y = g_dy_pixel();
 		}
 	}
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case MAGNET2M:
 		magnet2_precalculate_fp();
@@ -3158,8 +3158,8 @@ int phoenix_per_pixel(void)
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*fudge);
-		g_old_z_l.y = (long)(g_old_z.y*fudge);
+		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
+		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -3216,8 +3216,8 @@ int mandelbrot_phoenix_per_pixel(void)
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*fudge);
+		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 
 	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;

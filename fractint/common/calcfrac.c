@@ -719,19 +719,19 @@ int calculate_fractal(void)
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (integerfractal)          /* for integer routines (lambda) */
 	{
-		g_parameter_l.x = (long)(g_parameter.x*fudge);    /* real portion of Lambda */
-		g_parameter_l.y = (long)(g_parameter.y*fudge);    /* imaginary portion of Lambda */
-		g_parameter2_l.x = (long)(g_parameter2.x*fudge);  /* real portion of Lambda2 */
-		g_parameter2_l.y = (long)(g_parameter2.y*fudge);  /* imaginary portion of Lambda2 */
-		g_limit_l = (long)(g_rq_limit*fudge);      /* stop if magnitude exceeds this */
+		g_parameter_l.x = (long)(g_parameter.x*g_fudge);    /* real portion of Lambda */
+		g_parameter_l.y = (long)(g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
+		g_parameter2_l.x = (long)(g_parameter2.x*g_fudge);  /* real portion of Lambda2 */
+		g_parameter2_l.y = (long)(g_parameter2.y*g_fudge);  /* imaginary portion of Lambda2 */
+		g_limit_l = (long)(g_rq_limit*g_fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
-		g_limit2_l = (long)(g_rq_limit2*fudge);    /* stop if magnitude exceeds this */
-		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
-		g_init_orbit_l.x = (long)(g_initial_orbit_z.x*fudge);
-		g_init_orbit_l.y = (long)(g_initial_orbit_z.y*fudge);
+		g_limit2_l = (long)(g_rq_limit2*g_fudge);    /* stop if magnitude exceeds this */
+		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
+		g_init_orbit_l.x = (long)(g_initial_orbit_z.x*g_fudge);
+		g_init_orbit_l.y = (long)(g_initial_orbit_z.y*g_fudge);
 	}
 	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
@@ -765,7 +765,7 @@ int calculate_fractal(void)
 		{ /* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
-			g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
+			g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
 			setsymmetry(g_symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
@@ -868,7 +868,7 @@ static void perform_work_list()
 	int (*sv_per_image)(void) = NULL;  /* once-per-image setup */
 	int i, alt;
 
-	alt = find_alternate_math(fractype, bf_math);
+	alt = find_alternate_math(g_fractal_type, bf_math);
 	if (alt > -1)
 	{
 		sv_orbitcalc = g_current_fractal_specific->orbitcalc;
@@ -966,8 +966,8 @@ static void perform_work_list()
 		s_dem_mandelbrot =
 			(g_current_fractal_specific->tojulia != NOFRACTAL
 			|| g_use_old_distance_test
-			|| fractype == FORMULA
-			|| fractype == FFORMULA) ?
+			|| g_fractal_type == FORMULA
+			|| g_fractal_type == FFORMULA) ?
 				TRUE : FALSE;
 
 		s_dem_delta = sqr(g_delta_x_fp) + sqr(delta_y2_fp);
@@ -1111,7 +1111,7 @@ static void perform_work_list()
 
 		/* some common initialization for escape-time pixel level routines */
 		g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
-		g_close_enough_l = (long)(g_close_enough*fudge); /* "close enough" value */
+		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
 		setsymmetry(g_symmetry, 1);
@@ -1988,7 +1988,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	double totaldist = 0.0;
 	_CMPLX lastz;
 
-	lcloseprox = (long)(g_proximity*fudge);
+	lcloseprox = (long)(g_proximity*g_fudge);
 	savemaxit = maxit;
 #ifdef NUMSAVED
 	for (i = 0; i < NUMSAVED; i++)
@@ -2099,7 +2099,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	}
 	g_orbit_index = 0;
 	g_color_iter = 0;
-	if (fractype == JULIAFP || fractype == JULIA)
+	if (g_fractal_type == JULIAFP || g_fractal_type == JULIA)
 	{
 		g_color_iter = -1;
 	}
@@ -2134,8 +2134,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)
 		{
-			g_old_z.x = ((double)g_old_z_l.x) / fudge;
-			g_old_z.y = ((double)g_old_z_l.y) / fudge;
+			g_old_z.x = ((double)g_old_z_l.x) / g_fudge;
+			g_old_z.y = ((double)g_old_z_l.y) / g_fudge;
 		}
 		else if (bf_math == BIGNUM)
 		{
@@ -2258,9 +2258,9 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 					if (integerfractal)
 					{
 						g_new_z.x = g_new_z_l.x;
-						g_new_z.x /= fudge;
+						g_new_z.x /= g_fudge;
 						g_new_z.y = g_new_z_l.y;
-						g_new_z.y /= fudge;
+						g_new_z.y /= g_fudge;
 					}
 
 					if (g_save_release > 1824)
@@ -2328,8 +2328,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				double mag;
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2346,7 +2346,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 						g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
 					}
 					g_magnitude = g_magnitude_l;
-					g_magnitude = g_magnitude / fudge;
+					g_magnitude = g_magnitude / g_fudge;
 				}
 				else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 				{
@@ -2374,8 +2374,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			{
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 				}
 				totaldist += sqrt(sqr(lastz.x-g_new_z.x) + sqr(lastz.y-g_new_z.y));
 				lastz.x = g_new_z.x;
@@ -2386,8 +2386,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				double mag;
 				if (integerfractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / fudge;
+					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2430,13 +2430,13 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				{
 					at.x = g_new_z.x - g_attractors[i].x;
 					at.x = sqr(at.x);
-					if (at.x < f_at_rad)
+					if (at.x < g_f_at_rad)
 					{
 						at.y = g_new_z.y - g_attractors[i].y;
 						at.y = sqr(at.y);
-						if (at.y < f_at_rad)
+						if (at.y < g_f_at_rad)
 						{
-							if ((at.x + at.y) < f_at_rad)
+							if ((at.x + at.y) < g_f_at_rad)
 							{
 								attracted = TRUE;
 								if (g_finite_attractor < 0)
@@ -2605,8 +2605,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)       /* adjust integer fractals */
 		{
-			g_new_z.x = ((double)g_new_z_l.x) / fudge;
-			g_new_z.y = ((double)g_new_z_l.y) / fudge;
+			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 		}
 		else if (bf_math == BIGNUM)
 		{
@@ -2637,8 +2637,8 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 	{
 		if (integerfractal)
 		{
-			g_new_z.x = ((double)g_new_z_l.x) / fudge;
-			g_new_z.y = ((double)g_new_z_l.y) / fudge;
+			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 		}
 		else if (bf_math == 1)
 		{
@@ -2820,8 +2820,8 @@ plot_inside: /* we're "inside" */
 		{
 			if (integerfractal)
 			{
-				g_new_z.x = ((double)g_new_z_l.x) / fudge;
-				g_new_z.y = ((double)g_new_z_l.y) / fudge;
+				g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
+				g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
 			}
 			else
@@ -2840,7 +2840,7 @@ plot_inside: /* we're "inside" */
 		else if (g_inside == ZMAG)
 		{
 			g_color_iter = integerfractal ?
-				(long)(((double)g_magnitude_l/fudge)*(maxit >> 1) + 1)
+				(long)(((double)g_magnitude_l/g_fudge)*(maxit >> 1) + 1)
 				: (long)((sqr(g_new_z.x) + sqr(g_new_z.y))*(maxit >> 1) + 1);
 		}
 		else /* inside == -1 */
@@ -2940,22 +2940,22 @@ static void decomposition(void)
 	g_color_iter = 0;
 	if (integerfractal) /* the only case */
 	{
-		if (reset_fudge != fudge)
+		if (reset_fudge != g_fudge)
 		{
-			reset_fudge = fudge;
-			/* lcos45     = (long)(cos45*fudge); */
-			lsin45     = (long)(sin45*fudge);
-			lcos22_5   = (long)(cos22_5*fudge);
-			lsin22_5   = (long)(sin22_5*fudge);
-			lcos11_25  = (long)(cos11_25*fudge);
-			lsin11_25  = (long)(sin11_25*fudge);
-			lcos5_625  = (long)(cos5_625*fudge);
-			lsin5_625  = (long)(sin5_625*fudge);
-			ltan22_5   = (long)(tan22_5*fudge);
-			ltan11_25  = (long)(tan11_25*fudge);
-			ltan5_625  = (long)(tan5_625*fudge);
-			ltan2_8125 = (long)(tan2_8125*fudge);
-			ltan1_4063 = (long)(tan1_4063*fudge);
+			reset_fudge = g_fudge;
+			/* lcos45     = (long)(cos45*g_fudge); */
+			lsin45     = (long)(sin45*g_fudge);
+			lcos22_5   = (long)(cos22_5*g_fudge);
+			lsin22_5   = (long)(sin22_5*g_fudge);
+			lcos11_25  = (long)(cos11_25*g_fudge);
+			lsin11_25  = (long)(sin11_25*g_fudge);
+			lcos5_625  = (long)(cos5_625*g_fudge);
+			lsin5_625  = (long)(sin5_625*g_fudge);
+			ltan22_5   = (long)(tan22_5*g_fudge);
+			ltan11_25  = (long)(tan11_25*g_fudge);
+			ltan5_625  = (long)(tan5_625*g_fudge);
+			ltan2_8125 = (long)(tan2_8125*g_fudge);
+			ltan1_4063 = (long)(tan1_4063*g_fudge);
 		}
 		if (g_new_z_l.y < 0)
 		{
@@ -4300,7 +4300,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
 	parmsnoreal = (g_parameter.x == 0.0 && g_use_initial_orbit_z != 1);
 	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case LMANLAMFNFN:      /* These need only P1 checked. */
 	case FPMANLAMFNFN:     /* P2 is used for a switch value */

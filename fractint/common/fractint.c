@@ -63,7 +63,7 @@ int helpmode;
 
 long timer_start, timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
-char *fract_dir1="", *fract_dir2="";
+char *g_fract_dir1="", *g_fract_dir2="";
 
 /*
 	the following variables are out here only so
@@ -84,7 +84,7 @@ int     zrotate;                /* zoombox rotation         */
 double  zbx, zby;                /* topleft of zoombox       */
 double  zwidth, zdepth, zskew;    /* zoombox size & shape     */
 
-int     fractype;               /* if == 0, use Mandelbrot  */
+int     g_fractal_type;               /* if == 0, use Mandelbrot  */
 char    stdcalcmode;            /* '1', '2', 'g', 'b'       */
 long    g_c_real;
 long	g_c_imag;           /* real, imag'ry parts of C */
@@ -100,9 +100,9 @@ long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
 double  g_delta_min_fp;                /* same as a double         */
 double  param[MAXPARAMS];       /* parameters               */
 double  potparam[3];            /* three potential parameters*/
-long    fudge;                  /* 2**fudgefactor           */
+long    g_fudge;                  /* 2**fudgefactor           */
 long    l_at_rad;               /* finite attractor radius  */
-double  f_at_rad;               /* finite attractor radius  */
+double  g_f_at_rad;               /* finite attractor radius  */
 int     g_bit_shift;               /* fudgefactor              */
 
 int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
@@ -126,7 +126,7 @@ char    usr_floatflag;
 int     viewwindow;             /* 0 for full screen, 1 for window */
 float   viewreduction;          /* window auto-sizing */
 int     viewcrop;               /* nonzero to crop default coords */
-float   finalaspectratio;       /* for view shape and rotation */
+float   g_final_aspect_ratio;       /* for view shape and rotation */
 int     viewxdots, viewydots;    /* explicit view sizing */
 
 int maxhistory = 10;
@@ -161,7 +161,7 @@ int max_colors;                         /* maximum palette size */
 int        zoomoff;                     /* = 0 when zoom is disabled    */
 int        savedac;                     /* save-the-Video DAC flag      */
 int g_browsing;                 /* browse mode flag */
-char file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
+char g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
 int name_stack_ptr ;
 double toosmall;
 int  minbox;
@@ -242,15 +242,15 @@ int main(int argc, char **argv)
 
 	set_exe_path(argv[0]);
 
-	fract_dir1 = getenv("FRACTDIR");
-	if (fract_dir1 == NULL)
+	g_fract_dir1 = getenv("FRACTDIR");
+	if (g_fract_dir1 == NULL)
 	{
-		fract_dir1 = ".";
+		g_fract_dir1 = ".";
 	}
 #ifdef SRCDIR
-	fract_dir2 = SRCDIR;
+	g_fract_dir2 = SRCDIR;
 #else
-	fract_dir2 = ".";
+	g_fract_dir2 = ".";
 #endif
 
 	/* this traps non-math library floating point errors */
@@ -285,15 +285,15 @@ restart:   /* insert key re-starts here */
 	strcpy(g_browse_name, "            ");
 	name_stack_ptr = -1; /* init loaded files stack */
 
-	evolving = FALSE;
+	g_evolving = FALSE;
 	paramrangex = 4;
 	opx = newopx = -2.0;
 	paramrangey = 3;
 	opy = newopy = -1.5;
 	odpx = odpy = 0;
-	gridsz = 9;
-	fiddlefactor = 1;
-	fiddle_reduction = 1.0;
+	g_grid_size = 9;
+	g_fiddle_factor = 1;
+	g_fiddle_reduction = 1.0;
 	this_gen_rseed = (unsigned int)clock_ticks();
 	srand(this_gen_rseed);
 	g_start_show_orbit = 0;
@@ -317,26 +317,26 @@ restart:   /* insert key re-starts here */
 	{
 		g_cpu =  86; /* for testing purposes */
 	}
-	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && fpu >= 287)
+	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && g_fpu >= 287)
 	{
-		fpu = 287; /* for testing purposes */
+		g_fpu = 287; /* for testing purposes */
 		g_cpu = 286;
 	}
-	if (DEBUGFLAG_FPU_87 == g_debug_flag && fpu >=  87)
+	if (DEBUGFLAG_FPU_87 == g_debug_flag && g_fpu >=  87)
 	{
-		fpu =  87; /* for testing purposes */
+		g_fpu =  87; /* for testing purposes */
 		g_cpu =  86;
 	}
 	if (DEBUGFLAG_NO_FPU == g_debug_flag)
 	{
-		fpu =   0; /* for testing purposes */
+		g_fpu =   0; /* for testing purposes */
 	}
 	if (getenv("NO87"))
 	{
-		fpu = 0;
+		g_fpu = 0;
 	}
 
-	if (fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
+	if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
 	{
 		setup287code();
 	}
@@ -414,10 +414,11 @@ restorestart:
 			}
 
 			name_stack_ptr = 0; /* 'r' reads first filename for g_browsing */
-			strcpy(file_name_stack[name_stack_ptr], g_browse_name);
+			strcpy(g_file_name_stack[name_stack_ptr], g_browse_name);
 		}
 
-		evolving = viewwindow = 0;
+		g_evolving = EVOLVE_NONE;
+		viewwindow = 0;
 		g_show_file = 1;
 		helpmode = -1;
 		tabmode = 1;

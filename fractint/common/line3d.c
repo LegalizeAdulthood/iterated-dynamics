@@ -172,10 +172,10 @@ int line3d(BYTE *pixels, unsigned linelen)
 	LVECTOR lv;                  /* long equivalent of v */
 	LVECTOR lv0;                 /* long equivalent of v */
 	int last_dot;
-	long fudge;
+	long g_fudge;
 	static struct point s_old_last = { 0, 0, 0 }; /* old pixels */
 
-	fudge = 1L << 16;
+	g_fudge = 1L << 16;
 	g_plot_color = (g_transparent[0] || g_transparent[1]) ? transparent_clip_color : clip_color;
 	normal_plot = g_plot_color;
 
@@ -372,7 +372,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 			/* Allow Ray trace to go through so display ok */
 			if (s_persp || g_raytrace_output)
 			{  /* mrr how do lv[] and cur and f_cur all relate */
-				/* NOTE: fudge was pre-calculated above in r and s_radius */
+				/* NOTE: g_fudge was pre-calculated above in r and s_radius */
 				/* (almost) guarantee negative */
 				lv[2] = (long) (-s_radius - r*cos_theta*s_sin_phi);     /* z */
 				if ((lv[2] > s_z_cutoff) && !FILLTYPE < FILLTYPE_POINTS)
@@ -407,9 +407,9 @@ int line3d(BYTE *pixels, unsigned linelen)
 					v[0] = lv[0];
 					v[1] = lv[1];
 					v[2] = lv[2];
-					v[0] /= fudge;
-					v[1] /= fudge;
-					v[2] /= fudge;
+					v[0] /= g_fudge;
+					v[1] /= g_fudge;
+					v[2] /= g_fudge;
 					perspective(v);
 					cur.x = (int) (v[0] + .5 + g_xx_adjust);
 					cur.y = (int) (v[1] + .5 + g_yy_adjust);
@@ -444,7 +444,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				lv[0] = lv[0] << 16;
 				lv[1] = g_current_row;
 				lv[1] = lv[1] << 16;
-				if (filetype || g_potential_16bit) /* don't truncate fractional part */
+				if (g_file_type || g_potential_16bit) /* don't truncate fractional part */
 				{
 					lv[2] = (long) (f_cur.color*65536.0);
 				}
@@ -711,7 +711,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				lv[0] = col;
 				lv[1] = g_current_row;
 				lv[2] = 0;
-				/* apply fudge bit shift for integer math */
+				/* apply g_fudge bit shift for integer math */
 				lv[0] = lv[0] << 16;
 				lv[1] = lv[1] << 16;
 				/* Since 0, unnecessary lv[2] = lv[2] << 16; */
@@ -723,7 +723,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 					goto loopbottom;      /* another goto ! */
 				}
 
-				/* Round and fudge back to original  */
+				/* Round and g_fudge back to original  */
 				old.x = (int) ((lv[0] + 32768L) >> 16);
 				old.y = (int) ((lv[1] + 32768L) >> 16);
 			}
@@ -1301,7 +1301,7 @@ static void _fastcall clip_color(int x, int y, int color)
 {
 	if (0 <= x && x < xdots &&
 		0 <= y && y < ydots &&
-		0 <= color && color < filecolors)
+		0 <= color && color < g_file_colors)
 	{
 		assert(g_standard_plot);
 		(*g_standard_plot)(x, y, color);
@@ -2480,7 +2480,7 @@ static int first_time(int linelen, VECTOR v)
 
 	s_rand_factor = 14 - g_randomize;
 
-	s_z_coord = filecolors;
+	s_z_coord = g_file_colors;
 
 	err = line_3d_mem();
 	if (err != 0)
@@ -2700,7 +2700,7 @@ static int first_time(int linelen, VECTOR v)
 		/* precalculation factor used in sphere calc */
 		s_radius_factor = s_r_scale*s_radius/(double) s_z_coord;
 
-		if (s_persp)                /* precalculate fudge factor */
+		if (s_persp)                /* precalculate g_fudge factor */
 		{
 			double radius;
 			double zview;

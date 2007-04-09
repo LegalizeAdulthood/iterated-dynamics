@@ -457,7 +457,7 @@ struct fractal_info         /*  for saving data in GIF file     */
     short periodicity;    /* periodicity checking */
                         /* version 5 stuff, release 15 */
     short potential_16bit;       /* save 16 bit continuous potential info */
-    float faspectratio;   /* finalaspectratio, y/x */
+    float faspectratio;   /* g_final_aspect_ratio, y/x */
     short system;         /* 0 for dos, 1 for windows */
     short release;        /* release number, with 2 decimals implied */
     short flag3d;         /* stored only for now, for future use */
@@ -672,7 +672,7 @@ struct evolution_info      /* for saving evolution data in a GIF file */
    short evolving;
    short gridsz;
    unsigned short this_gen_rseed;
-   double fiddlefactor;
+   double g_fiddle_factor;
    double paramrangex;
    double paramrangey;
    double opx;
@@ -727,7 +727,7 @@ struct orbits_info      /* for saving orbits data in a GIF file */
 #define N_ATTR 8                        /* max number of attractors     */
 
 extern  long     l_at_rad;      /* finite attractor radius  */
-extern  double   f_at_rad;      /* finite attractor radius  */
+extern  double   g_f_at_rad;      /* finite attractor radius  */
 
 #define NUMIFS    64     /* number of ifs functions in ifs array */
 #define IFSPARM    7     /* number of ifs parameters */
@@ -878,9 +878,9 @@ extern struct fractalspecificstuff *g_current_fractal_specific;
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 
-#define PER_IMAGE   (g_fractal_specific[fractype].per_image)
-#define PER_PIXEL   (g_fractal_specific[fractype].per_pixel)
-#define ORBITCALC   (g_fractal_specific[fractype].orbitcalc)
+#define PER_IMAGE   (g_fractal_specific[g_fractal_type].per_image)
+#define PER_PIXEL   (g_fractal_specific[g_fractal_type].per_pixel)
+#define ORBITCALC   (g_fractal_specific[g_fractal_type].orbitcalc)
 
 typedef  _LCMPLX LCMPLX;
 
@@ -1340,7 +1340,7 @@ struct ext_blk_evolver_info
 	short evolving;
 	short gridsz;
 	unsigned short this_gen_rseed;
-	double fiddlefactor;
+	double g_fiddle_factor;
 	double paramrangex;
 	double paramrangey;
 	double opx;

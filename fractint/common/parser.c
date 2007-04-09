@@ -209,7 +209,7 @@ static int paren, ExpectingArg;
 struct ConstArg *v = (struct ConstArg *)0;      /* was static CAE fp */
 int InitLodPtr, InitStoPtr, InitOpPtr, LastInitOp;      /* was static CAE fp */
 static int Delta16;
-double fgLimit;           /* TIW 05-04-91 */
+double g_fudge_limit;           /* TIW 05-04-91 */
 static double fg;
 static int ShiftBack;     /* TIW 06-18-90 */
 static int SetRandom;     /* MCP 11-21-91 */
@@ -366,7 +366,7 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	Arg1->d.x = (double)Arg1->l.x / fg;
 	Arg1->d.y = y;
 	(*fct)();
-	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit)
+	if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
 	{
 		Arg1->l.x = (long)(Arg1->d.x*fg);
 		Arg1->l.y = (long)(Arg1->d.y*fg);
@@ -391,7 +391,7 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 	Arg1->d.x = (double)Arg1->l.x / fg; \
 	Arg1->d.y = y; \
 	(*fct)(); \
-	if (fabs(Arg1->d.x) < fgLimit && fabs(Arg1->d.y) < fgLimit) {\
+	if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit) {\
 		Arg1->l.x = (long)(Arg1->d.x*fg); \
 		Arg1->l.y = (long)(Arg1->d.y*fg); \
 	}\
@@ -1867,7 +1867,7 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z)
 {
 	double e2x, siny, cosy;
 
-	if (fpu >= 387)
+	if (g_fpu >= 387)
 	{
 		FPUcplxexp387(x, z);
 	}
@@ -1928,7 +1928,7 @@ void lStkPwr(void)
 	y.x = (double)Arg1->l.x / fg;
 	y.y = (double)Arg1->l.y / fg;
 	x = ComplexPower(x, y);
-	if (fabs(x.x) < fgLimit && fabs(x.y) < fgLimit)
+	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
 		Arg2->l.x = (long)(x.x*fg);
 		Arg2->l.y = (long)(x.y*fg);
@@ -4284,12 +4284,12 @@ int fpFormulaSetup(void)
 	int RunFormRes;              /* CAE fp */
 	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
-	if (fpu > 0)
+	if (g_fpu > 0)
 	{
 		MathType = D_MATH;
 		/* CAE changed below for fp */
 		RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
-		if (RunFormRes && (fpu >= 387) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
+		if (RunFormRes && (g_fpu >= 387) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 		{
 			return CvtStk(); /* run fast assembler code in parsera.asm */
@@ -4305,7 +4305,7 @@ int fpFormulaSetup(void)
 	MathType = D_MATH;
 	RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
 #if 0
-	if (RunFormRes && (fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
+	if (RunFormRes && (g_fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 		&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 	{
 		return CvtStk(); /* run fast assembler code in parsera.asm */
@@ -4322,7 +4322,7 @@ int intFormulaSetup(void)
 #else
 	MathType = L_MATH;
 	fg = (double)(1L << g_bit_shift);
-	fgLimit = (double)0x7fffffffL / fg;
+	g_fudge_limit = (double)0x7fffffffL / fg;
 	ShiftBack = 32 - g_bit_shift;
 	return !RunForm(g_formula_name, 0);
 #endif
@@ -4341,7 +4341,7 @@ void init_misc()
 	Arg1 = &argfirst;
 	Arg2 = &argsecond; /* needed by all the ?Stk* functions */
 	fg = (double)(1L << g_bit_shift);
-	fgLimit = (double)0x7fffffffL / fg;
+	g_fudge_limit = (double)0x7fffffffL / fg;
 	ShiftBack = 32 - g_bit_shift;
 	Delta16 = g_bit_shift - 16;
 	g_bit_shift_minus_1 = g_bit_shift-1;
@@ -4398,7 +4398,7 @@ static void parser_allocate(void)
 			is_bad_form = ParseStr(FormStr, pass);
 			if (is_bad_form == 0)
 			{
-				/* per Chuck Ebbert, fudge these up a little */
+				/* per Chuck Ebbert, g_fudge these up a little */
 				Max_Ops = posp + 4;
 				Max_Args = vsp + 4;
 			}

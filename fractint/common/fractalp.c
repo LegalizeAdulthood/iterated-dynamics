@@ -2276,7 +2276,7 @@ int parameter_not_used(int parm)
 	int ret = 0;
 
 	/* sanity check */
-	if (fractype != FORMULA && fractype != FFORMULA)
+	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
 	{
 		return 0;
 	}

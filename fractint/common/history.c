@@ -29,7 +29,7 @@ void _fastcall history_save_info(void)
 	last = history[saveptr];
 
 	memset((void *) &current, 0, sizeof(HISTORY));
-	current.fractal_type		= (short) fractype;
+	current.fractal_type		= (short) g_fractal_type;
 	current.xmin				= xxmin;
 	current.xmax				= xxmax;
 	current.ymin				= yymin;
@@ -150,7 +150,7 @@ void _fastcall history_save_info(void)
 	current.keep_scrn_coords	= (short) g_keep_screen_coords;
 	current.drawmode			= (char) g_orbit_draw_mode;
 	memcpy(current.dac, g_dac_box, 256*3);
-	switch (fractype)
+	switch (g_fractal_type)
 	{
 	case FORMULA:
 	case FFORMULA:
@@ -216,7 +216,7 @@ void _fastcall history_restore_info(void)
 	g_invert				= 0;
 	g_calculation_status				= CALCSTAT_PARAMS_CHANGED;
 	g_resuming				= 0;
-	fractype				= last.fractal_type;
+	g_fractal_type				= last.fractal_type;
 	xxmin               	= last.xmin;
 	xxmax               	= last.xmax;
 	yymin               	= last.ymin;
@@ -326,7 +326,7 @@ void _fastcall history_restore_info(void)
 	g_bail_out_test			= (enum bailouts) last.bailoutest;
 	maxit               	= last.iterations;
 	g_old_demm_colors     	= last.g_old_demm_colors;
-	g_current_fractal_specific  	= &g_fractal_specific[fractype];
+	g_current_fractal_specific  	= &g_fractal_specific[g_fractal_type];
 	g_potential_flag		= (potparam[0] != 0.0);
 	if (g_inversion[0] != 0.0)
 	{
@@ -358,8 +358,8 @@ void _fastcall history_restore_info(void)
 		memcpy(g_map_dac_box, last.dac, 256*3);
 	}
 	spindac(0, 1);
-	savedac = (fractype == JULIBROT || fractype == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
-	switch (fractype)
+	savedac = (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
+	switch (g_fractal_type)
 	{
 	case FORMULA:
 	case FFORMULA:

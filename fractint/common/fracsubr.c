@@ -28,7 +28,7 @@
 #define timebx timeb
 #endif
 
-/* fudge all values up by 2 << FUDGE_FACTOR{,2} */
+/* g_fudge all values up by 2 << FUDGE_FACTOR{,2} */
 #define FUDGE_FACTOR     29
 #define FUDGE_FACTOR2    24
 
@@ -139,7 +139,7 @@ void fractal_float_to_bf(void)
 
 	for (i = 0; i < MAXPARAMS; i++)
 	{
-		if (type_has_parameter(fractype, i, NULL))
+		if (type_has_parameter(g_fractal_type, i, NULL))
 		{
 			floattobf(bfparms[i], param[i]);
 		}
@@ -199,8 +199,8 @@ void calculate_fractal_initialize(void)
 		}
 		else if (bf_math)
 		{
-			fractype = tofloat;
-			g_current_fractal_specific = &g_fractal_specific[fractype];
+			g_fractal_type = tofloat;
+			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		}
 	}
 
@@ -218,31 +218,31 @@ void calculate_fractal_initialize(void)
 			init_bf_dec(gotprec);
 		}
 	}
-	else if ((fractype == MANDEL || fractype == MANDELFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == MANDEL || g_fractal_type == MANDELFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
-		fractype = MANDELFP;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = MANDELFP;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == JULIA || fractype == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == JULIA || g_fractal_type == JULIAFP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
-		fractype = JULIAFP;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = JULIAFP;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LMANDELZPOWER || fractype == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == LMANDELZPOWER || g_fractal_type == FPMANDELZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
-		fractype = FPMANDELZPOWER;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = FPMANDELZPOWER;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
-	else if ((fractype == LJULIAZPOWER || fractype == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == LJULIAZPOWER || g_fractal_type == FPJULIAZPOWER) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 	{
-		fractype = FPJULIAZPOWER;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = FPJULIAZPOWER;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		usr_floatflag = 1;
 	}
@@ -262,7 +262,7 @@ void calculate_fractal_initialize(void)
 	}
 	if (usr_stdcalcmode == 's')
 	{
-		if (fractype == MANDEL || fractype == MANDELFP)
+		if (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
 		{
 			g_float_flag = TRUE;
 		}
@@ -306,7 +306,7 @@ init_restart:
 		if (g_current_fractal_specific->isinteger != 0
 			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
-			fractype = g_current_fractal_specific->tofloat;
+			g_fractal_type = g_current_fractal_specific->tofloat;
 		}
 	}
 	else
@@ -314,11 +314,11 @@ init_restart:
 		if (g_current_fractal_specific->isinteger == 0
 			&& g_current_fractal_specific->tofloat != NOFRACTAL)
 		{
-			fractype = g_current_fractal_specific->tofloat;
+			g_fractal_type = g_current_fractal_specific->tofloat;
 		}
 	}
 	/* match Julibrot with integer mode of orbit */
-	if (fractype == JULIBROTFP && g_fractal_specific[g_new_orbit_type].isinteger)
+	if (g_fractal_type == JULIBROTFP && g_fractal_specific[g_new_orbit_type].isinteger)
 	{
 		int i = g_fractal_specific[g_new_orbit_type].tofloat;
 		if (i != NOFRACTAL)
@@ -327,10 +327,10 @@ init_restart:
 		}
 		else
 		{
-			fractype = JULIBROT;
+			g_fractal_type = JULIBROT;
 		}
 	}
-	else if (fractype == JULIBROT && g_fractal_specific[g_new_orbit_type].isinteger == 0)
+	else if (g_fractal_type == JULIBROT && g_fractal_specific[g_new_orbit_type].isinteger == 0)
 	{
 		int i = g_fractal_specific[g_new_orbit_type].tofloat;
 		if (i != NOFRACTAL)
@@ -339,11 +339,11 @@ init_restart:
 		}
 		else
 		{
-			fractype = JULIBROTFP;
+			g_fractal_type = JULIBROTFP;
 		}
 	}
 
-	g_current_fractal_specific = &g_fractal_specific[fractype];
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	integerfractal = g_current_fractal_specific->isinteger;
 
 	if (g_potential_flag && potparam[2] != 0.0)
@@ -410,7 +410,7 @@ init_restart:
 		}
 	}
 /* We want this code if we're using the assembler calculate_mandelbrot */
-	if (fractype == MANDEL || fractype == JULIA)  /* adust shift bits if.. */
+	if (g_fractal_type == MANDEL || g_fractal_type == JULIA)  /* adust shift bits if.. */
 	{
 		if (!g_potential_flag                            /* not using potential */
 		&& (param[0] > -2.0 && param[0] < 2.0)  /* parameters not too large */
@@ -425,10 +425,10 @@ init_restart:
 			g_bit_shift = FUDGE_FACTOR;                  /* use the larger g_bit_shift */
 		}
 
-	fudge = 1L << g_bit_shift;
+	g_fudge = 1L << g_bit_shift;
 
-	l_at_rad = fudge/32768L;
-	f_at_rad = 1.0/32768L;
+	l_at_rad = g_fudge/32768L;
+	g_f_at_rad = 1.0/32768L;
 
 	/* now setup arrays of real coordinates corresponding to each pixel */
 	if (bf_math)
@@ -445,7 +445,7 @@ init_restart:
 		fill_dx_array();
 	}
 
-	if (fractype != CELLULAR && fractype != ANT)  /* fudge_to_long fails w >10 digits in double */
+	if (g_fractal_type != CELLULAR && g_fractal_type != ANT)  /* fudge_to_long fails w >10 digits in double */
 	{
 		g_c_real = fudge_to_long(param[0]); /* integer equivs for it all */
 		g_c_imag = fudge_to_long(param[1]);
@@ -465,8 +465,8 @@ init_restart:
 	/* skip if bf_math to avoid extraseg conflict with g_delta_x0 arrays */
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
-	if (fractype != PLASMA && bf_math == 0
-		&& fractype != IFS && fractype != IFS3D && fractype != LSYSTEM)
+	if (g_fractal_type != PLASMA && bf_math == 0
+		&& g_fractal_type != IFS && g_fractal_type != IFS3D && g_fractal_type != LSYSTEM)
 	{
 		if (integerfractal && !g_invert && g_use_grid)
 		{
@@ -647,7 +647,7 @@ expand_retry:
 
 static long _fastcall fudge_to_long(double d)
 {
-	if ((d *= fudge) > 0)
+	if ((d *= g_fudge) > 0)
 	{
 		d += 0.5;
 	}
@@ -662,7 +662,7 @@ static double _fastcall fudge_to_double(long l)
 {
 	char buf[30];
 	double d;
-	sprintf(buf, "%.9g", (double)l / fudge);
+	sprintf(buf, "%.9g", (double)l / g_fudge);
 #ifndef XFRACT
 	sscanf(buf, "%lg", &d);
 #else
@@ -1729,7 +1729,7 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 
 void plot_orbit_i(long ix, long iy, int color)
 {
-	plot_orbit_d((double)ix/fudge-xxmin, (double)iy/fudge-yymax, color);
+	plot_orbit_d((double)ix/g_fudge-xxmin, (double)iy/g_fudge-yymax, color);
 }
 
 void plot_orbit(double real, double imag, int color)

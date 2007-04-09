@@ -127,15 +127,15 @@ static void init_bf_2(void)
 
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
-	i = find_alternate_math(fractype, BIGNUM);
+	i = find_alternate_math(g_fractal_type, BIGNUM);
 	if (i > -1)
 	{
 		bf_math = g_alternate_math[i].math;
 	}
 	else
 	{
-		i = find_alternate_math(fractype, BIGFLT);
-		/* 1 => maybe called from cmdfiles.c and fractype not set */
+		i = find_alternate_math(g_fractal_type, BIGFLT);
+		/* 1 => maybe called from cmdfiles.c and g_fractal_type not set */
 		bf_math = (i > -1) ? g_alternate_math[i].math : 1;
 	}
 	g_float_flag = TRUE;
@@ -402,7 +402,7 @@ void init_bf_dec(int dec)
 		/* using 2 doesn't gain much and requires another test */
 		intlength = 4;
 	}
-	else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
+	else if (g_fractal_type == FPMANDELZPOWER || g_fractal_type == FPJULIAZPOWER)
 	{
 		intlength = 2;
 	}
@@ -434,7 +434,7 @@ void init_bf_length(int bnl)
 		/* using 2 doesn't gain much and requires another test */
 		intlength = 4;
 	}
-	else if (fractype == FPMANDELZPOWER || fractype == FPJULIAZPOWER)
+	else if (g_fractal_type == FPMANDELZPOWER || g_fractal_type == FPJULIAZPOWER)
 	{
 		intlength = 2;
 	}

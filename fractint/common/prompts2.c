@@ -289,7 +289,7 @@ int get_toggles()
 		g_stop_pass = 0;
 	}
 
-	if (usr_stdcalcmode == 'o' && fractype == LYAPUNOV) /* Oops, lyapunov type */
+	if (usr_stdcalcmode == 'o' && g_fractal_type == LYAPUNOV) /* Oops, lyapunov type */
 										/* doesn't use 'new' & breaks orbits */
 	{
 		usr_stdcalcmode = old_usr_stdcalcmode;
@@ -832,7 +832,7 @@ int get_view_params()
 
 	old_viewwindow    = viewwindow;
 	old_viewreduction = viewreduction;
-	old_aspectratio   = finalaspectratio;
+	old_aspectratio   = g_final_aspect_ratio;
 	old_viewxdots     = viewxdots;
 	old_viewydots     = viewydots;
 	old_sxdots        = sxdots;
@@ -854,7 +854,7 @@ get_view_restart:
 
 		choices[++k] = "Final media overall aspect ratio, y/x";
 		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = finalaspectratio;
+		uvalues[k].uval.dval = g_final_aspect_ratio;
 
 		choices[++k] = "Crop starting coordinates to new aspect ratio?";
 		uvalues[k].type = 'y';
@@ -902,7 +902,7 @@ get_view_restart:
 		viewwindow = viewxdots = viewydots = 0;
 		viewreduction = 4.2f;
 		viewcrop = 1;
-		finalaspectratio = g_screen_aspect_ratio;
+		g_final_aspect_ratio = g_screen_aspect_ratio;
 		sxdots = old_sxdots;
 		sydots = old_sydots;
 		goto get_view_restart;
@@ -915,7 +915,7 @@ get_view_restart:
 	{
 		viewwindow = uvalues[++k].uval.ch.val;
 		viewreduction = (float) uvalues[++k].uval.dval;
-		finalaspectratio = (float) uvalues[++k].uval.dval;
+		g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
 		viewcrop = uvalues[++k].uval.ch.val;
 		viewxdots = uvalues[++k].uval.ival;
 		viewydots = uvalues[++k].uval.ival;
@@ -945,25 +945,25 @@ get_view_restart:
 
 	if (!driver_diskp())
 	{
-		if (viewxdots != 0 && viewydots != 0 && viewwindow && finalaspectratio == 0.0)
+		if (viewxdots != 0 && viewydots != 0 && viewwindow && g_final_aspect_ratio == 0.0)
 		{
-			finalaspectratio = ((float) viewydots)/((float) viewxdots);
+			g_final_aspect_ratio = ((float) viewydots)/((float) viewxdots);
 		}
-		else if (finalaspectratio == 0.0 && (viewxdots == 0 || viewydots == 0))
+		else if (g_final_aspect_ratio == 0.0 && (viewxdots == 0 || viewydots == 0))
 		{
-			finalaspectratio = old_aspectratio;
+			g_final_aspect_ratio = old_aspectratio;
 		}
 
-		if (finalaspectratio != old_aspectratio && viewcrop)
+		if (g_final_aspect_ratio != old_aspectratio && viewcrop)
 		{
-			aspectratio_crop(old_aspectratio, finalaspectratio);
+			aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
 		}
 	}
 	else
 	{
 		g_video_entry.xdots = sxdots;
 		g_video_entry.ydots = sydots;
-		finalaspectratio = ((float) sydots)/((float) sxdots);
+		g_final_aspect_ratio = ((float) sydots)/((float) sxdots);
 		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
 	}
 
@@ -971,7 +971,7 @@ get_view_restart:
 		|| sxdots != old_sxdots || sydots != old_sydots
 		|| (viewwindow
 			&& (viewreduction != old_viewreduction
-				|| finalaspectratio != old_aspectratio
+				|| g_final_aspect_ratio != old_aspectratio
 				|| viewxdots != old_viewxdots
 				|| (viewydots != old_viewydots && viewxdots)))) ? 1 : 0;
 }
@@ -1314,9 +1314,9 @@ void goodbye(void)                  /* we done.  Bail out */
 	{
 		end_resume();
 	}
-	if (evolve_handle != NULL)
+	if (g_evolve_handle != NULL)
 	{
-		free(evolve_handle);
+		free(g_evolve_handle);
 	}
 	ReleaseParamBox();
 	history_free();
@@ -1631,11 +1631,11 @@ retry_dir:
 		static int lastdir = 0;
 		if (lastdir == 0)
 		{
-			strcpy(dir, fract_dir1);
+			strcpy(dir, g_fract_dir1);
 		}
 		else
 		{
-			strcpy(dir, fract_dir2);
+			strcpy(dir, g_fract_dir2);
 		}
 		fix_dirname(dir);
 		makepath(flname, drive, dir, "", "");
@@ -2194,9 +2194,9 @@ gc_loop:
 		xxmax         = g_current_fractal_specific->xmax;
 		yy3rd = yymin = g_current_fractal_specific->ymin;
 		yymax         = g_current_fractal_specific->ymax;
-		if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
+		if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
+			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 		if (bf_math != 0)
 		{
@@ -2416,9 +2416,9 @@ gsc_loop:
 		xxmin = g_orbit_x_min; xxmax = g_orbit_x_max;
 		yymin = g_orbit_y_min; yymax = g_orbit_y_max;
 		xx3rd = g_orbit_x_3rd; yy3rd = g_orbit_y_3rd;
-		if (viewcrop && finalaspectratio != g_screen_aspect_ratio)
+		if (viewcrop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(g_screen_aspect_ratio, finalaspectratio);
+			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 
 		g_orbit_x_min = xxmin; g_orbit_x_max = xxmax;
@@ -2638,7 +2638,7 @@ get_brws_restart:
 		i = -3;
 	}
 
-	if (evolving)  /* can't browse */
+	if (g_evolving)  /* can't browse */
 	{
 		g_auto_browse = 0;
 		i = 0;
@@ -2859,9 +2859,9 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 int integer_unsupported(void)
 {
 	static int last_fractype = -1;
-	if (fractype != last_fractype)
+	if (g_fractal_type != last_fractype)
 	{
-		last_fractype = fractype;
+		last_fractype = g_fractal_type;
 		stopmsg(0, "This integer fractal type is unimplemented;\n"
 			"Use float=yes or the <X> screen to get a real image.");
 	}

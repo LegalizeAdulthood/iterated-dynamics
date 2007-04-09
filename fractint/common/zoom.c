@@ -144,13 +144,13 @@ void drawbox(int drawit)
 
 	/* calc co-ords of topleft & botright corners of box */
 	tmpx = zwidth/-2 + fxadj; /* from zoombox center as origin, on xdots scale */
-	tmpy = zdepth*finalaspectratio/2;
+	tmpy = zdepth*g_final_aspect_ratio/2;
 	dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; /* delta x to rotate topleft */
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy); /* delta y to rotate topleft */
 
 	/* calc co-ords of topleft */
 	ftemp1 = zbx + dx + fxadj;
-	ftemp2 = zby + dy/finalaspectratio;
+	ftemp2 = zby + dy/g_final_aspect_ratio;
 
 	tl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
 	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
@@ -164,7 +164,7 @@ void drawbox(int drawit)
 
 	/* calc co-ords of bottom right */
 	ftemp1 = zbx + zwidth - dx - fxadj;
-	ftemp2 = zby - dy/finalaspectratio + zdepth;
+	ftemp2 = zby - dy/g_final_aspect_ratio + zdepth;
 	br.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	xxmax  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -180,7 +180,7 @@ void drawbox(int drawit)
 	dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
 	ftemp1 = zbx + dx - fxadj;
-	ftemp2 = zby + dy/finalaspectratio + zdepth;
+	ftemp2 = zby + dy/g_final_aspect_ratio + zdepth;
 	bl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	xx3rd  = sxmin + ftemp1*fxwidth + ftemp2*fxskew;
@@ -192,7 +192,7 @@ void drawbox(int drawit)
 		restore_stack(saved);
 	}
 	ftemp1 = zbx + zwidth - dx + fxadj;
-	ftemp2 = zby - dy/finalaspectratio;
+	ftemp2 = zby - dy/g_final_aspect_ratio;
 	tr.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	tr.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 
@@ -611,7 +611,7 @@ void aspectratio_crop(float oldaspect, float newaspect)
 
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
 {   int i, j;
-	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || evolving)
+	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving)
 	{
 		return 0; /* not resumable, not complete */
 	}
@@ -714,7 +714,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	/* got a zoombox */
 	alignmask = check_pan()-1;
-	if (alignmask < 0 || evolving)
+	if (alignmask < 0 || g_evolving)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
 		return 0;

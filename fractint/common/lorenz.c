@@ -239,19 +239,19 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 	{
 		return -1;
 	}
-	l_cvt->a = (long) (cvt.a*fudge);
-	l_cvt->b = (long) (cvt.b*fudge);
-	l_cvt->c = (long) (cvt.c*fudge);
-	l_cvt->d = (long) (cvt.d*fudge);
-	l_cvt->e = (long) (cvt.e*fudge);
-	l_cvt->f = (long) (cvt.f*fudge);
+	l_cvt->a = (long) (cvt.a*g_fudge);
+	l_cvt->b = (long) (cvt.b*g_fudge);
+	l_cvt->c = (long) (cvt.c*g_fudge);
+	l_cvt->d = (long) (cvt.d*g_fudge);
+	l_cvt->e = (long) (cvt.e*g_fudge);
+	l_cvt->f = (long) (cvt.f*g_fudge);
 
 	/* MCP 7-7-91 */
 	return 0;
 }
 
 /******************************************************************/
-/*   setup functions - put in g_fractal_specific[fractype].per_image */
+/*   setup functions - put in g_fractal_specific[g_fractal_type].per_image */
 /******************************************************************/
 
 int orbit_3d_setup(void)
@@ -260,32 +260,32 @@ int orbit_3d_setup(void)
 	s_connect = 1;
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
-	if (fractype == LHENON || fractype == KAM || fractype == KAM3D ||
-		fractype == INVERSEJULIA)
+	if (g_fractal_type == LHENON || g_fractal_type == KAM || g_fractal_type == KAM3D ||
+		g_fractal_type == INVERSEJULIA)
 	{
 		s_connect = 0;
 	}
-	if (fractype == LROSSLER)
+	if (g_fractal_type == LROSSLER)
 	{
 		s_waste = 500;
 	}
-	if (fractype == LLORENZ)
+	if (g_fractal_type == LLORENZ)
 	{
 		s_projection = PROJECTION_XZ;
 	}
 
-	s_init_orbit_long[0] = fudge;  /* initial conditions */
-	s_init_orbit_long[1] = fudge;
-	s_init_orbit_long[2] = fudge;
+	s_init_orbit_long[0] = g_fudge;  /* initial conditions */
+	s_init_orbit_long[1] = g_fudge;
+	s_init_orbit_long[2] = g_fudge;
 
-	if (fractype == LHENON)
+	if (g_fractal_type == LHENON)
 	{
-		s_l_a =  (long) (param[0]*fudge);
-		s_l_b =  (long) (param[1]*fudge);
-		s_l_c =  (long) (param[2]*fudge);
-		s_l_d =  (long) (param[3]*fudge);
+		s_l_a =  (long) (param[0]*g_fudge);
+		s_l_b =  (long) (param[1]*g_fudge);
+		s_l_c =  (long) (param[2]*g_fudge);
+		s_l_d =  (long) (param[3]*g_fudge);
 	}
-	else if (fractype == KAM || fractype == KAM3D)
+	else if (g_fractal_type == KAM || g_fractal_type == KAM3D)
 	{
 		g_max_count = 1L;
 		s_a   = param[0];           /* angle */
@@ -293,22 +293,22 @@ int orbit_3d_setup(void)
 		{
 			param[1] = .01;
 		}
-		s_l_b =  (long) (param[1]*fudge);    /* stepsize */
-		s_l_c =  (long) (param[2]*fudge);    /* stop */
+		s_l_b =  (long) (param[1]*g_fudge);    /* stepsize */
+		s_l_c =  (long) (param[2]*g_fudge);    /* stop */
 		s_l_d =  (long) param[3];
 		s_t = (int) s_l_d;     /* points per orbit */
 
-		s_l_sinx = (long) (sin(s_a)*fudge);
-		s_l_cosx = (long) (cos(s_a)*fudge);
+		s_l_sinx = (long) (sin(s_a)*g_fudge);
+		s_l_cosx = (long) (cos(s_a)*g_fudge);
 		s_l_orbit = 0;
 		s_init_orbit_long[0] = s_init_orbit_long[1] = s_init_orbit_long[2] = 0;
 	}
-	else if (fractype == INVERSEJULIA)
+	else if (g_fractal_type == INVERSEJULIA)
 	{
 		LCMPLX Sqrt;
 
-		s_x_long = (long) (param[0]*fudge);
-		s_y_long = (long) (param[1]*fudge);
+		s_x_long = (long) (param[0]*g_fudge);
+		s_y_long = (long) (param[1]*g_fudge);
 
 		s_max_hits    = (int) param[2];
 		s_run_length = (int) param[3];
@@ -332,7 +332,7 @@ int orbit_3d_setup(void)
 		s_lcvt.e = (long) (s_cvt.e*(1L << 21));
 		s_lcvt.f = (long) (s_cvt.f*(1L << 21));
 
-		Sqrt = ComplexSqrtLong(fudge - 4*s_x_long, -4*s_y_long);
+		Sqrt = ComplexSqrtLong(g_fudge - 4*s_x_long, -4*s_y_long);
 
 		switch (g_major_method)
 		{
@@ -343,8 +343,8 @@ int orbit_3d_setup(void)
 				g_major_method = random_walk;
 				goto lrwalk;
 			}
-			EnQueueLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-			EnQueueLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+			EnQueueLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
+			EnQueueLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
 			break;
 		case depth_first:
 			if (Init_Queue((long)32*1024) == 0)
@@ -356,32 +356,32 @@ int orbit_3d_setup(void)
 			switch (g_minor_method)
 			{
 				case left_first:
-					PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-					PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
+					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
 					break;
 				case right_first:
-					PushLong((fudge - Sqrt.x) / 2, -Sqrt.y / 2);
-					PushLong((fudge + Sqrt.x) / 2,  Sqrt.y / 2);
+					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
 					break;
 			}
 			break;
 		case random_walk:
 lrwalk:
-			g_new_z_l.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x / 2;
 			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		case random_run:
-			g_new_z_l.x = s_init_orbit_long[0] = fudge + Sqrt.x / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x / 2;
 			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
 			break;
 		}
 	}
 	else
 	{
-		s_l_dt = (long) (param[0]*fudge);
-		s_l_a =  (long) (param[1]*fudge);
-		s_l_b =  (long) (param[2]*fudge);
-		s_l_c =  (long) (param[3]*fudge);
+		s_l_dt = (long) (param[0]*g_fudge);
+		s_l_a =  (long) (param[1]*g_fudge);
+		s_l_b =  (long) (param[2]*g_fudge);
+		s_l_c =  (long) (param[3]*g_fudge);
 	}
 
 	/* precalculations for speed */
@@ -401,22 +401,22 @@ int orbit_3d_setup_fp()
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
 
-	if (fractype == FPHENON || fractype == FPPICKOVER || fractype == FPGINGERBREAD
-				|| fractype == KAMFP || fractype == KAM3DFP
-				|| fractype == FPHOPALONG || fractype == INVERSEJULIAFP)
+	if (g_fractal_type == FPHENON || g_fractal_type == FPPICKOVER || g_fractal_type == FPGINGERBREAD
+				|| g_fractal_type == KAMFP || g_fractal_type == KAM3DFP
+				|| g_fractal_type == FPHOPALONG || g_fractal_type == INVERSEJULIAFP)
 	{
 		s_connect = 0;
 	}
-	if (fractype == FPLORENZ3D1 || fractype == FPLORENZ3D3 ||
-		fractype == FPLORENZ3D4)
+	if (g_fractal_type == FPLORENZ3D1 || g_fractal_type == FPLORENZ3D3 ||
+		g_fractal_type == FPLORENZ3D4)
 	{
 		s_waste = 750;
 	}
-	if (fractype == FPROSSLER)
+	if (g_fractal_type == FPROSSLER)
 	{
 		s_waste = 500;
 	}
-	if (fractype == FPLORENZ)
+	if (g_fractal_type == FPLORENZ)
 	{
 		s_projection = PROJECTION_XZ; /* plot x and z */
 	}
@@ -424,13 +424,13 @@ int orbit_3d_setup_fp()
 	s_init_orbit_fp[0] = 1;  /* initial conditions */
 	s_init_orbit_fp[1] = 1;
 	s_init_orbit_fp[2] = 1;
-	if (fractype == FPGINGERBREAD)
+	if (g_fractal_type == FPGINGERBREAD)
 	{
 		s_init_orbit_fp[0] = param[0];        /* initial conditions */
 		s_init_orbit_fp[1] = param[1];
 	}
 
-	if (fractype == ICON || fractype == ICON3D)        /* DMF */
+	if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
@@ -438,19 +438,19 @@ int orbit_3d_setup_fp()
 		s_waste = 2000;
 	}
 
-	if (fractype == LATOO)        /* HB */
+	if (g_fractal_type == LATOO)        /* HB */
 	{
 		s_connect = 0;
 	}
 
-	if (fractype == FPHENON || fractype == FPPICKOVER)
+	if (g_fractal_type == FPHENON || g_fractal_type == FPPICKOVER)
 	{
 		s_a =  param[0];
 		s_b =  param[1];
 		s_c =  param[2];
 		s_d =  param[3];
 	}
-	else if (fractype == ICON || fractype == ICON3D)        /* DMF */
+	else if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
@@ -462,7 +462,7 @@ int orbit_3d_setup_fp()
 		s_c  =   param[2];
 		s_d  =   param[3];
 	}
-	else if (fractype == KAMFP || fractype == KAM3DFP)
+	else if (g_fractal_type == KAMFP || g_fractal_type == KAM3DFP)
 	{
 		g_max_count = 1L;
 		s_a = param[0];           /* angle */
@@ -479,8 +479,8 @@ int orbit_3d_setup_fp()
 		s_orbit = 0;
 		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
 	}
-	else if (fractype == FPHOPALONG || fractype == FPMARTIN || fractype == CHIP
-		|| fractype == QUADRUPTWO || fractype == THREEPLY)
+	else if (g_fractal_type == FPHOPALONG || g_fractal_type == FPMARTIN || g_fractal_type == CHIP
+		|| g_fractal_type == QUADRUPTWO || g_fractal_type == THREEPLY)
 	{
 		s_init_orbit_fp[0] = 0;  /* initial conditions */
 		s_init_orbit_fp[1] = 0;
@@ -490,13 +490,13 @@ int orbit_3d_setup_fp()
 		s_b =  param[1];
 		s_c =  param[2];
 		s_d =  param[3];
-		if (fractype == THREEPLY)
+		if (g_fractal_type == THREEPLY)
 		{
 			COSB   = cos(s_b);
 			SINABC = sin(s_a + s_b + s_c);
 		}
 	}
-	else if (fractype == INVERSEJULIAFP)
+	else if (g_fractal_type == INVERSEJULIAFP)
 	{
 		_CMPLX Sqrt;
 
@@ -580,7 +580,7 @@ rwalk:
 }
 
 /******************************************************************/
-/*   orbit functions - put in g_fractal_specific[fractype].orbitcalc */
+/*   orbit functions - put in g_fractal_specific[g_fractal_type].orbitcalc */
 /******************************************************************/
 
 /* Julia sets by inverse iterations added by Juan J. Buhler 4/3/92 */
@@ -1037,7 +1037,7 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 	*l_z = *l_x; /* for warning only */
 	newx = multiply(*l_x, *l_x, g_bit_shift);
 	newx = multiply(newx, s_l_a, g_bit_shift);
-	newx  = fudge + *l_y - newx;
+	newx  = g_fudge + *l_y - newx;
 	newy  = multiply(s_l_b, *l_x, g_bit_shift);
 	*l_x = newx;
 	*l_y = newy;
@@ -1344,7 +1344,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 #undef PAR_D
 
 /**********************************************************************/
-/*   Main fractal engines - put in g_fractal_specific[fractype].calculate_type */
+/*   Main fractal engines - put in g_fractal_specific[g_fractal_type].calculate_type */
 /**********************************************************************/
 
 int inverse_julia_per_image()
@@ -1454,7 +1454,7 @@ int orbit_2d_fp()
 			{
 				sound_tone((int) (*soundvar*100 + g_base_hertz));
 			}
-			if ((fractype != ICON) && (fractype != LATOO))
+			if ((g_fractal_type != ICON) && (g_fractal_type != LATOO))
 			{
 				if (oldcol != -1 && s_connect)
 				{
@@ -1596,7 +1596,7 @@ int orbit_2d()
 			{
 				double yy;
 				yy = *soundvar;
-				yy = yy/fudge;
+				yy = yy/g_fudge;
 				sound_tone((int) (yy*100 + g_base_hertz));
 			}
 			if (oldcol != -1 && s_connect)
@@ -1627,7 +1627,7 @@ int orbit_2d()
 		}
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double) *p0/fudge, (double) *p1/fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", (double) *p0/g_fudge, (double) *p1/g_fudge, 0.0);
 		}
 	}
 	if (fp)
@@ -1692,7 +1692,7 @@ static int orbit_3d_calc(void)
 		LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/fudge, (double)inf.orbit[1]/fudge, (double)inf.orbit[2]/fudge);
+			fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge, (double)inf.orbit[1]/g_fudge, (double)inf.orbit[2]/g_fudge);
 		}
 		if (threed_view_trans(&inf))
 		{
@@ -1707,7 +1707,7 @@ static int orbit_3d_calc(void)
 				{
 					double yy;
 					yy = inf.viewvect[((g_sound_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
-					yy = yy/fudge;
+					yy = yy/g_fudge;
 					sound_tone((int) (yy*100 + g_base_hertz));
 				}
 				if (oldcol != -1 && s_connect)
@@ -1888,7 +1888,7 @@ int dynamic_2d_setup_fp()
 	{
 		s_d = 1;
 	}
-	if (fractype == DYNAMICFP)
+	if (g_fractal_type == DYNAMICFP)
 	{
 		s_a = param[2]; /* parameter */
 		s_b = param[3]; /* parameter */
@@ -2005,7 +2005,7 @@ int dynamic_2d_fp()
 		ypixel = g_dy_size*(ystep + .5)/s_d;
 		x = (double) ((xxmin + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
 		y = (double) ((yymax-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
-		if (fractype == MANDELCLOUD)
+		if (g_fractal_type == MANDELCLOUD)
 		{
 			s_a = x;
 			s_b = y;
@@ -2042,7 +2042,7 @@ int dynamic_2d_fp()
 					{
 						driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 					}
-					else if (count > 0 || fractype != MANDELCLOUD)
+					else if (count > 0 || g_fractal_type != MANDELCLOUD)
 					{
 						(*g_plot_color)(col, row, color % g_colors);
 					}
@@ -2114,8 +2114,8 @@ int plotorbits2dsetup(void)
 			return -1;
 		}
 		g_float_flag = usr_floatflag = TRUE; /* force floating point */
-		fractype = tofloat;
-		g_current_fractal_specific = &g_fractal_specific[fractype];
+		g_fractal_type = tofloat;
+		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
 #endif
 
@@ -2494,11 +2494,11 @@ static int ifs_2d(void)
 	{
 		for (j = 0; j < IFSPARM; j++)
 		{
-			localifs[i*IFSPARM + j] = (long) (g_ifs_definition[i*IFSPARM + j]*fudge);
+			localifs[i*IFSPARM + j] = (long) (g_ifs_definition[i*IFSPARM + j]*g_fudge);
 		}
 	}
 
-	tempr = fudge / 32767;        /* find the proper rand() fudge */
+	tempr = g_fudge / 32767;        /* find the proper rand() g_fudge */
 
 	fp = open_orbit_save();
 
@@ -2533,7 +2533,7 @@ static int ifs_2d(void)
 		y = newy;
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)newx/fudge, (double)newy/fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge, (double)newy/g_fudge, 0.0);
 		}
 
 		/* plot if inside window */
@@ -2598,11 +2598,11 @@ static int ifs_3d_long(void)
 	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
-			localifs[i*IFS3DPARM + j] = (long) (g_ifs_definition[i*IFS3DPARM + j]*fudge);
+			localifs[i*IFS3DPARM + j] = (long) (g_ifs_definition[i*IFS3DPARM + j]*g_fudge);
 		}
 	}
 
-	tempr = fudge / 32767;        /* find the proper rand() fudge */
+	tempr = g_fudge / 32767;        /* find the proper rand() g_fudge */
 
 	inf.orbit[0] = 0;
 	inf.orbit[1] = 0;
@@ -2654,7 +2654,7 @@ static int ifs_3d_long(void)
 		inf.orbit[2] = newz;
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)newx/fudge, (double)newy/fudge, (double)newz/fudge);
+			fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge, (double)newy/g_fudge, (double)newz/g_fudge);
 		}
 
 		if (threed_view_trans(&inf))
@@ -2773,10 +2773,10 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 		{
 			for (j = 0; j < 4; j++)
 			{
-				inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
+				inf->longmat[i][j] = (long) (inf->doublemat[i][j]*g_fudge);
 				if (s_real_time)
 				{
-					inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
+					inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*g_fudge);
 				}
 			}
 		}
@@ -2813,29 +2813,29 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*(double)ZVIEWER/100.0);
 
 			/* center image on origin */
-			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
-			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
+			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
+			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 			/* apply perspective shift */
 			tmpx += ((double)g_x_shift*(xxmax-xxmin))/(xdots);
 			tmpy += ((double)g_y_shift*(yymax-yymin))/(ydots);
-			tmpz = -((double)inf->maxvals[2]) / fudge;
+			tmpz = -((double)inf->maxvals[2]) / g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
 			if (s_real_time)
 			{
 				/* center image on origin */
-				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*fudge); /* center x */
-				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*fudge); /* center y */
+				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
+				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 				tmpx += ((double)g_x_shift1*(xxmax-xxmin))/(xdots);
 				tmpy += ((double)g_y_shift1*(yymax-yymin))/(ydots);
-				tmpz = -((double)inf->maxvals[2]) / fudge;
+				tmpz = -((double)inf->maxvals[2]) / g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
 			for (i = 0; i < 3; i++)
 			{
-				g_view[i] = (double)inf->iview[i] / fudge;
+				g_view[i] = (double)inf->iview[i] / g_fudge;
 			}
 
 			/* copy xform matrix to long for for fixed point math */
@@ -2843,10 +2843,10 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			{
 				for (j = 0; j < 4; j++)
 				{
-					inf->longmat[i][j] = (long) (inf->doublemat[i][j]*fudge);
+					inf->longmat[i][j] = (long) (inf->doublemat[i][j]*g_fudge);
 					if (s_real_time)
 					{
-						inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*fudge);
+						inf->longmat1[i][j] = (long) (inf->doublemat1[i][j]*g_fudge);
 					}
 				}
 			}
@@ -2863,23 +2863,23 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			VECTOR tmpv;
 			for (i = 0; i < 3; i++)
 			{
-				tmpv[i] = (double)inf->viewvect[i] / fudge;
+				tmpv[i] = (double)inf->viewvect[i] / g_fudge;
 			}
 			perspective(tmpv);
 			for (i = 0; i < 3; i++)
 			{
-				inf->viewvect[i] = (long) (tmpv[i]*fudge);
+				inf->viewvect[i] = (long) (tmpv[i]*g_fudge);
 			}
 			if (s_real_time)
 			{
 				for (i = 0; i < 3; i++)
 				{
-					tmpv[i] = (double)inf->viewvect1[i] / fudge;
+					tmpv[i] = (double)inf->viewvect1[i] / g_fudge;
 				}
 				perspective(tmpv);
 				for (i = 0; i < 3; i++)
 				{
-					inf->viewvect1[i] = (long) (tmpv[i]*fudge);
+					inf->viewvect1[i] = (long) (tmpv[i]*g_fudge);
 				}
 			}
 		}

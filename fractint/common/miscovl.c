@@ -354,8 +354,8 @@ prompt_user:
 skip_UI:
 		if (*g_make_par == 0)
 		{
-			strcpy(colorspec, (filecolors > 0) ? "y" : "n");
-			maxcolor = (g_make_par[1] == 0) ? 256 : filecolors;
+			strcpy(colorspec, (g_file_colors > 0) ? "y" : "n");
+			maxcolor = (g_make_par[1] == 0) ? 256 : g_file_colors;
 		}
 		strcpy(outname, g_command_file);
 		gotinfile = 0;
@@ -622,7 +622,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 		put_parm(" type=%s", sptr);
 
-		if (fractype == JULIBROT || fractype == JULIBROTFP)
+		if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 		{
 			put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
 				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
@@ -650,7 +650,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm(" 3dmode=%s", juli3Doptions[g_juli_3D_mode]);
 			}
 		}
-		if (fractype == FORMULA || fractype == FFORMULA)
+		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 		{
 			put_filename("formulafile", g_formula_filename);
 			put_parm(" formulaname=%s", g_formula_name);
@@ -659,17 +659,17 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
 			}
 		}
-		if (fractype == LSYSTEM)
+		if (g_fractal_type == LSYSTEM)
 		{
 			put_filename("lfile", g_l_system_filename);
 			put_parm(" lname=%s", g_l_system_name);
 		}
-		if (fractype == IFS || fractype == IFS3D)
+		if (g_fractal_type == IFS || g_fractal_type == IFS3D)
 		{
 			put_filename("ifsfile", g_ifs_filename);
 			put_parm(" ifs=%s", g_ifs_name);
 		}
-		if (fractype == INVERSEJULIA || fractype == INVERSEJULIAFP)
+		if (g_fractal_type == INVERSEJULIA || g_fractal_type == INVERSEJULIAFP)
 		{
 			put_parm(" miim=%s/%s", JIIMmethod[g_major_method], JIIMleftright[g_minor_method]);
 		}
@@ -790,8 +790,8 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 		for (i = (MAXPARAMS-1); i >= 0; --i)
 		{
-			if (type_has_parameter((fractype == JULIBROT || fractype == JULIBROTFP)
-					? g_new_orbit_type : fractype, i, NULL))
+			if (type_has_parameter((g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
+					? g_new_orbit_type : g_fractal_type, i, NULL))
 			{
 				break;
 			}
@@ -799,7 +799,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 		if (i >= 0)
 		{
-			if (fractype == CELLULAR || fractype == ANT)
+			if (g_fractal_type == CELLULAR || g_fractal_type == ANT)
 			{
 				put_parm(" params=%.1f", param[0]);
 			}
@@ -818,7 +818,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 			for (j = 1; j <= i; ++j)
 			{
-				if (fractype == CELLULAR || fractype == ANT)
+				if (g_fractal_type == CELLULAR || g_fractal_type == ANT)
 				{
 					put_parm("/%.1f", param[j]);
 				}
@@ -1225,7 +1225,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 	if (viewwindow == 1)
 	{
-		put_parm(" viewwindows=%g/%g", viewreduction, finalaspectratio);
+		put_parm(" viewwindows=%g/%g", viewreduction, g_final_aspect_ratio);
 		put_parm(viewcrop ? "/yes" : "/no");
 		put_parm("/%d/%d", viewxdots, viewydots);
 	}
@@ -1288,9 +1288,9 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		}
 
 #ifndef XFRACT
-		if (fm_vol != 63)
+		if (g_fm_volume != 63)
 		{
-			put_parm(" volume=%d", fm_vol);
+			put_parm(" volume=%d", g_fm_volume);
 		}
 
 		if (hi_atten != 0)
@@ -1318,29 +1318,29 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" polyphony=%d", polyphony + 1);
 		}
 
-		if (fm_wavetype != 0)
+		if (g_fm_wave_type != 0)
 		{
-			put_parm(" wavetype=%d", fm_wavetype);
+			put_parm(" wavetype=%d", g_fm_wave_type);
 		}
 
-		if (fm_attack != 5)
+		if (g_fm_attack != 5)
 		{
-			put_parm(" attack=%d", fm_attack);
+			put_parm(" attack=%d", g_fm_attack);
 		}
 
-		if (fm_decay != 10)
+		if (g_fm_decay != 10)
 		{
-			put_parm(" decay=%d", fm_decay);
+			put_parm(" decay=%d", g_fm_decay);
 		}
 
-		if (fm_sustain != 13)
+		if (g_fm_sustain != 13)
 		{
-			put_parm(" sustain=%d", fm_sustain);
+			put_parm(" sustain=%d", g_fm_sustain);
 		}
 
-		if (fm_release != 5)
+		if (g_fm_release != 5)
 		{
-			put_parm(" srelease=%d", fm_release);
+			put_parm(" srelease=%d", g_fm_release);
 		}
 
 		if (g_sound_flags & SOUNDFLAG_QUANTIZED)  /* quantize turned on */

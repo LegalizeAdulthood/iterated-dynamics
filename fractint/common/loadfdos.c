@@ -11,19 +11,19 @@
 		for and call setvideomode
 		set viewwindow on if file going to be loaded into a view smaller than
 		physical screen, in this case also set viewreduction, viewxdots,
-		viewydots, and finalaspectratio
+		viewydots, and g_final_aspect_ratio
 		set skipxdots and skipydots, to 0 if all pixels are to be loaded,
 		to 1 for every 2nd pixel, 2 for every 3rd, etc
 
 	In WinFract, at least initially, get_video_mode can do just the
 	following:
-		set overall image x & y dimensions (sxdots and sydots) to filexdots
-		and fileydots (note that filecolors is the number of g_colors in the
+		set overall image x & y dimensions (sxdots and sydots) to g_file_x_dots
+		and g_file_y_dots (note that g_file_colors is the number of g_colors in the
 		gif, not sure if that is of any use...)
 		if current window smaller than new sxdots and sydots, use scroll bars,
 		if larger perhaps reduce the window size? whatever
 		set viewwindow to 0 (no need? it always is for now in windows vsn?)
-		set finalaspectratio to .75 (ditto?)
+		set g_final_aspect_ratio to .75 (ditto?)
 		set skipxdots and skipydots to 0
 		return 0
 
@@ -140,7 +140,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	{
 		vident = &g_video_table[i];
 		if (info->xdots == vident->xdots && info->ydots == vident->ydots
-			&& filecolors == vident->g_colors)
+			&& g_file_colors == vident->g_colors)
 		{
 			g_init_mode = i;
 			break;
@@ -159,7 +159,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		{
 			vident = &g_video_table[i];
 			if (info->xdots == vident->xdots && info->ydots == vident->ydots
-				&& filecolors == vident->g_colors)
+				&& g_file_colors == vident->g_colors)
 			{
 				g_init_mode = i;
 				break;
@@ -185,19 +185,19 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		{
 			tmpflags |= VI_SBIG;
 		}
-		if (filexdots > g_video_entry.xdots || fileydots > g_video_entry.ydots)
+		if (g_file_x_dots > g_video_entry.xdots || g_file_y_dots > g_video_entry.ydots)
 		{
 			tmpflags |= VI_VSMALL;
 		}
-		else if (filexdots < g_video_entry.xdots || fileydots < g_video_entry.ydots)
+		else if (g_file_x_dots < g_video_entry.xdots || g_file_y_dots < g_video_entry.ydots)
 		{
 			tmpflags |= VI_VBIG;
 		}
-		if (filecolors > g_video_entry.g_colors)
+		if (g_file_colors > g_video_entry.g_colors)
 		{
 			tmpflags |= VI_CSMALL;
 		}
-		if (filecolors < g_video_entry.g_colors)
+		if (g_file_colors < g_video_entry.g_colors)
 		{
 			tmpflags |= VI_CBIG;
 		}
@@ -205,11 +205,11 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		{
 			tmpflags -= VI_EXACT;
 		}
-		if (fileaspectratio != 0 && (tmpflags & VI_VSMALL) == 0)
+		if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
 		{
-			ftemp = vid_aspect(filexdots, fileydots);
-			if (ftemp < fileaspectratio*0.98 ||
-				ftemp > fileaspectratio*1.02)
+			ftemp = vid_aspect(g_file_x_dots, g_file_y_dots);
+			if (ftemp < g_file_aspect_ratio*0.98 ||
+				ftemp > g_file_aspect_ratio*1.02)
 			{
 				tmpflags |= VI_ASPECT;
 			}
@@ -268,7 +268,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			}
 		}
 		sprintf((char *)g_stack, "File: %-44s  %d x %d x %d\n%-52s",
-				g_read_name, filexdots, fileydots, filecolors, temp1);
+				g_read_name, g_file_x_dots, g_file_y_dots, g_file_colors, temp1);
 		if (info->info_id[0] != 'G')
 		{
 			if (save_system)
@@ -301,7 +301,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				strcat((char *)g_stack, temp1);
 			}
 		}
-		if (fileaspectratio != 0 && fileaspectratio != g_screen_aspect_ratio)
+		if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
 		{
 			strcat((char *)g_stack,
 				"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
@@ -374,7 +374,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				sizeof(g_video_entry));
 
 	if (viewwindow &&
-		filexdots == g_video_entry.xdots && fileydots == g_video_entry.ydots)
+		g_file_x_dots == g_video_entry.xdots && g_file_y_dots == g_video_entry.ydots)
 	{
 		/* pull image into a view window */
 		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
@@ -392,7 +392,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	}
 
 	skipxdots = skipydots = 0; /* set for no reduction */
-	if (g_video_entry.xdots < filexdots || g_video_entry.ydots < fileydots)
+	if (g_video_entry.xdots < g_file_x_dots || g_video_entry.ydots < g_file_y_dots)
 	{
 		/* set up to load only every nth pixel to make image fit */
 		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
@@ -400,30 +400,30 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
 		skipxdots = skipydots = 1;
-		while (skipxdots*g_video_entry.xdots < filexdots)
+		while (skipxdots*g_video_entry.xdots < g_file_x_dots)
 		{
 			++skipxdots;
 		}
-		while (skipydots*g_video_entry.ydots < fileydots)
+		while (skipydots*g_video_entry.ydots < g_file_y_dots)
 		{
 			++skipydots;
 		}
 		i = j = 0;
 		while (1)
 		{
-			tmpxdots = (filexdots + skipxdots - 1) / skipxdots;
-			tmpydots = (fileydots + skipydots - 1) / skipydots;
+			tmpxdots = (g_file_x_dots + skipxdots - 1) / skipxdots;
+			tmpydots = (g_file_y_dots + skipydots - 1) / skipydots;
 			/* reduce further if that improves aspect */
 			ftemp = vid_aspect(tmpxdots, tmpydots);
-			if (ftemp > fileaspectratio)
+			if (ftemp > g_file_aspect_ratio)
 			{
 				if (j)
 				{
 					break; /* already reduced x, don't reduce y */
 				}
-				ftemp2 = vid_aspect(tmpxdots, (fileydots + skipydots)/(skipydots + 1));
-				if (ftemp2 < fileaspectratio &&
-					ftemp/fileaspectratio *0.9 <= fileaspectratio/ftemp2)
+				ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots + skipydots)/(skipydots + 1));
+				if (ftemp2 < g_file_aspect_ratio &&
+					ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
 				{
 					break; /* further y reduction is worse */
 				}
@@ -436,9 +436,9 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				{
 					break; /* already reduced y, don't reduce x */
 				}
-				ftemp2 = vid_aspect((filexdots + skipxdots)/(skipxdots + 1), tmpydots);
-				if (ftemp2 > fileaspectratio &&
-					fileaspectratio/ftemp *0.9 <= ftemp2/fileaspectratio)
+				ftemp2 = vid_aspect((g_file_x_dots + skipxdots)/(skipxdots + 1), tmpydots);
+				if (ftemp2 > g_file_aspect_ratio &&
+					g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
 				{
 					break; /* further x reduction is worse */
 				}
@@ -446,52 +446,52 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 				++j;
 			}
 		}
-		filexdots = tmpxdots;
-		fileydots = tmpydots;
+		g_file_x_dots = tmpxdots;
+		g_file_y_dots = tmpydots;
 		--skipxdots;
 		--skipydots;
 	}
 
-	finalaspectratio = fileaspectratio;
-	if (finalaspectratio == 0) /* assume display correct */
+	g_final_aspect_ratio = g_file_aspect_ratio;
+	if (g_final_aspect_ratio == 0) /* assume display correct */
 	{
-		finalaspectratio = (float)vid_aspect(filexdots, fileydots);
+		g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
 	}
-	if (finalaspectratio >= g_screen_aspect_ratio-0.02
-		&& finalaspectratio <= g_screen_aspect_ratio + 0.02)
+	if (g_final_aspect_ratio >= g_screen_aspect_ratio-0.02
+		&& g_final_aspect_ratio <= g_screen_aspect_ratio + 0.02)
 	{
-		finalaspectratio = g_screen_aspect_ratio;
+		g_final_aspect_ratio = g_screen_aspect_ratio;
 	}
-	i = (int)(finalaspectratio*1000.0 + 0.5);
-	finalaspectratio = (float)(i/1000.0); /* chop precision to 3 decimals */
+	i = (int)(g_final_aspect_ratio*1000.0 + 0.5);
+	g_final_aspect_ratio = (float)(i/1000.0); /* chop precision to 3 decimals */
 
 	/* setup view window stuff */
 	viewwindow = viewxdots = viewydots = 0;
-	if (filexdots != g_video_entry.xdots || fileydots != g_video_entry.ydots)
+	if (g_file_x_dots != g_video_entry.xdots || g_file_y_dots != g_video_entry.ydots)
 	{
 		/* image not exactly same size as screen */
 		viewwindow = 1;
-		ftemp = finalaspectratio*
+		ftemp = g_final_aspect_ratio*
 			(double)g_video_entry.ydots / (double)g_video_entry.xdots
 				/ g_screen_aspect_ratio;
-		if (finalaspectratio <= g_screen_aspect_ratio)
+		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
-			i = (int)((double)g_video_entry.xdots / (double)filexdots*20.0 + 0.5);
+			i = (int)((double)g_video_entry.xdots / (double)g_file_x_dots*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
 			i = (int)((double)g_video_entry.xdots / tmpreduce + 0.5);
 			j = (int)((double)i*ftemp + 0.5);
 		}
 		else
 		{
-			i = (int)((double)g_video_entry.ydots / (double)fileydots*20.0 + 0.5);
+			i = (int)((double)g_video_entry.ydots / (double)g_file_y_dots*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
 			j = (int)((double)g_video_entry.ydots / tmpreduce + 0.5);
 			i = (int)((double)j / ftemp + 0.5);
 		}
-		if (i != filexdots || j != fileydots)  /* too bad, must be explicit */
+		if (i != g_file_x_dots || j != g_file_y_dots)  /* too bad, must be explicit */
 		{
-			viewxdots = filexdots;
-			viewydots = fileydots;
+			viewxdots = g_file_x_dots;
+			viewydots = g_file_y_dots;
 		}
 		else
 		{
@@ -499,7 +499,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 		}
 	}
 	if (*g_make_par && !g_fast_restore && !g_initialize_batch &&
-			(fabs(finalaspectratio - g_screen_aspect_ratio) > .00001 || viewxdots != 0))
+			(fabs(g_final_aspect_ratio - g_screen_aspect_ratio) > .00001 || viewxdots != 0))
 	{
 		stopmsg(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"

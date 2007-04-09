@@ -648,7 +648,7 @@ int diffusion(void)
 
 	x = y = -1;
 	g_bit_shift = 16;
-	fudge = 1L << 16;
+	g_fudge = 1L << 16;
 
 	border = (int)param[0];
 	mode = (int)param[1];
@@ -982,7 +982,7 @@ int bifurcation(void)
 		return -1;
 	}
 
-	LPI = (long)(PI*fudge);
+	LPI = (long)(PI*g_fudge);
 
 	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
 	{
@@ -1076,7 +1076,7 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 	if (integerfractal)
 	{
-		lPopulation = (g_parameter.y == 0) ? (long)(SEED*fudge) : (long)(g_parameter.y*fudge);
+		lPopulation = (g_parameter.y == 0) ? (long)(SEED*g_fudge) : (long)(g_parameter.y*g_fudge);
 	}
 	else
 	{
@@ -1260,7 +1260,7 @@ int bifurcation_stewart_trig()
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	lPopulation = multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
 	lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
-	lPopulation -= fudge;
+	lPopulation -= g_fudge;
 #endif
 	return overflow;
 }
@@ -1343,9 +1343,9 @@ int bifurcation_may_fp()
 int bifurcation_may()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = lPopulation + fudge;
+	g_tmp_z_l.x = lPopulation + g_fudge;
 	g_tmp_z_l.y = 0;
-	g_parameter2_l.x = beta*fudge;
+	g_parameter2_l.x = beta*g_fudge;
 	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
 	lPopulation = multiply(lRate, lPopulation, g_bit_shift);
 	lPopulation = divide(lPopulation, g_tmp_z_l.x, g_bit_shift);
@@ -2451,8 +2451,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 		if (g_invert)
 		{
 			invert_z(&g_temp_z);
-			g_old_z_l.x = (long)(g_temp_z.x*fudge);
-			g_old_z_l.y = (long)(g_temp_z.y*fudge);
+			g_old_z_l.x = (long)(g_temp_z.x*g_fudge);
+			g_old_z_l.y = (long)(g_temp_z.y*g_fudge);
 		}
 		else
 		{
